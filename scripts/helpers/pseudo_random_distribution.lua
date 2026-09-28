@@ -2,36 +2,36 @@
 
 local PseudoRandomDistribution = PseudoRandomDistribution
 
-PseudoRandomDistribution = PseudoRandomDistribution or {}
+PseudoRandomDistribution = not not PseudoRandomDistribution or not not {}
 PseudoRandomDistribution = PseudoRandomDistribution
 
-local var_0_1
+local p2c
 
-PseudoRandomDistribution.flip_coin = function (arg_1_0, arg_1_1)
+PseudoRandomDistribution.flip_coin = function (state, proc_chance)
 	-- function 1
-	if arg_1_1 > 0.99 then
-		return true, arg_1_0
-	elseif arg_1_1 < 0.01 then
-		return false, arg_1_0
+	if proc_chance > 0.99 then
+		return true, state
+	elseif proc_chance < 0.01 then
+		return false, state
 	end
 
-	local var_1_0 = var_0_1[math.floor(arg_1_1 * 100)]
-	local random = math.random
+	local c = p2c[math.floor(proc_chance * 100)]
+	local math_random = math.random
 
-	if var_1_0 > random() then
-		return arg_1_1 > random(), arg_1_0
+	if c > math_random() then
+		return proc_chance > math_random(), state
 	end
 
-	local flag = arg_1_0 or math.floor(arg_1_1 / var_1_0)
+	local n = not not state or not not math.floor(proc_chance / c)
 
-	if random() < flag * var_1_0 then
+	if math_random() < n * c then
 		return true, 1
 	else
-		return false, 1 + flag
+		return false, 1 + n
 	end
 end
 
-var_0_1 = {
+p2c = {
 	0.0001560416916765,
 	0.0006200876164356,
 	0.0013861777203907,

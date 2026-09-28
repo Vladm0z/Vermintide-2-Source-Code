@@ -1,8 +1,9 @@
 -- chunkname: @scripts/entity_system/systems/dialogues/global_sound_event_filters.lua
 
-local map = table.map(TagQuery.OP, function (arg_1_0)
+local OP = table.map(TagQuery.OP, function (v)
 	-- function 1
-	return tostring(arg_1_0)
+	return tostring(v)
 end)
+local global_filters = {}
 
-return {}
+return global_filters

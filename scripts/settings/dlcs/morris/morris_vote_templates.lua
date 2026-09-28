@@ -14,20 +14,21 @@ VoteTemplates.deus_settings_vote = {
 	min_required_voters = 1,
 	gamepad_input_desc = "default_voting",
 	timeout_vote_option = 2,
-	requirement_failed_message_func = function (self)
+	requirement_failed_message_func = function (requirement_check_data)
 		-- function 1
-		local var_1_0 = Localize("vote_requirement_failed")
-		local player = Managers.player
+		local text = Localize("vote_requirement_failed")
+		local player_manager = Managers.player
 
-		for k, v in pairs(self.results) do
-			if not v then
-				local name = player:player_from_peer_id(k):name()
+		for peer_id, success in pairs(requirement_check_data.results) do
+			if not success then
+				local player = player_manager:player_from_peer_id(peer_id)
+				local name = player:name()
 
-				var_1_0 = var_1_0 .. name .. "\n"
+				text = text .. name .. "\n"
 			end
 		end
 
-		return var_1_0
+		return text
 	end,
 	vote_options = {
 		{
@@ -43,23 +44,23 @@ VoteTemplates.deus_settings_vote = {
 			input = "ingame_vote_no"
 		}
 	},
-	on_start = function (arg_2_0, arg_2_1)
+	on_start = function (ingame_context, data)
 		-- function 2
 		Managers.matchmaking:cancel_matchmaking()
 	end,
-	on_complete = function (arg_3_0, arg_3_1, arg_3_2)
+	on_complete = function (vote_result, ingame_context, data)
 		-- function 3
-		if arg_3_0 == 1 then
-			local mission_id = arg_3_2.mission_id
-			local difficulty = arg_3_2.difficulty
-			local quick_game = arg_3_2.quick_game
-			local private_game = arg_3_2.private_game
-			local always_host = arg_3_2.always_host
-			local strict_matchmaking = arg_3_2.strict_matchmaking
-			local matchmaking_type = arg_3_2.matchmaking_type
-			local excluded_level_keys = arg_3_2.excluded_level_keys
-			local vote_type = arg_3_2.vote_type
-			local tbl = {
+		if vote_result == 1 then
+			local mission_id = data.mission_id
+			local difficulty = data.difficulty
+			local quick_game = data.quick_game
+			local private_game = data.private_game
+			local always_host = data.always_host
+			local strict_matchmaking = data.strict_matchmaking
+			local matchmaking_type = data.matchmaking_type
+			local excluded_level_keys = data.excluded_level_keys
+			local vote_type = data.vote_type
+			local search_config = {
 				any_level = true,
 				dedicated_servers = false,
 				dedicated_server = false,
@@ -75,48 +76,72 @@ VoteTemplates.deus_settings_vote = {
 				excluded_level_keys = excluded_level_keys
 			}
 
-			if not (not Managers.twitch and Managers.twitch:is_connecting() and not Managers.twitch:is_connected() and Managers.twitch:game_mode_supported(vote_type, difficulty)) then
+			if Managers.twitch and (Managers.twitch:is_connecting() or Managers.twitch:is_connected()) and not Managers.twitch:game_mode_supported(vote_type, difficulty) then
 				Managers.twitch:disconnect()
 			end
 
-			Managers.mechanism:set_vote_data(arg_3_2)
+			Managers.mechanism:set_vote_data(data)
 			Managers.mechanism:reset_choose_next_state()
 
-			local matchmaking = Managers.matchmaking
+			local matchmaking_manager = Managers.matchmaking
 
-			matchmaking:find_game(tbl)
+			matchmaking_manager:find_game(search_config)
 
 			if matchmaking_type == "event" then
-				local event_data = arg_3_2.event_data
+				local event_data = data.event_data
 
-				matchmaking:set_game_mode_event_data(event_data)
+				matchmaking_manager:set_game_mode_event_data(event_data)
 			end
 		end
 	end,
-	pack_sync_data = function (self)
+	pack_sync_data = function (data)
 		-- function 4
-		local mission_id = self.mission_id
+		local mission_id_2 = data.mission_id
 
-		mission_id = mission_id or "n/a"
+		if not mission_id_2 then
+			-- Nothing
+		end
 
-		local act_key = self.act_key
+		mission_id_2 = "n/a"
 
-		act_key = act_key or "n/a"
+		local mission_id = mission_id_2
 
-		local difficulty = self.difficulty
-		local quick_game = self.quick_game
-		local private_game = self.private_game
-		local always_host = self.always_host
-		local strict_matchmaking = self.strict_matchmaking
-		local matchmaking_type = self.matchmaking_type
+		::label_4_0::
+
+		local act_key_2 = data.act_key
+
+		if not act_key_2 then
+			-- Nothing
+		end
+
+		act_key_2 = "n/a"
+
+		local act_key = act_key_2
+
+		::label_4_1::
+
+		local difficulty = data.difficulty
+		local quick_game = data.quick_game
+		local private_game = data.private_game
+		local always_host = data.always_host
+		local strict_matchmaking = data.strict_matchmaking
+		local matchmaking_type = data.matchmaking_type
 		local twitch = Managers.twitch
 
-		twitch = not twitch and Managers.twitch:is_connected()
+		if twitch then
+			-- Nothing
+		end
 
-		local dominant_god = self.dominant_god
-		local mechanism = self.mechanism
+		twitch = Managers.twitch:is_connected()
 
-		if not self.mission_id then
+		local twitch_enabled = twitch
+
+		::label_4_2::
+
+		local dominant_god = data.dominant_god
+		local mechanism = data.mechanism
+
+		if not data.mission_id then
 			mission_id = "n/a"
 			dominant_god = nil
 		end
@@ -128,142 +153,165 @@ VoteTemplates.deus_settings_vote = {
 		}
 		local flag
 
-		flag = not quick_game and 1 and 2
+		flag = (not quick_game or not 1) and not not 2
 		tbl[4] = flag
 
 		local flag_2
 
-		flag_2 = not private_game and 1 and 2
+		flag_2 = (not private_game or not 1) and not not 2
 		tbl[5] = flag_2
 
 		local flag_3
 
-		flag_3 = not always_host and 1 and 2
+		flag_3 = (not always_host or not 1) and not not 2
 		tbl[6] = flag_3
 
 		local flag_4
 
-		flag_4 = not strict_matchmaking and 1 and 2
+		flag_4 = (not strict_matchmaking or not 1) and not not 2
 		tbl[7] = flag_4
 		tbl[8] = NetworkLookup.matchmaking_types[matchmaking_type]
 
 		local flag_5
 
-		flag_5 = not twitch and 1 and 2
+		flag_5 = (not twitch_enabled or not 1) and not not 2
 		tbl[9] = flag_5
 		tbl[10] = NetworkLookup.mechanisms[mechanism]
-		tbl[11] = not dominant_god and NetworkLookup.deus_themes[dominant_god]
+		tbl[11] = not not dominant_god and not not NetworkLookup.deus_themes[dominant_god]
+
+		local sync_data = tbl
 
 		if matchmaking_type == "event" then
-			local event_data = self.event_data
-			local mutators = event_data.mutators
+			local event_data = data.event_data
+			local mutators_2 = event_data.mutators
 
-			mutators = mutators or {}
-			tbl[#tbl + 1] = #mutators
+			if not mutators_2 then
+				-- Nothing
+			end
+
+			mutators_2 = {}
+
+			local mutators = mutators_2
+
+			::label_4_3::
+
+			sync_data[#sync_data + 1] = #mutators
 
 			for i = 1, #mutators do
-				local var_4_19 = mutators[i]
-				local var_4_20 = NetworkLookup.mutator_templates[var_4_19]
+				local mutator_name = mutators[i]
+				local mutator_id = NetworkLookup.mutator_templates[mutator_name]
 
-				tbl[#tbl + 1] = var_4_20
+				sync_data[#sync_data + 1] = mutator_id
 			end
 
-			local boons = event_data.boons
+			local boons_2 = event_data.boons
 
-			boons = boons or {}
-			tbl[#tbl + 1] = #boons
+			if not boons_2 then
+				-- Nothing
+			end
 
-			for j = 1, #boons do
-				local var_4_22 = boons[j]
-				local var_4_23 = DeusPowerUpsLookup[var_4_22]
+			boons_2 = {}
 
-				tbl[#tbl + 1] = var_4_23.lookup_id
+			local boons = boons_2
+
+			::label_4_4::
+
+			sync_data[#sync_data + 1] = #boons
+
+			for i = 1, #boons do
+				local boon_name = boons[i]
+				local boon = DeusPowerUpsLookup[boon_name]
+
+				sync_data[#sync_data + 1] = boon.lookup_id
 			end
 		end
 
-		return tbl
+		return sync_data
 	end,
-	extract_sync_data = function (self)
+	extract_sync_data = function (sync_data)
 		-- function 5
-		local var_5_0 = self[1]
-		local var_5_1 = self[2]
-		local var_5_2 = self[3]
-		local var_5_3 = self[4]
-		local var_5_4 = self[5]
-		local var_5_5 = self[6]
-		local var_5_6 = self[7]
-		local var_5_7 = self[8]
-		local var_5_8 = self[9]
-		local var_5_9 = self[10]
-		local var_5_10 = self[11]
-		local var_5_11 = NetworkLookup.mission_ids[var_5_0]
+		local mission_id = sync_data[1]
+		local act_key_id = sync_data[2]
+		local difficulty_id = sync_data[3]
+		local quick_game_id = sync_data[4]
+		local private_game_id = sync_data[5]
+		local always_host_id = sync_data[6]
+		local strict_matchmaking_id = sync_data[7]
+		local matchmaking_type_id = sync_data[8]
+		local twitch_enabled_id = sync_data[9]
+		local mechanism_id = sync_data[10]
+		local dominant_god_id = sync_data[11]
+		local mission_id = NetworkLookup.mission_ids[mission_id]
 
-		if var_5_11 == "n/a" then
-			var_5_11 = nil
+		if mission_id == "n/a" then
+			mission_id = nil
 		end
 
-		local var_5_12 = NetworkLookup.act_keys[var_5_1]
+		local act_key = NetworkLookup.act_keys[act_key_id]
 
-		if var_5_12 == "n/a" then
-			var_5_12 = nil
+		if act_key == "n/a" then
+			act_key = nil
 		end
 
-		local var_5_13 = NetworkLookup.difficulties[var_5_2]
-		local var_5_14 = NetworkLookup.matchmaking_types[var_5_7]
-		local flag = not var_5_10 and NetworkLookup.deus_themes[var_5_10]
-		local var_5_16 = NetworkLookup.mechanisms[var_5_9]
-		local var_5_17
-		local var_5_18
+		local difficulty = NetworkLookup.difficulties[difficulty_id]
+		local matchmaking_type = NetworkLookup.matchmaking_types[matchmaking_type_id]
+		local dominant_god = not not dominant_god_id and not not NetworkLookup.deus_themes[dominant_god_id]
+		local mechanism = NetworkLookup.mechanisms[mechanism_id]
+		local mutators, boons
 
-		if var_5_14 == "event" then
-			var_5_17 = {}
+		if matchmaking_type == "event" then
+			mutators = {}
 
-			local num = 12
-			local num_2 = num + 1
-			local var_5_21 = self[num]
+			local num_mutator_index = 12
+			local mutator_start_index = num_mutator_index + 1
+			local num_mutators = sync_data[num_mutator_index]
 
-			for i = num_2, num_2 + var_5_21 - 1 do
-				local var_5_22 = self[i]
+			for i = mutator_start_index, mutator_start_index + num_mutators - 1 do
+				local mutator_id = sync_data[i]
 
-				var_5_17[#var_5_17 + 1] = NetworkLookup.mutator_templates[var_5_22]
+				mutators[#mutators + 1] = NetworkLookup.mutator_templates[mutator_id]
 			end
 
-			var_5_18 = {}
+			boons = {}
 
-			local num_3 = num_2 + var_5_21
-			local num_4 = num_3 + 1
-			local var_5_25 = self[num_3]
+			local num_boon_index = mutator_start_index + num_mutators
+			local boon_start_index = num_boon_index + 1
+			local num_boons = sync_data[num_boon_index]
 
-			for j = num_4, num_4 + var_5_25 - 1 do
-				local var_5_26 = self[j]
-				local var_5_27 = DeusPowerUpsLookup[var_5_26]
+			for i = boon_start_index, boon_start_index + num_boons - 1 do
+				local boon_id = sync_data[i]
+				local boon = DeusPowerUpsLookup[boon_id]
 
-				var_5_18[#var_5_18 + 1] = var_5_27.name
+				boons[#boons + 1] = boon.name
 			end
 		end
 
-		return {
-			mission_id = var_5_11,
-			act_key = var_5_12,
-			difficulty = var_5_13,
-			event_data = var_5_17 or not var_5_18 or {
-				mutators = var_5_17,
-				boons = var_5_18
+		local data = {
+			mission_id = mission_id,
+			act_key = act_key,
+			difficulty = difficulty,
+			event_data = (mutators or not not boons) and not not {
+				mutators = mutators,
+				boons = boons
 			},
-			dominant_god = flag,
-			quick_game = var_5_3 == 1,
-			private_game = var_5_4 == 1,
-			always_host = var_5_5 == 1,
-			strict_matchmaking = var_5_6 == 1,
-			matchmaking_type = var_5_14,
-			twitch_enabled = var_5_8 == 1,
-			mechanism = var_5_16
+			dominant_god = dominant_god,
+			quick_game = quick_game_id == 1,
+			private_game = private_game_id == 1,
+			always_host = always_host_id == 1,
+			strict_matchmaking = strict_matchmaking_id == 1,
+			matchmaking_type = matchmaking_type,
+			twitch_enabled = twitch_enabled_id == 1,
+			mechanism = mechanism
 		}
+
+		return data
 	end,
-	initial_vote_func = function (self)
+	initial_vote_func = function (data)
 		-- function 6
-		return {
-			[self.voter_peer_id] = 1
+		local votes = {
+			[data.voter_peer_id] = 1
 		}
+
+		return votes
 	end
 }

@@ -1,22 +1,22 @@
 -- chunkname: @scripts/ui/views/hero_view/windows/hero_window_prestige.lua
 
-local var_0_0 = local_require("scripts/ui/views/hero_view/windows/definitions/hero_window_prestige_definitions")
-local widgets = var_0_0.widgets
-local warning_widgets = var_0_0.warning_widgets
-local scenegraph_definition = var_0_0.scenegraph_definition
-local animation_definitions = var_0_0.animation_definitions
-local flag = false
+local definitions = local_require("scripts/ui/views/hero_view/windows/definitions/hero_window_prestige_definitions")
+local widget_definitions = definitions.widgets
+local warning_widget_definitions = definitions.warning_widgets
+local scenegraph_definition = definitions.scenegraph_definition
+local animation_definitions = definitions.animation_definitions
+local DO_RELOAD = false
 
 HeroWindowPrestige = class(HeroWindowPrestige)
 HeroWindowPrestige.NAME = "HeroWindowPrestige"
 
-HeroWindowPrestige.on_enter = function (self, arg_1_1, arg_1_2)
+HeroWindowPrestige.on_enter = function (self, params, offset)
 	-- function 1
 	print("[HeroViewWindow] Enter Substate HeroWindowPrestige")
 
-	self.parent = arg_1_1.parent
+	self.parent = params.parent
 
-	local ingame_ui_context = arg_1_1.ingame_ui_context
+	local ingame_ui_context = params.ingame_ui_context
 
 	self.ui_renderer = ingame_ui_context.ui_renderer
 	self.ui_top_renderer = ingame_ui_context.ui_top_renderer
@@ -26,206 +26,209 @@ HeroWindowPrestige.on_enter = function (self, arg_1_1, arg_1_2)
 		snap_pixel_positions = true
 	}
 
-	local player = Managers.player
+	local player_manager = Managers.player
+	local local_player = player_manager:local_player()
 
-	self._stats_id = player:local_player():stats_id()
-	self.player_manager = player
+	self._stats_id = local_player:stats_id()
+	self.player_manager = player_manager
 	self.peer_id = ingame_ui_context.peer_id
 	self._animations = {}
 
-	self:create_ui_elements(arg_1_1, arg_1_2)
+	self:create_ui_elements(params, offset)
 
-	self.hero_name = arg_1_1.hero_name
-	self.career_index = arg_1_1.career_index
-	self.profile_index = arg_1_1.profile_index
+	self.hero_name = params.hero_name
+	self.career_index = params.career_index
+	self.profile_index = params.profile_index
 
-	local get_experience = ExperienceSettings.get_experience(self.hero_name)
+	local experience = ExperienceSettings.get_experience(self.hero_name)
 
-	self.hero_level = ExperienceSettings.get_level(get_experience)
+	self.hero_level = ExperienceSettings.get_level(experience)
 
 	self:_setup_prestige_reward()
 end
 
-HeroWindowPrestige.on_exit = function (self, arg_2_1)
+HeroWindowPrestige.on_exit = function (self, params)
 	-- function 2
 	print("[HeroViewWindow] Exit Substate HeroWindowPrestige")
 
 	self.ui_animator = nil
 end
 
-HeroWindowPrestige.create_ui_elements = function (self, arg_3_1, arg_3_2)
+HeroWindowPrestige.create_ui_elements = function (self, params, offset)
 	-- function 3
 	self.ui_scenegraph = UISceneGraph.init_scenegraph(scenegraph_definition)
 
-	local tbl = {}
-	local tbl_2 = {}
+	local widgets = {}
+	local widgets_by_name = {}
 
-	for k, v in pairs(widgets) do
-		local var_3_2 = UIWidget.init(v)
+	for name, widget_definition in pairs(widget_definitions) do
+		local widget = UIWidget.init(widget_definition)
 
-		tbl[#tbl + 1] = var_3_2
-		tbl_2[k] = var_3_2
+		widgets[#widgets + 1] = widget
+		widgets_by_name[name] = widget
 	end
 
-	self._widgets = tbl
-	self._widgets_by_name = tbl_2
+	self._widgets = widgets
+	self._widgets_by_name = widgets_by_name
 
-	local tbl_3 = {}
+	local warning_widgets = {}
 
-	for k_2, v_2 in pairs(warning_widgets) do
-		local var_3_4 = UIWidget.init(v_2)
+	for name, widget_definition in pairs(warning_widget_definitions) do
+		local widget = UIWidget.init(widget_definition)
 
-		tbl_3[#tbl_3 + 1] = var_3_4
-		tbl_2[k_2] = var_3_4
+		warning_widgets[#warning_widgets + 1] = widget
+		widgets_by_name[name] = widget
 	end
 
-	self._warning_widgets = tbl_3
+	self._warning_widgets = warning_widgets
 
 	UIRenderer.clear_scenegraph_queue(self.ui_renderer)
 
 	self.ui_animator = UIAnimator:new(self.ui_scenegraph, animation_definitions)
 
-	if not arg_3_2 then
-		local local_position = self.ui_scenegraph.window.local_position
+	if offset then
+		local window_position = self.ui_scenegraph.window.local_position
 
-		local_position[1] = local_position[1] + arg_3_2[1]
-		local_position[2] = local_position[2] + arg_3_2[2]
-		local_position[3] = local_position[3] + arg_3_2[3]
+		window_position[1] = window_position[1] + offset[1]
+		window_position[2] = window_position[2] + offset[2]
+		window_position[3] = window_position[3] + offset[3]
 	end
 end
 
 HeroWindowPrestige._setup_prestige_reward = function (self)
 	-- function 4
-	local _widgets_by_name = self._widgets_by_name
+	local widgets_by_name = self._widgets_by_name
 	local hero_name = self.hero_name
-	local get_max_prestige_levels = ProgressionUnlocks.get_max_prestige_levels()
+	local max_prestige_level = ProgressionUnlocks.get_max_prestige_levels()
 
-	self._max_prestige_level = get_max_prestige_levels
+	self._max_prestige_level = max_prestige_level
 
-	local get_prestige_level = ProgressionUnlocks.get_prestige_level(hero_name)
+	local prestige_level = ProgressionUnlocks.get_prestige_level(hero_name)
 
-	self._prestige_level = get_prestige_level
+	self._prestige_level = prestige_level
 
-	local min = math.min(get_prestige_level + 1, get_max_prestige_levels)
+	local next_presige_level = math.min(prestige_level + 1, max_prestige_level)
+	local is_max_prestiged = prestige_level == next_presige_level
 
-	if not (get_prestige_level == min) then
-		local var_4_5
-		local var_4_6
-		local prestige_reward_by_level = ProgressionUnlocks.prestige_reward_by_level(min, hero_name)
+	if not is_max_prestiged then
+		local reward_portrait_frame, reward_texture
+		local reward_item_key = ProgressionUnlocks.prestige_reward_by_level(next_presige_level, hero_name)
 
-		self._reward_item_key = prestige_reward_by_level
+		self._reward_item_key = reward_item_key
 
-		local var_4_8 = ItemMasterList[prestige_reward_by_level]
-		local item_type = var_4_8.item_type
-		local display_name = var_4_8.display_name
+		local item_data = ItemMasterList[reward_item_key]
+		local item_type = item_data.item_type
+		local display_name = item_data.display_name
 
 		if item_type == "hat" then
 			-- Nothing
 		elseif item_type == "frame" then
-			var_4_5 = var_4_8.name
+			reward_portrait_frame = item_data.name
 		elseif item_type == "skin" then
 			-- Nothing
 		end
 
-		self:_set_prestige_reward_portrait_frame(var_4_5)
+		self:_set_prestige_reward_portrait_frame(reward_portrait_frame)
 
-		_widgets_by_name.reward_item_text.content.text = Localize(display_name)
+		widgets_by_name.reward_item_text.content.text = Localize(display_name)
 	end
 
-	local can_upgrade_prestige = ProgressionUnlocks.can_upgrade_prestige(hero_name)
+	local can_prestige = ProgressionUnlocks.can_upgrade_prestige(hero_name)
 
-	_widgets_by_name.prestige_button.content.button_hotspot.disable_button = not can_upgrade_prestige
-	_widgets_by_name.unable_description_text.content.visible = not can_upgrade_prestige
+	widgets_by_name.prestige_button.content.button_hotspot.disable_button = not can_prestige
+	widgets_by_name.unable_description_text.content.visible = not can_prestige
 end
 
-HeroWindowPrestige.update = function (self, arg_5_1, arg_5_2)
+HeroWindowPrestige.update = function (self, dt, t)
 	-- function 5
-	if not flag then
-		flag = false
+	if DO_RELOAD then
+		DO_RELOAD = false
 
 		self:create_ui_elements()
 	end
 
-	self:_update_animations(arg_5_1)
-	self:_handle_input(arg_5_1, arg_5_2)
-	self:draw(arg_5_1)
+	self:_update_animations(dt)
+	self:_handle_input(dt, t)
+	self:draw(dt)
 end
 
-HeroWindowPrestige.post_update = function (arg_6_0, arg_6_1, arg_6_2)
+HeroWindowPrestige.post_update = function (self, dt, t)
 	-- function 6
 	return
 end
 
-HeroWindowPrestige._update_animations = function (self, arg_7_1)
+HeroWindowPrestige._update_animations = function (self, dt)
 	-- function 7
-	self.ui_animator:update(arg_7_1)
+	self.ui_animator:update(dt)
 
-	local _animations = self._animations
+	local animations = self._animations
 	local ui_animator = self.ui_animator
 
-	for k, v in pairs(_animations) do
-		if not ui_animator:is_animation_completed(v) then
-			ui_animator:stop_animation(v)
+	for animation_name, animation_id in pairs(animations) do
+		if ui_animator:is_animation_completed(animation_id) then
+			ui_animator:stop_animation(animation_id)
 
-			_animations[k] = nil
+			animations[animation_name] = nil
 		end
 	end
 end
 
-HeroWindowPrestige._is_button_pressed = function (arg_8_0, arg_8_1)
+HeroWindowPrestige._is_button_pressed = function (self, widget)
 	-- function 8
-	local button_hotspot = arg_8_1.content.button_hotspot
+	local content = widget.content
+	local hotspot = content.button_hotspot
 
-	if not button_hotspot.on_pressed then
-		button_hotspot.on_pressed = false
+	if hotspot.on_pressed then
+		hotspot.on_pressed = false
 
 		return true
 	end
 end
 
-HeroWindowPrestige._is_button_released = function (arg_9_0, arg_9_1)
+HeroWindowPrestige._is_button_released = function (self, widget)
 	-- function 9
-	local button_hotspot = arg_9_1.content.button_hotspot
+	local content = widget.content
+	local hotspot = content.button_hotspot
 
-	if not button_hotspot.on_release then
-		button_hotspot.on_release = false
+	if hotspot.on_release then
+		hotspot.on_release = false
 
 		return true
 	end
 end
 
-HeroWindowPrestige._is_stepper_button_pressed = function (arg_10_0, arg_10_1)
+HeroWindowPrestige._is_stepper_button_pressed = function (self, widget)
 	-- function 10
-	local content = arg_10_1.content
-	local button_hotspot_left = content.button_hotspot_left
-	local button_hotspot_right = content.button_hotspot_right
+	local content = widget.content
+	local hotspot_left = content.button_hotspot_left
+	local hotspot_right = content.button_hotspot_right
 
-	if not button_hotspot_left.on_release then
-		button_hotspot_left.on_release = false
+	if hotspot_left.on_release then
+		hotspot_left.on_release = false
 
 		return true, -1
-	elseif not button_hotspot_right.on_release then
-		button_hotspot_right.on_release = false
+	elseif hotspot_right.on_release then
+		hotspot_right.on_release = false
 
 		return true, 1
 	end
 end
 
-HeroWindowPrestige._handle_input = function (self, arg_11_1, arg_11_2)
+HeroWindowPrestige._handle_input = function (self, dt, t)
 	-- function 11
 	local parent = self.parent
-	local _widgets_by_name = self._widgets_by_name
-	local get_interface = Managers.backend:get_interface("hero_attributes")
+	local widgets_by_name = self._widgets_by_name
+	local hero_attributes = Managers.backend:get_interface("hero_attributes")
 
-	if not self:_is_button_pressed(_widgets_by_name.debug_level_up_button) then
-		get_interface:set(self.hero_name, "experience", ExperienceSettings.max_experience)
+	if self:_is_button_pressed(widgets_by_name.debug_level_up_button) then
+		hero_attributes:set(self.hero_name, "experience", ExperienceSettings.max_experience)
 		self:_setup_prestige_reward()
 
 		return true
 	end
 
-	if not (not self:_is_button_pressed(_widgets_by_name.prestige_button) and self._show_warning_popup) then
-		_widgets_by_name.prestige_button.content.visible = false
+	if self:_is_button_pressed(widgets_by_name.prestige_button) and not self._show_warning_popup then
+		widgets_by_name.prestige_button.content.visible = false
 		self._show_warning_popup = true
 
 		parent:block_input()
@@ -234,11 +237,12 @@ HeroWindowPrestige._handle_input = function (self, arg_11_1, arg_11_2)
 		return true
 	end
 
-	if not self._show_warning_popup then
-		local get = parent:input_service():get("toggle_menu", true)
+	if self._show_warning_popup then
+		local input_service = parent:input_service()
+		local input_pressed = input_service:get("toggle_menu", true)
 
-		if self:_is_button_pressed(_widgets_by_name.warning_popup_decline_button) or not get then
-			_widgets_by_name.prestige_button.content.visible = true
+		if self:_is_button_pressed(widgets_by_name.warning_popup_decline_button) or input_pressed then
+			widgets_by_name.prestige_button.content.visible = true
 			self._show_warning_popup = false
 
 			parent:unblock_input()
@@ -247,12 +251,12 @@ HeroWindowPrestige._handle_input = function (self, arg_11_1, arg_11_2)
 			return true
 		end
 
-		if not self:_is_button_pressed(_widgets_by_name.warning_popup_accept_button) then
-			_widgets_by_name.prestige_button.content.visible = true
+		if self:_is_button_pressed(widgets_by_name.warning_popup_accept_button) then
+			widgets_by_name.prestige_button.content.visible = true
 			self._show_warning_popup = false
 
 			self:_play_sound("Play_enemy_combat_globadier_suicide_explosion")
-			get_interface:prestige(self.hero_name)
+			hero_attributes:prestige(self.hero_name)
 
 			self._wait_for_backend_attributes = true
 
@@ -265,56 +269,62 @@ HeroWindowPrestige._handle_input = function (self, arg_11_1, arg_11_2)
 	end
 end
 
-HeroWindowPrestige.draw = function (self, arg_12_1)
+HeroWindowPrestige.draw = function (self, dt)
 	-- function 12
 	local ui_renderer = self.ui_renderer
 	local ui_top_renderer = self.ui_top_renderer
 	local ui_scenegraph = self.ui_scenegraph
-	local window_input_service = self.parent:window_input_service()
+	local input_service = self.parent:window_input_service()
 
-	UIRenderer.begin_pass(ui_renderer, ui_scenegraph, window_input_service, arg_12_1, nil, self.render_settings)
+	UIRenderer.begin_pass(ui_renderer, ui_scenegraph, input_service, dt, nil, self.render_settings)
 
-	for i, v in ipairs(self._widgets) do
-		UIRenderer.draw_widget(ui_renderer, v)
+	for _, widget in ipairs(self._widgets) do
+		UIRenderer.draw_widget(ui_renderer, widget)
 	end
 
-	if not self._reward_portrait_widget then
+	if self._reward_portrait_widget then
 		UIRenderer.draw_widget(ui_renderer, self._reward_portrait_widget)
 	end
 
 	UIRenderer.end_pass(ui_renderer)
 
-	if not self._show_warning_popup then
-		local input_service = self.parent:input_service()
+	if self._show_warning_popup then
+		input_service = self.parent:input_service()
 
-		UIRenderer.begin_pass(ui_top_renderer, ui_scenegraph, input_service, arg_12_1, nil, self.render_settings)
+		UIRenderer.begin_pass(ui_top_renderer, ui_scenegraph, input_service, dt, nil, self.render_settings)
 
-		for i_2, v_2 in ipairs(self._warning_widgets) do
-			UIRenderer.draw_widget(ui_top_renderer, v_2)
+		for _, widget in ipairs(self._warning_widgets) do
+			UIRenderer.draw_widget(ui_top_renderer, widget)
 		end
 
 		UIRenderer.end_pass(ui_top_renderer)
 	end
 end
 
-HeroWindowPrestige._play_sound = function (self, arg_13_1)
+HeroWindowPrestige._play_sound = function (self, event)
 	-- function 13
-	self.parent:play_sound(arg_13_1)
+	self.parent:play_sound(event)
 end
 
-HeroWindowPrestige._set_prestige_reward_portrait_frame = function (self, arg_14_1)
+HeroWindowPrestige._set_prestige_reward_portrait_frame = function (self, frame_settings_name)
 	-- function 14
 	local career_index = self.career_index
 	local profile_index = self.profile_index
-	local portrait_image = SPProfiles[profile_index].careers[career_index].portrait_image
-	local var_14_3
+	local profile_settings = SPProfiles[profile_index]
+	local careers = profile_settings.careers
+	local career_settings = careers[career_index]
+	local portrait_image = career_settings.portrait_image
+	local widget
 
-	if not arg_14_1 then
-		local create_portrait_frame = UIWidgets.create_portrait_frame("reward_portrait_root", arg_14_1, "", 1, nil, portrait_image)
+	if frame_settings_name then
+		local widget_definition = UIWidgets.create_portrait_frame("reward_portrait_root", frame_settings_name, "", 1, nil, portrait_image)
 
-		var_14_3 = UIWidget.init(create_portrait_frame, self.ui_renderer)
-		var_14_3.content.frame_settings_name = arg_14_1
+		widget = UIWidget.init(widget_definition, self.ui_renderer)
+
+		local widget_content = widget.content
+
+		widget_content.frame_settings_name = frame_settings_name
 	end
 
-	self._reward_portrait_widget = var_14_3
+	self._reward_portrait_widget = widget
 end

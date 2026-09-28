@@ -3,7 +3,7 @@
 FPSReporter = class(FPSReporter)
 FPSReporter.NAME = "FPSReporter"
 
-local num = 10
+local NUM_BUCKETS = 10
 
 FPSReporter.init = function (self)
 	-- function 1
@@ -11,31 +11,31 @@ FPSReporter.init = function (self)
 	self._histogram = {}
 	self._num_frames = 1
 
-	for i = 1, num + 1 do
+	for i = 1, NUM_BUCKETS + 1 do
 		self._histogram[i] = 0
 	end
 end
 
-FPSReporter.update = function (self, arg_2_1, arg_2_2)
+FPSReporter.update = function (self, dt, t)
 	-- function 2
-	local num = 1 / math.max(arg_2_1, 0.001)
+	local fps = 1 / math.max(dt, 0.001)
 
-	self:_update_average_fps(num)
-	self:_update_histogram(num)
+	self:_update_average_fps(fps)
+	self:_update_histogram(fps)
 
 	self._num_frames = self._num_frames + 1
 end
 
-FPSReporter._update_average_fps = function (self, arg_3_1)
+FPSReporter._update_average_fps = function (self, fps)
 	-- function 3
-	self._avg_fps = (arg_3_1 + self._avg_fps * (self._num_frames - 1)) / self._num_frames
+	self._avg_fps = (fps + self._avg_fps * (self._num_frames - 1)) / self._num_frames
 end
 
-FPSReporter._update_histogram = function (self, arg_4_1)
+FPSReporter._update_histogram = function (self, fps)
 	-- function 4
-	local clamp = math.clamp(math.ceil(arg_4_1 / num), 1, num + 1)
+	local bucket_index = math.clamp(math.ceil(fps / NUM_BUCKETS), 1, NUM_BUCKETS + 1)
 
-	self._histogram[clamp] = self._histogram[clamp] + 1
+	self._histogram[bucket_index] = self._histogram[bucket_index] + 1
 end
 
 FPSReporter.report = function (self)
@@ -51,15 +51,15 @@ end
 
 FPSReporter._normalize_histogram = function (self)
 	-- function 7
-	local num = 0
+	local num_frames = 0
 
-	for k, v in pairs(self._histogram) do
-		num = num + v
+	for _, count in pairs(self._histogram) do
+		num_frames = num_frames + count
 	end
 
-	local max = math.max(num, 1)
+	num_frames = math.max(num_frames, 1)
 
-	for k_2, v_2 in pairs(self._histogram) do
-		self._histogram[k_2] = self._histogram[k_2] / max
+	for i, _ in pairs(self._histogram) do
+		self._histogram[i] = self._histogram[i] / num_frames
 	end
 end

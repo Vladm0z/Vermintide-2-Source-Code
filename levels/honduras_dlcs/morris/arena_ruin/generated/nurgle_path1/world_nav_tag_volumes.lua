@@ -1,6 +1,6 @@
 -- chunkname: @levels/honduras_dlcs/morris/arena_ruin/generated/nurgle_path1/world_nav_tag_volumes.lua
 
-local tbl = {
+local nav_tag_volumes = {
 	volume_004 = {
 		delay_nav_tag_volume_creation = false,
 		alt_max = 19.656240463256836,
@@ -184,9 +184,9 @@ local tbl = {
 		}
 	}
 }
-local str = "1"
+local version = "1"
 
 return {
-	version = str,
-	nav_tag_volumes = tbl
+	version = version,
+	nav_tag_volumes = nav_tag_volumes
 }

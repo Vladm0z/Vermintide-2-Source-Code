@@ -1,9 +1,7 @@
 -- chunkname: @scripts/ui/ui_fonts.lua
 
 local Gui = Gui
-local floor = math.floor
-local min = math.min
-local max = math.max
+local math_floor, math_min, math_max = math.floor, math.min, math.max
 
 Fonts = {
 	arial = {
@@ -88,71 +86,72 @@ Fonts = {
 	}
 }
 
-function UIFontByResolution(self, arg_1_1)
+function UIFontByResolution(font_style, optional_scale)
 	-- function 1
-	local font_type = self.font_type
-	local font_size = self.font_size
+	local font_type = font_style.font_type
+	local font_size = font_style.font_size
 	local scale = RESOLUTION_LOOKUP.scale
 
-	if not arg_1_1 then
-		scale = scale * arg_1_1
+	if optional_scale then
+		scale = scale * optional_scale
 	end
 
-	local num = font_size * scale
+	font_size = font_size * scale
 
-	if not self.allow_fractions then
-		num = floor(num)
+	if not font_style.allow_fractions then
+		font_size = math_floor(font_size)
 	end
 
-	return Fonts[font_type], max(num, 1)
+	return Fonts[font_type], math_max(font_size, 1)
 end
 
 local FontHeights = FontHeights
 
-FontHeights = FontHeights or {}
+FontHeights = not not FontHeights or not not {}
 FontHeights = FontHeights
 
-function UISetupFontHeights(arg_2_0)
+function UISetupFontHeights(gui)
 	-- function 2
 	local FontHeights = FontHeights
 
-	for k, v in pairs(Fonts) do
-		if FontHeights[k] == nil then
-			UIGetFontHeight(arg_2_0, k, v[2])
+	for font_name, font_data in pairs(Fonts) do
+		if FontHeights[font_name] == nil then
+			UIGetFontHeight(gui, font_name, font_data[2])
 		end
 	end
 end
 
-function UIGetFontHeight(arg_3_0, arg_3_1, arg_3_2)
+function UIGetFontHeight(gui, font_name, font_size)
 	-- function 3
 	local FontHeights = FontHeights
-	local var_3_1 = FontHeights[arg_3_1]
+	local var_3_0 = FontHeights[font_name]
 
-	var_3_1 = var_3_1 or {}
-	FontHeights[arg_3_1] = var_3_1
+	var_3_0 = not not var_3_0 or not not {}
+	FontHeights[font_name] = var_3_0
 
-	local var_3_2 = FontHeights[arg_3_1][arg_3_2]
+	local height_data = FontHeights[font_name][font_size]
 
 	::label_3_0::
 
-	if not var_3_2 then
-		local num = RESOLUTION_LOOKUP.scale * min(arg_3_2 * 0.05, 1)
-		local num_2 = 5 * num
-		local num_3 = 4 * num
+	if height_data then
+		local scale = RESOLUTION_LOOKUP.scale
+		local extra_base = scale * math_min(font_size * 0.05, 1)
+		local extra_max = 5 * extra_base
+		local extra_min = 4 * extra_base
 
-		return var_3_2[1] + (num_3 + num_2), var_3_2[2] - num_3, var_3_2[3] + num_2
+		return height_data[1] + (extra_min + extra_max), height_data[2] - extra_min, height_data[3] + extra_max
 	end
 
-	local var_3_6 = Fonts[arg_3_1][1]
-	local text_extents, var_3_8 = Gui.text_extents(arg_3_0, "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz1234567890", var_3_6, arg_3_2)
-	local text_extents_2, var_3_10 = Gui.text_extents(arg_3_0, "A", var_3_6, arg_3_2)
+	local material = Fonts[font_name][1]
+	local min, max = Gui.text_extents(gui, "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz1234567890", material, font_size)
+	local base_min, base_max = Gui.text_extents(gui, "A", material, font_size)
 
-	var_3_2 = {
-		var_3_10[2] - text_extents_2[2],
-		text_extents[2],
-		var_3_8[2]
+	height_data = {
+		base_max[2] - base_min[2],
+		min[2],
+		max[2]
 	}
-	FontHeights[arg_3_1][arg_3_2] = var_3_2
+	FontHeights[font_name][font_size] = height_data
 
 	goto label_3_0
 end

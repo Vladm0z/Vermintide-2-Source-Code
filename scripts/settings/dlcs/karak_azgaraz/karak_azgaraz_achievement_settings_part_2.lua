@@ -1,8 +1,8 @@
 -- chunkname: @scripts/settings/dlcs/karak_azgaraz/karak_azgaraz_achievement_settings_part_2.lua
 
-local karak_azgaraz_part_2 = DLCSettings.karak_azgaraz_part_2
+local settings = DLCSettings.karak_azgaraz_part_2
 
-karak_azgaraz_part_2.achievement_outline = {
+settings.achievement_outline = {
 	levels = {
 		entries = {},
 		categories = {
@@ -25,6 +25,6 @@ karak_azgaraz_part_2.achievement_outline = {
 		}
 	}
 }
-karak_azgaraz_part_2.achievement_template_file_names = {
+settings.achievement_template_file_names = {
 	"scripts/managers/achievements/achievement_templates_karak_azgaraz_part_2"
 }

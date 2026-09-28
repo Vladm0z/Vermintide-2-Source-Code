@@ -2,23 +2,23 @@
 
 require("scripts/unit_extensions/human/ai_player_unit/ai_utils")
 
-local tbl = {
+local extensions = {
 	"AIPanicExtension",
 	"AIFearExtension"
 }
 
 AIPanicSystem = class(AIPanicSystem, ExtensionSystemBase)
 
-AIPanicSystem.init = function (self, arg_1_1, arg_1_2)
+AIPanicSystem.init = function (self, context, system_name)
 	-- function 1
-	local entity_manager = arg_1_1.entity_manager
+	local entity_manager = context.entity_manager
 
-	entity_manager:register_system(self, arg_1_2, tbl)
+	entity_manager:register_system(self, system_name, extensions)
 
 	self.entity_manager = entity_manager
-	self.is_server = arg_1_1.is_server
-	self.world = arg_1_1.world
-	self.unit_storage = arg_1_1.unit_storage
+	self.is_server = context.is_server
+	self.world = context.world
+	self.unit_storage = context.unit_storage
 	self.nav_world = Managers.state.entity:system("ai_system"):nav_world()
 	self.unit_extension_data = {}
 	self.panic_zones = {}
@@ -29,121 +29,131 @@ AIPanicSystem.init = function (self, arg_1_1, arg_1_2)
 	self.current_panic_unit_index = 1
 end
 
-AIPanicSystem.destroy = function (arg_2_0)
+AIPanicSystem.destroy = function (self)
 	-- function 2
 	return
 end
 
-local tbl_2 = {}
+local dummy_input = {}
 
-AIPanicSystem.on_add_extension = function (self, arg_3_1, arg_3_2, arg_3_3, arg_3_4)
+AIPanicSystem.on_add_extension = function (self, world, unit, extension_name, extension_init_data)
 	-- function 3
-	local tbl = {}
+	local extension = {}
 
-	ScriptUnit.set_extension(arg_3_2, "ai_panic_system", tbl, tbl_2)
+	ScriptUnit.set_extension(unit, "ai_panic_system", extension, dummy_input)
 
-	self.unit_extension_data[arg_3_2] = tbl
+	self.unit_extension_data[unit] = extension
 
-	if arg_3_3 == "AIPanicExtension" then
-		self.panic_units[#self.panic_units + 1] = arg_3_2
+	if extension_name == "AIPanicExtension" then
+		self.panic_units[#self.panic_units + 1] = unit
 	end
 
-	if arg_3_3 == "AIFearExtension" then
-		local fear_active_on_spawn = arg_3_4.fear_active_on_spawn
-		local fear_radius = arg_3_4.fear_radius
+	if extension_name == "AIFearExtension" then
+		local fear_active_on_spawn = extension_init_data.fear_active_on_spawn
+		local fear_radius = extension_init_data.fear_radius
 
-		self.fear_units[#self.fear_units + 1] = arg_3_2
-		tbl.fear_radius = fear_radius
+		self.fear_units[#self.fear_units + 1] = unit
+		extension.fear_radius = fear_radius
 
-		if not fear_active_on_spawn then
-			self:activate_fear(arg_3_2)
+		if fear_active_on_spawn then
+			self:activate_fear(unit)
 		end
 	end
 
-	return tbl
+	return extension
 end
 
-AIPanicSystem.on_remove_extension = function (self, arg_4_1, arg_4_2)
+AIPanicSystem.on_remove_extension = function (self, unit, extension_name)
 	-- function 4
-	local var_4_0 = self.unit_extension_data[arg_4_1]
+	local extension = self.unit_extension_data[unit]
 
-	if arg_4_2 == "AIPanicExtension" then
+	if extension_name == "AIPanicExtension" then
 		local panic_units = self.panic_units
-		local count = #panic_units
+		local panic_units_n = #panic_units
 
-		for i = 1, count do
-			if panic_units[i] == arg_4_1 then
-				panic_units[i] = panic_units[count]
-				panic_units[count] = nil
+		for i = 1, panic_units_n do
+			local ai_unit = panic_units[i]
+
+			if ai_unit == unit then
+				panic_units[i] = panic_units[panic_units_n]
+				panic_units[panic_units_n] = nil
 
 				break
 			end
 		end
 	end
 
-	if arg_4_2 == "AIFearExtension" then
+	if extension_name == "AIFearExtension" then
 		local fear_units = self.fear_units
-		local count_2 = #fear_units
+		local fear_units_n = #fear_units
 
-		for j = 1, count_2 do
-			if fear_units[j] == arg_4_1 then
-				local panic_zone = self.unit_extension_data[arg_4_1].panic_zone
+		for i = 1, fear_units_n do
+			local ai_unit = fear_units[i]
 
-				if not panic_zone then
+			if ai_unit == unit then
+				local extension = self.unit_extension_data[unit]
+				local panic_zone = extension.panic_zone
+
+				if panic_zone then
 					self:deregister_panic_zone(panic_zone)
 				end
 
-				fear_units[j] = fear_units[count_2]
-				fear_units[count_2] = nil
+				fear_units[i] = fear_units[fear_units_n]
+				fear_units[fear_units_n] = nil
 
 				break
 			end
 		end
 	end
 
-	self.unit_extension_data[arg_4_1] = nil
+	self.unit_extension_data[unit] = nil
 
-	ScriptUnit.remove_extension(arg_4_1, self.NAME)
+	ScriptUnit.remove_extension(unit, self.NAME)
 end
 
-AIPanicSystem.hot_join_sync = function (arg_5_0, arg_5_1, arg_5_2)
+AIPanicSystem.hot_join_sync = function (self, peer_id, player)
 	-- function 5
 	return
 end
 
-AIPanicSystem.activate_fear = function (self, arg_6_1)
+AIPanicSystem.activate_fear = function (self, unit)
 	-- function 6
-	local var_6_0 = self.unit_extension_data[arg_6_1]
-	local var_6_1 = POSITION_LOOKUP[arg_6_1]
-	local fear_radius = var_6_0.fear_radius
+	local extension = self.unit_extension_data[unit]
+	local position = POSITION_LOOKUP[unit]
+	local fear_radius = extension.fear_radius
+	local panic_zone = self:register_panic_zone(position, fear_radius)
 
-	var_6_0.panic_zone = self:register_panic_zone(var_6_1, fear_radius)
-	var_6_0.active = true
+	extension.panic_zone = panic_zone
+	extension.active = true
 end
 
-AIPanicSystem.register_panic_zone = function (self, arg_7_1, arg_7_2)
+AIPanicSystem.register_panic_zone = function (self, position, radius)
 	-- function 7
-	local tbl = {
-		position = Vector3Box(arg_7_1),
-		radius_squared = arg_7_2 * arg_7_2,
-		radius = arg_7_2
+	local panic_zone = {
+		position = Vector3Box(position),
+		radius_squared = radius * radius,
+		radius = radius
 	}
 	local panic_zones = self.panic_zones
+	local panic_zones_n = #panic_zones
+	local i = panic_zones_n + 1
 
-	panic_zones[#panic_zones + 1] = tbl
+	panic_zones[i] = panic_zone
 
-	return tbl
+	return panic_zone
 end
 
-AIPanicSystem.deregister_panic_zone = function (self, arg_8_1)
+AIPanicSystem.deregister_panic_zone = function (self, panic_zone_to_remove)
 	-- function 8
 	local panic_zones = self.panic_zones
-	local count = #panic_zones
+	local panic_zones_n = #panic_zones
 
-	for i = 1, count do
-		if panic_zones[i] == arg_8_1 then
-			panic_zones[i] = panic_zones[count]
-			panic_zones[count] = nil
+	for i = 1, panic_zones_n do
+		local panic_zone = panic_zones[i]
+
+		if panic_zone == panic_zone_to_remove then
+			panic_zones[i] = panic_zones[panic_zones_n]
+			panic_zones[panic_zones_n] = nil
 
 			return
 		end
@@ -152,23 +162,25 @@ AIPanicSystem.deregister_panic_zone = function (self, arg_8_1)
 	assert("trying to deregister_panic_zone which hasnt been registered: %q", deregister_panic_zone)
 end
 
-AIPanicSystem.set_panic_zone_position = function (arg_9_0, arg_9_1, arg_9_2)
+AIPanicSystem.set_panic_zone_position = function (self, panic_zone, position)
 	-- function 9
-	arg_9_1.position:store(arg_9_2)
+	panic_zone.position:store(position)
 end
 
-AIPanicSystem.inside_panic_zone = function (self, arg_10_1)
+AIPanicSystem.inside_panic_zone = function (self, position)
 	-- function 10
 	local panic_zones = self.panic_zones
-	local count = #panic_zones
+	local panic_zones_n = #panic_zones
 
-	for i = 1, count do
+	for i = 1, panic_zones_n do
 		repeat
-			local var_10_2 = panic_zones[i]
-			local unbox = var_10_2.position:unbox()
+			local panic_zone = panic_zones[i]
+			local panic_zone_position = panic_zone.position:unbox()
+			local radius_squared = panic_zone.radius_squared
+			local distance_squared = Vector3.distance_squared(position, panic_zone_position)
 
-			if var_10_2.radius_squared >= Vector3.distance_squared(arg_10_1, unbox) then
-				return var_10_2
+			if distance_squared <= radius_squared then
+				return panic_zone
 			end
 		until true
 	end
@@ -176,70 +188,72 @@ AIPanicSystem.inside_panic_zone = function (self, arg_10_1)
 	return nil
 end
 
-local num = 1
+local FEAR_UNITS_UPDATES_PER_FRAME = 1
 
 AIPanicSystem.update_fear_units = function (self)
 	-- function 11
 	local fear_units = self.fear_units
-	local count = #fear_units
+	local fear_units_n = #fear_units
 
-	if count < self.current_fear_unit_index then
+	if fear_units_n < self.current_fear_unit_index then
 		self.current_fear_unit_index = 1
 	end
 
-	local current_fear_unit_index = self.current_fear_unit_index
-	local min = math.min(current_fear_unit_index + num - 1, count)
+	local start_index = self.current_fear_unit_index
+	local end_index = math.min(start_index + FEAR_UNITS_UPDATES_PER_FRAME - 1, fear_units_n)
 
-	for i = current_fear_unit_index, min do
+	for i = start_index, end_index do
 		repeat
-			local var_11_4 = fear_units[i]
-			local var_11_5 = self.unit_extension_data[var_11_4]
+			local unit = fear_units[i]
+			local extension = self.unit_extension_data[unit]
 
-			if not var_11_5.active then
+			if not extension.active then
 				break
 			end
 
-			local panic_zone = var_11_5.panic_zone
-			local var_11_7 = POSITION_LOOKUP[var_11_4]
+			local panic_zone = extension.panic_zone
+			local position = POSITION_LOOKUP[unit]
 
-			self:set_panic_zone_position(panic_zone, var_11_7)
+			self:set_panic_zone_position(panic_zone, position)
 		until true
 	end
 
-	self.current_fear_unit_index = min + 1
+	self.current_fear_unit_index = end_index + 1
 end
 
-local num_2 = 1
+local PANIC_UNITS_UPDATES_PER_FRAME = 1
 
 AIPanicSystem.update_panic_units = function (self)
 	-- function 12
 	local panic_units = self.panic_units
-	local count = #panic_units
+	local panic_units_n = #panic_units
 
-	if count < self.current_panic_unit_index then
+	if panic_units_n < self.current_panic_unit_index then
 		self.current_panic_unit_index = 1
 	end
 
-	local current_panic_unit_index = self.current_panic_unit_index
-	local min = math.min(current_panic_unit_index + num_2 - 1, count)
+	local start_index = self.current_panic_unit_index
+	local end_index = math.min(start_index + PANIC_UNITS_UPDATES_PER_FRAME - 1, panic_units_n)
 
-	for i = current_panic_unit_index, min do
-		local var_12_4 = panic_units[i]
-		local var_12_5 = POSITION_LOOKUP[var_12_4]
-		local inside_panic_zone = self:inside_panic_zone(var_12_5)
+	for i = start_index, end_index do
+		local unit = panic_units[i]
+		local position = POSITION_LOOKUP[unit]
+		local panic_zone = self:inside_panic_zone(position)
+		local ai_extension = ScriptUnit.extension(unit, "ai_system")
+		local blackboard = ai_extension:blackboard()
 
-		ScriptUnit.extension(var_12_4, "ai_system"):blackboard().panic_zone = inside_panic_zone
+		blackboard.panic_zone = panic_zone
 	end
 
-	self.current_panic_unit_index = min + 1
+	self.current_panic_unit_index = end_index + 1
 end
 
-AIPanicSystem.update = function (self, arg_13_1, arg_13_2, arg_13_3)
+AIPanicSystem.update = function (self, context, t, dt)
 	-- function 13
 	self:update_fear_units()
 	self:update_panic_units()
 
-	if not script_data.ai_debug_panic_zones then
+	if script_data.ai_debug_panic_zones then
 		self:debug_draw_panic_zones()
 	end
 end
@@ -251,13 +265,13 @@ AIPanicSystem.debug_draw_panic_zones = function (self)
 		name = "AIPanicSystem"
 	})
 	local panic_zones = self.panic_zones
-	local count = #panic_zones
+	local panic_zone_n = #panic_zones
 
-	for i = 1, count do
-		local var_14_3 = panic_zones[i]
-		local radius = var_14_3.radius
-		local unbox = var_14_3.position:unbox()
+	for i = 1, panic_zone_n do
+		local panic_zone = panic_zones[i]
+		local radius = panic_zone.radius
+		local position = panic_zone.position:unbox()
 
-		drawer:sphere(unbox, radius, Colors.get("red"))
+		drawer:sphere(position, radius, Colors.get("red"))
 	end
 end

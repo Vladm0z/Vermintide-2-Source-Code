@@ -18,10 +18,10 @@ EntitySystemBag.destroy = function (self)
 	local systems = self.systems
 
 	for i = 1, #systems do
-		local var_2_1 = systems[i]
+		local system = systems[i]
 
-		var_2_1:destroy()
-		table.clear(var_2_1)
+		system:destroy()
+		table.clear(system)
 	end
 
 	self.systems = nil
@@ -32,32 +32,32 @@ EntitySystemBag.destroy = function (self)
 	self.systems_physics_async_update = nil
 end
 
-EntitySystemBag.add_system = function (arg_3_0, arg_3_1, arg_3_2, arg_3_3)
+EntitySystemBag.add_system = function (self, system, block_pre_update, block_post_update)
 	-- function 3
-	arg_3_0.systems[#arg_3_0.systems + 1] = arg_3_1
+	self.systems[#self.systems + 1] = system
 
-	if not arg_3_1.update then
-		arg_3_0.systems_update[#arg_3_0.systems_update + 1] = arg_3_1
+	if system.update then
+		self.systems_update[#self.systems_update + 1] = system
 	end
 
-	if not arg_3_1.unsafe_entity_update then
-		arg_3_0.systems_unsafe_entity_update[#arg_3_0.systems_unsafe_entity_update + 1] = arg_3_1
+	if system.unsafe_entity_update then
+		self.systems_unsafe_entity_update[#self.systems_unsafe_entity_update + 1] = system
 	end
 
-	if not (not arg_3_1.pre_update and arg_3_2) then
-		arg_3_0.systems_pre_update[#arg_3_0.systems_pre_update + 1] = arg_3_1
+	if system.pre_update and not block_pre_update then
+		self.systems_pre_update[#self.systems_pre_update + 1] = system
 	end
 
-	if not (not arg_3_1.post_update and arg_3_3) then
-		arg_3_0.systems_post_update[#arg_3_0.systems_post_update + 1] = arg_3_1
+	if system.post_update and not block_post_update then
+		self.systems_post_update[#self.systems_post_update + 1] = system
 	end
 
-	if not arg_3_1.physics_async_update then
-		arg_3_0.systems_physics_async_update[#arg_3_0.systems_physics_async_update + 1] = arg_3_1
+	if system.physics_async_update then
+		self.systems_physics_async_update[#self.systems_physics_async_update + 1] = system
 	end
 end
 
-local tbl = {
+local list_name_by_function = {
 	pre_update = "systems_pre_update",
 	post_update = "systems_post_update",
 	physics_async_update = "systems_physics_async_update",
@@ -65,23 +65,24 @@ local tbl = {
 	unsafe_entity_update = "systems_unsafe_entity_update"
 }
 
-EntitySystemBag.update = function (self, arg_4_1, arg_4_2)
+EntitySystemBag.update = function (self, entity_system_update_context, update_function)
 	-- function 4
-	local var_4_0 = self[tbl[arg_4_2]]
-	local t = arg_4_1.t
+	local update_function_list_name = list_name_by_function[update_function]
+	local update_list = self[update_function_list_name]
+	local t = entity_system_update_context.t
 
-	for i = 1, #var_4_0 do
-		local var_4_2 = var_4_0[i]
+	for i = 1, #update_list do
+		local system = update_list[i]
 
-		var_4_2[arg_4_2](var_4_2, arg_4_1, t)
+		system[update_function](system, entity_system_update_context, t)
 	end
 end
 
-EntitySystemBag.hot_join_sync = function (self, arg_5_1)
+EntitySystemBag.hot_join_sync = function (self, peer_id)
 	-- function 5
-	for i, v in ipairs(self.systems) do
-		if not v.hot_join_sync then
-			v:hot_join_sync(arg_5_1)
+	for i, system in ipairs(self.systems) do
+		if system.hot_join_sync then
+			system:hot_join_sync(peer_id)
 		end
 	end
 end

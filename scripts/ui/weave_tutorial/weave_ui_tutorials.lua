@@ -1,36 +1,36 @@
 -- chunkname: @scripts/ui/weave_tutorial/weave_ui_tutorials.lua
 
-local num = 0
-local num_2 = 4
-local num_3 = 7
-local num_4 = 9
+local start_onboarding = 0
+local before_first_weave = 4
+local after_first_weave = 7
+local after_second_weave = 9
 
 require("scripts/ui/weave_tutorial/custom_popups/new_ui_popup")
 
 local WeaveUITutorials = WeaveUITutorials
 
-WeaveUITutorials = WeaveUITutorials or {}
+WeaveUITutorials = not not WeaveUITutorials or not not {}
 WeaveUITutorials = WeaveUITutorials
 WeaveUITutorials.forge_initial = {
 	ui_onboarding_bit = 1,
 	popup_title = "menu_weave_tutorial_athanor_01_title",
 	popup_sub_title = "menu_weave_tutorial_athanor_01_subtitle",
 	popup_body = "menu_weave_tutorial_athanor_01_body",
-	onboarding_step = num
+	onboarding_step = start_onboarding
 }
 WeaveUITutorials.book_initial = {
 	ui_onboarding_bit = 2,
 	popup_title = "menu_weave_tutorial_weave_selection_01_title",
 	popup_sub_title = "menu_weave_tutorial_weave_selection_01_subtitle",
 	popup_body = "menu_weave_tutorial_weave_selection_01_body",
-	onboarding_step = num
+	onboarding_step = start_onboarding
 }
 WeaveUITutorials.forge_weapon = {
 	ui_onboarding_bit = 4,
 	popup_title = "menu_weave_tutorial_weapon_selection_01_title",
 	popup_sub_title = "menu_weave_tutorial_weapon_selection_01_subtitle",
 	popup_body = "menu_weave_tutorial_weapon_selection_01_body",
-	onboarding_step = num
+	onboarding_step = start_onboarding
 }
 WeaveUITutorials.equip_weapon = {
 	popup_sub_title = "menu_weave_tutorial_weapon_selection_02_subtitle",
@@ -38,14 +38,14 @@ WeaveUITutorials.equip_weapon = {
 	popup_title = "menu_weave_tutorial_weapon_selection_02_title",
 	delay = 1,
 	popup_body = "menu_weave_tutorial_weapon_selection_02_body",
-	onboarding_step = num
+	onboarding_step = start_onboarding
 }
 WeaveUITutorials.amulet = {
 	ui_onboarding_bit = 16,
 	popup_title = "menu_weave_tutorial_athanor_02_title",
 	popup_sub_title = "menu_weave_tutorial_athanor_02_subtitle",
 	popup_body = "menu_weave_tutorial_athanor_02_body",
-	onboarding_step = num_3
+	onboarding_step = after_first_weave
 }
 WeaveUITutorials.temper_item = {
 	popup_sub_title = "menu_weave_tutorial_item_01_subtitle",
@@ -53,7 +53,7 @@ WeaveUITutorials.temper_item = {
 	popup_title = "menu_weave_tutorial_item_01_title",
 	delay = 1,
 	popup_body = "menu_weave_tutorial_item_01_body",
-	onboarding_step = num_3
+	onboarding_step = after_first_weave
 }
 WeaveUITutorials.mastery = {
 	popup_sub_title = "menu_weave_tutorial_item_02_subtitle",
@@ -61,18 +61,18 @@ WeaveUITutorials.mastery = {
 	popup_title = "menu_weave_tutorial_item_02_title",
 	delay = 1,
 	popup_body = "menu_weave_tutorial_item_02_body",
-	onboarding_step = num_3
+	onboarding_step = after_first_weave
 }
 WeaveUITutorials.upgrade_forge = {
 	ui_onboarding_bit = 128,
 	popup_title = "menu_weave_tutorial_athanor_03_title",
 	popup_sub_title = "menu_weave_tutorial_athanor_03_subtitle",
 	popup_body = "menu_weave_tutorial_athanor_03_body",
-	onboarding_step = num_4
+	onboarding_step = after_second_weave
 }
 WeaveUITutorials.forge_upgrade = {
 	ui_onboarding_bit = 256,
-	onboarding_step = num_4
+	onboarding_step = after_second_weave
 }
 WeaveUITutorials.requirements_not_met = {
 	ui_onboarding_bit = 0,
@@ -86,16 +86,27 @@ WeaveUITutorials.twitch_not_supported_for_weaves = {
 	optional_button_2 = "input_description_disconnect",
 	onboarding_step = 0,
 	popup_body = "menu_weave_area_locked_twitch_body",
-	optional_button_2_func = function (arg_1_0)
+	optional_button_2_func = function (self)
 		-- function 1
 		local twitch = Managers.twitch
 
-		if not twitch then
-			twitch = Managers.twitch:is_connected()
-			twitch = twitch or Managers.twitch:is_activated()
+		if twitch then
+			-- Nothing
 		end
 
+		twitch = Managers.twitch:is_connected()
+
 		if not twitch then
+			-- Nothing
+		end
+
+		twitch = Managers.twitch:is_activated()
+
+		local twitch_connection = twitch
+
+		::label_1_0::
+
+		if twitch_connection then
 			Managers.twitch:disconnect()
 		end
 	end,

@@ -1,116 +1,125 @@
 -- chunkname: @scripts/unit_extensions/default_player_unit/target_override_extension.lua
 
-local scripts_utils_stagger_types = require("scripts/utils/stagger_types")
+local stagger_types = require("scripts/utils/stagger_types")
 
 TargetOverrideExtension = class(TargetOverrideExtension)
 
-local num = 0.75
-local num_2 = 5
+local OVERRIDE_RADIUS = 0.75
+local OVERRIDE_LIFETIME = 5
 
-TargetOverrideExtension.init = function (self, arg_1_1, arg_1_2, arg_1_3)
+TargetOverrideExtension.init = function (self, extension_init_context, unit, extension_init_data)
 	-- function 1
-	self._unit = arg_1_2
+	self._unit = unit
 	self._result_table = {}
 	self._stagger_impact = {
-		scripts_utils_stagger_types.medium,
-		scripts_utils_stagger_types.weak,
-		scripts_utils_stagger_types.explosion,
-		scripts_utils_stagger_types.none,
-		scripts_utils_stagger_types.medium
+		stagger_types.medium,
+		stagger_types.weak,
+		stagger_types.explosion,
+		stagger_types.none,
+		stagger_types.medium
 	}
-	self._side = arg_1_3.side
+	self._side = extension_init_data.side
 	self._broadphase_categories = self._side.enemy_broadphase_categories
 end
 
-TargetOverrideExtension.destroy = function (arg_2_0)
+TargetOverrideExtension.destroy = function (self)
 	-- function 2
 	return
 end
 
-TargetOverrideExtension.taunt = function (self, arg_3_1, arg_3_2, arg_3_3, arg_3_4)
+TargetOverrideExtension.taunt = function (self, radius, duration, do_stagger, taunt_bosses)
 	-- function 3
-	local _unit = self._unit
-	local time = Managers.time:time("game")
-	local num = time + arg_3_2
-	local var_3_3 = POSITION_LOOKUP[_unit]
-	local _result_table = self._result_table
-	local broadphase_query = AiUtils.broadphase_query(var_3_3, arg_3_1, _result_table, self._broadphase_categories)
+	local self_unit = self._unit
+	local t = Managers.time:time("game")
+	local taunt_end_time = t + duration
+	local position = POSITION_LOOKUP[self_unit]
+	local result_table = self._result_table
+	local num_ai_units = AiUtils.broadphase_query(position, radius, result_table, self._broadphase_categories)
 
-	for i = 1, broadphase_query do
-		local var_3_6 = _result_table[i]
-		local extension = ScriptUnit.extension(var_3_6, "ai_system")
-		local blackboard = extension:blackboard()
-		local breed = extension:breed()
+	for i = 1, num_ai_units do
+		local ai_unit = result_table[i]
+		local ai_extension = ScriptUnit.extension(ai_unit, "ai_system")
+		local ai_blackboard = ai_extension:blackboard()
+		local ai_breed = ai_extension:breed()
+		local taunt_target = not ai_breed.ignore_taunts and not ai_breed.boss or not not taunt_bosses
 
-		if not ((not not breed.ignore_taunts or not breed.boss) and arg_3_4) then
-			if blackboard.target_unit == _unit then
-				blackboard.no_taunt_hesitate = true
+		if taunt_target then
+			if ai_blackboard.target_unit == self_unit then
+				ai_blackboard.no_taunt_hesitate = true
 			end
 
-			blackboard.taunt_unit = _unit
-			blackboard.taunt_end_time = num
-			blackboard.target_unit = _unit
-			blackboard.target_unit_found_time = time
+			ai_blackboard.taunt_unit = self_unit
+			ai_blackboard.taunt_end_time = taunt_end_time
+			ai_blackboard.target_unit = self_unit
+			ai_blackboard.target_unit_found_time = t
 
-			if not arg_3_3 then
-				local num_2 = POSITION_LOOKUP[var_3_6] - var_3_3
+			if do_stagger then
+				local stagger_direction = POSITION_LOOKUP[ai_unit] - position
 
-				AiUtils.stagger_target(_unit, var_3_6, 1, self._stagger_impact, num_2, time)
+				AiUtils.stagger_target(self_unit, ai_unit, 1, self._stagger_impact, stagger_direction, t)
 			end
 		end
 	end
 end
 
-TargetOverrideExtension.update = function (self, arg_4_1, arg_4_2, arg_4_3, arg_4_4, arg_4_5)
+TargetOverrideExtension.update = function (self, unit, input, dt, context, t)
 	-- function 4
-	local var_4_0 = POSITION_LOOKUP[arg_4_1]
+	local var_4_0 = POSITION_LOOKUP[unit]
 
-	var_4_0 = var_4_0 or Unit.world_position(arg_4_1, 0)
+	if not var_4_0 then
+		-- Nothing
+	end
 
-	local var_4_1 = num
-	local _result_table = self._result_table
-	local num_3 = arg_4_5 + num_2
-	local extension = ScriptUnit.extension(arg_4_1, "status_system")
-	local is_disabled = extension:is_disabled()
-	local is_invisible = extension:is_invisible()
+	var_4_0 = Unit.world_position(unit, 0)
 
-	if not (is_disabled or is_invisible) then
-		local system = Managers.state.entity:system("ai_system")
-		local system_2 = Managers.state.entity:system("ai_slot_system")
-		local broadphase_query = AiUtils.broadphase_query(var_4_0, var_4_1, _result_table, self._broadphase_categories)
+	local position = var_4_0
 
-		for i = 1, broadphase_query do
-			local var_4_10 = _result_table[i]
+	::label_4_0::
 
-			if not ScriptUnit.has_extension(var_4_10, "ai_slot_system") then
-				local extension_2 = ScriptUnit.extension(var_4_10, "ai_system")
-				local blackboard = extension_2:blackboard()
-				local var_4_13 = blackboard.override_targets[arg_4_1]
+	local radius = OVERRIDE_RADIUS
+	local result_table = self._result_table
+	local override_time = t + OVERRIDE_LIFETIME
+	local status_extension = ScriptUnit.extension(unit, "status_system")
+	local is_disabled = status_extension:is_disabled()
+	local is_invisible = status_extension:is_invisible()
 
-				blackboard.override_targets[arg_4_1] = num_3
+	if not is_disabled and not is_invisible then
+		local ai_system = Managers.state.entity:system("ai_system")
+		local ai_slot_system = Managers.state.entity:system("ai_slot_system")
+		local num_ai_units = AiUtils.broadphase_query(position, radius, result_table, self._broadphase_categories)
 
-				if not (var_4_13 == nil or not (var_4_13 < arg_4_5)) then
-					system:register_prioritized_perception_unit_update(var_4_10, extension_2)
-					system_2:register_prioritized_ai_unit_update(var_4_10)
+		for i = 1, num_ai_units do
+			local ai_unit = result_table[i]
+
+			if ScriptUnit.has_extension(ai_unit, "ai_slot_system") then
+				local ai_extension = ScriptUnit.extension(ai_unit, "ai_system")
+				local ai_blackboard = ai_extension:blackboard()
+				local previous_override_time = ai_blackboard.override_targets[unit]
+
+				ai_blackboard.override_targets[unit] = override_time
+
+				if previous_override_time == nil or previous_override_time < t then
+					ai_system:register_prioritized_perception_unit_update(ai_unit, ai_extension)
+					ai_slot_system:register_prioritized_ai_unit_update(ai_unit)
 				end
 			end
 		end
 	end
 end
 
-TargetOverrideExtension.add_to_override_targets = function (arg_5_0, arg_5_1, arg_5_2, arg_5_3, arg_5_4)
+TargetOverrideExtension.add_to_override_targets = function (self, ai_unit, target_unit, ai_unit_blackboard, t)
 	-- function 5
-	local num = arg_5_4 + num_2
-	local var_5_1 = arg_5_3.override_targets[arg_5_2]
+	local override_time = t + OVERRIDE_LIFETIME
+	local previous_override_time = ai_unit_blackboard.override_targets[target_unit]
 
-	arg_5_3.override_targets[arg_5_2] = num
+	ai_unit_blackboard.override_targets[target_unit] = override_time
 
-	if not (var_5_1 == nil or not (var_5_1 < arg_5_4)) then
-		local system = Managers.state.entity:system("ai_system")
-		local system_2 = Managers.state.entity:system("ai_slot_system")
-		local extension = ScriptUnit.extension(arg_5_1, "ai_system")
+	if previous_override_time == nil or previous_override_time < t then
+		local ai_system = Managers.state.entity:system("ai_system")
+		local ai_slot_system = Managers.state.entity:system("ai_slot_system")
+		local ai_extension = ScriptUnit.extension(ai_unit, "ai_system")
 
-		system:register_prioritized_perception_unit_update(arg_5_1, extension)
-		system_2:register_prioritized_ai_unit_update(arg_5_1)
+		ai_system:register_prioritized_perception_unit_update(ai_unit, ai_extension)
+		ai_slot_system:register_prioritized_ai_unit_update(ai_unit)
 	end
 end

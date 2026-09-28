@@ -4,36 +4,35 @@ require("scripts/unit_extensions/generic/generic_state_machine")
 
 LureWhereaboutsExtension = class(LureWhereaboutsExtension)
 
-LureWhereaboutsExtension.init = function (self, arg_1_1, arg_1_2, arg_1_3)
+LureWhereaboutsExtension.init = function (self, extension_init_context, unit, extension_init_data)
 	-- function 1
-	self._unit = arg_1_2
+	self._unit = unit
 
 	local nav_world = Managers.state.entity:system("ai_system"):nav_world()
 
 	self._closest_positions = {}
 
-	local world_position = Unit.world_position(arg_1_2, 0)
-	local num = 1
-	local num_2 = 5
-	local triangle_from_position, var_1_5 = GwNavQueries.triangle_from_position(nav_world, world_position, num, num_2)
+	local pos = Unit.world_position(unit, 0)
+	local above, below = 1, 5
+	local found, z = GwNavQueries.triangle_from_position(nav_world, pos, above, below)
 
-	if not triangle_from_position then
-		self._closest_positions[1] = Vector3Box(Vector3(world_position.x, world_position.y, var_1_5))
+	if found then
+		self._closest_positions[1] = Vector3Box(Vector3(pos.x, pos.y, z))
 		self._on_navmesh = true
 	else
 		self._on_navmesh = false
 
-		local num_3 = 5
-		local num_4 = 0.1
-		local inside_position_from_outside_position = GwNavQueries.inside_position_from_outside_position(nav_world, world_position, num, num_2, num_3, num_4)
+		local max_lateral_offset = 5
+		local from_border = 0.1
+		local nav_mesh_pos = GwNavQueries.inside_position_from_outside_position(nav_world, pos, above, below, max_lateral_offset, from_border)
 
-		if not inside_position_from_outside_position then
-			self._closest_positions[1] = Vector3Box(inside_position_from_outside_position)
+		if nav_mesh_pos then
+			self._closest_positions[1] = Vector3Box(nav_mesh_pos)
 		end
 	end
 end
 
-LureWhereaboutsExtension.destroy = function (arg_2_0)
+LureWhereaboutsExtension.destroy = function (self)
 	-- function 2
 	return
 end

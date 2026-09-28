@@ -4,30 +4,30 @@ require("scripts/managers/camera/cameras/base_camera")
 
 TransformCamera = class(TransformCamera, BaseCamera)
 
-TransformCamera.init = function (self, arg_1_1)
+TransformCamera.init = function (self, root_node)
 	-- function 1
-	BaseCamera.init(self, arg_1_1)
+	BaseCamera.init(self, root_node)
 
 	self._offset_position = Vector3(0, 0, 0)
 end
 
-TransformCamera.parse_parameters = function (self, arg_2_1, arg_2_2)
+TransformCamera.parse_parameters = function (self, camera_settings, parent_node)
 	-- function 2
-	BaseCamera.parse_parameters(self, arg_2_1, arg_2_2)
+	BaseCamera.parse_parameters(self, camera_settings, parent_node)
 
-	if not arg_2_1.offset_position then
-		self._offset_position = arg_2_1.offset_position
+	if camera_settings.offset_position then
+		self._offset_position = camera_settings.offset_position
 	end
 end
 
-TransformCamera.update = function (self, arg_3_1, arg_3_2, arg_3_3, arg_3_4)
+TransformCamera.update = function (self, dt, position, rotation, data)
 	-- function 3
-	local _offset_position = self._offset_position
-	local num = _offset_position.x * Quaternion.right(arg_3_3)
-	local num_2 = _offset_position.y * Quaternion.forward(arg_3_3)
-	local num_3 = _offset_position.z * Quaternion.up(arg_3_3)
+	local offset_position = self._offset_position
+	local offset_x = offset_position.x * Quaternion.right(rotation)
+	local offset_y = offset_position.y * Quaternion.forward(rotation)
+	local offset_z = offset_position.z * Quaternion.up(rotation)
 
-	arg_3_2 = arg_3_2 + num + num_2 + num_3
+	position = position + offset_x + offset_y + offset_z
 
-	BaseCamera.update(self, arg_3_1, arg_3_2, arg_3_3, arg_3_4)
+	BaseCamera.update(self, dt, position, rotation, data)
 end

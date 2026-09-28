@@ -1,6 +1,6 @@
 -- chunkname: @scripts/entity_system/systems/behaviour/trees/chaos/chaos_exalted_sorcerer_drachenfels_behavior.lua
 
-local chaos_exalted_sorcerer_drachenfels = BreedActions.chaos_exalted_sorcerer_drachenfels
+local ACTIONS = BreedActions.chaos_exalted_sorcerer_drachenfels
 
 BreedBehaviors.chaos_exalted_sorcerer_drachenfels = {
 	"BTSelector",
@@ -11,12 +11,12 @@ BreedBehaviors.chaos_exalted_sorcerer_drachenfels = {
 	},
 	{
 		"BTSequence",
-		action_data = chaos_exalted_sorcerer_drachenfels.intro_sequence,
+		action_data = ACTIONS.intro_sequence,
 		{
 			"BTDefensiveIdleAction",
 			name = "intro_idle",
 			leave_hook = "sorcerer_drachenfels_go_defensive",
-			action_data = chaos_exalted_sorcerer_drachenfels.intro_idle
+			action_data = ACTIONS.intro_idle
 		},
 		name = "intro_sequence",
 		leave_hook = "on_drachenfels_sorcerer_intro_leave",
@@ -58,7 +58,7 @@ BreedBehaviors.chaos_exalted_sorcerer_drachenfels = {
 					"BTSpawnAllies",
 					name = "spawn_wave_defensive_intense",
 					leave_hook = "sorcerer_next_phase",
-					action_data = chaos_exalted_sorcerer_drachenfels.spawn_allies_devensive_intense
+					action_data = ACTIONS.spawn_allies_devensive_intense
 				},
 				name = "defensive_mode_starts",
 				condition = "defensive_mode_starts",
@@ -69,13 +69,13 @@ BreedBehaviors.chaos_exalted_sorcerer_drachenfels = {
 				{
 					"BTDefensiveIdleAction",
 					name = "defensive_idle",
-					action_data = chaos_exalted_sorcerer_drachenfels.defensive_idle
+					action_data = ACTIONS.defensive_idle
 				},
 				{
 					"BTQuickTeleportAction",
 					name = "teleport_to_float",
 					leave_hook = "sorcerer_drachenfels_go_offensive_intense",
-					action_data = chaos_exalted_sorcerer_drachenfels.teleport_to_float
+					action_data = ACTIONS.teleport_to_float
 				},
 				name = "defensive_mode_ends",
 				condition = "spawned_allies_dead_or_time",
@@ -87,7 +87,7 @@ BreedBehaviors.chaos_exalted_sorcerer_drachenfels = {
 					"BTCastMissileAction",
 					enter_hook = "sorcerer_defensive_seeking_bomb",
 					name = "defensive_seeking_bomb",
-					action_data = chaos_exalted_sorcerer_drachenfels.defensive_seeking_bomb
+					action_data = ACTIONS.defensive_seeking_bomb
 				},
 				condition = "sorcerer_defensive_combat",
 				name = "smartobject"
@@ -95,7 +95,7 @@ BreedBehaviors.chaos_exalted_sorcerer_drachenfels = {
 			{
 				"BTDefensiveIdleAction",
 				name = "defensive_idle",
-				action_data = chaos_exalted_sorcerer_drachenfels.defensive_idle
+				action_data = ACTIONS.defensive_idle
 			},
 			condition = "transitioned_one_third_health",
 			name = "defensive_mode_third"
@@ -108,7 +108,7 @@ BreedBehaviors.chaos_exalted_sorcerer_drachenfels = {
 					"BTSpawnAllies",
 					name = "spawn_wave_defensive",
 					leave_hook = "sorcerer_next_phase",
-					action_data = chaos_exalted_sorcerer_drachenfels.spawn_allies_defensive
+					action_data = ACTIONS.spawn_allies_defensive
 				},
 				name = "defensive_mode_starts",
 				condition = "defensive_mode_starts",
@@ -120,7 +120,7 @@ BreedBehaviors.chaos_exalted_sorcerer_drachenfels = {
 					"BTDefensiveIdleAction",
 					name = "defensive_idle",
 					leave_hook = "sorcerer_drachenfels_go_offensive",
-					action_data = chaos_exalted_sorcerer_drachenfels.defensive_idle
+					action_data = ACTIONS.defensive_idle
 				},
 				name = "defensive_mode_ends",
 				condition = "spawned_allies_dead_or_time",
@@ -132,7 +132,7 @@ BreedBehaviors.chaos_exalted_sorcerer_drachenfels = {
 					"BTCastMissileAction",
 					enter_hook = "sorcerer_defensive_seeking_bomb",
 					name = "defensive_seeking_bomb",
-					action_data = chaos_exalted_sorcerer_drachenfels.defensive_seeking_bomb
+					action_data = ACTIONS.defensive_seeking_bomb
 				},
 				condition = "sorcerer_defensive_combat",
 				name = "smartobject"
@@ -148,7 +148,7 @@ BreedBehaviors.chaos_exalted_sorcerer_drachenfels = {
 					"BTSpawnAllies",
 					name = "spawn_wave_defensive",
 					leave_hook = "sorcerer_next_phase",
-					action_data = chaos_exalted_sorcerer_drachenfels.spawn_allies_defensive
+					action_data = ACTIONS.spawn_allies_defensive
 				},
 				name = "defensive_mode_starts",
 				condition = "defensive_mode_starts",
@@ -160,7 +160,7 @@ BreedBehaviors.chaos_exalted_sorcerer_drachenfels = {
 					"BTDefensiveIdleAction",
 					name = "defensive_idle",
 					leave_hook = "sorcerer_drachenfels_go_offensive",
-					action_data = chaos_exalted_sorcerer_drachenfels.defensive_idle
+					action_data = ACTIONS.defensive_idle
 				},
 				name = "defensive_mode_ends",
 				condition = "spawned_allies_dead_or_time",
@@ -172,7 +172,7 @@ BreedBehaviors.chaos_exalted_sorcerer_drachenfels = {
 					"BTCastMissileAction",
 					enter_hook = "sorcerer_defensive_seeking_bomb",
 					name = "defensive_seeking_bomb",
-					action_data = chaos_exalted_sorcerer_drachenfels.defensive_seeking_bomb
+					action_data = ACTIONS.defensive_seeking_bomb
 				},
 				condition = "sorcerer_defensive_combat",
 				name = "smartobject"
@@ -192,13 +192,13 @@ BreedBehaviors.chaos_exalted_sorcerer_drachenfels = {
 					"BTQuickTeleportAction",
 					enter_hook = "drop_items",
 					name = "teleport_to_death",
-					action_data = chaos_exalted_sorcerer_drachenfels.teleport_to_death
+					action_data = ACTIONS.teleport_to_death
 				},
 				{
 					"BTChampionAttackAction",
 					name = "death_explosion",
 					leave_hook = "unclamp_health",
-					action_data = chaos_exalted_sorcerer_drachenfels.death_explosion
+					action_data = ACTIONS.death_explosion
 				},
 				leave_hook = "kill_unit",
 				name = "death_sequence",
@@ -209,12 +209,12 @@ BreedBehaviors.chaos_exalted_sorcerer_drachenfels = {
 				"BTUtilityNode",
 				{
 					"BTSequence",
-					action_data = chaos_exalted_sorcerer_drachenfels.ring_spawn,
+					action_data = ACTIONS.ring_spawn,
 					{
 						"BTSpawnAllies",
 						name = "spawn_allies_trickle",
 						enter_hook = "trickle_spawn_drachenfels",
-						action_data = chaos_exalted_sorcerer_drachenfels.spawn_allies_trickle
+						action_data = ACTIONS.spawn_allies_trickle
 					},
 					name = "ring_spawn",
 					condition = "sorcerer_allow_tricke_spawn"
@@ -222,17 +222,17 @@ BreedBehaviors.chaos_exalted_sorcerer_drachenfels = {
 				{
 					"BTBossFollowAction",
 					name = "follow",
-					action_data = chaos_exalted_sorcerer_drachenfels.follow
+					action_data = ACTIONS.follow
 				},
 				{
 					"BTMeleeOverlapAttackAction",
 					name = "swing_floating",
-					action_data = chaos_exalted_sorcerer_drachenfels.swing_floating
+					action_data = ACTIONS.swing_floating
 				},
 				{
 					"BTMeleeOverlapAttackAction",
 					name = "combo_attack",
-					action_data = chaos_exalted_sorcerer_drachenfels.combo_attack
+					action_data = ACTIONS.combo_attack
 				},
 				name = "combat"
 			},
@@ -247,7 +247,7 @@ BreedBehaviors.chaos_exalted_sorcerer_drachenfels = {
 					"BTQuickTeleportAction",
 					name = "defensive_teleport_init_p3",
 					leave_hook = "sorcerer_drachenfels_re_enter_defensive",
-					action_data = chaos_exalted_sorcerer_drachenfels.defensive_escape_teleport
+					action_data = ACTIONS.defensive_escape_teleport
 				},
 				leave_hook = "transition_at_one_third",
 				name = "back_to_defensive",
@@ -260,7 +260,7 @@ BreedBehaviors.chaos_exalted_sorcerer_drachenfels = {
 					"BTQuickTeleportAction",
 					name = "defensive_teleport_init_p2",
 					leave_hook = "sorcerer_drachenfels_re_enter_defensive",
-					action_data = chaos_exalted_sorcerer_drachenfels.defensive_escape_teleport
+					action_data = ACTIONS.defensive_escape_teleport
 				},
 				leave_hook = "transition_at_two_thirds",
 				name = "back_to_defensive",
@@ -272,18 +272,18 @@ BreedBehaviors.chaos_exalted_sorcerer_drachenfels = {
 				{
 					"BTQuickTeleportAction",
 					name = "defensive_teleport_p1",
-					action_data = chaos_exalted_sorcerer_drachenfels.teleport_to_aoe
+					action_data = ACTIONS.teleport_to_aoe
 				},
 				{
 					"BTChaosSorcererSummoningAction",
 					name = "spawn_boss_rings_1",
-					action_data = chaos_exalted_sorcerer_drachenfels.spawn_boss_rings_1
+					action_data = ACTIONS.spawn_boss_rings_1
 				},
 				{
 					"BTDefensiveIdleAction",
 					name = "exhausted_idle",
 					leave_hook = "ring_summoning_ends",
-					action_data = chaos_exalted_sorcerer_drachenfels.exhausted_idle
+					action_data = ACTIONS.exhausted_idle
 				},
 				name = "summon_rings",
 				condition = "first_ring_summon",
@@ -294,7 +294,7 @@ BreedBehaviors.chaos_exalted_sorcerer_drachenfels = {
 				{
 					"BTQuickTeleportAction",
 					name = "defensive_teleport_p1",
-					action_data = chaos_exalted_sorcerer_drachenfels.teleport_to_aoe
+					action_data = ACTIONS.teleport_to_aoe
 				},
 				{
 					"BTRandom",
@@ -302,32 +302,32 @@ BreedBehaviors.chaos_exalted_sorcerer_drachenfels = {
 						"BTChaosSorcererSummoningAction",
 						name = "spawn_boss_rings_1",
 						weight = 1,
-						action_data = chaos_exalted_sorcerer_drachenfels.spawn_boss_rings_1
+						action_data = ACTIONS.spawn_boss_rings_1
 					},
 					{
 						"BTChaosSorcererSummoningAction",
 						name = "spawn_boss_rings_2",
 						weight = 5,
-						action_data = chaos_exalted_sorcerer_drachenfels.spawn_boss_rings_2
+						action_data = ACTIONS.spawn_boss_rings_2
 					},
 					{
 						"BTChaosSorcererSummoningAction",
 						name = "spawn_boss_rings_3",
 						weight = 5,
-						action_data = chaos_exalted_sorcerer_drachenfels.spawn_boss_rings_3
+						action_data = ACTIONS.spawn_boss_rings_3
 					},
 					{
 						"BTChaosSorcererSummoningAction",
 						name = "spawn_boss_rings_5",
 						weight = 5,
-						action_data = chaos_exalted_sorcerer_drachenfels.spawn_boss_rings_5
+						action_data = ACTIONS.spawn_boss_rings_5
 					},
 					name = "random_ring_summon"
 				},
 				{
 					"BTDefensiveIdleAction",
 					name = "exhausted_idle",
-					action_data = chaos_exalted_sorcerer_drachenfels.exhausted_idle
+					action_data = ACTIONS.exhausted_idle
 				},
 				leave_hook = "ring_summoning_ends",
 				name = "defensive_mode_ends",
@@ -339,42 +339,42 @@ BreedBehaviors.chaos_exalted_sorcerer_drachenfels = {
 				{
 					"BTChampionAttackAction",
 					name = "retaliation_aoe",
-					action_data = chaos_exalted_sorcerer_drachenfels.retaliation_aoe
+					action_data = ACTIONS.retaliation_aoe
 				},
 				{
 					"BTStormVerminAttackAction",
 					name = "overhead_downed",
 					condition = "ask_target_before_attacking",
-					action_data = chaos_exalted_sorcerer_drachenfels.overhead_downed
+					action_data = ACTIONS.overhead_downed
 				},
 				{
 					"BTStormVerminAttackAction",
 					name = "cleave_downed",
 					condition = "ask_target_before_attacking",
-					action_data = chaos_exalted_sorcerer_drachenfels.cleave_downed
+					action_data = ACTIONS.cleave_downed
 				},
 				{
 					"BTSequence",
-					action_data = chaos_exalted_sorcerer_drachenfels.spawn_trickle,
+					action_data = ACTIONS.spawn_trickle,
 					{
 						"BTQuickTeleportAction",
 						enter_hook = "quick_teleport",
 						name = "quick_teleport",
 						leave_hook = "teleport_ends",
-						action_data = chaos_exalted_sorcerer_drachenfels.quick_teleport
+						action_data = ACTIONS.quick_teleport
 					},
 					{
 						"BTSpawnAllies",
 						name = "spawn_wave_offensive",
 						enter_hook = "teleport_spawn_sequence_drachenfels",
-						action_data = chaos_exalted_sorcerer_drachenfels.spawn_allies_offensive
+						action_data = ACTIONS.spawn_allies_offensive
 					},
 					name = "spawn_trickle"
 				},
 				{
 					"BTCastMissileAction",
 					name = "defensive_magic_missile",
-					action_data = chaos_exalted_sorcerer_drachenfels.defensive_magic_missile
+					action_data = ACTIONS.defensive_magic_missile
 				},
 				name = "attack_and_teleport"
 			},

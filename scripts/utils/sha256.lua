@@ -1,62 +1,68 @@
 -- chunkname: @scripts/utils/sha256.lua
 
-local num = 4294967296
-local num_2 = num - 1
+local MOD = 4294967296
+local MODM = MOD - 1
 
-local function fn(arg_1_0)
+local function memoize(f)
 	-- function 1
-	local tbl = {}
-	local var_1_1 = setmetatable({}, tbl)
+	local mt = {}
+	local t = setmetatable({}, mt)
 
-	tbl.__index = function (arg_2_0, arg_2_1)
+	mt.__index = function (self, k)
 		-- function 2
-		local var_2_0 = arg_1_0(arg_2_1)
+		local v = f(k)
 
-		var_1_1[arg_2_1] = var_2_0
+		t[k] = v
 
-		return var_2_0
+		return v
 	end
 
-	return var_1_1
+	return t
 end
 
-local function fn_2(arg_3_0, arg_3_1)
+local function make_bitop_uncached(t, m)
 	-- function 3
-	return function (arg_4_0, arg_4_1)
+	local function bitop(a, b)
 		-- function 4
-		local num = 0
-		local num_2 = 1
+		local res, p = 0, 1
 
-		while not (arg_4_0 == 0 or arg_4_1 == 0) do
-			local num_3 = arg_4_0 % arg_3_1
-			local num_4 = arg_4_1 % arg_3_1
+		while a ~= 0 and b ~= 0 do
+			local am, bm = a % m, b % m
 
-			num = num + arg_3_0[num_3][num_4] * num_2
-			arg_4_0 = (arg_4_0 - num_3) / arg_3_1
-			arg_4_1 = (arg_4_1 - num_4) / arg_3_1
-			num_2 = num_2 * arg_3_1
+			res = res + t[am][bm] * p
+			a = (a - am) / m
+			b = (b - bm) / m
+			p = p * m
 		end
 
-		return num + (arg_4_0 + arg_4_1) * num_2
+		res = res + (a + b) * p
+
+		return res
 	end
+
+	return bitop
 end
 
-local var_0_4 = (function (self)
+local function make_bitop(t)
 	-- function 5
-	local var_5_0 = fn_2(self, 2)
-	local var_5_1, var_5_2 = fn(function (arg_6_0)
+	local op1 = make_bitop_uncached(t, 2)
+	local op2 = memoize(function (a)
 		-- function 6
-		return fn(function (arg_7_0)
+		return memoize(function (b)
 			-- function 7
-			return var_5_0(arg_6_0, arg_7_0)
+			return op1(a, b)
 		end)
-	end), fn_2
-	local n = self.n
+	end)
+	local var_5_0 = make_bitop_uncached
+	local var_5_1 = op2
+	local n = t.n
 
-	n = n or 1
+	n = not not n or not not 1
 
-	return var_5_2(var_5_1, 2^n)
-end)({
+	return var_5_0(var_5_1, 2^n)
+end
+
+local bxor1 = make_bitop({
 	[0] = {
 		[0] = 0,
 		1
@@ -68,93 +74,91 @@ end)({
 	n = 4
 })
 
-local function fn_3(arg_8_0, arg_8_1, arg_8_2, ...)
+local function bxor(a, b, c, ...)
 	-- function 8
-	local var_8_0
+	local z
 
-	if not arg_8_1 then
-		arg_8_0 = arg_8_0 % num
-		arg_8_1 = arg_8_1 % num
+	if b then
+		a = a % MOD
+		b = b % MOD
+		z = bxor1(a, b)
 
-		local var_8_1 = var_0_4(arg_8_0, arg_8_1)
-
-		if not arg_8_2 then
-			var_8_1 = fn_3(var_8_1, arg_8_2, ...)
+		if c then
+			z = bxor(z, c, ...)
 		end
 
-		return var_8_1
-	elseif not arg_8_0 then
-		return arg_8_0 % num
+		return z
+	elseif a then
+		return a % MOD
 	else
 		return 0
 	end
 end
 
-local function fn_4(arg_9_0, arg_9_1, arg_9_2, ...)
+local function band(a, b, c, ...)
 	-- function 9
-	local var_9_0
+	local z
 
-	if not arg_9_1 then
-		arg_9_0 = arg_9_0 % num
-		arg_9_1 = arg_9_1 % num
+	if b then
+		a = a % MOD
+		b = b % MOD
+		z = (a + b - bxor1(a, b)) / 2
 
-		local num_3 = (arg_9_0 + arg_9_1 - var_0_4(arg_9_0, arg_9_1)) / 2
-
-		if not arg_9_2 then
-			num_3 = bit32_band(num_3, arg_9_2, ...)
+		if c then
+			z = bit32_band(z, c, ...)
 		end
 
-		return num_3
-	elseif not arg_9_0 then
-		return arg_9_0 % num
+		return z
+	elseif a then
+		return a % MOD
 	else
-		return num_2
+		return MODM
 	end
 end
 
-local function fn_5(arg_10_0)
+local function bnot(x)
 	-- function 10
-	return (-1 - arg_10_0) % num
+	return (-1 - x) % MOD
 end
 
-local function fn_6(arg_11_0, arg_11_1)
+local function rshift1(a, disp)
 	-- function 11
-	if arg_11_1 < 0 then
-		return lshift(arg_11_0, -arg_11_1)
+	if disp < 0 then
+		return lshift(a, -disp)
 	end
 
-	return math.floor(arg_11_0 % 4294967296 / 2^arg_11_1)
+	return math.floor(a % 4294967296 / 2^disp)
 end
 
-local function fn_7(arg_12_0, arg_12_1)
+local function rshift(x, disp)
 	-- function 12
-	if not (arg_12_1 > 31 or not (arg_12_1 < -31)) then
+	if disp > 31 or disp < -31 then
 		return 0
 	end
 
-	return fn_6(arg_12_0 % num, arg_12_1)
+	return rshift1(x % MOD, disp)
 end
 
-local function fn_8(arg_13_0, arg_13_1)
+local function lshift(a, disp)
 	-- function 13
-	if arg_13_1 < 0 then
-		return fn_7(arg_13_0, -arg_13_1)
+	if disp < 0 then
+		return rshift(a, -disp)
 	end
 
-	return arg_13_0 * 2^arg_13_1 % 4294967296
+	return a * 2^disp % 4294967296
 end
 
-local function fn_9(arg_14_0, arg_14_1)
+local function rrotate(x, disp)
 	-- function 14
-	arg_14_0 = arg_14_0 % num
-	arg_14_1 = arg_14_1 % 32
+	x = x % MOD
+	disp = disp % 32
 
-	local var_14_0 = fn_4(arg_14_0, 2^arg_14_1 - 1)
+	local low = band(x, 2^disp - 1)
 
-	return fn_7(arg_14_0, arg_14_1) + fn_8(var_14_0, 32 - arg_14_1)
+	return rshift(x, disp) + lshift(low, 32 - disp)
 end
 
-local tbl = {
+local k = {
 	1116352408,
 	1899447441,
 	3049323471,
@@ -221,118 +225,113 @@ local tbl = {
 	3329325298
 }
 
-local function fn_10(arg_15_0)
+local function str2hexa(s)
 	-- function 15
-	return (string.gsub(arg_15_0, ".", function (arg_16_0)
+	return (string.gsub(s, ".", function (c)
 		-- function 16
-		return string.format("%02x", string.byte(arg_16_0))
+		return string.format("%02x", string.byte(c))
 	end))
 end
 
-local function fn_11(arg_17_0, arg_17_1)
+local function num2s(l, n)
 	-- function 17
-	local str = ""
+	local s = ""
 
-	for i = 1, arg_17_1 do
-		local num = arg_17_0 % 256
+	for i = 1, n do
+		local rem = l % 256
 
-		str = string.char(num) .. str
-		arg_17_0 = (arg_17_0 - num) / 256
+		s = string.char(rem) .. s
+		l = (l - rem) / 256
 	end
 
-	return str
+	return s
 end
 
-local function fn_12(arg_18_0, arg_18_1)
+local function s232num(s, i)
 	-- function 18
-	local num = 0
+	local n = 0
 
-	for i = arg_18_1, arg_18_1 + 3 do
-		num = num * 256 + string.byte(arg_18_0, i)
+	for i = i, i + 3 do
+		n = n * 256 + string.byte(s, i)
 	end
 
-	return num
+	return n
 end
 
-local function fn_13(arg_19_0, arg_19_1)
+local function preproc(msg, len)
 	-- function 19
-	local num = 64 - (arg_19_1 + 9) % 64
+	local extra = 64 - (len + 9) % 64
 
-	arg_19_1 = fn_11(8 * arg_19_1, 8)
-	arg_19_0 = arg_19_0 .. "€" .. string.rep("\x00", num) .. arg_19_1
+	len = num2s(8 * len, 8)
+	msg = msg .. "€" .. string.rep("\x00", extra) .. len
 
-	assert(#arg_19_0 % 64 == 0)
+	assert(#msg % 64 == 0)
 
-	return arg_19_0
+	return msg
 end
 
-local function fn_14(self)
+local function initH256(H)
 	-- function 20
-	self[1] = 1779033703
-	self[2] = 3144134277
-	self[3] = 1013904242
-	self[4] = 2773480762
-	self[5] = 1359893119
-	self[6] = 2600822924
-	self[7] = 528734635
-	self[8] = 1541459225
+	H[1] = 1779033703
+	H[2] = 3144134277
+	H[3] = 1013904242
+	H[4] = 2773480762
+	H[5] = 1359893119
+	H[6] = 2600822924
+	H[7] = 528734635
+	H[8] = 1541459225
 
-	return self
+	return H
 end
 
-local function fn_15(arg_21_0, arg_21_1, arg_21_2)
+local function digestblock(msg, i, H)
 	-- function 21
-	local tbl_2 = {}
+	local w = {}
 
-	for i = 1, 16 do
-		tbl_2[i] = fn_12(arg_21_0, arg_21_1 + (i - 1) * 4)
+	for j = 1, 16 do
+		w[j] = s232num(msg, i + (j - 1) * 4)
 	end
 
 	for j = 17, 64 do
-		local var_21_1 = tbl_2[j - 15]
-		local var_21_2 = fn_3(fn_9(var_21_1, 7), fn_9(var_21_1, 18), fn_7(var_21_1, 3))
-		local var_21_3 = tbl_2[j - 2]
+		local v = w[j - 15]
+		local s0 = bxor(rrotate(v, 7), rrotate(v, 18), rshift(v, 3))
 
-		tbl_2[j] = tbl_2[j - 16] + var_21_2 + tbl_2[j - 7] + fn_3(fn_9(var_21_3, 17), fn_9(var_21_3, 19), fn_7(var_21_3, 10))
+		v = w[j - 2]
+		w[j] = w[j - 16] + s0 + w[j - 7] + bxor(rrotate(v, 17), rrotate(v, 19), rshift(v, 10))
 	end
 
-	local var_21_4 = arg_21_2[1]
-	local var_21_5 = arg_21_2[2]
-	local var_21_6 = arg_21_2[3]
-	local var_21_7 = arg_21_2[4]
-	local var_21_8 = arg_21_2[5]
-	local var_21_9 = arg_21_2[6]
-	local var_21_10 = arg_21_2[7]
-	local var_21_11 = arg_21_2[8]
+	local a, b, c, d, e, f, g, h = H[1], H[2], H[3], H[4], H[5], H[6], H[7], H[8]
 
-	for k = 1, 64 do
-		local num = fn_3(fn_9(var_21_4, 2), fn_9(var_21_4, 13), fn_9(var_21_4, 22)) + fn_3(fn_4(var_21_4, var_21_5), fn_4(var_21_4, var_21_6), fn_4(var_21_5, var_21_6))
-		local var_21_13 = fn_3(fn_9(var_21_8, 6), fn_9(var_21_8, 11), fn_9(var_21_8, 25))
-		local var_21_14 = fn_3(fn_4(var_21_8, var_21_9), fn_4(fn_5(var_21_8), var_21_10))
-		local num_2 = var_21_11 + var_21_13 + var_21_14 + tbl[k] + tbl_2[k]
+	for i = 1, 64 do
+		local s0 = bxor(rrotate(a, 2), rrotate(a, 13), rrotate(a, 22))
+		local maj = bxor(band(a, b), band(a, c), band(b, c))
+		local t2 = s0 + maj
+		local s1 = bxor(rrotate(e, 6), rrotate(e, 11), rrotate(e, 25))
+		local ch = bxor(band(e, f), band(bnot(e), g))
+		local t1 = h + s1 + ch + k[i] + w[i]
 
-		var_21_11, var_21_10, var_21_9, var_21_8, var_21_7, var_21_6, var_21_5, var_21_4 = var_21_10, var_21_9, var_21_8, var_21_7 + num_2, var_21_6, var_21_5, var_21_4, num_2 + num
+		h, g, f, e, d, c, b, a = g, f, e, d + t1, c, b, a, t1 + t2
 	end
 
-	arg_21_2[1] = fn_4(arg_21_2[1] + var_21_4)
-	arg_21_2[2] = fn_4(arg_21_2[2] + var_21_5)
-	arg_21_2[3] = fn_4(arg_21_2[3] + var_21_6)
-	arg_21_2[4] = fn_4(arg_21_2[4] + var_21_7)
-	arg_21_2[5] = fn_4(arg_21_2[5] + var_21_8)
-	arg_21_2[6] = fn_4(arg_21_2[6] + var_21_9)
-	arg_21_2[7] = fn_4(arg_21_2[7] + var_21_10)
-	arg_21_2[8] = fn_4(arg_21_2[8] + var_21_11)
+	H[1] = band(H[1] + a)
+	H[2] = band(H[2] + b)
+	H[3] = band(H[3] + c)
+	H[4] = band(H[4] + d)
+	H[5] = band(H[5] + e)
+	H[6] = band(H[6] + f)
+	H[7] = band(H[7] + g)
+	H[8] = band(H[8] + h)
 end
 
-function sha256(arg_22_0)
+function sha256(msg)
 	-- function 22
-	arg_22_0 = fn_13(arg_22_0, #arg_22_0)
+	msg = preproc(msg, #msg)
 
-	local var_22_0 = fn_14({})
+	local H = initH256({})
 
-	for i = 1, #arg_22_0, 64 do
-		fn_15(arg_22_0, i, var_22_0)
+	for i = 1, #msg, 64 do
+		digestblock(msg, i, H)
 	end
 
-	return fn_10(fn_11(var_22_0[1], 4) .. fn_11(var_22_0[2], 4) .. fn_11(var_22_0[3], 4) .. fn_11(var_22_0[4], 4) .. fn_11(var_22_0[5], 4) .. fn_11(var_22_0[6], 4) .. fn_11(var_22_0[7], 4) .. fn_11(var_22_0[8], 4))
+	return str2hexa(num2s(H[1], 4) .. num2s(H[2], 4) .. num2s(H[3], 4) .. num2s(H[4], 4) .. num2s(H[5], 4) .. num2s(H[6], 4) .. num2s(H[7], 4) .. num2s(H[8], 4))
 end

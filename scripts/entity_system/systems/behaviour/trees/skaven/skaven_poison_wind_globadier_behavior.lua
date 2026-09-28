@@ -1,6 +1,6 @@
 -- chunkname: @scripts/entity_system/systems/behaviour/trees/skaven/skaven_poison_wind_globadier_behavior.lua
 
-local skaven_poison_wind_globadier = BreedActions.skaven_poison_wind_globadier
+local ACTIONS = BreedActions.skaven_poison_wind_globadier
 
 BreedBehaviors.skaven_poison_wind_globadier = {
 	"BTSelector",
@@ -13,7 +13,7 @@ BreedBehaviors.skaven_poison_wind_globadier = {
 		"BTStaggerAction",
 		name = "stagger",
 		condition = "stagger",
-		action_data = skaven_poison_wind_globadier.stagger
+		action_data = ACTIONS.stagger
 	},
 	{
 		"BTSpawningAction",
@@ -46,7 +46,7 @@ BreedBehaviors.skaven_poison_wind_globadier = {
 			"BTSmashDoorAction",
 			name = "smash_door",
 			condition = "at_door_smartobject",
-			action_data = skaven_poison_wind_globadier.smash_door
+			action_data = ACTIONS.smash_door
 		},
 		condition = "at_smartobject",
 		name = "smartobject"
@@ -57,7 +57,7 @@ BreedBehaviors.skaven_poison_wind_globadier = {
 			"BTSuicideRunAction",
 			name = "suicide_run",
 			condition = "suicide_run",
-			action_data = skaven_poison_wind_globadier.suicide_run
+			action_data = ACTIONS.suicide_run
 		},
 		{
 			"BTSequence",
@@ -67,19 +67,19 @@ BreedBehaviors.skaven_poison_wind_globadier = {
 					"BTMoveToPlayersAction",
 					name = "move_to_players",
 					condition = "globadier_skulked_for_too_long",
-					action_data = skaven_poison_wind_globadier.move_to_players
+					action_data = ACTIONS.move_to_players
 				},
 				{
 					"BTSequence",
 					{
 						"BTSkulkApproachAction",
 						name = "skulk_approach",
-						action_data = skaven_poison_wind_globadier.skulk_approach
+						action_data = ACTIONS.skulk_approach
 					},
 					{
 						"BTAdvanceTowardsPlayersAction",
 						name = "advance_towards_players",
-						action_data = skaven_poison_wind_globadier.advance_towards_players
+						action_data = ACTIONS.advance_towards_players
 					},
 					condition = "always_true",
 					name = "skulk_movement"
@@ -89,7 +89,7 @@ BreedBehaviors.skaven_poison_wind_globadier = {
 			{
 				"BTThrowPoisonGlobeAction",
 				name = "throw_poison_globe",
-				action_data = skaven_poison_wind_globadier.throw_poison_globe
+				action_data = ACTIONS.throw_poison_globe
 			},
 			{
 				"BTObservePoisonWind",

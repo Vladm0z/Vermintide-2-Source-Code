@@ -2,129 +2,128 @@
 
 EnemyCharacterStateAnimatedJump = class(EnemyCharacterStateAnimatedJump, EnemyCharacterState)
 
-EnemyCharacterStateAnimatedJump.do_the_transition = function (arg_1_0, arg_1_1, arg_1_2, arg_1_3, arg_1_4)
+EnemyCharacterStateAnimatedJump.do_the_transition = function (self, unit, t, dt, locomotion_extension)
 	-- function 1
 	return
 end
 
-EnemyCharacterStateAnimatedJump.setup_transition = function (arg_2_0, arg_2_1, arg_2_2, arg_2_3, arg_2_4)
+EnemyCharacterStateAnimatedJump.setup_transition = function (self, unit, smart_object_data, entrance_pos, exit_pos)
 	-- function 2
 	return
 end
 
-EnemyCharacterStateAnimatedJump.init = function (arg_3_0, arg_3_1, arg_3_2)
+EnemyCharacterStateAnimatedJump.init = function (self, character_state_init_context, name)
 	-- function 3
-	EnemyCharacterStateAnimatedJump.super.init(arg_3_0, arg_3_1, arg_3_2)
+	EnemyCharacterStateAnimatedJump.super.init(self, character_state_init_context, name)
 end
 
-EnemyCharacterStateAnimatedJump.on_enter = function (self, arg_4_1, arg_4_2, arg_4_3, arg_4_4, arg_4_5, arg_4_6, arg_4_7)
+EnemyCharacterStateAnimatedJump.on_enter = function (self, unit, input, dt, context, t, previous_state, params)
 	-- function 4
-	local _input_extension = self._input_extension
-	local _first_person_extension = self._first_person_extension
-	local _status_extension = self._status_extension
-	local _inventory_extension = self._inventory_extension
-	local _health_extension = self._health_extension
-	local _locomotion_extension = self._locomotion_extension
-	local _breed = self._breed
+	local input_extension = self._input_extension
+	local first_person_extension = self._first_person_extension
+	local status_extension = self._status_extension
+	local inventory_extension = self._inventory_extension
+	local health_extension = self._health_extension
+	local locomotion_extension = self._locomotion_extension
+	local breed = self._breed
 
-	Managers.telemetry_events:node_climb(_breed.name, POSITION_LOOKUP[arg_4_1])
+	Managers.telemetry_events:node_climb(breed.name, POSITION_LOOKUP[unit])
 
-	local flag = self._breed.climb_type == "climb"
+	local is_climber = self._breed.climb_type == "climb"
 
-	self.is_climber = flag
+	self.is_climber = is_climber
 	self._camera_transitioned_back = nil
 	self._control_back = nil
 
-	local owner = Managers.player:owner(arg_4_1)
+	local player = Managers.player:owner(unit)
 
-	self._player = owner
+	self._player = player
 
-	if not _status_extension:get_unarmed() then
-		CharacterStateHelper.play_animation_event(arg_4_1, "to_armed")
+	if status_extension:get_unarmed() then
+		CharacterStateHelper.play_animation_event(unit, "to_armed")
 	end
 
-	CharacterStateHelper.play_animation_event(arg_4_1, "climbing")
-	CharacterStateHelper.change_camera_state(owner, "follow_third_person_smart_climbing")
+	CharacterStateHelper.play_animation_event(unit, "climbing")
+	CharacterStateHelper.change_camera_state(player, "follow_third_person_smart_climbing")
 
-	local flag_2 = false
-	local var_4_10
-	local flag_3 = false
+	local active = false
+	local override
+	local unarmed = false
 
-	if not _status_extension:get_unarmed() then
-		flag_3 = true
+	if status_extension:get_unarmed() then
+		unarmed = true
 	end
 
-	_first_person_extension:set_first_person_mode(flag_2, var_4_10, flag_3)
+	first_person_extension:set_first_person_mode(active, override, unarmed)
 
-	local jump_data = arg_4_7.jump_data
+	local jump_data = params.jump_data
 
 	if not jump_data then
 		error("Missing jump_data")
 	end
 
-	_status_extension:set_should_climb(false)
-	_status_extension:set_is_climbing(true)
+	status_extension:set_should_climb(false)
+	status_extension:set_is_climbing(true)
 
 	local swap_entrance_exit = jump_data.swap_entrance_exit
 	local jump_object_data = jump_data.jump_object_data
-	local var_4_15
-	local var_4_16
+	local entrance_pos, exit_pos
 
-	if not swap_entrance_exit then
-		var_4_15 = Vector3Aux.unbox(jump_object_data.pos1)
-		var_4_16 = Vector3Aux.unbox(jump_object_data.pos2)
+	if swap_entrance_exit then
+		entrance_pos = Vector3Aux.unbox(jump_object_data.pos1)
+		exit_pos = Vector3Aux.unbox(jump_object_data.pos2)
 	else
-		var_4_15 = Vector3Aux.unbox(jump_object_data.pos2)
-		var_4_16 = Vector3Aux.unbox(jump_object_data.pos1)
+		entrance_pos = Vector3Aux.unbox(jump_object_data.pos2)
+		exit_pos = Vector3Aux.unbox(jump_object_data.pos1)
 	end
 
-	if not flag then
-		local normalize = Vector3.normalize(Vector3.flat(var_4_16 - var_4_15))
-		local look = Quaternion.look(normalize)
+	if not is_climber then
+		local look_direction_wanted = Vector3.normalize(Vector3.flat(exit_pos - entrance_pos))
+		local look_rotation_wanted = Quaternion.look(look_direction_wanted)
 
-		_locomotion_extension:teleport_to(var_4_16, look)
-	elseif not flag then
-		local data = jump_object_data.data
+		locomotion_extension:teleport_to(exit_pos, look_rotation_wanted)
+	elseif is_climber then
+		local smart_object_data = jump_object_data.data
 
-		self:setup_transition(arg_4_1, data, var_4_15, var_4_16)
+		self:setup_transition(unit, smart_object_data, entrance_pos, exit_pos)
 
-		self._fail_timer = arg_4_5 + 7
+		self._fail_timer = t + 7
 
-		local get_move_animation, var_4_21 = CharacterStateHelper.get_move_animation(self._locomotion_extension, _input_extension, _status_extension)
+		local move_anim_3p, move_anim_1p = CharacterStateHelper.get_move_animation(self._locomotion_extension, input_extension, status_extension)
 
-		self.move_anim_3p = get_move_animation
-		self.move_anim_1p = var_4_21
+		self.move_anim_3p = move_anim_3p
+		self.move_anim_1p = move_anim_1p
 
-		CharacterStateHelper.play_animation_event(arg_4_1, get_move_animation)
-		CharacterStateHelper.play_animation_event_first_person(_first_person_extension, var_4_21)
+		CharacterStateHelper.play_animation_event(unit, move_anim_3p)
+		CharacterStateHelper.play_animation_event_first_person(first_person_extension, move_anim_1p)
 
-		local var_4_22 = BLACKBOARDS[arg_4_1]
+		local blackboard = BLACKBOARDS[unit]
 
-		var_4_22.jump_start_finished = nil
-		var_4_22.jump_climb_finished = nil
+		blackboard.jump_start_finished = nil
+		blackboard.jump_climb_finished = nil
 	end
 
-	CharacterStateHelper.look(_input_extension, self._player.viewport_name, _first_person_extension, _status_extension, _inventory_extension)
-	CharacterStateHelper.update_weapon_actions(arg_4_5, arg_4_1, _input_extension, _inventory_extension, _health_extension)
+	CharacterStateHelper.look(input_extension, self._player.viewport_name, first_person_extension, status_extension, inventory_extension)
+	CharacterStateHelper.update_weapon_actions(t, unit, input_extension, inventory_extension, health_extension)
 	self:set_breed_action("climbing")
 end
 
-EnemyCharacterStateAnimatedJump.on_exit = function (self, arg_5_1, arg_5_2, arg_5_3, arg_5_4, arg_5_5, arg_5_6)
+EnemyCharacterStateAnimatedJump.on_exit = function (self, unit, input, dt, context, t, next_state)
 	-- function 5
-	local var_5_0 = BLACKBOARDS[arg_5_1]
+	local blackboard = BLACKBOARDS[unit]
 
-	if not var_5_0 then
-		var_5_0.jump_climb_finished = nil
-		var_5_0.jump_camera_transition = nil
-		var_5_0.jump_give_control = nil
+	if blackboard then
+		blackboard.jump_climb_finished = nil
+		blackboard.jump_camera_transition = nil
+		blackboard.jump_give_control = nil
 	end
 
-	local _status_extension = self._status_extension
+	local status_extension = self._status_extension
 
-	_status_extension:set_is_climbing(false)
+	status_extension:set_is_climbing(false)
 
-	if not _status_extension:get_unarmed() then
-		CharacterStateHelper.play_animation_event(arg_5_1, "to_unarmed")
+	if status_extension:get_unarmed() then
+		CharacterStateHelper.play_animation_event(unit, "to_unarmed")
 	end
 
 	if not self._camera_transitioned_back then
@@ -137,33 +136,35 @@ EnemyCharacterStateAnimatedJump.on_exit = function (self, arg_5_1, arg_5_2, arg_
 
 	self:set_breed_action("n/a")
 
-	ScriptUnit.extension(arg_5_1, "hit_reaction_system").force_ragdoll_on_death = nil
+	local hit_reaction_extension = ScriptUnit.extension(unit, "hit_reaction_system")
+
+	hit_reaction_extension.force_ragdoll_on_death = nil
 end
 
-EnemyCharacterStateAnimatedJump.update = function (self, arg_6_1, arg_6_2, arg_6_3, arg_6_4, arg_6_5)
+EnemyCharacterStateAnimatedJump.update = function (self, unit, input, dt, context, t)
 	-- function 6
-	local _csm = self._csm
-	local _input_extension = self._input_extension
-	local _status_extension = self._status_extension
-	local _first_person_extension = self._first_person_extension
-	local _locomotion_extension = self._locomotion_extension
-	local _inventory_extension = self._inventory_extension
+	local csm = self._csm
+	local input_extension = self._input_extension
+	local status_extension = self._status_extension
+	local first_person_extension = self._first_person_extension
+	local locomotion_extension = self._locomotion_extension
+	local inventory_extension = self._inventory_extension
 	local CharacterStateHelper = CharacterStateHelper
 
-	if not _locomotion_extension:is_on_ground() then
-		ScriptUnit.extension(arg_6_1, "whereabouts_system"):set_is_onground()
+	if locomotion_extension:is_on_ground() then
+		ScriptUnit.extension(unit, "whereabouts_system"):set_is_onground()
 	end
 
-	local _health_extension = self._health_extension
+	local health_extension = self._health_extension
 
-	CharacterStateHelper.update_weapon_actions(arg_6_5, arg_6_1, _input_extension, _inventory_extension, _health_extension)
+	CharacterStateHelper.update_weapon_actions(t, unit, input_extension, inventory_extension, health_extension)
 
-	if not CharacterStateHelper.do_common_state_transitions(_status_extension, _csm) then
+	if CharacterStateHelper.do_common_state_transitions(status_extension, csm) then
 		return
 	end
 
-	if not CharacterStateHelper.is_using_transport(_status_extension) then
-		_csm:change_state("using_transport")
+	if CharacterStateHelper.is_using_transport(status_extension) then
+		csm:change_state("using_transport")
 
 		return
 	end
@@ -174,46 +175,46 @@ EnemyCharacterStateAnimatedJump.update = function (self, arg_6_1, arg_6_2, arg_6
 		return
 	end
 
-	local var_6_8 = BLACKBOARDS[arg_6_1]
+	local blackboard = BLACKBOARDS[unit]
 
-	if not (not var_6_8.jump_camera_transition and self._camera_transitioned_back) then
+	if blackboard.jump_camera_transition and not self._camera_transitioned_back then
 		self:start_camera_transition()
 	end
 
-	if not self:do_the_transition(arg_6_1, arg_6_5, arg_6_3, _locomotion_extension) then
+	if self:do_the_transition(unit, t, dt, locomotion_extension) then
 		self:to_movement_state()
-	elseif not var_6_8.jump_give_control and self._control_back or not self:has_movement_input() then
+	elseif blackboard.jump_give_control and not self._control_back and self:has_movement_input() then
 		self:to_movement_state()
 	end
 
-	if not _locomotion_extension:is_animation_driven() then
+	if locomotion_extension:is_animation_driven() then
 		return
 	end
 
-	CharacterStateHelper.look(_input_extension, self._player.viewport_name, _first_person_extension, _status_extension, _inventory_extension)
+	CharacterStateHelper.look(input_extension, self._player.viewport_name, first_person_extension, status_extension, inventory_extension)
 end
 
 EnemyCharacterStateAnimatedJump.grant_control_to_player = function (self)
 	-- function 7
-	local _locomotion_extension = self._locomotion_extension
-	local animation_wanted_root_pose = Unit.animation_wanted_root_pose(self._unit)
+	local locomotion_extension = self._locomotion_extension
+	local wanted_pose = Unit.animation_wanted_root_pose(self._unit)
 
-	_locomotion_extension:teleport_to(Matrix4x4.translation(animation_wanted_root_pose))
-	_locomotion_extension:set_wanted_velocity(Vector3.zero())
-	_locomotion_extension:enable_script_driven_movement()
-	_locomotion_extension:set_animation_translation_scale(Vector3(1, 1, 1))
-	_locomotion_extension:force_on_ground(true)
+	locomotion_extension:teleport_to(Matrix4x4.translation(wanted_pose))
+	locomotion_extension:set_wanted_velocity(Vector3.zero())
+	locomotion_extension:enable_script_driven_movement()
+	locomotion_extension:set_animation_translation_scale(Vector3(1, 1, 1))
+	locomotion_extension:force_on_ground(true)
 
 	self._control_back = true
 end
 
 EnemyCharacterStateAnimatedJump.start_camera_transition = function (self)
 	-- function 8
-	local _first_person_extension = self._first_person_extension
+	local first_person_extension = self._first_person_extension
 
 	CharacterStateHelper.change_camera_state(self._player, "follow")
-	CharacterStateHelper.play_animation_event_first_person(_first_person_extension, "idle")
-	_first_person_extension:toggle_visibility(0.4)
+	CharacterStateHelper.play_animation_event_first_person(first_person_extension, "idle")
+	first_person_extension:toggle_visibility(0.4)
 
 	self._camera_transitioned_back = true
 end

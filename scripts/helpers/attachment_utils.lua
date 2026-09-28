@@ -2,83 +2,88 @@
 
 AttachmentUtils = {}
 
-AttachmentUtils.create_attachment = function (arg_1_0, arg_1_1, arg_1_2, arg_1_3, arg_1_4, arg_1_5)
+AttachmentUtils.create_attachment = function (world, owner_unit, attachments, slot_name, item_data, show)
 	-- function 1
-	assert(arg_1_2.slots[arg_1_3] == nil, "Slot is not empty, remove attachment before creating a new one.")
+	assert(attachments.slots[slot_name] == nil, "Slot is not empty, remove attachment before creating a new one.")
 
-	local get_item_template = BackendUtils.get_item_template(arg_1_4)
-	local var_1_1
+	local item_template = BackendUtils.get_item_template(item_data)
+	local unit
 
-	if not arg_1_4.unit then
-		local get_item_units = BackendUtils.get_item_units(arg_1_4)
+	if item_data.unit then
+		local item_units = BackendUtils.get_item_units(item_data)
 		local unit_spawner = Managers.state.unit_spawner
 
-		if not (not get_item_units.unit and get_item_units.unit == "") then
-			var_1_1 = unit_spawner:spawn_local_unit(get_item_units.unit)
+		if item_units.unit and item_units.unit ~= "" then
+			unit = unit_spawner:spawn_local_unit(item_units.unit)
 
-			Unit.set_unit_visibility(var_1_1, arg_1_5)
+			Unit.set_unit_visibility(unit, show)
 
-			if not arg_1_5 then
-				Unit.flow_event(var_1_1, "lua_attachment_hidden")
+			if not show then
+				Unit.flow_event(unit, "lua_attachment_hidden")
 			end
 		end
 	end
 
-	if not get_item_template.attachment_node_linking and not get_item_template.attachment_node_linking[arg_1_3] then
-		AttachmentUtils.link(arg_1_0, arg_1_1, var_1_1, get_item_template.attachment_node_linking[arg_1_3])
+	if item_template.attachment_node_linking and item_template.attachment_node_linking[slot_name] then
+		AttachmentUtils.link(world, owner_unit, unit, item_template.attachment_node_linking[slot_name])
 	end
 
-	if not ((Unit.num_lod_objects(arg_1_1) == 0 or not var_1_1) and Unit.num_lod_objects(var_1_1) == 0) then
-		local lod_object = Unit.lod_object(arg_1_1, 0)
-		local lod_object_2 = Unit.lod_object(var_1_1, 0)
+	if Unit.num_lod_objects(owner_unit) ~= 0 and unit and Unit.num_lod_objects(unit) ~= 0 then
+		local owner_lod_object = Unit.lod_object(owner_unit, 0)
+		local attachment_lod_object = Unit.lod_object(unit, 0)
 
-		LODObject.set_bounding_volume(lod_object_2, LODObject.bounding_volume(lod_object))
-		World.link_unit(arg_1_0, var_1_1, LODObject.node(lod_object_2), arg_1_1, LODObject.node(lod_object))
+		LODObject.set_bounding_volume(attachment_lod_object, LODObject.bounding_volume(owner_lod_object))
+		World.link_unit(world, unit, LODObject.node(attachment_lod_object), owner_unit, LODObject.node(owner_lod_object))
 	end
 
-	return {
-		unit = var_1_1,
-		name = arg_1_4.name,
-		item_data = arg_1_4
+	local slot_data = {
+		unit = unit,
+		name = item_data.name,
+		item_data = item_data
 	}
+
+	return slot_data
 end
 
-AttachmentUtils.create_weapon_visual_attachment = function (arg_2_0, arg_2_1, arg_2_2, arg_2_3)
+AttachmentUtils.create_weapon_visual_attachment = function (world, owner_unit, unit_to_spawn, attachment_node_linking)
 	-- function 2
-	local spawn_local_unit = Managers.state.unit_spawner:spawn_local_unit(arg_2_2)
+	local unit_spawner = Managers.state.unit_spawner
+	local unit = unit_spawner:spawn_local_unit(unit_to_spawn)
 
-	AttachmentUtils.link(arg_2_0, arg_2_1, spawn_local_unit, arg_2_3)
+	AttachmentUtils.link(world, owner_unit, unit, attachment_node_linking)
 
-	return spawn_local_unit
+	return unit
 end
 
-AttachmentUtils.destroy_attachment = function (arg_3_0, arg_3_1, arg_3_2)
+AttachmentUtils.destroy_attachment = function (world, owner_unit, slot_data)
 	-- function 3
-	local unit = arg_3_2.unit
+	local unit = slot_data.unit
 	local unit_spawner = Managers.state.unit_spawner
 
-	if not unit then
-		AttachmentUtils.unlink(arg_3_0, unit)
+	if unit then
+		AttachmentUtils.unlink(world, unit)
 		unit_spawner:mark_for_deletion(unit)
 	end
 end
 
-AttachmentUtils.link = function (arg_4_0, arg_4_1, arg_4_2, arg_4_3)
+AttachmentUtils.link = function (world, source, target, node_linking)
 	-- function 4
-	for i, v in ipairs(arg_4_3) do
-		local source = v.source
-		local target = v.target
+	for _, link_data in ipairs(node_linking) do
+		local source_node = link_data.source
+		local target_node = link_data.target
 		local node
 
-		if type(source) == "string" then
-			node = Unit.node(arg_4_1, source)
+		if type(source_node) == "string" then
+			node = Unit.node(source, source_node)
 
 			if not node then
 				-- Nothing
 			end
 		end
 
-		node = source
+		node = source_node
+
+		local source_node_index = node
 
 		do
 			local node_2
@@ -86,250 +91,251 @@ AttachmentUtils.link = function (arg_4_0, arg_4_1, arg_4_2, arg_4_3)
 
 		::label_4_0::
 
-		if type(target) == "string" then
-			node_2 = Unit.node(arg_4_2, target)
+		if type(target_node) == "string" then
+			node_2 = Unit.node(target, target_node)
 
 			if not node_2 then
 				-- Nothing
 			end
 		end
 
-		node_2 = target
+		node_2 = target_node
+
+		local target_node_index = node_2
 
 		::label_4_1::
 
-		World.link_unit(arg_4_0, arg_4_2, node_2, arg_4_1, node)
+		World.link_unit(world, target, target_node_index, source, source_node_index)
 	end
 end
 
-AttachmentUtils.unlink = function (arg_5_0, arg_5_1)
+AttachmentUtils.unlink = function (world, target)
 	-- function 5
-	World.unlink_unit(arg_5_0, arg_5_1)
+	World.unlink_unit(world, target)
 end
 
-AttachmentUtils.hot_join_sync = function (arg_6_0, arg_6_1, arg_6_2, arg_6_3)
+AttachmentUtils.hot_join_sync = function (peer_id, unit, slots, synced_buffs)
 	-- function 6
-	if not Managers.state.unit_spawner:is_marked_for_deletion(arg_6_1) then
+	local is_marked_for_deletion = Managers.state.unit_spawner:is_marked_for_deletion(unit)
+
+	if is_marked_for_deletion then
 		return
 	end
 
-	local go_id = Managers.state.unit_storage:go_id(arg_6_1)
+	local unit_go_id = Managers.state.unit_storage:go_id(unit)
 
-	for k, v in pairs(arg_6_2) do
+	for slot_name, slot_data in pairs(slots) do
 		repeat
-			if InventorySettings.slots_by_name[k].category ~= "attachment" then
+			local slot = InventorySettings.slots_by_name[slot_name]
+
+			if slot.category ~= "attachment" then
 				break
 			end
 
-			local var_6_1 = NetworkLookup.equipment_slots[k]
-			local var_6_2 = NetworkLookup.item_names[v.name]
-			local var_6_3 = PEER_ID_TO_CHANNEL[arg_6_0]
+			local slot_id = NetworkLookup.equipment_slots[slot_name]
+			local attachment_id = NetworkLookup.item_names[slot_data.name]
+			local channel_id = PEER_ID_TO_CHANNEL[peer_id]
 
-			RPC.rpc_create_attachment(var_6_3, go_id, var_6_1, var_6_2)
+			RPC.rpc_create_attachment(channel_id, unit_go_id, slot_id, attachment_id)
 
-			local var_6_4 = arg_6_3[k]
+			local slot_synced_buffs = synced_buffs[slot_name]
 
-			if not var_6_4 then
-				local buffs_to_rpc_params = BuffUtils.buffs_to_rpc_params(var_6_4)
-				local var_6_6, var_6_7, var_6_8, var_6_9 = unpack(buffs_to_rpc_params)
+			if slot_synced_buffs then
+				local rpc_params = BuffUtils.buffs_to_rpc_params(slot_synced_buffs)
+				local num_buffs, buff_ids, buff_value_type_ids, buff_values = unpack(rpc_params)
 
-				RPC.rpc_add_attachment_buffs(var_6_3, go_id, var_6_1, var_6_6, var_6_7, var_6_8, var_6_9)
+				RPC.rpc_add_attachment_buffs(channel_id, unit_go_id, slot_id, num_buffs, buff_ids, buff_value_type_ids, buff_values)
 			end
 		until true
 	end
 end
 
-AttachmentUtils.get_syncable_buff_params = function (arg_7_0)
+AttachmentUtils.get_syncable_buff_params = function (synced_buffs)
 	-- function 7
-	local var_7_0
-	local var_7_1
-	local var_7_2
-	local var_7_3
-	local var_7_4
-	local var_7_5
-	local var_7_6
-	local var_7_7
-	local var_7_8
-	local var_7_9
-	local var_7_10
-	local var_7_11
-	local var_7_12
-	local var_7_13
-	local var_7_14
-	local var_7_15
-	local var_7_16, var_7_17 = next(arg_7_0)
+	local buff_name_1, buff_variable_data_1, buff_data_type_1, buff_value_1, buff_name_2, buff_variable_data_2, buff_data_type_2, buff_value_2, buff_name_3, buff_variable_data_3, buff_data_type_3, buff_value_3, buff_name_4, buff_variable_data_4, buff_data_type_4, buff_value_4
 
-	if not var_7_16 then
-		var_7_2, var_7_3 = next(var_7_17)
+	buff_name_1, buff_variable_data_1 = next(synced_buffs)
 
-		local var_7_18
+	if buff_name_1 then
+		buff_data_type_1, buff_value_1 = next(buff_variable_data_1)
+		buff_name_2, buff_variable_data_2 = next(synced_buffs, buff_name_1)
 
-		var_7_4, var_7_18 = next(arg_7_0, var_7_16)
+		if buff_name_2 then
+			buff_data_type_2, buff_value_2 = next(buff_variable_data_2)
+			buff_name_3, buff_variable_data_3 = next(synced_buffs, buff_name_2)
 
-		if not var_7_4 then
-			var_7_6, var_7_7 = next(var_7_18)
+			if buff_name_3 then
+				buff_data_type_3, buff_value_3 = next(buff_variable_data_3)
+				buff_name_4, buff_variable_data_4 = next(synced_buffs, buff_name_3)
 
-			local var_7_19
-
-			var_7_8, var_7_19 = next(arg_7_0, var_7_4)
-
-			if not var_7_8 then
-				var_7_10, var_7_11 = next(var_7_19)
-
-				local var_7_20
-
-				var_7_12, var_7_20 = next(arg_7_0, var_7_8)
-
-				if not var_7_12 then
-					var_7_14, var_7_15 = next(var_7_20)
+				if buff_name_4 then
+					buff_data_type_4, buff_value_4 = next(buff_variable_data_4)
 				end
 			end
 		end
 	end
 
-	local var_7_21 = NetworkLookup.buff_templates["n/a"]
-	local var_7_22
+	local default_buff_id = NetworkLookup.buff_templates["n/a"]
+	local var_7_0
 
-	if not var_7_16 then
-		var_7_22 = NetworkLookup.buff_templates[var_7_16]
+	if buff_name_1 then
+		var_7_0 = NetworkLookup.buff_templates[buff_name_1]
 
-		if not var_7_22 then
+		if not var_7_0 then
 			-- Nothing
 		end
 	end
 
-	var_7_22 = var_7_21
+	var_7_0 = default_buff_id
+
+	local buff_1_id = var_7_0
 
 	do
-		local var_7_23
+		local var_7_1
 	end
 
 	::label_7_0::
 
-	if not var_7_4 then
-		var_7_23 = NetworkLookup.buff_templates[var_7_4]
+	if buff_name_2 then
+		var_7_1 = NetworkLookup.buff_templates[buff_name_2]
 
-		if not var_7_23 then
+		if not var_7_1 then
 			-- Nothing
 		end
 	end
 
-	var_7_23 = var_7_21
+	var_7_1 = default_buff_id
+
+	local buff_2_id = var_7_1
 
 	do
-		local var_7_24
+		local var_7_2
 	end
 
 	::label_7_1::
 
-	if not var_7_8 then
-		var_7_24 = NetworkLookup.buff_templates[var_7_8]
+	if buff_name_3 then
+		var_7_2 = NetworkLookup.buff_templates[buff_name_3]
 
-		if not var_7_24 then
+		if not var_7_2 then
 			-- Nothing
 		end
 	end
 
-	var_7_24 = var_7_21
+	var_7_2 = default_buff_id
+
+	local buff_3_id = var_7_2
 
 	do
-		local var_7_25
+		local var_7_3
 	end
 
 	::label_7_2::
 
-	if not var_7_12 then
-		var_7_25 = NetworkLookup.buff_templates[var_7_12]
+	if buff_name_4 then
+		var_7_3 = NetworkLookup.buff_templates[buff_name_4]
 
-		if not var_7_25 then
+		if not var_7_3 then
 			-- Nothing
 		end
 	end
 
-	var_7_25 = var_7_21
+	var_7_3 = default_buff_id
+
+	local buff_4_id = var_7_3
 
 	::label_7_3::
 
-	local var_7_26 = NetworkLookup.buff_data_types["n/a"]
-	local var_7_27
+	local default_buff_data_type_id = NetworkLookup.buff_data_types["n/a"]
+	local var_7_4
 
-	if not var_7_16 then
-		var_7_27 = NetworkLookup.buff_data_types[var_7_2]
+	if buff_name_1 then
+		var_7_4 = NetworkLookup.buff_data_types[buff_data_type_1]
 
-		if not var_7_27 then
+		if not var_7_4 then
 			-- Nothing
 		end
 	end
 
-	var_7_27 = var_7_26
+	var_7_4 = default_buff_data_type_id
+
+	local buff_data_type_1_id = var_7_4
 
 	do
-		local var_7_28
+		local var_7_5
 	end
 
 	::label_7_4::
 
-	if not var_7_4 then
-		var_7_28 = NetworkLookup.buff_data_types[var_7_6]
+	if buff_name_2 then
+		var_7_5 = NetworkLookup.buff_data_types[buff_data_type_2]
 
-		if not var_7_28 then
+		if not var_7_5 then
 			-- Nothing
 		end
 	end
 
-	var_7_28 = var_7_26
+	var_7_5 = default_buff_data_type_id
+
+	local buff_data_type_2_id = var_7_5
 
 	do
-		local var_7_29
+		local var_7_6
 	end
 
 	::label_7_5::
 
-	if not var_7_8 then
-		var_7_29 = NetworkLookup.buff_data_types[var_7_10]
+	if buff_name_3 then
+		var_7_6 = NetworkLookup.buff_data_types[buff_data_type_3]
 
-		if not var_7_29 then
+		if not var_7_6 then
 			-- Nothing
 		end
 	end
 
-	var_7_29 = var_7_26
+	var_7_6 = default_buff_data_type_id
+
+	local buff_data_type_3_id = var_7_6
 
 	do
-		local var_7_30
+		local var_7_7
 	end
 
 	::label_7_6::
 
-	if not var_7_12 then
-		var_7_30 = NetworkLookup.buff_data_types[var_7_14]
+	if buff_name_4 then
+		var_7_7 = NetworkLookup.buff_data_types[buff_data_type_4]
 
-		if not var_7_30 then
+		if not var_7_7 then
 			-- Nothing
 		end
 	end
 
-	var_7_30 = var_7_26
+	var_7_7 = default_buff_data_type_id
+
+	local buff_data_type_4_id = var_7_7
 
 	::label_7_7::
 
-	var_7_3 = var_7_3 or 1
-	var_7_7 = var_7_7 or 1
-	var_7_11 = var_7_11 or 1
-	var_7_15 = var_7_15 or 1
+	buff_value_1 = not not buff_value_1 or not not 1
+	buff_value_2 = not not buff_value_2 or not not 1
+	buff_value_3 = not not buff_value_3 or not not 1
+	buff_value_4 = not not buff_value_4 or not not 1
 
-	return {
-		var_7_22,
-		var_7_27,
-		var_7_3,
-		var_7_23,
-		var_7_28,
-		var_7_7,
-		var_7_24,
-		var_7_29,
-		var_7_11,
-		var_7_25,
-		var_7_30,
-		var_7_15
+	local params = {
+		buff_1_id,
+		buff_data_type_1_id,
+		buff_value_1,
+		buff_2_id,
+		buff_data_type_2_id,
+		buff_value_2,
+		buff_3_id,
+		buff_data_type_3_id,
+		buff_value_3,
+		buff_4_id,
+		buff_data_type_4_id,
+		buff_value_4
 	}
+
+	return params
 end

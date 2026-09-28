@@ -3,38 +3,38 @@
 require("scripts/managers/spawn/respawn_handler")
 require("scripts/managers/game_mode/spawning_components/spawning_helper")
 
-local num = 0.5
-local num_2 = 1
-local tbl = {
+local MINIMUM_HEALTH = 0.5
+local REAL_PLAYER_LOCAL_ID = 1
+local RPCS = {
 	"rpc_to_server_spawn_failed"
 }
 
 DeusSpawning = class(DeusSpawning)
 
-DeusSpawning.init = function (self, arg_1_1, arg_1_2, arg_1_3, arg_1_4, arg_1_5)
+DeusSpawning.init = function (self, profile_synchronizer, side, is_server, network_server, deus_run_controller)
 	-- function 1
-	self._profile_synchronizer = arg_1_1
-	self._side = arg_1_2
-	self._is_server = arg_1_3
-	self._network_server = arg_1_4
+	self._profile_synchronizer = profile_synchronizer
+	self._side = side
+	self._is_server = is_server
+	self._network_server = network_server
 	self._respawns_enabled = true
 	self._spawning = true
-	self._respawn_handler = RespawnHandler:new(arg_1_1, arg_1_3)
+	self._respawn_handler = RespawnHandler:new(profile_synchronizer, is_server)
 	self._peers_ongoing_game_object_sync = {}
 	self._spawn_points = {}
 	self._num_spawn_points_used = 0
 	self._status_updates_active = true
 	self._delayed_clients = {}
-	self._deus_run_controller = arg_1_5
+	self._deus_run_controller = deus_run_controller
 end
 
-DeusSpawning.register_rpcs = function (self, arg_2_1, arg_2_2)
+DeusSpawning.register_rpcs = function (self, network_event_delegate, network_transmit)
 	-- function 2
-	arg_2_1:register(self, unpack(tbl))
+	network_event_delegate:register(self, unpack(RPCS))
 
-	self._network_event_delegate = arg_2_1
+	self._network_event_delegate = network_event_delegate
 
-	self._respawn_handler:register_rpcs(arg_2_1, arg_2_2)
+	self._respawn_handler:register_rpcs(network_event_delegate, network_transmit)
 end
 
 DeusSpawning.unregister_rpcs = function (self)
@@ -45,343 +45,348 @@ DeusSpawning.unregister_rpcs = function (self)
 	self._network_event_delegate = nil
 end
 
-DeusSpawning._restore_player_game_mode_data = function (self, arg_4_1, arg_4_2, arg_4_3, arg_4_4)
+DeusSpawning._restore_player_game_mode_data = function (self, peer_id, local_player_id, profile_index, career_index)
 	-- function 4
-	local restore_game_mode_data = self._deus_run_controller:restore_game_mode_data(arg_4_1, arg_4_2, arg_4_3, arg_4_4)
+	local game_mode_data = self._deus_run_controller:restore_game_mode_data(peer_id, local_player_id, profile_index, career_index)
 
-	restore_game_mode_data.temporary_health_percentage = 0
-	restore_game_mode_data.ability_cooldown_percentage = 1
-	restore_game_mode_data.last_update = -math.huge
+	game_mode_data.temporary_health_percentage = 0
+	game_mode_data.ability_cooldown_percentage = 1
+	game_mode_data.last_update = -math.huge
 
-	local time = Managers.time:time("client_ingame")
-	local flag = time == nil or time < 10
-	local var_4_3
-	local var_4_4
+	local ingame_time = Managers.time:time("client_ingame")
+	local is_initial_spawn = ingame_time == nil or ingame_time < 10
+	local box_pos, box_rot
 
-	if not flag then
-		var_4_3, var_4_4 = self:get_spawn_point()
+	if is_initial_spawn then
+		box_pos, box_rot = self:get_spawn_point()
 	else
-		local conflict = Managers.state.conflict
-		local get_main_paths = conflict.level_analysis:get_main_paths()
-		local main_path_info = conflict.main_path_info
-		local main_path_player_info = conflict.main_path_player_info
+		local conflict_director = Managers.state.conflict
+		local main_paths = conflict_director.level_analysis:get_main_paths()
+		local main_path_info = conflict_director.main_path_info
+		local main_path_player_info = conflict_director.main_path_player_info
 
-		var_4_3, var_4_4 = MainPathUtils.get_main_path_point_between_players(get_main_paths, main_path_info, main_path_player_info)
+		box_pos, box_rot = MainPathUtils.get_main_path_point_between_players(main_paths, main_path_info, main_path_player_info)
 	end
 
-	restore_game_mode_data.position = var_4_3
-	restore_game_mode_data.rotation = var_4_4
+	game_mode_data.position = box_pos
+	game_mode_data.rotation = box_rot
 
-	if restore_game_mode_data.health_state ~= "alive" then
-		restore_game_mode_data.health_state = "dead"
-		restore_game_mode_data.ready_for_respawn = true
+	if game_mode_data.health_state ~= "alive" then
+		game_mode_data.health_state = "dead"
+		game_mode_data.ready_for_respawn = true
 	end
 
-	if restore_game_mode_data.health_state == "dead" then
-		restore_game_mode_data.spawn_state = "not_spawned"
-	elseif not flag then
-		restore_game_mode_data.spawn_state = "is_initial_spawn"
+	if game_mode_data.health_state == "dead" then
+		game_mode_data.spawn_state = "not_spawned"
+	elseif is_initial_spawn then
+		game_mode_data.spawn_state = "is_initial_spawn"
 	else
-		restore_game_mode_data.spawn_state = "spawn"
+		game_mode_data.spawn_state = "spawn"
 	end
 
-	if restore_game_mode_data.health_state == "alive" then
-		local var_4_9 = num
+	if game_mode_data.health_state == "alive" then
+		local minimum_health_at_start = MINIMUM_HEALTH
 
-		restore_game_mode_data.health_percentage = math.max(restore_game_mode_data.health_percentage, var_4_9)
+		game_mode_data.health_percentage = math.max(game_mode_data.health_percentage, minimum_health_at_start)
 	end
 
-	restore_game_mode_data.needs_initial_buffs = true
+	game_mode_data.needs_initial_buffs = true
 
-	return restore_game_mode_data
+	return game_mode_data
 end
 
-DeusSpawning._check_observer_camera = function (self, arg_5_1, arg_5_2)
+DeusSpawning._check_observer_camera = function (self, peer_id, local_player_id)
 	-- function 5
-	local get_own_peer_id = self._deus_run_controller:get_own_peer_id()
+	local self_peer_id = self._deus_run_controller:get_own_peer_id()
+	local dead = self._deus_run_controller:get_player_health_state(peer_id, local_player_id) == "dead"
 
-	if not (not (self._deus_run_controller:get_player_health_state(arg_5_1, arg_5_2) == "dead") and arg_5_1 == get_own_peer_id) then
-		local var_5_1 = PEER_ID_TO_CHANNEL[arg_5_1]
+	if dead and peer_id ~= self_peer_id then
+		local channel_id = PEER_ID_TO_CHANNEL[peer_id]
 
-		RPC.rpc_set_observer_camera(var_5_1, arg_5_2)
+		RPC.rpc_set_observer_camera(channel_id, local_player_id)
 	end
 end
 
-DeusSpawning._unassign_data_from_slot = function (arg_6_0, arg_6_1, arg_6_2)
+DeusSpawning._unassign_data_from_slot = function (self, slot, data)
 	-- function 6
-	arg_6_1.game_mode_data = {}
+	slot.game_mode_data = {}
 end
 
-DeusSpawning.player_entered_game_session = function (self, arg_7_1, arg_7_2)
+DeusSpawning.player_entered_game_session = function (self, peer_id, local_player_id)
 	-- function 7
-	local get_player_status = Managers.party:get_player_status(arg_7_1, arg_7_2)
+	local status = Managers.party:get_player_status(peer_id, local_player_id)
 
-	if not get_player_status.career_index then
-		get_player_status.game_mode_data = self:_restore_player_game_mode_data(arg_7_1, arg_7_2, get_player_status.profile_index, get_player_status.career_index)
+	if status.career_index then
+		status.game_mode_data = self:_restore_player_game_mode_data(peer_id, local_player_id, status.profile_index, status.career_index)
 	end
 end
 
-DeusSpawning.player_joined_party = function (arg_8_0, arg_8_1, arg_8_2, arg_8_3, arg_8_4)
+DeusSpawning.player_joined_party = function (self, peer_id, local_player_id, party_id, slot_id)
 	-- function 8
 	return
 end
 
-DeusSpawning.player_left_party = function (arg_9_0, arg_9_1, arg_9_2, arg_9_3, arg_9_4)
+DeusSpawning.player_left_party = function (self, peer_id, local_player_id, party_id, slot_id)
 	-- function 9
 	return
 end
 
-DeusSpawning.update = function (self, arg_10_1, arg_10_2)
+DeusSpawning.update = function (self, t, dt)
 	-- function 10
-	if not Managers.state.network:game() then
-		self._respawn_handler:update(arg_10_2, arg_10_1)
+	if Managers.state.network:game() then
+		self._respawn_handler:update(dt, t)
 	end
 end
 
-DeusSpawning.server_update = function (self, arg_11_1, arg_11_2)
+DeusSpawning.server_update = function (self, t, dt)
 	-- function 11
-	if not Managers.state.network:game() then
-		local occupied_slots = self._side.party.occupied_slots
+	if Managers.state.network:game() then
+		local party = self._side.party
+		local occupied_slots = party.occupied_slots
 
-		if not self._status_updates_active then
-			self:_update_player_status(arg_11_1, arg_11_2, occupied_slots)
+		if self._status_updates_active then
+			self:_update_player_status(t, dt, occupied_slots)
 		end
 
 		local allow_respawns = Managers.state.difficulty:get_difficulty_settings().allow_respawns
 
-		if not self._respawns_enabled and not allow_respawns then
-			self._respawn_handler:server_update(arg_11_2, arg_11_1, occupied_slots)
+		if self._respawns_enabled and allow_respawns then
+			self._respawn_handler:server_update(dt, t, occupied_slots)
 		end
 
-		self:_update_spawning(arg_11_2, arg_11_1, occupied_slots)
-		self:_update_joining_clients(arg_11_2, arg_11_1)
+		self:_update_spawning(dt, t, occupied_slots)
+		self:_update_joining_clients(dt, t)
 	end
 end
 
-DeusSpawning.profile_changed = function (self, arg_12_1, arg_12_2, arg_12_3, arg_12_4)
+DeusSpawning.profile_changed = function (self, peer_id, local_player_id, profile_index, career_index)
 	-- function 12
-	local get_player_status = Managers.party:get_player_status(arg_12_1, arg_12_2)
+	local status = Managers.party:get_player_status(peer_id, local_player_id)
 
-	get_player_status.game_mode_data = self:_restore_player_game_mode_data(arg_12_1, arg_12_2, get_player_status.profile_index, get_player_status.career_index)
+	status.game_mode_data = self:_restore_player_game_mode_data(peer_id, local_player_id, status.profile_index, status.career_index)
 end
 
-local tbl_2 = {}
+local working_persistent_buff_array = {}
 
-DeusSpawning._update_player_status = function (self, arg_13_1, arg_13_2, arg_13_3)
+DeusSpawning._update_player_status = function (self, t, dt, occupied_slots)
 	-- function 13
-	local player = Managers.player
-	local extension = ScriptUnit.extension
+	local player_manager = Managers.player
+	local ScriptUnit_extension = ScriptUnit.extension
 
-	for i = 1, #arg_13_3 do
-		local var_13_2 = arg_13_3[i]
-		local game_mode_data = var_13_2.game_mode_data
-		local peer_id = var_13_2.peer_id
-		local local_player_id = var_13_2.local_player_id
+	for i = 1, #occupied_slots do
+		local status = occupied_slots[i]
+		local data = status.game_mode_data
+		local peer_id = status.peer_id
+		local local_player_id = status.local_player_id
 
-		if not peer_id and not local_player_id then
-			local player_2 = player:player(peer_id, local_player_id)
+		if peer_id and local_player_id then
+			local player = player_manager:player(peer_id, local_player_id)
 
-			if not player_2 then
-				local spawn_state = game_mode_data.spawn_state
+			if player then
+				local spawn_state = data.spawn_state
 
 				if spawn_state == "force_respawn" then
-					if Unit.alive(player_2.player_unit) or not self._profile_synchronizer:all_synced() then
-						game_mode_data.spawn_state = "spawn"
+					if not Unit.alive(player.player_unit) and self._profile_synchronizer:all_synced() then
+						data.spawn_state = "spawn"
 					end
 				elseif spawn_state == "spawned" then
-					local player_unit = player_2.player_unit
+					local player_unit = player.player_unit
 
 					if not player_unit then
-						game_mode_data.needs_initial_buffs = true
+						data.needs_initial_buffs = true
 					else
-						if not game_mode_data.needs_initial_buffs then
-							self:_apply_initial_buffs(player_2)
+						if data.needs_initial_buffs then
+							self:_apply_initial_buffs(player)
 
-							game_mode_data.needs_initial_buffs = false
+							data.needs_initial_buffs = false
 						end
 
-						local last_position_on_navmesh = extension(player_unit, "locomotion_system"):last_position_on_navmesh()
+						local safe_position = ScriptUnit_extension(player_unit, "locomotion_system"):last_position_on_navmesh()
 
-						game_mode_data.position:store(last_position_on_navmesh)
-						game_mode_data.rotation:store(Unit.local_rotation(player_unit, 0))
+						data.position:store(safe_position)
+						data.rotation:store(Unit.local_rotation(player_unit, 0))
 
-						local var_13_10 = extension(player_unit, "status_system")
-						local is_dead = var_13_10:is_dead()
+						local status_extension = ScriptUnit_extension(player_unit, "status_system")
+						local is_dead = status_extension:is_dead()
 
-						if not is_dead then
-							if game_mode_data.health_state ~= "respawning" then
-								game_mode_data.health_state = "dead"
+						if is_dead then
+							if data.health_state ~= "respawning" then
+								data.health_state = "dead"
 							end
-						elseif not var_13_10:is_ready_for_assisted_respawn() then
-							game_mode_data.health_state = "respawn"
-						elseif not var_13_10:is_knocked_down() then
-							game_mode_data.health_state = "knocked_down"
-						elseif not (not var_13_10:is_disabled() and var_13_10:is_in_vortex() or var_13_10:is_grabbed_by_corruptor() or var_13_10:is_grabbed_by_chaos_spawn() or var_13_10:is_overpowered()) then
-							game_mode_data.health_state = "disabled"
+						elseif status_extension:is_ready_for_assisted_respawn() then
+							data.health_state = "respawn"
+						elseif status_extension:is_knocked_down() then
+							data.health_state = "knocked_down"
+						elseif status_extension:is_disabled() and not status_extension:is_in_vortex() and not status_extension:is_grabbed_by_corruptor() and not status_extension:is_grabbed_by_chaos_spawn() and not status_extension:is_overpowered() then
+							data.health_state = "disabled"
 						else
-							game_mode_data.health_state = "alive"
+							data.health_state = "alive"
 
-							local respawn_unit = game_mode_data.respawn_unit
+							local respawn_unit = data.respawn_unit
 
-							if not respawn_unit then
+							if respawn_unit then
 								self._respawn_handler:set_respawn_unit_available(respawn_unit)
 
-								game_mode_data.respawn_unit = nil
+								data.respawn_unit = nil
 							end
 						end
 
-						local var_13_13 = extension(player_unit, "health_system")
-						local var_13_14 = extension(player_unit, "career_system")
+						local health_ext = ScriptUnit_extension(player_unit, "health_system")
+						local career_ext = ScriptUnit_extension(player_unit, "career_system")
 
-						if not (not is_dead and game_mode_data.health_state == "respawning") then
-							game_mode_data.health_percentage = var_13_13:current_permanent_health_percent()
-							game_mode_data.temporary_health_percentage = var_13_13:current_temporary_health_percent()
-							game_mode_data.ability_cooldown_percentage = var_13_14:current_ability_cooldown_percentage()
+						if not is_dead or data.health_state ~= "respawning" then
+							data.health_percentage = health_ext:current_permanent_health_percent()
+							data.temporary_health_percentage = health_ext:current_temporary_health_percent()
+							data.ability_cooldown_percentage = career_ext:current_ability_cooldown_percentage()
 						end
 
 						if not DamageUtils.is_in_inn then
-							local var_13_15 = extension(player_unit, "inventory_system")
+							local inventory = ScriptUnit_extension(player_unit, "inventory_system")
 
-							SpawningHelper.fill_consumable_table(game_mode_data.consumables, var_13_15)
-							SpawningHelper.fill_ammo_percentage(game_mode_data.ammo, var_13_15, player_unit)
+							SpawningHelper.fill_consumable_table(data.consumables, inventory)
+							SpawningHelper.fill_ammo_percentage(data.ammo, inventory, player_unit)
 
-							game_mode_data.additional_items = var_13_15:get_additional_items_table()
+							data.additional_items = inventory:get_additional_items_table()
 						end
 
-						local active_buffs = extension(player_unit, "buff_system"):active_buffs()
+						local buff_ext = ScriptUnit_extension(player_unit, "buff_system")
+						local buffs = buff_ext:active_buffs()
 
-						table.clear(tbl_2)
+						table.clear(working_persistent_buff_array)
 
-						local num = 1
+						local index = 1
 
-						for k, v in pairs(active_buffs) do
-							local template = v.template
+						for _, buff_data in pairs(buffs) do
+							local template = buff_data.template
 
-							if v.removed or not template.is_persistent then
-								tbl_2[num] = template.name
-								num = num + 1
+							if not buff_data.removed and template.is_persistent then
+								working_persistent_buff_array[index] = template.name
+								index = index + 1
 							end
 						end
 
-						self._deus_run_controller:save_game_mode_data(peer_id, local_player_id, var_13_2.profile_index, var_13_2.career_index, game_mode_data)
-						self._deus_run_controller:save_persistent_buffs(peer_id, local_player_id, var_13_2.profile_index, var_13_2.career_index, tbl_2)
+						self._deus_run_controller:save_game_mode_data(peer_id, local_player_id, status.profile_index, status.career_index, data)
+						self._deus_run_controller:save_persistent_buffs(peer_id, local_player_id, status.profile_index, status.career_index, working_persistent_buff_array)
 					end
-				elseif not (spawn_state == "spawning" or spawn_state ~= "initial_spawning") then
-					if not player_2.player_unit then
-						game_mode_data.spawn_state = "spawned"
+				elseif spawn_state == "spawning" or spawn_state == "initial_spawning" then
+					if player.player_unit then
+						data.spawn_state = "spawned"
 					end
-				elseif spawn_state == "despawned" or spawn_state == "not_spawned" or not player_2.player_unit then
-					game_mode_data.spawn_state = "spawned"
+				elseif (spawn_state == "despawned" or spawn_state == "not_spawned") and player.player_unit then
+					data.spawn_state = "spawned"
 				end
 			end
 		end
 	end
 end
 
-DeusSpawning._apply_initial_buffs = function (self, arg_14_1)
+DeusSpawning._apply_initial_buffs = function (self, player)
 	-- function 14
-	local player_unit = arg_14_1.player_unit
-	local network_id = arg_14_1:network_id()
-	local local_player_id = arg_14_1:local_player_id()
-	local system = Managers.state.entity:system("buff_system")
-	local get_player_persistent_buffs = self._deus_run_controller:get_player_persistent_buffs(network_id, local_player_id)
+	local player_unit = player.player_unit
+	local peer_id = player:network_id()
+	local local_player_id = player:local_player_id()
+	local buff_system = Managers.state.entity:system("buff_system")
+	local persistent_buffs = self._deus_run_controller:get_player_persistent_buffs(peer_id, local_player_id)
 
-	for i, v in ipairs(get_player_persistent_buffs) do
-		system:add_buff(player_unit, v, player_unit)
+	for _, persistent_buff in ipairs(persistent_buffs) do
+		buff_system:add_buff(player_unit, persistent_buff, player_unit)
 	end
 
-	local get_player_power_ups = self._deus_run_controller:get_player_power_ups(arg_14_1.peer_id, local_player_id)
+	local power_ups = self._deus_run_controller:get_player_power_ups(player.peer_id, local_player_id)
 
-	for i_2, v_2 in ipairs(get_player_power_ups) do
-		local var_14_6 = DeusPowerUps[v_2.rarity][v_2.name]
+	for _, power_up_instance in ipairs(power_ups) do
+		local power_up = DeusPowerUps[power_up_instance.rarity][power_up_instance.name]
 
-		if not var_14_6.talent then
-			system:add_buff(player_unit, var_14_6.buff_name, player_unit)
+		if not power_up.talent then
+			buff_system:add_buff(player_unit, power_up.buff_name, player_unit)
 		end
 	end
 
-	local get_party_power_ups = self._deus_run_controller:get_party_power_ups()
+	local party_power_ups = self._deus_run_controller:get_party_power_ups()
 
-	for i_3, v_3 in ipairs(get_party_power_ups) do
-		local var_14_8 = DeusPowerUps[v_3.rarity][v_3.name]
+	for _, power_up_instance in ipairs(party_power_ups) do
+		local power_up = DeusPowerUps[power_up_instance.rarity][power_up_instance.name]
 
-		system:add_buff(player_unit, var_14_8.buff_name, player_unit)
+		buff_system:add_buff(player_unit, power_up.buff_name, player_unit)
 	end
 end
 
-DeusSpawning._update_spawning = function (self, arg_15_1, arg_15_2, arg_15_3)
+DeusSpawning._update_spawning = function (self, dt, t, occupied_slots)
 	-- function 15
-	if not self._spawning then
-		local get_own_peer_id = self._deus_run_controller:get_own_peer_id()
-		local flag = false
-		local peers_ongoing_game_object_sync, var_15_3 = Managers.state.network.network_server:peers_ongoing_game_object_sync(self._peers_ongoing_game_object_sync)
+	if self._spawning then
+		local own_peer_id = self._deus_run_controller:get_own_peer_id()
+		local local_player_is_ready = false
+		local joining_peers, num_joining_peers = Managers.state.network.network_server:peers_ongoing_game_object_sync(self._peers_ongoing_game_object_sync)
 
-		for i = 1, var_15_3 do
-			local var_15_4 = peers_ongoing_game_object_sync[i]
+		for i = 1, num_joining_peers do
+			local other_peer_id = joining_peers[i]
 
-			if not self._profile_synchronizer:all_synced_for_peer(var_15_4, 1) then
+			if not self._profile_synchronizer:all_synced_for_peer(other_peer_id, 1) then
 				return
 			end
 		end
 
-		for j = 1, #arg_15_3 do
-			local var_15_5 = arg_15_3[j]
-			local peer_id = var_15_5.peer_id
-			local local_player_id = var_15_5.local_player_id
+		for i = 1, #occupied_slots do
+			local status = occupied_slots[i]
+			local other_peer_id = status.peer_id
+			local other_local_player_id = status.local_player_id
 
-			if not self._profile_synchronizer:all_synced_for_peer(peer_id, local_player_id) then
+			if not self._profile_synchronizer:all_synced_for_peer(other_peer_id, other_local_player_id) then
 				return
 			end
 
-			if not (peer_id ~= get_own_peer_id or local_player_id ~= num_2) then
-				flag = true
+			if other_peer_id == own_peer_id and other_local_player_id == REAL_PLAYER_LOCAL_ID then
+				local_player_is_ready = true
 			end
 		end
 
-		if not flag then
+		if not local_player_is_ready then
 			return
 		end
 
-		local _network_server = self._network_server
+		local network_server = self._network_server
 
-		for k = 1, #arg_15_3 do
-			local var_15_9 = arg_15_3[k]
-			local spawn_state = var_15_9.game_mode_data.spawn_state
-			local var_15_11
+		for i = 1, #occupied_slots do
+			local status = occupied_slots[i]
+			local data = status.game_mode_data
+			local spawn_state = data.spawn_state
+			local ready_to_spawn
 
-			if not DEDICATED_SERVER then
-				var_15_11 = _network_server.game_session ~= nil
+			if DEDICATED_SERVER then
+				local game_session = network_server.game_session ~= nil
+
+				ready_to_spawn = game_session
 			else
-				var_15_11 = _network_server:is_peer_ingame(var_15_9.peer_id)
+				ready_to_spawn = network_server:is_peer_ingame(status.peer_id)
 			end
 
-			local flag_2 = spawn_state == "is_initial_spawn" or spawn_state == "spawn"
+			local wants_to_spawn = spawn_state == "is_initial_spawn" or spawn_state == "spawn"
 
-			if not var_15_11 and not flag_2 then
-				if not var_15_9.is_bot then
-					self:_spawn_bot(var_15_9)
+			if ready_to_spawn and wants_to_spawn then
+				if status.is_bot then
+					self:_spawn_bot(status)
 				else
-					self:_spawn_player(var_15_9)
+					self:_spawn_player(status)
 				end
 			end
 		end
 	end
 end
 
-DeusSpawning.add_delayed_client = function (arg_16_0, arg_16_1, arg_16_2)
+DeusSpawning.add_delayed_client = function (self, peer_id, local_player_id)
 	-- function 16
-	arg_16_0._delayed_clients[#arg_16_0._delayed_clients + 1] = {
-		peer_id = arg_16_1,
-		local_player_id = arg_16_2
+	self._delayed_clients[#self._delayed_clients + 1] = {
+		peer_id = peer_id,
+		local_player_id = local_player_id
 	}
 end
 
-DeusSpawning.remove_delayed_client = function (self, arg_17_1, arg_17_2)
+DeusSpawning.remove_delayed_client = function (self, peer_id, local_player_id)
 	-- function 17
 	for i = #self._delayed_clients, 1, -1 do
-		local var_17_0 = self._delayed_clients[i]
+		local peer_data = self._delayed_clients[i]
 
-		if not (var_17_0.peer_id ~= arg_17_1 or var_17_0.local_player_id ~= arg_17_2) then
+		if peer_data.peer_id == peer_id and peer_data.local_player_id == local_player_id then
 			table.remove(self._delayed_clients, i)
 
 			return
@@ -389,17 +394,17 @@ DeusSpawning.remove_delayed_client = function (self, arg_17_1, arg_17_2)
 	end
 end
 
-DeusSpawning._update_joining_clients = function (self, arg_18_1, arg_18_2)
+DeusSpawning._update_joining_clients = function (self, dt, t)
 	-- function 18
-	if not self._spawning and not self._profile_synchronizer:all_synced() then
-		local _network_server = self._network_server
+	if self._spawning and self._profile_synchronizer:all_synced() then
+		local network_server = self._network_server
 
 		for i = #self._delayed_clients, 1, -1 do
-			local var_18_1 = self._delayed_clients[i]
-			local peer_id = var_18_1.peer_id
-			local local_player_id = var_18_1.local_player_id
+			local peer_data = self._delayed_clients[i]
+			local peer_id = peer_data.peer_id
+			local local_player_id = peer_data.local_player_id
 
-			if not _network_server:is_peer_ingame(peer_id) then
+			if network_server:is_peer_ingame(peer_id) then
 				self:_add_client_to_party(peer_id, local_player_id)
 				table.remove(self._delayed_clients, i)
 			end
@@ -407,177 +412,205 @@ DeusSpawning._update_joining_clients = function (self, arg_18_1, arg_18_2)
 	end
 end
 
-DeusSpawning._add_client_to_party = function (arg_19_0, arg_19_1, arg_19_2)
+DeusSpawning._add_client_to_party = function (self, peer_id, local_player_id)
 	-- function 19
-	local num = 1
+	local party_id = 1
+	local status = Managers.party:get_player_status(peer_id, local_player_id)
 
-	if Managers.party:get_player_status(arg_19_1, arg_19_2).party_id ~= num then
-		local flag = true
-		local remove_bot = Managers.state.game_mode:remove_bot(num, arg_19_1, arg_19_2, flag)
+	if status.party_id ~= party_id then
+		local update_safe = true
+		local removed_bot_player = Managers.state.game_mode:remove_bot(party_id, peer_id, local_player_id, update_safe)
 
-		Managers.party:request_join_party(arg_19_1, arg_19_2, num, nil, remove_bot)
+		Managers.party:request_join_party(peer_id, local_player_id, party_id, nil, removed_bot_player)
 	end
 end
 
-DeusSpawning._spawn_player = function (self, arg_20_1)
+DeusSpawning._spawn_player = function (self, status)
 	-- function 20
-	local game_mode_data = arg_20_1.game_mode_data
-	local _find_spawn_point, var_20_2 = self:_find_spawn_point(arg_20_1)
-	local flag = game_mode_data.spawn_state == "is_initial_spawn"
+	local data = status.game_mode_data
+	local position, rotation = self:_find_spawn_point(status)
+	local is_initial_spawn = data.spawn_state == "is_initial_spawn"
+	local session = Managers.state.network:game()
 
-	if not Managers.state.network:game() then
-		local peer_id = arg_20_1.peer_id
-		local local_player_id = arg_20_1.local_player_id
-		local profile_index = arg_20_1.profile_index
-		local career_index = arg_20_1.career_index
-		local netpack_consumables = SpawningHelper.netpack_consumables(game_mode_data.consumables)
-		local var_20_9, var_20_10, var_20_11 = unpack(netpack_consumables)
-		local netpack_additional_items = SpawningHelper.netpack_additional_items(game_mode_data.additional_items)
-		local tbl = {}
-		local ammo = game_mode_data.ammo
-		local floor = math.floor(ammo.slot_melee * 100)
-		local floor_2 = math.floor(ammo.slot_ranged * 100)
-		local ability_cooldown_percentage = game_mode_data.ability_cooldown_percentage
+	if session then
+		local peer_id = status.peer_id
+		local local_player_id = status.local_player_id
+		local profile_index = status.profile_index
+		local career_index = status.career_index
+		local network_consumables = SpawningHelper.netpack_consumables(data.consumables)
+		local healthkit_id, potion_id, grenade_id = unpack(network_consumables)
+		local network_additional_items = SpawningHelper.netpack_additional_items(data.additional_items)
+		local network_buff_ids = {}
+		local ammo = data.ammo
+		local ammo_melee_percent_int = math.floor(ammo.slot_melee * 100)
+		local ammo_ranged_percent_int = math.floor(ammo.slot_ranged * 100)
+		local ability_cooldown_percentage = data.ability_cooldown_percentage
 
-		ability_cooldown_percentage = ability_cooldown_percentage or 1
+		if not ability_cooldown_percentage then
+			-- Nothing
+		end
 
-		local floor_3 = math.floor(ability_cooldown_percentage * 100)
+		ability_cooldown_percentage = 1
+
+		local ability_cooldown_perentage = ability_cooldown_percentage
+
+		::label_20_0::
+
+		local ability_cooldown_percent_int = math.floor(ability_cooldown_perentage * 100)
 
 		printf("rpc_to_client_spawn_player %s %d", tostring(peer_id), local_player_id)
 
-		local cached_inventory_hash = self._profile_synchronizer:cached_inventory_hash(peer_id, local_player_id)
+		local inventory_hash = self._profile_synchronizer:cached_inventory_hash(peer_id, local_player_id)
 
-		Managers.state.network.network_transmit:send_rpc("rpc_to_client_spawn_player", peer_id, local_player_id, profile_index, career_index, _find_spawn_point, var_20_2, flag, floor, floor_2, floor_3, var_20_9, var_20_10, var_20_11, netpack_additional_items, tbl, cached_inventory_hash)
+		Managers.state.network.network_transmit:send_rpc("rpc_to_client_spawn_player", peer_id, local_player_id, profile_index, career_index, position, rotation, is_initial_spawn, ammo_melee_percent_int, ammo_ranged_percent_int, ability_cooldown_percent_int, healthkit_id, potion_id, grenade_id, network_additional_items, network_buff_ids, inventory_hash)
 	end
 
-	local flag_2
+	local flag
 
-	flag_2 = not flag and "initial_spawning" and "spawning"
-	game_mode_data.spawn_state = flag_2
+	flag = (not is_initial_spawn or not "initial_spawning") and not not "spawning"
+	data.spawn_state = flag
 end
 
-DeusSpawning._spawn_bot = function (arg_21_0, arg_21_1)
+DeusSpawning._spawn_bot = function (self, status)
 	-- function 21
-	local game_mode_data = arg_21_1.game_mode_data
-	local peer_id = arg_21_1.peer_id
-	local local_player_id = arg_21_1.local_player_id
-	local unbox = game_mode_data.position:unbox()
-	local unbox_2 = game_mode_data.rotation:unbox()
-	local flag = false
-	local consumables = game_mode_data.consumables
-	local ammo = game_mode_data.ammo
-	local player = Managers.player:player(peer_id, local_player_id)
+	local data = status.game_mode_data
+	local peer_id = status.peer_id
+	local local_player_id = status.local_player_id
+	local position = data.position:unbox()
+	local rotation = data.rotation:unbox()
+	local is_initial_spawn = false
+	local consumables = data.consumables
+	local ammo = data.ammo
+	local bot_player = Managers.player:player(peer_id, local_player_id)
 
-	fassert(player.bot_player, "Trying to spawn a player as a bot, status info isn't correct")
+	fassert(bot_player.bot_player, "Trying to spawn a player as a bot, status info isn't correct")
 
-	local ability_cooldown_percentage = game_mode_data.ability_cooldown_percentage
+	local ability_cooldown_percentage = data.ability_cooldown_percentage
 
-	ability_cooldown_percentage = ability_cooldown_percentage or 1
-
-	local floor = math.floor(ability_cooldown_percentage * 100)
-
-	player:spawn(unbox, unbox_2, flag, ammo.slot_melee, ammo.slot_ranged, consumables.slot_healthkit, consumables.slot_potion, consumables.slot_grenade, floor)
-
-	game_mode_data.spawn_state = "spawned"
-end
-
-DeusSpawning._find_spawn_point = function (self, arg_22_1)
-	-- function 22
-	local var_22_0
-	local var_22_1
-	local room = Managers.state.room
-
-	if not room then
-		var_22_0, var_22_1 = self:_spawn_pos_rot_from_index(room:get_spawn_point_by_peer(arg_22_1.peer_id))
-	else
-		local game_mode_data = arg_22_1.game_mode_data
-
-		fassert(game_mode_data.position, "This level is missing spawn-points for the players.")
-
-		var_22_0 = game_mode_data.position:unbox()
-		var_22_1 = game_mode_data.rotation:unbox()
+	if not ability_cooldown_percentage then
+		-- Nothing
 	end
 
-	return var_22_0, var_22_1
+	ability_cooldown_percentage = 1
+
+	local ability_cooldown_perentage = ability_cooldown_percentage
+
+	::label_21_0::
+
+	local ability_cooldown_percent_int = math.floor(ability_cooldown_perentage * 100)
+
+	bot_player:spawn(position, rotation, is_initial_spawn, ammo.slot_melee, ammo.slot_ranged, consumables.slot_healthkit, consumables.slot_potion, consumables.slot_grenade, ability_cooldown_percent_int)
+
+	data.spawn_state = "spawned"
 end
 
-DeusSpawning.force_update_spawn_positions = function (self, arg_23_1, arg_23_2)
+DeusSpawning._find_spawn_point = function (self, status)
+	-- function 22
+	local position, rotation
+	local room_manager = Managers.state.room
+
+	if room_manager then
+		position, rotation = self:_spawn_pos_rot_from_index(room_manager:get_spawn_point_by_peer(status.peer_id))
+	else
+		local data = status.game_mode_data
+
+		fassert(data.position, "This level is missing spawn-points for the players.")
+
+		position = data.position:unbox()
+		rotation = data.rotation:unbox()
+	end
+
+	return position, rotation
+end
+
+DeusSpawning.force_update_spawn_positions = function (self, safe_position, safe_rotation)
 	-- function 23
-	local occupied_slots = self._side.party.occupied_slots
+	local party = self._side.party
+	local occupied_slots = party.occupied_slots
 
 	for i = 1, #occupied_slots do
-		local game_mode_data = occupied_slots[i].game_mode_data
+		local status = occupied_slots[i]
+		local data = status.game_mode_data
 
-		if not game_mode_data and not game_mode_data.position and not game_mode_data.rotation then
-			game_mode_data.position:store(arg_23_1)
-			game_mode_data.rotation:store(arg_23_2)
+		if data and data.position and data.rotation then
+			data.position:store(safe_position)
+			data.rotation:store(safe_rotation)
 		end
 	end
 end
 
-DeusSpawning.set_respawning_enabled = function (self, arg_24_1)
+DeusSpawning.set_respawning_enabled = function (self, enabled)
 	-- function 24
-	fassert(self._respawns_enabled ~= arg_24_1, "Respawns already enabled=%s", tostring(arg_24_1))
+	fassert(self._respawns_enabled ~= enabled, "Respawns already enabled=%s", tostring(enabled))
 
-	self._respawns_enabled = arg_24_1
+	self._respawns_enabled = enabled
 end
 
-DeusSpawning.set_spawning_disabled = function (self, arg_25_1)
+DeusSpawning.set_spawning_disabled = function (self, disabled)
 	-- function 25
-	self._spawning = not arg_25_1
+	self._spawning = not disabled
 end
 
-DeusSpawning.add_spawn_point = function (self, arg_26_1)
+DeusSpawning.add_spawn_point = function (self, unit)
 	-- function 26
-	local local_position = Unit.local_position(arg_26_1, 0)
-	local local_rotation = Unit.local_rotation(arg_26_1, 0)
-	local tbl = {
-		pos = Vector3Box(local_position),
-		rot = QuaternionBox(local_rotation)
+	local pos = Unit.local_position(unit, 0)
+	local rot = Unit.local_rotation(unit, 0)
+	local spawn_point = {
+		pos = Vector3Box(pos),
+		rot = QuaternionBox(rot)
 	}
-	local get_data = Unit.get_data(arg_26_1, "from_game_mode")
+	local prior_state = Unit.get_data(unit, "from_game_mode")
 
-	get_data = get_data == "" or not get_data or "default"
+	prior_state = (prior_state == "" or not prior_state) and not not "default"
 
 	local _spawn_points = self._spawn_points
-	local var_26_5 = self._spawn_points[get_data]
+	local var_26_1 = self._spawn_points[prior_state]
 
-	var_26_5 = var_26_5 or {}
-	_spawn_points[get_data] = var_26_5
-	self._spawn_points[get_data][#self._spawn_points[get_data] + 1] = tbl
+	var_26_1 = not not var_26_1 or not not {}
+	_spawn_points[prior_state] = var_26_1
+	self._spawn_points[prior_state][#self._spawn_points[prior_state] + 1] = spawn_point
 end
 
 DeusSpawning.get_spawn_point = function (self)
 	-- function 27
-	local str = "default"
-	local get_prior_state = Managers.mechanism:get_prior_state()
-	local var_27_2 = self._spawn_points[get_prior_state]
+	local default_state = "default"
+	local prior_state = Managers.mechanism:get_prior_state()
+	local var_27_0 = self._spawn_points[prior_state]
 
-	var_27_2 = var_27_2 or self._spawn_points[str]
+	if not var_27_0 then
+		-- Nothing
+	end
+
+	var_27_0 = self._spawn_points[default_state]
+
+	local spawn_points = var_27_0
+
+	::label_27_0::
+
 	self._num_spawn_points_used = self._num_spawn_points_used + 1
 
-	if self._num_spawn_points_used > #var_27_2 then
+	if self._num_spawn_points_used > #spawn_points then
 		self._num_spawn_points_used = 1
 	end
 
-	local var_27_3 = var_27_2[self._num_spawn_points_used]
+	local spawn_point = spawn_points[self._num_spawn_points_used]
 
-	return var_27_3.pos, var_27_3.rot
+	return spawn_point.pos, spawn_point.rot
 end
 
-DeusSpawning.respawn_unit_spawned = function (self, arg_28_1)
+DeusSpawning.respawn_unit_spawned = function (self, unit)
 	-- function 28
-	self._respawn_handler:respawn_unit_spawned(arg_28_1)
+	self._respawn_handler:respawn_unit_spawned(unit)
 end
 
-DeusSpawning.respawn_gate_unit_spawned = function (self, arg_29_1)
+DeusSpawning.respawn_gate_unit_spawned = function (self, unit)
 	-- function 29
-	self._respawn_handler:respawn_gate_unit_spawned(arg_29_1)
+	self._respawn_handler:respawn_gate_unit_spawned(unit)
 end
 
-DeusSpawning.remove_respawn_units_due_to_crossroads = function (self, arg_30_1, arg_30_2)
+DeusSpawning.remove_respawn_units_due_to_crossroads = function (self, removed_path_distances, total_main_path_length)
 	-- function 30
-	self._respawn_handler:remove_respawn_units_due_to_crossroads(arg_30_1, arg_30_2)
+	self._respawn_handler:remove_respawn_units_due_to_crossroads(removed_path_distances, total_main_path_length)
 end
 
 DeusSpawning.recalc_respawner_dist_due_to_crossroads = function (self)
@@ -590,26 +623,30 @@ DeusSpawning.disable_status_updates = function (self)
 	self._status_updates_active = false
 end
 
-DeusSpawning.teleport_despawned_players = function (self, arg_33_1)
+DeusSpawning.teleport_despawned_players = function (self, position)
 	-- function 33
-	local occupied_slots = self._side.party.occupied_slots
-	local player = Managers.player
+	local party = self._side.party
+	local occupied_slots = party.occupied_slots
+	local player_manager = Managers.player
 
 	for i = 1, #occupied_slots do
-		local var_33_2 = occupied_slots[i]
-		local peer_id = var_33_2.peer_id
-		local local_player_id = var_33_2.local_player_id
-		local flag = not peer_id and not local_player_id and player:player(peer_id, local_player_id)
+		local status = occupied_slots[i]
+		local peer_id = status.peer_id
+		local local_player_id = status.local_player_id
+		local player = not not peer_id and not not local_player_id and not not player_manager:player(peer_id, local_player_id)
 
-		if not (not flag and flag.player_unit) then
-			var_33_2.game_mode_data.position:store(arg_33_1)
+		if not player or not player.player_unit then
+			status.game_mode_data.position:store(position)
 		end
 	end
 end
 
-DeusSpawning.force_respawn = function (arg_34_0, arg_34_1, arg_34_2)
+DeusSpawning.force_respawn = function (self, peer_id, local_player_id)
 	-- function 34
-	Managers.party:get_player_status(arg_34_1, arg_34_2).game_mode_data.spawn_state = "force_respawn"
+	local status = Managers.party:get_player_status(peer_id, local_player_id)
+	local data = status.game_mode_data
+
+	data.spawn_state = "force_respawn"
 end
 
 DeusSpawning.force_respawn_dead_players = function (self)
@@ -619,19 +656,19 @@ DeusSpawning.force_respawn_dead_players = function (self)
 	self._respawn_handler:force_respawn_dead_players(party)
 end
 
-DeusSpawning.set_override_respawn_group = function (self, arg_36_1, arg_36_2)
+DeusSpawning.set_override_respawn_group = function (self, respawn_group_name, active)
 	-- function 36
-	self._respawn_handler:set_override_respawn_group(arg_36_1, arg_36_2)
+	self._respawn_handler:set_override_respawn_group(respawn_group_name, active)
 end
 
-DeusSpawning.set_respawn_group_enabled = function (self, arg_37_1, arg_37_2)
+DeusSpawning.set_respawn_group_enabled = function (self, respawn_group_name, enabled)
 	-- function 37
-	self._respawn_handler:set_respawn_group_enabled(arg_37_1, arg_37_2)
+	self._respawn_handler:set_respawn_group_enabled(respawn_group_name, enabled)
 end
 
-DeusSpawning.set_respawn_gate_enabled = function (self, arg_38_1, arg_38_2)
+DeusSpawning.set_respawn_gate_enabled = function (self, respawn_gate_unit, enabled)
 	-- function 38
-	self._respawn_handler:set_respawn_gate_enabled(arg_38_1, arg_38_2)
+	self._respawn_handler:set_respawn_gate_enabled(respawn_gate_unit, enabled)
 end
 
 DeusSpawning.get_active_respawn_units = function (self)
@@ -649,29 +686,30 @@ DeusSpawning.get_respawn_handler = function (self)
 	return self._respawn_handler
 end
 
-DeusSpawning.rpc_to_server_spawn_failed = function (self, arg_42_1, arg_42_2)
+DeusSpawning.rpc_to_server_spawn_failed = function (self, channel_id, local_player_id)
 	-- function 42
 	print("[DeusSpawning] Client detected spawning mismatch. Trying again.")
 
-	local var_42_0 = CHANNEL_TO_PEER_ID[arg_42_1]
-	local occupied_slots = self._side.party.occupied_slots
+	local peer_id = CHANNEL_TO_PEER_ID[channel_id]
+	local party = self._side.party
+	local occupied_slots = party.occupied_slots
 
 	for i = 1, #occupied_slots do
-		local var_42_2 = occupied_slots[i]
-		local peer_id = var_42_2.peer_id
-		local local_player_id = var_42_2.local_player_id
+		local status = occupied_slots[i]
+		local other_peer_id = status.peer_id
+		local other_local_player_id = status.local_player_id
 
-		if not (var_42_0 ~= peer_id or arg_42_2 ~= local_player_id) then
-			local game_mode_data = var_42_2.game_mode_data
+		if peer_id == other_peer_id and local_player_id == other_local_player_id then
+			local data = status.game_mode_data
 
-			if game_mode_data.spawn_state == "initial_spawning" then
-				game_mode_data.spawn_state = "is_initial_spawn"
+			if data.spawn_state == "initial_spawning" then
+				data.spawn_state = "is_initial_spawn"
 
 				break
 			end
 
-			if game_mode_data.spawn_state == "spawning" then
-				game_mode_data.spawn_state = "spawn"
+			if data.spawn_state == "spawning" then
+				data.spawn_state = "spawn"
 
 				break
 			end

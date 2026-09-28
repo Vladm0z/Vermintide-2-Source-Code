@@ -1,23 +1,26 @@
 -- chunkname: @scripts/ui/views/demo_end_ui.lua
 
-local var_0_0 = local_require("scripts/ui/views/demo_end_ui_definitions")
-local scenegraph_definition = var_0_0.scenegraph_definition
-local background_widget_definitions = var_0_0.background_widget_definitions
-local widget_definitions = var_0_0.widget_definitions
-local demo_video = var_0_0.demo_video
-local flag = false
-local str = "DemoEndUI"
+local definitions = local_require("scripts/ui/views/demo_end_ui_definitions")
+local scenegraph_definition = definitions.scenegraph_definition
+local background_widget_definitions = definitions.background_widget_definitions
+local widget_definitions = definitions.widget_definitions
+local demo_video = definitions.demo_video
+local DO_RELOAD = false
+local VIDEO_REFERENCE_NAME = "DemoEndUI"
 
 DemoEndUI = class(DemoEndUI)
 
-DemoEndUI.init = function (self, arg_1_1)
+DemoEndUI.init = function (self, world)
 	-- function 1
-	self._world = arg_1_1
-	self.platform = PLATFORM
+	self._world = world
+
+	local platform = PLATFORM
+
+	self.platform = platform
 	self.render_settings = {
 		snap_pixel_positions = true
 	}
-	self._ui_renderer = UIRenderer.create(arg_1_1, "material", "materials/fonts/gw_fonts", "material", "materials/ui/ui_1080p_common", "material", "materials/ui/ui_1080p_versus_available_common", "material", demo_video.video_name)
+	self._ui_renderer = UIRenderer.create(world, "material", "materials/fonts/gw_fonts", "material", "materials/ui/ui_1080p_common", "material", "materials/ui/ui_1080p_versus_available_common", "material", demo_video.video_name)
 
 	UISetupFontHeights(self._ui_renderer.gui)
 
@@ -33,66 +36,66 @@ end
 DemoEndUI._create_ui_elements = function (self)
 	-- function 2
 	self._ui_scenegraph = UISceneGraph.init_scenegraph(scenegraph_definition)
-	self._demo_video = UIWidget.init(UIWidgets.create_splash_video(demo_video, str))
+	self._demo_video = UIWidget.init(UIWidgets.create_splash_video(demo_video, VIDEO_REFERENCE_NAME))
 	self._widgets = {}
 
-	for k, v in pairs(widget_definitions) do
-		self._widgets[k] = UIWidget.init(v)
+	for widget_name, widget_definition in pairs(widget_definitions) do
+		self._widgets[widget_name] = UIWidget.init(widget_definition)
 	end
 
 	self._background_widgets = {}
 
-	for k_2, v_2 in pairs(background_widget_definitions) do
-		self._background_widgets[k_2] = UIWidget.init(v_2)
+	for widget_name, widget_definition in pairs(background_widget_definitions) do
+		self._background_widgets[widget_name] = UIWidget.init(widget_definition)
 	end
 end
 
-DemoEndUI.update = function (self, arg_3_1, arg_3_2)
+DemoEndUI.update = function (self, dt, t)
 	-- function 3
-	self:_draw(arg_3_1, arg_3_2)
+	self:_draw(dt, t)
 end
 
-DemoEndUI._draw = function (self, arg_4_1, arg_4_2)
+DemoEndUI._draw = function (self, dt, t)
 	-- function 4
-	local _ui_renderer = self._ui_renderer
-	local _ui_scenegraph = self._ui_scenegraph
-	local get_service = self.input_manager:get_service("demo")
+	local ui_renderer = self._ui_renderer
+	local ui_scenegraph = self._ui_scenegraph
+	local input_service = self.input_manager:get_service("demo")
 
-	UIRenderer.begin_pass(_ui_renderer, _ui_scenegraph, get_service, arg_4_1, nil, self.render_settings)
+	UIRenderer.begin_pass(ui_renderer, ui_scenegraph, input_service, dt, nil, self.render_settings)
 
 	if not self._demo_video.content.video_content.video_completed then
-		if not _ui_renderer.video_players[str] then
-			UIRenderer.create_video_player(_ui_renderer, str, self._world, demo_video.video_name, demo_video.loop)
+		if not ui_renderer.video_players[VIDEO_REFERENCE_NAME] then
+			UIRenderer.create_video_player(ui_renderer, VIDEO_REFERENCE_NAME, self._world, demo_video.video_name, demo_video.loop)
 		else
 			if not self._sound_started then
-				if not demo_video.sound_start then
+				if demo_video.sound_start then
 					Managers.music:trigger_event(demo_video.sound_start)
 				end
 
 				self._sound_started = true
 			end
 
-			UIRenderer.draw_widget(_ui_renderer, self._demo_video)
+			UIRenderer.draw_widget(ui_renderer, self._demo_video)
 		end
-	elseif not _ui_renderer.video_players[str] then
-		UIRenderer.destroy_video_player(_ui_renderer, str)
+	elseif ui_renderer.video_players[VIDEO_REFERENCE_NAME] then
+		UIRenderer.destroy_video_player(ui_renderer, VIDEO_REFERENCE_NAME)
 
 		self._sound_started = false
 
-		if not demo_video.sound_stop then
+		if demo_video.sound_stop then
 			Managers.music:trigger_event(demo_video.sound_stop)
 		end
 	end
 
-	for k, v in pairs(self._widgets) do
-		UIRenderer.draw_widget(_ui_renderer, v)
+	for _, widget in pairs(self._widgets) do
+		UIRenderer.draw_widget(ui_renderer, widget)
 	end
 
-	for k_2, v_2 in pairs(self._background_widgets) do
-		UIRenderer.draw_widget(_ui_renderer, v_2)
+	for _, widget in pairs(self._background_widgets) do
+		UIRenderer.draw_widget(ui_renderer, widget)
 	end
 
-	UIRenderer.end_pass(_ui_renderer)
+	UIRenderer.end_pass(ui_renderer)
 end
 
 DemoEndUI.completed = function (self)

@@ -2,28 +2,30 @@
 
 ActionCareerDummy = class(ActionCareerDummy, ActionDummy)
 
-ActionCareerDummy.init = function (self, arg_1_1, arg_1_2, arg_1_3, arg_1_4, arg_1_5, arg_1_6, arg_1_7, arg_1_8)
+ActionCareerDummy.init = function (self, world, item_name, is_server, owner_unit, damage_unit, first_person_unit, weapon_unit, weapon_system)
 	-- function 1
-	ActionCareerDummy.super.init(self, arg_1_1, arg_1_2, arg_1_3, arg_1_4, arg_1_5, arg_1_6, arg_1_7, arg_1_8)
+	ActionCareerDummy.super.init(self, world, item_name, is_server, owner_unit, damage_unit, first_person_unit, weapon_unit, weapon_system)
 
-	self.owner_unit = arg_1_4
-	self.inventory_extension = ScriptUnit.extension(arg_1_4, "inventory_system")
+	self.owner_unit = owner_unit
+	self.inventory_extension = ScriptUnit.extension(owner_unit, "inventory_system")
 end
 
-ActionCareerDummy.client_owner_start_action = function (self, arg_2_1, arg_2_2, arg_2_3, arg_2_4)
+ActionCareerDummy.client_owner_start_action = function (self, new_action, t, chain_action_data, power_level)
 	-- function 2
-	ActionCareerDummy.super.client_owner_start_action(self, arg_2_1, arg_2_2, arg_2_3, arg_2_4)
+	ActionCareerDummy.super.client_owner_start_action(self, new_action, t, chain_action_data, power_level)
 
-	self.current_action = arg_2_1
+	self.current_action = new_action
 
-	ScriptUnit.extension(self.owner_unit, "inventory_system"):check_and_drop_pickups("career_ability")
+	local inventory_extension = ScriptUnit.extension(self.owner_unit, "inventory_system")
+
+	inventory_extension:check_and_drop_pickups("career_ability")
 end
 
-ActionCareerDummy.finish = function (self, arg_3_1)
+ActionCareerDummy.finish = function (self, reason)
 	-- function 3
-	local finish = ActionCareerDummy.super.finish(self, arg_3_1)
+	local chain_action_data = ActionCareerDummy.super.finish(self, reason)
 
-	if arg_3_1 ~= "new_interupting_action" then
+	if reason ~= "new_interupting_action" then
 		self.inventory_extension:wield_previous_non_level_slot()
 	end
 
@@ -31,9 +33,11 @@ ActionCareerDummy.finish = function (self, arg_3_1)
 	local owner_unit = self.owner_unit
 	local unzoom_condition_function = current_action.unzoom_condition_function
 
-	if not unzoom_condition_function and not unzoom_condition_function(arg_3_1) then
-		ScriptUnit.extension(owner_unit, "status_system"):set_zooming(false)
+	if not unzoom_condition_function or unzoom_condition_function(reason) then
+		local status_extension = ScriptUnit.extension(owner_unit, "status_system")
+
+		status_extension:set_zooming(false)
 	end
 
-	return finish
+	return chain_action_data
 end

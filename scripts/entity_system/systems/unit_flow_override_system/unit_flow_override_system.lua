@@ -6,200 +6,236 @@ UnitFlowOverrideSystem = class(UnitFlowOverrideSystem, ExtensionSystemBase)
 
 local UNIT_FLOW_EVENT = UNIT_FLOW_EVENT
 
-UNIT_FLOW_EVENT = UNIT_FLOW_EVENT or Unit.flow_event
+UNIT_FLOW_EVENT = not not UNIT_FLOW_EVENT or not not Unit.flow_event
 UNIT_FLOW_EVENT = UNIT_FLOW_EVENT
 
 if not UNIT_FLOW_EVENT_OVERRIDDEN then
-	Unit.flow_event = function (arg_1_0, arg_1_1, arg_1_2)
+	Unit.flow_event = function (unit, event_name, params)
 		-- function 1
-		local has_extension = ScriptUnit.has_extension(arg_1_0, "unit_flow_override_system")
+		local unit_flow_override_extension = ScriptUnit.has_extension(unit, "unit_flow_override_system")
 
-		if not has_extension and not UnitFlowEventOverrideSettings[arg_1_1] then
-			has_extension.handle_flow_event(arg_1_0, arg_1_1, arg_1_2)
+		if unit_flow_override_extension and UnitFlowEventOverrideSettings[event_name] then
+			unit_flow_override_extension.handle_flow_event(unit, event_name, params)
 		else
-			UNIT_FLOW_EVENT(arg_1_0, arg_1_1, arg_1_2)
+			UNIT_FLOW_EVENT(unit, event_name, params)
 		end
 	end
 
 	UNIT_FLOW_EVENT_OVERRIDDEN = true
 end
 
-local tbl = {
+local extensions = {
 	"UnitFlowOverrideExtension"
 }
 
-UnitFlowOverrideSystem.init = function (self, arg_2_1, arg_2_2)
+UnitFlowOverrideSystem.init = function (self, entity_system_creation_context, system_name)
 	-- function 2
-	UnitFlowOverrideSystem.super.init(self, arg_2_1, arg_2_2, tbl)
+	UnitFlowOverrideSystem.super.init(self, entity_system_creation_context, system_name, extensions)
 
 	self._unit_extensions = {}
 	self._unit_event_data = {}
 	self._frozen_unit_extensions = {}
 	self._dynamic_events = {}
-	self._entity_system_creation_context = arg_2_1
+	self._entity_system_creation_context = entity_system_creation_context
 end
 
 UnitFlowOverrideSystem.add_ext_functions = {
-	UnitFlowOverrideExtension = function (arg_3_0, arg_3_1)
+	UnitFlowOverrideExtension = function (self, extension)
 		-- function 3
-		arg_3_1.handle_flow_event = callback(arg_3_0, "handle_flow_event")
+		extension.handle_flow_event = callback(self, "handle_flow_event")
 	end
 }
 
-UnitFlowOverrideSystem.on_add_extension = function (arg_4_0, arg_4_1, arg_4_2, arg_4_3)
+UnitFlowOverrideSystem.on_add_extension = function (self, world, unit, extension_name)
 	-- function 4
-	local tbl = {}
+	local extension = {}
+	local setup_func = UnitFlowOverrideSystem.add_ext_functions[extension_name]
 
-	UnitFlowOverrideSystem.add_ext_functions[arg_4_3](arg_4_0, tbl)
-	ScriptUnit.set_extension(arg_4_2, "unit_flow_override_system", tbl)
+	setup_func(self, extension)
+	ScriptUnit.set_extension(unit, "unit_flow_override_system", extension)
 
-	arg_4_0._unit_extensions[arg_4_2] = tbl
-	arg_4_0._unit_event_data[arg_4_2] = {}
+	self._unit_extensions[unit] = extension
+	self._unit_event_data[unit] = {}
 
-	return tbl
+	return extension
 end
 
-UnitFlowOverrideSystem.handle_flow_event = function (self, arg_5_1, arg_5_2, arg_5_3)
+UnitFlowOverrideSystem.handle_flow_event = function (self, unit, event_name, params)
 	-- function 5
-	local var_5_0 = self._unit_event_data[arg_5_1]
-	local var_5_1 = var_5_0[arg_5_2]
+	local unit_data = self._unit_event_data[unit]
+	local var_5_0 = unit_data[event_name]
 
-	var_5_1 = var_5_1 or {}
-	var_5_0[arg_5_2] = var_5_1
+	var_5_0 = not not var_5_0 or not not {}
+	unit_data[event_name] = var_5_0
 
-	local var_5_2 = var_5_0[arg_5_2]
-	local var_5_3 = UnitFlowEventOverrideSettings[arg_5_2]
+	local unit_event_data = unit_data[event_name]
+	local override = UnitFlowEventOverrideSettings[event_name]
 
-	var_5_3.init(self, var_5_2, arg_5_1, arg_5_2, arg_5_3)
+	override.init(self, unit_event_data, unit, event_name, params)
 
-	if not var_5_3.run_flow_event then
-		local flow_event_name = var_5_3.flow_event_name
+	if override.run_flow_event then
+		local flow_event_name = override.flow_event_name
 
-		flow_event_name = flow_event_name or arg_5_2
+		if not flow_event_name then
+			-- Nothing
+		end
 
-		UNIT_FLOW_EVENT(arg_5_1, flow_event_name, arg_5_3)
+		flow_event_name = event_name
+
+		local flow_event = flow_event_name
+
+		::label_5_0::
+
+		UNIT_FLOW_EVENT(unit, flow_event, params)
 	end
 
-	if not var_5_3.is_dynamic then
-		self:_add_dynamic_event_data(arg_5_1, arg_5_2, var_5_2)
+	if override.is_dynamic then
+		self:_add_dynamic_event_data(unit, event_name, unit_event_data)
 	end
 end
 
-UnitFlowOverrideSystem._add_dynamic_event_data = function (self, arg_6_1, arg_6_2, arg_6_3)
+UnitFlowOverrideSystem._add_dynamic_event_data = function (self, unit, event_name, event_data)
 	-- function 6
-	local _dynamic_events = self._dynamic_events
-	local var_6_1 = _dynamic_events[arg_6_1]
+	local dynamic_events = self._dynamic_events
+	local var_6_0 = dynamic_events[unit]
 
-	var_6_1 = var_6_1 or {}
-	var_6_1[arg_6_2] = arg_6_3
-	_dynamic_events[arg_6_1] = var_6_1
+	if not var_6_0 then
+		-- Nothing
+	end
+
+	var_6_0 = {}
+
+	local unit_dynamic_events = var_6_0
+
+	::label_6_0::
+
+	unit_dynamic_events[event_name] = event_data
+	dynamic_events[unit] = unit_dynamic_events
 end
 
-local tbl_2 = {}
+local EMPTY_TABLE = {}
 
-UnitFlowOverrideSystem.destroy_data = function (self, arg_7_1, arg_7_2)
+UnitFlowOverrideSystem.destroy_data = function (self, unit, event_name)
 	-- function 7
-	local var_7_0 = self._dynamic_events[arg_7_1]
+	local var_7_0 = self._dynamic_events[unit]
 
-	var_7_0 = var_7_0 or tbl_2
+	if not var_7_0 then
+		-- Nothing
+	end
 
-	local var_7_1 = self._unit_event_data[arg_7_1]
-	local flag = not var_7_1 and var_7_1[arg_7_2]
+	var_7_0 = EMPTY_TABLE
 
-	if not flag then
-		local var_7_3 = UnitFlowEventOverrideSettings[arg_7_2]
+	local unit_dynamic_events = var_7_0
 
-		if not var_7_3.destroy then
-			var_7_3.destroy(self, arg_7_1, arg_7_2, flag)
+	::label_7_0::
+
+	local unit_event_data = self._unit_event_data[unit]
+	local current_event_unit_event_data = not not unit_event_data and not not unit_event_data[event_name]
+
+	if current_event_unit_event_data then
+		local override = UnitFlowEventOverrideSettings[event_name]
+
+		if override.destroy then
+			override.destroy(self, unit, event_name, current_event_unit_event_data)
 		end
 	end
 
-	var_7_0[arg_7_2] = nil
+	unit_dynamic_events[event_name] = nil
 end
 
-UnitFlowOverrideSystem.update = function (self, arg_8_1, arg_8_2)
+UnitFlowOverrideSystem.update = function (self, context, t)
 	-- function 8
-	local _dynamic_events = self._dynamic_events
+	local dynamic_events = self._dynamic_events
 
-	for k, v in pairs(_dynamic_events) do
-		for k_2, v_2 in pairs(v) do
-			local var_8_1 = UnitFlowEventOverrideSettings[k_2]
+	for unit, event_name_data in pairs(dynamic_events) do
+		for event_name, event_data in pairs(event_name_data) do
+			local override = UnitFlowEventOverrideSettings[event_name]
 
-			if not var_8_1.update(self, k, k_2, v_2, arg_8_2) then
-				var_8_1.destroy(self, k, k_2, v_2)
+			if override.update(self, unit, event_name, event_data, t) then
+				override.destroy(self, unit, event_name, event_data)
 
-				v[k_2] = nil
+				event_name_data[event_name] = nil
 			end
 		end
 	end
 end
 
-UnitFlowOverrideSystem.on_remove_extension = function (self, arg_9_1, arg_9_2)
+UnitFlowOverrideSystem.on_remove_extension = function (self, unit, extension_name)
 	-- function 9
-	self._frozen_unit_extensions[arg_9_1] = nil
+	self._frozen_unit_extensions[unit] = nil
 
-	self:_cleanup_extension(arg_9_1, arg_9_2)
-	ScriptUnit.remove_extension(arg_9_1, self.NAME)
+	self:_cleanup_extension(unit, extension_name)
+	ScriptUnit.remove_extension(unit, self.NAME)
 end
 
-UnitFlowOverrideSystem.on_freeze_extension = function (self, arg_10_1, arg_10_2)
+UnitFlowOverrideSystem.on_freeze_extension = function (self, unit, extension_name)
 	-- function 10
-	local var_10_0 = self._unit_extensions[arg_10_1]
+	local extension = self._unit_extensions[unit]
 
-	fassert(var_10_0, "Unit was already frozen.")
+	fassert(extension, "Unit was already frozen.")
 
-	self._frozen_unit_extensions[arg_10_1] = var_10_0
+	self._frozen_unit_extensions[unit] = extension
 
-	self:_cleanup_extension(arg_10_1, arg_10_2)
+	self:_cleanup_extension(unit, extension_name)
 end
 
-UnitFlowOverrideSystem.freeze = function (self, arg_11_1, arg_11_2, arg_11_3)
+UnitFlowOverrideSystem.freeze = function (self, unit, extension_name, reason)
 	-- function 11
-	local _frozen_unit_extensions = self._frozen_unit_extensions
+	local frozen_extensions = self._frozen_unit_extensions
 
-	if not _frozen_unit_extensions[arg_11_1] then
+	if frozen_extensions[unit] then
 		return
 	end
 
-	local var_11_1 = self._unit_extensions[arg_11_1]
+	local extension = self._unit_extensions[unit]
 
-	fassert(var_11_1, "Unit to freeze didn't have unfrozen extension")
-	self:_cleanup_extension(arg_11_1, arg_11_2)
+	fassert(extension, "Unit to freeze didn't have unfrozen extension")
+	self:_cleanup_extension(unit, extension_name)
 
-	self._unit_extensions[arg_11_1] = nil
-	_frozen_unit_extensions[arg_11_1] = var_11_1
+	self._unit_extensions[unit] = nil
+	frozen_extensions[unit] = extension
 end
 
-UnitFlowOverrideSystem.unfreeze = function (self, arg_12_1)
+UnitFlowOverrideSystem.unfreeze = function (self, unit)
 	-- function 12
-	local var_12_0 = self._frozen_unit_extensions[arg_12_1]
+	local extension = self._frozen_unit_extensions[unit]
 
-	fassert(var_12_0, "Unit to unfreeze didn't have frozen extension")
+	fassert(extension, "Unit to unfreeze didn't have frozen extension")
 
-	self._frozen_unit_extensions[arg_12_1] = nil
-	self._unit_extensions[arg_12_1] = var_12_0
+	self._frozen_unit_extensions[unit] = nil
+	self._unit_extensions[unit] = extension
 end
 
-UnitFlowOverrideSystem._cleanup_extension = function (self, arg_13_1, arg_13_2)
+UnitFlowOverrideSystem._cleanup_extension = function (self, unit, extension_name)
 	-- function 13
-	if self._unit_extensions[arg_13_1] == nil then
+	local extension = self._unit_extensions[unit]
+
+	if extension == nil then
 		return
 	end
 
-	local var_13_0 = self._unit_event_data[arg_13_1]
+	local var_13_0 = self._unit_event_data[unit]
 
-	var_13_0 = var_13_0 or tbl_2
+	if not var_13_0 then
+		-- Nothing
+	end
 
-	for k, v in pairs(var_13_0) do
-		local var_13_1 = UnitFlowEventOverrideSettings[k]
+	var_13_0 = EMPTY_TABLE
 
-		if not var_13_1.destroy then
-			var_13_1.destroy(self, arg_13_1, k, v)
+	local unit_event_data = var_13_0
+
+	::label_13_0::
+
+	for event_name, event_data in pairs(unit_event_data) do
+		local override = UnitFlowEventOverrideSettings[event_name]
+
+		if override.destroy then
+			override.destroy(self, unit, event_name, event_data)
 		end
 	end
 
-	self._dynamic_events[arg_13_1] = nil
-	self._unit_extensions[arg_13_1] = nil
+	self._dynamic_events[unit] = nil
+	self._unit_extensions[unit] = nil
 
-	table.clear(self._unit_event_data[arg_13_1])
+	table.clear(self._unit_event_data[unit])
 end

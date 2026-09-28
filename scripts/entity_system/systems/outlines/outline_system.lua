@@ -25,13 +25,13 @@ OutlineSystem.system_extensions = {
 OutlineSystem.system_extensions[#OutlineSystem.system_extensions + 1] = "DarkPactPlayerOutlineExtension"
 OutlineSystem.system_extensions[#OutlineSystem.system_extensions + 1] = "DarkPactPlayerHuskOutlineExtension"
 
-OutlineSystem.init = function (self, arg_1_1, arg_1_2)
+OutlineSystem.init = function (self, context, system_name)
 	-- function 1
-	local system_extensions = OutlineSystem.system_extensions
+	local extensions = OutlineSystem.system_extensions
 
-	OutlineSystem.super.init(self, arg_1_1, arg_1_2, system_extensions)
+	OutlineSystem.super.init(self, context, system_name, extensions)
 
-	self.world = arg_1_1.world
+	self.world = context.world
 	self.physics_world = World.get_data(self.world, "physics_world")
 	self.unit_extension_data = {}
 	self.frozen_unit_extension_data = {}
@@ -41,9 +41,9 @@ OutlineSystem.init = function (self, arg_1_1, arg_1_2)
 	self.darkness_system = Managers.state.entity:system("darkness_system")
 	self.cutscene_system = Managers.state.entity:system("cutscene_system")
 
-	local game_mode = Managers.state.game_mode
+	local game_mode_manager = Managers.state.game_mode
 
-	self._game_mode = not game_mode and game_mode:game_mode()
+	self._game_mode = not not game_mode_manager and not not game_mode_manager:game_mode()
 	self._pulsing_units = {}
 	self._event_manager = Managers.state.event
 
@@ -53,295 +53,297 @@ OutlineSystem.init = function (self, arg_1_1, arg_1_2)
 end
 
 OutlineSystem.add_ext_functions = {
-	PlayerOutlineExtension = function (self)
+	PlayerOutlineExtension = function (extension)
 		-- function 2
-		local add_outline = self:add_outline({
+		local id = extension:add_outline({
 			method = "never",
 			outline_color = OutlineSettings.colors.ally,
 			flag = OutlineSettings.flags.non_wall_occluded
 		})
 
-		self.apply_method = "unit_and_childs"
-		self.pinged_method = "never"
+		extension.apply_method = "unit_and_childs"
+		extension.pinged_method = "never"
 
-		return add_outline
+		return id
 	end,
-	PlayerHuskOutlineExtension = function (self)
+	PlayerHuskOutlineExtension = function (extension)
 		-- function 3
-		local add_outline = self:add_outline({
+		local id = extension:add_outline({
 			method = "outside_distance_or_not_visible",
 			outline_color = OutlineSettings.colors.ally,
 			distance = OutlineSettings.ranges.player_husk,
 			flag = OutlineSettings.flags.non_wall_occluded
 		})
 
-		self.apply_method = "unit_and_childs"
-		self.pinged_method = "always"
+		extension.apply_method = "unit_and_childs"
+		extension.pinged_method = "always"
 
-		self.update_override_method_player_setting = function (arg_4_0)
+		extension.update_override_method_player_setting = function (self)
 			-- function 4
-			local var_4_0
-			local user_setting = Application.user_setting("player_outlines")
-			local flag
+			local user_outline_method
+			local outline_user_setting = Application.user_setting("player_outlines")
 
-			flag = (user_setting ~= "off" or not "never" or user_setting ~= "always_on") and (not "always" or "outside_distance_or_not_visible")
+			user_outline_method = (outline_user_setting ~= "off" or not "never") and (outline_user_setting ~= "always_on" or not "always") and not not "outside_distance_or_not_visible"
 
-			self:update_outline({
-				method = flag
+			extension:update_outline({
+				method = user_outline_method
 			}, 0)
 		end
 
-		self:update_override_method_player_setting()
+		extension:update_override_method_player_setting()
 
-		return add_outline
+		return id
 	end,
-	MinionOutlineExtension = function (self)
+	MinionOutlineExtension = function (extension)
 		-- function 5
-		local add_outline = self:add_outline({
+		local id = extension:add_outline({
 			method = "outside_distance_or_not_visible",
 			outline_color = OutlineSettings.colors.necromancer_command,
 			distance = OutlineSettings.ranges.player_husk,
 			flag = OutlineSettings.flags.non_wall_occluded
 		})
 
-		self.apply_method = "unit_and_childs"
-		self.pinged_method = "always"
+		extension.apply_method = "unit_and_childs"
+		extension.pinged_method = "always"
 
-		self.update_override_method_minion_setting = function (arg_6_0)
+		extension.update_override_method_minion_setting = function (self)
 			-- function 6
-			local var_6_0
-			local user_setting = Application.user_setting("minion_outlines")
-			local flag
+			local user_outline_method
+			local outline_user_setting = Application.user_setting("minion_outlines")
 
-			flag = (user_setting ~= "off" or not "never" or user_setting ~= "always_on") and (not "always" or "outside_distance_or_not_visible")
+			user_outline_method = (outline_user_setting ~= "off" or not "never") and (outline_user_setting ~= "always_on" or not "always") and not not "outside_distance_or_not_visible"
 
-			self:update_outline({
-				method = flag
+			extension:update_outline({
+				method = user_outline_method
 			}, 0)
 		end
 
-		self:update_override_method_minion_setting()
+		extension:update_override_method_minion_setting()
 
-		return add_outline
+		return id
 	end,
-	PickupOutlineExtension = function (self)
+	PickupOutlineExtension = function (extension)
 		-- function 7
-		local add_outline = self:add_outline({
+		local id = extension:add_outline({
 			method = "within_distance_and_not_in_dark",
 			outline_color = OutlineSettings.colors.interactable,
 			distance = OutlineSettings.ranges.pickup,
 			flag = OutlineSettings.flags.wall_occluded
 		})
 
-		self.apply_method = "unit"
-		self.pinged_method = "not_in_dark"
+		extension.apply_method = "unit"
+		extension.pinged_method = "not_in_dark"
 
-		return add_outline
+		return id
 	end,
-	AIOutlineExtension = function (self)
+	AIOutlineExtension = function (extension)
 		-- function 8
-		local add_outline = self:add_outline({
+		local id = extension:add_outline({
 			method = "never",
 			outline_color = OutlineSettings.colors.interactable,
 			distance = OutlineSettings.ranges.player_husk,
 			flag = OutlineSettings.flags.non_wall_occluded
 		})
 
-		self.apply_method = "unit"
-		self.pinged_method = "not_in_dark"
+		extension.apply_method = "unit"
+		extension.pinged_method = "not_in_dark"
 
-		return add_outline
+		return id
 	end,
-	DoorOutlineExtension = function (self)
+	DoorOutlineExtension = function (extension)
 		-- function 9
-		local add_outline = self:add_outline({
+		local id = extension:add_outline({
 			method = "within_distance_and_not_in_dark",
 			outline_color = OutlineSettings.colors.interactable,
 			distance = OutlineSettings.ranges.doors,
 			flag = OutlineSettings.flags.wall_occluded
 		})
 
-		self.apply_method = "unit"
-		self.pinged_method = "not_in_dark"
+		extension.apply_method = "unit"
+		extension.pinged_method = "not_in_dark"
 
-		return add_outline
+		return id
 	end,
-	SmallDoorOutlineExtension = function (self)
+	SmallDoorOutlineExtension = function (extension)
 		-- function 10
-		local add_outline = self:add_outline({
+		local id = extension:add_outline({
 			method = "within_distance_and_not_in_dark",
 			outline_color = OutlineSettings.colors.interactable,
 			distance = OutlineSettings.ranges.small_doors,
 			flag = OutlineSettings.flags.wall_occluded
 		})
 
-		self.apply_method = "unit"
-		self.pinged_method = "not_in_dark"
+		extension.apply_method = "unit"
+		extension.pinged_method = "not_in_dark"
 
-		return add_outline
+		return id
 	end,
-	ObjectiveOutlineExtension = function (self)
+	ObjectiveOutlineExtension = function (extension)
 		-- function 11
-		local add_outline = self:add_outline({
+		local id = extension:add_outline({
 			method = "within_distance",
 			outline_color = OutlineSettings.colors.interactable,
 			distance = OutlineSettings.ranges.objective,
 			flag = OutlineSettings.flags.non_wall_occluded
 		})
 
-		self.apply_method = "unit"
-		self.pinged_method = "always"
+		extension.apply_method = "unit"
+		extension.pinged_method = "always"
 
-		return add_outline
+		return id
 	end,
-	ObjectiveLightOutlineExtension = function (self)
+	ObjectiveLightOutlineExtension = function (extension)
 		-- function 12
-		local add_outline = self:add_outline({
+		local id = extension:add_outline({
 			method = "within_distance",
 			outline_color = OutlineSettings.colors.interactable,
 			distance = OutlineSettings.ranges.objective_light,
 			flag = OutlineSettings.flags.wall_occluded
 		})
 
-		self.apply_method = "unit"
-		self.pinged_method = "always"
+		extension.apply_method = "unit"
+		extension.pinged_method = "always"
 
-		return add_outline
+		return id
 	end,
-	ObjectiveLargeOutlineExtension = function (self)
+	ObjectiveLargeOutlineExtension = function (extension)
 		-- function 13
-		local add_outline = self:add_outline({
+		local id = extension:add_outline({
 			method = "within_distance",
 			outline_color = OutlineSettings.colors.interactable,
 			distance = OutlineSettings.ranges.objective_large,
 			flag = OutlineSettings.flags.wall_occluded
 		})
 
-		self.apply_method = "unit"
-		self.pinged_method = "always"
+		extension.apply_method = "unit"
+		extension.pinged_method = "always"
 
-		return add_outline
+		return id
 	end,
-	ElevatorOutlineExtension = function (self)
+	ElevatorOutlineExtension = function (extension)
 		-- function 14
-		local add_outline = self:add_outline({
+		local id = extension:add_outline({
 			method = "within_distance",
 			outline_color = OutlineSettings.colors.interactable,
 			distance = OutlineSettings.ranges.elevators,
 			flag = OutlineSettings.flags.wall_occluded
 		})
 
-		self.apply_method = "unit"
-		self.pinged_method = "not_in_dark"
+		extension.apply_method = "unit"
+		extension.pinged_method = "not_in_dark"
 
-		return add_outline
+		return id
 	end,
-	ConditionalInteractOutlineExtension = function (self)
+	ConditionalInteractOutlineExtension = function (extension)
 		-- function 15
-		local add_outline = self:add_outline({
+		local id = extension:add_outline({
 			method = "conditional_within_distance",
 			outline_color = OutlineSettings.colors.interactable,
 			distance = OutlineSettings.ranges.doors,
 			flag = OutlineSettings.flags.wall_occluded
 		})
 
-		self.apply_method = "unit"
-		self.pinged_method = "always"
+		extension.apply_method = "unit"
+		extension.pinged_method = "always"
 
-		return add_outline
+		return id
 	end,
-	ConditionalPickupOutlineExtension = function (self)
+	ConditionalPickupOutlineExtension = function (extension)
 		-- function 16
-		local add_outline = self:add_outline({
+		local id = extension:add_outline({
 			method = "conditional_within_distance",
 			outline_color = OutlineSettings.colors.interactable,
 			distance = OutlineSettings.ranges.pickup,
 			flag = OutlineSettings.flags.wall_occluded
 		})
 
-		self.apply_method = "unit"
-		self.pinged_method = "always"
+		extension.apply_method = "unit"
+		extension.pinged_method = "always"
 
-		return add_outline
+		return id
 	end,
-	EnemyOutlineExtension = function (self)
+	EnemyOutlineExtension = function (extension)
 		-- function 17
-		local add_outline = self:add_outline({
+		local id = extension:add_outline({
 			method = "never",
 			outline_color = OutlineSettings.colors.knocked_down,
 			flag = OutlineSettings.flags.non_wall_occluded
 		})
 
-		self.apply_method = "unit_and_childs"
-		self.pinged_method = "not_in_dark"
+		extension.apply_method = "unit_and_childs"
+		extension.pinged_method = "not_in_dark"
 
-		return add_outline
+		return id
 	end,
-	SmallPickupOutlineExtension = function (self)
+	SmallPickupOutlineExtension = function (extension)
 		-- function 18
-		local add_outline = self:add_outline({
+		local id = extension:add_outline({
 			method = "within_distance_and_not_in_dark",
 			outline_color = OutlineSettings.colors.interactable,
 			distance = OutlineSettings.ranges.small_pickup,
 			flag = OutlineSettings.flags.wall_occluded
 		})
 
-		self.apply_method = "unit"
-		self.pinged_method = "not_in_dark"
+		extension.apply_method = "unit"
+		extension.pinged_method = "not_in_dark"
 
-		return add_outline
+		return id
 	end,
-	GenericOutlineExtension = function (self)
+	GenericOutlineExtension = function (extension)
 		-- function 19
-		local add_outline = self:add_outline({
+		local id = extension:add_outline({
 			method = "within_distance",
 			outline_color = OutlineSettings.colors.interactable,
 			distance = OutlineSettings.ranges.interactable,
 			flag = OutlineSettings.flags.wall_occluded
 		})
 
-		self.apply_method = "unit"
-		self.pinged_method = "not_in_dark"
+		extension.apply_method = "unit"
+		extension.pinged_method = "not_in_dark"
 
-		return add_outline
+		return id
 	end,
-	DarkPactPlayerOutlineExtension = function (self)
+	DarkPactPlayerOutlineExtension = function (extension)
 		-- function 20
-		local add_outline = self:add_outline({
+		local id = extension:add_outline({
 			method = "never",
 			outline_color = OutlineSettingsVS.colors.ally,
 			flag = OutlineSettings.flags.non_wall_occluded
 		})
 
-		self.apply_method = "unit_and_childs"
-		self.pinged_method = "show_versus_dark_pact_outline"
+		extension.apply_method = "unit_and_childs"
+		extension.pinged_method = "show_versus_dark_pact_outline"
 
-		return add_outline
+		return id
 	end,
-	DarkPactPlayerHuskOutlineExtension = function (self)
+	DarkPactPlayerHuskOutlineExtension = function (extension)
 		-- function 21
-		local var_21_0
+		local is_ally
 		local local_player = Managers.player:local_player()
 
-		if not local_player then
-			local network_id = local_player:network_id()
+		if local_player then
+			local peer_id = local_player:network_id()
 			local local_player_id = local_player:local_player_id()
-			local get_party_from_player_id = Managers.party:get_party_from_player_id(network_id, local_player_id)
-			local var_21_5 = Managers.state.side.side_by_party[get_party_from_player_id]
+			local party = Managers.party:get_party_from_player_id(peer_id, local_player_id)
+			local side = Managers.state.side.side_by_party[party]
 
-			if not (not var_21_5 and var_21_5:name() ~= "dark_pact") then
-				var_21_0 = true
+			if side then
+				local side_name = side:name()
+
+				if side_name == "dark_pact" then
+					is_ally = true
+				end
 			end
 		end
 
-		local var_21_6 = self
-		local add_outline = self.add_outline
+		local var_21_0 = extension
+		local add_outline = extension.add_outline
 		local tbl = {
 			method = "always_same_side"
 		}
 		local ally
 
-		if not var_21_0 then
+		if is_ally then
 			ally = OutlineSettingsVS.colors.ally
 
 			if not ally then
@@ -357,152 +359,153 @@ OutlineSystem.add_ext_functions = {
 		tbl.distance = OutlineSettings.ranges.player_husk
 		tbl.flag = OutlineSettings.flags.non_wall_occluded
 
-		local var_21_10 = add_outline(var_21_6, tbl)
+		local id = add_outline(var_21_0, tbl)
 
-		self.apply_method = "unit_and_childs"
-		self.pinged_method = "show_versus_dark_pact_outline"
+		extension.apply_method = "unit_and_childs"
+		extension.pinged_method = "show_versus_dark_pact_outline"
 
-		return var_21_10
+		return id
 	end
 }
 
-OutlineSystem.on_add_extension = function (arg_22_0, arg_22_1, arg_22_2, arg_22_3)
+OutlineSystem.on_add_extension = function (self, world, unit, extension_name)
 	-- function 22
-	local var_22_0 = OutlineExtension:new(arg_22_0, arg_22_2)
-	local var_22_1 = OutlineSystem.add_ext_functions[arg_22_3]
-	local var_22_2 = var_22_1(var_22_0)
+	local extension = OutlineExtension:new(self, unit)
+	local setup_func = OutlineSystem.add_ext_functions[extension_name]
+	local id = setup_func(extension)
 
-	arg_22_0._initial_outline_data[var_22_0] = {
-		setup_func = var_22_1,
-		id = var_22_2
+	self._initial_outline_data[extension] = {
+		setup_func = setup_func,
+		id = id
 	}
 
-	ScriptUnit.set_extension(arg_22_2, "outline_system", var_22_0, {})
+	ScriptUnit.set_extension(unit, "outline_system", extension, {})
 
-	arg_22_0.unit_extension_data[arg_22_2] = var_22_0
-	arg_22_0.units[#arg_22_0.units + 1] = arg_22_2
+	self.unit_extension_data[unit] = extension
+	self.units[#self.units + 1] = unit
 
-	return var_22_0
+	return extension
 end
 
-OutlineSystem.on_remove_extension = function (self, arg_23_1, arg_23_2)
+OutlineSystem.on_remove_extension = function (self, unit, extension_name)
 	-- function 23
-	self.frozen_unit_extension_data[arg_23_1] = nil
+	self.frozen_unit_extension_data[unit] = nil
 
-	self:_cleanup_extension(arg_23_1, arg_23_2)
-	ScriptUnit.remove_extension(arg_23_1, self.NAME)
+	self:_cleanup_extension(unit, extension_name)
+	ScriptUnit.remove_extension(unit, self.NAME)
 end
 
-OutlineSystem.on_player_joined_party = function (self, arg_24_1, arg_24_2, arg_24_3)
+OutlineSystem.on_player_joined_party = function (self, peer_id, local_player_id, party_id)
 	-- function 24
 	if Managers.mechanism:current_mechanism_name() == "versus" then
-		self:_reinitialize_outlines(arg_24_1, arg_24_3)
+		self:_reinitialize_outlines(peer_id, party_id)
 	end
 end
 
-OutlineSystem._reinitialize_outlines = function (self, arg_25_1, arg_25_2)
+OutlineSystem._reinitialize_outlines = function (self, peer_id, party_id)
 	-- function 25
-	local is_game_participating_party = Managers.party:is_game_participating_party(arg_25_2)
+	local is_participating_party = Managers.party:is_game_participating_party(party_id)
 
-	if not (arg_25_1 ~= Network.peer_id() or is_game_participating_party) then
+	if peer_id ~= Network.peer_id() or not is_participating_party then
 		return
 	end
 
-	for k, v in pairs(self._initial_outline_data) do
-		local setup_func = v.setup_func(k)
+	for extension, data in pairs(self._initial_outline_data) do
+		local setup_func = data.setup_func
+		local temp_id = setup_func(extension)
 
-		k:swap_delete_outline(setup_func, v.id)
+		extension:swap_delete_outline(temp_id, data.id)
 
-		if not k.update_override_method_player_setting then
-			k.update_override_method_player_setting()
+		if extension.update_override_method_player_setting then
+			extension.update_override_method_player_setting()
 		end
 
-		if not k.update_override_method_minion_setting then
-			k.update_override_method_minion_setting()
+		if extension.update_override_method_minion_setting then
+			extension.update_override_method_minion_setting()
 		end
 	end
 end
 
-OutlineSystem.mark_outline_dirty = function (arg_26_0, arg_26_1)
+OutlineSystem.mark_outline_dirty = function (self, unit)
 	-- function 26
-	arg_26_0._dirty_units[arg_26_1] = true
+	self._dirty_units[unit] = true
 end
 
-OutlineSystem.on_freeze_extension = function (self, arg_27_1, arg_27_2)
+OutlineSystem.on_freeze_extension = function (self, unit, extension_name)
 	-- function 27
-	local var_27_0 = self.unit_extension_data[arg_27_1]
+	local extension = self.unit_extension_data[unit]
 
-	fassert(var_27_0, "Unit was already frozen.")
+	fassert(extension, "Unit was already frozen.")
 
-	self.frozen_unit_extension_data[arg_27_1] = var_27_0
+	self.frozen_unit_extension_data[unit] = extension
 
-	self:_cleanup_extension(arg_27_1, arg_27_2)
+	self:_cleanup_extension(unit, extension_name)
 end
 
-OutlineSystem._cleanup_extension = function (self, arg_28_1, arg_28_2)
+OutlineSystem._cleanup_extension = function (self, unit, extension_name)
 	-- function 28
-	local var_28_0 = self.unit_extension_data[arg_28_1]
+	local extension = self.unit_extension_data[unit]
 
-	if var_28_0 == nil then
+	if extension == nil then
 		return
 	end
 
-	self._initial_outline_data[var_28_0] = nil
-	self.unit_extension_data[arg_28_1] = nil
+	self._initial_outline_data[extension] = nil
+	self.unit_extension_data[unit] = nil
 
-	table.swap_delete(self.units, table.index_of(self.units, arg_28_1))
+	table.swap_delete(self.units, table.index_of(self.units, unit))
 end
 
-OutlineSystem.freeze = function (self, arg_29_1, arg_29_2, arg_29_3)
+OutlineSystem.freeze = function (self, unit, extension_name, reason)
 	-- function 29
-	local frozen_unit_extension_data = self.frozen_unit_extension_data
+	local frozen_extensions = self.frozen_unit_extension_data
 
-	if not frozen_unit_extension_data[arg_29_1] then
+	if frozen_extensions[unit] then
 		return
 	end
 
-	local var_29_1 = self.unit_extension_data[arg_29_1]
+	local extension = self.unit_extension_data[unit]
 
-	fassert(var_29_1, "Unit to freeze didn't have unfrozen extension")
-	self:_cleanup_extension(arg_29_1, arg_29_2)
+	fassert(extension, "Unit to freeze didn't have unfrozen extension")
+	self:_cleanup_extension(unit, extension_name)
 
-	self.unit_extension_data[arg_29_1] = nil
-	frozen_unit_extension_data[arg_29_1] = var_29_1
+	self.unit_extension_data[unit] = nil
+	frozen_extensions[unit] = extension
 
-	fassert(arg_29_2 == "EnemyOutlineExtension", "Only support for freezing enemy outline extensions")
+	fassert(extension_name == "EnemyOutlineExtension", "Only support for freezing enemy outline extensions")
 
-	if not var_29_1.outlined then
-		local outline_color = var_29_1.outline_color
-		local color = outline_color.color
-		local var_29_4 = Color(color[1], color[2], color[3], color[4])
+	if extension.outlined then
+		local outline_settings = extension.outline_color
+		local c = outline_settings.color
+		local color = Color(c[1], c[2], c[3], c[4])
 
-		self:outline_unit(arg_29_1, var_29_1.flag, var_29_4, false, var_29_1.apply_method, outline_color)
+		self:outline_unit(unit, extension.flag, color, false, extension.apply_method, outline_settings)
 
-		var_29_1.outlined = false
+		extension.outlined = false
 	end
 
-	var_29_1.method = "never"
+	extension.method = "never"
 
-	var_29_1:on_freeze()
+	extension:on_freeze()
 end
 
-OutlineSystem.unfreeze = function (self, arg_30_1)
+OutlineSystem.unfreeze = function (self, unit)
 	-- function 30
-	local var_30_0 = self.frozen_unit_extension_data[arg_30_1]
+	local extension = self.frozen_unit_extension_data[unit]
 
-	fassert(var_30_0, "Unit to unfreeze didn't have frozen extension")
+	fassert(extension, "Unit to unfreeze didn't have frozen extension")
 
-	self.frozen_unit_extension_data[arg_30_1] = nil
-	self.unit_extension_data[arg_30_1] = var_30_0
-	self.units[#self.units + 1] = arg_30_1
+	self.frozen_unit_extension_data[unit] = nil
+	self.unit_extension_data[unit] = extension
+	self.units[#self.units + 1] = unit
 
-	var_30_0:on_unfreeze()
+	extension:on_unfreeze()
 end
 
-OutlineSystem.local_player_created = function (self, arg_31_1)
+OutlineSystem.local_player_created = function (self, player)
 	-- function 31
-	self._local_player = arg_31_1
-	self.camera_unit = arg_31_1.camera_follow_unit
+	self._local_player = player
+	self.camera_unit = player.camera_follow_unit
 end
 
 OutlineSystem._is_cutscene_active = function (self)
@@ -515,46 +518,46 @@ OutlineSystem._is_cutscene_active = function (self)
 
 	local active_camera = cutscene_system.active_camera
 
-	active_camera = not active_camera and not cutscene_system.ingame_hud_enabled
+	active_camera = not not active_camera and not not not cutscene_system.ingame_hud_enabled
 
 	return active_camera
 end
 
 OutlineSystem._is_photomode_active = function (self)
 	-- function 33
-	local _game_mode = self._game_mode
+	local game_mode = self._game_mode
 
-	return not _game_mode and _game_mode:photomode_enabled()
+	return not not game_mode and not not game_mode:photomode_enabled()
 end
 
-OutlineSystem.set_disabled = function (self, arg_34_1)
+OutlineSystem.set_disabled = function (self, disabled)
 	-- function 34
-	if not (not arg_34_1 and self._disabled) then
+	if disabled and not self._disabled then
 		local units = self.units
 		local unit_extension_data = self.unit_extension_data
 
 		for i = 1, #units do
-			local var_34_2 = units[i]
-			local var_34_3 = unit_extension_data[var_34_2]
+			local unit = units[i]
+			local extension = unit_extension_data[unit]
 
-			if not var_34_3 and not var_34_3.outlined then
-				local outline_color = var_34_3.outline_color
-				local color = outline_color.color
-				local var_34_6 = Color(color[1], color[2], color[3], color[4])
+			if extension and extension.outlined then
+				local outline_settings = extension.outline_color
+				local c = outline_settings.color
+				local color = Color(c[1], c[2], c[3], c[4])
 
-				self:outline_unit(var_34_2, var_34_3.flag, var_34_6, false, var_34_3.apply_method, outline_color)
+				self:outline_unit(unit, extension.flag, color, false, extension.apply_method, outline_settings)
 
-				var_34_3.outlined = false
+				extension.outlined = false
 			end
 		end
 	end
 
-	self._disabled = arg_34_1
+	self._disabled = disabled
 end
 
-OutlineSystem.update = function (self, arg_35_1, arg_35_2)
+OutlineSystem.update = function (self, context, t)
 	-- function 35
-	if self._disabled or not script_data.disable_outlines then
+	if self._disabled or script_data.disable_outlines then
 		return
 	end
 
@@ -562,161 +565,190 @@ OutlineSystem.update = function (self, arg_35_1, arg_35_2)
 		return
 	end
 
-	local count = #self.units
+	local num_units = #self.units
 
-	if count == 0 then
+	if num_units == 0 then
 		return
 	end
 
 	local _is_cutscene_active = self:_is_cutscene_active()
 
-	_is_cutscene_active = _is_cutscene_active or self:_is_photomode_active()
-
-	local _dirty_units = self._dirty_units
-
-	for k in pairs(_dirty_units) do
-		self:_update_unit_outline(k, _is_cutscene_active)
-
-		_dirty_units[k] = nil
+	if not _is_cutscene_active then
+		-- Nothing
 	end
 
-	local dt = arg_35_1.dt
-	local min = math.min(count, 20)
+	_is_cutscene_active = self:_is_photomode_active()
+
+	local active_cutscene = _is_cutscene_active
+
+	::label_35_0::
+
+	local dirty_units = self._dirty_units
+
+	for unit in pairs(dirty_units) do
+		self:_update_unit_outline(unit, active_cutscene)
+
+		dirty_units[unit] = nil
+	end
+
+	local dt = context.dt
+	local num_to_check_per_frame = math.min(num_units, 20)
 	local current_index = self.current_index
 	local units = self.units
 
-	for j = 1, min do
-		current_index = current_index % count + 1
+	for i = 1, num_to_check_per_frame do
+		current_index = current_index % num_units + 1
 
-		local var_35_7 = units[current_index]
+		local unit = units[current_index]
 
-		if not self:_update_unit_outline(var_35_7, _is_cutscene_active) then
+		if not self:_update_unit_outline(unit, active_cutscene) then
 			break
 		end
 	end
 
 	self.current_index = current_index
 
-	self:_update_pulsing(dt, arg_35_2)
+	self:_update_pulsing(dt, t)
 end
 
-OutlineSystem._update_unit_outline = function (self, arg_36_1, arg_36_2)
+OutlineSystem._update_unit_outline = function (self, unit, active_cutscene)
 	-- function 36
-	local var_36_0 = self.unit_extension_data[arg_36_1]
+	local extension = self.unit_extension_data[unit]
 
-	if not var_36_0 then
-		local num = 3
-		local num_2 = 0
-		local outline_color = var_36_0.outline_color
-		local method = var_36_0.method
-		local prev_flag = var_36_0.prev_flag
+	if extension then
+		local max_slow_checks_per_frame = 3
+		local slow_checks_done = 0
+		local outline_settings = extension.outline_color
+		local method = extension.method
+		local prev_flag = extension.prev_flag
 
-		prev_flag = not prev_flag and var_36_0.prev_flag ~= var_36_0.flag
-
-		if not prev_flag then
-			self:outline_unit(arg_36_1, var_36_0.prev_flag, Color(0, 0, 0, 0), false, var_36_0.apply_method, outline_color)
-
-			var_36_0.prev_flag = nil
+		if prev_flag then
+			-- Nothing
 		end
 
-		local flag = false
-		local flag_2 = false
+		if extension.prev_flag == extension.flag then
+			prev_flag = false
 
-		if not arg_36_2 then
-			flag, flag_2 = self[method](self, arg_36_1, var_36_0)
+			goto label_36_0
 		end
 
-		if var_36_0.outlined ~= flag or not var_36_0.reapply then
-			local color = outline_color.color
-			local var_36_9 = Color(255, color[2], color[3], color[4])
+		prev_flag = true
 
-			self:outline_unit(arg_36_1, var_36_0.flag, var_36_9, flag, var_36_0.apply_method, outline_color)
+		local flag_swiched = prev_flag
 
-			var_36_0.outlined = flag
+		::label_36_0::
+
+		if flag_swiched then
+			self:outline_unit(unit, extension.prev_flag, Color(0, 0, 0, 0), false, extension.apply_method, outline_settings)
+
+			extension.prev_flag = nil
 		end
 
-		var_36_0.reapply = false
+		local do_outline, slow_check = false, false
 
-		if not (not flag_2 and not (num <= num_2 + 1)) then
-			return false
+		if not active_cutscene then
+			do_outline, slow_check = self[method](self, unit, extension)
+		end
+
+		if extension.outlined ~= do_outline or extension.reapply then
+			local c = outline_settings.color
+			local color = Color(255, c[2], c[3], c[4])
+
+			self:outline_unit(unit, extension.flag, color, do_outline, extension.apply_method, outline_settings)
+
+			extension.outlined = do_outline
+		end
+
+		extension.reapply = false
+
+		if slow_check then
+			slow_checks_done = slow_checks_done + 1
+
+			if max_slow_checks_per_frame <= slow_checks_done then
+				return false
+			end
 		end
 	end
 
 	return true
 end
 
-local tbl = {
-	flash = function (arg_37_0)
+local PULSE_METHODS = {
+	flash = function (t)
 		-- function 37
-		return math.round(arg_37_0 * 3 % 1)
+		return math.round(t * 3 % 1)
 	end,
-	pulse = function (arg_38_0)
+	pulse = function (t)
 		-- function 38
-		return math.round(arg_38_0 * 3 % 1.5)
+		return math.round(t * 3 % 1.5)
 	end
 }
 
-OutlineSystem.set_pulsing = function (self, arg_39_1, arg_39_2, arg_39_3)
+OutlineSystem.set_pulsing = function (self, unit, enable, method)
 	-- function 39
-	if not arg_39_2 then
-		self._pulsing_units[arg_39_1] = tbl[arg_39_3]
-	elseif not self._pulsing_units[arg_39_1] then
-		self._pulsing_units[arg_39_1] = nil
+	if enable then
+		self._pulsing_units[unit] = PULSE_METHODS[method]
+	else
+		local pulsing = self._pulsing_units[unit]
 
-		local var_39_0 = self.unit_extension_data[arg_39_1]
+		if pulsing then
+			self._pulsing_units[unit] = nil
 
-		if not var_39_0 then
-			var_39_0.reapply = true
+			local extension = self.unit_extension_data[unit]
+
+			if extension then
+				extension.reapply = true
+			end
 		end
 	end
 end
 
-OutlineSystem._update_pulsing = function (self, arg_40_1, arg_40_2)
+OutlineSystem._update_pulsing = function (self, dt, t)
 	-- function 40
-	for k, v in pairs(self._pulsing_units) do
-		local var_40_0 = self.unit_extension_data[k]
+	for unit, pulse_function in pairs(self._pulsing_units) do
+		local extension = self.unit_extension_data[unit]
 
-		if not var_40_0 then
-			local outline_color = var_40_0.outline_color
-			local color = outline_color.color
-			local var_40_3 = v(arg_40_2)
-			local var_40_4 = Color(color[1] * var_40_3, color[2] * var_40_3, color[3] * var_40_3, color[4] * var_40_3)
+		if extension then
+			local outline_settings = extension.outline_color
+			local c = outline_settings.color
+			local t_val = pulse_function(t)
+			local color = Color(c[1] * t_val, c[2] * t_val, c[3] * t_val, c[4] * t_val)
 
-			self:outline_unit(k, var_40_0.flag, var_40_4, true, var_40_0.apply_method, outline_color)
+			self:outline_unit(unit, extension.flag, color, true, extension.apply_method, outline_settings)
 
-			var_40_0.outlined = true
+			extension.outlined = true
 		else
-			self._pulsing_units[k] = nil
+			self._pulsing_units[unit] = nil
 		end
 	end
 end
 
-OutlineSystem.outline_unit = function (arg_41_0, arg_41_1, arg_41_2, arg_41_3, arg_41_4, arg_41_5, arg_41_6)
+OutlineSystem.outline_unit = function (self, unit, flag, color, do_outline, apply_method, outline_settings)
 	-- function 41
-	if not Unit.has_data(arg_41_1, "outlined_meshes") then
-		local num = 0
+	if Unit.has_data(unit, "outlined_meshes") then
+		local i = 0
 
-		while not Unit.has_data(arg_41_1, "outlined_meshes", num) do
-			local get_data = Unit.get_data(arg_41_1, "outlined_meshes", num)
-			local mesh = Unit.mesh(arg_41_1, get_data)
+		while Unit.has_data(unit, "outlined_meshes", i) do
+			local mesh_name = Unit.get_data(unit, "outlined_meshes", i)
+			local mesh = Unit.mesh(unit, mesh_name)
 
-			Mesh.set_shader_pass_flag(mesh, arg_41_2, arg_41_4)
+			Mesh.set_shader_pass_flag(mesh, flag, do_outline)
 
-			if not arg_41_4 then
+			if do_outline then
 				local num_materials = Mesh.num_materials(mesh)
 
-				for i = 0, num_materials - 1 do
-					local material = Mesh.material(mesh, i)
+				for j = 0, num_materials - 1 do
+					local material = Mesh.material(mesh, j)
 
-					Material.set_color(material, "outline_color", arg_41_3)
+					Material.set_color(material, "outline_color", color)
 
 					local set_scalar = Material.set_scalar
-					local var_41_6 = material
+					local var_41_1 = material
 					local str = "outline_pulse_multiplier"
 					local pulse_multiplier
 
-					if not arg_41_6.pulsate then
-						pulse_multiplier = arg_41_6.pulse_multiplier
+					if outline_settings.pulsate then
+						pulse_multiplier = outline_settings.pulse_multiplier
 
 						if not pulse_multiplier then
 							-- Nothing
@@ -727,23 +759,23 @@ OutlineSystem.outline_unit = function (arg_41_0, arg_41_1, arg_41_2, arg_41_3, a
 
 					::label_41_0::
 
-					set_scalar(var_41_6, str, pulse_multiplier)
+					set_scalar(var_41_1, str, pulse_multiplier)
 				end
 			end
 
-			num = num + 1
+			i = i + 1
 		end
-	elseif arg_41_5 == "unit_and_childs" then
-		Unit.set_shader_pass_flag_for_meshes_in_unit_and_childs(arg_41_1, arg_41_2, arg_41_4)
-		Unit.set_color_for_materials_in_unit_and_childs(arg_41_1, "outline_color", arg_41_3)
+	elseif apply_method == "unit_and_childs" then
+		Unit.set_shader_pass_flag_for_meshes_in_unit_and_childs(unit, flag, do_outline)
+		Unit.set_color_for_materials_in_unit_and_childs(unit, "outline_color", color)
 
 		local set_scalar_for_materials_in_unit_and_childs = Unit.set_scalar_for_materials_in_unit_and_childs
-		local var_41_10 = arg_41_1
+		local var_41_5 = unit
 		local str_2 = "outline_pulse_multiplier"
 		local pulse_multiplier_2
 
-		if not arg_41_6.pulsate then
-			pulse_multiplier_2 = arg_41_6.pulse_multiplier
+		if outline_settings.pulsate then
+			pulse_multiplier_2 = outline_settings.pulse_multiplier
 
 			if not pulse_multiplier_2 then
 				-- Nothing
@@ -754,18 +786,18 @@ OutlineSystem.outline_unit = function (arg_41_0, arg_41_1, arg_41_2, arg_41_3, a
 
 		::label_41_1::
 
-		set_scalar_for_materials_in_unit_and_childs(var_41_10, str_2, pulse_multiplier_2)
-	elseif arg_41_5 == "unit" then
-		Unit.set_shader_pass_flag_for_meshes(arg_41_1, arg_41_2, arg_41_4)
-		Unit.set_color_for_materials(arg_41_1, "outline_color", arg_41_3)
+		set_scalar_for_materials_in_unit_and_childs(var_41_5, str_2, pulse_multiplier_2)
+	elseif apply_method == "unit" then
+		Unit.set_shader_pass_flag_for_meshes(unit, flag, do_outline)
+		Unit.set_color_for_materials(unit, "outline_color", color)
 
 		local set_scalar_for_materials = Unit.set_scalar_for_materials
-		local var_41_14 = arg_41_1
+		local var_41_9 = unit
 		local str_3 = "outline_pulse_multiplier"
 		local pulse_multiplier_3
 
-		if not arg_41_6.pulsate then
-			pulse_multiplier_3 = arg_41_6.pulse_multiplier
+		if outline_settings.pulsate then
+			pulse_multiplier_3 = outline_settings.pulse_multiplier
 
 			if not pulse_multiplier_3 then
 				-- Nothing
@@ -776,81 +808,82 @@ OutlineSystem.outline_unit = function (arg_41_0, arg_41_1, arg_41_2, arg_41_3, a
 
 		::label_41_2::
 
-		set_scalar_for_materials(var_41_14, str_3, pulse_multiplier_3)
+		set_scalar_for_materials(var_41_9, str_3, pulse_multiplier_3)
 	else
-		error(sprintf("Non-existant apply method %s", arg_41_5))
+		error(sprintf("Non-existant apply method %s", apply_method))
 	end
 
-	local has_extension = ScriptUnit.has_extension(arg_41_1, "locomotion_system")
-	local flag = not has_extension and has_extension.bone_lod_extension_id
+	local locomotion_extension = ScriptUnit.has_extension(unit, "locomotion_system")
+	local bone_lod_id = not not locomotion_extension and not not locomotion_extension.bone_lod_extension_id
 
-	if not flag then
-		EngineOptimized.bone_lod_set_ignore_umbra(flag, arg_41_4)
+	if bone_lod_id then
+		EngineOptimized.bone_lod_set_ignore_umbra(bone_lod_id, do_outline)
 	end
 end
 
-OutlineSystem.raycast_result = function (self, arg_42_1)
+OutlineSystem.raycast_result = function (self, unit_center)
 	-- function 42
 	local physics_world = self.physics_world
-	local local_position = Unit.local_position(self.camera_unit, 0)
-	local distance = Vector3.distance(local_position, arg_42_1)
-	local normalize = Vector3.normalize(arg_42_1 - local_position)
-	local immediate_raycast, var_42_5 = PhysicsWorld.immediate_raycast(physics_world, local_position, normalize, distance, "all", "collision_filter", "filter_ai_line_of_sight_check")
+	local camera_position = Unit.local_position(self.camera_unit, 0)
+	local distance = Vector3.distance(camera_position, unit_center)
+	local direction = Vector3.normalize(unit_center - camera_position)
+	local result, num_hits = PhysicsWorld.immediate_raycast(physics_world, camera_position, direction, distance, "all", "collision_filter", "filter_ai_line_of_sight_check")
 
-	return immediate_raycast, var_42_5
+	return result, num_hits
 end
 
-OutlineSystem.distance_sq_to_unit = function (self, arg_43_1)
+OutlineSystem.distance_sq_to_unit = function (self, unit)
 	-- function 43
-	local local_position = Unit.local_position(self.camera_unit, 0)
-	local box, var_43_2 = Unit.box(arg_43_1)
-	local translation = Matrix4x4.translation(box)
+	local camera_position = Unit.local_position(self.camera_unit, 0)
+	local pose, _ = Unit.box(unit)
+	local unit_center = Matrix4x4.translation(pose)
+	local distance_sq = Vector3.distance_squared(camera_position, unit_center)
 
-	return (Vector3.distance_squared(local_position, translation))
+	return distance_sq
 end
 
-local flag = true
+local IS_SLOW_CHECK = true
 
-OutlineSystem.never = function (arg_44_0, arg_44_1, arg_44_2)
+OutlineSystem.never = function (self, unit, extension)
 	-- function 44
 	return false
 end
 
-OutlineSystem.ai_alive = function (arg_45_0, arg_45_1, arg_45_2)
+OutlineSystem.ai_alive = function (self, unit, extension)
 	-- function 45
-	return not not HEALTH_ALIVE[arg_45_1]
+	return not not HEALTH_ALIVE[unit]
 end
 
-OutlineSystem.always = function (arg_46_0, arg_46_1, arg_46_2)
+OutlineSystem.always = function (self, unit, extension)
 	-- function 46
 	return true
 end
 
-OutlineSystem.always_same_side = function (self, arg_47_1, arg_47_2)
+OutlineSystem.always_same_side = function (self, unit, extension)
 	-- function 47
-	local same_side = arg_47_2.same_side
+	local same_side = extension.same_side
 
 	if not same_side then
-		local var_47_1 = Managers.state.side.side_by_unit[arg_47_1]
-		local var_47_2 = Managers.state.side.side_by_party[self._local_player:get_party()]
+		local unit_side = Managers.state.side.side_by_unit[unit]
+		local local_side = Managers.state.side.side_by_party[self._local_player:get_party()]
 
-		same_side = not Managers.state.side:is_enemy_by_side(var_47_1, var_47_2)
-		arg_47_2.same_side = same_side
+		same_side = not Managers.state.side:is_enemy_by_side(unit_side, local_side)
+		extension.same_side = same_side
 	end
 
 	return same_side
 end
 
-OutlineSystem.same_side_in_ghost_mode = function (self, arg_48_1, arg_48_2)
+OutlineSystem.same_side_in_ghost_mode = function (self, unit, extension)
 	-- function 48
-	local status_extension = arg_48_2.status_extension
+	local status_extension = extension.status_extension
 
 	if status_extension == nil then
-		status_extension = ScriptUnit.has_extension(arg_48_1, "status_system")
-		arg_48_2.status_extension = status_extension or false
+		status_extension = ScriptUnit.has_extension(unit, "status_system")
+		extension.status_extension = not not status_extension or not not false
 	end
 
-	if not status_extension then
+	if status_extension then
 		-- Nothing
 	end
 
@@ -858,121 +891,125 @@ OutlineSystem.same_side_in_ghost_mode = function (self, arg_48_1, arg_48_2)
 
 	local get_in_ghost_mode = status_extension:get_in_ghost_mode()
 
-	get_in_ghost_mode = not get_in_ghost_mode and self:always_same_side(arg_48_1, arg_48_2)
+	get_in_ghost_mode = not not get_in_ghost_mode and not not self:always_same_side(unit, extension)
 
 	::label_48_1::
 
 	return get_in_ghost_mode
 end
 
-OutlineSystem.visible = function (self, arg_49_1, arg_49_2)
+OutlineSystem.visible = function (self, unit, extension)
 	-- function 49
-	local box, var_49_1 = Unit.box(arg_49_1)
-	local translation = Matrix4x4.translation(box)
+	local pose, _ = Unit.box(unit)
+	local unit_center = Matrix4x4.translation(pose)
+	local in_darkness = self.darkness_system:is_in_darkness(unit_center)
 
-	return not not self.darkness_system:is_in_darkness(translation) or not self:raycast_result(translation), flag
+	return not in_darkness and not not not self:raycast_result(unit_center), IS_SLOW_CHECK
 end
 
-OutlineSystem.not_in_dark = function (self, arg_50_1, arg_50_2)
+OutlineSystem.not_in_dark = function (self, unit, extension)
 	-- function 50
-	local box, var_50_1 = Unit.box(arg_50_1)
-	local translation = Matrix4x4.translation(box)
+	local pose, _ = Unit.box(unit)
+	local unit_center = Matrix4x4.translation(pose)
+	local in_darkness = self.darkness_system:is_in_darkness(unit_center)
 
-	return not self.darkness_system:is_in_darkness(translation)
+	return not in_darkness
 end
 
-OutlineSystem.not_visible = function (self, arg_51_1, arg_51_2)
+OutlineSystem.not_visible = function (self, unit, extension)
 	-- function 51
-	return not self:visible(arg_51_1, arg_51_2), flag
+	return not self:visible(unit, extension), IS_SLOW_CHECK
 end
 
-OutlineSystem.within_distance_and_not_in_dark = function (self, arg_52_1, arg_52_2)
+OutlineSystem.within_distance_and_not_in_dark = function (self, unit, extension)
 	-- function 52
-	if not self:within_distance(arg_52_1, arg_52_2) then
+	if not self:within_distance(unit, extension) then
 		return false
 	end
 
-	local box, var_52_1 = Unit.box(arg_52_1)
-	local translation = Matrix4x4.translation(box)
+	local pose, _ = Unit.box(unit)
+	local unit_center = Matrix4x4.translation(pose)
+	local in_darkness = self.darkness_system:is_in_darkness(unit_center)
 
-	return not self.darkness_system:is_in_darkness(translation)
+	return not in_darkness
 end
 
-OutlineSystem.within_distance = function (self, arg_53_1, arg_53_2)
+OutlineSystem.within_distance = function (self, unit, extension)
 	-- function 53
-	return self:distance_sq_to_unit(arg_53_1) <= arg_53_2.distance * arg_53_2.distance
+	return self:distance_sq_to_unit(unit) <= extension.distance * extension.distance
 end
 
-OutlineSystem.outside_distance = function (self, arg_54_1, arg_54_2)
+OutlineSystem.outside_distance = function (self, unit, extension)
 	-- function 54
-	return self:distance_sq_to_unit(arg_54_1) > arg_54_2.distance * arg_54_2.distance
+	return self:distance_sq_to_unit(unit) > extension.distance * extension.distance
 end
 
-OutlineSystem.outside_distance_or_not_visible = function (self, arg_55_1, arg_55_2)
+OutlineSystem.outside_distance_or_not_visible = function (self, unit, extension)
 	-- function 55
-	if not self:outside_distance(arg_55_1, arg_55_2) then
+	if self:outside_distance(unit, extension) then
 		return true
 	end
 
-	if not self:not_visible(arg_55_1, arg_55_2) then
-		return true, flag
+	if self:not_visible(unit, extension) then
+		return true, IS_SLOW_CHECK
 	end
 
-	return false, flag
+	return false, IS_SLOW_CHECK
 end
 
-OutlineSystem.within_distance_and_visible = function (self, arg_56_1, arg_56_2)
+OutlineSystem.within_distance_and_visible = function (self, unit, extension)
 	-- function 56
-	if not self:within_distance(arg_56_1, arg_56_2) and not self:visible(arg_56_1, arg_56_2) then
-		return true, flag
+	if self:within_distance(unit, extension) and self:visible(unit, extension) then
+		return true, IS_SLOW_CHECK
 	end
 
 	return false
 end
 
-OutlineSystem.conditional_within_distance = function (self, arg_57_1, arg_57_2)
+OutlineSystem.conditional_within_distance = function (self, unit, extension)
 	-- function 57
-	if not self:within_distance(arg_57_1, arg_57_2) then
-		local get_data = Unit.get_data(arg_57_1, "interaction_data", "interaction_type")
-		local var_57_1 = InteractionDefinitions[get_data]
-		local player_unit = Managers.player:local_player().player_unit
-		local flag = false
+	if self:within_distance(unit, extension) then
+		local interaction_type = Unit.get_data(unit, "interaction_data", "interaction_type")
+		local interaction_data = InteractionDefinitions[interaction_type]
+		local local_player = Managers.player:local_player()
+		local player_unit = local_player.player_unit
+		local can_interact = false
 
-		if not player_unit then
-			flag = var_57_1.client.can_interact(player_unit, arg_57_1)
+		if player_unit then
+			can_interact = interaction_data.client.can_interact(player_unit, unit)
 		end
 
-		return flag
+		return can_interact
 	end
 
 	return false
 end
 
-OutlineSystem.in_ghost_mode = function (arg_58_0, arg_58_1, arg_58_2)
+OutlineSystem.in_ghost_mode = function (self, unit, extension)
 	-- function 58
-	local has_extension = ScriptUnit.has_extension(arg_58_1, "ghost_mode_system")
+	local ghost_mode_extension = ScriptUnit.has_extension(unit, "ghost_mode_system")
 
-	return not has_extension and has_extension:is_in_ghost_mode()
+	return not not ghost_mode_extension and not not ghost_mode_extension:is_in_ghost_mode()
 end
 
-OutlineSystem.has_gutter_runner_invisible_buff = function (arg_59_0, arg_59_1, arg_59_2)
+OutlineSystem.has_gutter_runner_invisible_buff = function (self, unit, extension)
 	-- function 59
-	local extension = ScriptUnit.extension(arg_59_1, "buff_system")
+	local buff_system = ScriptUnit.extension(unit, "buff_system")
 
-	return not extension and extension:has_buff_type("vs_gutter_runner_smoke_bomb_invisible")
+	return not not buff_system and not not buff_system:has_buff_type("vs_gutter_runner_smoke_bomb_invisible")
 end
 
-OutlineSystem.show_versus_dark_pact_outline = function (self, arg_60_1, arg_60_2)
+OutlineSystem.show_versus_dark_pact_outline = function (self, unit, extension)
 	-- function 60
-	if not self:within_distance_and_not_in_dark(arg_60_1, arg_60_2) then
+	if not self:within_distance_and_not_in_dark(unit, extension) then
 		return false
 	end
 
-	if not self:in_ghost_mode(arg_60_1, arg_60_2) then
+	if self:in_ghost_mode(unit, extension) then
 		return false
 	end
 
-	return not self:has_gutter_runner_invisible_buff(arg_60_1, arg_60_2)
+	return not self:has_gutter_runner_invisible_buff(unit, extension)
 end
 
 OutlineSystem.destroy = function (self)

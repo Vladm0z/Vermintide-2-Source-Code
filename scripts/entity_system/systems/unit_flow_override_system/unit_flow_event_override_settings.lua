@@ -1,11 +1,18 @@
 -- chunkname: @scripts/entity_system/systems/unit_flow_override_system/unit_flow_event_override_settings.lua
 
-local scripts_entity_system_systems_unit_flow_override_system_breed_unit_flow_event_overrides = require("scripts/entity_system/systems/unit_flow_override_system/breed_unit_flow_event_overrides")
+local BREED_FLOW_EVENT_OVERRIDE_DATA_LOOKUP = require("scripts/entity_system/systems/unit_flow_override_system/breed_unit_flow_event_overrides")
+local unit_alive_2 = unit_alive
 
-if not unit_alive then
-	local alive = Unit.alive
+if not unit_alive_2 then
+	-- Nothing
 end
 
-local tbl = {}
+unit_alive_2 = Unit.alive
+
+local unit_alive = unit_alive_2
+
+::label_0_0::
+
+local EMPTY_TABLE = {}
 
 UnitFlowEventOverrideSettings = {}

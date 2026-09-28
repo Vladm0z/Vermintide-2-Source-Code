@@ -1,8 +1,8 @@
 -- chunkname: @levels/honduras/prologue/world_patrol_waypoints.lua
 
-local tbl = {}
-local tbl_2 = {}
-local tbl_3 = {
+local boss_waypoints = {}
+local patrol_waypoints = {}
+local event_waypoints = {
 	{
 		travel_dist = 719.2565316557884,
 		id = "event_1",
@@ -246,11 +246,11 @@ local tbl_3 = {
 		}
 	}
 }
-local str = "1"
+local patrol_spline_version = "1"
 
 return {
-	version = str,
-	boss_waypoints = tbl,
-	patrol_waypoints = tbl_2,
-	event_waypoints = tbl_3
+	version = patrol_spline_version,
+	boss_waypoints = boss_waypoints,
+	patrol_waypoints = patrol_waypoints,
+	event_waypoints = event_waypoints
 }

@@ -1,19 +1,19 @@
 -- chunkname: @scripts/ui/views/cinematics_view/cinematics_view_settings.lua
 
-local var_0_0 = local_require("scripts/ui/cutscene_overlay_templates/cutscene_template_vermintide_intro")
-local var_0_1 = local_require("scripts/ui/cutscene_overlay_templates/cutscene_template_trailer")
-local var_0_2 = local_require("scripts/ui/cutscene_overlay_templates/cutscene_template_bogenhafen_intro")
-local var_0_3 = local_require("scripts/ui/cutscene_overlay_templates/cutscene_template_penny_intro")
-local var_0_4 = local_require("scripts/ui/cutscene_overlay_templates/cutscene_template_cog_intro")
-local var_0_5 = local_require("scripts/ui/cutscene_overlay_templates/cutscene_template_morris_intro")
-local var_0_6 = local_require("scripts/ui/cutscene_overlay_templates/cutscene_template_woods_intro")
-local var_0_7 = local_require("scripts/ui/cutscene_overlay_templates/cutscene_template_bless_intro")
-local var_0_8 = local_require("scripts/ui/cutscene_overlay_templates/cutscene_template_wom_intro")
-local var_0_9 = local_require("scripts/ui/cutscene_overlay_templates/cutscene_template_belakor_intro")
-local var_0_10 = local_require("scripts/ui/cutscene_overlay_templates/cutscene_template_trails_intro")
-local var_0_11 = local_require("scripts/ui/cutscene_overlay_templates/cutscene_template_tower_intro")
-local var_0_12 = local_require("scripts/ui/cutscene_overlay_templates/cutscene_template_karak_intro")
-local var_0_13 = local_require("scripts/ui/cutscene_overlay_templates/cutscene_template_shovel_intro")
+local vermintide_intro_video_subtitle_settings = local_require("scripts/ui/cutscene_overlay_templates/cutscene_template_vermintide_intro")
+local prologue_video_subtitle_settings = local_require("scripts/ui/cutscene_overlay_templates/cutscene_template_trailer")
+local bogenhafen_video_subtitle_settings = local_require("scripts/ui/cutscene_overlay_templates/cutscene_template_bogenhafen_intro")
+local penny_intro_video_subtitle_settings = local_require("scripts/ui/cutscene_overlay_templates/cutscene_template_penny_intro")
+local cog_intro_video_subtitle_settings = local_require("scripts/ui/cutscene_overlay_templates/cutscene_template_cog_intro")
+local morris_intro_video_subtitle_settings = local_require("scripts/ui/cutscene_overlay_templates/cutscene_template_morris_intro")
+local woods_intro_video_subtitle_settings = local_require("scripts/ui/cutscene_overlay_templates/cutscene_template_woods_intro")
+local bless_intro_video_subtitle_settings = local_require("scripts/ui/cutscene_overlay_templates/cutscene_template_bless_intro")
+local wom_intro_video_subtitle_settings = local_require("scripts/ui/cutscene_overlay_templates/cutscene_template_wom_intro")
+local belakor_intro_video_subtitle_settings = local_require("scripts/ui/cutscene_overlay_templates/cutscene_template_belakor_intro")
+local trails_intro_video_subtitle_settings = local_require("scripts/ui/cutscene_overlay_templates/cutscene_template_trails_intro")
+local tower_intro_video_subtitle_settings = local_require("scripts/ui/cutscene_overlay_templates/cutscene_template_tower_intro")
+local karak_intro_video_subtitle_settings = local_require("scripts/ui/cutscene_overlay_templates/cutscene_template_karak_intro")
+local shovel_intro_video_subtitle_settings = local_require("scripts/ui/cutscene_overlay_templates/cutscene_template_shovel_intro")
 
 CinematicsViewSettings = {
 	{
@@ -27,7 +27,7 @@ CinematicsViewSettings = {
 				sound_stop = "Stop_all_cinematics",
 				sound_start = "Play_vermintide_1_release_trailer",
 				resource = "video/vermintide_intro",
-				subtitle_template_settings = var_0_0
+				subtitle_template_settings = vermintide_intro_video_subtitle_settings
 			}
 		},
 		{
@@ -53,7 +53,7 @@ CinematicsViewSettings = {
 				sound_start = "Play_vermintide_2_prologue_intro_cinematic",
 				frames_per_second = 24,
 				resource = "video/vermintide_2_prologue_intro",
-				subtitle_template_settings = var_0_1
+				subtitle_template_settings = prologue_video_subtitle_settings
 			}
 		},
 		{
@@ -66,7 +66,7 @@ CinematicsViewSettings = {
 				sound_stop = "Stop_all_cinematics",
 				sound_start = "Play_vermintide_2_bogenhafen_intro",
 				resource = "video/vermintide_2_bogenhafen_intro",
-				subtitle_template_settings = var_0_2
+				subtitle_template_settings = bogenhafen_video_subtitle_settings
 			}
 		},
 		{
@@ -103,7 +103,7 @@ CinematicsViewSettings = {
 				sound_stop = "Stop_all_cinematics",
 				sound_start = "cinematic_intro_wom",
 				resource = "video/vermintide_2_wom_intro",
-				subtitle_template_settings = var_0_8
+				subtitle_template_settings = wom_intro_video_subtitle_settings
 			}
 		},
 		{
@@ -116,7 +116,7 @@ CinematicsViewSettings = {
 				sound_stop = "Stop_all_cinematics",
 				sound_start = "cinematic_intro_penny",
 				resource = "video/vermintide_2_penny_intro",
-				subtitle_template_settings = var_0_3
+				subtitle_template_settings = penny_intro_video_subtitle_settings
 			}
 		},
 		{
@@ -141,7 +141,7 @@ CinematicsViewSettings = {
 				sound_stop = "Stop_all_cinematics",
 				sound_start = "Play_vermintide_2_cog_intro",
 				resource = "video/vermintide_2_cog_intro",
-				subtitle_template_settings = var_0_4
+				subtitle_template_settings = cog_intro_video_subtitle_settings
 			}
 		},
 		{
@@ -154,7 +154,7 @@ CinematicsViewSettings = {
 				sound_stop = "Stop_all_cinematics",
 				sound_start = "Play_MORRIS_INTRO_FINAL_AUDIO",
 				resource = "video/vermintide_2_morris_intro",
-				subtitle_template_settings = var_0_5
+				subtitle_template_settings = morris_intro_video_subtitle_settings
 			}
 		},
 		{
@@ -167,7 +167,7 @@ CinematicsViewSettings = {
 				sound_stop = "Stop_all_cinematics",
 				sound_start = "Play_vermintide_2_woods_intro",
 				resource = "video/vermintide_2_woods_intro",
-				subtitle_template_settings = var_0_6
+				subtitle_template_settings = woods_intro_video_subtitle_settings
 			}
 		},
 		{
@@ -180,7 +180,7 @@ CinematicsViewSettings = {
 				sound_stop = "Stop_all_cinematics",
 				sound_start = "Play_vermintide_2_bless_intro_trailer",
 				resource = "video/vermintide_2_bless_intro",
-				subtitle_template_settings = var_0_7
+				subtitle_template_settings = bless_intro_video_subtitle_settings
 			}
 		},
 		{
@@ -193,7 +193,7 @@ CinematicsViewSettings = {
 				sound_stop = "Stop_all_cinematics",
 				sound_start = "Play_vermintide_2_belakor_intro",
 				resource = "video/vermintide_2_belakor_intro",
-				subtitle_template_settings = var_0_9
+				subtitle_template_settings = belakor_intro_video_subtitle_settings
 			}
 		},
 		{
@@ -206,7 +206,7 @@ CinematicsViewSettings = {
 				sound_stop = "Stop_all_cinematics",
 				sound_start = "Play_vermintide_2_trails_intro",
 				resource = "video/vermintide_2_trails_intro",
-				subtitle_template_settings = var_0_10
+				subtitle_template_settings = trails_intro_video_subtitle_settings
 			}
 		},
 		{
@@ -219,7 +219,7 @@ CinematicsViewSettings = {
 				sound_stop = "Stop_all_cinematics",
 				sound_start = "Play_vermintide_2_tower_intro",
 				resource = "video/vermintide_2_tower_intro",
-				subtitle_template_settings = var_0_11
+				subtitle_template_settings = tower_intro_video_subtitle_settings
 			}
 		},
 		{
@@ -232,7 +232,7 @@ CinematicsViewSettings = {
 				sound_stop = "Stop_all_cinematics",
 				sound_start = "Play_vermintide_2_karak_intro",
 				resource = "video/vermintide_2_karak_intro",
-				subtitle_template_settings = var_0_12
+				subtitle_template_settings = karak_intro_video_subtitle_settings
 			}
 		},
 		{
@@ -245,7 +245,7 @@ CinematicsViewSettings = {
 				sound_stop = "Stop_all_cinematics",
 				sound_start = "Play_vermintide_2_shovel_intro_trailer",
 				resource = "video/vermintide_2_shovel_intro",
-				subtitle_template_settings = var_0_13
+				subtitle_template_settings = shovel_intro_video_subtitle_settings
 			}
 		},
 		{
@@ -273,7 +273,7 @@ CinematicsViewSettings = {
 				sound_stop = "Stop_all_cinematics",
 				sound_start = "Play_vermintide_2_bogenhafen_intro",
 				resource = "video/vermintide_2_bogenhafen_intro",
-				subtitle_template_settings = var_0_2
+				subtitle_template_settings = bogenhafen_video_subtitle_settings
 			}
 		},
 		{
@@ -298,7 +298,7 @@ CinematicsViewSettings = {
 				sound_stop = "Stop_all_cinematics",
 				sound_start = "cinematic_intro_wom",
 				resource = "video/vermintide_2_wom_intro",
-				subtitle_template_settings = var_0_8
+				subtitle_template_settings = wom_intro_video_subtitle_settings
 			}
 		},
 		{
@@ -311,7 +311,7 @@ CinematicsViewSettings = {
 				sound_stop = "Stop_all_cinematics",
 				sound_start = "Play_MORRIS_INTRO_FINAL_AUDIO",
 				resource = "video/vermintide_2_morris_intro",
-				subtitle_template_settings = var_0_5
+				subtitle_template_settings = morris_intro_video_subtitle_settings
 			}
 		},
 		{
@@ -324,7 +324,7 @@ CinematicsViewSettings = {
 				sound_stop = "Stop_all_cinematics",
 				sound_start = "cinematic_intro_penny",
 				resource = "video/vermintide_2_penny_intro",
-				subtitle_template_settings = var_0_3
+				subtitle_template_settings = penny_intro_video_subtitle_settings
 			}
 		},
 		{
@@ -337,7 +337,7 @@ CinematicsViewSettings = {
 				sound_stop = "Stop_all_cinematics",
 				sound_start = "Play_vermintide_2_belakor_intro",
 				resource = "video/vermintide_2_belakor_intro",
-				subtitle_template_settings = var_0_9
+				subtitle_template_settings = belakor_intro_video_subtitle_settings
 			}
 		},
 		category_name = "additional_content"
@@ -365,7 +365,7 @@ CinematicsViewSettings = {
 				sound_stop = "Stop_all_cinematics",
 				sound_start = "Play_vermintide_2_cog_intro",
 				resource = "video/vermintide_2_cog_intro",
-				subtitle_template_settings = var_0_4
+				subtitle_template_settings = cog_intro_video_subtitle_settings
 			}
 		},
 		{
@@ -378,7 +378,7 @@ CinematicsViewSettings = {
 				sound_stop = "Stop_all_cinematics",
 				sound_start = "Play_vermintide_2_woods_intro",
 				resource = "video/vermintide_2_woods_intro",
-				subtitle_template_settings = var_0_6
+				subtitle_template_settings = woods_intro_video_subtitle_settings
 			}
 		},
 		{
@@ -391,7 +391,7 @@ CinematicsViewSettings = {
 				sound_stop = "Stop_all_cinematics",
 				sound_start = "Play_vermintide_2_bless_intro_trailer",
 				resource = "video/vermintide_2_bless_intro",
-				subtitle_template_settings = var_0_7
+				subtitle_template_settings = bless_intro_video_subtitle_settings
 			}
 		},
 		category_name = "news_feed_career_title"

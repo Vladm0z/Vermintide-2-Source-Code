@@ -1,17 +1,17 @@
 -- chunkname: @scripts/settings/progression_unlocks.lua
 
-local tbl = {}
+local progression_unlocks = {}
 
-for k, v in pairs(TalentUnlockLevels) do
-	if not Development.parameter("debug_unlock_talents") then
-		v = 0
+for key, level_requirement in pairs(TalentUnlockLevels) do
+	if Development.parameter("debug_unlock_talents") then
+		level_requirement = 0
 	end
 
-	tbl[k] = {
+	progression_unlocks[key] = {
 		description = "reward_talent_point",
 		value = "options_button_icon_talents_glow",
 		unlock_type = "icon",
-		level_requirement = v,
+		level_requirement = level_requirement,
 		mechanism_overrides = {
 			versus = {
 				level_requirement = 0
@@ -20,7 +20,7 @@ for k, v in pairs(TalentUnlockLevels) do
 	}
 end
 
-tbl.es_mercenary = {
+progression_unlocks.es_mercenary = {
 	description = "end_screen_career_unlocked",
 	profile = "empire_soldier",
 	value = "es_mercenary",
@@ -28,7 +28,7 @@ tbl.es_mercenary = {
 	level_requirement = 0,
 	unlock_type = "career"
 }
-tbl.es_huntsman = {
+progression_unlocks.es_huntsman = {
 	description = "end_screen_career_unlocked",
 	profile = "empire_soldier",
 	value = "es_huntsman",
@@ -36,7 +36,7 @@ tbl.es_huntsman = {
 	level_requirement = 7,
 	unlock_type = "career"
 }
-tbl.es_knight = {
+progression_unlocks.es_knight = {
 	description = "end_screen_career_unlocked",
 	profile = "empire_soldier",
 	value = "es_knight",
@@ -44,7 +44,7 @@ tbl.es_knight = {
 	level_requirement = 12,
 	unlock_type = "career"
 }
-tbl.dr_ranger = {
+progression_unlocks.dr_ranger = {
 	description = "n/a",
 	profile = "dwarf_ranger",
 	value = "dr_ranger",
@@ -52,7 +52,7 @@ tbl.dr_ranger = {
 	level_requirement = 0,
 	unlock_type = "career"
 }
-tbl.dr_ironbreaker = {
+progression_unlocks.dr_ironbreaker = {
 	description = "end_screen_career_unlocked",
 	profile = "dwarf_ranger",
 	value = "dr_ironbreaker",
@@ -60,7 +60,7 @@ tbl.dr_ironbreaker = {
 	level_requirement = 7,
 	unlock_type = "career"
 }
-tbl.dr_slayer = {
+progression_unlocks.dr_slayer = {
 	description = "end_screen_career_unlocked",
 	profile = "dwarf_ranger",
 	value = "dr_slayer",
@@ -68,7 +68,7 @@ tbl.dr_slayer = {
 	level_requirement = 12,
 	unlock_type = "career"
 }
-tbl.wh_captain = {
+progression_unlocks.wh_captain = {
 	description = "end_screen_career_unlocked",
 	profile = "witch_hunter",
 	value = "wh_captain",
@@ -76,7 +76,7 @@ tbl.wh_captain = {
 	level_requirement = 0,
 	unlock_type = "career"
 }
-tbl.wh_bountyhunter = {
+progression_unlocks.wh_bountyhunter = {
 	description = "end_screen_career_unlocked",
 	profile = "witch_hunter",
 	value = "wh_bountyhunter",
@@ -84,7 +84,7 @@ tbl.wh_bountyhunter = {
 	level_requirement = 7,
 	unlock_type = "career"
 }
-tbl.wh_zealot = {
+progression_unlocks.wh_zealot = {
 	description = "end_screen_career_unlocked",
 	profile = "witch_hunter",
 	value = "wh_zealot",
@@ -92,7 +92,7 @@ tbl.wh_zealot = {
 	level_requirement = 12,
 	unlock_type = "career"
 }
-tbl.we_waywatcher = {
+progression_unlocks.we_waywatcher = {
 	description = "end_screen_career_unlocked",
 	profile = "wood_elf",
 	value = "we_waywatcher",
@@ -100,7 +100,7 @@ tbl.we_waywatcher = {
 	level_requirement = 0,
 	unlock_type = "career"
 }
-tbl.we_maidenguard = {
+progression_unlocks.we_maidenguard = {
 	description = "end_screen_career_unlocked",
 	profile = "wood_elf",
 	value = "we_maidenguard",
@@ -108,7 +108,7 @@ tbl.we_maidenguard = {
 	level_requirement = 7,
 	unlock_type = "career"
 }
-tbl.we_shade = {
+progression_unlocks.we_shade = {
 	description = "end_screen_career_unlocked",
 	profile = "wood_elf",
 	value = "we_shade",
@@ -116,7 +116,7 @@ tbl.we_shade = {
 	level_requirement = 12,
 	unlock_type = "career"
 }
-tbl.bw_adept = {
+progression_unlocks.bw_adept = {
 	description = "end_screen_career_unlocked",
 	profile = "bright_wizard",
 	value = "bw_adept",
@@ -124,7 +124,7 @@ tbl.bw_adept = {
 	level_requirement = 0,
 	unlock_type = "career"
 }
-tbl.bw_scholar = {
+progression_unlocks.bw_scholar = {
 	description = "end_screen_career_unlocked",
 	profile = "bright_wizard",
 	value = "bw_scholar",
@@ -132,7 +132,7 @@ tbl.bw_scholar = {
 	level_requirement = 7,
 	unlock_type = "career"
 }
-tbl.bw_unchained = {
+progression_unlocks.bw_unchained = {
 	description = "end_screen_career_unlocked",
 	profile = "bright_wizard",
 	value = "bw_unchained",
@@ -141,126 +141,139 @@ tbl.bw_unchained = {
 	unlock_type = "career"
 }
 
-DLCUtils.merge("progression_unlocks", tbl)
+DLCUtils.merge("progression_unlocks", progression_unlocks)
 
-for k_2, v_2 in pairs(tbl) do
-	v_2.name = k_2
+for unlock_name, template in pairs(progression_unlocks) do
+	template.name = unlock_name
 end
 
-local tbl_2 = {}
+local profile_unlocks = {}
 
-for k_3, v_3 in pairs(tbl) do
-	local profile = v_3.profile
+for unlock_name, template in pairs(progression_unlocks) do
+	local profile = template.profile
 
 	if profile ~= nil then
-		if tbl_2[profile] == nil then
-			tbl_2[profile] = {}
+		if profile_unlocks[profile] == nil then
+			profile_unlocks[profile] = {}
 		end
 
-		tbl_2[profile][v_3.name] = v_3
+		profile_unlocks[profile][template.name] = template
 	end
 end
 
 ProgressionUnlocks = {}
-ProgressionUnlocks.all_unlocks_for_debug = tbl
+ProgressionUnlocks.all_unlocks_for_debug = progression_unlocks
 
-ProgressionUnlocks.get_unlock = function (arg_1_0, arg_1_1)
+ProgressionUnlocks.get_unlock = function (unlock_name, profile)
 	-- function 1
-	return MechanismOverrides.get(tbl)[arg_1_0]
+	local progression_unlocks_for_mechanism = MechanismOverrides.get(progression_unlocks)
+	local template = progression_unlocks_for_mechanism[unlock_name]
+
+	return template
 end
 
-ProgressionUnlocks.get_profile_unlock = function (arg_2_0, arg_2_1)
+ProgressionUnlocks.get_profile_unlock = function (unlock_name, profile)
 	-- function 2
-	return MechanismOverrides.get(tbl_2)[arg_2_1][arg_2_0]
+	local mechanism_profile_unlocks = MechanismOverrides.get(profile_unlocks)
+	local template = mechanism_profile_unlocks[profile][unlock_name]
+
+	return template
 end
 
-ProgressionUnlocks.is_unlocked = function (arg_3_0, arg_3_1)
+ProgressionUnlocks.is_unlocked = function (unlock_name, level)
 	-- function 3
-	local var_3_0 = MechanismOverrides.get(tbl)[arg_3_0]
+	local progression_unlocks_for_mechanism = MechanismOverrides.get(progression_unlocks)
+	local template = progression_unlocks_for_mechanism[unlock_name]
 
-	fassert(var_3_0, "[ProgressionUnlocks] no template named %q", tostring(arg_3_0))
+	fassert(template, "[ProgressionUnlocks] no template named %q", tostring(unlock_name))
 
-	if not (var_3_0.disabled or not (arg_3_1 >= var_3_0.level_requirement)) then
+	if not template.disabled and level >= template.level_requirement then
 		return true
 	end
 end
 
-ProgressionUnlocks.get_level_unlocks = function (arg_4_0, arg_4_1)
+ProgressionUnlocks.get_level_unlocks = function (level, profile)
 	-- function 4
-	local tbl_2 = {}
-	local get = MechanismOverrides.get(tbl)
+	local templates = {}
+	local progression_unlocks_for_mechanism = MechanismOverrides.get(progression_unlocks)
 
-	for k, v in pairs(get) do
-		if not (not v.profile and v.profile ~= arg_4_1 and v.level_requirement ~= arg_4_0) then
-			tbl_2[#tbl_2 + 1] = v
+	for unlock_name, template in pairs(progression_unlocks_for_mechanism) do
+		if (not template.profile or template.profile == profile) and template.level_requirement == level then
+			templates[#templates + 1] = template
 		end
 	end
 
-	return tbl_2
+	return templates
 end
 
-ProgressionUnlocks.is_unlocked_for_profile = function (arg_5_0, arg_5_1, arg_5_2)
+ProgressionUnlocks.is_unlocked_for_profile = function (unlock_name, profile, level)
 	-- function 5
-	if not Development.parameter("unlock_all_careers") then
+	if Development.parameter("unlock_all_careers") then
 		return true
 	end
 
-	local var_5_0 = MechanismOverrides.get(tbl_2)[arg_5_1]
+	local mechanism_profile_unlocks = MechanismOverrides.get(profile_unlocks)
+	local profile_templates = mechanism_profile_unlocks[profile]
 
-	fassert(var_5_0, "No unlocks found for profile %s", arg_5_1)
+	fassert(profile_templates, "No unlocks found for profile %s", profile)
 
-	local get = MechanismOverrides.get(tbl)
-	local var_5_2 = var_5_0[arg_5_0]
+	local progression_unlocks_for_mechanism = MechanismOverrides.get(progression_unlocks)
+	local template = profile_templates[unlock_name]
 
-	if var_5_2 == nil then
+	if template == nil then
 		return true
 	end
 
-	if arg_5_2 < var_5_2.level_requirement then
-		local flag = true
-		local var_5_4
+	if level < template.level_requirement then
+		local localized = true
+		local dlc_name
 
-		return false, Localize("career_locked_info") .. " " .. tostring(var_5_2.level_requirement), var_5_4, flag
+		return false, Localize("career_locked_info") .. " " .. tostring(template.level_requirement), dlc_name, localized
 	end
 
 	return true
 end
 
-ProgressionUnlocks.get_quests_unlocked = function (arg_6_0)
+ProgressionUnlocks.get_quests_unlocked = function (level_key)
 	-- function 6
-	if not (LevelSettings[arg_6_0].dlc_name or table.contains(MainGameLevels, arg_6_0)) then
+	local level_settings = LevelSettings[level_key]
+
+	if level_settings.dlc_name or not table.contains(MainGameLevels, level_key) then
 		return
 	end
 
 	local statistics_db = Managers.player:statistics_db()
-	local stats_id = Managers.player:local_player():stats_id()
-	local flag = true
+	local player = Managers.player:local_player()
+	local stats_id = player:stats_id()
+	local quests_unlocked = true
 
-	for k, v in pairs(GameActs) do
-		local count = #v
+	for _, act_levels in pairs(GameActs) do
+		local num_act_levels = #act_levels
 
-		for k_2 = 1, count do
-			local var_6_4 = v[k_2]
-			local get_persistent_stat = statistics_db:get_persistent_stat(stats_id, "completed_levels", var_6_4)
+		for i = 1, num_act_levels do
+			local act_level_key = act_levels[i]
+			local completed_times = statistics_db:get_persistent_stat(stats_id, "completed_levels", act_level_key)
 
-			if not (get_persistent_stat == 0 or arg_6_0 ~= var_6_4 or not (get_persistent_stat > 1)) then
-				flag = false
+			if completed_times == 0 or level_key == act_level_key and completed_times > 1 then
+				quests_unlocked = false
 
 				break
 			end
 		end
 
-		if not flag then
+		if not quests_unlocked then
 			break
 		end
 	end
 
-	if not flag then
-		return MechanismOverrides.get(tbl).quests
+	if quests_unlocked then
+		local progression_unlocks_for_mechanism = MechanismOverrides.get(progression_unlocks)
+
+		return progression_unlocks_for_mechanism.quests
 	end
 end
 
-local tbl_3 = {
+local prestige_unlocks = {
 	witch_hunter = {
 		"frame_0001",
 		"frame_0002",
@@ -303,9 +316,9 @@ local tbl_3 = {
 	}
 }
 
-ProgressionUnlocks.prestige_reward_by_level = function (arg_7_0, arg_7_1)
+ProgressionUnlocks.prestige_reward_by_level = function (prestige_level, profile_name)
 	-- function 7
-	return tbl_3[arg_7_1][arg_7_0]
+	return prestige_unlocks[profile_name][prestige_level]
 end
 
 ProgressionUnlocks.get_max_prestige_levels = function ()
@@ -313,105 +326,114 @@ ProgressionUnlocks.get_max_prestige_levels = function ()
 	return 5
 end
 
-ProgressionUnlocks.can_upgrade_prestige = function (arg_9_0)
+ProgressionUnlocks.can_upgrade_prestige = function (hero_name)
 	-- function 9
-	local get = Managers.backend:get_interface("hero_attributes"):get(arg_9_0, "prestige")
-	local get_experience = ExperienceSettings.get_experience(arg_9_0)
-	local get_level = ExperienceSettings.get_level(get_experience)
+	local hero_attributes = Managers.backend:get_interface("hero_attributes")
+	local prestige = hero_attributes:get(hero_name, "prestige")
+	local experience = ExperienceSettings.get_experience(hero_name)
+	local level = ExperienceSettings.get_level(experience)
+	local can_unlock = ProgressionUnlocks.is_unlocked("prestige", level)
 
-	return (ProgressionUnlocks.is_unlocked("prestige", get_level))
+	return can_unlock
 end
 
-ProgressionUnlocks.upgrade_prestige = function (arg_10_0)
+ProgressionUnlocks.upgrade_prestige = function (hero_name)
 	-- function 10
-	local get_interface = Managers.backend:get_interface("hero_attributes")
+	local hero_attributes = Managers.backend:get_interface("hero_attributes")
+	local can_unlock = ProgressionUnlocks.can_upgrade_prestige(hero_name)
 
-	if not ProgressionUnlocks.can_upgrade_prestige(arg_10_0) then
+	if not can_unlock then
 		print("Trying to upgrade prestige although requirements are not met")
 
 		return
 	end
 
-	local get_interface_2 = Managers.backend:get_interface("hero_attributes")
+	local hero_attributes = Managers.backend:get_interface("hero_attributes")
 
-	get_interface_2:set(arg_10_0, "experience", 0)
+	hero_attributes:set(hero_name, "experience", 0)
 
-	local num = get_interface_2:get(arg_10_0, "prestige") + 1
+	local prestige = hero_attributes:get(hero_name, "prestige")
+	local new_prestige = prestige + 1
 
-	get_interface_2:set(arg_10_0, "prestige", num)
+	hero_attributes:set(hero_name, "prestige", new_prestige)
 
-	local prestige_reward_by_level = ProgressionUnlocks.prestige_reward_by_level(num, arg_10_0)
+	local reward = ProgressionUnlocks.prestige_reward_by_level(new_prestige, hero_name)
+	local item_interface = Managers.backend:get_interface("items")
 
-	Managers.backend:get_interface("items"):award_item(prestige_reward_by_level)
+	item_interface:award_item(reward)
 end
 
-ProgressionUnlocks.get_prestige_level = function (arg_11_0)
+ProgressionUnlocks.get_prestige_level = function (hero_name)
 	-- function 11
-	local get = Managers.backend:get_interface("hero_attributes"):get(arg_11_0, "prestige")
+	local hero_attributes = Managers.backend:get_interface("hero_attributes")
+	local get = hero_attributes:get(hero_name, "prestige")
 
-	get = get or 0
+	get = not not get or not not 0
 
 	return get
 end
 
-ProgressionUnlocks.get_num_talent_points = function (arg_12_0)
+ProgressionUnlocks.get_num_talent_points = function (hero_name)
 	-- function 12
-	local get_experience = ExperienceSettings.get_experience(arg_12_0)
-	local get_level = ExperienceSettings.get_level(get_experience)
-	local num = 0
+	local experience = ExperienceSettings.get_experience(hero_name)
+	local level = ExperienceSettings.get_level(experience)
+	local num_talent_points = 0
 
-	for k, v in pairs(TalentUnlockLevels) do
-		if not ProgressionUnlocks.is_unlocked(k, get_level) then
-			num = num + 1
+	for unlock_name, _ in pairs(TalentUnlockLevels) do
+		if ProgressionUnlocks.is_unlocked(unlock_name, level) then
+			num_talent_points = num_talent_points + 1
 		end
 	end
 
-	return num
+	return num_talent_points
 end
 
-local str = ""
+local debug_current_hero_template = ""
 
-ProgressionUnlocks.debug_use_hero_template = function (self)
+ProgressionUnlocks.debug_use_hero_template = function (hero_template)
 	-- function 13
-	if str ~= self.name then
-		local get_interface = Managers.backend:get_interface("items")
-		local get_interface_2 = Managers.backend:get_interface("hero_attributes")
-		local profile_index = Managers.player:local_player(1):profile_index()
-		local display_name = SPProfiles[profile_index].display_name
+	if debug_current_hero_template ~= hero_template.name then
+		local item_interface = Managers.backend:get_interface("items")
+		local hero_attributes = Managers.backend:get_interface("hero_attributes")
+		local player_manager = Managers.player
+		local player = player_manager:local_player(1)
+		local profile_index = player:profile_index()
+		local profile = SPProfiles[profile_index]
+		local profile_name = profile.display_name
 
 		BackendUtils.remove_items_for_prestige()
 
-		local level = self.level
-		local prestige_level = self.prestige_level
-		local items = self.items
-		local get_total_experience_required_for_level = ExperienceSettings.get_total_experience_required_for_level(level)
+		local level = hero_template.level
+		local prestige_level = hero_template.prestige_level
+		local items = hero_template.items
+		local experience = ExperienceSettings.get_total_experience_required_for_level(level)
 
-		get_interface_2:set(display_name, "experience", get_total_experience_required_for_level)
-		get_interface_2:set(display_name, "prestige", prestige_level)
+		hero_attributes:set(profile_name, "experience", experience)
+		hero_attributes:set(profile_name, "prestige", prestige_level)
 
-		for i, v in ipairs(items) do
-			get_interface:award_item(v)
+		for _, item in ipairs(items) do
+			item_interface:award_item(item)
 		end
 
-		str = self.name
+		debug_current_hero_template = hero_template.name
 
-		print(str)
+		print(debug_current_hero_template)
 	else
-		print("ERROR: You are already using hero template " .. self.name)
+		print("ERROR: You are already using hero template " .. hero_template.name)
 	end
 end
 
 ProgressionUnlocks.debug_get_current_hero_template = function ()
 	-- function 14
-	return str
+	return debug_current_hero_template
 end
 
 ProgressionUnlocks.debug_reset_current_hero_template = function ()
 	-- function 15
-	str = ""
+	debug_current_hero_template = ""
 end
 
-local tbl_4 = {
+local level_up_rewards = {
 	dwarf_ranger = {
 		{},
 		{

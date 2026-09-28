@@ -1,10 +1,10 @@
 -- chunkname: @scripts/ui/views/crosshair_ui_definitions.lua
 
-local num = 228
-local num_2 = 2
-local num_3 = 3
-local pi = math.pi
-local tbl = {
+local MAX_SIZE = 228
+local GAP = 2
+local HIT_GAP = 3
+local PI = math.pi
+local scenegraph_definition = {
 	screen = {
 		scale = "fit",
 		position = {
@@ -39,8 +39,8 @@ local tbl = {
 			1
 		},
 		size = {
-			num,
-			num
+			MAX_SIZE,
+			MAX_SIZE
 		}
 	},
 	crosshair_dot = {
@@ -160,7 +160,7 @@ local tbl = {
 		parent = "crosshair_root",
 		horizontal_alignment = "center",
 		position = {
-			-(4 + num_3),
+			-(4 + HIT_GAP),
 			0,
 			1
 		},
@@ -175,7 +175,7 @@ local tbl = {
 		horizontal_alignment = "center",
 		position = {
 			0,
-			-(4 + num_3),
+			-(4 + HIT_GAP),
 			1
 		},
 		size = {
@@ -189,7 +189,7 @@ local tbl = {
 		horizontal_alignment = "center",
 		position = {
 			0,
-			4 + num_3,
+			4 + HIT_GAP,
 			1
 		},
 		size = {
@@ -226,7 +226,7 @@ local tbl = {
 		}
 	}
 }
-local tbl_2 = {
+local widget_definitions = {
 	crosshair_dot = {
 		scenegraph_id = "crosshair_dot",
 		element = UIElements.SimpleTexture,
@@ -274,8 +274,8 @@ local tbl_2 = {
 		style = {
 			angle = 0,
 			pivot = {
-				tbl.crosshair_arrow.size[1] / 2,
-				tbl.crosshair_arrow.size[2] / 2
+				scenegraph_definition.crosshair_arrow.size[1] / 2,
+				scenegraph_definition.crosshair_arrow.size[2] / 2
 			},
 			offset = {
 				0,
@@ -298,8 +298,8 @@ local tbl_2 = {
 		style = {
 			angle = 0,
 			pivot = {
-				tbl.crosshair_line.size[1] / 2,
-				tbl.crosshair_line.size[2] / 2
+				scenegraph_definition.crosshair_line.size[1] / 2,
+				scenegraph_definition.crosshair_line.size[2] / 2
 			},
 			offset = {
 				0,
@@ -322,8 +322,8 @@ local tbl_2 = {
 		style = {
 			angle = 0,
 			pivot = {
-				tbl.crosshair_shotgun.size[1] / 2,
-				tbl.crosshair_shotgun.size[2] / 2
+				scenegraph_definition.crosshair_shotgun.size[1] / 2,
+				scenegraph_definition.crosshair_shotgun.size[2] / 2
 			},
 			offset = {
 				0,
@@ -436,7 +436,7 @@ local tbl_2 = {
 		},
 		style = {
 			rotating_texture = {
-				angle = 0.5 * pi,
+				angle = 0.5 * PI,
 				pivot = {
 					5,
 					2
@@ -472,7 +472,7 @@ local tbl_2 = {
 		},
 		style = {
 			rotating_texture = {
-				angle = 0.5 * pi,
+				angle = 0.5 * PI,
 				pivot = {
 					5,
 					2
@@ -697,7 +697,7 @@ local tbl_2 = {
 			crosshair_component_1 = {
 				vertical_alignment = "center",
 				horizontal_alignment = "center",
-				angle = pi / 6,
+				angle = PI / 6,
 				pivot = {
 					5,
 					2
@@ -721,7 +721,7 @@ local tbl_2 = {
 			crosshair_component_2 = {
 				vertical_alignment = "center",
 				horizontal_alignment = "center",
-				angle = 11 * pi / 6,
+				angle = 11 * PI / 6,
 				pivot = {
 					5,
 					2
@@ -745,7 +745,7 @@ local tbl_2 = {
 			crosshair_component_3 = {
 				vertical_alignment = "center",
 				horizontal_alignment = "center",
-				angle = 7 * pi / 6,
+				angle = 7 * PI / 6,
 				pivot = {
 					5,
 					2
@@ -769,7 +769,7 @@ local tbl_2 = {
 			crosshair_component_4 = {
 				vertical_alignment = "center",
 				horizontal_alignment = "center",
-				angle = 5 * pi / 6,
+				angle = 5 * PI / 6,
 				pivot = {
 					5,
 					2
@@ -855,7 +855,7 @@ local tbl_2 = {
 		}
 	}
 }
-local tbl_3 = {
+local hit_marker_configurations = {
 	normal = {
 		color = Colors.color_definitions.hit_marker_normal,
 		size = {
@@ -885,39 +885,39 @@ local tbl_3 = {
 		}
 	}
 }
-local tbl_4 = {
+local animations_definitions = {
 	ally_to_self = {
 		{
 			name = "ally_to_self",
 			start_progress = 0,
 			end_progress = 0.3,
-			init = function (arg_1_0, arg_1_1, arg_1_2, arg_1_3)
+			init = function (ui_scenegraph, scenegraph_definition, widgets, params)
 				-- function 1
 				return
 			end,
-			update = function (arg_2_0, arg_2_1, arg_2_2, arg_2_3, arg_2_4)
+			update = function (ui_scenegraph, scenegraph_definition, widgets, progress, params)
 				-- function 2
-				local style = arg_2_2.style
-				local easeOutCubic = math.easeOutCubic(arg_2_3)
-				local num = 100 * math.easeOutCubic(arg_2_3)
+				local style = widgets.style
+				local anim_progress = math.easeOutCubic(progress)
+				local move_progres = 100 * math.easeOutCubic(progress)
 
-				for k, v in pairs(style) do
-					if not v.angle then
+				for _, component in pairs(style) do
+					if not component.angle then
 						-- Nothing
 					else
-						local angle = v.angle
-						local num_2 = -num * math.cos(angle)
-						local num_3 = num * math.sin(angle)
+						local angle = component.angle
+						local offset_x = -move_progres * math.cos(angle)
+						local offset_y = move_progres * math.sin(angle)
 
-						v.offset[1] = num_2
-						v.offset[2] = num_3
+						component.offset[1] = offset_x
+						component.offset[2] = offset_y
 					end
 				end
 
-				style.career_portrait.color[1] = 255 * (1 - easeOutCubic)
-				style.text.text_color[1] = 255 * (1 - easeOutCubic)
+				style.career_portrait.color[1] = 255 * (1 - anim_progress)
+				style.text.text_color[1] = 255 * (1 - anim_progress)
 			end,
-			on_complete = function (arg_3_0, arg_3_1, arg_3_2, arg_3_3)
+			on_complete = function (ui_scenegraph, scenegraph_definition, widgets, params)
 				-- function 3
 				return
 			end
@@ -928,33 +928,33 @@ local tbl_4 = {
 			name = "self_to_ally",
 			start_progress = 0,
 			end_progress = 0.3,
-			init = function (arg_4_0, arg_4_1, arg_4_2, arg_4_3)
+			init = function (ui_scenegraph, scenegraph_definition, widgets, params)
 				-- function 4
 				return
 			end,
-			update = function (arg_5_0, arg_5_1, arg_5_2, arg_5_3, arg_5_4)
+			update = function (ui_scenegraph, scenegraph_definition, widgets, progress, params)
 				-- function 5
-				local style = arg_5_2.style
-				local easeOutCubic = math.easeOutCubic(arg_5_3)
-				local num = 10 + 90 * (1 - math.easeOutCubic(arg_5_3))
+				local style = widgets.style
+				local anim_progress = math.easeOutCubic(progress)
+				local move_progres = 10 + 90 * (1 - math.easeOutCubic(progress))
 
-				for k, v in pairs(style) do
-					if not v.angle then
+				for _, component in pairs(style) do
+					if not component.angle then
 						-- Nothing
 					else
-						local angle = v.angle
-						local num_2 = -num * math.cos(angle)
-						local num_3 = num * math.sin(angle)
+						local angle = component.angle
+						local offset_x = -move_progres * math.cos(angle)
+						local offset_y = move_progres * math.sin(angle)
 
-						v.offset[1] = num_2
-						v.offset[2] = num_3
+						component.offset[1] = offset_x
+						component.offset[2] = offset_y
 					end
 				end
 
-				style.career_portrait.color[1] = 255 * easeOutCubic
-				style.text.text_color[1] = 255 * easeOutCubic
+				style.career_portrait.color[1] = 255 * anim_progress
+				style.text.text_color[1] = 255 * anim_progress
 			end,
-			on_complete = function (arg_6_0, arg_6_1, arg_6_2, arg_6_3)
+			on_complete = function (ui_scenegraph, scenegraph_definition, widgets, params)
 				-- function 6
 				return
 			end
@@ -963,11 +963,11 @@ local tbl_4 = {
 }
 
 return {
-	scenegraph_definition = tbl,
-	animations_definitions = tbl_4,
-	widget_definitions = tbl_2,
-	hit_marker_configurations = tbl_3,
-	max_spread_pitch = num,
-	max_spread_yaw = num,
-	MAX_SIZE = num
+	scenegraph_definition = scenegraph_definition,
+	animations_definitions = animations_definitions,
+	widget_definitions = widget_definitions,
+	hit_marker_configurations = hit_marker_configurations,
+	max_spread_pitch = MAX_SIZE,
+	max_spread_yaw = MAX_SIZE,
+	MAX_SIZE = MAX_SIZE
 }

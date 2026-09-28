@@ -2,28 +2,28 @@
 
 Rectangle = class(Rectangle)
 
-Rectangle.init = function (self, arg_1_1, arg_1_2, arg_1_3, arg_1_4)
+Rectangle.init = function (self, x, y, width, height)
 	-- function 1
-	self.x = arg_1_1
-	self.y = arg_1_2
-	self.width = arg_1_3
-	self.height = arg_1_4
+	self.x = x
+	self.y = y
+	self.width = width
+	self.height = height
 end
 
 Rectangle.split_horizontal = function (self)
 	-- function 2
-	local num = self.height * 0.5
-	local var_2_1 = Rectangle:new(self.x, self.y, self.width, num)
-	local var_2_2 = Rectangle:new(self.x, self.y + num, self.width, num)
+	local half_height = self.height * 0.5
+	local upper_rect = Rectangle:new(self.x, self.y, self.width, half_height)
+	local lower_rect = Rectangle:new(self.x, self.y + half_height, self.width, half_height)
 
-	return var_2_1, var_2_2
+	return upper_rect, lower_rect
 end
 
 Rectangle.split_vertical = function (self)
 	-- function 3
-	local num = self.width * 0.5
-	local var_3_1 = Rectangle:new(self.x, self.y, num, self.height)
-	local var_3_2 = Rectangle:new(self.x + num, self.y, num, self.height)
+	local half_width = self.width * 0.5
+	local left_rect = Rectangle:new(self.x, self.y, half_width, self.height)
+	local right_rect = Rectangle:new(self.x + half_width, self.y, half_width, self.height)
 
-	return var_3_1, var_3_2
+	return left_rect, right_rect
 end

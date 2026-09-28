@@ -2,11 +2,11 @@
 
 require("scripts/settings/profiles/career_constants")
 
-local flag = true
-local num = 7
-local num_2 = 11
-local num_3 = 4
-local tbl = {
+local EXPERIMENTAL_POSITION_OFFSET = true
+local DETECTION_RADIUS = 7
+local DETECTION_RADIUS_STICKY = 11
+local MAX_FORMATION_UNITS = 4
+local FALLBACK_FORMATION = {
 	alternating = true,
 	lead_dist_min = 2,
 	lead_dist_max = 2,
@@ -20,21 +20,21 @@ local tbl = {
 
 AICommanderExtension = class(AICommanderExtension)
 
-AICommanderExtension.init = function (self, arg_1_1, arg_1_2, arg_1_3)
+AICommanderExtension.init = function (self, extension_init_context, unit, extension_init_data)
 	-- function 1
-	self._unit = arg_1_2
-	self.ai_commander_system = arg_1_1.owning_system
+	self._unit = unit
+	self.ai_commander_system = extension_init_context.owning_system
 	self._controlled_units = {}
 	self._controlled_units_n = 0
 	self._nav_world = Managers.state.entity:system("ai_system"):nav_world()
-	self._is_server = arg_1_1.is_server
-	self._network_transmit = arg_1_1.network_transmit
-	self._unit_storage = arg_1_1.unit_storage
+	self._is_server = extension_init_context.is_server
+	self._network_transmit = extension_init_context.network_transmit
+	self._unit_storage = extension_init_context.unit_storage
 
-	local player = arg_1_3.player
+	local player = extension_init_data.player
 
-	if not player then
-		self._is_local = not player and not player.remote
+	if player then
+		self._is_local = not not player and not not not player.remote
 	end
 
 	self._player = player
@@ -42,7 +42,7 @@ AICommanderExtension.init = function (self, arg_1_1, arg_1_2, arg_1_3)
 	self._last_reference_rot = QuaternionBox(Quaternion.identity())
 	self._last_point_match_rot = QuaternionBox(Quaternion.identity())
 
-	if not self._is_server then
+	if self._is_server then
 		self._follow_indices = {}
 		self._follow_datas = {}
 		self._units_to_recalculate = {}
@@ -59,88 +59,89 @@ AICommanderExtension.init = function (self, arg_1_1, arg_1_2, arg_1_3)
 	self._combat_units = {}
 	self._stand_ground_queue = {}
 	self._stand_ground_active = false
-	self._detection_radius = num
+	self._detection_radius = DETECTION_RADIUS
 	self._detection_source_pos = Vector3Box()
 	self._command_buffs = {}
 end
 
-AICommanderExtension.extensions_ready = function (self, arg_2_1, arg_2_2)
+AICommanderExtension.extensions_ready = function (self, world, unit)
 	-- function 2
-	self._locomotion_ext = ScriptUnit.has_extension(arg_2_2, "locomotion_system")
-	self._buff_extension = ScriptUnit.has_extension(arg_2_2, "buff_system")
-	self._first_person_extension = ScriptUnit.has_extension(arg_2_2, "first_person_system")
+	self._locomotion_ext = ScriptUnit.has_extension(unit, "locomotion_system")
+	self._buff_extension = ScriptUnit.has_extension(unit, "buff_system")
+	self._first_person_extension = ScriptUnit.has_extension(unit, "first_person_system")
 	self._buff_system = Managers.state.entity:system("buff_system")
 end
 
-AICommanderExtension.destroy = function (arg_3_0)
+AICommanderExtension.destroy = function (self)
 	-- function 3
 	return
 end
 
-AICommanderExtension._claim_follow_index = function (self, arg_4_1)
+AICommanderExtension._claim_follow_index = function (self, unit)
 	-- function 4
-	local num = #self._follow_indices + 1
+	local next_index = #self._follow_indices + 1
 
-	self._follow_indices[num] = arg_4_1
-	self._follow_datas[arg_4_1] = {
+	self._follow_indices[next_index] = unit
+	self._follow_datas[unit] = {
 		undergoing_avoidance = false,
-		follow_index = num,
+		follow_index = next_index,
 		last_follow_position = Vector3Box(),
-		lerped_follow_position = Vector3Box(POSITION_LOOKUP[arg_4_1]),
+		lerped_follow_position = Vector3Box(POSITION_LOOKUP[unit]),
 		target_follow_position = Vector3Box(),
 		true_follow_position = Vector3Box(),
-		unit = arg_4_1
+		unit = unit
 	}
 end
 
-AICommanderExtension._free_follow_index = function (self, arg_5_1)
+AICommanderExtension._free_follow_index = function (self, unit)
 	-- function 5
-	local follow_index = self._follow_datas[arg_5_1].follow_index
+	local follow_data = self._follow_datas[unit]
+	local index = follow_data.follow_index
 
-	self._follow_datas[arg_5_1] = nil
+	self._follow_datas[unit] = nil
 
-	local _follow_indices = self._follow_indices
+	local follow_indices = self._follow_indices
 
-	table.swap_delete(_follow_indices, follow_index)
+	table.swap_delete(follow_indices, index)
 
-	local var_5_2 = _follow_indices[follow_index]
+	local swapped_unit = follow_indices[index]
 
-	if not var_5_2 then
-		self._follow_datas[var_5_2].follow_index = follow_index
+	if swapped_unit then
+		self._follow_datas[swapped_unit].follow_index = index
 	end
 end
 
-AICommanderExtension.register_follow_node_update = function (self, arg_6_1)
+AICommanderExtension.register_follow_node_update = function (self, unit)
 	-- function 6
-	self._follow_units[arg_6_1] = true
+	self._follow_units[unit] = true
 	self._force_follow_update = true
 
-	self._follow_datas[arg_6_1].lerped_follow_position:store(POSITION_LOOKUP[arg_6_1])
+	self._follow_datas[unit].lerped_follow_position:store(POSITION_LOOKUP[unit])
 end
 
-AICommanderExtension.unregister_follow_node_update = function (arg_7_0, arg_7_1)
+AICommanderExtension.unregister_follow_node_update = function (self, unit)
 	-- function 7
-	arg_7_0._follow_units[arg_7_1] = nil
-	arg_7_0._units_to_recalculate[arg_7_1] = nil
+	self._follow_units[unit] = nil
+	self._units_to_recalculate[unit] = nil
 end
 
-AICommanderExtension.follow_node_pending = function (arg_8_0, arg_8_1)
+AICommanderExtension.follow_node_pending = function (self, blackboard)
 	-- function 8
-	return arg_8_1.waiting_for_follow_node
+	return blackboard.waiting_for_follow_node
 end
 
-AICommanderExtension.follow_node_position = function (self, arg_9_1)
+AICommanderExtension.follow_node_position = function (self, unit)
 	-- function 9
-	local var_9_0 = self._follow_datas[arg_9_1]
+	local follow_data = self._follow_datas[unit]
 
-	return not var_9_0 and var_9_0.lerped_follow_position
+	return not not follow_data and not not follow_data.lerped_follow_position
 end
 
-AICommanderExtension.update = function (self, arg_10_1, arg_10_2, arg_10_3, arg_10_4, arg_10_5)
+AICommanderExtension.update = function (self, unit, input, dt, context, t)
 	-- function 10
-	if not self._is_server then
-		self:_update_units(arg_10_3, arg_10_5)
-		self:_update_follow(arg_10_3, arg_10_5)
+	if self._is_server then
+		self:_update_units(dt, t)
+		self:_update_follow(dt, t)
 	end
 
 	self:_update_commands()
@@ -150,174 +151,176 @@ AICommanderExtension.update = function (self, arg_10_1, arg_10_2, arg_10_3, arg_
 	self._cached_hovered_commanded_unit = false
 end
 
-AICommanderExtension._on_controlled_unit_destroyed = function (self, arg_11_1)
+AICommanderExtension._on_controlled_unit_destroyed = function (self, controlled_unit)
 	-- function 11
-	self:remove_controlled_unit(arg_11_1)
+	self:remove_controlled_unit(controlled_unit)
 end
 
-AICommanderExtension.set_controlled_unit_template = function (self, arg_12_1, arg_12_2, arg_12_3, arg_12_4)
+AICommanderExtension.set_controlled_unit_template = function (self, controlled_unit, template_name, re_initialize, optional_t)
 	-- function 12
-	if not arg_12_3 then
-		self._controlled_units[arg_12_1] = {
-			start_t = arg_12_4 or Managers.time:time("game"),
+	if re_initialize then
+		self._controlled_units[controlled_unit] = {
+			start_t = not not optional_t or not not Managers.time:time("game"),
 			command_state = CommandStates.Following
 		}
 	end
 
-	local var_12_0 = ControlledUnitTemplates[arg_12_2]
+	local template = ControlledUnitTemplates[template_name]
 
 	if not self._is_server then
-		local client_version = var_12_0.client_version
+		local client_version = template.client_version
 
-		if not client_version then
-			var_12_0 = ControlledUnitTemplates[client_version]
+		if client_version then
+			template = ControlledUnitTemplates[client_version]
 		end
 	end
 
-	self._controlled_units[arg_12_1].template = var_12_0
+	self._controlled_units[controlled_unit].template = template
 end
 
-AICommanderExtension.controlled_unit_template = function (self, arg_13_1)
+AICommanderExtension.controlled_unit_template = function (self, controlled_unit)
 	-- function 13
-	local var_13_0 = self._controlled_units[arg_13_1]
+	local data = self._controlled_units[controlled_unit]
 
-	return not var_13_0 and var_13_0.template
+	return not not data and not not data.template
 end
 
-AICommanderExtension.add_controlled_unit = function (self, arg_14_1, arg_14_2, arg_14_3, arg_14_4)
+AICommanderExtension.add_controlled_unit = function (self, controlled_unit, template_name, t, skip_sync)
 	-- function 14
-	if not ALIVE[arg_14_1] then
+	if not ALIVE[controlled_unit] then
 		return
 	end
 
-	self:set_controlled_unit_template(arg_14_1, arg_14_2, true, arg_14_3)
+	self:set_controlled_unit_template(controlled_unit, template_name, true, t)
 
-	local _unit = self._unit
+	local commander_unit = self._unit
 
 	self._controlled_units_n = self._controlled_units_n + 1
 
-	self.ai_commander_system:register_commander_unit(_unit, arg_14_1)
+	self.ai_commander_system:register_commander_unit(commander_unit, controlled_unit)
 
-	if not self._is_server then
-		self:_claim_follow_index(arg_14_1)
+	if self._is_server then
+		self:_claim_follow_index(controlled_unit)
 
-		self._command_buffs[arg_14_1] = {}
+		self._command_buffs[controlled_unit] = {}
 
-		local var_14_1 = BLACKBOARDS[arg_14_1]
+		local blackboard = BLACKBOARDS[controlled_unit]
 
-		if not var_14_1.ability_spawned then
-			var_14_1.detection_radius = num
+		if not blackboard.ability_spawned then
+			blackboard.detection_radius = DETECTION_RADIUS
 		end
 
-		var_14_1.detection_source_pos = Vector3Box()
-		var_14_1.max_combat_range = num
-		var_14_1.max_combat_range_sq = var_14_1.max_combat_range * var_14_1.max_combat_range
-		var_14_1.max_combat_range_sticky = num_2
-		var_14_1.max_combat_range_sticky_sq = var_14_1.max_combat_range_sticky * var_14_1.max_combat_range_sticky
-		var_14_1.dist_to_commander = 0
-		var_14_1.commander_unit = _unit
-		var_14_1.commander_extension = self
-		var_14_1.command_state = CommandStates.Following
+		blackboard.detection_source_pos = Vector3Box()
+		blackboard.max_combat_range = DETECTION_RADIUS
+		blackboard.max_combat_range_sq = blackboard.max_combat_range * blackboard.max_combat_range
+		blackboard.max_combat_range_sticky = DETECTION_RADIUS_STICKY
+		blackboard.max_combat_range_sticky_sq = blackboard.max_combat_range_sticky * blackboard.max_combat_range_sticky
+		blackboard.dist_to_commander = 0
+		blackboard.commander_unit = commander_unit
+		blackboard.commander_extension = self
+		blackboard.command_state = CommandStates.Following
 
-		Managers.state.event:register_referenced(arg_14_1, self, "on_ai_unit_destroyed", "_on_controlled_unit_destroyed")
+		local event_manager = Managers.state.event
+
+		event_manager:register_referenced(controlled_unit, self, "on_ai_unit_destroyed", "_on_controlled_unit_destroyed")
 	end
 
-	if not self._is_local then
-		self:_set_command_state(arg_14_1, CommandStates.Following)
-		Managers.state.achievement:trigger_event("on_controlled_unit_added", arg_14_1, self._unit, self)
+	if self._is_local then
+		self:_set_command_state(controlled_unit, CommandStates.Following)
+		Managers.state.achievement:trigger_event("on_controlled_unit_added", controlled_unit, self._unit, self)
 	end
 
-	local _buff_extension = self._buff_extension
+	local owner_buff_extension = self._buff_extension
 
-	if not _buff_extension then
-		_buff_extension:trigger_procs("on_controlled_unit_added", arg_14_1)
+	if owner_buff_extension then
+		owner_buff_extension:trigger_procs("on_controlled_unit_added", controlled_unit)
 	end
 
-	Managers.state.event:trigger_referenced(_unit, "on_controlled_unit_added", arg_14_1)
+	Managers.state.event:trigger_referenced(commander_unit, "on_controlled_unit_added", controlled_unit)
 
-	if not arg_14_4 then
-		local go_id = self._unit_storage:go_id(_unit)
-		local go_id_2 = self._unit_storage:go_id(arg_14_1)
-		local var_14_5 = NetworkLookup.controlled_unit_templates[arg_14_2]
+	if not skip_sync then
+		local commander_unit_id = self._unit_storage:go_id(commander_unit)
+		local controlled_unit_id = self._unit_storage:go_id(controlled_unit)
+		local controlled_unit_template_id = NetworkLookup.controlled_unit_templates[template_name]
 
-		if not self._is_server then
-			local owner = Managers.player:owner(_unit)
+		if self._is_server then
+			local commanding_player = Managers.player:owner(commander_unit)
 
-			if not owner and not owner.remote then
-				self._network_transmit:send_rpc("rpc_add_controlled_unit", owner.peer_id, go_id, go_id_2, var_14_5)
+			if commanding_player and commanding_player.remote then
+				self._network_transmit:send_rpc("rpc_add_controlled_unit", commanding_player.peer_id, commander_unit_id, controlled_unit_id, controlled_unit_template_id)
 			end
 		else
-			self._network_transmit:send_rpc_server("rpc_add_controlled_unit", go_id, go_id_2, var_14_5)
+			self._network_transmit:send_rpc_server("rpc_add_controlled_unit", commander_unit_id, controlled_unit_id, controlled_unit_template_id)
 		end
 	end
 end
 
-AICommanderExtension.remove_controlled_unit = function (self, arg_15_1, arg_15_2)
+AICommanderExtension.remove_controlled_unit = function (self, controlled_unit, skip_sync)
 	-- function 15
-	local _controlled_units = self._controlled_units
+	local controlled_units = self._controlled_units
 
-	if not _controlled_units[arg_15_1] then
+	if not controlled_units[controlled_unit] then
 		return
 	end
 
-	self._combat_units[arg_15_1] = nil
-	_controlled_units[arg_15_1] = nil
+	self._combat_units[controlled_unit] = nil
+	controlled_units[controlled_unit] = nil
 	self._controlled_units_n = self._controlled_units_n - 1
 
-	if not self._is_local and not Managers.player:local_player() then
-		Managers.state.achievement:trigger_event("on_controlled_unit_removed", arg_15_1, self._unit, self)
+	if self._is_local and Managers.player:local_player() then
+		Managers.state.achievement:trigger_event("on_controlled_unit_removed", controlled_unit, self._unit, self)
 	end
 
-	local _buff_extension = self._buff_extension
+	local owner_buff_extension = self._buff_extension
 
-	if not _buff_extension then
-		_buff_extension:trigger_procs("on_controlled_unit_removed", arg_15_1)
+	if owner_buff_extension then
+		owner_buff_extension:trigger_procs("on_controlled_unit_removed", controlled_unit)
 
-		if not HEALTH_ALIVE[arg_15_1] then
-			_buff_extension:trigger_procs("on_controlled_unit_death", arg_15_1)
+		if not HEALTH_ALIVE[controlled_unit] then
+			owner_buff_extension:trigger_procs("on_controlled_unit_death", controlled_unit)
 		end
 	end
 
-	self.ai_commander_system:clear_commander_unit(arg_15_1)
+	self.ai_commander_system:clear_commander_unit(controlled_unit)
 
-	if not self._is_server then
-		self:_free_follow_index(arg_15_1)
-		self:unregister_follow_node_update(arg_15_1)
-		self:_store_fallback_position(arg_15_1)
+	if self._is_server then
+		self:_free_follow_index(controlled_unit)
+		self:unregister_follow_node_update(controlled_unit)
+		self:_store_fallback_position(controlled_unit)
 
-		local var_15_2 = BLACKBOARDS[arg_15_1]
+		local blackboard = BLACKBOARDS[controlled_unit]
 
-		if not var_15_2 then
-			var_15_2.max_combat_range = nil
-			var_15_2.max_combat_range_sq = nil
-			var_15_2.max_combat_range_sticky = nil
-			var_15_2.dist_to_commander = nil
-			var_15_2.commander_unit = nil
-			var_15_2.commander_extension = nil
-			var_15_2.waiting_for_follow_node = nil
+		if blackboard then
+			blackboard.max_combat_range = nil
+			blackboard.max_combat_range_sq = nil
+			blackboard.max_combat_range_sticky = nil
+			blackboard.dist_to_commander = nil
+			blackboard.commander_unit = nil
+			blackboard.commander_extension = nil
+			blackboard.waiting_for_follow_node = nil
 		end
 
-		self:_cleanup_command_buffs(arg_15_1, false)
+		self:_cleanup_command_buffs(controlled_unit, false)
 
-		self._command_buffs[arg_15_1] = nil
+		self._command_buffs[controlled_unit] = nil
 
-		Managers.state.event:unregister_referenced("on_ai_unit_destroyed", arg_15_1, self)
+		Managers.state.event:unregister_referenced("on_ai_unit_destroyed", controlled_unit, self)
 	end
 
-	if not arg_15_2 then
-		local _unit = self._unit
-		local go_id = self._unit_storage:go_id(_unit)
-		local go_id_2 = self._unit_storage:go_id(arg_15_1)
+	if not skip_sync then
+		local commander_unit = self._unit
+		local commander_unit_id = self._unit_storage:go_id(commander_unit)
+		local controlled_unit_id = self._unit_storage:go_id(controlled_unit)
 
-		if not go_id and not go_id_2 then
-			if not self._is_server then
-				local owner = Managers.player:owner(_unit)
+		if commander_unit_id and controlled_unit_id then
+			if self._is_server then
+				local commanding_player = Managers.player:owner(commander_unit)
 
-				if not owner and not owner.remote then
-					self._network_transmit:send_rpc("rpc_remove_controlled_unit", owner.peer_id, go_id, go_id_2)
+				if commanding_player and commanding_player.remote then
+					self._network_transmit:send_rpc("rpc_remove_controlled_unit", commanding_player.peer_id, commander_unit_id, controlled_unit_id)
 				end
 			else
-				self._network_transmit:send_rpc_server("rpc_remove_controlled_unit", go_id, go_id_2)
+				self._network_transmit:send_rpc_server("rpc_remove_controlled_unit", commander_unit_id, controlled_unit_id)
 			end
 		end
 	end
@@ -333,533 +336,597 @@ AICommanderExtension.get_controlled_units_count = function (self)
 	return self._controlled_units_n
 end
 
-local num_4 = 0.5
-local num_5 = num_4 * num_4
+local min_dist_to_new_move = 0.5
+local min_dist_to_new_move_sq = min_dist_to_new_move * min_dist_to_new_move
 
-AICommanderExtension._update_follow = function (self, arg_18_1, arg_18_2)
+AICommanderExtension._update_follow = function (self, dt, t)
 	-- function 18
-	if not self:_commander_is_on_navmesh() then
+	local is_on_navmesh = self:_commander_is_on_navmesh()
+
+	if not is_on_navmesh then
 		return
 	end
 
-	local _unit = self._unit
-	local var_18_1 = POSITION_LOOKUP[_unit]
-	local var_18_2
+	local unit = self._unit
+	local position = POSITION_LOOKUP[unit]
+	local rotation
 
-	if not self._first_person_extension then
-		var_18_2 = self._first_person_extension:current_rotation()
-		var_18_2 = Quaternion.flat_no_roll(var_18_2)
+	if self._first_person_extension then
+		rotation = self._first_person_extension:current_rotation()
+		rotation = Quaternion.flat_no_roll(rotation)
 	else
-		local go_id = self._unit_storage:go_id(_unit)
+		local game_object_id = self._unit_storage:go_id(unit)
 		local game = Managers.state.network:game()
-		local game_object_field = GameSession.game_object_field(game, go_id, "aim_direction")
+		local aim_direction = GameSession.game_object_field(game, game_object_id, "aim_direction")
 
-		var_18_2 = Quaternion.flat_no_roll(Quaternion.look(game_object_field))
+		rotation = Quaternion.flat_no_roll(Quaternion.look(aim_direction))
 	end
 
-	local _force_follow_update = self._force_follow_update
-	local flag = false
-	local flag_2 = not table.is_empty(self._units_to_recalculate)
+	local update_all = self._force_follow_update
+	local last_check = false
+	local update_some = not table.is_empty(self._units_to_recalculate)
 
 	self._force_follow_update = nil
 
-	if not _force_follow_update then
-		local unbox = self._last_reference_pos:unbox()
-		local distance_squared = Vector3.distance_squared(var_18_1, unbox)
+	if not update_all then
+		local last_ref_pos = self._last_reference_pos:unbox()
+		local dist_sq = Vector3.distance_squared(position, last_ref_pos)
 
-		if distance_squared > num_5 then
-			_force_follow_update = distance_squared > num_5
+		if dist_sq > min_dist_to_new_move_sq then
+			update_all = dist_sq > min_dist_to_new_move_sq
 		end
 
-		flag = not not _force_follow_update or distance_squared > 0.001
+		last_check = not update_all and dist_sq > 0.001
 
-		if not flag then
-			local current_velocity = self._locomotion_ext:current_velocity()
+		if last_check then
+			local commander_velocity = self._locomotion_ext:current_velocity()
+			local commander_standing_still = Vector3.length_squared(commander_velocity) < NetworkConstants.VELOCITY_EPSILON * NetworkConstants.VELOCITY_EPSILON
 
-			flag = Vector3.length_squared(current_velocity) < NetworkConstants.VELOCITY_EPSILON * NetworkConstants.VELOCITY_EPSILON
+			last_check = commander_standing_still
 		end
 	end
 
-	if _force_follow_update or flag_2 or not flag then
-		if _force_follow_update or not flag then
-			self._last_reference_rot:store(var_18_2)
-			self._last_reference_pos:store(var_18_1)
+	if update_all or update_some or last_check then
+		if update_all or last_check then
+			self._last_reference_rot:store(rotation)
+			self._last_reference_pos:store(position)
 
-			for k in pairs(self._follow_units) do
-				self._units_to_recalculate[k] = true
+			for follow_unit in pairs(self._follow_units) do
+				self._units_to_recalculate[follow_unit] = true
 			end
 		end
 
-		self:_update_follow_nodes(arg_18_1, arg_18_2)
+		self:_update_follow_nodes(dt, t)
 
-		local _last_point_match_rot = self._last_point_match_rot
+		local last_point_match_rot = self._last_point_match_rot
+		local point_match_angle = Quaternion.angle(rotation, last_point_match_rot:unbox())
 
-		if Quaternion.angle(var_18_2, _last_point_match_rot:unbox()) > math.pi * 0.25 or not flag then
-			_last_point_match_rot:store(var_18_2)
+		if point_match_angle > math.pi * 0.25 or last_check then
+			last_point_match_rot:store(rotation)
 			self:_pair_best_follow_nodes()
 		end
 	end
 
-	self:_lerp_follow_positions(arg_18_1)
+	self:_lerp_follow_positions(dt)
 end
 
-AICommanderExtension._update_follow_nodes = function (self, arg_19_1, arg_19_2)
+AICommanderExtension._update_follow_nodes = function (self, dt, t)
 	-- function 19
-	if not script_data.bots_dont_follow then
+	if script_data.bots_dont_follow then
 		return
 	end
 
-	local _unit = self._unit
-	local _nav_world = self._nav_world
-	local var_19_2 = POSITION_LOOKUP[_unit]
-	local current_velocity = self._locomotion_ext:current_velocity()
-	local var_19_4
-	local var_19_5
+	local unit = self._unit
+	local nav_world = self._nav_world
+	local commander_unit_pos = POSITION_LOOKUP[unit]
+	local commander_velocity = self._locomotion_ext:current_velocity()
+	local commander_speed, commander_move_dir
 
-	if Vector3.length_squared(current_velocity) < NetworkConstants.VELOCITY_EPSILON * NetworkConstants.VELOCITY_EPSILON then
-		var_19_4 = 0
-		var_19_5 = Quaternion.forward(Quaternion.flat_no_roll(self._last_reference_rot:unbox()))
+	if Vector3.length_squared(commander_velocity) < NetworkConstants.VELOCITY_EPSILON * NetworkConstants.VELOCITY_EPSILON then
+		commander_speed = 0
+		commander_move_dir = Quaternion.forward(Quaternion.flat_no_roll(self._last_reference_rot:unbox()))
 	else
-		var_19_4 = Vector3.length(current_velocity)
-		var_19_5 = current_velocity / var_19_4
+		commander_speed = Vector3.length(commander_velocity)
+		commander_move_dir = commander_velocity / commander_speed
 	end
 
-	local num = 30
-	local num_2 = 30
-	local num_4 = 5
+	local nav_above = 30
+	local nav_below = 30
+	local nav_horizontal = 5
 
-	for k in pairs(self._units_to_recalculate) do
+	for controlled_unit in pairs(self._units_to_recalculate) do
 		repeat
-			self._units_to_recalculate[k] = nil
+			self._units_to_recalculate[controlled_unit] = nil
 
-			local var_19_9 = self._follow_datas[k]
+			local follow_data = self._follow_datas[controlled_unit]
 
-			var_19_9.undergoing_avoidance = false
+			follow_data.undergoing_avoidance = false
 
-			if not POSITION_LOOKUP[k] then
+			local controlled_unit_pos = POSITION_LOOKUP[controlled_unit]
+
+			if not controlled_unit_pos then
 				break
 			end
 
-			local var_19_10 = BLACKBOARDS[k]
-			local commander_formation = var_19_10.breed.commander_formation
-			local flag = var_19_9.follow_index > num_3
-			local var_19_13
+			local blackboard = BLACKBOARDS[controlled_unit]
+			local breed = blackboard.breed
+			local formation_data = breed.commander_formation
+			local use_fallback_formation = follow_data.follow_index > MAX_FORMATION_UNITS
+			local formation_pos
 
-			if not flag then
+			if use_fallback_formation then
 				local grid_width = self._fallback_position_data.grid_width
+				local grid_offset = Vector3(0, -3 - grid_width * 0.5, 0)
+				local pos_data = self:_get_fallback_position(controlled_unit)
 
-				var_19_13 = Vector3(0, -3 - grid_width * 0.5, 0) + self:_get_fallback_position(k).pos:unbox()
-				var_19_13 = Quaternion.rotate(Quaternion.look(Vector3.flat(var_19_5)), var_19_13)
+				formation_pos = grid_offset + pos_data.pos:unbox()
+				formation_pos = Quaternion.rotate(Quaternion.look(Vector3.flat(commander_move_dir)), formation_pos)
 			else
-				local angle_offset = commander_formation.angle_offset
-				local initial_angle_offset = commander_formation.initial_angle_offset
+				local angle_offset = formation_data.angle_offset
+				local initial_angle_offset_2 = formation_data.initial_angle_offset
 
-				initial_angle_offset = initial_angle_offset or angle_offset
-
-				local alternating = commander_formation.alternating
-				local follow_index = var_19_9.follow_index
-				local num_5 = follow_index - 1
-
-				num_5 = not alternating and math.floor(num_5 * 0.5) and num_5
-
-				local num_6 = initial_angle_offset + num_5 * angle_offset
-
-				if not (not alternating and not (follow_index % 2 > 0)) then
-					num_6 = num_6 * -1
+				if not initial_angle_offset_2 then
+					-- Nothing
 				end
 
-				local axis_angle = Quaternion.axis_angle(Vector3.up(), num_6)
+				initial_angle_offset_2 = angle_offset
 
-				var_19_13 = Quaternion.rotate(axis_angle, Vector3.forward() * commander_formation.dist)
-				var_19_13 = Quaternion.rotate(Quaternion.look(Vector3.flat(var_19_5)), var_19_13)
+				local initial_angle_offset = initial_angle_offset_2
 
-				local var_19_22
+				::label_19_0::
 
-				if not commander_formation.offset then
-					var_19_22 = Vector3(commander_formation.offset[1], commander_formation.offset[2], 0)
+				local alternating = formation_data.alternating
+				local unit_index = follow_data.follow_index
+				local step_index = unit_index - 1
 
-					if not var_19_22 then
+				if alternating and not math.floor(step_index * 0.5) then
+					-- Nothing
+				end
+
+				local formation_angle = initial_angle_offset + step_index * angle_offset
+
+				if alternating and unit_index % 2 > 0 then
+					formation_angle = formation_angle * -1
+				end
+
+				local formation_rot_offset = Quaternion.axis_angle(Vector3.up(), formation_angle)
+
+				formation_pos = Quaternion.rotate(formation_rot_offset, Vector3.forward() * formation_data.dist)
+				formation_pos = Quaternion.rotate(Quaternion.look(Vector3.flat(commander_move_dir)), formation_pos)
+
+				local var_19_1
+
+				if formation_data.offset then
+					var_19_1 = Vector3(formation_data.offset[1], formation_data.offset[2], 0)
+
+					if not var_19_1 then
 						-- Nothing
 					end
 				end
 
-				var_19_22 = Vector3.zero()
+				var_19_1 = Vector3.zero()
 
-				::label_19_0::
+				local formation_pos_offset = var_19_1
 
-				var_19_13 = var_19_13 + var_19_22
+				::label_19_1::
+
+				formation_pos = formation_pos + formation_pos_offset
 			end
 
-			local flag_2
+			local flag
 
-			flag_2 = var_19_4 ~= 0 or not 0 or math.clamp(var_19_4 * commander_formation.lead_dist_mult, commander_formation.lead_dist_min, commander_formation.lead_dist_max)
+			flag = (commander_speed ~= 0 or not 0) and not not math.clamp(commander_speed * formation_data.lead_dist_mult, formation_data.lead_dist_min, formation_data.lead_dist_max)
 
-			local num_7 = var_19_5 * flag_2
-			local num_8 = var_19_2 + var_19_13 + num_7
-			local _navify_follow_pos = self:_navify_follow_pos(num_8, _nav_world, var_19_2, num_7, var_19_10)
+			local lead_distance = commander_move_dir * flag
+			local raw_follow_pos = commander_unit_pos + formation_pos + lead_distance
+			local true_follow_pos = self:_navify_follow_pos(raw_follow_pos, nav_world, commander_unit_pos, lead_distance, blackboard)
 
-			var_19_9.true_follow_position:store(_navify_follow_pos)
+			follow_data.true_follow_position:store(true_follow_pos)
 
-			local var_19_27 = _navify_follow_pos
-			local commander_avoid_radius
+			local follow_pos = true_follow_pos
+			local commander_avoid_radius_2
 
-			if var_19_4 > 0 then
-				commander_avoid_radius = commander_formation.commander_avoid_radius
+			if commander_speed > 0 then
+				commander_avoid_radius_2 = formation_data.commander_avoid_radius
 
-				if not commander_avoid_radius then
+				if not commander_avoid_radius_2 then
 					-- Nothing
 				end
 			end
 
-			commander_avoid_radius = 0
+			commander_avoid_radius_2 = 0
 
-			::label_19_1::
+			local commander_avoid_radius = commander_avoid_radius_2
 
-			local _avoid_unit = self:_avoid_unit(_unit, k, var_19_27, commander_avoid_radius, var_19_10, _nav_world, num, num_2, arg_19_1, arg_19_2)
+			::label_19_2::
 
-			for k_2 in pairs(self._follow_datas) do
-				if k_2 ~= k then
-					local var_19_30 = BLACKBOARDS[k_2]
+			follow_pos = self:_avoid_unit(unit, controlled_unit, follow_pos, commander_avoid_radius, blackboard, nav_world, nav_above, nav_below, dt, t)
 
-					if not (not var_19_30 and var_19_30.command_state ~= CommandStates.Following) then
-						local flag_3
+			for other_controlled_unit in pairs(self._follow_datas) do
+				if other_controlled_unit ~= controlled_unit then
+					local bb = BLACKBOARDS[other_controlled_unit]
 
-						flag_3 = not (var_19_4 > 0) or not self:_unit_arrived_at_follow_node(k_2) or 0.25 or not 1 or 0
-						_avoid_unit = self:_avoid_unit(k_2, k, _avoid_unit, flag_3, var_19_10, _nav_world, num, num_2, arg_19_1, arg_19_2)
+					if bb and bb.command_state == CommandStates.Following then
+						local num
+
+						if commander_speed > 0 then
+							if self:_unit_arrived_at_follow_node(other_controlled_unit) then
+								num = 0.25
+							else
+								num = 1
+							end
+
+							goto label_19_3
+						end
+
+						num = 0
+
+						local pet_avoid_radius = num
+
+						::label_19_3::
+
+						follow_pos = self:_avoid_unit(other_controlled_unit, controlled_unit, follow_pos, pet_avoid_radius, blackboard, nav_world, nav_above, nav_below, dt, t)
 					end
 				end
 			end
 
-			if _avoid_unit ~= _navify_follow_pos then
-				_avoid_unit = self:_navify_follow_pos(_avoid_unit, _nav_world, var_19_2, num_7, var_19_10)
+			if follow_pos ~= true_follow_pos then
+				follow_pos = self:_navify_follow_pos(follow_pos, nav_world, commander_unit_pos, lead_distance, blackboard)
 			end
 
-			local lerped_follow_position = var_19_9.lerped_follow_position
+			local node_position = follow_data.lerped_follow_position
 
-			if Vector3.distance_squared(lerped_follow_position:unbox(), _avoid_unit) > 0.09 then
-				local triangle_from_position, var_19_34 = GwNavQueries.triangle_from_position(_nav_world, _avoid_unit, num, num_2)
+			if Vector3.distance_squared(node_position:unbox(), follow_pos) > 0.09 then
+				local unit_is_on_navmesh, z = GwNavQueries.triangle_from_position(nav_world, follow_pos, nav_above, nav_below)
 
-				if not triangle_from_position then
-					_avoid_unit.z = var_19_34
+				if unit_is_on_navmesh then
+					follow_pos.z = z
 				else
-					_avoid_unit = GwNavQueries.inside_position_from_outside_position(_nav_world, _avoid_unit, num, num_2, num_4, 0.5)
+					follow_pos = GwNavQueries.inside_position_from_outside_position(nav_world, follow_pos, nav_above, nav_below, nav_horizontal, 0.5)
 				end
 
-				if not _avoid_unit then
-					var_19_9.target_follow_position:store(_avoid_unit)
+				if follow_pos then
+					follow_data.target_follow_position:store(follow_pos)
 				end
 			end
 		until true
 	end
 end
 
-AICommanderExtension._lerp_follow_positions = function (self, arg_20_1)
+AICommanderExtension._lerp_follow_positions = function (self, dt)
 	-- function 20
-	local _nav_world = self._nav_world
+	local nav_world = self._nav_world
 
-	for k in pairs(self._follow_units) do
-		local var_20_1 = BLACKBOARDS[k]
-		local var_20_2 = self._follow_datas[k]
-		local lerped_follow_position = var_20_2.lerped_follow_position
-		local unbox = lerped_follow_position:unbox()
-		local unbox_2 = var_20_2.target_follow_position:unbox()
+	for unit in pairs(self._follow_units) do
+		local blackboard = BLACKBOARDS[unit]
+		local follow_data = self._follow_datas[unit]
+		local position_boxed = follow_data.lerped_follow_position
+		local current_pos = position_boxed:unbox()
+		local target_position = follow_data.target_follow_position:unbox()
+		local sqr_dist = Vector3.distance_squared(current_pos, target_position)
 
-		if Vector3.distance_squared(unbox, unbox_2) > math.epsilon then
-			local num = var_20_1.navigation_extension:get_max_speed() * 2
-			local direction_length, var_20_8 = Vector3.direction_length(unbox_2 - unbox)
-			local num_2 = unbox + direction_length * math.max(num, var_20_8) * arg_20_1
-			local closest_point_on_line = Geometry.closest_point_on_line(num_2, unbox, unbox_2)
-			local traverse_logic = var_20_1.navigation_extension:traverse_logic()
+		if sqr_dist > math.epsilon then
+			local min_speed = blackboard.navigation_extension:get_max_speed() * 2
+			local direction, length = Vector3.direction_length(target_position - current_pos)
+			local wanted_pos = current_pos + direction * math.max(min_speed, length) * dt
 
-			if not traverse_logic then
-				local raycast, var_20_13 = GwNavQueries.raycast(_nav_world, unbox_2, closest_point_on_line, traverse_logic)
+			wanted_pos = Geometry.closest_point_on_line(wanted_pos, current_pos, target_position)
 
-				lerped_follow_position:store(var_20_13)
+			local traverse_logic = blackboard.navigation_extension:traverse_logic()
 
-				local last_follow_position = var_20_2.last_follow_position
+			if traverse_logic then
+				local _, end_pos = GwNavQueries.raycast(nav_world, target_position, wanted_pos, traverse_logic)
 
-				if Vector3.distance_squared(last_follow_position:unbox(), var_20_13) > 0.09 then
-					last_follow_position:store(var_20_13)
+				position_boxed:store(end_pos)
 
-					var_20_1.goal_destination = Vector3Box(var_20_13)
-					var_20_1.new_move_to_goal = true
-					self._units_to_recalculate[k] = true
+				local last_follow_position = follow_data.last_follow_position
+
+				if Vector3.distance_squared(last_follow_position:unbox(), end_pos) > 0.09 then
+					last_follow_position:store(end_pos)
+
+					blackboard.goal_destination = Vector3Box(end_pos)
+					blackboard.new_move_to_goal = true
+					self._units_to_recalculate[unit] = true
 				end
 			end
 		end
 
-		var_20_1.waiting_for_follow_node = nil
+		blackboard.waiting_for_follow_node = nil
 	end
 end
 
-AICommanderExtension._unit_arrived_at_follow_node = function (self, arg_21_1)
+AICommanderExtension._unit_arrived_at_follow_node = function (self, controlled_unit)
 	-- function 21
-	local var_21_0 = POSITION_LOOKUP[arg_21_1]
-	local var_21_1 = self._follow_datas[arg_21_1]
+	local position = POSITION_LOOKUP[controlled_unit]
+	local follow_data = self._follow_datas[controlled_unit]
 
-	return Vector3.distance_squared(var_21_0, var_21_1.target_follow_position:unbox()) < 0.25
+	return Vector3.distance_squared(position, follow_data.target_follow_position:unbox()) < 0.25
 end
 
-AICommanderExtension._avoid_unit = function (self, arg_22_1, arg_22_2, arg_22_3, arg_22_4, arg_22_5, arg_22_6, arg_22_7, arg_22_8, arg_22_9, arg_22_10)
+AICommanderExtension._avoid_unit = function (self, avoid_unit, controlled_unit, follow_pos, avoid_radius, blackboard, nav_world, nav_above, nav_below, dt, t)
 	-- function 22
-	local var_22_0 = POSITION_LOOKUP[arg_22_1]
-	local var_22_1 = POSITION_LOOKUP[arg_22_2]
+	local position_to_avoid = POSITION_LOOKUP[avoid_unit]
+	local controlled_unit_pos = POSITION_LOOKUP[controlled_unit]
 
-	if not var_22_0 then
-		return arg_22_3
+	if not position_to_avoid then
+		return follow_pos
 	end
 
-	if math.abs(var_22_0.z - var_22_1.z) > 1 then
-		return arg_22_3
+	if math.abs(position_to_avoid.z - controlled_unit_pos.z) > 1 then
+		return follow_pos
 	end
 
-	local var_22_2 = self._follow_datas[arg_22_1]
+	local avoid_follow_data = self._follow_datas[avoid_unit]
 
-	if not (not var_22_2 and var_22_2.undergoing_avoidance ~= arg_22_2) then
-		return arg_22_3
+	if avoid_follow_data and avoid_follow_data.undergoing_avoidance == controlled_unit then
+		return follow_pos
 	end
 
-	local flat = Vector3.flat(arg_22_3 - var_22_0)
-	local flat_2 = Vector3.flat(var_22_1 - var_22_0)
+	local avoid_pos_to_follow = Vector3.flat(follow_pos - position_to_avoid)
+	local avoid_pos_to_controlled = Vector3.flat(controlled_unit_pos - position_to_avoid)
 
-	if Vector3.length_squared(flat) < arg_22_4 * arg_22_4 then
-		return arg_22_3
+	if Vector3.length_squared(avoid_pos_to_follow) < avoid_radius * avoid_radius then
+		return follow_pos
 	end
 
-	if not (Vector3.dot(flat, flat_2) < 0) then
-		local flip_attempt_t = arg_22_5.flip_attempt_t
-		local flag = not flip_attempt_t and arg_22_10 - flip_attempt_t < 2
+	local avoid_unit_is_between = Vector3.dot(avoid_pos_to_follow, avoid_pos_to_controlled) < 0
+
+	if avoid_unit_is_between then
+		local flip_attempt_t = blackboard.flip_attempt_t
+		local flip = not not flip_attempt_t and t - flip_attempt_t < 2
 		local flip_dir
 
-		if not flag then
-			flip_dir = arg_22_5.flip_dir
+		if flip then
+			flip_dir = blackboard.flip_dir
 
 			if not flip_dir then
 				-- Nothing
 			end
 		end
 
-		flip_dir = not (Vector3.cross(flat_2, flat).z < 0) or not -1 or 1
+		if Vector3.cross(avoid_pos_to_controlled, avoid_pos_to_follow).z < 0 then
+			flip_dir = -1
+
+			goto label_22_0
+		end
+
+		flip_dir = 1
+
+		local side = flip_dir
 
 		::label_22_0::
 
-		local max = math.max(Vector3.length(flat_2), math.epsilon)
-		local flag_2 = max < arg_22_4
-		local var_22_10 = self._follow_datas[arg_22_2]
-		local undergoing_avoidance = var_22_10.undergoing_avoidance
+		local dist_to_avoid_unit = math.max(Vector3.length(avoid_pos_to_controlled), math.epsilon)
+		local controlled_unit_inside_avoid_radius = dist_to_avoid_unit < avoid_radius
+		local follow_data = self._follow_datas[controlled_unit]
+		local avoiding_something_else = follow_data.undergoing_avoidance
 
-		if not flag_2 then
-			var_22_10.undergoing_avoidance = arg_22_1
-			self._units_to_recalculate[arg_22_2] = true
+		if controlled_unit_inside_avoid_radius then
+			follow_data.undergoing_avoidance = avoid_unit
+			self._units_to_recalculate[controlled_unit] = true
 
-			if not undergoing_avoidance then
-				return Vector3.copy(var_22_1)
+			if avoiding_something_else then
+				return Vector3.copy(controlled_unit_pos)
 			end
 
-			local num = Vector3.cross(Vector3.normalize(flat_2), -Vector3.up()) * flip_dir
+			local perpendicular = Vector3.cross(Vector3.normalize(avoid_pos_to_controlled), -Vector3.up()) * side
 
-			arg_22_3 = var_22_1 + Quaternion.rotate(Quaternion.axis_angle(Vector3(0, 0, flip_dir), -math.pi * arg_22_9), num) * 2
+			perpendicular = Quaternion.rotate(Quaternion.axis_angle(Vector3(0, 0, side), -math.pi * dt), perpendicular)
+			follow_pos = controlled_unit_pos + perpendicular * 2
 		else
-			local normalize = Vector3.normalize(Vector3.flat(arg_22_3 - var_22_1))
-			local num_2 = var_22_1 + normalize * Vector3.dot(-flat_2, normalize)
+			local controlled_to_follow_dir = Vector3.normalize(Vector3.flat(follow_pos - controlled_unit_pos))
+			local projected_distance = Vector3.dot(-avoid_pos_to_controlled, controlled_to_follow_dir)
+			local projected_position = controlled_unit_pos + controlled_to_follow_dir * projected_distance
+			local running_through = Vector3.length_squared(Vector3.flat(position_to_avoid) - Vector3.flat(projected_position)) < avoid_radius * avoid_radius - math.epsilon
 
-			if not (Vector3.length_squared(Vector3.flat(var_22_0) - Vector3.flat(num_2)) < arg_22_4 * arg_22_4 - math.epsilon) then
-				var_22_10.undergoing_avoidance = arg_22_1
-				self._units_to_recalculate[arg_22_2] = true
+			if running_through then
+				follow_data.undergoing_avoidance = avoid_unit
+				self._units_to_recalculate[controlled_unit] = true
 
-				if not undergoing_avoidance then
-					local flat_3 = Vector3.flat(var_22_1)
-					local ray_circle, var_22_17 = Intersect.ray_circle(flat_3, normalize, Vector3.flat(var_22_0), arg_22_4)
-					local flag_3 = not (Vector3.distance_squared(ray_circle, flat_3) < Vector3.distance_squared(var_22_17, flat_3)) and ray_circle and var_22_17
+				if avoiding_something_else then
+					local self_pos_flat = Vector3.flat(controlled_unit_pos)
+					local edge_pos1, edge_pos2 = Intersect.ray_circle(self_pos_flat, controlled_to_follow_dir, Vector3.flat(position_to_avoid), avoid_radius)
+					local first_edge_closer = Vector3.distance_squared(edge_pos1, self_pos_flat) < Vector3.distance_squared(edge_pos2, self_pos_flat)
+					local edge_pos = (not first_edge_closer or not edge_pos1) and not not edge_pos2
 
-					if not flag then
-						arg_22_5.flip_attempt_t = arg_22_10
-						arg_22_5.flip_dir = -flip_dir
+					if not flip then
+						blackboard.flip_attempt_t = t
+						blackboard.flip_dir = -side
 					end
 
-					flag_3.z = arg_22_3.z
+					edge_pos.z = follow_pos.z
 
-					return flag_3
+					return edge_pos
 				end
 
-				local clamp01 = math.clamp01(arg_22_4 / max)
-				local num_3 = var_22_0 + Quaternion.rotate(Quaternion.axis_angle(Vector3(0, 0, flip_dir), math.acos(clamp01)), Vector3.normalize(flat_2) * arg_22_4)
-				local triangle_from_position, var_22_22 = GwNavQueries.triangle_from_position(arg_22_6, num_3, arg_22_7, arg_22_8)
+				local dot = math.clamp01(avoid_radius / dist_to_avoid_unit)
+				local pos_on_circle = position_to_avoid + Quaternion.rotate(Quaternion.axis_angle(Vector3(0, 0, side), math.acos(dot)), Vector3.normalize(avoid_pos_to_controlled) * avoid_radius)
+				local circle_is_on_navmesh, z = GwNavQueries.triangle_from_position(nav_world, pos_on_circle, nav_above, nav_below)
 
-				if not triangle_from_position then
-					num_3.z = var_22_22
-				elseif not flag then
-					arg_22_5.flip_attempt_t = arg_22_10
-					arg_22_5.flip_dir = -flip_dir
+				if circle_is_on_navmesh then
+					pos_on_circle.z = z
+				elseif not flip then
+					blackboard.flip_attempt_t = t
+					blackboard.flip_dir = -side
 				else
-					return num_2
+					return projected_position
 				end
 
-				local length = Vector3.length(arg_22_3 - var_22_1)
+				local dist_to_follow = Vector3.length(follow_pos - controlled_unit_pos)
 
-				arg_22_3 = var_22_1 + Vector3.normalize(num_3 - var_22_1) * length
+				follow_pos = controlled_unit_pos + Vector3.normalize(pos_on_circle - controlled_unit_pos) * dist_to_follow
 			end
 		end
 	end
 
-	return arg_22_3
+	return follow_pos
 end
 
 AICommanderExtension._pair_best_follow_nodes = function (self)
 	-- function 23
-	local _follow_indices = self._follow_indices
-	local _follow_datas = self._follow_datas
-	local alloc_table = FrameTable.alloc_table()
-	local alloc_table_2 = FrameTable.alloc_table()
-	local count = #_follow_indices
+	local follow_indices = self._follow_indices
+	local follow_datas = self._follow_datas
+	local source_positions = FrameTable.alloc_table()
+	local target_positions = FrameTable.alloc_table()
+	local num_units = #follow_indices
 
-	for i = 1, count do
-		local var_23_5 = _follow_indices[i]
-		local var_23_6 = POSITION_LOOKUP[var_23_5]
+	for i = 1, num_units do
+		local unit = follow_indices[i]
+		local unit_pos = POSITION_LOOKUP[unit]
+		local target_pos = follow_datas[unit].true_follow_position:unbox()
 
-		alloc_table_2[i], alloc_table[i] = _follow_datas[var_23_5].true_follow_position:unbox(), var_23_6
+		source_positions[i] = unit_pos
+		target_positions[i] = target_pos
 	end
 
-	local alloc_table_3 = FrameTable.alloc_table()
+	local out_indices = FrameTable.alloc_table()
 
-	math.distributed_point_matching(alloc_table, alloc_table_2, alloc_table_3, true)
+	math.distributed_point_matching(source_positions, target_positions, out_indices, true)
 
-	for j = 1, count do
-		local var_23_8 = alloc_table_3[j]
-		local var_23_9 = _follow_indices[j]
+	for i = 1, num_units do
+		local wanted_index = out_indices[i]
+		local unit = follow_indices[i]
 
-		if _follow_datas[var_23_9].follow_index ~= var_23_8 then
-			_follow_datas[var_23_9].follow_index = var_23_8
-			self._units_to_recalculate[var_23_9] = true
+		if follow_datas[unit].follow_index ~= wanted_index then
+			follow_datas[unit].follow_index = wanted_index
+			self._units_to_recalculate[unit] = true
 		end
 	end
 
-	for k, v in pairs(_follow_datas) do
-		_follow_indices[v.follow_index] = k
+	for unit, data in pairs(follow_datas) do
+		follow_indices[data.follow_index] = unit
 	end
 end
 
-AICommanderExtension._navify_follow_pos = function (arg_24_0, arg_24_1, arg_24_2, arg_24_3, arg_24_4, arg_24_5)
+AICommanderExtension._navify_follow_pos = function (self, follow_pos, nav_world, commander_unit_pos, lead_distance, blackboard)
 	-- function 24
-	local traverse_logic = arg_24_5.navigation_extension:traverse_logic()
+	local traverse_logic = blackboard.navigation_extension:traverse_logic()
 
-	if not traverse_logic then
-		local raycast, var_24_2 = GwNavQueries.raycast(arg_24_2, arg_24_3, arg_24_3 + arg_24_4, traverse_logic)
+	if traverse_logic then
+		local reference_clear_path, reference_pos = GwNavQueries.raycast(nav_world, commander_unit_pos, commander_unit_pos + lead_distance, traverse_logic)
 
-		if not raycast then
-			var_24_2 = var_24_2 + Vector3.normalize(arg_24_3 - var_24_2) * 1.5
+		if not reference_clear_path then
+			reference_pos = reference_pos + Vector3.normalize(commander_unit_pos - reference_pos) * 1.5
 		end
 
-		local raycast_2, var_24_4 = GwNavQueries.raycast(arg_24_2, var_24_2, arg_24_1, traverse_logic)
+		local clear_path, end_pos = GwNavQueries.raycast(nav_world, reference_pos, follow_pos, traverse_logic)
 
-		if not raycast_2 then
-			arg_24_1 = var_24_4
+		if not clear_path then
+			follow_pos = end_pos
 		end
 	end
 
-	return arg_24_1
+	return follow_pos
 end
 
-AICommanderExtension._update_units = function (self, arg_25_1, arg_25_2)
+AICommanderExtension._update_units = function (self, dt, t)
 	-- function 25
-	local var_25_0 = POSITION_LOOKUP[self._unit]
-	local _controlled_units = self._controlled_units
-	local var_25_2
+	local commander_unit_pos = POSITION_LOOKUP[self._unit]
+	local controlled_units = self._controlled_units
+	local var_25_0
 
-	if not table.is_empty(self._combat_units) then
-		var_25_2 = num
+	if table.is_empty(self._combat_units) then
+		var_25_0 = DETECTION_RADIUS
 
-		if not var_25_2 then
+		if not var_25_0 then
 			-- Nothing
 		end
 	end
 
-	var_25_2 = num_2
+	var_25_0 = DETECTION_RADIUS_STICKY
+
+	local detection_radius = var_25_0
 
 	::label_25_0::
 
-	local num_3 = var_25_2 * 0.5
-	local average_velocity = self._locomotion_ext:average_velocity()
+	local half_detection_radius = detection_radius * 0.5
+	local avg_velocity = self._locomotion_ext:average_velocity()
 
-	if Vector3.length_squared(average_velocity) > num_3 * num_3 then
-		average_velocity = Vector3.normalize(average_velocity) * num_3
+	if Vector3.length_squared(avg_velocity) > half_detection_radius * half_detection_radius then
+		avg_velocity = Vector3.normalize(avg_velocity) * half_detection_radius
 	end
 
-	local num_4 = var_25_0 + average_velocity
+	local detection_source_pos = commander_unit_pos + avg_velocity
 
-	for k in pairs(_controlled_units) do
-		local var_25_6 = BLACKBOARDS[k]
-		local var_25_7 = POSITION_LOOKUP[k]
+	for controlled_unit in pairs(controlled_units) do
+		local blackboard = BLACKBOARDS[controlled_unit]
+		local controlled_unit_pos = POSITION_LOOKUP[controlled_unit]
 
-		if not var_25_7 then
-			self:remove_controlled_unit(k)
-
-			return
-		end
-
-		if not ScriptUnit.extension(k, "health_system"):is_dead() then
-			self:remove_controlled_unit(k)
+		if not controlled_unit_pos then
+			self:remove_controlled_unit(controlled_unit)
 
 			return
 		end
 
-		local var_25_8 = self._controlled_units[k]
-		local template = var_25_8.template
+		local health_extension = ScriptUnit.extension(controlled_unit, "health_system")
 
-		if not (not template.duration and not (arg_25_2 > var_25_8.start_t + template.duration)) then
-			self:remove_controlled_unit(k)
+		if health_extension:is_dead() then
+			self:remove_controlled_unit(controlled_unit)
 
-			if template.disband_type == ControlledUnitDisbandType.kill then
-				AiUtils.kill_unit(k)
+			return
+		end
+
+		local data = self._controlled_units[controlled_unit]
+		local template = data.template
+
+		if template.duration then
+			local end_t = data.start_t + template.duration
+
+			if end_t < t then
+				self:remove_controlled_unit(controlled_unit)
+
+				if template.disband_type == ControlledUnitDisbandType.kill then
+					AiUtils.kill_unit(controlled_unit)
+				end
+
+				return
 			end
-
-			return
 		end
 
-		if not var_25_6.ability_spawned then
-			var_25_6.detection_radius = var_25_2
+		if not blackboard.ability_spawned then
+			blackboard.detection_radius = detection_radius
 		end
 
-		var_25_6.dist_to_commander = Vector3.distance(var_25_0, var_25_7)
+		blackboard.dist_to_commander = Vector3.distance(commander_unit_pos, controlled_unit_pos)
 
-		if var_25_6.command_state == CommandStates.StandingGround then
-			var_25_6.detection_source_pos:store(var_25_6.stand_ground_position:unbox())
+		if blackboard.command_state == CommandStates.StandingGround then
+			blackboard.detection_source_pos:store(blackboard.stand_ground_position:unbox())
 		else
-			var_25_6.detection_source_pos:store(num_4)
+			blackboard.detection_source_pos:store(detection_source_pos)
 		end
 
-		AiBreedSnippets.update_enemy_sighting_within_commander_sticky(var_25_6)
+		AiBreedSnippets.update_enemy_sighting_within_commander_sticky(blackboard)
 	end
 end
 
-AICommanderExtension.pet_ui_data = function (self, arg_26_1)
+AICommanderExtension.pet_ui_data = function (self, unit)
 	-- function 26
-	local var_26_0 = self._controlled_units[arg_26_1]
+	local data = self._controlled_units[unit]
 
-	if not var_26_0 then
+	if not data then
 		return nil, nil, nil
 	end
 
-	local template = var_26_0.template
+	local template = data.template
 	local pet_ui_type = template.pet_ui_type
 
 	if pet_ui_type == "health" then
-		local has_extension = ScriptUnit.has_extension(arg_26_1, "health_system")
+		local health_extension = ScriptUnit.has_extension(unit, "health_system")
 
-		if not has_extension then
-			local current_health = has_extension:current_health()
-			local get_max_health = has_extension:get_max_health()
+		if health_extension then
+			local current_health = health_extension:current_health()
+			local max_health = health_extension:get_max_health()
 
-			return template, current_health, get_max_health
+			return template, current_health, max_health
 		end
 	elseif pet_ui_type == "duration" then
-		local duration = var_26_0.template.duration
+		local duration = data.template.duration
 
-		if not duration then
-			local time = Managers.time:time("game")
-			local start_t = var_26_0.start_t
+		if duration then
+			local t = Managers.time:time("game")
+			local start_t = data.start_t
 
-			return template, time - start_t, duration
+			return template, t - start_t, duration
 		end
 	end
 
@@ -871,58 +938,58 @@ AICommanderExtension.controlled_units_in_combat = function (self)
 	return self._combat_units
 end
 
-AICommanderExtension.set_in_combat = function (arg_28_0, arg_28_1, arg_28_2)
+AICommanderExtension.set_in_combat = function (self, controlled_unit, is_in_combat)
 	-- function 28
-	arg_28_0._combat_units[arg_28_1] = arg_28_2 or nil
+	self._combat_units[controlled_unit] = not not is_in_combat or not not nil
 end
 
 AICommanderExtension._calculate_hovered_friendly_unit = function (self)
 	-- function 29
-	local num = 1
-	local _first_person_extension = self._first_person_extension
-	local current_position = _first_person_extension:current_position()
-	local forward = Quaternion.forward(_first_person_extension:current_rotation())
-	local get_controlled_units = self:get_controlled_units()
-	local var_29_5
-	local var_29_6
-	local var_29_7
-	local huge = math.huge
+	local radius = 1
+	local fp_extension = self._first_person_extension
+	local position = fp_extension:current_position()
+	local look_direction = Quaternion.forward(fp_extension:current_rotation())
+	local pets = self:get_controlled_units()
+	local hovered_pet, fallback_pet, commanded_unit
+	local best_angle = math.huge
 
-	for k in pairs(get_controlled_units) do
+	for pet_unit in pairs(pets) do
 		repeat
-			if not ALIVE[k] then
+			if not ALIVE[pet_unit] then
 				break
 			end
 
 			local world_position
 
-			if not Unit.has_node(k, "j_spine") then
-				world_position = Unit.world_position(k, Unit.node(k, "j_spine"))
+			if Unit.has_node(pet_unit, "j_spine") then
+				world_position = Unit.world_position(pet_unit, Unit.node(pet_unit, "j_spine"))
 
 				if not world_position then
 					-- Nothing
 				end
 			end
 
-			world_position = POSITION_LOOKUP[k]
+			world_position = POSITION_LOOKUP[pet_unit]
+
+			local pet_position = world_position
 
 			::label_29_0::
 
-			if not world_position then
-				local direction_length, var_29_11 = Vector3.direction_length(world_position - current_position)
-				local atan = math.atan(num / var_29_11)
-				local dot = Vector3.dot(forward, direction_length)
-				local acos = math.acos(dot)
+			if pet_position then
+				local to_pet_dir, to_pet_len = Vector3.direction_length(pet_position - position)
+				local max_angle_rad = math.atan(radius / to_pet_len)
+				local dot_angle = Vector3.dot(look_direction, to_pet_dir)
+				local angle_to_pet = math.acos(dot_angle)
 
-				if acos < huge then
-					var_29_6 = k
-					huge = acos
+				if angle_to_pet < best_angle then
+					fallback_pet = pet_unit
+					best_angle = angle_to_pet
 
-					if acos <= atan then
-						var_29_5 = k
+					if angle_to_pet <= max_angle_rad then
+						hovered_pet = pet_unit
 
-						if self:command_state(k) ~= CommandStates.Following then
-							var_29_7 = k
+						if self:command_state(pet_unit) ~= CommandStates.Following then
+							commanded_unit = pet_unit
 						end
 					end
 				end
@@ -930,126 +997,126 @@ AICommanderExtension._calculate_hovered_friendly_unit = function (self)
 		until true
 	end
 
-	self._cached_hovered_fallback_unit = var_29_6
-	self._cached_hovered_friendly_unit = var_29_5
-	self._cached_hovered_commanded_unit = var_29_7
+	self._cached_hovered_fallback_unit = fallback_pet
+	self._cached_hovered_friendly_unit = hovered_pet
+	self._cached_hovered_commanded_unit = commanded_unit
 end
 
-AICommanderExtension._set_command_state = function (self, arg_30_1, arg_30_2)
+AICommanderExtension._set_command_state = function (self, controlled_unit, command_state)
 	-- function 30
 	fassert(self._is_local, "[AICommanderExtension] Local only function")
 
-	local var_30_0 = self._controlled_units[arg_30_1]
+	local data = self._controlled_units[controlled_unit]
 
-	if not var_30_0 then
-		var_30_0.command_state = arg_30_2
+	if data then
+		data.command_state = command_state
 	end
 end
 
-AICommanderExtension.command_state = function (self, arg_31_1)
+AICommanderExtension.command_state = function (self, controlled_unit)
 	-- function 31
-	local var_31_0 = self._controlled_units[arg_31_1]
+	local data = self._controlled_units[controlled_unit]
 
-	return not var_31_0 and var_31_0.command_state
+	return not not data and not not data.command_state
 end
 
-AICommanderExtension.cancel_current_command = function (self, arg_32_1, arg_32_2)
+AICommanderExtension.cancel_current_command = function (self, controlled_unit, ignore_attacking_units)
 	-- function 32
-	if not (not arg_32_2 and self:command_state(arg_32_1) ~= CommandStates.Attacking) then
+	if ignore_attacking_units and self:command_state(controlled_unit) == CommandStates.Attacking then
 		return
 	end
 
-	if not self._is_local then
-		self:_set_command_state(arg_32_1, CommandStates.Following)
+	if self._is_local then
+		self:_set_command_state(controlled_unit, CommandStates.Following)
 	end
 
 	if not self._is_server then
-		local go_id = self._unit_storage:go_id(arg_32_1)
+		local controlled_unit_id = self._unit_storage:go_id(controlled_unit)
 
-		self._network_transmit:send_rpc_server("rpc_cancel_current_command", go_id)
+		self._network_transmit:send_rpc_server("rpc_cancel_current_command", controlled_unit_id)
 
 		return
 	end
 
-	self:_cleanup_command_buffs(arg_32_1, true)
+	self:_cleanup_command_buffs(controlled_unit, true)
 
-	local var_32_1 = BLACKBOARDS[arg_32_1]
+	local blackboard = BLACKBOARDS[controlled_unit]
 
-	var_32_1.command_state = CommandStates.Following
-	var_32_1.override_target_selection_name = nil
-	var_32_1.override_detection_radius = nil
-	var_32_1.fallback_rotation = nil
-	var_32_1.commander_target = nil
-	var_32_1.new_command_attack = nil
-	var_32_1.charge_target = nil
-	var_32_1.target_unit = nil
+	blackboard.command_state = CommandStates.Following
+	blackboard.override_target_selection_name = nil
+	blackboard.override_detection_radius = nil
+	blackboard.fallback_rotation = nil
+	blackboard.commander_target = nil
+	blackboard.new_command_attack = nil
+	blackboard.charge_target = nil
+	blackboard.target_unit = nil
 end
 
-AICommanderExtension.command_attack = function (self, arg_33_1, arg_33_2)
+AICommanderExtension.command_attack = function (self, controlled_unit, target_unit)
 	-- function 33
-	if not self._is_server then
-		self:cancel_current_command(arg_33_1)
+	if self._is_server then
+		self:cancel_current_command(controlled_unit)
 
-		local var_33_0 = BLACKBOARDS[arg_33_1]
+		local blackboard = BLACKBOARDS[controlled_unit]
 
-		var_33_0.target_unit = arg_33_2
-		var_33_0.commander_target = arg_33_2
-		var_33_0.override_target_selection_name = "attack_commander_target_with_fallback"
-		var_33_0.command_state = CommandStates.Attacking
-		var_33_0.new_command_attack = true
+		blackboard.target_unit = target_unit
+		blackboard.commander_target = target_unit
+		blackboard.override_target_selection_name = "attack_commander_target_with_fallback"
+		blackboard.command_state = CommandStates.Attacking
+		blackboard.new_command_attack = true
 
-		self:_add_command_buffs(arg_33_1, CommandStates.Attacking)
+		self:_add_command_buffs(controlled_unit, CommandStates.Attacking)
 	else
-		local go_id = self._unit_storage:go_id(arg_33_1)
-		local go_id_2 = self._unit_storage:go_id(arg_33_2)
+		local controlled_unit_id = self._unit_storage:go_id(controlled_unit)
+		local target_unit_id = self._unit_storage:go_id(target_unit)
 
-		self._network_transmit:send_rpc_server("rpc_command_attack", go_id, go_id_2)
+		self._network_transmit:send_rpc_server("rpc_command_attack", controlled_unit_id, target_unit_id)
 	end
 
-	if not self._is_local then
-		Managers.state.achievement:trigger_event("command_attack_unit", arg_33_1, arg_33_2)
-		self:_set_command_state(arg_33_1, CommandStates.Attacking)
+	if self._is_local then
+		Managers.state.achievement:trigger_event("command_attack_unit", controlled_unit, target_unit)
+		self:_set_command_state(controlled_unit, CommandStates.Attacking)
 
-		self._controlled_units[arg_33_1].commander_target = arg_33_2
+		self._controlled_units[controlled_unit].commander_target = target_unit
 
-		local extension_input = ScriptUnit.extension_input(self._unit, "dialogue_system")
-		local alloc_table = FrameTable.alloc_table()
+		local dialogue_input = ScriptUnit.extension_input(self._unit, "dialogue_system")
+		local event_data = FrameTable.alloc_table()
 
-		extension_input:trigger_dialogue_event("minion_command_attack", alloc_table)
+		dialogue_input:trigger_dialogue_event("minion_command_attack", event_data)
 	end
 end
 
-AICommanderExtension.command_stand_ground = function (self, arg_34_1, arg_34_2, arg_34_3)
+AICommanderExtension.command_stand_ground = function (self, controlled_unit, position, fallback_rotation)
 	-- function 34
-	if not self._is_server then
-		self:cancel_current_command(arg_34_1)
+	if self._is_server then
+		self:cancel_current_command(controlled_unit)
 
-		local var_34_0 = BLACKBOARDS[arg_34_1]
+		local blackboard = BLACKBOARDS[controlled_unit]
 
-		var_34_0.target_unit = nil
-		var_34_0.command_state = CommandStates.StandingGround
-		var_34_0.override_detection_radius = 3
-		var_34_0.stand_ground_position = Vector3Box(arg_34_2)
-		var_34_0.goal_destination = Vector3Box(arg_34_2)
-		var_34_0.new_move_to_goal = true
-		var_34_0.fallback_rotation = QuaternionBox(arg_34_3)
+		blackboard.target_unit = nil
+		blackboard.command_state = CommandStates.StandingGround
+		blackboard.override_detection_radius = 3
+		blackboard.stand_ground_position = Vector3Box(position)
+		blackboard.goal_destination = Vector3Box(position)
+		blackboard.new_move_to_goal = true
+		blackboard.fallback_rotation = QuaternionBox(fallback_rotation)
 
-		self:_add_command_buffs(arg_34_1, CommandStates.StandingGround)
+		self:_add_command_buffs(controlled_unit, CommandStates.StandingGround)
 	else
-		local go_id = self._unit_storage:go_id(arg_34_1)
+		local controlled_unit_id = self._unit_storage:go_id(controlled_unit)
 
-		self._network_transmit:send_rpc_server("rpc_command_stand_ground", go_id, arg_34_2, arg_34_3)
+		self._network_transmit:send_rpc_server("rpc_command_stand_ground", controlled_unit_id, position, fallback_rotation)
 	end
 
-	if not self._is_local then
-		self:_set_command_state(arg_34_1, CommandStates.StandingGround)
+	if self._is_local then
+		self:_set_command_state(controlled_unit, CommandStates.StandingGround)
 
 		self._stand_ground_active = true
 
-		local extension_input = ScriptUnit.extension_input(self._unit, "dialogue_system")
-		local alloc_table = FrameTable.alloc_table()
+		local dialogue_input = ScriptUnit.extension_input(self._unit, "dialogue_system")
+		local event_data = FrameTable.alloc_table()
 
-		extension_input:trigger_dialogue_event("minion_command_defend", alloc_table)
+		dialogue_input:trigger_dialogue_event("minion_command_defend", event_data)
 	end
 end
 
@@ -1073,26 +1140,26 @@ end
 
 AICommanderExtension._update_command_stand_ground = function (self)
 	-- function 37
-	if not self._stand_ground_active then
-		local flag = false
+	if self._stand_ground_active then
+		local cancel_stand_ground = false
 
-		for k in pairs(self._controlled_units) do
-			local var_37_1 = POSITION_LOOKUP[k]
-			local var_37_2 = POSITION_LOOKUP[self._unit]
-			local distance_squared = Vector3.distance_squared(var_37_1, var_37_2)
+		for controlled_unit in pairs(self._controlled_units) do
+			local position = POSITION_LOOKUP[controlled_unit]
+			local necromancer_position = POSITION_LOOKUP[self._unit]
+			local dist_sq = Vector3.distance_squared(position, necromancer_position)
 			local max_range = CareerConstants.bw_necromancer.max_range
 
-			if distance_squared > max_range * max_range then
-				flag = true
+			if dist_sq > max_range * max_range then
+				cancel_stand_ground = true
 
 				break
 			end
 		end
 
-		if not flag then
-			for k_2 in pairs(self._controlled_units) do
-				if self:command_state(k_2) == CommandStates.StandingGround then
-					self:cancel_current_command(k_2)
+		if cancel_stand_ground then
+			for controlled_unit in pairs(self._controlled_units) do
+				if self:command_state(controlled_unit) == CommandStates.StandingGround then
+					self:cancel_current_command(controlled_unit)
 				end
 			end
 
@@ -1100,27 +1167,29 @@ AICommanderExtension._update_command_stand_ground = function (self)
 		end
 	end
 
-	local _stand_ground_queue = self._stand_ground_queue
+	local stand_ground_queue = self._stand_ground_queue
 
-	for k_3 = 1, #_stand_ground_queue do
-		local var_37_6 = _stand_ground_queue[k_3]
+	for i = 1, #stand_ground_queue do
+		local entry = stand_ground_queue[i]
 
-		self:_command_stand_ground_group(var_37_6.units, var_37_6.target_position:unbox(), var_37_6.fallback_rotation:unbox())
+		self:_command_stand_ground_group(entry.units, entry.target_position:unbox(), entry.fallback_rotation:unbox())
 
-		_stand_ground_queue[k_3] = nil
+		stand_ground_queue[i] = nil
 	end
 end
 
 AICommanderExtension._update_commands = function (self)
 	-- function 38
-	if not self._is_local then
-		local flag = false
+	if self._is_local then
+		local has_stand_ground = false
 
-		for k, v in pairs(self._controlled_units) do
-			if not (self:command_state(k) ~= CommandStates.Attacking or HEALTH_ALIVE[v.commander_target]) then
-				self:cancel_current_command(k)
+		for controlled_unit, controlled_data in pairs(self._controlled_units) do
+			local command_state = self:command_state(controlled_unit)
+
+			if command_state == CommandStates.Attacking and not HEALTH_ALIVE[controlled_data.commander_target] then
+				self:cancel_current_command(controlled_unit)
 			else
-				flag = flag or v.command_state == CommandStates.StandingGround
+				has_stand_ground = not not has_stand_ground or controlled_data.command_state == CommandStates.StandingGround
 			end
 		end
 	end
@@ -1128,195 +1197,205 @@ AICommanderExtension._update_commands = function (self)
 	self:_update_command_stand_ground()
 end
 
-AICommanderExtension.command_stand_ground_group = function (self, arg_39_1, arg_39_2, arg_39_3)
+AICommanderExtension.command_stand_ground_group = function (self, units, target_position, fallback_rotation)
 	-- function 39
-	local _stand_ground_queue = self._stand_ground_queue
+	local stand_ground_queue = self._stand_ground_queue
 
-	_stand_ground_queue[#_stand_ground_queue + 1] = {
-		units = arg_39_1,
-		target_position = Vector3Box(arg_39_2),
-		fallback_rotation = QuaternionBox(arg_39_3)
+	stand_ground_queue[#stand_ground_queue + 1] = {
+		units = units,
+		target_position = Vector3Box(target_position),
+		fallback_rotation = QuaternionBox(fallback_rotation)
 	}
 end
 
-AICommanderExtension._command_stand_ground_group = function (self, arg_40_1, arg_40_2, arg_40_3)
+AICommanderExtension._command_stand_ground_group = function (self, units, target_position, fallback_rotation)
 	-- function 40
-	table.array_remove_if(arg_40_1, function (arg_41_0)
+	table.array_remove_if(units, function (unit)
 		-- function 41
-		return not self._controlled_units[arg_41_0]
+		return not self._controlled_units[unit]
 	end)
 
-	local count = #arg_40_1
+	local num_pets = #units
 
-	if count <= 0 then
+	if num_pets <= 0 then
 		return
 	end
 
-	local generate_positions = ActionCareerBwNecromancerCommandStandTargetingUtility.generate_positions(arg_40_2, arg_40_3, count)
-	local min = math.min(count, #generate_positions)
-	local alloc_table = FrameTable.alloc_table()
-	local alloc_table_2 = FrameTable.alloc_table()
+	local positions = ActionCareerBwNecromancerCommandStandTargetingUtility.generate_positions(target_position, fallback_rotation, num_pets)
+	local num_pairs = math.min(num_pets, #positions)
+	local pet_positions = FrameTable.alloc_table()
+	local target_positions = FrameTable.alloc_table()
 
-	for i = 1, min do
-		alloc_table[i] = POSITION_LOOKUP[arg_40_1[i]]
-		alloc_table_2[i] = generate_positions[i]:unbox()
+	for i = 1, num_pairs do
+		pet_positions[i] = POSITION_LOOKUP[units[i]]
+		target_positions[i] = positions[i]:unbox()
 	end
 
-	local alloc_table_3 = FrameTable.alloc_table()
-	local distributed_point_matching = math.distributed_point_matching(alloc_table, alloc_table_2, alloc_table_3)
+	local out_indices = FrameTable.alloc_table()
+	local num_matches = math.distributed_point_matching(pet_positions, target_positions, out_indices)
 
-	if not distributed_point_matching then
+	if not num_matches then
 		return
 	end
 
-	for j = 1, distributed_point_matching do
-		local var_40_7 = arg_40_1[j]
-		local var_40_8 = alloc_table_2[alloc_table_3[j]]
+	for i = 1, num_matches do
+		local pet_unit = units[i]
+		local pos_index = out_indices[i]
+		local position = target_positions[pos_index]
 
-		self:command_stand_ground(var_40_7, var_40_8, arg_40_3)
+		self:command_stand_ground(pet_unit, position, fallback_rotation)
 	end
 end
 
 AICommanderExtension._commander_is_on_navmesh = function (self)
 	-- function 42
-	local var_42_0 = POSITION_LOOKUP[self._unit]
+	local pos = POSITION_LOOKUP[self._unit]
 
-	if not var_42_0 then
+	if not pos then
 		self._is_on_navmesh = false
 
 		return
 	end
 
-	local num = 0.5
-	local num_2 = 2
+	local above = 0.5
+	local below = 2
+	local success = GwNavQueries.triangle_from_position(self._nav_world, pos, above, below)
 
-	return (GwNavQueries.triangle_from_position(self._nav_world, var_42_0, num, num_2))
+	return success
 end
 
-AICommanderExtension._cleanup_command_buffs = function (self, arg_43_1, arg_43_2)
+AICommanderExtension._cleanup_command_buffs = function (self, controlled_unit, only_remove_on_command)
 	-- function 43
-	local _buff_system = self._buff_system
-	local var_43_1 = self._command_buffs[arg_43_1]
+	local buff_system = self._buff_system
+	local command_buffs = self._command_buffs[controlled_unit]
 
-	for i = #var_43_1, 1, -1 do
-		local var_43_2 = var_43_1[i]
-		local remove_on_command = var_43_2.remove_on_command
+	for i = #command_buffs, 1, -1 do
+		local buff_data = command_buffs[i]
+		local remove_on_command = buff_data.remove_on_command
 
-		if not arg_43_2 and not remove_on_command then
-			local id = var_43_2.id
+		if not only_remove_on_command or remove_on_command then
+			local buff_id = buff_data.id
 
-			_buff_system:remove_buff_synced(arg_43_1, id)
-			table.swap_delete(var_43_1, i)
+			buff_system:remove_buff_synced(controlled_unit, buff_id)
+			table.swap_delete(command_buffs, i)
 		end
 	end
 end
 
-AICommanderExtension._add_command_buffs = function (self, arg_44_1, arg_44_2)
+AICommanderExtension._add_command_buffs = function (self, controlled_unit, command_state)
 	-- function 44
-	local buff_on_command = self._controlled_units[arg_44_1].template.buff_on_command
-	local flag = not buff_on_command and buff_on_command[arg_44_2]
+	local unit_data = self._controlled_units[controlled_unit]
+	local controlled_unit_template = unit_data.template
+	local buff_on_command = controlled_unit_template.buff_on_command
+	local buffs_to_add = not not buff_on_command and not not buff_on_command[command_state]
 
-	if not flag then
+	if not buffs_to_add then
 		return
 	end
 
-	local var_44_2 = self._command_buffs[arg_44_1]
-	local _buff_system = self._buff_system
+	local command_buffs = self._command_buffs[controlled_unit]
+	local buff_system = self._buff_system
 
-	for i = 1, #flag do
-		local var_44_4 = flag[i]
-		local add_buff_synced = _buff_system:add_buff_synced(arg_44_1, var_44_4.name, BuffSyncType.Local)
+	for i = 1, #buffs_to_add do
+		local buff_to_add = buffs_to_add[i]
+		local id = buff_system:add_buff_synced(controlled_unit, buff_to_add.name, BuffSyncType.Local)
 
-		var_44_2[#var_44_2 + 1] = {
-			id = add_buff_synced,
-			remove_on_command = var_44_4.remove_on_command
+		command_buffs[#command_buffs + 1] = {
+			id = id,
+			remove_on_command = buff_to_add.remove_on_command
 		}
 	end
 end
 
-AICommanderExtension._get_fallback_position = function (self, arg_45_1)
+AICommanderExtension._get_fallback_position = function (self, controlled_unit)
 	-- function 45
-	local _fallback_positions = self._fallback_positions
-	local _stored_fallback_positions = self._stored_fallback_positions
-	local _fallback_position_data = self._fallback_position_data
+	local fallback_positions = self._fallback_positions
+	local stored_positions = self._stored_fallback_positions
+	local fallback_data = self._fallback_position_data
 
-	if not _fallback_positions[arg_45_1] then
-		return _fallback_positions[arg_45_1]
+	if fallback_positions[controlled_unit] then
+		return fallback_positions[controlled_unit]
 	end
 
-	local count = #_stored_fallback_positions
+	local num_stored = #stored_positions
 
-	if count == 0 then
-		local cell_width = _fallback_position_data.cell_width
-		local num = _fallback_position_data.grid_width + 1
+	if num_stored == 0 then
+		local cell_width = fallback_data.cell_width
+		local current_pow_of = fallback_data.grid_width
+		local wanted_pow_of = current_pow_of + 1
 
-		_fallback_position_data.grid_width = num
+		fallback_data.grid_width = wanted_pow_of
 
-		for k, v in pairs(_fallback_positions) do
-			local pos = v.pos
-			local unbox = pos:unbox()
-			local num_2 = cell_width * 0.5
+		for unit, pos_data in pairs(fallback_positions) do
+			local pos_boxed = pos_data.pos
+			local pos = pos_boxed:unbox()
+			local offset = cell_width * 0.5
 
-			unbox[1] = unbox[1] - num_2
-			unbox[2] = unbox[2] - num_2
+			pos[1] = pos[1] - offset
+			pos[2] = pos[2] - offset
 
-			pos:store(unbox)
+			pos_boxed:store(pos)
 		end
 
-		local cell_width_2 = _fallback_position_data.cell_width
+		local random_margin = fallback_data.cell_width
 
-		for k_2 = 1, num do
-			local num_3 = (k_2 - 1 - (num - 1) * 0.5) * cell_width + math.random() * cell_width_2 - cell_width_2 * 0.5
-			local num_4 = (num - 1) * 0.5 * cell_width + math.random() * cell_width_2 - cell_width_2 * 0.5
+		for i = 1, wanted_pow_of do
+			do
+				local pos_x = (i - 1 - (wanted_pow_of - 1) * 0.5) * cell_width + math.random() * random_margin - random_margin * 0.5
+				local pos_y = (wanted_pow_of - 1) * 0.5 * cell_width + math.random() * random_margin - random_margin * 0.5
 
-			_stored_fallback_positions[k_2] = {
-				pos = Vector3Box(Vector3(num_3, num_4, 0)),
-				grid_pow_of = num
-			}
-			count = count + 1
-
-			if k_2 ~= num then
-				local num_5 = (num - 1) * 0.5 * cell_width + math.random() * cell_width_2 - cell_width_2 * 0.5
-				local num_6 = (k_2 - 1 - (num - 1) * 0.5) * cell_width + math.random() * cell_width_2 - cell_width_2 * 0.5
-
-				_stored_fallback_positions[num + k_2] = {
-					pos = Vector3Box(Vector3(num_5, num_6, 0)),
-					grid_pow_of = num
+				stored_positions[i] = {
+					pos = Vector3Box(Vector3(pos_x, pos_y, 0)),
+					grid_pow_of = wanted_pow_of
 				}
-				count = count + 1
+				num_stored = num_stored + 1
+			end
+
+			if i ~= wanted_pow_of then
+				local pos_x = (wanted_pow_of - 1) * 0.5 * cell_width + math.random() * random_margin - random_margin * 0.5
+				local pos_y = (i - 1 - (wanted_pow_of - 1) * 0.5) * cell_width + math.random() * random_margin - random_margin * 0.5
+
+				stored_positions[wanted_pow_of + i] = {
+					pos = Vector3Box(Vector3(pos_x, pos_y, 0)),
+					grid_pow_of = wanted_pow_of
+				}
+				num_stored = num_stored + 1
 			end
 		end
 	end
 
-	local random = Math.random(1, count)
-	local var_45_15 = _stored_fallback_positions[random]
+	local idx = Math.random(1, num_stored)
+	local pos_data = stored_positions[idx]
 
-	table.swap_delete(_stored_fallback_positions, random)
+	table.swap_delete(stored_positions, idx)
 
-	_fallback_positions[arg_45_1] = var_45_15
-	_fallback_position_data.n = _fallback_position_data.n + 1
+	fallback_positions[controlled_unit] = pos_data
+	fallback_data.n = fallback_data.n + 1
 
-	return var_45_15
+	return pos_data
 end
 
-AICommanderExtension._store_fallback_position = function (self, arg_46_1)
+AICommanderExtension._store_fallback_position = function (self, controlled_unit)
 	-- function 46
-	local _fallback_positions = self._fallback_positions
+	local fallback_positions = self._fallback_positions
 
-	if not _fallback_positions[arg_46_1] then
-		local _stored_fallback_positions = self._stored_fallback_positions
-		local _fallback_position_data = self._fallback_position_data
-		local var_46_3 = _fallback_positions[arg_46_1]
+	if fallback_positions[controlled_unit] then
+		local stored_positions = self._stored_fallback_positions
+		local fallback_data = self._fallback_position_data
 
-		_fallback_positions[arg_46_1] = nil
-		_fallback_position_data.n = _fallback_position_data.n - 1
-		_stored_fallback_positions[#_stored_fallback_positions + 1] = var_46_3
+		do
+			local pos = fallback_positions[controlled_unit]
 
-		local n = _fallback_position_data.n
+			fallback_positions[controlled_unit] = nil
+			fallback_data.n = fallback_data.n - 1
+			stored_positions[#stored_positions + 1] = pos
+		end
+
+		local num_positions = fallback_data.n
 		local ceil
 
-		if n > 0 then
-			ceil = math.ceil(math.sqrt(n))
+		if num_positions > 0 then
+			ceil = math.ceil(math.sqrt(num_positions))
 
 			if not ceil then
 				-- Nothing
@@ -1325,48 +1404,52 @@ AICommanderExtension._store_fallback_position = function (self, arg_46_1)
 
 		ceil = 0
 
+		local wanted_pow_of = ceil
+
 		::label_46_0::
 
-		local grid_width = _fallback_position_data.grid_width
+		local current_pow_of = fallback_data.grid_width
 
-		_fallback_position_data.grid_width = ceil
+		fallback_data.grid_width = wanted_pow_of
 
-		if ceil ~= grid_width then
-			local cell_width = _fallback_position_data.cell_width
+		if wanted_pow_of ~= current_pow_of then
+			local cell_width = fallback_data.cell_width
 
-			for k, v in pairs(_fallback_positions) do
-				if ceil < v.grid_pow_of then
-					_fallback_positions[k] = nil
-					_fallback_position_data.n = _fallback_position_data.n - 1
+			for unit, pos_data in pairs(fallback_positions) do
+				local grid_pow_of = pos_data.grid_pow_of
+
+				if wanted_pow_of < grid_pow_of then
+					fallback_positions[unit] = nil
+					fallback_data.n = fallback_data.n - 1
 				else
-					local pos = v.pos
-					local unbox = pos:unbox()
-					local num = cell_width * 0.5
+					local pos_boxed = pos_data.pos
+					local pos = pos_boxed:unbox()
+					local offset = cell_width * 0.5
 
-					unbox[1] = unbox[1] + num
-					unbox[2] = unbox[2] + num
+					pos[1] = pos[1] + offset
+					pos[2] = pos[2] + offset
 
-					pos:store(unbox)
+					pos_boxed:store(pos)
 				end
 			end
 
-			local n_2 = _fallback_position_data.n
-			local flag = not (n_2 > 0) or not math.ceil(math.sqrt(n_2)) or 0
+			num_positions = fallback_data.n
+			wanted_pow_of = (not (num_positions > 0) or not math.ceil(math.sqrt(num_positions))) and not not 0
 
-			for k_2 = #_stored_fallback_positions, 1, -1 do
-				local var_46_13 = _stored_fallback_positions[k_2]
+			for i = #stored_positions, 1, -1 do
+				local pos_data = stored_positions[i]
 
-				if flag < var_46_13.grid_pow_of then
-					table.swap_delete(_stored_fallback_positions, k_2)
+				if wanted_pow_of < pos_data.grid_pow_of then
+					table.swap_delete(stored_positions, i)
 				else
-					local pos_2 = var_46_13.pos
-					local unbox_2 = pos_2:unbox()
-					local num_2 = cell_width * 0.5
+					local pos_boxed = pos_data.pos
+					local pos = pos_boxed:unbox()
+					local offset = cell_width * 0.5
 
-					unbox_2[1] = unbox_2[1] + num_2
-					unbox_2[2] = unbox_2[2] + num_2
+					pos[1] = pos[1] + offset
+					pos[2] = pos[2] + offset
 
-					pos_2:store(unbox_2)
+					pos_boxed:store(pos)
 				end
 			end
 		end

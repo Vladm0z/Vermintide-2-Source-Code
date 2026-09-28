@@ -13,16 +13,16 @@ PingManager.init = function (self)
 	self._cb = nil
 end
 
-PingManager.update = function (self, arg_2_1, arg_2_2)
+PingManager.update = function (self, dt, t)
 	-- function 2
 	if not self._is_fetching_data then
 		return
 	end
 
-	local update = Ping.update(arg_2_1, arg_2_2)
+	local done_operations = Ping.update(dt, t)
 
-	if not update then
-		if arg_2_2 > self._timeout then
+	if not done_operations then
+		if t > self._timeout then
 			self._is_fetching_data = false
 
 			self._cb(false)
@@ -31,25 +31,25 @@ PingManager.update = function (self, arg_2_1, arg_2_2)
 		return
 	end
 
-	local tbl = {}
+	local processed = {}
 
-	for i = 1, #update do
-		for k, v in pairs(update[i].results) do
-			local var_2_2 = self._target_to_region[k]
+	for i = 1, #done_operations do
+		for target, result in pairs(done_operations[i].results) do
+			local ping_target = self._target_to_region[target]
 
-			if not var_2_2 then
-				if not v.failed then
-					printf("RegionLatency, failed to get latency for region %s", var_2_2.region)
+			if ping_target then
+				if result.failed then
+					printf("RegionLatency, failed to get latency for region %s", ping_target.region)
 				else
-					tbl[var_2_2.region] = v.latency
+					processed[ping_target.region] = result.latency
 				end
 			else
-				printf("RegionLatency, did not recieve latency for target %s", k)
+				printf("RegionLatency, did not recieve latency for target %s", target)
 			end
 		end
 	end
 
-	self._latency_results[#self._latency_results + 1] = tbl
+	self._latency_results[#self._latency_results + 1] = processed
 
 	if #self._latency_results < self._ping_count then
 		self:_ping(self._timeout)
@@ -62,109 +62,120 @@ end
 
 PingManager._stats = function (self)
 	-- function 3
-	local tbl = {}
+	local ping_by_region = {}
 
 	for i = 1, #self._latency_results do
-		for k, v in pairs(self._latency_results[i]) do
-			local var_3_1 = tbl[k]
+		for target, result in pairs(self._latency_results[i]) do
+			local var_3_0 = ping_by_region[target]
 
-			var_3_1 = var_3_1 or {}
-			var_3_1[#var_3_1 + 1] = v
-			tbl[k] = var_3_1
-		end
-	end
-
-	local tbl_2 = {}
-
-	for k_2, v_2 in pairs(tbl) do
-		local count = #v_2
-
-		if count > 0 then
-			tbl_2[k_2] = {}
-
-			local num = 0
-
-			for i5 = 1, count do
-				num = num + v_2[i5]
+			if not var_3_0 then
+				-- Nothing
 			end
 
-			tbl_2[k_2] = num / count
+			var_3_0 = {}
+
+			local target_data = var_3_0
+
+			::label_3_0::
+
+			target_data[#target_data + 1] = result
+			ping_by_region[target] = target_data
 		end
 	end
 
-	return tbl_2
+	local average_ping_by_region = {}
+
+	for key, target_data in pairs(ping_by_region) do
+		local num_targets = #target_data
+
+		if num_targets > 0 then
+			average_ping_by_region[key] = {}
+
+			local subtotal_ping = 0
+
+			for i = 1, num_targets do
+				subtotal_ping = subtotal_ping + target_data[i]
+			end
+
+			average_ping_by_region[key] = subtotal_ping / num_targets
+		end
+	end
+
+	return average_ping_by_region
 end
 
-PingManager._target_to_regions = function (self, arg_4_1)
+PingManager._target_to_regions = function (self, regions)
 	-- function 4
-	if not arg_4_1 then
+	if not regions then
 		print("Received empty region data, nothing to ping")
 
 		return false
 	end
 
-	local _targets = self._targets
-	local _target_to_region = self._target_to_region
+	local targets = self._targets
+	local target_to_region = self._target_to_region
 
-	table.clear(_targets)
-	table.clear(_target_to_region)
+	table.clear(targets)
+	table.clear(target_to_region)
 
-	for i = 1, #arg_4_1 do
-		local var_4_2 = arg_4_1[i]
-		local pingTarget = var_4_2.pingTarget
+	for i = 1, #regions do
+		local region = regions[i]
+		local ping_target = region.pingTarget
 
-		_targets[#_targets + 1] = pingTarget
-		_target_to_region[pingTarget] = var_4_2
+		targets[#targets + 1] = ping_target
+		target_to_region[ping_target] = region
 	end
 
 	return true
 end
 
-PingManager.ping_multiple_times = function (self, arg_5_1, arg_5_2, arg_5_3, arg_5_4)
+PingManager.ping_multiple_times = function (self, timeout, regions, ping_count, cb)
 	-- function 5
-	if not self._is_fetching_data then
+	if self._is_fetching_data then
 		print("Already pinging")
 
 		return
 	end
 
-	if not self:_target_to_regions(arg_5_2) then
+	if not self:_target_to_regions(regions) then
 		return
 	end
 
 	table.clear(self._latency_results)
 
-	self._ping_count = arg_5_3
-	self._timeout_duration = arg_5_1
-	self._cb = arg_5_4
+	self._ping_count = ping_count
+	self._timeout_duration = timeout
+	self._cb = cb
 
 	self:_ping()
 end
 
-PingManager.ping = function (self, arg_6_1, arg_6_2, arg_6_3)
+PingManager.ping = function (self, timeout, regions, cb)
 	-- function 6
-	if not self._is_fetching_data then
+	if self._is_fetching_data then
 		print("Already pinging")
 
 		return
 	end
 
-	if not self:_target_to_regions(arg_6_2) then
+	if not self:_target_to_regions(regions) then
 		return
 	end
 
 	table.clear(self._latency_results)
 
 	self._ping_count = 1
-	self._timeout_duration = arg_6_1
-	self._cb = arg_6_3
+	self._timeout_duration = timeout
+	self._cb = cb
 
 	self:_ping()
 end
 
 PingManager._ping = function (self)
 	-- function 7
-	self._timeout = Managers.time:time("main") + self._timeout_duration
+	local t = Managers.time:time("main")
+
+	self._timeout = t + self._timeout_duration
 	self._is_fetching_data = true
 
 	Ping.ping(self._timeout_duration, unpack(self._targets))

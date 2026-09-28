@@ -1,15 +1,15 @@
 -- chunkname: @scripts/ui/views/hero_view/windows/store/definitions/store_window_item_details_definitions.lua
 
 local console_menu_scenegraphs = UISettings.console_menu_scenegraphs
-local tbl = {
+local window_size = {
 	550,
 	700
 }
-local tbl_2 = {
-	tbl[1] - 84,
-	tbl[2] - 84
+local inner_window_size = {
+	window_size[1] - 84,
+	window_size[2] - 84
 }
-local tbl_3 = {
+local scenegraph_definition = {
 	screen = console_menu_scenegraphs.screen,
 	area = console_menu_scenegraphs.area,
 	area_left = console_menu_scenegraphs.area_left,
@@ -19,7 +19,7 @@ local tbl_3 = {
 		vertical_alignment = "top",
 		parent = "screen",
 		horizontal_alignment = "left",
-		size = tbl,
+		size = window_size,
 		position = {
 			130,
 			-215,
@@ -30,7 +30,7 @@ local tbl_3 = {
 		vertical_alignment = "center",
 		parent = "window",
 		horizontal_alignment = "center",
-		size = tbl_2,
+		size = inner_window_size,
 		position = {
 			0,
 			0,
@@ -126,7 +126,7 @@ local tbl_3 = {
 		parent = "window",
 		horizontal_alignment = "center",
 		size = {
-			tbl[1] - 42,
+			window_size[1] - 42,
 			42
 		},
 		position = {
@@ -140,7 +140,7 @@ local tbl_3 = {
 		parent = "window",
 		horizontal_alignment = "center",
 		size = {
-			tbl[1] - 42,
+			window_size[1] - 42,
 			42
 		},
 		position = {
@@ -155,7 +155,7 @@ local tbl_3 = {
 		horizontal_alignment = "left",
 		size = {
 			42,
-			tbl[2] - 42
+			window_size[2] - 42
 		},
 		position = {
 			0,
@@ -169,7 +169,7 @@ local tbl_3 = {
 		horizontal_alignment = "right",
 		size = {
 			42,
-			tbl[2] - 42
+			window_size[2] - 42
 		},
 		position = {
 			0,
@@ -388,7 +388,7 @@ local tbl_3 = {
 		}
 	}
 }
-local tbl_4 = {
+local title_text_style = {
 	word_wrap = true,
 	upper_case = false,
 	localize = false,
@@ -405,7 +405,7 @@ local tbl_4 = {
 		2
 	}
 }
-local tbl_5 = {
+local sub_title_text_style = {
 	word_wrap = true,
 	upper_case = false,
 	localize = false,
@@ -427,7 +427,7 @@ local tbl_5 = {
 		2
 	}
 }
-local tbl_6 = {
+local description_text_style = {
 	word_wrap = true,
 	upper_case = false,
 	localize = false,
@@ -450,9 +450,9 @@ local tbl_6 = {
 	}
 }
 
-local function fn(arg_1_0)
+local function create_career_icon(scenegraph_id)
 	-- function 1
-	return {
+	local widget = {
 		element = {
 			passes = {
 				{
@@ -467,11 +467,11 @@ local function fn(arg_1_0)
 					content_passes = {
 						"additional_option_info"
 					},
-					content_check_function = function (self)
+					content_check_function = function (content)
 						-- function 2
-						local tooltip = self.tooltip
+						local tooltip = content.tooltip
 
-						tooltip = not tooltip and self.button_hotspot.is_hover
+						tooltip = not not tooltip and not not content.button_hotspot.is_hover
 
 						return tooltip
 					end
@@ -564,16 +564,18 @@ local function fn(arg_1_0)
 				}
 			}
 		},
-		scenegraph_id = arg_1_0,
+		scenegraph_id = scenegraph_id,
 		offset = {
 			0,
 			0,
 			0
 		}
 	}
+
+	return widget
 end
 
-local tbl_7 = {
+local widgets = {
 	window_background = UIWidgets.create_tiled_texture("window_background", "menu_frame_bg_03", {
 		256,
 		256
@@ -629,8 +631,8 @@ local tbl_7 = {
 	title_text_background = UIWidgets.create_simple_texture("store_preview_info_text_backdrop", "title_text"),
 	title_text_edge_top = UIWidgets.create_simple_texture("store_preview_info_backdrop_border", "title_text_edge_top"),
 	title_text_edge_bottom = UIWidgets.create_simple_texture("store_preview_info_backdrop_border", "title_text_edge_bottom"),
-	title_text = UIWidgets.create_simple_text("n/a", "title_text", nil, nil, tbl_4),
-	sub_title_text = UIWidgets.create_simple_text("n/a", "sub_title_text", nil, nil, tbl_5),
+	title_text = UIWidgets.create_simple_text("n/a", "title_text", nil, nil, title_text_style),
+	sub_title_text = UIWidgets.create_simple_text("n/a", "sub_title_text", nil, nil, sub_title_text_style),
 	sub_title_text_edge_right = UIWidgets.create_simple_uv_texture("store_preview_info_arrow", {
 		{
 			1,
@@ -643,33 +645,33 @@ local tbl_7 = {
 	}, "sub_title_text_edge_right"),
 	sub_title_text_edge_left = UIWidgets.create_simple_texture("store_preview_info_arrow", "sub_title_text_edge_left"),
 	sub_title_divider = UIWidgets.create_simple_texture("journal_content_divider_medium", "sub_title_divider"),
-	description_text = UIWidgets.create_simple_text("n/a", "description_text", nil, nil, tbl_6),
+	description_text = UIWidgets.create_simple_text("n/a", "description_text", nil, nil, description_text_style),
 	hero_text_divider = UIWidgets.create_simple_texture("journal_content_divider_medium", "hero_text_divider"),
-	hero_text = UIWidgets.create_simple_text("n/a", "hero_text", nil, nil, tbl_5)
+	hero_text = UIWidgets.create_simple_text("n/a", "hero_text", nil, nil, sub_title_text_style)
 }
-local tbl_8 = {
+local animation_definitions = {
 	on_enter = {
 		{
 			name = "fade_in",
 			start_progress = 0,
 			end_progress = 0.3,
-			init = function (arg_3_0, arg_3_1, arg_3_2, arg_3_3)
+			init = function (ui_scenegraph, scenegraph_definition, widgets, params)
 				-- function 3
-				arg_3_3.render_settings.alpha_multiplier = 0
+				params.render_settings.alpha_multiplier = 0
 			end,
-			update = function (arg_4_0, arg_4_1, arg_4_2, arg_4_3, arg_4_4)
+			update = function (ui_scenegraph, scenegraph_definition, widgets, progress, params)
 				-- function 4
-				local easeOutCubic = math.easeOutCubic(arg_4_3)
+				local anim_progress = math.easeOutCubic(progress)
 
-				arg_4_4.render_settings.alpha_multiplier = easeOutCubic
+				params.render_settings.alpha_multiplier = anim_progress
 
-				local num = 250
-				local num_2 = num * easeOutCubic
-				local position = arg_4_1.window.position
+				local addition_width = 250
+				local animated_width = addition_width * anim_progress
+				local default_window_position = scenegraph_definition.window.position
 
-				arg_4_0.window.local_position[1] = math.floor(position[1] + num - num_2)
+				ui_scenegraph.window.local_position[1] = math.floor(default_window_position[1] + addition_width - animated_width)
 			end,
-			on_complete = function (arg_5_0, arg_5_1, arg_5_2, arg_5_3)
+			on_complete = function (ui_scenegraph, scenegraph_definition, widgets, params)
 				-- function 5
 				return
 			end
@@ -680,17 +682,17 @@ local tbl_8 = {
 			name = "fade_out",
 			start_progress = 0,
 			end_progress = 0.3,
-			init = function (arg_6_0, arg_6_1, arg_6_2, arg_6_3)
+			init = function (ui_scenegraph, scenegraph_definition, widgets, params)
 				-- function 6
-				arg_6_3.render_settings.alpha_multiplier = 1
+				params.render_settings.alpha_multiplier = 1
 			end,
-			update = function (arg_7_0, arg_7_1, arg_7_2, arg_7_3, arg_7_4)
+			update = function (ui_scenegraph, scenegraph_definition, widgets, progress, params)
 				-- function 7
-				local easeOutCubic = math.easeOutCubic(arg_7_3)
+				local anim_progress = math.easeOutCubic(progress)
 
-				arg_7_4.render_settings.alpha_multiplier = 1 - easeOutCubic
+				params.render_settings.alpha_multiplier = 1 - anim_progress
 			end,
-			on_complete = function (arg_8_0, arg_8_1, arg_8_2, arg_8_3)
+			on_complete = function (ui_scenegraph, scenegraph_definition, widgets, params)
 				-- function 8
 				return
 			end
@@ -699,9 +701,9 @@ local tbl_8 = {
 }
 
 return {
-	widgets = tbl_7,
-	create_career_icon = fn,
+	widgets = widgets,
+	create_career_icon = create_career_icon,
 	title_button_definitions = title_button_definitions,
-	scenegraph_definition = tbl_3,
-	animation_definitions = tbl_8
+	scenegraph_definition = scenegraph_definition,
+	animation_definitions = animation_definitions
 }

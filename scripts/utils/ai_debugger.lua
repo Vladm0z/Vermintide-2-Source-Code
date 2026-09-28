@@ -6,43 +6,45 @@ require("scripts/utils/draw_ai_behavior")
 local script_data = script_data
 local ai_debugger_freeflight_only = script_data.ai_debugger_freeflight_only
 
-ai_debugger_freeflight_only = ai_debugger_freeflight_only or Development.parameter("ai_debugger_freeflight_only")
+ai_debugger_freeflight_only = not not ai_debugger_freeflight_only or not not Development.parameter("ai_debugger_freeflight_only")
 script_data.ai_debugger_freeflight_only = ai_debugger_freeflight_only
 
-local num = 26
-local num_2 = 22
-local num_3 = 16
-local str = "arial"
-local str_2 = "materials/fonts/" .. str
+local font_size = 26
+local font_size_medium = 22
+local font_size_blackboard = 16
+local font = "arial"
+local font_mtrl = "materials/fonts/" .. font
 
-local function fn(self, arg_1_1, arg_1_2)
+local function table_as_sorted_string_arrays(source, key_dest, value_dest)
 	-- function 1
-	local num = 0
+	local count = 0
 
-	for k, v in pairs(self) do
-		num = num + 1
-		arg_1_1[num] = tostring(k)
+	for key, value in pairs(source) do
+		count = count + 1
+		key_dest[count] = tostring(key)
 	end
 
-	table.sort(arg_1_1)
+	table.sort(key_dest)
 
-	for k_2 = 1, num do
-		arg_1_2[k_2] = self[arg_1_1[k_2]]
+	for i = 1, count do
+		local key = key_dest[i]
+
+		value_dest[i] = source[key]
 	end
 
-	return num
+	return count
 end
 
 AIDebugger = class(AIDebugger)
 
-AIDebugger.init = function (self, arg_2_1, arg_2_2, arg_2_3, arg_2_4, arg_2_5)
+AIDebugger.init = function (self, world, nav_world, group_blackboard, is_server, free_flight_manager)
 	-- function 2
-	self.free_flight_manager = arg_2_5
-	self.is_server = arg_2_4
-	self.world = arg_2_1
-	self.nav_world = arg_2_2
-	self.group_blackboard = arg_2_3
-	self.world_gui = World.create_world_gui(arg_2_1, Matrix4x4.identity(), 1, 1, "immediate", "material", "materials/fonts/gw_fonts")
+	self.free_flight_manager = free_flight_manager
+	self.is_server = is_server
+	self.world = world
+	self.nav_world = nav_world
+	self.group_blackboard = group_blackboard
+	self.world_gui = World.create_world_gui(world, Matrix4x4.identity(), 1, 1, "immediate", "material", "materials/fonts/gw_fonts")
 	self.screen_gui = World.create_screen_gui(self.world, "material", "materials/fonts/gw_fonts", "immediate")
 	self.show_navmesh = false
 	self.show_extensions = false
@@ -55,7 +57,7 @@ end
 
 AIDebugger.lazy_create_drawer = function (self)
 	-- function 3
-	if not self.drawer then
+	if self.drawer then
 		return
 	end
 
@@ -65,182 +67,186 @@ AIDebugger.lazy_create_drawer = function (self)
 	})
 end
 
-AIDebugger.destroy = function (arg_4_0)
+AIDebugger.destroy = function (self)
 	-- function 4
 	return
 end
 
-AIDebugger.update = function (self, arg_5_1, arg_5_2)
+AIDebugger.update = function (self, t, dt)
 	-- function 5
 	self:lazy_create_drawer()
 
-	if not Unit.alive(script_data.debug_unit) then
-		local debug_unit = script_data.debug_unit
-		local has_extension = ScriptUnit.has_extension(debug_unit, "ai_system")
-		local flag = not has_extension and has_extension._breed
+	if Unit.alive(script_data.debug_unit) then
+		local unit = script_data.debug_unit
+		local ai_extension = ScriptUnit.has_extension(unit, "ai_system")
+		local breed = not not ai_extension and not not ai_extension._breed
 
-		if not flag then
-			local var_5_3 = BLACKBOARDS[debug_unit]
+		if breed then
+			local blackboard = BLACKBOARDS[unit]
 
-			if not var_5_3 and not var_5_3.mode then
-				Debug.text("debug_unit = %s, mode=%s, phase=%s", flag.name, tostring(var_5_3.mode), tostring(var_5_3.phase))
+			if blackboard and blackboard.mode then
+				Debug.text("debug_unit = %s, mode=%s, phase=%s", breed.name, tostring(blackboard.mode), tostring(blackboard.phase))
 			else
-				Debug.text("script_data.debug_unit = %s", flag.name)
+				Debug.text("script_data.debug_unit = %s", breed.name)
 			end
 		else
-			Debug.text("script_data.debug_unit = %s", tostring(debug_unit))
+			Debug.text("script_data.debug_unit = %s", tostring(unit))
 		end
 	end
 
-	local active = self.free_flight_manager:active("global")
+	local in_free_flight = self.free_flight_manager:active("global")
 
-	if not active then
-		local get_service = self.free_flight_manager.input_manager:get_service("FreeFlight")
+	if in_free_flight then
+		local input_service = self.free_flight_manager.input_manager:get_service("FreeFlight")
 
-		self:update_selection(get_service, arg_5_2)
-		self:update_mouse_input(get_service)
+		self:update_selection(input_service, dt)
+		self:update_mouse_input(input_service)
 		self:draw_reticule()
-		self:draw_hint(arg_5_1)
+		self:draw_hint(t)
 
-		if not self.follow_active and not Unit.alive(self.active_unit) then
-			local global_free_flight_viewport = ScriptWorld.global_free_flight_viewport(self.world)
-			local camera = ScriptViewport.camera(global_free_flight_viewport)
-			local local_pose = Unit.local_pose(self.active_unit, 0)
-			local translation = Matrix4x4.translation(local_pose)
-			local num = translation - Matrix4x4.forward(local_pose) * 4 + Vector3.up() * 3
+		if self.follow_active and Unit.alive(self.active_unit) then
+			local viewport = ScriptWorld.global_free_flight_viewport(self.world)
+			local cam = ScriptViewport.camera(viewport)
+			local cm = Unit.local_pose(self.active_unit, 0)
+			local pos = Matrix4x4.translation(cm)
+			local forward = Matrix4x4.forward(cm)
+			local new_pos = pos - forward * 4 + Vector3.up() * 3
 
-			Matrix4x4.set_translation(local_pose, num)
+			Matrix4x4.set_translation(cm, new_pos)
 
-			local normalize = Vector3.normalize(translation + Vector3.up() - num)
-			local look = Quaternion.look(normalize)
+			local direction = Vector3.normalize(pos + Vector3.up() - new_pos)
+			local rotation = Quaternion.look(direction)
 
-			Matrix4x4.set_rotation(local_pose, look)
-			ScriptCamera.set_local_pose(camera, local_pose)
+			Matrix4x4.set_rotation(cm, rotation)
+			ScriptCamera.set_local_pose(cam, cm)
 		end
 
 		self:update_ingame_selection(true)
 	else
 		self:update_ingame_selection(false)
 
-		self.hint_time_when_key_handle_visible = arg_5_1
+		self.hint_time_when_key_handle_visible = t
 
-		if not script_data.ai_debugger_freeflight_only then
+		if script_data.ai_debugger_freeflight_only then
 			return
 		end
 	end
 
-	if not DebugKeyHandler.key_pressed("k", "show ai navmesh", "ai debugger", nil, "FreeFlight") then
+	if DebugKeyHandler.key_pressed("k", "show ai navmesh", "ai debugger", nil, "FreeFlight") then
 		self.show_navmesh = not self.show_navmesh
 	end
 
-	if not DebugKeyHandler.key_pressed("l", "show ai slots", "ai debugger", nil, "FreeFlight") then
+	if DebugKeyHandler.key_pressed("l", "show ai slots", "ai debugger", nil, "FreeFlight") then
 		self.show_slots = not self.show_slots
 	end
 
-	if not DebugKeyHandler.key_pressed("j", "kill all but selected AI", "ai", "left shift") then
-		local zero = Vector3.zero()
+	if DebugKeyHandler.key_pressed("j", "kill all but selected AI", "ai", "left shift") then
+		local pos = Vector3.zero()
 
-		zero = not Managers.player:local_player() and POSITION_LOOKUP[Managers.player:local_player().player_unit] and zero
+		if Managers.player:local_player() and not POSITION_LOOKUP[Managers.player:local_player().player_unit] then
+			-- Nothing
+		end
 
-		Managers.state.debug:send_conflict_director_command("destroy_close_units", nil, zero, {
+		Managers.state.debug:send_conflict_director_command("destroy_close_units", nil, pos, {
 			"512"
 		})
-	elseif not DebugKeyHandler.key_pressed("j", "damage selected AI", "ai", "left alt") then
-		local active_unit = self.active_unit
+	elseif DebugKeyHandler.key_pressed("j", "damage selected AI", "ai", "left alt") then
+		local kill_unit = self.active_unit
 
-		if HEALTH_ALIVE[active_unit] or not self:closest_unit_in_aim_dir(active) then
-			active_unit = self.hot_unit
+		if not HEALTH_ALIVE[kill_unit] and self:closest_unit_in_aim_dir(in_free_flight) then
+			kill_unit = self.hot_unit
 		end
 
-		DamageUtils.debug_deal_damage(active_unit, 1000)
-	elseif not DebugKeyHandler.key_pressed("j", "kill selected AI", "ai") then
-		local active_unit_2 = self.active_unit
+		DamageUtils.debug_deal_damage(kill_unit, 1000)
+	elseif DebugKeyHandler.key_pressed("j", "kill selected AI", "ai") then
+		local kill_unit = self.active_unit
 
-		if HEALTH_ALIVE[active_unit_2] or not self:closest_unit_in_aim_dir(active) then
-			active_unit_2 = self.hot_unit
+		if not HEALTH_ALIVE[kill_unit] and self:closest_unit_in_aim_dir(in_free_flight) then
+			kill_unit = self.hot_unit
 		end
 
-		if not Unit.alive(active_unit_2) then
-			local has_extension_2 = ScriptUnit.has_extension(active_unit_2, "health_system")
+		if Unit.alive(kill_unit) then
+			local health_extension = ScriptUnit.has_extension(kill_unit, "health_system")
 
-			if not has_extension_2 then
-				if not has_extension_2:is_alive() then
-					local has_extension_3 = ScriptUnit.has_extension(active_unit_2, "status_system")
+			if health_extension then
+				if health_extension:is_alive() then
+					local status_extension = ScriptUnit.has_extension(kill_unit, "status_system")
+					local should_knock_down = not not status_extension and not not not status_extension:is_knocked_down()
 
-					if not (not has_extension_3 and not has_extension_3:is_knocked_down()) then
-						has_extension_2:knock_down(active_unit_2)
-					elseif not self.is_server then
-						has_extension_2:die("forced")
+					if should_knock_down then
+						health_extension:knock_down(kill_unit)
+					elseif self.is_server then
+						health_extension:die("forced")
 					else
-						AiUtils.kill_unit(active_unit_2)
+						AiUtils.kill_unit(kill_unit)
 					end
 				end
 			else
-				local var_5_18 = BLACKBOARDS[active_unit_2]
+				local blackboard = BLACKBOARDS[kill_unit]
 
-				Managers.state.conflict:destroy_unit(active_unit_2, var_5_18, "debug_destroy")
+				Managers.state.conflict:destroy_unit(kill_unit, blackboard, "debug_destroy")
 			end
 		end
 	end
 
-	if not Unit.alive(self.hot_unit) then
+	if Unit.alive(self.hot_unit) then
 		self:draw_hot_unit()
 	end
 
-	if not Unit.alive(self.active_unit) then
-		self:draw_active_unit(arg_5_1)
+	if Unit.alive(self.active_unit) then
+		self:draw_active_unit(t)
 
-		if not DebugKeyHandler.key_pressed("comma", "go to unit", "ai debugger", nil, "FreeFlight") then
+		if DebugKeyHandler.key_pressed("comma", "go to unit", "ai debugger", nil, "FreeFlight") then
 			self.follow_active = not self.follow_active
 		end
 
-		if not DebugKeyHandler.key_pressed("m", "animation log", "ai debugger", "left shift") then
-			local flag_2 = not not not Unit.get_data(self.active_unit, "ai_debugger", "logging_enabled")
+		if DebugKeyHandler.key_pressed("m", "animation log", "ai debugger", "left shift") then
+			local enabled = not not not Unit.get_data(self.active_unit, "ai_debugger", "logging_enabled")
 
-			print("animation log enabled " .. tostring(flag_2))
-			Unit.set_data(self.active_unit, "ai_debugger", "logging_enabled", flag_2)
-			Unit.set_animation_logging(self.active_unit, flag_2)
+			print("animation log enabled " .. tostring(enabled))
+			Unit.set_data(self.active_unit, "ai_debugger", "logging_enabled", enabled)
+			Unit.set_animation_logging(self.active_unit, enabled)
 		end
 
-		if not DebugKeyHandler.key_pressed("m", "show blackboard", "ai debugger", "left ctrl") then
+		if DebugKeyHandler.key_pressed("m", "show blackboard", "ai debugger", "left ctrl") then
 			self.cycle_info = (self.cycle_info + 1) % 3
 
-			local cycle_info = self.cycle_info
+			local c = self.cycle_info
 
-			if cycle_info == 1 then
+			if c == 1 then
 				self.show_blackboard = true
-			elseif cycle_info == 2 then
+			elseif c == 2 then
 				self.show_blackboard = false
 				self.show_extensions = true
-			elseif cycle_info == 0 then
+			elseif c == 0 then
 				self.show_extensions = false
 			end
 		end
 
-		local PLATFORM = PLATFORM
-		local var_5_22
+		local platform = PLATFORM
+		local toggle_bt_pressed
 
-		if not IS_CONSOLE then
-			var_5_22 = DebugKeyHandler.key_pressed("show_behaviour", "show behaviour graph", "ai debugger")
+		if IS_CONSOLE then
+			toggle_bt_pressed = DebugKeyHandler.key_pressed("show_behaviour", "show behaviour graph", "ai debugger")
 		else
-			var_5_22 = DebugKeyHandler.key_pressed("b", "show behaviour graph", "ai debugger", "left ctrl")
+			toggle_bt_pressed = DebugKeyHandler.key_pressed("b", "show behaviour graph", "ai debugger", "left ctrl")
 		end
 
-		if not var_5_22 then
+		if toggle_bt_pressed then
 			self.show_behavior_tree = not self.show_behavior_tree
 			script_data.hide_boss_health_ui = self.show_behavior_tree
 		end
 
-		local active_unit_3 = self.active_unit
+		local active_unit = self.active_unit
 
-		if not Unit.alive(active_unit_3) then
-			self:draw_blackboard(active_unit_3)
-			self:draw_extensions(active_unit_3)
-			self:draw_behavior_tree(active_unit_3, arg_5_1, arg_5_2)
+		if Unit.alive(active_unit) then
+			self:draw_blackboard(active_unit)
+			self:draw_extensions(active_unit)
+			self:draw_behavior_tree(active_unit, t, dt)
 		end
 	end
 
-	if not DebugKeyHandler.key_pressed("j", "edit_ai_utility", "ai", "left ctrl") then
+	if DebugKeyHandler.key_pressed("j", "edit_ai_utility", "ai", "left ctrl") then
 		if self._edit_ai_utility == nil then
 			self._edit_ai_utility = EditAiUtility:new(self.world)
 		end
@@ -254,212 +260,243 @@ AIDebugger.update = function (self, arg_5_1, arg_5_2)
 		self.show_edit_ai_utility = not self.show_edit_ai_utility
 	end
 
-	if not self.show_edit_ai_utility then
+	if self.show_edit_ai_utility then
 		local alive = Unit.alive(self.active_unit)
 
-		alive = not alive and BLACKBOARDS[self.active_unit]
+		if alive then
+			-- Nothing
+		end
 
-		self._edit_ai_utility:update(self.active_unit, arg_5_1, arg_5_2, Managers.input:get_service("Debug"), alive)
+		alive = BLACKBOARDS[self.active_unit]
+
+		local blackboard = alive
+
+		::label_5_0::
+
+		self._edit_ai_utility:update(self.active_unit, t, dt, Managers.input:get_service("Debug"), blackboard)
 	end
 
 	if not CurrentConflictSettings.disabled then
-		if not script_data.debug_ai_pacing then
-			self:debug_pacing(arg_5_1, arg_5_2)
+		if script_data.debug_ai_pacing then
+			self:debug_pacing(t, dt)
 		end
 
-		if not self.is_server and not script_data.debug_player_intensity then
-			self:debug_player_intensity(arg_5_1, arg_5_2)
+		if self.is_server and script_data.debug_player_intensity then
+			self:debug_player_intensity(t, dt)
 		end
 	end
 
-	if not DebugKeyHandler.key_pressed("c", "spawn bot player", "ai debugger", nil, "FreeFlight") then
+	if DebugKeyHandler.key_pressed("c", "spawn bot player", "ai debugger", nil, "FreeFlight") then
 		-- Nothing
 	end
 
-	if not self._fake_players then
-		for i, v in ipairs(self._fake_players) do
-			local unbox = Vector3Box.unbox(v)
+	if self._fake_players then
+		for _, box_position in ipairs(self._fake_players) do
+			local position = Vector3Box.unbox(box_position)
 
-			self.drawer:sphere(unbox, 0.5, Color(255, 255, 0, 0))
+			self.drawer:sphere(position, 0.5, Color(255, 255, 0, 0))
 		end
 	end
 end
 
-AIDebugger.perlin_path = function (self, arg_6_1, arg_6_2, arg_6_3, arg_6_4, arg_6_5)
+AIDebugger.perlin_path = function (self, t, x, y, xsize, ysize)
 	-- function 6
-	local resolution, var_6_1 = Application.resolution()
-	local num = 500
-	local num_2 = 3
-	local tbl = {
+	local resx, resy = Application.resolution()
+	local layer = 500
+	local line_width = 3
+	local colors = {
 		Color(255, 30, 240, 70),
 		Color(255, 130, 40, 170),
 		Color(255, 130, 240, 70),
 		Color(255, 0, 40, 170),
 		Color(255, 230, 40, 230)
 	}
-	local screen_gui = self.screen_gui
-	local num_3 = 60337
-	local make_perlin_path = PerlinPath.make_perlin_path(15, 15, 1, num_3)
-	local normalize_path = PerlinPath.normalize_path(make_perlin_path[1], 0.5 + 0.5 * math.sin(arg_6_1 * 0.1))
-	local num_4 = arg_6_2 * resolution
-	local num_5 = arg_6_3 * var_6_1
-	local num_6 = resolution * (arg_6_2 + arg_6_4)
-	local num_7 = var_6_1 * (arg_6_3 + arg_6_5)
+	local gui = self.screen_gui
+	local seed = 60337
+	local oktaves = PerlinPath.make_perlin_path(15, 15, 1, seed)
+	local mul_with = PerlinPath.normalize_path(oktaves[1], 0.5 + 0.5 * math.sin(t * 0.1))
+	local x1 = x * resx
+	local y1 = y * resy
+	local x2 = resx * (x + xsize)
+	local y2 = resy * (y + ysize)
 
-	ScriptGUI.icrect(screen_gui, resolution, var_6_1, num_4, num_5, num_6, num_7, num - 1, Color(200, 20, 20, 20))
+	ScriptGUI.icrect(gui, resx, resy, x1, y1, x2, y2, layer - 1, Color(200, 20, 20, 20))
 
-	for i = 1, #make_perlin_path do
-		local var_6_13 = make_perlin_path[i]
-		local var_6_14 = Vector3(arg_6_2 + var_6_13[0][1] * arg_6_4, arg_6_3 + (1 - var_6_13[0][2] * normalize_path) * arg_6_5, 0)
-		local var_6_15
+	for i = 1, #oktaves do
+		local octave = oktaves[i]
+		local p1 = Vector3(x + octave[0][1] * xsize, y + (1 - octave[0][2] * mul_with) * ysize, 0)
+		local p2
 
-		for j = 1, #var_6_13 do
-			local var_6_16 = var_6_13[j]
-			local var_6_17 = Vector3(arg_6_2 + var_6_16[1] * arg_6_4, arg_6_3 + (1 - var_6_16[2] * normalize_path) * arg_6_5, 0)
+		for j = 1, #octave do
+			local p = octave[j]
 
-			ScriptGUI.hud_iline(screen_gui, resolution, var_6_1, var_6_14, var_6_17, num, num_2, tbl[i % 5 + 1])
+			p2 = Vector3(x + p[1] * xsize, y + (1 - p[2] * mul_with) * ysize, 0)
 
-			var_6_14 = var_6_17
+			ScriptGUI.hud_iline(gui, resx, resy, p1, p2, layer, line_width, colors[i % 5 + 1])
+
+			p1 = p2
 		end
 	end
 end
 
-AIDebugger.update_selection = function (self, arg_7_1, arg_7_2)
+AIDebugger.update_selection = function (self, input, dt)
 	-- function 7
-	self:mouse_raycast(arg_7_1)
+	self:mouse_raycast(input)
 
 	if not Unit.alive(self.active_unit) then
 		self.active_unit = nil
 	end
 
-	if not arg_7_1:get("action_one") then
+	local mouse_released = input:get("action_one")
+
+	if mouse_released then
 		self.active_unit = self.hot_unit
 		script_data.debug_unit = self.active_unit
 	end
 
-	if not DebugKeyHandler.key_pressed("period", "select next bot", "ai debugger", nil, "FreeFlight") then
-		local get_entities = Managers.state.entity:get_entities("AISimpleExtension")
+	if DebugKeyHandler.key_pressed("period", "select next bot", "ai debugger", nil, "FreeFlight") then
+		local units = Managers.state.entity:get_entities("AISimpleExtension")
 
-		self.active_unit = next(get_entities, self.active_unit)
+		self.active_unit = next(units, self.active_unit)
 	end
 end
 
-AIDebugger.update_ingame_selection = function (self, arg_8_1)
+AIDebugger.update_ingame_selection = function (self, in_free_flight)
 	-- function 8
 	if not Unit.alive(self.active_unit) then
 		self.active_unit = nil
 	end
 
-	if DebugKeyHandler.key_pressed("right_thumb_pressed", "select target", "ai") or not DebugKeyHandler.key_pressed("v", "select bot", "ai debugger") or not self:closest_unit_in_aim_dir(arg_8_1) then
-		if not Unit.alive(self.active_unit) and not script_data.anim_debug_ai_debug_target then
+	local select_target = DebugKeyHandler.key_pressed("right_thumb_pressed", "select target", "ai")
+
+	if (select_target or DebugKeyHandler.key_pressed("v", "select bot", "ai debugger")) and self:closest_unit_in_aim_dir(in_free_flight) then
+		if Unit.alive(self.active_unit) and script_data.anim_debug_ai_debug_target then
 			Unit.set_animation_logging(self.active_unit, false)
 		end
 
 		self.active_unit = self.hot_unit
 		script_data.debug_unit = self.active_unit
 
-		if not self.active_unit and not script_data.anim_debug_ai_debug_target then
+		if self.active_unit and script_data.anim_debug_ai_debug_target then
 			Unit.set_animation_logging(self.active_unit, true)
 			print("[AIDebugger] NEW TARGET!", self.active_unit)
 		end
 	end
 end
 
-AIDebugger.closest_unit_in_aim_dir = function (self, arg_9_1)
+AIDebugger.closest_unit_in_aim_dir = function (self, in_free_flight)
 	-- function 9
-	if not arg_9_1 then
+	if in_free_flight then
 		return true
 	end
 
-	local player_unit = Managers.player:player_from_peer_id(Network.peer_id()).player_unit
+	local player_manager = Managers.player
+	local player = player_manager:player_from_peer_id(Network.peer_id())
+	local player_unit = player.player_unit
 
 	if not player_unit then
 		return
 	end
 
-	local extension = ScriptUnit.extension(player_unit, "first_person_system")
-	local get_first_person_unit = extension:get_first_person_unit()
-	local current_position = extension:current_position()
-	local current_rotation = extension:current_rotation()
-	local forward = Quaternion.forward(current_rotation)
-	local num = 999
-	local var_9_7
-	local tbl = {}
-	local entity = Managers.state.entity
-	local unit_extension_data = Managers.state.entity:system("ai_system").unit_extension_data
-	local get_entities = Managers.state.entity:get_entities("PlayerBotBase")
+	local first_person_extension = ScriptUnit.extension(player_unit, "first_person_system")
+	local first_person_unit = first_person_extension:get_first_person_unit()
+	local camera_position = first_person_extension:current_position()
+	local camera_rotation = first_person_extension:current_rotation()
+	local camera_direction = Quaternion.forward(camera_rotation)
+	local min_dot = 999
+	local best_unit
+	local units = {}
+	local entity_manager = Managers.state.entity
+	local ai_units = Managers.state.entity:system("ai_system").unit_extension_data
+	local player_bots = Managers.state.entity:get_entities("PlayerBotBase")
 
-	table.merge(tbl, unit_extension_data)
+	table.merge(units, ai_units)
 
 	if not script_data.ignore_bots_for_debug_selection then
-		table.merge(tbl, get_entities)
+		table.merge(units, player_bots)
 	end
 
-	for k, v in pairs(tbl) do
-		if not Unit.alive(k) then
-			local var_9_12 = forward
-			local var_9_13 = current_position
-			local num_2 = POSITION_LOOKUP[k] + Vector3(0, 0, 1)
-			local normalize = Vector3.normalize(var_9_13 - num_2)
-			local dot = Vector3.dot(var_9_12, normalize)
+	for unit, _ in pairs(units) do
+		if Unit.alive(unit) then
+			local v1 = camera_direction
+			local p1 = camera_position
+			local p2 = POSITION_LOOKUP[unit] + Vector3(0, 0, 1)
+			local v2 = Vector3.normalize(p1 - p2)
+			local dot = Vector3.dot(v1, v2)
 
-			if not (not (dot <= num) or k == self.active_unit) then
-				print("UNIT", k)
+			if dot <= min_dot and unit ~= self.active_unit then
+				print("UNIT", unit)
 
-				num = dot
-				var_9_7 = k
+				min_dot = dot
+				best_unit = unit
 			end
 		end
 	end
 
-	if not var_9_7 then
-		self.hot_unit = var_9_7
+	if best_unit then
+		self.hot_unit = best_unit
 
 		return true
 	end
 end
 
-AIDebugger.mouse_raycast = function (self, arg_10_1)
+AIDebugger.mouse_raycast = function (self, input)
 	-- function 10
-	local global = self.free_flight_manager.data.global
-	local world = Managers.world:world(global.viewport_world_name)
-	local get_data = World.get_data(world, "physics_world")
-	local global_free_flight_viewport = ScriptWorld.global_free_flight_viewport(world)
-	local frustum_freeze_camera = global.frustum_freeze_camera
+	local data = self.free_flight_manager.data.global
+	local world = Managers.world:world(data.viewport_world_name)
+	local physics_world = World.get_data(world, "physics_world")
+	local viewport = ScriptWorld.global_free_flight_viewport(world)
+	local frustum_freeze_camera = data.frustum_freeze_camera
 
-	frustum_freeze_camera = frustum_freeze_camera or ScriptViewport.camera(global_free_flight_viewport)
+	if not frustum_freeze_camera then
+		-- Nothing
+	end
 
-	local get = arg_10_1:get("cursor")
-	local screen_to_world = Camera.screen_to_world(frustum_freeze_camera, Vector3(get.x, get.y, 0), 0)
-	local num = Camera.screen_to_world(frustum_freeze_camera, Vector3(get.x, get.y, 0), 1) - screen_to_world
-	local normalize = Vector3.normalize(num)
-	local immediate_raycast, var_10_10, var_10_11, var_10_12, var_10_13 = PhysicsWorld.immediate_raycast(get_data, screen_to_world, normalize, 100, "closest", "collision_filter", "filter_character_trigger")
+	frustum_freeze_camera = ScriptViewport.camera(viewport)
+
+	local camera = frustum_freeze_camera
+
+	::label_10_0::
+
+	local mouse = input:get("cursor")
+	local position = Camera.screen_to_world(camera, Vector3(mouse.x, mouse.y, 0), 0)
+	local direction = Camera.screen_to_world(camera, Vector3(mouse.x, mouse.y, 0), 1) - position
+	local raycast_dir = Vector3.normalize(direction)
+	local hit, hit_position, distance, normal, actor = PhysicsWorld.immediate_raycast(physics_world, position, raycast_dir, 100, "closest", "collision_filter", "filter_character_trigger")
 
 	self.hot_unit = nil
 	self.hot_actor = nil
 
-	if not immediate_raycast and not var_10_13 then
-		local unit = Actor.unit(var_10_13)
-		local get_data_2 = Unit.get_data(unit, "breed")
-		local player = Managers.player
-		local is_player_unit = player:is_player_unit(unit)
+	if hit and actor then
+		local unit = Actor.unit(actor)
+		local breed = Unit.get_data(unit, "breed")
+		local player_manager = Managers.player
+		local is_player_unit = player_manager:is_player_unit(unit)
 
-		is_player_unit = not is_player_unit and player:owner(unit).bot_player
+		if is_player_unit then
+			-- Nothing
+		end
 
-		if get_data_2 or not is_player_unit then
+		is_player_unit = player_manager:owner(unit).bot_player
+
+		local is_bot = is_player_unit
+
+		::label_10_1::
+
+		if breed or is_bot then
 			self.hot_unit = unit
-			self.hot_actor = var_10_13
+			self.hot_actor = actor
 		end
 	end
 end
 
-local tbl = {
+local damage_direction = {
 	z = -1,
 	x = 0,
 	y = 0
 }
 
-AIDebugger.update_mouse_input = function (self, arg_11_1)
+AIDebugger.update_mouse_input = function (self, input)
 	-- function 11
 	if not Unit.alive(self.hot_unit) then
 		return
@@ -468,96 +505,96 @@ end
 
 AIDebugger.draw_hot_unit = function (self)
 	-- function 12
-	local local_position = Unit.local_position(self.hot_unit, 0)
+	local position = Unit.local_position(self.hot_unit, 0)
 
-	self.drawer:sphere(local_position + Vector3.up() * 2, 0.15, Color(255, 255, 100, 0))
+	self.drawer:sphere(position + Vector3.up() * 2, 0.15, Color(255, 255, 100, 0))
 end
 
-AIDebugger.draw_active_unit = function (self, arg_13_1)
+AIDebugger.draw_active_unit = function (self, t)
 	-- function 13
 	local drawer = self.drawer
-	local active_unit = self.active_unit
-	local num = Unit.local_position(active_unit, 0) + Vector3.up() * 2
-	local forward = Quaternion.forward(Unit.local_rotation(active_unit, 0))
+	local unit = self.active_unit
+	local position = Unit.local_position(unit, 0) + Vector3.up() * 2
+	local direction = Quaternion.forward(Unit.local_rotation(unit, 0))
 
-	drawer:sphere(num, 0.1, Color(255, 255, 0))
-	drawer:vector(num, forward, Color(255, 255, 0))
-	self:draw_nearby_navmesh(active_unit)
+	drawer:sphere(position, 0.1, Color(255, 255, 0))
+	drawer:vector(position, direction, Color(255, 255, 0))
+	self:draw_nearby_navmesh(unit)
 end
 
-local tbl_2 = {}
+local color_table = {}
 
 for i = 1, 25 do
-	tbl_2[i] = math.random(1, 15)
+	color_table[i] = math.random(1, 15)
 end
 
-AIDebugger.draw_nearby_navmesh = function (self, arg_14_1)
+AIDebugger.draw_nearby_navmesh = function (self, ai_unit)
 	-- function 14
 	if not self.show_navmesh then
 		return
 	end
 
 	local drawer = self.drawer
-	local var_14_1 = POSITION_LOOKUP[arg_14_1]
-	local var_14_2 = Vector3(0, 0, 0.2)
+	local position = POSITION_LOOKUP[ai_unit]
+	local offset = Vector3(0, 0, 0.2)
 	local _line_object = self._line_object
 
-	_line_object = _line_object or World.create_line_object(self.world, false)
+	_line_object = not not _line_object or not not World.create_line_object(self.world, false)
 	self._line_object = _line_object
 
 	LineObject.reset(self._line_object)
 
 	local nav_world = self.nav_world
-	local get_seed_triangle = GwNavTraversal.get_seed_triangle(nav_world, var_14_1)
+	local triangle = GwNavTraversal.get_seed_triangle(nav_world, position)
 
-	if get_seed_triangle == nil then
+	if triangle == nil then
 		return
 	end
 
-	local tbl = {
-		get_seed_triangle
+	local triangles = {
+		triangle
 	}
-	local num = 1
-	local num_2 = 0
+	local num_triangles = 1
+	local i = 0
 
-	while num_2 < num do
-		num_2 = num_2 + 1
+	while i < num_triangles do
+		i = i + 1
+		triangle = triangles[i]
 
-		local var_14_9 = tbl[num_2]
-		local get_triangle_vertices, var_14_11, var_14_12 = GwNavTraversal.get_triangle_vertices(nav_world, var_14_9)
-		local num_3 = get_triangle_vertices + var_14_11 + var_14_12
-		local ceil = math.ceil((num_3.x + num_3.y) % 24 + 1)
-		local num_4 = tbl_2[ceil] * 10
+		local p1, p2, p3 = GwNavTraversal.get_triangle_vertices(nav_world, triangle)
+		local triangle_center = p1 + p2 + p3
+		local table_index = math.ceil((triangle_center.x + triangle_center.y) % 24 + 1)
+		local green = color_table[table_index] * 10
 
-		Gui.triangle(self.world_gui, get_triangle_vertices + var_14_2, var_14_11 + var_14_2, var_14_12 + var_14_2, 0, Color(150, 0, num_4, 255))
-		LineObject.add_line(self._line_object, Color(0, 0, 200), get_triangle_vertices + var_14_2, var_14_11 + var_14_2)
-		LineObject.add_line(self._line_object, Color(0, 0, 200), get_triangle_vertices + var_14_2, var_14_12 + var_14_2)
-		LineObject.add_line(self._line_object, Color(0, 0, 200), var_14_11 + var_14_2, var_14_12 + var_14_2)
+		Gui.triangle(self.world_gui, p1 + offset, p2 + offset, p3 + offset, 0, Color(150, 0, green, 255))
+		LineObject.add_line(self._line_object, Color(0, 0, 200), p1 + offset, p2 + offset)
+		LineObject.add_line(self._line_object, Color(0, 0, 200), p1 + offset, p3 + offset)
+		LineObject.add_line(self._line_object, Color(0, 0, 200), p2 + offset, p3 + offset)
 
-		local tbl_3 = {
-			GwNavTraversal.get_neighboring_triangles(var_14_9)
+		local neighbors = {
+			GwNavTraversal.get_neighboring_triangles(triangle)
 		}
 
-		for i = 1, #tbl_3 do
-			local var_14_17 = tbl_3[i]
-			local flag = false
+		for j = 1, #neighbors do
+			local neighbor = neighbors[j]
+			local is_in_list_already = false
 
-			for j = 1, num do
-				local var_14_19 = tbl[j]
+			for k = 1, num_triangles do
+				local triangle2 = triangles[k]
 
-				if not GwNavTraversal.are_triangles_equal(var_14_17, var_14_19) then
-					flag = true
+				if GwNavTraversal.are_triangles_equal(neighbor, triangle2) then
+					is_in_list_already = true
 
 					break
 				end
 			end
 
-			if not flag then
-				local get_triangle_vertices_2, var_14_21, var_14_22 = GwNavTraversal.get_triangle_vertices(nav_world, var_14_9)
+			if not is_in_list_already then
+				local p2_1, p2_2, p2_3 = GwNavTraversal.get_triangle_vertices(nav_world, triangle)
 
-				if Vector3.distance((get_triangle_vertices_2 + var_14_21 + var_14_22) * 0.33, var_14_1) < 5 then
-					num = num + 1
-					tbl[num] = var_14_17
+				if Vector3.distance((p2_1 + p2_2 + p2_3) * 0.33, position) < 5 then
+					num_triangles = num_triangles + 1
+					triangles[num_triangles] = neighbor
 				end
 			end
 		end
@@ -566,101 +603,99 @@ AIDebugger.draw_nearby_navmesh = function (self, arg_14_1)
 	LineObject.dispatch(self.world, self._line_object)
 end
 
-AIDebugger.draw_blackboard = function (self, arg_15_1)
+AIDebugger.draw_blackboard = function (self, ai_unit)
 	-- function 15
 	if not self.show_blackboard then
 		return
 	end
 
-	local screen_gui = self.screen_gui
-	local var_15_1 = BLACKBOARDS[arg_15_1]
-	local tbl = {}
-	local tbl_2 = {}
-	local tbl_3 = {}
-	local tbl_4 = {}
-	local var_15_6 = fn(var_15_1, tbl, tbl_2)
-	local resolution, var_15_8 = Application.resolution()
-	local num_2 = var_15_8 - 100
-	local var_15_10 = Vector3(200, num_2, 150)
-	local var_15_11 = Vector3(200, 0, 0)
-	local var_15_12 = Vector3(30, 0, 0)
-	local num_4 = 1
-	local format = string.format("Blackboard [ %s ]  @  %s", var_15_1.breed.name, tostring(POSITION_LOOKUP[arg_15_1]))
+	local gui = self.screen_gui
+	local blackboard = BLACKBOARDS[ai_unit]
+	local key_dest_root, value_dest_root = {}, {}
+	local key_dest_subtree, value_dest_subtree = {}, {}
+	local count_root = table_as_sorted_string_arrays(blackboard, key_dest_root, value_dest_root)
+	local res_x, res_y = Application.resolution()
+	local start_y = res_y - 100
+	local pos = Vector3(200, start_y, 150)
+	local value_offset = Vector3(200, 0, 0)
+	local indent_offset = Vector3(30, 0, 0)
+	local columns = 1
+	local header = string.format("Blackboard [ %s ]  @  %s", blackboard.breed.name, tostring(POSITION_LOOKUP[ai_unit]))
 
-	Gui.text(screen_gui, format, str_2, num, str, var_15_10, Color(255, 255, 255, 255))
+	Gui.text(gui, header, font_mtrl, font_size, font, pos, Color(255, 255, 255, 255))
 
-	var_15_10.y = var_15_10.y - num
+	pos.y = pos.y - font_size
 
-	for i = 1, var_15_6 do
-		local var_15_15 = tbl[i]
-		local var_15_16 = tbl_2[i]
+	for i = 1, count_root do
+		local key = key_dest_root[i]
+		local value = value_dest_root[i]
 
-		var_15_10.y = var_15_10.y - num_3
+		pos.y = pos.y - font_size_blackboard
 
-		if var_15_10.y < 100 then
-			var_15_10.y = num_2 - num - num_3
-			var_15_10.x = var_15_10.x + 500
-			num_4 = num_4 + 1
+		if pos.y < 100 then
+			pos.y = start_y - font_size - font_size_blackboard
+			pos.x = pos.x + 500
+			columns = columns + 1
 		end
 
-		Gui.text(screen_gui, var_15_15, str_2, num_3, str, var_15_10, Color(255, 255, 255, 255))
+		Gui.text(gui, key, font_mtrl, font_size_blackboard, font, pos, Color(255, 255, 255, 255))
 
-		if type(var_15_16) == "table" then
-			local var_15_17 = fn(var_15_16, tbl_3, tbl_4)
+		if type(value) == "table" then
+			local count_subtree = table_as_sorted_string_arrays(value, key_dest_subtree, value_dest_subtree)
 
-			if var_15_17 == 0 then
-				Gui.text(screen_gui, "[empty table]", str_2, num_3, str, var_15_10 + var_15_11, Color(255, 100, 100, 100))
-			elseif var_15_16.name ~= nil then
-				var_15_10.y = var_15_10.y - num_3
+			if count_subtree == 0 then
+				Gui.text(gui, "[empty table]", font_mtrl, font_size_blackboard, font, pos + value_offset, Color(255, 100, 100, 100))
+			elseif value.name ~= nil then
+				pos.y = pos.y - font_size_blackboard
 
-				Gui.text(screen_gui, "name", str_2, num_3, str, var_15_10 + var_15_12, Color(255, 255, 255, 255))
-				Gui.text(screen_gui, tostring(var_15_16.name), str_2, num_3, str, var_15_10 + var_15_11, Color(255, 255, 255, 0))
+				Gui.text(gui, "name", font_mtrl, font_size_blackboard, font, pos + indent_offset, Color(255, 255, 255, 255))
+				Gui.text(gui, tostring(value.name), font_mtrl, font_size_blackboard, font, pos + value_offset, Color(255, 255, 255, 0))
 
-				var_15_10.y = var_15_10.y - num_3
+				pos.y = pos.y - font_size_blackboard
 
-				Gui.text(screen_gui, "[hidden fields]", str_2, num_3, str, var_15_10 + var_15_12, Color(255, 100, 100, 100))
-				Gui.text(screen_gui, tostring(var_15_17 - 1), str_2, num_3, str, var_15_10 + var_15_11, Color(255, 100, 100, 0))
-			elseif var_15_15:find("_extension") ~= nil then
-				var_15_10.y = var_15_10.y - num_3
+				Gui.text(gui, "[hidden fields]", font_mtrl, font_size_blackboard, font, pos + indent_offset, Color(255, 100, 100, 100))
+				Gui.text(gui, tostring(count_subtree - 1), font_mtrl, font_size_blackboard, font, pos + value_offset, Color(255, 100, 100, 0))
+			elseif key:find("_extension") ~= nil then
+				pos.y = pos.y - font_size_blackboard
 
-				Gui.text(screen_gui, "[hidden fields]", str_2, num_3, str, var_15_10 + var_15_12, Color(255, 100, 100, 100))
-				Gui.text(screen_gui, tostring(var_15_17 - 1), str_2, num_3, str, var_15_10 + var_15_11, Color(255, 100, 100, 0))
+				Gui.text(gui, "[hidden fields]", font_mtrl, font_size_blackboard, font, pos + indent_offset, Color(255, 100, 100, 100))
+				Gui.text(gui, tostring(count_subtree - 1), font_mtrl, font_size_blackboard, font, pos + value_offset, Color(255, 100, 100, 0))
 			else
-				for j = 1, var_15_17 do
-					local var_15_18 = tbl_3[j]
-					local var_15_19 = tbl_4[j]
+				for j = 1, count_subtree do
+					local key_subtree = key_dest_subtree[j]
+					local value_subtree = value_dest_subtree[j]
 
-					if type(var_15_19) ~= "table" then
-						var_15_10.y = var_15_10.y - num_3
+					if type(value_subtree) ~= "table" then
+						pos.y = pos.y - font_size_blackboard
 
-						Gui.text(screen_gui, var_15_18, str_2, num_3, str, var_15_10 + var_15_12, Color(255, 255, 255, 255))
-						Gui.text(screen_gui, tostring(var_15_19), str_2, num_3, str, var_15_10 + var_15_11, Color(255, 255, 255, 0))
+						Gui.text(gui, key_subtree, font_mtrl, font_size_blackboard, font, pos + indent_offset, Color(255, 255, 255, 255))
+						Gui.text(gui, tostring(value_subtree), font_mtrl, font_size_blackboard, font, pos + value_offset, Color(255, 255, 255, 0))
 					else
-						var_15_10.y = var_15_10.y - num_3
+						pos.y = pos.y - font_size_blackboard
 
-						Gui.text(screen_gui, var_15_18, str_2, num_3, str, var_15_10 + var_15_12, Color(255, 255, 255, 255))
-						Gui.text(screen_gui, "[table]", str_2, num_3, str, var_15_10 + var_15_11, Color(255, 255, 255, 0))
+						Gui.text(gui, key_subtree, font_mtrl, font_size_blackboard, font, pos + indent_offset, Color(255, 255, 255, 255))
+						Gui.text(gui, "[table]", font_mtrl, font_size_blackboard, font, pos + value_offset, Color(255, 255, 255, 0))
 					end
 				end
 			end
 
-			table.clear_array(tbl_3, var_15_17)
-			table.clear_array(tbl_4, var_15_17)
+			table.clear_array(key_dest_subtree, count_subtree)
+			table.clear_array(value_dest_subtree, count_subtree)
 		else
-			Gui.text(screen_gui, tostring(var_15_16), str_2, num_3, str, var_15_10 + var_15_11, Color(255, 255, 255, 0))
+			Gui.text(gui, tostring(value), font_mtrl, font_size_blackboard, font, pos + value_offset, Color(255, 255, 255, 0))
 		end
 	end
 
-	var_15_10.y = var_15_10.y - num_3
+	pos.y = pos.y - font_size_blackboard
 
-	if num_4 == 1 then
-		Gui.rect(screen_gui, Vector3(150, var_15_10.y, 100), Vector2(var_15_10.x + 400, num_2 - var_15_10.y + num_3 * 3), Color(240, 25, 50, 25))
+	if columns == 1 then
+		Gui.rect(gui, Vector3(150, pos.y, 100), Vector2(pos.x + 400, start_y - pos.y + font_size_blackboard * 3), Color(240, 25, 50, 25))
 	else
-		Gui.rect(screen_gui, Vector3(150, 0, 100), Vector2(var_15_10.x + 400, num_2 + 50), Color(240, 25, 50, 25))
+		Gui.rect(gui, Vector3(150, 0, 100), Vector2(pos.x + 400, start_y + 50), Color(240, 25, 50, 25))
 	end
 end
 
-AIDebugger.draw_behavior_tree = function (self, arg_16_1, arg_16_2, arg_16_3)
+AIDebugger.draw_behavior_tree = function (self, ai_unit, t, dt)
 	-- function 16
 	if not self.show_behavior_tree then
 		return
@@ -668,55 +703,57 @@ AIDebugger.draw_behavior_tree = function (self, arg_16_1, arg_16_2, arg_16_3)
 
 	local tree_x = self.tree_x
 
-	tree_x = tree_x or 0.45
+	tree_x = not not tree_x or not not 0.45
 	self.tree_x = tree_x
 
 	local tree_y = self.tree_y
 
-	tree_y = tree_y or 0
+	tree_y = not not tree_y or not not 0
 	self.tree_y = tree_y
 
-	local has_extension = ScriptUnit.has_extension(arg_16_1, "ai_system")
+	local ai_extension = ScriptUnit.has_extension(ai_unit, "ai_system")
 
-	if not has_extension then
-		local bt = has_extension:brain():bt()
-		local root = bt:root()
+	if ai_extension then
+		local bt = ai_extension:brain():bt()
+		local root_node = bt:root()
 
-		DrawAiBehaviour.tree_width(self.screen_gui, root)
+		DrawAiBehaviour.tree_width(self.screen_gui, root_node)
 
-		local var_16_5
-		local has_extension_2 = ScriptUnit.has_extension(arg_16_1, "ai_group_system")
+		local extra_info
+		local group_extension = ScriptUnit.has_extension(ai_unit, "ai_group_system")
 
-		if not has_extension_2 and not has_extension_2.template then
-			local var_16_7 = AIGroupTemplates[has_extension_2.template]
+		if group_extension and group_extension.template then
+			local group_template = AIGroupTemplates[group_extension.template]
 
-			var_16_5 = not var_16_7.BT_debug and var_16_7.BT_debug(has_extension_2.group)
+			extra_info = not not group_template.BT_debug and not not group_template.BT_debug(group_extension.group)
 		end
 
-		local var_16_8 = BLACKBOARDS[arg_16_1]
+		local blackboard = BLACKBOARDS[ai_unit]
 
-		DrawAiBehaviour.draw_tree(bt, self.screen_gui, root, var_16_8, 1, arg_16_2, arg_16_3, self.tree_x, self.tree_y, nil, var_16_5)
+		DrawAiBehaviour.draw_tree(bt, self.screen_gui, root_node, blackboard, 1, t, dt, self.tree_x, self.tree_y, nil, extra_info)
 
-		local key_pressed = DebugKeyHandler.key_pressed("right_shoulder_held", "pan behaviour graph", "ai debugger")
-		local key_pressed_2 = DebugKeyHandler.key_pressed("mouse_middle_held", "pan behaviour graph", "ai debugger")
-		local key_pressed_3 = DebugKeyHandler.key_pressed("mouse_middle_held", "pan behaviour graph vertical", "ai debugger", "left ctrl")
+		local right_shoulder_held = DebugKeyHandler.key_pressed("right_shoulder_held", "pan behaviour graph", "ai debugger")
+		local mouse_middle_held = DebugKeyHandler.key_pressed("mouse_middle_held", "pan behaviour graph", "ai debugger")
+		local pan_mouse_vertical = DebugKeyHandler.key_pressed("mouse_middle_held", "pan behaviour graph vertical", "ai debugger", "left ctrl")
 
-		if key_pressed_2 or not key_pressed_3 then
-			local get = self.free_flight_manager.input_manager:get_service("Debug"):get("look")
+		if mouse_middle_held or pan_mouse_vertical then
+			local input_service = self.free_flight_manager.input_manager:get_service("Debug")
+			local look = input_service:get("look")
 
-			self.tree_x = self.tree_x - get.x * 0.001
+			self.tree_x = self.tree_x - look.x * 0.001
 
-			if not key_pressed_3 then
-				self.tree_y = self.tree_y - get.y * 0.001
+			if pan_mouse_vertical then
+				self.tree_y = self.tree_y - look.y * 0.001
 			end
-		elseif not key_pressed then
-			local get_2 = self.free_flight_manager.input_manager:get_service("Debug"):get("look_raw")
+		elseif right_shoulder_held then
+			local input_service = self.free_flight_manager.input_manager:get_service("Debug")
+			local look = input_service:get("look_raw")
 
-			self.tree_x = self.tree_x - get_2.x * 0.1
-			self.tree_y = self.tree_y - get_2.y * 0.1
+			self.tree_x = self.tree_x - look.x * 0.1
+			self.tree_y = self.tree_y - look.y * 0.1
 		end
 
-		if not DebugKeyHandler.key_pressed("mouse_middle_held", "pan reset behaviour graph", "ai debugger", "left shift") then
+		if DebugKeyHandler.key_pressed("mouse_middle_held", "pan reset behaviour graph", "ai debugger", "left shift") then
 			self.tree_x = 0.45
 			self.tree_y = 0
 		end
@@ -727,246 +764,293 @@ AIDebugger.draw_reticule = function (self)
 	-- function 17
 	do return end
 
-	local str = "crosshair_texture_1"
-	local str_2 = "hud_assets"
+	local crosshair = "crosshair_texture_1"
+	local atlas_name = "hud_assets"
 
-	if not rawget(_G, str_2)[str] then
-		local resolution, var_17_3 = Gui.resolution()
-		local var_17_4
+	if rawget(_G, atlas_name)[crosshair] then
+		local resolution_width, resolution_height = Gui.resolution()
+		local var_17_0
 
-		if not self.hot_unit then
-			var_17_4 = Color(255, 255, 0, 0)
+		if self.hot_unit then
+			var_17_0 = Color(255, 255, 0, 0)
 
-			if not var_17_4 then
+			if not var_17_0 then
 				-- Nothing
 			end
 		end
 
-		var_17_4 = Color(255, 255, 255, 255)
+		var_17_0 = Color(255, 255, 255, 255)
+
+		local color = var_17_0
 
 		::label_17_0::
 
-		local atlas_material, var_17_6, var_17_7, var_17_8 = HUDHelper.atlas_material(str_2, str)
-		local num = 1
+		local material, uv00, uv11, size = HUDHelper.atlas_material(atlas_name, crosshair)
+		local scale = 1
 
-		Gui.bitmap_uv(self.screen_gui, atlas_material, Vector2(var_17_6[1], var_17_6[2]), Vector2(var_17_7[1], var_17_7[2]), Vector3((resolution - num * var_17_8.x) / 2, (var_17_3 - num * var_17_8.y) / 2, 0), num * var_17_8, var_17_4)
+		Gui.bitmap_uv(self.screen_gui, material, Vector2(uv00[1], uv00[2]), Vector2(uv11[1], uv11[2]), Vector3((resolution_width - scale * size.x) / 2, (resolution_height - scale * size.y) / 2, 0), scale * size, color)
 	end
 end
 
-AIDebugger.debug_player_intensity = function (self, arg_18_1, arg_18_2)
+AIDebugger.debug_player_intensity = function (self, t, dt)
 	-- function 18
-	local tbl = {
+	local xcol = {
 		Color(200, 160, 145, 0),
 		Color(200, 90, 150, 170),
 		Color(200, 10, 200, 100),
 		Color(200, 190, 50, 190)
 	}
-	local screen_gui = self.screen_gui
-	local resolution, var_18_3 = Application.resolution()
-	local human_players = Managers.player:human_players()
-	local num_2 = 0.15
-	local num_3 = 0.02
-	local num_4 = 0.0025
-	local num_5 = 1 - (num_2 + num_4)
-	local num_6 = 0.15
-	local var_18_10 = num_6
-	local conflict = Managers.state.conflict
-	local pacing = conflict.pacing
-	local get_pacing_intensity, var_18_14 = pacing:get_pacing_intensity()
+	local gui = self.screen_gui
+	local res_x, res_y = Application.resolution()
+	local players = Managers.player:human_players()
+	local bar_width, bar_height, wedge = 0.15, 0.02, 0.0025
+	local win_x = 1 - (bar_width + wedge)
+	local win_y = 0.15
+	local row = win_y
+	local conflict_director = Managers.state.conflict
+	local pacing = conflict_director.pacing
+	local sum_pacing_intensity, player_intensity = pacing:get_pacing_intensity()
 
-	for i = 1, #var_18_14 do
-		local num_7 = var_18_14[i] * 0.01
-		local var_18_16 = num_5
-		local num_8 = var_18_10 + num_3
-		local num_9 = num_5 + num_2 * num_7
-		local var_18_19 = var_18_10
+	for k = 1, #player_intensity do
+		local int = player_intensity[k] * 0.01
+		local x1 = win_x
+		local y1 = row + bar_height
+		local x2 = win_x + bar_width * int
+		local y2 = row
 
-		ScriptGUI.irect(screen_gui, resolution, var_18_3, var_18_16, num_8, num_5 + num_2, var_18_19, 1, Color(100, 10, 10, 10))
-		ScriptGUI.irect(screen_gui, resolution, var_18_3, var_18_16, num_8, num_9, var_18_19, 2, tbl[i])
+		ScriptGUI.irect(gui, res_x, res_y, x1, y1, win_x + bar_width, y2, 1, Color(100, 10, 10, 10))
+		ScriptGUI.irect(gui, res_x, res_y, x1, y1, x2, y2, 2, xcol[k])
 
-		var_18_10 = var_18_10 + num_3 + num_4
+		row = row + bar_height + wedge
 	end
 
-	ScriptGUI.itext(screen_gui, resolution, var_18_3, "[Player Intensity]", str_2, num, str, num_5, num_6, 3, Color(255, 237, 237, 152))
+	ScriptGUI.itext(gui, res_x, res_y, "[Player Intensity]", font_mtrl, font_size, font, win_x, win_y, 3, Color(255, 237, 237, 152))
 
-	local num_10 = var_18_10 + num_3 * 1
+	row = row + bar_height * 1
 
-	ScriptGUI.itext(screen_gui, resolution, var_18_3, "[Total Intensity]", str_2, num, str, num_5, num_10 + num_3 * 0.75, 3, Color(255, 237, 237, 152))
+	ScriptGUI.itext(gui, res_x, res_y, "[Total Intensity]", font_mtrl, font_size, font, win_x, row + bar_height * 0.75, 3, Color(255, 237, 237, 152))
 
-	local num_11 = num_10 + num_3 * 1
+	row = row + bar_height * 1
 
-	ScriptGUI.irect(screen_gui, resolution, var_18_3, num_5, num_11 + num_3, num_5 + num_2, num_11, 1, Color(100, 90, 10, 10))
-	ScriptGUI.irect(screen_gui, resolution, var_18_3, num_5, num_11 + num_3, num_5 + num_2 * get_pacing_intensity * 0.01, num_11, 2, Color(200, 130, 10, 10))
+	ScriptGUI.irect(gui, res_x, res_y, win_x, row + bar_height, win_x + bar_width, row, 1, Color(100, 90, 10, 10))
+	ScriptGUI.irect(gui, res_x, res_y, win_x, row + bar_height, win_x + bar_width * sum_pacing_intensity * 0.01, row, 2, Color(200, 130, 10, 10))
 
-	local str_3 = ""
+	local decay_text = ""
+	local frozen = conflict_director:intensity_decay_frozen()
 
-	if not conflict:intensity_decay_frozen() then
-		str_3 = string.format("decay delay frozen: %.1f", math.clamp(conflict.frozen_intensity_decay_until - arg_18_1, 0, 100))
-	elseif not pacing:ignore_pacing_intensity_decay_delay() then
-		str_3 = "decay delay: ignored"
+	if frozen then
+		decay_text = string.format("decay delay frozen: %.1f", math.clamp(conflict_director.frozen_intensity_decay_until - t, 0, 100))
+	elseif pacing:ignore_pacing_intensity_decay_delay() then
+		decay_text = "decay delay: ignored"
 	else
-		local local_player = Managers.player:local_player(1)
+		local player = Managers.player:local_player(1)
+		local status_extension = ScriptUnit.has_extension(player.player_unit, "status_system")
 
-		if not ScriptUnit.has_extension(local_player.player_unit, "status_system") then
+		if status_extension then
 			-- Nothing
 		end
 	end
 
-	local num_12 = num_11 + num_3 * 1.5
-	local num_13 = 22
+	row = row + bar_height * 1.5
 
-	ScriptGUI.itext(screen_gui, resolution, var_18_3, str_3, str_2, num_13, str, num_5, num_12 + num_3 * 0.75, 3, Color(255, 200, 200, 32))
+	local small_font_size = 22
+
+	ScriptGUI.itext(gui, res_x, res_y, decay_text, font_mtrl, small_font_size, font, win_x, row + bar_height * 0.75, 3, Color(255, 200, 200, 32))
 end
 
-AIDebugger.debug_pacing = function (self, arg_19_1, arg_19_2)
+AIDebugger.debug_pacing = function (self, t, dt)
 	-- function 19
-	local screen_gui = self.screen_gui
-	local conflict = Managers.state.conflict
-	local resolution, var_19_3 = Application.resolution()
-	local num_3 = 0.02
-	local num_4 = 0.3
-	local num_5 = 0.2
-	local num_6 = 0.0025
-	local num_7 = 0.45
-	local num_8 = 0.01
-	local var_19_10 = num_8
+	local gui = self.screen_gui
+	local cm = Managers.state.conflict
+	local res_x, res_y = Application.resolution()
+	local text_height = 0.02
+	local width, height, wedge = 0.3, 0.2, 0.0025
+	local win_x = 0.45
+	local win_y = 0.01
+	local row = win_y
 	local name = CurrentPacing.name
 
-	name = name or "default"
-
-	local itext_next_xy = ScriptGUI.itext_next_xy(screen_gui, resolution, var_19_3, "Pacing: ", str_2, num, str, num_7 + num_6, var_19_10 + num_3, 3, Color(255, 237, 237, 152))
-	local itext_next_xy_2 = ScriptGUI.itext_next_xy(screen_gui, resolution, var_19_3, name, str_2, num, str, itext_next_xy, var_19_10 + num_3, 3, Color(255, 137, 237, 137))
-	local itext_next_xy_3 = ScriptGUI.itext_next_xy(screen_gui, resolution, var_19_3, "Conflict setting: ", str_2, num, str, itext_next_xy_2, var_19_10 + num_3, 3, Color(255, 237, 237, 152))
-	local itext_next_xy_4 = ScriptGUI.itext_next_xy(screen_gui, resolution, var_19_3, tostring(conflict.current_conflict_settings), str_2, num, str, itext_next_xy_3, var_19_10 + num_3, 3, Color(255, 137, 237, 137))
-	local num_9 = var_19_10 + 0.03
-	local var_19_17
-	local var_19_18
-	local get_pacing_data, var_19_20, var_19_21, var_19_22, var_19_23, var_19_24 = conflict.pacing:get_pacing_data()
-	local flag
-
-	flag = not (var_19_21 > 0) or not "[Roamers]" or "[NO Roamers]"
-
-	local flag_2
-
-	flag_2 = not (var_19_23 > 0) or not "[Specials]" or "[NO Specials]"
-
-	local flag_3
-
-	flag_3 = not (var_19_23 > 0) or not "[Hordes]" or "[NO Hordes]"
-
-	if not var_19_24 then
-		local clamp = math.clamp(var_19_24 - arg_19_1, 0, 999999)
-
-		var_19_17 = string.format("State: %s time left: %.1f", get_pacing_data, clamp)
-		var_19_18 = string.format("%s%s%s", flag, flag_2, flag_3)
-	else
-		var_19_17 = string.format("State: %s runtime: %.1f", get_pacing_data, arg_19_1 - var_19_20)
-		var_19_18 = string.format("%s%s%s", flag, flag_2, flag_3)
+	if not name then
+		-- Nothing
 	end
 
-	ScriptGUI.itext(screen_gui, resolution, var_19_3, var_19_17, str_2, num_2, str, num_7 + num_6, num_9 + num_3, 3, Color(255, 237, 237, 152))
+	name = "default"
 
-	local num_10 = num_9 + 0.03
+	local info = name
 
-	ScriptGUI.itext(screen_gui, resolution, var_19_3, var_19_18, str_2, num_2, str, num_7 + num_6, num_10 + num_3, 3, Color(255, 137, 237, 152))
+	::label_19_0::
 
-	local num_11 = num_10 + 0.03
-	local str_3 = "Horde debugging is disabled on clients"
+	local nx = ScriptGUI.itext_next_xy(gui, res_x, res_y, "Pacing: ", font_mtrl, font_size, font, win_x + wedge, row + text_height, 3, Color(255, 237, 237, 152))
 
-	if not Managers.state.network.is_server then
-		if not script_data.ai_horde_spawning_disabled then
-			str_3 = string.format("Horde spawning is disabled")
+	nx = ScriptGUI.itext_next_xy(gui, res_x, res_y, info, font_mtrl, font_size, font, nx, row + text_height, 3, Color(255, 137, 237, 137))
+	nx = ScriptGUI.itext_next_xy(gui, res_x, res_y, "Conflict setting: ", font_mtrl, font_size, font, nx, row + text_height, 3, Color(255, 237, 237, 152))
+	nx = ScriptGUI.itext_next_xy(gui, res_x, res_y, tostring(cm.current_conflict_settings), font_mtrl, font_size, font, nx, row + text_height, 3, Color(255, 137, 237, 137))
+	row = row + 0.03
+
+	local text, spawning_text
+	local state_name, state_start_time, threat_population, specials_population, horde_population, end_time = cm.pacing:get_pacing_data()
+	local str
+
+	if threat_population > 0 then
+		str = "[Roamers]"
+
+		goto label_19_1
+	end
+
+	str = "[NO Roamers]"
+
+	local roamers = str
+
+	do
+		local str_2
+	end
+
+	::label_19_1::
+
+	if horde_population > 0 then
+		str_2 = "[Specials]"
+
+		goto label_19_2
+	end
+
+	str_2 = "[NO Specials]"
+
+	local specials = str_2
+
+	do
+		local str_3
+	end
+
+	::label_19_2::
+
+	if horde_population > 0 then
+		str_3 = "[Hordes]"
+
+		goto label_19_3
+	end
+
+	str_3 = "[NO Hordes]"
+
+	local horde = str_3
+
+	::label_19_3::
+
+	if end_time then
+		local count_down = math.clamp(end_time - t, 0, 999999)
+
+		text = string.format("State: %s time left: %.1f", state_name, count_down)
+		spawning_text = string.format("%s%s%s", roamers, specials, horde)
+	else
+		text = string.format("State: %s runtime: %.1f", state_name, t - state_start_time)
+		spawning_text = string.format("%s%s%s", roamers, specials, horde)
+	end
+
+	ScriptGUI.itext(gui, res_x, res_y, text, font_mtrl, font_size_medium, font, win_x + wedge, row + text_height, 3, Color(255, 237, 237, 152))
+
+	row = row + 0.03
+
+	ScriptGUI.itext(gui, res_x, res_y, spawning_text, font_mtrl, font_size_medium, font, win_x + wedge, row + text_height, 3, Color(255, 137, 237, 152))
+
+	row = row + 0.03
+
+	local s1 = "Horde debugging is disabled on clients"
+
+	if Managers.state.network.is_server then
+		if script_data.ai_horde_spawning_disabled then
+			s1 = string.format("Horde spawning is disabled")
 		else
-			local get_horde_data, var_19_33, var_19_34 = conflict:get_horde_data()
+			local next_horde_time, hordes, multiple_horde_count = cm:get_horde_data()
 
-			if #var_19_33 > 0 then
-				str_3 = string.format("Number of hordes active: %d  horde size:%d", #var_19_33, conflict:horde_size())
-			elseif var_19_23 > 0 then
-				if not get_horde_data then
-					str_3 = string.format("Next horde in: %.1fs horde size:%d", get_horde_data - arg_19_1, conflict:horde_size())
+			if #hordes > 0 then
+				s1 = string.format("Number of hordes active: %d  horde size:%d", #hordes, cm:horde_size())
+			elseif horde_population > 0 then
+				if next_horde_time then
+					s1 = string.format("Next horde in: %.1fs horde size:%d", next_horde_time - t, cm:horde_size())
 				else
-					str_3 = "Next horde in: N/A"
+					s1 = "Next horde in: N/A"
 				end
 			else
-				str_3 = string.format("No horde will spawn during this state")
+				s1 = string.format("No horde will spawn during this state")
 			end
 
-			if not var_19_34 then
-				local format = string.format("Horde waves left: %d", var_19_34)
+			if multiple_horde_count then
+				local textmc = string.format("Horde waves left: %d", multiple_horde_count)
 
-				ScriptGUI.itext(screen_gui, resolution, var_19_3, format, str_2, num_2, str, num_7 + num_6, num_11 + num_3, 3, Color(255, 237, 237, 152))
+				ScriptGUI.itext(gui, res_x, res_y, textmc, font_mtrl, font_size_medium, font, win_x + wedge, row + text_height, 3, Color(255, 237, 237, 152))
 
-				num_11 = num_11 + 0.03
+				row = row + 0.03
 			end
 		end
 	end
 
-	ScriptGUI.itext(screen_gui, resolution, var_19_3, str_3, str_2, num_2, str, num_7 + num_6, num_11 + num_3, 3, Color(255, 237, 237, 152))
+	ScriptGUI.itext(gui, res_x, res_y, s1, font_mtrl, font_size_medium, font, win_x + wedge, row + text_height, 3, Color(255, 237, 237, 152))
 
-	local num_12 = num_11 + 0.03
+	row = row + 0.03
 
-	if not conflict.players_speeding_dist then
-		local relax_rushing_distance = CurrentPacing.relax_rushing_distance
-		local format_2 = string.format("Players rushing dist: %d / %d", conflict.players_speeding_dist, relax_rushing_distance)
+	if cm.players_speeding_dist then
+		local max_dist = CurrentPacing.relax_rushing_distance
+		local s = string.format("Players rushing dist: %d / %d", cm.players_speeding_dist, max_dist)
 
-		ScriptGUI.itext(screen_gui, resolution, var_19_3, format_2, str_2, num_2, str, num_7 + num_6, num_12 + num_3, 3, Color(255, 237, 237, 152))
+		ScriptGUI.itext(gui, res_x, res_y, s, font_mtrl, font_size_medium, font, win_x + wedge, row + text_height, 3, Color(255, 237, 237, 152))
 
-		num_12 = num_12 + 0.03
+		row = row + 0.03
 	end
 
-	ScriptGUI.irect(screen_gui, resolution, var_19_3, num_7, num_8, num_7 + num_4, num_12, 2, Color(100, 10, 10, 10))
+	ScriptGUI.irect(gui, res_x, res_y, win_x, win_y, win_x + width, row, 2, Color(100, 10, 10, 10))
 end
 
-local flag = false
+local hint_shown = false
 
-AIDebugger.draw_hint = function (self, arg_20_1)
+AIDebugger.draw_hint = function (self, t)
 	-- function 20
-	if not script_data and not script_data.disable_debug_draw then
+	if script_data and script_data.disable_debug_draw then
 		return
 	end
 
-	if not flag then
+	if hint_shown then
 		return
 	end
 
-	local screen_gui = self.screen_gui
-	local resolution, var_20_2 = Application.resolution()
+	local gui = self.screen_gui
+	local res_x, res_y = Application.resolution()
 
-	if not script_data.debug_key_handler_visible then
-		self.hint_time_when_key_handle_visible = arg_20_1
-
-		return
-	end
-
-	local num_2 = arg_20_1 - self.hint_time_when_key_handle_visible
-
-	if num_2 > math.pi * 2 then
-		flag = true
+	if script_data.debug_key_handler_visible then
+		self.hint_time_when_key_handle_visible = t
 
 		return
 	end
 
-	local num_3 = math.min(1, math.sin(num_2 * 0.5) * 3) * 255
-	local str_3 = "Hint: you can show ai debugger shortcuts by enabling 'debug_key_handler_visible' in the debug menu"
-	local text_extents, var_20_7 = Gui.text_extents(screen_gui, str_3, str_2, num)
-	local num_4 = var_20_7.x - text_extents.x
-	local num_5 = resolution / 2 - num_4 / 2
+	local anim_t = t - self.hint_time_when_key_handle_visible
 
-	Gui.text(screen_gui, str_3, str_2, num, str, Vector3(num_5, 20, 150), Color(num_3, 255, 255, 255))
-	Gui.rect(screen_gui, Vector3(num_5 - 20, 0, 100), Vector2(num_4 + 40, 50), Color(num_3 * 0.75, 25, 50, 25))
+	if anim_t > math.pi * 2 then
+		hint_shown = true
+
+		return
+	end
+
+	local opacity = math.min(1, math.sin(anim_t * 0.5) * 3) * 255
+	local msg = "Hint: you can show ai debugger shortcuts by enabling 'debug_key_handler_visible' in the debug menu"
+	local msg_min, msg_max = Gui.text_extents(gui, msg, font_mtrl, font_size)
+	local msg_width = msg_max.x - msg_min.x
+	local x = res_x / 2 - msg_width / 2
+
+	Gui.text(gui, msg, font_mtrl, font_size, font, Vector3(x, 20, 150), Color(opacity, 255, 255, 255))
+	Gui.rect(gui, Vector3(x - 20, 0, 100), Vector2(msg_width + 40, 50), Color(opacity * 0.75, 25, 50, 25))
 end
 
 AIDebugger.create_fake_players = function (self)
 	-- function 21
-	local player_unit = Managers.player:player_from_peer_id(Network.peer_id()).player_unit
-	local var_21_1 = POSITION_LOOKUP[player_unit]
+	local player_manager = Managers.player
+	local player = player_manager:player_from_peer_id(Network.peer_id())
+	local player_unit = player.player_unit
+	local center_position = POSITION_LOOKUP[player_unit]
 	local nav_world = Managers.state.entity:system("ai_system"):nav_world()
 
 	self._fake_players = {}
-	self._fake_players[1] = Vector3Box(var_21_1)
+	self._fake_players[1] = Vector3Box(center_position)
 
 	for i = 2, 4 do
-		self._fake_players[i] = Vector3Box(LocomotionUtils.new_random_goal(nav_world, nil, var_21_1, 5, 20, 10))
+		self._fake_players[i] = Vector3Box(LocomotionUtils.new_random_goal(nav_world, nil, center_position, 5, 20, 10))
 	end
 
 	return self._fake_players
@@ -977,43 +1061,43 @@ AIDebugger.fake_players = function (self)
 	return self._fake_players
 end
 
-AIDebugger.draw_extensions = function (self, arg_23_1)
+AIDebugger.draw_extensions = function (self, ai_unit)
 	-- function 23
 	if not self.show_extensions then
 		return
 	end
 
-	local screen_gui = self.screen_gui
-	local var_23_1 = BLACKBOARDS[arg_23_1]
-	local resolution, var_23_3 = Application.resolution()
-	local num_2 = var_23_3 - 120
-	local var_23_5 = Vector3(200, num_2, 150)
-	local num_4 = 1
-	local format = string.format("Extensions for %s", var_23_1.breed.name)
+	local gui = self.screen_gui
+	local blackboard = BLACKBOARDS[ai_unit]
+	local res_x, res_y = Application.resolution()
+	local start_y = res_y - 120
+	local pos = Vector3(200, start_y, 150)
+	local columns = 1
+	local header = string.format("Extensions for %s", blackboard.breed.name)
 
-	Gui.text(screen_gui, format, str_2, num, str, var_23_5, Color(255, 255, 255, 255))
+	Gui.text(gui, header, font_mtrl, font_size, font, pos, Color(255, 255, 255, 255))
 
-	var_23_5.y = var_23_5.y - num
+	pos.y = pos.y - font_size
 
-	local extensions = ScriptUnit.extensions(arg_23_1)
+	local unit_extensions = ScriptUnit.extensions(ai_unit)
 
-	for k, v in pairs(extensions) do
-		var_23_5.y = var_23_5.y - num_3
+	for system_name, _ in pairs(unit_extensions) do
+		pos.y = pos.y - font_size_blackboard
 
-		if var_23_5.y < 100 then
-			var_23_5.y = num_2 - num - num_3
-			var_23_5.x = var_23_5.x + 500
-			num_4 = num_4 + 1
+		if pos.y < 100 then
+			pos.y = start_y - font_size - font_size_blackboard
+			pos.x = pos.x + 500
+			columns = columns + 1
 		end
 
-		Gui.text(screen_gui, k, str_2, num_3, str, var_23_5, Color(255, 255, 255, 255))
+		Gui.text(gui, system_name, font_mtrl, font_size_blackboard, font, pos, Color(255, 255, 255, 255))
 	end
 
-	var_23_5.y = var_23_5.y - num_3
+	pos.y = pos.y - font_size_blackboard
 
-	if num_4 == 1 then
-		Gui.rect(screen_gui, Vector3(150, var_23_5.y, 100), Vector2(var_23_5.x + 400, num_2 - var_23_5.y + num_3 * 3), Color(240, 25, 50, 25))
+	if columns == 1 then
+		Gui.rect(gui, Vector3(150, pos.y, 100), Vector2(pos.x + 400, start_y - pos.y + font_size_blackboard * 3), Color(240, 25, 50, 25))
 	else
-		Gui.rect(screen_gui, Vector3(150, 0, 100), Vector2(var_23_5.x + 400, num_2 + 50), Color(240, 25, 50, 25))
+		Gui.rect(gui, Vector3(150, 0, 100), Vector2(pos.x + 400, start_y + 50), Color(240, 25, 50, 25))
 	end
 end

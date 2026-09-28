@@ -1,7 +1,8 @@
 -- chunkname: @scripts/settings/terror_events/terror_events_bell_pvp.lua
 
-local count_event_breed = require("scripts/settings/terror_events/terror_event_utils").count_event_breed
-local tbl = {
+local TerrorEventUtils = require("scripts/settings/terror_events/terror_event_utils")
+local count_event_breed = TerrorEventUtils.count_event_breed
+local terror_event_blueprints = {
 	bell_pvp_pacing_off = {
 		{
 			"control_hordes",
@@ -129,7 +130,7 @@ local tbl = {
 		},
 		{
 			"continue_when",
-			condition = function (arg_1_0)
+			condition = function (t)
 				-- function 1
 				return count_event_breed("skaven_slave") < 6
 			end
@@ -204,5 +205,5 @@ local tbl = {
 }
 
 return {
-	tbl
+	terror_event_blueprints
 }

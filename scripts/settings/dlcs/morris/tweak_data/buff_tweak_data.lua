@@ -2,7 +2,7 @@
 
 local MorrisBuffTweakData = MorrisBuffTweakData
 
-MorrisBuffTweakData = MorrisBuffTweakData or {
+MorrisBuffTweakData = not not MorrisBuffTweakData or not not {
 	friendly_murderer_potion = {
 		duration = 10,
 		range = 10,
@@ -555,13 +555,15 @@ MorrisBuffTweakData = MorrisBuffTweakData or {
 		duration = 10
 	},
 	boon_skulls_set_01_data = {
-		duration_modifier_func = function (arg_1_0, arg_1_1, arg_1_2, arg_1_3, arg_1_4)
+		duration_modifier_func = function (unit, sub_buff_template, duration, buff_extension, params)
 			-- function 1
-			if not (arg_1_3:num_buff_stacks("power_up_boon_skulls_set_bonus_01_event") > 0) then
-				arg_1_2 = arg_1_2 * (1 + MorrisBuffTweakData.boon_skulls_set_bonus_01.duration_amplify_amount)
+			local has_full_set = buff_extension:num_buff_stacks("power_up_boon_skulls_set_bonus_01_event") > 0
+
+			if has_full_set then
+				duration = duration * (1 + MorrisBuffTweakData.boon_skulls_set_bonus_01.duration_amplify_amount)
 			end
 
-			return arg_1_2
+			return duration
 		end
 	},
 	boon_skulls_06_data = {

@@ -1,16 +1,16 @@
 -- chunkname: @scripts/settings/terror_events/terror_events_weaves.lua
 
-local scripts_settings_terror_events_terror_event_utils = require("scripts/settings/terror_events/terror_event_utils")
-local count_event_breed = scripts_settings_terror_events_terror_event_utils.count_event_breed
-local num_spawned_enemies = scripts_settings_terror_events_terror_event_utils.num_spawned_enemies
-local num_spawned_enemies_during_event = scripts_settings_terror_events_terror_event_utils.num_spawned_enemies_during_event
-local HARD = scripts_settings_terror_events_terror_event_utils.HARD
-local HARDER = scripts_settings_terror_events_terror_event_utils.HARDER
-local HARDEST = scripts_settings_terror_events_terror_event_utils.HARDEST
-local CATACLYSM = scripts_settings_terror_events_terror_event_utils.CATACLYSM
-local CATACLYSM2 = scripts_settings_terror_events_terror_event_utils.CATACLYSM2
-local CATACLYSM3 = scripts_settings_terror_events_terror_event_utils.CATACLYSM3
-local tbl = {
+local TerrorEventUtils = require("scripts/settings/terror_events/terror_event_utils")
+local count_event_breed = TerrorEventUtils.count_event_breed
+local num_spawned_enemies = TerrorEventUtils.num_spawned_enemies
+local num_spawned_enemies_during_event = TerrorEventUtils.num_spawned_enemies_during_event
+local HARD = TerrorEventUtils.HARD
+local HARDER = TerrorEventUtils.HARDER
+local HARDEST = TerrorEventUtils.HARDEST
+local CATACLYSM = TerrorEventUtils.CATACLYSM
+local CATACLYSM2 = TerrorEventUtils.CATACLYSM2
+local CATACLYSM3 = TerrorEventUtils.CATACLYSM3
+local horde_sound_settings = {
 	skaven = {
 		stinger_sound_event = "enemy_horde_stinger",
 		music_states = {
@@ -32,7 +32,7 @@ local tbl = {
 		}
 	}
 }
-local tbl_2 = {
+local terror_event_blueprints = {
 	boss_01 = {
 		{
 			"delay",
@@ -61,7 +61,7 @@ local tbl_2 = {
 		{
 			"continue_when",
 			duration = 30,
-			condition = function (arg_1_0)
+			condition = function (t)
 				-- function 1
 				return num_spawned_enemies() < 2
 			end
@@ -79,7 +79,7 @@ local tbl_2 = {
 		{
 			"continue_when",
 			duration = 30,
-			condition = function (arg_2_0)
+			condition = function (t)
 				-- function 2
 				return num_spawned_enemies() < 2
 			end
@@ -92,7 +92,7 @@ local tbl_2 = {
 		},
 		{
 			"continue_when",
-			condition = function (arg_3_0)
+			condition = function (t)
 				-- function 3
 				return num_spawned_enemies() < 1
 			end
@@ -118,7 +118,7 @@ local tbl_2 = {
 		},
 		{
 			"continue_when",
-			condition = function (arg_4_0)
+			condition = function (t)
 				-- function 4
 				return num_spawned_enemies() < 1
 			end
@@ -149,7 +149,7 @@ local tbl_2 = {
 		},
 		{
 			"continue_when",
-			condition = function (arg_5_0)
+			condition = function (t)
 				-- function 5
 				return num_spawned_enemies() < 2
 			end
@@ -192,7 +192,7 @@ local tbl_2 = {
 		},
 		{
 			"continue_when",
-			condition = function (arg_6_0)
+			condition = function (t)
 				-- function 6
 				return num_spawned_enemies() < 1
 			end
@@ -218,7 +218,7 @@ local tbl_2 = {
 		},
 		{
 			"continue_when",
-			condition = function (arg_7_0)
+			condition = function (t)
 				-- function 7
 				return num_spawned_enemies() < 1
 			end
@@ -260,7 +260,7 @@ local tbl_2 = {
 		},
 		{
 			"continue_when",
-			condition = function (arg_8_0)
+			condition = function (t)
 				-- function 8
 				return num_spawned_enemies() < 2
 			end
@@ -321,7 +321,7 @@ local tbl_2 = {
 		},
 		{
 			"continue_when",
-			condition = function (arg_9_0)
+			condition = function (t)
 				-- function 9
 				return num_spawned_enemies() < 2
 			end
@@ -353,7 +353,7 @@ local tbl_2 = {
 		},
 		{
 			"continue_when",
-			condition = function (arg_10_0)
+			condition = function (t)
 				-- function 10
 				return num_spawned_enemies() < 1
 			end
@@ -395,7 +395,7 @@ local tbl_2 = {
 		},
 		{
 			"continue_when",
-			condition = function (arg_11_0)
+			condition = function (t)
 				-- function 11
 				return num_spawned_enemies() < 2
 			end
@@ -427,7 +427,7 @@ local tbl_2 = {
 		},
 		{
 			"continue_when",
-			condition = function (arg_12_0)
+			condition = function (t)
 				-- function 12
 				return num_spawned_enemies() < 2
 			end
@@ -471,7 +471,7 @@ local tbl_2 = {
 		},
 		{
 			"continue_when",
-			condition = function (arg_13_0)
+			condition = function (t)
 				-- function 13
 				return num_spawned_enemies() < 1
 			end
@@ -527,7 +527,7 @@ local tbl_2 = {
 		},
 		{
 			"continue_when",
-			condition = function (arg_14_0)
+			condition = function (t)
 				-- function 14
 				return num_spawned_enemies() < 2
 			end
@@ -554,7 +554,7 @@ local tbl_2 = {
 		},
 		{
 			"continue_when",
-			condition = function (arg_15_0)
+			condition = function (t)
 				-- function 15
 				return num_spawned_enemies() < 2
 			end
@@ -601,7 +601,7 @@ local tbl_2 = {
 		},
 		{
 			"continue_when",
-			condition = function (arg_16_0)
+			condition = function (t)
 				-- function 16
 				return num_spawned_enemies() < 1
 			end
@@ -661,7 +661,7 @@ local tbl_2 = {
 		},
 		{
 			"continue_when",
-			condition = function (arg_17_0)
+			condition = function (t)
 				-- function 17
 				return num_spawned_enemies() < 4
 			end
@@ -704,7 +704,7 @@ local tbl_2 = {
 		},
 		{
 			"continue_when",
-			condition = function (arg_18_0)
+			condition = function (t)
 				-- function 18
 				return num_spawned_enemies() < 4
 			end
@@ -756,7 +756,7 @@ local tbl_2 = {
 		},
 		{
 			"continue_when",
-			condition = function (arg_19_0)
+			condition = function (t)
 				-- function 19
 				return num_spawned_enemies() < 1
 			end
@@ -814,7 +814,7 @@ local tbl_2 = {
 		},
 		{
 			"continue_when",
-			condition = function (arg_20_0)
+			condition = function (t)
 				-- function 20
 				return num_spawned_enemies() < 5
 			end
@@ -851,7 +851,7 @@ local tbl_2 = {
 		},
 		{
 			"continue_when",
-			condition = function (arg_21_0)
+			condition = function (t)
 				-- function 21
 				return num_spawned_enemies() < 5
 			end
@@ -900,7 +900,7 @@ local tbl_2 = {
 		},
 		{
 			"continue_when",
-			condition = function (arg_22_0)
+			condition = function (t)
 				-- function 22
 				return num_spawned_enemies() < 5
 			end
@@ -953,7 +953,7 @@ local tbl_2 = {
 		},
 		{
 			"continue_when",
-			condition = function (arg_23_0)
+			condition = function (t)
 				-- function 23
 				return num_spawned_enemies() < 5
 			end
@@ -988,7 +988,7 @@ local tbl_2 = {
 		},
 		{
 			"continue_when",
-			condition = function (arg_24_0)
+			condition = function (t)
 				-- function 24
 				return num_spawned_enemies() < 1
 			end
@@ -1035,7 +1035,7 @@ local tbl_2 = {
 		},
 		{
 			"continue_when",
-			condition = function (arg_25_0)
+			condition = function (t)
 				-- function 25
 				return num_spawned_enemies() < 2
 			end
@@ -1078,7 +1078,7 @@ local tbl_2 = {
 		},
 		{
 			"continue_when",
-			condition = function (arg_26_0)
+			condition = function (t)
 				-- function 26
 				return num_spawned_enemies() < 1
 			end
@@ -1124,7 +1124,7 @@ local tbl_2 = {
 		{
 			"continue_when",
 			duration = 80,
-			condition = function (arg_27_0)
+			condition = function (t)
 				-- function 27
 				return num_spawned_enemies_during_event() < 4
 			end
@@ -1166,7 +1166,7 @@ local tbl_2 = {
 		},
 		{
 			"continue_when",
-			condition = function (arg_28_0)
+			condition = function (t)
 				-- function 28
 				return num_spawned_enemies() < 1
 			end
@@ -1211,7 +1211,7 @@ local tbl_2 = {
 		},
 		{
 			"continue_when",
-			condition = function (arg_29_0)
+			condition = function (t)
 				-- function 29
 				return num_spawned_enemies() < 1
 			end
@@ -1257,7 +1257,7 @@ local tbl_2 = {
 		},
 		{
 			"continue_when",
-			condition = function (arg_30_0)
+			condition = function (t)
 				-- function 30
 				return num_spawned_enemies() < 1
 			end
@@ -1305,7 +1305,7 @@ local tbl_2 = {
 		},
 		{
 			"continue_when",
-			condition = function (arg_31_0)
+			condition = function (t)
 				-- function 31
 				return num_spawned_enemies() < 1
 			end
@@ -1351,7 +1351,7 @@ local tbl_2 = {
 		{
 			"continue_when",
 			duration = 80,
-			condition = function (arg_32_0)
+			condition = function (t)
 				-- function 32
 				return num_spawned_enemies_during_event() < 3
 			end
@@ -1412,7 +1412,7 @@ local tbl_2 = {
 		},
 		{
 			"continue_when",
-			condition = function (arg_33_0)
+			condition = function (t)
 				-- function 33
 				return num_spawned_enemies() < 1
 			end
@@ -1468,7 +1468,7 @@ local tbl_2 = {
 		{
 			"continue_when",
 			duration = 80,
-			condition = function (arg_34_0)
+			condition = function (t)
 				-- function 34
 				return num_spawned_enemies_during_event() < 3
 			end
@@ -1523,7 +1523,7 @@ local tbl_2 = {
 		},
 		{
 			"continue_when",
-			condition = function (arg_35_0)
+			condition = function (t)
 				-- function 35
 				return num_spawned_enemies() < 1
 			end
@@ -1568,7 +1568,7 @@ local tbl_2 = {
 		},
 		{
 			"continue_when",
-			condition = function (arg_36_0)
+			condition = function (t)
 				-- function 36
 				return num_spawned_enemies() < 2
 			end
@@ -1613,7 +1613,7 @@ local tbl_2 = {
 		},
 		{
 			"continue_when",
-			condition = function (arg_37_0)
+			condition = function (t)
 				-- function 37
 				return num_spawned_enemies() < 3
 			end
@@ -1669,7 +1669,7 @@ local tbl_2 = {
 		},
 		{
 			"continue_when",
-			condition = function (arg_38_0)
+			condition = function (t)
 				-- function 38
 				return num_spawned_enemies() < 4
 			end
@@ -1715,7 +1715,7 @@ local tbl_2 = {
 		{
 			"continue_when",
 			duration = 80,
-			condition = function (arg_39_0)
+			condition = function (t)
 				-- function 39
 				return num_spawned_enemies_during_event() < 3
 			end
@@ -1776,7 +1776,7 @@ local tbl_2 = {
 		},
 		{
 			"continue_when",
-			condition = function (arg_40_0)
+			condition = function (t)
 				-- function 40
 				return num_spawned_enemies() < 2
 			end
@@ -1827,7 +1827,7 @@ local tbl_2 = {
 		},
 		{
 			"continue_when",
-			condition = function (arg_41_0)
+			condition = function (t)
 				-- function 41
 				return num_spawned_enemies() < 1
 			end
@@ -1868,7 +1868,7 @@ local tbl_2 = {
 		},
 		{
 			"continue_when",
-			condition = function (arg_42_0)
+			condition = function (t)
 				-- function 42
 				return num_spawned_enemies() < 2
 			end
@@ -1906,7 +1906,7 @@ local tbl_2 = {
 		},
 		{
 			"continue_when",
-			condition = function (arg_43_0)
+			condition = function (t)
 				-- function 43
 				return num_spawned_enemies() < 2
 			end
@@ -1958,7 +1958,7 @@ local tbl_2 = {
 		},
 		{
 			"continue_when",
-			condition = function (arg_44_0)
+			condition = function (t)
 				-- function 44
 				return num_spawned_enemies() < 2
 			end
@@ -1996,7 +1996,7 @@ local tbl_2 = {
 		{
 			"continue_when",
 			duration = 80,
-			condition = function (arg_45_0)
+			condition = function (t)
 				-- function 45
 				return num_spawned_enemies_during_event() < 3
 			end
@@ -2043,7 +2043,7 @@ local tbl_2 = {
 		{
 			"continue_when",
 			duration = 80,
-			condition = function (arg_46_0)
+			condition = function (t)
 				-- function 46
 				return num_spawned_enemies_during_event() < 4
 			end
@@ -2086,7 +2086,7 @@ local tbl_2 = {
 		},
 		{
 			"continue_when",
-			condition = function (arg_47_0)
+			condition = function (t)
 				-- function 47
 				return num_spawned_enemies() < 1
 			end
@@ -2135,7 +2135,7 @@ local tbl_2 = {
 		},
 		{
 			"continue_when",
-			condition = function (arg_48_0)
+			condition = function (t)
 				-- function 48
 				return num_spawned_enemies() < 2
 			end
@@ -2187,7 +2187,7 @@ local tbl_2 = {
 		{
 			"continue_when",
 			duration = 45,
-			condition = function (arg_49_0)
+			condition = function (t)
 				-- function 49
 				return num_spawned_enemies() < 1
 			end
@@ -2273,7 +2273,7 @@ local tbl_2 = {
 		},
 		{
 			"continue_when",
-			condition = function (arg_50_0)
+			condition = function (t)
 				-- function 50
 				return num_spawned_enemies() < 1
 			end
@@ -2322,7 +2322,7 @@ local tbl_2 = {
 		},
 		{
 			"continue_when",
-			condition = function (arg_51_0)
+			condition = function (t)
 				-- function 51
 				return num_spawned_enemies() < 2
 			end
@@ -2374,7 +2374,7 @@ local tbl_2 = {
 		{
 			"continue_when",
 			duration = 45,
-			condition = function (arg_52_0)
+			condition = function (t)
 				-- function 52
 				return num_spawned_enemies() < 1
 			end
@@ -2460,7 +2460,7 @@ local tbl_2 = {
 		},
 		{
 			"continue_when",
-			condition = function (arg_53_0)
+			condition = function (t)
 				-- function 53
 				return num_spawned_enemies() < 1
 			end
@@ -2509,7 +2509,7 @@ local tbl_2 = {
 		},
 		{
 			"continue_when",
-			condition = function (arg_54_0)
+			condition = function (t)
 				-- function 54
 				return num_spawned_enemies() < 2
 			end
@@ -2561,7 +2561,7 @@ local tbl_2 = {
 		{
 			"continue_when",
 			duration = 45,
-			condition = function (arg_55_0)
+			condition = function (t)
 				-- function 55
 				return num_spawned_enemies() < 1
 			end
@@ -2647,7 +2647,7 @@ local tbl_2 = {
 		},
 		{
 			"continue_when",
-			condition = function (arg_56_0)
+			condition = function (t)
 				-- function 56
 				return num_spawned_enemies() < 1
 			end
@@ -2730,7 +2730,7 @@ local tbl_2 = {
 		},
 		{
 			"continue_when",
-			condition = function (arg_57_0)
+			condition = function (t)
 				-- function 57
 				return num_spawned_enemies() < 2
 			end
@@ -2781,7 +2781,7 @@ local tbl_2 = {
 		{
 			"continue_when",
 			duration = 45,
-			condition = function (arg_58_0)
+			condition = function (t)
 				-- function 58
 				return num_spawned_enemies() < 1
 			end
@@ -2865,7 +2865,7 @@ local tbl_2 = {
 		},
 		{
 			"continue_when",
-			condition = function (arg_59_0)
+			condition = function (t)
 				-- function 59
 				return num_spawned_enemies() < 1
 			end
@@ -2967,7 +2967,7 @@ local tbl_2 = {
 		},
 		{
 			"continue_when",
-			condition = function (arg_60_0)
+			condition = function (t)
 				-- function 60
 				return num_spawned_enemies() < 1
 			end
@@ -3087,7 +3087,7 @@ local tbl_2 = {
 		},
 		{
 			"continue_when",
-			condition = function (arg_61_0)
+			condition = function (t)
 				-- function 61
 				return num_spawned_enemies() < 1
 			end
@@ -3136,7 +3136,7 @@ local tbl_2 = {
 		},
 		{
 			"continue_when",
-			condition = function (arg_62_0)
+			condition = function (t)
 				-- function 62
 				return num_spawned_enemies_during_event() < 2
 			end
@@ -3177,7 +3177,7 @@ local tbl_2 = {
 		},
 		{
 			"continue_when",
-			condition = function (arg_63_0)
+			condition = function (t)
 				-- function 63
 				return num_spawned_enemies_during_event() < 2
 			end
@@ -3225,7 +3225,7 @@ local tbl_2 = {
 		{
 			"continue_when",
 			duration = 80,
-			condition = function (arg_64_0)
+			condition = function (t)
 				-- function 64
 				return num_spawned_enemies_during_event() < 3
 			end
@@ -3242,7 +3242,7 @@ local tbl_2 = {
 		},
 		{
 			"continue_when",
-			condition = function (arg_65_0)
+			condition = function (t)
 				-- function 65
 				return num_spawned_enemies_during_event() < 2
 			end
@@ -3288,7 +3288,7 @@ local tbl_2 = {
 		{
 			"continue_when",
 			duration = 80,
-			condition = function (arg_66_0)
+			condition = function (t)
 				-- function 66
 				return num_spawned_enemies_during_event() < 3
 			end
@@ -3335,7 +3335,7 @@ local tbl_2 = {
 		{
 			"continue_when",
 			duration = 80,
-			condition = function (arg_67_0)
+			condition = function (t)
 				-- function 67
 				return num_spawned_enemies_during_event() < 3
 			end
@@ -3383,7 +3383,7 @@ local tbl_2 = {
 		{
 			"continue_when",
 			duration = 80,
-			condition = function (arg_68_0)
+			condition = function (t)
 				-- function 68
 				return num_spawned_enemies_during_event() < 4
 			end
@@ -3435,7 +3435,7 @@ local tbl_2 = {
 		{
 			"continue_when",
 			duration = 80,
-			condition = function (arg_69_0)
+			condition = function (t)
 				-- function 69
 				return num_spawned_enemies_during_event() < 1
 			end
@@ -3456,7 +3456,7 @@ local tbl_2 = {
 		},
 		{
 			"continue_when",
-			condition = function (arg_70_0)
+			condition = function (t)
 				-- function 70
 				return num_spawned_enemies() < 1
 			end
@@ -3505,7 +3505,7 @@ local tbl_2 = {
 		},
 		{
 			"continue_when",
-			condition = function (arg_71_0)
+			condition = function (t)
 				-- function 71
 				return num_spawned_enemies_during_event() < 2
 			end
@@ -3546,7 +3546,7 @@ local tbl_2 = {
 		},
 		{
 			"continue_when",
-			condition = function (arg_72_0)
+			condition = function (t)
 				-- function 72
 				return num_spawned_enemies_during_event() < 2
 			end
@@ -3594,7 +3594,7 @@ local tbl_2 = {
 		{
 			"continue_when",
 			duration = 80,
-			condition = function (arg_73_0)
+			condition = function (t)
 				-- function 73
 				return num_spawned_enemies_during_event() < 3
 			end
@@ -3611,7 +3611,7 @@ local tbl_2 = {
 		},
 		{
 			"continue_when",
-			condition = function (arg_74_0)
+			condition = function (t)
 				-- function 74
 				return num_spawned_enemies_during_event() < 2
 			end
@@ -3657,7 +3657,7 @@ local tbl_2 = {
 		{
 			"continue_when",
 			duration = 80,
-			condition = function (arg_75_0)
+			condition = function (t)
 				-- function 75
 				return num_spawned_enemies_during_event() < 3
 			end
@@ -3704,7 +3704,7 @@ local tbl_2 = {
 		{
 			"continue_when",
 			duration = 80,
-			condition = function (arg_76_0)
+			condition = function (t)
 				-- function 76
 				return num_spawned_enemies_during_event() < 9
 			end
@@ -3730,7 +3730,7 @@ local tbl_2 = {
 		},
 		{
 			"continue_when",
-			condition = function (arg_77_0)
+			condition = function (t)
 				-- function 77
 				return num_spawned_enemies() < 1
 			end
@@ -3784,7 +3784,7 @@ local tbl_2 = {
 		},
 		{
 			"continue_when",
-			condition = function (arg_78_0)
+			condition = function (t)
 				-- function 78
 				return num_spawned_enemies_during_event() < 2
 			end
@@ -3825,7 +3825,7 @@ local tbl_2 = {
 		},
 		{
 			"continue_when",
-			condition = function (arg_79_0)
+			condition = function (t)
 				-- function 79
 				return num_spawned_enemies_during_event() < 2
 			end
@@ -3882,7 +3882,7 @@ local tbl_2 = {
 		{
 			"continue_when",
 			duration = 80,
-			condition = function (arg_80_0)
+			condition = function (t)
 				-- function 80
 				return num_spawned_enemies_during_event() < 3
 			end
@@ -3899,7 +3899,7 @@ local tbl_2 = {
 		},
 		{
 			"continue_when",
-			condition = function (arg_81_0)
+			condition = function (t)
 				-- function 81
 				return num_spawned_enemies_during_event() < 2
 			end
@@ -3945,7 +3945,7 @@ local tbl_2 = {
 		{
 			"continue_when",
 			duration = 80,
-			condition = function (arg_82_0)
+			condition = function (t)
 				-- function 82
 				return num_spawned_enemies_during_event() < 3
 			end
@@ -3996,7 +3996,7 @@ local tbl_2 = {
 		},
 		{
 			"continue_when",
-			condition = function (arg_83_0)
+			condition = function (t)
 				-- function 83
 				return num_spawned_enemies() < 1
 			end
@@ -4041,7 +4041,7 @@ local tbl_2 = {
 		},
 		{
 			"continue_when",
-			condition = function (arg_84_0)
+			condition = function (t)
 				-- function 84
 				return num_spawned_enemies() < 1
 			end
@@ -4087,7 +4087,7 @@ local tbl_2 = {
 		},
 		{
 			"continue_when",
-			condition = function (arg_85_0)
+			condition = function (t)
 				-- function 85
 				return num_spawned_enemies() < 1
 			end
@@ -4135,7 +4135,7 @@ local tbl_2 = {
 		},
 		{
 			"continue_when",
-			condition = function (arg_86_0)
+			condition = function (t)
 				-- function 86
 				return num_spawned_enemies() < 1
 			end
@@ -4181,7 +4181,7 @@ local tbl_2 = {
 		{
 			"continue_when",
 			duration = 80,
-			condition = function (arg_87_0)
+			condition = function (t)
 				-- function 87
 				return num_spawned_enemies_during_event() < 3
 			end
@@ -4247,7 +4247,7 @@ local tbl_2 = {
 		},
 		{
 			"continue_when",
-			condition = function (arg_88_0)
+			condition = function (t)
 				-- function 88
 				return num_spawned_enemies() < 1
 			end
@@ -4303,7 +4303,7 @@ local tbl_2 = {
 		},
 		{
 			"continue_when",
-			condition = function (arg_89_0)
+			condition = function (t)
 				-- function 89
 				return num_spawned_enemies() < 1
 			end
@@ -4378,7 +4378,7 @@ local tbl_2 = {
 		},
 		{
 			"continue_when",
-			condition = function (arg_90_0)
+			condition = function (t)
 				-- function 90
 				return num_spawned_enemies() < 5
 			end
@@ -4446,7 +4446,7 @@ local tbl_2 = {
 		},
 		{
 			"continue_when",
-			condition = function (arg_91_0)
+			condition = function (t)
 				-- function 91
 				return num_spawned_enemies() < 1
 			end
@@ -4464,7 +4464,7 @@ local tbl_2 = {
 		},
 		{
 			"continue_when",
-			condition = function (arg_92_0)
+			condition = function (t)
 				-- function 92
 				return num_spawned_enemies() < 1
 			end
@@ -4479,7 +4479,7 @@ local tbl_2 = {
 		},
 		{
 			"continue_when",
-			condition = function (arg_93_0)
+			condition = function (t)
 				-- function 93
 				return num_spawned_enemies() < 1
 			end
@@ -4494,7 +4494,7 @@ local tbl_2 = {
 		},
 		{
 			"continue_when",
-			condition = function (arg_94_0)
+			condition = function (t)
 				-- function 94
 				return num_spawned_enemies() < 1
 			end
@@ -4509,7 +4509,7 @@ local tbl_2 = {
 		},
 		{
 			"continue_when",
-			condition = function (arg_95_0)
+			condition = function (t)
 				-- function 95
 				return num_spawned_enemies() < 1
 			end
@@ -4524,7 +4524,7 @@ local tbl_2 = {
 		},
 		{
 			"continue_when",
-			condition = function (arg_96_0)
+			condition = function (t)
 				-- function 96
 				return num_spawned_enemies() < 1
 			end
@@ -4539,7 +4539,7 @@ local tbl_2 = {
 		},
 		{
 			"continue_when",
-			condition = function (arg_97_0)
+			condition = function (t)
 				-- function 97
 				return num_spawned_enemies() < 1
 			end
@@ -4554,7 +4554,7 @@ local tbl_2 = {
 		},
 		{
 			"continue_when",
-			condition = function (arg_98_0)
+			condition = function (t)
 				-- function 98
 				return num_spawned_enemies() < 1
 			end
@@ -4572,7 +4572,7 @@ local tbl_2 = {
 		{
 			"continue_when",
 			duration = 80,
-			condition = function (arg_99_0)
+			condition = function (t)
 				-- function 99
 				return num_spawned_enemies_during_event() < 3
 			end
@@ -4617,7 +4617,7 @@ local tbl_2 = {
 		{
 			"continue_when",
 			duration = 80,
-			condition = function (arg_100_0)
+			condition = function (t)
 				-- function 100
 				return num_spawned_enemies_during_event() < 3
 			end
@@ -4654,7 +4654,7 @@ local tbl_2 = {
 		{
 			"continue_when",
 			duration = 80,
-			condition = function (arg_101_0)
+			condition = function (t)
 				-- function 101
 				return num_spawned_enemies_during_event() < 3
 			end
@@ -4672,7 +4672,7 @@ local tbl_2 = {
 		{
 			"continue_when",
 			duration = 80,
-			condition = function (arg_102_0)
+			condition = function (t)
 				-- function 102
 				return num_spawned_enemies_during_event() < 3
 			end
@@ -4698,7 +4698,7 @@ local tbl_2 = {
 		{
 			"continue_when",
 			duration = 80,
-			condition = function (arg_103_0)
+			condition = function (t)
 				-- function 103
 				return num_spawned_enemies_during_event() < 3
 			end
@@ -4741,7 +4741,7 @@ local tbl_2 = {
 		{
 			"continue_when",
 			duration = 80,
-			condition = function (arg_104_0)
+			condition = function (t)
 				-- function 104
 				return num_spawned_enemies_during_event() < 3
 			end
@@ -4776,7 +4776,7 @@ local tbl_2 = {
 		{
 			"continue_when",
 			duration = 80,
-			condition = function (arg_105_0)
+			condition = function (t)
 				-- function 105
 				return num_spawned_enemies_during_event() < 3
 			end
@@ -4794,7 +4794,7 @@ local tbl_2 = {
 		{
 			"continue_when",
 			duration = 80,
-			condition = function (arg_106_0)
+			condition = function (t)
 				-- function 106
 				return num_spawned_enemies_during_event() < 3
 			end
@@ -4820,7 +4820,7 @@ local tbl_2 = {
 		{
 			"continue_when",
 			duration = 80,
-			condition = function (arg_107_0)
+			condition = function (t)
 				-- function 107
 				return num_spawned_enemies_during_event() < 3
 			end
@@ -4865,7 +4865,7 @@ local tbl_2 = {
 		{
 			"continue_when",
 			duration = 80,
-			condition = function (arg_108_0)
+			condition = function (t)
 				-- function 108
 				return num_spawned_enemies_during_event() < 3
 			end
@@ -4883,7 +4883,7 @@ local tbl_2 = {
 		{
 			"continue_when",
 			duration = 80,
-			condition = function (arg_109_0)
+			condition = function (t)
 				-- function 109
 				return num_spawned_enemies_during_event() < 3
 			end
@@ -4920,7 +4920,7 @@ local tbl_2 = {
 		{
 			"continue_when",
 			duration = 80,
-			condition = function (arg_110_0)
+			condition = function (t)
 				-- function 110
 				return num_spawned_enemies_during_event() < 3
 			end
@@ -4938,7 +4938,7 @@ local tbl_2 = {
 		{
 			"continue_when",
 			duration = 80,
-			condition = function (arg_111_0)
+			condition = function (t)
 				-- function 111
 				return num_spawned_enemies_during_event() < 3
 			end
@@ -4956,7 +4956,7 @@ local tbl_2 = {
 		{
 			"continue_when",
 			duration = 80,
-			condition = function (arg_112_0)
+			condition = function (t)
 				-- function 112
 				return num_spawned_enemies_during_event() < 3
 			end
@@ -4974,7 +4974,7 @@ local tbl_2 = {
 		{
 			"continue_when",
 			duration = 80,
-			condition = function (arg_113_0)
+			condition = function (t)
 				-- function 113
 				return num_spawned_enemies_during_event() < 3
 			end
@@ -5000,7 +5000,7 @@ local tbl_2 = {
 		{
 			"continue_when",
 			duration = 80,
-			condition = function (arg_114_0)
+			condition = function (t)
 				-- function 114
 				return num_spawned_enemies_during_event() < 3
 			end
@@ -5043,7 +5043,7 @@ local tbl_2 = {
 		{
 			"continue_when",
 			duration = 80,
-			condition = function (arg_115_0)
+			condition = function (t)
 				-- function 115
 				return num_spawned_enemies_during_event() < 3
 			end
@@ -5061,7 +5061,7 @@ local tbl_2 = {
 		{
 			"continue_when",
 			duration = 80,
-			condition = function (arg_116_0)
+			condition = function (t)
 				-- function 116
 				return num_spawned_enemies_during_event() < 3
 			end
@@ -5096,7 +5096,7 @@ local tbl_2 = {
 		{
 			"continue_when",
 			duration = 80,
-			condition = function (arg_117_0)
+			condition = function (t)
 				-- function 117
 				return num_spawned_enemies_during_event() < 3
 			end
@@ -5114,7 +5114,7 @@ local tbl_2 = {
 		{
 			"continue_when",
 			duration = 80,
-			condition = function (arg_118_0)
+			condition = function (t)
 				-- function 118
 				return num_spawned_enemies_during_event() < 3
 			end
@@ -5132,7 +5132,7 @@ local tbl_2 = {
 		{
 			"continue_when",
 			duration = 80,
-			condition = function (arg_119_0)
+			condition = function (t)
 				-- function 119
 				return num_spawned_enemies_during_event() < 3
 			end
@@ -5150,7 +5150,7 @@ local tbl_2 = {
 		{
 			"continue_when",
 			duration = 80,
-			condition = function (arg_120_0)
+			condition = function (t)
 				-- function 120
 				return num_spawned_enemies_during_event() < 3
 			end
@@ -5176,7 +5176,7 @@ local tbl_2 = {
 		{
 			"continue_when",
 			duration = 80,
-			condition = function (arg_121_0)
+			condition = function (t)
 				-- function 121
 				return num_spawned_enemies_during_event() < 3
 			end
@@ -5221,7 +5221,7 @@ local tbl_2 = {
 		{
 			"continue_when",
 			duration = 80,
-			condition = function (arg_122_0)
+			condition = function (t)
 				-- function 122
 				return num_spawned_enemies_during_event() < 3
 			end
@@ -5239,7 +5239,7 @@ local tbl_2 = {
 		{
 			"continue_when",
 			duration = 80,
-			condition = function (arg_123_0)
+			condition = function (t)
 				-- function 123
 				return num_spawned_enemies_during_event() < 3
 			end
@@ -5276,7 +5276,7 @@ local tbl_2 = {
 		{
 			"continue_when",
 			duration = 80,
-			condition = function (arg_124_0)
+			condition = function (t)
 				-- function 124
 				return num_spawned_enemies_during_event() < 3
 			end
@@ -5294,7 +5294,7 @@ local tbl_2 = {
 		{
 			"continue_when",
 			duration = 80,
-			condition = function (arg_125_0)
+			condition = function (t)
 				-- function 125
 				return num_spawned_enemies_during_event() < 3
 			end
@@ -5312,7 +5312,7 @@ local tbl_2 = {
 		{
 			"continue_when",
 			duration = 80,
-			condition = function (arg_126_0)
+			condition = function (t)
 				-- function 126
 				return num_spawned_enemies_during_event() < 3
 			end
@@ -5349,7 +5349,7 @@ local tbl_2 = {
 		{
 			"continue_when",
 			duration = 80,
-			condition = function (arg_127_0)
+			condition = function (t)
 				-- function 127
 				return num_spawned_enemies_during_event() < 3
 			end
@@ -5367,7 +5367,7 @@ local tbl_2 = {
 		{
 			"continue_when",
 			duration = 80,
-			condition = function (arg_128_0)
+			condition = function (t)
 				-- function 128
 				return num_spawned_enemies_during_event() < 3
 			end
@@ -5395,7 +5395,7 @@ local tbl_2 = {
 		{
 			"continue_when",
 			duration = 80,
-			condition = function (arg_129_0)
+			condition = function (t)
 				-- function 129
 				return num_spawned_enemies_during_event() < 3
 			end
@@ -5413,7 +5413,7 @@ local tbl_2 = {
 		{
 			"continue_when",
 			duration = 80,
-			condition = function (arg_130_0)
+			condition = function (t)
 				-- function 130
 				return num_spawned_enemies_during_event() < 3
 			end
@@ -5431,7 +5431,7 @@ local tbl_2 = {
 		{
 			"continue_when",
 			duration = 80,
-			condition = function (arg_131_0)
+			condition = function (t)
 				-- function 131
 				return num_spawned_enemies_during_event() < 3
 			end
@@ -5457,7 +5457,7 @@ local tbl_2 = {
 		{
 			"continue_when",
 			duration = 80,
-			condition = function (arg_132_0)
+			condition = function (t)
 				-- function 132
 				return num_spawned_enemies_during_event() < 3
 			end
@@ -5500,7 +5500,7 @@ local tbl_2 = {
 		{
 			"continue_when",
 			duration = 80,
-			condition = function (arg_133_0)
+			condition = function (t)
 				-- function 133
 				return num_spawned_enemies_during_event() < 2
 			end
@@ -5518,7 +5518,7 @@ local tbl_2 = {
 		{
 			"continue_when",
 			duration = 80,
-			condition = function (arg_134_0)
+			condition = function (t)
 				-- function 134
 				return num_spawned_enemies_during_event() < 2
 			end
@@ -5536,7 +5536,7 @@ local tbl_2 = {
 		{
 			"continue_when",
 			duration = 80,
-			condition = function (arg_135_0)
+			condition = function (t)
 				-- function 135
 				return num_spawned_enemies_during_event() < 3
 			end
@@ -5571,7 +5571,7 @@ local tbl_2 = {
 		{
 			"continue_when",
 			duration = 80,
-			condition = function (arg_136_0)
+			condition = function (t)
 				-- function 136
 				return num_spawned_enemies_during_event() < 3
 			end
@@ -5589,7 +5589,7 @@ local tbl_2 = {
 		{
 			"continue_when",
 			duration = 80,
-			condition = function (arg_137_0)
+			condition = function (t)
 				-- function 137
 				return num_spawned_enemies_during_event() < 3
 			end
@@ -5613,7 +5613,7 @@ local tbl_2 = {
 		{
 			"continue_when",
 			duration = 80,
-			condition = function (arg_138_0)
+			condition = function (t)
 				-- function 138
 				return num_spawned_enemies_during_event() < 3
 			end
@@ -5641,7 +5641,7 @@ local tbl_2 = {
 		{
 			"continue_when",
 			duration = 80,
-			condition = function (arg_139_0)
+			condition = function (t)
 				-- function 139
 				return num_spawned_enemies_during_event() < 3
 			end
@@ -5659,7 +5659,7 @@ local tbl_2 = {
 		{
 			"continue_when",
 			duration = 80,
-			condition = function (arg_140_0)
+			condition = function (t)
 				-- function 140
 				return num_spawned_enemies_during_event() < 3
 			end
@@ -5677,7 +5677,7 @@ local tbl_2 = {
 		{
 			"continue_when",
 			duration = 80,
-			condition = function (arg_141_0)
+			condition = function (t)
 				-- function 141
 				return num_spawned_enemies_during_event() < 3
 			end
@@ -5703,7 +5703,7 @@ local tbl_2 = {
 		{
 			"continue_when",
 			duration = 80,
-			condition = function (arg_142_0)
+			condition = function (t)
 				-- function 142
 				return num_spawned_enemies_during_event() < 3
 			end
@@ -5748,7 +5748,7 @@ local tbl_2 = {
 		{
 			"continue_when",
 			duration = 80,
-			condition = function (arg_143_0)
+			condition = function (t)
 				-- function 143
 				return num_spawned_enemies_during_event() < 3
 			end
@@ -5766,7 +5766,7 @@ local tbl_2 = {
 		{
 			"continue_when",
 			duration = 80,
-			condition = function (arg_144_0)
+			condition = function (t)
 				-- function 144
 				return num_spawned_enemies_during_event() < 3
 			end
@@ -5784,7 +5784,7 @@ local tbl_2 = {
 		{
 			"continue_when",
 			duration = 80,
-			condition = function (arg_145_0)
+			condition = function (t)
 				-- function 145
 				return num_spawned_enemies_during_event() < 3
 			end
@@ -5802,7 +5802,7 @@ local tbl_2 = {
 		{
 			"continue_when",
 			duration = 80,
-			condition = function (arg_146_0)
+			condition = function (t)
 				-- function 146
 				return num_spawned_enemies_during_event() < 3
 			end
@@ -5839,7 +5839,7 @@ local tbl_2 = {
 		{
 			"continue_when",
 			duration = 80,
-			condition = function (arg_147_0)
+			condition = function (t)
 				-- function 147
 				return num_spawned_enemies_during_event() < 3
 			end
@@ -5857,7 +5857,7 @@ local tbl_2 = {
 		{
 			"continue_when",
 			duration = 80,
-			condition = function (arg_148_0)
+			condition = function (t)
 				-- function 148
 				return num_spawned_enemies_during_event() < 3
 			end
@@ -5875,7 +5875,7 @@ local tbl_2 = {
 		{
 			"continue_when",
 			duration = 80,
-			condition = function (arg_149_0)
+			condition = function (t)
 				-- function 149
 				return num_spawned_enemies_during_event() < 3
 			end
@@ -5903,7 +5903,7 @@ local tbl_2 = {
 		{
 			"continue_when",
 			duration = 80,
-			condition = function (arg_150_0)
+			condition = function (t)
 				-- function 150
 				return num_spawned_enemies_during_event() < 3
 			end
@@ -5921,7 +5921,7 @@ local tbl_2 = {
 		{
 			"continue_when",
 			duration = 80,
-			condition = function (arg_151_0)
+			condition = function (t)
 				-- function 151
 				return num_spawned_enemies_during_event() < 3
 			end
@@ -5939,7 +5939,7 @@ local tbl_2 = {
 		{
 			"continue_when",
 			duration = 80,
-			condition = function (arg_152_0)
+			condition = function (t)
 				-- function 152
 				return num_spawned_enemies_during_event() < 3
 			end
@@ -5965,7 +5965,7 @@ local tbl_2 = {
 		{
 			"continue_when",
 			duration = 80,
-			condition = function (arg_153_0)
+			condition = function (t)
 				-- function 153
 				return num_spawned_enemies_during_event() < 3
 			end
@@ -6010,7 +6010,7 @@ local tbl_2 = {
 		{
 			"continue_when",
 			duration = 80,
-			condition = function (arg_154_0)
+			condition = function (t)
 				-- function 154
 				return num_spawned_enemies_during_event() < 3
 			end
@@ -6024,7 +6024,7 @@ local tbl_2 = {
 		{
 			"continue_when",
 			duration = 80,
-			condition = function (arg_155_0)
+			condition = function (t)
 				-- function 155
 				return num_spawned_enemies_during_event() < 3
 			end
@@ -6061,7 +6061,7 @@ local tbl_2 = {
 		{
 			"continue_when",
 			duration = 80,
-			condition = function (arg_156_0)
+			condition = function (t)
 				-- function 156
 				return num_spawned_enemies_during_event() < 3
 			end
@@ -6075,7 +6075,7 @@ local tbl_2 = {
 		{
 			"continue_when",
 			duration = 80,
-			condition = function (arg_157_0)
+			condition = function (t)
 				-- function 157
 				return num_spawned_enemies_during_event() < 3
 			end
@@ -6093,7 +6093,7 @@ local tbl_2 = {
 		{
 			"continue_when",
 			duration = 80,
-			condition = function (arg_158_0)
+			condition = function (t)
 				-- function 158
 				return num_spawned_enemies_during_event() < 3
 			end
@@ -6111,7 +6111,7 @@ local tbl_2 = {
 		{
 			"continue_when",
 			duration = 80,
-			condition = function (arg_159_0)
+			condition = function (t)
 				-- function 159
 				return num_spawned_enemies_during_event() < 3
 			end
@@ -6148,7 +6148,7 @@ local tbl_2 = {
 		{
 			"continue_when",
 			duration = 80,
-			condition = function (arg_160_0)
+			condition = function (t)
 				-- function 160
 				return num_spawned_enemies_during_event() < 3
 			end
@@ -6176,7 +6176,7 @@ local tbl_2 = {
 		{
 			"continue_when",
 			duration = 80,
-			condition = function (arg_161_0)
+			condition = function (t)
 				-- function 161
 				return num_spawned_enemies_during_event() < 3
 			end
@@ -6194,7 +6194,7 @@ local tbl_2 = {
 		{
 			"continue_when",
 			duration = 80,
-			condition = function (arg_162_0)
+			condition = function (t)
 				-- function 162
 				return num_spawned_enemies_during_event() < 3
 			end
@@ -6212,7 +6212,7 @@ local tbl_2 = {
 		{
 			"continue_when",
 			duration = 80,
-			condition = function (arg_163_0)
+			condition = function (t)
 				-- function 163
 				return num_spawned_enemies_during_event() < 3
 			end
@@ -6238,7 +6238,7 @@ local tbl_2 = {
 		{
 			"continue_when",
 			duration = 80,
-			condition = function (arg_164_0)
+			condition = function (t)
 				-- function 164
 				return num_spawned_enemies_during_event() < 3
 			end
@@ -6283,7 +6283,7 @@ local tbl_2 = {
 		{
 			"continue_when",
 			duration = 80,
-			condition = function (arg_165_0)
+			condition = function (t)
 				-- function 165
 				return num_spawned_enemies_during_event() < 3
 			end
@@ -6301,7 +6301,7 @@ local tbl_2 = {
 		{
 			"continue_when",
 			duration = 80,
-			condition = function (arg_166_0)
+			condition = function (t)
 				-- function 166
 				return num_spawned_enemies_during_event() < 3
 			end
@@ -6338,7 +6338,7 @@ local tbl_2 = {
 		{
 			"continue_when",
 			duration = 80,
-			condition = function (arg_167_0)
+			condition = function (t)
 				-- function 167
 				return num_spawned_enemies_during_event() < 3
 			end
@@ -6356,7 +6356,7 @@ local tbl_2 = {
 		{
 			"continue_when",
 			duration = 80,
-			condition = function (arg_168_0)
+			condition = function (t)
 				-- function 168
 				return num_spawned_enemies_during_event() < 3
 			end
@@ -6393,7 +6393,7 @@ local tbl_2 = {
 		{
 			"continue_when",
 			duration = 80,
-			condition = function (arg_169_0)
+			condition = function (t)
 				-- function 169
 				return num_spawned_enemies_during_event() < 3
 			end
@@ -6411,7 +6411,7 @@ local tbl_2 = {
 		{
 			"continue_when",
 			duration = 80,
-			condition = function (arg_170_0)
+			condition = function (t)
 				-- function 170
 				return num_spawned_enemies_during_event() < 3
 			end
@@ -6429,7 +6429,7 @@ local tbl_2 = {
 		{
 			"continue_when",
 			duration = 80,
-			condition = function (arg_171_0)
+			condition = function (t)
 				-- function 171
 				return num_spawned_enemies_during_event() < 3
 			end
@@ -6457,7 +6457,7 @@ local tbl_2 = {
 		{
 			"continue_when",
 			duration = 80,
-			condition = function (arg_172_0)
+			condition = function (t)
 				-- function 172
 				return num_spawned_enemies_during_event() < 3
 			end
@@ -6475,7 +6475,7 @@ local tbl_2 = {
 		{
 			"continue_when",
 			duration = 80,
-			condition = function (arg_173_0)
+			condition = function (t)
 				-- function 173
 				return num_spawned_enemies_during_event() < 3
 			end
@@ -6493,7 +6493,7 @@ local tbl_2 = {
 		{
 			"continue_when",
 			duration = 80,
-			condition = function (arg_174_0)
+			condition = function (t)
 				-- function 174
 				return num_spawned_enemies_during_event() < 3
 			end
@@ -6519,7 +6519,7 @@ local tbl_2 = {
 		{
 			"continue_when",
 			duration = 80,
-			condition = function (arg_175_0)
+			condition = function (t)
 				-- function 175
 				return num_spawned_enemies_during_event() < 3
 			end
@@ -6562,7 +6562,7 @@ local tbl_2 = {
 		{
 			"continue_when",
 			duration = 80,
-			condition = function (arg_176_0)
+			condition = function (t)
 				-- function 176
 				return num_spawned_enemies_during_event() < 3
 			end
@@ -6580,7 +6580,7 @@ local tbl_2 = {
 		{
 			"continue_when",
 			duration = 80,
-			condition = function (arg_177_0)
+			condition = function (t)
 				-- function 177
 				return num_spawned_enemies_during_event() < 3
 			end
@@ -6615,7 +6615,7 @@ local tbl_2 = {
 		{
 			"continue_when",
 			duration = 80,
-			condition = function (arg_178_0)
+			condition = function (t)
 				-- function 178
 				return num_spawned_enemies_during_event() < 3
 			end
@@ -6633,7 +6633,7 @@ local tbl_2 = {
 		{
 			"continue_when",
 			duration = 80,
-			condition = function (arg_179_0)
+			condition = function (t)
 				-- function 179
 				return num_spawned_enemies_during_event() < 3
 			end
@@ -6668,7 +6668,7 @@ local tbl_2 = {
 		{
 			"continue_when",
 			duration = 80,
-			condition = function (arg_180_0)
+			condition = function (t)
 				-- function 180
 				return num_spawned_enemies_during_event() < 3
 			end
@@ -6686,7 +6686,7 @@ local tbl_2 = {
 		{
 			"continue_when",
 			duration = 80,
-			condition = function (arg_181_0)
+			condition = function (t)
 				-- function 181
 				return num_spawned_enemies_during_event() < 3
 			end
@@ -6704,7 +6704,7 @@ local tbl_2 = {
 		{
 			"continue_when",
 			duration = 80,
-			condition = function (arg_182_0)
+			condition = function (t)
 				-- function 182
 				return num_spawned_enemies_during_event() < 3
 			end
@@ -6732,7 +6732,7 @@ local tbl_2 = {
 		{
 			"continue_when",
 			duration = 80,
-			condition = function (arg_183_0)
+			condition = function (t)
 				-- function 183
 				return num_spawned_enemies_during_event() < 3
 			end
@@ -6750,7 +6750,7 @@ local tbl_2 = {
 		{
 			"continue_when",
 			duration = 80,
-			condition = function (arg_184_0)
+			condition = function (t)
 				-- function 184
 				return num_spawned_enemies_during_event() < 3
 			end
@@ -6768,7 +6768,7 @@ local tbl_2 = {
 		{
 			"continue_when",
 			duration = 80,
-			condition = function (arg_185_0)
+			condition = function (t)
 				-- function 185
 				return num_spawned_enemies_during_event() < 3
 			end
@@ -6794,7 +6794,7 @@ local tbl_2 = {
 		{
 			"continue_when",
 			duration = 80,
-			condition = function (arg_186_0)
+			condition = function (t)
 				-- function 186
 				return num_spawned_enemies_during_event() < 3
 			end
@@ -6839,7 +6839,7 @@ local tbl_2 = {
 		{
 			"continue_when",
 			duration = 80,
-			condition = function (arg_187_0)
+			condition = function (t)
 				-- function 187
 				return num_spawned_enemies_during_event() < 3
 			end
@@ -6857,7 +6857,7 @@ local tbl_2 = {
 		{
 			"continue_when",
 			duration = 80,
-			condition = function (arg_188_0)
+			condition = function (t)
 				-- function 188
 				return num_spawned_enemies_during_event() < 3
 			end
@@ -6894,7 +6894,7 @@ local tbl_2 = {
 		{
 			"continue_when",
 			duration = 80,
-			condition = function (arg_189_0)
+			condition = function (t)
 				-- function 189
 				return num_spawned_enemies_during_event() < 3
 			end
@@ -6912,7 +6912,7 @@ local tbl_2 = {
 		{
 			"continue_when",
 			duration = 80,
-			condition = function (arg_190_0)
+			condition = function (t)
 				-- function 190
 				return num_spawned_enemies_during_event() < 3
 			end
@@ -6938,7 +6938,7 @@ local tbl_2 = {
 		{
 			"continue_when",
 			duration = 60,
-			condition = function (arg_191_0)
+			condition = function (t)
 				-- function 191
 				return num_spawned_enemies_during_event() < 3
 			end
@@ -6969,7 +6969,7 @@ local tbl_2 = {
 		{
 			"continue_when",
 			duration = 60,
-			condition = function (arg_192_0)
+			condition = function (t)
 				-- function 192
 				return num_spawned_enemies_during_event() < 3
 			end
@@ -6991,7 +6991,7 @@ local tbl_2 = {
 		{
 			"continue_when",
 			duration = 80,
-			condition = function (arg_193_0)
+			condition = function (t)
 				-- function 193
 				return num_spawned_enemies_during_event() < 3
 			end
@@ -7009,7 +7009,7 @@ local tbl_2 = {
 		{
 			"continue_when",
 			duration = 80,
-			condition = function (arg_194_0)
+			condition = function (t)
 				-- function 194
 				return num_spawned_enemies_during_event() < 3
 			end
@@ -7027,7 +7027,7 @@ local tbl_2 = {
 		{
 			"continue_when",
 			duration = 80,
-			condition = function (arg_195_0)
+			condition = function (t)
 				-- function 195
 				return num_spawned_enemies_during_event() < 3
 			end
@@ -7053,7 +7053,7 @@ local tbl_2 = {
 		{
 			"continue_when",
 			duration = 60,
-			condition = function (arg_196_0)
+			condition = function (t)
 				-- function 196
 				return num_spawned_enemies_during_event() < 3
 			end
@@ -7084,7 +7084,7 @@ local tbl_2 = {
 		{
 			"continue_when",
 			duration = 60,
-			condition = function (arg_197_0)
+			condition = function (t)
 				-- function 197
 				return num_spawned_enemies_during_event() < 3
 			end
@@ -7116,7 +7116,7 @@ local tbl_2 = {
 		{
 			"continue_when",
 			duration = 80,
-			condition = function (arg_198_0)
+			condition = function (t)
 				-- function 198
 				return num_spawned_enemies_during_event() < 3
 			end
@@ -7144,7 +7144,7 @@ local tbl_2 = {
 		{
 			"continue_when",
 			duration = 80,
-			condition = function (arg_199_0)
+			condition = function (t)
 				-- function 199
 				return num_spawned_enemies_during_event() < 3
 			end
@@ -7161,7 +7161,7 @@ local tbl_2 = {
 		{
 			"continue_when",
 			duration = 80,
-			condition = function (arg_200_0)
+			condition = function (t)
 				-- function 200
 				return num_spawned_enemies_during_event() < 1
 			end
@@ -7183,7 +7183,7 @@ local tbl_2 = {
 		{
 			"continue_when",
 			duration = 60,
-			condition = function (arg_201_0)
+			condition = function (t)
 				-- function 201
 				return num_spawned_enemies_during_event() < 3
 			end
@@ -7219,7 +7219,7 @@ local tbl_2 = {
 		{
 			"continue_when",
 			duration = 80,
-			condition = function (arg_202_0)
+			condition = function (t)
 				-- function 202
 				return num_spawned_enemies_during_event() < 3
 			end
@@ -7241,7 +7241,7 @@ local tbl_2 = {
 		{
 			"continue_when",
 			duration = 80,
-			condition = function (arg_203_0)
+			condition = function (t)
 				-- function 203
 				return num_spawned_enemies_during_event() < 3
 			end
@@ -7258,7 +7258,7 @@ local tbl_2 = {
 		{
 			"continue_when",
 			duration = 80,
-			condition = function (arg_204_0)
+			condition = function (t)
 				-- function 204
 				return num_spawned_enemies_during_event() < 1
 			end
@@ -7280,7 +7280,7 @@ local tbl_2 = {
 		{
 			"continue_when",
 			duration = 60,
-			condition = function (arg_205_0)
+			condition = function (t)
 				-- function 205
 				return num_spawned_enemies_during_event() < 3
 			end
@@ -7317,7 +7317,7 @@ local tbl_2 = {
 		{
 			"continue_when",
 			duration = 60,
-			condition = function (arg_206_0)
+			condition = function (t)
 				-- function 206
 				return num_spawned_enemies_during_event() < 5
 			end
@@ -7344,7 +7344,7 @@ local tbl_2 = {
 		{
 			"continue_when",
 			duration = 60,
-			condition = function (arg_207_0)
+			condition = function (t)
 				-- function 207
 				return num_spawned_enemies_during_event() < 3
 			end
@@ -7362,7 +7362,7 @@ local tbl_2 = {
 		{
 			"continue_when",
 			duration = 60,
-			condition = function (arg_208_0)
+			condition = function (t)
 				-- function 208
 				return num_spawned_enemies_during_event() < 3
 			end
@@ -7376,7 +7376,7 @@ local tbl_2 = {
 		{
 			"continue_when",
 			duration = 60,
-			condition = function (arg_209_0)
+			condition = function (t)
 				-- function 209
 				return num_spawned_enemies_during_event() < 3
 			end
@@ -7396,7 +7396,7 @@ local tbl_2 = {
 		{
 			"continue_when",
 			duration = 60,
-			condition = function (arg_210_0)
+			condition = function (t)
 				-- function 210
 				return num_spawned_enemies_during_event() < 3
 			end
@@ -7422,7 +7422,7 @@ local tbl_2 = {
 		{
 			"continue_when",
 			duration = 60,
-			condition = function (arg_211_0)
+			condition = function (t)
 				-- function 211
 				return num_spawned_enemies_during_event() < 3
 			end
@@ -7454,7 +7454,7 @@ local tbl_2 = {
 		{
 			"continue_when",
 			duration = 60,
-			condition = function (arg_212_0)
+			condition = function (t)
 				-- function 212
 				return num_spawned_enemies_during_event() < 3
 			end
@@ -7481,7 +7481,7 @@ local tbl_2 = {
 		{
 			"continue_when",
 			duration = 60,
-			condition = function (arg_213_0)
+			condition = function (t)
 				-- function 213
 				return num_spawned_enemies_during_event() < 3
 			end
@@ -7499,7 +7499,7 @@ local tbl_2 = {
 		{
 			"continue_when",
 			duration = 60,
-			condition = function (arg_214_0)
+			condition = function (t)
 				-- function 214
 				return num_spawned_enemies_during_event() < 3
 			end
@@ -7513,7 +7513,7 @@ local tbl_2 = {
 		{
 			"continue_when",
 			duration = 60,
-			condition = function (arg_215_0)
+			condition = function (t)
 				-- function 215
 				return num_spawned_enemies_during_event() < 1
 			end
@@ -7554,7 +7554,7 @@ local tbl_2 = {
 		{
 			"continue_when",
 			duration = 80,
-			condition = function (arg_216_0)
+			condition = function (t)
 				-- function 216
 				return num_spawned_enemies() < 1
 			end
@@ -7589,7 +7589,7 @@ local tbl_2 = {
 		{
 			"continue_when",
 			duration = 80,
-			condition = function (arg_217_0)
+			condition = function (t)
 				-- function 217
 				return num_spawned_enemies() < 1
 			end
@@ -7623,7 +7623,7 @@ local tbl_2 = {
 		{
 			"continue_when",
 			duration = 80,
-			condition = function (arg_218_0)
+			condition = function (t)
 				-- function 218
 				return num_spawned_enemies() < 1
 			end
@@ -7665,7 +7665,7 @@ local tbl_2 = {
 		{
 			"continue_when",
 			duration = 80,
-			condition = function (arg_219_0)
+			condition = function (t)
 				-- function 219
 				return num_spawned_enemies() < 1
 			end
@@ -7707,7 +7707,7 @@ local tbl_2 = {
 		{
 			"continue_when",
 			duration = 80,
-			condition = function (arg_220_0)
+			condition = function (t)
 				-- function 220
 				return num_spawned_enemies() < 1
 			end
@@ -7731,7 +7731,7 @@ local tbl_2 = {
 		{
 			"continue_when",
 			duration = 80,
-			condition = function (arg_221_0)
+			condition = function (t)
 				-- function 221
 				return num_spawned_enemies() < 1
 			end
@@ -7764,7 +7764,7 @@ local tbl_2 = {
 		{
 			"continue_when",
 			duration = 90,
-			condition = function (arg_222_0)
+			condition = function (t)
 				-- function 222
 				return num_spawned_enemies() < 1
 			end
@@ -7793,7 +7793,7 @@ local tbl_2 = {
 		{
 			"continue_when",
 			duration = 90,
-			condition = function (arg_223_0)
+			condition = function (t)
 				-- function 223
 				return num_spawned_enemies() < 1
 			end
@@ -7822,7 +7822,7 @@ local tbl_2 = {
 		{
 			"continue_when",
 			duration = 90,
-			condition = function (arg_224_0)
+			condition = function (t)
 				-- function 224
 				return num_spawned_enemies() < 1
 			end
@@ -7851,7 +7851,7 @@ local tbl_2 = {
 		{
 			"continue_when",
 			duration = 90,
-			condition = function (arg_225_0)
+			condition = function (t)
 				-- function 225
 				return num_spawned_enemies() < 1
 			end
@@ -7880,7 +7880,7 @@ local tbl_2 = {
 		{
 			"continue_when",
 			duration = 90,
-			condition = function (arg_226_0)
+			condition = function (t)
 				-- function 226
 				return num_spawned_enemies() < 1
 			end
@@ -7901,7 +7901,7 @@ local tbl_2 = {
 		{
 			"continue_when",
 			duration = 90,
-			condition = function (arg_227_0)
+			condition = function (t)
 				-- function 227
 				return num_spawned_enemies() < 1
 			end
@@ -7922,7 +7922,7 @@ local tbl_2 = {
 		{
 			"continue_when",
 			duration = 90,
-			condition = function (arg_228_0)
+			condition = function (t)
 				-- function 228
 				return num_spawned_enemies() < 1
 			end
@@ -7943,7 +7943,7 @@ local tbl_2 = {
 		{
 			"continue_when",
 			duration = 90,
-			condition = function (arg_229_0)
+			condition = function (t)
 				-- function 229
 				return num_spawned_enemies() < 1
 			end
@@ -7964,7 +7964,7 @@ local tbl_2 = {
 		{
 			"continue_when",
 			duration = 90,
-			condition = function (arg_230_0)
+			condition = function (t)
 				-- function 230
 				return num_spawned_enemies() < 1
 			end
@@ -7985,7 +7985,7 @@ local tbl_2 = {
 		{
 			"continue_when",
 			duration = 90,
-			condition = function (arg_231_0)
+			condition = function (t)
 				-- function 231
 				return num_spawned_enemies() < 1
 			end
@@ -8003,7 +8003,7 @@ local tbl_2 = {
 		{
 			"ambush_horde",
 			composition_type = "weave_horde_skaven_small",
-			sound_settings = tbl.skaven
+			sound_settings = horde_sound_settings.skaven
 		}
 	},
 	mixed_main_path_event_01 = {
@@ -8014,7 +8014,7 @@ local tbl_2 = {
 		{
 			"ambush_horde",
 			composition_type = "weave_horde_chaos_small",
-			sound_settings = tbl.chaos
+			sound_settings = horde_sound_settings.chaos
 		},
 		{
 			"delay",
@@ -8036,7 +8036,7 @@ local tbl_2 = {
 		{
 			"ambush_horde",
 			composition_type = "weave_horde_chaos_small",
-			sound_settings = tbl.chaos
+			sound_settings = horde_sound_settings.chaos
 		},
 		{
 			"delay",
@@ -8058,7 +8058,7 @@ local tbl_2 = {
 		{
 			"ambush_horde",
 			composition_type = "weave_horde_chaos_small",
-			sound_settings = tbl.chaos
+			sound_settings = horde_sound_settings.chaos
 		},
 		{
 			"delay",
@@ -8080,7 +8080,7 @@ local tbl_2 = {
 		{
 			"ambush_horde",
 			composition_type = "weave_horde_chaos_small",
-			sound_settings = tbl.chaos
+			sound_settings = horde_sound_settings.chaos
 		},
 		{
 			"delay",
@@ -8102,7 +8102,7 @@ local tbl_2 = {
 		{
 			"ambush_horde",
 			composition_type = "weave_horde_chaos_small",
-			sound_settings = tbl.chaos
+			sound_settings = horde_sound_settings.chaos
 		},
 		{
 			"delay",
@@ -8131,7 +8131,7 @@ local tbl_2 = {
 		{
 			"ambush_horde",
 			composition_type = "weave_horde_skaven_small",
-			sound_settings = tbl.skaven
+			sound_settings = horde_sound_settings.skaven
 		}
 	},
 	skaven_main_path_event_horde_medium = {
@@ -8142,7 +8142,7 @@ local tbl_2 = {
 		{
 			"ambush_horde",
 			composition_type = "weave_horde_skaven_medium",
-			sound_settings = tbl.skaven
+			sound_settings = horde_sound_settings.skaven
 		}
 	},
 	skaven_main_path_event_horde_large = {
@@ -8153,7 +8153,7 @@ local tbl_2 = {
 		{
 			"ambush_horde",
 			composition_type = "weave_horde_skaven_large",
-			sound_settings = tbl.skaven
+			sound_settings = horde_sound_settings.skaven
 		}
 	},
 	chaos_main_path_event_horde_small = {
@@ -8164,7 +8164,7 @@ local tbl_2 = {
 		{
 			"ambush_horde",
 			composition_type = "weave_horde_chaos_small",
-			sound_settings = tbl.chaos
+			sound_settings = horde_sound_settings.chaos
 		}
 	},
 	chaos_main_path_event_horde_medium = {
@@ -8175,7 +8175,7 @@ local tbl_2 = {
 		{
 			"ambush_horde",
 			composition_type = "weave_horde_chaos_medium",
-			sound_settings = tbl.chaos
+			sound_settings = horde_sound_settings.chaos
 		}
 	},
 	chaos_main_path_event_horde_large = {
@@ -8186,7 +8186,7 @@ local tbl_2 = {
 		{
 			"ambush_horde",
 			composition_type = "weave_horde_chaos_large",
-			sound_settings = tbl.chaos
+			sound_settings = horde_sound_settings.chaos
 		}
 	},
 	beastmen_skaven_main_path_event_horde_small = {
@@ -8197,7 +8197,7 @@ local tbl_2 = {
 		{
 			"ambush_horde",
 			composition_type = "weave_horde_beastmen_skaven_small",
-			sound_settings = tbl.chaos
+			sound_settings = horde_sound_settings.chaos
 		}
 	},
 	beastmen_main_path_event_horde_small = {
@@ -8208,7 +8208,7 @@ local tbl_2 = {
 		{
 			"ambush_horde",
 			composition_type = "weave_horde_beastmen_small",
-			sound_settings = tbl.chaos
+			sound_settings = horde_sound_settings.chaos
 		}
 	},
 	beastmen_main_path_event_horde_medium = {
@@ -8219,7 +8219,7 @@ local tbl_2 = {
 		{
 			"ambush_horde",
 			composition_type = "weave_horde_beastmen_medium",
-			sound_settings = tbl.chaos
+			sound_settings = horde_sound_settings.chaos
 		}
 	},
 	beastmen_main_path_event_horde_large = {
@@ -8230,7 +8230,7 @@ local tbl_2 = {
 		{
 			"ambush_horde",
 			composition_type = "weave_horde_beastmen_large",
-			sound_settings = tbl.chaos
+			sound_settings = horde_sound_settings.chaos
 		}
 	},
 	skaven_main_path_event_elite_spice = {
@@ -8241,7 +8241,7 @@ local tbl_2 = {
 		{
 			"ambush_horde",
 			composition_type = "weave_spice_elite_skaven",
-			sound_settings = tbl.chaos
+			sound_settings = horde_sound_settings.chaos
 		}
 	},
 	chaos_main_path_event_elite_spice = {
@@ -8252,7 +8252,7 @@ local tbl_2 = {
 		{
 			"ambush_horde",
 			composition_type = "weave_spice_elite_chaos",
-			sound_settings = tbl.chaos
+			sound_settings = horde_sound_settings.chaos
 		}
 	},
 	beastmen_main_path_event_elite_spice = {
@@ -8263,7 +8263,7 @@ local tbl_2 = {
 		{
 			"ambush_horde",
 			composition_type = "weave_spice_elite_beastmen",
-			sound_settings = tbl.chaos
+			sound_settings = horde_sound_settings.chaos
 		}
 	},
 	skaven_main_path_event_horde_elite_spice = {
@@ -8274,12 +8274,12 @@ local tbl_2 = {
 		{
 			"ambush_horde",
 			composition_type = "weave_horde_skaven_small",
-			sound_settings = tbl.skaven
+			sound_settings = horde_sound_settings.skaven
 		},
 		{
 			"ambush_horde",
 			composition_type = "weave_spice_elite_skaven",
-			sound_settings = tbl.chaos
+			sound_settings = horde_sound_settings.chaos
 		}
 	},
 	chaos_main_path_event_horde_elite_spice = {
@@ -8290,12 +8290,12 @@ local tbl_2 = {
 		{
 			"ambush_horde",
 			composition_type = "weave_horde_chaos_small",
-			sound_settings = tbl.chaos
+			sound_settings = horde_sound_settings.chaos
 		},
 		{
 			"ambush_horde",
 			composition_type = "weave_spice_elite_chaos",
-			sound_settings = tbl.chaos
+			sound_settings = horde_sound_settings.chaos
 		}
 	},
 	beastmen_main_path_event_horde_elite_spice = {
@@ -8306,12 +8306,12 @@ local tbl_2 = {
 		{
 			"ambush_horde",
 			composition_type = "weave_horde_beastmen_small",
-			sound_settings = tbl.chaos
+			sound_settings = horde_sound_settings.chaos
 		},
 		{
 			"ambush_horde",
 			composition_type = "weave_spice_elite_beastmen",
-			sound_settings = tbl.chaos
+			sound_settings = horde_sound_settings.chaos
 		}
 	},
 	skaven_main_path_event_berzerker_spice = {
@@ -8322,7 +8322,7 @@ local tbl_2 = {
 		{
 			"ambush_horde",
 			composition_type = "weave_spice_berzerker_skaven",
-			sound_settings = tbl.chaos
+			sound_settings = horde_sound_settings.chaos
 		}
 	},
 	chaos_main_path_event_berzerker_spice = {
@@ -8333,7 +8333,7 @@ local tbl_2 = {
 		{
 			"ambush_horde",
 			composition_type = "weave_spice_berzerker_chaos",
-			sound_settings = tbl.chaos
+			sound_settings = horde_sound_settings.chaos
 		}
 	},
 	skaven_main_path_event_horde_berzerker_spice = {
@@ -8344,12 +8344,12 @@ local tbl_2 = {
 		{
 			"ambush_horde",
 			composition_type = "weave_horde_skaven_small",
-			sound_settings = tbl.skaven
+			sound_settings = horde_sound_settings.skaven
 		},
 		{
 			"ambush_horde",
 			composition_type = "weave_spice_berzerker_skaven",
-			sound_settings = tbl.chaos
+			sound_settings = horde_sound_settings.chaos
 		}
 	},
 	chaos_main_path_event_horde_berzerker_spice = {
@@ -8360,12 +8360,12 @@ local tbl_2 = {
 		{
 			"ambush_horde",
 			composition_type = "weave_horde_chaos_small",
-			sound_settings = tbl.skaven
+			sound_settings = horde_sound_settings.skaven
 		},
 		{
 			"ambush_horde",
 			composition_type = "weave_spice_berzerker_chaos",
-			sound_settings = tbl.chaos
+			sound_settings = horde_sound_settings.chaos
 		}
 	},
 	chaos_main_path_event_armored_skaven = {
@@ -8376,12 +8376,12 @@ local tbl_2 = {
 		{
 			"ambush_horde",
 			composition_type = "weave_boss_skaven_armour",
-			sound_settings = tbl.skaven
+			sound_settings = horde_sound_settings.skaven
 		},
 		{
 			"ambush_horde",
 			composition_type = "weave_storm_skaven",
-			sound_settings = tbl.skaven
+			sound_settings = horde_sound_settings.skaven
 		}
 	},
 	main_path_event_special_small = {
@@ -8760,7 +8760,7 @@ local tbl_2 = {
 		{
 			"ambush_horde",
 			composition_type = "weave_event_smaller",
-			sound_settings = tbl.skaven
+			sound_settings = horde_sound_settings.skaven
 		}
 	},
 	main_path_standard_skaven_small_medium = {
@@ -8775,7 +8775,7 @@ local tbl_2 = {
 		{
 			"ambush_horde",
 			composition_type = "weave_event_smaller",
-			sound_settings = tbl.skaven
+			sound_settings = horde_sound_settings.skaven
 		},
 		{
 			"delay",
@@ -8784,7 +8784,7 @@ local tbl_2 = {
 		{
 			"continue_when",
 			duration = 30,
-			condition = function (arg_232_0)
+			condition = function (t)
 				-- function 232
 				return num_spawned_enemies_during_event() < 3
 			end
@@ -8792,7 +8792,7 @@ local tbl_2 = {
 		{
 			"ambush_horde",
 			composition_type = "weave_event_smaller",
-			sound_settings = tbl.skaven
+			sound_settings = horde_sound_settings.skaven
 		}
 	},
 	main_path_standard_skaven_small_long = {
@@ -8807,7 +8807,7 @@ local tbl_2 = {
 		{
 			"ambush_horde",
 			composition_type = "weave_event_smaller",
-			sound_settings = tbl.skaven
+			sound_settings = horde_sound_settings.skaven
 		},
 		{
 			"delay",
@@ -8816,7 +8816,7 @@ local tbl_2 = {
 		{
 			"continue_when",
 			duration = 30,
-			condition = function (arg_233_0)
+			condition = function (t)
 				-- function 233
 				return num_spawned_enemies_during_event() < 3
 			end
@@ -8824,7 +8824,7 @@ local tbl_2 = {
 		{
 			"ambush_horde",
 			composition_type = "weave_event_smaller",
-			sound_settings = tbl.skaven
+			sound_settings = horde_sound_settings.skaven
 		},
 		{
 			"delay",
@@ -8833,7 +8833,7 @@ local tbl_2 = {
 		{
 			"continue_when",
 			duration = 30,
-			condition = function (arg_234_0)
+			condition = function (t)
 				-- function 234
 				return num_spawned_enemies_during_event() < 3
 			end
@@ -8841,7 +8841,7 @@ local tbl_2 = {
 		{
 			"ambush_horde",
 			composition_type = "weave_event_smaller",
-			sound_settings = tbl.skaven
+			sound_settings = horde_sound_settings.skaven
 		}
 	},
 	main_path_standard_skaven_medium_short = {
@@ -8856,7 +8856,7 @@ local tbl_2 = {
 		{
 			"ambush_horde",
 			composition_type = "weave_event_small",
-			sound_settings = tbl.skaven
+			sound_settings = horde_sound_settings.skaven
 		}
 	},
 	main_path_standard_skaven_medium_medium = {
@@ -8871,7 +8871,7 @@ local tbl_2 = {
 		{
 			"ambush_horde",
 			composition_type = "weave_event_small",
-			sound_settings = tbl.skaven
+			sound_settings = horde_sound_settings.skaven
 		},
 		{
 			"delay",
@@ -8880,7 +8880,7 @@ local tbl_2 = {
 		{
 			"continue_when",
 			duration = 30,
-			condition = function (arg_235_0)
+			condition = function (t)
 				-- function 235
 				return num_spawned_enemies_during_event() < 3
 			end
@@ -8888,7 +8888,7 @@ local tbl_2 = {
 		{
 			"ambush_horde",
 			composition_type = "weave_event_smaller",
-			sound_settings = tbl.skaven
+			sound_settings = horde_sound_settings.skaven
 		}
 	},
 	main_path_standard_skaven_medium_long = {
@@ -8903,7 +8903,7 @@ local tbl_2 = {
 		{
 			"ambush_horde",
 			composition_type = "weave_event_small",
-			sound_settings = tbl.skaven
+			sound_settings = horde_sound_settings.skaven
 		},
 		{
 			"delay",
@@ -8912,7 +8912,7 @@ local tbl_2 = {
 		{
 			"continue_when",
 			duration = 30,
-			condition = function (arg_236_0)
+			condition = function (t)
 				-- function 236
 				return num_spawned_enemies_during_event() < 3
 			end
@@ -8920,7 +8920,7 @@ local tbl_2 = {
 		{
 			"ambush_horde",
 			composition_type = "weave_event_smaller",
-			sound_settings = tbl.skaven
+			sound_settings = horde_sound_settings.skaven
 		},
 		{
 			"delay",
@@ -8929,7 +8929,7 @@ local tbl_2 = {
 		{
 			"continue_when",
 			duration = 30,
-			condition = function (arg_237_0)
+			condition = function (t)
 				-- function 237
 				return num_spawned_enemies_during_event() < 3
 			end
@@ -8937,7 +8937,7 @@ local tbl_2 = {
 		{
 			"ambush_horde",
 			composition_type = "weave_event_medium",
-			sound_settings = tbl.skaven
+			sound_settings = horde_sound_settings.skaven
 		}
 	},
 	main_path_standard_skaven_large_short = {
@@ -8952,7 +8952,7 @@ local tbl_2 = {
 		{
 			"ambush_horde",
 			composition_type = "weave_event_medium",
-			sound_settings = tbl.skaven
+			sound_settings = horde_sound_settings.skaven
 		}
 	},
 	main_path_standard_skaven_large_medium = {
@@ -8967,7 +8967,7 @@ local tbl_2 = {
 		{
 			"ambush_horde",
 			composition_type = "weave_event_medium",
-			sound_settings = tbl.skaven
+			sound_settings = horde_sound_settings.skaven
 		},
 		{
 			"delay",
@@ -8976,7 +8976,7 @@ local tbl_2 = {
 		{
 			"continue_when",
 			duration = 40,
-			condition = function (arg_238_0)
+			condition = function (t)
 				-- function 238
 				return num_spawned_enemies_during_event() < 3
 			end
@@ -8984,7 +8984,7 @@ local tbl_2 = {
 		{
 			"ambush_horde",
 			composition_type = "weave_event_small",
-			sound_settings = tbl.skaven
+			sound_settings = horde_sound_settings.skaven
 		}
 	},
 	main_path_standard_skaven_large_long = {
@@ -8999,7 +8999,7 @@ local tbl_2 = {
 		{
 			"ambush_horde",
 			composition_type = "weave_event_medium",
-			sound_settings = tbl.skaven
+			sound_settings = horde_sound_settings.skaven
 		},
 		{
 			"delay",
@@ -9008,7 +9008,7 @@ local tbl_2 = {
 		{
 			"continue_when",
 			duration = 40,
-			condition = function (arg_239_0)
+			condition = function (t)
 				-- function 239
 				return num_spawned_enemies_during_event() < 3
 			end
@@ -9016,7 +9016,7 @@ local tbl_2 = {
 		{
 			"ambush_horde",
 			composition_type = "weave_event_small",
-			sound_settings = tbl.skaven
+			sound_settings = horde_sound_settings.skaven
 		},
 		{
 			"delay",
@@ -9025,7 +9025,7 @@ local tbl_2 = {
 		{
 			"continue_when",
 			duration = 30,
-			condition = function (arg_240_0)
+			condition = function (t)
 				-- function 240
 				return num_spawned_enemies_during_event() < 3
 			end
@@ -9033,7 +9033,7 @@ local tbl_2 = {
 		{
 			"ambush_horde",
 			composition_type = "weave_event_large",
-			sound_settings = tbl.skaven
+			sound_settings = horde_sound_settings.skaven
 		}
 	},
 	main_path_standard_chaos_small_short = {
@@ -9048,7 +9048,7 @@ local tbl_2 = {
 		{
 			"ambush_horde",
 			composition_type = "weave_event_small_chaos",
-			sound_settings = tbl.chaos
+			sound_settings = horde_sound_settings.chaos
 		}
 	},
 	main_path_standard_chaos_small_medium = {
@@ -9063,7 +9063,7 @@ local tbl_2 = {
 		{
 			"ambush_horde",
 			composition_type = "weave_event_small_chaos",
-			sound_settings = tbl.chaos
+			sound_settings = horde_sound_settings.chaos
 		},
 		{
 			"delay",
@@ -9072,7 +9072,7 @@ local tbl_2 = {
 		{
 			"continue_when",
 			duration = 30,
-			condition = function (arg_241_0)
+			condition = function (t)
 				-- function 241
 				return num_spawned_enemies_during_event() < 3
 			end
@@ -9080,7 +9080,7 @@ local tbl_2 = {
 		{
 			"ambush_horde",
 			composition_type = "weave_event_small_chaos",
-			sound_settings = tbl.chaos
+			sound_settings = horde_sound_settings.chaos
 		}
 	},
 	main_path_standard_chaos_small_long = {
@@ -9095,7 +9095,7 @@ local tbl_2 = {
 		{
 			"ambush_horde",
 			composition_type = "weave_event_small_chaos",
-			sound_settings = tbl.chaos
+			sound_settings = horde_sound_settings.chaos
 		},
 		{
 			"delay",
@@ -9104,7 +9104,7 @@ local tbl_2 = {
 		{
 			"continue_when",
 			duration = 30,
-			condition = function (arg_242_0)
+			condition = function (t)
 				-- function 242
 				return num_spawned_enemies_during_event() < 3
 			end
@@ -9112,7 +9112,7 @@ local tbl_2 = {
 		{
 			"ambush_horde",
 			composition_type = "weave_event_small_chaos",
-			sound_settings = tbl.chaos
+			sound_settings = horde_sound_settings.chaos
 		},
 		{
 			"delay",
@@ -9121,7 +9121,7 @@ local tbl_2 = {
 		{
 			"continue_when",
 			duration = 30,
-			condition = function (arg_243_0)
+			condition = function (t)
 				-- function 243
 				return num_spawned_enemies_during_event() < 3
 			end
@@ -9129,7 +9129,7 @@ local tbl_2 = {
 		{
 			"ambush_horde",
 			composition_type = "weave_event_small_chaos",
-			sound_settings = tbl.chaos
+			sound_settings = horde_sound_settings.chaos
 		}
 	},
 	main_path_standard_chaos_medium_short = {
@@ -9144,7 +9144,7 @@ local tbl_2 = {
 		{
 			"ambush_horde",
 			composition_type = "weave_event_medium_chaos",
-			sound_settings = tbl.chaos
+			sound_settings = horde_sound_settings.chaos
 		}
 	},
 	main_path_standard_chaos_medium_medium = {
@@ -9159,7 +9159,7 @@ local tbl_2 = {
 		{
 			"ambush_horde",
 			composition_type = "weave_event_medium_chaos",
-			sound_settings = tbl.chaos
+			sound_settings = horde_sound_settings.chaos
 		},
 		{
 			"delay",
@@ -9168,7 +9168,7 @@ local tbl_2 = {
 		{
 			"continue_when",
 			duration = 40,
-			condition = function (arg_244_0)
+			condition = function (t)
 				-- function 244
 				return num_spawned_enemies_during_event() < 3
 			end
@@ -9176,7 +9176,7 @@ local tbl_2 = {
 		{
 			"ambush_horde",
 			composition_type = "weave_event_small_chaos",
-			sound_settings = tbl.chaos
+			sound_settings = horde_sound_settings.chaos
 		}
 	},
 	main_path_standard_chaos_medium_long = {
@@ -9191,7 +9191,7 @@ local tbl_2 = {
 		{
 			"ambush_horde",
 			composition_type = "weave_event_medium_chaos",
-			sound_settings = tbl.chaos
+			sound_settings = horde_sound_settings.chaos
 		},
 		{
 			"delay",
@@ -9200,7 +9200,7 @@ local tbl_2 = {
 		{
 			"continue_when",
 			duration = 40,
-			condition = function (arg_245_0)
+			condition = function (t)
 				-- function 245
 				return num_spawned_enemies_during_event() < 3
 			end
@@ -9208,7 +9208,7 @@ local tbl_2 = {
 		{
 			"ambush_horde",
 			composition_type = "weave_event_small_chaos",
-			sound_settings = tbl.chaos
+			sound_settings = horde_sound_settings.chaos
 		},
 		{
 			"delay",
@@ -9217,7 +9217,7 @@ local tbl_2 = {
 		{
 			"continue_when",
 			duration = 30,
-			condition = function (arg_246_0)
+			condition = function (t)
 				-- function 246
 				return num_spawned_enemies_during_event() < 3
 			end
@@ -9225,7 +9225,7 @@ local tbl_2 = {
 		{
 			"ambush_horde",
 			composition_type = "weave_event_medium_chaos",
-			sound_settings = tbl.chaos
+			sound_settings = horde_sound_settings.chaos
 		}
 	},
 	main_path_standard_chaos_large_short = {
@@ -9240,7 +9240,7 @@ local tbl_2 = {
 		{
 			"ambush_horde",
 			composition_type = "weave_event_large_chaos",
-			sound_settings = tbl.chaos
+			sound_settings = horde_sound_settings.chaos
 		}
 	},
 	main_path_standard_chaos_large_medium = {
@@ -9255,7 +9255,7 @@ local tbl_2 = {
 		{
 			"ambush_horde",
 			composition_type = "weave_event_large_chaos",
-			sound_settings = tbl.chaos
+			sound_settings = horde_sound_settings.chaos
 		},
 		{
 			"delay",
@@ -9264,7 +9264,7 @@ local tbl_2 = {
 		{
 			"continue_when",
 			duration = 50,
-			condition = function (arg_247_0)
+			condition = function (t)
 				-- function 247
 				return num_spawned_enemies_during_event() < 3
 			end
@@ -9272,7 +9272,7 @@ local tbl_2 = {
 		{
 			"ambush_horde",
 			composition_type = "weave_event_medium_chaos",
-			sound_settings = tbl.chaos
+			sound_settings = horde_sound_settings.chaos
 		}
 	},
 	main_path_standard_chaos_large_long = {
@@ -9287,7 +9287,7 @@ local tbl_2 = {
 		{
 			"ambush_horde",
 			composition_type = "weave_event_large_chaos",
-			sound_settings = tbl.chaos
+			sound_settings = horde_sound_settings.chaos
 		},
 		{
 			"delay",
@@ -9296,7 +9296,7 @@ local tbl_2 = {
 		{
 			"continue_when",
 			duration = 50,
-			condition = function (arg_248_0)
+			condition = function (t)
 				-- function 248
 				return num_spawned_enemies_during_event() < 3
 			end
@@ -9304,7 +9304,7 @@ local tbl_2 = {
 		{
 			"ambush_horde",
 			composition_type = "weave_event_medium_chaos",
-			sound_settings = tbl.chaos
+			sound_settings = horde_sound_settings.chaos
 		},
 		{
 			"delay",
@@ -9313,7 +9313,7 @@ local tbl_2 = {
 		{
 			"continue_when",
 			duration = 40,
-			condition = function (arg_249_0)
+			condition = function (t)
 				-- function 249
 				return num_spawned_enemies_during_event() < 3
 			end
@@ -9321,7 +9321,7 @@ local tbl_2 = {
 		{
 			"ambush_horde",
 			composition_type = "weave_event_large_chaos",
-			sound_settings = tbl.chaos
+			sound_settings = horde_sound_settings.chaos
 		}
 	},
 	main_path_standard_beastmen_small_short = {
@@ -9336,7 +9336,7 @@ local tbl_2 = {
 		{
 			"ambush_horde",
 			composition_type = "weave_event_small_beastmen",
-			sound_settings = tbl.beastmen
+			sound_settings = horde_sound_settings.beastmen
 		}
 	},
 	main_path_standard_beastmen_small_medium = {
@@ -9351,7 +9351,7 @@ local tbl_2 = {
 		{
 			"ambush_horde",
 			composition_type = "weave_event_small_beastmen",
-			sound_settings = tbl.beastmen
+			sound_settings = horde_sound_settings.beastmen
 		},
 		{
 			"delay",
@@ -9360,7 +9360,7 @@ local tbl_2 = {
 		{
 			"continue_when",
 			duration = 30,
-			condition = function (arg_250_0)
+			condition = function (t)
 				-- function 250
 				return num_spawned_enemies_during_event() < 3
 			end
@@ -9368,7 +9368,7 @@ local tbl_2 = {
 		{
 			"ambush_horde",
 			composition_type = "weave_event_small_beastmen",
-			sound_settings = tbl.beastmen
+			sound_settings = horde_sound_settings.beastmen
 		}
 	},
 	main_path_standard_beastmen_small_long = {
@@ -9383,7 +9383,7 @@ local tbl_2 = {
 		{
 			"ambush_horde",
 			composition_type = "weave_event_small_beastmen",
-			sound_settings = tbl.beastmen
+			sound_settings = horde_sound_settings.beastmen
 		},
 		{
 			"delay",
@@ -9392,7 +9392,7 @@ local tbl_2 = {
 		{
 			"continue_when",
 			duration = 30,
-			condition = function (arg_251_0)
+			condition = function (t)
 				-- function 251
 				return num_spawned_enemies_during_event() < 3
 			end
@@ -9400,7 +9400,7 @@ local tbl_2 = {
 		{
 			"ambush_horde",
 			composition_type = "weave_event_small_beastmen",
-			sound_settings = tbl.beastmen
+			sound_settings = horde_sound_settings.beastmen
 		},
 		{
 			"delay",
@@ -9409,7 +9409,7 @@ local tbl_2 = {
 		{
 			"continue_when",
 			duration = 30,
-			condition = function (arg_252_0)
+			condition = function (t)
 				-- function 252
 				return num_spawned_enemies_during_event() < 3
 			end
@@ -9417,7 +9417,7 @@ local tbl_2 = {
 		{
 			"ambush_horde",
 			composition_type = "weave_event_small_beastmen",
-			sound_settings = tbl.beastmen
+			sound_settings = horde_sound_settings.beastmen
 		}
 	},
 	main_path_standard_beastmen_medium_short = {
@@ -9432,7 +9432,7 @@ local tbl_2 = {
 		{
 			"ambush_horde",
 			composition_type = "weave_event_medium_beastmen",
-			sound_settings = tbl.beastmen
+			sound_settings = horde_sound_settings.beastmen
 		}
 	},
 	main_path_standard_beastmen_medium_medium = {
@@ -9447,7 +9447,7 @@ local tbl_2 = {
 		{
 			"ambush_horde",
 			composition_type = "weave_event_medium_beastmen",
-			sound_settings = tbl.beastmen
+			sound_settings = horde_sound_settings.beastmen
 		},
 		{
 			"delay",
@@ -9456,7 +9456,7 @@ local tbl_2 = {
 		{
 			"continue_when",
 			duration = 40,
-			condition = function (arg_253_0)
+			condition = function (t)
 				-- function 253
 				return num_spawned_enemies_during_event() < 3
 			end
@@ -9464,7 +9464,7 @@ local tbl_2 = {
 		{
 			"ambush_horde",
 			composition_type = "weave_event_small_beastmen",
-			sound_settings = tbl.beastmen
+			sound_settings = horde_sound_settings.beastmen
 		}
 	},
 	main_path_standard_beastmen_medium_long = {
@@ -9479,7 +9479,7 @@ local tbl_2 = {
 		{
 			"ambush_horde",
 			composition_type = "weave_event_medium_beastmen",
-			sound_settings = tbl.beastmen
+			sound_settings = horde_sound_settings.beastmen
 		},
 		{
 			"delay",
@@ -9488,7 +9488,7 @@ local tbl_2 = {
 		{
 			"continue_when",
 			duration = 40,
-			condition = function (arg_254_0)
+			condition = function (t)
 				-- function 254
 				return num_spawned_enemies_during_event() < 3
 			end
@@ -9496,7 +9496,7 @@ local tbl_2 = {
 		{
 			"ambush_horde",
 			composition_type = "weave_event_small_beastmen",
-			sound_settings = tbl.beastmen
+			sound_settings = horde_sound_settings.beastmen
 		},
 		{
 			"delay",
@@ -9505,7 +9505,7 @@ local tbl_2 = {
 		{
 			"continue_when",
 			duration = 30,
-			condition = function (arg_255_0)
+			condition = function (t)
 				-- function 255
 				return num_spawned_enemies_during_event() < 3
 			end
@@ -9513,7 +9513,7 @@ local tbl_2 = {
 		{
 			"ambush_horde",
 			composition_type = "weave_event_medium_beastmen",
-			sound_settings = tbl.beastmen
+			sound_settings = horde_sound_settings.beastmen
 		}
 	},
 	main_path_standard_beastmen_large_short = {
@@ -9528,7 +9528,7 @@ local tbl_2 = {
 		{
 			"ambush_horde",
 			composition_type = "weave_event_large_beastmen",
-			sound_settings = tbl.beastmen
+			sound_settings = horde_sound_settings.beastmen
 		}
 	},
 	main_path_standard_beastmen_large_medium = {
@@ -9543,7 +9543,7 @@ local tbl_2 = {
 		{
 			"ambush_horde",
 			composition_type = "weave_event_large_beastmen",
-			sound_settings = tbl.beastmen
+			sound_settings = horde_sound_settings.beastmen
 		},
 		{
 			"delay",
@@ -9552,7 +9552,7 @@ local tbl_2 = {
 		{
 			"continue_when",
 			duration = 50,
-			condition = function (arg_256_0)
+			condition = function (t)
 				-- function 256
 				return num_spawned_enemies_during_event() < 3
 			end
@@ -9560,7 +9560,7 @@ local tbl_2 = {
 		{
 			"ambush_horde",
 			composition_type = "weave_event_medium_beastmen",
-			sound_settings = tbl.beastmen
+			sound_settings = horde_sound_settings.beastmen
 		}
 	},
 	main_path_standard_beastmen_large_long = {
@@ -9575,7 +9575,7 @@ local tbl_2 = {
 		{
 			"ambush_horde",
 			composition_type = "weave_event_large_beastmen",
-			sound_settings = tbl.beastmen
+			sound_settings = horde_sound_settings.beastmen
 		},
 		{
 			"delay",
@@ -9584,7 +9584,7 @@ local tbl_2 = {
 		{
 			"continue_when",
 			duration = 50,
-			condition = function (arg_257_0)
+			condition = function (t)
 				-- function 257
 				return num_spawned_enemies_during_event() < 3
 			end
@@ -9592,7 +9592,7 @@ local tbl_2 = {
 		{
 			"ambush_horde",
 			composition_type = "weave_event_medium_beastmen",
-			sound_settings = tbl.beastmen
+			sound_settings = horde_sound_settings.beastmen
 		},
 		{
 			"delay",
@@ -9601,7 +9601,7 @@ local tbl_2 = {
 		{
 			"continue_when",
 			duration = 40,
-			condition = function (arg_258_0)
+			condition = function (t)
 				-- function 258
 				return num_spawned_enemies_during_event() < 3
 			end
@@ -9609,7 +9609,7 @@ local tbl_2 = {
 		{
 			"ambush_horde",
 			composition_type = "weave_event_large_beastmen",
-			sound_settings = tbl.beastmen
+			sound_settings = horde_sound_settings.beastmen
 		}
 	},
 	main_path_standard_mixed_small_long = {
@@ -9624,7 +9624,7 @@ local tbl_2 = {
 		{
 			"ambush_horde",
 			composition_type = "weave_event_small",
-			sound_settings = tbl.skaven
+			sound_settings = horde_sound_settings.skaven
 		},
 		{
 			"delay",
@@ -9633,7 +9633,7 @@ local tbl_2 = {
 		{
 			"continue_when",
 			duration = 30,
-			condition = function (arg_259_0)
+			condition = function (t)
 				-- function 259
 				return num_spawned_enemies_during_event() < 3
 			end
@@ -9641,7 +9641,7 @@ local tbl_2 = {
 		{
 			"ambush_horde",
 			composition_type = "weave_event_small_beastmen",
-			sound_settings = tbl.beastmen
+			sound_settings = horde_sound_settings.beastmen
 		},
 		{
 			"delay",
@@ -9650,7 +9650,7 @@ local tbl_2 = {
 		{
 			"continue_when",
 			duration = 30,
-			condition = function (arg_260_0)
+			condition = function (t)
 				-- function 260
 				return num_spawned_enemies_during_event() < 3
 			end
@@ -9658,7 +9658,7 @@ local tbl_2 = {
 		{
 			"ambush_horde",
 			composition_type = "weave_event_small_chaos",
-			sound_settings = tbl.chaos
+			sound_settings = horde_sound_settings.chaos
 		}
 	},
 	main_path_standard_mixed_medium_medium = {
@@ -9673,12 +9673,12 @@ local tbl_2 = {
 		{
 			"ambush_horde",
 			composition_type = "weave_event_small",
-			sound_settings = tbl.skaven
+			sound_settings = horde_sound_settings.skaven
 		},
 		{
 			"ambush_horde",
 			composition_type = "weave_event_small_chaos",
-			sound_settings = tbl.chaos
+			sound_settings = horde_sound_settings.chaos
 		},
 		{
 			"delay",
@@ -9687,7 +9687,7 @@ local tbl_2 = {
 		{
 			"continue_when",
 			duration = 40,
-			condition = function (arg_261_0)
+			condition = function (t)
 				-- function 261
 				return num_spawned_enemies_during_event() < 3
 			end
@@ -9695,7 +9695,7 @@ local tbl_2 = {
 		{
 			"ambush_horde",
 			composition_type = "weave_event_small_beastmen",
-			sound_settings = tbl.beastmen
+			sound_settings = horde_sound_settings.beastmen
 		}
 	},
 	main_path_standard_mixed_medium_long = {
@@ -9710,7 +9710,7 @@ local tbl_2 = {
 		{
 			"ambush_horde",
 			composition_type = "weave_event_medium_beastmen",
-			sound_settings = tbl.beastmen
+			sound_settings = horde_sound_settings.beastmen
 		},
 		{
 			"delay",
@@ -9719,7 +9719,7 @@ local tbl_2 = {
 		{
 			"continue_when",
 			duration = 40,
-			condition = function (arg_262_0)
+			condition = function (t)
 				-- function 262
 				return num_spawned_enemies_during_event() < 3
 			end
@@ -9727,7 +9727,7 @@ local tbl_2 = {
 		{
 			"ambush_horde",
 			composition_type = "weave_event_medium_chaos",
-			sound_settings = tbl.chaos
+			sound_settings = horde_sound_settings.chaos
 		},
 		{
 			"delay",
@@ -9736,7 +9736,7 @@ local tbl_2 = {
 		{
 			"continue_when",
 			duration = 30,
-			condition = function (arg_263_0)
+			condition = function (t)
 				-- function 263
 				return num_spawned_enemies_during_event() < 3
 			end
@@ -9744,7 +9744,7 @@ local tbl_2 = {
 		{
 			"ambush_horde",
 			composition_type = "weave_event_medium",
-			sound_settings = tbl.skaven
+			sound_settings = horde_sound_settings.skaven
 		}
 	},
 	main_path_standard_mixed_large_medium = {
@@ -9759,12 +9759,12 @@ local tbl_2 = {
 		{
 			"ambush_horde",
 			composition_type = "weave_event_medium_beastmen",
-			sound_settings = tbl.beastmen
+			sound_settings = horde_sound_settings.beastmen
 		},
 		{
 			"ambush_horde",
 			composition_type = "weave_event_small_chaos",
-			sound_settings = tbl.chaos
+			sound_settings = horde_sound_settings.chaos
 		},
 		{
 			"delay",
@@ -9773,7 +9773,7 @@ local tbl_2 = {
 		{
 			"continue_when",
 			duration = 50,
-			condition = function (arg_264_0)
+			condition = function (t)
 				-- function 264
 				return num_spawned_enemies_during_event() < 3
 			end
@@ -9781,7 +9781,7 @@ local tbl_2 = {
 		{
 			"ambush_horde",
 			composition_type = "weave_event_medium",
-			sound_settings = tbl.skaven
+			sound_settings = horde_sound_settings.skaven
 		}
 	},
 	main_path_standard_mixed_large_long = {
@@ -9796,7 +9796,7 @@ local tbl_2 = {
 		{
 			"ambush_horde",
 			composition_type = "weave_event_large_chaos",
-			sound_settings = tbl.chaos
+			sound_settings = horde_sound_settings.chaos
 		},
 		{
 			"delay",
@@ -9805,7 +9805,7 @@ local tbl_2 = {
 		{
 			"continue_when",
 			duration = 50,
-			condition = function (arg_265_0)
+			condition = function (t)
 				-- function 265
 				return num_spawned_enemies_during_event() < 3
 			end
@@ -9813,7 +9813,7 @@ local tbl_2 = {
 		{
 			"ambush_horde",
 			composition_type = "weave_event_medium",
-			sound_settings = tbl.skaven
+			sound_settings = horde_sound_settings.skaven
 		},
 		{
 			"delay",
@@ -9822,7 +9822,7 @@ local tbl_2 = {
 		{
 			"continue_when",
 			duration = 40,
-			condition = function (arg_266_0)
+			condition = function (t)
 				-- function 266
 				return num_spawned_enemies_during_event() < 3
 			end
@@ -9830,7 +9830,7 @@ local tbl_2 = {
 		{
 			"ambush_horde",
 			composition_type = "weave_event_large_beastmen",
-			sound_settings = tbl.beastmen
+			sound_settings = horde_sound_settings.beastmen
 		}
 	},
 	main_path_theme_berzerkers_skaven_short = {
@@ -9845,7 +9845,7 @@ local tbl_2 = {
 		{
 			"ambush_horde",
 			composition_type = "weave_plague_monks_small",
-			sound_settings = tbl.skaven
+			sound_settings = horde_sound_settings.skaven
 		}
 	},
 	main_path_theme_berzerkers_skaven_medium = {
@@ -9860,7 +9860,7 @@ local tbl_2 = {
 		{
 			"ambush_horde",
 			composition_type = "weave_plague_monks_small",
-			sound_settings = tbl.skaven
+			sound_settings = horde_sound_settings.skaven
 		},
 		{
 			"delay",
@@ -9869,7 +9869,7 @@ local tbl_2 = {
 		{
 			"continue_when",
 			duration = 20,
-			condition = function (arg_267_0)
+			condition = function (t)
 				-- function 267
 				return num_spawned_enemies_during_event() < 1
 			end
@@ -9877,7 +9877,7 @@ local tbl_2 = {
 		{
 			"ambush_horde",
 			composition_type = "weave_plague_monks_small",
-			sound_settings = tbl.skaven
+			sound_settings = horde_sound_settings.skaven
 		}
 	},
 	main_path_theme_berzerkers_skaven_long = {
@@ -9892,7 +9892,7 @@ local tbl_2 = {
 		{
 			"ambush_horde",
 			composition_type = "weave_plague_monks_small",
-			sound_settings = tbl.skaven
+			sound_settings = horde_sound_settings.skaven
 		},
 		{
 			"delay",
@@ -9901,7 +9901,7 @@ local tbl_2 = {
 		{
 			"continue_when",
 			duration = 20,
-			condition = function (arg_268_0)
+			condition = function (t)
 				-- function 268
 				return num_spawned_enemies_during_event() < 1
 			end
@@ -9909,7 +9909,7 @@ local tbl_2 = {
 		{
 			"ambush_horde",
 			composition_type = "weave_plague_monks_small",
-			sound_settings = tbl.skaven
+			sound_settings = horde_sound_settings.skaven
 		},
 		{
 			"delay",
@@ -9918,7 +9918,7 @@ local tbl_2 = {
 		{
 			"continue_when",
 			duration = 20,
-			condition = function (arg_269_0)
+			condition = function (t)
 				-- function 269
 				return num_spawned_enemies_during_event() < 1
 			end
@@ -9926,7 +9926,7 @@ local tbl_2 = {
 		{
 			"ambush_horde",
 			composition_type = "weave_plague_monks_small",
-			sound_settings = tbl.skaven
+			sound_settings = horde_sound_settings.skaven
 		}
 	},
 	main_path_theme_shields_skaven_short = {
@@ -9941,7 +9941,7 @@ local tbl_2 = {
 		{
 			"ambush_horde",
 			composition_type = "weave_storm_vermin_shields_small",
-			sound_settings = tbl.skaven
+			sound_settings = horde_sound_settings.skaven
 		}
 	},
 	main_path_theme_shields_skaven_medium = {
@@ -9956,7 +9956,7 @@ local tbl_2 = {
 		{
 			"ambush_horde",
 			composition_type = "weave_storm_vermin_shields_small",
-			sound_settings = tbl.skaven
+			sound_settings = horde_sound_settings.skaven
 		},
 		{
 			"delay",
@@ -9965,7 +9965,7 @@ local tbl_2 = {
 		{
 			"continue_when",
 			duration = 30,
-			condition = function (arg_270_0)
+			condition = function (t)
 				-- function 270
 				return num_spawned_enemies_during_event() < 1
 			end
@@ -9973,7 +9973,7 @@ local tbl_2 = {
 		{
 			"ambush_horde",
 			composition_type = "weave_storm_vermin_shields_small",
-			sound_settings = tbl.skaven
+			sound_settings = horde_sound_settings.skaven
 		}
 	},
 	main_path_theme_shields_skaven_long = {
@@ -9988,7 +9988,7 @@ local tbl_2 = {
 		{
 			"ambush_horde",
 			composition_type = "weave_storm_vermin_shields_small",
-			sound_settings = tbl.skaven
+			sound_settings = horde_sound_settings.skaven
 		},
 		{
 			"delay",
@@ -9997,7 +9997,7 @@ local tbl_2 = {
 		{
 			"continue_when",
 			duration = 30,
-			condition = function (arg_271_0)
+			condition = function (t)
 				-- function 271
 				return num_spawned_enemies_during_event() < 1
 			end
@@ -10005,7 +10005,7 @@ local tbl_2 = {
 		{
 			"ambush_horde",
 			composition_type = "weave_storm_vermin_shields_small",
-			sound_settings = tbl.skaven
+			sound_settings = horde_sound_settings.skaven
 		},
 		{
 			"delay",
@@ -10014,7 +10014,7 @@ local tbl_2 = {
 		{
 			"continue_when",
 			duration = 30,
-			condition = function (arg_272_0)
+			condition = function (t)
 				-- function 272
 				return num_spawned_enemies_during_event() < 1
 			end
@@ -10022,7 +10022,7 @@ local tbl_2 = {
 		{
 			"ambush_horde",
 			composition_type = "weave_storm_vermin_shields_medium",
-			sound_settings = tbl.skaven
+			sound_settings = horde_sound_settings.skaven
 		}
 	},
 	main_path_theme_armored_skaven_short = {
@@ -10037,7 +10037,7 @@ local tbl_2 = {
 		{
 			"ambush_horde",
 			composition_type = "weave_storm_vermin_small",
-			sound_settings = tbl.skaven
+			sound_settings = horde_sound_settings.skaven
 		}
 	},
 	main_path_theme_armored_skaven_medium = {
@@ -10052,7 +10052,7 @@ local tbl_2 = {
 		{
 			"ambush_horde",
 			composition_type = "weave_storm_vermin_small",
-			sound_settings = tbl.skaven
+			sound_settings = horde_sound_settings.skaven
 		},
 		{
 			"delay",
@@ -10061,7 +10061,7 @@ local tbl_2 = {
 		{
 			"continue_when",
 			duration = 25,
-			condition = function (arg_273_0)
+			condition = function (t)
 				-- function 273
 				return num_spawned_enemies_during_event() < 1
 			end
@@ -10069,7 +10069,7 @@ local tbl_2 = {
 		{
 			"ambush_horde",
 			composition_type = "weave_storm_vermin_small",
-			sound_settings = tbl.skaven
+			sound_settings = horde_sound_settings.skaven
 		}
 	},
 	main_path_theme_armored_skaven_long = {
@@ -10084,7 +10084,7 @@ local tbl_2 = {
 		{
 			"ambush_horde",
 			composition_type = "weave_storm_vermin_small",
-			sound_settings = tbl.skaven
+			sound_settings = horde_sound_settings.skaven
 		},
 		{
 			"delay",
@@ -10093,7 +10093,7 @@ local tbl_2 = {
 		{
 			"continue_when",
 			duration = 25,
-			condition = function (arg_274_0)
+			condition = function (t)
 				-- function 274
 				return num_spawned_enemies_during_event() < 1
 			end
@@ -10101,7 +10101,7 @@ local tbl_2 = {
 		{
 			"ambush_horde",
 			composition_type = "weave_storm_vermin_small",
-			sound_settings = tbl.skaven
+			sound_settings = horde_sound_settings.skaven
 		},
 		{
 			"delay",
@@ -10110,7 +10110,7 @@ local tbl_2 = {
 		{
 			"continue_when",
 			duration = 25,
-			condition = function (arg_275_0)
+			condition = function (t)
 				-- function 275
 				return num_spawned_enemies_during_event() < 1
 			end
@@ -10118,7 +10118,7 @@ local tbl_2 = {
 		{
 			"ambush_horde",
 			composition_type = "weave_storm_vermin_medium",
-			sound_settings = tbl.skaven
+			sound_settings = horde_sound_settings.skaven
 		}
 	},
 	main_path_theme_vanilla_chaos_short = {
@@ -10133,7 +10133,7 @@ local tbl_2 = {
 		{
 			"ambush_horde",
 			composition_type = "weave_chaos_raiders_small",
-			sound_settings = tbl.chaos
+			sound_settings = horde_sound_settings.chaos
 		}
 	},
 	main_path_theme_vanilla_chaos_medium = {
@@ -10148,7 +10148,7 @@ local tbl_2 = {
 		{
 			"ambush_horde",
 			composition_type = "weave_chaos_raiders_small",
-			sound_settings = tbl.chaos
+			sound_settings = horde_sound_settings.chaos
 		},
 		{
 			"delay",
@@ -10157,7 +10157,7 @@ local tbl_2 = {
 		{
 			"continue_when",
 			duration = 25,
-			condition = function (arg_276_0)
+			condition = function (t)
 				-- function 276
 				return num_spawned_enemies_during_event() < 1
 			end
@@ -10165,7 +10165,7 @@ local tbl_2 = {
 		{
 			"ambush_horde",
 			composition_type = "weave_chaos_raiders_small",
-			sound_settings = tbl.chaos
+			sound_settings = horde_sound_settings.chaos
 		}
 	},
 	main_path_theme_vanilla_chaos_long = {
@@ -10180,7 +10180,7 @@ local tbl_2 = {
 		{
 			"ambush_horde",
 			composition_type = "weave_chaos_raiders_small",
-			sound_settings = tbl.chaos
+			sound_settings = horde_sound_settings.chaos
 		},
 		{
 			"delay",
@@ -10189,7 +10189,7 @@ local tbl_2 = {
 		{
 			"continue_when",
 			duration = 25,
-			condition = function (arg_277_0)
+			condition = function (t)
 				-- function 277
 				return num_spawned_enemies_during_event() < 1
 			end
@@ -10197,7 +10197,7 @@ local tbl_2 = {
 		{
 			"ambush_horde",
 			composition_type = "weave_chaos_raiders_medium",
-			sound_settings = tbl.chaos
+			sound_settings = horde_sound_settings.chaos
 		},
 		{
 			"delay",
@@ -10206,7 +10206,7 @@ local tbl_2 = {
 		{
 			"continue_when",
 			duration = 25,
-			condition = function (arg_278_0)
+			condition = function (t)
 				-- function 278
 				return num_spawned_enemies_during_event() < 1
 			end
@@ -10214,7 +10214,7 @@ local tbl_2 = {
 		{
 			"ambush_horde",
 			composition_type = "weave_chaos_raiders_small",
-			sound_settings = tbl.chaos
+			sound_settings = horde_sound_settings.chaos
 		}
 	},
 	main_path_theme_berzerkers_chaos_short = {
@@ -10229,7 +10229,7 @@ local tbl_2 = {
 		{
 			"ambush_horde",
 			composition_type = "weave_chaos_berzerkers_small",
-			sound_settings = tbl.chaos
+			sound_settings = horde_sound_settings.chaos
 		}
 	},
 	main_path_theme_berzerkers_chaos_medium = {
@@ -10244,7 +10244,7 @@ local tbl_2 = {
 		{
 			"ambush_horde",
 			composition_type = "weave_chaos_berzerkers_small",
-			sound_settings = tbl.chaos
+			sound_settings = horde_sound_settings.chaos
 		},
 		{
 			"delay",
@@ -10253,7 +10253,7 @@ local tbl_2 = {
 		{
 			"continue_when",
 			duration = 20,
-			condition = function (arg_279_0)
+			condition = function (t)
 				-- function 279
 				return num_spawned_enemies_during_event() < 1
 			end
@@ -10261,7 +10261,7 @@ local tbl_2 = {
 		{
 			"ambush_horde",
 			composition_type = "weave_chaos_berzerkers_small",
-			sound_settings = tbl.chaos
+			sound_settings = horde_sound_settings.chaos
 		}
 	},
 	main_path_theme_berzerkers_chaos_long = {
@@ -10276,7 +10276,7 @@ local tbl_2 = {
 		{
 			"ambush_horde",
 			composition_type = "weave_chaos_berzerkers_small",
-			sound_settings = tbl.chaos
+			sound_settings = horde_sound_settings.chaos
 		},
 		{
 			"delay",
@@ -10285,7 +10285,7 @@ local tbl_2 = {
 		{
 			"continue_when",
 			duration = 20,
-			condition = function (arg_280_0)
+			condition = function (t)
 				-- function 280
 				return num_spawned_enemies_during_event() < 1
 			end
@@ -10293,7 +10293,7 @@ local tbl_2 = {
 		{
 			"ambush_horde",
 			composition_type = "weave_chaos_berzerkers_small",
-			sound_settings = tbl.chaos
+			sound_settings = horde_sound_settings.chaos
 		},
 		{
 			"delay",
@@ -10302,7 +10302,7 @@ local tbl_2 = {
 		{
 			"continue_when",
 			duration = 20,
-			condition = function (arg_281_0)
+			condition = function (t)
 				-- function 281
 				return num_spawned_enemies_during_event() < 1
 			end
@@ -10310,7 +10310,7 @@ local tbl_2 = {
 		{
 			"ambush_horde",
 			composition_type = "weave_chaos_berzerkers_small",
-			sound_settings = tbl.chaos
+			sound_settings = horde_sound_settings.chaos
 		}
 	},
 	main_path_theme_shields_chaos_short = {
@@ -10325,7 +10325,7 @@ local tbl_2 = {
 		{
 			"ambush_horde",
 			composition_type = "weave_chaos_shields",
-			sound_settings = tbl.chaos
+			sound_settings = horde_sound_settings.chaos
 		}
 	},
 	main_path_theme_shields_chaos_medium = {
@@ -10340,7 +10340,7 @@ local tbl_2 = {
 		{
 			"ambush_horde",
 			composition_type = "weave_chaos_shields",
-			sound_settings = tbl.chaos
+			sound_settings = horde_sound_settings.chaos
 		},
 		{
 			"delay",
@@ -10349,7 +10349,7 @@ local tbl_2 = {
 		{
 			"continue_when",
 			duration = 35,
-			condition = function (arg_282_0)
+			condition = function (t)
 				-- function 282
 				return num_spawned_enemies_during_event() < 2
 			end
@@ -10357,7 +10357,7 @@ local tbl_2 = {
 		{
 			"ambush_horde",
 			composition_type = "weave_chaos_shields",
-			sound_settings = tbl.chaos
+			sound_settings = horde_sound_settings.chaos
 		}
 	},
 	main_path_theme_shields_chaos_long = {
@@ -10372,7 +10372,7 @@ local tbl_2 = {
 		{
 			"ambush_horde",
 			composition_type = "weave_chaos_shields",
-			sound_settings = tbl.chaos
+			sound_settings = horde_sound_settings.chaos
 		},
 		{
 			"delay",
@@ -10381,7 +10381,7 @@ local tbl_2 = {
 		{
 			"continue_when",
 			duration = 35,
-			condition = function (arg_283_0)
+			condition = function (t)
 				-- function 283
 				return num_spawned_enemies_during_event() < 2
 			end
@@ -10389,7 +10389,7 @@ local tbl_2 = {
 		{
 			"ambush_horde",
 			composition_type = "weave_chaos_shields",
-			sound_settings = tbl.chaos
+			sound_settings = horde_sound_settings.chaos
 		},
 		{
 			"delay",
@@ -10398,7 +10398,7 @@ local tbl_2 = {
 		{
 			"continue_when",
 			duration = 35,
-			condition = function (arg_284_0)
+			condition = function (t)
 				-- function 284
 				return num_spawned_enemies_during_event() < 2
 			end
@@ -10406,7 +10406,7 @@ local tbl_2 = {
 		{
 			"ambush_horde",
 			composition_type = "weave_chaos_shields",
-			sound_settings = tbl.chaos
+			sound_settings = horde_sound_settings.chaos
 		}
 	},
 	main_path_theme_armored_chaos_short = {
@@ -10421,7 +10421,7 @@ local tbl_2 = {
 		{
 			"ambush_horde",
 			composition_type = "weave_chaos_warriors_small",
-			sound_settings = tbl.chaos
+			sound_settings = horde_sound_settings.chaos
 		}
 	},
 	main_path_theme_armored_chaos_medium = {
@@ -10436,7 +10436,7 @@ local tbl_2 = {
 		{
 			"ambush_horde",
 			composition_type = "weave_chaos_warriors_small",
-			sound_settings = tbl.chaos
+			sound_settings = horde_sound_settings.chaos
 		},
 		{
 			"delay",
@@ -10445,7 +10445,7 @@ local tbl_2 = {
 		{
 			"continue_when",
 			duration = 25,
-			condition = function (arg_285_0)
+			condition = function (t)
 				-- function 285
 				return num_spawned_enemies_during_event() < 1
 			end
@@ -10453,7 +10453,7 @@ local tbl_2 = {
 		{
 			"ambush_horde",
 			composition_type = "weave_chaos_warriors_small",
-			sound_settings = tbl.chaos
+			sound_settings = horde_sound_settings.chaos
 		}
 	},
 	main_path_theme_armored_chaos_long = {
@@ -10468,7 +10468,7 @@ local tbl_2 = {
 		{
 			"ambush_horde",
 			composition_type = "weave_chaos_warriors_small",
-			sound_settings = tbl.chaos
+			sound_settings = horde_sound_settings.chaos
 		},
 		{
 			"delay",
@@ -10477,7 +10477,7 @@ local tbl_2 = {
 		{
 			"continue_when",
 			duration = 25,
-			condition = function (arg_286_0)
+			condition = function (t)
 				-- function 286
 				return num_spawned_enemies_during_event() < 1
 			end
@@ -10485,7 +10485,7 @@ local tbl_2 = {
 		{
 			"ambush_horde",
 			composition_type = "weave_chaos_warriors_small",
-			sound_settings = tbl.chaos
+			sound_settings = horde_sound_settings.chaos
 		},
 		{
 			"delay",
@@ -10494,7 +10494,7 @@ local tbl_2 = {
 		{
 			"continue_when",
 			duration = 25,
-			condition = function (arg_287_0)
+			condition = function (t)
 				-- function 287
 				return num_spawned_enemies_during_event() < 1
 			end
@@ -10502,7 +10502,7 @@ local tbl_2 = {
 		{
 			"ambush_horde",
 			composition_type = "weave_chaos_warriors",
-			sound_settings = tbl.chaos
+			sound_settings = horde_sound_settings.chaos
 		}
 	},
 	main_path_theme_armored_beastmen_short = {
@@ -10517,7 +10517,7 @@ local tbl_2 = {
 		{
 			"ambush_horde",
 			composition_type = "weave_bestigors",
-			sound_settings = tbl.beastmen
+			sound_settings = horde_sound_settings.beastmen
 		}
 	},
 	main_path_theme_armored_beastmen_medium = {
@@ -10532,7 +10532,7 @@ local tbl_2 = {
 		{
 			"ambush_horde",
 			composition_type = "weave_bestigors_small",
-			sound_settings = tbl.beastmen
+			sound_settings = horde_sound_settings.beastmen
 		},
 		{
 			"delay",
@@ -10541,7 +10541,7 @@ local tbl_2 = {
 		{
 			"continue_when",
 			duration = 20,
-			condition = function (arg_288_0)
+			condition = function (t)
 				-- function 288
 				return num_spawned_enemies_during_event() < 1
 			end
@@ -10549,7 +10549,7 @@ local tbl_2 = {
 		{
 			"ambush_horde",
 			composition_type = "weave_bestigors",
-			sound_settings = tbl.beastmen
+			sound_settings = horde_sound_settings.beastmen
 		}
 	},
 	main_path_theme_armored_beastmen_long = {
@@ -10564,7 +10564,7 @@ local tbl_2 = {
 		{
 			"ambush_horde",
 			composition_type = "weave_bestigors_small",
-			sound_settings = tbl.beastmen
+			sound_settings = horde_sound_settings.beastmen
 		},
 		{
 			"delay",
@@ -10573,7 +10573,7 @@ local tbl_2 = {
 		{
 			"continue_when",
 			duration = 20,
-			condition = function (arg_289_0)
+			condition = function (t)
 				-- function 289
 				return num_spawned_enemies_during_event() < 1
 			end
@@ -10581,7 +10581,7 @@ local tbl_2 = {
 		{
 			"ambush_horde",
 			composition_type = "weave_bestigors",
-			sound_settings = tbl.beastmen
+			sound_settings = horde_sound_settings.beastmen
 		},
 		{
 			"delay",
@@ -10590,7 +10590,7 @@ local tbl_2 = {
 		{
 			"continue_when",
 			duration = 30,
-			condition = function (arg_290_0)
+			condition = function (t)
 				-- function 290
 				return num_spawned_enemies_during_event() < 1
 			end
@@ -10598,7 +10598,7 @@ local tbl_2 = {
 		{
 			"ambush_horde",
 			composition_type = "weave_bestigors",
-			sound_settings = tbl.beastmen
+			sound_settings = horde_sound_settings.beastmen
 		}
 	},
 	main_path_theme_archers_beastmen_short = {
@@ -10613,7 +10613,7 @@ local tbl_2 = {
 		{
 			"ambush_horde",
 			composition_type = "weave_ungor_archers",
-			sound_settings = tbl.beastmen
+			sound_settings = horde_sound_settings.beastmen
 		}
 	},
 	main_path_theme_archers_beastmen_medium = {
@@ -10628,7 +10628,7 @@ local tbl_2 = {
 		{
 			"ambush_horde",
 			composition_type = "weave_ungor_archers",
-			sound_settings = tbl.beastmen
+			sound_settings = horde_sound_settings.beastmen
 		},
 		{
 			"delay",
@@ -10637,7 +10637,7 @@ local tbl_2 = {
 		{
 			"continue_when",
 			duration = 20,
-			condition = function (arg_291_0)
+			condition = function (t)
 				-- function 291
 				return num_spawned_enemies_during_event() < 2
 			end
@@ -10645,7 +10645,7 @@ local tbl_2 = {
 		{
 			"ambush_horde",
 			composition_type = "weave_ungor_archers",
-			sound_settings = tbl.beastmen
+			sound_settings = horde_sound_settings.beastmen
 		}
 	},
 	main_path_theme_archers_beastmen_long = {
@@ -10660,7 +10660,7 @@ local tbl_2 = {
 		{
 			"ambush_horde",
 			composition_type = "weave_ungor_archers",
-			sound_settings = tbl.beastmen
+			sound_settings = horde_sound_settings.beastmen
 		},
 		{
 			"delay",
@@ -10669,7 +10669,7 @@ local tbl_2 = {
 		{
 			"continue_when",
 			duration = 20,
-			condition = function (arg_292_0)
+			condition = function (t)
 				-- function 292
 				return num_spawned_enemies_during_event() < 2
 			end
@@ -10677,7 +10677,7 @@ local tbl_2 = {
 		{
 			"ambush_horde",
 			composition_type = "weave_ungor_archers",
-			sound_settings = tbl.beastmen
+			sound_settings = horde_sound_settings.beastmen
 		},
 		{
 			"delay",
@@ -10686,7 +10686,7 @@ local tbl_2 = {
 		{
 			"continue_when",
 			duration = 30,
-			condition = function (arg_293_0)
+			condition = function (t)
 				-- function 293
 				return num_spawned_enemies_during_event() < 2
 			end
@@ -10694,7 +10694,7 @@ local tbl_2 = {
 		{
 			"ambush_horde",
 			composition_type = "weave_ungor_archers",
-			sound_settings = tbl.beastmen
+			sound_settings = horde_sound_settings.beastmen
 		}
 	},
 	main_path_specials_aoe_skaven_short = {
@@ -13026,7 +13026,7 @@ local tbl_2 = {
 		{
 			"ambush_horde",
 			composition_type = "weave_event_medium",
-			sound_settings = tbl.skaven
+			sound_settings = horde_sound_settings.skaven
 		}
 	},
 	main_path_horde_skaven_medium = {
@@ -13041,7 +13041,7 @@ local tbl_2 = {
 		{
 			"ambush_horde",
 			composition_type = "weave_event_medium",
-			sound_settings = tbl.skaven
+			sound_settings = horde_sound_settings.skaven
 		},
 		{
 			"delay",
@@ -13050,7 +13050,7 @@ local tbl_2 = {
 		{
 			"continue_when",
 			duration = 30,
-			condition = function (arg_294_0)
+			condition = function (t)
 				-- function 294
 				return num_spawned_enemies_during_event() < 3
 			end
@@ -13058,7 +13058,7 @@ local tbl_2 = {
 		{
 			"ambush_horde",
 			composition_type = "weave_event_medium",
-			sound_settings = tbl.skaven
+			sound_settings = horde_sound_settings.skaven
 		}
 	},
 	main_path_horde_skaven_long = {
@@ -13073,7 +13073,7 @@ local tbl_2 = {
 		{
 			"ambush_horde",
 			composition_type = "weave_event_medium",
-			sound_settings = tbl.skaven
+			sound_settings = horde_sound_settings.skaven
 		},
 		{
 			"delay",
@@ -13082,7 +13082,7 @@ local tbl_2 = {
 		{
 			"continue_when",
 			duration = 30,
-			condition = function (arg_295_0)
+			condition = function (t)
 				-- function 295
 				return num_spawned_enemies_during_event() < 3
 			end
@@ -13090,7 +13090,7 @@ local tbl_2 = {
 		{
 			"ambush_horde",
 			composition_type = "weave_event_medium",
-			sound_settings = tbl.skaven
+			sound_settings = horde_sound_settings.skaven
 		},
 		{
 			"delay",
@@ -13099,7 +13099,7 @@ local tbl_2 = {
 		{
 			"continue_when",
 			duration = 30,
-			condition = function (arg_296_0)
+			condition = function (t)
 				-- function 296
 				return num_spawned_enemies_during_event() < 3
 			end
@@ -13107,7 +13107,7 @@ local tbl_2 = {
 		{
 			"ambush_horde",
 			composition_type = "weave_event_medium",
-			sound_settings = tbl.skaven
+			sound_settings = horde_sound_settings.skaven
 		}
 	},
 	trickle_event_skaven_small = {
@@ -13122,7 +13122,7 @@ local tbl_2 = {
 		{
 			"ambush_horde",
 			composition_type = "weave_trickle_skaven_small",
-			sound_settings = tbl.skaven
+			sound_settings = horde_sound_settings.skaven
 		},
 		{
 			"start_event",
@@ -13143,7 +13143,7 @@ local tbl_2 = {
 		{
 			"ambush_horde",
 			composition_type = "weave_trickle_chaos_small",
-			sound_settings = tbl.chaos
+			sound_settings = horde_sound_settings.chaos
 		},
 		{
 			"start_event",
@@ -13162,7 +13162,7 @@ local tbl_2 = {
 		{
 			"ambush_horde",
 			composition_type = "weave_trickle_chaos_medium",
-			sound_settings = tbl.chaos
+			sound_settings = horde_sound_settings.chaos
 		},
 		{
 			"start_event",
@@ -13182,7 +13182,7 @@ local tbl_2 = {
 		{
 			"ambush_horde",
 			composition_type = "weave_trickle_beastmen_small",
-			sound_settings = tbl.beastmen
+			sound_settings = horde_sound_settings.beastmen
 		},
 		{
 			"start_event",
@@ -13206,7 +13206,7 @@ local tbl_2 = {
 		{
 			"ambush_horde",
 			composition_type = "weave_trickle_skaven_small",
-			sound_settings = tbl.skaven
+			sound_settings = horde_sound_settings.skaven
 		},
 		{
 			"delay",
@@ -13215,7 +13215,7 @@ local tbl_2 = {
 		{
 			"ambush_horde",
 			composition_type = "weave_trickle_skaven_armour",
-			sound_settings = tbl.skaven
+			sound_settings = horde_sound_settings.skaven
 		},
 		{
 			"delay",
@@ -13224,7 +13224,7 @@ local tbl_2 = {
 		{
 			"ambush_horde",
 			composition_type = "weave_trickle_chaos_berzerkers",
-			sound_settings = tbl.chaos
+			sound_settings = horde_sound_settings.chaos
 		},
 		{
 			"start_event",
@@ -13243,7 +13243,7 @@ local tbl_2 = {
 		{
 			"ambush_horde",
 			composition_type = "weave_trickle_skaven_small",
-			sound_settings = tbl.skaven
+			sound_settings = horde_sound_settings.skaven
 		},
 		{
 			"delay",
@@ -13252,7 +13252,7 @@ local tbl_2 = {
 		{
 			"ambush_horde",
 			composition_type = "weave_trickle_skaven_armour",
-			sound_settings = tbl.skaven
+			sound_settings = horde_sound_settings.skaven
 		},
 		{
 			"delay",
@@ -13261,7 +13261,7 @@ local tbl_2 = {
 		{
 			"ambush_horde",
 			composition_type = "weave_trickle_chaos_berzerkers",
-			sound_settings = tbl.chaos
+			sound_settings = horde_sound_settings.chaos
 		},
 		{
 			"start_event",
@@ -13280,7 +13280,7 @@ local tbl_2 = {
 		{
 			"ambush_horde",
 			composition_type = "weave_trickle_skaven_small",
-			sound_settings = tbl.skaven
+			sound_settings = horde_sound_settings.skaven
 		},
 		{
 			"delay",
@@ -13289,7 +13289,7 @@ local tbl_2 = {
 		{
 			"ambush_horde",
 			composition_type = "weave_trickle_skaven_armour",
-			sound_settings = tbl.skaven
+			sound_settings = horde_sound_settings.skaven
 		},
 		{
 			"delay",
@@ -13298,7 +13298,7 @@ local tbl_2 = {
 		{
 			"ambush_horde",
 			composition_type = "weave_trickle_beastmen_small",
-			sound_settings = tbl.beastmen
+			sound_settings = horde_sound_settings.beastmen
 		},
 		{
 			"start_event",
@@ -13317,7 +13317,7 @@ local tbl_2 = {
 		{
 			"ambush_horde",
 			composition_type = "weave_spice_berzerker_skaven",
-			sound_settings = tbl.skaven
+			sound_settings = horde_sound_settings.skaven
 		},
 		{
 			"delay",
@@ -13326,7 +13326,7 @@ local tbl_2 = {
 		{
 			"ambush_horde",
 			composition_type = "weave_horde_skaven_large",
-			sound_settings = tbl.skaven
+			sound_settings = horde_sound_settings.skaven
 		},
 		{
 			"delay",
@@ -13335,7 +13335,7 @@ local tbl_2 = {
 		{
 			"ambush_horde",
 			composition_type = "weave_trickle_beastmen_small",
-			sound_settings = tbl.beastmen
+			sound_settings = horde_sound_settings.beastmen
 		},
 		{
 			"start_event",
@@ -13354,7 +13354,7 @@ local tbl_2 = {
 		{
 			"ambush_horde",
 			composition_type = "weave_trickle_skaven_small",
-			sound_settings = tbl.skaven
+			sound_settings = horde_sound_settings.skaven
 		},
 		{
 			"delay",
@@ -13363,7 +13363,7 @@ local tbl_2 = {
 		{
 			"ambush_horde",
 			composition_type = "weave_trickle_skaven_small",
-			sound_settings = tbl.skaven
+			sound_settings = horde_sound_settings.skaven
 		},
 		{
 			"delay",
@@ -13372,7 +13372,7 @@ local tbl_2 = {
 		{
 			"ambush_horde",
 			composition_type = "weave_trickle_skaven_small",
-			sound_settings = tbl.skaven
+			sound_settings = horde_sound_settings.skaven
 		},
 		{
 			"start_event",
@@ -13391,7 +13391,7 @@ local tbl_2 = {
 		{
 			"ambush_horde",
 			composition_type = "weave_trickle_chaos_small",
-			sound_settings = tbl.chaos
+			sound_settings = horde_sound_settings.chaos
 		},
 		{
 			"delay",
@@ -13400,7 +13400,7 @@ local tbl_2 = {
 		{
 			"ambush_horde",
 			composition_type = "weave_trickle_chaos_small",
-			sound_settings = tbl.chaos
+			sound_settings = horde_sound_settings.chaos
 		},
 		{
 			"delay",
@@ -13409,7 +13409,7 @@ local tbl_2 = {
 		{
 			"ambush_horde",
 			composition_type = "weave_trickle_chaos_berzerkers",
-			sound_settings = tbl.chaos
+			sound_settings = horde_sound_settings.chaos
 		},
 		{
 			"start_event",
@@ -13428,7 +13428,7 @@ local tbl_2 = {
 		{
 			"ambush_horde",
 			composition_type = "weave_trickle_chaos_small",
-			sound_settings = tbl.chaos
+			sound_settings = horde_sound_settings.chaos
 		},
 		{
 			"delay",
@@ -13437,7 +13437,7 @@ local tbl_2 = {
 		{
 			"ambush_horde",
 			composition_type = "weave_trickle_chaos_small",
-			sound_settings = tbl.chaos
+			sound_settings = horde_sound_settings.chaos
 		},
 		{
 			"delay",
@@ -13446,7 +13446,7 @@ local tbl_2 = {
 		{
 			"ambush_horde",
 			composition_type = "weave_trickle_chaos_berzerkers",
-			sound_settings = tbl.chaos
+			sound_settings = horde_sound_settings.chaos
 		},
 		{
 			"start_event",
@@ -13465,7 +13465,7 @@ local tbl_2 = {
 		{
 			"ambush_horde",
 			composition_type = "weave_spice_elite_chaos",
-			sound_settings = tbl.chaos
+			sound_settings = horde_sound_settings.chaos
 		},
 		{
 			"delay",
@@ -13474,7 +13474,7 @@ local tbl_2 = {
 		{
 			"ambush_horde",
 			composition_type = "weave_trickle_chaos_berzerkers",
-			sound_settings = tbl.chaos
+			sound_settings = horde_sound_settings.chaos
 		},
 		{
 			"start_event",
@@ -13493,7 +13493,7 @@ local tbl_2 = {
 		{
 			"ambush_horde",
 			composition_type = "weave_spice_elite_chaos",
-			sound_settings = tbl.chaos
+			sound_settings = horde_sound_settings.chaos
 		},
 		{
 			"delay",
@@ -13502,7 +13502,7 @@ local tbl_2 = {
 		{
 			"ambush_horde",
 			composition_type = "weave_trickle_chaos_berzerkers",
-			sound_settings = tbl.chaos
+			sound_settings = horde_sound_settings.chaos
 		},
 		{
 			"start_event",
@@ -13521,7 +13521,7 @@ local tbl_2 = {
 		{
 			"ambush_horde",
 			composition_type = "weave_chaos_warriors",
-			sound_settings = tbl.chaos
+			sound_settings = horde_sound_settings.chaos
 		},
 		{
 			"delay",
@@ -13530,7 +13530,7 @@ local tbl_2 = {
 		{
 			"ambush_horde",
 			composition_type = "weave_boss_skaven_armour",
-			sound_settings = tbl.skaven
+			sound_settings = horde_sound_settings.skaven
 		},
 		{
 			"start_event",
@@ -13549,7 +13549,7 @@ local tbl_2 = {
 		{
 			"ambush_horde",
 			composition_type = "weave_explosive_horde_medium",
-			sound_settings = tbl.skaven
+			sound_settings = horde_sound_settings.skaven
 		},
 		{
 			"start_event",
@@ -13585,9 +13585,9 @@ local tbl_2 = {
 		},
 		{
 			"continue_when",
-			condition = function (arg_297_0)
+			condition = function (t)
 				-- function 297
-				return not (count_event_breed("skaven_rat_ogre") < 1) or not (count_event_breed("skaven_stormfiend") < 1) or not (count_event_breed("chaos_troll") < 1) or count_event_breed("chaos_spawn") < 1
+				return count_event_breed("skaven_rat_ogre") < 1 and count_event_breed("skaven_stormfiend") < 1 and count_event_breed("chaos_troll") < 1 and count_event_breed("chaos_spawn") < 1
 			end
 		},
 		{
@@ -13627,7 +13627,7 @@ local tbl_2 = {
 		{
 			"continue_when",
 			duration = 80,
-			condition = function (arg_298_0)
+			condition = function (t)
 				-- function 298
 				return num_spawned_enemies() < 3
 			end
@@ -13645,7 +13645,7 @@ local tbl_2 = {
 		{
 			"continue_when",
 			duration = 80,
-			condition = function (arg_299_0)
+			condition = function (t)
 				-- function 299
 				return num_spawned_enemies() < 3
 			end
@@ -13681,7 +13681,7 @@ local tbl_2 = {
 		{
 			"continue_when",
 			duration = 80,
-			condition = function (arg_300_0)
+			condition = function (t)
 				-- function 300
 				return num_spawned_enemies() < 3
 			end
@@ -13705,7 +13705,7 @@ local tbl_2 = {
 		{
 			"continue_when",
 			duration = 80,
-			condition = function (arg_301_0)
+			condition = function (t)
 				-- function 301
 				return num_spawned_enemies() < 2
 			end
@@ -13735,7 +13735,7 @@ local tbl_2 = {
 		{
 			"continue_when",
 			duration = 80,
-			condition = function (arg_302_0)
+			condition = function (t)
 				-- function 302
 				return num_spawned_enemies() < 3
 			end
@@ -13753,7 +13753,7 @@ local tbl_2 = {
 		{
 			"continue_when",
 			duration = 80,
-			condition = function (arg_303_0)
+			condition = function (t)
 				-- function 303
 				return num_spawned_enemies() < 3
 			end
@@ -13783,7 +13783,7 @@ local tbl_2 = {
 		{
 			"continue_when",
 			duration = 80,
-			condition = function (arg_304_0)
+			condition = function (t)
 				-- function 304
 				return num_spawned_enemies() < 1
 			end
@@ -13800,5 +13800,5 @@ local tbl_2 = {
 }
 
 return {
-	tbl_2
+	terror_event_blueprints
 }

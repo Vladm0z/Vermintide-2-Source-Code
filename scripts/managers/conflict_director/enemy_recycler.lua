@@ -3,41 +3,41 @@
 EnemyRecycler = class(EnemyRecycler)
 
 local InterestPointUnits = InterestPointUnits
-local POSITION_LOOKUP = POSITION_LOOKUP
-local alive = Unit.alive
-local num = 1
-local num_2 = 2
-local num_3 = 3
-local num_4 = 4
-local num_5 = 5
-local num_6 = 2
-local num_7 = 5
-local num_8 = 7
-local num_9 = 8
-local num_10 = 9
-local num_11 = 10
-local num_12 = 11
-local num_13 = 1
-local num_14 = 2
-local num_15 = 3
-local num_16 = 4
+local position_lookup = POSITION_LOOKUP
+local unit_alive = Unit.alive
+local U_UNIT = 1
+local U_BREED_NAME = 2
+local U_POSITION = 3
+local U_ROTATION = 4
+local U_OPTIONAL_DATA = 5
+local AREA_UNITS = 2
+local AREA_PACK_SIZE_OR_EVENT_NAME = 5
+local AREA_TYPE = 7
+local AREA_ROTATION_OR_EVENT_DATA = 8
+local AREA_PACK_MEMBERS = 9
+local ZONE_DATA = 10
+local AREA_ID = 11
+local MP_TRAVEL_DIST = 1
+local MP_BOXED_POS = 2
+local MP_TERROR_EVENT_NAME = 3
+local MP_EVENT_DATA = 4
 
-local function fn(self, arg_1_1)
+local function fast_array_remove(array, index)
 	-- function 1
-	local var_1_0 = self[arg_1_1]
-	local count = #self
+	local value = array[index]
+	local size = #array
 
-	self[arg_1_1] = self[count]
-	self[count] = nil
+	array[index] = array[size]
+	array[size] = nil
 
-	return var_1_0
+	return value
 end
 
-EnemyRecycler.init = function (self, arg_2_1, arg_2_2, arg_2_3, arg_2_4, arg_2_5, arg_2_6, arg_2_7, arg_2_8)
+EnemyRecycler.init = function (self, world, nav_world, pos_list, pack_sizes, pack_rotations, pack_members, zone_data_list, level_seed)
 	-- function 2
-	self._seed = arg_2_8
-	self.world = arg_2_1
-	self.nav_world = arg_2_2
+	self._seed = level_seed
+	self.world = world
+	self.nav_world = nav_world
 	self.conflict_director = Managers.state.conflict
 	self.group_manager = self.conflict_director.navigation_group_manager
 	self.areas = {}
@@ -50,11 +50,11 @@ EnemyRecycler.init = function (self, arg_2_1, arg_2_2, arg_2_3, arg_2_4, arg_2_5
 	self._roaming_ai = 0
 	self.group_id = 0
 	self.visible = 0
-	self.level = LevelHelper:current_level(arg_2_1)
+	self.level = LevelHelper:current_level(world)
 	self.ai_group_system = Managers.state.entity:system("ai_group_system")
 	self.patrol_analysis = self.conflict_director.patrol_analysis
 
-	self:setup(arg_2_3, arg_2_4, arg_2_5, arg_2_6, arg_2_7)
+	self:setup(pos_list, pack_sizes, pack_rotations, pack_members, zone_data_list)
 end
 
 EnemyRecycler.debug_print_all_unspawned_packs = function (self)
@@ -62,20 +62,20 @@ EnemyRecycler.debug_print_all_unspawned_packs = function (self)
 	local areas = self.areas
 
 	for i = 1, #areas do
-		local var_3_1 = areas[i]
-		local var_3_2 = var_3_1[num_6]
-		local var_3_3 = var_3_1[num_10]
-		local var_3_4 = var_3_1[num_8]
+		local area = areas[i]
+		local units_in_area = area[AREA_UNITS]
+		local pack_members = area[AREA_PACK_MEMBERS]
+		local area_type = area[AREA_TYPE]
 
-		if not ((var_3_2 or not var_3_3) and var_3_4 ~= "pack") then
-			for j = 1, #var_3_3 do
-				local var_3_5 = var_3_3[j]
+		if not units_in_area and pack_members and area_type == "pack" then
+			for j = 1, #pack_members do
+				local breed = pack_members[j]
 
-				if not var_3_5.name then
-					print("Found breed:", var_3_5.name, "in area:", i)
+				if breed.name then
+					print("Found breed:", breed.name, "in area:", i)
 				else
-					for k = 1, #var_3_5 do
-						print("Found sub-breeds:", var_3_5[k].name, "in area:", i)
+					for k = 1, #breed do
+						print("Found sub-breeds:", breed[k].name, "in area:", i)
 					end
 				end
 			end
@@ -83,49 +83,49 @@ EnemyRecycler.debug_print_all_unspawned_packs = function (self)
 	end
 end
 
-EnemyRecycler.get_replacement_breed = function (arg_4_0, arg_4_1)
+EnemyRecycler.get_replacement_breed = function (self, override_breed)
 	-- function 4
-	local var_4_0
+	local replace_breed
 
-	if type(arg_4_1) == "table" then
-		var_4_0 = Breeds[arg_4_1[math.random(1, #arg_4_1)]]
+	if type(override_breed) == "table" then
+		replace_breed = Breeds[override_breed[math.random(1, #override_breed)]]
 	else
-		var_4_0 = Breeds[arg_4_1]
+		replace_breed = Breeds[override_breed]
 	end
 
-	return var_4_0
+	return replace_breed
 end
 
-EnemyRecycler.patch_override_breed = function (self, arg_5_1, arg_5_2)
+EnemyRecycler.patch_override_breed = function (self, breed_name, override_breed)
 	-- function 5
 	local areas = self.areas
 
 	for i = 1, #areas do
-		local var_5_1 = areas[i]
-		local var_5_2 = var_5_1[num_6]
-		local var_5_3 = var_5_1[num_10]
-		local var_5_4 = var_5_1[num_8]
+		local area = areas[i]
+		local units_in_area = area[AREA_UNITS]
+		local pack_members = area[AREA_PACK_MEMBERS]
+		local area_type = area[AREA_TYPE]
 
-		if not ((var_5_2 or not var_5_3) and var_5_4 ~= "pack") then
-			for j = 1, #var_5_3 do
-				local var_5_5 = var_5_3[j]
+		if not units_in_area and pack_members and area_type == "pack" then
+			for j = 1, #pack_members do
+				local breed = pack_members[j]
 
-				if not var_5_5.name then
-					if var_5_5.name == arg_5_1 then
-						local get_replacement_breed = self:get_replacement_breed(arg_5_2)
+				if breed.name then
+					if breed.name == breed_name then
+						local replacement = self:get_replacement_breed(override_breed)
 
-						var_5_3[j] = get_replacement_breed
+						pack_members[j] = replacement
 
-						print("Replacing breed:", arg_5_1, "with:", get_replacement_breed.name, "in area:", i)
+						print("Replacing breed:", breed_name, "with:", replacement.name, "in area:", i)
 					end
 				else
-					for k = 1, #var_5_5 do
-						if var_5_5[k].name == arg_5_1 then
-							local get_replacement_breed_2 = self:get_replacement_breed(arg_5_2)
+					for k = 1, #breed do
+						if breed[k].name == breed_name then
+							local replacement = self:get_replacement_breed(override_breed)
 
-							var_5_5[k] = get_replacement_breed_2
+							breed[k] = replacement
 
-							print("Replacing sub-breed:", arg_5_1, "with:", get_replacement_breed_2.name, "in area:", i)
+							print("Replacing sub-breed:", breed_name, "with:", replacement.name, "in area:", i)
 						end
 					end
 				end
@@ -136,66 +136,70 @@ end
 
 EnemyRecycler._random = function (self, ...)
 	-- function 6
-	local next_random, var_6_1 = Math.next_random(self._seed, ...)
+	local seed, value = Math.next_random(self._seed, ...)
 
-	self._seed = next_random
+	self._seed = seed
 
-	return var_6_1
+	return value
 end
 
-EnemyRecycler._random_dice_roll = function (self, arg_7_1, arg_7_2)
+EnemyRecycler._random_dice_roll = function (self, prob, alias)
 	-- function 7
-	local roll_seeded, var_7_1 = LoadedDice.roll_seeded(arg_7_1, arg_7_2, self._seed)
+	local seed, value = LoadedDice.roll_seeded(prob, alias, self._seed)
 
-	self._seed = roll_seeded
+	self._seed = seed
 
-	return var_7_1
+	return value
 end
 
-EnemyRecycler.set_seed = function (self, arg_8_1)
+EnemyRecycler.set_seed = function (self, seed)
 	-- function 8
-	fassert(not arg_8_1 and type(arg_8_1) == "number", "Bad seed input!")
+	fassert(not not seed and type(seed) == "number", "Bad seed input!")
 
-	self._seed = arg_8_1
+	self._seed = seed
 end
 
-EnemyRecycler.setup_forbidden_zones = function (self, arg_9_1)
+EnemyRecycler.setup_forbidden_zones = function (self, pos)
 	-- function 9
 	self.forbidden_zones = {}
 
 	local forbidden_zones = self.forbidden_zones
 
 	for i = 1, 9 do
-		local str = "forbidden_zone" .. i
+		local zone_name = "forbidden_zone" .. i
 
-		if not Level.has_volume(self.level, str) then
-			forbidden_zones[#forbidden_zones + 1] = str
+		if Level.has_volume(self.level, zone_name) then
+			forbidden_zones[#forbidden_zones + 1] = zone_name
 		end
 	end
 
 	local checkpoint_data = Managers.state.spawn:checkpoint_data()
 
-	if not checkpoint_data then
+	if checkpoint_data then
 		forbidden_zones[#forbidden_zones + 1] = checkpoint_data.no_spawn_volume
 	end
 
-	for j = 20, 39 do
-		local var_9_3 = LAYER_ID_MAPPING[j]
+	for layer_id = 20, 39 do
+		local layer_name = LAYER_ID_MAPPING[layer_id]
 
-		if not (not var_9_3 and NAV_TAG_VOLUME_LAYER_COST_AI[var_9_3] ~= 0) then
-			print("Layer named:", var_9_3, ", id:", j, " has cost 0 --> removed all roaming spawns found inside")
+		if layer_name then
+			local cost = NAV_TAG_VOLUME_LAYER_COST_AI[layer_name]
 
-			forbidden_zones[#forbidden_zones + 1] = var_9_3
+			if cost == 0 then
+				print("Layer named:", layer_name, ", id:", layer_id, " has cost 0 --> removed all roaming spawns found inside")
+
+				forbidden_zones[#forbidden_zones + 1] = layer_name
+			end
 		end
 	end
 
 	self.has_forbidden_zones = #forbidden_zones > 0
 end
 
-local function fn_2(arg_10_0, arg_10_1, arg_10_2, arg_10_3)
+local function is_allowed_spawn(level, volume_list, volume_list_size, pos)
 	-- function 10
-	for i = 1, arg_10_2 do
-		if not Level.is_point_inside_volume(arg_10_0, arg_10_1[i], arg_10_3) then
+	for i = 1, volume_list_size do
+		if Level.is_point_inside_volume(level, volume_list[i], pos) then
 			return false
 		end
 	end
@@ -207,101 +211,101 @@ EnemyRecycler.add_critters = function (self)
 	-- function 11
 	local level_key = Managers.state.game_mode:level_key()
 	local level_name = LevelSettings[level_key].level_name
+	local num_nested_levels = LevelResource.nested_level_count(level_name)
 
-	if LevelResource.nested_level_count(level_name) > 0 then
+	if num_nested_levels > 0 then
 		level_name = LevelResource.nested_level_resource_name(level_name, 0)
 	end
 
-	local unit_indices = LevelResource.unit_indices(level_name, "units/hub_elements/critter_spawner")
+	local unit_ind = LevelResource.unit_indices(level_name, "units/hub_elements/critter_spawner")
 
-	for i, v in ipairs(unit_indices) do
-		local unit_position = LevelResource.unit_position(level_name, v)
-		local unit_data = LevelResource.unit_data(level_name, v)
-		local get = DynamicData.get(unit_data, "breed")
+	for _, id in ipairs(unit_ind) do
+		local pos = LevelResource.unit_position(level_name, id)
+		local unit_data = LevelResource.unit_data(level_name, id)
+		local breed_name = DynamicData.get(unit_data, "breed")
 
-		assert(Breeds[get], "Level '%s' has placed a 'critter_spawner' unit, with a bad breed-name: '%s'", level_name, get)
+		assert(Breeds[breed_name], "Level '%s' has placed a 'critter_spawner' unit, with a bad breed-name: '%s'", level_name, breed_name)
 
-		local var_11_6 = QuaternionBox(Quaternion(Vector3.up(), math.degrees_to_radians(Math.random(1, 360))))
-		local var_11_7 = Vector3Box(unit_position)
+		local boxed_rot = QuaternionBox(Quaternion(Vector3.up(), math.degrees_to_radians(Math.random(1, 360))))
+		local boxed_pos = Vector3Box(pos)
 
-		self:add_breed(get, var_11_7, var_11_6)
+		self:add_breed(breed_name, boxed_pos, boxed_rot)
 	end
 end
 
-EnemyRecycler.boxify_waypoint_table = function (arg_12_0, arg_12_1)
+EnemyRecycler.boxify_waypoint_table = function (self, waypoint_table)
 	-- function 12
-	local tbl = {}
+	local waypoints = {}
 
-	for i = 1, #arg_12_1 do
-		local var_12_1 = arg_12_1[i]
+	for i = 1, #waypoint_table do
+		local w = waypoint_table[i]
 
-		tbl[i] = Vector3Box(var_12_1[1], var_12_1[2], var_12_1[3])
+		waypoints[i] = Vector3Box(w[1], w[2], w[3])
 	end
 
-	return tbl
+	return waypoints
 end
 
 EnemyRecycler.draw_roaming_splines = function (self)
 	-- function 13
-	local var_13_0 = Color(75, 200, 200)
-	local var_13_1 = Color(200, 75, 0)
-	local QuickDrawerStay = QuickDrawerStay
-	local _roaming_splines = self.ai_group_system._roaming_splines
+	local used_color = Color(75, 200, 200)
+	local not_used_color = Color(200, 75, 0)
+	local drawer = QuickDrawerStay
+	local roaming_splines = self.ai_group_system._roaming_splines
 
-	for k, v in pairs(_roaming_splines) do
-		if not v.spline_points then
-			local has_party = v.has_party
+	for spline_id, spline in pairs(roaming_splines) do
+		if spline.spline_points then
+			local is_roaming = spline.has_party
 
-			if not has_party then
-				QuickDrawerStay:sphere(v.has_party:unbox(), 1, Color(0, 255, 0))
+			if is_roaming then
+				QuickDrawerStay:sphere(spline.has_party:unbox(), 1, Color(0, 255, 0))
 				print("FOUND ROAMING!")
 			end
 
-			local flag = not has_party and var_13_0 and var_13_1
+			local color = (not is_roaming or not used_color) and not not not_used_color
 
-			self.ai_group_system:draw_spline(v.spline_points, QuickDrawerStay, flag)
+			self.ai_group_system:draw_spline(spline.spline_points, drawer, color)
 		end
 	end
 end
 
 local SizeOfInterestPoint = SizeOfInterestPoint
-local num_17 = 3
+local min_roaming_patrol_size = 3
 
-EnemyRecycler.inject_roaming_patrol = function (self, arg_14_1, arg_14_2, arg_14_3, arg_14_4, arg_14_5)
+EnemyRecycler.inject_roaming_patrol = function (self, area_position, area_rot, pack_type, pack_size_ip_unit_name, zone_data)
 	-- function 14
-	local var_14_0 = SizeOfInterestPoint[arg_14_4]
+	local amount = SizeOfInterestPoint[pack_size_ip_unit_name]
 
-	if var_14_0 < num_17 then
+	if amount < min_roaming_patrol_size then
 		return
 	end
 
-	local patrol_overrides = BreedPacks[arg_14_3].patrol_overrides
+	local ptrl = BreedPacks[pack_type].patrol_overrides
 
-	if not (not patrol_overrides and not (self:_random() < patrol_overrides.patrol_chance)) then
-		local flag = false
-		local get_closest_roaming_spline, var_14_4, var_14_5 = self.conflict_director.level_analysis:get_closest_roaming_spline(arg_14_1:unbox(), flag)
+	if ptrl and self:_random() < ptrl.patrol_chance then
+		local use_any_pos_on_spline = false
+		local spline_name, spline_data, start_pos = self.conflict_director.level_analysis:get_closest_roaming_spline(area_position:unbox(), use_any_pos_on_spline)
 
-		if not get_closest_roaming_spline then
+		if not spline_name then
 			return false
 		end
 
-		local spline = self.ai_group_system:spline(get_closest_roaming_spline)
+		local spline = self.ai_group_system:spline(spline_name)
 
-		if not spline then
-			var_14_5 = self.patrol_analysis:get_path_point(spline.spline_points, nil, self:_random() * 0.9)
+		if spline then
+			start_pos = self.patrol_analysis:get_path_point(spline.spline_points, nil, self:_random() * 0.9)
 		end
 
-		local get_group_from_position = self.group_manager:get_group_from_position(var_14_5)
-		local var_14_8 = BreedPacksBySize[arg_14_3][var_14_0]
-		local prob = var_14_8.prob
-		local alias = var_14_8.alias
-		local _random_dice_roll = self:_random_dice_roll(prob, alias)
-		local var_14_12 = var_14_8.packs[_random_dice_roll]
-		local var_14_13 = Vector3Box(var_14_5)
-		local waypoints = var_14_4.waypoints
+		local zone = self.group_manager:get_group_from_position(start_pos)
+		local pack_data = BreedPacksBySize[pack_type][amount]
+		local prob, alias = pack_data.prob, pack_data.alias
+		local pack_index = self:_random_dice_roll(prob, alias)
+		local pack = pack_data.packs[pack_index]
+		local spline_start_position = Vector3Box(start_pos)
+		local waypoints = spline_data.waypoints
 
-		if not spline then
-			spline.has_party = var_14_13
+		if spline then
+			spline.has_party = spline_start_position
 		end
 
 		local boxify_waypoint_table
@@ -316,34 +320,37 @@ EnemyRecycler.inject_roaming_patrol = function (self, arg_14_1, arg_14_2, arg_14
 
 		boxify_waypoint_table = nil
 
+		local spline_waypoints = boxify_waypoint_table
+
 		::label_14_0::
 
-		local tbl = {
+		local event_data = {
 			spline_type = "roaming",
-			optional_pos = var_14_13,
-			pack_type = arg_14_3,
-			spline_name = get_closest_roaming_spline,
-			pack = var_14_12,
-			spline_way_points = boxify_waypoint_table,
-			zone_data = arg_14_5
+			optional_pos = spline_start_position,
+			pack_type = pack_type,
+			spline_name = spline_name,
+			pack = pack,
+			spline_way_points = spline_waypoints,
+			zone_data = zone_data
 		}
-
-		return {
-			var_14_13,
+		local area = {
+			spline_start_position,
 			false,
 			0,
 			0,
 			"roaming_patrol",
-			get_group_from_position,
+			zone,
 			"event",
-			tbl
+			event_data
 		}
+
+		return area
 	end
 
 	return false
 end
 
-EnemyRecycler.setup = function (self, arg_15_1, arg_15_2, arg_15_3, arg_15_4, arg_15_5)
+EnemyRecycler.setup = function (self, pos_list, pack_sizes, pack_rotations, pack_members, zone_data_list)
 	-- function 15
 	self.unique_area_id = 0
 
@@ -351,63 +358,63 @@ EnemyRecycler.setup = function (self, arg_15_1, arg_15_2, arg_15_3, arg_15_4, ar
 	self:setup_forbidden_zones()
 
 	local areas = self.areas
-	local current_level_settings = LevelHelper:current_level_settings()
-	local num = 1
-	local forbidden_zones = self.forbidden_zones
-	local count = #self.forbidden_zones
+	local level_settings = LevelHelper:current_level_settings()
+	local k = 1
+	local volume_list = self.forbidden_zones
+	local volume_list_size = #self.forbidden_zones
 	local level = self.level
 	local nav_world = self.nav_world
 	local nav_tag_volume_handler = self.conflict_director.nav_tag_volume_handler
-	local flag = not not script_data.ai_roaming_patrols_disabled or self.conflict_director.level_analysis.patrol_waypoints
+	local roaming_patrols_allowed = not script_data.ai_roaming_patrols_disabled and not not self.conflict_director.level_analysis.patrol_waypoints
 
 	if not CurrentConflictSettings.roaming.disabled then
-		for i = 1, #arg_15_1 do
-			local var_15_9 = arg_15_1[i]
-			local var_15_10 = arg_15_2[i]
-			local var_15_11 = arg_15_3[i]
-			local var_15_12 = arg_15_4[i]
-			local var_15_13 = arg_15_5[i]
-			local unbox = var_15_9:unbox()
-			local flag_2 = true
-			local get_group_from_position = self.group_manager:get_group_from_position(unbox)
+		for i = 1, #pos_list do
+			local area_position = pos_list[i]
+			local pack_size = pack_sizes[i]
+			local area_rot = pack_rotations[i]
+			local members = pack_members[i]
+			local zone_data = zone_data_list[i]
+			local pos = area_position:unbox()
+			local spawn = true
+			local zone = self.group_manager:get_group_from_position(pos)
 
-			if not fn_2(level, forbidden_zones, count, unbox) then
-				flag_2 = false
-			elseif NavTagVolumeUtils.inside_level_volume_layer(level, nav_tag_volume_handler, unbox, "NO_SPAWN") or not NavTagVolumeUtils.inside_level_volume_layer(level, nav_tag_volume_handler, unbox, "NO_BOTS_NO_SPAWN") then
-				flag_2 = false
-			elseif not flag then
-				local inject_roaming_patrol = self:inject_roaming_patrol(var_15_9, var_15_11, var_15_12.type, var_15_10, var_15_13)
+			if not is_allowed_spawn(level, volume_list, volume_list_size, pos) then
+				spawn = false
+			elseif NavTagVolumeUtils.inside_level_volume_layer(level, nav_tag_volume_handler, pos, "NO_SPAWN") or NavTagVolumeUtils.inside_level_volume_layer(level, nav_tag_volume_handler, pos, "NO_BOTS_NO_SPAWN") then
+				spawn = false
+			elseif roaming_patrols_allowed then
+				local area = self:inject_roaming_patrol(area_position, area_rot, members.type, pack_size, zone_data)
 
-				if not inject_roaming_patrol then
-					areas[num] = inject_roaming_patrol
-					num = num + 1
-					flag_2 = false
+				if area then
+					areas[k] = area
+					k = k + 1
+					spawn = false
 				end
 			end
 
-			fassert(var_15_10, "Fatal error, missing interest point unit")
+			fassert(pack_size, "Fatal error, missing interest point unit")
 
-			if not flag_2 then
-				areas[num] = {
-					var_15_9,
+			if spawn then
+				areas[k] = {
+					area_position,
 					false,
 					0,
 					0,
-					var_15_10,
-					get_group_from_position,
+					pack_size,
+					zone,
 					"pack",
-					var_15_11,
-					var_15_12,
-					var_15_13
+					area_rot,
+					members,
+					zone_data
 				}
-				num = num + 1
+				k = k + 1
 			end
 		end
 
-		self.unique_area_id = num
+		self.unique_area_id = k
 	end
 
-	if not (CurrentConflictSettings.roaming.disabled or script_data.ai_critter_spawning_disabled) then
+	if not CurrentConflictSettings.roaming.disabled and not script_data.ai_critter_spawning_disabled then
 		self:add_critters()
 	end
 end
@@ -417,12 +424,13 @@ EnemyRecycler.reset_areas = function (self)
 	local areas = self.areas
 
 	for i = 1, #areas do
-		local var_16_1 = areas[i]
-		local var_16_2 = var_16_1[num_8]
-		local var_16_3 = var_16_1[num_6]
+		local area = areas[i]
+		local area_type = area[AREA_TYPE]
+		local units_in_area = area[AREA_UNITS]
+		local area_is_activated = not not units_in_area and area_type ~= "pack" or units_in_area[1][1] ~= nil
 
-		if not (not var_16_3 and var_16_2 ~= "pack" and var_16_3[1][1] ~= nil) then
-			self:deactivate_area(var_16_1)
+		if area_is_activated then
+			self:deactivate_area(area)
 		end
 
 		areas[i] = nil
@@ -430,321 +438,363 @@ EnemyRecycler.reset_areas = function (self)
 
 	local shutdown_areas = self.shutdown_areas
 
-	for j = 1, #shutdown_areas do
-		shutdown_areas[j] = nil
+	for i = 1, #shutdown_areas do
+		shutdown_areas[i] = nil
 	end
 
 	local inside_areas = self.inside_areas
 
-	for k = 1, #inside_areas do
-		inside_areas[k] = nil
+	for i = 1, #inside_areas do
+		inside_areas[i] = nil
 	end
 
 	table.clear(self.main_path_events)
 end
 
-EnemyRecycler.update = function (self, arg_17_1, arg_17_2, arg_17_3, arg_17_4, arg_17_5, arg_17_6)
+EnemyRecycler.update = function (self, t, dt, player_positions, threat_population, player_areas, use_player_areas)
 	-- function 17
-	self:_update_roaming_spawning(arg_17_1, arg_17_3, arg_17_4, arg_17_5, arg_17_6)
-	self.ai_group_system:prepare_update_recycler(arg_17_3, arg_17_5, arg_17_6)
+	self:_update_roaming_spawning(t, player_positions, threat_population, player_areas, use_player_areas)
+	self.ai_group_system:prepare_update_recycler(player_positions, player_areas, use_player_areas)
 end
 
-EnemyRecycler.update_main_path_events = function (self, arg_18_1)
+EnemyRecycler.update_main_path_events = function (self, t)
 	-- function 18
-	if not self.current_main_path_event_id and not script_data.ai_boss_spawning_disabled then
+	if not self.current_main_path_event_id or script_data.ai_boss_spawning_disabled then
 		return
 	end
 
 	if self.main_path_info.ahead_travel_dist >= self.current_main_path_event_activation_dist then
-		local current_main_path_event_id = self.current_main_path_event_id
-		local main_path_events = self.main_path_events
-		local var_18_2 = main_path_events[current_main_path_event_id]
-		local var_18_3 = var_18_2[num_15]
-		local var_18_4 = var_18_2[num_14]
-		local var_18_5 = var_18_2[num_16]
-		local var_18_6
+		local id = self.current_main_path_event_id
+		local events = self.main_path_events
+		local event = events[id]
+		local event_name = event[MP_TERROR_EVENT_NAME]
+		local pos = event[MP_BOXED_POS]
+		local event_data = event[MP_EVENT_DATA]
+		local map_section
 
-		if not var_18_5 then
-			local gizmo_unit = var_18_5.gizmo_unit
+		if event_data then
+			local gizmo_unit = event_data.gizmo_unit
 
-			if not gizmo_unit then
-				var_18_6 = Unit.get_data(gizmo_unit, "map_section")
+			if gizmo_unit then
+				map_section = Unit.get_data(gizmo_unit, "map_section")
 			end
 
-			var_18_5.optional_pos = var_18_4
-			var_18_5.map_section = var_18_6
+			event_data.optional_pos = pos
+			event_data.map_section = map_section
 		end
 
-		print("main path terror event triggered:", var_18_3)
-		TerrorEventMixer.start_event(var_18_3, var_18_5)
+		print("main path terror event triggered:", event_name)
+		TerrorEventMixer.start_event(event_name, event_data)
 
-		local num = current_main_path_event_id + 1
-		local var_18_9 = main_path_events[num]
+		id = id + 1
+		event = events[id]
 
-		if not var_18_9 then
-			self.current_main_path_event_id = num
-			self.current_main_path_event_activation_dist = var_18_9[num_13]
+		if event then
+			self.current_main_path_event_id = id
+			self.current_main_path_event_activation_dist = event[MP_TRAVEL_DIST]
 		else
 			self.current_main_path_event_id = nil
 		end
 	end
 end
 
-EnemyRecycler.spawn_interest_point = function (arg_19_0, arg_19_1, arg_19_2, arg_19_3, arg_19_4, arg_19_5, arg_19_6)
+EnemyRecycler.spawn_interest_point = function (self, unit_name, position, do_spawn, angle, pack_members, zone_data)
 	-- function 19
-	local tbl = {
+	local extension_init_data = {
 		ai_interest_point_system = {
 			recycler = true,
-			do_spawn = arg_19_3,
-			pack_members = arg_19_5,
-			zone_data = arg_19_6
+			do_spawn = do_spawn,
+			pack_members = pack_members,
+			zone_data = zone_data
 		}
 	}
-	local var_19_1 = Quaternion(Vector3.up(), arg_19_4)
-	local spawn_network_unit = Managers.state.unit_spawner:spawn_network_unit(arg_19_1, "interest_point", tbl, arg_19_2:unbox(), var_19_1)
+	local rot = Quaternion(Vector3.up(), angle)
+	local unit = Managers.state.unit_spawner:spawn_network_unit(unit_name, "interest_point", extension_init_data, position:unbox(), rot)
 
-	assert(spawn_network_unit, "Bad interest point, not found")
+	assert(unit, "Bad interest point, not found")
 
-	return spawn_network_unit
+	return unit
 end
 
-EnemyRecycler.add_breed = function (self, arg_20_1, arg_20_2, arg_20_3, arg_20_4)
+EnemyRecycler.add_breed = function (self, breed_name, boxed_pos, boxed_rot, optional_data)
 	-- function 20
 	self.unique_area_id = self.unique_area_id + 1
 
-	local tbl = {
-		[2] = arg_20_1,
-		[3] = arg_20_2,
-		[4] = arg_20_3,
-		[5] = arg_20_4
+	local unit_data = {
+		[2] = breed_name,
+		[3] = boxed_pos,
+		[4] = boxed_rot,
+		[5] = optional_data
 	}
-	local tbl_2 = {
-		tbl
+	local unit_list = {
+		unit_data
 	}
-	local get_group_from_position = self.group_manager:get_group_from_position(arg_20_2:unbox())
+	local zone = self.group_manager:get_group_from_position(boxed_pos:unbox())
 
 	self.areas[#self.areas + 1] = {
-		arg_20_2,
-		tbl_2,
+		boxed_pos,
+		unit_list,
 		0,
 		0,
 		false,
-		get_group_from_position,
+		zone,
 		"breed"
 	}
 end
 
-EnemyRecycler.breed_spawned_callback = function (arg_21_0, arg_21_1, arg_21_2)
+EnemyRecycler.breed_spawned_callback = function (ai_unit, breed, optional_data)
 	-- function 21
-	local dead_breed_data = arg_21_2.dead_breed_data
+	local unit_data = optional_data.dead_breed_data
 
-	BREED_DIE_LOOKUP[arg_21_0] = {
+	BREED_DIE_LOOKUP[ai_unit] = {
 		EnemyRecycler.cleanup_dead_breed,
-		dead_breed_data
+		unit_data
 	}
 end
 
-EnemyRecycler.cleanup_dead_breed = function (arg_22_0, arg_22_1)
+EnemyRecycler.cleanup_dead_breed = function (ai_unit, unit_data)
 	-- function 22
-	arg_22_1[num] = nil
+	unit_data[U_UNIT] = nil
 end
 
-EnemyRecycler.activate_area = function (self, arg_23_1, arg_23_2)
+EnemyRecycler.activate_area = function (self, area, threat_population)
 	-- function 23
-	local num_12 = 2
-	local var_23_1 = arg_23_1[num_6]
-	local var_23_2 = arg_23_1[num_8]
+	local INDEX_UNITLIST = 2
+	local units_in_area = area[AREA_UNITS]
+	local area_type = area[AREA_TYPE]
 
-	if not var_23_1 then
-		if var_23_2 == "pack" then
-			if arg_23_2 == 0 then
+	if not units_in_area then
+		if area_type == "pack" then
+			if threat_population == 0 then
 				return true
 			else
-				local var_23_3 = arg_23_1[num_7]
-				local var_23_4 = arg_23_1[num_10]
-				local var_23_5 = arg_23_1[num_11]
-				local var_23_6 = arg_23_1[1]
-				local flag = true
-				local spawn_interest_point = self:spawn_interest_point(var_23_3, var_23_6, flag, arg_23_1[num_9], var_23_4, var_23_5)
+				local unit_name = area[AREA_PACK_SIZE_OR_EVENT_NAME]
+				local pack_members = area[AREA_PACK_MEMBERS]
+				local zone_data = area[ZONE_DATA]
+				local position = area[1]
+				local do_spawn_yes = true
+				local interest_point_unit = self:spawn_interest_point(unit_name, position, do_spawn_yes, area[AREA_ROTATION_OR_EVENT_DATA], pack_members, zone_data)
+				local units_in_area = {}
 
-				arg_23_1[num_12] = {
-					{
-						spawn_interest_point,
-						var_23_3,
-						var_23_6
-					}
+				units_in_area[1] = {
+					interest_point_unit,
+					unit_name,
+					position
 				}
+				area[INDEX_UNITLIST] = units_in_area
 			end
-		elseif var_23_2 == "event" then
-			local var_23_9 = arg_23_1[1]
-			local var_23_10 = arg_23_1[num_7]
-			local flag_2 = arg_23_1[num_9] or {
-				optional_pos = var_23_9
+		elseif area_type == "event" then
+			local boxed_pos = area[1]
+			local event_name = area[AREA_PACK_SIZE_OR_EVENT_NAME]
+			local event_data = area[AREA_ROTATION_OR_EVENT_DATA]
+			local data = not not event_data or not not {
+				optional_pos = boxed_pos
 			}
 
-			TerrorEventMixer.start_event(var_23_10, flag_2)
+			TerrorEventMixer.start_event(event_name, data)
 
 			return true
 		end
-	elseif var_23_2 == "pack" then
-		local var_23_12 = var_23_1[1][1]
-		local var_23_13 = var_23_1[1][2]
-		local var_23_14 = var_23_1[1][3]
+	elseif area_type == "pack" then
+		local interest_point_unit = units_in_area[1][1]
+		local interest_point_unit_name = units_in_area[1][2]
+		local interest_point_position = units_in_area[1][3]
 
-		assert(var_23_12 == nil, "lolwut")
+		assert(interest_point_unit == nil, "lolwut")
 
-		local flag_3 = false
-		local spawn_interest_point_2 = self:spawn_interest_point(var_23_13, var_23_14, flag_3, arg_23_1[num_9])
+		local do_spawn_no = false
 
-		var_23_1[1][1] = spawn_interest_point_2
+		interest_point_unit = self:spawn_interest_point(interest_point_unit_name, interest_point_position, do_spawn_no, area[AREA_ROTATION_OR_EVENT_DATA])
+		units_in_area[1][1] = interest_point_unit
 
-		for i = 2, #var_23_1 do
-			local var_23_17 = var_23_1[i]
-			local var_23_18 = var_23_17[num_2]
-			local var_23_19 = var_23_17[num_3]
-			local var_23_20 = var_23_17[num_4]
-			local var_23_21 = var_23_17[num_5]
+		for i = 2, #units_in_area do
+			local unit_data = units_in_area[i]
+			local breed_name = unit_data[U_BREED_NAME]
+			local spawn_pos = unit_data[U_POSITION]
+			local spawn_rot = unit_data[U_ROTATION]
+			local var_23_0 = unit_data[U_OPTIONAL_DATA]
 
-			var_23_21 = var_23_21 or {}
-			var_23_21.ignore_event_counter = true
-			var_23_21.spawned_func = EnemyRecycler.breed_spawned_callback
-			var_23_21.dead_breed_data = var_23_17
+			if not var_23_0 then
+				-- Nothing
+			end
 
-			local var_23_22 = Breeds[var_23_18]
-			local str = "enemy_recycler"
-			local str_2 = "roam"
-			local spawn_queued_unit = self.conflict_director:spawn_queued_unit(var_23_22, var_23_19, var_23_20, str, nil, str_2, var_23_21, nil, var_23_17)
+			var_23_0 = {}
 
-			var_23_17[num] = spawn_queued_unit
+			local optional_data = var_23_0
+
+			::label_23_0::
+
+			optional_data.ignore_event_counter = true
+			optional_data.spawned_func = EnemyRecycler.breed_spawned_callback
+			optional_data.dead_breed_data = unit_data
+
+			local breed = Breeds[breed_name]
+			local spawn_category = "enemy_recycler"
+			local spawn_type = "roam"
+			local id = self.conflict_director:spawn_queued_unit(breed, spawn_pos, spawn_rot, spawn_category, nil, spawn_type, optional_data, nil, unit_data)
+
+			unit_data[U_UNIT] = id
 			self._roaming_ai = self._roaming_ai + 1
 		end
-	elseif var_23_2 == "breed" then
-		local var_23_26 = var_23_1[1]
-		local var_23_27 = var_23_26[num_2]
-		local var_23_28 = var_23_26[num_3]
-		local var_23_29 = var_23_26[num_4]
-		local var_23_30 = var_23_26[num_5]
+	elseif area_type == "breed" then
+		local unit_data = units_in_area[1]
+		local breed_name = unit_data[U_BREED_NAME]
+		local spawn_pos = unit_data[U_POSITION]
+		local spawn_rot = unit_data[U_ROTATION]
+		local var_23_1 = unit_data[U_OPTIONAL_DATA]
 
-		var_23_30 = var_23_30 or {}
-		var_23_30.ignore_event_counter = true
-		var_23_30.spawned_func = EnemyRecycler.breed_spawned_callback
-		var_23_30.dead_breed_data = var_23_26
+		if not var_23_1 then
+			-- Nothing
+		end
 
-		local var_23_31 = Breeds[var_23_27]
-		local str_3 = "enemy_recycler"
-		local spawn_type = var_23_30.spawn_type
+		var_23_1 = {}
 
-		spawn_type = spawn_type or "roam"
+		local optional_data = var_23_1
 
-		local spawn_queued_unit_2 = self.conflict_director:spawn_queued_unit(var_23_31, var_23_28, var_23_29, str_3, nil, spawn_type, var_23_30, nil, var_23_26)
+		::label_23_1::
 
-		var_23_26[num] = spawn_queued_unit_2
+		optional_data.ignore_event_counter = true
+		optional_data.spawned_func = EnemyRecycler.breed_spawned_callback
+		optional_data.dead_breed_data = unit_data
+
+		local breed = Breeds[breed_name]
+		local spawn_category = "enemy_recycler"
+		local spawn_type_2 = optional_data.spawn_type
+
+		if not spawn_type_2 then
+			-- Nothing
+		end
+
+		spawn_type_2 = "roam"
+
+		local spawn_type = spawn_type_2
+
+		::label_23_2::
+
+		local id = self.conflict_director:spawn_queued_unit(breed, spawn_pos, spawn_rot, spawn_category, nil, spawn_type, optional_data, nil, unit_data)
+
+		unit_data[U_UNIT] = id
 		self._roaming_ai = self._roaming_ai + 1
 	end
 
 	return false
 end
 
-local num_18 = 25
+local REFREEZE_DISTANCE_SQUARED = 25
 
-EnemyRecycler.deactivate_area = function (self, arg_24_1)
+EnemyRecycler.deactivate_area = function (self, area)
 	-- function 24
-	local var_24_0 = arg_24_1[num_6]
-	local var_24_1 = arg_24_1[num_8]
+	local units_in_area = area[AREA_UNITS]
+	local area_type = area[AREA_TYPE]
 	local BLACKBOARDS = BLACKBOARDS
 
-	if var_24_1 == "pack" then
-		if not var_24_0 then
-			local var_24_3 = var_24_0[1][1]
-			local extension = ScriptUnit.extension(var_24_3, "ai_interest_point_system")
+	if area_type == "pack" then
+		if units_in_area then
+			local interest_point_unit = units_in_area[1][1]
+			local extension = ScriptUnit.extension(interest_point_unit, "ai_interest_point_system")
 			local points = extension.points
 			local points_n = extension.points_n
-			local num_5 = 1
-			local var_24_8
+			local units_in_area_n = 1
+			local sleepy
 
-			for i = 2, #var_24_0 do
-				local var_24_9 = var_24_0[i][1]
+			for i = 2, #units_in_area do
+				local unit_data = units_in_area[i]
+				local queue_id = unit_data[1]
 
-				if type(var_24_9) == "number" then
-					local remove_queued_unit = self.conflict_director:remove_queued_unit(var_24_9)
+				if type(queue_id) == "number" then
+					local d = self.conflict_director:remove_queued_unit(queue_id)
 
 					self._roaming_ai = self._roaming_ai - 1
-					num_5 = num_5 + 1
-					var_24_0[num_5] = {
-						[2] = remove_queued_unit[1].name,
-						[3] = remove_queued_unit[2],
-						[4] = remove_queued_unit[3],
-						[5] = remove_queued_unit[7]
+					units_in_area_n = units_in_area_n + 1
+					units_in_area[units_in_area_n] = {
+						[2] = d[1].name,
+						[3] = d[2],
+						[4] = d[3],
+						[5] = d[7]
 					}
-					var_24_8 = true
-				elseif not HEALTH_ALIVE[var_24_9] then
-					local var_24_11 = var_24_9
-					local var_24_12 = BLACKBOARDS[var_24_11]
+					sleepy = true
+				elseif HEALTH_ALIVE[queue_id] then
+					local unit = queue_id
+					local blackboard = BLACKBOARDS[unit]
 
-					if not var_24_12.target_unit_found_time then
-						local var_24_13 = POSITION_LOOKUP[var_24_11]
+					if not blackboard.target_unit_found_time then
+						local position = position_lookup[unit]
 
-						if var_24_12.next_smart_object_data.next_smart_object_id ~= nil then
-							var_24_13 = var_24_12.next_smart_object_data.entrance_pos:unbox()
+						if blackboard.next_smart_object_data.next_smart_object_id ~= nil then
+							position = blackboard.next_smart_object_data.entrance_pos:unbox()
 						end
 
-						num_5 = num_5 + 1
-						var_24_0[num_5] = {
-							[2] = Unit.get_data(var_24_11, "breed").name,
-							[3] = Vector3Box(var_24_13),
-							[4] = QuaternionBox(Unit.local_rotation(var_24_11, 0)),
-							[5] = var_24_12.optional_spawn_data
+						units_in_area_n = units_in_area_n + 1
+						units_in_area[units_in_area_n] = {
+							[2] = Unit.get_data(unit, "breed").name,
+							[3] = Vector3Box(position),
+							[4] = QuaternionBox(Unit.local_rotation(unit, 0)),
+							[5] = blackboard.optional_spawn_data
 						}
 
-						self.conflict_director:destroy_unit(var_24_11, var_24_12, "deactivate_area")
+						self.conflict_director:destroy_unit(unit, blackboard, "deactivate_area")
 
 						self._roaming_ai = self._roaming_ai - 1
 					end
 
-					var_24_8 = true
+					sleepy = true
 				end
 			end
 
-			if not var_24_8 then
-				for j = 1, points_n do
-					local var_24_14 = points[j]
+			if not sleepy then
+				for i = 1, points_n do
+					local point = points[i]
 
-					if type(var_24_14[1]) == "number" then
-						local remove_queued_unit_2 = self.conflict_director:remove_queued_unit(var_24_14[1])
+					if type(point[1]) == "number" then
+						local d = self.conflict_director:remove_queued_unit(point[1])
 
 						self._roaming_ai = self._roaming_ai - 1
-						num_5 = num_5 + 1
-						var_24_0[num_5] = {
-							[2] = remove_queued_unit_2[1].name,
-							[3] = remove_queued_unit_2[2],
-							[4] = remove_queued_unit_2[3],
-							[5] = remove_queued_unit_2[7]
+						units_in_area_n = units_in_area_n + 1
+						units_in_area[units_in_area_n] = {
+							[2] = d[1].name,
+							[3] = d[2],
+							[4] = d[3],
+							[5] = d[7]
 						}
 					end
 
-					local claim_unit = var_24_14.claim_unit
+					local claim_unit_2 = point.claim_unit
 
-					claim_unit = claim_unit or type(var_24_14[1]) == "number" or var_24_14[1]
+					if not claim_unit_2 then
+						if type(point[1]) ~= "number" then
+							claim_unit_2 = point[1]
+						else
+							claim_unit_2 = false
+						end
+					end
 
-					if not claim_unit and not HEALTH_ALIVE[claim_unit] then
-						local var_24_17 = BLACKBOARDS[claim_unit]
+					goto label_24_0
 
-						if not var_24_17.target_unit_found_time then
-							local var_24_18 = POSITION_LOOKUP[claim_unit]
+					claim_unit_2 = true
 
-							if var_24_17.next_smart_object_data.next_smart_object_id ~= nil then
-								var_24_18 = var_24_17.next_smart_object_data.entrance_pos:unbox()
+					local claim_unit = claim_unit_2
+
+					::label_24_0::
+
+					if claim_unit and HEALTH_ALIVE[claim_unit] then
+						local blackboard = BLACKBOARDS[claim_unit]
+
+						if not blackboard.target_unit_found_time then
+							local position = position_lookup[claim_unit]
+
+							if blackboard.next_smart_object_data.next_smart_object_id ~= nil then
+								position = blackboard.next_smart_object_data.entrance_pos:unbox()
 							end
 
-							num_5 = num_5 + 1
-							var_24_0[num_5] = {
+							units_in_area_n = units_in_area_n + 1
+							units_in_area[units_in_area_n] = {
 								[2] = Unit.get_data(claim_unit, "breed").name,
-								[3] = Vector3Box(var_24_18),
+								[3] = Vector3Box(position),
 								[4] = QuaternionBox(Unit.local_rotation(claim_unit, 0)),
-								[5] = var_24_17.optional_spawn_data
+								[5] = blackboard.optional_spawn_data
 							}
 
-							self.conflict_director:destroy_unit(claim_unit, var_24_17, "deactivate_area")
+							self.conflict_director:destroy_unit(claim_unit, blackboard, "deactivate_area")
 
 							self._roaming_ai = self._roaming_ai - 1
 						end
@@ -752,55 +802,55 @@ EnemyRecycler.deactivate_area = function (self, arg_24_1)
 				end
 			end
 
-			for k = num_5 + 1, #var_24_0 do
-				assert(k ~= 1)
+			for i = units_in_area_n + 1, #units_in_area do
+				assert(i ~= 1)
 
-				var_24_0[k] = nil
+				units_in_area[i] = nil
 			end
 
-			Managers.state.unit_spawner:mark_for_deletion(var_24_3)
+			Managers.state.unit_spawner:mark_for_deletion(interest_point_unit)
 
-			var_24_0[1][1] = nil
+			units_in_area[1][1] = nil
 
-			if num_5 == 1 then
+			if units_in_area_n == 1 then
 				return false
 			end
 		end
-	elseif var_24_1 == "breed" then
-		local var_24_19 = var_24_0[1]
-		local var_24_20 = var_24_19[num]
+	elseif area_type == "breed" then
+		local unit_data = units_in_area[1]
+		local unit = unit_data[U_UNIT]
 
-		if type(var_24_20) == "number" then
-			self.conflict_director:remove_queued_unit(var_24_20)
+		if type(unit) == "number" then
+			self.conflict_director:remove_queued_unit(unit)
 
 			self._roaming_ai = self._roaming_ai - 1
 
 			return true
 		end
 
-		local var_24_21 = HEALTH_ALIVE[var_24_20]
-		local flag = false
-		local var_24_23
+		local alive = HEALTH_ALIVE[unit]
+		local sleep_unit = false
+		local blackboard
 
-		if not var_24_21 then
-			var_24_23 = BLACKBOARDS[var_24_20]
+		if alive then
+			blackboard = BLACKBOARDS[unit]
 
-			if not var_24_23.target_unit_found_time then
-				local var_24_24 = POSITION_LOOKUP[var_24_20]
+			if not blackboard.target_unit_found_time then
+				local position = position_lookup[unit]
 
-				if var_24_23.next_smart_object_data.next_smart_object_id ~= nil then
-					var_24_24 = var_24_23.next_smart_object_data.entrance_pos:unbox()
+				if blackboard.next_smart_object_data.next_smart_object_id ~= nil then
+					position = blackboard.next_smart_object_data.entrance_pos:unbox()
 				end
 
-				var_24_19[num_3] = Vector3Box(var_24_24)
-				var_24_19[num_4] = QuaternionBox(Unit.local_rotation(var_24_20, 0))
-				var_24_19[num_2] = var_24_23.breed.name
-				flag = true
+				unit_data[U_POSITION] = Vector3Box(position)
+				unit_data[U_ROTATION] = QuaternionBox(Unit.local_rotation(unit, 0))
+				unit_data[U_BREED_NAME] = blackboard.breed.name
+				sleep_unit = true
 			end
 		end
 
-		if not flag then
-			self.conflict_director:destroy_unit(var_24_20, var_24_23, "deactivate_area")
+		if sleep_unit then
+			self.conflict_director:destroy_unit(unit, blackboard, "deactivate_area")
 
 			self._roaming_ai = self._roaming_ai - 1
 		else
@@ -811,173 +861,194 @@ EnemyRecycler.deactivate_area = function (self, arg_24_1)
 	return true
 end
 
-local num_19 = 20
-local tbl = {}
+local area_checks_per_frame = 20
+local remove_zones = {}
 
-EnemyRecycler._update_roaming_spawning = function (self, arg_25_1, arg_25_2, arg_25_3, arg_25_4, arg_25_5)
+EnemyRecycler._update_roaming_spawning = function (self, t, player_positions, threat_population, player_zones, use_player_zones)
 	-- function 25
-	local num = 3
-	local num_2 = 4
-	local num_3 = 6
-	local CurrentRoamingSettings = CurrentRoamingSettings
-	local despawn_distance = CurrentRoamingSettings.despawn_distance
-	local despawn_distance_z = CurrentRoamingSettings.despawn_distance_z
+	local INDEX_SEEN = 3
+	local INDEX_SEEN_LAST_FRAME = 4
+	local INDEX_ZONE = 6
+	local roaming = CurrentRoamingSettings
+	local wakeup_distance = roaming.despawn_distance
+	local despawn_distance_z = roaming.despawn_distance_z
 
-	despawn_distance_z = despawn_distance_z or 30
+	if not despawn_distance_z then
+		-- Nothing
+	end
 
-	local num_4 = despawn_distance + 5
-	local abs = math.abs
+	despawn_distance_z = 30
+
+	local wakeup_distance_z = despawn_distance_z
+
+	::label_25_0::
+
+	local sleep_distance = wakeup_distance + 5
+	local math_abs = math.abs
 	local areas = self.areas
 	local shutdown_areas = self.shutdown_areas
-	local count = #arg_25_2
-	local despawn_path_distance = CurrentRoamingSettings.despawn_path_distance
+	local players = #player_positions
+	local path_distance_threshold = CurrentRoamingSettings.despawn_path_distance
 	local remembered_area_index = self.remembered_area_index
 
-	remembered_area_index = remembered_area_index or 1
-
-	local count_2 = #areas
-	local var_25_14 = num_19
-
-	if count_2 < var_25_14 then
-		var_25_14 = count_2
-		remembered_area_index = 1
+	if not remembered_area_index then
+		-- Nothing
 	end
 
-	local num_5 = 0
-	local num_6 = 0
-	local var_25_17 = remembered_area_index
-	local num_7 = 1
+	remembered_area_index = 1
 
-	while num_7 <= var_25_14 do
-		if count_2 < remembered_area_index then
-			remembered_area_index = 1
+	local index = remembered_area_index
+
+	::label_25_1::
+
+	local size = #areas
+	local checks = area_checks_per_frame
+
+	if size < checks then
+		checks = size
+		index = 1
+	end
+
+	local num_to_remove = 0
+	local add_visible = 0
+	local start_index = index
+	local i = 1
+
+	while i <= checks do
+		if size < index then
+			index = 1
 		end
 
-		local var_25_19 = areas[remembered_area_index]
+		local area = areas[index]
 
-		var_25_19[num_2] = var_25_19[num]
-		var_25_19[num] = 0
+		area[INDEX_SEEN_LAST_FRAME] = area[INDEX_SEEN]
+		area[INDEX_SEEN] = 0
 
-		local unbox = var_25_19[1]:unbox()
+		local pos = area[1]:unbox()
 
-		for i = 1, count do
-			local num_8 = unbox - arg_25_2[i]
-			local z = num_8.z
+		for j = 1, players do
+			local to_dir = pos - player_positions[j]
+			local h = to_dir.z
 
-			Vector3.set_z(num_8, 0)
+			Vector3.set_z(to_dir, 0)
 
-			if not (not (despawn_distance > Vector3.length(num_8)) or not (despawn_distance_z > abs(z))) then
-				local var_25_23 = arg_25_4[i]
+			local dist = Vector3.length(to_dir)
 
-				if not arg_25_5 and not var_25_23 and not var_25_19[num_3] then
-					local a_star_cached, var_25_25, var_25_26 = self.group_manager:a_star_cached(var_25_23, var_25_19[num_3])
+			if dist < wakeup_distance and wakeup_distance_z > math_abs(h) then
+				local zone = player_zones[j]
 
-					if not (not var_25_25 and not (var_25_25 < despawn_path_distance)) then
-						var_25_19[num] = var_25_19[num] + 1
+				if use_player_zones and zone and area[INDEX_ZONE] then
+					local _, path_dist, cached = self.group_manager:a_star_cached(zone, area[INDEX_ZONE])
+
+					if not path_dist or path_dist < path_distance_threshold then
+						area[INDEX_SEEN] = area[INDEX_SEEN] + 1
 					end
 				else
-					var_25_19[num] = var_25_19[num] + 1
+					area[INDEX_SEEN] = area[INDEX_SEEN] + 1
 				end
 			end
 		end
 
-		local var_25_27 = var_25_19[num]
-		local var_25_28 = var_25_19[num_2]
+		local s1 = area[INDEX_SEEN]
+		local s2 = area[INDEX_SEEN_LAST_FRAME]
 
-		if var_25_27 ~= var_25_28 then
-			if var_25_27 > 0 then
-				if var_25_28 == 0 then
-					if not self:activate_area(var_25_19, arg_25_3) then
-						num_5 = num_5 + 1
-						tbl[num_5] = remembered_area_index
+		if s1 ~= s2 then
+			if s1 > 0 then
+				if s2 == 0 then
+					local shutdown_area = self:activate_area(area, threat_population)
+
+					if shutdown_area then
+						num_to_remove = num_to_remove + 1
+						remove_zones[num_to_remove] = index
 					else
-						num_6 = num_6 + 1
-						self.inside_areas[var_25_19] = true
+						add_visible = add_visible + 1
+						self.inside_areas[area] = true
 					end
 				end
-			elseif var_25_28 > 0 then
-				if not self:deactivate_area(var_25_19) then
-					num_5 = num_5 + 1
-					tbl[num_5] = remembered_area_index
+			elseif s2 > 0 then
+				if not self:deactivate_area(area) then
+					num_to_remove = num_to_remove + 1
+					remove_zones[num_to_remove] = index
 				end
 
-				num_6 = num_6 - 1
+				add_visible = add_visible - 1
 			end
 		end
 
-		remembered_area_index = remembered_area_index + 1
-		num_7 = num_7 + 1
+		index = index + 1
+		i = i + 1
 	end
 
-	if num_5 > 0 then
-		local function fn_2(arg_26_0, arg_26_1)
+	if num_to_remove > 0 then
+		local function sort_func(a, b)
 			-- function 26
-			return arg_26_1 < arg_26_0
+			return b < a
 		end
 
-		table.sort(tbl, fn_2)
+		table.sort(remove_zones, sort_func)
 
-		for j = 1, num_5 do
-			shutdown_areas[#shutdown_areas + 1] = fn(areas, tbl[j])
-			tbl[j] = nil
+		for i = 1, num_to_remove do
+			shutdown_areas[#shutdown_areas + 1] = fast_array_remove(areas, remove_zones[i])
+			remove_zones[i] = nil
 		end
 	end
 
-	self.remembered_area_index = math.clamp(remembered_area_index - num_5, 1, #areas)
-	self.visible = self.visible + num_6
+	self.remembered_area_index = math.clamp(index - num_to_remove, 1, #areas)
+	self.visible = self.visible + add_visible
 end
 
-EnemyRecycler.add_terror_event_in_area = function (self, arg_27_1, arg_27_2, arg_27_3)
+EnemyRecycler.add_terror_event_in_area = function (self, boxed_pos, terror_event_name, event_data)
 	-- function 27
-	local get_group_from_position = self.group_manager:get_group_from_position(arg_27_1:unbox())
+	local nav_group = self.group_manager:get_group_from_position(boxed_pos:unbox())
 
 	self.areas[#self.areas + 1] = {
-		arg_27_1,
+		boxed_pos,
 		nil,
 		0,
 		0,
-		arg_27_2,
-		get_group_from_position,
+		terror_event_name,
+		nav_group,
 		"event",
-		arg_27_3 or false,
+		not not event_data or not not false,
 		[11] = self.unique_area_id
 	}
 end
 
-EnemyRecycler.add_main_path_terror_event = function (self, arg_28_1, arg_28_2, arg_28_3, arg_28_4, arg_28_5)
+EnemyRecycler.add_main_path_terror_event = function (self, boxed_pos, terror_event_name, activation_dist, event_data, optional_spawn_distance)
 	-- function 28
-	print("Adding main path event:", arg_28_1, arg_28_2, arg_28_3, arg_28_4)
+	print("Adding main path event:", boxed_pos, terror_event_name, activation_dist, event_data)
 
 	local main_path_events = self.main_path_events
-	local closest_pos_at_main_path, var_28_2, var_28_3, var_28_4, var_28_5 = MainPathUtils.closest_pos_at_main_path(nil, arg_28_1:unbox())
+	local path_pos, travel_dist, move_percent, path_index, sub_index = MainPathUtils.closest_pos_at_main_path(nil, boxed_pos:unbox())
 
-	var_28_2 = arg_28_5 or math.max(0, var_28_2 - (arg_28_3 or 45))
+	travel_dist = not not optional_spawn_distance or not not math.max(0, travel_dist - (not not activation_dist or not not 45))
 
-	local num = #main_path_events + 1
+	local num_events = #main_path_events
 
-	main_path_events[num] = {
-		var_28_2,
-		arg_28_1,
-		arg_28_2,
-		arg_28_4
+	num_events = num_events + 1
+	main_path_events[num_events] = {
+		travel_dist,
+		boxed_pos,
+		terror_event_name,
+		event_data
 	}
 
-	if num == 1 then
+	if num_events == 1 then
 		self.current_main_path_event_id = 1
-		self.current_main_path_event_activation_dist = var_28_2
+		self.current_main_path_event_activation_dist = travel_dist
 	else
-		table.sort(main_path_events, function (self, arg_29_1)
+		table.sort(main_path_events, function (a, b)
 			-- function 29
-			return self[1] < arg_29_1[1]
+			return a[1] < b[1]
 		end)
 
-		local var_28_7 = main_path_events[self.current_main_path_event_id]
+		local next_event = main_path_events[self.current_main_path_event_id]
 
-		self.current_main_path_event_activation_dist = math.min(var_28_7[num_13], self.current_main_path_event_activation_dist)
+		self.current_main_path_event_activation_dist = math.min(next_event[MP_TRAVEL_DIST], self.current_main_path_event_activation_dist)
 	end
 end
 
-EnemyRecycler.setup_main_path_events = function (self, arg_30_1)
+EnemyRecycler.setup_main_path_events = function (self, t)
 	-- function 30
 	local main_path_events = self.main_path_events
 
@@ -987,222 +1058,247 @@ EnemyRecycler.setup_main_path_events = function (self, arg_30_1)
 		return
 	end
 
-	table.sort(main_path_events, function (self, arg_31_1)
+	table.sort(main_path_events, function (a, b)
 		-- function 31
-		return self[1] < arg_31_1[1]
+		return a[1] < b[1]
 	end)
 
 	self.current_main_path_event_id = 1
-	self.current_main_path_event_activation_dist = main_path_events[1][1]
+
+	local travel_dist = main_path_events[1][1]
+
+	self.current_main_path_event_activation_dist = travel_dist
 end
 
-EnemyRecycler.draw_main_path_events = function (self, arg_32_1)
+EnemyRecycler.draw_main_path_events = function (self, drawer)
 	-- function 32
-	local main_path_events = self.main_path_events
+	local events = self.main_path_events
 
-	for i = 1, #main_path_events do
-		local var_32_1 = main_path_events[i][4]
+	for i = 1, #events do
+		local main_event_data = events[i]
+		local event_data = main_event_data[4]
+		local event_kind = event_data.event_kind
 
-		if var_32_1.event_kind == "event_spline_patrol" then
-			self.conflict_director.patrol_analysis:draw_spline_path(var_32_1.spline_way_points, QuickDrawerStay)
+		if event_kind == "event_spline_patrol" then
+			self.conflict_director.patrol_analysis:draw_spline_path(event_data.spline_way_points, QuickDrawerStay)
 		end
 	end
 end
 
-EnemyRecycler.draw_debug = function (self, arg_33_1)
+EnemyRecycler.draw_debug = function (self, player_positions)
 	-- function 33
-	local shutdown_areas = self.shutdown_areas
+	local shutdown = self.shutdown_areas
 	local drawer = Managers.state.debug:drawer({
 		mode = "immediate",
 		name = "ai_recycler"
 	})
-	local var_33_2 = Color(255, 140, 255, 200)
-	local var_33_3 = Color(255, 255, 40, 100)
-	local var_33_4 = Color(128, 30, 40, 230)
-	local var_33_5 = Color(255, 255, 200, 0)
-	local var_33_6 = Color(255, 0, 200, 100)
-	local var_33_7 = Vector3(0, 0, 12)
-	local var_33_8 = Vector3(0, 0, 9.5)
-	local var_33_9 = Vector3(0, 0, 8.5)
-	local var_33_10 = Vector3(0, 0, 3)
-	local CurrentRoamingSettings = CurrentRoamingSettings
-	local var_33_12 = arg_33_1[1]
+	local inside_color = Color(255, 140, 255, 200)
+	local outside_color = Color(255, 255, 40, 100)
+	local shutdown_color = Color(128, 30, 40, 230)
+	local yellow = Color(255, 255, 200, 0)
+	local roaming_color = Color(255, 0, 200, 100)
+	local cone_height = Vector3(0, 0, 12)
+	local cone_height2 = Vector3(0, 0, 9.5)
+	local cone_height3 = Vector3(0, 0, 8.5)
+	local head_height = Vector3(0, 0, 3)
+	local roaming = CurrentRoamingSettings
+	local pos = player_positions[1]
 
-	if not var_33_12 then
+	if not pos then
 		return
 	end
 
-	local despawn_distance_z = CurrentRoamingSettings.despawn_distance_z
-	local despawn_distance = CurrentRoamingSettings.despawn_distance
+	local z_dist = roaming.despawn_distance_z
+	local r = roaming.despawn_distance
 
-	drawer:cylinder(var_33_12 + Vector3(0, 0, -despawn_distance_z), var_33_12 + Vector3(0, 0, despawn_distance_z), despawn_distance, var_33_2, 8)
-	drawer:cylinder(var_33_12 + Vector3(0, 0, -despawn_distance_z), var_33_12 + Vector3(0, 0, despawn_distance_z), despawn_distance, var_33_2, 8)
-	drawer:line(var_33_12 + Vector3(despawn_distance, 0, -despawn_distance_z), var_33_12 + Vector3(-despawn_distance, 0, -despawn_distance_z), var_33_2, 8)
-	drawer:line(var_33_12 + Vector3(0, despawn_distance, -despawn_distance_z), var_33_12 + Vector3(0, -despawn_distance, -despawn_distance_z), var_33_2, 8)
-	drawer:line(var_33_12 + Vector3(despawn_distance, 0, despawn_distance_z), var_33_12 + Vector3(-despawn_distance, 0, despawn_distance_z), var_33_2, 8)
-	drawer:line(var_33_12 + Vector3(0, despawn_distance, despawn_distance_z), var_33_12 + Vector3(0, -despawn_distance, despawn_distance_z), var_33_2, 8)
+	drawer:cylinder(pos + Vector3(0, 0, -z_dist), pos + Vector3(0, 0, z_dist), r, inside_color, 8)
+	drawer:cylinder(pos + Vector3(0, 0, -z_dist), pos + Vector3(0, 0, z_dist), r, inside_color, 8)
+	drawer:line(pos + Vector3(r, 0, -z_dist), pos + Vector3(-r, 0, -z_dist), inside_color, 8)
+	drawer:line(pos + Vector3(0, r, -z_dist), pos + Vector3(0, -r, -z_dist), inside_color, 8)
+	drawer:line(pos + Vector3(r, 0, z_dist), pos + Vector3(-r, 0, z_dist), inside_color, 8)
+	drawer:line(pos + Vector3(0, r, z_dist), pos + Vector3(0, -r, z_dist), inside_color, 8)
 
 	local areas = self.areas
 	local visible = self.visible
-	local num = #areas - visible
+	local not_visible = #areas - visible
 
-	Debug.text("Areas: " .. #areas .. ", visible: " .. visible .. ", not visible: " .. num)
+	Debug.text("Areas: " .. #areas .. ", visible: " .. visible .. ", not visible: " .. not_visible)
 
-	local str = ""
-	local str_2 = ""
+	local s = ""
+	local t = ""
 
 	for i = 1, #areas do
-		local var_33_20 = areas[i]
-		local unbox = var_33_20[1]:unbox()
-		local var_33_22 = var_33_20[3]
+		local area = areas[i]
+		local pos = area[1]:unbox()
+		local seen = area[3]
 
-		if var_33_20[7] == "event" then
-			if var_33_20[5] == "roaming_patrol" then
-				drawer:sphere(unbox + var_33_7, 0.7, var_33_6)
-				drawer:sphere(unbox + var_33_8, 0.7, var_33_6)
-				drawer:sphere(unbox + var_33_9, 0.7, var_33_6)
+		if area[7] == "event" then
+			if area[5] == "roaming_patrol" then
+				drawer:sphere(pos + cone_height, 0.7, roaming_color)
+				drawer:sphere(pos + cone_height2, 0.7, roaming_color)
+				drawer:sphere(pos + cone_height3, 0.7, roaming_color)
 			else
-				drawer:sphere(unbox + var_33_7, 2, var_33_5)
-				drawer:sphere(unbox + var_33_8, 1, var_33_5)
-				drawer:sphere(unbox + var_33_9, 0.5, var_33_5)
+				drawer:sphere(pos + cone_height, 2, yellow)
+				drawer:sphere(pos + cone_height2, 1, yellow)
+				drawer:sphere(pos + cone_height3, 0.5, yellow)
 			end
 		end
 
-		if var_33_22 > 0 then
-			drawer:line(unbox, unbox + var_33_7, var_33_2)
-			Debug.world_text(unbox + var_33_10, string.format("%s id(%s) S%s/%s", var_33_20[7], var_33_20[11], var_33_20[3], var_33_20[4]), "teal")
+		if seen > 0 then
+			drawer:line(pos, pos + cone_height, inside_color)
+			Debug.world_text(pos + head_height, string.format("%s id(%s) S%s/%s", area[7], area[11], area[3], area[4]), "teal")
 		else
-			drawer:line(unbox, unbox + var_33_7, var_33_3)
-			Debug.world_text(unbox + var_33_10, string.format("%s id(%s) S%s/%s", var_33_20[7], var_33_20[11], var_33_20[3], var_33_20[4]), "tomato")
+			drawer:line(pos, pos + cone_height, outside_color)
+			Debug.world_text(pos + head_height, string.format("%s id(%s) S%s/%s", area[7], area[11], area[3], area[4]), "tomato")
 		end
 	end
 
-	for j = 1, #shutdown_areas do
-		local var_33_23 = shutdown_areas[j]
-		local unbox_2 = var_33_23[1]:unbox()
+	for i = 1, #shutdown do
+		local area = shutdown[i]
+		local pos = area[1]:unbox()
 
-		drawer:line(unbox_2, unbox_2 + var_33_7 * 0.66, var_33_4)
-		Debug.world_text(unbox_2 + var_33_10, string.format("%s id(%s) S%s/%s", var_33_23[7], var_33_23[11], var_33_23[3], var_33_23[4]), "red")
+		drawer:line(pos, pos + cone_height * 0.66, shutdown_color)
+		Debug.world_text(pos + head_height, string.format("%s id(%s) S%s/%s", area[7], area[11], area[3], area[4]), "red")
 	end
 
-	local player_unit = Managers.player:local_player().player_unit
+	local local_player_unit = Managers.player:local_player().player_unit
 
-	if not ALIVE[player_unit] then
-		local var_33_26 = self.conflict_director.main_path_player_info[player_unit]
+	if ALIVE[local_player_unit] then
+		local main_path_player_info = self.conflict_director.main_path_player_info
+		local info = main_path_player_info[local_player_unit]
 
-		if not var_33_26 then
-			Debug.text("travel-dist: %.1fm, move_percent: %.1f%%, path-index: %d, sub-index: %d", var_33_26.travel_dist, var_33_26.move_percent * 100, var_33_26.path_index, var_33_26.sub_index)
+		if info then
+			Debug.text("travel-dist: %.1fm, move_percent: %.1f%%, path-index: %d, sub-index: %d", info.travel_dist, info.move_percent * 100, info.path_index, info.sub_index)
 		end
 	end
 end
 
-local num_20 = 6
+local NUM_FAR_OFF_CHECKS = 6
 
-EnemyRecycler.far_off_despawn = function (self, arg_34_1, arg_34_2, arg_34_3, arg_34_4)
+EnemyRecycler.far_off_despawn = function (self, t, dt, player_positions, spawned)
 	-- function 34
 	local far_off_index = self.far_off_index
 
-	far_off_index = far_off_index or 1
-
-	local count = #arg_34_4
-	local var_34_2 = num_20
-
-	if count < var_34_2 then
-		var_34_2 = count
-		far_off_index = 1
+	if not far_off_index then
+		-- Nothing
 	end
 
-	local destroy_los_distance_squared = LevelHelper:current_level_settings().destroy_los_distance_squared
+	far_off_index = 1
 
-	destroy_los_distance_squared = destroy_los_distance_squared or RecycleSettings.destroy_los_distance_squared
+	local index = far_off_index
+
+	::label_34_0::
+
+	local size = #spawned
+	local num = NUM_FAR_OFF_CHECKS
+
+	if size < num then
+		num = size
+		index = 1
+	end
+
+	local destroy_los_distance_squared_2 = LevelHelper:current_level_settings().destroy_los_distance_squared
+
+	if not destroy_los_distance_squared_2 then
+		-- Nothing
+	end
+
+	destroy_los_distance_squared_2 = RecycleSettings.destroy_los_distance_squared
+
+	local destroy_los_distance_squared = destroy_los_distance_squared_2
+
+	::label_34_1::
 
 	local nav_world = self.nav_world
-	local count_2 = #arg_34_3
+	local num_players = #player_positions
 
-	if count_2 == 0 then
+	if num_players == 0 then
 		return
 	end
 
-	local distance_squared = Vector3.distance_squared
-	local num = 1
+	local Vector3_distance_squared = Vector3.distance_squared
+	local i = 1
 
-	while num <= var_34_2 do
-		if count < far_off_index then
-			far_off_index = 1
+	while i <= num do
+		if size < index then
+			index = 1
 		end
 
-		local var_34_8 = destroy_los_distance_squared
-		local flag = false
-		local var_34_10 = arg_34_4[far_off_index]
-		local var_34_11 = POSITION_LOOKUP[var_34_10]
-		local var_34_12 = BLACKBOARDS[var_34_10]
+		local destroy_distance_squared = destroy_los_distance_squared
+		local ai_stuck = false
+		local unit = spawned[index]
+		local pos = position_lookup[unit]
+		local blackboard = BLACKBOARDS[unit]
 
-		if not var_34_12 then
+		if not blackboard then
 			local print = print
 			local str = "is related to freezing: "
-			local var_34_15 = rawget(_G, "DoubleFreezeContext")
+			local var_34_4 = rawget(_G, "DoubleFreezeContext")
 
-			var_34_15 = var_34_15 or {}
+			var_34_4 = not not var_34_4 or not not {}
 
-			print(str, not not var_34_15[var_34_10])
+			print(str, not not var_34_4[unit])
 		end
 
-		if arg_34_1 > var_34_12.stuck_check_time then
-			if not var_34_12.far_off_despawn_immunity then
-				if not var_34_12.navigation_extension._enabled and not var_34_12.no_path_found then
-					if not var_34_12.stuck_time then
-						var_34_12.stuck_time = arg_34_1 + 3
-					elseif arg_34_1 > var_34_12.stuck_time then
-						flag = true
-						var_34_8 = RecycleSettings.destroy_stuck_distance_squared
-						var_34_12.stuck_time = nil
+		if t > blackboard.stuck_check_time then
+			if not blackboard.far_off_despawn_immunity then
+				local navigation_extension = blackboard.navigation_extension
+
+				if navigation_extension._enabled and blackboard.no_path_found then
+					if not blackboard.stuck_time then
+						blackboard.stuck_time = t + 3
+					elseif t > blackboard.stuck_time then
+						ai_stuck = true
+						destroy_distance_squared = RecycleSettings.destroy_stuck_distance_squared
+						blackboard.stuck_time = nil
 					end
-				elseif not var_34_12.no_path_found then
-					var_34_12.stuck_time = nil
+				elseif not blackboard.no_path_found then
+					blackboard.stuck_time = nil
 				end
 			end
 
-			var_34_12.stuck_check_time = arg_34_1 + 3 + num * arg_34_2
+			blackboard.stuck_check_time = t + 3 + i * dt
 		end
 
-		local num_2 = 0
+		local num_players_far_away = 0
 
-		for i = 1, count_2 do
-			local var_34_17 = arg_34_3[i]
+		for j = 1, num_players do
+			local player_pos = player_positions[j]
+			local dist_squared = Vector3_distance_squared(pos, player_pos)
 
-			if var_34_8 < distance_squared(var_34_11, var_34_17) then
-				num_2 = num_2 + 1
+			if destroy_distance_squared < dist_squared then
+				num_players_far_away = num_players_far_away + 1
 			end
 		end
 
-		if num_2 == count_2 then
-			if not flag then
+		if num_players_far_away == num_players then
+			if ai_stuck then
 				local printf = printf
 				local str_2 = "Destroying unit - ai got stuck breed: %s index: %d size: %d action: %s"
-				local name = var_34_12.breed.name
-				local var_34_21 = far_off_index
-				local var_34_22 = count
-				local action = var_34_12.action
+				local name = blackboard.breed.name
+				local var_34_8 = index
+				local var_34_9 = size
+				local action = blackboard.action
 
-				action = not action and var_34_12.action.name
+				action = not not action and not not blackboard.action.name
 
-				printf(str_2, name, var_34_21, var_34_22, action)
-				self.conflict_director:destroy_unit(var_34_10, var_34_12, "stuck")
-			elseif not var_34_12.far_off_despawn_immunity then
-				print("Destroying unit - ai too far away from all players. ", var_34_12.breed.name, num, far_off_index, count)
-				self.conflict_director:destroy_unit(var_34_10, var_34_12, "far_away")
+				printf(str_2, name, var_34_8, var_34_9, action)
+				self.conflict_director:destroy_unit(unit, blackboard, "stuck")
+			elseif not blackboard.far_off_despawn_immunity then
+				print("Destroying unit - ai too far away from all players. ", blackboard.breed.name, i, index, size)
+				self.conflict_director:destroy_unit(unit, blackboard, "far_away")
 			end
 
-			count = #arg_34_4
+			size = #spawned
 
-			if count == 0 then
+			if size == 0 then
 				break
 			end
 		end
 
-		far_off_index = far_off_index + 1
-		num = num + 1
+		index = index + 1
+		i = i + 1
 	end
 
-	self.far_off_index = far_off_index
+	self.far_off_index = index
 end

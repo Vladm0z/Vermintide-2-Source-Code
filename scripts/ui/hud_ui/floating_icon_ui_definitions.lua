@@ -1,8 +1,7 @@
 -- chunkname: @scripts/ui/hud_ui/floating_icon_ui_definitions.lua
 
-local num = 1920
-local num_2 = 1080
-local tbl = {
+local SIZE_X, SIZE_Y = 1920, 1080
+local scenegraph_definition = {
 	screen = {
 		scale = "fit",
 		position = {
@@ -11,8 +10,8 @@ local tbl = {
 			UILayer.hud
 		},
 		size = {
-			num,
-			num_2
+			SIZE_X,
+			SIZE_Y
 		}
 	},
 	pivot = {
@@ -45,7 +44,7 @@ local tbl = {
 	}
 }
 
-local function fn(arg_1_0, arg_1_1)
+local function create_simple_bar(scenegraph_id, size)
 	-- function 1
 	return {
 		element = {
@@ -65,7 +64,7 @@ local function fn(arg_1_0, arg_1_1)
 			background = {
 				vertical_alignment = "bottom",
 				horizontal_alignment = "left",
-				texture_size = arg_1_1,
+				texture_size = size,
 				color = {
 					200,
 					30,
@@ -82,12 +81,12 @@ local function fn(arg_1_0, arg_1_1)
 				vertical_alignment = "bottom",
 				horizontal_alignment = "left",
 				texture_size = {
-					arg_1_1[1] - 4,
-					arg_1_1[2] - 4
+					size[1] - 4,
+					size[2] - 4
 				},
 				default_size = {
-					arg_1_1[1] - 4,
-					arg_1_1[2] - 4
+					size[1] - 4,
+					size[2] - 4
 				},
 				color = {
 					255,
@@ -107,11 +106,11 @@ local function fn(arg_1_0, arg_1_1)
 			0,
 			0
 		},
-		scenegraph_id = arg_1_0
+		scenegraph_id = scenegraph_id
 	}
 end
 
-local tbl_2 = {
+local widget_definitions = {
 	default = {
 		scenegraph_id = "pivot",
 		element = {
@@ -125,27 +124,27 @@ local tbl_2 = {
 					texture_id = "arrow",
 					style_id = "arrow",
 					pass_type = "rotated_texture",
-					content_check_function = function (arg_2_0, arg_2_1)
+					content_check_function = function (content, style)
 						-- function 2
-						return arg_2_1.color[1] > 0
+						return style.color[1] > 0
 					end
 				},
 				{
 					style_id = "text",
 					pass_type = "text",
 					text_id = "text",
-					content_check_function = function (self)
+					content_check_function = function (content)
 						-- function 3
-						return self.text
+						return content.text
 					end
 				},
 				{
 					style_id = "text_shadow",
 					pass_type = "text",
 					text_id = "text",
-					content_check_function = function (self)
+					content_check_function = function (content)
 						-- function 4
-						return self.text
+						return content.text
 					end
 				}
 			}
@@ -224,15 +223,15 @@ local tbl_2 = {
 			0
 		}
 	},
-	progress_bar = fn("bar_pivot", {
+	progress_bar = create_simple_bar("bar_pivot", {
 		300,
 		50
 	})
 }
-local tbl_3 = {}
+local animation_definitions = {}
 
 return {
-	animation_definitions = tbl_3,
-	scenegraph_definition = tbl,
-	widget_definitions = tbl_2
+	animation_definitions = animation_definitions,
+	scenegraph_definition = scenegraph_definition,
+	widget_definitions = widget_definitions
 }

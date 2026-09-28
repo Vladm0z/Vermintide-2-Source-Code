@@ -2,7 +2,7 @@
 
 local MaterialSettingsTemplates = MaterialSettingsTemplates
 
-MaterialSettingsTemplates = MaterialSettingsTemplates or {}
+MaterialSettingsTemplates = not not MaterialSettingsTemplates or not not {}
 MaterialSettingsTemplates = MaterialSettingsTemplates
 MaterialSettingsTemplates.blue_glow = {
 	rune_emissive_color = {

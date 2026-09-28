@@ -1,78 +1,97 @@
 -- chunkname: @scripts/ui/hud_ui/gamepad_equipment_ui.lua
 
-local var_0_0 = local_require("scripts/ui/hud_ui/gamepad_equipment_ui_definitions")
-local scenegraph_definition = var_0_0.scenegraph_definition
-local inventory_slot_backgrounds = var_0_0.inventory_slot_backgrounds
-local animations_definitions = var_0_0.animations_definitions
+local definitions = local_require("scripts/ui/hud_ui/gamepad_equipment_ui_definitions")
+local scenegraph_definition = definitions.scenegraph_definition
+local inventory_slot_backgrounds = definitions.inventory_slot_backgrounds
+local animation_definitions = definitions.animations_definitions
 
 GamePadEquipmentUI = class(GamePadEquipmentUI)
 
-local num = 2
-local slot_size = var_0_0.slot_size
-local NUM_SLOTS = var_0_0.NUM_SLOTS
-local tbl = {
+local AMMO_PRESENTATION_DURATION = 2
+local slot_size = definitions.slot_size
+local NUM_SLOTS = definitions.NUM_SLOTS
+local input_actions_by_slot = {
 	slot_healthkit = "wield_3",
 	slot_grenade = "wield_5",
 	slot_potion = "wield_4",
 	slot_melee = "wield_1",
 	slot_ranged = "wield_2"
 }
-local tbl_2 = {
+local ammo_colors = {
 	normal = Colors.get_color_table_with_alpha("white", 255),
 	empty = Colors.get_color_table_with_alpha("red", 255),
 	focus = Colors.get_color_table_with_alpha("font_default", 150),
 	unfocused = Colors.get_color_table_with_alpha("font_default", 150)
 }
 
-local function fn(self, arg_1_1)
+local function sort_by_console_hud_index(a, b)
 	-- function 1
-	local console_hud_index = self.console_hud_index
+	local console_hud_index = a.console_hud_index
 
-	console_hud_index = console_hud_index or 0
+	if not console_hud_index then
+		-- Nothing
+	end
 
-	local console_hud_index_2 = arg_1_1.console_hud_index
+	console_hud_index = 0
 
-	console_hud_index_2 = console_hud_index_2 or 0
+	local a_console_hud_index = console_hud_index
 
-	return console_hud_index < console_hud_index_2
+	::label_1_0::
+
+	local console_hud_index_2 = b.console_hud_index
+
+	if not console_hud_index_2 then
+		-- Nothing
+	end
+
+	console_hud_index_2 = 0
+
+	local b_console_hud_index = console_hud_index_2
+
+	::label_1_1::
+
+	return a_console_hud_index < b_console_hud_index
 end
 
-local function fn_2()
+local function is_dark_pact()
 	-- function 2
-	local get_local_player_party = Managers.party:get_local_player_party()
-	local var_2_1 = Managers.state.side.side_by_party[get_local_player_party]
+	local local_player_party = Managers.party:get_local_player_party()
+	local side = Managers.state.side.side_by_party[local_player_party]
 
-	return not var_2_1 and var_2_1:name() == "dark_pact"
+	return not not side and side:name() == "dark_pact"
 end
 
-GamePadEquipmentUI.init = function (self, arg_3_1, arg_3_2)
+GamePadEquipmentUI.init = function (self, parent, ingame_ui_context)
 	-- function 3
-	self._parent = arg_3_1
-	self.ui_renderer = arg_3_2.ui_renderer
-	self.ingame_ui = arg_3_2.ingame_ui
-	self.input_manager = arg_3_2.input_manager
-	self.peer_id = arg_3_2.peer_id
-	self.player_manager = arg_3_2.player_manager
+	self._parent = parent
+	self.ui_renderer = ingame_ui_context.ui_renderer
+	self.ingame_ui = ingame_ui_context.ingame_ui
+	self.input_manager = ingame_ui_context.input_manager
+	self.peer_id = ingame_ui_context.peer_id
+	self.player_manager = ingame_ui_context.player_manager
 	self.ui_animations = {}
 	self._animations = {}
 	self.render_settings = {
 		alpha_multiplier = 1,
 		snap_pixel_positions = false
 	}
-	self.is_in_inn = arg_3_2.is_in_inn
-	self.cleanui = arg_3_2.cleanui
+	self.is_in_inn = ingame_ui_context.is_in_inn
+	self.cleanui = ingame_ui_context.cleanui
 	self._retained_elements_visible = false
-	self.player = arg_3_2.player
+
+	local player = ingame_ui_context.player
+
+	self.player = player
 	self._game_options_dirty = true
 	self._reload_attempts = 0
 
 	self:_create_ui_elements()
 
-	local event = Managers.state.event
+	local event_manager = Managers.state.event
 
-	event:register(self, "input_changed", "event_input_changed")
-	event:register(self, "swap_equipment_from_storage", "event_swap_equipment_from_storage")
-	event:register(self, "on_game_options_changed", "_set_game_options_dirty")
+	event_manager:register(self, "input_changed", "event_input_changed")
+	event_manager:register(self, "swap_equipment_from_storage", "event_swap_equipment_from_storage")
+	event_manager:register(self, "on_game_options_changed", "_set_game_options_dirty")
 	self:_update_game_options()
 end
 
@@ -80,82 +99,82 @@ GamePadEquipmentUI._create_ui_elements = function (self)
 	-- function 4
 	self.ui_scenegraph = UISceneGraph.init_scenegraph(scenegraph_definition)
 
-	local tbl = {}
-	local tbl_2 = {}
-	local tbl_3 = {}
-	local tbl_4 = {}
-	local tbl_5 = {}
-	local tbl_6 = {}
-	local tbl_7 = {}
-	local tbl_8 = {}
-	local tbl_9 = {}
-	local tbl_10 = {}
+	local widgets = {}
+	local widgets_by_name = {}
+	local frame_widgets = {}
+	local frame_widgets_by_name = {}
+	local ammo_widgets = {}
+	local ammo_widgets_by_name = {}
+	local unused_widgets = {}
+	local slot_widgets = {}
+	local career_widgets = {}
+	local static_widgets = {}
 
-	for k, v in pairs(var_0_0.widget_definitions) do
-		local var_4_10 = UIWidget.init(v)
+	for name, definition in pairs(definitions.widget_definitions) do
+		local widget = UIWidget.init(definition)
 
-		tbl_2[k] = var_4_10
-		tbl_10[#tbl_10 + 1] = var_4_10
+		widgets_by_name[name] = widget
+		static_widgets[#static_widgets + 1] = widget
 	end
 
-	for k_2, v_2 in pairs(var_0_0.career_widget_definitions) do
-		local var_4_11 = UIWidget.init(v_2)
+	for name, definition in pairs(definitions.career_widget_definitions) do
+		local widget = UIWidget.init(definition)
 
-		tbl_2[k_2] = var_4_11
-		tbl_9[k_2] = var_4_11
-		tbl_10[#tbl_10 + 1] = var_4_11
+		widgets_by_name[name] = widget
+		career_widgets[name] = widget
+		static_widgets[#static_widgets + 1] = widget
 	end
 
-	for i, v_3 in ipairs(var_0_0.slot_widget_definitions) do
-		local var_4_12 = UIWidget.init(v_3)
+	for i, definition in ipairs(definitions.slot_widget_definitions) do
+		local widget = UIWidget.init(definition)
 
-		tbl[i] = var_4_12
-		tbl_7[i] = var_4_12
-		tbl_8[i] = var_4_12
+		widgets[i] = widget
+		unused_widgets[i] = widget
+		slot_widgets[i] = widget
 	end
 
-	for k_3, v_4 in pairs(var_0_0.ammo_widget_definitions) do
-		local var_4_13 = UIWidget.init(v_4)
+	for name, definition in pairs(definitions.ammo_widget_definitions) do
+		local widget = UIWidget.init(definition)
 
-		tbl_5[#tbl_5 + 1] = var_4_13
-		tbl_6[k_3] = var_4_13
-		tbl_2[k_3] = var_4_13
+		ammo_widgets[#ammo_widgets + 1] = widget
+		ammo_widgets_by_name[name] = widget
+		widgets_by_name[name] = widget
 	end
 
-	for k_4, v_5 in pairs(var_0_0.frame_definitions) do
-		local var_4_14 = UIWidget.init(v_5)
+	for name, definition in pairs(definitions.frame_definitions) do
+		local widget = UIWidget.init(definition)
 
-		tbl_3[#tbl_3 + 1] = var_4_14
-		tbl_4[k_4] = var_4_14
-		tbl_2[k_4] = var_4_14
+		frame_widgets[#frame_widgets + 1] = widget
+		frame_widgets_by_name[name] = widget
+		widgets_by_name[name] = widget
 	end
 
-	self._widgets = tbl
-	self._widgets_by_name = tbl_2
-	self._ammo_widgets = tbl_5
-	self._ammo_widgets_by_name = tbl_6
-	self._frame_widgets = tbl_3
-	self._frame_widgets_by_name = tbl_4
-	self._static_widgets = tbl_10
-	self._unused_widgets = tbl_7
-	self._slot_widgets = tbl_8
-	self._career_widgets = tbl_9
-	self._ui_animator = UIAnimator:new(self.ui_scenegraph, animations_definitions)
+	self._widgets = widgets
+	self._widgets_by_name = widgets_by_name
+	self._ammo_widgets = ammo_widgets
+	self._ammo_widgets_by_name = ammo_widgets_by_name
+	self._frame_widgets = frame_widgets
+	self._frame_widgets_by_name = frame_widgets_by_name
+	self._static_widgets = static_widgets
+	self._unused_widgets = unused_widgets
+	self._slot_widgets = slot_widgets
+	self._career_widgets = career_widgets
+	self._ui_animator = UIAnimator:new(self.ui_scenegraph, animation_definitions)
 
-	local tbl_11 = {}
+	local extra_storage_icon_widgets = {}
 
-	for i_2, v_6 in ipairs(var_0_0.extra_storage_icon_definitions) do
-		tbl_11[i_2] = UIWidget.init(v_6)
+	for i, widget_def in ipairs(definitions.extra_storage_icon_definitions) do
+		extra_storage_icon_widgets[i] = UIWidget.init(widget_def)
 	end
 
-	self._extra_storage_icon_widgets = tbl_11
-	tbl_2.overcharge_background.style.texture_id.color = {
+	self._extra_storage_icon_widgets = extra_storage_icon_widgets
+	widgets_by_name.overcharge_background.style.texture_id.color = {
 		100,
 		150,
 		150,
 		150
 	}
-	tbl_2.overcharge.style.texture_id.color = Colors.get_color_table_with_alpha("font_title", 255)
+	widgets_by_name.overcharge.style.texture_id.color = Colors.get_color_table_with_alpha("font_title", 255)
 	self._added_items = {}
 
 	UIRenderer.clear_scenegraph_queue(self.ui_renderer)
@@ -167,179 +186,207 @@ GamePadEquipmentUI._create_ui_elements = function (self)
 	self._num_added_items = 0
 end
 
-GamePadEquipmentUI.event_swap_equipment_from_storage = function (self, arg_5_1, arg_5_2)
+GamePadEquipmentUI.event_swap_equipment_from_storage = function (self, slot_name, additional_items)
 	-- function 5
-	if arg_5_1 ~= "slot_grenade" then
+	if slot_name ~= "slot_grenade" then
 		return
 	end
 
 	self._widgets_by_name.extra_storage_bg.style.texture.color[1] = 163
 	self._time_fade_storage_slots = Managers.time:time("ui") + 2
 
-	local _extra_storage_icon_widgets = self._extra_storage_icon_widgets
+	local widgets = self._extra_storage_icon_widgets
 
-	for i = 1, #_extra_storage_icon_widgets do
-		local var_5_1 = _extra_storage_icon_widgets[i]
-		local var_5_2 = arg_5_2[i]
+	for i = 1, #widgets do
+		local widget = widgets[i]
+		local item = additional_items[i]
 
-		if not var_5_2 then
-			local gamepad_hud_icon = var_5_2.gamepad_hud_icon
-			local style = var_5_1.style
-			local content = var_5_1.content
+		if item then
+			local hud_icon = item.gamepad_hud_icon
+			local style = widget.style
+			local content = widget.content
 
 			content.visible = true
-			content.texture_icon = gamepad_hud_icon
-			content.texture_glow = gamepad_hud_icon .. "_glow"
+			content.texture_icon = hud_icon
+			content.texture_glow = hud_icon .. "_glow"
 			style.texture_icon.color[1] = 255
 
-			local var_5_6 = Colors.color_definitions[var_5_2.key]
+			local var_5_0 = Colors.color_definitions[item.key]
 
-			var_5_6 = var_5_6 or Colors.color_definitions.black
+			if not var_5_0 then
+				-- Nothing
+			end
 
-			local color = style.texture_glow.color
+			var_5_0 = Colors.color_definitions.black
 
-			color[1] = 255
-			color[2] = var_5_6[2]
-			color[3] = var_5_6[3]
-			color[4] = var_5_6[4]
+			local color_src = var_5_0
+
+			::label_5_0::
+
+			local color_dst = style.texture_glow.color
+
+			color_dst[1] = 255
+			color_dst[2] = color_src[2]
+			color_dst[3] = color_src[3]
+			color_dst[4] = color_src[4]
 		else
-			var_5_1.content.visible = false
+			widget.content.visible = false
 		end
 	end
 end
 
 GamePadEquipmentUI.event_input_changed = function (self)
 	-- function 6
-	local str = "wield_switch_1"
-	local weapon_slot = self._widgets_by_name.weapon_slot
+	local input_action = "wield_switch_1"
+	local widget = self._widgets_by_name.weapon_slot
 
-	self:_set_switch_input(weapon_slot, str)
-	self:_set_widget_dirty(weapon_slot)
+	self:_set_switch_input(widget, input_action)
+	self:_set_widget_dirty(widget)
 
-	local str_2 = "wield_"
+	local prefix = "wield_"
 
-	for k, v in pairs(self._slot_widgets) do
-		local str_3 = str_2 .. k + 2
+	for idx, widget in pairs(self._slot_widgets) do
+		local input_action = prefix .. idx + 2
 
-		self:_set_slot_input(v, str_3)
-		self:_set_widget_dirty(v)
+		self:_set_slot_input(widget, input_action)
+		self:_set_widget_dirty(widget)
 	end
 
 	self:set_dirty()
 end
 
-GamePadEquipmentUI._set_switch_input = function (self, arg_7_1, arg_7_2)
+GamePadEquipmentUI._set_switch_input = function (self, widget, input_action)
 	-- function 7
-	local _get_input_texture_data, var_7_1, var_7_2 = self:_get_input_texture_data(arg_7_2)
+	local texture_data, input_text, prefix_text = self:_get_input_texture_data(input_action)
+	local length
 
-	if not (not var_7_1 and Utf8.length(var_7_1)) then
-		local num = 0
+	if input_text then
+		length = Utf8.length(input_text)
+
+		if not length then
+			-- Nothing
+		end
 	end
 
-	local num_2 = 40
-	local style = arg_7_1.style
-	local content = arg_7_1.content
-	local input_text = style.input_text
+	length = 0
+
+	local text_length = length
+
+	::label_7_0::
+
+	local max_length = 40
+	local style = widget.style
+	local content = widget.content
+	local input_style = style.input_text
 	local ui_renderer = self.ui_renderer
 
-	content.input_action = arg_7_2
+	content.input_action = input_action
 
-	if not _get_input_texture_data then
-		var_7_1 = nil
+	if texture_data then
+		input_text = nil
 
-		local size
+		local texture = texture_data.texture
+		local size = texture_data.size
 
-		content.wield_switch_id, size = _get_input_texture_data.texture, _get_input_texture_data.size
+		content.wield_switch_id = texture
 		content.input_text = ""
 
-		local texture_size = style.wield_switch.texture_size
+		local wield_switch_style = style.wield_switch
+		local texture_size = wield_switch_style.texture_size
 
 		texture_size[1] = size[1]
 		texture_size[2] = size[2]
-	elseif not var_7_1 then
-		content.input_text = UIRenderer.crop_text_width(ui_renderer, var_7_1, num_2, input_text)
+	elseif input_text then
+		content.input_text = UIRenderer.crop_text_width(ui_renderer, input_text, max_length, input_style)
 		content.wield_switch_id = nil
 	end
 end
 
-GamePadEquipmentUI._set_slot_input = function (self, arg_8_1, arg_8_2)
+GamePadEquipmentUI._set_slot_input = function (self, widget, input_action)
 	-- function 8
-	local _get_input_texture_data, var_8_1, var_8_2 = self:_get_input_texture_data(arg_8_2)
+	local texture_data, input_text, prefix_text = self:_get_input_texture_data(input_action)
+	local length
 
-	if not (not var_8_1 and Utf8.length(var_8_1)) then
-		local num = 0
+	if input_text then
+		length = Utf8.length(input_text)
+
+		if not length then
+			-- Nothing
+		end
 	end
 
-	local num_2 = 40
-	local style = arg_8_1.style
-	local content = arg_8_1.content
-	local input_text = style.input_text
+	length = 0
+
+	local text_length = length
+
+	::label_8_0::
+
+	local max_length = 40
+	local style = widget.style
+	local content = widget.content
+	local input_style = style.input_text
 	local ui_renderer = self.ui_renderer
 
-	if not var_8_1 then
-		content.input_text = UIRenderer.crop_text_width(ui_renderer, var_8_1, num_2, input_text)
+	if input_text then
+		content.input_text = UIRenderer.crop_text_width(ui_renderer, input_text, max_length, input_style)
 	end
 end
 
-GamePadEquipmentUI._get_input_texture_data = function (self, arg_9_1)
+GamePadEquipmentUI._get_input_texture_data = function (self, input_action)
 	-- function 9
 	local input_manager = self.input_manager
-	local get_service = input_manager:get_service("Player")
-	local is_device_active = input_manager:is_device_active("gamepad")
-	local PLATFORM = PLATFORM
+	local input_service = input_manager:get_service("Player")
+	local gamepad_active = input_manager:is_device_active("gamepad")
+	local platform = PLATFORM
 
-	if not IS_WINDOWS and not is_device_active then
-		PLATFORM = "xb1"
-	elseif not (not IS_XB1 and is_device_active) then
-		PLATFORM = "win32"
+	if IS_WINDOWS and gamepad_active then
+		platform = "xb1"
+	elseif IS_XB1 and not gamepad_active then
+		platform = "win32"
 	end
 
-	local get_keymapping = get_service:get_keymapping(arg_9_1, PLATFORM)
+	local keymap_binding = input_service:get_keymapping(input_action, platform)
 
-	if not get_keymapping then
-		Application.warning(string.format("[GamePadEquipmentUI] There is no keymap for %q on %q", arg_9_1, PLATFORM))
+	if not keymap_binding then
+		Application.warning(string.format("[GamePadEquipmentUI] There is no keymap for %q on %q", input_action, platform))
 
 		return nil, ""
 	end
 
-	local var_9_5 = get_keymapping[1]
-	local var_9_6 = get_keymapping[2]
-	local var_9_7 = get_keymapping[3]
-	local var_9_8
+	local device_type = keymap_binding[1]
+	local key_index = keymap_binding[2]
+	local key_action_type = keymap_binding[3]
+	local prefix_text
 
-	if var_9_7 == "held" then
-		var_9_8 = "matchmaking_prefix_hold"
+	if key_action_type == "held" then
+		prefix_text = "matchmaking_prefix_hold"
 	end
 
-	local flag = var_9_6 == UNASSIGNED_KEY
-	local str = ""
+	local is_button_unassigned = key_index == UNASSIGNED_KEY
+	local button_name = ""
 
-	if var_9_5 == "keyboard" then
-		local flag_2
+	if device_type == "keyboard" then
+		button_name = (not is_button_unassigned or not "") and not not Keyboard.button_locale_name(key_index) or not not Keyboard.button_name(key_index)
 
-		flag_2 = not flag and "" and Keyboard.button_locale_name(var_9_6) or Keyboard.button_name(var_9_6)
-
-		if not IS_XB1 then
-			flag_2 = string.upper(flag_2)
+		if IS_XB1 then
+			button_name = string.upper(button_name)
 		end
 
-		return nil, flag_2, var_9_8
-	elseif var_9_5 == "mouse" then
-		local flag_3
+		return nil, button_name, prefix_text
+	elseif device_type == "mouse" then
+		button_name = (not is_button_unassigned or not "") and not not Mouse.button_name(key_index)
 
-		flag_3 = not flag and "" and Mouse.button_name(var_9_6)
+		return nil, button_name, prefix_text
+	elseif device_type == "gamepad" then
+		button_name = (not is_button_unassigned or not "") and not not Pad1.button_name(key_index)
 
-		return nil, flag_3, var_9_8
-	elseif var_9_5 == "gamepad" then
-		local flag_4
-
-		flag_4 = not flag and "" and Pad1.button_name(var_9_6)
-
-		if not UISettings.use_ps4_input_icons and not IS_WINDOWS then
-			PLATFORM = "win32_ps4"
+		if UISettings.use_ps4_input_icons and IS_WINDOWS then
+			platform = "win32_ps4"
 		end
 
-		return ButtonTextureByName(flag_4, PLATFORM), flag_4, var_9_8
+		local button_texture_data = ButtonTextureByName(button_name, platform)
+
+		return button_texture_data, button_name, prefix_text
 	end
 
 	return nil, ""
@@ -347,10 +394,10 @@ end
 
 GamePadEquipmentUI._update_widgets = function (self)
 	-- function 10
-	local _slot_widgets = self._slot_widgets
+	local slot_widgets = self._slot_widgets
 
-	for i, v in ipairs(_slot_widgets) do
-		self:_set_widget_dirty(v)
+	for index, widget in ipairs(slot_widgets) do
+		self:_set_widget_dirty(widget)
 	end
 
 	self:set_dirty()
@@ -365,178 +412,183 @@ GamePadEquipmentUI._get_wield_scroll_input = function (self)
 		return
 	end
 
-	local network_id = player:network_id()
+	local peer_id = player:network_id()
+	local input_extension = ScriptUnit.extension(player_unit, "input_system")
 
-	return ScriptUnit.extension(player_unit, "input_system"):get_last_scroll_value()
+	return input_extension:get_last_scroll_value()
 end
 
-GamePadEquipmentUI._set_wielded_item = function (self, arg_12_1, arg_12_2)
+GamePadEquipmentUI._set_wielded_item = function (self, item_name, force_select)
 	-- function 12
-	local _get_wield_scroll_input = self:_get_wield_scroll_input()
-	local _added_items = self._added_items
+	local scroll_dir = self:_get_wield_scroll_input()
+	local added_items = self._added_items
 
-	for i, v in ipairs(_added_items) do
-		local flag = v.item_name == self._wielded_item_name
-		local flag_2 = v.item_name == arg_12_1
-		local widget = v.widget
+	for _, data in ipairs(added_items) do
+		local was_wielded = data.item_name == self._wielded_item_name
+		local is_wielded = data.item_name == item_name
+		local widget = data.widget
 
-		widget.content.selected = flag_2
+		widget.content.selected = is_wielded
 
-		local slot_name = v.slot_name
+		local slot_name = data.slot_name
 
-		if not flag_2 then
-			local flag_3 = slot_name == "slot_ranged"
+		if is_wielded then
+			local ammo_focus = slot_name == "slot_ranged"
 
-			self:_set_ammo_text_focus(flag_3)
+			self:_set_ammo_text_focus(ammo_focus)
 			self:_add_animation(slot_name .. "_wield_anim", widget, widget, "_animate_slot_wield")
-		elseif not flag then
+		elseif was_wielded then
 			self:_add_animation(slot_name .. "_wield_anim", widget, widget, "_animate_slot_unwield")
 		end
 
-		v.is_wielded = flag_2
+		data.is_wielded = is_wielded
 	end
 
-	self._wielded_item_name = arg_12_1
+	self._wielded_item_name = item_name
 end
 
-local tbl_3 = {
+local allowed_equipment_slots = {
 	slot_grenade = true,
 	slot_healthkit = true,
 	slot_potion = true,
 	slot_melee = false,
 	slot_ranged = false
 }
-local tbl_4 = {}
-local tbl_5 = {}
-local tbl_6 = {}
+local sorted_buffs = {}
+local widgets_to_remove = {}
+local verified_widgets = {}
 
-GamePadEquipmentUI._update_equipment_lookup = function (self, arg_13_1, arg_13_2)
+GamePadEquipmentUI._update_equipment_lookup = function (self, equipment, inventory_extension)
 	-- function 13
 	local _equipment_lookup = self._equipment_lookup
 
-	_equipment_lookup = _equipment_lookup or {}
+	_equipment_lookup = not not _equipment_lookup or not not {}
 	self._equipment_lookup = _equipment_lookup
 
 	local _equipment_lookup_2 = self._equipment_lookup
-	local additional_items_lookup = self._equipment_lookup.additional_items_lookup
+	local additional_items_lookup_2 = self._equipment_lookup.additional_items_lookup
 
-	additional_items_lookup = additional_items_lookup or {}
-	_equipment_lookup_2.additional_items_lookup = additional_items_lookup
+	additional_items_lookup_2 = not not additional_items_lookup_2 or not not {}
+	_equipment_lookup_2.additional_items_lookup = additional_items_lookup_2
 
-	local _equipment_lookup_3 = self._equipment_lookup
+	local equipment_lookup = self._equipment_lookup
 
-	_equipment_lookup_3.wielded_slot = arg_13_1.wielded_slot
+	equipment_lookup.wielded_slot = equipment.wielded_slot
 
-	local additional_items_lookup_2 = _equipment_lookup_3.additional_items_lookup
-	local get_additional_items_table = arg_13_2:get_additional_items_table()
-	local var_13_6
-	local slots = arg_13_1.slots
+	local additional_items_lookup = equipment_lookup.additional_items_lookup
+	local additional_items_table = inventory_extension:get_additional_items_table()
+	local item_template
+	local equipment_slots = equipment.slots
 
-	for k, v in pairs(tbl_3) do
-		local flag = not slots[k] and arg_13_2:get_item_template(slots[k])
+	for slot_name, _ in pairs(allowed_equipment_slots) do
+		item_template = not not equipment_slots[slot_name] and not not inventory_extension:get_item_template(equipment_slots[slot_name])
+		equipment_lookup[slot_name] = not not item_template and not not item_template.name
 
-		_equipment_lookup_3[k] = not flag and flag.name
+		local slot_additional_items = not not additional_items_table and not not additional_items_table[slot_name]
 
-		local flag_2 = not get_additional_items_table and get_additional_items_table[k]
+		if slot_additional_items then
+			local additional_items = slot_additional_items.items
+			local item_data = additional_items[1]
 
-		if not flag_2 then
-			local var_13_10 = flag_2.items[1]
-
-			additional_items_lookup_2[k] = not var_13_10 and var_13_10.key
+			additional_items_lookup[slot_name] = not not item_data and not not item_data.key
 		else
-			additional_items_lookup_2[k] = nil
+			additional_items_lookup[slot_name] = nil
 		end
 	end
 
-	local slot_ranged = slots.slot_ranged
+	local ranged_slot_data = equipment_slots.slot_ranged
 
-	if not slot_ranged and not slot_ranged.item_data then
-		local get_item_template = BackendUtils.get_item_template(slot_ranged.item_data)
-		local _get_ammunition_count, var_13_14, var_13_15 = self:_get_ammunition_count(slot_ranged.left_unit_1p, slot_ranged.right_unit_1p, get_item_template)
+	if ranged_slot_data and ranged_slot_data.item_data then
+		local item_template = BackendUtils.get_item_template(ranged_slot_data.item_data)
+		local ammo_count, remaining_ammo, using_single_clip = self:_get_ammunition_count(ranged_slot_data.left_unit_1p, ranged_slot_data.right_unit_1p, item_template)
 
-		_equipment_lookup_3.ammo_count = _get_ammunition_count
-		_equipment_lookup_3.remaining_ammo = var_13_14
+		equipment_lookup.ammo_count = ammo_count
+		equipment_lookup.remaining_ammo = remaining_ammo
 	end
 
-	local slot_grenade = slots.slot_grenade
+	local grenade_slot_data = equipment_slots.slot_grenade
 
-	if not slot_grenade and not slot_grenade.item_data then
-		_equipment_lookup_3.grenade_count = arg_13_2:get_total_item_count("slot_grenade")
+	if grenade_slot_data and grenade_slot_data.item_data then
+		local item_count = inventory_extension:get_total_item_count("slot_grenade")
+
+		equipment_lookup.grenade_count = item_count
 	end
 end
 
-GamePadEquipmentUI._check_equipment_changed = function (self, arg_14_1, arg_14_2)
+GamePadEquipmentUI._check_equipment_changed = function (self, equipment, inventory_extension)
 	-- function 14
 	if not self._equipment_lookup then
-		self:_update_equipment_lookup(arg_14_1, arg_14_2)
+		self:_update_equipment_lookup(equipment, inventory_extension)
 
 		return true
 	end
 
-	if self._equipment_lookup.wielded_slot ~= arg_14_1.wielded_slot then
-		self:_update_equipment_lookup(arg_14_1, arg_14_2)
+	if self._equipment_lookup.wielded_slot ~= equipment.wielded_slot then
+		self:_update_equipment_lookup(equipment, inventory_extension)
 
 		return true
 	end
 
-	local var_14_0
-	local var_14_1
-	local var_14_2
-	local slots = arg_14_1.slots
-	local get_additional_items_table = arg_14_2:get_additional_items_table()
-	local _equipment_lookup = self._equipment_lookup
-	local additional_items_lookup = _equipment_lookup.additional_items_lookup
+	local item_template, item_name, saved_item_name
+	local equipment_slots = equipment.slots
+	local additional_items_table = inventory_extension:get_additional_items_table()
+	local equipment_lookup = self._equipment_lookup
+	local additional_items_lookup = equipment_lookup.additional_items_lookup
 
-	for k, v in pairs(tbl_3) do
-		local var_14_7 = slots[k]
-		local flag = not var_14_7 and arg_14_2:get_item_template(var_14_7)
+	for slot_name, _ in pairs(allowed_equipment_slots) do
+		local slot_data = equipment_slots[slot_name]
 
-		if (not flag and flag.name) ~= _equipment_lookup[k] then
-			self:_update_equipment_lookup(arg_14_1, arg_14_2)
+		item_template = not not slot_data and not not inventory_extension:get_item_template(slot_data)
+		item_name = not not item_template and not not item_template.name
+		saved_item_name = equipment_lookup[slot_name]
+
+		if item_name ~= saved_item_name then
+			self:_update_equipment_lookup(equipment, inventory_extension)
 
 			return true
 		end
 
-		local var_14_9 = get_additional_items_table[k]
+		local slot_additional_items = additional_items_table[slot_name]
 
-		if not var_14_9 then
-			local var_14_10 = var_14_9.items[1]
-			local flag_2 = not var_14_10 and var_14_10.key
+		if slot_additional_items then
+			local additional_items = slot_additional_items.items
+			local additional_item = additional_items[1]
+			local additional_item_name = not not additional_item and not not additional_item.key
 
-			if additional_items_lookup[k] ~= flag_2 then
-				self:_update_equipment_lookup(arg_14_1, arg_14_2)
+			if additional_items_lookup[slot_name] ~= additional_item_name then
+				self:_update_equipment_lookup(equipment, inventory_extension)
 
 				return true
 			end
 		end
 	end
 
-	local slot_ranged = slots.slot_ranged
+	local ranged_slot_data = equipment_slots.slot_ranged
 
-	if not slot_ranged and not slot_ranged.item_data then
-		local get_item_template = BackendUtils.get_item_template(slot_ranged.item_data)
-		local _get_ammunition_count, var_14_15, var_14_16 = self:_get_ammunition_count(slot_ranged.left_unit_1p, slot_ranged.right_unit_1p, get_item_template)
+	if ranged_slot_data and ranged_slot_data.item_data then
+		local item_template = BackendUtils.get_item_template(ranged_slot_data.item_data)
+		local ammo_count, remaining_ammo, using_single_clip = self:_get_ammunition_count(ranged_slot_data.left_unit_1p, ranged_slot_data.right_unit_1p, item_template)
 
-		if _equipment_lookup.ammo_count ~= _get_ammunition_count then
-			self:_update_equipment_lookup(arg_14_1, arg_14_2)
+		if equipment_lookup.ammo_count ~= ammo_count then
+			self:_update_equipment_lookup(equipment, inventory_extension)
 
 			return true
 		end
 
-		if _equipment_lookup.remaining_ammo ~= var_14_15 then
-			self:_update_equipment_lookup(arg_14_1, arg_14_2)
+		if equipment_lookup.remaining_ammo ~= remaining_ammo then
+			self:_update_equipment_lookup(equipment, inventory_extension)
 
 			return true
 		end
 	end
 
-	local slot_grenade = slots.slot_grenade
+	local grenade_slot_data = equipment_slots.slot_grenade
 
-	if not slot_grenade and not slot_grenade.item_data and not arg_14_2:has_additional_item_slots("slot_grenade") then
-		local get_total_item_count = arg_14_2:get_total_item_count("slot_grenade")
+	if grenade_slot_data and grenade_slot_data.item_data and inventory_extension:has_additional_item_slots("slot_grenade") then
+		local item_count = inventory_extension:get_total_item_count("slot_grenade")
 
-		if _equipment_lookup.grenade_count ~= get_total_item_count then
-			self:_update_equipment_lookup(arg_14_1, arg_14_2)
+		if equipment_lookup.grenade_count ~= item_count then
+			self:_update_equipment_lookup(equipment, inventory_extension)
 
 			return true
 		end
@@ -547,10 +599,10 @@ end
 
 GamePadEquipmentUI._sync_player_equipment = function (self)
 	-- function 15
-	local is_device_active = Managers.input:is_device_active("gamepad")
+	local gamepad_active = Managers.input:is_device_active("gamepad")
 	local use_gamepad_hud_layout = UISettings.use_gamepad_hud_layout
 
-	if not (use_gamepad_hud_layout == "never" or use_gamepad_hud_layout ~= "auto" or is_device_active) then
+	if use_gamepad_hud_layout == "never" or use_gamepad_hud_layout == "auto" and not gamepad_active then
 		return
 	end
 
@@ -561,804 +613,875 @@ GamePadEquipmentUI._sync_player_equipment = function (self)
 		return
 	end
 
-	local network_id = player:network_id()
-	local extension = ScriptUnit.extension(player_unit, "inventory_system")
-	local equipment = extension:equipment()
+	local peer_id = player:network_id()
+	local inventory_extension = ScriptUnit.extension(player_unit, "inventory_system")
+	local equipment = inventory_extension:equipment()
 
 	if not equipment then
 		return
 	end
 
-	if not self:_check_equipment_changed(equipment, extension) then
+	if not self:_check_equipment_changed(equipment, inventory_extension) then
 		return
 	end
 
-	table.clear(tbl_6)
+	table.clear(verified_widgets)
 
-	local flag = false
-	local var_15_8
-	local slots = equipment.slots
+	local inventory_modified = false
+	local wielded_item_name
+	local equipment_slots = equipment.slots
 	local wielded = equipment.wielded
-	local slots_2 = InventorySettings.slots
-	local count = #slots_2
-	local _added_items = self._added_items
+	local inventory_slots = InventorySettings.slots
+	local num_inventory_slots = #inventory_slots
+	local added_items = self._added_items
 
-	for i = 1, count do
-		local name = slots_2[i].name
-		local var_15_15 = slots[name]
-		local flag_2
+	for i = 1, num_inventory_slots do
+		local slot = inventory_slots[i]
+		local slot_name = slot.name
+		local slot_data = equipment_slots[slot_name]
+		local flag
 
-		flag_2 = not var_15_15 and true and false
+		if slot_data then
+			flag = true
 
-		local flag_3 = not var_15_15 and var_15_15.item_data
-		local flag_4 = not flag_3 and flag_3.name
-		local flag_5 = not flag_4 and wielded == flag_3 or false
+			goto label_15_0
+		end
 
-		if not flag_5 then
-			local slot_type = flag_3.slot_type
-			local weapon_slot = self._widgets_by_name.weapon_slot
-			local content = weapon_slot.content
-			local style = weapon_slot.style
+		flag = false
+
+		local slot_visible = flag
+
+		::label_15_0::
+
+		local item_data = not not slot_data and not not slot_data.item_data
+		local item_name = not not item_data and not not item_data.name
+		local is_wielded = (not item_name or wielded ~= item_data) and not not false
+
+		if is_wielded then
+			local master_item = item_data
+			local slot_type = master_item.slot_type
+			local widget = self._widgets_by_name.weapon_slot
+			local content = widget.content
+			local style = widget.style
 
 			content.wielded_slot = slot_type
 
-			if self._wielded_slot_name ~= name then
-				if not (slot_type == "melee" or slot_type ~= "ranged") then
+			if self._wielded_slot_name ~= slot_name then
+				if slot_type == "melee" or slot_type == "ranged" then
 					self._weapon_was_wielded = true
 
-					self:_add_animation("weapon_slot", weapon_slot, weapon_slot, "_animate_weapon_wield", 1)
-				elseif not self._weapon_was_wielded then
+					self:_add_animation("weapon_slot", widget, widget, "_animate_weapon_wield", 1)
+				elseif self._weapon_was_wielded then
 					self._weapon_was_wielded = false
 
-					self:_add_animation("weapon_slot", weapon_slot, weapon_slot, "_animate_weapon_unwield", 4)
+					self:_add_animation("weapon_slot", widget, widget, "_animate_weapon_unwield", 4)
 				end
 			end
 
-			self._wielded_slot_name = name
+			self._wielded_slot_name = slot_name
 		end
 
-		if not tbl_3[name] then
-			local num = 0
-			local flag_6 = false
+		if allowed_equipment_slots[slot_name] then
+			local widget_id = 0
+			local verified = false
 
-			for j = 1, #_added_items do
-				local var_15_26 = _added_items[j]
-				local flag_7 = var_15_26.item_name == flag_4
-				local flag_8 = var_15_26.slot_name == name
+			for j = 1, #added_items do
+				local data = added_items[j]
+				local same_item = data.item_name == item_name
+				local same_slot = data.slot_name == slot_name
 
-				if not flag_8 then
-					num = j
+				if same_slot then
+					widget_id = j
 				end
 
-				if not flag_7 then
-					if not tbl_6[j] then
-						flag_6 = true
-						tbl_6[j] = true
+				if same_item then
+					if not verified_widgets[j] then
+						verified = true
+						verified_widgets[j] = true
 
 						break
 					end
-				elseif not flag_4 and not flag_8 then
-					flag_6 = true
-					tbl_6[j] = true
+				elseif item_name and same_slot then
+					verified = true
+					verified_widgets[j] = true
 
-					self:_add_item(var_15_15, var_15_26)
+					self:_add_item(slot_data, data)
 
-					num = j
-					flag = true
+					widget_id = j
+					inventory_modified = true
 
 					break
 				end
 			end
 
-			if not (flag_6 or var_15_15 == nil) then
-				self:_add_item(var_15_15)
+			if not verified and slot_data ~= nil then
+				self:_add_item(slot_data)
 
-				num = #_added_items
-				tbl_6[#_added_items] = true
-				flag = true
+				widget_id = #added_items
+				verified_widgets[#added_items] = true
+				inventory_modified = true
 			end
 
-			if not flag_5 then
-				var_15_8 = flag_4
+			if is_wielded then
+				wielded_item_name = item_name
 			end
 
-			if not ((name ~= "slot_grenade" or not flag_3) and not (num > 0)) then
-				local has_additional_item_slots = extension:has_additional_item_slots(name)
-				local get_total_item_count = extension:get_total_item_count(name)
-				local var_15_31 = _added_items[num]
-				local flag_9 = not var_15_31 and var_15_31.widget
+			if slot_name == "slot_grenade" and item_data and widget_id > 0 then
+				local has_additional_slots = inventory_extension:has_additional_item_slots(slot_name)
+				local item_count = inventory_extension:get_total_item_count(slot_name)
+				local hud_slot = added_items[widget_id]
+				local widget = not not hud_slot and not not hud_slot.widget
 
-				if not flag_9 then
-					local content_2 = flag_9.content
-					local get_total_item_count_2 = extension:get_total_item_count(name)
+				if widget then
+					local content = widget.content
+					local item_count = inventory_extension:get_total_item_count(slot_name)
 
-					if content_2.item_count ~= get_total_item_count_2 then
-						content_2.item_count = get_total_item_count_2
-						content_2.use_count_text = "x" .. get_total_item_count_2
-						content_2.has_additional_slots = has_additional_item_slots
+					if content.item_count ~= item_count then
+						content.item_count = item_count
+						content.use_count_text = "x" .. item_count
+						content.has_additional_slots = has_additional_slots
 
-						self:_set_widget_dirty(flag_9)
+						self:_set_widget_dirty(widget)
 					end
 
-					local can_swap_from_storage = extension:can_swap_from_storage(name, SwapFromStorageType.Unique)
+					local can_swap = inventory_extension:can_swap_from_storage(slot_name, SwapFromStorageType.Unique)
 
-					if content_2.can_swap ~= can_swap_from_storage then
-						content_2.can_swap = can_swap_from_storage
+					if content.can_swap ~= can_swap then
+						content.can_swap = can_swap
 
-						self:_set_widget_dirty(flag_9)
+						self:_set_widget_dirty(widget)
 					end
 				end
-			elseif not ((name ~= "slot_potion" or not flag_3) and not (num > 0)) then
-				local var_15_36 = _added_items[num]
-				local flag_10 = not var_15_36 and var_15_36.widget
+			elseif slot_name == "slot_potion" and item_data and widget_id > 0 then
+				local hud_slot = added_items[widget_id]
+				local widget = not not hud_slot and not not hud_slot.widget
 
-				if not flag_10 then
-					local content_3 = flag_10.content
-					local style_2 = flag_10.style
-					local get_additional_items = extension:get_additional_items(name)
+				if widget then
+					local content = widget.content
+					local style = widget.style
+					local additional_items = inventory_extension:get_additional_items(slot_name)
 
-					if not get_additional_items then
-						local var_15_41 = get_additional_items[1]
+					if additional_items then
+						local next_additional_item = additional_items[1]
 
-						if not var_15_41 then
-							local gamepad_hud_icon = var_15_41.gamepad_hud_icon
+						if next_additional_item then
+							local hud_icon = next_additional_item.gamepad_hud_icon
 
-							content_3.secondary_texture_icon = gamepad_hud_icon
-							content_3.secondary_texture_icon_glow = gamepad_hud_icon .. "_glow"
+							content.secondary_texture_icon = hud_icon
+							content.secondary_texture_icon_glow = hud_icon .. "_glow"
 
 							local inventory_consumable_slot_colors = UISettings.inventory_consumable_slot_colors
-							local tbl = {
+							local default_background_color = {
 								255,
 								0,
 								0,
 								0
 							}
-							local tbl_2 = {
+							local default_glow_color = {
 								255,
 								255,
 								255,
 								255
 							}
-							local var_15_46 = inventory_consumable_slot_colors[var_15_41.key]
+							local slot_background_color = inventory_consumable_slot_colors[next_additional_item.key]
 
-							if not var_15_46 then
-								style_2.secondary_texture_icon.color = var_15_46
-								style_2.secondary_texture_icon_glow.color = {
+							if slot_background_color then
+								style.secondary_texture_icon.color = slot_background_color
+								style.secondary_texture_icon_glow.color = {
 									255,
 									0,
 									0,
 									0
 								}
 							else
-								style_2.secondary_texture_icon.color = tbl
-								style_2.secondary_texture_icon_glow.color = tbl_2
+								style.secondary_texture_icon.color = default_background_color
+								style.secondary_texture_icon_glow.color = default_glow_color
 							end
 
-							self:_set_widget_dirty(flag_10)
+							self:_set_widget_dirty(widget)
 						else
-							content_3.secondary_texture_icon = nil
-							content_3.secondary_texture_icon_glow = nil
+							content.secondary_texture_icon = nil
+							content.secondary_texture_icon_glow = nil
 
-							self:_set_widget_dirty(flag_10)
+							self:_set_widget_dirty(widget)
 						end
 					else
-						content_3.secondary_texture_icon = nil
-						content_3.secondary_texture_icon_glow = nil
+						content.secondary_texture_icon = nil
+						content.secondary_texture_icon_glow = nil
 
-						self:_set_widget_dirty(flag_10)
+						self:_set_widget_dirty(widget)
 					end
 				end
 			end
 		else
-			if name ~= "slot_ranged" or not flag_3 then
-				self:_update_ammo_count(flag_3, var_15_15, player_unit)
-				self:_set_ammo_text_focus(flag_5)
+			if slot_name == "slot_ranged" and item_data then
+				self:_update_ammo_count(item_data, slot_data, player_unit)
+				self:_set_ammo_text_focus(is_wielded)
 			end
 
-			if not flag_5 then
-				var_15_8 = flag_4
+			if is_wielded then
+				wielded_item_name = item_name
 			end
 		end
 	end
 
-	table.clear(tbl_5)
+	table.clear(widgets_to_remove)
 
-	for k = 1, #_added_items do
-		if not tbl_6[k] then
-			tbl_5[#tbl_5 + 1] = k
+	for i = 1, #added_items do
+		if not verified_widgets[i] then
+			widgets_to_remove[#widgets_to_remove + 1] = i
 		end
 	end
 
-	local num_2 = 0
+	local index_mod = 0
 
-	for l = 1, #tbl_5 do
-		local num_3 = tbl_5[l] - num_2
+	for i = 1, #widgets_to_remove do
+		local index = widgets_to_remove[i] - index_mod
 
-		self:_remove_item(num_3)
+		self:_remove_item(index)
 
-		num_2 = num_2 + 1
-		flag = true
+		index_mod = index_mod + 1
+		inventory_modified = true
 	end
 
-	if not flag then
+	if inventory_modified then
 		self:_update_widgets()
-		table.sort(_added_items, fn)
+		table.sort(added_items, sort_by_console_hud_index)
 	end
 
-	if not var_15_8 and self._wielded_item_name ~= var_15_8 and not flag then
-		var_15_8 = var_15_8 or self._wielded_item_name
+	if (not wielded_item_name or self._wielded_item_name == wielded_item_name) and inventory_modified then
+		wielded_item_name = not not wielded_item_name or not not self._wielded_item_name
 
-		self:_set_wielded_item(var_15_8, flag)
+		self:_set_wielded_item(wielded_item_name, inventory_modified)
 	end
 end
 
-GamePadEquipmentUI._update_ammo_count = function (self, arg_16_1, arg_16_2, arg_16_3)
+GamePadEquipmentUI._update_ammo_count = function (self, item_data, slot_data, player_unit)
 	-- function 16
-	local get_item_template = BackendUtils.get_item_template(arg_16_1)
-	local _ammo_widgets_by_name = self._ammo_widgets_by_name
-	local flag = false
+	local item_template = BackendUtils.get_item_template(item_data)
+	local ammo_widgets_by_name = self._ammo_widgets_by_name
+	local draw_overheat = false
 
-	if not get_item_template.ammo_data then
-		local _get_ammunition_count, var_16_4, var_16_5 = self:_get_ammunition_count(arg_16_2.left_unit_1p, arg_16_2.right_unit_1p, get_item_template)
-		local content = _ammo_widgets_by_name.ammo_text_clip.content
-		local flag_2 = _get_ammunition_count + var_16_4 == 0
-		local flag_3 = false
+	if item_template.ammo_data then
+		local ammo_count, remaining_ammo, using_single_clip = self:_get_ammunition_count(slot_data.left_unit_1p, slot_data.right_unit_1p, item_template)
+		local ammo_text_clip_widget = ammo_widgets_by_name.ammo_text_clip
+		local content = ammo_text_clip_widget.content
+		local ammo_empty = ammo_count + remaining_ammo == 0
+		local ammo_changed = false
 
-		if self._ammo_count ~= _get_ammunition_count then
-			self._ammo_count = _get_ammunition_count
+		if self._ammo_count ~= ammo_count then
+			self._ammo_count = ammo_count
 
-			local ammo_text_clip = _ammo_widgets_by_name.ammo_text_clip
+			local widget = ammo_widgets_by_name.ammo_text_clip
+			local content = widget.content
 
-			ammo_text_clip.content.text = tostring(_get_ammunition_count)
+			content.text = tostring(ammo_count)
 
-			self:_set_widget_dirty(ammo_text_clip)
+			self:_set_widget_dirty(widget)
 
-			flag_3 = true
+			ammo_changed = true
 		end
 
-		if self._remaining_ammo ~= var_16_4 then
-			self._remaining_ammo = var_16_4
+		if self._remaining_ammo ~= remaining_ammo then
+			self._remaining_ammo = remaining_ammo
 
-			local ammo_text_remaining = _ammo_widgets_by_name.ammo_text_remaining
+			local widget = ammo_widgets_by_name.ammo_text_remaining
+			local content = widget.content
 
-			ammo_text_remaining.content.text = tostring(var_16_4)
+			content.text = tostring(remaining_ammo)
 
-			self:_set_widget_dirty(ammo_text_remaining)
+			self:_set_widget_dirty(widget)
 
-			flag_3 = true
+			ammo_changed = true
 		end
 
-		if not flag_3 then
-			self._ammo_counter_fade_delay = num
+		if ammo_changed then
+			self._ammo_counter_fade_delay = AMMO_PRESENTATION_DURATION
 			self._ammo_counter_fade_progress = 1
 
 			self:_set_ammo_counter_alpha(255)
 
 			local empty
 
-			if not flag_2 then
-				empty = tbl_2.empty
+			if ammo_empty then
+				empty = ammo_colors.empty
 
 				if not empty then
 					-- Nothing
 				end
 			end
 
-			empty = tbl_2.normal
+			empty = ammo_colors.normal
+
+			local ammo_text_color = empty
 
 			::label_16_0::
 
-			self:_set_ammo_counter_color(empty)
+			self:_set_ammo_counter_color(ammo_text_color)
 			self:set_dirty()
 		end
 	else
-		local _get_overcharge_amount, var_16_13, var_16_14 = self:_get_overcharge_amount(arg_16_3)
+		local has_overcharge, overcharge_fraction, threshold_fraction = self:_get_overcharge_amount(player_unit)
 
-		if self._overcharge_fraction ~= var_16_13 then
-			self._overcharge_fraction = var_16_13
+		if self._overcharge_fraction ~= overcharge_fraction then
+			self._overcharge_fraction = overcharge_fraction
 
-			self:_set_overheat_fraction(var_16_13)
+			self:_set_overheat_fraction(overcharge_fraction)
 		end
 
-		flag = true
+		draw_overheat = true
 	end
 
-	if self._draw_overheat ~= flag then
-		self._draw_overheat = flag
+	if self._draw_overheat ~= draw_overheat then
+		self._draw_overheat = draw_overheat
 
-		self:_show_overheat_meter(flag)
+		self:_show_overheat_meter(draw_overheat)
 	end
 end
 
-GamePadEquipmentUI._animate_ammo_counter = function (self, arg_17_1)
+GamePadEquipmentUI._animate_ammo_counter = function (self, dt)
 	-- function 17
-	local _ammo_counter_fade_delay = self._ammo_counter_fade_delay
+	local ammo_counter_fade_delay = self._ammo_counter_fade_delay
 
-	if not _ammo_counter_fade_delay then
-		local max = math.max(_ammo_counter_fade_delay - arg_17_1, 0)
+	if ammo_counter_fade_delay then
+		ammo_counter_fade_delay = math.max(ammo_counter_fade_delay - dt, 0)
 
-		if max == 0 then
+		if ammo_counter_fade_delay == 0 then
 			self._ammo_counter_fade_delay = nil
 		else
-			self._ammo_counter_fade_delay = max
+			self._ammo_counter_fade_delay = ammo_counter_fade_delay
 		end
 
 		return
 	end
 
-	local _ammo_counter_fade_progress = self._ammo_counter_fade_progress
+	local ammo_counter_fade_progress = self._ammo_counter_fade_progress
 
-	if not _ammo_counter_fade_progress then
+	if not ammo_counter_fade_progress then
 		return
 	end
 
-	local max_2 = math.max(_ammo_counter_fade_progress - 0.01, 0)
-	local num = 100 + 155 * max_2
+	ammo_counter_fade_progress = math.max(ammo_counter_fade_progress - 0.01, 0)
 
-	self:_set_ammo_counter_alpha(num)
+	local alpha = 100 + 155 * ammo_counter_fade_progress
 
-	if max_2 == 0 then
+	self:_set_ammo_counter_alpha(alpha)
+
+	if ammo_counter_fade_progress == 0 then
 		self._ammo_counter_fade_progress = nil
 	else
-		self._ammo_counter_fade_progress = max_2
+		self._ammo_counter_fade_progress = ammo_counter_fade_progress
 	end
 
 	return true
 end
 
-GamePadEquipmentUI._set_ammo_counter_alpha = function (self, arg_18_1)
+GamePadEquipmentUI._set_ammo_counter_alpha = function (self, alpha)
 	-- function 18
-	local _ammo_widgets_by_name = self._ammo_widgets_by_name
-	local ammo_text_clip = _ammo_widgets_by_name.ammo_text_clip
+	local ammo_widgets_by_name = self._ammo_widgets_by_name
+	local ammo_clip_widget = ammo_widgets_by_name.ammo_text_clip
+	local ammo_clip_widget_style = ammo_clip_widget.style.text
+	local clip_text_color = ammo_clip_widget_style.text_color
 
-	ammo_text_clip.style.text.text_color[1] = arg_18_1
+	clip_text_color[1] = alpha
 
-	self:_set_widget_dirty(ammo_text_clip)
+	self:_set_widget_dirty(ammo_clip_widget)
 
-	local ammo_text_remaining = _ammo_widgets_by_name.ammo_text_remaining
+	local ammo_remaining_widget = ammo_widgets_by_name.ammo_text_remaining
+	local ammo_remaining_widget_style = ammo_remaining_widget.style.text
+	local remaining_text_color = ammo_remaining_widget_style.text_color
 
-	ammo_text_remaining.style.text.text_color[1] = arg_18_1
+	remaining_text_color[1] = alpha
 
-	self:_set_widget_dirty(ammo_text_remaining)
+	self:_set_widget_dirty(ammo_remaining_widget)
 
-	local ammo_text_center = _ammo_widgets_by_name.ammo_text_center
+	local ammo_center_widget = ammo_widgets_by_name.ammo_text_center
+	local ammo_center_widget_style = ammo_center_widget.style.text
+	local center_text_color = ammo_center_widget_style.text_color
 
-	ammo_text_center.style.text.text_color[1] = arg_18_1
+	center_text_color[1] = alpha
 
-	self:_set_widget_dirty(ammo_text_center)
+	self:_set_widget_dirty(ammo_center_widget)
 	self:set_dirty()
 end
 
-GamePadEquipmentUI._set_ammo_counter_color = function (self, arg_19_1)
+GamePadEquipmentUI._set_ammo_counter_color = function (self, color)
 	-- function 19
-	local ammo_text_clip = self._ammo_widgets_by_name.ammo_text_clip
-	local text_color = ammo_text_clip.style.text.text_color
+	local ammo_clip_widget = self._ammo_widgets_by_name.ammo_text_clip
+	local ammo_clip_widget_style = ammo_clip_widget.style.text
+	local clip_text_color = ammo_clip_widget_style.text_color
 
-	text_color[2] = arg_19_1[2]
-	text_color[3] = arg_19_1[3]
-	text_color[4] = arg_19_1[4]
+	clip_text_color[2] = color[2]
+	clip_text_color[3] = color[3]
+	clip_text_color[4] = color[4]
 
-	self:_set_widget_dirty(ammo_text_clip)
+	self:_set_widget_dirty(ammo_clip_widget)
 
-	local ammo_text_remaining = self._ammo_widgets_by_name.ammo_text_remaining
-	local text_color_2 = ammo_text_remaining.style.text.text_color
+	local ammo_remaining_widget = self._ammo_widgets_by_name.ammo_text_remaining
+	local ammo_remaining_widget_style = ammo_remaining_widget.style.text
+	local remaining_text_color = ammo_remaining_widget_style.text_color
 
-	text_color_2[2] = arg_19_1[2]
-	text_color_2[3] = arg_19_1[3]
-	text_color_2[4] = arg_19_1[4]
+	remaining_text_color[2] = color[2]
+	remaining_text_color[3] = color[3]
+	remaining_text_color[4] = color[4]
 
-	self:_set_widget_dirty(ammo_text_remaining)
+	self:_set_widget_dirty(ammo_remaining_widget)
 
-	local ammo_text_center = self._ammo_widgets_by_name.ammo_text_center
-	local text_color_3 = ammo_text_center.style.text.text_color
+	local ammo_center_widget = self._ammo_widgets_by_name.ammo_text_center
+	local ammo_center_widget_style = ammo_center_widget.style.text
+	local center_text_color = ammo_center_widget_style.text_color
 
-	text_color_3[2] = arg_19_1[2]
-	text_color_3[3] = arg_19_1[3]
-	text_color_3[4] = arg_19_1[4]
+	center_text_color[2] = color[2]
+	center_text_color[3] = color[3]
+	center_text_color[4] = color[4]
 
-	self:_set_widget_dirty(ammo_text_center)
+	self:_set_widget_dirty(ammo_center_widget)
 	self:set_dirty()
 end
 
-GamePadEquipmentUI._set_ammo_text_focus = function (self, arg_20_1)
+GamePadEquipmentUI._set_ammo_text_focus = function (self, focus)
 	-- function 20
-	if not (not self._draw_overheat and self._overcharge_fraction == nil) then
-		local num = 1
-		local focus
+	if self._draw_overheat and self._overcharge_fraction ~= nil then
+		local multiplier = 1
+		local focus_2
 
-		if not arg_20_1 then
-			focus = tbl_2.focus
+		if focus then
+			focus_2 = ammo_colors.focus
 
-			if not focus then
+			if not focus_2 then
 				-- Nothing
 			end
 		end
 
-		focus = tbl_2.unfocused
+		focus_2 = ammo_colors.unfocused
+
+		local color = focus_2
 
 		::label_20_0::
 
-		local _widgets_by_name = self._widgets_by_name
-		local overcharge = _widgets_by_name.overcharge
-		local overcharge_background = _widgets_by_name.overcharge_background
-		local color = overcharge.style.texture_id.color
-		local color_2 = overcharge_background.style.texture_id.color
+		local widgets_by_name = self._widgets_by_name
+		local fg_widget = widgets_by_name.overcharge
+		local bg_widget = widgets_by_name.overcharge_background
+		local fg_color = fg_widget.style.texture_id.color
+		local bg_color = bg_widget.style.texture_id.color
 
-		color[2] = focus[2] * num
-		color[3] = focus[3] * num
-		color[4] = focus[4] * num
+		fg_color[2] = color[2] * multiplier
+		fg_color[3] = color[3] * multiplier
+		fg_color[4] = color[4] * multiplier
 
-		self:_set_widget_dirty(overcharge)
-		self:_set_widget_dirty(overcharge_background)
+		self:_set_widget_dirty(fg_widget)
+		self:_set_widget_dirty(bg_widget)
 		self:set_dirty()
 	end
 
 	self._ammo_dirty = true
 end
 
-GamePadEquipmentUI._get_ammunition_count = function (arg_21_0, arg_21_1, arg_21_2, arg_21_3)
+GamePadEquipmentUI._get_ammunition_count = function (self, left_hand_wielded_unit, right_hand_wielded_unit, item_template)
 	-- function 21
-	local var_21_0
+	local ammo_extension
 
-	if not arg_21_3.ammo_data then
+	if not item_template.ammo_data then
 		return
 	end
 
-	local ammo_hand = arg_21_3.ammo_data.ammo_hand
+	local ammo_unit_hand = item_template.ammo_data.ammo_hand
 
-	if ammo_hand == "right" then
-		var_21_0 = ScriptUnit.extension(arg_21_2, "ammo_system")
-	elseif ammo_hand == "left" then
-		var_21_0 = ScriptUnit.extension(arg_21_1, "ammo_system")
+	if ammo_unit_hand == "right" then
+		ammo_extension = ScriptUnit.extension(right_hand_wielded_unit, "ammo_system")
+	elseif ammo_unit_hand == "left" then
+		ammo_extension = ScriptUnit.extension(left_hand_wielded_unit, "ammo_system")
 	else
 		return
 	end
 
-	local ammo_count = var_21_0:ammo_count()
-	local remaining_ammo = var_21_0:remaining_ammo()
-	local using_single_clip = var_21_0:using_single_clip()
+	local ammo_count = ammo_extension:ammo_count()
+	local remaining_ammo = ammo_extension:remaining_ammo()
+	local single_clip = ammo_extension:using_single_clip()
 
-	return ammo_count, remaining_ammo, using_single_clip
+	return ammo_count, remaining_ammo, single_clip
 end
 
-GamePadEquipmentUI._get_overcharge_amount = function (arg_22_0, arg_22_1)
+GamePadEquipmentUI._get_overcharge_amount = function (self, player_unit)
 	-- function 22
-	local extension = ScriptUnit.extension(arg_22_1, "overcharge_system")
-	local overcharge_fraction = extension:overcharge_fraction()
-	local threshold_fraction = extension:threshold_fraction()
-	local get_anim_blend_overcharge = extension:get_anim_blend_overcharge()
+	local overcharge_extension = ScriptUnit.extension(player_unit, "overcharge_system")
+	local overcharge_fraction = overcharge_extension:overcharge_fraction()
+	local threshold_fraction = overcharge_extension:threshold_fraction()
+	local anim_blend_overcharge = overcharge_extension:get_anim_blend_overcharge()
 
-	return true, overcharge_fraction, threshold_fraction, get_anim_blend_overcharge
+	return true, overcharge_fraction, threshold_fraction, anim_blend_overcharge
 end
 
-GamePadEquipmentUI._add_animation = function (self, arg_23_1, arg_23_2, arg_23_3, arg_23_4, arg_23_5)
+GamePadEquipmentUI._add_animation = function (self, name, widget, style, func_name, animation_duration)
 	-- function 23
-	local _animations = self._animations
-	local inventory_hud = UISettings.inventory_hud
-	local flag = arg_23_5 or inventory_hud.equip_animation_duration
-	local var_23_3 = _animations[arg_23_1]
+	local animations = self._animations
+	local inventory_hud_settings = UISettings.inventory_hud
+	local total_time = not not animation_duration or not not inventory_hud_settings.equip_animation_duration
+	local animation = animations[name]
 
-	if not var_23_3 then
-		var_23_3.total_time = flag
-		var_23_3.time = 0
-		var_23_3.func = arg_23_4
+	if animation then
+		animation.total_time = total_time
+		animation.time = 0
+		animation.func = func_name
 	else
-		_animations[arg_23_1] = {
+		animations[name] = {
 			time = 0,
-			total_time = flag,
-			style = arg_23_3,
-			widget = arg_23_2,
-			func = arg_23_4
+			total_time = total_time,
+			style = style,
+			widget = widget,
+			func = func_name
 		}
 	end
 end
 
-GamePadEquipmentUI._update_animations = function (self, arg_24_1, arg_24_2)
+GamePadEquipmentUI._update_animations = function (self, dt, t)
 	-- function 24
-	local _time_fade_storage_slots = self._time_fade_storage_slots
+	local t_until_fade = self._time_fade_storage_slots
 
-	if not _time_fade_storage_slots then
-		local clamp = math.clamp(_time_fade_storage_slots - arg_24_2, 0, 1)
-		local _extra_storage_icon_widgets = self._extra_storage_icon_widgets
+	if t_until_fade then
+		local progress = math.clamp(t_until_fade - t, 0, 1)
+		local widgets = self._extra_storage_icon_widgets
 
-		for i = 1, #_extra_storage_icon_widgets do
-			local style = _extra_storage_icon_widgets[i].style
+		for i = 1, #widgets do
+			local widget = widgets[i]
+			local style = widget.style
 
-			style.texture_icon.color[1] = 255 * clamp
-			style.texture_glow.color[1] = 128 * clamp
+			style.texture_icon.color[1] = 255 * progress
+			style.texture_glow.color[1] = 128 * progress
 		end
 
-		local extra_storage_bg = self._widgets_by_name.extra_storage_bg
+		local bg_widget = self._widgets_by_name.extra_storage_bg
 
-		extra_storage_bg.style.texture.color[1] = 189 * clamp
+		bg_widget.style.texture.color[1] = 189 * progress
 
-		self:_set_widget_dirty(extra_storage_bg)
+		self:_set_widget_dirty(bg_widget)
 
-		if clamp == 0 then
+		if progress == 0 then
 			self._time_fade_storage_slots = nil
 		end
 	end
 
-	local _animations = self._animations
-	local flag = false
+	local animations = self._animations
+	local dirty = false
 
-	for k, v in pairs(_animations) do
-		_animations[k] = self[v.func](self, v, arg_24_1)
+	for name, animation_data in pairs(animations) do
+		local anim_func_name = animation_data.func
 
-		local widget = v.widget
+		animations[name] = self[anim_func_name](self, animation_data, dt)
+
+		local widget = animation_data.widget
 
 		self:_set_widget_dirty(widget)
 
-		flag = true
+		dirty = true
 	end
 
-	return flag
+	return dirty
 end
 
-GamePadEquipmentUI._animate_weapon_wield = function (arg_25_0, arg_25_1, arg_25_2)
+GamePadEquipmentUI._animate_weapon_wield = function (self, animation_data, dt)
 	-- function 25
-	local widget = arg_25_1.widget
-	local total_time = arg_25_1.total_time
-	local num = arg_25_1.time + arg_25_2
-	local min = math.min(num / total_time, 1)
-	local easeInCubic = math.easeInCubic(min)
-	local easeOutCubic = math.easeOutCubic(min)
+	local widget = animation_data.widget
+	local total_time = animation_data.total_time
+	local time = animation_data.time
 
-	widget.style.melee_weapon_texture.color[2] = 255 - 192 * easeInCubic
-	widget.style.melee_weapon_texture.color[3] = 255 - 192 * easeInCubic
-	widget.style.melee_weapon_texture.color[4] = 255 - 192 * easeInCubic
-	widget.style.ranged_weapon_texture.color[2] = 255 - 192 * easeInCubic
-	widget.style.ranged_weapon_texture.color[3] = 255 - 192 * easeInCubic
-	widget.style.ranged_weapon_texture.color[4] = 255 - 192 * easeInCubic
-	widget.style.melee_weapon_texture_glow.color[1] = 255 - 255 * easeOutCubic
-	widget.style.ranged_weapon_texture_glow.color[1] = 255 - 255 * easeOutCubic
-	arg_25_1.time = num
+	time = time + dt
 
-	return not (min < 1) or not arg_25_1 or nil
+	local progress = math.min(time / total_time, 1)
+	local anim_progress_input = math.easeInCubic(progress)
+	local anim_progress_glow = math.easeOutCubic(progress)
+
+	widget.style.melee_weapon_texture.color[2] = 255 - 192 * anim_progress_input
+	widget.style.melee_weapon_texture.color[3] = 255 - 192 * anim_progress_input
+	widget.style.melee_weapon_texture.color[4] = 255 - 192 * anim_progress_input
+	widget.style.ranged_weapon_texture.color[2] = 255 - 192 * anim_progress_input
+	widget.style.ranged_weapon_texture.color[3] = 255 - 192 * anim_progress_input
+	widget.style.ranged_weapon_texture.color[4] = 255 - 192 * anim_progress_input
+	widget.style.melee_weapon_texture_glow.color[1] = 255 - 255 * anim_progress_glow
+	widget.style.ranged_weapon_texture_glow.color[1] = 255 - 255 * anim_progress_glow
+	animation_data.time = time
+
+	return (not (progress < 1) or not animation_data) and not not nil
 end
 
-GamePadEquipmentUI._animate_weapon_unwield = function (arg_26_0, arg_26_1, arg_26_2)
+GamePadEquipmentUI._animate_weapon_unwield = function (self, animation_data, dt)
 	-- function 26
-	local widget = arg_26_1.widget
-	local total_time = arg_26_1.total_time
-	local num = arg_26_1.time + arg_26_2
-	local min = math.min(num / total_time, 1)
-	local easeInCubic = math.easeInCubic(1 - min)
-	local easeOutCubic = math.easeOutCubic(min)
+	local widget = animation_data.widget
+	local total_time = animation_data.total_time
+	local time = animation_data.time
 
-	widget.style.highlight_weapon_texture.color[1] = 255 * easeInCubic
-	arg_26_1.time = num
+	time = time + dt
 
-	return not (min < 1) or not arg_26_1 or nil
+	local progress = math.min(time / total_time, 1)
+	local anim_progress = math.easeInCubic(1 - progress)
+	local anim_progress_input = math.easeOutCubic(progress)
+
+	widget.style.highlight_weapon_texture.color[1] = 255 * anim_progress
+	animation_data.time = time
+
+	return (not (progress < 1) or not animation_data) and not not nil
 end
 
-GamePadEquipmentUI._animate_slot_wield = function (arg_27_0, arg_27_1, arg_27_2)
+GamePadEquipmentUI._animate_slot_wield = function (self, animation_data, dt)
 	-- function 27
-	local widget = arg_27_1.widget
-	local total_time = arg_27_1.total_time
-	local num = arg_27_1.time + arg_27_2
-	local min = math.min(num / total_time, 1)
-	local easeOutCubic = math.easeOutCubic(min)
-	local easeInCubic = math.easeInCubic(1 - min)
+	local widget = animation_data.widget
+	local total_time = animation_data.total_time
+	local time = animation_data.time
 
-	widget.style.texture_icon.color[2] = 128 + 127 * easeOutCubic
-	widget.style.texture_icon.color[3] = 128 + 127 * easeOutCubic
-	widget.style.texture_icon.color[4] = 128 + 127 * easeOutCubic
-	widget.style.texture_selected.color[1] = 255 * easeOutCubic
-	widget.style.texture_selected_left_arrow_glow.color[1] = 255 * easeOutCubic
-	widget.style.texture_selected_up_arrow_glow.color[1] = 255 * easeOutCubic
-	widget.style.texture_selected_right_arrow_glow.color[1] = 255 * easeOutCubic
-	widget.style.texture_selected_left_arrow.color[2] = 128 + 127 * easeOutCubic
-	widget.style.texture_selected_left_arrow.color[3] = 128 + 127 * easeOutCubic
-	widget.style.texture_selected_left_arrow.color[4] = 128 + 127 * easeOutCubic
-	widget.style.texture_selected_up_arrow.color[2] = 128 + 127 * easeOutCubic
-	widget.style.texture_selected_up_arrow.color[3] = 128 + 127 * easeOutCubic
-	widget.style.texture_selected_up_arrow.color[4] = 128 + 127 * easeOutCubic
-	widget.style.texture_selected_right_arrow.color[2] = 128 + 127 * easeOutCubic
-	widget.style.texture_selected_right_arrow.color[3] = 128 + 127 * easeOutCubic
-	widget.style.texture_selected_right_arrow.color[4] = 128 + 127 * easeOutCubic
-	arg_27_1.time = num
+	time = time + dt
 
-	return not (min < 1) or not arg_27_1 or nil
+	local progress = math.min(time / total_time, 1)
+	local anim_progress = math.easeOutCubic(progress)
+	local anim_progress_input = math.easeInCubic(1 - progress)
+
+	widget.style.texture_icon.color[2] = 128 + 127 * anim_progress
+	widget.style.texture_icon.color[3] = 128 + 127 * anim_progress
+	widget.style.texture_icon.color[4] = 128 + 127 * anim_progress
+	widget.style.texture_selected.color[1] = 255 * anim_progress
+	widget.style.texture_selected_left_arrow_glow.color[1] = 255 * anim_progress
+	widget.style.texture_selected_up_arrow_glow.color[1] = 255 * anim_progress
+	widget.style.texture_selected_right_arrow_glow.color[1] = 255 * anim_progress
+	widget.style.texture_selected_left_arrow.color[2] = 128 + 127 * anim_progress
+	widget.style.texture_selected_left_arrow.color[3] = 128 + 127 * anim_progress
+	widget.style.texture_selected_left_arrow.color[4] = 128 + 127 * anim_progress
+	widget.style.texture_selected_up_arrow.color[2] = 128 + 127 * anim_progress
+	widget.style.texture_selected_up_arrow.color[3] = 128 + 127 * anim_progress
+	widget.style.texture_selected_up_arrow.color[4] = 128 + 127 * anim_progress
+	widget.style.texture_selected_right_arrow.color[2] = 128 + 127 * anim_progress
+	widget.style.texture_selected_right_arrow.color[3] = 128 + 127 * anim_progress
+	widget.style.texture_selected_right_arrow.color[4] = 128 + 127 * anim_progress
+	animation_data.time = time
+
+	return (not (progress < 1) or not animation_data) and not not nil
 end
 
-GamePadEquipmentUI._animate_slot_unwield = function (arg_28_0, arg_28_1, arg_28_2)
+GamePadEquipmentUI._animate_slot_unwield = function (self, animation_data, dt)
 	-- function 28
-	local widget = arg_28_1.widget
-	local total_time = arg_28_1.total_time
-	local num = arg_28_1.time + arg_28_2
-	local min = math.min(num / total_time, 1)
-	local easeInCubic = math.easeInCubic(1 - min)
-	local easeOutCubic = math.easeOutCubic(min)
+	local widget = animation_data.widget
+	local total_time = animation_data.total_time
+	local time = animation_data.time
 
-	if not widget.content.is_filled then
-		widget.style.texture_icon.color[2] = 128 + 127 * easeInCubic
-		widget.style.texture_icon.color[3] = 128 + 127 * easeInCubic
-		widget.style.texture_icon.color[4] = 128 + 127 * easeInCubic
+	time = time + dt
+
+	local progress = math.min(time / total_time, 1)
+	local anim_progress = math.easeInCubic(1 - progress)
+	local anim_progress_input = math.easeOutCubic(progress)
+
+	if widget.content.is_filled then
+		widget.style.texture_icon.color[2] = 128 + 127 * anim_progress
+		widget.style.texture_icon.color[3] = 128 + 127 * anim_progress
+		widget.style.texture_icon.color[4] = 128 + 127 * anim_progress
 	else
-		widget.style.texture_icon.color[1] = 255 * easeInCubic
-		widget.style.texture_icon.color[2] = 128 + 127 * easeInCubic
-		widget.style.texture_icon.color[3] = 128 + 127 * easeInCubic
-		widget.style.texture_icon.color[4] = 128 + 127 * easeInCubic
+		widget.style.texture_icon.color[1] = 255 * anim_progress
+		widget.style.texture_icon.color[2] = 128 + 127 * anim_progress
+		widget.style.texture_icon.color[3] = 128 + 127 * anim_progress
+		widget.style.texture_icon.color[4] = 128 + 127 * anim_progress
 	end
 
-	widget.style.texture_selected.color[1] = 255 * easeInCubic
-	widget.style.texture_selected_left_arrow_glow.color[1] = 255 * easeInCubic
-	widget.style.texture_selected_up_arrow_glow.color[1] = 255 * easeInCubic
-	widget.style.texture_selected_right_arrow_glow.color[1] = 255 * easeInCubic
-	widget.style.texture_selected_left_arrow.color[2] = 128 + 127 * easeInCubic
-	widget.style.texture_selected_left_arrow.color[3] = 128 + 127 * easeInCubic
-	widget.style.texture_selected_left_arrow.color[4] = 128 + 127 * easeInCubic
-	widget.style.texture_selected_up_arrow.color[2] = 128 + 127 * easeInCubic
-	widget.style.texture_selected_up_arrow.color[3] = 128 + 127 * easeInCubic
-	widget.style.texture_selected_up_arrow.color[4] = 128 + 127 * easeInCubic
-	widget.style.texture_selected_right_arrow.color[2] = 128 + 127 * easeInCubic
-	widget.style.texture_selected_right_arrow.color[3] = 128 + 127 * easeInCubic
-	widget.style.texture_selected_right_arrow.color[4] = 128 + 127 * easeInCubic
-	arg_28_1.time = num
+	widget.style.texture_selected.color[1] = 255 * anim_progress
+	widget.style.texture_selected_left_arrow_glow.color[1] = 255 * anim_progress
+	widget.style.texture_selected_up_arrow_glow.color[1] = 255 * anim_progress
+	widget.style.texture_selected_right_arrow_glow.color[1] = 255 * anim_progress
+	widget.style.texture_selected_left_arrow.color[2] = 128 + 127 * anim_progress
+	widget.style.texture_selected_left_arrow.color[3] = 128 + 127 * anim_progress
+	widget.style.texture_selected_left_arrow.color[4] = 128 + 127 * anim_progress
+	widget.style.texture_selected_up_arrow.color[2] = 128 + 127 * anim_progress
+	widget.style.texture_selected_up_arrow.color[3] = 128 + 127 * anim_progress
+	widget.style.texture_selected_up_arrow.color[4] = 128 + 127 * anim_progress
+	widget.style.texture_selected_right_arrow.color[2] = 128 + 127 * anim_progress
+	widget.style.texture_selected_right_arrow.color[3] = 128 + 127 * anim_progress
+	widget.style.texture_selected_right_arrow.color[4] = 128 + 127 * anim_progress
+	animation_data.time = time
 
-	return not (min < 1) or not arg_28_1 or nil
+	return (not (progress < 1) or not animation_data) and not not nil
 end
 
-GamePadEquipmentUI._add_item = function (self, arg_29_1, arg_29_2)
+GamePadEquipmentUI._add_item = function (self, slot_data, data)
 	-- function 29
 	local _num_added_items = self._num_added_items
 
-	_num_added_items = _num_added_items or 0
+	if not _num_added_items then
+		-- Nothing
+	end
 
-	local flag = arg_29_2 ~= nil
+	_num_added_items = 0
 
-	if not (flag or not (_num_added_items >= NUM_SLOTS)) then
+	local num_added_items = _num_added_items
+
+	::label_29_0::
+
+	local use_exsiting_data = data ~= nil
+
+	if not use_exsiting_data and num_added_items >= NUM_SLOTS then
 		return
 	end
 
-	local id = arg_29_1.id
-	local console_hud_index = InventorySettings.slots_by_name[id].console_hud_index
-	local var_29_4
+	local slot_name = slot_data.id
+	local slots_by_name = InventorySettings.slots_by_name
+	local slot_settings = slots_by_name[slot_name]
+	local console_hud_index = slot_settings.console_hud_index
+	local widget
 
-	if not flag then
-		var_29_4 = arg_29_2.widget
+	if use_exsiting_data then
+		widget = data.widget
 	else
-		for i, v in ipairs(self._slot_widgets) do
-			if v.content.console_hud_index == console_hud_index then
-				var_29_4 = v
+		for i, slot_widget in ipairs(self._slot_widgets) do
+			if slot_widget.content.console_hud_index == console_hud_index then
+				widget = slot_widget
 
 				break
 			end
 		end
 
-		UIRenderer.set_element_visible(self.ui_renderer, var_29_4.element, true)
+		UIRenderer.set_element_visible(self.ui_renderer, widget.element, true)
 	end
 
-	local content = var_29_4.content
-	local style = var_29_4.style
-	local normal_color = content.normal_color
+	local widget_content = widget.content
+	local widget_style = widget.style
+	local color = widget_content.normal_color
 
-	content.is_filled = true
+	widget_content.is_filled = true
 
-	local item_data = arg_29_1.item_data
-	local name = item_data.name
-	local gamepad_hud_icon = item_data.gamepad_hud_icon
-	local var_29_11
+	local item_data = slot_data.item_data
+	local item_name = item_data.name
+	local hud_icon = item_data.gamepad_hud_icon
+	local hud_icon_glow
 
-	if id == "slot_melee" then
-		gamepad_hud_icon = "hud_icon_melee"
-	elseif id == "slot_ranged" then
-		gamepad_hud_icon = "hud_icon_ranged"
-	elseif not gamepad_hud_icon then
-		var_29_11 = gamepad_hud_icon .. "_glow"
+	if slot_name == "slot_melee" then
+		hud_icon = "hud_icon_melee"
+	elseif slot_name == "slot_ranged" then
+		hud_icon = "hud_icon_ranged"
+	elseif hud_icon then
+		hud_icon_glow = hud_icon .. "_glow"
 	end
 
 	local inventory_consumable_slot_colors = UISettings.inventory_consumable_slot_colors
-	local default = inventory_consumable_slot_colors.default
-	local var_29_14 = inventory_consumable_slot_colors[name]
+	local default_background_color = inventory_consumable_slot_colors.default
+	local var_29_1 = inventory_consumable_slot_colors[item_name]
 
-	var_29_14 = var_29_14 or default
+	if not var_29_1 then
+		-- Nothing
+	end
 
-	local color = style.texture_selected.color
+	var_29_1 = default_background_color
 
-	color[2] = var_29_14[2]
-	color[3] = var_29_14[3]
-	color[4] = var_29_14[4]
+	local slot_background_color = var_29_1
 
-	local color_2 = style.texture_selected_left_arrow_glow.color
+	::label_29_1::
 
-	color_2[2] = var_29_14[2]
-	color_2[3] = var_29_14[3]
-	color_2[4] = var_29_14[4]
+	local background_color = widget_style.texture_selected.color
 
-	local color_3 = style.texture_selected_up_arrow_glow.color
+	background_color[2] = slot_background_color[2]
+	background_color[3] = slot_background_color[3]
+	background_color[4] = slot_background_color[4]
 
-	color_3[2] = var_29_14[2]
-	color_3[3] = var_29_14[3]
-	color_3[4] = var_29_14[4]
+	local left_arrow_glow = widget_style.texture_selected_left_arrow_glow.color
 
-	local color_4 = style.texture_selected_right_arrow_glow.color
+	left_arrow_glow[2] = slot_background_color[2]
+	left_arrow_glow[3] = slot_background_color[3]
+	left_arrow_glow[4] = slot_background_color[4]
 
-	color_4[2] = var_29_14[2]
-	color_4[3] = var_29_14[3]
-	color_4[4] = var_29_14[4]
-	content.texture_icon = gamepad_hud_icon or "icons_placeholder"
-	content.texture_selected = var_29_11 or "icons_placeholder"
-	style.texture_icon.color[1] = 255
-	style.texture_selected_left_arrow.color[1] = 255
-	style.texture_selected_up_arrow.color[1] = 255
-	style.texture_selected_right_arrow.color[1] = 255
-	style.texture_empty_slot.color[1] = 0
-	arg_29_2 = arg_29_2 or {}
-	arg_29_2.console_hud_index = console_hud_index
-	arg_29_2.slot_name = id
-	arg_29_2.item_name = name
-	arg_29_2.widget = var_29_4
-	arg_29_2.wielded = false
-	arg_29_2.icon = gamepad_hud_icon
+	local up_arrow_glow = widget_style.texture_selected_up_arrow_glow.color
 
-	if not flag then
-		local _added_items = self._added_items
+	up_arrow_glow[2] = slot_background_color[2]
+	up_arrow_glow[3] = slot_background_color[3]
+	up_arrow_glow[4] = slot_background_color[4]
 
-		table.insert(_added_items, #_added_items + 1, arg_29_2)
+	local right_arrow_glow = widget_style.texture_selected_right_arrow_glow.color
 
-		self._num_added_items = _num_added_items + 1
+	right_arrow_glow[2] = slot_background_color[2]
+	right_arrow_glow[3] = slot_background_color[3]
+	right_arrow_glow[4] = slot_background_color[4]
+	widget_content.texture_icon = not not hud_icon or not not "icons_placeholder"
+	widget_content.texture_selected = not not hud_icon_glow or not not "icons_placeholder"
+	widget_style.texture_icon.color[1] = 255
+	widget_style.texture_selected_left_arrow.color[1] = 255
+	widget_style.texture_selected_up_arrow.color[1] = 255
+	widget_style.texture_selected_right_arrow.color[1] = 255
+	widget_style.texture_empty_slot.color[1] = 0
+	data = not not data or not not {}
+	data.console_hud_index = console_hud_index
+	data.slot_name = slot_name
+	data.item_name = item_name
+	data.widget = widget
+	data.wielded = false
+	data.icon = hud_icon
+
+	if not use_exsiting_data then
+		local added_items = self._added_items
+
+		table.insert(added_items, #added_items + 1, data)
+
+		self._num_added_items = num_added_items + 1
 	end
 end
 
-GamePadEquipmentUI._remove_item = function (self, arg_30_1)
+GamePadEquipmentUI._remove_item = function (self, index)
 	-- function 30
 	local _num_added_items = self._num_added_items
 
-	_num_added_items = _num_added_items or 0
+	if not _num_added_items then
+		-- Nothing
+	end
 
-	if _num_added_items <= 0 then
+	_num_added_items = 0
+
+	local num_added_items = _num_added_items
+
+	::label_30_0::
+
+	if num_added_items <= 0 then
 		return
 	end
 
-	local _added_items = self._added_items
-	local remove = table.remove(_added_items, arg_30_1)
-	local slot_name = remove.slot_name
-	local widget = remove.widget
-	local content = widget.content
-	local style = widget.style
+	local added_items = self._added_items
+	local data = table.remove(added_items, index)
+	local slot_name = data.slot_name
+	local widget = data.widget
+	local widget_content = widget.content
+	local widget_style = widget.style
 
-	content.is_filled = false
-	style.texture_icon.color[1] = 0
-	style.texture_arrow_left.color[1] = 0
-	style.texture_arrow_up.color[1] = 0
-	style.texture_arrow_right.color[1] = 0
-	style.texture_empty_slot.color[1] = 128
+	widget_content.is_filled = false
+	widget_style.texture_icon.color[1] = 0
+	widget_style.texture_arrow_left.color[1] = 0
+	widget_style.texture_arrow_up.color[1] = 0
+	widget_style.texture_arrow_right.color[1] = 0
+	widget_style.texture_empty_slot.color[1] = 128
 
-	local selected = content.selected
+	local was_selected = widget_content.selected
 
-	content.selected = false
+	widget_content.selected = false
 
-	local default = UISettings.inventory_consumable_slot_colors.default
-	local color = style.texture_background.color
+	local inventory_consumable_slot_colors = UISettings.inventory_consumable_slot_colors
+	local default_background_color = inventory_consumable_slot_colors.default
+	local background_color = widget_style.texture_background.color
 
-	color[1] = 0
-	color[2] = default[2]
-	color[3] = default[3]
-	color[4] = default[4]
-	self._num_added_items = _num_added_items - 1
+	background_color[1] = 0
+	background_color[2] = default_background_color[2]
+	background_color[3] = default_background_color[3]
+	background_color[4] = default_background_color[4]
+	self._num_added_items = num_added_items - 1
 
-	if not selected then
+	if was_selected then
 		self:_add_animation(slot_name .. "_wield_anim", widget, widget, "_animate_slot_unwield")
 	else
 		widget.style.texture_selected.color[1] = 0
 	end
 end
 
-GamePadEquipmentUI.set_position = function (self, arg_31_1, arg_31_2)
+GamePadEquipmentUI.set_position = function (self, x, y)
 	-- function 31
-	local local_position = self.ui_scenegraph.pivot.local_position
+	local position = self.ui_scenegraph.pivot.local_position
 
-	local_position[1] = arg_31_1
-	local_position[2] = arg_31_2
+	position[1] = x
+	position[2] = y
 
-	for i, v in ipairs(self._widgets) do
-		self:_set_widget_dirty(v)
+	for _, widget in ipairs(self._widgets) do
+		self:_set_widget_dirty(widget)
 	end
 
-	for i_2, v_2 in ipairs(self._static_widgets) do
-		self:_set_widget_dirty(v_2)
+	for _, widget in ipairs(self._static_widgets) do
+		self:_set_widget_dirty(widget)
 	end
 
 	self:set_dirty()
@@ -1366,11 +1489,11 @@ end
 
 GamePadEquipmentUI.destroy = function (self)
 	-- function 32
-	local event = Managers.state.event
+	local event_manager = Managers.state.event
 
-	event:unregister("input_changed", self)
-	event:unregister("swap_equipment_from_storage", self)
-	event:unregister("on_game_options_changed", self)
+	event_manager:unregister("input_changed", self)
+	event_manager:unregister("swap_equipment_from_storage", self)
+	event_manager:unregister("on_game_options_changed", self)
 
 	self._ui_animator = nil
 
@@ -1378,87 +1501,90 @@ GamePadEquipmentUI.destroy = function (self)
 	print("[GamePadEquipmentUI] - Destroy")
 end
 
-GamePadEquipmentUI.set_visible = function (self, arg_33_1)
+GamePadEquipmentUI.set_visible = function (self, visible)
 	-- function 33
-	self._is_visible = arg_33_1
+	self._is_visible = visible
 
-	self:_set_elements_visible(arg_33_1)
+	self:_set_elements_visible(visible)
 end
 
-GamePadEquipmentUI._set_elements_visible = function (self, arg_34_1)
+GamePadEquipmentUI._set_elements_visible = function (self, visible)
 	-- function 34
 	local ui_renderer = self.ui_renderer
 
-	for i, v in ipairs(self._widgets) do
-		UIRenderer.set_element_visible(ui_renderer, v.element, arg_34_1)
+	for _, widget in ipairs(self._widgets) do
+		UIRenderer.set_element_visible(ui_renderer, widget.element, visible)
 	end
 
-	for i_2, v_2 in ipairs(self._static_widgets) do
-		UIRenderer.set_element_visible(ui_renderer, v_2.element, arg_34_1)
+	for _, widget in ipairs(self._static_widgets) do
+		UIRenderer.set_element_visible(ui_renderer, widget.element, visible)
 	end
 
-	for i_3, v_3 in ipairs(self._ammo_widgets) do
-		UIRenderer.set_element_visible(ui_renderer, v_3.element, arg_34_1)
+	for _, widget in ipairs(self._ammo_widgets) do
+		UIRenderer.set_element_visible(ui_renderer, widget.element, visible)
 	end
 
-	for i_4, v_4 in ipairs(self._frame_widgets) do
-		UIRenderer.set_element_visible(ui_renderer, v_4.element, arg_34_1)
+	for _, widget in ipairs(self._frame_widgets) do
+		UIRenderer.set_element_visible(ui_renderer, widget.element, visible)
 	end
 
-	self._retained_elements_visible = arg_34_1
+	self._retained_elements_visible = visible
 
 	self:set_dirty()
 end
 
-GamePadEquipmentUI.update = function (self, arg_35_1, arg_35_2)
+GamePadEquipmentUI.update = function (self, dt, t)
 	-- function 35
-	local flag = false
+	local dirty = false
 
 	self:_update_game_options()
 
-	local get_crosshair_position, var_35_2 = self._parent:get_crosshair_position()
+	local parent = self._parent
+	local crosshair_position_x, crosshair_position_y = parent:get_crosshair_position()
 
-	if not self:_apply_crosshair_position(get_crosshair_position, var_35_2) then
-		flag = true
+	if self:_apply_crosshair_position(crosshair_position_x, crosshair_position_y) then
+		dirty = true
 	end
 
-	if not self:_update_animations(arg_35_1, arg_35_2) then
-		flag = true
+	if self:_update_animations(dt, t) then
+		dirty = true
 	end
 
-	if not self:_animate_ammo_counter(arg_35_1) then
-		flag = true
+	if self:_animate_ammo_counter(dt) then
+		dirty = true
 	end
 
-	if not flag then
+	if dirty then
 		self:set_dirty()
 	end
 
 	self:_handle_resolution_modified()
 	self:_sync_player_equipment()
-	self:_show_hold_to_reload(arg_35_2)
+	self:_show_hold_to_reload(t)
 	self:_handle_gamepad_activity()
-	self:draw(arg_35_1)
-	self._ui_animator:update(arg_35_1)
+	self:draw(dt)
+	self._ui_animator:update(dt)
 end
 
 GamePadEquipmentUI._handle_career_change = function (self)
 	-- function 36
-	local _career_name = self._career_name
-	local local_player = Managers.player:local_player()
-	local flag = not local_player and local_player.player_unit
+	local old_career_name = self._career_name
+	local player = Managers.player:local_player()
+	local player_unit = not not player and not not player.player_unit
 
-	if not ALIVE[flag] then
+	if not ALIVE[player_unit] then
 		return
 	end
 
-	self._career_name = ScriptUnit.extension(flag, "career_system"):career_name()
+	local career_ext = ScriptUnit.extension(player_unit, "career_system")
 
-	if self._career_name ~= _career_name then
-		for k, v in pairs(self._career_widgets) do
-			v.content.visible = true
+	self._career_name = career_ext:career_name()
 
-			self:_set_widget_dirty(v)
+	if self._career_name ~= old_career_name then
+		for name, widget in pairs(self._career_widgets) do
+			widget.content.visible = true
+
+			self:_set_widget_dirty(widget)
 		end
 
 		return true
@@ -1467,23 +1593,23 @@ end
 
 GamePadEquipmentUI._handle_resolution_modified = function (self)
 	-- function 37
-	if not RESOLUTION_LOOKUP.modified then
+	if RESOLUTION_LOOKUP.modified then
 		self:_on_resolution_modified()
 	end
 end
 
 GamePadEquipmentUI._on_resolution_modified = function (self)
 	-- function 38
-	for i, v in ipairs(self._widgets) do
-		self:_set_widget_dirty(v)
+	for _, widget in ipairs(self._widgets) do
+		self:_set_widget_dirty(widget)
 	end
 
-	for i_2, v_2 in ipairs(self._static_widgets) do
-		self:_set_widget_dirty(v_2)
+	for _, widget in ipairs(self._static_widgets) do
+		self:_set_widget_dirty(widget)
 	end
 
-	for k, v_3 in pairs(self._frame_widgets) do
-		self:_set_widget_dirty(v_3)
+	for _, widget in pairs(self._frame_widgets) do
+		self:_set_widget_dirty(widget)
 	end
 
 	self:set_dirty()
@@ -1491,25 +1617,25 @@ end
 
 GamePadEquipmentUI._handle_gamepad_activity = function (self)
 	-- function 39
-	local is_device_active = Managers.input:is_device_active("gamepad")
-	local get_most_recent_device = Managers.input:get_most_recent_device()
-	local flag = self.gamepad_active_last_frame == nil or not is_device_active or get_most_recent_device ~= self._most_recent_device
+	local gamepad_active = Managers.input:is_device_active("gamepad")
+	local most_recent_device = Managers.input:get_most_recent_device()
+	local force_update = (self.gamepad_active_last_frame == nil or not not gamepad_active) and most_recent_device ~= self._most_recent_device
 
-	if is_device_active or not IS_PS4 then
-		if not self.gamepad_active_last_frame and not flag then
+	if gamepad_active or IS_PS4 then
+		if not self.gamepad_active_last_frame or force_update then
 			self.gamepad_active_last_frame = true
 
 			self:_update_gamepad_input_button()
 			self:event_input_changed()
 		end
-	elseif self.gamepad_active_last_frame or not flag then
+	elseif self.gamepad_active_last_frame or force_update then
 		self.gamepad_active_last_frame = false
 
 		self:_update_gamepad_input_button()
 		self:event_input_changed()
 	end
 
-	self._most_recent_device = get_most_recent_device
+	self._most_recent_device = most_recent_device
 end
 
 GamePadEquipmentUI._set_game_options_dirty = function (self)
@@ -1531,41 +1657,44 @@ end
 
 GamePadEquipmentUI._update_gamepad_input_button = function (self)
 	-- function 42
-	local get_service = Managers.input:get_service("Player")
-	local str = "weapon_reload_input"
-	local flag = true
-	local get_gamepad_input_texture_data, var_42_4, var_42_5, var_42_6 = UISettings.get_gamepad_input_texture_data(get_service, str, flag)
-	local engineer_base = self._widgets_by_name.engineer_base
-	local style = engineer_base.style
-	local content = engineer_base.content
-	local is_device_active = Managers.input:is_device_active("gamepad")
+	local input_service = Managers.input:get_service("Player")
+	local input_action = "weapon_reload_input"
+	local fake_gamepad_active = true
+	local button_texture_data, button_name, gamepad_keymap_binding, unassigned = UISettings.get_gamepad_input_texture_data(input_service, input_action, fake_gamepad_active)
+	local widget = self._widgets_by_name.engineer_base
+	local style = widget.style
+	local content = widget.content
+	local gamepad_active = Managers.input:is_device_active("gamepad")
 
-	if not get_gamepad_input_texture_data and not is_device_active then
-		content.reload_button_id = get_gamepad_input_texture_data.texture
+	if button_texture_data and gamepad_active then
+		local texture = button_texture_data.texture
+
+		content.reload_button_id = texture
 		content.input_text = ""
 
-		local texture_size = style.reload_button.texture_size
-		local size = get_gamepad_input_texture_data.size
+		local reload_button_style = style.reload_button
+		local reload_button_texture_size = reload_button_style.texture_size
+		local size = button_texture_data.size
 
-		texture_size[1] = size[1]
-		texture_size[2] = size[2]
+		reload_button_texture_size[1] = size[1]
+		reload_button_texture_size[2] = size[2]
 	else
-		local num = 40
-		local str_2 = "weapon_reload"
-		local get_keymapping = get_service:get_keymapping(str_2, "win32")
+		local max_length = 40
+		local input_action = "weapon_reload"
+		local keymap_binding = input_service:get_keymapping(input_action, "win32")
 
-		if not get_keymapping then
-			content.input_text = UIRenderer.crop_text_width(self.ui_renderer, Localize("unassigned_keymap"), num, input_style)
+		if not keymap_binding then
+			content.input_text = UIRenderer.crop_text_width(self.ui_renderer, Localize("unassigned_keymap"), max_length, input_style)
 		else
-			local var_42_16 = get_keymapping[1]
-			local var_42_17 = get_keymapping[2]
-			local input_text = style.input_text
-			local str_3 = ""
+			local device_type = keymap_binding[1]
+			local key_index = keymap_binding[2]
+			local input_style = style.input_text
+			local input_text = ""
 
-			if var_42_17 ~= UNASSIGNED_KEY then
+			if key_index ~= UNASSIGNED_KEY then
 				local Mouse
 
-				if var_42_16 == "mouse" then
+				if device_type == "mouse" then
 					Mouse = Mouse
 
 					if not Mouse then
@@ -1575,12 +1704,14 @@ GamePadEquipmentUI._update_gamepad_input_button = function (self)
 
 				Mouse = Keyboard
 
+				local device = Mouse
+
 				::label_42_0::
 
-				str_3 = Mouse.button_locale_name(var_42_17) or Mouse.button_name(var_42_17) or Localize("lb_unknown")
+				input_text = not not device.button_locale_name(key_index) or not not device.button_name(key_index) or not not Localize("lb_unknown")
 			end
 
-			content.input_text = UIRenderer.crop_text_width(self.ui_renderer, str_3, num, input_text)
+			content.input_text = UIRenderer.crop_text_width(self.ui_renderer, input_text, max_length, input_style)
 		end
 	end
 end
@@ -1589,10 +1720,18 @@ GamePadEquipmentUI._handle_gamepad = function (self)
 	-- function 43
 	local is_device_active = Managers.input:is_device_active("gamepad")
 
-	is_device_active = is_device_active or not IS_WINDOWS
+	if not is_device_active then
+		-- Nothing
+	end
 
-	if not (not is_device_active and UISettings.use_gamepad_hud_layout ~= "never" and UISettings.use_gamepad_hud_layout == "always") then
-		if not self._retained_elements_visible then
+	is_device_active = not IS_WINDOWS
+
+	local gamepad_active = is_device_active
+
+	::label_43_0::
+
+	if (not gamepad_active or UISettings.use_gamepad_hud_layout == "never") and UISettings.use_gamepad_hud_layout ~= "always" then
+		if self._retained_elements_visible then
 			self:_set_elements_visible(false)
 		end
 
@@ -1607,69 +1746,77 @@ GamePadEquipmentUI._handle_gamepad = function (self)
 	end
 end
 
-GamePadEquipmentUI.draw = function (self, arg_44_1)
+GamePadEquipmentUI.draw = function (self, dt)
 	-- function 44
 	if not self._is_visible then
 		return
 	end
 
-	local _handle_gamepad = self:_handle_gamepad()
+	local should_render = self:_handle_gamepad()
 
-	if not _handle_gamepad then
+	if not should_render then
 		return
 	end
 
 	local _handle_career_change = self:_handle_career_change()
 
-	_handle_career_change = _handle_career_change or _handle_gamepad
-
 	if not _handle_career_change then
+		-- Nothing
+	end
+
+	_handle_career_change = should_render
+
+	local should_render = _handle_career_change
+
+	::label_44_0::
+
+	if not should_render then
 		return
 	end
 
 	local ui_renderer = self.ui_renderer
 	local ui_scenegraph = self.ui_scenegraph
-	local get_service = self.input_manager:get_service("ingame_menu")
+	local input_service = self.input_manager:get_service("ingame_menu")
 	local render_settings = self.render_settings
 	local alpha_multiplier = render_settings.alpha_multiplier
 
-	UIRenderer.begin_pass(ui_renderer, ui_scenegraph, get_service, arg_44_1, nil, render_settings)
+	UIRenderer.begin_pass(ui_renderer, ui_scenegraph, input_service, dt, nil, render_settings)
 
 	render_settings.snap_pixel_positions = true
 
 	local panel_alpha_multiplier = self.panel_alpha_multiplier
 
-	panel_alpha_multiplier = panel_alpha_multiplier or alpha_multiplier
+	panel_alpha_multiplier = not not panel_alpha_multiplier or not not alpha_multiplier
 	render_settings.alpha_multiplier = panel_alpha_multiplier
 
-	for i, v in ipairs(self._slot_widgets) do
-		UIRenderer.draw_widget(ui_renderer, v)
+	for _, widget in ipairs(self._slot_widgets) do
+		UIRenderer.draw_widget(ui_renderer, widget)
 	end
 
-	for i_2, v_2 in ipairs(self._extra_storage_icon_widgets) do
-		UIRenderer.draw_widget(ui_renderer, v_2)
-	end
-
-	render_settings.snap_pixel_positions = true
-
-	for i_3, v_3 in ipairs(self._static_widgets) do
-		UIRenderer.draw_widget(ui_renderer, v_3)
+	for _, widget in ipairs(self._extra_storage_icon_widgets) do
+		UIRenderer.draw_widget(ui_renderer, widget)
 	end
 
 	render_settings.snap_pixel_positions = true
 
-	for i_4, v_4 in ipairs(self._ammo_widgets) do
-		UIRenderer.draw_widget(ui_renderer, v_4)
+	for _, widget in ipairs(self._static_widgets) do
+		UIRenderer.draw_widget(ui_renderer, widget)
+	end
+
+	render_settings.snap_pixel_positions = true
+
+	for _, widget in ipairs(self._ammo_widgets) do
+		UIRenderer.draw_widget(ui_renderer, widget)
 	end
 
 	local frame_alpha_multiplier = self.frame_alpha_multiplier
 
-	frame_alpha_multiplier = frame_alpha_multiplier or alpha_multiplier
+	frame_alpha_multiplier = not not frame_alpha_multiplier or not not alpha_multiplier
 	render_settings.alpha_multiplier = frame_alpha_multiplier
 	render_settings.snap_pixel_positions = true
 
-	for i_5, v_5 in ipairs(self._frame_widgets) do
-		UIRenderer.draw_widget(ui_renderer, v_5)
+	for _, widget in ipairs(self._frame_widgets) do
+		UIRenderer.draw_widget(ui_renderer, widget)
 	end
 
 	UIRenderer.end_pass(ui_renderer)
@@ -1678,181 +1825,185 @@ GamePadEquipmentUI.draw = function (self, arg_44_1)
 	self._ammo_dirty = false
 end
 
-GamePadEquipmentUI._set_color = function (arg_45_0, arg_45_1, arg_45_2, arg_45_3)
+GamePadEquipmentUI._set_color = function (self, color, new_color, ignore_alpha)
 	-- function 45
-	if not arg_45_3 then
-		arg_45_1[1] = arg_45_2[1]
+	if not ignore_alpha then
+		color[1] = new_color[1]
 	end
 
-	arg_45_1[2] = arg_45_2[2]
-	arg_45_1[3] = arg_45_2[3]
-	arg_45_1[4] = arg_45_2[4]
+	color[2] = new_color[2]
+	color[3] = new_color[3]
+	color[4] = new_color[4]
 end
 
 GamePadEquipmentUI.set_dirty = function (self)
 	-- function 46
 	self._dirty = true
 
-	if not self.cleanui then
+	if self.cleanui then
 		self.cleanui.dirty = true
 	end
 end
 
-GamePadEquipmentUI._set_widget_dirty = function (self, arg_47_1)
+GamePadEquipmentUI._set_widget_dirty = function (self, widget)
 	-- function 47
-	arg_47_1.element.dirty = true
+	widget.element.dirty = true
 
-	if not self.cleanui then
+	if self.cleanui then
 		self.cleanui.dirty = true
 	end
 end
 
-GamePadEquipmentUI._set_overheat_fraction = function (self, arg_48_1)
+GamePadEquipmentUI._set_overheat_fraction = function (self, fraction)
 	-- function 48
-	local overcharge = self._widgets_by_name.overcharge
+	local widget = self._widgets_by_name.overcharge
+	local content = widget.content
+	local uvs = content.texture_id.uvs
 
-	overcharge.content.texture_id.uvs[2][1] = arg_48_1
+	uvs[2][1] = fraction
 
-	local scenegraph_id = overcharge.scenegraph_id
-	local var_48_2 = self.ui_scenegraph[scenegraph_id]
-	local size = scenegraph_definition[scenegraph_id].size
+	local scenegraph_id = widget.scenegraph_id
+	local scenegraph = self.ui_scenegraph[scenegraph_id]
+	local default_scenegraph = scenegraph_definition[scenegraph_id]
+	local default_size = default_scenegraph.size
+	local size = scenegraph.size
 
-	var_48_2.size[1] = size[1] * arg_48_1
+	size[1] = default_size[1] * fraction
 
-	self:_set_widget_dirty(overcharge)
+	self:_set_widget_dirty(widget)
 	self:set_dirty()
 end
 
-GamePadEquipmentUI._show_overheat_meter = function (self, arg_49_1)
+GamePadEquipmentUI._show_overheat_meter = function (self, visible)
 	-- function 49
-	local _widgets_by_name = self._widgets_by_name
-	local _ammo_widgets_by_name = self._ammo_widgets_by_name
+	local widgets_by_name = self._widgets_by_name
+	local ammo_widgets_by_name = self._ammo_widgets_by_name
 
-	self:_set_widget_visibility(_widgets_by_name.overcharge, false)
-	self:_set_widget_visibility(_widgets_by_name.overcharge_background, false)
-	self:_set_widget_visibility(_ammo_widgets_by_name.ammo_text_clip, not arg_49_1)
-	self:_set_widget_visibility(_ammo_widgets_by_name.ammo_text_remaining, not arg_49_1)
-	self:_set_widget_visibility(_ammo_widgets_by_name.ammo_text_center, not arg_49_1)
+	self:_set_widget_visibility(widgets_by_name.overcharge, false)
+	self:_set_widget_visibility(widgets_by_name.overcharge_background, false)
+	self:_set_widget_visibility(ammo_widgets_by_name.ammo_text_clip, not visible)
+	self:_set_widget_visibility(ammo_widgets_by_name.ammo_text_remaining, not visible)
+	self:_set_widget_visibility(ammo_widgets_by_name.ammo_text_center, not visible)
 	self:set_dirty()
 end
 
-GamePadEquipmentUI._set_widget_visibility = function (self, arg_50_1, arg_50_2)
+GamePadEquipmentUI._set_widget_visibility = function (self, widget, visible)
 	-- function 50
-	arg_50_1.content.visible = arg_50_2
+	widget.content.visible = visible
 
-	self:_set_widget_dirty(arg_50_1)
+	self:_set_widget_dirty(widget)
 end
 
-GamePadEquipmentUI.set_alpha = function (self, arg_51_1)
+GamePadEquipmentUI.set_alpha = function (self, alpha)
 	-- function 51
-	self.render_settings.alpha_multiplier = arg_51_1
+	self.render_settings.alpha_multiplier = alpha
 
-	for k, v in pairs(self._widgets) do
-		self:_set_widget_dirty(v)
+	for widget_index, widget in pairs(self._widgets) do
+		self:_set_widget_dirty(widget)
 	end
 
-	for k_2, v_2 in pairs(self._slot_widgets) do
-		self:_set_widget_dirty(v_2)
+	for widget_index, widget in pairs(self._slot_widgets) do
+		self:_set_widget_dirty(widget)
 	end
 
-	for k_3, v_3 in pairs(self._static_widgets) do
-		self:_set_widget_dirty(v_3)
+	for widget_index, widget in pairs(self._static_widgets) do
+		self:_set_widget_dirty(widget)
 	end
 
-	for k_4, v_4 in pairs(self._ammo_widgets) do
-		self:_set_widget_dirty(v_4)
+	for widget_index, widget in pairs(self._ammo_widgets) do
+		self:_set_widget_dirty(widget)
 	end
 
-	for k_5, v_5 in pairs(self._frame_widgets) do
-		self:_set_widget_dirty(v_5)
+	for widget_index, widget in pairs(self._frame_widgets) do
+		self:_set_widget_dirty(widget)
 	end
 
 	self:set_dirty()
 end
 
-GamePadEquipmentUI.set_ammo_alpha = function (self, arg_52_1)
+GamePadEquipmentUI.set_ammo_alpha = function (self, alpha)
 	-- function 52
-	self.ammo_alpha_multiplier = arg_52_1
+	self.ammo_alpha_multiplier = alpha
 
-	for k, v in pairs(self._ammo_widgets) do
-		self:_set_widget_dirty(v)
+	for widget_index, widget in pairs(self._ammo_widgets) do
+		self:_set_widget_dirty(widget)
 	end
 
 	self:set_dirty()
 end
 
-GamePadEquipmentUI.set_frame_alpha = function (self, arg_53_1)
+GamePadEquipmentUI.set_frame_alpha = function (self, alpha)
 	-- function 53
-	self.frame_alpha_multiplier = arg_53_1
+	self.frame_alpha_multiplier = alpha
 
-	for k, v in pairs(self._frame_widgets) do
-		self:_set_widget_dirty(v)
+	for widget_index, widget in pairs(self._frame_widgets) do
+		self:_set_widget_dirty(widget)
 	end
 
 	self:set_dirty()
 end
 
-GamePadEquipmentUI.set_panel_alpha = function (self, arg_54_1)
+GamePadEquipmentUI.set_panel_alpha = function (self, alpha)
 	-- function 54
-	self.panel_alpha_multiplier = arg_54_1
+	self.panel_alpha_multiplier = alpha
 
-	for k, v in pairs(self._widgets) do
-		self:_set_widget_dirty(v)
+	for widget_index, widget in pairs(self._widgets) do
+		self:_set_widget_dirty(widget)
 	end
 
-	for k_2, v_2 in pairs(self._slot_widgets) do
-		self:_set_widget_dirty(v_2)
+	for widget_index, widget in pairs(self._slot_widgets) do
+		self:_set_widget_dirty(widget)
 	end
 
-	for k_3, v_3 in pairs(self._static_widgets) do
-		self:_set_widget_dirty(v_3)
+	for widget_index, widget in pairs(self._static_widgets) do
+		self:_set_widget_dirty(widget)
 	end
 
-	for k_4, v_4 in pairs(self._ammo_widgets) do
-		self:_set_widget_dirty(v_4)
+	for widget_index, widget in pairs(self._ammo_widgets) do
+		self:_set_widget_dirty(widget)
 	end
 
 	self:set_dirty()
 end
 
-GamePadEquipmentUI._apply_crosshair_position = function (self, arg_55_1, arg_55_2)
+GamePadEquipmentUI._apply_crosshair_position = function (self, x, y)
 	-- function 55
-	local str = "screen_bottom_pivot"
-	local local_position = self.ui_scenegraph[str].local_position
-	local flag = false
+	local scenegraph_id = "screen_bottom_pivot"
+	local position = self.ui_scenegraph[scenegraph_id].local_position
+	local dirty = false
 
-	if not (local_position[1] ~= arg_55_1 or local_position[2] == arg_55_2) then
-		flag = true
+	if position[1] ~= x or position[2] ~= y then
+		dirty = true
 	end
 
-	local_position[1] = arg_55_1
-	local_position[2] = arg_55_2
+	position[1] = x
+	position[2] = y
 
-	if not flag then
-		local _widgets_by_name = self._widgets_by_name
-		local _ammo_widgets_by_name = self._ammo_widgets_by_name
+	if dirty then
+		local widgets_by_name = self._widgets_by_name
+		local ammo_widgets_by_name = self._ammo_widgets_by_name
 
-		self:_set_widget_dirty(_ammo_widgets_by_name.ammo_text_clip)
-		self:_set_widget_dirty(_ammo_widgets_by_name.ammo_text_remaining)
-		self:_set_widget_dirty(_ammo_widgets_by_name.ammo_text_center)
-		self:_set_widget_dirty(_widgets_by_name.overcharge)
-		self:_set_widget_dirty(_widgets_by_name.overcharge_background)
+		self:_set_widget_dirty(ammo_widgets_by_name.ammo_text_clip)
+		self:_set_widget_dirty(ammo_widgets_by_name.ammo_text_remaining)
+		self:_set_widget_dirty(ammo_widgets_by_name.ammo_text_center)
+		self:_set_widget_dirty(widgets_by_name.overcharge)
+		self:_set_widget_dirty(widgets_by_name.overcharge_background)
 	end
 
-	return flag
+	return dirty
 end
 
-GamePadEquipmentUI._show_hold_to_reload = function (self, arg_56_1)
+GamePadEquipmentUI._show_hold_to_reload = function (self, t)
 	-- function 56
-	local is_device_active = Managers.input:is_device_active("gamepad")
+	local gamepad_active = Managers.input:is_device_active("gamepad")
 
-	if not (not is_device_active and UISettings.use_gamepad_hud_layout ~= "never" and UISettings.use_gamepad_hud_layout == "always") then
+	if (not gamepad_active or UISettings.use_gamepad_hud_layout == "never") and UISettings.use_gamepad_hud_layout ~= "always" then
 		return
 	end
 
 	local _spectated_player
 
-	if not self._is_spectator then
+	if self._is_spectator then
 		_spectated_player = self._spectated_player
 
 		if not _spectated_player then
@@ -1862,135 +2013,192 @@ GamePadEquipmentUI._show_hold_to_reload = function (self, arg_56_1)
 
 	_spectated_player = self.player
 
+	local player = _spectated_player
+
 	::label_56_0::
 
-	local player_unit = _spectated_player.player_unit
+	local player_unit = player.player_unit
 
 	if not player_unit then
 		return
 	end
 
-	local equipment = ScriptUnit.extension(player_unit, "inventory_system"):equipment()
+	local inventory_extension = ScriptUnit.extension(player_unit, "inventory_system")
+	local equipment = inventory_extension:equipment()
 	local wielded_slot = equipment.wielded_slot
-	local flag = false
-	local var_56_6
-	local var_56_7
-	local var_56_8
+	local is_wielding_special_weapon = false
+	local slot_data, item_data, item_template
 
-	for k, v in pairs(equipment.slots) do
-		local item_data = v.item_data
-		local get_item_template = BackendUtils.get_item_template(item_data)
+	for _, temp_slot_data in pairs(equipment.slots) do
+		local temp_item_data = temp_slot_data.item_data
+		local temp_item_template = BackendUtils.get_item_template(temp_item_data)
 
-		if v.id == wielded_slot then
-			local ammo_data = get_item_template.ammo_data
+		if temp_slot_data.id == wielded_slot then
+			local ammo_data = temp_item_template.ammo_data
 
-			ammo_data = not ammo_data and get_item_template.ammo_data.unique_ammo_type
+			if ammo_data then
+				-- Nothing
+			end
 
-			if not ammo_data then
-				var_56_6 = v
-				var_56_7 = item_data
-				var_56_8 = get_item_template
-				flag = true
+			ammo_data = temp_item_template.ammo_data.unique_ammo_type
+
+			local unique_ammo_type = ammo_data
+
+			::label_56_1::
+
+			if unique_ammo_type then
+				slot_data = temp_slot_data
+				item_data = temp_item_data
+				item_template = temp_item_template
+				is_wielding_special_weapon = true
 			end
 		end
 	end
 
-	if not (not var_56_7 and not var_56_6 and var_56_8) then
+	if not item_data or not slot_data or not item_template then
 		return
 	end
 
-	local _get_ammunition_count, var_56_13, var_56_14 = self:_get_ammunition_count(var_56_6.left_unit_1p, var_56_6.right_unit_1p, var_56_8)
-	local flag_2
+	local ammo_count, remaining_ammo, using_single_clip = self:_get_ammunition_count(slot_data.left_unit_1p, slot_data.right_unit_1p, item_template)
+	local str
 
-	flag_2 = not is_device_active and "weapon_reload_hold_input" and "weapon_reload_hold"
+	if gamepad_active then
+		str = "weapon_reload_hold_input"
 
-	local reload_tip_text = self._ammo_widgets_by_name.reload_tip_text
-	local _get_input_texture_data, var_56_18, var_56_19 = self:_get_input_texture_data(flag_2)
-	local var_56_20 = reload_tip_text.style.text.text_color[1]
-	local format = string.format("{#color(193,91,36, %d)}", var_56_20)
-	local format_2
+		goto label_56_2
+	end
 
-	if not is_device_active then
-		format_2 = string.format("$KEY;Player__%s:", flag_2)
+	str = "weapon_reload_hold"
 
-		if not format_2 then
+	local input_action = str
+
+	::label_56_2::
+
+	local reload_tip_widget = self._ammo_widgets_by_name.reload_tip_text
+	local texture_data, input_text, prefix_text = self:_get_input_texture_data(input_action)
+	local alpha = reload_tip_widget.style.text.text_color[1]
+	local format_color = string.format("{#color(193,91,36, %d)}", alpha)
+	local format
+
+	if gamepad_active then
+		format = string.format("$KEY;Player__%s:", input_action)
+
+		if not format then
 			-- Nothing
 		end
 	end
 
-	format_2 = var_56_18
+	format = input_text
 
-	::label_56_1::
+	local key_text = format
 
-	reload_tip_text.content.text = string.format(Localize("reload_tip"), format, format_2, "{#reset()}")
+	::label_56_3::
 
-	local flag_3 = _get_ammunition_count + var_56_13 == var_56_8.ammo_data.max_ammo
+	reload_tip_widget.content.text = string.format(Localize("reload_tip"), format_color, key_text, "{#reset()}")
 
-	if not (not flag and flag_3) then
+	local full_clip = ammo_count + remaining_ammo == item_template.ammo_data.max_ammo
+
+	if is_wielding_special_weapon and not full_clip then
 		if self._reload_attempts >= 3 then
 			self._reload_tip_text_shown = true
 
-			if not self._reload_tip_anim and not self._ui_animator:is_animation_completed(self._reload_tip_anim) then
-				self._reload_tip_anim = self._ui_animator:start_animation("show_reload_tip", reload_tip_text, scenegraph_definition)
+			if not self._reload_tip_anim or self._ui_animator:is_animation_completed(self._reload_tip_anim) then
+				self._reload_tip_anim = self._ui_animator:start_animation("show_reload_tip", reload_tip_widget, scenegraph_definition)
 			end
 		end
 
-		self:_update_reload_ui_state(arg_56_1, var_56_8)
+		self:_update_reload_ui_state(t, item_template)
 	end
 
-	self:_set_widget_dirty(reload_tip_text)
+	self:_set_widget_dirty(reload_tip_widget)
 end
 
-GamePadEquipmentUI._update_reload_ui_state = function (self, arg_57_1, arg_57_2)
+GamePadEquipmentUI._update_reload_ui_state = function (self, t, item_template)
 	-- function 57
-	if not self._ammo_widgets_by_name.reload_tip_text then
+	local reload_tip_widget = self._ammo_widgets_by_name.reload_tip_text
+
+	if not reload_tip_widget then
 		return
 	end
 
-	local get_service = Managers.input:get_service("Player")
-	local num = 5
+	local input_service = Managers.input:get_service("Player")
+	local listening_duration = 5
 	local is_device_active = Managers.input:is_device_active("gamepad")
 
-	is_device_active = is_device_active or not IS_WINDOWS
+	if not is_device_active then
+		-- Nothing
+	end
 
-	local flag
+	is_device_active = not IS_WINDOWS
 
-	flag = not is_device_active and "weapon_reload_hold_input" and "weapon_reload_hold"
+	local gamepad_active = is_device_active
 
-	if not get_service:get(flag) then
+	do
+		local str
+	end
+
+	::label_57_0::
+
+	if gamepad_active then
+		str = "weapon_reload_hold_input"
+
+		goto label_57_1
+	end
+
+	str = "weapon_reload_hold"
+
+	local input_action = str
+
+	::label_57_1::
+
+	if input_service:get(input_action) then
 		if not self._ui_animator:is_animation_completed(self._reload_tip_anim) then
 			return
 		end
 
 		if not self._listening_timer_start then
-			self._listening_timer_start = arg_57_1
+			self._listening_timer_start = t
 		end
 
 		if not self._reload_start_time then
-			self._reload_start_time = arg_57_1
+			self._reload_start_time = t
 		end
 	else
-		local anim_time_scale = arg_57_2.actions.weapon_reload.default.anim_time_scale
+		local reload_time = item_template.actions.weapon_reload.default.anim_time_scale
 		local _reload_start_time = self._reload_start_time
 
-		_reload_start_time = not _reload_start_time and anim_time_scale > arg_57_1 - self._reload_start_time
+		if _reload_start_time then
+			-- Nothing
+		end
 
-		if not _reload_start_time then
+		if not (reload_time > t - self._reload_start_time) then
+			_reload_start_time = false
+
+			goto label_57_2
+		end
+
+		_reload_start_time = true
+
+		local failed_reload = _reload_start_time
+
+		::label_57_2::
+
+		if failed_reload then
 			self._reload_attempts = self._reload_attempts + 1
 		end
 
-		if not self._reload_start_time then
+		if self._reload_start_time then
 			self._reload_start_time = nil
 		end
 	end
 
-	local num_2 = 0
+	local end_time = 0
 
-	if not self._listening_timer_start then
-		num_2 = self._listening_timer_start + num
+	if self._listening_timer_start then
+		end_time = self._listening_timer_start + listening_duration
 	end
 
-	if (num_2 == 0 or not (num_2 < arg_57_1)) and not self._reload_tip_text_shown then
+	if (end_time == 0 or not (end_time < t)) and self._reload_tip_text_shown then
 		self._listening_timer_start = nil
 		self._reload_attempts = 0
 		self._reload_tip_text_shown = false

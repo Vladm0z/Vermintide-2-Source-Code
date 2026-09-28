@@ -1,16 +1,16 @@
 -- chunkname: @scripts/settings/terror_events/terror_events_ground_zero.lua
 
-local scripts_settings_terror_events_terror_event_utils = require("scripts/settings/terror_events/terror_event_utils")
-local count_event_breed = scripts_settings_terror_events_terror_event_utils.count_event_breed
-local HARD = scripts_settings_terror_events_terror_event_utils.HARD
-local HARDER = scripts_settings_terror_events_terror_event_utils.HARDER
-local tbl = {
+local TerrorEventUtils = require("scripts/settings/terror_events/terror_event_utils")
+local count_event_breed = TerrorEventUtils.count_event_breed
+local HARD = TerrorEventUtils.HARD
+local HARDER = TerrorEventUtils.HARDER
+local weighted_random_terror_events = {
 	gz_elevator_guards = {
 		"gz_elevator_guards_a",
 		1
 	}
 }
-local tbl_2 = {
+local terror_event_blueprints = {
 	generic_disable_specials = GenericTerrorEvents.generic_disable_specials,
 	generic_disable_pacing = GenericTerrorEvents.generic_disable_pacing,
 	gz_chaos_boss = {
@@ -28,14 +28,14 @@ local tbl_2 = {
 		},
 		{
 			"continue_when",
-			condition = function (arg_1_0)
+			condition = function (t)
 				-- function 1
 				return count_event_breed("chaos_exalted_sorcerer") == 1
 			end
 		},
 		{
 			"continue_when",
-			condition = function (arg_2_0)
+			condition = function (t)
 				-- function 2
 				return count_event_breed("chaos_exalted_sorcerer") < 1
 			end
@@ -134,6 +134,6 @@ local tbl_2 = {
 }
 
 return {
-	tbl_2,
-	tbl
+	terror_event_blueprints,
+	weighted_random_terror_events
 }

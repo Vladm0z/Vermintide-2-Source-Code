@@ -1,11 +1,11 @@
 -- chunkname: @scripts/settings/equipment/weapon_templates/shortbows_hagbane.lua
 
-local tbl = {}
-local str = "poison_arrow_impact"
-local num = 4
-local num_2 = 2
+local weapon_template = {}
+local ARROW_HIT_EFFECT = "poison_arrow_impact"
+local ALERT_SOUND_RANGE_FIRE = 4
+local ALERT_SOUND_RANGE_HIT = 2
 
-tbl.actions = {
+weapon_template.actions = {
 	action_one = {
 		default = {
 			anim_event = "attack_shoot_fast",
@@ -60,11 +60,11 @@ tbl.actions = {
 					input = "weapon_reload"
 				}
 			},
-			enter_function = function (arg_1_0, arg_1_1)
+			enter_function = function (attacker_unit, input_extension)
 				-- function 1
-				arg_1_1:clear_input_buffer()
+				input_extension:clear_input_buffer()
 
-				return arg_1_1:reset_release_input()
+				return input_extension:reset_release_input()
 			end,
 			cleave_distribution = {
 				attack = 0,
@@ -75,8 +75,8 @@ tbl.actions = {
 				damage_profile = "shortbow_hagbane",
 				targets = 1
 			},
-			alert_sound_range_fire = num,
-			alert_sound_range_hit = num_2,
+			alert_sound_range_fire = ALERT_SOUND_RANGE_FIRE,
+			alert_sound_range_hit = ALERT_SOUND_RANGE_HIT,
 			recoil_settings = {
 				horizontal_climb = -0.5,
 				restore_duration = 0.15,
@@ -123,16 +123,16 @@ tbl.actions = {
 					input = "weapon_reload"
 				}
 			},
-			hit_effect = str,
+			hit_effect = ARROW_HIT_EFFECT,
 			cleave_distribution = {
 				attack = 0,
 				impact = 0
 			},
-			enter_function = function (arg_2_0, arg_2_1)
+			enter_function = function (attacker_unit, input_extension)
 				-- function 2
-				arg_2_1:clear_input_buffer()
+				input_extension:clear_input_buffer()
 
-				return arg_2_1:reset_release_input()
+				return input_extension:reset_release_input()
 			end,
 			projectile_info = Projectiles.carbine_poison_arrow,
 			impact_data = {
@@ -140,8 +140,8 @@ tbl.actions = {
 				aoe_on_bounce = true,
 				aoe = ExplosionTemplates.carbine_poison_arrow
 			},
-			alert_sound_range_fire = num,
-			alert_sound_range_hit = num_2,
+			alert_sound_range_fire = ALERT_SOUND_RANGE_FIRE,
+			alert_sound_range_hit = ALERT_SOUND_RANGE_HIT,
 			recoil_settings = {
 				horizontal_climb = -0.5,
 				restore_duration = 0.15,
@@ -173,9 +173,9 @@ tbl.actions = {
 			anim_event = "draw_bow",
 			allow_hold_toggle = true,
 			reload_when_out_of_ammo = true,
-			anim_end_event_condition_func = function (arg_3_0, arg_3_1)
+			anim_end_event_condition_func = function (unit, end_reason)
 				-- function 3
-				return arg_3_1 ~= "new_interupting_action"
+				return end_reason ~= "new_interupting_action"
 			end,
 			total_time = math.huge,
 			buff_data = {
@@ -223,13 +223,13 @@ tbl.actions = {
 				-- function 4
 				return true
 			end,
-			unzoom_condition_function = function (arg_5_0)
+			unzoom_condition_function = function (end_reason)
 				-- function 5
-				return arg_5_0 ~= "new_interupting_action"
+				return end_reason ~= "new_interupting_action"
 			end,
-			condition_func = function (arg_6_0, arg_6_1, arg_6_2)
+			condition_func = function (unit, input_extension, ammo_extension)
 				-- function 6
-				if not arg_6_2 and arg_6_2:total_remaining_ammo() <= 0 and not arg_6_2:is_reloading() then
+				if ammo_extension and (ammo_extension:total_remaining_ammo() <= 0 or ammo_extension:is_reloading()) then
 					return false
 				end
 
@@ -241,7 +241,7 @@ tbl.actions = {
 	action_inspect = ActionTemplates.action_inspect_left,
 	action_wield = ActionTemplates.wield_left
 }
-tbl.ammo_data = {
+weapon_template.ammo_data = {
 	ammo_per_reload = 1,
 	max_ammo = 25,
 	ammo_per_clip = 1,
@@ -250,7 +250,7 @@ tbl.ammo_data = {
 	ammo_hand = "left",
 	ammo_unit_attachment_node_linking = AttachmentNodeLinking.arrow
 }
-tbl.attack_meta_data = {
+weapon_template.attack_meta_data = {
 	aim_at_node = "j_head",
 	charged_attack_action_name = "shoot_charged",
 	can_charge_shot = true,
@@ -263,14 +263,14 @@ tbl.attack_meta_data = {
 	effective_against_charged = bit.bor(BreedCategory.Infantry, BreedCategory.Berserker, BreedCategory.Armored, BreedCategory.Shielded)
 }
 
-local default = tbl.actions.action_one.default
+local action = weapon_template.actions.action_one.default
 
-tbl.default_loaded_projectile_settings = {
+weapon_template.default_loaded_projectile_settings = {
 	drop_multiplier = 0.03,
-	speed = default.speed,
-	gravity = ProjectileGravitySettings[default.projectile_info.gravity_settings]
+	speed = action.speed,
+	gravity = ProjectileGravitySettings[action.projectile_info.gravity_settings]
 }
-tbl.aim_assist_settings = {
+weapon_template.aim_assist_settings = {
 	max_range = 50,
 	no_aim_input_multiplier = 0,
 	always_auto_aim = true,
@@ -283,20 +283,20 @@ tbl.aim_assist_settings = {
 		skaven_slave = 1
 	}
 }
-tbl.default_spread_template = "bow"
-tbl.left_hand_unit = "units/weapons/player/wpn_we_bow_01_t1/wpn_we_bow_01_t1"
-tbl.display_unit = "units/weapons/weapon_display/display_bow"
-tbl.left_hand_attachment_node_linking = AttachmentNodeLinking.shortbow
-tbl.wield_anim = "to_shortbow"
-tbl.wield_anim_no_ammo = "to_shortbow_noammo"
-tbl.state_machine = "units/beings/player/first_person_base/state_machines/ranged/shortbow"
-tbl.crosshair_style = "projectile"
-tbl.no_ammo_reload_event = "reload"
-tbl.buff_type = "RANGED"
-tbl.weapon_type = "SHORTBOW_HAGBANE"
-tbl.default_projectile_action = tbl.actions.action_one.default
-tbl.dodge_count = 6
-tbl.buffs = {
+weapon_template.default_spread_template = "bow"
+weapon_template.left_hand_unit = "units/weapons/player/wpn_we_bow_01_t1/wpn_we_bow_01_t1"
+weapon_template.display_unit = "units/weapons/weapon_display/display_bow"
+weapon_template.left_hand_attachment_node_linking = AttachmentNodeLinking.shortbow
+weapon_template.wield_anim = "to_shortbow"
+weapon_template.wield_anim_no_ammo = "to_shortbow_noammo"
+weapon_template.state_machine = "units/beings/player/first_person_base/state_machines/ranged/shortbow"
+weapon_template.crosshair_style = "projectile"
+weapon_template.no_ammo_reload_event = "reload"
+weapon_template.buff_type = "RANGED"
+weapon_template.weapon_type = "SHORTBOW_HAGBANE"
+weapon_template.default_projectile_action = weapon_template.actions.action_one.default
+weapon_template.dodge_count = 6
+weapon_template.buffs = {
 	change_dodge_distance = {
 		external_optional_multiplier = 1.25
 	},
@@ -304,10 +304,10 @@ tbl.buffs = {
 		external_optional_multiplier = 1.25
 	}
 }
-tbl.server_buffs = {
+weapon_template.server_buffs = {
 	we_deus_01_kerillian_critical_bleed_dot_disable = {}
 }
-tbl.weapon_diagram = {
+weapon_template.weapon_diagram = {
 	light_attack = {
 		[DamageTypes.ARMOR_PIERCING] = 2,
 		[DamageTypes.CLEAVE] = 0,
@@ -323,12 +323,12 @@ tbl.weapon_diagram = {
 		[DamageTypes.DAMAGE] = 6
 	}
 }
-tbl.tooltip_keywords = {
+weapon_template.tooltip_keywords = {
 	"weapon_keyword_damage_over_time",
 	"weapon_keyword_rapid_fire",
 	"weapon_keyword_crowd_control"
 }
-tbl.tooltip_compare = {
+weapon_template.tooltip_compare = {
 	light = {
 		action_name = "action_one",
 		sub_action_name = "default"
@@ -338,7 +338,7 @@ tbl.tooltip_compare = {
 		sub_action_name = "shoot_charged"
 	}
 }
-tbl.tooltip_detail = {
+weapon_template.tooltip_detail = {
 	light = {
 		action_name = "action_one",
 		sub_action_name = "default"
@@ -348,10 +348,10 @@ tbl.tooltip_detail = {
 		sub_action_name = "default"
 	}
 }
-tbl.wwise_dep_left_hand = {
+weapon_template.wwise_dep_left_hand = {
 	"wwise/bow"
 }
 
 return {
-	shortbow_hagbane_template_1 = table.clone(tbl)
+	shortbow_hagbane_template_1 = table.clone(weapon_template)
 }

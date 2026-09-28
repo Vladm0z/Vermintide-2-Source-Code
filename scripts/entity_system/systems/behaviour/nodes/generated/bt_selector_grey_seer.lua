@@ -2,10 +2,10 @@
 
 require("scripts/entity_system/systems/behaviour/nodes/bt_node")
 
-local alive = Unit.alive
+local unit_alive = Unit.alive
 local Profiler = Profiler
 
-local function fn()
+local function nop()
 	-- function 1
 	return
 end
@@ -20,262 +20,320 @@ BTSelector_grey_seer.init = function (self, ...)
 	self._children = {}
 end
 
-BTSelector_grey_seer.leave = function (self, arg_3_1, arg_3_2, arg_3_3, arg_3_4)
+BTSelector_grey_seer.leave = function (self, unit, blackboard, t, reason)
 	-- function 3
-	self:set_running_child(arg_3_1, arg_3_2, arg_3_3, nil, arg_3_4)
+	self:set_running_child(unit, blackboard, t, nil, reason)
 end
 
-BTSelector_grey_seer.run = function (self, arg_4_1, arg_4_2, arg_4_3, arg_4_4)
+BTSelector_grey_seer.run = function (self, unit, blackboard, t, dt)
 	-- function 4
-	local start = Profiler.start
-	local stop = Profiler.stop
-	local current_running_child = self:current_running_child(arg_4_2)
-	local _children = self._children
-	local var_4_4 = _children[1]
+	local Profiler_start, Profiler_stop = Profiler.start, Profiler.stop
+	local child_running = self:current_running_child(blackboard)
+	local children = self._children
 
-	if not arg_4_2.spawn then
-		self:set_running_child(arg_4_1, arg_4_2, arg_4_3, var_4_4, "aborted")
+	do
+		local node_spawn = children[1]
+		local condition_result = blackboard.spawn
 
-		local run, var_4_6 = var_4_4:run(arg_4_1, arg_4_2, arg_4_3, arg_4_4)
+		if condition_result then
+			self:set_running_child(unit, blackboard, t, node_spawn, "aborted")
 
-		if run ~= "running" then
-			self:set_running_child(arg_4_1, arg_4_2, arg_4_3, nil, run)
-		end
+			local result, evaluate = node_spawn:run(unit, blackboard, t, dt)
 
-		if run ~= "failed" then
-			return run, var_4_6
-		end
-	elseif var_4_4 == current_running_child then
-		self:set_running_child(arg_4_1, arg_4_2, arg_4_3, nil, "failed")
-	end
+			if result ~= "running" then
+				self:set_running_child(unit, blackboard, t, nil, result)
+			end
 
-	local var_4_7 = _children[2]
-	local time = Managers.time:time("game")
-	local intro_timer = arg_4_2.intro_timer
-
-	intro_timer = not intro_timer and time < arg_4_2.intro_timer
-
-	if not intro_timer then
-		self:set_running_child(arg_4_1, arg_4_2, time, var_4_7, "aborted")
-
-		local run_2, var_4_11 = var_4_7:run(arg_4_1, arg_4_2, time, arg_4_4)
-
-		if run_2 ~= "running" then
-			self:set_running_child(arg_4_1, arg_4_2, time, nil, run_2)
-		end
-
-		if run_2 ~= "failed" then
-			return run_2, var_4_11
-		end
-	elseif var_4_7 == current_running_child then
-		self:set_running_child(arg_4_1, arg_4_2, time, nil, "failed")
-	end
-
-	local var_4_12 = _children[3]
-
-	if not (arg_4_2.should_mount_unit ~= nil) then
-		self:set_running_child(arg_4_1, arg_4_2, arg_4_3, var_4_12, "aborted")
-
-		local run_3, var_4_14 = var_4_12:run(arg_4_1, arg_4_2, arg_4_3, arg_4_4)
-
-		if run_3 ~= "running" then
-			self:set_running_child(arg_4_1, arg_4_2, arg_4_3, nil, run_3)
-		end
-
-		if run_3 ~= "failed" then
-			return run_3, var_4_14
-		end
-	elseif var_4_12 == current_running_child then
-		self:set_running_child(arg_4_1, arg_4_2, arg_4_3, nil, "failed")
-	end
-
-	local var_4_15 = _children[4]
-
-	if not arg_4_2.waiting_for_pickup then
-		self:set_running_child(arg_4_1, arg_4_2, arg_4_3, var_4_15, "aborted")
-
-		local run_4, var_4_17 = var_4_15:run(arg_4_1, arg_4_2, arg_4_3, arg_4_4)
-
-		if run_4 ~= "running" then
-			self:set_running_child(arg_4_1, arg_4_2, arg_4_3, nil, run_4)
-		end
-
-		if run_4 ~= "failed" then
-			return run_4, var_4_17
-		end
-	elseif var_4_15 == current_running_child then
-		self:set_running_child(arg_4_1, arg_4_2, arg_4_3, nil, "failed")
-	end
-
-	local var_4_18 = _children[5]
-	local mount_unit = arg_4_2.mounted_data.mount_unit
-
-	if not (not not arg_4_2.knocked_off_mount or HEALTH_ALIVE[mount_unit]) then
-		self:set_running_child(arg_4_1, arg_4_2, arg_4_3, var_4_18, "aborted")
-
-		local run_5, var_4_21 = var_4_18:run(arg_4_1, arg_4_2, arg_4_3, arg_4_4)
-
-		if run_5 ~= "running" then
-			self:set_running_child(arg_4_1, arg_4_2, arg_4_3, nil, run_5)
-		end
-
-		if run_5 ~= "failed" then
-			return run_5, var_4_21
-		end
-	elseif var_4_18 == current_running_child then
-		self:set_running_child(arg_4_1, arg_4_2, arg_4_3, nil, "failed")
-	end
-
-	local var_4_22 = _children[6]
-
-	if not (arg_4_2.current_phase == 6) then
-		self:set_running_child(arg_4_1, arg_4_2, arg_4_3, var_4_22, "aborted")
-
-		local run_6, var_4_24 = var_4_22:run(arg_4_1, arg_4_2, arg_4_3, arg_4_4)
-
-		if run_6 ~= "running" then
-			self:set_running_child(arg_4_1, arg_4_2, arg_4_3, nil, run_6)
-		end
-
-		if run_6 ~= "failed" then
-			return run_6, var_4_24
-		end
-	elseif var_4_22 == current_running_child then
-		self:set_running_child(arg_4_1, arg_4_2, arg_4_3, nil, "failed")
-	end
-
-	local var_4_25 = _children[7]
-
-	if not (arg_4_2.current_phase == 5) then
-		self:set_running_child(arg_4_1, arg_4_2, arg_4_3, var_4_25, "aborted")
-
-		local run_7, var_4_27 = var_4_25:run(arg_4_1, arg_4_2, arg_4_3, arg_4_4)
-
-		if run_7 ~= "running" then
-			self:set_running_child(arg_4_1, arg_4_2, arg_4_3, nil, run_7)
-		end
-
-		if run_7 ~= "failed" then
-			return run_7, var_4_27
-		end
-	elseif var_4_25 == current_running_child then
-		self:set_running_child(arg_4_1, arg_4_2, arg_4_3, nil, "failed")
-	end
-
-	local var_4_28 = _children[8]
-
-	if not arg_4_2.call_stormfiend then
-		self:set_running_child(arg_4_1, arg_4_2, arg_4_3, var_4_28, "aborted")
-
-		local run_8, var_4_30 = var_4_28:run(arg_4_1, arg_4_2, arg_4_3, arg_4_4)
-
-		if run_8 ~= "running" then
-			self:set_running_child(arg_4_1, arg_4_2, arg_4_3, nil, run_8)
-		end
-
-		if run_8 ~= "failed" then
-			return run_8, var_4_30
-		end
-	elseif var_4_28 == current_running_child then
-		self:set_running_child(arg_4_1, arg_4_2, arg_4_3, nil, "failed")
-	end
-
-	local var_4_31 = _children[9]
-	local var_4_32
-
-	if not arg_4_2.stagger then
-		if not arg_4_2.stagger_prohibited then
-			arg_4_2.stagger = false
-		else
-			var_4_32 = not arg_4_2.about_to_mount
+			if result ~= "failed" then
+				return result, evaluate
+			end
+		elseif node_spawn == child_running then
+			self:set_running_child(unit, blackboard, t, nil, "failed")
 		end
 	end
 
-	if not var_4_32 then
-		self:set_running_child(arg_4_1, arg_4_2, arg_4_3, var_4_31, "aborted")
+	do
+		local node_intro_sequence = children[2]
+		local t = Managers.time:time("game")
+		local intro_timer = blackboard.intro_timer
 
-		local run_9, var_4_34 = var_4_31:run(arg_4_1, arg_4_2, arg_4_3, arg_4_4)
-
-		if run_9 ~= "running" then
-			self:set_running_child(arg_4_1, arg_4_2, arg_4_3, nil, run_9)
+		if intro_timer then
+			-- Nothing
 		end
 
-		if run_9 ~= "failed" then
-			return run_9, var_4_34
-		end
-	elseif var_4_31 == current_running_child then
-		self:set_running_child(arg_4_1, arg_4_2, arg_4_3, nil, "failed")
-	end
+		if not (t < blackboard.intro_timer) then
+			intro_timer = false
 
-	local var_4_35 = _children[10]
-	local ready_to_summon = arg_4_2.ready_to_summon
-
-	ready_to_summon = not ready_to_summon and not not arg_4_2.about_to_mount or HEALTH_ALIVE[arg_4_2.target_unit]
-
-	if not ready_to_summon then
-		self:set_running_child(arg_4_1, arg_4_2, arg_4_3, var_4_35, "aborted")
-
-		local run_10, var_4_38 = var_4_35:run(arg_4_1, arg_4_2, arg_4_3, arg_4_4)
-
-		if run_10 ~= "running" then
-			self:set_running_child(arg_4_1, arg_4_2, arg_4_3, nil, run_10)
+			goto label_4_0
 		end
 
-		if run_10 ~= "failed" then
-			return run_10, var_4_38
+		intro_timer = true
+
+		local condition_result = intro_timer
+
+		::label_4_0::
+
+		if condition_result then
+			self:set_running_child(unit, blackboard, t, node_intro_sequence, "aborted")
+
+			local result, evaluate = node_intro_sequence:run(unit, blackboard, t, dt)
+
+			if result ~= "running" then
+				self:set_running_child(unit, blackboard, t, nil, result)
+			end
+
+			if result ~= "failed" then
+				return result, evaluate
+			end
+		elseif node_intro_sequence == child_running then
+			self:set_running_child(unit, blackboard, t, nil, "failed")
 		end
-	elseif var_4_35 == current_running_child then
-		self:set_running_child(arg_4_1, arg_4_2, arg_4_3, nil, "failed")
 	end
 
-	local var_4_39 = _children[11]
+	do
+		local node_mount_unit = children[3]
+		local condition_result = blackboard.should_mount_unit ~= nil
 
-	if not ((arg_4_2.knocked_off_mount or not HEALTH_ALIVE[arg_4_2.mounted_data.mount_unit]) and HEALTH_ALIVE[arg_4_2.target_unit]) then
-		self:set_running_child(arg_4_1, arg_4_2, arg_4_3, var_4_39, "aborted")
+		if condition_result then
+			self:set_running_child(unit, blackboard, t, node_mount_unit, "aborted")
 
-		local run_11, var_4_41 = var_4_39:run(arg_4_1, arg_4_2, arg_4_3, arg_4_4)
+			local result, evaluate = node_mount_unit:run(unit, blackboard, t, dt)
 
-		if run_11 ~= "running" then
-			self:set_running_child(arg_4_1, arg_4_2, arg_4_3, nil, run_11)
+			if result ~= "running" then
+				self:set_running_child(unit, blackboard, t, nil, result)
+			end
+
+			if result ~= "failed" then
+				return result, evaluate
+			end
+		elseif node_mount_unit == child_running then
+			self:set_running_child(unit, blackboard, t, nil, "failed")
+		end
+	end
+
+	do
+		local node_waiting_for_pickup_idle = children[4]
+		local condition_result = blackboard.waiting_for_pickup
+
+		if condition_result then
+			self:set_running_child(unit, blackboard, t, node_waiting_for_pickup_idle, "aborted")
+
+			local result, evaluate = node_waiting_for_pickup_idle:run(unit, blackboard, t, dt)
+
+			if result ~= "running" then
+				self:set_running_child(unit, blackboard, t, nil, result)
+			end
+
+			if result ~= "failed" then
+				return result, evaluate
+			end
+		elseif node_waiting_for_pickup_idle == child_running then
+			self:set_running_child(unit, blackboard, t, nil, "failed")
+		end
+	end
+
+	do
+		local node_mounted_combat = children[5]
+		local mount_unit = blackboard.mounted_data.mount_unit
+		local condition_result = not blackboard.knocked_off_mount and not not HEALTH_ALIVE[mount_unit]
+
+		if condition_result then
+			self:set_running_child(unit, blackboard, t, node_mounted_combat, "aborted")
+
+			local result, evaluate = node_mounted_combat:run(unit, blackboard, t, dt)
+
+			if result ~= "running" then
+				self:set_running_child(unit, blackboard, t, nil, result)
+			end
+
+			if result ~= "failed" then
+				return result, evaluate
+			end
+		elseif node_mounted_combat == child_running then
+			self:set_running_child(unit, blackboard, t, nil, "failed")
+		end
+	end
+
+	do
+		local node_wounded_idle = children[6]
+		local condition_result = blackboard.current_phase == 6
+
+		if condition_result then
+			self:set_running_child(unit, blackboard, t, node_wounded_idle, "aborted")
+
+			local result, evaluate = node_wounded_idle:run(unit, blackboard, t, dt)
+
+			if result ~= "running" then
+				self:set_running_child(unit, blackboard, t, nil, result)
+			end
+
+			if result ~= "failed" then
+				return result, evaluate
+			end
+		elseif node_wounded_idle == child_running then
+			self:set_running_child(unit, blackboard, t, nil, "failed")
+		end
+	end
+
+	do
+		local node_grey_seer_death_sequence = children[7]
+		local condition_result = blackboard.current_phase == 5
+
+		if condition_result then
+			self:set_running_child(unit, blackboard, t, node_grey_seer_death_sequence, "aborted")
+
+			local result, evaluate = node_grey_seer_death_sequence:run(unit, blackboard, t, dt)
+
+			if result ~= "running" then
+				self:set_running_child(unit, blackboard, t, nil, result)
+			end
+
+			if result ~= "failed" then
+				return result, evaluate
+			end
+		elseif node_grey_seer_death_sequence == child_running then
+			self:set_running_child(unit, blackboard, t, nil, "failed")
+		end
+	end
+
+	do
+		local node_grey_seer_call_stormfiend = children[8]
+		local condition_result = blackboard.call_stormfiend
+
+		if condition_result then
+			self:set_running_child(unit, blackboard, t, node_grey_seer_call_stormfiend, "aborted")
+
+			local result, evaluate = node_grey_seer_call_stormfiend:run(unit, blackboard, t, dt)
+
+			if result ~= "running" then
+				self:set_running_child(unit, blackboard, t, nil, result)
+			end
+
+			if result ~= "failed" then
+				return result, evaluate
+			end
+		elseif node_grey_seer_call_stormfiend == child_running then
+			self:set_running_child(unit, blackboard, t, nil, "failed")
+		end
+	end
+
+	do
+		local node_stagger = children[9]
+		local condition_result
+
+		if blackboard.stagger then
+			if blackboard.stagger_prohibited then
+				blackboard.stagger = false
+			else
+				condition_result = not blackboard.about_to_mount
+			end
 		end
 
-		if run_11 ~= "failed" then
-			return run_11, var_4_41
+		if condition_result then
+			self:set_running_child(unit, blackboard, t, node_stagger, "aborted")
+
+			local result, evaluate = node_stagger:run(unit, blackboard, t, dt)
+
+			if result ~= "running" then
+				self:set_running_child(unit, blackboard, t, nil, result)
+			end
+
+			if result ~= "failed" then
+				return result, evaluate
+			end
+		elseif node_stagger == child_running then
+			self:set_running_child(unit, blackboard, t, nil, "failed")
 		end
-	elseif var_4_39 == current_running_child then
-		self:set_running_child(arg_4_1, arg_4_2, arg_4_3, nil, "failed")
 	end
 
-	local var_4_42 = _children[12]
+	do
+		local node_spell_casting = children[10]
+		local ready_to_summon = blackboard.ready_to_summon
 
-	self:set_running_child(arg_4_1, arg_4_2, arg_4_3, var_4_42, "aborted")
+		if ready_to_summon then
+			if not blackboard.about_to_mount then
+				ready_to_summon = HEALTH_ALIVE[blackboard.target_unit]
+			else
+				ready_to_summon = false
+			end
+		end
 
-	local run_12, var_4_44 = var_4_42:run(arg_4_1, arg_4_2, arg_4_3, arg_4_4)
+		goto label_4_1
 
-	if run_12 ~= "running" then
-		self:set_running_child(arg_4_1, arg_4_2, arg_4_3, nil, run_12)
+		ready_to_summon = true
+
+		local condition_result = ready_to_summon
+
+		::label_4_1::
+
+		if condition_result then
+			self:set_running_child(unit, blackboard, t, node_spell_casting, "aborted")
+
+			local result, evaluate = node_spell_casting:run(unit, blackboard, t, dt)
+
+			if result ~= "running" then
+				self:set_running_child(unit, blackboard, t, nil, result)
+			end
+
+			if result ~= "failed" then
+				return result, evaluate
+			end
+		elseif node_spell_casting == child_running then
+			self:set_running_child(unit, blackboard, t, nil, "failed")
+		end
 	end
 
-	if run_12 ~= "failed" then
-		return run_12, var_4_44
+	do
+		local node_ground_combat = children[11]
+		local condition_result = (blackboard.knocked_off_mount or not HEALTH_ALIVE[blackboard.mounted_data.mount_unit]) and not not HEALTH_ALIVE[blackboard.target_unit]
+
+		if condition_result then
+			self:set_running_child(unit, blackboard, t, node_ground_combat, "aborted")
+
+			local result, evaluate = node_ground_combat:run(unit, blackboard, t, dt)
+
+			if result ~= "running" then
+				self:set_running_child(unit, blackboard, t, nil, result)
+			end
+
+			if result ~= "failed" then
+				return result, evaluate
+			end
+		elseif node_ground_combat == child_running then
+			self:set_running_child(unit, blackboard, t, nil, "failed")
+		end
 	end
 
-	local var_4_45 = _children[13]
+	local node_defensive_idle = children[12]
 
-	self:set_running_child(arg_4_1, arg_4_2, arg_4_3, var_4_45, "aborted")
+	self:set_running_child(unit, blackboard, t, node_defensive_idle, "aborted")
 
-	local run_13, var_4_47 = var_4_45:run(arg_4_1, arg_4_2, arg_4_3, arg_4_4)
+	local result, evaluate = node_defensive_idle:run(unit, blackboard, t, dt)
 
-	if run_13 ~= "running" then
-		self:set_running_child(arg_4_1, arg_4_2, arg_4_3, nil, run_13)
+	if result ~= "running" then
+		self:set_running_child(unit, blackboard, t, nil, result)
 	end
 
-	if run_13 ~= "failed" then
-		return run_13, var_4_47
+	if result ~= "failed" then
+		return result, evaluate
+	end
+
+	local node_idle = children[13]
+
+	self:set_running_child(unit, blackboard, t, node_idle, "aborted")
+
+	local result, evaluate = node_idle:run(unit, blackboard, t, dt)
+
+	if result ~= "running" then
+		self:set_running_child(unit, blackboard, t, nil, result)
+	end
+
+	if result ~= "failed" then
+		return result, evaluate
 	end
 end
 
-BTSelector_grey_seer.add_child = function (arg_5_0, arg_5_1)
+BTSelector_grey_seer.add_child = function (self, node)
 	-- function 5
-	arg_5_0._children[#arg_5_0._children + 1] = arg_5_1
+	self._children[#self._children + 1] = node
 end

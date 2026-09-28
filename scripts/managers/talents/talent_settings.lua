@@ -2,7 +2,7 @@
 
 local Talents = Talents
 
-Talents = Talents or {}
+Talents = not not Talents or not not {}
 Talents = Talents
 
 require("scripts/managers/talents/talent_settings_bardin")
@@ -25,40 +25,39 @@ TalentUnlockLevels = {
 }
 TalentIDLookup = {}
 
-for k, v in pairs(Talents) do
-	for i, v_2 in ipairs(v) do
-		local name = v_2.name
+for hero_name, hero_talents in pairs(Talents) do
+	for talent_id, data in ipairs(hero_talents) do
+		local talent_name = data.name
 
-		if not name then
-			table.dump(v_2, "talent_contents", 2)
+		if not talent_name then
+			table.dump(data, "talent_contents", 2)
 		end
 
-		fassert(not TalentIDLookup[name], "talent with unique name %s already exists", name)
+		fassert(not TalentIDLookup[talent_name], "talent with unique name %s already exists", talent_name)
 
-		local tbl = {
-			talent_id = i,
-			hero_name = k
-		}
+		local lookup_entry = {}
 
-		TalentIDLookup[name] = tbl
+		lookup_entry.talent_id = talent_id
+		lookup_entry.hero_name = hero_name
+		TalentIDLookup[talent_name] = lookup_entry
 	end
 end
 
-for k_2, v_3 in pairs(TalentTrees) do
-	for i_2, v_4 in ipairs(v_3) do
-		for i_3, v_5 in ipairs(v_4) do
-			for i_4, v_6 in ipairs(v_5) do
-				if v_6 ~= "empty" then
-					local var_0_3 = TalentIDLookup[v_6]
+for hero_name, hero_talent_trees in pairs(TalentTrees) do
+	for tree, tree_layout in ipairs(hero_talent_trees) do
+		for row, coulumns in ipairs(tree_layout) do
+			for coulumn, talent_name in ipairs(coulumns) do
+				if talent_name ~= "empty" then
+					local lookup = TalentIDLookup[talent_name]
 
-					fassert(var_0_3, "Talent %s is missing from the TalentIDLookup table", v_6)
+					fassert(lookup, "Talent %s is missing from the TalentIDLookup table", talent_name)
 
-					local var_0_4 = Talents[k_2][var_0_3.talent_id]
+					local talent_settings = Talents[hero_name][lookup.talent_id]
 
-					var_0_4.tree = i_2
-					var_0_4.row = i_3
-					var_0_4.coulumn = i_4
-					var_0_4.talent_id = var_0_3.talent_id
+					talent_settings.tree = tree
+					talent_settings.row = row
+					talent_settings.coulumn = coulumn
+					talent_settings.talent_id = lookup.talent_id
 				end
 			end
 		end

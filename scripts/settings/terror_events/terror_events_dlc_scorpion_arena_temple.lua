@@ -1,7 +1,7 @@
 -- chunkname: @scripts/settings/terror_events/terror_events_dlc_scorpion_arena_temple.lua
 
-local tbl = {}
+local terror_event_blueprints = {}
 
 return {
-	tbl
+	terror_event_blueprints
 }

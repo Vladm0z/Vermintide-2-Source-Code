@@ -1,6 +1,6 @@
 -- chunkname: @levels/honduras_dlcs/morris/sig_crag/generated/wastes_path4/world_nav_tag_volumes.lua
 
-local tbl = {
+local nav_tag_volumes = {
 	dmg_13 = {
 		delay_nav_tag_volume_creation = true,
 		alt_max = 29.948333740234375,
@@ -1899,9 +1899,9 @@ local tbl = {
 		}
 	}
 }
-local str = "1"
+local version = "1"
 
 return {
-	version = str,
-	nav_tag_volumes = tbl
+	version = version,
+	nav_tag_volumes = nav_tag_volumes
 }

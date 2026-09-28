@@ -2,22 +2,22 @@
 
 DeusArenaBelakorBigStatueExtension = class(DeusArenaBelakorBigStatueExtension)
 
-DeusArenaBelakorBigStatueExtension.init = function (arg_1_0, arg_1_1, arg_1_2, arg_1_3)
+DeusArenaBelakorBigStatueExtension.init = function (self, extension_init_context, unit, extension_init_data)
 	-- function 1
 	return
 end
 
-DeusArenaBelakorBigStatueExtension.game_object_initialized = function (arg_2_0, arg_2_1, arg_2_2)
+DeusArenaBelakorBigStatueExtension.game_object_initialized = function (self, unit, go_id)
 	-- function 2
 	return
 end
 
-DeusArenaBelakorBigStatueExtension.destroy = function (arg_3_0)
+DeusArenaBelakorBigStatueExtension.destroy = function (self)
 	-- function 3
 	return
 end
 
-DeusArenaBelakorBigStatueExtension.update = function (arg_4_0, arg_4_1, arg_4_2, arg_4_3, arg_4_4, arg_4_5)
+DeusArenaBelakorBigStatueExtension.update = function (self, unit, input, dt, context, t)
 	-- function 4
 	return
 end

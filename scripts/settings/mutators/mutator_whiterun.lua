@@ -1,23 +1,24 @@
 -- chunkname: @scripts/settings/mutators/mutator_whiterun.lua
 
-local function fn()
+local function resync_loadout()
 	-- function 1
-	local profile_synchronizer = Managers.state.network.profile_synchronizer
+	local network_manager = Managers.state.network
+	local profile_synchronizer = network_manager.profile_synchronizer
 	local local_player = Managers.player:local_player()
 
 	if not local_player then
 		return
 	end
 
-	local has_extension = ScriptUnit.has_extension(local_player.player_unit, "talent_system")
+	local talent_extension = ScriptUnit.has_extension(local_player.player_unit, "talent_system")
 
-	if not has_extension then
-		has_extension:talents_changed()
+	if talent_extension then
+		talent_extension:talents_changed()
 	else
-		local bot_player = local_player.bot_player
-		local flag = false
+		local is_bot = local_player.bot_player
+		local force_resync = false
 
-		profile_synchronizer:resync_loadout(local_player:network_id(), local_player:local_player_id(), bot_player, flag)
+		profile_synchronizer:resync_loadout(local_player:network_id(), local_player:local_player_id(), is_bot, force_resync)
 	end
 end
 
@@ -25,8 +26,8 @@ return {
 	description = "description_mutator_whiterun",
 	display_name = "display_name_mutator_whiterun",
 	icon = "mutator_icon_whiterun",
-	client_start_function = fn,
-	client_stop_function = fn,
+	client_start_function = resync_loadout,
+	client_stop_function = resync_loadout,
 	check_dependencies = function ()
 		-- function 2
 		if not BackendUtils.get_total_power_level then

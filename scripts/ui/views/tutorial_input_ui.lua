@@ -1,17 +1,17 @@
 -- chunkname: @scripts/ui/views/tutorial_input_ui.lua
 
-local var_0_0 = local_require("scripts/ui/views/tutorial_input_ui_definitions")
-local flag = true
+local definitions = local_require("scripts/ui/views/tutorial_input_ui_definitions")
+local DO_RELOAD = true
 
 TutorialInputUI = class(TutorialInputUI)
 
-TutorialInputUI.init = function (self, arg_1_1, arg_1_2)
+TutorialInputUI.init = function (self, parent, ingame_ui_context)
 	-- function 1
-	self._parent = arg_1_1
-	self._ui_renderer = arg_1_2.ui_renderer
-	self._input_manager = arg_1_2.input_manager
+	self._parent = parent
+	self._ui_renderer = ingame_ui_context.ui_renderer
+	self._input_manager = ingame_ui_context.input_manager
 	self._platform = PLATFORM
-	self._ingame_ui_context = arg_1_2
+	self._ingame_ui_context = ingame_ui_context
 	self._tutorial_tooltip_animations = {}
 	self._tutorial_tooltip_input_widgets = {}
 	self._active_tutorial_tooltips = {}
@@ -28,51 +28,51 @@ TutorialInputUI.init = function (self, arg_1_1, arg_1_2)
 	Managers.state.event:register(self, "input_changed", "event_input_changed")
 end
 
-TutorialInputUI.destroy = function (arg_2_0)
+TutorialInputUI.destroy = function (self)
 	-- function 2
-	if not Managers.state.event then
-		Managers.state.event:unregister("event_add_tutorial_input", arg_2_0)
-		Managers.state.event:unregister("event_update_tutorial_input", arg_2_0)
-		Managers.state.event:unregister("event_remove_tutorial_input", arg_2_0)
-		Managers.state.event:unregister("input_changed", arg_2_0)
+	if Managers.state.event then
+		Managers.state.event:unregister("event_add_tutorial_input", self)
+		Managers.state.event:unregister("event_update_tutorial_input", self)
+		Managers.state.event:unregister("event_remove_tutorial_input", self)
+		Managers.state.event:unregister("input_changed", self)
 	end
 end
 
-TutorialInputUI.event_add_tutorial_input = function (self, arg_3_1, arg_3_2)
+TutorialInputUI.event_add_tutorial_input = function (self, mission_name, unit)
 	-- function 3
-	local var_3_0 = Missions[arg_3_1]
+	local mission_data = Missions[mission_name]
 
-	fassert(var_3_0, "[TutorialInputUI:event_add_tutorial_input] There is no mission called %q", arg_3_1)
+	fassert(mission_data, "[TutorialInputUI:event_add_tutorial_input] There is no mission called %q", mission_name)
 
-	self._active_tutorial_tooltips[#self._active_tutorial_tooltips + 1] = var_3_0
+	self._active_tutorial_tooltips[#self._active_tutorial_tooltips + 1] = mission_data
 	self._current_profile_index, self._current_career_index = self:_get_profile_and_career_index()
 
-	if not arg_3_2 then
-		Unit.flow_event(arg_3_2, "lua_mission_started")
+	if unit then
+		Unit.flow_event(unit, "lua_mission_started")
 	end
 end
 
-TutorialInputUI.event_update_tutorial_input = function (arg_4_0, arg_4_1)
+TutorialInputUI.event_update_tutorial_input = function (self, mission_name)
 	-- function 4
 	return
 end
 
-TutorialInputUI.event_remove_tutorial_input = function (self, arg_5_1)
+TutorialInputUI.event_remove_tutorial_input = function (self, mission_name)
 	-- function 5
-	fassert(Missions[arg_5_1], "[TutorialInputUI:event_remove_tutorial_input] There is no mission called %q", arg_5_1)
+	fassert(Missions[mission_name], "[TutorialInputUI:event_remove_tutorial_input] There is no mission called %q", mission_name)
 
-	local var_5_0
+	local index
 
-	for k, v in pairs(self._active_tutorial_tooltips) do
-		if v.name == arg_5_1 then
-			var_5_0 = k
+	for idx, mission_data in pairs(self._active_tutorial_tooltips) do
+		if mission_data.name == mission_name then
+			index = idx
 
 			break
 		end
 	end
 
-	if not var_5_0 then
-		table.remove(self._active_tutorial_tooltips, var_5_0)
+	if index then
+		table.remove(self._active_tutorial_tooltips, index)
 	end
 end
 
@@ -87,81 +87,85 @@ TutorialInputUI._create_ui_elements = function (self)
 
 	UIRenderer.clear_scenegraph_queue(self._ui_renderer)
 
-	self._ui_scenegraph = UISceneGraph.init_scenegraph(var_0_0.scenegraph)
-	self._tutorial_tooltip_widget = UIWidget.init(var_0_0.widgets.tutorial_tooltip)
+	self._ui_scenegraph = UISceneGraph.init_scenegraph(definitions.scenegraph)
+	self._tutorial_tooltip_widget = UIWidget.init(definitions.widgets.tutorial_tooltip)
 
-	for i = 1, var_0_0.NUMBER_OF_TOOLTIP_INPUT_WIDGETS do
-		self._tutorial_tooltip_input_widgets[i] = UIWidget.init(var_0_0.tutorial_tooltip_input_widgets[i])
+	for i = 1, definitions.NUMBER_OF_TOOLTIP_INPUT_WIDGETS do
+		self._tutorial_tooltip_input_widgets[i] = UIWidget.init(definitions.tutorial_tooltip_input_widgets[i])
 	end
 
-	flag = false
+	DO_RELOAD = false
 	self._active_tooltip_name = nil
 end
 
-TutorialInputUI._button_texture_data_by_input_action = function (self, arg_8_1, arg_8_2, arg_8_3)
+TutorialInputUI._button_texture_data_by_input_action = function (self, input_action, alt_button_name, active_template)
 	-- function 8
-	local _input_manager = self._input_manager
-	local is_device_active = _input_manager:is_device_active("gamepad")
-	local PLATFORM = PLATFORM
+	local input_manager = self._input_manager
+	local gamepad_active = input_manager:is_device_active("gamepad")
+	local platform = PLATFORM
 
-	if not IS_WINDOWS and not is_device_active then
-		PLATFORM = "xb1"
+	if IS_WINDOWS and gamepad_active then
+		platform = "xb1"
 	end
 
-	if not arg_8_2 then
-		return (ButtonTextureByName(arg_8_2, PLATFORM))
-	else
-		local get_service = _input_manager:get_service("Player")
-		local var_8_4
+	if alt_button_name then
+		local button_texture_data = ButtonTextureByName(alt_button_name, platform)
 
-		if not arg_8_3.input_service_fallback then
-			var_8_4 = _input_manager:get_service(arg_8_3.input_service_fallback)
+		return button_texture_data
+	else
+		local input_service = input_manager:get_service("Player")
+		local alternate_input_action
+
+		if active_template.input_service_fallback then
+			alternate_input_action = input_manager:get_service(active_template.input_service_fallback)
 		end
 
-		return UISettings.get_gamepad_input_texture_data(get_service, arg_8_1, is_device_active, var_8_4)
+		return UISettings.get_gamepad_input_texture_data(input_service, input_action, gamepad_active, alternate_input_action)
 	end
 end
 
-TutorialInputUI.update = function (self, arg_9_1, arg_9_2)
+TutorialInputUI.update = function (self, dt, t)
 	-- function 9
-	if not flag then
+	if DO_RELOAD then
 		self:_create_ui_elements()
 	end
 
-	self:_update_animations(arg_9_1, arg_9_2)
-	self:_update_tooltip(arg_9_1, arg_9_2)
-	self:_draw(arg_9_1, arg_9_2)
+	self:_update_animations(dt, t)
+	self:_update_tooltip(dt, t)
+	self:_draw(dt, t)
 end
 
-TutorialInputUI._update_animations = function (self, arg_10_1, arg_10_2)
+TutorialInputUI._update_animations = function (self, dt, t)
 	-- function 10
-	for k, v in pairs(self._tutorial_tooltip_animations) do
-		UIAnimation.update(v, arg_10_1)
+	for name, ui_animation in pairs(self._tutorial_tooltip_animations) do
+		UIAnimation.update(ui_animation, dt)
 
-		if not UIAnimation.completed(v) then
-			self._tutorial_tooltip_animations[k] = nil
+		if UIAnimation.completed(ui_animation) then
+			self._tutorial_tooltip_animations[name] = nil
 		end
 	end
 end
 
-TutorialInputUI._update_tooltip = function (self, arg_11_1, arg_11_2)
+TutorialInputUI._update_tooltip = function (self, dt, t)
 	-- function 11
-	local var_11_0 = self._active_tutorial_tooltips[1]
+	local active_template = self._active_tutorial_tooltips[1]
 
-	if not var_11_0 then
-		if not self._active_tooltip_name then
+	if not active_template then
+		if self._active_tooltip_name then
 			self:hide()
 		end
 
 		return
 	end
 
-	if not self:_is_in_inn() then
-		local _get_profile_and_career_index, var_11_2 = self:_get_profile_and_career_index()
+	local is_in_inn = self:_is_in_inn()
 
-		if not (_get_profile_and_career_index ~= self._current_profile_index or var_11_2 == self._current_career_index) then
-			self._current_profile_index = _get_profile_and_career_index
-			self._current_career_index = var_11_2
+	if is_in_inn then
+		local current_profile_index, current_career_index = self:_get_profile_and_career_index()
+
+		if current_profile_index ~= self._current_profile_index or current_career_index ~= self._current_career_index then
+			self._current_profile_index = current_profile_index
+			self._current_career_index = current_career_index
 
 			table.clear(self._active_tutorial_tooltips)
 
@@ -169,64 +173,77 @@ TutorialInputUI._update_tooltip = function (self, arg_11_1, arg_11_2)
 		end
 	end
 
-	local _ui_renderer = self._ui_renderer
-	local _ui_scenegraph = self._ui_scenegraph
-	local name = var_11_0.name
-	local _active_tooltip_name = self._active_tooltip_name
-	local style = self._tutorial_tooltip_widget.style
-	local content = self._tutorial_tooltip_widget.content
-	local text = var_11_0.text
+	local ui_renderer = self._ui_renderer
+	local ui_scenegraph = self._ui_scenegraph
+	local tooltip_name = active_template.name
+	local active_tooltip_name = self._active_tooltip_name
+	local widget_style = self._tutorial_tooltip_widget.style
+	local widget_content = self._tutorial_tooltip_widget.content
+	local text_2 = active_template.text
 
-	text = text or "-no text assigned-"
+	if not text_2 then
+		-- Nothing
+	end
 
-	local var_11_10
+	text_2 = "-no text assigned-"
 
-	if not var_11_0.sub_text then
-		var_11_10 = Localize(var_11_0.sub_text)
+	local text = text_2
 
-		if not var_11_10 then
+	do
+		local var_11_1
+	end
+
+	::label_11_0::
+
+	if active_template.sub_text then
+		var_11_1 = Localize(active_template.sub_text)
+
+		if not var_11_1 then
 			-- Nothing
 		end
 	end
 
-	var_11_10 = ""
+	var_11_1 = ""
 
-	::label_11_0::
+	local sub_text = var_11_1
 
-	local force_update = var_11_0.force_update
-	local num = 0
-	local num_2 = 0
-	local is_device_active = self._input_manager:is_device_active("gamepad")
+	::label_11_1::
+
+	local force_update = active_template.force_update
+	local texture_size_y, texture_size_x = 0, 0
+	local gamepad_active = self._input_manager:is_device_active("gamepad")
 	local tooltip_gamepad_inputs
 
-	if is_device_active or not IS_PS4 then
-		tooltip_gamepad_inputs = var_11_0.tooltip_gamepad_inputs
+	if gamepad_active or IS_PS4 then
+		tooltip_gamepad_inputs = active_template.tooltip_gamepad_inputs
 
 		if not tooltip_gamepad_inputs then
 			-- Nothing
 		end
 	end
 
-	tooltip_gamepad_inputs = var_11_0.tooltip_inputs
+	tooltip_gamepad_inputs = active_template.tooltip_inputs
 
-	::label_11_1::
+	local inputs = tooltip_gamepad_inputs
 
-	if not _active_tooltip_name then
+	::label_11_2::
+
+	if not active_tooltip_name then
 		self:fade_in()
 	end
 
-	local _tutorial_tooltip_input_widgets = self._tutorial_tooltip_input_widgets
+	local input_widgets = self._tutorial_tooltip_input_widgets
 
-	if force_update or name ~= _active_tooltip_name or is_device_active ~= content.using_gamepad_input or not self._input_changed then
-		content.using_gamepad_input = is_device_active
-		content.input_set = true
-		content.unassigned = false
+	if force_update or tooltip_name ~= active_tooltip_name or gamepad_active ~= widget_content.using_gamepad_input or self._input_changed then
+		widget_content.using_gamepad_input = gamepad_active
+		widget_content.input_set = true
+		widget_content.unassigned = false
 		self._input_changed = false
-		self._active_tooltip_name = name
+		self._active_tooltip_name = tooltip_name
 
-		if self._active_tooltip_name ~= name then
-			if not tooltip_gamepad_inputs then
-				self._tooltip_inputs = table.clone(tooltip_gamepad_inputs)
+		if self._active_tooltip_name ~= tooltip_name then
+			if inputs then
+				self._tooltip_inputs = table.clone(inputs)
 			else
 				self._tooltip_inputs = nil
 			end
@@ -234,8 +251,8 @@ TutorialInputUI._update_tooltip = function (self, arg_11_1, arg_11_2)
 
 		local count
 
-		if not tooltip_gamepad_inputs then
-			count = #tooltip_gamepad_inputs
+		if inputs then
+			count = #inputs
 
 			if not count then
 				-- Nothing
@@ -244,154 +261,161 @@ TutorialInputUI._update_tooltip = function (self, arg_11_1, arg_11_2)
 
 		count = 0
 
-		::label_11_2::
+		local num_inputs = count
 
-		content.show_bg = count > 0
-		content.description = text
-		content.sub_description = var_11_10
+		::label_11_3::
 
-		local var_11_18 = content
-		local num_3 = 0
-		local num_4 = 0
+		widget_content.show_bg = num_inputs > 0
+		widget_content.description = text
+		widget_content.sub_description = sub_text
 
-		for i = 1, count do
-			local var_11_21 = _tutorial_tooltip_input_widgets[i]
-			local content_2 = var_11_21.content
-			local style_2 = var_11_21.style
-			local var_11_24 = tooltip_gamepad_inputs[i]
-			local action = var_11_24.action
-			local _button_texture_data_by_input_action, var_11_27, var_11_28, var_11_29 = self:_button_texture_data_by_input_action(action, nil, var_11_0)
+		local parent_widget_content = widget_content
+		local total_width = 0
+		local num_widgets = 0
 
-			if _button_texture_data_by_input_action or not var_11_0.alt_action_icons then
-				_button_texture_data_by_input_action, var_11_27 = self:_button_texture_data_by_input_action(action, var_11_0.alt_action_icons[action], var_11_0)
+		for i = 1, num_inputs do
+			local widget = input_widgets[i]
+			local widget_content = widget.content
+			local widget_style = widget.style
+			local input = inputs[i]
+			local input_action = input.action
+			local button_texture_data, button_text, keymap_binding, unassigned = self:_button_texture_data_by_input_action(input_action, nil, active_template)
+
+			if not button_texture_data and active_template.alt_action_icons then
+				button_texture_data, button_text = self:_button_texture_data_by_input_action(input_action, active_template.alt_action_icons[input_action], active_template)
 			end
 
-			local unassigned = var_11_18.unassigned
+			local unassigned_2 = parent_widget_content.unassigned
 
-			unassigned = unassigned or var_11_29
-			var_11_18.unassigned = unassigned
+			unassigned_2 = not not unassigned_2 or not not unassigned
+			parent_widget_content.unassigned = unassigned_2
 
-			local num_5 = 0
-			local num_6 = 0
+			local texture_size_x = 0
+			local texture_size_y = 0
 
-			if not _button_texture_data_by_input_action then
-				num_4 = num_4 + 1
+			if button_texture_data then
+				num_widgets = num_widgets + 1
 
-				if not _button_texture_data_by_input_action.texture then
-					content_2.button_text = ""
-					content_2.icon = {
-						_button_texture_data_by_input_action.texture
+				if button_texture_data.texture then
+					widget_content.button_text = ""
+					widget_content.icon = {
+						button_texture_data.texture
 					}
-					style_2.icon.texture_sizes = {
-						_button_texture_data_by_input_action.size
+					widget_style.icon.texture_sizes = {
+						button_texture_data.size
 					}
-					num_5 = _button_texture_data_by_input_action.size[1]
-					num_6 = _button_texture_data_by_input_action.size[2]
+					texture_size_x = button_texture_data.size[1]
+					texture_size_y = button_texture_data.size[2]
 				else
-					if not (not var_11_28 and var_11_27 == "") then
-						local var_11_33 = var_11_28[1]
-						local flag = not var_11_33 and self._prefixes[var_11_33]
+					if keymap_binding and button_text ~= "" then
+						local device_name = keymap_binding[1]
+						local prefix = not not device_name and not not self._prefixes[device_name]
 
-						if not flag then
-							var_11_27 = flag .. " " .. var_11_27
+						if prefix then
+							button_text = prefix .. " " .. button_text
 						end
 					end
 
-					if var_11_27 == "" then
-						var_11_27 = Localize("unassigned_keymap")
+					if button_text == "" then
+						button_text = Localize("unassigned_keymap")
 					else
-						var_11_27 = "[" .. var_11_27 .. "]"
+						button_text = "[" .. button_text .. "]"
 					end
 
-					local tbl = {}
-					local tbl_2 = {}
-					local tbl_3 = {}
-					local var_11_38, var_11_39 = UIFontByResolution(style_2.button_text)
-					local text_size, var_11_41, var_11_42 = UIRenderer.text_size(_ui_renderer, var_11_27, var_11_38[1], var_11_39)
+					local textures = {}
+					local sizes = {}
+					local tile_sizes = {}
+					local font, scaled_font_size = UIFontByResolution(widget_style.button_text)
+					local text_width, text_height, min = UIRenderer.text_size(ui_renderer, button_text, font[1], scaled_font_size)
 
-					for j = 1, #_button_texture_data_by_input_action do
-						tbl[j] = _button_texture_data_by_input_action[j].texture
-						tbl_2[j] = _button_texture_data_by_input_action[j].size
+					for i = 1, #button_texture_data do
+						textures[i] = button_texture_data[i].texture
+						sizes[i] = button_texture_data[i].size
 
-						if not _button_texture_data_by_input_action[j].tileable then
-							tbl_3[j] = {
-								text_size,
-								tbl_2[j][2]
+						if button_texture_data[i].tileable then
+							tile_sizes[i] = {
+								text_width,
+								sizes[i][2]
 							}
-							num_5 = num_5 + text_size
+							texture_size_x = texture_size_x + text_width
 
-							if num_6 < tbl_2[j][2] then
-								num_6 = tbl_2[j][2] or num_6
+							if texture_size_y < sizes[i][2] then
+								texture_size_y = not not sizes[i][2] or not not texture_size_y
 							end
 						else
-							num_5 = num_5 + tbl_2[j][1]
-							num_6 = not (num_6 < tbl_2[j][2]) or not tbl_2[j][2] or num_6
+							texture_size_x = texture_size_x + sizes[i][1]
+
+							if texture_size_y < sizes[i][2] and not sizes[i][2] then
+								-- Nothing
+							end
 						end
 					end
 
-					content_2.button_text = var_11_27
-					style_2.icon.texture_sizes = tbl_2
-					style_2.icon.tile_sizes = tbl_3
-					content_2.icon = nil
+					widget_content.button_text = button_text
+					widget_style.icon.texture_sizes = sizes
+					widget_style.icon.tile_sizes = tile_sizes
+					widget_content.icon = nil
 				end
 
-				_ui_scenegraph["input_description_icon_" .. i].size[1] = num_5
-				_ui_scenegraph["input_description_icon_" .. i].size[2] = num_6
+				ui_scenegraph["input_description_icon_" .. i].size[1] = texture_size_x
+				ui_scenegraph["input_description_icon_" .. i].size[2] = texture_size_y
 
-				local var_11_43
+				local var_11_5
 
-				if not (not var_11_24.prefix and var_11_24.prefix == "") then
-					var_11_43 = Localize(var_11_24.prefix)
+				if input.prefix and input.prefix ~= "" then
+					var_11_5 = Localize(input.prefix)
 
-					if not var_11_43 then
+					if not var_11_5 then
 						-- Nothing
 					end
 				end
 
-				var_11_43 = ""
+				var_11_5 = ""
 
-				::label_11_3::
+				::label_11_4::
 
-				content_2.prefix_text = var_11_43
-				content_2.suffix_text = var_11_24.suffix
+				widget_content.prefix_text = var_11_5
+				widget_content.suffix_text = input.suffix
 
-				local var_11_44, var_11_45 = UIFontByResolution(style_2.prefix_text)
-				local var_11_46, var_11_47 = UIFontByResolution(style_2.suffix_text)
-				local text_size_2 = UIRenderer.text_size(_ui_renderer, content_2.prefix_text, var_11_44[1], var_11_45)
-				local text_size_3 = UIRenderer.text_size(_ui_renderer, content_2.suffix_text, var_11_46[1], var_11_47)
-				local num_7 = num_5 + text_size_2 + text_size_3 + 5
+				local prefix_font, prefix_scaled_font_size = UIFontByResolution(widget_style.prefix_text)
+				local suffix_font, suffix_scaled_font_size = UIFontByResolution(widget_style.suffix_text)
+				local prefix_text_width = UIRenderer.text_size(ui_renderer, widget_content.prefix_text, prefix_font[1], prefix_scaled_font_size)
+				local suffix_text_width = UIRenderer.text_size(ui_renderer, widget_content.suffix_text, suffix_font[1], suffix_scaled_font_size)
+				local widget_width = texture_size_x + prefix_text_width + suffix_text_width + 5
 
-				_ui_scenegraph["input_description_icon_" .. i].local_position[1] = text_size_2
-				_ui_scenegraph["input_description_" .. i].local_position[1] = num_3
-				num_3 = num_3 + num_7
-				var_11_21.content.visible = true
+				ui_scenegraph["input_description_icon_" .. i].local_position[1] = prefix_text_width
+				ui_scenegraph["input_description_" .. i].local_position[1] = total_width
+				total_width = total_width + widget_width
+				widget.content.visible = true
 			end
 		end
 
-		for k = num_4 + 1, var_0_0.NUMBER_OF_TOOLTIP_INPUT_WIDGETS do
-			_tutorial_tooltip_input_widgets[k].content.visible = false
+		for i = num_widgets + 1, definitions.NUMBER_OF_TOOLTIP_INPUT_WIDGETS do
+			local widget = input_widgets[i]
+
+			widget.content.visible = false
 		end
 
-		_ui_scenegraph.tutorial_tooltip_input_field.local_position[1] = -(num_3 + 5) * 0.5
+		ui_scenegraph.tutorial_tooltip_input_field.local_position[1] = -(total_width + 5) * 0.5
 
-		return self._tutorial_tooltip_widget, name
+		return self._tutorial_tooltip_widget, tooltip_name
 	end
 end
 
-TutorialInputUI._draw = function (self, arg_12_1, arg_12_2)
+TutorialInputUI._draw = function (self, dt, t)
 	-- function 12
-	local _ui_renderer = self._ui_renderer
-	local _ui_scenegraph = self._ui_scenegraph
-	local get_service = self._input_manager:get_service("Player")
+	local ui_renderer = self._ui_renderer
+	local ui_scenegraph = self._ui_scenegraph
+	local input_service = self._input_manager:get_service("Player")
 
-	UIRenderer.begin_pass(_ui_renderer, _ui_scenegraph, get_service, arg_12_1)
-	UIRenderer.draw_widget(_ui_renderer, self._tutorial_tooltip_widget)
+	UIRenderer.begin_pass(ui_renderer, ui_scenegraph, input_service, dt)
+	UIRenderer.draw_widget(ui_renderer, self._tutorial_tooltip_widget)
 
-	for i = 1, var_0_0.NUMBER_OF_TOOLTIP_INPUT_WIDGETS do
-		UIRenderer.draw_widget(_ui_renderer, self._tutorial_tooltip_input_widgets[i])
+	for i = 1, definitions.NUMBER_OF_TOOLTIP_INPUT_WIDGETS do
+		UIRenderer.draw_widget(ui_renderer, self._tutorial_tooltip_input_widgets[i])
 	end
 
-	UIRenderer.end_pass(_ui_renderer)
+	UIRenderer.end_pass(ui_renderer)
 end
 
 TutorialInputUI.hide = function (self)
@@ -401,78 +425,90 @@ TutorialInputUI.hide = function (self)
 	self:fade_out()
 end
 
-local num = 0.25
+local FADE_TIME = 0.25
 
 TutorialInputUI.fade_in = function (self)
 	-- function 14
-	self:_fade(0, 255, num, false)
+	self:_fade(0, 255, FADE_TIME, false)
 end
 
 TutorialInputUI.fade_out = function (self)
 	-- function 15
-	self:_fade(255, 0, num, true)
+	self:_fade(255, 0, FADE_TIME, true)
 end
 
-TutorialInputUI._fade = function (self, arg_16_1, arg_16_2, arg_16_3, arg_16_4)
+TutorialInputUI._fade = function (self, from_alpha, to_alpha, duration, completed)
 	-- function 16
-	local style = self._tutorial_tooltip_widget.style
-	local background = style.background
-	local divider = style.divider
-	local description = style.description
-	local description_shadow = style.description_shadow
-	local sub_description = style.sub_description
-	local sub_description_shadow = style.sub_description_shadow
-	local completed_texture = style.completed_texture
-	local completed_texture_shadow = style.completed_texture_shadow
-	local unassigned = style.unassigned
-	local unassigned_shadow = style.unassigned_shadow
-	local unassigned_background = style.unassigned_background
-	local _tutorial_tooltip_animations = self._tutorial_tooltip_animations
-	local flag
+	local widget_style = self._tutorial_tooltip_widget.style
+	local bg_style = widget_style.background
+	local divider_style = widget_style.divider
+	local description_style = widget_style.description
+	local description_shadow_style = widget_style.description_shadow
+	local sub_description_style = widget_style.sub_description
+	local sub_description_shadow_style = widget_style.sub_description_shadow
+	local completed_texture_style = widget_style.completed_texture
+	local completed_texture_shadow_style = widget_style.completed_texture_shadow
+	local unassigned_style = widget_style.unassigned
+	local unassigned_shadow_style = widget_style.unassigned_shadow
+	local unassigned_background_style = widget_style.unassigned_background
+	local tutorial_tooltip_animations = self._tutorial_tooltip_animations
+	local num
 
-	flag = not arg_16_4 and 0.5 and 0
-	self._tutorial_tooltip_widget.content.completed = arg_16_4
+	if completed then
+		num = 0.5
 
-	if not arg_16_4 then
-		local num = 0.3
-
-		_tutorial_tooltip_animations.completed_size_x = UIAnimation.init(UIAnimation.function_by_time, completed_texture.texture_size, 1, 1224, 408, num, math.easeInCubic)
-		_tutorial_tooltip_animations.completed_size_y = UIAnimation.init(UIAnimation.function_by_time, completed_texture.texture_size, 2, 537, 179, num, math.easeInCubic)
-		_tutorial_tooltip_animations.completed_fade_in = UIAnimation.init(UIAnimation.function_by_time, completed_texture.color, 1, 0, 255, arg_16_3, math.easeInCubic)
-		_tutorial_tooltip_animations.completed_shadow_fade_in = UIAnimation.init(UIAnimation.function_by_time, completed_texture_shadow.color, 1, 0, 255, arg_16_3, math.easeInCubic)
+		goto label_16_0
 	end
 
-	_tutorial_tooltip_animations.completed_fade = UIAnimation.init(UIAnimation.wait, flag, UIAnimation.function_by_time, completed_texture.color, 1, arg_16_1, arg_16_2, arg_16_3, math.easeInCubic)
-	_tutorial_tooltip_animations.completed_shadow_fade = UIAnimation.init(UIAnimation.wait, flag, UIAnimation.function_by_time, completed_texture_shadow.color, 1, arg_16_1, arg_16_2, arg_16_3, math.easeInCubic)
-	_tutorial_tooltip_animations.unassigned_fade = UIAnimation.init(UIAnimation.wait, flag, UIAnimation.function_by_time, unassigned.text_color, 1, arg_16_1, arg_16_2, arg_16_3, math.easeInCubic)
-	_tutorial_tooltip_animations.unassigned_shadow_fade = UIAnimation.init(UIAnimation.wait, flag, UIAnimation.function_by_time, unassigned_shadow.text_color, 1, arg_16_1, arg_16_2, arg_16_3, math.easeInCubic)
-	_tutorial_tooltip_animations.unassigned_background_fade = UIAnimation.init(UIAnimation.wait, flag, UIAnimation.function_by_time, unassigned_background.color, 1, arg_16_1, arg_16_2, arg_16_3, math.easeInCubic)
-	_tutorial_tooltip_animations.tooltip_bg_fade = UIAnimation.init(UIAnimation.wait, flag, UIAnimation.function_by_time, background.color, 1, arg_16_1, arg_16_2, arg_16_3, math.easeInCubic)
-	_tutorial_tooltip_animations.tooltip_divider_fade = UIAnimation.init(UIAnimation.wait, flag, UIAnimation.function_by_time, divider.color, 1, arg_16_1, arg_16_2, arg_16_3, math.easeInCubic)
-	_tutorial_tooltip_animations.tooltip_description_fade = UIAnimation.init(UIAnimation.wait, flag, UIAnimation.function_by_time, description.text_color, 1, arg_16_1, arg_16_2, arg_16_3, math.easeInCubic)
-	_tutorial_tooltip_animations.tooltip_description_shadow_fade = UIAnimation.init(UIAnimation.wait, flag, UIAnimation.function_by_time, description_shadow.text_color, 1, arg_16_1, arg_16_2, arg_16_3, math.easeInCubic)
-	_tutorial_tooltip_animations.tooltip_sub_description_fade = UIAnimation.init(UIAnimation.wait, flag, UIAnimation.function_by_time, sub_description.text_color, 1, arg_16_1, arg_16_2, arg_16_3, math.easeInCubic)
-	_tutorial_tooltip_animations.tooltip_sub_description_shadow_fade = UIAnimation.init(UIAnimation.wait, flag, UIAnimation.function_by_time, sub_description_shadow.text_color, 1, arg_16_1, arg_16_2, arg_16_3, math.easeInCubic)
+	num = 0
 
-	local _tutorial_tooltip_input_widgets = self._tutorial_tooltip_input_widgets
+	local wait_time = num
 
-	for i = 1, var_0_0.NUMBER_OF_TOOLTIP_INPUT_WIDGETS do
-		local style_2 = _tutorial_tooltip_input_widgets[i].style
-		local prefix_text = style_2.prefix_text
-		local prefix_text_shadow = style_2.prefix_text_shadow
-		local suffix_text = style_2.suffix_text
-		local suffix_text_shadow = style_2.suffix_text_shadow
-		local button_text = style_2.button_text
-		local button_text_shadow = style_2.button_text_shadow
-		local icon = style_2.icon
+	::label_16_0::
 
-		_tutorial_tooltip_animations["tooltip_input_prefix_" .. i] = UIAnimation.init(UIAnimation.wait, flag, UIAnimation.function_by_time, prefix_text.text_color, 1, arg_16_1, arg_16_2, arg_16_3, math.easeInCubic)
-		_tutorial_tooltip_animations["tooltip_input_prefix_shadow_" .. i] = UIAnimation.init(UIAnimation.wait, flag, UIAnimation.function_by_time, prefix_text_shadow.text_color, 1, arg_16_1, arg_16_2, arg_16_3, math.easeInCubic)
-		_tutorial_tooltip_animations["tooltip_input_suffix_" .. i] = UIAnimation.init(UIAnimation.wait, flag, UIAnimation.function_by_time, suffix_text.text_color, 1, arg_16_1, arg_16_2, arg_16_3, math.easeInCubic)
-		_tutorial_tooltip_animations["tooltip_input_suffix_shadow_" .. i] = UIAnimation.init(UIAnimation.wait, flag, UIAnimation.function_by_time, suffix_text_shadow.text_color, 1, arg_16_1, arg_16_2, arg_16_3, math.easeInCubic)
-		_tutorial_tooltip_animations["tooltip_input_button_" .. i] = UIAnimation.init(UIAnimation.wait, flag, UIAnimation.function_by_time, button_text.text_color, 1, arg_16_1, arg_16_2, arg_16_3, math.easeInCubic)
-		_tutorial_tooltip_animations["tooltip_input_button_shadow_" .. i] = UIAnimation.init(UIAnimation.wait, flag, UIAnimation.function_by_time, button_text_shadow.text_color, 1, arg_16_1, arg_16_2, arg_16_3, math.easeInCubic)
-		_tutorial_tooltip_animations["tooltip_input_icon_" .. i] = UIAnimation.init(UIAnimation.wait, flag, UIAnimation.function_by_time, icon.color, 1, arg_16_1, arg_16_2, arg_16_3, math.easeInCubic)
+	self._tutorial_tooltip_widget.content.completed = completed
+
+	if completed then
+		local complete_in_duration = 0.3
+
+		tutorial_tooltip_animations.completed_size_x = UIAnimation.init(UIAnimation.function_by_time, completed_texture_style.texture_size, 1, 1224, 408, complete_in_duration, math.easeInCubic)
+		tutorial_tooltip_animations.completed_size_y = UIAnimation.init(UIAnimation.function_by_time, completed_texture_style.texture_size, 2, 537, 179, complete_in_duration, math.easeInCubic)
+		tutorial_tooltip_animations.completed_fade_in = UIAnimation.init(UIAnimation.function_by_time, completed_texture_style.color, 1, 0, 255, duration, math.easeInCubic)
+		tutorial_tooltip_animations.completed_shadow_fade_in = UIAnimation.init(UIAnimation.function_by_time, completed_texture_shadow_style.color, 1, 0, 255, duration, math.easeInCubic)
+	end
+
+	tutorial_tooltip_animations.completed_fade = UIAnimation.init(UIAnimation.wait, wait_time, UIAnimation.function_by_time, completed_texture_style.color, 1, from_alpha, to_alpha, duration, math.easeInCubic)
+	tutorial_tooltip_animations.completed_shadow_fade = UIAnimation.init(UIAnimation.wait, wait_time, UIAnimation.function_by_time, completed_texture_shadow_style.color, 1, from_alpha, to_alpha, duration, math.easeInCubic)
+	tutorial_tooltip_animations.unassigned_fade = UIAnimation.init(UIAnimation.wait, wait_time, UIAnimation.function_by_time, unassigned_style.text_color, 1, from_alpha, to_alpha, duration, math.easeInCubic)
+	tutorial_tooltip_animations.unassigned_shadow_fade = UIAnimation.init(UIAnimation.wait, wait_time, UIAnimation.function_by_time, unassigned_shadow_style.text_color, 1, from_alpha, to_alpha, duration, math.easeInCubic)
+	tutorial_tooltip_animations.unassigned_background_fade = UIAnimation.init(UIAnimation.wait, wait_time, UIAnimation.function_by_time, unassigned_background_style.color, 1, from_alpha, to_alpha, duration, math.easeInCubic)
+	tutorial_tooltip_animations.tooltip_bg_fade = UIAnimation.init(UIAnimation.wait, wait_time, UIAnimation.function_by_time, bg_style.color, 1, from_alpha, to_alpha, duration, math.easeInCubic)
+	tutorial_tooltip_animations.tooltip_divider_fade = UIAnimation.init(UIAnimation.wait, wait_time, UIAnimation.function_by_time, divider_style.color, 1, from_alpha, to_alpha, duration, math.easeInCubic)
+	tutorial_tooltip_animations.tooltip_description_fade = UIAnimation.init(UIAnimation.wait, wait_time, UIAnimation.function_by_time, description_style.text_color, 1, from_alpha, to_alpha, duration, math.easeInCubic)
+	tutorial_tooltip_animations.tooltip_description_shadow_fade = UIAnimation.init(UIAnimation.wait, wait_time, UIAnimation.function_by_time, description_shadow_style.text_color, 1, from_alpha, to_alpha, duration, math.easeInCubic)
+	tutorial_tooltip_animations.tooltip_sub_description_fade = UIAnimation.init(UIAnimation.wait, wait_time, UIAnimation.function_by_time, sub_description_style.text_color, 1, from_alpha, to_alpha, duration, math.easeInCubic)
+	tutorial_tooltip_animations.tooltip_sub_description_shadow_fade = UIAnimation.init(UIAnimation.wait, wait_time, UIAnimation.function_by_time, sub_description_shadow_style.text_color, 1, from_alpha, to_alpha, duration, math.easeInCubic)
+
+	local input_widgets = self._tutorial_tooltip_input_widgets
+
+	for i = 1, definitions.NUMBER_OF_TOOLTIP_INPUT_WIDGETS do
+		local widget = input_widgets[i]
+		local input_widget_style = widget.style
+		local prefix_text_style = input_widget_style.prefix_text
+		local prefix_text_shadow_style = input_widget_style.prefix_text_shadow
+		local suffix_text_style = input_widget_style.suffix_text
+		local suffix_text_shadow_style = input_widget_style.suffix_text_shadow
+		local button_text_style = input_widget_style.button_text
+		local button_text_shadow_style = input_widget_style.button_text_shadow
+		local icon_style = input_widget_style.icon
+
+		tutorial_tooltip_animations["tooltip_input_prefix_" .. i] = UIAnimation.init(UIAnimation.wait, wait_time, UIAnimation.function_by_time, prefix_text_style.text_color, 1, from_alpha, to_alpha, duration, math.easeInCubic)
+		tutorial_tooltip_animations["tooltip_input_prefix_shadow_" .. i] = UIAnimation.init(UIAnimation.wait, wait_time, UIAnimation.function_by_time, prefix_text_shadow_style.text_color, 1, from_alpha, to_alpha, duration, math.easeInCubic)
+		tutorial_tooltip_animations["tooltip_input_suffix_" .. i] = UIAnimation.init(UIAnimation.wait, wait_time, UIAnimation.function_by_time, suffix_text_style.text_color, 1, from_alpha, to_alpha, duration, math.easeInCubic)
+		tutorial_tooltip_animations["tooltip_input_suffix_shadow_" .. i] = UIAnimation.init(UIAnimation.wait, wait_time, UIAnimation.function_by_time, suffix_text_shadow_style.text_color, 1, from_alpha, to_alpha, duration, math.easeInCubic)
+		tutorial_tooltip_animations["tooltip_input_button_" .. i] = UIAnimation.init(UIAnimation.wait, wait_time, UIAnimation.function_by_time, button_text_style.text_color, 1, from_alpha, to_alpha, duration, math.easeInCubic)
+		tutorial_tooltip_animations["tooltip_input_button_shadow_" .. i] = UIAnimation.init(UIAnimation.wait, wait_time, UIAnimation.function_by_time, button_text_shadow_style.text_color, 1, from_alpha, to_alpha, duration, math.easeInCubic)
+		tutorial_tooltip_animations["tooltip_input_icon_" .. i] = UIAnimation.init(UIAnimation.wait, wait_time, UIAnimation.function_by_time, icon_style.color, 1, from_alpha, to_alpha, duration, math.easeInCubic)
 	end
 end
 
@@ -485,58 +521,66 @@ TutorialInputUI.has_completed_fade = function (self)
 	return true
 end
 
-TutorialInputUI.set_visible = function (self, arg_18_1)
+TutorialInputUI.set_visible = function (self, visible)
 	-- function 18
-	self._is_visible = arg_18_1
+	self._is_visible = visible
 
-	local _ui_renderer = self._ui_renderer
+	local ui_renderer = self._ui_renderer
 
-	for i, v in ipairs(self._tutorial_tooltip_input_widgets) do
-		UIRenderer.set_element_visible(_ui_renderer, v.element, arg_18_1)
+	for _, widget in ipairs(self._tutorial_tooltip_input_widgets) do
+		UIRenderer.set_element_visible(ui_renderer, widget.element, visible)
 	end
 
-	UIRenderer.set_element_visible(_ui_renderer, self._tutorial_tooltip_widget.element, arg_18_1)
+	UIRenderer.set_element_visible(ui_renderer, self._tutorial_tooltip_widget.element, visible)
 end
 
-TutorialInputUI._get_profile_and_career_index = function (arg_19_0)
+TutorialInputUI._get_profile_and_career_index = function (self)
 	-- function 19
-	local local_player = Managers.player:local_player(1)
-	local career_index
+	local player_manager = Managers.player
+	local player = player_manager:local_player(1)
+	local career_index_2
 
-	if not local_player then
-		career_index = local_player:career_index()
+	if player then
+		career_index_2 = player:career_index()
 
-		if not career_index then
+		if not career_index_2 then
 			-- Nothing
 		end
 	end
 
-	career_index = 1
+	career_index_2 = 1
+
+	local career_index = career_index_2
 
 	do
-		local profile_index
+		local profile_index_2
 	end
 
 	::label_19_0::
 
-	if not local_player then
-		profile_index = local_player:profile_index()
+	if player then
+		profile_index_2 = player:profile_index()
 
-		if not profile_index then
+		if not profile_index_2 then
 			-- Nothing
 		end
 	end
 
-	profile_index = 1
+	profile_index_2 = 1
+
+	local profile_index = profile_index_2
 
 	::label_19_1::
 
 	return profile_index, career_index
 end
 
-TutorialInputUI._is_in_inn = function (arg_20_0)
+TutorialInputUI._is_in_inn = function (self)
 	-- function 20
-	local get_current_level_keys = Managers.level_transition_handler:get_current_level_keys()
+	local level_transition_handler = Managers.level_transition_handler
+	local level_key = level_transition_handler:get_current_level_keys()
+	local level_settings = LevelSettings[level_key]
+	local is_in_inn = level_settings.hub_level
 
-	return LevelSettings[get_current_level_keys].hub_level
+	return is_in_inn
 end

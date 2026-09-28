@@ -1,52 +1,52 @@
 -- chunkname: @scripts/settings/dlcs/morris/rarity_settings.lua
 
-local get_table = Colors.get_table("plentiful")
-local num = 255 / get_table[2]
-local num_2 = 255 / get_table[3]
-local num_3 = 255 / get_table[4]
-local flag = not (num < num_2) or not num or num_2
+local plentiful_color = Colors.get_table("plentiful")
+local red = 255 / plentiful_color[2]
+local green = 255 / plentiful_color[3]
+local blue = 255 / plentiful_color[4]
+local plentiful_multiplier = (not (red < green) or not red) and not not green
 
-flag = not (flag < num_3) or not flag or num_3
+plentiful_multiplier = (not (plentiful_multiplier < blue) or not plentiful_multiplier) and not not blue
 
-local get_table_2 = Colors.get_table("common")
-local num_4 = 255 / get_table_2[2]
-local num_5 = 255 / get_table_2[3]
-local num_6 = 255 / get_table_2[4]
-local flag_2 = not (num_4 < num_5) or not num_4 or num_5
+local common_color = Colors.get_table("common")
+local red = 255 / common_color[2]
+local green = 255 / common_color[3]
+local blue = 255 / common_color[4]
+local common_multiplier = (not (red < green) or not red) and not not green
 
-flag_2 = not (flag_2 < num_6) or not flag_2 or num_6
+common_multiplier = (not (common_multiplier < blue) or not common_multiplier) and not not blue
 
-local get_table_3 = Colors.get_table("rare")
-local num_7 = 255 / get_table_3[2]
-local num_8 = 255 / get_table_3[3]
-local num_9 = 255 / get_table_3[4]
-local flag_3 = not (num_7 < num_8) or not num_7 or num_8
+local rare_color = Colors.get_table("rare")
+local red = 255 / rare_color[2]
+local green = 255 / rare_color[3]
+local blue = 255 / rare_color[4]
+local rare_multiplier = (not (red < green) or not red) and not not green
 
-flag_3 = not (flag_3 < num_9) or not flag_3 or num_9
+rare_multiplier = (not (rare_multiplier < blue) or not rare_multiplier) and not not blue
 
-local get_table_4 = Colors.get_table("exotic")
-local num_10 = 255 / get_table_4[2]
-local num_11 = 255 / get_table_4[3]
-local num_12 = 255 / get_table_4[4]
-local flag_4 = not (num_10 < num_11) or not num_10 or num_11
+local exotic_color = Colors.get_table("exotic")
+local red = 255 / exotic_color[2]
+local green = 255 / exotic_color[3]
+local blue = 255 / exotic_color[4]
+local exotic_multiplier = (not (red < green) or not red) and not not green
 
-flag_4 = not (flag_4 < num_12) or not flag_4 or num_12
+exotic_multiplier = (not (exotic_multiplier < blue) or not exotic_multiplier) and not not blue
 
-local get_table_5 = Colors.get_table("unique")
-local num_13 = 255 / get_table_5[2]
-local num_14 = 255 / get_table_5[3]
-local num_15 = 255 / get_table_5[4]
-local flag_5 = not (num_13 < num_14) or not num_13 or num_14
+local unique_color = Colors.get_table("unique")
+local red = 255 / unique_color[2]
+local green = 255 / unique_color[3]
+local blue = 255 / unique_color[4]
+local unique_multiplier = (not (red < green) or not red) and not not green
 
-flag_5 = not (flag_5 < num_15) or not flag_5 or num_15
+unique_multiplier = (not (unique_multiplier < blue) or not unique_multiplier) and not not blue
 
-local get_table_6 = Colors.get_table("event")
-local num_16 = 255 / get_table_6[2]
-local num_17 = 255 / get_table_6[3]
-local num_18 = 255 / get_table_6[4]
-local flag_6 = not (num_16 < num_17) or not num_16 or num_17
+local event_color = Colors.get_table("event")
+local red = 255 / event_color[2]
+local green = 255 / event_color[3]
+local blue = 255 / event_color[4]
+local event_multiplier = (not (red < green) or not red) and not not green
 
-flag_6 = not (flag_6 < num_18) or not flag_6 or num_18
+event_multiplier = (not (event_multiplier < blue) or not event_multiplier) and not not blue
 ORDER_RARITY = table.mirror_array({
 	"plentiful",
 	"common",
@@ -59,83 +59,83 @@ ORDER_RARITY = table.mirror_array({
 
 local RaritySettings = RaritySettings
 
-RaritySettings = RaritySettings or {
+RaritySettings = not not RaritySettings or not not {
 	plentiful = {
 		name = "plentiful",
 		display_name = "rarity_display_name_plentiful",
 		order = 1,
-		color = get_table,
+		color = plentiful_color,
 		frame_color = {
-			get_table[1],
-			get_table[2] * flag,
-			get_table[3] * flag,
-			get_table[4] * flag
+			plentiful_color[1],
+			plentiful_color[2] * plentiful_multiplier,
+			plentiful_color[3] * plentiful_multiplier,
+			plentiful_color[4] * plentiful_multiplier
 		}
 	},
 	common = {
 		name = "common",
 		display_name = "rarity_display_name_common",
 		order = 2,
-		color = get_table_2,
+		color = common_color,
 		frame_color = {
-			get_table_2[1],
-			get_table_2[2] * flag_2,
-			get_table_2[3] * flag_2,
-			get_table_2[4] * flag_2
+			common_color[1],
+			common_color[2] * common_multiplier,
+			common_color[3] * common_multiplier,
+			common_color[4] * common_multiplier
 		}
 	},
 	rare = {
 		name = "rare",
 		display_name = "rarity_display_name_rare",
 		order = 3,
-		color = get_table_3,
+		color = rare_color,
 		frame_color = {
-			get_table_3[1],
-			get_table_3[2] * flag_3,
-			get_table_3[3] * flag_3,
-			get_table_3[4] * flag_3
+			rare_color[1],
+			rare_color[2] * rare_multiplier,
+			rare_color[3] * rare_multiplier,
+			rare_color[4] * rare_multiplier
 		}
 	},
 	exotic = {
 		name = "exotic",
 		display_name = "rarity_display_name_exotic",
 		order = 4,
-		color = get_table_4,
+		color = exotic_color,
 		frame_color = {
-			get_table_4[1],
-			get_table_4[2] * flag_4,
-			get_table_4[3] * flag_4,
-			get_table_4[4] * flag_4
+			exotic_color[1],
+			exotic_color[2] * exotic_multiplier,
+			exotic_color[3] * exotic_multiplier,
+			exotic_color[4] * exotic_multiplier
 		}
 	},
 	unique = {
 		name = "unique",
 		display_name = "rarity_display_name_unique",
 		order = 5,
-		color = get_table_5,
+		color = unique_color,
 		frame_color = {
-			get_table_5[1],
-			get_table_5[2] * flag_5,
-			get_table_5[3] * flag_5,
-			get_table_5[4] * flag_5
+			unique_color[1],
+			unique_color[2] * unique_multiplier,
+			unique_color[3] * unique_multiplier,
+			unique_color[4] * unique_multiplier
 		}
 	},
 	event = {
 		name = "event",
 		display_name = "rarity_display_name_event",
 		order = 6,
-		color = get_table_6,
+		color = event_color,
 		frame_color = {
-			get_table_6[1],
-			get_table_6[2] * flag_6,
-			get_table_6[3] * flag_6,
-			get_table_6[4] * flag_6
+			event_color[1],
+			event_color[2] * event_multiplier,
+			event_color[3] * event_multiplier,
+			event_color[4] * event_multiplier
 		}
 	}
 }
 RaritySettings = RaritySettings
 RarityIndex = {}
 
-for k, v in pairs(RaritySettings) do
-	RarityIndex[k] = v.order
+for rarity_name, rarity_data in pairs(RaritySettings) do
+	RarityIndex[rarity_name] = rarity_data.order
 end

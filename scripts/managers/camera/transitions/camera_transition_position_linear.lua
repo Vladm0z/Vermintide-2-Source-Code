@@ -4,28 +4,28 @@ require("scripts/managers/camera/transitions/camera_transition_base")
 
 CameraTransitionPositionLinear = class(CameraTransitionPositionLinear, CameraTransitionBase)
 
-CameraTransitionPositionLinear.init = function (self, arg_1_1, arg_1_2, arg_1_3, arg_1_4, arg_1_5)
+CameraTransitionPositionLinear.init = function (self, node_1, node_2, duration, speed, settings)
 	-- function 1
-	CameraTransitionBase.init(self, arg_1_1, arg_1_2, arg_1_3, arg_1_4, arg_1_5)
+	CameraTransitionBase.init(self, node_1, node_2, duration, speed, settings)
 
-	self._freeze_node_1 = arg_1_5.freeze_start_node
+	self._freeze_node_1 = settings.freeze_start_node
 
-	if not self._freeze_node_1 then
-		local position = arg_1_1:position()
+	if self._freeze_node_1 then
+		local node_1_pos = node_1:position()
 
-		self._node_1_pos_table = Vector3Box(position)
+		self._node_1_pos_table = Vector3Box(node_1_pos)
 	end
 
-	self._transition_func = arg_1_5.transition_func
+	self._transition_func = settings.transition_func
 end
 
-CameraTransitionPositionLinear.update = function (self, arg_2_1, arg_2_2, arg_2_3)
+CameraTransitionPositionLinear.update = function (self, dt, position, update_time)
 	-- function 2
-	CameraTransitionBase.update(self, arg_2_1, arg_2_3)
+	CameraTransitionBase.update(self, dt, update_time)
 
 	local unbox
 
-	if not self._freeze_node_1 then
+	if self._freeze_node_1 then
 		unbox = self._node_1_pos_table:unbox()
 
 		if not unbox then
@@ -33,45 +33,49 @@ CameraTransitionPositionLinear.update = function (self, arg_2_1, arg_2_2, arg_2_
 		end
 	end
 
-	unbox = arg_2_2
+	unbox = position
+
+	local node_1_position = unbox
 
 	::label_2_0::
 
-	local position = self._node_2:position()
-	local _duration = self._duration
-	local _speed = self._speed
-	local _time = self._time
-	local var_2_5
-	local var_2_6
+	local node_2_position = self._node_2:position()
+	local duration = self._duration
+	local speed = self._speed
+	local time = self._time
+	local pos, done
 
-	if not _speed and not _duration then
+	if speed and duration then
 		assert(false, "CameraTransitionPositionLinear:update() transition has defined both speed and duration, only one can be allowed at once")
-	elseif not _speed then
-		local num = position - unbox
-		local length = Vector3.length(num)
-		local num_2 = _time * _speed
+	elseif speed then
+		local target_vec = node_2_position - node_1_position
+		local max_length = Vector3.length(target_vec)
+		local dist_moved = time * speed
 
-		if length <= num_2 then
-			var_2_5 = position
-			var_2_6 = true
+		if max_length <= dist_moved then
+			pos = node_2_position
+			done = true
 		else
-			var_2_5 = unbox + Vector3.normalize(num) * num_2
+			local dir = Vector3.normalize(target_vec)
+
+			pos = node_1_position + dir * dist_moved
 		end
-	elseif not _duration then
-		assert(_duration > 0, "CameraTransitionPositionLinear has a zero duration")
+	elseif duration then
+		assert(duration > 0, "CameraTransitionPositionLinear has a zero duration")
 
-		local num_3 = _time / _duration
-		local min = math.min(num_3, 1)
+		local t = time / duration
 
-		if not self._transition_func then
-			min = self._transition_func(min)
+		t = math.min(t, 1)
+
+		if self._transition_func then
+			t = self._transition_func(t)
 		end
 
-		var_2_5 = unbox * (1 - min) + position * min
-		var_2_6 = _duration < _time
+		pos = node_1_position * (1 - t) + node_2_position * t
+		done = duration < time
 	end
 
-	assert(Vector3.is_valid(var_2_5), "Interpolated position is not valid.")
+	assert(Vector3.is_valid(pos), "Interpolated position is not valid.")
 
-	return var_2_5, var_2_6
+	return pos, done
 end

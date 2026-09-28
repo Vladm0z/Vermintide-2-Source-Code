@@ -2,47 +2,50 @@
 
 require("scripts/utils/debug_hero_templates")
 
-local function fn()
+local function save_statistics()
 	-- function 1
-	local backend = Managers.backend
+	local backend_manager = Managers.backend
+	local stats_interface = backend_manager:get_interface("statistics")
 
-	backend:get_interface("statistics"):save()
-	backend:commit(true)
+	stats_interface:save()
+	backend_manager:commit(true)
 end
 
-local function fn_2(arg_2_0, arg_2_1)
+local function add_items(items, skip_autosave)
 	-- function 2
-	local _backend_mirror = Managers.backend._backend_mirror
-	local tbl = {
+	local backend_mirror = Managers.backend._backend_mirror
+	local request = {
 		FunctionName = "devGrantItems",
 		FunctionParameter = {
-			items = arg_2_0
+			items = items
 		}
 	}
 
-	local function fn(self)
+	local function cb(result)
 		-- function 3
-		local items = self.FunctionResult.items
-		local get_interface = Managers.backend:get_interface("items")
+		local items = result.FunctionResult.items
+		local item_interface = Managers.backend:get_interface("items")
 
 		for i = 1, #items do
-			if not (not arg_2_1 and i ~= #items) then
-				arg_2_1 = nil
+			if skip_autosave and i == #items then
+				skip_autosave = nil
 			end
 
-			local var_3_2 = items[i]
+			local item = items[i]
 
-			_backend_mirror:add_item(var_3_2.ItemInstanceId, var_3_2, arg_2_1)
+			backend_mirror:add_item(item.ItemInstanceId, item, skip_autosave)
 		end
 
-		local chest_inventory = self.FunctionResult.chest_inventory
+		local chest_inventory = result.FunctionResult.chest_inventory
 
-		if not chest_inventory then
-			_backend_mirror:set_read_only_data("chest_inventory", chest_inventory, true)
+		if chest_inventory then
+			backend_mirror:set_read_only_data("chest_inventory", chest_inventory, true)
 		end
 	end
 
-	_backend_mirror:request_queue():enqueue(tbl, fn, false)
+	local request_queue = backend_mirror:request_queue()
+
+	request_queue:enqueue(request, cb, false)
 end
 
 local tbl = {
@@ -124,95 +127,96 @@ local tbl = {
 		description = "Teleports the player to a portal hub element",
 		category = "Allround useful stuff!",
 		item_source = {},
-		load_items_source_func = function (self)
+		load_items_source_func = function (options)
 			-- function 4
-			table.clear(self)
+			table.clear(options)
 
-			local get_teleporter_portals = ConflictUtils.get_teleporter_portals()
+			local portals = ConflictUtils.get_teleporter_portals()
 
-			for k, v in pairs(get_teleporter_portals) do
-				self[#self + 1] = k
+			for key, _ in pairs(portals) do
+				options[#options + 1] = key
 			end
 
-			if not Managers.player.is_server then
-				local get_main_paths = Managers.state.conflict.level_analysis:get_main_paths()
-				local mirror_array = table.mirror_array(self)
+			if Managers.player.is_server then
+				local level_analysis = Managers.state.conflict.level_analysis
+				local main_paths = level_analysis:get_main_paths()
+				local original_order = table.mirror_array(options)
 
-				table.sort(self, function (arg_5_0, arg_5_1)
+				table.sort(options, function (a, b)
 					-- function 5
-					local unbox = get_teleporter_portals[arg_5_0][1]:unbox()
-					local unbox_2 = get_teleporter_portals[arg_5_1][1]:unbox()
-					local closest_pos_at_main_path, var_5_3 = MainPathUtils.closest_pos_at_main_path(get_main_paths, unbox)
-					local closest_pos_at_main_path_2, var_5_5 = MainPathUtils.closest_pos_at_main_path(get_main_paths, unbox_2)
+					local pos_a = portals[a][1]:unbox()
+					local pos_b = portals[b][1]:unbox()
+					local _, best_travel_dist_a = MainPathUtils.closest_pos_at_main_path(main_paths, pos_a)
+					local _, best_travel_dist_b = MainPathUtils.closest_pos_at_main_path(main_paths, pos_b)
 
-					var_5_3 = var_5_3 or math.huge
-					var_5_5 = var_5_5 or math.huge
+					best_travel_dist_a = not not best_travel_dist_a or not not math.huge
+					best_travel_dist_b = not not best_travel_dist_b or not not math.huge
 
-					if var_5_3 ~= var_5_5 then
-						return var_5_3 < var_5_5
+					if best_travel_dist_a ~= best_travel_dist_b then
+						return best_travel_dist_a < best_travel_dist_b
 					end
 
-					return mirror_array[arg_5_0] < mirror_array[arg_5_1]
+					return original_order[a] < original_order[b]
 				end)
 			else
 				local local_player = Managers.player:local_player()
-				local flag = not local_player and local_player.player_unit
+				local player_unit = not not local_player and not not local_player.player_unit
 
-				if not ALIVE[flag] then
+				if not ALIVE[player_unit] then
 					return
 				end
 
-				local get_entities = Managers.state.entity:get_entities("EndZoneExtension")
-				local var_4_6 = next(get_entities)
+				local units = Managers.state.entity:get_entities("EndZoneExtension")
+				local any_end_zone = next(units)
 
-				if not var_4_6 then
+				if not any_end_zone then
 					return
 				end
 
-				local world_position = Unit.world_position(var_4_6, 0)
-				local world_position_2 = Unit.world_position(flag, 0)
-				local num = world_position - world_position_2
-				local mirror_array_2 = table.mirror_array(self)
+				local end_zone_pos = Unit.world_position(any_end_zone, 0)
+				local player_pos = Unit.world_position(player_unit, 0)
+				local to_end_zone = end_zone_pos - player_pos
+				local original_order = table.mirror_array(options)
 
-				table.sort(self, function (arg_6_0, arg_6_1)
+				table.sort(options, function (a, b)
 					-- function 6
-					local unbox = get_teleporter_portals[arg_6_0][1]:unbox()
-					local unbox_2 = get_teleporter_portals[arg_6_1][1]:unbox()
-					local num_2 = unbox - world_position_2
-					local num_3 = unbox_2 - world_position_2
-					local dot = Vector3.dot(num_2, num)
-					local dot_2 = Vector3.dot(num_3, num)
+					local pos_a = portals[a][1]:unbox()
+					local pos_b = portals[b][1]:unbox()
+					local to_pos_a = pos_a - player_pos
+					local to_pos_b = pos_b - player_pos
+					local pos_a_proj = Vector3.dot(to_pos_a, to_end_zone)
+					local pos_b_proj = Vector3.dot(to_pos_b, to_end_zone)
 
-					if dot == dot_2 then
-						return mirror_array_2[arg_6_0] < mirror_array_2[arg_6_1]
+					if pos_a_proj == pos_b_proj then
+						return original_order[a] < original_order[b]
 					end
 
-					return dot < dot_2
+					return pos_a_proj < pos_b_proj
 				end)
 			end
 		end,
-		func = function (self, arg_7_1)
+		func = function (options, index)
 			-- function 7
 			local local_player = Managers.player:local_player()
 
-			if not local_player then
+			if local_player then
 				local player_unit = local_player.player_unit
 
-				if not Unit.alive(player_unit) then
-					local get_teleporter_portals = ConflictUtils.get_teleporter_portals()
+				if Unit.alive(player_unit) then
+					local portals = ConflictUtils.get_teleporter_portals()
 
-					if not table.is_empty(get_teleporter_portals) then
+					if table.is_empty(portals) then
 						return
 					end
 
-					local var_7_3 = self[arg_7_1]
-					local unbox = get_teleporter_portals[var_7_3][1]:unbox()
-					local unbox_2 = get_teleporter_portals[var_7_3][2]:unbox()
-					local extension = ScriptUnit.extension(player_unit, "locomotion_system")
+					local portal_id = options[index]
+					local pos = portals[portal_id][1]:unbox()
+					local rot = portals[portal_id][2]:unbox()
+					local locomotion = ScriptUnit.extension(player_unit, "locomotion_system")
 					local world = Managers.world:world("level_world")
 
-					LevelHelper:flow_event(world, "teleport_" .. self[arg_7_1])
-					extension:teleport_to(unbox, unbox_2)
+					LevelHelper:flow_event(world, "teleport_" .. options[index])
+					locomotion:teleport_to(pos, rot)
 				end
 			end
 
@@ -224,121 +228,124 @@ local tbl = {
 		description = "When entering a level, Teleports the player to a portal hub element",
 		category = "Allround useful stuff!",
 		item_source = {},
-		load_items_source_func = function (self)
+		load_items_source_func = function (options)
 			-- function 8
-			if not Managers.level_transition_handler:get_current_level_keys() then
+			local current_level_key = Managers.level_transition_handler:get_current_level_keys()
+
+			if not current_level_key then
 				return
 			end
 
-			table.clear(self)
+			table.clear(options)
 
-			self[1] = "[clear value]"
+			options[1] = "[clear value]"
 
-			local get_teleporter_portals = ConflictUtils.get_teleporter_portals()
+			local portals = ConflictUtils.get_teleporter_portals()
 
-			for k, v in pairs(get_teleporter_portals) do
-				self[#self + 1] = k
+			for key, _ in pairs(portals) do
+				options[#options + 1] = key
 			end
 
-			if not Managers.player.is_server then
-				local get_main_paths = Managers.state.conflict.level_analysis:get_main_paths()
-				local mirror_array = table.mirror_array(self)
+			if Managers.player.is_server then
+				local level_analysis = Managers.state.conflict.level_analysis
+				local main_paths = level_analysis:get_main_paths()
+				local original_order = table.mirror_array(options)
 
-				table.sort(self, function (arg_9_0, arg_9_1)
+				table.sort(options, function (a, b)
 					-- function 9
-					if not (arg_9_0 == "[clear value]" or arg_9_1 ~= "[clear value]") then
-						return arg_9_0 == "[clear value]"
+					if a == "[clear value]" or b == "[clear value]" then
+						return a == "[clear value]"
 					end
 
-					local unbox = get_teleporter_portals[arg_9_0][1]:unbox()
-					local unbox_2 = get_teleporter_portals[arg_9_1][1]:unbox()
-					local closest_pos_at_main_path, var_9_3 = MainPathUtils.closest_pos_at_main_path(get_main_paths, unbox)
-					local closest_pos_at_main_path_2, var_9_5 = MainPathUtils.closest_pos_at_main_path(get_main_paths, unbox_2)
+					local pos_a = portals[a][1]:unbox()
+					local pos_b = portals[b][1]:unbox()
+					local _, best_travel_dist_a = MainPathUtils.closest_pos_at_main_path(main_paths, pos_a)
+					local _, best_travel_dist_b = MainPathUtils.closest_pos_at_main_path(main_paths, pos_b)
 
-					var_9_3 = var_9_3 or math.huge
-					var_9_5 = var_9_5 or math.huge
+					best_travel_dist_a = not not best_travel_dist_a or not not math.huge
+					best_travel_dist_b = not not best_travel_dist_b or not not math.huge
 
-					if var_9_3 ~= var_9_5 then
-						return var_9_3 < var_9_5
+					if best_travel_dist_a ~= best_travel_dist_b then
+						return best_travel_dist_a < best_travel_dist_b
 					end
 
-					return mirror_array[arg_9_0] < mirror_array[arg_9_1]
+					return original_order[a] < original_order[b]
 				end)
 			else
 				local local_player = Managers.player:local_player()
-				local flag = not local_player and local_player.player_unit
+				local player_unit = not not local_player and not not local_player.player_unit
 
-				if not ALIVE[flag] then
+				if not ALIVE[player_unit] then
 					return
 				end
 
-				local get_entities = Managers.state.entity:get_entities("EndZoneExtension")
-				local var_8_6 = next(get_entities)
+				local units = Managers.state.entity:get_entities("EndZoneExtension")
+				local any_end_zone = next(units)
 
-				if not var_8_6 then
+				if not any_end_zone then
 					return
 				end
 
-				local world_position = Unit.world_position(var_8_6, 0)
-				local world_position_2 = Unit.world_position(flag, 0)
-				local num = world_position - world_position_2
-				local mirror_array_2 = table.mirror_array(self)
+				local end_zone_pos = Unit.world_position(any_end_zone, 0)
+				local player_pos = Unit.world_position(player_unit, 0)
+				local to_end_zone = end_zone_pos - player_pos
+				local original_order = table.mirror_array(options)
 
-				table.sort(self, function (arg_10_0, arg_10_1)
+				table.sort(options, function (a, b)
 					-- function 10
-					if not (arg_10_0 == "[clear value]" or arg_10_1 ~= "[clear value]") then
-						return arg_10_0 == "[clear value]"
+					if a == "[clear value]" or b == "[clear value]" then
+						return a == "[clear value]"
 					end
 
-					local unbox = get_teleporter_portals[arg_10_0][1]:unbox()
-					local unbox_2 = get_teleporter_portals[arg_10_1][1]:unbox()
-					local num_2 = unbox - world_position_2
-					local num_3 = unbox_2 - world_position_2
-					local dot = Vector3.dot(num_2, num)
-					local dot_2 = Vector3.dot(num_3, num)
+					local pos_a = portals[a][1]:unbox()
+					local pos_b = portals[b][1]:unbox()
+					local to_pos_a = pos_a - player_pos
+					local to_pos_b = pos_b - player_pos
+					local pos_a_proj = Vector3.dot(to_pos_a, to_end_zone)
+					local pos_b_proj = Vector3.dot(to_pos_b, to_end_zone)
 
-					if dot == dot_2 then
-						return mirror_array_2[arg_10_0] < mirror_array_2[arg_10_1]
+					if pos_a_proj == pos_b_proj then
+						return original_order[a] < original_order[b]
 					end
 
-					return dot < dot_2
+					return pos_a_proj < pos_b_proj
 				end)
 			end
 		end,
-		func = function (self, arg_11_1)
+		func = function (options, index)
 			-- function 11
-			if self[arg_11_1] == "[clear value]" then
+			if options[index] == "[clear value]" then
 				return
 			end
 
 			local local_player = Managers.player:local_player()
 
-			if not local_player then
+			if local_player then
 				local player_unit = local_player.player_unit
 
-				if not Unit.alive(player_unit) then
-					local get_teleporter_portals = ConflictUtils.get_teleporter_portals()
+				if Unit.alive(player_unit) then
+					local portals = ConflictUtils.get_teleporter_portals()
 
-					if not table.is_empty(get_teleporter_portals) then
+					if table.is_empty(portals) then
 						return
 					end
 
-					local var_11_3 = self[arg_11_1]
-					local unbox = get_teleporter_portals[var_11_3][1]:unbox()
-					local unbox_2 = get_teleporter_portals[var_11_3][2]:unbox()
-					local extension = ScriptUnit.extension(player_unit, "locomotion_system")
+					local portal_id = options[index]
+					local pos = portals[portal_id][1]:unbox()
+					local rot = portals[portal_id][2]:unbox()
+					local locomotion = ScriptUnit.extension(player_unit, "locomotion_system")
 					local world = Managers.world:world("level_world")
 
-					LevelHelper:flow_event(world, "teleport_" .. var_11_3)
-					extension:teleport_to(unbox, unbox_2)
+					LevelHelper:flow_event(world, "teleport_" .. portal_id)
+					locomotion:teleport_to(pos, rot)
 				end
 			end
 
-			local get_current_level_keys = Managers.level_transition_handler:get_current_level_keys()
+			local current_level_key = Managers.level_transition_handler:get_current_level_keys()
 
-			script_data["teleport player when enter game"] = get_current_level_keys .. ":" .. self[arg_11_1]
+			script_data["teleport player when enter game"] = current_level_key .. ":" .. options[index]
 
-			Development.set_setting("teleport player when enter game", get_current_level_keys .. ":" .. self[arg_11_1])
+			Development.set_setting("teleport player when enter game", current_level_key .. ":" .. options[index])
 			Development.clear_param_cache("teleport player when enter game")
 			print("TELEPORT")
 		end
@@ -348,53 +355,53 @@ local tbl = {
 		description = "Teleports the player to another player.",
 		category = "Allround useful stuff!",
 		item_source = {},
-		load_items_source_func = function (self)
+		load_items_source_func = function (options)
 			-- function 12
-			table.clear(self)
+			table.clear(options)
 
-			local tbl = {}
+			local data = {}
 
-			self.data = tbl
+			options.data = data
 
 			local players = Managers.player:players()
 			local local_player = Managers.player:local_player()
 
-			for k, v in pairs(players) do
-				if v ~= local_player then
-					self[#self + 1] = v:name()
-					tbl[#tbl + 1] = v
+			for _, player in pairs(players) do
+				if player ~= local_player then
+					options[#options + 1] = player:name()
+					data[#data + 1] = player
 				end
 			end
 		end,
-		func = function (self, arg_13_1)
+		func = function (options, index)
 			-- function 13
 			local local_player = Managers.player:local_player()
-			local data = self.data
+			local data = options.data
 
-			if not local_player then
+			if local_player then
 				local player_unit = local_player.player_unit
 
 				if not Unit.alive(player_unit) then
 					return
 				end
 
-				if not table.is_empty(data) then
+				if table.is_empty(data) then
 					return
 				end
 
-				local player_unit_2 = data[arg_13_1].player_unit
+				local target_player_unit = data[index].player_unit
 
-				if not Unit.alive(player_unit_2) then
+				if not Unit.alive(target_player_unit) then
 					return
 				end
 
-				local extension = ScriptUnit.extension(player_unit, "locomotion_system")
-				local extension_2 = ScriptUnit.extension(player_unit_2, "locomotion_system")
-				local mover = Unit.mover(player_unit_2)
-				local position = Mover.position(mover)
-				local current_rotation = extension_2:current_rotation()
+				local player_locomotion_ext = ScriptUnit.extension(player_unit, "locomotion_system")
+				local target_locomotion_ext = ScriptUnit.extension(target_player_unit, "locomotion_system")
+				local mover = Unit.mover(target_player_unit)
+				local pos = Mover.position(mover)
+				local rot = target_locomotion_ext:current_rotation()
 
-				extension:teleport_to(position, current_rotation)
+				player_locomotion_ext:teleport_to(pos, rot)
 			end
 		end
 	},
@@ -403,53 +410,53 @@ local tbl = {
 		description = "Teleports the player to another player every 2 seconds.",
 		category = "Allround useful stuff!",
 		item_source = {},
-		load_items_source_func = function (self)
+		load_items_source_func = function (options)
 			-- function 14
-			table.clear(self)
+			table.clear(options)
 
-			local tbl = {}
+			local data = {}
 
-			self.data = tbl
+			options.data = data
 
 			local players = Managers.player:players()
 			local local_player = Managers.player:local_player()
 
-			for k, v in pairs(players) do
-				if v ~= local_player then
-					self[#self + 1] = v:name()
-					tbl[#tbl + 1] = v
+			for _, player in pairs(players) do
+				if player ~= local_player then
+					options[#options + 1] = player:name()
+					data[#data + 1] = player
 				end
 			end
 
-			self[#self + 1] = "Turn Off"
-			tbl[#tbl + 1] = {}
+			options[#options + 1] = "Turn Off"
+			data[#data + 1] = {}
 		end,
-		func = function (self, arg_15_1)
+		func = function (options, index)
 			-- function 15
-			local data = self.data
+			local data = options.data
 
-			if not table.is_empty(data) then
+			if table.is_empty(data) then
 				return
 			end
 
-			local str = "teleport player to player repeatedly"
+			local updator_id = "teleport player to player repeatedly"
 
-			if not Managers.updator:has(str) then
-				Managers.updator:remove(str)
+			if Managers.updator:has(updator_id) then
+				Managers.updator:remove(updator_id)
 			end
 
-			local num = 0
-			local player_unit = data[arg_15_1].player_unit
+			local timer = 0
+			local target_player_unit = data[index].player_unit
 
-			Managers.updator:add(function (arg_16_0)
+			Managers.updator:add(function (dt)
 				-- function 16
-				num = num - arg_16_0
+				timer = timer - dt
 
-				if num > 0 then
+				if timer > 0 then
 					return
 				end
 
-				num = 2
+				timer = 2
 
 				UPDATE_POSITION_LOOKUP()
 
@@ -459,26 +466,26 @@ local tbl = {
 					return
 				end
 
-				local player_unit_2 = local_player.player_unit
-
-				if not Unit.alive(player_unit_2) then
-					return
-				end
+				local player_unit = local_player.player_unit
 
 				if not Unit.alive(player_unit) then
-					Managers.updator:remove(str)
+					return
+				end
+
+				if not Unit.alive(target_player_unit) then
+					Managers.updator:remove(updator_id)
 
 					return
 				end
 
-				local extension = ScriptUnit.extension(player_unit_2, "locomotion_system")
-				local extension_2 = ScriptUnit.extension(player_unit, "locomotion_system")
-				local mover = Unit.mover(player_unit)
-				local position = Mover.position(mover)
-				local current_rotation = extension_2:current_rotation()
+				local player_locomotion_ext = ScriptUnit.extension(player_unit, "locomotion_system")
+				local target_locomotion_ext = ScriptUnit.extension(target_player_unit, "locomotion_system")
+				local mover = Unit.mover(target_player_unit)
+				local pos = Mover.position(mover)
+				local rot = target_locomotion_ext:current_rotation()
 
-				extension:teleport_to(position, current_rotation)
-			end, str)
+				player_locomotion_ext:teleport_to(pos, rot)
+			end, updator_id)
 		end
 	},
 	{
@@ -490,15 +497,17 @@ local tbl = {
 			local bots = Managers.player:bots()
 			local local_player = Managers.player:local_player()
 
-			if not local_player and not local_player.player_unit then
+			if local_player and local_player.player_unit then
 				local player_unit = local_player.player_unit
-				local extension = ScriptUnit.extension(player_unit, "locomotion_system")
+				local player_locomotion_ext = ScriptUnit.extension(player_unit, "locomotion_system")
 				local mover = Unit.mover(player_unit)
-				local position = Mover.position(mover)
-				local current_rotation = extension:current_rotation()
+				local pos = Mover.position(mover)
+				local rot = player_locomotion_ext:current_rotation()
 
-				for k, v in pairs(bots) do
-					ScriptUnit.extension(v.player_unit, "locomotion_system"):teleport_to(position, current_rotation)
+				for _, bot in pairs(bots) do
+					local locomotion_ext = ScriptUnit.extension(bot.player_unit, "locomotion_system")
+
+					locomotion_ext:teleport_to(pos, rot)
 				end
 			end
 		end
@@ -600,109 +609,142 @@ local tbl = {
 		description = "Loads the selected level.",
 		category = "Allround useful stuff!",
 		item_source = {},
-		load_items_source_func = function (self)
+		load_items_source_func = function (options)
 			-- function 19
-			table.clear(self)
-			table.keys(LevelSettings, self)
+			table.clear(options)
+			table.keys(LevelSettings, options)
 
-			local tbl = {}
+			local level_variations = {}
 
-			for i = #self, 1, -1 do
-				local var_19_1 = self[i]
-				local environment_variations = LevelSettings[var_19_1].environment_variations
+			for i = #options, 1, -1 do
+				local level_name = options[i]
+				local level_settings = LevelSettings[level_name]
+				local variations = level_settings.environment_variations
 
-				if not environment_variations then
-					for j = #environment_variations, 1, -1 do
-						local str = var_19_1 .. "_" .. environment_variations[j]
+				if variations then
+					for variation_id = #variations, 1, -1 do
+						local combined_name = level_name .. "_" .. variations[variation_id]
 
-						table.insert(self, str)
+						table.insert(options, combined_name)
 
-						self[str] = {
-							var_19_1,
-							j
+						options[combined_name] = {
+							level_name,
+							variation_id
 						}
-						tbl[str] = true
+						level_variations[combined_name] = true
 					end
 				end
 			end
 
-			local mirror_array_inplace = table.mirror_array_inplace({
+			local high_prio_levels = table.mirror_array_inplace({
 				"inn_level",
 				"whitebox"
 			})
-			local mirror_array_inplace_2 = table.mirror_array_inplace({
+			local mechanism_order = table.mirror_array_inplace({
 				"adventure",
 				"versus",
 				"deus",
 				"weaves"
 			})
 
-			table.sort(self, function (arg_20_0, arg_20_1)
+			table.sort(options, function (a, b)
 				-- function 20
-				if mirror_array_inplace[arg_20_0] or not mirror_array_inplace[arg_20_1] then
-					local var_20_0 = mirror_array_inplace[arg_20_0]
+				if high_prio_levels[a] or high_prio_levels[b] then
+					local var_20_0 = high_prio_levels[a]
 
-					var_20_0 = var_20_0 or math.huge
+					var_20_0 = not not var_20_0 or not not math.huge
 
-					local var_20_1 = mirror_array_inplace[arg_20_1]
+					local var_20_1 = high_prio_levels[b]
 
-					var_20_1 = var_20_1 or math.huge
+					var_20_1 = not not var_20_1 or not not math.huge
 
 					return var_20_0 < var_20_1
 				end
 
-				if tbl[arg_20_0] or not tbl[arg_20_1] then
-					if not (not tbl[arg_20_0] and tbl[arg_20_1]) then
-						return not tbl[arg_20_0]
+				if level_variations[a] or level_variations[b] then
+					if not level_variations[a] or not level_variations[b] then
+						return not level_variations[a]
 					else
-						return arg_20_0 < arg_20_1
+						return a < b
 					end
 				end
 
-				local var_20_2 = LevelSettings[arg_20_0]
-				local var_20_3 = LevelSettings[arg_20_1]
+				local settings_a = LevelSettings[a]
+				local settings_b = LevelSettings[b]
 
-				if var_20_2.mechanism ~= var_20_3.mechanism then
-					local var_20_4 = mirror_array_inplace_2[var_20_2.mechanism]
+				if settings_a.mechanism ~= settings_b.mechanism then
+					local var_20_2 = mechanism_order[settings_a.mechanism]
 
-					var_20_4 = var_20_4 or math.huge
+					var_20_2 = not not var_20_2 or not not math.huge
 
-					local var_20_5 = mirror_array_inplace_2[var_20_3.mechanism]
+					local var_20_3 = mechanism_order[settings_b.mechanism]
 
-					var_20_5 = var_20_5 or math.huge
+					var_20_3 = not not var_20_3 or not not math.huge
 
-					return var_20_4 < var_20_5
+					return var_20_2 < var_20_3
 				end
 
-				local find = table.find(GameActsOrder, var_20_2.act)
+				local find = table.find(GameActsOrder, settings_a.act)
 
-				find = find or math.huge
+				if not find then
+					-- Nothing
+				end
 
-				local find_2 = table.find(GameActsOrder, var_20_3.act)
+				find = math.huge
 
-				find_2 = find_2 or math.huge
+				local act_a_index = find
 
-				if find < find_2 then
+				::label_20_0::
+
+				local find_2 = table.find(GameActsOrder, settings_b.act)
+
+				if not find_2 then
+					-- Nothing
+				end
+
+				find_2 = math.huge
+
+				local act_b_index = find_2
+
+				::label_20_1::
+
+				if act_a_index < act_b_index then
 					return true
-				elseif find == find_2 then
-					local act_presentation_order = var_20_2.act_presentation_order
-					local act_presentation_order_2 = var_20_3.act_presentation_order
+				elseif act_a_index == act_b_index then
+					local act_presentation_order_a = settings_a.act_presentation_order
+					local act_presentation_order_b = settings_b.act_presentation_order
 
-					if act_presentation_order or not act_presentation_order_2 then
-						return (act_presentation_order or math.huge) < (act_presentation_order_2 or math.huge)
+					if act_presentation_order_a or act_presentation_order_b then
+						return (not not act_presentation_order_a or not not math.huge) < (not not act_presentation_order_b or not not math.huge)
 					else
-						local map_settings = var_20_2.map_settings
+						local map_settings = settings_a.map_settings
 
-						map_settings = not map_settings and var_20_2.map_settings.sorting
+						if map_settings then
+							-- Nothing
+						end
 
-						local map_settings_2 = var_20_3.map_settings
+						map_settings = settings_a.map_settings.sorting
 
-						map_settings_2 = not map_settings_2 and var_20_3.map_settings.sorting
+						local debug_sorting_a = map_settings
 
-						if map_settings or not map_settings_2 then
-							return (map_settings or math.huge) < (map_settings_2 or math.huge)
+						::label_20_2::
+
+						local map_settings_2 = settings_b.map_settings
+
+						if map_settings_2 then
+							-- Nothing
+						end
+
+						map_settings_2 = settings_b.map_settings.sorting
+
+						local debug_sorting_b = map_settings_2
+
+						::label_20_3::
+
+						if debug_sorting_a or debug_sorting_b then
+							return (not not debug_sorting_a or not not math.huge) < (not not debug_sorting_b or not not math.huge)
 						else
-							return arg_20_0 < arg_20_1
+							return a < b
 						end
 					end
 				else
@@ -710,28 +752,28 @@ local tbl = {
 				end
 			end)
 		end,
-		func = function (self, arg_21_1)
+		func = function (options, index)
 			-- function 21
 			if not Managers.state.network.is_server then
 				return
 			end
 
-			local var_21_0 = self[arg_21_1]
-			local num = 0
-			local var_21_2 = self[var_21_0]
+			local level_name = options[index]
+			local environment_id = 0
+			local combined_name = options[level_name]
 
-			if not var_21_2 then
-				var_21_0 = var_21_2[1]
-				num = var_21_2[2]
+			if combined_name then
+				level_name = combined_name[1]
+				environment_id = combined_name[2]
 			end
 
-			local var_21_3 = LevelSettings[var_21_0]
+			local level_settings = LevelSettings[level_name]
 
-			if not var_21_3.hub_level then
-				Managers.mechanism:override_hub_level(var_21_0)
+			if level_settings.hub_level then
+				Managers.mechanism:override_hub_level(level_name)
 			end
 
-			Debug.load_level(var_21_0, num, var_21_3.debug_environment_level_flow_event)
+			Debug.load_level(level_name, environment_id, level_settings.debug_environment_level_flow_event)
 		end
 	},
 	{
@@ -1012,23 +1054,34 @@ local tbl = {
 		setting_name = "player_invisibility",
 		category = "Player mechanics recommended",
 		is_boolean = true,
-		func = function (self, arg_23_1)
+		func = function (options, option_id)
 			-- function 23
-			local var_23_0 = self[arg_23_1]
-			local local_player = Managers.player:local_player()
-			local flag = not local_player and local_player.player_unit
+			local wants_invis = options[option_id]
+			local player_manager = Managers.player
+			local local_player = player_manager:local_player()
+			local player_unit = not not local_player and not not local_player.player_unit
 
-			if not Unit.alive(flag) then
-				local extension = ScriptUnit.extension(flag, "status_system")
+			if Unit.alive(player_unit) then
+				local status_extension = ScriptUnit.extension(player_unit, "status_system")
 
-				if extension:is_invisible() ~= var_23_0 then
-					extension:set_invisible(var_23_0, nil, "debug_invis")
+				if status_extension:is_invisible() ~= wants_invis then
+					status_extension:set_invisible(wants_invis, nil, "debug_invis")
 
-					local flag_2
+					local str
 
-					flag_2 = not var_23_0 and "Local player is now invisible" and "Local player is now visible"
+					if wants_invis then
+						str = "Local player is now invisible"
 
-					Debug.sticky_text(flag_2)
+						goto label_23_0
+					end
+
+					str = "Local player is now visible"
+
+					local debug_text = str
+
+					::label_23_0::
+
+					Debug.sticky_text(debug_text)
 				end
 			end
 		end
@@ -1073,48 +1126,58 @@ local tbl = {
 		description = "Switch player class to play",
 		category = "Player mechanics recommended",
 		item_source = {},
-		load_items_source_func = function (self)
+		load_items_source_func = function (options)
 			-- function 24
-			table.clear(self)
+			table.clear(options)
 
-			local tbl = {}
+			local data = {}
 
-			self.data = tbl
+			options.data = data
 
-			local local_player = Managers.player:local_player()
-			local network_id = local_player:network_id()
-			local local_player_id = local_player:local_player_id()
-			local get_party_from_player_id = Managers.party:get_party_from_player_id(network_id, local_player_id)
-			local available_profiles = Managers.state.side.side_by_party[get_party_from_player_id].available_profiles
+			local player = Managers.player:local_player()
+			local peer_id = player:network_id()
+			local local_player_id = player:local_player_id()
+			local party_manager = Managers.party
+			local party = party_manager:get_party_from_player_id(peer_id, local_player_id)
+			local side = Managers.state.side.side_by_party[party]
+			local available_profiles = side.available_profiles
 
-			available_profiles = available_profiles or PROFILES_BY_AFFILIATION.heroes
+			available_profiles = not not available_profiles or not not PROFILES_BY_AFFILIATION.heroes
 
-			for i = 1, #available_profiles do
-				local var_24_6 = available_profiles[i]
-				local num = #self + 1
+			for k = 1, #available_profiles do
+				local profile_name = available_profiles[k]
+				local index = #options + 1
 
-				self[num] = var_24_6
-				tbl[num] = var_24_6
+				options[index] = profile_name
+				data[index] = profile_name
 			end
 		end,
-		func = function (self, arg_25_1)
+		func = function (options, index)
 			-- function 25
-			local var_25_0 = self.data[arg_25_1]
+			local profile_name = options.data[index]
 
-			if not var_25_0 then
-				local var_25_1 = FindProfileIndex(var_25_0)
-				local careers = SPProfiles[var_25_1].careers
-				local var_25_3 = careers[script_data.wanted_career_index]
+			if profile_name then
+				local profile_index = FindProfileIndex(profile_name)
+				local careers = SPProfiles[profile_index].careers
+				local var_25_0 = careers[script_data.wanted_career_index]
 
-				var_25_3 = var_25_3 or careers[1]
+				if not var_25_0 then
+					-- Nothing
+				end
 
-				local flag = true
+				var_25_0 = careers[1]
 
-				if var_25_3.display_name == "vs_undecided" then
+				local career = var_25_0
+
+				::label_25_0::
+
+				local force_respawn = true
+
+				if career.display_name == "vs_undecided" then
 					return
 				end
 
-				Managers.state.network:request_profile(1, var_25_0, var_25_3.display_name, flag)
+				Managers.state.network:request_profile(1, profile_name, career.display_name, force_respawn)
 			end
 		end
 	},
@@ -1123,74 +1186,75 @@ local tbl = {
 		description = "Switch party you you want to spawn in. Note: you need to 'switch_class' for it to be fulfilled",
 		category = "Player mechanics recommended",
 		item_source = {},
-		load_items_source_func = function (self)
+		load_items_source_func = function (options)
 			-- function 26
-			local parties = Managers.party:parties()
+			local party_manager = Managers.party
+			local parties = party_manager:parties()
 
-			table.clear(self)
+			table.clear(options)
 
-			local tbl = {}
+			local data = {}
 
-			self.data = tbl
+			options.data = data
 
-			for i, v in ipairs(parties) do
-				local num = #self + 1
-				local num_2 = v.num_used_slots - v.num_bots
-				local num_slots = v.num_slots
+			for k, party in ipairs(parties) do
+				local index = #options + 1
+				local num_used_slots = party.num_used_slots - party.num_bots
+				local num_slots = party.num_slots
 
-				if num_2 < num_slots then
-					self[num] = string.format("%s (%d/%d)", v.party_id, num_2, num_slots)
+				if num_used_slots < num_slots then
+					options[index] = string.format("%s (%d/%d)", party.party_id, num_used_slots, num_slots)
 				else
-					self[num] = string.format("%s (%d/%d) FULL!", v.party_id, num_2, num_slots)
+					options[index] = string.format("%s (%d/%d) FULL!", party.party_id, num_used_slots, num_slots)
 				end
 
-				tbl[num] = v.party_id
+				data[index] = party.party_id
 			end
 		end,
-		func = function (self, arg_27_1)
+		func = function (options, index)
 			-- function 27
-			local var_27_0 = self.data[arg_27_1]
+			local party_id = options.data[index]
 
-			if not var_27_0 then
-				local get_party = Managers.party:get_party(var_27_0)
+			if party_id then
+				local party = Managers.party:get_party(party_id)
 
-				if get_party.num_open_slots + get_party.num_bots > 0 then
-					print("Debug switching wanted party to:", var_27_0)
+				if party.num_open_slots + party.num_bots > 0 then
+					print("Debug switching wanted party to:", party_id)
 
-					local local_player = Managers.player:local_player()
-					local local_player_id = local_player:local_player_id()
-					local network_id = local_player:network_id()
-					local current_mechanism_name = Managers.mechanism:current_mechanism_name()
-					local var_27_6 = Managers.state.side.side_by_party[get_party]
+					local player = Managers.player:local_player()
+					local local_player_id = player:local_player_id()
+					local peer_id = player:network_id()
+					local mechanism_name = Managers.mechanism:current_mechanism_name()
+					local side = Managers.state.side.side_by_party[party]
 
-					Managers.party:request_join_party(network_id, local_player_id, var_27_0)
+					Managers.party:request_join_party(peer_id, local_player_id, party_id)
 
-					if not local_player and not local_player:needs_despawn() then
-						Managers.state.spawn:delayed_despawn(local_player)
+					if player and player:needs_despawn() then
+						Managers.state.spawn:delayed_despawn(player)
 					end
 
-					local system = Managers.state.entity:system("camera_system")
+					local camera_system = Managers.state.entity:system("camera_system")
 
-					if get_party.name == "spectators" then
-						local spectator = PROFILES_BY_NAME.spectator
+					if party.name == "spectators" then
+						local profile = PROFILES_BY_NAME.spectator
 
-						system:initialize_camera_states(local_player, spectator.index, 1)
+						camera_system:initialize_camera_states(player, profile.index, 1)
 					else
-						local var_27_9 = FindProfileIndex("witch_hunter")
+						local profile_index = FindProfileIndex("witch_hunter")
 
-						system:initialize_camera_states(local_player, var_27_9, 1)
+						camera_system:initialize_camera_states(player, profile_index, 1)
 					end
 
 					local sides = Managers.state.side:sides()
-					local var_27_11
-					local var_27_12
+					local object_set_name, enable
 
 					for i = 1, #sides do
-						local var_27_13 = sides[i]
-						local format = string.format("%s_%s", current_mechanism_name, var_27_13:name())
-						local flag = var_27_13 == var_27_6
+						local current_side = sides[i]
 
-						Managers.state.game_mode:set_object_set_enabled(format, flag)
+						object_set_name = string.format("%s_%s", mechanism_name, current_side:name())
+						enable = current_side == side
+
+						Managers.state.game_mode:set_object_set_enabled(object_set_name, enable)
 					end
 				end
 			end
@@ -1201,23 +1265,26 @@ local tbl = {
 		description = "automatically puts you in selected party on join",
 		category = "Player mechanics",
 		item_source = {},
-		load_items_source_func = function (self)
+		load_items_source_func = function (options)
 			-- function 28
-			local parties = Managers.party:parties()
+			local party_manager = Managers.party
+			local parties = party_manager:parties()
 
-			table.clear(self)
+			table.clear(options)
 
-			self[#self + 1] = "none"
+			options[#options + 1] = "none"
 
 			for i = 1, #parties do
-				local var_28_1 = parties[i]
+				local party = parties[i]
 
-				self[#self + 1] = var_28_1.party_id
+				options[#options + 1] = party.party_id
 			end
 		end,
-		func = function (self, arg_29_1)
+		func = function (options, index)
 			-- function 29
-			if not self[arg_29_1] then
+			local party_tag = options[index]
+
+			if party_tag then
 				-- Nothing
 			end
 		end
@@ -1227,22 +1294,25 @@ local tbl = {
 		description = "Switch what party you want debugging spawning (P) AI units to belong to",
 		category = "Player mechanics recommended",
 		item_source = {},
-		load_items_source_func = function (self)
+		load_items_source_func = function (options)
 			-- function 30
-			local sides = Managers.state.side:sides()
+			local side_manager = Managers.state.side
+			local sides = side_manager:sides()
 
-			table.clear(self)
+			table.clear(options)
 
-			for k, v in pairs(sides) do
-				self[#self + 1] = v.side_id
+			for k, side in pairs(sides) do
+				local index = #options + 1
+
+				options[index] = side.side_id
 			end
 		end,
-		func = function (self, arg_31_1)
+		func = function (options, index)
 			-- function 31
-			local var_31_0 = self[arg_31_1]
+			local side_id = options[index]
 
-			if not var_31_0 then
-				Managers.state.conflict:set_debug_spawn_side(var_31_0)
+			if side_id then
+				Managers.state.conflict:set_debug_spawn_side(side_id)
 			end
 		end
 	},
@@ -1366,17 +1436,18 @@ local tbl = {
 		setting_name = "reset_career_talents",
 		func = function ()
 			-- function 32
-			local backend = Managers.backend
-			local career_name = Managers.player:local_player():career_name()
+			local backend_manager = Managers.backend
+			local player = Managers.player:local_player()
+			local career_name = player:career_name()
 
-			backend:get_interface("talents"):set_talents(career_name, {
+			backend_manager:get_interface("talents"):set_talents(career_name, {
 				0,
 				0,
 				0,
 				0,
 				0
 			})
-			backend:commit(true)
+			backend_manager:commit(true)
 		end
 	},
 	{
@@ -1462,30 +1533,32 @@ local tbl = {
 		setting_name = "Add Buff",
 		category = "Player mechanics",
 		item_source = {},
-		load_items_source_func = function (self)
+		load_items_source_func = function (options)
 			-- function 33
-			table.clear(self)
+			table.clear(options)
 
-			local BuffTemplates = BuffTemplates
+			local buff_templates = BuffTemplates
 
-			for k, v in pairs(BuffTemplates) do
-				v = BuffUtils.get_buff_template(k)
+			for key, item in pairs(buff_templates) do
+				item = BuffUtils.get_buff_template(key)
 
-				if not (not v.buffs and not v.buffs[1] and v.buffs[1].dormant) then
-					self[#self + 1] = k
+				if item.buffs and item.buffs[1] and not item.buffs[1].dormant then
+					options[#options + 1] = key
 				end
 			end
 
-			table.sort(self)
+			table.sort(options)
 		end,
-		func = function (self, arg_34_1)
+		func = function (options, index)
 			-- function 34
-			local var_34_0 = self[arg_34_1]
-			local player_unit = Managers.player:local_player().player_unit
-			local system = Managers.state.entity:system("buff_system")
-			local flag = false
+			local key = options[index]
+			local player_manager = Managers.player
+			local player = player_manager:local_player()
+			local unit = player.player_unit
+			local buff_system = Managers.state.entity:system("buff_system")
+			local server_controlled = false
 
-			system:add_buff(player_unit, var_34_0, player_unit, flag)
+			buff_system:add_buff(unit, key, unit, server_controlled)
 		end
 	},
 	{
@@ -1659,12 +1732,12 @@ local tbl = {
 			1400,
 			1600
 		},
-		custom_item_source_order = function (arg_36_0, arg_36_1)
+		custom_item_source_order = function (item_source, options)
 			-- function 36
-			for i, v in ipairs(arg_36_0) do
-				local var_36_0 = v
+			for _, v in ipairs(item_source) do
+				local option = v
 
-				arg_36_1[#arg_36_1 + 1] = var_36_0
+				options[#options + 1] = option
 			end
 		end
 	},
@@ -1700,12 +1773,12 @@ local tbl = {
 			775,
 			800
 		},
-		custom_item_source_order = function (arg_37_0, arg_37_1)
+		custom_item_source_order = function (item_source, options)
 			-- function 37
-			for i, v in ipairs(arg_37_0) do
-				local var_37_0 = v
+			for _, v in ipairs(item_source) do
+				local option = v
 
-				arg_37_1[#arg_37_1 + 1] = var_37_0
+				options[#options + 1] = option
 			end
 		end
 	},
@@ -1763,33 +1836,33 @@ local tbl = {
 		category = "Versus",
 		close_when_selected = true,
 		item_source = {},
-		load_items_source_func = function (self)
+		load_items_source_func = function (options)
 			-- function 38
-			table.clear(self)
+			table.clear(options)
 
-			if not (Managers.level_transition_handler:in_hub_level() or Managers.mechanism:current_mechanism_name() == "versus") then
+			if Managers.level_transition_handler:in_hub_level() or Managers.mechanism:current_mechanism_name() ~= "versus" then
 				return
 			end
 
-			local game_mechanism = Managers.mechanism:game_mechanism()
-			local num_sets = game_mechanism:get_objective_settings().num_sets
-			local get_current_set = game_mechanism:get_current_set()
+			local mechanism = Managers.mechanism:game_mechanism()
+			local num_sets = mechanism:get_objective_settings().num_sets
+			local current_set = mechanism:get_current_set()
 
-			for i = 1, num_sets do
-				if get_current_set < i then
-					self[#self + 1] = i
+			for set = 1, num_sets do
+				if current_set < set then
+					options[#options + 1] = set
 				end
 			end
 		end,
-		func = function (self, arg_39_1)
+		func = function (options, index)
 			-- function 39
-			local var_39_0 = self[arg_39_1]
+			local key = options[index]
 
-			if not var_39_0 then
+			if not key then
 				return
 			end
 
-			Managers.mechanism:game_mechanism():debug_skip_to_set(var_39_0)
+			Managers.mechanism:game_mechanism():debug_skip_to_set(key)
 		end
 	},
 	{
@@ -1798,13 +1871,15 @@ local tbl = {
 		setting_name = "vs_end_match",
 		category = "Versus",
 		propagate_to_server = true,
-		func = function (arg_40_0, arg_40_1)
+		func = function (options, index)
 			-- function 40
-			if not (Managers.level_transition_handler:in_hub_level() or Managers.mechanism:current_mechanism_name() == "versus") then
+			if Managers.level_transition_handler:in_hub_level() or Managers.mechanism:current_mechanism_name() ~= "versus" then
 				return
 			end
 
-			Managers.state.game_mode:round_started()
+			local game_mode_manager = Managers.state.game_mode
+
+			game_mode_manager:round_started()
 
 			script_data.disable_gamemode_end = nil
 			script_data.disable_gamemode_end_hero_check = nil
@@ -1827,23 +1902,24 @@ local tbl = {
 			50,
 			100
 		},
-		custom_item_source_order = function (arg_41_0, arg_41_1)
+		custom_item_source_order = function (item_source, options)
 			-- function 41
-			for i, v in ipairs(arg_41_0) do
-				local var_41_0 = v
+			for _, v in ipairs(item_source) do
+				local option = v
 
-				arg_41_1[#arg_41_1 + 1] = var_41_0
+				options[#options + 1] = option
 			end
 		end,
-		func = function (self, arg_42_1)
+		func = function (options, index)
 			-- function 42
-			if not Managers.level_transition_handler:in_hub_level() then
+			if Managers.level_transition_handler:in_hub_level() then
 				return
 			end
 
-			local var_42_0 = self[arg_42_1]
+			local value = options[index]
+			local win_conditions = Managers.mechanism:game_mechanism():win_conditions()
 
-			Managers.mechanism:game_mechanism():win_conditions():debug_add_score(var_42_0)
+			win_conditions:debug_add_score(value)
 		end
 	},
 	{
@@ -1856,9 +1932,10 @@ local tbl = {
 		description = "Unhoists local player",
 		setting_name = "vs_unhoist_local_player",
 		category = "Versus",
-		func = function (arg_43_0, arg_43_1)
+		func = function (options, index)
 			-- function 43
-			local player_unit = Managers.player:local_player(1).player_unit
+			local player = Managers.player:local_player(1)
+			local player_unit = player.player_unit
 
 			StatusUtils.set_grabbed_by_pack_master_network("pack_master_dropping", player_unit, true, nil)
 		end
@@ -1868,42 +1945,53 @@ local tbl = {
 		description = "Adds Versus Experience to your account.",
 		category = "Versus",
 		item_source = {},
-		load_items_source_func = function (self)
+		load_items_source_func = function (options)
 			-- function 44
-			table.clear(self)
+			table.clear(options)
 
-			self[1] = 100
-			self[2] = 500
-			self[3] = 2000
-			self[4] = 5000
-			self[5] = 10000
-			self[6] = 100000
+			options[1] = 100
+			options[2] = 500
+			options[3] = 2000
+			options[4] = 5000
+			options[5] = 10000
+			options[6] = 100000
 		end,
-		func = function (self, arg_45_1)
+		func = function (options, index)
 			-- function 45
-			local backend = Managers.backend
-			local var_45_1 = self[arg_45_1]
+			local backend_manager = Managers.backend
+			local var_45_0 = options[index]
 
-			var_45_1 = var_45_1 or 1
-
-			local local_player = Managers.player:local_player(1)
-
-			local function fn(self)
-				-- function 46
-				local FunctionResult = self.FunctionResult
-				local player_profile_data = self.FunctionResult.data.player_profile_data
-
-				Managers.backend:get_backend_mirror():set_read_only_data("vs_profile_data", cjson.encode(player_profile_data), true)
+			if not var_45_0 then
+				-- Nothing
 			end
 
-			local tbl = {
+			var_45_0 = 1
+
+			local experience = var_45_0
+
+			::label_45_0::
+
+			local player = Managers.player:local_player(1)
+
+			local function cb(result)
+				-- function 46
+				local function_result = result.FunctionResult
+				local new_vs_profile_data = result.FunctionResult.data.player_profile_data
+				local backend_mirror = Managers.backend:get_backend_mirror()
+
+				backend_mirror:set_read_only_data("vs_profile_data", cjson.encode(new_vs_profile_data), true)
+			end
+
+			local request = {
 				FunctionName = "devAddVersusExperience",
 				FunctionParameter = {
-					experience = var_45_1
+					experience = experience
 				}
 			}
+			local backend_mirror = backend_manager._backend_mirror
+			local request_queue = backend_mirror:request_queue()
 
-			backend._backend_mirror:request_queue():enqueue(tbl, fn, false)
+			request_queue:enqueue(request, cb, false)
 		end
 	},
 	{
@@ -1911,42 +1999,52 @@ local tbl = {
 		description = "Adds Versus Versus Currency.",
 		category = "Versus",
 		item_source = {},
-		load_items_source_func = function (self)
+		load_items_source_func = function (options)
 			-- function 47
-			table.clear(self)
+			table.clear(options)
 
-			self[1] = 1
-			self[2] = 5
-			self[3] = 10
-			self[4] = 50
-			self[5] = 100
+			options[1] = 1
+			options[2] = 5
+			options[3] = 10
+			options[4] = 50
+			options[5] = 100
 		end,
-		func = function (self, arg_48_1)
+		func = function (options, index)
 			-- function 48
-			local backend = Managers.backend
-			local var_48_1 = self[arg_48_1]
+			local backend_manager = Managers.backend
+			local var_48_0 = options[index]
 
-			var_48_1 = var_48_1 or 1
-
-			local get_interface = backend:get_interface("peddler")
-			local get_chips = get_interface:get_chips("VS")
-			local local_player = Managers.player:local_player(1)
-
-			local function fn(self)
-				-- function 49
-				local FunctionResult = self.FunctionResult
-
-				get_interface:set_chips("VS", FunctionResult.new_vs_currency)
+			if not var_48_0 then
+				-- Nothing
 			end
 
-			local tbl = {
+			var_48_0 = 1
+
+			local amount = var_48_0
+
+			::label_48_0::
+
+			local peddler_interface = backend_manager:get_interface("peddler")
+			local current_chips = peddler_interface:get_chips("VS")
+			local player = Managers.player:local_player(1)
+
+			local function cb(result)
+				-- function 49
+				local function_result = result.FunctionResult
+
+				peddler_interface:set_chips("VS", function_result.new_vs_currency)
+			end
+
+			local request = {
 				FunctionName = "devGrantVersusCurrency",
 				FunctionParameter = {
-					amount = var_48_1
+					amount = amount
 				}
 			}
+			local backend_mirror = backend_manager._backend_mirror
+			local request_queue = backend_mirror:request_queue()
 
-			backend._backend_mirror:request_queue():enqueue(tbl, fn, false)
+			request_queue:enqueue(request, cb, false)
 		end
 	},
 	{
@@ -2133,30 +2231,30 @@ local tbl = {
 		description = "Spawns a mini patrol right now",
 		category = "AI",
 		item_source = {},
-		load_items_source_func = function (self)
+		load_items_source_func = function (options)
 			-- function 50
-			table.clear(self)
+			table.clear(options)
 
-			for k, v in pairs(HordeSettings) do
-				self[#self + 1] = v.mini_patrol_composition
+			for k, setting in pairs(HordeSettings) do
+				options[#options + 1] = setting.mini_patrol_composition
 			end
 		end,
-		func = function (self, arg_51_1)
+		func = function (options, index)
 			-- function 51
-			local var_51_0 = self[arg_51_1]
+			local composition = options[index]
 
-			if not var_51_0 then
-				print("Debug spawning mini patrol of composition:", var_51_0)
+			if composition then
+				print("Debug spawning mini patrol of composition:", composition)
 
-				local tbl = {
+				local group_template = {
 					size = 0,
 					template = "mini_patrol",
 					id = Managers.state.entity:system("ai_group_system"):generate_group_id()
 				}
-				local time = Managers.time:time("game")
-				local var_51_3
+				local t = Managers.time:time("game")
+				local side_id
 
-				Managers.state.conflict:mini_patrol(time, nil, var_51_3, var_51_0, tbl)
+				Managers.state.conflict:mini_patrol(t, nil, side_id, composition, group_template)
 			end
 		end
 	},
@@ -2182,12 +2280,12 @@ local tbl = {
 			2,
 			3
 		},
-		custom_item_source_order = function (arg_52_0, arg_52_1)
+		custom_item_source_order = function (item_source, options)
 			-- function 52
-			for i, v in ipairs(arg_52_0) do
-				local var_52_0 = v
+			for _, v in ipairs(item_source) do
+				local option = v
 
-				arg_52_1[#arg_52_1 + 1] = var_52_0
+				options[#options + 1] = option
 			end
 		end
 	},
@@ -2469,9 +2567,9 @@ local tbl = {
 			8,
 			16
 		},
-		custom_item_source_order = function (arg_56_0, arg_56_1)
+		custom_item_source_order = function (item_source, options)
 			-- function 56
-			table.append(arg_56_1, arg_56_0)
+			table.append(options, item_source)
 		end
 	},
 	{
@@ -2506,17 +2604,17 @@ local tbl = {
 		category = "AI",
 		description = "Change which difficulty tweak terror events will be played at.",
 		item_source = {},
-		load_items_source_func = function (self)
+		load_items_source_func = function (options)
 			-- function 58
-			table.clear(self)
+			table.clear(options)
 
 			for i = -DifficultyTweak.range, DifficultyTweak.range do
-				self[#self + 1] = i
+				options[#options + 1] = i
 			end
 
-			table.sort(self)
+			table.sort(options)
 
-			self[#self + 1] = "[clear value]"
+			options[#options + 1] = "[clear value]"
 		end
 	},
 	{
@@ -2525,10 +2623,10 @@ local tbl = {
 		setting_name = "debug_spawn_ogre_from_closest_boss_spawner",
 		func = function ()
 			-- function 59
-			if not script_data.debug_ai_recycler then
-				local flag = false
+			if script_data.debug_ai_recycler then
+				local only_draw = false
 
-				Managers.state.conflict.level_analysis:debug_spawn_boss_from_closest_spawner_to_player(flag)
+				Managers.state.conflict.level_analysis:debug_spawn_boss_from_closest_spawner_to_player(only_draw)
 			end
 		end
 	},
@@ -2845,23 +2943,23 @@ local tbl = {
 			short = true,
 			long = true
 		},
-		func = function (self, arg_64_1)
+		func = function (options, index)
 			-- function 64
-			local var_64_0 = self[arg_64_1]
+			local option = options[index]
 			local nav_world = Managers.state.entity:system("ai_system"):nav_world()
 
-			if var_64_0 == "off" then
+			if option == "off" then
 				print("Not changing pathfinding budget")
-			elseif var_64_0 == "short" then
-				local num = 0.1
+			elseif option == "short" then
+				local ms = 0.1
 
-				printf("Changing pathfinding budget to %.1fms", num)
-				GwNavWorld.set_pathfinder_budget(nav_world, num * 0.001)
+				printf("Changing pathfinding budget to %.1fms", ms)
+				GwNavWorld.set_pathfinder_budget(nav_world, ms * 0.001)
 			else
-				local num_2 = 100
+				local ms = 100
 
-				printf("Changing pathfinding budget to %.1fms", num_2)
-				GwNavWorld.set_pathfinder_budget(nav_world, num_2 * 0.001)
+				printf("Changing pathfinding budget to %.1fms", ms)
+				GwNavWorld.set_pathfinder_budget(nav_world, ms * 0.001)
 			end
 		end
 	},
@@ -2969,17 +3067,17 @@ local tbl = {
 		category = "Gamemode/level",
 		description = "Change which difficulty tweak you play at. Restart required.",
 		item_source = {},
-		load_items_source_func = function (self)
+		load_items_source_func = function (options)
 			-- function 65
-			table.clear(self)
+			table.clear(options)
 
 			for i = -DifficultyTweak.range, DifficultyTweak.range do
-				self[#self + 1] = i
+				options[#options + 1] = i
 			end
 
-			table.sort(self)
+			table.sort(options)
 
-			self[#self + 1] = "[clear value]"
+			options[#options + 1] = "[clear value]"
 		end
 	},
 	{
@@ -2987,35 +3085,36 @@ local tbl = {
 		setting_name = "set_difficulty",
 		category = "Gamemode/level",
 		item_source = {},
-		load_items_source_func = function (self)
+		load_items_source_func = function (options)
 			-- function 66
-			table.clear(self)
+			table.clear(options)
 
-			for k, v in pairs(Difficulties) do
-				self[#self + 1] = v
+			for _, difficulty in pairs(Difficulties) do
+				options[#options + 1] = difficulty
 			end
 
-			table.sort(self)
+			table.sort(options)
 		end,
-		func = function (self, arg_67_1)
+		func = function (options, index)
 			-- function 67
-			local var_67_0 = self[arg_67_1]
-			local get_difficulty, var_67_2 = Managers.state.difficulty:get_difficulty()
+			local difficulty = options[index]
+			local _, current_difficulty_tweak = Managers.state.difficulty:get_difficulty()
 
-			Managers.state.difficulty:set_difficulty(var_67_0, var_67_2)
+			Managers.state.difficulty:set_difficulty(difficulty, current_difficulty_tweak)
 
-			local PLAYER_AND_BOT_UNITS = Managers.state.side:get_side_from_name("heroes").PLAYER_AND_BOT_UNITS
+			local side = Managers.state.side:get_side_from_name("heroes")
+			local player_and_bot_units = side.PLAYER_AND_BOT_UNITS
 
-			for i = 1, #PLAYER_AND_BOT_UNITS do
-				local var_67_4 = PLAYER_AND_BOT_UNITS[i]
-				local has_extension = ScriptUnit.has_extension(var_67_4, "attack_intensity_system")
+			for i = 1, #player_and_bot_units do
+				local player_unit = player_and_bot_units[i]
+				local player_unit_attack_intensity_extension = ScriptUnit.has_extension(player_unit, "attack_intensity_system")
 
-				if not has_extension then
-					has_extension:refresh_difficulty()
+				if player_unit_attack_intensity_extension then
+					player_unit_attack_intensity_extension:refresh_difficulty()
 				end
 			end
 
-			print("Set difficulty to " .. var_67_0 .. var_67_2)
+			print("Set difficulty to " .. difficulty .. current_difficulty_tweak)
 		end
 	},
 	{
@@ -3023,23 +3122,23 @@ local tbl = {
 		category = "Gamemode/level",
 		description = "Set difficulty tweak to make the current difficulty slightly easier/harder. " .. "No restart required for most stuff, mostly used for testing enemies. Some stuff might need restart of level.",
 		item_source = {},
-		load_items_source_func = function (self)
+		load_items_source_func = function (options)
 			-- function 68
-			table.clear(self)
+			table.clear(options)
 
 			for i = -DifficultyTweak.range, DifficultyTweak.range do
-				self[#self + 1] = i
+				options[#options + 1] = i
 			end
 
-			table.sort(self)
+			table.sort(options)
 		end,
-		func = function (self, arg_69_1)
+		func = function (options, index)
 			-- function 69
-			local get_difficulty, var_69_1 = Managers.state.difficulty:get_difficulty()
-			local var_69_2 = self[arg_69_1]
+			local current_difficulty, _ = Managers.state.difficulty:get_difficulty()
+			local difficulty_tweak = options[index]
 
-			Managers.state.difficulty:set_difficulty(get_difficulty, var_69_2)
-			print("Set difficulty to " .. get_difficulty .. var_69_2)
+			Managers.state.difficulty:set_difficulty(current_difficulty, difficulty_tweak)
+			print("Set difficulty to " .. current_difficulty .. difficulty_tweak)
 		end
 	},
 	{
@@ -3128,21 +3227,21 @@ local tbl = {
 			"Listen",
 			"[clear value]"
 		},
-		load_items_source_func = function (self)
+		load_items_source_func = function (options)
 			-- function 70
-			table.clear(self)
+			table.clear(options)
 
-			self[1] = "Listen"
-			self[2] = "[clear value]"
+			options[1] = "Listen"
+			options[2] = "[clear value]"
 
-			local var_70_0 = rawget(_G, "_sound_cue_breakpoint_set")
+			local events = rawget(_G, "_sound_cue_breakpoint_set")
 
-			if not var_70_0 then
-				local count = #self
+			if events then
+				local i = #options
 
-				for k in pairs(var_70_0) do
-					count = count + 1
-					self[count] = k
+				for event_name in pairs(events) do
+					i = i + 1
+					options[i] = event_name
 				end
 			end
 		end
@@ -6075,7 +6174,7 @@ local tbl_2 = {
 }
 local flag
 
-flag = BUILD ~= "dev" or not "Enables or disables different color blindness simulations." or "This is only available in dev builds for performance reasons. Switch exe to dev to see the effects of the changes."
+flag = (BUILD ~= "dev" or not "Enables or disables different color blindness simulations.") and not not "This is only available in dev builds for performance reasons. Switch exe to dev to see the effects of the changes."
 tbl_2.description = flag
 tbl_2.item_source = {
 	common_deuteranomaly = true,
@@ -6084,26 +6183,26 @@ tbl_2.item_source = {
 	very_rare_tritanomaly = true
 }
 
-tbl_2.func = function (self, arg_72_1)
+tbl_2.func = function (options, index)
 	-- function 72
-	local var_72_0 = self[arg_72_1]
-	local flag = true
-	local num = 0
+	local option = options[index]
+	local on = true
+	local mode = 0
 
-	if var_72_0 == "off" then
-		flag = false
+	if option == "off" then
+		on = false
 	else
-		num = (var_72_0 ~= "rare_protanomaly" or not 0 or var_72_0 ~= "common_deuteranomaly") and (not 1 or 2)
+		mode = (option ~= "rare_protanomaly" or not 0) and (option ~= "common_deuteranomaly" or not 1) and not not 2
 	end
 
-	if not flag then
-		printf("Turning on mode %d of color blindness simulation.", num)
-		Application.set_user_setting("render_settings", "color_blindness_mode", num)
+	if on then
+		printf("Turning on mode %d of color blindness simulation.", mode)
+		Application.set_user_setting("render_settings", "color_blindness_mode", mode)
 	else
 		printf("Turning off color blindness simulation.")
 	end
 
-	Application.set_user_setting("render_settings", "simulate_color_blindness", flag)
+	Application.set_user_setting("render_settings", "simulate_color_blindness", on)
 	Application.apply_user_settings()
 	GlobalShaderFlags.apply_settings()
 end
@@ -6348,19 +6447,19 @@ local tbl_13 = {
 		8,
 		16
 	},
-	custom_item_source_order = function (arg_73_0, arg_73_1)
+	custom_item_source_order = function (item_source, options)
 		-- function 73
-		for i, v in ipairs(arg_73_0) do
-			local var_73_0 = v
+		for _, v in ipairs(item_source) do
+			local option = v
 
-			arg_73_1[#arg_73_1 + 1] = var_73_0
+			options[#options + 1] = option
 		end
 	end,
-	func = function (self, arg_74_1)
+	func = function (options, index)
 		-- function 74
-		local var_74_0 = self[arg_74_1]
+		local option = options[index]
 
-		script_data.backend_response_latency = var_74_0
+		script_data.backend_response_latency = option
 	end
 }
 
@@ -6653,21 +6752,24 @@ local tbl_33 = {
 	item_source = {
 		"[clear value]"
 	},
-	load_items_source_func = function (self)
+	load_items_source_func = function (options)
 		-- function 75
-		table.clear(self)
+		table.clear(options)
 
-		local system = Managers.state.entity:system("dialogue_system")
+		local dialogue_system = Managers.state.entity:system("dialogue_system")
 
-		if not system then
-			local rule_id_mapping = system:tagquery_database().rule_id_mapping
+		if dialogue_system then
+			local tagquery_database = dialogue_system:tagquery_database()
+			local rule_id_mapping = tagquery_database.rule_id_mapping
 
 			for i = 1, #rule_id_mapping do
-				self[i] = rule_id_mapping[i].name
+				local rule = rule_id_mapping[i]
+
+				options[i] = rule.name
 			end
 		end
 
-		table.insert(self, 1, "[clear value]")
+		table.insert(options, 1, "[clear value]")
 	end
 }
 
@@ -6678,23 +6780,25 @@ local tbl_34 = {
 	setting_name = "filter_single_dialogue_file",
 	category = "Dialogue",
 	item_source = {},
-	load_items_source_func = function (self)
+	load_items_source_func = function (options)
 		-- function 76
-		table.clear(self)
+		table.clear(options)
 
-		if not Managers.state.entity:system("dialogue_system") then
-			local debug_loaded_files = Managers.state.entity:system("dialogue_system"):tagquery_loader().debug_loaded_files
+		local dialogue_system = Managers.state.entity:system("dialogue_system")
 
-			if not debug_loaded_files then
-				for k in pairs(debug_loaded_files) do
-					self[#self + 1] = string.match(k, "^.+/(.+)$")
+		if dialogue_system then
+			local loaded_files = Managers.state.entity:system("dialogue_system"):tagquery_loader().debug_loaded_files
+
+			if loaded_files then
+				for file_name in pairs(loaded_files) do
+					options[#options + 1] = string.match(file_name, "^.+/(.+)$")
 				end
 
-				table.sort(self)
+				table.sort(options)
 			end
 		end
 
-		table.insert(self, 1, "[clear value]")
+		table.insert(options, 1, "[clear value]")
 	end
 }
 
@@ -6705,29 +6809,31 @@ local tbl_35 = {
 	description = "Used to debug dialog files, facial expressions and missing vo/subtitles. To skip use: DebugVo.jump_to(('line_number/line_id')",
 	category = "Dialogue",
 	item_source = {},
-	load_items_source_func = function (self)
+	load_items_source_func = function (options)
 		-- function 77
-		table.clear(self)
+		table.clear(options)
 
-		local system = Managers.state.entity:system("dialogue_system")
+		local dialogue_system = Managers.state.entity:system("dialogue_system")
 
-		if not system then
-			local debug_loaded_files = system:tagquery_loader().debug_loaded_files
+		if dialogue_system then
+			local loaded_files = dialogue_system:tagquery_loader().debug_loaded_files
 
-			if not debug_loaded_files then
-				for k in pairs(debug_loaded_files) do
-					self[#self + 1] = string.match(k, "^.+/(.+)$")
+			if loaded_files then
+				for file_name in pairs(loaded_files) do
+					options[#options + 1] = string.match(file_name, "^.+/(.+)$")
 				end
 
-				table.sort(self)
+				table.sort(options)
 			end
 		end
 
-		table.insert(self, 1, "[clear value]")
+		table.insert(options, 1, "[clear value]")
 	end,
-	func = function (self, arg_78_1)
+	func = function (options, index)
 		-- function 78
-		Managers.state.entity:system("dialogue_system"):debug_vo_by_file(self[arg_78_1], false)
+		local dialogue_system = Managers.state.entity:system("dialogue_system")
+
+		dialogue_system:debug_vo_by_file(options[index], false)
 	end
 }
 
@@ -7118,64 +7224,64 @@ local tbl_75 = {
 		15,
 		30
 	},
-	custom_item_source_order = function (arg_80_0, arg_80_1)
+	custom_item_source_order = function (item_source, options)
 		-- function 80
-		for i, v in ipairs(arg_80_0) do
-			local var_80_0 = v
+		for i, v in ipairs(item_source) do
+			local option = v
 
-			if type(var_80_0) == "string" then
-				arg_80_1[i] = var_80_0
-			elseif type(var_80_0) == "table" then
+			if type(option) == "string" then
+				options[i] = option
+			elseif type(option) == "table" then
 				local tbl = {
-					var_80_0[1]
+					option[1]
 				}
-				local var_80_2 = var_80_0[2]
+				local var_80_1 = option[2]
 
-				var_80_2 = var_80_2 or var_80_0[1]
-				tbl[2] = var_80_2
-				arg_80_1[i] = tbl
+				var_80_1 = not not var_80_1 or not not option[1]
+				tbl[2] = var_80_1
+				options[i] = tbl
 			else
-				arg_80_1[i] = {
-					var_80_0,
-					var_80_0
+				options[i] = {
+					option,
+					option
 				}
 			end
 		end
 	end,
-	item_display_func = function (self, arg_81_1, arg_81_2)
+	item_display_func = function (option, idx, options)
 		-- function 81
-		if type(self) == "string" then
-			return self
-		elseif type(self) == "table" then
+		if type(option) == "string" then
+			return option
+		elseif type(option) == "table" then
 			local format = string.format
 			local str = "%s - %s seconds"
-			local var_81_2 = self[1]
-			local var_81_3 = self[2]
+			local var_81_2 = option[1]
+			local var_81_3 = option[2]
 
-			var_81_3 = var_81_3 or self[1]
+			var_81_3 = not not var_81_3 or not not option[1]
 
 			return format(str, var_81_2, var_81_3)
 		else
 			local format_2 = string.format
 			local str_2 = "%s second%s"
-			local var_81_6 = self
+			local var_81_6 = option
 			local flag
 
-			flag = self ~= 1 or not "s" or ""
+			flag = (option ~= 1 or not "s") and not not ""
 
 			return format_2(str_2, var_81_6, flag)
 		end
 	end,
-	func = function (self, arg_82_1)
+	func = function (options, index)
 		-- function 82
-		local var_82_0 = self[arg_82_1]
+		local val = options[index]
 
-		if var_82_0 == "[clear value]" then
+		if val == "[clear value]" then
 			script_data.package_loading_latency = nil
 		else
-			script_data.package_loading_latency = type(var_82_0) ~= "table" or not var_82_0 or {
-				var_82_0,
-				var_82_0
+			script_data.package_loading_latency = (type(val) ~= "table" or not val) and not not {
+				val,
+				val
 			}
 		end
 	end
@@ -7248,36 +7354,36 @@ local tbl_81 = {
 		throttle_fps_30 = true,
 		throttle_fps_5 = true
 	},
-	func = function (self, arg_84_1)
+	func = function (options, index)
 		-- function 84
-		local var_84_0 = self[arg_84_1]
-		local num = 60
+		local option = options[index]
+		local fps = 60
 
-		if var_84_0 == "default" then
+		if option == "default" then
 			Application.set_time_step_policy("no_throttle")
 
 			return
-		elseif var_84_0 == "throttle_fps_1" then
-			num = 1
-		elseif var_84_0 == "throttle_fps_5" then
-			num = 5
-		elseif var_84_0 == "throttle_fps_10" then
-			num = 10
-		elseif var_84_0 == "throttle_fps_15" then
-			num = 15
-		elseif var_84_0 == "throttle_fps_20" then
-			num = 20
-		elseif var_84_0 == "throttle_fps_25" then
-			num = 25
-		elseif var_84_0 == "throttle_fps_30" then
-			num = 30
-		elseif var_84_0 == "throttle_fps_45" then
-			num = 45
-		elseif var_84_0 == "throttle_fps_60" then
-			num = 60
+		elseif option == "throttle_fps_1" then
+			fps = 1
+		elseif option == "throttle_fps_5" then
+			fps = 5
+		elseif option == "throttle_fps_10" then
+			fps = 10
+		elseif option == "throttle_fps_15" then
+			fps = 15
+		elseif option == "throttle_fps_20" then
+			fps = 20
+		elseif option == "throttle_fps_25" then
+			fps = 25
+		elseif option == "throttle_fps_30" then
+			fps = 30
+		elseif option == "throttle_fps_45" then
+			fps = 45
+		elseif option == "throttle_fps_60" then
+			fps = 60
 		end
 
-		Application.set_time_step_policy("throttle", num)
+		Application.set_time_step_policy("throttle", fps)
 	end
 }
 
@@ -8161,7 +8267,9 @@ local tbl_134 = {
 	category = "Versus",
 	func = function ()
 		-- function 90
-		if Managers.mechanism:get_state() ~= "inn" then
+		local mechanism_state = Managers.mechanism:get_state()
+
+		if mechanism_state ~= "inn" then
 			Debug.sticky_text("Tried force starting a dedicated server but was not in the keep.")
 
 			return
@@ -8188,11 +8296,13 @@ local tbl_135 = {
 	category = "Versus",
 	func = function ()
 		-- function 91
-		if not Managers.level_transition_handler:in_hub_level() then
+		if Managers.level_transition_handler:in_hub_level() then
 			return false, "Failed to start round - Match not started"
 		end
 
-		Managers.state.game_mode:round_started()
+		local game_mode_manager = Managers.state.game_mode
+
+		game_mode_manager:round_started()
 
 		return true, "Round started!"
 	end
@@ -8208,7 +8318,7 @@ local tbl_136 = {
 	category = "Progression",
 	func = function ()
 		-- function 92
-		if not Managers.state.network.is_server then
+		if Managers.state.network.is_server then
 			Managers.state.game_mode:retry_level()
 		end
 	end
@@ -8418,45 +8528,57 @@ local tbl_153 = {
 	description = "Adds Experience to your account.",
 	category = "Progression",
 	item_source = {},
-	load_items_source_func = function (self)
+	load_items_source_func = function (options)
 		-- function 109
-		table.clear(self)
+		table.clear(options)
 
-		self[1] = 1
-		self[2] = 10
-		self[3] = 100
-		self[4] = 1000
-		self[5] = 10000
-		self[6] = 60850
+		options[1] = 1
+		options[2] = 10
+		options[3] = 100
+		options[4] = 1000
+		options[5] = 10000
+		options[6] = 60850
 	end,
-	func = function (self, arg_110_1)
+	func = function (options, index)
 		-- function 110
-		local backend = Managers.backend
-		local var_110_1 = self[arg_110_1]
+		local backend_manager = Managers.backend
+		local var_110_0 = options[index]
 
-		var_110_1 = var_110_1 or 1
-
-		local profile_index = Managers.player:local_player(1):profile_index()
-		local display_name = SPProfiles[profile_index].display_name
-
-		local function fn(self)
-			-- function 111
-			local FunctionResult = self.FunctionResult
-			local get_interface = backend:get_interface("hero_attributes")
-
-			get_interface:set(display_name, "experience", FunctionResult.data[display_name .. "_experience"])
-			get_interface:set(display_name, "experience_pool", FunctionResult.data[display_name .. "_experience_pool"])
+		if not var_110_0 then
+			-- Nothing
 		end
 
-		local tbl = {
+		var_110_0 = 1
+
+		local experience = var_110_0
+
+		::label_110_0::
+
+		local player = Managers.player:local_player(1)
+		local profile_index = player:profile_index()
+		local profile = SPProfiles[profile_index]
+		local display_name = profile.display_name
+
+		local function cb(result)
+			-- function 111
+			local function_result = result.FunctionResult
+			local hero_attributes = backend_manager:get_interface("hero_attributes")
+
+			hero_attributes:set(display_name, "experience", function_result.data[display_name .. "_experience"])
+			hero_attributes:set(display_name, "experience_pool", function_result.data[display_name .. "_experience_pool"])
+		end
+
+		local request = {
 			FunctionName = "devAddExperience",
 			FunctionParameter = {
 				hero = display_name,
-				experience = var_110_1
+				experience = experience
 			}
 		}
+		local backend_mirror = backend_manager._backend_mirror
+		local request_queue = backend_mirror:request_queue()
 
-		backend._backend_mirror:request_queue():enqueue(tbl, fn, false)
+		request_queue:enqueue(request, cb, false)
 	end
 }
 
@@ -8468,26 +8590,30 @@ local tbl_154 = {
 	setting_name = "Reset Level",
 	func = function ()
 		-- function 112
-		local backend = Managers.backend
-		local profile_index = Managers.player:local_player(1):profile_index()
-		local display_name = SPProfiles[profile_index].display_name
-		local get_interface = backend:get_interface("hero_attributes")
+		local backend_manager = Managers.backend
+		local player = Managers.player:local_player(1)
+		local profile_index = player:profile_index()
+		local profile = SPProfiles[profile_index]
+		local display_name = profile.display_name
+		local hero_attributes = backend_manager:get_interface("hero_attributes")
 
-		local function fn(self)
+		local function cb(result)
 			-- function 113
-			assert(self.FunctionResult.data, self.FunctionResult.reason)
-			get_interface:set(display_name, "experience", self.FunctionResult.data[display_name .. "_experience"])
+			assert(result.FunctionResult.data, result.FunctionResult.reason)
+			hero_attributes:set(display_name, "experience", result.FunctionResult.data[display_name .. "_experience"])
 		end
 
-		local tbl = {
+		local request = {
 			FunctionName = "devSetExperience",
 			FunctionParameter = {
 				experience = 1,
 				hero = display_name
 			}
 		}
+		local backend_mirror = backend_manager._backend_mirror
+		local request_queue = backend_mirror:request_queue()
 
-		backend._backend_mirror:request_queue():enqueue(tbl, fn, false)
+		request_queue:enqueue(request, cb, false)
 	end
 }
 
@@ -8499,27 +8625,32 @@ local tbl_155 = {
 	setting_name = "Level up above prestige level requirements",
 	func = function ()
 		-- function 114
-		local backend = Managers.backend
-		local profile_index = Managers.player:local_player(1):profile_index()
-		local display_name = SPProfiles[profile_index].display_name
+		local backend_manager = Managers.backend
+		local player = Managers.player:local_player(1)
+		local profile_index = player:profile_index()
+		local profile = SPProfiles[profile_index]
+		local display_name = profile.display_name
 
-		local function fn(self)
+		local function cb(result)
 			-- function 115
-			local FunctionResult = self.FunctionResult
+			local function_result = result.FunctionResult
+			local hero_attributes = backend_manager:get_interface("hero_attributes")
 
-			backend:get_interface("hero_attributes"):set(display_name, "experience", FunctionResult.data[display_name .. "_experience"])
+			hero_attributes:set(display_name, "experience", function_result.data[display_name .. "_experience"])
 			Debug.load_level("inn_level")
 		end
 
-		local tbl = {
+		local request = {
 			FunctionName = "devSetExperience",
 			FunctionParameter = {
 				experience = 1000000,
 				hero = display_name
 			}
 		}
+		local backend_mirror = backend_manager._backend_mirror
+		local request_queue = backend_mirror:request_queue()
 
-		backend._backend_mirror:request_queue():enqueue(tbl, fn, false)
+		request_queue:enqueue(request, cb, false)
 	end
 }
 
@@ -8531,10 +8662,13 @@ local tbl_156 = {
 	setting_name = "Reset prestige level",
 	func = function ()
 		-- function 116
-		local profile_index = Managers.player:local_player(1):profile_index()
-		local var_116_1 = SPProfiles[profile_index]
+		local player_manager = Managers.player
+		local player = player_manager:local_player(1)
+		local profile_index = player:profile_index()
+		local profile = SPProfiles[profile_index]
+		local hero_attributes = Managers.backend:get_interface("hero_attributes")
 
-		Managers.backend:get_interface("hero_attributes"):set(var_116_1.display_name, "prestige", 0)
+		hero_attributes:set(profile.display_name, "prestige", 0)
 		Debug.load_level("inn_level")
 	end
 }
@@ -8586,12 +8720,12 @@ local tbl_158 = {
 		1250,
 		1300
 	},
-	custom_item_source_order = function (arg_118_0, arg_118_1)
+	custom_item_source_order = function (item_source, options)
 		-- function 118
-		for i, v in ipairs(arg_118_0) do
-			local var_118_0 = v
+		for _, v in ipairs(item_source) do
+			local option = v
 
-			arg_118_1[#arg_118_1 + 1] = var_118_0
+			options[#options + 1] = option
 		end
 	end
 }
@@ -8684,32 +8818,33 @@ local tbl_167 = {
 	description = "Force activate a specific HUD visibility group",
 	category = "HUD",
 	item_source = {},
-	load_items_source_func = function (self)
+	load_items_source_func = function (options)
 		-- function 120
-		if not self.initialized then
-			table.clear(self)
+		if not options.initialized then
+			table.clear(options)
 
-			self[#self + 1] = "none"
+			options[#options + 1] = "none"
 
-			local visibility_groups = local_require("scripts/ui/views/ingame_hud_definitions").visibility_groups
+			local definitions = local_require("scripts/ui/views/ingame_hud_definitions")
+			local visibility_groups = definitions.visibility_groups
 
-			for i, v in ipairs(visibility_groups) do
-				local name = v.name
+			for _, settings in ipairs(visibility_groups) do
+				local name = settings.name
 
-				self[#self + 1] = name
+				options[#options + 1] = name
 			end
 
-			self.initialized = true
+			options.initialized = true
 		end
 	end,
-	func = function (self, arg_121_1)
+	func = function (options, index)
 		-- function 121
-		local var_121_0 = self[arg_121_1]
+		local item = options[index]
 
-		if not (not var_121_0 and var_121_0 ~= "none") then
+		if not item or item == "none" then
 			script_data.debug_hud_visibility_group = nil
 		else
-			script_data.debug_hud_visibility_group = var_121_0
+			script_data.debug_hud_visibility_group = item
 		end
 	end
 }
@@ -8766,28 +8901,28 @@ local tbl_173 = {
 	description = "Works on non-local backend. Adds a legend vault",
 	category = "Progression",
 	item_source = {},
-	load_items_source_func = function (self)
+	load_items_source_func = function (options)
 		-- function 122
-		table.clear(self)
+		table.clear(options)
 
-		self[#self + 1] = "tier_1"
-		self[#self + 1] = "tier_2"
-		self[#self + 1] = "tier_3"
-		self[#self + 1] = "tier_4"
-		self[#self + 1] = "tier_5"
+		options[#options + 1] = "tier_1"
+		options[#options + 1] = "tier_2"
+		options[#options + 1] = "tier_3"
+		options[#options + 1] = "tier_4"
+		options[#options + 1] = "tier_5"
 
-		table.sort(self)
+		table.sort(options)
 	end,
-	func = function (self, arg_123_1)
+	func = function (options, index)
 		-- function 123
-		local var_123_0 = self[arg_123_1]
-		local get_interface = Managers.backend:get_interface("loot")
-		local local_player = Managers.player:local_player()
-		local display_name = SPProfiles[local_player:profile_index()].display_name
-		local str = "default"
+		local item = options[index]
+		local loot_interface = Managers.backend:get_interface("loot")
+		local player = Managers.player:local_player()
+		local display_name = SPProfiles[player:profile_index()].display_name
+		local loot_profile_name = "default"
 
-		if var_123_0 == "tier_1" then
-			local tbl = {
+		if item == "tier_1" then
+			local end_of_level_rewards_arguments = {
 				chest_upgrade_data = {
 					grimoire = 0,
 					tome = 0,
@@ -8796,9 +8931,9 @@ local tbl_173 = {
 				}
 			}
 
-			get_interface:generate_end_of_level_loot(true, true, "hardest", "bell", display_name, 0, 0, str, nil, nil, "adventure", 0, tbl)
-		elseif var_123_0 == "tier_2" then
-			local tbl_2 = {
+			loot_interface:generate_end_of_level_loot(true, true, "hardest", "bell", display_name, 0, 0, loot_profile_name, nil, nil, "adventure", 0, end_of_level_rewards_arguments)
+		elseif item == "tier_2" then
+			local end_of_level_rewards_arguments = {
 				chest_upgrade_data = {
 					grimoire = 0,
 					tome = 2,
@@ -8807,9 +8942,9 @@ local tbl_173 = {
 				}
 			}
 
-			get_interface:generate_end_of_level_loot(true, true, "hardest", "bell", display_name, 0, 0, str, nil, nil, "adventure", 0, tbl_2)
-		elseif var_123_0 == "tier_3" then
-			local tbl_3 = {
+			loot_interface:generate_end_of_level_loot(true, true, "hardest", "bell", display_name, 0, 0, loot_profile_name, nil, nil, "adventure", 0, end_of_level_rewards_arguments)
+		elseif item == "tier_3" then
+			local end_of_level_rewards_arguments = {
 				chest_upgrade_data = {
 					grimoire = 1,
 					tome = 2,
@@ -8818,9 +8953,9 @@ local tbl_173 = {
 				}
 			}
 
-			get_interface:generate_end_of_level_loot(true, true, "hardest", "bell", display_name, 0, 0, str, nil, nil, "adventure", 0, tbl_3)
-		elseif var_123_0 == "tier_4" then
-			local tbl_4 = {
+			loot_interface:generate_end_of_level_loot(true, true, "hardest", "bell", display_name, 0, 0, loot_profile_name, nil, nil, "adventure", 0, end_of_level_rewards_arguments)
+		elseif item == "tier_4" then
+			local end_of_level_rewards_arguments = {
 				chest_upgrade_data = {
 					grimoire = 2,
 					tome = 2,
@@ -8829,9 +8964,9 @@ local tbl_173 = {
 				}
 			}
 
-			get_interface:generate_end_of_level_loot(true, true, "hardest", "bell", display_name, 0, 0, str, nil, nil, "adventure", 0, tbl_4)
-		elseif var_123_0 == "tier_5" then
-			local tbl_5 = {
+			loot_interface:generate_end_of_level_loot(true, true, "hardest", "bell", display_name, 0, 0, loot_profile_name, nil, nil, "adventure", 0, end_of_level_rewards_arguments)
+		elseif item == "tier_5" then
+			local end_of_level_rewards_arguments = {
 				chest_upgrade_data = {
 					grimoire = 3,
 					tome = 2,
@@ -8840,7 +8975,7 @@ local tbl_173 = {
 				}
 			}
 
-			get_interface:generate_end_of_level_loot(true, true, "hardest", "bell", display_name, 0, 0, str, nil, nil, "adventure", 0, tbl_5)
+			loot_interface:generate_end_of_level_loot(true, true, "hardest", "bell", display_name, 0, 0, loot_profile_name, nil, nil, "adventure", 0, end_of_level_rewards_arguments)
 		end
 	end
 }
@@ -8852,28 +8987,28 @@ local tbl_174 = {
 	setting_name = "Add Hat Items",
 	category = "Items",
 	item_source = {},
-	load_items_source_func = function (self)
+	load_items_source_func = function (options)
 		-- function 124
-		table.clear(self)
+		table.clear(options)
 
-		local ItemMasterList = ItemMasterList
+		local item_master_list = ItemMasterList
 
-		for k, v in pairs(ItemMasterList) do
-			if v.slot_type == "hat" then
-				self[#self + 1] = k
+		for key, item in pairs(item_master_list) do
+			if item.slot_type == "hat" then
+				options[#options + 1] = key
 			end
 		end
 
-		table.sort(self)
+		table.sort(options)
 	end,
-	func = function (self, arg_125_1)
+	func = function (options, index)
 		-- function 125
-		local get_interface = Managers.backend:get_interface("items")
-		local var_125_1 = self[arg_125_1]
+		local item_interface = Managers.backend:get_interface("items")
+		local item = options[index]
 
-		fn_2({
+		add_items({
 			{
-				ItemName = var_125_1
+				ItemName = item
 			}
 		})
 	end
@@ -8887,20 +9022,20 @@ local tbl_175 = {
 	category = "Items",
 	func = function ()
 		-- function 126
-		local ItemMasterList = ItemMasterList
-		local tbl = {}
+		local item_master_list = ItemMasterList
+		local hats = {}
 
-		for k, v in pairs(ItemMasterList) do
-			if v.slot_type == "hat" then
-				tbl[#tbl + 1] = {
-					ItemName = k
+		for key, item in pairs(item_master_list) do
+			if item.slot_type == "hat" then
+				hats[#hats + 1] = {
+					ItemName = key
 				}
 			end
 		end
 
-		local flag = true
+		local skip_autosave = true
 
-		fn_2(tbl, flag)
+		add_items(hats, skip_autosave)
 	end
 }
 
@@ -8911,28 +9046,28 @@ local tbl_176 = {
 	setting_name = "Add Skin Items",
 	category = "Items",
 	item_source = {},
-	load_items_source_func = function (self)
+	load_items_source_func = function (options)
 		-- function 127
-		table.clear(self)
+		table.clear(options)
 
-		local ItemMasterList = ItemMasterList
+		local item_master_list = ItemMasterList
 
-		for k, v in pairs(ItemMasterList) do
-			if v.slot_type == "skin" then
-				self[#self + 1] = k
+		for key, item in pairs(item_master_list) do
+			if item.slot_type == "skin" then
+				options[#options + 1] = key
 			end
 		end
 
-		table.sort(self)
+		table.sort(options)
 	end,
-	func = function (self, arg_128_1)
+	func = function (options, index)
 		-- function 128
-		local get_interface = Managers.backend:get_interface("items")
-		local var_128_1 = self[arg_128_1]
+		local item_interface = Managers.backend:get_interface("items")
+		local item = options[index]
 
-		fn_2({
+		add_items({
 			{
-				ItemName = var_128_1
+				ItemName = item
 			}
 		})
 	end
@@ -8945,34 +9080,34 @@ local tbl_177 = {
 	setting_name = "Add Chest Items",
 	category = "Items",
 	item_source = {},
-	load_items_source_func = function (self)
+	load_items_source_func = function (options)
 		-- function 129
-		table.clear(self)
+		table.clear(options)
 
-		local ItemMasterList = ItemMasterList
+		local item_master_list = ItemMasterList
 
-		for k, v in pairs(ItemMasterList) do
-			if v.slot_type == "loot_chest" then
-				self[#self + 1] = k
+		for key, item in pairs(item_master_list) do
+			if item.slot_type == "loot_chest" then
+				options[#options + 1] = key
 			end
 		end
 
-		table.sort(self)
+		table.sort(options)
 	end,
-	func = function (self, arg_130_1)
+	func = function (options, index)
 		-- function 130
-		local get_interface = Managers.backend:get_interface("items")
-		local var_130_1 = self[arg_130_1]
-		local num = 1
+		local item_interface = Managers.backend:get_interface("items")
+		local item = options[index]
+		local amount = 1
 
 		if Keyboard.button(Keyboard.button_index("left shift")) > 0 then
-			num = 10
+			amount = 10
 		end
 
-		fn_2({
+		add_items({
 			{
-				ItemName = var_130_1,
-				Amount = num
+				ItemName = item,
+				Amount = amount
 			}
 		})
 	end
@@ -8985,28 +9120,28 @@ local tbl_178 = {
 	setting_name = "Add Frame Items",
 	category = "Items",
 	item_source = {},
-	load_items_source_func = function (self)
+	load_items_source_func = function (options)
 		-- function 131
-		table.clear(self)
+		table.clear(options)
 
-		local ItemMasterList = ItemMasterList
+		local item_master_list = ItemMasterList
 
-		for k, v in pairs(ItemMasterList) do
-			if v.slot_type == "frame" then
-				self[#self + 1] = k
+		for key, item in pairs(item_master_list) do
+			if item.slot_type == "frame" then
+				options[#options + 1] = key
 			end
 		end
 
-		table.sort(self)
+		table.sort(options)
 	end,
-	func = function (self, arg_132_1)
+	func = function (options, index)
 		-- function 132
-		local get_interface = Managers.backend:get_interface("items")
-		local var_132_1 = self[arg_132_1]
+		local item_interface = Managers.backend:get_interface("items")
+		local item = options[index]
 
-		fn_2({
+		add_items({
 			{
-				ItemName = var_132_1
+				ItemName = item
 			}
 		})
 	end
@@ -9019,33 +9154,34 @@ local tbl_179 = {
 	setting_name = "Add Deed Items",
 	category = "Items",
 	item_source = {},
-	load_items_source_func = function (self)
+	load_items_source_func = function (options)
 		-- function 133
-		table.clear(self)
+		table.clear(options)
 
-		local ItemMasterList = ItemMasterList
+		local item_master_list = ItemMasterList
 
-		for k, v in pairs(ItemMasterList) do
-			if v.slot_type == "deed" then
-				self[#self + 1] = k
+		for key, item in pairs(item_master_list) do
+			if item.slot_type == "deed" then
+				options[#options + 1] = key
 			end
 		end
 
-		table.sort(self)
+		table.sort(options)
 	end,
-	func = function (self, arg_134_1)
+	func = function (options, index)
 		-- function 134
-		local get_interface = Managers.backend:get_interface("items")
-		local var_134_1 = self[arg_134_1]
-		local var_134_2 = ItemMasterList[var_134_1].difficulties[1]
-		local str = "farmlands"
+		local item_interface = Managers.backend:get_interface("items")
+		local item = options[index]
+		local item_data = ItemMasterList[item]
+		local difficulty = item_data.difficulties[1]
+		local level_key = "farmlands"
 
-		fn_2({
+		add_items({
 			{
-				ItemName = var_134_1,
+				ItemName = item,
 				CustomData = {
-					difficulty = var_134_2,
-					level_key = str
+					difficulty = difficulty,
+					level_key = level_key
 				}
 			}
 		})
@@ -9060,28 +9196,28 @@ local tbl_180 = {
 	category = "Items",
 	func = function ()
 		-- function 135
-		local ItemMasterList = ItemMasterList
-		local WeaponSkins = WeaponSkins
-		local get_interface = Managers.backend:get_interface("items")
-		local tbl = {}
-		local tbl_2 = {}
+		local item_master_list = ItemMasterList
+		local weapon_skins = WeaponSkins
+		local item_interface = Managers.backend:get_interface("items")
+		local added_skins = {}
+		local weapons_to_add = {}
 
-		for k, v in pairs(ItemMasterList) do
-			local slot_type = v.slot_type
-			local skin_combination_table = v.skin_combination_table
+		for key, item in pairs(item_master_list) do
+			local slot_type = item.slot_type
+			local skin_combination = item.skin_combination_table
 
-			if not ((slot_type == "melee" or slot_type == "ranged" or not skin_combination_table) and v.rarity == "magic") then
-				local var_135_7 = WeaponSkins.skin_combinations[skin_combination_table]
+			if (slot_type == "melee" or slot_type == "ranged") and skin_combination and item.rarity ~= "magic" then
+				local skin_combinations_by_rarity = weapon_skins.skin_combinations[skin_combination]
 
-				for k_2, v_2 in pairs(var_135_7) do
-					for i, v_3 in ipairs(v_2) do
-						if not tbl[v_3] then
-							tbl[v_3] = true
-							tbl_2[#tbl_2 + 1] = {
-								ItemName = k,
+				for rarity, skins in pairs(skin_combinations_by_rarity) do
+					for _, skin_name in ipairs(skins) do
+						if not added_skins[skin_name] then
+							added_skins[skin_name] = true
+							weapons_to_add[#weapons_to_add + 1] = {
+								ItemName = key,
 								CustomData = {
 									power_level = 5,
-									skin = v_3
+									skin = skin_name
 								}
 							}
 						end
@@ -9090,19 +9226,21 @@ local tbl_180 = {
 			end
 		end
 
-		local _backend_mirror = Managers.backend._backend_mirror
-		local tbl_3 = {
+		local backend_mirror = Managers.backend._backend_mirror
+		local request = {
 			FunctionName = "devUnlockAllWeaponSkins",
 			FunctionParameter = {}
 		}
-		local flag = true
+		local skip_autosave = true
 
-		local function fn(arg_136_0)
+		local function cb(result)
 			-- function 136
-			fn_2(tbl_2, flag)
+			add_items(weapons_to_add, skip_autosave)
 		end
 
-		_backend_mirror:request_queue():enqueue(tbl_3, fn, false)
+		local request_queue = backend_mirror:request_queue()
+
+		request_queue:enqueue(request, cb, false)
 	end
 }
 
@@ -9122,42 +9260,50 @@ local tbl_182 = {
 	setting_name = "Activate or Deactivate Mutator",
 	category = "Items",
 	item_source = {},
-	load_items_source_func = function (self)
+	load_items_source_func = function (options)
 		-- function 137
-		table.clear(self)
+		table.clear(options)
 
-		for k, v in pairs(MutatorTemplates) do
-			self[#self + 1] = k
+		for key, _ in pairs(MutatorTemplates) do
+			options[#options + 1] = key
 		end
 
-		table.sort(self)
+		table.sort(options)
 	end,
-	func = function (self, arg_138_1)
+	func = function (options, index)
 		-- function 138
 		local debug_activated_mutators = script_data.debug_activated_mutators
 
-		debug_activated_mutators = debug_activated_mutators or {}
+		if not debug_activated_mutators then
+			-- Nothing
+		end
 
-		local var_138_1 = self[arg_138_1]
-		local var_138_2
+		debug_activated_mutators = {}
 
-		for i = 1, #debug_activated_mutators do
-			if debug_activated_mutators[i] == var_138_1 then
-				var_138_2 = i
+		local activated_mutators = debug_activated_mutators
+
+		::label_138_0::
+
+		local key = options[index]
+		local mutator_deactivation_index
+
+		for i = 1, #activated_mutators do
+			if activated_mutators[i] == key then
+				mutator_deactivation_index = i
 			end
 		end
 
-		if not var_138_2 then
-			table.remove(debug_activated_mutators, var_138_2)
-			Debug.sticky_text("Deactivated mutator %s", var_138_1)
+		if mutator_deactivation_index then
+			table.remove(activated_mutators, mutator_deactivation_index)
+			Debug.sticky_text("Deactivated mutator %s", key)
 		else
-			debug_activated_mutators[#debug_activated_mutators + 1] = var_138_1
+			activated_mutators[#activated_mutators + 1] = key
 
-			Debug.sticky_text("Activated mutator %s", var_138_1)
+			Debug.sticky_text("Activated mutator %s", key)
 		end
 
-		if #debug_activated_mutators > 0 then
-			script_data.debug_activated_mutators = debug_activated_mutators
+		if #activated_mutators > 0 then
+			script_data.debug_activated_mutators = activated_mutators
 		else
 			script_data.debug_activated_mutators = nil
 		end
@@ -9171,34 +9317,34 @@ local tbl_183 = {
 	setting_name = "Start or stop mutator",
 	category = "Items",
 	item_source = {},
-	load_items_source_func = function (self)
+	load_items_source_func = function (options)
 		-- function 139
-		table.clear(self)
+		table.clear(options)
 
-		for k, v in pairs(MutatorTemplates) do
-			self[#self + 1] = k
+		for key, _ in pairs(MutatorTemplates) do
+			options[#options + 1] = key
 		end
 
-		table.sort(self)
+		table.sort(options)
 	end,
-	func = function (self, arg_140_1)
+	func = function (options, index)
 		-- function 140
 		local mutator_handler = Managers.state.game_mode:mutator_handler()
-		local var_140_1 = self[arg_140_1]
+		local mutator_name = options[index]
 
-		if not mutator_handler:has_mutator(var_140_1) then
+		if not mutator_handler:has_mutator(mutator_name) then
 			mutator_handler:initialize_mutators({
-				var_140_1
+				mutator_name
 			})
-			Debug.sticky_text("Initialized mutator %s", var_140_1)
+			Debug.sticky_text("Initialized mutator %s", mutator_name)
 		end
 
-		if not mutator_handler:has_activated_mutator(var_140_1) then
-			mutator_handler:deactivate_mutator(var_140_1)
-			Debug.sticky_text("Stopped mutator %s", var_140_1)
+		if mutator_handler:has_activated_mutator(mutator_name) then
+			mutator_handler:deactivate_mutator(mutator_name)
+			Debug.sticky_text("Stopped mutator %s", mutator_name)
 		else
-			mutator_handler:activate_mutator(var_140_1)
-			Debug.sticky_text("Started mutator %s", var_140_1)
+			mutator_handler:activate_mutator(mutator_name)
+			Debug.sticky_text("Started mutator %s", mutator_name)
 		end
 	end
 }
@@ -9210,42 +9356,50 @@ local tbl_184 = {
 	setting_name = "Activate or Deactivate Blessings",
 	category = "Items",
 	item_source = {},
-	load_items_source_func = function (self)
+	load_items_source_func = function (options)
 		-- function 141
-		table.clear(self)
+		table.clear(options)
 
-		for k, v in pairs(DeusBlessingSettings) do
-			self[#self + 1] = k
+		for key, _ in pairs(DeusBlessingSettings) do
+			options[#options + 1] = key
 		end
 
-		table.sort(self)
+		table.sort(options)
 	end,
-	func = function (self, arg_142_1)
+	func = function (options, index)
 		-- function 142
 		local debug_activated_blessings = script_data.debug_activated_blessings
 
-		debug_activated_blessings = debug_activated_blessings or {}
+		if not debug_activated_blessings then
+			-- Nothing
+		end
 
-		local var_142_1 = self[arg_142_1]
-		local var_142_2
+		debug_activated_blessings = {}
 
-		for i = 1, #debug_activated_blessings do
-			if debug_activated_blessings[i] == var_142_1 then
-				var_142_2 = i
+		local activated_blessings = debug_activated_blessings
+
+		::label_142_0::
+
+		local key = options[index]
+		local blessing_deactivation_index
+
+		for i = 1, #activated_blessings do
+			if activated_blessings[i] == key then
+				blessing_deactivation_index = i
 			end
 		end
 
-		if not var_142_2 then
-			table.remove(debug_activated_blessings, var_142_2)
-			Debug.sticky_text("Deactivated blessing %s", var_142_1)
+		if blessing_deactivation_index then
+			table.remove(activated_blessings, blessing_deactivation_index)
+			Debug.sticky_text("Deactivated blessing %s", key)
 		else
-			debug_activated_blessings[#debug_activated_blessings + 1] = var_142_1
+			activated_blessings[#activated_blessings + 1] = key
 
-			Debug.sticky_text("Activated blessing %s", var_142_1)
+			Debug.sticky_text("Activated blessing %s", key)
 		end
 
-		if #debug_activated_blessings > 0 then
-			script_data.debug_activated_blessings = debug_activated_blessings
+		if #activated_blessings > 0 then
+			script_data.debug_activated_blessings = activated_blessings
 		else
 			script_data.debug_activated_blessings = nil
 		end
@@ -9259,32 +9413,40 @@ local tbl_185 = {
 	setting_name = "Force Twitch Mode Vote Template",
 	category = "Items",
 	item_source = {},
-	load_items_source_func = function (self)
+	load_items_source_func = function (options)
 		-- function 143
-		table.clear(self)
+		table.clear(options)
 
-		for k, v in pairs(TwitchVoteTemplates) do
-			self[#self + 1] = k
+		for key, _ in pairs(TwitchVoteTemplates) do
+			options[#options + 1] = key
 		end
 
-		self[#self + 1] = "clear_votes"
+		options[#options + 1] = "clear_votes"
 
-		table.sort(self)
+		table.sort(options)
 	end,
-	func = function (self, arg_144_1)
+	func = function (options, index)
 		-- function 144
-		if not script_data.debug_activated_mutators then
-			local tbl = {}
+		local debug_activated_mutators = script_data.debug_activated_mutators
+
+		if not debug_activated_mutators then
+			-- Nothing
 		end
 
-		local var_144_1 = self[arg_144_1]
+		debug_activated_mutators = {}
 
-		if var_144_1 == "clear_votes" then
+		local forced_templates = debug_activated_mutators
+
+		::label_144_0::
+
+		local key = options[index]
+
+		if key == "clear_votes" then
 			script_data.twitch_mode_force_vote_template = nil
 		else
-			local var_144_2 = TwitchVoteTemplates[var_144_1]
+			local vote_template = TwitchVoteTemplates[key]
 
-			script_data.twitch_mode_force_vote_template = var_144_2
+			script_data.twitch_mode_force_vote_template = vote_template
 		end
 	end
 }
@@ -9306,36 +9468,36 @@ local tbl_187 = {
 	category = "Progression",
 	clear_when_selected = true,
 	item_source = {},
-	load_items_source_func = function (arg_145_0)
+	load_items_source_func = function (options)
 		-- function 145
-		table.clear(arg_145_0)
+		table.clear(options)
 
-		for k, v in pairs(AchievementTemplates.achievements) do
-			if not v.debug_unlock then
-				table.insert(arg_145_0, k)
+		for id, achievement in pairs(AchievementTemplates.achievements) do
+			if achievement.debug_unlock then
+				table.insert(options, id)
 			end
 		end
 
-		table.sort(arg_145_0)
+		table.sort(options)
 	end,
-	func = function (self, arg_146_1)
+	func = function (options, index)
 		-- function 146
-		if not AchievementTemplates then
-			local var_146_0 = AchievementTemplates.achievements[self[arg_146_1]]
+		if AchievementTemplates then
+			local template = AchievementTemplates.achievements[options[index]]
 
-			if var_146_0 ~= nil then
-				if not var_146_0.debug_unlock then
-					local statistics_db = Managers.state.game_mode.statistics_db
+			if template ~= nil then
+				if template.debug_unlock then
+					local stats_db = Managers.state.game_mode.statistics_db
 					local stats_id = Managers.player:local_player():stats_id()
 
-					if not statistics_db and not stats_id then
-						var_146_0.debug_unlock(statistics_db, stats_id)
-						print("Unlocked challenge ", self[arg_146_1])
+					if stats_db and stats_id then
+						template.debug_unlock(stats_db, stats_id)
+						print("Unlocked challenge ", options[index])
 
 						local world = Managers.world:world("level_world")
 
 						LevelHelper:flow_event(world, "lua_unlock_challenge_debug_event")
-						fn()
+						save_statistics()
 
 						return
 					end
@@ -9345,7 +9507,7 @@ local tbl_187 = {
 			end
 		end
 
-		print("Could not unlock challenge ", self[arg_146_1])
+		print("Could not unlock challenge ", options[index])
 	end
 }
 
@@ -9357,32 +9519,32 @@ local tbl_188 = {
 	category = "Progression",
 	clear_when_selected = true,
 	item_source = {},
-	load_items_source_func = function (arg_147_0)
+	load_items_source_func = function (options)
 		-- function 147
-		table.clear(arg_147_0)
+		table.clear(options)
 
-		for k, v in pairs(AchievementTemplates.achievements) do
-			if not v.debug_reset then
-				table.insert(arg_147_0, k)
+		for id, achievement in pairs(AchievementTemplates.achievements) do
+			if achievement.debug_reset then
+				table.insert(options, id)
 			end
 		end
 
-		table.sort(arg_147_0)
+		table.sort(options)
 	end,
-	func = function (self, arg_148_1)
+	func = function (options, index)
 		-- function 148
-		if not AchievementTemplates then
-			local var_148_0 = AchievementTemplates.achievements[self[arg_148_1]]
+		if AchievementTemplates then
+			local template = AchievementTemplates.achievements[options[index]]
 
-			if var_148_0 ~= nil then
-				if not var_148_0.debug_reset then
-					local statistics_db = Managers.state.game_mode.statistics_db
+			if template ~= nil then
+				if template.debug_reset then
+					local stats_db = Managers.state.game_mode.statistics_db
 					local stats_id = Managers.player:local_player():stats_id()
 
-					if not statistics_db and not stats_id then
-						var_148_0.debug_reset(statistics_db, stats_id)
-						print("Reset challenge ", self[arg_148_1])
-						fn()
+					if stats_db and stats_id then
+						template.debug_reset(stats_db, stats_id)
+						print("Reset challenge ", options[index])
+						save_statistics()
 
 						return
 					end
@@ -9392,7 +9554,7 @@ local tbl_188 = {
 			end
 		end
 
-		print("Could not reset challenge ", self[arg_148_1])
+		print("Could not reset challenge ", options[index])
 	end
 }
 
@@ -9478,47 +9640,47 @@ local tbl_197 = {
 		-- function 149
 		local world = Managers.world:world("level_world")
 		local units = World.units(world)
-		local tbl = {}
+		local objectives = {}
 
-		for i, v in ipairs(units) do
-			if not Unit.is_frozen(v) then
-				local debug_name = Unit.debug_name(v)
+		for _, unit in ipairs(units) do
+			if not Unit.is_frozen(unit) then
+				local name = Unit.debug_name(unit)
 
-				if debug_name:match(".*weave_capture_point_spawner") or debug_name:match(".*weave_interaction_spawner") or debug_name:match(".*weave_prop_skaven_doom_wheel_01_spawner") or not debug_name:match(".*weave_limited_item_track_spawner") then
-					local get_data = Unit.get_data(v, "weave_objective_id")
-					local num = #NetworkLookup.objective_names + 1
+				if name:match(".*weave_capture_point_spawner") or name:match(".*weave_interaction_spawner") or name:match(".*weave_prop_skaven_doom_wheel_01_spawner") or name:match(".*weave_limited_item_track_spawner") then
+					local objective_id = Unit.get_data(unit, "weave_objective_id")
+					local i = #NetworkLookup.objective_names + 1
 
-					NetworkLookup.objective_names[num] = get_data
-					NetworkLookup.objective_names[get_data] = num
-					tbl[get_data] = {}
+					NetworkLookup.objective_names[i] = objective_id
+					NetworkLookup.objective_names[objective_id] = i
+					objectives[objective_id] = {}
 
-					print(debug_name)
+					print(name)
 				end
 			end
 		end
 
-		local num_2 = #NetworkLookup.objective_names + 1
+		local i = #NetworkLookup.objective_names + 1
 
-		NetworkLookup.objective_names[num_2] = "kill_enemies"
-		NetworkLookup.objective_names.kill_enemies = num_2
-		tbl.kill_enemies = {}
+		NetworkLookup.objective_names[i] = "kill_enemies"
+		NetworkLookup.objective_names.kill_enemies = i
+		objectives.kill_enemies = {}
 
 		local script_data = script_data
 		local temp_objective_list_counter = script_data.temp_objective_list_counter
 
-		temp_objective_list_counter = temp_objective_list_counter or 0
+		temp_objective_list_counter = not not temp_objective_list_counter or not not 0
 		script_data.temp_objective_list_counter = temp_objective_list_counter + 1
 
-		local str = "temp_objective_list_" .. script_data.temp_objective_list_counter
+		local objective_list_name = "temp_objective_list_" .. script_data.temp_objective_list_counter
 
-		ObjectiveLists[str] = {
-			tbl
+		ObjectiveLists[objective_list_name] = {
+			objectives
 		}
 
-		local system = Managers.state.entity:system("objective_system")
+		local objective_system = Managers.state.entity:system("objective_system")
 
-		system:server_register_objectives(str)
-		system:server_activate_first_objective()
+		objective_system:server_register_objectives(objective_list_name)
+		objective_system:server_activate_first_objective()
 	end
 }
 
@@ -9649,36 +9811,37 @@ local tbl_209 = {
 	description = "change onboarding stat",
 	category = "Onboarding",
 	item_source = {},
-	load_items_source_func = function (self)
+	load_items_source_func = function (options)
 		-- function 157
-		table.clear(self)
+		table.clear(options)
 
-		self[#self + 1] = "1"
-		self[#self + 1] = "2"
-		self[#self + 1] = "3"
-		self[#self + 1] = "4"
-		self[#self + 1] = "5"
-		self[#self + 1] = "6"
-		self[#self + 1] = "7"
-		self[#self + 1] = "8"
-		self[#self + 1] = "9"
-		self[#self + 1] = "clear"
+		options[#options + 1] = "1"
+		options[#options + 1] = "2"
+		options[#options + 1] = "3"
+		options[#options + 1] = "4"
+		options[#options + 1] = "5"
+		options[#options + 1] = "6"
+		options[#options + 1] = "7"
+		options[#options + 1] = "8"
+		options[#options + 1] = "9"
+		options[#options + 1] = "clear"
 
-		table.sort(self)
+		table.sort(options)
 	end,
-	func = function (self, arg_158_1)
+	func = function (options, index)
 		-- function 158
-		local var_158_0 = self[arg_158_1]
+		local chosen_state = options[index]
 		local statistics_db = Managers.player:statistics_db()
-		local stats_id = Managers.player:local_player():stats_id()
+		local local_player = Managers.player:local_player()
+		local stats_id = local_player:stats_id()
 
-		if var_158_0 == "clear" then
+		if chosen_state == "clear" then
 			statistics_db:set_stat(stats_id, "scorpion_onboarding_step", 0)
 		else
-			statistics_db:set_stat(stats_id, "scorpion_onboarding_step", tonumber(var_158_0))
+			statistics_db:set_stat(stats_id, "scorpion_onboarding_step", tonumber(chosen_state))
 		end
 
-		fn()
+		save_statistics()
 	end
 }
 
@@ -9691,10 +9854,11 @@ local tbl_210 = {
 	func = function ()
 		-- function 159
 		local statistics_db = Managers.player:statistics_db()
-		local stats_id = Managers.player:local_player():stats_id()
+		local local_player = Managers.player:local_player()
+		local stats_id = local_player:stats_id()
 
 		statistics_db:set_stat(stats_id, "scorpion_ui_onboarding_state", -1)
-		fn()
+		save_statistics()
 	end
 }
 
@@ -9707,10 +9871,11 @@ local tbl_211 = {
 	func = function ()
 		-- function 160
 		local statistics_db = Managers.player:statistics_db()
-		local stats_id = Managers.player:local_player():stats_id()
+		local local_player = Managers.player:local_player()
+		local stats_id = local_player:stats_id()
 
 		statistics_db:set_stat(stats_id, "scorpion_ui_onboarding_state", 0)
-		fn()
+		save_statistics()
 	end
 }
 
@@ -9723,10 +9888,11 @@ local tbl_212 = {
 	func = function ()
 		-- function 161
 		local statistics_db = Managers.player:statistics_db()
-		local stats_id = Managers.player:local_player():stats_id()
+		local local_player = Managers.player:local_player()
+		local stats_id = local_player:stats_id()
 
 		statistics_db:set_stat(stats_id, "scorpion_onboarding_weave_first_fail_vo_played", 0)
-		fn()
+		save_statistics()
 	end
 }
 
@@ -9829,13 +9995,13 @@ local tbl_221 = {
 		-- function 165
 		local seen_handbook_pages = SaveData.seen_handbook_pages
 
-		if not seen_handbook_pages then
+		if seen_handbook_pages then
 			table.clear(seen_handbook_pages)
 		end
 
 		local seen_handbook_popups = SaveData.seen_handbook_popups
 
-		if not seen_handbook_popups then
+		if seen_handbook_popups then
 			table.clear(seen_handbook_popups)
 		end
 	end
@@ -9898,10 +10064,10 @@ local tbl_227 = {
 	category = "Deus",
 	func = function ()
 		-- function 167
-		local game_mechanism = Managers.mechanism:game_mechanism()
+		local mechanism = Managers.mechanism:game_mechanism()
 
-		if not game_mechanism.debug_load_map then
-			game_mechanism:debug_load_map()
+		if mechanism.debug_load_map then
+			mechanism:debug_load_map()
 		end
 	end
 }
@@ -9914,10 +10080,10 @@ local tbl_228 = {
 	category = "Deus",
 	func = function ()
 		-- function 168
-		local game_mechanism = Managers.mechanism:game_mechanism()
+		local mechanism = Managers.mechanism:game_mechanism()
 
-		if not game_mechanism.debug_load_shrine_node then
-			game_mechanism:debug_load_shrine_node()
+		if mechanism.debug_load_shrine_node then
+			mechanism:debug_load_shrine_node()
 		end
 	end
 }
@@ -9929,21 +10095,21 @@ local tbl_229 = {
 	setting_name = "Clear Finished Journey",
 	category = "Deus",
 	item_source = {},
-	load_items_source_func = function (self)
+	load_items_source_func = function (options)
 		-- function 169
-		table.clear(self)
+		table.clear(options)
 
-		for k, v in pairs(DeusJourneySettings) do
-			self[#self + 1] = k
+		for name, settings in pairs(DeusJourneySettings) do
+			options[#options + 1] = name
 		end
 
-		table.sort(self)
+		table.sort(options)
 	end,
-	func = function (self, arg_170_1)
+	func = function (options, index)
 		-- function 170
-		local var_170_0 = self[arg_170_1]
+		local journey = options[index]
 
-		LevelUnlockUtils.debug_set_completed_journey_difficulty(var_170_0, 0)
+		LevelUnlockUtils.debug_set_completed_journey_difficulty(journey, 0)
 	end
 }
 
@@ -9954,24 +10120,24 @@ local tbl_230 = {
 	setting_name = "Set completed journey difficulty",
 	category = "Deus",
 	item_source = {},
-	load_items_source_func = function (self)
+	load_items_source_func = function (options)
 		-- function 171
-		table.clear(self)
+		table.clear(options)
 
-		for i, v in ipairs(AvailableJourneyOrder) do
-			for i_2, v_2 in ipairs(DefaultDifficulties) do
-				self[#self + 1] = v .. "/" .. v_2
+		for _, journey_name in ipairs(AvailableJourneyOrder) do
+			for _, difficulty_name in ipairs(DefaultDifficulties) do
+				options[#options + 1] = journey_name .. "/" .. difficulty_name
 			end
 		end
 	end,
-	func = function (self, arg_172_1)
+	func = function (options, index)
 		-- function 172
-		local split_deprecated = string.split_deprecated(self[arg_172_1], "/")
-		local var_172_1 = split_deprecated[1]
-		local var_172_2 = split_deprecated[2]
-		local index_of = table.index_of(DefaultDifficulties, var_172_2)
+		local journey_and_difficulty = string.split_deprecated(options[index], "/")
+		local journey_name = journey_and_difficulty[1]
+		local difficulty_name = journey_and_difficulty[2]
+		local difficulty_id = table.index_of(DefaultDifficulties, difficulty_name)
 
-		LevelUnlockUtils.debug_set_completed_journey_difficulty(var_172_1, index_of)
+		LevelUnlockUtils.debug_set_completed_journey_difficulty(journey_name, difficulty_id)
 	end
 }
 
@@ -9982,27 +10148,27 @@ local tbl_231 = {
 	setting_name = "Set completed hero journey difficulty",
 	category = "Deus",
 	item_source = {},
-	load_items_source_func = function (self)
+	load_items_source_func = function (options)
 		-- function 173
-		local str = "journey_citadel"
+		local journey_name = "journey_citadel"
 
-		table.clear(self)
+		table.clear(options)
 
-		for i, v in ipairs(SPProfilesAbbreviation) do
-			for i_2, v_2 in ipairs(DefaultDifficulties) do
-				self[#self + 1] = v .. "/" .. str .. "/" .. v_2
+		for _, hero in ipairs(SPProfilesAbbreviation) do
+			for _, difficulty_name in ipairs(DefaultDifficulties) do
+				options[#options + 1] = hero .. "/" .. journey_name .. "/" .. difficulty_name
 			end
 		end
 	end,
-	func = function (self, arg_174_1)
+	func = function (options, index)
 		-- function 174
-		local split_deprecated = string.split_deprecated(self[arg_174_1], "/")
-		local var_174_1 = split_deprecated[1]
-		local var_174_2 = split_deprecated[2]
-		local var_174_3 = split_deprecated[3]
-		local index_of = table.index_of(DefaultDifficulties, var_174_3)
+		local hero_journey_and_difficulty = string.split_deprecated(options[index], "/")
+		local hero = hero_journey_and_difficulty[1]
+		local journey_name = hero_journey_and_difficulty[2]
+		local difficulty_name = hero_journey_and_difficulty[3]
+		local difficulty_id = table.index_of(DefaultDifficulties, difficulty_name)
 
-		LevelUnlockUtils.debug_set_completed_hero_journey_difficulty(var_174_1, var_174_2, index_of)
+		LevelUnlockUtils.debug_set_completed_hero_journey_difficulty(hero, journey_name, difficulty_id)
 	end
 }
 
@@ -10014,7 +10180,9 @@ local tbl_232 = {
 	category = "Deus",
 	func = function ()
 		-- function 175
-		Managers.backend:get_interface("deus"):debug_clear_meta_progression()
+		local deus_interface = Managers.backend:get_interface("deus")
+
+		deus_interface:debug_clear_meta_progression()
 	end
 }
 
@@ -10025,52 +10193,53 @@ local tbl_233 = {
 	setting_name = "Activate Deus PowerUp",
 	category = "Deus",
 	item_source = {},
-	load_items_source_func = function (self)
+	load_items_source_func = function (options)
 		-- function 176
-		table.clear(self)
+		table.clear(options)
 
-		for k, v in pairs(DeusPowerUps) do
-			for k_2, v_2 in pairs(v) do
-				self[#self + 1] = k .. "/" .. k_2
+		for rarity, powerups_for_rarity in pairs(DeusPowerUps) do
+			for power_up_name, powerup in pairs(powerups_for_rarity) do
+				options[#options + 1] = rarity .. "/" .. power_up_name
 			end
 		end
 
-		table.sort(self)
+		table.sort(options)
 	end,
-	func = function (self, arg_177_1)
+	func = function (options, index)
 		-- function 177
 		if not Managers.mechanism:current_mechanism_name() == "deus" then
 			return
 		end
 
-		local get_deus_run_controller = Managers.mechanism:game_mechanism():get_deus_run_controller()
+		local mechanism = Managers.mechanism:game_mechanism()
+		local deus_run_controller = mechanism:get_deus_run_controller()
 
-		if not get_deus_run_controller then
+		if not deus_run_controller then
 			return
 		end
 
 		local local_player = Managers.player:local_player()
 		local local_player_id = local_player:local_player_id()
-		local var_177_3 = self[arg_177_1]
-		local split_deprecated = string.split_deprecated(var_177_3, "/")
-		local var_177_5 = split_deprecated[1]
-		local var_177_6 = split_deprecated[2]
-		local get_player_power_ups = get_deus_run_controller:get_player_power_ups(local_player.peer_id, local_player_id)
-		local var_177_8
+		local option = options[index]
+		local rarity_and_power_up_name = string.split_deprecated(option, "/")
+		local rarity = rarity_and_power_up_name[1]
+		local power_up_name = rarity_and_power_up_name[2]
+		local existing_power_ups = deus_run_controller:get_player_power_ups(local_player.peer_id, local_player_id)
+		local already_added
 
-		for i, v in ipairs(get_player_power_ups) do
-			if v.name == var_177_6 then
-				var_177_8 = true
+		for _, existing_power_up in ipairs(existing_power_ups) do
+			if existing_power_up.name == power_up_name then
+				already_added = true
 
 				break
 			end
 		end
 
-		if not var_177_8 then
-			local generate_specific_power_up = DeusPowerUpUtils.generate_specific_power_up(var_177_6, var_177_5)
+		if not already_added then
+			local power_up = DeusPowerUpUtils.generate_specific_power_up(power_up_name, rarity)
 
-			get_deus_run_controller:add_power_ups({
-				generate_specific_power_up
+			deus_run_controller:add_power_ups({
+				power_up
 			}, local_player_id, false)
 		end
 	end
@@ -10082,12 +10251,12 @@ local tbl_234 = {
 	description = "Adds 10.000 deus soft currency",
 	setting_name = "add_soft_currency",
 	category = "Deus",
-	func = function (arg_178_0, arg_178_1)
+	func = function (options, index)
 		-- function 178
-		local get_deus_run_controller = Managers.mechanism:game_mechanism():get_deus_run_controller()
-		local get_own_peer_id = get_deus_run_controller._run_state:get_own_peer_id()
+		local deus_run_controller = Managers.mechanism:game_mechanism():get_deus_run_controller()
+		local own_peer_id = deus_run_controller._run_state:get_own_peer_id()
 
-		get_deus_run_controller:_add_soft_currency_to_peer(get_own_peer_id, 10000)
+		deus_run_controller:_add_soft_currency_to_peer(own_peer_id, 10000)
 	end
 }
 
@@ -10097,19 +10266,21 @@ local tbl_235 = {
 	description = "Adds a random boon, the type obtained from boon shrines",
 	setting_name = "add_random_boon",
 	category = "Deus",
-	func = function (arg_179_0, arg_179_1)
+	func = function (options, index)
 		-- function 179
-		local get_deus_run_controller = Managers.mechanism:game_mechanism():get_deus_run_controller()
-		local var_179_1 = get_deus_run_controller:generate_random_power_ups(DeusPowerUpSettings.weapon_chest_choice_amount, DeusPowerUpAvailabilityTypes.weapon_chest, math.random_seed())[1]
-		local local_player_id = Managers.player:local_player():local_player_id()
+		local deus_run_controller = Managers.mechanism:game_mechanism():get_deus_run_controller()
+		local power_ups = deus_run_controller:generate_random_power_ups(DeusPowerUpSettings.weapon_chest_choice_amount, DeusPowerUpAvailabilityTypes.weapon_chest, math.random_seed())
+		local power_up = power_ups[1]
+		local local_player = Managers.player:local_player()
+		local local_player_id = local_player:local_player_id()
 
-		get_deus_run_controller:add_power_ups({
-			var_179_1
+		deus_run_controller:add_power_ups({
+			power_up
 		}, local_player_id, true)
 		Managers.state.event:trigger("present_rewards", {
 			{
 				type = "deus_power_up",
-				power_up = var_179_1
+				power_up = power_up
 			}
 		})
 	end
@@ -10122,64 +10293,65 @@ local tbl_236 = {
 	setting_name = "Activate all Deus PowerUps",
 	category = "Deus",
 	item_source = {},
-	func = function (arg_180_0, arg_180_1)
+	func = function (options, index)
 		-- function 180
 		if not Managers.mechanism:current_mechanism_name() == "deus" then
 			return
 		end
 
-		local get_deus_run_controller = Managers.mechanism:game_mechanism():get_deus_run_controller()
+		local mechanism = Managers.mechanism:game_mechanism()
+		local deus_run_controller = mechanism:get_deus_run_controller()
 
-		if not get_deus_run_controller then
+		if not deus_run_controller then
 			return
 		end
 
 		local local_player = Managers.player:local_player()
 		local local_player_id = local_player:local_player_id()
-		local network_id = local_player:network_id()
-		local get_player_power_ups = get_deus_run_controller:get_player_power_ups(network_id, local_player_id)
-		local num = 50
-		local num_2 = 0
-		local tbl = {}
+		local local_peer_id = local_player:network_id()
+		local existing_power_ups = deus_run_controller:get_player_power_ups(local_peer_id, local_player_id)
+		local stride = 50
+		local num = 0
+		local power_ups = {}
 
-		for k, v in pairs(DeusPowerUps) do
-			for k_2, v_2 in pairs(v) do
-				local var_180_8
+		for rarity, power_ups_for_rarity in pairs(DeusPowerUps) do
+			for power_up_name, power_up in pairs(power_ups_for_rarity) do
+				local already_added
 
-				for i, v_3 in ipairs(get_player_power_ups) do
-					if v_3.name == k_2 then
-						var_180_8 = true
-
-						break
-					end
-				end
-
-				local mutators = v_2.mutators
-				local is_empty = table.is_empty(mutators)
-
-				for i6 = 1, #mutators do
-					if not Managers.state.game_mode:has_activated_mutator(mutators[i6]) then
-						is_empty = true
+				for _, existing_power_up in ipairs(existing_power_ups) do
+					if existing_power_up.name == power_up_name then
+						already_added = true
 
 						break
 					end
 				end
 
-				if not (not is_empty and var_180_8) then
-					num_2 = num_2 + 1
+				local mutators = power_up.mutators
+				local mutator_valid = table.is_empty(mutators)
 
-					local ceil = math.ceil(num_2 / num)
-					local var_180_12 = tbl[ceil]
+				for i = 1, #mutators do
+					if Managers.state.game_mode:has_activated_mutator(mutators[i]) then
+						mutator_valid = true
 
-					var_180_12 = var_180_12 or {}
-					tbl[ceil] = var_180_12
-					tbl[ceil][#tbl[ceil] + 1] = DeusPowerUpUtils.generate_specific_power_up(k_2, k)
+						break
+					end
+				end
+
+				if mutator_valid and not already_added then
+					num = num + 1
+
+					local idx = math.ceil(num / stride)
+					local var_180_0 = power_ups[idx]
+
+					var_180_0 = not not var_180_0 or not not {}
+					power_ups[idx] = var_180_0
+					power_ups[idx][#power_ups[idx] + 1] = DeusPowerUpUtils.generate_specific_power_up(power_up_name, rarity)
 				end
 			end
 		end
 
-		for i7 = 1, #tbl do
-			get_deus_run_controller:add_power_ups(tbl[i7], local_player_id, false)
+		for i = 1, #power_ups do
+			deus_run_controller:add_power_ups(power_ups[i], local_player_id, false)
 		end
 	end
 }
@@ -10191,20 +10363,20 @@ local tbl_237 = {
 	setting_name = "Draw Weapon Position",
 	category = "Weapons",
 	item_source = {},
-	load_items_source_func = function (arg_181_0)
+	load_items_source_func = function (options)
 		-- function 181
-		table.clear(arg_181_0)
-		table.insert(arg_181_0, "all")
-		table.insert(arg_181_0, "right_hand")
-		table.insert(arg_181_0, "left_hand")
-		table.insert(arg_181_0, "right_hand_ammo")
-		table.insert(arg_181_0, "left_hand_ammo")
-		table.insert(arg_181_0, "[clear value]")
-		table.sort(arg_181_0)
+		table.clear(options)
+		table.insert(options, "all")
+		table.insert(options, "right_hand")
+		table.insert(options, "left_hand")
+		table.insert(options, "right_hand_ammo")
+		table.insert(options, "left_hand_ammo")
+		table.insert(options, "[clear value]")
+		table.sort(options)
 	end,
-	func = function (self, arg_182_1)
+	func = function (options, index)
 		-- function 182
-		script_data.debug_draw_weapon_position = self[arg_182_1]
+		script_data.debug_draw_weapon_position = options[index]
 	end
 }
 
@@ -10260,17 +10432,17 @@ local tbl_243 = {
 	category = "Deus",
 	description = "override the run progress when using this menu's load level. 900 == 0.9 ",
 	item_source = {},
-	load_items_source_func = function (self)
+	load_items_source_func = function (options)
 		-- function 183
-		table.clear(self)
+		table.clear(options)
 
 		for i = 0, 999, 10 do
-			self[#self + 1] = i
+			options[#options + 1] = i
 		end
 
-		table.sort(self)
+		table.sort(options)
 
-		self[#self + 1] = "[clear value]"
+		options[#options + 1] = "[clear value]"
 	end
 }
 
@@ -10281,17 +10453,17 @@ local tbl_244 = {
 	category = "Deus",
 	description = "Force a default graph seed",
 	item_source = {},
-	load_items_source_func = function (self)
+	load_items_source_func = function (options)
 		-- function 184
-		table.clear(self)
+		table.clear(options)
 
-		for k, v in pairs(DeusDefaultGraphs) do
-			self[#self + 1] = k
+		for key, _ in pairs(DeusDefaultGraphs) do
+			options[#options + 1] = key
 		end
 
-		self[#self + 1] = "[clear value]"
+		options[#options + 1] = "[clear value]"
 
-		table.sort(self)
+		table.sort(options)
 	end
 }
 
@@ -10302,17 +10474,17 @@ local tbl_245 = {
 	category = "Deus",
 	description = "Force a deus journey",
 	item_source = {},
-	load_items_source_func = function (self)
+	load_items_source_func = function (options)
 		-- function 185
-		table.clear(self)
+		table.clear(options)
 
-		for k, v in pairs(AvailableJourneyOrder) do
-			self[#self + 1] = v
+		for _, val in pairs(AvailableJourneyOrder) do
+			options[#options + 1] = val
 		end
 
-		self[#self + 1] = "[clear value]"
+		options[#options + 1] = "[clear value]"
 
-		table.sort(self)
+		table.sort(options)
 	end
 }
 
@@ -10323,17 +10495,17 @@ local tbl_246 = {
 	category = "Deus",
 	description = "Force a deus dominant god",
 	item_source = {},
-	load_items_source_func = function (self)
+	load_items_source_func = function (options)
 		-- function 186
-		table.clear(self)
+		table.clear(options)
 
-		for k, v in pairs(DEUS_GOD_INDEX) do
-			self[#self + 1] = v
+		for _, val in pairs(DEUS_GOD_INDEX) do
+			options[#options + 1] = val
 		end
 
-		self[#self + 1] = "[clear value]"
+		options[#options + 1] = "[clear value]"
 
-		table.sort(self)
+		table.sort(options)
 	end
 }
 
@@ -10483,19 +10655,19 @@ local tbl_259 = {
 		4000,
 		5000
 	},
-	custom_item_source_order = function (arg_188_0, arg_188_1)
+	custom_item_source_order = function (item_source, options)
 		-- function 188
-		for i, v in ipairs(arg_188_0) do
-			local var_188_0 = v
+		for _, v in ipairs(item_source) do
+			local option = v
 
-			arg_188_1[#arg_188_1 + 1] = var_188_0
+			options[#options + 1] = option
 		end
 	end,
-	func = function (self, arg_189_1)
+	func = function (options, index)
 		-- function 189
-		local var_189_0 = self[arg_189_1]
+		local option = options[index]
 
-		Managers.state.crafting:debug_set_crafted_items_stat(var_189_0)
+		Managers.state.crafting:debug_set_crafted_items_stat(option)
 	end
 }
 
@@ -10531,19 +10703,19 @@ local tbl_260 = {
 		4000,
 		5000
 	},
-	custom_item_source_order = function (arg_190_0, arg_190_1)
+	custom_item_source_order = function (item_source, options)
 		-- function 190
-		for i, v in ipairs(arg_190_0) do
-			local var_190_0 = v
+		for _, v in ipairs(item_source) do
+			local option = v
 
-			arg_190_1[#arg_190_1 + 1] = var_190_0
+			options[#options + 1] = option
 		end
 	end,
-	func = function (self, arg_191_1)
+	func = function (options, index)
 		-- function 191
-		local var_191_0 = self[arg_191_1]
+		local option = options[index]
 
-		Managers.state.crafting:debug_set_salvaged_items_stat(var_191_0)
+		Managers.state.crafting:debug_set_salvaged_items_stat(option)
 	end
 }
 
@@ -10571,9 +10743,11 @@ local tbl_263 = {
 	description = "starts the round",
 	setting_name = "start_player_hosted_round",
 	category = "Versus",
-	func = function (arg_192_0, arg_192_1)
+	func = function (options, index)
 		-- function 192
-		Managers.state.game_mode:round_started()
+		local game_mode_manager = Managers.state.game_mode
+
+		game_mode_manager:round_started()
 		printf("Round started!")
 	end
 }
@@ -10584,7 +10758,7 @@ local tbl_264 = {
 	description = "Trigger boss terror event",
 	setting_name = "inject_playable_boss_into_main_path",
 	category = "Versus",
-	func = function (arg_193_0, arg_193_1)
+	func = function (options, index)
 		-- function 193
 		print("Playable boss patrols injected into the main path now")
 		Managers.state.conflict.level_analysis:inject_playable_boss_into_main_path()
@@ -10597,10 +10771,13 @@ local tbl_265 = {
 	description = "Trigger boss terror event",
 	setting_name = "trigger_playable_boss_event",
 	category = "Versus",
-	func = function (arg_194_0, arg_194_1)
+	func = function (options, index)
 		-- function 194
 		print("[DEBUG] Triggered Playable boss")
-		Managers.state.game_mode:game_mode():set_playable_boss_can_be_picked(true)
+
+		local game_mode = Managers.state.game_mode:game_mode()
+
+		game_mode:set_playable_boss_can_be_picked(true)
 	end
 }
 
@@ -10628,9 +10805,9 @@ local tbl_268 = {
 	description = "starts the round",
 	setting_name = "end_player_hosted_round",
 	category = "Versus",
-	func = function (arg_195_0, arg_195_1)
+	func = function (options, index)
 		-- function 195
-		if not Managers.level_transition_handler:in_hub_level() then
+		if Managers.level_transition_handler:in_hub_level() then
 			printf("Failed to end round - Match not started")
 
 			return false
@@ -10642,8 +10819,13 @@ local tbl_268 = {
 			return false
 		end
 
-		Managers.state.game_mode:round_started()
-		Managers.mechanism:game_mechanism():win_conditions():set_time(0)
+		local game_mode_manager = Managers.state.game_mode
+
+		game_mode_manager:round_started()
+
+		local win_conditions = Managers.mechanism:game_mechanism():win_conditions()
+
+		win_conditions:set_time(0)
 
 		DebugScreen.active = false
 
@@ -10664,183 +10846,185 @@ local tbl_269 = {
 
 tbl[585] = tbl_269
 
-local function fn_3(arg_196_0)
+local settings = tbl
+
+local function add_melee_preset(rarity)
 	-- function 196
 	return {
 		{
 			description = "Lists all items with functionality to add them to inventory.",
 			category = "Items",
-			setting_name = "Add Melee Items (" .. arg_196_0 .. ")",
+			setting_name = "Add Melee Items (" .. rarity .. ")",
 			item_source = {},
-			load_items_source_func = function (self)
+			load_items_source_func = function (options)
 				-- function 197
-				table.clear(self)
+				table.clear(options)
 
-				local ItemMasterList = ItemMasterList
+				local item_master_list = ItemMasterList
 
-				for k, v in pairs(ItemMasterList) do
-					if v.slot_type == "melee" then
-						self[#self + 1] = k
+				for key, item in pairs(item_master_list) do
+					if item.slot_type == "melee" then
+						options[#options + 1] = key
 					end
 				end
 
-				table.sort(self)
+				table.sort(options)
 			end,
-			func = function (self, arg_198_1)
+			func = function (options, index)
 				-- function 198
-				local get_interface = Managers.backend:get_interface("items")
-				local var_198_1 = self[arg_198_1]
+				local item_interface = Managers.backend:get_interface("items")
+				local item = options[index]
 
-				if not var_198_1 then
-					get_interface:award_item(var_198_1, nil, nil, arg_196_0)
+				if item then
+					item_interface:award_item(item, nil, nil, rarity)
 				end
 			end
 		}
 	}
 end
 
-local function fn_4(arg_199_0)
+local function add_ranged_preset(rarity)
 	-- function 199
 	return {
 		{
 			description = "Lists all items with functionality to add them to inventory.",
 			category = "Items",
-			setting_name = "Add Ranged Items (" .. arg_199_0 .. ")",
+			setting_name = "Add Ranged Items (" .. rarity .. ")",
 			item_source = {},
-			load_items_source_func = function (self)
+			load_items_source_func = function (options)
 				-- function 200
-				table.clear(self)
+				table.clear(options)
 
-				local ItemMasterList = ItemMasterList
+				local item_master_list = ItemMasterList
 
-				for k, v in pairs(ItemMasterList) do
-					if v.slot_type == "ranged" then
-						self[#self + 1] = k
+				for key, item in pairs(item_master_list) do
+					if item.slot_type == "ranged" then
+						options[#options + 1] = key
 					end
 				end
 
-				table.sort(self)
+				table.sort(options)
 			end,
-			func = function (self, arg_201_1)
+			func = function (options, index)
 				-- function 201
-				local get_interface = Managers.backend:get_interface("items")
-				local var_201_1 = self[arg_201_1]
+				local item_interface = Managers.backend:get_interface("items")
+				local item = options[index]
 
-				if not var_201_1 then
-					get_interface:award_item(var_201_1, nil, nil, arg_199_0)
+				if item then
+					item_interface:award_item(item, nil, nil, rarity)
 				end
 			end
 		}
 	}
 end
 
-local function fn_5(arg_202_0)
+local function add_ring_preset(rarity)
 	-- function 202
 	return {
 		{
 			description = "Lists all items with functionality to add them to inventory.",
 			category = "Items",
-			setting_name = "Add Ring Items (" .. arg_202_0 .. ")",
+			setting_name = "Add Ring Items (" .. rarity .. ")",
 			item_source = {},
-			load_items_source_func = function (self)
+			load_items_source_func = function (options)
 				-- function 203
-				table.clear(self)
+				table.clear(options)
 
-				local ItemMasterList = ItemMasterList
+				local item_master_list = ItemMasterList
 
-				for k, v in pairs(ItemMasterList) do
-					if v.slot_type == "ring" then
-						self[#self + 1] = k
+				for key, item in pairs(item_master_list) do
+					if item.slot_type == "ring" then
+						options[#options + 1] = key
 					end
 				end
 
-				table.sort(self)
+				table.sort(options)
 			end,
-			func = function (self, arg_204_1)
+			func = function (options, index)
 				-- function 204
-				local get_interface = Managers.backend:get_interface("items")
-				local var_204_1 = self[arg_204_1]
+				local item_interface = Managers.backend:get_interface("items")
+				local item = options[index]
 
-				if not var_204_1 then
-					get_interface:award_item(var_204_1, nil, nil, arg_202_0)
+				if item then
+					item_interface:award_item(item, nil, nil, rarity)
 				end
 			end
 		}
 	}
 end
 
-local function fn_6(arg_205_0)
+local function add_necklace_preset(rarity)
 	-- function 205
 	return {
 		{
 			no_nil = true,
 			description = "Lists all items with functionality to add them to inventory.",
 			category = "Items",
-			setting_name = "Add Necklace Items (" .. arg_205_0 .. ")",
+			setting_name = "Add Necklace Items (" .. rarity .. ")",
 			item_source = {},
-			load_items_source_func = function (self)
+			load_items_source_func = function (options)
 				-- function 206
-				table.clear(self)
+				table.clear(options)
 
-				local ItemMasterList = ItemMasterList
+				local item_master_list = ItemMasterList
 
-				for k, v in pairs(ItemMasterList) do
-					if v.slot_type == "necklace" then
-						self[#self + 1] = k
+				for key, item in pairs(item_master_list) do
+					if item.slot_type == "necklace" then
+						options[#options + 1] = key
 					end
 				end
 
-				table.sort(self)
+				table.sort(options)
 			end,
-			func = function (self, arg_207_1)
+			func = function (options, index)
 				-- function 207
-				local get_interface = Managers.backend:get_interface("items")
-				local var_207_1 = self[arg_207_1]
+				local item_interface = Managers.backend:get_interface("items")
+				local item = options[index]
 
-				if not var_207_1 then
-					get_interface:award_item(var_207_1, nil, nil, arg_205_0)
+				if item then
+					item_interface:award_item(item, nil, nil, rarity)
 				end
 			end
 		}
 	}
 end
 
-local function fn_7(arg_208_0)
+local function add_trinket_preset(rarity)
 	-- function 208
 	return {
 		{
 			description = "Lists all items with functionality to add them to inventory.",
 			category = "Items",
-			setting_name = "Add Trinket Items (" .. arg_208_0 .. ")",
+			setting_name = "Add Trinket Items (" .. rarity .. ")",
 			item_source = {},
-			load_items_source_func = function (self)
+			load_items_source_func = function (options)
 				-- function 209
-				table.clear(self)
+				table.clear(options)
 
-				local ItemMasterList = ItemMasterList
+				local item_master_list = ItemMasterList
 
-				for k, v in pairs(ItemMasterList) do
-					if v.slot_type == "trinket" then
-						self[#self + 1] = k
+				for key, item in pairs(item_master_list) do
+					if item.slot_type == "trinket" then
+						options[#options + 1] = key
 					end
 				end
 
-				table.sort(self)
+				table.sort(options)
 			end,
-			func = function (self, arg_210_1)
+			func = function (options, index)
 				-- function 210
-				local get_interface = Managers.backend:get_interface("items")
-				local var_210_1 = self[arg_210_1]
+				local item_interface = Managers.backend:get_interface("items")
+				local item = options[index]
 
-				if not var_210_1 then
-					get_interface:award_item(var_210_1, nil, nil, arg_208_0)
+				if item then
+					item_interface:award_item(item, nil, nil, rarity)
 				end
 			end
 		}
 	}
 end
 
-local tbl_270 = {
+local item_rarities = {
 	"plentiful",
 	"common",
 	"rare",
@@ -10848,126 +11032,132 @@ local tbl_270 = {
 	"unique"
 }
 
-for i, v in ipairs(tbl_270) do
-	table.append(tbl, fn_3(v))
+for _, rarity in ipairs(item_rarities) do
+	table.append(settings, add_melee_preset(rarity))
 end
 
-for i_2, v_2 in ipairs(tbl_270) do
-	table.append(tbl, fn_4(v_2))
+for _, rarity in ipairs(item_rarities) do
+	table.append(settings, add_ranged_preset(rarity))
 end
 
-for i_3, v_3 in ipairs(tbl_270) do
-	table.append(tbl, fn_5(v_3))
+for _, rarity in ipairs(item_rarities) do
+	table.append(settings, add_ring_preset(rarity))
 end
 
-for i_4, v_4 in ipairs(tbl_270) do
-	table.append(tbl, fn_6(v_4))
+for _, rarity in ipairs(item_rarities) do
+	table.append(settings, add_necklace_preset(rarity))
 end
 
-for i_5, v_5 in ipairs(tbl_270) do
-	table.append(tbl, fn_7(v_5))
+for _, rarity in ipairs(item_rarities) do
+	table.append(settings, add_trinket_preset(rarity))
 end
 
-local function fn_8(arg_211_0, arg_211_1)
+local function equip_preset(slot_type, rarity)
 	-- function 211
-	local function fn(self)
+	local function load_items_preset(options)
 		-- function 212
-		table.clear(self)
+		table.clear(options)
 
-		local local_player = Managers.player:local_player()
-		local profile_index = local_player:profile_index()
-		local var_212_2 = SPProfiles[profile_index]
-		local career_index = local_player:career_index()
-		local name = var_212_2.careers[career_index].name
-		local ItemMasterList = ItemMasterList
-		local get_interface = Managers.backend:get_interface("common")
+		local player_manager = Managers.player
+		local player = player_manager:local_player()
+		local profile_index = player:profile_index()
+		local profile = SPProfiles[profile_index]
+		local career_index = player:career_index()
+		local career_data = profile.careers[career_index]
+		local career_name = career_data.name
+		local item_master_list = ItemMasterList
+		local backend_common = Managers.backend:get_interface("common")
 
-		for k, v in pairs(ItemMasterList) do
-			if v.slot_type ~= arg_211_0 or not get_interface:can_wield(name, v) then
-				self[#self + 1] = k
+		for item_name, item_data in pairs(item_master_list) do
+			if item_data.slot_type == slot_type and backend_common:can_wield(career_name, item_data) then
+				options[#options + 1] = item_name
 			end
 		end
 
-		table.sort(self)
+		table.sort(options)
 	end
 
-	local function fn_2(self, arg_213_1)
+	local function equip_item_preset(options, index)
 		-- function 213
-		local var_213_0 = self[arg_213_1]
+		local item_name = options[index]
 
-		if not var_213_0 then
+		if not item_name then
 			return
 		end
 
-		local get_interface = Managers.backend:get_interface("items")
-		local get_item_from_key = get_interface:get_item_from_key(var_213_0)
+		local item_interface = Managers.backend:get_interface("items")
+		local item = item_interface:get_item_from_key(item_name)
 
-		if not get_item_from_key then
-			get_interface:award_item(var_213_0, nil, nil, arg_211_1)
+		if not item then
+			item_interface:award_item(item_name, nil, nil, rarity)
 
-			get_item_from_key = get_interface:get_item_from_key(var_213_0)
+			item = item_interface:get_item_from_key(item_name)
 		end
 
-		if not get_item_from_key then
+		if not item then
 			return
 		end
 
-		local var_213_3 = ItemMasterList[var_213_0]
-		local local_player = Managers.player:local_player()
-		local player_unit = local_player.player_unit
-		local extension = ScriptUnit.extension(player_unit, "inventory_system")
+		local item_data = ItemMasterList[item_name]
+		local player_manager = Managers.player
+		local player = player_manager:local_player()
+		local player_unit = player.player_unit
+		local inventory_extension = ScriptUnit.extension(player_unit, "inventory_system")
+		local resyncing_loadout = inventory_extension:resyncing_loadout()
 
-		if not extension:resyncing_loadout() then
+		if resyncing_loadout then
 			return
 		end
 
-		local backend_id = get_item_from_key.backend_id
-		local slot_type = var_213_3.slot_type
-		local slots_by_slot_index = InventorySettings.slots_by_slot_index
-		local var_213_10
+		local backend_id = item.backend_id
+		local slot_type = item_data.slot_type
+		local slots = InventorySettings.slots_by_slot_index
+		local slot_name
 
-		for k, v in pairs(slots_by_slot_index) do
-			if slot_type == v.type then
-				var_213_10 = v.name
+		for _, slot in pairs(slots) do
+			if slot_type == slot.type then
+				slot_name = slot.name
 
 				break
 			end
 		end
 
-		local profile_index = local_player:profile_index()
-		local var_213_12 = SPProfiles[profile_index]
-		local display_name = var_213_12.display_name
-		local get = Managers.backend:get_interface("hero_attributes"):get(display_name, "career")
-		local name = var_213_12.careers[get].name
+		local profile_index = player:profile_index()
+		local profile = SPProfiles[profile_index]
+		local display_name = profile.display_name
+		local hero_attributes = Managers.backend:get_interface("hero_attributes")
+		local career_index = hero_attributes:get(display_name, "career")
+		local career_data = profile.careers[career_index]
+		local career_name = career_data.name
 
-		BackendUtils.set_loadout_item(backend_id, name, var_213_10)
-		extension:create_equipment_in_slot(var_213_10, backend_id)
+		BackendUtils.set_loadout_item(backend_id, career_name, slot_name)
+		inventory_extension:create_equipment_in_slot(slot_name, backend_id)
 	end
 
 	return {
 		{
 			description = "Lists all items for current career to equip them, adding to inventory if necessary.",
 			category = "Items",
-			setting_name = "Equip " .. arg_211_0 .. " Items (" .. arg_211_1 .. ")",
+			setting_name = "Equip " .. slot_type .. " Items (" .. rarity .. ")",
 			item_source = {},
-			load_items_source_func = fn,
-			func = fn_2
+			load_items_source_func = load_items_preset,
+			func = equip_item_preset
 		}
 	}
 end
 
-for i_6, v_6 in ipairs(tbl_270) do
-	table.append(tbl, fn_8("melee", v_6))
+for _, rarity in ipairs(item_rarities) do
+	table.append(settings, equip_preset("melee", rarity))
 end
 
-for i_7, v_7 in ipairs(tbl_270) do
-	table.append(tbl, fn_8("ranged", v_7))
+for _, rarity in ipairs(item_rarities) do
+	table.append(settings, equip_preset("ranged", rarity))
 end
 
-local PLATFORM = PLATFORM
+local platform = PLATFORM
 
-if not IS_PS4 then
-	local tbl_271 = {
+if IS_PS4 then
+	local settings_ps4 = {
 		{
 			description = "Debug PSN Features",
 			is_boolean = true,
@@ -10976,55 +11166,55 @@ if not IS_PS4 then
 		}
 	}
 
-	table.append(tbl, tbl_271)
+	table.append(settings, settings_ps4)
 end
 
-if not IS_CONSOLE then
-	local tbl_272 = {
+if IS_CONSOLE then
+	local settings_console = {
 		{
 			setting_name = "Spawn/Unspawn",
 			description = "",
 			category = "Breed",
 			item_source = {},
-			load_items_source_func = function (self)
+			load_items_source_func = function (options)
 				-- function 214
-				table.clear(self)
+				table.clear(options)
 
-				self[1] = "Switch Breed"
-				self[2] = "Spawn Breed"
-				self[3] = "Spawn Group"
-				self[4] = "Spawn Horde"
-				self[5] = "Unspawn All Breed"
-				self[6] = "Unspawn Nearby Breed"
-				self[7] = "Unspawn Specials"
+				options[1] = "Switch Breed"
+				options[2] = "Spawn Breed"
+				options[3] = "Spawn Group"
+				options[4] = "Spawn Horde"
+				options[5] = "Unspawn All Breed"
+				options[6] = "Unspawn Nearby Breed"
+				options[7] = "Unspawn Specials"
 			end,
-			func = function (self, arg_215_1)
+			func = function (options, index)
 				-- function 215
-				local conflict = Managers.state.conflict
+				local conflict_director = Managers.state.conflict
 
-				if not conflict then
-					local var_215_1 = self[arg_215_1]
+				if conflict_director then
+					local selected_value = options[index]
 
-					if var_215_1 == "Switch Breed" then
-						local time = Managers.time:time("main")
+					if selected_value == "Switch Breed" then
+						local t = Managers.time:time("main")
 
-						conflict:debug_spawn_switch_breed(time)
-					elseif var_215_1 == "Spawn Breed" then
-						local time_2 = Managers.time:time("main")
+						conflict_director:debug_spawn_switch_breed(t)
+					elseif selected_value == "Spawn Breed" then
+						local t = Managers.time:time("main")
 
-						conflict:debug_spawn_breed(time_2)
-					elseif var_215_1 == "Spawn Group" then
-						local time_3 = Managers.time:time("main")
+						conflict_director:debug_spawn_breed(t)
+					elseif selected_value == "Spawn Group" then
+						local t = Managers.time:time("main")
 
-						conflict:debug_spawn_group(time_3)
-					elseif var_215_1 == "Spawn Horde" then
-						conflict:debug_spawn_horde()
-					elseif var_215_1 == "Unspawn All Breed" then
-						conflict:destroy_all_units()
-					elseif var_215_1 == "Unspawn Nearby Breed" then
-						conflict:destroy_close_units(nil, nil, 144)
-					elseif var_215_1 == "Unspawn Specials" then
-						conflict:destroy_specials()
+						conflict_director:debug_spawn_group(t)
+					elseif selected_value == "Spawn Horde" then
+						conflict_director:debug_spawn_horde()
+					elseif selected_value == "Unspawn All Breed" then
+						conflict_director:destroy_all_units()
+					elseif selected_value == "Unspawn Nearby Breed" then
+						conflict_director:destroy_close_units(nil, nil, 144)
+					elseif selected_value == "Unspawn Specials" then
+						conflict_director:destroy_specials()
 					end
 				end
 			end
@@ -11034,53 +11224,53 @@ if not IS_CONSOLE then
 			description = "",
 			category = "Time",
 			item_source = {},
-			load_items_source_func = function (self)
+			load_items_source_func = function (options)
 				-- function 216
-				table.clear(self)
+				table.clear(options)
 
-				self[1] = 1
-				self[2] = 50
-				self[3] = 100
-				self[4] = 200
+				options[1] = 1
+				options[2] = 50
+				options[3] = 100
+				options[4] = 200
 			end,
-			func = function (self, arg_217_1)
+			func = function (options, index)
 				-- function 217
-				local debug = Managers.state.debug
+				local debug_manager = Managers.state.debug
 
-				if not debug then
-					local var_217_1 = self[arg_217_1]
-					local find = table.find(debug.time_scale_list, var_217_1)
+				if debug_manager then
+					local time_scale_value = options[index]
+					local time_scale_index = table.find(debug_manager.time_scale_list, time_scale_value)
 
-					assert(find, "[DebugScreen] Selected time scale not found in Managers.state.debug.time_scale_list")
-					debug:set_time_scale(find)
+					assert(time_scale_index, "[DebugScreen] Selected time scale not found in Managers.state.debug.time_scale_list")
+					debug_manager:set_time_scale(time_scale_index)
 				end
 			end
 		}
 	}
 
-	table.append(tbl, tbl_272)
+	table.append(settings, settings_console)
 end
 
-for k, v_8 in pairs(tbl) do
-	if not v_8.preset then
-		for k_2, v_9 in pairs(v_8.preset) do
-			v_8.description = string.format("%s¤ %s = %s \n", v_8.description, k_2, tostring(v_9))
+for _, settings_value in pairs(settings) do
+	if settings_value.preset then
+		for preset_key, preset_value in pairs(settings_value.preset) do
+			settings_value.description = string.format("%s¤ %s = %s \n", settings_value.description, preset_key, tostring(preset_value))
 		end
 	end
 end
 
-local tbl_273 = {
-	visualize_sound_occlusion = function (arg_218_0)
+local callbacks = {
+	visualize_sound_occlusion = function (option)
 		-- function 218
 		World.visualize_sound_occlusion()
 	end,
-	enable_chain_constraints = function (arg_219_0)
+	enable_chain_constraints = function (option)
 		-- function 219
-		World.enable_chain_constraints(arg_219_0)
+		World.enable_chain_constraints(option)
 	end,
-	update_using_luajit = function (arg_220_0)
+	update_using_luajit = function (option)
 		-- function 220
-		if not script_data.luajit_disabled then
+		if script_data.luajit_disabled then
 			jit.off()
 			print("lua jit is disabled")
 		else
@@ -11088,9 +11278,9 @@ local tbl_273 = {
 			print("lua jit is enabled")
 		end
 	end,
-	enable_navigation_visual_debug = function (arg_221_0)
+	enable_navigation_visual_debug = function (option)
 		-- function 221
-		if not arg_221_0 and VISUAL_DEBUGGING_ENABLED or not Managers.state.entity then
+		if option and not VISUAL_DEBUGGING_ENABLED and Managers.state.entity then
 			VISUAL_DEBUGGING_ENABLED = true
 
 			local nav_world = Managers.state.entity:system("ai_system"):nav_world()
@@ -11098,15 +11288,16 @@ local tbl_273 = {
 			GwNavWorld.init_visual_debug_server(nav_world, 4888)
 		end
 	end,
-	disable_outlines = function (arg_222_0)
+	disable_outlines = function (option)
 		-- function 222
-		if not Managers.state and not Managers.state.entity then
-			Managers.state.entity:system("outline_system"):set_disabled(arg_222_0)
+		if Managers.state and Managers.state.entity then
+			Managers.state.entity:system("outline_system"):set_disabled(option)
 		end
 	end
 }
-
-return {
-	settings = tbl,
-	callbacks = tbl_273
+local data = {
+	settings = settings,
+	callbacks = callbacks
 }
+
+return data

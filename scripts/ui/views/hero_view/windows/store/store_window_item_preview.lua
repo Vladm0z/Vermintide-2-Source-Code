@@ -2,91 +2,94 @@
 
 require("scripts/ui/views/menu_world_previewer")
 
-local var_0_0 = local_require("scripts/ui/views/hero_view/windows/store/definitions/store_window_item_preview_definitions")
-local dlc_top_widgets = var_0_0.dlc_top_widgets
-local dlc_bottom_widgets = var_0_0.dlc_bottom_widgets
-local item_widgets = var_0_0.item_widgets
-local top_widgets = var_0_0.top_widgets
-local bottom_widgets = var_0_0.bottom_widgets
-local scenegraph_definition = var_0_0.scenegraph_definition
-local animation_definitions = var_0_0.animation_definitions
-local loading_widgets = var_0_0.loading_widgets
-local create_dlc_entry_definition = var_0_0.create_dlc_entry_definition
-local generic_input_actions = var_0_0.generic_input_actions
-local num = 10
-local num_2 = 800
-local num_3 = 140
-local str = "gui/1080p/single_textures/generic/transparent_placeholder_texture"
-local flag = false
+local definitions = local_require("scripts/ui/views/hero_view/windows/store/definitions/store_window_item_preview_definitions")
+local dlc_top_widget_definitions = definitions.dlc_top_widgets
+local dlc_bottom_widget_definitions = definitions.dlc_bottom_widgets
+local item_widgets_definitions = definitions.item_widgets
+local top_widget_definitions = definitions.top_widgets
+local bottom_widget_definitions = definitions.bottom_widgets
+local scenegraph_definition = definitions.scenegraph_definition
+local animation_definitions = definitions.animation_definitions
+local loading_widget_definitions = definitions.loading_widgets
+local create_dlc_entry_definition = definitions.create_dlc_entry_definition
+local generic_input_actions = definitions.generic_input_actions
+local LIST_SPACING = 10
+local LIST_MAX_WIDTH = 800
+local CONSOLE_PRICE_WIDTH = 140
+local PRODUCT_PLACEHOLDER_TEXTURE_PATH = "gui/1080p/single_textures/generic/transparent_placeholder_texture"
+local DO_RELOAD = false
 
 StoreWindowItemPreview = class(StoreWindowItemPreview)
 StoreWindowItemPreview.NAME = "StoreWindowItemPreview"
 
-StoreWindowItemPreview.on_enter = function (self, arg_1_1, arg_1_2)
+StoreWindowItemPreview.on_enter = function (self, params, offset)
 	-- function 1
 	print("[HeroViewWindow] Enter Substate StoreWindowItemPreview")
 
-	self._params = arg_1_1
-	self._parent = arg_1_1.parent
-	self._ingame_ui_context = arg_1_1.ingame_ui_context
+	self._params = params
+	self._parent = params.parent
 
-	local get_renderers, var_1_1 = self._parent:get_renderers()
+	local ingame_ui_context = params.ingame_ui_context
 
-	self._ui_renderer = get_renderers
-	self._ui_top_renderer = var_1_1
+	self._ingame_ui_context = ingame_ui_context
+
+	local ui_renderer, ui_top_renderer = self._parent:get_renderers()
+
+	self._ui_renderer = ui_renderer
+	self._ui_top_renderer = ui_top_renderer
 	self._render_settings = {
 		snap_pixel_positions = true
 	}
-	self.hero_name = arg_1_1.hero_name
-	self.career_index = arg_1_1.career_index
-	self._layout_settings = arg_1_1.layout_settings
+	self.hero_name = params.hero_name
+	self.career_index = params.career_index
+	self._layout_settings = params.layout_settings
 	self._animations = {}
 	self._ui_animations = {}
 
-	self:_create_ui_elements(arg_1_1, arg_1_2)
+	self:_create_ui_elements(params, offset)
 	self:_start_transition_animation("on_enter")
 
-	local num = scenegraph_definition.title_text.size[1] + 50
+	local title_edge_length = scenegraph_definition.title_text.size[1] + 50
 
-	self:_set_title_edge_length(num, 0.01)
+	self:_set_title_edge_length(title_edge_length, 0.01)
 
 	self._current_generic_input_action = nil
 	self._required_dlcs = {}
 	self._item_currency_settings = DLCSettings.store.currency_ui_settings
 end
 
-StoreWindowItemPreview._set_window_expanded = function (self, arg_2_1)
+StoreWindowItemPreview._set_window_expanded = function (self, expand)
 	-- function 2
-	local num = scenegraph_definition.title_text.size[1] + 50
+	local title_edge_length = scenegraph_definition.title_text.size[1] + 50
 
-	if not arg_2_1 then
+	if expand then
 		self:_start_transition_animation("expand")
 		self:_set_title_edge_length(0, 0.3)
 	else
 		self:_start_transition_animation("collapse")
-		self:_set_title_edge_length(num, 0.3)
+		self:_set_title_edge_length(title_edge_length, 0.3)
 	end
 
 	local details_button = self._item_widgets_by_name.details_button
 
 	details_button.content.button_hotspot.is_selected = not details_button.content.button_hotspot.is_selected
-	self._expanded = arg_2_1
+	self._expanded = expand
 end
 
-StoreWindowItemPreview._start_transition_animation = function (self, arg_3_1)
+StoreWindowItemPreview._start_transition_animation = function (self, animation_name)
 	-- function 3
-	local tbl = {
+	local params = {
 		render_settings = self._render_settings
 	}
-	local _top_widgets_by_name = self._top_widgets_by_name
-	local start_animation = self._ui_animator:start_animation(arg_3_1, _top_widgets_by_name, scenegraph_definition, tbl)
+	local widgets = self._top_widgets_by_name
+	local anim_id = self._ui_animator:start_animation(animation_name, widgets, scenegraph_definition, params)
 
-	self._animations[arg_3_1] = start_animation
+	self._animations[animation_name] = anim_id
 end
 
-StoreWindowItemPreview._create_viewport_definition = function (arg_4_0)
+StoreWindowItemPreview._create_viewport_definition = function (self)
 	-- function 4
-	local str = "environment/ui_store_preview"
+	local shading_environment = "environment/ui_store_preview"
 
 	return {
 		scenegraph_id = "viewport",
@@ -100,7 +103,7 @@ StoreWindowItemPreview._create_viewport_definition = function (arg_4_0)
 				level_name = "levels/ui_store_preview/world",
 				enable_sub_gui = false,
 				fov = 65,
-				shading_environment = str,
+				shading_environment = shading_environment,
 				object_sets = LevelResource.object_set_names("levels/ui_store_preview/world"),
 				camera_position = {
 					0,
@@ -122,9 +125,9 @@ StoreWindowItemPreview._create_viewport_definition = function (arg_4_0)
 	}
 end
 
-StoreWindowItemPreview._create_ui_elements = function (self, arg_5_1, arg_5_2)
+StoreWindowItemPreview._create_ui_elements = function (self, params, offset)
 	-- function 5
-	if not self._viewport_widget then
+	if self._viewport_widget then
 		UIWidget.destroy(self._ui_renderer, self._viewport_widget)
 
 		self._viewport_widget = nil
@@ -132,131 +135,131 @@ StoreWindowItemPreview._create_ui_elements = function (self, arg_5_1, arg_5_2)
 
 	self._ui_scenegraph = UISceneGraph.init_scenegraph(scenegraph_definition)
 
-	local tbl = {}
-	local tbl_2 = {}
+	local dlc_top_widgets = {}
+	local dlc_top_widgets_by_name = {}
 
-	for k, v in pairs(dlc_top_widgets) do
-		local var_5_2 = UIWidget.init(v)
+	for name, widget_definition in pairs(dlc_top_widget_definitions) do
+		local widget = UIWidget.init(widget_definition)
 
-		tbl[#tbl + 1] = var_5_2
-		tbl_2[k] = var_5_2
+		dlc_top_widgets[#dlc_top_widgets + 1] = widget
+		dlc_top_widgets_by_name[name] = widget
 	end
 
-	self._dlc_top_widgets = tbl
-	self._dlc_top_widgets_by_name = tbl_2
+	self._dlc_top_widgets = dlc_top_widgets
+	self._dlc_top_widgets_by_name = dlc_top_widgets_by_name
 
-	local tbl_3 = {}
-	local tbl_4 = {}
+	local dlc_bottom_widgets = {}
+	local dlc_bottom_widgets_by_name = {}
 
-	for k_2, v_2 in pairs(dlc_bottom_widgets) do
-		local var_5_5 = UIWidget.init(v_2)
+	for name, widget_definition in pairs(dlc_bottom_widget_definitions) do
+		local widget = UIWidget.init(widget_definition)
 
-		tbl_3[#tbl_3 + 1] = var_5_5
-		tbl_4[k_2] = var_5_5
+		dlc_bottom_widgets[#dlc_bottom_widgets + 1] = widget
+		dlc_bottom_widgets_by_name[name] = widget
 	end
 
-	self._dlc_bottom_widgets = tbl_3
-	self._dlc_bottom_widgets_by_name = tbl_4
+	self._dlc_bottom_widgets = dlc_bottom_widgets
+	self._dlc_bottom_widgets_by_name = dlc_bottom_widgets_by_name
 
-	local tbl_5 = {}
-	local tbl_6 = {}
+	local item_widgets = {}
+	local item_widgets_by_name = {}
 
-	for k_3, v_3 in pairs(item_widgets) do
-		local var_5_8 = UIWidget.init(v_3)
+	for name, widget_definition in pairs(item_widgets_definitions) do
+		local widget = UIWidget.init(widget_definition)
 
-		tbl_5[#tbl_5 + 1] = var_5_8
-		tbl_6[k_3] = var_5_8
+		item_widgets[#item_widgets + 1] = widget
+		item_widgets_by_name[name] = widget
 	end
 
-	self._item_widgets = tbl_5
-	self._item_widgets_by_name = tbl_6
+	self._item_widgets = item_widgets
+	self._item_widgets_by_name = item_widgets_by_name
 
-	local tbl_7 = {}
-	local tbl_8 = {}
+	local bottom_widgets = {}
+	local bottom_widgets_by_name = {}
 
-	for k_4, v_4 in pairs(bottom_widgets) do
-		local var_5_11 = UIWidget.init(v_4)
+	for name, widget_definition in pairs(bottom_widget_definitions) do
+		local widget = UIWidget.init(widget_definition)
 
-		tbl_7[#tbl_7 + 1] = var_5_11
-		tbl_8[k_4] = var_5_11
+		bottom_widgets[#bottom_widgets + 1] = widget
+		bottom_widgets_by_name[name] = widget
 	end
 
-	self._bottom_widgets = tbl_7
-	self._bottom_widgets_by_name = tbl_8
+	self._bottom_widgets = bottom_widgets
+	self._bottom_widgets_by_name = bottom_widgets_by_name
 
-	local tbl_9 = {}
-	local tbl_10 = {}
+	local top_widgets = {}
+	local top_widgets_by_name = {}
 
-	for k_5, v_5 in pairs(top_widgets) do
-		local var_5_14 = UIWidget.init(v_5)
+	for name, widget_definition in pairs(top_widget_definitions) do
+		local widget = UIWidget.init(widget_definition)
 
-		tbl_9[#tbl_9 + 1] = var_5_14
-		tbl_10[k_5] = var_5_14
+		top_widgets[#top_widgets + 1] = widget
+		top_widgets_by_name[name] = widget
 	end
 
-	self._top_widgets = tbl_9
-	self._top_widgets_by_name = tbl_10
+	self._top_widgets = top_widgets
+	self._top_widgets_by_name = top_widgets_by_name
 
-	local tbl_11 = {}
-	local tbl_12 = {}
+	local loading_widgets = {}
+	local loading_widgets_by_name = {}
 
-	for k_6, v_6 in pairs(loading_widgets) do
-		local var_5_17 = UIWidget.init(v_6)
+	for name, widget_definition in pairs(loading_widget_definitions) do
+		local widget = UIWidget.init(widget_definition)
 
-		tbl_11[#tbl_11 + 1] = var_5_17
-		tbl_12[k_6] = var_5_17
+		loading_widgets[#loading_widgets + 1] = widget
+		loading_widgets_by_name[name] = widget
 	end
 
-	self._loading_widgets = tbl_11
-	self._loading_widgets_by_name = tbl_12
+	self._loading_widgets = loading_widgets
+	self._loading_widgets_by_name = loading_widgets_by_name
 
 	UIRenderer.clear_scenegraph_queue(self._ui_renderer)
 
 	self._ui_animator = UIAnimator:new(self._ui_scenegraph, animation_definitions)
 
-	if not arg_5_2 then
-		local local_position = self._ui_scenegraph.window.local_position
+	if offset then
+		local window_position = self._ui_scenegraph.window.local_position
 
-		local_position[1] = local_position[1] + arg_5_2[1]
-		local_position[2] = local_position[2] + arg_5_2[2]
-		local_position[3] = local_position[3] + arg_5_2[3]
+		window_position[1] = window_position[1] + offset[1]
+		window_position[2] = window_position[2] + offset[2]
+		window_position[3] = window_position[3] + offset[3]
 	end
 
 	self._viewport_widget_definition = self:_create_viewport_definition()
 end
 
-StoreWindowItemPreview.on_exit = function (self, arg_6_1, arg_6_2)
+StoreWindowItemPreview.on_exit = function (self, params, force_unload)
 	-- function 6
 	print("[HeroViewWindow] Exit Substate StoreWindowItemPreview")
 
 	self._ui_animator = nil
 	self._has_exited = true
 
-	self:_destroy_dlc_product_widgets(arg_6_2)
+	self:_destroy_dlc_product_widgets(force_unload)
 	self:_destroy_previewers()
 
-	if not self._viewport_widget then
+	if self._viewport_widget then
 		UIWidget.destroy(self._ui_renderer, self._viewport_widget)
 
 		self._viewport_widget = nil
 	end
 end
 
-StoreWindowItemPreview.update = function (self, arg_7_1, arg_7_2)
+StoreWindowItemPreview.update = function (self, dt, t)
 	-- function 7
-	if not flag then
-		flag = false
+	if DO_RELOAD then
+		DO_RELOAD = false
 
 		self:_create_ui_elements()
 	end
 
-	local _dupe_warning_popup_id = self._dupe_warning_popup_id
+	local dupe_warning_popup_id = self._dupe_warning_popup_id
 
-	if not _dupe_warning_popup_id then
-		local query_result = Managers.popup:query_result(_dupe_warning_popup_id)
+	if dupe_warning_popup_id then
+		local result = Managers.popup:query_result(dupe_warning_popup_id)
 
-		if not query_result then
-			if query_result == "yes" then
+		if result then
+			if result == "yes" then
 				self._parent:product_purchase_request(self._selected_product)
 			end
 
@@ -264,13 +267,13 @@ StoreWindowItemPreview.update = function (self, arg_7_1, arg_7_2)
 		end
 	end
 
-	local _missing_required_dlc_popup_id = self._missing_required_dlc_popup_id
+	local missing_required_dlc_popup_id = self._missing_required_dlc_popup_id
 
-	if not _missing_required_dlc_popup_id then
-		local query_result_2 = Managers.popup:query_result(_missing_required_dlc_popup_id)
+	if missing_required_dlc_popup_id then
+		local result = Managers.popup:query_result(missing_required_dlc_popup_id)
 
-		if not query_result_2 then
-			if query_result_2 == "yes" then
+		if result then
+			if result == "yes" then
 				self._parent:product_purchase_request(self._selected_product)
 			end
 
@@ -278,58 +281,60 @@ StoreWindowItemPreview.update = function (self, arg_7_1, arg_7_2)
 		end
 	end
 
-	self:_update_animations(arg_7_1)
+	self:_update_animations(dt)
 	self:_sync_layout_path()
 
-	if not self._selected_product then
-		local window_input_service = self._parent:window_input_service()
-		local _handle_input, var_7_6 = self:_handle_input(window_input_service, arg_7_1, arg_7_2)
+	if self._selected_product then
+		local input_service = self._parent:window_input_service()
+		local input_handled, input_hovered = self:_handle_input(input_service, dt, t)
 
-		if not self._world_previewer then
-			local input_blocked = self._parent:input_blocked()
+		if self._world_previewer then
+			local parent = self._parent
+			local input_disabled = parent:input_blocked()
 
-			self._world_previewer:update(arg_7_1, arg_7_2, input_blocked)
+			self._world_previewer:update(dt, t, input_disabled)
 		end
 
-		if not self._item_previewer then
+		if self._item_previewer then
 			local viewport_button = self._top_widgets_by_name.viewport_button
-			local _is_button_hover = self:_is_button_hover(viewport_button)
-			local is_device_active = Managers.input:is_device_active("gamepad")
-			local flag_2 = not not _handle_input or not not var_7_6 or is_device_active or _is_button_hover
+			local is_hover = self:_is_button_hover(viewport_button)
+			local gamepad_active = Managers.input:is_device_active("gamepad")
+			local allow_preview_input = not input_handled and not input_hovered and not not gamepad_active or not not is_hover
 
-			self._item_previewer:update(arg_7_1, arg_7_2, not flag_2 and window_input_service)
+			self._item_previewer:update(dt, t, not not allow_preview_input and not not input_service)
 		end
 	end
 end
 
-StoreWindowItemPreview._register_object_sets = function (self, arg_8_1, arg_8_2)
+StoreWindowItemPreview._register_object_sets = function (self, viewport_widget, viewport_definition)
 	-- function 8
-	local viewport = arg_8_2.style.viewport
-	local style = arg_8_1.style
-	local content = arg_8_1.content
-	local var_8_3 = arg_8_1.element.pass_data[1]
-	local level_name = viewport.level_name
-	local tbl = {}
-	local object_set_names = LevelResource.object_set_names(level_name)
+	local viewport_definition_style = viewport_definition.style.viewport
+	local viewport_widget_style = viewport_widget.style
+	local viewport_widget_content = viewport_widget.content
+	local viewport_widget_element = viewport_widget.element
+	local pass_data = viewport_widget_element.pass_data[1]
+	local level_name = viewport_definition_style.level_name
+	local object_sets = {}
+	local available_level_sets = LevelResource.object_set_names(level_name)
 
-	for i, v in ipairs(object_set_names) do
-		tbl[v] = {
+	for _, set_name in ipairs(available_level_sets) do
+		object_sets[set_name] = {
 			set_enabled = true,
-			units = LevelResource.unit_indices_in_object_set(level_name, v)
+			units = LevelResource.unit_indices_in_object_set(level_name, set_name)
 		}
 	end
 
-	content.object_set_data = {
-		world = var_8_3.world,
-		level = var_8_3.level,
-		object_sets = tbl,
+	viewport_widget_content.object_set_data = {
+		world = pass_data.world,
+		level = pass_data.level,
+		object_sets = object_sets,
 		level_name = level_name
 	}
 
 	self:_show_object_set(nil, true)
 end
 
-StoreWindowItemPreview._show_object_set = function (self, arg_9_1, arg_9_2)
+StoreWindowItemPreview._show_object_set = function (self, object_set_name, force_disable)
 	-- function 9
 	if not self._viewport_widget then
 		print("[StoreWindowItemPreview:show_object_set] Viewport not initiated")
@@ -337,108 +342,112 @@ StoreWindowItemPreview._show_object_set = function (self, arg_9_1, arg_9_2)
 		return
 	end
 
-	local object_set_data = self._viewport_widget.content.object_set_data
+	local viewport_widget_content = self._viewport_widget.content
+	local object_set_data = viewport_widget_content.object_set_data
 	local world = object_set_data.world
 	local level = object_set_data.level
 	local level_name = object_set_data.level_name
 	local object_sets = object_set_data.object_sets
 
-	if not (object_sets[arg_9_1] or arg_9_2) then
-		print(string.format("[StoreWindowItemPreview:show_object_set] No object set called %q in level %q", arg_9_1, level_name))
+	if not object_sets[object_set_name] and not force_disable then
+		print(string.format("[StoreWindowItemPreview:show_object_set] No object set called %q in level %q", object_set_name, level_name))
 
 		return
 	end
 
-	for k, v in pairs(object_sets) do
-		local set_enabled = v.set_enabled
+	for set_name, object_set_data in pairs(object_sets) do
+		local set_enabled = object_set_data.set_enabled
 
-		if not (not set_enabled and k == arg_9_1) then
-			local units = v.units
+		if set_enabled and set_name ~= object_set_name then
+			local units = object_set_data.units
 
-			for i, v_2 in ipairs(units) do
-				local unit_by_index = Level.unit_by_index(level, v_2)
+			for _, unit_index in ipairs(units) do
+				local unit = Level.unit_by_index(level, unit_index)
 
-				Unit.set_unit_visibility(unit_by_index, false)
+				Unit.set_unit_visibility(unit, false)
 			end
 
-			v.set_enabled = false
-		elseif not (set_enabled or k ~= arg_9_1) then
-			local units_2 = v.units
+			object_set_data.set_enabled = false
+		elseif not set_enabled and set_name == object_set_name then
+			local units = object_set_data.units
 
-			for i_2, v_3 in ipairs(units_2) do
-				local unit_by_index_2 = Level.unit_by_index(level, v_3)
+			for _, unit_index in ipairs(units) do
+				local unit = Level.unit_by_index(level, unit_index)
 
-				Unit.set_unit_visibility(unit_by_index_2, true)
+				Unit.set_unit_visibility(unit, true)
 
-				if not Unit.has_data(unit_by_index_2, "LevelEditor", "is_gizmo_unit") then
-					local get_data = Unit.get_data(unit_by_index_2, "LevelEditor", "is_gizmo_unit")
-					local is_a = Unit.is_a(unit_by_index_2, "core/stingray_renderer/helper_units/reflection_probe/reflection_probe")
+				if Unit.has_data(unit, "LevelEditor", "is_gizmo_unit") then
+					local is_gizmo = Unit.get_data(unit, "LevelEditor", "is_gizmo_unit")
+					local is_reflection_probe = Unit.is_a(unit, "core/stingray_renderer/helper_units/reflection_probe/reflection_probe")
 
-					if not (not get_data and is_a) then
-						Unit.flow_event(unit_by_index_2, "hide_helper_mesh")
+					if is_gizmo and not is_reflection_probe then
+						Unit.flow_event(unit, "hide_helper_mesh")
 					end
 				end
 			end
 
-			v.set_enabled = true
+			object_set_data.set_enabled = true
 		end
 	end
 
-	print("Showing object set:", arg_9_1)
+	print("Showing object set:", object_set_name)
 end
 
-StoreWindowItemPreview._update_environment = function (self, arg_10_1, arg_10_2)
+StoreWindowItemPreview._update_environment = function (self, item_preview_environment, force_default)
 	-- function 10
 	if not self._viewport_widget then
 		return
 	end
 
-	local flag = arg_10_1 or "default"
-	local world = self._viewport_widget.content.object_set_data.world
-	local get_data = World.get_data(world, "shading_settings")
-	local flag_2
+	local item_preview_environment = not not item_preview_environment or not not "default"
+	local viewport_widget_content = self._viewport_widget.content
+	local object_set_data = viewport_widget_content.object_set_data
+	local world = object_set_data.world
+	local shading_settings = World.get_data(world, "shading_settings")
+	local flag
 
-	flag_2 = not arg_10_2 and "default" and flag
-	get_data[1] = flag_2
+	flag = (not force_default or not "default") and not not item_preview_environment
+	shading_settings[1] = flag
 end
 
-StoreWindowItemPreview.post_update = function (self, arg_11_1, arg_11_2)
+StoreWindowItemPreview.post_update = function (self, dt, t)
 	-- function 11
-	if not (not self._viewport_widget_definition and self._viewport_widget) then
+	if self._viewport_widget_definition and not self._viewport_widget then
 		self._viewport_widget = UIWidget.init(self._viewport_widget_definition)
 
 		self:_register_object_sets(self._viewport_widget, self._viewport_widget_definition)
 	end
 
-	self:_update_loading_overlay_fadeout_animation(arg_11_1)
-	self:_update_delayed_item_unit_presentation(arg_11_1)
+	self:_update_loading_overlay_fadeout_animation(dt)
+	self:_update_delayed_item_unit_presentation(dt)
 
-	if not self._viewport_widget then
-		local flag = false
+	if self._viewport_widget then
+		local force_update = false
 
-		if not self:_sync_products_version() then
-			flag = self._selected_product ~= nil
+		if self:_sync_products_version() then
+			force_update = self._selected_product ~= nil
 		end
 
-		self:_sync_presentation_item(flag)
+		self:_sync_presentation_item(force_update)
 	end
 
-	if not self._world_previewer then
-		self._world_previewer:post_update(arg_11_1, arg_11_2)
+	if self._world_previewer then
+		self._world_previewer:post_update(dt, t)
 	end
 
-	if not self._item_previewer then
-		self._item_previewer:post_update(arg_11_1, arg_11_2)
+	if self._item_previewer then
+		self._item_previewer:post_update(dt, t)
 	end
 
-	if not self._selected_product then
-		self:draw(arg_11_1)
+	if self._selected_product then
+		self:draw(dt)
 	end
 end
 
 StoreWindowItemPreview._sync_products_version = function (self)
 	-- function 12
-	local products_version_id = self._parent:products_version_id()
+	local parent = self._parent
+	local products_version_id = parent:products_version_id()
 
 	if products_version_id ~= self._products_version_id then
 		self._products_version_id = products_version_id
@@ -449,103 +458,125 @@ StoreWindowItemPreview._sync_products_version = function (self)
 	return false
 end
 
-StoreWindowItemPreview._update_animations = function (self, arg_13_1)
+StoreWindowItemPreview._update_animations = function (self, dt)
 	-- function 13
-	local _ui_animations = self._ui_animations
-	local _animations = self._animations
-	local _ui_animator = self._ui_animator
+	local ui_animations = self._ui_animations
+	local animations = self._animations
+	local ui_animator = self._ui_animator
 
-	for k, v in pairs(self._ui_animations) do
-		UIAnimation.update(v, arg_13_1)
+	for name, animation in pairs(self._ui_animations) do
+		UIAnimation.update(animation, dt)
 
-		if not UIAnimation.completed(v) then
-			self._ui_animations[k] = nil
+		if UIAnimation.completed(animation) then
+			self._ui_animations[name] = nil
 		end
 	end
 
-	_ui_animator:update(arg_13_1)
+	ui_animator:update(dt)
 
-	for k_2, v_2 in pairs(_animations) do
-		if not _ui_animator:is_animation_completed(v_2) then
-			_ui_animator:stop_animation(v_2)
+	for animation_name, animation_id in pairs(animations) do
+		if ui_animator:is_animation_completed(animation_id) then
+			ui_animator:stop_animation(animation_id)
 
-			_animations[k_2] = nil
+			animations[animation_name] = nil
 		end
 	end
 
-	if not self._dlc_list_initialized then
-		self:_animate_dlc_list_entries(arg_13_1)
+	if self._dlc_list_initialized then
+		self:_animate_dlc_list_entries(dt)
 	end
 
-	local unlock_button = self._top_widgets_by_name.unlock_button
+	local top_widgets_by_name = self._top_widgets_by_name
+	local unlock_button = top_widgets_by_name.unlock_button
 
-	UIWidgetUtils.animate_default_button(unlock_button, arg_13_1)
+	UIWidgetUtils.animate_default_button(unlock_button, dt)
 
 	if not self._dlc_presentation_active then
-		self:_animate_detail_button(arg_13_1)
+		self:_animate_detail_button(dt)
 	end
 
-	self:_update_title_edge_animation(arg_13_1)
+	self:_update_title_edge_animation(dt)
 end
 
-StoreWindowItemPreview._animate_dlc_list_entries = function (self, arg_14_1)
+StoreWindowItemPreview._animate_dlc_list_entries = function (self, dt)
 	-- function 14
-	local _parent = self._parent
-	local _is_dlc_list_hovered = self:_is_dlc_list_hovered()
+	local parent = self._parent
+	local list_hovered = self:_is_dlc_list_hovered()
 
-	if not self._gamepad_active_last_frame then
-		_is_dlc_list_hovered = true
+	if self._gamepad_active_last_frame then
+		list_hovered = true
 	end
 
-	local _dlc_list_widgets = self._dlc_list_widgets
+	local dlc_list_widgets = self._dlc_list_widgets
 
-	for i, v in ipairs(_dlc_list_widgets) do
-		local content = v.content
-		local style = v.style
+	for _, widget in ipairs(dlc_list_widgets) do
+		local content = widget.content
+		local style = widget.style
 		local button_hotspot = content.button_hotspot
 
-		button_hotspot = button_hotspot or content.hotspot
-
-		if not button_hotspot and not button_hotspot.on_hover_enter then
-			self:_play_sound("Play_hud_store_button_hover")
-
-			button_hotspot.on_hover_enter = false
+		if not button_hotspot then
+			-- Nothing
 		end
 
-		_parent:animate_store_product(v, arg_14_1, _is_dlc_list_hovered)
+		button_hotspot = content.hotspot
+
+		local hotspot = button_hotspot
+
+		::label_14_0::
+
+		if hotspot and hotspot.on_hover_enter then
+			self:_play_sound("Play_hud_store_button_hover")
+
+			hotspot.on_hover_enter = false
+		end
+
+		parent:animate_store_product(widget, dt, list_hovered)
 	end
 end
 
 StoreWindowItemPreview._is_dlc_list_hovered = function (self)
 	-- function 15
-	local is_hover = self._dlc_top_widgets_by_name.list.content.list_hotspot.is_hover
+	local list_mask = self._dlc_top_widgets_by_name.list
+	local is_hover = list_mask.content.list_hotspot.is_hover
 
-	is_hover = is_hover or false
+	is_hover = not not is_hover or not not false
 
 	return is_hover
 end
 
-StoreWindowItemPreview._is_button_hover = function (arg_16_0, arg_16_1)
+StoreWindowItemPreview._is_button_hover = function (self, widget)
 	-- function 16
-	local content = arg_16_1.content
+	local content = widget.content
 	local button_hotspot = content.button_hotspot
 
-	button_hotspot = button_hotspot or content.hotspot
+	if not button_hotspot then
+		-- Nothing
+	end
 
-	return button_hotspot.is_hover
+	button_hotspot = content.hotspot
+
+	local hotspot = button_hotspot
+
+	::label_16_0::
+
+	return hotspot.is_hover
 end
 
-StoreWindowItemPreview._is_button_hovered = function (arg_17_0, arg_17_1)
+StoreWindowItemPreview._is_button_hovered = function (self, widget)
 	-- function 17
-	return arg_17_1.content.button_hotspot.on_hover_enter
+	local content = widget.content
+	local hotspot = content.button_hotspot
+
+	return hotspot.on_hover_enter
 end
 
-StoreWindowItemPreview._is_button_pressed = function (arg_18_0, arg_18_1)
+StoreWindowItemPreview._is_button_pressed = function (self, widget)
 	-- function 18
-	local button_hotspot = arg_18_1.content.button_hotspot
+	local content = widget.content
+	local hotspot = content.button_hotspot
 
-	if not button_hotspot.on_release then
-		button_hotspot.on_release = false
+	if hotspot.on_release then
+		hotspot.on_release = false
 
 		return true
 	end
@@ -553,19 +584,27 @@ end
 
 StoreWindowItemPreview._dlc_list_index_pressed = function (self)
 	-- function 19
-	local _dlc_list_widgets = self._dlc_list_widgets
+	local list_widgets = self._dlc_list_widgets
 
-	if not _dlc_list_widgets then
-		for i, v in ipairs(_dlc_list_widgets) do
-			local content = v.content
-			local hotspot = content.hotspot
+	if list_widgets then
+		for index, widget in ipairs(list_widgets) do
+			local content = widget.content
+			local hotspot_2 = content.hotspot
 
-			hotspot = hotspot or content.button_hotspot
+			if not hotspot_2 then
+				-- Nothing
+			end
 
-			if not hotspot and not hotspot.on_release then
+			hotspot_2 = content.button_hotspot
+
+			local hotspot = hotspot_2
+
+			::label_19_0::
+
+			if hotspot and hotspot.on_release then
 				hotspot.on_release = false
 
-				return i
+				return index
 			end
 		end
 	end
@@ -573,75 +612,84 @@ end
 
 StoreWindowItemPreview._bundle_item_pressed = function (self)
 	-- function 20
-	local _dlc_list_widgets = self._dlc_list_widgets
+	local list_widgets = self._dlc_list_widgets
 
-	if not _dlc_list_widgets then
-		for i, v in ipairs(_dlc_list_widgets) do
-			local content = v.content
-			local hotspot = content.hotspot
+	if list_widgets then
+		for index, widget in ipairs(list_widgets) do
+			local content = widget.content
+			local hotspot_2 = content.hotspot
 
-			hotspot = hotspot or content.button_hotspot
+			if not hotspot_2 then
+				-- Nothing
+			end
 
-			if not hotspot and not hotspot.on_release then
+			hotspot_2 = content.button_hotspot
+
+			local hotspot = hotspot_2
+
+			::label_20_0::
+
+			if hotspot and hotspot.on_release then
 				hotspot.on_release = false
 
-				return i
+				return index
 			end
 		end
 	end
 end
 
-StoreWindowItemPreview._handle_input = function (self, arg_21_1, arg_21_2, arg_21_3)
+StoreWindowItemPreview._handle_input = function (self, input_service, dt, t)
 	-- function 21
-	local _parent = self._parent
-	local window_input_service = _parent:window_input_service()
-	local _top_widgets_by_name = self._top_widgets_by_name
-	local _item_widgets_by_name = self._item_widgets_by_name
-	local _dlc_top_widgets_by_name = self._dlc_top_widgets_by_name
-	local unlock_button = _top_widgets_by_name.unlock_button
-	local details_button = _item_widgets_by_name.details_button
-	local flag = false
-	local flag_2 = false
+	local parent = self._parent
+	local input_service = parent:window_input_service()
+	local top_widgets_by_name = self._top_widgets_by_name
+	local item_widgets_by_name = self._item_widgets_by_name
+	local dlc_top_widgets_by_name = self._dlc_top_widgets_by_name
+	local unlock_button = top_widgets_by_name.unlock_button
+	local details_button = item_widgets_by_name.details_button
+	local input_handled = false
+	local input_hovered = false
 
-	if self:_is_button_hovered(unlock_button) or not self:_is_button_hovered(details_button) then
+	if self:_is_button_hovered(unlock_button) or self:_is_button_hovered(details_button) then
 		self:_play_sound("Play_hud_hover")
 
-		flag_2 = true
-	elseif self:_is_button_hover(unlock_button) or not self:_is_button_hover(details_button) then
-		flag_2 = true
+		input_hovered = true
+	elseif self:_is_button_hover(unlock_button) or self:_is_button_hover(details_button) then
+		input_hovered = true
 	end
 
-	if not self._dlc_presentation_active then
-		if not self._draw_fullscreen_video and not Managers.input:any_input_released() then
+	if self._dlc_presentation_active then
+		if self._draw_fullscreen_video and Managers.input:any_input_released() then
 			self:_stop_fullscreen_video()
 
-			flag = true
+			input_handled = true
 		end
 
-		if not self._dlc_list_initialized then
-			if not self:_is_dlc_list_hovered() then
-				local _dlc_list_index_pressed = self:_dlc_list_index_pressed()
+		if self._dlc_list_initialized then
+			if self:_is_dlc_list_hovered() then
+				local list_index = self:_dlc_list_index_pressed()
 
-				if not _dlc_list_index_pressed then
-					local var_21_10 = self._dlc_layout[_dlc_list_index_pressed]
-					local product_id = var_21_10.product_id
-					local type = var_21_10.type
-					local settings = var_21_10.settings
+				if list_index then
+					local layout = self._dlc_layout
+					local entry = layout[list_index]
+					local product_id = entry.product_id
+					local product_type = entry.type
+					local settings = entry.settings
 
-					if type == "dlc_header_video" then
+					if product_type == "dlc_header_video" then
 						local material_name = settings.material_name
 						local resource = settings.resource
 						local sound_event = settings.sound_event
 
 						self._parent:start_fullscreen_video(material_name, resource, sound_event)
-					elseif type == "item" then
-						local _item_widgets = self._item_widgets
-						local var_21_18 = self._dlc_list_widgets[_dlc_list_index_pressed]
-						local _parent_2 = self._parent
+					elseif product_type == "item" then
+						local item_widgets = self._item_widgets
+						local widget = self._dlc_list_widgets[list_index]
+						local parent = self._parent
 
 						self._params.last_selected_product = self._selected_product
 
-						_parent_2:go_to_product(product_id, nil, {
+						parent:go_to_product(product_id, nil, {
 							acquire_hidden = true,
 							part_of_bundle = true,
 							acquire_disabled = true
@@ -650,97 +698,100 @@ StoreWindowItemPreview._handle_input = function (self, arg_21_1, arg_21_2, arg_2
 				end
 			end
 
-			self._dlc_scrollbar_logic:update(arg_21_2, arg_21_3)
+			self._dlc_scrollbar_logic:update(dt, t)
 			self:_update_dlc_scroll_position()
 		end
 	end
 
-	local get = window_input_service:get("confirm_press")
+	local confirm_press = input_service:get("confirm_press")
 
-	if not ((self:_is_button_pressed(unlock_button) or not get) and self:_owns_product()) then
+	if (self:_is_button_pressed(unlock_button) or confirm_press) and not self:_owns_product() then
 		self:_play_sound("Play_hud_store_buy_window")
 
-		if not self._show_dupe_warning then
+		if self._show_dupe_warning then
 			self._dupe_warning_popup_id = Managers.popup:queue_popup(Localize("bundle_party_owned_description"), Localize("bundle_partly_owned_title"), "yes", Localize("popup_choice_yes"), "no", Localize("popup_choice_no"))
-		elseif not self._should_show_required_dlcs_popup then
-			local str = ""
+		elseif self._should_show_required_dlcs_popup then
+			local missing_dlcs_text = ""
 
 			for i = 1, #self._required_dlcs do
-				local var_21_22 = StoreDlcSettingsByName[self._required_dlcs[i]]
-				local var_21_23
+				local settings = StoreDlcSettingsByName[self._required_dlcs[i]]
+				local var_21_0
 
-				if not var_21_22 then
-					var_21_23 = Localize(var_21_22.name)
+				if settings then
+					var_21_0 = Localize(settings.name)
 
-					if not var_21_23 then
+					if not var_21_0 then
 						-- Nothing
 					end
 				end
 
-				var_21_23 = Localize("lb_unknown")
+				var_21_0 = Localize("lb_unknown")
+
+				local dlc_name = var_21_0
 
 				::label_21_0::
 
-				str = str .. var_21_23 .. "\n"
+				missing_dlcs_text = missing_dlcs_text .. dlc_name .. "\n"
 			end
 
-			self._missing_required_dlc_popup_id = Managers.popup:queue_popup(Localize("menu_store_missing_dlc_error") .. "\n\n" .. string.format(Localize("menu_store_missing_dlc_careers"), str), Localize("twitch_disconnect_warning"), "yes", Localize("popup_choice_yes"), "no", Localize("popup_choice_no"))
+			self._missing_required_dlc_popup_id = Managers.popup:queue_popup(Localize("menu_store_missing_dlc_error") .. "\n\n" .. string.format(Localize("menu_store_missing_dlc_careers"), missing_dlcs_text), Localize("twitch_disconnect_warning"), "yes", Localize("popup_choice_yes"), "no", Localize("popup_choice_no"))
 		else
-			_parent:product_purchase_request(self._selected_product)
+			parent:product_purchase_request(self._selected_product)
 		end
 
-		flag = true
-	elseif not get then
+		input_handled = true
+	elseif confirm_press then
 		self:_play_sound("menu_leaderboard_close")
 	end
 
-	local get_2 = window_input_service:get("special_1_press")
+	local special_press = input_service:get("special_1_press")
 
-	if self:_is_button_pressed(details_button) or not get_2 then
-		local get_store_path = _parent:get_store_path()
-		local clone = table.clone(get_store_path)
-		local _selected_product = self._selected_product
-		local flag_3 = not _selected_product and _selected_product.settings
-		local flag_4 = not flag_3 and flag_3.part_of_bundle
+	if self:_is_button_pressed(details_button) or special_press then
+		local path = parent:get_store_path()
+		local new_path = table.clone(path)
+		local product = self._selected_product
+		local product_settings = not not product and not not product.settings
+		local part_of_bundle = not not product_settings and not not product_settings.part_of_bundle
 
-		if not flag_4 then
+		if part_of_bundle then
 			self:_play_sound("Play_hud_select")
 
-			clone[#clone] = nil
+			new_path[#new_path] = nil
 
-			_parent:go_to_store_path(clone)
+			parent:go_to_store_path(new_path)
 
-			flag = true
-		elseif not (not self:_detailed_view_available() and flag_4) then
+			input_handled = true
+		elseif self:_detailed_view_available() and not part_of_bundle then
 			self:_play_sound("Play_hud_select")
 
-			if get_store_path[#get_store_path] == "item_details" then
-				clone[#clone] = nil
+			if path[#path] == "item_details" then
+				new_path[#new_path] = nil
 			else
-				clone[#clone + 1] = "item_details"
+				new_path[#new_path + 1] = "item_details"
 			end
 
-			local flag_5 = true
+			local keep_global_shader_flags = true
 
-			_parent:go_to_store_path(clone, flag_5)
+			parent:go_to_store_path(new_path, keep_global_shader_flags)
 
-			flag = true
+			input_handled = true
 		else
-			local product_id_2 = self._selected_product.product_id
+			local selected_product = self._selected_product
+			local product_id = selected_product.product_id
 
-			if not self._parent:page_exists(product_id_2) then
+			if self._parent:page_exists(product_id) then
 				self:_play_sound("Play_hud_select")
 
-				clone[#clone + 1] = product_id_2
+				new_path[#new_path + 1] = product_id
 
-				_parent:go_to_store_path(clone)
+				parent:go_to_store_path(new_path)
 
-				flag = true
+				input_handled = true
 			end
 		end
 	end
 
-	return flag, flag_2
+	return input_handled, input_hovered
 end
 
 StoreWindowItemPreview._exit = function (self)
@@ -748,102 +799,102 @@ StoreWindowItemPreview._exit = function (self)
 	self.exit = true
 end
 
-StoreWindowItemPreview._get_alpha_multiplier = function (self, arg_23_1, arg_23_2)
+StoreWindowItemPreview._get_alpha_multiplier = function (self, widget, alpha_multiplier)
 	-- function 23
-	local _render_settings = self._render_settings
-	local alpha_multiplier = arg_23_1.alpha_multiplier
+	local render_settings = self._render_settings
+	local widget_alpha_multiplier = widget.alpha_multiplier
 
-	if not alpha_multiplier then
-		return math.min(alpha_multiplier, arg_23_2)
+	if widget_alpha_multiplier then
+		return math.min(widget_alpha_multiplier, alpha_multiplier)
 	end
 
-	return arg_23_2
+	return alpha_multiplier
 end
 
-StoreWindowItemPreview.draw = function (self, arg_24_1)
+StoreWindowItemPreview.draw = function (self, dt)
 	-- function 24
-	local _ui_renderer = self._ui_renderer
-	local _ui_top_renderer = self._ui_top_renderer
-	local _ui_scenegraph = self._ui_scenegraph
-	local window_input_service = self._parent:window_input_service()
-	local _render_settings = self._render_settings
-	local alpha_multiplier = _render_settings.alpha_multiplier
+	local ui_renderer = self._ui_renderer
+	local ui_top_renderer = self._ui_top_renderer
+	local ui_scenegraph = self._ui_scenegraph
+	local input_service = self._parent:window_input_service()
+	local render_settings = self._render_settings
+	local alpha_multiplier = render_settings.alpha_multiplier
 
-	UIRenderer.begin_pass(_ui_top_renderer, _ui_scenegraph, window_input_service, arg_24_1, nil, _render_settings)
+	UIRenderer.begin_pass(ui_top_renderer, ui_scenegraph, input_service, dt, nil, render_settings)
 
-	if not self._dlc_presentation_active then
-		for i, v in ipairs(self._dlc_top_widgets) do
-			_render_settings.alpha_multiplier = self:_get_alpha_multiplier(v, alpha_multiplier)
+	if self._dlc_presentation_active then
+		for _, widget in ipairs(self._dlc_top_widgets) do
+			render_settings.alpha_multiplier = self:_get_alpha_multiplier(widget, alpha_multiplier)
 
-			UIRenderer.draw_widget(_ui_top_renderer, v)
+			UIRenderer.draw_widget(ui_top_renderer, widget)
 		end
 	else
-		for i_2, v_2 in ipairs(self._item_widgets) do
-			_render_settings.alpha_multiplier = self:_get_alpha_multiplier(v_2, alpha_multiplier)
+		for _, widget in ipairs(self._item_widgets) do
+			render_settings.alpha_multiplier = self:_get_alpha_multiplier(widget, alpha_multiplier)
 
-			UIRenderer.draw_widget(_ui_top_renderer, v_2)
+			UIRenderer.draw_widget(ui_top_renderer, widget)
 		end
 	end
 
-	for i_3, v_3 in ipairs(self._top_widgets) do
-		_render_settings.alpha_multiplier = self:_get_alpha_multiplier(v_3, alpha_multiplier)
+	for _, widget in ipairs(self._top_widgets) do
+		render_settings.alpha_multiplier = self:_get_alpha_multiplier(widget, alpha_multiplier)
 
-		UIRenderer.draw_widget(_ui_top_renderer, v_3)
+		UIRenderer.draw_widget(ui_top_renderer, widget)
 	end
 
-	if not self._dlc_list_initialized then
-		local _dlc_list_widgets = self._dlc_list_widgets
+	if self._dlc_list_initialized then
+		local dlc_list_widgets = self._dlc_list_widgets
 
-		if not _dlc_list_widgets then
-			local _update_visible_list_entries = self:_update_visible_list_entries()
+		if dlc_list_widgets then
+			local render_all = self:_update_visible_list_entries()
 
-			for i_4, v_4 in ipairs(_dlc_list_widgets) do
-				if _update_visible_list_entries or not v_4.content.visible then
-					_render_settings.alpha_multiplier = self:_get_alpha_multiplier(v_4, alpha_multiplier)
+			for _, widget in ipairs(dlc_list_widgets) do
+				if render_all or widget.content.visible then
+					render_settings.alpha_multiplier = self:_get_alpha_multiplier(widget, alpha_multiplier)
 
-					UIRenderer.draw_widget(_ui_top_renderer, v_4)
+					UIRenderer.draw_widget(ui_top_renderer, widget)
 				end
 			end
 		end
 	end
 
-	if not self._show_loading_overlay then
-		for i_5, v_5 in ipairs(self._loading_widgets) do
-			_render_settings.alpha_multiplier = self:_get_alpha_multiplier(v_5, alpha_multiplier)
+	if self._show_loading_overlay then
+		for _, widget in ipairs(self._loading_widgets) do
+			render_settings.alpha_multiplier = self:_get_alpha_multiplier(widget, alpha_multiplier)
 
-			UIRenderer.draw_widget(_ui_top_renderer, v_5)
+			UIRenderer.draw_widget(ui_top_renderer, widget)
 		end
 	end
 
-	UIRenderer.end_pass(_ui_top_renderer)
+	UIRenderer.end_pass(ui_top_renderer)
 
-	if not self._viewport_widget then
-		UIRenderer.begin_pass(_ui_renderer, _ui_scenegraph, window_input_service, arg_24_1, nil, _render_settings)
-		UIRenderer.draw_widget(_ui_renderer, self._viewport_widget)
+	if self._viewport_widget then
+		UIRenderer.begin_pass(ui_renderer, ui_scenegraph, input_service, dt, nil, render_settings)
+		UIRenderer.draw_widget(ui_renderer, self._viewport_widget)
 
-		if not self._dlc_presentation_active then
-			for i_6, v_6 in ipairs(self._dlc_bottom_widgets) do
-				_render_settings.alpha_multiplier = self:_get_alpha_multiplier(v_6, alpha_multiplier)
+		if self._dlc_presentation_active then
+			for _, widget in ipairs(self._dlc_bottom_widgets) do
+				render_settings.alpha_multiplier = self:_get_alpha_multiplier(widget, alpha_multiplier)
 
-				UIRenderer.draw_widget(_ui_renderer, v_6)
+				UIRenderer.draw_widget(ui_renderer, widget)
 			end
 		end
 
-		for i_7, v_7 in ipairs(self._bottom_widgets) do
-			_render_settings.alpha_multiplier = self:_get_alpha_multiplier(v_7, alpha_multiplier)
+		for _, widget in ipairs(self._bottom_widgets) do
+			render_settings.alpha_multiplier = self:_get_alpha_multiplier(widget, alpha_multiplier)
 
-			UIRenderer.draw_widget(_ui_renderer, v_7)
+			UIRenderer.draw_widget(ui_renderer, widget)
 		end
 
-		UIRenderer.end_pass(_ui_renderer)
+		UIRenderer.end_pass(ui_renderer)
 	end
 
-	_render_settings.alpha_multiplier = alpha_multiplier
+	render_settings.alpha_multiplier = alpha_multiplier
 end
 
-StoreWindowItemPreview._play_sound = function (self, arg_25_1)
+StoreWindowItemPreview._play_sound = function (self, event)
 	-- function 25
-	self._parent:play_sound(arg_25_1)
+	self._parent:play_sound(event)
 end
 
 StoreWindowItemPreview._start_loading_overlay = function (self)
@@ -851,32 +902,37 @@ StoreWindowItemPreview._start_loading_overlay = function (self)
 	self._show_loading_overlay = true
 	self._fadeout_loading_overlay = nil
 	self._fadeout_progress = nil
-	self._loading_widgets_by_name.loading_icon.style.texture_id.color[1] = 255
+
+	local loading_widgets_by_name = self._loading_widgets_by_name
+	local loading_icon = loading_widgets_by_name.loading_icon
+
+	loading_icon.style.texture_id.color[1] = 255
 end
 
-StoreWindowItemPreview._update_loading_overlay_fadeout_animation = function (self, arg_27_1)
+StoreWindowItemPreview._update_loading_overlay_fadeout_animation = function (self, dt)
 	-- function 27
-	if self._fadeout_loading_overlay or not self._show_loading_overlay then
+	if not self._fadeout_loading_overlay and self._show_loading_overlay then
 		return
 	end
 
-	local _loading_widgets_by_name = self._loading_widgets_by_name
-	local num = 255
-	local num_2 = 0
-	local num_3 = 9
+	local loading_widgets_by_name = self._loading_widgets_by_name
+	local start = 255
+	local target = 0
+	local speed = 9
 	local min = math.min
-	local num_4 = 1
+	local num = 1
 	local _fadeout_progress = self._fadeout_progress
 
-	_fadeout_progress = _fadeout_progress or 0
+	_fadeout_progress = not not _fadeout_progress or not not 0
 
-	local var_27_7 = min(num_4, _fadeout_progress + num_3 * arg_27_1)
-	local lerp = math.lerp(num, num_2, math.easeInCubic(var_27_7))
+	local progress = min(num, _fadeout_progress + speed * dt)
+	local alpha = math.lerp(start, target, math.easeInCubic(progress))
+	local loading_icon = loading_widgets_by_name.loading_icon
 
-	_loading_widgets_by_name.loading_icon.style.texture_id.color[1] = lerp
-	self._fadeout_progress = var_27_7
+	loading_icon.style.texture_id.color[1] = alpha
+	self._fadeout_progress = progress
 
-	if var_27_7 == 1 then
+	if progress == 1 then
 		self._fadeout_loading_overlay = nil
 		self._fadeout_progress = nil
 		self._show_loading_overlay = false
@@ -885,165 +941,179 @@ end
 
 StoreWindowItemPreview._destroy_previewers = function (self)
 	-- function 28
-	local _item_previewer = self._item_previewer
+	local item_previewer = self._item_previewer
 
-	if not _item_previewer then
-		_item_previewer:destroy()
+	if item_previewer then
+		item_previewer:destroy()
 
 		self._item_previewer = nil
 	end
 
-	local _world_previewer = self._world_previewer
+	local world_previewer = self._world_previewer
 
-	if not _world_previewer then
-		_world_previewer:prepare_exit()
-		_world_previewer:on_exit()
-		_world_previewer:destroy()
+	if world_previewer then
+		world_previewer:prepare_exit()
+		world_previewer:on_exit()
+		world_previewer:destroy()
 
 		self._world_previewer = nil
 	end
 end
 
-local tbl = {}
+local dummy_table = {}
 
-StoreWindowItemPreview._sync_presentation_item = function (self, arg_29_1)
+StoreWindowItemPreview._sync_presentation_item = function (self, force_update)
 	-- function 29
-	local selected_product = self._params.selected_product
+	local params = self._params
+	local selected_product = params.selected_product
 
-	if selected_product ~= self._selected_product or not arg_29_1 then
+	if selected_product ~= self._selected_product or force_update then
 		table.clear(self._required_dlcs)
 
-		local flag = not self._selected_product and not selected_product and self._selected_product.product_id ~= selected_product.product_id or self._selected_product.item ~= selected_product.item
+		local reset_presentation = not self._selected_product or not selected_product or self._selected_product.product_id ~= selected_product.product_id or self._selected_product.item ~= selected_product.item
 
 		self._selected_product = selected_product
 
-		local flag_2 = false
-		local flag_3 = true
-		local var_29_4
-		local flag_4 = false
-		local flag_5 = true
-		local flag_6 = false
-		local tbl = {}
-		local var_29_9
-		local var_29_10
-		local var_29_11
+		local already_owned = false
+		local can_afford = true
+		local dlc_name
+		local show_dupe_warning = false
+		local owns_required_dlc = true
+		local show_required_dlc_warning = false
+		local required_dlcs = {}
+		local product_id, product_type, is_item_useable
 
-		if not selected_product then
-			var_29_9 = selected_product.product_id
-			var_29_10 = selected_product.type
+		if selected_product then
+			product_id = selected_product.product_id
+			product_type = selected_product.type
+			is_item_useable = true
 
-			local flag_7 = true
-
-			if var_29_10 == "item" then
+			if product_type == "item" then
 				local item = selected_product.item
-				local get_interface = Managers.backend:get_interface("items")
-				local key = item.key
+				local backend_items = Managers.backend:get_interface("items")
+				local item_key = item.key
 
-				var_29_4 = item.dlc_name
+				dlc_name = item.dlc_name
 
-				if not key and get_interface:has_item(key) and not get_interface:has_weapon_illusion(key) then
-					flag_2 = item.data.item_type == "chips" or not true or false
+				if item_key and (backend_items:has_item(item_key) or backend_items:has_weapon_illusion(item_key)) then
+					local item_data = item.data
+					local item_type = item_data.item_type
+
+					already_owned = (item_type == "chips" or not true) and not not false
 				else
-					local has_bundle_contents, var_29_17, var_29_18 = get_interface:has_bundle_contents(item.data.bundle_contains)
+					local all_owned, any_owned, missing_dlcs = backend_items:has_bundle_contents(item.data.bundle_contains)
 
-					flag_2 = has_bundle_contents
-					flag_4 = var_29_17
+					already_owned = all_owned
+					show_dupe_warning = any_owned
 
-					if var_29_18 ~= nil then
-						tbl = var_29_18
-						flag_6 = #var_29_18 ~= 0
+					if missing_dlcs ~= nil then
+						required_dlcs = missing_dlcs
+						show_required_dlc_warning = #missing_dlcs ~= 0
 					end
 				end
 
-				flag_3 = self._parent:can_afford_item(item)
-				flag_7 = self._parent:can_use_item(item)
+				can_afford = self._parent:can_afford_item(item)
+				is_item_useable = self._parent:can_use_item(item)
 
 				local required_dlc = item.data.required_dlc
 
-				if not required_dlc then
-					flag_5 = Managers.unlock:is_dlc_unlocked(required_dlc)
+				if required_dlc then
+					owns_required_dlc = Managers.unlock:is_dlc_unlocked(required_dlc)
 				end
-			elseif var_29_10 == "dlc" then
-				var_29_4 = selected_product.dlc_settings.dlc_name
-				flag_2 = Managers.unlock:is_dlc_unlocked(var_29_4)
+			elseif product_type == "dlc" then
+				local dlc_settings = selected_product.dlc_settings
+
+				dlc_name = dlc_settings.dlc_name
+				already_owned = Managers.unlock:is_dlc_unlocked(dlc_name)
 			elseif selected_product.product_type == "collection" then
-				local get_interface_2 = Managers.backend:get_interface("items")
+				local backend_items = Managers.backend:get_interface("items")
 				local product_item = selected_product.product_item
-				local BundledItems = product_item.data.bundle.BundledItems
+				local product_item_data = product_item.data
+				local bundle = product_item_data.bundle
+				local BundledItems = bundle.BundledItems
 
-				BundledItems = BundledItems or {}
-				flag_2 = true
+				if not BundledItems then
+					-- Nothing
+				end
 
-				for i = 1, #BundledItems do
-					local var_29_23 = BundledItems[i]
+				BundledItems = {}
 
-					if not get_interface_2:has_item(var_29_23) then
-						flag_2 = false
+				local bundled_items = BundledItems
+
+				::label_29_0::
+
+				already_owned = true
+
+				for i = 1, #bundled_items do
+					local bundled_item_name = bundled_items[i]
+
+					if not backend_items:has_item(bundled_item_name) then
+						already_owned = false
 
 						break
 					end
 				end
 
-				flag_3 = self._parent:can_afford_item(product_item)
+				can_afford = self._parent:can_afford_item(product_item)
 			end
 
-			self._show_dupe_warning = flag_4
-			self._should_show_required_dlcs_popup = flag_6
-			self._required_dlcs = tbl
+			self._show_dupe_warning = show_dupe_warning
+			self._should_show_required_dlcs_popup = show_required_dlc_warning
+			self._required_dlcs = required_dlcs
 
-			local settings = selected_product.settings
-			local flag_8 = not settings and settings.acquire_disabled
-			local flag_9 = not settings and settings.acquire_hidden
+			local selected_product_settings = selected_product.settings
+			local acquire_disabled = not not selected_product_settings and not not selected_product_settings.acquire_disabled
+			local acquire_hidden = not not selected_product_settings and not not selected_product_settings.acquire_hidden
 
-			self:_set_unlock_button_states(flag_2, flag_3, flag_7, flag_8, flag_9, flag_5)
+			self:_set_unlock_button_states(already_owned, can_afford, is_item_useable, acquire_disabled, acquire_hidden, owns_required_dlc)
 		end
 
-		if not flag then
+		if reset_presentation then
 			self._delayed_item_unit_presentation_delay = nil
 			self._show_loading_overlay = false
 
 			self:_destroy_previewers()
 
-			local num = 0
+			local unlock_button_width_offset = 0
 
-			if not (var_29_10 == "item" or var_29_10 ~= "weapon_pose") then
-				local item_2 = selected_product.item
+			if product_type == "item" or product_type == "weapon_pose" then
+				local item = selected_product.item
 
-				if item_2.data.item_type == "bundle" then
-					self:_present_item(item_2)
+				if item.data.item_type == "bundle" then
+					self:_present_item(item)
 				else
 					self:_start_loading_overlay()
-					self:_present_item(item_2, selected_product)
+					self:_present_item(item, selected_product)
 				end
-			elseif var_29_10 == "dlc" then
+			elseif product_type == "dlc" then
 				local dlc_settings = selected_product.dlc_settings
 
-				self:_present_dlc(dlc_settings, var_29_9)
+				self:_present_dlc(dlc_settings, product_id)
 
-				num = -49
+				unlock_button_width_offset = -49
 			end
 
-			self:_update_unlock_button_width(num, flag_2, var_29_4)
+			self:_update_unlock_button_width(unlock_button_width_offset, already_owned, dlc_name)
 		end
 	end
 end
 
-StoreWindowItemPreview._create_dlc_bundle_layout = function (arg_30_0, arg_30_1, arg_30_2)
+StoreWindowItemPreview._create_dlc_bundle_layout = function (self, settings, product_id)
 	-- function 30
-	local bundle_contains = arg_30_1.bundle_contains
-	local information_text = arg_30_1.information_text
-	local tbl = {}
+	local bundle_contains = settings.bundle_contains
+	local bundle_desc = settings.information_text
+	local layout = {}
 
-	if not arg_30_1.store_bundle_big_image then
-		tbl[#tbl + 1] = {
+	if settings.store_bundle_big_image then
+		layout[#layout + 1] = {
 			id = "dlc_feature_1",
 			type = "big_image",
 			settings = {
 				text = "",
 				localize = false,
 				show_frame = true,
-				texture_path = arg_30_1.store_bundle_big_image,
-				texture_package = arg_30_1.store_texture_package,
+				texture_path = settings.store_bundle_big_image,
+				texture_package = settings.store_texture_package,
 				image_size = {
 					800,
 					592
@@ -1052,16 +1122,16 @@ StoreWindowItemPreview._create_dlc_bundle_layout = function (arg_30_0, arg_30_1,
 		}
 	end
 
-	tbl[#tbl + 1] = {
+	layout[#layout + 1] = {
 		type = "spacing"
 	}
-	tbl[#tbl + 1] = {
+	layout[#layout + 1] = {
 		type = "divider_horizontal"
 	}
-	tbl[#tbl + 1] = {
+	layout[#layout + 1] = {
 		type = "spacing"
 	}
-	tbl[#tbl + 1] = {
+	layout[#layout + 1] = {
 		type = "header_text",
 		settings = {
 			text = "menu_store_dlc_title_including",
@@ -1069,11 +1139,11 @@ StoreWindowItemPreview._create_dlc_bundle_layout = function (arg_30_0, arg_30_1,
 		}
 	}
 
-	local num = #tbl + 1
-	local count = #bundle_contains
+	local item_row = #layout + 1
+	local num_items = #bundle_contains
 
-	if count == 1 then
-		tbl[num] = {
+	if num_items == 1 then
+		layout[item_row] = {
 			type = "spacing",
 			settings = {
 				size = {
@@ -1082,9 +1152,9 @@ StoreWindowItemPreview._create_dlc_bundle_layout = function (arg_30_0, arg_30_1,
 				}
 			}
 		}
-		num = num + 1
-	elseif count == 2 then
-		tbl[num] = {
+		item_row = item_row + 1
+	elseif num_items == 2 then
+		layout[item_row] = {
 			type = "spacing",
 			settings = {
 				size = {
@@ -1093,15 +1163,15 @@ StoreWindowItemPreview._create_dlc_bundle_layout = function (arg_30_0, arg_30_1,
 				}
 			}
 		}
-		num = num + 1
+		item_row = item_row + 1
 	end
 
 	for i = 1, #bundle_contains do
-		local var_30_5 = bundle_contains[i]
+		local item_key = bundle_contains[i]
 
-		tbl[num + i - 1] = {
+		layout[item_row + i - 1] = {
 			type = "bundle_item",
-			id = var_30_5,
+			id = item_key,
 			settings = {
 				hide_price = true,
 				hide_new = true
@@ -1109,39 +1179,41 @@ StoreWindowItemPreview._create_dlc_bundle_layout = function (arg_30_0, arg_30_1,
 		}
 	end
 
-	tbl[#tbl + 1] = {
+	layout[#layout + 1] = {
 		type = "body_text",
 		settings = {
 			localize = true,
-			text = information_text
+			text = bundle_desc
 		}
 	}
-	tbl[#tbl + 1] = {
+	layout[#layout + 1] = {
 		type = "spacing"
 	}
-	tbl[#tbl + 1] = {
+	layout[#layout + 1] = {
 		type = "divider_horizontal"
 	}
-	tbl[#tbl + 1] = {
+	layout[#layout + 1] = {
 		type = "spacing"
 	}
 
-	return tbl
+	return layout
 end
 
-StoreWindowItemPreview._create_item_bundle_layout_with_items = function (arg_31_0, arg_31_1, arg_31_2, arg_31_3)
+StoreWindowItemPreview._create_item_bundle_layout_with_items = function (self, item_preview_layout, steam_itemdefid, item_data)
 	-- function 31
-	local bundle_contains = arg_31_3.bundle_contains
-	local tbl = {}
-	local num = 1
+	local bundle_contains = item_data.bundle_contains
+	local layout = {}
+	local item_row = 1
 
-	for i = 1, #arg_31_1 do
-		local var_31_3 = arg_31_1[i]
-		local num_2 = #tbl + 1
+	for i = 1, #item_preview_layout do
+		local original_layout = item_preview_layout[i]
+		local item_row = #layout + 1
 
-		if var_31_3.type == "inject_bundle_items" then
-			if #bundle_contains == 2 then
-				tbl[num_2] = {
+		if original_layout.type == "inject_bundle_items" then
+			local num_items = #bundle_contains
+
+			if num_items == 2 then
+				layout[item_row] = {
 					type = "spacing",
 					settings = {
 						size = {
@@ -1150,16 +1222,16 @@ StoreWindowItemPreview._create_item_bundle_layout_with_items = function (arg_31_
 						}
 					}
 				}
-				num_2 = num_2 + 1
+				item_row = item_row + 1
 			end
 
-			for j = 1, #bundle_contains do
-				local var_31_5 = bundle_contains[j]
-				local var_31_6 = SteamitemdefidToMasterList[var_31_5]
+			for i = 1, #bundle_contains do
+				local steam_itemdefid = bundle_contains[i]
+				local item_key = SteamitemdefidToMasterList[steam_itemdefid]
 
-				tbl[num_2 + j - 1] = {
+				layout[item_row + i - 1] = {
 					type = "item",
-					id = var_31_6,
+					id = item_key,
 					settings = {
 						hide_price = true,
 						hide_new = true
@@ -1167,37 +1239,37 @@ StoreWindowItemPreview._create_item_bundle_layout_with_items = function (arg_31_
 				}
 			end
 		else
-			tbl[num_2] = var_31_3
+			layout[item_row] = original_layout
 		end
 	end
 
-	return tbl
+	return layout
 end
 
-StoreWindowItemPreview._create_item_bundle_layout = function (arg_32_0, arg_32_1, arg_32_2)
+StoreWindowItemPreview._create_item_bundle_layout = function (self, steam_itemdefid, item_data)
 	-- function 32
-	local bundle_contains = arg_32_2.bundle_contains
-	local description = arg_32_2.description
-	local get_interface = Managers.backend:get_interface("peddler")
-	local flag = true
+	local bundle_contains = item_data.bundle_contains
+	local bundle_desc = item_data.description
+	local backend_store = Managers.backend:get_interface("peddler")
+	local show_bundle_price = true
 
-	if not flag then
-		local get_steam_item_price, var_32_5 = get_interface:get_steam_item_price(arg_32_1)
-		local str = tostring(var_32_5) .. " " .. string.format("%.2f", get_steam_item_price * 0.01)
+	if show_bundle_price then
+		local price, currency = backend_store:get_steam_item_price(steam_itemdefid)
+		local price_text = tostring(currency) .. " " .. string.format("%.2f", price * 0.01)
 	end
 
-	local tbl = {}
+	local layout = {}
 
-	if not arg_32_2.store_bundle_big_image then
-		tbl[#tbl + 1] = {
+	if item_data.store_bundle_big_image then
+		layout[#layout + 1] = {
 			id = "dlc_feature_1",
 			type = "big_image",
 			settings = {
 				text = "",
 				localize = false,
 				show_frame = true,
-				texture_path = arg_32_2.store_bundle_big_image,
-				texture_package = arg_32_2.store_texture_package,
+				texture_path = item_data.store_bundle_big_image,
+				texture_package = item_data.store_texture_package,
 				image_size = {
 					800,
 					592
@@ -1206,16 +1278,16 @@ StoreWindowItemPreview._create_item_bundle_layout = function (arg_32_0, arg_32_1
 		}
 	end
 
-	tbl[#tbl + 1] = {
+	layout[#layout + 1] = {
 		type = "spacing"
 	}
-	tbl[#tbl + 1] = {
+	layout[#layout + 1] = {
 		type = "divider_horizontal"
 	}
-	tbl[#tbl + 1] = {
+	layout[#layout + 1] = {
 		type = "spacing"
 	}
-	tbl[#tbl + 1] = {
+	layout[#layout + 1] = {
 		type = "header_text",
 		settings = {
 			text = "menu_store_dlc_title_including",
@@ -1223,10 +1295,11 @@ StoreWindowItemPreview._create_item_bundle_layout = function (arg_32_0, arg_32_1
 		}
 	}
 
-	local num = #tbl + 1
+	local item_row = #layout + 1
+	local num_items = #bundle_contains
 
-	if #bundle_contains == 2 then
-		tbl[num] = {
+	if num_items == 2 then
+		layout[item_row] = {
 			type = "spacing",
 			settings = {
 				size = {
@@ -1235,16 +1308,16 @@ StoreWindowItemPreview._create_item_bundle_layout = function (arg_32_0, arg_32_1
 				}
 			}
 		}
-		num = num + 1
+		item_row = item_row + 1
 	end
 
 	for i = 1, #bundle_contains do
-		local var_32_9 = bundle_contains[i]
-		local var_32_10 = SteamitemdefidToMasterList[var_32_9]
+		local steam_itemdefid = bundle_contains[i]
+		local item_key = SteamitemdefidToMasterList[steam_itemdefid]
 
-		tbl[num + i - 1] = {
+		layout[item_row + i - 1] = {
 			type = "item",
-			id = var_32_10,
+			id = item_key,
 			settings = {
 				hide_price = false,
 				hide_new = true
@@ -1252,32 +1325,32 @@ StoreWindowItemPreview._create_item_bundle_layout = function (arg_32_0, arg_32_1
 		}
 	end
 
-	tbl[#tbl + 1] = {
+	layout[#layout + 1] = {
 		type = "body_text",
 		settings = {
 			localize = true,
-			text = description
+			text = bundle_desc
 		}
 	}
-	tbl[#tbl + 1] = {
+	layout[#layout + 1] = {
 		type = "spacing"
 	}
-	tbl[#tbl + 1] = {
+	layout[#layout + 1] = {
 		type = "divider_horizontal"
 	}
-	tbl[#tbl + 1] = {
+	layout[#layout + 1] = {
 		type = "spacing"
 	}
 
-	return tbl
+	return layout
 end
 
-StoreWindowItemPreview._present_dlc = function (self, arg_33_1, arg_33_2)
+StoreWindowItemPreview._present_dlc = function (self, settings, product_id)
 	-- function 33
-	local dlc_name = arg_33_1.dlc_name
-	local name = arg_33_1.name
+	local dlc_name = settings.dlc_name
+	local title_text = settings.name
 
-	self:_set_title_name(Localize(name))
+	self:_set_title_name(Localize(title_text))
 	self:_set_sub_title_name("")
 	self:_set_sub_title_alpha_multiplier(1)
 	self:_set_type_title_name("")
@@ -1289,11 +1362,11 @@ StoreWindowItemPreview._present_dlc = function (self, arg_33_1, arg_33_2)
 	self._dlc_presentation_active = true
 	self._item_widgets_by_name.details_button.content.visible = false
 
-	if not self:_owns_product() then
+	if self:_owns_product() then
 		self._current_generic_input_action = "dlc_preview_owned"
 
 		self._parent:change_generic_actions(generic_input_actions.dlc_preview_owned)
-	elseif not arg_33_1.is_bundle then
+	elseif settings.is_bundle then
 		self._current_generic_input_action = "dlc_bundle_purchase"
 
 		self._parent:change_generic_actions(generic_input_actions.dlc_bundle_purchase)
@@ -1303,28 +1376,31 @@ StoreWindowItemPreview._present_dlc = function (self, arg_33_1, arg_33_2)
 		self._parent:change_generic_actions(generic_input_actions.dlc_preview_purchase)
 	end
 
+	local is_console = not IS_WINDOWS
 	local layout_console
 
-	if not not IS_WINDOWS then
-		layout_console = arg_33_1.layout_console
+	if is_console then
+		layout_console = settings.layout_console
 
 		if not layout_console then
 			-- Nothing
 		end
 	end
 
-	layout_console = arg_33_1.layout
+	layout_console = settings.layout
+
+	local layout = layout_console
 
 	::label_33_0::
 
-	if layout_console or not arg_33_1.is_bundle then
-		layout_console = self:_create_dlc_bundle_layout(arg_33_1, arg_33_2)
+	if not layout and settings.is_bundle then
+		layout = self:_create_dlc_bundle_layout(settings, product_id)
 	end
 
-	self:_dlc_component_layout(layout_console)
+	self:_dlc_component_layout(layout)
 end
 
-StoreWindowItemPreview._present_item = function (self, arg_34_1, arg_34_2)
+StoreWindowItemPreview._present_item = function (self, item, product)
 	-- function 34
 	if not self._detail_button_hidden then
 		self._item_widgets_by_name.details_button.content.visible = true
@@ -1332,179 +1408,207 @@ StoreWindowItemPreview._present_item = function (self, arg_34_1, arg_34_2)
 
 	self._dlc_presentation_active = false
 
-	local data = arg_34_1.data
-	local item_type = data.item_type
-	local slot_type = data.slot_type
-	local can_wield = data.can_wield
-	local steam_itemdefid = arg_34_1.steam_itemdefid
-	local end_time = arg_34_1.end_time
-	local dlc_name = arg_34_1.dlc_name
-	local var_34_7
-	local var_34_8
+	local item_data = item.data
+	local item_type = item_data.item_type
+	local slot_type = item_data.slot_type
+	local can_wield = item_data.can_wield
+	local steam_itemdefid = item.steam_itemdefid
+	local end_time = item.end_time
+	local dlc_name = item.dlc_name
+	local price, currency
 
-	if not steam_itemdefid then
+	if steam_itemdefid then
 		self:_set_price(nil, nil, nil, steam_itemdefid)
-	elseif not dlc_name then
+	elseif dlc_name then
 		self:_set_price(nil, nil, dlc_name)
 	else
-		local str = "SM"
-		local product_item = arg_34_2.product_item
-		local regular_prices
+		local currency_type = "SM"
+		local product_item = product.product_item
+		local regular_prices_2
 
-		if not product_item then
-			regular_prices = product_item.regular_prices
+		if product_item then
+			regular_prices_2 = product_item.regular_prices
 
-			if not regular_prices then
+			if not regular_prices_2 then
 				-- Nothing
 			end
 		end
 
-		regular_prices = arg_34_1.regular_prices
+		regular_prices_2 = item.regular_prices
+
+		local regular_prices = regular_prices_2
 
 		do
-			local current_prices
+			local current_prices_2
 		end
 
 		::label_34_0::
 
-		if not product_item then
-			current_prices = product_item.current_prices
+		if product_item then
+			current_prices_2 = product_item.current_prices
 
-			if not current_prices then
+			if not current_prices_2 then
 				-- Nothing
 			end
 		end
 
-		current_prices = arg_34_1.current_prices
+		current_prices_2 = item.current_prices
+
+		local current_prices = current_prices_2
 
 		::label_34_1::
 
-		for k, v in pairs(self._item_currency_settings) do
-			local var_34_13 = regular_prices[k]
-			local var_34_14 = current_prices[k]
+		for currency, settings in pairs(self._item_currency_settings) do
+			local has_regular_price = regular_prices[currency]
+			local has_current_price = current_prices[currency]
 
-			if not var_34_13 and not var_34_14 then
-				str = k
+			if has_regular_price and has_current_price then
+				currency_type = currency
 
 				break
 			end
 		end
 
-		local var_34_15 = current_prices[str]
+		local var_34_2 = current_prices[currency_type]
 
-		var_34_15 = var_34_15 or regular_prices[str]
+		if not var_34_2 then
+			-- Nothing
+		end
 
-		self:_set_price(var_34_15, str)
+		var_34_2 = regular_prices[currency_type]
+
+		local price = var_34_2
+
+		::label_34_2::
+
+		self:_set_price(price, currency_type)
 	end
 
-	local product_layout = arg_34_1.product_layout
+	local product_layout = item.product_layout
 
-	product_layout = product_layout or data.product_layout
-
-	local flag = not product_layout and StoreBundleLayouts[product_layout]
-
-	if not ((item_type == "cosmetic_bundle" or not data.bundle_contains) and product_layout) then
-		flag = self:_create_item_bundle_layout(steam_itemdefid, data)
+	if not product_layout then
+		-- Nothing
 	end
 
-	local required_dlc = data.required_dlc
+	product_layout = item_data.product_layout
 
-	required_dlc = not required_dlc and not Managers.unlock:is_dlc_unlocked(data.required_dlc)
+	local item_preview_layout_name = product_layout
 
-	if not flag then
-		local get_ui_information_from_item, var_34_20, var_34_21 = UIUtils.get_ui_information_from_item(arg_34_1)
+	::label_34_3::
 
-		self:_set_title_name(Localize(var_34_20))
+	local item_preview_layout = not not item_preview_layout_name and not not StoreBundleLayouts[item_preview_layout_name]
+
+	if item_type ~= "cosmetic_bundle" and item_data.bundle_contains and not item_preview_layout_name then
+		item_preview_layout = self:_create_item_bundle_layout(steam_itemdefid, item_data)
+	end
+
+	local required_dlc = item_data.required_dlc
+
+	if required_dlc then
+		-- Nothing
+	end
+
+	required_dlc = not Managers.unlock:is_dlc_unlocked(item_data.required_dlc)
+
+	local missing_required_dlc = required_dlc
+
+	::label_34_4::
+
+	if item_preview_layout then
+		local inventory_icon, display_name, _ = UIUtils.get_ui_information_from_item(item)
+
+		self:_set_title_name(Localize(display_name))
 		self:_set_sub_title_name("")
 		self:_set_sub_title_alpha_multiplier(1)
 		self:_set_type_title_name("")
 		self:_set_career_title_name("")
 
-		local str_2 = ""
+		local disclaimer_text = ""
 
-		if not required_dlc then
-			local var_34_23 = StoreDlcSettingsByName[data.required_dlc]
+		if missing_required_dlc then
+			local settings = StoreDlcSettingsByName[item_data.required_dlc]
 
-			str_2 = not var_34_23 and string.format(Localize("menu_store_disclaimer_missing_required_dlc"), Localize(var_34_23.name)) and Localize("dlc_required")
+			disclaimer_text = (not settings or not string.format(Localize("menu_store_disclaimer_missing_required_dlc"), Localize(settings.name))) and not not Localize("dlc_required")
 		end
 
-		self:_set_disclaimer_text(str_2)
+		self:_set_disclaimer_text(disclaimer_text)
 		self:_set_expire_timer_text("")
 
 		self._dlc_presentation_active = true
 		self._item_widgets_by_name.details_button.content.visible = false
 
-		self:_dlc_component_layout(flag)
+		self:_dlc_component_layout(item_preview_layout)
 	else
-		local item_preview_environment = data.item_preview_environment
-		local item_preview_object_set_name = data.item_preview_object_set_name
-		local str_3 = ""
-		local str_4 = ""
-		local _get_can_wield_display_text, var_34_29 = self:_get_can_wield_display_text(can_wield)
+		local item_preview_environment = item_data.item_preview_environment
+		local item_preview_object_set_name = item_data.item_preview_object_set_name
+		local type_title_text = ""
+		local disclaimer_text = ""
+		local sub_title_text, career_title_text = self:_get_can_wield_display_text(can_wield)
 
-		if not (slot_type == "melee" or slot_type == "ranged" or slot_type ~= "weapon_skin") then
-			local item_type_2 = ItemMasterList[data.matching_item_key].item_type
+		if slot_type == "melee" or slot_type == "ranged" or slot_type == "weapon_skin" then
+			local matching_item_type = ItemMasterList[item_data.matching_item_key].item_type
 
-			str_3 = Localize(item_type_2)
-			item_preview_environment = item_preview_environment or "weapons_default_01"
-			item_preview_object_set_name = item_preview_object_set_name or "flow_weapon_lights"
+			type_title_text = Localize(matching_item_type)
+			item_preview_environment = not not item_preview_environment or not not "weapons_default_01"
+			item_preview_object_set_name = not not item_preview_object_set_name or not not "flow_weapon_lights"
 
-			if not required_dlc then
-				local var_34_31 = StoreDlcSettingsByName[data.required_dlc]
+			if missing_required_dlc then
+				local settings = StoreDlcSettingsByName[item_data.required_dlc]
 
-				str_4 = not var_34_31 and string.format(Localize("menu_store_disclaimer_missing_required_dlc"), Localize(var_34_31.name)) and Localize("dlc_required")
+				disclaimer_text = (not settings or not string.format(Localize("menu_store_disclaimer_missing_required_dlc"), Localize(settings.name))) and not not Localize("dlc_required")
 			else
-				str_4 = Localize(item_type)
+				disclaimer_text = Localize(item_type)
 			end
 		elseif slot_type == "hat" then
-			str_3 = Localize(item_type)
-			item_preview_environment = item_preview_environment or "hats_default_01"
-			item_preview_object_set_name = item_preview_object_set_name or "flow_hat_lights"
+			type_title_text = Localize(item_type)
+			item_preview_environment = not not item_preview_environment or not not "hats_default_01"
+			item_preview_object_set_name = not not item_preview_object_set_name or not not "flow_hat_lights"
 
-			if not required_dlc then
-				local var_34_32 = StoreDlcSettingsByName[data.required_dlc]
+			if missing_required_dlc then
+				local settings = StoreDlcSettingsByName[item_data.required_dlc]
 
-				str_4 = not var_34_32 and string.format(Localize("menu_store_disclaimer_missing_required_dlc"), Localize(var_34_32.name)) and Localize("dlc_required")
+				disclaimer_text = (not settings or not string.format(Localize("menu_store_disclaimer_missing_required_dlc"), Localize(settings.name))) and not not Localize("dlc_required")
 			end
-		elseif not (slot_type == "skin" or slot_type == "cosmetic_bundle" or slot_type ~= "weapon_pose") then
-			local flag_2 = true
-			local _get_hero_wield_info_by_item, var_34_35 = self:_get_hero_wield_info_by_item(arg_34_1)
+		elseif slot_type == "skin" or slot_type == "cosmetic_bundle" or slot_type == "weapon_pose" then
+			local hero_skin = true
+			local _, profile_index = self:_get_hero_wield_info_by_item(item)
+			local profile = SPProfiles[profile_index]
 
-			if SPProfiles[var_34_35].affiliation == "dark_pact" then
-				flag_2 = false
+			if profile.affiliation == "dark_pact" then
+				hero_skin = false
 			end
 
-			str_3 = not flag_2 and Localize(item_type) and Localize("dark_pact_skin")
-			item_preview_object_set_name = item_preview_object_set_name or "flow_character_lights"
+			type_title_text = (not hero_skin or not Localize(item_type)) and not not Localize("dark_pact_skin")
+			item_preview_object_set_name = not not item_preview_object_set_name or not not "flow_character_lights"
 
-			if not required_dlc then
-				local var_34_36 = StoreDlcSettingsByName[data.required_dlc]
+			if missing_required_dlc then
+				local settings = StoreDlcSettingsByName[item_data.required_dlc]
 
-				str_4 = not var_34_36 and string.format(Localize("menu_store_disclaimer_missing_required_dlc"), Localize(var_34_36.name)) and Localize("dlc_required")
+				disclaimer_text = (not settings or not string.format(Localize("menu_store_disclaimer_missing_required_dlc"), Localize(settings.name))) and not not Localize("dlc_required")
 			elseif slot_type == "weapon_pose" then
-				str_4 = ""
+				disclaimer_text = ""
 			elseif slot_type == "cosmetic_bundle" then
-				str_4 = Localize("menu_store_product_pactsworn_skin_disclaimer_desc")
+				disclaimer_text = Localize("menu_store_product_pactsworn_skin_disclaimer_desc")
 			else
-				local name = data.name
-				local var_34_38 = Cosmetics[name]
+				local item_name = item_data.name
+				local skin_data = Cosmetics[item_name]
 
-				if not var_34_38 and not var_34_38.always_hide_attachment_slots then
-					str_4 = Localize("menu_store_product_hero_skin_disclaimer_02_desc")
+				if skin_data and skin_data.always_hide_attachment_slots then
+					disclaimer_text = Localize("menu_store_product_hero_skin_disclaimer_02_desc")
 				else
-					str_4 = Localize("menu_store_product_hero_skin_disclaimer_desc")
+					disclaimer_text = Localize("menu_store_product_hero_skin_disclaimer_desc")
 				end
 			end
 		end
 
-		local settings = arg_34_2.settings
+		local product_settings = product.settings
 
-		if not settings then
-			if not settings.acquire_disabled then
-				str_4 = Localize("item_is_part_of_a_bundle")
+		if product_settings then
+			if product_settings.acquire_disabled then
+				disclaimer_text = Localize("item_is_part_of_a_bundle")
 			end
 
-			if not settings.part_of_bundle then
+			if product_settings.part_of_bundle then
 				local content = self._item_widgets_by_name.details_button.content
 
 				content.normal = "store_info_back_off"
@@ -1515,21 +1619,21 @@ StoreWindowItemPreview._present_item = function (self, arg_34_1, arg_34_2)
 		self:_show_object_set(item_preview_object_set_name)
 		self:_update_environment(item_preview_environment)
 
-		local get_ui_information_from_item_2, var_34_42, var_34_43 = UIUtils.get_ui_information_from_item(arg_34_1)
+		local inventory_icon, display_name, _ = UIUtils.get_ui_information_from_item(item)
 
-		self:_set_title_name(Localize(var_34_42))
-		self:_set_sub_title_name(_get_can_wield_display_text)
+		self:_set_title_name(Localize(display_name))
+		self:_set_sub_title_name(sub_title_text)
 		self:_set_sub_title_alpha_multiplier(1)
-		self:_set_type_title_name(str_3)
-		self:_set_career_title_name(var_34_29)
-		self:_set_disclaimer_text(str_4)
+		self:_set_type_title_name(type_title_text)
+		self:_set_career_title_name(career_title_text)
+		self:_set_disclaimer_text(disclaimer_text)
 
 		self._delayed_item_unit_presentation_delay = 0.3
 	end
 
 	local _calculate_expire_timer_text
 
-	if not end_time then
+	if end_time then
 		_calculate_expire_timer_text = self:_calculate_expire_timer_text(end_time)
 
 		if not _calculate_expire_timer_text then
@@ -1539,11 +1643,13 @@ StoreWindowItemPreview._present_item = function (self, arg_34_1, arg_34_2)
 
 	_calculate_expire_timer_text = ""
 
-	::label_34_2::
+	local expire_timer_text = _calculate_expire_timer_text
 
-	self:_set_expire_timer_text(_calculate_expire_timer_text)
+	::label_34_5::
 
-	if not self:_owns_product() then
+	self:_set_expire_timer_text(expire_timer_text)
+
+	if self:_owns_product() then
 		self._current_generic_input_action = "item_preview_owned"
 
 		self._parent:change_generic_actions(generic_input_actions.item_preview_owned)
@@ -1554,121 +1660,127 @@ StoreWindowItemPreview._present_item = function (self, arg_34_1, arg_34_2)
 	end
 end
 
-StoreWindowItemPreview._delayed_item_unit_presentation = function (self, arg_35_1)
+StoreWindowItemPreview._delayed_item_unit_presentation = function (self, item)
 	-- function 35
-	local data = arg_35_1.data
-	local key = data.key
-	local slot_type = data.slot_type
+	local item_data = item.data
+	local item_key = item_data.key
+	local slot_type = item_data.slot_type
 	local settings = self._selected_product.settings
 
-	settings = settings or tbl
+	if not settings then
+		-- Nothing
+	end
 
-	local _viewport_widget = self._viewport_widget
-	local var_35_5 = _viewport_widget.element.pass_data[1]
-	local viewport = var_35_5.viewport
-	local world = var_35_5.world
+	settings = dummy_table
 
-	if not (slot_type == "melee" or slot_type == "ranged" or slot_type ~= "weapon_skin") then
-		local tbl_2 = {
+	local product_settings = settings
+
+	::label_35_0::
+
+	local viewport_widget = self._viewport_widget
+	local viewport_pass_data = viewport_widget.element.pass_data[1]
+	local viewport = viewport_pass_data.viewport
+	local world = viewport_pass_data.world
+
+	if slot_type == "melee" or slot_type == "ranged" or slot_type == "weapon_skin" then
+		local preview_position = {
 			0,
 			0,
 			0
 		}
-		local var_35_9
-		local flag = true
-		local var_35_11
-		local flag_2 = true
+		local unique_id, invert_start_rotation, display_unit_key = nil, true
+		local use_highest_mip_levels = true
 		local camera = ScriptViewport.camera(viewport)
 
 		ScriptCamera.set_local_rotation(camera, QuaternionBox(0, 0, 1, 0):unbox())
 
-		local var_35_14 = LootItemUnitPreviewer:new(arg_35_1, tbl_2, world, viewport, var_35_9, flag, var_35_11, flag_2)
-		local var_35_15 = callback(self, "cb_unit_spawned_item_preview", var_35_14, key)
+		local item_previewer = LootItemUnitPreviewer:new(item, preview_position, world, viewport, unique_id, invert_start_rotation, display_unit_key, use_highest_mip_levels)
+		local callback = callback(self, "cb_unit_spawned_item_preview", item_previewer, item_key)
 
-		var_35_14:activate_auto_spin()
-		var_35_14:register_spawn_callback(var_35_15)
+		item_previewer:activate_auto_spin()
+		item_previewer:register_spawn_callback(callback)
 
-		self._item_previewer = var_35_14
-	elseif not (slot_type == "frame" or slot_type ~= "chips") then
-		local tbl_3 = {
+		self._item_previewer = item_previewer
+	elseif slot_type == "frame" or slot_type == "chips" then
+		local preview_position = {
 			0,
 			0.4,
 			-0.25
 		}
 
 		if slot_type == "chips" then
-			tbl_3 = {
+			preview_position = {
 				0,
 				-1,
 				-0.25
 			}
 		end
 
-		local var_35_17
-		local flag_3 = true
-		local var_35_19
-		local flag_4 = true
-		local camera_2 = ScriptViewport.camera(viewport)
+		local unique_id, invert_start_rotation, display_unit_key = nil, true
+		local use_highest_mip_levels = true
+		local camera = ScriptViewport.camera(viewport)
 
-		ScriptCamera.set_local_rotation(camera_2, QuaternionBox(0, 0, 1, 0):unbox())
+		ScriptCamera.set_local_rotation(camera, QuaternionBox(0, 0, 1, 0):unbox())
 
-		local var_35_22 = LootItemUnitPreviewer:new(arg_35_1, tbl_3, world, viewport, var_35_17, flag_3, var_35_19, flag_4)
-		local var_35_23 = callback(self, "cb_unit_spawned_item_preview", var_35_22, key)
+		local item_previewer = LootItemUnitPreviewer:new(item, preview_position, world, viewport, unique_id, invert_start_rotation, display_unit_key, use_highest_mip_levels)
+		local callback = callback(self, "cb_unit_spawned_item_preview", item_previewer, item_key)
 
-		var_35_22:activate_auto_spin()
-		var_35_22:register_spawn_callback(var_35_23)
+		item_previewer:activate_auto_spin()
+		item_previewer:register_spawn_callback(callback)
 
-		self._item_previewer = var_35_22
+		self._item_previewer = item_previewer
 	elseif slot_type == "hat" then
-		local var_35_24 = MenuWorldPreviewer:new(self._ingame_ui_context, UISettings.hero_hat_camera_position_by_character, "StoreWindowItemPreview")
+		local world_previewer = MenuWorldPreviewer:new(self._ingame_ui_context, UISettings.hero_hat_camera_position_by_character, "StoreWindowItemPreview")
 
-		var_35_24:on_enter(_viewport_widget)
+		world_previewer:on_enter(viewport_widget)
 
-		self._world_previewer = var_35_24
+		self._world_previewer = world_previewer
 
-		local _get_hero_wield_info_by_item, var_35_26, var_35_27, var_35_28 = self:_get_hero_wield_info_by_item(arg_35_1)
-		local var_35_29 = CareerSettings[var_35_27]
+		local profile_name, profile_index, career_name, career_index = self:_get_hero_wield_info_by_item(item)
+		local career_settings = CareerSettings[career_name]
 		local store_optional_skin
 
-		if not settings.part_of_bundle then
-			store_optional_skin = data.store_optional_skin
+		if product_settings.part_of_bundle then
+			store_optional_skin = item_data.store_optional_skin
 
 			if not store_optional_skin then
 				-- Nothing
 			end
 		end
 
-		store_optional_skin = var_35_29.base_skin
+		store_optional_skin = career_settings.base_skin
 
-		::label_35_0::
+		local skin = store_optional_skin
 
-		local key_2 = data.key
+		::label_35_1::
 
-		self:_spawn_hero_with_hat(var_35_24, _get_hero_wield_info_by_item, var_35_28, store_optional_skin, key_2)
+		local hat_name = item_data.key
+
+		self:_spawn_hero_with_hat(world_previewer, profile_name, career_index, skin, hat_name)
 	elseif slot_type == "skin" then
-		local var_35_32 = MenuWorldPreviewer:new(self._ingame_ui_context, UISettings.hero_skin_camera_position_by_character, "StoreWindowItemPreview")
+		local world_previewer = MenuWorldPreviewer:new(self._ingame_ui_context, UISettings.hero_skin_camera_position_by_character, "StoreWindowItemPreview")
 
-		var_35_32:on_enter(_viewport_widget)
+		world_previewer:on_enter(viewport_widget)
 
-		self._world_previewer = var_35_32
+		self._world_previewer = world_previewer
 
-		local name = data.name
-		local _get_hero_wield_info_by_item_2, var_35_35, var_35_36, var_35_37 = self:_get_hero_wield_info_by_item(arg_35_1)
+		local optional_skin = item_data.name
+		local profile_name, profile_index, career_name, career_index = self:_get_hero_wield_info_by_item(item)
 
-		if not data.linked_weapon then
-			local var_35_38
-			local var_35_39 = ItemMasterList[data.linked_weapon]
+		if item_data.linked_weapon then
+			local optional_weapon_skin
+			local optional_weapon_item = ItemMasterList[item_data.linked_weapon]
 
-			if not var_35_39 then
-				var_35_38 = var_35_39.name
+			if optional_weapon_item then
+				optional_weapon_skin = optional_weapon_item.name
 			end
 
-			self:_spawn_hero_with_linked_weapon(var_35_32, _get_hero_wield_info_by_item_2, var_35_37, name, var_35_38)
+			self:_spawn_hero_with_linked_weapon(world_previewer, profile_name, career_index, optional_skin, optional_weapon_skin)
 		else
 			local store_optional_hat
 
-			if not settings.part_of_bundle then
-				store_optional_hat = data.store_optional_hat
+			if product_settings.part_of_bundle then
+				store_optional_hat = item_data.store_optional_hat
 
 				if not store_optional_hat then
 					-- Nothing
@@ -1677,192 +1789,199 @@ StoreWindowItemPreview._delayed_item_unit_presentation = function (self, arg_35_
 
 			store_optional_hat = nil
 
-			::label_35_1::
+			local optional_hat = store_optional_hat
 
-			self:_spawn_hero_with_hat(var_35_32, _get_hero_wield_info_by_item_2, var_35_37, name, store_optional_hat)
+			::label_35_2::
+
+			self:_spawn_hero_with_hat(world_previewer, profile_name, career_index, optional_skin, optional_hat)
 		end
 	elseif slot_type == "cosmetic_bundle" then
-		local var_35_41 = MenuWorldPreviewer:new(self._ingame_ui_context, UISettings.hero_skin_camera_position_by_character, "StoreWindowItemPreview")
+		local world_previewer = MenuWorldPreviewer:new(self._ingame_ui_context, UISettings.hero_skin_camera_position_by_character, "StoreWindowItemPreview")
 
-		var_35_41:on_enter(_viewport_widget)
+		world_previewer:on_enter(viewport_widget)
 
-		self._world_previewer = var_35_41
+		self._world_previewer = world_previewer
 
-		local _get_cosmetic_bundle_item_contents = self:_get_cosmetic_bundle_item_contents(data)
-		local var_35_43
+		local contents = self:_get_cosmetic_bundle_item_contents(item_data)
+		local optional_skin
 
-		if not _get_cosmetic_bundle_item_contents.skin then
-			var_35_43 = _get_cosmetic_bundle_item_contents.skin
+		if contents.skin then
+			optional_skin = contents.skin
 		end
 
-		local var_35_44
+		local optional_weapon_skin
 
-		if _get_cosmetic_bundle_item_contents.melee or not _get_cosmetic_bundle_item_contents.ranged then
-			var_35_44 = _get_cosmetic_bundle_item_contents.melee or content.ranged
+		if contents.melee or contents.ranged then
+			optional_weapon_skin = not not contents.melee or not not content.ranged
 		end
 
-		local _get_hero_wield_info_by_item_3, var_35_46, var_35_47, var_35_48 = self:_get_hero_wield_info_by_item(arg_35_1)
+		local profile_name, profile_index, career_name, career_index = self:_get_hero_wield_info_by_item(item)
 
-		self:_spawn_hero_with_linked_weapon(var_35_41, _get_hero_wield_info_by_item_3, var_35_48, var_35_43, var_35_44)
+		self:_spawn_hero_with_linked_weapon(world_previewer, profile_name, career_index, optional_skin, optional_weapon_skin)
 	elseif slot_type == "weapon_pose" then
-		local var_35_49 = MenuWorldPreviewer:new(self._ingame_ui_context, UISettings.hero_skin_camera_position_by_character, "StoreWindowItemPreview")
+		local world_previewer = MenuWorldPreviewer:new(self._ingame_ui_context, UISettings.hero_skin_camera_position_by_character, "StoreWindowItemPreview")
 
-		var_35_49:on_enter(_viewport_widget)
+		world_previewer:on_enter(viewport_widget)
 
-		self._world_previewer = var_35_49
+		self._world_previewer = world_previewer
 
-		local _get_hero_wield_info_by_item_4, var_35_51, var_35_52, var_35_53 = self:_get_hero_wield_info_by_item(arg_35_1)
-		local var_35_54
-		local var_35_55
+		local profile_name, profile_index, career_name, career_index = self:_get_hero_wield_info_by_item(item)
+		local optional_skin, hat_item_name
 
-		self:_spawn_hero_with_hat_and_pose(var_35_49, _get_hero_wield_info_by_item_4, var_35_53, var_35_54, var_35_55, arg_35_1)
+		self:_spawn_hero_with_hat_and_pose(world_previewer, profile_name, career_index, optional_skin, hat_item_name, item)
 	end
 end
 
-StoreWindowItemPreview._get_cosmetic_bundle_item_contents = function (arg_36_0, arg_36_1)
+StoreWindowItemPreview._get_cosmetic_bundle_item_contents = function (self, item_data)
 	-- function 36
-	local tbl = {}
-	local bundle_contains = arg_36_1.bundle_contains
+	local contained_items = {}
+	local bundle_contains = item_data.bundle_contains
 
-	if not (not bundle_contains and not (#bundle_contains > 0)) then
+	if bundle_contains and #bundle_contains > 0 then
 		for i = 1, #bundle_contains do
-			local var_36_2 = bundle_contains[i]
-			local var_36_3 = SteamitemdefidToMasterList[var_36_2]
-			local var_36_4 = ItemMasterList[var_36_3]
+			local steam_itemdefid = bundle_contains[i]
+			local item_key = SteamitemdefidToMasterList[steam_itemdefid]
+			local contained_item_data = ItemMasterList[item_key]
 
-			if not var_36_4 then
-				tbl[var_36_4.slot_type] = var_36_4.name
+			if contained_item_data then
+				local slot_type = contained_item_data.slot_type
+
+				contained_items[slot_type] = contained_item_data.name
 			end
 		end
 	end
 
-	return tbl
+	return contained_items
 end
 
-StoreWindowItemPreview._update_delayed_item_unit_presentation = function (self, arg_37_1)
+StoreWindowItemPreview._update_delayed_item_unit_presentation = function (self, dt)
 	-- function 37
-	local _delayed_item_unit_presentation_delay = self._delayed_item_unit_presentation_delay
+	local delay = self._delayed_item_unit_presentation_delay
 
-	if not _delayed_item_unit_presentation_delay then
+	if not delay then
 		return
 	end
 
-	local max = math.max(_delayed_item_unit_presentation_delay - arg_37_1, 0)
+	delay = math.max(delay - dt, 0)
 
-	if max == 0 then
+	if delay == 0 then
 		self._delayed_item_unit_presentation_delay = nil
 
-		local item = self._selected_product.item
+		local selected_product = self._selected_product
+		local item = selected_product.item
 
 		self:_delayed_item_unit_presentation(item)
 	else
-		self._delayed_item_unit_presentation_delay = max
+		self._delayed_item_unit_presentation_delay = delay
 	end
 end
 
-StoreWindowItemPreview._set_price = function (self, arg_38_1, arg_38_2, arg_38_3, arg_38_4)
+StoreWindowItemPreview._set_price = function (self, price, currency_type, dlc_name, steam_itemdefid)
 	-- function 38
-	local unlock_button = self._top_widgets_by_name.unlock_button
-	local content = unlock_button.content
+	local widget = self._top_widgets_by_name.unlock_button
+	local content = widget.content
 
-	if not arg_38_1 then
-		content.currency_text = tostring(arg_38_1)
+	if price then
+		content.currency_text = tostring(price)
 	end
 
-	if not arg_38_2 then
-		content.currency_icon = self._item_currency_settings[arg_38_2].icon_big
+	if currency_type then
+		local currency_ui_settings = self._item_currency_settings[currency_type]
+
+		content.currency_icon = currency_ui_settings.icon_big
 	end
 
-	content.present_currency = arg_38_1 ~= nil
+	content.present_currency = price ~= nil
 
-	if not arg_38_4 then
-		content.currency_text = self._parent:get_steam_item_price_text(arg_38_4, content)
+	if steam_itemdefid then
+		content.currency_text = self._parent:get_steam_item_price_text(steam_itemdefid, content)
 		content.real_currency = true
-	elseif not (not arg_38_3 and IS_WINDOWS) then
-		self:_handle_platform_price_data(unlock_button, arg_38_3)
+	elseif dlc_name and not IS_WINDOWS then
+		self:_handle_platform_price_data(widget, dlc_name)
 	else
 		content.real_currency = false
 	end
 end
 
-StoreWindowItemPreview._handle_platform_price_data = function (self, arg_39_1, arg_39_2)
+StoreWindowItemPreview._handle_platform_price_data = function (self, widget, dlc_name)
 	-- function 39
-	local get_app_price = Managers.backend:get_interface("peddler"):get_app_price(arg_39_2)
+	local backend_store = Managers.backend:get_interface("peddler")
+	local price_data = backend_store:get_app_price(dlc_name)
 
-	if not get_app_price then
-		Application.warning(string.format("[StoreWindowItemPreview] Missing pricing info for %q", arg_39_2))
+	if not price_data then
+		Application.warning(string.format("[StoreWindowItemPreview] Missing pricing info for %q", dlc_name))
 
-		get_app_price = {}
+		price_data = {}
 	end
 
-	if not IS_PS4 then
-		self:_setup_ps4_price_data(arg_39_1, get_app_price)
-	elseif not IS_XB1 then
-		self:_setup_xb1_price_data(arg_39_1, get_app_price)
+	if IS_PS4 then
+		self:_setup_ps4_price_data(widget, price_data)
+	elseif IS_XB1 then
+		self:_setup_xb1_price_data(widget, price_data)
 	end
 end
 
-StoreWindowItemPreview._setup_ps4_price_data = function (self, arg_40_1, arg_40_2)
+StoreWindowItemPreview._setup_ps4_price_data = function (self, widget, price_data)
 	-- function 40
-	local content = arg_40_1.content
-	local style = arg_40_1.style
-	local num = 20
+	local content = widget.content
+	local style = widget.style
+	local spacing = 20
 	local size = content.size
-	local is_plus_price = arg_40_2.is_plus_price
-	local flag = false
+	local is_plus_price = price_data.is_plus_price
+	local has_ps_plus = false
 
 	if not Managers.account:offline_mode() then
-		flag = Managers.account:has_access("playstation_plus")
+		has_ps_plus = Managers.account:has_access("playstation_plus")
 	end
 
-	local original_price = arg_40_2.original_price
-	local display_original_price = arg_40_2.display_original_price
-	local display_price = arg_40_2.display_price
-	local display_plus_upsell_price = arg_40_2.display_plus_upsell_price
-	local console_first_price_text = style.console_first_price_text
-	local console_secondary_price_text = style.console_secondary_price_text
-	local console_third_price_text = style.console_third_price_text
-	local psplus_icon = style.psplus_icon
-	local console_secondary_price_stroke = style.console_secondary_price_stroke
-	local console_third_price_stroke = style.console_third_price_stroke
+	local original_price = price_data.original_price
+	local display_original_price = price_data.display_original_price
+	local display_price = price_data.display_price
+	local display_plus_upsell_price = price_data.display_plus_upsell_price
+	local console_first_price_style = style.console_first_price_text
+	local console_secondary_price_style = style.console_secondary_price_text
+	local console_third_price_style = style.console_third_price_text
+	local psplus_icon_style = style.psplus_icon
+	local console_secondary_price_stroke_style = style.console_secondary_price_stroke
+	local console_third_price_stroke_style = style.console_third_price_stroke
 
-	if not (original_price or display_plus_upsell_price or is_plus_price) then
-		content.console_first_price_text = display_original_price or display_price or Localize("dlc_price_unavailable")
+	if not original_price and not display_plus_upsell_price and not is_plus_price then
+		content.console_first_price_text = not not display_original_price or not not display_price or not not Localize("dlc_price_unavailable")
 		content.console_secondary_price_text = ""
 		content.console_third_price_text = ""
 		content.show_ps4_plus = false
 		content.show_secondary_stroke = false
 		content.show_third_stroke = false
-	elseif not (not original_price and display_plus_upsell_price or is_plus_price) then
-		content.console_first_price_text = display_price or Localize("dlc_price_unavailable")
-		content.console_secondary_price_text = display_original_price or Localize("dlc_price_unavailable")
+	elseif original_price and not display_plus_upsell_price and not is_plus_price then
+		content.console_first_price_text = not not display_price or not not Localize("dlc_price_unavailable")
+		content.console_secondary_price_text = not not display_original_price or not not Localize("dlc_price_unavailable")
 		content.console_third_price_text = ""
 		content.show_ps4_plus = false
 		content.show_secondary_stroke = true
 		content.show_third_stroke = false
-	elseif not original_price and display_plus_upsell_price or not is_plus_price then
-		content.console_first_price_text = display_price or Localize("dlc_price_unavailable")
-		content.console_secondary_price_text = display_original_price or Localize("dlc_price_unavailable")
+	elseif original_price and not display_plus_upsell_price and is_plus_price then
+		content.console_first_price_text = not not display_price or not not Localize("dlc_price_unavailable")
+		content.console_secondary_price_text = not not display_original_price or not not Localize("dlc_price_unavailable")
 		content.console_third_price_text = ""
 		content.show_ps4_plus = true
-		content.show_secondary_stroke = flag
+		content.show_secondary_stroke = has_ps_plus
 		content.show_third_stroke = false
-	elseif not ((original_price or not display_plus_upsell_price) and is_plus_price) then
-		content.console_first_price_text = display_plus_upsell_price or Localize("dlc_price_unavailable")
-		content.console_secondary_price_text = display_price or Localize("dlc_price_unavailable")
+	elseif not original_price and display_plus_upsell_price and not is_plus_price then
+		content.console_first_price_text = not not display_plus_upsell_price or not not Localize("dlc_price_unavailable")
+		content.console_secondary_price_text = not not display_price or not not Localize("dlc_price_unavailable")
 		content.console_third_price_text = ""
 		content.show_ps4_plus = true
 		content.show_secondary_stroke = false
 		content.show_third_stroke = false
-	elseif not (not original_price and not display_plus_upsell_price and is_plus_price) then
-		content.console_first_price_text = display_plus_upsell_price or Localize("dlc_price_unavailable")
-		content.console_secondary_price_text = display_price or Localize("dlc_price_unavailable")
-		content.console_third_price_text = display_original_price or Localize("dlc_price_unavailable")
+	elseif original_price and display_plus_upsell_price and not is_plus_price then
+		content.console_first_price_text = not not display_plus_upsell_price or not not Localize("dlc_price_unavailable")
+		content.console_secondary_price_text = not not display_price or not not Localize("dlc_price_unavailable")
+		content.console_third_price_text = not not display_original_price or not not Localize("dlc_price_unavailable")
 		content.show_ps4_plus = true
 		content.show_secondary_stroke = false
 		content.show_third_stroke = true
 	else
-		content.console_first_price_text = display_price or display_original_price or Localize("dlc_price_unavailable")
+		content.console_first_price_text = not not display_price or not not display_original_price or not not Localize("dlc_price_unavailable")
 		content.console_secondary_price_text = ""
 		content.console_third_price_text = ""
 		content.show_ps4_plus = false
@@ -1870,135 +1989,137 @@ StoreWindowItemPreview._setup_ps4_price_data = function (self, arg_40_1, arg_40_
 		content.show_third_stroke = false
 	end
 
-	local get_text_width = UIUtils.get_text_width(self._ui_top_renderer, console_first_price_text, content.console_first_price_text)
-	local get_text_width_2 = UIUtils.get_text_width(self._ui_top_renderer, console_secondary_price_text, content.console_secondary_price_text)
-	local get_text_width_3 = UIUtils.get_text_width(self._ui_top_renderer, console_third_price_text, content.console_third_price_text)
-	local var_40_19 = num_3
+	local console_first_price_text_length = UIUtils.get_text_width(self._ui_top_renderer, console_first_price_style, content.console_first_price_text)
+	local console_secondary_price_text_length = UIUtils.get_text_width(self._ui_top_renderer, console_secondary_price_style, content.console_secondary_price_text)
+	local console_third_price_text_length = UIUtils.get_text_width(self._ui_top_renderer, console_third_price_style, content.console_third_price_text)
+	local starting_point = CONSOLE_PRICE_WIDTH
 
 	if content.console_secondary_price_text == "" then
-		var_40_19 = var_40_19 - get_text_width * 0.5
+		starting_point = starting_point - console_first_price_text_length * 0.5
 	elseif content.console_third_price_text == "" then
-		var_40_19 = var_40_19 - (get_text_width_2 + num * 0.5) * 0.5
+		starting_point = starting_point - (console_secondary_price_text_length + spacing * 0.5) * 0.5
 	else
-		var_40_19 = var_40_19 - (get_text_width_2 + num * 0.5 + get_text_width_3) * 0.5
+		starting_point = starting_point - (console_secondary_price_text_length + spacing * 0.5 + console_third_price_text_length) * 0.5
 	end
 
-	console_third_price_text.offset[1] = -var_40_19 - get_text_width_2 - num * 0.5
-	console_secondary_price_stroke.texture_size = {
-		get_text_width_2,
+	console_third_price_style.offset[1] = -starting_point - console_secondary_price_text_length - spacing * 0.5
+	console_secondary_price_stroke_style.texture_size = {
+		console_secondary_price_text_length,
 		1
 	}
-	console_third_price_stroke.offset[1] = -var_40_19 - get_text_width_2 - num * 0.5
-	console_third_price_stroke.texture_size = {
-		get_text_width_3,
+	console_third_price_stroke_style.offset[1] = -starting_point - console_secondary_price_text_length - spacing * 0.5
+	console_third_price_stroke_style.texture_size = {
+		console_third_price_text_length,
 		1
 	}
-	console_first_price_text.offset[1] = -var_40_19
-	console_secondary_price_text.offset[1] = -var_40_19
-	console_secondary_price_stroke.offset[1] = -var_40_19
-	psplus_icon.offset[1] = -var_40_19 - get_text_width - num * 0.25
+	console_first_price_style.offset[1] = -starting_point
+	console_secondary_price_style.offset[1] = -starting_point
+	console_secondary_price_stroke_style.offset[1] = -starting_point
+	psplus_icon_style.offset[1] = -starting_point - console_first_price_text_length - spacing * 0.25
 
 	if content.console_secondary_price_text == "" then
-		console_first_price_text.vertical_alignment = "center"
+		console_first_price_style.vertical_alignment = "center"
 	else
-		console_first_price_text.vertical_alignment = "bottom"
+		console_first_price_style.vertical_alignment = "bottom"
 	end
 
 	content.real_currency = true
 end
 
-StoreWindowItemPreview._setup_xb1_price_data = function (self, arg_41_1, arg_41_2)
+StoreWindowItemPreview._setup_xb1_price_data = function (self, widget, price_data)
 	-- function 41
-	local content = arg_41_1.content
-	local style = arg_41_1.style
-	local num = 20
+	local content = widget.content
+	local style = widget.style
+	local spacing = 20
 	local size = content.size
-	local var_41_4
+	local var_41_0
 
-	if not arg_41_2.availabilities then
-		var_41_4 = arg_41_2.availabilities[1]
+	if price_data.availabilities then
+		var_41_0 = price_data.availabilities[1]
 
-		if not var_41_4 then
+		if not var_41_0 then
 			-- Nothing
 		end
 	end
 
-	var_41_4 = {}
+	var_41_0 = {}
+
+	local availability = var_41_0
 
 	::label_41_0::
 
-	local DisplayListPrice = var_41_4.DisplayListPrice
-	local DisplayPrice = var_41_4.DisplayPrice
+	local display_original_price = availability.DisplayListPrice
+	local display_price = availability.DisplayPrice
 
-	if DisplayPrice == DisplayListPrice then
-		content.console_first_price_text = DisplayListPrice or DisplayPrice or Localize("dlc_price_unavailable")
+	if display_price == display_original_price then
+		content.console_first_price_text = not not display_original_price or not not display_price or not not Localize("dlc_price_unavailable")
 		content.console_secondary_price_text = ""
 		content.show_secondary_stroke = false
-	elseif DisplayPrice ~= DisplayListPrice then
-		content.console_first_price_text = DisplayPrice or Localize("dlc_price_unavailable")
-		content.console_secondary_price_text = DisplayListPrice or Localize("dlc_price_unavailable")
+	elseif display_price ~= display_original_price then
+		content.console_first_price_text = not not display_price or not not Localize("dlc_price_unavailable")
+		content.console_secondary_price_text = not not display_original_price or not not Localize("dlc_price_unavailable")
 		content.show_secondary_stroke = true
 	end
 
-	local console_first_price_text = style.console_first_price_text
-	local console_secondary_price_text = style.console_secondary_price_text
-	local console_secondary_price_stroke = style.console_secondary_price_stroke
-	local get_text_width = UIUtils.get_text_width(self._ui_top_renderer, console_first_price_text, content.console_first_price_text)
-	local get_text_width_2 = UIUtils.get_text_width(self._ui_top_renderer, console_secondary_price_text, content.console_secondary_price_text)
-	local var_41_12 = num_3
+	local console_first_price_style = style.console_first_price_text
+	local console_secondary_price_style = style.console_secondary_price_text
+	local console_secondary_price_stroke_style = style.console_secondary_price_stroke
+	local console_first_price_text_length = UIUtils.get_text_width(self._ui_top_renderer, console_first_price_style, content.console_first_price_text)
+	local console_secondary_price_text_length = UIUtils.get_text_width(self._ui_top_renderer, console_secondary_price_style, content.console_secondary_price_text)
+	local starting_point = CONSOLE_PRICE_WIDTH
 
-	if not content.show_secondary_stroke then
-		var_41_12 = var_41_12 - get_text_width_2 * 0.5
+	if content.show_secondary_stroke then
+		starting_point = starting_point - console_secondary_price_text_length * 0.5
 	else
-		var_41_12 = var_41_12 - get_text_width * 0.5
+		starting_point = starting_point - console_first_price_text_length * 0.5
 	end
 
-	console_first_price_text.offset[1] = -var_41_12
-	console_secondary_price_stroke.offset[1] = -var_41_12
-	console_secondary_price_stroke.texture_size = {
-		get_text_width_2,
+	console_first_price_style.offset[1] = -starting_point
+	console_secondary_price_stroke_style.offset[1] = -starting_point
+	console_secondary_price_stroke_style.texture_size = {
+		console_secondary_price_text_length,
 		2
 	}
-	console_secondary_price_stroke.vertical_alignment = "bottom"
-	console_secondary_price_text.offset[1] = -var_41_12
-	console_secondary_price_text.offset[2] = 25
-	console_secondary_price_text.vertical_alignment = "bottom"
+	console_secondary_price_stroke_style.vertical_alignment = "bottom"
+	console_secondary_price_style.offset[1] = -starting_point
+	console_secondary_price_style.offset[2] = 25
+	console_secondary_price_style.vertical_alignment = "bottom"
 
-	if not content.show_secondary_stroke then
-		console_first_price_text.vertical_alignment = "bottom"
-		console_first_price_text.base_color = {
+	if content.show_secondary_stroke then
+		console_first_price_style.vertical_alignment = "bottom"
+		console_first_price_style.base_color = {
 			255,
 			255,
 			255,
 			0
 		}
-		console_secondary_price_stroke.color = {
+		console_secondary_price_stroke_style.color = {
 			255,
 			90,
 			90,
 			90
 		}
-		console_secondary_price_text.text_color = {
+		console_secondary_price_style.text_color = {
 			255,
 			90,
 			90,
 			90
 		}
 	else
-		console_first_price_text.vertical_alignment = "center"
-		console_first_price_text.base_color = {
+		console_first_price_style.vertical_alignment = "center"
+		console_first_price_style.base_color = {
 			255,
 			255,
 			255,
 			255
 		}
-		console_secondary_price_stroke.color = {
+		console_secondary_price_stroke_style.color = {
 			255,
 			255,
 			255,
 			255
 		}
-		console_secondary_price_text.text_color = {
+		console_secondary_price_style.text_color = {
 			255,
 			255,
 			255,
@@ -2009,102 +2130,150 @@ StoreWindowItemPreview._setup_xb1_price_data = function (self, arg_41_1, arg_41_
 	content.real_currency = true
 end
 
-StoreWindowItemPreview._set_unlock_button_states = function (self, arg_42_1, arg_42_2, arg_42_3, arg_42_4, arg_42_5, arg_42_6)
+StoreWindowItemPreview._set_unlock_button_states = function (self, already_owned, can_afford, dlc_unlocked, acquire_disabled, acquire_hidden, owns_required_dlc)
 	-- function 42
-	local flag = not not GameSettingsDevelopment.read_only_backend or not not arg_42_1 or not arg_42_2 or not arg_42_3 or not not arg_42_4 or arg_42_6
-	local unlock_button = self._top_widgets_by_name.unlock_button
+	local enabled = not GameSettingsDevelopment.read_only_backend and not already_owned and not not can_afford and not not dlc_unlocked and not acquire_disabled and not not owns_required_dlc
+	local widget = self._top_widgets_by_name.unlock_button
 
-	unlock_button.content.button_hotspot.disable_button = not flag
-	unlock_button.content.owned = arg_42_1
-	unlock_button.content.dlc_unlocked = arg_42_3
-	unlock_button.content.visible = not arg_42_5
-	unlock_button.content.owns_required_dlc = arg_42_6
+	widget.content.button_hotspot.disable_button = not enabled
+	widget.content.owned = already_owned
+	widget.content.dlc_unlocked = dlc_unlocked
+	widget.content.visible = not acquire_hidden
+	widget.content.owns_required_dlc = owns_required_dlc
 end
 
 StoreWindowItemPreview._owns_product = function (self)
 	-- function 43
-	return self._top_widgets_by_name.unlock_button.content.button_hotspot.disable_button
+	local widget = self._top_widgets_by_name.unlock_button
+	local disable_button = widget.content.button_hotspot.disable_button
+
+	return disable_button
 end
 
 StoreWindowItemPreview._detailed_view_available = function (self)
 	-- function 44
-	return self._item_widgets_by_name.details_button.content.visible
+	local visible = self._item_widgets_by_name.details_button.content.visible
+
+	return visible
 end
 
-StoreWindowItemPreview._set_title_name = function (arg_45_0, arg_45_1)
+StoreWindowItemPreview._set_title_name = function (self, text)
 	-- function 45
-	arg_45_0._top_widgets_by_name.title_text.content.text = arg_45_1
+	local widget = self._top_widgets_by_name.title_text
+
+	widget.content.text = text
 end
 
-StoreWindowItemPreview._set_sub_title_name = function (arg_46_0, arg_46_1)
+StoreWindowItemPreview._set_sub_title_name = function (self, text)
 	-- function 46
-	arg_46_0._top_widgets_by_name.sub_title_text.content.text = arg_46_1
+	local widget = self._top_widgets_by_name.sub_title_text
+
+	widget.content.text = text
 end
 
-StoreWindowItemPreview._set_sub_title_alpha_multiplier = function (arg_47_0, arg_47_1)
+StoreWindowItemPreview._set_sub_title_alpha_multiplier = function (self, alpha_multiplier)
 	-- function 47
-	arg_47_0._top_widgets_by_name.sub_title_text.alpha_multiplier = arg_47_1
+	local widget = self._top_widgets_by_name.sub_title_text
+
+	widget.alpha_multiplier = alpha_multiplier
 end
 
-StoreWindowItemPreview._set_type_title_name = function (arg_48_0, arg_48_1)
+StoreWindowItemPreview._set_type_title_name = function (self, text)
 	-- function 48
-	arg_48_0._top_widgets_by_name.type_title_text.content.text = arg_48_1
+	local widget = self._top_widgets_by_name.type_title_text
+
+	widget.content.text = text
 end
 
-StoreWindowItemPreview._set_career_title_name = function (arg_49_0, arg_49_1)
+StoreWindowItemPreview._set_career_title_name = function (self, text)
 	-- function 49
-	arg_49_0._top_widgets_by_name.career_title_text.content.text = arg_49_1
+	local widget = self._top_widgets_by_name.career_title_text
+
+	widget.content.text = text
 end
 
-StoreWindowItemPreview._set_disclaimer_text = function (self, arg_50_1)
+StoreWindowItemPreview._set_disclaimer_text = function (self, text)
 	-- function 50
-	self._disclaimer_text = arg_50_1
-	self._top_widgets_by_name.disclaimer_text.content.text = arg_50_1
+	self._disclaimer_text = text
+
+	local widget = self._top_widgets_by_name.disclaimer_text
+
+	widget.content.text = text
 
 	self:_update_info_text_alignment()
 end
 
-StoreWindowItemPreview._set_expire_timer_text = function (self, arg_51_1)
+StoreWindowItemPreview._set_expire_timer_text = function (self, text)
 	-- function 51
-	self._expire_text = arg_51_1
-	self._top_widgets_by_name.expire_timer_text.content.text = arg_51_1
+	self._expire_text = text
+
+	local widget = self._top_widgets_by_name.expire_timer_text
+
+	widget.content.text = text
 
 	self:_update_info_text_alignment()
 end
 
 StoreWindowItemPreview._update_info_text_alignment = function (self)
 	-- function 52
-	local expire_timer_text = self._top_widgets_by_name.expire_timer_text
-	local disclaimer_text = self._top_widgets_by_name.disclaimer_text
-	local disclaimer_divider = self._top_widgets_by_name.disclaimer_divider
+	local expire_widget = self._top_widgets_by_name.expire_timer_text
+	local disclaimer_widget = self._top_widgets_by_name.disclaimer_text
+	local divider_widget = self._top_widgets_by_name.disclaimer_divider
 	local _expire_text = self._expire_text
 
-	_expire_text = not _expire_text and self._expire_text ~= ""
+	if _expire_text then
+		-- Nothing
+	end
+
+	if self._expire_text == "" then
+		_expire_text = false
+
+		goto label_52_0
+	end
+
+	_expire_text = true
+
+	local has_expire_text = _expire_text
+
+	::label_52_0::
 
 	local _disclaimer_text = self._disclaimer_text
 
-	_disclaimer_text = not _disclaimer_text and self._disclaimer_text ~= ""
-
-	local var_52_5
-	local var_52_6
-
-	if not _expire_text then
-		if not _disclaimer_text then
-			var_52_5 = expire_timer_text
-			var_52_6 = disclaimer_text
-		else
-			var_52_6 = expire_timer_text
-		end
-	elseif not _disclaimer_text then
-		var_52_6 = disclaimer_text
+	if _disclaimer_text then
+		-- Nothing
 	end
 
-	local flag = _expire_text or _disclaimer_text
-	local _ui_renderer = self._ui_renderer
+	if self._disclaimer_text == "" then
+		_disclaimer_text = false
+
+		goto label_52_1
+	end
+
+	_disclaimer_text = true
+
+	local has_disclaimer_text = _disclaimer_text
+
+	::label_52_1::
+
+	local text_widget_1, text_widget_2
+
+	if has_expire_text then
+		if has_disclaimer_text then
+			text_widget_1 = expire_widget
+			text_widget_2 = disclaimer_widget
+		else
+			text_widget_2 = expire_widget
+		end
+	elseif has_disclaimer_text then
+		text_widget_2 = disclaimer_widget
+	end
+
+	local has_info_text = not not has_expire_text or not not has_disclaimer_text
+	local ui_renderer = self._ui_renderer
 	local get_text_width
 
-	if not var_52_5 then
-		get_text_width = UIUtils.get_text_width(_ui_renderer, var_52_5.style.text, var_52_5.content.text)
+	if text_widget_1 then
+		get_text_width = UIUtils.get_text_width(ui_renderer, text_widget_1.style.text, text_widget_1.content.text)
 
 		if not get_text_width then
 			-- Nothing
@@ -2113,14 +2282,16 @@ StoreWindowItemPreview._update_info_text_alignment = function (self)
 
 	get_text_width = 0
 
+	local text_1_width = get_text_width
+
 	do
 		local get_text_width_2
 	end
 
-	::label_52_0::
+	::label_52_2::
 
-	if not var_52_6 then
-		get_text_width_2 = UIUtils.get_text_width(_ui_renderer, var_52_6.style.text, var_52_6.content.text)
+	if text_widget_2 then
+		get_text_width_2 = UIUtils.get_text_width(ui_renderer, text_widget_2.style.text, text_widget_2.content.text)
 
 		if not get_text_width_2 then
 			-- Nothing
@@ -2129,28 +2300,30 @@ StoreWindowItemPreview._update_info_text_alignment = function (self)
 
 	get_text_width_2 = 0
 
-	::label_52_1::
+	local text_2_width = get_text_width_2
 
-	local num = 14
-	local var_52_12 = scenegraph_definition[disclaimer_divider.scenegraph_id].size[1]
-	local num_2 = get_text_width + get_text_width_2 + var_52_12
-	local num_3 = get_text_width / 2 - num_2 / 2 - num / 2
-	local num_4 = num_3 + get_text_width / 2 + var_52_12 / 2 + num / 2
-	local num_5 = num_4 + get_text_width_2 / 2 + var_52_12 / 2 + num / 2
+	::label_52_3::
 
-	if not var_52_5 then
-		var_52_5.offset[1] = num_3
+	local spacing = 14
+	local divider_width = scenegraph_definition[divider_widget.scenegraph_id].size[1]
+	local total_length = text_1_width + text_2_width + divider_width
+	local text_1_x = text_1_width / 2 - total_length / 2 - spacing / 2
+	local divider_x = text_1_x + text_1_width / 2 + divider_width / 2 + spacing / 2
+	local text_2_x = divider_x + text_2_width / 2 + divider_width / 2 + spacing / 2
+
+	if text_widget_1 then
+		text_widget_1.offset[1] = text_1_x
 	end
 
-	if not var_52_6 then
-		var_52_6.offset[1] = num_5
+	if text_widget_2 then
+		text_widget_2.offset[1] = text_2_x
 	end
 
-	disclaimer_divider.offset[1] = num_4
-	disclaimer_divider.content.visible = flag
+	divider_widget.offset[1] = divider_x
+	divider_widget.content.visible = has_info_text
 end
 
-local tbl_2 = {
+local month_lookup = {
 	"datetime_january",
 	"datetime_february",
 	"datetime_march",
@@ -2165,757 +2338,889 @@ local tbl_2 = {
 	"datetime_december"
 }
 
-StoreWindowItemPreview._calculate_expire_timer_text = function (arg_53_0, arg_53_1)
+StoreWindowItemPreview._calculate_expire_timer_text = function (self, end_time)
 	-- function 53
-	local num = arg_53_1 / 1000 - os.time()
-	local max = math.max(num, 0)
-	local floor = math.floor(max / 60)
-	local floor_2 = math.floor(floor / 60)
-	local floor_3 = math.floor(floor_2 / 24)
+	local time_left = end_time / 1000 - os.time()
+	local seconds = math.max(time_left, 0)
+	local minutes = math.floor(seconds / 60)
+	local hours = math.floor(minutes / 60)
+	local days = math.floor(hours / 24)
 
-	if floor_3 > 7 then
-		local str = Localize("menu_store_expire_timer_expires") .. " "
-		local date = os.date("*t", arg_53_1 / 1000)
-		local month = date.month
-		local day = date.day
+	if days > 7 then
+		local timer_text = Localize("menu_store_expire_timer_expires") .. " "
+		local end_date = os.date("*t", end_time / 1000)
+		local month = end_date.month
+		local day = end_date.day
 
-		return str .. string.format(Localize(tbl_2[month]), day)
+		timer_text = timer_text .. string.format(Localize(month_lookup[month]), day)
+
+		return timer_text
 	end
 
-	local str_2 = Localize("menu_store_expire_timer_expires_in") .. " "
+	local timer_text = Localize("menu_store_expire_timer_expires_in") .. " "
 
-	if floor_3 > 0 then
-		local flag
+	if days > 0 then
+		local str
 
-		flag = floor_3 ~= 1 or not "datetime_day" or "datetime_days"
-		str_2 = str_2 .. string.format(Localize(flag), floor_3)
+		if days == 1 then
+			str = "datetime_day"
 
-		return str_2
+			goto label_53_0
+		end
+
+		str = "datetime_days"
+
+		local day_string = str
+
+		::label_53_0::
+
+		timer_text = timer_text .. string.format(Localize(day_string), days)
+
+		return timer_text
 	end
 
-	if floor_2 > 0 then
-		local flag_2
+	if hours > 0 then
+		local str_2
 
-		flag_2 = floor_2 ~= 1 or not "datetime_hour" or "datetime_hours"
-		str_2 = str_2 .. string.format(Localize(flag_2), floor_2)
+		if hours == 1 then
+			str_2 = "datetime_hour"
 
-		return str_2
+			goto label_53_1
+		end
+
+		str_2 = "datetime_hours"
+
+		local hour_string = str_2
+
+		::label_53_1::
+
+		timer_text = timer_text .. string.format(Localize(hour_string), hours)
+
+		return timer_text
 	end
 
-	if floor > 0 then
-		local flag_3
+	if minutes > 0 then
+		local str_3
 
-		flag_3 = floor ~= 1 or not "datetime_minute" or "datetime_minutes"
-		str_2 = str_2 .. string.format(Localize(flag_3), floor)
+		if minutes == 1 then
+			str_3 = "datetime_minute"
 
-		return str_2
+			goto label_53_2
+		end
+
+		str_3 = "datetime_minutes"
+
+		local minute_string = str_3
+
+		::label_53_2::
+
+		timer_text = timer_text .. string.format(Localize(minute_string), minutes)
+
+		return timer_text
 	end
 
-	local max_2 = math.max(num / 1000, 0)
-	local flag_4
+	local seconds_left = math.max(time_left / 1000, 0)
+	local str_4
 
-	flag_4 = max ~= 1 or not "datetime_second" or "datetime_seconds"
+	if seconds == 1 then
+		str_4 = "datetime_second"
 
-	return str_2 .. string.format(Localize(flag_4), max)
+		goto label_53_3
+	end
+
+	str_4 = "datetime_seconds"
+
+	local second_string = str_4
+
+	::label_53_3::
+
+	timer_text = timer_text .. string.format(Localize(second_string), seconds)
+
+	return timer_text
 end
 
-StoreWindowItemPreview.cb_unit_spawned_item_preview = function (self, arg_54_1, arg_54_2)
+StoreWindowItemPreview.cb_unit_spawned_item_preview = function (self, item_previewer, item_key)
 	-- function 54
-	local flag = true
+	local ignore_spin = true
 
-	arg_54_1:present_item(arg_54_2, flag)
+	item_previewer:present_item(item_key, ignore_spin)
 
 	self._fadeout_loading_overlay = true
 end
 
-StoreWindowItemPreview._spawn_hero_with_linked_weapon = function (arg_55_0, arg_55_1, arg_55_2, arg_55_3, arg_55_4, arg_55_5)
+StoreWindowItemPreview._spawn_hero_with_linked_weapon = function (self, world_previewer, hero_name, career_index, optional_skin, weapon_item_name)
 	-- function 55
-	local var_55_0 = callback(arg_55_0, "cb_hero_unit_spawned_weapon_preview", arg_55_1, arg_55_2, arg_55_3, arg_55_5)
+	local callback = callback(self, "cb_hero_unit_spawned_weapon_preview", world_previewer, hero_name, career_index, weapon_item_name)
 
-	arg_55_1:request_spawn_hero_unit(arg_55_2, arg_55_3, false, var_55_0, 1, nil, arg_55_4)
+	world_previewer:request_spawn_hero_unit(hero_name, career_index, false, callback, 1, nil, optional_skin)
 end
 
-StoreWindowItemPreview.cb_hero_unit_spawned_weapon_preview = function (self, arg_56_1, arg_56_2, arg_56_3, arg_56_4)
+StoreWindowItemPreview.cb_hero_unit_spawned_weapon_preview = function (self, world_previewer, hero_name, career_index, weapon_item_name)
 	-- function 56
-	local var_56_0 = FindProfileIndex(arg_56_2)
-	local var_56_1 = SPProfiles[var_56_0]
-	local var_56_2 = var_56_1.careers[arg_56_3]
-	local str = "store_idle"
+	local profile_index = FindProfileIndex(hero_name)
+	local profile = SPProfiles[profile_index]
+	local careers = profile.careers
+	local career_settings = careers[career_index]
+	local preview_idle_animation = "store_idle"
 
-	if var_56_1.affiliation == "dark_pact" then
-		str = "career_idle_01"
+	if profile.affiliation == "dark_pact" then
+		preview_idle_animation = "career_idle_01"
 	end
 
-	local preview_items = var_56_2.preview_items
+	local preview_items = career_settings.preview_items
 
-	if not arg_56_4 then
-		local slot_type = ItemMasterList[arg_56_4].slot_type
-		local var_56_6 = InventorySettings.slot_names_by_type[slot_type][1]
-		local var_56_7 = InventorySettings.slots_by_name[var_56_6]
+	if weapon_item_name then
+		local item_data = ItemMasterList[weapon_item_name]
+		local slot_type = item_data.slot_type
+		local slot_names = InventorySettings.slot_names_by_type[slot_type]
+		local slot_name = slot_names[1]
+		local slot = InventorySettings.slots_by_name[slot_name]
 
-		if not (slot_type == "melee" or slot_type ~= "ranged") then
-			arg_56_1:wield_weapon_slot(slot_type)
+		if slot_type == "melee" or slot_type == "ranged" then
+			world_previewer:wield_weapon_slot(slot_type)
 		end
 
-		arg_56_1:equip_item(arg_56_4, var_56_7)
-	elseif not preview_items then
-		for i, v in ipairs(preview_items) do
-			local item_name = v.item_name
-			local slot_type_2 = ItemMasterList[item_name].slot_type
+		world_previewer:equip_item(weapon_item_name, slot)
+	elseif preview_items then
+		for _, item_data in ipairs(preview_items) do
+			local item_name = item_data.item_name
+			local item_template = ItemMasterList[item_name]
+			local slot_type = item_template.slot_type
 
-			if not (slot_type_2 == "melee" or slot_type_2 ~= "ranged") then
-				local var_56_10 = InventorySettings.slot_names_by_type[slot_type_2][1]
-				local var_56_11 = InventorySettings.slots_by_name[var_56_10]
+			if slot_type == "melee" or slot_type == "ranged" then
+				local slot_names = InventorySettings.slot_names_by_type[slot_type]
+				local slot_name = slot_names[1]
+				local slot = InventorySettings.slots_by_name[slot_name]
 
-				arg_56_1:equip_item(item_name, var_56_11)
-				arg_56_1:wield_weapon_slot(slot_type_2)
+				world_previewer:equip_item(item_name, slot)
+				world_previewer:wield_weapon_slot(slot_type)
 			end
 		end
 	end
 
-	if not str then
-		arg_56_1:play_character_animation(str)
+	if preview_idle_animation then
+		world_previewer:play_character_animation(preview_idle_animation)
 	end
 
 	self._fadeout_loading_overlay = true
 end
 
-StoreWindowItemPreview._spawn_hero_with_hat = function (arg_57_0, arg_57_1, arg_57_2, arg_57_3, arg_57_4, arg_57_5)
+StoreWindowItemPreview._spawn_hero_with_hat = function (self, world_previewer, hero_name, career_index, optional_skin, hat_item_name)
 	-- function 57
-	local var_57_0 = callback(arg_57_0, "cb_hero_unit_spawned_hat_preview", arg_57_1, arg_57_2, arg_57_3, arg_57_5)
+	local callback = callback(self, "cb_hero_unit_spawned_hat_preview", world_previewer, hero_name, career_index, hat_item_name)
 
-	arg_57_1:request_spawn_hero_unit(arg_57_2, arg_57_3, false, var_57_0, 1, nil, arg_57_4)
+	world_previewer:request_spawn_hero_unit(hero_name, career_index, false, callback, 1, nil, optional_skin)
 end
 
-StoreWindowItemPreview.cb_hero_unit_spawned_hat_preview = function (self, arg_58_1, arg_58_2, arg_58_3, arg_58_4)
+StoreWindowItemPreview.cb_hero_unit_spawned_hat_preview = function (self, world_previewer, hero_name, career_index, hat_item_name)
 	-- function 58
-	local var_58_0 = FindProfileIndex(arg_58_2)
-	local var_58_1 = SPProfiles[var_58_0]
-	local var_58_2 = var_58_1.careers[arg_58_3]
-	local str = "store_idle"
+	local profile_index = FindProfileIndex(hero_name)
+	local profile = SPProfiles[profile_index]
+	local careers = profile.careers
+	local career_settings = careers[career_index]
+	local preview_idle_animation = "store_idle"
 
-	if var_58_1.affiliation == "dark_pact" then
-		str = "idle"
+	if profile.affiliation == "dark_pact" then
+		preview_idle_animation = "idle"
 	end
 
-	local preview_items = var_58_2.preview_items
+	local preview_items = career_settings.preview_items
 
-	if not arg_58_4 then
-		local slot_hat = InventorySettings.slots_by_name.slot_hat
+	if hat_item_name then
+		local hat_slot = InventorySettings.slots_by_name.slot_hat
 
-		arg_58_1:equip_item(arg_58_4, slot_hat)
+		world_previewer:equip_item(hat_item_name, hat_slot)
 	end
 
-	if not preview_items then
-		for i, v in ipairs(preview_items) do
-			local item_name = v.item_name
-			local slot_type = ItemMasterList[item_name].slot_type
+	if preview_items then
+		for _, item_data in ipairs(preview_items) do
+			local item_name = item_data.item_name
+			local item_template = ItemMasterList[item_name]
+			local slot_type = item_template.slot_type
 
-			if not (slot_type == "melee" or slot_type == "ranged" or not arg_58_4 or slot_type == "hat") then
-				local var_58_8 = InventorySettings.slot_names_by_type[slot_type][1]
-				local var_58_9 = InventorySettings.slots_by_name[var_58_8]
+			if slot_type ~= "melee" and slot_type ~= "ranged" and (not hat_item_name or slot_type ~= "hat") then
+				local slot_names = InventorySettings.slot_names_by_type[slot_type]
+				local slot_name = slot_names[1]
+				local slot = InventorySettings.slots_by_name[slot_name]
 
-				arg_58_1:equip_item(item_name, var_58_9)
+				world_previewer:equip_item(item_name, slot)
 			end
 		end
 	end
 
-	if not str then
-		arg_58_1:play_character_animation(str)
+	if preview_idle_animation then
+		world_previewer:play_character_animation(preview_idle_animation)
 	end
 
 	self._fadeout_loading_overlay = true
 end
 
-StoreWindowItemPreview._spawn_hero_with_hat_and_pose = function (arg_59_0, arg_59_1, arg_59_2, arg_59_3, arg_59_4, arg_59_5, arg_59_6)
+StoreWindowItemPreview._spawn_hero_with_hat_and_pose = function (self, world_previewer, hero_name, career_index, optional_skin, hat_item_name, pose_item)
 	-- function 59
-	local var_59_0 = callback(arg_59_0, "cb_hero_unit_spawned_hat_and_pose_preview", arg_59_1, arg_59_2, arg_59_3, arg_59_5, arg_59_6)
+	local callback = callback(self, "cb_hero_unit_spawned_hat_and_pose_preview", world_previewer, hero_name, career_index, hat_item_name, pose_item)
 
-	arg_59_1:request_spawn_hero_unit(arg_59_2, arg_59_3, false, var_59_0, 1, nil, arg_59_4)
+	world_previewer:request_spawn_hero_unit(hero_name, career_index, false, callback, 1, nil, optional_skin)
 end
 
-StoreWindowItemPreview.cb_hero_unit_spawned_hat_and_pose_preview = function (self, arg_60_1, arg_60_2, arg_60_3, arg_60_4, arg_60_5)
+StoreWindowItemPreview.cb_hero_unit_spawned_hat_and_pose_preview = function (self, world_previewer, hero_name, career_index, hat_item_name, pose_item)
 	-- function 60
-	local var_60_0 = FindProfileIndex(arg_60_2)
-	local var_60_1 = SPProfiles[var_60_0]
-	local var_60_2 = var_60_1.careers[arg_60_3]
-	local str = "store_idle"
+	local profile_index = FindProfileIndex(hero_name)
+	local profile = SPProfiles[profile_index]
+	local careers = profile.careers
+	local career_settings = careers[career_index]
+	local preview_idle_animation = "store_idle"
 
-	if var_60_1.affiliation == "dark_pact" then
-		local str_2 = "career_idle_01"
+	if profile.affiliation == "dark_pact" then
+		preview_idle_animation = "career_idle_01"
 	end
 
-	local preview_items = var_60_2.preview_items
+	local preview_items = career_settings.preview_items
 
-	if not arg_60_4 then
-		local slot_hat = InventorySettings.slots_by_name.slot_hat
+	if hat_item_name then
+		local hat_slot = InventorySettings.slots_by_name.slot_hat
 
-		arg_60_1:equip_item(arg_60_4, slot_hat)
+		world_previewer:equip_item(hat_item_name, hat_slot)
 	end
 
-	if not preview_items then
-		for i, v in ipairs(preview_items) do
-			local item_name = v.item_name
-			local slot_type = ItemMasterList[item_name].slot_type
+	if preview_items then
+		for _, item_data in ipairs(preview_items) do
+			local item_name = item_data.item_name
+			local item_template = ItemMasterList[item_name]
+			local slot_type = item_template.slot_type
 
-			if not (slot_type == "melee" or slot_type == "ranged" or not arg_60_4 or slot_type == "hat") then
-				local var_60_9 = InventorySettings.slot_names_by_type[slot_type][1]
-				local var_60_10 = InventorySettings.slots_by_name[var_60_9]
+			if slot_type ~= "melee" and slot_type ~= "ranged" and (not hat_item_name or slot_type ~= "hat") then
+				local slot_names = InventorySettings.slot_names_by_type[slot_type]
+				local slot_name = slot_names[1]
+				local slot = InventorySettings.slots_by_name[slot_name]
 
-				arg_60_1:equip_item(item_name, var_60_10)
-				arg_60_1:wield_weapon_slot(slot_type)
+				world_previewer:equip_item(item_name, slot)
+				world_previewer:wield_weapon_slot(slot_type)
 			end
 		end
 	end
 
-	local parent = arg_60_5.parent
+	local parent_item = pose_item.parent
 
-	if not parent then
-		local slot_type_2 = ItemMasterList[parent].slot_type
-		local var_60_13 = InventorySettings.slot_names_by_type[slot_type_2][1]
-		local var_60_14 = InventorySettings.slots_by_name[var_60_13]
+	if parent_item then
+		local item_data = ItemMasterList[parent_item]
+		local slot_type = item_data.slot_type
+		local slot_names = InventorySettings.slot_names_by_type[slot_type]
+		local slot_name = slot_names[1]
+		local slot = InventorySettings.slots_by_name[slot_name]
 
-		if not (slot_type_2 == "melee" or slot_type_2 ~= "ranged") then
-			arg_60_1:wield_weapon_slot(slot_type_2)
+		if slot_type == "melee" or slot_type == "ranged" then
+			world_previewer:wield_weapon_slot(slot_type)
 		end
 
-		arg_60_1:equip_item(parent, var_60_14)
+		world_previewer:equip_item(parent_item, slot)
 	end
 
-	local anim_event = arg_60_5.data.data.anim_event
+	local anim_event = pose_item.data.data.anim_event
 
-	if not anim_event then
-		arg_60_1:play_character_animation(anim_event)
+	if anim_event then
+		world_previewer:play_character_animation(anim_event)
 	end
 
 	self._fadeout_loading_overlay = true
 end
 
-StoreWindowItemPreview._get_can_wield_display_text = function (arg_61_0, arg_61_1)
+StoreWindowItemPreview._get_can_wield_display_text = function (self, can_wield)
 	-- function 61
-	local str = ""
-	local str_2 = ""
-	local flag = true
+	local hero_text = ""
+	local career_text = ""
+	local can_wield_all = true
 
-	for k, v in pairs(CanWieldAllItemTemplates) do
-		if not table.contains(arg_61_1, v) then
-			flag = false
+	for _, key in pairs(CanWieldAllItemTemplates) do
+		if not table.contains(can_wield, key) then
+			can_wield_all = false
 
 			break
 		end
 	end
 
-	if not flag then
-		str = Localize("store_can_be_wielded_by_all")
-	elseif not arg_61_1 then
-		local num = 0
-		local num_2 = 0
+	if can_wield_all then
+		hero_text = Localize("store_can_be_wielded_by_all")
+	elseif can_wield then
+		local added_heroes = 0
+		local added_careers = 0
 
-		for i, v_2 in ipairs(arg_61_1) do
-			local var_61_5 = CareerSettings[v_2]
-			local profile_name = var_61_5.profile_name
-			local var_61_7 = FindProfileIndex(profile_name)
-			local var_61_8 = SPProfiles[var_61_7]
-			local character_name = var_61_8.character_name
+		for _, career_name in ipairs(can_wield) do
+			local career_settings = CareerSettings[career_name]
+			local profile_name = career_settings.profile_name
+			local profile_index = FindProfileIndex(profile_name)
+			local profile = SPProfiles[profile_index]
+			local hero_display_name = profile.character_name
 
-			if var_61_8.affiliation ~= "dark_pact" then
-				if num_2 > 0 then
-					str_2 = str_2 .. ", "
+			if profile.affiliation ~= "dark_pact" then
+				if added_careers > 0 then
+					career_text = career_text .. ", "
 				end
 
-				num_2 = num_2 + 1
+				added_careers = added_careers + 1
 
-				local display_name = var_61_5.display_name
+				local career_display_name = career_settings.display_name
 
-				str_2 = str_2 .. Localize(display_name)
+				career_text = career_text .. Localize(career_display_name)
 			end
 
-			local var_61_11 = Localize(character_name)
+			local hero_display_name_localized = Localize(hero_display_name)
 
-			if not string.find(str, var_61_11) then
-				if num > 0 then
-					str = str .. ", "
+			if not string.find(hero_text, hero_display_name_localized) then
+				if added_heroes > 0 then
+					hero_text = hero_text .. ", "
 				end
 
-				num = num + 1
-				str = str .. var_61_11
+				added_heroes = added_heroes + 1
+				hero_text = hero_text .. hero_display_name_localized
 			end
 		end
 	end
 
-	return str, str_2
+	return hero_text, career_text
 end
 
-local tbl_3 = {}
+local TEMP_TABLE = {}
 
-StoreWindowItemPreview._get_hero_wield_info_by_item = function (arg_62_0, arg_62_1)
+StoreWindowItemPreview._get_hero_wield_info_by_item = function (self, item)
 	-- function 62
-	local can_wield = arg_62_1.data.can_wield
+	local item_data = item.data
+	local can_wield = item_data.can_wield
 
-	table.clear(tbl_3)
+	table.clear(TEMP_TABLE)
 
-	for i, v in ipairs(SPProfiles) do
-		local careers = v.careers
+	for _, profile_settings in ipairs(SPProfiles) do
+		local careers = profile_settings.careers
 
-		for i_2, v_2 in ipairs(careers) do
-			if not table.contains(can_wield, v_2.name) then
-				local display_name = v.display_name
-				local var_62_3 = FindProfileIndex(display_name)
-				local sort_order = v_2.sort_order
+		for index, career_settings in ipairs(careers) do
+			if table.contains(can_wield, career_settings.name) then
+				local profile_name = profile_settings.display_name
+				local profile_index = FindProfileIndex(profile_name)
+				local career_index = career_settings.sort_order
 
-				tbl_3[#tbl_3 + 1] = {
-					profile_name = display_name,
-					profile_index = var_62_3,
-					career_name = v_2.name,
-					career_index = sort_order
+				TEMP_TABLE[#TEMP_TABLE + 1] = {
+					profile_name = profile_name,
+					profile_index = profile_index,
+					career_name = career_settings.name,
+					career_index = career_index
 				}
 			end
 		end
 	end
 
-	local function fn(self, arg_63_1)
+	local function sort_func(a, b)
 		-- function 63
-		return self.career_index < arg_63_1.career_index
+		return a.career_index < b.career_index
 	end
 
-	table.sort(tbl_3, fn)
+	table.sort(TEMP_TABLE, sort_func)
 
-	local var_62_6 = tbl_3[1]
-	local profile_name = var_62_6.profile_name
-	local profile_index = var_62_6.profile_index
-	local career_name = var_62_6.career_name
-	local career_index = var_62_6.career_index
+	local data = TEMP_TABLE[1]
+	local profile_name = data.profile_name
+	local profile_index = data.profile_index
+	local career_name = data.career_name
+	local career_index = data.career_index
 
 	return profile_name, profile_index, career_name, career_index
 end
 
 StoreWindowItemPreview._sync_layout_path = function (self)
 	-- function 64
-	local get_store_path = self._parent:get_store_path()
-	local structure = StoreLayoutConfig.structure
+	local parent = self._parent
+	local path = parent:get_store_path()
+	local path_structure = StoreLayoutConfig.structure
 	local pages = StoreLayoutConfig.pages
 	local _saved_path = self._saved_path
 
-	_saved_path = _saved_path or {}
+	if not _saved_path then
+		-- Nothing
+	end
 
-	local flag = false
-	local count = #get_store_path
+	_saved_path = {}
 
-	if count ~= #_saved_path then
-		flag = true
+	local saved_path = _saved_path
+
+	::label_64_0::
+
+	local path_differs = false
+	local path_length = #path
+	local saved_path_length = #saved_path
+
+	if path_length ~= saved_path_length then
+		path_differs = true
 	else
-		for i = 1, #get_store_path do
-			if get_store_path[i] ~= _saved_path[i] then
-				flag = true
+		for i = 1, #path do
+			if path[i] ~= saved_path[i] then
+				path_differs = true
 
 				break
 			end
 		end
 	end
 
-	if not flag then
-		if get_store_path[#get_store_path] == "item_details" then
-			local settings = self._selected_product.settings
-			local flag_2 = not settings and settings.part_of_bundle
+	if path_differs then
+		local page_name = path[#path]
 
-			if not (flag_2 or self._expanded) then
+		if page_name == "item_details" then
+			local selected_product_settings = self._selected_product.settings
+			local part_of_bundle = not not selected_product_settings and not not selected_product_settings.part_of_bundle
+
+			if not part_of_bundle and not self._expanded then
 				self:_set_window_expanded(true)
 			end
 
-			local var_64_8 = get_store_path[count - 1]
+			local previous_page_name = path[path_length - 1]
 
-			if not (flag_2 or not var_64_8 or pages[var_64_8].layout == "item_list") then
+			if not part_of_bundle and (not previous_page_name or pages[previous_page_name].layout ~= "item_list") then
 				self:_hide_detail_button_assets()
 			end
-		elseif not self._expanded then
+		elseif self._expanded then
 			self:_set_window_expanded(false)
 		end
 
-		self._saved_path = table.clone(get_store_path)
+		self._saved_path = table.clone(path)
 	end
 end
 
 StoreWindowItemPreview._hide_detail_button_assets = function (self)
 	-- function 65
-	local _item_widgets_by_name = self._item_widgets_by_name
+	local item_widgets_by_name = self._item_widgets_by_name
 
-	_item_widgets_by_name.details_button.content.visible = false
-	_item_widgets_by_name.details_button_bg.content.visible = false
-	_item_widgets_by_name.title_edge_detail.content.visible = false
-	_item_widgets_by_name.title_edge.content.visible = false
+	item_widgets_by_name.details_button.content.visible = false
+	item_widgets_by_name.details_button_bg.content.visible = false
+	item_widgets_by_name.title_edge_detail.content.visible = false
+	item_widgets_by_name.title_edge.content.visible = false
 	self._detail_button_hidden = true
 
-	if not self._current_generic_input_action then
-		local var_65_1 = generic_input_actions[self._current_generic_input_action .. "_no_details"]
+	if self._current_generic_input_action then
+		local hide_detail_input_action = generic_input_actions[self._current_generic_input_action .. "_no_details"]
 
-		if not var_65_1 then
-			self._parent:change_generic_actions(var_65_1)
+		if hide_detail_input_action then
+			self._parent:change_generic_actions(hide_detail_input_action)
 		end
 	end
 end
 
-StoreWindowItemPreview._animate_detail_button = function (self, arg_66_1)
+StoreWindowItemPreview._animate_detail_button = function (self, dt)
 	-- function 66
-	local details_button = self._item_widgets_by_name.details_button
-	local content = details_button.content
-	local style = details_button.style
-	local button_hotspot = content.button_hotspot
-	local is_hover = button_hotspot.is_hover
-	local is_selected = button_hotspot.is_selected
+	local item_widgets_by_name = self._item_widgets_by_name
+	local widget = item_widgets_by_name.details_button
+	local content = widget.content
+	local style = widget.style
+	local hotspot = content.button_hotspot
+	local is_hover = hotspot.is_hover
+	local is_selected = hotspot.is_selected
+	local is_clicked
 
 	if not is_selected then
-		if not button_hotspot.is_clicked then
+		is_clicked = hotspot.is_clicked
+
+		if is_clicked then
 			-- Nothing
 		end
 
-		if button_hotspot.is_clicked ~= 0 then
+		if hotspot.is_clicked ~= 0 then
 			-- Nothing
 		end
 	end
 
-	do
-		local flag = false
+	is_clicked = false
 
-		goto label_66_1
-	end
+	goto label_66_1
 
 	::label_66_0::
 
-	do
-		local flag_2 = true
-	end
+	is_clicked = true
+
+	local input_pressed = is_clicked
 
 	::label_66_1::
 
-	local hover_progress = button_hotspot.hover_progress
+	local hover_progress_2 = hotspot.hover_progress
 
-	hover_progress = hover_progress or 0
-
-	local selection_progress = button_hotspot.selection_progress
-
-	selection_progress = selection_progress or 0
-
-	local num = 8
-
-	if not is_hover then
-		hover_progress = math.min(hover_progress + arg_66_1 * num, 1)
-	else
-		hover_progress = math.max(hover_progress - arg_66_1 * num, 0)
+	if not hover_progress_2 then
+		-- Nothing
 	end
 
-	if not is_selected then
-		selection_progress = math.min(selection_progress + arg_66_1 * num, 1)
-	else
-		selection_progress = math.max(selection_progress - arg_66_1 * num, 0)
+	hover_progress_2 = 0
+
+	local hover_progress = hover_progress_2
+
+	::label_66_2::
+
+	local selection_progress_2 = hotspot.selection_progress
+
+	if not selection_progress_2 then
+		-- Nothing
 	end
 
-	local max = math.max(hover_progress, selection_progress)
+	selection_progress_2 = 0
+
+	local selection_progress = selection_progress_2
+
+	::label_66_3::
+
+	local speed = 8
+
+	if is_hover then
+		hover_progress = math.min(hover_progress + dt * speed, 1)
+	else
+		hover_progress = math.max(hover_progress - dt * speed, 0)
+	end
+
+	if is_selected then
+		selection_progress = math.min(selection_progress + dt * speed, 1)
+	else
+		selection_progress = math.max(selection_progress - dt * speed, 0)
+	end
+
+	local combined_progress = math.max(hover_progress, selection_progress)
 
 	style.normal_glow.color[1] = 255 * hover_progress
 	style.expanded_glow.color[1] = 255 * hover_progress
-	button_hotspot.hover_progress = hover_progress
-	button_hotspot.selection_progress = selection_progress
+	hotspot.hover_progress = hover_progress
+	hotspot.selection_progress = selection_progress
 end
 
-StoreWindowItemPreview._set_title_edge_length = function (self, arg_67_1, arg_67_2)
+StoreWindowItemPreview._set_title_edge_length = function (self, length, animation_duration)
 	-- function 67
-	local _ui_scenegraph = self._ui_scenegraph
-	local _item_widgets_by_name = self._item_widgets_by_name
-	local title_edge_detail = _item_widgets_by_name.title_edge_detail
-	local size = scenegraph_definition[title_edge_detail.scenegraph_id].size
-	local max = math.max(arg_67_1 - size[1], 0)
-	local var_67_5 = _ui_scenegraph[_item_widgets_by_name.title_edge.scenegraph_id].size[1]
-	local _title_edge_animation_data = self._title_edge_animation_data
-
-	_title_edge_animation_data = _title_edge_animation_data or {}
-	self._title_edge_animation_data = _title_edge_animation_data
-	_title_edge_animation_data.duration = arg_67_2
-	_title_edge_animation_data.total_duration = arg_67_2
-	_title_edge_animation_data.target_length = max
-	_title_edge_animation_data.start_length = var_67_5
-end
-
-StoreWindowItemPreview._update_title_edge_animation = function (self, arg_68_1)
-	-- function 68
+	local ui_scenegraph = self._ui_scenegraph
+	local item_widgets_by_name = self._item_widgets_by_name
+	local title_edge_detail = item_widgets_by_name.title_edge_detail
+	local title_edge_detail_size = scenegraph_definition[title_edge_detail.scenegraph_id].size
+	local target_length = math.max(length - title_edge_detail_size[1], 0)
+	local title_edge = item_widgets_by_name.title_edge
+	local start_length = ui_scenegraph[title_edge.scenegraph_id].size[1]
 	local _title_edge_animation_data = self._title_edge_animation_data
 
 	if not _title_edge_animation_data then
+		-- Nothing
+	end
+
+	_title_edge_animation_data = {}
+
+	local title_edge_animation_data = _title_edge_animation_data
+
+	::label_67_0::
+
+	self._title_edge_animation_data = title_edge_animation_data
+	title_edge_animation_data.duration = animation_duration
+	title_edge_animation_data.total_duration = animation_duration
+	title_edge_animation_data.target_length = target_length
+	title_edge_animation_data.start_length = start_length
+end
+
+StoreWindowItemPreview._update_title_edge_animation = function (self, dt)
+	-- function 68
+	local title_edge_animation_data = self._title_edge_animation_data
+
+	if not title_edge_animation_data then
 		return
 	end
 
-	local duration = _title_edge_animation_data.duration
+	local duration = title_edge_animation_data.duration
 
 	if not duration then
 		return
 	end
 
-	local max = math.max(duration - arg_68_1, 0)
-	local start_length = _title_edge_animation_data.start_length
-	local target_length = _title_edge_animation_data.target_length
-	local total_duration = _title_edge_animation_data.total_duration
-	local easeOutCubic = math.easeOutCubic
-	local num = 1 - max / total_duration
-	local var_68_8 = easeOutCubic(num)
-	local num_2 = start_length + (target_length - start_length) * var_68_8
-	local title_edge = self._item_widgets_by_name.title_edge
+	duration = math.max(duration - dt, 0)
 
-	self._ui_scenegraph[title_edge.scenegraph_id].size[1] = num_2
+	local start_length = title_edge_animation_data.start_length
+	local target_length = title_edge_animation_data.target_length
+	local total_duration = title_edge_animation_data.total_duration
+	local easing = math.easeOutCubic
+	local progress = 1 - duration / total_duration
+	local anim_progress = easing(progress)
+	local animation_length = (target_length - start_length) * anim_progress
+	local current_length = start_length + animation_length
+	local item_widgets_by_name = self._item_widgets_by_name
+	local title_edge = item_widgets_by_name.title_edge
+	local ui_scenegraph = self._ui_scenegraph
 
-	if max == 0 then
-		_title_edge_animation_data.duration = nil
+	ui_scenegraph[title_edge.scenegraph_id].size[1] = current_length
+
+	if duration == 0 then
+		title_edge_animation_data.duration = nil
 	else
-		_title_edge_animation_data.duration = max
+		title_edge_animation_data.duration = duration
 	end
 end
 
-StoreWindowItemPreview._update_unlock_button_width = function (self, arg_69_1, arg_69_2, arg_69_3)
+StoreWindowItemPreview._update_unlock_button_width = function (self, width_offset, already_owned, dlc_name)
 	-- function 69
-	local unlock_button = self._top_widgets_by_name.unlock_button
-	local content = unlock_button.content
+	local top_widgets_by_name = self._top_widgets_by_name
+	local widget = top_widgets_by_name.unlock_button
+	local content = widget.content
 	local present_currency = content.present_currency
-	local style = unlock_button.style
-	local num = 65
+	local style = widget.style
+	local side_padding = 65
 	local frame_width = content.frame_width
-	local var_69_6
+	local var_69_0
 
-	if not arg_69_2 then
-		var_69_6 = Localize(content.owned_text)
+	if already_owned then
+		var_69_0 = Localize(content.owned_text)
 
-		if not var_69_6 then
+		if not var_69_0 then
 			-- Nothing
 		end
 	end
 
-	var_69_6 = content.title_text
+	var_69_0 = content.title_text
+
+	local title_text = var_69_0
 
 	::label_69_0::
 
-	local title_text = style.title_text
-	local _get_text_width = self:_get_text_width(title_text, var_69_6)
+	local title_text_style = style.title_text
+	local title_text_width = self:_get_text_width(title_text_style, title_text)
 
-	if not ((IS_WINDOWS or not arg_69_3) and arg_69_2) then
-		_get_text_width = num_3
+	if not IS_WINDOWS and dlc_name and not already_owned then
+		title_text_width = CONSOLE_PRICE_WIDTH
 	end
 
-	title_text.offset[1] = num
-	style.title_text_disabled.offset[1] = num
-	style.title_text_write_mask.offset[1] = num
-	style.title_text_shadow.offset[1] = num + 2
+	title_text_style.offset[1] = side_padding
+	style.title_text_disabled.offset[1] = side_padding
+	style.title_text_write_mask.offset[1] = side_padding
+	style.title_text_shadow.offset[1] = side_padding + 2
 
-	local currency_icon = style.currency_icon
-	local currency_icon_disabled = style.currency_icon_disabled
-	local var_69_11
+	local currency_icon_style = style.currency_icon
+	local currency_icon_disabled_style = style.currency_icon_disabled
+	local var_69_1
 
-	if not (not present_currency and arg_69_2) then
-		var_69_11 = currency_icon.texture_size[1]
+	if present_currency and not already_owned then
+		var_69_1 = currency_icon_style.texture_size[1]
 
-		if not var_69_11 then
+		if not var_69_1 then
 			-- Nothing
 		end
 	end
 
-	var_69_11 = 0
+	var_69_1 = 0
+
+	local currency_icon_width = var_69_1
 
 	::label_69_1::
 
-	currency_icon.offset[1] = num + _get_text_width
-	currency_icon_disabled.offset[1] = currency_icon.offset[1]
+	currency_icon_style.offset[1] = side_padding + title_text_width
+	currency_icon_disabled_style.offset[1] = currency_icon_style.offset[1]
 
-	local flag
+	local str
 
-	flag = not present_currency and not arg_69_2 and "9999" and ""
+	if present_currency and not already_owned then
+		str = "9999"
 
-	local currency_text = style.currency_text
-	local currency_text_disabled = style.currency_text_disabled
-	local _get_text_width_2 = self:_get_text_width(currency_text, flag)
+		goto label_69_2
+	end
 
-	currency_text.offset[1] = num + _get_text_width + var_69_11
-	currency_text_disabled.offset[1] = currency_text.offset[1]
-	style.currency_text_shadow.offset[1] = currency_text.offset[1] + 2
+	str = ""
 
-	local num_2 = var_69_11 + _get_text_width + _get_text_width_2 + num * 2
+	local currency_text = str
 
-	self._ui_scenegraph.unlock_button.size[1] = num_2
-	content.size[1] = num_2 - 20
+	::label_69_2::
+
+	local currency_text_style = style.currency_text
+	local currency_text_disabled_style = style.currency_text_disabled
+	local currency_text_width = self:_get_text_width(currency_text_style, currency_text)
+
+	currency_text_style.offset[1] = side_padding + title_text_width + currency_icon_width
+	currency_text_disabled_style.offset[1] = currency_text_style.offset[1]
+	style.currency_text_shadow.offset[1] = currency_text_style.offset[1] + 2
+
+	local total_width = currency_icon_width + title_text_width + currency_text_width + side_padding * 2
+	local ui_scenegraph = self._ui_scenegraph
+
+	ui_scenegraph.unlock_button.size[1] = total_width
+	content.size[1] = total_width - 20
 	content.size[2] = 50
-	style.glass_top.size[1] = num_2
-	style.hover_glow.size[1] = num_2
-	style.background_fade.size[1] = num_2 - frame_width * 2
-	style.title_text_gradient.texture_size[1] = num_2
-	style.owned_overlay.texture_size[1] = num_2
-	style.owned_text_gradient.texture_size[1] = num_2
+	style.glass_top.size[1] = total_width
+	style.hover_glow.size[1] = total_width
+	style.background_fade.size[1] = total_width - frame_width * 2
+	style.title_text_gradient.texture_size[1] = total_width
+	style.owned_overlay.texture_size[1] = total_width
+	style.owned_text_gradient.texture_size[1] = total_width
 
-	local uvs = content.owned_overlay.uvs
-	local num_4 = math.clamp(num_2 / 684, 0, 1) * 0.5
+	local owned_overlay_content = content.owned_overlay
+	local owned_overlay_uvs = owned_overlay_content.uvs
+	local owned_overlay_fraction = math.clamp(total_width / 684, 0, 1) * 0.5
 
-	uvs[1][1] = 0.5 - num_4
-	uvs[2][1] = 0.5 + num_4
+	owned_overlay_uvs[1][1] = 0.5 - owned_overlay_fraction
+	owned_overlay_uvs[2][1] = 0.5 + owned_overlay_fraction
 
 	local owned_text = content.owned_text
-	local owned_text_write_mask = style.owned_text_write_mask
-	local _get_text_width_3 = self:_get_text_width(owned_text_write_mask, owned_text)
+	local owned_text_style = style.owned_text_write_mask
+	local owned_text_length = self:_get_text_width(owned_text_style, owned_text)
 
-	owned_text_write_mask.offset[1] = style.owned_icon.texture_size[1] * 0.5
-	style.owned_icon.offset[1] = -(_get_text_width_3 * 0.5)
-	style.owned_icon_bg.offset[1] = -(_get_text_width_3 * 0.5)
-	unlock_button.offset[1] = arg_69_1 or 0
+	owned_text_style.offset[1] = style.owned_icon.texture_size[1] * 0.5
+	style.owned_icon.offset[1] = -(owned_text_length * 0.5)
+	style.owned_icon_bg.offset[1] = -(owned_text_length * 0.5)
+	widget.offset[1] = not not width_offset or not not 0
 end
 
-StoreWindowItemPreview._get_text_width = function (self, arg_70_1, arg_70_2)
+StoreWindowItemPreview._get_text_width = function (self, text_style, text)
 	-- function 70
-	if not arg_70_1.localize then
-		arg_70_2 = Localize(arg_70_2)
+	if text_style.localize then
+		text = Localize(text)
 	end
 
-	if not arg_70_1.upper_case then
-		arg_70_2 = TextToUpper(arg_70_2)
+	if text_style.upper_case then
+		text = TextToUpper(text)
 	end
 
-	local _ui_renderer = self._ui_renderer
-	local var_70_1, var_70_2 = UIFontByResolution(arg_70_1)
-	local text_size, var_70_4, var_70_5 = UIRenderer.text_size(_ui_renderer, arg_70_2, var_70_1[1], var_70_2)
+	local ui_renderer = self._ui_renderer
+	local font, scaled_font_size = UIFontByResolution(text_style)
+	local text_width, text_height, min = UIRenderer.text_size(ui_renderer, text, font[1], scaled_font_size)
 
-	return text_size
+	return text_width
 end
 
 StoreWindowItemPreview._initialize_dlc_scrollbar = function (self)
 	-- function 71
-	local size = scenegraph_definition.list_window.size
-	local size_2 = scenegraph_definition.list_scrollbar.size
-	local var_71_2 = size[2]
-	local _total_list_height = self._total_list_height
-	local var_71_4 = size_2[2]
-	local num_2 = 220 + num * 1.5
-	local num_3 = 1
-	local _dlc_scrollbar_logic = self._dlc_scrollbar_logic
+	local list_window_size = scenegraph_definition.list_window.size
+	local list_scrollbar_size = scenegraph_definition.list_scrollbar.size
+	local draw_length = list_window_size[2]
+	local content_length = self._total_list_height
+	local scrollbar_length = list_scrollbar_size[2]
+	local step_size = 220 + LIST_SPACING * 1.5
+	local scroll_step_multiplier = 1
+	local dlc_scrollbar_logic = self._dlc_scrollbar_logic
 
-	_dlc_scrollbar_logic:set_scrollbar_values(var_71_2, _total_list_height, var_71_4, num_2, num_3)
-	_dlc_scrollbar_logic:set_scroll_percentage(0)
+	dlc_scrollbar_logic:set_scrollbar_values(draw_length, content_length, scrollbar_length, step_size, scroll_step_multiplier)
+	dlc_scrollbar_logic:set_scroll_percentage(0)
 end
 
 StoreWindowItemPreview._update_dlc_scroll_position = function (self)
 	-- function 72
-	local get_scrolled_length = self._dlc_scrollbar_logic:get_scrolled_length()
+	local dlc_scrollbar_logic = self._dlc_scrollbar_logic
+	local length = dlc_scrollbar_logic:get_scrolled_length()
 
-	if get_scrolled_length ~= self._scrolled_length then
-		self._ui_scenegraph.list.local_position[2] = get_scrolled_length
-		self._scrolled_length = get_scrolled_length
+	if length ~= self._scrolled_length then
+		self._ui_scenegraph.list.local_position[2] = length
+		self._scrolled_length = length
 
-		local num = 1 - math.min(get_scrolled_length / 100, 1)
+		local sub_title_alpha_multiplier = 1 - math.min(length / 100, 1)
 
-		self:_set_sub_title_alpha_multiplier(num)
+		self:_set_sub_title_alpha_multiplier(sub_title_alpha_multiplier)
 	end
 end
 
 StoreWindowItemPreview._update_visible_list_entries = function (self)
 	-- function 73
-	local _dlc_scrollbar_logic = self._dlc_scrollbar_logic
+	local dlc_scrollbar_logic = self._dlc_scrollbar_logic
+	local enabled = dlc_scrollbar_logic:enabled()
 
-	if not _dlc_scrollbar_logic:enabled() then
+	if not enabled then
 		return true
 	end
 
-	local get_scroll_percentage = _dlc_scrollbar_logic:get_scroll_percentage()
-	local get_scrolled_length = _dlc_scrollbar_logic:get_scrolled_length()
-	local get_scroll_length = _dlc_scrollbar_logic:get_scroll_length()
-	local size = scenegraph_definition.list_window.size
-	local num_2 = num * 2
-	local num_3 = size[2] + num_2
-	local _dlc_list_widgets = self._dlc_list_widgets
-	local count = #_dlc_list_widgets
+	local scroll_percentage = dlc_scrollbar_logic:get_scroll_percentage()
+	local scrolled_length = dlc_scrollbar_logic:get_scrolled_length()
+	local scroll_length = dlc_scrollbar_logic:get_scroll_length()
+	local list_window_size = scenegraph_definition.list_window.size
+	local draw_padding = LIST_SPACING * 2
+	local draw_length = list_window_size[2] + draw_padding
+	local widgets = self._dlc_list_widgets
+	local num_widgets = #widgets
 
-	for i, v in ipairs(_dlc_list_widgets) do
-		local offset = v.offset
-		local content = v.content
-		local size_2 = content.size
-		local num_4 = math.abs(offset[2]) + size_2[2]
-		local flag = false
+	for index, widget in ipairs(widgets) do
+		local offset = widget.offset
+		local content = widget.content
+		local size = content.size
+		local widget_position = math.abs(offset[2]) + size[2]
+		local is_outside = false
 
-		if num_4 < get_scrolled_length - num_2 then
-			flag = true
-		elseif num_3 < math.abs(offset[2]) - get_scrolled_length then
-			flag = true
+		if widget_position < scrolled_length - draw_padding then
+			is_outside = true
+		elseif draw_length < math.abs(offset[2]) - scrolled_length then
+			is_outside = true
 		end
 
-		content.visible = not flag
+		content.visible = not is_outside
 	end
 end
 
-StoreWindowItemPreview._scroll_to_list_index = function (self, arg_74_1)
+StoreWindowItemPreview._scroll_to_list_index = function (self, index)
 	-- function 74
-	local _dlc_scrollbar_logic = self._dlc_scrollbar_logic
+	local dlc_scrollbar_logic = self._dlc_scrollbar_logic
+	local enabled = dlc_scrollbar_logic:enabled()
 
-	if not _dlc_scrollbar_logic:enabled() then
-		local get_scroll_percentage = _dlc_scrollbar_logic:get_scroll_percentage()
-		local get_scrolled_length = _dlc_scrollbar_logic:get_scrolled_length()
-		local get_scroll_length = _dlc_scrollbar_logic:get_scroll_length()
-		local var_74_4 = scenegraph_definition.list_window.size[2]
-		local var_74_5 = get_scrolled_length
-		local num = var_74_5 + var_74_4
-		local _dlc_list_widgets = self._dlc_list_widgets
+	if enabled then
+		local scroll_percentage = dlc_scrollbar_logic:get_scroll_percentage()
+		local scrolled_length = dlc_scrollbar_logic:get_scrolled_length()
+		local scroll_length = dlc_scrollbar_logic:get_scroll_length()
+		local list_window_size = scenegraph_definition.list_window.size
+		local draw_length = list_window_size[2]
+		local draw_start_height = scrolled_length
+		local draw_end_height = draw_start_height + draw_length
+		local list_widgets = self._dlc_list_widgets
 
-		if not _dlc_list_widgets then
-			local var_74_8 = _dlc_list_widgets[arg_74_1]
-			local content = var_74_8.content
-			local offset = var_74_8.offset
-			local var_74_11 = content.size[2]
-			local abs = math.abs(offset[2])
-			local num_2 = abs + var_74_11
-			local var_74_14
+		if list_widgets then
+			local widget = list_widgets[index]
+			local content = widget.content
+			local offset = widget.offset
+			local size = content.size
+			local height = size[2]
+			local start_position_top = math.abs(offset[2])
+			local start_position_bottom = start_position_top + height
+			local percentage_difference
 
-			if num < num_2 then
-				local num_3 = num_2 - num
+			if draw_end_height < start_position_bottom then
+				local height_missing = start_position_bottom - draw_end_height
 
-				var_74_14 = math.clamp(num_3 / get_scroll_length, 0, 1)
-			elseif abs < var_74_5 then
-				local num_4 = var_74_5 - abs
+				percentage_difference = math.clamp(height_missing / scroll_length, 0, 1)
+			elseif start_position_top < draw_start_height then
+				local height_missing = draw_start_height - start_position_top
 
-				var_74_14 = -math.clamp(num_4 / get_scroll_length, 0, 1)
+				percentage_difference = -math.clamp(height_missing / scroll_length, 0, 1)
 			end
 
-			if not var_74_14 then
-				local clamp = math.clamp(get_scroll_percentage + var_74_14, 0, 1)
+			if percentage_difference then
+				local scroll_percentage = math.clamp(scroll_percentage + percentage_difference, 0, 1)
 
-				_dlc_scrollbar_logic:set_scroll_percentage(clamp)
+				dlc_scrollbar_logic:set_scroll_percentage(scroll_percentage)
 			end
 		end
 	end
 end
 
-StoreWindowItemPreview._get_scrollbar_percentage_by_index = function (self, arg_75_1)
+StoreWindowItemPreview._get_scrollbar_percentage_by_index = function (self, index)
 	-- function 75
-	local _dlc_scrollbar_logic = self._dlc_scrollbar_logic
+	local dlc_scrollbar_logic = self._dlc_scrollbar_logic
+	local enabled = dlc_scrollbar_logic:enabled()
 
-	if not _dlc_scrollbar_logic:enabled() then
-		local get_scroll_percentage = _dlc_scrollbar_logic:get_scroll_percentage()
-		local get_scrolled_length = _dlc_scrollbar_logic:get_scrolled_length()
-		local get_scroll_length = _dlc_scrollbar_logic:get_scroll_length()
-		local var_75_4 = scenegraph_definition.list_window.size[2]
-		local var_75_5 = get_scrolled_length
-		local num = var_75_5 + var_75_4
-		local _dlc_list_widgets = self._dlc_list_widgets
+	if enabled then
+		local scroll_percentage = dlc_scrollbar_logic:get_scroll_percentage()
+		local scrolled_length = dlc_scrollbar_logic:get_scrolled_length()
+		local scroll_length = dlc_scrollbar_logic:get_scroll_length()
+		local list_window_size = scenegraph_definition.list_window.size
+		local draw_length = list_window_size[2]
+		local draw_start_height = scrolled_length
+		local draw_end_height = draw_start_height + draw_length
+		local list_widgets = self._dlc_list_widgets
 
-		if not _dlc_list_widgets then
-			local var_75_8 = _dlc_list_widgets[arg_75_1]
-			local content = var_75_8.content
-			local offset = var_75_8.offset
-			local var_75_11 = content.size[2]
-			local abs = math.abs(offset[2])
-			local num_2 = abs + var_75_11
-			local num_3 = 0
+		if list_widgets then
+			local widget = list_widgets[index]
+			local content = widget.content
+			local offset = widget.offset
+			local size = content.size
+			local height = size[2]
+			local start_position_top = math.abs(offset[2])
+			local start_position_bottom = start_position_top + height
+			local percentage_difference = 0
 
-			if num < num_2 then
-				local num_4 = num_2 - num
+			if draw_end_height < start_position_bottom then
+				local height_missing = start_position_bottom - draw_end_height
 
-				num_3 = math.clamp(num_4 / get_scroll_length, 0, 1)
-			elseif abs < var_75_5 then
-				local num_5 = var_75_5 - abs
+				percentage_difference = math.clamp(height_missing / scroll_length, 0, 1)
+			elseif start_position_top < draw_start_height then
+				local height_missing = draw_start_height - start_position_top
 
-				num_3 = -math.clamp(num_5 / get_scroll_length, 0, 1)
+				percentage_difference = -math.clamp(height_missing / scroll_length, 0, 1)
 			end
 
-			if not num_3 then
-				return (math.clamp(get_scroll_percentage + num_3, 0, 1))
+			if percentage_difference then
+				local scroll_percentage = math.clamp(scroll_percentage + percentage_difference, 0, 1)
+
+				return scroll_percentage
 			end
 		end
 	end
@@ -2923,159 +3228,159 @@ StoreWindowItemPreview._get_scrollbar_percentage_by_index = function (self, arg_
 	return 0
 end
 
-StoreWindowItemPreview._dlc_component_layout = function (self, arg_76_1)
+StoreWindowItemPreview._dlc_component_layout = function (self, layout)
 	-- function 76
-	local list_scrollbar = self._dlc_top_widgets_by_name.list_scrollbar
+	local scrollbar_widget = self._dlc_top_widgets_by_name.list_scrollbar
 
-	self._dlc_scrollbar_logic = ScrollBarLogic:new(list_scrollbar)
+	self._dlc_scrollbar_logic = ScrollBarLogic:new(scrollbar_widget)
 
 	self:_destroy_dlc_product_widgets()
 
-	local _parent = self._parent
-	local tbl = {}
+	local parent = self._parent
+	local dlc_layout = {}
 
-	for i = 1, #arg_76_1 do
-		local var_76_3 = arg_76_1[i]
-		local id = var_76_3.id
-		local type = var_76_3.type
-		local var_76_6
+	for i = 1, #layout do
+		local product_data = layout[i]
+		local product_id = product_data.id
+		local product_type = product_data.type
+		local product
 
-		if type == "dlc" then
-			local _get_dlc_settings = self:_get_dlc_settings(id)
+		if product_type == "dlc" then
+			local dlc_settings = self:_get_dlc_settings(product_id)
 
-			if not _get_dlc_settings then
-				var_76_6 = {
-					dlc_settings = _get_dlc_settings,
-					type = type,
-					product_id = id
+			if dlc_settings then
+				product = {
+					dlc_settings = dlc_settings,
+					type = product_type,
+					product_id = product_id
 				}
 			end
-		elseif type == "item" then
-			local get_item_by_key = self._parent:get_item_by_key(id)
+		elseif product_type == "item" then
+			local item = self._parent:get_item_by_key(product_id)
 
-			if not get_item_by_key then
-				var_76_6 = {
-					item = get_item_by_key,
-					type = type,
-					product_id = id,
-					settings = var_76_3.settings
+			if item then
+				product = {
+					item = item,
+					type = product_type,
+					product_id = product_id,
+					settings = product_data.settings
 				}
 			end
-		elseif type == "bundle_item" then
-			local var_76_9 = ItemMasterList[id]
+		elseif product_type == "bundle_item" then
+			local item = ItemMasterList[product_id]
 
-			if not var_76_9 then
-				var_76_6 = {
+			if item then
+				product = {
 					item = {
-						data = var_76_9
+						data = item
 					},
-					type = type,
-					product_id = id,
-					settings = var_76_3.settings
+					type = product_type,
+					product_id = product_id,
+					settings = product_data.settings
 				}
 			end
 		else
-			var_76_6 = {
-				type = type,
-				settings = var_76_3.settings,
-				product_id = id
+			product = {
+				type = product_type,
+				settings = product_data.settings,
+				product_id = product_id
 			}
 		end
 
-		if not var_76_6 then
-			tbl[#tbl + 1] = var_76_6
+		if product then
+			dlc_layout[#dlc_layout + 1] = product
 		end
 	end
 
-	self._dlc_layout = tbl
+	self._dlc_layout = dlc_layout
 
-	self:_create_dlc_product_widgets(tbl)
+	self:_create_dlc_product_widgets(dlc_layout)
 
 	self._dlc_list_initialized = true
 end
 
-StoreWindowItemPreview._create_dlc_product_widgets = function (self, arg_77_1)
+StoreWindowItemPreview._create_dlc_product_widgets = function (self, layout)
 	-- function 77
-	local tbl = {}
-	local _parent = self._parent
-	local str = "item_root"
-	local flag = true
+	local widgets = {}
+	local parent = self._parent
+	local scenegraph_id = "item_root"
+	local masked = true
 
-	for i, v in ipairs(arg_77_1) do
-		local create_item_widget = _parent:create_item_widget(v, str, flag)
+	for i, entry in ipairs(layout) do
+		local widget = parent:create_item_widget(entry, scenegraph_id, masked)
 
-		_parent:populate_product_widget(create_item_widget, v)
+		parent:populate_product_widget(widget, entry)
 
-		tbl[i] = create_item_widget
+		widgets[i] = widget
 	end
 
-	self._dlc_list_widgets = tbl
+	self._dlc_list_widgets = widgets
 
 	self:_align_dlc_widgets()
 	self:_initialize_dlc_scrollbar()
 end
 
-StoreWindowItemPreview._destroy_dlc_product_widgets = function (self, arg_78_1)
+StoreWindowItemPreview._destroy_dlc_product_widgets = function (self, force_unload)
 	-- function 78
-	local _parent = self._parent
-	local _dlc_layout = self._dlc_layout
-	local _dlc_list_widgets = self._dlc_list_widgets
+	local parent = self._parent
+	local layout = self._dlc_layout
+	local widgets = self._dlc_list_widgets
 
-	if not _dlc_list_widgets and not _dlc_layout then
-		for i, v in ipairs(_dlc_layout) do
-			local var_78_3 = _dlc_list_widgets[i]
+	if widgets and layout then
+		for i, entry in ipairs(layout) do
+			local widget = widgets[i]
 
-			_parent:destroy_product_widget(var_78_3, v, arg_78_1)
+			parent:destroy_product_widget(widget, entry, force_unload)
 		end
 	end
 end
 
 StoreWindowItemPreview._align_dlc_widgets = function (self)
 	-- function 79
-	local num_3 = 0
-	local num_4 = 0
-	local num_5 = 0
-	local num_6 = 1
-	local num_7 = 1
-	local num_8 = 0
-	local num_9 = 0
-	local _dlc_list_widgets = self._dlc_list_widgets
-	local count = #_dlc_list_widgets
+	local total_height = 0
+	local widget_position_x = 0
+	local widget_position_y = 0
+	local row = 1
+	local column = 1
+	local previous_height = 0
+	local row_heighest_height = 0
+	local widgets = self._dlc_list_widgets
+	local num_widgets = #widgets
 
-	for i, v in ipairs(_dlc_list_widgets) do
-		local offset = v.offset
-		local content = v.content
+	for index, widget in ipairs(widgets) do
+		local offset = widget.offset
+		local content = widget.content
 		local size = content.size
-		local var_79_12 = size[1]
-		local var_79_13 = size[2]
+		local width = size[1]
+		local height = size[2]
+		local change_row = widget_position_x + width > LIST_MAX_WIDTH
 
-		if not (num_4 + var_79_12 > num_2) then
-			num_7 = 1
-			num_6 = num_6 + 1
-			num_4 = 0
-			num_5 = num_5 - (num_9 + num)
-			num_9 = 0
+		if change_row then
+			column = 1
+			row = row + 1
+			widget_position_x = 0
+			widget_position_y = widget_position_y - (row_heighest_height + LIST_SPACING)
+			row_heighest_height = 0
 		end
 
-		offset[1] = num_4
-		offset[2] = num_5
-		v.default_offset = table.clone(offset)
-		content.row = num_6
-		content.column = num_7
-		num_4 = num_4 + (var_79_12 + num)
+		offset[1] = widget_position_x
+		offset[2] = widget_position_y
+		widget.default_offset = table.clone(offset)
+		content.row = row
+		content.column = column
+		widget_position_x = widget_position_x + (width + LIST_SPACING)
 
-		if i == count then
-			num_3 = math.abs(num_5 - var_79_13)
+		if index == num_widgets then
+			total_height = math.abs(widget_position_y - height)
 		end
 
-		num_7 = num_7 + 1
+		column = column + 1
+		previous_height = height
 
-		local var_79_14 = var_79_13
-
-		if num_9 < var_79_13 then
-			num_9 = var_79_13
+		if row_heighest_height < height then
+			row_heighest_height = height
 		end
 	end
 
-	self._total_list_height = num_3
+	self._total_list_height = total_height
 end

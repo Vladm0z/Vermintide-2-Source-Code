@@ -2,7 +2,7 @@
 
 local AttackIntensitySettings = AttackIntensitySettings
 
-AttackIntensitySettings = AttackIntensitySettings or {}
+AttackIntensitySettings = not not AttackIntensitySettings or not not {}
 AttackIntensitySettings = AttackIntensitySettings
 AttackIntensitySettings.attack_type_intesities = {
 	cleave = true,
@@ -195,8 +195,8 @@ AttackIntensitySettings.difficulty.cataclysm_2 = table.clone(AttackIntensitySett
 AttackIntensitySettings.difficulty.cataclysm_3 = table.clone(AttackIntensitySettings.difficulty.hardest)
 AttackIntensitySettings.difficulty.versus_base = table.clone(AttackIntensitySettings.difficulty.hard)
 
-for k, v in pairs(AttackIntensitySettings.attack_type_intesities) do
-	for k_2, v_2 in pairs(AttackIntensitySettings.difficulty) do
-		fassert(v_2[k], "Missing settings for attack type [%s] in AttackIntensitySettings for difficulty [%s]", k, k_2)
+for attack_type, _ in pairs(AttackIntensitySettings.attack_type_intesities) do
+	for difficulty, data in pairs(AttackIntensitySettings.difficulty) do
+		fassert(data[attack_type], "Missing settings for attack type [%s] in AttackIntensitySettings for difficulty [%s]", attack_type, difficulty)
 	end
 end

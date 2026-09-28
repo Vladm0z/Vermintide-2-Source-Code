@@ -1,8 +1,17 @@
 -- chunkname: @scripts/settings/equipment/weapon_templates/grenades.lua
 
-local weapon_template_frag = weapon_template_frag
+local weapon_template_frag_2 = weapon_template_frag
 
-weapon_template_frag = weapon_template_frag or {}
+if not weapon_template_frag_2 then
+	-- Nothing
+end
+
+weapon_template_frag_2 = {}
+
+local weapon_template_frag = weapon_template_frag_2
+
+::label_0_0::
+
 weapon_template_frag.actions = {
 	action_one = {
 		default = {
@@ -17,9 +26,9 @@ weapon_template_frag.actions = {
 			block_pickup = true,
 			uninterruptible = true,
 			anim_event = "grenade_charge",
-			anim_end_event_condition_func = function (arg_1_0, arg_1_1)
+			anim_end_event_condition_func = function (unit, end_reason)
 				-- function 1
-				return arg_1_1 == "new_interupting_action" or arg_1_1 ~= "action_complete"
+				return end_reason ~= "new_interupting_action" and end_reason ~= "action_complete"
 			end,
 			total_time = math.huge,
 			allowed_chain_actions = {
@@ -72,9 +81,9 @@ weapon_template_frag.actions = {
 			throw_offset_length_in_target_direction = 0.1,
 			anim_event = "attack_throw",
 			total_time = 0.5,
-			anim_end_event_condition_func = function (arg_2_0, arg_2_1)
+			anim_end_event_condition_func = function (unit, end_reason)
 				-- function 2
-				return arg_2_1 == "new_interupting_action" or arg_2_1 ~= "action_complete"
+				return end_reason ~= "new_interupting_action" and end_reason ~= "action_complete"
 			end,
 			throw_offset = Vector3Box(0, 0, 0.9),
 			allowed_chain_actions = {},
@@ -142,9 +151,18 @@ weapon_template_frag.buffs = {
 	}
 }
 
-local weapon_template_fire_dot = weapon_template_fire_dot
+local weapon_template_fire_dot_2 = weapon_template_fire_dot
 
-weapon_template_fire_dot = weapon_template_fire_dot or {}
+if not weapon_template_fire_dot_2 then
+	-- Nothing
+end
+
+weapon_template_fire_dot_2 = {}
+
+local weapon_template_fire_dot = weapon_template_fire_dot_2
+
+::label_0_1::
+
 weapon_template_fire_dot.actions = {
 	action_one = {
 		default = {
@@ -159,9 +177,9 @@ weapon_template_fire_dot.actions = {
 			block_pickup = true,
 			uninterruptible = true,
 			anim_event = "grenade_charge",
-			anim_end_event_condition_func = function (arg_3_0, arg_3_1)
+			anim_end_event_condition_func = function (unit, end_reason)
 				-- function 3
-				return arg_3_1 == "new_interupting_action" or arg_3_1 ~= "action_complete"
+				return end_reason ~= "new_interupting_action" and end_reason ~= "action_complete"
 			end,
 			total_time = math.huge,
 			allowed_chain_actions = {
@@ -213,9 +231,9 @@ weapon_template_fire_dot.actions = {
 			throw_offset_length_in_target_direction = 0.1,
 			anim_event = "attack_throw",
 			total_time = 0.5,
-			anim_end_event_condition_func = function (arg_4_0, arg_4_1)
+			anim_end_event_condition_func = function (unit, end_reason)
 				-- function 4
-				return arg_4_1 == "new_interupting_action" or arg_4_1 ~= "action_complete"
+				return end_reason ~= "new_interupting_action" and end_reason ~= "action_complete"
 			end,
 			throw_offset = Vector3Box(0, 0, 0.1),
 			allowed_chain_actions = {},
@@ -279,64 +297,64 @@ weapon_template_fire_dot.buffs = {
 	}
 }
 
-local clone = table.clone(weapon_template_frag)
+local frag_grenade_t1 = table.clone(weapon_template_frag)
 
-clone.left_hand_unit = weapon_template_frag.left_hand_unit
-clone.wield_anim = weapon_template_frag.wield_anim
-clone.right_hand_unit = "units/weapons/player/wpn_emp_grenade_01_t1/wpn_emp_grenade_01_t1"
-clone.left_hand_unit = "units/weapons/player/wpn_emp_grenade_01_t1/wpn_emp_grenade_lighter_01_t1"
-clone.pickup_data.pickup_name = "frag_grenade_t1"
+frag_grenade_t1.left_hand_unit = weapon_template_frag.left_hand_unit
+frag_grenade_t1.wield_anim = weapon_template_frag.wield_anim
+frag_grenade_t1.right_hand_unit = "units/weapons/player/wpn_emp_grenade_01_t1/wpn_emp_grenade_01_t1"
+frag_grenade_t1.left_hand_unit = "units/weapons/player/wpn_emp_grenade_01_t1/wpn_emp_grenade_lighter_01_t1"
+frag_grenade_t1.pickup_data.pickup_name = "frag_grenade_t1"
 
-local clone_2 = table.clone(weapon_template_frag)
+local frag_grenade_t2 = table.clone(weapon_template_frag)
 
-clone_2.left_hand_unit = weapon_template_frag.left_hand_unit
-clone_2.wield_anim = weapon_template_frag.wield_anim
-clone_2.right_hand_unit = "units/weapons/player/wpn_emp_grenade_01_t2/wpn_emp_grenade_01_t2"
-clone_2.left_hand_unit = "units/weapons/player/wpn_emp_grenade_01_t2/wpn_emp_grenade_lighter_01_t2"
-clone_2.pickup_data.pickup_name = "frag_grenade_t2"
+frag_grenade_t2.left_hand_unit = weapon_template_frag.left_hand_unit
+frag_grenade_t2.wield_anim = weapon_template_frag.wield_anim
+frag_grenade_t2.right_hand_unit = "units/weapons/player/wpn_emp_grenade_01_t2/wpn_emp_grenade_01_t2"
+frag_grenade_t2.left_hand_unit = "units/weapons/player/wpn_emp_grenade_01_t2/wpn_emp_grenade_lighter_01_t2"
+frag_grenade_t2.pickup_data.pickup_name = "frag_grenade_t2"
 
-local clone_3 = table.clone(weapon_template_frag)
+local shadow_flare = table.clone(weapon_template_frag)
 
-clone_3.right_hand_unit = "units/weapons/player/wpn_shadow_flare/wpn_shadow_flare"
-clone_3.left_hand_unit = "units/weapons/player/wpn_emp_grenade_01_t2/wpn_emp_grenade_lighter_01_t2"
-clone_3.actions.action_one.throw.impact_data.aoe = ExplosionTemplates.shadow_flare
-clone_3.actions.action_one.throw.timed_data.aoe = ExplosionTemplates.shadow_flare
-clone_3.pickup_data = nil
+shadow_flare.right_hand_unit = "units/weapons/player/wpn_shadow_flare/wpn_shadow_flare"
+shadow_flare.left_hand_unit = "units/weapons/player/wpn_emp_grenade_01_t2/wpn_emp_grenade_lighter_01_t2"
+shadow_flare.actions.action_one.throw.impact_data.aoe = ExplosionTemplates.shadow_flare
+shadow_flare.actions.action_one.throw.timed_data.aoe = ExplosionTemplates.shadow_flare
+shadow_flare.pickup_data = nil
 
-local clone_4 = table.clone(weapon_template_fire_dot)
+local fire_grenade_t1 = table.clone(weapon_template_fire_dot)
 
-clone_4.left_hand_unit = weapon_template_fire_dot.left_hand_unit
-clone_4.wield_anim = weapon_template_fire_dot.wield_anim
-clone_4.right_hand_unit = "units/weapons/player/wpn_emp_grenade_03_t1/wpn_emp_grenade_03_t1"
-clone_4.left_hand_unit = "units/weapons/player/wpn_emp_grenade_01_t1/wpn_emp_grenade_lighter_01_t1"
-clone_4.pickup_data.pickup_name = "fire_grenade_t1"
-clone_4.actions.action_one.throw.projectile_info = Projectiles.grenade_fire
+fire_grenade_t1.left_hand_unit = weapon_template_fire_dot.left_hand_unit
+fire_grenade_t1.wield_anim = weapon_template_fire_dot.wield_anim
+fire_grenade_t1.right_hand_unit = "units/weapons/player/wpn_emp_grenade_03_t1/wpn_emp_grenade_03_t1"
+fire_grenade_t1.left_hand_unit = "units/weapons/player/wpn_emp_grenade_01_t1/wpn_emp_grenade_lighter_01_t1"
+fire_grenade_t1.pickup_data.pickup_name = "fire_grenade_t1"
+fire_grenade_t1.actions.action_one.throw.projectile_info = Projectiles.grenade_fire
 
-local clone_5 = table.clone(weapon_template_fire_dot)
+local fire_grenade_t2 = table.clone(weapon_template_fire_dot)
 
-clone_5.left_hand_unit = weapon_template_fire_dot.left_hand_unit
-clone_5.wield_anim = weapon_template_fire_dot.wield_anim
-clone_5.right_hand_unit = "units/weapons/player/wpn_emp_grenade_03_t2/wpn_emp_grenade_03_t2"
-clone_5.left_hand_unit = "units/weapons/player/wpn_emp_grenade_01_t2/wpn_emp_grenade_lighter_01_t2"
-clone_5.pickup_data.pickup_name = "fire_grenade_t2"
-clone_5.actions.action_one.throw.projectile_info = Projectiles.grenade_fire
+fire_grenade_t2.left_hand_unit = weapon_template_fire_dot.left_hand_unit
+fire_grenade_t2.wield_anim = weapon_template_fire_dot.wield_anim
+fire_grenade_t2.right_hand_unit = "units/weapons/player/wpn_emp_grenade_03_t2/wpn_emp_grenade_03_t2"
+fire_grenade_t2.left_hand_unit = "units/weapons/player/wpn_emp_grenade_01_t2/wpn_emp_grenade_lighter_01_t2"
+fire_grenade_t2.pickup_data.pickup_name = "fire_grenade_t2"
+fire_grenade_t2.actions.action_one.throw.projectile_info = Projectiles.grenade_fire
 
-local clone_6 = table.clone(weapon_template_frag)
+local engineer_grenade_t1 = table.clone(weapon_template_frag)
 
-clone_6.actions.action_one.throw.impact_data.aoe = ExplosionTemplates.engineer_grenade
-clone_6.actions.action_one.throw.timed_data.aoe = ExplosionTemplates.engineer_grenade
-clone_6.left_hand_unit = weapon_template_frag.left_hand_unit
-clone_6.wield_anim = weapon_template_frag.wield_anim
-clone_6.right_hand_unit = "units/weapons/player/wpn_emp_grenade_01_t1/wpn_emp_grenade_01_t1"
-clone_6.left_hand_unit = "units/weapons/player/wpn_emp_grenade_01_t1/wpn_emp_grenade_lighter_01_t1"
-clone_6.pickup_data.pickup_name = "engineer_grenade_t1"
+engineer_grenade_t1.actions.action_one.throw.impact_data.aoe = ExplosionTemplates.engineer_grenade
+engineer_grenade_t1.actions.action_one.throw.timed_data.aoe = ExplosionTemplates.engineer_grenade
+engineer_grenade_t1.left_hand_unit = weapon_template_frag.left_hand_unit
+engineer_grenade_t1.wield_anim = weapon_template_frag.wield_anim
+engineer_grenade_t1.right_hand_unit = "units/weapons/player/wpn_emp_grenade_01_t1/wpn_emp_grenade_01_t1"
+engineer_grenade_t1.left_hand_unit = "units/weapons/player/wpn_emp_grenade_01_t1/wpn_emp_grenade_lighter_01_t1"
+engineer_grenade_t1.pickup_data.pickup_name = "engineer_grenade_t1"
 
 return {
 	grenade = table.clone(weapon_template_frag),
-	frag_grenade_t1 = clone,
-	frag_grenade_t2 = clone_2,
-	fire_grenade_t1 = clone_4,
-	fire_grenade_t2 = clone_5,
-	shadow_flare = clone_3,
-	engineer_grenade_t1 = clone_6
+	frag_grenade_t1 = frag_grenade_t1,
+	frag_grenade_t2 = frag_grenade_t2,
+	fire_grenade_t1 = fire_grenade_t1,
+	fire_grenade_t2 = fire_grenade_t2,
+	shadow_flare = shadow_flare,
+	engineer_grenade_t1 = engineer_grenade_t1
 }

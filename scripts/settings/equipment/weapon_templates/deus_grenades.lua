@@ -1,6 +1,6 @@
 -- chunkname: @scripts/settings/equipment/weapon_templates/deus_grenades.lua
 
-local tbl = {
+local weapon_template_frag = {
 	crosshair_style = "default",
 	max_fatigue_points = 4,
 	left_hand_unit = "units/weapons/player/wpn_emp_grenade_01_t1/wpn_emp_grenade_lighter_01_t1",
@@ -27,9 +27,9 @@ local tbl = {
 				block_pickup = true,
 				uninterruptible = true,
 				anim_event = "grenade_charge",
-				anim_end_event_condition_func = function (arg_1_0, arg_1_1)
+				anim_end_event_condition_func = function (unit, end_reason)
 					-- function 1
-					return arg_1_1 == "new_interupting_action" or arg_1_1 ~= "action_complete"
+					return end_reason ~= "new_interupting_action" and end_reason ~= "action_complete"
 				end,
 				total_time = math.huge,
 				allowed_chain_actions = {
@@ -82,9 +82,9 @@ local tbl = {
 				throw_offset_length_in_target_direction = 0.1,
 				anim_event = "attack_throw",
 				total_time = 0.5,
-				anim_end_event_condition_func = function (arg_2_0, arg_2_1)
+				anim_end_event_condition_func = function (unit, end_reason)
 					-- function 2
-					return arg_2_1 == "new_interupting_action" or arg_2_1 ~= "action_complete"
+					return end_reason ~= "new_interupting_action" and end_reason ~= "action_complete"
 				end,
 				throw_offset = Vector3Box(0, 0, 0.9),
 				allowed_chain_actions = {},
@@ -139,11 +139,11 @@ local tbl = {
 				throw_offset_length_in_target_direction = 0.1,
 				anim_event = "attack_throw",
 				total_time = 0.5,
-				anim_end_event_condition_func = function (arg_3_0, arg_3_1)
+				anim_end_event_condition_func = function (unit, end_reason)
 					-- function 3
-					return arg_3_1 == "new_interupting_action" or arg_3_1 ~= "action_complete"
+					return end_reason ~= "new_interupting_action" and end_reason ~= "action_complete"
 				end,
-				condition_func = function (arg_4_0)
+				condition_func = function (user_unit)
 					-- function 4
 					return true
 				end,
@@ -200,9 +200,9 @@ local tbl = {
 		}
 	}
 }
-local clone = table.clone(tbl)
+local holy_hand_grenade = table.clone(weapon_template_frag)
 
-clone.actions.action_one.throw = {
+holy_hand_grenade.actions.action_one.throw = {
 	uninterruptible = true,
 	anim_end_event = "attack_finished",
 	hide_weapon_after_fire = true,
@@ -220,16 +220,16 @@ clone.actions.action_one.throw = {
 	throw_offset_length_in_target_direction = 0.1,
 	anim_event = "attack_throw",
 	total_time = 0.5,
-	anim_end_event_condition_func = function (arg_5_0, arg_5_1)
+	anim_end_event_condition_func = function (unit, end_reason)
 		-- function 5
-		return arg_5_1 == "new_interupting_action" or arg_5_1 ~= "action_complete"
+		return end_reason ~= "new_interupting_action" and end_reason ~= "action_complete"
 	end,
-	enter_function = function (arg_6_0, arg_6_1)
+	enter_function = function (attacker_unit, input_extxension)
 		-- function 6
-		local extension_input = ScriptUnit.extension_input(arg_6_0, "dialogue_system")
-		local alloc_table = FrameTable.alloc_table()
+		local dialogue_input = ScriptUnit.extension_input(attacker_unit, "dialogue_system")
+		local event_data = FrameTable.alloc_table()
 
-		extension_input:trigger_networked_dialogue_event("on_holy_grenade", alloc_table)
+		dialogue_input:trigger_networked_dialogue_event("on_holy_grenade", event_data)
 	end,
 	throw_offset = Vector3Box(0, 0, 0.9),
 	allowed_chain_actions = {},
@@ -250,12 +250,12 @@ clone.actions.action_one.throw = {
 		0
 	}
 }
-clone.left_hand_unit = tbl.left_hand_unit
-clone.wield_anim = tbl.wield_anim
-clone.right_hand_unit = "units/weapons/player/wpn_emp_holy_hand_grenade_01_t1/wpn_emp_holy_hand_grenade_01_t1"
-clone.left_hand_unit = "units/weapons/player/wpn_emp_holy_hand_grenade_01_t1/wpn_emp_holy_hand_grenade_lighter_01_t1"
-clone.pickup_data.pickup_name = "holy_hand_grenade"
+holy_hand_grenade.left_hand_unit = weapon_template_frag.left_hand_unit
+holy_hand_grenade.wield_anim = weapon_template_frag.wield_anim
+holy_hand_grenade.right_hand_unit = "units/weapons/player/wpn_emp_holy_hand_grenade_01_t1/wpn_emp_holy_hand_grenade_01_t1"
+holy_hand_grenade.left_hand_unit = "units/weapons/player/wpn_emp_holy_hand_grenade_01_t1/wpn_emp_holy_hand_grenade_lighter_01_t1"
+holy_hand_grenade.pickup_data.pickup_name = "holy_hand_grenade"
 
 return {
-	holy_hand_grenade = clone
+	holy_hand_grenade = holy_hand_grenade
 }

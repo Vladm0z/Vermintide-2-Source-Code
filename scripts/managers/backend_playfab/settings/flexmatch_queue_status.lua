@@ -1,6 +1,6 @@
 -- chunkname: @scripts/managers/backend_playfab/settings/flexmatch_queue_status.lua
 
-return {
+local FlexmatchQueueStatus = {
 	Searching = "SEARCHING",
 	Cancelled = "CANCELLED",
 	Failed = "FAILED",
@@ -10,3 +10,5 @@ return {
 	Succeeded = "SUCCEEDED",
 	RequiredAcceptance = "REQUIRES_ACCEPTANCE"
 }
+
+return FlexmatchQueueStatus

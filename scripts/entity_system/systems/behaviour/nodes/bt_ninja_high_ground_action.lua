@@ -4,165 +4,169 @@ require("scripts/entity_system/systems/behaviour/nodes/bt_node")
 
 BTNinjaHighGroundAction = class(BTNinjaHighGroundAction, BTClimbAction)
 
-local POSITION_LOOKUP = POSITION_LOOKUP
+local position_lookup = POSITION_LOOKUP
 local ALIVE = ALIVE
 
-BTNinjaHighGroundAction.init = function (arg_1_0, ...)
+BTNinjaHighGroundAction.init = function (self, ...)
 	-- function 1
-	BTNinjaHighGroundAction.super.init(arg_1_0, ...)
+	BTNinjaHighGroundAction.super.init(self, ...)
 end
 
 BTNinjaHighGroundAction.name = "BTNinjaHighGroundAction"
 
-BTNinjaHighGroundAction.enter = function (self, arg_2_1, arg_2_2, arg_2_3)
+BTNinjaHighGroundAction.enter = function (self, unit, blackboard, t)
 	-- function 2
-	arg_2_2.high_ground_opportunity = nil
+	blackboard.high_ground_opportunity = nil
 
-	if not ALIVE[arg_2_2.target_unit] then
-		local next_smart_object_data = arg_2_2.next_smart_object_data
-		local unbox = next_smart_object_data.entrance_pos:unbox()
-		local unbox_2 = next_smart_object_data.exit_pos:unbox()
+	if ALIVE[blackboard.target_unit] then
+		local smart_data = blackboard.next_smart_object_data
+		local pos1 = smart_data.entrance_pos:unbox()
+		local pos2 = smart_data.exit_pos:unbox()
 
-		if next_smart_object_data.smart_object_type ~= "ledges_with_fence" or not arg_2_2.breed.allow_fence_jumping then
-			arg_2_2.fence_jumping = true
+		if smart_data.smart_object_type == "ledges_with_fence" and blackboard.breed.allow_fence_jumping then
+			blackboard.fence_jumping = true
 
 			print("fence jumping")
-		elseif next_smart_object_data.smart_object_type ~= "ledges" or not (unbox.z > unbox_2.z) or not self:try_jump(arg_2_1, arg_2_2, arg_2_3, unbox) then
-			arg_2_2.high_ground_opportunity = true
+		elseif smart_data.smart_object_type == "ledges" and pos1.z > pos2.z and self:try_jump(unit, blackboard, t, pos1) then
+			blackboard.high_ground_opportunity = true
 		end
 	end
 
-	if not arg_2_2.high_ground_opportunity then
-		BTClimbAction.enter(self, arg_2_1, arg_2_2, arg_2_3)
+	if not blackboard.high_ground_opportunity then
+		BTClimbAction.enter(self, unit, blackboard, t)
 	end
 end
 
-BTNinjaHighGroundAction.leave = function (arg_3_0, arg_3_1, arg_3_2, arg_3_3, arg_3_4, arg_3_5)
+BTNinjaHighGroundAction.leave = function (self, unit, blackboard, t, reason, destroy)
 	-- function 3
-	if not arg_3_2.high_ground_opportunity then
-		if arg_3_4 == "aborted" then
-			arg_3_2.high_ground_opportunity = nil
+	if blackboard.high_ground_opportunity then
+		if reason == "aborted" then
+			blackboard.high_ground_opportunity = nil
 		end
 
-		if not arg_3_2.fence_jumping then
-			local navigation_extension = arg_3_2.navigation_extension
-			local locomotion_extension = arg_3_2.locomotion_extension
+		if blackboard.fence_jumping then
+			local navigation_extension = blackboard.navigation_extension
+			local locomotion_extension = blackboard.locomotion_extension
 
 			navigation_extension:set_enabled(true)
 
-			local unbox = arg_3_2.climb_exit_pos:unbox()
+			local exit_pos = blackboard.climb_exit_pos:unbox()
 
-			navigation_extension:set_navbot_position(unbox)
+			navigation_extension:set_navbot_position(exit_pos)
 
-			if not arg_3_5 then
+			if not destroy then
 				locomotion_extension:set_wanted_velocity(Vector3.zero())
 				locomotion_extension:set_movement_type("script_driven")
-				locomotion_extension:teleport_to(arg_3_2.ledge_position:unbox(), Unit.local_rotation(arg_3_1, 0))
+				locomotion_extension:teleport_to(blackboard.ledge_position:unbox(), Unit.local_rotation(unit, 0))
 			end
 
-			arg_3_2.climb_spline_ground = nil
-			arg_3_2.climb_spline_ledge = nil
-			arg_3_2.climb_entrance_pos = nil
-			arg_3_2.climb_state = nil
-			arg_3_2.climb_upwards = nil
-			arg_3_2.is_climbing = nil
-			arg_3_2.stagger_prohibited = nil
-			arg_3_2.climb_jump_height = nil
-			arg_3_2.climb_ledge_lookat_direction = nil
-			arg_3_2.climb_entrance_pos = nil
-			arg_3_2.climb_exit_pos = nil
-			arg_3_2.is_smart_objecting = nil
-			arg_3_2.jump_climb_finished = nil
-			arg_3_2.climb_align_end_time = nil
-			arg_3_2.smart_object_data = nil
-			arg_3_2.ledge_position = nil
+			blackboard.climb_spline_ground = nil
+			blackboard.climb_spline_ledge = nil
+			blackboard.climb_entrance_pos = nil
+			blackboard.climb_state = nil
+			blackboard.climb_upwards = nil
+			blackboard.is_climbing = nil
+			blackboard.stagger_prohibited = nil
+			blackboard.climb_jump_height = nil
+			blackboard.climb_ledge_lookat_direction = nil
+			blackboard.climb_entrance_pos = nil
+			blackboard.climb_exit_pos = nil
+			blackboard.is_smart_objecting = nil
+			blackboard.jump_climb_finished = nil
+			blackboard.climb_align_end_time = nil
+			blackboard.smart_object_data = nil
+			blackboard.ledge_position = nil
 
-			if not arg_3_5 then
-				LocomotionUtils.set_animation_translation_scale(arg_3_1, Vector3(1, 1, 1))
-				LocomotionUtils.constrain_on_clients(arg_3_1, false)
+			if not destroy then
+				LocomotionUtils.set_animation_translation_scale(unit, Vector3(1, 1, 1))
+				LocomotionUtils.constrain_on_clients(unit, false)
 			end
 
-			ScriptUnit.extension(arg_3_1, "hit_reaction_system").force_ragdoll_on_death = nil
+			local hit_reaction_extension = ScriptUnit.extension(unit, "hit_reaction_system")
 
-			if not navigation_extension:is_using_smart_object() then
-				local use_smart_object = navigation_extension:use_smart_object(false)
+			hit_reaction_extension.force_ragdoll_on_death = nil
+
+			if navigation_extension:is_using_smart_object() then
+				local success = navigation_extension:use_smart_object(false)
 			end
 		end
 	else
-		BTClimbAction.leave(arg_3_0, arg_3_1, arg_3_2, arg_3_3, arg_3_4, arg_3_5)
+		BTClimbAction.leave(self, unit, blackboard, t, reason, destroy)
 	end
 
-	if arg_3_4 == "aborted" then
-		arg_3_2.jump_data = nil
+	if reason == "aborted" then
+		blackboard.jump_data = nil
 	end
 
-	arg_3_2.fence_jumping = false
+	blackboard.fence_jumping = false
 end
 
-BTNinjaHighGroundAction.run = function (self, arg_4_1, arg_4_2, arg_4_3, arg_4_4)
+BTNinjaHighGroundAction.run = function (self, unit, blackboard, t, dt)
 	-- function 4
-	if not arg_4_2.high_ground_opportunity then
+	if blackboard.high_ground_opportunity then
 		return "running"
 	else
-		if not arg_4_2.fence_jumping and arg_4_2.climb_state ~= "waiting_for_finished_climb_anim" or not arg_4_2.jump_climb_finished then
-			if not self:try_jump(arg_4_1, arg_4_2, arg_4_3, arg_4_2.ledge_position:unbox()) then
-				arg_4_2.high_ground_opportunity = true
+		if blackboard.fence_jumping and blackboard.climb_state == "waiting_for_finished_climb_anim" and blackboard.jump_climb_finished then
+			if self:try_jump(unit, blackboard, t, blackboard.ledge_position:unbox()) then
+				blackboard.high_ground_opportunity = true
 
 				return "failed"
 			else
-				arg_4_2.fence_jumping = false
+				blackboard.fence_jumping = false
 			end
 		end
 
-		return BTClimbAction.run(self, arg_4_1, arg_4_2, arg_4_3, arg_4_4)
+		return BTClimbAction.run(self, unit, blackboard, t, dt)
 	end
 end
 
-BTNinjaHighGroundAction.try_jump = function (arg_5_0, arg_5_1, arg_5_2, arg_5_3, arg_5_4, arg_5_5)
+BTNinjaHighGroundAction.try_jump = function (self, unit, blackboard, t, pos1, force_idle)
 	-- function 5
-	local target_unit = arg_5_2.target_unit
+	local target_unit = blackboard.target_unit
 
 	if not ALIVE[target_unit] then
 		return
 	end
 
-	local get_data = World.get_data(arg_5_2.world, "physics_world")
-	local num = arg_5_4 + Vector3(0, 0, 1)
-	local node = Unit.node(arg_5_2.target_unit, "j_neck")
-	local num_2 = Unit.world_position(target_unit, 0) + Vector3(0, 0, 0.2)
-	local local_rotation = Unit.local_rotation(arg_5_1, 0)
-	local forward = Quaternion.forward(local_rotation)
-	local num_3 = num_2 - POSITION_LOOKUP[arg_5_1]
+	local physics_world = World.get_data(blackboard.world, "physics_world")
+	local p1 = pos1 + Vector3(0, 0, 1)
+	local enemy_spine_node = Unit.node(blackboard.target_unit, "j_neck")
+	local p2 = Unit.world_position(target_unit, 0) + Vector3(0, 0, 0.2)
+	local ninja_rotation = Unit.local_rotation(unit, 0)
+	local ninja_forward = Quaternion.forward(ninja_rotation)
+	local to_target = p2 - POSITION_LOOKUP[unit]
+	local dot = Vector3.dot(ninja_forward, to_target)
+	local target_ahead = dot > 0.3
 
-	if not (Vector3.dot(forward, num_3) > 0.3) then
-		local tbl = {}
-		local var_5_9 = Vector3(0, 0, 0.05)
-		local test_trajectory, var_5_11, var_5_12 = BTPrepareForCrazyJumpAction.test_trajectory(arg_5_2, num + Vector3(0, 0, 0, 5), num_2 + var_5_9, tbl, true)
+	if target_ahead then
+		local segment_list = {}
+		local wedge = Vector3(0, 0, 0.05)
+		local in_los, velocity, time_of_flight = BTPrepareForCrazyJumpAction.test_trajectory(blackboard, p1 + Vector3(0, 0, 0, 5), p2 + wedge, segment_list, true)
 
-		if not test_trajectory then
-			arg_5_2.jump_data = {
+		if in_los then
+			blackboard.jump_data = {
 				delay_jump_start = true,
-				segment_list = tbl,
-				jump_target_pos = Vector3Box(num_2),
-				jump_velocity_boxed = Vector3Box(var_5_11),
-				total_distance = Vector3.distance(num, num_2),
-				enemy_spine_node = node
+				segment_list = segment_list,
+				jump_target_pos = Vector3Box(p2),
+				jump_velocity_boxed = Vector3Box(velocity),
+				total_distance = Vector3.distance(p1, p2),
+				enemy_spine_node = enemy_spine_node
 			}
-			arg_5_2.skulk_pos = Vector3Box(arg_5_4)
+			blackboard.skulk_pos = Vector3Box(pos1)
 
-			arg_5_2.navigation_extension:move_to(arg_5_4)
+			blackboard.navigation_extension:move_to(pos1)
 
-			local network = Managers.state.network
+			local network_manager = Managers.state.network
 
-			network:anim_event(arg_5_1, "to_crouch")
+			network_manager:anim_event(unit, "to_crouch")
 
-			if not arg_5_5 then
-				network:anim_event(arg_5_1, "idle")
+			if force_idle then
+				network_manager:anim_event(unit, "idle")
 			end
 
-			local look = Quaternion.look(num_2 - num, Vector3.up())
+			local wanted_rot = Quaternion.look(p2 - p1, Vector3.up())
 
-			arg_5_2.locomotion_extension:set_wanted_rotation(look)
+			blackboard.locomotion_extension:set_wanted_rotation(wanted_rot)
 
 			return true
 		else

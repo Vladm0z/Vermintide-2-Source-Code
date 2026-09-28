@@ -1,41 +1,41 @@
 -- chunkname: @scripts/ui/views/tutorial_ui_definitions.lua
 
-local flag = true
-local var_0_1 = local_require("scripts/ui/views/tutorial_ui_animation_definitions")
-local tbl = {
+local RETAINED_MODE_ENABLED = true
+local animations = local_require("scripts/ui/views/tutorial_ui_animation_definitions")
+local INFO_SLATE_SIZE = {
 	500,
 	500
 }
-local tbl_2 = {
+local INFO_SLATE_ENTRY_SIZE = {
 	450,
 	66
 }
-local num = 30
-local tbl_3 = {
+local INFO_SLATE_ENTRY_SPACING = 30
+local INFO_SLATE_GLOW_SIZE = {
 	584,
 	138
 }
-local tbl_4 = {
+local INFO_SLATE_GLOW_UV_SIZE = {
 	450,
 	62
 }
-local num_2 = 20
-local num_3 = 4
-local num_4 = 10
-local num_5 = 6
-local tbl_5 = {
+local INFO_SLATE_ENTRY_HEIGHT_SPACING = 20
+local NUMBER_OF_INFO_SLATE_ENTRIES = 4
+local NUMBER_OF_HEALTH_BARS = 10
+local NUMBER_OF_OBJECTIVE_TOOLTIPS = 6
+local FLOATING_ICON_SIZE = {
 	64,
 	64
 }
-local tbl_6 = {
+local HEALTH_BAR_SIZE_FG = {
 	137,
 	7
 }
-local tbl_7 = {
+local HEALTH_BAR_SIZE_BG = {
 	147,
 	17
 }
-local tbl_8 = {
+local scenegraph_definition = {
 	root = {
 		is_root = true,
 		size = {
@@ -118,12 +118,12 @@ local tbl_8 = {
 	info_slate_mission_goal_end = {
 		parent = "info_slate_root",
 		size = {
-			tbl_2[1],
-			tbl_2[2] / 2
+			INFO_SLATE_ENTRY_SIZE[1],
+			INFO_SLATE_ENTRY_SIZE[2] / 2
 		},
 		position = {
 			0,
-			tbl_2[2] / 2,
+			INFO_SLATE_ENTRY_SIZE[2] / 2,
 			2
 		}
 	},
@@ -131,7 +131,7 @@ local tbl_8 = {
 		vertical_alignment = "top",
 		parent = "info_slate_root",
 		size = {
-			tbl_2[1] + 30,
+			INFO_SLATE_ENTRY_SIZE[1] + 30,
 			550
 		},
 		position = {
@@ -143,37 +143,37 @@ local tbl_8 = {
 }
 
 for i = 1, 3 do
-	local format = string.format("info_slate_slot%d_start", i)
-	local format_2 = string.format("info_slate_slot%d_end", i)
-	local num_6 = (i - 1) * (tbl_2[2] + num)
+	local slot_name_start = string.format("info_slate_slot%d_start", i)
+	local slot_name_end = string.format("info_slate_slot%d_end", i)
+	local y = (i - 1) * (INFO_SLATE_ENTRY_SIZE[2] + INFO_SLATE_ENTRY_SPACING)
 
-	tbl_8[format] = {
+	scenegraph_definition[slot_name_start] = {
 		parent = "info_slate_mission_goal_end",
 		size = {
-			tbl_2[1],
-			tbl_2[2]
+			INFO_SLATE_ENTRY_SIZE[1],
+			INFO_SLATE_ENTRY_SIZE[2]
 		},
 		position = {
 			0,
-			-num_6,
+			-y,
 			1
 		}
 	}
-	tbl_8[format_2] = {
+	scenegraph_definition[slot_name_end] = {
 		parent = "info_slate_mission_goal_end",
 		size = {
-			tbl_2[1],
-			tbl_2[2] / 2
+			INFO_SLATE_ENTRY_SIZE[1],
+			INFO_SLATE_ENTRY_SIZE[2] / 2
 		},
 		position = {
 			0,
-			-num_6,
+			-y,
 			2
 		}
 	}
 end
 
-local tbl_9 = {
+local widget_definitions = {
 	tooltip_mission = {
 		scenegraph_id = "tooltip",
 		element = {
@@ -187,27 +187,27 @@ local tbl_9 = {
 					texture_id = "arrow",
 					style_id = "arrow",
 					pass_type = "rotated_texture",
-					content_check_function = function (arg_1_0, arg_1_1)
+					content_check_function = function (content, style)
 						-- function 1
-						return arg_1_1.color[1] > 0
+						return style.color[1] > 0
 					end
 				},
 				{
 					style_id = "text",
 					pass_type = "text",
 					text_id = "text",
-					content_check_function = function (self)
+					content_check_function = function (content)
 						-- function 2
-						return self.text
+						return content.text
 					end
 				},
 				{
 					style_id = "text_shadow",
 					pass_type = "text",
 					text_id = "text",
-					content_check_function = function (self)
+					content_check_function = function (content)
 						-- function 3
-						return self.text
+						return content.text
 					end
 				}
 			}
@@ -299,7 +299,7 @@ local tbl_9 = {
 		}
 	}
 }
-local tbl_10 = {
+local floating_icons_scene_graph = {
 	root = {
 		is_root = true,
 		size = {
@@ -395,8 +395,8 @@ local tbl_10 = {
 		parent = "tooltip_mission",
 		horizontal_alignment = "center",
 		size = {
-			tbl_5[1],
-			tbl_5[2]
+			FLOATING_ICON_SIZE[1],
+			FLOATING_ICON_SIZE[2]
 		},
 		position = {
 			0,
@@ -420,23 +420,24 @@ local tbl_10 = {
 	}
 }
 
-local function fn(arg_4_0)
+local function create_health_bar_definitions(num_health_bars)
 	-- function 4
-	local tbl = {}
+	local definitions = {}
 
-	for i = 1, arg_4_0 do
-		local str = "health_bar_" .. i
+	for i = 1, num_health_bars do
+		local scenegraph_id = "health_bar_" .. i
 
-		tbl_10[str] = {
+		floating_icons_scene_graph[scenegraph_id] = {
 			parent = "screen_fit",
 			position = {
 				0,
 				0,
 				1
 			},
-			size = tbl_6
+			size = HEALTH_BAR_SIZE_FG
 		}
-		tbl[i] = {
+
+		local health_bar_definition = {
 			element = {
 				passes = {
 					{
@@ -457,9 +458,9 @@ local function fn(arg_4_0)
 			},
 			style = {
 				texture_bg = {
-					size = tbl_7,
+					size = HEALTH_BAR_SIZE_BG,
 					offset = {
-						-tbl_7[1] / 2,
+						-HEALTH_BAR_SIZE_BG[1] / 2,
 						0,
 						1
 					},
@@ -469,12 +470,12 @@ local function fn(arg_4_0)
 						255,
 						255
 					},
-					scenegraph_id = str
+					scenegraph_id = scenegraph_id
 				},
 				texture_fg = {
-					size = tbl_6,
+					size = HEALTH_BAR_SIZE_FG,
 					offset = {
-						-tbl_6[1] / 2,
+						-HEALTH_BAR_SIZE_FG[1] / 2,
 						5,
 						1
 					},
@@ -484,50 +485,52 @@ local function fn(arg_4_0)
 						255,
 						255
 					},
-					scenegraph_id = str
+					scenegraph_id = scenegraph_id
 				}
 			},
-			scenegraph_id = str
+			scenegraph_id = scenegraph_id
 		}
+
+		definitions[i] = health_bar_definition
 	end
 
-	return tbl
+	return definitions
 end
 
-local function fn_2(arg_5_0)
+local function create_info_slate_widgets(num_of_entries)
 	-- function 5
-	local tbl = {}
+	local entries = {}
 
-	for i = 1, arg_5_0 do
-		local str = "info_slate_entry_anchor" .. i
-		local str_2 = "info_slate_entry_root" .. i
-		local str_3 = str_2 .. "_text"
-		local str_4 = str_2 .. "_icon_root"
-		local str_5 = str_2 .. "_icon"
-		local str_6 = str_2 .. "_top_frame"
-		local str_7 = str_2 .. "_bottom_frame"
-		local str_8 = str_2 .. "_frame_details"
-		local str_9 = str_2 .. "_frame_glow_top"
-		local str_10 = str_2 .. "_frame_glow_bottom"
+	for i = 1, num_of_entries do
+		local scenegraph_anchor_id = "info_slate_entry_anchor" .. i
+		local scenegraph_id = "info_slate_entry_root" .. i
+		local text_scenegraph_id = scenegraph_id .. "_text"
+		local icon_root_scenegraph_id = scenegraph_id .. "_icon_root"
+		local icon_scenegraph_id = scenegraph_id .. "_icon"
+		local top_frame_scenegraph_id = scenegraph_id .. "_top_frame"
+		local bottom_frame_scenegraph_id = scenegraph_id .. "_bottom_frame"
+		local frame_details_scenegraph_id = scenegraph_id .. "_frame_details"
+		local frame_glow_top_scenegraph_id = scenegraph_id .. "_frame_glow_top"
+		local frame_glow_bottom_scenegraph_id = scenegraph_id .. "_frame_glow_bottom"
 
-		tbl_8[str_2] = {
+		scenegraph_definition[scenegraph_id] = {
 			parent = "info_slate_root",
 			position = {
-				-tbl_2[1],
+				-INFO_SLATE_ENTRY_SIZE[1],
 				0,
 				1
 			},
 			size = {
-				tbl_2[1],
-				tbl_2[2]
+				INFO_SLATE_ENTRY_SIZE[1],
+				INFO_SLATE_ENTRY_SIZE[2]
 			}
 		}
-		tbl_8[str_4] = {
+		scenegraph_definition[icon_root_scenegraph_id] = {
 			vertical_alignment = "top",
 			horizontal_alignment = "center",
-			parent = str_2,
+			parent = scenegraph_id,
 			position = {
-				-tbl_2[1] / 2 + 30,
+				-INFO_SLATE_ENTRY_SIZE[1] / 2 + 30,
 				0,
 				0
 			},
@@ -536,10 +539,10 @@ local function fn_2(arg_5_0)
 				62
 			}
 		}
-		tbl_8[str_5] = {
+		scenegraph_definition[icon_scenegraph_id] = {
 			vertical_alignment = "center",
 			horizontal_alignment = "center",
-			parent = str_4,
+			parent = icon_root_scenegraph_id,
 			position = {
 				0,
 				0,
@@ -550,24 +553,24 @@ local function fn_2(arg_5_0)
 				62
 			}
 		}
-		tbl_8[str_3] = {
+		scenegraph_definition[text_scenegraph_id] = {
 			vertical_alignment = "center",
 			horizontal_alignment = "left",
-			parent = str_2,
+			parent = scenegraph_id,
 			position = {
 				2,
 				0,
 				1
 			},
 			size = {
-				tbl_2[1] - 62,
-				tbl_2[2]
+				INFO_SLATE_ENTRY_SIZE[1] - 62,
+				INFO_SLATE_ENTRY_SIZE[2]
 			}
 		}
-		tbl_8[str_6] = {
+		scenegraph_definition[top_frame_scenegraph_id] = {
 			vertical_alignment = "top",
 			horizontal_alignment = "left",
-			parent = str_2,
+			parent = scenegraph_id,
 			position = {
 				0,
 				0,
@@ -578,10 +581,10 @@ local function fn_2(arg_5_0)
 				4
 			}
 		}
-		tbl_8[str_7] = {
+		scenegraph_definition[bottom_frame_scenegraph_id] = {
 			vertical_alignment = "bottom",
 			horizontal_alignment = "left",
-			parent = str_2,
+			parent = scenegraph_id,
 			position = {
 				0,
 				0,
@@ -592,80 +595,83 @@ local function fn_2(arg_5_0)
 				4
 			}
 		}
-		tbl_8[str_9] = {
+		scenegraph_definition[frame_glow_top_scenegraph_id] = {
 			vertical_alignment = "top",
 			horizontal_alignment = "left",
-			parent = str_2,
+			parent = scenegraph_id,
 			position = {
 				-105,
 				108,
 				5
 			},
 			size = {
-				tbl_3[1],
-				tbl_3[2]
+				INFO_SLATE_GLOW_SIZE[1],
+				INFO_SLATE_GLOW_SIZE[2]
 			}
 		}
-		tbl_8[str_10] = {
+		scenegraph_definition[frame_glow_bottom_scenegraph_id] = {
 			vertical_alignment = "bottom",
 			horizontal_alignment = "left",
-			parent = str_2,
+			parent = scenegraph_id,
 			position = {
 				-105,
 				-108,
 				5
 			},
 			size = {
-				tbl_3[1],
-				tbl_3[2]
+				INFO_SLATE_GLOW_SIZE[1],
+				INFO_SLATE_GLOW_SIZE[2]
 			}
 		}
 
-		local tbl_4 = {
+		local temp = {
 			0,
 			0,
 			0
 		}
-		local tbl_5 = {
+		local info_slate_entry_default = {
 			element = {
 				passes = {
 					{
 						style_id = "background_texture",
 						pass_type = "texture_uv_dynamic_color_uvs_size_offset",
 						content_id = "background_texture",
-						dynamic_function = function (self, arg_6_1, arg_6_2, arg_6_3)
+						dynamic_function = function (content, style, size, dt)
 							-- function 6
-							local fraction = self.fraction
-							local num = arg_6_1.uv_start_pixels + arg_6_1.uv_scale_pixels * fraction
-							local uvs = arg_6_1.uvs
-							local scale_axis = arg_6_1.scale_axis
-							local offset_scale = arg_6_1.offset_scale
+							local fraction = content.fraction
+							local uv_start_pixels = style.uv_start_pixels
+							local uv_scale_pixels = style.uv_scale_pixels
+							local uv_pixels = uv_start_pixels + uv_scale_pixels * fraction
+							local uvs = style.uvs
+							local uv_scale_axis = style.scale_axis
+							local offset_scale = style.offset_scale
 
-							uvs[1][scale_axis] = 1 - fraction
-							arg_6_2[scale_axis] = num
+							uvs[1][uv_scale_axis] = 1 - fraction
+							size[uv_scale_axis] = uv_pixels
 
-							return arg_6_1.color, uvs, arg_6_2, tbl_4
+							return style.color, uvs, size, temp
 						end
 					},
 					{
 						style_id = "icon_texture",
 						pass_type = "texture_uv_dynamic_color_uvs_size_offset",
 						content_id = "icon_texture",
-						dynamic_function = function (self, arg_7_1, arg_7_2, arg_7_3)
+						dynamic_function = function (content, style, size, dt)
 							-- function 7
-							local fraction = self.fraction
-							local color = arg_7_1.color
-							local uv_start_pixels = arg_7_1.uv_start_pixels
-							local uv_scale_pixels = arg_7_1.uv_scale_pixels
-							local num = uv_start_pixels + uv_scale_pixels * fraction
-							local uvs = arg_7_1.uvs
-							local scale_axis = arg_7_1.scale_axis
-							local num_2 = (1 - num / (uv_start_pixels + uv_scale_pixels)) * 0.5
+							local fraction = content.fraction
+							local color = style.color
+							local uv_start_pixels = style.uv_start_pixels
+							local uv_scale_pixels = style.uv_scale_pixels
+							local uv_pixels = uv_start_pixels + uv_scale_pixels * fraction
+							local uvs = style.uvs
+							local uv_scale_axis = style.scale_axis
+							local uv_diff = uv_pixels / (uv_start_pixels + uv_scale_pixels)
+							local side_scale = (1 - uv_diff) * 0.5
 
-							uvs[1][scale_axis] = num_2
-							uvs[2][scale_axis] = 1 - num_2
+							uvs[1][uv_scale_axis] = side_scale
+							uvs[2][uv_scale_axis] = 1 - side_scale
 
-							return color, uvs, arg_7_2, arg_7_1.offset
+							return color, uvs, size, style.offset
 						end
 					},
 					{
@@ -673,12 +679,12 @@ local function fn_2(arg_5_0)
 						pass_type = "text",
 						text_id = "description_text",
 						retained_mode = false,
-						content_check_function = function (self, arg_8_1)
+						content_check_function = function (content, style)
 							-- function 8
-							if not self.icon_texture then
-								arg_8_1.offset[1] = 78
+							if content.icon_texture then
+								style.offset[1] = 78
 							else
-								arg_8_1.offset[1] = 0
+								style.offset[1] = 0
 							end
 
 							return true
@@ -688,40 +694,40 @@ local function fn_2(arg_5_0)
 						pass_type = "texture",
 						style_id = "top_frame_texture",
 						texture_id = "top_frame_texture",
-						retained_mode = flag,
-						content_check_function = function (self)
+						retained_mode = RETAINED_MODE_ENABLED,
+						content_check_function = function (content)
 							-- function 9
-							return self.top_frame_texture
+							return content.top_frame_texture
 						end
 					},
 					{
 						pass_type = "texture",
 						style_id = "bottom_frame_texture",
 						texture_id = "bottom_frame_texture",
-						retained_mode = flag,
-						content_check_function = function (self)
+						retained_mode = RETAINED_MODE_ENABLED,
+						content_check_function = function (content)
 							-- function 10
-							return self.bottom_frame_texture
+							return content.bottom_frame_texture
 						end
 					},
 					{
 						pass_type = "texture",
 						style_id = "frame_glow_top_texture",
 						texture_id = "frame_glow_top_texture",
-						retained_mode = flag,
-						content_check_function = function (self)
+						retained_mode = RETAINED_MODE_ENABLED,
+						content_check_function = function (content)
 							-- function 11
-							return self.frame_glow_top_texture
+							return content.frame_glow_top_texture
 						end
 					},
 					{
 						pass_type = "texture",
 						style_id = "frame_glow_bottom_texture",
 						texture_id = "frame_glow_bottom_texture",
-						retained_mode = flag,
-						content_check_function = function (self)
+						retained_mode = RETAINED_MODE_ENABLED,
+						content_check_function = function (content)
 							-- function 12
-							return self.frame_glow_bottom_texture
+							return content.frame_glow_bottom_texture
 						end
 					}
 				}
@@ -752,7 +758,7 @@ local function fn_2(arg_5_0)
 					uv_start_pixels = 0,
 					offset_scale = 1,
 					scale_axis = 2,
-					scenegraph_id = str_5,
+					scenegraph_id = icon_scenegraph_id,
 					color = {
 						255,
 						255,
@@ -789,7 +795,7 @@ local function fn_2(arg_5_0)
 						0
 					},
 					text_color = Colors.get_color_table_with_alpha("white", 255),
-					scenegraph_id = str_3
+					scenegraph_id = text_scenegraph_id
 				},
 				background_texture = {
 					masked = true,
@@ -802,14 +808,14 @@ local function fn_2(arg_5_0)
 						0,
 						0
 					},
-					scenegraph_id = str_2,
+					scenegraph_id = scenegraph_id,
 					color = {
 						255,
 						66,
 						31,
 						17
 					},
-					uv_scale_pixels = tbl_2[1],
+					uv_scale_pixels = INFO_SLATE_ENTRY_SIZE[1],
 					uvs = {
 						{
 							0,
@@ -835,7 +841,7 @@ local function fn_2(arg_5_0)
 						255,
 						255
 					},
-					scenegraph_id = str_6
+					scenegraph_id = top_frame_scenegraph_id
 				},
 				bottom_frame_texture = {
 					background_component = true,
@@ -851,7 +857,7 @@ local function fn_2(arg_5_0)
 						255,
 						255
 					},
-					scenegraph_id = str_7
+					scenegraph_id = bottom_frame_scenegraph_id
 				},
 				frame_glow_top_texture = {
 					masked = true,
@@ -866,7 +872,7 @@ local function fn_2(arg_5_0)
 						255,
 						255
 					},
-					scenegraph_id = str_9
+					scenegraph_id = frame_glow_top_scenegraph_id
 				},
 				frame_glow_bottom_texture = {
 					masked = true,
@@ -881,36 +887,36 @@ local function fn_2(arg_5_0)
 						255,
 						255
 					},
-					scenegraph_id = str_10
+					scenegraph_id = frame_glow_bottom_scenegraph_id
 				}
 			},
-			scenegraph_id = str_2
+			scenegraph_id = scenegraph_id
 		}
 
-		for k, v in pairs(tbl_5.style) do
-			if not v.color then
-				v.default_alpha = v.color[1]
+		for name, style_data in pairs(info_slate_entry_default.style) do
+			if style_data.color then
+				style_data.default_alpha = style_data.color[1]
 			end
 		end
 
-		tbl[#tbl + 1] = tbl_5
+		entries[#entries + 1] = info_slate_entry_default
 	end
 
-	return tbl
+	return entries
 end
 
-local function fn_3(arg_13_0)
+local function create_objective_tooltip_definitions(num_objective_tooltips)
 	-- function 13
-	local tbl = {}
+	local definitions = {}
 
-	for i = 1, arg_13_0 do
-		local str = "objective_tooltip_root_" .. i
-		local str_2 = "objective_tooltip_" .. i
-		local str_3 = "objective_tooltip_text" .. i
-		local str_4 = "objective_tooltip_icon" .. i
-		local str_5 = "objective_tooltip_arrow" .. i
+	for i = 1, num_objective_tooltips do
+		local scenegraph_root = "objective_tooltip_root_" .. i
+		local scenegraph_id = "objective_tooltip_" .. i
+		local scenegraph_text = "objective_tooltip_text" .. i
+		local scenegraph_icon = "objective_tooltip_icon" .. i
+		local scenegraph_arrow = "objective_tooltip_arrow" .. i
 
-		tbl_10[str] = {
+		floating_icons_scene_graph[scenegraph_root] = {
 			parent = "root",
 			position = {
 				0,
@@ -922,9 +928,9 @@ local function fn_3(arg_13_0)
 				3
 			}
 		}
-		tbl_10[str_2] = {
+		floating_icons_scene_graph[scenegraph_id] = {
 			vertical_alignment = "bottom",
-			parent = str,
+			parent = scenegraph_root,
 			position = {
 				0,
 				0,
@@ -935,10 +941,10 @@ local function fn_3(arg_13_0)
 				1
 			}
 		}
-		tbl_10[str_3] = {
+		floating_icons_scene_graph[scenegraph_text] = {
 			vertical_alignment = "center",
 			horizontal_alignment = "right",
-			parent = str_4,
+			parent = scenegraph_icon,
 			size = {
 				400,
 				62
@@ -949,10 +955,10 @@ local function fn_3(arg_13_0)
 				2
 			}
 		}
-		tbl_10[str_4] = {
+		floating_icons_scene_graph[scenegraph_icon] = {
 			vertical_alignment = "center",
 			horizontal_alignment = "center",
-			parent = str_2,
+			parent = scenegraph_id,
 			size = {
 				62,
 				62
@@ -963,10 +969,10 @@ local function fn_3(arg_13_0)
 				3
 			}
 		}
-		tbl_10[str_5] = {
+		floating_icons_scene_graph[scenegraph_arrow] = {
 			vertical_alignment = "center",
 			horizontal_alignment = "center",
-			parent = str_4,
+			parent = scenegraph_icon,
 			size = {
 				38,
 				18
@@ -977,7 +983,8 @@ local function fn_3(arg_13_0)
 				2
 			}
 		}
-		tbl[i] = {
+
+		local objective_tooltip = {
 			element = {
 				passes = {
 					{
@@ -989,27 +996,27 @@ local function fn_3(arg_13_0)
 						texture_id = "arrow",
 						style_id = "arrow",
 						pass_type = "rotated_texture",
-						content_check_function = function (arg_14_0, arg_14_1)
+						content_check_function = function (content, style)
 							-- function 14
-							return arg_14_1.color[1] > 0
+							return style.color[1] > 0
 						end
 					},
 					{
 						style_id = "text",
 						pass_type = "text",
 						text_id = "text",
-						content_check_function = function (self)
+						content_check_function = function (content)
 							-- function 15
-							return self.text
+							return content.text
 						end
 					},
 					{
 						style_id = "text_shadow",
 						pass_type = "text",
 						text_id = "text",
-						content_check_function = function (self)
+						content_check_function = function (content)
 							-- function 16
-							return self.text
+							return content.text
 						end
 					}
 				}
@@ -1034,7 +1041,7 @@ local function fn_3(arg_13_0)
 						0,
 						1
 					},
-					scenegraph_id = str_3
+					scenegraph_id = scenegraph_text
 				},
 				text_shadow = {
 					font_size = 30,
@@ -1050,7 +1057,7 @@ local function fn_3(arg_13_0)
 						-2,
 						0
 					},
-					scenegraph_id = str_3
+					scenegraph_id = scenegraph_text
 				},
 				texture_id = {
 					offset = {
@@ -1064,8 +1071,8 @@ local function fn_3(arg_13_0)
 						255,
 						255
 					},
-					scenegraph_id = str_4,
-					size = tbl_5
+					scenegraph_id = scenegraph_icon,
+					size = FLOATING_ICON_SIZE
 				},
 				arrow = {
 					angle = 0,
@@ -1084,35 +1091,37 @@ local function fn_3(arg_13_0)
 						255,
 						255
 					},
-					scenegraph_id = str_5
+					scenegraph_id = scenegraph_arrow
 				}
 			},
-			scenegraph_id = str_2
+			scenegraph_id = scenegraph_id
 		}
+
+		definitions[i] = objective_tooltip
 	end
 
-	return tbl
+	return definitions
 end
 
-local var_0_23 = fn_2(num_3)
-local var_0_24 = fn(num_4)
-local var_0_25 = fn_3(num_5)
+local info_slate_entries = create_info_slate_widgets(NUMBER_OF_INFO_SLATE_ENTRIES)
+local health_bar_definitions = create_health_bar_definitions(NUMBER_OF_HEALTH_BARS)
+local objective_tooltips = create_objective_tooltip_definitions(NUMBER_OF_OBJECTIVE_TOOLTIPS)
 
 return {
-	scenegraph = tbl_8,
-	floating_icons_scene_graph = tbl_10,
-	widgets = tbl_9,
-	INFO_SLATE_SIZE = tbl,
-	INFO_SLATE_ENTRY_SIZE = tbl_2,
-	INFO_SLATE_ENTRY_SPACING = num,
-	INFO_SLATE_ENTRY_HEIGHT_SPACING = num_2,
-	NUMBER_OF_INFO_SLATE_ENTRIES = num_3,
+	scenegraph = scenegraph_definition,
+	floating_icons_scene_graph = floating_icons_scene_graph,
+	widgets = widget_definitions,
+	INFO_SLATE_SIZE = INFO_SLATE_SIZE,
+	INFO_SLATE_ENTRY_SIZE = INFO_SLATE_ENTRY_SIZE,
+	INFO_SLATE_ENTRY_SPACING = INFO_SLATE_ENTRY_SPACING,
+	INFO_SLATE_ENTRY_HEIGHT_SPACING = INFO_SLATE_ENTRY_HEIGHT_SPACING,
+	NUMBER_OF_INFO_SLATE_ENTRIES = NUMBER_OF_INFO_SLATE_ENTRIES,
 	tutorial_icons = tutorial_icons,
-	info_slate_entries = var_0_23,
-	health_bar_definitions = var_0_24,
-	NUMBER_OF_HEALTH_BARS = num_4,
-	objective_tooltips = var_0_25,
-	NUMBER_OF_OBJECTIVE_TOOLTIPS = num_5,
-	FLOATING_ICON_SIZE = tbl_5,
-	animations = var_0_1
+	info_slate_entries = info_slate_entries,
+	health_bar_definitions = health_bar_definitions,
+	NUMBER_OF_HEALTH_BARS = NUMBER_OF_HEALTH_BARS,
+	objective_tooltips = objective_tooltips,
+	NUMBER_OF_OBJECTIVE_TOOLTIPS = NUMBER_OF_OBJECTIVE_TOOLTIPS,
+	FLOATING_ICON_SIZE = FLOATING_ICON_SIZE,
+	animations = animations
 }

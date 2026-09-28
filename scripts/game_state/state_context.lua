@@ -2,24 +2,24 @@
 
 local StateContext = StateContext
 
-StateContext = StateContext or {}
+StateContext = not not StateContext or not not {}
 StateContext = StateContext
 
-StateContext.set_context = function (arg_1_0)
+StateContext.set_context = function (c)
 	-- function 1
-	StateContext.context = arg_1_0
+	StateContext.context = c
 end
 
-StateContext.get = function (arg_2_0, arg_2_1)
+StateContext.get = function (parent, child)
 	-- function 2
-	assert(StateContext.context[arg_2_0], "parent does not exist")
+	assert(StateContext.context[parent], "parent does not exist")
 
-	return StateContext.context[arg_2_0][arg_2_1]
+	return StateContext.context[parent][child]
 end
 
-StateContext.manager = function (arg_3_0)
+StateContext.manager = function (name)
 	-- function 3
-	return StateContext.get("manager", arg_3_0)
+	return StateContext.get("manager", name)
 end
 
 StateContext.event = function ()

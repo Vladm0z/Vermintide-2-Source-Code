@@ -1,6 +1,6 @@
 -- chunkname: @scripts/entity_system/systems/behaviour/trees/skaven/skaven_packmaster_behavior.lua
 
-local skaven_pack_master = BreedActions.skaven_pack_master
+local ACTIONS = BreedActions.skaven_pack_master
 
 BreedBehaviors.pack_master = {
 	"BTSelector",
@@ -23,7 +23,7 @@ BreedBehaviors.pack_master = {
 		"BTStaggerAction",
 		name = "stagger",
 		condition = "stagger",
-		action_data = skaven_pack_master.stagger
+		action_data = ACTIONS.stagger
 	},
 	{
 		"BTSelector",
@@ -46,7 +46,7 @@ BreedBehaviors.pack_master = {
 			"BTSmashDoorAction",
 			name = "smash_door",
 			condition = "at_door_smartobject",
-			action_data = skaven_pack_master.smash_door
+			action_data = ACTIONS.smash_door
 		},
 		condition = "at_smartobject",
 		name = "smartobject"
@@ -62,33 +62,33 @@ BreedBehaviors.pack_master = {
 			"BTPackMasterSkulkAroundAction",
 			name = "skulking",
 			condition = "path_found",
-			action_data = skaven_pack_master.skulk
+			action_data = ACTIONS.skulk
 		},
 		{
 			"BTPackMasterFollowAction",
 			name = "follow",
 			condition = "path_found",
-			action_data = skaven_pack_master.follow
+			action_data = ACTIONS.follow
 		},
 		{
 			"BTPackMasterAttackAction",
 			name = "attack",
-			action_data = skaven_pack_master.grab_attack
+			action_data = ACTIONS.grab_attack
 		},
 		{
 			"BTPackMasterInitialPullAction",
 			name = "pull",
-			action_data = skaven_pack_master.initial_pull
+			action_data = ACTIONS.initial_pull
 		},
 		{
 			"BTPackMasterDragAction",
 			name = "drag",
-			action_data = skaven_pack_master.drag
+			action_data = ACTIONS.drag
 		},
 		{
 			"BTPackMasterHoistAction",
 			name = "hoist",
-			action_data = skaven_pack_master.hoist
+			action_data = ACTIONS.hoist
 		},
 		condition = "can_see_player",
 		name = "enemy_spotted"

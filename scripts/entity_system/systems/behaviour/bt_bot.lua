@@ -2,10 +2,10 @@
 
 local BotBehaviors = BotBehaviors
 
-BotBehaviors = BotBehaviors or {}
+BotBehaviors = not not BotBehaviors or not not {}
 BotBehaviors = BotBehaviors
 
-local default = BotActions.default
+local ACTIONS_DEFAULT = BotActions.default
 
 BotBehaviors.default = {
 	"BTSelector",
@@ -23,12 +23,12 @@ BotBehaviors.default = {
 			condition_args = {
 				"slot_melee"
 			},
-			action_data = default.switch_melee
+			action_data = ACTIONS_DEFAULT.switch_melee
 		},
 		{
 			"BTBotInteractAction",
 			name = "do_revive",
-			action_data = default.revive
+			action_data = ACTIONS_DEFAULT.revive
 		},
 		condition = "can_revive",
 		name = "revive"
@@ -47,12 +47,12 @@ BotBehaviors.default = {
 			condition_args = {
 				"slot_melee"
 			},
-			action_data = default.switch_melee
+			action_data = ACTIONS_DEFAULT.switch_melee
 		},
 		{
 			"BTBotInteractAction",
 			name = "do_rescue_hanging_from_hook",
-			action_data = default.rescue_hanging_from_hook
+			action_data = ACTIONS_DEFAULT.rescue_hanging_from_hook
 		},
 		condition = "can_rescue_hanging_from_hook",
 		name = "rescue_hanging_from_hook"
@@ -66,12 +66,12 @@ BotBehaviors.default = {
 			condition_args = {
 				"slot_melee"
 			},
-			action_data = default.switch_melee
+			action_data = ACTIONS_DEFAULT.switch_melee
 		},
 		{
 			"BTBotInteractAction",
 			name = "do_rescue_leadge_hanging",
-			action_data = default.rescue_ledge_hanging
+			action_data = ACTIONS_DEFAULT.rescue_ledge_hanging
 		},
 		condition = "can_rescue_ledge_hanging",
 		name = "rescue_leadge_hanging"
@@ -85,12 +85,12 @@ BotBehaviors.default = {
 			condition_args = {
 				"slot_healthkit"
 			},
-			action_data = default.switch_heal
+			action_data = ACTIONS_DEFAULT.switch_heal
 		},
 		{
 			"BTBotInteractAction",
 			name = "use_other_heal",
-			action_data = default.use_heal_on_player
+			action_data = ACTIONS_DEFAULT.use_heal_on_player
 		},
 		condition = "can_heal_player",
 		name = "heal_other"
@@ -107,12 +107,12 @@ BotBehaviors.default = {
 			condition_args = {
 				"slot_healthkit"
 			},
-			action_data = default.switch_heal
+			action_data = ACTIONS_DEFAULT.switch_heal
 		},
 		{
 			"BTBotInteractAction",
 			name = "do_give_heal_item",
-			action_data = default.do_give_heal_item
+			action_data = ACTIONS_DEFAULT.do_give_heal_item
 		},
 		name = "give_heal_item",
 		condition = "can_help_in_need_player"
@@ -129,12 +129,12 @@ BotBehaviors.default = {
 			condition_args = {
 				"slot_grenade"
 			},
-			action_data = default.switch_grenade
+			action_data = ACTIONS_DEFAULT.switch_grenade
 		},
 		{
 			"BTBotInteractAction",
 			name = "do_give_grenade",
-			action_data = default.do_give_grenade
+			action_data = ACTIONS_DEFAULT.do_give_grenade
 		},
 		name = "give_grenade",
 		condition = "can_help_in_need_player"
@@ -151,12 +151,12 @@ BotBehaviors.default = {
 			condition_args = {
 				"slot_potion"
 			},
-			action_data = default.switch_potion
+			action_data = ACTIONS_DEFAULT.switch_potion
 		},
 		{
 			"BTBotInteractAction",
 			name = "do_give_potion",
-			action_data = default.do_give_potion
+			action_data = ACTIONS_DEFAULT.do_give_potion
 		},
 		name = "give_potion",
 		condition = "can_help_in_need_player"
@@ -170,7 +170,7 @@ BotBehaviors.default = {
 			condition_args = {
 				"slot_potion"
 			},
-			action_data = default.switch_potion
+			action_data = ACTIONS_DEFAULT.switch_potion
 		},
 		{
 			"BTBotDropPickupAction",
@@ -193,7 +193,7 @@ BotBehaviors.default = {
 			condition_args = {
 				"slot_healthkit"
 			},
-			action_data = default.switch_heal
+			action_data = ACTIONS_DEFAULT.switch_heal
 		},
 		{
 			"BTBotHealAction",
@@ -215,12 +215,12 @@ BotBehaviors.default = {
 				"slot_melee",
 				"slot_career_skill_weapon"
 			},
-			action_data = default.switch_melee
+			action_data = ACTIONS_DEFAULT.switch_melee
 		},
 		{
 			"BTBotActivateAbilityAction",
 			name = "use_ability",
-			action_data = default.use_ability
+			action_data = ACTIONS_DEFAULT.use_ability
 		},
 		name = "activate_normal_ability",
 		condition = "can_activate_ability"
@@ -233,7 +233,7 @@ BotBehaviors.default = {
 		{
 			"BTBotShootAction",
 			name = "shoot_ability",
-			action_data = default.shoot_ability
+			action_data = ACTIONS_DEFAULT.shoot_ability
 		},
 		name = "activate_ranged_shot_ability",
 		condition = "can_activate_ability"
@@ -252,12 +252,12 @@ BotBehaviors.default = {
 				condition_args = {
 					"slot_career_skill_weapon"
 				},
-				action_data = default.use_ability
+				action_data = ACTIONS_DEFAULT.use_ability
 			},
 			{
 				"BTBotShootAction",
 				name = "ability_shoot_priority_target",
-				action_data = default.shoot
+				action_data = ACTIONS_DEFAULT.shoot
 			},
 			name = "ability_weapon",
 			condition = "can_activate_ability"
@@ -271,12 +271,12 @@ BotBehaviors.default = {
 				condition_args = {
 					"slot_melee"
 				},
-				action_data = default.switch_melee
+				action_data = ACTIONS_DEFAULT.switch_melee
 			},
 			{
 				"BTBotMeleeAction",
 				name = "fight_melee_priority_target",
-				action_data = default.fight_melee_priority_target
+				action_data = ACTIONS_DEFAULT.fight_melee_priority_target
 			},
 			condition = "bot_in_melee_range",
 			name = "melee_priority_target"
@@ -295,12 +295,12 @@ BotBehaviors.default = {
 				condition_args = {
 					"slot_ranged"
 				},
-				action_data = default.switch_ranged
+				action_data = ACTIONS_DEFAULT.switch_ranged
 			},
 			{
 				"BTBotShootAction",
 				name = "shoot_priority_target",
-				action_data = default.shoot
+				action_data = ACTIONS_DEFAULT.shoot
 			},
 			name = "ranged_priority_target",
 			condition = "has_target_and_ammo_greater_than"
@@ -317,7 +317,7 @@ BotBehaviors.default = {
 		"BTUtilityNode",
 		{
 			"BTSelector",
-			action_data = default.combat,
+			action_data = ACTIONS_DEFAULT.combat,
 			{
 				"BTSelector",
 				condition_args = {
@@ -330,12 +330,12 @@ BotBehaviors.default = {
 					condition_args = {
 						"slot_career_skill_weapon"
 					},
-					action_data = default.use_ability
+					action_data = ACTIONS_DEFAULT.use_ability
 				},
 				{
 					"BTBotShootAction",
 					name = "ability_shoot",
-					action_data = default.shoot
+					action_data = ACTIONS_DEFAULT.shoot
 				},
 				name = "ability_weapon",
 				condition = "can_activate_ability"
@@ -356,7 +356,7 @@ BotBehaviors.default = {
 							"slot_melee",
 							"slot_ranged"
 						},
-						action_data = default.switch_ranged
+						action_data = ACTIONS_DEFAULT.switch_ranged
 					},
 					{
 						"BTBotInventorySwitchAction",
@@ -365,7 +365,7 @@ BotBehaviors.default = {
 						condition_args = {
 							"slot_melee"
 						},
-						action_data = default.switch_melee
+						action_data = ACTIONS_DEFAULT.switch_melee
 					},
 					name = "pick_weapon_slot",
 					condition = "needs_weapon_swap"
@@ -373,7 +373,7 @@ BotBehaviors.default = {
 				{
 					"BTBotMeleeAction",
 					name = "fight_melee",
-					action_data = default.fight_melee
+					action_data = ACTIONS_DEFAULT.fight_melee
 				},
 				condition = "bot_in_melee_range",
 				name = "melee"
@@ -392,12 +392,12 @@ BotBehaviors.default = {
 					condition_args = {
 						"slot_ranged"
 					},
-					action_data = default.switch_ranged
+					action_data = ACTIONS_DEFAULT.switch_ranged
 				},
 				{
 					"BTBotShootAction",
 					name = "shoot",
-					action_data = default.shoot
+					action_data = ACTIONS_DEFAULT.shoot
 				},
 				name = "ranged",
 				condition = "has_target_and_ammo_greater_than"
@@ -406,7 +406,7 @@ BotBehaviors.default = {
 		},
 		{
 			"BTSelector",
-			action_data = default.follow,
+			action_data = ACTIONS_DEFAULT.follow,
 			{
 				"BTBotInteractAction",
 				condition = "can_open_door",
@@ -421,12 +421,12 @@ BotBehaviors.default = {
 					condition_args = {
 						"slot_melee"
 					},
-					action_data = default.switch_melee
+					action_data = ACTIONS_DEFAULT.switch_melee
 				},
 				{
 					"BTBotMeleeAction",
 					name = "destroying_object",
-					action_data = default.destroy_object_melee
+					action_data = ACTIONS_DEFAULT.destroy_object_melee
 				},
 				condition = "bot_at_breakable",
 				name = "melee_break_object"
@@ -446,7 +446,7 @@ BotBehaviors.default = {
 						"wanted_slot_to_reload",
 						"slot_ranged"
 					},
-					action_data = default.switch_reload_slot
+					action_data = ACTIONS_DEFAULT.switch_reload_slot
 				},
 				{
 					"BTBotActivateAbilityAction",
@@ -456,7 +456,7 @@ BotBehaviors.default = {
 						"wanted_slot_to_reload",
 						"slot_career_skill_weapon"
 					},
-					action_data = default.use_ability
+					action_data = ACTIONS_DEFAULT.use_ability
 				},
 				{
 					"BTBotReloadAction",
@@ -480,7 +480,7 @@ BotBehaviors.default = {
 					condition_args = {
 						"slot_ranged"
 					},
-					action_data = default.switch_ranged
+					action_data = ACTIONS_DEFAULT.switch_ranged
 				},
 				{
 					"BTBotReloadAction",
@@ -492,7 +492,7 @@ BotBehaviors.default = {
 			{
 				"BTBotFollowAction",
 				name = "successful_follow",
-				action_data = default.successful_follow
+				action_data = ACTIONS_DEFAULT.successful_follow
 			},
 			name = "follow"
 		},

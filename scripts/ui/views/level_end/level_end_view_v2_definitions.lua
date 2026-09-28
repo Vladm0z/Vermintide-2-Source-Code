@@ -2,8 +2,8 @@
 
 local_require("scripts/ui/ui_widgets")
 
-local num = 20
-local tbl = {
+local MAX_SCORE_PANEL_ROWS = 20
+local scenegraph_definition = {
 	screen = {
 		scale = "fit",
 		size = {
@@ -576,16 +576,16 @@ local tbl = {
 	}
 }
 
-local function fn(arg_1_0, arg_1_1)
+local function create_checkboxes(scenegraph_id, color)
 	-- function 1
-	local tbl = {
+	local size = {
 		30,
 		30
 	}
-	local num = 7
-	local tbl_2 = {
-		num,
-		tbl[2] + num
+	local spacing = 7
+	local base_offset = {
+		spacing,
+		size[2] + spacing
 	}
 
 	return {
@@ -595,11 +595,11 @@ local function fn(arg_1_0, arg_1_1)
 					texture_id = "texture_id",
 					style_id = "checkbox_1",
 					pass_type = "texture",
-					content_check_function = function (self, arg_2_1)
+					content_check_function = function (content, style)
 						-- function 2
 						local allow_retry_weave = GameSettingsDevelopment.allow_retry_weave
 
-						allow_retry_weave = not allow_retry_weave and self.votes > 0
+						allow_retry_weave = not not allow_retry_weave and content.votes > 0
 
 						return allow_retry_weave
 					end
@@ -608,11 +608,11 @@ local function fn(arg_1_0, arg_1_1)
 					texture_id = "texture_id",
 					style_id = "checkbox_2",
 					pass_type = "texture",
-					content_check_function = function (self, arg_3_1)
+					content_check_function = function (content, style)
 						-- function 3
 						local allow_retry_weave = GameSettingsDevelopment.allow_retry_weave
 
-						allow_retry_weave = not allow_retry_weave and self.votes > 1
+						allow_retry_weave = not not allow_retry_weave and content.votes > 1
 
 						return allow_retry_weave
 					end
@@ -621,11 +621,11 @@ local function fn(arg_1_0, arg_1_1)
 					texture_id = "texture_id",
 					style_id = "checkbox_3",
 					pass_type = "texture",
-					content_check_function = function (self, arg_4_1)
+					content_check_function = function (content, style)
 						-- function 4
 						local allow_retry_weave = GameSettingsDevelopment.allow_retry_weave
 
-						allow_retry_weave = not allow_retry_weave and self.votes > 2
+						allow_retry_weave = not not allow_retry_weave and content.votes > 2
 
 						return allow_retry_weave
 					end
@@ -634,11 +634,11 @@ local function fn(arg_1_0, arg_1_1)
 					texture_id = "texture_id",
 					style_id = "checkbox_4",
 					pass_type = "texture",
-					content_check_function = function (self, arg_5_1)
+					content_check_function = function (content, style)
 						-- function 5
 						local allow_retry_weave = GameSettingsDevelopment.allow_retry_weave
 
-						allow_retry_weave = not allow_retry_weave and self.votes > 3
+						allow_retry_weave = not not allow_retry_weave and content.votes > 3
 
 						return allow_retry_weave
 					end
@@ -653,66 +653,66 @@ local function fn(arg_1_0, arg_1_1)
 			checkbox_1 = {
 				vertical_alignment = "top",
 				horizontal_alignment = "left",
-				color = arg_1_1 or {
+				color = not not color or not not {
 					255,
 					255,
 					255,
 					255
 				},
 				offset = {
-					tbl_2[1] + (tbl[1] + num) * 0,
-					tbl_2[2],
+					base_offset[1] + (size[1] + spacing) * 0,
+					base_offset[2],
 					0
 				},
-				texture_size = tbl
+				texture_size = size
 			},
 			checkbox_2 = {
 				vertical_alignment = "top",
 				horizontal_alignment = "left",
-				color = arg_1_1 or {
+				color = not not color or not not {
 					255,
 					255,
 					255,
 					255
 				},
 				offset = {
-					tbl_2[1] + (tbl[1] + num) * 1,
-					tbl_2[2],
+					base_offset[1] + (size[1] + spacing) * 1,
+					base_offset[2],
 					0
 				},
-				texture_size = tbl
+				texture_size = size
 			},
 			checkbox_3 = {
 				vertical_alignment = "top",
 				horizontal_alignment = "left",
-				color = arg_1_1 or {
+				color = not not color or not not {
 					255,
 					255,
 					255,
 					255
 				},
 				offset = {
-					tbl_2[1] + (tbl[1] + num) * 2,
-					tbl_2[2],
+					base_offset[1] + (size[1] + spacing) * 2,
+					base_offset[2],
 					0
 				},
-				texture_size = tbl
+				texture_size = size
 			},
 			checkbox_4 = {
 				vertical_alignment = "top",
 				horizontal_alignment = "left",
-				color = arg_1_1 or {
+				color = not not color or not not {
 					255,
 					255,
 					255,
 					255
 				},
 				offset = {
-					tbl_2[1] + (tbl[1] + num) * 3,
-					tbl_2[2],
+					base_offset[1] + (size[1] + spacing) * 3,
+					base_offset[2],
 					0
 				},
-				texture_size = tbl
+				texture_size = size
 			}
 		},
 		offset = {
@@ -720,11 +720,11 @@ local function fn(arg_1_0, arg_1_1)
 			0,
 			10
 		},
-		scenegraph_id = arg_1_0
+		scenegraph_id = scenegraph_id
 	}
 end
 
-local tbl_2 = {
+local timer_text_style = {
 	word_wrap = true,
 	font_size = 52,
 	localize = false,
@@ -739,7 +739,7 @@ local tbl_2 = {
 		2
 	}
 }
-local tbl_3 = {
+local player_title_style = {
 	vertical_alignment = "top",
 	font_size = 20,
 	localize = false,
@@ -753,16 +753,26 @@ local tbl_3 = {
 		2
 	}
 }
-local flag
+local str
 
-flag = not IS_XB1 and "leave_party_xb1" and "leave_party"
+if IS_XB1 then
+	str = "leave_party_xb1"
 
-local flag_2 = true
-local flag_3 = true
-local tbl_4 = {
-	timer_text = UIWidgets.create_simple_text(Localize("timer_prefix_time_left"), "timer_text", nil, nil, tbl_2),
+	goto label_0_0
+end
+
+str = "leave_party"
+
+local leave_party_text = str
+
+::label_0_0::
+
+local masked = true
+local disable_with_gamepad = true
+local widgets_definitions = {
+	timer_text = UIWidgets.create_simple_text(Localize("timer_prefix_time_left"), "timer_text", nil, nil, timer_text_style),
 	timer_bg = UIWidgets.create_simple_texture("tab_menu_bg_03", "timer_bg"),
-	ready_button = UIWidgets.create_default_button("ready_button", tbl.ready_button.size, nil, nil, Localize("return_to_inn"), 32, nil, nil, nil, flag_3),
+	ready_button = UIWidgets.create_default_button("ready_button", scenegraph_definition.ready_button.size, nil, nil, Localize("return_to_inn"), 32, nil, nil, nil, disable_with_gamepad),
 	reset_button = UIWidgets.create_simple_two_state_button("reset_button", "scroll_bar_button_up", "scroll_bar_button_up_clicked"),
 	page_background = UIWidgets.create_simple_rect("page_background", {
 		150,
@@ -770,13 +780,13 @@ local tbl_4 = {
 		0,
 		0
 	}),
-	retry_checkboxes = fn("retry_button", {
+	retry_checkboxes = create_checkboxes("retry_button", {
 		255,
 		0,
 		255,
 		0
 	}),
-	reload_checkboxes = fn("ready_button", {
+	reload_checkboxes = create_checkboxes("ready_button", {
 		255,
 		255,
 		0,
@@ -795,31 +805,31 @@ local tbl_4 = {
 		21
 	})
 }
-local tbl_5 = {
+local bottom_glow_back_smoke_color = {
 	200,
 	138,
 	0,
 	147
 }
-local tbl_6 = {
+local bottom_glow_front_smoke_color = {
 	255,
 	138,
 	0,
 	187
 }
-local tbl_7 = {
+local bottom_glow_front_2_smoke_color = {
 	200,
 	128,
 	0,
 	217
 }
-local tbl_8 = {
+local bottom_glow_back_ember_color = {
 	130,
 	255,
 	255,
 	255
 }
-local tbl_9 = {
+local weave_widget_definitions = {
 	bottom_glow_smoke_1 = UIWidgets.create_simple_uv_texture("forge_overview_bottom_glow_effect_smoke_1", {
 		{
 			0,
@@ -829,7 +839,7 @@ local tbl_9 = {
 			1,
 			0
 		}
-	}, "bottom_glow", nil, nil, tbl_5),
+	}, "bottom_glow", nil, nil, bottom_glow_back_smoke_color),
 	bottom_glow_smoke_2 = UIWidgets.create_simple_uv_texture("forge_overview_bottom_glow_effect_smoke_2", {
 		{
 			0,
@@ -839,7 +849,7 @@ local tbl_9 = {
 			1,
 			0
 		}
-	}, "bottom_glow_short", nil, nil, tbl_6),
+	}, "bottom_glow_short", nil, nil, bottom_glow_front_smoke_color),
 	bottom_glow_smoke_3 = UIWidgets.create_simple_uv_texture("forge_overview_bottom_glow_effect_embers_2", {
 		{
 			0,
@@ -849,7 +859,7 @@ local tbl_9 = {
 			1,
 			0
 		}
-	}, "bottom_glow_shortest", nil, nil, tbl_7),
+	}, "bottom_glow_shortest", nil, nil, bottom_glow_front_2_smoke_color),
 	bottom_glow_embers_1 = UIWidgets.create_simple_uv_texture("forge_overview_bottom_glow_effect_embers_1", {
 		{
 			0,
@@ -859,7 +869,7 @@ local tbl_9 = {
 			1,
 			0
 		}
-	}, "bottom_glow", nil, nil, tbl_8, 1),
+	}, "bottom_glow", nil, nil, bottom_glow_back_ember_color, 1),
 	bottom_glow_embers_3 = UIWidgets.create_simple_uv_texture("forge_overview_bottom_glow_effect_embers_3", {
 		{
 			0,
@@ -869,7 +879,7 @@ local tbl_9 = {
 			1,
 			0
 		}
-	}, "bottom_glow_short", nil, nil, tbl_8, 1),
+	}, "bottom_glow_short", nil, nil, bottom_glow_back_ember_color, 1),
 	dead_space_filler = UIWidgets.create_simple_texture("rect_masked", "dead_space_filler", false, false, {
 		255,
 		0,
@@ -877,25 +887,25 @@ local tbl_9 = {
 		0
 	})
 }
-local tbl_10 = {
+local animations = {
 	ready_button_entry_alone = {
 		{
 			name = "entry",
 			start_progress = 0,
 			end_progress = 0.3,
-			init = function (arg_6_0, arg_6_1, arg_6_2, arg_6_3)
+			init = function (ui_scenegraph, scenegraph_definition, widgets, params)
 				-- function 6
-				arg_6_3.render_settings.alpha_multiplier = 0
+				params.render_settings.alpha_multiplier = 0
 			end,
-			update = function (arg_7_0, arg_7_1, arg_7_2, arg_7_3, arg_7_4)
+			update = function (ui_scenegraph, scenegraph_definition, widgets, progress, params)
 				-- function 7
-				local easeCubic = math.easeCubic(arg_7_3)
-				local easeCubic_2 = math.easeCubic(1 - arg_7_3)
+				local alpha_progress = math.easeCubic(progress)
+				local anim_progress = math.easeCubic(1 - progress)
 
-				arg_7_0.ready_button_alone.local_position[2] = arg_7_1.ready_button_alone.position[2] - 100 * easeCubic_2
-				arg_7_4.render_settings.alpha_multiplier = easeCubic
+				ui_scenegraph.ready_button_alone.local_position[2] = scenegraph_definition.ready_button_alone.position[2] - 100 * anim_progress
+				params.render_settings.alpha_multiplier = alpha_progress
 			end,
-			on_complete = function (arg_8_0, arg_8_1, arg_8_2, arg_8_3)
+			on_complete = function (ui_scenegraph, scenegraph_definition, widgets, params)
 				-- function 8
 				return
 			end
@@ -906,16 +916,16 @@ local tbl_10 = {
 			name = "entry",
 			start_progress = 0,
 			end_progress = 0,
-			init = function (arg_9_0, arg_9_1, arg_9_2, arg_9_3)
+			init = function (ui_scenegraph, scenegraph_definition, widgets, params)
 				-- function 9
 				return
 			end,
-			update = function (arg_10_0, arg_10_1, arg_10_2, arg_10_3, arg_10_4)
+			update = function (ui_scenegraph, scenegraph_definition, widgets, progress, params)
 				-- function 10
-				arg_10_0.ready_button_alone.local_position[2] = arg_10_1.ready_button_alone.position[2]
-				arg_10_4.render_settings.alpha_multiplier = 0
+				ui_scenegraph.ready_button_alone.local_position[2] = scenegraph_definition.ready_button_alone.position[2]
+				params.render_settings.alpha_multiplier = 0
 			end,
-			on_complete = function (arg_11_0, arg_11_1, arg_11_2, arg_11_3)
+			on_complete = function (ui_scenegraph, scenegraph_definition, widgets, params)
 				-- function 11
 				return
 			end
@@ -926,19 +936,19 @@ local tbl_10 = {
 			name = "entry",
 			start_progress = 0,
 			end_progress = 0.3,
-			init = function (arg_12_0, arg_12_1, arg_12_2, arg_12_3)
+			init = function (ui_scenegraph, scenegraph_definition, widgets, params)
 				-- function 12
-				arg_12_3.render_settings.alpha_multiplier = 0
+				params.render_settings.alpha_multiplier = 0
 			end,
-			update = function (arg_13_0, arg_13_1, arg_13_2, arg_13_3, arg_13_4)
+			update = function (ui_scenegraph, scenegraph_definition, widgets, progress, params)
 				-- function 13
-				local easeCubic = math.easeCubic(arg_13_3)
-				local easeCubic_2 = math.easeCubic(1 - arg_13_3)
+				local alpha_progress = math.easeCubic(progress)
+				local anim_progress = math.easeCubic(1 - progress)
 
-				arg_13_0.ready_button.local_position[2] = arg_13_1.ready_button.position[2] - 100 * easeCubic_2
-				arg_13_4.render_settings.alpha_multiplier = easeCubic
+				ui_scenegraph.ready_button.local_position[2] = scenegraph_definition.ready_button.position[2] - 100 * anim_progress
+				params.render_settings.alpha_multiplier = alpha_progress
 			end,
-			on_complete = function (arg_14_0, arg_14_1, arg_14_2, arg_14_3)
+			on_complete = function (ui_scenegraph, scenegraph_definition, widgets, params)
 				-- function 14
 				return
 			end
@@ -949,26 +959,26 @@ local tbl_10 = {
 			name = "entry",
 			start_progress = 0,
 			end_progress = 0.3,
-			init = function (arg_15_0, arg_15_1, arg_15_2, arg_15_3)
+			init = function (ui_scenegraph, scenegraph_definition, widgets, params)
 				-- function 15
-				arg_15_3.render_settings.alpha_multiplier = 0
+				params.render_settings.alpha_multiplier = 0
 			end,
-			update = function (arg_16_0, arg_16_1, arg_16_2, arg_16_3, arg_16_4)
+			update = function (ui_scenegraph, scenegraph_definition, widgets, progress, params)
 				-- function 16
-				local easeCubic = math.easeCubic(arg_16_3)
-				local easeCubic_2 = math.easeCubic(1 - arg_16_3)
+				local alpha_progress = math.easeCubic(progress)
+				local anim_progress = math.easeCubic(1 - progress)
 
-				arg_16_0.retry_button.local_position[2] = arg_16_1.retry_button.position[2] - 100 * easeCubic_2
-				arg_16_4.render_settings.alpha_multiplier = easeCubic
+				ui_scenegraph.retry_button.local_position[2] = scenegraph_definition.retry_button.position[2] - 100 * anim_progress
+				params.render_settings.alpha_multiplier = alpha_progress
 			end,
-			on_complete = function (arg_17_0, arg_17_1, arg_17_2, arg_17_3)
+			on_complete = function (ui_scenegraph, scenegraph_definition, widgets, params)
 				-- function 17
 				return
 			end
 		}
 	}
 }
-local tbl_11 = {
+local generic_input_actions = {
 	default = {
 		{
 			input_action = "analog_input",
@@ -995,10 +1005,10 @@ local tbl_11 = {
 return {
 	num_reward_entries = num_reward_entries,
 	num_experience_entries = num_experience_entries,
-	scenegraph_definition = tbl,
-	widgets_definitions = tbl_4,
-	weave_widget_definitions = tbl_9,
-	animations = tbl_10,
-	generic_input_actions = tbl_11,
+	scenegraph_definition = scenegraph_definition,
+	widgets_definitions = widgets_definitions,
+	weave_widget_definitions = weave_widget_definitions,
+	animations = animations,
+	generic_input_actions = generic_input_actions,
 	console_cursor_definition = UIWidgets.create_console_cursor("console_cursor")
 }

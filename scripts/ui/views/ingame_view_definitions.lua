@@ -3,27 +3,27 @@
 local create_menu_button = UIWidgets.create_menu_button
 local create_simple_texture = UIWidgets.create_simple_texture
 local create_simple_uv_texture = UIWidgets.create_simple_uv_texture
-local num = 18
-local tbl = {
+local MENU_BUTTON_SPACING = 18
+local MENU_BUTTON_SIZE = {
 	370,
 	70
 }
-local tbl_2 = {
+local LAST_MENU_BUTTON_SIZE = {
 	300,
 	70
 }
-local tbl_3 = {
+local MENU_BUTTON_POSITION = {
 	0,
-	-(70 + num),
+	-(70 + MENU_BUTTON_SPACING),
 	1
 }
-local num_2 = 24
-local str = "menu_frame_03"
-local str_2 = "menu_frame_bg_02"
+local MENU_BUTTON_FONT_SIZE = 24
+local background_frame_settings = "menu_frame_03"
+local background_texture = "menu_frame_bg_02"
 
 IngameViewDefinitions = {
-	MENU_BUTTON_SPACING = num,
-	MENU_BUTTON_SIZE = tbl,
+	MENU_BUTTON_SPACING = MENU_BUTTON_SPACING,
+	MENU_BUTTON_SIZE = MENU_BUTTON_SIZE,
 	scenegraph_definition = {
 		root = {
 			is_root = true,
@@ -75,8 +75,8 @@ IngameViewDefinitions = {
 				1
 			},
 			size = {
-				tbl[1] + 20,
-				tbl[2]
+				MENU_BUTTON_SIZE[1] + 20,
+				MENU_BUTTON_SIZE[2]
 			}
 		},
 		top_panel = {
@@ -179,7 +179,7 @@ IngameViewDefinitions = {
 			vertical_alignment = "top",
 			parent = "window",
 			horizontal_alignment = "center",
-			size = tbl,
+			size = MENU_BUTTON_SIZE,
 			position = {
 				0,
 				-10,
@@ -190,57 +190,57 @@ IngameViewDefinitions = {
 			vertical_alignment = "bottom",
 			parent = "button_1",
 			horizontal_alignment = "center",
-			size = tbl,
-			position = tbl_3
+			size = MENU_BUTTON_SIZE,
+			position = MENU_BUTTON_POSITION
 		},
 		button_3 = {
 			vertical_alignment = "bottom",
 			parent = "button_2",
 			horizontal_alignment = "center",
-			size = tbl,
-			position = tbl_3
+			size = MENU_BUTTON_SIZE,
+			position = MENU_BUTTON_POSITION
 		},
 		button_4 = {
 			vertical_alignment = "bottom",
 			parent = "button_3",
 			horizontal_alignment = "center",
-			size = tbl,
-			position = tbl_3
+			size = MENU_BUTTON_SIZE,
+			position = MENU_BUTTON_POSITION
 		},
 		button_5 = {
 			vertical_alignment = "bottom",
 			parent = "button_4",
 			horizontal_alignment = "center",
-			size = tbl,
-			position = tbl_3
+			size = MENU_BUTTON_SIZE,
+			position = MENU_BUTTON_POSITION
 		},
 		button_6 = {
 			vertical_alignment = "bottom",
 			parent = "button_5",
 			horizontal_alignment = "center",
-			size = tbl,
-			position = tbl_3
+			size = MENU_BUTTON_SIZE,
+			position = MENU_BUTTON_POSITION
 		},
 		button_7 = {
 			vertical_alignment = "bottom",
 			parent = "button_6",
 			horizontal_alignment = "center",
-			size = tbl,
-			position = tbl_3
+			size = MENU_BUTTON_SIZE,
+			position = MENU_BUTTON_POSITION
 		},
 		button_8 = {
 			vertical_alignment = "bottom",
 			parent = "button_7",
 			horizontal_alignment = "center",
-			size = tbl,
-			position = tbl_3
+			size = MENU_BUTTON_SIZE,
+			position = MENU_BUTTON_POSITION
 		},
 		button_9 = {
 			vertical_alignment = "bottom",
 			parent = "button_8",
 			horizontal_alignment = "center",
-			size = tbl,
-			position = tbl_3
+			size = MENU_BUTTON_SIZE,
+			position = MENU_BUTTON_POSITION
 		}
 	},
 	widgets = {
@@ -260,15 +260,15 @@ IngameViewDefinitions = {
 				}
 			}
 		},
-		button_1 = UIWidgets.create_default_button("button_1", tbl, nil, nil, "n/a", num_2),
-		button_2 = UIWidgets.create_default_button("button_2", tbl, nil, nil, "n/a", num_2),
-		button_3 = UIWidgets.create_default_button("button_3", tbl, nil, nil, "n/a", num_2),
-		button_4 = UIWidgets.create_default_button("button_4", tbl, nil, nil, "n/a", num_2),
-		button_5 = UIWidgets.create_default_button("button_5", tbl, nil, nil, "n/a", num_2),
-		button_6 = UIWidgets.create_default_button("button_6", tbl, nil, nil, "n/a", num_2),
-		button_7 = UIWidgets.create_default_button("button_7", tbl, nil, nil, "n/a", num_2),
-		button_8 = UIWidgets.create_default_button("button_8", tbl, nil, nil, "n/a", num_2),
-		button_9 = UIWidgets.create_default_button("button_9", tbl, nil, nil, "n/a", num_2),
+		button_1 = UIWidgets.create_default_button("button_1", MENU_BUTTON_SIZE, nil, nil, "n/a", MENU_BUTTON_FONT_SIZE),
+		button_2 = UIWidgets.create_default_button("button_2", MENU_BUTTON_SIZE, nil, nil, "n/a", MENU_BUTTON_FONT_SIZE),
+		button_3 = UIWidgets.create_default_button("button_3", MENU_BUTTON_SIZE, nil, nil, "n/a", MENU_BUTTON_FONT_SIZE),
+		button_4 = UIWidgets.create_default_button("button_4", MENU_BUTTON_SIZE, nil, nil, "n/a", MENU_BUTTON_FONT_SIZE),
+		button_5 = UIWidgets.create_default_button("button_5", MENU_BUTTON_SIZE, nil, nil, "n/a", MENU_BUTTON_FONT_SIZE),
+		button_6 = UIWidgets.create_default_button("button_6", MENU_BUTTON_SIZE, nil, nil, "n/a", MENU_BUTTON_FONT_SIZE),
+		button_7 = UIWidgets.create_default_button("button_7", MENU_BUTTON_SIZE, nil, nil, "n/a", MENU_BUTTON_FONT_SIZE),
+		button_8 = UIWidgets.create_default_button("button_8", MENU_BUTTON_SIZE, nil, nil, "n/a", MENU_BUTTON_FONT_SIZE),
+		button_9 = UIWidgets.create_default_button("button_9", MENU_BUTTON_SIZE, nil, nil, "n/a", MENU_BUTTON_FONT_SIZE),
 		gamepad_button_selection = UIWidgets.create_gamepad_selection("button_gamepad_selection", nil, nil, {
 			70,
 			70

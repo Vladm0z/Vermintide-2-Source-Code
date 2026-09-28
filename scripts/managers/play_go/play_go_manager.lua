@@ -2,42 +2,42 @@
 
 PlayGoManager = class(PlayGoManager)
 
-PlayGoManager.init = function (arg_1_0)
+PlayGoManager.init = function (self)
 	-- function 1
 	return
 end
 
-PlayGoManager.update = function (arg_2_0, arg_2_1, arg_2_2)
+PlayGoManager.update = function (self, dt, t)
 	-- function 2
 	return
 end
 
-PlayGoManager.installed = function (arg_3_0)
+PlayGoManager.installed = function (self)
 	-- function 3
 	return true
 end
 
-PlayGoManager.total = function (arg_4_0)
+PlayGoManager.total = function (self)
 	-- function 4
 	return 1
 end
 
-PlayGoManager.progress = function (arg_5_0)
+PlayGoManager.progress = function (self)
 	-- function 5
 	return 1
 end
 
-PlayGoManager.progress_percentage = function (arg_6_0)
+PlayGoManager.progress_percentage = function (self)
 	-- function 6
 	return 1
 end
 
-PlayGoManager.set_install_speed = function (arg_7_0, arg_7_1)
+PlayGoManager.set_install_speed = function (self, speed)
 	-- function 7
 	return
 end
 
-PlayGoManager.destroy = function (arg_8_0)
+PlayGoManager.destroy = function (self)
 	-- function 8
 	return
 end

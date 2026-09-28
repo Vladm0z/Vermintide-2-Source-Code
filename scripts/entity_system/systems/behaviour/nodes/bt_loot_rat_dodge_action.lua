@@ -4,177 +4,182 @@ require("scripts/entity_system/systems/behaviour/nodes/bt_node")
 
 BTLootRatDodgeAction = class(BTLootRatDodgeAction, BTNode)
 
-BTLootRatDodgeAction.init = function (arg_1_0, ...)
+BTLootRatDodgeAction.init = function (self, ...)
 	-- function 1
-	BTLootRatDodgeAction.super.init(arg_1_0, ...)
+	BTLootRatDodgeAction.super.init(self, ...)
 end
 
 BTLootRatDodgeAction.name = "BTLootRatDodgeAction"
 
-local POSITION_LOOKUP = POSITION_LOOKUP
+local position_lookup = POSITION_LOOKUP
 local script_data = script_data
 
-BTLootRatDodgeAction.enter = function (self, arg_2_1, arg_2_2, arg_2_3)
+BTLootRatDodgeAction.enter = function (self, unit, blackboard, t)
 	-- function 2
-	local action_data = self._tree_node.action_data
+	local action = self._tree_node.action_data
 
-	arg_2_2.action = action_data
+	blackboard.action = action
 
-	local unbox = arg_2_2.dodge_vector:unbox()
-	local unbox_2 = arg_2_2.threat_vector:unbox()
-	local dodge, var_2_4, var_2_5 = self:dodge(arg_2_1, arg_2_2, unbox, unbox_2)
+	local dodge_vector = blackboard.dodge_vector:unbox()
+	local threat_vector = blackboard.threat_vector:unbox()
+	local dodge_position, pass_check_position, right = self:dodge(unit, blackboard, dodge_vector, threat_vector)
 
-	if not dodge then
-		arg_2_2.is_dodging = true
-		arg_2_2.pass_check_position = Vector3Box(var_2_4)
-		arg_2_2.dodge_end_time = arg_2_3 + action_data.dodge_time
-		arg_2_2.move_state = nil
+	if dodge_position then
+		blackboard.is_dodging = true
+		blackboard.pass_check_position = Vector3Box(pass_check_position)
+		blackboard.dodge_end_time = t + action.dodge_time
+		blackboard.move_state = nil
 
-		LocomotionUtils.set_animation_driven_movement(arg_2_1, false)
+		LocomotionUtils.set_animation_driven_movement(unit, false)
 
-		local navigation_extension = arg_2_2.navigation_extension
+		local navigation_extension = blackboard.navigation_extension
 
-		navigation_extension:set_max_speed(arg_2_2.breed.run_speed)
-		navigation_extension:move_to(dodge)
+		navigation_extension:set_max_speed(blackboard.breed.run_speed)
+		navigation_extension:move_to(dodge_position)
 
-		local locomotion_extension = arg_2_2.locomotion_extension
+		local locomotion = blackboard.locomotion_extension
 
-		locomotion_extension:set_rotation_speed(20)
-		locomotion_extension:set_movement_type("snap_to_navmesh")
+		locomotion:set_rotation_speed(20)
+		locomotion:set_movement_type("snap_to_navmesh")
 
-		local network = Managers.state.network
-		local var_2_9 = network
-		local anim_event = network.anim_event
-		local var_2_11 = arg_2_1
+		local network_manager = Managers.state.network
+		local var_2_0 = network_manager
+		local anim_event = network_manager.anim_event
+		local var_2_2 = unit
 		local dodge_right_anim
 
-		if not var_2_5 then
-			dodge_right_anim = action_data.dodge_right_anim
+		if right then
+			dodge_right_anim = action.dodge_right_anim
 
 			if not dodge_right_anim then
 				-- Nothing
 			end
 		end
 
-		if not var_2_5 then
-			dodge_right_anim = action_data.dodge_left_anim
+		if not right then
+			dodge_right_anim = action.dodge_left_anim
 
 			if not dodge_right_anim then
 				-- Nothing
 			end
 		end
 
-		dodge_right_anim = action_data.dodge_anim
+		dodge_right_anim = action.dodge_anim
 
 		::label_2_0::
 
-		anim_event(var_2_9, var_2_11, dodge_right_anim)
+		anim_event(var_2_0, var_2_2, dodge_right_anim)
 
-		if not script_data.debug_ai_movement then
-			local var_2_13 = POSITION_LOOKUP[arg_2_1]
+		if script_data.debug_ai_movement then
+			local unit_position = position_lookup[unit]
 
-			QuickDrawerStay:sphere(dodge, 0.2, Color(255, 255, 0))
-			QuickDrawerStay:sphere(var_2_4, 0.2, Color(255, 0, 0))
-			QuickDrawerStay:line(var_2_13, dodge, Color(255, 255, 0))
+			QuickDrawerStay:sphere(dodge_position, 0.2, Color(255, 255, 0))
+			QuickDrawerStay:sphere(pass_check_position, 0.2, Color(255, 0, 0))
+			QuickDrawerStay:line(unit_position, dodge_position, Color(255, 255, 0))
 		end
 	end
 end
 
-BTLootRatDodgeAction.run = function (arg_3_0, arg_3_1, arg_3_2, arg_3_3, arg_3_4)
+BTLootRatDodgeAction.run = function (self, unit, blackboard, t, dt)
 	-- function 3
-	if not arg_3_2.is_dodging then
+	if not blackboard.is_dodging then
 		return "done"
 	end
 
-	if not arg_3_2.anim_cb_dodge_finished then
+	if blackboard.anim_cb_dodge_finished then
 		return "done"
 	end
 
-	if arg_3_3 > arg_3_2.dodge_end_time then
+	if t > blackboard.dodge_end_time then
 		return "done"
 	end
 
-	local num = arg_3_2.pass_check_position:unbox() - POSITION_LOOKUP[arg_3_1]
-	local local_rotation = Unit.local_rotation(arg_3_1, 0)
-	local forward = Quaternion.forward(local_rotation)
-	local dot = Vector3.dot(Vector3.normalize(num), forward)
+	local pass_check_position = blackboard.pass_check_position:unbox()
+	local unit_position = position_lookup[unit]
+	local to_pass_check_position = pass_check_position - unit_position
+	local unit_rotation = Unit.local_rotation(unit, 0)
+	local unit_forward = Quaternion.forward(unit_rotation)
+	local dot = Vector3.dot(Vector3.normalize(to_pass_check_position), unit_forward)
 
-	if not (arg_3_2.do_pass_check or not (dot > 0.5)) then
-		arg_3_2.do_pass_check = true
+	if not blackboard.do_pass_check and dot > 0.5 then
+		blackboard.do_pass_check = true
 	end
 
-	if not (not arg_3_2.do_pass_check and not (dot < 0)) then
+	if blackboard.do_pass_check and dot < 0 then
 		return "done"
 	end
 
 	return "running"
 end
 
-BTLootRatDodgeAction.leave = function (arg_4_0, arg_4_1, arg_4_2, arg_4_3, arg_4_4, arg_4_5)
+BTLootRatDodgeAction.leave = function (self, unit, blackboard, t, reason, destroy)
 	-- function 4
-	arg_4_2.action = nil
-	arg_4_2.is_dodging = nil
-	arg_4_2.pass_check_position = nil
-	arg_4_2.dodge_end_time = nil
-	arg_4_2.do_pass_check = nil
-	arg_4_2.dodge_vector = nil
-	arg_4_2.threat_vector = nil
-	arg_4_2.anim_cb_dodge_finished = nil
+	blackboard.action = nil
+	blackboard.is_dodging = nil
+	blackboard.pass_check_position = nil
+	blackboard.dodge_end_time = nil
+	blackboard.do_pass_check = nil
+	blackboard.dodge_vector = nil
+	blackboard.threat_vector = nil
+	blackboard.anim_cb_dodge_finished = nil
 
-	local get_default_breed_move_speed = AiUtils.get_default_breed_move_speed(arg_4_1, arg_4_2)
+	local default_move_speed = AiUtils.get_default_breed_move_speed(unit, blackboard)
+	local navigation_extension = blackboard.navigation_extension
 
-	arg_4_2.navigation_extension:set_max_speed(get_default_breed_move_speed)
+	navigation_extension:set_max_speed(default_move_speed)
 
-	if not script_data.debug_ai_movement then
-		local var_4_1 = POSITION_LOOKUP[arg_4_1]
+	if script_data.debug_ai_movement then
+		local unit_position = position_lookup[unit]
 
-		QuickDrawerStay:sphere(var_4_1, 0.25, Color(0, 255, 0))
+		QuickDrawerStay:sphere(unit_position, 0.25, Color(0, 255, 0))
 	end
 end
 
-BTLootRatDodgeAction.dodge = function (self, arg_5_1, arg_5_2, arg_5_3, arg_5_4)
+BTLootRatDodgeAction.dodge = function (self, unit, blackboard, dodge_vector, threat_vector)
 	-- function 5
-	local var_5_0 = POSITION_LOOKUP[arg_5_1]
-	local current_velocity = arg_5_2.locomotion_extension:current_velocity()
-	local normalize = Vector3.normalize(current_velocity)
-	local normalize_2 = Vector3.normalize(arg_5_3)
-	local cross = Vector3.cross(-arg_5_4, Vector3.up())
+	local unit_position = position_lookup[unit]
+	local velocity = blackboard.locomotion_extension:current_velocity()
+	local normalized_velocity = Vector3.normalize(velocity)
+	local normalized_dodge_vector = Vector3.normalize(dodge_vector)
+	local left_right = Vector3.cross(-threat_vector, Vector3.up())
 
-	if Vector3.cross(normalize_2, arg_5_4).z > 0 then
-		cross = -cross
+	if Vector3.cross(normalized_dodge_vector, threat_vector).z > 0 then
+		left_right = -left_right
 	end
 
-	local num = cross * 2 + normalize
-	local dodge_distance = arg_5_2.action.dodge_distance
-	local num_2 = dodge_distance - 0.3
-	local num_3 = var_5_0 + num * dodge_distance
-	local try_dodge_position = self:try_dodge_position(arg_5_1, arg_5_2, var_5_0, num_3)
+	local dodge_direction = left_right * 2 + normalized_velocity
+	local dodge_distance = blackboard.action.dodge_distance
+	local pass_check_distance = dodge_distance - 0.3
+	local try_position = unit_position + dodge_direction * dodge_distance
+	local dodge_position = self:try_dodge_position(unit, blackboard, unit_position, try_position)
 
-	if not try_dodge_position then
-		local num_4 = var_5_0 + num * num_2
+	if dodge_position then
+		local pass_check_position = unit_position + dodge_direction * pass_check_distance
 
-		return try_dodge_position, num_4, Vector3.cross(num, normalize).z > 0
+		return dodge_position, pass_check_position, Vector3.cross(dodge_direction, normalized_velocity).z > 0
 	end
 
-	local num_5 = var_5_0 - num * dodge_distance
-	local try_dodge_position_2 = self:try_dodge_position(arg_5_1, arg_5_2, var_5_0, num_5)
+	try_position = unit_position - dodge_direction * dodge_distance
+	dodge_position = self:try_dodge_position(unit, blackboard, unit_position, try_position)
 
-	if not try_dodge_position_2 then
-		local num_6 = var_5_0 - num * num_2
+	if dodge_position then
+		local pass_check_position = unit_position - dodge_direction * pass_check_distance
 
-		return try_dodge_position_2, num_6, Vector3.cross(-num, normalize).z > 0
+		return dodge_position, pass_check_position, Vector3.cross(-dodge_direction, normalized_velocity).z > 0
 	end
 end
 
-BTLootRatDodgeAction.try_dodge_position = function (arg_6_0, arg_6_1, arg_6_2, arg_6_3, arg_6_4)
+BTLootRatDodgeAction.try_dodge_position = function (self, unit, blackboard, unit_position, dodge_position)
 	-- function 6
-	local triangle_from_position, var_6_1 = GwNavQueries.triangle_from_position(arg_6_2.nav_world, arg_6_4, 3, 3)
+	local success, altitude = GwNavQueries.triangle_from_position(blackboard.nav_world, dodge_position, 3, 3)
 
-	if not triangle_from_position then
-		Vector3.set_z(arg_6_4, var_6_1)
+	if success then
+		Vector3.set_z(dodge_position, altitude)
 
-		if not GwNavQueries.raycast(arg_6_2.nav_world, arg_6_3, arg_6_4) then
-			return arg_6_4
+		local success = GwNavQueries.raycast(blackboard.nav_world, unit_position, dodge_position)
+
+		if success then
+			return dodge_position
 		end
 	end
 end

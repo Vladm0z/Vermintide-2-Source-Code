@@ -1,6 +1,6 @@
 -- chunkname: @scripts/settings/hit_effects/hit_effects_chaos_zombie.lua
 
-local tbl = {
+local sideways_damage_types = {
 	"light_slashing_linesman",
 	"slashing_linesman",
 	"heavy_slashing_linesman",
@@ -14,7 +14,7 @@ local tbl = {
 	"blunt_tank",
 	"heavy_blunt_tank"
 }
-local tbl_2 = {
+local smiter_damage_types = {
 	"light_slashing_smiter",
 	"slashing_smiter",
 	"heavy_slashing_smiter",
@@ -25,7 +25,7 @@ local tbl_2 = {
 	"stab_smiter",
 	"heavy_stab_smiter"
 }
-local tbl_3 = {
+local fencer_damage_types = {
 	"light_slashing_fencer",
 	"slashing_fencer",
 	"heavy_slashing_fencer",
@@ -78,7 +78,7 @@ HitEffectsChaosZombie = {
 		inherits = "default",
 		extra_conditions = {
 			death = true,
-			damage_type = tbl
+			damage_type = sideways_damage_types
 		},
 		animations = {
 			"ragdoll"
@@ -93,7 +93,7 @@ HitEffectsChaosZombie = {
 		inherits = "default",
 		extra_conditions = {
 			death = true,
-			damage_type = tbl_2
+			damage_type = smiter_damage_types
 		},
 		animations = {
 			"ragdoll"
@@ -108,7 +108,7 @@ HitEffectsChaosZombie = {
 		inherits = "default",
 		extra_conditions = {
 			death = true,
-			damage_type = tbl_3
+			damage_type = fencer_damage_types
 		},
 		animations = {
 			"ragdoll"

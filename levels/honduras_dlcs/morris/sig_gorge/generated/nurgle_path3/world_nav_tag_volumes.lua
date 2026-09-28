@@ -1,6 +1,6 @@
 -- chunkname: @levels/honduras_dlcs/morris/sig_gorge/generated/nurgle_path3/world_nav_tag_volumes.lua
 
-local tbl = {
+local nav_tag_volumes = {
 	nospawn_terror = {
 		delay_nav_tag_volume_creation = true,
 		alt_max = 101.28846740722656,
@@ -1143,9 +1143,9 @@ local tbl = {
 		}
 	}
 }
-local str = "1"
+local version = "1"
 
 return {
-	version = str,
-	nav_tag_volumes = tbl
+	version = version,
+	nav_tag_volumes = nav_tag_volumes
 }

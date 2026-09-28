@@ -1,10 +1,10 @@
 -- chunkname: @scripts/settings/dlcs/bless/priest_resource_bar_ui.lua
 
-local var_0_0 = local_require("scripts/settings/dlcs/bless/priest_resource_bar_ui_definition")
+local definitions = local_require("scripts/settings/dlcs/bless/priest_resource_bar_ui_definition")
 
 PriestResourceBarUI = class(PriestResourceBarUI)
 
-local tbl = {
+local passive_ui_data = {
 	material = "overcharge_bar_warrior_priest",
 	color = {
 		255,
@@ -13,26 +13,26 @@ local tbl = {
 		36
 	}
 }
-local tbl_2 = {
+local passive_feedback_values = {
 	detail_bar_passive_active = 0.2,
 	glow_brightness_min = 0.1,
 	detail_bar_passive_inactive = -0.4,
 	glow_brightness_max = 0.8
 }
 
-PriestResourceBarUI.init = function (self, arg_1_1, arg_1_2)
+PriestResourceBarUI.init = function (self, parent, ingame_ui_context)
 	-- function 1
-	self._parent = arg_1_1
+	self._parent = parent
 	self.platform = PLATFORM
-	self.ui_renderer = arg_1_2.ui_renderer
-	self._gui = arg_1_2.ui_renderer.gui
-	self.input_manager = arg_1_2.input_manager
-	self._gui = arg_1_2.ui_renderer.gui
+	self.ui_renderer = ingame_ui_context.ui_renderer
+	self._gui = ingame_ui_context.ui_renderer.gui
+	self.input_manager = ingame_ui_context.input_manager
+	self._gui = ingame_ui_context.ui_renderer.gui
 
 	self:create_ui_elements()
 
-	self.peer_id = arg_1_2.peer_id
-	self.player_manager = arg_1_2.player_manager
+	self.peer_id = ingame_ui_context.peer_id
+	self.player_manager = ingame_ui_context.player_manager
 	self.render_settings = {
 		alpha_multiplier = 1,
 		snap_pixel_positions = true
@@ -46,57 +46,60 @@ PriestResourceBarUI.init = function (self, arg_1_1, arg_1_2)
 	self._active_passive = false
 	self._animations = {}
 
-	local event = Managers.state.event
+	local event_manager = Managers.state.event
 
-	event:register(self, "on_spectator_target_changed", "on_spectator_target_changed")
-	event:register(self, "glow_feedback", "glow_feedback")
-	event:register(self, "active_passive_feedback", "active_passive_feedback")
+	event_manager:register(self, "on_spectator_target_changed", "on_spectator_target_changed")
+	event_manager:register(self, "glow_feedback", "glow_feedback")
+	event_manager:register(self, "active_passive_feedback", "active_passive_feedback")
 end
 
-local function fn(arg_2_0)
+local function get_resource_amount(player_unit)
 	-- function 2
-	local get_resource_fraction = ScriptUnit.extension(arg_2_0, "career_system"):get_passive_ability():get_resource_fraction()
-	local num = 0.8
-	local num_2 = 0.5
+	local career_extension = ScriptUnit.extension(player_unit, "career_system")
+	local passive_ability = career_extension:get_passive_ability()
+	local resource_fraction = passive_ability:get_resource_fraction()
+	local threshold_fraction = 0.8
+	local anim_blend_overcharge = 0.5
 
-	return get_resource_fraction, num, 0.8, num_2
+	return resource_fraction, threshold_fraction, 0.8, anim_blend_overcharge
 end
 
-PriestResourceBarUI.on_spectator_target_changed = function (self, arg_3_1)
+PriestResourceBarUI.on_spectator_target_changed = function (self, spectated_player_unit)
 	-- function 3
-	self._spectated_player_unit = arg_3_1
-	self._spectated_player = Managers.player:owner(arg_3_1)
+	self._spectated_player_unit = spectated_player_unit
+	self._spectated_player = Managers.player:owner(spectated_player_unit)
 	self._is_spectator = true
 end
 
-PriestResourceBarUI._set_player_extensions = function (self, arg_4_1)
+PriestResourceBarUI._set_player_extensions = function (self, player_unit)
 	-- function 4
-	self.inventory_extension = ScriptUnit.extension(arg_4_1, "inventory_system")
+	self.inventory_extension = ScriptUnit.extension(player_unit, "inventory_system")
 	self.initialize_charge_bar = true
 end
 
-PriestResourceBarUI._update_resource_bar = function (self, arg_5_1, arg_5_2)
+PriestResourceBarUI._update_resource_bar = function (self, player, dt)
 	-- function 5
-	if not arg_5_1 then
+	if not player then
 		return
 	end
 
-	local player_unit = arg_5_1.player_unit
+	local player_unit = player.player_unit
 
 	if not ALIVE[player_unit] then
 		return
 	end
 
-	local get_passive_ability = ScriptUnit.extension(player_unit, "career_system"):get_passive_ability()
+	local career_extension = ScriptUnit.extension(player_unit, "career_system")
+	local passive_ability = career_extension:get_passive_ability()
 
-	if not (not get_passive_ability and get_passive_ability.uses_resource) then
+	if not passive_ability or not passive_ability.uses_resource then
 		return
 	end
 
-	local var_5_2, var_5_3, var_5_4, var_5_5 = fn(player_unit)
+	local overcharge_fraction, min_threshold_fraction, max_threshold_fraction, anim_blend_overcharge = get_resource_amount(player_unit)
 
-	if var_5_2 > 0 then
-		self:set_charge_bar_fraction(arg_5_1, var_5_2, 0.3, var_5_4, var_5_5, arg_5_2)
+	if overcharge_fraction > 0 then
+		self:set_charge_bar_fraction(player, overcharge_fraction, 0.3, max_threshold_fraction, anim_blend_overcharge, dt)
 
 		return true
 	end
@@ -106,30 +109,30 @@ PriestResourceBarUI.create_ui_elements = function (self)
 	-- function 6
 	UIRenderer.clear_scenegraph_queue(self.ui_renderer)
 
-	self.ui_scenegraph = UISceneGraph.init_scenegraph(var_0_0.scenegraph_definition)
+	self.ui_scenegraph = UISceneGraph.init_scenegraph(definitions.scenegraph_definition)
 
-	local inventory_entry_definitions = var_0_0.inventory_entry_definitions
+	local widget_definitions = definitions.inventory_entry_definitions
 
-	self.charge_bar = UIWidget.init(var_0_0.widget_definitions.charge_bar)
+	self.charge_bar = UIWidget.init(definitions.widget_definitions.charge_bar)
 end
 
-local tbl_3 = {
+local customizer_data = {
 	root_scenegraph_id = "screen_bottom_pivot_parent",
 	label = "Overcharge",
 	registry_key = "overcharge",
 	drag_scenegraph_id = "charge_bar"
 }
 
-PriestResourceBarUI.update = function (self, arg_7_1, arg_7_2, arg_7_3)
+PriestResourceBarUI.update = function (self, dt, t, player)
 	-- function 7
 	local ui_renderer = self.ui_renderer
 	local ui_scenegraph = self.ui_scenegraph
 	local input_manager = self.input_manager
-	local get_service = input_manager:get_service("ingame_menu")
-	local is_device_active = input_manager:is_device_active("gamepad")
+	local input_service = input_manager:get_service("ingame_menu")
+	local gamepad_active = input_manager:is_device_active("gamepad")
 	local _spectated_player
 
-	if not self._is_spectator then
+	if self._is_spectator then
 		_spectated_player = self._spectated_player
 
 		if not _spectated_player then
@@ -137,128 +140,134 @@ PriestResourceBarUI.update = function (self, arg_7_1, arg_7_2, arg_7_3)
 		end
 	end
 
-	_spectated_player = arg_7_3
+	_spectated_player = player
+
+	local actual_player = _spectated_player
 
 	::label_7_0::
 
-	if not HudCustomizer.run(ui_renderer, ui_scenegraph, tbl_3) then
+	if HudCustomizer.run(ui_renderer, ui_scenegraph, customizer_data) then
 		UISceneGraph.update_scenegraph(ui_scenegraph)
 	end
 
-	local _update_resource_bar = self:_update_resource_bar(_spectated_player, arg_7_1)
-	local is_activated = Managers.twitch:is_activated()
+	local is_dirty = self:_update_resource_bar(actual_player, dt)
+	local has_twitch = Managers.twitch:is_activated()
 
-	if is_activated ~= self._has_twitch then
+	if has_twitch ~= self._has_twitch then
 		local offset = self.charge_bar.offset
 		local flag
 
-		flag = not is_activated and 140 and 0
+		flag = (not has_twitch or not 140) and not not 0
 		offset[2] = flag
-		self._has_twitch = is_activated
-		_update_resource_bar = true
+		self._has_twitch = has_twitch
+		is_dirty = true
 	end
 
-	for k, v in pairs(self._animations) do
-		UIAnimation.update(v, arg_7_1)
+	for name, ui_animation in pairs(self._animations) do
+		UIAnimation.update(ui_animation, dt)
 
-		if not UIAnimation.completed(v) then
-			self._animations[k] = nil
+		if UIAnimation.completed(ui_animation) then
+			self._animations[name] = nil
 		end
 	end
 
-	if not _update_resource_bar then
-		local get_crosshair_position, var_7_11 = self._parent:get_crosshair_position()
+	if is_dirty then
+		local parent = self._parent
+		local crosshair_position_x, crosshair_position_y = parent:get_crosshair_position()
 
-		self:_apply_crosshair_position(get_crosshair_position, var_7_11)
-		UIRenderer.begin_pass(ui_renderer, ui_scenegraph, get_service, arg_7_1, nil, self.render_settings)
+		self:_apply_crosshair_position(crosshair_position_x, crosshair_position_y)
+		UIRenderer.begin_pass(ui_renderer, ui_scenegraph, input_service, dt, nil, self.render_settings)
 		UIRenderer.draw_widget(ui_renderer, self.charge_bar)
 		UIRenderer.end_pass(ui_renderer)
 	end
 end
 
-PriestResourceBarUI.set_charge_bar_fraction = function (self, arg_8_1, arg_8_2, arg_8_3, arg_8_4, arg_8_5, arg_8_6)
+PriestResourceBarUI.set_charge_bar_fraction = function (self, player, overcharge_fraction, min_threshold_fraction, max_threshold_fraction, anim_blend_overcharge, dt)
 	-- function 8
-	local charge_bar = self.charge_bar
-	local style = charge_bar.style
-	local content = charge_bar.content
-	local size = content.size
+	local widget = self.charge_bar
+	local style = widget.style
+	local content = widget.content
+	local bar_size = content.size
 	local lerp = math.lerp
 	local internal_gradient_threshold = content.internal_gradient_threshold
 
-	internal_gradient_threshold = internal_gradient_threshold or 0
-	arg_8_2 = lerp(internal_gradient_threshold, math.min(arg_8_2, 1), 0.3)
-	content.internal_gradient_threshold = arg_8_2
-	style.bar_1.gradient_threshold = arg_8_2
+	internal_gradient_threshold = not not internal_gradient_threshold or not not 0
+	overcharge_fraction = lerp(internal_gradient_threshold, math.min(overcharge_fraction, 1), 0.3)
+	content.internal_gradient_threshold = overcharge_fraction
+	style.bar_1.gradient_threshold = overcharge_fraction
 
-	local color = style.bar_1.color
-	local var_8_7 = tbl
-	local color_2 = var_8_7.color
+	local bar_color = style.bar_1.color
+	local ui_data = passive_ui_data
+	local color = ui_data.color
 
-	content.bar_1 = var_8_7.material
+	content.bar_1 = ui_data.material
 
-	local glow = style.glow
-	local size_2 = glow.size
+	local glow_style = style.glow
+	local glow_size = glow_style.size
+	local glow_offset = glow_style.offset
 
-	glow.offset[1] = size[1] * arg_8_2 - size_2[1] / 2 + 2
+	glow_offset[1] = bar_size[1] * overcharge_fraction - glow_size[1] / 2 + 2
 
-	self:handle_glow_feedback(charge_bar, arg_8_6)
+	self:handle_glow_feedback(widget, dt)
 
-	style.bar_detail.gradient_threshold = arg_8_2
+	local detail_style = style.bar_detail
 
-	local bar_detail = charge_bar.content.bar_detail
-	local material = Gui.material(self._gui, bar_detail)
+	detail_style.gradient_threshold = overcharge_fraction
 
-	Material.set_scalar(material, "gradient_threshold", arg_8_2)
+	local material_name = widget.content.bar_detail
+	local material = Gui.material(self._gui, material_name)
 
-	if not self._active_passive then
-		local num = 0 + 0.5 * math.sin(2.5 * Managers.time:time("ui"))
-		local bar_active = charge_bar.content.bar_active
-		local material_2 = Gui.material(self._gui, bar_active)
+	Material.set_scalar(material, "gradient_threshold", overcharge_fraction)
 
-		Material.set_scalar(material_2, "detail_offset", num)
-		Material.set_scalar(material_2, "gradient_threshold", arg_8_2)
+	if self._active_passive then
+		local detail_value = 0 + 0.5 * math.sin(2.5 * Managers.time:time("ui"))
+		local material_name = widget.content.bar_active
+		local material = Gui.material(self._gui, material_name)
 
-		glow.size = {
+		Material.set_scalar(material, "detail_offset", detail_value)
+		Material.set_scalar(material, "gradient_threshold", overcharge_fraction)
+
+		glow_style.size = {
 			150,
 			150
 		}
-		glow.offset[2] = -75 + content.size[2] / 2
+		glow_style.offset[2] = -75 + content.size[2] / 2
 
-		self:handle_active_passive_feedback(tbl_2.detail_bar_passive_active)
+		self:handle_active_passive_feedback(passive_feedback_values.detail_bar_passive_active)
 	else
-		glow.size = {
+		glow_style.size = {
 			75,
 			75
 		}
-		glow.offset[2] = -37.5 + content.size[2] / 2
+		glow_style.offset[2] = -37.5 + content.size[2] / 2
 
-		self:handle_active_passive_feedback(tbl_2.detail_bar_passive_inactive)
+		self:handle_active_passive_feedback(passive_feedback_values.detail_bar_passive_inactive)
 	end
 
-	color[2] = color_2[2]
-	color[3] = color_2[3]
-	color[4] = color_2[4]
+	bar_color[2] = color[2]
+	bar_color[3] = color[3]
+	bar_color[4] = color[4]
 end
 
-PriestResourceBarUI.destroy = function (arg_9_0)
+PriestResourceBarUI.destroy = function (self)
 	-- function 9
-	Managers.state.event:unregister("on_spectator_target_changed", arg_9_0)
-	Managers.state.event:unregister("glow_feedback", arg_9_0)
-	Managers.state.event:unregister("activate_passive_feedback", arg_9_0)
+	Managers.state.event:unregister("on_spectator_target_changed", self)
+	Managers.state.event:unregister("glow_feedback", self)
+	Managers.state.event:unregister("activate_passive_feedback", self)
 end
 
-PriestResourceBarUI.set_alpha = function (arg_10_0, arg_10_1)
+PriestResourceBarUI.set_alpha = function (self, alpha)
 	-- function 10
-	arg_10_0.render_settings.alpha_multiplier = arg_10_1
+	self.render_settings.alpha_multiplier = alpha
 end
 
-PriestResourceBarUI._apply_crosshair_position = function (self, arg_11_1, arg_11_2)
+PriestResourceBarUI._apply_crosshair_position = function (self, x, y)
 	-- function 11
-	local str = "screen_bottom_pivot"
-	local local_position = self.ui_scenegraph[str].local_position
+	local scenegraph_id = "screen_bottom_pivot"
+	local position = self.ui_scenegraph[scenegraph_id].local_position
 
-	local_position[1] = arg_11_1
-	local_position[2] = arg_11_2
+	position[1] = x
+	position[2] = y
 end
 
 PriestResourceBarUI.glow_feedback = function (self)
@@ -268,57 +277,58 @@ PriestResourceBarUI.glow_feedback = function (self)
 	end
 end
 
-PriestResourceBarUI.handle_glow_feedback = function (self, arg_13_1, arg_13_2)
+PriestResourceBarUI.handle_glow_feedback = function (self, widget, dt)
 	-- function 13
 	if not self._play_glow_feedback then
 		return
 	end
 
-	local glow_brightness_min = tbl_2.glow_brightness_min
-	local glow_brightness_max = tbl_2.glow_brightness_max
-	local _value = self._value
+	local min_value = passive_feedback_values.glow_brightness_min
+	local max_value = passive_feedback_values.glow_brightness_max
+	local value = self._value
 
 	if self._bar_feedback_state == "increase" then
-		_value = _value + 5 * arg_13_2
+		value = value + 5 * dt
 
-		if glow_brightness_max <= _value then
+		if max_value <= value then
 			self._bar_feedback_state = "decrease"
 		end
 	elseif self._bar_feedback_state == "decrease" then
-		_value = _value - 2.5 * arg_13_2
+		value = value - 2.5 * dt
 
-		if _value <= glow_brightness_min then
+		if value <= min_value then
 			self._bar_feedback_state = "done"
 		end
 	elseif self._bar_feedback_state == "done" then
-		self._value = glow_brightness_min
+		self._value = min_value
 		self._play_glow_feedback = false
 		self._bar_feedback_state = "increase"
 	end
 
-	self._value = _value
+	self._value = value
 
-	local glow = arg_13_1.content.glow
-	local material = Gui.material(self._gui, glow)
+	local material_name = widget.content.glow
+	local material = Gui.material(self._gui, material_name)
 
-	Material.set_scalar(material, "detail_offset", _value)
+	Material.set_scalar(material, "detail_offset", value)
 end
 
-PriestResourceBarUI.active_passive_feedback = function (self, arg_14_1)
+PriestResourceBarUI.active_passive_feedback = function (self, active)
 	-- function 14
-	self._active_passive = arg_14_1
+	self._active_passive = active
 
-	if not arg_14_1 then
+	if active then
 		self._animations.fade_in = UIAnimation.init(UIAnimation.function_by_time, self.charge_bar.style.bar_active.color, 1, 0, 255, 0.3, math.ease_in_exp)
 	else
 		self._animations.fade_in = UIAnimation.init(UIAnimation.function_by_time, self.charge_bar.style.bar_active.color, 1, 255, 0, 0.3, math.ease_in_exp)
 	end
 end
 
-PriestResourceBarUI.handle_active_passive_feedback = function (self, arg_15_1)
+PriestResourceBarUI.handle_active_passive_feedback = function (self, value)
 	-- function 15
-	local bar_detail = self.charge_bar.content.bar_detail
-	local material = Gui.material(self._gui, bar_detail)
+	local widget = self.charge_bar
+	local material_name = widget.content.bar_detail
+	local material = Gui.material(self._gui, material_name)
 
-	Material.set_scalar(material, "detail_offset", arg_15_1)
+	Material.set_scalar(material, "detail_offset", value)
 end

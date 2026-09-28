@@ -2,33 +2,35 @@
 
 KillVolumeHandlerExtension = class(KillVolumeHandlerExtension)
 
-KillVolumeHandlerExtension.init = function (self, arg_1_1, arg_1_2, arg_1_3)
+KillVolumeHandlerExtension.init = function (self, extension_init_context, unit, extension_init_data)
 	-- function 1
 	self._callbacks = {}
 end
 
-KillVolumeHandlerExtension.game_object_initialized = function (arg_2_0, arg_2_1, arg_2_2)
+KillVolumeHandlerExtension.game_object_initialized = function (self, unit, go_id)
 	-- function 2
 	return
 end
 
-KillVolumeHandlerExtension.destroy = function (arg_3_0)
+KillVolumeHandlerExtension.destroy = function (self)
 	-- function 3
 	return
 end
 
-KillVolumeHandlerExtension.add_handler = function (arg_4_0, arg_4_1)
+KillVolumeHandlerExtension.add_handler = function (self, on_hit_kill_volume_cb)
 	-- function 4
-	arg_4_0._callbacks[#arg_4_0._callbacks + 1] = arg_4_1
+	self._callbacks[#self._callbacks + 1] = on_hit_kill_volume_cb
 end
 
 KillVolumeHandlerExtension.on_hit_kill_volume = function (self)
 	-- function 5
-	local flag = false
+	local handled = false
 
 	for i = 1, #self._callbacks do
-		flag = self._callbacks[i]() or flag
+		local cb = self._callbacks[i]
+
+		handled = not not cb() or not not handled
 	end
 
-	return flag
+	return handled
 end

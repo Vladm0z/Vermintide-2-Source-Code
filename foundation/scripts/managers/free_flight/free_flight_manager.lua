@@ -5,7 +5,16 @@ require("foundation/scripts/managers/free_flight/control_points")
 
 local testify = script_data.testify
 
-testify = not testify and require("foundation/scripts/managers/free_flight/free_flight_manager_testify")
+if testify then
+	-- Nothing
+end
+
+testify = require("foundation/scripts/managers/free_flight/free_flight_manager_testify")
+
+local free_flight_manager_testify = testify
+
+::label_0_0::
+
 FreeFlightManager = class(FreeFlightManager)
 
 FreeFlightManager.init = function (self)
@@ -19,25 +28,25 @@ FreeFlightManager.init = function (self)
 	self._frames_to_step = 1
 	self._max_players = 4
 	self._input_service_wrapper = {
-		get = function (arg_2_0, arg_2_1)
+		get = function (self, id)
 			-- function 2
-			local PLATFORM = PLATFORM
-			local var_2_1 = FreeFlightFilters[PLATFORM][arg_2_1]
+			local platform = PLATFORM
+			local filter = FreeFlightFilters[platform][id]
 
-			if not var_2_1 then
-				if var_2_1.filter_type == "virtual_axis" then
+			if filter then
+				if filter.filter_type == "virtual_axis" then
 					return Vector3(0, 0, 0)
 				else
 					return false
 				end
 			else
-				local var_2_2 = FreeFlightKeymaps[PLATFORM][arg_2_1].input_mappings[1][3]
+				local func = FreeFlightKeymaps[platform][id].input_mappings[1][3]
 
-				if not (var_2_2 == "pressed" or var_2_2 ~= "held") then
+				if func == "pressed" or func == "held" then
 					return false
-				elseif var_2_2 == "soft_button" then
+				elseif func == "soft_button" then
 					return 0
-				elseif not (var_2_2 == "axis" or var_2_2 ~= "filter") then
+				elseif func == "axis" or func == "filter" then
 					return Vector3(0, 0, 0)
 				end
 			end
@@ -45,14 +54,14 @@ FreeFlightManager.init = function (self)
 	}
 end
 
-FreeFlightManager.register_input_manager = function (self, arg_3_1)
+FreeFlightManager.register_input_manager = function (self, input_manager)
 	-- function 3
-	self.input_manager = arg_3_1
+	self.input_manager = input_manager
 
-	arg_3_1:create_input_service("FreeFlight", "FreeFlightKeymaps", "FreeFlightFilters")
-	arg_3_1:map_device_to_service("FreeFlight", "keyboard")
-	arg_3_1:map_device_to_service("FreeFlight", "mouse")
-	arg_3_1:map_device_to_service("FreeFlight", "gamepad")
+	input_manager:create_input_service("FreeFlight", "FreeFlightKeymaps", "FreeFlightFilters")
+	input_manager:map_device_to_service("FreeFlight", "keyboard")
+	input_manager:map_device_to_service("FreeFlight", "mouse")
+	input_manager:map_device_to_service("FreeFlight", "gamepad")
 end
 
 FreeFlightManager.unregister_input_manager = function (self)
@@ -66,207 +75,217 @@ FreeFlightManager.destroy = function (self)
 	self.data = nil
 end
 
-FreeFlightManager.update = function (self, arg_6_1)
+FreeFlightManager.update = function (self, dt)
 	-- function 6
-	if Development.parameter("gdc") or not GameSettingsDevelopment.disable_free_flight then
+	if Development.parameter("gdc") or GameSettingsDevelopment.disable_free_flight then
 		return
 	end
 
-	if not self._paused then
+	if self._paused then
 		Debug.text("FreeFlightManager: game is paused")
 	end
 
-	self:_update_global(arg_6_1)
+	self:_update_global(dt)
 
-	local player = Managers.player
+	local player_manager = Managers.player
 
-	for k, v in pairs(self.data) do
-		if k ~= "global" then
-			local local_player = player:local_player(k)
+	for local_player_id, data in pairs(self.data) do
+		if local_player_id ~= "global" then
+			local player = player_manager:local_player(local_player_id)
 
-			self:_update_player(arg_6_1, local_player, v)
+			self:_update_player(dt, player, data)
 		end
 	end
 
-	if not script_data.testify then
-		Testify:poll_requests_through_handler(testify, self)
+	if script_data.testify then
+		Testify:poll_requests_through_handler(free_flight_manager_testify, self)
 	end
 end
 
-FreeFlightManager.set_teleport_override = function (self, arg_7_1)
+FreeFlightManager.set_teleport_override = function (self, cb)
 	-- function 7
-	self._teleport_override = arg_7_1
+	self._teleport_override = cb
 end
 
-FreeFlightManager._get_camera = function (self, arg_8_1)
+FreeFlightManager._get_camera = function (self, local_player_id)
 	-- function 8
-	if not arg_8_1 then
-		local var_8_0 = self.data[arg_8_1]
-		local viewport_name = var_8_0.viewport_name
+	if local_player_id then
+		local data = self.data[local_player_id]
+		local name = data.viewport_name
 
-		if not viewport_name then
-			printf("[FreeFlightManager] Free flight camera for local player id %i not active. Try pressing f8 first.", arg_8_1)
+		if not name then
+			printf("[FreeFlightManager] Free flight camera for local player id %i not active. Try pressing f8 first.", local_player_id)
 
 			return false
 		end
 
-		local world = Managers.world:world(var_8_0.viewport_world_name)
+		local world = Managers.world:world(data.viewport_world_name)
 
-		return ScriptViewport.camera(ScriptWorld.free_flight_viewport(world, viewport_name))
+		return ScriptViewport.camera(ScriptWorld.free_flight_viewport(world, name))
 	else
-		local viewport_world_name = self.data.global.viewport_world_name
+		local name = self.data.global.viewport_world_name
 
-		if not viewport_world_name then
+		if not name then
 			printf("[FreeFlightManager] Global free flight camera not active. Press F9 first.")
 
 			return false
 		end
 
-		local world_2 = Managers.world:world(viewport_world_name)
+		local world = Managers.world:world(name)
 
-		return ScriptViewport.camera(ScriptWorld.global_free_flight_viewport(world_2))
+		return ScriptViewport.camera(ScriptWorld.global_free_flight_viewport(world))
 	end
 end
 
-FreeFlightManager.teleport_camera = function (self, arg_9_1, arg_9_2, arg_9_3)
+FreeFlightManager.teleport_camera = function (self, local_player_id, pos, rot)
 	-- function 9
-	local _get_camera = self:_get_camera(arg_9_1)
+	local cam = self:_get_camera(local_player_id)
 
-	if not _get_camera then
+	if not cam then
 		return
 	end
 
-	if not arg_9_3 then
-		local from_quaternion_position = Matrix4x4.from_quaternion_position(arg_9_3, arg_9_2)
+	if rot then
+		local pose = Matrix4x4.from_quaternion_position(rot, pos)
 
-		ScriptCamera.set_local_pose(_get_camera, from_quaternion_position)
+		ScriptCamera.set_local_pose(cam, pose)
 	else
-		ScriptCamera.set_local_position(_get_camera, arg_9_2)
+		ScriptCamera.set_local_position(cam, pos)
 	end
 end
 
-FreeFlightManager.camera_position_rotation = function (self, arg_10_1)
+FreeFlightManager.camera_position_rotation = function (self, local_player_id)
 	-- function 10
-	local _get_camera = self:_get_camera(arg_10_1)
+	local cam = self:_get_camera(local_player_id)
 
-	if not _get_camera then
+	if not cam then
 		return
 	end
 
-	local local_pose = Camera.local_pose(_get_camera)
-	local position = ScriptCamera.position(_get_camera)
-	local rotation = ScriptCamera.rotation(_get_camera)
+	local pose = Camera.local_pose(cam)
+	local position = ScriptCamera.position(cam)
+	local rotation = ScriptCamera.rotation(cam)
 
 	return position, rotation
 end
 
-FreeFlightManager._update_global = function (self, arg_11_1)
+FreeFlightManager._update_global = function (self, dt)
 	-- function 11
-	local global = self.data.global
-	local _resolve_input_service = self:_resolve_input_service()
+	local data = self.data.global
+	local input_service = self:_resolve_input_service()
 
-	if not IS_LINUX then
+	if IS_LINUX then
 		return
 	end
 
-	local get = _resolve_input_service:get("global_free_flight_toggle")
-	local get_2 = _resolve_input_service:get("frustum_freeze_toggle")
-	local get_3 = _resolve_input_service:get("player_controls_toggle")
+	local button_pressed = input_service:get("global_free_flight_toggle")
+	local frustum_modifier = input_service:get("frustum_freeze_toggle")
+	local player_controls_toggle = input_service:get("player_controls_toggle")
 
-	if not (not global.active and Managers.world:has_world(global.viewport_world_name)) then
-		self:_clear_global_free_flight(global)
-	elseif not global.active and not get_2 then
-		local world = Managers.world:world(global.viewport_world_name)
+	if data.active and not Managers.world:has_world(data.viewport_world_name) then
+		self:_clear_global_free_flight(data)
+	elseif data.active and frustum_modifier then
+		local world = Managers.world:world(data.viewport_world_name)
 
-		self:_toggle_frustum_freeze(arg_11_1, global, world, ScriptWorld.global_free_flight_viewport(world), true)
-	elseif not global.active and not get_3 then
+		self:_toggle_frustum_freeze(dt, data, world, ScriptWorld.global_free_flight_viewport(world), true)
+	elseif data.active and player_controls_toggle then
 		self:_set_control_input(not self._controlling_input)
-	elseif not global.active and not get then
-		self:_exit_global_free_flight(global)
-	elseif not get then
-		self:_enter_global_free_flight(global)
-	elseif not global.active and not self._controlling_input then
-		self:_update_global_free_flight(arg_11_1, global, _resolve_input_service)
+	elseif data.active and button_pressed then
+		self:_exit_global_free_flight(data)
+	elseif button_pressed then
+		self:_enter_global_free_flight(data)
+	elseif data.active and self._controlling_input then
+		self:_update_global_free_flight(dt, data, input_service)
 	end
 end
 
 FreeFlightManager._resolve_input_service = function (self)
 	-- function 12
-	if not self.input_manager then
+	if self.input_manager then
 		return self.input_manager:get_service("FreeFlight")
 	else
 		return self._input_service_wrapper
 	end
 end
 
-FreeFlightManager._exit_frustum_freeze = function (arg_13_0, arg_13_1, arg_13_2, arg_13_3, arg_13_4)
+FreeFlightManager._exit_frustum_freeze = function (self, data, world, viewport, destroy_camera)
 	-- function 13
-	World.set_frustum_inspector_camera(arg_13_2, nil)
+	World.set_frustum_inspector_camera(world, nil)
 
-	local frustum_freeze_camera = arg_13_1.frustum_freeze_camera
-	local get_data = Camera.get_data(frustum_freeze_camera, "unit")
-	local camera = ScriptViewport.camera(arg_13_3)
-	local get_data_2 = Camera.get_data(camera, "unit")
-	local local_pose = Camera.local_pose(frustum_freeze_camera)
+	local camera = data.frustum_freeze_camera
+	local camera_unit = Camera.get_data(camera, "unit")
+	local cam = ScriptViewport.camera(viewport)
+	local cam_unit = Camera.get_data(cam, "unit")
+	local pose = Camera.local_pose(camera)
 
-	Camera.set_local_pose(camera, get_data_2, local_pose)
+	Camera.set_local_pose(cam, cam_unit, pose)
 
-	if not arg_13_4 then
-		World.destroy_unit(arg_13_2, get_data)
+	if destroy_camera then
+		World.destroy_unit(world, camera_unit)
 	end
 
-	arg_13_1.frustum_freeze_camera = nil
+	data.frustum_freeze_camera = nil
 end
 
-FreeFlightManager._enter_frustum_freeze = function (arg_14_0, arg_14_1, arg_14_2, arg_14_3, arg_14_4)
+FreeFlightManager._enter_frustum_freeze = function (self, data, world, viewport, create_new_camera)
 	-- function 14
-	local var_14_0
-	local camera = ScriptViewport.camera(arg_14_3)
-	local vertical_fov = Camera.vertical_fov(camera)
+	local camera
+	local cam = ScriptViewport.camera(viewport)
+	local cam_fov = Camera.vertical_fov(cam)
 
-	if not arg_14_4 then
-		local spawn_unit = World.spawn_unit(arg_14_2, "core/units/camera")
+	if create_new_camera then
+		local camera_unit = World.spawn_unit(world, "core/units/camera")
 
-		var_14_0 = Unit.camera(spawn_unit, "camera")
+		camera = Unit.camera(camera_unit, "camera")
 
-		Camera.set_data(var_14_0, "unit", spawn_unit)
+		Camera.set_data(camera, "unit", camera_unit)
 
-		local local_pose = Camera.local_pose(camera)
+		local pose = Camera.local_pose(cam)
 
-		Camera.set_local_pose(var_14_0, spawn_unit, local_pose)
-		Camera.set_vertical_fov(var_14_0, vertical_fov)
+		Camera.set_local_pose(camera, camera_unit, pose)
+		Camera.set_vertical_fov(camera, cam_fov)
 	else
-		var_14_0 = camera
+		camera = cam
 	end
 
-	arg_14_1.frustum_freeze_camera = var_14_0
+	data.frustum_freeze_camera = camera
 
-	World.set_frustum_inspector_camera(arg_14_2, var_14_0)
+	World.set_frustum_inspector_camera(world, camera)
 end
 
-FreeFlightManager._toggle_frustum_freeze = function (self, arg_15_1, arg_15_2, arg_15_3, arg_15_4, arg_15_5)
+FreeFlightManager._toggle_frustum_freeze = function (self, dt, data, world, viewport, global)
 	-- function 15
-	if not arg_15_2.frustum_freeze_camera then
-		self:_exit_frustum_freeze(arg_15_2, arg_15_3, arg_15_4, true)
+	if data.frustum_freeze_camera then
+		self:_exit_frustum_freeze(data, world, viewport, true)
 	else
-		self:_enter_frustum_freeze(arg_15_2, arg_15_3, arg_15_4, true)
+		self:_enter_frustum_freeze(data, world, viewport, true)
 	end
 end
 
-FreeFlightManager.camera_pose = function (arg_16_0, arg_16_1)
+FreeFlightManager.camera_pose = function (self, data)
 	-- function 16
-	local world = Managers.world:world(arg_16_1.viewport_world_name)
-	local global_free_flight_viewport = ScriptWorld.global_free_flight_viewport(world)
-	local frustum_freeze_camera = arg_16_1.frustum_freeze_camera
+	local world = Managers.world:world(data.viewport_world_name)
+	local viewport = ScriptWorld.global_free_flight_viewport(world)
+	local frustum_freeze_camera = data.frustum_freeze_camera
 
-	frustum_freeze_camera = frustum_freeze_camera or ScriptViewport.camera(global_free_flight_viewport)
+	if not frustum_freeze_camera then
+		-- Nothing
+	end
 
-	return (Camera.local_pose(frustum_freeze_camera))
+	frustum_freeze_camera = ScriptViewport.camera(viewport)
+
+	local cam = frustum_freeze_camera
+
+	::label_16_0::
+
+	local cm = Camera.local_pose(cam)
+
+	return cm
 end
 
-FreeFlightManager.set_pause_on_enter_freeflight = function (self, arg_17_1)
+FreeFlightManager.set_pause_on_enter_freeflight = function (self, set)
 	-- function 17
-	self._pause_on_enter_freeflight = arg_17_1
+	self._pause_on_enter_freeflight = set
 end
 
 FreeFlightManager.paused = function (self)
@@ -274,101 +293,109 @@ FreeFlightManager.paused = function (self)
 	return self._paused
 end
 
-FreeFlightManager._pause_game = function (self, arg_19_1)
+FreeFlightManager._pause_game = function (self, set)
 	-- function 19
-	self._paused = arg_19_1
+	self._paused = set
 
-	local global = self.data.global
-	local world = Managers.world:world(global.viewport_world_name)
+	local data = self.data.global
+	local world = Managers.world:world(data.viewport_world_name)
 
-	if not arg_19_1 then
+	if set then
 		ScriptWorld.pause(world)
 	else
 		ScriptWorld.unpause(world)
 	end
 end
 
-FreeFlightManager._update_global_free_flight = function (self, arg_20_1, arg_20_2, arg_20_3)
+FreeFlightManager._update_global_free_flight = function (self, dt, data, input_service)
 	-- function 20
-	local world = Managers.world:world(arg_20_2.viewport_world_name)
-	local global_free_flight_viewport = ScriptWorld.global_free_flight_viewport(world)
-	local frustum_freeze_camera = arg_20_2.frustum_freeze_camera
+	local world = Managers.world:world(data.viewport_world_name)
+	local viewport = ScriptWorld.global_free_flight_viewport(world)
+	local frustum_freeze_camera = data.frustum_freeze_camera
 
-	frustum_freeze_camera = frustum_freeze_camera or ScriptViewport.camera(global_free_flight_viewport)
-
-	local get = arg_20_3:get("projection_mode")
-
-	if not (not get and arg_20_2.projection_type ~= Camera.PERSPECTIVE) then
-		arg_20_2.projection_type = Camera.ORTHOGRAPHIC
-	elseif not (not get and arg_20_2.projection_type ~= Camera.ORTHOGRAPHIC) then
-		arg_20_2.projection_type = Camera.PERSPECTIVE
+	if not frustum_freeze_camera then
+		-- Nothing
 	end
 
-	Camera.set_projection_type(frustum_freeze_camera, arg_20_2.projection_type)
+	frustum_freeze_camera = ScriptViewport.camera(viewport)
 
-	local num = arg_20_2.translation_speed * 0.5
-	local y = Vector3.y(arg_20_3:get("speed_change"))
+	local cam = frustum_freeze_camera
 
-	arg_20_2.translation_speed = arg_20_2.translation_speed + y * num
+	::label_20_0::
 
-	if arg_20_2.translation_speed < 0.001 then
-		arg_20_2.translation_speed = 0.001
+	local projection_mode_swap = input_service:get("projection_mode")
+
+	if projection_mode_swap and data.projection_type == Camera.PERSPECTIVE then
+		data.projection_type = Camera.ORTHOGRAPHIC
+	elseif projection_mode_swap and data.projection_type == Camera.ORTHOGRAPHIC then
+		data.projection_type = Camera.PERSPECTIVE
 	end
 
-	local local_pose = Camera.local_pose(frustum_freeze_camera)
-	local translation = Matrix4x4.translation(local_pose)
-	local get_2 = arg_20_3:get("look")
+	Camera.set_projection_type(cam, data.projection_type)
 
-	if arg_20_2.projection_type == Camera.ORTHOGRAPHIC then
-		local orthographic_data = arg_20_2.orthographic_data
-		local yaw = orthographic_data.yaw
+	local translation_change_speed = data.translation_speed * 0.5
+	local speed_change = Vector3.y(input_service:get("speed_change"))
 
-		yaw = yaw or 0
-		orthographic_data.yaw = yaw - Vector3.x(get_2) * arg_20_2.rotation_speed
+	data.translation_speed = data.translation_speed + speed_change * translation_change_speed
 
-		local var_20_11 = Quaternion(Vector3(0, 0, 1), orthographic_data.yaw)
-		local var_20_12 = Quaternion(Vector3.right(), -math.half_pi)
-		local multiply = Quaternion.multiply(var_20_11, var_20_12)
-		local num_2 = (arg_20_3:get("move_right") - arg_20_3:get("move_left")) * arg_20_1 * 250
-		local num_3 = (arg_20_3:get("move_forward") - arg_20_3:get("move_back")) * arg_20_1 * 250
-		local num_4 = translation + Quaternion.up(multiply) * num_3 + Quaternion.right(multiply) * num_2
+	if data.translation_speed < 0.001 then
+		data.translation_speed = 0.001
+	end
 
-		local_pose = Matrix4x4.from_quaternion_position(multiply, num_4)
+	local cm = Camera.local_pose(cam)
+	local trans = Matrix4x4.translation(cm)
+	local mouse = input_service:get("look")
 
-		local size = orthographic_data.size
-		local num_5 = size - y * (size * arg_20_1)
+	if data.projection_type == Camera.ORTHOGRAPHIC then
+		local ortho_data = data.orthographic_data
+		local yaw = ortho_data.yaw
 
-		orthographic_data.size = num_5
+		yaw = not not yaw or not not 0
+		ortho_data.yaw = yaw - Vector3.x(mouse) * data.rotation_speed
 
-		Camera.set_orthographic_view(frustum_freeze_camera, -num_5, num_5, -num_5, num_5)
+		local q1 = Quaternion(Vector3(0, 0, 1), ortho_data.yaw)
+		local q2 = Quaternion(Vector3.right(), -math.half_pi)
+		local q = Quaternion.multiply(q1, q2)
+		local x_trans = (input_service:get("move_right") - input_service:get("move_left")) * dt * 250
+		local y_trans = (input_service:get("move_forward") - input_service:get("move_back")) * dt * 250
+		local pos = trans + Quaternion.up(q) * y_trans + Quaternion.right(q) * x_trans
+
+		cm = Matrix4x4.from_quaternion_position(q, pos)
+
+		local size = ortho_data.size
+
+		size = size - speed_change * (size * dt)
+		ortho_data.size = size
+
+		Camera.set_orthographic_view(cam, -size, size, -size, size)
 	else
-		Matrix4x4.set_translation(local_pose, Vector3(0, 0, 0))
+		Matrix4x4.set_translation(cm, Vector3(0, 0, 0))
 
-		local var_20_19 = Quaternion(Vector3(0, 0, 1), -Vector3.x(get_2) * arg_20_2.rotation_speed)
-		local var_20_20 = Quaternion(Matrix4x4.x(local_pose), -Vector3.y(get_2) * arg_20_2.rotation_speed)
-		local multiply_2 = Quaternion.multiply(var_20_19, var_20_20)
+		local q1 = Quaternion(Vector3(0, 0, 1), -Vector3.x(mouse) * data.rotation_speed)
+		local q2 = Quaternion(Matrix4x4.x(cm), -Vector3.y(mouse) * data.rotation_speed)
+		local q = Quaternion.multiply(q1, q2)
 
-		local_pose = Matrix4x4.multiply(local_pose, Matrix4x4.from_quaternion(multiply_2))
+		cm = Matrix4x4.multiply(cm, Matrix4x4.from_quaternion(q))
 
-		local num_6 = arg_20_3:get("move_right") - arg_20_3:get("move_left")
-		local num_7 = arg_20_3:get("move_forward") - arg_20_3:get("move_back")
+		local x_trans = input_service:get("move_right") - input_service:get("move_left")
+		local y_trans = input_service:get("move_forward") - input_service:get("move_back")
 
-		if not IS_XB1 then
-			local get_3 = arg_20_3:get("move")
+		if IS_XB1 then
+			local move = input_service:get("move")
 
-			num_6 = get_3.x * 2
-			num_7 = get_3.y * 2
+			x_trans = move.x * 2
+			y_trans = move.y * 2
 		end
 
-		local num_8 = arg_20_3:get("move_up") - arg_20_3:get("move_down")
-		local transform = Matrix4x4.transform(local_pose, Vector3(num_6, num_7, num_8) * arg_20_2.translation_speed)
+		local z_trans = input_service:get("move_up") - input_service:get("move_down")
+		local offset = Matrix4x4.transform(cm, Vector3(x_trans, y_trans, z_trans) * data.translation_speed)
 
-		translation = Vector3.add(translation, transform)
+		trans = Vector3.add(trans, offset)
 
-		Matrix4x4.set_translation(local_pose, translation)
+		Matrix4x4.set_translation(cm, trans)
 	end
 
-	if not self._frames_until_pause then
+	if self._frames_until_pause then
 		self._frames_until_pause = self._frames_until_pause - 1
 
 		if self._frames_until_pause <= 0 then
@@ -376,135 +403,135 @@ FreeFlightManager._update_global_free_flight = function (self, arg_20_1, arg_20_
 
 			self:_pause_game(true)
 		end
-	elseif not arg_20_3:get("step_frame") then
+	elseif input_service:get("step_frame") then
 		printf("step %d frame", self._frames_to_step)
 		self:_pause_game(false)
 
 		self._frames_until_pause = self._frames_to_step
 	end
 
-	if not arg_20_3:get("play_pause") then
+	if input_service:get("play_pause") then
 		self:_pause_game(not self._paused)
 	end
 
-	if not arg_20_3:get("decrease_frame_step") then
-		local num_9
+	if input_service:get("decrease_frame_step") then
+		local num
 
 		if self._frames_to_step > 1 then
-			num_9 = self._frames_to_step - 1
+			num = self._frames_to_step - 1
 
-			if not num_9 then
+			if not num then
 				-- Nothing
 			end
 		end
 
-		num_9 = 1
+		num = 1
 
-		::label_20_0::
+		::label_20_1::
 
-		self._frames_to_step = num_9
+		self._frames_to_step = num
 
 		print("Frame step:", self._frames_to_step)
-	elseif not arg_20_3:get("increase_frame_step") then
+	elseif input_service:get("increase_frame_step") then
 		self._frames_to_step = self._frames_to_step + 1
 
 		print("Frame step:", self._frames_to_step)
 	end
 
-	local rotation = Matrix4x4.rotation(local_pose)
+	local rot = Matrix4x4.rotation(cm)
 	local wwise_world = Managers.world:wwise_world(world)
 
-	WwiseWorld.set_listener(wwise_world, 0, local_pose)
+	WwiseWorld.set_listener(wwise_world, 0, cm)
 
-	if not self._has_terrain then
-		TerrainDecoration.move_observer(world, arg_20_2.terrain_decoration_observer, translation)
+	if self._has_terrain then
+		TerrainDecoration.move_observer(world, data.terrain_decoration_observer, trans)
 	end
 
-	ScatterSystem.move_observer(World.scatter_system(world), arg_20_2.scatter_system_observer, translation, rotation)
+	ScatterSystem.move_observer(World.scatter_system(world), data.scatter_system_observer, trans, rot)
 
-	if not arg_20_3:get("mark") then
-		print("Camera at: " .. tostring(local_pose))
+	if input_service:get("mark") then
+		print("Camera at: " .. tostring(cm))
 	end
 
-	if not arg_20_3:get("toggle_control_points") then
-		local_pose = FreeFlightControlPoints[self.current_control_point]:unbox()
+	if input_service:get("toggle_control_points") then
+		cm = FreeFlightControlPoints[self.current_control_point]:unbox()
 		self.current_control_point = self.current_control_point % #FreeFlightControlPoints + 1
 
 		print("Control Point: " .. tostring(self.current_control_point))
 	end
 
-	if not arg_20_3:get("set_drop_position") then
-		self:drop_player_at_camera_pos(frustum_freeze_camera)
+	if input_service:get("set_drop_position") then
+		self:drop_player_at_camera_pos(cam)
 	end
 
-	ScriptCamera.set_local_pose(frustum_freeze_camera, local_pose)
+	ScriptCamera.set_local_pose(cam, cm)
 end
 
 FreeFlightManager.cleanup_free_flight = function (self)
 	-- function 21
-	local global = self.data.global
+	local global_data = self.data.global
 
-	if not global.active then
-		self:_exit_global_free_flight(global)
+	if global_data.active then
+		self:_exit_global_free_flight(global_data)
 	end
 
-	local player = Managers.player
+	local player_manager = Managers.player
 
-	for k, v in pairs(self.data) do
-		if k == "global" or not v.active then
-			local local_player = player:local_player(k)
+	for local_player_id, data in pairs(self.data) do
+		if local_player_id ~= "global" and data.active then
+			local player = player_manager:local_player(local_player_id)
 
-			self:_exit_free_flight(local_player, v)
+			self:_exit_free_flight(player, data)
 		end
 	end
 end
 
-FreeFlightManager._enter_global_free_flight = function (self, arg_22_1)
+FreeFlightManager._enter_global_free_flight = function (self, data)
 	-- function 22
-	local main_world = Application.main_world()
+	local world = Application.main_world()
 
-	if not main_world then
+	if not world then
 		return
 	end
 
-	local create_global_free_flight_viewport = ScriptWorld.create_global_free_flight_viewport(main_world, "default")
+	local viewport = ScriptWorld.create_global_free_flight_viewport(world, "default")
 
-	if not create_global_free_flight_viewport then
+	if not viewport then
 		return
 	end
 
-	arg_22_1.active = true
-	arg_22_1.viewport_world_name = ScriptWorld.name(main_world)
+	data.active = true
+	data.viewport_world_name = ScriptWorld.name(world)
 
-	local camera = ScriptViewport.camera(create_global_free_flight_viewport)
-	local local_pose = Camera.local_pose(camera)
-	local translation = Matrix4x4.translation(local_pose)
-	local rotation = Matrix4x4.rotation(local_pose)
+	local cam = ScriptViewport.camera(viewport)
+	local tm = Camera.local_pose(cam)
+	local position = Matrix4x4.translation(tm)
+	local rotation = Matrix4x4.rotation(tm)
 
-	if not self._has_terrain then
-		arg_22_1.terrain_decoration_observer = TerrainDecoration.create_observer(main_world, translation)
+	if self._has_terrain then
+		data.terrain_decoration_observer = TerrainDecoration.create_observer(world, position)
 	end
 
-	arg_22_1.scatter_system_observer = ScatterSystem.make_observer(World.scatter_system(main_world), translation, rotation)
+	data.scatter_system_observer = ScatterSystem.make_observer(World.scatter_system(world), position, rotation)
 
-	if not self._pause_on_enter_freeflight then
+	if self._pause_on_enter_freeflight then
 		self:_pause_game(true)
 	end
 
 	self:_set_control_input(true)
 end
 
-FreeFlightManager._set_control_input = function (self, arg_23_1)
+FreeFlightManager._set_control_input = function (self, control_input)
 	-- function 23
-	arg_23_1 = not not arg_23_1
+	control_input = not not control_input
 
-	if self._controlling_input == arg_23_1 then
+	if self._controlling_input == control_input then
 		return
 	end
 
-	self._controlling_input = arg_23_1
+	self._controlling_input = control_input
 
-	if not arg_23_1 then
+	if control_input then
 		self.input_manager:block_device_except_service("FreeFlight", "keyboard", nil, "free_flight")
 		self.input_manager:block_device_except_service("FreeFlight", "mouse", nil, "free_flight")
 		self.input_manager:block_device_except_service("FreeFlight", "gamepad", nil, "free_flight")
@@ -521,72 +548,72 @@ FreeFlightManager._set_control_input = function (self, arg_23_1)
 	end
 end
 
-FreeFlightManager._exit_global_free_flight = function (self, arg_24_1)
+FreeFlightManager._exit_global_free_flight = function (self, data)
 	-- function 24
-	local world = Managers.world:world(arg_24_1.viewport_world_name)
+	local world = Managers.world:world(data.viewport_world_name)
 
-	if not arg_24_1.frustum_freeze_camera then
-		self:_exit_frustum_freeze(arg_24_1, world, ScriptWorld.global_free_flight_viewport(world), true)
+	if data.frustum_freeze_camera then
+		self:_exit_frustum_freeze(data, world, ScriptWorld.global_free_flight_viewport(world), true)
 	end
 
-	local viewport_world_name = arg_24_1.viewport_world_name
+	local world_name = data.viewport_world_name
 
-	if not self._has_terrain then
-		TerrainDecoration.destroy_observer(world, arg_24_1.terrain_decoration_observer)
+	if self._has_terrain then
+		TerrainDecoration.destroy_observer(world, data.terrain_decoration_observer)
 	end
 
-	ScatterSystem.destroy_observer(World.scatter_system(world), arg_24_1.scatter_system_observer)
+	ScatterSystem.destroy_observer(World.scatter_system(world), data.scatter_system_observer)
 
-	if not self._paused then
+	if self._paused then
 		self:_pause_game(false)
 	end
 
-	arg_24_1.active = false
-	arg_24_1.viewport_world_name = nil
+	data.active = false
+	data.viewport_world_name = nil
 
-	ScriptWorld.destroy_global_free_flight_viewport(Managers.world:world(viewport_world_name))
+	ScriptWorld.destroy_global_free_flight_viewport(Managers.world:world(world_name))
 	self:_set_control_input(false)
 end
 
-FreeFlightManager._clear_global_free_flight = function (arg_25_0, arg_25_1)
+FreeFlightManager._clear_global_free_flight = function (self, data)
 	-- function 25
-	arg_25_1.active = false
-	arg_25_1.viewport_world_name = nil
+	data.active = false
+	data.viewport_world_name = nil
 end
 
-FreeFlightManager._update_player = function (self, arg_26_1, arg_26_2, arg_26_3)
+FreeFlightManager._update_player = function (self, dt, player, data)
 	-- function 26
-	local input_service = arg_26_3.input_service
-	local get = input_service:get("frustum_freeze_toggle")
-	local get_2 = input_service:get("free_flight_toggle")
+	local input_service = data.input_service
+	local frustum_freeze_toggle = input_service:get("frustum_freeze_toggle")
+	local free_flight_toggle = input_service:get("free_flight_toggle")
 
-	if not (not arg_26_3.active and Managers.world:has_world(arg_26_3.viewport_world_name)) then
-		self:_clear_free_flight(arg_26_3)
-	elseif not arg_26_3.active and not get then
-		local world = Managers.world:world(arg_26_3.viewport_world_name)
+	if data.active and not Managers.world:has_world(data.viewport_world_name) then
+		self:_clear_free_flight(data)
+	elseif data.active and frustum_freeze_toggle then
+		local world = Managers.world:world(data.viewport_world_name)
 
-		self:_toggle_frustum_freeze(arg_26_1, arg_26_3, world, ScriptWorld.free_flight_viewport(world, arg_26_3.viewport_name))
-	elseif not arg_26_3.active and not get_2 then
-		self:_exit_free_flight(arg_26_2, arg_26_3)
-	elseif get_2 or not Testify:poll_request("activate_free_flight") then
-		self:_enter_free_flight(arg_26_2, arg_26_3)
-	elseif not (not arg_26_3.active and self.data.global.active) then
-		self:_update_free_flight(arg_26_1, arg_26_2, arg_26_3)
+		self:_toggle_frustum_freeze(dt, data, world, ScriptWorld.free_flight_viewport(world, data.viewport_name))
+	elseif data.active and free_flight_toggle then
+		self:_exit_free_flight(player, data)
+	elseif free_flight_toggle or Testify:poll_request("activate_free_flight") then
+		self:_enter_free_flight(player, data)
+	elseif data.active and not self.data.global.active then
+		self:_update_free_flight(dt, player, data)
 	end
 end
 
-FreeFlightManager._clear_free_flight = function (arg_27_0, arg_27_1)
+FreeFlightManager._clear_free_flight = function (self, data)
 	-- function 27
-	arg_27_1.active = false
-	arg_27_1.viewport_world_name = nil
-	arg_27_1.viewport_name = nil
+	data.active = false
+	data.viewport_world_name = nil
+	data.viewport_name = nil
 end
 
-FreeFlightManager.register_player = function (self, arg_28_1)
+FreeFlightManager.register_player = function (self, local_player_id)
 	-- function 28
-	local get_service = self.input_manager:get_service("FreeFlight")
+	local input_service = self.input_manager:get_service("FreeFlight")
 
-	self.data[arg_28_1] = {
+	self.data[local_player_id] = {
 		mode = "paused",
 		current_translation_max_speed = 10,
 		dof_focal_distance = 10,
@@ -599,28 +626,28 @@ FreeFlightManager.register_player = function (self, arg_28_1)
 		dof_enabled = 0,
 		active = false,
 		dof_focal_region = 8,
-		input_service = get_service,
+		input_service = input_service,
 		rotation_accumulation = Vector3Box(),
 		current_translation_speed = Vector3Box()
 	}
 end
 
-FreeFlightManager.unregister_player = function (self, arg_29_1)
+FreeFlightManager.unregister_player = function (self, local_player_id)
 	-- function 29
-	local var_29_0 = self.data[arg_29_1]
+	local data = self.data[local_player_id]
 
-	fassert(var_29_0, "Trying to unregister player %i not registered", arg_29_1)
+	fassert(data, "Trying to unregister player %i not registered", local_player_id)
 
-	if not var_29_0.active then
-		self:_clear_free_flight(var_29_0)
+	if data.active then
+		self:_clear_free_flight(data)
 	end
 
-	self.data[arg_29_1] = nil
+	self.data[local_player_id] = nil
 end
 
-FreeFlightManager._setup_data = function (arg_30_0, arg_30_1)
+FreeFlightManager._setup_data = function (self, data)
 	-- function 30
-	arg_30_1.global = {
+	data.global = {
 		translation_speed = 0.05,
 		rotation_speed = 0.003,
 		mode = "paused",
@@ -632,64 +659,64 @@ FreeFlightManager._setup_data = function (arg_30_0, arg_30_1)
 	}
 end
 
-FreeFlightManager._enter_free_flight = function (self, arg_31_1, arg_31_2)
+FreeFlightManager._enter_free_flight = function (self, player, data)
 	-- function 31
-	local viewport_world_name = arg_31_1.viewport_world_name
-	local viewport_name = arg_31_1.viewport_name
-	local world = Managers.world:world(viewport_world_name)
-	local get_data = World.get_data(world, "viewports")
-	local camera = ScriptViewport.camera(get_data[viewport_name])
-	local vertical_fov = Camera.vertical_fov(camera)
+	local world_name = player.viewport_world_name
+	local viewport_name = player.viewport_name
+	local world = Managers.world:world(world_name)
+	local viewports = World.get_data(world, "viewports")
+	local cam = ScriptViewport.camera(viewports[viewport_name])
+	local cam_fov = Camera.vertical_fov(cam)
 
-	arg_31_2.active = true
-	arg_31_2.viewport_name = arg_31_1.viewport_name
-	arg_31_2.viewport_world_name = viewport_world_name
+	data.active = true
+	data.viewport_name = player.viewport_name
+	data.viewport_world_name = world_name
 
-	local create_free_flight_viewport = ScriptWorld.create_free_flight_viewport(world, viewport_name, "default")
-	local camera_2 = ScriptViewport.camera(create_free_flight_viewport)
-	local local_pose = Camera.local_pose(camera_2)
-	local translation = Matrix4x4.translation(local_pose)
-	local rotation = Matrix4x4.rotation(local_pose)
+	local viewport = ScriptWorld.create_free_flight_viewport(world, viewport_name, "default")
+	local cam = ScriptViewport.camera(viewport)
+	local tm = Camera.local_pose(cam)
+	local position = Matrix4x4.translation(tm)
+	local rotation = Matrix4x4.rotation(tm)
 
-	Camera.set_vertical_fov(camera_2, vertical_fov)
+	Camera.set_vertical_fov(cam, cam_fov)
 
-	if not self._has_terrain then
-		arg_31_2.terrain_decoration_observer = TerrainDecoration.create_observer(world, translation)
+	if self._has_terrain then
+		data.terrain_decoration_observer = TerrainDecoration.create_observer(world, position)
 	end
 
-	arg_31_2.scatter_system_observer = ScatterSystem.make_observer(World.scatter_system(world), translation, rotation)
+	data.scatter_system_observer = ScatterSystem.make_observer(World.scatter_system(world), position, rotation)
 
 	self.input_manager:block_device_except_service("FreeFlight", "keyboard", nil, "free_flight")
 	self.input_manager:block_device_except_service("FreeFlight", "mouse", nil, "free_flight")
 	self.input_manager:block_device_except_service("FreeFlight", "gamepad", nil, "free_flight")
 
-	if not script_data.testify and not Testify:poll_request("activate_free_flight") then
+	if script_data.testify and Testify:poll_request("activate_free_flight") then
 		Testify:respond_to_request("activate_free_flight")
 	end
 end
 
-FreeFlightManager._exit_free_flight = function (self, arg_32_1, arg_32_2)
+FreeFlightManager._exit_free_flight = function (self, player, data)
 	-- function 32
-	local world = Managers.world:world(arg_32_2.viewport_world_name)
+	local world = Managers.world:world(data.viewport_world_name)
 
-	if not arg_32_2.frustum_freeze_camera then
-		self:_exit_frustum_freeze(arg_32_2, world, ScriptWorld.viewport(world, arg_32_2.viewport_name))
+	if data.frustum_freeze_camera then
+		self:_exit_frustum_freeze(data, world, ScriptWorld.viewport(world, data.viewport_name))
 	end
 
-	local viewport_name = arg_32_2.viewport_name
+	local viewport_name = data.viewport_name
 
-	arg_32_2.active = false
-	arg_32_2.viewport_name = nil
-	arg_32_2.viewport_world_name = nil
+	data.active = false
+	data.viewport_name = nil
+	data.viewport_world_name = nil
 
-	if not self._has_terrain then
-		TerrainDecoration.destroy_observer(world, arg_32_2.terrain_decoration_observer)
+	if self._has_terrain then
+		TerrainDecoration.destroy_observer(world, data.terrain_decoration_observer)
 	end
 
-	ScatterSystem.destroy_observer(World.scatter_system(world), arg_32_2.scatter_system_observer)
+	ScatterSystem.destroy_observer(World.scatter_system(world), data.scatter_system_observer)
 
-	arg_32_2.terrain_decoration_observer = nil
-	arg_32_2.scatter_system_observer = nil
+	data.terrain_decoration_observer = nil
+	data.scatter_system_observer = nil
 
 	ScriptWorld.destroy_free_flight_viewport(world, viewport_name)
 	self.input_manager:device_unblock_all_services("keyboard")
@@ -697,256 +724,267 @@ FreeFlightManager._exit_free_flight = function (self, arg_32_1, arg_32_2)
 	self.input_manager:device_unblock_all_services("gamepad")
 end
 
-FreeFlightManager.active = function (self, arg_33_1)
+FreeFlightManager.active = function (self, player_index)
 	-- function 33
-	local var_33_0 = self.data[arg_33_1]
+	local var_33_0 = self.data[player_index]
 
-	var_33_0 = not var_33_0 and self.data[arg_33_1].active
+	var_33_0 = not not var_33_0 and not not self.data[player_index].active
 
 	return var_33_0
 end
 
-FreeFlightManager.mode = function (self, arg_34_1)
+FreeFlightManager.mode = function (self, player_index)
 	-- function 34
-	return self.data[arg_34_1].mode
+	return self.data[player_index].mode
 end
 
-FreeFlightManager._update_free_flight = function (self, arg_35_1, arg_35_2, arg_35_3)
+FreeFlightManager._update_free_flight = function (self, dt, player, data)
 	-- function 35
-	local world = Managers.world:world(arg_35_3.viewport_world_name)
-	local free_flight_viewport = ScriptWorld.free_flight_viewport(world, arg_35_3.viewport_name)
-	local frustum_freeze_camera = arg_35_3.frustum_freeze_camera
+	local world = Managers.world:world(data.viewport_world_name)
+	local viewport = ScriptWorld.free_flight_viewport(world, data.viewport_name)
+	local frustum_freeze_camera = data.frustum_freeze_camera
 
-	frustum_freeze_camera = frustum_freeze_camera or ScriptViewport.camera(free_flight_viewport)
-
-	local get_service = self.input_manager:get_service("FreeFlight")
-	local num = arg_35_3.current_translation_max_speed * 0.5
-	local y = Vector3.y
-	local get = get_service:get("speed_change")
-
-	get = get or Vector3(0, 0, 0)
-
-	local var_35_7 = y(get)
-
-	arg_35_3.current_translation_max_speed = math.max(arg_35_3.current_translation_max_speed + var_35_7 * num, 0.01)
-
-	local local_pose = Camera.local_pose(frustum_freeze_camera)
-	local translation = Matrix4x4.translation(local_pose)
-
-	Matrix4x4.set_translation(local_pose, Vector3(0, 0, 0))
-
-	local get_2 = get_service:get("look")
-	local num_2 = arg_35_3.rotation_accumulation:unbox() + get_2
-	local num_3 = num_2 * math.min(arg_35_1, 1)
-	local free_flight_movement_filter_speed = arg_35_2.free_flight_movement_filter_speed
-
-	free_flight_movement_filter_speed = free_flight_movement_filter_speed or 15
-
-	local num_4 = num_3 * free_flight_movement_filter_speed
-
-	arg_35_3.rotation_accumulation:store(num_2 - num_4)
-
-	local var_35_15 = Quaternion(Vector3(0, 0, 1), -Vector3.x(num_4) * arg_35_3.rotation_speed)
-	local var_35_16 = Quaternion(Matrix4x4.x(local_pose), -Vector3.y(num_4) * arg_35_3.rotation_speed)
-	local multiply = Quaternion.multiply(var_35_15, var_35_16)
-	local multiply_2 = Matrix4x4.multiply(local_pose, Matrix4x4.from_quaternion(multiply))
-	local num_5 = get_service:get("move") * arg_35_3.current_translation_max_speed
-	local unbox = arg_35_3.current_translation_speed:unbox()
-	local num_6 = num_5 - unbox
-	local length = Vector3.length(num_6)
-	local normalize = Vector3.normalize(num_6)
-
-	if var_35_7 ~= 0 then
-		local free_flight_acceleration_factor = arg_35_2.free_flight_acceleration_factor
-
-		free_flight_acceleration_factor = free_flight_acceleration_factor or 5
-		arg_35_3.acceleration = free_flight_acceleration_factor * Vector3.length(num_6)
-	end
-
-	local acceleration = arg_35_3.acceleration
-	local num_7 = unbox + normalize * math.min(length, acceleration * arg_35_1)
-
-	if not Vector3.equal(num_7, unbox) then
+	if not frustum_freeze_camera then
 		-- Nothing
 	end
 
-	arg_35_3.current_translation_speed:store(num_7)
+	frustum_freeze_camera = ScriptViewport.camera(viewport)
 
-	local rotation = Matrix4x4.rotation(multiply_2)
-	local num_8 = (Quaternion.forward(rotation) * num_7.y + Quaternion.right(rotation) * num_7.x + Quaternion.up(rotation) * num_7.z) * arg_35_1
-	local add = Vector3.add(translation, num_8)
+	local cam = frustum_freeze_camera
 
-	Matrix4x4.set_translation(multiply_2, add)
-	ScriptCamera.set_local_pose(frustum_freeze_camera, multiply_2)
+	::label_35_0::
+
+	local input = self.input_manager:get_service("FreeFlight")
+	local translation_change_speed = data.current_translation_max_speed * 0.5
+	local y = Vector3.y
+	local get = input:get("speed_change")
+
+	get = not not get or not not Vector3(0, 0, 0)
+
+	local speed_change = y(get)
+
+	data.current_translation_max_speed = math.max(data.current_translation_max_speed + speed_change * translation_change_speed, 0.01)
+
+	local cm = Camera.local_pose(cam)
+	local trans = Matrix4x4.translation(cm)
+
+	Matrix4x4.set_translation(cm, Vector3(0, 0, 0))
+
+	local mouse = input:get("look")
+	local rotation_accumulation = data.rotation_accumulation:unbox() + mouse
+	local num = rotation_accumulation * math.min(dt, 1)
+	local free_flight_movement_filter_speed = player.free_flight_movement_filter_speed
+
+	free_flight_movement_filter_speed = not not free_flight_movement_filter_speed or not not 15
+
+	local rotation = num * free_flight_movement_filter_speed
+
+	data.rotation_accumulation:store(rotation_accumulation - rotation)
+
+	local q1 = Quaternion(Vector3(0, 0, 1), -Vector3.x(rotation) * data.rotation_speed)
+	local q2 = Quaternion(Matrix4x4.x(cm), -Vector3.y(rotation) * data.rotation_speed)
+	local q = Quaternion.multiply(q1, q2)
+
+	cm = Matrix4x4.multiply(cm, Matrix4x4.from_quaternion(q))
+
+	local wanted_speed = input:get("move") * data.current_translation_max_speed
+	local current_speed = data.current_translation_speed:unbox()
+	local speed_difference = wanted_speed - current_speed
+	local speed_distance = Vector3.length(speed_difference)
+	local speed_difference_direction = Vector3.normalize(speed_difference)
+
+	if speed_change ~= 0 then
+		local free_flight_acceleration_factor = player.free_flight_acceleration_factor
+
+		free_flight_acceleration_factor = not not free_flight_acceleration_factor or not not 5
+		data.acceleration = free_flight_acceleration_factor * Vector3.length(speed_difference)
+	end
+
+	local acceleration = data.acceleration
+	local new_speed = current_speed + speed_difference_direction * math.min(speed_distance, acceleration * dt)
+
+	if not Vector3.equal(new_speed, current_speed) then
+		-- Nothing
+	end
+
+	data.current_translation_speed:store(new_speed)
+
+	local rot = Matrix4x4.rotation(cm)
+	local offset = (Quaternion.forward(rot) * new_speed.y + Quaternion.right(rot) * new_speed.x + Quaternion.up(rot) * new_speed.z) * dt
+
+	trans = Vector3.add(trans, offset)
+
+	Matrix4x4.set_translation(cm, trans)
+	ScriptCamera.set_local_pose(cam, cm)
 
 	local wwise_world = Managers.world:wwise_world(world)
 
-	WwiseWorld.set_listener(wwise_world, 0, multiply_2)
+	WwiseWorld.set_listener(wwise_world, 0, cm)
 
-	if not self._has_terrain then
-		TerrainDecoration.move_observer(world, arg_35_3.terrain_decoration_observer, add)
+	if self._has_terrain then
+		TerrainDecoration.move_observer(world, data.terrain_decoration_observer, trans)
 	end
 
-	ScatterSystem.move_observer(World.scatter_system(world), arg_35_3.scatter_system_observer, add, rotation)
+	ScatterSystem.move_observer(World.scatter_system(world), data.scatter_system_observer, trans, rot)
 
-	if not get_service:get("set_drop_position") then
-		self:drop_player_at_camera_pos(frustum_freeze_camera, arg_35_2)
+	if input:get("set_drop_position") then
+		self:drop_player_at_camera_pos(cam, player)
 	end
 
-	if not get_service:get("increase_fov") then
-		local vertical_fov = Camera.vertical_fov(frustum_freeze_camera)
+	if input:get("increase_fov") then
+		local old_fov = Camera.vertical_fov(cam)
 
-		Camera.set_vertical_fov(frustum_freeze_camera, vertical_fov + math.pi / 72)
+		Camera.set_vertical_fov(cam, old_fov + math.pi / 72)
 	end
 
-	if not get_service:get("ray") then
-		local get_data = World.get_data(world, "physics_world")
-		local immediate_raycast, var_35_34, var_35_35, var_35_36, var_35_37 = PhysicsWorld.immediate_raycast(get_data, Camera.local_position(frustum_freeze_camera), Quaternion.forward(Camera.local_rotation(frustum_freeze_camera)), 999, "closest")
+	if input:get("ray") then
+		local physics_world = World.get_data(world, "physics_world")
+		local _, _, _, _, actor = PhysicsWorld.immediate_raycast(physics_world, Camera.local_position(cam), Quaternion.forward(Camera.local_rotation(cam)), 999, "closest")
 
-		if not var_35_37 then
-			print(var_35_37)
+		if actor then
+			print(actor)
 		end
 	end
 
-	if not get_service:get("decrease_fov") then
-		local vertical_fov_2 = Camera.vertical_fov(frustum_freeze_camera)
+	if input:get("decrease_fov") then
+		local old_fov = Camera.vertical_fov(cam)
 
-		Camera.set_vertical_fov(frustum_freeze_camera, vertical_fov_2 - math.pi / 72)
+		Camera.set_vertical_fov(cam, old_fov - math.pi / 72)
 	end
 
-	local get_data_2 = World.get_data(world, "shading_environment")
+	local shading_env = World.get_data(world, "shading_environment")
 
-	if not get_data_2 then
-		if not (not get_service:get("toggle_dof") and get_service:get("dof_reset")) then
-			arg_35_3.dof_enabled = 1 - arg_35_3.dof_enabled
+	if shading_env then
+		if input:get("toggle_dof") and not input:get("dof_reset") then
+			data.dof_enabled = 1 - data.dof_enabled
 		end
 
-		if not (not get_service:get("inc_dof_distance") and get_service:get("inc_dof_region") or get_service:get("inc_dof_padding") or get_service:get("inc_dof_scale")) then
-			arg_35_3.dof_focal_distance = arg_35_3.dof_focal_distance + 0.2
+		if input:get("inc_dof_distance") and not input:get("inc_dof_region") and not input:get("inc_dof_padding") and not input:get("inc_dof_scale") then
+			data.dof_focal_distance = data.dof_focal_distance + 0.2
 
-			print("Dof Focal Distance: ", arg_35_3.dof_focal_distance)
+			print("Dof Focal Distance: ", data.dof_focal_distance)
 		end
 
-		if not (not get_service:get("dec_dof_distance") and get_service:get("dec_dof_region") or get_service:get("dec_dof_padding") or get_service:get("dec_dof_scale")) then
-			arg_35_3.dof_focal_distance = arg_35_3.dof_focal_distance - 0.2
+		if input:get("dec_dof_distance") and not input:get("dec_dof_region") and not input:get("dec_dof_padding") and not input:get("dec_dof_scale") then
+			data.dof_focal_distance = data.dof_focal_distance - 0.2
 
-			if arg_35_3.dof_focal_distance < 0 then
-				arg_35_3.dof_focal_distance = 0
+			if data.dof_focal_distance < 0 then
+				data.dof_focal_distance = 0
 			end
 
-			print("Dof Focal Distance: ", arg_35_3.dof_focal_distance)
+			print("Dof Focal Distance: ", data.dof_focal_distance)
 		end
 
-		if not get_service:get("inc_dof_region") then
-			arg_35_3.dof_focal_region = arg_35_3.dof_focal_region + 0.2
+		if input:get("inc_dof_region") then
+			data.dof_focal_region = data.dof_focal_region + 0.2
 
-			print("Dof Focal Region: ", arg_35_3.dof_focal_region)
+			print("Dof Focal Region: ", data.dof_focal_region)
 		end
 
-		if not get_service:get("dec_dof_region") then
-			arg_35_3.dof_focal_region = arg_35_3.dof_focal_region - 0.2
+		if input:get("dec_dof_region") then
+			data.dof_focal_region = data.dof_focal_region - 0.2
 
-			if arg_35_3.dof_focal_region < 0 then
-				arg_35_3.dof_focal_region = 0
+			if data.dof_focal_region < 0 then
+				data.dof_focal_region = 0
 			end
 
-			print("Dof Focal Region: ", arg_35_3.dof_focal_region)
+			print("Dof Focal Region: ", data.dof_focal_region)
 		end
 
-		if not get_service:get("inc_dof_padding") then
-			arg_35_3.dof_focal_region_start = arg_35_3.dof_focal_region_start + 0.1
-			arg_35_3.dof_focal_region_end = arg_35_3.dof_focal_region_end + 0.1
+		if input:get("inc_dof_padding") then
+			data.dof_focal_region_start = data.dof_focal_region_start + 0.1
+			data.dof_focal_region_end = data.dof_focal_region_end + 0.1
 
-			print("Dof Focal Padding: ", arg_35_3.dof_focal_region_start)
+			print("Dof Focal Padding: ", data.dof_focal_region_start)
 		end
 
-		if not get_service:get("dec_dof_padding") then
-			arg_35_3.dof_focal_region_start = arg_35_3.dof_focal_region_start - 0.1
-			arg_35_3.dof_focal_region_end = arg_35_3.dof_focal_region_end - 0.1
+		if input:get("dec_dof_padding") then
+			data.dof_focal_region_start = data.dof_focal_region_start - 0.1
+			data.dof_focal_region_end = data.dof_focal_region_end - 0.1
 
-			if arg_35_3.dof_focal_region_start < 0 then
-				arg_35_3.dof_focal_region_start = 0
+			if data.dof_focal_region_start < 0 then
+				data.dof_focal_region_start = 0
 			end
 
-			if arg_35_3.dof_focal_region_end < 0 then
-				arg_35_3.dof_focal_region_end = 0
+			if data.dof_focal_region_end < 0 then
+				data.dof_focal_region_end = 0
 			end
 
-			print("Dof Focal Padding: ", arg_35_3.dof_focal_region_start)
+			print("Dof Focal Padding: ", data.dof_focal_region_start)
 		end
 
-		if not get_service:get("inc_dof_scale") then
-			arg_35_3.dof_focal_near_scale = arg_35_3.dof_focal_near_scale + 0.02
-			arg_35_3.dof_focal_far_scale = arg_35_3.dof_focal_far_scale + 0.02
+		if input:get("inc_dof_scale") then
+			data.dof_focal_near_scale = data.dof_focal_near_scale + 0.02
+			data.dof_focal_far_scale = data.dof_focal_far_scale + 0.02
 
-			if arg_35_3.dof_focal_near_scale > 1 then
-				arg_35_3.dof_focal_near_scale = 1
+			if data.dof_focal_near_scale > 1 then
+				data.dof_focal_near_scale = 1
 			end
 
-			if arg_35_3.dof_focal_far_scale > 1 then
-				arg_35_3.dof_focal_far_scale = 1
+			if data.dof_focal_far_scale > 1 then
+				data.dof_focal_far_scale = 1
 			end
 
-			print("Dof Focal Scale: ", arg_35_3.dof_focal_near_scale)
+			print("Dof Focal Scale: ", data.dof_focal_near_scale)
 		end
 
-		if not get_service:get("dec_dof_scale") then
-			arg_35_3.dof_focal_near_scale = arg_35_3.dof_focal_near_scale - 0.02
-			arg_35_3.dof_focal_far_scale = arg_35_3.dof_focal_far_scale - 0.02
+		if input:get("dec_dof_scale") then
+			data.dof_focal_near_scale = data.dof_focal_near_scale - 0.02
+			data.dof_focal_far_scale = data.dof_focal_far_scale - 0.02
 
-			if arg_35_3.dof_focal_near_scale < 0 then
-				arg_35_3.dof_focal_near_scale = 0
+			if data.dof_focal_near_scale < 0 then
+				data.dof_focal_near_scale = 0
 			end
 
-			if arg_35_3.dof_focal_far_scale < 0 then
-				arg_35_3.dof_focal_far_scale = 0
+			if data.dof_focal_far_scale < 0 then
+				data.dof_focal_far_scale = 0
 			end
 
-			print("Dof Focal Scale: ", arg_35_3.dof_focal_near_scale)
+			print("Dof Focal Scale: ", data.dof_focal_near_scale)
 		end
 
-		if not get_service:get("dof_reset") then
-			arg_35_3.dof_focal_distance = 10
-			arg_35_3.dof_focal_region = 8
-			arg_35_3.dof_focal_region_start = 3
-			arg_35_3.dof_focal_region_end = 3
-			arg_35_3.dof_focal_near_scale = 1
-			arg_35_3.dof_focal_far_scale = 1
+		if input:get("dof_reset") then
+			data.dof_focal_distance = 10
+			data.dof_focal_region = 8
+			data.dof_focal_region_start = 3
+			data.dof_focal_region_end = 3
+			data.dof_focal_near_scale = 1
+			data.dof_focal_far_scale = 1
 
-			print("Dof Focal Distance: ", arg_35_3.dof_focal_distance)
-			print("Dof Focal Region: ", arg_35_3.dof_focal_region)
-			print("Dof Focal Padding: ", arg_35_3.dof_focal_region_start)
-			print("Dof Focal Scale: ", arg_35_3.dof_focal_near_scale)
+			print("Dof Focal Distance: ", data.dof_focal_distance)
+			print("Dof Focal Region: ", data.dof_focal_region)
+			print("Dof Focal Padding: ", data.dof_focal_region_start)
+			print("Dof Focal Scale: ", data.dof_focal_near_scale)
 		end
 
-		ShadingEnvironment.set_scalar(get_data_2, "dof_enabled", arg_35_3.dof_enabled)
-		ShadingEnvironment.set_scalar(get_data_2, "dof_focal_distance", arg_35_3.dof_focal_distance)
-		ShadingEnvironment.set_scalar(get_data_2, "dof_focal_region", arg_35_3.dof_focal_region)
-		ShadingEnvironment.set_scalar(get_data_2, "dof_focal_region_start", arg_35_3.dof_focal_region_start)
-		ShadingEnvironment.set_scalar(get_data_2, "dof_focal_region_end", arg_35_3.dof_focal_region_end)
-		ShadingEnvironment.set_scalar(get_data_2, "dof_focal_near_scale", arg_35_3.dof_focal_near_scale)
-		ShadingEnvironment.set_scalar(get_data_2, "dof_focal_far_scale", arg_35_3.dof_focal_far_scale)
+		ShadingEnvironment.set_scalar(shading_env, "dof_enabled", data.dof_enabled)
+		ShadingEnvironment.set_scalar(shading_env, "dof_focal_distance", data.dof_focal_distance)
+		ShadingEnvironment.set_scalar(shading_env, "dof_focal_region", data.dof_focal_region)
+		ShadingEnvironment.set_scalar(shading_env, "dof_focal_region_start", data.dof_focal_region_start)
+		ShadingEnvironment.set_scalar(shading_env, "dof_focal_region_end", data.dof_focal_region_end)
+		ShadingEnvironment.set_scalar(shading_env, "dof_focal_near_scale", data.dof_focal_near_scale)
+		ShadingEnvironment.set_scalar(shading_env, "dof_focal_far_scale", data.dof_focal_far_scale)
 
-		if not ShadingEnvironment.scalar(get_data_2, "dof_enabled") then
-			ShadingEnvironment.apply(get_data_2)
+		if ShadingEnvironment.scalar(shading_env, "dof_enabled") then
+			ShadingEnvironment.apply(shading_env)
 		end
 	end
 end
 
-FreeFlightManager.drop_player_at_camera_pos = function (self, arg_36_1, arg_36_2)
+FreeFlightManager.drop_player_at_camera_pos = function (self, cam, player)
 	-- function 36
-	local local_position = Camera.local_position(arg_36_1)
-	local local_rotation = Camera.local_rotation(arg_36_1)
+	local pos = Camera.local_position(cam)
+	local rot = Camera.local_rotation(cam)
 
-	if not self._teleport_override then
-		self._teleport_override(local_position, local_rotation)
-	elseif not arg_36_2 and not arg_36_2.camera_follow_unit then
-		Unit.set_local_position(arg_36_2.camera_follow_unit, 0, local_position)
+	if self._teleport_override then
+		self._teleport_override(pos, rot)
+	elseif player and player.camera_follow_unit then
+		Unit.set_local_position(player.camera_follow_unit, 0, pos)
 
-		local mover = Unit.mover(arg_36_2.camera_follow_unit)
+		local mover = Unit.mover(player.camera_follow_unit)
 
-		if not mover then
-			Mover.set_position(mover, local_position)
+		if mover then
+			Mover.set_position(mover, pos)
 		end
 	end
 end

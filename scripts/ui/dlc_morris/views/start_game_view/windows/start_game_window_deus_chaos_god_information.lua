@@ -1,15 +1,15 @@
 -- chunkname: @scripts/ui/dlc_morris/views/start_game_view/windows/start_game_window_deus_chaos_god_information.lua
 
-local var_0_0 = local_require("scripts/ui/dlc_morris/views/start_game_view/windows/definitions/start_game_window_deus_chaos_god_information_definitions")
-local widgets = var_0_0.widgets
+local definitions = local_require("scripts/ui/dlc_morris/views/start_game_view/windows/definitions/start_game_window_deus_chaos_god_information_definitions")
+local widget_definitions = definitions.widgets
 
 StartGameWindowDeusChaosGodInformation = class(StartGameWindowDeusChaosGodInformation)
 
-StartGameWindowDeusChaosGodInformation.on_enter = function (self, arg_1_1, arg_1_2)
+StartGameWindowDeusChaosGodInformation.on_enter = function (self, params, offset)
 	-- function 1
-	self._parent = arg_1_1.parent
+	self._parent = params.parent
 
-	local ingame_ui_context = arg_1_1.ingame_ui_context
+	local ingame_ui_context = params.ingame_ui_context
 
 	self._ingame_ui_context = ingame_ui_context
 	self._ui_top_renderer = ingame_ui_context.ui_top_renderer
@@ -19,57 +19,57 @@ StartGameWindowDeusChaosGodInformation.on_enter = function (self, arg_1_1, arg_1
 		snap_pixel_positions = true
 	}
 
-	self:_create_ui_elements(var_0_0, arg_1_1, arg_1_2)
+	self:_create_ui_elements(definitions, params, offset)
 
 	self._should_draw = false
 
 	self:_start_animation("on_enter", self._widgets_by_name.god_info_widget)
 end
 
-StartGameWindowDeusChaosGodInformation.on_exit = function (arg_2_0, arg_2_1)
+StartGameWindowDeusChaosGodInformation.on_exit = function (self, params)
 	-- function 2
-	table.clear(arg_2_0)
+	table.clear(self)
 end
 
-StartGameWindowDeusChaosGodInformation._create_ui_elements = function (self, arg_3_1, arg_3_2, arg_3_3)
+StartGameWindowDeusChaosGodInformation._create_ui_elements = function (self, definitions, params, offset)
 	-- function 3
-	self._scenegraph_definition = arg_3_1.scenegraph_definition
-	self._ui_scenegraph = UISceneGraph.init_scenegraph(arg_3_1.scenegraph_definition)
-	self._ui_animator = UIAnimator:new(self._ui_scenegraph, arg_3_1.animation_definitions)
+	self._scenegraph_definition = definitions.scenegraph_definition
+	self._ui_scenegraph = UISceneGraph.init_scenegraph(definitions.scenegraph_definition)
+	self._ui_animator = UIAnimator:new(self._ui_scenegraph, definitions.animation_definitions)
 	self._refresh_time = 0
 
-	local tbl = {}
-	local tbl_2 = {}
+	local widgets = {}
+	local widgets_by_name = {}
 
-	for k, v in pairs(widgets) do
-		local var_3_2 = UIWidget.init(v)
+	for name, widget_definition in pairs(widget_definitions) do
+		local widget = UIWidget.init(widget_definition)
 
-		tbl[#tbl + 1] = var_3_2
-		tbl_2[k] = var_3_2
+		widgets[#widgets + 1] = widget
+		widgets_by_name[name] = widget
 	end
 
-	self._widgets = tbl
-	self._widgets_by_name = tbl_2
+	self._widgets = widgets
+	self._widgets_by_name = widgets_by_name
 
 	UIRenderer.clear_scenegraph_queue(self._ui_top_renderer)
 	self:_setup_belakor_information()
 end
 
-StartGameWindowDeusChaosGodInformation._start_animation = function (self, arg_4_1, arg_4_2, arg_4_3)
+StartGameWindowDeusChaosGodInformation._start_animation = function (self, animation_name, widget, params)
 	-- function 4
-	arg_4_3 = arg_4_3 or {}
-	arg_4_3.render_settings = self._render_settings
-	self._animations[arg_4_1] = self._ui_animator:start_animation(arg_4_1, arg_4_2, self._scenegraph_definition, arg_4_3)
+	params = not not params or not not {}
+	params.render_settings = self._render_settings
+	self._animations[animation_name] = self._ui_animator:start_animation(animation_name, widget, self._scenegraph_definition, params)
 end
 
-StartGameWindowDeusChaosGodInformation.update = function (self, arg_5_1, arg_5_2)
+StartGameWindowDeusChaosGodInformation.update = function (self, dt, t)
 	-- function 5
-	self:_update_animations(arg_5_1, arg_5_2)
+	self:_update_animations(dt, t)
 	self:_update_time_left()
 	self:_update_journey()
 
-	if not self._should_draw then
-		self:_draw(arg_5_1, arg_5_2)
+	if self._should_draw then
+		self:_draw(dt, t)
 	end
 end
 
@@ -77,98 +77,110 @@ StartGameWindowDeusChaosGodInformation._update_journey = function (self)
 	-- function 6
 	local get_selected_level_id = self._parent:get_selected_level_id()
 
-	get_selected_level_id = get_selected_level_id or self._journey_name
+	if not get_selected_level_id then
+		-- Nothing
+	end
 
-	if get_selected_level_id ~= self._journey_name then
-		self._journey_name = get_selected_level_id
+	get_selected_level_id = self._journey_name
+
+	local selected_journey = get_selected_level_id
+
+	::label_6_0::
+
+	if selected_journey ~= self._journey_name then
+		self._journey_name = selected_journey
 
 		self:_update_theme()
 		self:_update_belakor_status()
 	end
 end
 
-StartGameWindowDeusChaosGodInformation.post_update = function (arg_7_0, arg_7_1, arg_7_2)
+StartGameWindowDeusChaosGodInformation.post_update = function (self, dt, t)
 	-- function 7
 	return
 end
 
-StartGameWindowDeusChaosGodInformation._update_animations = function (self, arg_8_1, arg_8_2)
+StartGameWindowDeusChaosGodInformation._update_animations = function (self, dt, t)
 	-- function 8
-	local _ui_animator = self._ui_animator
+	local ui_animator = self._ui_animator
 
-	_ui_animator:update(arg_8_1)
+	ui_animator:update(dt)
 
-	local _animations = self._animations
+	local animations = self._animations
 
-	for k, v in pairs(_animations) do
-		if not _ui_animator:is_animation_completed(v) then
-			_animations[k] = nil
+	for animation_name, animation_id in pairs(animations) do
+		if ui_animator:is_animation_completed(animation_id) then
+			animations[animation_name] = nil
 		end
 	end
 end
 
-StartGameWindowDeusChaosGodInformation._draw = function (self, arg_9_1, arg_9_2)
+StartGameWindowDeusChaosGodInformation._draw = function (self, dt, t)
 	-- function 9
-	local _ui_top_renderer = self._ui_top_renderer
-	local window_input_service = self._parent:window_input_service()
+	local ui_renderer = self._ui_top_renderer
+	local input_service = self._parent:window_input_service()
 
-	UIRenderer.begin_pass(_ui_top_renderer, self._ui_scenegraph, window_input_service, arg_9_1, nil, self._render_settings)
+	UIRenderer.begin_pass(ui_renderer, self._ui_scenegraph, input_service, dt, nil, self._render_settings)
 
 	for i = 1, #self._widgets do
-		local var_9_2 = self._widgets[i]
+		local widget = self._widgets[i]
 
-		UIRenderer.draw_widget(_ui_top_renderer, var_9_2)
+		UIRenderer.draw_widget(ui_renderer, widget)
 	end
 
-	UIRenderer.end_pass(_ui_top_renderer)
+	UIRenderer.end_pass(ui_renderer)
 end
 
 StartGameWindowDeusChaosGodInformation._refresh_journey_data = function (self)
 	-- function 10
-	local get_journey_cycle = Managers.backend:get_interface("deus"):get_journey_cycle()
+	local backend_deus = Managers.backend:get_interface("deus")
+	local journey_cycle = backend_deus:get_journey_cycle()
 
-	self._journey_cycle = get_journey_cycle
-	self._refresh_time = get_journey_cycle.remaining_time + get_journey_cycle.time_of_update
+	self._journey_cycle = journey_cycle
+	self._refresh_time = journey_cycle.remaining_time + journey_cycle.time_of_update
 
 	self:_update_theme()
 end
 
 StartGameWindowDeusChaosGodInformation._update_time_left = function (self)
 	-- function 11
-	local time = Managers.time:time("main")
-	local num = self._refresh_time - time
-	local content = self._widgets_by_name.god_info_widget.content
+	local current_time = Managers.time:time("main")
+	local remaining_time = self._refresh_time - current_time
+	local widget = self._widgets_by_name.god_info_widget
+	local widget_content = widget.content
 
-	if num > 120 then
-		local num_2 = num / 86400
-		local num_3 = num / 3600 % 24
-		local num_4 = num / 60 % 60
-		local var_11_6 = Localize("deus_start_game_mod_timer")
+	if remaining_time > 120 then
+		local days = remaining_time / 86400
+		local hours = remaining_time / 3600 % 24
+		local minutes = remaining_time / 60 % 60
+		local fmt = Localize("deus_start_game_mod_timer")
 
-		content.subtitle = string.format(var_11_6, num_2, num_3, num_4)
+		widget_content.subtitle = string.format(fmt, days, hours, minutes)
 	else
-		local var_11_7 = Localize("deus_start_game_mod_timer_seconds")
+		local fmt = Localize("deus_start_game_mod_timer_seconds")
 
-		if num < 0 then
-			num = 0
+		if remaining_time < 0 then
+			remaining_time = 0
 
 			self:_refresh_journey_data()
 		end
 
-		content.subtitle = string.format(var_11_7, num)
+		widget_content.subtitle = string.format(fmt, remaining_time)
 	end
 
 	self:_update_belakor_time_left()
 end
 
-StartGameWindowDeusChaosGodInformation._update_theme = function (self, arg_12_1)
+StartGameWindowDeusChaosGodInformation._update_theme = function (self, initial_delay)
 	-- function 12
-	local _journey_name = self._journey_name
-	local var_12_1 = self._journey_cycle.journey_data[_journey_name]
-	local flag = not var_12_1 and var_12_1.dominant_god
-	local flag_2 = not flag and DeusThemeSettings[flag]
+	local journey_name = self._journey_name
+	local journey_cycle = self._journey_cycle
+	local all_journey_data = journey_cycle.journey_data
+	local current_journey_data = all_journey_data[journey_name]
+	local dominant_god = not not current_journey_data and not not current_journey_data.dominant_god
+	local theme_settings = not not dominant_god and not not DeusThemeSettings[dominant_god]
 
-	if not flag_2 then
+	if not theme_settings then
 		self._should_draw = false
 
 		return
@@ -176,14 +188,14 @@ StartGameWindowDeusChaosGodInformation._update_theme = function (self, arg_12_1)
 
 	self._should_draw = true
 
-	local get_current_window_layout_settings = self._parent:get_current_window_layout_settings()
+	local current_window_layout_settings = self._parent:get_current_window_layout_settings()
 
-	if not get_current_window_layout_settings and not get_current_window_layout_settings.should_draw_god_info then
-		self._should_draw = get_current_window_layout_settings.should_draw_god_info(self._ingame_ui_context)
+	if current_window_layout_settings and current_window_layout_settings.should_draw_god_info then
+		self._should_draw = current_window_layout_settings.should_draw_god_info(self._ingame_ui_context)
 	end
 
 	self:_start_animation("set_theme", self._widgets_by_name.god_info_widget, {
-		theme_settings = flag_2
+		theme_settings = theme_settings
 	})
 end
 
@@ -191,52 +203,57 @@ StartGameWindowDeusChaosGodInformation._setup_belakor_information = function (se
 	-- function 13
 	self._belakor_refresh_time = 0
 	self._is_refreshing_belakor = false
-	self._widgets_by_name.belakor_info_widget.content.visible = false
+
+	local belakor_widget = self._widgets_by_name.belakor_info_widget
+
+	belakor_widget.content.visible = false
 
 	self:_refresh_belakor_curse_data()
 end
 
 StartGameWindowDeusChaosGodInformation._refresh_belakor_curse_data = function (self)
 	-- function 14
-	local get_belakor_cycle = Managers.backend:get_interface("deus"):get_belakor_cycle()
+	local backend_deus = Managers.backend:get_interface("deus")
+	local belakor_data = backend_deus:get_belakor_cycle()
 
-	if not get_belakor_cycle then
+	if not belakor_data then
 		return false
 	end
 
-	self._belakor_data = get_belakor_cycle
-	self._belakor_refresh_time = get_belakor_cycle.remaining_time + get_belakor_cycle.time_of_update
+	self._belakor_data = belakor_data
+	self._belakor_refresh_time = belakor_data.remaining_time + belakor_data.time_of_update
 
 	Managers.state.event:trigger("_update_additional_curse_frame", self._belakor_data.journey_name)
 end
 
 StartGameWindowDeusChaosGodInformation._update_belakor_time_left = function (self)
 	-- function 15
-	local time = Managers.time:time("main")
-	local get_interface = Managers.backend:get_interface("deus")
-	local deus_journey_with_belakor = get_interface:deus_journey_with_belakor(self._journey_name)
-	local max = math.max(self._belakor_refresh_time - time, 0)
+	local current_time = Managers.time:time("main")
+	local backend_deus = Managers.backend:get_interface("deus")
+	local belakor_active_in_expedition = backend_deus:deus_journey_with_belakor(self._journey_name)
+	local belakor_remaining_time = math.max(self._belakor_refresh_time - current_time, 0)
 
-	if not deus_journey_with_belakor then
-		local content = self._widgets_by_name.belakor_info_widget.content
+	if belakor_active_in_expedition then
+		local belakor_widget = self._widgets_by_name.belakor_info_widget
+		local belakor_widget_content = belakor_widget.content
 
-		if max > 120 then
-			local num = max / 3600 % 24
-			local num_2 = max / 60 % 60
-			local var_15_7 = Localize("datetime_hours_short")
-			local var_15_8 = Localize("datetime_minutes_short")
+		if belakor_remaining_time > 120 then
+			local hours = belakor_remaining_time / 3600 % 24
+			local minutes = belakor_remaining_time / 60 % 60
+			local hrs = Localize("datetime_hours_short")
+			local min = Localize("datetime_minutes_short")
 
-			content.subtitle = string.format(var_15_7, num) .. " " .. string.format(var_15_8, num_2)
+			belakor_widget_content.subtitle = string.format(hrs, hours) .. " " .. string.format(min, minutes)
 		else
-			local var_15_9 = Localize("deus_start_game_mod_timer_seconds")
+			local fmt = Localize("deus_start_game_mod_timer_seconds")
 
-			content.subtitle = string.format(var_15_9, max)
+			belakor_widget_content.subtitle = string.format(fmt, belakor_remaining_time)
 		end
 	end
 
-	if max <= 0 then
-		if not self._is_refreshing_belakor then
-			if not get_interface:has_loaded_belakor_data() then
+	if belakor_remaining_time <= 0 then
+		if self._is_refreshing_belakor then
+			if backend_deus:has_loaded_belakor_data() then
 				self._is_refreshing_belakor = false
 
 				self:_refresh_belakor_curse_data()
@@ -245,21 +262,22 @@ StartGameWindowDeusChaosGodInformation._update_belakor_time_left = function (sel
 		else
 			self._is_refreshing_belakor = true
 
-			get_interface:refresh_belakor_cycle()
+			backend_deus:refresh_belakor_cycle()
 		end
 	end
 end
 
 StartGameWindowDeusChaosGodInformation._update_belakor_status = function (self)
 	-- function 16
-	local deus_journey_with_belakor = Managers.backend:get_interface("deus"):deus_journey_with_belakor(self._journey_name)
-	local belakor_info_widget = self._widgets_by_name.belakor_info_widget
+	local backend_deus = Managers.backend:get_interface("deus")
+	local belakor_active_in_expedition = backend_deus:deus_journey_with_belakor(self._journey_name)
+	local widget = self._widgets_by_name.belakor_info_widget
 
-	if not deus_journey_with_belakor then
-		self:_start_animation("set_theme_belakor", belakor_info_widget, {
+	if belakor_active_in_expedition then
+		self:_start_animation("set_theme_belakor", widget, {
 			theme_settings = DeusThemeSettings.belakor
 		})
 	end
 
-	belakor_info_widget.content.visible = deus_journey_with_belakor
+	widget.content.visible = belakor_active_in_expedition
 end

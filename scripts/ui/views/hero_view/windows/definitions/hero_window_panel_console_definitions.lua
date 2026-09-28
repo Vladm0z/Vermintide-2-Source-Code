@@ -1,17 +1,17 @@
 -- chunkname: @scripts/ui/views/hero_view/windows/definitions/hero_window_panel_console_definitions.lua
 
-local game_start_windows = UISettings.game_start_windows
-local background = game_start_windows.background
-local frame = game_start_windows.frame
-local size = game_start_windows.size
-local var_0_4 = UIFrameSettings[frame].texture_sizes.vertical[1]
-local var_0_5 = UIFrameSettings[frame].texture_sizes.horizontal[2]
-local tbl = {
-	size[1] - var_0_4 * 2,
-	(size[2] - var_0_5 * 2) / 3.5
+local window_default_settings = UISettings.game_start_windows
+local window_background = window_default_settings.background
+local window_frame = window_default_settings.frame
+local window_size = window_default_settings.size
+local window_frame_width = UIFrameSettings[window_frame].texture_sizes.vertical[1]
+local window_frame_height = UIFrameSettings[window_frame].texture_sizes.horizontal[2]
+local game_option_size = {
+	window_size[1] - window_frame_width * 2,
+	(window_size[2] - window_frame_height * 2) / 3.5
 }
 local console_menu_scenegraphs = UISettings.console_menu_scenegraphs
-local tbl_2 = {
+local scenegraph_definition = {
 	screen = console_menu_scenegraphs.screen,
 	area = console_menu_scenegraphs.area,
 	area_left = console_menu_scenegraphs.area_left,
@@ -375,7 +375,7 @@ local tbl_2 = {
 		}
 	}
 }
-local tbl_3 = {
+local preorder_text_style = {
 	font_size = 42,
 	upper_case = true,
 	localize = false,
@@ -392,17 +392,17 @@ local tbl_3 = {
 		2
 	}
 }
-local num = 32
-local tbl_4 = {}
+local menu_options_font_size = 32
+local title_button_definitions = {}
 
-tbl_4[#tbl_4 + 1] = UIWidgets.create_console_panel_button("game_option_1", tbl_2.game_option_1.size, "hero_window_equipment", num, nil, "center")
-tbl_4[#tbl_4 + 1] = UIWidgets.create_console_panel_button("game_option_2", tbl_2.game_option_2.size, "hero_window_talents", num, nil, "center")
-tbl_4[#tbl_4 + 1] = UIWidgets.create_console_panel_button("game_option_3", tbl_2.game_option_3.size, "hero_window_crafting", num, nil, "center")
-tbl_4[#tbl_4 + 1] = UIWidgets.create_console_panel_button("game_option_4", tbl_2.game_option_4.size, "hero_window_cosmetics", num, nil, "center")
-tbl_4[#tbl_4 + 1] = UIWidgets.create_console_panel_button("game_option_5", tbl_2.game_option_5.size, "hero_window_pactsworn_equipment", num, nil, "center")
+title_button_definitions[#title_button_definitions + 1] = UIWidgets.create_console_panel_button("game_option_1", scenegraph_definition.game_option_1.size, "hero_window_equipment", menu_options_font_size, nil, "center")
+title_button_definitions[#title_button_definitions + 1] = UIWidgets.create_console_panel_button("game_option_2", scenegraph_definition.game_option_2.size, "hero_window_talents", menu_options_font_size, nil, "center")
+title_button_definitions[#title_button_definitions + 1] = UIWidgets.create_console_panel_button("game_option_3", scenegraph_definition.game_option_3.size, "hero_window_crafting", menu_options_font_size, nil, "center")
+title_button_definitions[#title_button_definitions + 1] = UIWidgets.create_console_panel_button("game_option_4", scenegraph_definition.game_option_4.size, "hero_window_cosmetics", menu_options_font_size, nil, "center")
+title_button_definitions[#title_button_definitions + 1] = UIWidgets.create_console_panel_button("game_option_5", scenegraph_definition.game_option_5.size, "hero_window_pactsworn_equipment", menu_options_font_size, nil, "center")
 
-local console_menu_rect_color = UISettings.console_menu_rect_color
-local tbl_5 = {
+local panel_color = UISettings.console_menu_rect_color
+local widgets = {
 	system_button = {
 		scenegraph_id = "system_button",
 		element = {
@@ -482,7 +482,7 @@ local tbl_5 = {
 	},
 	panel_input_area_1 = UIWidgets.create_simple_texture("xbone_button_icon_lt", "panel_input_area_1"),
 	panel_input_area_2 = UIWidgets.create_simple_texture("xbone_button_icon_rt", "panel_input_area_2"),
-	panel = UIWidgets.create_simple_texture("menu_panel_bg", "panel", nil, nil, console_menu_rect_color),
+	panel = UIWidgets.create_simple_texture("menu_panel_bg", "panel", nil, nil, panel_color),
 	panel_edge = UIWidgets.create_tiled_texture("panel_edge", "menu_frame_04_divider", {
 		1920,
 		4
@@ -496,8 +496,8 @@ local tbl_5 = {
 			1,
 			0
 		}
-	}, "bottom_panel", nil, nil, console_menu_rect_color),
-	preorder_text = UIWidgets.create_simple_text(Localize("preorder_now"), "preorder_text", nil, nil, tbl_3),
+	}, "bottom_panel", nil, nil, panel_color),
+	preorder_text = UIWidgets.create_simple_text(Localize("preorder_now"), "preorder_text", nil, nil, preorder_text_style),
 	preorder_divider = UIWidgets.create_simple_texture("divider_01_top", "preorder_divider"),
 	preorder_divider_top = UIWidgets.create_simple_texture("divider_01_bottom", "preorder_divider_top"),
 	preorder_divider_effect = UIWidgets.create_simple_texture("play_button_frame_glow", "preorder_divider_effect", nil, nil, Colors.get_color_table_with_alpha("light_sky_blue", 255)),
@@ -512,7 +512,7 @@ local tbl_5 = {
 		}
 	}, "preorder_divider_top_effect", nil, nil, Colors.get_color_table_with_alpha("light_sky_blue", 255)),
 	preorder_input = UIWidgets.create_simple_texture("xbone_button_icon_show_large", "preorder_input"),
-	preorder_text_bg = UIWidgets.create_simple_texture("bg_center_fade", "preorder_text_bg", nil, nil, console_menu_rect_color),
+	preorder_text_bg = UIWidgets.create_simple_texture("bg_center_fade", "preorder_text_bg", nil, nil, panel_color),
 	back_button = UIWidgets.create_layout_button("back_button", "layout_button_back", "layout_button_back_glow", {
 		0,
 		0,
@@ -524,23 +524,23 @@ local tbl_5 = {
 		100
 	})
 }
-local tbl_6 = {
+local animation_definitions = {
 	on_enter = {
 		{
 			name = "fade_in",
 			start_progress = 0,
 			end_progress = 0.3,
-			init = function (arg_1_0, arg_1_1, arg_1_2, arg_1_3)
+			init = function (ui_scenegraph, scenegraph_definition, widgets, params)
 				-- function 1
-				arg_1_3.render_settings.alpha_multiplier = 0
+				params.render_settings.alpha_multiplier = 0
 			end,
-			update = function (arg_2_0, arg_2_1, arg_2_2, arg_2_3, arg_2_4)
+			update = function (ui_scenegraph, scenegraph_definition, widgets, progress, params)
 				-- function 2
-				local easeOutCubic = math.easeOutCubic(arg_2_3)
+				local anim_progress = math.easeOutCubic(progress)
 
-				arg_2_4.render_settings.alpha_multiplier = easeOutCubic
+				params.render_settings.alpha_multiplier = anim_progress
 			end,
-			on_complete = function (arg_3_0, arg_3_1, arg_3_2, arg_3_3)
+			on_complete = function (ui_scenegraph, scenegraph_definition, widgets, params)
 				-- function 3
 				return
 			end
@@ -551,17 +551,17 @@ local tbl_6 = {
 			name = "fade_out",
 			start_progress = 0,
 			end_progress = 0.3,
-			init = function (arg_4_0, arg_4_1, arg_4_2, arg_4_3)
+			init = function (ui_scenegraph, scenegraph_definition, widgets, params)
 				-- function 4
-				arg_4_3.render_settings.alpha_multiplier = 1
+				params.render_settings.alpha_multiplier = 1
 			end,
-			update = function (arg_5_0, arg_5_1, arg_5_2, arg_5_3, arg_5_4)
+			update = function (ui_scenegraph, scenegraph_definition, widgets, progress, params)
 				-- function 5
-				local easeOutCubic = math.easeOutCubic(arg_5_3)
+				local anim_progress = math.easeOutCubic(progress)
 
-				arg_5_4.render_settings.alpha_multiplier = 1 - easeOutCubic
+				params.render_settings.alpha_multiplier = 1 - anim_progress
 			end,
-			on_complete = function (arg_6_0, arg_6_1, arg_6_2, arg_6_3)
+			on_complete = function (ui_scenegraph, scenegraph_definition, widgets, params)
 				-- function 6
 				return
 			end
@@ -572,17 +572,18 @@ local tbl_6 = {
 			name = "bot_fade_in",
 			start_progress = 0,
 			end_progress = 0.3,
-			init = function (arg_7_0, arg_7_1, arg_7_2, arg_7_3)
+			init = function (ui_scenegraph, scenegraph_definition, widgets, params)
 				-- function 7
 				return
 			end,
-			update = function (arg_8_0, arg_8_1, arg_8_2, arg_8_3, arg_8_4)
+			update = function (ui_scenegraph, scenegraph_definition, widgets, progress, params)
 				-- function 8
-				local easeOutCubic = math.easeOutCubic(arg_8_3)
+				local anim_progress = math.easeOutCubic(progress)
+				local widget = widgets.bot_customization_button
 
-				arg_8_2.bot_customization_button.content.progress = easeOutCubic
+				widget.content.progress = anim_progress
 			end,
-			on_complete = function (arg_9_0, arg_9_1, arg_9_2, arg_9_3)
+			on_complete = function (ui_scenegraph, scenegraph_definition, widgets, params)
 				-- function 9
 				return
 			end
@@ -593,17 +594,18 @@ local tbl_6 = {
 			name = "bot_fade_out",
 			start_progress = 0,
 			end_progress = 0.3,
-			init = function (arg_10_0, arg_10_1, arg_10_2, arg_10_3)
+			init = function (ui_scenegraph, scenegraph_definition, widgets, params)
 				-- function 10
 				return
 			end,
-			update = function (arg_11_0, arg_11_1, arg_11_2, arg_11_3, arg_11_4)
+			update = function (ui_scenegraph, scenegraph_definition, widgets, progress, params)
 				-- function 11
-				local easeOutCubic = math.easeOutCubic(arg_11_3)
+				local anim_progress = math.easeOutCubic(progress)
+				local widget = widgets.bot_customization_button
 
-				arg_11_2.bot_customization_button.content.progress = 1 - easeOutCubic
+				widget.content.progress = 1 - anim_progress
 			end,
-			on_complete = function (arg_12_0, arg_12_1, arg_12_2, arg_12_3)
+			on_complete = function (ui_scenegraph, scenegraph_definition, widgets, params)
 				-- function 12
 				return
 			end
@@ -612,9 +614,9 @@ local tbl_6 = {
 }
 
 return {
-	widgets = tbl_5,
+	widgets = widgets,
 	create_bot_cusomization_button = UIWidgets.create_bot_cusomization_button,
-	title_button_definitions = tbl_4,
-	scenegraph_definition = tbl_2,
-	animation_definitions = tbl_6
+	title_button_definitions = title_button_definitions,
+	scenegraph_definition = scenegraph_definition,
+	animation_definitions = animation_definitions
 }

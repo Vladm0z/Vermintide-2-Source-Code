@@ -2,13 +2,13 @@
 
 CareerAbilityCorruptorGrab = class(CareerAbilityCorruptorGrab)
 
-CareerAbilityCorruptorGrab.init = function (self, arg_1_1, arg_1_2, arg_1_3)
+CareerAbilityCorruptorGrab.init = function (self, extension_init_context, unit, extension_init_data)
 	-- function 1
-	self._unit = arg_1_2
-	self._world = arg_1_1.world
+	self._unit = unit
+	self._world = extension_init_context.world
 	self._wwise_world = Managers.world:wwise_world(self._world)
 
-	local player = arg_1_3.player
+	local player = extension_init_data.player
 
 	self._player = player
 	self._is_server = player.is_server
@@ -18,42 +18,47 @@ CareerAbilityCorruptorGrab.init = function (self, arg_1_1, arg_1_2, arg_1_3)
 	self._input_manager = Managers.input
 end
 
-CareerAbilityCorruptorGrab.extensions_ready = function (self, arg_2_1, arg_2_2)
+CareerAbilityCorruptorGrab.extensions_ready = function (self, world, unit)
 	-- function 2
-	self._first_person_extension = ScriptUnit.has_extension(arg_2_2, "first_person_system")
-	self._status_extension = ScriptUnit.extension(arg_2_2, "status_system")
-	self._career_extension = ScriptUnit.extension(arg_2_2, "career_system")
-	self._buff_extension = ScriptUnit.extension(arg_2_2, "buff_system")
-	self._locomotion_extension = ScriptUnit.extension(arg_2_2, "locomotion_system")
-	self._input_extension = ScriptUnit.has_extension(arg_2_2, "input_system")
-	self._inventory_extension = ScriptUnit.has_extension(arg_2_2, "inventory_system")
-	self._ghost_mode_extension = ScriptUnit.has_extension(arg_2_2, "ghost_mode_system")
-	self._ability_input = self._career_extension:get_activated_ability_data(1).input_action
+	self._first_person_extension = ScriptUnit.has_extension(unit, "first_person_system")
+	self._status_extension = ScriptUnit.extension(unit, "status_system")
+	self._career_extension = ScriptUnit.extension(unit, "career_system")
+	self._buff_extension = ScriptUnit.extension(unit, "buff_system")
+	self._locomotion_extension = ScriptUnit.extension(unit, "locomotion_system")
+	self._input_extension = ScriptUnit.has_extension(unit, "input_system")
+	self._inventory_extension = ScriptUnit.has_extension(unit, "inventory_system")
+	self._ghost_mode_extension = ScriptUnit.has_extension(unit, "ghost_mode_system")
 
-	if not self._first_person_extension then
+	local career_extension = self._career_extension
+	local career_ability_data = career_extension:get_activated_ability_data(1)
+
+	self._ability_input = career_ability_data.input_action
+
+	if self._first_person_extension then
 		self._first_person_unit = self._first_person_extension:get_first_person_unit()
 	end
 end
 
-CareerAbilityCorruptorGrab.destroy = function (arg_3_0)
+CareerAbilityCorruptorGrab.destroy = function (self)
 	-- function 3
 	return
 end
 
 CareerAbilityCorruptorGrab._ability_available = function (self)
 	-- function 4
-	local _career_extension = self._career_extension
-	local _status_extension = self._status_extension
-	local _locomotion_extension = self._locomotion_extension
-	local is_in_ghost_mode = self._ghost_mode_extension:is_in_ghost_mode()
-	local can_use_activated_ability = _career_extension:can_use_activated_ability()
+	local career_extension = self._career_extension
+	local status_extension = self._status_extension
+	local locomotion_extension = self._locomotion_extension
+	local ghost_mode_extension = self._ghost_mode_extension
+	local in_ghost_mode = ghost_mode_extension:is_in_ghost_mode()
+	local can_use_activated_ability = career_extension:can_use_activated_ability()
 
-	if not can_use_activated_ability then
-		if not _status_extension:is_disabled() then
-			can_use_activated_ability = _locomotion_extension:is_on_ground()
+	if can_use_activated_ability then
+		if not status_extension:is_disabled() then
+			can_use_activated_ability = locomotion_extension:is_on_ground()
 
-			if not can_use_activated_ability then
-				can_use_activated_ability = not is_in_ghost_mode
+			if can_use_activated_ability then
+				can_use_activated_ability = not in_ghost_mode
 			end
 		else
 			can_use_activated_ability = false
@@ -67,7 +72,7 @@ CareerAbilityCorruptorGrab._ability_available = function (self)
 	return can_use_activated_ability
 end
 
-CareerAbilityCorruptorGrab.update = function (arg_5_0, arg_5_1, arg_5_2, arg_5_3, arg_5_4, arg_5_5)
+CareerAbilityCorruptorGrab.update = function (self, unit, input, dt, context, t)
 	-- function 5
 	return
 end
@@ -78,13 +83,13 @@ CareerAbilityCorruptorGrab.was_triggered = function (self)
 		return false
 	end
 
-	local _input_extension = self._input_extension
+	local input_extension = self._input_extension
 
-	if not _input_extension then
+	if not input_extension then
 		return false
 	end
 
-	if not _input_extension:get(self._ability_input) then
+	if input_extension:get(self._ability_input) then
 		self:_start()
 
 		return true
@@ -93,17 +98,17 @@ CareerAbilityCorruptorGrab.was_triggered = function (self)
 	return false
 end
 
-CareerAbilityCorruptorGrab.finish = function (arg_7_0, arg_7_1)
+CareerAbilityCorruptorGrab.finish = function (self, reason)
 	-- function 7
 	return
 end
 
-CareerAbilityCorruptorGrab.stop = function (arg_8_0, arg_8_1)
+CareerAbilityCorruptorGrab.stop = function (self, reason)
 	-- function 8
 	return
 end
 
-CareerAbilityCorruptorGrab._start = function (arg_9_0)
+CareerAbilityCorruptorGrab._start = function (self)
 	-- function 9
 	return
 end

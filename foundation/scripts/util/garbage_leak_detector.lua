@@ -2,7 +2,7 @@
 
 local GarbageLeakDetector = GarbageLeakDetector
 
-GarbageLeakDetector = GarbageLeakDetector or {
+GarbageLeakDetector = not not GarbageLeakDetector or not not {
 	enabled = false,
 	object_callstack_map = setmetatable({}, {
 		__mode = "k"
@@ -10,182 +10,182 @@ GarbageLeakDetector = GarbageLeakDetector or {
 }
 GarbageLeakDetector = GarbageLeakDetector
 
-GarbageLeakDetector.register_object = function (arg_1_0, arg_1_1)
+GarbageLeakDetector.register_object = function (object, object_name)
 	-- function 1
 	return
 end
 
-local var_0_1
+local debug_search
 
-local function fn(arg_2_0, arg_2_1, arg_2_2, arg_2_3)
+local function debug_search_function(func, what, path, path_n)
 	-- function 2
-	local num = 1
+	local up = 1
 
 	while true do
-		local getupvalue, var_2_2 = debug.getupvalue(arg_2_0, num)
+		local k, v = debug.getupvalue(func, up)
 
-		if getupvalue == nil then
+		if k == nil then
 			break
 		end
 
-		if getupvalue == arg_2_1 then
-			arg_2_2[arg_2_3] = string.format("> upvalue key [value %s]", tostring(var_2_2))
+		if k == what then
+			path[path_n] = string.format("> upvalue key [value %s]", tostring(v))
 
-			printf("Found leak at path: %s", table.concat(arg_2_2))
+			printf("Found leak at path: %s", table.concat(path))
 		else
-			arg_2_2[arg_2_3] = string.format("> upval name %q", tostring(getupvalue))
+			path[path_n] = string.format("> upval name %q", tostring(k))
 
-			var_0_1(getupvalue, arg_2_1, arg_2_2, arg_2_3 + 1)
+			debug_search(k, what, path, path_n + 1)
 		end
 
-		if var_2_2 == arg_2_1 then
-			arg_2_2[arg_2_3] = string.format("> upvalue %q", tostring(getupvalue))
+		if v == what then
+			path[path_n] = string.format("> upvalue %q", tostring(k))
 
-			printf("Found leak at path: %s", table.concat(arg_2_2))
+			printf("Found leak at path: %s", table.concat(path))
 		else
-			arg_2_2[arg_2_3] = string.format("> upval %q", tostring(getupvalue))
+			path[path_n] = string.format("> upval %q", tostring(k))
 
-			var_0_1(var_2_2, arg_2_1, arg_2_2, arg_2_3 + 1)
+			debug_search(v, what, path, path_n + 1)
 		end
 
-		arg_2_2[arg_2_3] = nil
-		num = num + 1
+		path[path_n] = nil
+		up = up + 1
 	end
 end
 
-local function fn_2(arg_3_0, arg_3_1, arg_3_2, arg_3_3)
+local function debug_search_table(tablet, what, path, path_n)
 	-- function 3
-	for k, v in pairs(arg_3_0) do
-		arg_3_2[arg_3_3] = string.format("> key %s", tostring(k))
+	for k, v in pairs(tablet) do
+		path[path_n] = string.format("> key %s", tostring(k))
 
-		if k == arg_3_1 then
-			printf("Found leak at path: %s", table.concat(arg_3_2))
+		if k == what then
+			printf("Found leak at path: %s", table.concat(path))
 		else
-			var_0_1(k, arg_3_1, arg_3_2, arg_3_3 + 1)
+			debug_search(k, what, path, path_n + 1)
 		end
 
-		arg_3_2[arg_3_3] = string.format("> %s", tostring(k))
+		path[path_n] = string.format("> %s", tostring(k))
 
-		if v == arg_3_1 then
-			printf("Found leak at path: %s", table.concat(arg_3_2))
+		if v == what then
+			printf("Found leak at path: %s", table.concat(path))
 		else
-			var_0_1(v, arg_3_1, arg_3_2, arg_3_3 + 1)
+			debug_search(v, what, path, path_n + 1)
 		end
 
-		local getmetatable = debug.getmetatable(arg_3_0)
+		local metatable = debug.getmetatable(tablet)
 
-		if not getmetatable then
-			arg_3_2[arg_3_3] = string.format("> metatable %s", tostring(getmetatable))
+		if metatable then
+			path[path_n] = string.format("> metatable %s", tostring(metatable))
 
-			if getmetatable == arg_3_1 then
-				printf("Found leak at path: %s", table.concat(arg_3_2))
+			if metatable == what then
+				printf("Found leak at path: %s", table.concat(path))
 			else
-				var_0_1(getmetatable, arg_3_1, arg_3_2, arg_3_3 + 1)
+				debug_search(metatable, what, path, path_n + 1)
 			end
 		end
 
-		arg_3_2[arg_3_3] = nil
+		path[path_n] = nil
 	end
 end
 
-local var_0_4
+local seen_tables
 
-function var_0_1(arg_4_0, arg_4_1, arg_4_2, arg_4_3)
+function debug_search(object, what, path, path_n)
 	-- function 4
-	if arg_4_0 == arg_4_1 then
-		printf("Found leak at path: %s", table.concat(arg_4_2))
+	if object == what then
+		printf("Found leak at path: %s", table.concat(path))
 	end
 
-	local var_4_0 = type(arg_4_0)
+	local t_type = type(object)
 
-	if var_4_0 == "function" then
-		if not var_0_4[arg_4_0] then
+	if t_type == "function" then
+		if seen_tables[object] then
 			return
 		end
 
-		var_0_4[arg_4_0] = true
-		arg_4_2[arg_4_3] = "> function"
+		seen_tables[object] = true
+		path[path_n] = "> function"
 
-		fn(arg_4_0, arg_4_1, arg_4_2, arg_4_3 + 1)
+		debug_search_function(object, what, path, path_n + 1)
 
-		arg_4_2[arg_4_3] = nil
-	elseif var_4_0 == "table" then
-		if not var_0_4[arg_4_0] then
+		path[path_n] = nil
+	elseif t_type == "table" then
+		if seen_tables[object] then
 			return
 		end
 
-		var_0_4[arg_4_0] = true
-		arg_4_2[arg_4_3] = "> table "
+		seen_tables[object] = true
+		path[path_n] = "> table "
 
-		fn_2(arg_4_0, arg_4_1, arg_4_2, arg_4_3 + 1)
+		debug_search_table(object, what, path, path_n + 1)
 
-		arg_4_2[arg_4_3] = nil
+		path[path_n] = nil
 	else
-		local var_4_1 = getmetatable(arg_4_0)
+		local metatable = getmetatable(object)
 
-		if not (not var_4_1 and var_0_4[var_4_1]) then
-			arg_4_2[arg_4_3] = string.format("> %s metatable", tostring(arg_4_0))
+		if metatable and not seen_tables[metatable] then
+			path[path_n] = string.format("> %s metatable", tostring(object))
 
-			var_0_1(var_4_1, arg_4_1, arg_4_2, arg_4_3 + 1)
+			debug_search(metatable, what, path, path_n + 1)
 
-			arg_4_2[arg_4_3] = nil
+			path[path_n] = nil
 		end
 	end
 end
 
-local function fn_3(arg_5_0, arg_5_1, arg_5_2)
+local function debug_search_stack(what, path, path_n)
 	-- function 5
-	local num = 3
+	local stack_level = 3
 
 	while true do
-		local getinfo = debug.getinfo(num)
+		local function_info = debug.getinfo(stack_level)
 
-		if not getinfo then
+		if not function_info then
 			break
 		end
 
 		local format = string.format
 		local str = "Stack function %s [%d]"
-		local name = getinfo.name
+		local name_2 = function_info.name
 
-		name = name or "UNKNOWN"
-		arg_5_1[arg_5_2] = format(str, name, num)
+		name_2 = not not name_2 or not not "UNKNOWN"
+		path[path_n] = format(str, name_2, stack_level)
 
-		local func = getinfo.func
+		local func = function_info.func
 
-		if not func then
-			var_0_1(func, arg_5_0, arg_5_1, arg_5_2 + 1)
+		if func then
+			debug_search(func, what, path, path_n + 1)
 		end
 
-		local num_2 = 1
+		local local_index = 1
 
 		while true do
-			local getlocal, var_5_8 = debug.getlocal(num, num_2)
+			local name, value = debug.getlocal(stack_level, local_index)
 
-			if not getlocal then
+			if not name then
 				break
 			end
 
-			arg_5_1[arg_5_2 + 1] = string.format("> Stack variable %s:%q [name]", tostring(getlocal), tostring(var_5_8))
+			path[path_n + 1] = string.format("> Stack variable %s:%q [name]", tostring(name), tostring(value))
 
-			var_0_1(getlocal, arg_5_0, arg_5_1, arg_5_2 + 2)
+			debug_search(name, what, path, path_n + 2)
 
-			arg_5_1[arg_5_2 + 1] = string.format("> Stack variable %s:%q [value]", tostring(getlocal), tostring(var_5_8))
+			path[path_n + 1] = string.format("> Stack variable %s:%q [value]", tostring(name), tostring(value))
 
-			var_0_1(var_5_8, arg_5_0, arg_5_1, arg_5_2 + 2)
+			debug_search(value, what, path, path_n + 2)
 
-			arg_5_1[arg_5_2 + 1] = nil
-			num_2 = num_2 + 1
+			path[path_n + 1] = nil
+			local_index = local_index + 1
 		end
 
-		num = num + 1
-		arg_5_1[arg_5_2] = nil
+		stack_level = stack_level + 1
+		path[path_n] = nil
 	end
 end
 
-local var_0_6
+local has_run
 
-GarbageLeakDetector.run_leak_detection = function (arg_6_0)
+GarbageLeakDetector.run_leak_detection = function (do_assert)
 	-- function 6
 	return
 end

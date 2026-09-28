@@ -6,22 +6,22 @@ require("scripts/entity_system/systems/ai/ai_group_templates/ai_group_templates_
 AIGroupSystem = class(AIGroupSystem, ExtensionSystemBase)
 
 local AIGroupTemplates = AIGroupTemplates
-local tbl = {
+local extensions = {
 	"AIGroupMember"
 }
 
 AIGroupSystem.invalid_group_uid = 0
 
-AIGroupSystem.init = function (self, arg_1_1, arg_1_2)
+AIGroupSystem.init = function (self, context, system_name)
 	-- function 1
-	local entity_manager = arg_1_1.entity_manager
+	local entity_manager = context.entity_manager
 
-	entity_manager:register_system(self, arg_1_2, tbl)
+	entity_manager:register_system(self, system_name, extensions)
 
 	self.entity_manager = entity_manager
-	self.is_server = arg_1_1.is_server
-	self._world = arg_1_1.world
-	self.unit_storage = arg_1_1.unit_storage
+	self.is_server = context.is_server
+	self._world = context.world
+	self.unit_storage = context.unit_storage
 	self.nav_world = Managers.state.entity:system("ai_system"):nav_world()
 	self.groups = {}
 	self.groups_to_initialize = {}
@@ -35,97 +35,97 @@ AIGroupSystem.init = function (self, arg_1_1, arg_1_2)
 	self._last_recycler_group_id = nil
 end
 
-function boxify_table_pos_array(self)
+function boxify_table_pos_array(array)
 	-- function 2
-	for i = 1, #self do
-		local var_2_0 = self[i]
+	for i = 1, #array do
+		local p = array[i]
 
-		self[i] = Vector3Box(var_2_0[1], var_2_0[2], var_2_0[3])
+		array[i] = Vector3Box(p[1], p[2], p[3])
 	end
 end
 
-function remove_duplicates(self)
+function remove_duplicates(spline_points)
 	-- function 3
-	local count = #self
-	local equal = Vector3.equal
+	local num_spline_points = #spline_points
+	local Vector3_equal = Vector3.equal
 
-	for i = count, 2, -1 do
-		local unbox = self[i]:unbox()
-		local unbox_2 = self[i - 1]:unbox()
+	for i = num_spline_points, 2, -1 do
+		local point_1 = spline_points[i]:unbox()
+		local point_2 = spline_points[i - 1]:unbox()
 
-		if not equal(unbox, unbox_2) then
-			table.remove(self, i)
+		if Vector3_equal(point_1, point_2) then
+			table.remove(spline_points, i)
 		end
 	end
 end
 
-AIGroupSystem.add_ready_splines = function (self, arg_4_1, arg_4_2)
+AIGroupSystem.add_ready_splines = function (self, waypoint_list, spline_type)
 	-- function 4
-	if not arg_4_1 then
+	if not waypoint_list then
 		return
 	end
 
-	for i = 1, #arg_4_1 do
-		local var_4_0 = arg_4_1[i]
-		local astar_points = var_4_0.astar_points
+	for i = 1, #waypoint_list do
+		local data = waypoint_list[i]
+		local spline_points = data.astar_points
 
-		if not astar_points then
-			boxify_table_pos_array(astar_points)
-			remove_duplicates(astar_points)
+		if spline_points then
+			boxify_table_pos_array(spline_points)
+			remove_duplicates(spline_points)
 
-			local var_4_2 = astar_points[1]
-			local unbox = var_4_2:unbox()
+			local start_position_boxed = spline_points[1]
+			local start_position = start_position_boxed:unbox()
 
-			if #astar_points == 2 then
-				table.insert(astar_points, 2, Vector3Box((unbox + astar_points[2]:unbox()) / 2))
+			if #spline_points == 2 then
+				table.insert(spline_points, 2, Vector3Box((start_position + spline_points[2]:unbox()) / 2))
 			end
 
-			local normalize = Vector3.normalize(astar_points[3]:unbox() - unbox)
-			local tbl = {
-				start_position = var_4_2,
-				start_direction = Vector3Box(normalize),
-				spline_points = astar_points
+			local start_direction = Vector3.normalize(spline_points[3]:unbox() - start_position)
+			local spline_data = {
+				start_position = start_position_boxed,
+				start_direction = Vector3Box(start_direction),
+				spline_points = spline_points
 			}
 
-			self:_add_spline(var_4_0.id, tbl, arg_4_2)
+			self:_add_spline(data.id, spline_data, spline_type)
 		end
 	end
 end
 
-AIGroupSystem.destroy = function (arg_5_0)
+AIGroupSystem.destroy = function (self)
 	-- function 5
 	return
 end
 
-AIGroupSystem.ai_ready = function (self, arg_6_1)
+AIGroupSystem.ai_ready = function (self, patrol_analysis)
 	-- function 6
-	self.patrol_analysis = arg_6_1
+	self.patrol_analysis = patrol_analysis
 end
 
-AIGroupSystem.on_add_extension = function (self, arg_7_1, arg_7_2, arg_7_3, arg_7_4)
+AIGroupSystem.on_add_extension = function (self, world, unit, extension_name, extension_init_data)
 	-- function 7
-	local tbl = {}
+	local extension = {}
 
-	if arg_7_4.id ~= nil then
-		self:init_extension(arg_7_2, tbl, arg_7_4)
+	if extension_init_data.id ~= nil then
+		self:init_extension(unit, extension, extension_init_data)
 	end
 
-	ScriptUnit.set_extension(arg_7_2, "ai_group_system", tbl)
+	ScriptUnit.set_extension(unit, "ai_group_system", extension)
 
-	self.unit_extension_data[arg_7_2] = tbl
+	self.unit_extension_data[unit] = extension
 
-	return tbl
+	return extension
 end
 
-AIGroupSystem.init_extension = function (self, arg_8_1, arg_8_2, arg_8_3)
+AIGroupSystem.init_extension = function (self, unit, extension, extension_init_data)
 	-- function 8
-	local id = arg_8_3.id
-	local template = arg_8_3.template
-	local var_8_2 = self.groups[id]
-	local formation = arg_8_3.formation
+	local id = extension_init_data.id
+	local template = extension_init_data.template
+	local group = self.groups[id]
+	local formation = extension_init_data.formation
 	local settings
 
-	if not formation then
+	if formation then
 		settings = formation.settings
 
 		if not settings then
@@ -135,183 +135,209 @@ AIGroupSystem.init_extension = function (self, arg_8_1, arg_8_2, arg_8_3)
 
 	settings = PatrolFormationSettings.default_settings
 
+	local formation_settings = settings
+
 	::label_8_0::
 
-	local despawn_at_end = arg_8_3.despawn_at_end
+	local despawn_at_end = extension_init_data.despawn_at_end
 
-	if var_8_2 == nil then
-		var_8_2 = {
+	if group == nil then
+		group = {
 			members_n = 0,
 			start_forward = true,
 			num_spawned_members = 0,
 			id = id,
 			members = {},
-			size = arg_8_3.size,
+			size = extension_init_data.size,
 			template = template,
-			spline_name = arg_8_3.spline_name,
+			spline_name = extension_init_data.spline_name,
 			formation = formation,
-			formation_settings = settings,
-			group_type = arg_8_3.group_type,
-			group_start_position = arg_8_3.group_start_position,
+			formation_settings = formation_settings,
+			group_type = extension_init_data.group_type,
+			group_start_position = extension_init_data.group_start_position,
 			despawn_at_end = despawn_at_end,
-			side_id = arg_8_3.side_id,
-			side = arg_8_3.side,
-			commanding_player = arg_8_3.commanding_player,
-			group_data = arg_8_3.group_data
+			side_id = extension_init_data.side_id,
+			side = extension_init_data.side,
+			commanding_player = extension_init_data.commanding_player,
+			group_data = extension_init_data.group_data
 		}
 
-		local spline_name = var_8_2.spline_name
-		local var_8_7 = self._patrol_splines[spline_name]
+		local spline_name = group.spline_name
+		local var_8_1 = self._patrol_splines[spline_name]
 
-		if not var_8_7 then
-			var_8_7 = self._roaming_splines[spline_name]
-			var_8_7 = var_8_7 or self._event_splines[spline_name]
+		if not var_8_1 then
+			-- Nothing
 		end
 
-		if not var_8_7 then
-			var_8_2.spline_points = var_8_7.spline_points
-			var_8_2.cached_splines = self._cached_splines[spline_name]
+		var_8_1 = self._roaming_splines[spline_name]
+
+		if not var_8_1 then
+			-- Nothing
 		end
 
-		fassert(var_8_2.size, "Created group without size!")
+		var_8_1 = self._event_splines[spline_name]
+
+		local spline = var_8_1
+
+		::label_8_1::
+
+		if spline then
+			local spline_points = spline.spline_points
+
+			group.spline_points = spline_points
+			group.cached_splines = self._cached_splines[spline_name]
+		end
+
+		fassert(group.size, "Created group without size!")
 		fassert(template, "Created group without template!")
 
-		self.groups[id] = var_8_2
-		self.groups_to_initialize[id] = var_8_2
+		self.groups[id] = group
+		self.groups_to_initialize[id] = group
 
 		local setup_group = AIGroupTemplates[template].setup_group
 
-		if not setup_group then
-			setup_group(self.world, self.nav_world, var_8_2, arg_8_1)
+		if setup_group then
+			setup_group(self.world, self.nav_world, group, unit)
 		end
-	elseif not arg_8_3.insert_into_group then
-		var_8_2.size = var_8_2.size + 1
+	elseif extension_init_data.insert_into_group then
+		group.size = group.size + 1
 	end
 
-	local breed = arg_8_3.breed
-	local formation_2 = var_8_2.formation
+	local breed = extension_init_data.breed
+	local formation = group.formation
 
-	if not breed and not formation_2 then
-		local group_position = arg_8_3.group_position
+	if breed and formation then
+		local group_position = extension_init_data.group_position
 
-		arg_8_2.group_row = group_position.row
-		arg_8_2.group_column = group_position.column
+		extension.group_row = group_position.row
+		extension.group_column = group_position.column
 	end
 
-	var_8_2.members[arg_8_1] = arg_8_2
-	var_8_2.members_n = var_8_2.members_n + 1
-	var_8_2.num_spawned_members = var_8_2.num_spawned_members + 1
-	arg_8_2.group = var_8_2
-	arg_8_2.template = template
-	arg_8_2.id = id
+	group.members[unit] = extension
+	group.members_n = group.members_n + 1
+	group.num_spawned_members = group.num_spawned_members + 1
+	extension.group = group
+	extension.template = template
+	extension.id = id
 
-	local var_8_12 = AIGroupTemplates[template]
+	local template_data = AIGroupTemplates[template]
+	local in_patrol = template_data.in_patrol
+	local use_patrol_perception = template_data.use_patrol_perception
 
-	arg_8_2.in_patrol = var_8_12.in_patrol, var_8_12.use_patrol_perception
-	arg_8_2.use_patrol_perception = arg_8_3.group_type == "spline_patrol"
+	extension.in_patrol = in_patrol
+	extension.use_patrol_perception = extension_init_data.group_type == "spline_patrol"
 
-	fassert(var_8_2.num_spawned_members <= var_8_2.size, "An AI group was initialized with size=%d but %d AIs was assigned to it.", var_8_2.size, var_8_2.num_spawned_members)
+	fassert(group.num_spawned_members <= group.size, "An AI group was initialized with size=%d but %d AIs was assigned to it.", group.size, group.num_spawned_members)
 end
 
-AIGroupSystem.extensions_ready = function (self, arg_9_1, arg_9_2, arg_9_3)
+AIGroupSystem.extensions_ready = function (self, world, unit, extension_name)
 	-- function 9
-	local var_9_0 = self.unit_extension_data[arg_9_2]
-	local var_9_1 = AIGroupTemplates[var_9_0.template]
+	local extension = self.unit_extension_data[unit]
+	local var_9_0 = AIGroupTemplates[extension.template]
 
-	var_9_1 = not var_9_1 and AIGroupTemplates[var_9_0.template].pre_unit_init
+	if var_9_0 then
+		-- Nothing
+	end
 
-	if not var_9_1 then
-		var_9_1(arg_9_2, var_9_0.group)
+	var_9_0 = AIGroupTemplates[extension.template].pre_unit_init
+
+	local pre_unit_init = var_9_0
+
+	::label_9_0::
+
+	if pre_unit_init then
+		pre_unit_init(unit, extension.group)
 	end
 end
 
-AIGroupSystem.on_remove_extension = function (self, arg_10_1, arg_10_2)
+AIGroupSystem.on_remove_extension = function (self, unit, extension_name)
 	-- function 10
-	self.frozen_unit_extension_data[arg_10_1] = nil
+	self.frozen_unit_extension_data[unit] = nil
 
-	self:_cleanup_extension(arg_10_1, arg_10_2)
-	ScriptUnit.remove_extension(arg_10_1, self.NAME)
+	self:_cleanup_extension(unit, extension_name)
+	ScriptUnit.remove_extension(unit, self.NAME)
 end
 
-AIGroupSystem.on_freeze_extension = function (self, arg_11_1, arg_11_2)
+AIGroupSystem.on_freeze_extension = function (self, unit, extension_name)
 	-- function 11
-	local var_11_0 = self.unit_extension_data[arg_11_1]
+	local extension = self.unit_extension_data[unit]
 
-	fassert(var_11_0, "Unit was already frozen.")
+	fassert(extension, "Unit was already frozen.")
 
-	if var_11_0 == nil then
+	if extension == nil then
 		return
 	end
 
-	self.frozen_unit_extension_data[arg_11_1] = var_11_0
+	self.frozen_unit_extension_data[unit] = extension
 
-	self:_cleanup_extension(arg_11_1, arg_11_2)
+	self:_cleanup_extension(unit, extension_name)
 end
 
-AIGroupSystem.freeze = function (self, arg_12_1, arg_12_2, arg_12_3)
+AIGroupSystem.freeze = function (self, unit, extension_name, reason)
 	-- function 12
-	local frozen_unit_extension_data = self.frozen_unit_extension_data
+	local frozen_extensions = self.frozen_unit_extension_data
 
-	if not frozen_unit_extension_data[arg_12_1] then
+	if frozen_extensions[unit] then
 		return
 	end
 
-	local var_12_1 = self.unit_extension_data[arg_12_1]
+	local extension = self.unit_extension_data[unit]
 
-	fassert(var_12_1, "Unit to freeze didn't have unfrozen extension")
-	self:_cleanup_extension(arg_12_1, arg_12_2)
+	fassert(extension, "Unit to freeze didn't have unfrozen extension")
+	self:_cleanup_extension(unit, extension_name)
 
-	self.unit_extension_data[arg_12_1] = nil
-	frozen_unit_extension_data[arg_12_1] = var_12_1
+	self.unit_extension_data[unit] = nil
+	frozen_extensions[unit] = extension
 end
 
-AIGroupSystem.unfreeze = function (self, arg_13_1, arg_13_2, arg_13_3)
+AIGroupSystem.unfreeze = function (self, unit, extension_name, data)
 	-- function 13
-	local var_13_0 = self.frozen_unit_extension_data[arg_13_1]
+	local extension = self.frozen_unit_extension_data[unit]
 
-	fassert(var_13_0, "Unit to unfreeze didn't have frozen extension")
+	fassert(extension, "Unit to unfreeze didn't have frozen extension")
 
-	self.frozen_unit_extension_data[arg_13_1] = nil
-	self.unit_extension_data[arg_13_1] = var_13_0
+	self.frozen_unit_extension_data[unit] = nil
+	self.unit_extension_data[unit] = extension
 
-	local var_13_1 = arg_13_3[8]
+	local extension_init_data = data[8]
 
-	if not var_13_1 and not var_13_1.id then
-		self:init_extension(arg_13_1, var_13_0, var_13_1)
+	if extension_init_data and extension_init_data.id then
+		self:init_extension(unit, extension, extension_init_data)
 	end
 end
 
-AIGroupSystem._cleanup_extension = function (self, arg_14_1, arg_14_2)
+AIGroupSystem._cleanup_extension = function (self, unit, extension_name)
 	-- function 14
-	local var_14_0 = self.unit_extension_data[arg_14_1]
+	local extension = self.unit_extension_data[unit]
 
-	if var_14_0 == nil then
+	if extension == nil then
 		return
 	end
 
-	self.unit_extension_data[arg_14_1] = nil
+	self.unit_extension_data[unit] = nil
 
-	local id = var_14_0.id
+	local id = extension.id
 
 	if not id then
 		return
 	end
 
-	local var_14_2 = self.groups[id]
+	local group = self.groups[id]
 
-	fassert(var_14_2 ~= nil, "Trying to remove group extension for unit %s that does not belong to a group.", arg_14_1)
+	fassert(group ~= nil, "Trying to remove group extension for unit %s that does not belong to a group.", unit)
 
-	var_14_2.members[arg_14_1] = nil
-	var_14_2.members_n = var_14_2.members_n - 1
+	group.members[unit] = nil
+	group.members_n = group.members_n - 1
 
-	if not (var_14_2.members_n ~= 0 or var_14_2.num_spawned_members ~= var_14_2.size) then
-		local _world = self._world
+	if group.members_n == 0 and group.num_spawned_members == group.size then
+		local world = self._world
 		local nav_world = self.nav_world
 
 		if self.groups_to_initialize[id] == nil then
-			local template = var_14_2.template
+			local template = group.template
+			local template_destroy = AIGroupTemplates[template].destroy
 
-			AIGroupTemplates[template].destroy(_world, nav_world, var_14_2, arg_14_1)
+			template_destroy(world, nav_world, group, unit)
 		end
 
 		self.groups[id] = nil
@@ -323,399 +349,440 @@ AIGroupSystem._cleanup_extension = function (self, arg_14_1, arg_14_2)
 		end
 	end
 
-	var_14_0.id = nil
-	var_14_0.group = nil
-	var_14_0.template = nil
-	var_14_0.in_patrol = nil
-	var_14_0.use_patrol_perception = nil
+	extension.id = nil
+	extension.group = nil
+	extension.template = nil
+	extension.in_patrol = nil
+	extension.use_patrol_perception = nil
 end
 
-local num = 100
-local num_2 = 100
-local num_3 = 100
-local str = "patrol_"
-local str_2 = "roaming_"
-local str_3 = "event_"
+local MAX_PATROL_SPLINES = 100
+local MAX_ROAMING_SPLINES = 100
+local MAX_EVENT_SPLINES = 100
+local PATROL_SPLINE_PREFIX = "patrol_"
+local ROAMING_SPLINE_PREFIX = "roaming_"
+local EVENT_SPLINE_PREFIX = "event_"
 
-AIGroupSystem.set_level = function (self, arg_15_1)
+AIGroupSystem.set_level = function (self, level)
 	-- function 15
-	self._level = arg_15_1
+	self._level = level
 	self._patrol_splines = {}
 	self._roaming_splines = {}
 	self._event_splines = {}
 
-	local _world = self._world
+	local world = self._world
 
-	for i = 1, num do
+	for i = 1, MAX_PATROL_SPLINES do
 		repeat
-			local str_4 = str .. i
-			local spline = Level.spline(arg_15_1, str_4)
+			local spline_name = PATROL_SPLINE_PREFIX .. i
+			local spline_points = Level.spline(level, spline_name)
 
-			if #spline == 0 then
+			if #spline_points == 0 then
 				break
 			end
 
-			local var_15_3 = spline[1]
-			local normalize = Vector3.normalize(spline[3] - spline[1])
-			local tbl = {
-				start_position = Vector3Box(var_15_3),
-				start_direction = Vector3Box(normalize)
+			local start_position = spline_points[1]
+			local start_direction = Vector3.normalize(spline_points[3] - spline_points[1])
+			local data = {
+				start_position = Vector3Box(start_position),
+				start_direction = Vector3Box(start_direction)
 			}
 
-			self._patrol_splines[str_4] = tbl
-			self._spline_lookup[str_4] = tbl
+			self._patrol_splines[spline_name] = data
+			self._spline_lookup[spline_name] = data
 		until true
 	end
 
-	for j = 1, num_2 do
+	for i = 1, MAX_ROAMING_SPLINES do
 		repeat
-			local str_5 = str_2 .. j
-			local spline_2 = Level.spline(arg_15_1, str_5)
+			local spline_name = ROAMING_SPLINE_PREFIX .. i
+			local spline_points = Level.spline(level, spline_name)
 
-			if #spline_2 == 0 then
+			if #spline_points == 0 then
 				break
 			end
 
-			local var_15_8 = spline_2[1]
-			local normalize_2 = Vector3.normalize(spline_2[3] - spline_2[1])
-			local tbl_2 = {
-				start_position = Vector3Box(var_15_8),
-				start_direction = Vector3Box(normalize_2)
+			local start_position = spline_points[1]
+			local start_direction = Vector3.normalize(spline_points[3] - spline_points[1])
+			local data = {
+				start_position = Vector3Box(start_position),
+				start_direction = Vector3Box(start_direction)
 			}
 
-			self._roaming_splines[str_5] = tbl_2
-			self._spline_lookup[str_5] = tbl_2
+			self._roaming_splines[spline_name] = data
+			self._spline_lookup[spline_name] = data
 		until true
 	end
 
-	for k = 1, num_3 do
+	for i = 1, MAX_EVENT_SPLINES do
 		repeat
-			local str_6 = str_3 .. k
-			local spline_3 = Level.spline(arg_15_1, str_6)
+			local spline_name = EVENT_SPLINE_PREFIX .. i
+			local spline_points = Level.spline(level, spline_name)
 
-			if #spline_3 == 0 then
+			if #spline_points == 0 then
 				break
 			end
 
-			local var_15_13 = spline_3[1]
-			local normalize_3 = Vector3.normalize(spline_3[3] - spline_3[1])
-			local tbl_3 = {
-				start_position = Vector3Box(var_15_13),
-				start_direction = Vector3Box(normalize_3)
+			local start_position = spline_points[1]
+			local start_direction = Vector3.normalize(spline_points[3] - spline_points[1])
+			local data = {
+				start_position = Vector3Box(start_position),
+				start_direction = Vector3Box(start_direction)
 			}
 
-			self._event_splines[str_6] = tbl_3
-			self._spline_lookup[str_6] = tbl_3
+			self._event_splines[spline_name] = data
+			self._spline_lookup[spline_name] = data
 		until true
 	end
 end
 
-local num_4 = 25
-local num_5 = 25
+local MAX_RANDOM_DISTANCE_MODIFIER = 25
+local MAX_DISTANCE_ROAMING_SPLINE = 25
 
-AIGroupSystem.get_best_spline = function (self, arg_16_1, arg_16_2)
+AIGroupSystem.get_best_spline = function (self, position, spline_type)
 	-- function 16
-	local var_16_0
-	local var_16_1
-	local huge = math.huge
-	local var_16_3
-	local var_16_4
+	local best_spline, best_spline_data
+	local best_distance = math.huge
+	local splines, max_distance
 
-	if arg_16_2 == "patrol" then
-		var_16_3 = self._patrol_splines
-		var_16_4 = math.huge
-	elseif arg_16_2 == "roaming" then
-		var_16_3 = self._roaming_splines
-		var_16_4 = num_5
-	elseif arg_16_2 == "event" then
-		var_16_3 = self._event_splines
-		var_16_4 = math.huge
+	if spline_type == "patrol" then
+		splines = self._patrol_splines
+		max_distance = math.huge
+	elseif spline_type == "roaming" then
+		splines = self._roaming_splines
+		max_distance = MAX_DISTANCE_ROAMING_SPLINE
+	elseif spline_type == "event" then
+		splines = self._event_splines
+		max_distance = math.huge
 	end
 
-	for k, v in pairs(var_16_3) do
+	for spline_name, spline_data in pairs(splines) do
 		repeat
-			local random = math.random(1, num_4)
-			local unbox = v.start_position:unbox()
-			local distance = Vector3.distance(arg_16_1, unbox)
+			local random_distance_modifier = math.random(1, MAX_RANDOM_DISTANCE_MODIFIER)
+			local start_position = spline_data.start_position:unbox()
+			local distance = Vector3.distance(position, start_position)
 
-			if var_16_4 < distance then
+			if max_distance < distance then
 				break
 			end
 
-			local num = distance - random
+			distance = distance - random_distance_modifier
 
-			if huge < num then
+			if best_distance < distance then
 				break
 			end
 
-			huge = num
-			var_16_0 = k
-			var_16_1 = v
+			best_distance = distance
+			best_spline = spline_name
+			best_spline_data = spline_data
 		until true
 	end
 
-	return var_16_0, var_16_1
+	return best_spline, best_spline_data
 end
 
-AIGroupSystem.spline_start_position = function (self, arg_17_1)
+AIGroupSystem.spline_start_position = function (self, spline_name)
 	-- function 17
-	return (self._spline_lookup[arg_17_1].start_position:unbox())
+	local spline = self._spline_lookup[spline_name]
+	local start_position = spline.start_position:unbox()
+
+	return start_position
 end
 
-AIGroupSystem.spline_start_direction = function (self, arg_18_1)
+AIGroupSystem.spline_start_direction = function (self, spline_name)
 	-- function 18
-	return (self._spline_lookup[arg_18_1].start_direction:unbox())
+	local spline = self._spline_lookup[spline_name]
+	local start_direction = spline.start_direction:unbox()
+
+	return start_direction
 end
 
-AIGroupSystem.spline = function (self, arg_19_1)
+AIGroupSystem.spline = function (self, spline_name)
 	-- function 19
-	return self._spline_lookup[arg_19_1]
+	return self._spline_lookup[spline_name]
 end
 
-AIGroupSystem.level_has_splines = function (self, arg_20_1)
+AIGroupSystem.level_has_splines = function (self, spline_type)
 	-- function 20
-	local var_20_0
+	local splines
 
-	if arg_20_1 == "patrol" then
-		var_20_0 = self._patrol_splines
-	elseif arg_20_1 == "roaming" then
-		var_20_0 = self._roaming_splines
-	elseif arg_20_1 == "event" then
-		var_20_0 = self._event_splines
+	if spline_type == "patrol" then
+		splines = self._patrol_splines
+	elseif spline_type == "roaming" then
+		splines = self._roaming_splines
+	elseif spline_type == "event" then
+		splines = self._event_splines
 	else
-		error("no such spline_type: " .. arg_20_1)
+		error("no such spline_type: " .. spline_type)
 	end
 
-	return table.size(var_20_0) > 0
+	local size = table.size(splines)
+	local has_splines = size > 0
+
+	return has_splines
 end
 
 AIGroupSystem.get_available_spline_type = function (self)
 	-- function 21
-	local var_21_0
+	local splines
 
-	if not self._patrol_splines then
-		local _patrol_splines = self._patrol_splines
-	elseif not self._roaming_splines then
-		local _roaming_splines = self._roaming_splines
-	elseif not self._event_splines then
-		local _event_splines = self._event_splines
+	if self._patrol_splines then
+		splines = self._patrol_splines
+	elseif self._roaming_splines then
+		splines = self._roaming_splines
+	elseif self._event_splines then
+		splines = self._event_splines
 	end
 
 	local str
 
-	if not next(self._patrol_splines) then
+	if next(self._patrol_splines) then
 		str = "patrol"
-	elseif not next(self._roaming_splines) then
-		str = "roaming"
-	else
-		str = next(self._event_splines)
-		str = not str and "event"
+
+		goto label_21_0
 	end
 
-	return str
+	if next(self._roaming_splines) then
+		str = "roaming"
+
+		goto label_21_0
+	end
+
+	str = next(self._event_splines)
+
+	if str then
+		-- Nothing
+	end
+
+	str = "event"
+
+	local spline_type = str
+
+	::label_21_0::
+
+	return spline_type
 end
 
-AIGroupSystem.hot_join_sync = function (arg_22_0, arg_22_1, arg_22_2)
+AIGroupSystem.hot_join_sync = function (self, peer_id, player)
 	-- function 22
 	return
 end
 
-local POSITION_LOOKUP = POSITION_LOOKUP
+local position_lookup = POSITION_LOOKUP
 
-AIGroupSystem.check_recycler_despawn = function (self, arg_23_1, arg_23_2, arg_23_3)
+AIGroupSystem.check_recycler_despawn = function (self, player_positions, player_zones, use_player_zones)
 	-- function 23
-	local groups_to_update = self.groups_to_update
-	local var_23_1, var_23_2 = next(groups_to_update, self._last_recycler_group_id)
+	local groups = self.groups_to_update
+	local group_id, group = next(groups, self._last_recycler_group_id)
 
-	self._last_recycler_group_id = var_23_1
+	self._last_recycler_group_id = group_id
 
-	if not var_23_1 and var_23_2.group_type ~= "roaming_patrol" or not var_23_2.patrol_in_combat then
+	if not group_id or group.group_type ~= "roaming_patrol" or group.patrol_in_combat then
 		return
 	end
 
-	local var_23_3 = var_23_2.indexed_members[1]
-	local var_23_4 = POSITION_LOOKUP[var_23_3]
+	local indexed_members = group.indexed_members
+	local unit = indexed_members[1]
+	local pos = position_lookup[unit]
 
-	if not var_23_4 then
+	if not pos then
 		return
 	end
 
-	local conflict = Managers.state.conflict
-	local navigation_group_manager = conflict.navigation_group_manager
-	local get_group_from_position = navigation_group_manager:get_group_from_position(var_23_4)
+	local conflict_director = Managers.state.conflict
+	local navigation_group_manager = conflict_director.navigation_group_manager
+	local patrol_zone = navigation_group_manager:get_group_from_position(pos)
 
-	if not get_group_from_position then
+	if not patrol_zone then
 		return
 	end
 
-	local CurrentRoamingSettings = CurrentRoamingSettings
-	local despawn_path_distance = CurrentRoamingSettings.despawn_path_distance
-	local num = CurrentRoamingSettings.despawn_distance + 8
-	local despawn_distance_z = CurrentRoamingSettings.despawn_distance_z
+	local roaming_settings = CurrentRoamingSettings
+	local path_distance_threshold = roaming_settings.despawn_path_distance
+	local wakeup_distance = roaming_settings.despawn_distance + 8
+	local despawn_distance_z = roaming_settings.despawn_distance_z
 
-	despawn_distance_z = despawn_distance_z or 8
+	if not despawn_distance_z then
+		-- Nothing
+	end
 
-	local flag = false
-	local count = #arg_23_1
-	local abs = math.abs
+	despawn_distance_z = 8
 
-	if count >= 0 then
-		for i = 1, count do
-			local num_2 = var_23_4 - arg_23_1[i]
-			local z = num_2.z
+	local wakeup_distance_z = despawn_distance_z
 
-			Vector3.set_z(num_2, 0)
+	::label_23_0::
 
-			if not (not (num > Vector3.length(num_2)) or not (despawn_distance_z > abs(z))) then
-				local var_23_17 = arg_23_2[i]
+	local seen_by_player = false
+	local num_players = #player_positions
+	local math_abs = math.abs
 
-				if not arg_23_3 and not var_23_17 then
-					local a_star_cached, var_23_19, var_23_20 = navigation_group_manager:a_star_cached(var_23_17, get_group_from_position)
+	if num_players >= 0 then
+		for j = 1, num_players do
+			local to_dir = pos - player_positions[j]
+			local h = to_dir.z
 
-					if not (not var_23_19 and not (var_23_19 < despawn_path_distance)) then
-						flag = true
+			Vector3.set_z(to_dir, 0)
+
+			local dist = Vector3.length(to_dir)
+
+			if dist < wakeup_distance and wakeup_distance_z > math_abs(h) then
+				local zone = player_zones[j]
+
+				if use_player_zones and zone then
+					local _, path_dist, cached = navigation_group_manager:a_star_cached(zone, patrol_zone)
+
+					if not path_dist or path_dist < path_distance_threshold then
+						seen_by_player = true
 
 						break
 					end
 				else
-					flag = true
+					seen_by_player = true
 
 					break
 				end
 			end
 		end
 	else
-		flag = true
+		seen_by_player = true
 	end
 
-	if not flag then
-		local indexed_members = var_23_2.indexed_members
-		local num_indexed_members = var_23_2.num_indexed_members
-		local enemy_recycler = conflict.enemy_recycler
+	if not seen_by_player then
+		local indexed_members = group.indexed_members
+		local num_indexed_members = group.num_indexed_members
+		local enemy_recycler = conflict_director.enemy_recycler
 		local BLACKBOARDS = BLACKBOARDS
 
-		for j = 1, num_indexed_members do
-			local var_23_25 = indexed_members[j]
-			local var_23_26 = BLACKBOARDS[var_23_25]
-			local var_23_27 = Vector3Box(POSITION_LOOKUP[var_23_25])
-			local var_23_28 = QuaternionBox(Unit.local_rotation(var_23_25, 0))
+		for i = 1, num_indexed_members do
+			local member_unit = indexed_members[i]
+			local blackboard = BLACKBOARDS[member_unit]
+			local boxed_pos = Vector3Box(POSITION_LOOKUP[member_unit])
+			local boxed_rot = QuaternionBox(Unit.local_rotation(member_unit, 0))
 
-			enemy_recycler:add_breed(var_23_26.breed.name, var_23_27, var_23_28)
-			Managers.state.conflict:destroy_unit(var_23_25, var_23_26, "patrol_finished")
+			enemy_recycler:add_breed(blackboard.breed.name, boxed_pos, boxed_rot)
+			Managers.state.conflict:destroy_unit(member_unit, blackboard, "patrol_finished")
 		end
 	end
 end
 
-local tbl_2 = {
+local debug_drawer_info = {
 	mode = "retained",
 	name = "AIGroupTemplates_retained"
 }
 
-AIGroupSystem.update = function (self, arg_24_1, arg_24_2)
+AIGroupSystem.update = function (self, context, t)
 	-- function 24
 	if not self.is_server then
 		return
 	end
 
-	local _world = self._world
+	local world = self._world
 	local nav_world = self.nav_world
-	local var_24_2 = AIGroupTemplates
+	local AIGroupTemplates = AIGroupTemplates
 
-	for k, v in pairs(self.groups_to_initialize) do
-		if v.num_spawned_members == v.size then
-			if v.members_n > 0 then
-				local template = v.template
-				local init = var_24_2[template].init
+	for id, group in pairs(self.groups_to_initialize) do
+		if group.num_spawned_members == group.size then
+			if group.members_n > 0 then
+				local template = group.template
+				local template_init = AIGroupTemplates[template].init
 
 				printf("Init group template: %s", template)
-				init(_world, nav_world, v, arg_24_2)
+				template_init(world, nav_world, group, t)
 
-				self.groups_to_initialize[v.id] = nil
-				self.groups_to_update[v.id] = v
+				self.groups_to_initialize[group.id] = nil
+				self.groups_to_update[group.id] = group
 			else
-				self.groups_to_initialize[v.id] = nil
+				self.groups_to_initialize[group.id] = nil
 			end
 		end
 	end
 
-	for k_2, v_2 in pairs(self.groups_to_update) do
-		var_24_2[v_2.template].update(_world, nav_world, v_2, arg_24_2, arg_24_1.dt)
+	for id, group in pairs(self.groups_to_update) do
+		local template = group.template
+		local template_update = AIGroupTemplates[template].update
+
+		template_update(world, nav_world, group, t, context.dt)
 	end
 
-	if not self.patrol_analysis and not self._computing_splines then
+	if self.patrol_analysis and self._computing_splines then
 		self.patrol_analysis:run()
 
-		for k_3, v_3 in pairs(self._computing_splines) do
+		for spline_name, spline_type in pairs(self._computing_splines) do
 			repeat
-				if not self:_spline_ready(k_3) then
+				local spline_ready = self:_spline_ready(spline_name)
+
+				if not spline_ready then
 					break
 				end
 
-				local spline = self.patrol_analysis:spline(k_3)
+				local spline = self.patrol_analysis:spline(spline_name)
 				local spline_points = spline.spline_points
-				local var_24_7 = spline_points[1]
+				local start_position_boxed = spline_points[1]
 
-				fassert(var_24_7, "missing starting spline point, for spline %s", spline.id)
+				fassert(start_position_boxed, "missing starting spline point, for spline %s", spline.id)
 
-				local unbox = var_24_7:unbox()
+				local start_position = start_position_boxed:unbox()
 
 				if #spline_points == 2 then
-					table.insert(spline_points, 2, Vector3Box((unbox + spline_points[2]:unbox()) / 2))
+					table.insert(spline_points, 2, Vector3Box((start_position + spline_points[2]:unbox()) / 2))
 				end
 
-				local normalize = Vector3.normalize(spline_points[3]:unbox() - unbox)
+				local start_direction = Vector3.normalize(spline_points[3]:unbox() - start_position)
+				local num_spline_points = #spline_points
 
-				for i6 = #spline_points, 2, -1 do
-					local unbox_2 = spline_points[i6]:unbox()
-					local unbox_3 = spline_points[i6 - 1]:unbox()
+				for i = num_spline_points, 2, -1 do
+					local point_1 = spline_points[i]:unbox()
+					local point_2 = spline_points[i - 1]:unbox()
 
-					if not Vector3.equal(unbox_2, unbox_3) then
-						table.remove(spline_points, i6)
+					if Vector3.equal(point_1, point_2) then
+						table.remove(spline_points, i)
 					end
 				end
 
-				local tbl = {
-					start_position = var_24_7,
-					start_direction = Vector3Box(normalize),
+				local spline_data = {
+					start_position = start_position_boxed,
+					start_direction = Vector3Box(start_direction),
 					spline_points = spline_points,
 					failed = spline.failed
 				}
 
-				self:_add_spline(k_3, tbl, v_3)
+				self:_add_spline(spline_name, spline_data, spline_type)
 
-				self._computing_splines[k_3] = nil
+				self._computing_splines[spline_name] = nil
 			until true
 		end
 	end
 
-	local conflict = Managers.state.conflict
+	local conflict_director = Managers.state.conflict
 
-	if not self._update_recycler then
+	if self._update_recycler then
 		self:check_recycler_despawn(self._player_positions, self._player_areas, self._use_player_areas)
 	end
 
 	self._update_recycler = false
 end
 
-AIGroupSystem.prepare_update_recycler = function (self, arg_25_1, arg_25_2, arg_25_3)
+AIGroupSystem.prepare_update_recycler = function (self, player_positions, player_areas, use_player_areas)
 	-- function 25
 	self._update_recycler = true
-	self._player_positions = arg_25_1
-	self._player_areas = arg_25_2
-	self._use_player_areas = arg_25_3
+	self._player_positions = player_positions
+	self._player_areas = player_areas
+	self._use_player_areas = use_player_areas
 end
 
-AIGroupSystem.get_ai_group = function (self, arg_26_1)
+AIGroupSystem.get_ai_group = function (self, id)
 	-- function 26
-	return self.groups[arg_26_1]
+	local groups = self.groups
+
+	return groups[id]
 end
 
-AIGroupSystem.run_func_on_all_members = function (arg_27_0, arg_27_1, arg_27_2, ...)
+AIGroupSystem.run_func_on_all_members = function (self, group, func, ...)
 	-- function 27
-	local members = arg_27_1.members
+	local members = group.members
 
-	for k, v in pairs(members) do
-		arg_27_2(k, v, ...)
+	for unit, extension in pairs(members) do
+		func(unit, extension, ...)
 	end
 end
 
@@ -726,42 +793,52 @@ AIGroupSystem.generate_group_id = function (self)
 	return self.group_uid
 end
 
-AIGroupSystem.set_allowed_layer = function (self, arg_29_1, arg_29_2)
+AIGroupSystem.set_allowed_layer = function (self, layer_name, allowed)
 	-- function 29
-	local var_29_0 = LAYER_ID_MAPPING[arg_29_1]
+	local layer_id = LAYER_ID_MAPPING[layer_name]
 
-	for k, v in pairs(self.groups_to_update) do
-		if not v.nav_data and not v.nav_data.navtag_layer_cost_table then
-			if not arg_29_2 then
-				GwNavTagLayerCostTable.allow_layer(v.nav_data.navtag_layer_cost_table, var_29_0)
+	for id, group in pairs(self.groups_to_update) do
+		if group.nav_data and group.nav_data.navtag_layer_cost_table then
+			if allowed then
+				GwNavTagLayerCostTable.allow_layer(group.nav_data.navtag_layer_cost_table, layer_id)
 			else
-				GwNavTagLayerCostTable.forbid_layer(v.nav_data.navtag_layer_cost_table, var_29_0)
+				GwNavTagLayerCostTable.forbid_layer(group.nav_data.navtag_layer_cost_table, layer_id)
 			end
 		end
 	end
 end
 
-AIGroupSystem.create_spline_from_way_points = function (self, arg_30_1, arg_30_2, arg_30_3)
+AIGroupSystem.create_spline_from_way_points = function (self, spline_name, spline_way_points, spline_type)
 	-- function 30
-	local flag
+	local str
 
-	flag = arg_30_3 ~= "roaming" or not "roaming" or "standard"
+	if spline_type == "roaming" then
+		str = "roaming"
 
-	self.patrol_analysis:compute_spline_path(arg_30_1, arg_30_2, flag)
+		goto label_30_0
+	end
+
+	str = "standard"
+
+	local navbot_kind = str
+
+	::label_30_0::
+
+	self.patrol_analysis:compute_spline_path(spline_name, spline_way_points, navbot_kind)
 
 	local _computing_splines = self._computing_splines
 
-	_computing_splines = _computing_splines or {}
+	_computing_splines = not not _computing_splines or not not {}
 	self._computing_splines = _computing_splines
-	self._computing_splines[arg_30_1] = arg_30_3
+	self._computing_splines[spline_name] = spline_type
 end
 
-AIGroupSystem.spline_ready = function (self, arg_31_1)
+AIGroupSystem.spline_ready = function (self, spline_name)
 	-- function 31
-	return self._spline_lookup[arg_31_1]
+	return self._spline_lookup[spline_name]
 end
 
-AIGroupSystem._spline_ready = function (self, arg_32_1)
+AIGroupSystem._spline_ready = function (self, spline_name)
 	-- function 32
 	local patrol_analysis = self.patrol_analysis
 
@@ -769,261 +846,269 @@ AIGroupSystem._spline_ready = function (self, arg_32_1)
 		return false
 	end
 
-	return (patrol_analysis:spline(arg_32_1))
+	local spline = patrol_analysis:spline(spline_name)
+
+	return spline
 end
 
-AIGroupSystem._add_spline = function (self, arg_33_1, arg_33_2, arg_33_3)
+AIGroupSystem._add_spline = function (self, spline_name, spline_data, spline_type)
 	-- function 33
-	self._spline_lookup[arg_33_1] = arg_33_2
+	self._spline_lookup[spline_name] = spline_data
 
-	if not GameSettingsDevelopment.pre_calculate_patrol_splines then
-		self._cached_splines[arg_33_1] = self:_calculate_splines(arg_33_1, arg_33_2)
+	if GameSettingsDevelopment.pre_calculate_patrol_splines then
+		self._cached_splines[spline_name] = self:_calculate_splines(spline_name, spline_data)
 	end
 
-	if not (arg_33_3 == "patrol" or string.find(arg_33_1, str)) then
-		self._patrol_splines[arg_33_1] = arg_33_2
+	local is_patrol_spline = spline_type == "patrol" or not not string.find(spline_name, PATROL_SPLINE_PREFIX)
+
+	if is_patrol_spline then
+		self._patrol_splines[spline_name] = spline_data
 
 		return
 	end
 
-	if not (arg_33_3 == "roaming" or string.find(arg_33_1, str_2)) then
-		self._roaming_splines[arg_33_1] = arg_33_2
+	local is_roaming_spline = spline_type == "roaming" or not not string.find(spline_name, ROAMING_SPLINE_PREFIX)
+
+	if is_roaming_spline then
+		self._roaming_splines[spline_name] = spline_data
 
 		return
 	end
 
-	if not (arg_33_3 == "event" or string.find(arg_33_1, str_3)) then
-		self._event_splines[arg_33_1] = arg_33_2
+	local is_event_spline = spline_type == "event" or not not string.find(spline_name, EVENT_SPLINE_PREFIX)
+
+	if is_event_spline then
+		self._event_splines[spline_name] = spline_data
 
 		return
 	end
 
-	error("unsupported spline type for spline: " .. arg_33_1 .. ". Spline name should start with 'patrol_', 'roaming_' or 'event_' which defines the spline type")
+	error("unsupported spline type for spline: " .. spline_name .. ". Spline name should start with 'patrol_', 'roaming_' or 'event_' which defines the spline type")
 end
 
-AIGroupSystem._calculate_splines = function (arg_34_0, arg_34_1, arg_34_2)
+AIGroupSystem._calculate_splines = function (self, spline_name, spline_data)
 	-- function 34
-	if not arg_34_2.spline_points then
+	if not spline_data.spline_points then
 		return
 	end
 
-	local tbl = {}
-	local spline_points = arg_34_2.spline_points
-	local remove_bad_boxed_spline_points = AiUtils.remove_bad_boxed_spline_points(spline_points, arg_34_1)
+	local cached_spline_data = {}
+	local source_spline_points = spline_data.spline_points
+	local spline_points = AiUtils.remove_bad_boxed_spline_points(source_spline_points, spline_name)
+	local spline_curve = SplineCurve:new(spline_points, "Hermite", "SplineMovementHermiteInterpolatedMetered", spline_name, 3)
 
-	return SplineCurve:new(remove_bad_boxed_spline_points, "Hermite", "SplineMovementHermiteInterpolatedMetered", arg_34_1, 3):splines()
+	return spline_curve:splines()
 end
 
 AIGroupSystem.draw_active_spline_paths = function (self)
 	-- function 35
-	local QuickDrawerStay = QuickDrawerStay
-	local _patrol_splines = self._patrol_splines
-	local var_35_2 = Color(255, 255, 0)
+	local drawer = QuickDrawerStay
+	local splines1 = self._patrol_splines
+	local color1 = Color(255, 255, 0)
 
-	for k, v in pairs(_patrol_splines) do
-		self:draw_spline(v.spline_points, QuickDrawerStay, var_35_2)
+	for spline_name, spline_data in pairs(splines1) do
+		self:draw_spline(spline_data.spline_points, drawer, color1)
 	end
 
-	local _roaming_splines = self._roaming_splines
-	local var_35_4 = Color(255, 255, 0)
+	local splines2 = self._roaming_splines
+	local color2 = Color(255, 255, 0)
 
-	for k_2, v_2 in pairs(_roaming_splines) do
-		self:draw_spline(v_2.spline_points, QuickDrawerStay, var_35_4)
+	for spline_name, spline_data in pairs(splines2) do
+		self:draw_spline(spline_data.spline_points, drawer, color2)
 	end
 
-	local _event_splines = self._event_splines
-	local var_35_6 = Color(255, 255, 0)
+	local splines3 = self._event_splines
+	local color3 = Color(255, 255, 0)
 
-	for k_3, v_3 in pairs(_event_splines) do
-		self:draw_spline(v_3.spline_points, QuickDrawerStay, var_35_6)
+	for spline_name, spline_data in pairs(splines3) do
+		self:draw_spline(spline_data.spline_points, drawer, color3)
 	end
 end
 
-AIGroupSystem.draw_spline = function (arg_36_0, arg_36_1, arg_36_2, arg_36_3)
+AIGroupSystem.draw_spline = function (self, spline, drawer, color)
 	-- function 36
-	local unbox = arg_36_1[1]:unbox()
-	local var_36_1 = Vector3(0, 0, 1)
+	local p1 = spline[1]:unbox()
+	local h = Vector3(0, 0, 1)
 
-	for i = 2, #arg_36_1 do
-		local var_36_2 = arg_36_1[i]
-		local unbox_2 = arg_36_1[i]:unbox()
+	for i = 2, #spline do
+		local waypoint = spline[i]
+		local p2 = spline[i]:unbox()
 
-		arg_36_2:line(unbox + var_36_1, unbox_2 + var_36_1, arg_36_3)
+		drawer:line(p1 + h, p2 + h, color)
 
-		unbox = unbox_2
+		p1 = p2
 	end
 end
 
-AIGroupSystem.create_formation_data = function (self, arg_37_1, arg_37_2, arg_37_3, arg_37_4, arg_37_5)
+AIGroupSystem.create_formation_data = function (self, position, formation, spline_name, spawn_all_at_same_position, group_data)
 	-- function 37
-	local y = PatrolFormationSettings.default_settings.offsets.ANCHOR_OFFSET.y
-	local SPLINE_SPEED = PatrolFormationSettings.default_settings.speeds.SPLINE_SPEED
-	local spline_start_direction = self:spline_start_direction(arg_37_3)
-	local clone = table.clone(arg_37_2)
-	local count = #arg_37_2
-	local num = (count - 1) * SPLINE_SPEED
-	local num_2 = 0
-	local var_37_7 = self._spline_lookup[arg_37_3]
-	local var_37_8
+	local anchor_offset_y = PatrolFormationSettings.default_settings.offsets.ANCHOR_OFFSET.y
+	local anchor_offset_x = PatrolFormationSettings.default_settings.speeds.SPLINE_SPEED
+	local start_direction = self:spline_start_direction(spline_name)
+	local formation_data = table.clone(formation)
+	local num_rows = #formation
+	local formation_length = (num_rows - 1) * anchor_offset_x
+	local group_size = 0
+	local spline = self._spline_lookup[spline_name]
+	local spline_curve
 
-	if not var_37_7.spline_points then
-		local var_37_9 = self._cached_splines[arg_37_3]
-		local spline_points = var_37_7.spline_points
-		local remove_bad_boxed_spline_points = AiUtils.remove_bad_boxed_spline_points(spline_points, arg_37_3)
+	if spline.spline_points then
+		local cached_spline = self._cached_splines[spline_name]
+		local source_spline_points = spline.spline_points
+		local spline_points = AiUtils.remove_bad_boxed_spline_points(source_spline_points, spline_name)
 
-		var_37_8 = SplineCurve:new(remove_bad_boxed_spline_points, "Hermite", "SplineMovementHermiteInterpolatedMetered", arg_37_3, 3, var_37_9)
+		spline_curve = SplineCurve:new(spline_points, "Hermite", "SplineMovementHermiteInterpolatedMetered", spline_name, 3, cached_spline)
 	else
-		local _level = self._level
-		local spline = Level.spline(_level, arg_37_3)
-		local remove_bad_spline_points = AiUtils.remove_bad_spline_points(spline, arg_37_3)
+		local level = self._level
+		local source_spline_points = Level.spline(level, spline_name)
+		local spline_points = AiUtils.remove_bad_spline_points(source_spline_points, spline_name)
 
-		var_37_8 = SplineCurve:new(remove_bad_spline_points, "Bezier", "SplineMovementHermiteInterpolatedMetered", arg_37_3, 10)
+		spline_curve = SplineCurve:new(spline_points, "Bezier", "SplineMovementHermiteInterpolatedMetered", spline_name, 10)
 	end
 
-	local get_closest_index_on_spline = NavigationUtils.get_closest_index_on_spline(var_37_8, arg_37_1)
-	local num_3 = 1
-	local num_4 = 1
+	local start_spline_index = NavigationUtils.get_closest_index_on_spline(spline_curve, position)
+	local above, below = 1, 1
 	local inside_position_from_outside_position = GwNavQueries.inside_position_from_outside_position
 	local nav_world = self.nav_world
-	local var_37_20
-	local var_37_21
-	local var_37_22
-	local var_37_23
+	local position_on_spline, direction_on_spline, flat_start_direction, direction_on_spline_normal
 
-	if not arg_37_4 then
-		local var_37_24
+	if spawn_all_at_same_position then
+		position_on_spline, direction_on_spline = self:_get_position_on_spline_by_distance(0, spline_curve, start_spline_index)
 
-		var_37_20, var_37_24 = self:_get_position_on_spline_by_distance(0, var_37_8, get_closest_index_on_spline)
-
-		if var_37_20 == nil then
-			var_37_20 = arg_37_1
-			var_37_24 = spline_start_direction
+		if position_on_spline == nil then
+			position_on_spline = position
+			direction_on_spline = start_direction
 		end
 
-		var_37_23 = Vector3(var_37_24.y, -var_37_24.x, 0)
-		var_37_22 = Vector3.flat(var_37_24)
+		direction_on_spline_normal = Vector3(direction_on_spline.y, -direction_on_spline.x, 0)
+		flat_start_direction = Vector3.flat(direction_on_spline)
 	end
 
-	local num_5 = 1
+	local current_row = 1
 
-	for i, v in ipairs(arg_37_2) do
-		table.clear(clone[i])
+	for row, columns in ipairs(formation) do
+		table.clear(formation_data[row])
 
-		if not arg_37_4 then
-			local num_6 = num - (num_5 - 1) * SPLINE_SPEED
-			local var_37_27
+		if not spawn_all_at_same_position then
+			local distance = formation_length - (current_row - 1) * anchor_offset_x
 
-			var_37_20, var_37_27 = self:_get_position_on_spline_by_distance(num_6, var_37_8, get_closest_index_on_spline)
+			position_on_spline, direction_on_spline = self:_get_position_on_spline_by_distance(distance, spline_curve, start_spline_index)
 
-			if var_37_20 == nil then
-				var_37_20 = arg_37_1
-				var_37_27 = spline_start_direction
+			if position_on_spline == nil then
+				position_on_spline = position
+				direction_on_spline = start_direction
 			end
 
-			var_37_23 = Vector3(var_37_27.y, -var_37_27.x, 0)
-			var_37_22 = Vector3.flat(var_37_27)
+			direction_on_spline_normal = Vector3(direction_on_spline.y, -direction_on_spline.x, 0)
+			flat_start_direction = Vector3.flat(direction_on_spline)
 		end
 
-		for i_2, v_2 in ipairs(v) do
-			local num_7 = var_37_20 + var_37_23 * (-((#v - 1) * (y * 2)) / 2 + y * 2 * (i_2 - 1))
+		for column, breed_name in ipairs(columns) do
+			local num_columns_in_row = #columns
+			local column_length = (num_columns_in_row - 1) * (anchor_offset_y * 2)
+			local offset = direction_on_spline_normal * (-column_length / 2 + anchor_offset_y * 2 * (column - 1))
+			local wanted_spawn_position = position_on_spline + offset
 
-			if not Breeds[v_2] then
-				local pos_on_mesh = LocomotionUtils.pos_on_mesh(nav_world, num_7, num_3, num_4)
+			if Breeds[breed_name] then
+				local spawn_pos = LocomotionUtils.pos_on_mesh(nav_world, wanted_spawn_position, above, below)
 
-				pos_on_mesh = pos_on_mesh or LocomotionUtils.pos_on_mesh(nav_world, var_37_20, num_3, num_4)
-				pos_on_mesh = pos_on_mesh or inside_position_from_outside_position(nav_world, num_7, num_3, num_4, 0.5, 0.2)
+				spawn_pos = not not spawn_pos or not not LocomotionUtils.pos_on_mesh(nav_world, position_on_spline, above, below)
+				spawn_pos = not not spawn_pos or not not inside_position_from_outside_position(nav_world, wanted_spawn_position, above, below, 0.5, 0.2)
 
-				if not pos_on_mesh then
-					clone[num_5][i_2] = {
-						breed_name = v_2,
-						start_position = Vector3Box(pos_on_mesh),
-						start_direction = Vector3Box(var_37_22)
+				if spawn_pos then
+					formation_data[current_row][column] = {
+						breed_name = breed_name,
+						start_position = Vector3Box(spawn_pos),
+						start_direction = Vector3Box(flat_start_direction)
 					}
-					num_2 = num_2 + 1
+					group_size = group_size + 1
 				else
-					if not arg_37_5 then
-						printf("Patrol formation outside navmesh. template_name: %s, spline_name: %s group_type: %s, wanted_spawn_pos: %s", arg_37_5.template, arg_37_3, arg_37_5.group_type, tostring(num_7))
+					if group_data then
+						printf("Patrol formation outside navmesh. template_name: %s, spline_name: %s group_type: %s, wanted_spawn_pos: %s", group_data.template, spline_name, group_data.group_type, tostring(wanted_spawn_position))
 					end
 
-					clone[num_5][i_2] = {
-						start_position = Vector3Box(num_7),
-						start_direction = Vector3Box(var_37_22)
+					formation_data[current_row][column] = {
+						start_position = Vector3Box(wanted_spawn_position),
+						start_direction = Vector3Box(flat_start_direction)
 					}
 				end
 			else
-				clone[num_5][i_2] = {
-					start_position = Vector3Box(num_7),
-					start_direction = Vector3Box(var_37_22)
+				formation_data[current_row][column] = {
+					start_position = Vector3Box(wanted_spawn_position),
+					start_direction = Vector3Box(flat_start_direction)
 				}
 			end
 		end
 
-		if #clone[num_5] > 0 then
-			num_5 = num_5 + 1
+		if #formation_data[current_row] > 0 then
+			current_row = current_row + 1
 		end
 	end
 
-	for i4 = num_5, count do
-		local var_37_30 = clone[i4]
+	for i = current_row, num_rows do
+		local columns = formation_data[i]
 
-		clone[i4] = nil
+		formation_data[i] = nil
 	end
 
-	clone.group_size = num_2
+	formation_data.group_size = group_size
 
-	return clone
+	return formation_data
 end
 
-AIGroupSystem._get_position_on_spline_by_distance = function (arg_38_0, arg_38_1, arg_38_2, arg_38_3)
+AIGroupSystem._get_position_on_spline_by_distance = function (self, distance, spline_curve, start_spline_index)
 	-- function 38
-	local num = 0
-	local movement = arg_38_2:movement()
+	local total_distance = 0
+	local movement = spline_curve:movement()
 
 	movement:reset_to_start()
 	movement:set_speed(2)
 
-	if not arg_38_3 then
-		movement:set_spline_index(arg_38_3, 1, 0)
+	if start_spline_index then
+		movement:set_spline_index(start_spline_index, 1, 0)
 	end
 
-	local current_position, current_spline_curve_distance = movement:current_position(), movement:current_spline_curve_distance()
-	local num_2 = 0.1
+	local start_position = movement:current_position()
+	local previous_spline_curve_distance = movement:current_spline_curve_distance()
+	local previous_position = start_position
+	local dt = 0.1
 
 	while true do
-		local temp_count, var_38_6, var_38_7 = Script.temp_count()
+		local a, b, c = Script.temp_count()
+		local status = movement:update(dt)
 
-		if movement:update(num_2) == "end" then
+		if status == "end" then
 			return nil
 		end
 
-		local current_position_2 = movement:current_position()
-		local current_spline_curve_distance_2 = movement:current_spline_curve_distance()
-		local abs = math.abs(current_spline_curve_distance_2 - current_spline_curve_distance)
+		local current_position = movement:current_position()
+		local current_spline_curve_distance = movement:current_spline_curve_distance()
+		local current_distance = math.abs(current_spline_curve_distance - previous_spline_curve_distance)
 
-		num = abs + num
+		total_distance = current_distance + total_distance
 
-		if not (arg_38_1 <= num or not (abs <= 0)) then
-			local normalize = Vector3.normalize(current_position_2 - current_position)
+		if distance <= total_distance or current_distance <= 0 then
+			local direction = Vector3.normalize(current_position - previous_position)
 
-			return current_position_2, normalize
+			return current_position, direction
 		end
 
-		Vector3.set_xyz(current_position, current_position_2.x, current_position_2.y, current_position_2.z)
+		Vector3.set_xyz(previous_position, current_position.x, current_position.y, current_position.z)
 
-		current_spline_curve_distance = current_spline_curve_distance_2
+		previous_spline_curve_distance = current_spline_curve_distance
 
-		Script.set_temp_count(temp_count, var_38_6, var_38_7)
+		Script.set_temp_count(a, b, c)
 	end
 end
 
-AIGroupSystem.register_spline_properties = function (arg_39_0, arg_39_1, arg_39_2)
+AIGroupSystem.register_spline_properties = function (self, spline_name, properties)
 	-- function 39
-	arg_39_0._spline_properties[arg_39_1] = arg_39_2
+	self._spline_properties[spline_name] = properties
 end
 
-AIGroupSystem.get_group_id = function (self, arg_40_1)
+AIGroupSystem.get_group_id = function (self, unit)
 	-- function 40
-	local var_40_0 = self.unit_extension_data[arg_40_1]
+	local extension = self.unit_extension_data[unit]
 
-	return not var_40_0 and var_40_0.id
+	return not not extension and not not extension.id
 end

@@ -1,7 +1,7 @@
 -- chunkname: @scripts/settings/equipment/weapon_templates/staff_death.lua
 
-local tbl = {}
-local tbl_2 = {
+local weapon_template = {}
+local common_default_action_settings = {
 	apply_recoil = true,
 	is_spell = true,
 	charge_value = "light_attack",
@@ -36,11 +36,11 @@ local tbl_2 = {
 		climb_function = math.easeInCubic,
 		restore_function = math.ease_out_quad
 	},
-	enter_function = function (arg_1_0, arg_1_1)
+	enter_function = function (attacker_unit, input_extension)
 		-- function 1
-		arg_1_1:clear_input_buffer()
+		input_extension:clear_input_buffer()
 
-		return arg_1_1:reset_release_input()
+		return input_extension:reset_release_input()
 	end,
 	projectile_info = Projectiles.bw_necromancy_staff,
 	impact_data = {
@@ -58,7 +58,7 @@ local tbl_2 = {
 	}
 }
 
-tbl.actions = {
+weapon_template.actions = {
 	action_one = {
 		default = table.merge({
 			anim_event = "chain_attack",
@@ -115,20 +115,20 @@ tbl.actions = {
 					0
 				}
 			},
-			fire_pos_rot = function (arg_2_0, arg_2_1, arg_2_2, arg_2_3, arg_2_4)
+			fire_pos_rot = function (action, first_person_unit, weapon_unit, owner_unit, world)
 				-- function 2
-				local node = Unit.node(arg_2_1, "j_leftweaponattach")
-				local world_position = Unit.world_position(arg_2_1, node)
-				local local_position = Unit.local_position(arg_2_1, 0)
-				local physics_world = World.physics_world(arg_2_4)
-				local forward = Quaternion.forward(Unit.local_rotation(arg_2_1, 0))
-				local var_2_5 = Managers.state.side.side_by_unit[arg_2_3]
-				local look_at_enemy_or_static_position = WeaponHelper:look_at_enemy_or_static_position(physics_world, local_position, forward, var_2_5, 0.15, 100)
-				local look = Quaternion.look(look_at_enemy_or_static_position - world_position, Vector3.up())
+				local node = Unit.node(first_person_unit, "j_leftweaponattach")
+				local from_pos = Unit.world_position(first_person_unit, node)
+				local ray_pos = Unit.local_position(first_person_unit, 0)
+				local physics_world = World.physics_world(world)
+				local dir = Quaternion.forward(Unit.local_rotation(first_person_unit, 0))
+				local side = Managers.state.side.side_by_unit[owner_unit]
+				local target_pos = WeaponHelper:look_at_enemy_or_static_position(physics_world, ray_pos, dir, side, 0.15, 100)
+				local target_rot = Quaternion.look(target_pos - from_pos, Vector3.up())
 
-				return world_position, look
+				return from_pos, target_rot
 			end
-		}, tbl_2),
+		}, common_default_action_settings),
 		default_02 = table.merge({
 			anim_event = "chain_attack_02",
 			weapon_action_hand = "right",
@@ -184,19 +184,19 @@ tbl.actions = {
 					0
 				}
 			},
-			fire_pos_rot = function (arg_3_0, arg_3_1, arg_3_2, arg_3_3, arg_3_4)
+			fire_pos_rot = function (action, first_person_unit, weapon_unit, owner_unit, world)
 				-- function 3
-				local physics_world = World.physics_world(arg_3_4)
-				local world_position = Unit.world_position(arg_3_2, 0)
-				local local_position = Unit.local_position(arg_3_1, 0)
-				local forward = Quaternion.forward(Unit.local_rotation(arg_3_1, 0))
-				local var_3_4 = Managers.state.side.side_by_unit[arg_3_3]
-				local look_at_enemy_or_static_position = WeaponHelper:look_at_enemy_or_static_position(physics_world, local_position, forward, var_3_4, 0.15, 100)
-				local look = Quaternion.look(look_at_enemy_or_static_position - world_position, Vector3.up())
+				local physics_world = World.physics_world(world)
+				local from_pos = Unit.world_position(weapon_unit, 0)
+				local ray_pos = Unit.local_position(first_person_unit, 0)
+				local dir = Quaternion.forward(Unit.local_rotation(first_person_unit, 0))
+				local side = Managers.state.side.side_by_unit[owner_unit]
+				local target_pos = WeaponHelper:look_at_enemy_or_static_position(physics_world, ray_pos, dir, side, 0.15, 100)
+				local target_rot = Quaternion.look(target_pos - from_pos, Vector3.up())
 
-				return world_position, look
+				return from_pos, target_rot
 			end
-		}, tbl_2),
+		}, common_default_action_settings),
 		soul_rip = {
 			lethal_fx_name = "fx/wpnfx_staff_death/rip_soul",
 			anim_end_event = "soul_rip_exit",
@@ -248,11 +248,11 @@ tbl.actions = {
 					buff_name = "planted_fast_decrease_movement"
 				}
 			},
-			enter_function = function (arg_4_0, arg_4_1)
+			enter_function = function (attacker_unit, input_extension)
 				-- function 4
-				arg_4_1:clear_input_buffer()
+				input_extension:clear_input_buffer()
 
-				return arg_4_1:reset_release_input()
+				return input_extension:reset_release_input()
 			end,
 			damage_steps = {
 				{
@@ -276,12 +276,12 @@ tbl.actions = {
 				action_name = "action_one",
 				sub_action_name = "soul_rip_cooldown"
 			},
-			chain_condition_func = function (arg_5_0, arg_5_1, arg_5_2, arg_5_3)
+			chain_condition_func = function (player_unit, input_extension, ammo_extension, weapon_extension)
 				-- function 5
-				if not arg_5_3 then
-					local get_current_action = arg_5_3:get_current_action()
+				if weapon_extension then
+					local action = weapon_extension:get_current_action()
 
-					return not get_current_action and ALIVE[get_current_action.target]
+					return not not action and not not ALIVE[action.target]
 				end
 
 				return false
@@ -320,11 +320,11 @@ tbl.actions = {
 					input = "weapon_reload"
 				}
 			},
-			enter_function = function (arg_6_0, arg_6_1)
+			enter_function = function (attacker_unit, input_extension)
 				-- function 6
-				arg_6_1:clear_input_buffer()
+				input_extension:clear_input_buffer()
 
-				return arg_6_1:reset_release_input()
+				return input_extension:reset_release_input()
 			end
 		}
 	},
@@ -350,9 +350,9 @@ tbl.actions = {
 			uninterruptible = true,
 			anim_event = "soul_rip_start",
 			allow_hold_toggle = true,
-			anim_end_event_condition_func = function (arg_7_0, arg_7_1)
+			anim_end_event_condition_func = function (unit, end_reason)
 				-- function 7
-				return arg_7_1 ~= "new_interupting_action"
+				return end_reason ~= "new_interupting_action"
 			end,
 			total_time = math.huge,
 			buff_data = {
@@ -434,9 +434,9 @@ tbl.actions = {
 			uninterruptible = true,
 			anim_event = "cooldown_start",
 			charge_sound_name = "player_combat_weapon_staff_cooldown",
-			anim_end_event_condition_func = function (arg_9_0, arg_9_1)
+			anim_end_event_condition_func = function (unit, end_reason)
 				-- function 9
-				return arg_9_1 ~= "new_interupting_action"
+				return end_reason ~= "new_interupting_action"
 			end,
 			total_time = math.huge,
 			buff_data = {
@@ -447,10 +447,10 @@ tbl.actions = {
 					end_time = math.huge
 				}
 			},
-			enter_function = function (arg_10_0, arg_10_1)
+			enter_function = function (attacker_unit, input_extension)
 				-- function 10
-				arg_10_1:reset_release_input()
-				arg_10_1:clear_input_buffer()
+				input_extension:reset_release_input()
+				input_extension:clear_input_buffer()
 			end,
 			allowed_chain_actions = {
 				{
@@ -460,28 +460,32 @@ tbl.actions = {
 					input = "action_wield"
 				}
 			},
-			condition_func = function (arg_11_0, arg_11_1)
+			condition_func = function (action_user, input_extension)
 				-- function 11
-				return ScriptUnit.extension(arg_11_0, "overcharge_system"):get_overcharge_value() ~= 0
+				local overcharge_extension = ScriptUnit.extension(action_user, "overcharge_system")
+
+				return overcharge_extension:get_overcharge_value() ~= 0
 			end,
-			chain_condition_func = function (arg_12_0, arg_12_1)
+			chain_condition_func = function (action_user, input_extension)
 				-- function 12
-				return ScriptUnit.extension(arg_12_0, "overcharge_system"):get_overcharge_value() ~= 0
+				local overcharge_extension = ScriptUnit.extension(action_user, "overcharge_system")
+
+				return overcharge_extension:get_overcharge_value() ~= 0
 			end
 		}
 	},
 	action_inspect = ActionTemplates.action_inspect,
 	action_wield = ActionTemplates.wield
 }
-tbl.default_spread_template = "spear"
-tbl.overcharge_data = {
+weapon_template.default_spread_template = "spear"
+weapon_template.overcharge_data = {
 	explosion_template = "overcharge_explosion_brw",
 	overcharge_threshold = 10,
 	hit_overcharge_threshold_sound = "ui_special_attack_ready",
 	time_until_overcharge_decreases = 0.5,
 	overcharge_value_decrease_rate = 1
 }
-tbl.attack_meta_data = {
+weapon_template.attack_meta_data = {
 	max_range = 50,
 	charged_attack_action_name = "shoot_charged",
 	can_charge_shot = true,
@@ -510,7 +514,7 @@ tbl.attack_meta_data = {
 	},
 	effective_against = bit.bor(BreedCategory.Infantry, BreedCategory.Berserker, BreedCategory.Special, BreedCategory.Armored)
 }
-tbl.aim_assist_settings = {
+weapon_template.aim_assist_settings = {
 	max_range = 50,
 	no_aim_input_multiplier = 0,
 	always_auto_aim = true,
@@ -523,18 +527,18 @@ tbl.aim_assist_settings = {
 		skaven_slave = 1
 	}
 }
-tbl.right_hand_unit = "units/weapons/player/wpn_brw_skullstaff/wpn_brw_skullstaff"
-tbl.right_hand_attachment_node_linking = AttachmentNodeLinking.spear_staff
-tbl.left_hand_unit = "units/weapons/player/wpn_invisible_weapon"
-tbl.left_hand_attachment_node_linking = AttachmentNodeLinking.necro_skull
-tbl.display_unit = "units/weapons/weapon_display/display_staff"
-tbl.wield_anim = "to_necro_staff"
-tbl.state_machine = "units/beings/player/first_person_base/state_machines/ranged/necro_staff"
-tbl.crosshair_style = "arrows"
-tbl.buff_type = "RANGED"
-tbl.weapon_type = "FIRE_STAFF"
-tbl.destroy_indexed_projectiles = true
-tbl.buffs = {
+weapon_template.right_hand_unit = "units/weapons/player/wpn_brw_skullstaff/wpn_brw_skullstaff"
+weapon_template.right_hand_attachment_node_linking = AttachmentNodeLinking.spear_staff
+weapon_template.left_hand_unit = "units/weapons/player/wpn_invisible_weapon"
+weapon_template.left_hand_attachment_node_linking = AttachmentNodeLinking.necro_skull
+weapon_template.display_unit = "units/weapons/weapon_display/display_staff"
+weapon_template.wield_anim = "to_necro_staff"
+weapon_template.state_machine = "units/beings/player/first_person_base/state_machines/ranged/necro_staff"
+weapon_template.crosshair_style = "arrows"
+weapon_template.buff_type = "RANGED"
+weapon_template.weapon_type = "FIRE_STAFF"
+weapon_template.destroy_indexed_projectiles = true
+weapon_template.buffs = {
 	change_dodge_distance = {
 		external_optional_multiplier = 1
 	},
@@ -542,7 +546,7 @@ tbl.buffs = {
 		external_optional_multiplier = 1
 	}
 }
-tbl.weapon_diagram = {
+weapon_template.weapon_diagram = {
 	light_attack = {
 		[DamageTypes.ARMOR_PIERCING] = 2,
 		[DamageTypes.CLEAVE] = 3,
@@ -558,12 +562,12 @@ tbl.weapon_diagram = {
 		[DamageTypes.DAMAGE] = 7
 	}
 }
-tbl.tooltip_keywords = {
+weapon_template.tooltip_keywords = {
 	"weapon_keyword_sniper",
 	"weapon_keyword_crowd_control",
 	"weapon_keyword_damage_over_time"
 }
-tbl.tooltip_compare = {
+weapon_template.tooltip_compare = {
 	light = {
 		action_name = "action_one",
 		sub_action_name = "default"
@@ -573,7 +577,7 @@ tbl.tooltip_compare = {
 		sub_action_name = "shoot_charged"
 	}
 }
-tbl.tooltip_detail = {
+weapon_template.tooltip_detail = {
 	light = {
 		action_name = "action_one",
 		sub_action_name = "default"
@@ -583,14 +587,14 @@ tbl.tooltip_detail = {
 		sub_action_name = "shoot_charged"
 	}
 }
-tbl.wwise_dep_right_hand = {
+weapon_template.wwise_dep_right_hand = {
 	"wwise/staff",
 	"wwise/flamethrower"
 }
 
-local clone = table.clone(tbl)
+local staff_death_vs = table.clone(weapon_template)
 
-clone.actions.action_one.soul_rip.damage_steps = {
+staff_death_vs.actions.action_one.soul_rip.damage_steps = {
 	{
 		repeat_count = 4,
 		damage_profile = "staff_suck_damage_vs",
@@ -611,6 +615,6 @@ clone.actions.action_one.soul_rip.damage_steps = {
 }
 
 return {
-	staff_death = table.clone(tbl),
-	staff_death_vs = table.clone(clone)
+	staff_death = table.clone(weapon_template),
+	staff_death_vs = table.clone(staff_death_vs)
 }

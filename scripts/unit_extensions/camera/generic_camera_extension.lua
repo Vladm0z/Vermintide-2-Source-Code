@@ -2,10 +2,10 @@
 
 GenericCameraExtension = class(GenericCameraExtension)
 
-GenericCameraExtension.init = function (self, arg_1_1, arg_1_2, arg_1_3)
+GenericCameraExtension.init = function (self, extension_init_context, unit, extension_init_data)
 	-- function 1
-	self.unit = arg_1_2
-	self.player = arg_1_3.player
+	self.unit = unit
+	self.player = extension_init_data.player
 	self.viewport_name = self.player.viewport_name
 	self.idle_position = Vector3Box(0, 0, 0)
 	self.idle_rotation = QuaternionBox(Quaternion.identity())
@@ -13,53 +13,53 @@ GenericCameraExtension.init = function (self, arg_1_1, arg_1_2, arg_1_3)
 	self.external_state_change_params = nil
 end
 
-GenericCameraExtension.extensions_ready = function (arg_2_0)
+GenericCameraExtension.extensions_ready = function (self)
 	-- function 2
 	return
 end
 
-GenericCameraExtension.update = function (self, arg_3_1, arg_3_2, arg_3_3, arg_3_4, arg_3_5)
+GenericCameraExtension.update = function (self, unit, input, dt, context, t)
 	-- function 3
-	if not (not self._delayed_state_change and not (arg_3_5 > self._delayed_state_change_t)) then
+	if self._delayed_state_change and t > self._delayed_state_change_t then
 		self:set_external_state_change(self._delayed_state_change, self._delayed_state_change_params)
 	end
 
 	local override_follow_unit = self.override_follow_unit
 
-	if not (not override_follow_unit and Unit.alive(override_follow_unit)) then
+	if override_follow_unit and not Unit.alive(override_follow_unit) then
 		self:set_follow_unit(nil, nil)
 	end
 end
 
-GenericCameraExtension.set_external_state_change = function (self, arg_4_1, arg_4_2)
+GenericCameraExtension.set_external_state_change = function (self, state, params)
 	-- function 4
-	self.external_state_change = arg_4_1
-	self.external_state_change_params = arg_4_2
+	self.external_state_change = state
+	self.external_state_change_params = params
 	self._delayed_state_change = nil
 	self._delayed_state_change_t = nil
 	self._delayed_state_change_params = nil
 end
 
-GenericCameraExtension.set_delayed_external_state_change = function (self, arg_5_1, arg_5_2, arg_5_3)
+GenericCameraExtension.set_delayed_external_state_change = function (self, state, params, t)
 	-- function 5
-	self._delayed_state_change = arg_5_1
-	self._delayed_state_change_t = arg_5_3
-	self._delayed_state_change_params = arg_5_2
+	self._delayed_state_change = state
+	self._delayed_state_change_t = t
+	self._delayed_state_change_params = params
 end
 
-GenericCameraExtension.set_idle_position = function (self, arg_6_1)
+GenericCameraExtension.set_idle_position = function (self, position)
 	-- function 6
 	local viewport_name = self.viewport_name
 
-	assert(Vector3.is_valid(arg_6_1), "Trying to set invalid camera position")
-	self.idle_position:store(arg_6_1)
+	assert(Vector3.is_valid(position), "Trying to set invalid camera position")
+	self.idle_position:store(position)
 end
 
-GenericCameraExtension.set_idle_rotation = function (self, arg_7_1)
+GenericCameraExtension.set_idle_rotation = function (self, rotation)
 	-- function 7
 	local viewport_name = self.viewport_name
 
-	self.idle_rotation:store(arg_7_1)
+	self.idle_rotation:store(rotation)
 end
 
 GenericCameraExtension.get_idle_position = function (self)
@@ -72,14 +72,14 @@ GenericCameraExtension.get_idle_rotation = function (self)
 	return self.idle_rotation:unbox()
 end
 
-GenericCameraExtension.set_follow_unit = function (self, arg_10_1, arg_10_2)
+GenericCameraExtension.set_follow_unit = function (self, follow_unit, follow_node)
 	-- function 10
-	self.override_follow_unit = arg_10_1
+	self.override_follow_unit = follow_unit
 
 	local node
 
-	if not arg_10_2 then
-		node = Unit.node(arg_10_1, arg_10_2)
+	if follow_node then
+		node = Unit.node(follow_unit, follow_node)
 
 		if not node then
 			-- Nothing
@@ -97,24 +97,25 @@ GenericCameraExtension.get_follow_data = function (self)
 	-- function 11
 	local player = self.player
 	local player_unit = player.player_unit
-	local var_11_2
-	local var_11_3
+	local first_person_unit, node
 
-	if not player.respawning then
+	if player.respawning then
 		return
 	end
 
-	if not self.override_follow_unit then
+	if self.override_follow_unit then
 		return self.override_follow_unit, self.override_follow_node
-	elseif not player_unit and not ScriptUnit.has_extension(player_unit, "first_person_system") then
-		var_11_2 = ScriptUnit.extension(player_unit, "first_person_system"):get_first_person_unit()
-		var_11_3 = Unit.node(var_11_2, "camera_node")
+	elseif player_unit and ScriptUnit.has_extension(player_unit, "first_person_system") then
+		local first_person_extension = ScriptUnit.extension(player_unit, "first_person_system")
+
+		first_person_unit = first_person_extension:get_first_person_unit()
+		node = Unit.node(first_person_unit, "camera_node")
 	end
 
-	return var_11_2, var_11_3
+	return first_person_unit, node
 end
 
-GenericCameraExtension.destroy = function (arg_12_0)
+GenericCameraExtension.destroy = function (self)
 	-- function 12
 	return
 end

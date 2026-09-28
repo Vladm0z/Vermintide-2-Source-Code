@@ -1,7 +1,7 @@
 -- chunkname: @scripts/managers/backend/statistics_definitions_bless.lua
 
 local player = StatisticsDefinitions.player
-local tbl = {
+local database_names = {
 	"bless_heal_allies",
 	"bless_fast_shield",
 	"bless_book_run",
@@ -22,12 +22,12 @@ local tbl = {
 	"bless_protected_killing"
 }
 
-for i = 1, #tbl do
-	local var_0_2 = tbl[i]
+for i = 1, #database_names do
+	local name = database_names[i]
 
-	player[var_0_2] = {
+	player[name] = {
 		value = 0,
 		source = "player_data",
-		database_name = var_0_2
+		database_name = name
 	}
 end

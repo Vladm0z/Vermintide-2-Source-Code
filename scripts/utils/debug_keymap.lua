@@ -5,309 +5,306 @@ require("scripts/utils/input_helper")
 DebugKeymap = {}
 DebugInputFilters = {}
 
-local flag
-
-flag = BUILD == "dev" or BUILD == "debug"
-
-local str = "keyboard"
-local tbl = {
+local valid_debug_build = BUILD == "dev" or BUILD == "debug"
+local keyboard_device = "keyboard"
+local keyboard_keymaps = {
 	f1 = {
-		str,
+		keyboard_device,
 		"f1",
 		"pressed"
 	},
 	f2 = {
-		str,
+		keyboard_device,
 		"f2",
 		"pressed"
 	},
 	f3 = {
-		str,
+		keyboard_device,
 		"f3",
 		"pressed"
 	},
 	f4 = {
-		str,
+		keyboard_device,
 		"f4",
 		"pressed"
 	},
 	f5 = {
-		str,
+		keyboard_device,
 		"f5",
 		"pressed"
 	},
 	f6 = {
-		str,
+		keyboard_device,
 		"f6",
 		"pressed"
 	},
 	f7 = {
-		str,
+		keyboard_device,
 		"f7",
 		"pressed"
 	},
 	f8 = {
-		str,
+		keyboard_device,
 		"f8",
 		"pressed"
 	},
 	f9 = {
-		str,
+		keyboard_device,
 		"f9",
 		"pressed"
 	},
 	f10 = {
-		str,
+		keyboard_device,
 		"f10",
 		"pressed"
 	},
 	f11 = {
-		str,
+		keyboard_device,
 		"f11",
 		"pressed"
 	},
 	f12 = {
-		str,
+		keyboard_device,
 		"f12",
 		"pressed"
 	},
 	["page up"] = {
-		str,
+		keyboard_device,
 		"page up",
 		"pressed"
 	},
 	["page down"] = {
-		str,
+		keyboard_device,
 		"page down",
 		"pressed"
 	},
 	home = {
-		str,
+		keyboard_device,
 		"home",
 		"pressed"
 	},
 	["end"] = {
-		str,
+		keyboard_device,
 		"end",
 		"pressed"
 	},
 	["left ctrl"] = {
-		str,
+		keyboard_device,
 		"left ctrl",
 		"held"
 	},
 	["left shift"] = {
-		str,
+		keyboard_device,
 		"left shift",
 		"held"
 	},
 	["right ctrl"] = {
-		str,
+		keyboard_device,
 		"right ctrl",
 		"held"
 	},
 	["left alt"] = {
-		str,
+		keyboard_device,
 		"left alt",
 		"held"
 	},
 	right_key = {
-		str,
+		keyboard_device,
 		"right",
 		"pressed"
 	},
 	left_key = {
-		str,
+		keyboard_device,
 		"left",
 		"pressed"
 	},
 	up_key = {
-		str,
+		keyboard_device,
 		"up",
 		"held"
 	},
 	down_key = {
-		str,
+		keyboard_device,
 		"down",
 		"held"
 	},
 	enter_key = {
-		str,
+		keyboard_device,
 		"enter",
 		"pressed"
 	},
 	backspace = {
-		str,
+		keyboard_device,
 		"backspace",
 		"pressed"
 	},
 	numpad_plus = {
-		str,
+		keyboard_device,
 		"numpad +",
 		"pressed"
 	},
 	numpad_minus = {
-		str,
+		keyboard_device,
 		"num -",
 		"pressed"
 	},
 	a = {
-		str,
+		keyboard_device,
 		"a",
 		"pressed"
 	},
 	b = {
-		str,
+		keyboard_device,
 		"b",
 		"pressed"
 	},
 	c = {
-		str,
+		keyboard_device,
 		"c",
 		"pressed"
 	},
 	d = {
-		str,
+		keyboard_device,
 		"d",
 		"pressed"
 	},
 	e = {
-		str,
+		keyboard_device,
 		"e",
 		"pressed"
 	},
 	f = {
-		str,
+		keyboard_device,
 		"f",
 		"pressed"
 	},
 	g = {
-		str,
+		keyboard_device,
 		"g",
 		"pressed"
 	},
 	h = {
-		str,
+		keyboard_device,
 		"h",
 		"pressed"
 	},
 	h_held = {
-		str,
+		keyboard_device,
 		"h",
 		"held"
 	},
 	i = {
-		str,
+		keyboard_device,
 		"i",
 		"pressed"
 	},
 	j = {
-		str,
+		keyboard_device,
 		"j",
 		"pressed"
 	},
 	k = {
-		str,
+		keyboard_device,
 		"k",
 		"pressed"
 	},
 	l = {
-		str,
+		keyboard_device,
 		"l",
 		"pressed"
 	},
 	m = {
-		str,
+		keyboard_device,
 		"m",
 		"pressed"
 	},
 	n = {
-		str,
+		keyboard_device,
 		"n",
 		"pressed"
 	},
 	o = {
-		str,
+		keyboard_device,
 		"o",
 		"pressed"
 	},
 	p = {
-		str,
+		keyboard_device,
 		"p",
 		"pressed"
 	},
 	q = {
-		str,
+		keyboard_device,
 		"q",
 		"pressed"
 	},
 	r = {
-		str,
+		keyboard_device,
 		"r",
 		"pressed"
 	},
 	s = {
-		str,
+		keyboard_device,
 		"s",
 		"pressed"
 	},
 	t = {
-		str,
+		keyboard_device,
 		"t",
 		"pressed"
 	},
 	u = {
-		str,
+		keyboard_device,
 		"u",
 		"pressed"
 	},
 	v = {
-		str,
+		keyboard_device,
 		"v",
 		"pressed"
 	},
 	w = {
-		str,
+		keyboard_device,
 		"w",
 		"pressed"
 	},
 	x = {
-		str,
+		keyboard_device,
 		"x",
 		"pressed"
 	},
 	y = {
-		str,
+		keyboard_device,
 		"y",
 		"pressed"
 	},
 	z = {
-		str,
+		keyboard_device,
 		"z",
 		"pressed"
 	},
 	esc = {
-		str,
+		keyboard_device,
 		"esc",
 		"pressed"
 	},
 	activate_chat_input = {
-		str,
+		keyboard_device,
 		"y",
 		"pressed"
 	},
 	console_open_key = {
-		str,
+		keyboard_device,
 		"end",
 		"pressed"
 	},
 	console_favorite_key = {
-		str,
+		keyboard_device,
 		"f",
 		"pressed"
 	},
 	console_search_key = {
-		str,
+		keyboard_device,
 		"backspace",
 		"pressed"
 	},
@@ -340,13 +337,13 @@ local tbl = {
 local DebugKeymap = DebugKeymap
 local keymaps_key_approved = InputUtils.keymaps_key_approved("win32")
 
-keymaps_key_approved = not keymaps_key_approved and tbl
+keymaps_key_approved = not not keymaps_key_approved and not not keyboard_keymaps
 DebugKeymap.win32 = keymaps_key_approved
 
 local DebugInputFilters = DebugInputFilters
 local keymaps_key_approved_2 = InputUtils.keymaps_key_approved("win32")
 
-keymaps_key_approved_2 = not keymaps_key_approved_2 and {
+keymaps_key_approved_2 = not not keymaps_key_approved_2 and not not {
 	console_mod_key = {
 		filter_type = "or",
 		input_mappings = {
@@ -360,7 +357,7 @@ DebugInputFilters.win32 = keymaps_key_approved_2
 local DebugKeymap_2 = DebugKeymap
 local keymaps_key_approved_3 = InputUtils.keymaps_key_approved("xb1")
 
-keymaps_key_approved_3 = not keymaps_key_approved_3 and {
+keymaps_key_approved_3 = not not keymaps_key_approved_3 and not not {
 	left_thumb = {
 		"gamepad",
 		"left_thumb",
@@ -479,7 +476,7 @@ DebugKeymap_2.xb1 = keymaps_key_approved_3
 local DebugInputFilters_2 = DebugInputFilters
 local keymaps_key_approved_4 = InputUtils.keymaps_key_approved("xb1")
 
-keymaps_key_approved_4 = not keymaps_key_approved_4 and {
+keymaps_key_approved_4 = not not keymaps_key_approved_4 and not not {
 	n_switch = {
 		filter_type = "and",
 		input_mappings = {
@@ -582,7 +579,7 @@ DebugInputFilters_2.xb1 = keymaps_key_approved_4
 local DebugKeymap_3 = DebugKeymap
 local keymaps_key_approved_5 = InputUtils.keymaps_key_approved("ps4")
 
-keymaps_key_approved_5 = not keymaps_key_approved_5 and {
+keymaps_key_approved_5 = not not keymaps_key_approved_5 and not not {
 	l3 = {
 		"gamepad",
 		"l3",
@@ -699,7 +696,7 @@ DebugKeymap_3.ps4 = keymaps_key_approved_5
 local DebugKeymap_4 = DebugKeymap
 local keymaps_key_approved_6 = InputUtils.keymaps_key_approved("ps_pad")
 
-keymaps_key_approved_6 = not keymaps_key_approved_6 and {
+keymaps_key_approved_6 = not not keymaps_key_approved_6 and not not {
 	l3 = {
 		"ps_pad",
 		"l3",
@@ -813,7 +810,7 @@ keymaps_key_approved_6 = not keymaps_key_approved_6 and {
 }
 DebugKeymap_4.ps_pad = keymaps_key_approved_6
 
-local tbl_2 = {
+local DebugInputFilters_ps4 = {
 	n_switch = {
 		filter_type = "and",
 		input_mappings = {
@@ -919,11 +916,11 @@ local tbl_2 = {
 local DebugInputFilters_3 = DebugInputFilters
 local keymaps_key_approved_7 = InputUtils.keymaps_key_approved("ps4")
 
-keymaps_key_approved_7 = not keymaps_key_approved_7 and tbl_2
+keymaps_key_approved_7 = not not keymaps_key_approved_7 and not not DebugInputFilters_ps4
 DebugInputFilters_3.ps4 = keymaps_key_approved_7
 
 local DebugInputFilters_4 = DebugInputFilters
 local keymaps_key_approved_8 = InputUtils.keymaps_key_approved("ps_pad")
 
-keymaps_key_approved_8 = not keymaps_key_approved_8 and tbl_2
+keymaps_key_approved_8 = not not keymaps_key_approved_8 and not not DebugInputFilters_ps4
 DebugInputFilters_4.ps_pad = keymaps_key_approved_8

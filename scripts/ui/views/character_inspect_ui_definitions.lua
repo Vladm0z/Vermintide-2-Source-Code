@@ -1,19 +1,18 @@
 -- chunkname: @scripts/ui/views/character_inspect_ui_definitions.lua
 
-local num = 1920
-local num_2 = 1080
-local tbl = {
+local SIZE_X, SIZE_Y = 1920, 1080
+local ITEM_SIZE = {
 	124,
 	124
 }
-local num_3 = 30
-local num_4 = 7
-local num_5 = 50
-local tbl_2 = {
-	tbl[1] * num_4 + (num_4 - 1) * num_3 + num_5 * 2,
+local ITEM_SPACING = 30
+local NUM_ITEM_SLOTS = 7
+local WINDOW_WIDTH_SPACING = 50
+local WINDOW_SIZE = {
+	ITEM_SIZE[1] * NUM_ITEM_SLOTS + (NUM_ITEM_SLOTS - 1) * ITEM_SPACING + WINDOW_WIDTH_SPACING * 2,
 	550
 }
-local tbl_3 = {
+local scenegraph_definition = {
 	root = {
 		is_root = true,
 		position = {
@@ -22,8 +21,8 @@ local tbl_3 = {
 			UILayer.ingame_player_list + 50
 		},
 		size = {
-			num,
-			num_2
+			SIZE_X,
+			SIZE_Y
 		}
 	},
 	screen = {
@@ -50,8 +49,8 @@ local tbl_3 = {
 			1
 		},
 		size = {
-			num,
-			num_2 - 360
+			SIZE_X,
+			SIZE_Y - 360
 		}
 	},
 	background = {
@@ -64,8 +63,8 @@ local tbl_3 = {
 			2
 		},
 		size = {
-			tbl_2[1],
-			tbl_2[2]
+			WINDOW_SIZE[1],
+			WINDOW_SIZE[2]
 		}
 	},
 	item_background = {
@@ -78,8 +77,8 @@ local tbl_3 = {
 			1
 		},
 		size = {
-			tbl_2[1] - num_5 * 2,
-			tbl[2] + num_3
+			WINDOW_SIZE[1] - WINDOW_WIDTH_SPACING * 2,
+			ITEM_SIZE[2] + ITEM_SPACING
 		}
 	},
 	item_title = {
@@ -92,7 +91,7 @@ local tbl_3 = {
 			1
 		},
 		size = {
-			tbl_2[1],
+			WINDOW_SIZE[1],
 			50
 		}
 	},
@@ -106,8 +105,8 @@ local tbl_3 = {
 			1
 		},
 		size = {
-			tbl_2[1] - num_5 * 2,
-			tbl[2] + num_3
+			WINDOW_SIZE[1] - WINDOW_WIDTH_SPACING * 2,
+			ITEM_SIZE[2] + ITEM_SPACING
 		}
 	},
 	talents_title = {
@@ -120,7 +119,7 @@ local tbl_3 = {
 			1
 		},
 		size = {
-			tbl_2[1],
+			WINDOW_SIZE[1],
 			50
 		}
 	},
@@ -129,13 +128,13 @@ local tbl_3 = {
 		parent = "item_background",
 		horizontal_alignment = "left",
 		position = {
-			num_3 / 2,
+			ITEM_SPACING / 2,
 			0,
 			5
 		},
 		size = {
-			tbl[1],
-			tbl[2]
+			ITEM_SIZE[1],
+			ITEM_SIZE[2]
 		}
 	},
 	portrait_pivot = {
@@ -153,7 +152,7 @@ local tbl_3 = {
 		}
 	}
 }
-local tbl_4 = {
+local title_text_style = {
 	word_wrap = true,
 	upper_case = true,
 	localize = true,
@@ -168,30 +167,30 @@ local tbl_4 = {
 		2
 	}
 }
-local tbl_5 = {
+local rect_color = {
 	240,
 	5,
 	5,
 	5
 }
-local tbl_6 = {
+local background_color = {
 	200,
 	10,
 	10,
 	10
 }
-local tbl_7 = {
-	item_title = UIWidgets.create_simple_text("equipment", "item_title", nil, nil, tbl_4),
-	talents_title = UIWidgets.create_simple_text("talents", "talents_title", nil, nil, tbl_4),
-	rect = UIWidgets.create_simple_rect("rect", tbl_5),
-	background = UIWidgets.create_background_with_frame("background", tbl_3.background.size, "menu_frame_bg_01", "menu_frame_02"),
-	item_background = UIWidgets.create_rect_with_frame("item_background", tbl_3.item_background.size, tbl_6, "menu_frame_06"),
-	talents_background = UIWidgets.create_rect_with_frame("talents_background", tbl_3.talents_background.size, tbl_6, "menu_frame_06"),
-	loadout = UIWidgets.create_loadout_grid("item_slot", tbl, num_4, num_3, true),
+local widget_definitions = {
+	item_title = UIWidgets.create_simple_text("equipment", "item_title", nil, nil, title_text_style),
+	talents_title = UIWidgets.create_simple_text("talents", "talents_title", nil, nil, title_text_style),
+	rect = UIWidgets.create_simple_rect("rect", rect_color),
+	background = UIWidgets.create_background_with_frame("background", scenegraph_definition.background.size, "menu_frame_bg_01", "menu_frame_02"),
+	item_background = UIWidgets.create_rect_with_frame("item_background", scenegraph_definition.item_background.size, background_color, "menu_frame_06"),
+	talents_background = UIWidgets.create_rect_with_frame("talents_background", scenegraph_definition.talents_background.size, background_color, "menu_frame_06"),
+	loadout = UIWidgets.create_loadout_grid("item_slot", ITEM_SIZE, NUM_ITEM_SLOTS, ITEM_SPACING, true),
 	portrait = UIWidgets.create_portrait_frame("portrait_pivot", "default", "-", 1, nil, "unit_frame_portrait_way_watcher")
 }
 
 return {
-	scenegraph_definition = tbl_3,
-	widget_definitions = tbl_7
+	scenegraph_definition = scenegraph_definition,
+	widget_definitions = widget_definitions
 }

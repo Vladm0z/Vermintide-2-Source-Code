@@ -1,6 +1,8 @@
 -- chunkname: @scripts/settings/dlcs/legacy_bundle/legacy_bundle_common_settings.lua
 
-DLCSettings.legacy_bundle.unlock_settings = {
+local settings = DLCSettings.legacy_bundle
+
+settings.unlock_settings = {
 	legacy_bundle = {
 		id = "47337",
 		class = "UnlockDlcBundle",

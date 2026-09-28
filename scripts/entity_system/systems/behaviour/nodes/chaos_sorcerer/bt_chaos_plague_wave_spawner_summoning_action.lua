@@ -7,82 +7,83 @@ BTChaosPlagueWaveSpawnerSummoningAction.name = "BTChaosPlagueWaveSpawnerSummonin
 
 local BTChaosPlagueWaveSpawnerSummoningAction = BTChaosPlagueWaveSpawnerSummoningAction
 
-BTChaosPlagueWaveSpawnerSummoningAction.init = function (arg_1_0, ...)
+BTChaosPlagueWaveSpawnerSummoningAction.init = function (self, ...)
 	-- function 1
-	BTChaosPlagueWaveSpawnerSummoningAction.super.init(arg_1_0, ...)
+	BTChaosPlagueWaveSpawnerSummoningAction.super.init(self, ...)
 end
 
-BTChaosPlagueWaveSpawnerSummoningAction.enter = function (self, arg_2_1, arg_2_2, arg_2_3)
+BTChaosPlagueWaveSpawnerSummoningAction.enter = function (self, unit, blackboard, t)
 	-- function 2
-	local action_data = self._tree_node.action_data
-	local breed = arg_2_2.breed
+	local action = self._tree_node.action_data
+	local breed = blackboard.breed
 
-	arg_2_2.action = action_data
+	blackboard.action = action
 
-	local target_dist = arg_2_2.target_dist
+	local target_dist = blackboard.target_dist
 
-	arg_2_2.ready_to_summon = false
+	blackboard.ready_to_summon = false
 
-	if not arg_2_2.plague_wave_data then
-		arg_2_2.plague_wave_data = {
-			plague_wave_timer = arg_2_3 + action_data.plague_wave_spawn_cooldown,
-			physics_world = World.get_data(arg_2_2.world, "physics_world"),
+	if not blackboard.plague_wave_data then
+		blackboard.plague_wave_data = {
+			plague_wave_timer = t + action.plague_wave_spawn_cooldown,
+			physics_world = World.get_data(blackboard.world, "physics_world"),
 			target_starting_pos = Vector3Box(),
 			plague_wave_rot = QuaternionBox()
 		}
 	end
 end
 
-BTChaosPlagueWaveSpawnerSummoningAction.leave = function (arg_3_0, arg_3_1, arg_3_2, arg_3_3, arg_3_4, arg_3_5)
+BTChaosPlagueWaveSpawnerSummoningAction.leave = function (self, unit, blackboard, t, reason, destroy)
 	-- function 3
-	arg_3_2.action = nil
+	blackboard.action = nil
 end
 
-BTChaosPlagueWaveSpawnerSummoningAction.run = function (arg_4_0, arg_4_1, arg_4_2, arg_4_3, arg_4_4)
+BTChaosPlagueWaveSpawnerSummoningAction.run = function (self, unit, blackboard, t, dt)
 	-- function 4
-	local action = arg_4_2.action
-	local plague_wave_data = arg_4_2.plague_wave_data
-	local skulk_data = arg_4_2.skulk_data
-	local target_unit = arg_4_2.target_unit
-	local external_event_name = arg_4_2.external_event_name
-	local external_event_value = arg_4_2.external_event_value
-	local plague_wave_spawn_cooldown = action.plague_wave_spawn_cooldown
+	local action = blackboard.action
+	local plague_wave_data = blackboard.plague_wave_data
+	local skulk_data = blackboard.skulk_data
+	local target_unit = blackboard.target_unit
+	local external_event_name = blackboard.external_event_name
+	local external_event_value = blackboard.external_event_value
+	local timer = action.plague_wave_spawn_cooldown
 
-	if not (not external_event_name and external_event_name ~= action.external_event_name) then
-		plague_wave_spawn_cooldown = external_event_value
+	if external_event_name and external_event_name == action.external_event_name then
+		timer = external_event_value
 	end
 
-	if not (not external_event_value and not (external_event_value >= 100)) then
-		Managers.state.conflict:destroy_unit(arg_4_1, arg_4_2, "plague_wave_spawner")
+	if external_event_value and external_event_value >= 100 then
+		Managers.state.conflict:destroy_unit(unit, blackboard, "plague_wave_spawner")
 
 		return
 	end
 
 	local anticipation_fx = action.anticipation_fx
 
-	if not ((arg_4_2.anticipation_fx_id or not anticipation_fx) and not (arg_4_3 > plague_wave_data.plague_wave_timer - action.anticipation_fx_offset_time)) then
-		local world = arg_4_2.world
+	if not blackboard.anticipation_fx_id and anticipation_fx and t > plague_wave_data.plague_wave_timer - action.anticipation_fx_offset_time then
+		local world = blackboard.world
 
-		arg_4_2.anticipation_fx_id = World.create_particles(world, anticipation_fx, POSITION_LOOKUP[arg_4_1], Quaternion.identity())
+		blackboard.anticipation_fx_id = World.create_particles(world, anticipation_fx, POSITION_LOOKUP[unit], Quaternion.identity())
 	end
 
-	if not (not (arg_4_3 > plague_wave_data.plague_wave_timer) or ScriptUnit.extension(target_unit, "status_system"):is_invisible()) then
-		local nav_world = arg_4_2.nav_world
-		local var_4_10 = POSITION_LOOKUP[target_unit]
-		local var_4_11 = POSITION_LOOKUP[arg_4_1]
-		local pos_on_mesh = LocomotionUtils.pos_on_mesh(nav_world, var_4_11, 1, 1)
-		local pos_on_mesh_2 = LocomotionUtils.pos_on_mesh(nav_world, var_4_10, 1, 1)
+	if t > plague_wave_data.plague_wave_timer and not ScriptUnit.extension(target_unit, "status_system"):is_invisible() then
+		local nav_world = blackboard.nav_world
+		local target_position = POSITION_LOOKUP[target_unit]
+		local unit_pos = POSITION_LOOKUP[unit]
+		local projected_start_pos = LocomotionUtils.pos_on_mesh(nav_world, unit_pos, 1, 1)
+		local projected_end_pos = LocomotionUtils.pos_on_mesh(nav_world, target_position, 1, 1)
+		local success = not not projected_start_pos and not not projected_end_pos and not not GwNavQueries.raycango(nav_world, projected_start_pos, projected_end_pos)
 
-		if not (not pos_on_mesh and not pos_on_mesh_2 and GwNavQueries.raycango(nav_world, pos_on_mesh, pos_on_mesh_2)) then
-			local num = arg_4_3 + plague_wave_spawn_cooldown
+		if success then
+			local num = t + timer
 
-			num = num or action.plague_wave_spawn_cooldown
+			num = not not num or not not action.plague_wave_spawn_cooldown
 			plague_wave_data.plague_wave_timer = num
-			arg_4_2.ready_to_summon = true
-			arg_4_2.summoning_finished = true
-			arg_4_2.anticipation_fx_id = nil
+			blackboard.ready_to_summon = true
+			blackboard.summoning_finished = true
+			blackboard.anticipation_fx_id = nil
 		else
-			plague_wave_data.plague_wave_timer = arg_4_3 + 2
+			plague_wave_data.plague_wave_timer = t + 2
 		end
 
 		return "done"

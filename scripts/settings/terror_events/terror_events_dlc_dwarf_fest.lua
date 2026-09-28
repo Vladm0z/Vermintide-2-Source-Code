@@ -1,38 +1,49 @@
 -- chunkname: @scripts/settings/terror_events/terror_events_dlc_dwarf_fest.lua
 
-local function fn(arg_1_0)
+local function count_event_breed(breed_name)
 	-- function 1
-	return Managers.state.conflict:count_units_by_breed_during_event(arg_1_0)
+	return Managers.state.conflict:count_units_by_breed_during_event(breed_name)
 end
 
-local function fn_2(arg_2_0)
+local function count_breed(breed_name)
 	-- function 2
-	return Managers.state.conflict:count_units_by_breed(arg_2_0)
+	return Managers.state.conflict:count_units_by_breed(breed_name)
 end
 
-local function fn_3()
+local function num_spawned_enemies()
 	-- function 3
-	return #Managers.state.conflict:spawned_enemies()
+	local spawned_enemies = Managers.state.conflict:spawned_enemies()
+
+	return #spawned_enemies
 end
 
-local num = 1
-local num_2 = 2
-local num_3 = 3
-local num_4 = 4
-local num_5 = 5
+local NORMAL = 1
+local HARD = 2
+local HARDER = 3
+local HARDEST = 4
+local CATACLYSM = 5
 
-local function fn_4(self)
+local function add_grudgemark(optional_data)
 	-- function 4
-	local var_4_0 = self.enhancements[1]
-	local enhancements = self.enhancements
+	local grudge_mark = optional_data.enhancements[1]
+	local enhancements = optional_data.enhancements
 
-	enhancements = enhancements or {}
-	self.enhancements = enhancements
+	if not enhancements then
+		-- Nothing
+	end
 
-	return self
+	enhancements = {}
+
+	local list = enhancements
+
+	::label_4_0::
+
+	optional_data.enhancements = list
+
+	return optional_data
 end
 
-local tbl = {
+local terror_event_blueprints = {
 	dwarf_fest_load_bosses = {
 		{
 			"force_load_breed_package",
@@ -83,9 +94,9 @@ local tbl = {
 		},
 		{
 			"continue_when",
-			condition = function (arg_5_0)
+			condition = function (t)
 				-- function 5
-				return fn_2("chaos_troll") < 1
+				return count_breed("chaos_troll") < 1
 			end
 		},
 		{
@@ -121,9 +132,9 @@ local tbl = {
 		},
 		{
 			"continue_when",
-			condition = function (arg_6_0)
+			condition = function (t)
 				-- function 6
-				return fn_2("chaos_troll") < 2
+				return count_breed("chaos_troll") < 2
 			end
 		},
 		{
@@ -132,9 +143,9 @@ local tbl = {
 		},
 		{
 			"continue_when",
-			condition = function (arg_7_0)
+			condition = function (t)
 				-- function 7
-				return fn_2("chaos_troll") < 1
+				return count_breed("chaos_troll") < 1
 			end
 		},
 		{
@@ -154,7 +165,7 @@ local tbl = {
 			"spawn_at_raw",
 			breed_name = "chaos_troll",
 			spawner_id = "troll_waterflow",
-			pre_spawn_func = fn_4,
+			pre_spawn_func = add_grudgemark,
 			optional_data = {
 				enhancements = {
 					BreedEnhancements.dwarf_fest_chaos_troll_waterflow_1,
@@ -168,9 +179,9 @@ local tbl = {
 		},
 		{
 			"continue_when",
-			condition = function (arg_8_0)
+			condition = function (t)
 				-- function 8
-				return fn_2("chaos_troll") < 1
+				return count_breed("chaos_troll") < 1
 			end
 		},
 		{
@@ -190,7 +201,7 @@ local tbl = {
 			"spawn_at_raw",
 			breed_name = "chaos_troll",
 			spawner_id = "troll_waterwheel",
-			pre_spawn_func = fn_4,
+			pre_spawn_func = add_grudgemark,
 			optional_data = {
 				enhancements = {
 					BreedEnhancements.dwarf_fest_chaos_troll_waterwheel_1,
@@ -204,9 +215,9 @@ local tbl = {
 		},
 		{
 			"continue_when",
-			condition = function (arg_9_0)
+			condition = function (t)
 				-- function 9
-				return fn_2("chaos_troll") < 1
+				return count_breed("chaos_troll") < 1
 			end
 		},
 		{
@@ -226,7 +237,7 @@ local tbl = {
 			"spawn_at_raw",
 			breed_name = "chaos_troll",
 			spawner_id = "troll_cog",
-			pre_spawn_func = fn_4,
+			pre_spawn_func = add_grudgemark,
 			optional_data = {
 				enhancements = {
 					BreedEnhancements.dwarf_fest_chaos_troll_cog_1,
@@ -240,9 +251,9 @@ local tbl = {
 		},
 		{
 			"continue_when",
-			condition = function (arg_10_0)
+			condition = function (t)
 				-- function 10
-				return fn_2("chaos_troll") < 1
+				return count_breed("chaos_troll") < 1
 			end
 		},
 		{
@@ -472,9 +483,9 @@ local tbl = {
 		{
 			"continue_when",
 			duration = 30,
-			condition = function (arg_11_0)
+			condition = function (t)
 				-- function 11
-				return not (fn_2("skaven_clan_rat") < 2) or not (fn_2("skaven_slave") < 2) or not (fn_2("skaven_warpfire_thrower") < 1) or fn_2("skaven_pack_master") < 1
+				return count_breed("skaven_clan_rat") < 2 and count_breed("skaven_slave") < 2 and count_breed("skaven_warpfire_thrower") < 1 and count_breed("skaven_pack_master") < 1
 			end
 		},
 		{
@@ -516,9 +527,9 @@ local tbl = {
 		{
 			"continue_when",
 			duration = 30,
-			condition = function (arg_12_0)
+			condition = function (t)
 				-- function 12
-				return not (fn_2("skaven_clan_rat") < 2) or not (fn_2("skaven_slave") < 2) or not (fn_2("skaven_warpfire_thrower") < 1) or fn_2("skaven_pack_master") < 1
+				return count_breed("skaven_clan_rat") < 2 and count_breed("skaven_slave") < 2 and count_breed("skaven_warpfire_thrower") < 1 and count_breed("skaven_pack_master") < 1
 			end
 		},
 		{
@@ -573,9 +584,9 @@ local tbl = {
 		{
 			"continue_when",
 			duration = 30,
-			condition = function (arg_13_0)
+			condition = function (t)
 				-- function 13
-				return not (fn_2("skaven_clan_rat") < 2) or fn_2("skaven_slave") < 2
+				return count_breed("skaven_clan_rat") < 2 and count_breed("skaven_slave") < 2
 			end
 		},
 		{
@@ -634,9 +645,9 @@ local tbl = {
 		{
 			"continue_when",
 			duration = 30,
-			condition = function (arg_14_0)
+			condition = function (t)
 				-- function 14
-				return not (fn_2("skaven_clan_rat") < 2) or fn_2("skaven_slave") < 2
+				return count_breed("skaven_clan_rat") < 2 and count_breed("skaven_slave") < 2
 			end
 		},
 		{
@@ -716,7 +727,7 @@ local tbl = {
 			"spawn_at_raw",
 			breed_name = "skaven_gutter_runner",
 			spawner_id = "cog_bridge_manual_02",
-			difficulty_requirement = num_2
+			difficulty_requirement = HARD
 		},
 		{
 			"delay",
@@ -734,13 +745,13 @@ local tbl = {
 			"spawn_at_raw",
 			breed_name = "skaven_gutter_runner",
 			spawner_id = "cog_bridge_manual_03",
-			difficulty_requirement = num_3
+			difficulty_requirement = HARDER
 		},
 		{
 			"spawn_at_raw",
 			breed_name = "skaven_gutter_runner",
 			spawner_id = "cog_bridge_manual_02",
-			difficulty_requirement = num_4
+			difficulty_requirement = HARDEST
 		}
 	},
 	dwarf_fest_cog_manuals_bridge = {
@@ -755,7 +766,7 @@ local tbl = {
 			"spawn_at_raw",
 			breed_name = "skaven_gutter_runner",
 			spawner_id = "cog_canyon_manual_01",
-			difficulty_requirement = num_2
+			difficulty_requirement = HARD
 		},
 		{
 			"delay",
@@ -777,13 +788,13 @@ local tbl = {
 			"spawn_at_raw",
 			breed_name = "skaven_gutter_runner",
 			spawner_id = "cog_bridge_manual_03",
-			difficulty_requirement = num_2
+			difficulty_requirement = HARD
 		},
 		{
 			"spawn_at_raw",
 			breed_name = "skaven_gutter_runner",
 			spawner_id = "cog_bridge_manual_03",
-			difficulty_requirement = num_3
+			difficulty_requirement = HARDER
 		},
 		{
 			"delay",
@@ -801,7 +812,7 @@ local tbl = {
 			"spawn_at_raw",
 			breed_name = "skaven_gutter_runner",
 			spawner_id = "cog_bridge_manual_03",
-			difficulty_requirement = num_4
+			difficulty_requirement = HARDEST
 		}
 	},
 	dwarf_fest_cog_manuals_canyon = {
@@ -816,7 +827,7 @@ local tbl = {
 			"spawn_at_raw",
 			breed_name = "skaven_gutter_runner",
 			spawner_id = "cog_canyon_manual_01",
-			difficulty_requirement = num_2
+			difficulty_requirement = HARD
 		},
 		{
 			"delay",
@@ -838,7 +849,7 @@ local tbl = {
 			"spawn_at_raw",
 			breed_name = "skaven_gutter_runner",
 			spawner_id = "cog_bridge_manual_03",
-			difficulty_requirement = num_2
+			difficulty_requirement = HARD
 		},
 		{
 			"delay",
@@ -851,7 +862,7 @@ local tbl = {
 			"spawn_at_raw",
 			breed_name = "skaven_gutter_runner",
 			spawner_id = "cog_canyon_manual_01",
-			difficulty_requirement = num_4
+			difficulty_requirement = HARDEST
 		}
 	},
 	dwarf_fest_cog_horde_event_01 = {
@@ -930,9 +941,9 @@ local tbl = {
 		{
 			"continue_when",
 			duration = 30,
-			condition = function (arg_15_0)
+			condition = function (t)
 				-- function 15
-				return not (fn_2("skaven_clan_rat") < 2) or fn_2("skaven_slave") < 2
+				return count_breed("skaven_clan_rat") < 2 and count_breed("skaven_slave") < 2
 			end
 		},
 		{
@@ -953,9 +964,9 @@ local tbl = {
 		{
 			"continue_when",
 			duration = 30,
-			condition = function (arg_16_0)
+			condition = function (t)
 				-- function 16
-				return not (fn_2("skaven_clan_rat") < 2) or fn_2("skaven_slave") < 2
+				return count_breed("skaven_clan_rat") < 2 and count_breed("skaven_slave") < 2
 			end
 		},
 		{
@@ -976,9 +987,9 @@ local tbl = {
 		{
 			"continue_when",
 			duration = 30,
-			condition = function (arg_17_0)
+			condition = function (t)
 				-- function 17
-				return not (fn_2("chaos_fanatic") < 2) or not (fn("chaos_raider") < 3) or not (fn("chaos_marauder") < 3) or fn("chaos_marauder_with_shield") < 2
+				return count_breed("chaos_fanatic") < 2 and count_event_breed("chaos_raider") < 3 and count_event_breed("chaos_marauder") < 3 and count_event_breed("chaos_marauder_with_shield") < 2
 			end
 		},
 		{
@@ -996,7 +1007,7 @@ local tbl = {
 				"skaven_gutter_runner",
 				"chaos_corruptor_sorcerer"
 			},
-			difficulty_requirement = num_3
+			difficulty_requirement = HARDER
 		}
 	},
 	dwarf_fest_cog_event_manual_02 = {
@@ -1009,7 +1020,7 @@ local tbl = {
 				"skaven_gutter_runner",
 				"chaos_corruptor_sorcerer"
 			},
-			difficulty_requirement = num_4
+			difficulty_requirement = HARDEST
 		}
 	},
 	dwarf_fest_troll_horde_01 = {
@@ -1062,9 +1073,9 @@ local tbl = {
 		},
 		{
 			"continue_when",
-			condition = function (arg_18_0)
+			condition = function (t)
 				-- function 18
-				return fn_2("chaos_troll_chief") < 1
+				return count_breed("chaos_troll_chief") < 1
 			end
 		},
 		{
@@ -1077,5 +1088,5 @@ local tbl = {
 }
 
 return {
-	tbl
+	terror_event_blueprints
 }

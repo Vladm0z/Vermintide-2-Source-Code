@@ -4,9 +4,9 @@ return {
 	description = "description_explosive_loot_rats",
 	icon = "mutator_icon_explosive_loot_rats",
 	display_name = "display_name_explosive_loot_rats",
-	server_initialize_function = function (arg_1_0, arg_1_1)
+	server_initialize_function = function (context, data)
 		-- function 1
-		arg_1_1.amount_of_rats_per_difficulty = {
+		data.amount_of_rats_per_difficulty = {
 			normal = {
 				3,
 				5
@@ -28,7 +28,7 @@ return {
 				13
 			}
 		}
-		arg_1_1.spawn_frequency_per_difficulty = {
+		data.spawn_frequency_per_difficulty = {
 			normal = {
 				68,
 				80
@@ -50,7 +50,7 @@ return {
 				56
 			}
 		}
-		arg_1_1.spawn_frequency_per_difficulty_twitch_mode = {
+		data.spawn_frequency_per_difficulty_twitch_mode = {
 			normal = {
 				34,
 				40
@@ -72,54 +72,57 @@ return {
 				28
 			}
 		}
-		arg_1_1.side_id = Managers.state.side:get_side_from_name("dark_pact").side_id
+
+		local side = Managers.state.side:get_side_from_name("dark_pact")
+
+		data.side_id = side.side_id
 	end,
-	server_players_left_safe_zone = function (arg_2_0, arg_2_1)
+	server_players_left_safe_zone = function (context, data)
 		-- function 2
-		arg_2_1.has_left_safe_zone = true
+		data.has_left_safe_zone = true
 
-		local num = 20
+		local safe_zone_grace_time = 20
 
-		arg_2_1.spawn_loot_rats_at = Managers.time:time("game") + num
+		data.spawn_loot_rats_at = Managers.time:time("game") + safe_zone_grace_time
 	end,
-	server_update_function = function (arg_3_0, arg_3_1)
+	server_update_function = function (context, data)
 		-- function 3
-		if not arg_3_1.has_left_safe_zone then
+		if not data.has_left_safe_zone then
 			return
 		end
 
-		local time = Managers.time:time("game")
+		local t = Managers.time:time("game")
 
-		if not (global_is_inside_inn or not (time > arg_3_1.spawn_loot_rats_at)) then
-			local get_difficulty = Managers.state.difficulty:get_difficulty()
-			local var_3_2 = arg_3_1.amount_of_rats_per_difficulty[get_difficulty]
-			local var_3_3 = arg_3_1.spawn_frequency_per_difficulty[get_difficulty]
+		if not global_is_inside_inn and t > data.spawn_loot_rats_at then
+			local difficulty = Managers.state.difficulty:get_difficulty()
+			local num_rats_range = data.amount_of_rats_per_difficulty[difficulty]
+			local spawn_frequency_range = data.spawn_frequency_per_difficulty[difficulty]
 
-			if not Managers.twitch:is_activated() then
-				local var_3_4 = arg_3_1.spawn_frequency_per_difficulty_twitch_mode[get_difficulty]
+			if Managers.twitch:is_activated() then
+				local spawn_frequency_range = data.spawn_frequency_per_difficulty_twitch_mode[difficulty]
 			end
 
-			local random = math.random(var_3_2[1], var_3_2[2])
-			local random_2 = math.random(var_3_3[1], var_3_3[2])
-			local tbl = {}
+			local amount_of_rats = math.random(num_rats_range[1], num_rats_range[2])
+			local spawn_frequency = math.random(spawn_frequency_range[1], spawn_frequency_range[2])
+			local spawn_list = {}
 
-			for i = 1, random do
-				tbl[#tbl + 1] = "skaven_explosive_loot_rat"
+			for i = 1, amount_of_rats do
+				spawn_list[#spawn_list + 1] = "skaven_explosive_loot_rat"
 			end
 
-			local conflict = Managers.state.conflict
-			local flag = false
-			local side_id = arg_3_1.side_id
-			local main_path_info = conflict.main_path_info
+			local conflict_director = Managers.state.conflict
+			local only_ahead = false
+			local side_id = data.side_id
+			local main_path_info = conflict_director.main_path_info
 
-			if main_path_info.ahead_unit or not main_path_info.behind_unit then
-				conflict.horde_spawner:execute_custom_horde(tbl, flag, side_id)
+			if main_path_info.ahead_unit or main_path_info.behind_unit then
+				conflict_director.horde_spawner:execute_custom_horde(spawn_list, only_ahead, side_id)
 
-				arg_3_1.spawn_loot_rats_at = time + random_2
+				data.spawn_loot_rats_at = t + spawn_frequency
 			end
 		end
 	end,
-	server_stop_function = function (arg_4_0, arg_4_1)
+	server_stop_function = function (context, data)
 		-- function 4
 		return
 	end

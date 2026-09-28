@@ -2,7 +2,7 @@
 
 CurseCorruptorBeamExtension = class(CurseCorruptorBeamExtension, CorruptorBeamExtension)
 
-CurseCorruptorBeamExtension._get_positions = function (arg_1_0, arg_1_1, arg_1_2, arg_1_3)
+CurseCorruptorBeamExtension._get_positions = function (self, dt, self_pos, real_target_position)
 	-- function 1
-	return arg_1_3, arg_1_3
+	return real_target_position, real_target_position
 end

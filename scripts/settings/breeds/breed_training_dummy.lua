@@ -1,7 +1,7 @@
 -- chunkname: @scripts/settings/breeds/breed_training_dummy.lua
 
-local num = 2
-local tbl = {
+local HEALTH_MULTIPLIER = 2
+local breed_data = {
 	detection_radius = 12,
 	bot_melee_aim_node = "j_neck",
 	target_selection = "pick_closest_target",
@@ -57,15 +57,15 @@ local tbl = {
 	has_inventory = false,
 	infighting = InfightingSettings.small,
 	max_health = {
-		25 * num,
-		25 * num,
-		37.5 * num,
-		50 * num,
-		75 * num,
-		75 * num,
-		75 * num,
-		75 * num,
-		25 * num
+		25 * HEALTH_MULTIPLIER,
+		25 * HEALTH_MULTIPLIER,
+		37.5 * HEALTH_MULTIPLIER,
+		50 * HEALTH_MULTIPLIER,
+		75 * HEALTH_MULTIPLIER,
+		75 * HEALTH_MULTIPLIER,
+		75 * HEALTH_MULTIPLIER,
+		75 * HEALTH_MULTIPLIER,
+		25 * HEALTH_MULTIPLIER
 	},
 	hit_mass_counts = BreedTweaks.hit_mass_counts.marauder,
 	stagger_duration = {
@@ -140,52 +140,69 @@ local tbl = {
 			}
 		}
 	},
-	modify_extension_init_data = function (arg_1_0, arg_1_1, arg_1_2, arg_1_3, arg_1_4)
+	modify_extension_init_data = function (breed, extension_init_data, optional_data, position, rotation)
 		-- function 1
-		local projectile_locomotion_system = arg_1_1.projectile_locomotion_system
+		local projectile_locomotion_system = extension_init_data.projectile_locomotion_system
 
-		projectile_locomotion_system = projectile_locomotion_system or {}
+		if not projectile_locomotion_system then
+			-- Nothing
+		end
 
-		local network_position = arg_1_1.network_position
+		projectile_locomotion_system = {}
 
-		network_position = network_position or AiAnimUtils.position_network_scale(arg_1_3, true)
-		projectile_locomotion_system.network_position = network_position
+		local data1 = projectile_locomotion_system
 
-		local network_rotation = arg_1_1.network_rotation
+		::label_1_0::
 
-		network_rotation = network_rotation or AiAnimUtils.rotation_network_scale(arg_1_4, true)
-		projectile_locomotion_system.network_rotation = network_rotation
+		local network_position = extension_init_data.network_position
 
-		local network_velocity = arg_1_1.network_velocity
+		network_position = not not network_position or not not AiAnimUtils.position_network_scale(position, true)
+		data1.network_position = network_position
 
-		network_velocity = network_velocity or AiAnimUtils.velocity_network_scale(Vector3.zero(), true)
-		projectile_locomotion_system.network_velocity = network_velocity
+		local network_rotation = extension_init_data.network_rotation
 
-		local network_angular_velocity = arg_1_1.network_angular_velocity
+		network_rotation = not not network_rotation or not not AiAnimUtils.rotation_network_scale(rotation, true)
+		data1.network_rotation = network_rotation
 
-		network_angular_velocity = network_angular_velocity or AiAnimUtils.velocity_network_scale(Vector3.zero(), true)
-		projectile_locomotion_system.network_angular_velocity = network_angular_velocity
-		arg_1_1.projectile_locomotion_system = projectile_locomotion_system
+		local network_velocity = extension_init_data.network_velocity
 
-		local pickup_system = arg_1_1.pickup_system
+		network_velocity = not not network_velocity or not not AiAnimUtils.velocity_network_scale(Vector3.zero(), true)
+		data1.network_velocity = network_velocity
 
-		pickup_system = pickup_system or {}
-		pickup_system.has_physics = false
-		pickup_system.spawn_type = "debug"
-		pickup_system.pickup_name = "training_dummy_bob"
-		arg_1_1.pickup_system = pickup_system
+		local network_angular_velocity = extension_init_data.network_angular_velocity
+
+		network_angular_velocity = not not network_angular_velocity or not not AiAnimUtils.velocity_network_scale(Vector3.zero(), true)
+		data1.network_angular_velocity = network_angular_velocity
+		extension_init_data.projectile_locomotion_system = data1
+
+		local pickup_system = extension_init_data.pickup_system
+
+		if not pickup_system then
+			-- Nothing
+		end
+
+		pickup_system = {}
+
+		local data2 = pickup_system
+
+		::label_1_1::
+
+		data2.has_physics = false
+		data2.spawn_type = "debug"
+		data2.pickup_name = "training_dummy_bob"
+		extension_init_data.pickup_system = data2
 	end,
 	debug_spawn_optional_data = {
-		prepare_func = function (self, arg_2_1, arg_2_2, arg_2_3, arg_2_4)
+		prepare_func = function (breed, extension_init_data, optional_data, position, rotation)
 			-- function 2
-			self.modify_extension_init_data(self, arg_2_1, arg_2_2, arg_2_3, arg_2_4)
+			breed.modify_extension_init_data(breed, extension_init_data, optional_data, position, rotation)
 		end
 	}
 }
 
-Breeds.training_dummy = table.create_copy(Breeds.training_dummy, tbl)
+Breeds.training_dummy = table.create_copy(Breeds.training_dummy, breed_data)
 
-local tbl_2 = {
+local action_data = {
 	dummy_idle = {},
 	stagger = {
 		stagger_anims = {
@@ -311,4 +328,4 @@ local tbl_2 = {
 	}
 }
 
-BreedActions.training_dummy = table.create_copy(BreedActions.training_dummy, tbl_2)
+BreedActions.training_dummy = table.create_copy(BreedActions.training_dummy, action_data)

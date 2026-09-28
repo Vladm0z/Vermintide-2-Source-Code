@@ -4,122 +4,142 @@ require("scripts/entity_system/systems/behaviour/nodes/bt_node")
 
 BTVortexWanderAction = class(BTVortexWanderAction, BTNode)
 
-local POSITION_LOOKUP = POSITION_LOOKUP
+local position_lookup = POSITION_LOOKUP
 
-BTVortexWanderAction.init = function (arg_1_0, ...)
+BTVortexWanderAction.init = function (self, ...)
 	-- function 1
-	BTVortexWanderAction.super.init(arg_1_0, ...)
+	BTVortexWanderAction.super.init(self, ...)
 end
 
 BTVortexWanderAction.name = "BTVortexWanderAction"
 
-BTVortexWanderAction.enter = function (self, arg_2_1, arg_2_2, arg_2_3)
+BTVortexWanderAction.enter = function (self, unit, blackboard, t)
 	-- function 2
-	arg_2_2.action = self._tree_node.action_data
+	local action = self._tree_node.action_data
+
+	blackboard.action = action
 end
 
-BTVortexWanderAction.leave = function (arg_3_0, arg_3_1, arg_3_2, arg_3_3, arg_3_4, arg_3_5)
+BTVortexWanderAction.leave = function (self, unit, blackboard, t, reason, destroy)
 	-- function 3
 	return
 end
 
-BTVortexWanderAction.run = function (self, arg_4_1, arg_4_2, arg_4_3, arg_4_4)
+BTVortexWanderAction.run = function (self, unit, blackboard, t, dt)
 	-- function 4
-	local vortex_data = arg_4_2.vortex_data
+	local vortex_data = blackboard.vortex_data
 
-	self:_wander_around(arg_4_1, arg_4_3, arg_4_4, arg_4_2, vortex_data)
+	self:_wander_around(unit, t, dt, blackboard, vortex_data)
 
 	return "running"
 end
 
-BTVortexWanderAction._wander_around = function (arg_5_0, arg_5_1, arg_5_2, arg_5_3, arg_5_4, arg_5_5)
+BTVortexWanderAction._wander_around = function (self, unit, t, dt, blackboard, vortex_data)
 	-- function 5
-	local action = arg_5_4.action
-	local wander_state = arg_5_5.wander_state
-	local vortex_template = arg_5_5.vortex_template
-	local num_players_inside = arg_5_5.num_players_inside
-	local navigation_extension = arg_5_4.navigation_extension
+	local action = blackboard.action
+	local wander_state = vortex_data.wander_state
+	local vortex_template = vortex_data.vortex_template
+	local num_players_inside = vortex_data.num_players_inside
+	local navigation_extension = blackboard.navigation_extension
 	local is_following_path = navigation_extension:is_following_path()
 	local flag
 
-	flag = not is_following_path and "moving" and "idle"
-	arg_5_4.move_state = flag
+	flag = (not is_following_path or not "moving") and not not "idle"
+	blackboard.move_state = flag
 
-	if not (not vortex_template.stop_and_process_player and not (num_players_inside > 0) or wander_state == "standing_still" or wander_state == "forced_standing_still") then
-		arg_5_5.wander_state = "standing_still"
+	if vortex_template.stop_and_process_player and num_players_inside > 0 and wander_state ~= "standing_still" and wander_state ~= "forced_standing_still" then
+		vortex_data.wander_state = "standing_still"
 
 		navigation_extension:stop()
-	elseif not (num_players_inside ~= 0 or arg_5_5.wander_state ~= "standing_still") then
-		arg_5_5.wander_state = "recalc_path"
+	elseif num_players_inside == 0 and vortex_data.wander_state == "standing_still" then
+		vortex_data.wander_state = "recalc_path"
 	end
 
 	if wander_state == "wandering" then
-		if not (navigation_extension:has_reached_destination(0.5) or not (arg_5_2 > arg_5_5.wander_time)) then
-			arg_5_5.wander_state = "recalc_path"
+		if navigation_extension:has_reached_destination(0.5) or t > vortex_data.wander_time then
+			vortex_data.wander_state = "recalc_path"
 		end
 	elseif wander_state == "calculating_path" then
 		local is_computing_path = navigation_extension:is_computing_path()
-		local flag_2 = not arg_5_4.no_path_found
+		local path_found = not blackboard.no_path_found
 
-		if not (is_computing_path or is_following_path or flag_2) then
-			if not flag_2 then
-				arg_5_5.wander_state = "wandering"
-				arg_5_5.wander_time = arg_5_2 + 1
+		if not is_computing_path and (is_following_path or not path_found) then
+			if path_found then
+				vortex_data.wander_state = "wandering"
+				vortex_data.wander_time = t + 1
 			else
-				arg_5_5.wander_state = "no_path_found"
-				arg_5_5.idle_time = arg_5_2 + 2 + math.random()
+				vortex_data.wander_state = "no_path_found"
+				vortex_data.idle_time = t + 2 + math.random()
 			end
 		end
 	elseif wander_state == "recalc_path" then
-		local nav_world = arg_5_4.nav_world
-		local target_unit = arg_5_4.target_unit
-		local var_5_11 = POSITION_LOOKUP[arg_5_1]
-		local random_wander = vortex_template.random_wander
+		local nav_world = blackboard.nav_world
+		local target_unit = blackboard.target_unit
+		local position = position_lookup[unit]
+		local random_wander_2 = vortex_template.random_wander
 
-		random_wander = random_wander or not target_unit
+		if not random_wander_2 then
+			-- Nothing
+		end
 
-		local directed_wander_position_boxed = arg_5_4.directed_wander_position_boxed
+		random_wander_2 = not target_unit
 
-		directed_wander_position_boxed = not directed_wander_position_boxed and arg_5_4.directed_wander_position_boxed:unbox()
+		local random_wander = random_wander_2
 
-		if not directed_wander_position_boxed then
-			navigation_extension:move_to(directed_wander_position_boxed)
+		::label_5_0::
 
-			arg_5_5.wander_state = "calculating_path"
-		elseif not random_wander then
-			local get_spawn_pos_on_circle = ConflictUtils.get_spawn_pos_on_circle(nav_world, var_5_11, 5, 10, 7)
+		local directed_wander_position_boxed = blackboard.directed_wander_position_boxed
 
-			if not get_spawn_pos_on_circle then
-				navigation_extension:move_to(get_spawn_pos_on_circle)
+		if directed_wander_position_boxed then
+			-- Nothing
+		end
 
-				arg_5_5.wander_state = "calculating_path"
+		directed_wander_position_boxed = blackboard.directed_wander_position_boxed:unbox()
+
+		local directed_wander_position = directed_wander_position_boxed
+
+		::label_5_1::
+
+		if directed_wander_position then
+			navigation_extension:move_to(directed_wander_position)
+
+			vortex_data.wander_state = "calculating_path"
+		elseif random_wander then
+			local random_pos = ConflictUtils.get_spawn_pos_on_circle(nav_world, position, 5, 10, 7)
+
+			if random_pos then
+				navigation_extension:move_to(random_pos)
+
+				vortex_data.wander_state = "calculating_path"
 			else
-				arg_5_5.idle_time = arg_5_2 + math.random() * 0.5
-				arg_5_5.wander_state = "no_path_found"
+				vortex_data.idle_time = t + math.random() * 0.5
+				vortex_data.wander_state = "no_path_found"
 			end
-		elseif not Unit.alive(target_unit) then
-			local var_5_15 = POSITION_LOOKUP[target_unit]
-			local pos_on_mesh = LocomotionUtils.pos_on_mesh(nav_world, var_5_15, 1, 2)
+		elseif Unit.alive(target_unit) then
+			local target_position = position_lookup[target_unit]
+			local projected_target_position = LocomotionUtils.pos_on_mesh(nav_world, target_position, 1, 2)
 
-			if not pos_on_mesh then
-				if Vector3.length_squared(pos_on_mesh - var_5_11) > 0.25 then
-					navigation_extension:move_to(pos_on_mesh)
+			if projected_target_position then
+				local target_distance_sq = Vector3.length_squared(projected_target_position - position)
 
-					arg_5_5.wander_state = "calculating_path"
+				if target_distance_sq > 0.25 then
+					navigation_extension:move_to(projected_target_position)
+
+					vortex_data.wander_state = "calculating_path"
 				end
 			else
-				arg_5_5.idle_time = arg_5_2 + math.random() * 0.5
-				arg_5_5.wander_state = "no_path_found"
+				vortex_data.idle_time = t + math.random() * 0.5
+				vortex_data.wander_state = "no_path_found"
 			end
 		else
-			arg_5_5.idle_time = arg_5_2 + 2 + math.random()
-			arg_5_5.wander_state = "no_path_found"
+			vortex_data.idle_time = t + 2 + math.random()
+			vortex_data.wander_state = "no_path_found"
 		end
 	elseif wander_state == "no_path_found" then
-		if arg_5_2 > arg_5_5.idle_time then
-			arg_5_5.wander_state = "recalc_path"
+		if t > vortex_data.idle_time then
+			vortex_data.wander_state = "recalc_path"
 		end
-	elseif not (wander_state == "standing_still" or wander_state ~= "forced_standing_still") then
+	elseif wander_state ~= "standing_still" and wander_state == "forced_standing_still" then
 		-- Nothing
 	end
 end

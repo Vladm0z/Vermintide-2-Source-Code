@@ -1,20 +1,20 @@
 -- chunkname: @scripts/settings/dlcs/mutators_batch_02/mutators_batch_02_equipment_settings.lua
 
-local mutators_batch_02 = DLCSettings.mutators_batch_02
+local settings = DLCSettings.mutators_batch_02
 
-mutators_batch_02.item_master_list_file_names = {
+settings.item_master_list_file_names = {
 	"scripts/settings/equipment/item_master_list_mutators_batch_02"
 }
-mutators_batch_02.weapon_template_file_names = {
+settings.weapon_template_file_names = {
 	"scripts/settings/equipment/weapon_templates/mutator_statue_01"
 }
-mutators_batch_02.damage_profile_template_files_names = {
+settings.damage_profile_template_files_names = {
 	"scripts/settings/equipment/damage_profile_templates_dlc_mutators_batch_02"
 }
-mutators_batch_02.attack_template_files_names = {
+settings.attack_template_files_names = {
 	"scripts/settings/equipment/attack_templates_dlc_mutators_batch_02"
 }
-mutators_batch_02.explosion_templates = {
+settings.explosion_templates = {
 	loot_rat_explosion = {
 		explosion = {
 			radius = 4,

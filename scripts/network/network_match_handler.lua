@@ -2,7 +2,7 @@
 
 NetworkMatchHandler = class(NetworkMatchHandler)
 
-local tbl = {
+local DEFAULT_DATA = {
 	leader_peer_id = "",
 	player_name = "",
 	is_dedicated_server = false,
@@ -10,21 +10,21 @@ local tbl = {
 	versus_level = 1,
 	is_match_owner = false
 }
-local tbl_2 = {
+local RPCS = {
 	"rpc_network_match_sync_player_data",
 	"rpc_network_match_changed",
 	"rpc_network_match_request_sync"
 }
-local flag = true
+local VERBOSE_LOG = true
 
-NetworkMatchHandler.init = function (self, arg_1_1, arg_1_2, arg_1_3, arg_1_4, arg_1_5)
+NetworkMatchHandler.init = function (self, network_handler, is_server, peer_id, server_peer_id, lobby)
 	-- function 1
-	self._network_handler = arg_1_1
-	self._is_server = arg_1_2
-	self._my_peer_id = arg_1_3
-	self._server_peer_id = arg_1_4
+	self._network_handler = network_handler
+	self._is_server = is_server
+	self._my_peer_id = peer_id
+	self._server_peer_id = server_peer_id
 	self._stored_data = {}
-	self._lobby = arg_1_5
+	self._lobby = lobby
 
 	local tbl = {}
 	local var_1_1 = self
@@ -36,7 +36,7 @@ NetworkMatchHandler.init = function (self, arg_1_1, arg_1_2, arg_1_3, arg_1_4, a
 	local player_name
 
 	if not DEDICATED_SERVER then
-		player_name = PlayerUtils.player_name(arg_1_3, arg_1_5)
+		player_name = PlayerUtils.player_name(peer_id, lobby)
 
 		if not player_name then
 			-- Nothing
@@ -49,7 +49,7 @@ NetworkMatchHandler.init = function (self, arg_1_1, arg_1_2, arg_1_3, arg_1_4, a
 
 	tbl_2.player_name = player_name
 	tbl_2.leader_peer_id = self._server_peer_id
-	tbl_2.is_match_owner = not arg_1_2 and true
+	tbl_2.is_match_owner = not not is_server and not not true
 
 	local get_versus_level
 
@@ -66,13 +66,13 @@ NetworkMatchHandler.init = function (self, arg_1_1, arg_1_2, arg_1_3, arg_1_4, a
 	::label_1_1::
 
 	tbl_2.versus_level = get_versus_level
-	tbl[arg_1_3] = _create_data(var_1_1, tbl_2)
+	tbl[peer_id] = _create_data(var_1_1, tbl_2)
 	self._data_by_peer = tbl
 
-	if not arg_1_2 then
-		self._data_by_peer[arg_1_4] = self:_create_data({
+	if not is_server then
+		self._data_by_peer[server_peer_id] = self:_create_data({
 			is_match_owner = true,
-			leader_peer_id = arg_1_4
+			leader_peer_id = server_peer_id
 		})
 		self._pending_initial_sync = true
 
@@ -80,41 +80,41 @@ NetworkMatchHandler.init = function (self, arg_1_1, arg_1_2, arg_1_3, arg_1_4, a
 	end
 end
 
-NetworkMatchHandler.server_created = function (self, arg_2_1)
+NetworkMatchHandler.server_created = function (self, peer_id)
 	-- function 2
-	Managers.persistent_event:trigger("new_network_match_synced", self._is_server, arg_2_1)
+	Managers.persistent_event:trigger("new_network_match_synced", self._is_server, peer_id)
 end
 
-NetworkMatchHandler.register_pending_peer = function (self, arg_3_1, arg_3_2)
+NetworkMatchHandler.register_pending_peer = function (self, peer_id, leader)
 	-- function 3
-	local var_3_0 = PEER_ID_TO_CHANNEL[arg_3_1]
+	local channel_id = PEER_ID_TO_CHANNEL[peer_id]
 	local _data_by_peer = self._data_by_peer
-	local _try_unstore_data = self:_try_unstore_data(arg_3_1)
+	local _try_unstore_data = self:_try_unstore_data(peer_id)
 
-	_try_unstore_data = _try_unstore_data or self:_create_data()
-	_data_by_peer[arg_3_1] = _try_unstore_data
-	self._data_by_peer[arg_3_1].leader_peer_id = arg_3_2
+	_try_unstore_data = not not _try_unstore_data or not not self:_create_data()
+	_data_by_peer[peer_id] = _try_unstore_data
+	self._data_by_peer[peer_id].leader_peer_id = leader
 
-	printf("[NetworkMatchHandler] Registering pending peer %s with leader %s", arg_3_1, arg_3_2)
-	self:sync_data_down_to(arg_3_1)
+	printf("[NetworkMatchHandler] Registering pending peer %s with leader %s", peer_id, leader)
+	self:sync_data_down_to(peer_id)
 
-	if arg_3_2 == self._my_peer_id then
-		RPC.rpc_network_match_request_sync(var_3_0)
-	elseif not PEER_ID_TO_CHANNEL[arg_3_2] then
-		local var_3_3 = PEER_ID_TO_CHANNEL[arg_3_2]
+	if leader == self._my_peer_id then
+		RPC.rpc_network_match_request_sync(channel_id)
+	elseif PEER_ID_TO_CHANNEL[leader] then
+		local leader_channel = PEER_ID_TO_CHANNEL[leader]
 
-		RPC.rpc_network_match_request_sync(var_3_3)
+		RPC.rpc_network_match_request_sync(leader_channel)
 	else
-		printf("[NetworkMatchHandler] Failed to sync client %s because of no longer holding a connection to their leader %s", arg_3_1, arg_3_2)
+		printf("[NetworkMatchHandler] Failed to sync client %s because of no longer holding a connection to their leader %s", peer_id, leader)
 	end
 end
 
-NetworkMatchHandler.register_rpcs = function (self, arg_4_1, arg_4_2)
+NetworkMatchHandler.register_rpcs = function (self, network_event_delegate, network_transmit)
 	-- function 4
-	self._network_event_delegate = arg_4_1
-	self._network_transmit = arg_4_2
+	self._network_event_delegate = network_event_delegate
+	self._network_transmit = network_transmit
 
-	arg_4_1:register(self, unpack(tbl_2))
+	network_event_delegate:register(self, unpack(RPCS))
 end
 
 NetworkMatchHandler.unregister_rpcs = function (self)
@@ -126,148 +126,157 @@ NetworkMatchHandler.poll_propagation_peer = function (self)
 	-- function 6
 	assert(self._is_server, "[NetworkMatchHandler] Only lobby hosts may propagate to another lobby host")
 
-	local var_6_0
-	local query_lobby = Managers.lobby:query_lobby("matchmaking_join_lobby")
+	local propagation_peer
+	local joining_lobby = Managers.lobby:query_lobby("matchmaking_join_lobby")
 
-	if not query_lobby then
-		var_6_0 = query_lobby:lobby_host()
+	if joining_lobby then
+		propagation_peer = joining_lobby:lobby_host()
 	end
 
-	local _join_lobby_peer_id = self._join_lobby_peer_id
-	local flag = var_6_0 ~= _join_lobby_peer_id
+	local old_join_peer = self._join_lobby_peer_id
+	local has_new_join_peer = propagation_peer ~= old_join_peer
 
-	if var_6_0 ~= nil or not PEER_ID_TO_CHANNEL[_join_lobby_peer_id] then
-		flag = false
+	if propagation_peer == nil and PEER_ID_TO_CHANNEL[old_join_peer] then
+		has_new_join_peer = false
 	end
 
-	if not flag then
-		printf("[NetworkMatchHandler] Join lobby peer changed. Old: %s, New: %s", _join_lobby_peer_id, var_6_0)
+	if has_new_join_peer then
+		printf("[NetworkMatchHandler] Join lobby peer changed. Old: %s, New: %s", old_join_peer, propagation_peer)
 
-		self._join_lobby_peer_id = var_6_0
+		self._join_lobby_peer_id = propagation_peer
 
-		if not _join_lobby_peer_id then
+		if old_join_peer then
 			self:_clear_non_session_peers()
 		end
 
-		self:_network_match_changed(var_6_0)
+		self:_network_match_changed(propagation_peer)
 
-		if not var_6_0 then
+		if propagation_peer then
 			self:sync_data_up()
 			self:_request_sync()
-		elseif _join_lobby_peer_id == self._propagate_peer_id then
+		elseif old_join_peer == self._propagate_peer_id then
 			self._propagate_peer_id = nil
 		end
 	end
 end
 
-NetworkMatchHandler.rpc_network_match_sync_player_data = function (self, arg_7_1, arg_7_2, arg_7_3, arg_7_4, arg_7_5, arg_7_6)
+NetworkMatchHandler.rpc_network_match_sync_player_data = function (self, channel_id, peer_id, player_name, leader_peer_id, is_match_owner, versus_level)
 	-- function 7
-	local var_7_0 = CHANNEL_TO_PEER_ID[arg_7_1]
-	local _try_unstore_data = self:_try_unstore_data(arg_7_2)
+	local from_peer = CHANNEL_TO_PEER_ID[channel_id]
+	local _try_unstore_data = self:_try_unstore_data(peer_id)
 
-	_try_unstore_data = _try_unstore_data or self:_create_data()
-	self._data_by_peer[arg_7_2] = _try_unstore_data
-	_try_unstore_data.player_name = arg_7_3
-	_try_unstore_data.leader_peer_id = arg_7_4
-	_try_unstore_data.versus_level = arg_7_6
-	_try_unstore_data.is_match_owner = arg_7_5
-	_try_unstore_data.is_synced = true
+	if not _try_unstore_data then
+		-- Nothing
+	end
 
-	if arg_7_2 == self._join_lobby_peer_id then
-		if not arg_7_5 then
-			self._propagate_peer_id = arg_7_2
+	_try_unstore_data = self:_create_data()
+
+	local peer_data = _try_unstore_data
+
+	::label_7_0::
+
+	self._data_by_peer[peer_id] = peer_data
+	peer_data.player_name = player_name
+	peer_data.leader_peer_id = leader_peer_id
+	peer_data.versus_level = versus_level
+	peer_data.is_match_owner = is_match_owner
+	peer_data.is_synced = true
+
+	if peer_id == self._join_lobby_peer_id then
+		if is_match_owner then
+			self._propagate_peer_id = peer_id
 		else
-			self._data_by_peer[self._my_peer_id].leader_peer_id = arg_7_2
+			self._data_by_peer[self._my_peer_id].leader_peer_id = peer_id
 		end
 	end
 
-	if not flag then
-		printf("[NetworkMatchHandler] Sync data received from peer %s for peer %s (%s). has_leader=%s, is_match_owner=%s", var_7_0, arg_7_2, arg_7_3, arg_7_4, arg_7_5)
+	if VERBOSE_LOG then
+		printf("[NetworkMatchHandler] Sync data received from peer %s for peer %s (%s). has_leader=%s, is_match_owner=%s", from_peer, peer_id, player_name, leader_peer_id, is_match_owner)
 	end
 
-	local var_7_2 = CHANNEL_TO_PEER_ID[arg_7_1]
+	local sender_peer_id = CHANNEL_TO_PEER_ID[channel_id]
 
-	self:propagate_rpc("rpc_network_match_sync_player_data", var_7_2, arg_7_2, arg_7_3, arg_7_4, arg_7_5, arg_7_6)
+	self:propagate_rpc("rpc_network_match_sync_player_data", sender_peer_id, peer_id, player_name, leader_peer_id, is_match_owner, versus_level)
 
-	if not self._pending_initial_sync then
+	if self._pending_initial_sync then
 		self._pending_initial_sync = false
 
 		Managers.persistent_event:trigger("new_network_match_synced", self._is_server, self._my_peer_id)
 	end
 end
 
-NetworkMatchHandler.rpc_network_match_changed = function (self, arg_8_1, arg_8_2)
+NetworkMatchHandler.rpc_network_match_changed = function (self, channel_id, new_match_owner_peer_id)
 	-- function 8
 	self:_clear_non_session_peers()
-	self:_network_match_changed(arg_8_2)
-	self:send_rpc_down("rpc_network_match_changed", arg_8_2)
+	self:_network_match_changed(new_match_owner_peer_id)
+	self:send_rpc_down("rpc_network_match_changed", new_match_owner_peer_id)
 end
 
-NetworkMatchHandler._network_match_changed = function (self, arg_9_1)
+NetworkMatchHandler._network_match_changed = function (self, new_match_owner_peer_id)
 	-- function 9
-	printf("[NetworkMatchHandler] Network match changed. New match owner: %s", arg_9_1)
+	printf("[NetworkMatchHandler] Network match changed. New match owner: %s", new_match_owner_peer_id)
 
-	for k, v in pairs(self._data_by_peer) do
-		v.is_match_owner = false
+	for peer_id, peer_data in pairs(self._data_by_peer) do
+		peer_data.is_match_owner = false
 	end
 
-	if not arg_9_1 then
-		self._data_by_peer[arg_9_1] = self:_create_data({
+	if new_match_owner_peer_id then
+		self._data_by_peer[new_match_owner_peer_id] = self:_create_data({
 			is_match_owner = true,
-			leader_peer_id = arg_9_1
+			leader_peer_id = new_match_owner_peer_id
 		})
 
 		self:_request_sync()
-	elseif not self._is_server then
+	elseif self._is_server then
 		self._data_by_peer[self._my_peer_id].is_match_owner = true
 	else
 		self._data_by_peer[self._server_peer_id].is_match_owner = true
 	end
 
-	if not self._is_server then
-		self:send_rpc_down("rpc_network_match_changed", arg_9_1 or self._my_peer_id)
+	if self._is_server then
+		self:send_rpc_down("rpc_network_match_changed", not not new_match_owner_peer_id or not not self._my_peer_id)
 	end
 
-	Managers.persistent_event:trigger("network_match_changed", arg_9_1)
+	Managers.persistent_event:trigger("network_match_changed", new_match_owner_peer_id)
 end
 
-NetworkMatchHandler.rpc_network_match_request_sync = function (self, arg_10_1)
+NetworkMatchHandler.rpc_network_match_request_sync = function (self, channel_id)
 	-- function 10
-	local var_10_0 = CHANNEL_TO_PEER_ID[arg_10_1]
+	local requester_peer_id = CHANNEL_TO_PEER_ID[channel_id]
 
-	printf("[NetworkMatchHandler] Peer %s requested sync", var_10_0)
+	printf("[NetworkMatchHandler] Peer %s requested sync", requester_peer_id)
 
-	if not flag then
+	if VERBOSE_LOG then
 		printf("[NetworkMatchHandler] Own data:\n%s", table.tostring(self._data_by_peer))
 	end
 
-	local var_10_1 = self._data_by_peer[var_10_0]
+	local requester_data = self._data_by_peer[requester_peer_id]
 
-	if not var_10_1 then
+	if not requester_data then
 		return
 	end
 
-	if not var_10_1.is_match_owner then
+	if requester_data.is_match_owner then
 		self:sync_data_up()
 
 		return
 	end
 
-	local _my_peer_id = self._my_peer_id
-	local var_10_3 = self._data_by_peer[_my_peer_id]
+	local my_peer_id = self._my_peer_id
+	local my_peer_data = self._data_by_peer[my_peer_id]
 
-	if not var_10_3.is_match_owner then
-		self:sync_data_down_to(var_10_0)
+	if my_peer_data.is_match_owner then
+		self:sync_data_down_to(requester_peer_id)
 
 		return
-	elseif var_10_3.leader_peer_id == var_10_0 then
+	elseif my_peer_data.leader_peer_id == requester_peer_id then
 		self:sync_data_up()
 
 		return
-	elseif var_10_1.leader_peer_id == _my_peer_id then
-		self:sync_data_down_to(var_10_0)
+	elseif requester_data.leader_peer_id == my_peer_id then
+		self:sync_data_down_to(requester_peer_id)
 	else
-		self:sync_data_to(var_10_0)
+		self:sync_data_to(requester_peer_id)
 	end
 end
 
@@ -279,9 +288,9 @@ end
 
 NetworkMatchHandler.get_match_owner = function (self)
 	-- function 12
-	for k, v in pairs(self._data_by_peer) do
-		if not v.is_match_owner then
-			return k
+	for peer_id, peer_data in pairs(self._data_by_peer) do
+		if peer_data.is_match_owner then
+			return peer_id
 		end
 	end
 end
@@ -291,87 +300,81 @@ NetworkMatchHandler.is_match_owner = function (self)
 	return self:get_match_owner() == self._my_peer_id
 end
 
-NetworkMatchHandler.is_leader = function (self, arg_14_1)
+NetworkMatchHandler.is_leader = function (self, optional_peer_id)
 	-- function 14
-	local flag = arg_14_1 or self._my_peer_id
+	local peer_id = not not optional_peer_id or not not self._my_peer_id
 
-	return self:query_peer_data(flag, "leader_peer_id") == flag
+	return self:query_peer_data(peer_id, "leader_peer_id") == peer_id
 end
 
 NetworkMatchHandler.synced_peers = function (self)
 	-- function 15
-	return table.keys_if(self._data_by_peer, function (arg_16_0, arg_16_1)
+	return table.keys_if(self._data_by_peer, function (_, peer_data)
 		-- function 16
-		return arg_16_1.is_synced
+		return peer_data.is_synced
 	end)
 end
 
 NetworkMatchHandler.sync_data_up = function (self)
 	-- function 17
-	local _my_peer_id = self._my_peer_id
+	local my_peer_id = self._my_peer_id
 
-	for k, v in pairs(self._data_by_peer) do
-		if not (v.leader_peer_id == _my_peer_id or k ~= _my_peer_id) then
-			local player_name = v.player_name
-			local leader_peer_id = v.leader_peer_id
-			local is_match_owner = v.is_match_owner
+	for peer_id, peer_data in pairs(self._data_by_peer) do
+		if peer_data.leader_peer_id == my_peer_id or peer_id == my_peer_id then
+			local player_name, leader_peer_id, is_match_owner = peer_data.player_name, peer_data.leader_peer_id, peer_data.is_match_owner
 
-			self:send_rpc_up("rpc_network_match_sync_player_data", k, player_name, leader_peer_id, is_match_owner, v.versus_level)
+			self:send_rpc_up("rpc_network_match_sync_player_data", peer_id, player_name, leader_peer_id, is_match_owner, peer_data.versus_level)
 		end
 	end
 end
 
 NetworkMatchHandler.sync_data_down = function (self)
 	-- function 18
-	for k, v in pairs(self._data_by_peer) do
-		local player_name = v.player_name
-		local leader_peer_id = v.leader_peer_id
-		local is_match_owner = v.is_match_owner
+	for peer_id, peer_data in pairs(self._data_by_peer) do
+		local player_name, leader_peer_id, is_match_owner = peer_data.player_name, peer_data.leader_peer_id, peer_data.is_match_owner
 
-		self:send_rpc_down_except("rpc_network_match_sync_player_data", k, k, player_name, leader_peer_id, is_match_owner, v.versus_level)
+		self:send_rpc_down_except("rpc_network_match_sync_player_data", peer_id, peer_id, player_name, leader_peer_id, is_match_owner, peer_data.versus_level)
 	end
 end
 
-NetworkMatchHandler.sync_data_down_to = function (self, arg_19_1)
+NetworkMatchHandler.sync_data_down_to = function (self, target_peer)
 	-- function 19
-	local var_19_0 = PEER_ID_TO_CHANNEL[arg_19_1]
+	local channel_id = PEER_ID_TO_CHANNEL[target_peer]
 
-	if not var_19_0 then
+	if not channel_id then
 		return
 	end
 
-	for k, v in pairs(self._data_by_peer) do
-		if k ~= arg_19_1 then
-			local player_name = v.player_name
-			local leader_peer_id = v.leader_peer_id
-			local is_match_owner = v.is_match_owner
+	for peer_id, peer_data in pairs(self._data_by_peer) do
+		if peer_id ~= target_peer then
+			local player_name, leader_peer_id, is_match_owner = peer_data.player_name, peer_data.leader_peer_id, peer_data.is_match_owner
 
-			RPC.rpc_network_match_sync_player_data(var_19_0, k, player_name, leader_peer_id, is_match_owner, v.versus_level)
+			RPC.rpc_network_match_sync_player_data(channel_id, peer_id, player_name, leader_peer_id, is_match_owner, peer_data.versus_level)
 		end
 	end
 end
 
-NetworkMatchHandler.sync_data_to = function (self, arg_20_1)
+NetworkMatchHandler.sync_data_to = function (self, target_peer)
 	-- function 20
-	local var_20_0 = PEER_ID_TO_CHANNEL[arg_20_1]
-	local var_20_1 = self._data_by_peer[self._my_peer_id]
+	local channel_id = PEER_ID_TO_CHANNEL[target_peer]
+	local my_data = self._data_by_peer[self._my_peer_id]
 
-	RPC.rpc_network_match_sync_player_data(var_20_0, self._my_peer_id, var_20_1.player_name, var_20_1.leader_peer_id, var_20_1.is_match_owner, var_20_1.versus_level)
+	RPC.rpc_network_match_sync_player_data(channel_id, self._my_peer_id, my_data.player_name, my_data.leader_peer_id, my_data.is_match_owner, my_data.versus_level)
 end
 
-NetworkMatchHandler.send_rpc_up = function (self, arg_21_1, ...)
+NetworkMatchHandler.send_rpc_up = function (self, rpc, ...)
 	-- function 21
 	if self._server_peer_id ~= self._my_peer_id then
-		local var_21_0 = PEER_ID_TO_CHANNEL[self._server_peer_id]
+		local server_channel = PEER_ID_TO_CHANNEL[self._server_peer_id]
 
-		if not var_21_0 then
-			RPC[arg_21_1](var_21_0, ...)
+		if server_channel then
+			RPC[rpc](server_channel, ...)
 		end
-	elseif not self._propagate_peer_id then
-		local var_21_1 = PEER_ID_TO_CHANNEL[self._propagate_peer_id]
+	elseif self._propagate_peer_id then
+		local propagate_channel = PEER_ID_TO_CHANNEL[self._propagate_peer_id]
 
-		if not var_21_1 then
-			RPC[arg_21_1](var_21_1, ...)
+		if propagate_channel then
+			RPC[rpc](propagate_channel, ...)
 		end
 	end
 end
@@ -381,141 +384,143 @@ NetworkMatchHandler.can_propagate = function (self)
 	return self._propagate_peer_id
 end
 
-NetworkMatchHandler.send_rpc_others = function (self, arg_23_1, ...)
+NetworkMatchHandler.send_rpc_others = function (self, rpc, ...)
 	-- function 23
-	self:send_rpc_up(arg_23_1, ...)
-	self:send_rpc_down(arg_23_1, ...)
+	self:send_rpc_up(rpc, ...)
+	self:send_rpc_down(rpc, ...)
 end
 
-NetworkMatchHandler.send_rpc = function (arg_24_0, arg_24_1, arg_24_2, ...)
+NetworkMatchHandler.send_rpc = function (self, rpc, peer_id, ...)
 	-- function 24
-	local var_24_0 = PEER_ID_TO_CHANNEL[arg_24_2]
+	local channel_id = PEER_ID_TO_CHANNEL[peer_id]
 
-	RPC[arg_24_1](var_24_0, ...)
+	RPC[rpc](channel_id, ...)
 end
 
-NetworkMatchHandler.send_rpc_down = function (self, arg_25_1, ...)
+NetworkMatchHandler.send_rpc_down = function (self, rpc, ...)
 	-- function 25
-	self:send_rpc_down_except(arg_25_1, nil, ...)
+	self:send_rpc_down_except(rpc, nil, ...)
 end
 
-NetworkMatchHandler.send_rpc_down_except = function (self, arg_26_1, arg_26_2, ...)
+NetworkMatchHandler.send_rpc_down_except = function (self, rpc, except_peer, ...)
 	-- function 26
-	local _my_peer_id = self._my_peer_id
-	local is_match_owner = self._data_by_peer[_my_peer_id].is_match_owner
+	local my_peer_id = self._my_peer_id
+	local im_match_host = self._data_by_peer[my_peer_id].is_match_owner
 
-	for k, v in pairs(self._data_by_peer) do
-		if k == arg_26_2 or k == _my_peer_id or v.leader_peer_id == _my_peer_id or v.leader_peer_id ~= k or not is_match_owner then
-			local var_26_2 = PEER_ID_TO_CHANNEL[k]
+	for peer_id, peer_data in pairs(self._data_by_peer) do
+		if peer_id ~= except_peer and peer_id ~= my_peer_id and (peer_data.leader_peer_id == my_peer_id or peer_data.leader_peer_id == peer_id and im_match_host) then
+			local channel_id = PEER_ID_TO_CHANNEL[peer_id]
 
-			if not var_26_2 then
-				RPC[arg_26_1](var_26_2, ...)
+			if channel_id then
+				RPC[rpc](channel_id, ...)
 			end
 		end
 	end
 end
 
-NetworkMatchHandler.send_rpc_down_except_if = function (self, arg_27_1, arg_27_2, arg_27_3, ...)
+NetworkMatchHandler.send_rpc_down_except_if = function (self, rpc, except_peer, condition, ...)
 	-- function 27
-	local _my_peer_id = self._my_peer_id
-	local is_match_owner = self._data_by_peer[_my_peer_id].is_match_owner
+	local my_peer_id = self._my_peer_id
+	local im_match_host = self._data_by_peer[my_peer_id].is_match_owner
 
-	for k, v in pairs(self._data_by_peer) do
-		if k == arg_27_2 or not arg_27_3(k) and k == _my_peer_id and v.leader_peer_id == _my_peer_id and v.leader_peer_id ~= k or not is_match_owner then
-			local var_27_2 = PEER_ID_TO_CHANNEL[k]
+	for peer_id, peer_data in pairs(self._data_by_peer) do
+		if peer_id ~= except_peer and condition(peer_id) and peer_id ~= my_peer_id and (peer_data.leader_peer_id == my_peer_id or peer_data.leader_peer_id == peer_id and im_match_host) then
+			local channel_id = PEER_ID_TO_CHANNEL[peer_id]
 
-			if not var_27_2 then
-				RPC[arg_27_1](var_27_2, ...)
+			if channel_id then
+				RPC[rpc](channel_id, ...)
 			end
 		end
 	end
 end
 
-NetworkMatchHandler.send_rpc_down_if = function (self, arg_28_1, arg_28_2, ...)
+NetworkMatchHandler.send_rpc_down_if = function (self, rpc, condition, ...)
 	-- function 28
-	local _my_peer_id = self._my_peer_id
-	local is_match_owner = self._data_by_peer[_my_peer_id].is_match_owner
+	local my_peer_id = self._my_peer_id
+	local im_match_host = self._data_by_peer[my_peer_id].is_match_owner
 
-	for k, v in pairs(self._data_by_peer) do
-		if not arg_28_2(k) and k == _my_peer_id and v.leader_peer_id == _my_peer_id and v.leader_peer_id ~= k or not is_match_owner then
-			local var_28_2 = PEER_ID_TO_CHANNEL[k]
+	for peer_id, peer_data in pairs(self._data_by_peer) do
+		if condition(peer_id) and peer_id ~= my_peer_id and (peer_data.leader_peer_id == my_peer_id or peer_data.leader_peer_id == peer_id and im_match_host) then
+			local channel_id = PEER_ID_TO_CHANNEL[peer_id]
 
-			if not var_28_2 then
-				RPC[arg_28_1](var_28_2, ...)
+			if channel_id then
+				RPC[rpc](channel_id, ...)
 			end
 		end
 	end
 end
 
-NetworkMatchHandler.propagate_rpc = function (self, arg_29_1, arg_29_2, ...)
+NetworkMatchHandler.propagate_rpc = function (self, rpc, source_peer_id, ...)
 	-- function 29
-	if not self._propagate_peer_id then
-		if self._propagate_peer_id == arg_29_2 then
-			self:send_rpc_down(arg_29_1, ...)
+	if self._propagate_peer_id then
+		if self._propagate_peer_id == source_peer_id then
+			self:send_rpc_down(rpc, ...)
 
 			return
 		end
 
-		self:send_rpc_up(arg_29_1, ...)
+		self:send_rpc_up(rpc, ...)
 	end
 
-	if not self._is_server then
-		self:send_rpc_down_except(arg_29_1, arg_29_2, ...)
+	if self._is_server then
+		self:send_rpc_down_except(rpc, source_peer_id, ...)
 	end
 end
 
-NetworkMatchHandler.propagate_rpc_if = function (self, arg_30_1, arg_30_2, arg_30_3, ...)
+NetworkMatchHandler.propagate_rpc_if = function (self, rpc, source_peer_id, condition, ...)
 	-- function 30
-	if not self._propagate_peer_id then
-		if self._propagate_peer_id == arg_30_2 then
-			self:send_rpc_down_if(arg_30_1, arg_30_3, ...)
+	if self._propagate_peer_id then
+		if self._propagate_peer_id == source_peer_id then
+			self:send_rpc_down_if(rpc, condition, ...)
 
 			return
 		end
 
-		self:send_rpc_up(arg_30_1, ...)
+		self:send_rpc_up(rpc, ...)
 	end
 
-	if not self._is_server then
-		self:send_rpc_down_except_if(arg_30_1, arg_30_2, arg_30_3, ...)
+	if self._is_server then
+		self:send_rpc_down_except_if(rpc, source_peer_id, condition, ...)
 	end
 end
 
 NetworkMatchHandler._clear_non_session_peers = function (self)
 	-- function 31
-	local members_map = self._lobby:members():members_map()
+	local lobby = self._lobby
+	local members = lobby:members()
+	local members_map = members:members_map()
 
-	for k in pairs(self._data_by_peer) do
-		if not members_map[k] then
-			self._data_by_peer[k] = nil
+	for peer_id in pairs(self._data_by_peer) do
+		if not members_map[peer_id] then
+			self._data_by_peer[peer_id] = nil
 		end
 	end
 end
 
-NetworkMatchHandler.client_disconnected = function (self, arg_32_1)
+NetworkMatchHandler.client_disconnected = function (self, peer_id)
 	-- function 32
-	if not self._data_by_peer[arg_32_1] then
-		self:_store_data(arg_32_1)
+	if self._data_by_peer[peer_id] then
+		self:_store_data(peer_id)
 	end
 end
 
-NetworkMatchHandler.has_peer_data = function (self, arg_33_1)
+NetworkMatchHandler.has_peer_data = function (self, peer_id)
 	-- function 33
-	return self._data_by_peer[arg_33_1]
+	return self._data_by_peer[peer_id]
 end
 
-NetworkMatchHandler.query_peer_data = function (self, arg_34_1, arg_34_2, arg_34_3)
+NetworkMatchHandler.query_peer_data = function (self, peer_id, key, disallow_default)
 	-- function 34
-	local var_34_0 = self._data_by_peer[arg_34_1]
+	local peer_data = self._data_by_peer[peer_id]
 
-	if not var_34_0 then
-		return var_34_0[arg_34_2]
+	if peer_data then
+		return peer_data[key]
 	end
 
 	local default_data
 
-	if not arg_34_3 then
-		default_data = self:default_data(arg_34_2)
+	if not disallow_default then
+		default_data = self:default_data(key)
 
 		if not default_data then
 			-- Nothing
@@ -529,43 +534,43 @@ NetworkMatchHandler.query_peer_data = function (self, arg_34_1, arg_34_2, arg_34
 	return default_data
 end
 
-NetworkMatchHandler.default_data = function (arg_35_0, arg_35_1)
+NetworkMatchHandler.default_data = function (self, key)
 	-- function 35
-	return tbl[arg_35_1]
+	return DEFAULT_DATA[key]
 end
 
-NetworkMatchHandler._try_unstore_data = function (self, arg_36_1)
+NetworkMatchHandler._try_unstore_data = function (self, peer_id)
 	-- function 36
-	local var_36_0 = self._stored_data[arg_36_1]
+	local stored_data = self._stored_data[peer_id]
 
-	self._stored_data[arg_36_1] = nil
+	self._stored_data[peer_id] = nil
 
-	return var_36_0 or self._data_by_peer[arg_36_1]
+	return not not stored_data or not not self._data_by_peer[peer_id]
 end
 
-NetworkMatchHandler._store_data = function (self, arg_37_1)
+NetworkMatchHandler._store_data = function (self, peer_id)
 	-- function 37
-	local var_37_0 = self._data_by_peer[arg_37_1]
+	local data = self._data_by_peer[peer_id]
 
-	var_37_0.is_synced = tbl.is_synced
-	var_37_0.is_match_owner = tbl.is_match_owner
-	var_37_0.leader_peer_id = tbl.leader_peer_id
-	self._stored_data[arg_37_1] = var_37_0
-	self._data_by_peer[arg_37_1] = nil
+	data.is_synced = DEFAULT_DATA.is_synced
+	data.is_match_owner = DEFAULT_DATA.is_match_owner
+	data.leader_peer_id = DEFAULT_DATA.leader_peer_id
+	self._stored_data[peer_id] = data
+	self._data_by_peer[peer_id] = nil
 end
 
-NetworkMatchHandler._create_data = function (arg_38_0, arg_38_1)
+NetworkMatchHandler._create_data = function (self, init_data)
 	-- function 38
-	local shallow_copy = table.shallow_copy(tbl)
+	local data = table.shallow_copy(DEFAULT_DATA)
 
-	if not arg_38_1 then
-		table.merge(shallow_copy, arg_38_1)
+	if init_data then
+		table.merge(data, init_data)
 	end
 
-	return shallow_copy
+	return data
 end
 
-NetworkMatchHandler.destroy = function (arg_39_0)
+NetworkMatchHandler.destroy = function (self)
 	-- function 39
 	Managers.persistent_event:trigger("network_match_terminated")
 end

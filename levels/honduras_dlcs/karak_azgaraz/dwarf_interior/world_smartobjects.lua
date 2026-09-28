@@ -1,6 +1,6 @@
 -- chunkname: @levels/honduras_dlcs/karak_azgaraz/dwarf_interior/world_smartobjects.lua
 
-local tbl = {
+local smart_objects = {
 	["dd270ba2-d13b-40e9-8a93-5c36a76031bb"] = {
 		{
 			smart_object_index = 1023,
@@ -42686,13 +42686,13 @@ local tbl = {
 		}
 	}
 }
-local num = 1755
-local str = "v1"
-local str_2 = "2017.MAY.05.05"
+local smart_object_count = 1755
+local version = "v1"
+local ledgelator_version = "2017.MAY.05.05"
 
 return {
-	smart_objects = tbl,
-	smart_object_count = num,
-	version = str,
-	ledgelator_version = str_2
+	smart_objects = smart_objects,
+	smart_object_count = smart_object_count,
+	version = version,
+	ledgelator_version = ledgelator_version
 }

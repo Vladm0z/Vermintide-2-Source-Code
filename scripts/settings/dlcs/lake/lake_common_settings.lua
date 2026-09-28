@@ -1,33 +1,33 @@
 -- chunkname: @scripts/settings/dlcs/lake/lake_common_settings.lua
 
-local lake = DLCSettings.lake
+local settings = DLCSettings.lake
 
-lake.career_setting_files = {
+settings.career_setting_files = {
 	"scripts/settings/dlcs/lake/career_settings_lake"
 }
-lake.player_breeds = {
+settings.player_breeds = {
 	"scripts/settings/dlcs/lake/player_breeds_lake"
 }
-lake.career_ability_settings = {
+settings.career_ability_settings = {
 	"scripts/settings/dlcs/lake/passive_ability_questing_knight",
 	"scripts/settings/dlcs/lake/career_ability_settings_lake"
 }
-lake.action_template_files = {
+settings.action_template_files = {
 	"scripts/settings/dlcs/lake/action_templates_lake"
 }
-lake.talent_settings = {
+settings.talent_settings = {
 	"scripts/settings/dlcs/lake/talent_settings_lake_empire_soldier"
 }
-lake.profile_files = {
+settings.profile_files = {
 	"scripts/settings/dlcs/lake/lake_profiles"
 }
-lake.challenge_categories = {
+settings.challenge_categories = {
 	"questing_knight"
 }
-lake.statistics_definitions = {
+settings.statistics_definitions = {
 	"scripts/managers/backend/statistics_definitions_lake"
 }
-lake.statistics_lookup = {
+settings.statistics_lookup = {
 	"lake_mission_streak_act1_legend_es_questingknight",
 	"lake_mission_streak_act2_legend_es_questingknight",
 	"lake_mission_streak_act3_legend_es_questingknight",
@@ -39,14 +39,14 @@ lake.statistics_lookup = {
 	"lake_timing_quest",
 	"complete_all_grailknight_challenges"
 }
-lake.anim_lookup = {
+settings.anim_lookup = {
 	"swap_charge_stance",
 	"holding_right_charge"
 }
-lake.effects = {
+settings.effects = {
 	"fx/grail_knight_active_ability"
 }
-lake.unlock_settings = {
+settings.unlock_settings = {
 	lake = {
 		id = "1343500",
 		class = "UnlockDlc",
@@ -58,7 +58,7 @@ lake.unlock_settings = {
 		requires_restart = true
 	}
 }
-lake.unlock_settings_xb1 = {
+settings.unlock_settings_xb1 = {
 	lake = {
 		id = "52544E39-5A56-305A-C058-52563853C200",
 		backend_reward_id = "lake",
@@ -71,7 +71,7 @@ lake.unlock_settings_xb1 = {
 		class = "UnlockDlc"
 	}
 }
-lake.unlock_settings_ps4 = {
+settings.unlock_settings_ps4 = {
 	CUSA13595_00 = {
 		lake = {
 			product_label = "V2USGRAILKNIGHTK",
@@ -103,7 +103,7 @@ lake.unlock_settings_ps4 = {
 		}
 	}
 }
-lake.progression_unlocks = {
+settings.progression_unlocks = {
 	es_questingknight = {
 		description = "end_screen_career_unlocked",
 		profile = "empire_soldier",

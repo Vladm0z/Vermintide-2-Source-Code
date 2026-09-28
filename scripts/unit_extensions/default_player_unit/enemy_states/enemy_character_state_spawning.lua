@@ -2,7 +2,7 @@
 
 EnemyCharacterStateSpawning = class(EnemyCharacterStateSpawning, EnemyCharacterState)
 
-local tbl = {
+local exit_data = {
 	chimney = {
 		"exit_teleporter_chimney",
 		0,
@@ -30,149 +30,163 @@ local tbl = {
 	}
 }
 
-EnemyCharacterStateSpawning.init = function (arg_1_0, arg_1_1)
+EnemyCharacterStateSpawning.init = function (self, character_state_init_context)
 	-- function 1
-	EnemyCharacterStateSpawning.super.init(arg_1_0, arg_1_1, "spawning")
+	EnemyCharacterStateSpawning.super.init(self, character_state_init_context, "spawning")
 end
 
-EnemyCharacterStateSpawning.on_enter = function (self, arg_2_1, arg_2_2, arg_2_3, arg_2_4, arg_2_5, arg_2_6, arg_2_7)
+EnemyCharacterStateSpawning.on_enter = function (self, unit, input, dt, context, t, previous_state, params)
 	-- function 2
-	local _input_extension = self._input_extension
-	local _first_person_extension = self._first_person_extension
-	local _status_extension = self._status_extension
-	local _inventory_extension = self._inventory_extension
-	local _health_extension = self._health_extension
-	local _locomotion_extension = self._locomotion_extension
-	local interactable_unit = self._interactor_extension:interactable_unit()
-	local extension = ScriptUnit.extension(interactable_unit, "door_system")
+	local input_extension = self._input_extension
+	local first_person_extension = self._first_person_extension
+	local status_extension = self._status_extension
+	local inventory_extension = self._inventory_extension
+	local health_extension = self._health_extension
+	local locomotion_extension = self._locomotion_extension
+	local interactor_extension = self._interactor_extension
+	local enter_unit = interactor_extension:interactable_unit()
+	local enter_crawl_space_extension = ScriptUnit.extension(enter_unit, "door_system")
 
-	self.enter_unit = interactable_unit
+	self.enter_unit = enter_unit
 	self.transition_manager = Managers.transition
-	self.enter_pos = extension.enter_pos
-	self.enter_rot = extension.enter_rot
 
-	local unbox = Vector3Box.unbox(self.enter_rot)
+	local enter_pos = enter_crawl_space_extension.enter_pos
 
-	self.exit_rot = QuaternionBox(Quaternion.look(-unbox))
+	self.enter_pos = enter_pos
+	self.enter_rot = enter_crawl_space_extension.enter_rot
+
+	local exit_crawl_space_enter_rot = Vector3Box.unbox(self.enter_rot)
+
+	self.exit_rot = QuaternionBox(Quaternion.look(-exit_crawl_space_enter_rot))
 	self.wanted_rot = self.enter_rot
 
-	local entrance_type = extension.entrance_type
+	local entrance_type = enter_crawl_space_extension.entrance_type
 
-	self._player = Managers.player:owner(arg_2_1)
-	self.exit_anim = tbl[entrance_type][1]
-	self.forward_offset = tbl[entrance_type][2]
-	self.height_offset = tbl[entrance_type][3]
-	self.fade_t = arg_2_5 + 0.5
+	self._player = Managers.player:owner(unit)
+	self.exit_anim = exit_data[entrance_type][1]
+	self.forward_offset = exit_data[entrance_type][2]
+	self.height_offset = exit_data[entrance_type][3]
 
-	local num = 5
+	local fade_time = 0.5
 
-	self.transition_manager:fade_in(num)
-	_locomotion_extension:enable_animation_driven_movement_with_rotation_no_mover()
+	self.fade_t = t + fade_time
 
-	local flag = false
-	local var_2_12
-	local flag_2 = false
+	local fade_speed = 5
 
-	if not _status_extension:get_unarmed() then
-		flag_2 = true
+	self.transition_manager:fade_in(fade_speed)
+	locomotion_extension:enable_animation_driven_movement_with_rotation_no_mover()
+
+	local active = false
+	local override
+	local unarmed = false
+
+	if status_extension:get_unarmed() then
+		unarmed = true
 	end
 
-	_first_person_extension:set_first_person_mode(flag, var_2_12, flag_2)
-	CharacterStateHelper.update_weapon_actions(arg_2_5, arg_2_1, _input_extension, _inventory_extension, _health_extension)
-	_status_extension:set_should_spawn(false)
+	first_person_extension:set_first_person_mode(active, override, unarmed)
+	CharacterStateHelper.update_weapon_actions(t, unit, input_extension, inventory_extension, health_extension)
+	status_extension:set_should_spawn(false)
 	self:set_breed_action("spawning")
 end
 
-EnemyCharacterStateSpawning.update = function (self, arg_3_1, arg_3_2, arg_3_3, arg_3_4, arg_3_5)
+EnemyCharacterStateSpawning.update = function (self, unit, input, dt, context, t)
 	-- function 3
-	local var_3_0 = BLACKBOARDS[arg_3_1]
-	local _input_extension = self._input_extension
-	local _status_extension = self._status_extension
-	local _first_person_extension = self._first_person_extension
-	local _inventory_extension = self._inventory_extension
+	local blackboard = BLACKBOARDS[unit]
+	local input_extension = self._input_extension
+	local status_extension = self._status_extension
+	local first_person_extension = self._first_person_extension
+	local inventory_extension = self._inventory_extension
 
-	CharacterStateHelper.look(_input_extension, self._player.viewport_name, _first_person_extension, _status_extension, _inventory_extension)
+	CharacterStateHelper.look(input_extension, self._player.viewport_name, first_person_extension, status_extension, inventory_extension)
 
-	if not (not self.fade_t and not (arg_3_5 > self.fade_t)) then
-		local unbox = QuaternionBox.unbox(self.exit_rot)
+	if self.fade_t and t > self.fade_t then
+		local exit_rot = QuaternionBox.unbox(self.exit_rot)
 
-		self._first_person_extension:force_look_rotation(unbox)
+		self._first_person_extension:force_look_rotation(exit_rot)
 
-		local forward = Quaternion.forward(unbox)
+		local dir_vector = Quaternion.forward(exit_rot)
 
-		self.wanted_rot = Vector3Box(forward)
+		self.wanted_rot = Vector3Box(dir_vector)
 
-		local num = forward * self.forward_offset + Vector3.up() * self.height_offset
-		local num_2 = Unit.local_position(self.enter_unit, 0) + num
-		local mover = Unit.mover(arg_3_1)
+		local offset = dir_vector * self.forward_offset + Vector3.up() * self.height_offset
+		local exit_pos = Unit.local_position(self.enter_unit, 0) + offset
+		local mover = Unit.mover(unit)
 
-		Mover.set_position(mover, num_2)
-		Unit.set_local_position(arg_3_1, 0, num_2)
+		Mover.set_position(mover, exit_pos)
+		Unit.set_local_position(unit, 0, exit_pos)
 		CharacterStateHelper.change_camera_state(self._player, "follow_third_person_tunneling")
 
-		local exit_anim = self.exit_anim
+		local move_anim = self.exit_anim
 
-		CharacterStateHelper.play_animation_event(arg_3_1, exit_anim)
-		CharacterStateHelper.look(_input_extension, self._player.viewport_name, _first_person_extension, _status_extension, _inventory_extension, nil, Vector3(-2, 0, 0))
+		CharacterStateHelper.play_animation_event(unit, move_anim)
+		CharacterStateHelper.look(input_extension, self._player.viewport_name, first_person_extension, status_extension, inventory_extension, nil, Vector3(-2, 0, 0))
 
-		local system = Managers.state.entity:system("camera_system")
-		local num_3 = -forward + Vector3.up()
-		local num_4 = Vector3Box.unbox(self.enter_pos) + num_3 * 2
+		local camera_system = Managers.state.entity:system("camera_system")
 
-		system:update_tunnel_camera_position(self._player, num_4)
+		dir_vector = -dir_vector + Vector3.up()
 
-		local extension = ScriptUnit.extension(arg_3_1, "ghost_mode_system")
-		local flag = true
+		local enter_pos = Vector3Box.unbox(self.enter_pos)
+		local new_cam_pos = enter_pos + dir_vector * 2
 
-		extension:try_leave_ghost_mode(flag)
+		camera_system:update_tunnel_camera_position(self._player, new_cam_pos)
 
-		local num_5 = 5
+		local ghost_mode_extension = ScriptUnit.extension(unit, "ghost_mode_system")
+		local force_leave = true
 
-		self.transition_manager:fade_out(num_5)
+		ghost_mode_extension:try_leave_ghost_mode(force_leave)
+
+		local fade_speed = 5
+
+		self.transition_manager:fade_out(fade_speed)
 
 		self.fade_t = nil
 	end
 
-	if not var_3_0.tunneling_finished then
-		_first_person_extension:force_look_rotation(QuaternionBox.unbox(self.exit_rot), 0.1)
+	if blackboard.tunneling_finished then
+		first_person_extension:force_look_rotation(QuaternionBox.unbox(self.exit_rot), 0.1)
 		self:start_camera_transition()
 		self:to_movement_state()
 
-		var_3_0.tunneling_finished = nil
+		blackboard.tunneling_finished = nil
 	end
 
-	Unit.set_local_rotation(arg_3_1, 0, Quaternion.look(Vector3Box.unbox(self.wanted_rot)))
+	Unit.set_local_rotation(unit, 0, Quaternion.look(Vector3Box.unbox(self.wanted_rot)))
 end
 
-EnemyCharacterStateSpawning.on_exit = function (self, arg_4_1, arg_4_2, arg_4_3, arg_4_4, arg_4_5, arg_4_6)
+EnemyCharacterStateSpawning.on_exit = function (self, unit, input, dt, context, t, next_state)
 	-- function 4
-	if not self._status_extension:get_unarmed() then
-		CharacterStateHelper.play_animation_event(arg_4_1, "to_unarmed")
+	local status_extension = self._status_extension
+
+	if status_extension:get_unarmed() then
+		CharacterStateHelper.play_animation_event(unit, "to_unarmed")
 	end
 
 	self:grant_control_to_player()
 	self:set_breed_action("n/a")
 
-	ScriptUnit.extension(arg_4_1, "hit_reaction_system").force_ragdoll_on_death = nil
+	local hit_reaction_extension = ScriptUnit.extension(unit, "hit_reaction_system")
+
+	hit_reaction_extension.force_ragdoll_on_death = nil
 end
 
 EnemyCharacterStateSpawning.grant_control_to_player = function (self)
 	-- function 5
-	local _locomotion_extension = self._locomotion_extension
-	local animation_wanted_root_pose = Unit.animation_wanted_root_pose(self._unit)
+	local locomotion_extension = self._locomotion_extension
+	local wanted_pose = Unit.animation_wanted_root_pose(self._unit)
 
-	_locomotion_extension:teleport_to(Matrix4x4.translation(animation_wanted_root_pose))
-	_locomotion_extension:set_wanted_velocity(Vector3.zero())
-	_locomotion_extension:enable_script_driven_movement()
-	_locomotion_extension:set_animation_translation_scale(Vector3(1, 1, 1))
-	_locomotion_extension:force_on_ground(true)
+	locomotion_extension:teleport_to(Matrix4x4.translation(wanted_pose))
+	locomotion_extension:set_wanted_velocity(Vector3.zero())
+	locomotion_extension:enable_script_driven_movement()
+	locomotion_extension:set_animation_translation_scale(Vector3(1, 1, 1))
+	locomotion_extension:force_on_ground(true)
 end
 
 EnemyCharacterStateSpawning.start_camera_transition = function (self)
 	-- function 6
-	local _first_person_extension = self._first_person_extension
+	local first_person_extension = self._first_person_extension
 
 	CharacterStateHelper.change_camera_state(self._player, "follow")
-	CharacterStateHelper.play_animation_event_first_person(_first_person_extension, "idle")
-	_first_person_extension:toggle_visibility(0.4)
+	CharacterStateHelper.play_animation_event_first_person(first_person_extension, "idle")
+	first_person_extension:toggle_visibility(0.4)
 end

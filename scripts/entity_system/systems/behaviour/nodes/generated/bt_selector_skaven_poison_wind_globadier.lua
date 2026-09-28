@@ -2,10 +2,10 @@
 
 require("scripts/entity_system/systems/behaviour/nodes/bt_node")
 
-local alive = Unit.alive
+local unit_alive = Unit.alive
 local Profiler = Profiler
 
-local function fn()
+local function nop()
 	-- function 1
 	return
 end
@@ -20,178 +20,216 @@ BTSelector_skaven_poison_wind_globadier.init = function (self, ...)
 	self._children = {}
 end
 
-BTSelector_skaven_poison_wind_globadier.leave = function (self, arg_3_1, arg_3_2, arg_3_3, arg_3_4)
+BTSelector_skaven_poison_wind_globadier.leave = function (self, unit, blackboard, t, reason)
 	-- function 3
-	self:set_running_child(arg_3_1, arg_3_2, arg_3_3, nil, arg_3_4)
+	self:set_running_child(unit, blackboard, t, nil, reason)
 end
 
-BTSelector_skaven_poison_wind_globadier.run = function (self, arg_4_1, arg_4_2, arg_4_3, arg_4_4)
+BTSelector_skaven_poison_wind_globadier.run = function (self, unit, blackboard, t, dt)
 	-- function 4
-	local start = Profiler.start
-	local stop = Profiler.stop
-	local current_running_child = self:current_running_child(arg_4_2)
-	local _children = self._children
-	local var_4_4 = _children[1]
-	local stagger = arg_4_2.stagger
+	local Profiler_start, Profiler_stop = Profiler.start, Profiler.stop
+	local child_running = self:current_running_child(blackboard)
+	local children = self._children
 
-	stagger = not stagger and arg_4_2.suicide_run == nil or arg_4_2.suicide_run.explosion_started
+	do
+		local node_suicide_stagger = children[1]
+		local stagger = blackboard.stagger
 
-	if not stagger then
-		self:set_running_child(arg_4_1, arg_4_2, arg_4_3, var_4_4, "aborted")
-
-		local run, var_4_7 = var_4_4:run(arg_4_1, arg_4_2, arg_4_3, arg_4_4)
-
-		if run ~= "running" then
-			self:set_running_child(arg_4_1, arg_4_2, arg_4_3, nil, run)
+		if stagger then
+			if blackboard.suicide_run ~= nil then
+				stagger = blackboard.suicide_run.explosion_started
+			else
+				stagger = false
+			end
 		end
 
-		if run ~= "failed" then
-			return run, var_4_7
+		goto label_4_0
+
+		stagger = true
+
+		local condition_result = stagger
+
+		::label_4_0::
+
+		if condition_result then
+			self:set_running_child(unit, blackboard, t, node_suicide_stagger, "aborted")
+
+			local result, evaluate = node_suicide_stagger:run(unit, blackboard, t, dt)
+
+			if result ~= "running" then
+				self:set_running_child(unit, blackboard, t, nil, result)
+			end
+
+			if result ~= "failed" then
+				return result, evaluate
+			end
+		elseif node_suicide_stagger == child_running then
+			self:set_running_child(unit, blackboard, t, nil, "failed")
 		end
-	elseif var_4_4 == current_running_child then
-		self:set_running_child(arg_4_1, arg_4_2, arg_4_3, nil, "failed")
 	end
 
-	local var_4_8 = _children[2]
-	local var_4_9
+	do
+		local node_stagger = children[2]
+		local condition_result
 
-	if not arg_4_2.stagger then
-		if not arg_4_2.stagger_prohibited then
-			arg_4_2.stagger = false
-		else
-			var_4_9 = true
+		if blackboard.stagger then
+			if blackboard.stagger_prohibited then
+				blackboard.stagger = false
+			else
+				condition_result = true
+			end
+		end
+
+		if condition_result then
+			self:set_running_child(unit, blackboard, t, node_stagger, "aborted")
+
+			local result, evaluate = node_stagger:run(unit, blackboard, t, dt)
+
+			if result ~= "running" then
+				self:set_running_child(unit, blackboard, t, nil, result)
+			end
+
+			if result ~= "failed" then
+				return result, evaluate
+			end
+		elseif node_stagger == child_running then
+			self:set_running_child(unit, blackboard, t, nil, "failed")
 		end
 	end
 
-	if not var_4_9 then
-		self:set_running_child(arg_4_1, arg_4_2, arg_4_3, var_4_8, "aborted")
+	do
+		local node_spawn = children[3]
+		local condition_result = blackboard.spawn
 
-		local run_2, var_4_11 = var_4_8:run(arg_4_1, arg_4_2, arg_4_3, arg_4_4)
+		if condition_result then
+			self:set_running_child(unit, blackboard, t, node_spawn, "aborted")
 
-		if run_2 ~= "running" then
-			self:set_running_child(arg_4_1, arg_4_2, arg_4_3, nil, run_2)
+			local result, evaluate = node_spawn:run(unit, blackboard, t, dt)
+
+			if result ~= "running" then
+				self:set_running_child(unit, blackboard, t, nil, result)
+			end
+
+			if result ~= "failed" then
+				return result, evaluate
+			end
+		elseif node_spawn == child_running then
+			self:set_running_child(unit, blackboard, t, nil, "failed")
 		end
-
-		if run_2 ~= "failed" then
-			return run_2, var_4_11
-		end
-	elseif var_4_8 == current_running_child then
-		self:set_running_child(arg_4_1, arg_4_2, arg_4_3, nil, "failed")
 	end
 
-	local var_4_12 = _children[3]
+	do
+		local node_in_vortex = children[4]
+		local condition_result = blackboard.in_vortex
 
-	if not arg_4_2.spawn then
-		self:set_running_child(arg_4_1, arg_4_2, arg_4_3, var_4_12, "aborted")
+		if condition_result then
+			self:set_running_child(unit, blackboard, t, node_in_vortex, "aborted")
 
-		local run_3, var_4_14 = var_4_12:run(arg_4_1, arg_4_2, arg_4_3, arg_4_4)
+			local result, evaluate = node_in_vortex:run(unit, blackboard, t, dt)
 
-		if run_3 ~= "running" then
-			self:set_running_child(arg_4_1, arg_4_2, arg_4_3, nil, run_3)
+			if result ~= "running" then
+				self:set_running_child(unit, blackboard, t, nil, result)
+			end
+
+			if result ~= "failed" then
+				return result, evaluate
+			end
+		elseif node_in_vortex == child_running then
+			self:set_running_child(unit, blackboard, t, nil, "failed")
 		end
-
-		if run_3 ~= "failed" then
-			return run_3, var_4_14
-		end
-	elseif var_4_12 == current_running_child then
-		self:set_running_child(arg_4_1, arg_4_2, arg_4_3, nil, "failed")
 	end
 
-	local var_4_15 = _children[4]
+	do
+		local node_smartobject = children[5]
+		local condition_result
+		local next_smart_object_data = blackboard.next_smart_object_data
+		local smartobject_is_next = next_smart_object_data.next_smart_object_id ~= nil
 
-	if not arg_4_2.in_vortex then
-		self:set_running_child(arg_4_1, arg_4_2, arg_4_3, var_4_15, "aborted")
-
-		local run_4, var_4_17 = var_4_15:run(arg_4_1, arg_4_2, arg_4_3, arg_4_4)
-
-		if run_4 ~= "running" then
-			self:set_running_child(arg_4_1, arg_4_2, arg_4_3, nil, run_4)
+		if not smartobject_is_next then
+			condition_result = false
 		end
 
-		if run_4 ~= "failed" then
-			return run_4, var_4_17
-		end
-	elseif var_4_15 == current_running_child then
-		self:set_running_child(arg_4_1, arg_4_2, arg_4_3, nil, "failed")
-	end
+		local is_smart_objecting = blackboard.is_smart_objecting
+		local nav_graph_system = Managers.state.entity:system("nav_graph_system")
+		local smart_object_data = next_smart_object_data.smart_object_data
 
-	local var_4_18 = _children[5]
-	local var_4_19
-	local next_smart_object_data = arg_4_2.next_smart_object_data
-
-	if not (next_smart_object_data.next_smart_object_id ~= nil) then
-		var_4_19 = false
-	end
-
-	local is_smart_objecting = arg_4_2.is_smart_objecting
-	local system = Managers.state.entity:system("nav_graph_system")
-	local smart_object_data = next_smart_object_data.smart_object_data
-
-	smart_object_data = not smart_object_data and next_smart_object_data.smart_object_data.unit
-
-	local has_nav_graph, var_4_25 = system:has_nav_graph(smart_object_data)
-
-	if not (not has_nav_graph and var_4_25 or is_smart_objecting or var_4_19 ~= nil) then
-		var_4_19 = false
-	end
-
-	local is_in_smartobject_range = arg_4_2.is_in_smartobject_range
-	local flag = arg_4_2.move_state == "moving"
-
-	if var_4_19 == nil then
-		var_4_19 = not is_in_smartobject_range and flag and is_smart_objecting
-	end
-
-	if not var_4_19 then
-		self:set_running_child(arg_4_1, arg_4_2, arg_4_3, var_4_18, "aborted")
-
-		local run_5, var_4_29 = var_4_18:run(arg_4_1, arg_4_2, arg_4_3, arg_4_4)
-
-		if run_5 ~= "running" then
-			self:set_running_child(arg_4_1, arg_4_2, arg_4_3, nil, run_5)
+		if smart_object_data then
+			-- Nothing
 		end
 
-		if run_5 ~= "failed" then
-			return run_5, var_4_29
-		end
-	elseif var_4_18 == current_running_child then
-		self:set_running_child(arg_4_1, arg_4_2, arg_4_3, nil, "failed")
-	end
+		smart_object_data = next_smart_object_data.smart_object_data.unit
 
-	local var_4_30 = _children[6]
+		local smart_object_unit = smart_object_data
 
-	if not alive(arg_4_2.target_unit) then
-		self:set_running_child(arg_4_1, arg_4_2, arg_4_3, var_4_30, "aborted")
+		::label_4_1::
 
-		local run_6, var_4_32 = var_4_30:run(arg_4_1, arg_4_2, arg_4_3, arg_4_4)
+		local has_nav_graph_extension, nav_graph_enabled = nav_graph_system:has_nav_graph(smart_object_unit)
 
-		if run_6 ~= "running" then
-			self:set_running_child(arg_4_1, arg_4_2, arg_4_3, nil, run_6)
+		if has_nav_graph_extension and not nav_graph_enabled and not is_smart_objecting and condition_result == nil then
+			condition_result = false
 		end
 
-		if run_6 ~= "failed" then
-			return run_6, var_4_32
+		local is_in_smartobject_range = blackboard.is_in_smartobject_range
+		local moving_state = blackboard.move_state == "moving"
+
+		if condition_result == nil then
+			condition_result = (not is_in_smartobject_range or not moving_state) and not not is_smart_objecting
 		end
-	elseif var_4_30 == current_running_child then
-		self:set_running_child(arg_4_1, arg_4_2, arg_4_3, nil, "failed")
+
+		if condition_result then
+			self:set_running_child(unit, blackboard, t, node_smartobject, "aborted")
+
+			local result, evaluate = node_smartobject:run(unit, blackboard, t, dt)
+
+			if result ~= "running" then
+				self:set_running_child(unit, blackboard, t, nil, result)
+			end
+
+			if result ~= "failed" then
+				return result, evaluate
+			end
+		elseif node_smartobject == child_running then
+			self:set_running_child(unit, blackboard, t, nil, "failed")
+		end
 	end
 
-	local var_4_33 = _children[7]
+	do
+		local node_in_combat = children[6]
+		local condition_result = unit_alive(blackboard.target_unit)
 
-	self:set_running_child(arg_4_1, arg_4_2, arg_4_3, var_4_33, "aborted")
+		if condition_result then
+			self:set_running_child(unit, blackboard, t, node_in_combat, "aborted")
 
-	local run_7, var_4_35 = var_4_33:run(arg_4_1, arg_4_2, arg_4_3, arg_4_4)
+			local result, evaluate = node_in_combat:run(unit, blackboard, t, dt)
 
-	if run_7 ~= "running" then
-		self:set_running_child(arg_4_1, arg_4_2, arg_4_3, nil, run_7)
+			if result ~= "running" then
+				self:set_running_child(unit, blackboard, t, nil, result)
+			end
+
+			if result ~= "failed" then
+				return result, evaluate
+			end
+		elseif node_in_combat == child_running then
+			self:set_running_child(unit, blackboard, t, nil, "failed")
+		end
 	end
 
-	if run_7 ~= "failed" then
-		return run_7, var_4_35
+	local node_idle = children[7]
+
+	self:set_running_child(unit, blackboard, t, node_idle, "aborted")
+
+	local result, evaluate = node_idle:run(unit, blackboard, t, dt)
+
+	if result ~= "running" then
+		self:set_running_child(unit, blackboard, t, nil, result)
+	end
+
+	if result ~= "failed" then
+		return result, evaluate
 	end
 end
 
-BTSelector_skaven_poison_wind_globadier.add_child = function (arg_5_0, arg_5_1)
+BTSelector_skaven_poison_wind_globadier.add_child = function (self, node)
 	-- function 5
-	arg_5_0._children[#arg_5_0._children + 1] = arg_5_1
+	self._children[#self._children + 1] = node
 end

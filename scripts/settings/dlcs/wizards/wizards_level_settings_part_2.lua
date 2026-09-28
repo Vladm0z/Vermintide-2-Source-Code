@@ -1,9 +1,9 @@
 -- chunkname: @scripts/settings/dlcs/wizards/wizards_level_settings_part_2.lua
 
-local wizards_part_2 = DLCSettings.wizards_part_2
+local settings = DLCSettings.wizards_part_2
 
-wizards_part_2.level_settings = "levels/honduras_dlcs/wizards/level_settings_wizards_part_2"
-wizards_part_2.missions = {
+settings.level_settings = "levels/honduras_dlcs/wizards/level_settings_wizards_part_2"
+settings.missions = {
 	wizards_tower_top_tower = {
 		mission_template_name = "goal",
 		text = "mission_wizards_tower_top_tower"

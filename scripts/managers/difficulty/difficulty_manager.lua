@@ -4,14 +4,14 @@ require("scripts/settings/difficulty_settings")
 
 DifficultyManager = class(DifficultyManager)
 
-DifficultyManager.init = function (self, arg_1_1, arg_1_2, arg_1_3, arg_1_4)
+DifficultyManager.init = function (self, world, is_server, network_event_delegate, lobby)
 	-- function 1
-	self.world = arg_1_1
-	self.is_server = arg_1_2
-	self.network_event_delegate = arg_1_3
-	self._lobby = arg_1_4
+	self.world = world
+	self.is_server = is_server
+	self.network_event_delegate = network_event_delegate
+	self._lobby = lobby
 
-	arg_1_3:register(self, "rpc_set_difficulty")
+	network_event_delegate:register(self, "rpc_set_difficulty")
 
 	self.difficulty = nil
 	self.fallback_difficulty = nil
@@ -19,42 +19,42 @@ DifficultyManager.init = function (self, arg_1_1, arg_1_2, arg_1_3, arg_1_4)
 	self.difficulty_tweak = 0
 end
 
-DifficultyManager.set_difficulty = function (self, arg_2_1, arg_2_2)
+DifficultyManager.set_difficulty = function (self, difficulty, tweak)
 	-- function 2
-	fassert(not arg_2_2 and not (arg_2_2 >= -10) or arg_2_2 <= 10, "tweak must be a number from -10 to 10")
+	fassert(not not tweak and tweak >= -10 and tweak <= 10, "tweak must be a number from -10 to 10")
 
-	if arg_2_1 == "versus_base" then
-		arg_2_2 = 0
+	if difficulty == "versus_base" then
+		tweak = 0
 	end
 
-	self.difficulty = arg_2_1
-	self.difficulty_setting = DifficultySettings[arg_2_1]
+	self.difficulty = difficulty
+	self.difficulty_setting = DifficultySettings[difficulty]
 	self.difficulty_rank = self.difficulty_setting.rank
 	self.fallback_difficulty = self.difficulty_setting.fallback_difficulty
-	self.difficulty_tweak = arg_2_2
+	self.difficulty_tweak = tweak
 
-	SET_BREED_DIFFICULTY(arg_2_1)
+	SET_BREED_DIFFICULTY(difficulty)
 
-	if not self.is_server then
-		local get_stored_lobby_data = self._lobby:get_stored_lobby_data()
+	if self.is_server then
+		local lobby_data = self._lobby:get_stored_lobby_data()
 
-		get_stored_lobby_data.difficulty = arg_2_1
-		get_stored_lobby_data.difficulty_tweak = arg_2_2
+		lobby_data.difficulty = difficulty
+		lobby_data.difficulty_tweak = tweak
 
-		self._lobby:set_lobby_data(get_stored_lobby_data)
+		self._lobby:set_lobby_data(lobby_data)
 
-		local network = Managers.state.network
+		local network_manager = Managers.state.network
 
-		if not network then
-			local network_transmit = network.network_transmit
-			local var_2_3 = NetworkLookup.difficulties[self.difficulty]
+		if network_manager then
+			local network_transmit = network_manager.network_transmit
+			local difficulty_id = NetworkLookup.difficulties[self.difficulty]
 
-			network_transmit:send_rpc_clients("rpc_set_difficulty", var_2_3, arg_2_2, false)
+			network_transmit:send_rpc_clients("rpc_set_difficulty", difficulty_id, tweak, false)
 		end
 	end
 end
 
-DifficultyManager.get_default_difficulties = function (arg_3_0)
+DifficultyManager.get_default_difficulties = function (self)
 	-- function 3
 	return DefaultDifficulties, DefaultStartingDifficulty
 end
@@ -74,16 +74,18 @@ DifficultyManager.get_difficulty_settings = function (self)
 	return self.difficulty_setting
 end
 
-DifficultyManager.get_difficulty_value_from_table = function (self, arg_7_1)
+DifficultyManager.get_difficulty_value_from_table = function (self, lookup_table)
 	-- function 7
-	local difficulty = self.difficulty
-	local var_7_1 = arg_7_1[difficulty]
+	local difficulty_key = self.difficulty
+	local val = lookup_table[difficulty_key]
 
-	if not var_7_1 then
-		return var_7_1
+	if val then
+		return val
 	end
 
-	return arg_7_1[DifficultySettings[difficulty].fallback_difficulty]
+	local fallback_difficulty = DifficultySettings[difficulty_key].fallback_difficulty
+
+	return lookup_table[fallback_difficulty]
 end
 
 DifficultyManager.get_difficulty_index = function (self)
@@ -91,12 +93,13 @@ DifficultyManager.get_difficulty_index = function (self)
 	return table.index_of(DefaultDifficulties, self.difficulty)
 end
 
-DifficultyManager.hot_join_sync = function (self, arg_9_1)
+DifficultyManager.hot_join_sync = function (self, peer_id)
 	-- function 9
-	local network_transmit = Managers.state.network.network_transmit
-	local var_9_1 = NetworkLookup.difficulties[self.difficulty]
+	local network_manager = Managers.state.network
+	local network_transmit = network_manager.network_transmit
+	local difficulty_id = NetworkLookup.difficulties[self.difficulty]
 
-	network_transmit:send_rpc("rpc_set_difficulty", arg_9_1, var_9_1, self.difficulty_tweak, true)
+	network_transmit:send_rpc("rpc_set_difficulty", peer_id, difficulty_id, self.difficulty_tweak, true)
 end
 
 DifficultyManager.destroy = function (self)
@@ -104,52 +107,53 @@ DifficultyManager.destroy = function (self)
 	self.network_event_delegate:unregister(self)
 end
 
-DifficultyManager.rpc_set_difficulty = function (self, arg_11_1, arg_11_2, arg_11_3, arg_11_4)
+DifficultyManager.rpc_set_difficulty = function (self, channel_id, difficulty_id, difficulty_tweak, hot_join)
 	-- function 11
-	local var_11_0 = NetworkLookup.difficulties[arg_11_2]
+	local difficulty = NetworkLookup.difficulties[difficulty_id]
 
-	self:set_difficulty(var_11_0, arg_11_3)
+	self:set_difficulty(difficulty, difficulty_tweak)
 
-	if not arg_11_4 then
+	if hot_join then
 		Managers.state.event:trigger("difficulty_synced")
 	end
 end
 
-local tbl = {}
+local players_below_power_level = {}
 
-DifficultyManager.players_below_required_power_level = function (arg_12_0, arg_12_1)
+DifficultyManager.players_below_required_power_level = function (difficulty_key, players)
 	-- function 12
-	table.clear(tbl)
+	table.clear(players_below_power_level)
 
-	local required_power_level = DifficultySettings[arg_12_0].required_power_level
+	local required_power_level = DifficultySettings[difficulty_key].required_power_level
 
-	for k, v in pairs(arg_12_1) do
-		if not (not v:sync_data_active() and not (required_power_level > v:get_data("best_aquired_power_level"))) then
-			tbl[#tbl + 1] = v
+	for unique_id, player in pairs(players) do
+		if player:sync_data_active() and required_power_level > player:get_data("best_aquired_power_level") then
+			players_below_power_level[#players_below_power_level + 1] = player
 		end
 	end
 
-	return tbl
+	return players_below_power_level
 end
 
-local tbl_2 = {}
+local player_below_difficulty_rank = {}
 
-DifficultyManager.players_locked_difficulty_rank = function (arg_13_0, arg_13_1)
+DifficultyManager.players_locked_difficulty_rank = function (difficulty_key, players)
 	-- function 13
-	table.clear(tbl_2)
+	table.clear(player_below_difficulty_rank)
 
-	local var_13_0 = DifficultySettings[arg_13_0]
+	local difficulty_settings = DifficultySettings[difficulty_key]
 
-	for k, v in pairs(arg_13_1) do
-		if not v:sync_data_active() then
-			local get_data = v:get_data("highest_unlocked_difficulty")
-			local var_13_2 = NetworkLookup.difficulties[get_data]
+	for unique_id, player in pairs(players) do
+		if player:sync_data_active() then
+			local difficulty_id = player:get_data("highest_unlocked_difficulty")
+			local highest_difficulty = NetworkLookup.difficulties[difficulty_id]
+			local highest_difficulty_settings = DifficultySettings[highest_difficulty]
 
-			if DifficultySettings[var_13_2].rank < var_13_0.rank then
-				tbl_2[#tbl_2 + 1] = v
+			if highest_difficulty_settings.rank < difficulty_settings.rank then
+				player_below_difficulty_rank[#player_below_difficulty_rank + 1] = player
 			end
 		end
 	end
 
-	return tbl_2
+	return player_below_difficulty_rank
 end

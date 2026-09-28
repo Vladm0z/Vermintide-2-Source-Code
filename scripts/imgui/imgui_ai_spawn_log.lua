@@ -2,20 +2,20 @@
 
 ImguiAISpawnLog = class(ImguiAISpawnLog)
 
-local flag = false
+local SHOULD_RELOAD = false
 
-local function fn(arg_1_0)
+local function format_timestamp(time)
 	-- function 1
-	return string.format("%06.3f", arg_1_0)
+	return string.format("%06.3f", time)
 end
 
-local num = 1
-local num_2 = 2
-local num_3 = 3
-local num_4 = 6
-local num_5 = 7
-local num_6 = 8
-local num_7 = 9
+local EVENT_TYPE_ID = 1
+local TIMESTAMP_ID = 2
+local LOCATION_ID = 3
+local BREED_ID = 6
+local SPAWN_CATEGORY_ID = 7
+local SPAWN_TYPE_ID = 8
+local QUEUE_ID_ID = 9
 
 ImguiAISpawnLog.init = function (self)
 	-- function 2
@@ -45,38 +45,38 @@ ImguiAISpawnLog.init = function (self)
 	self:register_events()
 end
 
-ImguiAISpawnLog.register_events = function (arg_3_0)
+ImguiAISpawnLog.register_events = function (self)
 	-- function 3
-	local event = Managers.state.event
+	local event_manager = Managers.state.event
 
-	if not event then
-		event:register(arg_3_0, "spawn_log_queue", "log_queue")
-		event:register(arg_3_0, "spawn_log_spawn", "log_spawn")
+	if event_manager then
+		event_manager:register(self, "spawn_log_queue", "log_queue")
+		event_manager:register(self, "spawn_log_spawn", "log_spawn")
 	end
 end
 
-ImguiAISpawnLog.unregister_events = function (arg_4_0)
+ImguiAISpawnLog.unregister_events = function (self)
 	-- function 4
-	local event = Managers.state.event
+	local event_manager = Managers.state.event
 
-	if not event then
-		event:unregister("spawn_log_queue", arg_4_0)
-		event:unregister("spawn_log_spawn", arg_4_0)
+	if event_manager then
+		event_manager:unregister("spawn_log_queue", self)
+		event_manager:unregister("spawn_log_spawn", self)
 	end
 end
 
 ImguiAISpawnLog.update = function (self)
 	-- function 5
-	if not flag then
+	if SHOULD_RELOAD then
 		self:unregister_events()
 		self:init()
 
-		flag = false
+		SHOULD_RELOAD = false
 	end
 
-	local time = Managers.time:time("game")
+	local game_time = Managers.time:time("game")
 
-	if not time then
+	if not game_time then
 		self:_reset()
 
 		return
@@ -86,9 +86,9 @@ ImguiAISpawnLog.update = function (self)
 		self:_init_session()
 	end
 
-	self:_log_player_positions(time)
+	self:_log_player_positions(game_time)
 
-	if not self._visualize_locations and not self._drawer then
+	if self._visualize_locations and self._drawer then
 		self:_visualise_player_pos()
 	end
 end
@@ -100,15 +100,15 @@ end
 
 ImguiAISpawnLog.draw = function (self)
 	-- function 7
-	local time = Managers.time:time("game")
+	local game_time = Managers.time:time("game")
 
-	if not time then
+	if not game_time then
 		return
 	end
 
-	local begin_window = Imgui.begin_window("AI Spawn Log")
+	local do_close = Imgui.begin_window("AI Spawn Log")
 
-	if not Imgui.button("Export Log") then
+	if Imgui.button("Export Log") then
 		self:_export_log_data()
 	end
 
@@ -119,60 +119,60 @@ ImguiAISpawnLog.draw = function (self)
 	self._live_log = Imgui.checkbox("Live Log", self._live_log)
 	self._specials_only = Imgui.checkbox("Specials Only", self._specials_only)
 
-	if not self._live_log then
-		self._timeline_end = time
+	if self._live_log then
+		self._timeline_end = game_time
 	end
 
 	self._timeline_slice_size = Imgui.slider_float("Capture Size", self._timeline_slice_size, 1, 120)
 	self._timeline_end = math.max(self._timeline_end, self._timeline_slice_size)
-	self._timeline_end = Imgui.slider_float("Capture Location", self._timeline_end, self._timeline_slice_size, time)
+	self._timeline_end = Imgui.slider_float("Capture Location", self._timeline_end, self._timeline_slice_size, game_time)
 
-	if not self._show_totals then
+	if self._show_totals then
 		Imgui.begin_window("AI Spawn Totals")
 
-		if not Imgui.button("Export") then
+		if Imgui.button("Export") then
 			self:_export_recap_data()
 		end
 
-		local count = #self._event_type_names
-		local str = "Legend -" .. string.rep(" %s,", count)
+		local arg_c = #self._event_type_names
+		local legend_format = "Legend -" .. string.rep(" %s,", arg_c)
 
-		Imgui.text(string.format(str, unpack(self._event_type_names)))
+		Imgui.text(string.format(legend_format, unpack(self._event_type_names)))
 
-		local str_2 = "%32s -" .. string.rep(" %d,", count)
+		local format = "%32s -" .. string.rep(" %d,", arg_c)
 
-		for k, v in pairs(self._totals) do
-			Imgui.text(string.format(str_2, k, unpack(v)))
+		for name, counts in pairs(self._totals) do
+			Imgui.text(string.format(format, name, unpack(counts)))
 		end
 
 		Imgui.end_window()
 	end
 
-	if not Imgui.button("Clear") then
+	if Imgui.button("Clear") then
 		self:_clear()
 	end
 
 	Imgui.separator()
 
-	local _event_type_names = self._event_type_names
-	local _visualize_locations = self._visualize_locations
-	local var_7_7 = Color(255, 0, 0)
-	local tbl = {
+	local type_names = self._event_type_names
+	local vislualize = self._visualize_locations
+	local visualize_color = Color(255, 0, 0)
+	local normal_color = {
 		255,
 		255,
 		255
 	}
-	local tbl_2 = {
+	local selected_color = {
 		255,
 		0,
 		0
 	}
-	local _specials_only = self._specials_only
-	local num_8 = self._timeline_end - self._timeline_slice_size
-	local _timeline_end = self._timeline_end
+	local filter_specials = self._specials_only
+	local segment_start = self._timeline_end - self._timeline_slice_size
+	local segment_end = self._timeline_end
 	local _hovered_id
 
-	if not self._sticky_hover then
+	if self._sticky_hover then
 		_hovered_id = self._hovered_id
 
 		if not _hovered_id then
@@ -182,13 +182,15 @@ ImguiAISpawnLog.draw = function (self)
 
 	_hovered_id = -1
 
+	local hovered_id = _hovered_id
+
 	do
 		local _hovered_time
 	end
 
 	::label_7_0::
 
-	if not self._sticky_hover then
+	if self._sticky_hover then
 		_hovered_time = self._hovered_time
 
 		if not _hovered_time then
@@ -198,58 +200,71 @@ ImguiAISpawnLog.draw = function (self)
 
 	_hovered_time = -1
 
+	local hovered_time = _hovered_time
+
 	::label_7_1::
 
-	local _hovered_id_2 = self._hovered_id
+	local last_hovered_id = self._hovered_id
 
-	for k_2 = 1, #self._log do
-		local var_7_16 = self._log[k_2]
-		local var_7_17 = var_7_16[num_2]
+	for line_id = 1, #self._log do
+		local line = self._log[line_id]
+		local timestamp = line[TIMESTAMP_ID]
 
-		if not (not (num_8 <= var_7_17) or not (var_7_17 <= _timeline_end)) then
-			local var_7_18 = var_7_16[num_4]
+		if segment_start <= timestamp and timestamp <= segment_end then
+			local breed = line[BREED_ID]
 
-			if not _specials_only and not var_7_18 and not var_7_18.special then
-				local var_7_19 = fn(var_7_17)
-				local var_7_20 = _event_type_names[var_7_16[num]]
-				local str_3 = var_7_19 .. " " .. var_7_20
-				local flag = not var_7_18 and var_7_18.name
-				local str_4 = str_3 .. " " .. tostring(flag)
-				local var_7_24 = var_7_16[num_5]
-				local str_5 = str_4 .. " " .. tostring(var_7_24)
-				local var_7_26 = var_7_16[num_6]
-				local str_6 = str_5 .. " " .. tostring(var_7_26)
-				local var_7_28 = var_7_16[num_7]
-				local str_7 = str_6 .. " " .. tostring(var_7_28)
-				local flag_2 = _hovered_id_2 == var_7_28
-				local flag_3 = not flag_2 and tbl_2 and tbl
+			if not filter_specials or breed and breed.special then
+				local text = format_timestamp(timestamp)
+				local type_id = line[EVENT_TYPE_ID]
+				local type = type_names[type_id]
 
-				Imgui.text_colored(str_7, flag_3[1], flag_3[2], flag_3[3], 255)
+				text = text .. " " .. type
 
-				if not Imgui.is_item_hovered() then
-					_hovered_id = var_7_28
-					_hovered_time = var_7_17
+				local breed_name = not not breed and not not breed.name
+
+				text = text .. " " .. tostring(breed_name)
+
+				local spawn_category = line[SPAWN_CATEGORY_ID]
+
+				text = text .. " " .. tostring(spawn_category)
+
+				local spawn_type = line[SPAWN_TYPE_ID]
+
+				text = text .. " " .. tostring(spawn_type)
+
+				local queue_id = line[QUEUE_ID_ID]
+
+				text = text .. " " .. tostring(queue_id)
+
+				local is_selected = last_hovered_id == queue_id
+				local color = (not is_selected or not selected_color) and not not normal_color
+
+				Imgui.text_colored(text, color[1], color[2], color[3], 255)
+
+				if Imgui.is_item_hovered() then
+					hovered_id = queue_id
+					hovered_time = timestamp
 				end
 
-				if not (not _visualize_locations and not self._drawer and _hovered_id_2 == -1 or _hovered_id ~= var_7_28) then
-					local var_7_32 = Vector3(var_7_16[num_3], var_7_16[num_3 + 1], var_7_16[num_3 + 2])
+				if vislualize and self._drawer and (last_hovered_id == -1 or hovered_id == queue_id) then
+					local location = Vector3(line[LOCATION_ID], line[LOCATION_ID + 1], line[LOCATION_ID + 2])
 
-					self._drawer:sphere(var_7_32, 1, var_7_7)
+					self._drawer:sphere(location, 1, visualize_color)
 
-					if not flag_2 then
-						self._drawer:line(var_7_32, var_7_32 + Vector3(0, 0, 25), var_7_7)
+					if is_selected then
+						self._drawer:line(location, location + Vector3(0, 0, 25), visualize_color)
 					end
 				end
 			end
 		end
 	end
 
-	self._hovered_id = _hovered_id
-	self._hovered_time = _hovered_time
+	self._hovered_id = hovered_id
+	self._hovered_time = hovered_time
 
 	Imgui.end_window("AI Spawn Log")
 
-	return begin_window
+	return do_close
 end
 
 ImguiAISpawnLog.log_queue = function (self, ...)
@@ -267,18 +282,18 @@ ImguiAISpawnLog.log_spawn = function (self, ...)
 	self:_log_event(3, ...)
 end
 
-ImguiAISpawnLog._log_event = function (self, arg_11_1, arg_11_2, arg_11_3, arg_11_4, arg_11_5, arg_11_6)
+ImguiAISpawnLog._log_event = function (self, event_type, boxed_location, breed, spawn_category, spawn_type, spawn_queue_id)
 	-- function 11
-	local flag = not arg_11_2 and arg_11_2:unbox()
-	local time = Managers.time:time("game")
+	local location = not not boxed_location and not not boxed_location:unbox()
+	local game_time = Managers.time:time("game")
 	local tbl = {
-		arg_11_1,
-		time
+		event_type,
+		game_time
 	}
 	local x
 
-	if not flag then
-		x = flag.x
+	if location then
+		x = location.x
 
 		if not x then
 			-- Nothing
@@ -293,8 +308,8 @@ ImguiAISpawnLog._log_event = function (self, arg_11_1, arg_11_2, arg_11_3, arg_1
 
 	local y
 
-	if not flag then
-		y = flag.y
+	if location then
+		y = location.y
 
 		if not y then
 			-- Nothing
@@ -309,8 +324,8 @@ ImguiAISpawnLog._log_event = function (self, arg_11_1, arg_11_2, arg_11_3, arg_1
 
 	local z
 
-	if not flag then
-		z = flag.z
+	if location then
+		z = location.z
 
 		if not z then
 			-- Nothing
@@ -322,24 +337,26 @@ ImguiAISpawnLog._log_event = function (self, arg_11_1, arg_11_2, arg_11_3, arg_1
 	::label_11_2::
 
 	tbl[5] = z
-	tbl[6] = arg_11_3
-	tbl[7] = arg_11_4
-	tbl[8] = arg_11_5
-	tbl[9] = arg_11_6
+	tbl[6] = breed
+	tbl[7] = spawn_category
+	tbl[8] = spawn_type
+	tbl[9] = spawn_queue_id
 
-	if not arg_11_3 then
-		if not self._totals[arg_11_3.name] then
-			self._totals[arg_11_3.name] = {}
+	local entry = tbl
+
+	if breed then
+		if not self._totals[breed.name] then
+			self._totals[breed.name] = {}
 
 			for i = 1, #self._event_type_names do
-				self._totals[arg_11_3.name][i] = 0
+				self._totals[breed.name][i] = 0
 			end
 		end
 
-		self._totals[arg_11_3.name][arg_11_1] = self._totals[arg_11_3.name][arg_11_1] + 1
+		self._totals[breed.name][event_type] = self._totals[breed.name][event_type] + 1
 	end
 
-	table.insert(self._log, 1, tbl)
+	table.insert(self._log, 1, entry)
 end
 
 ImguiAISpawnLog._clear = function (self)
@@ -361,49 +378,51 @@ ImguiAISpawnLog._init_session = function (self)
 	-- function 14
 	local state = Managers.state
 
-	if not state then
+	if state then
 		self:register_events()
 
 		self._drawer = state.debug:drawer({
 			mode = "immediate",
 			name = "ImguiAISpawnLog"
 		})
-		self._hero_side = state.side:get_side_from_name("heroes")
+
+		local side = state.side:get_side_from_name("heroes")
+
+		self._hero_side = side
 	end
 end
 
-ImguiAISpawnLog._log_player_positions = function (self, arg_15_1)
+ImguiAISpawnLog._log_player_positions = function (self, game_time)
 	-- function 15
-	local _hero_side = self._hero_side
+	local hero_side = self._hero_side
 
-	if not _hero_side then
-		local PLAYER_AND_BOT_UNITS = _hero_side.PLAYER_AND_BOT_UNITS
-		local PLAYER_AND_BOT_POSITIONS = _hero_side.PLAYER_AND_BOT_POSITIONS
-		local _segment_distance_sq = self._segment_distance_sq
+	if hero_side then
+		local hero_units = hero_side.PLAYER_AND_BOT_UNITS
+		local hero_positions = hero_side.PLAYER_AND_BOT_POSITIONS
+		local dist_tolerence = self._segment_distance_sq
 
-		for i = 1, #PLAYER_AND_BOT_UNITS do
-			local var_15_4 = PLAYER_AND_BOT_UNITS[i]
-			local var_15_5 = PLAYER_AND_BOT_POSITIONS[i]
+		for i = 1, #hero_units do
+			local unit = hero_units[i]
+			local position = hero_positions[i]
 
-			if not self._player_positions[var_15_4] then
-				self._player_positions[var_15_4] = {
-					arg_15_1,
-					var_15_5.x,
-					var_15_5.y,
-					var_15_5.z
+			if not self._player_positions[unit] then
+				self._player_positions[unit] = {
+					game_time,
+					position.x,
+					position.y,
+					position.z
 				}
 			else
-				local var_15_6 = self._player_positions[var_15_4]
-				local count = #var_15_6
-				local var_15_8 = var_15_6[count - 2]
-				local var_15_9 = var_15_6[count - 1]
-				local var_15_10 = var_15_6[count]
+				local recorded_player_pos = self._player_positions[unit]
+				local last_pos_id = #recorded_player_pos
+				local x, y, z = recorded_player_pos[last_pos_id - 2], recorded_player_pos[last_pos_id - 1], recorded_player_pos[last_pos_id]
+				local dist_sq = Vector3.distance_squared(position, Vector3(x, y, z))
 
-				if _segment_distance_sq <= Vector3.distance_squared(var_15_5, Vector3(var_15_8, var_15_9, var_15_10)) then
-					var_15_6[count + 1] = arg_15_1
-					var_15_6[count + 2] = var_15_5.x
-					var_15_6[count + 3] = var_15_5.y
-					var_15_6[count + 4] = var_15_5.z
+				if dist_tolerence <= dist_sq then
+					recorded_player_pos[last_pos_id + 1] = game_time
+					recorded_player_pos[last_pos_id + 2] = position.x
+					recorded_player_pos[last_pos_id + 3] = position.y
+					recorded_player_pos[last_pos_id + 4] = position.z
 				end
 			end
 		end
@@ -412,47 +431,47 @@ end
 
 ImguiAISpawnLog._visualise_player_pos = function (self)
 	-- function 16
-	local num = self._timeline_end - self._timeline_slice_size
-	local _timeline_end = self._timeline_end
-	local var_16_2 = Color(0, 255, 0)
-	local var_16_3 = Color(255, 255, 0)
-	local _hovered_time = self._hovered_time
+	local segment_start = self._timeline_end - self._timeline_slice_size
+	local segment_end = self._timeline_end
+	local player_color = Color(0, 255, 0)
+	local hovered_player_color = Color(255, 255, 0)
+	local hovered_time = self._hovered_time
 
-	for k, v in pairs(self._player_positions) do
-		local num_2 = 1
-		local num_3 = 1
+	for unit, positions in pairs(self._player_positions) do
+		local start_id = 1
+		local end_id = 1
 
-		for k_2 = 1, #v, 4 do
-			local var_16_7 = v[k_2]
+		for i = 1, #positions, 4 do
+			local timestamp = positions[i]
 
-			if var_16_7 < num then
-				num_2 = k_2
-				num_3 = k_2
-			elseif _timeline_end < var_16_7 then
-				num_3 = k_2
+			if timestamp < segment_start then
+				start_id = i
+				end_id = i
+			elseif segment_end < timestamp then
+				end_id = i
 
 				break
 			else
-				num_3 = k_2
+				end_id = i
 			end
 		end
 
-		for l = num_2, num_3, 4 do
-			local var_16_8 = Vector3(v[l + 1], v[l + 2], v[l + 3])
+		for i = start_id, end_id, 4 do
+			local location = Vector3(positions[i + 1], positions[i + 2], positions[i + 3])
 
-			self._drawer:sphere(var_16_8, 1, var_16_2)
+			self._drawer:sphere(location, 1, player_color)
 
-			if num_3 >= l + 4 then
-				local var_16_9 = Vector3(v[l + 5], v[l + 6], v[l + 7])
+			if end_id >= i + 4 then
+				local next_location = Vector3(positions[i + 5], positions[i + 6], positions[i + 7])
 
-				self._drawer:arrow_2d(var_16_8, var_16_9, var_16_2)
+				self._drawer:arrow_2d(location, next_location, player_color)
 
-				if not (not (_hovered_time >= v[l]) or not (_hovered_time <= v[l + 4])) then
-					local num_4 = (_hovered_time - v[l]) / (v[l + 4] - v[l])
-					local lerp = Vector3.lerp(var_16_8, var_16_9, num_4)
+				if hovered_time >= positions[i] and hovered_time <= positions[i + 4] then
+					local interp_t = (hovered_time - positions[i]) / (positions[i + 4] - positions[i])
+					local interp_loc = Vector3.lerp(location, next_location, interp_t)
 
-					self._drawer:sphere(lerp, 1, var_16_3)
-					self._drawer:line(lerp, lerp + Vector3(0, 0, 25), var_16_3)
+					self._drawer:sphere(interp_loc, 1, hovered_player_color)
+					self._drawer:line(interp_loc, interp_loc + Vector3(0, 0, 25), hovered_player_color)
 				end
 			end
 		end
@@ -461,14 +480,14 @@ end
 
 ImguiAISpawnLog._export_recap_data = function (self)
 	-- function 17
-	local str = "Breed,Faction,Count"
+	local output = "Breed,Faction,Count"
 
-	for k, v in pairs(self._totals) do
-		local var_17_1 = Breeds[k]
+	for name, counts in pairs(self._totals) do
+		local breed = Breeds[name]
 		local race
 
-		if not var_17_1 then
-			race = var_17_1.race
+		if breed then
+			race = breed.race
 
 			if not race then
 				-- Nothing
@@ -477,33 +496,37 @@ ImguiAISpawnLog._export_recap_data = function (self)
 
 		race = "unknown"
 
+		local faction = race
+
 		::label_17_0::
 
-		str = str .. "\n"
-		str = str .. k .. ","
-		str = str .. race .. ","
-		str = str .. tostring(v[3])
+		output = output .. "\n"
+		output = output .. name .. ","
+		output = output .. faction .. ","
+		output = output .. tostring(counts[3])
 	end
 
-	Clipboard.put(str)
+	Clipboard.put(output)
 end
 
 ImguiAISpawnLog._export_log_data = function (self)
 	-- function 18
-	local _event_type_names = self._event_type_names
-	local str = "Breed,Faction,Spawn Category,Spawn Type"
+	local type_names = self._event_type_names
+	local output = "Breed,Faction,Spawn Category,Spawn Type"
 
-	for i = 1, #self._log do
-		local var_18_2 = self._log[i]
+	for line_id = 1, #self._log do
+		local line = self._log[line_id]
+		local type_id = line[EVENT_TYPE_ID]
+		local type = type_names[type_id]
 
-		if _event_type_names[var_18_2[num]] == "spawned" then
-			str = str .. "\n"
+		if type == "spawned" then
+			output = output .. "\n"
 
-			local var_18_3 = var_18_2[num_4]
+			local breed = line[BREED_ID]
 			local name
 
-			if not var_18_3 then
-				name = var_18_3.name
+			if breed then
+				name = breed.name
 
 				if not name then
 					-- Nothing
@@ -512,14 +535,16 @@ ImguiAISpawnLog._export_log_data = function (self)
 
 			name = "unknown"
 
+			local breed_name = name
+
 			do
 				local race
 			end
 
 			::label_18_0::
 
-			if not var_18_3 then
-				race = var_18_3.race
+			if breed then
+				race = breed.race
 
 				if not race then
 					-- Nothing
@@ -528,20 +553,22 @@ ImguiAISpawnLog._export_log_data = function (self)
 
 			race = "unknown"
 
+			local faction = race
+
 			::label_18_1::
 
-			str = str .. name .. ","
-			str = str .. race .. ","
+			output = output .. breed_name .. ","
+			output = output .. faction .. ","
 
-			local var_18_6 = var_18_2[num_5]
+			local spawn_category = line[SPAWN_CATEGORY_ID]
 
-			str = str .. tostring(var_18_6) .. ","
+			output = output .. tostring(spawn_category) .. ","
 
-			local var_18_7 = var_18_2[num_6]
+			local spawn_type = line[SPAWN_TYPE_ID]
 
-			str = str .. tostring(var_18_7)
+			output = output .. tostring(spawn_type)
 		end
 	end
 
-	Clipboard.put(str)
+	Clipboard.put(output)
 end

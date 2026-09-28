@@ -1,10 +1,10 @@
 -- chunkname: @scripts/settings/dlcs/belladonna/belladonna_sound_settings.lua
 
-local belladonna = DLCSettings.belladonna
+local settings = DLCSettings.belladonna
 
-belladonna.auto_load_files = {
+settings.auto_load_files = {
 	"dialogues/generated/enemy_beastmen_vo"
 }
-belladonna.dialogue_lookup = {
+settings.dialogue_lookup = {
 	"dialogues/generated/lookup_enemy_beastmen_vo"
 }

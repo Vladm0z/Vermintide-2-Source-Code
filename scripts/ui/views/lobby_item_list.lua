@@ -4,95 +4,95 @@ require("foundation/scripts/util/local_require")
 require("scripts/managers/telemetry/iso_country_names")
 require("scripts/settings/level_settings")
 
-local game_start_windows = UISettings.game_start_windows
-local background = game_start_windows.background
-local frame = game_start_windows.frame
-local size = game_start_windows.size
-local spacing = game_start_windows.spacing
-local var_0_5 = UIFrameSettings[frame].texture_sizes.vertical[1]
-local var_0_6 = UIFrameSettings[frame].texture_sizes.horizontal[2]
-local num = size[1] + spacing
-local num_2 = size[1] - (var_0_5 * 2 + 60)
-local large_window_frame = game_start_windows.large_window_frame
-local var_0_10 = UIFrameSettings[large_window_frame].texture_sizes.vertical[1]
-local tbl = {
-	size[1] * 3 + spacing * 2 + var_0_10 * 2,
-	size[2] + var_0_10 * 2
+local window_default_settings = UISettings.game_start_windows
+local window_background = window_default_settings.background
+local window_frame = window_default_settings.frame
+local window_size = window_default_settings.size
+local window_spacing = window_default_settings.spacing
+local window_frame_width = UIFrameSettings[window_frame].texture_sizes.vertical[1]
+local window_frame_height = UIFrameSettings[window_frame].texture_sizes.horizontal[2]
+local window_width_offset = window_size[1] + window_spacing
+local window_text_width = window_size[1] - (window_frame_width * 2 + 60)
+local large_window_frame = window_default_settings.large_window_frame
+local large_window_frame_width = UIFrameSettings[large_window_frame].texture_sizes.vertical[1]
+local inner_window_size = {
+	window_size[1] * 3 + window_spacing * 2 + large_window_frame_width * 2,
+	window_size[2] + large_window_frame_width * 2
 }
-local tbl_2 = {
+local filter_frame_size = {
 	400,
-	tbl[2]
+	inner_window_size[2]
 }
-local tbl_3 = {
+local info_frame_size = {
 	400,
-	tbl[2]
+	inner_window_size[2]
 }
-local tbl_4 = {
-	tbl[1] - tbl_2[1] - tbl_3[1] + 12,
-	tbl[2] - 60
+local window_size = {
+	inner_window_size[1] - filter_frame_size[1] - info_frame_size[1] + 12,
+	inner_window_size[2] - 60
 }
-local tbl_5 = {
+local element_settings = {
 	height_spacing = 7,
 	height = 45,
-	width = tbl_4[1] - 50
+	width = window_size[1] - 50
 }
-local tbl_6 = {
+local ListSettings = {
 	font_size = 18
 }
-local num_3 = 22
-local num_4 = 100
-local num_5 = 5
-local tbl_7 = {
+local scrollbar_width = 22
+local max_list_entries = 100
+local time_until_remove = 5
+local title_text_position = {
 	20,
 	0,
 	2
 }
-local tbl_8 = {
-	tbl_4[1] * 0.3,
+local level_text_position = {
+	window_size[1] * 0.3,
 	0,
 	2
 }
-local tbl_9 = {
-	tbl_4[1] * 0.6,
+local difficulty_text_position = {
+	window_size[1] * 0.6,
 	0,
 	2
 }
-local tbl_10 = {
-	tbl_4[1] * 0.8,
+local num_players_text_position = {
+	window_size[1] * 0.8,
 	0,
 	2
 }
-local tbl_11 = {
-	tbl_4[1] * 0.6,
+local status_text_position = {
+	window_size[1] * 0.6,
 	0,
 	2
 }
-local tbl_12 = {
+local country_text_position = {
 	-5,
 	0,
 	2
 }
-local tbl_13 = {
+local country_button_position = {
 	-50,
 	0,
 	2
 }
-local tbl_14 = {
-	tbl_8[1] - 25,
+local level_lock_position = {
+	level_text_position[1] - 25,
 	10,
 	3
 }
-local tbl_15 = {
-	tbl_9[1] - 25,
+local difficulty_lock_position = {
+	difficulty_text_position[1] - 25,
 	10,
 	3
 }
-local tbl_16 = {
-	tbl_11[1] - 25,
+local status_lock_position = {
+	status_text_position[1] - 25,
 	10,
 	3
 }
-local tbl_17 = {
+local definitions = {
 	scenegraph_definition = {
 		root = {
 			is_root = true,
@@ -124,7 +124,7 @@ local tbl_17 = {
 			vertical_alignment = "center",
 			parent = "menu_root",
 			horizontal_alignment = "center",
-			size = tbl,
+			size = inner_window_size,
 			position = {
 				0,
 				0,
@@ -136,11 +136,11 @@ local tbl_17 = {
 			parent = "window",
 			horizontal_alignment = "left",
 			size = {
-				tbl_4[1],
-				tbl_4[2]
+				window_size[1],
+				window_size[2]
 			},
 			position = {
-				tbl_2[1] + 8,
+				filter_frame_size[1] + 8,
 				12,
 				1
 			}
@@ -150,8 +150,8 @@ local tbl_17 = {
 			parent = "item_list",
 			horizontal_alignment = "left",
 			size = {
-				tbl_4[1] - 16,
-				tbl_4[2] + 7
+				window_size[1] - 16,
+				window_size[2] + 7
 			},
 			position = {
 				-4,
@@ -211,7 +211,7 @@ local tbl_17 = {
 				0
 			},
 			size = {
-				tbl_4[1],
+				window_size[1],
 				40
 			}
 		},
@@ -219,7 +219,7 @@ local tbl_17 = {
 			vertical_alignment = "top",
 			parent = "label_root",
 			horizontal_alignment = "left",
-			position = tbl_7,
+			position = title_text_position,
 			size = {
 				100,
 				40
@@ -228,7 +228,7 @@ local tbl_17 = {
 		level_text_button = {
 			parent = "label_root",
 			horizontal_alignment = "left",
-			position = tbl_8,
+			position = level_text_position,
 			size = {
 				100,
 				40
@@ -237,7 +237,7 @@ local tbl_17 = {
 		difficulty_text_button = {
 			parent = "label_root",
 			horizontal_alignment = "left",
-			position = tbl_9,
+			position = difficulty_text_position,
 			size = {
 				130,
 				40
@@ -246,7 +246,7 @@ local tbl_17 = {
 		players_text_button = {
 			parent = "label_root",
 			horizontal_alignment = "left",
-			position = tbl_10,
+			position = num_players_text_position,
 			size = {
 				120,
 				40
@@ -271,9 +271,9 @@ local tbl_17 = {
 							{
 								pass_type = "on_click",
 								click_check_content_id = "button_hotspot",
-								click_function = function (arg_1_0, arg_1_1, arg_1_2, arg_1_3)
+								click_function = function (ui_scenegraph, ui_style, ui_content, input_service)
 									-- function 1
-									arg_1_2.button_hotspot.is_selected = true
+									ui_content.button_hotspot.is_selected = true
 								end
 							},
 							{
@@ -285,12 +285,12 @@ local tbl_17 = {
 								pass_type = "texture",
 								style_id = "background",
 								texture_id = "background_normal_hover",
-								content_check_function = function (self)
+								content_check_function = function (ui_content)
 									-- function 2
-									local button_hotspot = self.button_hotspot
+									local button_hotspot = ui_content.button_hotspot
 									local is_hover = button_hotspot.is_hover
 
-									is_hover = not is_hover and not button_hotspot.is_selected
+									is_hover = not not is_hover and not not not button_hotspot.is_selected
 
 									return is_hover
 								end
@@ -299,12 +299,12 @@ local tbl_17 = {
 								pass_type = "texture",
 								style_id = "background",
 								texture_id = "background_selected",
-								content_check_function = function (self)
+								content_check_function = function (ui_content)
 									-- function 3
-									local button_hotspot = self.button_hotspot
+									local button_hotspot = ui_content.button_hotspot
 									local is_selected = button_hotspot.is_selected
 
-									is_selected = not is_selected and not button_hotspot.is_hover
+									is_selected = not not is_selected and not not not button_hotspot.is_hover
 
 									return is_selected
 								end
@@ -313,12 +313,12 @@ local tbl_17 = {
 								pass_type = "texture",
 								style_id = "background",
 								texture_id = "background_selected_hover",
-								content_check_function = function (self)
+								content_check_function = function (ui_content)
 									-- function 4
-									local button_hotspot = self.button_hotspot
+									local button_hotspot = ui_content.button_hotspot
 									local is_selected = button_hotspot.is_selected
 
-									is_selected = not is_selected and button_hotspot.is_hover
+									is_selected = not not is_selected and not not button_hotspot.is_hover
 
 									return is_selected
 								end
@@ -327,18 +327,18 @@ local tbl_17 = {
 								pass_type = "texture",
 								style_id = "locked_level",
 								texture_id = "locked_level",
-								content_check_function = function (self)
+								content_check_function = function (ui_content)
 									-- function 5
-									return self.level_is_locked
+									return ui_content.level_is_locked
 								end
 							},
 							{
 								pass_type = "texture",
 								style_id = "locked_difficulty",
 								texture_id = "locked_difficulty",
-								content_check_function = function (self)
+								content_check_function = function (ui_content)
 									-- function 6
-									return self.difficulty_is_locked
+									return ui_content.difficulty_is_locked
 								end
 							},
 							{
@@ -399,10 +399,10 @@ local tbl_17 = {
 			0,
 			0
 		}),
-		host_text_button = UIWidgets.create_text_button("host_text_button", "lb_host", tbl_6.font_size),
-		level_text_button = UIWidgets.create_text_button("level_text_button", "lb_level", tbl_6.font_size),
-		difficulty_text_button = UIWidgets.create_text_button("difficulty_text_button", "lb_difficulty", tbl_6.font_size),
-		players_text_button = UIWidgets.create_text_button("players_text_button", "lb_players", tbl_6.font_size),
+		host_text_button = UIWidgets.create_text_button("host_text_button", "lb_host", ListSettings.font_size),
+		level_text_button = UIWidgets.create_text_button("level_text_button", "lb_level", ListSettings.font_size),
+		difficulty_text_button = UIWidgets.create_text_button("difficulty_text_button", "lb_difficulty", ListSettings.font_size),
+		players_text_button = UIWidgets.create_text_button("players_text_button", "lb_players", ListSettings.font_size),
 		loading_overlay = UIWidgets.create_simple_rect("loading_overlay", {
 			100,
 			0,
@@ -417,25 +417,25 @@ local tbl_17 = {
 	}
 }
 
-local function fn(arg_7_0, arg_7_1)
+local function setup_list_hover_area(width, height)
 	-- function 7
-	local inventory_list_widget = tbl_17.widget_definitions.inventory_list_widget
-	local var_7_1 = inventory_list_widget.element.passes[2]
-	local hover = inventory_list_widget.style.hover
-	local size = hover.size
-	local offset = hover.offset
+	local list_definition = definitions.widget_definitions.inventory_list_widget
+	local hover_pass = list_definition.element.passes[2]
+	local hover_style = list_definition.style.hover
+	local size = hover_style.size
+	local offset = hover_style.offset
 
-	size[1] = arg_7_0
-	size[2] = arg_7_1
+	size[1] = width
+	size[2] = height
 	offset[2] = 0
 end
 
-local function fn_2(arg_8_0, arg_8_1)
+local function setup_mouse_scroll_widget_definition(scroll_field_width, scroll_field_height)
 	-- function 8
-	tbl_17.scenegraph_definition.scrollbar_root.size[2] = arg_8_1
+	definitions.scenegraph_definition.scrollbar_root.size[2] = scroll_field_height
 
-	local str = "mouse_scroll_field"
-	local tbl = {
+	local scenegraph_id = "mouse_scroll_field"
+	local scroll_field_scenegraph_definition = {
 		horizontal_alignment = "right",
 		position = {
 			0,
@@ -443,27 +443,36 @@ local function fn_2(arg_8_0, arg_8_1)
 			1
 		},
 		size = {
-			arg_8_0 + 24,
-			arg_8_1
+			scroll_field_width + 24,
+			scroll_field_height
 		}
 	}
 
-	tbl.parent = "scrollbar_root"
-	tbl_17.scenegraph_definition[str] = tbl
-	tbl_17.widget_definitions.scroll_field = {
+	scroll_field_scenegraph_definition.parent = "scrollbar_root"
+	definitions.scenegraph_definition[scenegraph_id] = scroll_field_scenegraph_definition
+	definitions.widget_definitions.scroll_field = {
 		element = {
 			passes = {
 				{
 					pass_type = "scroll",
-					scroll_function = function (arg_9_0, arg_9_1, arg_9_2, arg_9_3, arg_9_4)
+					scroll_function = function (ui_scenegraph, ui_style, ui_content, input_service, scroll_axis)
 						-- function 9
-						local scroll_step = arg_9_2.scroll_step
+						local scroll_step_2 = ui_content.scroll_step
 
-						scroll_step = scroll_step or 0.1
+						if not scroll_step_2 then
+							-- Nothing
+						end
 
-						local num = arg_9_2.internal_scroll_value + scroll_step * -arg_9_4.y
+						scroll_step_2 = 0.1
 
-						arg_9_2.internal_scroll_value = math.clamp(num, 0, 1)
+						local scroll_step = scroll_step_2
+
+						::label_9_0::
+
+						local current_scroll_value = ui_content.internal_scroll_value
+
+						current_scroll_value = current_scroll_value + scroll_step * -scroll_axis.y
+						ui_content.internal_scroll_value = math.clamp(current_scroll_value, 0, 1)
 					end
 				}
 			}
@@ -473,94 +482,112 @@ local function fn_2(arg_8_0, arg_8_1)
 			internal_scroll_value = 0
 		},
 		style = {},
-		scenegraph_id = str
+		scenegraph_id = scenegraph_id
 	}
 end
 
-local function fn_3(self)
+local function lobby_level_display_name(lobby_data)
 	-- function 10
-	local selected_mission_id = self.selected_mission_id
+	local selected_mission_id = lobby_data.selected_mission_id
 
-	selected_mission_id = selected_mission_id or self.mission_id
+	if not selected_mission_id then
+		-- Nothing
+	end
 
-	local mechanism = self.mechanism
-	local var_10_2 = tonumber(self.matchmaking_type)
-	local clone = table.clone(NetworkLookup.matchmaking_types, true)
-	local flag
+	selected_mission_id = lobby_data.mission_id
 
-	flag = not var_10_2 and clone[var_10_2]
+	local mission_id = selected_mission_id
+
+	::label_10_0::
+
+	local mechanism = lobby_data.mechanism
+	local matchmaking_type_index = tonumber(lobby_data.matchmaking_type)
+	local matchmaking_type_names = table.clone(NetworkLookup.matchmaking_types, true)
+	local matchmaking_type_name = not not matchmaking_type_index and not not matchmaking_type_names[matchmaking_type_index]
 
 	if mechanism == "weave" then
-		if not (selected_mission_id == "false" or self.weave_quick_game ~= "false") then
-			local split_deprecated = string.split_deprecated(selected_mission_id, "_")
+		if mission_id ~= "false" and lobby_data.weave_quick_game == "false" then
+			local weave_name_data = string.split_deprecated(mission_id, "_")
+			local weave_name = "Weave " .. weave_name_data[2]
 
-			return "Weave " .. split_deprecated[2]
-		elseif self.weave_quick_game == "true" then
+			return weave_name
+		elseif lobby_data.weave_quick_game == "true" then
 			return Localize("start_game_window_weave_quickplay_title")
 		else
 			return Localize("lb_unknown")
 		end
 	else
-		local var_10_6 = selected_mission_id
-		local var_10_7
+		local level_key = mission_id
+		local display_name
 
-		if var_10_6 == "n/a" then
-			var_10_7 = "lb_unknown"
-		elseif var_10_6 == "any" then
-			var_10_7 = "map_screen_quickplay_button"
+		if level_key == "n/a" then
+			display_name = "lb_unknown"
+		elseif level_key == "any" then
+			display_name = "map_screen_quickplay_button"
 		else
-			local var_10_8 = rawget(LevelSettings, var_10_6)
+			local level_settings = rawget(LevelSettings, level_key)
 
-			if not var_10_8 then
-				var_10_7 = var_10_8.display_name
+			if level_settings then
+				display_name = level_settings.display_name
 			end
 		end
 
-		return Localize(var_10_7 or "lb_unknown")
+		return Localize(not not display_name or not not "lb_unknown")
 	end
 end
 
-local function fn_4(self)
+local function lobby_level_sort_order(lobby_data)
 	-- function 11
-	local selected_mission_id = self.selected_mission_id
+	local selected_mission_id = lobby_data.selected_mission_id
 
-	selected_mission_id = selected_mission_id or self.mission_id
+	if not selected_mission_id then
+		-- Nothing
+	end
 
-	local make_hash = Application.make_hash(selected_mission_id)
+	selected_mission_id = lobby_data.mission_id
 
-	return Application.hex64_to_dec(make_hash) or 0
+	local mission_id = selected_mission_id
+
+	::label_11_0::
+
+	local mission_hex = Application.make_hash(mission_id)
+	local sort_id = Application.hex64_to_dec(mission_hex)
+
+	return not not sort_id or not not 0
 end
 
-local function fn_5(self)
+local function lobby_difficulty_display_name(lobby_data)
 	-- function 12
-	local difficulty = self.difficulty
-	local flag = not difficulty and DifficultySettings[difficulty]
-	local flag_2 = not difficulty and flag.display_name
-	local var_12_3
+	local difficulty = lobby_data.difficulty
+	local difficulty_setting = not not difficulty and not not DifficultySettings[difficulty]
+	local difficulty_display_name = not not difficulty and not not difficulty_setting.display_name
+	local var_12_0
 
-	if not difficulty then
-		var_12_3 = Localize(flag_2)
+	if difficulty then
+		var_12_0 = Localize(difficulty_display_name)
 
-		if not var_12_3 then
+		if not var_12_0 then
 			-- Nothing
 		end
 	end
 
-	var_12_3 = "-"
+	var_12_0 = "-"
+
+	local difficulty_text = var_12_0
 
 	::label_12_0::
 
-	return var_12_3
+	return difficulty_text
 end
 
-local function fn_6(self)
+local function lobby_difficulty_rank(lobby_data)
 	-- function 13
-	local difficulty = self.difficulty
-	local flag = not difficulty and DifficultySettings[difficulty]
+	local difficulty = lobby_data.difficulty
+	local difficulty_setting = not not difficulty and not not DifficultySettings[difficulty]
 	local rank
 
-	if not difficulty then
-		rank = flag.rank
+	if difficulty then
+		rank = difficulty_setting.rank
 
 		if not rank then
 			-- Nothing
@@ -569,84 +596,105 @@ local function fn_6(self)
 
 	rank = 0
 
+	local difficulty_rank = rank
+
 	::label_13_0::
 
-	return rank
+	return difficulty_rank
 end
 
-local function fn_7(self)
+local function lobby_country_text(lobby_data)
 	-- function 14
-	local country_code = self.country_code
-	local var_14_1
+	local country_code = lobby_data.country_code
+	local var_14_0
 
-	if not country_code then
-		var_14_1 = iso_countries[country_code]
+	if country_code then
+		var_14_0 = iso_countries[country_code]
 
-		if not var_14_1 then
+		if not var_14_0 then
 			-- Nothing
 		end
 	end
 
-	var_14_1 = ""
+	var_14_0 = ""
+
+	local country_text = var_14_0
 
 	::label_14_0::
 
-	return var_14_1
+	return country_text
 end
 
-local function fn_8(self)
+local function level_is_locked(lobby_data)
 	-- function 15
-	local player = Managers.player
-	local local_player = player:local_player()
-	local statistics_db = player:statistics_db()
-	local stats_id = local_player:stats_id()
-	local flag = self.weave_quick_game == "true"
-	local is_lobby_private = MatchmakingManager.is_lobby_private(self)
-	local mechanism = self.mechanism
-	local flag_2 = not mechanism and MechanismSettings[mechanism]
+	local player_manager = Managers.player
+	local player = player_manager:local_player()
+	local statistics_db = player_manager:statistics_db()
+	local player_stats_id = player:stats_id()
+	local weave_quick_game = lobby_data.weave_quick_game == "true"
+	local private_game = MatchmakingManager.is_lobby_private(lobby_data)
+	local mechanism = lobby_data.mechanism
+	local mechanism_settings = not not mechanism and not not MechanismSettings[mechanism]
 
-	if not is_lobby_private then
+	if private_game then
 		return true
 	end
 
-	local selected_mission_id = self.selected_mission_id
-
-	selected_mission_id = selected_mission_id or self.mission_id
+	local selected_mission_id = lobby_data.selected_mission_id
 
 	if not selected_mission_id then
+		-- Nothing
+	end
+
+	selected_mission_id = lobby_data.mission_id
+
+	local mission_id = selected_mission_id
+
+	::label_15_0::
+
+	if not mission_id then
 		return false
 	end
 
-	if not WeaveSettings.templates[selected_mission_id] then
-		local var_15_9 = rawget(LevelSettings, selected_mission_id)
+	local weave_template = WeaveSettings.templates[mission_id]
 
-		if not var_15_9 then
+	if not weave_template then
+		local level_setting = rawget(LevelSettings, mission_id)
+
+		if not level_setting then
 			return true
 		end
 
-		if not var_15_9.hub_level then
+		local in_inn = level_setting.hub_level
+
+		if in_inn then
 			return false
 		end
 	end
 
-	if not (not flag_2 and not flag_2.extra_requirements_function and flag_2.extra_requirements_function()) then
+	if mechanism_settings and mechanism_settings.extra_requirements_function and not mechanism_settings.extra_requirements_function() then
 		return true
 	end
 
 	if mechanism == "weave" then
-		if not flag then
-			local flag_3 = false
-			local var_15_11 = selected_mission_id
+		if not weave_quick_game then
+			local ignore_dlc_check = false
+			local weave_name = mission_id
+			local weave_disabled = LevelUnlockUtils.weave_disabled(weave_name)
 
-			if not LevelUnlockUtils.weave_disabled(var_15_11) then
+			if weave_disabled then
 				return true
 			end
 
-			if not LevelUnlockUtils.weave_unlocked(statistics_db, stats_id, var_15_11, flag_3) then
+			local weave_unlocked = LevelUnlockUtils.weave_unlocked(statistics_db, player_stats_id, weave_name, ignore_dlc_check)
+
+			if weave_unlocked then
 				return false
 			end
 
-			if LevelUnlockUtils.current_weave(statistics_db, stats_id, flag_3) == var_15_11 then
+			local current_weave = LevelUnlockUtils.current_weave(statistics_db, player_stats_id, ignore_dlc_check)
+
+			if current_weave == weave_name then
 				return false
 			end
 		end
@@ -654,55 +702,70 @@ local function fn_8(self)
 		return false
 	end
 
-	if not LevelUnlockUtils.level_unlocked(statistics_db, stats_id, selected_mission_id) then
+	local level_unlocked = LevelUnlockUtils.level_unlocked(statistics_db, player_stats_id, mission_id)
+
+	if not level_unlocked then
 		return true
 	end
 end
 
-local function fn_9(self)
+local function difficulty_is_locked(lobby_data)
 	-- function 16
-	local var_16_0 = tonumber(self.matchmaking_type)
-	local var_16_1 = table.clone(NetworkLookup.matchmaking_types, true)[var_16_0]
+	local matchmaking_type_index = tonumber(lobby_data.matchmaking_type)
+	local matchmaking_type_names = table.clone(NetworkLookup.matchmaking_types, true)
+	local matchmaking_type = matchmaking_type_names[matchmaking_type_index]
+	local mechanism = lobby_data.mechanism
 
-	if self.mechanism == "weave" then
+	if mechanism == "weave" then
 		return false
 	end
 
-	local selected_mission_id = self.selected_mission_id
+	local selected_mission_id = lobby_data.selected_mission_id
 
-	selected_mission_id = selected_mission_id or self.mission_id
+	if not selected_mission_id then
+		-- Nothing
+	end
 
-	local player = Managers.player
-	local local_player = player:local_player()
-	local statistics_db = player:statistics_db()
-	local stats_id = local_player:stats_id()
-	local difficulty = self.difficulty
+	selected_mission_id = lobby_data.mission_id
 
-	if not (not difficulty and selected_mission_id) then
+	local mission_id = selected_mission_id
+
+	::label_16_0::
+
+	local player_manager = Managers.player
+	local player = player_manager:local_player()
+	local statistics_db = player_manager:statistics_db()
+	local player_stats_id = player:stats_id()
+	local difficulty = lobby_data.difficulty
+
+	if not difficulty or not mission_id then
 		return false
 	end
 
-	if not difficulty then
-		local var_16_8 = DifficultySettings[difficulty]
+	if difficulty then
+		local difficulty_settings = DifficultySettings[difficulty]
 
-		if not var_16_8.extra_requirement_name then
-			local var_16_9 = ExtraDifficultyRequirements[var_16_8.extra_requirement_name]
+		if difficulty_settings.extra_requirement_name then
+			local extra_requirement = ExtraDifficultyRequirements[difficulty_settings.extra_requirement_name]
 
-			if not (Development.parameter("unlock_all_difficulties") or var_16_9.requirement_function()) then
+			if not Development.parameter("unlock_all_difficulties") and not extra_requirement.requirement_function() then
 				return true
 			end
 		end
 
-		if not (not var_16_8.dlc_requirement and Managers.unlock:is_dlc_unlocked(var_16_8.dlc_requirement)) then
+		if difficulty_settings.dlc_requirement and not Managers.unlock:is_dlc_unlocked(difficulty_settings.dlc_requirement) then
 			return true
 		end
 	end
 
-	if not MatchmakingManager.is_lobby_private(self) then
-		local profile_display_name = local_player:profile_display_name()
-		local career_name = local_player:career_name()
+	local private_game = MatchmakingManager.is_lobby_private(lobby_data)
 
-		if not Managers.matchmaking:has_required_power_level(self, profile_display_name, career_name) then
+	if not private_game then
+		local profile_name = player:profile_display_name()
+		local career_name = player:career_name()
+		local has_required_power_level = Managers.matchmaking:has_required_power_level(lobby_data, profile_name, career_name)
+
+		if not has_required_power_level then
 			return true
 		end
 	end
@@ -710,67 +773,91 @@ local function fn_9(self)
 	return false
 end
 
-local function fn_10(self)
+local function status_is_locked(lobby_data)
 	-- function 17
-	local get_matchmaking_settings_for_mechanism = Managers.matchmaking.get_matchmaking_settings_for_mechanism(self.mechanism)
-	local num_players = self.num_players
-	local matchmaking = self.matchmaking
+	local matchmaking_settings = Managers.matchmaking.get_matchmaking_settings_for_mechanism(lobby_data.mechanism)
+	local num_players = lobby_data.num_players
+	local matchmaking = lobby_data.matchmaking
 
-	if not (not num_players and matchmaking) then
+	if not num_players or not matchmaking then
 		return false
 	end
 
-	local flag = self.matchmaking == "false"
-	local flag_2 = self.num_players == get_matchmaking_settings_for_mechanism.MAX_NUMBER_OF_PLAYERS
+	local is_private = lobby_data.matchmaking == "false"
+	local is_full = lobby_data.num_players == matchmaking_settings.MAX_NUMBER_OF_PLAYERS
+	local is_broken = lobby_data.is_broken
 
-	return self.is_broken or flag_2 or flag
+	return not not is_broken or not not is_full or not not is_private
 end
 
-local menu_frame_12 = UIFrameSettings.menu_frame_12
+local entry_frame_settings = UIFrameSettings.menu_frame_12
 
-local function fn_11(self)
+local function create_lobby_list_entry_content(lobby_data)
 	-- function 18
-	local peer_id = Network.peer_id()
-	local host = self.host
-	local server_name = self.server_name
+	local my_peer_id = Network.peer_id()
+	local host = lobby_data.host
+	local server_name = lobby_data.server_name
 
 	if not server_name then
-		server_name = self.unique_server_name
-
-		if not server_name then
-			server_name = self.name
-			server_name = server_name or self.host
-		end
+		-- Nothing
 	end
 
-	if not (host == peer_id or server_name) then
+	server_name = lobby_data.unique_server_name
+
+	if not server_name then
+		-- Nothing
+	end
+
+	server_name = lobby_data.name
+
+	if not server_name then
+		-- Nothing
+	end
+
+	server_name = lobby_data.host
+
+	local title_text = server_name
+
+	::label_18_0::
+
+	if host == my_peer_id or not title_text then
 		return
 	end
 
-	local var_18_3 = fn_3(self)
-	local num_players = self.num_players
+	local level_text = lobby_level_display_name(lobby_data)
+	local num_players = lobby_data.num_players
 
-	num_players = num_players or 0
+	if not num_players then
+		-- Nothing
+	end
 
-	local var_18_5 = fn_5(self)
-	local lobby_status_text = LobbyItemsList.lobby_status_text(self)
+	num_players = 0
+
+	local num_players_text = num_players
+
+	::label_18_1::
+
+	local difficulty_text = lobby_difficulty_display_name(lobby_data)
+	local status_text = LobbyItemsList.lobby_status_text(lobby_data)
+	local is_invalid = not lobby_data.valid
 	local str
 
-	if not not self.valid then
-		str = "[INV]" .. lobby_status_text
+	if is_invalid then
+		str = "[INV]" .. status_text
 
 		if not str then
 			-- Nothing
 		end
 	end
 
-	str = lobby_status_text
+	str = status_text
 
-	::label_18_0::
+	local status_text_parsed = str
 
-	local var_18_8 = fn_7(self)
+	::label_18_2::
 
-	return {
+	local country_text = lobby_country_text(lobby_data)
+	local content = {
 		locked_difficulty = "locked_icon_01",
 		locked_status = "locked_icon_01",
 		background_selected = "lb_list_item_clicked",
@@ -780,23 +867,25 @@ local function fn_11(self)
 		background_normal = "lb_list_item_normal",
 		locked_level = "locked_icon_01",
 		button_hotspot = {},
-		lobby_data = self,
-		title_text = server_name,
-		level_text = var_18_3,
-		difficulty_text = var_18_5,
-		num_players_text = num_players .. "/4",
-		status_text = str,
-		country_text = var_18_8,
-		level_is_locked = fn_8(self),
-		difficulty_is_locked = fn_9(self),
-		status_is_locked = fn_10(self),
-		frame = menu_frame_12.texture
+		lobby_data = lobby_data,
+		title_text = title_text,
+		level_text = level_text,
+		difficulty_text = difficulty_text,
+		num_players_text = num_players_text .. "/4",
+		status_text = status_text_parsed,
+		country_text = country_text,
+		level_is_locked = level_is_locked(lobby_data),
+		difficulty_is_locked = difficulty_is_locked(lobby_data),
+		status_is_locked = status_is_locked(lobby_data),
+		frame = entry_frame_settings.texture
 	}
+
+	return content
 end
 
-local function fn_12()
+local function create_empty_lobby_list_entry_content()
 	-- function 19
-	return {
+	local content = {
 		difficulty_text = "",
 		title_text = "",
 		num_players_text = "",
@@ -811,16 +900,18 @@ local function fn_12()
 		button_hotspot = {
 			allow_multi_hover = true
 		},
-		frame = menu_frame_12.texture
+		frame = entry_frame_settings.texture
 	}
+
+	return content
 end
 
-local function fn_13()
+local function create_lobby_list_entry_style()
 	-- function 20
-	return {
+	local style = {
 		frame = {
-			texture_size = menu_frame_12.texture_size,
-			texture_sizes = menu_frame_12.texture_sizes,
+			texture_size = entry_frame_settings.texture_size,
+			texture_sizes = entry_frame_settings.texture_sizes,
 			color = {
 				255,
 				255,
@@ -828,8 +919,8 @@ local function fn_13()
 				255
 			},
 			size = {
-				tbl_5.width,
-				tbl_5.height
+				element_settings.width,
+				element_settings.height
 			},
 			offset = {
 				0,
@@ -839,8 +930,8 @@ local function fn_13()
 		},
 		background = {
 			size = {
-				tbl_5.width,
-				tbl_5.height
+				element_settings.width,
+				element_settings.height
 			},
 			offset = {
 				0,
@@ -853,33 +944,33 @@ local function fn_13()
 				20,
 				26
 			},
-			offset = tbl_14
+			offset = level_lock_position
 		},
 		locked_difficulty = {
 			size = {
 				20,
 				26
 			},
-			offset = tbl_15
+			offset = difficulty_lock_position
 		},
 		locked_status = {
 			size = {
 				20,
 				26
 			},
-			offset = tbl_16
+			offset = status_lock_position
 		},
 		title_text = {
 			vertical_alignment = "center",
 			horizontal_alignment = "left",
 			font_type = "arial",
 			size = {
-				tbl_5.width,
-				tbl_5.height
+				element_settings.width,
+				element_settings.height
 			},
 			text_color = Colors.color_definitions.white,
-			font_size = tbl_6.font_size,
-			offset = tbl_7
+			font_size = ListSettings.font_size,
+			offset = title_text_position
 		},
 		level_text = {
 			word_wrap = false,
@@ -888,43 +979,43 @@ local function fn_13()
 			dynamic_font_size = true,
 			font_type = "arial",
 			size = {
-				tbl_5.width,
-				tbl_5.height
+				element_settings.width,
+				element_settings.height
 			},
 			text_color = Colors.color_definitions.white,
-			font_size = tbl_6.font_size,
+			font_size = ListSettings.font_size,
 			area_size = {
 				240,
 				50
 			},
-			offset = tbl_8
+			offset = level_text_position
 		},
 		difficulty_text = {
 			vertical_alignment = "center",
 			horizontal_alignment = "left",
 			font_type = "arial",
 			size = {
-				tbl_5.width,
-				tbl_5.height
+				element_settings.width,
+				element_settings.height
 			},
 			text_color = Colors.color_definitions.white,
-			font_size = tbl_6.font_size,
-			offset = tbl_9
+			font_size = ListSettings.font_size,
+			offset = difficulty_text_position
 		},
 		num_players_text = {
 			vertical_alignment = "center",
 			horizontal_alignment = "left",
 			font_type = "arial",
 			size = {
-				tbl_5.width,
-				tbl_5.height
+				element_settings.width,
+				element_settings.height
 			},
 			text_color = Colors.color_definitions.white,
-			font_size = tbl_6.font_size,
+			font_size = ListSettings.font_size,
 			offset = {
-				tbl_10[1] + 5,
-				tbl_10[2],
-				tbl_10[3]
+				num_players_text_position[1] + 5,
+				num_players_text_position[2],
+				num_players_text_position[3]
 			}
 		},
 		status_text = {
@@ -932,79 +1023,81 @@ local function fn_13()
 			horizontal_alignment = "left",
 			font_type = "arial",
 			size = {
-				tbl_5.width,
-				tbl_5.height
+				element_settings.width,
+				element_settings.height
 			},
 			text_color = Colors.color_definitions.white,
-			font_size = tbl_6.font_size,
-			offset = tbl_11
+			font_size = ListSettings.font_size,
+			offset = status_text_position
 		},
 		country_text = {
 			vertical_alignment = "center",
 			horizontal_alignment = "right",
 			font_type = "arial",
 			size = {
-				tbl_5.width,
-				tbl_5.height
+				element_settings.width,
+				element_settings.height
 			},
 			text_color = Colors.color_definitions.white,
-			font_size = tbl_6.font_size,
-			offset = tbl_12
+			font_size = ListSettings.font_size,
+			offset = country_text_position
 		}
 	}
+
+	return style
 end
 
 LobbyItemsList = class(LobbyItemsList)
 
-LobbyItemsList.init = function (self, arg_21_1, arg_21_2)
+LobbyItemsList.init = function (self, ingame_ui_context, settings)
 	-- function 21
-	self.ui_renderer = arg_21_1.ui_top_renderer
-	self.input_manager = arg_21_1.input_manager
+	self.ui_renderer = ingame_ui_context.ui_top_renderer
+	self.input_manager = ingame_ui_context.input_manager
 
-	local num_list_items = arg_21_2.num_list_items
+	local num_list_items = settings.num_list_items
 
-	if not arg_21_2.use_top_renderer then
-		self.ui_renderer = arg_21_1.ui_top_renderer
+	if settings.use_top_renderer then
+		self.ui_renderer = ingame_ui_context.ui_top_renderer
 	else
-		self.ui_renderer = arg_21_1.ui_renderer
+		self.ui_renderer = ingame_ui_context.ui_renderer
 	end
 
-	self.world_manager = arg_21_1.world_manager
+	self.world_manager = ingame_ui_context.world_manager
 
 	local world = self.world_manager:world("level_world")
 
 	self.wwise_world = Managers.world:wwise_world(world)
 
-	local scenegraph_definition = tbl_17.scenegraph_definition
-	local item_list = scenegraph_definition.item_list
-	local var_21_4 = item_list.size[1]
-	local var_21_5 = item_list.size[2]
+	local scenegraph_definition = definitions.scenegraph_definition
+	local item_list_definitions = scenegraph_definition.item_list
+	local scroll_field_width = item_list_definitions.size[1]
+	local scroll_field_height = item_list_definitions.size[2]
 
-	arg_21_2.list_size = {
-		item_list.size[1],
-		item_list.size[2]
+	settings.list_size = {
+		item_list_definitions.size[1],
+		item_list_definitions.size[2]
 	}
 
-	fn_2(var_21_4, var_21_5)
-	fn(var_21_4, var_21_5)
+	setup_mouse_scroll_widget_definition(scroll_field_width, scroll_field_height)
+	setup_list_hover_area(scroll_field_width, scroll_field_height)
 
-	self.settings = arg_21_2
-	self.widget_definitions = tbl_17.widget_definitions
+	self.settings = settings
+	self.widget_definitions = definitions.widget_definitions
 	self.bar_animations = {}
 	self.inventory_list_animations = {}
 	self.scenegraph_definition = scenegraph_definition
 	self.lobby_list = {}
-	self.input_service_name = arg_21_2.input_service_name
+	self.input_service_name = settings.input_service_name
 
-	self:create_ui_elements(arg_21_2.offset)
+	self:create_ui_elements(settings.offset)
 
 	self.list_style = {
 		vertical_alignment = "top",
 		scenegraph_id = "item_list",
-		size = arg_21_2.list_size,
+		size = settings.list_size,
 		list_member_offset = {
 			0,
-			-(tbl_5.height + tbl_5.height_spacing),
+			-(element_settings.height + element_settings.height_spacing),
 			0
 		},
 		item_styles = {}
@@ -1012,74 +1105,116 @@ LobbyItemsList.init = function (self, arg_21_1, arg_21_2)
 	self.selected_list_index = 1
 end
 
-LobbyItemsList.destroy = function (arg_22_0)
+LobbyItemsList.destroy = function (self)
 	-- function 22
 	return
 end
 
-LobbyItemsList.lobby_status_text = function (self)
+LobbyItemsList.lobby_status_text = function (lobby_data)
 	-- function 23
-	local flag = self.server_info ~= nil
-	local get_matchmaking_settings_for_mechanism = Managers.matchmaking.get_matchmaking_settings_for_mechanism(self.mechanism)
-	local mission_id = self.mission_id
+	local is_dedicated_server = lobby_data.server_info ~= nil
+	local matchmaking_settings = Managers.matchmaking.get_matchmaking_settings_for_mechanism(lobby_data.mechanism)
+	local mission_id = lobby_data.mission_id
 	local password
 
-	if not flag then
-		password = self.server_info.password
+	if is_dedicated_server then
+		password = lobby_data.server_info.password
 
 		if not password then
 			-- Nothing
 		end
 	end
 
-	password = not not flag or self.matchmaking == "false"
+	if is_dedicated_server or lobby_data.matchmaking ~= "false" then
+		password = false
+
+		goto label_23_0
+	end
+
+	password = true
+
+	local is_private = password
 
 	::label_23_0::
 
-	local flag_2 = self.num_players == get_matchmaking_settings_for_mechanism.MAX_NUMBER_OF_PLAYERS
-	local var_23_5 = tonumber(self.matchmaking_type)
-	local clone = table.clone(NetworkLookup.matchmaking_types, true)
-	local flag_3 = not var_23_5 and clone[var_23_5]
-	local var_23_8 = mission_id
+	local is_full = lobby_data.num_players == matchmaking_settings.MAX_NUMBER_OF_PLAYERS
+	local matchmaking_type_index = tonumber(lobby_data.matchmaking_type)
+	local matchmaking_type_names = table.clone(NetworkLookup.matchmaking_types, true)
+	local matchmaking_type_name = not not matchmaking_type_index and not not matchmaking_type_names[matchmaking_type_index]
+	local level_key = mission_id
 
-	if flag_3 == "weave" then
-		local var_23_9 = WeaveSettings.templates[mission_id]
+	if matchmaking_type_name == "weave" then
+		local weave_template = WeaveSettings.templates[mission_id]
 
-		if not var_23_9 then
-			local level_id = var_23_9.objectives[1].level_id
+		if weave_template then
+			level_key = weave_template.objectives[1].level_id
 		end
 	end
 
-	local hub_level = LevelSettings[mission_id].hub_level
-	local flag_4
+	local level_setting = LevelSettings[mission_id]
+	local is_in_inn = level_setting.hub_level
+	local is_broken = lobby_data.is_broken
+	local str
 
-	flag_4 = not self.is_broken and "lb_broken" and not password or "lb_private" and (not flag_2 and "lb_full" and not hub_level or "lb_in_inn" and "lb_started")
+	if is_broken then
+		str = "lb_broken"
 
-	local var_23_13
+		goto label_23_1
+	end
 
-	if not flag_4 then
-		var_23_13 = Localize(flag_4)
+	if is_private then
+		str = "lb_private"
 
-		if not var_23_13 then
+		goto label_23_1
+	end
+
+	if is_full then
+		str = "lb_full"
+
+		goto label_23_1
+	end
+
+	if is_in_inn then
+		str = "lb_in_inn"
+
+		goto label_23_1
+	end
+
+	str = "lb_started"
+
+	local status = str
+
+	do
+		local var_23_2
+	end
+
+	::label_23_1::
+
+	if status then
+		var_23_2 = Localize(status)
+
+		if not var_23_2 then
 			-- Nothing
 		end
 	end
 
-	var_23_13 = ""
+	var_23_2 = ""
 
-	::label_23_1::
+	local status_text = var_23_2
 
-	return var_23_13
+	::label_23_2::
+
+	return status_text
 end
 
-LobbyItemsList.create_ui_elements = function (self, arg_24_1)
+LobbyItemsList.create_ui_elements = function (self, offset)
 	-- function 24
 	self.ui_scenegraph = UISceneGraph.init_scenegraph(self.scenegraph_definition)
 
-	local str = "scrollbar_root"
-	local var_24_1 = self.scenegraph_definition[str]
+	local scrollbar_scenegraph_id = "scrollbar_root"
+	local scrollbar_scenegraph = self.scenegraph_definition[scrollbar_scenegraph_id]
 
-	self.scrollbar_widget = UIWidget.init(UIWidgets.create_scrollbar(str, var_24_1.size))
+	self.scrollbar_widget = UIWidget.init(UIWidgets.create_scrollbar(scrollbar_scenegraph_id, scrollbar_scenegraph.size))
 	self.item_list_widget = UIWidget.init(self.widget_definitions.inventory_list_widget)
 	self.scroll_field_widget = UIWidget.init(self.widget_definitions.scroll_field)
 	self.test = UIWidget.init(self.widget_definitions.test)
@@ -1094,178 +1229,324 @@ LobbyItemsList.create_ui_elements = function (self, arg_24_1)
 
 	UIRenderer.clear_scenegraph_queue(self.ui_renderer)
 
-	if not arg_24_1 then
-		local local_position = self.ui_scenegraph.window.local_position
+	if offset then
+		local window_position = self.ui_scenegraph.window.local_position
 
-		local_position[1] = local_position[1] + arg_24_1[1]
-		local_position[2] = local_position[2] + arg_24_1[2]
-		local_position[3] = local_position[3] + arg_24_1[3]
+		window_position[1] = window_position[1] + offset[1]
+		window_position[2] = window_position[2] + offset[2]
+		window_position[3] = window_position[3] + offset[3]
 	end
 end
 
-local function fn_14(self, arg_25_1)
+local function sort_lobbies_on_host_asc(lobby_a, lobby_b)
 	-- function 25
-	local server_name = self.server_name
+	local server_name = lobby_a.server_name
 
 	if not server_name then
-		server_name = self.unique_server_name
-
-		if not server_name then
-			server_name = self.host
-			server_name = server_name or ""
-		end
+		-- Nothing
 	end
 
-	local server_name_2 = arg_25_1.server_name
+	server_name = lobby_a.unique_server_name
+
+	if not server_name then
+		-- Nothing
+	end
+
+	server_name = lobby_a.host
+
+	if not server_name then
+		-- Nothing
+	end
+
+	server_name = ""
+
+	local host_a = server_name
+
+	::label_25_0::
+
+	local server_name_2 = lobby_b.server_name
 
 	if not server_name_2 then
-		server_name_2 = arg_25_1.unique_server_name
-
-		if not server_name_2 then
-			server_name_2 = arg_25_1.host
-			server_name_2 = server_name_2 or ""
-		end
+		-- Nothing
 	end
 
-	return server_name < server_name_2
+	server_name_2 = lobby_b.unique_server_name
+
+	if not server_name_2 then
+		-- Nothing
+	end
+
+	server_name_2 = lobby_b.host
+
+	if not server_name_2 then
+		-- Nothing
+	end
+
+	server_name_2 = ""
+
+	local host_b = server_name_2
+
+	::label_25_1::
+
+	return host_a < host_b
 end
 
-local function fn_15(self, arg_26_1)
+local function sort_lobbies_on_host_desc(lobby_a, lobby_b)
 	-- function 26
-	local server_name = self.server_name
+	local server_name = lobby_a.server_name
 
 	if not server_name then
-		server_name = self.unique_server_name
-
-		if not server_name then
-			server_name = self.host
-			server_name = server_name or ""
-		end
+		-- Nothing
 	end
 
-	local server_name_2 = arg_26_1.server_name
+	server_name = lobby_a.unique_server_name
+
+	if not server_name then
+		-- Nothing
+	end
+
+	server_name = lobby_a.host
+
+	if not server_name then
+		-- Nothing
+	end
+
+	server_name = ""
+
+	local host_a = server_name
+
+	::label_26_0::
+
+	local server_name_2 = lobby_b.server_name
 
 	if not server_name_2 then
-		server_name_2 = arg_26_1.unique_server_name
-
-		if not server_name_2 then
-			server_name_2 = arg_26_1.host
-			server_name_2 = server_name_2 or ""
-		end
+		-- Nothing
 	end
 
-	return server_name_2 < server_name
+	server_name_2 = lobby_b.unique_server_name
+
+	if not server_name_2 then
+		-- Nothing
+	end
+
+	server_name_2 = lobby_b.host
+
+	if not server_name_2 then
+		-- Nothing
+	end
+
+	server_name_2 = ""
+
+	local host_b = server_name_2
+
+	::label_26_1::
+
+	return host_b < host_a
 end
 
-local function fn_16(self, arg_27_1)
+local function sort_lobbies_on_levels_asc(lobby_a, lobby_b)
 	-- function 27
-	local selected_mission_id = self.selected_mission_id
+	local selected_mission_id = lobby_a.selected_mission_id
 
 	if not selected_mission_id then
-		selected_mission_id = self.mission_id
-		selected_mission_id = selected_mission_id or "lb_unknown"
+		-- Nothing
 	end
 
-	local selected_mission_id_2 = arg_27_1.selected_mission_id
+	selected_mission_id = lobby_a.mission_id
+
+	if not selected_mission_id then
+		-- Nothing
+	end
+
+	selected_mission_id = "lb_unknown"
+
+	local mission_a = selected_mission_id
+
+	::label_27_0::
+
+	local selected_mission_id_2 = lobby_b.selected_mission_id
 
 	if not selected_mission_id_2 then
-		selected_mission_id_2 = arg_27_1.mission_id
-		selected_mission_id_2 = selected_mission_id_2 or "lb_unknown"
+		-- Nothing
 	end
 
-	return Localize(selected_mission_id) < Localize(selected_mission_id_2)
+	selected_mission_id_2 = lobby_b.mission_id
+
+	if not selected_mission_id_2 then
+		-- Nothing
+	end
+
+	selected_mission_id_2 = "lb_unknown"
+
+	local mission_b = selected_mission_id_2
+
+	::label_27_1::
+
+	return Localize(mission_a) < Localize(mission_b)
 end
 
-local function fn_17(self, arg_28_1)
+local function sort_lobbies_on_levels_desc(lobby_a, lobby_b)
 	-- function 28
-	local var_28_0 = fn_4(self)
-	local var_28_1 = fn_4(arg_28_1)
-	local selected_mission_id = self.selected_mission_id
+	local level_a = lobby_level_sort_order(lobby_a)
+	local level_b = lobby_level_sort_order(lobby_b)
+	local selected_mission_id = lobby_a.selected_mission_id
 
 	if not selected_mission_id then
-		selected_mission_id = self.mission_id
-		selected_mission_id = selected_mission_id or "lb_unknown"
+		-- Nothing
 	end
 
-	local selected_mission_id_2 = arg_28_1.selected_mission_id
+	selected_mission_id = lobby_a.mission_id
+
+	if not selected_mission_id then
+		-- Nothing
+	end
+
+	selected_mission_id = "lb_unknown"
+
+	local mission_a = selected_mission_id
+
+	::label_28_0::
+
+	local selected_mission_id_2 = lobby_b.selected_mission_id
 
 	if not selected_mission_id_2 then
-		selected_mission_id_2 = arg_28_1.mission_id
-		selected_mission_id_2 = selected_mission_id_2 or "lb_unknown"
+		-- Nothing
 	end
 
-	return Localize(selected_mission_id) > Localize(selected_mission_id_2)
+	selected_mission_id_2 = lobby_b.mission_id
+
+	if not selected_mission_id_2 then
+		-- Nothing
+	end
+
+	selected_mission_id_2 = "lb_unknown"
+
+	local mission_b = selected_mission_id_2
+
+	::label_28_1::
+
+	return Localize(mission_a) > Localize(mission_b)
 end
 
-local function fn_18(arg_29_0, arg_29_1)
+local function sort_lobbies_on_difficulty_asc(lobby_a, lobby_b)
 	-- function 29
-	return fn_6(arg_29_0) < fn_6(arg_29_1)
+	local difficulty_a = lobby_difficulty_rank(lobby_a)
+	local difficulty_b = lobby_difficulty_rank(lobby_b)
+
+	return difficulty_a < difficulty_b
 end
 
-local function fn_19(arg_30_0, arg_30_1)
+local function sort_lobbies_on_difficulty_desc(lobby_a, lobby_b)
 	-- function 30
-	return fn_6(arg_30_0) > fn_6(arg_30_1)
+	local difficulty_a = lobby_difficulty_rank(lobby_a)
+	local difficulty_b = lobby_difficulty_rank(lobby_b)
+
+	return difficulty_b < difficulty_a
 end
 
-local function fn_20(arg_31_0, arg_31_1)
+local function sort_lobbies_on_status_asc(lobby_a, lobby_b)
 	-- function 31
-	return LobbyItemsList.lobby_status_text(arg_31_0) < LobbyItemsList.lobby_status_text(arg_31_1)
+	local status_a = LobbyItemsList.lobby_status_text(lobby_a)
+	local status_b = LobbyItemsList.lobby_status_text(lobby_b)
+
+	return status_a < status_b
 end
 
-local function fn_21(arg_32_0, arg_32_1)
+local function sort_lobbies_on_status_desc(lobby_a, lobby_b)
 	-- function 32
-	return LobbyItemsList.lobby_status_text(arg_32_0) > LobbyItemsList.lobby_status_text(arg_32_1)
+	local status_a = LobbyItemsList.lobby_status_text(lobby_a)
+	local status_b = LobbyItemsList.lobby_status_text(lobby_b)
+
+	return status_b < status_a
 end
 
-local function fn_22(self, arg_33_1)
+local function sort_lobbies_on_num_players_asc(lobby_a, lobby_b)
 	-- function 33
-	local var_33_0 = tonumber(self.num_players)
+	local var_33_0 = tonumber(lobby_a.num_players)
 
-	var_33_0 = var_33_0 or 0
+	if not var_33_0 then
+		-- Nothing
+	end
 
-	local var_33_1 = tonumber(arg_33_1.num_players)
+	var_33_0 = 0
 
-	var_33_1 = var_33_1 or 0
+	local num_players_a = var_33_0
 
-	return var_33_0 < var_33_1
+	::label_33_0::
+
+	local var_33_1 = tonumber(lobby_b.num_players)
+
+	if not var_33_1 then
+		-- Nothing
+	end
+
+	var_33_1 = 0
+
+	local num_players_b = var_33_1
+
+	::label_33_1::
+
+	return num_players_a < num_players_b
 end
 
-local function fn_23(self, arg_34_1)
+local function sort_lobbies_on_num_players_desc(lobby_a, lobby_b)
 	-- function 34
-	local var_34_0 = tonumber(self.num_players)
+	local var_34_0 = tonumber(lobby_a.num_players)
 
-	var_34_0 = var_34_0 or 0
+	if not var_34_0 then
+		-- Nothing
+	end
 
-	local var_34_1 = tonumber(arg_34_1.num_players)
+	var_34_0 = 0
 
-	var_34_1 = var_34_1 or 0
+	local num_players_a = var_34_0
 
-	return var_34_1 < var_34_0
+	::label_34_0::
+
+	local var_34_1 = tonumber(lobby_b.num_players)
+
+	if not var_34_1 then
+		-- Nothing
+	end
+
+	var_34_1 = 0
+
+	local num_players_b = var_34_1
+
+	::label_34_1::
+
+	return num_players_b < num_players_a
 end
 
-local function fn_24(arg_35_0, arg_35_1)
+local function sort_lobbies_on_country_asc(lobby_a, lobby_b)
 	-- function 35
-	return fn_7(arg_35_0) < fn_7(arg_35_1)
+	local country_text_a = lobby_country_text(lobby_a)
+	local country_text_b = lobby_country_text(lobby_b)
+
+	return country_text_a < country_text_b
 end
 
-local function fn_25(arg_36_0, arg_36_1)
+local function sort_lobbies_on_country_desc(lobby_a, lobby_b)
 	-- function 36
-	return fn_7(arg_36_0) > fn_7(arg_36_1)
+	local country_text_a = lobby_country_text(lobby_a)
+	local country_text_b = lobby_country_text(lobby_b)
+
+	return country_text_b < country_text_a
 end
 
-LobbyItemsList.update = function (self, arg_37_1, arg_37_2)
+LobbyItemsList.update = function (self, dt, loading)
 	-- function 37
-	if not arg_37_2 then
+	if loading then
 		if not self._loading_previous_frame then
 			self:loading_overlay_fade_in(180)
 		end
 
-		self:rotate_loading_icon(arg_37_1)
-	elseif not self._loading_previous_frame then
+		self:rotate_loading_icon(dt)
+	elseif self._loading_previous_frame then
 		self:loading_overlay_fade_out()
 	end
 
-	self._loading_previous_frame = arg_37_2
+	self._loading_previous_frame = loading
 
 	local item_list_widget = self.item_list_widget
 	local list_content = item_list_widget.content.list_content
@@ -1273,14 +1554,15 @@ LobbyItemsList.update = function (self, arg_37_1, arg_37_2)
 	local selected_list_index = self.selected_list_index
 	local hover_list_index = self.hover_list_index
 	local number_of_items_in_list = self.number_of_items_in_list
-	local is_device_active = self.input_manager:is_device_active("gamepad")
+	local input_manager = self.input_manager
+	local gamepad_active = input_manager:is_device_active("gamepad")
 
 	self.lobby_list_index_changed = nil
 	self.inventory_list_index_pressed = nil
 
-	local count = #list_content
+	local num_list_content = #list_content
 
-	if not is_device_active then
+	if gamepad_active then
 		if number_of_items_in_list > 0 then
 			self:update_gamepad_list_scroll()
 		end
@@ -1288,18 +1570,18 @@ LobbyItemsList.update = function (self, arg_37_1, arg_37_2)
 		self.gamepad_changed_selected_list_index = nil
 	end
 
-	for i = 1, count do
-		local var_37_8 = list_content[i]
-		local button_hotspot = var_37_8.button_hotspot
+	for i = 1, num_list_content do
+		local button_content = list_content[i]
+		local button_hotspot = button_content.button_hotspot
 
-		if not var_37_8.fake then
-			if not button_hotspot.on_hover_enter then
+		if not button_content.fake then
+			if button_hotspot.on_hover_enter then
 				self:play_sound("Play_hud_hover")
 
 				button_hotspot.on_hover_enter = false
 			end
 
-			if not ((button_hotspot.is_selected or self.gamepad_changed_selected_list_index == i) and i == selected_list_index) then
+			if (button_hotspot.is_selected or self.gamepad_changed_selected_list_index == i) and i ~= selected_list_index then
 				self.lobby_list_index_changed = i
 
 				self:play_sound("Play_hud_select")
@@ -1311,95 +1593,120 @@ LobbyItemsList.update = function (self, arg_37_1, arg_37_2)
 
 	self:update_scroll()
 
-	local button_text = self.host_text_button.content.button_text
-	local button_text_2 = self.level_text_button.content.button_text
-	local button_text_3 = self.difficulty_text_button.content.button_text
-	local button_text_4 = self.players_text_button.content.button_text
+	local host_button_hotspot = self.host_text_button.content.button_text
+	local level_button_hotspot = self.level_text_button.content.button_text
+	local difficulty_button_hotspot = self.difficulty_text_button.content.button_text
+	local player_button_hotspot = self.players_text_button.content.button_text
 
-	if button_text.on_hover_enter or button_text_2.on_hover_enter or button_text_3.on_hover_enter or not button_text_4.on_hover_enter then
+	if host_button_hotspot.on_hover_enter or level_button_hotspot.on_hover_enter or difficulty_button_hotspot.on_hover_enter or player_button_hotspot.on_hover_enter then
 		self:play_sound("Play_hud_hover")
 	end
 
-	if not button_text.on_pressed then
-		local _pick_sort_func = self:_pick_sort_func(fn_14, fn_15)
+	if host_button_hotspot.on_pressed then
+		local sort_func = self:_pick_sort_func(sort_lobbies_on_host_asc, sort_lobbies_on_host_desc)
 		local lobbies = self.lobbies
 
-		self:populate_lobby_list(lobbies, _pick_sort_func)
+		self:populate_lobby_list(lobbies, sort_func)
 		self:play_sound("Play_hud_select")
 	end
 
-	if not button_text_2.on_pressed then
-		local _pick_sort_func_2 = self:_pick_sort_func(fn_16, fn_17)
-		local lobbies_2 = self.lobbies
+	if level_button_hotspot.on_pressed then
+		local sort_func = self:_pick_sort_func(sort_lobbies_on_levels_asc, sort_lobbies_on_levels_desc)
+		local lobbies = self.lobbies
 
-		self:populate_lobby_list(lobbies_2, _pick_sort_func_2)
+		self:populate_lobby_list(lobbies, sort_func)
 		self:play_sound("Play_hud_select")
 	end
 
-	if not button_text_3.on_pressed then
-		local _pick_sort_func_3 = self:_pick_sort_func(fn_18, fn_19)
-		local lobbies_3 = self.lobbies
+	if difficulty_button_hotspot.on_pressed then
+		local sort_func = self:_pick_sort_func(sort_lobbies_on_difficulty_asc, sort_lobbies_on_difficulty_desc)
+		local lobbies = self.lobbies
 
-		self:populate_lobby_list(lobbies_3, _pick_sort_func_3)
+		self:populate_lobby_list(lobbies, sort_func)
 		self:play_sound("Play_hud_select")
 	end
 
-	if not button_text_4.on_pressed then
-		local _pick_sort_func_4 = self:_pick_sort_func(fn_22, fn_23)
-		local lobbies_4 = self.lobbies
+	if player_button_hotspot.on_pressed then
+		local sort_func = self:_pick_sort_func(sort_lobbies_on_num_players_asc, sort_lobbies_on_num_players_desc)
+		local lobbies = self.lobbies
 
-		self:populate_lobby_list(lobbies_4, _pick_sort_func_4)
+		self:populate_lobby_list(lobbies, sort_func)
 		self:play_sound("Play_hud_select")
 	end
 end
 
-LobbyItemsList.handle_gamepad_input = function (self, arg_38_1, arg_38_2)
+LobbyItemsList.handle_gamepad_input = function (self, dt, num_elements)
 	-- function 38
-	local get_service = self.input_manager:get_service(self.input_service_name)
+	local input_manager = self.input_manager
+	local input_service = input_manager:get_service(self.input_service_name)
 	local controller_cooldown = self.controller_cooldown
 
-	if not (not controller_cooldown and not (controller_cooldown > 0)) then
-		self.controller_cooldown = controller_cooldown - arg_38_1
+	if controller_cooldown and controller_cooldown > 0 then
+		self.controller_cooldown = controller_cooldown - dt
 
-		local speed_multiplier = self.speed_multiplier
+		local speed_multiplier_2 = self.speed_multiplier
 
-		speed_multiplier = speed_multiplier or 1
+		if not speed_multiplier_2 then
+			-- Nothing
+		end
 
-		local menu_speed_multiplier_frame_decrease = GamepadSettings.menu_speed_multiplier_frame_decrease
-		local menu_min_speed_multiplier = GamepadSettings.menu_min_speed_multiplier
+		speed_multiplier_2 = 1
 
-		self.speed_multiplier = math.max(speed_multiplier - menu_speed_multiplier_frame_decrease, menu_min_speed_multiplier)
+		local speed_multiplier = speed_multiplier_2
+
+		::label_38_0::
+
+		local decrease = GamepadSettings.menu_speed_multiplier_frame_decrease
+		local min_multiplier = GamepadSettings.menu_min_speed_multiplier
+
+		self.speed_multiplier = math.max(speed_multiplier - decrease, min_multiplier)
 
 		return
 	else
-		local selected_list_index = self.selected_list_index
+		local selected_list_index_2 = self.selected_list_index
 
-		selected_list_index = selected_list_index or 1
+		if not selected_list_index_2 then
+			-- Nothing
+		end
 
-		if not selected_list_index then
-			local speed_multiplier_2 = self.speed_multiplier
+		selected_list_index_2 = 1
 
-			speed_multiplier_2 = speed_multiplier_2 or 1
+		local selected_list_index = selected_list_index_2
 
-			local var_38_7
-			local get = get_service:get("move_up")
-			local get_2 = get_service:get("move_up_hold")
+		::label_38_1::
 
-			if get or not get_2 then
-				var_38_7 = math.max(selected_list_index - 1, 1)
-				self.controller_cooldown = GamepadSettings.menu_cooldown * speed_multiplier_2
+		if selected_list_index then
+			local speed_multiplier_3 = self.speed_multiplier
+
+			if not speed_multiplier_3 then
+				-- Nothing
+			end
+
+			speed_multiplier_3 = 1
+
+			local speed_multiplier = speed_multiplier_3
+
+			::label_38_2::
+
+			local new_list_index
+			local move_up = input_service:get("move_up")
+			local move_up_hold = input_service:get("move_up_hold")
+
+			if move_up or move_up_hold then
+				new_list_index = math.max(selected_list_index - 1, 1)
+				self.controller_cooldown = GamepadSettings.menu_cooldown * speed_multiplier
 			else
-				local get_3 = get_service:get("move_down")
-				local get_4 = get_service:get("move_down_hold")
+				local move_down = input_service:get("move_down")
+				local move_down_hold = input_service:get("move_down_hold")
 
-				if get_3 or not get_4 then
-					self.controller_cooldown = GamepadSettings.menu_cooldown * speed_multiplier_2
-					var_38_7 = math.min(selected_list_index + 1, arg_38_2)
+				if move_down or move_down_hold then
+					self.controller_cooldown = GamepadSettings.menu_cooldown * speed_multiplier
+					new_list_index = math.min(selected_list_index + 1, num_elements)
 				end
 			end
 
-			if not (not var_38_7 and var_38_7 == selected_list_index) then
-				self.gamepad_changed_selected_list_index = var_38_7
+			if new_list_index and new_list_index ~= selected_list_index then
+				self.gamepad_changed_selected_list_index = new_list_index
 
 				return
 			end
@@ -1417,13 +1724,13 @@ LobbyItemsList.update_gamepad_list_scroll = function (self)
 		return
 	end
 
-	local is_entry_outside, var_39_2 = self:is_entry_outside(selected_list_index)
+	local is_outside, state = self:is_entry_outside(selected_list_index)
 
-	while not is_entry_outside do
+	while is_outside do
 		local button_scroll_step = self.scrollbar_widget.content.button_scroll_step
 		local scroll_value = self.scroll_value
 
-		if var_39_2 == "below" then
+		if state == "below" then
 			scroll_value = math.min(scroll_value + button_scroll_step, 1)
 		else
 			scroll_value = math.max(scroll_value - button_scroll_step, 0)
@@ -1433,24 +1740,24 @@ LobbyItemsList.update_gamepad_list_scroll = function (self)
 			self:set_scroll_amount(scroll_value)
 		end
 
-		is_entry_outside, var_39_2 = self:is_entry_outside(self.selected_list_index)
+		is_outside, state = self:is_entry_outside(self.selected_list_index)
 	end
 end
 
-LobbyItemsList.is_entry_outside = function (self, arg_40_1)
+LobbyItemsList.is_entry_outside = function (self, index)
 	-- function 40
 	local item_list_widget = self.item_list_widget
 
-	if not item_list_widget then
+	if item_list_widget then
 		local list_content = item_list_widget.content.list_content
 		local list_style = item_list_widget.style.list_style
-		local num_draws = list_style.num_draws
-		local count = #list_content
-		local start_index = list_style.start_index
+		local max_visible_elements = list_style.num_draws
+		local total_elements = #list_content
+		local current_start_index = list_style.start_index
 
-		if arg_40_1 < start_index then
+		if index < current_start_index then
 			return true, "above"
-		elseif arg_40_1 > math.min(start_index + num_draws - 1, count) then
+		elseif index > math.min(current_start_index + max_visible_elements - 1, total_elements) then
 			return true, "below"
 		end
 	end
@@ -1458,86 +1765,100 @@ LobbyItemsList.is_entry_outside = function (self, arg_40_1)
 	return false
 end
 
-LobbyItemsList._pick_sort_func = function (self, arg_41_1, arg_41_2)
+LobbyItemsList._pick_sort_func = function (self, sort_func_asc, sort_func_desc)
 	-- function 41
-	local sort_lobbies_function = self.sort_lobbies_function
+	local sort_func = self.sort_lobbies_function
 
-	if not (not sort_lobbies_function and sort_lobbies_function ~= arg_41_1) then
-		sort_lobbies_function = arg_41_2
+	if sort_func and sort_func == sort_func_asc then
+		sort_func = sort_func_desc
 	else
-		sort_lobbies_function = arg_41_1
+		sort_func = sort_func_asc
 	end
 
-	self.sort_lobbies_function = sort_lobbies_function
+	self.sort_lobbies_function = sort_func
 
-	return sort_lobbies_function
+	return sort_func
 end
 
-LobbyItemsList.rotate_loading_icon = function (self, arg_42_1)
+LobbyItemsList.rotate_loading_icon = function (self, dt)
 	-- function 42
-	local texture_id = self.loading_icon.style.texture_id
-	local fraction = texture_id.fraction
+	local loading_icon_style = self.loading_icon.style.texture_id
+	local fraction = loading_icon_style.fraction
 
-	fraction = fraction or 0
+	if not fraction then
+		-- Nothing
+	end
 
-	local num = (fraction + arg_42_1) % 1
+	fraction = 0
 
-	texture_id.angle = math.easeOutCubic(num) * math.degrees_to_radians(360)
-	texture_id.fraction = num
+	local angle_fraction = fraction
+
+	::label_42_0::
+
+	angle_fraction = (angle_fraction + dt) % 1
+
+	local anim_fraction = math.easeOutCubic(angle_fraction)
+	local angle = anim_fraction * math.degrees_to_radians(360)
+
+	loading_icon_style.angle = angle
+	loading_icon_style.fraction = angle_fraction
 end
 
-LobbyItemsList.loading_overlay_fade_in = function (self, arg_43_1)
+LobbyItemsList.loading_overlay_fade_in = function (self, alpha)
 	-- function 43
-	local loading_icon = self.loading_icon
-	local color = loading_icon.style.texture_id.color
-	local var_43_2 = UIAnimation.init(UIAnimation.function_by_time, color, 1, color[1], 255, 0.3, math.easeOutCubic)
+	local widget = self.loading_icon
+	local style = widget.style
+	local color = style.texture_id.color
+	local animation = UIAnimation.init(UIAnimation.function_by_time, color, 1, color[1], 255, 0.3, math.easeOutCubic)
 
-	table.clear(loading_icon.animations)
+	table.clear(widget.animations)
 
-	loading_icon.animations[var_43_2] = true
+	widget.animations[animation] = true
 
 	table.clear(self.loading_overlay.animations)
 
-	self.loading_overlay.style.rect.color[1] = arg_43_1
+	self.loading_overlay.style.rect.color[1] = alpha
 end
 
 LobbyItemsList.loading_overlay_fade_out = function (self)
 	-- function 44
-	local function fn(self, arg_45_1)
+	local function fade(widget, color)
 		-- function 45
-		local var_45_0 = UIAnimation.init(UIAnimation.function_by_time, arg_45_1, 1, arg_45_1[1], 0, 0.3, math.easeOutCubic)
+		local animation = UIAnimation.init(UIAnimation.function_by_time, color, 1, color[1], 0, 0.3, math.easeOutCubic)
 
-		table.clear(self.animations)
+		table.clear(widget.animations)
 
-		self.animations[var_45_0] = true
+		widget.animations[animation] = true
 	end
 
-	fn(self.loading_overlay, self.loading_overlay.style.rect.color)
-	fn(self.loading_icon, self.loading_icon.style.texture_id.color)
-	fn(self.loading_text, self.loading_text.style.text.text_color)
+	fade(self.loading_overlay, self.loading_overlay.style.rect.color)
+	fade(self.loading_icon, self.loading_icon.style.texture_id.color)
+	fade(self.loading_text, self.loading_text.style.text.text_color)
 end
 
 LobbyItemsList.animate_loading_text = function (self)
 	-- function 46
-	local loading_text = self.loading_text
-	local text_color = loading_text.style.text.text_color
+	local widget = self.loading_text
+	local style = widget.style
+	local color = style.text.text_color
 
-	if text_color[1] ~= 255 then
-		local var_46_2 = UIAnimation.init(UIAnimation.function_by_time, text_color, 1, text_color[1], 255, 0.3, math.easeOutCubic, UIAnimation.wait, 3.2, UIAnimation.function_by_time, text_color, 1, 255, 0, 0.3, math.easeOutCubic)
+	if color[1] ~= 255 then
+		local animation = UIAnimation.init(UIAnimation.function_by_time, color, 1, color[1], 255, 0.3, math.easeOutCubic, UIAnimation.wait, 3.2, UIAnimation.function_by_time, color, 1, 255, 0, 0.3, math.easeOutCubic)
 
-		table.clear(loading_text.animations)
+		table.clear(widget.animations)
 
-		loading_text.animations[var_46_2] = true
+		widget.animations[animation] = true
 	end
 end
 
-LobbyItemsList.draw = function (self, arg_47_1)
+LobbyItemsList.draw = function (self, dt)
 	-- function 47
 	local ui_renderer = self.ui_renderer
 	local ui_scenegraph = self.ui_scenegraph
-	local get_service = self.input_manager:get_service(self.input_service_name)
+	local input_manager = self.input_manager
+	local input_service = input_manager:get_service(self.input_service_name)
 
-	UIRenderer.begin_pass(ui_renderer, ui_scenegraph, get_service, arg_47_1)
+	UIRenderer.begin_pass(ui_renderer, ui_scenegraph, input_service, dt)
 	UIRenderer.draw_widget(ui_renderer, self.item_list_widget)
 	UIRenderer.draw_widget(ui_renderer, self.scroll_field_widget)
 	UIRenderer.draw_widget(ui_renderer, self.scrollbar_widget)
@@ -1551,60 +1872,60 @@ LobbyItemsList.draw = function (self, arg_47_1)
 	UIRenderer.end_pass(ui_renderer)
 end
 
-LobbyItemsList.sort_lobbies = function (arg_48_0, arg_48_1, arg_48_2)
+LobbyItemsList.sort_lobbies = function (self, lobbies, sort_func)
 	-- function 48
-	table.sort(arg_48_1, arg_48_2)
+	table.sort(lobbies, sort_func)
 end
 
-LobbyItemsList.remove_invalid_lobbies = function (arg_49_0, arg_49_1)
+LobbyItemsList.remove_invalid_lobbies = function (self, lobbies)
 	-- function 49
-	local tbl = {}
-	local count = #arg_49_1
+	local valid_lobbies = {}
+	local num_lobbies = #lobbies
 
-	for i = 1, count do
-		local var_49_2 = arg_49_1[i]
+	for i = 1, num_lobbies do
+		local lobby = lobbies[i]
 
-		if not var_49_2 then
-			tbl[#tbl + 1] = var_49_2
+		if lobby then
+			valid_lobbies[#valid_lobbies + 1] = lobby
 		end
 	end
 
-	return tbl
+	return valid_lobbies
 end
 
-LobbyItemsList.populate_lobby_list = function (self, arg_50_1, arg_50_2)
+LobbyItemsList.populate_lobby_list = function (self, lobbies, ignore_scroll_reset)
 	-- function 50
 	local settings = self.settings
 	local item_list_widget = self.item_list_widget
-	local tbl = {}
+	local list_content = {}
 	local list_style = self.list_style
-	local num = 0
-	local sort_lobbies_function = self.sort_lobbies_function
+	local num_lobbies = 0
+	local sort_func = self.sort_lobbies_function
 	local selected_lobby = self:selected_lobby()
-	local remove_invalid_lobbies = self:remove_invalid_lobbies(arg_50_1)
+	local valid_lobbies = self:remove_invalid_lobbies(lobbies)
 
-	if not sort_lobbies_function then
-		self:sort_lobbies(remove_invalid_lobbies, sort_lobbies_function)
+	if sort_func then
+		self:sort_lobbies(valid_lobbies, sort_func)
 	end
 
-	for k, v in pairs(remove_invalid_lobbies) do
-		local var_50_8 = fn_13()
-		local var_50_9 = fn_11(v)
+	for lobby_id, lobby_data in pairs(valid_lobbies) do
+		local style = create_lobby_list_entry_style()
+		local content = create_lobby_list_entry_content(lobby_data)
 
-		if not var_50_9 then
-			num = num + 1
-			tbl[num] = var_50_9
-			list_style.item_styles[num] = var_50_8
+		if content then
+			num_lobbies = num_lobbies + 1
+			list_content[num_lobbies] = content
+			list_style.item_styles[num_lobbies] = style
 
-			if num >= num_4 then
+			if num_lobbies >= max_list_entries then
 				break
 			end
 		end
 	end
 
-	self.lobbies = remove_invalid_lobbies
-	self.number_of_items_in_list = num
-	item_list_widget.content.list_content = tbl
+	self.lobbies = valid_lobbies
+	self.number_of_items_in_list = num_lobbies
+	item_list_widget.content.list_content = list_content
 	item_list_widget.style.list_style = list_style
 	item_list_widget.style.list_style.start_index = 1
 	item_list_widget.style.list_style.num_draws = settings.num_list_items
@@ -1612,134 +1933,138 @@ LobbyItemsList.populate_lobby_list = function (self, arg_50_1, arg_50_2)
 
 	local num_draws = item_list_widget.style.list_style.num_draws
 
-	if num < num_draws then
-		local num_2 = num_draws - num % num_draws
+	if num_lobbies < num_draws then
+		local num_empty = num_draws - num_lobbies % num_draws
 
-		if num_2 <= num_draws then
-			for k_2 = 1, num_2 do
-				local var_50_12 = fn_12()
-				local var_50_13 = fn_13()
-				local num_3 = #tbl + 1
+		if num_empty <= num_draws then
+			for i = 1, num_empty do
+				local content = create_empty_lobby_list_entry_content()
+				local style = create_lobby_list_entry_style()
+				local index = #list_content + 1
 
-				tbl[num_3] = var_50_12
-				list_style.item_styles[num_3] = var_50_13
+				list_content[index] = content
+				list_style.item_styles[index] = style
 			end
 		end
 	end
 
-	self:set_scrollbar_length(nil, arg_50_2)
+	self:set_scrollbar_length(nil, ignore_scroll_reset)
 
 	self.selected_list_index = nil
 end
 
 LobbyItemsList.update_scroll = function (self)
 	-- function 51
-	local value = self.scrollbar_widget.content.scroll_bar_info.value
-	local internal_scroll_value = self.scroll_field_widget.content.internal_scroll_value
-	local scroll_value = self.scroll_value
+	local scroll_bar_value = self.scrollbar_widget.content.scroll_bar_info.value
+	local mouse_scroll_value = self.scroll_field_widget.content.internal_scroll_value
+	local current_scroll_value = self.scroll_value
 
-	if scroll_value ~= internal_scroll_value then
-		self:set_scroll_amount(internal_scroll_value)
-	elseif scroll_value ~= value then
-		self:set_scroll_amount(value)
+	if current_scroll_value ~= mouse_scroll_value then
+		self:set_scroll_amount(mouse_scroll_value)
+	elseif current_scroll_value ~= scroll_bar_value then
+		self:set_scroll_amount(scroll_bar_value)
 	end
 end
 
-LobbyItemsList.set_scroll_amount = function (self, arg_52_1)
+LobbyItemsList.set_scroll_amount = function (self, value)
 	-- function 52
-	local scroll_value = self.scroll_value
+	local current_scroll_value = self.scroll_value
 
-	if not (not scroll_value and arg_52_1 == scroll_value) then
-		self.scrollbar_widget.content.scroll_bar_info.value = arg_52_1
-		self.scroll_field_widget.content.internal_scroll_value = arg_52_1
-		self.scroll_value = arg_52_1
+	if not current_scroll_value or value ~= current_scroll_value then
+		local widget_scroll_bar_info = self.scrollbar_widget.content.scroll_bar_info
 
-		self:scroll_inventory_list(arg_52_1)
+		widget_scroll_bar_info.value = value
+		self.scroll_field_widget.content.internal_scroll_value = value
+		self.scroll_value = value
+
+		self:scroll_inventory_list(value)
 	end
 end
 
-LobbyItemsList.set_scrollbar_length = function (self, arg_53_1, arg_53_2)
+LobbyItemsList.set_scrollbar_length = function (self, start_scroll_value, ignore_scroll_reset)
 	-- function 53
 	local settings = self.settings
 	local columns = settings.columns
-	local num_list_items = settings.num_list_items
+	local total_inventory_slots = settings.num_list_items
 	local number_of_items_in_list = self.number_of_items_in_list
-	local max = math.max(number_of_items_in_list - num_list_items, 0)
-	local content = self.scrollbar_widget.content
-	local scroll_bar_info = content.scroll_bar_info
-	local num = 0
-	local num_2 = 0
+	local item_diff_count = math.max(number_of_items_in_list - total_inventory_slots, 0)
+	local scrollbar_content = self.scrollbar_widget.content
+	local widget_scroll_bar_info = scrollbar_content.scroll_bar_info
+	local bar_fraction, step_fraction = 0, 0
 
-	if max > 0 then
-		local flag = not columns and columns and 1
-		local ceil = math.ceil(max / flag)
+	if item_diff_count > 0 then
+		local number_of_elements_per_step = (not columns or not columns) and not not 1
+		local number_of_steps_possible = math.ceil(item_diff_count / number_of_elements_per_step)
+		local number_of_steps_total = math.ceil(number_of_items_in_list / number_of_elements_per_step)
+		local list_fraction = 1 / number_of_steps_total
 
-		num = 1 - 1 / math.ceil(number_of_items_in_list / flag) * ceil
-		num_2 = 1 / ceil
+		bar_fraction = 1 - list_fraction * number_of_steps_possible
+		step_fraction = 1 / number_of_steps_possible
 	else
-		num = 1
-		num_2 = 1
+		bar_fraction = 1
+		step_fraction = 1
 	end
 
-	scroll_bar_info.bar_height_percentage = num
-	self.scroll_field_widget.content.scroll_step = num_2
-	content.button_scroll_step = num_2
+	widget_scroll_bar_info.bar_height_percentage = bar_fraction
+	self.scroll_field_widget.content.scroll_step = step_fraction
+	scrollbar_content.button_scroll_step = step_fraction
 
-	if not arg_53_2 then
-		local scroll_value = self.scroll_value
+	if ignore_scroll_reset then
+		local current_scroll_value = self.scroll_value
 
 		self.scroll_value = nil
 
-		self:set_scroll_amount(scroll_value or 0)
+		self:set_scroll_amount(not not current_scroll_value or not not 0)
 	else
-		self:set_scroll_amount(arg_53_1 or 0)
+		self:set_scroll_amount(not not start_scroll_value or not not 0)
 	end
 end
 
-LobbyItemsList.scroll_inventory_list = function (self, arg_54_1)
+LobbyItemsList.scroll_inventory_list = function (self, value)
 	-- function 54
 	local item_list_widget = self.item_list_widget
 
-	if not item_list_widget then
+	if item_list_widget then
 		local list_content = item_list_widget.content.list_content
 		local list_style = item_list_widget.style.list_style
-		local num_draws = list_style.num_draws
-		local columns = list_style.columns
-		local count = #list_content
+		local max_visible_elements = list_style.num_draws
+		local column_count = list_style.columns
+		local total_elements = #list_content
 
-		if not (not num_draws and not (num_draws < count)) then
-			local num = count - num_draws
-			local num_2 = math.max(0, math.round(arg_54_1 * num)) + 1
+		if max_visible_elements and max_visible_elements < total_elements then
+			local elements_to_scroll = total_elements - max_visible_elements
+			local new_start_index = math.max(0, math.round(value * elements_to_scroll)) + 1
 
-			if not (not columns and num_2 % columns ~= 0) then
-				num_2 = num_2 + columns - 1
+			if column_count and new_start_index % column_count == 0 then
+				new_start_index = new_start_index + column_count - 1
 			end
 
-			list_style.start_index = num_2
+			list_style.start_index = new_start_index
 		end
 	end
 end
 
-LobbyItemsList.on_lobby_selected = function (self, arg_55_1, arg_55_2)
+LobbyItemsList.on_lobby_selected = function (self, index, play_sound)
 	-- function 55
-	local list_content = self.item_list_widget.content.list_content
+	local item_list_widget = self.item_list_widget
+	local list_content = item_list_widget.content.list_content
 	local number_of_items_in_list = self.number_of_items_in_list
 
-	if not (not number_of_items_in_list and not (number_of_items_in_list < 1)) then
+	if not number_of_items_in_list or number_of_items_in_list < 1 then
 		return
 	end
 
-	if not arg_55_2 then
+	if play_sound then
 		self:play_sound(self.item_select_sound_event)
 	end
 
-	if not arg_55_1 and not list_content[arg_55_1] then
+	if index and list_content[index] then
 		for i = 1, #list_content do
-			list_content[i].button_hotspot.is_selected = i == arg_55_1
+			list_content[i].button_hotspot.is_selected = i == index
 		end
 
 		self.lobby_list_select_animation_time = 0
-		self.selected_list_index = arg_55_1
+		self.selected_list_index = index
 	end
 end
 
@@ -1751,36 +2076,45 @@ LobbyItemsList.selected_lobby = function (self)
 		return
 	end
 
-	local var_56_1 = self.item_list_widget.content.list_content[selected_list_index]
+	local item_list_widget = self.item_list_widget
+	local list_content = item_list_widget.content.list_content
+	local selected_list_content = list_content[selected_list_index]
 
-	if not var_56_1 then
+	if not selected_list_content then
 		return
 	end
 
-	return var_56_1.lobby_data
+	return selected_list_content.lobby_data
 end
 
-LobbyItemsList.set_selected_lobby = function (self, arg_57_1)
+LobbyItemsList.set_selected_lobby = function (self, selected_lobby_data)
 	-- function 57
 	self.selected_list_index = nil
 
-	local id = arg_57_1.id
-	local list_content = self.item_list_widget.content.list_content
+	local selected_lobby_id = selected_lobby_data.id
+	local item_list_widget = self.item_list_widget
+	local list_content = item_list_widget.content.list_content
 	local number_of_items_in_list = self.number_of_items_in_list
 
 	for i = 1, number_of_items_in_list do
-		if id == list_content[i].lobby_data.id then
+		local content = list_content[i]
+		local lobby_data = content.lobby_data
+		local lobby_id = lobby_data.id
+
+		if selected_lobby_id == lobby_id then
 			self:on_lobby_selected(i, false)
 		end
 	end
 end
 
-LobbyItemsList.animate_element_by_time = function (arg_58_0, arg_58_1, arg_58_2, arg_58_3, arg_58_4, arg_58_5)
+LobbyItemsList.animate_element_by_time = function (self, target, destination_index, from, to, time)
 	-- function 58
-	return (UIAnimation.init(UIAnimation.function_by_time, arg_58_1, arg_58_2, arg_58_3, arg_58_4, arg_58_5, math.easeInCubic))
+	local new_animation = UIAnimation.init(UIAnimation.function_by_time, target, destination_index, from, to, time, math.easeInCubic)
+
+	return new_animation
 end
 
-LobbyItemsList.play_sound = function (self, arg_59_1)
+LobbyItemsList.play_sound = function (self, event)
 	-- function 59
-	WwiseWorld.trigger_event(self.wwise_world, arg_59_1)
+	WwiseWorld.trigger_event(self.wwise_world, event)
 end

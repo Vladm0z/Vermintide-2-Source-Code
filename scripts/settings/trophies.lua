@@ -2,7 +2,7 @@
 
 local Trophies = Trophies
 
-Trophies = Trophies or {}
+Trophies = not not Trophies or not not {}
 Trophies = Trophies
 Trophies.hub_trophy_empty = {
 	sound_event = "hub_trophy_empty_description",
@@ -71,7 +71,7 @@ DefaultTrophies = {
 	"hub_trophy_empty"
 }
 
-local tbl = {
+local trophy_order = {
 	"hub_trophy_empty",
 	"hub_trophy_holly",
 	"hub_trophy_skarrik",
@@ -84,12 +84,12 @@ local tbl = {
 }
 local TrophyOrder = TrophyOrder
 
-TrophyOrder = TrophyOrder or {}
+TrophyOrder = not not TrophyOrder or not not {}
 TrophyOrder = TrophyOrder
 
-for i, v in ipairs(tbl) do
-	if not (table.contains(TrophyOrder, v) or table.contains(DefaultTrophies, v)) then
-		TrophyOrder[#TrophyOrder + 1] = v
+for _, painting in ipairs(trophy_order) do
+	if not table.contains(TrophyOrder, painting) and not table.contains(DefaultTrophies, painting) then
+		TrophyOrder[#TrophyOrder + 1] = painting
 	end
 end
 

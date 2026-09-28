@@ -2,7 +2,7 @@
 
 local UtilityConsiderations = UtilityConsiderations
 
-UtilityConsiderations = UtilityConsiderations or {}
+UtilityConsiderations = not not UtilityConsiderations or not not {}
 UtilityConsiderations = UtilityConsiderations
 UtilityConsiderations.beastmen_ungor_archer_find_ranged_position = {
 	does_not_have_line_of_sight = {

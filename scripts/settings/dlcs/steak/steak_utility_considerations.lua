@@ -2,7 +2,7 @@
 
 local UtilityConsiderations = UtilityConsiderations
 
-UtilityConsiderations = UtilityConsiderations or {}
+UtilityConsiderations = not not UtilityConsiderations or not not {}
 UtilityConsiderations = UtilityConsiderations
 UtilityConsiderations.minotaur_melee_shove = {
 	distance_to_target = {

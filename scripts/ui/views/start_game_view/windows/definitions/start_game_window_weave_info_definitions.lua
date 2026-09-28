@@ -1,24 +1,25 @@
 -- chunkname: @scripts/ui/views/start_game_view/windows/definitions/start_game_window_weave_info_definitions.lua
 
-local game_start_windows = UISettings.game_start_windows
-local background = game_start_windows.background
-local frame = game_start_windows.frame
-local size = game_start_windows.size
-local large_window_size = game_start_windows.large_window_size
-local str = "menu_frame_11"
-local var_0_6 = UIFrameSettings[str].texture_sizes.vertical[1]
-local tbl = {
-	large_window_size[1] - (600 + var_0_6 * 2),
-	large_window_size[2] - var_0_6 * 2
+local window_default_settings = UISettings.game_start_windows
+local window_background = window_default_settings.background
+local window_frame = window_default_settings.frame
+local default_window_size = window_default_settings.size
+local large_window_size = window_default_settings.large_window_size
+local window_frame_name = "menu_frame_11"
+local window_frame = UIFrameSettings[window_frame_name]
+local window_frame_width = window_frame.texture_sizes.vertical[1]
+local window_size = {
+	large_window_size[1] - (600 + window_frame_width * 2),
+	large_window_size[2] - window_frame_width * 2
 }
-local num = tbl[1] - var_0_6 * 2
-local num_2 = tbl[1] - 20
-local tbl_2 = {
-	tbl[1],
+local window_text_width = window_size[1] - window_frame_width * 2
+local mutator_window_width = window_size[1] - 20
+local game_option_size = {
+	window_size[1],
 	194
 }
-local num_3 = 1.5
-local tbl_3 = {
+local wheel_scale = 1.5
+local scenegraph_definition = {
 	root = {
 		is_root = true,
 		size = {
@@ -72,9 +73,9 @@ local tbl_3 = {
 		vertical_alignment = "center",
 		parent = "parent_window",
 		horizontal_alignment = "right",
-		size = tbl,
+		size = window_size,
 		position = {
-			-var_0_6,
+			-window_frame_width,
 			0,
 			1
 		}
@@ -84,7 +85,7 @@ local tbl_3 = {
 		parent = "window",
 		horizontal_alignment = "center",
 		size = {
-			tbl[1],
+			window_size[1],
 			84
 		},
 		position = {
@@ -98,7 +99,7 @@ local tbl_3 = {
 		parent = "top_panel",
 		horizontal_alignment = "center",
 		size = {
-			num,
+			window_text_width,
 			50
 		},
 		position = {
@@ -112,7 +113,7 @@ local tbl_3 = {
 		parent = "title",
 		horizontal_alignment = "center",
 		size = {
-			num - 10,
+			window_text_width - 10,
 			40
 		},
 		position = {
@@ -126,7 +127,7 @@ local tbl_3 = {
 		parent = "wind_title",
 		horizontal_alignment = "center",
 		size = {
-			num - 10,
+			window_text_width - 10,
 			40
 		},
 		position = {
@@ -294,8 +295,8 @@ local tbl_3 = {
 		parent = "window",
 		horizontal_alignment = "center",
 		size = {
-			tbl_2[1],
-			tbl_2[2]
+			game_option_size[1],
+			game_option_size[2]
 		},
 		position = {
 			0,
@@ -318,7 +319,7 @@ local tbl_3 = {
 		}
 	}
 }
-local tbl_4 = {
+local title_text_style = {
 	word_wrap = true,
 	upper_case = true,
 	localize = true,
@@ -335,7 +336,7 @@ local tbl_4 = {
 		2
 	}
 }
-local tbl_5 = {
+local score_text_style = {
 	font_size = 36,
 	upper_case = true,
 	localize = false,
@@ -351,7 +352,7 @@ local tbl_5 = {
 		2
 	}
 }
-local tbl_6 = {
+local objective_title_text_style = {
 	font_size = 32,
 	upper_case = false,
 	use_shadow = true,
@@ -367,7 +368,7 @@ local tbl_6 = {
 		2
 	}
 }
-local tbl_7 = {
+local objective_description_text_style = {
 	font_size = 26,
 	upper_case = false,
 	use_shadow = true,
@@ -383,7 +384,7 @@ local tbl_7 = {
 		2
 	}
 }
-local tbl_8 = {
+local rating_title_text_style = {
 	font_size = 28,
 	upper_case = true,
 	localize = true,
@@ -399,7 +400,7 @@ local tbl_8 = {
 		2
 	}
 }
-local tbl_9 = {
+local level_title_text_style = {
 	font_size = 26,
 	upper_case = false,
 	localize = true,
@@ -415,7 +416,7 @@ local tbl_9 = {
 		2
 	}
 }
-local tbl_10 = {
+local wind_title_text_style = {
 	font_size = 32,
 	upper_case = false,
 	localize = true,
@@ -431,7 +432,7 @@ local tbl_10 = {
 		2
 	}
 }
-local tbl_11 = {
+local mutator_title_text_style = {
 	font_size = 32,
 	upper_case = false,
 	localize = true,
@@ -448,7 +449,7 @@ local tbl_11 = {
 		2
 	}
 }
-local tbl_12 = {
+local mutator_description_text_style = {
 	font_size = 20,
 	use_shadow = true,
 	localize = true,
@@ -465,7 +466,7 @@ local tbl_12 = {
 	}
 }
 
-local function fn(arg_1_0, arg_1_1)
+local function create_objective_widget(scenegraph_id, size)
 	-- function 1
 	return {
 		element = {
@@ -550,8 +551,8 @@ local function fn(arg_1_0, arg_1_1)
 				dynamic_font_size = true,
 				font_type = "hell_shark_header",
 				size = {
-					arg_1_1[1] - 50,
-					arg_1_1[2]
+					size[1] - 50,
+					size[2]
 				},
 				text_color = Colors.get_color_table_with_alpha("font_button_normal", 255),
 				offset = {
@@ -569,8 +570,8 @@ local function fn(arg_1_0, arg_1_1)
 				dynamic_font_size = true,
 				font_type = "hell_shark_header",
 				size = {
-					arg_1_1[1] - 50,
-					arg_1_1[2]
+					size[1] - 50,
+					size[2]
 				},
 				text_color = Colors.get_color_table_with_alpha("black", 255),
 				offset = {
@@ -615,52 +616,52 @@ local function fn(arg_1_0, arg_1_1)
 			0,
 			0
 		},
-		scenegraph_id = arg_1_0
+		scenegraph_id = scenegraph_id
 	}
 end
 
-local function fn_2(arg_2_0, arg_2_1, arg_2_2, arg_2_3, arg_2_4, arg_2_5)
+local function create_checkbox_button(scenegraph_id, size, text, font_size, tooltip_info, disable_with_gamepad)
 	-- function 2
-	local tbl = {
+	local widget = {
 		element = {}
 	}
-	local tbl_2 = {}
-	local tbl_3 = {}
-	local tbl_4 = {}
-	local str = "button_hotspot"
+	local passes = {}
+	local content = {}
+	local style = {}
+	local hotspot_name = "button_hotspot"
 
-	tbl_2[#tbl_2 + 1] = {
+	passes[#passes + 1] = {
 		pass_type = "hotspot",
-		content_id = str,
-		style_id = str
+		content_id = hotspot_name,
+		style_id = hotspot_name
 	}
-	tbl_4[str] = {
-		size = arg_2_1,
+	style[hotspot_name] = {
+		size = size,
 		offset = {
 			0,
 			0,
 			0
 		}
 	}
-	tbl_3.disable_with_gamepad = arg_2_5
-	tbl_3[str] = {}
+	content.disable_with_gamepad = disable_with_gamepad
+	content[hotspot_name] = {}
 
-	local var_2_5 = tbl_3[str]
+	local hotspot_content = content[hotspot_name]
 
-	if not arg_2_4 then
-		local str_2 = "additional_option_info"
+	if tooltip_info then
+		local tooltip_name = "additional_option_info"
 
-		tbl_2[#tbl_2 + 1] = {
+		passes[#passes + 1] = {
 			pass_type = "additional_option_tooltip",
-			content_id = str,
-			style_id = str_2,
-			additional_option_id = str_2,
-			content_check_function = function (self)
+			content_id = hotspot_name,
+			style_id = tooltip_name,
+			additional_option_id = tooltip_name,
+			content_check_function = function (content)
 				-- function 3
-				return self.is_hover
+				return content.is_hover
 			end
 		}
-		tbl_4[str_2] = {
+		style[tooltip_name] = {
 			vertical_alignment = "top",
 			max_width = 400,
 			horizontal_alignment = "center",
@@ -670,25 +671,25 @@ local function fn_2(arg_2_0, arg_2_1, arg_2_2, arg_2_3, arg_2_4, arg_2_5)
 				0
 			}
 		}
-		var_2_5[str_2] = arg_2_4
+		hotspot_content[tooltip_name] = tooltip_info
 	end
 
-	local str_3 = "text"
+	local text_name = "text"
 
-	tbl_2[#tbl_2 + 1] = {
+	passes[#passes + 1] = {
 		pass_type = "text",
-		content_id = str,
-		text_id = str_3,
-		style_id = str_3,
-		content_check_function = function (self)
+		content_id = hotspot_name,
+		text_id = text_name,
+		style_id = text_name,
+		content_check_function = function (content)
 			-- function 4
-			return not self.disable_button
+			return not content.disable_button
 		end
 	}
 
-	local num = 40
+	local text_offset_x = 40
 
-	tbl_4[str_3] = {
+	style[text_name] = {
 		word_wrap = true,
 		font_size = 22,
 		horizontal_alignment = "left",
@@ -698,27 +699,27 @@ local function fn_2(arg_2_0, arg_2_1, arg_2_2, arg_2_3, arg_2_4, arg_2_5)
 		default_text_color = Colors.get_color_table_with_alpha("font_button_normal", 255),
 		select_text_color = Colors.get_color_table_with_alpha("white", 255),
 		offset = {
-			num,
+			text_offset_x,
 			3,
 			4
 		},
-		size = arg_2_1
+		size = size
 	}
-	var_2_5[str_3] = arg_2_2
+	hotspot_content[text_name] = text
 
-	local str_4 = "text_disabled"
+	local text_disabled_name = "text_disabled"
 
-	tbl_2[#tbl_2 + 1] = {
+	passes[#passes + 1] = {
 		pass_type = "text",
-		content_id = str,
-		text_id = str_3,
-		style_id = str_4,
-		content_check_function = function (self)
+		content_id = hotspot_name,
+		text_id = text_name,
+		style_id = text_disabled_name,
+		content_check_function = function (content)
 			-- function 5
-			return self.disable_button
+			return content.disable_button
 		end
 	}
-	tbl_4[str_4] = {
+	style[text_disabled_name] = {
 		horizontal_alignment = "left",
 		font_size = 22,
 		word_wrap = true,
@@ -727,22 +728,22 @@ local function fn_2(arg_2_0, arg_2_1, arg_2_2, arg_2_3, arg_2_4, arg_2_5)
 		text_color = Colors.get_color_table_with_alpha("gray", 255),
 		default_text_color = Colors.get_color_table_with_alpha("gray", 255),
 		offset = {
-			num,
+			text_offset_x,
 			3,
 			4
 		},
-		size = arg_2_1
+		size = size
 	}
 
-	local str_5 = "text_shadow"
+	local text_shadow_name = "text_shadow"
 
-	tbl_2[#tbl_2 + 1] = {
+	passes[#passes + 1] = {
 		pass_type = "text",
-		content_id = str,
-		text_id = str_3,
-		style_id = str_5
+		content_id = hotspot_name,
+		text_id = text_name,
+		style_id = text_shadow_name
 	}
-	tbl_4[str_5] = {
+	style[text_shadow_name] = {
 		vertical_alignment = "center",
 		font_size = 22,
 		horizontal_alignment = "left",
@@ -750,36 +751,36 @@ local function fn_2(arg_2_0, arg_2_1, arg_2_2, arg_2_3, arg_2_4, arg_2_5)
 		font_type = "hell_shark",
 		text_color = Colors.get_color_table_with_alpha("black", 255),
 		offset = {
-			num + 2,
+			text_offset_x + 2,
 			1,
 			3
 		},
-		size = arg_2_1
+		size = size
 	}
 
-	local str_6 = "checkbox_background"
+	local checkbox_background_name = "checkbox_background"
 
-	tbl_2[#tbl_2 + 1] = {
+	passes[#passes + 1] = {
 		pass_type = "rect",
-		style_id = str_6
+		style_id = checkbox_background_name
 	}
 
-	local tbl_5 = {
+	local checkbox_size = {
 		25,
 		25
 	}
-	local tbl_6 = {
+	local checkbox_offset = {
 		0,
-		arg_2_1[2] / 2 - tbl_5[2] / 2 + 2,
+		size[2] / 2 - checkbox_size[2] / 2 + 2,
 		3
 	}
 
-	tbl_4[str_6] = {
+	style[checkbox_background_name] = {
 		size = {
-			tbl_5[1],
-			tbl_5[2]
+			checkbox_size[1],
+			checkbox_size[2]
 		},
-		offset = tbl_6,
+		offset = checkbox_offset,
 		color = {
 			255,
 			0,
@@ -788,33 +789,33 @@ local function fn_2(arg_2_0, arg_2_1, arg_2_2, arg_2_3, arg_2_4, arg_2_5)
 		}
 	}
 
-	local str_7 = "checkbox_frame"
+	local checkbox_frame_name = "checkbox_frame"
 
-	tbl_2[#tbl_2 + 1] = {
+	passes[#passes + 1] = {
 		pass_type = "texture_frame",
-		content_id = str,
-		texture_id = str_7,
-		style_id = str_7,
-		content_check_function = function (self)
+		content_id = hotspot_name,
+		texture_id = checkbox_frame_name,
+		style_id = checkbox_frame_name,
+		content_check_function = function (content)
 			-- function 6
-			return not self.is_disabled
+			return not content.is_disabled
 		end
 	}
 
-	local menu_frame_06 = UIFrameSettings.menu_frame_06
+	local frame_settings = UIFrameSettings.menu_frame_06
 
-	var_2_5[str_7] = menu_frame_06.texture
-	tbl_4[str_7] = {
+	hotspot_content[checkbox_frame_name] = frame_settings.texture
+	style[checkbox_frame_name] = {
 		size = {
-			tbl_5[1],
-			tbl_5[2]
+			checkbox_size[1],
+			checkbox_size[2]
 		},
-		texture_size = menu_frame_06.texture_size,
-		texture_sizes = menu_frame_06.texture_sizes,
+		texture_size = frame_settings.texture_size,
+		texture_sizes = frame_settings.texture_sizes,
 		offset = {
-			tbl_6[1],
-			tbl_6[2],
-			tbl_6[3] + 1
+			checkbox_offset[1],
+			checkbox_offset[2],
+			checkbox_offset[3] + 1
 		},
 		color = {
 			255,
@@ -824,29 +825,29 @@ local function fn_2(arg_2_0, arg_2_1, arg_2_2, arg_2_3, arg_2_4, arg_2_5)
 		}
 	}
 
-	local str_8 = "checkbox_frame_disabled"
+	local checkbox_frame_disabled_name = "checkbox_frame_disabled"
 
-	tbl_2[#tbl_2 + 1] = {
+	passes[#passes + 1] = {
 		pass_type = "texture_frame",
-		content_id = str,
-		texture_id = str_7,
-		style_id = str_8,
-		content_check_function = function (self)
+		content_id = hotspot_name,
+		texture_id = checkbox_frame_name,
+		style_id = checkbox_frame_disabled_name,
+		content_check_function = function (content)
 			-- function 7
-			return not self.is_disabled
+			return not content.is_disabled
 		end
 	}
-	tbl_4[str_8] = {
+	style[checkbox_frame_disabled_name] = {
 		size = {
-			tbl_5[1],
-			tbl_5[2]
+			checkbox_size[1],
+			checkbox_size[2]
 		},
-		texture_size = menu_frame_06.texture_size,
-		texture_sizes = menu_frame_06.texture_sizes,
+		texture_size = frame_settings.texture_size,
+		texture_sizes = frame_settings.texture_sizes,
 		offset = {
-			tbl_6[1],
-			tbl_6[2],
-			tbl_6[3] + 1
+			checkbox_offset[1],
+			checkbox_offset[2],
+			checkbox_offset[3] + 1
 		},
 		color = {
 			96,
@@ -856,75 +857,75 @@ local function fn_2(arg_2_0, arg_2_1, arg_2_2, arg_2_3, arg_2_4, arg_2_5)
 		}
 	}
 
-	local str_9 = "checkbox_marker"
+	local checkbox_marker_name = "checkbox_marker"
 
-	tbl_2[#tbl_2 + 1] = {
+	passes[#passes + 1] = {
 		pass_type = "texture",
-		content_id = str,
-		texture_id = str_9,
-		style_id = str_9,
-		content_check_function = function (self)
+		content_id = hotspot_name,
+		texture_id = checkbox_marker_name,
+		style_id = checkbox_marker_name,
+		content_check_function = function (content)
 			-- function 8
-			local is_selected = self.is_selected
+			local is_selected = content.is_selected
 
-			is_selected = not is_selected and not self.disable_button
+			is_selected = not not is_selected and not not not content.disable_button
 
 			return is_selected
 		end
 	}
-	var_2_5[str_9] = "matchmaking_checkbox"
+	hotspot_content[checkbox_marker_name] = "matchmaking_checkbox"
 
-	local tbl_7 = {
+	local marker_size = {
 		22,
 		16
 	}
-	local tbl_8 = {
-		tbl_6[1] + 4,
-		tbl_6[2] + tbl_7[2] / 2 - 1,
-		tbl_6[3] + 2
+	local marker_offset = {
+		checkbox_offset[1] + 4,
+		checkbox_offset[2] + marker_size[2] / 2 - 1,
+		checkbox_offset[3] + 2
 	}
 
-	tbl_4[str_9] = {
-		size = tbl_7,
-		offset = tbl_8,
+	style[checkbox_marker_name] = {
+		size = marker_size,
+		offset = marker_offset,
 		color = Colors.get_color_table_with_alpha("white", 255)
 	}
 
-	local str_10 = "checkbox_marker_disabled"
+	local checkbox_marker_disabled_name = "checkbox_marker_disabled"
 
-	tbl_2[#tbl_2 + 1] = {
+	passes[#passes + 1] = {
 		pass_type = "texture",
-		content_id = str,
-		texture_id = str_9,
-		style_id = str_10,
-		content_check_function = function (self)
+		content_id = hotspot_name,
+		texture_id = checkbox_marker_name,
+		style_id = checkbox_marker_disabled_name,
+		content_check_function = function (content)
 			-- function 9
-			local is_selected = self.is_selected
+			local is_selected = content.is_selected
 
-			is_selected = not is_selected and self.disable_button
+			is_selected = not not is_selected and not not content.disable_button
 
 			return is_selected
 		end
 	}
-	tbl_4[str_10] = {
-		size = tbl_7,
-		offset = tbl_8,
+	style[checkbox_marker_disabled_name] = {
+		size = marker_size,
+		offset = marker_offset,
 		color = Colors.get_color_table_with_alpha("gray", 255)
 	}
-	tbl.element.passes = tbl_2
-	tbl.content = tbl_3
-	tbl.style = tbl_4
-	tbl.offset = {
+	widget.element.passes = passes
+	widget.content = content
+	widget.style = style
+	widget.offset = {
 		0,
 		0,
 		0
 	}
-	tbl.scenegraph_id = arg_2_0
+	widget.scenegraph_id = scenegraph_id
 
-	return tbl
+	return widget
 end
 
-local function fn_3(arg_10_0, arg_10_1)
+local function create_player_widget(scenegraph_id, size)
 	-- function 10
 	return {
 		element = {
@@ -933,47 +934,57 @@ local function fn_3(arg_10_0, arg_10_1)
 					texture_id = "background",
 					style_id = "background",
 					pass_type = "texture",
-					content_check_function = function (self)
+					content_check_function = function (content)
 						-- function 11
-						return not self.occupied
+						return not content.occupied
 					end
 				},
 				{
 					texture_id = "player_icon",
 					style_id = "player_icon",
 					pass_type = "texture",
-					content_check_function = function (self)
+					content_check_function = function (content)
 						-- function 12
-						return self.occupied
+						return content.occupied
 					end
 				},
 				{
 					style_id = "search_icon",
 					pass_type = "rotated_texture",
 					texture_id = "search_icon",
-					content_check_function = function (self)
+					content_check_function = function (content)
 						-- function 13
-						return not not self.occupied or self.searching
+						return not content.occupied and not not content.searching
 					end,
-					content_change_function = function (arg_14_0, arg_14_1, arg_14_2, arg_14_3)
+					content_change_function = function (content, style, _, dt)
 						-- function 14
-						local progress = arg_14_1.progress
+						local progress_2 = style.progress
 
-						progress = progress or 0
+						if not progress_2 then
+							-- Nothing
+						end
 
-						local num = (progress + arg_14_3) % 1
+						progress_2 = 0
 
-						arg_14_1.angle = math.pow(2, math.smoothstep(num, 0, 1)) * (math.pi * 2)
-						arg_14_1.progress = num
+						local progress = progress_2
+
+						::label_14_0::
+
+						progress = (progress + dt) % 1
+
+						local angle = math.pow(2, math.smoothstep(progress, 0, 1)) * (math.pi * 2)
+
+						style.angle = angle
+						style.progress = progress
 					end
 				},
 				{
 					texture_id = "empty_icon",
 					style_id = "empty_icon",
 					pass_type = "texture",
-					content_check_function = function (self)
+					content_check_function = function (content)
 						-- function 15
-						return not not self.occupied or not self.searching
+						return not content.occupied and not not not content.searching
 					end
 				}
 			}
@@ -990,7 +1001,7 @@ local function fn_3(arg_10_0, arg_10_1)
 			background = {
 				vertical_alignment = "center",
 				horizontal_alignment = "center",
-				texture_size = arg_10_1,
+				texture_size = size,
 				color = Colors.get_color_table_with_alpha("white", 255),
 				offset = {
 					0,
@@ -1001,7 +1012,7 @@ local function fn_3(arg_10_0, arg_10_1)
 			player_icon = {
 				vertical_alignment = "center",
 				horizontal_alignment = "center",
-				texture_size = arg_10_1,
+				texture_size = size,
 				color = Colors.get_color_table_with_alpha("white", 255),
 				offset = {
 					0,
@@ -1058,32 +1069,35 @@ local function fn_3(arg_10_0, arg_10_1)
 			0,
 			0
 		},
-		scenegraph_id = arg_10_0
+		scenegraph_id = scenegraph_id
 	}
 end
 
-function create_tooltip_button(arg_16_0, arg_16_1, arg_16_2, arg_16_3, arg_16_4, arg_16_5, arg_16_6, arg_16_7, arg_16_8, arg_16_9, arg_16_10, arg_16_11)
+function create_tooltip_button(scenegraph_id, size, frame_name, background_texture, text, font_size, optional_color_name, optional_detail_texture, optional_detail_offset, disable_with_gamepad, find_party_tooltip_info, find_party_disabled_tooltip_info)
 	-- function 16
-	arg_16_3 = arg_16_3 or "button_bg_01"
+	background_texture = not not background_texture or not not "button_bg_01"
 
-	local get_atlas_settings_by_texture_name = UIAtlasHelper.get_atlas_settings_by_texture_name(arg_16_3)
-	local var_16_1
+	local background_texture_settings = UIAtlasHelper.get_atlas_settings_by_texture_name(background_texture)
+	local var_16_0
 
-	if not arg_16_2 then
-		var_16_1 = UIFrameSettings[arg_16_2]
+	if frame_name then
+		var_16_0 = UIFrameSettings[frame_name]
 
-		if not var_16_1 then
+		if not var_16_0 then
 			-- Nothing
 		end
 	end
 
-	var_16_1 = UIFrameSettings.button_frame_01
+	var_16_0 = UIFrameSettings.button_frame_01
+
+	local frame_settings = var_16_0
 
 	::label_16_0::
 
-	local var_16_2 = var_16_1.texture_sizes.corner[1]
-	local flag = arg_16_7 or "button_detail_01"
-	local size = UIAtlasHelper.get_atlas_settings_by_texture_name(flag).size
+	local frame_width = frame_settings.texture_sizes.corner[1]
+	local side_detail_texture = not not optional_detail_texture or not not "button_detail_01"
+	local side_detail_texture_settings = UIAtlasHelper.get_atlas_settings_by_texture_name(side_detail_texture)
+	local side_detail_texture_size = side_detail_texture_settings.size
 	local tbl = {
 		element = {
 			passes = {
@@ -1124,9 +1138,11 @@ function create_tooltip_button(arg_16_0, arg_16_1, arg_16_2, arg_16_3, arg_16_4,
 				{
 					style_id = "disabled_rect",
 					pass_type = "rect",
-					content_check_function = function (self)
+					content_check_function = function (content)
 						-- function 17
-						return self.button_hotspot.disable_button
+						local button_hotspot = content.button_hotspot
+
+						return button_hotspot.disable_button
 					end
 				},
 				{
@@ -1144,18 +1160,22 @@ function create_tooltip_button(arg_16_0, arg_16_1, arg_16_2, arg_16_3, arg_16_4,
 					style_id = "title_text",
 					pass_type = "text",
 					text_id = "title_text",
-					content_check_function = function (self)
+					content_check_function = function (content)
 						-- function 18
-						return not self.button_hotspot.disable_button
+						local button_hotspot = content.button_hotspot
+
+						return not button_hotspot.disable_button
 					end
 				},
 				{
 					style_id = "title_text_disabled",
 					pass_type = "text",
 					text_id = "title_text",
-					content_check_function = function (self)
+					content_check_function = function (content)
 						-- function 19
-						return self.button_hotspot.disable_button
+						local button_hotspot = content.button_hotspot
+
+						return button_hotspot.disable_button
 					end
 				},
 				{
@@ -1178,12 +1198,12 @@ function create_tooltip_button(arg_16_0, arg_16_1, arg_16_2, arg_16_3, arg_16_4,
 					style_id = "find_party_tooltip",
 					pass_type = "additional_option_tooltip",
 					content_id = "hover_hotspot",
-					content_check_function = function (self)
+					content_check_function = function (content)
 						-- function 20
-						local button_hotspot = self.parent.button_hotspot
-						local is_hover = self.is_hover
+						local button_hotspot = content.parent.button_hotspot
+						local is_hover = content.is_hover
 
-						is_hover = not is_hover and not not button_hotspot.disable_button or not Managers.matchmaking:is_game_matchmaking()
+						is_hover = not not is_hover and not button_hotspot.disable_button and not not not Managers.matchmaking:is_game_matchmaking()
 
 						return is_hover
 					end
@@ -1193,12 +1213,12 @@ function create_tooltip_button(arg_16_0, arg_16_1, arg_16_2, arg_16_3, arg_16_4,
 					style_id = "find_party_disabled_tooltip",
 					pass_type = "additional_option_tooltip",
 					content_id = "hover_hotspot",
-					content_check_function = function (self)
+					content_check_function = function (content)
 						-- function 21
-						local button_hotspot = self.parent.button_hotspot
-						local is_hover = self.is_hover
+						local button_hotspot = content.parent.button_hotspot
+						local is_hover = content.is_hover
 
-						is_hover = not is_hover and button_hotspot.disable_button
+						is_hover = not not is_hover and not not button_hotspot.disable_button
 
 						return is_hover
 					end
@@ -1220,29 +1240,29 @@ function create_tooltip_button(arg_16_0, arg_16_1, arg_16_2, arg_16_3, arg_16_4,
 						1
 					}
 				},
-				texture_id = flag
+				texture_id = side_detail_texture
 			},
 			button_hotspot = {},
 			hover_hotspot = {
-				find_party_disabled_tooltip = arg_16_11,
-				find_party_tooltip = arg_16_10
+				find_party_disabled_tooltip = find_party_disabled_tooltip_info,
+				find_party_tooltip = find_party_tooltip_info
 			},
-			title_text = arg_16_4 or "n/a",
-			frame = var_16_1.texture,
+			title_text = not not text or not not "n/a",
+			frame = frame_settings.texture,
 			background = {
 				uvs = {
 					{
 						0,
-						1 - arg_16_1[2] / get_atlas_settings_by_texture_name.size[2]
+						1 - size[2] / background_texture_settings.size[2]
 					},
 					{
-						arg_16_1[1] / get_atlas_settings_by_texture_name.size[1],
+						size[1] / background_texture_settings.size[1],
 						1
 					}
 				},
-				texture_id = arg_16_3
+				texture_id = background_texture
 			},
-			disable_with_gamepad = arg_16_9
+			disable_with_gamepad = disable_with_gamepad
 		}
 	}
 	local tbl_2 = {
@@ -1267,13 +1287,13 @@ function create_tooltip_button(arg_16_0, arg_16_1, arg_16_2, arg_16_3, arg_16_4,
 				255
 			},
 			offset = {
-				var_16_2,
-				var_16_2 - 2,
+				frame_width,
+				frame_width - 2,
 				2
 			},
 			size = {
-				arg_16_1[1] - var_16_2 * 2,
-				arg_16_1[2] - var_16_2 * 2
+				size[1] - frame_width * 2,
+				size[2] - frame_width * 2
 			}
 		},
 		hover_glow = {
@@ -1285,12 +1305,12 @@ function create_tooltip_button(arg_16_0, arg_16_1, arg_16_2, arg_16_3, arg_16_4,
 			},
 			offset = {
 				0,
-				var_16_2 - 2,
+				frame_width - 2,
 				3
 			},
 			size = {
-				arg_16_1[1],
-				math.min(arg_16_1[2] - 5, 80)
+				size[1],
+				math.min(size[2] - 5, 80)
 			}
 		},
 		clicked_rect = {
@@ -1326,13 +1346,13 @@ function create_tooltip_button(arg_16_0, arg_16_1, arg_16_2, arg_16_3, arg_16_4,
 			vertical_alignment = "center",
 			dynamic_font_size = true,
 			font_type = "hell_shark",
-			font_size = arg_16_5 or 24,
+			font_size = not not font_size or not not 24,
 			text_color = Colors.get_color_table_with_alpha("font_button_normal", 255),
 			default_text_color = Colors.get_color_table_with_alpha("font_button_normal", 255),
 			select_text_color = Colors.get_color_table_with_alpha("white", 255),
 			size = {
-				arg_16_1[1] - 40,
-				arg_16_1[2]
+				size[1] - 40,
+				size[2]
 			},
 			offset = {
 				20,
@@ -1347,12 +1367,12 @@ function create_tooltip_button(arg_16_0, arg_16_1, arg_16_2, arg_16_3, arg_16_4,
 			vertical_alignment = "center",
 			dynamic_font_size = true,
 			font_type = "hell_shark",
-			font_size = arg_16_5 or 24,
+			font_size = not not font_size or not not 24,
 			text_color = Colors.get_color_table_with_alpha("gray", 255),
 			default_text_color = Colors.get_color_table_with_alpha("gray", 255),
 			size = {
-				arg_16_1[1] - 40,
-				arg_16_1[2]
+				size[1] - 40,
+				size[2]
 			},
 			offset = {
 				20,
@@ -1367,12 +1387,12 @@ function create_tooltip_button(arg_16_0, arg_16_1, arg_16_2, arg_16_3, arg_16_4,
 			vertical_alignment = "center",
 			dynamic_font_size = true,
 			font_type = "hell_shark",
-			font_size = arg_16_5 or 24,
+			font_size = not not font_size or not not 24,
 			text_color = Colors.get_color_table_with_alpha("black", 255),
 			default_text_color = Colors.get_color_table_with_alpha("black", 255),
 			size = {
-				arg_16_1[1] - 40,
-				arg_16_1[2]
+				size[1] - 40,
+				size[2]
 			},
 			offset = {
 				22,
@@ -1381,8 +1401,8 @@ function create_tooltip_button(arg_16_0, arg_16_1, arg_16_2, arg_16_3, arg_16_4,
 			}
 		},
 		frame = {
-			texture_size = var_16_1.texture_size,
-			texture_sizes = var_16_1.texture_sizes,
+			texture_size = frame_settings.texture_size,
+			texture_sizes = frame_settings.texture_sizes,
 			color = {
 				255,
 				255,
@@ -1404,11 +1424,11 @@ function create_tooltip_button(arg_16_0, arg_16_1, arg_16_2, arg_16_3, arg_16_4,
 			},
 			offset = {
 				0,
-				arg_16_1[2] - (var_16_2 + 11),
+				size[2] - (frame_width + 11),
 				4
 			},
 			size = {
-				arg_16_1[1],
+				size[1],
 				11
 			}
 		},
@@ -1421,11 +1441,11 @@ function create_tooltip_button(arg_16_0, arg_16_1, arg_16_2, arg_16_3, arg_16_4,
 			},
 			offset = {
 				0,
-				var_16_2 - 9,
+				frame_width - 9,
 				4
 			},
 			size = {
-				arg_16_1[1],
+				size[1],
 				11
 			}
 		}
@@ -1445,8 +1465,8 @@ function create_tooltip_button(arg_16_0, arg_16_1, arg_16_2, arg_16_3, arg_16_4,
 	}
 	local num
 
-	if not arg_16_8 then
-		num = -arg_16_8
+	if optional_detail_offset then
+		num = -optional_detail_offset
 
 		if not num then
 			-- Nothing
@@ -1458,11 +1478,11 @@ function create_tooltip_button(arg_16_0, arg_16_1, arg_16_2, arg_16_3, arg_16_4,
 	::label_16_1::
 
 	tbl_4[1] = num
-	tbl_4[2] = arg_16_1[2] / 2 - size[2] / 2
+	tbl_4[2] = size[2] / 2 - side_detail_texture_size[2] / 2
 	tbl_3.offset = tbl_4
 	tbl_3.size = {
-		size[1],
-		size[2]
+		side_detail_texture_size[1],
+		side_detail_texture_size[2]
 	}
 	tbl_2.side_detail_left = tbl_3
 	tbl_2.side_detail_right = {
@@ -1473,13 +1493,13 @@ function create_tooltip_button(arg_16_0, arg_16_1, arg_16_2, arg_16_3, arg_16_4,
 			255
 		},
 		offset = {
-			arg_16_1[1] - size[1] + (arg_16_8 or 9),
-			arg_16_1[2] / 2 - size[2] / 2,
+			size[1] - side_detail_texture_size[1] + (not not optional_detail_offset or not not 9),
+			size[2] / 2 - side_detail_texture_size[2] / 2,
 			9
 		},
 		size = {
-			size[1],
-			size[2]
+			side_detail_texture_size[1],
+			side_detail_texture_size[2]
 		}
 	}
 	tbl_2.find_party_tooltip = {
@@ -1505,7 +1525,7 @@ function create_tooltip_button(arg_16_0, arg_16_1, arg_16_2, arg_16_3, arg_16_4,
 		}
 	}
 	tbl.style = tbl_2
-	tbl.scenegraph_id = arg_16_0
+	tbl.scenegraph_id = scenegraph_id
 	tbl.offset = {
 		0,
 		0,
@@ -1515,23 +1535,24 @@ function create_tooltip_button(arg_16_0, arg_16_1, arg_16_2, arg_16_3, arg_16_4,
 	return tbl
 end
 
-function create_play_button(arg_22_0, arg_22_1, arg_22_2, arg_22_3, arg_22_4, arg_22_5)
+function create_play_button(scenegraph_id, size, text, font_size, disable_with_gamepad, tooltip_info)
 	-- function 22
-	local var_22_0
-	local str = "green"
+	local button_color_name
+	local optional_color_name = "green"
 
-	if not str then
-		var_22_0 = "button_" .. str
+	if optional_color_name then
+		button_color_name = "button_" .. optional_color_name
 	else
-		var_22_0 = "button_normal"
+		button_color_name = "button_normal"
 	end
 
-	local get_color_table_with_alpha = Colors.get_color_table_with_alpha(var_22_0, 255)
-	local str_2 = "button_bg_01"
-	local get_atlas_settings_by_texture_name = UIAtlasHelper.get_atlas_settings_by_texture_name(str_2)
-	local menu_frame_08 = UIFrameSettings.menu_frame_08
-	local str_3 = "button_detail_05_glow"
-	local size = UIAtlasHelper.get_atlas_settings_by_texture_name(str_3).size
+	local background_color = Colors.get_color_table_with_alpha(button_color_name, 255)
+	local background_texture = "button_bg_01"
+	local background_texture_settings = UIAtlasHelper.get_atlas_settings_by_texture_name(background_texture)
+	local frame_settings = UIFrameSettings.menu_frame_08
+	local side_detail_glow = "button_detail_05_glow"
+	local side_detail_glow_settings = UIAtlasHelper.get_atlas_settings_by_texture_name(side_detail_glow)
+	local side_detail_glow_size = side_detail_glow_settings.size
 
 	return {
 		element = {
@@ -1559,64 +1580,77 @@ function create_play_button(arg_22_0, arg_22_1, arg_22_2, arg_22_3, arg_22_4, ar
 				{
 					style_id = "clicked_rect",
 					pass_type = "rect",
-					content_check_function = function (self)
+					content_check_function = function (content)
 						-- function 23
-						local is_clicked = self.button_hotspot.is_clicked
+						local button_hotspot = content.button_hotspot
+						local is_clicked = button_hotspot.is_clicked
 
-						return not is_clicked and is_clicked == 0
+						return not is_clicked or is_clicked == 0
 					end
 				},
 				{
 					style_id = "disabled_rect",
 					pass_type = "rect",
-					content_check_function = function (self)
+					content_check_function = function (content)
 						-- function 24
-						return self.button_hotspot.disable_button
+						local button_hotspot = content.button_hotspot
+
+						return button_hotspot.disable_button
 					end
 				},
 				{
 					texture_id = "side_detail_right",
 					style_id = "side_detail_right",
 					pass_type = "texture",
-					content_check_function = function (self)
+					content_check_function = function (content)
 						-- function 25
-						return not self.button_hotspot.disable_button
+						local button_hotspot = content.button_hotspot
+
+						return not button_hotspot.disable_button
 					end
 				},
 				{
 					texture_id = "side_detail_left",
 					style_id = "side_detail_left",
 					pass_type = "texture",
-					content_check_function = function (self)
+					content_check_function = function (content)
 						-- function 26
-						return not self.button_hotspot.disable_button
+						local button_hotspot = content.button_hotspot
+
+						return not button_hotspot.disable_button
 					end
 				},
 				{
 					texture_id = "side_detail_right",
 					style_id = "side_detail_right_disabled",
 					pass_type = "texture",
-					content_check_function = function (self)
+					content_check_function = function (content)
 						-- function 27
-						return self.button_hotspot.disable_button
+						local button_hotspot = content.button_hotspot
+
+						return button_hotspot.disable_button
 					end
 				},
 				{
 					texture_id = "side_detail_left",
 					style_id = "side_detail_left_disabled",
 					pass_type = "texture",
-					content_check_function = function (self)
+					content_check_function = function (content)
 						-- function 28
-						return self.button_hotspot.disable_button
+						local button_hotspot = content.button_hotspot
+
+						return button_hotspot.disable_button
 					end
 				},
 				{
 					style_id = "side_detail_glow_right",
 					pass_type = "texture_uv",
 					content_id = "side_detail_glow",
-					content_check_function = function (self)
+					content_check_function = function (content)
 						-- function 29
-						return not self.parent.button_hotspot.disable_button
+						local button_hotspot = content.parent.button_hotspot
+
+						return not button_hotspot.disable_button
 					end
 				},
 				{
@@ -1624,27 +1658,33 @@ function create_play_button(arg_22_0, arg_22_1, arg_22_2, arg_22_3, arg_22_4, ar
 					style_id = "side_detail_glow_left",
 					pass_type = "texture",
 					content_id = "side_detail_glow",
-					content_check_function = function (self)
+					content_check_function = function (content)
 						-- function 30
-						return not self.parent.button_hotspot.disable_button
+						local button_hotspot = content.parent.button_hotspot
+
+						return not button_hotspot.disable_button
 					end
 				},
 				{
 					style_id = "title_text",
 					pass_type = "text",
 					text_id = "title_text",
-					content_check_function = function (self)
+					content_check_function = function (content)
 						-- function 31
-						return not self.button_hotspot.disable_button
+						local button_hotspot = content.button_hotspot
+
+						return not button_hotspot.disable_button
 					end
 				},
 				{
 					style_id = "title_text_disabled",
 					pass_type = "text",
 					text_id = "title_text",
-					content_check_function = function (self)
+					content_check_function = function (content)
 						-- function 32
-						return self.button_hotspot.disable_button
+						local button_hotspot = content.button_hotspot
+
+						return button_hotspot.disable_button
 					end
 				},
 				{
@@ -1666,18 +1706,20 @@ function create_play_button(arg_22_0, arg_22_1, arg_22_2, arg_22_3, arg_22_4, ar
 					texture_id = "effect",
 					style_id = "effect",
 					pass_type = "texture",
-					content_check_function = function (self)
+					content_check_function = function (content)
 						-- function 33
-						return not self.button_hotspot.disable_button
+						local button_hotspot = content.button_hotspot
+
+						return not button_hotspot.disable_button
 					end
 				},
 				{
 					texture_id = "hover_glow",
 					style_id = "hover_glow",
 					pass_type = "texture",
-					content_check_function = function (self)
+					content_check_function = function (content)
 						-- function 34
-						local button_hotspot = self.button_hotspot
+						local button_hotspot = content.button_hotspot
 						local is_selected
 
 						if not button_hotspot.disable_button then
@@ -1702,12 +1744,12 @@ function create_play_button(arg_22_0, arg_22_1, arg_22_2, arg_22_3, arg_22_4, ar
 					style_id = "cancel_matchmaking_tooltip",
 					pass_type = "additional_option_tooltip",
 					content_id = "hover_hotspot",
-					content_check_function = function (self)
+					content_check_function = function (content)
 						-- function 35
-						local button_hotspot = self.parent.button_hotspot
-						local is_hover = self.is_hover
+						local button_hotspot = content.parent.button_hotspot
+						local is_hover = content.is_hover
 
-						is_hover = not is_hover and button_hotspot.disable_button
+						is_hover = not not is_hover and not not button_hotspot.disable_button
 
 						return is_hover
 					end
@@ -1732,40 +1774,40 @@ function create_play_button(arg_22_0, arg_22_1, arg_22_2, arg_22_3, arg_22_4, ar
 						1
 					}
 				},
-				texture_id = str_3
+				texture_id = side_detail_glow
 			},
 			button_hotspot = {},
 			hover_hotspot = {
-				cancel_matchmaking_tooltip = arg_22_5
+				cancel_matchmaking_tooltip = tooltip_info
 			},
-			title_text = arg_22_2 or "n/a",
-			frame = menu_frame_08.texture,
-			disable_with_gamepad = arg_22_4,
+			title_text = not not text or not not "n/a",
+			frame = frame_settings.texture,
+			disable_with_gamepad = disable_with_gamepad,
 			background = {
 				uvs = {
 					{
 						0,
-						1 - arg_22_1[2] / get_atlas_settings_by_texture_name.size[2]
+						1 - size[2] / background_texture_settings.size[2]
 					},
 					{
-						arg_22_1[1] / get_atlas_settings_by_texture_name.size[1],
+						size[1] / background_texture_settings.size[1],
 						1
 					}
 				},
-				texture_id = str_2
+				texture_id = background_texture
 			}
 		},
 		style = {
 			background = {
-				color = get_color_table_with_alpha,
+				color = background_color,
 				offset = {
 					0,
 					0,
 					0
 				},
 				size = {
-					arg_22_1[1],
-					arg_22_1[2]
+					size[1],
+					size[2]
 				}
 			},
 			clicked_rect = {
@@ -1781,8 +1823,8 @@ function create_play_button(arg_22_0, arg_22_1, arg_22_2, arg_22_3, arg_22_4, ar
 					7
 				},
 				size = {
-					arg_22_1[1],
-					arg_22_1[2]
+					size[1],
+					size[2]
 				}
 			},
 			disabled_rect = {
@@ -1798,8 +1840,8 @@ function create_play_button(arg_22_0, arg_22_1, arg_22_2, arg_22_3, arg_22_4, ar
 					7
 				},
 				size = {
-					arg_22_1[1],
-					arg_22_1[2]
+					size[1],
+					size[2]
 				}
 			},
 			title_text = {
@@ -1808,7 +1850,7 @@ function create_play_button(arg_22_0, arg_22_1, arg_22_2, arg_22_3, arg_22_4, ar
 				horizontal_alignment = "center",
 				vertical_alignment = "center",
 				font_type = "hell_shark",
-				font_size = arg_22_3 or 24,
+				font_size = not not font_size or not not 24,
 				text_color = Colors.get_color_table_with_alpha("font_button_normal", 255),
 				default_text_color = Colors.get_color_table_with_alpha("font_button_normal", 255),
 				select_text_color = Colors.get_color_table_with_alpha("white", 255),
@@ -1818,8 +1860,8 @@ function create_play_button(arg_22_0, arg_22_1, arg_22_2, arg_22_3, arg_22_4, ar
 					9
 				},
 				size = {
-					arg_22_1[1],
-					arg_22_1[2]
+					size[1],
+					size[2]
 				}
 			},
 			title_text_disabled = {
@@ -1828,7 +1870,7 @@ function create_play_button(arg_22_0, arg_22_1, arg_22_2, arg_22_3, arg_22_4, ar
 				horizontal_alignment = "center",
 				vertical_alignment = "center",
 				font_type = "hell_shark",
-				font_size = arg_22_3 or 24,
+				font_size = not not font_size or not not 24,
 				text_color = Colors.get_color_table_with_alpha("gray", 255),
 				default_text_color = Colors.get_color_table_with_alpha("gray", 255),
 				offset = {
@@ -1837,8 +1879,8 @@ function create_play_button(arg_22_0, arg_22_1, arg_22_2, arg_22_3, arg_22_4, ar
 					9
 				},
 				size = {
-					arg_22_1[1],
-					arg_22_1[2]
+					size[1],
+					size[2]
 				}
 			},
 			title_text_shadow = {
@@ -1847,7 +1889,7 @@ function create_play_button(arg_22_0, arg_22_1, arg_22_2, arg_22_3, arg_22_4, ar
 				horizontal_alignment = "center",
 				vertical_alignment = "center",
 				font_type = "hell_shark",
-				font_size = arg_22_3 or 24,
+				font_size = not not font_size or not not 24,
 				text_color = Colors.get_color_table_with_alpha("black", 255),
 				offset = {
 					2,
@@ -1855,13 +1897,13 @@ function create_play_button(arg_22_0, arg_22_1, arg_22_2, arg_22_3, arg_22_4, ar
 					8
 				},
 				size = {
-					arg_22_1[1],
-					arg_22_1[2]
+					size[1],
+					size[2]
 				}
 			},
 			frame = {
-				texture_size = menu_frame_08.texture_size,
-				texture_sizes = menu_frame_08.texture_sizes,
+				texture_size = frame_settings.texture_size,
+				texture_sizes = frame_settings.texture_sizes,
 				color = {
 					255,
 					255,
@@ -1874,8 +1916,8 @@ function create_play_button(arg_22_0, arg_22_1, arg_22_2, arg_22_3, arg_22_4, ar
 					8
 				},
 				size = {
-					arg_22_1[1],
-					arg_22_1[2]
+					size[1],
+					size[2]
 				}
 			},
 			hover_glow = {
@@ -1887,12 +1929,12 @@ function create_play_button(arg_22_0, arg_22_1, arg_22_2, arg_22_3, arg_22_4, ar
 				},
 				offset = {
 					0,
-					menu_frame_08.texture_sizes.horizontal[2],
+					frame_settings.texture_sizes.horizontal[2],
 					1
 				},
 				size = {
-					arg_22_1[1],
-					math.min(60, arg_22_1[2] - menu_frame_08.texture_sizes.horizontal[2] * 2)
+					size[1],
+					math.min(60, size[2] - frame_settings.texture_sizes.horizontal[2] * 2)
 				}
 			},
 			glass_top = {
@@ -1904,11 +1946,11 @@ function create_play_button(arg_22_0, arg_22_1, arg_22_2, arg_22_3, arg_22_4, ar
 				},
 				offset = {
 					0,
-					arg_22_1[2] - menu_frame_08.texture_sizes.horizontal[2] - 4,
+					size[2] - frame_settings.texture_sizes.horizontal[2] - 4,
 					6
 				},
 				size = {
-					arg_22_1[1],
+					size[1],
 					5
 				}
 			},
@@ -1921,12 +1963,12 @@ function create_play_button(arg_22_0, arg_22_1, arg_22_2, arg_22_3, arg_22_4, ar
 				},
 				offset = {
 					0,
-					menu_frame_08.texture_sizes.horizontal[2] - 1,
+					frame_settings.texture_sizes.horizontal[2] - 1,
 					3
 				},
 				size = {
-					arg_22_1[1],
-					math.min(60, arg_22_1[2] - menu_frame_08.texture_sizes.horizontal[2] * 2)
+					size[1],
+					math.min(60, size[2] - frame_settings.texture_sizes.horizontal[2] * 2)
 				}
 			},
 			effect = {
@@ -1942,8 +1984,8 @@ function create_play_button(arg_22_0, arg_22_1, arg_22_2, arg_22_3, arg_22_4, ar
 					5
 				},
 				size = {
-					arg_22_1[1],
-					arg_22_1[2]
+					size[1],
+					size[2]
 				}
 			},
 			side_detail_left = {
@@ -1955,7 +1997,7 @@ function create_play_button(arg_22_0, arg_22_1, arg_22_2, arg_22_3, arg_22_4, ar
 				},
 				offset = {
 					0,
-					arg_22_1[2] / 2 - 36,
+					size[2] / 2 - 36,
 					9
 				},
 				size = {
@@ -1971,8 +2013,8 @@ function create_play_button(arg_22_0, arg_22_1, arg_22_2, arg_22_3, arg_22_4, ar
 					255
 				},
 				offset = {
-					arg_22_1[1] - 88,
-					arg_22_1[2] / 2 - 36,
+					size[1] - 88,
+					size[2] / 2 - 36,
 					9
 				},
 				size = {
@@ -1989,7 +2031,7 @@ function create_play_button(arg_22_0, arg_22_1, arg_22_2, arg_22_3, arg_22_4, ar
 				},
 				offset = {
 					0,
-					arg_22_1[2] / 2 - 36,
+					size[2] / 2 - 36,
 					9
 				},
 				size = {
@@ -2005,8 +2047,8 @@ function create_play_button(arg_22_0, arg_22_1, arg_22_2, arg_22_3, arg_22_4, ar
 					200
 				},
 				offset = {
-					arg_22_1[1] - 88,
-					arg_22_1[2] / 2 - 36,
+					size[1] - 88,
+					size[2] / 2 - 36,
 					9
 				},
 				size = {
@@ -2023,12 +2065,12 @@ function create_play_button(arg_22_0, arg_22_1, arg_22_2, arg_22_3, arg_22_4, ar
 				},
 				offset = {
 					0,
-					arg_22_1[2] / 2 - size[2] / 2,
+					size[2] / 2 - side_detail_glow_size[2] / 2,
 					10
 				},
 				size = {
-					size[1],
-					size[2]
+					side_detail_glow_size[1],
+					side_detail_glow_size[2]
 				}
 			},
 			side_detail_glow_right = {
@@ -2039,13 +2081,13 @@ function create_play_button(arg_22_0, arg_22_1, arg_22_2, arg_22_3, arg_22_4, ar
 					255
 				},
 				offset = {
-					arg_22_1[1] - size[1],
-					arg_22_1[2] / 2 - size[2] / 2,
+					size[1] - side_detail_glow_size[1],
+					size[2] / 2 - side_detail_glow_size[2] / 2,
 					10
 				},
 				size = {
-					size[1],
-					size[2]
+					side_detail_glow_size[1],
+					side_detail_glow_size[2]
 				}
 			},
 			cancel_matchmaking_tooltip = {
@@ -2059,7 +2101,7 @@ function create_play_button(arg_22_0, arg_22_1, arg_22_2, arg_22_3, arg_22_4, ar
 				}
 			}
 		},
-		scenegraph_id = arg_22_0,
+		scenegraph_id = scenegraph_id,
 		offset = {
 			0,
 			0,
@@ -2068,40 +2110,40 @@ function create_play_button(arg_22_0, arg_22_1, arg_22_2, arg_22_3, arg_22_4, ar
 	}
 end
 
-function create_start_game_console_play_button(arg_36_0, arg_36_1)
+function create_start_game_console_play_button(scenegraph_id, text)
 	-- function 36
-	local tbl = {}
-	local tbl_2 = {}
-	local tbl_3 = {}
-	local str = "text"
-	local str_2 = str .. "_shadow"
+	local passes = {}
+	local content = {}
+	local style = {}
+	local text_name = "text"
+	local text_name_shadow = text_name .. "_shadow"
 
-	tbl[#tbl + 1] = {
+	passes[#passes + 1] = {
 		pass_type = "text",
-		text_id = str,
-		style_id = str,
-		content_change_function = function (self, arg_37_1)
+		text_id = text_name,
+		style_id = text_name,
+		content_change_function = function (content, style)
 			-- function 37
-			if not self.locked then
-				arg_37_1.text_color = arg_37_1.disabled_color
+			if content.locked then
+				style.text_color = style.disabled_color
 			else
-				arg_37_1.text_color = arg_37_1.normal_color
+				style.text_color = style.normal_color
 			end
 		end
 	}
-	tbl[#tbl + 1] = {
+	passes[#passes + 1] = {
 		pass_type = "text",
-		text_id = str,
-		style_id = str_2
+		text_id = text_name,
+		style_id = text_name_shadow
 	}
-	tbl_2[str] = arg_36_1
+	content[text_name] = text
 
-	local tbl_4 = {
+	local text_offset = {
 		0,
 		6,
 		1
 	}
-	local tbl_5 = {
+	local text_style = {
 		word_wrap = false,
 		upper_case = true,
 		localize = false,
@@ -2113,36 +2155,36 @@ function create_start_game_console_play_button(arg_36_0, arg_36_1)
 		disabled_color = Colors.get_color_table_with_alpha("dark_gray", 255),
 		normal_color = Colors.get_color_table_with_alpha("white", 255),
 		offset = {
-			tbl_4[1],
-			tbl_4[2],
-			tbl_4[3]
+			text_offset[1],
+			text_offset[2],
+			text_offset[3]
 		}
 	}
-	local clone = table.clone(tbl_5)
+	local text_shadow_style = table.clone(text_style)
 
-	clone.text_color = {
+	text_shadow_style.text_color = {
 		255,
 		0,
 		0,
 		0
 	}
-	clone.offset = {
-		tbl_4[1] + 2,
-		tbl_4[2] - 2,
-		tbl_4[3] - 1
+	text_shadow_style.offset = {
+		text_offset[1] + 2,
+		text_offset[2] - 2,
+		text_offset[3] - 1
 	}
-	tbl_3[str] = tbl_5
-	tbl_3[str_2] = clone
+	style[text_name] = text_style
+	style[text_name_shadow] = text_shadow_style
 
-	local str_3 = "divider"
+	local divider_name = "divider"
 
-	tbl[#tbl + 1] = {
+	passes[#passes + 1] = {
 		pass_type = "texture",
-		texture_id = str_3,
-		style_id = str_3
+		texture_id = divider_name,
+		style_id = divider_name
 	}
-	tbl_2[str_3] = "divider_01_top"
-	tbl_3[str_3] = {
+	content[divider_name] = "divider_01_top"
+	style[divider_name] = {
 		vertical_alignment = "center",
 		horizontal_alignment = "center",
 		texture_size = {
@@ -2162,23 +2204,23 @@ function create_start_game_console_play_button(arg_36_0, arg_36_1)
 		}
 	}
 
-	local str_4 = "input_texture"
+	local input_texture_name = "input_texture"
 
-	tbl[#tbl + 1] = {
+	passes[#passes + 1] = {
 		pass_type = "texture",
-		texture_id = str_4,
-		style_id = str_4,
-		content_change_function = function (self, arg_38_1)
+		texture_id = input_texture_name,
+		style_id = input_texture_name,
+		content_change_function = function (content, style)
 			-- function 38
-			if not self.locked then
-				arg_38_1.saturated = true
+			if content.locked then
+				style.saturated = true
 			else
-				arg_38_1.saturated = false
+				style.saturated = false
 			end
 		end
 	}
-	tbl_2[str_4] = ""
-	tbl_3[str_4] = {
+	content[input_texture_name] = ""
+	style[input_texture_name] = {
 		vertical_alignment = "center",
 		horizontal_alignment = "center",
 		texture_size = {
@@ -2198,19 +2240,19 @@ function create_start_game_console_play_button(arg_36_0, arg_36_1)
 		}
 	}
 
-	local str_5 = "glow"
+	local glow_name = "glow"
 
-	tbl[#tbl + 1] = {
+	passes[#passes + 1] = {
 		pass_type = "texture",
-		texture_id = str_5,
-		style_id = str_5,
-		content_check_function = function (self)
+		texture_id = glow_name,
+		style_id = glow_name,
+		content_check_function = function (content)
 			-- function 39
-			return not self.locked
+			return not content.locked
 		end
 	}
-	tbl_2[str_5] = "play_glow_mask"
-	tbl_3[str_5] = {
+	content[glow_name] = "play_glow_mask"
+	style[glow_name] = {
 		vertical_alignment = "center",
 		horizontal_alignment = "center",
 		texture_size = {
@@ -2225,23 +2267,25 @@ function create_start_game_console_play_button(arg_36_0, arg_36_1)
 		}
 	}
 
-	return {
-		element = {
-			passes = tbl
-		},
-		content = tbl_2,
-		style = tbl_3,
-		offset = {
-			0,
-			0,
-			0
-		},
-		scenegraph_id = arg_36_0
+	local widget = {}
+
+	widget.element = {
+		passes = passes
 	}
+	widget.content = content
+	widget.style = style
+	widget.offset = {
+		0,
+		0,
+		0
+	}
+	widget.scenegraph_id = scenegraph_id
+
+	return widget
 end
 
-local flag = true
-local tbl_13 = {
+local disable_with_gamepad = true
+local widgets = {
 	difficulty_title = UIWidgets.create_simple_text("n/a", "difficulty_title", nil, nil, difficulty_title_text_style),
 	difficulty_description = UIWidgets.create_simple_text("n/a", "difficulty_description", nil, nil, difficulty_description_text_style),
 	difficulty_selected = UIWidgets.create_simple_texture("icons_placeholder", "difficulty_selected"),
@@ -2251,53 +2295,53 @@ local tbl_13 = {
 		0,
 		187
 	}),
-	play_button = create_play_button("play_button", tbl_3.play_button.size, Localize("start_game_window_play"), 34, flag, {
+	play_button = create_play_button("play_button", scenegraph_definition.play_button.size, Localize("start_game_window_play"), 34, disable_with_gamepad, {
 		title = Localize("start_game_weave_disabled_tooltip_title"),
 		description = Localize("start_game_weave_disabled_tooltip_description")
-	}, flag),
+	}, disable_with_gamepad),
 	play_button_console = create_start_game_console_play_button("play_button_console", Localize("start_game_window_play"))
 }
-local tbl_14 = {
+local bottom_hdr_widgets = {
 	wind_icon = UIWidgets.create_simple_texture("weave_menu_wind_icon", "wind_icon")
 }
-local tbl_15 = {}
-local flag_2 = true
-local tbl_16 = {
-	play_button = create_play_button("play_button", tbl_3.play_button.size, Localize("start_game_window_play"), 34, flag_2, {
+local bottom_widgets = {}
+local disable_with_gamepad = true
+local top_widgets = {
+	play_button = create_play_button("play_button", scenegraph_definition.play_button.size, Localize("start_game_window_play"), 34, disable_with_gamepad, {
 		title = Localize("start_game_weave_disabled_tooltip_title"),
 		description = Localize("start_game_weave_disabled_tooltip_description")
 	}),
 	play_button_console = create_start_game_console_play_button("play_button_console", Localize("start_game_window_play")),
-	title = UIWidgets.create_simple_text("n/a", "title", nil, nil, tbl_4),
+	title = UIWidgets.create_simple_text("n/a", "title", nil, nil, title_text_style),
 	mutator_icon = UIWidgets.create_simple_texture("icons_placeholder", "mutator_icon"),
-	mutator_title_text = UIWidgets.create_simple_text("n/a", "mutator_title_text", nil, nil, tbl_11),
-	mutator_description_text = UIWidgets.create_simple_text("n/a", "mutator_description_text", nil, nil, tbl_12),
-	wind_title = UIWidgets.create_simple_text("n/a", "wind_title", nil, nil, tbl_10),
-	level_title = UIWidgets.create_simple_text("n/a", "level_title", nil, nil, tbl_9),
-	private_checkbox = fn_2("private_checkbox", tbl_3.private_checkbox.size, Localize("start_game_window_disallow_join"), 24, {
+	mutator_title_text = UIWidgets.create_simple_text("n/a", "mutator_title_text", nil, nil, mutator_title_text_style),
+	mutator_description_text = UIWidgets.create_simple_text("n/a", "mutator_description_text", nil, nil, mutator_description_text_style),
+	wind_title = UIWidgets.create_simple_text("n/a", "wind_title", nil, nil, wind_title_text_style),
+	level_title = UIWidgets.create_simple_text("n/a", "level_title", nil, nil, level_title_text_style),
+	private_checkbox = create_checkbox_button("private_checkbox", scenegraph_definition.private_checkbox.size, Localize("start_game_window_disallow_join"), 24, {
 		title = Localize("start_game_window_disallow_join"),
 		description = Localize("start_game_window_disallow_join_description")
 	}),
-	objective_title_text = UIWidgets.create_simple_text(Localize("weave_objective_title"), "objective_title_text", nil, nil, tbl_6),
-	objective_description_text = UIWidgets.create_simple_text(Localize("menu_weave_play_objective_sub_title"), "objective_description_text", nil, nil, tbl_7)
+	objective_title_text = UIWidgets.create_simple_text(Localize("weave_objective_title"), "objective_title_text", nil, nil, objective_title_text_style),
+	objective_description_text = UIWidgets.create_simple_text(Localize("menu_weave_play_objective_sub_title"), "objective_description_text", nil, nil, objective_description_text_style)
 }
-local tbl_17 = {
+local animation_definitions = {
 	on_enter = {
 		{
 			name = "fade_in",
 			start_progress = 0,
 			end_progress = 0.5,
-			init = function (arg_40_0, arg_40_1, arg_40_2, arg_40_3)
+			init = function (ui_scenegraph, scenegraph_definition, widgets, params)
 				-- function 40
-				arg_40_3.render_settings.alpha_multiplier = 0
+				params.render_settings.alpha_multiplier = 0
 			end,
-			update = function (arg_41_0, arg_41_1, arg_41_2, arg_41_3, arg_41_4)
+			update = function (ui_scenegraph, scenegraph_definition, widgets, progress, params)
 				-- function 41
-				local easeInCubic = math.easeInCubic(arg_41_3)
+				local anim_progress = math.easeInCubic(progress)
 
-				arg_41_4.render_settings.alpha_multiplier = easeInCubic
+				params.render_settings.alpha_multiplier = anim_progress
 			end,
-			on_complete = function (arg_42_0, arg_42_1, arg_42_2, arg_42_3)
+			on_complete = function (ui_scenegraph, scenegraph_definition, widgets, params)
 				-- function 42
 				return
 			end
@@ -2308,17 +2352,17 @@ local tbl_17 = {
 			name = "fade_out",
 			start_progress = 0,
 			end_progress = 0.3,
-			init = function (arg_43_0, arg_43_1, arg_43_2, arg_43_3)
+			init = function (ui_scenegraph, scenegraph_definition, widgets, params)
 				-- function 43
-				arg_43_3.render_settings.alpha_multiplier = 1
+				params.render_settings.alpha_multiplier = 1
 			end,
-			update = function (arg_44_0, arg_44_1, arg_44_2, arg_44_3, arg_44_4)
+			update = function (ui_scenegraph, scenegraph_definition, widgets, progress, params)
 				-- function 44
-				local easeOutCubic = math.easeOutCubic(arg_44_3)
+				local anim_progress = math.easeOutCubic(progress)
 
-				arg_44_4.render_settings.alpha_multiplier = 1 - easeOutCubic
+				params.render_settings.alpha_multiplier = 1 - anim_progress
 			end,
-			on_complete = function (arg_45_0, arg_45_1, arg_45_2, arg_45_3)
+			on_complete = function (ui_scenegraph, scenegraph_definition, widgets, params)
 				-- function 45
 				return
 			end
@@ -2327,10 +2371,10 @@ local tbl_17 = {
 }
 
 return {
-	top_widgets = tbl_16,
-	bottom_widgets = tbl_15,
-	bottom_hdr_widgets = tbl_14,
-	create_objective_widget = fn,
-	scenegraph_definition = tbl_3,
-	animation_definitions = tbl_17
+	top_widgets = top_widgets,
+	bottom_widgets = bottom_widgets,
+	bottom_hdr_widgets = bottom_hdr_widgets,
+	create_objective_widget = create_objective_widget,
+	scenegraph_definition = scenegraph_definition,
+	animation_definitions = animation_definitions
 }

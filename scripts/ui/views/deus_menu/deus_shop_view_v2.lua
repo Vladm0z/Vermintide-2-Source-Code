@@ -2,38 +2,38 @@
 
 require("scripts/network/shared_state")
 
-local var_0_0 = local_require("scripts/ui/views/deus_menu/deus_shop_view_definitions_v2")
-local interaction_data = var_0_0.interaction_data
-local purchase_interaction = var_0_0.purchase_interaction
-local allow_boon_removal = var_0_0.allow_boon_removal
-local num = 1
-local num_2 = 2
-local num_3 = 3
-local num_4 = 4
-local num_5 = 5
-local tbl = {
-	[num] = {
+local definitions = local_require("scripts/ui/views/deus_menu/deus_shop_view_definitions_v2")
+local interaction_data = definitions.interaction_data
+local purchase_interaction = definitions.purchase_interaction
+local ALLOW_BOON_REMOVAL = definitions.allow_boon_removal
+local WITCH_HUNTER = 1
+local BRIGHT_WIZARD = 2
+local DWARF_RANGER = 3
+local WOOD_ELF = 4
+local EMPIRE_SOLDIER = 5
+local BACKGROUND_PROFILE_UNITS = {
+	[WITCH_HUNTER] = {
 		unit_package = "units/props/deus_idol/deus_sigmar_01",
 		unit_name = "units/props/deus_idol/deus_sigmar_01"
 	},
-	[num_2] = {
+	[BRIGHT_WIZARD] = {
 		unit_package = "units/props/deus_idol/deus_myrmidia_01",
 		unit_name = "units/props/deus_idol/deus_myrmidia_01"
 	},
-	[num_3] = {
+	[DWARF_RANGER] = {
 		unit_package = "units/props/deus_idol/deus_valaya_01",
 		unit_name = "units/props/deus_idol/deus_valaya_01"
 	},
-	[num_4] = {
+	[WOOD_ELF] = {
 		unit_package = "units/props/deus_idol/deus_lileath_01",
 		unit_name = "units/props/deus_idol/deus_lileath_01"
 	},
-	[num_5] = {
+	[EMPIRE_SOLDIER] = {
 		unit_package = "units/props/deus_idol/deus_taal_01",
 		unit_name = "units/props/deus_idol/deus_taal_01"
 	}
 }
-local tbl_2 = {
+local SOUND_EVENTS = {
 	blessing_bought = "hud_morris_map_shrine_buy_blessing",
 	power_up_bought = "hud_morris_map_shrine_buy_power_up",
 	button_hover = "hud_morris_hover",
@@ -45,22 +45,22 @@ require("scripts/settings/dlcs/morris/deus_shop_settings")
 
 DeusShopView = class(DeusShopView)
 
-local num_6 = 1
-local num_7 = 60
-local num_8 = 5
-local num_9 = 15
-local tbl_3 = {
+local REAL_PLAYER_LOCAL_ID = 1
+local SELECT_COUNTDOWN = 60
+local FINAL_COUNTDOWN = 5
+local HURRY_UP_TIME = 15
+local states = {
 	FINISHED = 5,
 	SELECTING = 3,
 	INITIALIZED = 1,
 	FINISHING = 4,
 	STARTING = 2
 }
-local tbl_4 = {
+local peer_states = {
 	READY_TO_BUY = 1,
 	DONE_BUYING = 2
 }
-local tbl_5 = {
+local shared_state_spec = {
 	server = {
 		shop_state = {
 			default_value = 0,
@@ -77,64 +77,64 @@ local tbl_5 = {
 	}
 }
 
-SharedState.validate_spec(tbl_5)
+SharedState.validate_spec(shared_state_spec)
 
-local function fn(arg_1_0)
+local function get_color_for_consumable_item(item_key)
 	-- function 1
-	local default = UISettings.inventory_consumable_slot_colors.default
-	local var_1_1
+	local default_color = UISettings.inventory_consumable_slot_colors.default
+	local var_1_0
 
-	if not arg_1_0 then
-		var_1_1 = UISettings.inventory_consumable_slot_colors[arg_1_0]
+	if item_key then
+		var_1_0 = UISettings.inventory_consumable_slot_colors[item_key]
 
-		if not var_1_1 then
+		if not var_1_0 then
 			-- Nothing
 		end
 	end
 
-	var_1_1 = default
+	var_1_0 = default_color
 
 	::label_1_0::
 
-	return var_1_1
+	return var_1_0
 end
 
-DeusShopView.init = function (self, arg_2_1)
+DeusShopView.init = function (self, context)
 	-- function 2
-	local str = "deus_shop_view"
-	local input_manager = arg_2_1.input_manager
+	local input_service_name = "deus_shop_view"
+	local input_manager = context.input_manager
 
 	self._input_manager = input_manager
-	self._world = arg_2_1.world
-	self._network_event_delegate = arg_2_1.network_event_delegate
-	self._input_service_name = str
+	self._world = context.world
+	self._network_event_delegate = context.network_event_delegate
+	self._input_service_name = input_service_name
 	self._previous_bought_blessings = {}
 
-	input_manager:create_input_service(str, "IngameMenuKeymaps", "IngameMenuFilters")
-	input_manager:map_device_to_service(str, "keyboard")
-	input_manager:map_device_to_service(str, "mouse")
-	input_manager:map_device_to_service(str, "gamepad")
+	input_manager:create_input_service(input_service_name, "IngameMenuKeymaps", "IngameMenuFilters")
+	input_manager:map_device_to_service(input_service_name, "keyboard")
+	input_manager:map_device_to_service(input_service_name, "mouse")
+	input_manager:map_device_to_service(input_service_name, "gamepad")
 
 	self.render_settings = {
 		alpha_multiplier = 1,
 		snap_pixel_positions = false
 	}
-	self.ui_renderer = arg_2_1.ui_renderer
-	self.ui_top_renderer = arg_2_1.ui_top_renderer
-	self._wwise_world = arg_2_1.wwise_world
+	self.ui_renderer = context.ui_renderer
+	self.ui_top_renderer = context.ui_top_renderer
+	self._wwise_world = context.wwise_world
 	self._portrait_mode = false
-	self._is_server = arg_2_1.is_server
-	self._deus_run_controller = arg_2_1.deus_run_controller
+	self._is_server = context.is_server
+	self._deus_run_controller = context.deus_run_controller
 
-	local get_server_peer_id = self._deus_run_controller:get_server_peer_id()
-	local get_own_peer_id = self._deus_run_controller:get_own_peer_id()
+	local server_peer_id = self._deus_run_controller:get_server_peer_id()
+	local own_peer_id = self._deus_run_controller:get_own_peer_id()
 
-	self._shared_state = SharedState:new("deus_shop_" .. self._deus_run_controller:get_run_id(), tbl_5, self._is_server, arg_2_1.network_server, get_server_peer_id, get_own_peer_id)
+	self._shared_state = SharedState:new("deus_shop_" .. self._deus_run_controller:get_run_id(), shared_state_spec, self._is_server, context.network_server, server_peer_id, own_peer_id)
 
 	self._shared_state:full_sync()
 
-	if not self._is_server then
-		self._shared_state:set_server(self._shared_state:get_key("shop_state"), tbl_3.INITIALIZED)
+	if self._is_server then
+		self._shared_state:set_server(self._shared_state:get_key("shop_state"), states.INITIALIZED)
 
 		self._human_player_vo_units = {}
 	end
@@ -145,42 +145,44 @@ DeusShopView.init = function (self, arg_2_1)
 	event:register(self, "ingame_menu_closed", "on_ingame_menu_closed")
 end
 
-DeusShopView._set_camera_node = function (arg_3_0, arg_3_1)
+DeusShopView._set_camera_node = function (self, camera_node)
 	-- function 3
-	local camera_follow_unit = Managers.player:local_player().camera_follow_unit
+	local player = Managers.player:local_player()
+	local camera_follow_unit = player.camera_follow_unit
 
-	Unit.set_data(camera_follow_unit, "camera", "settings_node", arg_3_1)
+	Unit.set_data(camera_follow_unit, "camera", "settings_node", camera_node)
 end
 
-DeusShopView.start = function (self, arg_4_1)
+DeusShopView.start = function (self, params)
 	-- function 4
-	fassert(arg_4_1, "DeusShopView needs params to be set in order to function properly, see GameModeMapDeus")
+	fassert(params, "DeusShopView needs params to be set in order to function properly, see GameModeMapDeus")
 
 	self._finished = false
-	self._finish_cb = arg_4_1.finish_cb
+	self._finish_cb = params.finish_cb
 
 	self:_set_camera_node("map_deus")
 	self:_acquire_input()
 
 	self._render_top_widgets = true
 	self._selecting_countdown = nil
-	self._final_countdown = num_8
+	self._final_countdown = FINAL_COUNTDOWN
 
-	self._shared_state:set_own(self._shared_state:get_key("peer_state"), tbl_4.READY_TO_BUY)
+	self._shared_state:set_own(self._shared_state:get_key("peer_state"), peer_states.READY_TO_BUY)
 
-	if not self._is_server then
-		self._shared_state:set_server(self._shared_state:get_key("shop_state"), tbl_3.STARTING)
+	if self._is_server then
+		self._shared_state:set_server(self._shared_state:get_key("shop_state"), states.STARTING)
 
-		local get_peers = self._deus_run_controller:get_peers()
+		local peers = self._deus_run_controller:get_peers()
 
-		for k, v in pairs(get_peers) do
-			local get_player_profile = self._deus_run_controller:get_player_profile(v, num_6)
+		for _, peer_id in pairs(peers) do
+			local profile_index = self._deus_run_controller:get_player_profile(peer_id, REAL_PLAYER_LOCAL_ID)
 
-			if not get_player_profile then
-				local character_vo = SPProfiles[get_player_profile].character_vo
+			if profile_index then
+				local profile = SPProfiles[profile_index]
+				local character_vo = profile.character_vo
 
-				if not character_vo then
-					self._human_player_vo_units[v] = Managers.state.unit_spawner:spawn_network_unit("units/hub_elements/empty", "dialogue_node", {
+				if character_vo then
+					self._human_player_vo_units[peer_id] = Managers.state.unit_spawner:spawn_network_unit("units/hub_elements/empty", "dialogue_node", {
 						dialogue_system = {
 							faction = "player",
 							dialogue_profile = character_vo
@@ -191,35 +193,37 @@ DeusShopView.start = function (self, arg_4_1)
 		end
 	end
 
-	self._shop_type = self._deus_run_controller:get_current_node().level
+	local current_node = self._deus_run_controller:get_current_node()
+
+	self._shop_type = current_node.level
 	self._shop_config = DeusShopSettings.shop_types[self._shop_type]
 	self._available_blessings = self._shop_config.blessings
 	self._available_power_ups = self._deus_run_controller:generate_random_power_ups(self._shop_config.power_up_count, DeusPowerUpAvailabilityTypes.shrine)
 
-	local get_own_peer_id = self._deus_run_controller:get_own_peer_id()
-	local get_player_profile_2, var_4_5 = self._deus_run_controller:get_player_profile(get_own_peer_id, num_6)
-	local var_4_6 = tbl[get_player_profile_2]
+	local own_peer_id = self._deus_run_controller:get_own_peer_id()
+	local profile_index, _ = self._deus_run_controller:get_player_profile(own_peer_id, REAL_PLAYER_LOCAL_ID)
+	local background_unit_settings = BACKGROUND_PROFILE_UNITS[profile_index]
 
-	self:_create_ui_elements(self._shop_config, self._available_power_ups, self._available_blessings, var_4_6)
+	self:_create_ui_elements(self._shop_config, self._available_power_ups, self._available_blessings, background_unit_settings)
 
-	local find_dialogue_unit = LevelHelper:find_dialogue_unit(self._world, "ferry_lady_01")
-	local extension_input = ScriptUnit.extension_input(find_dialogue_unit, "dialogue_system")
-	local alloc_table = FrameTable.alloc_table()
+	local vo_unit = LevelHelper:find_dialogue_unit(self._world, "ferry_lady_01")
+	local dialogue_input = ScriptUnit.extension_input(vo_unit, "dialogue_system")
+	local event_data = FrameTable.alloc_table()
 
-	extension_input:trigger_dialogue_event("deus_shrine_tutorial", alloc_table)
+	dialogue_input:trigger_dialogue_event("deus_shrine_tutorial", event_data)
 
 	self._telemetry_data = {
 		store_type = self._shop_type,
 		purchased_blessings = {},
 		purchased_boons = {},
-		currency_when_entered = self._deus_run_controller:get_player_soft_currency(get_own_peer_id),
+		currency_when_entered = self._deus_run_controller:get_player_soft_currency(own_peer_id),
 		run_id = self._deus_run_controller:get_run_id()
 	}
 end
 
-DeusShopView.register_rpcs = function (self, arg_5_1, arg_5_2)
+DeusShopView.register_rpcs = function (self, network_event_delegate, network_transmit)
 	-- function 5
-	self._shared_state:register_rpcs(arg_5_1)
+	self._shared_state:register_rpcs(network_event_delegate)
 end
 
 DeusShopView.unregister_rpcs = function (self)
@@ -227,184 +231,197 @@ DeusShopView.unregister_rpcs = function (self)
 	self._shared_state:unregister_rpcs()
 end
 
-DeusShopView._create_ui_elements = function (self, arg_7_1, arg_7_2, arg_7_3, arg_7_4)
+DeusShopView._create_ui_elements = function (self, shop_settings, power_ups, blessings, background_unit_settings)
 	-- function 7
-	self.ui_scenegraph = UISceneGraph.init_scenegraph(var_0_0.scenegraph_definition)
-	self._ui_animator = UIAnimator:new(self.ui_scenegraph, var_0_0.animations_definitions)
+	self.ui_scenegraph = UISceneGraph.init_scenegraph(definitions.scenegraph_definition)
+	self._ui_animator = UIAnimator:new(self.ui_scenegraph, definitions.animations_definitions)
 
-	local tbl = {}
-	local tbl_2 = {}
+	local widgets = {}
+	local widgets_by_name = {}
 
-	for k, v in pairs(var_0_0.widgets) do
-		if not v then
-			local var_7_2 = UIWidget.init(v)
+	for name, widget_definition in pairs(definitions.widgets) do
+		if widget_definition then
+			local widget = UIWidget.init(widget_definition)
 
-			tbl[#tbl + 1] = var_7_2
-			tbl_2[k] = var_7_2
+			widgets[#widgets + 1] = widget
+			widgets_by_name[name] = widget
 		end
 	end
 
-	tbl_2.bottom_text.content.text = Localize("deus_shrine_continue_info")
-	tbl_2.ready_button.content.title_text = Localize("deus_ready_button")
+	widgets_by_name.bottom_text.content.text = Localize("deus_shrine_continue_info")
+	widgets_by_name.ready_button.content.title_text = Localize("deus_ready_button")
 
-	local tbl_3 = {}
+	local top_widgets = {}
 
-	for k_2, v_2 in pairs(var_0_0.top_widgets) do
-		if not v_2 then
-			local var_7_4 = UIWidget.init(v_2)
+	for name, widget_definition in pairs(definitions.top_widgets) do
+		if widget_definition then
+			local widget = UIWidget.init(widget_definition)
 
-			tbl_3[#tbl_3 + 1] = var_7_4
-			tbl_2[k_2] = var_7_4
+			top_widgets[#top_widgets + 1] = widget
+			widgets_by_name[name] = widget
 		end
 	end
 
-	local tbl_4 = {}
+	local player_widgets = {}
 
-	for k_3, v_3 in pairs(var_0_0.player_widgets) do
-		if not v_3 then
-			local var_7_6 = UIWidget.init(v_3)
+	for name, widget_definition in pairs(definitions.player_widgets) do
+		if widget_definition then
+			local widget = UIWidget.init(widget_definition)
 
-			tbl_4[#tbl_4 + 1] = var_7_6
-			tbl[#tbl + 1] = var_7_6
-			tbl_2[k_3] = var_7_6
+			player_widgets[#player_widgets + 1] = widget
+			widgets[#widgets + 1] = widget
+			widgets_by_name[name] = widget
 		end
 	end
 
-	local get_own_peer_id = self._deus_run_controller:get_own_peer_id()
-	local get_player_profile, var_7_9 = self._deus_run_controller:get_player_profile(get_own_peer_id, num_6)
-	local tbl_5 = {
+	local local_peer_id = self._deus_run_controller:get_own_peer_id()
+	local profile_index, career_index = self._deus_run_controller:get_player_profile(local_peer_id, REAL_PLAYER_LOCAL_ID)
+	local shop_items = {
 		power_ups = {},
 		blessings = {}
 	}
-	local DeusPowerUpTemplates = DeusPowerUpTemplates
-	local tbl_6 = {}
-	local count = #arg_7_2
+	local power_up_templates = DeusPowerUpTemplates
+	local shop_item_widgets = {}
+	local num_power_ups = #power_ups
 
-	for i6 = 1, count do
-		local var_7_14 = arg_7_2[i6]
-		local rectangular_icon = DeusPowerUpTemplates[var_7_14.name].rectangular_icon
-		local size = var_0_0.scenegraph_definition.power_up_root.size
-		local create_power_up_shop_item = var_0_0.create_power_up_shop_item("power_up_root", size, false, rectangular_icon)
-		local var_7_18 = UIWidget.init(create_power_up_shop_item)
-		local num = i6 - 1
-		local num_2 = count - 1
-		local rad = math.rad(num / num_2 * 180)
-		local num_3 = 60
-		local num_4 = 0
-		local num_5 = ((size[2] + num_4) * count + size[2]) / 2
+	for i = 1, num_power_ups do
+		local power_up = power_ups[i]
+		local power_up_template = power_up_templates[power_up.name]
+		local is_rectangular_icon = power_up_template.rectangular_icon
+		local widget_size = definitions.scenegraph_definition.power_up_root.size
+		local widget_definition = definitions.create_power_up_shop_item("power_up_root", widget_size, false, is_rectangular_icon)
+		local widget = UIWidget.init(widget_definition)
+		local step = i - 1
+		local max_steps = num_power_ups - 1
+		local rad = math.rad(step / max_steps * 180)
+		local max_spacing_x = 60
+		local spacing_y = 0
+		local widget_offset_y = widget_size[2] + spacing_y
+		local max_spacing_y = widget_offset_y * num_power_ups + widget_size[2]
+		local init_pos_y = max_spacing_y / 2
 
-		var_7_18.offset = {
-			num_3 * math.sin(rad),
-			num_5 - (num_4 + size[2]) * i6,
+		widget.offset = {
+			max_spacing_x * math.sin(rad),
+			init_pos_y - (spacing_y + widget_size[2]) * i,
 			0
 		}
 
-		local flag = not (i6 <= arg_7_1.max_discounts) and arg_7_1.power_up_discount
-		local var_7_26
-		local num_7 = 0
+		local has_discount = i <= shop_settings.max_discounts
+		local discount = not not has_discount and not not shop_settings.power_up_discount
+		local max_value
+		local current_value = 0
 
-		self:_init_power_up_widget(var_7_18, var_7_14, flag, num_7, var_7_26, get_player_profile, var_7_9)
+		self:_init_power_up_widget(widget, power_up, discount, current_value, max_value, profile_index, career_index)
 
-		tbl[#tbl + 1] = var_7_18
-		tbl_6[#tbl_6 + 1] = var_7_18
-		tbl_2["power_up_item_" .. i6] = var_7_18
-		tbl_5.power_ups[#tbl_5.power_ups + 1] = {
-			widget = var_7_18,
-			power_up = var_7_14,
-			discount = flag
+		widgets[#widgets + 1] = widget
+		shop_item_widgets[#shop_item_widgets + 1] = widget
+		widgets_by_name["power_up_item_" .. i] = widget
+		shop_items.power_ups[#shop_items.power_ups + 1] = {
+			widget = widget,
+			power_up = power_up,
+			discount = discount
 		}
 	end
 
-	local tbl_7 = {}
-	local count_2 = #arg_7_3
+	local blessing_frame_widgets = {}
+	local num_blessings = #blessings
 
-	for i7 = 1, count_2 do
-		local size_2 = var_0_0.scenegraph_definition.blessing_root.size
-		local create_blessing_shop_item = var_0_0.create_blessing_shop_item("blessing_root", size_2, false)
-		local var_7_32 = UIWidget.init(create_blessing_shop_item)
-		local num_8 = 15
-		local num_9 = ((size_2[2] + num_8) * count_2 + size_2[2]) / 2
+	for i = 1, num_blessings do
+		local widget_size = definitions.scenegraph_definition.blessing_root.size
+		local widget_definition = definitions.create_blessing_shop_item("blessing_root", widget_size, false)
+		local widget = UIWidget.init(widget_definition)
+		local spacing_y = 15
+		local widget_offset_y = widget_size[2] + spacing_y
+		local max_spacing_y = widget_offset_y * num_blessings + widget_size[2]
+		local init_pos_y = max_spacing_y / 2
 
-		var_7_32.offset = {
+		widget.offset = {
 			0,
-			num_9 - (num_8 + size_2[2]) * i7,
+			init_pos_y - (spacing_y + widget_size[2]) * i,
 			0
 		}
 
-		local var_7_35 = arg_7_3[i7]
-		local offset = var_7_32.offset
-		local tbl_8 = {
+		local blessing_name = blessings[i]
+		local widget_offset = widget.offset
+		local relative_offset = {
 			541,
 			75,
 			10
 		}
-		local tbl_9 = {
-			offset[1] + tbl_8[1],
-			offset[2] + tbl_8[2],
-			offset[3] + tbl_8[3]
-		}
-		local create_blessing_portraits_frame = var_0_0.create_blessing_portraits_frame("blessing_root", "default", "-", false, tbl_9)
-		local var_7_40 = UIWidget.init(create_blessing_portraits_frame)
+		local frame_offset = {}
 
-		var_7_32.content.frame_index = i7
-		tbl_7[#tbl_7 + 1] = var_7_40
-		tbl_2[var_7_35 .. "_portrait_frame_" .. i7] = var_7_40
+		frame_offset[1] = widget_offset[1] + relative_offset[1]
+		frame_offset[2] = widget_offset[2] + relative_offset[2]
+		frame_offset[3] = widget_offset[3] + relative_offset[3]
 
-		self:_init_blessing_widget(var_7_32, var_7_35)
+		local frame_widget_definition = definitions.create_blessing_portraits_frame("blessing_root", "default", "-", false, frame_offset)
+		local frame_widget = UIWidget.init(frame_widget_definition)
 
-		tbl[#tbl + 1] = var_7_32
-		tbl_6[#tbl_6 + 1] = var_7_32
-		tbl_2["blessing_item_" .. i7] = var_7_32
-		tbl_5.blessings[#tbl_5.blessings + 1] = {
-			widget = var_7_32,
-			blessing_name = var_7_35
+		widget.content.frame_index = i
+		blessing_frame_widgets[#blessing_frame_widgets + 1] = frame_widget
+		widgets_by_name[blessing_name .. "_portrait_frame_" .. i] = frame_widget
+
+		self:_init_blessing_widget(widget, blessing_name)
+
+		widgets[#widgets + 1] = widget
+		shop_item_widgets[#shop_item_widgets + 1] = widget
+		widgets_by_name["blessing_item_" .. i] = widget
+		shop_items.blessings[#shop_items.blessings + 1] = {
+			widget = widget,
+			blessing_name = blessing_name
 		}
 	end
 
-	local get_peers = self._deus_run_controller:get_peers()
-	local tbl_10 = {}
+	local peers = self._deus_run_controller:get_peers()
+	local portrait_frame_widgets = {}
 
-	for i8 = 1, 4 do
-		local str = "player_portrait_frame_" .. i8
-		local var_7_44
-		local var_7_45
+	for i = 1, 4 do
+		local name = "player_portrait_frame_" .. i
+		local widget_definition, widget
 
-		if not get_peers[i8] then
-			local get_player_profile_2, var_7_47 = self._deus_run_controller:get_player_profile(get_peers[i8], num_6)
-			local get_player_level = self._deus_run_controller:get_player_level(get_peers[i8], get_player_profile_2)
+		if peers[i] then
+			local profile_index, career_index = self._deus_run_controller:get_player_profile(peers[i], REAL_PLAYER_LOCAL_ID)
+			local get_player_level = self._deus_run_controller:get_player_level(peers[i], profile_index)
 
-			get_player_level = get_player_level or "n/a"
+			if not get_player_level then
+				-- Nothing
+			end
 
-			local get_player_frame = self._deus_run_controller:get_player_frame(get_peers[i8], get_player_profile_2, var_7_47)
+			get_player_level = "n/a"
 
-			var_7_44 = UIWidgets.deus_create_player_portraits_frame("player_portrait_" .. i8, get_player_frame, get_player_level, false)
+			local level_text = get_player_level
+
+			::label_7_0::
+
+			local frame_settings_name = self._deus_run_controller:get_player_frame(peers[i], profile_index, career_index)
+
+			widget_definition = UIWidgets.deus_create_player_portraits_frame("player_portrait_" .. i, frame_settings_name, level_text, false)
 		else
-			var_7_44 = UIWidgets.deus_create_player_portraits_frame("player_portrait_" .. i8, "default", " ", false)
+			widget_definition = UIWidgets.deus_create_player_portraits_frame("player_portrait_" .. i, "default", " ", false)
 		end
 
-		local var_7_50 = UIWidget.init(var_7_44)
-
-		tbl_10[#tbl_10 + 1] = var_7_50
-		tbl_2[str] = var_7_50
+		widget = UIWidget.init(widget_definition)
+		portrait_frame_widgets[#portrait_frame_widgets + 1] = widget
+		widgets_by_name[name] = widget
 	end
 
-	self._blessing_frame_widgets = tbl_7
-	self._portrait_frame_widgets = tbl_10
-	self._shop_items = tbl_5
-	self._shop_item_widgets = tbl_6
-	self._widgets = tbl
-	self._top_widgets = tbl_3
-	self._widgets_by_name = tbl_2
+	self._blessing_frame_widgets = blessing_frame_widgets
+	self._portrait_frame_widgets = portrait_frame_widgets
+	self._shop_items = shop_items
+	self._shop_item_widgets = shop_item_widgets
+	self._widgets = widgets
+	self._top_widgets = top_widgets
+	self._widgets_by_name = widgets_by_name
 
 	UIRenderer.clear_scenegraph_queue(self.ui_renderer)
 
-	if not arg_7_4 then
-		local _create_background_unit_definition = self:_create_background_unit_definition()
+	if background_unit_settings then
+		local background_unit_definition = self:_create_background_unit_definition()
 
-		self._background_unit_widget = UIWidget.init(_create_background_unit_definition)
+		self._background_unit_widget = UIWidget.init(background_unit_definition)
 
-		local unit_name = arg_7_4.unit_name
-		local unit_package = arg_7_4.unit_package
+		local unit_name = background_unit_settings.unit_name
+		local unit_package = background_unit_settings.unit_package
 
 		self._unit_previewer = self:_create_unit_previewer(self._background_unit_widget, unit_name, unit_package)
 
@@ -413,60 +430,62 @@ DeusShopView._create_ui_elements = function (self, arg_7_1, arg_7_2, arg_7_3, ar
 
 	local _purchased_boons = self._purchased_boons
 
-	_purchased_boons = _purchased_boons or {}
+	_purchased_boons = not not _purchased_boons or not not {}
 	self._purchased_boons = _purchased_boons
 	self._total_num_power_ups = nil
 
 	self:_update_power_ups()
 end
 
-DeusShopView.update = function (self, arg_8_1, arg_8_2)
+DeusShopView.update = function (self, dt, t)
 	-- function 8
-	local get_server = self._shared_state:get_server(self._shared_state:get_key("shop_state"))
+	local state = self._shared_state:get_server(self._shared_state:get_key("shop_state"))
 
-	self:_update_countdowns(get_server, arg_8_1, arg_8_2)
+	self:_update_countdowns(state, dt, t)
 
-	if not self._is_server then
-		local _check_transition = self:_check_transition(get_server)
+	if self._is_server then
+		local new_state = self:_check_transition(state)
 
-		if _check_transition ~= get_server then
-			self._shared_state:set_server(self._shared_state:get_key("shop_state"), _check_transition)
+		if new_state ~= state then
+			self._shared_state:set_server(self._shared_state:get_key("shop_state"), new_state)
 
-			get_server = _check_transition
+			state = new_state
 		end
 	end
 
-	if get_server == tbl_3.STARTING then
-		self:_update_during_starting(arg_8_1, arg_8_2)
-	elseif get_server == tbl_3.SELECTING then
-		self:_update_during_selecting(arg_8_1, arg_8_2)
-	elseif get_server == tbl_3.FINISHING then
-		self:_update_during_finishing(arg_8_1, arg_8_2)
-	elseif not (get_server ~= tbl_3.FINISHED or self._finished) then
+	if state == states.STARTING then
+		self:_update_during_starting(dt, t)
+	elseif state == states.SELECTING then
+		self:_update_during_selecting(dt, t)
+	elseif state == states.FINISHING then
+		self:_update_during_finishing(dt, t)
+	elseif state == states.FINISHED and not self._finished then
 		self:_finish()
 
 		self._finished = true
 	end
 
-	local _unit_previewer = self._unit_previewer
+	local unit_previewer = self._unit_previewer
 
-	if not _unit_previewer then
-		_unit_previewer:update(arg_8_1, arg_8_2, false)
+	if unit_previewer then
+		unit_previewer:update(dt, t, false)
 	end
 
-	self:_handle_mode_input(arg_8_1, arg_8_2)
+	self:_handle_mode_input(dt, t)
 	self:_update_player_data()
 	self:_update_hold_text()
-	self:_update_input_helper_text(arg_8_1, arg_8_2)
-	self:_update_background_animations(arg_8_1)
-	self:_update_animations(arg_8_1)
+	self:_update_input_helper_text(dt, t)
+	self:_update_background_animations(dt)
+	self:_update_animations(dt)
 	self:_update_power_ups()
-	self:_draw(arg_8_1, arg_8_2)
+	self:_draw(dt, t)
 end
 
-DeusShopView._handle_mode_input = function (self, arg_9_1, arg_9_2)
+DeusShopView._handle_mode_input = function (self, dt, t)
 	-- function 9
-	if not self:input_service():get("cycle_next_raw") then
+	local input_service = self:input_service()
+
+	if input_service:get("cycle_next_raw") then
 		if not self._ui_animator:is_animation_completed(self._anim_id) then
 			self._ui_animator:stop_animation(self._anim_id)
 		end
@@ -476,175 +495,184 @@ DeusShopView._handle_mode_input = function (self, arg_9_1, arg_9_2)
 		local start_animation = _ui_animator.start_animation
 		local flag
 
-		flag = not self._portrait_mode and "switch_to_boons" and "switch_to_portraits"
-		self._anim_id = start_animation(var_9_1, flag, self._widgets_by_name, var_0_0.scenegraph_definition)
+		flag = (not self._portrait_mode or not "switch_to_boons") and not not "switch_to_portraits"
+		self._anim_id = start_animation(var_9_1, flag, self._widgets_by_name, definitions.scenegraph_definition)
 		self._portrait_mode = not self._portrait_mode
 	end
 end
 
 DeusShopView._update_power_ups = function (self)
 	-- function 10
-	local _deus_run_controller = self._deus_run_controller
-	local get_own_peer_id = _deus_run_controller:get_own_peer_id()
-	local get_player_power_ups = _deus_run_controller:get_player_power_ups(get_own_peer_id, num_6)
-	local get_party_power_ups = _deus_run_controller:get_party_power_ups()
-	local get_player_profile, var_10_5 = _deus_run_controller:get_player_profile(get_own_peer_id, num_6)
-	local num = #get_player_power_ups + #get_party_power_ups
+	local run_controller = self._deus_run_controller
+	local peer_id = run_controller:get_own_peer_id()
+	local power_ups = run_controller:get_player_power_ups(peer_id, REAL_PLAYER_LOCAL_ID)
+	local party_power_ups = run_controller:get_party_power_ups()
+	local profile_index, career_index = run_controller:get_player_profile(peer_id, REAL_PLAYER_LOCAL_ID)
+	local total_num_power_ups = #power_ups + #party_power_ups
 
-	if num ~= self._total_num_power_ups then
-		local tbl = {}
+	if total_num_power_ups ~= self._total_num_power_ups then
+		local power_up_widgets = {}
 
-		if num > 0 then
-			local var_10_8 = Managers.mechanism:game_mechanism():get_deus_run_controller():get_own_initial_talents()[SPProfiles[get_player_profile].careers[var_10_5].name]
-			local tbl_2 = {}
+		if total_num_power_ups > 0 then
+			local mechanism = Managers.mechanism:game_mechanism()
+			local deus_run_controller = mechanism:get_deus_run_controller()
+			local initial_talents = deus_run_controller:get_own_initial_talents()
+			local profile = SPProfiles[profile_index]
+			local career_name = profile.careers[career_index].name
+			local initial_talents_for_career = initial_talents[career_name]
+			local talent_power_ups = {}
 
-			for i = 1, #var_10_8 do
-				local var_10_10 = var_10_8[i]
+			for tier = 1, #initial_talents_for_career do
+				local column = initial_talents_for_career[tier]
 
-				if var_10_10 ~= 0 then
-					local get_talent_power_up_from_tier_and_column, var_10_12 = DeusPowerUpUtils.get_talent_power_up_from_tier_and_column(i, var_10_10)
+				if column ~= 0 then
+					local power_up, _ = DeusPowerUpUtils.get_talent_power_up_from_tier_and_column(tier, column)
 
-					tbl_2[get_talent_power_up_from_tier_and_column.name] = true
+					talent_power_ups[power_up.name] = true
 				end
 			end
 
-			local RaritySettings = RaritySettings
+			local rarity_settings = RaritySettings
 
-			table.sort(get_player_power_ups, function (self, arg_11_1)
+			table.sort(power_ups, function (a, b)
 				-- function 11
-				local order = RaritySettings[self.rarity].order
-				local order_2 = RaritySettings[arg_11_1.rarity].order
+				local rarity_order_a = rarity_settings[a.rarity].order
+				local rarity_order_b = rarity_settings[b.rarity].order
 
-				if order == order_2 then
-					return self.name < arg_11_1.name
+				if rarity_order_a == rarity_order_b then
+					return a.name < b.name
 				else
-					return order_2 < order
+					return rarity_order_b < rarity_order_a
 				end
 			end)
 
-			local DeusPowerUpTemplates = DeusPowerUpTemplates
-			local num_2 = #get_player_power_ups + #get_party_power_ups
-			local num_3 = Managers.time:time("main") * 2
+			local power_up_templates = DeusPowerUpTemplates
+			local num_power_ups = #power_ups + #party_power_ups
+			local t = Managers.time:time("main") * 2
 
-			for j = 1, num_2 do
-				local var_10_17
-				local flag = false
+			for i = 1, num_power_ups do
+				local power_up_instance
+				local is_party_power_up = false
 
-				if j <= #get_player_power_ups then
-					var_10_17 = get_player_power_ups[j]
+				if i <= #power_ups then
+					power_up_instance = power_ups[i]
 				else
-					var_10_17 = get_party_power_ups[j - #get_player_power_ups]
-					flag = true
+					power_up_instance = party_power_ups[i - #power_ups]
+					is_party_power_up = true
 				end
 
-				local var_10_19 = DeusPowerUps[var_10_17.rarity][var_10_17.name]
-				local get_power_up_name_text, var_10_21 = DeusPowerUpUtils.get_power_up_name_text(var_10_19.name, var_10_19.talent_index, var_10_19.talent_tier, get_player_profile, var_10_5)
-				local get_power_up_icon = DeusPowerUpUtils.get_power_up_icon(var_10_19, get_player_profile, var_10_5)
-				local get_table = Colors.get_table(var_10_19.rarity)
-				local rectangular_icon = DeusPowerUpTemplates[var_10_19.name].rectangular_icon
+				local power_up = DeusPowerUps[power_up_instance.rarity][power_up_instance.name]
+				local title_text, sub_text = DeusPowerUpUtils.get_power_up_name_text(power_up.name, power_up.talent_index, power_up.talent_tier, profile_index, career_index)
+				local icon = DeusPowerUpUtils.get_power_up_icon(power_up, profile_index, career_index)
+				local text_color = Colors.get_table(power_up.rarity)
+				local power_up_template = power_up_templates[power_up.name]
+				local is_rectangular_icon = power_up_template.rectangular_icon
 				local rectangular_power_up_widget_data
 
-				if not rectangular_icon then
-					rectangular_power_up_widget_data = var_0_0.rectangular_power_up_widget_data
+				if is_rectangular_icon then
+					rectangular_power_up_widget_data = definitions.rectangular_power_up_widget_data
 
 					if not rectangular_power_up_widget_data then
 						-- Nothing
 					end
 				end
 
-				rectangular_power_up_widget_data = var_0_0.round_power_up_widget_data
+				rectangular_power_up_widget_data = definitions.round_power_up_widget_data
+
+				local widget_data = rectangular_power_up_widget_data
 
 				::label_10_0::
 
-				local flag_2 = true
-				local flag_3 = true
-				local tbl_3 = {
+				local hide_text = true
+				local masked = true
+				local icon_hotspot = {
 					color = {
 						255,
 						138,
 						172,
 						235
 					},
-					offset = var_0_0.rectangular_power_up_widget_data.icon_offset,
-					texture_size = var_0_0.rectangular_power_up_widget_data.icon_size
+					offset = definitions.rectangular_power_up_widget_data.icon_offset,
+					texture_size = definitions.rectangular_power_up_widget_data.icon_size
 				}
-				local str = "own_power_up_anchor"
-				local create_icon_info_box = UIWidgets.create_icon_info_box(str, get_power_up_icon, rectangular_power_up_widget_data.icon_size, rectangular_power_up_widget_data.icon_offset, rectangular_power_up_widget_data.background_icon, rectangular_power_up_widget_data.background_icon_size, rectangular_power_up_widget_data.background_icon_offset, var_10_21, get_power_up_name_text, get_table, rectangular_power_up_widget_data.width, rectangular_icon, flag_2, flag_3, tbl_3)
-				local var_10_31 = UIWidget.init(create_icon_info_box)
+				local scenegraph_id = "own_power_up_anchor"
+				local widget_definition = UIWidgets.create_icon_info_box(scenegraph_id, icon, widget_data.icon_size, widget_data.icon_offset, widget_data.background_icon, widget_data.background_icon_size, widget_data.background_icon_offset, sub_text, title_text, text_color, widget_data.width, is_rectangular_icon, hide_text, masked, icon_hotspot)
+				local widget = UIWidget.init(widget_definition)
 
-				var_10_31.content.power_up_name = var_10_19.name
-				var_10_31.content.power_up_rarity = var_10_19.rarity
+				widget.content.power_up_name = power_up.name
+				widget.content.power_up_rarity = power_up.rarity
 
-				local content = var_10_31.content
+				local content = widget.content
 
-				if not flag then
+				if not is_party_power_up then
 					-- Nothing
 				end
 
 				::label_10_1::
 
-				local var_10_33 = tbl_2[var_10_19.name]
+				local var_10_2 = talent_power_ups[power_up.name]
 
-				var_10_33 = var_10_33 or self._purchased_boons[var_10_19.name]
+				var_10_2 = not not var_10_2 or not not self._purchased_boons[power_up.name]
 
 				::label_10_2::
 
-				content.locked = var_10_33
+				content.locked = var_10_2
 
-				local content_2 = var_10_31.content
-				local flag_4
+				local content_2 = widget.content
+				local flag
 
-				flag_4 = not flag and "party_locked" and not tbl_2[var_10_19.name] or "talent_locked" and not self._purchased_boons[var_10_19.name] and "deus_shrine_unlocked" and "search_filter_locked"
-				content_2.locked_text_id = flag_4
+				flag = (not is_party_power_up or not "party_locked") and (not talent_power_ups[power_up.name] or not "talent_locked") and (not self._purchased_boons[power_up.name] or not "deus_shrine_unlocked") and not not "search_filter_locked"
+				content_2.locked_text_id = flag
 
-				local num_4 = (j - 1) % 2
+				local column = (i - 1) % 2
 
-				var_10_31.offset[1] = num_4 * (var_0_0.power_up_widget_size[1] + var_0_0.power_up_widget_spacing[1])
-				var_10_31.offset[2] = -math.floor((j - 1) / 2) * (var_0_0.power_up_widget_size[2] + var_0_0.power_up_widget_spacing[2])
-				tbl[#tbl + 1] = var_10_31
-				self._widgets_by_name[str] = var_10_31
+				widget.offset[1] = column * (definitions.power_up_widget_size[1] + definitions.power_up_widget_spacing[1])
+				widget.offset[2] = -math.floor((i - 1) / 2) * (definitions.power_up_widget_size[2] + definitions.power_up_widget_spacing[2])
+				power_up_widgets[#power_up_widgets + 1] = widget
+				self._widgets_by_name[scenegraph_id] = widget
 			end
 		end
 
-		self._total_num_power_ups = num
-		self._power_up_widgets = tbl
-		self._power_ups = get_player_power_ups
-		self._party_power_ups = get_party_power_ups
+		self._total_num_power_ups = total_num_power_ups
+		self._power_up_widgets = power_up_widgets
+		self._power_ups = power_ups
+		self._party_power_ups = party_power_ups
 
-		local num_5 = math.ceil(self._total_num_power_ups / 2) * (var_0_0.power_up_widget_size[2] + var_0_0.power_up_widget_spacing[2]) - self.ui_scenegraph.own_power_up_window.size[2]
+		local excess = math.ceil(self._total_num_power_ups / 2) * (definitions.power_up_widget_size[2] + definitions.power_up_widget_spacing[2]) - self.ui_scenegraph.own_power_up_window.size[2]
 
-		if num_5 > 0 then
+		if excess > 0 then
 			local ui_scenegraph = self.ui_scenegraph
-			local str_2 = "own_power_up_anchor"
-			local str_3 = "own_power_up_window"
-			local var_10_41 = num_5
-			local flag_5 = false
-			local var_10_43
-			local var_10_44
-			local flag_6 = true
+			local scroll_area_scenegraph_id = "own_power_up_anchor"
+			local scroll_area_anchor_scenegraph_id = "own_power_up_window"
+			local excess_area = excess
+			local enable_auto_scroll = false
+			local optional_scroll_area_hotspot_widget, horizontal_scrollbar
+			local left_aligned = true
 
-			self._scrollbar_ui = ScrollbarUI:new(ui_scenegraph, str_2, str_3, var_10_41, flag_5, var_10_43, var_10_44, flag_6)
+			self._scrollbar_ui = ScrollbarUI:new(ui_scenegraph, scroll_area_scenegraph_id, scroll_area_anchor_scenegraph_id, excess_area, enable_auto_scroll, optional_scroll_area_hotspot_widget, horizontal_scrollbar, left_aligned)
 		else
 			self._scrollbar_ui = nil
 		end
 	end
 end
 
-DeusShopView.post_update = function (self, arg_12_1, arg_12_2)
+DeusShopView.post_update = function (self, dt, t)
 	-- function 12
-	if not self._unit_previewer then
-		self._unit_previewer:post_update(arg_12_1, arg_12_2)
+	if self._unit_previewer then
+		self._unit_previewer:post_update(dt, t)
 	end
 end
 
-DeusShopView._update_animations = function (self, arg_13_1)
+DeusShopView._update_animations = function (self, dt)
 	-- function 13
-	self._ui_animator:update(arg_13_1)
+	local ui_animator = self._ui_animator
+
+	ui_animator:update(dt)
 end
 
 DeusShopView.destroy_idol = function (self)
 	-- function 14
-	if not self._background_unit_widget then
+	if self._background_unit_widget then
 		self._unit_previewer:destroy()
 
 		self._unit_previewer = nil
@@ -659,9 +687,9 @@ DeusShopView.destroy = function (self)
 	-- function 15
 	self:destroy_idol()
 
-	local get_server = self._shared_state:get_server(self._shared_state:get_key("shop_state"))
+	local state = self._shared_state:get_server(self._shared_state:get_key("shop_state"))
 
-	if not (get_server == tbl_3.FINISHED or get_server == tbl_3.INITIALIZED) then
+	if state ~= states.FINISHED and state ~= states.INITIALIZED then
 		self:_release_input()
 	end
 
@@ -680,14 +708,14 @@ DeusShopView.input_service = function (self)
 	return self._input_manager:get_service(self._input_service_name)
 end
 
-DeusShopView._finish = function (self, arg_17_1)
+DeusShopView._finish = function (self, data)
 	-- function 17
-	local _finish_cb = self._finish_cb
+	local finish_cb = self._finish_cb
 
-	if not _finish_cb then
+	if finish_cb then
 		self._finish_cb = nil
 
-		_finish_cb(arg_17_1)
+		finish_cb(data)
 	end
 
 	self:_release_input()
@@ -695,106 +723,139 @@ DeusShopView._finish = function (self, arg_17_1)
 	Managers.telemetry_events:store_node_traversed(self._telemetry_data)
 end
 
-DeusShopView._init_power_up_widget = function (self, arg_18_1, arg_18_2, arg_18_3, arg_18_4, arg_18_5, arg_18_6, arg_18_7)
+DeusShopView._init_power_up_widget = function (self, widget, power_up_instance, discount, current_value, max_value, profile_index, career_index)
 	-- function 18
-	local var_18_0 = DeusPowerUps[arg_18_2.rarity][arg_18_2.name]
-	local rarity = var_18_0.rarity
-	local content = arg_18_1.content
+	local power_up = DeusPowerUps[power_up_instance.rarity][power_up_instance.name]
+	local rarity = power_up.rarity
+	local content = widget.content
 
-	content.title_text = DeusPowerUpUtils.get_power_up_name_text(var_18_0.name, var_18_0.talent_index, var_18_0.talent_tier, arg_18_6, arg_18_7)
+	content.title_text = DeusPowerUpUtils.get_power_up_name_text(power_up.name, power_up.talent_index, power_up.talent_tier, profile_index, career_index)
 	content.rarity_text = Localize(RaritySettings[rarity].display_name)
-	content.sub_text = DeusPowerUpUtils.get_power_up_description(var_18_0, arg_18_6, arg_18_7)
+	content.sub_text = DeusPowerUpUtils.get_power_up_description(power_up, profile_index, career_index)
 	content.max_value_text = nil
 	content.current_value_text = nil
-	content.has_discount = arg_18_3
-	content.icon = DeusPowerUpUtils.get_power_up_icon(var_18_0, arg_18_6, arg_18_7)
+	content.has_discount = discount
+	content.icon = DeusPowerUpUtils.get_power_up_icon(power_up, profile_index, career_index)
 
-	local var_18_3 = DeusCostSettings.shop.power_ups[rarity]
+	local var_18_0 = DeusCostSettings.shop.power_ups[rarity]
 
-	var_18_3 = var_18_3 or 9001
-
-	if not arg_18_3 then
-		var_18_3 = var_18_3 - var_18_3 * arg_18_3
+	if not var_18_0 then
+		-- Nothing
 	end
 
-	content.price_text = tostring(var_18_3)
+	var_18_0 = 9001
 
-	local style = arg_18_1.style
-	local get_table = Colors.get_table(rarity)
+	local price = var_18_0
 
-	style.rarity_text.text_color = get_table
+	::label_18_0::
 
-	if not arg_18_3 then
-		style.price_text.text_color = var_0_0.discount_text_color
+	if discount then
+		price = price - price * discount
 	end
 
-	if not (not arg_18_5 and arg_18_4) then
-		local var_18_6 = var_0_0.single_price_offset[2]
+	content.price_text = tostring(price)
 
-		style.price_icon.offset[2] = style.price_icon.offset[2] + var_18_6
-		style.price_text.offset[2] = style.price_text.offset[2] + var_18_6
-		style.price_text_shadow.offset[2] = style.price_text_shadow.offset[2] + var_18_6
-		style.price_text_disabled.offset[2] = style.price_text_disabled.offset[2] + var_18_6
+	local style = widget.style
+	local rarity_color = Colors.get_table(rarity)
+
+	style.rarity_text.text_color = rarity_color
+
+	if discount then
+		style.price_text.text_color = definitions.discount_text_color
 	end
 
-	local var_18_7 = DeusPowerUpSetLookup[arg_18_2.rarity]
+	if not max_value or not current_value then
+		local offset_y = definitions.single_price_offset[2]
 
-	var_18_7 = not var_18_7 and DeusPowerUpSetLookup[arg_18_2.rarity][arg_18_2.name]
+		style.price_icon.offset[2] = style.price_icon.offset[2] + offset_y
+		style.price_text.offset[2] = style.price_text.offset[2] + offset_y
+		style.price_text_shadow.offset[2] = style.price_text_shadow.offset[2] + offset_y
+		style.price_text_disabled.offset[2] = style.price_text_disabled.offset[2] + offset_y
+	end
 
-	local flag = false
+	local var_18_1 = DeusPowerUpSetLookup[power_up_instance.rarity]
 
-	if not var_18_7 then
-		local var_18_9 = var_18_7[1]
-		local num = 0
-		local pieces = var_18_9.pieces
+	if var_18_1 then
+		-- Nothing
+	end
 
-		for i, v in ipairs(pieces) do
-			local name = v.name
-			local rarity_2 = v.rarity
-			local get_own_peer_id = self._deus_run_controller:get_own_peer_id()
+	var_18_1 = DeusPowerUpSetLookup[power_up_instance.rarity][power_up_instance.name]
 
-			if not self._deus_run_controller:has_power_up_by_name(get_own_peer_id, name, rarity_2) then
-				num = num + 1
+	local power_up_sets = var_18_1
+
+	::label_18_1::
+
+	local is_part_of_set = false
+
+	if power_up_sets then
+		local set = power_up_sets[1]
+		local piece_count = 0
+		local pieces = set.pieces
+
+		for _, piece in ipairs(pieces) do
+			local name, rarity = piece.name, piece.rarity
+			local local_peer_id = self._deus_run_controller:get_own_peer_id()
+
+			if self._deus_run_controller:has_power_up_by_name(local_peer_id, name, rarity) then
+				piece_count = piece_count + 1
 			end
 		end
 
-		flag = true
+		is_part_of_set = true
 
-		local num_required_pieces = var_18_9.num_required_pieces
+		local num_required_pieces_2 = set.num_required_pieces
 
-		num_required_pieces = num_required_pieces or #pieces
-		arg_18_1.content.set_progression = Localize("set_bonus_boons") .. " " .. string.format(Localize("set_counter_boons"), num, num_required_pieces)
+		if not num_required_pieces_2 then
+			-- Nothing
+		end
 
-		if #pieces == num then
-			arg_18_1.style.set_progression.text_color = arg_18_1.style.set_progression.progression_colors.complete
+		num_required_pieces_2 = #pieces
+
+		local num_required_pieces = num_required_pieces_2
+
+		::label_18_2::
+
+		widget.content.set_progression = Localize("set_bonus_boons") .. " " .. string.format(Localize("set_counter_boons"), piece_count, num_required_pieces)
+
+		if #pieces == piece_count then
+			widget.style.set_progression.text_color = widget.style.set_progression.progression_colors.complete
 		end
 	end
 
-	arg_18_1.content.is_part_of_set = flag
+	widget.content.is_part_of_set = is_part_of_set
 end
 
-DeusShopView._init_blessing_widget = function (arg_19_0, arg_19_1, arg_19_2)
+DeusShopView._init_blessing_widget = function (self, widget, blessing_name)
 	-- function 19
-	local content = arg_19_1.content
-	local var_19_1 = DeusBlessingSettings[arg_19_2]
+	local content = widget.content
+	local blessing_settings = DeusBlessingSettings[blessing_name]
 
-	content.title_text = Localize(var_19_1.display_name)
-	content.sub_text = Localize(var_19_1.description)
-	content.icon = var_19_1.shop_icon
+	content.title_text = Localize(blessing_settings.display_name)
+	content.sub_text = Localize(blessing_settings.description)
+	content.icon = blessing_settings.shop_icon
 
-	local var_19_2 = DeusCostSettings.shop.blessings[arg_19_2]
+	local var_19_0 = DeusCostSettings.shop.blessings[blessing_name]
 
-	var_19_2 = var_19_2 or 9001
-	content.price_text = var_19_2
+	if not var_19_0 then
+		-- Nothing
+	end
+
+	var_19_0 = 9001
+
+	local price = var_19_0
+
+	::label_19_0::
+
+	content.price_text = price
 end
 
-DeusShopView._update_countdowns = function (self, arg_20_1, arg_20_2, arg_20_3)
+DeusShopView._update_countdowns = function (self, state, dt, t)
 	-- function 20
-	if arg_20_1 == tbl_3.FINISHING then
+	if state == states.FINISHING then
 		local max
 
-		if not self._final_countdown then
-			max = math.max(0, self._final_countdown - arg_20_2)
+		if self._final_countdown then
+			max = math.max(0, self._final_countdown - dt)
 
 			if not max then
 				-- Nothing
@@ -809,120 +870,127 @@ DeusShopView._update_countdowns = function (self, arg_20_1, arg_20_2, arg_20_3)
 	end
 end
 
-DeusShopView._check_transition = function (self, arg_21_1)
+DeusShopView._check_transition = function (self, state)
 	-- function 21
-	if arg_21_1 == tbl_3.STARTING then
-		if not self:_are_all_peers_ready() then
-			return tbl_3.SELECTING
+	if state == states.STARTING then
+		if self:_are_all_peers_ready() then
+			return states.SELECTING
 		end
-	elseif arg_21_1 == tbl_3.SELECTING then
-		if self._selecting_countdown == 0 or not self:_are_all_peers_done() then
+	elseif state == states.SELECTING then
+		if self._selecting_countdown == 0 or self:_are_all_peers_done() then
 			self._selecting_countdown = 0
 
-			return tbl_3.FINISHING
+			return states.FINISHING
 		end
-	elseif not (arg_21_1 ~= tbl_3.FINISHING or self._final_countdown ~= 0) then
-		return tbl_3.FINISHED
+	elseif state == states.FINISHING and self._final_countdown == 0 then
+		return states.FINISHED
 	end
 
-	return arg_21_1
+	return state
 end
 
-DeusShopView._update_during_starting = function (self, arg_22_1, arg_22_2)
+DeusShopView._update_during_starting = function (self, dt, t)
 	-- function 22
-	local _widgets_by_name = self._widgets_by_name
+	local widgets_by_name = self._widgets_by_name
+	local bottom_text_widget_content = widgets_by_name.bottom_text.content
 
-	_widgets_by_name.bottom_text.content.text = Localize("deus_shrine_waiting_info")
-	_widgets_by_name.ready_button.content.button_hotspot.disable_button = true
+	bottom_text_widget_content.text = Localize("deus_shrine_waiting_info")
+	widgets_by_name.ready_button.content.button_hotspot.disable_button = true
 
 	self:_update_shop_widgets()
 end
 
-DeusShopView._update_during_selecting = function (self, arg_23_1, arg_23_2)
+DeusShopView._update_during_selecting = function (self, dt, t)
 	-- function 23
-	local _widgets_by_name = self._widgets_by_name
+	local widgets_by_name = self._widgets_by_name
+	local bottom_text_widget_content = widgets_by_name.bottom_text.content
 
-	_widgets_by_name.bottom_text.content.text = Localize("deus_shrine_continue_info")
+	bottom_text_widget_content.text = Localize("deus_shrine_continue_info")
 
-	local get_key = self._shared_state:get_key("peer_state")
-	local flag = self._shared_state:get_own(get_key) == tbl_4.DONE_BUYING
+	local key = self._shared_state:get_key("peer_state")
+	local ready_state = self._shared_state:get_own(key) == peer_states.DONE_BUYING
 
-	_widgets_by_name.ready_button.content.button_hotspot.disable_button = flag
+	widgets_by_name.ready_button.content.button_hotspot.disable_button = ready_state
 
-	if not self._selecting_countdown then
-		local num = self._selecting_countdown - arg_23_1
-		local max = math.max(num, 0)
+	if self._selecting_countdown then
+		local new_countdown = self._selecting_countdown - dt
 
-		_widgets_by_name.timer_text.content.text = math.floor(max)
+		new_countdown = math.max(new_countdown, 0)
+		widgets_by_name.timer_text.content.text = math.floor(new_countdown)
 
-		self:_update_vote_hurry_up(max)
+		self:_update_vote_hurry_up(new_countdown)
 
-		self._selecting_countdown = max
-	elseif not self:_did_someone_vote() then
-		self._selecting_countdown = num_7
+		self._selecting_countdown = new_countdown
+	elseif self:_did_someone_vote() then
+		self._selecting_countdown = SELECT_COUNTDOWN
 	end
 
 	self:_update_shop_widgets()
-	self:_handle_input(arg_23_1, arg_23_2)
+	self:_handle_input(dt, t)
 end
 
-DeusShopView._update_vote_hurry_up = function (self, arg_24_1)
+DeusShopView._update_vote_hurry_up = function (self, time_left)
 	-- function 24
-	if not ((self._hurry_up_vo_played or not self._deus_run_controller:is_server()) and not (arg_24_1 < num_9)) then
+	if not self._hurry_up_vo_played and self._deus_run_controller:is_server() and time_left < HURRY_UP_TIME then
 		self._hurry_up_vo_played = true
 
-		local get_key = self._shared_state:get_key("peer_state")
-		local select_array = table.select_array(self._deus_run_controller:get_peers(), function (arg_25_0, arg_25_1)
+		local key = self._shared_state:get_key("peer_state")
+		local ready_peers = table.select_array(self._deus_run_controller:get_peers(), function (_, peer_id)
 			-- function 25
-			if not (not self._human_player_vo_units[arg_25_1] and self._shared_state:get_peer(arg_25_1, get_key) ~= tbl_4.DONE_BUYING) then
-				return arg_25_1
+			local vo_unit = self._human_player_vo_units[peer_id]
+
+			if vo_unit and self._shared_state:get_peer(peer_id, key) == peer_states.DONE_BUYING then
+				return peer_id
 			end
 		end)
 
-		table.shuffle(select_array)
+		table.shuffle(ready_peers)
 
-		if not select_array[1] then
-			local var_24_2 = self._human_player_vo_units[select_array[1]]
+		if ready_peers[1] then
+			local vo_unit = self._human_player_vo_units[ready_peers[1]]
+			local dialogue_input = ScriptUnit.extension_input(vo_unit, "dialogue_system")
 
-			ScriptUnit.extension_input(var_24_2, "dialogue_system"):trigger_networked_dialogue_event("deus_shrine_hurry")
+			dialogue_input:trigger_networked_dialogue_event("deus_shrine_hurry")
 		end
 	end
 end
 
-DeusShopView._update_during_finishing = function (self, arg_26_1, arg_26_2)
+DeusShopView._update_during_finishing = function (self, dt, t)
 	-- function 26
-	local _widgets_by_name = self._widgets_by_name
+	local widgets_by_name = self._widgets_by_name
+	local bottom_text_widget_content = widgets_by_name.bottom_text.content
 
-	_widgets_by_name.bottom_text.content.text = Localize("deus_shrine_continue_in")
-	_widgets_by_name.ready_button.content.button_hotspot.disable_button = true
-	_widgets_by_name.timer_text.content.text = nil
+	bottom_text_widget_content.text = Localize("deus_shrine_continue_in")
+	widgets_by_name.ready_button.content.button_hotspot.disable_button = true
+	widgets_by_name.timer_text.content.text = nil
 
 	self:_update_shop_widgets()
-	self:_handle_input(arg_26_1, arg_26_2)
+	self:_handle_input(dt, t)
 end
 
 DeusShopView._update_shop_widgets = function (self)
 	-- function 27
-	local get_own_peer_id = self._deus_run_controller:get_own_peer_id()
-	local get_player_soft_currency = self._deus_run_controller:get_player_soft_currency(get_own_peer_id)
+	local local_peer_id = self._deus_run_controller:get_own_peer_id()
+	local coins = self._deus_run_controller:get_player_soft_currency(local_peer_id)
+	local coins_widget = self._widgets_by_name.coins_text
 
-	self._widgets_by_name.coins_text.content.text = string.format("%d", get_player_soft_currency)
+	coins_widget.content.text = string.format("%d", coins)
 
-	local _shop_items = self._shop_items
+	local shop_items = self._shop_items
 
-	for i, v in ipairs(_shop_items.power_ups) do
-		local widget = v.widget
-		local power_up = v.power_up
-		local discount = v.discount
-		local _get_power_up_costs = self:_get_power_up_costs(power_up.rarity, discount)
-		local reached_max_power_ups = self._deus_run_controller:reached_max_power_ups(get_own_peer_id, power_up.name)
-		local has_power_up = self._deus_run_controller:has_power_up(get_own_peer_id, power_up.client_id)
+	for _, power_up_data in ipairs(shop_items.power_ups) do
+		local widget = power_up_data.widget
+		local power_up = power_up_data.power_up
+		local discount = power_up_data.discount
+		local costs = self:_get_power_up_costs(power_up.rarity, discount)
+		local max_power_ups_reached = self._deus_run_controller:reached_max_power_ups(local_peer_id, power_up.name)
+		local bought = self._deus_run_controller:has_power_up(local_peer_id, power_up.client_id)
 		local content = widget.content
 
-		if reached_max_power_ups or not has_power_up then
+		if max_power_ups_reached or bought then
 			content.is_bought = true
 			content.button_hotspot.disable_button = true
-		elseif get_player_soft_currency < _get_power_up_costs then
+		elseif coins < costs then
 			content.button_hotspot.disable_button = true
 		else
 			content.is_bought = false
@@ -930,175 +998,188 @@ DeusShopView._update_shop_widgets = function (self)
 		end
 	end
 
-	local get_blessings_with_buyer = self._deus_run_controller:get_blessings_with_buyer()
-	local blessings = DeusCostSettings.shop.blessings
+	local blessings_with_buyer = self._deus_run_controller:get_blessings_with_buyer()
+	local blessing_costs = DeusCostSettings.shop.blessings
 
-	for i_2, v_2 in ipairs(_shop_items.blessings) do
-		local widget_2 = v_2.widget
-		local blessing_name = v_2.blessing_name
-		local var_27_14 = blessings[blessing_name]
+	for _, blessing_data in ipairs(shop_items.blessings) do
+		local widget = blessing_data.widget
+		local blessing_name = blessing_data.blessing_name
+		local var_27_0 = blessing_costs[blessing_name]
 
-		var_27_14 = var_27_14 or 9001
+		if not var_27_0 then
+			-- Nothing
+		end
 
-		local content_2 = widget_2.content
-		local var_27_16 = get_blessings_with_buyer[blessing_name]
+		var_27_0 = 9001
 
-		if not var_27_16 then
-			if not content_2.is_bought then
-				self:_blessing_bought_vo(var_27_16)
+		local costs = var_27_0
+
+		::label_27_0::
+
+		local content = widget.content
+		local buyer = blessings_with_buyer[blessing_name]
+
+		if buyer then
+			if not content.is_bought then
+				self:_blessing_bought_vo(buyer)
 			end
 
-			content_2.is_bought = true
-			content_2.button_hotspot.disable_button = true
+			content.is_bought = true
+			content.button_hotspot.disable_button = true
 
-			local get_player_profile, var_27_18 = self._deus_run_controller:get_player_profile(var_27_16, num_6)
+			local profile_index, career_index = self._deus_run_controller:get_player_profile(buyer, REAL_PLAYER_LOCAL_ID)
 
-			if get_player_profile ~= 0 then
-				local var_27_19 = SPProfiles[get_player_profile].careers[var_27_18]
-				local get_player_name = self._deus_run_controller:get_player_name(var_27_16)
-				local get_player_level = self._deus_run_controller:get_player_level(var_27_16, get_player_profile)
-				local get_player_frame = self._deus_run_controller:get_player_frame(var_27_16, get_player_profile, var_27_18)
-				local offset = widget_2.offset
-				local tbl = {
+			if profile_index ~= 0 then
+				local profile_data = SPProfiles[profile_index]
+				local careers = profile_data.careers
+				local career_data = careers[career_index]
+				local name = self._deus_run_controller:get_player_name(buyer)
+				local level = self._deus_run_controller:get_player_level(buyer, profile_index)
+				local frame = self._deus_run_controller:get_player_frame(buyer, profile_index, career_index)
+				local widget_offset = widget.offset
+				local relative_offset = {
 					541,
 					75,
 					10
 				}
-				local tbl_3 = {
-					offset[1] + tbl[1],
-					offset[2] + tbl[2],
-					offset[3] + tbl[3]
-				}
-				local var_27_26 = self._blessing_frame_widgets[content_2.frame_index]
+				local frame_offset = {}
 
-				if not (var_27_26.content.frame_settings_name ~= get_player_frame or var_27_26.content.level == get_player_level) then
-					self:_update_blessing_portrait_frame(get_player_frame, tostring(get_player_level), blessing_name, content_2.frame_index, tbl_3, content_2.is_bought)
+				frame_offset[1] = widget_offset[1] + relative_offset[1]
+				frame_offset[2] = widget_offset[2] + relative_offset[2]
+				frame_offset[3] = widget_offset[3] + relative_offset[3]
+
+				local blessing_portrait_frame = self._blessing_frame_widgets[content.frame_index]
+
+				if blessing_portrait_frame.content.frame_settings_name ~= frame or blessing_portrait_frame.content.level ~= level then
+					self:_update_blessing_portrait_frame(frame, tostring(level), blessing_name, content.frame_index, frame_offset, content.is_bought)
 				end
 
-				content_2.player_name_text = get_player_name
-				content_2.character_portrait = var_27_19.portrait_image
-				content_2.level = tostring(get_player_level)
+				content.player_name_text = name
+				content.character_portrait = career_data.portrait_image
+				content.level = tostring(level)
 			end
 
-			if not (self._previous_bought_blessings[blessing_name] or var_27_16 == get_own_peer_id) then
-				self:_play_sound(tbl_2.blessing_bought)
+			if not self._previous_bought_blessings[blessing_name] and buyer ~= local_peer_id then
+				self:_play_sound(SOUND_EVENTS.blessing_bought)
 			end
-		elseif get_player_soft_currency < var_27_14 then
-			content_2.button_hotspot.disable_button = true
+		elseif coins < costs then
+			content.button_hotspot.disable_button = true
 		else
-			content_2.button_hotspot.disable_button = false
-			content_2.is_bought = false
+			content.button_hotspot.disable_button = false
+			content.is_bought = false
 		end
 
-		self._previous_bought_blessings[blessing_name] = content_2.is_bought
+		self._previous_bought_blessings[blessing_name] = content.is_bought
 	end
 end
 
-DeusShopView._acquire_input = function (self, arg_28_1)
+DeusShopView._acquire_input = function (self, ignore_cursor_stack)
 	-- function 28
 	self:_release_input(true)
 
-	local _input_manager = self._input_manager
-	local _input_service_name = self._input_service_name
+	local input_manager = self._input_manager
+	local input_service_name = self._input_service_name
 
-	_input_manager:capture_input({
+	input_manager:capture_input({
 		"keyboard",
 		"gamepad",
 		"mouse"
-	}, 1, _input_service_name, "DeusShopView")
+	}, 1, input_service_name, "DeusShopView")
 
-	if not arg_28_1 then
+	if not ignore_cursor_stack then
 		ShowCursorStack.show("DeusShopView")
-		_input_manager:enable_gamepad_cursor()
+		input_manager:enable_gamepad_cursor()
 	end
 
 	self._acquiring_input = true
 end
 
-DeusShopView._blessing_bought_vo = function (self, arg_29_1)
+DeusShopView._blessing_bought_vo = function (self, buyer_peer_id)
 	-- function 29
-	if not self._deus_run_controller:is_server() then
-		local var_29_0 = self._human_player_vo_units[arg_29_1]
+	if self._deus_run_controller:is_server() then
+		local vo_unit = self._human_player_vo_units[buyer_peer_id]
 
-		if not var_29_0 then
-			ScriptUnit.extension_input(var_29_0, "dialogue_system"):trigger_networked_dialogue_event("deus_purchasing_blessing")
+		if vo_unit then
+			local dialogue_input = ScriptUnit.extension_input(vo_unit, "dialogue_system")
+
+			dialogue_input:trigger_networked_dialogue_event("deus_purchasing_blessing")
 		end
 	end
 end
 
-DeusShopView._release_input = function (self, arg_30_1)
+DeusShopView._release_input = function (self, ignore_cursor_stack)
 	-- function 30
-	local _input_manager = self._input_manager
+	local input_manager = self._input_manager
 
-	_input_manager:release_input({
+	input_manager:release_input({
 		"keyboard",
 		"gamepad",
 		"mouse"
 	}, 1, self._input_service_name, "DeusShopView")
 
-	if arg_30_1 or not self._acquiring_input then
+	if not ignore_cursor_stack and self._acquiring_input then
 		ShowCursorStack.hide("DeusShopView")
-		_input_manager:disable_gamepad_cursor()
+		input_manager:disable_gamepad_cursor()
 	end
 
 	self._acquiring_input = false
 end
 
-DeusShopView._update_button_hover_sound = function (self, arg_31_1)
+DeusShopView._update_button_hover_sound = function (self, widget)
 	-- function 31
-	if not UIUtils.is_button_hover_enter(arg_31_1) then
-		self:_play_sound(tbl_2.button_hover)
+	if UIUtils.is_button_hover_enter(widget) then
+		self:_play_sound(SOUND_EVENTS.button_hover)
 	end
 end
 
-DeusShopView._on_blessing_bought = function (self, arg_32_1)
+DeusShopView._on_blessing_bought = function (self, blessing_name)
 	-- function 32
-	self._deus_run_controller:shop_buy_blessing(arg_32_1)
+	self._deus_run_controller:shop_buy_blessing(blessing_name)
 
-	local var_32_0 = DeusCostSettings.shop.blessings[arg_32_1]
+	local cost = DeusCostSettings.shop.blessings[blessing_name]
 
 	table.insert(self._telemetry_data.purchased_blessings, {
-		name = arg_32_1,
-		cost = var_32_0
+		name = blessing_name,
+		cost = cost
 	})
 end
 
-DeusShopView._on_power_up_bought = function (self, arg_33_1, arg_33_2)
+DeusShopView._on_power_up_bought = function (self, power_up, discount)
 	-- function 33
-	self._deus_run_controller:shop_buy_power_up(arg_33_1, arg_33_2)
+	self._deus_run_controller:shop_buy_power_up(power_up, discount)
 
-	local _get_power_up_costs = self:_get_power_up_costs(arg_33_1.rarity, arg_33_2)
+	local cost = self:_get_power_up_costs(power_up.rarity, discount)
 
 	table.insert(self._telemetry_data.purchased_boons, {
-		name = arg_33_1.name,
-		cost = _get_power_up_costs
+		name = power_up.name,
+		cost = cost
 	})
 
-	self._purchased_boons[arg_33_1.name] = true
+	self._purchased_boons[power_up.name] = true
 end
 
-DeusShopView._handle_input = function (self, arg_34_1, arg_34_2)
+DeusShopView._handle_input = function (self, dt, t)
 	-- function 34
-	local _shop_items = self._shop_items
+	local shop_items = self._shop_items
 
-	for i, v in ipairs(_shop_items.power_ups) do
-		local widget = v.widget
-		local flag = false
+	for _, power_up_data in ipairs(shop_items.power_ups) do
+		local widget = power_up_data.widget
+		local purchase_done = false
 
-		if not (not UIUtils.is_button_held(widget) and widget.content.is_bought) then
+		if UIUtils.is_button_held(widget) and not widget.content.is_bought then
 			if not interaction_data.interaction_started then
-				purchase_interaction.start(interaction_data, arg_34_2)
+				purchase_interaction.start(interaction_data, t)
 
-				self._purchasing_power_up_name = v.power_up.name
+				self._purchasing_power_up_name = power_up_data.power_up.name
 			end
 
 			interaction_data.interaction_ongoing = true
 
-			local num = 255 * interaction_data.progress
+			local purchase_progress = 255 * interaction_data.progress
 
-			widget.style.loading_frame.color[1] = num
-			flag = purchase_interaction.update(interaction_data, arg_34_2)
-		elseif not (not self._purchasing_power_up_name and v.power_up.name ~= self._purchasing_power_up_name) then
+			widget.style.loading_frame.color[1] = purchase_progress
+			purchase_done = purchase_interaction.update(interaction_data, t)
+		elseif self._purchasing_power_up_name and power_up_data.power_up.name == self._purchasing_power_up_name then
 			interaction_data.interaction_ongoing = false
 			widget.style.loading_frame.color[1] = 0
 			self._purchasing_power_up_name = nil
@@ -1106,12 +1187,12 @@ DeusShopView._handle_input = function (self, arg_34_1, arg_34_2)
 			purchase_interaction.abort(interaction_data)
 		end
 
-		if not flag then
-			local power_up = v.power_up
-			local discount = v.discount
+		if purchase_done then
+			local power_up = power_up_data.power_up
+			local discount = power_up_data.discount
 
-			self:_on_power_up_bought(power_up, discount or 0)
-			self:_play_sound(tbl_2.power_up_bought)
+			self:_on_power_up_bought(power_up, not not discount or not not 0)
+			self:_play_sound(SOUND_EVENTS.power_up_bought)
 			purchase_interaction.successful(interaction_data)
 
 			self._purchasing_power_up_name = nil
@@ -1120,98 +1201,97 @@ DeusShopView._handle_input = function (self, arg_34_1, arg_34_2)
 		self:_update_button_hover_sound(widget)
 	end
 
-	for i_2, v_2 in ipairs(_shop_items.blessings) do
-		local widget_2 = v_2.widget
-		local flag_2 = false
+	for _, blessing_data in ipairs(shop_items.blessings) do
+		local widget = blessing_data.widget
+		local purchase_done = false
 
-		if not (not UIUtils.is_button_held(widget_2) and widget_2.content.is_bought) then
+		if UIUtils.is_button_held(widget) and not widget.content.is_bought then
 			if not interaction_data.interaction_started then
-				purchase_interaction.start(interaction_data, arg_34_2)
+				purchase_interaction.start(interaction_data, t)
 
-				self._purchasing_blessing_name = v_2.blessing_name
+				self._purchasing_blessing_name = blessing_data.blessing_name
 			end
 
 			interaction_data.interaction_ongoing = true
 
-			local num_2 = 255 * interaction_data.progress
+			local purchase_progress = 255 * interaction_data.progress
 
-			widget_2.style.loading_frame.color[1] = num_2
-			flag_2 = purchase_interaction.update(interaction_data, arg_34_2)
-		elseif not (not self._purchasing_blessing_name and v_2.blessing_name ~= self._purchasing_blessing_name) then
+			widget.style.loading_frame.color[1] = purchase_progress
+			purchase_done = purchase_interaction.update(interaction_data, t)
+		elseif self._purchasing_blessing_name and blessing_data.blessing_name == self._purchasing_blessing_name then
 			interaction_data.interaction_ongoing = false
-			widget_2.style.loading_frame.color[1] = 0
+			widget.style.loading_frame.color[1] = 0
 			self._purchasing_blessing_name = nil
 
 			purchase_interaction.abort(interaction_data)
 		end
 
-		if not flag_2 then
-			self:_on_blessing_bought(v_2.blessing_name)
-			self:_play_sound(tbl_2.blessing_bought)
+		if purchase_done then
+			self:_on_blessing_bought(blessing_data.blessing_name)
+			self:_play_sound(SOUND_EVENTS.blessing_bought)
 			purchase_interaction.successful(interaction_data)
 
 			self._purchasing_blessing_name = nil
 		end
 
-		self:_update_button_hover_sound(widget_2)
+		self:_update_button_hover_sound(widget)
 	end
 
-	local _widgets_by_name = self._widgets_by_name
+	local widgets_by_name = self._widgets_by_name
 
-	self:_update_button_hover_sound(_widgets_by_name.ready_button)
+	self:_update_button_hover_sound(widgets_by_name.ready_button)
 
-	if not UIUtils.is_button_pressed(_widgets_by_name.ready_button) then
-		local get_key = self._shared_state:get_key("peer_state")
+	if UIUtils.is_button_pressed(widgets_by_name.ready_button) then
+		local key = self._shared_state:get_key("peer_state")
 
-		self._shared_state:set_own(get_key, tbl_4.DONE_BUYING)
-		self:_play_sound(tbl_2.ready_pressed)
+		self._shared_state:set_own(key, peer_states.DONE_BUYING)
+		self:_play_sound(SOUND_EVENTS.ready_pressed)
 	end
 
-	self:_handle_owned_power_up_input(arg_34_1, arg_34_2)
+	self:_handle_owned_power_up_input(dt, t)
 end
 
-DeusShopView._handle_owned_power_up_input = function (self, arg_35_1, arg_35_2)
+DeusShopView._handle_owned_power_up_input = function (self, dt, t)
 	-- function 35
 	local ui_scenegraph = self.ui_scenegraph
 	local input_service = self:input_service()
-	local _power_up_widgets = self._power_up_widgets
-	local power_up_description = self._widgets_by_name.power_up_description
-	local var_35_4
-	local var_35_5
+	local power_up_widgets = self._power_up_widgets
+	local power_up_description_widget = self._widgets_by_name.power_up_description
+	local current_power_up_name, power_up_rarity
 
-	if not (self._portrait_mode or allow_boon_removal) then
-		power_up_description.content.visible = false
+	if self._portrait_mode or not ALLOW_BOON_REMOVAL then
+		power_up_description_widget.content.visible = false
 		self._current_power_up_name = nil
 
 		return
 	end
 
-	local content = power_up_description.content
-	local style = power_up_description.style
-	local flag = false
+	local content = power_up_description_widget.content
+	local style = power_up_description_widget.style
+	local is_hovering = false
 
-	for i = 1, #_power_up_widgets do
-		local var_35_9 = self._power_up_widgets[i]
+	for i = 1, #power_up_widgets do
+		local widget = self._power_up_widgets[i]
 
-		if not UIUtils.is_button_hover(var_35_9) then
-			local scenegraph_id = var_35_9.scenegraph_id
-			local get_world_position = UISceneGraph.get_world_position(ui_scenegraph, scenegraph_id)
-			local offset = var_35_9.offset
+		if UIUtils.is_button_hover(widget) then
+			local scenegraph_id = widget.scenegraph_id
+			local world_position = UISceneGraph.get_world_position(ui_scenegraph, scenegraph_id)
+			local offset = widget.offset
 
-			ui_scenegraph.power_up_description_root.local_position[1] = get_world_position[1] + offset[1]
-			ui_scenegraph.power_up_description_root.local_position[2] = get_world_position[2] + offset[2]
-			var_35_4 = var_35_9.content.power_up_name
-			var_35_5 = var_35_9.content.power_up_rarity
+			ui_scenegraph.power_up_description_root.local_position[1] = world_position[1] + offset[1]
+			ui_scenegraph.power_up_description_root.local_position[2] = world_position[2] + offset[2]
+			current_power_up_name = widget.content.power_up_name
+			power_up_rarity = widget.content.power_up_rarity
 
-			local locked = var_35_9.content.locked
-			local locked_text_id = var_35_9.content.locked_text_id
+			local locked = widget.content.locked
+			local locked_text_id = widget.content.locked_text_id
 
 			content.visible = true
 			content.locked = locked
-			content.locked_text_id = locked_text_id or content.locked_text_id
-			flag = true
+			content.locked_text_id = not not locked_text_id or not not content.locked_text_id
+			is_hovering = true
 
-			if not locked then
+			if locked then
 				content.end_time = nil
 				content.progress = nil
 				content.input_made = false
@@ -1220,7 +1300,7 @@ DeusShopView._handle_owned_power_up_input = function (self, arg_35_1, arg_35_2)
 				break
 			end
 
-			if input_service:get("mouse_middle_press") or not input_service:get("special_1_press") then
+			if input_service:get("mouse_middle_press") or input_service:get("special_1_press") then
 				content.input_made = true
 				style.remove_frame.color[1] = 0
 
@@ -1229,37 +1309,51 @@ DeusShopView._handle_owned_power_up_input = function (self, arg_35_1, arg_35_2)
 				break
 			end
 
-			if not content.input_made and input_service:get("mouse_middle_held") and not input_service:get("special_1_hold") then
-				local end_time = content.end_time
+			if content.input_made and (input_service:get("mouse_middle_held") or input_service:get("special_1_hold")) then
+				local end_time_2 = content.end_time
 
-				end_time = end_time or arg_35_2 + content.remove_interaction_duration
-
-				local num = (end_time - arg_35_2) / content.remove_interaction_duration
-
-				style.remove_frame.color[1] = 255 * (1 - num)
-
-				if not (num <= 0) then
-					content.end_time = nil
-					content.progress = nil
-					content.input_made = false
-
-					local get_deus_run_controller = Managers.mechanism:game_mechanism():get_deus_run_controller()
-					local local_player_id = Managers.player:local_player():local_player_id()
-
-					self._force_update_power_ups = get_deus_run_controller:remove_power_ups(var_35_4, local_player_id)
-
-					self:_play_sound("Play_gui_boon_removal_end")
-
-					break
+				if not end_time_2 then
+					-- Nothing
 				end
 
-				content.end_time = end_time
-				content.progress = num
+				end_time_2 = t + content.remove_interaction_duration
+
+				do
+					local end_time = end_time_2
+
+					::label_35_0::
+
+					local progress = (end_time - t) / content.remove_interaction_duration
+
+					style.remove_frame.color[1] = 255 * (1 - progress)
+
+					local done = progress <= 0
+
+					if done then
+						content.end_time = nil
+						content.progress = nil
+						content.input_made = false
+
+						local mechanism = Managers.mechanism:game_mechanism()
+						local deus_run_controller = mechanism:get_deus_run_controller()
+						local player = Managers.player:local_player()
+						local local_player_id = player:local_player_id()
+
+						self._force_update_power_ups = deus_run_controller:remove_power_ups(current_power_up_name, local_player_id)
+
+						self:_play_sound("Play_gui_boon_removal_end")
+
+						break
+					end
+
+					content.end_time = end_time
+					content.progress = progress
+				end
 
 				break
 			end
 
-			if not content.input_made then
+			if content.input_made then
 				self:_play_sound("Stop_gui_boon_removal_start")
 			end
 
@@ -1272,287 +1366,332 @@ DeusShopView._handle_owned_power_up_input = function (self, arg_35_1, arg_35_2)
 		end
 	end
 
-	if not flag then
+	if not is_hovering then
 		content.end_time = nil
 		content.progress = nil
 		content.input_made = false
 		style.remove_frame.color[1] = 0
 	end
 
-	if var_35_4 ~= self._current_power_up_name then
-		self:_populate_power_up(var_35_4, var_35_5, power_up_description)
+	if current_power_up_name ~= self._current_power_up_name then
+		self:_populate_power_up(current_power_up_name, power_up_rarity, power_up_description_widget)
 	end
 
-	self._current_power_up_name = var_35_4
+	self._current_power_up_name = current_power_up_name
 end
 
-DeusShopView._populate_power_up = function (arg_36_0, arg_36_1, arg_36_2, arg_36_3)
+DeusShopView._populate_power_up = function (self, power_up_name, power_up_rarity, power_up_description_widget)
 	-- function 36
-	if not arg_36_1 then
-		arg_36_3.content.visible = false
+	if not power_up_name then
+		power_up_description_widget.content.visible = false
 
 		return
 	end
 
-	local var_36_0 = DeusPowerUps[arg_36_2][arg_36_1]
-	local content = arg_36_3.content
-	local local_player = Managers.player:local_player()
-	local profile_index = local_player:profile_index()
-	local career_index = local_player:career_index()
-	local rarity = var_36_0.rarity
+	local power_up = DeusPowerUps[power_up_rarity][power_up_name]
+	local content = power_up_description_widget.content
+	local player = Managers.player:local_player()
+	local profile_index, career_index = player:profile_index(), player:career_index()
+	local rarity = power_up.rarity
 
-	content.title_text = DeusPowerUpUtils.get_power_up_name_text(var_36_0.name, var_36_0.talent_index, var_36_0.talent_tier, profile_index, career_index)
+	content.title_text = DeusPowerUpUtils.get_power_up_name_text(power_up.name, power_up.talent_index, power_up.talent_tier, profile_index, career_index)
 	content.rarity_text = Localize(RaritySettings[rarity].display_name)
-	content.description_text = DeusPowerUpUtils.get_power_up_description(var_36_0, profile_index, career_index)
-	content.icon = DeusPowerUpUtils.get_power_up_icon(var_36_0, profile_index, career_index)
+	content.description_text = DeusPowerUpUtils.get_power_up_description(power_up, profile_index, career_index)
+	content.icon = DeusPowerUpUtils.get_power_up_icon(power_up, profile_index, career_index)
 	content.extend_left = false
-	content.is_rectangular_icon = DeusPowerUpTemplates[var_36_0.name].rectangular_icon
 
-	local style = arg_36_3.style
-	local get_table = Colors.get_table(rarity)
+	local power_up_template = DeusPowerUpTemplates[power_up.name]
 
-	style.rarity_text.text_color = get_table
-	arg_36_3.content.visible = true
+	content.is_rectangular_icon = power_up_template.rectangular_icon
 
-	local var_36_8 = DeusPowerUpSetLookup[rarity]
+	local style = power_up_description_widget.style
+	local rarity_color = Colors.get_table(rarity)
 
-	var_36_8 = not var_36_8 and DeusPowerUpSetLookup[rarity][var_36_0.name]
+	style.rarity_text.text_color = rarity_color
+	power_up_description_widget.content.visible = true
 
-	local flag = false
+	local var_36_0 = DeusPowerUpSetLookup[rarity]
 
-	if not var_36_8 then
-		local var_36_10 = var_36_8[1]
-		local num = 0
-		local pieces = var_36_10.pieces
-		local get_deus_run_controller = Managers.mechanism:game_mechanism():get_deus_run_controller()
+	if var_36_0 then
+		-- Nothing
+	end
 
-		for i, v in ipairs(pieces) do
-			local name = v.name
-			local rarity_2 = v.rarity
-			local get_own_peer_id = get_deus_run_controller:get_own_peer_id()
+	var_36_0 = DeusPowerUpSetLookup[rarity][power_up.name]
 
-			if not get_deus_run_controller:has_power_up_by_name(get_own_peer_id, name, rarity_2) then
-				num = num + 1
+	local power_up_sets = var_36_0
+
+	::label_36_0::
+
+	local is_part_of_set = false
+
+	if power_up_sets then
+		local set = power_up_sets[1]
+		local piece_count = 0
+		local pieces = set.pieces
+		local mechanism = Managers.mechanism:game_mechanism()
+		local deus_run_controller = mechanism:get_deus_run_controller()
+
+		for _, piece in ipairs(pieces) do
+			local name, rarity = piece.name, piece.rarity
+			local local_peer_id = deus_run_controller:get_own_peer_id()
+
+			if deus_run_controller:has_power_up_by_name(local_peer_id, name, rarity) then
+				piece_count = piece_count + 1
 			end
 		end
 
-		flag = true
+		is_part_of_set = true
 
-		local num_required_pieces = var_36_10.num_required_pieces
+		local num_required_pieces_2 = set.num_required_pieces
 
-		num_required_pieces = num_required_pieces or #pieces
-		content.set_progression = Localize("set_bonus_boons") .. " " .. string.format(Localize("set_counter_boons"), num, num_required_pieces)
+		if not num_required_pieces_2 then
+			-- Nothing
+		end
 
-		if #pieces == num then
+		num_required_pieces_2 = #pieces
+
+		local num_required_pieces = num_required_pieces_2
+
+		::label_36_1::
+
+		content.set_progression = Localize("set_bonus_boons") .. " " .. string.format(Localize("set_counter_boons"), piece_count, num_required_pieces)
+
+		if #pieces == piece_count then
 			style.set_progression.text_color = style.set_progression.progression_colors.complete
 		end
 	end
 
-	content.is_part_of_set = flag
+	content.is_part_of_set = is_part_of_set
 end
 
-DeusShopView._get_power_up_costs = function (arg_37_0, arg_37_1, arg_37_2)
+DeusShopView._get_power_up_costs = function (self, rarity, discount)
 	-- function 37
-	local var_37_0 = DeusCostSettings.shop.power_ups[arg_37_1]
+	local var_37_0 = DeusCostSettings.shop.power_ups[rarity]
 
-	var_37_0 = var_37_0 or 9001
-
-	if not arg_37_2 then
-		var_37_0 = var_37_0 - math.round(var_37_0 * arg_37_2)
+	if not var_37_0 then
+		-- Nothing
 	end
 
-	return var_37_0
+	var_37_0 = 9001
+
+	local cost = var_37_0
+
+	::label_37_0::
+
+	if discount then
+		cost = cost - math.round(cost * discount)
+	end
+
+	return cost
 end
 
-DeusShopView._play_sound = function (self, arg_38_1)
+DeusShopView._play_sound = function (self, event)
 	-- function 38
-	WwiseWorld.trigger_event(self._wwise_world, arg_38_1)
+	WwiseWorld.trigger_event(self._wwise_world, event)
 end
 
 DeusShopView._update_player_data = function (self)
 	-- function 39
-	local tbl = {
+	local player_data = {
 		{}
 	}
-	local peer_id = Network.peer_id()
-	local get_peers = self._deus_run_controller:get_peers()
+	local local_peer_id = Network.peer_id()
+	local peers = self._deus_run_controller:get_peers()
 
-	for i = 1, #get_peers do
-		local var_39_3 = get_peers[i]
-		local var_39_4
+	for i = 1, #peers do
+		local peer_id = peers[i]
+		local data
 
-		if var_39_3 == peer_id then
-			var_39_4 = tbl[1]
+		if peer_id == local_peer_id then
+			data = player_data[1]
 		else
-			var_39_4 = {}
-			tbl[#tbl + 1] = var_39_4
+			data = {}
+			player_data[#player_data + 1] = data
 		end
 
-		local get_player_profile, var_39_6 = self._deus_run_controller:get_player_profile(var_39_3, num_6)
+		local profile_index, career_index = self._deus_run_controller:get_player_profile(peer_id, REAL_PLAYER_LOCAL_ID)
 
-		if not (get_player_profile == 0 or var_39_6 == 0) then
-			var_39_4.profile_index = get_player_profile
-			var_39_4.career_index = var_39_6
-			var_39_4.level = self._deus_run_controller:get_player_level(var_39_3, var_39_4.profile_index)
-			var_39_4.frame = self._deus_run_controller:get_player_frame(var_39_3, var_39_4.profile_index, var_39_4.career_index)
-			var_39_4.name = self._deus_run_controller:get_player_name(var_39_3)
+		if profile_index ~= 0 and career_index ~= 0 then
+			data.profile_index = profile_index
+			data.career_index = career_index
+			data.level = self._deus_run_controller:get_player_level(peer_id, data.profile_index)
+			data.frame = self._deus_run_controller:get_player_frame(peer_id, data.profile_index, data.career_index)
+			data.name = self._deus_run_controller:get_player_name(peer_id)
 
-			local get_player_health_percentage = self._deus_run_controller:get_player_health_percentage(var_39_3, num_6)
+			local get_player_health_percentage = self._deus_run_controller:get_player_health_percentage(peer_id, REAL_PLAYER_LOCAL_ID)
 
-			get_player_health_percentage = get_player_health_percentage or 1
-			var_39_4.health_percentage = get_player_health_percentage
-			var_39_4.healthkit_consumable = self._deus_run_controller:get_player_consumable_healthkit_slot(var_39_3, num_6)
-			var_39_4.potion_consumable = self._deus_run_controller:get_player_consumable_potion_slot(var_39_3, num_6)
-			var_39_4.grenade_consumable = self._deus_run_controller:get_player_consumable_grenade_slot(var_39_3, num_6)
-			var_39_4.ammo_percentage = self._deus_run_controller:get_player_ranged_ammo(var_39_3, num_6)
+			get_player_health_percentage = not not get_player_health_percentage or not not 1
+			data.health_percentage = get_player_health_percentage
+			data.healthkit_consumable = self._deus_run_controller:get_player_consumable_healthkit_slot(peer_id, REAL_PLAYER_LOCAL_ID)
+			data.potion_consumable = self._deus_run_controller:get_player_consumable_potion_slot(peer_id, REAL_PLAYER_LOCAL_ID)
+			data.grenade_consumable = self._deus_run_controller:get_player_consumable_grenade_slot(peer_id, REAL_PLAYER_LOCAL_ID)
+			data.ammo_percentage = self._deus_run_controller:get_player_ranged_ammo(peer_id, REAL_PLAYER_LOCAL_ID)
 
-			local get_player_soft_currency = self._deus_run_controller:get_player_soft_currency(var_39_3)
+			local get_player_soft_currency = self._deus_run_controller:get_player_soft_currency(peer_id)
 
-			get_player_soft_currency = get_player_soft_currency or 0
-			var_39_4.soft_currency = get_player_soft_currency
-			var_39_4.peer_state = self._shared_state:get_peer(var_39_3, self._shared_state:get_key("peer_state"))
+			get_player_soft_currency = not not get_player_soft_currency or not not 0
+			data.soft_currency = get_player_soft_currency
+			data.peer_state = self._shared_state:get_peer(peer_id, self._shared_state:get_key("peer_state"))
 		else
-			var_39_4.profile_index = 0
-			var_39_4.career_index = 0
-			var_39_4.level = 1
-			var_39_4.frame = "default"
-			var_39_4.health_percentage = 1
-			var_39_4.soft_currency = 0
+			data.profile_index = 0
+			data.career_index = 0
+			data.level = 1
+			data.frame = "default"
+			data.health_percentage = 1
+			data.soft_currency = 0
 		end
 	end
 
-	self:_update_player_portraits(tbl)
+	self:_update_player_portraits(player_data)
 end
 
-DeusShopView._update_portrait_frame = function (arg_40_0, arg_40_1, arg_40_2, arg_40_3)
+DeusShopView._update_portrait_frame = function (self, frame_name, level_text, index)
 	-- function 40
-	local deus_create_player_portraits_frame = UIWidgets.deus_create_player_portraits_frame("player_portrait_" .. arg_40_3, arg_40_1, arg_40_2, false)
-	local var_40_1 = UIWidget.init(deus_create_player_portraits_frame)
+	local new_frame_widget_definition = UIWidgets.deus_create_player_portraits_frame("player_portrait_" .. index, frame_name, level_text, false)
+	local new_frame_widget = UIWidget.init(new_frame_widget_definition)
 
-	arg_40_0._portrait_frame_widgets[arg_40_3] = var_40_1
-	arg_40_0._widgets_by_name["player_portrait_frame_" .. arg_40_3] = var_40_1
+	self._portrait_frame_widgets[index] = new_frame_widget
+	self._widgets_by_name["player_portrait_frame_" .. index] = new_frame_widget
 end
 
-DeusShopView._update_blessing_portrait_frame = function (arg_41_0, arg_41_1, arg_41_2, arg_41_3, arg_41_4, arg_41_5, arg_41_6)
+DeusShopView._update_blessing_portrait_frame = function (self, frame_name, level_text, blessing_name, index, offset, is_bought)
 	-- function 41
-	local create_blessing_portraits_frame = var_0_0.create_blessing_portraits_frame("blessing_root", arg_41_1, arg_41_2, false, arg_41_5)
-	local var_41_1 = UIWidget.init(create_blessing_portraits_frame)
+	local new_frame_widget_definition = definitions.create_blessing_portraits_frame("blessing_root", frame_name, level_text, false, offset)
+	local new_frame_widget = UIWidget.init(new_frame_widget_definition)
 
-	var_41_1.content.is_bought = arg_41_6
-	arg_41_0._blessing_frame_widgets[arg_41_4] = var_41_1
-	arg_41_0._widgets_by_name[arg_41_3 .. "_portrait_frame_" .. arg_41_4] = var_41_1
+	new_frame_widget.content.is_bought = is_bought
+	self._blessing_frame_widgets[index] = new_frame_widget
+	self._widgets_by_name[blessing_name .. "_portrait_frame_" .. index] = new_frame_widget
 end
 
-DeusShopView._update_player_portraits = function (self, arg_42_1)
+DeusShopView._update_player_portraits = function (self, player_data)
 	-- function 42
-	local _widgets_by_name = self._widgets_by_name
-	local ready_button_tokens = _widgets_by_name.ready_button_tokens
+	local widgets_by_name = self._widgets_by_name
+	local ready_button_tokens = widgets_by_name.ready_button_tokens
 
 	for i = 1, 4 do
-		local var_42_2 = arg_42_1[i]
-		local var_42_3 = _widgets_by_name["player_portrait_" .. i]
-		local var_42_4 = _widgets_by_name["player_texts_" .. i]
-		local var_42_5 = _widgets_by_name["player_portrait_frame_" .. i]
-		local flag = not not var_42_2
+		local data = player_data[i]
+		local player_portrait = widgets_by_name["player_portrait_" .. i]
+		local player_texts = widgets_by_name["player_texts_" .. i]
+		local player_portrait_frame = widgets_by_name["player_portrait_frame_" .. i]
+		local should_be_visible = not not data
 
-		var_42_3.content.visible = flag
-		var_42_4.content.visible = flag
-		var_42_5.content.visible = flag
+		player_portrait.content.visible = should_be_visible
+		player_texts.content.visible = should_be_visible
+		player_portrait_frame.content.visible = should_be_visible
 
-		local str = "token_icon_" .. i
+		local token_icon_name = "token_icon_" .. i
 
-		ready_button_tokens.content[str] = nil
+		ready_button_tokens.content[token_icon_name] = nil
 
-		if not flag then
-			local frame = var_42_2.frame
+		if should_be_visible then
+			local frame = data.frame
 
-			frame = frame or "default"
-
-			local level = var_42_2.level
-
-			level = level or "-"
-
-			if not (var_42_5.content.frame_settings_name ~= frame or var_42_5.content.level == level) then
-				self:_update_portrait_frame(frame, level, i)
-
-				var_42_5.content.level = level
+			if not frame then
+				-- Nothing
 			end
 
-			local content = var_42_4.content
-			local crop_text = UIRenderer.crop_text
-			local name = var_42_2.name
+			frame = "default"
 
-			name = name or ""
+			local frame_settings_name = frame
+
+			::label_42_0::
+
+			local level_2 = data.level
+
+			if not level_2 then
+				-- Nothing
+			end
+
+			level_2 = "-"
+
+			local level = level_2
+
+			::label_42_1::
+
+			if player_portrait_frame.content.frame_settings_name ~= frame_settings_name or player_portrait_frame.content.level ~= level then
+				self:_update_portrait_frame(frame_settings_name, level, i)
+
+				player_portrait_frame.content.level = level
+			end
+
+			local content = player_texts.content
+			local crop_text = UIRenderer.crop_text
+			local name = data.name
+
+			name = not not name or not not ""
 			content.name_text = crop_text(name, 17)
 
-			local content_2 = var_42_4.content
+			local content_2 = player_texts.content
 			local format = string.format
-			local str_2 = "%d"
-			local soft_currency = var_42_2.soft_currency
+			local str = "%d"
+			local soft_currency = data.soft_currency
 
-			soft_currency = soft_currency or 0
-			content_2.coins_text = format(str_2, soft_currency)
-			var_42_4.style.name_text.size[1] = 100
-			var_42_4.style.name_text_shadow.size[1] = 100
-			var_42_3.style.token_icon.saturated = var_42_2.peer_state == tbl_4.DONE_BUYING
+			soft_currency = not not soft_currency or not not 0
+			content_2.coins_text = format(str, soft_currency)
+			player_texts.style.name_text.size[1] = 100
+			player_texts.style.name_text_shadow.size[1] = 100
+			player_portrait.style.token_icon.saturated = data.peer_state == peer_states.DONE_BUYING
 
-			if not (not var_42_2.profile_index and var_42_2.profile_index == 0) then
-				local var_42_17 = SPProfiles[var_42_2.profile_index]
-				local var_42_18 = var_42_17.careers[var_42_2.career_index]
+			if data.profile_index and data.profile_index ~= 0 then
+				local profile_data = SPProfiles[data.profile_index]
+				local careers = profile_data.careers
+				local career_data = careers[data.career_index]
 
-				var_42_3.content.character_portrait = var_42_18.portrait_image
+				player_portrait.content.character_portrait = career_data.portrait_image
 
-				local hero_selection_image = var_42_17.hero_selection_image
+				local hero_selection_image = profile_data.hero_selection_image
 
-				var_42_3.content.token_icon = var_42_17.hero_selection_image
+				player_portrait.content.token_icon = profile_data.hero_selection_image
 
-				if var_42_2.peer_state == tbl_4.DONE_BUYING then
-					ready_button_tokens.content[str] = hero_selection_image
+				if data.peer_state == peer_states.DONE_BUYING then
+					ready_button_tokens.content[token_icon_name] = hero_selection_image
 				end
 			else
-				var_42_3.content.character_portrait = "unit_frame_portrait_default"
-				var_42_3.content.token_icon = nil
+				player_portrait.content.character_portrait = "unit_frame_portrait_default"
+				player_portrait.content.token_icon = nil
 			end
 
-			local hp_bar = var_42_3.content.hp_bar
-			local health_percentage = var_42_2.health_percentage
+			local hp_bar = player_portrait.content.hp_bar
+			local health_percentage = data.health_percentage
 
-			health_percentage = health_percentage or 0
+			health_percentage = not not health_percentage or not not 0
 			hp_bar.bar_value = health_percentage
 
-			local content_3 = var_42_3.content
-			local ammo_percentage = var_42_2.ammo_percentage
+			local content_3 = player_portrait.content
+			local ammo_percentage = data.ammo_percentage
 
-			ammo_percentage = ammo_percentage or 0
+			ammo_percentage = not not ammo_percentage or not not 0
 			content_3.ammo_percentage = ammo_percentage
 
-			local healthkit_consumable = var_42_2.healthkit_consumable
+			local healthkit_item = data.healthkit_consumable
 
-			var_42_3.content.healthkit_slot = not healthkit_consumable and ItemMasterList[healthkit_consumable].hud_icon
-			var_42_3.style.healthkit_slot_bg.color = fn(healthkit_consumable)
+			player_portrait.content.healthkit_slot = not not healthkit_item and not not ItemMasterList[healthkit_item].hud_icon
+			player_portrait.style.healthkit_slot_bg.color = get_color_for_consumable_item(healthkit_item)
 
-			local potion_consumable = var_42_2.potion_consumable
+			local potion_item = data.potion_consumable
 
-			var_42_3.content.potion_slot = not potion_consumable and ItemMasterList[potion_consumable].hud_icon
-			var_42_3.style.potion_slot_bg.color = fn(potion_consumable)
+			player_portrait.content.potion_slot = not not potion_item and not not ItemMasterList[potion_item].hud_icon
+			player_portrait.style.potion_slot_bg.color = get_color_for_consumable_item(potion_item)
 
-			local grenade_consumable = var_42_2.grenade_consumable
+			local grenade_item = data.grenade_consumable
 
-			var_42_3.content.grenade_slot = not grenade_consumable and ItemMasterList[grenade_consumable].hud_icon
-			var_42_3.style.grenade_slot_bg.color = fn(grenade_consumable)
+			player_portrait.content.grenade_slot = not not grenade_item and not not ItemMasterList[grenade_item].hud_icon
+			player_portrait.style.grenade_slot_bg.color = get_color_for_consumable_item(grenade_item)
 		end
 	end
 end
 
 DeusShopView._are_all_peers_ready = function (self)
 	-- function 43
-	local get_own_peer_id = self._deus_run_controller:get_own_peer_id()
+	local local_peer_id = self._deus_run_controller:get_own_peer_id()
 
-	for i, v in ipairs(self._deus_run_controller:get_peers()) do
-		if get_own_peer_id ~= v then
-			local get_key = self._shared_state:get_key("peer_state")
+	for _, peer_id in ipairs(self._deus_run_controller:get_peers()) do
+		if local_peer_id ~= peer_id then
+			local key = self._shared_state:get_key("peer_state")
+			local ready_state = self._shared_state:get_peer(peer_id, key) == peer_states.READY_TO_BUY
 
-			if self._shared_state:get_peer(v, get_key) == tbl_4.READY_TO_BUY ~= true then
+			if ready_state ~= true then
 				return false
 			end
 		end
@@ -1563,10 +1702,11 @@ end
 
 DeusShopView._are_all_peers_done = function (self)
 	-- function 44
-	for i, v in ipairs(self._deus_run_controller:get_peers()) do
-		local get_key = self._shared_state:get_key("peer_state")
+	for _, peer_id in ipairs(self._deus_run_controller:get_peers()) do
+		local key = self._shared_state:get_key("peer_state")
+		local ready_state = self._shared_state:get_peer(peer_id, key) == peer_states.DONE_BUYING
 
-		if self._shared_state:get_peer(v, get_key) == tbl_4.DONE_BUYING ~= true then
+		if ready_state ~= true then
 			return false
 		end
 	end
@@ -1576,10 +1716,11 @@ end
 
 DeusShopView._did_someone_vote = function (self)
 	-- function 45
-	for i, v in ipairs(self._deus_run_controller:get_peers()) do
-		local get_key = self._shared_state:get_key("peer_state")
+	for _, peer_id in ipairs(self._deus_run_controller:get_peers()) do
+		local key = self._shared_state:get_key("peer_state")
+		local ready_state = self._shared_state:get_peer(peer_id, key) == peer_states.DONE_BUYING
 
-		if self._shared_state:get_peer(v, get_key) == tbl_4.DONE_BUYING == true then
+		if ready_state == true then
 			return true
 		end
 	end
@@ -1587,123 +1728,173 @@ DeusShopView._did_someone_vote = function (self)
 	return false
 end
 
-DeusShopView._animate_shop_item_widget = function (self, arg_46_1, arg_46_2)
+DeusShopView._animate_shop_item_widget = function (self, dt, widget)
 	-- function 46
-	local content = arg_46_2.content
-	local style = arg_46_2.style
-	local hotspot = content.hotspot
+	local content = widget.content
+	local style = widget.style
+	local hotspot_2 = content.hotspot
 
-	hotspot = hotspot or content.button_hotspot
+	if not hotspot_2 then
+		-- Nothing
+	end
+
+	hotspot_2 = content.button_hotspot
+
+	local hotspot = hotspot_2
+
+	::label_46_0::
 
 	local is_hover = hotspot.is_hover
 	local is_bought = content.is_bought
 	local is_held = hotspot.is_held
 	local has_buying_animation_played = content.has_buying_animation_played
 	local is_selected = hotspot.is_selected
-	local hover_progress = hotspot.hover_progress
-
-	hover_progress = hover_progress or 0
-
 	local hover_progress_2 = hotspot.hover_progress
 
-	hover_progress_2 = hover_progress_2 or 0
+	if not hover_progress_2 then
+		-- Nothing
+	end
 
-	local highlight_progress = hotspot.highlight_progress
+	hover_progress_2 = 0
 
-	highlight_progress = highlight_progress or 0
+	local hover_progress = hover_progress_2
 
-	local selection_progress = hotspot.selection_progress
+	::label_46_1::
 
-	selection_progress = selection_progress or 0
+	local hover_progress_3 = hotspot.hover_progress
 
-	local num = 15
+	if not hover_progress_3 then
+		-- Nothing
+	end
 
-	if not is_bought then
+	hover_progress_3 = 0
+
+	local background_hover_progress = hover_progress_3
+
+	::label_46_2::
+
+	local highlight_progress_2 = hotspot.highlight_progress
+
+	if not highlight_progress_2 then
+		-- Nothing
+	end
+
+	highlight_progress_2 = 0
+
+	local highlight_progress = highlight_progress_2
+
+	::label_46_3::
+
+	local selection_progress_2 = hotspot.selection_progress
+
+	if not selection_progress_2 then
+		-- Nothing
+	end
+
+	selection_progress_2 = 0
+
+	local selection_progress = selection_progress_2
+
+	::label_46_4::
+
+	local speed = 15
+
+	if is_bought then
 		is_hover = false
 	end
 
-	if not (not is_hover and is_held) then
-		hover_progress = math.min(hover_progress + arg_46_1 * num, 1)
-		hover_progress_2 = math.max(hover_progress - arg_46_1 * num, 1)
-	elseif not is_hover and not is_held then
-		hover_progress = math.max(hover_progress - arg_46_1 * num, 0)
-		hover_progress_2 = math.max(hover_progress - arg_46_1 * num, 1)
+	if is_hover and not is_held then
+		hover_progress = math.min(hover_progress + dt * speed, 1)
+		background_hover_progress = math.max(hover_progress - dt * speed, 1)
+	elseif is_hover and is_held then
+		hover_progress = math.max(hover_progress - dt * speed, 0)
+		background_hover_progress = math.max(hover_progress - dt * speed, 1)
 	else
-		hover_progress = math.max(hover_progress - arg_46_1 * num, 0)
-		hover_progress_2 = math.max(hover_progress - arg_46_1 * num, 0)
+		hover_progress = math.max(hover_progress - dt * speed, 0)
+		background_hover_progress = math.max(hover_progress - dt * speed, 0)
 	end
 
 	style.icon_hover_frame.color[1] = 255 * hover_progress
-	style.hover.color[1] = 255 * hover_progress_2
+	style.hover.color[1] = 255 * background_hover_progress
 
-	if not is_bought then
-		highlight_progress = math.min(highlight_progress + arg_46_1 * num, 1)
+	if is_bought then
+		highlight_progress = math.min(highlight_progress + dt * speed, 1)
 	else
-		highlight_progress = math.max(highlight_progress - arg_46_1 * num, 0)
+		highlight_progress = math.max(highlight_progress - dt * speed, 0)
 	end
 
-	if not is_selected then
-		selection_progress = math.min(selection_progress + arg_46_1 * num, 1)
+	if is_selected then
+		selection_progress = math.min(selection_progress + dt * speed, 1)
 	else
-		selection_progress = math.max(selection_progress - arg_46_1 * num, 0)
+		selection_progress = math.max(selection_progress - dt * speed, 0)
 	end
 
-	if not (not is_bought and has_buying_animation_played) then
-		self._ui_animator:start_animation("flash_icon", arg_46_2, var_0_0.scenegraph_definition)
+	if is_bought and not has_buying_animation_played then
+		self._ui_animator:start_animation("flash_icon", widget, definitions.scenegraph_definition)
 	end
 
-	if not (not is_bought and has_buying_animation_played) then
-		self._ui_animator:start_animation("flash_icon", arg_46_2, var_0_0.scenegraph_definition)
+	if is_bought and not has_buying_animation_played then
+		self._ui_animator:start_animation("flash_icon", widget, definitions.scenegraph_definition)
 	end
 
-	if not (not is_bought and has_buying_animation_played) then
-		self._ui_animator:start_animation("flash_icon", arg_46_2, var_0_0.scenegraph_definition)
+	if is_bought and not has_buying_animation_played then
+		self._ui_animator:start_animation("flash_icon", widget, definitions.scenegraph_definition)
 	end
 
-	if not content.bought_glow_style_ids then
-		for i, v in ipairs(content.bought_glow_style_ids) do
-			style[v].color[1] = 255 * highlight_progress
+	local bought_glow_style_ids = content.bought_glow_style_ids
+
+	if bought_glow_style_ids then
+		for _, style_id in ipairs(content.bought_glow_style_ids) do
+			style[style_id].color[1] = 255 * highlight_progress
 		end
 	end
 
-	local value_progress = hotspot.value_progress
+	local value_progress_2 = hotspot.value_progress
 
-	value_progress = value_progress or 0
-
-	local max = math.max(value_progress - arg_46_1 * num, 0)
-
-	if not style.icon_equipped_frame then
-		style.icon_equipped_frame.color[1] = 255 * max
+	if not value_progress_2 then
+		-- Nothing
 	end
 
-	hotspot.value_progress = max
+	value_progress_2 = 0
+
+	local value_progress = value_progress_2
+
+	::label_46_5::
+
+	value_progress = math.max(value_progress - dt * speed, 0)
+
+	if style.icon_equipped_frame then
+		style.icon_equipped_frame.color[1] = 255 * value_progress
+	end
+
+	hotspot.value_progress = value_progress
 	hotspot.hover_progress = hover_progress
 	hotspot.highlight_progress = highlight_progress
 	hotspot.selection_progress = selection_progress
 end
 
-DeusShopView._draw = function (self, arg_47_1, arg_47_2)
+DeusShopView._draw = function (self, dt, t)
 	-- function 47
-	for i, v in ipairs(self._shop_item_widgets) do
-		self:_animate_shop_item_widget(arg_47_1, v)
+	for _, widget in ipairs(self._shop_item_widgets) do
+		self:_animate_shop_item_widget(dt, widget)
 	end
 
-	local _widgets_by_name = self._widgets_by_name
+	local widgets_by_name = self._widgets_by_name
 
-	UIWidgetUtils.animate_default_button(_widgets_by_name.ready_button, arg_47_1)
+	UIWidgetUtils.animate_default_button(widgets_by_name.ready_button, dt)
 
 	local ui_scenegraph = self.ui_scenegraph
-	local get_service = self._input_manager:get_service(self._input_service_name)
+	local input_service = self._input_manager:get_service(self._input_service_name)
 	local render_settings = self.render_settings
 
-	if not self._render_top_widgets then
+	if self._render_top_widgets then
 		local ui_top_renderer = self.ui_top_renderer
-		local _top_widgets = self._top_widgets
+		local top_widgets = self._top_widgets
 
-		UIRenderer.begin_pass(ui_top_renderer, ui_scenegraph, get_service, arg_47_1, nil, render_settings)
+		UIRenderer.begin_pass(ui_top_renderer, ui_scenegraph, input_service, dt, nil, render_settings)
 
-		for k = 1, #_top_widgets do
-			UIRenderer.draw_widget(ui_top_renderer, _top_widgets[k])
+		for i = 1, #top_widgets do
+			UIRenderer.draw_widget(ui_top_renderer, top_widgets[i])
 		end
 
 		UIRenderer.end_pass(ui_top_renderer)
@@ -1711,92 +1902,92 @@ DeusShopView._draw = function (self, arg_47_1, arg_47_2)
 
 	local ui_renderer = self.ui_renderer
 
-	UIRenderer.begin_pass(ui_renderer, ui_scenegraph, get_service, arg_47_1, nil, render_settings)
+	UIRenderer.begin_pass(ui_renderer, ui_scenegraph, input_service, dt, nil, render_settings)
 
-	if not self._background_unit_widget then
+	if self._background_unit_widget then
 		UIRenderer.draw_widget(ui_renderer, self._background_unit_widget)
 	end
 
 	local snap_pixel_positions = render_settings.snap_pixel_positions
-	local _widgets = self._widgets
+	local widgets = self._widgets
 
-	for l = 1, #_widgets do
-		local var_47_9 = _widgets[l]
+	for i = 1, #widgets do
+		local widget = widgets[i]
 
-		if var_47_9.snap_pixel_positions ~= nil then
-			render_settings.snap_pixel_positions = var_47_9.snap_pixel_positions
+		if widget.snap_pixel_positions ~= nil then
+			render_settings.snap_pixel_positions = widget.snap_pixel_positions
 		end
 
-		UIRenderer.draw_widget(ui_renderer, var_47_9)
+		UIRenderer.draw_widget(ui_renderer, widget)
 
 		render_settings.snap_pixel_positions = snap_pixel_positions
 	end
 
-	local _portrait_frame_widgets = self._portrait_frame_widgets
+	local protrait_frame_widgets = self._portrait_frame_widgets
 
-	UIRenderer.draw_all_widgets(ui_renderer, _portrait_frame_widgets)
+	UIRenderer.draw_all_widgets(ui_renderer, protrait_frame_widgets)
 
-	local _blessing_frame_widgets = self._blessing_frame_widgets
+	local blessing_frame_widgets = self._blessing_frame_widgets
 
-	UIRenderer.draw_all_widgets(ui_renderer, _blessing_frame_widgets)
-	self:_draw_boons(arg_47_1, arg_47_2)
+	UIRenderer.draw_all_widgets(ui_renderer, blessing_frame_widgets)
+	self:_draw_boons(dt, t)
 	UIRenderer.end_pass(ui_renderer)
 
-	if not (not self._scrollbar_ui and self._portrait_mode) then
-		self._scrollbar_ui:update(arg_47_1, arg_47_2, ui_renderer, get_service, render_settings)
+	if self._scrollbar_ui and not self._portrait_mode then
+		self._scrollbar_ui:update(dt, t, ui_renderer, input_service, render_settings)
 	end
 end
 
-DeusShopView._draw_boons = function (self, arg_48_1, arg_48_2)
+DeusShopView._draw_boons = function (self, dt, t)
 	-- function 48
 	local ui_scenegraph = self.ui_scenegraph
 	local ui_renderer = self.ui_renderer
-	local str = "own_power_up_anchor"
-	local str_2 = "own_power_up_window"
-	local get_world_position = UISceneGraph.get_world_position(ui_scenegraph, str)
-	local get_world_position_2 = UISceneGraph.get_world_position(ui_scenegraph, str_2)
-	local var_48_6 = ui_scenegraph[str_2].size[2]
-	local _power_up_widgets = self._power_up_widgets
+	local anchor_scenegraph_id = "own_power_up_anchor"
+	local window_scenegraph_id = "own_power_up_window"
+	local anchor_world_position = UISceneGraph.get_world_position(ui_scenegraph, anchor_scenegraph_id)
+	local window_world_position = UISceneGraph.get_world_position(ui_scenegraph, window_scenegraph_id)
+	local window_height = ui_scenegraph[window_scenegraph_id].size[2]
+	local boon_widgets = self._power_up_widgets
 
-	for i = 1, #_power_up_widgets do
-		local var_48_8 = _power_up_widgets[i]
-		local offset = var_48_8.offset
-		local num = get_world_position[2] + offset[2]
-		local var_48_11 = var_0_0.power_up_widget_size[2]
+	for i = 1, #boon_widgets do
+		local widget = boon_widgets[i]
+		local offset = widget.offset
+		local pos_y = anchor_world_position[2] + offset[2]
+		local size_y = definitions.power_up_widget_size[2]
 
-		if num - var_48_11 > get_world_position_2[2] + var_48_6 then
+		if pos_y - size_y > window_world_position[2] + window_height then
 			-- Nothing
-		elseif num + var_48_11 < get_world_position_2[2] then
+		elseif pos_y + size_y < window_world_position[2] then
 			break
 		else
-			UIRenderer.draw_widget(ui_renderer, var_48_8)
+			UIRenderer.draw_widget(ui_renderer, widget)
 		end
 	end
 end
 
-DeusShopView._create_unit_previewer = function (arg_49_0, arg_49_1, arg_49_2, arg_49_3)
+DeusShopView._create_unit_previewer = function (self, widget, unit_name, package_name)
 	-- function 49
-	local var_49_0 = arg_49_1.element.pass_data[1]
-	local viewport = var_49_0.viewport
-	local world = var_49_0.world
+	local pass_data = widget.element.pass_data[1]
+	local viewport = pass_data.viewport
+	local world = pass_data.world
 
 	World.set_data(world, "avoid_blend", true)
 
-	local tbl = {
+	local preview_position = {
 		0.15,
 		2.5,
 		-0.5
 	}
-	local var_49_4 = UIUnitPreviewer:new(arg_49_2, arg_49_3, tbl, world, viewport)
+	local unit_previewer = UIUnitPreviewer:new(unit_name, package_name, preview_position, world, viewport)
 
-	var_49_4:activate_auto_spin()
+	unit_previewer:activate_auto_spin()
 
-	return var_49_4
+	return unit_previewer
 end
 
-DeusShopView._create_background_unit_definition = function (arg_50_0)
+DeusShopView._create_background_unit_definition = function (self)
 	-- function 50
-	local str = "environment/ui_weave_forge_preview"
+	local shading_environment = "environment/ui_weave_forge_preview"
 
 	return {
 		scenegraph_id = "background_unit",
@@ -1809,7 +2000,7 @@ DeusShopView._create_background_unit_definition = function (arg_50_0)
 				viewport_name = "item_preview_viewport",
 				enable_sub_gui = false,
 				fov = 20,
-				shading_environment = str,
+				shading_environment = shading_environment,
 				camera_position = {
 					0,
 					0,
@@ -1832,43 +2023,45 @@ end
 
 DeusShopView._update_hold_text = function (self)
 	-- function 51
-	local text = self._widgets_by_name.hold_to_buy_text.style.text
-	local num = 0.5 + math.sin(Managers.time:time("ui") * 5) * 0.5
+	local widgets_by_name = self._widgets_by_name
+	local hold_to_buy_widget = widgets_by_name.hold_to_buy_text
+	local hold_to_buy_style = hold_to_buy_widget.style.text
+	local glow_progress = 0.5 + math.sin(Managers.time:time("ui") * 5) * 0.5
 
-	text.text_color[1] = 100 + 155 * num
+	hold_to_buy_style.text_color[1] = 100 + 155 * glow_progress
 end
 
 DeusShopView._update_input_helper_text = function (self)
 	-- function 52
-	local num = 0.5 + math.sin(Managers.time:time("ui") * 5) * 0.5
-	local _widgets_by_name = self._widgets_by_name
-	local portrait_input_helper_text = _widgets_by_name.portrait_input_helper_text
-	local text = portrait_input_helper_text.style.text
-	local boon_input_helper_text = _widgets_by_name.boon_input_helper_text
-	local text_2 = boon_input_helper_text.style.text
+	local glow_progress = 0.5 + math.sin(Managers.time:time("ui") * 5) * 0.5
+	local widgets_by_name = self._widgets_by_name
+	local portrait_input_helper_widget = widgets_by_name.portrait_input_helper_text
+	local portrait_input_helper_style = portrait_input_helper_widget.style.text
+	local boon_input_helper_widget = widgets_by_name.boon_input_helper_text
+	local boon_input_helper_style = boon_input_helper_widget.style.text
 
-	text.text_color[1] = 100 + 155 * num
-	text_2.text_color[1] = 100 + 155 * num
-	portrait_input_helper_text.content.visible = not self._portrait_mode
-	boon_input_helper_text.content.visible = self._portrait_mode
+	portrait_input_helper_style.text_color[1] = 100 + 155 * glow_progress
+	boon_input_helper_style.text_color[1] = 100 + 155 * glow_progress
+	portrait_input_helper_widget.content.visible = not self._portrait_mode
+	boon_input_helper_widget.content.visible = self._portrait_mode
 end
 
-DeusShopView._update_background_animations = function (self, arg_53_1)
+DeusShopView._update_background_animations = function (self, dt)
 	-- function 53
-	local _widgets_by_name = self._widgets_by_name
+	local widgets_by_name = self._widgets_by_name
 
 	for i = 1, 3 do
-		local var_53_1 = _widgets_by_name["background_wheel_0" .. i]
-		local angle = var_53_1.style.texture_id.angle
-		local num = 0
-		local var_53_4
-		local flag
+		local wheel_widget = widgets_by_name["background_wheel_0" .. i]
+		local current_angle = wheel_widget.style.texture_id.angle
+		local angle_add = 0
+		local circle_speed_modifier
 
-		flag = (i ~= 1 or not 0.2 or i ~= 2) and (not -0.1 or 0.05)
+		circle_speed_modifier = (i ~= 1 or not 0.2) and (i ~= 2 or not -0.1) and not not 0.05
 
-		local num_2 = angle + arg_53_1 * flag
+		local speed = dt * circle_speed_modifier
 
-		var_53_1.style.texture_id.angle = num_2
+		angle_add = current_angle + speed
+		wheel_widget.style.texture_id.angle = angle_add
 	end
 end
 

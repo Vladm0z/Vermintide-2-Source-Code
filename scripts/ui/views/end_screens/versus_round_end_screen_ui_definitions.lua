@@ -1,6 +1,6 @@
 -- chunkname: @scripts/ui/views/end_screens/versus_round_end_screen_ui_definitions.lua
 
-local tbl = {
+local scenegraph = {
 	screen = {
 		scale = "fit",
 		position = {
@@ -266,7 +266,7 @@ local tbl = {
 		}
 	}
 }
-local tbl_2 = {
+local level_name_text_style = {
 	word_wrap = true,
 	upper_case = true,
 	localize = false,
@@ -282,7 +282,7 @@ local tbl_2 = {
 		2
 	}
 }
-local tbl_3 = {
+local round_counter_text_style = {
 	word_wrap = true,
 	upper_case = false,
 	localize = false,
@@ -298,7 +298,7 @@ local tbl_3 = {
 		2
 	}
 }
-local tbl_4 = {
+local title_text_round_end_style = {
 	word_wrap = true,
 	upper_case = true,
 	localize = false,
@@ -314,7 +314,7 @@ local tbl_4 = {
 		2
 	}
 }
-local tbl_5 = {
+local team_name_1_style = {
 	word_wrap = true,
 	upper_case = true,
 	localize = false,
@@ -330,7 +330,7 @@ local tbl_5 = {
 		0
 	}
 }
-local tbl_6 = {
+local team_winning_text_style = {
 	word_wrap = true,
 	upper_case = false,
 	localize = false,
@@ -346,12 +346,12 @@ local tbl_6 = {
 		10
 	}
 }
-local clone = table.clone(tbl_5)
+local team_name_2_style = table.clone(team_name_1_style)
 
-clone.horizontal_alignment = "right"
-clone.text_color = Colors.get_color_table_with_alpha("opponent_team", 255)
+team_name_2_style.horizontal_alignment = "right"
+team_name_2_style.text_color = Colors.get_color_table_with_alpha("opponent_team", 255)
 
-local tbl_7 = {
+local widgets = {
 	background = UIWidgets.create_simple_rect("screen", {
 		0,
 		0,
@@ -377,52 +377,58 @@ local tbl_7 = {
 		10
 	}),
 	level_image = UIWidgets.create_level_widget("level_image"),
-	level_name = UIWidgets.create_simple_text("LEVEL NAME", "level_name", nil, nil, tbl_2),
-	round_counter = UIWidgets.create_simple_text("Round 1/3", "round_count", nil, nil, tbl_3),
+	level_name = UIWidgets.create_simple_text("LEVEL NAME", "level_name", nil, nil, level_name_text_style),
+	round_counter = UIWidgets.create_simple_text("Round 1/3", "round_count", nil, nil, round_counter_text_style),
 	team_1_banner = UIWidgets.create_simple_texture("banner_skulls_local_long", "team_1_banner"),
 	team_1_info = UIWidgets.create_team_banner_info("team_1_info", true),
 	team_2_banner = UIWidgets.create_simple_texture("banner_skulls_opponent_long", "team_2_banner"),
 	team_2_info = UIWidgets.create_team_banner_info("team_2_info", false),
-	total_score_bg = UIWidgets.create_round_end_total_score_widget("total_score", tbl.total_score.size),
-	team_wining_status_text = UIWidgets.create_simple_text("Your Team is Winning", "team_winning_text", nil, nil, tbl_6)
+	total_score_bg = UIWidgets.create_round_end_total_score_widget("total_score", scenegraph.total_score.size),
+	team_wining_status_text = UIWidgets.create_simple_text("Your Team is Winning", "team_winning_text", nil, nil, team_winning_text_style)
 }
 local set_widget_alpha = UIUtils.set_widget_alpha
 
-local function fn(self, arg_1_1)
+local function set_score_progress_bar_length(widget, anim_progress)
 	-- function 1
-	local style = self.style
-	local content = self.content
+	local style = widget.style
+	local content = widget.content
 	local current_score = content.current_score
 	local max_score = content.max_score
-	local min = math.min(current_score / max_score, 1)
+	local progress_fraction = math.min(current_score / max_score, 1)
 
-	content.score_progress = min * arg_1_1
-	style.current_score_icon.offset[1] = 75 + content.progress_bar_max_size * (min * arg_1_1) - 32
-	style.current_score_text.offset[1] = 75 + content.progress_bar_max_size * (min * arg_1_1) - 32
-	content.current_score_text = math.floor(min * arg_1_1 * max_score)
+	content.score_progress = progress_fraction * anim_progress
+
+	local current_score_icon_style = style.current_score_icon
+
+	current_score_icon_style.offset[1] = 75 + content.progress_bar_max_size * (progress_fraction * anim_progress) - 32
+
+	local current_score_text_style = style.current_score_text
+
+	current_score_text_style.offset[1] = 75 + content.progress_bar_max_size * (progress_fraction * anim_progress) - 32
+	content.current_score_text = math.floor(progress_fraction * anim_progress * max_score)
 end
 
-local tbl_8 = {
+local animations = {
 	round_end = {
 		{
 			name = "entry",
 			start_progress = 0,
 			end_progress = 0.5,
-			init = function (arg_2_0, arg_2_1, arg_2_2, arg_2_3)
+			init = function (ui_scenegraph, scenegraph_definition, widgets, params)
 				-- function 2
-				set_widget_alpha(arg_2_2.background, 0)
+				set_widget_alpha(widgets.background, 0)
 
-				arg_2_3.draw_flags.alpha_multiplier = 0
+				params.draw_flags.alpha_multiplier = 0
 			end,
-			update = function (arg_3_0, arg_3_1, arg_3_2, arg_3_3, arg_3_4)
+			update = function (ui_scenegraph, scenegraph_definition, widgets, progress, params)
 				-- function 3
-				local easeCubic = math.easeCubic(arg_3_3)
+				local anim_fraction = math.easeCubic(progress)
 
-				arg_3_4.draw_flags.alpha_multiplier = easeCubic
+				params.draw_flags.alpha_multiplier = anim_fraction
 
-				set_widget_alpha(arg_3_2.background, easeCubic * 60)
+				set_widget_alpha(widgets.background, anim_fraction * 60)
 			end,
-			on_complete = function (arg_4_0, arg_4_1, arg_4_2, arg_4_3)
+			on_complete = function (ui_scenegraph, scenegraph_definition, widgets, params)
 				-- function 4
 				return
 			end
@@ -431,56 +437,58 @@ local tbl_8 = {
 			name = "set_team_score_progress",
 			start_progress = 0.9,
 			end_progress = 2.5,
-			init = function (arg_5_0, arg_5_1, arg_5_2, arg_5_3)
+			init = function (ui_scenegraph, scenegraph_definition, widgets, params)
 				-- function 5
-				if arg_5_3.current_round > 1 then
-					for i = 1, 2 do
-						for j = 1, arg_5_3.current_round - 1 do
-							local var_5_0 = arg_5_2["round_" .. j .. "_team_" .. i .. "_score_bar"]
-							local content = var_5_0.content
-							local style = var_5_0.style
-							local bar_fill_threashold = content.bar_fill_threashold
-							local current_score_bg = style.current_score_bg
+				if params.current_round > 1 then
+					for team = 1, 2 do
+						for round = 1, params.current_round - 1 do
+							local widget_name = "round_" .. round .. "_team_" .. team .. "_score_bar"
+							local team_score_bar = widgets[widget_name]
+							local team_content = team_score_bar.content
+							local team_style = team_score_bar.style
+							local team_progress = team_content.bar_fill_threashold
+							local current_score_background = team_style.current_score_bg
 
-							current_score_bg.offset[1] = current_score_bg.default_offset[1] + (content.bar_size[1] - content.score_size[1] - 50) * math.max(0, bar_fill_threashold)
+							current_score_background.offset[1] = current_score_background.default_offset[1] + (team_content.bar_size[1] - team_content.score_size[1] - 50) * math.max(0, team_progress)
 
-							local current_score_frame = style.current_score_frame
+							local current_score_frame = team_style.current_score_frame
 
-							current_score_frame.offset[1] = current_score_frame.default_offset[1] + (content.bar_size[1] - content.score_size[1] - 50) * math.max(0, bar_fill_threashold)
+							current_score_frame.offset[1] = current_score_frame.default_offset[1] + (team_content.bar_size[1] - team_content.score_size[1] - 50) * math.max(0, team_progress)
 
-							local current_score = style.current_score
+							local current_score = team_style.current_score
 
-							current_score.offset[1] = current_score.default_offset[1] + (content.bar_size[1] - content.score_size[1] - 50) * math.max(0, bar_fill_threashold)
-							content.current_bar_fil_threshold = bar_fill_threashold
+							current_score.offset[1] = current_score.default_offset[1] + (team_content.bar_size[1] - team_content.score_size[1] - 50) * math.max(0, team_progress)
+							team_content.current_bar_fil_threshold = team_progress
 						end
 					end
 				end
 			end,
-			update = function (arg_6_0, arg_6_1, arg_6_2, arg_6_3, arg_6_4)
+			update = function (ui_scenegraph, scenegraph_definition, widgets, progress, params)
 				-- function 6
-				local easeCubic = math.easeCubic(arg_6_3)
+				local anim_fraction = math.easeCubic(progress)
 
-				for i = 1, 2 do
-					local current_round = arg_6_4.current_round
-					local var_6_2 = arg_6_2["round_" .. current_round .. "_team_" .. i .. "_score_bar"]
-					local content = var_6_2.content
-					local style = var_6_2.style
-					local num = content.bar_fill_threashold * easeCubic
-					local current_score_bg = style.current_score_bg
+				for team = 1, 2 do
+					local current_round = params.current_round
+					local widget_name = "round_" .. current_round .. "_team_" .. team .. "_score_bar"
+					local team_score_bar = widgets[widget_name]
+					local team_content = team_score_bar.content
+					local team_style = team_score_bar.style
+					local team_progress = team_content.bar_fill_threashold * anim_fraction
+					local current_score_background = team_style.current_score_bg
 
-					current_score_bg.offset[1] = current_score_bg.default_offset[1] + (content.bar_size[1] - content.score_size[1] - 50) * math.max(0, num)
+					current_score_background.offset[1] = current_score_background.default_offset[1] + (team_content.bar_size[1] - team_content.score_size[1] - 50) * math.max(0, team_progress)
 
-					local current_score_frame = style.current_score_frame
+					local current_score_frame = team_style.current_score_frame
 
-					current_score_frame.offset[1] = current_score_frame.default_offset[1] + (content.bar_size[1] - content.score_size[1] - 50) * math.max(0, num)
+					current_score_frame.offset[1] = current_score_frame.default_offset[1] + (team_content.bar_size[1] - team_content.score_size[1] - 50) * math.max(0, team_progress)
 
-					local current_score = style.current_score
+					local current_score = team_style.current_score
 
-					current_score.offset[1] = current_score.default_offset[1] + (content.bar_size[1] - content.score_size[1] - 50) * math.max(0, num)
-					content.current_bar_fil_threshold = num
+					current_score.offset[1] = current_score.default_offset[1] + (team_content.bar_size[1] - team_content.score_size[1] - 50) * math.max(0, team_progress)
+					team_content.current_bar_fil_threshold = team_progress
 				end
 			end,
-			on_complete = function (arg_7_0, arg_7_1, arg_7_2, arg_7_3)
+			on_complete = function (ui_scenegraph, scenegraph_definition, widgets, params)
 				-- function 7
 				return
 			end
@@ -489,55 +497,55 @@ local tbl_8 = {
 			name = "total_score_progress",
 			start_progress = 1.3,
 			end_progress = 2.5,
-			init = function (arg_8_0, arg_8_1, arg_8_2, arg_8_3)
+			init = function (ui_scenegraph, scenegraph_definition, widgets, params)
 				-- function 8
 				return
 			end,
-			update = function (arg_9_0, arg_9_1, arg_9_2, arg_9_3, arg_9_4)
+			update = function (ui_scenegraph, scenegraph_definition, widgets, progress, params)
 				-- function 9
-				local easeCubic = math.easeCubic(arg_9_3)
+				local anim_fraction = math.easeCubic(progress)
 
 				for i = 1, 2 do
-					local var_9_1 = arg_9_2["team_" .. i .. "_total_score"]
-					local content = var_9_1.content
-					local style = var_9_1.style
-					local num = content.bar_fill_threashold * easeCubic
-					local current_score_background = style.current_score_background
+					local team_score_bar = widgets["team_" .. i .. "_total_score"]
+					local team_content = team_score_bar.content
+					local team_style = team_score_bar.style
+					local team_progress = team_content.bar_fill_threashold * anim_fraction
+					local current_score_background = team_style.current_score_background
 
-					current_score_background.offset[1] = current_score_background.default_offset[1] + (content.bar_size[1] - content.current_score_size[1] - 65) * math.max(0, num)
+					current_score_background.offset[1] = current_score_background.default_offset[1] + (team_content.bar_size[1] - team_content.current_score_size[1] - 65) * math.max(0, team_progress)
 
-					local gold_frame = style.gold_frame
+					local gold_frame = team_style.gold_frame
 
-					gold_frame.offset[1] = gold_frame.default_offset[1] + (content.bar_size[1] - content.current_score_size[1] - 65) * math.max(0, num)
+					gold_frame.offset[1] = gold_frame.default_offset[1] + (team_content.bar_size[1] - team_content.current_score_size[1] - 65) * math.max(0, team_progress)
 
-					local left_detail_w = style.left_detail_w
+					local left_detail_w = team_style.left_detail_w
 
-					left_detail_w.offset[1] = left_detail_w.default_offset[1] + (content.bar_size[1] - content.current_score_size[1] - 65) * math.max(0, num)
+					left_detail_w.offset[1] = left_detail_w.default_offset[1] + (team_content.bar_size[1] - team_content.current_score_size[1] - 65) * math.max(0, team_progress)
 
-					local right_detail_w = style.right_detail_w
+					local right_detail_w = team_style.right_detail_w
 
-					right_detail_w.offset[1] = right_detail_w.default_offset[1] + (content.bar_size[1] - content.current_score_size[1] - 65) * math.max(0, num)
+					right_detail_w.offset[1] = right_detail_w.default_offset[1] + (team_content.bar_size[1] - team_content.current_score_size[1] - 65) * math.max(0, team_progress)
 
-					local bronze_frame = style.bronze_frame
+					local bronze_frame = team_style.bronze_frame
 
-					bronze_frame.offset[1] = bronze_frame.default_offset[1] + (content.bar_size[1] - content.current_score_size[1] - 65) * math.max(0, num)
+					bronze_frame.offset[1] = bronze_frame.default_offset[1] + (team_content.bar_size[1] - team_content.current_score_size[1] - 65) * math.max(0, team_progress)
 
-					local left_detail_l = style.left_detail_l
+					local left_detail_l = team_style.left_detail_l
 
-					left_detail_l.offset[1] = left_detail_l.default_offset[1] + (content.bar_size[1] - content.current_score_size[1] - 65) * math.max(0, num)
+					left_detail_l.offset[1] = left_detail_l.default_offset[1] + (team_content.bar_size[1] - team_content.current_score_size[1] - 65) * math.max(0, team_progress)
 
-					local right_detail_l = style.right_detail_l
+					local right_detail_l = team_style.right_detail_l
 
-					right_detail_l.offset[1] = right_detail_l.default_offset[1] + (content.bar_size[1] - content.current_score_size[1] - 65) * math.max(0, num)
+					right_detail_l.offset[1] = right_detail_l.default_offset[1] + (team_content.bar_size[1] - team_content.current_score_size[1] - 65) * math.max(0, team_progress)
 
-					local current_score = style.current_score
+					local current_score = team_style.current_score
 
-					current_score.offset[1] = current_score.default_offset[1] + (content.bar_size[1] - content.current_score_size[1] - 65) * math.max(0, num)
-					content.current_score_text = math.floor(content.current_score * easeCubic)
-					content.current_bar_fil_threshold = num
+					current_score.offset[1] = current_score.default_offset[1] + (team_content.bar_size[1] - team_content.current_score_size[1] - 65) * math.max(0, team_progress)
+					team_content.current_score_text = math.floor(team_content.current_score * anim_fraction)
+					team_content.current_bar_fil_threshold = team_progress
 				end
 			end,
-			on_complete = function (arg_10_0, arg_10_1, arg_10_2, arg_10_3)
+			on_complete = function (ui_scenegraph, scenegraph_definition, widgets, params)
 				-- function 10
 				return
 			end
@@ -546,17 +554,17 @@ local tbl_8 = {
 			name = "fade_out",
 			start_progress = 9.5,
 			end_progress = 10,
-			init = function (arg_11_0, arg_11_1, arg_11_2, arg_11_3)
+			init = function (ui_scenegraph, scenegraph_definition, widgets, params)
 				-- function 11
 				return
 			end,
-			update = function (arg_12_0, arg_12_1, arg_12_2, arg_12_3, arg_12_4)
+			update = function (ui_scenegraph, scenegraph_definition, widgets, progress, params)
 				-- function 12
-				local num = 1 - math.easeInCubic(arg_12_3)
+				local anim_fraction = 1 - math.easeInCubic(progress)
 
-				arg_12_4.draw_flags.alpha_multiplier = num
+				params.draw_flags.alpha_multiplier = anim_fraction
 			end,
-			on_complete = function (arg_13_0, arg_13_1, arg_13_2, arg_13_3)
+			on_complete = function (ui_scenegraph, scenegraph_definition, widgets, params)
 				-- function 13
 				return
 			end
@@ -565,7 +573,7 @@ local tbl_8 = {
 }
 
 return {
-	scenegraph_definition = tbl,
-	widget_definitions = tbl_7,
-	animation_definitions = tbl_8
+	scenegraph_definition = scenegraph,
+	widget_definitions = widgets,
+	animation_definitions = animations
 }

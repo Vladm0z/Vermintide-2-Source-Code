@@ -1,6 +1,6 @@
 -- chunkname: @levels/honduras_dlcs/carousel/farmlands_pvp/world_nav_tag_volumes.lua
 
-local tbl = {
+local nav_tag_volumes = {
 	volume_no_spawn_oak_hill = {
 		delay_nav_tag_volume_creation = true,
 		alt_max = 13.072698593139648,
@@ -2753,9 +2753,9 @@ local tbl = {
 		}
 	}
 }
-local str = "1"
+local version = "1"
 
 return {
-	version = str,
-	nav_tag_volumes = tbl
+	version = version,
+	nav_tag_volumes = nav_tag_volumes
 }

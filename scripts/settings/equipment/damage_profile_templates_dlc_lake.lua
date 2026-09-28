@@ -1,6 +1,6 @@
 -- chunkname: @scripts/settings/equipment/damage_profile_templates_dlc_lake.lua
 
-return {
+local damage_templates = {
 	questing_knight_career_sword = {
 		charge_value = "heavy_attack",
 		is_explosion = true,
@@ -167,3 +167,5 @@ return {
 		}
 	}
 }
+
+return damage_templates

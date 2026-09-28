@@ -1,274 +1,286 @@
 -- chunkname: @scripts/managers/conflict_director/perlin_path.lua
 
-local function fn(arg_1_0, arg_1_1)
+local function noise(x, seed)
 	-- function 1
-	local next_random, var_1_1 = Math.next_random(arg_1_0 + arg_1_1)
-	local next_random_2, var_1_3 = Math.next_random(next_random)
+	local next_seed, _ = Math.next_random(x + seed)
+	local _, value = Math.next_random(next_seed)
 
-	return var_1_3 * 2 - 1
+	return value * 2 - 1
 end
 
-local function fn_2(arg_2_0, arg_2_1)
+local function smoothed_noise(x, seed)
 	-- function 2
-	return fn(arg_2_0, arg_2_1) / 2 + fn(arg_2_0 - 1, arg_2_1) / 4 + fn(arg_2_0 + 1, arg_2_1) / 4
+	return noise(x, seed) / 2 + noise(x - 1, seed) / 4 + noise(x + 1, seed) / 4
 end
 
-local function fn_3(arg_3_0, arg_3_1)
+local function interpolated_noise(x, seed)
 	-- function 3
-	local floor = math.floor(arg_3_0)
-	local num = arg_3_0 - floor
-	local var_3_2 = fn_2(floor, arg_3_1)
-	local var_3_3 = fn_2(floor + 1, arg_3_1)
+	local x_floored = math.floor(x)
+	local remainder = x - x_floored
+	local v1 = smoothed_noise(x_floored, seed)
+	local v2 = smoothed_noise(x_floored + 1, seed)
 
-	return math.lerp(var_3_2, var_3_3, num)
+	return math.lerp(v1, v2, remainder)
 end
 
 PerlinPath = {}
 
-PerlinPath.make_perlin_path = function (arg_4_0, arg_4_1, arg_4_2, arg_4_3)
+PerlinPath.make_perlin_path = function (start_oktave, end_oktave, persistance, seed)
 	-- function 4
-	local num = 0
-	local tbl = {}
+	local total = 0
+	local octave_table = {}
 
-	for i = arg_4_0, arg_4_1 do
-		local tbl_2 = {}
-		local num_2 = arg_4_2^i
-		local num_3 = 0
-		local num_4 = 1 / i
+	for i = start_oktave, end_oktave do
+		local waves = {}
+		local amplitude = persistance^i
+		local x = 0
+		local step_dist = 1 / i
 
 		for j = 0, i do
-			local next_random, var_4_7 = Math.next_random(num_3 + arg_4_3)
-			local next_random_2, var_4_9 = Math.next_random(next_random)
+			local next_seed, _ = Math.next_random(x + seed)
+			local _, value = Math.next_random(next_seed)
 
-			tbl_2[j] = {
-				num_3,
-				var_4_9 * num_2
+			waves[j] = {
+				x,
+				value * amplitude
 			}
-			num_3 = num_3 + num_4
-			arg_4_3 = next_random
+			x = x + step_dist
+			seed = next_seed
 		end
 
-		tbl[i - arg_4_0 + 1] = tbl_2
+		octave_table[i - start_oktave + 1] = waves
 	end
 
-	return tbl
+	return octave_table
 end
 
-local num = 1345600
-local num_2 = 25
+local near_path = 1345600
+local zone_length = 25
 
-PerlinPath.make_easy_path = function (arg_5_0, arg_5_1, arg_5_2)
+PerlinPath.make_easy_path = function (nav_world, main_path, path_length)
 	-- function 5
-	local tbl = {}
-	local num = arg_5_2 / num_2
-	local num_3 = arg_5_2 / math.floor(num)
-	local num_4 = 0
+	local new_path = {}
+	local cycle_length = zone_length
+	local num_cycles = path_length / cycle_length
+	local new_cycle_length = path_length / math.floor(num_cycles)
+	local x = 0
 
-	for i = 1, num do
-		local get_path_point = LevelAnalysis.get_path_point(arg_5_1, arg_5_2, i / num)
+	for i = 1, num_cycles do
+		local pos = LevelAnalysis.get_path_point(main_path, path_length, i / num_cycles)
 
-		tbl[#tbl + 1] = Vector3Box(get_path_point)
+		new_path[#new_path + 1] = Vector3Box(pos)
 	end
 
-	return PerlinPath.fill_spawns(arg_5_0, tbl, arg_5_2)
+	return PerlinPath.fill_spawns(nav_world, new_path, path_length)
 end
 
-local distance_squared = Vector3.distance_squared
+local vector3_distance_squared = Vector3.distance_squared
 
-PerlinPath.fill_spawns = function (arg_6_0, arg_6_1, arg_6_2, arg_6_3, arg_6_4, arg_6_5)
+PerlinPath.fill_spawns = function (nav_world, main_path, path_length, density_path, p1, p2)
 	-- function 6
-	local tbl = {}
-	local var_6_1
-	local num_2 = 0
-	local tbl_2 = {}
-	local tbl_3 = {}
-	local tbl_4 = {}
+	local lookup = {}
+	local triangle
+	local num_triangles = 0
+	local triangles = {}
+	local seed_list = {}
+	local area_list = {}
 
-	for i = 1, #arg_6_1 do
-		local unbox = arg_6_1[i]:unbox()
-		local get_seed_triangle = GwNavTraversal.get_seed_triangle(arg_6_0, unbox)
+	for i = 1, #main_path do
+		local pos = main_path[i]:unbox()
+		local triangle = GwNavTraversal.get_seed_triangle(nav_world, pos)
 
-		if not get_seed_triangle then
-			num_2 = num_2 + 1
-			tbl_2[num_2] = get_seed_triangle
-			tbl_3[num_2] = unbox
+		if triangle then
+			num_triangles = num_triangles + 1
+			triangles[num_triangles] = triangle
+			seed_list[num_triangles] = pos
 
-			local temp_count, var_6_9, var_6_10 = Script.temp_count()
-			local get_triangle_vertices, var_6_12, var_6_13 = GwNavTraversal.get_triangle_vertices(arg_6_0, get_seed_triangle)
-			local num_3 = (get_triangle_vertices + var_6_12 + var_6_13) / 3
-			local num_4 = num_3.x * 0.0001 + num_3.y + num_3.z * 10000
+			local a, b, c = Script.temp_count()
+			local p1, p2, p3 = GwNavTraversal.get_triangle_vertices(nav_world, triangle)
+			local tri_center = (p1 + p2 + p3) / 3
+			local key = tri_center.x * 0.0001 + tri_center.y + tri_center.z * 10000
 
-			tbl_4[num_2] = Vector3.length(Vector3.cross(var_6_12 - get_triangle_vertices, var_6_13 - get_triangle_vertices)) / 2
+			area_list[num_triangles] = Vector3.length(Vector3.cross(p2 - p1, p3 - p1)) / 2
 
-			Script.set_temp_count(temp_count, var_6_9, var_6_10)
+			Script.set_temp_count(a, b, c)
 
-			tbl[num_4] = num_2
+			lookup[key] = num_triangles
 		end
 	end
 
-	local num_5 = 0
+	local i = 0
 
-	while num_5 < num_2 do
-		num_5 = num_5 + 1
+	while i < num_triangles do
+		i = i + 1
+		triangle = triangles[i]
 
-		local var_6_17 = tbl_2[num_5]
-		local temp_count_2, var_6_19, var_6_20 = Script.temp_count()
-		local get_triangle_vertices_2, var_6_22, var_6_23 = GwNavTraversal.get_triangle_vertices(arg_6_0, var_6_17)
-		local num_6 = (get_triangle_vertices_2 + var_6_22 + var_6_23) / 3
-		local var_6_25 = tbl[num_6.x * 0.0001 + num_6.y + num_6.z * 10000]
+		local a, b, c = Script.temp_count()
+		local p1, p2, p3 = GwNavTraversal.get_triangle_vertices(nav_world, triangle)
+		local tri_center = (p1 + p2 + p3) / 3
+		local key = tri_center.x * 0.0001 + tri_center.y + tri_center.z * 10000
+		local seed_index = lookup[key]
 
-		tbl_4[var_6_25] = tbl_4[var_6_25] + Vector3.length(Vector3.cross(var_6_22 - get_triangle_vertices_2, var_6_23 - get_triangle_vertices_2)) / 2
+		area_list[seed_index] = area_list[seed_index] + Vector3.length(Vector3.cross(p2 - p1, p3 - p1)) / 2
 
-		Script.set_temp_count(temp_count_2, var_6_19, var_6_20)
+		Script.set_temp_count(a, b, c)
 
-		local var_6_26 = tbl_3[var_6_25 - 1]
-		local var_6_27 = tbl_3[var_6_25]
-		local var_6_28 = tbl_3[var_6_25 + 1]
-		local tbl_5 = {
-			GwNavTraversal.get_neighboring_triangles(var_6_17)
+		local seed_a = seed_list[seed_index - 1]
+		local seed_b = seed_list[seed_index]
+		local seed_c = seed_list[seed_index + 1]
+		local neighbors = {
+			GwNavTraversal.get_neighboring_triangles(triangle)
 		}
 
-		for j = 1, #tbl_5 do
-			local var_6_30 = tbl_5[j]
-			local temp_count_3, var_6_32, var_6_33 = Script.temp_count()
-			local get_triangle_vertices_3, var_6_35, var_6_36 = GwNavTraversal.get_triangle_vertices(arg_6_0, var_6_30)
-			local var_6_37 = var_6_36
-			local var_6_38 = var_6_35
-			local num_7 = (get_triangle_vertices_3 + var_6_38 + var_6_37) / 3
-			local num_8 = num_7.x * 0.0001 + num_7.y + num_7.z * 10000
+		for k = 1, #neighbors do
+			local neighbour = neighbors[k]
+			local t1, t2, t3 = Script.temp_count()
 
-			if not tbl[num_8] then
-				local get_triangle_vertices_4, var_6_42, var_6_43 = GwNavTraversal.get_triangle_vertices(arg_6_0, var_6_30)
-				local var_6_44
+			p1, p2, p3 = GwNavTraversal.get_triangle_vertices(nav_world, neighbour)
 
-				if not var_6_26 then
-					var_6_44 = distance_squared(var_6_26, num_7)
+			local tri_center = (p1 + p2 + p3) / 3
+			local key = tri_center.x * 0.0001 + tri_center.y + tri_center.z * 10000
 
-					if not var_6_44 then
+			if not lookup[key] then
+				local p1, p2, p3 = GwNavTraversal.get_triangle_vertices(nav_world, neighbour)
+				local var_6_0
+
+				if seed_a then
+					var_6_0 = vector3_distance_squared(seed_a, tri_center)
+
+					if not var_6_0 then
 						-- Nothing
 					end
 				end
 
-				var_6_44 = math.huge
+				var_6_0 = math.huge
+
+				local a = var_6_0
 
 				do
-					local var_6_45
+					local var_6_1
 				end
 
 				::label_6_0::
 
-				if not var_6_27 then
-					var_6_45 = distance_squared(var_6_27, num_7)
+				if seed_b then
+					var_6_1 = vector3_distance_squared(seed_b, tri_center)
 
-					if not var_6_45 then
+					if not var_6_1 then
 						-- Nothing
 					end
 				end
 
-				var_6_45 = math.huge
+				var_6_1 = math.huge
+
+				local b = var_6_1
 
 				do
-					local var_6_46
+					local var_6_2
 				end
 
 				::label_6_1::
 
-				if not var_6_28 then
-					var_6_46 = distance_squared(var_6_28, num_7)
+				if seed_c then
+					var_6_2 = vector3_distance_squared(seed_c, tri_center)
 
-					if not var_6_46 then
+					if not var_6_2 then
 						-- Nothing
 					end
 				end
 
-				var_6_46 = math.huge
+				var_6_2 = math.huge
+
+				local c = var_6_2
 
 				::label_6_2::
 
-				local var_6_47
+				local closest
 
-				if var_6_44 < var_6_45 then
-					if not (not var_6_46 and not (var_6_44 < var_6_46)) then
-						if var_6_44 < num then
-							var_6_47 = var_6_25 - 1
+				if a < b then
+					if c and a < c then
+						if a < near_path then
+							closest = seed_index - 1
 						else
-							var_6_47 = 1
+							closest = 1
 						end
-					elseif var_6_46 < num then
-						var_6_47 = var_6_25 + 1
+					elseif c < near_path then
+						closest = seed_index + 1
 					else
-						var_6_47 = 1
+						closest = 1
 					end
-				elseif var_6_45 < var_6_46 then
-					if var_6_45 < num then
-						var_6_47 = var_6_25
+				elseif b < c then
+					if b < near_path then
+						closest = seed_index
 					else
-						var_6_47 = 1
+						closest = 1
 					end
-				elseif var_6_46 < num then
-					var_6_47 = var_6_25 + 1
+				elseif c < near_path then
+					closest = seed_index + 1
 				else
-					var_6_47 = 1
+					closest = 1
 				end
 
-				num_2 = num_2 + 1
-				tbl_2[num_2] = var_6_30
-				tbl[num_8] = var_6_47
+				num_triangles = num_triangles + 1
+				triangles[num_triangles] = neighbour
+				lookup[key] = closest
 			end
 
-			Script.set_temp_count(temp_count_3, var_6_32, var_6_33)
+			Script.set_temp_count(t1, t2, t3)
 		end
 	end
 
-	for k = 1, #tbl_4 do
-		print("area " .. k .. ") " .. tbl_4[k])
+	for i = 1, #area_list do
+		print("area " .. i .. ") " .. area_list[i])
 	end
 
-	print("DONE!", #tbl_2)
+	print("DONE!", #triangles)
 
-	return tbl_2, tbl, tbl_4
+	return triangles, lookup, area_list
 end
 
-PerlinPath.populate_spawns = function (arg_7_0, arg_7_1, arg_7_2, arg_7_3, arg_7_4, arg_7_5)
+PerlinPath.populate_spawns = function (nav_world, main_path, path_length, density_path, p1, p2)
 	-- function 7
 	return
 end
 
-PerlinPath.draw_debug_spawns = function (arg_8_0, arg_8_1, arg_8_2, arg_8_3, arg_8_4)
+PerlinPath.draw_debug_spawns = function (nav_world, gui, triangles, lookup, area_list)
 	-- function 8
-	local count = #arg_8_2
+	local size = #triangles
 
-	for i = 1, count do
-		local var_8_1 = arg_8_2[i]
-		local temp_count, var_8_3, var_8_4 = Script.temp_count()
-		local var_8_5 = Vector3(0, 0, 0.1)
-		local get_triangle_vertices, var_8_7, var_8_8 = GwNavTraversal.get_triangle_vertices(arg_8_0, var_8_1)
-		local num = (get_triangle_vertices + var_8_7 + var_8_8) / 3
-		local num_2 = num.x * 0.0001 + num.y + num.z * 10000
+	for i = 1, size do
+		local triangle = triangles[i]
+		local a, b, c = Script.temp_count()
+		local h = Vector3(0, 0, 0.1)
+		local p1, p2, p3 = GwNavTraversal.get_triangle_vertices(nav_world, triangle)
+		local tri_center = (p1 + p2 + p3) / 3
+		local key = tri_center.x * 0.0001 + tri_center.y + tri_center.z * 10000
 
-		Gui.triangle(arg_8_1, get_triangle_vertices + var_8_5, var_8_7 + var_8_5, var_8_8 + var_8_5, 2, Colors.get_indexed((12 + arg_8_3[num_2]) % 32 + 1))
-		Script.set_temp_count(temp_count, var_8_3, var_8_4)
+		Gui.triangle(gui, p1 + h, p2 + h, p3 + h, 2, Colors.get_indexed((12 + lookup[key]) % 32 + 1))
+		Script.set_temp_count(a, b, c)
 	end
 end
 
-PerlinPath.make_path = function (arg_9_0, arg_9_1)
+PerlinPath.make_path = function (oktave_table, points)
 	-- function 9
-	local num = 1 / arg_9_1
-	local num_2 = 0
+	local step_dist = 1 / points
+	local x = 0
 
 	for i = start_oktave, end_oktave do
-		num_2 = num_2 + num
+		x = x + step_dist
 	end
 end
 
-PerlinPath.normalize_path = function (self, arg_10_1)
+PerlinPath.normalize_path = function (points, wanted_area_fill_rate)
 	-- function 10
-	local num = 0
-	local num_2 = #self - 1
+	local area = 0
+	local segments = #points - 1
 
-	for i = 1, num_2 do
-		num = num + (self[i][2] + self[i + 1][2]) * 0.5
+	for i = 1, segments do
+		area = area + (points[i][2] + points[i + 1][2]) * 0.5
 	end
 
-	return arg_10_1 / (num / num_2)
+	local total_area = segments
+	local area_fill_rate = area / total_area
+	local multiply_with = wanted_area_fill_rate / area_fill_rate
+
+	return multiply_with
 end

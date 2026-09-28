@@ -1,43 +1,46 @@
 -- chunkname: @scripts/settings/mutators/mutator_curse_change_of_tzeentch.lua
 
-local scripts_settings_mutators_mutator_splitting_enemies = require("scripts/settings/mutators/mutator_splitting_enemies")
-local clone = table.clone(scripts_settings_mutators_mutator_splitting_enemies)
+local base_splitting_enemies = require("scripts/settings/mutators/mutator_splitting_enemies")
+local curse_change_of_tzeentch = table.clone(base_splitting_enemies)
 
-clone.display_name = "curse_change_of_tzeentch_name"
-clone.description = "curse_change_of_tzeentch_desc"
-clone.icon = "deus_curse_tzeentch_01"
+curse_change_of_tzeentch.display_name = "curse_change_of_tzeentch_name"
+curse_change_of_tzeentch.description = "curse_change_of_tzeentch_desc"
+curse_change_of_tzeentch.icon = "deus_curse_tzeentch_01"
 
-local num = 0.25
+local SPLIT_CHANCE = 0.25
 
-clone.server_start_function = function (arg_1_0, arg_1_1)
+curse_change_of_tzeentch.server_start_function = function (context, data)
 	-- function 1
-	scripts_settings_mutators_mutator_splitting_enemies.server_start_function(arg_1_0, arg_1_1)
+	base_splitting_enemies.server_start_function(context, data)
 
-	arg_1_1.seed = Managers.mechanism:get_level_seed("mutator")
+	data.seed = Managers.mechanism:get_level_seed("mutator")
 end
 
-clone.server_ai_killed_function = function (arg_2_0, arg_2_1, arg_2_2, arg_2_3, arg_2_4, arg_2_5)
+curse_change_of_tzeentch.server_ai_killed_function = function (context, data, killed_unit, killer_unit, death_data, killing_blow)
 	-- function 2
-	local var_2_0
-	local var_2_1
+	local random
 
-	arg_2_1.seed, var_2_1 = Math.next_random(arg_2_1.seed)
+	data.seed, random = Math.next_random(data.seed)
 
-	if var_2_1 > num then
+	if random > SPLIT_CHANCE then
 		return
 	end
 
-	scripts_settings_mutators_mutator_splitting_enemies.server_ai_killed_function(arg_2_0, arg_2_1, arg_2_2, arg_2_3, arg_2_4, arg_2_5)
+	base_splitting_enemies.server_ai_killed_function(context, data, killed_unit, killer_unit, death_data, killing_blow)
 end
 
-clone.on_split_enemy = function (arg_3_0)
+curse_change_of_tzeentch.on_split_enemy = function (killer_unit)
 	-- function 3
-	if not HEALTH_ALIVE[arg_3_0] and not Managers.player:is_player_unit(arg_3_0) then
-		local extension_input = ScriptUnit.extension_input(arg_3_0, "dialogue_system")
-		local alloc_table = FrameTable.alloc_table()
+	if HEALTH_ALIVE[killer_unit] then
+		local killed_by_player = Managers.player:is_player_unit(killer_unit)
 
-		extension_input:trigger_dialogue_event("curse_negative_effect_happened", alloc_table)
+		if killed_by_player then
+			local dialogue_input = ScriptUnit.extension_input(killer_unit, "dialogue_system")
+			local event_data = FrameTable.alloc_table()
+
+			dialogue_input:trigger_dialogue_event("curse_negative_effect_happened", event_data)
+		end
 	end
 end
 
-return clone
+return curse_change_of_tzeentch

@@ -4,19 +4,20 @@ CareerAbilityGutterRunnerFoff = class(CareerAbilityGutterRunnerFoff, CareerAbili
 
 CareerAbilityGutterRunnerFoff._ability_available = function (self)
 	-- function 1
-	local _ability_available = self.super._ability_available(self)
-	local flag = self._career_extension:get_state() == "vs_gutter_runner_smoke_bomb_invisible"
+	local ability_available = self.super._ability_available(self)
+	local career_extension = self._career_extension
+	local in_foff_invis = career_extension:get_state() == "vs_gutter_runner_smoke_bomb_invisible"
 
-	return not _ability_available and not flag
+	return not not ability_available and not not not in_foff_invis
 end
 
 CareerAbilityGutterRunnerFoff._start = function (self)
 	-- function 2
 	self.super._start(self)
 
-	local _career_extension = self._career_extension
-	local ability_id = self._ability_data.ability_id
+	local career_extension = self._career_extension
+	local id = self._ability_data.ability_id
 
-	_career_extension:start_activated_ability_cooldown(ability_id)
-	_career_extension:set_activated_ability_cooldown_paused(ability_id)
+	career_extension:start_activated_ability_cooldown(id)
+	career_extension:set_activated_ability_cooldown_paused(id)
 end

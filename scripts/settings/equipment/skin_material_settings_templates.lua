@@ -2,7 +2,7 @@
 
 local MaterialSettingsTemplates = MaterialSettingsTemplates
 
-MaterialSettingsTemplates = MaterialSettingsTemplates or {}
+MaterialSettingsTemplates = not not MaterialSettingsTemplates or not not {}
 MaterialSettingsTemplates = MaterialSettingsTemplates
 MaterialSettingsTemplates.ektrik = {
 	tint_64 = {

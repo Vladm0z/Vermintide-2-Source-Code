@@ -1,6 +1,6 @@
 -- chunkname: @scripts/settings/dlcs/geheimnisnacht_2025/geheimnisnacht_map_settings.lua
 
-return {
+local locations = {
 	dlc_dwarf_whaling = {
 		ritual_locations = {
 			{
@@ -242,3 +242,5 @@ return {
 		}
 	}
 }
+
+return locations

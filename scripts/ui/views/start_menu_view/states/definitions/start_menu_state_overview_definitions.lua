@@ -1,20 +1,20 @@
 -- chunkname: @scripts/ui/views/start_menu_view/states/definitions/start_menu_state_overview_definitions.lua
 
-local num = 4
-local num_2 = 40
-local tbl = {
+local num_difficulties = 4
+local difficulty_spacing = 40
+local difficulty_button_size = {
 	250,
 	250
 }
-local tbl_2 = {
+local difficulty_image_size = {
 	250,
 	250
 }
-local tbl_3 = {
-	tbl[1] * num + num_2 * (num - 1),
-	tbl[2]
+local difficulty_option_size = {
+	difficulty_button_size[1] * num_difficulties + difficulty_spacing * (num_difficulties - 1),
+	difficulty_button_size[2]
 }
-local tbl_4 = {
+local scenegraph_definition = {
 	screen = {
 		scale = "fit",
 		size = {
@@ -435,8 +435,8 @@ local tbl_4 = {
 	}
 }
 
-if not Development.parameter("tobii_button") then
-	tbl_4.tobii_window = {
+if Development.parameter("tobii_button") then
+	scenegraph_definition.tobii_window = {
 		vertical_alignment = "bottom",
 		parent = "right_side_root",
 		horizontal_alignment = "right",
@@ -450,7 +450,7 @@ if not Development.parameter("tobii_button") then
 			1
 		}
 	}
-	tbl_4.tobii_button = {
+	scenegraph_definition.tobii_button = {
 		vertical_alignment = "bottom",
 		parent = "tobii_window",
 		horizontal_alignment = "center",
@@ -464,7 +464,7 @@ if not Development.parameter("tobii_button") then
 			30
 		}
 	}
-	tbl_4.tobii_description = {
+	scenegraph_definition.tobii_description = {
 		vertical_alignment = "bottom",
 		parent = "tobii_window",
 		horizontal_alignment = "center",
@@ -478,7 +478,7 @@ if not Development.parameter("tobii_button") then
 			10
 		}
 	}
-	tbl_4.tobii_title = {
+	scenegraph_definition.tobii_title = {
 		vertical_alignment = "center",
 		parent = "tobii_window",
 		horizontal_alignment = "center",
@@ -492,7 +492,7 @@ if not Development.parameter("tobii_button") then
 			10
 		}
 	}
-	tbl_4.tobii_title_divider = {
+	scenegraph_definition.tobii_title_divider = {
 		vertical_alignment = "center",
 		parent = "tobii_title",
 		horizontal_alignment = "center",
@@ -506,7 +506,7 @@ if not Development.parameter("tobii_button") then
 			-3
 		}
 	}
-	tbl_4.tobii_title_effect = {
+	scenegraph_definition.tobii_title_effect = {
 		vertical_alignment = "bottom",
 		parent = "tobii_title_divider",
 		horizontal_alignment = "center",
@@ -522,7 +522,7 @@ if not Development.parameter("tobii_button") then
 	}
 end
 
-local tbl_5 = {
+local hero_career_style = {
 	font_size = 36,
 	upper_case = true,
 	localize = false,
@@ -539,7 +539,7 @@ local tbl_5 = {
 		2
 	}
 }
-local tbl_6 = {
+local hero_name_style = {
 	word_wrap = true,
 	use_shadow = true,
 	localize = false,
@@ -555,7 +555,7 @@ local tbl_6 = {
 		2
 	}
 }
-local tbl_7 = {
+local hero_level_style = {
 	word_wrap = true,
 	font_size = 20,
 	localize = false,
@@ -570,7 +570,7 @@ local tbl_7 = {
 		2
 	}
 }
-local tbl_8 = {
+local tobii_title_style = {
 	word_wrap = true,
 	upper_case = true,
 	localize = false,
@@ -586,7 +586,7 @@ local tbl_8 = {
 		2
 	}
 }
-local tbl_9 = {
+local tobii_description_style = {
 	word_wrap = true,
 	upper_case = true,
 	localize = false,
@@ -602,14 +602,14 @@ local tbl_9 = {
 		2
 	}
 }
-local tbl_10 = {
-	tutorial_button = UIWidgets.create_default_button("tutorial_button", tbl_4.tutorial_button.size, nil, nil, Localize("start_menu_tutorial"), 24),
-	cinematics_button = UIWidgets.create_default_button("cinematics_button", tbl_4.cinematics_button.size, nil, nil, Localize("start_menu_cinematics"), 24),
-	credits_button = UIWidgets.create_default_button("credits_button", tbl_4.credits_button.size, nil, nil, Localize("start_menu_credits"), 24),
-	quit_button = UIWidgets.create_default_button("quit_button", tbl_4.quit_button.size, nil, nil, Localize("start_menu_quit"), 24),
-	play_button = UIWidgets.create_default_button("play_button", tbl_4.play_button.size, nil, nil, Localize("start_menu_play"), 24, "green"),
-	options_button = UIWidgets.create_default_button("options_button", tbl_4.options_button.size, nil, nil, Localize("start_menu_options"), 24),
-	hero_button = UIWidgets.create_default_button("hero_button", tbl_4.hero_button.size, nil, nil, Localize("start_menu_switch_hero"), 24, nil, "button_detail_02"),
+local widgets = {
+	tutorial_button = UIWidgets.create_default_button("tutorial_button", scenegraph_definition.tutorial_button.size, nil, nil, Localize("start_menu_tutorial"), 24),
+	cinematics_button = UIWidgets.create_default_button("cinematics_button", scenegraph_definition.cinematics_button.size, nil, nil, Localize("start_menu_cinematics"), 24),
+	credits_button = UIWidgets.create_default_button("credits_button", scenegraph_definition.credits_button.size, nil, nil, Localize("start_menu_credits"), 24),
+	quit_button = UIWidgets.create_default_button("quit_button", scenegraph_definition.quit_button.size, nil, nil, Localize("start_menu_quit"), 24),
+	play_button = UIWidgets.create_default_button("play_button", scenegraph_definition.play_button.size, nil, nil, Localize("start_menu_play"), 24, "green"),
+	options_button = UIWidgets.create_default_button("options_button", scenegraph_definition.options_button.size, nil, nil, Localize("start_menu_options"), 24),
+	hero_button = UIWidgets.create_default_button("hero_button", scenegraph_definition.hero_button.size, nil, nil, Localize("start_menu_switch_hero"), 24, nil, "button_detail_02"),
 	game_options_right_chain_end = UIWidgets.create_simple_texture("chain_link_02", "game_options_right_chain_end"),
 	game_options_left_chain_end = UIWidgets.create_simple_texture("chain_link_02", "game_options_left_chain_end"),
 	game_options_left_chain = UIWidgets.create_tiled_texture("game_options_left_chain", "chain_link_01", {
@@ -640,23 +640,23 @@ local tbl_10 = {
 		0,
 		0
 	}),
-	info_career_name = UIWidgets.create_simple_text("n/a", "info_career_name", nil, nil, tbl_5),
-	info_hero_name = UIWidgets.create_simple_text("n/a", "info_hero_name", nil, nil, tbl_6),
-	info_hero_level = UIWidgets.create_simple_text("n/a", "info_hero_level", nil, nil, tbl_7)
+	info_career_name = UIWidgets.create_simple_text("n/a", "info_career_name", nil, nil, hero_career_style),
+	info_hero_name = UIWidgets.create_simple_text("n/a", "info_hero_name", nil, nil, hero_name_style),
+	info_hero_level = UIWidgets.create_simple_text("n/a", "info_hero_level", nil, nil, hero_level_style)
 }
 
-if not Development.parameter("tobii_button") then
-	tbl_10.tobii_description = UIWidgets.create_simple_text("Rush into the chance to win exclusive prizes", "tobii_description", nil, nil, tbl_9)
-	tbl_10.tobii_title = UIWidgets.create_simple_text("JOIN AN EPIC CHALLENGE", "tobii_title", nil, nil, tbl_8)
-	tbl_10.tobii_title_effect = UIWidgets.create_simple_texture("play_button_frame_glow", "tobii_title_effect")
-	tbl_10.tobii_title_divider = UIWidgets.create_simple_texture("divider_01_top", "tobii_title_divider")
-	tbl_10.tobii_button = UIWidgets.create_default_button("tobii_button", tbl_4.tobii_button.size, nil, nil, "Read More", 24)
-	tbl_10.tobii_window_frame = UIWidgets.create_frame("tobii_window", tbl_4.tobii_window.size, "menu_frame_12", 10)
-	tbl_10.tobii_window = UIWidgets.create_background("tobii_window", tbl_4.tobii_window.size, "menu_frame_bg_01")
-	tbl_10.tobii_window_background_fade = UIWidgets.create_simple_texture("options_window_fade_01", "tobii_window", nil, nil, nil, 1)
+if Development.parameter("tobii_button") then
+	widgets.tobii_description = UIWidgets.create_simple_text("Rush into the chance to win exclusive prizes", "tobii_description", nil, nil, tobii_description_style)
+	widgets.tobii_title = UIWidgets.create_simple_text("JOIN AN EPIC CHALLENGE", "tobii_title", nil, nil, tobii_title_style)
+	widgets.tobii_title_effect = UIWidgets.create_simple_texture("play_button_frame_glow", "tobii_title_effect")
+	widgets.tobii_title_divider = UIWidgets.create_simple_texture("divider_01_top", "tobii_title_divider")
+	widgets.tobii_button = UIWidgets.create_default_button("tobii_button", scenegraph_definition.tobii_button.size, nil, nil, "Read More", 24)
+	widgets.tobii_window_frame = UIWidgets.create_frame("tobii_window", scenegraph_definition.tobii_window.size, "menu_frame_12", 10)
+	widgets.tobii_window = UIWidgets.create_background("tobii_window", scenegraph_definition.tobii_window.size, "menu_frame_bg_01")
+	widgets.tobii_window_background_fade = UIWidgets.create_simple_texture("options_window_fade_01", "tobii_window", nil, nil, nil, 1)
 end
 
-local tbl_11 = {
+local generic_input_actions = {
 	default = {
 		{
 			input_action = "confirm",
@@ -670,25 +670,25 @@ local tbl_11 = {
 		}
 	}
 }
-local tbl_12 = {
+local animation_definitions = {
 	on_enter = {
 		{
 			name = "fade_in",
 			start_progress = 0,
 			end_progress = 0.3,
-			init = function (arg_1_0, arg_1_1, arg_1_2, arg_1_3)
+			init = function (ui_scenegraph, scenegraph_definition, widgets, params)
 				-- function 1
-				arg_1_3.render_settings.alpha_multiplier = 0
+				params.render_settings.alpha_multiplier = 0
 			end,
-			update = function (arg_2_0, arg_2_1, arg_2_2, arg_2_3, arg_2_4)
+			update = function (ui_scenegraph, scenegraph_definition, widgets, progress, params)
 				-- function 2
-				local easeOutCubic = math.easeOutCubic(arg_2_3)
+				local anim_progress = math.easeOutCubic(progress)
 
-				arg_2_4.render_settings.alpha_multiplier = easeOutCubic
-				arg_2_0.left_side_root.local_position[1] = arg_2_1.left_side_root.position[1] + -100 * (1 - easeOutCubic)
-				arg_2_0.right_side_root.local_position[1] = arg_2_1.right_side_root.position[1] + 100 * (1 - easeOutCubic)
+				params.render_settings.alpha_multiplier = anim_progress
+				ui_scenegraph.left_side_root.local_position[1] = scenegraph_definition.left_side_root.position[1] + -100 * (1 - anim_progress)
+				ui_scenegraph.right_side_root.local_position[1] = scenegraph_definition.right_side_root.position[1] + 100 * (1 - anim_progress)
 			end,
-			on_complete = function (arg_3_0, arg_3_1, arg_3_2, arg_3_3)
+			on_complete = function (ui_scenegraph, scenegraph_definition, widgets, params)
 				-- function 3
 				return
 			end
@@ -699,19 +699,19 @@ local tbl_12 = {
 			name = "fade_out",
 			start_progress = 0,
 			end_progress = 1,
-			init = function (arg_4_0, arg_4_1, arg_4_2, arg_4_3)
+			init = function (ui_scenegraph, scenegraph_definition, widgets, params)
 				-- function 4
-				arg_4_3.render_settings.alpha_multiplier = 1
+				params.render_settings.alpha_multiplier = 1
 			end,
-			update = function (arg_5_0, arg_5_1, arg_5_2, arg_5_3, arg_5_4)
+			update = function (ui_scenegraph, scenegraph_definition, widgets, progress, params)
 				-- function 5
-				local easeOutCubic = math.easeOutCubic(arg_5_3)
+				local anim_progress = math.easeOutCubic(progress)
 
-				arg_5_4.render_settings.alpha_multiplier = 1 - easeOutCubic
-				arg_5_0.left_side_root.local_position[1] = arg_5_1.left_side_root.position[1] + -100 * easeOutCubic
-				arg_5_0.right_side_root.local_position[1] = arg_5_1.right_side_root.position[1] + 100 * easeOutCubic
+				params.render_settings.alpha_multiplier = 1 - anim_progress
+				ui_scenegraph.left_side_root.local_position[1] = scenegraph_definition.left_side_root.position[1] + -100 * anim_progress
+				ui_scenegraph.right_side_root.local_position[1] = scenegraph_definition.right_side_root.position[1] + 100 * anim_progress
 			end,
-			on_complete = function (arg_6_0, arg_6_1, arg_6_2, arg_6_3)
+			on_complete = function (ui_scenegraph, scenegraph_definition, widgets, params)
 				-- function 6
 				return
 			end
@@ -720,9 +720,9 @@ local tbl_12 = {
 }
 
 return {
-	widgets = tbl_10,
-	generic_input_actions = tbl_11,
-	scenegraph_definition = tbl_4,
-	animation_definitions = tbl_12,
+	widgets = widgets,
+	generic_input_actions = generic_input_actions,
+	scenegraph_definition = scenegraph_definition,
+	animation_definitions = animation_definitions,
 	console_cursor_definition = UIWidgets.create_console_cursor("console_cursor")
 }

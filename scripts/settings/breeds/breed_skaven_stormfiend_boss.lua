@@ -1,7 +1,7 @@
 -- chunkname: @scripts/settings/breeds/breed_skaven_stormfiend_boss.lua
 
-local scripts_utils_stagger_types = require("scripts/utils/stagger_types")
-local tbl = {
+local stagger_types = require("scripts/utils/stagger_types")
+local breed_data = {
 	is_bot_aid_threat = true,
 	walk_speed = 5,
 	minion_detection_radius = 10,
@@ -277,15 +277,15 @@ local tbl = {
 		stormfiend_warpfire = 1,
 		vortex_danger_zone = 1
 	},
-	before_stagger_enter_function = function (arg_1_0, arg_1_1, arg_1_2, arg_1_3)
+	before_stagger_enter_function = function (unit, blackboard, attacker_unit, is_push)
 		-- function 1
-		QuestSettings.handle_charge_stagger(arg_1_0, arg_1_1, arg_1_2)
+		QuestSettings.handle_charge_stagger(unit, blackboard, attacker_unit)
 	end
 }
 
-Breeds.skaven_stormfiend_boss = table.create_copy(Breeds.skaven_stormfiend_boss, tbl)
+Breeds.skaven_stormfiend_boss = table.create_copy(Breeds.skaven_stormfiend_boss, breed_data)
 
-local tbl_2 = {
+local AttackIntensityPerDifficulty = {
 	aoe = {
 		easy = {
 			running = 2,
@@ -392,7 +392,7 @@ local tbl_2 = {
 		}
 	}
 }
-local tbl_3 = {
+local action_data = {
 	climb = {
 		sync_with_linked_unit = false,
 		catapult_players = {
@@ -414,7 +414,7 @@ local tbl_3 = {
 		blocked_damage = 5,
 		ignore_ai_damage = true,
 		damage_type = "cutting",
-		difficulty_attack_intensity = tbl_2,
+		difficulty_attack_intensity = AttackIntensityPerDifficulty,
 		considerations = UtilityConsiderations.stormfiend_boss_charge,
 		attacks = {
 			{
@@ -449,11 +449,11 @@ local tbl_3 = {
 				push_ai = {
 					stagger_distance = 3,
 					stagger_impact = {
-						scripts_utils_stagger_types.explosion,
-						scripts_utils_stagger_types.explosion,
-						scripts_utils_stagger_types.none,
-						scripts_utils_stagger_types.none,
-						scripts_utils_stagger_types.explosion
+						stagger_types.explosion,
+						stagger_types.explosion,
+						stagger_types.none,
+						stagger_types.none,
+						stagger_types.explosion
 					},
 					stagger_duration = {
 						4.5,
@@ -515,7 +515,7 @@ local tbl_3 = {
 		attack_intensity_type = "shove",
 		ignore_ai_damage = true,
 		damage_type = "cutting",
-		difficulty_attack_intensity = tbl_2,
+		difficulty_attack_intensity = AttackIntensityPerDifficulty,
 		attacks = {
 			{
 				anim_driven = true,
@@ -582,10 +582,10 @@ local tbl_3 = {
 				push_ai = {
 					stagger_distance = 4,
 					stagger_impact = {
-						scripts_utils_stagger_types.explosion,
-						scripts_utils_stagger_types.heavy,
-						scripts_utils_stagger_types.none,
-						scripts_utils_stagger_types.none
+						stagger_types.explosion,
+						stagger_types.heavy,
+						stagger_types.none,
+						stagger_types.none
 					},
 					stagger_duration = {
 						4.5,
@@ -702,7 +702,7 @@ local tbl_3 = {
 		action_weight = 1,
 		ignore_ai_damage = true,
 		damage_type = "cutting",
-		difficulty_attack_intensity = tbl_2,
+		difficulty_attack_intensity = AttackIntensityPerDifficulty,
 		considerations = UtilityConsiderations.stormfiend_boss_melee_shove,
 		attacks = {
 			{
@@ -776,10 +776,10 @@ local tbl_3 = {
 				push_ai = {
 					stagger_distance = 3,
 					stagger_impact = {
-						scripts_utils_stagger_types.explosion,
-						scripts_utils_stagger_types.heavy,
-						scripts_utils_stagger_types.none,
-						scripts_utils_stagger_types.none
+						stagger_types.explosion,
+						stagger_types.heavy,
+						stagger_types.none,
+						stagger_types.none
 					},
 					stagger_duration = {
 						4.5,
@@ -875,7 +875,7 @@ local tbl_3 = {
 		shove_speed = 10,
 		player_push_speed_blocked = 15,
 		ignore_abort_on_blocked_attack = true,
-		difficulty_attack_intensity = tbl_2,
+		difficulty_attack_intensity = AttackIntensityPerDifficulty,
 		considerations = UtilityConsiderations.stormfiend_boss_aoe,
 		difficulty_damage = {
 			hardest = 30,
@@ -1455,4 +1455,4 @@ local tbl_3 = {
 	}
 }
 
-BreedActions.skaven_stormfiend_boss = table.create_copy(BreedActions.skaven_stormfiend_boss, tbl_3)
+BreedActions.skaven_stormfiend_boss = table.create_copy(BreedActions.skaven_stormfiend_boss, action_data)

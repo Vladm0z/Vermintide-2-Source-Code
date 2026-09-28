@@ -2,28 +2,28 @@
 
 require("scripts/settings/dlcs/morris/deus_cost_settings")
 
-local num = 2
-local num_2 = 3
-local num_3 = 4
-local num_4 = 5
-local num_5 = 6
-local tbl = {
-	[num] = 50,
-	[num_2] = 50,
-	[num_3] = 50,
-	[num_4] = 50,
-	[num_5] = 50
+local NORMAL = 2
+local HARD = 3
+local HARDER = 4
+local HARDEST = 5
+local CATACLYSM = 6
+local POWER_LEVEL_BONUSES = {
+	[NORMAL] = 50,
+	[HARD] = 50,
+	[HARDER] = 50,
+	[HARDEST] = 50,
+	[CATACLYSM] = 50
 }
 local DeusBlessingSettings = DeusBlessingSettings
 
-DeusBlessingSettings = DeusBlessingSettings or {
+DeusBlessingSettings = not not DeusBlessingSettings or not not {
 	blessing_of_power = {
 		description = "blessing_of_power_desc",
 		display_name = "blessing_of_power_name",
 		lifetime = 1,
 		icon = "blessing_power_01",
 		shop_icon = "blessing_power_02",
-		improve_all_weapons = tbl
+		improve_all_weapons = POWER_LEVEL_BONUSES
 	},
 	blessing_of_shallya = {
 		description = "blessing_of_shallya_desc",

@@ -2,40 +2,44 @@
 
 local InputUtils = InputUtils
 
-InputUtils = InputUtils or {}
+InputUtils = not not InputUtils or not not {}
 InputUtils = InputUtils
 
-InputUtils.keymaps_key_approved = function (arg_1_0)
+InputUtils.keymaps_key_approved = function (platform_key)
 	-- function 1
-	local PLATFORM = PLATFORM
+	local platform = PLATFORM
 
-	if not IS_WINDOWS then
+	if IS_WINDOWS then
 		local flag
 
-		flag = arg_1_0 == PLATFORM or arg_1_0 == "xb1" or arg_1_0 == "ps_pad" or true or nil
+		flag = (platform_key == platform or platform_key == "xb1" or platform_key == "ps_pad") and not not true or not not nil
 
 		return flag
-	elseif not IS_XB1 then
+	elseif IS_XB1 then
 		local flag_2
 
-		flag_2 = arg_1_0 == PLATFORM or arg_1_0 == "win32" or true or nil
+		flag_2 = (platform_key == platform or platform_key == "win32") and not not true or not not nil
 
 		return flag_2
 	else
 		local flag_3
 
-		flag_3 = arg_1_0 ~= PLATFORM or not true or nil
+		flag_3 = (platform_key ~= platform or not true) and not not nil
 
 		return flag_3
 	end
 end
 
-InputUtils.get_platform_keymaps = function (self, arg_2_1)
+InputUtils.get_platform_keymaps = function (keymappings, optional_platform_key)
 	-- function 2
-	return self[arg_2_1 or PLATFORM]
+	local platform = not not optional_platform_key or not not PLATFORM
+
+	return keymappings[platform]
 end
 
-InputUtils.get_platform_filters = function (self, arg_3_1)
+InputUtils.get_platform_filters = function (filters, optional_platform_key)
 	-- function 3
-	return self[arg_3_1 or PLATFORM]
+	local platform = not not optional_platform_key or not not PLATFORM
+
+	return filters[platform]
 end

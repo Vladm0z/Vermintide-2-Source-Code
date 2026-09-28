@@ -1,10 +1,10 @@
 -- chunkname: @scripts/settings/mutators/mutator_curse_skulls_of_fury.lua
 
-local str = "units/props/skull_of_fury"
-local num = 2
-local str_2 = "curse_skulls_of_fury"
-local num_2 = 0
-local tbl = {
+local skull_unit = "units/props/skull_of_fury"
+local spawn_z_offset = 2
+local buff_name = "curse_skulls_of_fury"
+local BASE_SPAWN_CHANCE = 0
+local breed_additional_spawn_chance = {
 	skaven_plague_monk = 0.05,
 	chaos_raider = 0.1,
 	chaos_marauder = 0.05,
@@ -35,14 +35,14 @@ return {
 	packages = {
 		"resource_packages/mutators/mutator_curse_skulls_of_fury"
 	},
-	server_start_function = function (arg_1_0, arg_1_1)
+	server_start_function = function (context, data)
 		-- function 1
-		arg_1_1.seed = Managers.mechanism:get_level_seed("mutator")
-		arg_1_1.unit_extension_template = "buffed_timed_explosion_unit"
-		arg_1_1.extension_init_data = {
+		data.seed = Managers.mechanism:get_level_seed("mutator")
+		data.unit_extension_template = "buffed_timed_explosion_unit"
+		data.extension_init_data = {
 			buff_system = {
 				initial_buff_names = {
-					str_2
+					buff_name
 				}
 			},
 			area_damage_system = {
@@ -50,54 +50,60 @@ return {
 			}
 		}
 	end,
-	server_ai_killed_function = function (arg_2_0, arg_2_1, arg_2_2, arg_2_3, arg_2_4)
+	server_ai_killed_function = function (context, data, killed_unit, killer_unit, death_data)
 		-- function 2
-		local num_3 = 1
-		local var_2_1
+		local random = 1
 
-		arg_2_1.seed, var_2_1 = Math.next_random(arg_2_1.seed)
+		data.seed, random = Math.next_random(data.seed)
 
-		local get_data = Unit.get_data(arg_2_2, "breed")
-		local var_2_3
+		local breed = Unit.get_data(killed_unit, "breed")
+		local var_2_0
 
-		if not get_data then
-			var_2_3 = tbl[get_data.name]
+		if breed then
+			var_2_0 = breed_additional_spawn_chance[breed.name]
 
-			if not var_2_3 then
+			if not var_2_0 then
 				-- Nothing
 			end
 		end
 
-		var_2_3 = 0
+		var_2_0 = 0
+
+		local breed_spawn_chance = var_2_0
 
 		::label_2_0::
 
-		if var_2_1 < num_2 + var_2_3 then
-			local copy = Vector3.copy(POSITION_LOOKUP[arg_2_2])
+		local spawn_chance = BASE_SPAWN_CHANCE + breed_spawn_chance
 
-			copy.z = copy.z + num
+		if random < spawn_chance then
+			local position = Vector3.copy(POSITION_LOOKUP[killed_unit])
 
-			local identity = Quaternion.identity()
+			position.z = position.z + spawn_z_offset
 
-			Managers.state.unit_spawner:spawn_network_unit(str, arg_2_1.unit_extension_template, arg_2_1.extension_init_data, copy, identity)
+			local rotation = Quaternion.identity()
 
-			local get_random_player = Managers.state.entity:system("dialogue_system"):get_random_player()
+			Managers.state.unit_spawner:spawn_network_unit(skull_unit, data.unit_extension_template, data.extension_init_data, position, rotation)
 
-			if not get_random_player then
-				local extension_input = ScriptUnit.extension_input(get_random_player, "dialogue_system")
-				local alloc_table = FrameTable.alloc_table()
+			local dialogue_system = Managers.state.entity:system("dialogue_system")
+			local random_player_unit = dialogue_system:get_random_player()
 
-				extension_input:trigger_dialogue_event("curse_danger_spotted", alloc_table)
+			if random_player_unit then
+				local dialogue_input = ScriptUnit.extension_input(random_player_unit, "dialogue_system")
+				local event_data = FrameTable.alloc_table()
+
+				dialogue_input:trigger_dialogue_event("curse_danger_spotted", event_data)
 			end
 		end
 	end,
-	server_player_hit_function = function (arg_3_0, arg_3_1, arg_3_2, arg_3_3, arg_3_4)
+	server_player_hit_function = function (context, data, hit_unit, attacker_unit, hit_data)
 		-- function 3
-		if arg_3_4[2] == "skulls_of_fury" then
-			local extension_input = ScriptUnit.extension_input(arg_3_2, "dialogue_system")
-			local alloc_table = FrameTable.alloc_table()
+		local damage_type = hit_data[2]
 
-			extension_input:trigger_dialogue_event("curse_damage_taken", alloc_table)
+		if damage_type == "skulls_of_fury" then
+			local dialogue_input = ScriptUnit.extension_input(hit_unit, "dialogue_system")
+			local event_data = FrameTable.alloc_table()
+
+			dialogue_input:trigger_dialogue_event("curse_damage_taken", event_data)
 		end
 	end
 }

@@ -2,22 +2,22 @@
 
 ImguiDeusLoadLevel = class(ImguiDeusLoadLevel)
 
-local tbl = {
+local difficulties = {
 	"normal",
 	"hard",
 	"harder",
 	"hardest",
 	"cataclysm"
 }
-local tbl_2 = {}
+local levels = {}
 
-if not DEUS_LEVEL_SETTINGS then
-	for k, v in pairs(DEUS_LEVEL_SETTINGS) do
-		tbl_2[#tbl_2 + 1] = k
+if DEUS_LEVEL_SETTINGS then
+	for level_name, _ in pairs(DEUS_LEVEL_SETTINGS) do
+		levels[#levels + 1] = level_name
 	end
 end
 
-table.sort(tbl_2)
+table.sort(levels)
 
 ImguiDeusLoadLevel.init = function (self)
 	-- function 1
@@ -29,72 +29,73 @@ ImguiDeusLoadLevel.init = function (self)
 	self._level_seed = 0
 end
 
-ImguiDeusLoadLevel.update = function (arg_2_0)
+ImguiDeusLoadLevel.update = function (self)
 	-- function 2
 	return
 end
 
-ImguiDeusLoadLevel.is_persistent = function (arg_3_0)
+ImguiDeusLoadLevel.is_persistent = function (self)
 	-- function 3
 	return false
 end
 
-ImguiDeusLoadLevel.draw = function (self, arg_4_1)
+ImguiDeusLoadLevel.draw = function (self, is_open)
 	-- function 4
-	local current_mechanism_name = Managers.mechanism:current_mechanism_name()
-	local begin_window = Imgui.begin_window("DeusLoadLevel", "always_auto_resize")
+	local mechanism_name = Managers.mechanism:current_mechanism_name()
+	local do_close = Imgui.begin_window("DeusLoadLevel", "always_auto_resize")
 
-	if current_mechanism_name ~= "deus" then
+	if mechanism_name ~= "deus" then
 		Imgui.text("This UI only works when playing with the deus mechanism.")
 	else
-		local _base_level_index = self._base_level_index
+		local prev_base_level_index = self._base_level_index
 
-		self._base_level_index = Imgui.combo("Level", self._base_level_index, tbl_2)
+		self._base_level_index = Imgui.combo("Level", self._base_level_index, levels)
 
-		if _base_level_index ~= self._base_level_index then
+		if prev_base_level_index ~= self._base_level_index then
 			self._path_index = 1
 			self._theme_index = 1
 		end
 
-		local var_4_3 = tbl_2[self._base_level_index]
-		local var_4_4 = DEUS_LEVEL_SETTINGS[var_4_3]
-		local var_4_5
+		local level_name = levels[self._base_level_index]
+		local deus_level = DEUS_LEVEL_SETTINGS[level_name]
+		local with_belakor
 
-		if var_4_3 ~= "arena_belakor" then
-			self._path_index = Imgui.combo("Path", self._path_index, var_4_4.paths)
-			self._theme_index = Imgui.combo("Theme", self._theme_index, var_4_4.themes)
+		if level_name ~= "arena_belakor" then
+			self._path_index = Imgui.combo("Path", self._path_index, deus_level.paths)
+			self._theme_index = Imgui.combo("Theme", self._theme_index, deus_level.themes)
 			self._with_belakor = Imgui.checkbox("With Belakor", not not self._with_belakor)
-			var_4_5 = self._with_belakor
+			with_belakor = self._with_belakor
 		else
 			Imgui.checkbox("With Belakor", true)
 
-			var_4_5 = true
+			with_belakor = true
 		end
 
-		self._difficulty_index = Imgui.combo("Difficulty", self._difficulty_index, tbl)
+		self._difficulty_index = Imgui.combo("Difficulty", self._difficulty_index, difficulties)
 		self._progress = Imgui.slider_float("Run progress", self._progress, 0, 0.999)
 		self._level_seed = Imgui.input_int("Level seed", self._level_seed)
 
 		Imgui.same_line()
 
-		if not Imgui.button("Randomize seed") then
+		if Imgui.button("Randomize seed") then
 			self._level_seed = math.random_seed()
 		end
 
 		Imgui.text_colored("If entered manually: Press return to confirm the entered seed", 255, 255, 255, 128)
 		Imgui.spacing()
 
-		local var_4_6
-		local flag
+		local full_name
 
-		flag = var_4_3 ~= "arena_belakor" or not "arena_belakor" or var_4_3 .. "_" .. var_4_4.themes[self._theme_index] .. "_path" .. var_4_4.paths[self._path_index]
+		full_name = (level_name ~= "arena_belakor" or not "arena_belakor") and not not (level_name .. "_" .. deus_level.themes[self._theme_index] .. "_path" .. deus_level.paths[self._path_index])
 
-		if not Imgui.button("Load") then
-			Managers.mechanism:game_mechanism():debug_load_deus_level(flag, tbl[self._difficulty_index], self._progress, self._level_seed, var_4_5)
+		if Imgui.button("Load") then
+			local mechanism = Managers.mechanism:game_mechanism()
+
+			mechanism:debug_load_deus_level(full_name, difficulties[self._difficulty_index], self._progress, self._level_seed, with_belakor)
 		end
 	end
 
 	Imgui.end_window()
 
-	return begin_window
+	return do_close
 end

@@ -1,39 +1,40 @@
 -- chunkname: @scripts/ui/views/start_game_view/states/definitions/start_game_state_weave_leaderboard_definitions.lua
 
-local game_start_windows = UISettings.game_start_windows
-local size = game_start_windows.size
-local spacing = game_start_windows.spacing
-local str = "menu_frame_11"
-local var_0_4 = UIFrameSettings[str].texture_sizes.vertical[1]
-local large_window_frame = game_start_windows.large_window_frame
-local var_0_6 = UIFrameSettings[large_window_frame].texture_sizes.vertical[1]
-local tbl = {
-	size[1] * 3 + spacing * 2 + var_0_6 * 2,
-	size[2] + 80
+local window_default_settings = UISettings.game_start_windows
+local small_window_size = window_default_settings.size
+local small_window_spacing = window_default_settings.spacing
+local window_frame_name = "menu_frame_11"
+local window_frame = UIFrameSettings[window_frame_name]
+local window_frame_width = window_frame.texture_sizes.vertical[1]
+local large_window_frame = window_default_settings.large_window_frame
+local large_window_frame_width = UIFrameSettings[large_window_frame].texture_sizes.vertical[1]
+local inner_window_size = {
+	small_window_size[1] * 3 + small_window_spacing * 2 + large_window_frame_width * 2,
+	small_window_size[2] + 80
 }
-local tbl_2 = {
-	tbl[1] + 50,
-	tbl[2]
+local window_size = {
+	inner_window_size[1] + 50,
+	inner_window_size[2]
 }
-local num = 40
-local num_2 = 10
-local tbl_3 = {
-	tbl_2[1] - var_0_4 * 2,
-	tbl_2[2] - var_0_4 * 2
+local option_tabs_height = 40
+local list_fade_height = 10
+local list_window_size = {
+	window_size[1] - window_frame_width * 2,
+	window_size[2] - window_frame_width * 2
 }
-local tbl_4 = {
-	tbl_3[1] - 100,
-	tbl_3[2] - 280
+local list_mask_size = {
+	list_window_size[1] - 100,
+	list_window_size[2] - 280
 }
-local tbl_5 = {
+local list_scrollbar_size = {
 	16,
-	tbl_4[2]
+	list_mask_size[2]
 }
-local tbl_6 = {
-	tbl_4[1] - 80,
+local list_entry_size = {
+	list_mask_size[1] - 80,
 	48
 }
-local tbl_7 = {
+local scenegraph_definition = {
 	root = {
 		is_root = true,
 		size = {
@@ -104,7 +105,7 @@ local tbl_7 = {
 		vertical_alignment = "center",
 		parent = "screen",
 		horizontal_alignment = "center",
-		size = tbl_2,
+		size = window_size,
 		position = {
 			0,
 			0,
@@ -116,8 +117,8 @@ local tbl_7 = {
 		parent = "window",
 		horizontal_alignment = "center",
 		size = {
-			tbl_2[1] - 5,
-			tbl_2[2] - 5
+			window_size[1] - 5,
+			window_size[2] - 5
 		},
 		position = {
 			0,
@@ -130,8 +131,8 @@ local tbl_7 = {
 		parent = "window",
 		horizontal_alignment = "center",
 		size = {
-			tbl_2[1] - 5,
-			tbl_2[2] - 5
+			window_size[1] - 5,
+			window_size[2] - 5
 		},
 		position = {
 			0,
@@ -143,7 +144,7 @@ local tbl_7 = {
 		vertical_alignment = "center",
 		parent = "window",
 		horizontal_alignment = "center",
-		size = tbl,
+		size = inner_window_size,
 		position = {
 			0,
 			0,
@@ -210,9 +211,9 @@ local tbl_7 = {
 		vertical_alignment = "center",
 		parent = "window",
 		horizontal_alignment = "left",
-		size = tbl_3,
+		size = list_window_size,
 		position = {
-			var_0_4,
+			window_frame_width,
 			0,
 			1
 		}
@@ -221,7 +222,7 @@ local tbl_7 = {
 		vertical_alignment = "bottom",
 		parent = "list_window",
 		horizontal_alignment = "center",
-		size = tbl_4,
+		size = list_mask_size,
 		position = {
 			0,
 			80,
@@ -232,7 +233,7 @@ local tbl_7 = {
 		vertical_alignment = "bottom",
 		parent = "list_mask",
 		horizontal_alignment = "right",
-		size = tbl_5,
+		size = list_scrollbar_size,
 		position = {
 			-16,
 			0,
@@ -257,7 +258,7 @@ local tbl_7 = {
 		vertical_alignment = "top",
 		parent = "list_scroll_root",
 		horizontal_alignment = "left",
-		size = tbl_6,
+		size = list_entry_size,
 		position = {
 			25,
 			0,
@@ -269,12 +270,12 @@ local tbl_7 = {
 		parent = "list_window",
 		horizontal_alignment = "center",
 		size = {
-			tbl_3[1] / 3,
+			list_window_size[1] / 3,
 			85
 		},
 		position = {
-			tbl_3[1] / 5,
-			-(num + 13),
+			list_window_size[1] / 5,
+			-(option_tabs_height + 13),
 			4
 		}
 	},
@@ -283,12 +284,12 @@ local tbl_7 = {
 		parent = "list_window",
 		horizontal_alignment = "center",
 		size = {
-			tbl_3[1] / 3,
+			list_window_size[1] / 3,
 			85
 		},
 		position = {
-			-tbl_3[1] / 5,
-			-(num + 13),
+			-list_window_size[1] / 5,
+			-(option_tabs_height + 13),
 			4
 		}
 	},
@@ -367,8 +368,8 @@ local tbl_7 = {
 		parent = "list_window",
 		horizontal_alignment = "center",
 		size = {
-			tbl_3[1],
-			num
+			list_window_size[1],
+			option_tabs_height
 		},
 		position = {
 			0,
@@ -381,7 +382,7 @@ local tbl_7 = {
 		parent = "option_tabs",
 		horizontal_alignment = "center",
 		size = {
-			tbl_3[1],
+			list_window_size[1],
 			0
 		},
 		position = {
@@ -395,7 +396,7 @@ local tbl_7 = {
 		parent = "option_tabs",
 		horizontal_alignment = "center",
 		size = {
-			tbl_3[1],
+			list_window_size[1],
 			0
 		},
 		position = {
@@ -409,7 +410,7 @@ local tbl_7 = {
 		parent = "option_tabs",
 		horizontal_alignment = "center",
 		size = {
-			tbl_3[1],
+			list_window_size[1],
 			0
 		},
 		position = {
@@ -423,7 +424,7 @@ local tbl_7 = {
 		parent = "option_tabs",
 		horizontal_alignment = "center",
 		size = {
-			tbl_3[1] + 6,
+			list_window_size[1] + 6,
 			0
 		},
 		position = {
@@ -451,7 +452,7 @@ local tbl_7 = {
 		parent = "refresh_button",
 		horizontal_alignment = "left",
 		size = {
-			tbl_3[1] - 40,
+			list_window_size[1] - 40,
 			30
 		},
 		position = {
@@ -477,51 +478,51 @@ local tbl_7 = {
 }
 
 if not IS_WINDOWS then
-	tbl_7.setting_stepper_1 = {
+	scenegraph_definition.setting_stepper_1 = {
 		vertical_alignment = "top",
 		parent = "list_window",
 		horizontal_alignment = "center",
 		size = {
-			tbl_3[1] / 3.5,
+			list_window_size[1] / 3.5,
 			85
 		},
 		position = {
-			tbl_3[1] / 3,
-			-(num + 13),
+			list_window_size[1] / 3,
+			-(option_tabs_height + 13),
 			4
 		}
 	}
-	tbl_7.setting_stepper_2 = {
+	scenegraph_definition.setting_stepper_2 = {
 		vertical_alignment = "top",
 		parent = "list_window",
 		horizontal_alignment = "center",
 		size = {
-			tbl_3[1] / 3.5,
+			list_window_size[1] / 3.5,
 			85
 		},
 		position = {
 			0,
-			-(num + 13),
+			-(option_tabs_height + 13),
 			4
 		}
 	}
-	tbl_7.setting_stepper_3 = {
+	scenegraph_definition.setting_stepper_3 = {
 		vertical_alignment = "top",
 		parent = "list_window",
 		horizontal_alignment = "center",
 		size = {
-			tbl_3[1] / 3.5,
+			list_window_size[1] / 3.5,
 			85
 		},
 		position = {
-			-tbl_3[1] / 3,
-			-(num + 13),
+			-list_window_size[1] / 3,
+			-(option_tabs_height + 13),
 			4
 		}
 	}
 end
 
-local tbl_8 = {
+local title_text_style = {
 	use_shadow = true,
 	upper_case = true,
 	localize = false,
@@ -537,7 +538,7 @@ local tbl_8 = {
 		2
 	}
 }
-local tbl_9 = {
+local list_title_text_style = {
 	use_shadow = true,
 	upper_case = true,
 	localize = false,
@@ -558,7 +559,7 @@ local tbl_9 = {
 		2
 	}
 }
-local tbl_10 = {
+local refresh_text_style = {
 	use_shadow = true,
 	upper_case = false,
 	localize = false,
@@ -579,7 +580,7 @@ local tbl_10 = {
 		2
 	}
 }
-local tbl_11 = {
+local no_placement_text_style = {
 	use_shadow = true,
 	upper_case = true,
 	localize = false,
@@ -601,11 +602,11 @@ local tbl_11 = {
 	}
 }
 
-local function fn(arg_1_0, arg_1_1, arg_1_2)
+local function create_list_mask(scenegraph_id, size, fade_height)
 	-- function 1
-	arg_1_2 = arg_1_2 or 20
+	fade_height = not not fade_height or not not 20
 
-	local tbl = {
+	local element = {
 		passes = {
 			{
 				pass_type = "hotspot",
@@ -628,20 +629,20 @@ local function fn(arg_1_0, arg_1_1, arg_1_2)
 			}
 		}
 	}
-	local tbl_2 = {
+	local content = {
 		mask_texture = "mask_rect",
 		mask_edge = "mask_rect_edge_fade",
 		hotspot = {
 			allow_multi_hover = true
 		}
 	}
-	local tbl_3 = {
+	local style = {
 		mask = {
 			vertical_alignment = "center",
 			horizontal_alignment = "center",
 			texture_size = {
-				arg_1_1[1],
-				arg_1_1[2] - arg_1_2 * 2
+				size[1],
+				size[2] - fade_height * 2
 			},
 			color = {
 				255,
@@ -659,8 +660,8 @@ local function fn(arg_1_0, arg_1_1, arg_1_2)
 			vertical_alignment = "top",
 			horizontal_alignment = "center",
 			texture_size = {
-				arg_1_1[1],
-				arg_1_2
+				size[1],
+				fade_height
 			},
 			color = {
 				255,
@@ -678,8 +679,8 @@ local function fn(arg_1_0, arg_1_1, arg_1_2)
 			vertical_alignment = "bottom",
 			horizontal_alignment = "center",
 			texture_size = {
-				arg_1_1[1],
-				arg_1_2
+				size[1],
+				fade_height
 			},
 			color = {
 				255,
@@ -694,42 +695,43 @@ local function fn(arg_1_0, arg_1_1, arg_1_2)
 			},
 			angle = math.pi,
 			pivot = {
-				arg_1_1[1] / 2,
-				arg_1_2 / 2
+				size[1] / 2,
+				fade_height / 2
 			}
 		}
 	}
+	local widget = {}
 
-	return {
-		element = tbl,
-		content = tbl_2,
-		style = tbl_3,
-		offset = {
-			0,
-			0,
-			0
-		},
-		scenegraph_id = arg_1_0
-	}
-end
-
-local function fn_2(arg_2_0, arg_2_1)
-	-- function 2
-	local tbl = {
-		17,
-		27
-	}
-	local tbl_2 = {
-		30,
-		40
-	}
-	local tbl_3 = {
+	widget.element = element
+	widget.content = content
+	widget.style = style
+	widget.offset = {
 		0,
 		0,
 		0
 	}
-	local tbl_4 = {
-		arg_2_1[1] - tbl_2[1],
+	widget.scenegraph_id = scenegraph_id
+
+	return widget
+end
+
+local function create_stepper(scenegraph_id, size)
+	-- function 2
+	local arrow_icon_size = {
+		17,
+		27
+	}
+	local button_hotspot_size = {
+		30,
+		40
+	}
+	local left_button_offset = {
+		0,
+		0,
+		0
+	}
+	local right_button_offset = {
+		size[1] - button_hotspot_size[1],
 		0,
 		0
 	}
@@ -838,11 +840,11 @@ local function fn_2(arg_2_0, arg_2_1)
 				text_color = Colors.get_color_table_with_alpha("font_title", 255),
 				offset = {
 					0,
-					arg_2_1[2] - 50,
+					size[2] - 50,
 					4
 				},
 				size = {
-					arg_2_1[1],
+					size[1],
 					59
 				}
 			},
@@ -858,11 +860,11 @@ local function fn_2(arg_2_0, arg_2_1)
 				text_color = Colors.get_color_table_with_alpha("black", 255),
 				offset = {
 					2,
-					arg_2_1[2] - 50 - 2,
+					size[2] - 50 - 2,
 					3
 				},
 				size = {
-					arg_2_1[1],
+					size[1],
 					59
 				}
 			},
@@ -877,13 +879,13 @@ local function fn_2(arg_2_0, arg_2_1)
 				font_type = "hell_shark",
 				text_color = Colors.get_color_table_with_alpha("font_default", 255),
 				offset = {
-					tbl_2[1] + 10,
+					button_hotspot_size[1] + 10,
 					0,
 					4
 				},
 				size = {
-					arg_2_1[1] - (tbl_2[1] * 2 + 20),
-					tbl_2[2]
+					size[1] - (button_hotspot_size[1] * 2 + 20),
+					button_hotspot_size[2]
 				}
 			},
 			setting_text_shadow = {
@@ -897,13 +899,13 @@ local function fn_2(arg_2_0, arg_2_1)
 				font_type = "hell_shark",
 				text_color = Colors.get_color_table_with_alpha("black", 255),
 				offset = {
-					tbl_2[1] + 10 + 2,
+					button_hotspot_size[1] + 10 + 2,
 					-2,
 					3
 				},
 				size = {
-					arg_2_1[1] - (tbl_2[1] * 2 + 20),
-					tbl_2[2]
+					size[1] - (button_hotspot_size[1] * 2 + 20),
+					button_hotspot_size[2]
 				}
 			},
 			button_hotspot_left = {
@@ -913,14 +915,14 @@ local function fn_2(arg_2_0, arg_2_1)
 					30,
 					30
 				},
-				size = tbl_2,
-				offset = tbl_3
+				size = button_hotspot_size,
+				offset = left_button_offset
 			},
 			left_arrow_icon = {
-				size = tbl,
+				size = arrow_icon_size,
 				offset = {
-					tbl_3[1] + (tbl_2[1] / 2 - tbl[1] / 2),
-					tbl_3[2] + (tbl_2[2] / 2 - tbl[2] / 2),
+					left_button_offset[1] + (button_hotspot_size[1] / 2 - arrow_icon_size[1] / 2),
+					left_button_offset[2] + (button_hotspot_size[2] / 2 - arrow_icon_size[2] / 2),
 					2
 				},
 				color = {
@@ -931,8 +933,8 @@ local function fn_2(arg_2_0, arg_2_1)
 				}
 			},
 			button_hotspot_right = {
-				size = tbl_2,
-				offset = tbl_4
+				size = button_hotspot_size,
+				offset = right_button_offset
 			},
 			right_arrow_icon = {
 				angle = math.degrees_to_radians(180),
@@ -940,10 +942,10 @@ local function fn_2(arg_2_0, arg_2_1)
 					14,
 					17
 				},
-				size = tbl,
+				size = arrow_icon_size,
 				offset = {
-					tbl_4[1] + (tbl_2[1] / 2 - tbl[1] / 2),
-					tbl_4[2] + (tbl_2[2] / 2 - tbl[2] / 2),
+					right_button_offset[1] + (button_hotspot_size[1] / 2 - arrow_icon_size[1] / 2),
+					right_button_offset[2] + (button_hotspot_size[2] / 2 - arrow_icon_size[2] / 2),
 					2
 				},
 				color = {
@@ -954,13 +956,13 @@ local function fn_2(arg_2_0, arg_2_1)
 				}
 			}
 		},
-		scenegraph_id = arg_2_0
+		scenegraph_id = scenegraph_id
 	}
 end
 
-local function fn_3(arg_3_0, arg_3_1)
+local function create_window_divider(scenegraph_id, size)
 	-- function 3
-	return {
+	local widget = {
 		element = {
 			passes = {
 				{
@@ -999,11 +1001,11 @@ local function fn_3(arg_3_0, arg_3_1)
 					6
 				},
 				size = {
-					arg_3_1[1] - 10,
+					size[1] - 10,
 					5
 				},
 				texture_tiling_size = {
-					arg_3_1[1] - 10,
+					size[1] - 10,
 					5
 				}
 			},
@@ -1032,7 +1034,7 @@ local function fn_3(arg_3_0, arg_3_1)
 					255
 				},
 				offset = {
-					arg_3_1[1] - 12,
+					size[1] - 12,
 					-6,
 					10
 				},
@@ -1042,19 +1044,21 @@ local function fn_3(arg_3_0, arg_3_1)
 				}
 			}
 		},
-		scenegraph_id = arg_3_0,
+		scenegraph_id = scenegraph_id,
 		offset = {
 			0,
 			0,
 			0
 		}
 	}
+
+	return widget
 end
 
-local function fn_4(arg_4_0, arg_4_1)
+local function create_refresh_button(scenegraph_id, size)
 	-- function 4
-	local menu_frame_09 = UIFrameSettings.menu_frame_09
-	local tbl = {
+	local frame_settings = UIFrameSettings.menu_frame_09
+	local element = {
 		passes = {
 			{
 				style_id = "button",
@@ -1074,38 +1078,38 @@ local function fn_4(arg_4_0, arg_4_1)
 				pass_type = "texture",
 				style_id = "icon",
 				texture_id = "icon",
-				content_check_function = function (self)
+				content_check_function = function (content)
 					-- function 5
-					return not self.button_hotspot.is_hover
+					return not content.button_hotspot.is_hover
 				end
 			},
 			{
 				pass_type = "texture",
 				style_id = "icon_hover",
 				texture_id = "icon",
-				content_check_function = function (self)
+				content_check_function = function (content)
 					-- function 6
-					return self.button_hotspot.is_hover
+					return content.button_hotspot.is_hover
 				end
 			},
 			{
 				pass_type = "texture",
 				style_id = "hover",
 				texture_id = "hover",
-				content_check_function = function (self)
+				content_check_function = function (content)
 					-- function 7
-					return self.button_hotspot.is_hover
+					return content.button_hotspot.is_hover
 				end
 			}
 		}
 	}
-	local tbl_2 = {
+	local content = {
 		icon = "leaderboard_icon_refresh",
 		hover = "button_state_default_2",
 		button_hotspot = {},
-		frame = menu_frame_09.texture
+		frame = frame_settings.texture
 	}
-	local tbl_3 = {
+	local style = {
 		button = {
 			color = Colors.get_color_table_with_alpha("black", 200),
 			offset = {
@@ -1143,8 +1147,8 @@ local function fn_4(arg_4_0, arg_4_1)
 			}
 		},
 		frame = {
-			texture_size = menu_frame_09.texture_size,
-			texture_sizes = menu_frame_09.texture_sizes,
+			texture_size = frame_settings.texture_size,
+			texture_sizes = frame_settings.texture_sizes,
 			color = {
 				255,
 				255,
@@ -1171,23 +1175,24 @@ local function fn_4(arg_4_0, arg_4_1)
 			}
 		}
 	}
+	local widget = {}
 
-	return {
-		element = tbl,
-		content = tbl_2,
-		style = tbl_3,
-		offset = {
-			0,
-			0,
-			0
-		},
-		scenegraph_id = arg_4_0
+	widget.element = element
+	widget.content = content
+	widget.style = style
+	widget.offset = {
+		0,
+		0,
+		0
 	}
+	widget.scenegraph_id = scenegraph_id
+
+	return widget
 end
 
-local flag = true
-local tbl_12 = {
-	window = UIWidgets.create_frame("window", tbl_7.window.size, "menu_frame_11"),
+local disable_with_gamepad = true
+local tbl = {
+	window = UIWidgets.create_frame("window", scenegraph_definition.window.size, "menu_frame_11"),
 	window_background = UIWidgets.create_tiled_texture("window_background", "quests_background", {
 		50,
 		156
@@ -1201,38 +1206,38 @@ local tbl_12 = {
 		200,
 		200
 	}),
-	exit_button = UIWidgets.create_default_button("exit_button", tbl_7.exit_button.size, nil, nil, Localize("menu_close"), 24, nil, "button_detail_04", 34, flag),
+	exit_button = UIWidgets.create_default_button("exit_button", scenegraph_definition.exit_button.size, nil, nil, Localize("menu_close"), 24, nil, "button_detail_04", 34, disable_with_gamepad),
 	title = UIWidgets.create_simple_texture("frame_title_bg", "title"),
-	title_bg = UIWidgets.create_background("title_bg", tbl_7.title_bg.size, "menu_frame_bg_02"),
-	title_text = UIWidgets.create_simple_text(Localize("menu_weave_leaderboard_title"), "title_text", nil, nil, tbl_8),
-	option_tabs_divider = fn_3("option_tabs_divider", tbl_7.option_tabs_divider.size),
-	list_title_rank = UIWidgets.create_simple_text(Localize("menu_weave_leaderboard_title_rank"), "list_title_rank", nil, nil, tbl_9)
+	title_bg = UIWidgets.create_background("title_bg", scenegraph_definition.title_bg.size, "menu_frame_bg_02"),
+	title_text = UIWidgets.create_simple_text(Localize("menu_weave_leaderboard_title"), "title_text", nil, nil, title_text_style),
+	option_tabs_divider = create_window_divider("option_tabs_divider", scenegraph_definition.option_tabs_divider.size),
+	list_title_rank = UIWidgets.create_simple_text(Localize("menu_weave_leaderboard_title_rank"), "list_title_rank", nil, nil, list_title_text_style)
 }
 local create_simple_text = UIWidgets.create_simple_text
-local var_0_27
+local var_0_2
 
 if not IS_XB1 then
-	var_0_27 = Localize("menu_weave_leaderboard_title_player_name")
+	var_0_2 = Localize("menu_weave_leaderboard_title_player_name")
 
-	if not var_0_27 then
+	if not var_0_2 then
 		-- Nothing
 	end
 end
 
-var_0_27 = Localize("menu_weave_leaderboard_title_gamertag")
+var_0_2 = Localize("menu_weave_leaderboard_title_gamertag")
 
 ::label_0_0::
 
-tbl_12.list_title_name = create_simple_text(var_0_27, "list_title_name", nil, nil, tbl_9)
-tbl_12.list_title_weave = UIWidgets.create_simple_text(Localize("menu_weave_leaderboard_title_weave_number"), "list_title_weave", nil, nil, tbl_9)
-tbl_12.list_title_score = UIWidgets.create_simple_text(Localize("menu_weave_leaderboard_title_weave_score"), "list_title_score", nil, nil, tbl_9)
-tbl_12.no_placement_text = UIWidgets.create_simple_text(Localize("menu_weave_leaderboard_no_placement_text"), "no_placement_text", nil, nil, tbl_11)
-tbl_12.refresh_button = fn_4("refresh_button", tbl_7.refresh_button.size)
-tbl_12.refresh_text = UIWidgets.create_simple_text(Localize("menu_description_refresh"), "refresh_text", nil, nil, tbl_10)
-tbl_12.list_window_fade = UIWidgets.create_simple_texture("options_window_fade_01", "list_window", nil, nil, nil, -1)
-tbl_12.list_scrollbar = UIWidgets.create_chain_scrollbar("list_scrollbar", "list_mask", tbl_7.list_scrollbar.size)
-tbl_12.list_mask = fn("list_mask", tbl_7.list_mask.size, num_2)
-tbl_12.list_mask_window = UIWidgets.create_rect_with_outer_frame("list_mask", tbl_7.list_mask.size, "shadow_frame_02", nil, {
+tbl.list_title_name = create_simple_text(var_0_2, "list_title_name", nil, nil, list_title_text_style)
+tbl.list_title_weave = UIWidgets.create_simple_text(Localize("menu_weave_leaderboard_title_weave_number"), "list_title_weave", nil, nil, list_title_text_style)
+tbl.list_title_score = UIWidgets.create_simple_text(Localize("menu_weave_leaderboard_title_weave_score"), "list_title_score", nil, nil, list_title_text_style)
+tbl.no_placement_text = UIWidgets.create_simple_text(Localize("menu_weave_leaderboard_no_placement_text"), "no_placement_text", nil, nil, no_placement_text_style)
+tbl.refresh_button = create_refresh_button("refresh_button", scenegraph_definition.refresh_button.size)
+tbl.refresh_text = UIWidgets.create_simple_text(Localize("menu_description_refresh"), "refresh_text", nil, nil, refresh_text_style)
+tbl.list_window_fade = UIWidgets.create_simple_texture("options_window_fade_01", "list_window", nil, nil, nil, -1)
+tbl.list_scrollbar = UIWidgets.create_chain_scrollbar("list_scrollbar", "list_mask", scenegraph_definition.list_scrollbar.size)
+tbl.list_mask = create_list_mask("list_mask", scenegraph_definition.list_mask.size, list_fade_height)
+tbl.list_mask_window = UIWidgets.create_rect_with_outer_frame("list_mask", scenegraph_definition.list_mask.size, "shadow_frame_02", nil, {
 	100,
 	0,
 	0,
@@ -1243,33 +1248,35 @@ tbl_12.list_mask_window = UIWidgets.create_rect_with_outer_frame("list_mask", tb
 	0,
 	0
 })
-tbl_12.setting_stepper_1 = fn_2("setting_stepper_1", tbl_7.setting_stepper_1.size)
-tbl_12.setting_stepper_2 = fn_2("setting_stepper_2", tbl_7.setting_stepper_2.size)
-tbl_12.loading_icon = UIWidgets.create_leaderboard_loading_icon("loading_icon", {
+tbl.setting_stepper_1 = create_stepper("setting_stepper_1", scenegraph_definition.setting_stepper_1.size)
+tbl.setting_stepper_2 = create_stepper("setting_stepper_2", scenegraph_definition.setting_stepper_2.size)
+tbl.loading_icon = UIWidgets.create_leaderboard_loading_icon("loading_icon", {
 	"list_mask"
 })
 
+local widgets = tbl
+
 if not IS_WINDOWS then
-	tbl_12.setting_stepper_3 = fn_2("setting_stepper_3", tbl_7.setting_stepper_3.size)
+	widgets.setting_stepper_3 = create_stepper("setting_stepper_3", scenegraph_definition.setting_stepper_3.size)
 end
 
-local tbl_13 = {
+local animation_definitions = {
 	on_enter = {
 		{
 			name = "fade_in",
 			start_progress = 0,
 			end_progress = 0.3,
-			init = function (arg_8_0, arg_8_1, arg_8_2, arg_8_3)
+			init = function (ui_scenegraph, scenegraph_definition, widgets, params)
 				-- function 8
-				arg_8_3.render_settings.alpha_multiplier = 0
+				params.render_settings.alpha_multiplier = 0
 			end,
-			update = function (arg_9_0, arg_9_1, arg_9_2, arg_9_3, arg_9_4)
+			update = function (ui_scenegraph, scenegraph_definition, widgets, progress, params)
 				-- function 9
-				local easeOutCubic = math.easeOutCubic(arg_9_3)
+				local anim_progress = math.easeOutCubic(progress)
 
-				arg_9_4.render_settings.alpha_multiplier = 1
+				params.render_settings.alpha_multiplier = 1
 			end,
-			on_complete = function (arg_10_0, arg_10_1, arg_10_2, arg_10_3)
+			on_complete = function (ui_scenegraph, scenegraph_definition, widgets, params)
 				-- function 10
 				return
 			end
@@ -1280,24 +1287,24 @@ local tbl_13 = {
 			name = "fade_out",
 			start_progress = 0,
 			end_progress = 0.3,
-			init = function (arg_11_0, arg_11_1, arg_11_2, arg_11_3)
+			init = function (ui_scenegraph, scenegraph_definition, widgets, params)
 				-- function 11
-				arg_11_3.render_settings.alpha_multiplier = 1
+				params.render_settings.alpha_multiplier = 1
 			end,
-			update = function (arg_12_0, arg_12_1, arg_12_2, arg_12_3, arg_12_4)
+			update = function (ui_scenegraph, scenegraph_definition, widgets, progress, params)
 				-- function 12
-				local easeOutCubic = math.easeOutCubic(arg_12_3)
+				local anim_progress = math.easeOutCubic(progress)
 
-				arg_12_4.render_settings.alpha_multiplier = 1
+				params.render_settings.alpha_multiplier = 1
 			end,
-			on_complete = function (arg_13_0, arg_13_1, arg_13_2, arg_13_3)
+			on_complete = function (ui_scenegraph, scenegraph_definition, widgets, params)
 				-- function 13
 				return
 			end
 		}
 	}
 }
-local tbl_14 = {
+local generic_input_actions = {
 	default = {
 		{
 			input_action = "special_1",
@@ -1327,9 +1334,9 @@ local tbl_14 = {
 }
 
 return {
-	widgets = tbl_12,
-	scenegraph_definition = tbl_7,
-	animation_definitions = tbl_13,
+	widgets = widgets,
+	scenegraph_definition = scenegraph_definition,
+	animation_definitions = animation_definitions,
 	console_cursor_definition = UIWidgets.create_console_cursor("console_cursor"),
-	generic_input_actions = tbl_14
+	generic_input_actions = generic_input_actions
 }

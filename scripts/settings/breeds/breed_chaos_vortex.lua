@@ -1,6 +1,6 @@
 -- chunkname: @scripts/settings/breeds/breed_chaos_vortex.lua
 
-local tbl = {
+local breed_data = {
 	detection_radius = 90,
 	animation_sync_rpc = "rpc_sync_anim_state_1",
 	target_selection = "pick_closest_vortex_target",
@@ -57,18 +57,18 @@ local tbl = {
 		vortex_danger_zone = 1
 	},
 	debug_spawn_optional_data = {
-		prepare_func = function (arg_1_0, arg_1_1)
+		prepare_func = function (breed, extension_init_data)
 			-- function 1
-			arg_1_1.ai_supplementary_system = {
+			extension_init_data.ai_supplementary_system = {
 				vortex_template_name = "standard"
 			}
 		end
 	}
 }
 
-Breeds.chaos_vortex = table.create_copy(Breeds.chaos_vortex, tbl)
+Breeds.chaos_vortex = table.create_copy(Breeds.chaos_vortex, breed_data)
 
-local tbl_2 = {
+local action_data = {
 	smash_door = {
 		move_speed = 3.75,
 		rotation_speed = 0,
@@ -76,4 +76,4 @@ local tbl_2 = {
 	}
 }
 
-BreedActions.chaos_vortex = table.create_copy(BreedActions.chaos_vortex, tbl_2)
+BreedActions.chaos_vortex = table.create_copy(BreedActions.chaos_vortex, action_data)

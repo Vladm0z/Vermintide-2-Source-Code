@@ -2,7 +2,7 @@
 
 local DEUS_BASE_MAP_GEN_SETTINGS = DEUS_BASE_MAP_GEN_SETTINGS
 
-DEUS_BASE_MAP_GEN_SETTINGS = DEUS_BASE_MAP_GEN_SETTINGS or {
+DEUS_BASE_MAP_GEN_SETTINGS = not not DEUS_BASE_MAP_GEN_SETTINGS or not not {
 	default = {
 		MAX_STRAIGHT_LINE = 2,
 		MIN_NODES = 10,
@@ -250,6 +250,6 @@ DEUS_BASE_MAP_GEN_SETTINGS.journey_citadel.FINAL_NODE_VALIDATIONS = {
 	"check_minimum_nodes"
 }
 
-for k, v in pairs(DEUS_BASE_MAP_GEN_SETTINGS) do
-	v.name = k
+for name, settings in pairs(DEUS_BASE_MAP_GEN_SETTINGS) do
+	settings.name = name
 end

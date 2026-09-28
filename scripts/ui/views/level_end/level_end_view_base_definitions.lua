@@ -1,6 +1,6 @@
 -- chunkname: @scripts/ui/views/level_end/level_end_view_base_definitions.lua
 
-local tbl = {
+local transition_scenegraph_definition = {
 	screen = {
 		scale = "fit",
 		size = {
@@ -14,7 +14,7 @@ local tbl = {
 		}
 	}
 }
-local tbl_2 = {
+local transition_widget_definition = {
 	transition_fade = UIWidgets.create_simple_rect("screen", {
 		255,
 		0,
@@ -22,26 +22,28 @@ local tbl_2 = {
 		0
 	})
 }
-local tbl_3 = {
+local transition_animations = {
 	transition = {
 		{
 			name = "fade_out",
 			start_progress = 0,
 			end_progress = 1,
-			init = function (arg_1_0, arg_1_1, arg_1_2, arg_1_3)
+			init = function (ui_scenegraph, transition_scenegraph_definition, widgets, params)
 				-- function 1
-				arg_1_3.render_settings.alpha_multiplier = 0
+				params.render_settings.alpha_multiplier = 0
 			end,
-			update = function (arg_2_0, arg_2_1, arg_2_2, arg_2_3, arg_2_4)
+			update = function (ui_scenegraph, transition_scenegraph_definition, widgets, progress, params)
 				-- function 2
-				local easeOutCubic = math.easeOutCubic(arg_2_3)
+				local alpha_progress = math.easeOutCubic(progress)
 
-				arg_2_4.render_settings.alpha_multiplier = easeOutCubic
+				params.render_settings.alpha_multiplier = alpha_progress
 			end,
-			on_complete = function (arg_3_0, arg_3_1, arg_3_2, arg_3_3)
+			on_complete = function (ui_scenegraph, transition_scenegraph_definition, widgets, params)
 				-- function 3
-				if not arg_3_3.parent.game_won then
-					arg_3_3.parent:play_sound("Stop_parading_screen_amb")
+				local parent = params.parent
+
+				if parent.game_won then
+					params.parent:play_sound("Stop_parading_screen_amb")
 				end
 			end
 		},
@@ -49,40 +51,41 @@ local tbl_3 = {
 			name = "position_camera",
 			start_progress = 1,
 			end_progress = 1,
-			init = function (arg_4_0, arg_4_1, arg_4_2, arg_4_3)
+			init = function (ui_scenegraph, transition_scenegraph_definition, widgets, params)
 				-- function 4
 				return
 			end,
-			update = function (arg_5_0, arg_5_1, arg_5_2, arg_5_3, arg_5_4)
+			update = function (ui_scenegraph, transition_scenegraph_definition, widgets, progress, params)
 				-- function 5
 				return
 			end,
-			on_complete = function (arg_6_0, arg_6_1, arg_6_2, arg_6_3)
+			on_complete = function (ui_scenegraph, transition_scenegraph_definition, widgets, params)
 				-- function 6
-				local parent = arg_6_3.parent
+				local parent = params.parent
 
-				parent:transition_camera(arg_6_3.transition_data)
+				parent:transition_camera(params.transition_data)
 
-				local _world = parent._world
+				local world = parent._world
+				local shading_settings = World.get_data(world, "shading_settings")
 
-				World.get_data(_world, "shading_settings")[1] = "default"
+				shading_settings[1] = "default"
 			end
 		},
 		{
 			name = "fade_in",
 			start_progress = 1,
 			end_progress = 2,
-			init = function (arg_7_0, arg_7_1, arg_7_2, arg_7_3)
+			init = function (ui_scenegraph, transition_scenegraph_definition, widgets, params)
 				-- function 7
 				return
 			end,
-			update = function (arg_8_0, arg_8_1, arg_8_2, arg_8_3, arg_8_4)
+			update = function (ui_scenegraph, transition_scenegraph_definition, widgets, progress, params)
 				-- function 8
-				local easeInCubic = math.easeInCubic(arg_8_3)
+				local alpha_progress = math.easeInCubic(progress)
 
-				arg_8_4.render_settings.alpha_multiplier = 1 - easeInCubic
+				params.render_settings.alpha_multiplier = 1 - alpha_progress
 			end,
-			on_complete = function (arg_9_0, arg_9_1, arg_9_2, arg_9_3)
+			on_complete = function (ui_scenegraph, transition_scenegraph_definition, widgets, params)
 				-- function 9
 				return
 			end
@@ -92,15 +95,15 @@ local tbl_3 = {
 		name = "default",
 		start_progress = 0,
 		end_progress = 0,
-		init = function (arg_10_0, arg_10_1, arg_10_2, arg_10_3)
+		init = function (ui_scenegraph, transition_scenegraph_definition, widgets, params)
 			-- function 10
 			return
 		end,
-		update = function (arg_11_0, arg_11_1, arg_11_2, arg_11_3, arg_11_4)
+		update = function (ui_scenegraph, transition_scenegraph_definition, widgets, progress, params)
 			-- function 11
 			return
 		end,
-		on_complete = function (arg_12_0, arg_12_1, arg_12_2, arg_12_3)
+		on_complete = function (ui_scenegraph, transition_scenegraph_definition, widgets, params)
 			-- function 12
 			return
 		end
@@ -108,7 +111,7 @@ local tbl_3 = {
 }
 
 return {
-	transition_scenegraph_definition = tbl,
-	transition_widget_definition = tbl_2,
-	transition_animations = tbl_3
+	transition_scenegraph_definition = transition_scenegraph_definition,
+	transition_widget_definition = transition_widget_definition,
+	transition_animations = transition_animations
 }

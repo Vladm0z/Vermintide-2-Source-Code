@@ -1,27 +1,27 @@
 -- chunkname: @scripts/ui/hud_ui/scrollbar_ui.lua
 
-local var_0_0 = local_require("scripts/ui/hud_ui/scrollbar_ui_definitions")
+local definitions = local_require("scripts/ui/hud_ui/scrollbar_ui_definitions")
 
 ScrollbarUI = class(ScrollbarUI)
 ScrollbarUI.NAME = "ScrollbarUI"
 
-local num = 2
-local num_2 = 0.25
-local num_3 = 5
-local num_4 = 150
-local num_5 = 300
+local WAIT_TIME = 2
+local AUTO_SCROLL_SPEED = 0.25
+local RESET_TIME = 5
+local SCROLL_LENGTH = 150
+local SCROLL_LENGTH_HORIZONTAL = 300
 
-ScrollbarUI.init = function (self, arg_1_1, arg_1_2, arg_1_3, arg_1_4, arg_1_5, arg_1_6, arg_1_7, arg_1_8)
+ScrollbarUI.init = function (self, ui_scenegraph, scroll_area_scenegraph_id, scroll_area_anchor_scenegraph_id, excess_area, enable_auto_scroll, optional_scroll_area_hotspot_widget, optional_is_horizontal_scrollbar, optional_left_aligned)
 	-- function 1
-	self._scroll_area_scenegraph_id = arg_1_2
-	self._scroll_area_anchor_scenegraph_id = arg_1_3
-	self._scroll_area_hotspot_widget = arg_1_6
-	self._excess_area = arg_1_4
-	self._ui_scenegraph = arg_1_1
-	self._auto_scroll_enabled = arg_1_5
-	self._auto_scroll_enabled_at_start = arg_1_5
-	self._horizontal_scrollbar = arg_1_7
-	self._left_aligned = arg_1_8
+	self._scroll_area_scenegraph_id = scroll_area_scenegraph_id
+	self._scroll_area_anchor_scenegraph_id = scroll_area_anchor_scenegraph_id
+	self._scroll_area_hotspot_widget = optional_scroll_area_hotspot_widget
+	self._excess_area = excess_area
+	self._ui_scenegraph = ui_scenegraph
+	self._auto_scroll_enabled = enable_auto_scroll
+	self._auto_scroll_enabled_at_start = enable_auto_scroll
+	self._horizontal_scrollbar = optional_is_horizontal_scrollbar
+	self._left_aligned = optional_left_aligned
 
 	self:_create_ui_elements()
 end
@@ -33,223 +33,257 @@ ScrollbarUI._create_ui_elements = function (self)
 	self._auto_scroll_enabled = self._auto_scroll_enabled_at_start
 	self._progress = 0
 	self._ui_animations = {}
-	self._widgets, self._widgets_by_name = var_0_0.setup_func(self._ui_scenegraph, self._scroll_area_anchor_scenegraph_id, self._excess_area, self._horizontal_scrollbar, self._left_aligned)
+
+	local setup_func = definitions.setup_func
+
+	self._widgets, self._widgets_by_name = setup_func(self._ui_scenegraph, self._scroll_area_anchor_scenegraph_id, self._excess_area, self._horizontal_scrollbar, self._left_aligned)
 
 	if not self._scroll_area_hotspot_widget then
-		local create_simple_hotspot = UIWidgets.create_simple_hotspot(self._scroll_area_anchor_scenegraph_id)
-		local var_2_1 = UIWidget.init(create_simple_hotspot)
+		local widget_definition = UIWidgets.create_simple_hotspot(self._scroll_area_anchor_scenegraph_id)
+		local widget = UIWidget.init(widget_definition)
 
-		self._scroll_area_hotspot_widget = var_2_1
-		self._internal_hotspot_widget = var_2_1
+		self._scroll_area_hotspot_widget = widget
+		self._internal_hotspot_widget = widget
 	end
 end
 
-ScrollbarUI.update = function (self, arg_3_1, arg_3_2, arg_3_3, arg_3_4, arg_3_5)
+ScrollbarUI.update = function (self, dt, t, ui_renderer, input_service, render_settings)
 	-- function 3
-	self:_auto_scroll(arg_3_1, arg_3_2)
-	self:_update_input(arg_3_1, arg_3_2, arg_3_4, arg_3_3)
+	self:_auto_scroll(dt, t)
+	self:_update_input(dt, t, input_service, ui_renderer)
 	self:_update_scroller_progress()
 	self:_update_scrollbar_hover_animations()
-	self:_update_animations(arg_3_1, arg_3_2)
-	self:_draw(arg_3_1, arg_3_2, arg_3_3, arg_3_4, arg_3_5)
+	self:_update_animations(dt, t)
+	self:_draw(dt, t, ui_renderer, input_service, render_settings)
 end
 
-ScrollbarUI.force_update_progress = function (self, arg_4_1)
+ScrollbarUI.force_update_progress = function (self, offset_index)
 	-- function 4
-	local flag = arg_4_1 or 1
-	local var_4_1 = self._ui_scenegraph[self._scroll_area_scenegraph_id].local_position[flag]
+	local offset_index = not not offset_index or not not 1
+	local offset = self._ui_scenegraph[self._scroll_area_scenegraph_id].local_position[offset_index]
 
-	self._progress = math.inv_lerp(0, self._excess_area, math.abs(var_4_1))
+	self._progress = math.inv_lerp(0, self._excess_area, math.abs(offset))
 
 	table.clear(self._ui_animations)
 end
 
-ScrollbarUI._auto_scroll = function (self, arg_5_1, arg_5_2)
+ScrollbarUI._auto_scroll = function (self, dt, t)
 	-- function 5
 	if not self._auto_scroll_enabled then
 		return
 	end
 
-	if not UIUtils.is_button_hover(self._scroll_area_hotspot_widget) then
+	if UIUtils.is_button_hover(self._scroll_area_hotspot_widget) then
 		self._scrollbar_wait_timer = 0
-	elseif self._scrollbar_wait_timer > num then
-		local num_5 = num_2 * arg_5_1
+	elseif self._scrollbar_wait_timer > WAIT_TIME then
+		local scroll_value = AUTO_SCROLL_SPEED * dt
 
-		self._progress = math.clamp(self._progress + num_5 * num_4 / self._excess_area, 0, 1)
+		self._progress = math.clamp(self._progress + scroll_value * SCROLL_LENGTH / self._excess_area, 0, 1)
 
-		local num_6
+		local num
 
 		if self._progress == 1 then
-			num_6 = self._scrollbar_timer + arg_5_1
+			num = self._scrollbar_timer + dt
 
-			if not num_6 then
+			if not num then
 				-- Nothing
 			end
 		end
 
-		num_6 = 0
+		num = 0
 
 		::label_5_0::
 
-		self._scrollbar_timer = num_6
+		self._scrollbar_timer = num
 
-		if self._scrollbar_timer >= num_3 then
+		if self._scrollbar_timer >= RESET_TIME then
 			self._scrollbar_timer = 0
 			self._scrollbar_wait_timer = 0
 			self._progress = 0
 		end
 	else
-		self._scrollbar_wait_timer = self._scrollbar_wait_timer + arg_5_1
+		self._scrollbar_wait_timer = self._scrollbar_wait_timer + dt
 	end
 end
 
-ScrollbarUI.disable_input = function (self, arg_6_1)
+ScrollbarUI.disable_input = function (self, disable)
 	-- function 6
-	self._input_disabled = arg_6_1
-	self._widgets_by_name.scrollbar.content.gamepad_input_disabled = arg_6_1
+	self._input_disabled = disable
+
+	local widget = self._widgets_by_name.scrollbar
+
+	widget.content.gamepad_input_disabled = disable
 end
 
-ScrollbarUI.disable_gamepad_input = function (self, arg_7_1)
+ScrollbarUI.disable_gamepad_input = function (self, disable)
 	-- function 7
-	self._gamepad_input_disabled = arg_7_1
-	self._widgets_by_name.scrollbar.content.gamepad_input_disabled = arg_7_1
+	self._gamepad_input_disabled = disable
+
+	local widget = self._widgets_by_name.scrollbar
+
+	widget.content.gamepad_input_disabled = disable
 end
 
-ScrollbarUI._update_input = function (self, arg_8_1, arg_8_2, arg_8_3, arg_8_4)
+ScrollbarUI._update_input = function (self, dt, t, input_service, ui_renderer)
 	-- function 8
-	if not self._input_disabled then
+	if self._input_disabled then
 		return
 	end
 
-	local scrollbar = self._widgets_by_name.scrollbar
-	local is_device_active = Managers.input:is_device_active("gamepad")
-	local _ui_scenegraph = self._ui_scenegraph
+	local widget = self._widgets_by_name.scrollbar
+	local gamepad_active = Managers.input:is_device_active("gamepad")
+	local ui_scenegraph = self._ui_scenegraph
 
-	if not arg_8_3:get("left_press") then
-		if not UIUtils.is_button_hover(scrollbar, "scroller_hotspot") then
-			self:_calculate_input_offset(arg_8_3, _ui_scenegraph)
-		elseif not UIUtils.is_button_hover(scrollbar, "scrollbar_hotspot") then
-			self:_update_scroller_position(arg_8_3, _ui_scenegraph)
+	if input_service:get("left_press") then
+		if UIUtils.is_button_hover(widget, "scroller_hotspot") then
+			self:_calculate_input_offset(input_service, ui_scenegraph)
+		elseif UIUtils.is_button_hover(widget, "scrollbar_hotspot") then
+			self:_update_scroller_position(input_service, ui_scenegraph)
 		end
-	elseif not arg_8_3:get("left_hold") and not self._progress_diff then
-		self:_update_scroller_position(arg_8_3, _ui_scenegraph)
+	elseif input_service:get("left_hold") and self._progress_diff then
+		self:_update_scroller_position(input_service, ui_scenegraph)
 	else
 		self._progress_diff = nil
 	end
 
-	local num = 0
+	local scroll_value = 0
 
-	if not self._horizontal_scrollbar then
-		if not (not is_device_active and self._gamepad_input_disabled) then
-			local get = arg_8_3:get("gamepad_right_axis")
+	if self._horizontal_scrollbar then
+		if gamepad_active and not self._gamepad_input_disabled then
+			local scroll_axis = input_service:get("gamepad_right_axis")
 
-			num = not get and -get[1] and 0
-		elseif not UIUtils.is_button_hover(self._scroll_area_hotspot_widget) then
-			local get_2 = arg_8_3:get("scroll_axis")
+			scroll_value = (not scroll_axis or not -scroll_axis[1]) and not not 0
+		elseif UIUtils.is_button_hover(self._scroll_area_hotspot_widget) then
+			local scroll_axis = input_service:get("scroll_axis")
 
-			num = not get_2 and get_2[2] and 0
+			scroll_value = (not scroll_axis or not scroll_axis[2]) and not not 0
 		end
-	elseif not (not is_device_active and self._gamepad_input_disabled) then
-		local get_3 = arg_8_3:get("gamepad_right_axis")
+	elseif gamepad_active and not self._gamepad_input_disabled then
+		local scroll_axis = input_service:get("gamepad_right_axis")
 
-		num = not get_3 and get_3[2] and 0
-	elseif not UIUtils.is_button_hover(self._scroll_area_hotspot_widget) then
-		local get_4 = arg_8_3:get("scroll_axis")
+		scroll_value = (not scroll_axis or not scroll_axis[2]) and not not 0
+	elseif UIUtils.is_button_hover(self._scroll_area_hotspot_widget) then
+		local scroll_axis = input_service:get("scroll_axis")
 
-		num = not get_4 and get_4[2] and 0
+		scroll_value = (not scroll_axis or not scroll_axis[2]) and not not 0
 	end
 
-	if math.abs(num) == 0 then
+	if math.abs(scroll_value) == 0 then
 		return
 	end
 
-	local var_8_8
+	local var_8_0
 
-	if not self._horizontal_scrollbar then
-		var_8_8 = num_5
+	if self._horizontal_scrollbar then
+		var_8_0 = SCROLL_LENGTH_HORIZONTAL
 
-		if not var_8_8 then
+		if not var_8_0 then
 			-- Nothing
 		end
 	end
 
-	var_8_8 = num_4
+	var_8_0 = SCROLL_LENGTH
+
+	local scroll_length = var_8_0
 
 	::label_8_0::
 
-	local num_2 = self._progress - num * var_8_8 / self._excess_area
+	local progress = self._progress - scroll_value * scroll_length / self._excess_area
 
-	self._ui_animations.scroll = UIAnimation.init(UIAnimation.function_by_time, self, "_progress", self._progress, math.clamp(num_2, 0, 1), 0.5, math.easeOutCubic)
+	self._ui_animations.scroll = UIAnimation.init(UIAnimation.function_by_time, self, "_progress", self._progress, math.clamp(progress, 0, 1), 0.5, math.easeOutCubic)
 	self._auto_scroll_enabled = false
 end
 
-ScrollbarUI._calculate_input_offset = function (self, arg_9_1, arg_9_2)
+ScrollbarUI._calculate_input_offset = function (self, input_service, ui_scenegraph)
 	-- function 9
-	local style = self._widgets_by_name.scrollbar.style
-	local get = arg_9_1:get("cursor")
-	local var_9_2 = arg_9_2[self._scroll_area_anchor_scenegraph_id]
-	local world_position = var_9_2.world_position
-	local size = var_9_2.size
+	local widget = self._widgets_by_name.scrollbar
+	local style = widget.style
+	local cursor_pos = input_service:get("cursor")
+	local scenegraph_node = ui_scenegraph[self._scroll_area_anchor_scenegraph_id]
+	local world_pos = scenegraph_node.world_position
+	local size = scenegraph_node.size
 
-	if not self._horizontal_scrollbar then
-		local var_9_5 = world_position[1]
-		local num = world_position[1] + size[1]
-		local var_9_7 = style.scroller.rect_size[1]
-		local var_9_8 = UIInverseScaleVectorToResolution(get)[1]
-		local num_2 = 1 - math.clamp(1 - math.inv_lerp(var_9_5 + var_9_7 * 0.5, num - var_9_7 * 0.5, var_9_8), 0, 1)
+	if self._horizontal_scrollbar then
+		local start_point = world_pos[1]
+		local end_point = world_pos[1] + size[1]
+		local scroller_height = style.scroller.rect_size[1]
+		local input_pos = UIInverseScaleVectorToResolution(cursor_pos)[1]
+		local progress = 1 - math.clamp(1 - math.inv_lerp(start_point + scroller_height * 0.5, end_point - scroller_height * 0.5, input_pos), 0, 1)
 
-		self._progress_diff = self._progress - num_2
+		self._progress_diff = self._progress - progress
 	else
-		local var_9_10 = world_position[2]
-		local num_3 = world_position[2] + size[2]
-		local var_9_12 = style.scroller.rect_size[2]
-		local var_9_13 = UIInverseScaleVectorToResolution(get)[2]
-		local num_4 = 1 - math.inv_lerp(var_9_10 + var_9_12 * 0.5, num_3 - var_9_12 * 0.5, var_9_13)
+		local start_point = world_pos[2]
+		local end_point = world_pos[2] + size[2]
+		local scroller_height = style.scroller.rect_size[2]
+		local input_pos = UIInverseScaleVectorToResolution(cursor_pos)[2]
+		local progress = 1 - math.inv_lerp(start_point + scroller_height * 0.5, end_point - scroller_height * 0.5, input_pos)
 
-		self._progress_diff = self._progress - num_4
+		self._progress_diff = self._progress - progress
 	end
 end
 
-ScrollbarUI._update_scroller_position = function (self, arg_10_1, arg_10_2)
+ScrollbarUI._update_scroller_position = function (self, input_service, ui_scenegraph)
 	-- function 10
-	local style = self._widgets_by_name.scrollbar.style
-	local get = arg_10_1:get("cursor")
-	local var_10_2 = arg_10_2[self._scroll_area_anchor_scenegraph_id]
-	local world_position = var_10_2.world_position
-	local size = var_10_2.size
+	local widget = self._widgets_by_name.scrollbar
+	local style = widget.style
+	local cursor_pos = input_service:get("cursor")
+	local scenegraph_node = ui_scenegraph[self._scroll_area_anchor_scenegraph_id]
+	local world_pos = scenegraph_node.world_position
+	local size = scenegraph_node.size
 
-	if not self._horizontal_scrollbar then
-		local var_10_5 = world_position[1]
-		local num = world_position[1] + size[1]
-		local var_10_7 = style.scroller.rect_size[1]
-		local var_10_8 = UIInverseScaleVectorToResolution(get)[1]
+	if self._horizontal_scrollbar then
+		local start_point = world_pos[1]
+		local end_point = world_pos[1] + size[1]
+		local scroller_height = style.scroller.rect_size[1]
+		local input_pos = UIInverseScaleVectorToResolution(cursor_pos)[1]
 
-		self._progress = 1 - (1 - math.inv_lerp(var_10_5 + var_10_7 * 0.5, num - var_10_7 * 0.5, var_10_8))
+		self._progress = 1 - (1 - math.inv_lerp(start_point + scroller_height * 0.5, end_point - scroller_height * 0.5, input_pos))
 
 		local _progress_diff = self._progress_diff
 
-		_progress_diff = _progress_diff or 0
-		self._progress = math.clamp(self._progress + _progress_diff, 0, 1)
-	else
-		local var_10_10 = world_position[2]
-		local num_2 = world_position[2] + size[2]
-		local var_10_12 = style.scroller.rect_size[2]
-		local var_10_13 = UIInverseScaleVectorToResolution(get)[2]
+		if not _progress_diff then
+			-- Nothing
+		end
 
-		self._progress = 1 - math.inv_lerp(var_10_10 + var_10_12 * 0.5, num_2 - var_10_12 * 0.5, var_10_13)
+		_progress_diff = 0
+
+		local progress_diff = _progress_diff
+
+		::label_10_0::
+
+		self._progress = math.clamp(self._progress + progress_diff, 0, 1)
+	else
+		local start_point = world_pos[2]
+		local end_point = world_pos[2] + size[2]
+		local scroller_height = style.scroller.rect_size[2]
+		local input_pos = UIInverseScaleVectorToResolution(cursor_pos)[2]
+
+		self._progress = 1 - math.inv_lerp(start_point + scroller_height * 0.5, end_point - scroller_height * 0.5, input_pos)
 
 		local _progress_diff_2 = self._progress_diff
 
-		_progress_diff_2 = _progress_diff_2 or 0
-		self._progress = math.clamp(self._progress + _progress_diff_2, 0, 1)
+		if not _progress_diff_2 then
+			-- Nothing
+		end
+
+		_progress_diff_2 = 0
+
+		local progress_diff = _progress_diff_2
+
+		::label_10_1::
+
+		self._progress = math.clamp(self._progress + progress_diff, 0, 1)
 	end
 end
 
 ScrollbarUI._update_scroller_progress = function (self)
 	-- function 11
-	self._widgets_by_name.scrollbar.content.progress = self._progress
+	local widget = self._widgets_by_name.scrollbar
+	local widget_content = widget.content
 
-	if not self._horizontal_scrollbar then
+	widget_content.progress = self._progress
+
+	if self._horizontal_scrollbar then
 		self._ui_scenegraph[self._scroll_area_scenegraph_id].local_position[1] = -self._excess_area * self._progress
 	else
 		self._ui_scenegraph[self._scroll_area_scenegraph_id].local_position[2] = self._excess_area * self._progress
@@ -258,56 +292,56 @@ end
 
 ScrollbarUI._update_scrollbar_hover_animations = function (self)
 	-- function 12
-	local scrollbar = self._widgets_by_name.scrollbar
-	local content = scrollbar.content
-	local style = scrollbar.style
+	local widget = self._widgets_by_name.scrollbar
+	local widget_content = widget.content
+	local widget_style = widget.style
 
-	if not UIUtils.is_button_hover(scrollbar, "scroller_hotspot") then
-		self._ui_animations.scroller_hotspot_anim = UIAnimation.init(UIAnimation.function_by_time, style.scroller.color, 1, style.scroller.color[1], 255, 0.25, math.easeOutCubic)
+	if UIUtils.is_button_hover(widget, "scroller_hotspot") then
+		self._ui_animations.scroller_hotspot_anim = UIAnimation.init(UIAnimation.function_by_time, widget_style.scroller.color, 1, widget_style.scroller.color[1], 255, 0.25, math.easeOutCubic)
 	else
-		self._ui_animations.scroller_hotspot_anim = UIAnimation.init(UIAnimation.function_by_time, style.scroller.color, 1, style.scroller.color[1], 128, 0.25, math.easeOutCubic)
+		self._ui_animations.scroller_hotspot_anim = UIAnimation.init(UIAnimation.function_by_time, widget_style.scroller.color, 1, widget_style.scroller.color[1], 128, 0.25, math.easeOutCubic)
 	end
 
-	if not UIUtils.is_button_hover(scrollbar, "scrollbar_hotspot") then
-		self._ui_animations.scrollbar_hotspot_anim = UIAnimation.init(UIAnimation.function_by_time, style.scrollbar_bg_bg.color, 1, style.scrollbar_bg_bg.color[1], 255, 0.25, math.easeOutCubic)
+	if UIUtils.is_button_hover(widget, "scrollbar_hotspot") then
+		self._ui_animations.scrollbar_hotspot_anim = UIAnimation.init(UIAnimation.function_by_time, widget_style.scrollbar_bg_bg.color, 1, widget_style.scrollbar_bg_bg.color[1], 255, 0.25, math.easeOutCubic)
 	else
-		self._ui_animations.scrollbar_hotspot_anim = UIAnimation.init(UIAnimation.function_by_time, style.scrollbar_bg_bg.color, 1, style.scrollbar_bg_bg.color[1], 128, 0.25, math.easeOutCubic)
+		self._ui_animations.scrollbar_hotspot_anim = UIAnimation.init(UIAnimation.function_by_time, widget_style.scrollbar_bg_bg.color, 1, widget_style.scrollbar_bg_bg.color[1], 128, 0.25, math.easeOutCubic)
 	end
 end
 
-ScrollbarUI._update_animations = function (self, arg_13_1, arg_13_2)
+ScrollbarUI._update_animations = function (self, dt, t)
 	-- function 13
-	local _ui_animations = self._ui_animations
+	local ui_animations = self._ui_animations
 
-	for k, v in pairs(_ui_animations) do
-		UIAnimation.update(v, arg_13_1)
+	for animation_name, ui_animation in pairs(ui_animations) do
+		UIAnimation.update(ui_animation, dt)
 
-		if not UIAnimation.completed(v) then
-			v[k] = nil
+		if UIAnimation.completed(ui_animation) then
+			ui_animation[animation_name] = nil
 		end
 	end
 end
 
-ScrollbarUI._draw = function (self, arg_14_1, arg_14_2, arg_14_3, arg_14_4, arg_14_5)
+ScrollbarUI._draw = function (self, dt, t, ui_renderer, input_service, render_settings)
 	-- function 14
-	local _ui_scenegraph = self._ui_scenegraph
+	local ui_scenegraph = self._ui_scenegraph
 
-	UIRenderer.begin_pass(arg_14_3, _ui_scenegraph, arg_14_4, arg_14_1, nil, arg_14_5)
+	UIRenderer.begin_pass(ui_renderer, ui_scenegraph, input_service, dt, nil, render_settings)
 
-	for i, v in ipairs(self._widgets) do
-		UIRenderer.draw_widget(arg_14_3, v)
+	for _, widget in ipairs(self._widgets) do
+		UIRenderer.draw_widget(ui_renderer, widget)
 	end
 
-	if not self._internal_hotspot_widget then
-		UIRenderer.draw_widget(arg_14_3, self._internal_hotspot_widget)
+	if self._internal_hotspot_widget then
+		UIRenderer.draw_widget(ui_renderer, self._internal_hotspot_widget)
 	end
 
-	UIRenderer.end_pass(arg_14_3)
+	UIRenderer.end_pass(ui_renderer)
 end
 
-ScrollbarUI.destroy = function (self, arg_15_1)
+ScrollbarUI.destroy = function (self, ui_scenegraph)
 	-- function 15
-	arg_15_1[self._scroll_area_scenegraph_id].local_position[2] = 0
+	ui_scenegraph[self._scroll_area_scenegraph_id].local_position[2] = 0
 	self._scroll_area_scenegraph_id = nil
 	self._scroll_area_anchor_scenegraph_id = nil
 	self._excess_area = nil

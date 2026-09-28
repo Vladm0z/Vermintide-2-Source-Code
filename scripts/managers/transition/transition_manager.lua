@@ -5,7 +5,7 @@ require("scripts/ui/views/loading_icon_view")
 require("scripts/ui/views/twitch_icon_view")
 require("scripts/ui/views/dev_backend_water_mark_view")
 
-if not script_data.honduras_demo then
+if script_data.honduras_demo then
 	require("scripts/ui/views/water_mark_view")
 	require("scripts/ui/views/transition_video")
 end
@@ -21,7 +21,7 @@ TransitionManager.init = function (self)
 	self._disconnect_indicator_view = DisconnectIndicatorView:new(self._world)
 	self._twitch_icon_view = TwitchIconView:new(self._world)
 
-	if not script_data.honduras_demo then
+	if script_data.honduras_demo then
 		self._watermark = WaterMarkView:new(self._world)
 		self._transition_video = TransitionVideo:new(self._world)
 	end
@@ -40,26 +40,26 @@ TransitionManager._setup_names = function (self)
 	self._world_name = "top_ingame_view"
 end
 
-TransitionManager.set_multiplayer_values = function (self, arg_3_1, arg_3_2, arg_3_3)
+TransitionManager.set_multiplayer_values = function (self, type, data, string)
 	-- function 3
 	local _multiplayer_tracking = self._multiplayer_tracking
 
-	_multiplayer_tracking = _multiplayer_tracking or {}
+	_multiplayer_tracking = not not _multiplayer_tracking or not not {}
 	self._multiplayer_tracking = _multiplayer_tracking
 
 	local _multiplayer_tracking_2 = self._multiplayer_tracking
-	local var_3_2 = self._multiplayer_tracking[arg_3_1]
+	local var_3_2 = self._multiplayer_tracking[type]
 
-	var_3_2 = var_3_2 or {}
-	_multiplayer_tracking_2[arg_3_1] = var_3_2
-	self._multiplayer_tracking[arg_3_1][#self._multiplayer_tracking[arg_3_1] + 1] = arg_3_2
+	var_3_2 = not not var_3_2 or not not {}
+	_multiplayer_tracking_2[type] = var_3_2
+	self._multiplayer_tracking[type][#self._multiplayer_tracking[type] + 1] = data
 
 	local _multiplayer_tracking_3 = self._multiplayer_tracking
-	local string = self._multiplayer_tracking.string
+	local string_2 = self._multiplayer_tracking.string
 
-	string = string or {}
-	_multiplayer_tracking_3.string = string
-	self._multiplayer_tracking.string[#self._multiplayer_tracking.string + 1] = arg_3_3
+	string_2 = not not string_2 or not not {}
+	_multiplayer_tracking_3.string = string_2
+	self._multiplayer_tracking.string[#self._multiplayer_tracking.string + 1] = string
 end
 
 TransitionManager.dump_multiplayer_data = function (self)
@@ -72,7 +72,7 @@ TransitionManager.dump_multiplayer_data = function (self)
 	local dump = table.dump
 	local start = self._multiplayer_tracking.start
 
-	start = start or {}
+	start = not not start or not not {}
 
 	dump(start, "MultiplayerRoundStart", 2, Application.warning)
 	Application.warning(" ")
@@ -81,7 +81,7 @@ TransitionManager.dump_multiplayer_data = function (self)
 	local dump_2 = table.dump
 	local var_4_3 = self._multiplayer_tracking["end"]
 
-	var_4_3 = var_4_3 or {}
+	var_4_3 = not not var_4_3 or not not {}
 
 	dump_2(var_4_3, "MultiplayerRoundEnd", 2, Application.warning)
 	Application.warning(" ")
@@ -90,7 +90,7 @@ TransitionManager.dump_multiplayer_data = function (self)
 	local dump_3 = table.dump
 	local string = self._multiplayer_tracking.string
 
-	string = string or {}
+	string = not not string or not not {}
 
 	dump_3(string, "Strings", 2, Application.warning)
 	Application.warning(" ")
@@ -100,12 +100,12 @@ end
 
 TransitionManager._setup_world = function (self)
 	-- function 5
-	local create_world = Managers.world:create_world(self._world_name, GameSettingsDevelopment.default_environment, nil, 991, Application.DISABLE_PHYSICS, Application.DISABLE_APEX_CLOTH)
+	local world = Managers.world:create_world(self._world_name, GameSettingsDevelopment.default_environment, nil, 991, Application.DISABLE_PHYSICS, Application.DISABLE_APEX_CLOTH)
 
-	ScriptWorld.activate(create_world)
+	ScriptWorld.activate(world)
 
-	self._loading_icon_viewport = ScriptWorld.create_viewport(create_world, "top_ingame_view_viewport", "overlay", 1)
-	self._world = create_world
+	self._loading_icon_viewport = ScriptWorld.create_viewport(world, "top_ingame_view_viewport", "overlay", 1)
+	self._world = world
 	self._gui = World.create_screen_gui(self._world, "material", "materials/fonts/gw_fonts", "immediate")
 end
 
@@ -115,27 +115,27 @@ TransitionManager.destroy = function (self)
 
 	self._loading_icon_view = nil
 
-	if not self._disconnect_indicator_view then
+	if self._disconnect_indicator_view then
 		self._disconnect_indicator_view:destroy()
 
 		self._disconnect_indicator_view = nil
 	end
 
-	if not self._twitch_icon_view then
+	if self._twitch_icon_view then
 		self._twitch_icon_view:destroy()
 	end
 
 	self._twitch_icon_view = nil
 
-	if not self._watermark then
+	if self._watermark then
 		self._watermark:destroy()
 	end
 
-	if not self._dev_backend_watermark then
+	if self._dev_backend_watermark then
 		self._dev_backend_watermark:destroy()
 	end
 
-	if not self._transition_video then
+	if self._transition_video then
 		self._transition_video:destroy()
 	end
 
@@ -144,40 +144,40 @@ TransitionManager.destroy = function (self)
 	Managers.world:destroy_world(self._world_name)
 end
 
-TransitionManager.show_waiting_for_peers_message = function (self, arg_7_1)
+TransitionManager.show_waiting_for_peers_message = function (self, enable)
 	-- function 7
-	self._waiting_for_peers_message = arg_7_1
+	self._waiting_for_peers_message = enable
 	self._waiting_for_peers_timer = Managers.time:time("main")
 end
 
-TransitionManager.show_loading_icon = function (self, arg_8_1)
+TransitionManager.show_loading_icon = function (self, show_background)
 	-- function 8
 	self._loading_icon_view:show_loading_icon()
 
-	if not arg_8_1 then
+	if show_background then
 		self:show_icon_background()
 	else
 		self:hide_icon_background()
 	end
 end
 
-TransitionManager.show_video = function (self, arg_9_1)
+TransitionManager.show_video = function (self, show)
 	-- function 9
-	if not self._transition_video then
-		self._transition_video:activate(arg_9_1)
+	if self._transition_video then
+		self._transition_video:activate(show)
 	end
 end
 
 TransitionManager.is_video_done = function (self)
 	-- function 10
-	if not self._transition_video then
+	if self._transition_video then
 		return self._transition_video:completed()
 	end
 end
 
 TransitionManager.is_video_active = function (self)
 	-- function 11
-	if not self._transition_video then
+	if self._transition_video then
 		return self._transition_video:is_active()
 	end
 end
@@ -201,29 +201,29 @@ TransitionManager.loading_icon_active = function (self)
 	-- function 15
 	local _loading_icon_view = self._loading_icon_view
 
-	_loading_icon_view = not _loading_icon_view and self._loading_icon_view:active()
+	_loading_icon_view = not not _loading_icon_view and not not self._loading_icon_view:active()
 
 	return _loading_icon_view
 end
 
-TransitionManager.fade_in = function (self, arg_16_1, arg_16_2)
+TransitionManager.fade_in = function (self, speed, callback)
 	-- function 16
 	self._fade_state = "fade_in"
-	self._fade_speed = arg_16_1
-	self._callback = arg_16_2
+	self._fade_speed = speed
+	self._callback = callback
 
-	if not script_data.debug_transition_manager then
+	if script_data.debug_transition_manager then
 		print("[TransitionManager:fade_in]", Script.callstack())
 	end
 end
 
-TransitionManager.fade_out = function (self, arg_17_1, arg_17_2)
+TransitionManager.fade_out = function (self, speed, callback)
 	-- function 17
 	self._fade_state = "fade_out"
-	self._fade_speed = -arg_17_1
-	self._callback = arg_17_2
+	self._fade_speed = -speed
+	self._callback = callback
 
-	if not script_data.debug_transition_manager then
+	if script_data.debug_transition_manager then
 		print("[TransitionManager:fade_out]", Script.callstack())
 	end
 end
@@ -234,7 +234,7 @@ TransitionManager.force_fade_in = function (self)
 	self._fade_speed = 0
 	self._fade = 1
 
-	if not self._callback then
+	if self._callback then
 		self._callback()
 
 		self._callback = nil
@@ -247,7 +247,7 @@ TransitionManager.force_fade_out = function (self)
 	self._fade_speed = 0
 	self._fade = 0
 
-	if not self._callback then
+	if self._callback then
 		self._callback()
 
 		self._callback = nil
@@ -271,117 +271,121 @@ end
 
 TransitionManager.fade_in_completed = function (self)
 	-- function 23
-	return self._fade_state ~= "in" or self._fade == 1
+	return self._fade_state == "in" and self._fade == 1
 end
 
 TransitionManager.fade_out_completed = function (self)
 	-- function 24
-	return self._fade_state ~= "out" or self._fade == 0
+	return self._fade_state == "out" and self._fade == 0
 end
 
-TransitionManager._render = function (self, arg_25_1)
+TransitionManager._render = function (self, dt)
 	-- function 25
-	if not DEDICATED_SERVER then
+	if DEDICATED_SERVER then
 		return
 	end
 
-	local resolution, var_25_1 = Application.resolution()
-	local unbox = self._color:unbox()
+	local w, h = Application.resolution()
+	local color = self._color:unbox()
 
-	Gui.rect(self._gui, Vector3(0, 0, UILayer.transition), Vector2(resolution, var_25_1), Color(self._fade * 255, unbox.x, unbox.y, unbox.z))
+	Gui.rect(self._gui, Vector3(0, 0, UILayer.transition), Vector2(w, h), Color(self._fade * 255, color.x, color.y, color.z))
 end
 
-local tbl = {
+local FONT_STYLE = {
 	font_type = "hell_shark",
 	font_size = 56
 }
 
-TransitionManager._render_waiting_message = function (self, arg_26_1)
+TransitionManager._render_waiting_message = function (self, dt)
 	-- function 26
 	if not self._waiting_for_peers_message then
 		return
 	end
 
-	if IS_WINDOWS or not IS_LINUX then
+	if IS_WINDOWS or IS_LINUX then
 		self:show_waiting_for_peers_message(false)
 
 		return
 	end
 
-	if not (self._fade_state == "fade_out" or self._fade_state ~= "out") then
+	if self._fade_state == "fade_out" or self._fade_state == "out" then
 		self:show_waiting_for_peers_message(false)
 
 		return
 	end
 
-	local resolution, var_26_1 = Gui.resolution()
-	local num = 192 + 63 * math.sin(self._waiting_for_peers_timer * 4)
-	local var_26_3 = Localize("matchmaking_status_waiting_for_other_players")
-	local var_26_4, var_26_5 = UIFontByResolution(tbl)
-	local var_26_6 = var_26_4[1]
-	local var_26_7 = var_26_4[2]
-	local var_26_8 = var_26_4[3]
-	local var_26_9 = Color(255, num, num, num)
-	local text_extents, var_26_11 = Gui.text_extents(self._gui, var_26_3, var_26_6, var_26_5)
-	local num_2 = var_26_11.x - text_extents.x
-	local var_26_13 = Vector3(resolution * 0.5 - num_2 * 0.5, var_26_1 * 0.1, UILayer.transition + 1)
+	local w, h = Gui.resolution()
+	local alpha = 192 + 63 * math.sin(self._waiting_for_peers_timer * 4)
+	local text = Localize("matchmaking_status_waiting_for_other_players")
+	local font, size_of_font = UIFontByResolution(FONT_STYLE)
+	local font_name = font[1]
+	local font_size = font[2]
+	local font_material = font[3]
+	local color = Color(255, alpha, alpha, alpha)
+	local min, max = Gui.text_extents(self._gui, text, font_name, size_of_font)
+	local text_width = max.x - min.x
+	local position = Vector3(w * 0.5 - text_width * 0.5, h * 0.1, UILayer.transition + 1)
 
-	Gui.text(self._gui, var_26_3, var_26_6, var_26_5, var_26_8, var_26_13, var_26_9)
+	Gui.text(self._gui, text, font_name, size_of_font, font_material, position, color)
 
-	self._waiting_for_peers_timer = self._waiting_for_peers_timer + arg_26_1
+	self._waiting_for_peers_timer = self._waiting_for_peers_timer + dt
 end
 
-TransitionManager.force_render = function (self, arg_27_1)
+TransitionManager.force_render = function (self, dt)
 	-- function 27
-	if not (not self:loading_icon_active() and Development.parameter("disable_loading_icon")) then
-		self._loading_icon_view:update(arg_27_1)
+	local is_loading_icon_active = self:loading_icon_active()
+
+	if is_loading_icon_active and not Development.parameter("disable_loading_icon") then
+		self._loading_icon_view:update(dt)
 	end
 
-	if not script_data.honduras_demo then
+	if script_data.honduras_demo then
 		if not Development.parameter("disable_water_mark") then
-			self._watermark:update(arg_27_1)
+			self._watermark:update(dt)
 		end
 
-		self._transition_video:update(arg_27_1)
+		self._transition_video:update(dt)
 	end
 
-	if not (not self._dev_backend_watermark and Development.parameter("disable_water_mark")) then
-		self._dev_backend_watermark:update(arg_27_1)
+	if self._dev_backend_watermark and not Development.parameter("disable_water_mark") then
+		self._dev_backend_watermark:update(dt)
 	end
 
 	self:_render()
 end
 
-TransitionManager.update = function (self, arg_28_1)
+TransitionManager.update = function (self, dt)
 	-- function 28
 	if Managers.eac ~= nil then
-		Managers.eac:draw_panel(self._gui, arg_28_1)
+		Managers.eac:draw_panel(self._gui, dt)
 	end
 
-	if not self._disconnect_indicator_view then
-		self._disconnect_indicator_view:update(arg_28_1)
+	if self._disconnect_indicator_view then
+		self._disconnect_indicator_view:update(dt)
 	end
 
-	if not (not self:loading_icon_active() and Development.parameter("disable_loading_icon")) then
-		self._loading_icon_view:update(arg_28_1)
+	local is_loading_icon_active = self:loading_icon_active()
+
+	if is_loading_icon_active and not Development.parameter("disable_loading_icon") then
+		self._loading_icon_view:update(dt)
 	end
 
-	if not self._twitch_icon_view then
-		self._twitch_icon_view:update(arg_28_1)
+	if self._twitch_icon_view then
+		self._twitch_icon_view:update(dt)
 	end
 
-	self:_render_waiting_message(arg_28_1)
+	self:_render_waiting_message(dt)
 
-	if not script_data.honduras_demo then
+	if script_data.honduras_demo then
 		if not Development.parameter("disable_water_mark") then
-			self._watermark:update(arg_28_1)
+			self._watermark:update(dt)
 		end
 
-		self._transition_video:update(arg_28_1)
+		self._transition_video:update(dt)
 	end
 
-	if not (not self._dev_backend_watermark and Development.parameter("disable_water_mark")) then
-		self._dev_backend_watermark:update(arg_28_1)
+	if self._dev_backend_watermark and not Development.parameter("disable_water_mark") then
+		self._dev_backend_watermark:update(dt)
 	end
 
 	if self._fade_state == "out" then
@@ -389,40 +393,40 @@ TransitionManager.update = function (self, arg_28_1)
 	end
 
 	if self._fade_state == "in" then
-		self:_render(arg_28_1)
+		self:_render(dt)
 
 		return
 	end
 
-	self._fade = math.clamp(self._fade + self._fade_speed * math.min(arg_28_1, 0.03333333333333333), 0, 1)
+	self._fade = math.clamp(self._fade + self._fade_speed * math.min(dt, 0.03333333333333333), 0, 1)
 
-	if not (self._fade_state ~= "fade_in" or not (self._fade >= 1)) then
+	if self._fade_state == "fade_in" and self._fade >= 1 then
 		self._fade = 1
 		self._fade_state = "in"
 
-		if not self._callback then
-			local _callback = self._callback
+		if self._callback then
+			local callback = self._callback
 
 			self._callback = nil
 
-			_callback()
+			callback()
 		end
-	elseif not (self._fade_state ~= "fade_out" or not (self._fade <= 0)) then
+	elseif self._fade_state == "fade_out" and self._fade <= 0 then
 		self._fade = 0
 		self._fade_state = "out"
 
-		if not self._callback then
-			local _callback_2 = self._callback
+		if self._callback then
+			local callback = self._callback
 
 			self._callback = nil
 
-			_callback_2()
+			callback()
 		end
 
 		return
 	end
 
 	if self._fade_state ~= "out" then
-		self:_render(arg_28_1)
+		self:_render(dt)
 	end
 end

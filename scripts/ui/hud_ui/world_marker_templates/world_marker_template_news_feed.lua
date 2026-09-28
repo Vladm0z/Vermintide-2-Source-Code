@@ -2,31 +2,40 @@
 
 local WorldMarkerTemplates = WorldMarkerTemplates
 
-WorldMarkerTemplates = WorldMarkerTemplates or {}
+WorldMarkerTemplates = not not WorldMarkerTemplates or not not {}
 WorldMarkerTemplates = WorldMarkerTemplates
 
-local str = "news_feed"
-local var_0_2 = WorldMarkerTemplates[str]
+local NAME = "news_feed"
+local var_0_1 = WorldMarkerTemplates[NAME]
 
-var_0_2 = var_0_2 or {}
-WorldMarkerTemplates[str] = var_0_2
-var_0_2.position_offset = {
+if not var_0_1 then
+	-- Nothing
+end
+
+var_0_1 = {}
+
+local template = var_0_1
+
+::label_0_0::
+
+WorldMarkerTemplates[NAME] = template
+template.position_offset = {
 	0,
 	0,
 	2
 }
-var_0_2.max_distance = nil
-var_0_2.screen_clamp = true
-var_0_2.screen_margins = {
+template.max_distance = nil
+template.screen_clamp = true
+template.screen_margins = {
 	down = 150,
 	up = 150,
 	left = 150,
 	right = 150
 }
 
-var_0_2.create_widget_definition = function (arg_1_0)
+template.create_widget_definition = function (scenegraph_id)
 	-- function 1
-	local num = 25
+	local arrow_offset = 25
 
 	return {
 		element = {
@@ -55,20 +64,20 @@ var_0_2.create_widget_definition = function (arg_1_0)
 					pass_type = "rotated_texture",
 					style_id = "arrow",
 					texture_id = "arrow",
-					content_check_function = function (self)
+					content_check_function = function (content)
 						-- function 2
-						return self.is_clamped
+						return content.is_clamped
 					end
 				},
 				{
 					style_id = "text",
 					pass_type = "text",
 					text_id = "text",
-					content_check_function = function (self)
+					content_check_function = function (content)
 						-- function 3
-						local is_clamped = self.is_clamped
+						local is_clamped = content.is_clamped
 
-						is_clamped = is_clamped or self.distance > 5
+						is_clamped = not not is_clamped or content.distance > 5
 
 						return is_clamped
 					end
@@ -181,7 +190,7 @@ var_0_2.create_widget_definition = function (arg_1_0)
 				horizontal_alignment = "center",
 				angle = 0,
 				pivot = {
-					21.5 + num,
+					21.5 + arrow_offset,
 					24
 				},
 				texture_size = {
@@ -199,7 +208,7 @@ var_0_2.create_widget_definition = function (arg_1_0)
 					255
 				},
 				offset = {
-					-num,
+					-arrow_offset,
 					0,
 					0
 				}
@@ -233,59 +242,64 @@ var_0_2.create_widget_definition = function (arg_1_0)
 			0,
 			0
 		},
-		scenegraph_id = arg_1_0
+		scenegraph_id = scenegraph_id
 	}
 end
 
-var_0_2.on_enter = function (arg_4_0)
+template.on_enter = function (widget)
 	-- function 4
-	arg_4_0.content.spawn_progress_timer = 0
+	local content = widget.content
+
+	content.spawn_progress_timer = 0
 end
 
-var_0_2.update_function = function (arg_5_0, arg_5_1, arg_5_2, arg_5_3, arg_5_4, arg_5_5)
+template.update_function = function (ui_renderer, widget, marker, settings, dt, t)
 	-- function 5
-	local flag = false
-	local content = arg_5_1.content
-	local style = arg_5_1.style
+	local animating = false
+	local content = widget.content
+	local style = widget.style
 	local is_inside_frustum = content.is_inside_frustum
 	local is_under = content.is_under
 	local distance = content.distance
 	local angle = content.angle
 	local spawn_progress_timer = content.spawn_progress_timer
 
-	if not spawn_progress_timer then
-		local num = spawn_progress_timer + arg_5_4
-		local num_2 = 1
-		local min = math.min(num / num_2, 1)
-		local easeOutCubic = math.easeOutCubic(min)
-		local easeInCubic = math.easeInCubic(1 - min)
+	if spawn_progress_timer then
+		spawn_progress_timer = spawn_progress_timer + dt
 
-		content.spawn_progress_timer = min == 1 or not num or nil
+		local duration = 1
+		local progress = math.min(spawn_progress_timer / duration, 1)
+		local anim_progress = math.easeOutCubic(progress)
+		local inv_anim_progress = math.easeInCubic(1 - progress)
 
-		local icon_pulse = style.icon_pulse
-		local color = icon_pulse.color
-		local texture_size = icon_pulse.texture_size
-		local default_size = icon_pulse.default_size
+		content.spawn_progress_timer = (progress == 1 or not spawn_progress_timer) and not not nil
 
-		texture_size[1] = default_size[1] + default_size[1] * easeInCubic
-		texture_size[2] = default_size[1] + default_size[2] * easeInCubic
-		color[1] = 255 - 255 * easeOutCubic
+		local icon_pulse_style = style.icon_pulse
+		local icon_pulse_color = icon_pulse_style.color
+		local icon_pulse_size = icon_pulse_style.texture_size
+		local icon_pulse_default_size = icon_pulse_style.default_size
+
+		icon_pulse_size[1] = icon_pulse_default_size[1] + icon_pulse_default_size[1] * inv_anim_progress
+		icon_pulse_size[2] = icon_pulse_default_size[1] + icon_pulse_default_size[2] * inv_anim_progress
+		icon_pulse_color[1] = 255 - 255 * anim_progress
 
 		for i = 1, 2 do
-			local var_5_17 = style["background_pulse_" .. i]
-			local color_2 = var_5_17.color
-			local texture_size_2 = var_5_17.texture_size
-			local default_size_2 = var_5_17.default_size
+			local background_pulse_style = style["background_pulse_" .. i]
+			local background_pulse_color = background_pulse_style.color
+			local background_pulse_size = background_pulse_style.texture_size
+			local background_pulse_default_size = background_pulse_style.default_size
 
-			texture_size_2[1] = default_size_2[1] - default_size_2[1] * easeInCubic
-			texture_size_2[2] = default_size_2[1] - default_size_2[2] * easeInCubic
-			color_2[1] = 255 - 255 * easeOutCubic
+			background_pulse_size[1] = background_pulse_default_size[1] - background_pulse_default_size[1] * inv_anim_progress
+			background_pulse_size[2] = background_pulse_default_size[1] - background_pulse_default_size[2] * inv_anim_progress
+			background_pulse_color[1] = 255 - 255 * anim_progress
 		end
 
-		flag = true
+		animating = true
 	end
 
-	style.arrow.angle = angle + math.pi * 0.5
+	local arrow_style = style.arrow
+
+	arrow_style.angle = angle + math.pi * 0.5
 
 	local str
 
@@ -303,5 +317,5 @@ var_0_2.update_function = function (arg_5_0, arg_5_1, arg_5_2, arg_5_3, arg_5_4,
 
 	content.text = str
 
-	return flag
+	return animating
 end

@@ -4,7 +4,7 @@ CraftingSettings = {
 	NUM_SALVAGE_SLOTS = 9
 }
 
-local tbl = {
+local crafting_recipes = {
 	{
 		result_function = "salvage_result_func",
 		name = "salvage",
@@ -24,115 +24,161 @@ local tbl = {
 			ranged = true,
 			hat = true
 		},
-		item_sort_func = function (self, arg_1_1)
+		item_sort_func = function (item_1, item_2)
 			-- function 1
-			local data = self.data
-			local data_2 = arg_1_1.data
-			local power_level = self.power_level
+			local item_data_1 = item_1.data
+			local item_data_2 = item_2.data
+			local power_level = item_1.power_level
 
-			power_level = power_level or math.huge
+			if not power_level then
+				-- Nothing
+			end
 
-			local power_level_2 = arg_1_1.power_level
+			power_level = math.huge
 
-			power_level_2 = power_level_2 or math.huge
+			local item_1_power_level = power_level
 
-			local item_type = data.item_type
-			local item_type_2 = data_2.item_type
-			local backend_id = self.backend_id
-			local backend_id_2 = arg_1_1.backend_id
-			local is_favorite_backend_id = ItemHelper.is_favorite_backend_id(backend_id, self)
+			::label_1_0::
 
-			if is_favorite_backend_id == ItemHelper.is_favorite_backend_id(backend_id_2, arg_1_1) then
-				if power_level == power_level_2 then
-					local rarity = self.rarity
+			local power_level_2 = item_2.power_level
 
-					rarity = rarity or data.rarity
+			if not power_level_2 then
+				-- Nothing
+			end
 
-					local rarity_2 = arg_1_1.rarity
+			power_level_2 = math.huge
 
-					rarity_2 = rarity_2 or data_2.rarity
+			local item_2_power_level = power_level_2
+
+			::label_1_1::
+
+			local item_1_item_type = item_data_1.item_type
+			local item_2_item_type = item_data_2.item_type
+			local item_1_backend_id = item_1.backend_id
+			local item_2_backend_id = item_2.backend_id
+			local item_1_favorited = ItemHelper.is_favorite_backend_id(item_1_backend_id, item_1)
+			local item_2_favorited = ItemHelper.is_favorite_backend_id(item_2_backend_id, item_2)
+
+			if item_1_favorited == item_2_favorited then
+				if item_1_power_level == item_2_power_level then
+					local rarity = item_1.rarity
+
+					if not rarity then
+						-- Nothing
+					end
+
+					rarity = item_data_1.rarity
+
+					local item_1_rarity = rarity
+
+					::label_1_2::
+
+					local rarity_2 = item_2.rarity
+
+					if not rarity_2 then
+						-- Nothing
+					end
+
+					rarity_2 = item_data_2.rarity
+
+					local item_2_rarity = rarity_2
+
+					::label_1_3::
 
 					local item_rarity_order = UISettings.item_rarity_order
-					local var_1_12 = item_rarity_order[rarity]
-					local var_1_13 = item_rarity_order[rarity_2]
+					local item_1_rarity_order = item_rarity_order[item_1_rarity]
+					local item_2_rarity_order = item_rarity_order[item_2_rarity]
 					local cosmetics_sorting_order = UISettings.cosmetics_sorting_order
-					local var_1_15 = cosmetics_sorting_order[item_type]
+					local var_1_4 = cosmetics_sorting_order[item_1_item_type]
 
-					var_1_15 = var_1_15 or 0
+					if not var_1_4 then
+						-- Nothing
+					end
 
-					local var_1_16 = cosmetics_sorting_order[item_type_2]
+					var_1_4 = 0
 
-					var_1_16 = var_1_16 or 0
+					local item_1_cosmetic_order = var_1_4
 
-					local flag
+					::label_1_4::
 
-					flag = item_type == "skin" or item_type == "hat"
+					local var_1_5 = cosmetics_sorting_order[item_2_item_type]
 
-					local flag_2
+					if not var_1_5 then
+						-- Nothing
+					end
 
-					flag_2 = item_type_2 == "skin" or item_type_2 == "hat"
+					var_1_5 = 0
 
-					if var_1_15 == var_1_16 then
-						if var_1_12 == var_1_13 then
-							local var_1_19 = Localize(item_type)
-							local var_1_20 = Localize(item_type)
+					local item_2_cosmetic_order = var_1_5
 
-							if var_1_19 == var_1_20 then
-								local get_ui_information_from_item, var_1_22 = UIUtils.get_ui_information_from_item(self)
-								local get_ui_information_from_item_2, var_1_24 = UIUtils.get_ui_information_from_item(arg_1_1)
+					::label_1_5::
 
-								if var_1_22 == var_1_24 then
-									return backend_id < backend_id_2
+					local item_1_is_cosmetic = item_1_item_type == "skin" or item_1_item_type == "hat"
+					local item_2_is_cosmetic = item_2_item_type == "skin" or item_2_item_type == "hat"
+
+					if item_1_cosmetic_order == item_2_cosmetic_order then
+						if item_1_rarity_order == item_2_rarity_order then
+							local item_type_1 = Localize(item_1_item_type)
+							local item_type_2 = Localize(item_1_item_type)
+
+							if item_type_1 == item_type_2 then
+								local _, item_name_1 = UIUtils.get_ui_information_from_item(item_1)
+								local _, item_name_2 = UIUtils.get_ui_information_from_item(item_2)
+
+								if item_name_1 == item_name_2 then
+									return item_1_backend_id < item_2_backend_id
 								else
-									return Localize(var_1_22) < Localize(var_1_24)
+									return Localize(item_name_1) < Localize(item_name_2)
 								end
 							else
-								return var_1_19 < var_1_20
+								return item_type_1 < item_type_2
 							end
 						else
-							return var_1_13 < var_1_12
+							return item_2_rarity_order < item_1_rarity_order
 						end
 					else
-						return var_1_15 < var_1_16
+						return item_1_cosmetic_order < item_2_cosmetic_order
 					end
 				else
-					return power_level < power_level_2
+					return item_1_power_level < item_2_power_level
 				end
-			elseif not is_favorite_backend_id then
+			elseif item_1_favorited then
 				return false
 			else
 				return true
 			end
 		end,
-		input_func = function (self, arg_2_1)
+		input_func = function (self, input_service)
 			-- function 2
-			local var_2_0
+			local backend_ids
+			local gamepad_active = Managers.input:is_device_active("gamepad")
 
-			if not Managers.input:is_device_active("gamepad") then
-				if not arg_2_1:get("right_stick_press") then
-					local _item_grid = self._item_grid
-					local get_item_hovered, var_2_3 = _item_grid:get_item_hovered()
+			if gamepad_active then
+				if input_service:get("right_stick_press") then
+					local item_grid = self._item_grid
+					local item, is_equipped = item_grid:get_item_hovered()
 
-					if not get_item_hovered then
-						get_item_hovered, var_2_3 = _item_grid:selected_item()
+					if not item then
+						item, is_equipped = item_grid:selected_item()
 					end
 
-					var_2_0 = {}
+					backend_ids = {}
 
-					if not (not get_item_hovered and var_2_3) then
-						local rarity = get_item_hovered.rarity
+					if item and not is_equipped then
+						local rarity = item.rarity
 
-						var_2_0[#var_2_0 + 1] = get_item_hovered.backend_id
+						backend_ids[#backend_ids + 1] = item.backend_id
 
-						local items = _item_grid:items()
+						local items = item_grid:items()
 
-						for i, v in ipairs(items) do
-							local backend_id = v.backend_id
+						for idx, item in ipairs(items) do
+							local backend_id = item.backend_id
+							local item_rarity = item.rarity
 
-							if not (v.rarity ~= rarity or table.find(var_2_0, backend_id)) then
-								var_2_0[#var_2_0 + 1] = backend_id
+							if item_rarity == rarity and not table.find(backend_ids, backend_id) then
+								backend_ids[#backend_ids + 1] = backend_id
 
-								if table.size(var_2_0) == CraftingSettings.NUM_SALVAGE_SLOTS then
+								if table.size(backend_ids) == CraftingSettings.NUM_SALVAGE_SLOTS then
 									break
 								end
 							end
@@ -140,20 +186,22 @@ local tbl = {
 					end
 				end
 			else
-				var_2_0 = {}
+				backend_ids = {}
 
-				local get_auto_fill_rarity = self.parent:get_auto_fill_rarity()
+				local rarity = self.parent:get_auto_fill_rarity()
 
-				if not get_auto_fill_rarity then
-					local items_2 = self._item_grid:items()
+				if rarity then
+					local item_grid = self._item_grid
+					local items = item_grid:items()
 
-					for i_2, v_2 in ipairs(items_2) do
-						local backend_id_2 = v_2.backend_id
+					for idx, item in ipairs(items) do
+						local backend_id = item.backend_id
+						local item_rarity = item.rarity
 
-						if not (v_2.rarity ~= get_auto_fill_rarity or table.find(var_2_0, backend_id_2)) then
-							var_2_0[#var_2_0 + 1] = backend_id_2
+						if item_rarity == rarity and not table.find(backend_ids, backend_id) then
+							backend_ids[#backend_ids + 1] = backend_id
 
-							if table.size(var_2_0) == CraftingSettings.NUM_SALVAGE_SLOTS then
+							if table.size(backend_ids) == CraftingSettings.NUM_SALVAGE_SLOTS then
 								break
 							end
 						end
@@ -161,7 +209,7 @@ local tbl = {
 				end
 			end
 
-			self.parent:set_selected_items_backend_ids(var_2_0)
+			self.parent:set_selected_items_backend_ids(backend_ids)
 		end
 	},
 	{
@@ -181,26 +229,27 @@ local tbl = {
 				name = "crafting_material_scrap"
 			}
 		},
-		item_sort_func = function (self, arg_3_1)
+		item_sort_func = function (item_1, item_2)
 			-- function 3
-			local data = self.data
-			local data_2 = arg_3_1.data
-			local var_3_2 = Localize(data.item_type)
-			local var_3_3 = Localize(data_2.item_type)
-			local backend_id = self.backend_id
-			local backend_id_2 = arg_3_1.backend_id
-			local is_favorite_backend_id = ItemHelper.is_favorite_backend_id(backend_id, self)
+			local item_data_1 = item_1.data
+			local item_data_2 = item_2.data
+			local item_type_1 = Localize(item_data_1.item_type)
+			local item_type_2 = Localize(item_data_2.item_type)
+			local item_1_backend_id = item_1.backend_id
+			local item_2_backend_id = item_2.backend_id
+			local item_1_favorited = ItemHelper.is_favorite_backend_id(item_1_backend_id, item_1)
+			local item_2_favorited = ItemHelper.is_favorite_backend_id(item_2_backend_id, item_2)
 
-			if is_favorite_backend_id == ItemHelper.is_favorite_backend_id(backend_id_2, arg_3_1) then
-				if var_3_2 == var_3_3 then
-					local get_ui_information_from_item, var_3_8 = UIUtils.get_ui_information_from_item(self)
-					local get_ui_information_from_item_2, var_3_10 = UIUtils.get_ui_information_from_item(arg_3_1)
+			if item_1_favorited == item_2_favorited then
+				if item_type_1 == item_type_2 then
+					local _, item_name_1 = UIUtils.get_ui_information_from_item(item_1)
+					local _, item_name_2 = UIUtils.get_ui_information_from_item(item_2)
 
-					return Localize(var_3_8) < Localize(var_3_10)
+					return Localize(item_name_1) < Localize(item_name_2)
 				else
-					return var_3_2 < var_3_3
+					return item_type_1 < item_type_2
 				end
-			elseif not is_favorite_backend_id then
+			elseif item_1_favorited then
 				return true
 			else
 				return false
@@ -234,26 +283,27 @@ local tbl = {
 				}
 			}
 		},
-		item_sort_func = function (self, arg_4_1)
+		item_sort_func = function (item_1, item_2)
 			-- function 4
-			local data = self.data
-			local data_2 = arg_4_1.data
-			local var_4_2 = Localize(data.item_type)
-			local var_4_3 = Localize(data_2.item_type)
-			local backend_id = self.backend_id
-			local backend_id_2 = arg_4_1.backend_id
-			local is_favorite_backend_id = ItemHelper.is_favorite_backend_id(backend_id, self)
+			local item_data_1 = item_1.data
+			local item_data_2 = item_2.data
+			local item_type_1 = Localize(item_data_1.item_type)
+			local item_type_2 = Localize(item_data_2.item_type)
+			local item_1_backend_id = item_1.backend_id
+			local item_2_backend_id = item_2.backend_id
+			local item_1_favorited = ItemHelper.is_favorite_backend_id(item_1_backend_id, item_1)
+			local item_2_favorited = ItemHelper.is_favorite_backend_id(item_2_backend_id, item_2)
 
-			if is_favorite_backend_id == ItemHelper.is_favorite_backend_id(backend_id_2, arg_4_1) then
-				if var_4_2 == var_4_3 then
-					local get_ui_information_from_item, var_4_8 = UIUtils.get_ui_information_from_item(self)
-					local get_ui_information_from_item_2, var_4_10 = UIUtils.get_ui_information_from_item(arg_4_1)
+			if item_1_favorited == item_2_favorited then
+				if item_type_1 == item_type_2 then
+					local _, item_name_1 = UIUtils.get_ui_information_from_item(item_1)
+					local _, item_name_2 = UIUtils.get_ui_information_from_item(item_2)
 
-					return Localize(var_4_8) < Localize(var_4_10)
+					return Localize(item_name_1) < Localize(item_name_2)
 				else
-					return var_4_2 < var_4_3
+					return item_type_1 < item_type_2
 				end
-			elseif not is_favorite_backend_id then
+			elseif item_1_favorited then
 				return true
 			else
 				return false
@@ -287,26 +337,27 @@ local tbl = {
 				}
 			}
 		},
-		item_sort_func = function (self, arg_5_1)
+		item_sort_func = function (item_1, item_2)
 			-- function 5
-			local data = self.data
-			local data_2 = arg_5_1.data
-			local var_5_2 = Localize(data.item_type)
-			local var_5_3 = Localize(data_2.item_type)
-			local backend_id = self.backend_id
-			local backend_id_2 = arg_5_1.backend_id
-			local is_favorite_backend_id = ItemHelper.is_favorite_backend_id(backend_id, self)
+			local item_data_1 = item_1.data
+			local item_data_2 = item_2.data
+			local item_type_1 = Localize(item_data_1.item_type)
+			local item_type_2 = Localize(item_data_2.item_type)
+			local item_1_backend_id = item_1.backend_id
+			local item_2_backend_id = item_2.backend_id
+			local item_1_favorited = ItemHelper.is_favorite_backend_id(item_1_backend_id, item_1)
+			local item_2_favorited = ItemHelper.is_favorite_backend_id(item_2_backend_id, item_2)
 
-			if is_favorite_backend_id == ItemHelper.is_favorite_backend_id(backend_id_2, arg_5_1) then
-				if var_5_2 == var_5_3 then
-					local get_ui_information_from_item, var_5_8 = UIUtils.get_ui_information_from_item(self)
-					local get_ui_information_from_item_2, var_5_10 = UIUtils.get_ui_information_from_item(arg_5_1)
+			if item_1_favorited == item_2_favorited then
+				if item_type_1 == item_type_2 then
+					local _, item_name_1 = UIUtils.get_ui_information_from_item(item_1)
+					local _, item_name_2 = UIUtils.get_ui_information_from_item(item_2)
 
-					return Localize(var_5_8) < Localize(var_5_10)
+					return Localize(item_name_1) < Localize(item_name_2)
 				else
-					return var_5_2 < var_5_3
+					return item_type_1 < item_type_2
 				end
-			elseif not is_favorite_backend_id then
+			elseif item_1_favorited then
 				return true
 			else
 				return false
@@ -340,55 +391,88 @@ local tbl = {
 				}
 			}
 		},
-		item_sort_func = function (self, arg_6_1)
+		item_sort_func = function (item_1, item_2)
 			-- function 6
-			local data = self.data
-			local data_2 = arg_6_1.data
-			local power_level = self.power_level
+			local item_data_1 = item_1.data
+			local item_data_2 = item_2.data
+			local power_level = item_1.power_level
 
-			power_level = power_level or 0
+			if not power_level then
+				-- Nothing
+			end
 
-			local power_level_2 = arg_6_1.power_level
+			power_level = 0
 
-			power_level_2 = power_level_2 or 0
+			local item_1_power_level = power_level
 
-			local backend_id = self.backend_id
-			local backend_id_2 = arg_6_1.backend_id
-			local is_favorite_backend_id = ItemHelper.is_favorite_backend_id(backend_id, self)
+			::label_6_0::
 
-			if is_favorite_backend_id == ItemHelper.is_favorite_backend_id(backend_id_2, arg_6_1) then
-				if power_level == power_level_2 then
-					local rarity = self.rarity
+			local power_level_2 = item_2.power_level
 
-					rarity = rarity or data.rarity
+			if not power_level_2 then
+				-- Nothing
+			end
 
-					local rarity_2 = arg_6_1.rarity
+			power_level_2 = 0
 
-					rarity_2 = rarity_2 or data_2.rarity
+			local item_2_power_level = power_level_2
+
+			::label_6_1::
+
+			local item_1_backend_id = item_1.backend_id
+			local item_2_backend_id = item_2.backend_id
+			local item_1_favorited = ItemHelper.is_favorite_backend_id(item_1_backend_id, item_1)
+			local item_2_favorited = ItemHelper.is_favorite_backend_id(item_2_backend_id, item_2)
+
+			if item_1_favorited == item_2_favorited then
+				if item_1_power_level == item_2_power_level then
+					local rarity = item_1.rarity
+
+					if not rarity then
+						-- Nothing
+					end
+
+					rarity = item_data_1.rarity
+
+					local item_1_rarity = rarity
+
+					::label_6_2::
+
+					local rarity_2 = item_2.rarity
+
+					if not rarity_2 then
+						-- Nothing
+					end
+
+					rarity_2 = item_data_2.rarity
+
+					local item_2_rarity = rarity_2
+
+					::label_6_3::
 
 					local item_rarity_order = UISettings.item_rarity_order
-					local var_6_10 = item_rarity_order[rarity]
-					local var_6_11 = item_rarity_order[rarity_2]
+					local item_1_rarity_order = item_rarity_order[item_1_rarity]
+					local item_2_rarity_order = item_rarity_order[item_2_rarity]
 
-					if var_6_10 == var_6_11 then
-						local var_6_12 = Localize(data.item_type)
-						local var_6_13 = Localize(data_2.item_type)
+					if item_1_rarity_order == item_2_rarity_order then
+						local item_type_1 = Localize(item_data_1.item_type)
+						local item_type_2 = Localize(item_data_2.item_type)
 
-						if var_6_12 == var_6_13 then
-							local get_ui_information_from_item, var_6_15 = UIUtils.get_ui_information_from_item(self)
-							local get_ui_information_from_item_2, var_6_17 = UIUtils.get_ui_information_from_item(arg_6_1)
+						if item_type_1 == item_type_2 then
+							local _, item_name_1 = UIUtils.get_ui_information_from_item(item_1)
+							local _, item_name_2 = UIUtils.get_ui_information_from_item(item_2)
 
-							return Localize(var_6_15) < Localize(var_6_17)
+							return Localize(item_name_1) < Localize(item_name_2)
 						else
-							return var_6_12 < var_6_13
+							return item_type_1 < item_type_2
 						end
 					else
-						return var_6_10 < var_6_11
+						return item_1_rarity_order < item_2_rarity_order
 					end
 				else
-					return power_level_2 < power_level
+					return item_2_power_level < item_1_power_level
 				end
-			elseif not is_favorite_backend_id then
+			elseif item_1_favorited then
 				return true
 			else
 				return false
@@ -422,55 +506,88 @@ local tbl = {
 				}
 			}
 		},
-		item_sort_func = function (self, arg_7_1)
+		item_sort_func = function (item_1, item_2)
 			-- function 7
-			local data = self.data
-			local data_2 = arg_7_1.data
-			local power_level = self.power_level
+			local item_data_1 = item_1.data
+			local item_data_2 = item_2.data
+			local power_level = item_1.power_level
 
-			power_level = power_level or 0
+			if not power_level then
+				-- Nothing
+			end
 
-			local power_level_2 = arg_7_1.power_level
+			power_level = 0
 
-			power_level_2 = power_level_2 or 0
+			local item_1_power_level = power_level
 
-			local backend_id = self.backend_id
-			local backend_id_2 = arg_7_1.backend_id
-			local is_favorite_backend_id = ItemHelper.is_favorite_backend_id(backend_id, self)
+			::label_7_0::
 
-			if is_favorite_backend_id == ItemHelper.is_favorite_backend_id(backend_id_2, arg_7_1) then
-				if power_level == power_level_2 then
-					local rarity = self.rarity
+			local power_level_2 = item_2.power_level
 
-					rarity = rarity or data.rarity
+			if not power_level_2 then
+				-- Nothing
+			end
 
-					local rarity_2 = arg_7_1.rarity
+			power_level_2 = 0
 
-					rarity_2 = rarity_2 or data_2.rarity
+			local item_2_power_level = power_level_2
+
+			::label_7_1::
+
+			local item_1_backend_id = item_1.backend_id
+			local item_2_backend_id = item_2.backend_id
+			local item_1_favorited = ItemHelper.is_favorite_backend_id(item_1_backend_id, item_1)
+			local item_2_favorited = ItemHelper.is_favorite_backend_id(item_2_backend_id, item_2)
+
+			if item_1_favorited == item_2_favorited then
+				if item_1_power_level == item_2_power_level then
+					local rarity = item_1.rarity
+
+					if not rarity then
+						-- Nothing
+					end
+
+					rarity = item_data_1.rarity
+
+					local item_1_rarity = rarity
+
+					::label_7_2::
+
+					local rarity_2 = item_2.rarity
+
+					if not rarity_2 then
+						-- Nothing
+					end
+
+					rarity_2 = item_data_2.rarity
+
+					local item_2_rarity = rarity_2
+
+					::label_7_3::
 
 					local item_rarity_order = UISettings.item_rarity_order
-					local var_7_10 = item_rarity_order[rarity]
-					local var_7_11 = item_rarity_order[rarity_2]
+					local item_1_rarity_order = item_rarity_order[item_1_rarity]
+					local item_2_rarity_order = item_rarity_order[item_2_rarity]
 
-					if var_7_10 == var_7_11 then
-						local var_7_12 = Localize(data.item_type)
-						local var_7_13 = Localize(data_2.item_type)
+					if item_1_rarity_order == item_2_rarity_order then
+						local item_type_1 = Localize(item_data_1.item_type)
+						local item_type_2 = Localize(item_data_2.item_type)
 
-						if var_7_12 == var_7_13 then
-							local get_ui_information_from_item, var_7_15 = UIUtils.get_ui_information_from_item(self)
-							local get_ui_information_from_item_2, var_7_17 = UIUtils.get_ui_information_from_item(arg_7_1)
+						if item_type_1 == item_type_2 then
+							local _, item_name_1 = UIUtils.get_ui_information_from_item(item_1)
+							local _, item_name_2 = UIUtils.get_ui_information_from_item(item_2)
 
-							return Localize(var_7_15) < Localize(var_7_17)
+							return Localize(item_name_1) < Localize(item_name_2)
 						else
-							return var_7_12 < var_7_13
+							return item_type_1 < item_type_2
 						end
 					else
-						return var_7_10 < var_7_11
+						return item_1_rarity_order < item_2_rarity_order
 					end
 				else
-					return power_level_2 < power_level
+					return item_2_power_level < item_1_power_level
 				end
-			elseif not is_favorite_backend_id then
+			elseif item_1_favorited then
 				return true
 			else
 				return false
@@ -500,55 +617,88 @@ local tbl = {
 				}
 			}
 		},
-		item_sort_func = function (self, arg_8_1)
+		item_sort_func = function (item_1, item_2)
 			-- function 8
-			local data = self.data
-			local data_2 = arg_8_1.data
-			local power_level = self.power_level
+			local item_data_1 = item_1.data
+			local item_data_2 = item_2.data
+			local power_level = item_1.power_level
 
-			power_level = power_level or 0
+			if not power_level then
+				-- Nothing
+			end
 
-			local power_level_2 = arg_8_1.power_level
+			power_level = 0
 
-			power_level_2 = power_level_2 or 0
+			local item_1_power_level = power_level
 
-			local backend_id = self.backend_id
-			local backend_id_2 = arg_8_1.backend_id
-			local is_favorite_backend_id = ItemHelper.is_favorite_backend_id(backend_id, self)
+			::label_8_0::
 
-			if is_favorite_backend_id == ItemHelper.is_favorite_backend_id(backend_id_2, arg_8_1) then
-				if power_level == power_level_2 then
-					local rarity = self.rarity
+			local power_level_2 = item_2.power_level
 
-					rarity = rarity or data.rarity
+			if not power_level_2 then
+				-- Nothing
+			end
 
-					local rarity_2 = arg_8_1.rarity
+			power_level_2 = 0
 
-					rarity_2 = rarity_2 or data_2.rarity
+			local item_2_power_level = power_level_2
+
+			::label_8_1::
+
+			local item_1_backend_id = item_1.backend_id
+			local item_2_backend_id = item_2.backend_id
+			local item_1_favorited = ItemHelper.is_favorite_backend_id(item_1_backend_id, item_1)
+			local item_2_favorited = ItemHelper.is_favorite_backend_id(item_2_backend_id, item_2)
+
+			if item_1_favorited == item_2_favorited then
+				if item_1_power_level == item_2_power_level then
+					local rarity = item_1.rarity
+
+					if not rarity then
+						-- Nothing
+					end
+
+					rarity = item_data_1.rarity
+
+					local item_1_rarity = rarity
+
+					::label_8_2::
+
+					local rarity_2 = item_2.rarity
+
+					if not rarity_2 then
+						-- Nothing
+					end
+
+					rarity_2 = item_data_2.rarity
+
+					local item_2_rarity = rarity_2
+
+					::label_8_3::
 
 					local item_rarity_order = UISettings.item_rarity_order
-					local var_8_10 = item_rarity_order[rarity]
-					local var_8_11 = item_rarity_order[rarity_2]
+					local item_1_rarity_order = item_rarity_order[item_1_rarity]
+					local item_2_rarity_order = item_rarity_order[item_2_rarity]
 
-					if var_8_10 == var_8_11 then
-						local var_8_12 = Localize(data.item_type)
-						local var_8_13 = Localize(data_2.item_type)
+					if item_1_rarity_order == item_2_rarity_order then
+						local item_type_1 = Localize(item_data_1.item_type)
+						local item_type_2 = Localize(item_data_2.item_type)
 
-						if var_8_12 == var_8_13 then
-							local get_ui_information_from_item, var_8_15 = UIUtils.get_ui_information_from_item(self)
-							local get_ui_information_from_item_2, var_8_17 = UIUtils.get_ui_information_from_item(arg_8_1)
+						if item_type_1 == item_type_2 then
+							local _, item_name_1 = UIUtils.get_ui_information_from_item(item_1)
+							local _, item_name_2 = UIUtils.get_ui_information_from_item(item_2)
 
-							return Localize(var_8_15) < Localize(var_8_17)
+							return Localize(item_name_1) < Localize(item_name_2)
 						else
-							return var_8_12 < var_8_13
+							return item_type_1 < item_type_2
 						end
 					else
-						return var_8_10 < var_8_11
+						return item_1_rarity_order < item_2_rarity_order
 					end
 				else
-					return power_level_2 < power_level
+					return item_2_power_level < item_1_power_level
 				end
-			elseif not is_favorite_backend_id then
+			elseif item_1_favorited then
 				return true
 			else
 				return false
@@ -599,55 +749,88 @@ local tbl = {
 				}
 			}
 		},
-		item_sort_func = function (self, arg_9_1)
+		item_sort_func = function (item_1, item_2)
 			-- function 9
-			local data = self.data
-			local data_2 = arg_9_1.data
-			local power_level = self.power_level
+			local item_data_1 = item_1.data
+			local item_data_2 = item_2.data
+			local power_level = item_1.power_level
 
-			power_level = power_level or 0
+			if not power_level then
+				-- Nothing
+			end
 
-			local power_level_2 = arg_9_1.power_level
+			power_level = 0
 
-			power_level_2 = power_level_2 or 0
+			local item_1_power_level = power_level
 
-			local backend_id = self.backend_id
-			local backend_id_2 = arg_9_1.backend_id
-			local is_favorite_backend_id = ItemHelper.is_favorite_backend_id(backend_id, self)
+			::label_9_0::
 
-			if is_favorite_backend_id == ItemHelper.is_favorite_backend_id(backend_id_2, arg_9_1) then
-				if power_level == power_level_2 then
-					local rarity = self.rarity
+			local power_level_2 = item_2.power_level
 
-					rarity = rarity or data.rarity
+			if not power_level_2 then
+				-- Nothing
+			end
 
-					local rarity_2 = arg_9_1.rarity
+			power_level_2 = 0
 
-					rarity_2 = rarity_2 or data_2.rarity
+			local item_2_power_level = power_level_2
+
+			::label_9_1::
+
+			local item_1_backend_id = item_1.backend_id
+			local item_2_backend_id = item_2.backend_id
+			local item_1_favorited = ItemHelper.is_favorite_backend_id(item_1_backend_id, item_1)
+			local item_2_favorited = ItemHelper.is_favorite_backend_id(item_2_backend_id, item_2)
+
+			if item_1_favorited == item_2_favorited then
+				if item_1_power_level == item_2_power_level then
+					local rarity = item_1.rarity
+
+					if not rarity then
+						-- Nothing
+					end
+
+					rarity = item_data_1.rarity
+
+					local item_1_rarity = rarity
+
+					::label_9_2::
+
+					local rarity_2 = item_2.rarity
+
+					if not rarity_2 then
+						-- Nothing
+					end
+
+					rarity_2 = item_data_2.rarity
+
+					local item_2_rarity = rarity_2
+
+					::label_9_3::
 
 					local item_rarity_order = UISettings.item_rarity_order
-					local var_9_10 = item_rarity_order[rarity]
-					local var_9_11 = item_rarity_order[rarity_2]
+					local item_1_rarity_order = item_rarity_order[item_1_rarity]
+					local item_2_rarity_order = item_rarity_order[item_2_rarity]
 
-					if var_9_10 == var_9_11 then
-						local var_9_12 = Localize(data.item_type)
-						local var_9_13 = Localize(data_2.item_type)
+					if item_1_rarity_order == item_2_rarity_order then
+						local item_type_1 = Localize(item_data_1.item_type)
+						local item_type_2 = Localize(item_data_2.item_type)
 
-						if var_9_12 == var_9_13 then
-							local get_ui_information_from_item, var_9_15 = UIUtils.get_ui_information_from_item(self)
-							local get_ui_information_from_item_2, var_9_17 = UIUtils.get_ui_information_from_item(arg_9_1)
+						if item_type_1 == item_type_2 then
+							local _, item_name_1 = UIUtils.get_ui_information_from_item(item_1)
+							local _, item_name_2 = UIUtils.get_ui_information_from_item(item_2)
 
-							return Localize(var_9_15) < Localize(var_9_17)
+							return Localize(item_name_1) < Localize(item_name_2)
 						else
-							return var_9_12 < var_9_13
+							return item_type_1 < item_type_2
 						end
 					else
-						return var_9_10 < var_9_11
+						return item_1_rarity_order < item_2_rarity_order
 					end
 				else
-					return power_level_2 < power_level
+					return item_2_power_level < item_1_power_level
 				end
-			elseif not is_favorite_backend_id then
+			elseif item_1_favorited then
 				return true
 			else
 				return false
@@ -666,55 +849,88 @@ local tbl = {
 		description_text = "description_crafting_recipe_apply_weapon_skin",
 		display_icon_console = "console_crafting_recipe_icon_apply",
 		ingredients = {},
-		item_sort_func = function (self, arg_10_1)
+		item_sort_func = function (item_1, item_2)
 			-- function 10
-			local data = self.data
-			local data_2 = arg_10_1.data
-			local power_level = self.power_level
+			local item_data_1 = item_1.data
+			local item_data_2 = item_2.data
+			local power_level = item_1.power_level
 
-			power_level = power_level or 0
+			if not power_level then
+				-- Nothing
+			end
 
-			local power_level_2 = arg_10_1.power_level
+			power_level = 0
 
-			power_level_2 = power_level_2 or 0
+			local item_1_power_level = power_level
 
-			local backend_id = self.backend_id
-			local backend_id_2 = arg_10_1.backend_id
-			local is_favorite_backend_id = ItemHelper.is_favorite_backend_id(backend_id, self)
+			::label_10_0::
 
-			if is_favorite_backend_id == ItemHelper.is_favorite_backend_id(backend_id_2, arg_10_1) then
-				if power_level == power_level_2 then
-					local rarity = self.rarity
+			local power_level_2 = item_2.power_level
 
-					rarity = rarity or data.rarity
+			if not power_level_2 then
+				-- Nothing
+			end
 
-					local rarity_2 = arg_10_1.rarity
+			power_level_2 = 0
 
-					rarity_2 = rarity_2 or data_2.rarity
+			local item_2_power_level = power_level_2
+
+			::label_10_1::
+
+			local item_1_backend_id = item_1.backend_id
+			local item_2_backend_id = item_2.backend_id
+			local item_1_favorited = ItemHelper.is_favorite_backend_id(item_1_backend_id, item_1)
+			local item_2_favorited = ItemHelper.is_favorite_backend_id(item_2_backend_id, item_2)
+
+			if item_1_favorited == item_2_favorited then
+				if item_1_power_level == item_2_power_level then
+					local rarity = item_1.rarity
+
+					if not rarity then
+						-- Nothing
+					end
+
+					rarity = item_data_1.rarity
+
+					local item_1_rarity = rarity
+
+					::label_10_2::
+
+					local rarity_2 = item_2.rarity
+
+					if not rarity_2 then
+						-- Nothing
+					end
+
+					rarity_2 = item_data_2.rarity
+
+					local item_2_rarity = rarity_2
+
+					::label_10_3::
 
 					local item_rarity_order = UISettings.item_rarity_order
-					local var_10_10 = item_rarity_order[rarity]
-					local var_10_11 = item_rarity_order[rarity_2]
+					local item_1_rarity_order = item_rarity_order[item_1_rarity]
+					local item_2_rarity_order = item_rarity_order[item_2_rarity]
 
-					if var_10_10 == var_10_11 then
-						local var_10_12 = Localize(data.item_type)
-						local var_10_13 = Localize(data_2.item_type)
+					if item_1_rarity_order == item_2_rarity_order then
+						local item_type_1 = Localize(item_data_1.item_type)
+						local item_type_2 = Localize(item_data_2.item_type)
 
-						if var_10_12 == var_10_13 then
-							local get_ui_information_from_item, var_10_15 = UIUtils.get_ui_information_from_item(self)
-							local get_ui_information_from_item_2, var_10_17 = UIUtils.get_ui_information_from_item(arg_10_1)
+						if item_type_1 == item_type_2 then
+							local _, item_name_1 = UIUtils.get_ui_information_from_item(item_1)
+							local _, item_name_2 = UIUtils.get_ui_information_from_item(item_2)
 
-							return Localize(var_10_15) < Localize(var_10_17)
+							return Localize(item_name_1) < Localize(item_name_2)
 						else
-							return var_10_12 < var_10_13
+							return item_type_1 < item_type_2
 						end
 					else
-						return var_10_10 < var_10_11
+						return item_1_rarity_order < item_2_rarity_order
 					end
 				else
-					return power_level_2 < power_level
+					return item_2_power_level < item_1_power_level
 				end
-			elseif not is_favorite_backend_id then
+			elseif item_1_favorited then
 				return true
 			else
 				return false
@@ -748,55 +964,88 @@ local tbl = {
 				}
 			}
 		},
-		item_sort_func = function (self, arg_11_1)
+		item_sort_func = function (item_1, item_2)
 			-- function 11
-			local data = self.data
-			local data_2 = arg_11_1.data
-			local power_level = self.power_level
+			local item_data_1 = item_1.data
+			local item_data_2 = item_2.data
+			local power_level = item_1.power_level
 
-			power_level = power_level or 0
+			if not power_level then
+				-- Nothing
+			end
 
-			local power_level_2 = arg_11_1.power_level
+			power_level = 0
 
-			power_level_2 = power_level_2 or 0
+			local item_1_power_level = power_level
 
-			local backend_id = self.backend_id
-			local backend_id_2 = arg_11_1.backend_id
-			local is_favorite_backend_id = ItemHelper.is_favorite_backend_id(backend_id, self)
+			::label_11_0::
 
-			if is_favorite_backend_id == ItemHelper.is_favorite_backend_id(backend_id_2, arg_11_1) then
-				if power_level == power_level_2 then
-					local rarity = self.rarity
+			local power_level_2 = item_2.power_level
 
-					rarity = rarity or data.rarity
+			if not power_level_2 then
+				-- Nothing
+			end
 
-					local rarity_2 = arg_11_1.rarity
+			power_level_2 = 0
 
-					rarity_2 = rarity_2 or data_2.rarity
+			local item_2_power_level = power_level_2
+
+			::label_11_1::
+
+			local item_1_backend_id = item_1.backend_id
+			local item_2_backend_id = item_2.backend_id
+			local item_1_favorited = ItemHelper.is_favorite_backend_id(item_1_backend_id, item_1)
+			local item_2_favorited = ItemHelper.is_favorite_backend_id(item_2_backend_id, item_2)
+
+			if item_1_favorited == item_2_favorited then
+				if item_1_power_level == item_2_power_level then
+					local rarity = item_1.rarity
+
+					if not rarity then
+						-- Nothing
+					end
+
+					rarity = item_data_1.rarity
+
+					local item_1_rarity = rarity
+
+					::label_11_2::
+
+					local rarity_2 = item_2.rarity
+
+					if not rarity_2 then
+						-- Nothing
+					end
+
+					rarity_2 = item_data_2.rarity
+
+					local item_2_rarity = rarity_2
+
+					::label_11_3::
 
 					local item_rarity_order = UISettings.item_rarity_order
-					local var_11_10 = item_rarity_order[rarity]
-					local var_11_11 = item_rarity_order[rarity_2]
+					local item_1_rarity_order = item_rarity_order[item_1_rarity]
+					local item_2_rarity_order = item_rarity_order[item_2_rarity]
 
-					if var_11_10 == var_11_11 then
-						local var_11_12 = Localize(data.item_type)
-						local var_11_13 = Localize(data_2.item_type)
+					if item_1_rarity_order == item_2_rarity_order then
+						local item_type_1 = Localize(item_data_1.item_type)
+						local item_type_2 = Localize(item_data_2.item_type)
 
-						if var_11_12 == var_11_13 then
-							local get_ui_information_from_item, var_11_15 = UIUtils.get_ui_information_from_item(self)
-							local get_ui_information_from_item_2, var_11_17 = UIUtils.get_ui_information_from_item(arg_11_1)
+						if item_type_1 == item_type_2 then
+							local _, item_name_1 = UIUtils.get_ui_information_from_item(item_1)
+							local _, item_name_2 = UIUtils.get_ui_information_from_item(item_2)
 
-							return Localize(var_11_15) < Localize(var_11_17)
+							return Localize(item_name_1) < Localize(item_name_2)
 						else
-							return var_11_12 < var_11_13
+							return item_type_1 < item_type_2
 						end
 					else
-						return var_11_10 < var_11_11
+						return item_1_rarity_order < item_2_rarity_order
 					end
 				else
-					return power_level_2 < power_level
+					return item_2_power_level < item_1_power_level
 				end
-			elseif not is_favorite_backend_id then
+			elseif item_1_favorited then
 				return true
 			else
 				return false
@@ -830,55 +1079,88 @@ local tbl = {
 				}
 			}
 		},
-		item_sort_func = function (self, arg_12_1)
+		item_sort_func = function (item_1, item_2)
 			-- function 12
-			local data = self.data
-			local data_2 = arg_12_1.data
-			local power_level = self.power_level
+			local item_data_1 = item_1.data
+			local item_data_2 = item_2.data
+			local power_level = item_1.power_level
 
-			power_level = power_level or 0
+			if not power_level then
+				-- Nothing
+			end
 
-			local power_level_2 = arg_12_1.power_level
+			power_level = 0
 
-			power_level_2 = power_level_2 or 0
+			local item_1_power_level = power_level
 
-			local backend_id = self.backend_id
-			local backend_id_2 = arg_12_1.backend_id
-			local is_favorite_backend_id = ItemHelper.is_favorite_backend_id(backend_id, self)
+			::label_12_0::
 
-			if is_favorite_backend_id == ItemHelper.is_favorite_backend_id(backend_id_2, arg_12_1) then
-				if power_level == power_level_2 then
-					local rarity = self.rarity
+			local power_level_2 = item_2.power_level
 
-					rarity = rarity or data.rarity
+			if not power_level_2 then
+				-- Nothing
+			end
 
-					local rarity_2 = arg_12_1.rarity
+			power_level_2 = 0
 
-					rarity_2 = rarity_2 or data_2.rarity
+			local item_2_power_level = power_level_2
+
+			::label_12_1::
+
+			local item_1_backend_id = item_1.backend_id
+			local item_2_backend_id = item_2.backend_id
+			local item_1_favorited = ItemHelper.is_favorite_backend_id(item_1_backend_id, item_1)
+			local item_2_favorited = ItemHelper.is_favorite_backend_id(item_2_backend_id, item_2)
+
+			if item_1_favorited == item_2_favorited then
+				if item_1_power_level == item_2_power_level then
+					local rarity = item_1.rarity
+
+					if not rarity then
+						-- Nothing
+					end
+
+					rarity = item_data_1.rarity
+
+					local item_1_rarity = rarity
+
+					::label_12_2::
+
+					local rarity_2 = item_2.rarity
+
+					if not rarity_2 then
+						-- Nothing
+					end
+
+					rarity_2 = item_data_2.rarity
+
+					local item_2_rarity = rarity_2
+
+					::label_12_3::
 
 					local item_rarity_order = UISettings.item_rarity_order
-					local var_12_10 = item_rarity_order[rarity]
-					local var_12_11 = item_rarity_order[rarity_2]
+					local item_1_rarity_order = item_rarity_order[item_1_rarity]
+					local item_2_rarity_order = item_rarity_order[item_2_rarity]
 
-					if var_12_10 == var_12_11 then
-						local var_12_12 = Localize(data.item_type)
-						local var_12_13 = Localize(data_2.item_type)
+					if item_1_rarity_order == item_2_rarity_order then
+						local item_type_1 = Localize(item_data_1.item_type)
+						local item_type_2 = Localize(item_data_2.item_type)
 
-						if var_12_12 == var_12_13 then
-							local get_ui_information_from_item, var_12_15 = UIUtils.get_ui_information_from_item(self)
-							local get_ui_information_from_item_2, var_12_17 = UIUtils.get_ui_information_from_item(arg_12_1)
+						if item_type_1 == item_type_2 then
+							local _, item_name_1 = UIUtils.get_ui_information_from_item(item_1)
+							local _, item_name_2 = UIUtils.get_ui_information_from_item(item_2)
 
-							return Localize(var_12_15) < Localize(var_12_17)
+							return Localize(item_name_1) < Localize(item_name_2)
 						else
-							return var_12_12 < var_12_13
+							return item_type_1 < item_type_2
 						end
 					else
-						return var_12_10 < var_12_11
+						return item_1_rarity_order < item_2_rarity_order
 					end
 				else
-					return power_level_2 < power_level
+					return item_2_power_level < item_1_power_level
 				end
-			elseif not is_favorite_backend_id then
+			elseif item_1_favorited then
 				return true
 			else
 				return false
@@ -912,55 +1194,88 @@ local tbl = {
 				}
 			}
 		},
-		item_sort_func = function (self, arg_13_1)
+		item_sort_func = function (item_1, item_2)
 			-- function 13
-			local data = self.data
-			local data_2 = arg_13_1.data
-			local power_level = self.power_level
+			local item_data_1 = item_1.data
+			local item_data_2 = item_2.data
+			local power_level = item_1.power_level
 
-			power_level = power_level or 0
+			if not power_level then
+				-- Nothing
+			end
 
-			local power_level_2 = arg_13_1.power_level
+			power_level = 0
 
-			power_level_2 = power_level_2 or 0
+			local item_1_power_level = power_level
 
-			local backend_id = self.backend_id
-			local backend_id_2 = arg_13_1.backend_id
-			local is_favorite_backend_id = ItemHelper.is_favorite_backend_id(backend_id, self)
+			::label_13_0::
 
-			if is_favorite_backend_id == ItemHelper.is_favorite_backend_id(backend_id_2, arg_13_1) then
-				if power_level == power_level_2 then
-					local rarity = self.rarity
+			local power_level_2 = item_2.power_level
 
-					rarity = rarity or data.rarity
+			if not power_level_2 then
+				-- Nothing
+			end
 
-					local rarity_2 = arg_13_1.rarity
+			power_level_2 = 0
 
-					rarity_2 = rarity_2 or data_2.rarity
+			local item_2_power_level = power_level_2
+
+			::label_13_1::
+
+			local item_1_backend_id = item_1.backend_id
+			local item_2_backend_id = item_2.backend_id
+			local item_1_favorited = ItemHelper.is_favorite_backend_id(item_1_backend_id, item_1)
+			local item_2_favorited = ItemHelper.is_favorite_backend_id(item_2_backend_id, item_2)
+
+			if item_1_favorited == item_2_favorited then
+				if item_1_power_level == item_2_power_level then
+					local rarity = item_1.rarity
+
+					if not rarity then
+						-- Nothing
+					end
+
+					rarity = item_data_1.rarity
+
+					local item_1_rarity = rarity
+
+					::label_13_2::
+
+					local rarity_2 = item_2.rarity
+
+					if not rarity_2 then
+						-- Nothing
+					end
+
+					rarity_2 = item_data_2.rarity
+
+					local item_2_rarity = rarity_2
+
+					::label_13_3::
 
 					local item_rarity_order = UISettings.item_rarity_order
-					local var_13_10 = item_rarity_order[rarity]
-					local var_13_11 = item_rarity_order[rarity_2]
+					local item_1_rarity_order = item_rarity_order[item_1_rarity]
+					local item_2_rarity_order = item_rarity_order[item_2_rarity]
 
-					if var_13_10 == var_13_11 then
-						local var_13_12 = Localize(data.item_type)
-						local var_13_13 = Localize(data_2.item_type)
+					if item_1_rarity_order == item_2_rarity_order then
+						local item_type_1 = Localize(item_data_1.item_type)
+						local item_type_2 = Localize(item_data_2.item_type)
 
-						if var_13_12 == var_13_13 then
-							local get_ui_information_from_item, var_13_15 = UIUtils.get_ui_information_from_item(self)
-							local get_ui_information_from_item_2, var_13_17 = UIUtils.get_ui_information_from_item(arg_13_1)
+						if item_type_1 == item_type_2 then
+							local _, item_name_1 = UIUtils.get_ui_information_from_item(item_1)
+							local _, item_name_2 = UIUtils.get_ui_information_from_item(item_2)
 
-							return Localize(var_13_15) < Localize(var_13_17)
+							return Localize(item_name_1) < Localize(item_name_2)
 						else
-							return var_13_12 < var_13_13
+							return item_type_1 < item_type_2
 						end
 					else
-						return var_13_10 < var_13_11
+						return item_1_rarity_order < item_2_rarity_order
 					end
 				else
-					return power_level_2 < power_level
+					return item_2_power_level < item_1_power_level
 				end
-			elseif not is_favorite_backend_id then
+			elseif item_1_favorited then
 				return true
 			else
 				return false
@@ -990,55 +1305,88 @@ local tbl = {
 				}
 			}
 		},
-		item_sort_func = function (self, arg_14_1)
+		item_sort_func = function (item_1, item_2)
 			-- function 14
-			local data = self.data
-			local data_2 = arg_14_1.data
-			local power_level = self.power_level
+			local item_data_1 = item_1.data
+			local item_data_2 = item_2.data
+			local power_level = item_1.power_level
 
-			power_level = power_level or 0
+			if not power_level then
+				-- Nothing
+			end
 
-			local power_level_2 = arg_14_1.power_level
+			power_level = 0
 
-			power_level_2 = power_level_2 or 0
+			local item_1_power_level = power_level
 
-			local backend_id = self.backend_id
-			local backend_id_2 = arg_14_1.backend_id
-			local is_favorite_backend_id = ItemHelper.is_favorite_backend_id(backend_id, self)
+			::label_14_0::
 
-			if is_favorite_backend_id == ItemHelper.is_favorite_backend_id(backend_id_2, arg_14_1) then
-				if power_level == power_level_2 then
-					local rarity = self.rarity
+			local power_level_2 = item_2.power_level
 
-					rarity = rarity or data.rarity
+			if not power_level_2 then
+				-- Nothing
+			end
 
-					local rarity_2 = arg_14_1.rarity
+			power_level_2 = 0
 
-					rarity_2 = rarity_2 or data_2.rarity
+			local item_2_power_level = power_level_2
+
+			::label_14_1::
+
+			local item_1_backend_id = item_1.backend_id
+			local item_2_backend_id = item_2.backend_id
+			local item_1_favorited = ItemHelper.is_favorite_backend_id(item_1_backend_id, item_1)
+			local item_2_favorited = ItemHelper.is_favorite_backend_id(item_2_backend_id, item_2)
+
+			if item_1_favorited == item_2_favorited then
+				if item_1_power_level == item_2_power_level then
+					local rarity = item_1.rarity
+
+					if not rarity then
+						-- Nothing
+					end
+
+					rarity = item_data_1.rarity
+
+					local item_1_rarity = rarity
+
+					::label_14_2::
+
+					local rarity_2 = item_2.rarity
+
+					if not rarity_2 then
+						-- Nothing
+					end
+
+					rarity_2 = item_data_2.rarity
+
+					local item_2_rarity = rarity_2
+
+					::label_14_3::
 
 					local item_rarity_order = UISettings.item_rarity_order
-					local var_14_10 = item_rarity_order[rarity]
-					local var_14_11 = item_rarity_order[rarity_2]
+					local item_1_rarity_order = item_rarity_order[item_1_rarity]
+					local item_2_rarity_order = item_rarity_order[item_2_rarity]
 
-					if var_14_10 == var_14_11 then
-						local var_14_12 = Localize(data.item_type)
-						local var_14_13 = Localize(data_2.item_type)
+					if item_1_rarity_order == item_2_rarity_order then
+						local item_type_1 = Localize(item_data_1.item_type)
+						local item_type_2 = Localize(item_data_2.item_type)
 
-						if var_14_12 == var_14_13 then
-							local get_ui_information_from_item, var_14_15 = UIUtils.get_ui_information_from_item(self)
-							local get_ui_information_from_item_2, var_14_17 = UIUtils.get_ui_information_from_item(arg_14_1)
+						if item_type_1 == item_type_2 then
+							local _, item_name_1 = UIUtils.get_ui_information_from_item(item_1)
+							local _, item_name_2 = UIUtils.get_ui_information_from_item(item_2)
 
-							return Localize(var_14_15) < Localize(var_14_17)
+							return Localize(item_name_1) < Localize(item_name_2)
 						else
-							return var_14_12 < var_14_13
+							return item_type_1 < item_type_2
 						end
 					else
-						return var_14_10 < var_14_11
+						return item_1_rarity_order < item_2_rarity_order
 					end
 				else
-					return power_level_2 < power_level
+					return item_2_power_level < item_1_power_level
 				end
-			elseif not is_favorite_backend_id then
+			elseif item_1_favorited then
 				return true
 			else
 				return false
@@ -1072,12 +1420,12 @@ local tbl = {
 				name = "crafting_material_dust_1"
 			}
 		},
-		item_sort_func = function (arg_15_0, arg_15_1)
+		item_sort_func = function (item_1, item_2)
 			-- function 15
-			local get_ui_information_from_item, var_15_1 = UIUtils.get_ui_information_from_item(arg_15_0)
-			local get_ui_information_from_item_2, var_15_3 = UIUtils.get_ui_information_from_item(arg_15_1)
+			local _, item_name_1 = UIUtils.get_ui_information_from_item(item_1)
+			local _, item_name_2 = UIUtils.get_ui_information_from_item(item_2)
 
-			return var_15_1 < var_15_3
+			return item_name_1 < item_name_2
 		end
 	},
 	{
@@ -1107,23 +1455,23 @@ local tbl = {
 				name = "crafting_material_dust_2"
 			}
 		},
-		item_sort_func = function (arg_16_0, arg_16_1)
+		item_sort_func = function (item_1, item_2)
 			-- function 16
-			local get_ui_information_from_item, var_16_1 = UIUtils.get_ui_information_from_item(arg_16_0)
-			local get_ui_information_from_item_2, var_16_3 = UIUtils.get_ui_information_from_item(arg_16_1)
+			local _, item_name_1 = UIUtils.get_ui_information_from_item(item_1)
+			local _, item_name_2 = UIUtils.get_ui_information_from_item(item_2)
 
-			return var_16_1 < var_16_3
+			return item_name_1 < item_name_2
 		end
 	}
 }
-local tbl_2 = {}
-local tbl_3 = {}
+local crafting_recipes_lookup = {}
+local crafting_recipes_by_name = {}
 
-for i, v in ipairs(tbl) do
-	local name = v.name
+for i, recipe_data in ipairs(crafting_recipes) do
+	local name = recipe_data.name
 
-	tbl_2[i] = name
-	tbl_3[name] = v
+	crafting_recipes_lookup[i] = name
+	crafting_recipes_by_name[name] = recipe_data
 end
 
-return tbl, tbl_3, tbl_2
+return crafting_recipes, crafting_recipes_by_name, crafting_recipes_lookup

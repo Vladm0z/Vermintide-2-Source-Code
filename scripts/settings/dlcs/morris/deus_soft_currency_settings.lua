@@ -1,6 +1,6 @@
 -- chunkname: @scripts/settings/dlcs/morris/deus_soft_currency_settings.lua
 
-local tbl = {
+local DEFAULT_BOSS_RANGE = {
 	{
 		max = 104,
 		min = 43
@@ -18,7 +18,7 @@ local tbl = {
 		min = 28
 	}
 }
-local tbl_2 = {
+local DEFAULT_RANGE = {
 	{
 		max = 59,
 		min = 28
@@ -38,24 +38,24 @@ local tbl_2 = {
 }
 local DeusSoftCurrencySettings = DeusSoftCurrencySettings
 
-DeusSoftCurrencySettings = DeusSoftCurrencySettings or {
+DeusSoftCurrencySettings = not not DeusSoftCurrencySettings or not not {
 	loot_amount = {
-		["n/a"] = tbl_2,
-		beastmen_minotaur = tbl,
-		chaos_exalted_champion_norsca = tbl,
-		chaos_exalted_champion_warcamp = tbl,
-		chaos_exalted_sorcerer = tbl,
-		chaos_exalted_sorcerer_drachenfels = tbl,
-		chaos_spawn = tbl,
-		chaos_spawn_exalted_champion_warcamp = tbl,
-		chaos_troll = tbl,
-		skaven_grey_seer = tbl,
-		skaven_rat_ogre = tbl,
-		skaven_storm_vermin_champion = tbl,
-		skaven_storm_vermin_warlord = tbl,
-		skaven_stormfiend = tbl,
-		skaven_stormfiend_boss = tbl,
-		skaven_loot_rat = tbl
+		["n/a"] = DEFAULT_RANGE,
+		beastmen_minotaur = DEFAULT_BOSS_RANGE,
+		chaos_exalted_champion_norsca = DEFAULT_BOSS_RANGE,
+		chaos_exalted_champion_warcamp = DEFAULT_BOSS_RANGE,
+		chaos_exalted_sorcerer = DEFAULT_BOSS_RANGE,
+		chaos_exalted_sorcerer_drachenfels = DEFAULT_BOSS_RANGE,
+		chaos_spawn = DEFAULT_BOSS_RANGE,
+		chaos_spawn_exalted_champion_warcamp = DEFAULT_BOSS_RANGE,
+		chaos_troll = DEFAULT_BOSS_RANGE,
+		skaven_grey_seer = DEFAULT_BOSS_RANGE,
+		skaven_rat_ogre = DEFAULT_BOSS_RANGE,
+		skaven_storm_vermin_champion = DEFAULT_BOSS_RANGE,
+		skaven_storm_vermin_warlord = DEFAULT_BOSS_RANGE,
+		skaven_stormfiend = DEFAULT_BOSS_RANGE,
+		skaven_stormfiend_boss = DEFAULT_BOSS_RANGE,
+		skaven_loot_rat = DEFAULT_BOSS_RANGE
 	},
 	types = {
 		GROUND = 1,

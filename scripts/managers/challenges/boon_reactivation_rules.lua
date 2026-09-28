@@ -2,20 +2,20 @@
 
 local BoonReactivationRules = BoonReactivationRules
 
-BoonReactivationRules = BoonReactivationRules or {}
+BoonReactivationRules = not not BoonReactivationRules or not not {}
 BoonReactivationRules = BoonReactivationRules
 
-BoonReactivationRules.questing_knight = function (arg_1_0)
+BoonReactivationRules.questing_knight = function (player_unique_id)
 	-- function 1
-	local get_status_from_unique_id = Managers.party:get_status_from_unique_id(arg_1_0)
+	local status = Managers.party:get_status_from_unique_id(player_unique_id)
 
-	if not get_status_from_unique_id then
-		local profile_index = get_status_from_unique_id.profile_index
-		local career_index = get_status_from_unique_id.career_index
-		local var_1_3 = SPProfiles[profile_index]
-		local flag = not var_1_3 and var_1_3.careers[career_index]
+	if status then
+		local profile_index = status.profile_index
+		local career_index = status.career_index
+		local profile = SPProfiles[profile_index]
+		local career_settings = not not profile and not not profile.careers[career_index]
 
-		return not flag and flag == CareerSettings.es_questingknight
+		return not not career_settings and career_settings == CareerSettings.es_questingknight
 	end
 
 	return false

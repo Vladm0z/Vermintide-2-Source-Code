@@ -1,18 +1,18 @@
 -- chunkname: @scripts/entity_system/systems/behaviour/trees/skaven/skaven_explosive_loot_rat_behavior.lua
 
-local skaven_explosive_loot_rat = BreedActions.skaven_explosive_loot_rat
-local tbl = {
+local ACTIONS = BreedActions.skaven_explosive_loot_rat
+local EXPLOSIVE_LOOT_RAT_BEHAVIOR = {
 	"BTUtilityNode",
-	action_data = skaven_explosive_loot_rat.utility_action,
+	action_data = ACTIONS.utility_action,
 	{
 		"BTClanRatFollowAction",
 		name = "follow",
-		action_data = skaven_explosive_loot_rat.follow
+		action_data = ACTIONS.follow
 	},
 	{
 		"BTZombieExplodeAction",
 		name = "explosion_attack",
-		action_data = skaven_explosive_loot_rat.explosion_attack
+		action_data = ACTIONS.explosion_attack
 	},
 	name = "in_combat",
 	condition = "can_see_player"
@@ -39,7 +39,7 @@ BreedBehaviors.explosive_loot_rat = {
 		"BTStaggerAction",
 		name = "stagger",
 		condition = "stagger",
-		action_data = skaven_explosive_loot_rat.stagger
+		action_data = ACTIONS.stagger
 	},
 	{
 		"BTSelector",
@@ -62,17 +62,17 @@ BreedBehaviors.explosive_loot_rat = {
 			"BTSmashDoorAction",
 			name = "smash_door",
 			condition = "at_door_smartobject",
-			action_data = skaven_explosive_loot_rat.smash_door
+			action_data = ACTIONS.smash_door
 		},
 		condition = "at_smartobject",
 		name = "smartobject"
 	},
-	tbl,
+	EXPLOSIVE_LOOT_RAT_BEHAVIOR,
 	{
 		"BTIdleAction",
 		name = "idle",
 		condition = "no_target",
-		action_data = skaven_explosive_loot_rat.idle
+		action_data = ACTIONS.idle
 	},
 	{
 		"BTFallbackIdleAction",

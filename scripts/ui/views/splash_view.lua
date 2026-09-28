@@ -5,7 +5,7 @@ require("scripts/ui/ui_layer")
 require("scripts/ui/ui_elements")
 require("scripts/ui/ui_widgets")
 
-local tbl = {
+local scenegraph_definition = {
 	root = {
 		is_root = true,
 		position = {
@@ -289,7 +289,7 @@ local tbl = {
 	}
 }
 
-function create_xbox_beta_widget(self)
+function create_xbox_beta_widget(input)
 	-- function 1
 	local tbl = {
 		element = {
@@ -298,9 +298,9 @@ function create_xbox_beta_widget(self)
 					style_id = "foreground",
 					scenegraph_id = "foreground",
 					pass_type = "rect",
-					content_check_function = function (self)
+					content_check_function = function (content)
 						-- function 2
-						return self.foreground.disable_foreground ~= true
+						return content.foreground.disable_foreground ~= true
 					end
 				},
 				{
@@ -308,10 +308,10 @@ function create_xbox_beta_widget(self)
 					style_id = "texture_style",
 					pass_type = "texture",
 					content_id = "texture_content",
-					scenegraph_id = self.scenegraph_id,
-					content_check_function = function (self)
+					scenegraph_id = input.scenegraph_id,
+					content_check_function = function (content)
 						-- function 3
-						return self.material_name
+						return content.material_name
 					end
 				},
 				{
@@ -319,36 +319,36 @@ function create_xbox_beta_widget(self)
 					pass_type = "texture",
 					texture_id = "material_name",
 					content_id = "input_texture_content",
-					scenegraph_id = self.input_scenegraph_id,
-					content_check_function = function (self)
+					scenegraph_id = input.input_scenegraph_id,
+					content_check_function = function (content)
 						-- function 4
-						return self.material_name
+						return content.material_name
 					end,
-					content_change_function = function (self, arg_5_1, arg_5_2, arg_5_3)
+					content_change_function = function (content, style, ui_animations, dt)
 						-- function 5
-						local timer = self.timer
+						local timer = content.timer
 
-						timer = timer or 0
-						self.timer = timer + arg_5_3
+						timer = not not timer or not not 0
+						content.timer = timer + dt
 
-						local num = 192 + 63 * math.sin(self.timer * 4)
+						local intensity = 192 + 63 * math.sin(content.timer * 4)
 
-						arg_5_1.color[2] = num
-						arg_5_1.color[3] = num
-						arg_5_1.color[4] = num
+						style.color[2] = intensity
+						style.color[3] = intensity
+						style.color[4] = intensity
 					end
 				}
 			}
 		},
 		content = {
 			texture_content = {
-				material_name = self.material_name
+				material_name = input.material_name
 			},
 			input_texture_content = {
-				material_name = self.input_material_name
+				material_name = input.input_material_name
 			},
 			foreground = {
-				disable_foreground = self.disable_foreground
+				disable_foreground = input.disable_foreground
 			}
 		}
 	}
@@ -360,11 +360,11 @@ function create_xbox_beta_widget(self)
 	local tbl_3 = {
 		vertical_alignment = "center",
 		horizontal_alignment = "center",
-		texture_size = self.input_texture_size
+		texture_size = input.input_texture_size
 	}
-	local input_texture_offset = self.input_texture_offset
+	local input_texture_offset = input.input_texture_offset
 
-	input_texture_offset = input_texture_offset or {
+	input_texture_offset = not not input_texture_offset or not not {
 		0,
 		0,
 		0
@@ -379,11 +379,11 @@ function create_xbox_beta_widget(self)
 	tbl_2.input_style = tbl_3
 
 	local tbl_4 = {
-		size = self.texture_size
+		size = input.texture_size
 	}
-	local texture_offset = self.texture_offset
+	local texture_offset = input.texture_offset
 
-	texture_offset = texture_offset or {
+	texture_offset = not not texture_offset or not not {
 		0,
 		0,
 		0
@@ -391,12 +391,12 @@ function create_xbox_beta_widget(self)
 	tbl_4.offset = texture_offset
 	tbl_2.texture_style = tbl_4
 	tbl.style = tbl_2
-	tbl.scenegraph_id = self.scenegraph_id
+	tbl.scenegraph_id = input.scenegraph_id
 
 	return tbl
 end
 
-local function fn(self)
+local function create_disclaimer_widget(input)
 	-- function 6
 	return {
 		scenegraph_id = "disclaimer",
@@ -431,25 +431,33 @@ local function fn(self)
 					pass_type = "text",
 					text_id = "continue",
 					scenegraph_id = "screen",
-					content_check_function = function (self)
+					content_check_function = function (content)
 						-- function 7
-						return self.ready
+						return content.ready
 					end,
-					content_change_function = function (self, arg_8_1)
+					content_change_function = function (content, style)
 						-- function 8
 						local IS_CONSOLE = IS_CONSOLE
 
-						IS_CONSOLE = IS_CONSOLE or Managers.input:is_device_active("gamepad")
+						if not IS_CONSOLE then
+							-- Nothing
+						end
 
-						local time_and_delta, var_8_2 = Managers.time:time_and_delta("main")
+						IS_CONSOLE = Managers.input:is_device_active("gamepad")
 
-						self.timer = self.timer + var_8_2 * 2
-						arg_8_1.text_color[1] = 128 - math.cos(self.timer) * 127
+						local gamepad_active = IS_CONSOLE
+
+						::label_8_0::
+
+						local time, dt = Managers.time:time_and_delta("main")
+
+						content.timer = content.timer + dt * 2
+						style.text_color[1] = 128 - math.cos(content.timer) * 127
 
 						local flag
 
-						flag = not IS_CONSOLE and "press_any_button_to_continue" and "press_any_key_to_continue"
-						self.continue = flag
+						flag = (not gamepad_active or not "press_any_button_to_continue") and not not "press_any_key_to_continue"
+						content.continue = flag
 					end
 				}
 			}
@@ -458,9 +466,9 @@ local function fn(self)
 			continue = "press_any_key_to_continue",
 			timer = 0,
 			ready = false,
-			text = self.text,
-			header_text = self.header_text,
-			texture_id = self.texture_id
+			text = input.text,
+			header_text = input.header_text,
+			texture_id = input.texture_id
 		},
 		style = {
 			foreground = {
@@ -469,7 +477,7 @@ local function fn(self)
 			texture_style = {
 				vertical_alignment = "top",
 				horizontal_alignment = "left",
-				texture_size = self.texture_size,
+				texture_size = input.texture_size,
 				color = Colors.get_color_table_with_alpha("white", 255),
 				offset = {
 					0,
@@ -546,7 +554,7 @@ local function fn(self)
 	}
 end
 
-local tbl_2 = {
+local dead_space_filler = {
 	scenegraph_id = "dead_space_filler",
 	element = {
 		passes = {
@@ -568,7 +576,7 @@ local tbl_2 = {
 		}
 	}
 }
-local tbl_3 = {
+local splash_content = {
 	{
 		video_name = "video/fatshark_splash",
 		sound_start = "Play_fatshark_logo",
@@ -659,17 +667,17 @@ local tbl_3 = {
 	}
 }
 
-if Development.parameter("use_beta_mode") or not script_data.settings.use_beta_mode then
-	if not IS_XB1 then
-		local flag = false
+if Development.parameter("use_beta_mode") or script_data.settings.use_beta_mode then
+	if IS_XB1 then
+		local is_xbox_one_x = false
 		local console_type = XboxOne.console_type()
 
-		if not (console_type == XboxOne.CONSOLE_TYPE_XBOX_ONE_X_DEVKIT or console_type == XboxOne.CONSOLE_TYPE_XBOX_ONE_X or console_type == XboxOne.CONSOLE_TYPE_XBOX_ANACONDA or console_type ~= XboxOne.CONSOLE_TYPE_XBOX_SERIES_X_DEVKIT) then
-			flag = true
+		if console_type == XboxOne.CONSOLE_TYPE_XBOX_ONE_X_DEVKIT or console_type == XboxOne.CONSOLE_TYPE_XBOX_ONE_X or console_type == XboxOne.CONSOLE_TYPE_XBOX_ANACONDA or console_type == XboxOne.CONSOLE_TYPE_XBOX_SERIES_X_DEVKIT then
+			is_xbox_one_x = true
 		end
 
-		local num = #tbl_3 + 1
-		local tbl_4 = {
+		local num = #splash_content + 1
+		local tbl = {
 			input_scenegraph_id = "input_background",
 			product_id = "ADAA6515-8206-49E5-B34C-405244800B46",
 			type = "beta_end",
@@ -680,55 +688,55 @@ if Development.parameter("use_beta_mode") or not script_data.settings.use_beta_m
 			music_name = "Play_menu_screen_music",
 			material_name = "beta_end_overlay"
 		}
-		local tbl_5
+		local tbl_2
 
-		if not flag then
-			tbl_5 = {
+		if is_xbox_one_x then
+			tbl_2 = {
 				1776,
 				346
 			}
 
-			if not tbl_5 then
+			if not tbl_2 then
 				-- Nothing
 			end
 		end
 
-		tbl_5 = {
+		tbl_2 = {
 			888,
 			173
 		}
 
 		::label_0_0::
 
-		tbl_4.input_texture_size = tbl_5
+		tbl.input_texture_size = tbl_2
 
-		local tbl_6
+		local tbl_3
 
-		if not flag then
-			tbl_6 = {
+		if is_xbox_one_x then
+			tbl_3 = {
 				550,
 				-260
 			}
 
-			if not tbl_6 then
+			if not tbl_3 then
 				-- Nothing
 			end
 		end
 
-		tbl_6 = {
+		tbl_3 = {
 			275,
 			-130
 		}
 
 		::label_0_1::
 
-		tbl_4.input_texture_offset = tbl_6
-		tbl_4.time = math.huge
-		tbl_3[num] = tbl_4
-	elseif not IS_PS4 then
+		tbl.input_texture_offset = tbl_3
+		tbl.time = math.huge
+		splash_content[num] = tbl
+	elseif IS_PS4 then
 		local is_pro = PS4.is_pro()
-		local num_2 = #tbl_3 + 1
-		local tbl_7 = {
+		local num_2 = #splash_content + 1
+		local tbl_4 = {
 			scenegraph_id = "background",
 			type = "texture",
 			axis = 2,
@@ -754,32 +762,46 @@ if Development.parameter("use_beta_mode") or not script_data.settings.use_beta_m
 				"to providing customer support for the game."
 			}
 		}
-		local flag_2
+		local flag
 
-		flag_2 = not is_pro and 52 and 36
-		tbl_7.font_size = flag_2
+		flag = (not is_pro or not 52) and not not 36
+		tbl_4.font_size = flag
 
-		local tbl_8 = {
+		local tbl_5 = {
 			1920
 		}
-		local flag_3
+		local flag_2
 
-		flag_3 = not is_pro and 70 and 50
-		tbl_8[2] = flag_3
-		tbl_7.size = tbl_8
-		tbl_7.offset = {
+		flag_2 = (not is_pro or not 70) and not not 50
+		tbl_5[2] = flag_2
+		tbl_4.size = tbl_5
+		tbl_4.offset = {
 			0,
 			750,
 			0
 		}
-		tbl_3[num_2] = tbl_7
-	elseif not IS_WINDOWS then
-		local var_0_16 = rawget(_G, "Steam")
+		splash_content[num_2] = tbl_4
+	elseif IS_WINDOWS then
+		local var_0_9 = rawget(_G, "Steam")
 
-		var_0_16 = not var_0_16 and Steam.app_id() == 1085780
+		if var_0_9 then
+			-- Nothing
+		end
 
-		if not var_0_16 then
-			tbl_3[#tbl_3 + 1] = {
+		if Steam.app_id() ~= 1085780 then
+			var_0_9 = false
+
+			goto label_0_2
+		end
+
+		var_0_9 = true
+
+		local is_beta = var_0_9
+
+		::label_0_2::
+
+		if is_beta then
+			splash_content[#splash_content + 1] = {
 				scenegraph_id = "background",
 				type = "texture",
 				axis = 2,
@@ -819,13 +841,13 @@ if Development.parameter("use_beta_mode") or not script_data.settings.use_beta_m
 	end
 end
 
-local str = "SplashView"
+local VIDEO_REFERENCE_NAME = "SplashView"
 
 SplashView = class(SplashView)
 
-SplashView.init = function (self, arg_9_1, arg_9_2)
+SplashView.init = function (self, input_manager, world)
 	-- function 9
-	if not IS_PS4 then
+	if IS_PS4 then
 		PS4.hide_splash_screen()
 	end
 
@@ -834,31 +856,31 @@ SplashView.init = function (self, arg_9_1, arg_9_2)
 	self.render_settings = {
 		snap_pixel_positions = true
 	}
-	self._world = arg_9_2
+	self._world = world
 	self._current_index = 1
-	self.ui_renderer = UIRenderer.create(arg_9_2, "material", "video/fatshark_splash", "material", "materials/fonts/gw_fonts", "material", "materials/ui/ui_1080p_splash_screen")
+	self.ui_renderer = UIRenderer.create(world, "material", "video/fatshark_splash", "material", "materials/fonts/gw_fonts", "material", "materials/ui/ui_1080p_splash_screen")
 
-	if not arg_9_1 then
-		arg_9_1:create_input_service("splash_view", "SplashScreenKeymaps", "SplashScreenFilters")
-		arg_9_1:map_device_to_service("splash_view", "keyboard")
-		arg_9_1:map_device_to_service("splash_view", "gamepad")
-		arg_9_1:map_device_to_service("splash_view", "mouse")
+	if input_manager then
+		input_manager:create_input_service("splash_view", "SplashScreenKeymaps", "SplashScreenFilters")
+		input_manager:map_device_to_service("splash_view", "keyboard")
+		input_manager:map_device_to_service("splash_view", "gamepad")
+		input_manager:map_device_to_service("splash_view", "mouse")
 
-		self.input_manager = arg_9_1
+		self.input_manager = input_manager
 	end
 
 	self:_create_ui_elements()
 
-	if not script_data["-no-rendering"] then
-		self._current_index = #tbl_3 + 1
+	if script_data["-no-rendering"] then
+		self._current_index = #splash_content + 1
 	end
 
 	self:_next_splash(true)
 end
 
-SplashView._next_splash = function (self, arg_10_1)
+SplashView._next_splash = function (self, override_skip)
 	-- function 10
-	if not ((arg_10_1 or not IS_CONSOLE) and self._allow_console_skip) then
+	if not override_skip and IS_CONSOLE and not self._allow_console_skip then
 		self._update_func = "_wait_for_allow_console_skip"
 		self._video_complete = true
 
@@ -866,13 +888,13 @@ SplashView._next_splash = function (self, arg_10_1)
 	end
 
 	self._update_func = "do_nothing"
-	self._current_splash_data = tbl_3[self._current_index]
+	self._current_splash_data = splash_content[self._current_index]
 	self._current_widget = self._splash_widgets[self._current_index]
 
-	if not self._current_splash_data then
-		local str = "_update_" .. self._current_splash_data.type
+	if self._current_splash_data then
+		local update_func = "_update_" .. self._current_splash_data.type
 
-		self._update_func = not self[str] and str and "_update_texture"
+		self._update_func = (not self[update_func] or not update_func) and not not "_update_texture"
 		self._current_index = self._current_index + 1
 		self._current_splash_data.timer = self._current_splash_data.time
 	elseif not Managers.transition:loading_icon_active() then
@@ -880,166 +902,170 @@ SplashView._next_splash = function (self, arg_10_1)
 	end
 end
 
-SplashView._update_video = function (self, arg_11_1, arg_11_2)
+SplashView._update_video = function (self, gui, dt)
 	-- function 11
-	if not self.ui_renderer.video_players[str] then
-		UIRenderer.create_video_player(self.ui_renderer, str, self._world, self._current_splash_data.video_name, false)
+	if not self.ui_renderer.video_players[VIDEO_REFERENCE_NAME] then
+		UIRenderer.create_video_player(self.ui_renderer, VIDEO_REFERENCE_NAME, self._world, self._current_splash_data.video_name, false)
 		Managers.transition:fade_out(0.5, nil)
-	elseif not self._current_widget.content.video_content.video_completed then
-		UIRenderer.destroy_video_player(self.ui_renderer, str)
-
-		self._sound_started = false
-
-		if not self._current_splash_data.sound_stop then
-			Managers.music:trigger_event(self._current_splash_data.sound_stop)
-		end
-
-		self:_next_splash()
 	else
-		if not self._sound_started then
-			if not self._current_splash_data.sound_start then
-				Managers.music:trigger_event(self._current_splash_data.sound_start)
+		local video_complete = self._current_widget.content.video_content.video_completed
+
+		if video_complete then
+			UIRenderer.destroy_video_player(self.ui_renderer, VIDEO_REFERENCE_NAME)
+
+			self._sound_started = false
+
+			if self._current_splash_data.sound_stop then
+				Managers.music:trigger_event(self._current_splash_data.sound_stop)
 			end
 
-			self._sound_started = true
-		end
+			self:_next_splash()
+		else
+			if not self._sound_started then
+				if self._current_splash_data.sound_start then
+					Managers.music:trigger_event(self._current_splash_data.sound_start)
+				end
 
-		UIRenderer.draw_widget(self.ui_renderer, self._current_widget)
+				self._sound_started = true
+			end
+
+			UIRenderer.draw_widget(self.ui_renderer, self._current_widget)
+		end
 	end
 end
 
-SplashView._update_texture = function (self, arg_12_1, arg_12_2)
+SplashView._update_texture = function (self, gui, dt)
 	-- function 12
-	local resolution, var_12_1 = Gui.resolution()
+	local w, h = Gui.resolution()
 	local timer = self._current_splash_data.timer
 	local texts = self._current_splash_data.texts
-	local time = self._current_splash_data.time
+	local total_time = self._current_splash_data.time
 
-	arg_12_2 = math.min(arg_12_2, 0.03333333333333333)
+	dt = math.min(dt, 0.03333333333333333)
 
-	if timer > time - 0.5 then
-		local num = 255 * ((timer - (time - 0.5)) / 0.5)
+	if timer > total_time - 0.5 then
+		local value = 255 * ((timer - (total_time - 0.5)) / 0.5)
 
-		self._current_widget.style.foreground.color[1] = num
+		self._current_widget.style.foreground.color[1] = value
 	elseif timer <= 0.5 then
-		local num_2 = 255 * (1 - timer / 0.5)
+		local value = 255 * (1 - timer / 0.5)
 
-		self._current_widget.style.foreground.color[1] = num_2
+		self._current_widget.style.foreground.color[1] = value
 	else
 		self._current_widget.style.foreground.color[1] = 0
 	end
 
 	UIRenderer.draw_widget(self.ui_renderer, self._current_widget)
 
-	self._current_splash_data.timer = self._current_splash_data.timer - arg_12_2
+	self._current_splash_data.timer = self._current_splash_data.timer - dt
 
 	if self._current_splash_data.timer <= 0 then
 		self:_next_splash()
 	end
 end
 
-SplashView._update_disclaimer = function (self, arg_13_1, arg_13_2)
+SplashView._update_disclaimer = function (self, gui, dt)
 	-- function 13
-	local resolution, var_13_1 = Gui.resolution()
+	local w, h = Gui.resolution()
 	local timer = self._current_splash_data.timer
 	local texts = self._current_splash_data.texts
-	local time = self._current_splash_data.time
+	local total_time = self._current_splash_data.time
 
-	arg_13_2 = math.min(arg_13_2, 0.03333333333333333)
+	dt = math.min(dt, 0.03333333333333333)
 
-	if not self._current_splash_data.confirmed then
-		local num = 255 * (1 - timer / 0.5)
+	if self._current_splash_data.confirmed then
+		local value = 255 * (1 - timer / 0.5)
 
-		self._current_widget.style.foreground.color[1] = num
-	elseif timer > time - 0.5 then
-		local num_2 = 255 * ((timer - (time - 0.5)) / 0.5)
+		self._current_widget.style.foreground.color[1] = value
+	elseif timer > total_time - 0.5 then
+		local value = 255 * ((timer - (total_time - 0.5)) / 0.5)
 
-		self._current_widget.style.foreground.color[1] = num_2
+		self._current_widget.style.foreground.color[1] = value
 	elseif timer <= 0.5 then
-		local var_13_7
+		local skip
 
-		if not IS_CONSOLE then
-			var_13_7 = script_data.skip_splash or self:_get_console_input()
+		if IS_CONSOLE then
+			skip = not not script_data.skip_splash or not not self:_get_console_input()
 		else
-			local get_service = self.input_manager:get_service("splash_view")
+			local input_service = self.input_manager:get_service("splash_view")
 
-			var_13_7 = script_data.skip_splash or get_service:get("skip_splash")
+			skip = not not script_data.skip_splash or not not input_service:get("skip_splash")
 		end
 
-		if not var_13_7 then
+		if skip then
 			self._current_splash_data.confirmed = true
 		end
 
-		arg_13_2 = 0
+		dt = 0
 		self._current_widget.style.foreground.color[1] = 0
 		self._current_widget.content.ready = true
 	end
 
 	UIRenderer.draw_widget(self.ui_renderer, self._current_widget)
 
-	self._current_splash_data.timer = self._current_splash_data.timer - arg_13_2
+	self._current_splash_data.timer = self._current_splash_data.timer - dt
 
 	if self._current_splash_data.timer <= 0 then
 		self:_next_splash()
 	end
 end
 
-SplashView._update_beta_end = function (self, arg_14_1, arg_14_2)
+SplashView._update_beta_end = function (self, gui, dt)
 	-- function 14
-	local resolution, var_14_1 = Gui.resolution()
+	local w, h = Gui.resolution()
 	local timer = self._current_splash_data.timer
 	local texts = self._current_splash_data.texts
-	local time = self._current_splash_data.time
+	local total_time = self._current_splash_data.time
 
-	if not (not self._current_splash_data.music_name and self._sound_started) then
+	if self._current_splash_data.music_name and not self._sound_started then
 		Managers.music:stop_all_sounds()
 		Managers.music:trigger_event(self._current_splash_data.music_name)
 
 		self._sound_started = true
 	end
 
-	arg_14_2 = math.min(arg_14_2, 0.03333333333333333)
+	dt = math.min(dt, 0.03333333333333333)
 
 	if timer <= 0.5 then
-		local num = 255 * (1 - timer / 0.5)
+		local value = 255 * (1 - timer / 0.5)
 
-		self._current_widget.style.foreground.color[1] = num
+		self._current_widget.style.foreground.color[1] = value
 	else
 		self._current_widget.style.foreground.color[1] = 0
 	end
 
 	UIRenderer.draw_widget(self.ui_renderer, self._current_widget)
 
-	self._current_splash_data.timer = self._current_splash_data.timer - arg_14_2
+	self._current_splash_data.timer = self._current_splash_data.timer - dt
 
-	local str = "Pad"
+	local pad = "Pad"
 
 	for i = 1, 8 do
-		local str_2 = str .. tostring(i)
-		local var_14_8 = rawget(_G, str_2)
+		local pad_name = pad .. tostring(i)
+		local pad_controller = rawget(_G, pad_name)
 
-		if not var_14_8 and not var_14_8.pressed(var_14_8.button_index("y")) then
-			local user_id = var_14_8.user_id()
+		if pad_controller and pad_controller.pressed(pad_controller.button_index("y")) then
+			local user_id = pad_controller.user_id()
 
-			if not user_id then
+			if user_id then
 				XboxLive.show_product_details(user_id, self._current_splash_data.product_id)
 			end
 		end
 	end
 end
 
-if not IS_CONSOLE then
+if IS_CONSOLE then
 	SplashView._wait_for_allow_console_skip = function (self)
 		-- function 15
-		if not self._allow_console_skip then
+		if self._allow_console_skip then
 			self:_next_splash()
 		end
 	end
 end
 
-SplashView.set_index = function (self, arg_16_1)
+SplashView.set_index = function (self, index)
 	-- function 16
-	self._current_index = arg_16_1
+	self._current_index = index
 
 	self:_next_splash()
 end
@@ -1047,43 +1073,43 @@ end
 SplashView._create_ui_elements = function (self)
 	-- function 17
 	self._splash_widgets = {}
-	self.ui_scenegraph = UISceneGraph.init_scenegraph(tbl)
-	self.dead_space_filler = UIWidget.init(tbl_2)
+	self.ui_scenegraph = UISceneGraph.init_scenegraph(scenegraph_definition)
+	self.dead_space_filler = UIWidget.init(dead_space_filler)
 
-	for k, v in pairs(tbl_3) do
-		local var_17_0
+	for _, splash in pairs(splash_content) do
+		local widget
 
-		if v.type == "video" then
-			var_17_0 = UIWidgets.create_splash_video(v, str)
-		elseif v.type == "beta_end" then
-			var_17_0 = create_xbox_beta_widget(v)
-		elseif v.type == "disclaimer" then
-			var_17_0 = fn(v)
-		elseif not v.partner_splash then
-			var_17_0 = UIWidgets.create_partner_splash_widget(v)
+		if splash.type == "video" then
+			widget = UIWidgets.create_splash_video(splash, VIDEO_REFERENCE_NAME)
+		elseif splash.type == "beta_end" then
+			widget = create_xbox_beta_widget(splash)
+		elseif splash.type == "disclaimer" then
+			widget = create_disclaimer_widget(splash)
+		elseif splash.partner_splash then
+			widget = UIWidgets.create_partner_splash_widget(splash)
 		else
-			var_17_0 = UIWidgets.create_splash_texture(v)
+			widget = UIWidgets.create_splash_texture(splash)
 		end
 
-		self._splash_widgets[#self._splash_widgets + 1] = UIWidget.init(var_17_0)
+		self._splash_widgets[#self._splash_widgets + 1] = UIWidget.init(widget)
 	end
 
 	UIRenderer.clear_scenegraph_queue(self.ui_renderer)
 end
 
-SplashView.update = function (self, arg_18_1)
+SplashView.update = function (self, dt)
 	-- function 18
-	if not (not IS_WINDOWS and not (self._fram_skip_hack < 1)) then
+	if IS_WINDOWS and self._fram_skip_hack < 1 then
 		self._fram_skip_hack = self._fram_skip_hack + 1
 
 		return
 	end
 
-	local resolution, var_18_1 = Gui.resolution()
+	local w, h = Gui.resolution()
 	local ui_renderer = self.ui_renderer
 	local get_service
 
-	if not IS_WINDOWS then
+	if IS_WINDOWS then
 		get_service = self.input_manager:get_service("splash_view")
 
 		if not get_service then
@@ -1093,26 +1119,28 @@ SplashView.update = function (self, arg_18_1)
 
 	get_service = FAKE_INPUT_SERVICE
 
+	local input_service = get_service
+
 	::label_18_0::
 
-	UIRenderer.begin_pass(ui_renderer, self.ui_scenegraph, get_service, arg_18_1, nil, self.render_settings)
+	UIRenderer.begin_pass(ui_renderer, self.ui_scenegraph, input_service, dt, nil, self.render_settings)
 	UIRenderer.draw_widget(ui_renderer, self.dead_space_filler)
 
-	local var_18_4
+	local skip
 
-	if not IS_CONSOLE then
-		var_18_4 = script_data.skip_splash or self:_get_console_input()
+	if IS_CONSOLE then
+		skip = not not script_data.skip_splash or not not self:_get_console_input()
 	else
-		var_18_4 = script_data.skip_splash or get_service:get("skip_splash")
+		skip = not not script_data.skip_splash or not not input_service:get("skip_splash")
 	end
 
-	if not (not var_18_4 and not self._current_splash_data and self._current_splash_data.forced) then
-		if not (not self._current_splash_data and self._current_splash_data.type ~= "video") then
-			if not ui_renderer.video_players[str] then
-				UIRenderer.destroy_video_player(self.ui_renderer, str)
+	if skip and (not self._current_splash_data or not self._current_splash_data.forced) then
+		if self._current_splash_data and self._current_splash_data.type == "video" then
+			if ui_renderer.video_players[VIDEO_REFERENCE_NAME] then
+				UIRenderer.destroy_video_player(self.ui_renderer, VIDEO_REFERENCE_NAME)
 			end
 
-			if not self._current_splash_data.sound_stop then
+			if self._current_splash_data.sound_stop then
 				Managers.music:trigger_event(self._current_splash_data.sound_stop)
 			end
 
@@ -1120,14 +1148,14 @@ SplashView.update = function (self, arg_18_1)
 		end
 
 		self:_next_splash()
-	elseif not self[self._update_func] then
-		self[self._update_func](self, ui_renderer.gui, arg_18_1)
+	elseif self[self._update_func] then
+		self[self._update_func](self, ui_renderer.gui, dt)
 	end
 
 	UIRenderer.end_pass(ui_renderer)
 end
 
-if not IS_CONSOLE then
+if IS_CONSOLE then
 	SplashView.allow_console_skip = function (self)
 		-- function 19
 		self._allow_console_skip = true
@@ -1139,24 +1167,24 @@ if not IS_CONSOLE then
 			return
 		end
 
-		local str = "Pad"
+		local pad = "Pad"
 
 		for i = 1, 8 do
-			local str_2 = str .. tostring(i)
-			local var_20_2 = rawget(_G, str_2)
+			local pad_name = pad .. tostring(i)
+			local pad_controller = rawget(_G, pad_name)
 
-			if not var_20_2 and not var_20_2.any_pressed() then
+			if pad_controller and pad_controller.any_pressed() then
 				return true
 			end
 		end
 
-		if not IS_XB1 and not GameSettingsDevelopment.allow_keyboard_mouse and Keyboard.any_pressed() and not Mouse.any_pressed() then
+		if IS_XB1 and GameSettingsDevelopment.allow_keyboard_mouse and (Keyboard.any_pressed() or Mouse.any_pressed()) then
 			return true
 		end
 	end
 end
 
-SplashView.render = function (arg_21_0)
+SplashView.render = function (self)
 	-- function 21
 	return
 end

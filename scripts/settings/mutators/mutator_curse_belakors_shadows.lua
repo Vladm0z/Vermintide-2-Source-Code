@@ -1,9 +1,9 @@
 -- chunkname: @scripts/settings/mutators/mutator_curse_belakors_shadows.lua
 
-local num = 5
-local num_2 = 0
-local num_3 = 0
-local tbl = {}
+local enemies_per_frame = 5
+local buffed_current_index = 0
+local faded_current_index = 0
+local dead_units = {}
 
 return {
 	description = "weaves_shadow_mutator_desc",
@@ -16,284 +16,316 @@ return {
 	buff_params = {
 		external_optional_multiplier = -0.9
 	},
-	server_start_function = function (arg_1_0, arg_1_1)
+	server_start_function = function (context, data)
 		-- function 1
 		local get_wind_strength = Managers.weave:get_wind_strength()
 
-		get_wind_strength = get_wind_strength or 1
+		if not get_wind_strength then
+			-- Nothing
+		end
 
-		local get_active_wind_settings = Managers.weave:get_active_wind_settings()
-		local get_difficulty = Managers.state.difficulty:get_difficulty()
+		get_wind_strength = 1
 
-		arg_1_1.buff_system = Managers.state.entity:system("buff_system")
-		arg_1_1.hero_side = Managers.state.side:get_side_from_name("heroes")
-		arg_1_1.lantern_spawned = false
-		arg_1_1.light_radius = not get_active_wind_settings and get_active_wind_settings.light_radius[get_difficulty][get_wind_strength]
+		local wind_strength = get_wind_strength
+
+		::label_1_0::
+
+		local wind_settings = Managers.weave:get_active_wind_settings()
+		local difficulty_name = Managers.state.difficulty:get_difficulty()
+
+		data.buff_system = Managers.state.entity:system("buff_system")
+		data.hero_side = Managers.state.side:get_side_from_name("heroes")
+		data.lantern_spawned = false
+		data.light_radius = not not wind_settings and not not wind_settings.light_radius[difficulty_name][wind_strength]
 	end,
-	server_update_function = function (arg_2_0, arg_2_1, arg_2_2, arg_2_3)
+	server_update_function = function (context, data, dt, t)
 		-- function 2
-		local hero_side = arg_2_1.hero_side
-		local enemy_units = hero_side:enemy_units()
-		local template = arg_2_1.template
+		local hero_side = data.hero_side
+		local spawned_enemies = hero_side:enemy_units()
+		local template = data.template
 		local buffed_units = template.buffed_units
 		local buff_params = template.buff_params
 		local PLAYER_UNITS = hero_side.PLAYER_UNITS
 
-		for i = 1, num do
-			num_2 = num_2 + 1
+		for i = 1, enemies_per_frame do
+			buffed_current_index = buffed_current_index + 1
 
-			local var_2_6 = enemy_units[num_2]
-			local flag = false
+			local unit = spawned_enemies[buffed_current_index]
+			local remove_buff = false
 
-			if not var_2_6 then
-				for k, v in pairs(PLAYER_UNITS) do
-					local light_radius = arg_2_1.light_radius
-					local var_2_9 = POSITION_LOOKUP[v]
+			if unit then
+				for name, player in pairs(PLAYER_UNITS) do
+					local radius = data.light_radius
+					local pos = POSITION_LOOKUP[player]
 
-					if not ScriptUnit.has_extension(var_2_6, "buff_system") and not HEALTH_ALIVE[var_2_6] then
-						local var_2_10 = POSITION_LOOKUP[var_2_6]
+					if ScriptUnit.has_extension(unit, "buff_system") and HEALTH_ALIVE[unit] then
+						local unit_pos = POSITION_LOOKUP[unit]
+						local dist_sq = Vector3.distance_squared(pos, unit_pos)
 
-						if Vector3.distance_squared(var_2_9, var_2_10) <= light_radius * light_radius then
-							flag = true
+						if dist_sq <= radius * radius then
+							remove_buff = true
 
 							break
 						end
 					end
 				end
 
-				local has_extension = ScriptUnit.has_extension(var_2_6, "buff_system")
+				local buff_extension = ScriptUnit.has_extension(unit, "buff_system")
 
-				if not has_extension then
-					local has_buff_type = has_extension:has_buff_type("mutator_shadow_damage_reduction")
+				if buff_extension then
+					local has_shadow_mutator_buff = buff_extension:has_buff_type("mutator_shadow_damage_reduction")
 
-					if not flag then
-						if not has_buff_type and not buffed_units[var_2_6] then
-							local var_2_13 = buffed_units[var_2_6]
+					if remove_buff then
+						if has_shadow_mutator_buff and buffed_units[unit] then
+							local id = buffed_units[unit]
 
-							arg_2_1.buff_system:remove_server_controlled_buff(var_2_6, var_2_13)
+							data.buff_system:remove_server_controlled_buff(unit, id)
 
-							buffed_units[var_2_6] = nil
+							buffed_units[unit] = nil
 						end
 					else
-						local has_extension_2 = ScriptUnit.has_extension(var_2_6, "ping_system")
+						local ping_extension = ScriptUnit.has_extension(unit, "ping_system")
 
-						if not has_extension_2 and not has_extension_2:pinged() then
-							Managers.state.entity:system("ping_system"):remove_ping_from_unit(var_2_6)
+						if ping_extension then
+							local is_pinged = ping_extension:pinged()
+
+							if is_pinged then
+								local ping_system = Managers.state.entity:system("ping_system")
+
+								ping_system:remove_ping_from_unit(unit)
+							end
 						end
 
-						if not has_buff_type then
-							buffed_units[var_2_6] = arg_2_1.buff_system:add_buff(var_2_6, "mutator_shadow_damage_reduction", var_2_6, true)
+						if not has_shadow_mutator_buff then
+							local server_buff_id = data.buff_system:add_buff(unit, "mutator_shadow_damage_reduction", unit, true)
+
+							buffed_units[unit] = server_buff_id
 						end
 					end
 				end
 			else
-				num_2 = 0
+				buffed_current_index = 0
 			end
 		end
 
-		if #tbl > 0 then
-			table.clear(tbl)
+		if #dead_units > 0 then
+			table.clear(dead_units)
 		end
 
-		for k_2, v_2 in pairs(buffed_units) do
-			if not HEALTH_ALIVE[k_2] then
-				tbl[#tbl + 1] = k_2
+		for buffed_unit, _ in pairs(buffed_units) do
+			if not HEALTH_ALIVE[buffed_unit] then
+				dead_units[#dead_units + 1] = buffed_unit
 			end
 		end
 
-		for i5 = 1, #tbl do
-			buffed_units[tbl[i5]] = nil
+		for i = 1, #dead_units do
+			local dead_unit = dead_units[i]
+
+			buffed_units[dead_unit] = nil
 		end
 	end,
-	client_start_function = function (arg_3_0, arg_3_1)
+	client_start_function = function (context, data)
 		-- function 3
-		arg_3_1.hero_side = Managers.state.side:get_side_from_name("heroes")
-		arg_3_1.light_spawned = false
+		data.hero_side = Managers.state.side:get_side_from_name("heroes")
+		data.light_spawned = false
 	end,
-	client_player_respawned_function = function (self, arg_4_1, arg_4_2)
+	client_player_respawned_function = function (context, data, spawned_unit)
 		-- function 4
 		local player_unit = Managers.player:local_player().player_unit
 
-		if arg_4_2 == player_unit then
-			local local_position = Unit.local_position(player_unit, 0)
-			local local_rotation = Unit.local_rotation(player_unit, 0)
-			local spawn_unit = World.spawn_unit(self.world, "units/weapons/player/wpn_shadow_gargoyle_head/wpn_shadow_gargoyle_head", local_position, local_rotation)
-			local light = Unit.light(spawn_unit, "light")
+		if spawned_unit == player_unit then
+			local position = Unit.local_position(player_unit, 0)
+			local rotation = Unit.local_rotation(player_unit, 0)
+			local unit = World.spawn_unit(context.world, "units/weapons/player/wpn_shadow_gargoyle_head/wpn_shadow_gargoyle_head", position, rotation)
+			local light = Unit.light(unit, "light")
 
-			Light.set_falloff_end(light, arg_4_1.light_radius)
-			Light.set_falloff_start(light, arg_4_1.light_radius - 1)
-			World.link_unit(self.world, spawn_unit, 0, player_unit, 0)
+			Light.set_falloff_end(light, data.light_radius)
+			Light.set_falloff_start(light, data.light_radius - 1)
+			World.link_unit(context.world, unit, 0, player_unit, 0)
 		end
 	end,
-	client_update_function = function (self, arg_5_1)
+	client_update_function = function (context, data)
 		-- function 5
 		local get_wind_strength = Managers.weave:get_wind_strength()
 
-		get_wind_strength = get_wind_strength or 1
+		if not get_wind_strength then
+			-- Nothing
+		end
 
-		local get_active_wind_settings = Managers.weave:get_active_wind_settings()
-		local get_difficulty = Managers.state.difficulty:get_difficulty()
-		local enemy_units = arg_5_1.hero_side:enemy_units()
-		local system = Managers.state.entity:system("fade_system")
-		local template = arg_5_1.template
+		get_wind_strength = 1
+
+		local wind_strength = get_wind_strength
+
+		::label_5_0::
+
+		local wind_settings = Managers.weave:get_active_wind_settings()
+		local difficulty_name = Managers.state.difficulty:get_difficulty()
+		local hero_side = data.hero_side
+		local spawned_enemies = hero_side:enemy_units()
+		local fade_system = Managers.state.entity:system("fade_system")
+		local template = data.template
 		local faded_units = template.faded_units
 		local linked_units = template.linked_units
 		local linked_units_visibility = template.linked_units_visibility
-		local player = Managers.player
-		local player_unit = player:local_player().player_unit
-		local var_5_11
+		local player_manager = Managers.player
+		local player_unit = player_manager:local_player().player_unit
+		local var_5_1
 
-		if not get_active_wind_settings then
-			var_5_11 = get_active_wind_settings.light_radius[get_difficulty][get_wind_strength]
+		if wind_settings then
+			var_5_1 = wind_settings.light_radius[difficulty_name][wind_strength]
 
-			if not var_5_11 then
+			if not var_5_1 then
 				-- Nothing
 			end
 		end
 
-		var_5_11 = 6
+		var_5_1 = 6
 
-		::label_5_0::
+		::label_5_1::
 
-		arg_5_1.light_radius = var_5_11
+		data.light_radius = var_5_1
 
-		if not (not player_unit and arg_5_1.light_spawned) then
-			local local_position = Unit.local_position(player_unit, 0)
-			local local_rotation = Unit.local_rotation(player_unit, 0)
-			local spawn_unit = World.spawn_unit(self.world, "units/weapons/player/wpn_shadow_gargoyle_head/wpn_shadow_gargoyle_head", local_position, local_rotation)
-			local light = Unit.light(spawn_unit, "light")
+		if player_unit and not data.light_spawned then
+			local position = Unit.local_position(player_unit, 0)
+			local rotation = Unit.local_rotation(player_unit, 0)
+			local unit = World.spawn_unit(context.world, "units/weapons/player/wpn_shadow_gargoyle_head/wpn_shadow_gargoyle_head", position, rotation)
+			local light = Unit.light(unit, "light")
 
-			Light.set_falloff_end(light, arg_5_1.light_radius)
-			Light.set_falloff_start(light, arg_5_1.light_radius - 1)
-			World.link_unit(self.world, spawn_unit, 0, player_unit, 0)
+			Light.set_falloff_end(light, data.light_radius)
+			Light.set_falloff_start(light, data.light_radius - 1)
+			World.link_unit(context.world, unit, 0, player_unit, 0)
 
-			arg_5_1.light_spawned = true
+			data.light_spawned = true
 		end
 
-		if not (player_unit or arg_5_1.light_spawned) then
+		if not player_unit and not data.light_spawned then
 			return
 		end
 
-		local local_player = player:local_player()
+		local local_player = player_manager:local_player()
 		local observed_unit = local_player:observed_unit()
 
 		if not ALIVE[observed_unit] then
 			observed_unit = local_player.player_unit
 		end
 
-		for i = 1, num do
-			num_3 = num_3 + 1
+		for i = 1, enemies_per_frame do
+			faded_current_index = faded_current_index + 1
 
-			local var_5_18 = enemy_units[num_3]
+			local unit = spawned_enemies[faded_current_index]
 
-			if not var_5_18 then
-				local var_5_19 = POSITION_LOOKUP[var_5_18]
-				local num_2 = 1
+			if unit then
+				local unit_pos = POSITION_LOOKUP[unit]
+				local scalar = 1
 
-				if faded_units[var_5_18] or not HEALTH_ALIVE[var_5_18] then
-					system:set_min_fade(var_5_18, num_2)
+				if not faded_units[unit] and HEALTH_ALIVE[unit] then
+					fade_system:set_min_fade(unit, scalar)
 
-					faded_units[var_5_18] = num_2
+					faded_units[unit] = scalar
 
-					local has_extension = ScriptUnit.has_extension(var_5_18, "projectile_linker_system")
+					local projectile_linker_extension = ScriptUnit.has_extension(unit, "projectile_linker_system")
 
-					if not has_extension then
-						local world = self.world
-						local spawn_unit_2 = World.spawn_unit(world, "units/fx/vfx_static_shadow_01", var_5_19)
+					if projectile_linker_extension then
+						local world = context.world
+						local effect_unit = World.spawn_unit(world, "units/fx/vfx_static_shadow_01", unit_pos)
 
-						has_extension:link_projectile(spawn_unit_2, Vector3(0, 0, 0), Quaternion.identity(), 0)
+						projectile_linker_extension:link_projectile(effect_unit, Vector3(0, 0, 0), Quaternion.identity(), 0)
 
-						local get_data = Unit.get_data(var_5_18, "breed")
+						local breed = Unit.get_data(unit, "breed")
 
-						if not (not get_data and get_data.name ~= "skaven_warpfire_thrower") then
-							Unit.flow_event(var_5_18, "disable_vfx")
+						if breed and breed.name == "skaven_warpfire_thrower" then
+							Unit.flow_event(unit, "disable_vfx")
 						end
 
-						linked_units[var_5_18] = spawn_unit_2
-						linked_units_visibility[var_5_18] = true
+						linked_units[unit] = effect_unit
+						linked_units_visibility[unit] = true
 					end
 				end
 
-				local light_radius = arg_5_1.light_radius
-				local var_5_26 = POSITION_LOOKUP[observed_unit]
+				local radius = data.light_radius
+				local pos = POSITION_LOOKUP[observed_unit]
 				local distance_squared
 
-				if not var_5_26 then
-					distance_squared = Vector3.distance_squared(var_5_26, var_5_19)
+				if pos then
+					distance_squared = Vector3.distance_squared(pos, unit_pos)
 
 					if not distance_squared then
 						-- Nothing
 					end
 				end
 
-				distance_squared = light_radius * light_radius
+				distance_squared = radius * radius
 
-				::label_5_1::
+				local dist_sq = distance_squared
 
-				local var_5_28 = linked_units[var_5_18]
-				local var_5_29 = linked_units_visibility[var_5_18]
+				::label_5_2::
 
-				if not (distance_squared < light_radius * light_radius or HEALTH_ALIVE[var_5_18]) then
-					num_2 = 0
+				local effect_unit = linked_units[unit]
+				local effect_unit_visible = linked_units_visibility[unit]
 
-					if not var_5_28 and not var_5_29 then
-						local get_data_2 = Unit.get_data(var_5_18, "breed")
+				if dist_sq < radius * radius or not HEALTH_ALIVE[unit] then
+					scalar = 0
 
-						if not get_data_2 and get_data_2.name ~= "skaven_warpfire_thrower" or not HEALTH_ALIVE[var_5_18] then
-							Unit.flow_event(var_5_18, "enable_vfx")
+					if effect_unit and effect_unit_visible then
+						local breed = Unit.get_data(unit, "breed")
+
+						if breed and breed.name == "skaven_warpfire_thrower" and HEALTH_ALIVE[unit] then
+							Unit.flow_event(unit, "enable_vfx")
 						end
 
-						if not Unit.alive(var_5_28) then
-							Unit.flow_event(var_5_28, "lua_shadow_effect_off")
+						if Unit.alive(effect_unit) then
+							Unit.flow_event(effect_unit, "lua_shadow_effect_off")
 						end
 
-						if not Unit.alive(var_5_18) then
-							WwiseUtils.trigger_unit_event(self.world, "Play_winds_shadow_reveal_enemy", var_5_18)
+						if Unit.alive(unit) then
+							WwiseUtils.trigger_unit_event(context.world, "Play_winds_shadow_reveal_enemy", unit)
 						end
 
-						linked_units_visibility[var_5_18] = false
+						linked_units_visibility[unit] = false
 					end
-				elseif not (not var_5_28 and var_5_29) then
-					local get_data_3 = Unit.get_data(var_5_18, "breed")
+				elseif effect_unit and not effect_unit_visible then
+					local breed = Unit.get_data(unit, "breed")
 
-					if not (not get_data_3 and get_data_3.name ~= "skaven_warpfire_thrower") then
-						Unit.flow_event(var_5_18, "disable_vfx")
+					if breed and breed.name == "skaven_warpfire_thrower" then
+						Unit.flow_event(unit, "disable_vfx")
 					end
 
-					Unit.flow_event(var_5_28, "lua_shadow_effect_on")
+					Unit.flow_event(effect_unit, "lua_shadow_effect_on")
 
-					linked_units_visibility[var_5_18] = true
+					linked_units_visibility[unit] = true
 				end
 
-				if num_2 ~= faded_units[var_5_18] then
-					system:set_min_fade(var_5_18, num_2)
+				local old_scalar = faded_units[unit]
 
-					faded_units[var_5_18] = num_2
+				if scalar ~= old_scalar then
+					fade_system:set_min_fade(unit, scalar)
+
+					faded_units[unit] = scalar
 				end
 			else
-				num_3 = 0
+				faded_current_index = 0
 			end
 		end
 
-		if #tbl > 0 then
-			table.clear(tbl)
+		if #dead_units > 0 then
+			table.clear(dead_units)
 		end
 
-		for k, v in pairs(faded_units) do
-			if not HEALTH_ALIVE[k] then
-				tbl[#tbl + 1] = k
+		for faded_unit, _ in pairs(faded_units) do
+			if not HEALTH_ALIVE[faded_unit] then
+				dead_units[#dead_units + 1] = faded_unit
 			end
 		end
 
-		for l = 1, #tbl do
-			local var_5_32 = tbl[l]
+		for i = 1, #dead_units do
+			local dead_unit = dead_units[i]
 
-			faded_units[var_5_32] = nil
+			faded_units[dead_unit] = nil
 
-			local var_5_33 = linked_units[var_5_32]
+			local linked_unit = linked_units[dead_unit]
 
-			if not Unit.alive(var_5_33) then
-				World.destroy_unit(self.world, var_5_33)
+			if Unit.alive(linked_unit) then
+				World.destroy_unit(context.world, linked_unit)
 			end
 		end
 	end

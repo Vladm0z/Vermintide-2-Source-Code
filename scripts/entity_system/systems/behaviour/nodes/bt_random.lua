@@ -12,61 +12,68 @@ BTRandom.init = function (self, ...)
 	self._children = {}
 end
 
-BTRandom.ready = function (self, arg_2_1)
+BTRandom.ready = function (self, lua_node)
 	-- function 2
-	local tbl = {}
+	local probabilities = {}
 
 	for i = 1, #self._children do
-		tbl[i] = self._children[i]._tree_node.weight
+		local child = self._children[i]
+
+		probabilities[i] = child._tree_node.weight
 	end
 
-	self.prob, self.alias = LoadedDice.create(tbl, false)
+	self.prob, self.alias = LoadedDice.create(probabilities, false)
 end
 
-BTRandom.enter = function (self, arg_3_1, arg_3_2, arg_3_3)
+BTRandom.enter = function (self, unit, blackboard, t)
 	-- function 3
-	local roll = LoadedDice.roll(self.prob, self.alias)
+	local child_index = LoadedDice.roll(self.prob, self.alias)
 
-	arg_3_2.node_data[self._identifier] = roll
+	blackboard.node_data[self._identifier] = child_index
 end
 
-BTRandom.leave = function (self, arg_4_1, arg_4_2, arg_4_3, arg_4_4, arg_4_5)
+BTRandom.leave = function (self, unit, blackboard, t, reason, destroy)
 	-- function 4
-	self:set_running_child(arg_4_1, arg_4_2, arg_4_3, nil)
+	self:set_running_child(unit, blackboard, t, nil)
 
-	arg_4_2.node_data[self._identifier] = nil
+	blackboard.node_data[self._identifier] = nil
 end
 
-BTRandom.run = function (self, arg_5_1, arg_5_2, arg_5_3, arg_5_4)
+BTRandom.run = function (self, unit, blackboard, t, dt)
 	-- function 5
-	local current_running_child = self:current_running_child(arg_5_2)
+	local running_child = self:current_running_child(blackboard)
 
-	if not current_running_child then
-		if not current_running_child:condition(arg_5_2) then
+	if running_child then
+		if not running_child:condition(blackboard) then
 			return "failed"
 		end
 
-		return (current_running_child:run(arg_5_1, arg_5_2, arg_5_3, arg_5_4))
+		local result = running_child:run(unit, blackboard, t, dt)
+
+		return result
 	end
 
-	local var_5_1 = arg_5_2.node_data[self._identifier]
-	local count = #self._children
+	local node_data = blackboard.node_data[self._identifier]
+	local child_to_run_index = node_data
+	local num_children = #self._children
 
-	for i = 1, count do
-		local num = (i + var_5_1 - 2) % count + 1
-		local var_5_4 = self._children[num]
+	for i = 1, num_children do
+		local actual_index = (i + child_to_run_index - 2) % num_children + 1
+		local child = self._children[actual_index]
 
-		if not var_5_4:condition(arg_5_2) then
-			self:set_running_child(arg_5_1, arg_5_2, arg_5_3, var_5_4)
+		if child:condition(blackboard) then
+			self:set_running_child(unit, blackboard, t, child)
 
-			return (var_5_4:run(arg_5_1, arg_5_2, arg_5_3, arg_5_4))
+			local result = child:run(unit, blackboard, t, dt)
+
+			return result
 		end
 	end
 
 	return "failed"
 end
 
-BTRandom.add_child = function (arg_6_0, arg_6_1)
+BTRandom.add_child = function (self, node)
 	-- function 6
-	arg_6_0._children[#arg_6_0._children + 1] = arg_6_1
+	self._children[#self._children + 1] = node
 end

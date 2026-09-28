@@ -6,20 +6,29 @@ require("scripts/ui/weave_tutorial/weave_onboarding_utils")
 
 WeaveUIOnboardingTutorial = class(WeaveUIOnboardingTutorial)
 
-WeaveUIOnboardingTutorial.init = function (self, arg_1_1)
+WeaveUIOnboardingTutorial.init = function (self, context)
 	-- function 1
 	self.onboarding_step = 0
 	self.ui_onboarding_state = 0
-	self.statistics_db = arg_1_1.statistics_db
+	self.statistics_db = context.statistics_db
 
-	local player = Managers.player
+	local player_2 = Managers.player
 
-	player = not player and Managers.player:local_player()
-	self.player_stats_id = not player and player:stats_id()
+	if player_2 then
+		-- Nothing
+	end
+
+	player_2 = Managers.player:local_player()
+
+	local player = player_2
+
+	::label_1_0::
+
+	self.player_stats_id = not not player and not not player:stats_id()
 	self.delayed_tutorial = nil
 	self.tutorial_timer = 0
 	self.tutorial_queue = {}
-	self.tutorial_popup = WeaveTutorialPopupUI:new(arg_1_1)
+	self.tutorial_popup = WeaveTutorialPopupUI:new(context)
 
 	self:get_tutorial_state()
 	self:register_events()
@@ -30,31 +39,31 @@ WeaveUIOnboardingTutorial.destroy = function (self)
 	self:unregister_events()
 	self:clear_all_popups()
 
-	if not self.tutorial_popup then
+	if self.tutorial_popup then
 		self.tutorial_popup:destroy()
 
 		self.tutorial_popup = nil
 	end
 end
 
-WeaveUIOnboardingTutorial.update = function (self, arg_3_1, arg_3_2)
+WeaveUIOnboardingTutorial.update = function (self, dt, t)
 	-- function 3
-	if not Managers.state.voting:vote_in_progress() then
-		if not self:is_showing_tutorial() then
+	if Managers.state.voting:vote_in_progress() then
+		if self:is_showing_tutorial() then
 			self:clear_all_popups()
 		end
 
 		return
 	end
 
-	if not self.tutorial_popup then
+	if self.tutorial_popup then
 		if not self:is_showing_tutorial() then
 			local tutorial_queue = self.tutorial_queue
 
 			self:try_show_tutorial(tutorial_queue[1])
 			table.remove(tutorial_queue, 1)
-		elseif not self.delayed_tutorial then
-			self.tutorial_timer = self.tutorial_timer + arg_3_1
+		elseif self.delayed_tutorial then
+			self.tutorial_timer = self.tutorial_timer + dt
 
 			if self.tutorial_timer >= self.delayed_tutorial.delay then
 				self:show_tutorial(self.delayed_tutorial)
@@ -63,117 +72,117 @@ WeaveUIOnboardingTutorial.update = function (self, arg_3_1, arg_3_2)
 			end
 		end
 
-		self.tutorial_popup:update(arg_3_1)
+		self.tutorial_popup:update(dt)
 	end
 end
 
-WeaveUIOnboardingTutorial.register_events = function (arg_4_0)
+WeaveUIOnboardingTutorial.register_events = function (self)
 	-- function 4
-	local event = Managers.state.event
+	local event_manager = Managers.state.event
 
-	if not event then
-		event:register(arg_4_0, "weave_forge_entered", "event_weave_forge_entered")
-		event:register(arg_4_0, "weave_list_entered", "event_weave_list_entered")
-		event:register(arg_4_0, "weave_forge_weapons_entered", "event_weave_forge_weapons_entered")
-		event:register(arg_4_0, "weave_forge_item_unlocked", "event_weave_forge_item_unlocked")
-		event:register(arg_4_0, "weave_forge_upgrade_item_entered", "event_weave_forge_upgrade_item_entered")
-		event:register(arg_4_0, "weave_forge_item_upgraded", "event_weave_forge_item_upgraded")
-		event:register(arg_4_0, "weave_forge_upgraded", "event_weave_forge_upgraded")
-		event:register(arg_4_0, "weave_tutorial_message", "event_weave_tutorial_message")
+	if event_manager then
+		event_manager:register(self, "weave_forge_entered", "event_weave_forge_entered")
+		event_manager:register(self, "weave_list_entered", "event_weave_list_entered")
+		event_manager:register(self, "weave_forge_weapons_entered", "event_weave_forge_weapons_entered")
+		event_manager:register(self, "weave_forge_item_unlocked", "event_weave_forge_item_unlocked")
+		event_manager:register(self, "weave_forge_upgrade_item_entered", "event_weave_forge_upgrade_item_entered")
+		event_manager:register(self, "weave_forge_item_upgraded", "event_weave_forge_item_upgraded")
+		event_manager:register(self, "weave_forge_upgraded", "event_weave_forge_upgraded")
+		event_manager:register(self, "weave_tutorial_message", "event_weave_tutorial_message")
 	end
 end
 
-WeaveUIOnboardingTutorial.unregister_events = function (arg_5_0)
+WeaveUIOnboardingTutorial.unregister_events = function (self)
 	-- function 5
-	local event = Managers.state.event
+	local event_manager = Managers.state.event
 
-	if not event then
-		event:unregister("weave_forge_entered", arg_5_0)
-		event:unregister("weave_list_entered", arg_5_0)
-		event:unregister("weave_forge_weapons_entered", arg_5_0)
-		event:unregister("weave_forge_item_unlocked", arg_5_0)
-		event:unregister("weave_forge_upgrade_item_entered", arg_5_0)
-		event:unregister("weave_forge_item_upgraded", arg_5_0)
-		event:unregister("weave_forge_upgraded", arg_5_0)
-		event:unregister("weave_tutorial_message", arg_5_0)
+	if event_manager then
+		event_manager:unregister("weave_forge_entered", self)
+		event_manager:unregister("weave_list_entered", self)
+		event_manager:unregister("weave_forge_weapons_entered", self)
+		event_manager:unregister("weave_forge_item_unlocked", self)
+		event_manager:unregister("weave_forge_upgrade_item_entered", self)
+		event_manager:unregister("weave_forge_item_upgraded", self)
+		event_manager:unregister("weave_forge_upgraded", self)
+		event_manager:unregister("weave_tutorial_message", self)
 	end
 end
 
 WeaveUIOnboardingTutorial.get_tutorial_state = function (self)
 	-- function 6
 	local statistics_db = self.statistics_db
-	local player_stats_id = self.player_stats_id
+	local stats_id = self.player_stats_id
 
-	if not statistics_db and not player_stats_id then
-		self.onboarding_step = WeaveOnboardingUtils.get_onboarding_step(statistics_db, player_stats_id)
-		self.ui_onboarding_state = WeaveOnboardingUtils.get_ui_onboarding_state(statistics_db, player_stats_id)
+	if statistics_db and stats_id then
+		self.onboarding_step = WeaveOnboardingUtils.get_onboarding_step(statistics_db, stats_id)
+		self.ui_onboarding_state = WeaveOnboardingUtils.get_ui_onboarding_state(statistics_db, stats_id)
 	end
 end
 
-WeaveUIOnboardingTutorial.has_popup = function (arg_7_0, arg_7_1)
+WeaveUIOnboardingTutorial.has_popup = function (self, tutorial)
 	-- function 7
-	if not arg_7_1 then
+	if tutorial then
 		-- Nothing
 	end
 
 	::label_7_0::
 
-	local popup_body = arg_7_1.popup_body
+	local popup_body = tutorial.popup_body
 
-	popup_body = popup_body or arg_7_1.custom_popup
+	popup_body = not not popup_body or not not tutorial.custom_popup
 
 	::label_7_1::
 
 	return popup_body
 end
 
-WeaveUIOnboardingTutorial.needs_to_show = function (self, arg_8_1)
+WeaveUIOnboardingTutorial.needs_to_show = function (self, tutorial_data)
 	-- function 8
-	local reached_requirements = WeaveOnboardingUtils.reached_requirements(self.onboarding_step, arg_8_1)
+	local reached_requirements = WeaveOnboardingUtils.reached_requirements(self.onboarding_step, tutorial_data)
 
-	reached_requirements = not reached_requirements and not WeaveOnboardingUtils.tutorial_completed(self.ui_onboarding_state, arg_8_1)
+	reached_requirements = not not reached_requirements and not not not WeaveOnboardingUtils.tutorial_completed(self.ui_onboarding_state, tutorial_data)
 
 	return reached_requirements
 end
 
-WeaveUIOnboardingTutorial.show_tutorial = function (self, arg_9_1)
+WeaveUIOnboardingTutorial.show_tutorial = function (self, tutorial_data)
 	-- function 9
-	if not arg_9_1 and not self.tutorial_popup then
-		if not arg_9_1.custom_popup then
-			self.tutorial_popup:show_custom_popup(arg_9_1)
+	if tutorial_data and self.tutorial_popup then
+		if tutorial_data.custom_popup then
+			self.tutorial_popup:show_custom_popup(tutorial_data)
 		else
-			local popup_title = arg_9_1.popup_title
-			local popup_sub_title = arg_9_1.popup_sub_title
-			local popup_body = arg_9_1.popup_body
-			local optional_button_2 = arg_9_1.optional_button_2
-			local optional_button_2_func = arg_9_1.optional_button_2_func
-			local optional_button_2_input_actions = arg_9_1.optional_button_2_input_actions
-			local disable_body_localization = arg_9_1.disable_body_localization
+			local title = tutorial_data.popup_title
+			local sub_title = tutorial_data.popup_sub_title
+			local body = tutorial_data.popup_body
+			local optional_button_2 = tutorial_data.optional_button_2
+			local optional_button_2_func = tutorial_data.optional_button_2_func
+			local optional_button_2_input_actions = tutorial_data.optional_button_2_input_actions
+			local disable_body_localization = tutorial_data.disable_body_localization
 
-			self.tutorial_popup:show(popup_title, popup_sub_title, popup_body, optional_button_2, optional_button_2_func, optional_button_2_input_actions, disable_body_localization, arg_9_1)
+			self.tutorial_popup:show(title, sub_title, body, optional_button_2, optional_button_2_func, optional_button_2_input_actions, disable_body_localization, tutorial_data)
 		end
 
-		self:set_completed(arg_9_1)
+		self:set_completed(tutorial_data)
 	end
 end
 
-WeaveUIOnboardingTutorial.queue_tutorial = function (self, arg_10_1)
+WeaveUIOnboardingTutorial.queue_tutorial = function (self, tutorial_data)
 	-- function 10
-	if not arg_10_1 then
-		table.insert(self.tutorial_queue, arg_10_1)
+	if tutorial_data then
+		table.insert(self.tutorial_queue, tutorial_data)
 	end
 end
 
-WeaveUIOnboardingTutorial.set_completed = function (self, arg_11_1)
+WeaveUIOnboardingTutorial.set_completed = function (self, tutorial_data)
 	-- function 11
-	WeaveOnboardingUtils.complete_tutorial(self.statistics_db, self.player_stats_id, arg_11_1)
+	WeaveOnboardingUtils.complete_tutorial(self.statistics_db, self.player_stats_id, tutorial_data)
 end
 
 WeaveUIOnboardingTutorial.is_showing_tutorial = function (self)
 	-- function 12
 	local is_visible
 
-	if not self.tutorial_popup then
+	if self.tutorial_popup then
 		is_visible = self.tutorial_popup.is_visible
 
 		if not is_visible then
@@ -188,21 +197,21 @@ WeaveUIOnboardingTutorial.is_showing_tutorial = function (self)
 	return is_visible
 end
 
-WeaveUIOnboardingTutorial.try_show_tutorial = function (self, arg_13_1)
+WeaveUIOnboardingTutorial.try_show_tutorial = function (self, tutorial_data)
 	-- function 13
-	if not arg_13_1 then
+	if tutorial_data then
 		self:get_tutorial_state()
 
-		if not self:needs_to_show(arg_13_1) then
-			if not self:has_popup(arg_13_1) then
-				self:set_completed(arg_13_1)
-			elseif not self:is_showing_tutorial() then
-				self:queue_tutorial(arg_13_1)
-			elseif not arg_13_1.delay then
-				self.delayed_tutorial = arg_13_1
+		if self:needs_to_show(tutorial_data) then
+			if not self:has_popup(tutorial_data) then
+				self:set_completed(tutorial_data)
+			elseif self:is_showing_tutorial() then
+				self:queue_tutorial(tutorial_data)
+			elseif tutorial_data.delay then
+				self.delayed_tutorial = tutorial_data
 				self.tutorial_timer = 0
 			else
-				self:show_tutorial(arg_13_1)
+				self:show_tutorial(tutorial_data)
 			end
 		end
 	end
@@ -213,7 +222,7 @@ WeaveUIOnboardingTutorial.clear_all_popups = function (self)
 	self.tutorial_queue = {}
 	self.delayed_tutorial = nil
 
-	if not self.tutorial_popup then
+	if self.tutorial_popup then
 		self.tutorial_popup:hide()
 	end
 end
@@ -255,7 +264,7 @@ WeaveUIOnboardingTutorial.event_weave_forge_upgraded = function (self)
 	self:try_show_tutorial(WeaveUITutorials.forge_upgrade)
 end
 
-WeaveUIOnboardingTutorial.event_weave_tutorial_message = function (self, arg_22_1)
+WeaveUIOnboardingTutorial.event_weave_tutorial_message = function (self, message)
 	-- function 22
-	self:try_show_tutorial(arg_22_1)
+	self:try_show_tutorial(message)
 end

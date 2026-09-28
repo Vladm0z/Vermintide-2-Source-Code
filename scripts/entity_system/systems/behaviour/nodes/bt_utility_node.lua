@@ -14,169 +14,174 @@ end
 
 BTUtilityNode.name = "BTUtilityNode"
 
-BTUtilityNode.ready = function (self, arg_2_1)
+BTUtilityNode.ready = function (self, lua_node)
 	-- function 2
-	for k, v in pairs(self._children) do
+	for name, child in pairs(self._children) do
 		local _action_list = self._action_list
 
-		_action_list = _action_list or {}
+		_action_list = not not _action_list or not not {}
 		self._action_list = _action_list
-		self._action_list[#self._action_list + 1] = v._tree_node.action_data
+		self._action_list[#self._action_list + 1] = child._tree_node.action_data
 	end
 end
 
-BTUtilityNode.enter = function (arg_3_0, arg_3_1, arg_3_2, arg_3_3)
+BTUtilityNode.enter = function (self, unit, blackboard, t)
 	-- function 3
 	return
 end
 
-BTUtilityNode.leave = function (self, arg_4_1, arg_4_2, arg_4_3, arg_4_4, arg_4_5)
+BTUtilityNode.leave = function (self, unit, blackboard, t, reason, destroy)
 	-- function 4
-	arg_4_2.running_attack_action = nil
+	blackboard.running_attack_action = nil
 
-	self:set_running_child(arg_4_1, arg_4_2, arg_4_3, nil, arg_4_4)
+	self:set_running_child(unit, blackboard, t, nil, reason)
 end
 
-local function fn(self, arg_5_1, arg_5_2)
+local function swap(t, i, j)
 	-- function 5
-	self[arg_5_2], self[arg_5_1] = self[arg_5_1], self[arg_5_2]
+	local temp = t[i]
+
+	t[i] = t[j]
+	t[j] = temp
 end
 
-local function fn_2(arg_6_0, arg_6_1, arg_6_2, arg_6_3, arg_6_4)
+local function randomize_actions(unit, actions, blackboard, t, node_children)
 	-- function 6
-	local count = #arg_6_1
-	local num = 0
+	local num_actions = #actions
+	local total_utility_score = 0
 
-	for i = 1, count do
-		local var_6_2 = arg_6_1[i]
-		local name = var_6_2.name
-		local var_6_4 = arg_6_4[name]
-		local num_2 = 0
+	for i = 1, num_actions do
+		local action = actions[i]
+		local action_name = action.name
+		local node = node_children[action_name]
+		local score = 0
 
-		if not var_6_4:condition(arg_6_2) then
-			num_2 = Utility.get_action_utility(var_6_2, name, arg_6_2, arg_6_3)
+		if node:condition(blackboard) then
+			score = Utility.get_action_utility(action, action_name, blackboard, t)
 		end
 
-		arg_6_1[i].utility_score = num_2
-		num = num + num_2
+		actions[i].utility_score = score
+		total_utility_score = total_utility_score + score
 	end
 
-	for j = 1, count do
-		local var_6_6
-		local num_3 = math.random() * num
+	for i = 1, num_actions do
+		local picked_index
+		local random_utility_score = math.random() * total_utility_score
 
-		for k = j, count do
-			local utility_score = arg_6_1[k].utility_score
+		for j = i, num_actions do
+			local action_utility_score = actions[j].utility_score
 
-			if num_3 < utility_score then
-				var_6_6 = k
+			if random_utility_score < action_utility_score then
+				picked_index = j
 
 				break
 			end
 
-			num_3 = num_3 - utility_score
+			random_utility_score = random_utility_score - action_utility_score
 		end
 
-		if not var_6_6 then
-			count = j - 1
+		if not picked_index then
+			num_actions = i - 1
 
-			return count
+			return num_actions
 		end
 
-		num = num - arg_6_1[var_6_6].utility_score
+		total_utility_score = total_utility_score - actions[picked_index].utility_score
 
-		if var_6_6 ~= j then
-			fn(arg_6_1, var_6_6, j)
+		if picked_index ~= i then
+			swap(actions, picked_index, i)
 		end
 	end
 
-	return count
+	return num_actions
 end
 
-BTUtilityNode.run = function (self, arg_7_1, arg_7_2, arg_7_3, arg_7_4)
+BTUtilityNode.run = function (self, unit, blackboard, t, dt)
 	-- function 7
 	local action_data = self._tree_node.action_data
-	local var_7_1 = arg_7_2[self.fail_cooldown_name]
+	local fail_cooldown_t = blackboard[self.fail_cooldown_name]
 
-	if not var_7_1 then
-		if arg_7_3 < var_7_1 then
+	if fail_cooldown_t then
+		if t < fail_cooldown_t then
 			return "failed"
 		end
 
-		arg_7_2[self.fail_cooldown_name] = nil
+		blackboard[self.fail_cooldown_name] = nil
 	end
 
-	local current_running_child = self:current_running_child(arg_7_2)
-	local str = "failed"
-	local var_7_4
+	local running_node = self:current_running_child(blackboard)
+	local result = "failed"
+	local evaluate_next_frame
 
-	if not (not current_running_child and arg_7_2.evaluate) then
-		local _identifier = current_running_child._identifier
-		local var_7_6
+	if running_node and not blackboard.evaluate then
+		local running_node_id = running_node._identifier
 
-		str, var_7_6 = current_running_child:evaluate(arg_7_1, arg_7_2, arg_7_3, arg_7_4)
+		result, evaluate_next_frame = running_node:evaluate(unit, blackboard, t, dt)
 
-		if str == "done" then
-			arg_7_2.utility_actions[_identifier].last_done_time = arg_7_3
+		if result == "done" then
+			local utility_data = blackboard.utility_actions[running_node_id]
+
+			utility_data.last_done_time = t
 		end
 
-		if str ~= "failed" then
-			arg_7_2.evaluate = var_7_6
+		if result ~= "failed" then
+			blackboard.evaluate = evaluate_next_frame
 
-			return str
+			return result
 		end
 	end
 
-	local _action_list = self._action_list
-	local var_7_8 = fn_2(arg_7_1, _action_list, arg_7_2, arg_7_3, self._children)
+	local actions = self._action_list
+	local num_actions = randomize_actions(unit, actions, blackboard, t, self._children)
 
-	for i = 1, var_7_8 do
-		local name = _action_list[i].name
-		local var_7_10 = self._children[name]
+	for i = 1, num_actions do
+		local action = actions[i]
+		local action_name = action.name
+		local node = self._children[action_name]
 
-		if var_7_10 ~= current_running_child then
-			self:set_running_child(arg_7_1, arg_7_2, arg_7_3, var_7_10, "aborted")
+		if node ~= running_node then
+			self:set_running_child(unit, blackboard, t, node, "aborted")
 
-			current_running_child = var_7_10
+			running_node = node
 		end
 
-		local var_7_11 = arg_7_2.utility_actions[name]
+		local utility_data = blackboard.utility_actions[action_name]
 
-		var_7_11.last_time = arg_7_3
+		utility_data.last_time = t
 
-		local _identifier_2 = var_7_10._identifier
-		local var_7_13
+		local node_id = node._identifier
 
-		str, var_7_13 = var_7_10:evaluate(arg_7_1, arg_7_2, arg_7_3, arg_7_4)
+		result, evaluate_next_frame = node:evaluate(unit, blackboard, t, dt)
 
-		if str ~= "running" then
-			if str == "done" then
-				var_7_11.last_done_time = arg_7_3
+		if result ~= "running" then
+			if result == "done" then
+				utility_data.last_done_time = t
 			end
 
-			self:set_running_child(arg_7_1, arg_7_2, arg_7_3, nil, str)
+			self:set_running_child(unit, blackboard, t, nil, result)
 
-			current_running_child = nil
+			running_node = nil
 		end
 
-		if str ~= "failed" then
-			arg_7_2.evaluate = var_7_13
+		if result ~= "failed" then
+			blackboard.evaluate = evaluate_next_frame
 
 			break
 		end
 	end
 
-	if not (str == "running" or str ~= "done") then
-		return str
+	if result == "running" or result == "done" then
+		return result
 	end
 
-	local flag = not action_data and action_data.fail_cooldown_blackboard_identifier
-	local flag_2 = not flag and arg_7_2[flag]
+	local fail_cooldown_blackboard_identifier = not not action_data and not not action_data.fail_cooldown_blackboard_identifier
 
-	if flag_2 == nil then
+	fail_cooldown_t = not not fail_cooldown_blackboard_identifier and not not blackboard[fail_cooldown_blackboard_identifier]
+
+	if fail_cooldown_t == nil then
 		local fail_cooldown
 
-		if not action_data then
+		if action_data then
 			fail_cooldown = action_data.fail_cooldown
 
 			if not fail_cooldown then
@@ -188,15 +193,15 @@ BTUtilityNode.run = function (self, arg_7_1, arg_7_2, arg_7_3, arg_7_4)
 
 		::label_7_0::
 
-		flag_2 = arg_7_3 + fail_cooldown
+		fail_cooldown_t = t + fail_cooldown
 	end
 
-	arg_7_2[self.fail_cooldown_name] = flag_2
+	blackboard[self.fail_cooldown_name] = fail_cooldown_t
 
-	return str
+	return result
 end
 
-BTUtilityNode.add_child = function (arg_8_0, arg_8_1)
+BTUtilityNode.add_child = function (self, node)
 	-- function 8
-	arg_8_0._children[arg_8_1._identifier] = arg_8_1
+	self._children[node._identifier] = node
 end

@@ -2,19 +2,19 @@
 
 PassiveAbilityRatOgre = class(PassiveAbilityRatOgre)
 
-local tbl = {
+local RPCS = {
 	"rpc_start_leap",
 	"rpc_stop_leap"
 }
 
-PassiveAbilityRatOgre.init = function (self, arg_1_1, arg_1_2, arg_1_3, arg_1_4)
+PassiveAbilityRatOgre.init = function (self, extension_init_context, unit, extension_init_data, ability_init_data)
 	-- function 1
-	self._unit = arg_1_2
-	self._is_server = arg_1_1.is_server
+	self._unit = unit
+	self._is_server = extension_init_context.is_server
 
-	local player = arg_1_3.player
+	local player = extension_init_data.player
 
-	player = not player and arg_1_3.player.remote
+	player = not not player and not not extension_init_data.player.remote
 	self._is_remote_player = player
 	self._jump_from_pos = Vector3Box(0, 0, 0)
 	self._jump_to_pos = Vector3Box(0, 0, 0)
@@ -27,28 +27,28 @@ PassiveAbilityRatOgre.init = function (self, arg_1_1, arg_1_2, arg_1_3, arg_1_4)
 	self._anim_value = 0
 end
 
-PassiveAbilityRatOgre.register_rpcs = function (self, arg_2_1)
+PassiveAbilityRatOgre.register_rpcs = function (self, network_event_delegate)
 	-- function 2
-	self._network_event_delegate = arg_2_1
+	self._network_event_delegate = network_event_delegate
 
-	arg_2_1:register(self, unpack(tbl))
+	network_event_delegate:register(self, unpack(RPCS))
 end
 
 PassiveAbilityRatOgre.unregister_rpcs = function (self)
 	-- function 3
-	if not self._network_event_delegate then
+	if self._network_event_delegate then
 		self._network_event_delegate:unregister(self)
 
 		self._network_event_delegate = nil
 	end
 end
 
-PassiveAbilityRatOgre.extensions_ready = function (self, arg_4_1, arg_4_2)
+PassiveAbilityRatOgre.extensions_ready = function (self, world, unit)
 	-- function 4
-	self._career_extension = ScriptUnit.extension(arg_4_2, "career_system")
+	self._career_extension = ScriptUnit.extension(unit, "career_system")
 
 	if not self._is_remote_player then
-		self._first_person_extension = ScriptUnit.has_extension(arg_4_2, "first_person_system")
+		self._first_person_extension = ScriptUnit.has_extension(unit, "first_person_system")
 	end
 end
 
@@ -57,93 +57,97 @@ PassiveAbilityRatOgre.destroy = function (self)
 	self:unregister_rpcs()
 end
 
-PassiveAbilityRatOgre.rpc_start_leap = function (self, arg_6_1, arg_6_2, arg_6_3, arg_6_4)
+PassiveAbilityRatOgre.rpc_start_leap = function (self, channel_id, unit_id, from_position, to_position)
 	-- function 6
-	if Managers.state.unit_storage:unit(arg_6_2) ~= self._unit then
+	local unit = Managers.state.unit_storage:unit(unit_id)
+
+	if unit ~= self._unit then
 		return
 	end
 
-	if not self._is_server then
+	if self._is_server then
 		if not DEDICATED_SERVER then
-			self:set_leap_data(arg_6_3, arg_6_4)
+			self:set_leap_data(from_position, to_position)
 		end
 
-		local var_6_0 = CHANNEL_TO_PEER_ID[arg_6_1]
+		local peer_id = CHANNEL_TO_PEER_ID[channel_id]
 
-		self._network_transmit:send_rpc_clients_except("rpc_start_leap", var_6_0, arg_6_2, arg_6_3, arg_6_4)
+		self._network_transmit:send_rpc_clients_except("rpc_start_leap", peer_id, unit_id, from_position, to_position)
 	else
-		self:set_leap_data(arg_6_3, arg_6_4)
+		self:set_leap_data(from_position, to_position)
 	end
 end
 
-PassiveAbilityRatOgre.rpc_stop_leap = function (self, arg_7_1, arg_7_2)
+PassiveAbilityRatOgre.rpc_stop_leap = function (self, channel_id, unit_id)
 	-- function 7
-	if Managers.state.unit_storage:unit(arg_7_2) ~= self._unit then
+	local unit = Managers.state.unit_storage:unit(unit_id)
+
+	if unit ~= self._unit then
 		return
 	end
 
-	if not self._is_server then
+	if self._is_server then
 		if not DEDICATED_SERVER then
 			self:stop()
 		end
 
-		local var_7_0 = CHANNEL_TO_PEER_ID[arg_7_1]
+		local peer_id = CHANNEL_TO_PEER_ID[channel_id]
 
-		self._network_transmit:send_rpc_clients_except("rpc_stop_leap", var_7_0, arg_7_2)
+		self._network_transmit:send_rpc_clients_except("rpc_stop_leap", peer_id, unit_id)
 	else
 		self:stop()
 	end
 end
 
-PassiveAbilityRatOgre.start_leap = function (self, arg_8_1, arg_8_2)
+PassiveAbilityRatOgre.start_leap = function (self, from_position, to_position)
 	-- function 8
-	local go_id = Managers.state.unit_storage:go_id(self._unit)
+	local unit_id = Managers.state.unit_storage:go_id(self._unit)
 
-	if not (self._is_server or self._is_remote_player) then
-		self._network_transmit:send_rpc_server("rpc_start_leap", go_id, arg_8_1, arg_8_2)
-		self:set_leap_data(arg_8_1, arg_8_2)
-	elseif not (not self._is_server and DEDICATED_SERVER) then
-		self._network_transmit:send_rpc_clients("rpc_start_leap", go_id, arg_8_1, arg_8_2)
-		self:set_leap_data(arg_8_1, arg_8_2)
-	elseif not self._is_server then
-		self._network_transmit:send_rpc_clients("rpc_start_leap", go_id, arg_8_1, arg_8_2)
+	if not self._is_server and not self._is_remote_player then
+		self._network_transmit:send_rpc_server("rpc_start_leap", unit_id, from_position, to_position)
+		self:set_leap_data(from_position, to_position)
+	elseif self._is_server and not DEDICATED_SERVER then
+		self._network_transmit:send_rpc_clients("rpc_start_leap", unit_id, from_position, to_position)
+		self:set_leap_data(from_position, to_position)
+	elseif self._is_server then
+		self._network_transmit:send_rpc_clients("rpc_start_leap", unit_id, from_position, to_position)
 	end
 end
 
-PassiveAbilityRatOgre.set_leap_data = function (self, arg_9_1, arg_9_2)
+PassiveAbilityRatOgre.set_leap_data = function (self, from_position, to_position)
 	-- function 9
 	if not DEDICATED_SERVER then
-		Vector3Box.store(self._jump_from_pos, arg_9_1)
-		Vector3Box.store(self._jump_to_pos, arg_9_2)
+		Vector3Box.store(self._jump_from_pos, from_position)
+		Vector3Box.store(self._jump_to_pos, to_position)
 
 		self._update_anim_variables = true
 
-		local _unit = self._unit
+		local unit = self._unit
 
 		if not self._is_remote_player then
 			self._first_person_extension:play_animation_event("attack_jump_air")
 		end
 
-		Unit.animation_event(_unit, "attack_jump_air")
+		Unit.animation_event(unit, "attack_jump_air")
 	end
 end
 
 PassiveAbilityRatOgre.stop_leap = function (self)
 	-- function 10
-	local go_id = Managers.state.unit_storage:go_id(self._unit)
+	local unit_id = Managers.state.unit_storage:go_id(self._unit)
 
-	if not go_id then
+	if not unit_id then
 		return
 	end
 
-	if not (self._is_server or self._is_remote_player) then
-		self._network_transmit:send_rpc_server("rpc_stop_leap", go_id)
+	if not self._is_server and not self._is_remote_player then
+		self._network_transmit:send_rpc_server("rpc_stop_leap", unit_id)
 		self:stop()
-	elseif not (not self._is_server and DEDICATED_SERVER) then
-		self._network_transmit:send_rpc_clients("rpc_stop_leap", go_id)
+	elseif self._is_server and not DEDICATED_SERVER then
+		self._network_transmit:send_rpc_clients("rpc_stop_leap", unit_id)
 		self:stop()
-	elseif not self._is_server then
-		self._network_transmit:send_rpc_clients("rpc_stop_leap", go_id)
+	elseif self._is_server then
+		self._network_transmit:send_rpc_clients("rpc_stop_leap", unit_id)
 	end
 end
 
@@ -151,53 +155,54 @@ PassiveAbilityRatOgre.stop = function (self)
 	-- function 11
 	self._update_anim_variables = false
 
-	local _unit = self._unit
+	local unit = self._unit
 
-	if not Unit.alive(_unit) then
+	if not Unit.alive(unit) then
 		return
 	end
 
-	if not (not self._anim_value and not (self._anim_value > 0.2)) then
+	if self._anim_value and self._anim_value > 0.2 then
 		if not self._is_remote_player then
 			self._first_person_extension:play_animation_event("attack_jump_land")
 		end
 
-		Unit.animation_event(_unit, "attack_jump_land")
+		Unit.animation_event(unit, "attack_jump_land")
 	else
 		if not self._is_remote_player then
 			self._first_person_extension:play_animation_event("cancel_priming")
 		end
 
-		Unit.animation_event(_unit, "cancel_priming")
+		Unit.animation_event(unit, "cancel_priming")
 	end
 end
 
-PassiveAbilityRatOgre.update = function (self, arg_12_1, arg_12_2)
+PassiveAbilityRatOgre.update = function (self, dt, t)
 	-- function 12
-	if not self._update_anim_variables then
-		local _unit = self._unit
+	if self._update_anim_variables then
+		local unit = self._unit
 
-		if not Unit.alive(_unit) then
+		if not Unit.alive(unit) then
 			self._update_anim_variables = false
 
 			return
 		end
 
-		local var_12_1 = POSITION_LOOKUP[_unit]
-		local unbox = self._jump_from_pos:unbox()
-		local unbox_2 = self._jump_to_pos:unbox()
-		local num = Vector3.length(var_12_1 - unbox) / Vector3.length(unbox_2 - unbox)
+		local current_position = POSITION_LOOKUP[unit]
+		local starting_pos = self._jump_from_pos:unbox()
+		local projected_hit_pos = self._jump_to_pos:unbox()
+		local distance_travelled = Vector3.length(current_position - starting_pos)
+		local percentage_done = distance_travelled / Vector3.length(projected_hit_pos - starting_pos)
 
-		self._anim_value = math.clamp(num * 2, 0, 2)
+		self._anim_value = math.clamp(percentage_done * 2, 0, 2)
 
-		local str = "jump_rotation"
-		local animation_find_variable = Unit.animation_find_variable(_unit, str)
+		local anim_variable = "jump_rotation"
+		local variable_index = Unit.animation_find_variable(unit, anim_variable)
 
-		if not self._is_remote_player then
-			Unit.animation_set_variable(_unit, animation_find_variable, self._anim_value)
+		if self._is_remote_player then
+			Unit.animation_set_variable(unit, variable_index, self._anim_value)
 		else
-			Unit.animation_set_variable(_unit, animation_find_variable, self._anim_value)
-			self._first_person_extension:animation_set_variable(str, self._anim_value)
+			Unit.animation_set_variable(unit, variable_index, self._anim_value)
+			self._first_person_extension:animation_set_variable(anim_variable, self._anim_value)
 		end
 	end
 end

@@ -1,0 +1,6 @@
+﻿E:\Warhammer\GitHub\Vermintide-2-Source-Code\scripts\game_state\state_loading.lua  (raw LuaJIT bytecode)
+E:\Warhammer\GitHub\Vermintide-2-Source-Code\scripts\settings\horde_compositions.lua  (raw LuaJIT bytecode)
+E:\Warhammer\GitHub\Vermintide-2-Source-Code\scripts\settings\dlcs\shovel\action_damage_target.lua  (raw LuaJIT bytecode)
+E:\Warhammer\GitHub\Vermintide-2-Source-Code\scripts\settings\equipment\attachments.lua  (raw LuaJIT bytecode)
+E:\Warhammer\GitHub\Vermintide-2-Source-Code\scripts\unit_extensions\default_player_unit\ping\context_aware_ping_extension.lua  (raw LuaJIT bytecode)
+E:\Warhammer\GitHub\Vermintide-2-Source-Code\scripts\unit_extensions\weapons\actions\action_sweep.lua  (raw LuaJIT bytecode)

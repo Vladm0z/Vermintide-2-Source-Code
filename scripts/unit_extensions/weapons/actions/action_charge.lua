@@ -2,46 +2,47 @@
 
 ActionCharge = class(ActionCharge, ActionBase)
 
-ActionCharge.init = function (self, arg_1_1, arg_1_2, arg_1_3, arg_1_4, arg_1_5, arg_1_6, arg_1_7, arg_1_8)
+ActionCharge.init = function (self, world, item_name, is_server, owner_unit, damage_unit, first_person_unit, weapon_unit, weapon_system)
 	-- function 1
-	ActionCharge.super.init(self, arg_1_1, arg_1_2, arg_1_3, arg_1_4, arg_1_5, arg_1_6, arg_1_7, arg_1_8)
+	ActionCharge.super.init(self, world, item_name, is_server, owner_unit, damage_unit, first_person_unit, weapon_unit, weapon_system)
 
-	if not ScriptUnit.has_extension(arg_1_4, "inventory_system") then
-		local extension = ScriptUnit.extension(self.owner_unit, "inventory_system")
-		local get_wielded_slot_name = extension:get_wielded_slot_name()
+	if ScriptUnit.has_extension(owner_unit, "inventory_system") then
+		local inventory_extension = ScriptUnit.extension(self.owner_unit, "inventory_system")
+		local slot_name = inventory_extension:get_wielded_slot_name()
+		local slot_data = inventory_extension:get_slot_data(slot_name)
 
-		self.left_unit = extension:get_slot_data(get_wielded_slot_name).left_unit_1p
+		self.left_unit = slot_data.left_unit_1p
 	end
 
-	self.status_extension = ScriptUnit.has_extension(arg_1_4, "status_system")
-	self.spread_extension = ScriptUnit.has_extension(arg_1_7, "spread_system")
-	self.overcharge_extension = ScriptUnit.extension(arg_1_4, "overcharge_system")
-	self.first_person_extension = ScriptUnit.extension(arg_1_4, "first_person_system")
-	self.weapon_extension = ScriptUnit.extension(arg_1_7, "weapon_system")
-	self.ammo_extension = ScriptUnit.has_extension(arg_1_7, "ammo_system")
+	self.status_extension = ScriptUnit.has_extension(owner_unit, "status_system")
+	self.spread_extension = ScriptUnit.has_extension(weapon_unit, "spread_system")
+	self.overcharge_extension = ScriptUnit.extension(owner_unit, "overcharge_system")
+	self.first_person_extension = ScriptUnit.extension(owner_unit, "first_person_system")
+	self.weapon_extension = ScriptUnit.extension(weapon_unit, "weapon_system")
+	self.ammo_extension = ScriptUnit.has_extension(weapon_unit, "ammo_system")
 	self._rumble_effect_id = nil
 end
 
-ActionCharge.client_owner_start_action = function (self, arg_2_1, arg_2_2)
+ActionCharge.client_owner_start_action = function (self, new_action, t)
 	-- function 2
-	ActionCharge.super.client_owner_start_action(self, arg_2_1, arg_2_2)
+	ActionCharge.super.client_owner_start_action(self, new_action, t)
 
 	local owner_unit = self.owner_unit
 
-	self.current_action = arg_2_1
+	self.current_action = new_action
 
-	local audio_loop_id = arg_2_1.audio_loop_id
+	local audio_loop_id = new_action.audio_loop_id
 
-	audio_loop_id = audio_loop_id or "charge"
+	audio_loop_id = not not audio_loop_id or not not "charge"
 	self.audio_loop_id = audio_loop_id
 	self.charge_ready_sound_event = self.current_action.charge_ready_sound_event
-	self.charge_flow_event_left_weapon = arg_2_1.charge_flow_event_left_weapon
+	self.charge_flow_event_left_weapon = new_action.charge_flow_event_left_weapon
 	self.venting_overcharge = nil
 	self._max_charge = false
 
 	local overcharge_extension = self.overcharge_extension
 
-	if not (not arg_2_1.vent_overcharge and not overcharge_extension and not (overcharge_extension:get_overcharge_value() > 0)) then
+	if new_action.vent_overcharge and overcharge_extension and overcharge_extension:get_overcharge_value() > 0 then
 		overcharge_extension:vent_overcharge()
 
 		self.venting_overcharge = true
@@ -49,79 +50,81 @@ ActionCharge.client_owner_start_action = function (self, arg_2_1, arg_2_2)
 
 	self.fully_charged_triggered = false
 	self.total_overcharge_added = 0
-	self.remove_overcharge_on_interrupt = arg_2_1.remove_overcharge_on_interrupt
+	self.remove_overcharge_on_interrupt = new_action.remove_overcharge_on_interrupt
 
-	local extension = ScriptUnit.extension(owner_unit, "buff_system")
+	local buff_extension = ScriptUnit.extension(owner_unit, "buff_system")
 
-	self.buff_extension = extension
+	self.buff_extension = buff_extension
 	self.charge_level = 0
-	self.charge_time = extension:apply_buffs_to_value(arg_2_1.charge_time, "reduced_ranged_charge_time")
-	self.charge_complete_time = self.charge_time + arg_2_2
+	self.charge_time = buff_extension:apply_buffs_to_value(new_action.charge_time, "reduced_ranged_charge_time")
+	self.charge_complete_time = self.charge_time + t
 	self.overcharge_timer = 0
 	self.ability_charge_timer = 0
 	self.ammo_consumption_timer = 0
 
-	if not arg_2_1.vent_overcharge then
+	if not new_action.vent_overcharge then
 		Unit.flow_event(self.first_person_unit, "lua_charge_start")
 	end
 
-	local charge_effect_name = arg_2_1.charge_effect_name
+	local charge_effect_name = new_action.charge_effect_name
 
-	if not charge_effect_name then
-		local weapon_unit = self.weapon_unit
-		local node = Unit.node(weapon_unit, "fx_muzzle")
+	if charge_effect_name then
+		local unit = self.weapon_unit
+		local node = Unit.node(unit, "fx_muzzle")
 
-		self.particle_id = ScriptWorld.create_particles_linked(self.world, charge_effect_name, weapon_unit, node, "destroy")
+		self.particle_id = ScriptWorld.create_particles_linked(self.world, charge_effect_name, unit, node, "destroy")
 
-		if not self.left_unit then
-			local node_2 = Unit.node(self.left_unit, "fx_muzzle")
+		if self.left_unit then
+			local left_node = Unit.node(self.left_unit, "fx_muzzle")
 
-			self.left_particle_id = ScriptWorld.create_particles_linked(self.world, charge_effect_name, self.left_unit, node_2, "destroy")
+			self.left_particle_id = ScriptWorld.create_particles_linked(self.world, charge_effect_name, self.left_unit, left_node, "destroy")
 		end
 	end
 
 	self:_start_charge_sound()
 
-	local spread_template_override = arg_2_1.spread_template_override
+	local spread_template_override = new_action.spread_template_override
 
-	if not spread_template_override then
+	if spread_template_override then
 		self.spread_extension:override_spread_template(spread_template_override)
 	end
 
-	if not arg_2_1.zoom then
-		local extension_2 = ScriptUnit.extension(self.owner_unit, "status_system")
+	if new_action.zoom then
+		local status_extension = ScriptUnit.extension(self.owner_unit, "status_system")
 
-		if not extension_2:is_zooming() then
-			extension_2:set_zooming(true)
+		if not status_extension:is_zooming() then
+			status_extension:set_zooming(true)
 		end
 	end
 
-	local loaded_projectile_settings = arg_2_1.loaded_projectile_settings
+	local loaded_projectile_settings = new_action.loaded_projectile_settings
 
-	if not loaded_projectile_settings then
-		ScriptUnit.extension(self.owner_unit, "inventory_system"):set_loaded_projectile_override(loaded_projectile_settings)
+	if loaded_projectile_settings then
+		local inventory_extension = ScriptUnit.extension(self.owner_unit, "inventory_system")
+
+		inventory_extension:set_loaded_projectile_override(loaded_projectile_settings)
 	end
 end
 
 ActionCharge._start_charge_sound = function (self)
 	-- function 3
 	local current_action = self.current_action
-	local charge_sound_name = current_action.charge_sound_name
-	local charge_sound_stop_event = current_action.charge_sound_stop_event
+	local start_charge_id = current_action.charge_sound_name
+	local stop_charge_id = current_action.charge_sound_stop_event
 
-	if not (not charge_sound_name and charge_sound_stop_event) then
+	if not start_charge_id or not stop_charge_id then
 		return
 	end
 
 	local weapon_extension = self.weapon_extension
-	local charge_sound_husk_name = current_action.charge_sound_husk_name
-	local charge_sound_husk_stop_event = current_action.charge_sound_husk_stop_event
+	local start_charge_husk_id = current_action.charge_sound_husk_name
+	local stop_charge_husk_id = current_action.charge_sound_husk_stop_event
 
-	weapon_extension:add_looping_audio(self.audio_loop_id, charge_sound_name, charge_sound_stop_event, charge_sound_husk_name, charge_sound_husk_stop_event)
+	weapon_extension:add_looping_audio(self.audio_loop_id, start_charge_id, stop_charge_id, start_charge_husk_id, stop_charge_husk_id)
 
 	local owner_player = self.owner_player
 
-	if not owner_player then
+	if owner_player then
 		-- Nothing
 	end
 
@@ -129,24 +132,41 @@ ActionCharge._start_charge_sound = function (self)
 
 	local bot_player = owner_player.bot_player
 
-	bot_player = not bot_player and not owner_player.remote
+	if bot_player then
+		-- Nothing
+	end
+
+	bot_player = not owner_player.remote
+
+	local is_local_player = bot_player
 
 	::label_3_1::
 
-	if not bot_player then
+	if is_local_player then
 		local charge_sound_switch = current_action.charge_sound_switch
 
-		if not charge_sound_switch then
-			local flag
+		if charge_sound_switch then
+			local overcharge_extension = ScriptUnit.extension(self.owner_unit, "overcharge_system")
+			local str
 
-			flag = not ScriptUnit.extension(self.owner_unit, "overcharge_system"):above_overcharge_threshold() and "above_overcharge_threshold" and "below_overcharge_threshold"
+			if overcharge_extension:above_overcharge_threshold() then
+				str = "above_overcharge_threshold"
 
-			weapon_extension:set_looping_audio_switch(self.audio_loop_id, charge_sound_switch, flag)
+				goto label_3_2
+			end
+
+			str = "below_overcharge_threshold"
+
+			local overcharge_state = str
+
+			::label_3_2::
+
+			weapon_extension:set_looping_audio_switch(self.audio_loop_id, charge_sound_switch, overcharge_state)
 		end
 
 		local charge_sound_parameter_name = current_action.charge_sound_parameter_name
 
-		if not charge_sound_parameter_name then
+		if charge_sound_parameter_name then
 			weapon_extension:update_looping_audio_parameter(self.audio_loop_id, charge_sound_parameter_name, 1)
 		end
 	end
@@ -154,43 +174,46 @@ ActionCharge._start_charge_sound = function (self)
 	weapon_extension:start_looping_audio(self.audio_loop_id)
 end
 
-ActionCharge._stop_charge_sound = function (self, arg_4_1)
+ActionCharge._stop_charge_sound = function (self, reason)
 	-- function 4
-	local charge_sound_stop_event_condition_func = self.current_action.charge_sound_stop_event_condition_func
+	local end_condition = self.current_action.charge_sound_stop_event_condition_func
 
-	if not (not charge_sound_stop_event_condition_func and charge_sound_stop_event_condition_func(self.owner_unit, arg_4_1)) then
+	if end_condition and not end_condition(self.owner_unit, reason) then
 		return
 	end
 
-	self.weapon_extension:stop_looping_audio(self.audio_loop_id)
+	local weapon_extension = self.weapon_extension
+
+	weapon_extension:stop_looping_audio(self.audio_loop_id)
 end
 
-ActionCharge.client_owner_post_update = function (self, arg_5_1, arg_5_2, arg_5_3, arg_5_4)
+ActionCharge.client_owner_post_update = function (self, dt, t, world, can_damage)
 	-- function 5
 	local current_action = self.current_action
 	local charge_time = self.charge_time
-	local num = self.charge_complete_time - arg_5_2
+	local charge_complete_time = self.charge_complete_time
+	local full_charge_time = charge_complete_time - t
 
-	if not current_action.ammo_charge then
+	if current_action.ammo_charge then
 		local ammo_extension = self.ammo_extension
 
-		if not (not ammo_extension and not (ammo_extension:current_ammo() < 1)) then
+		if not ammo_extension or ammo_extension:current_ammo() < 1 then
 			return
 		end
 	end
 
 	local overcharge_type = current_action.overcharge_type
-	local var_5_5
+	local current_charge_time
 
-	if not (not (num > 0) or not (charge_time > 0)) then
-		var_5_5 = 1 - num / charge_time
-	elseif not ((not (num > 0) or not (charge_time <= 0) or not (num <= 0)) and (not (charge_time > 0) or not (num <= 0) or not (charge_time <= 0))) then
-		var_5_5 = 1
+	if full_charge_time > 0 and charge_time > 0 then
+		current_charge_time = 1 - full_charge_time / charge_time
+	elseif (not (full_charge_time > 0) or not (charge_time <= 0)) and (not (full_charge_time <= 0) or not (charge_time > 0)) and full_charge_time <= 0 and charge_time <= 0 then
+		current_charge_time = 1
 	end
 
-	local max = math.max(math.min(var_5_5, 1), 0)
+	local charge_level = math.max(math.min(current_charge_time, 1), 0)
 
-	if not (current_action.vent_overcharge or not (max >= 1) or self._max_charge) then
+	if not current_action.vent_overcharge and charge_level >= 1 and not self._max_charge then
 		self._max_charge = true
 
 		Unit.flow_event(self.first_person_unit, "lua_max_charge")
@@ -203,163 +226,170 @@ ActionCharge.client_owner_post_update = function (self, arg_5_1, arg_5_2, arg_5_
 	end
 
 	local overcharge_extension = self.overcharge_extension
-	local extension = ScriptUnit.extension(self.owner_unit, "inventory_system")
-	local extension_2 = ScriptUnit.extension(self.owner_unit, "career_system")
+	local inventory_extension = ScriptUnit.extension(self.owner_unit, "inventory_system")
+	local career_extension = ScriptUnit.extension(self.owner_unit, "career_system")
 
-	if not overcharge_type and overcharge_extension:get_overcharge_value() ~= 0 or not self.venting_overcharge then
-		CharacterStateHelper.stop_weapon_actions(extension, "no_more_overcharge")
-		CharacterStateHelper.stop_career_abilities(extension_2, "no_more_overcharge")
+	if overcharge_type and overcharge_extension:get_overcharge_value() == 0 and self.venting_overcharge then
+		CharacterStateHelper.stop_weapon_actions(inventory_extension, "no_more_overcharge")
+		CharacterStateHelper.stop_career_abilities(career_extension, "no_more_overcharge")
 	end
 
-	if not current_action.overcharge_interval then
-		self.overcharge_timer = self.overcharge_timer + arg_5_1
+	if current_action.overcharge_interval then
+		self.overcharge_timer = self.overcharge_timer + dt
 
 		if self.overcharge_timer >= current_action.overcharge_interval then
-			if not overcharge_type then
-				local var_5_10 = PlayerUnitStatusSettings.overcharge_values[overcharge_type]
+			if overcharge_type then
+				local overcharge_amount = PlayerUnitStatusSettings.overcharge_values[overcharge_type]
 
-				if not (not self.remove_overcharge_on_interrupt and var_5_5 ~= 1) then
-					var_5_10 = PlayerUnitStatusSettings.overcharge_values.drakegun_charging
+				if self.remove_overcharge_on_interrupt and current_charge_time == 1 then
+					overcharge_amount = PlayerUnitStatusSettings.overcharge_values.drakegun_charging
 				end
 
-				self.overcharge_extension:add_charge(var_5_10, nil, overcharge_type)
+				self.overcharge_extension:add_charge(overcharge_amount, nil, overcharge_type)
 
-				self.total_overcharge_added = self.total_overcharge_added + var_5_10
+				self.total_overcharge_added = self.total_overcharge_added + overcharge_amount
 			end
 
 			self.overcharge_timer = 0
 		end
 	end
 
-	if not current_action.ammo_charge then
-		self.ammo_consumption_timer = self.ammo_consumption_timer + arg_5_1
+	if current_action.ammo_charge then
+		self.ammo_consumption_timer = self.ammo_consumption_timer + dt
 
 		if self.ammo_consumption_timer >= current_action.charge_time / current_action.ammo_per_clip then
-			local ammo_extension_2 = self.ammo_extension
+			local ammo_extension = self.ammo_extension
 
-			if not ammo_extension_2 then
-				ammo_extension_2:use_ammo(1)
+			if ammo_extension then
+				ammo_extension:use_ammo(1)
 			end
 
 			self.ammo_consumption_timer = 0
 		end
 	end
 
-	if not current_action.charge_anim_variable then
-		self.first_person_extension:animation_set_variable(current_action.charge_anim_variable, max)
+	local charge_anim_variable = current_action.charge_anim_variable
+
+	if charge_anim_variable then
+		self.first_person_extension:animation_set_variable(current_action.charge_anim_variable, charge_level)
 	end
 
 	local particle_id = self.particle_id
 	local charge_effect_material_name = current_action.charge_effect_material_name
 	local charge_effect_material_variable_name = current_action.charge_effect_material_variable_name
 
-	if not charge_effect_material_name and not charge_effect_material_variable_name and not particle_id and not World.has_particles_material(arg_5_3, particle_id, charge_effect_material_name) then
-		World.set_particles_material_scalar(arg_5_3, particle_id, charge_effect_material_name, charge_effect_material_variable_name, max)
+	if charge_effect_material_name and charge_effect_material_variable_name and particle_id and World.has_particles_material(world, particle_id, charge_effect_material_name) then
+		World.set_particles_material_scalar(world, particle_id, charge_effect_material_name, charge_effect_material_variable_name, charge_level)
 	end
 
 	local left_particle_id = self.left_particle_id
-	local charge_effect_material_name_2 = current_action.charge_effect_material_name
-	local charge_effect_material_variable_name_2 = current_action.charge_effect_material_variable_name
+	local left_charge_effect_material_name = current_action.charge_effect_material_name
+	local left_charge_effect_material_variable_name = current_action.charge_effect_material_variable_name
 
-	if not charge_effect_material_name_2 and not charge_effect_material_variable_name_2 and not left_particle_id and not World.has_particles_material(arg_5_3, left_particle_id, charge_effect_material_name_2) then
-		World.set_particles_material_scalar(arg_5_3, left_particle_id, charge_effect_material_name_2, charge_effect_material_variable_name_2, max)
+	if left_charge_effect_material_name and left_charge_effect_material_variable_name and left_particle_id and World.has_particles_material(world, left_particle_id, left_charge_effect_material_name) then
+		World.set_particles_material_scalar(world, left_particle_id, left_charge_effect_material_name, left_charge_effect_material_variable_name, charge_level)
 	end
 
 	local owner_unit = self.owner_unit
-	local owner = Managers.player:owner(owner_unit)
+	local owner_player = Managers.player:owner(owner_unit)
+	local is_bot = not not owner_player and not not owner_player.bot_player
 
-	if not (not owner and owner.bot_player) then
+	if not is_bot then
 		local charge_sound_parameter_name = current_action.charge_sound_parameter_name
 
-		if not charge_sound_parameter_name then
+		if charge_sound_parameter_name then
 			local wwise_world = self.wwise_world
 			local wwise_source_id = self.wwise_source_id
 
-			WwiseWorld.set_source_parameter(wwise_world, wwise_source_id, charge_sound_parameter_name, max)
+			WwiseWorld.set_source_parameter(wwise_world, wwise_source_id, charge_sound_parameter_name, charge_level)
 		end
 
-		if not (not self.charge_ready_sound_event and not (max >= 1)) then
+		if self.charge_ready_sound_event and charge_level >= 1 then
 			self.first_person_extension:play_hud_sound_event(self.charge_ready_sound_event)
 
 			self.charge_ready_sound_event = nil
 		end
 
-		if (not (max >= 1) or not self.charge_flow_event_left_weapon) and not self.left_unit then
+		if charge_level >= 1 and self.charge_flow_event_left_weapon and self.left_unit then
 			Unit.flow_event(self.left_unit, self.charge_flow_event_left_weapon)
 
 			self.charge_flow_event_left_weapon = nil
 		end
 	end
 
-	if not (not (max >= 1) or Managers.player:owner(self.owner_unit).bot_player or self._rumble_effect_id) then
+	if charge_level >= 1 and not Managers.player:owner(self.owner_unit).bot_player and not self._rumble_effect_id then
 		self._rumble_effect_id = Managers.state.controller_features:add_effect("persistent_rumble", {
 			rumble_effect = "reload_start"
 		})
 	end
 
-	self.charge_level = max
+	self.charge_level = charge_level
 end
 
-ActionCharge._clean_up = function (self, arg_6_1)
+ActionCharge._clean_up = function (self, reason)
 	-- function 6
-	if not self.particle_id then
+	if self.particle_id then
 		World.destroy_particles(self.world, self.particle_id)
 
 		self.particle_id = nil
 	end
 
-	if not self.left_particle_id then
+	if self.left_particle_id then
 		World.destroy_particles(self.world, self.left_particle_id)
 
 		self.left_particle_id = nil
 	end
 
-	if not self._rumble_effect_id then
+	if self._rumble_effect_id then
 		Managers.state.controller_features:stop_effect(self._rumble_effect_id)
 
 		self._rumble_effect_id = nil
 	end
 
-	self:_stop_charge_sound(arg_6_1)
+	self:_stop_charge_sound(reason)
 end
 
-ActionCharge.finish = function (self, arg_7_1)
+ActionCharge.finish = function (self, reason)
 	-- function 7
 	local owner_unit = self.owner_unit
 	local first_person_unit = self.first_person_unit
 	local current_action = self.current_action
 
-	self:_clean_up(arg_7_1)
+	self:_clean_up(reason)
 
 	local overcharge_extension = self.overcharge_extension
 
-	if not current_action.vent_overcharge and not overcharge_extension then
+	if current_action.vent_overcharge and overcharge_extension then
 		overcharge_extension:vent_overcharge_done()
 	end
 
-	if not self.remove_overcharge_on_interrupt then
-		if arg_7_1 == "interrupted" then
+	if self.remove_overcharge_on_interrupt then
+		if reason == "interrupted" then
 			overcharge_extension:remove_charge(self.total_overcharge_added * 0.75)
-		elseif arg_7_1 == "hold_input_released" then
+		elseif reason == "hold_input_released" then
 			overcharge_extension:remove_charge(self.total_overcharge_added * 0.5)
 		end
 	end
 
-	if not (arg_7_1 == "hold_input_released" or arg_7_1 ~= "weapon_wielded") then
+	if reason == "hold_input_released" or reason == "weapon_wielded" then
 		Unit.flow_event(first_person_unit, "lua_charge_cancel")
 	end
 
 	Unit.flow_event(first_person_unit, "lua_charge_stop")
 
-	if not self.spread_extension then
+	if self.spread_extension then
 		self.spread_extension:reset_spread_template()
 	end
 
-	if not current_action.zoom then
-		ScriptUnit.extension(owner_unit, "status_system"):set_zooming(false)
+	if current_action.zoom then
+		local status_extension = ScriptUnit.extension(owner_unit, "status_system")
+
+		status_extension:set_zooming(false)
 	end
 
-	ScriptUnit.extension(self.owner_unit, "inventory_system"):set_loaded_projectile_override(nil)
+	local inventory_extension = ScriptUnit.extension(self.owner_unit, "inventory_system")
+
+	inventory_extension:set_loaded_projectile_override(nil)
 	self.buff_extension:trigger_procs("on_charge_finished")
 
 	return {

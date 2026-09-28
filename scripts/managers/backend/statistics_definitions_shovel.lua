@@ -1,7 +1,7 @@
 -- chunkname: @scripts/managers/backend/statistics_definitions_shovel.lua
 
 local player = StatisticsDefinitions.player
-local tbl = {
+local database_names = {
 	"shovel_sac_vent",
 	"shovel_sac_low",
 	"shovel_fast_generate",
@@ -20,12 +20,12 @@ local tbl = {
 	"shovel_keep_skeletons_alive"
 }
 
-for i = 1, #tbl do
-	local var_0_2 = tbl[i]
+for i = 1, #database_names do
+	local name = database_names[i]
 
-	player[var_0_2] = {
+	player[name] = {
 		value = 0,
 		source = "player_data",
-		database_name = var_0_2
+		database_name = name
 	}
 end

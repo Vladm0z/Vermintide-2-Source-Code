@@ -3,8 +3,8 @@
 require("scripts/entity_system/systems/buff/buff_sync_type")
 require("scripts/settings/profiles/career_constants")
 
-local scripts_unit_extensions_default_player_unit_buffs_settings_buff_perk_names = require("scripts/unit_extensions/default_player_unit/buffs/settings/buff_perk_names")
-local tbl = {
+local buff_perks = require("scripts/unit_extensions/default_player_unit/buffs/settings/buff_perk_names")
+local buff_tweak_data = {
 	bardin_ironbreaker_ability_cooldown_on_hit = {
 		bonus = 0.25
 	},
@@ -22,13 +22,19 @@ local tbl = {
 	},
 	bardin_ironbreaker_gromril_delay = {
 		duration = 20,
-		duration_modifier_func = function (arg_1_0, arg_1_1, arg_1_2, arg_1_3, arg_1_4)
+		duration_modifier_func = function (unit, sub_buff_template, duration, buff_extension, params)
 			-- function 1
-			if Managers.mechanism:current_mechanism_name() ~= "versus" or not ScriptUnit.extension(arg_1_0, "talent_system"):has_talent("bardin_ironbreaker_gromril_stagger") then
-				arg_1_2 = 30
+			local mechanism_name = Managers.mechanism:current_mechanism_name()
+
+			if mechanism_name == "versus" then
+				local talent_extension = ScriptUnit.extension(unit, "talent_system")
+
+				if talent_extension:has_talent("bardin_ironbreaker_gromril_stagger") then
+					duration = 30
+				end
 			end
 
-			return arg_1_2
+			return duration
 		end
 	},
 	bardin_ironbreaker_gromril_antistun = {
@@ -274,7 +280,7 @@ local tbl = {
 }
 local TalentBuffTemplates = TalentBuffTemplates
 
-TalentBuffTemplates = TalentBuffTemplates or {}
+TalentBuffTemplates = not not TalentBuffTemplates or not not {}
 TalentBuffTemplates = TalentBuffTemplates
 TalentBuffTemplates.dwarf_ranger = {
 	bardin_ironbreaker_ability_cooldown_on_hit = {
@@ -332,7 +338,7 @@ TalentBuffTemplates.dwarf_ranger = {
 				event = "on_gromril_armour_removed",
 				buff_func = "add_gromril_delay",
 				buff_to_add = "bardin_ironbreaker_gromril_buff",
-				base_duration = tbl.bardin_ironbreaker_gromril_delay.duration
+				base_duration = buff_tweak_data.bardin_ironbreaker_gromril_delay.duration
 			}
 		}
 	},
@@ -373,9 +379,9 @@ TalentBuffTemplates.dwarf_ranger = {
 				max_stacks = 1,
 				update_func = "update_bardin_ironbreaker_activated_ability",
 				perks = {
-					scripts_unit_extensions_default_player_unit_buffs_settings_buff_perk_names.reduced_hit_react
+					buff_perks.reduced_hit_react
 				},
-				multiplier = tbl.bardin_ironbreaker_activated_ability.multiplier_damage_taken
+				multiplier = buff_tweak_data.bardin_ironbreaker_activated_ability.multiplier_damage_taken
 			}
 		}
 	},
@@ -386,8 +392,8 @@ TalentBuffTemplates.dwarf_ranger = {
 				stat_buff = "block_cost",
 				refresh_durations = true,
 				max_stacks = 1,
-				multiplier = tbl.bardin_ironbreaker_activated_ability.multiplier_block_cost,
-				duration = tbl.bardin_ironbreaker_activated_ability.duration
+				multiplier = buff_tweak_data.bardin_ironbreaker_activated_ability.multiplier_block_cost,
+				duration = buff_tweak_data.bardin_ironbreaker_activated_ability.duration
 			}
 		}
 	},
@@ -398,8 +404,8 @@ TalentBuffTemplates.dwarf_ranger = {
 				stat_buff = "attack_intensity_decay",
 				refresh_durations = true,
 				max_stacks = 1,
-				multiplier = tbl.bardin_ironbreaker_activated_ability.attack_intensity_decay_multiplier,
-				duration = tbl.bardin_ironbreaker_activated_ability.duration
+				multiplier = buff_tweak_data.bardin_ironbreaker_activated_ability.attack_intensity_decay_multiplier,
+				duration = buff_tweak_data.bardin_ironbreaker_activated_ability.duration
 			}
 		}
 	},
@@ -411,7 +417,7 @@ TalentBuffTemplates.dwarf_ranger = {
 				buff_func = "heal_stagger_targets_on_melee",
 				event = "on_stagger",
 				perks = {
-					scripts_unit_extensions_default_player_unit_buffs_settings_buff_perk_names.tank_healing
+					buff_perks.tank_healing
 				}
 			}
 		}
@@ -425,7 +431,7 @@ TalentBuffTemplates.dwarf_ranger = {
 				buff_func = "heal_percentage_of_enemy_hp_on_melee_kill",
 				event = "on_kill",
 				perks = {
-					scripts_unit_extensions_default_player_unit_buffs_settings_buff_perk_names.smiter_healing
+					buff_perks.smiter_healing
 				}
 			}
 		}
@@ -468,7 +474,7 @@ TalentBuffTemplates.dwarf_ranger = {
 				max_stacks = 10,
 				update_func = "activate_buff_stacks_based_on_overcharge_chunks",
 				perks = {
-					scripts_unit_extensions_default_player_unit_buffs_settings_buff_perk_names.overcharge_no_slow
+					buff_perks.overcharge_no_slow
 				}
 			}
 		}
@@ -661,9 +667,9 @@ TalentBuffTemplates.dwarf_ranger = {
 				max_stacks = 1,
 				update_func = "update_bardin_ironbreaker_activated_ability",
 				perks = {
-					scripts_unit_extensions_default_player_unit_buffs_settings_buff_perk_names.reduced_hit_react
+					buff_perks.reduced_hit_react
 				},
-				multiplier = tbl.bardin_ironbreaker_activated_ability_taunt_range_and_duration.multiplier_damage_taken
+				multiplier = buff_tweak_data.bardin_ironbreaker_activated_ability_taunt_range_and_duration.multiplier_damage_taken
 			}
 		}
 	},
@@ -673,8 +679,8 @@ TalentBuffTemplates.dwarf_ranger = {
 				refresh_durations = true,
 				stat_buff = "block_cost",
 				max_stacks = 1,
-				multiplier = tbl.bardin_ironbreaker_activated_ability_taunt_range_and_duration.multiplier_block_cost,
-				duration = tbl.bardin_ironbreaker_activated_ability_taunt_range_and_duration.duration
+				multiplier = buff_tweak_data.bardin_ironbreaker_activated_ability_taunt_range_and_duration.multiplier_block_cost,
+				duration = buff_tweak_data.bardin_ironbreaker_activated_ability_taunt_range_and_duration.duration
 			}
 		}
 	},
@@ -685,8 +691,8 @@ TalentBuffTemplates.dwarf_ranger = {
 				stat_buff = "attack_intensity_decay",
 				refresh_durations = true,
 				max_stacks = 1,
-				multiplier = tbl.bardin_ironbreaker_activated_ability_taunt_range_and_duration.attack_intensity_decay_multiplier,
-				duration = tbl.bardin_ironbreaker_activated_ability_taunt_range_and_duration.duration
+				multiplier = buff_tweak_data.bardin_ironbreaker_activated_ability_taunt_range_and_duration.attack_intensity_decay_multiplier,
+				duration = buff_tweak_data.bardin_ironbreaker_activated_ability_taunt_range_and_duration.duration
 			}
 		}
 	},
@@ -727,7 +733,7 @@ TalentBuffTemplates.dwarf_ranger = {
 		buffs = {
 			{
 				perks = {
-					scripts_unit_extensions_default_player_unit_buffs_settings_buff_perk_names.uninterruptible_heavy
+					buff_perks.uninterruptible_heavy
 				}
 			}
 		}
@@ -737,7 +743,7 @@ TalentBuffTemplates.dwarf_ranger = {
 			{
 				max_stacks = 1,
 				perks = {
-					scripts_unit_extensions_default_player_unit_buffs_settings_buff_perk_names.uninterruptible
+					buff_perks.uninterruptible
 				}
 			}
 		}
@@ -747,7 +753,7 @@ TalentBuffTemplates.dwarf_ranger = {
 			{
 				event = "on_hit",
 				buff_func = "add_bardin_slayer_passive_buff",
-				max_stacks = tbl.bardin_slayer_passive_stacking_damage_buff.max_stacks
+				max_stacks = buff_tweak_data.bardin_slayer_passive_stacking_damage_buff.max_stacks
 			}
 		}
 	},
@@ -770,7 +776,7 @@ TalentBuffTemplates.dwarf_ranger = {
 				remove_buff_func = "end_slayer_activated_ability",
 				refresh_durations = true,
 				perks = {
-					scripts_unit_extensions_default_player_unit_buffs_settings_buff_perk_names.no_ranged_knockback
+					buff_perks.no_ranged_knockback
 				}
 			}
 		}
@@ -785,7 +791,7 @@ TalentBuffTemplates.dwarf_ranger = {
 				max_targets = 5,
 				bonus = 0.25,
 				perks = {
-					scripts_unit_extensions_default_player_unit_buffs_settings_buff_perk_names.linesman_healing
+					buff_perks.linesman_healing
 				}
 			}
 		}
@@ -799,7 +805,7 @@ TalentBuffTemplates.dwarf_ranger = {
 				buff_func = "heal_percentage_of_enemy_hp_on_melee_kill",
 				event = "on_kill",
 				perks = {
-					scripts_unit_extensions_default_player_unit_buffs_settings_buff_perk_names.smiter_healing
+					buff_perks.smiter_healing
 				}
 			}
 		}
@@ -865,7 +871,7 @@ TalentBuffTemplates.dwarf_ranger = {
 				stat_buff = "cooldown_regen",
 				max_stacks = 1,
 				refresh_durations = true,
-				duration = tbl.bardin_slayer_passive_stacking_damage_buff.duration
+				duration = buff_tweak_data.bardin_slayer_passive_stacking_damage_buff.duration
 			}
 		}
 	},
@@ -954,7 +960,7 @@ TalentBuffTemplates.dwarf_ranger = {
 				icon = "bardin_slayer_activated_ability_leap_damage",
 				stat_buff = "power_level",
 				perks = {
-					scripts_unit_extensions_default_player_unit_buffs_settings_buff_perk_names.bloody_mess
+					buff_perks.bloody_mess
 				}
 			}
 		}
@@ -966,7 +972,7 @@ TalentBuffTemplates.dwarf_ranger = {
 				refresh_durations = true,
 				max_stacks = 1,
 				remove_buff_func = "remove_movement_buff",
-				duration = tbl.bardin_slayer_activated_ability.duration,
+				duration = buff_tweak_data.bardin_slayer_activated_ability.duration,
 				path_to_movement_setting_to_modify = {
 					"move_speed"
 				}
@@ -1046,13 +1052,15 @@ TalentBuffTemplates.dwarf_ranger = {
 				sound_to_play = "Play_career_ability_bardin_ranger_enter",
 				icon = "bardin_ranger_activated_ability",
 				buff_sync_type = BuffSyncType.LocalAndServer,
-				duration_modifier_func = function (arg_2_0, arg_2_1, arg_2_2, arg_2_3, arg_2_4)
+				duration_modifier_func = function (unit, sub_buff_template, duration, self, params)
 					-- function 2
-					if Managers.mechanism:current_mechanism_name() == "versus" then
+					local mechanism_name = Managers.mechanism:current_mechanism_name()
+
+					if mechanism_name == "versus" then
 						return CareerConstants.dr_ranger.ability_duration_versus
 					end
 
-					return arg_2_2
+					return duration
 				end
 			}
 		}
@@ -1077,7 +1085,7 @@ TalentBuffTemplates.dwarf_ranger = {
 				max_targets = 5,
 				bonus = 0.25,
 				perks = {
-					scripts_unit_extensions_default_player_unit_buffs_settings_buff_perk_names.linesman_healing
+					buff_perks.linesman_healing
 				}
 			}
 		}
@@ -1090,7 +1098,7 @@ TalentBuffTemplates.dwarf_ranger = {
 				buff_func = "heal_stagger_targets_on_melee",
 				event = "on_stagger",
 				perks = {
-					scripts_unit_extensions_default_player_unit_buffs_settings_buff_perk_names.tank_healing
+					buff_perks.tank_healing
 				}
 			}
 		}
@@ -1210,13 +1218,15 @@ TalentBuffTemplates.dwarf_ranger = {
 				buff_area = true,
 				area_unit_name = "units/hub_elements/empty",
 				buff_sync_type = BuffSyncType.All,
-				duration_modifier_func = function (arg_3_0, arg_3_1, arg_3_2, arg_3_3, arg_3_4)
+				duration_modifier_func = function (unit, sub_buff_template, duration, self, params)
 					-- function 3
-					if Managers.mechanism:current_mechanism_name() == "versus" then
+					local mechanism_name = Managers.mechanism:current_mechanism_name()
+
+					if mechanism_name == "versus" then
 						return CareerConstants.dr_ranger.ability_duration_versus
 					end
 
-					return arg_3_2
+					return duration
 				end
 			}
 		}
@@ -1242,13 +1252,15 @@ TalentBuffTemplates.dwarf_ranger = {
 				buff_area = true,
 				area_unit_name = "units/hub_elements/empty",
 				buff_sync_type = BuffSyncType.LocalAndServer,
-				duration_modifier_func = function (arg_4_0, arg_4_1, arg_4_2, arg_4_3, arg_4_4)
+				duration_modifier_func = function (unit, sub_buff_template, duration, self, params)
 					-- function 4
-					if Managers.mechanism:current_mechanism_name() == "versus" then
+					local mechanism_name = Managers.mechanism:current_mechanism_name()
+
+					if mechanism_name == "versus" then
 						return CareerConstants.dr_ranger.ability_duration_versus
 					end
 
-					return arg_4_2
+					return duration
 				end
 			}
 		}
@@ -1270,13 +1282,15 @@ TalentBuffTemplates.dwarf_ranger = {
 				max_stacks = 1,
 				refresh_durations = true,
 				apply_buff_func = "add_buff_local",
-				duration_modifier_func = function (arg_5_0, arg_5_1, arg_5_2, arg_5_3, arg_5_4)
+				duration_modifier_func = function (unit, sub_buff_template, duration, self, params)
 					-- function 5
-					if Managers.mechanism:current_mechanism_name() == "versus" then
+					local mechanism_name = Managers.mechanism:current_mechanism_name()
+
+					if mechanism_name == "versus" then
 						return CareerConstants.dr_ranger.ability_duration_versus
 					end
 
-					return arg_5_2
+					return duration
 				end
 			}
 		}
@@ -1289,7 +1303,7 @@ TalentBuffTemplates.dwarf_ranger = {
 				max_stacks = 1,
 				icon = "bardin_ranger_ability_free_grenade",
 				perks = {
-					scripts_unit_extensions_default_player_unit_buffs_settings_buff_perk_names.free_grenade
+					buff_perks.free_grenade
 				}
 			}
 		}
@@ -1298,7 +1312,7 @@ TalentBuffTemplates.dwarf_ranger = {
 
 local TalentTrees = TalentTrees
 
-TalentTrees = TalentTrees or {}
+TalentTrees = not not TalentTrees or not not {}
 TalentTrees = TalentTrees
 TalentTrees.dwarf_ranger = {
 	{
@@ -1487,7 +1501,7 @@ Talents.dwarf_ranger = {
 		description_values = {
 			{
 				value_type = "percent",
-				value = tbl.bardin_ironbreaker_power_on_nearby_allies_buff.multiplier
+				value = buff_tweak_data.bardin_ironbreaker_power_on_nearby_allies_buff.multiplier
 			}
 		},
 		buffs = {
@@ -1503,19 +1517,19 @@ Talents.dwarf_ranger = {
 		description_values = {
 			{
 				value_type = "percent",
-				value = tbl.bardin_ironbreaker_overcharge_increase_power_lowers_attack_speed_desc.inital_power
+				value = buff_tweak_data.bardin_ironbreaker_overcharge_increase_power_lowers_attack_speed_desc.inital_power
 			},
 			{
 				value_type = "percent",
-				value = tbl.bardin_ironbreaker_overcharge_increase_power_lowers_attack_speed_desc.final_power
+				value = buff_tweak_data.bardin_ironbreaker_overcharge_increase_power_lowers_attack_speed_desc.final_power
 			},
 			{
 				value_type = "percent",
-				value = tbl.bardin_ironbreaker_overcharge_increase_power_lowers_attack_speed_desc.initial_attack_speed
+				value = buff_tweak_data.bardin_ironbreaker_overcharge_increase_power_lowers_attack_speed_desc.initial_attack_speed
 			},
 			{
 				value_type = "percent",
-				value = tbl.bardin_ironbreaker_overcharge_increase_power_lowers_attack_speed_desc.final_attack_speed
+				value = buff_tweak_data.bardin_ironbreaker_overcharge_increase_power_lowers_attack_speed_desc.final_attack_speed
 			}
 		},
 		buffs = {
@@ -1532,13 +1546,13 @@ Talents.dwarf_ranger = {
 		description_values = {
 			{
 				value_type = "percent",
-				value = tbl.bardin_ironbreaker_party_power_on_blocked_attacks_buff.multiplier
+				value = buff_tweak_data.bardin_ironbreaker_party_power_on_blocked_attacks_buff.multiplier
 			},
 			{
-				value = tbl.bardin_ironbreaker_party_power_on_blocked_attacks_buff.duration
+				value = buff_tweak_data.bardin_ironbreaker_party_power_on_blocked_attacks_buff.duration
 			},
 			{
-				value = tbl.bardin_ironbreaker_party_power_on_blocked_attacks_buff.max_stacks
+				value = buff_tweak_data.bardin_ironbreaker_party_power_on_blocked_attacks_buff.max_stacks
 			}
 		},
 		buffs = {
@@ -1552,11 +1566,11 @@ Talents.dwarf_ranger = {
 		icon = "bardin_ironbreaker_stamina_regen_during_gromril",
 		description_values = {
 			{
-				value = tbl.bardin_ironbreaker_gromril_attack_speed.presentation_delay
+				value = buff_tweak_data.bardin_ironbreaker_gromril_attack_speed.presentation_delay
 			},
 			{
 				value_type = "percent",
-				value = tbl.bardin_ironbreaker_gromril_attack_speed.multiplier
+				value = buff_tweak_data.bardin_ironbreaker_gromril_attack_speed.multiplier
 			}
 		},
 		buffs = {
@@ -1570,7 +1584,7 @@ Talents.dwarf_ranger = {
 		icon = "bardin_ironbreaker_max_gromril_delay",
 		description_values = {
 			{
-				value = tbl.bardin_ironbreaker_gromril_delay_short.duration
+				value = buff_tweak_data.bardin_ironbreaker_gromril_delay_short.duration
 			}
 		},
 		buffs = {}
@@ -1594,10 +1608,10 @@ Talents.dwarf_ranger = {
 		description_values = {
 			{
 				value_type = "percent",
-				value = tbl.bardin_ironbreaker_regen_stamina_on_charged_attacks_buff.multiplier
+				value = buff_tweak_data.bardin_ironbreaker_regen_stamina_on_charged_attacks_buff.multiplier
 			},
 			{
-				value = tbl.bardin_ironbreaker_regen_stamina_on_charged_attacks_buff.duration
+				value = buff_tweak_data.bardin_ironbreaker_regen_stamina_on_charged_attacks_buff.duration
 			}
 		},
 		buffs = {
@@ -1612,7 +1626,7 @@ Talents.dwarf_ranger = {
 		description_values = {
 			{
 				value_type = "percent",
-				value = tbl.bardin_ironbreaker_regen_stamina_on_block_broken.proc_chance
+				value = buff_tweak_data.bardin_ironbreaker_regen_stamina_on_block_broken.proc_chance
 			}
 		},
 		buffs = {
@@ -1627,7 +1641,7 @@ Talents.dwarf_ranger = {
 		description_values = {
 			{
 				value_type = "percent",
-				value = tbl.bardin_ironbreaker_cooldown_reduction_on_kill_while_full_stamina.cooldown_reduction
+				value = buff_tweak_data.bardin_ironbreaker_cooldown_reduction_on_kill_while_full_stamina.cooldown_reduction
 			}
 		},
 		buffs = {
@@ -1642,10 +1656,10 @@ Talents.dwarf_ranger = {
 		description_values = {
 			{
 				value_type = "percent",
-				value = tbl.bardin_ironbreaker_activated_ability_power_buff.multiplier
+				value = buff_tweak_data.bardin_ironbreaker_activated_ability_power_buff.multiplier
 			},
 			{
-				value = tbl.bardin_ironbreaker_activated_ability_power_buff.duration
+				value = buff_tweak_data.bardin_ironbreaker_activated_ability_power_buff.duration
 			}
 		},
 		buffs = {}
@@ -1665,10 +1679,10 @@ Talents.dwarf_ranger = {
 		description_values = {
 			{
 				value_type = "percent",
-				value = tbl.bardin_ironbreaker_activated_ability_taunt_range_and_duration.display_multiplier
+				value = buff_tweak_data.bardin_ironbreaker_activated_ability_taunt_range_and_duration.display_multiplier
 			},
 			{
-				value = tbl.bardin_ironbreaker_activated_ability_taunt_range_and_duration.duration
+				value = buff_tweak_data.bardin_ironbreaker_activated_ability_taunt_range_and_duration.duration
 			}
 		},
 		buffs = {}
@@ -1827,7 +1841,7 @@ Talents.dwarf_ranger = {
 		description_values = {
 			{
 				value_type = "percent",
-				value = tbl.bardin_slayer_crit_chance.bonus
+				value = buff_tweak_data.bardin_slayer_crit_chance.bonus
 			}
 		},
 		buffs = {
@@ -1843,7 +1857,7 @@ Talents.dwarf_ranger = {
 		description_values = {
 			{
 				value_type = "percent",
-				value = tbl.bardin_slayer_power_on_double_two_handed_weapons_buff.multiplier
+				value = buff_tweak_data.bardin_slayer_power_on_double_two_handed_weapons_buff.multiplier
 			}
 		},
 		buffs = {
@@ -1859,7 +1873,7 @@ Talents.dwarf_ranger = {
 		description_values = {
 			{
 				value_type = "percent",
-				value = tbl.bardin_slayer_attack_speed_on_double_one_handed_weapons_buff.multiplier
+				value = buff_tweak_data.bardin_slayer_attack_speed_on_double_one_handed_weapons_buff.multiplier
 			}
 		},
 		buffs = {
@@ -1884,7 +1898,7 @@ Talents.dwarf_ranger = {
 		description_values = {
 			{
 				value_type = "baked_percent",
-				value = tbl.bardin_slayer_passive_movement_speed.multiplier
+				value = buff_tweak_data.bardin_slayer_passive_movement_speed.multiplier
 			}
 		},
 		buffs = {}
@@ -1897,7 +1911,7 @@ Talents.dwarf_ranger = {
 		icon = "bardin_slayer_passive_increased_max_stacks",
 		description_values = {
 			{
-				value = tbl.bardin_slayer_passive_increased_max_stacks.display_value
+				value = buff_tweak_data.bardin_slayer_passive_increased_max_stacks.display_value
 			}
 		},
 		buffs = {}
@@ -1910,7 +1924,7 @@ Talents.dwarf_ranger = {
 		icon = "bardin_slayer_damage_taken_capped",
 		description_values = {
 			{
-				value = tbl.bardin_slayer_damage_taken_capped.value
+				value = buff_tweak_data.bardin_slayer_damage_taken_capped.value
 			}
 		},
 		buffs = {
@@ -1926,10 +1940,10 @@ Talents.dwarf_ranger = {
 		description_values = {
 			{
 				value_type = "percent",
-				value = tbl.bardin_slayer_damage_reduction_on_melee_charge_action_buff.multiplier
+				value = buff_tweak_data.bardin_slayer_damage_reduction_on_melee_charge_action_buff.multiplier
 			},
 			{
-				value = tbl.bardin_slayer_damage_reduction_on_melee_charge_action_buff.duration
+				value = buff_tweak_data.bardin_slayer_damage_reduction_on_melee_charge_action_buff.duration
 			}
 		},
 		buffs = {
@@ -1955,7 +1969,7 @@ Talents.dwarf_ranger = {
 		description_values = {
 			{
 				value_type = "percent",
-				value = tbl.bardin_slayer_activated_ability_leap_range.display_multiplier
+				value = buff_tweak_data.bardin_slayer_activated_ability_leap_range.display_multiplier
 			}
 		},
 		buffs = {}
@@ -1969,7 +1983,7 @@ Talents.dwarf_ranger = {
 		description_values = {
 			{
 				value_type = "percent",
-				value = tbl.bardin_slayer_activated_ability_leap_damage_buff.multiplier
+				value = buff_tweak_data.bardin_slayer_activated_ability_leap_damage_buff.multiplier
 			}
 		},
 		buffs = {
@@ -1985,7 +1999,7 @@ Talents.dwarf_ranger = {
 		description_values = {
 			{
 				value_type = "percent",
-				value = tbl.bardin_slayer_activated_ability_impact_damage.display_multiplier
+				value = buff_tweak_data.bardin_slayer_activated_ability_impact_damage.display_multiplier
 			}
 		},
 		buffs = {}
@@ -1998,7 +2012,7 @@ Talents.dwarf_ranger = {
 		description_values = {
 			{
 				value_type = "baked_percent",
-				value = tbl.bardin_slayer_activated_ability_movement.multiplier
+				value = buff_tweak_data.bardin_slayer_activated_ability_movement.multiplier
 			}
 		},
 		buffs = {}
@@ -2146,7 +2160,7 @@ Talents.dwarf_ranger = {
 		description_values = {
 			{
 				value_type = "percent",
-				value = tbl.bardin_ranger_melee_damage_on_no_ammo.multiplier
+				value = buff_tweak_data.bardin_ranger_melee_damage_on_no_ammo.multiplier
 			}
 		},
 		buffs = {
@@ -2162,7 +2176,7 @@ Talents.dwarf_ranger = {
 		icon = "bardin_ranger_cooldown_on_reload",
 		description_values = {
 			{
-				value = tbl.bardin_ranger_cooldown_on_reload.bonus
+				value = buff_tweak_data.bardin_ranger_cooldown_on_reload.bonus
 			}
 		},
 		buffs = {
@@ -2177,7 +2191,7 @@ Talents.dwarf_ranger = {
 		description_values = {
 			{
 				value_type = "percent",
-				value = tbl.bardin_ranger_attack_speed.multiplier
+				value = buff_tweak_data.bardin_ranger_attack_speed.multiplier
 			}
 		},
 		buffs = {
@@ -2192,23 +2206,23 @@ Talents.dwarf_ranger = {
 		description_values = {
 			{
 				value_type = "percent",
-				value = tbl.bardin_ranger_passive_spawn_potions_or_bombs.spawn_chance
+				value = buff_tweak_data.bardin_ranger_passive_spawn_potions_or_bombs.spawn_chance
 			}
 		},
 		buffs = {},
 		attributes = {
-			spawn_chance = tbl.bardin_ranger_passive_spawn_potions_or_bombs.spawn_chance
+			spawn_chance = buff_tweak_data.bardin_ranger_passive_spawn_potions_or_bombs.spawn_chance
 		},
 		mechanism_overrides = {
 			versus = {
 				description_values = {
 					{
 						value_type = "percent",
-						value = tbl.bardin_ranger_passive_spawn_potions_or_bombs.spawn_chance_versus
+						value = buff_tweak_data.bardin_ranger_passive_spawn_potions_or_bombs.spawn_chance_versus
 					}
 				},
 				attributes = {
-					spawn_chance = tbl.bardin_ranger_passive_spawn_potions_or_bombs.spawn_chance_versus
+					spawn_chance = buff_tweak_data.bardin_ranger_passive_spawn_potions_or_bombs.spawn_chance_versus
 				}
 			}
 		}
@@ -2221,7 +2235,7 @@ Talents.dwarf_ranger = {
 		description_values = {
 			{
 				value_type = "percent",
-				value = tbl.bardin_ranger_passive_improved_ammo.multiplier
+				value = buff_tweak_data.bardin_ranger_passive_improved_ammo.multiplier
 			}
 		},
 		buffs = {}
@@ -2234,17 +2248,17 @@ Talents.dwarf_ranger = {
 		description_values = {
 			{
 				value_type = "percent",
-				value = tbl.bardin_survival_ale_buff_presentation.multiplier_2
+				value = buff_tweak_data.bardin_survival_ale_buff_presentation.multiplier_2
 			},
 			{
 				value_type = "baked_percent",
-				value = tbl.bardin_survival_ale_buff_presentation.multiplier
+				value = buff_tweak_data.bardin_survival_ale_buff_presentation.multiplier
 			},
 			{
-				value = tbl.bardin_survival_ale_buff_presentation.duration
+				value = buff_tweak_data.bardin_survival_ale_buff_presentation.duration
 			},
 			{
-				value = tbl.bardin_survival_ale_buff_presentation.max_stacks
+				value = buff_tweak_data.bardin_survival_ale_buff_presentation.max_stacks
 			}
 		},
 		buffs = {}
@@ -2257,7 +2271,7 @@ Talents.dwarf_ranger = {
 		description_values = {
 			{
 				value_type = "baked_percent",
-				value = tbl.bardin_ranger_movement_speed.multiplier
+				value = buff_tweak_data.bardin_ranger_movement_speed.multiplier
 			}
 		},
 		buffs = {
@@ -2273,10 +2287,10 @@ Talents.dwarf_ranger = {
 		description_values = {
 			{
 				value_type = "percent",
-				value = tbl.bardin_ranger_reduced_damage_taken_headshot_buff.multiplier
+				value = buff_tweak_data.bardin_ranger_reduced_damage_taken_headshot_buff.multiplier
 			},
 			{
-				value = tbl.bardin_ranger_reduced_damage_taken_headshot_buff.duration
+				value = buff_tweak_data.bardin_ranger_reduced_damage_taken_headshot_buff.duration
 			}
 		},
 		buffs = {
@@ -2290,11 +2304,11 @@ Talents.dwarf_ranger = {
 		icon = "bardin_ranger_reload_speed_on_multi_hit",
 		description_values = {
 			{
-				value = tbl.bardin_ranger_reload_speed_on_multi_hit_add.target_number
+				value = buff_tweak_data.bardin_ranger_reload_speed_on_multi_hit_add.target_number
 			},
 			{
 				value_type = "percent",
-				value = tbl.bardin_ranger_reload_speed_on_multi_hit_buff.multiplier
+				value = buff_tweak_data.bardin_ranger_reload_speed_on_multi_hit_buff.multiplier
 			}
 		},
 		buffs = {
@@ -2309,10 +2323,10 @@ Talents.dwarf_ranger = {
 		description_values = {
 			{
 				value_type = "percent",
-				value = tbl.bardin_ranger_smoke_attack_buff.multiplier
+				value = buff_tweak_data.bardin_ranger_smoke_attack_buff.multiplier
 			},
 			{
-				value = tbl.bardin_ranger_smoke_heal_buff.heal_amount
+				value = buff_tweak_data.bardin_ranger_smoke_heal_buff.heal_amount
 			}
 		},
 		buffs = {}
@@ -2403,4 +2417,4 @@ Talents.dwarf_ranger = {
 }
 
 BuffUtils.copy_talent_buff_names(TalentBuffTemplates.dwarf_ranger)
-BuffUtils.apply_buff_tweak_data(TalentBuffTemplates.dwarf_ranger, tbl)
+BuffUtils.apply_buff_tweak_data(TalentBuffTemplates.dwarf_ranger, buff_tweak_data)

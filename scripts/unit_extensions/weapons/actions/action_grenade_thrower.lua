@@ -2,63 +2,63 @@
 
 ActionGrenadeThrower = class(ActionGrenadeThrower, ActionBase)
 
-ActionGrenadeThrower.init = function (self, arg_1_1, arg_1_2, arg_1_3, arg_1_4, arg_1_5, arg_1_6, arg_1_7, arg_1_8)
+ActionGrenadeThrower.init = function (self, world, item_name, is_server, owner_unit, damage_unit, first_person_unit, weapon_unit, weapon_system)
 	-- function 1
-	ActionGrenadeThrower.super.init(self, arg_1_1, arg_1_2, arg_1_3, arg_1_4, arg_1_5, arg_1_6, arg_1_7, arg_1_8)
+	ActionGrenadeThrower.super.init(self, world, item_name, is_server, owner_unit, damage_unit, first_person_unit, weapon_unit, weapon_system)
 
-	if not ScriptUnit.has_extension(arg_1_7, "ammo_system") then
-		self.ammo_extension = ScriptUnit.extension(arg_1_7, "ammo_system")
+	if ScriptUnit.has_extension(weapon_unit, "ammo_system") then
+		self.ammo_extension = ScriptUnit.extension(weapon_unit, "ammo_system")
 	end
 
-	self.spread_extension = ScriptUnit.extension(arg_1_7, "spread_system")
+	self.spread_extension = ScriptUnit.extension(weapon_unit, "spread_system")
 end
 
-ActionGrenadeThrower.client_owner_start_action = function (self, arg_2_1, arg_2_2, arg_2_3, arg_2_4)
+ActionGrenadeThrower.client_owner_start_action = function (self, new_action, t, chain_action_data, power_level)
 	-- function 2
-	ActionGrenadeThrower.super.client_owner_start_action(self, arg_2_1, arg_2_2, arg_2_3, arg_2_4)
+	ActionGrenadeThrower.super.client_owner_start_action(self, new_action, t, chain_action_data, power_level)
 
 	local owner_unit = self.owner_unit
-	local is_critical_strike = ActionUtils.is_critical_strike(owner_unit, arg_2_1, arg_2_2)
-	local extension = ScriptUnit.extension(owner_unit, "buff_system")
+	local is_critical_strike = ActionUtils.is_critical_strike(owner_unit, new_action, t)
+	local buff_extension = ScriptUnit.extension(owner_unit, "buff_system")
 
-	self.power_level = arg_2_4
-	self.owner_buff_extension = extension
-	self.current_action = arg_2_1
+	self.power_level = power_level
+	self.owner_buff_extension = buff_extension
+	self.current_action = new_action
 	self.extra_buff_shot = false
-	self.num_projectiles = arg_2_1.num_projectiles
+	self.num_projectiles = new_action.num_projectiles
 
-	local multi_projectile_spread = arg_2_1.multi_projectile_spread
+	local multi_projectile_spread = new_action.multi_projectile_spread
 
-	multi_projectile_spread = multi_projectile_spread or 0.075
+	multi_projectile_spread = not not multi_projectile_spread or not not 0.075
 	self.multi_projectile_spread = multi_projectile_spread
 
-	if not self.ammo_extension and not self.num_projectiles then
+	if self.ammo_extension and self.num_projectiles then
 		self.num_projectiles = math.min(self.num_projectiles, self.ammo_extension:current_ammo())
 	end
 
 	self.num_projectiles_shot = 1
 	self.state = "waiting_to_shoot"
 
-	local fire_time = arg_2_1.fire_time
+	local fire_time = new_action.fire_time
 
-	fire_time = fire_time or 0
-	self.time_to_shoot = arg_2_2 + fire_time
+	fire_time = not not fire_time or not not 0
+	self.time_to_shoot = t + fire_time
 
-	local active_reload_time = arg_2_1.active_reload_time
+	local active_reload_time = new_action.active_reload_time
 
-	active_reload_time = not active_reload_time and arg_2_2 + arg_2_1.active_reload_time
+	active_reload_time = not not active_reload_time and not not (t + new_action.active_reload_time)
 	self.active_reload_time = active_reload_time
 
-	local has_extension = ScriptUnit.has_extension(owner_unit, "hud_system")
+	local hud_extension = ScriptUnit.has_extension(owner_unit, "hud_system")
 
-	self:_handle_critical_strike(is_critical_strike, extension, has_extension, nil, "on_critical_shot", nil)
+	self:_handle_critical_strike(is_critical_strike, buff_extension, hud_extension, nil, "on_critical_shot", nil)
 
 	self._is_critical_strike = is_critical_strike
 end
 
-ActionGrenadeThrower.client_owner_post_update = function (self, arg_3_1, arg_3_2, arg_3_3, arg_3_4)
+ActionGrenadeThrower.client_owner_post_update = function (self, dt, t, world, can_damage)
 	-- function 3
-	if not (self.state ~= "waiting_to_shoot" or not (arg_3_2 >= self.time_to_shoot)) then
+	if self.state == "waiting_to_shoot" and t >= self.time_to_shoot then
 		self.state = "shooting"
 	end
 
@@ -71,96 +71,113 @@ ActionGrenadeThrower.client_owner_post_update = function (self, arg_3_1, arg_3_2
 			})
 		end
 
-		local extension = ScriptUnit.extension(owner_unit, "first_person_system")
-		local get_projectile_start_position_rotation, var_3_3 = extension:get_projectile_start_position_rotation()
+		local first_person_extension = ScriptUnit.extension(owner_unit, "first_person_system")
+		local position, rotation = first_person_extension:get_projectile_start_position_rotation()
 		local spread_extension = self.spread_extension
 		local current_action = self.current_action
 
-		if not spread_extension then
-			var_3_3 = spread_extension:get_randomised_spread(var_3_3)
+		if spread_extension then
+			rotation = spread_extension:get_randomised_spread(rotation)
 
 			spread_extension:set_shooting()
 		end
 
-		local pitch_from_rotation = ActionUtils.pitch_from_rotation(var_3_3)
+		local angle = ActionUtils.pitch_from_rotation(rotation)
 		local speed = current_action.speed
-		local normalize = Vector3.normalize(Vector3.flat(Quaternion.forward(var_3_3)))
+		local target_vector = Vector3.normalize(Vector3.flat(Quaternion.forward(rotation)))
 		local lookup_data = current_action.lookup_data
 
-		ActionUtils.spawn_player_projectile(owner_unit, get_projectile_start_position_rotation, var_3_3, 0, pitch_from_rotation, normalize, speed, self.item_name, lookup_data.item_template_name, lookup_data.action_name, lookup_data.sub_action_name, self._is_critical_strike, self.power_level)
+		ActionUtils.spawn_player_projectile(owner_unit, position, rotation, 0, angle, target_vector, speed, self.item_name, lookup_data.item_template_name, lookup_data.action_name, lookup_data.sub_action_name, self._is_critical_strike, self.power_level)
 
 		local fire_sound_event = self.current_action.fire_sound_event
 
-		if not fire_sound_event then
-			extension:play_hud_sound_event(fire_sound_event)
+		if fire_sound_event then
+			first_person_extension:play_hud_sound_event(fire_sound_event)
 		end
 
-		if not (not self.ammo_extension and self.extra_buff_shot) then
+		if self.ammo_extension and not self.extra_buff_shot then
 			local ammo_usage = current_action.ammo_usage
-			local flag = ItemMasterList[self.item_name].item_type == "grenade"
-			local apply_buffs_to_value, var_3_14 = self.owner_buff_extension:apply_buffs_to_value(0, "not_consume_grenade")
+			local is_grenade = ItemMasterList[self.item_name].item_type == "grenade"
+			local _, procced = self.owner_buff_extension:apply_buffs_to_value(0, "not_consume_grenade")
 
-			if not var_3_14 and not flag then
+			if procced and is_grenade then
 				self.ammo_extension:add_ammo_to_reserve(ammo_usage)
 			end
 
 			self.ammo_extension:use_ammo(ammo_usage)
 		end
 
-		local flag_2 = not self.extra_buff_shot
+		local add_spread = not self.extra_buff_shot
 
-		if not self:_update_extra_shots(self.owner_buff_extension, 1) then
+		if self:_update_extra_shots(self.owner_buff_extension, 1) then
 			self.state = "waiting_to_shoot"
-			self.time_to_shoot = arg_3_2 + 0.1
+			self.time_to_shoot = t + 0.1
 			self.extra_buff_shot = true
 		else
 			self.state = "shot"
 		end
 
-		extension:reset_aim_assist_multiplier()
+		first_person_extension:reset_aim_assist_multiplier()
 	end
 
-	if self.state ~= "shot" or not self.active_reload_time then
-		local owner_unit_2 = self.owner_unit
-		local extension_2 = ScriptUnit.extension(owner_unit_2, "input_system")
+	if self.state == "shot" and self.active_reload_time then
+		local owner_unit = self.owner_unit
+		local input_extension = ScriptUnit.extension(owner_unit, "input_system")
 
-		if arg_3_2 > self.active_reload_time then
+		if t > self.active_reload_time then
 			local ammo_extension = self.ammo_extension
 
-			if extension_2:get("weapon_reload") or not extension_2:get_buffer("weapon_reload") or not ammo_extension:can_reload() then
-				ScriptUnit.extension(self.owner_unit, "status_system"):set_zooming(false)
-				ScriptUnit.extension(self.weapon_unit, "weapon_system"):stop_action("reload")
+			if (input_extension:get("weapon_reload") or input_extension:get_buffer("weapon_reload")) and ammo_extension:can_reload() then
+				local status_extension = ScriptUnit.extension(self.owner_unit, "status_system")
+
+				status_extension:set_zooming(false)
+
+				local weapon_extension = ScriptUnit.extension(self.weapon_unit, "weapon_system")
+
+				weapon_extension:stop_action("reload")
 			end
-		elseif not extension_2:get("weapon_reload") then
-			extension_2:add_buffer("weapon_reload", 0)
+		elseif input_extension:get("weapon_reload") then
+			input_extension:add_buffer("weapon_reload", 0)
 		end
 	end
 end
 
-ActionGrenadeThrower.finish = function (self, arg_4_1)
+ActionGrenadeThrower.finish = function (self, reason)
 	-- function 4
 	local ammo_extension = self.ammo_extension
 	local current_action = self.current_action
 	local owner_unit = self.owner_unit
 
-	if arg_4_1 ~= "new_interupting_action" then
-		ScriptUnit.extension(owner_unit, "status_system"):set_zooming(false)
+	if reason ~= "new_interupting_action" then
+		local status_extension = ScriptUnit.extension(owner_unit, "status_system")
+
+		status_extension:set_zooming(false)
 
 		local reload_when_out_of_ammo_condition_func = current_action.reload_when_out_of_ammo_condition_func
 		local flag
 
-		flag = reload_when_out_of_ammo_condition_func or not true or reload_when_out_of_ammo_condition_func(owner_unit, arg_4_1)
+		if not reload_when_out_of_ammo_condition_func then
+			flag = true
 
-		if not ammo_extension and not current_action.reload_when_out_of_ammo and not flag and ammo_extension:ammo_count() ~= 0 or not ammo_extension:can_reload() then
-			local flag_2 = true
+			goto label_4_0
+		end
 
-			ammo_extension:start_reload(flag_2)
+		flag = reload_when_out_of_ammo_condition_func(owner_unit, reason)
+
+		local do_out_of_ammo_reload = flag
+
+		::label_4_0::
+
+		if ammo_extension and current_action.reload_when_out_of_ammo and do_out_of_ammo_reload and ammo_extension:ammo_count() == 0 and ammo_extension:can_reload() then
+			local play_reload_animation = true
+
+			ammo_extension:start_reload(play_reload_animation)
 		end
 	end
 
-	local has_extension = ScriptUnit.has_extension(owner_unit, "hud_system")
+	local hud_extension = ScriptUnit.has_extension(owner_unit, "hud_system")
 
-	if not has_extension then
-		has_extension.show_critical_indication = false
+	if hud_extension then
+		hud_extension.show_critical_indication = false
 	end
 end

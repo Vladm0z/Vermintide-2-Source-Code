@@ -2,82 +2,82 @@
 
 ScriptRconServer = class(ScriptRconServer)
 
-local function fn(arg_1_0, ...)
+local function print_log(text, ...)
 	-- function 1
-	local format = string.format(arg_1_0, ...)
+	local formatted_string = string.format(text, ...)
 
-	cprintf("[RCON] %s", format)
+	cprintf("[RCON] %s", formatted_string)
 end
 
-ScriptRconServer.init = function (self, arg_2_1, arg_2_2)
+ScriptRconServer.init = function (self, settings, dedicated_server_commands)
 	-- function 2
-	if not arg_2_1 then
-		fn("Failed to start")
+	if not settings then
+		print_log("Failed to start")
 
 		self._enabled = false
 	end
 
-	local port = arg_2_1.port
+	local port = settings.port
 
-	port = port or 27018
+	port = not not port or not not 27018
 	self._port = port
-	self._password = arg_2_1.rcon_password
+	self._password = settings.rcon_password
 
-	if not RConServer.start(self._port, self._password) then
-		fn("Running on port %d.", self._port)
-		fn("You need to open TCP port %d for incoming traffic to make the server configurable outside the LAN", self._port)
+	if RConServer.start(self._port, self._password) then
+		print_log("Running on port %d.", self._port)
+		print_log("You need to open TCP port %d for incoming traffic to make the server configurable outside the LAN", self._port)
 
-		self._dedicated_server_commands = arg_2_2
+		self._dedicated_server_commands = dedicated_server_commands
 		self._clients = {}
 		self._enabled = true
 	else
 		self._enabled = false
 
-		fn("Failed to start")
+		print_log("Failed to start")
 	end
 end
 
 ScriptRconServer.destroy = function (self)
 	-- function 3
-	if not self._enabled then
+	if self._enabled then
 		RConServer.stop()
 	end
 end
 
-ScriptRconServer.update = function (self, arg_4_1, arg_4_2)
+ScriptRconServer.update = function (self, dt, t)
 	-- function 4
-	if not self._enabled then
-		RConServer.update(arg_4_1, self)
+	if self._enabled then
+		RConServer.update(dt, self)
 	end
 end
 
-ScriptRconServer.rcon_connect = function (self, arg_5_1, arg_5_2)
+ScriptRconServer.rcon_connect = function (self, id, ip_port)
 	-- function 5
-	fassert(self._clients[arg_5_1] == nil, "Tried to connect duplicate RCON client")
-	fn("Client '%s' connected", arg_5_1)
+	fassert(self._clients[id] == nil, "Tried to connect duplicate RCON client")
+	print_log("Client '%s' connected", id)
 
-	self._clients[arg_5_1] = arg_5_2
+	self._clients[id] = ip_port
 
 	return true
 end
 
-ScriptRconServer.rcon_command = function (self, arg_6_1, arg_6_2)
+ScriptRconServer.rcon_command = function (self, id, command_string)
 	-- function 6
-	if not self._clients[arg_6_1] then
-		fn("Unauthorized")
+	if not self._clients[id] then
+		print_log("Unauthorized")
 
 		return "Unauthorized"
 	end
 
-	local execute_command, var_6_1 = self._dedicated_server_commands:execute_command(arg_6_2)
+	local result, response = self._dedicated_server_commands:execute_command(command_string)
 
-	return var_6_1
+	return response
 end
 
-ScriptRconServer.rcon_disconnect = function (self, arg_7_1)
+ScriptRconServer.rcon_disconnect = function (self, id)
 	-- function 7
-	fassert(self._clients[arg_7_1] ~= nil, "Tried to disconnect duplicate RCON client")
-	fn("Client '%s' disconnected", arg_7_1)
+	fassert(self._clients[id] ~= nil, "Tried to disconnect duplicate RCON client")
+	print_log("Client '%s' disconnected", id)
 
-	self._clients[arg_7_1] = nil
+	self._clients[id] = nil
 end

@@ -1,13 +1,12 @@
 -- chunkname: @scripts/ui/hud_ui/deus_soft_currency_indicator_ui_definitions.lua
 
-local num = 1920
-local num_2 = 1080
-local num_3 = 1
-local tbl = {
-	325 * num_3,
-	50 * num_3
+local SIZE_X, SIZE_Y = 1920, 1080
+local coin_ui_multiplier = 1
+local COIN_UI_WINDOW_SIZE = {
+	325 * coin_ui_multiplier,
+	50 * coin_ui_multiplier
 }
-local tbl_2 = {
+local scenegraph_definition = {
 	screen = {
 		scale = "fit",
 		position = {
@@ -16,8 +15,8 @@ local tbl_2 = {
 			UILayer.hud
 		},
 		size = {
-			num,
-			num_2
+			SIZE_X,
+			SIZE_Y
 		}
 	},
 	coin_ui = {
@@ -29,20 +28,20 @@ local tbl_2 = {
 			-25,
 			0
 		},
-		size = tbl
+		size = COIN_UI_WINDOW_SIZE
 	}
 }
 
-local function fn()
+local function create_coin_widget_definition()
 	-- function 1
-	local str = "weaves_essence_bar_backdrop"
-	local get_atlas_settings_by_texture_name = UIAtlasHelper.get_atlas_settings_by_texture_name(str)
-	local num = get_atlas_settings_by_texture_name.size[2] * 0.5
-	local num_2 = get_atlas_settings_by_texture_name.size[1] * 0.5
-	local num_3 = -2
-	local tbl_2 = {
-		num,
-		num
+	local background_texture = "weaves_essence_bar_backdrop"
+	local background_texture_settings = UIAtlasHelper.get_atlas_settings_by_texture_name(background_texture)
+	local base_height = background_texture_settings.size[2] * 0.5
+	local base_offset_x = background_texture_settings.size[1] * 0.5
+	local base_offset_y = -2
+	local icon_size = {
+		base_height,
+		base_height
 	}
 
 	return {
@@ -53,9 +52,12 @@ local function fn()
 					pass_type = "texture",
 					style_id = "background",
 					texture_id = "background",
-					content_check_function = function (arg_2_0)
+					content_check_function = function (content)
 						-- function 2
-						return Managers.mechanism:get_state() ~= "map_deus"
+						local current_mechanism_state = Managers.mechanism:get_state()
+						local show_background = current_mechanism_state ~= "map_deus"
+
+						return show_background
 					end
 				},
 				{
@@ -125,13 +127,13 @@ local function fn()
 			background_glow = "horizontal_gradient",
 			coin_icon_highlight = "deus_icons_coin_highlight",
 			coins_label = "deus_collect_coins_text",
-			background = str
+			background = background_texture
 		},
 		style = {
 			background = {
 				vertical_alignment = "top",
 				horizontal_alignment = "right",
-				texture_size = get_atlas_settings_by_texture_name.size,
+				texture_size = background_texture_settings.size,
 				color = {
 					255,
 					255,
@@ -147,7 +149,7 @@ local function fn()
 			background_glow = {
 				vertical_alignment = "top",
 				horizontal_alignment = "right",
-				texture_size = get_atlas_settings_by_texture_name.size,
+				texture_size = background_texture_settings.size,
 				color = {
 					0,
 					74,
@@ -164,12 +166,12 @@ local function fn()
 				vertical_alignment = "center",
 				horizontal_alignment = "center",
 				texture_size = {
-					tbl_2[1],
-					tbl_2[2]
+					icon_size[1],
+					icon_size[2]
 				},
 				base_size = {
-					tbl_2[1],
-					tbl_2[2]
+					icon_size[1],
+					icon_size[2]
 				},
 				color = {
 					255,
@@ -178,8 +180,8 @@ local function fn()
 					255
 				},
 				offset = {
-					num_2 - 155,
-					num_3,
+					base_offset_x - 155,
+					base_offset_y,
 					10
 				}
 			},
@@ -187,8 +189,8 @@ local function fn()
 				vertical_alignment = "center",
 				horizontal_alignment = "center",
 				texture_size = {
-					tbl_2[1],
-					tbl_2[2]
+					icon_size[1],
+					icon_size[2]
 				},
 				color = {
 					255,
@@ -197,8 +199,8 @@ local function fn()
 					255
 				},
 				offset = {
-					num_2 - 155,
-					num_3,
+					base_offset_x - 155,
+					base_offset_y,
 					11
 				}
 			},
@@ -206,8 +208,8 @@ local function fn()
 				vertical_alignment = "center",
 				horizontal_alignment = "center",
 				texture_size = {
-					tbl_2[1],
-					tbl_2[2]
+					icon_size[1],
+					icon_size[2]
 				},
 				color = {
 					0,
@@ -216,13 +218,13 @@ local function fn()
 					255
 				},
 				base_offset = {
-					num_2 - 155,
-					num_3,
+					base_offset_x - 155,
+					base_offset_y,
 					12
 				},
 				offset = {
-					num_2 - 155,
-					num_3,
+					base_offset_x - 155,
+					base_offset_y,
 					11
 				}
 			},
@@ -230,8 +232,8 @@ local function fn()
 				vertical_alignment = "center",
 				horizontal_alignment = "center",
 				texture_size = {
-					tbl_2[1] * 2,
-					tbl_2[2] * 2
+					icon_size[1] * 2,
+					icon_size[2] * 2
 				},
 				color = {
 					0,
@@ -240,8 +242,8 @@ local function fn()
 					255
 				},
 				offset = {
-					num_2 - 155,
-					num_3,
+					base_offset_x - 155,
+					base_offset_y,
 					13
 				}
 			},
@@ -249,12 +251,12 @@ local function fn()
 				vertical_alignment = "center",
 				horizontal_alignment = "center",
 				texture_size = {
-					tbl_2[1] * 1.75,
-					tbl_2[2] * 1.75
+					icon_size[1] * 1.75,
+					icon_size[2] * 1.75
 				},
 				base_texture_size = {
-					tbl_2[1] * 1.75,
-					tbl_2[2] * 1.75
+					icon_size[1] * 1.75,
+					icon_size[2] * 1.75
 				},
 				color = {
 					0,
@@ -263,8 +265,8 @@ local function fn()
 					255
 				},
 				offset = {
-					num_2 - 155,
-					num_3,
+					base_offset_x - 155,
+					base_offset_y,
 					13
 				}
 			},
@@ -289,8 +291,8 @@ local function fn()
 					1
 				},
 				size = {
-					tbl[1] - 80,
-					tbl[2]
+					COIN_UI_WINDOW_SIZE[1] - 80,
+					COIN_UI_WINDOW_SIZE[2]
 				}
 			},
 			coins_label_shadow = {
@@ -314,8 +316,8 @@ local function fn()
 					0
 				},
 				size = {
-					tbl[1] - 80,
-					tbl[2]
+					COIN_UI_WINDOW_SIZE[1] - 80,
+					COIN_UI_WINDOW_SIZE[2]
 				}
 			},
 			coin_count = {
@@ -325,8 +327,8 @@ local function fn()
 				horizontal_alignment = "left",
 				vertical_alignment = "center",
 				font_type = "hell_shark_header",
-				base_font_size = num,
-				font_size = num,
+				base_font_size = base_height,
+				font_size = base_height,
 				text_color = {
 					255,
 					255,
@@ -334,8 +336,8 @@ local function fn()
 					255
 				},
 				offset = {
-					num_2 + tbl_2[1] + 5,
-					num_3 - 2,
+					base_offset_x + icon_size[1] + 5,
+					base_offset_y - 2,
 					1
 				}
 			},
@@ -346,7 +348,7 @@ local function fn()
 				horizontal_alignment = "left",
 				vertical_alignment = "center",
 				font_type = "hell_shark_header",
-				font_size = num,
+				font_size = base_height,
 				text_color = {
 					255,
 					0,
@@ -354,8 +356,8 @@ local function fn()
 					0
 				},
 				offset = {
-					num_2 + tbl_2[1] + 5 - 2,
-					num_3 - 2 - 2,
+					base_offset_x + icon_size[1] + 5 - 2,
+					base_offset_y - 2 - 2,
 					0
 				}
 			},
@@ -364,7 +366,7 @@ local function fn()
 				horizontal_alignment = "left",
 				localize = false,
 				font_type = "hell_shark_header",
-				font_size = num,
+				font_size = base_height,
 				text_color = {
 					255,
 					200,
@@ -372,13 +374,13 @@ local function fn()
 					200
 				},
 				base_offset = {
-					num_2 + tbl_2[1] + 5 - 2 + 60,
-					num_3 - 2 - 2,
+					base_offset_x + icon_size[1] + 5 - 2 + 60,
+					base_offset_y - 2 - 2,
 					3
 				},
 				offset = {
-					num_2 + tbl_2[1] + 5 - 2 + 60,
-					num_3 - 2 - 2,
+					base_offset_x + icon_size[1] + 5 - 2 + 60,
+					base_offset_y - 2 - 2,
 					3
 				}
 			}
@@ -386,86 +388,87 @@ local function fn()
 	}
 end
 
-local tbl_3 = {
+local animation_definitions = {
 	coin_change = {
 		{
 			name = "count",
 			duration = 1.2,
-			init = function (arg_3_0, arg_3_1, arg_3_2, arg_3_3)
+			init = function (ui_scenegraph, scenegraph_definition, coin_widget, params)
 				-- function 3
-				arg_3_2.content.coin_delta = string.format("%+d", arg_3_3.coin_delta)
-				arg_3_3.delta_dir = math.sign(arg_3_3.coin_delta)
+				coin_widget.content.coin_delta = string.format("%+d", params.coin_delta)
+				params.delta_dir = math.sign(params.coin_delta)
 
-				local text_color = arg_3_2.style.coin_delta.text_color
+				local coin_delta_color = coin_widget.style.coin_delta.text_color
 				local flag
 
-				flag = not (arg_3_3.delta_dir <= 0) or not 255 or 200
-				text_color[2] = flag
+				flag = (not (params.delta_dir <= 0) or not 255) and not not 200
+				coin_delta_color[2] = flag
 			end,
-			update = function (arg_4_0, arg_4_1, arg_4_2, arg_4_3, arg_4_4)
+			update = function (ui_scenegraph, scenegraph_definition, coin_widget, progress, params)
 				-- function 4
-				local num = 1 - (1 - arg_4_3)^2
+				local p = 1 - (1 - progress)^2
 				local lerp = math.lerp
-				local from_coin_count = arg_4_4.from_coin_count
+				local from_coin_count = params.from_coin_count
 
-				from_coin_count = from_coin_count or 0
+				from_coin_count = not not from_coin_count or not not 0
 
-				local to_coin_count = arg_4_4.to_coin_count
+				local to_coin_count = params.to_coin_count
 
-				to_coin_count = to_coin_count or 100
+				to_coin_count = not not to_coin_count or not not 100
 
-				local var_4_4 = lerp(from_coin_count, to_coin_count, num)
+				local coin_count = lerp(from_coin_count, to_coin_count, p)
 
-				arg_4_2.content.coin_count_text = string.format("%d", var_4_4)
+				coin_widget.content.coin_count_text = string.format("%d", coin_count)
 			end,
 			on_complete = NOP
 		},
 		{
 			name = "delta",
 			duration = 2,
-			init = function (arg_5_0, arg_5_1, arg_5_2, arg_5_3)
+			init = function (ui_scenegraph, scenegraph_definition, coin_widget, params)
 				-- function 5
-				arg_5_3.delta_dir = math.sign(arg_5_3.coin_delta)
-				arg_5_2.content.coin_delta = string.format("%+d", arg_5_3.coin_delta)
+				params.delta_dir = math.sign(params.coin_delta)
+				coin_widget.content.coin_delta = string.format("%+d", params.coin_delta)
 			end,
-			update = function (arg_6_0, arg_6_1, arg_6_2, arg_6_3, arg_6_4)
+			update = function (ui_scenegraph, scenegraph_definition, coin_widget, progress, params)
 				-- function 6
-				local coin_delta = arg_6_2.style.coin_delta
+				local coin_delta_style = coin_widget.style.coin_delta
 
-				coin_delta.offset[2] = coin_delta.base_offset[2] + arg_6_4.delta_dir * (arg_6_3 - 0.5) * 40
-				coin_delta.text_color[1] = math.clamp(255 * (1 - arg_6_3) / 0.8, 0, 255)
+				coin_delta_style.offset[2] = coin_delta_style.base_offset[2] + params.delta_dir * (progress - 0.5) * 40
+				coin_delta_style.text_color[1] = math.clamp(255 * (1 - progress) / 0.8, 0, 255)
 			end,
-			on_complete = function (arg_7_0, arg_7_1, arg_7_2, arg_7_3)
+			on_complete = function (ui_scenegraph, scenegraph_definition, coin_widget, params)
 				-- function 7
-				arg_7_2.style.coin_delta.text_color[1] = 0
+				coin_widget.style.coin_delta.text_color[1] = 0
 			end
 		},
 		{
 			name = "grow",
 			delay = 0.2,
 			duration = 0.2,
-			init = function (arg_8_0, arg_8_1, arg_8_2, arg_8_3)
+			init = function (ui_scenegraph, scenegraph_definition, coin_widget, params)
 				-- function 8
-				arg_8_3.icon_size_x = arg_8_2.style.coin_icon.texture_size[1]
-				arg_8_3.icon_size_y = arg_8_2.style.coin_icon.texture_size[2]
+				params.icon_size_x = coin_widget.style.coin_icon.texture_size[1]
+				params.icon_size_y = coin_widget.style.coin_icon.texture_size[2]
 			end,
-			update = function (arg_9_0, arg_9_1, arg_9_2, arg_9_3, arg_9_4)
+			update = function (ui_scenegraph, scenegraph_definition, coin_widget, progress, params)
 				-- function 9
-				local num = 1 + 0.5 * (1 - (1 - arg_9_3) * (1 - arg_9_3))
-				local style = arg_9_2.style
-				local coin_count = style.coin_count
-				local coin_icon = style.coin_icon
-				local coin_icon_mask = style.coin_icon_mask
-				local coin_icon_bloom = style.coin_icon_bloom
-				local num_2 = num * arg_9_4.icon_size_x
-				local num_3 = num * arg_9_4.icon_size_y
+				local s = 1 - (1 - progress) * (1 - progress)
+				local size_multiplier = 1 + 0.5 * s
+				local style = coin_widget.style
+				local coin_count_style = style.coin_count
+				local coin_icon_style = style.coin_icon
+				local coin_mask_style = style.coin_icon_mask
+				local coin_bloom_style = style.coin_icon_bloom
+				local size_x = size_multiplier * params.icon_size_x
+				local size_y = size_multiplier * params.icon_size_y
 
-				coin_icon.texture_size[1] = num_2
-				coin_icon.texture_size[2] = num_3
-				coin_icon_mask.texture_size[1] = num_2
-				coin_icon_mask.texture_size[2] = num_3
-				coin_icon_bloom.texture_size[1] = num * coin_icon_bloom.base_texture_size[1]
-				coin_icon_bloom.texture_size[2] = num * coin_icon_bloom.base_texture_size[2]
+				coin_icon_style.texture_size[1] = size_x
+				coin_icon_style.texture_size[2] = size_y
+				coin_mask_style.texture_size[1] = size_x
+				coin_mask_style.texture_size[2] = size_y
+				coin_bloom_style.texture_size[1] = size_multiplier * coin_bloom_style.base_texture_size[1]
+				coin_bloom_style.texture_size[2] = size_multiplier * coin_bloom_style.base_texture_size[2]
 			end,
 			on_complete = NOP
 		},
@@ -473,28 +476,29 @@ local tbl_3 = {
 			name = "shrink",
 			delay = 0.4,
 			duration = 0.4,
-			init = function (arg_10_0, arg_10_1, arg_10_2, arg_10_3)
+			init = function (ui_scenegraph, scenegraph_definition, coin_widget, params)
 				-- function 10
-				arg_10_3.icon_size_x = arg_10_2.style.coin_icon.texture_size[1]
-				arg_10_3.icon_size_y = arg_10_2.style.coin_icon.texture_size[2]
+				params.icon_size_x = coin_widget.style.coin_icon.texture_size[1]
+				params.icon_size_y = coin_widget.style.coin_icon.texture_size[2]
 			end,
-			update = function (arg_11_0, arg_11_1, arg_11_2, arg_11_3, arg_11_4)
+			update = function (ui_scenegraph, scenegraph_definition, coin_widget, progress, params)
 				-- function 11
-				local num = 1 + 0.5 * (1 - arg_11_3 * arg_11_3)
-				local style = arg_11_2.style
-				local coin_count = style.coin_count
-				local coin_icon = style.coin_icon
-				local coin_icon_mask = style.coin_icon_mask
-				local coin_icon_bloom = style.coin_icon_bloom
-				local num_2 = num * arg_11_4.icon_size_x
-				local num_3 = num * arg_11_4.icon_size_y
+				local s = 1 - progress * progress
+				local size_multiplier = 1 + 0.5 * s
+				local style = coin_widget.style
+				local coin_count_style = style.coin_count
+				local coin_icon_style = style.coin_icon
+				local coin_mask_style = style.coin_icon_mask
+				local coin_bloom_style = style.coin_icon_bloom
+				local size_x = size_multiplier * params.icon_size_x
+				local size_y = size_multiplier * params.icon_size_y
 
-				coin_icon.texture_size[1] = num_2
-				coin_icon.texture_size[2] = num_3
-				coin_icon_mask.texture_size[1] = num_2
-				coin_icon_mask.texture_size[2] = num_3
-				coin_icon_bloom.texture_size[1] = num * coin_icon_bloom.base_texture_size[1]
-				coin_icon_bloom.texture_size[2] = num * coin_icon_bloom.base_texture_size[2]
+				coin_icon_style.texture_size[1] = size_x
+				coin_icon_style.texture_size[2] = size_y
+				coin_mask_style.texture_size[1] = size_x
+				coin_mask_style.texture_size[2] = size_y
+				coin_bloom_style.texture_size[1] = size_multiplier * coin_bloom_style.base_texture_size[1]
+				coin_bloom_style.texture_size[2] = size_multiplier * coin_bloom_style.base_texture_size[2]
 			end,
 			on_complete = NOP
 		},
@@ -502,15 +506,15 @@ local tbl_3 = {
 			name = "background_glow",
 			delay = 0,
 			duration = 0.8,
-			init = function (arg_12_0, arg_12_1, arg_12_2, arg_12_3)
+			init = function (ui_scenegraph, scenegraph_definition, coin_widget, params)
 				-- function 12
 				return
 			end,
-			update = function (arg_13_0, arg_13_1, arg_13_2, arg_13_3, arg_13_4)
+			update = function (ui_scenegraph, scenegraph_definition, coin_widget, progress, params)
 				-- function 13
-				local num = 4 * arg_13_3 * (1 - arg_13_3)
+				local s = 4 * progress * (1 - progress)
 
-				arg_13_2.style.background_glow.color[1] = 96 * num
+				coin_widget.style.background_glow.color[1] = 96 * s
 			end,
 			on_complete = NOP
 		},
@@ -518,16 +522,16 @@ local tbl_3 = {
 			name = "glow",
 			delay = 0.3,
 			duration = 0.4,
-			init = function (arg_14_0, arg_14_1, arg_14_2, arg_14_3)
+			init = function (ui_scenegraph, scenegraph_definition, coin_widget, params)
 				-- function 14
 				return
 			end,
-			update = function (arg_15_0, arg_15_1, arg_15_2, arg_15_3, arg_15_4)
+			update = function (ui_scenegraph, scenegraph_definition, coin_widget, progress, params)
 				-- function 15
-				local num = 4 * arg_15_3 * (1 - arg_15_3)
+				local s = 4 * progress * (1 - progress)
 
-				arg_15_2.style.coin_icon_highlight.color[1] = 0
-				arg_15_2.style.coin_icon_bloom.color[1] = 127 * num
+				coin_widget.style.coin_icon_highlight.color[1] = 0
+				coin_widget.style.coin_icon_bloom.color[1] = 127 * s
 			end,
 			on_complete = NOP
 		},
@@ -535,27 +539,27 @@ local tbl_3 = {
 			name = "reflection",
 			delay = 0.5,
 			duration = 0.5,
-			init = function (arg_16_0, arg_16_1, arg_16_2, arg_16_3)
+			init = function (ui_scenegraph, scenegraph_definition, coin_widget, params)
 				-- function 16
 				return
 			end,
-			update = function (arg_17_0, arg_17_1, arg_17_2, arg_17_3, arg_17_4)
+			update = function (ui_scenegraph, scenegraph_definition, coin_widget, progress, params)
 				-- function 17
-				local coin_icon_fx = arg_17_2.style.coin_icon_fx
+				local coin_fx_style = coin_widget.style.coin_icon_fx
 
-				coin_icon_fx.offset[1] = coin_icon_fx.base_offset[1] + (2 * arg_17_3 - 1) * coin_icon_fx.texture_size[1]
-				coin_icon_fx.color[1] = 255
+				coin_fx_style.offset[1] = coin_fx_style.base_offset[1] + (2 * progress - 1) * coin_fx_style.texture_size[1]
+				coin_fx_style.color[1] = 255
 			end,
-			on_complete = function (arg_18_0, arg_18_1, arg_18_2, arg_18_3)
+			on_complete = function (ui_scenegraph, scenegraph_definition, coin_widget, params)
 				-- function 18
-				arg_18_2.style.coin_icon_fx.color[1] = 0
+				coin_widget.style.coin_icon_fx.color[1] = 0
 			end
 		}
 	}
 }
 
 return {
-	scenegraph_definition = tbl_2,
-	coin_widget_definition = fn(),
-	animation_definitions = tbl_3
+	scenegraph_definition = scenegraph_definition,
+	coin_widget_definition = create_coin_widget_definition(),
+	animation_definitions = animation_definitions
 }

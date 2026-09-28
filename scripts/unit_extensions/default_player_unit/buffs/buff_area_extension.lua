@@ -2,45 +2,46 @@
 
 BuffAreaExtension = class(BuffAreaExtension)
 
-BuffAreaExtension.init = function (self, arg_1_1, arg_1_2, arg_1_3)
+BuffAreaExtension.init = function (self, extension_init_context, unit, extension_init_data)
 	-- function 1
-	local world = arg_1_1.world
+	local world = extension_init_context.world
+	local unit_spawner = Managers.state.unit_spawner
 
-	self._unit_spawner = Managers.state.unit_spawner
+	self._unit_spawner = unit_spawner
 	self._world = world
-	self._unit = arg_1_2
+	self._unit = unit
 
 	Unit.set_unit_visibility(self._unit, false)
 
-	local time = Managers.time:time("game")
-	local sub_buff_template = arg_1_3.sub_buff_template
-	local duration = sub_buff_template.duration
+	local t = Managers.time:time("game")
+	local template = extension_init_data.sub_buff_template
+	local duration = template.duration
 
-	duration = duration or math.huge
-	self._end_t = time + duration
-	self.sub_buff_id = arg_1_3.sub_buff_id
-	self.template = sub_buff_template
+	duration = not not duration or not not math.huge
+	self._end_t = t + duration
+	self.sub_buff_id = extension_init_data.sub_buff_id
+	self.template = template
 
-	local radius = arg_1_3.radius
+	local radius = extension_init_data.radius
 
-	self.owner_unit = arg_1_3.owner_unit
-	self.source_unit = arg_1_3.source_unit
+	self.owner_unit = extension_init_data.owner_unit
+	self.source_unit = extension_init_data.source_unit
 	self.radius = radius
 	self.radius_squared = radius * radius
-	self._buff_area_system = arg_1_1.owning_system
+	self._buff_area_system = extension_init_context.owning_system
 	self._unlimited = self.template.unlimited
-	self.side_id = arg_1_3.side_id
+	self.side_id = extension_init_data.side_id
 	self.side = Managers.state.side:get_side(self.side_id)
-	self._buff_allies = sub_buff_template.buff_allies
-	self._buff_enemies = sub_buff_template.buff_enemies
-	self._buff_self = sub_buff_template.buff_self
+	self._buff_allies = template.buff_allies
+	self._buff_enemies = template.buff_enemies
+	self._buff_self = template.buff_self
 	self._wwise_world = Managers.world:wwise_world(world)
-	self._area_start_sfx = sub_buff_template.area_start_sfx
-	self._area_end_sfx = sub_buff_template.area_end_sfx
-	self._enter_area_sfx = sub_buff_template.enter_area_sfx
-	self._leave_area_sfx = sub_buff_template.leave_area_sfx
+	self._area_start_sfx = template.area_start_sfx
+	self._area_end_sfx = template.area_end_sfx
+	self._enter_area_sfx = template.enter_area_sfx
+	self._leave_area_sfx = template.leave_area_sfx
 
-	if not sub_buff_template.area_start_sfx then
+	if template.area_start_sfx then
 		self:_play_unit_audio()
 	end
 
@@ -48,33 +49,37 @@ BuffAreaExtension.init = function (self, arg_1_1, arg_1_2, arg_1_3)
 
 	self._is_server = Managers.state.network.is_server
 
-	if not self._is_server then
+	if self._is_server then
 		self:_spawn_los_blocker()
 	end
 end
 
-BuffAreaExtension.game_object_initialized = function (self, arg_2_1, arg_2_2)
+BuffAreaExtension.game_object_initialized = function (self, unit, go_id)
 	-- function 2
-	self._is_owner = GameSession.game_object_owned(Managers.state.network:game(), arg_2_2)
+	self._is_owner = GameSession.game_object_owned(Managers.state.network:game(), go_id)
 end
 
 BuffAreaExtension.destroy = function (self)
 	-- function 3
-	if not self._is_server and not Unit.alive(self._los_blocker_unit) then
+	if self._is_server and Unit.alive(self._los_blocker_unit) then
 		self._unit_spawner:mark_for_deletion(self._los_blocker_unit)
 
 		self._los_blocker_unit = nil
 	end
 
-	if not self._is_owner and not Managers.state.network:game() then
-		self:_cleanup_inside_units()
+	if self._is_owner then
+		local game = Managers.state.network:game()
+
+		if game then
+			self:_cleanup_inside_units()
+		end
 	end
 
-	if not self._leave_area_sfx then
+	if self._leave_area_sfx then
 		self:play_leave_buff_zone_sfx()
 	end
 
-	if not self._area_end_sfx then
+	if self._area_end_sfx then
 		self:_stop_unit_audio()
 	end
 
@@ -83,225 +88,281 @@ end
 
 BuffAreaExtension._cleanup_inside_units = function (self)
 	-- function 4
-	local inside_by_area = self._buff_area_system:inside_by_area(self)
-	local by_position = inside_by_area.by_position
+	local inside = self._buff_area_system:inside_by_area(self)
+	local by_position = inside.by_position
 
-	for k in pairs(by_position) do
-		self:_set_not_inside(by_position, k)
+	for inside_unit in pairs(by_position) do
+		self:_set_not_inside(by_position, inside_unit)
 	end
 
-	local by_broadphase = inside_by_area.by_broadphase
+	local by_broadphase = inside.by_broadphase
 
-	for k_2 in pairs(by_broadphase) do
-		self:_set_not_inside(by_broadphase, k_2)
+	for inside_unit in pairs(by_broadphase) do
+		self:_set_not_inside(by_broadphase, inside_unit)
 	end
 end
 
-BuffAreaExtension.update = function (self, arg_5_1, arg_5_2, arg_5_3, arg_5_4, arg_5_5)
+BuffAreaExtension.update = function (self, unit, input, dt, context, t)
 	-- function 5
-	if not self._particle_state and not self._particle_state.update_fx then
-		BuffUtils.update_attached_particles(self._world, self._particle_state, arg_5_5)
+	if self._particle_state and self._particle_state.update_fx then
+		BuffUtils.update_attached_particles(self._world, self._particle_state, t)
 	end
 
 	if not self._is_owner then
 		return
 	end
 
-	if not (not self._end_t and not (arg_5_5 > self._end_t)) then
+	if self._end_t and t > self._end_t then
 		self:_remove_unit()
 		self:_cleanup_inside_units()
 
 		return
 	end
 
-	local var_5_0 = POSITION_LOOKUP[arg_5_1]
+	local position = POSITION_LOOKUP[unit]
 	local radius = self.radius
 
-	if self._buff_allies or not self._buff_enemies then
-		self:_check_ai(var_5_0, radius)
+	if self._buff_allies or self._buff_enemies then
+		self:_check_ai(position, radius)
 	end
 
-	self:_check_players(var_5_0, radius)
+	self:_check_players(position, radius)
 end
 
-BuffAreaExtension._check_ai = function (self, arg_6_1, arg_6_2)
+BuffAreaExtension._check_ai = function (self, position, radius)
 	-- function 6
-	local source_unit = self.source_unit
+	local source_unit_2 = self.source_unit
 
-	source_unit = source_unit or self.owner_unit
+	if not source_unit_2 then
+		-- Nothing
+	end
 
-	local by_broadphase = self._buff_area_system:inside_by_area(self).by_broadphase
-	local _buff_allies = self._buff_allies
-	local _buff_enemies = self._buff_enemies
-	local side = Managers.state.side
-	local alloc_table = FrameTable.alloc_table()
-	local alloc_table_2 = FrameTable.alloc_table()
-	local broadphase_query = AiUtils.broadphase_query(arg_6_1, arg_6_2, alloc_table)
+	source_unit_2 = self.owner_unit
 
-	for i = 1, broadphase_query do
-		local var_6_8 = alloc_table[i]
+	local source_unit = source_unit_2
 
-		alloc_table_2[var_6_8] = true
+	::label_6_0::
 
-		if not by_broadphase[var_6_8] then
+	local inside = self._buff_area_system:inside_by_area(self).by_broadphase
+	local buff_allies = self._buff_allies
+	local buff_enemies = self._buff_enemies
+	local side_manager = Managers.state.side
+	local ai_units = FrameTable.alloc_table()
+	local inside_this_frame = FrameTable.alloc_table()
+	local num_ai = AiUtils.broadphase_query(position, radius, ai_units)
+
+	for i = 1, num_ai do
+		local ai_unit = ai_units[i]
+
+		inside_this_frame[ai_unit] = true
+
+		local already_inside = inside[ai_unit]
+
+		if not already_inside then
 			local is_ally
 
-			if not _buff_allies then
-				is_ally = side:is_ally(source_unit, var_6_8)
+			if buff_allies then
+				is_ally = side_manager:is_ally(source_unit, ai_unit)
 
 				if not is_ally then
 					-- Nothing
 				end
 			end
 
-			is_ally = not _buff_enemies and side:is_enemy(source_unit, var_6_8)
+			if buff_enemies then
+				-- Nothing
+			end
 
-			::label_6_0::
+			::label_6_1::
 
-			if not is_ally then
-				self:_set_inside(by_broadphase, var_6_8)
+			is_ally = side_manager:is_enemy(source_unit, ai_unit)
+
+			local should_buff = is_ally
+
+			::label_6_2::
+
+			if should_buff then
+				self:_set_inside(inside, ai_unit)
 			end
 		end
 	end
 
-	for k in pairs(by_broadphase) do
-		if not alloc_table_2[k] then
-			self:_set_not_inside(by_broadphase, k)
+	for ai_unit in pairs(inside) do
+		if not inside_this_frame[ai_unit] then
+			self:_set_not_inside(inside, ai_unit)
 		end
 	end
 end
 
-BuffAreaExtension._check_players = function (self, arg_7_1)
+BuffAreaExtension._check_players = function (self, position)
 	-- function 7
-	local alloc_table = FrameTable.alloc_table()
+	local inside_this_frame = FrameTable.alloc_table()
 
-	if not self._buff_self then
+	if self._buff_self then
 		local source_unit = self.source_unit
 
-		source_unit = source_unit or self.owner_unit
-		alloc_table[source_unit] = self:_update_by_position(source_unit)
+		if not source_unit then
+			-- Nothing
+		end
+
+		source_unit = self.owner_unit
+
+		local unit = source_unit
+
+		::label_7_0::
+
+		inside_this_frame[unit] = self:_update_by_position(unit)
 	end
 
 	local side = self.side
 
-	if not self._buff_allies then
-		local PLAYER_AND_BOT_UNITS = side.PLAYER_AND_BOT_UNITS
+	if self._buff_allies then
+		local player_units = side.PLAYER_AND_BOT_UNITS
 
-		for i = 1, #PLAYER_AND_BOT_UNITS do
-			local var_7_4 = PLAYER_AND_BOT_UNITS[i]
+		for i = 1, #player_units do
+			local unit = player_units[i]
 
-			alloc_table[var_7_4] = self:_update_by_position(var_7_4)
+			inside_this_frame[unit] = self:_update_by_position(unit)
 		end
 	end
 
-	if not self._buff_enemies then
-		local ENEMY_PLAYER_AND_BOT_UNITS = side.ENEMY_PLAYER_AND_BOT_UNITS
+	if self._buff_enemies then
+		local player_units = side.ENEMY_PLAYER_AND_BOT_UNITS
 
-		for j = 1, #ENEMY_PLAYER_AND_BOT_UNITS do
-			local var_7_6 = ENEMY_PLAYER_AND_BOT_UNITS[j]
+		for i = 1, #player_units do
+			local unit = player_units[i]
 
-			alloc_table[var_7_6] = self:_update_by_position(var_7_6)
+			inside_this_frame[unit] = self:_update_by_position(unit)
 		end
 	end
 
-	local by_position = self._buff_area_system:inside_by_area(self).by_position
+	local inside = self._buff_area_system:inside_by_area(self).by_position
 
-	for k in pairs(by_position) do
-		if not alloc_table[k] then
-			self:_set_not_inside(by_position, k)
+	for unit in pairs(inside) do
+		if not inside_this_frame[unit] then
+			self:_set_not_inside(inside, unit)
 		end
 	end
 end
 
-BuffAreaExtension._update_by_position = function (self, arg_8_1)
+BuffAreaExtension._update_by_position = function (self, unit)
 	-- function 8
-	local by_position = self._buff_area_system:inside_by_area(self).by_position
-	local flag = false
-	local var_8_2 = POSITION_LOOKUP[arg_8_1]
+	local inside = self._buff_area_system:inside_by_area(self).by_position
+	local within_distance = false
+	local unit_pos = POSITION_LOOKUP[unit]
 
-	if not var_8_2 then
-		local var_8_3 = POSITION_LOOKUP[self._unit]
+	if unit_pos then
+		local own_pos = POSITION_LOOKUP[self._unit]
+		local distance_squared = Vector3.length_squared(own_pos - unit_pos)
 
-		flag = Vector3.length_squared(var_8_3 - var_8_2) <= self.radius_squared
+		within_distance = distance_squared <= self.radius_squared
 	end
 
-	if not flag then
-		self:_set_inside(by_position, arg_8_1)
+	if within_distance then
+		self:_set_inside(inside, unit)
 	else
-		self:_set_not_inside(by_position, arg_8_1)
+		self:_set_not_inside(inside, unit)
 	end
 
-	return flag
+	return within_distance
 end
 
-BuffAreaExtension.set_unit_position = function (self, arg_9_1)
+BuffAreaExtension.set_unit_position = function (self, position)
 	-- function 9
-	Unit.set_local_position(self._unit, 0, arg_9_1)
+	Unit.set_local_position(self._unit, 0, position)
 end
 
-BuffAreaExtension.set_duration = function (self, arg_10_1)
+BuffAreaExtension.set_duration = function (self, duration)
 	-- function 10
-	self._end_t = Managers.time:time("game") + arg_10_1
+	local t = Managers.time:time("game")
+
+	self._end_t = t + duration
 end
 
-BuffAreaExtension._leave_func = function (self, arg_11_1)
+BuffAreaExtension._leave_func = function (self, leaving_unit)
 	-- function 11
 	if not self._unlimited then
-		local system = Managers.state.entity:system("buff_system")
+		local buff_system = Managers.state.entity:system("buff_system")
 		local buff_ids = self._buff_area_system:inside_by_area(self).buff_ids
-		local var_11_2 = buff_ids[arg_11_1]
+		local area_buff_id = buff_ids[leaving_unit]
 
-		system:remove_buff_synced(arg_11_1, var_11_2)
+		buff_system:remove_buff_synced(leaving_unit, area_buff_id)
 
-		buff_ids[arg_11_1] = nil
+		buff_ids[leaving_unit] = nil
 	end
 
-	local owner = Managers.player:owner(arg_11_1)
-	local flag = not owner and owner:network_id()
+	local player_owner = Managers.player:owner(leaving_unit)
+	local peer_id = not not player_owner and not not player_owner:network_id()
 	local _unit = self._unit
 
-	_unit = not _unit and Managers.state.unit_storage:go_id(self._unit)
+	if _unit then
+		-- Nothing
+	end
 
-	if not self._leave_area_sfx and not flag and not _unit then
-		Managers.state.network.network_transmit:send_rpc("rpc_play_leave_buff_zone_sfx", flag, _unit)
+	_unit = Managers.state.unit_storage:go_id(self._unit)
+
+	local go_id = _unit
+
+	::label_11_0::
+
+	if self._leave_area_sfx and peer_id and go_id then
+		Managers.state.network.network_transmit:send_rpc("rpc_play_leave_buff_zone_sfx", peer_id, go_id)
 	end
 end
 
-BuffAreaExtension._enter_func = function (self, arg_12_1)
+BuffAreaExtension._enter_func = function (self, entering_unit)
 	-- function 12
-	local system = Managers.state.entity:system("buff_system")
+	local buff_system = Managers.state.entity:system("buff_system")
 	local template = self.template
-	local buff_area_buff = template.buff_area_buff
+	local buff_name = template.buff_area_buff
 	local buff_sync_type = template.buff_sync_type
 
-	buff_sync_type = buff_sync_type or BuffSyncType.Local
-
-	local alloc_table = FrameTable.alloc_table()
-	local source_unit = self.source_unit
-
-	alloc_table.attacker_unit = source_unit
-	alloc_table.source_attacker_unit = source_unit
-
-	local owner = Managers.player:owner(arg_12_1)
-	local flag = not owner and owner:network_id()
-	local _unit = self._unit
-
-	_unit = not _unit and Managers.state.unit_storage:go_id(self._unit)
-
-	if not self._leave_area_sfx and not flag and not _unit then
-		Managers.state.network.network_transmit:send_rpc("rpc_play_enter_buff_zone_sfx", flag, _unit)
+	if not buff_sync_type then
+		-- Nothing
 	end
 
-	if not ((buff_sync_type == BuffSyncType.Client or buff_sync_type == BuffSyncType.ClientAndServer) and flag) then
+	buff_sync_type = BuffSyncType.Local
+
+	local sync_type = buff_sync_type
+
+	::label_12_0::
+
+	local params = FrameTable.alloc_table()
+	local source_unit = self.source_unit
+
+	params.attacker_unit = source_unit
+	params.source_attacker_unit = source_unit
+
+	local player_owner = Managers.player:owner(entering_unit)
+	local peer_id = not not player_owner and not not player_owner:network_id()
+	local _unit = self._unit
+
+	if _unit then
+		-- Nothing
+	end
+
+	_unit = Managers.state.unit_storage:go_id(self._unit)
+
+	local go_id = _unit
+
+	::label_12_1::
+
+	if self._leave_area_sfx and peer_id and go_id then
+		Managers.state.network.network_transmit:send_rpc("rpc_play_enter_buff_zone_sfx", peer_id, go_id)
+	end
+
+	if (sync_type == BuffSyncType.Client or sync_type == BuffSyncType.ClientAndServer) and not peer_id then
 		return
 	end
 
-	self._buff_area_system:inside_by_area(self).buff_ids[arg_12_1] = system:add_buff_synced(arg_12_1, buff_area_buff, buff_sync_type, alloc_table, flag)
+	local buff_ids = self._buff_area_system:inside_by_area(self).buff_ids
+
+	buff_ids[entering_unit] = buff_system:add_buff_synced(entering_unit, buff_name, sync_type, params, peer_id)
 end
 
 BuffAreaExtension._remove_unit = function (self)
 	-- function 13
-	if not ALIVE[self._unit] then
+	if ALIVE[self._unit] then
 		self._unit_spawner:mark_for_deletion(self._unit)
 
 		self._unit = nil
@@ -310,70 +371,80 @@ end
 
 BuffAreaExtension._spawn_los_blocker = function (self)
 	-- function 14
-	local world_position = Unit.world_position(self._unit, 0)
+	local position = Unit.world_position(self._unit, 0)
 	local radius = self.radius
-	local str = "units/gameplay/line_of_sight_blocker/hemisphere_los_blocker"
-	local str_2 = "network_synched_dummy_unit"
-	local spawn_network_unit, var_14_5 = self._unit_spawner:spawn_network_unit(str, str_2, nil, world_position, Quaternion.identity(), nil)
+	local unit_name = "units/gameplay/line_of_sight_blocker/hemisphere_los_blocker"
+	local unit_template_name = "network_synched_dummy_unit"
+	local los_blocker_unit, los_blocker_unit_go_id = self._unit_spawner:spawn_network_unit(unit_name, unit_template_name, nil, position, Quaternion.identity(), nil)
 
-	Unit.set_local_scale(spawn_network_unit, 0, Vector3(radius, radius, radius))
+	Unit.set_local_scale(los_blocker_unit, 0, Vector3(radius, radius, radius))
 
-	self._los_blocker_unit = spawn_network_unit
+	self._los_blocker_unit = los_blocker_unit
 end
 
-BuffAreaExtension._set_inside = function (self, arg_15_1, arg_15_2)
+BuffAreaExtension._set_inside = function (self, inside_table, unit)
 	-- function 15
-	local var_15_0 = arg_15_1[arg_15_2]
+	local var_15_0 = inside_table[unit]
 
-	var_15_0 = var_15_0 or {}
-	arg_15_1[arg_15_2] = var_15_0
+	if not var_15_0 then
+		-- Nothing
+	end
 
-	local is_empty = table.is_empty(var_15_0)
+	var_15_0 = {}
 
-	var_15_0[self] = true
+	local refs = var_15_0
 
-	if not is_empty then
-		self:_enter_func(arg_15_2)
+	::label_15_0::
+
+	inside_table[unit] = refs
+
+	local first_ref = table.is_empty(refs)
+
+	refs[self] = true
+
+	if first_ref then
+		self:_enter_func(unit)
 	end
 end
 
-BuffAreaExtension._set_not_inside = function (self, arg_16_1, arg_16_2)
+BuffAreaExtension._set_not_inside = function (self, inside_table, unit)
 	-- function 16
-	local var_16_0 = arg_16_1[arg_16_2]
+	local refs = inside_table[unit]
 
-	if not var_16_0 and not var_16_0[self] then
-		var_16_0[self] = nil
+	if refs and refs[self] then
+		refs[self] = nil
 
-		if not table.is_empty(var_16_0) then
-			arg_16_1[arg_16_2] = nil
+		if table.is_empty(refs) then
+			inside_table[unit] = nil
 
-			self:_leave_func(arg_16_2)
+			self:_leave_func(unit)
 		end
 	end
 end
 
 BuffAreaExtension._spawn_particles = function (self)
 	-- function 17
-	local buff_area_particles = self.template.buff_area_particles
+	local template = self.template
+	local particles = template.buff_area_particles
 
-	if not buff_area_particles then
+	if not particles then
 		return
 	end
 
-	local flag = false
+	local is_first_person = false
 
-	self._particle_state = BuffUtils.create_attached_particles(self._world, buff_area_particles, self._unit, flag, self.source_unit, self._end_t)
+	self._particle_state = BuffUtils.create_attached_particles(self._world, particles, self._unit, is_first_person, self.source_unit, self._end_t)
 end
 
 BuffAreaExtension._destroy_particles = function (self)
 	-- function 18
-	local _particle_state = self._particle_state
+	local particle_state = self._particle_state
 
-	if not _particle_state then
+	if not particle_state then
 		return
 	end
 
-	BuffUtils.destroy_attached_particles(self._world, _particle_state)
+	BuffUtils.destroy_attached_particles(self._world, particle_state)
 end
 
 BuffAreaExtension._play_unit_audio = function (self)
@@ -385,7 +456,7 @@ end
 
 BuffAreaExtension._stop_unit_audio = function (self)
 	-- function 20
-	if not self._unit_source_id then
+	if self._unit_source_id then
 		WwiseWorld.trigger_event(self._wwise_world, self._area_end_sfx, true, self._unit_source_id)
 		WwiseWorld.destroy_manual_source(self._wwise_world, self._unit_source_id)
 	end
@@ -400,7 +471,7 @@ end
 
 BuffAreaExtension.play_leave_buff_zone_sfx = function (self)
 	-- function 22
-	if not self._inside_zone_audio_id then
+	if self._inside_zone_audio_id then
 		WwiseWorld.trigger_event(self._wwise_world, self._leave_area_sfx, true, self._inside_zone_audio_id)
 
 		self._inside_zone_audio_id = nil

@@ -1,42 +1,50 @@
 -- chunkname: @scripts/managers/game_mode/game_mode_manager_testify.lua
 
-return {
-	game_mode_start_round = function (self)
+local GameModeManagerTestify = {
+	game_mode_start_round = function (game_mode_manager)
 		-- function 1
-		self:round_started()
+		game_mode_manager:round_started()
 
-		self:game_mode().pre_round_start_timer = 0
+		local game_mode = game_mode_manager:game_mode()
+
+		game_mode.pre_round_start_timer = 0
 	end,
-	wait_for_game_mode = function (self, arg_2_1)
+	wait_for_game_mode = function (game_mode_manager, wanted_game_mode)
 		-- function 2
-		if arg_2_1 ~= self:game_mode_key() then
+		local game_mode_key = game_mode_manager:game_mode_key()
+
+		if wanted_game_mode ~= game_mode_key then
 			return Testify.RETRY
 		end
 	end,
-	wait_for_game_mode_state = function (self, arg_3_1)
+	wait_for_game_mode_state = function (game_mode_manager, params)
 		-- function 3
-		local game_mode = arg_3_1.game_mode
-		local state = arg_3_1.state
-		local game_mode_key = self:game_mode_key()
+		local wanted_game_mode = params.game_mode
+		local wanted_state = params.state
+		local game_mode_key = game_mode_manager:game_mode_key()
 
-		if not (not game_mode and game_mode == game_mode_key) then
+		if wanted_game_mode and wanted_game_mode ~= game_mode_key then
 			return Testify.RETRY
 		end
 
-		local game_mode_2 = self:game_mode()
+		local game_mode = game_mode_manager:game_mode()
 
-		if not game_mode_2 then
+		if not game_mode then
 			return Testify.RETRY
 		end
 
-		if game_mode_2:game_mode_state() ~= state then
+		if game_mode:game_mode_state() ~= wanted_state then
 			return Testify.RETRY
 		end
 	end,
-	wait_for_transition_state = function (self, arg_4_1)
+	wait_for_transition_state = function (game_mode_manager, wanted_transition_state)
 		-- function 4
-		if self:wanted_transition() ~= arg_4_1 then
+		local current_transition = game_mode_manager:wanted_transition()
+
+		if current_transition ~= wanted_transition_state then
 			return Testify.RETRY
 		end
 	end
 }
+
+return GameModeManagerTestify

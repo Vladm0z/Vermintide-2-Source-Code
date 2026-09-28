@@ -1,9 +1,9 @@
 -- chunkname: @scripts/settings/dlcs/termite/termite_level_settings_part_3.lua
 
-local termite_part_3 = DLCSettings.termite_part_3
+local settings = DLCSettings.termite_part_3
 
-termite_part_3.level_settings = "levels/honduras_dlcs/termite/level_settings_termite_part_3"
-termite_part_3.missions = {
+settings.level_settings = "levels/honduras_dlcs/termite/level_settings_termite_part_3"
+settings.missions = {
 	termite_lvl3_follow_bomb = {
 		mission_template_name = "goal",
 		text = "termite_lvl3_follow_bomb"

@@ -1,23 +1,23 @@
 -- chunkname: @scripts/ui/views/hero_view/windows/hero_window_hero_power_console.lua
 
-local var_0_0 = local_require("scripts/ui/views/hero_view/windows/definitions/hero_window_hero_power_console_definitions")
-local widgets = var_0_0.widgets
-local category_settings = var_0_0.category_settings
-local scenegraph_definition = var_0_0.scenegraph_definition
-local animation_definitions = var_0_0.animation_definitions
-local flag = false
-local num = 1
+local definitions = local_require("scripts/ui/views/hero_view/windows/definitions/hero_window_hero_power_console_definitions")
+local widget_definitions = definitions.widgets
+local category_settings = definitions.category_settings
+local scenegraph_definition = definitions.scenegraph_definition
+local animation_definitions = definitions.animation_definitions
+local DO_RELOAD = false
+local HERO_POWER_EFFECT_DURATION = 1
 
 HeroWindowHeroPowerConsole = class(HeroWindowHeroPowerConsole)
 HeroWindowHeroPowerConsole.NAME = "HeroWindowHeroPowerConsole"
 
-HeroWindowHeroPowerConsole.on_enter = function (self, arg_1_1, arg_1_2)
+HeroWindowHeroPowerConsole.on_enter = function (self, params, offset)
 	-- function 1
 	print("[HeroViewWindow] Enter Substate HeroWindowHeroPowerConsole")
 
-	self.parent = arg_1_1.parent
+	self.parent = params.parent
 
-	local ingame_ui_context = arg_1_1.ingame_ui_context
+	local ingame_ui_context = params.ingame_ui_context
 
 	self.ui_renderer = ingame_ui_context.ui_renderer
 	self.ui_top_renderer = ingame_ui_context.ui_top_renderer
@@ -27,136 +27,139 @@ HeroWindowHeroPowerConsole.on_enter = function (self, arg_1_1, arg_1_2)
 		snap_pixel_positions = true
 	}
 
-	local player = Managers.player
+	local player_manager = Managers.player
+	local local_player = player_manager:local_player()
 
-	self._stats_id = player:local_player():stats_id()
-	self.player_manager = player
+	self._stats_id = local_player:stats_id()
+	self.player_manager = player_manager
 	self.peer_id = ingame_ui_context.peer_id
-	self.hero_name = arg_1_1.hero_name
-	self.career_index = arg_1_1.career_index
-	self.profile_index = arg_1_1.profile_index
+	self.hero_name = params.hero_name
+	self.career_index = params.career_index
+	self.profile_index = params.profile_index
 	self._animations = {}
 	self._ui_animations = {}
 	self._hero_power_loadout_selection = {}
 
-	self:create_ui_elements(arg_1_1, arg_1_2)
+	self:create_ui_elements(params, offset)
 	self:_start_transition_animation("on_enter")
 end
 
-HeroWindowHeroPowerConsole._start_transition_animation = function (self, arg_2_1)
+HeroWindowHeroPowerConsole._start_transition_animation = function (self, animation_name)
 	-- function 2
-	local tbl = {
+	local params = {
 		wwise_world = self.wwise_world,
 		render_settings = self.render_settings
 	}
-	local tbl_2 = {}
-	local start_animation = self.ui_animator:start_animation(arg_2_1, tbl_2, scenegraph_definition, tbl)
+	local widgets = {}
+	local anim_id = self.ui_animator:start_animation(animation_name, widgets, scenegraph_definition, params)
 
-	self._animations[arg_2_1] = start_animation
+	self._animations[animation_name] = anim_id
 end
 
-HeroWindowHeroPowerConsole.create_ui_elements = function (self, arg_3_1, arg_3_2)
+HeroWindowHeroPowerConsole.create_ui_elements = function (self, params, offset)
 	-- function 3
 	self.ui_scenegraph = UISceneGraph.init_scenegraph(scenegraph_definition)
 
-	local tbl = {}
-	local tbl_2 = {}
+	local widgets = {}
+	local widgets_by_name = {}
 
-	for k, v in pairs(widgets) do
-		local var_3_2 = UIWidget.init(v)
+	for name, widget_definition in pairs(widget_definitions) do
+		local widget = UIWidget.init(widget_definition)
 
-		tbl[#tbl + 1] = var_3_2
-		tbl_2[k] = var_3_2
+		widgets[#widgets + 1] = widget
+		widgets_by_name[name] = widget
 	end
 
-	self._widgets = tbl
-	self._widgets_by_name = tbl_2
+	self._widgets = widgets
+	self._widgets_by_name = widgets_by_name
 
 	UIRenderer.clear_scenegraph_queue(self.ui_renderer)
 
 	self.ui_animator = UIAnimator:new(self.ui_scenegraph, animation_definitions)
 
-	if not arg_3_2 then
-		local local_position = self.ui_scenegraph.window.local_position
+	if offset then
+		local window_position = self.ui_scenegraph.window.local_position
 
-		local_position[1] = local_position[1] + arg_3_2[1]
-		local_position[2] = local_position[2] + arg_3_2[2]
-		local_position[3] = local_position[3] + arg_3_2[3]
+		window_position[1] = window_position[1] + offset[1]
+		window_position[2] = window_position[2] + offset[2]
+		window_position[3] = window_position[3] + offset[3]
 	end
 end
 
-HeroWindowHeroPowerConsole.on_exit = function (self, arg_4_1)
+HeroWindowHeroPowerConsole.on_exit = function (self, params)
 	-- function 4
 	print("[HeroViewWindow] Exit Substate HeroWindowHeroPowerConsole")
 
 	self.ui_animator = nil
 end
 
-HeroWindowHeroPowerConsole.update = function (self, arg_5_1, arg_5_2)
+HeroWindowHeroPowerConsole.update = function (self, dt, t)
 	-- function 5
-	if not flag then
-		flag = false
+	if DO_RELOAD then
+		DO_RELOAD = false
 
 		self:create_ui_elements()
 	end
 
 	self:_update_loadout_sync()
-	self:_update_animations(arg_5_1)
-	self:_update_hero_power_effect(arg_5_1)
-	self:draw(arg_5_1)
+	self:_update_animations(dt)
+	self:_update_hero_power_effect(dt)
+	self:draw(dt)
 end
 
-HeroWindowHeroPowerConsole.post_update = function (arg_6_0, arg_6_1, arg_6_2)
+HeroWindowHeroPowerConsole.post_update = function (self, dt, t)
 	-- function 6
 	return
 end
 
-HeroWindowHeroPowerConsole._update_animations = function (self, arg_7_1)
+HeroWindowHeroPowerConsole._update_animations = function (self, dt)
 	-- function 7
-	local _ui_animations = self._ui_animations
-	local _animations = self._animations
+	local ui_animations = self._ui_animations
+	local animations = self._animations
 	local ui_animator = self.ui_animator
 
-	for k, v in pairs(self._ui_animations) do
-		UIAnimation.update(v, arg_7_1)
+	for name, animation in pairs(self._ui_animations) do
+		UIAnimation.update(animation, dt)
 
-		if not UIAnimation.completed(v) then
-			self._ui_animations[k] = nil
+		if UIAnimation.completed(animation) then
+			self._ui_animations[name] = nil
 		end
 	end
 
-	ui_animator:update(arg_7_1)
+	ui_animator:update(dt)
 
-	for k_2, v_2 in pairs(_animations) do
-		if not ui_animator:is_animation_completed(v_2) then
-			ui_animator:stop_animation(v_2)
+	for animation_name, animation_id in pairs(animations) do
+		if ui_animator:is_animation_completed(animation_id) then
+			ui_animator:stop_animation(animation_id)
 
-			_animations[k_2] = nil
+			animations[animation_name] = nil
 		end
 	end
 end
 
-HeroWindowHeroPowerConsole._is_button_pressed = function (arg_8_0, arg_8_1)
+HeroWindowHeroPowerConsole._is_button_pressed = function (self, widget)
 	-- function 8
-	local button_hotspot = arg_8_1.content.button_hotspot
+	local content = widget.content
+	local hotspot = content.button_hotspot
 
-	if not button_hotspot.on_release then
-		button_hotspot.on_release = false
+	if hotspot.on_release then
+		hotspot.on_release = false
 
 		return true
 	end
 end
 
-HeroWindowHeroPowerConsole.set_focus = function (self, arg_9_1)
+HeroWindowHeroPowerConsole.set_focus = function (self, focused)
 	-- function 9
-	self._focused = arg_9_1
+	self._focused = focused
 end
 
 HeroWindowHeroPowerConsole._update_loadout_sync = function (self)
 	-- function 10
-	local loadout_sync_id = self.parent.loadout_sync_id
+	local parent = self.parent
+	local loadout_sync_id = parent.loadout_sync_id
 
-	if loadout_sync_id ~= self._loadout_sync_id or not self:_has_hero_level_changed() then
+	if loadout_sync_id ~= self._loadout_sync_id or self:_has_hero_level_changed() then
 		self:_calculate_power_level()
 
 		self._loadout_sync_id = loadout_sync_id
@@ -165,9 +168,10 @@ end
 
 HeroWindowHeroPowerConsole._has_hero_level_changed = function (self)
 	-- function 11
-	local get_experience = ExperienceSettings.get_experience(self.hero_name)
+	local experience = ExperienceSettings.get_experience(self.hero_name)
+	local level = ExperienceSettings.get_level(experience)
 
-	if ExperienceSettings.get_level(get_experience) ~= self._hero_level then
+	if level ~= self._hero_level then
 		return true
 	end
 end
@@ -176,57 +180,75 @@ HeroWindowHeroPowerConsole._calculate_power_level = function (self)
 	-- function 12
 	local hero_name = self.hero_name
 	local career_index = self.career_index
-	local var_12_2 = FindProfileIndex(hero_name)
-	local name = SPProfiles[var_12_2].careers[career_index].name
-	local get_total_power_level = BackendUtils.get_total_power_level(hero_name, name)
-	local presentable_hero_power_level = UIUtils.presentable_hero_power_level(get_total_power_level)
-	local content = self._widgets_by_name.power_text.content
-	local get_selected_career_loadout = Managers.backend:get_interface("items"):get_selected_career_loadout(name)
+	local profile_index = FindProfileIndex(hero_name)
+	local profile = SPProfiles[profile_index]
+	local career_data = profile.careers[career_index]
+	local career_name = career_data.name
+	local total_power_level = BackendUtils.get_total_power_level(hero_name, career_name)
+	local presentable_hero_power_level = UIUtils.presentable_hero_power_level(total_power_level)
+	local widgets_by_name = self._widgets_by_name
+	local content = widgets_by_name.power_text.content
+	local selected_loadout_index = Managers.backend:get_interface("items"):get_selected_career_loadout(career_name)
 	local power = content.power
 
-	power = not power and presentable_hero_power_level > content.power
+	if power then
+		-- Nothing
+	end
 
-	if not power then
-		self._hero_power_effect_time = num
+	if not (presentable_hero_power_level > content.power) then
+		power = false
 
-		local var_12_9 = self._hero_power_loadout_selection[name]
+		goto label_12_0
+	end
 
-		if not (not var_12_9 and get_selected_career_loadout ~= var_12_9) then
+	power = true
+
+	local play_effect = power
+
+	::label_12_0::
+
+	if play_effect then
+		self._hero_power_effect_time = HERO_POWER_EFFECT_DURATION
+
+		local current_loadout_selection_index = self._hero_power_loadout_selection[career_name]
+
+		if not current_loadout_selection_index or selected_loadout_index == current_loadout_selection_index then
 			self:_play_sound("play_gui_equipment_power_level_increase")
 		end
 	end
 
 	content.power = presentable_hero_power_level
 	content.text = tostring(presentable_hero_power_level)
-	self._hero_power_loadout_selection[name] = get_selected_career_loadout
+	self._hero_power_loadout_selection[career_name] = selected_loadout_index
 end
 
-local get_color_table_with_alpha = Colors.get_color_table_with_alpha("white", 255)
-local get_color_table_with_alpha_2 = Colors.get_color_table_with_alpha("font_title", 255)
+local power_default_color = Colors.get_color_table_with_alpha("white", 255)
+local power_increase_color = Colors.get_color_table_with_alpha("font_title", 255)
 
-HeroWindowHeroPowerConsole._update_hero_power_effect = function (self, arg_13_1)
+HeroWindowHeroPowerConsole._update_hero_power_effect = function (self, dt)
 	-- function 13
-	local _hero_power_effect_time = self._hero_power_effect_time
+	local hero_power_effect_time = self._hero_power_effect_time
 
-	if not _hero_power_effect_time then
-		local max = math.max(_hero_power_effect_time - arg_13_1, 0)
-		local num_2 = 1 - max / num
-		local easeOutCubic = math.easeOutCubic(num_2)
-		local ease_pulse = math.ease_pulse(easeOutCubic)
-		local _widgets_by_name = self._widgets_by_name
-		local effect = _widgets_by_name.hero_power_tooltip.style.effect
+	if hero_power_effect_time then
+		hero_power_effect_time = math.max(hero_power_effect_time - dt, 0)
 
-		effect.angle = math.degrees_to_radians(120 * easeOutCubic)
-		effect.color[1] = 255 * ease_pulse
+		local progress = 1 - hero_power_effect_time / HERO_POWER_EFFECT_DURATION
+		local anim_progress = math.easeOutCubic(progress)
+		local pulse_progress = math.ease_pulse(anim_progress)
+		local widgets_by_name = self._widgets_by_name
+		local effect_style = widgets_by_name.hero_power_tooltip.style.effect
 
-		local text = _widgets_by_name.power_text.style.text
+		effect_style.angle = math.degrees_to_radians(120 * anim_progress)
+		effect_style.color[1] = 255 * pulse_progress
 
-		Colors.lerp_color_tables(get_color_table_with_alpha, get_color_table_with_alpha_2, ease_pulse, text.text_color)
+		local text_style = widgets_by_name.power_text.style.text
 
-		if num_2 == 1 then
+		Colors.lerp_color_tables(power_default_color, power_increase_color, pulse_progress, text_style.text_color)
+
+		if progress == 1 then
 			self._hero_power_effect_time = nil
 		else
-			self._hero_power_effect_time = max
+			self._hero_power_effect_time = hero_power_effect_time
 		end
 	end
 end
@@ -236,23 +258,23 @@ HeroWindowHeroPowerConsole._exit = function (self)
 	self.exit = true
 end
 
-HeroWindowHeroPowerConsole.draw = function (self, arg_15_1)
+HeroWindowHeroPowerConsole.draw = function (self, dt)
 	-- function 15
 	local ui_renderer = self.ui_renderer
 	local ui_top_renderer = self.ui_top_renderer
 	local ui_scenegraph = self.ui_scenegraph
-	local window_input_service = self.parent:window_input_service()
+	local input_service = self.parent:window_input_service()
 
-	UIRenderer.begin_pass(ui_top_renderer, ui_scenegraph, window_input_service, arg_15_1, nil, self.render_settings)
+	UIRenderer.begin_pass(ui_top_renderer, ui_scenegraph, input_service, dt, nil, self.render_settings)
 
-	for i, v in ipairs(self._widgets) do
-		UIRenderer.draw_widget(ui_top_renderer, v)
+	for _, widget in ipairs(self._widgets) do
+		UIRenderer.draw_widget(ui_top_renderer, widget)
 	end
 
 	UIRenderer.end_pass(ui_top_renderer)
 end
 
-HeroWindowHeroPowerConsole._play_sound = function (self, arg_16_1)
+HeroWindowHeroPowerConsole._play_sound = function (self, event)
 	-- function 16
-	self.parent:play_sound(arg_16_1)
+	self.parent:play_sound(event)
 end

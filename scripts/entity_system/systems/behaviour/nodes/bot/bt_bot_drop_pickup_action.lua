@@ -4,43 +4,44 @@ require("scripts/entity_system/systems/behaviour/nodes/bt_node")
 
 BTBotDropPickupAction = class(BTBotDropPickupAction, BTNode)
 
-BTBotDropPickupAction.init = function (arg_1_0, ...)
+BTBotDropPickupAction.init = function (self, ...)
 	-- function 1
-	BTBotDropPickupAction.super.init(arg_1_0, ...)
+	BTBotDropPickupAction.super.init(self, ...)
 end
 
 BTBotDropPickupAction.name = "BTBotDropPickupAction"
 
-BTBotDropPickupAction.enter = function (arg_2_0, arg_2_1, arg_2_2, arg_2_3)
+BTBotDropPickupAction.enter = function (self, unit, blackboard, t)
 	-- function 2
-	local inventory_extension = arg_2_2.inventory_extension
-	local get_wielded_slot_name = inventory_extension:get_wielded_slot_name()
-	local item_data = inventory_extension:get_slot_data(get_wielded_slot_name).item_data
-	local get_item_template = BackendUtils.get_item_template(item_data)
-	local get_item_data_and_weapon_extensions, var_2_5, var_2_6 = CharacterStateHelper.get_item_data_and_weapon_extensions(inventory_extension)
-	local get_current_action_data, var_2_8, var_2_9 = CharacterStateHelper.get_current_action_data(var_2_6, var_2_5)
-	local get_bot_weapon_extension = AiUtils.get_bot_weapon_extension(arg_2_2)
+	local inventory_extension = blackboard.inventory_extension
+	local wielded_slot_name = inventory_extension:get_wielded_slot_name()
+	local slot_data = inventory_extension:get_slot_data(wielded_slot_name)
+	local item_data = slot_data.item_data
+	local item_template = BackendUtils.get_item_template(item_data)
+	local _, right_hand_weapon_extension, left_hand_weapon_extension = CharacterStateHelper.get_item_data_and_weapon_extensions(inventory_extension)
+	local _, current_action_extension, _ = CharacterStateHelper.get_current_action_data(left_hand_weapon_extension, right_hand_weapon_extension)
+	local weapon_extension = AiUtils.get_bot_weapon_extension(blackboard)
 
-	arg_2_2.drop = {
-		weapon_extension = get_bot_weapon_extension,
-		wielded_item_template = get_item_template
+	blackboard.drop = {
+		weapon_extension = weapon_extension,
+		wielded_item_template = item_template
 	}
 end
 
-BTBotDropPickupAction.leave = function (arg_3_0, arg_3_1, arg_3_2, arg_3_3, arg_3_4, arg_3_5)
+BTBotDropPickupAction.leave = function (self, unit, blackboard, t, reason, destroy)
 	-- function 3
-	arg_3_2.drop = nil
+	blackboard.drop = nil
 end
 
-BTBotDropPickupAction.run = function (arg_4_0, arg_4_1, arg_4_2, arg_4_3, arg_4_4)
+BTBotDropPickupAction.run = function (self, unit, blackboard, t, dt)
 	-- function 4
-	local drop = arg_4_2.drop
-	local weapon_extension = drop.weapon_extension
-	local wielded_item_template = drop.wielded_item_template
-	local str = "hold_attack"
-	local var_4_4 = wielded_item_template.attack_meta_data[str]
+	local drop_blackboard = blackboard.drop
+	local weapon_extension = drop_blackboard.weapon_extension
+	local wielded_item_template = drop_blackboard.wielded_item_template
+	local attack_input = "hold_attack"
+	local attack_meta_data = wielded_item_template.attack_meta_data[attack_input]
 
-	weapon_extension:request_bot_attack_action(str, wielded_item_template.actions, wielded_item_template.name, var_4_4.attack_chain)
+	weapon_extension:request_bot_attack_action(attack_input, wielded_item_template.actions, wielded_item_template.name, attack_meta_data.attack_chain)
 
 	return "running"
 end

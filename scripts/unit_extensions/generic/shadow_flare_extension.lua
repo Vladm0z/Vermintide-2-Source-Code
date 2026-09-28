@@ -2,27 +2,27 @@
 
 ShadowFlareExtension = class(ShadowFlareExtension)
 
-ShadowFlareExtension.init = function (self, arg_1_1, arg_1_2, arg_1_3)
+ShadowFlareExtension.init = function (self, extension_init_context, unit, extension_init_data)
 	-- function 1
-	self.owner_unit_id = arg_1_3.owner_unit_id
+	self.owner_unit_id = extension_init_data.owner_unit_id
 
-	local glow_time = arg_1_3.glow_time
+	local glow_time = extension_init_data.glow_time
 
-	glow_time = glow_time or 10
+	glow_time = not not glow_time or not not 10
 	self.glow_time = glow_time
 
-	local delete_time = arg_1_3.delete_time
+	local delete_time = extension_init_data.delete_time
 
-	delete_time = delete_time or 3
+	delete_time = not not delete_time or not not 3
 	self.delete_time = delete_time
-	self.initial_position = arg_1_3.initial_position
+	self.initial_position = extension_init_data.initial_position
 	self._timer = 0
 	self._delete_timer = 0
 	self._flare_done = false
 
-	local unit = Managers.state.unit_storage:unit(self.owner_unit_id)
+	local owner_unit = Managers.state.unit_storage:unit(self.owner_unit_id)
 
-	self._player = Managers.player:owner(unit)
+	self._player = Managers.player:owner(owner_unit)
 end
 
 ShadowFlareExtension.flare_active = function (self)
@@ -35,51 +35,51 @@ ShadowFlareExtension.set_flare_done = function (self)
 	self._flare_done = true
 end
 
-ShadowFlareExtension.update = function (self, arg_4_1, arg_4_2)
+ShadowFlareExtension.update = function (self, unit, dt)
 	-- function 4
-	if not self._player.remote then
+	if self._player.remote then
 		return
 	end
 
 	local glow_time = self.glow_time
-	local _timer = self._timer
+	local timer = self._timer
 
-	if _timer < 1 then
-		local clamp = math.clamp(_timer + arg_4_2 / glow_time, 0, 1)
+	if timer < 1 then
+		timer = math.clamp(timer + dt / glow_time, 0, 1)
 
-		if clamp == 1 then
-			local network = Managers.state.network
-			local unit_game_object_id = network:unit_game_object_id(arg_4_1)
+		if timer == 1 then
+			local network_manager = Managers.state.network
+			local unit_id = network_manager:unit_game_object_id(unit)
 
-			if not self._player.is_server then
-				network.network_transmit:send_rpc_clients("rpc_shadow_flare_done", unit_game_object_id)
+			if self._player.is_server then
+				network_manager.network_transmit:send_rpc_clients("rpc_shadow_flare_done", unit_id)
 			else
-				network.network_transmit:send_rpc_server("rpc_shadow_flare_done", unit_game_object_id)
+				network_manager.network_transmit:send_rpc_server("rpc_shadow_flare_done", unit_id)
 			end
 
 			self:set_flare_done()
 		end
 
-		self._timer = clamp
+		self._timer = timer
 	end
 
-	if not self._flare_done then
-		self:delete_with_delay(arg_4_1, arg_4_2)
+	if self._flare_done then
+		self:delete_with_delay(unit, dt)
 	end
 end
 
-ShadowFlareExtension.delete_with_delay = function (self, arg_5_1, arg_5_2)
+ShadowFlareExtension.delete_with_delay = function (self, unit, dt)
 	-- function 5
-	local delete_time = self.delete_time
-	local _delete_timer = self._delete_timer
+	local deldete_time = self.delete_time
+	local timer = self._delete_timer
 
-	if _delete_timer < 1 then
-		_delete_timer = math.clamp(_delete_timer + arg_5_2 / delete_time, 0, 1)
+	if timer < 1 then
+		timer = math.clamp(timer + dt / deldete_time, 0, 1)
 
-		if _delete_timer == 1 then
-			Managers.state.unit_spawner:mark_for_deletion(arg_5_1)
+		if timer == 1 then
+			Managers.state.unit_spawner:mark_for_deletion(unit)
 		end
 	end
 
-	self._delete_timer = _delete_timer
+	self._delete_timer = timer
 end

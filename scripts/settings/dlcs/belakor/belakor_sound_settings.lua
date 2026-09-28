@@ -1,15 +1,15 @@
 -- chunkname: @scripts/settings/dlcs/belakor/belakor_sound_settings.lua
 
-local belakor = DLCSettings.belakor
+local settings = DLCSettings.belakor
 
-belakor.dialogue_lookup = {
+settings.dialogue_lookup = {
 	"dialogues/generated/lookup_hero_conversations_dlc_cowbell_arena",
 	"dialogues/generated/lookup_hero_conversations_dlc_cowbell_ingame",
 	"dialogues/generated/lookup_hero_conversations_dlc_cowbell_map",
 	"dialogues/generated/lookup_hero_conversations_dlc_cowbell_banter",
 	"dialogues/generated/lookup_hub_conversations_cowbell"
 }
-belakor.dialogue_settings = {
+settings.dialogue_settings = {
 	morris_hub = {
 		"dialogues/generated/hub_conversations_cowbell"
 	},
@@ -20,9 +20,9 @@ belakor.dialogue_settings = {
 		"dialogues/generated/hero_conversations_dlc_cowbell_arena"
 	}
 }
-belakor.dialogue_events = {}
-belakor.auto_load_files = {}
-belakor.network_sound_events = {
+settings.dialogue_events = {}
+settings.auto_load_files = {}
+settings.network_sound_events = {
 	"boon_melee_wave",
 	"boon_shield_of_splinters",
 	"boon_static_blade",

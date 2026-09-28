@@ -2,13 +2,13 @@
 
 WardSystem = class(WardSystem, ExtensionSystemBase)
 
-local tbl = {
+local extensions = {
 	"WardExtension"
 }
 
-WardSystem.init = function (self, arg_1_1, arg_1_2, ...)
+WardSystem.init = function (self, entity_system_creation_context, system_name, ...)
 	-- function 1
-	WardSystem.super.init(self, arg_1_1, arg_1_2, tbl, ...)
+	WardSystem.super.init(self, entity_system_creation_context, system_name, extensions, ...)
 
 	self._update_index = 1
 	self._units = {}
@@ -17,80 +17,82 @@ WardSystem.init = function (self, arg_1_1, arg_1_2, ...)
 	self._profiler_name = self.profiler_names.WardExtension
 end
 
-WardSystem.on_add_extension = function (self, arg_2_1, arg_2_2, arg_2_3, arg_2_4)
+WardSystem.on_add_extension = function (self, world, unit, extension_name, extension_init_data)
 	-- function 2
-	local NAME = self.NAME
-	local var_2_1
-	local add_extension = ScriptUnit.add_extension(self.extension_init_context, arg_2_2, arg_2_3, NAME, arg_2_4, var_2_1)
+	local extension_alias = self.NAME
+	local extension_pool_table
+	local extension = ScriptUnit.add_extension(self.extension_init_context, unit, extension_name, extension_alias, extension_init_data, extension_pool_table)
 	local extensions = self.extensions
-	local var_2_4 = self.extensions[arg_2_3]
+	local var_2_1 = self.extensions[extension_name]
 
-	var_2_4 = var_2_4 or 0
-	extensions[arg_2_3] = var_2_4 + 1
+	var_2_1 = not not var_2_1 or not not 0
+	extensions[extension_name] = var_2_1 + 1
 
-	local var_2_5 = self.extensions[arg_2_3]
+	local index = self.extensions[extension_name]
 
-	self._units[var_2_5] = arg_2_2
-	self._lookup[arg_2_2] = var_2_5
+	self._units[index] = unit
+	self._lookup[unit] = index
 
-	if not add_extension.update then
+	if extension.update then
 		local _to_update = self._to_update
 		local count = #self._to_update
 
-		count = count or 0
-		_to_update[count + 1] = add_extension
+		count = not not count or not not 0
+		_to_update[count + 1] = extension
 	end
 
-	return add_extension
+	return extension
 end
 
-WardSystem.update = function (self, arg_3_1, arg_3_2)
+WardSystem.update = function (self, context, t)
 	-- function 3
-	local count = #self._to_update
-	local dt = arg_3_1.dt
+	local num_extensions = #self._to_update
+	local dt = context.dt
 
-	if count == 0 then
+	if num_extensions == 0 then
 		return
 	end
 
-	local _update_index = self._update_index
-	local var_3_3 = self._to_update[_update_index]
+	local index = self._update_index
+	local extension = self._to_update[index]
 
-	if not var_3_3 then
-		var_3_3:update(self._units[_update_index], nil, dt, arg_3_1, arg_3_2)
+	if extension then
+		extension:update(self._units[index], nil, dt, context, t)
 	end
 
-	if _update_index == count then
+	if index == num_extensions then
 		self._update_index = 1
 	else
-		self._update_index = _update_index + 1
+		self._update_index = index + 1
 	end
 end
 
-WardSystem.on_remove_extension = function (self, arg_4_1, arg_4_2)
+WardSystem.on_remove_extension = function (self, unit, extension_name)
 	-- function 4
-	if not ScriptUnit.has_extension(arg_4_1, self.NAME) then
+	local extension = ScriptUnit.has_extension(unit, self.NAME)
+
+	if not extension then
 		return
 	end
 
-	local var_4_0 = self.extensions[arg_4_2]
-	local var_4_1 = self._lookup[arg_4_1]
+	local num_extensions = self.extensions[extension_name]
+	local index = self._lookup[unit]
 
-	if var_4_1 == var_4_0 then
-		self._units[var_4_1] = nil
-		self._to_update[var_4_1] = nil
-		self._lookup[var_4_1] = nil
+	if index == num_extensions then
+		self._units[index] = nil
+		self._to_update[index] = nil
+		self._lookup[index] = nil
 	else
-		self._units[var_4_1] = self._units[var_4_0]
-		self._units[var_4_0] = nil
-		self._to_update[var_4_1] = self._to_update[var_4_0]
-		self._to_update[var_4_0] = nil
-		self._lookup[self._units[var_4_1]] = var_4_1
-		self._lookup[var_4_0] = nil
+		self._units[index] = self._units[num_extensions]
+		self._units[num_extensions] = nil
+		self._to_update[index] = self._to_update[num_extensions]
+		self._to_update[num_extensions] = nil
+		self._lookup[self._units[index]] = index
+		self._lookup[num_extensions] = nil
 	end
 
 	self._update_index = 1
-	self.extensions[arg_4_2] = self.extensions[arg_4_2] - 1
+	self.extensions[extension_name] = self.extensions[extension_name] - 1
 
-	ScriptUnit.remove_extension(arg_4_1, self.NAME)
+	ScriptUnit.remove_extension(unit, self.NAME)
 end

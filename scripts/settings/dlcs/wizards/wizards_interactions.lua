@@ -1,8 +1,8 @@
 -- chunkname: @scripts/settings/dlcs/wizards/wizards_interactions.lua
 
-local clone = table.clone(InteractionDefinitions.smartobject)
+local base_trail_light_urn_definition = table.clone(InteractionDefinitions.smartobject)
 
-clone.config = {
+base_trail_light_urn_definition.config = {
 	allow_rotation_update = false,
 	hud_verb = "player_interaction",
 	block_other_interactions = true,
@@ -13,179 +13,215 @@ clone.config = {
 	rotate_toward_interactable = true,
 	show_weapons = true
 }
-InteractionDefinitions.trail_light_urn = clone
+InteractionDefinitions.trail_light_urn = base_trail_light_urn_definition
 
-clone.server.start = function (arg_1_0, arg_1_1, arg_1_2, arg_1_3, arg_1_4, arg_1_5)
+base_trail_light_urn_definition.server.start = function (world, interactor_unit, interactable_unit, data, config, t)
 	-- function 1
-	local get_data = Unit.get_data(arg_1_2, "interaction_data", "interaction_length")
+	local duration = Unit.get_data(interactable_unit, "interaction_data", "interaction_length")
 
-	arg_1_3.done_time = arg_1_5 + get_data
-	arg_1_3.duration = get_data
+	data.done_time = t + duration
+	data.duration = duration
 end
 
-clone.client.start = function (arg_2_0, arg_2_1, arg_2_2, arg_2_3, arg_2_4, arg_2_5)
+base_trail_light_urn_definition.client.start = function (world, interactor_unit, interactable_unit, data, config, t)
 	-- function 2
-	ScriptUnit.extension(arg_2_2, "trail_urn_alignment_system"):on_client_start_interaction(arg_2_1, arg_2_5)
+	local trail_urn_alignment_extension = ScriptUnit.extension(interactable_unit, "trail_urn_alignment_system")
 
-	arg_2_3.start_time = arg_2_5
+	trail_urn_alignment_extension:on_client_start_interaction(interactor_unit, t)
 
-	local get_data = Unit.get_data(arg_2_2, "interaction_data", "interaction_length")
+	data.start_time = t
 
-	arg_2_3.duration = get_data
+	local duration = Unit.get_data(interactable_unit, "interaction_data", "interaction_length")
 
-	local get_data_2 = Unit.get_data(arg_2_2, "interaction_data", "interactor_animation")
-	local get_data_3 = Unit.get_data(arg_2_2, "interaction_data", "interactor_animation_time_variable")
-	local extension = ScriptUnit.extension(arg_2_1, "inventory_system")
-	local extension_2 = ScriptUnit.extension(arg_2_1, "career_system")
+	data.duration = duration
 
-	CharacterStateHelper.stop_weapon_actions(extension, "interacting")
-	CharacterStateHelper.stop_career_abilities(extension_2, "interacting")
+	local interactor_animation_name = Unit.get_data(interactable_unit, "interaction_data", "interactor_animation")
+	local interactor_animation_time_variable = Unit.get_data(interactable_unit, "interaction_data", "interactor_animation_time_variable")
+	local inventory_extension = ScriptUnit.extension(interactor_unit, "inventory_system")
+	local career_extension = ScriptUnit.extension(interactor_unit, "career_system")
 
-	if not get_data_2 then
-		local animation_find_variable = Unit.animation_find_variable(arg_2_1, get_data_3)
+	CharacterStateHelper.stop_weapon_actions(inventory_extension, "interacting")
+	CharacterStateHelper.stop_career_abilities(career_extension, "interacting")
 
-		Unit.animation_set_variable(arg_2_1, animation_find_variable, get_data)
+	if interactor_animation_name then
+		local interactor_animation_time_variable = Unit.animation_find_variable(interactor_unit, interactor_animation_time_variable)
 
-		local get_data_4 = Unit.get_data(arg_2_2, "interaction_data", "interactor_animation")
+		Unit.animation_set_variable(interactor_unit, interactor_animation_time_variable, duration)
 
-		Unit.animation_event(arg_2_1, get_data_4)
+		local interactor_animation_name = Unit.get_data(interactable_unit, "interaction_data", "interactor_animation")
+
+		Unit.animation_event(interactor_unit, interactor_animation_name)
 	end
 
-	Unit.set_data(arg_2_2, "interaction_data", "being_used", true)
+	Unit.set_data(interactable_unit, "interaction_data", "being_used", true)
 end
 
-clone.server.update = function (arg_3_0, arg_3_1, arg_3_2, arg_3_3, arg_3_4, arg_3_5, arg_3_6)
+base_trail_light_urn_definition.server.update = function (world, interactor_unit, interactable_unit, data, config, dt, t)
 	-- function 3
-	if not (ScriptUnit.extension(arg_3_1, "status_system"):is_knocked_down() or HEALTH_ALIVE[arg_3_1]) then
+	local status_extension = ScriptUnit.extension(interactor_unit, "status_system")
+
+	if status_extension:is_knocked_down() or not HEALTH_ALIVE[interactor_unit] then
 		return InteractionResult.FAILURE
 	end
 
-	local extension = ScriptUnit.extension(arg_3_2, "trail_urn_alignment_system")
+	local trail_urn_alignment_extension = ScriptUnit.extension(interactable_unit, "trail_urn_alignment_system")
 
-	if not extension:is_state_aligned() and not extension:is_unit_pushed_out_off_range(arg_3_1, arg_3_2) then
+	if trail_urn_alignment_extension:is_state_aligned() and trail_urn_alignment_extension:is_unit_pushed_out_off_range(interactor_unit, interactable_unit) then
 		return InteractionResult.FAILURE
 	end
 
-	if arg_3_6 > arg_3_3.done_time then
+	if t > data.done_time then
 		return InteractionResult.SUCCESS
 	end
 
 	return InteractionResult.ONGOING
 end
 
-clone.client.update = function (arg_4_0, arg_4_1, arg_4_2, arg_4_3, arg_4_4, arg_4_5, arg_4_6)
+base_trail_light_urn_definition.client.update = function (world, interactor_unit, interactable_unit, data, config, dt, t)
 	-- function 4
-	ScriptUnit.extension(arg_4_2, "trail_urn_alignment_system"):on_client_move_to_node(arg_4_1, arg_4_2, arg_4_3.is_husk, arg_4_6)
+	local trail_urn_alignment_extension = ScriptUnit.extension(interactable_unit, "trail_urn_alignment_system")
+
+	trail_urn_alignment_extension:on_client_move_to_node(interactor_unit, interactable_unit, data.is_husk, t)
 end
 
-clone.server.stop = function (arg_5_0, arg_5_1, arg_5_2, arg_5_3, arg_5_4, arg_5_5, arg_5_6)
+base_trail_light_urn_definition.server.stop = function (world, interactor_unit, interactable_unit, data, config, t, result)
 	-- function 5
-	if arg_5_6 == InteractionResult.SUCCESS then
-		local extension = ScriptUnit.extension(arg_5_2, "interactable_system")
+	if result == InteractionResult.SUCCESS then
+		local interactable_system = ScriptUnit.extension(interactable_unit, "interactable_system")
 
-		extension.num_times_successfully_completed = extension.num_times_successfully_completed + 1
+		interactable_system.num_times_successfully_completed = interactable_system.num_times_successfully_completed + 1
 
-		if not Unit.get_data(arg_5_2, "interaction_data", "only_once") then
-			Unit.set_data(arg_5_2, "interaction_data", "used", true)
+		if Unit.get_data(interactable_unit, "interaction_data", "only_once") then
+			Unit.set_data(interactable_unit, "interaction_data", "used", true)
 		end
 	end
 
-	Unit.set_data(arg_5_2, "interaction_data", "being_used", false)
+	Unit.set_data(interactable_unit, "interaction_data", "being_used", false)
 end
 
-local function fn(arg_6_0)
+local function remove_torch(interactor_unit)
 	-- function 6
-	local extension = ScriptUnit.extension(arg_6_0, "inventory_system")
+	local inventory_extension = ScriptUnit.extension(interactor_unit, "inventory_system")
 
-	extension:destroy_slot("slot_level_event")
-	extension:wield_previous_weapon()
+	inventory_extension:destroy_slot("slot_level_event")
+	inventory_extension:wield_previous_weapon()
 end
 
-clone.client.stop = function (arg_7_0, arg_7_1, arg_7_2, arg_7_3, arg_7_4, arg_7_5, arg_7_6)
+base_trail_light_urn_definition.client.stop = function (world, interactor_unit, interactable_unit, data, config, t, result)
 	-- function 7
-	Unit.animation_event(arg_7_1, "interaction_end")
+	Unit.animation_event(interactor_unit, "interaction_end")
 
-	if arg_7_6 == InteractionResult.SUCCESS then
-		if not Unit.get_data(arg_7_2, "interaction_data", "only_once") then
-			Unit.set_data(arg_7_2, "interaction_data", "used", true)
+	if result == InteractionResult.SUCCESS then
+		if Unit.get_data(interactable_unit, "interaction_data", "only_once") then
+			Unit.set_data(interactable_unit, "interaction_data", "used", true)
 		end
 
-		if not arg_7_3.is_husk then
-			fn(arg_7_1)
+		if not data.is_husk then
+			remove_torch(interactor_unit)
 		end
 	end
 
-	if arg_7_3.is_husk or not arg_7_4.rotate_toward_interactable then
-		local extension = ScriptUnit.extension(arg_7_1, "locomotion_system")
+	if not data.is_husk and config.rotate_toward_interactable then
+		local locomotion_extension = ScriptUnit.extension(interactor_unit, "locomotion_system")
 
-		extension:enable_script_driven_movement()
-		extension:enable_rotation_towards_velocity(true)
+		locomotion_extension:enable_script_driven_movement()
+		locomotion_extension:enable_rotation_towards_velocity(true)
 	end
 
-	ScriptUnit.extension(arg_7_2, "trail_urn_alignment_system"):on_client_stop(arg_7_6)
-	Unit.set_data(arg_7_2, "interaction_data", "being_used", false)
+	local trail_urn_alignment_extension = ScriptUnit.extension(interactable_unit, "trail_urn_alignment_system")
+
+	trail_urn_alignment_extension:on_client_stop(result)
+	Unit.set_data(interactable_unit, "interaction_data", "being_used", false)
 end
 
-clone.server.can_interact = function (arg_8_0, arg_8_1, arg_8_2, arg_8_3)
+base_trail_light_urn_definition.server.can_interact = function (interactor_unit, interactable_unit, data, config)
 	-- function 8
-	local get_data = Unit.get_data(arg_8_1, "interaction_data", "used")
-	local get_data_2 = Unit.get_data(arg_8_1, "interaction_data", "being_used")
+	local used = Unit.get_data(interactable_unit, "interaction_data", "used")
+	local being_used = Unit.get_data(interactable_unit, "interaction_data", "being_used")
 
-	if get_data or not get_data_2 then
-		return not not get_data or not get_data_2
+	if used or being_used then
+		return not used and not not not being_used
 	end
 
-	if not ScriptUnit.extension(arg_8_1, "trail_urn_alignment_system"):can_interact() then
+	local trail_urn_alignment_extension = ScriptUnit.extension(interactable_unit, "trail_urn_alignment_system")
+
+	if not trail_urn_alignment_extension:can_interact() then
 		return false
 	end
 
-	local get_data_3 = Unit.get_data(arg_8_1, "interaction_data", "wanted_item")
+	local get_data = Unit.get_data(interactable_unit, "interaction_data", "wanted_item")
 
-	get_data_3 = get_data_3 or "shadow_torch"
+	if not get_data then
+		-- Nothing
+	end
 
-	local has_extension = ScriptUnit.has_extension(arg_8_0, "inventory_system")
+	get_data = "shadow_torch"
 
-	if not (has_extension or has_extension:has_inventory_item("slot_level_event", get_data_3)) then
+	local item_name = get_data
+
+	::label_8_0::
+
+	local inventory_extension = ScriptUnit.has_extension(interactor_unit, "inventory_system")
+
+	if not inventory_extension and not inventory_extension:has_inventory_item("slot_level_event", item_name) then
 		return false
 	end
 
-	local get_data_4 = Unit.get_data(arg_8_1, "interaction_data", "custom_interaction_check_name")
+	local custom_interaction_check_name = Unit.get_data(interactable_unit, "interaction_data", "custom_interaction_check_name")
 
-	if not (not get_data_4 and not InteractionCustomChecks[get_data_4] and InteractionCustomChecks[get_data_4](arg_8_0, arg_8_1)) then
-		return false
+	if custom_interaction_check_name then
+		local interaction_custom_check_func = InteractionCustomChecks[custom_interaction_check_name]
+
+		if interaction_custom_check_func and not InteractionCustomChecks[custom_interaction_check_name](interactor_unit, interactable_unit) then
+			return false
+		end
 	end
 
-	return not not get_data or not get_data_2
+	return not used and not not not being_used
 end
 
-clone.client.can_interact = function (arg_9_0, arg_9_1, arg_9_2, arg_9_3)
+base_trail_light_urn_definition.client.can_interact = function (interactor_unit, interactable_unit, data, config)
 	-- function 9
-	if not ScriptUnit.extension(arg_9_1, "trail_urn_alignment_system"):can_interact() then
+	local trail_urn_alignment_extension = ScriptUnit.extension(interactable_unit, "trail_urn_alignment_system")
+
+	if not trail_urn_alignment_extension:can_interact() then
 		return false
 	end
 
-	local get_data = Unit.get_data(arg_9_1, "interaction_data", "wanted_item")
+	local get_data = Unit.get_data(interactable_unit, "interaction_data", "wanted_item")
 
-	get_data = get_data or "shadow_torch"
+	if not get_data then
+		-- Nothing
+	end
 
-	local has_extension = ScriptUnit.has_extension(arg_9_0, "inventory_system")
+	get_data = "shadow_torch"
 
-	if not (has_extension == nil or has_extension:has_inventory_item("slot_level_event", get_data)) then
+	local item_name = get_data
+
+	::label_9_0::
+
+	local inventory_extension = ScriptUnit.has_extension(interactor_unit, "inventory_system")
+
+	if inventory_extension == nil or not inventory_extension:has_inventory_item("slot_level_event", item_name) then
 		return false
 	end
 
-	local get_data_2 = Unit.get_data(arg_9_1, "interaction_data", "used")
-	local get_data_3 = Unit.get_data(arg_9_1, "interaction_data", "being_used")
+	local used = Unit.get_data(interactable_unit, "interaction_data", "used")
+	local being_used = Unit.get_data(interactable_unit, "interaction_data", "being_used")
 
-	if get_data_2 or not get_data_3 then
-		return not not get_data_2 or not get_data_3
+	if used or being_used then
+		return not used and not not not being_used
 	end
 
-	local get_data_4 = Unit.get_data(arg_9_1, "interaction_data", "custom_interaction_check_name")
+	local custom_interaction_check_name = Unit.get_data(interactable_unit, "interaction_data", "custom_interaction_check_name")
 
-	if not (not get_data_4 and not InteractionCustomChecks[get_data_4] and InteractionCustomChecks[get_data_4](arg_9_0, arg_9_1)) then
-		return false
+	if custom_interaction_check_name then
+		local interaction_custom_check_func = InteractionCustomChecks[custom_interaction_check_name]
+
+		if interaction_custom_check_func and not InteractionCustomChecks[custom_interaction_check_name](interactor_unit, interactable_unit) then
+			return false
+		end
 	end
 
-	return not not get_data_2 or not get_data_3
+	return not used and not not not being_used
 end

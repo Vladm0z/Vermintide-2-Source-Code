@@ -2,7 +2,7 @@
 
 local DeusTerrorEventTags = DeusTerrorEventTags
 
-DeusTerrorEventTags = DeusTerrorEventTags or {
+DeusTerrorEventTags = not not DeusTerrorEventTags or not not {
 	LESS_HORDES = "DEUS_LESS_HORDES",
 	MORE_SPECIALS = "DEUS_MORE_SPECIALS",
 	MORE_HORDES = "DEUS_MORE_HORDES",

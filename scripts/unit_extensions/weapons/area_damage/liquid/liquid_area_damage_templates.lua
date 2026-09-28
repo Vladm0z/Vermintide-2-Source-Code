@@ -193,13 +193,13 @@ LiquidAreaDamageTemplates.templates = {
 				1
 			}
 		},
-		hit_player_function = function (arg_1_0, arg_1_1, arg_1_2)
+		hit_player_function = function (player_unit, player_and_bot_units, source_unit)
 			-- function 1
-			if not Unit.alive(arg_1_2) then
-				local var_1_0 = BLACKBOARDS[arg_1_2]
+			if Unit.alive(source_unit) then
+				local blackboard = BLACKBOARDS[source_unit]
 
-				if not var_1_0 then
-					var_1_0.has_done_bile_damage = true
+				if blackboard then
+					blackboard.has_done_bile_damage = true
 				end
 			end
 		end
@@ -503,13 +503,13 @@ LiquidAreaDamageTemplates.templates = {
 				2.8
 			}
 		},
-		hit_player_function = function (arg_2_0, arg_2_1, arg_2_2)
+		hit_player_function = function (player_unit, player_and_bot_units, source_unit)
 			-- function 2
-			if not Unit.alive(arg_2_2) then
-				local var_2_0 = BLACKBOARDS[arg_2_2]
+			if Unit.alive(source_unit) then
+				local blackboard = BLACKBOARDS[source_unit]
 
-				if not var_2_0 then
-					var_2_0.has_done_bile_damage = true
+				if blackboard then
+					blackboard.has_done_bile_damage = true
 				end
 			end
 		end
@@ -609,48 +609,64 @@ LiquidAreaDamageTemplates.templates = {
 				1
 			}
 		},
-		hit_player_function = function (arg_3_0, arg_3_1)
+		hit_player_function = function (hit_player_unit, player_and_bot_units)
 			-- function 3
-			local tbl = {
+			local stat_names = {
 				"nurgle_bathed_all",
 				"nurgle_bathed_all_cata"
 			}
 
-			for i = 1, #tbl do
-				local get_difficulty = Managers.state.difficulty:get_difficulty()
-				local var_3_2 = tbl[i]
+			for h = 1, #stat_names do
+				local current_difficulty = Managers.state.difficulty:get_difficulty()
+				local stat_name = stat_names[h]
+				local allowed_difficulties = QuestSettings.allowed_difficulties[stat_name]
+				local allowed_difficulty = allowed_difficulties[current_difficulty]
 
-				if not QuestSettings.allowed_difficulties[var_3_2][get_difficulty] then
-					local extension = ScriptUnit.extension(arg_3_0, "status_system")
-					local num_times_bathed_in_nurgle_liquid = extension.num_times_bathed_in_nurgle_liquid
+				if allowed_difficulty then
+					local status_extension = ScriptUnit.extension(hit_player_unit, "status_system")
+					local num_times_bathed_in_nurgle_liquid_2 = status_extension.num_times_bathed_in_nurgle_liquid
 
-					num_times_bathed_in_nurgle_liquid = num_times_bathed_in_nurgle_liquid or 0
-					extension.num_times_bathed_in_nurgle_liquid = num_times_bathed_in_nurgle_liquid + 1
+					if not num_times_bathed_in_nurgle_liquid_2 then
+						-- Nothing
+					end
 
-					local flag = false
+					num_times_bathed_in_nurgle_liquid_2 = 0
 
-					for j = 0, #arg_3_1 do
-						local var_3_6 = arg_3_1[j]
+					local num_times_bathed_in_nurgle_liquid = num_times_bathed_in_nurgle_liquid_2
 
-						if not Unit.alive(var_3_6) then
-							local num_times_bathed_in_nurgle_liquid_2 = ScriptUnit.extension(var_3_6, "status_system").num_times_bathed_in_nurgle_liquid
+					::label_3_0::
 
-							if not (not num_times_bathed_in_nurgle_liquid_2 and not (num_times_bathed_in_nurgle_liquid_2 >= QuestSettings.nurgle_bathed_all)) then
-								Managers.player:statistics_db():increment_stat_and_sync_to_clients(tbl[i])
+					status_extension.num_times_bathed_in_nurgle_liquid = num_times_bathed_in_nurgle_liquid + 1
 
-								flag = true
+					local completed_challenge = false
+
+					for i = 0, #player_and_bot_units do
+						local player_unit = player_and_bot_units[i]
+
+						if Unit.alive(player_unit) then
+							local player_unit_status_extension = ScriptUnit.extension(player_unit, "status_system")
+							local num_times_bathed = player_unit_status_extension.num_times_bathed_in_nurgle_liquid
+
+							if num_times_bathed and num_times_bathed >= QuestSettings.nurgle_bathed_all then
+								local statistics_db = Managers.player:statistics_db()
+
+								statistics_db:increment_stat_and_sync_to_clients(stat_names[h])
+
+								completed_challenge = true
 
 								break
 							end
 						end
 					end
 
-					if not flag then
-						for k = 0, #arg_3_1 do
-							local var_3_8 = arg_3_1[k]
+					if completed_challenge then
+						for i = 0, #player_and_bot_units do
+							local player_unit = player_and_bot_units[i]
 
-							if not Unit.alive(var_3_8) then
-								ScriptUnit.extension(var_3_8, "status_system").num_times_bathed_in_nurgle_liquid = nil
+							if Unit.alive(player_unit) then
+								local player_unit_status_extension = ScriptUnit.extension(player_unit, "status_system")
+
+								player_unit_status_extension.num_times_bathed_in_nurgle_liquid = nil
 							end
 						end
 					end
@@ -754,10 +770,12 @@ LiquidAreaDamageTemplates.templates = {
 				1
 			}
 		},
-		hit_player_function = function (arg_4_0, arg_4_1, arg_4_2)
+		hit_player_function = function (player_unit, player_and_bot_units, source_unit)
 			-- function 4
-			if not Unit.alive(arg_4_2) then
-				BLACKBOARDS[arg_4_2].has_dealt_burn_damage = true
+			if Unit.alive(source_unit) then
+				local blackboard = BLACKBOARDS[source_unit]
+
+				blackboard.has_dealt_burn_damage = true
 			end
 		end
 	},
@@ -1105,132 +1123,143 @@ LiquidAreaDamageTemplates.templates.troll_chief_vomit.fx_name_filled = "fx/wpnfx
 LiquidAreaDamageTemplates.templates.troll_chief_vomit_near = table.clone(LiquidAreaDamageTemplates.templates.bile_troll_vomit_near)
 LiquidAreaDamageTemplates.templates.troll_chief_vomit_near.fx_name_filled = "fx/wpnfx_troll_chief_vomit_impact_01"
 
-LiquidAreaDamageTemplates.pour_spread = function (arg_5_0)
+LiquidAreaDamageTemplates.pour_spread = function (angle)
 	-- function 5
 	return 1
 end
 
-LiquidAreaDamageTemplates.default_spread = function (arg_6_0)
+LiquidAreaDamageTemplates.default_spread = function (angle)
 	-- function 6
-	return math.max((1 - arg_6_0 / math.pi)^2 - 0.45, 0)
+	return math.max((1 - angle / math.pi)^2 - 0.45, 0)
 end
 
-LiquidAreaDamageTemplates.forward_spread = function (arg_7_0)
+LiquidAreaDamageTemplates.forward_spread = function (angle)
 	-- function 7
-	return math.max(1 - arg_7_0 / (math.pi * 0.25), 0)
+	return math.max(1 - angle / (math.pi * 0.25), 0)
 end
 
-LiquidAreaDamageTemplates.flamethrower_spread = function (arg_8_0)
+LiquidAreaDamageTemplates.flamethrower_spread = function (angle)
 	-- function 8
-	return math.max((1 - arg_8_0 / math.pi)^2, 0)
+	return math.max((1 - angle / math.pi)^2, 0)
 end
 
-LiquidAreaDamageTemplates.bile_troll_vomit_init = function (self, arg_9_1)
+LiquidAreaDamageTemplates.bile_troll_vomit_init = function (self, t)
 	-- function 9
-	local _source_attacker_unit = self._source_attacker_unit
+	local troll_unit = self._source_attacker_unit
 
-	if not HEALTH_ALIVE[_source_attacker_unit] then
-		local _world = self._world
-		local node = Unit.node(_source_attacker_unit, "j_tongue_01")
-		local world_position = Unit.world_position(_source_attacker_unit, node)
-		local str = "units/weapons/enemy/wpn_troll_vomit/wpn_troll_vomit"
-		local spawn_local_unit = Managers.state.unit_spawner:spawn_local_unit(str, world_position, nil, nil)
+	if HEALTH_ALIVE[troll_unit] then
+		local world = self._world
+		local tongue_node = Unit.node(troll_unit, "j_tongue_01")
+		local tongue_pos = Unit.world_position(troll_unit, tongue_node)
+		local vomit_unit_name = "units/weapons/enemy/wpn_troll_vomit/wpn_troll_vomit"
+		local unit_spawner = Managers.state.unit_spawner
+		local vomit_unit = unit_spawner:spawn_local_unit(vomit_unit_name, tongue_pos, nil, nil)
 
-		World.link_unit(_world, spawn_local_unit, _source_attacker_unit, node)
-		Unit.flow_event(spawn_local_unit, "fade_in")
+		World.link_unit(world, vomit_unit, troll_unit, tongue_node)
+		Unit.flow_event(vomit_unit, "fade_in")
 
-		self._vomit_unit = spawn_local_unit
-		self._firing_time_deadline = arg_9_1 + BreedActions.chaos_troll.vomit.firing_time
+		self._vomit_unit = vomit_unit
+
+		local action = BreedActions.chaos_troll.vomit
+		local firing_time = action.firing_time
+
+		self._firing_time_deadline = t + firing_time
 	end
 end
 
-LiquidAreaDamageTemplates.vs_bile_troll_vomit_init = function (self, arg_10_1)
+LiquidAreaDamageTemplates.vs_bile_troll_vomit_init = function (self, t)
 	-- function 10
-	local _source_attacker_unit = self._source_attacker_unit
+	local troll_unit = self._source_attacker_unit
 
-	if not HEALTH_ALIVE[_source_attacker_unit] then
-		local _world = self._world
-		local str = "units/weapons/enemy/wpn_troll_vomit/wpn_troll_vomit"
+	if HEALTH_ALIVE[troll_unit] then
+		local world = self._world
+		local vomit_unit_name = "units/weapons/enemy/wpn_troll_vomit/wpn_troll_vomit"
 		local unit_spawner = Managers.state.unit_spawner
-		local var_10_4
-		local unit_owner = Managers.player:unit_owner(_source_attacker_unit)
+		local vomit_unit
+		local player = Managers.player:unit_owner(troll_unit)
 
-		if not unit_owner and not unit_owner.remote then
-			local node = Unit.node(_source_attacker_unit, "j_tongue_01")
-			local world_position = Unit.world_position(_source_attacker_unit, node)
+		if player and player.remote then
+			local tongue_node = Unit.node(troll_unit, "j_tongue_01")
+			local tongue_pos = Unit.world_position(troll_unit, tongue_node)
 
-			var_10_4 = unit_spawner:spawn_local_unit(str, world_position, nil, nil)
+			vomit_unit = unit_spawner:spawn_local_unit(vomit_unit_name, tongue_pos, nil, nil)
 
-			World.link_unit(_world, var_10_4, _source_attacker_unit, node)
-			Unit.flow_event(var_10_4, "fade_in")
+			World.link_unit(world, vomit_unit, troll_unit, tongue_node)
+			Unit.flow_event(vomit_unit, "fade_in")
 
 			self._fade_out_vomit = true
 		else
-			local has_extension = ScriptUnit.has_extension(_source_attacker_unit, "first_person_system")
+			local first_person_extension = ScriptUnit.has_extension(troll_unit, "first_person_system")
 			local local_player = Managers.player:local_player()
 
-			if not local_player then
-				local viewport_name = local_player.viewport_name
-				local viewport = ScriptWorld.viewport(self._world, viewport_name, true)
-				local camera = ScriptViewport.camera(viewport)
-				local get_data = Camera.get_data(camera, "unit")
-				local current_position = has_extension:current_position()
+			if local_player then
+				local vp_name = local_player.viewport_name
+				local vp = ScriptWorld.viewport(self._world, vp_name, true)
+				local camera = ScriptViewport.camera(vp)
+				local camera_unit = Camera.get_data(camera, "unit")
+				local camera_position = first_person_extension:current_position()
 
-				var_10_4 = unit_spawner:spawn_local_unit(str, current_position, nil, nil)
+				vomit_unit = unit_spawner:spawn_local_unit(vomit_unit_name, camera_position, nil, nil)
 
-				World.link_unit(_world, var_10_4, get_data, 0)
-				Unit.set_local_position(var_10_4, 0, Vector3(0, 0, -0.5))
-				Unit.set_local_rotation(var_10_4, 0, Quaternion.axis_angle(Vector3.up(), math.pi / 2))
-				Unit.flow_event(var_10_4, "spawn_1p_effect")
+				World.link_unit(world, vomit_unit, camera_unit, 0)
+				Unit.set_local_position(vomit_unit, 0, Vector3(0, 0, -0.5))
+				Unit.set_local_rotation(vomit_unit, 0, Quaternion.axis_angle(Vector3.up(), math.pi / 2))
+				Unit.flow_event(vomit_unit, "spawn_1p_effect")
 			end
 		end
 
-		self._vomit_unit = var_10_4
-		self._firing_time_deadline = arg_10_1 + BreedActions.chaos_troll.vomit.firing_time
+		self._vomit_unit = vomit_unit
+
+		local action = BreedActions.chaos_troll.vomit
+		local firing_time = action.firing_time
+
+		self._firing_time_deadline = t + firing_time
 	end
 end
 
-LiquidAreaDamageTemplates.nurgle_noxious_init = function (self, arg_11_1)
+LiquidAreaDamageTemplates.nurgle_noxious_init = function (self, t)
 	-- function 11
-	local _source_attacker_unit = self._source_attacker_unit
+	local unit = self._source_attacker_unit
 
-	if not HEALTH_ALIVE[_source_attacker_unit] then
-		local _world = self._world
-		local node = Unit.node(_source_attacker_unit, "j_spine")
-		local world_position = Unit.world_position(_source_attacker_unit, node)
-		local var_11_4
+	if HEALTH_ALIVE[unit] then
+		local world = self._world
+		local node = Unit.node(unit, "j_spine")
+		local pos = Unit.world_position(unit, node)
+		local rotation
 
-		if not self._flow_dir then
-			local unbox = self._flow_dir:unbox()
-			local look = Quaternion.look(unbox, Vector3.up())
+		if self._flow_dir then
+			local dir = self._flow_dir:unbox()
+
+			rotation = Quaternion.look(dir, Vector3.up())
 		else
-			local identity = Quaternion.identity()
+			rotation = Quaternion.identity()
 		end
 
-		local str = "units/weapons/enemy/wpn_troll_vomit/wpn_troll_vomit"
-		local spawn_local_unit = Managers.state.unit_spawner:spawn_local_unit(str, world_position, nil, nil)
+		local vomit_unit_name = "units/weapons/enemy/wpn_troll_vomit/wpn_troll_vomit"
+		local unit_spawner = Managers.state.unit_spawner
+		local vomit_unit = unit_spawner:spawn_local_unit(vomit_unit_name, pos, nil, nil)
 
-		World.link_unit(_world, spawn_local_unit, _source_attacker_unit, node)
-		Unit.set_local_scale(spawn_local_unit, 0, Vector3(0.6, 0.6, 0.6))
-		Unit.flow_event(spawn_local_unit, "fade_in")
+		World.link_unit(world, vomit_unit, unit, node)
+		Unit.set_local_scale(vomit_unit, 0, Vector3(0.6, 0.6, 0.6))
+		Unit.flow_event(vomit_unit, "fade_in")
 
-		self._vomit_unit = spawn_local_unit
-		self._firing_time_deadline = arg_11_1 + 1
+		self._vomit_unit = vomit_unit
+		self._firing_time_deadline = t + 1
 	end
 end
 
-LiquidAreaDamageTemplates.bile_troll_vomit_update = function (self, arg_12_1, arg_12_2)
+LiquidAreaDamageTemplates.bile_troll_vomit_update = function (self, t, dt)
 	-- function 12
-	local _vomit_unit = self._vomit_unit
-	local _source_attacker_unit = self._source_attacker_unit
-	local var_12_2 = HEALTH_ALIVE[_source_attacker_unit]
-	local _firing_time_deadline = self._firing_time_deadline
+	local vomit_unit = self._vomit_unit
+	local troll_unit = self._source_attacker_unit
+	local source_unit_is_alive = HEALTH_ALIVE[troll_unit]
+	local firing_time_deadline = self._firing_time_deadline
 
-	if not (not var_12_2 and _vomit_unit == nil or not (arg_12_1 < _firing_time_deadline)) then
+	if source_unit_is_alive and vomit_unit ~= nil and t < firing_time_deadline then
 		return true
 	else
-		if _vomit_unit ~= nil then
-			Unit.flow_event(_vomit_unit, "fade_out")
+		if vomit_unit ~= nil then
+			Unit.flow_event(vomit_unit, "fade_out")
 
 			self._vomit_unit = nil
 		end
@@ -1239,19 +1268,19 @@ LiquidAreaDamageTemplates.bile_troll_vomit_update = function (self, arg_12_1, ar
 	end
 end
 
-LiquidAreaDamageTemplates.vs_bile_troll_vomit_update = function (self, arg_13_1, arg_13_2)
+LiquidAreaDamageTemplates.vs_bile_troll_vomit_update = function (self, t, dt)
 	-- function 13
-	local _vomit_unit = self._vomit_unit
-	local _source_attacker_unit = self._source_attacker_unit
-	local var_13_2 = HEALTH_ALIVE[_source_attacker_unit]
-	local _firing_time_deadline = self._firing_time_deadline
+	local vomit_unit = self._vomit_unit
+	local troll_unit = self._source_attacker_unit
+	local source_unit_is_alive = HEALTH_ALIVE[troll_unit]
+	local firing_time_deadline = self._firing_time_deadline
 
-	if not (not var_13_2 and _vomit_unit == nil or not (arg_13_1 < _firing_time_deadline)) then
+	if source_unit_is_alive and vomit_unit ~= nil and t < firing_time_deadline then
 		return true
 	else
-		if _vomit_unit ~= nil then
-			if not self._fade_out_vomit then
-				Unit.flow_event(_vomit_unit, "fade_out")
+		if vomit_unit ~= nil then
+			if self._fade_out_vomit then
+				Unit.flow_event(vomit_unit, "fade_out")
 			end
 
 			self._vomit_unit = nil
@@ -1261,12 +1290,16 @@ LiquidAreaDamageTemplates.vs_bile_troll_vomit_update = function (self, arg_13_1,
 	end
 end
 
-LiquidAreaDamageTemplates.bile_troll_vomit_ground_base_condition = function (arg_14_0)
+LiquidAreaDamageTemplates.bile_troll_vomit_ground_base_condition = function (unit)
 	-- function 14
-	return not ScriptUnit.has_extension(arg_14_0, "buff_system"):has_buff_type("troll_bile_face")
+	local buff_extension = ScriptUnit.has_extension(unit, "buff_system")
+
+	return not buff_extension:has_buff_type("troll_bile_face")
 end
 
-LiquidAreaDamageTemplates.stormfiend_warpfire_ground_base_condition = function (arg_15_0)
+LiquidAreaDamageTemplates.stormfiend_warpfire_ground_base_condition = function (unit)
 	-- function 15
-	return not ScriptUnit.has_extension(arg_15_0, "buff_system"):has_buff_type("stormfiend_warpfire_face")
+	local buff_extension = ScriptUnit.has_extension(unit, "buff_system")
+
+	return not buff_extension:has_buff_type("stormfiend_warpfire_face")
 end

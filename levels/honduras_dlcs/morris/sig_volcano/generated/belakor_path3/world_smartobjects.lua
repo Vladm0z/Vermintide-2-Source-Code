@@ -1,6 +1,6 @@
 -- chunkname: @levels/honduras_dlcs/morris/sig_volcano/generated/belakor_path3/world_smartobjects.lua
 
-local tbl = {
+local smart_objects = {
 	["6f3bdd9b-8e8a-4c3f-9d18-dab977cf02b3"] = {
 		{
 			smart_object_index = 133,
@@ -9774,13 +9774,13 @@ local tbl = {
 		}
 	}
 }
-local num = 412
-local str = "v1"
-local str_2 = "2017.MAY.05.05"
+local smart_object_count = 412
+local version = "v1"
+local ledgelator_version = "2017.MAY.05.05"
 
 return {
-	smart_objects = tbl,
-	smart_object_count = num,
-	version = str,
-	ledgelator_version = str_2
+	smart_objects = smart_objects,
+	smart_object_count = smart_object_count,
+	version = version,
+	ledgelator_version = ledgelator_version
 }

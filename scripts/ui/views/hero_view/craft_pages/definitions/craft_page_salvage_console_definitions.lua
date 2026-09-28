@@ -1,14 +1,15 @@
 -- chunkname: @scripts/ui/views/hero_view/craft_pages/definitions/craft_page_salvage_console_definitions.lua
 
-local num = 3
-local num_2 = num * 3
+local NUM_CRAFT_SLOTS_X = 3
+local NUM_CRAFT_SLOTS_Y = 3
+local NUM_CRAFT_SLOTS = NUM_CRAFT_SLOTS_X * NUM_CRAFT_SLOTS_Y
 local console_menu_scenegraphs = UISettings.console_menu_scenegraphs
-local tbl = {
+local auto_fill_button_size = {
 	80,
 	80
 }
-local num_3 = tbl[2] + 16
-local tbl_2 = {
+local auto_fill_button_offset = auto_fill_button_size[2] + 16
+local scenegraph_definition = {
 	screen = console_menu_scenegraphs.screen,
 	area = console_menu_scenegraphs.area,
 	area_left = console_menu_scenegraphs.area_left,
@@ -214,7 +215,7 @@ local tbl_2 = {
 		vertical_alignment = "bottom",
 		parent = "auto_fill_area",
 		horizontal_alignment = "left",
-		size = tbl,
+		size = auto_fill_button_size,
 		position = {
 			-42,
 			93,
@@ -225,9 +226,9 @@ local tbl_2 = {
 		vertical_alignment = "top",
 		parent = "auto_fill_buttons",
 		horizontal_alignment = "left",
-		size = tbl,
+		size = auto_fill_button_size,
 		position = {
-			80 + num_3 * 0,
+			80 + auto_fill_button_offset * 0,
 			-125,
 			1
 		}
@@ -236,9 +237,9 @@ local tbl_2 = {
 		vertical_alignment = "top",
 		parent = "auto_fill_buttons",
 		horizontal_alignment = "left",
-		size = tbl,
+		size = auto_fill_button_size,
 		position = {
-			80 + num_3 * 1,
+			80 + auto_fill_button_offset * 1,
 			-125,
 			1
 		}
@@ -247,9 +248,9 @@ local tbl_2 = {
 		vertical_alignment = "top",
 		parent = "auto_fill_buttons",
 		horizontal_alignment = "left",
-		size = tbl,
+		size = auto_fill_button_size,
 		position = {
-			80 + num_3 * 2,
+			80 + auto_fill_button_offset * 2,
 			-125,
 			1
 		}
@@ -258,9 +259,9 @@ local tbl_2 = {
 		vertical_alignment = "top",
 		parent = "auto_fill_buttons",
 		horizontal_alignment = "left",
-		size = tbl,
+		size = auto_fill_button_size,
 		position = {
-			80 + num_3 * 3,
+			80 + auto_fill_button_offset * 3,
 			-125,
 			1
 		}
@@ -269,15 +270,15 @@ local tbl_2 = {
 		vertical_alignment = "top",
 		parent = "auto_fill_buttons",
 		horizontal_alignment = "left",
-		size = tbl,
+		size = auto_fill_button_size,
 		position = {
-			80 + num_3 * 4,
+			80 + auto_fill_button_offset * 4,
 			-125,
 			1
 		}
 	}
 }
-local tbl_3 = {
+local counter_text_style = {
 	word_wrap = true,
 	upper_case = true,
 	localize = false,
@@ -293,7 +294,7 @@ local tbl_3 = {
 		2
 	}
 }
-local tbl_4 = {
+local max_counter_text_style = {
 	word_wrap = true,
 	upper_case = true,
 	localize = false,
@@ -310,7 +311,7 @@ local tbl_4 = {
 	}
 }
 
-local function fn(arg_1_0)
+local function create_craft_material_widget(scenegraph_id)
 	-- function 1
 	return {
 		element = {
@@ -333,18 +334,18 @@ local function fn(arg_1_0)
 					style_id = "text",
 					pass_type = "text",
 					text_id = "text",
-					content_check_function = function (self)
+					content_check_function = function (content)
 						-- function 2
-						return not self.warning
+						return not content.warning
 					end
 				},
 				{
 					style_id = "text_warning",
 					pass_type = "text",
 					text_id = "text",
-					content_check_function = function (self)
+					content_check_function = function (content)
 						-- function 3
-						return self.warning
+						return content.warning
 					end
 				},
 				{
@@ -355,11 +356,11 @@ local function fn(arg_1_0)
 				{
 					item_id = "item",
 					pass_type = "item_tooltip",
-					content_check_function = function (self)
+					content_check_function = function (content)
 						-- function 4
-						local is_hover = self.button_hotspot.is_hover
+						local is_hover = content.button_hotspot.is_hover
 
-						is_hover = not is_hover and self.item
+						is_hover = not not is_hover and not not content.item
 
 						return is_hover
 					end
@@ -455,7 +456,7 @@ local function fn(arg_1_0)
 				}
 			}
 		},
-		scenegraph_id = arg_1_0,
+		scenegraph_id = scenegraph_id,
 		offset = {
 			0,
 			0,
@@ -464,12 +465,12 @@ local function fn(arg_1_0)
 	}
 end
 
-local function fn_2(arg_5_0, arg_5_1, arg_5_2, arg_5_3, arg_5_4)
+local function create_auto_fill_button(scenegraph_id, icon_name, hover_color, hover_texture, disable_with_gamepad)
 	-- function 5
-	local var_5_0 = tbl
-	local str = "menu_frame_bg_04"
-	local num = 7
-	local get_atlas_settings_by_texture_name = UIAtlasHelper.get_atlas_settings_by_texture_name(str)
+	local size = auto_fill_button_size
+	local background_texture = "menu_frame_bg_04"
+	local frame_width = 7
+	local bg_texture = UIAtlasHelper.get_atlas_settings_by_texture_name(background_texture)
 
 	return {
 		element = {
@@ -529,13 +530,13 @@ local function fn_2(arg_5_0, arg_5_1, arg_5_2, arg_5_3, arg_5_4)
 						0
 					},
 					{
-						var_5_0[1] / get_atlas_settings_by_texture_name.size[1],
-						var_5_0[2] / get_atlas_settings_by_texture_name.size[2]
+						size[1] / bg_texture.size[1],
+						size[2] / bg_texture.size[2]
 					}
 				},
-				texture_id = str
+				texture_id = background_texture
 			},
-			texture_hover = arg_5_3 or "crafting_icon_hover",
+			texture_hover = not not hover_texture or not not "crafting_icon_hover",
 			texture_icon = {
 				uvs = {
 					{
@@ -547,9 +548,9 @@ local function fn_2(arg_5_0, arg_5_1, arg_5_2, arg_5_3, arg_5_4)
 						1
 					}
 				},
-				texture_id = arg_5_1
+				texture_id = icon_name
 			},
-			disable_with_gamepad = arg_5_4
+			disable_with_gamepad = disable_with_gamepad
 		},
 		style = {
 			frame = {},
@@ -581,13 +582,13 @@ local function fn_2(arg_5_0, arg_5_1, arg_5_2, arg_5_3, arg_5_4)
 					255
 				},
 				offset = {
-					num,
-					num - 2,
+					frame_width,
+					frame_width - 2,
 					1
 				},
 				size = {
-					var_5_0[1] - num * 2,
-					var_5_0[2] - num * 2
+					size[1] - frame_width * 2,
+					size[2] - frame_width * 2
 				}
 			},
 			texture_hover = {
@@ -599,14 +600,14 @@ local function fn_2(arg_5_0, arg_5_1, arg_5_2, arg_5_3, arg_5_4)
 				},
 				default_color = {
 					127,
-					arg_5_2[2],
-					arg_5_2[3],
-					arg_5_2[4]
+					hover_color[2],
+					hover_color[3],
+					hover_color[4]
 				},
-				hover_color = arg_5_2,
+				hover_color = hover_color,
 				offset = {
 					0,
-					num - 2,
+					frame_width - 2,
 					3
 				}
 			},
@@ -638,7 +639,7 @@ local function fn_2(arg_5_0, arg_5_1, arg_5_2, arg_5_3, arg_5_4)
 				}
 			}
 		},
-		scenegraph_id = arg_5_0,
+		scenegraph_id = scenegraph_id,
 		offset = {
 			0,
 			0,
@@ -647,50 +648,50 @@ local function fn_2(arg_5_0, arg_5_1, arg_5_2, arg_5_3, arg_5_4)
 	}
 end
 
-local flag = true
-local tbl_5 = {
+local disable_with_gamepad = true
+local widgets = {
 	craft_button = UIWidgets.create_console_craft_button("craft_button", "console_crafting_recipe_icon_salvage"),
-	counter_text = UIWidgets.create_simple_text("", "counter_text", nil, nil, tbl_3),
-	max_counter_text = UIWidgets.create_simple_text("", "max_counter_text", nil, nil, tbl_4),
+	counter_text = UIWidgets.create_simple_text("", "counter_text", nil, nil, counter_text_style),
+	max_counter_text = UIWidgets.create_simple_text("", "max_counter_text", nil, nil, max_counter_text_style),
 	material_holder = UIWidgets.create_simple_texture("console_crafting_salvage_bg", "material_holder"),
 	material_circle = UIWidgets.create_simple_texture("console_crafting_salvage_ring", "material_circle"),
 	material_cross = UIWidgets.create_simple_texture("console_crafting_salvage_cross", "material_cross"),
-	material_text_1 = fn("material_text_1"),
-	material_text_2 = fn("material_text_2"),
-	material_text_3 = fn("material_text_3"),
-	material_text_4 = fn("material_text_4"),
-	material_text_5 = fn("material_text_5"),
-	material_text_6 = fn("material_text_6"),
-	material_text_7 = fn("material_text_7"),
-	auto_fill_plentiful = fn_2("auto_fill_plentiful", "store_tag_icon_weapon_plentiful", Colors.get_table("plentiful"), nil, flag),
-	auto_fill_common = fn_2("auto_fill_common", "store_tag_icon_weapon_common", Colors.get_table("common"), nil, flag),
-	auto_fill_rare = fn_2("auto_fill_rare", "store_tag_icon_weapon_rare", Colors.get_table("rare"), nil, flag),
-	auto_fill_exotic = fn_2("auto_fill_exotic", "store_tag_icon_weapon_exotic", Colors.get_table("exotic"), nil, flag),
-	auto_fill_clear = fn_2("auto_fill_clear", "layout_button_back", {
+	material_text_1 = create_craft_material_widget("material_text_1"),
+	material_text_2 = create_craft_material_widget("material_text_2"),
+	material_text_3 = create_craft_material_widget("material_text_3"),
+	material_text_4 = create_craft_material_widget("material_text_4"),
+	material_text_5 = create_craft_material_widget("material_text_5"),
+	material_text_6 = create_craft_material_widget("material_text_6"),
+	material_text_7 = create_craft_material_widget("material_text_7"),
+	auto_fill_plentiful = create_auto_fill_button("auto_fill_plentiful", "store_tag_icon_weapon_plentiful", Colors.get_table("plentiful"), nil, disable_with_gamepad),
+	auto_fill_common = create_auto_fill_button("auto_fill_common", "store_tag_icon_weapon_common", Colors.get_table("common"), nil, disable_with_gamepad),
+	auto_fill_rare = create_auto_fill_button("auto_fill_rare", "store_tag_icon_weapon_rare", Colors.get_table("rare"), nil, disable_with_gamepad),
+	auto_fill_exotic = create_auto_fill_button("auto_fill_exotic", "store_tag_icon_weapon_exotic", Colors.get_table("exotic"), nil, disable_with_gamepad),
+	auto_fill_clear = create_auto_fill_button("auto_fill_clear", "layout_button_back", {
 		100,
 		255,
 		100,
 		100
-	}, "button_state_default", flag)
+	}, "button_state_default", disable_with_gamepad)
 }
-local tbl_6 = {
+local animation_definitions = {
 	on_enter = {
 		{
 			name = "fade_in",
 			start_progress = 0,
 			end_progress = 0.3,
-			init = function (arg_6_0, arg_6_1, arg_6_2, arg_6_3)
+			init = function (ui_scenegraph, scenegraph_definition, widgets, params)
 				-- function 6
-				arg_6_3.render_settings.alpha_multiplier = 0
+				params.render_settings.alpha_multiplier = 0
 			end,
-			update = function (arg_7_0, arg_7_1, arg_7_2, arg_7_3, arg_7_4)
+			update = function (ui_scenegraph, scenegraph_definition, widgets, progress, params)
 				-- function 7
-				local easeOutCubic = math.easeOutCubic(arg_7_3)
+				local anim_progress = math.easeOutCubic(progress)
 
-				arg_7_4.render_settings.alpha_multiplier = easeOutCubic
-				arg_7_0.auto_fill_area.local_position[1] = arg_7_1.auto_fill_area.position[1] + -100 * (1 - easeOutCubic)
+				params.render_settings.alpha_multiplier = anim_progress
+				ui_scenegraph.auto_fill_area.local_position[1] = scenegraph_definition.auto_fill_area.position[1] + -100 * (1 - anim_progress)
 			end,
-			on_complete = function (arg_8_0, arg_8_1, arg_8_2, arg_8_3)
+			on_complete = function (ui_scenegraph, scenegraph_definition, widgets, params)
 				-- function 8
 				return
 			end
@@ -701,17 +702,17 @@ local tbl_6 = {
 			name = "fade_out",
 			start_progress = 0,
 			end_progress = 0.3,
-			init = function (arg_9_0, arg_9_1, arg_9_2, arg_9_3)
+			init = function (ui_scenegraph, scenegraph_definition, widgets, params)
 				-- function 9
-				arg_9_3.render_settings.alpha_multiplier = 1
+				params.render_settings.alpha_multiplier = 1
 			end,
-			update = function (arg_10_0, arg_10_1, arg_10_2, arg_10_3, arg_10_4)
+			update = function (ui_scenegraph, scenegraph_definition, widgets, progress, params)
 				-- function 10
-				local easeOutCubic = math.easeOutCubic(arg_10_3)
+				local anim_progress = math.easeOutCubic(progress)
 
-				arg_10_4.render_settings.alpha_multiplier = 1 - easeOutCubic
+				params.render_settings.alpha_multiplier = 1 - anim_progress
 			end,
-			on_complete = function (arg_11_0, arg_11_1, arg_11_2, arg_11_3)
+			on_complete = function (ui_scenegraph, scenegraph_definition, widgets, params)
 				-- function 11
 				return
 			end
@@ -720,8 +721,8 @@ local tbl_6 = {
 }
 
 return {
-	widgets = tbl_5,
-	scenegraph_definition = tbl_2,
-	animation_definitions = tbl_6,
-	NUM_CRAFT_SLOTS = num_2
+	widgets = widgets,
+	scenegraph_definition = scenegraph_definition,
+	animation_definitions = animation_definitions,
+	NUM_CRAFT_SLOTS = NUM_CRAFT_SLOTS
 }

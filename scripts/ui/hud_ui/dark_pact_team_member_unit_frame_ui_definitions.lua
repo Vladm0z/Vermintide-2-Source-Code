@@ -1,11 +1,10 @@
 -- chunkname: @scripts/ui/hud_ui/dark_pact_team_member_unit_frame_ui_definitions.lua
 
-local num = 1920
-local num_2 = 1080
-local flag = true
-local num_3 = 1
-local num_4 = 1
-local tbl = {
+local SIZE_X, SIZE_Y = 1920, 1080
+local RETAINED_MODE_ENABLED = true
+local portrait_scale = 1
+local slot_scale = 1
+local scenegraph_definition = {
 	root = {
 		scale = "hud_scale_fit",
 		position = {
@@ -14,8 +13,8 @@ local tbl = {
 			UILayer.hud
 		},
 		size = {
-			num,
-			num_2
+			SIZE_X,
+			SIZE_Y
 		}
 	},
 	pivot_parent = {
@@ -89,16 +88,17 @@ local tbl = {
 		}
 	}
 }
+local platform = PLATFORM
 
-if PLATFORM ~= "win32" then
-	tbl.root.scale = "hud_fit"
-	tbl.root.is_root = nil
+if platform ~= "win32" then
+	scenegraph_definition.root.scale = "hud_fit"
+	scenegraph_definition.root.is_root = nil
 end
 
-local tbl_2
+local tbl
 
-if not IS_WINDOWS then
-	tbl_2 = {
+if IS_WINDOWS then
+	tbl = {
 		wpn_grimoire_01 = "teammate_consumable_icon_grimoire",
 		potion_cooldown_reduction_01 = "teammate_consumable_icon_speed",
 		potion_healing_draught_01 = "teammate_consumable_icon_potion_01",
@@ -117,12 +117,12 @@ if not IS_WINDOWS then
 		potion_speed_boost_01 = "teammate_consumable_icon_speed"
 	}
 
-	if not tbl_2 then
+	if not tbl then
 		-- Nothing
 	end
 end
 
-tbl_2 = {
+tbl = {
 	wpn_grimoire_01 = "consumables_grimoire",
 	potion_cooldown_reduction_01 = "consumables_speed",
 	potion_healing_draught_01 = "consumables_potion_01",
@@ -141,50 +141,54 @@ tbl_2 = {
 	potion_speed_boost_01 = "consumables_speed"
 }
 
+local inventory_consumable_icons = tbl
+
 do
-	local tbl_3
+	local tbl_2
 end
 
 ::label_0_0::
 
-if not IS_WINDOWS then
-	tbl_3 = {
+if IS_WINDOWS then
+	tbl_2 = {
 		slot_healthkit = 1,
 		slot_grenade = 3,
 		slot_potion = 2
 	}
 
-	if not tbl_3 then
+	if not tbl_2 then
 		-- Nothing
 	end
 end
 
-tbl_3 = {
+tbl_2 = {
 	slot_potion = 3,
 	slot_grenade = 2,
 	slot_healthkit = 1
 }
 
+local inventory_index_by_slot = tbl_2
+
 ::label_0_1::
 
-local tbl_4 = {
+local weapon_slot_widget_settings = {
 	ammo_fields = {
 		slot_ranged = "ammo_text_weapon_slot_2",
 		slot_melee = "ammo_text_weapon_slot_1"
 	}
 }
-local num_5 = 1
-local tbl_5 = {
-	num_5 * 92,
-	num_5 * 9
+local health_bar_size_fraction = 1
+local health_bar_size = {
+	health_bar_size_fraction * 92,
+	health_bar_size_fraction * 9
 }
-local tbl_6 = {
-	-(tbl_5[1] / 2),
-	-25 * num_5,
+local health_bar_offset = {
+	-(health_bar_size[1] / 2),
+	-25 * health_bar_size_fraction,
 	0
 }
 
-local function fn()
+local function create_static_widget()
 	-- function 1
 	local tbl = {
 		scenegraph_id = "pivot",
@@ -194,12 +198,12 @@ local function fn()
 					style_id = "character_portrait",
 					texture_id = "character_portrait",
 					pass_type = "texture",
-					retained_mode = flag,
-					content_change_function = function (self, arg_2_1)
+					retained_mode = RETAINED_MODE_ENABLED,
+					content_change_function = function (content, style)
 						-- function 2
 						local get_color_table_with_alpha
 
-						if not self.dim_portraits then
+						if content.dim_portraits then
 							get_color_table_with_alpha = Colors.get_color_table_with_alpha("dim_gray", 255)
 
 							if not get_color_table_with_alpha then
@@ -211,48 +215,48 @@ local function fn()
 
 						::label_2_0::
 
-						arg_2_1.color = get_color_table_with_alpha
+						style.color = get_color_table_with_alpha
 					end
 				},
 				{
 					style_id = "player_level",
 					pass_type = "text",
 					text_id = "player_level",
-					retained_mode = flag
+					retained_mode = RETAINED_MODE_ENABLED
 				},
 				{
 					pass_type = "texture",
 					style_id = "host_icon",
 					texture_id = "host_icon",
-					retained_mode = flag,
-					content_check_function = function (self)
+					retained_mode = RETAINED_MODE_ENABLED,
+					content_check_function = function (content)
 						-- function 3
-						return self.is_host
+						return content.is_host
 					end
 				},
 				{
 					style_id = "player_name",
 					pass_type = "text",
 					text_id = "player_name",
-					retained_mode = flag
+					retained_mode = RETAINED_MODE_ENABLED
 				},
 				{
 					style_id = "player_name_shadow",
 					pass_type = "text",
 					text_id = "player_name",
-					retained_mode = flag
+					retained_mode = RETAINED_MODE_ENABLED
 				},
 				{
 					pass_type = "texture",
 					style_id = "hp_bar_bg",
 					texture_id = "hp_bar_bg",
-					retained_mode = flag
+					retained_mode = RETAINED_MODE_ENABLED
 				},
 				{
 					pass_type = "texture",
 					style_id = "hp_bar_fg",
 					texture_id = "hp_bar_fg",
-					retained_mode = flag
+					retained_mode = RETAINED_MODE_ENABLED
 				}
 			}
 		},
@@ -269,12 +273,12 @@ local function fn()
 	local tbl_2 = {
 		character_portrait = {
 			size = {
-				86 * num_3,
-				108 * num_3
+				86 * portrait_scale,
+				108 * portrait_scale
 			},
 			offset = {
-				-43 * num_3,
-				-54 * num_3 + 55 * num_3,
+				-43 * portrait_scale,
+				-54 * portrait_scale + 55 * portrait_scale,
 				0
 			},
 			color = {
@@ -308,9 +312,9 @@ local function fn()
 			horizontal_alignment = "center",
 			text_color = Colors.get_table("cheeseburger"),
 			offset = {
-				tbl_6[1],
-				tbl_6[2] - 130,
-				tbl_6[3] + 15
+				health_bar_offset[1],
+				health_bar_offset[2] - 130,
+				health_bar_offset[3] + 15
 			}
 		}
 	}
@@ -320,16 +324,16 @@ local function fn()
 		font_size = 18,
 		text_color = Colors.get_table("white")
 	}
-	local flag_2
+	local flag
 
-	flag_2 = not IS_PS4 and "left" and "center"
-	tbl_3.horizontal_alignment = flag_2
+	flag = (not IS_PS4 or not "left") and not not "center"
+	tbl_3.horizontal_alignment = flag
 
 	local tbl_4 = {}
 	local num
 
-	if not IS_PS4 then
-		num = -43 * num_3
+	if IS_PS4 then
+		num = -43 * portrait_scale
 
 		if not num then
 			-- Nothing
@@ -341,27 +345,27 @@ local function fn()
 	::label_1_0::
 
 	tbl_4[1] = num
-	tbl_4[2] = 110 * num_3
-	tbl_4[3] = tbl_6[3] + 15
+	tbl_4[2] = 110 * portrait_scale
+	tbl_4[3] = health_bar_offset[3] + 15
 	tbl_3.offset = tbl_4
 	tbl_2.player_name = tbl_3
 
-	local tbl_7 = {
+	local tbl_5 = {
 		vertical_alignment = "bottom",
 		font_type = "arial",
 		font_size = 18,
 		text_color = Colors.get_table("black")
 	}
-	local flag_3
+	local flag_2
 
-	flag_3 = not IS_PS4 and "left" and "center"
-	tbl_7.horizontal_alignment = flag_3
+	flag_2 = (not IS_PS4 or not "left") and not not "center"
+	tbl_5.horizontal_alignment = flag_2
 
-	local tbl_8 = {}
+	local tbl_6 = {}
 	local num_2
 
-	if not IS_PS4 then
-		num_2 = -43 * num_3
+	if IS_PS4 then
+		num_2 = -43 * portrait_scale
 
 		if not num_2 then
 			-- Nothing
@@ -372,20 +376,20 @@ local function fn()
 
 	::label_1_1::
 
-	tbl_8[1] = num_2 + 2
-	tbl_8[2] = 110 * num_3 - 2
-	tbl_8[3] = tbl_6[3] + 14
-	tbl_7.offset = tbl_8
-	tbl_2.player_name_shadow = tbl_7
+	tbl_6[1] = num_2 + 2
+	tbl_6[2] = 110 * portrait_scale - 2
+	tbl_6[3] = health_bar_offset[3] + 14
+	tbl_5.offset = tbl_6
+	tbl_2.player_name_shadow = tbl_5
 	tbl_2.hp_bar_bg = {
 		size = {
 			100,
 			17
 		},
 		offset = {
-			tbl_6[1] + tbl_5[1] / 2 - 50,
-			tbl_6[2] + tbl_5[2] / 2 - 8.5,
-			tbl_6[3] + 15
+			health_bar_offset[1] + health_bar_size[1] / 2 - 50,
+			health_bar_offset[2] + health_bar_size[2] / 2 - 8.5,
+			health_bar_offset[3] + 15
 		},
 		color = {
 			255,
@@ -400,9 +404,9 @@ local function fn()
 			24
 		},
 		offset = {
-			tbl_6[1] + tbl_5[1] / 2 - 50,
-			tbl_6[2] + tbl_5[2] / 2 - 8.5 - 7,
-			tbl_6[3] + 20
+			health_bar_offset[1] + health_bar_size[1] / 2 - 50,
+			health_bar_offset[2] + health_bar_size[2] / 2 - 8.5 - 7,
+			health_bar_offset[3] + 20
 		},
 		color = {
 			255,
@@ -414,14 +418,14 @@ local function fn()
 	tbl.style = tbl_2
 	tbl.offset = {
 		0,
-		-55 * num_3,
+		-55 * portrait_scale,
 		0
 	}
 
 	return tbl
 end
 
-local function fn_2()
+local function create_dynamic_portait_widget()
 	-- function 4
 	return {
 		scenegraph_id = "pivot",
@@ -431,48 +435,48 @@ local function fn_2()
 					style_id = "portrait_icon",
 					texture_id = "portrait_icon",
 					pass_type = "texture",
-					retained_mode = flag,
-					content_check_function = function (self)
+					retained_mode = RETAINED_MODE_ENABLED,
+					content_check_function = function (content)
 						-- function 5
-						return self.display_portrait_icon
+						return content.display_portrait_icon
 					end,
-					content_change_function = function (self, arg_6_1)
+					content_change_function = function (content, style)
 						-- function 6
-						arg_6_1.staturated = self.state == "countdown"
+						style.staturated = content.state == "countdown"
 					end
 				},
 				{
 					pass_type = "texture",
 					style_id = "talk_indicator",
 					texture_id = "talk_indicator",
-					retained_mode = flag
+					retained_mode = RETAINED_MODE_ENABLED
 				},
 				{
 					pass_type = "texture",
 					style_id = "talk_indicator_glow",
 					texture_id = "talk_indicator_glow",
-					retained_mode = flag
+					retained_mode = RETAINED_MODE_ENABLED
 				},
 				{
 					pass_type = "texture",
 					style_id = "talk_indicator_highlight",
 					texture_id = "talk_indicator_highlight",
-					retained_mode = flag
+					retained_mode = RETAINED_MODE_ENABLED
 				},
 				{
 					pass_type = "texture",
 					style_id = "talk_indicator_highlight_glow",
 					texture_id = "talk_indicator_highlight_glow",
-					retained_mode = flag
+					retained_mode = RETAINED_MODE_ENABLED
 				},
 				{
 					pass_type = "rotated_texture",
 					style_id = "connecting_icon",
 					texture_id = "connecting_icon",
-					retained_mode = flag,
-					content_check_function = function (self)
+					retained_mode = RETAINED_MODE_ENABLED,
+					content_check_function = function (content)
 						-- function 7
-						return self.connecting
+						return content.connecting
 					end
 				},
 				{
@@ -480,9 +484,9 @@ local function fn_2()
 					pass_type = "text",
 					text_id = "respawn_countdown_text",
 					retained_mode = false,
-					content_check_function = function (self)
+					content_check_function = function (content)
 						-- function 8
-						return self.state == "countdown" or self.state == "fadeout"
+						return content.state == "countdown" or content.state == "fadeout"
 					end
 				}
 			}
@@ -598,11 +602,11 @@ local function fn_2()
 			},
 			portrait_icon = {
 				size = {
-					86 * num_3,
-					108 * num_3
+					86 * portrait_scale,
+					108 * portrait_scale
 				},
 				offset = {
-					-(86 * num_3) / 2,
+					-(86 * portrait_scale) / 2,
 					0,
 					1
 				},
@@ -622,8 +626,8 @@ local function fn_2()
 				vertical_alignment = "center",
 				font_type = "hell_shark_header",
 				size = {
-					86 * num_3,
-					108 * num_3
+					86 * portrait_scale,
+					108 * portrait_scale
 				},
 				text_color = {
 					255,
@@ -632,8 +636,8 @@ local function fn_2()
 					255
 				},
 				offset = {
-					-(86 * num_3) / 2,
-					-(108 * num_3) / 2,
+					-(86 * portrait_scale) / 2,
+					-(108 * portrait_scale) / 2,
 					50
 				},
 				shadow_offset = {
@@ -645,13 +649,13 @@ local function fn_2()
 		},
 		offset = {
 			0,
-			-55 * num_3,
+			-55 * portrait_scale,
 			0
 		}
 	}
 end
 
-local function fn_3()
+local function create_static_loadout_widget()
 	-- function 9
 	return {
 		scenegraph_id = "pivot",
@@ -668,7 +672,7 @@ local function fn_3()
 	}
 end
 
-local function fn_4()
+local function create_dynamic_health_widget()
 	-- function 10
 	return {
 		scenegraph_id = "pivot",
@@ -678,31 +682,41 @@ local function fn_4()
 					pass_type = "texture",
 					style_id = "hp_bar_highlight",
 					texture_id = "hp_bar_highlight",
-					retained_mode = flag,
-					content_check_function = function (self, arg_11_1)
+					retained_mode = RETAINED_MODE_ENABLED,
+					content_check_function = function (content, style)
 						-- function 11
-						return not self.has_shield
+						return not content.has_shield
 					end
 				},
 				{
 					style_id = "grimoire_debuff_divider",
 					texture_id = "grimoire_debuff_divider",
 					pass_type = "texture",
-					retained_mode = flag,
-					content_check_function = function (self)
+					retained_mode = RETAINED_MODE_ENABLED,
+					content_check_function = function (content)
 						-- function 12
-						return self.hp_bar.draw_health_bar
+						return content.hp_bar.draw_health_bar
 					end,
-					content_change_function = function (self, arg_13_1)
+					content_change_function = function (content, style)
 						-- function 13
-						local internal_bar_value = self.hp_bar.internal_bar_value
-						local actual_active_percentage = self.actual_active_percentage
+						local hp_bar_content = content.hp_bar
+						local internal_bar_value = hp_bar_content.internal_bar_value
+						local actual_active_percentage_2 = content.actual_active_percentage
 
-						actual_active_percentage = actual_active_percentage or 1
+						if not actual_active_percentage_2 then
+							-- Nothing
+						end
 
-						local max = math.max(internal_bar_value, actual_active_percentage)
+						actual_active_percentage_2 = 1
 
-						arg_13_1.offset[1] = tbl_6[1] + tbl_5[1] * max
+						local actual_active_percentage = actual_active_percentage_2
+
+						::label_13_0::
+
+						local grim_progress = math.max(internal_bar_value, actual_active_percentage)
+						local offset = style.offset
+
+						offset[1] = health_bar_offset[1] + health_bar_size[1] * grim_progress
 					end
 				},
 				{
@@ -710,10 +724,10 @@ local function fn_4()
 					style_id = "hp_bar",
 					texture_id = "texture_id",
 					content_id = "hp_bar",
-					retained_mode = flag,
-					content_check_function = function (self)
+					retained_mode = RETAINED_MODE_ENABLED,
+					content_check_function = function (content)
 						-- function 14
-						return self.draw_health_bar
+						return content.draw_health_bar
 					end
 				},
 				{
@@ -721,54 +735,63 @@ local function fn_4()
 					style_id = "total_health_bar",
 					texture_id = "texture_id",
 					content_id = "total_health_bar",
-					retained_mode = flag,
-					content_check_function = function (self)
+					retained_mode = RETAINED_MODE_ENABLED,
+					content_check_function = function (content)
 						-- function 15
-						return self.draw_health_bar
+						return content.draw_health_bar
 					end
 				},
 				{
 					style_id = "grimoire_bar",
 					pass_type = "texture_uv",
 					content_id = "grimoire_bar",
-					retained_mode = flag,
-					content_change_function = function (self, arg_16_1)
+					retained_mode = RETAINED_MODE_ENABLED,
+					content_change_function = function (content, style)
 						-- function 16
-						local parent = self.parent
-						local internal_bar_value = parent.hp_bar.internal_bar_value
-						local actual_active_percentage = parent.actual_active_percentage
+						local parent_content = content.parent
+						local hp_bar_content = parent_content.hp_bar
+						local internal_bar_value = hp_bar_content.internal_bar_value
+						local actual_active_percentage_2 = parent_content.actual_active_percentage
 
-						actual_active_percentage = actual_active_percentage or 1
+						if not actual_active_percentage_2 then
+							-- Nothing
+						end
 
-						local max = math.max(internal_bar_value, actual_active_percentage)
-						local size = arg_16_1.size
-						local uvs = self.uvs
-						local offset = arg_16_1.offset
-						local var_16_7 = tbl_5[1]
+						actual_active_percentage_2 = 1
 
-						uvs[1][1] = max
-						size[1] = var_16_7 * (1 - max)
-						offset[1] = 2 + tbl_6[1] + var_16_7 * max
+						local actual_active_percentage = actual_active_percentage_2
+
+						::label_16_0::
+
+						local grim_progress = math.max(internal_bar_value, actual_active_percentage)
+						local size = style.size
+						local uvs = content.uvs
+						local offset = style.offset
+						local bar_length = health_bar_size[1]
+
+						uvs[1][1] = grim_progress
+						size[1] = bar_length * (1 - grim_progress)
+						offset[1] = 2 + health_bar_offset[1] + bar_length * grim_progress
 					end
 				},
 				{
 					pass_type = "texture",
 					style_id = "hp_bar",
 					texture_id = "hp_bar_mask",
-					retained_mode = flag,
-					content_check_function = function (self)
+					retained_mode = RETAINED_MODE_ENABLED,
+					content_check_function = function (content)
 						-- function 17
-						return self.hp_bar.draw_health_bar
+						return content.hp_bar.draw_health_bar
 					end
 				},
 				{
 					pass_type = "texture",
 					style_id = "portrait_icon",
 					texture_id = "portrait_icon",
-					retained_mode = flag,
-					content_check_function = function (self)
+					retained_mode = RETAINED_MODE_ENABLED,
+					content_check_function = function (content)
 						-- function 18
-						return self.display_portrait_icon
+						return content.display_portrait_icon
 					end
 				}
 			}
@@ -808,8 +831,8 @@ local function fn_4()
 			total_health_bar = {
 				gradient_threshold = 1,
 				size = {
-					tbl_5[1],
-					tbl_5[2]
+					health_bar_size[1],
+					health_bar_size[2]
 				},
 				color = {
 					255,
@@ -818,16 +841,16 @@ local function fn_4()
 					255
 				},
 				offset = {
-					tbl_6[1],
-					tbl_6[2],
-					tbl_6[3] + 17
+					health_bar_offset[1],
+					health_bar_offset[2],
+					health_bar_offset[3] + 17
 				}
 			},
 			hp_bar = {
 				gradient_threshold = 1,
 				size = {
-					tbl_5[1],
-					tbl_5[2]
+					health_bar_size[1],
+					health_bar_size[2]
 				},
 				color = {
 					255,
@@ -836,15 +859,15 @@ local function fn_4()
 					255
 				},
 				offset = {
-					tbl_6[1],
-					tbl_6[2],
-					tbl_6[3] + 18
+					health_bar_offset[1],
+					health_bar_offset[2],
+					health_bar_offset[3] + 18
 				}
 			},
 			grimoire_bar = {
 				size = {
-					tbl_5[1],
-					tbl_5[2]
+					health_bar_size[1],
+					health_bar_size[2]
 				},
 				color = {
 					255,
@@ -853,9 +876,9 @@ local function fn_4()
 					255
 				},
 				offset = {
-					tbl_6[1],
-					tbl_6[2],
-					tbl_6[3] + 19
+					health_bar_offset[1],
+					health_bar_offset[2],
+					health_bar_offset[3] + 19
 				}
 			},
 			grimoire_debuff_divider = {
@@ -871,8 +894,8 @@ local function fn_4()
 					255
 				},
 				offset = {
-					tbl_6[1],
-					tbl_6[2],
+					health_bar_offset[1],
+					health_bar_offset[2],
 					23
 				}
 			},
@@ -882,9 +905,9 @@ local function fn_4()
 					17
 				},
 				offset = {
-					tbl_6[1] + tbl_5[1] / 2 - 50,
-					tbl_6[2] - 7,
-					tbl_6[3] + 20
+					health_bar_offset[1] + health_bar_size[1] / 2 - 50,
+					health_bar_offset[2] - 7,
+					health_bar_offset[3] + 20
 				},
 				color = {
 					0,
@@ -896,26 +919,26 @@ local function fn_4()
 		},
 		offset = {
 			0,
-			-55 * num_3,
+			-55 * portrait_scale,
 			0
 		}
 	}
 end
 
-local tbl_7 = {
-	portrait_static = UIWidgets.create_portrait_frame("portrait_pivot", "default", "-", num_3, flag),
-	default_dynamic = fn_2(),
-	default_static = fn(),
-	health_dynamic = fn_4(),
-	versus_insignia_static = UIWidgets.create_small_insignia("insignia_pivot", 1, nil, nil, nil, flag)
+local widget_definitions = {
+	portrait_static = UIWidgets.create_portrait_frame("portrait_pivot", "default", "-", portrait_scale, RETAINED_MODE_ENABLED),
+	default_dynamic = create_dynamic_portait_widget(),
+	default_static = create_static_widget(),
+	health_dynamic = create_dynamic_health_widget(),
+	versus_insignia_static = UIWidgets.create_small_insignia("insignia_pivot", 1, nil, nil, nil, RETAINED_MODE_ENABLED)
 }
-local tbl_8 = {
+local features_list = {
 	equipment = false,
 	ammo = false,
 	damage = true,
 	ability = false
 }
-local tbl_9 = {
+local widget_name_by_feature = {
 	static = {
 		default = "default_static",
 		player_name = "default_static",
@@ -930,15 +953,15 @@ local tbl_9 = {
 		health = "health_dynamic"
 	}
 }
-local create_damage_widget = UnitFramesUiUtils.create_damage_widget("team", 4)
+local damage_widget_definitions = UnitFramesUiUtils.create_damage_widget("team", 4)
 
 return {
-	weapon_slot_widget_settings = tbl_4,
-	inventory_index_by_slot = tbl_3,
-	inventory_consumable_icons = tbl_2,
-	features_list = tbl_8,
-	widget_name_by_feature = tbl_9,
-	scenegraph_definition = tbl,
-	widget_definitions = tbl_7,
-	damage_widget_definitions = create_damage_widget
+	weapon_slot_widget_settings = weapon_slot_widget_settings,
+	inventory_index_by_slot = inventory_index_by_slot,
+	inventory_consumable_icons = inventory_consumable_icons,
+	features_list = features_list,
+	widget_name_by_feature = widget_name_by_feature,
+	scenegraph_definition = scenegraph_definition,
+	widget_definitions = widget_definitions,
+	damage_widget_definitions = damage_widget_definitions
 }

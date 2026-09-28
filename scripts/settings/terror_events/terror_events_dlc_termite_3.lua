@@ -1,25 +1,34 @@
 -- chunkname: @scripts/settings/terror_events/terror_events_dlc_termite_3.lua
 
-local scripts_settings_terror_events_terror_event_utils = require("scripts/settings/terror_events/terror_event_utils")
-local count_event_breed = scripts_settings_terror_events_terror_event_utils.count_event_breed
-local num_spawned_enemies = scripts_settings_terror_events_terror_event_utils.num_spawned_enemies
-local HARD = scripts_settings_terror_events_terror_event_utils.HARD
-local HARDER = scripts_settings_terror_events_terror_event_utils.HARDER
-local HARDEST = scripts_settings_terror_events_terror_event_utils.HARDEST
+local TerrorEventUtils = require("scripts/settings/terror_events/terror_event_utils")
+local count_event_breed = TerrorEventUtils.count_event_breed
+local num_spawned_enemies = TerrorEventUtils.num_spawned_enemies
+local HARD = TerrorEventUtils.HARD
+local HARDER = TerrorEventUtils.HARDER
+local HARDEST = TerrorEventUtils.HARDEST
 
-local function fn(self, arg_1_1, arg_1_2, arg_1_3, arg_1_4, arg_1_5)
+local function setup_grudgemarked_stormfiend(optional_data, difficulty, breed_name, event, difficulty_tweak, enhancement_list)
 	-- function 1
-	local str = "termite_base"
-	local enhancements = self.enhancements
+	local base_grudgemark_name = "termite_base"
+	local enhancements = optional_data.enhancements
 
-	enhancements = enhancements or {}
-	enhancements[#enhancements + 1] = BreedEnhancements[str]
-	self.enhancements = enhancements
+	if not enhancements then
+		-- Nothing
+	end
 
-	return self
+	enhancements = {}
+
+	local list = enhancements
+
+	::label_1_0::
+
+	list[#list + 1] = BreedEnhancements[base_grudgemark_name]
+	optional_data.enhancements = list
+
+	return optional_data
 end
 
-local tbl = {
+local terror_event_blueprints = {
 	pacing_off = {
 		{
 			"control_pacing",
@@ -170,9 +179,9 @@ local tbl = {
 		{
 			"continue_when",
 			duration = 90,
-			condition = function (arg_2_0)
+			condition = function (t)
 				-- function 2
-				return not (count_event_breed("skaven_clan_rat") < 5) or not (count_event_breed("skaven_slave") < 5) or not (count_event_breed("skaven_storm_vermin") < 1) or count_event_breed("skaven_storm_vermin_with_shield") < 1
+				return count_event_breed("skaven_clan_rat") < 5 and count_event_breed("skaven_slave") < 5 and count_event_breed("skaven_storm_vermin") < 1 and count_event_breed("skaven_storm_vermin_with_shield") < 1
 			end
 		},
 		{
@@ -265,9 +274,9 @@ local tbl = {
 		{
 			"continue_when",
 			duration = 90,
-			condition = function (arg_3_0)
+			condition = function (t)
 				-- function 3
-				return not (count_event_breed("skaven_clan_rat") < 5) or not (count_event_breed("skaven_slave") < 5) or not (count_event_breed("skaven_storm_vermin") < 1) or count_event_breed("skaven_storm_vermin_with_shield") < 1
+				return count_event_breed("skaven_clan_rat") < 5 and count_event_breed("skaven_slave") < 5 and count_event_breed("skaven_storm_vermin") < 1 and count_event_breed("skaven_storm_vermin_with_shield") < 1
 			end
 		},
 		{
@@ -360,9 +369,9 @@ local tbl = {
 		{
 			"continue_when",
 			duration = 90,
-			condition = function (arg_4_0)
+			condition = function (t)
 				-- function 4
-				return not (count_event_breed("skaven_clan_rat") < 5) or not (count_event_breed("skaven_slave") < 5) or not (count_event_breed("skaven_storm_vermin") < 1) or count_event_breed("skaven_storm_vermin_with_shield") < 1
+				return count_event_breed("skaven_clan_rat") < 5 and count_event_breed("skaven_slave") < 5 and count_event_breed("skaven_storm_vermin") < 1 and count_event_breed("skaven_storm_vermin_with_shield") < 1
 			end
 		},
 		{
@@ -399,7 +408,7 @@ local tbl = {
 		},
 		{
 			"continue_when",
-			condition = function (arg_5_0)
+			condition = function (t)
 				-- function 5
 				return count_event_breed("skaven_ratling_gunner") < 2
 			end
@@ -490,9 +499,9 @@ local tbl = {
 		{
 			"continue_when",
 			duration = 90,
-			condition = function (arg_6_0)
+			condition = function (t)
 				-- function 6
-				return not (count_event_breed("skaven_clan_rat") < 5) or not (count_event_breed("skaven_slave") < 5) or not (count_event_breed("skaven_storm_vermin") < 1) or count_event_breed("skaven_storm_vermin_with_shield") < 1
+				return count_event_breed("skaven_clan_rat") < 5 and count_event_breed("skaven_slave") < 5 and count_event_breed("skaven_storm_vermin") < 1 and count_event_breed("skaven_storm_vermin_with_shield") < 1
 			end
 		},
 		{
@@ -712,7 +721,7 @@ local tbl = {
 		},
 		{
 			"continue_when",
-			condition = function (arg_7_0)
+			condition = function (t)
 				-- function 7
 				return count_event_breed("skaven_stormfiend") < 1 or count_event_breed("skaven_rat_ogre") < 1
 			end
@@ -723,9 +732,9 @@ local tbl = {
 		},
 		{
 			"continue_when",
-			condition = function (arg_8_0)
+			condition = function (t)
 				-- function 8
-				return not (count_event_breed("skaven_stormfiend") < 1) or count_event_breed("skaven_rat_ogre") < 1
+				return count_event_breed("skaven_stormfiend") < 1 and count_event_breed("skaven_rat_ogre") < 1
 			end
 		},
 		{
@@ -770,9 +779,9 @@ local tbl = {
 		{
 			"continue_when",
 			duration = 120,
-			condition = function (arg_9_0)
+			condition = function (t)
 				-- function 9
-				return not (count_event_breed("skaven_clan_rat") < 5) or count_event_breed("skaven_slave") < 5
+				return count_event_breed("skaven_clan_rat") < 5 and count_event_breed("skaven_slave") < 5
 			end
 		},
 		{
@@ -839,7 +848,7 @@ local tbl = {
 		{
 			"continue_when",
 			duration = 45,
-			condition = function (arg_10_0)
+			condition = function (t)
 				-- function 10
 				return num_spawned_enemies() < 6
 			end
@@ -908,7 +917,7 @@ local tbl = {
 		{
 			"continue_when",
 			duration = 45,
-			condition = function (arg_11_0)
+			condition = function (t)
 				-- function 11
 				return num_spawned_enemies() < 5
 			end
@@ -979,7 +988,7 @@ local tbl = {
 		{
 			"continue_when",
 			duration = 45,
-			condition = function (arg_12_0)
+			condition = function (t)
 				-- function 12
 				return num_spawned_enemies() < 6
 			end
@@ -1023,7 +1032,7 @@ local tbl = {
 		{
 			"continue_when",
 			duration = 45,
-			condition = function (arg_13_0)
+			condition = function (t)
 				-- function 13
 				return num_spawned_enemies() < 5
 			end
@@ -1047,9 +1056,9 @@ local tbl = {
 		{
 			"continue_when",
 			duration = 120,
-			condition = function (arg_14_0)
+			condition = function (t)
 				-- function 14
-				return not (count_event_breed("skaven_clan_rat") < 5) or count_event_breed("skaven_slave") < 5
+				return count_event_breed("skaven_clan_rat") < 5 and count_event_breed("skaven_slave") < 5
 			end
 		},
 		{
@@ -1159,9 +1168,9 @@ local tbl = {
 		{
 			"continue_when",
 			duration = 20,
-			condition = function (arg_15_0)
+			condition = function (t)
 				-- function 15
-				return not (count_event_breed("skaven_clan_rat") < 5) or count_event_breed("skaven_slave") < 5
+				return count_event_breed("skaven_clan_rat") < 5 and count_event_breed("skaven_slave") < 5
 			end
 		},
 		{
@@ -1199,9 +1208,9 @@ local tbl = {
 		{
 			"continue_when",
 			duration = 20,
-			condition = function (arg_16_0)
+			condition = function (t)
 				-- function 16
-				return not (count_event_breed("skaven_clan_rat") < 5) or count_event_breed("skaven_slave") < 5
+				return count_event_breed("skaven_clan_rat") < 5 and count_event_breed("skaven_slave") < 5
 			end
 		},
 		{
@@ -1239,9 +1248,9 @@ local tbl = {
 		{
 			"continue_when",
 			duration = 20,
-			condition = function (arg_17_0)
+			condition = function (t)
 				-- function 17
-				return not (count_event_breed("skaven_clan_rat") < 5) or count_event_breed("skaven_slave") < 5
+				return count_event_breed("skaven_clan_rat") < 5 and count_event_breed("skaven_slave") < 5
 			end
 		},
 		{
@@ -1252,5 +1261,5 @@ local tbl = {
 }
 
 return {
-	tbl
+	terror_event_blueprints
 }

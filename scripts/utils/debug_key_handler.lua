@@ -3,204 +3,206 @@
 local script_data = script_data
 local debug_key_handler_visible = script_data.debug_key_handler_visible
 
-debug_key_handler_visible = debug_key_handler_visible or Development.parameter("debug_key_handler_visible")
+debug_key_handler_visible = not not debug_key_handler_visible or not not Development.parameter("debug_key_handler_visible")
 script_data.debug_key_handler_visible = debug_key_handler_visible
 
-local tbl = {}
+local cache_fail = {}
 
-local function fn(arg_1_0)
+local function cached_fail(key)
 	-- function 1
-	if tbl[arg_1_0] == nil then
-		tbl[arg_1_0] = arg_1_0 .. "(M)"
+	if cache_fail[key] == nil then
+		cache_fail[key] = key .. "(M)"
 	end
 
-	return tbl[arg_1_0]
+	return cache_fail[key]
 end
 
-local tbl_2 = {
-	["left shift"] = {},
-	["right shift"] = {},
-	["left ctrl"] = {},
-	["right ctrl"] = {},
-	["left alt"] = {}
-}
+local mod_cache = {}
 
-local function fn_2(arg_2_0, arg_2_1, arg_2_2)
+mod_cache["left shift"] = {}
+mod_cache["right shift"] = {}
+mod_cache["left ctrl"] = {}
+mod_cache["right ctrl"] = {}
+mod_cache["left alt"] = {}
+
+local function cached_key_mod(key, key_modifier, missing)
 	-- function 2
-	local var_2_0 = tbl_2[arg_2_1]
+	local cache = mod_cache[key_modifier]
 
-	if var_2_0[arg_2_0] == nil then
-		var_2_0[arg_2_0] = {
-			exist = arg_2_1 .. "+" .. arg_2_0,
-			missing = arg_2_1 .. "(M)+" .. arg_2_0
+	if cache[key] == nil then
+		cache[key] = {
+			exist = key_modifier .. "+" .. key,
+			missing = key_modifier .. "(M)+" .. key
 		}
 	end
 
-	local missing
+	local missing_2
 
-	if not arg_2_2 then
-		missing = var_2_0[arg_2_0].missing
+	if missing then
+		missing_2 = cache[key].missing
 
-		if not missing then
+		if not missing_2 then
 			-- Nothing
 		end
 	end
 
-	missing = var_2_0[arg_2_0].exist
+	missing_2 = cache[key].exist
 
 	::label_2_0::
 
-	return missing
+	return missing_2
 end
-
-local DebugKeyHandler = DebugKeyHandler
-
-DebugKeyHandler = DebugKeyHandler or {
-	num_keys = 0,
-	keys = {}
-}
-DebugKeyHandler = DebugKeyHandler
 
 local DebugKeyHandler_2 = DebugKeyHandler
 
-DebugKeyHandler_2.setup = function (arg_3_0, arg_3_1)
+DebugKeyHandler_2 = not not DebugKeyHandler_2 or not not {
+	num_keys = 0,
+	keys = {}
+}
+DebugKeyHandler = DebugKeyHandler_2
+
+local DebugKeyHandler = DebugKeyHandler
+
+DebugKeyHandler.setup = function (world, input_manager)
 	-- function 3
-	DebugKeyHandler_2.gui = World.create_screen_gui(arg_3_0, "material", "materials/fonts/gw_fonts", "immediate")
-	DebugKeyHandler_2.enabled = true
-	DebugKeyHandler_2.input_manager = arg_3_1
-	DebugKeyHandler_2.current_y = 0
+	DebugKeyHandler.gui = World.create_screen_gui(world, "material", "materials/fonts/gw_fonts", "immediate")
+	DebugKeyHandler.enabled = true
+	DebugKeyHandler.input_manager = input_manager
+	DebugKeyHandler.current_y = 0
 end
 
-DebugKeyHandler_2.set_enabled = function (arg_4_0)
+DebugKeyHandler.set_enabled = function (enabled)
 	-- function 4
-	DebugKeyHandler_2.enabled = arg_4_0
+	DebugKeyHandler.enabled = enabled
 end
 
-local tbl_3 = {
+local blocking_modifiers = {
 	"left ctrl",
 	"left shift",
 	"right ctrl",
 	"left alt"
 }
 
-DebugKeyHandler_2.key_pressed = function (arg_5_0, arg_5_1, arg_5_2, arg_5_3, arg_5_4)
+DebugKeyHandler.key_pressed = function (key, description, category, key_modifier, input_service_name)
 	-- function 5
-	if not DebugKeyHandler_2.enabled and not IS_LINUX then
+	if not DebugKeyHandler.enabled or IS_LINUX then
 		return
 	end
 
-	local get_service = DebugKeyHandler_2.input_manager:get_service(arg_5_4 or "Debug")
+	local input_service = DebugKeyHandler.input_manager:get_service(not not input_service_name or not not "Debug")
 
-	if not get_service then
+	if not input_service then
 		return
 	end
 
-	if not script_data.debug_key_handler_visible then
-		DebugKeyHandler_2.num_keys = DebugKeyHandler_2.num_keys + 1
-		arg_5_2 = arg_5_2 or "misc"
+	if script_data.debug_key_handler_visible then
+		DebugKeyHandler.num_keys = DebugKeyHandler.num_keys + 1
+		category = not not category or not not "misc"
 
-		local var_5_1 = DebugKeyHandler_2.keys[arg_5_2]
+		local category_keys = DebugKeyHandler.keys[category]
 
-		if var_5_1 == nil then
-			var_5_1 = {}
-			DebugKeyHandler_2.keys[arg_5_2] = var_5_1
+		if category_keys == nil then
+			category_keys = {}
+			DebugKeyHandler.keys[category] = category_keys
 		end
 
-		local flag = not get_service:has(arg_5_0) and arg_5_0 and fn(arg_5_0)
+		local key_string = (not input_service:has(key) or not key) and not not cached_fail(key)
 
-		if not arg_5_3 then
-			flag = not get_service:has(arg_5_0) and fn_2(arg_5_0, arg_5_3) and fn_2(arg_5_0, arg_5_3, true)
+		if key_modifier then
+			key_string = (not input_service:has(key) or not cached_key_mod(key, key_modifier)) and not not cached_key_mod(key, key_modifier, true)
 		end
 
-		var_5_1[flag] = arg_5_1
+		category_keys[key_string] = description
 	end
 
-	local flag_2 = true
+	local modifier_pressed = true
 
-	if not arg_5_3 then
-		flag_2 = get_service:get(arg_5_3)
+	if key_modifier then
+		modifier_pressed = input_service:get(key_modifier)
 	else
-		for i = 1, #tbl_3 do
-			local var_5_4 = tbl_3[i]
+		for i = 1, #blocking_modifiers do
+			local blocking_key = blocking_modifiers[i]
 
-			if var_5_4 == arg_5_0 or not get_service:get(var_5_4) then
-				flag_2 = false
+			if blocking_key ~= key and input_service:get(blocking_key) then
+				modifier_pressed = false
 
 				break
 			end
 		end
 	end
 
-	return not flag_2 and get_service:get(arg_5_0)
+	local key_pressed = not not modifier_pressed and not not input_service:get(key)
+
+	return key_pressed
 end
 
-DebugKeyHandler_2.frame_clear = function ()
+DebugKeyHandler.frame_clear = function ()
 	-- function 6
-	DebugKeyHandler_2.num_keys = 0
+	DebugKeyHandler.num_keys = 0
 
-	for k, v in pairs(DebugKeyHandler_2.keys) do
-		if next(v) == nil then
-			DebugKeyHandler_2.keys[k] = nil
+	for category, category_keys in pairs(DebugKeyHandler.keys) do
+		if next(category_keys) == nil then
+			DebugKeyHandler.keys[category] = nil
 		end
 
-		table.clear(v)
+		table.clear(category_keys)
 	end
 end
 
-local num = 16
-local str = "arial"
-local str_2 = "materials/fonts/" .. str
+local font_size = 16
+local font = "arial"
+local font_mtrl = "materials/fonts/" .. font
 
-DebugKeyHandler_2.render = function ()
+DebugKeyHandler.render = function ()
 	-- function 7
 	if not script_data.debug_key_handler_visible then
 		return
 	end
 
-	local num_2 = 1
+	local offset_lerp = 1
 
-	if not DebugKeyHandler_2.enabled then
-		num_2 = 0.3
+	if not DebugKeyHandler.enabled then
+		offset_lerp = 0.3
 	end
 
-	local var_7_1 = Color(num_2 * 250, 255, 255, 100)
-	local var_7_2 = Color(num_2 * 250, 255, 255, 255)
-	local var_7_3 = Color(num_2 * 250, 255, 120, 0)
-	local var_7_4 = Color(num_2 * 255, 150, 150, 150)
-	local resolution, var_7_6 = Application.resolution()
-	local gui = DebugKeyHandler_2.gui
-	local current_y = DebugKeyHandler_2.current_y
+	local header_color = Color(offset_lerp * 250, 255, 255, 100)
+	local category_color = Color(offset_lerp * 250, 255, 255, 255)
+	local key_color = Color(offset_lerp * 250, 255, 120, 0)
+	local description_color = Color(offset_lerp * 255, 150, 150, 150)
+	local res_x, res_y = Application.resolution()
+	local gui = DebugKeyHandler.gui
+	local start_y = DebugKeyHandler.current_y
 
-	DebugKeyHandler_2.current_y = math.lerp(current_y, var_7_6 / 2 + DebugKeyHandler_2.num_keys * num / 2 + table.size(DebugKeyHandler_2.keys) * num / 2, 0.1)
+	DebugKeyHandler.current_y = math.lerp(start_y, res_y / 2 + DebugKeyHandler.num_keys * font_size / 2 + table.size(DebugKeyHandler.keys) * font_size / 2, 0.1)
 
-	local var_7_9 = Vector3(resolution - 230, current_y, 200)
+	local pos = Vector3(res_x - 230, start_y, 200)
 
-	Gui.text(gui, "Debug keys", str_2, num, str, var_7_9, var_7_1)
+	Gui.text(gui, "Debug keys", font_mtrl, font_size, font, pos, header_color)
 
-	var_7_9.y = var_7_9.y - num * 1.5
+	pos.y = pos.y - font_size * 1.5
 
-	local flag = false
+	local even = false
 
-	for k, v in pairs(DebugKeyHandler_2.keys) do
-		local y = var_7_9.y
+	for category, category_keys in pairs(DebugKeyHandler.keys) do
+		local start_y_cat = pos.y
 
-		Gui.text(gui, k, str_2, num, str, var_7_9, var_7_2)
+		Gui.text(gui, category, font_mtrl, font_size, font, pos, category_color)
 
-		var_7_9.y = var_7_9.y - num
+		pos.y = pos.y - font_size
 
-		for k_2, v_2 in pairs(v) do
-			Gui.text(gui, k_2, str_2, num, str, var_7_9, var_7_3)
-			Gui.text(gui, v_2, str_2, num, str, var_7_9 + Vector3(80, 0, 0), var_7_4)
+		for key, description in pairs(category_keys) do
+			Gui.text(gui, key, font_mtrl, font_size, font, pos, key_color)
+			Gui.text(gui, description, font_mtrl, font_size, font, pos + Vector3(80, 0, 0), description_color)
 
-			var_7_9.y = var_7_9.y - num
+			pos.y = pos.y - font_size
 		end
 
-		var_7_9.y = var_7_9.y - num / 2
+		pos.y = pos.y - font_size / 2
 	end
 
-	Gui.rect(gui, Vector3(resolution - 250, var_7_9.y + num, 100), Vector2(250, current_y - var_7_9.y), Color(num_2 * 240, 25, 50, 25))
+	Gui.rect(gui, Vector3(res_x - 250, pos.y + font_size, 100), Vector2(250, start_y - pos.y), Color(offset_lerp * 240, 25, 50, 25))
 
-	if not DebugKeyHandler_2.enabled then
-		Gui.rect(gui, Vector3(resolution - 250, var_7_9.y + num, 300), Vector2(250, current_y - var_7_9.y), Color(num_2 * 200, 20, 20, 20))
+	if not DebugKeyHandler.enabled then
+		Gui.rect(gui, Vector3(res_x - 250, pos.y + font_size, 300), Vector2(250, start_y - pos.y), Color(offset_lerp * 200, 20, 20, 20))
 	end
 end

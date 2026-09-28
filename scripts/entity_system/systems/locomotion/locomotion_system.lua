@@ -10,7 +10,7 @@ require("scripts/entity_system/systems/locomotion/locomotion_templates_ai_husk")
 require("scripts/entity_system/systems/locomotion/locomotion_templates_player")
 
 local LocomotionTemplates = LocomotionTemplates
-local tbl = {
+local RPCS = {
 	"rpc_set_animation_driven_script_movement",
 	"rpc_set_script_driven",
 	"rpc_set_animation_driven",
@@ -30,7 +30,7 @@ local tbl = {
 	"rpc_set_affected_by_gravity",
 	"rpc_set_linked_transport_driven"
 }
-local tbl_2 = {
+local extensions = {
 	"AiHuskLocomotionExtension",
 	"AILocomotionExtension",
 	"AILocomotionExtensionC",
@@ -38,48 +38,48 @@ local tbl_2 = {
 	"PlayerUnitLocomotionExtension"
 }
 
-LocomotionSystem.init = function (self, arg_1_1, arg_1_2)
+LocomotionSystem.init = function (self, entity_system_creation_context, system_name)
 	-- function 1
-	LocomotionSystem.super.init(self, arg_1_1, arg_1_2, tbl_2)
+	LocomotionSystem.super.init(self, entity_system_creation_context, system_name, extensions)
 
-	local network_event_delegate = arg_1_1.network_event_delegate
+	local network_event_delegate = entity_system_creation_context.network_event_delegate
 
 	self.network_event_delegate = network_event_delegate
 
-	network_event_delegate:register(self, unpack(tbl))
+	network_event_delegate:register(self, unpack(RPCS))
 
-	self.world = arg_1_1.world
+	self.world = entity_system_creation_context.world
 	self.animation_lod_units = {}
 	self.player_units = {}
 	self.template_data = {}
 
-	for k, v in pairs(LocomotionTemplates) do
-		if k ~= "AILocomotionExtensionC" then
-			local tbl_3 = {}
+	for template_name, template in pairs(LocomotionTemplates) do
+		if template_name ~= "AILocomotionExtensionC" then
+			local data = {}
 
-			v.init(tbl_3, GLOBAL_AI_NAVWORLD)
+			template.init(data, GLOBAL_AI_NAVWORLD)
 
-			self.template_data[k] = tbl_3
-		elseif k == "PlayerUnitLocomotionExtension" then
-			local tbl_4 = {}
+			self.template_data[template_name] = data
+		elseif template_name == "PlayerUnitLocomotionExtension" then
+			local data = {}
 
-			v.init(tbl_4, GLOBAL_AI_NAVWORLD)
+			template.init(data, GLOBAL_AI_NAVWORLD)
 
-			self.template_data[k] = tbl_4
+			self.template_data[template_name] = data
 		end
 	end
 
 	EngineOptimizedExtensions.init_husk_extensions()
 
-	if not GameSettingsDevelopment.use_engine_optimized_ai_locomotion then
-		local get_data = World.get_data(self.world, "physics_world")
-		local game = Managers.state.network:game()
+	if GameSettingsDevelopment.use_engine_optimized_ai_locomotion then
+		local physics_world = World.get_data(self.world, "physics_world")
+		local game_session = Managers.state.network:game()
 
-		EngineOptimizedExtensions.init_extensions(get_data, GLOBAL_AI_NAVWORLD, game)
+		EngineOptimizedExtensions.init_extensions(physics_world, GLOBAL_AI_NAVWORLD, game_session)
 	end
 
 	if not GameSettingsDevelopment.use_engine_optimized_ai_locomotion then
-		tbl_2.AILocomotionExtensionC = nil
+		extensions.AILocomotionExtensionC = nil
 	end
 
 	EngineOptimized.bone_lod_init(GameSettingsDevelopment.bone_lod_husks.lod_in_range_sq, GameSettingsDevelopment.bone_lod_husks.lod_out_range_sq, GameSettingsDevelopment.bone_lod_husks.lod_multiplier)
@@ -91,143 +91,166 @@ LocomotionSystem.destroy = function (self)
 	EngineOptimized.bone_lod_destroy()
 	EngineOptimizedExtensions.destroy_husk_extensions()
 
-	if not GameSettingsDevelopment.use_engine_optimized_ai_locomotion then
+	if GameSettingsDevelopment.use_engine_optimized_ai_locomotion then
 		EngineOptimizedExtensions.destroy_extensions()
 	end
 end
 
-LocomotionSystem.on_add_extension = function (self, arg_3_1, arg_3_2, arg_3_3, arg_3_4)
+LocomotionSystem.on_add_extension = function (self, world, unit, extension_name, extension_init_data)
 	-- function 3
-	if arg_3_3 == "AILocomotionExtension" then
-		local unit_game_object_id = network_manager:unit_game_object_id(selected_unit)
-		local var_3_1 = BLACKBOARDS[arg_3_2]
-		local _wanted_destination = var_3_1.navigation_extension._wanted_destination
-		local num = 20
-		local run_speed = var_3_1.breed.run_speed
+	if extension_name == "AILocomotionExtension" then
+		local game_object_id = network_manager:unit_game_object_id(selected_unit)
+		local blackboard = BLACKBOARDS[unit]
+		local wanted_destination_boxed = blackboard.navigation_extension._wanted_destination
+		local locomotion_gravity = 20
+		local breed_run_speed = blackboard.breed.run_speed
 
-		EngineOptimized.ai_locomotion_register_extension(arg_3_2, unit_game_object_id, _wanted_destination, num, run_speed, breed.sync_full_rotation)
+		EngineOptimized.ai_locomotion_register_extension(unit, game_object_id, wanted_destination_boxed, locomotion_gravity, breed_run_speed, breed.sync_full_rotation)
 	else
-		arg_3_4.system_data = self.template_data[arg_3_3]
+		extension_init_data.system_data = self.template_data[extension_name]
 
-		return (LocomotionSystem.super.on_add_extension(self, arg_3_1, arg_3_2, arg_3_3, arg_3_4))
+		local extension = LocomotionSystem.super.on_add_extension(self, world, unit, extension_name, extension_init_data)
+
+		return extension
 	end
 end
 
-LocomotionSystem.extensions_ready = function (arg_4_0, arg_4_1, arg_4_2, arg_4_3)
+LocomotionSystem.extensions_ready = function (self, world, unit, extension_name)
 	-- function 4
-	local extension = ScriptUnit.extension(arg_4_2, "locomotion_system")
+	local extension = ScriptUnit.extension(unit, "locomotion_system")
 
-	if not (arg_4_3 == "AILocomotionExtensionC" or arg_4_3 == "AILocomotionExtension" or arg_4_3 ~= "AiHuskLocomotionExtension") then
-		if not (not (extension.breed.bone_lod_level > 0) or script_data.bone_lod_disable) then
-			extension.bone_lod_extension_id = EngineOptimized.bone_lod_register_extension(arg_4_2)
-			arg_4_0.animation_lod_units[arg_4_2] = extension
+	if extension_name == "AILocomotionExtensionC" or extension_name == "AILocomotionExtension" or extension_name == "AiHuskLocomotionExtension" then
+		local breed = extension.breed
+		local bone_lod_level = breed.bone_lod_level
+
+		if bone_lod_level > 0 and not script_data.bone_lod_disable then
+			extension.bone_lod_extension_id = EngineOptimized.bone_lod_register_extension(unit)
+			self.animation_lod_units[unit] = extension
 		end
 	else
-		arg_4_0.player_units[arg_4_2] = extension
+		self.player_units[unit] = extension
 	end
 end
 
-LocomotionSystem.on_remove_extension = function (self, arg_5_1, arg_5_2)
+LocomotionSystem.on_remove_extension = function (self, unit, extension_name)
 	-- function 5
-	self:_cleanup_extension(arg_5_1, arg_5_2)
-	LocomotionSystem.super.on_remove_extension(self, arg_5_1, arg_5_2)
+	self:_cleanup_extension(unit, extension_name)
+	LocomotionSystem.super.on_remove_extension(self, unit, extension_name)
 end
 
-LocomotionSystem.on_freeze_extension = function (arg_6_0, arg_6_1, arg_6_2)
+LocomotionSystem.on_freeze_extension = function (self, unit, extension_name)
 	-- function 6
 	return
 end
 
-LocomotionSystem._cleanup_extension = function (self, arg_7_1, arg_7_2)
+LocomotionSystem._cleanup_extension = function (self, unit, extension_name)
 	-- function 7
-	if not (arg_7_2 == "AILocomotionExtensionC" or arg_7_2 == "AILocomotionExtension" or arg_7_2 ~= "AiHuskLocomotionExtension") then
-		local var_7_0 = self.animation_lod_units[arg_7_1]
+	if extension_name == "AILocomotionExtensionC" or extension_name == "AILocomotionExtension" or extension_name == "AiHuskLocomotionExtension" then
+		local extension = self.animation_lod_units[unit]
 
-		if not var_7_0 then
-			EngineOptimized.bone_lod_unregister_extension(var_7_0.bone_lod_extension_id)
+		if extension then
+			EngineOptimized.bone_lod_unregister_extension(extension.bone_lod_extension_id)
 
-			var_7_0.bone_lod_extension_id = nil
-			self.animation_lod_units[arg_7_1] = nil
+			extension.bone_lod_extension_id = nil
+			self.animation_lod_units[unit] = nil
 		end
 	end
 end
 
-LocomotionSystem.freeze = function (self, arg_8_1, arg_8_2, arg_8_3)
+LocomotionSystem.freeze = function (self, unit, extension_name, reason)
 	-- function 8
-	fassert(arg_8_2 == "AILocomotionExtensionC" or arg_8_2 == "AiHuskLocomotionExtension", "Unsupported freeze extension")
-	self:_cleanup_extension(arg_8_1, arg_8_2)
-	ScriptUnit.extension(arg_8_1, "locomotion_system"):freeze(arg_8_3)
+	fassert(extension_name == "AILocomotionExtensionC" or extension_name == "AiHuskLocomotionExtension", "Unsupported freeze extension")
+	self:_cleanup_extension(unit, extension_name)
+
+	local extension = ScriptUnit.extension(unit, "locomotion_system")
+
+	extension:freeze(reason)
 end
 
-LocomotionSystem.unfreeze = function (arg_9_0, arg_9_1, arg_9_2)
+LocomotionSystem.unfreeze = function (self, unit, extension_name)
 	-- function 9
-	local extension = ScriptUnit.extension(arg_9_1, "locomotion_system")
+	local extension = ScriptUnit.extension(unit, "locomotion_system")
 
-	extension:unfreeze(arg_9_1)
+	extension:unfreeze(unit)
 
-	if not ((arg_9_2 == "AILocomotionExtensionC" or arg_9_2 == "AILocomotionExtension" or arg_9_2 == "AiHuskLocomotionExtension") and not (extension.breed.bone_lod_level > 0) or script_data.bone_lod_disable) then
-		extension.bone_lod_extension_id = EngineOptimized.bone_lod_register_extension(arg_9_1)
-		arg_9_0.animation_lod_units[arg_9_1] = extension
+	if extension_name == "AILocomotionExtensionC" or extension_name == "AILocomotionExtension" or extension_name == "AiHuskLocomotionExtension" then
+		local breed = extension.breed
+		local bone_lod_level = breed.bone_lod_level
+
+		if bone_lod_level > 0 and not script_data.bone_lod_disable then
+			extension.bone_lod_extension_id = EngineOptimized.bone_lod_register_extension(unit)
+			self.animation_lod_units[unit] = extension
+		end
 	end
 end
 
-LocomotionSystem.post_update = function (self, arg_10_1, arg_10_2)
+LocomotionSystem.post_update = function (self, context, t)
 	-- function 10
-	local dt = arg_10_1.dt
+	local dt = context.dt
 
-	self:post_update_extension("PlayerUnitLocomotionExtension", dt, arg_10_1, arg_10_2)
-	LocomotionSystem.super.post_update(self, arg_10_1, arg_10_2)
+	self:post_update_extension("PlayerUnitLocomotionExtension", dt, context, t)
+	LocomotionSystem.super.post_update(self, context, t)
 end
 
-LocomotionSystem.update = function (self, arg_11_1, arg_11_2)
+LocomotionSystem.update = function (self, context, t)
 	-- function 11
-	self:update_extensions(arg_11_1, arg_11_2)
+	self:update_extensions(context, t)
 	self:update_animation_lods()
 	self:update_actor_proximity_shapes()
 end
 
-LocomotionSystem.update_extensions = function (self, arg_12_1, arg_12_2)
+LocomotionSystem.update_extensions = function (self, context, t)
 	-- function 12
-	local dt = arg_12_1.dt
+	local dt = context.dt
 
-	self:update_extension("PlayerHuskLocomotionExtension", dt, arg_12_1, arg_12_2)
-	self:update_extension("PlayerUnitLocomotionExtension", dt, arg_12_1, arg_12_2)
+	self:update_extension("PlayerHuskLocomotionExtension", dt, context, t)
+	self:update_extension("PlayerUnitLocomotionExtension", dt, context, t)
 
-	if not GameSettingsDevelopment.use_engine_optimized_ai_locomotion then
-		if not self.is_server then
-			LocomotionTemplates.AILocomotionExtensionC.update(nil, arg_12_2, dt)
+	if GameSettingsDevelopment.use_engine_optimized_ai_locomotion then
+		if self.is_server then
+			LocomotionTemplates.AILocomotionExtensionC.update(nil, t, dt)
 		else
-			local AiHuskLocomotionExtension = self.template_data.AiHuskLocomotionExtension
+			local data = self.template_data.AiHuskLocomotionExtension
 
-			LocomotionTemplates.AiHuskLocomotionExtension.update(AiHuskLocomotionExtension, arg_12_2, dt)
+			LocomotionTemplates.AiHuskLocomotionExtension.update(data, t, dt)
 		end
 
-		local PlayerUnitLocomotionExtension = self.template_data.PlayerUnitLocomotionExtension
+		local data = self.template_data.PlayerUnitLocomotionExtension
 
-		LocomotionTemplates.PlayerUnitLocomotionExtension.update(PlayerUnitLocomotionExtension, arg_12_2, dt)
+		LocomotionTemplates.PlayerUnitLocomotionExtension.update(data, t, dt)
 	else
-		for k, v in pairs(self.template_data) do
-			LocomotionTemplates[k].update(v, arg_12_2, dt)
+		for template_name, data in pairs(self.template_data) do
+			local template = LocomotionTemplates[template_name]
+
+			template.update(data, t, dt)
 		end
 	end
 end
 
-LocomotionSystem.set_override_player = function (self, arg_13_1)
+LocomotionSystem.set_override_player = function (self, player)
 	-- function 13
-	self._override_player = arg_13_1
+	self._override_player = player
 end
 
 LocomotionSystem.update_animation_lods = function (self)
 	-- function 14
-	if not DEDICATED_SERVER then
+	if DEDICATED_SERVER then
 		return
 	end
 
 	local _override_player = self._override_player
 
-	_override_player = _override_player or Managers.player:local_player()
+	if not _override_player then
+		-- Nothing
+	end
 
-	local viewport_name = _override_player.viewport_name
+	_override_player = Managers.player:local_player()
+
+	local player = _override_player
+
+	::label_14_0::
+
+	local viewport_name = player.viewport_name
 	local viewport = ScriptWorld.viewport(self.world, viewport_name)
 	local camera = ScriptViewport.camera(viewport)
 
@@ -237,79 +260,91 @@ end
 LocomotionSystem.update_actor_proximity_shapes = function (self)
 	-- function 15
 	local POSITION_LOOKUP = POSITION_LOOKUP
-	local player = Managers.player
-	local get_data = World.get_data(self.world, "physics_world")
-	local degrees_to_radians = math.degrees_to_radians(17)
-	local forward = Quaternion.forward
-	local human_and_bot_players = player:human_and_bot_players()
+	local player_manager = Managers.player
+	local physics_world = World.get_data(self.world, "physics_world")
+	local default_insta_hit_cone_angle = math.degrees_to_radians(17)
+	local Quaternion_forward = Quaternion.forward
+	local human_and_bot_players = player_manager:human_and_bot_players()
 
-	for k, v in pairs(human_and_bot_players) do
-		local player_unit = v.player_unit
+	for id, player in pairs(human_and_bot_players) do
+		local unit = player.player_unit
 
-		if not (not Unit.alive(player_unit) and v.remote) then
-			local extension = ScriptUnit.extension(player_unit, "first_person_system")
-			local extension_2 = ScriptUnit.extension(player_unit, "inventory_system")
-			local current_position = extension:current_position()
-			local var_15_10 = forward(extension:current_rotation())
-			local var_15_11
+		if Unit.alive(unit) and not player.remote then
+			local first_persion_system = ScriptUnit.extension(unit, "first_person_system")
+			local inventory_extension = ScriptUnit.extension(unit, "inventory_system")
+			local position = first_persion_system:current_position()
+			local direction = Quaternion_forward(first_persion_system:current_rotation())
+			local angle
+			local slot_name = inventory_extension:get_wielded_slot_name()
 
-			if extension_2:get_wielded_slot_name() == "slot_ranged" then
-				local equipment = extension_2:equipment()
+			if slot_name == "slot_ranged" then
+				local equipment = inventory_extension:equipment()
 				local right_hand_wielded_unit = equipment.right_hand_wielded_unit
 
-				right_hand_wielded_unit = right_hand_wielded_unit or equipment.left_hand_wielded_unit
+				if not right_hand_wielded_unit then
+					-- Nothing
+				end
 
-				if not right_hand_wielded_unit and not ScriptUnit.has_extension(right_hand_wielded_unit, "spread_system") then
-					local get_current_pitch_and_yaw, var_15_15 = ScriptUnit.extension(right_hand_wielded_unit, "spread_system"):get_current_pitch_and_yaw()
+				right_hand_wielded_unit = equipment.left_hand_wielded_unit
 
-					var_15_11 = math.degrees_to_radians(math.max(get_current_pitch_and_yaw, var_15_15))
+				local weapon_unit = right_hand_wielded_unit
+
+				::label_15_0::
+
+				if weapon_unit and ScriptUnit.has_extension(weapon_unit, "spread_system") then
+					local spread_extension = ScriptUnit.extension(weapon_unit, "spread_system")
+					local pitch, yaw = spread_extension:get_current_pitch_and_yaw()
+
+					angle = math.degrees_to_radians(math.max(pitch, yaw))
 				end
 			end
 
-			PhysicsWorld.commit_actor_proximity_shape(get_data, current_position, var_15_10, 36, var_15_11, true)
+			PhysicsWorld.commit_actor_proximity_shape(physics_world, position, direction, 36, angle, true)
 		end
 	end
 end
 
-LocomotionSystem.rpc_set_affected_by_gravity = function (self, arg_16_1, arg_16_2, arg_16_3)
+LocomotionSystem.rpc_set_affected_by_gravity = function (self, channel_id, game_object_id, affected)
 	-- function 16
-	local unit = self.unit_storage:unit(arg_16_2)
+	local unit = self.unit_storage:unit(game_object_id)
 
 	if not unit then
-		printf("unit from game_object_id %d is nil", arg_16_2)
+		printf("unit from game_object_id %d is nil", game_object_id)
 
 		return
 	end
 
-	ScriptUnit.extension(unit, "locomotion_system"):set_affected_by_gravity(arg_16_3)
+	local locomotion_extension = ScriptUnit.extension(unit, "locomotion_system")
+
+	locomotion_extension:set_affected_by_gravity(affected)
 end
 
-local num = 9
+local MAX_ALLOWABLE_RESYNC_TELEPORT_DISTANCE_SQ = 9
 
-LocomotionSystem.rpc_set_animation_driven_movement = function (self, arg_17_1, arg_17_2, arg_17_3, arg_17_4, arg_17_5, arg_17_6, arg_17_7, arg_17_8)
+LocomotionSystem.rpc_set_animation_driven_movement = function (self, channel_id, game_object_id, animation_driven, script_driven_rotation, is_affected_by_gravity, is_on_transport, position, rotation)
 	-- function 17
-	local unit = self.unit_storage:unit(arg_17_2)
+	local unit = self.unit_storage:unit(game_object_id)
 
 	if not unit then
-		printf("unit from game_object_id %d is nil", arg_17_2)
+		printf("unit from game_object_id %d is nil", game_object_id)
 
 		return
 	end
 
-	local extension = ScriptUnit.extension(unit, "locomotion_system")
+	local locomotion_extension = ScriptUnit.extension(unit, "locomotion_system")
 
-	extension:set_animation_driven(arg_17_3, arg_17_5, arg_17_4, arg_17_6)
+	locomotion_extension:set_animation_driven(animation_driven, is_affected_by_gravity, script_driven_rotation, is_on_transport)
 
-	if not arg_17_3 then
-		local local_position = Unit.local_position(unit, 0)
-		local distance_squared = Vector3.distance_squared(local_position, arg_17_7)
+	if animation_driven then
+		local source_position = Unit.local_position(unit, 0)
+		local distance_sq = Vector3.distance_squared(source_position, position)
 
-		if distance_squared > num then
-			local unit_breed = AiUtils.unit_breed(unit)
+		if distance_sq > MAX_ALLOWABLE_RESYNC_TELEPORT_DISTANCE_SQ then
+			local breed = AiUtils.unit_breed(unit)
 			local name
 
-			if not unit_breed then
-				name = unit_breed.name
+			if breed then
+				name = breed.name
 
 				if not name then
 					-- Nothing
@@ -318,229 +353,247 @@ LocomotionSystem.rpc_set_animation_driven_movement = function (self, arg_17_1, a
 
 			name = "n/a"
 
+			local breed_name = name
+
 			::label_17_0::
 
-			Managers.telemetry_events:breed_position_desync(local_position, arg_17_7, distance_squared, name)
+			Managers.telemetry_events:breed_position_desync(source_position, position, distance_sq, breed_name)
 		end
 
-		extension:teleport_to(arg_17_7, arg_17_8, extension:current_velocity())
+		locomotion_extension:teleport_to(position, rotation, locomotion_extension:current_velocity())
 	end
 end
 
-LocomotionSystem.rpc_set_animation_driven_script_movement = function (self, arg_18_1, arg_18_2, arg_18_3, arg_18_4, arg_18_5)
+LocomotionSystem.rpc_set_animation_driven_script_movement = function (self, channel_id, game_object_id, position, rotation, is_affected_by_gravity)
 	-- function 18
-	self:rpc_set_animation_driven_movement(arg_18_1, arg_18_2, true, true, arg_18_5, false, arg_18_3, arg_18_4)
+	self:rpc_set_animation_driven_movement(channel_id, game_object_id, true, true, is_affected_by_gravity, false, position, rotation)
 end
 
-LocomotionSystem.rpc_set_animation_driven = function (self, arg_19_1, arg_19_2, arg_19_3, arg_19_4, arg_19_5)
+LocomotionSystem.rpc_set_animation_driven = function (self, channel_id, game_object_id, position, rotation, is_affected_by_gravity)
 	-- function 19
-	self:rpc_set_animation_driven_movement(arg_19_1, arg_19_2, true, false, arg_19_5, false, arg_19_3, arg_19_4)
+	self:rpc_set_animation_driven_movement(channel_id, game_object_id, true, false, is_affected_by_gravity, false, position, rotation)
 end
 
-LocomotionSystem.rpc_set_script_driven = function (self, arg_20_1, arg_20_2, arg_20_3)
+LocomotionSystem.rpc_set_script_driven = function (self, channel_id, game_object_id, is_affected_by_gravity)
 	-- function 20
-	self:rpc_set_animation_driven_movement(arg_20_1, arg_20_2, false, true, arg_20_3, false)
+	self:rpc_set_animation_driven_movement(channel_id, game_object_id, false, true, is_affected_by_gravity, false)
 end
 
-LocomotionSystem.rpc_set_linked_transport_driven = function (self, arg_21_1, arg_21_2, arg_21_3)
+LocomotionSystem.rpc_set_linked_transport_driven = function (self, channel_id, game_object_id, is_affected_by_gravity)
 	-- function 21
-	self:rpc_set_animation_driven_movement(arg_21_1, arg_21_2, false, true, arg_21_3, true)
+	self:rpc_set_animation_driven_movement(channel_id, game_object_id, false, true, is_affected_by_gravity, true)
 end
 
-LocomotionSystem.rpc_set_animation_translation_scale = function (self, arg_22_1, arg_22_2, arg_22_3)
+LocomotionSystem.rpc_set_animation_translation_scale = function (self, channel_id, game_object_id, animation_translation_scale)
 	-- function 22
-	local unit = self.unit_storage:unit(arg_22_2)
+	local unit = self.unit_storage:unit(game_object_id)
 
 	if not unit then
-		printf("unit from game_object_id %d is nil", arg_22_2)
+		printf("unit from game_object_id %d is nil", game_object_id)
 
 		return
 	end
 
-	ScriptUnit.extension(unit, "locomotion_system"):set_animation_translation_scale(arg_22_3)
+	local locomotion_extension = ScriptUnit.extension(unit, "locomotion_system")
 
-	if not self.is_server then
-		local var_22_1 = CHANNEL_TO_PEER_ID[arg_22_1]
+	locomotion_extension:set_animation_translation_scale(animation_translation_scale)
 
-		self.network_transmit:send_rpc_clients_except("rpc_set_animation_translation_scale", var_22_1, arg_22_2, arg_22_3)
+	if self.is_server then
+		local peer_id = CHANNEL_TO_PEER_ID[channel_id]
+
+		self.network_transmit:send_rpc_clients_except("rpc_set_animation_translation_scale", peer_id, game_object_id, animation_translation_scale)
 	end
 end
 
-LocomotionSystem.rpc_set_animation_rotation_scale = function (self, arg_23_1, arg_23_2, arg_23_3)
+LocomotionSystem.rpc_set_animation_rotation_scale = function (self, channel_id, game_object_id, animation_rotation_scale)
 	-- function 23
-	local unit = self.unit_storage:unit(arg_23_2)
+	local unit = self.unit_storage:unit(game_object_id)
 
 	if not unit then
-		printf("unit from game_object_id %d is nil", arg_23_2)
+		printf("unit from game_object_id %d is nil", game_object_id)
 
 		return
 	end
 
-	ScriptUnit.extension(unit, "locomotion_system"):set_animation_rotation_scale(arg_23_3)
+	local locomotion_extension = ScriptUnit.extension(unit, "locomotion_system")
+
+	locomotion_extension:set_animation_rotation_scale(animation_rotation_scale)
 end
 
-LocomotionSystem.rpc_disable_locomotion = function (self, arg_24_1, arg_24_2, arg_24_3, arg_24_4)
+LocomotionSystem.rpc_disable_locomotion = function (self, channel_id, game_object_id, disabled, update_func_id)
 	-- function 24
-	local unit = self.unit_storage:unit(arg_24_2)
+	local unit = self.unit_storage:unit(game_object_id)
 
 	if not unit then
-		printf("unit from game_object_id %d is nil", arg_24_2)
+		printf("unit from game_object_id %d is nil", game_object_id)
 
 		return
 	end
 
-	local extension = ScriptUnit.extension(unit, "locomotion_system")
-	local var_24_2 = LocomotionUtils[NetworkLookup.movement_funcs[arg_24_4]]
+	local locomotion_extension = ScriptUnit.extension(unit, "locomotion_system")
+	local func = LocomotionUtils[NetworkLookup.movement_funcs[update_func_id]]
 
-	extension:set_disabled(arg_24_3, var_24_2)
+	locomotion_extension:set_disabled(disabled, func)
 
-	if not self.is_server then
-		local var_24_3 = CHANNEL_TO_PEER_ID[arg_24_1]
+	if self.is_server then
+		local peer_id = CHANNEL_TO_PEER_ID[channel_id]
 
-		self.network_transmit:send_rpc_clients_except("rpc_disable_locomotion", var_24_3, arg_24_2, arg_24_3, arg_24_4)
+		self.network_transmit:send_rpc_clients_except("rpc_disable_locomotion", peer_id, game_object_id, disabled, update_func_id)
 	end
 end
 
-LocomotionSystem.rpc_teleport_unit_to = function (self, arg_25_1, arg_25_2, arg_25_3, arg_25_4)
+LocomotionSystem.rpc_teleport_unit_to = function (self, channel_id, game_object_id, position, rotation)
 	-- function 25
-	local unit = self.unit_storage:unit(arg_25_2)
+	local unit = self.unit_storage:unit(game_object_id)
 
 	if not unit then
-		printf("unit from game_object_id %d is nil", arg_25_2)
+		printf("unit from game_object_id %d is nil", game_object_id)
 
 		return
 	end
 
-	ScriptUnit.extension(unit, "locomotion_system"):teleport_to(arg_25_3, arg_25_4)
+	local locomotion_extension = ScriptUnit.extension(unit, "locomotion_system")
 
-	if not self.is_server then
-		local var_25_1 = CHANNEL_TO_PEER_ID[arg_25_1]
+	locomotion_extension:teleport_to(position, rotation)
 
-		self.network_transmit:send_rpc_clients_except("rpc_teleport_unit_to", var_25_1, arg_25_2, arg_25_3, arg_25_4)
+	if self.is_server then
+		local peer_id = CHANNEL_TO_PEER_ID[channel_id]
+
+		self.network_transmit:send_rpc_clients_except("rpc_teleport_unit_to", peer_id, game_object_id, position, rotation)
 	end
 end
 
-LocomotionSystem.rpc_teleport_unit_with_yaw_rotation = function (self, arg_26_1, arg_26_2, arg_26_3, arg_26_4)
+LocomotionSystem.rpc_teleport_unit_with_yaw_rotation = function (self, channel_id, game_object_id, position, yaw)
 	-- function 26
-	local unit = self.unit_storage:unit(arg_26_2)
+	local unit = self.unit_storage:unit(game_object_id)
 
 	if not unit then
-		printf("unit from game_object_id %d is nil", arg_26_2)
+		printf("unit from game_object_id %d is nil", game_object_id)
 
 		return
 	end
 
-	local var_26_1 = Quaternion(Vector3.up(), arg_26_4)
+	local rotation = Quaternion(Vector3.up(), yaw)
+	local locomotion_extension = ScriptUnit.extension(unit, "locomotion_system")
 
-	ScriptUnit.extension(unit, "locomotion_system"):teleport_to(arg_26_3, var_26_1)
+	locomotion_extension:teleport_to(position, rotation)
 end
 
-LocomotionSystem.rpc_enable_linked_movement = function (self, arg_27_1, arg_27_2, arg_27_3, arg_27_4, arg_27_5)
+LocomotionSystem.rpc_enable_linked_movement = function (self, channel_id, game_object_id, parent_level_unit_index, parent_node_index, offset)
 	-- function 27
-	local unit = self.unit_storage:unit(arg_27_2)
+	local unit = self.unit_storage:unit(game_object_id)
 
 	if not unit then
-		printf("unit from game_object_id %d is nil", arg_27_2)
+		printf("unit from game_object_id %d is nil", game_object_id)
 
 		return
 	end
 
-	local extension = ScriptUnit.extension(unit, "locomotion_system")
-	local current_level = LevelHelper:current_level(self.world)
-	local unit_by_index = Level.unit_by_index(current_level, arg_27_3)
+	local locomotion_extension = ScriptUnit.extension(unit, "locomotion_system")
+	local level = LevelHelper:current_level(self.world)
+	local parent_unit = Level.unit_by_index(level, parent_level_unit_index)
 
-	extension:enable_linked_movement(unit_by_index, arg_27_4, arg_27_5)
+	locomotion_extension:enable_linked_movement(parent_unit, parent_node_index, offset)
 end
 
-LocomotionSystem.rpc_disable_linked_movement = function (self, arg_28_1, arg_28_2)
+LocomotionSystem.rpc_disable_linked_movement = function (self, channel_id, game_object_id)
 	-- function 28
-	local unit = self.unit_storage:unit(arg_28_2)
+	local unit = self.unit_storage:unit(game_object_id)
 
 	if not unit then
-		printf("unit from game_object_id %d is nil", arg_28_2)
+		printf("unit from game_object_id %d is nil", game_object_id)
 
 		return
 	end
 
-	ScriptUnit.extension(unit, "locomotion_system"):disable_linked_movement()
+	local locomotion_extension = ScriptUnit.extension(unit, "locomotion_system")
+
+	locomotion_extension:disable_linked_movement()
 end
 
-LocomotionSystem.rpc_add_external_velocity = function (self, arg_29_1, arg_29_2, arg_29_3)
+LocomotionSystem.rpc_add_external_velocity = function (self, channel_id, game_object_id, velocity)
 	-- function 29
-	local unit = self.unit_storage:unit(arg_29_2)
+	local unit = self.unit_storage:unit(game_object_id)
 
 	if not unit then
-		printf("unit from game_object_id %d is nil", arg_29_2)
+		printf("unit from game_object_id %d is nil", game_object_id)
 
 		return
 	end
 
-	ScriptUnit.extension(unit, "locomotion_system"):add_external_velocity(arg_29_3)
+	local locomotion_extension = ScriptUnit.extension(unit, "locomotion_system")
+
+	locomotion_extension:add_external_velocity(velocity)
 end
 
-LocomotionSystem.rpc_add_external_velocity_with_upper_limit = function (self, arg_30_1, arg_30_2, arg_30_3, arg_30_4)
+LocomotionSystem.rpc_add_external_velocity_with_upper_limit = function (self, channel_id, game_object_id, velocity, upper_limit)
 	-- function 30
-	local unit = self.unit_storage:unit(arg_30_2)
+	local unit = self.unit_storage:unit(game_object_id)
 
 	if not unit then
-		printf("unit from game_object_id %d is nil", arg_30_2)
+		printf("unit from game_object_id %d is nil", game_object_id)
 
 		return
 	end
 
-	ScriptUnit.extension(unit, "locomotion_system"):add_external_velocity(arg_30_3, arg_30_4)
+	local locomotion_extension = ScriptUnit.extension(unit, "locomotion_system")
+
+	locomotion_extension:add_external_velocity(velocity, upper_limit)
 end
 
-LocomotionSystem.rpc_set_forced_velocity = function (self, arg_31_1, arg_31_2, arg_31_3)
+LocomotionSystem.rpc_set_forced_velocity = function (self, channel_id, game_object_id, velocity)
 	-- function 31
-	local unit = self.unit_storage:unit(arg_31_2)
+	local unit = self.unit_storage:unit(game_object_id)
 
 	if not unit then
-		printf("unit from game_object_id %d is nil", arg_31_2)
+		printf("unit from game_object_id %d is nil", game_object_id)
 
 		return
 	end
 
-	ScriptUnit.extension(unit, "locomotion_system"):set_forced_velocity(arg_31_3)
+	local locomotion_extension = ScriptUnit.extension(unit, "locomotion_system")
+
+	locomotion_extension:set_forced_velocity(velocity)
 end
 
-LocomotionSystem.rpc_constrain_ai = function (self, arg_32_1, arg_32_2, arg_32_3, arg_32_4)
+LocomotionSystem.rpc_constrain_ai = function (self, channel_id, game_object_id, constrain, position_array)
 	-- function 32
-	local unit = self.unit_storage:unit(arg_32_2)
+	local unit = self.unit_storage:unit(game_object_id)
 
 	if not unit then
-		printf("unit from game_object_id %d is nil", arg_32_2)
+		printf("unit from game_object_id %d is nil", game_object_id)
 
 		return
 	end
 
-	local var_32_1 = arg_32_4[1]
-	local var_32_2 = arg_32_4[2]
+	local min, max = position_array[1], position_array[2]
+	local locomotion_extension = ScriptUnit.extension(unit, "locomotion_system")
 
-	ScriptUnit.extension(unit, "locomotion_system"):set_constrained(arg_32_3, var_32_1, var_32_2)
+	locomotion_extension:set_constrained(constrain, min, max)
 end
 
-LocomotionSystem.rpc_set_on_moving_platform = function (self, arg_33_1, arg_33_2, arg_33_3)
+LocomotionSystem.rpc_set_on_moving_platform = function (self, channel_id, game_object_id, unit_index)
 	-- function 33
-	local unit = self.unit_storage:unit(arg_33_2)
+	local unit = self.unit_storage:unit(game_object_id)
 
 	if not unit then
-		printf("unit from game_object_id %d is nil", arg_33_2)
+		printf("unit from game_object_id %d is nil", game_object_id)
 
 		return
 	end
 
-	local current_level = LevelHelper:current_level(self.world)
-	local unit_by_index = Level.unit_by_index(current_level, arg_33_3)
+	local level = LevelHelper:current_level(self.world)
+	local platform_unit = Level.unit_by_index(level, unit_index)
+	local locomotion_extension = ScriptUnit.extension(unit, "locomotion_system")
 
-	ScriptUnit.extension(unit, "locomotion_system"):set_on_moving_platform(unit_by_index)
+	locomotion_extension:set_on_moving_platform(platform_unit)
 end
 
-LocomotionSystem.rpc_hot_join_nail_to_wall_fix = function (self, arg_34_1, arg_34_2)
+LocomotionSystem.rpc_hot_join_nail_to_wall_fix = function (self, channel_id, game_object_id)
 	-- function 34
-	local unit = self.unit_storage:unit(arg_34_2)
+	local unit = self.unit_storage:unit(game_object_id)
 
-	if not Unit.has_animation_state_machine(unit) then
+	if Unit.has_animation_state_machine(unit) then
 		Unit.animation_event(unit, "ragdoll")
 	end
 end

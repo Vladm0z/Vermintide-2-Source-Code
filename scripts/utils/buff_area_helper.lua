@@ -1,110 +1,138 @@
 -- chunkname: @scripts/utils/buff_area_helper.lua
 
-local BuffAreaHelper = BuffAreaHelper
+local BuffAreaHelper_2 = BuffAreaHelper
 
-BuffAreaHelper = BuffAreaHelper or {}
+if not BuffAreaHelper_2 then
+	-- Nothing
+end
 
-BuffAreaHelper.setup_range_check = function (arg_1_0, arg_1_1, arg_1_2, arg_1_3)
+BuffAreaHelper_2 = {}
+
+local BuffAreaHelper = BuffAreaHelper_2
+
+::label_0_0::
+
+BuffAreaHelper.setup_range_check = function (unit, buff, params, world)
 	-- function 1
-	arg_1_1.range_check = {
+	buff.range_check = {
 		update_time = 0,
 		units_in_range = {},
 		temp_new_units_in_range = {}
 	}
 end
 
-BuffAreaHelper.update_range_check = function (arg_2_0, arg_2_1, arg_2_2, arg_2_3)
+BuffAreaHelper.update_range_check = function (unit, buff, params, world)
 	-- function 2
-	local template = arg_2_1.template
-	local range_check = template.range_check
+	local buff_template = buff.template
+	local range_check_template = buff_template.range_check
 
-	if not (not range_check.server_only and Managers.state.network.is_server) then
+	if range_check_template.server_only and not Managers.state.network.is_server then
 		return
 	end
 
-	local range_check_2 = arg_2_1.range_check
+	local range_check_state = buff.range_check
 
-	if range_check_2.update_time < arg_2_2.t then
-		range_check_2.update_time = arg_2_2.t + range_check.update_rate
+	if range_check_state.update_time < params.t then
+		range_check_state.update_time = params.t + range_check_template.update_rate
 
-		local radius
+		local radius_2
 
-		if not template.custom_radius then
-			radius = arg_2_1.radius
+		if buff_template.custom_radius then
+			radius_2 = buff.radius
 
-			if not radius then
+			if not radius_2 then
 				-- Nothing
 			end
 		end
 
-		radius = range_check.radius
+		radius_2 = range_check_template.radius
+
+		local radius = radius_2
 
 		::label_2_0::
 
-		local units_in_range = range_check_2.units_in_range
-		local unit_entered_range_func = range_check.unit_entered_range_func
-		local unit_left_range_func = range_check.unit_left_range_func
-		local temp_new_units_in_range = range_check_2.temp_new_units_in_range
-		local count = #temp_new_units_in_range
-		local var_2_9 = POSITION_LOOKUP[arg_2_0]
+		local units_in_range = range_check_state.units_in_range
+		local unit_entered_range_func_name = range_check_template.unit_entered_range_func
+		local unit_left_range_func_name = range_check_template.unit_left_range_func
+		local temp_new_units_in_range = range_check_state.temp_new_units_in_range
+		local initial_length_temp_new_units_in_range = #temp_new_units_in_range
+		local var_2_1 = POSITION_LOOKUP[unit]
 
-		var_2_9 = var_2_9 or Unit.world_position(arg_2_0, 0)
-
-		local num = 0
-		local var_2_11 = Managers.state.side.side_by_unit[arg_2_0]
-
-		var_2_11 = var_2_11 or Managers.state.side:get_side_from_name("heroes")
-
-		if not range_check.only_players then
-			num = AiUtils.broadphase_query(var_2_9, radius, temp_new_units_in_range, var_2_11.enemy_broadphase_categories)
+		if not var_2_1 then
+			-- Nothing
 		end
 
-		if not range_check.only_ai then
-			local PLAYER_AND_BOT_POSITIONS = var_2_11.PLAYER_AND_BOT_POSITIONS
+		var_2_1 = Unit.world_position(unit, 0)
 
-			for i = 1, #PLAYER_AND_BOT_POSITIONS do
-				local var_2_13 = PLAYER_AND_BOT_POSITIONS[i]
+		local position = var_2_1
 
-				if math.pow(radius, 2) >= Vector3.distance_squared(var_2_9, var_2_13) then
-					num = num + 1
-					temp_new_units_in_range[num] = var_2_11.PLAYER_AND_BOT_UNITS[i]
+		::label_2_1::
+
+		local num_hits = 0
+		local var_2_2 = Managers.state.side.side_by_unit[unit]
+
+		if not var_2_2 then
+			-- Nothing
+		end
+
+		var_2_2 = Managers.state.side:get_side_from_name("heroes")
+
+		local side = var_2_2
+
+		::label_2_2::
+
+		if not range_check_template.only_players then
+			num_hits = AiUtils.broadphase_query(position, radius, temp_new_units_in_range, side.enemy_broadphase_categories)
+		end
+
+		if not range_check_template.only_ai then
+			local other_player_positions = side.PLAYER_AND_BOT_POSITIONS
+
+			for i = 1, #other_player_positions do
+				local other_player_position = other_player_positions[i]
+				local radius_squared = math.pow(radius, 2)
+				local distance_squared = Vector3.distance_squared(position, other_player_position)
+
+				if distance_squared <= radius_squared then
+					num_hits = num_hits + 1
+					temp_new_units_in_range[num_hits] = side.PLAYER_AND_BOT_UNITS[i]
 				end
 			end
 		end
 
-		for j = num + 1, count do
-			temp_new_units_in_range[j] = nil
+		for i = num_hits + 1, initial_length_temp_new_units_in_range do
+			temp_new_units_in_range[i] = nil
 		end
 
-		if not template.randomize_result then
+		if buff_template.randomize_result then
 			table.shuffle(temp_new_units_in_range)
 		end
 
-		local flag = not unit_entered_range_func and BuffFunctionTemplates.functions[unit_entered_range_func]
+		local unit_entered_range_func = not not unit_entered_range_func_name and not not BuffFunctionTemplates.functions[unit_entered_range_func_name]
 
-		for i_2, v in ipairs(temp_new_units_in_range) do
-			if not units_in_range[v] then
-				local flag_2 = true
+		for _, new_unit in ipairs(temp_new_units_in_range) do
+			if not units_in_range[new_unit] then
+				local user_data = true
 
-				if not flag then
-					flag_2 = flag(v, arg_2_0, arg_2_1, arg_2_2, arg_2_3) or true
+				if unit_entered_range_func then
+					user_data = not not unit_entered_range_func(new_unit, unit, buff, params, world) or not not true
 				end
 
-				units_in_range[v] = flag_2
+				units_in_range[new_unit] = user_data
 			end
 		end
 
-		local flag_3 = not unit_left_range_func and BuffFunctionTemplates.functions[unit_left_range_func]
+		local unit_left_range_func = not not unit_left_range_func_name and not not BuffFunctionTemplates.functions[unit_left_range_func_name]
 
-		for k, v_2 in pairs(units_in_range) do
-			if not table.contains(temp_new_units_in_range, k) then
-				if not flag_3 then
-					local var_2_17 = units_in_range[k]
+		for prev_unit_in_range, _ in pairs(units_in_range) do
+			if not table.contains(temp_new_units_in_range, prev_unit_in_range) then
+				if unit_left_range_func then
+					local user_data = units_in_range[prev_unit_in_range]
 
-					flag_3(k, var_2_17, arg_2_0, arg_2_1, arg_2_2, arg_2_3)
+					unit_left_range_func(prev_unit_in_range, user_data, unit, buff, params, world)
 				end
 
-				units_in_range[k] = nil
+				units_in_range[prev_unit_in_range] = nil
 			end
 		end
 
@@ -114,20 +142,21 @@ BuffAreaHelper.update_range_check = function (arg_2_0, arg_2_1, arg_2_2, arg_2_3
 	return false
 end
 
-BuffAreaHelper.destroy_range_check = function (arg_3_0, arg_3_1, arg_3_2, arg_3_3)
+BuffAreaHelper.destroy_range_check = function (unit, buff, params, world)
 	-- function 3
-	local range_check = arg_3_1.template.range_check
-	local range_check_2 = arg_3_1.range_check
-	local unit_left_range_func = range_check.unit_left_range_func
+	local buff_template = buff.template
+	local range_check_template = buff_template.range_check
+	local range_check_state = buff.range_check
+	local unit_left_range_func_name = range_check_template.unit_left_range_func
 
-	if not unit_left_range_func then
+	if not unit_left_range_func_name then
 		return
 	end
 
-	local var_3_3 = BuffFunctionTemplates.functions[unit_left_range_func]
+	local unit_left_range_func = BuffFunctionTemplates.functions[unit_left_range_func_name]
 
-	for k, v in pairs(range_check_2.units_in_range) do
-		var_3_3(k, v, arg_3_0, arg_3_1, arg_3_2, arg_3_3)
+	for unit_in_range, user_data in pairs(range_check_state.units_in_range) do
+		unit_left_range_func(unit_in_range, user_data, unit, buff, params, world)
 	end
 end
 

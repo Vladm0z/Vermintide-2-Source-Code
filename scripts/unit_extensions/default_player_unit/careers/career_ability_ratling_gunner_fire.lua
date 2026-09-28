@@ -6,11 +6,14 @@ CareerAbilityRatlingGunnerFire.ability_ready = function (self)
 	-- function 1
 	self.super.ability_ready(self)
 
-	if not self._first_person_extension then
-		local get_data = Unit.get_data(self._unit, "breed")
+	local first_person_extension = self._first_person_extension
 
-		if not BLACKBOARDS[self._unit].attack_pattern_data then
-			local tbl = {}
+	if first_person_extension then
+		local breed = Unit.get_data(self._unit, "breed")
+		local blackboard = BLACKBOARDS[self._unit]
+
+		if not blackboard.attack_pattern_data then
+			local data = {}
 		end
 	end
 end
@@ -26,16 +29,25 @@ CareerAbilityRatlingGunnerReload._start = function (self)
 	-- function 3
 	self.super.ability_ready(self)
 
-	local _first_person_extension = self._first_person_extension
-	local get_data = Unit.get_data(self._unit, "breed")
-	local attack_pattern_data = BLACKBOARDS[self._unit].attack_pattern_data
+	local first_person_extension = self._first_person_extension
+	local breed = Unit.get_data(self._unit, "breed")
+	local blackboard = BLACKBOARDS[self._unit]
+	local attack_pattern_data = blackboard.attack_pattern_data
 
-	attack_pattern_data = attack_pattern_data or {}
+	if not attack_pattern_data then
+		-- Nothing
+	end
 
-	if not self._career_extension:can_use_activated_ability(2) then
-		local current_ammo = attack_pattern_data.current_ammo
+	attack_pattern_data = {}
 
-		current_ammo = current_ammo or 120
+	local data = attack_pattern_data
+
+	::label_3_0::
+
+	if self._career_extension:can_use_activated_ability(2) then
+		local current_ammo = data.current_ammo
+
+		current_ammo = not not current_ammo or not not 120
 
 		if current_ammo >= 120 then
 			-- Nothing
@@ -44,7 +56,7 @@ CareerAbilityRatlingGunnerReload._start = function (self)
 
 	do return end
 
-	::label_3_0::
+	::label_3_1::
 
 	self._career_extension:start_activated_ability_cooldown(1)
 	self._career_extension:start_activated_ability_cooldown(2)
@@ -57,11 +69,11 @@ end
 
 CareerAbilityRatlingGunnerReload._ability_available = function (self)
 	-- function 5
-	local _career_extension = self._career_extension
-	local _status_extension = self._status_extension
-	local _locomotion_extension = self._locomotion_extension
-	local can_use_activated_ability = _career_extension:can_use_activated_ability(2)
-	local is_disabled = _status_extension:is_disabled()
+	local career_extension = self._career_extension
+	local status_extension = self._status_extension
+	local locomotion_extension = self._locomotion_extension
+	local can_use = career_extension:can_use_activated_ability(2)
+	local is_disabled = status_extension:is_disabled()
 
-	return not can_use_activated_ability and not is_disabled
+	return not not can_use and not not not is_disabled
 end

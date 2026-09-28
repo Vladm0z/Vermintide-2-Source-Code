@@ -1,10 +1,10 @@
 -- chunkname: @scripts/ui/views/versus_menu/versus_team_parading_view_v2_definitions.lua
 
-local tbl = {
+local player_name_box_size = {
 	474,
 	46
 }
-local tbl_2 = {
+local scenegraph_position = {
 	screen = {
 		0,
 		0,
@@ -71,7 +71,7 @@ local tbl_2 = {
 		40
 	}
 }
-local tbl_3 = {
+local scenegraph_size = {
 	screen = {
 		1920,
 		1080
@@ -101,98 +101,98 @@ local tbl_3 = {
 	player_insignia_anchor_3 = player_portrait_anchor_size,
 	player_insignia_anchor_4 = player_portrait_anchor_size
 }
-local tbl_4 = {
+local scenegraph_definition = {
 	screen = {
 		scale = "fit",
-		size = tbl_3.screen,
-		position = tbl_2.screen
+		size = scenegraph_size.screen,
+		position = scenegraph_position.screen
 	},
 	bottom_bar = {
 		vertical_alignment = "bottom",
 		scale = "fit_width",
 		horizontal_alignment = "center",
-		size = tbl_3.bottom_bar,
-		position = tbl_2.bottom_bar
+		size = scenegraph_size.bottom_bar,
+		position = scenegraph_position.bottom_bar
 	},
 	bottom_bar_detail = {
 		vertical_alignment = "top",
 		parent = "bottom_bar",
 		horizontal_alignment = "center",
-		size = tbl_3.bottom_bar_detail,
-		position = tbl_2.bottom_bar_detail
+		size = scenegraph_size.bottom_bar_detail,
+		position = scenegraph_position.bottom_bar_detail
 	},
 	top_bar_detail = {
 		vertical_alignment = "top",
 		parent = "screen",
 		horizontal_alignment = "center",
-		size = tbl_3.top_bar_detail,
-		position = tbl_2.top_bar_detail
+		size = scenegraph_size.top_bar_detail,
+		position = scenegraph_position.top_bar_detail
 	},
 	center_pivot = {
 		vertical_alignment = "center",
 		parent = "screen",
 		horizontal_alignment = "center",
-		size = tbl_3.center_pivot,
-		position = tbl_2.center_pivot
+		size = scenegraph_size.center_pivot,
+		position = scenegraph_position.center_pivot
 	},
 	player_portrait_anchor_1 = {
 		vertical_alignment = "center",
 		parent = "bottom_bar",
 		horizontal_alignment = "center",
-		size = tbl_3.player_portrait_anchor_1,
-		position = tbl_2.player_portrait_anchor_1
+		size = scenegraph_size.player_portrait_anchor_1,
+		position = scenegraph_position.player_portrait_anchor_1
 	},
 	player_portrait_anchor_2 = {
 		vertical_alignment = "center",
 		parent = "bottom_bar",
 		horizontal_alignment = "center",
-		size = tbl_3.player_portrait_anchor_2,
-		position = tbl_2.player_portrait_anchor_2
+		size = scenegraph_size.player_portrait_anchor_2,
+		position = scenegraph_position.player_portrait_anchor_2
 	},
 	player_portrait_anchor_3 = {
 		vertical_alignment = "center",
 		parent = "bottom_bar",
 		horizontal_alignment = "center",
-		size = tbl_3.player_portrait_anchor_3,
-		position = tbl_2.player_portrait_anchor_3
+		size = scenegraph_size.player_portrait_anchor_3,
+		position = scenegraph_position.player_portrait_anchor_3
 	},
 	player_portrait_anchor_4 = {
 		vertical_alignment = "center",
 		parent = "bottom_bar",
 		horizontal_alignment = "center",
-		size = tbl_3.player_portrait_anchor_4,
-		position = tbl_2.player_portrait_anchor_4
+		size = scenegraph_size.player_portrait_anchor_4,
+		position = scenegraph_position.player_portrait_anchor_4
 	},
 	player_insignia_anchor_1 = {
 		vertical_alignment = "center",
 		parent = "bottom_bar",
 		horizontal_alignment = "center",
-		size = tbl_3.player_insignia_anchor_1,
-		position = tbl_2.player_insignia_anchor_1
+		size = scenegraph_size.player_insignia_anchor_1,
+		position = scenegraph_position.player_insignia_anchor_1
 	},
 	player_insignia_anchor_2 = {
 		vertical_alignment = "center",
 		parent = "bottom_bar",
 		horizontal_alignment = "center",
-		size = tbl_3.player_insignia_anchor_2,
-		position = tbl_2.player_insignia_anchor_2
+		size = scenegraph_size.player_insignia_anchor_2,
+		position = scenegraph_position.player_insignia_anchor_2
 	},
 	player_insignia_anchor_3 = {
 		vertical_alignment = "center",
 		parent = "bottom_bar",
 		horizontal_alignment = "center",
-		size = tbl_3.player_insignia_anchor_3,
-		position = tbl_2.player_insignia_anchor_3
+		size = scenegraph_size.player_insignia_anchor_3,
+		position = scenegraph_position.player_insignia_anchor_3
 	},
 	player_insignia_anchor_4 = {
 		vertical_alignment = "center",
 		parent = "bottom_bar",
 		horizontal_alignment = "center",
-		size = tbl_3.player_insignia_anchor_4,
-		position = tbl_2.player_insignia_anchor_4
+		size = scenegraph_size.player_insignia_anchor_4,
+		position = scenegraph_position.player_insignia_anchor_4
 	}
 }
-local tbl_5 = {
+local team_text_style = {
 	word_wrap = true,
 	upper_case = true,
 	localize = false,
@@ -209,7 +209,7 @@ local tbl_5 = {
 	}
 }
 
-function create_rotated_texture(arg_1_0, arg_1_1, arg_1_2, arg_1_3, arg_1_4, arg_1_5, arg_1_6, arg_1_7)
+function create_rotated_texture(texture, angle, size, pivot, scenegraph_id, color, layer, offset)
 	-- function 1
 	return {
 		alpha_multiplier = 0,
@@ -223,13 +223,13 @@ function create_rotated_texture(arg_1_0, arg_1_1, arg_1_2, arg_1_3, arg_1_4, arg
 			}
 		},
 		content = {
-			texture_id = arg_1_0
+			texture_id = texture
 		},
 		style = {
 			texture_id = {
-				angle = arg_1_1,
-				pivot = arg_1_3,
-				color = arg_1_5 or {
+				angle = angle,
+				pivot = pivot,
+				color = not not color or not not {
 					255,
 					255,
 					255,
@@ -238,21 +238,21 @@ function create_rotated_texture(arg_1_0, arg_1_1, arg_1_2, arg_1_3, arg_1_4, arg
 				offset = {
 					0,
 					0,
-					arg_1_6 or 0
+					not not layer or not not 0
 				},
-				texture_size = arg_1_2
+				texture_size = size
 			}
 		},
-		offset = arg_1_7 or {
+		offset = not not offset or not not {
 			0,
 			0,
 			0
 		},
-		scenegraph_id = arg_1_4
+		scenegraph_id = scenegraph_id
 	}
 end
 
-function create_player_name_career_text(arg_2_0)
+function create_player_name_career_text(scenegraph_id)
 	-- function 2
 	return {
 		element = {
@@ -307,7 +307,7 @@ function create_player_name_career_text(arg_2_0)
 				}
 			}
 		},
-		scenegraph_id = arg_2_0,
+		scenegraph_id = scenegraph_id,
 		offset = {
 			-960,
 			0,
@@ -316,12 +316,12 @@ function create_player_name_career_text(arg_2_0)
 	}
 end
 
-local tbl_6 = {
+local bottom_widgets_definitions = {
 	bottom_background = UIWidgets.create_simple_rect("bottom_bar", Colors.get_color_table_with_alpha("black", 100)),
-	bottom_background_detail = UIWidgets.create_parading_screen_divider("bottom_bar_detail", tbl_4.bottom_bar_detail.size)
+	bottom_background_detail = UIWidgets.create_parading_screen_divider("bottom_bar_detail", scenegraph_definition.bottom_bar_detail.size)
 }
-local tbl_7 = {
-	top_background_detail = UIWidgets.create_parading_screen_divider("top_bar_detail", tbl_4.top_bar_detail.size),
+local top_widgets_definitions = {
+	top_background_detail = UIWidgets.create_parading_screen_divider("top_bar_detail", scenegraph_definition.top_bar_detail.size),
 	team_flag = UIWidgets.create_simple_texture("banner_hammers_local_long", "top_bar_detail", nil, nil, {
 		255,
 		255,
@@ -336,109 +336,110 @@ local tbl_7 = {
 		484
 	})
 }
-local tbl_8 = {
+local vs_text_size = {
 	512,
 	512
 }
-local tbl_9 = {
-	-tbl_8[1] / 2,
-	-tbl_8[1] / 2,
+local vs_text_offset = {
+	-vs_text_size[1] / 2,
+	-vs_text_size[1] / 2,
 	0
 }
-local tbl_10 = {
+local slim_background_size = {
 	2300,
 	50
 }
-local tbl_11 = {
+local thick_background_size = {
 	2300,
 	500
 }
-local tbl_12 = {
+local slim_background_offset = {
 	-1160,
 	250,
 	0
 }
-local tbl_13 = {
+local thick_background_offset = {
 	-1160,
 	-300,
 	0
 }
-local tbl_14 = {
+local transition_widget_definitions = {
 	background = UIWidgets.create_simple_rect("screen", Colors.get_color_table_with_alpha("black", 255))
 }
-local tbl_15 = {
+local view_settings = {
 	level_name = "levels/carousel_podium/world"
 }
-local tbl_16 = {
+local animation_definitions = {
 	on_enter_local_player = {
 		{
 			name = "fade_in",
 			start_progress = 0,
 			end_progress = 0.5,
-			init = function (arg_3_0, arg_3_1, arg_3_2, arg_3_3)
+			init = function (ui_scenegraph, scenegraph_definition, widgets, params)
 				-- function 3
-				local self = arg_3_3.self
-				local _bottom_widgets = self._bottom_widgets
-				local _team_portrait_frame_widgets = self._team_portrait_frame_widgets
-				local _top_widgets = self._top_widgets
-				local _player_name_widgets = self._player_name_widgets
-				local _team_insignia_widgets = self._team_insignia_widgets
+				local self = params.self
+				local bottom_widgets = self._bottom_widgets
+				local portrait_widgets = self._team_portrait_frame_widgets
+				local top_widgets = self._top_widgets
+				local player_name_widgets = self._player_name_widgets
+				local insignia_widgets = self._team_insignia_widgets
 
-				for i, v in ipairs(_bottom_widgets) do
-					v.alpha_multiplier = 0
+				for _, widget in ipairs(bottom_widgets) do
+					widget.alpha_multiplier = 0
 				end
 
-				for i_2, v_2 in ipairs(_team_portrait_frame_widgets) do
-					v_2.alpha_multiplier = 0
+				for _, widget in ipairs(portrait_widgets) do
+					widget.alpha_multiplier = 0
 				end
 
-				for i_3, v_3 in ipairs(_team_insignia_widgets) do
-					v_3.alpha_multiplier = 0
+				for _, widget in ipairs(insignia_widgets) do
+					widget.alpha_multiplier = 0
 				end
 
-				for i_4, v_4 in ipairs(_top_widgets) do
-					v_4.alpha_multiplier = 0
+				for _, widget in ipairs(top_widgets) do
+					widget.alpha_multiplier = 0
 				end
 
-				for i_5, v_5 in ipairs(_top_widgets) do
-					v_5.alpha_multiplier = 0
+				for _, widget in ipairs(top_widgets) do
+					widget.alpha_multiplier = 0
 				end
 			end,
-			update = function (arg_4_0, arg_4_1, arg_4_2, arg_4_3, arg_4_4)
+			update = function (ui_scenegraph, scenegraph_definition, widgets, progress, params)
 				-- function 4
-				local easeOutCubic = math.easeOutCubic(arg_4_3)
-				local self = arg_4_4.self
-				local _bottom_widgets = self._bottom_widgets
-				local _team_portrait_frame_widgets = self._team_portrait_frame_widgets
-				local _top_widgets = self._top_widgets
-				local _team_insignia_widgets = self._team_insignia_widgets
+				local anim_progress = math.easeOutCubic(progress)
+				local self = params.self
+				local bottom_widgets = self._bottom_widgets
+				local portrait_widgets = self._team_portrait_frame_widgets
+				local top_widgets = self._top_widgets
+				local insignia_widgets = self._team_insignia_widgets
 
-				for i, v in ipairs(_bottom_widgets) do
-					v.alpha_multiplier = easeOutCubic
+				for _, widget in ipairs(bottom_widgets) do
+					widget.alpha_multiplier = anim_progress
 				end
 
-				for i_2, v_2 in ipairs(_team_portrait_frame_widgets) do
-					v_2.alpha_multiplier = easeOutCubic
+				for _, widget in ipairs(portrait_widgets) do
+					widget.alpha_multiplier = anim_progress
 				end
 
-				for i_3, v_3 in ipairs(_team_insignia_widgets) do
-					v_3.alpha_multiplier = easeOutCubic
+				for _, widget in ipairs(insignia_widgets) do
+					widget.alpha_multiplier = anim_progress
 				end
 
-				for i_4, v_4 in ipairs(_top_widgets) do
-					v_4.alpha_multiplier = easeOutCubic
+				for _, widget in ipairs(top_widgets) do
+					widget.alpha_multiplier = anim_progress
 				end
 
-				for i_5, v_5 in ipairs(_top_widgets) do
-					v_5.alpha_multiplier = easeOutCubic
+				for _, widget in ipairs(top_widgets) do
+					widget.alpha_multiplier = anim_progress
 				end
 			end,
-			on_complete = function (arg_5_0, arg_5_1, arg_5_2, arg_5_3)
+			on_complete = function (ui_scenegraph, scenegraph_definition, widgets, params)
 				-- function 5
-				local _transition_widgets = arg_5_3.self._transition_widgets
+				local self = params.self
+				local transition_widgets = self._transition_widgets
 
-				for i, v in ipairs(_transition_widgets) do
-					v.alpha_multiplier = 0
+				for _, widget in ipairs(transition_widgets) do
+					widget.alpha_multiplier = 0
 				end
 			end
 		},
@@ -446,44 +447,48 @@ local tbl_16 = {
 			name = "slide_up_bottom_widgets",
 			start_progress = 0,
 			end_progress = 0.8,
-			init = function (arg_6_0, arg_6_1, arg_6_2, arg_6_3)
+			init = function (ui_scenegraph, scenegraph_definition, widgets, params)
 				-- function 6
 				return
 			end,
-			update = function (arg_7_0, arg_7_1, arg_7_2, arg_7_3, arg_7_4)
+			update = function (ui_scenegraph, scenegraph_definition, widgets, progress, params)
 				-- function 7
-				local easeOutCubic = math.easeOutCubic(arg_7_3)
-				local self = arg_7_4.self
-				local _bottom_widgets = self._bottom_widgets
-				local _team_portrait_frame_widgets = self._team_portrait_frame_widgets
-				local _team_insignia_widgets = self._team_insignia_widgets
-				local _player_name_widgets = self._player_name_widgets
+				local anim_progress = math.easeOutCubic(progress)
+				local self = params.self
+				local bottom_widgets = self._bottom_widgets
+				local portrait_widgets = self._team_portrait_frame_widgets
+				local insignia_widgets = self._team_insignia_widgets
+				local player_name_widgets = self._player_name_widgets
 
-				for i, v in ipairs(_bottom_widgets) do
-					local num = -250 + 250 * easeOutCubic
+				for _, widget in ipairs(bottom_widgets) do
+					local y = -250 + 250 * anim_progress
+					local offset = widget.offset
 
-					v.offset[2] = num
+					offset[2] = y
 				end
 
-				for i_2, v_2 in ipairs(_team_portrait_frame_widgets) do
-					local num_2 = -200 + 200 * easeOutCubic
+				for _, widget in ipairs(portrait_widgets) do
+					local y = -200 + 200 * anim_progress
+					local offset = widget.offset
 
-					v_2.offset[2] = num_2
+					offset[2] = y
 				end
 
-				for i_3, v_3 in ipairs(_team_insignia_widgets) do
-					local num_3 = -200 + 200 * easeOutCubic
+				for _, widget in ipairs(insignia_widgets) do
+					local y = -200 + 200 * anim_progress
+					local offset = widget.offset
 
-					v_3.offset[2] = num_3
+					offset[2] = y
 				end
 
-				for i_4, v_4 in ipairs(_player_name_widgets) do
-					local num_4 = -270 + 50 * easeOutCubic
+				for _, widget in ipairs(player_name_widgets) do
+					local y = -270 + 50 * anim_progress
+					local offset = widget.offset
 
-					v_4.offset[2] = num_4
+					offset[2] = y
 				end
 			end,
-			on_complete = function (arg_8_0, arg_8_1, arg_8_2, arg_8_3)
+			on_complete = function (ui_scenegraph, scenegraph_definition, widgets, params)
 				-- function 8
 				return
 			end
@@ -492,26 +497,28 @@ local tbl_16 = {
 			name = "slide_in_top_widgets",
 			start_progress = 0,
 			end_progress = 1,
-			init = function (arg_9_0, arg_9_1, arg_9_2, arg_9_3)
+			init = function (ui_scenegraph, scenegraph_definition, widgets, params)
 				-- function 9
 				return
 			end,
-			update = function (arg_10_0, arg_10_1, arg_10_2, arg_10_3, arg_10_4)
+			update = function (ui_scenegraph, scenegraph_definition, widgets, progress, params)
 				-- function 10
-				local easeOutCubic = math.easeOutCubic(arg_10_3)
-				local ease_out_quad = math.ease_out_quad(arg_10_3)
-				local self = arg_10_4.self
-				local top_background_detail = self._widgets_by_name.top_background_detail
-				local team_flag = self._widgets_by_name.team_flag
-				local num = 1920 - 1920 * easeOutCubic
+				local anim_progress = math.easeOutCubic(progress)
+				local anim_quad_progress = math.ease_out_quad(progress)
+				local self = params.self
+				local top_detail = self._widgets_by_name.top_background_detail
+				local team_banner = self._widgets_by_name.team_flag
+				local x_detail = 1920 - 1920 * anim_progress
+				local detail_offset = top_detail.offset
 
-				top_background_detail.offset[1] = num
+				detail_offset[1] = x_detail
 
-				local num_2 = -480 + 480 * (1 - easeOutCubic)
+				local y_banner = -480 + 480 * (1 - anim_progress)
+				local banner_offset = team_banner.offset
 
-				team_flag.offset[2] = num_2
+				banner_offset[2] = y_banner
 			end,
-			on_complete = function (arg_11_0, arg_11_1, arg_11_2, arg_11_3)
+			on_complete = function (ui_scenegraph, scenegraph_definition, widgets, params)
 				-- function 11
 				return
 			end
@@ -522,35 +529,36 @@ local tbl_16 = {
 			name = "fade_in",
 			start_progress = 0,
 			end_progress = 0.25,
-			init = function (arg_12_0, arg_12_1, arg_12_2, arg_12_3)
+			init = function (ui_scenegraph, scenegraph_definition, widgets, params)
 				-- function 12
-				local self = arg_12_3.self
-				local _bottom_widgets = self._bottom_widgets
-				local _transition_widgets = self._transition_widgets
-				local _top_widgets = self._top_widgets
+				local self = params.self
+				local bottom_widgets = self._bottom_widgets
+				local transition_widgets = self._transition_widgets
+				local top_widgets = self._top_widgets
 
-				for i, v in ipairs(_bottom_widgets) do
-					v.alpha_multiplier = 0
+				for _, widget in ipairs(bottom_widgets) do
+					widget.alpha_multiplier = 0
 				end
 
-				for i_2, v_2 in ipairs(_transition_widgets) do
-					v_2.alpha_multiplier = 0
+				for _, widget in ipairs(transition_widgets) do
+					widget.alpha_multiplier = 0
 				end
 
-				for i_3, v_3 in ipairs(_top_widgets) do
-					v_3.alpha_multiplier = 0
+				for _, widget in ipairs(top_widgets) do
+					widget.alpha_multiplier = 0
 				end
 			end,
-			update = function (arg_13_0, arg_13_1, arg_13_2, arg_13_3, arg_13_4)
+			update = function (ui_scenegraph, scenegraph_definition, widgets, progress, params)
 				-- function 13
-				local easeOutCubic = math.easeOutCubic(arg_13_3)
-				local _transition_widgets = arg_13_4.self._transition_widgets
+				local anim_progress = math.easeOutCubic(progress)
+				local self = params.self
+				local transition_widgets = self._transition_widgets
 
-				for i, v in ipairs(_transition_widgets) do
-					v.alpha_multiplier = easeOutCubic
+				for _, widget in ipairs(transition_widgets) do
+					widget.alpha_multiplier = anim_progress
 				end
 			end,
-			on_complete = function (arg_14_0, arg_14_1, arg_14_2, arg_14_3)
+			on_complete = function (ui_scenegraph, scenegraph_definition, widgets, params)
 				-- function 14
 				return
 			end
@@ -559,20 +567,20 @@ local tbl_16 = {
 			name = "slide_in",
 			start_progress = 0,
 			end_progress = 0.25,
-			init = function (arg_15_0, arg_15_1, arg_15_2, arg_15_3)
+			init = function (ui_scenegraph, scenegraph_definition, widgets, params)
 				-- function 15
 				return
 			end,
-			update = function (arg_16_0, arg_16_1, arg_16_2, arg_16_3, arg_16_4)
+			update = function (ui_scenegraph, scenegraph_definition, widgets, progress, params)
 				-- function 16
 				return
 			end,
-			on_complete = function (arg_17_0, arg_17_1, arg_17_2, arg_17_3)
+			on_complete = function (ui_scenegraph, scenegraph_definition, widgets, params)
 				-- function 17
-				local self = arg_17_3.self
-				local _opponents_party_data = self._opponents_party_data
+				local self = params.self
+				local opponent_team_data = self._opponents_party_data
 
-				self:_change_team_info(_opponents_party_data)
+				self:_change_team_info(opponent_team_data)
 			end
 		}
 	},
@@ -581,62 +589,62 @@ local tbl_16 = {
 			name = "fade_in",
 			start_progress = 0,
 			end_progress = 0.5,
-			init = function (arg_18_0, arg_18_1, arg_18_2, arg_18_3)
+			init = function (ui_scenegraph, scenegraph_definition, widgets, params)
 				-- function 18
-				local self = arg_18_3.self
-				local _bottom_widgets = self._bottom_widgets
-				local _team_portrait_frame_widgets = self._team_portrait_frame_widgets
-				local _player_name_widgets = self._player_name_widgets
-				local _team_insignia_widgets = self._team_insignia_widgets
+				local self = params.self
+				local bottom_widgets = self._bottom_widgets
+				local portrait_widgets = self._team_portrait_frame_widgets
+				local player_name_widgets = self._player_name_widgets
+				local insignia_widgets = self._team_insignia_widgets
 
-				for i, v in ipairs(_bottom_widgets) do
-					v.alpha_multiplier = 0
+				for _, widget in ipairs(bottom_widgets) do
+					widget.alpha_multiplier = 0
 				end
 
-				for i_2, v_2 in ipairs(_team_portrait_frame_widgets) do
-					v_2.alpha_multiplier = 0
+				for _, widget in ipairs(portrait_widgets) do
+					widget.alpha_multiplier = 0
 				end
 
-				for i_3, v_3 in ipairs(_team_insignia_widgets) do
-					v_3.alpha_multiplier = 0
+				for _, widget in ipairs(insignia_widgets) do
+					widget.alpha_multiplier = 0
 				end
 
-				for i_4, v_4 in ipairs(_player_name_widgets) do
-					v_4.alpha_multiplier = 0
+				for _, widget in ipairs(player_name_widgets) do
+					widget.alpha_multiplier = 0
 				end
 			end,
-			update = function (arg_19_0, arg_19_1, arg_19_2, arg_19_3, arg_19_4)
+			update = function (ui_scenegraph, scenegraph_definition, widgets, progress, params)
 				-- function 19
-				local easeOutCubic = math.easeOutCubic(arg_19_3)
-				local self = arg_19_4.self
-				local self_2 = arg_19_4.self
-				local _bottom_widgets = self_2._bottom_widgets
-				local _team_portrait_frame_widgets = self_2._team_portrait_frame_widgets
-				local _top_widgets = self_2._top_widgets
-				local _player_name_widgets = self_2._player_name_widgets
-				local _team_insignia_widgets = self_2._team_insignia_widgets
+				local anim_progress = math.easeOutCubic(progress)
+				local self = params.self
+				local self = params.self
+				local bottom_widgets = self._bottom_widgets
+				local portrait_widgets = self._team_portrait_frame_widgets
+				local top_widgets = self._top_widgets
+				local player_name_widgets = self._player_name_widgets
+				local insignia_widgets = self._team_insignia_widgets
 
-				for i, v in ipairs(_bottom_widgets) do
-					v.alpha_multiplier = easeOutCubic
+				for _, widget in ipairs(bottom_widgets) do
+					widget.alpha_multiplier = anim_progress
 				end
 
-				for i_2, v_2 in ipairs(_team_portrait_frame_widgets) do
-					v_2.alpha_multiplier = easeOutCubic
+				for _, widget in ipairs(portrait_widgets) do
+					widget.alpha_multiplier = anim_progress
 				end
 
-				for i_3, v_3 in ipairs(_team_insignia_widgets) do
-					v_3.alpha_multiplier = easeOutCubic
+				for _, widget in ipairs(insignia_widgets) do
+					widget.alpha_multiplier = anim_progress
 				end
 
-				for i_4, v_4 in ipairs(_top_widgets) do
-					v_4.alpha_multiplier = easeOutCubic
+				for _, widget in ipairs(top_widgets) do
+					widget.alpha_multiplier = anim_progress
 				end
 
-				for i_5, v_5 in ipairs(_player_name_widgets) do
-					v_5.alpha_multiplier = easeOutCubic
+				for _, widget in ipairs(player_name_widgets) do
+					widget.alpha_multiplier = anim_progress
 				end
 			end,
-			on_complete = function (arg_20_0, arg_20_1, arg_20_2, arg_20_3)
+			on_complete = function (ui_scenegraph, scenegraph_definition, widgets, params)
 				-- function 20
 				return
 			end
@@ -645,44 +653,48 @@ local tbl_16 = {
 			name = "slide_up_bottom_widgets",
 			start_progress = 0,
 			end_progress = 0.8,
-			init = function (arg_21_0, arg_21_1, arg_21_2, arg_21_3)
+			init = function (ui_scenegraph, scenegraph_definition, widgets, params)
 				-- function 21
 				return
 			end,
-			update = function (arg_22_0, arg_22_1, arg_22_2, arg_22_3, arg_22_4)
+			update = function (ui_scenegraph, scenegraph_definition, widgets, progress, params)
 				-- function 22
-				local easeOutCubic = math.easeOutCubic(arg_22_3)
-				local self = arg_22_4.self
-				local _bottom_widgets = self._bottom_widgets
-				local _team_portrait_frame_widgets = self._team_portrait_frame_widgets
-				local _player_name_widgets = self._player_name_widgets
-				local _team_insignia_widgets = self._team_insignia_widgets
+				local anim_progress = math.easeOutCubic(progress)
+				local self = params.self
+				local bottom_widgets = self._bottom_widgets
+				local portrait_widgets = self._team_portrait_frame_widgets
+				local player_name_widgets = self._player_name_widgets
+				local insignia_widgets = self._team_insignia_widgets
 
-				for i, v in ipairs(_bottom_widgets) do
-					local num = -250 + 250 * easeOutCubic
+				for _, widget in ipairs(bottom_widgets) do
+					local y = -250 + 250 * anim_progress
+					local offset = widget.offset
 
-					v.offset[2] = num
+					offset[2] = y
 				end
 
-				for i_2, v_2 in ipairs(_team_portrait_frame_widgets) do
-					local num_2 = -200 + 200 * easeOutCubic
+				for _, widget in ipairs(portrait_widgets) do
+					local y = -200 + 200 * anim_progress
+					local offset = widget.offset
 
-					v_2.offset[2] = num_2
+					offset[2] = y
 				end
 
-				for i_3, v_3 in ipairs(_team_insignia_widgets) do
-					local num_3 = -200 + 200 * easeOutCubic
+				for _, widget in ipairs(insignia_widgets) do
+					local y = -200 + 200 * anim_progress
+					local offset = widget.offset
 
-					v_3.offset[2] = num_3
+					offset[2] = y
 				end
 
-				for i_4, v_4 in ipairs(_player_name_widgets) do
-					local num_4 = -270 + 50 * easeOutCubic
+				for _, widget in ipairs(player_name_widgets) do
+					local y = -270 + 50 * anim_progress
+					local offset = widget.offset
 
-					v_4.offset[2] = num_4
+					offset[2] = y
 				end
 			end,
-			on_complete = function (arg_23_0, arg_23_1, arg_23_2, arg_23_3)
+			on_complete = function (ui_scenegraph, scenegraph_definition, widgets, params)
 				-- function 23
 				return
 			end
@@ -691,27 +703,29 @@ local tbl_16 = {
 			name = "slide_in_top_widgets",
 			start_progress = 0,
 			end_progress = 1,
-			init = function (arg_24_0, arg_24_1, arg_24_2, arg_24_3)
+			init = function (ui_scenegraph, scenegraph_definition, widgets, params)
 				-- function 24
 				return
 			end,
-			update = function (arg_25_0, arg_25_1, arg_25_2, arg_25_3, arg_25_4)
+			update = function (ui_scenegraph, scenegraph_definition, widgets, progress, params)
 				-- function 25
-				local easeOutCubic = math.easeOutCubic(arg_25_3)
-				local ease_out_quad = math.ease_out_quad(arg_25_3)
-				local self = arg_25_4.self
-				local top_background_detail = self._widgets_by_name.top_background_detail
-				local team_flag = self._widgets_by_name.team_flag
-				local _ui_top_renderer = self._ui_top_renderer
-				local num = 0 + -3840 * (1 - easeOutCubic)
+				local anim_progress = math.easeOutCubic(progress)
+				local anim_quad_progress = math.ease_out_quad(progress)
+				local self = params.self
+				local top_detail = self._widgets_by_name.top_background_detail
+				local team_banner = self._widgets_by_name.team_flag
+				local ui_renderer = self._ui_top_renderer
+				local x_detail = 0 + -3840 * (1 - anim_progress)
+				local detail_offset = top_detail.offset
 
-				top_background_detail.offset[1] = num
+				detail_offset[1] = x_detail
 
-				local num_2 = -480 + 480 * (1 - easeOutCubic)
+				local y_banner = -480 + 480 * (1 - anim_progress)
+				local banner_offset = team_banner.offset
 
-				team_flag.offset[2] = num_2
+				banner_offset[2] = y_banner
 			end,
-			on_complete = function (arg_26_0, arg_26_1, arg_26_2, arg_26_3)
+			on_complete = function (ui_scenegraph, scenegraph_definition, widgets, params)
 				-- function 26
 				return
 			end
@@ -722,20 +736,21 @@ local tbl_16 = {
 			name = "fade_out",
 			start_progress = 0,
 			end_progress = 0.25,
-			init = function (arg_27_0, arg_27_1, arg_27_2, arg_27_3)
+			init = function (ui_scenegraph, scenegraph_definition, widgets, params)
 				-- function 27
 				return
 			end,
-			update = function (arg_28_0, arg_28_1, arg_28_2, arg_28_3, arg_28_4)
+			update = function (ui_scenegraph, scenegraph_definition, widgets, progress, params)
 				-- function 28
-				local easeOutCubic = math.easeOutCubic(arg_28_3)
-				local _transition_widgets = arg_28_4.self._transition_widgets
+				local anim_progress = math.easeOutCubic(progress)
+				local self = params.self
+				local transition_widgets = self._transition_widgets
 
-				for i, v in ipairs(_transition_widgets) do
-					v.alpha_multiplier = 1 - easeOutCubic
+				for _, widget in ipairs(transition_widgets) do
+					widget.alpha_multiplier = 1 - anim_progress
 				end
 			end,
-			on_complete = function (arg_29_0, arg_29_1, arg_29_2, arg_29_3)
+			on_complete = function (ui_scenegraph, scenegraph_definition, widgets, params)
 				-- function 29
 				return
 			end
@@ -746,17 +761,17 @@ local tbl_16 = {
 			name = "fade_out",
 			start_progress = 0,
 			end_progress = 1,
-			init = function (arg_30_0, arg_30_1, arg_30_2, arg_30_3)
+			init = function (ui_scenegraph, scenegraph_definition, widgets, params)
 				-- function 30
-				arg_30_3.render_settings.alpha_multiplier = 1
+				params.render_settings.alpha_multiplier = 1
 			end,
-			update = function (arg_31_0, arg_31_1, arg_31_2, arg_31_3, arg_31_4)
+			update = function (ui_scenegraph, scenegraph_definition, widgets, progress, params)
 				-- function 31
-				local easeOutCubic = math.easeOutCubic(arg_31_3)
+				local anim_progress = math.easeOutCubic(progress)
 
-				arg_31_4.render_settings.alpha_multiplier = 1 - easeOutCubic
+				params.render_settings.alpha_multiplier = 1 - anim_progress
 			end,
-			on_complete = function (arg_32_0, arg_32_1, arg_32_2, arg_32_3)
+			on_complete = function (ui_scenegraph, scenegraph_definition, widgets, params)
 				-- function 32
 				return
 			end
@@ -765,11 +780,11 @@ local tbl_16 = {
 }
 
 return {
-	scenegraph_definition = tbl_4,
-	bottom_widgets_definitions = tbl_6,
-	top_widgets_definitions = tbl_7,
-	animation_definitions = tbl_16,
-	transition_widget_definitions = tbl_14,
+	scenegraph_definition = scenegraph_definition,
+	bottom_widgets_definitions = bottom_widgets_definitions,
+	top_widgets_definitions = top_widgets_definitions,
+	animation_definitions = animation_definitions,
+	transition_widget_definitions = transition_widget_definitions,
 	create_player_name_career_text = create_player_name_career_text,
-	view_settings = tbl_15
+	view_settings = view_settings
 }

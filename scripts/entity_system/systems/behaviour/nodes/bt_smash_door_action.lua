@@ -10,148 +10,172 @@ BTSmashDoorAction.StateOpening = class(BTSmashDoorAction.StateOpening)
 BTSmashDoorAction.StateMovingToSmartObjectExit = class(BTSmashDoorAction.StateMovingToSmartObjectExit)
 BTSmashDoorAction.StateExitingSmartObject = class(BTSmashDoorAction.StateExitingSmartObject)
 
-local function fn(self)
+local function randomize(event)
 	-- function 1
-	if type(self) == "table" then
-		return self[Math.random(1, #self)]
+	if type(event) == "table" then
+		return event[Math.random(1, #event)]
 	else
-		return self
+		return event
 	end
 end
 
-BTSmashDoorAction.init = function (arg_2_0, ...)
+BTSmashDoorAction.init = function (self, ...)
 	-- function 2
-	BTSmashDoorAction.super.init(arg_2_0, ...)
+	BTSmashDoorAction.super.init(self, ...)
 end
 
 BTSmashDoorAction.name = "BTSmashDoorAction"
 
-BTSmashDoorAction.enter = function (self, arg_3_1, arg_3_2, arg_3_3)
+BTSmashDoorAction.enter = function (self, unit, blackboard, t)
 	-- function 3
-	local action_data = self._tree_node.action_data
-	local next_smart_object_data = arg_3_2.next_smart_object_data
-	local unit = next_smart_object_data.smart_object_data.unit
+	local action = self._tree_node.action_data
+	local smart_object = blackboard.next_smart_object_data
+	local target_unit = smart_object.smart_object_data.unit
 
-	arg_3_2.action = action_data
-	arg_3_2.is_smashing_door = nil
-	arg_3_2.is_opening_door = nil
-	arg_3_2.active_node = BTSmashDoorAction
-	arg_3_2.attacks_done = 0
-	arg_3_2.attack_finished = false
-	arg_3_2.attack_aborted = false
+	blackboard.action = action
+	blackboard.is_smashing_door = nil
+	blackboard.is_opening_door = nil
+	blackboard.active_node = BTSmashDoorAction
+	blackboard.attacks_done = 0
+	blackboard.attack_finished = false
+	blackboard.attack_aborted = false
 
-	local smash_door = arg_3_2.smash_door
+	local smash_door = blackboard.smash_door
 
-	smash_door = smash_door or {}
-	arg_3_2.smash_door = smash_door
-	arg_3_2.smash_door.done = false
-	arg_3_2.smash_door.frames_to_done = nil
-	arg_3_2.smash_door.failed = false
-	arg_3_2.smash_door.target_unit = unit
+	smash_door = not not smash_door or not not {}
+	blackboard.smash_door = smash_door
+	blackboard.smash_door.done = false
+	blackboard.smash_door.frames_to_done = nil
+	blackboard.smash_door.failed = false
+	blackboard.smash_door.target_unit = target_unit
 
-	local tbl = {
-		unit = arg_3_1,
-		blackboard = arg_3_2,
-		action = action_data,
-		entrance_pos = next_smart_object_data.entrance_pos,
-		exit_pos = next_smart_object_data.exit_pos,
-		exit_lookat_direction = Vector3Box(Vector3.normalize(Vector3.flat(next_smart_object_data.exit_pos:unbox() - next_smart_object_data.entrance_pos:unbox()))),
-		start_t = arg_3_3
+	local params = {
+		unit = unit,
+		blackboard = blackboard,
+		action = action,
+		entrance_pos = smart_object.entrance_pos,
+		exit_pos = smart_object.exit_pos,
+		exit_lookat_direction = Vector3Box(Vector3.normalize(Vector3.flat(smart_object.exit_pos:unbox() - smart_object.entrance_pos:unbox()))),
+		start_t = t
 	}
 
-	arg_3_2.smash_door.state_machine = StateMachine:new(self, BTSmashDoorAction.StateInit, tbl)
+	blackboard.smash_door.state_machine = StateMachine:new(self, BTSmashDoorAction.StateInit, params)
 
-	local rotation_speed = action_data.rotation_speed
+	local rotation_speed_2 = action.rotation_speed
 
-	rotation_speed = rotation_speed or 10
+	if not rotation_speed_2 then
+		-- Nothing
+	end
 
-	local locomotion_extension = arg_3_2.locomotion_extension
+	rotation_speed_2 = 10
+
+	local rotation_speed = rotation_speed_2
+
+	::label_3_0::
+
+	local locomotion_extension = blackboard.locomotion_extension
 
 	locomotion_extension:set_affected_by_gravity(false)
 	locomotion_extension:set_movement_type("snap_to_navmesh")
 	locomotion_extension:set_rotation_speed(rotation_speed)
 
-	arg_3_2.spawn_to_running = nil
+	blackboard.spawn_to_running = nil
 end
 
-BTSmashDoorAction.leave = function (arg_4_0, arg_4_1, arg_4_2, arg_4_3, arg_4_4, arg_4_5)
+BTSmashDoorAction.leave = function (self, unit, blackboard, t, reason, destroy)
 	-- function 4
-	if not arg_4_5 then
-		local locomotion_extension = arg_4_2.locomotion_extension
+	if not destroy then
+		local locomotion_extension = blackboard.locomotion_extension
 
 		locomotion_extension:set_affected_by_gravity(true)
 		locomotion_extension:set_movement_type("snap_to_navmesh")
 	end
 
-	local navigation_extension = arg_4_2.navigation_extension
+	local navigation_extension = blackboard.navigation_extension
 
 	navigation_extension:set_enabled(true)
 
-	if not (not navigation_extension:is_using_smart_object() and navigation_extension:use_smart_object(false)) then
-		local target_unit = arg_4_2.smash_door.target_unit
+	if navigation_extension:is_using_smart_object() then
+		local success = navigation_extension:use_smart_object(false)
 
-		if not ALIVE[target_unit] then
-			ScriptUnit.extension(target_unit, "door_system"):register_breed_failed_leaving_smart_object(arg_4_1)
+		if not success then
+			local target_unit = blackboard.smash_door.target_unit
+
+			if ALIVE[target_unit] then
+				local door_extension = ScriptUnit.extension(target_unit, "door_system")
+
+				door_extension:register_breed_failed_leaving_smart_object(unit)
+			end
 		end
 	end
 
-	arg_4_2.action = nil
-	arg_4_2.is_smart_objecting = nil
-	arg_4_2.is_smashing_door = nil
-	arg_4_2.is_opening_door = nil
-	arg_4_2.smash_door.target_unit = nil
+	blackboard.action = nil
+	blackboard.is_smart_objecting = nil
+	blackboard.is_smashing_door = nil
+	blackboard.is_opening_door = nil
+	blackboard.smash_door.target_unit = nil
 end
 
-BTSmashDoorAction.run = function (arg_5_0, arg_5_1, arg_5_2, arg_5_3, arg_5_4)
+BTSmashDoorAction.run = function (self, unit, blackboard, t, dt)
 	-- function 5
-	if not Unit.alive(arg_5_2.smash_door.target_unit) then
+	if not Unit.alive(blackboard.smash_door.target_unit) then
 		return "failed"
 	end
 
-	if not arg_5_2.attack_aborted then
+	if blackboard.attack_aborted then
 		return "failed"
 	end
 
-	if not arg_5_2.smash_door.failed then
+	if blackboard.smash_door.failed then
 		return "failed"
 	end
 
-	if not arg_5_2.smash_door.done then
-		local frames_to_done = arg_5_2.smash_door.frames_to_done
+	if blackboard.smash_door.done then
+		local frames_to_done_2 = blackboard.smash_door.frames_to_done
 
-		frames_to_done = frames_to_done or 2
+		if not frames_to_done_2 then
+			-- Nothing
+		end
+
+		frames_to_done_2 = 2
+
+		local frames_to_done = frames_to_done_2
+
+		::label_5_0::
 
 		if frames_to_done == 0 then
 			return "done"
 		end
 
-		arg_5_2.smash_door.frames_to_done = frames_to_done - 1
+		blackboard.smash_door.frames_to_done = frames_to_done - 1
 	end
 
-	arg_5_2.smash_door.state_machine:update(arg_5_4, arg_5_3)
+	blackboard.smash_door.state_machine:update(dt, t)
 
 	return "running"
 end
 
-BTSmashDoorAction.StateInit.on_enter = function (self, arg_6_1)
+BTSmashDoorAction.StateInit.on_enter = function (self, params)
 	-- function 6
-	self.blackboard = arg_6_1.blackboard
-	self.unit = arg_6_1.unit
-	self.entrance_pos = arg_6_1.entrance_pos
+	self.blackboard = params.blackboard
+	self.unit = params.unit
+	self.entrance_pos = params.entrance_pos
 end
 
-BTSmashDoorAction.StateInit.update = function (self, arg_7_1, arg_7_2)
+BTSmashDoorAction.StateInit.update = function (self, dt, t)
 	-- function 7
 	local blackboard = self.blackboard
 
-	if not blackboard.is_in_smartobject_range then
-		blackboard.locomotion_extension:set_wanted_velocity(Vector3.zero())
+	if blackboard.is_in_smartobject_range then
+		local locomotion_extension = blackboard.locomotion_extension
+
+		locomotion_extension:set_wanted_velocity(Vector3.zero())
 
 		local navigation_extension = blackboard.navigation_extension
 
 		navigation_extension:set_enabled(false)
 
-		if not navigation_extension:use_smart_object(true) then
+		if navigation_extension:use_smart_object(true) then
 			blackboard.is_smart_objecting = true
 			blackboard.is_smashing_door = true
 
@@ -164,48 +188,60 @@ BTSmashDoorAction.StateInit.update = function (self, arg_7_1, arg_7_2)
 	end
 end
 
-BTSmashDoorAction.StateMovingToSmartObjectEntrance.on_enter = function (self, arg_8_1)
+BTSmashDoorAction.StateMovingToSmartObjectEntrance.on_enter = function (self, params)
 	-- function 8
-	self.blackboard = arg_8_1.blackboard
-	self.unit = arg_8_1.unit
-	self.target_unit = arg_8_1.blackboard.smash_door.target_unit
-	self.entrance_pos = arg_8_1.entrance_pos
-	self.exit_lookat_direction = arg_8_1.exit_lookat_direction
+	self.blackboard = params.blackboard
+	self.unit = params.unit
+	self.target_unit = params.blackboard.smash_door.target_unit
+	self.entrance_pos = params.entrance_pos
+	self.exit_lookat_direction = params.exit_lookat_direction
 
-	if not arg_8_1.action.move_anim then
-		Managers.state.network:anim_event(arg_8_1.unit, arg_8_1.action.move_anim)
+	if params.action.move_anim then
+		Managers.state.network:anim_event(params.unit, params.action.move_anim)
 	end
 end
 
-BTSmashDoorAction.StateMovingToSmartObjectEntrance.update = function (self, arg_9_1, arg_9_2)
+BTSmashDoorAction.StateMovingToSmartObjectEntrance.update = function (self, dt, t)
 	-- function 9
 	local unit = self.unit
 	local blackboard = self.blackboard
 	local action = blackboard.action
-	local var_9_3 = POSITION_LOOKUP[unit]
-	local num = self.entrance_pos:unbox() - var_9_3
-	local length_squared = Vector3.length_squared(num)
+	local unit_position = POSITION_LOOKUP[unit]
+	local entrance_pos = self.entrance_pos:unbox()
+	local vector_to_target = entrance_pos - unit_position
+	local distance_to_target_sq = Vector3.length_squared(vector_to_target)
 	local door_attack_distance = action.door_attack_distance
 
-	door_attack_distance = door_attack_distance or 0.1
+	door_attack_distance = not not door_attack_distance or not not 0.1
 
-	if length_squared > door_attack_distance^2 then
-		local unbox = self.exit_lookat_direction:unbox()
-		local normalize = Vector3.normalize(num)
+	local wanted_distance_sq = door_attack_distance^2
+
+	if wanted_distance_sq < distance_to_target_sq then
+		local look_direction_wanted = self.exit_lookat_direction:unbox()
+		local direction_to_target = Vector3.normalize(vector_to_target)
 		local locomotion_extension = blackboard.locomotion_extension
-		local move_speed = action.move_speed
+		local move_speed_2 = action.move_speed
 
-		move_speed = move_speed or blackboard.breed.walk_speed
+		if not move_speed_2 then
+			-- Nothing
+		end
 
-		locomotion_extension:set_wanted_velocity(normalize * move_speed)
-		locomotion_extension:set_wanted_rotation(Quaternion.look(unbox))
+		move_speed_2 = blackboard.breed.walk_speed
+
+		local move_speed = move_speed_2
+
+		::label_9_0::
+
+		locomotion_extension:set_wanted_velocity(direction_to_target * move_speed)
+		locomotion_extension:set_wanted_rotation(Quaternion.look(look_direction_wanted))
 	else
 		local preferred_door_action = blackboard.preferred_door_action
 
-		if not (not preferred_door_action and preferred_door_action ~= "open") then
+		if preferred_door_action and preferred_door_action == "open" then
 			local target_unit = self.target_unit
+			local door_extension = ScriptUnit.extension(target_unit, "door_system")
 
-			if ScriptUnit.extension(target_unit, "door_system").num_attackers == 0 then
+			if door_extension.num_attackers == 0 then
 				return BTSmashDoorAction.StateOpening
 			end
 		end
@@ -214,11 +250,11 @@ BTSmashDoorAction.StateMovingToSmartObjectEntrance.update = function (self, arg_
 	end
 end
 
-BTSmashDoorAction.StateOpening.on_enter = function (self, arg_10_1)
+BTSmashDoorAction.StateOpening.on_enter = function (self, params)
 	-- function 10
-	local blackboard = arg_10_1.blackboard
-	local unit = arg_10_1.unit
-	local action = arg_10_1.action
+	local blackboard = params.blackboard
+	local unit = params.unit
+	local action = params.action
 	local target_unit = blackboard.smash_door.target_unit
 
 	self.blackboard = blackboard
@@ -230,12 +266,12 @@ BTSmashDoorAction.StateOpening.on_enter = function (self, arg_10_1)
 
 	locomotion_extension:set_wanted_velocity(Vector3.zero())
 
-	local rotation_towards_unit = LocomotionUtils.rotation_towards_unit(unit, target_unit)
+	local rotation = LocomotionUtils.rotation_towards_unit(unit, target_unit)
 
-	locomotion_extension:set_wanted_rotation(rotation_towards_unit)
+	locomotion_extension:set_wanted_rotation(rotation)
 end
 
-BTSmashDoorAction.StateOpening.update = function (self, arg_11_1, arg_11_2)
+BTSmashDoorAction.StateOpening.update = function (self, dt, t)
 	-- function 11
 	local blackboard = self.blackboard
 	local target_unit = self.target_unit
@@ -244,57 +280,59 @@ BTSmashDoorAction.StateOpening.update = function (self, arg_11_1, arg_11_2)
 		return BTSmashDoorAction.StateMovingToSmartObjectExit
 	end
 
-	local extension = ScriptUnit.extension(target_unit, "door_system")
+	local door_extension = ScriptUnit.extension(target_unit, "door_system")
 
-	if not (not extension:is_open() and extension:is_opening()) then
+	if door_extension:is_open() and not door_extension:is_opening() then
 		return BTSmashDoorAction.StateMovingToSmartObjectExit
-	elseif not extension:is_open() then
+	elseif not door_extension:is_open() then
 		local unit = self.unit
 
-		extension:interacted_with(unit)
+		door_extension:interacted_with(unit)
 
 		blackboard.is_opening_door = true
 	end
 end
 
-BTSmashDoorAction.StateAttacking.on_enter = function (self, arg_12_1)
+BTSmashDoorAction.StateAttacking.on_enter = function (self, params)
 	-- function 12
-	local target_unit = arg_12_1.blackboard.smash_door.target_unit
-	local blackboard = arg_12_1.blackboard
+	local target_unit = params.blackboard.smash_door.target_unit
+	local blackboard = params.blackboard
 
 	self.blackboard = blackboard
-	self.unit = arg_12_1.unit
-	self.action = arg_12_1.action
+	self.unit = params.unit
+	self.action = params.action
 	self.target_unit = target_unit
-	self.start_t = arg_12_1.start_t
+	self.start_t = params.start_t
 
-	blackboard.locomotion_extension:set_wanted_velocity(Vector3.zero())
+	local locomotion_extension = blackboard.locomotion_extension
 
-	local extension = ScriptUnit.extension(target_unit, "door_system")
+	locomotion_extension:set_wanted_velocity(Vector3.zero())
 
-	extension.num_attackers = extension.num_attackers + 1
+	local door_extension = ScriptUnit.extension(target_unit, "door_system")
+
+	door_extension.num_attackers = door_extension.num_attackers + 1
 
 	self:attack()
 end
 
-BTSmashDoorAction.StateAttacking.update = function (self, arg_13_1, arg_13_2)
+BTSmashDoorAction.StateAttacking.update = function (self, dt, t)
 	-- function 13
 	local blackboard = self.blackboard
 	local target_unit = self.target_unit
-	local extension = ScriptUnit.extension(target_unit, "door_system")
+	local door_extension = ScriptUnit.extension(target_unit, "door_system")
 
-	if not (not HEALTH_ALIVE[target_unit] and not extension:is_open() and extension:is_opening()) then
-		if not extension.move_to_exit_when_opened then
+	if not HEALTH_ALIVE[target_unit] or door_extension:is_open() and not door_extension:is_opening() then
+		if door_extension.move_to_exit_when_opened then
 			return BTSmashDoorAction.StateMovingToSmartObjectExit
 		else
 			blackboard.smash_door.done = true
 		end
 	end
 
-	if not blackboard.attack_finished then
+	if blackboard.attack_finished then
 		self:attack()
 
-		if not (not extension.ai_attack_re_eval_time and not (arg_13_2 > extension.ai_attack_re_eval_time + self.start_t)) then
+		if door_extension.ai_attack_re_eval_time and t > door_extension.ai_attack_re_eval_time + self.start_t then
 			blackboard.attack_aborted = true
 		end
 	end
@@ -303,9 +341,9 @@ end
 BTSmashDoorAction.StateAttacking.on_exit = function (self)
 	-- function 14
 	local target_unit = self.target_unit
-	local extension = ScriptUnit.extension(target_unit, "door_system")
+	local door_extension = ScriptUnit.extension(target_unit, "door_system")
 
-	extension.num_attackers = extension.num_attackers - 1
+	door_extension.num_attackers = door_extension.num_attackers - 1
 end
 
 BTSmashDoorAction.StateAttacking.attack = function (self)
@@ -314,14 +352,16 @@ BTSmashDoorAction.StateAttacking.attack = function (self)
 	local unit = self.unit
 	local blackboard = self.blackboard
 	local action = self.action
-	local rotation_towards_unit = LocomotionUtils.rotation_towards_unit(unit, target_unit)
+	local rotation = LocomotionUtils.rotation_towards_unit(unit, target_unit)
+	local locomotion_extension = blackboard.locomotion_extension
 
-	blackboard.locomotion_extension:set_wanted_rotation(rotation_towards_unit)
+	locomotion_extension:set_wanted_rotation(rotation)
 
-	if not action.attack_anim then
-		local var_15_5 = fn(action.attack_anim)
+	if action.attack_anim then
+		local anim = randomize(action.attack_anim)
+		local network_manager = Managers.state.network
 
-		Managers.state.network:anim_event(unit, var_15_5)
+		network_manager:anim_event(unit, anim)
 
 		blackboard.attack_finished = false
 	else
@@ -331,55 +371,65 @@ BTSmashDoorAction.StateAttacking.attack = function (self)
 	end
 end
 
-BTSmashDoorAction.StateMovingToSmartObjectExit.on_enter = function (self, arg_16_1)
+BTSmashDoorAction.StateMovingToSmartObjectExit.on_enter = function (self, params)
 	-- function 16
-	self.blackboard = arg_16_1.blackboard
-	self.unit = arg_16_1.unit
-	self.exit_pos = arg_16_1.exit_pos
-	self.exit_lookat_direction = arg_16_1.exit_lookat_direction
+	self.blackboard = params.blackboard
+	self.unit = params.unit
+	self.exit_pos = params.exit_pos
+	self.exit_lookat_direction = params.exit_lookat_direction
 
-	if not arg_16_1.action.move_anim then
-		Managers.state.network:anim_event(arg_16_1.unit, arg_16_1.action.move_anim)
+	if params.action.move_anim then
+		Managers.state.network:anim_event(params.unit, params.action.move_anim)
 	end
 end
 
-BTSmashDoorAction.StateMovingToSmartObjectExit.update = function (self, arg_17_1, arg_17_2)
+BTSmashDoorAction.StateMovingToSmartObjectExit.update = function (self, dt, t)
 	-- function 17
 	local unit = self.unit
 	local blackboard = self.blackboard
-	local var_17_2 = POSITION_LOOKUP[unit]
-	local unbox = self.exit_pos:unbox()
-	local flat = Vector3.flat(unbox - var_17_2)
+	local unit_position = POSITION_LOOKUP[unit]
+	local exit_pos = self.exit_pos:unbox()
+	local vector_to_target = Vector3.flat(exit_pos - unit_position)
+	local distance_to_target_sq = Vector3.length_squared(vector_to_target)
+	local wanted_distance_sq = 0.010000000000000002
 
-	if Vector3.length_squared(flat) > 0.010000000000000002 then
-		local unbox_2 = self.exit_lookat_direction:unbox()
-		local normalize = Vector3.normalize(flat)
+	if wanted_distance_sq < distance_to_target_sq then
+		local look_direction_wanted = self.exit_lookat_direction:unbox()
+		local direction_to_target = Vector3.normalize(vector_to_target)
 		local locomotion_extension = blackboard.locomotion_extension
-		local move_speed = blackboard.action.move_speed
+		local move_speed_2 = blackboard.action.move_speed
 
-		move_speed = move_speed or blackboard.breed.walk_speed
+		if not move_speed_2 then
+			-- Nothing
+		end
 
-		locomotion_extension:set_wanted_velocity(normalize * move_speed)
-		locomotion_extension:set_wanted_rotation(Quaternion.look(unbox_2))
+		move_speed_2 = blackboard.breed.walk_speed
+
+		local move_speed = move_speed_2
+
+		::label_17_0::
+
+		locomotion_extension:set_wanted_velocity(direction_to_target * move_speed)
+		locomotion_extension:set_wanted_rotation(Quaternion.look(look_direction_wanted))
 	else
 		blackboard.smash_door.done = true
 	end
 end
 
-BTSmashDoorAction.anim_cb_damage = function (arg_18_0, arg_18_1, arg_18_2)
+BTSmashDoorAction.anim_cb_damage = function (self, unit, blackboard)
 	-- function 18
-	if not arg_18_2.smash_door.target_unit then
-		local action = arg_18_2.action
+	if blackboard.smash_door.target_unit then
+		local action = blackboard.action
 
-		AiUtils.damage_target(arg_18_2.smash_door.target_unit, arg_18_1, action, action.damage)
+		AiUtils.damage_target(blackboard.smash_door.target_unit, unit, action, action.damage)
 	end
 end
 
-BTSmashDoorAction.anim_cb_attack_overlap_done = function (arg_19_0, arg_19_1, arg_19_2)
+BTSmashDoorAction.anim_cb_attack_overlap_done = function (self, unit, blackboard)
 	-- function 19
-	if not arg_19_2.smash_door.target_unit then
-		local action = arg_19_2.action
+	if blackboard.smash_door.target_unit then
+		local action = blackboard.action
 
-		AiUtils.damage_target(arg_19_2.smash_door.target_unit, arg_19_1, action, action.damage)
+		AiUtils.damage_target(blackboard.smash_door.target_unit, unit, action, action.damage)
 	end
 end

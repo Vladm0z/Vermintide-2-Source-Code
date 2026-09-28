@@ -4,161 +4,177 @@ require("scripts/entity_system/systems/behaviour/nodes/bt_node")
 
 BTMoveToPlayersAction = class(BTMoveToPlayersAction, BTNode)
 
-local num = 0.25
+local EVALUATE_TIME = 0.25
 
-BTMoveToPlayersAction.init = function (arg_1_0, ...)
+BTMoveToPlayersAction.init = function (self, ...)
 	-- function 1
-	BTMoveToPlayersAction.super.init(arg_1_0, ...)
+	BTMoveToPlayersAction.super.init(self, ...)
 end
 
 BTMoveToPlayersAction.name = "BTMoveToPlayersAction"
 
-BTMoveToPlayersAction.enter = function (self, arg_2_1, arg_2_2, arg_2_3)
+BTMoveToPlayersAction.enter = function (self, unit, blackboard, t)
 	-- function 2
-	arg_2_2.action = self._tree_node.action_data
+	local action = self._tree_node.action_data
 
-	LocomotionUtils.set_animation_driven_movement(arg_2_1, false)
+	blackboard.action = action
 
-	if arg_2_2.move_state ~= "idle" then
-		self:start_idle_animation(arg_2_1, arg_2_2)
+	LocomotionUtils.set_animation_driven_movement(unit, false)
+
+	if blackboard.move_state ~= "idle" then
+		self:start_idle_animation(unit, blackboard)
 	end
 
-	local navigation_extension = arg_2_2.navigation_extension
-	local walk_speed = arg_2_2.breed.walk_speed
+	local ai_navigation_extension = blackboard.navigation_extension
+	local walk_speed = blackboard.breed.walk_speed
 
-	navigation_extension:set_max_speed(walk_speed)
+	ai_navigation_extension:set_max_speed(walk_speed)
 
-	if not arg_2_2.move_to_players_position then
-		local unbox = arg_2_2.move_to_players_position:unbox()
+	if blackboard.move_to_players_position then
+		local move_to_players_position = blackboard.move_to_players_position:unbox()
 
-		navigation_extension:move_to(unbox)
+		ai_navigation_extension:move_to(move_to_players_position)
 	end
 
-	local tbl = {}
-	local tbl_2 = {
-		target_units = tbl
-	}
+	local target_units = {}
+	local move_to_players = {}
 
-	arg_2_2.move_to_players = tbl_2
+	move_to_players.target_units = target_units
+	blackboard.move_to_players = move_to_players
 
-	self:_init_targets(tbl_2, arg_2_3, arg_2_1, arg_2_2)
+	self:_init_targets(move_to_players, t, unit, blackboard)
 end
 
-BTMoveToPlayersAction._init_targets = function (arg_3_0, arg_3_1, arg_3_2, arg_3_3, arg_3_4)
+BTMoveToPlayersAction._init_targets = function (self, data, t, unit, blackboard)
 	-- function 3
-	arg_3_1.index = 0
-	arg_3_1.eval_timer = arg_3_2 + num
-	arg_3_1.find_move_position_attempts = 0
+	data.index = 0
+	data.eval_timer = t + EVALUATE_TIME
+	data.find_move_position_attempts = 0
 
-	local ENEMY_PLAYER_UNITS = arg_3_4.side.ENEMY_PLAYER_UNITS
+	local side = blackboard.side
+	local ENEMY_PLAYER_UNITS = side.ENEMY_PLAYER_UNITS
 
-	table.merge(arg_3_1.target_units, ENEMY_PLAYER_UNITS)
+	table.merge(data.target_units, ENEMY_PLAYER_UNITS)
 end
 
-BTMoveToPlayersAction.leave = function (self, arg_4_1, arg_4_2, arg_4_3, arg_4_4, arg_4_5)
+BTMoveToPlayersAction.leave = function (self, unit, blackboard, t, reason, destroy)
 	-- function 4
-	arg_4_2.action = nil
-	arg_4_2.move_to_players = nil
+	blackboard.action = nil
+	blackboard.move_to_players = nil
 
-	local navigation_extension = arg_4_2.navigation_extension
+	local navigation_extension = blackboard.navigation_extension
 
-	if arg_4_4 == "aborted" then
-		local is_following_path = navigation_extension:is_following_path()
+	if reason == "aborted" then
+		local path_found = navigation_extension:is_following_path()
 
-		if not (not arg_4_2.move_to_players_position and not is_following_path and arg_4_2.move_state ~= "idle") then
-			self:start_move_animation(arg_4_1, arg_4_2)
+		if blackboard.move_to_players_position and path_found and blackboard.move_state == "idle" then
+			self:start_move_animation(unit, blackboard)
 		end
 
-		arg_4_2.move_to_players_position = nil
+		blackboard.move_to_players_position = nil
 	end
 
-	local get_default_breed_move_speed = AiUtils.get_default_breed_move_speed(arg_4_1, arg_4_2)
+	local default_move_speed = AiUtils.get_default_breed_move_speed(unit, blackboard)
 
-	navigation_extension:set_max_speed(get_default_breed_move_speed)
+	navigation_extension:set_max_speed(default_move_speed)
 end
 
-BTMoveToPlayersAction.run = function (self, arg_5_1, arg_5_2, arg_5_3, arg_5_4)
+BTMoveToPlayersAction.run = function (self, unit, blackboard, t, dt)
 	-- function 5
-	local navigation_extension = arg_5_2.navigation_extension
-	local move_to_players = arg_5_2.move_to_players
-	local var_5_2 = POSITION_LOOKUP[arg_5_2.target_unit]
+	local ai_navigation = blackboard.navigation_extension
+	local data = blackboard.move_to_players
+	local target_pos = POSITION_LOOKUP[blackboard.target_unit]
 
-	if not (not arg_5_2.move_to_players_position and not (Vector3.distance_squared(arg_5_2.move_to_players_position:unbox(), var_5_2) > 9)) then
-		self:_update_move_to_players_position(arg_5_2, navigation_extension, var_5_2, move_to_players)
+	if not blackboard.move_to_players_position or Vector3.distance_squared(blackboard.move_to_players_position:unbox(), target_pos) > 9 then
+		self:_update_move_to_players_position(blackboard, ai_navigation, target_pos, data)
 
 		return "running"
 	end
 
-	local is_following_path = navigation_extension:is_following_path()
+	local path_found = ai_navigation:is_following_path()
 
-	if not (not arg_5_2.move_to_players_position and not is_following_path and arg_5_2.move_state ~= "idle") then
-		self:start_move_animation(arg_5_1, arg_5_2)
+	if blackboard.move_to_players_position and path_found and blackboard.move_state == "idle" then
+		self:start_move_animation(unit, blackboard)
 	end
 
-	return (self:_evalute_targets(arg_5_1, arg_5_2, move_to_players, arg_5_3))
+	local ret_value = self:_evalute_targets(unit, blackboard, data, t)
+
+	return ret_value
 end
 
-BTMoveToPlayersAction._evalute_targets = function (self, arg_6_1, arg_6_2, arg_6_3, arg_6_4)
+BTMoveToPlayersAction._evalute_targets = function (self, unit, blackboard, data, t)
 	-- function 6
-	if not (arg_6_4 > arg_6_3.eval_timer) then
-		arg_6_3.eval_timer = arg_6_4 + num
+	local should_evaluate_next_player = t > data.eval_timer
+
+	if should_evaluate_next_player then
+		data.eval_timer = t + EVALUATE_TIME
 	else
 		return "running"
 	end
 
-	local index = arg_6_3.index
-	local var_6_1
+	local next_index = data.index
+	local next_target_unit
 
 	repeat
-		index = index + 1
-		var_6_1 = arg_6_3.target_units[index]
-	until var_6_1 == nil or not Unit.alive(var_6_1)
+		next_index = next_index + 1
+		next_target_unit = data.target_units[next_index]
+	until next_target_unit == nil or Unit.alive(next_target_unit)
 
-	if not var_6_1 then
-		table.clear(arg_6_3.target_units)
-		self:_init_targets(arg_6_3, arg_6_4, arg_6_1, arg_6_2)
+	if not next_target_unit then
+		table.clear(data.target_units)
+		self:_init_targets(data, t, unit, blackboard)
 
 		return "running"
 	else
-		arg_6_3.index = index
+		data.index = next_index
 	end
 
-	local action = arg_6_2.action
+	local action = blackboard.action
+	local target_found = self[action.find_target_function_name](self, unit, blackboard, action, next_target_unit, t)
 	local flag
 
-	flag = not self[action.find_target_function_name](self, arg_6_1, arg_6_2, action, var_6_1, arg_6_4) and "done" and "running"
+	flag = (not target_found or not "done") and not not "running"
 
 	return flag
 end
 
-BTMoveToPlayersAction._find_target_globadier = function (self, arg_7_1, arg_7_2, arg_7_3, arg_7_4, arg_7_5)
+BTMoveToPlayersAction._find_target_globadier = function (self, unit, blackboard, action, next_target_unit, t)
 	-- function 7
-	local throw_globe_data = arg_7_2.throw_globe_data
+	local throw_globe_data = blackboard.throw_globe_data
 
-	if not (not throw_globe_data and not throw_globe_data.next_throw_at and not (arg_7_2.target_dist < 4)) then
+	if throw_globe_data and throw_globe_data.next_throw_at and blackboard.target_dist < 4 then
 		throw_globe_data.next_throw_at = -math.huge
 	end
 
-	if not self:_valid_globadier_target(arg_7_4, arg_7_2, arg_7_2.target_dist, arg_7_3) and not self:_has_line_of_sight(arg_7_1, arg_7_4, arg_7_2.world, arg_7_5) then
-		local _calculate_trajectory_to_target, var_7_2, var_7_3, var_7_4, var_7_5 = self:_calculate_trajectory_to_target(arg_7_1, arg_7_2.world, arg_7_4, arg_7_3.attack_throw_offset, arg_7_2.breed.max_globe_throw_speed)
+	if self:_valid_globadier_target(next_target_unit, blackboard, blackboard.target_dist, action) and self:_has_line_of_sight(unit, next_target_unit, blackboard.world, t) then
+		local has_trajectory, angle, speed, throw_from_pos, target_vector = self:_calculate_trajectory_to_target(unit, blackboard.world, next_target_unit, action.attack_throw_offset, blackboard.breed.max_globe_throw_speed)
 
-		if not _calculate_trajectory_to_target then
-			arg_7_2.has_thrown = true
-			arg_7_2.move_to_players_position = nil
+		if has_trajectory then
+			blackboard.has_thrown = true
+			blackboard.move_to_players_position = nil
 
-			local throw_globe_data_2 = arg_7_2.throw_globe_data
+			local throw_globe_data_2 = blackboard.throw_globe_data
 
-			throw_globe_data_2 = throw_globe_data_2 or {
+			if not throw_globe_data_2 then
+				-- Nothing
+			end
+
+			throw_globe_data_2 = {
 				throw_pos = Vector3Box(),
 				target_direction = Vector3Box()
 			}
-			throw_globe_data_2.angle = var_7_2
-			throw_globe_data_2.speed = var_7_3
 
-			throw_globe_data_2.throw_pos:store(var_7_4)
-			throw_globe_data_2.target_direction:store(var_7_5)
+			local throw_data = throw_globe_data_2
 
-			arg_7_2.throw_globe_data = throw_globe_data_2
+			::label_7_0::
+
+			throw_data.angle = angle
+			throw_data.speed = speed
+
+			throw_data.throw_pos:store(throw_from_pos)
+			throw_data.target_direction:store(target_vector)
+
+			blackboard.throw_globe_data = throw_data
 
 			return true
 		end
@@ -167,17 +183,26 @@ BTMoveToPlayersAction._find_target_globadier = function (self, arg_7_1, arg_7_2,
 	return false
 end
 
-BTMoveToPlayersAction._find_target_ratling_gunner = function (arg_8_0, arg_8_1, arg_8_2, arg_8_3, arg_8_4, arg_8_5)
+BTMoveToPlayersAction._find_target_ratling_gunner = function (self, unit, blackboard, action, next_target_unit, t)
 	-- function 8
-	local pick_ratling_gun_target, var_8_1, var_8_2 = PerceptionUtils.pick_ratling_gun_target(arg_8_1, arg_8_2, nil)
+	local closest_enemy, visible_node_name, old_target_visible = PerceptionUtils.pick_ratling_gun_target(unit, blackboard, nil)
 
-	if not pick_ratling_gun_target then
-		local attack_pattern_data = arg_8_2.attack_pattern_data
+	if closest_enemy then
+		local attack_pattern_data = blackboard.attack_pattern_data
 
-		attack_pattern_data = attack_pattern_data or {}
-		attack_pattern_data.target_unit = pick_ratling_gun_target
-		attack_pattern_data.target_node_name = var_8_1
-		arg_8_2.attack_pattern_data = attack_pattern_data
+		if not attack_pattern_data then
+			-- Nothing
+		end
+
+		attack_pattern_data = {}
+
+		local data = attack_pattern_data
+
+		::label_8_0::
+
+		data.target_unit = closest_enemy
+		data.target_node_name = visible_node_name
+		blackboard.attack_pattern_data = data
 
 		return true
 	else
@@ -185,97 +210,113 @@ BTMoveToPlayersAction._find_target_ratling_gunner = function (arg_8_0, arg_8_1, 
 	end
 end
 
-BTMoveToPlayersAction._update_move_to_players_position = function (arg_9_0, arg_9_1, arg_9_2, arg_9_3, arg_9_4)
+BTMoveToPlayersAction._update_move_to_players_position = function (self, blackboard, navigation_extension, wanted_position, data)
 	-- function 9
-	local find_move_position_attempts = arg_9_4.find_move_position_attempts
-	local num = 0.7 + find_move_position_attempts * 0.2
-	local num_2 = 2 + find_move_position_attempts * 0.2
-	local var_9_3
-	local traverse_logic = arg_9_2:traverse_logic()
-	local nav_world = arg_9_2:nav_world()
-	local triangle_from_position, var_9_7 = GwNavQueries.triangle_from_position(nav_world, arg_9_3, num, num_2, traverse_logic)
+	local attempts = data.find_move_position_attempts
+	local above = 0.7 + attempts * 0.2
+	local below = 2 + attempts * 0.2
+	local goal_pos
+	local traverse_logic = navigation_extension:traverse_logic()
+	local nav_world = navigation_extension:nav_world()
+	local found_nav_mesh, z = GwNavQueries.triangle_from_position(nav_world, wanted_position, above, below, traverse_logic)
 
-	if not triangle_from_position then
-		var_9_3 = Vector3(arg_9_3.x, arg_9_3.y, var_9_7)
+	if found_nav_mesh then
+		goal_pos = Vector3(wanted_position.x, wanted_position.y, z)
 	else
-		local num_3 = 0
-		local num_4 = find_move_position_attempts * 0.5
+		local distance_from_nav_mesh = 0
+		local lateral = attempts * 0.5
 
-		var_9_3 = GwNavQueries.inside_position_from_outside_position(nav_world, arg_9_3, num_2, num, num_4, num_3, traverse_logic)
+		goal_pos = GwNavQueries.inside_position_from_outside_position(nav_world, wanted_position, below, above, lateral, distance_from_nav_mesh, traverse_logic)
 	end
 
-	if not var_9_3 then
-		arg_9_2:move_to(var_9_3)
+	if goal_pos then
+		navigation_extension:move_to(goal_pos)
 
-		local move_to_players_position = arg_9_1.move_to_players_position
+		local move_to_players_position = blackboard.move_to_players_position
 
-		move_to_players_position = move_to_players_position or Vector3Box()
+		if not move_to_players_position then
+			-- Nothing
+		end
 
-		move_to_players_position:store(var_9_3)
+		move_to_players_position = Vector3Box()
 
-		arg_9_1.move_to_players_position = move_to_players_position
-		arg_9_4.find_move_position_attempts = 0
+		local pos_box = move_to_players_position
+
+		::label_9_0::
+
+		pos_box:store(goal_pos)
+
+		blackboard.move_to_players_position = pos_box
+		data.find_move_position_attempts = 0
 	else
-		arg_9_4.find_move_position_attempts = find_move_position_attempts + 1
+		data.find_move_position_attempts = attempts + 1
 	end
 end
 
-BTMoveToPlayersAction._calculate_trajectory_to_target = function (arg_10_0, arg_10_1, arg_10_2, arg_10_3, arg_10_4, arg_10_5)
+BTMoveToPlayersAction._calculate_trajectory_to_target = function (self, unit, world, target_unit, attack_throw_offset, max_speed)
 	-- function 10
-	local copy = Vector3.copy(POSITION_LOOKUP[arg_10_1])
-	local rotation_towards_unit_flat = LocomotionUtils.rotation_towards_unit_flat(arg_10_1, arg_10_3)
-	local var_10_2, var_10_3, var_10_4 = unpack(arg_10_4)
-	local var_10_5 = Vector3(var_10_2, var_10_3, var_10_4)
-	local num = copy + Quaternion.rotate(rotation_towards_unit_flat, var_10_5)
+	local curr_pos = Vector3.copy(POSITION_LOOKUP[unit])
+	local rot = LocomotionUtils.rotation_towards_unit_flat(unit, target_unit)
+	local x, y, z = unpack(attack_throw_offset)
+	local pos = Vector3(x, y, z)
+	local throw_offset = Quaternion.rotate(rot, pos)
+	local throw_pos = curr_pos + throw_offset
 
-	copy.z = num.z
+	curr_pos.z = throw_pos.z
 
-	local num_2 = num - copy
-	local normalize = Vector3.normalize(num_2)
-	local length = Vector3.length(num_2)
-	local get_data = World.get_data(arg_10_2, "physics_world")
+	local root_to_throw = throw_pos - curr_pos
+	local direction = Vector3.normalize(root_to_throw)
+	local length = Vector3.length(root_to_throw)
+	local physics_world = World.get_data(world, "physics_world")
+	local result = PhysicsWorld.immediate_raycast(physics_world, curr_pos, direction, length, "closest", "collision_filter", "filter_enemy_ray_projectile")
 
-	if not PhysicsWorld.immediate_raycast(get_data, copy, normalize, length, "closest", "collision_filter", "filter_enemy_ray_projectile") then
+	if result then
 		return false
 	end
 
-	local var_10_11 = POSITION_LOOKUP[arg_10_3]
-	local normalize_2 = Vector3.normalize(var_10_11 - num)
-	local calculate_trajectory, var_10_14, var_10_15 = WeaponHelper:calculate_trajectory(arg_10_2, num, var_10_11, ProjectileGravitySettings.default, arg_10_5)
+	local target_position = POSITION_LOOKUP[target_unit]
+	local target_vector = Vector3.normalize(target_position - throw_pos)
+	local hit, angle, speed = WeaponHelper:calculate_trajectory(world, throw_pos, target_position, ProjectileGravitySettings.default, max_speed)
 
-	return calculate_trajectory, var_10_14, var_10_15, num, normalize_2
+	return hit, angle, speed, throw_pos, target_vector
 end
 
-BTMoveToPlayersAction._valid_globadier_target = function (arg_11_0, arg_11_1, arg_11_2, arg_11_3, arg_11_4)
+BTMoveToPlayersAction._valid_globadier_target = function (self, target_unit, blackboard, target_distance, action)
 	-- function 11
-	local var_11_0 = arg_11_2.side.VALID_ENEMY_TARGETS_PLAYERS_AND_BOTS[arg_11_1]
+	local side = blackboard.side
+	local var_11_0 = side.VALID_ENEMY_TARGETS_PLAYERS_AND_BOTS[target_unit]
 
-	var_11_0 = not var_11_0 and arg_11_3 < arg_11_4.attack_distance
+	var_11_0 = not not var_11_0 and target_distance < action.attack_distance
 
 	return var_11_0
 end
 
-BTMoveToPlayersAction._has_line_of_sight = function (arg_12_0, arg_12_1, arg_12_2, arg_12_3, arg_12_4)
+BTMoveToPlayersAction._has_line_of_sight = function (self, unit, target_unit, world, t)
 	-- function 12
-	local num = POSITION_LOOKUP[arg_12_1] + Vector3.up()
-	local num_2 = POSITION_LOOKUP[arg_12_2] + Vector3.up() * 1.75 - num
-	local normalize = Vector3.normalize(num_2)
-	local length = Vector3.length(num_2)
-	local immediate_raycast, var_12_5, var_12_6, var_12_7, var_12_8 = PhysicsWorld.immediate_raycast(World.get_data(arg_12_3, "physics_world"), num, normalize, length, "closest", "collision_filter", "filter_ai_line_of_sight_check")
+	local start_pos = POSITION_LOOKUP[unit] + Vector3.up()
+	local end_pos = POSITION_LOOKUP[target_unit] + Vector3.up() * 1.75
+	local look_vector = end_pos - start_pos
+	local direction = Vector3.normalize(look_vector)
+	local length = Vector3.length(look_vector)
+	local hit, position1, distance1, normal, actor1 = PhysicsWorld.immediate_raycast(World.get_data(world, "physics_world"), start_pos, direction, length, "closest", "collision_filter", "filter_ai_line_of_sight_check")
 
-	return not immediate_raycast
+	return not hit
 end
 
-BTMoveToPlayersAction.start_idle_animation = function (arg_13_0, arg_13_1, arg_13_2)
+BTMoveToPlayersAction.start_idle_animation = function (self, unit, blackboard)
 	-- function 13
-	Managers.state.network:anim_event(arg_13_1, "idle")
+	local network_manager = Managers.state.network
 
-	arg_13_2.move_state = "idle"
+	network_manager:anim_event(unit, "idle")
+
+	blackboard.move_state = "idle"
 end
 
-BTMoveToPlayersAction.start_move_animation = function (arg_14_0, arg_14_1, arg_14_2)
+BTMoveToPlayersAction.start_move_animation = function (self, unit, blackboard)
 	-- function 14
-	Managers.state.network:anim_event(arg_14_1, "move_fwd")
+	local network_manager = Managers.state.network
 
-	arg_14_2.move_state = "moving"
+	network_manager:anim_event(unit, "move_fwd")
+
+	blackboard.move_state = "moving"
 end

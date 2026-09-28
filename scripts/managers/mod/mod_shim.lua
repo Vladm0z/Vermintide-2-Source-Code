@@ -20,15 +20,15 @@ ModShim.patches = {
 		},
 		func = function ()
 			-- function 2
-			local num = RESOLUTION_LOOKUP.res_w / 1920
+			local x = RESOLUTION_LOOKUP.res_w / 1920
 			local math = math
-			local frexp, var_2_3 = math.frexp(num)
+			local m, e = math.frexp(x)
 
-			if frexp == 0.5 then
-				return num
+			if m == 0.5 then
+				return x
 			end
 
-			return math.ldexp(1, var_2_3)
+			return math.ldexp(1, e)
 		end
 	},
 	{
@@ -73,9 +73,9 @@ ModShim.patches = {
 		mods = {
 			"ui_improvements"
 		},
-		func = function (arg_6_0, arg_6_1, arg_6_2)
+		func = function (self, widget, hotspot_name)
 			-- function 6
-			return UIUtils.is_button_hover_enter(arg_6_1, arg_6_2)
+			return UIUtils.is_button_hover_enter(widget, hotspot_name)
 		end
 	},
 	{
@@ -86,30 +86,47 @@ ModShim.patches = {
 }
 ModShim.error_handling = {
 	error_state = {},
-	state_bound_log = function (arg_7_0, arg_7_1, arg_7_2, ...)
+	state_bound_log = function (vmf_mod, identifier, message, ...)
 		-- function 7
-		local var_7_0 = ModShim.error_handling.error_state[arg_7_1]
+		local var_7_0 = ModShim.error_handling.error_state[identifier]
 
-		var_7_0 = var_7_0 or {
+		if not var_7_0 then
+			-- Nothing
+		end
+
+		var_7_0 = {
 			printed = {}
 		}
-		ModShim.error_handling.error_state[arg_7_1] = var_7_0
 
-		local game_mode = Managers.state.game_mode
+		local state = var_7_0
 
-		game_mode = not game_mode and Managers.state.game_mode:game_mode()
+		::label_7_0::
 
-		if not game_mode and not var_7_0.printed[game_mode] then
+		ModShim.error_handling.error_state[identifier] = state
+
+		local game_mode_2 = Managers.state.game_mode
+
+		if game_mode_2 then
+			-- Nothing
+		end
+
+		game_mode_2 = Managers.state.game_mode:game_mode()
+
+		local game_mode = game_mode_2
+
+		::label_7_1::
+
+		if not game_mode or state.printed[game_mode] then
 			return
 		end
 
-		var_7_0.printed[game_mode] = true
+		state.printed[game_mode] = true
 
-		ModShim.error_handling.log(arg_7_0, arg_7_2, ...)
+		ModShim.error_handling.log(vmf_mod, message, ...)
 	end,
-	log = function (self, arg_8_1, ...)
+	log = function (vmf_mod, message, ...)
 		-- function 8
-		self:error(arg_8_1, ...)
+		vmf_mod:error(message, ...)
 	end
 }
 ModShim.wedges = {
@@ -121,170 +138,194 @@ ModShim.wedges = {
 		override_hooks = {
 			{
 				name = "BackendUtils.get_loadout_item",
-				func = function (arg_9_0, arg_9_1, arg_9_2, arg_9_3, ...)
+				func = function (vmf_mod, mod_func, mod_name, hooked_function, ...)
 					-- function 9
-					local var_9_0 = arg_9_1(arg_9_3, ...)
-					local current_mechanism_name = Managers.mechanism:current_mechanism_name()
+					local hook_result = mod_func(hooked_function, ...)
+					local mechanism_name = Managers.mechanism:current_mechanism_name()
 
-					if not (current_mechanism_name == "adventure" or global_is_inside_inn) then
-						local var_9_2 = arg_9_3(...)
+					if mechanism_name ~= "adventure" and not global_is_inside_inn then
+						local original_result = hooked_function(...)
 
-						if var_9_0 ~= var_9_2 then
-							local var_9_3 = MechanismSettings[current_mechanism_name]
+						if hook_result ~= original_result then
+							local var_9_0 = MechanismSettings[mechanism_name]
 
-							var_9_3 = not var_9_3 and MechanismSettings[current_mechanism_name].display_name
+							if var_9_0 then
+								-- Nothing
+							end
 
-							if current_mechanism_name == "versus" then
+							var_9_0 = MechanismSettings[mechanism_name].display_name
+
+							local display_name = var_9_0
+
+							::label_9_0::
+
+							if mechanism_name == "versus" then
 								local state_bound_log = ModShim.error_handling.state_bound_log
-								local var_9_5 = arg_9_0
+								local var_9_2 = vmf_mod
 								local str = "loadout_item"
 								local str_2 = "Unauthorized override of inventory items. Not allowed in %s."
-								local var_9_8
+								local var_9_5
 
-								if not var_9_3 then
-									var_9_8 = Localize(var_9_3)
+								if display_name then
+									var_9_5 = Localize(display_name)
 
-									if not var_9_8 then
+									if not var_9_5 then
 										-- Nothing
 									end
 								end
 
-								var_9_8 = current_mechanism_name
-
-								::label_9_0::
-
-								state_bound_log(var_9_5, str, str_2, var_9_8)
-							else
-								local state_bound_log_2 = ModShim.error_handling.state_bound_log
-								local var_9_10 = arg_9_0
-								local str_3 = "loadout_item"
-								local str_4 = "Unauthorized override of bot's inventory items. Not allowed in %s. Please refer to the official loadout system for bot overrides."
-								local var_9_13
-
-								if not var_9_3 then
-									var_9_13 = Localize(var_9_3)
-
-									if not var_9_13 then
-										-- Nothing
-									end
-								end
-
-								var_9_13 = current_mechanism_name
+								var_9_5 = mechanism_name
 
 								::label_9_1::
 
-								state_bound_log_2(var_9_10, str_3, str_4, var_9_13)
+								state_bound_log(var_9_2, str, str_2, var_9_5)
+							else
+								local state_bound_log_2 = ModShim.error_handling.state_bound_log
+								local var_9_7 = vmf_mod
+								local str_3 = "loadout_item"
+								local str_4 = "Unauthorized override of bot's inventory items. Not allowed in %s. Please refer to the official loadout system for bot overrides."
+								local var_9_10
+
+								if display_name then
+									var_9_10 = Localize(display_name)
+
+									if not var_9_10 then
+										-- Nothing
+									end
+								end
+
+								var_9_10 = mechanism_name
+
+								::label_9_2::
+
+								state_bound_log_2(var_9_7, str_3, str_4, var_9_10)
 							end
 						end
 
-						return var_9_2
+						return original_result
 					end
 
-					return var_9_0
+					return hook_result
 				end
 			},
 			{
 				name = "BackendInterfaceTalentsPlayfab:get_talents",
-				func = function (arg_10_0, arg_10_1, arg_10_2, arg_10_3, ...)
+				func = function (vmf_mod, mod_func, mod_name, hooked_function, ...)
 					-- function 10
-					local var_10_0 = arg_10_1(arg_10_3, ...)
-					local current_mechanism_name = Managers.mechanism:current_mechanism_name()
+					local hook_result = mod_func(hooked_function, ...)
+					local mechanism_name = Managers.mechanism:current_mechanism_name()
 
-					if not (current_mechanism_name == "adventure" or global_is_inside_inn) then
-						local var_10_2 = arg_10_3(...)
+					if mechanism_name ~= "adventure" and not global_is_inside_inn then
+						local original_result = hooked_function(...)
 
-						if var_10_0 ~= var_10_2 then
-							local var_10_3 = MechanismSettings[current_mechanism_name]
+						if hook_result ~= original_result then
+							local var_10_0 = MechanismSettings[mechanism_name]
 
-							var_10_3 = not var_10_3 and MechanismSettings[current_mechanism_name].display_name
+							if var_10_0 then
+								-- Nothing
+							end
 
-							if current_mechanism_name == "versus" then
+							var_10_0 = MechanismSettings[mechanism_name].display_name
+
+							local display_name = var_10_0
+
+							::label_10_0::
+
+							if mechanism_name == "versus" then
 								local state_bound_log = ModShim.error_handling.state_bound_log
-								local var_10_5 = arg_10_0
+								local var_10_2 = vmf_mod
 								local str = "loadout_talent"
 								local str_2 = "Unauthorized override of talents. Not allowed in %s."
-								local var_10_8
+								local var_10_5
 
-								if not var_10_3 then
-									var_10_8 = Localize(var_10_3)
+								if display_name then
+									var_10_5 = Localize(display_name)
 
-									if not var_10_8 then
+									if not var_10_5 then
 										-- Nothing
 									end
 								end
 
-								var_10_8 = current_mechanism_name
-
-								::label_10_0::
-
-								state_bound_log(var_10_5, str, str_2, var_10_8)
-							else
-								local state_bound_log_2 = ModShim.error_handling.state_bound_log
-								local var_10_10 = arg_10_0
-								local str_3 = "loadout_talent"
-								local str_4 = "Unauthorized override of bot's talents. Not allowed in %s. Please refer to the official loadout system for bot overrides."
-								local var_10_13
-
-								if not var_10_3 then
-									var_10_13 = Localize(var_10_3)
-
-									if not var_10_13 then
-										-- Nothing
-									end
-								end
-
-								var_10_13 = current_mechanism_name
+								var_10_5 = mechanism_name
 
 								::label_10_1::
 
-								state_bound_log_2(var_10_10, str_3, str_4, var_10_13)
+								state_bound_log(var_10_2, str, str_2, var_10_5)
+							else
+								local state_bound_log_2 = ModShim.error_handling.state_bound_log
+								local var_10_7 = vmf_mod
+								local str_3 = "loadout_talent"
+								local str_4 = "Unauthorized override of bot's talents. Not allowed in %s. Please refer to the official loadout system for bot overrides."
+								local var_10_10
+
+								if display_name then
+									var_10_10 = Localize(display_name)
+
+									if not var_10_10 then
+										-- Nothing
+									end
+								end
+
+								var_10_10 = mechanism_name
+
+								::label_10_2::
+
+								state_bound_log_2(var_10_7, str_3, str_4, var_10_10)
 							end
 						end
 
-						return var_10_2
+						return original_result
 					end
 
-					return var_10_0
+					return hook_result
 				end
 			}
 		},
-		initializer = function (self)
+		initializer = function (vmf_mod)
 			-- function 11
-			local restore_loadout = self.restore_loadout
+			local restore_loadout = vmf_mod.restore_loadout
 
-			if not restore_loadout then
-				self.restore_loadout = function (...)
+			if restore_loadout then
+				vmf_mod.restore_loadout = function (...)
 					-- function 12
-					local current_mechanism_name = Managers.mechanism:current_mechanism_name()
+					local mechanism_name = Managers.mechanism:current_mechanism_name()
 
-					if not (current_mechanism_name ~= "versus" or global_is_inside_inn) then
+					if mechanism_name == "versus" and not global_is_inside_inn then
 						return
 					end
 
-					if not (current_mechanism_name == "adventure" or not global_is_inside_inn or current_mechanism_name ~= "versus") then
-						local var_12_1 = MechanismSettings[current_mechanism_name]
+					if mechanism_name ~= "adventure" and (not global_is_inside_inn or mechanism_name == "versus") then
+						local var_12_0 = MechanismSettings[mechanism_name]
 
-						var_12_1 = not var_12_1 and MechanismSettings[current_mechanism_name].display_name
+						if var_12_0 then
+							-- Nothing
+						end
+
+						var_12_0 = MechanismSettings[mechanism_name].display_name
+
+						local display_name = var_12_0
+
+						::label_12_0::
 
 						local state_bound_log = ModShim.error_handling.state_bound_log
-						local var_12_3 = self
+						local var_12_2 = vmf_mod
 						local str = "loadout_restore"
 						local str_2 = "Unauthorized override of loadout. Not allowed in %s."
-						local var_12_6
+						local var_12_5
 
-						if not var_12_1 then
-							var_12_6 = Localize(var_12_1)
+						if display_name then
+							var_12_5 = Localize(display_name)
 
-							if not var_12_6 then
+							if not var_12_5 then
 								-- Nothing
 							end
 						end
 
-						var_12_6 = current_mechanism_name
+						var_12_5 = mechanism_name
 
-						::label_12_0::
+						::label_12_1::
 
-						state_bound_log(var_12_3, str, str_2, var_12_6)
+						state_bound_log(var_12_2, str, str_2, var_12_5)
 
 						return
 					end
@@ -302,29 +343,29 @@ ModShim.wedges = {
 		override_hooks = {
 			{
 				name = "UnitFrameUI.draw",
-				func = function (arg_13_0, arg_13_1, arg_13_2, arg_13_3, arg_13_4, ...)
+				func = function (vmf_mod, mod_func, mod_name, hooked_function, self, ...)
 					-- function 13
-					local local_player = Managers.player:local_player()
-					local flag = not local_player and local_player:get_party()
+					local player = Managers.player:local_player()
+					local party = not not player and not not player:get_party()
 
-					if not (not flag and flag.name ~= "dark_pact") then
-						return arg_13_3(arg_13_4, ...)
+					if party and party.name == "dark_pact" then
+						return hooked_function(self, ...)
 					else
-						return arg_13_1(arg_13_3, arg_13_4, ...)
+						return mod_func(hooked_function, self, ...)
 					end
 				end
 			},
 			{
 				name = "OverchargeBarUI._update_overcharge",
-				func = function (arg_14_0, arg_14_1, arg_14_2, arg_14_3, arg_14_4, ...)
+				func = function (vmf_mod, mod_func, mod_name, hooked_function, self, ...)
 					-- function 14
-					local local_player = Managers.player:local_player()
-					local flag = not local_player and local_player:get_party()
+					local player = Managers.player:local_player()
+					local party = not not player and not not player:get_party()
 
-					if not (not flag and flag.name ~= "dark_pact") then
-						return arg_14_3(arg_14_4, ...)
+					if party and party.name == "dark_pact" then
+						return hooked_function(self, ...)
 					else
-						return arg_14_1(arg_14_3, arg_14_4, ...)
+						return mod_func(hooked_function, self, ...)
 					end
 				end
 			}
@@ -338,61 +379,61 @@ ModShim.wedges = {
 		new_hooks = {
 			{
 				name = "MoodHandler.set_mood",
-				func = function (self, arg_15_1, arg_15_2, arg_15_3, arg_15_4, ...)
+				func = function (vmf_mod, mod_name, hooked_function, self, mood_name, ...)
 					-- function 15
-					if not self.SETTING_NAMES then
-						return arg_15_2(arg_15_3, arg_15_4, ...)
+					if not vmf_mod.SETTING_NAMES then
+						return hooked_function(self, mood_name, ...)
 					end
 
-					local tbl = {
+					local mood_to_name = {
 						skill_shade = "SHADE",
 						skill_slayer = "SLAYER",
 						skill_ranger = "RANGER",
 						skill_zealot = "ZEALOT"
 					}
 
-					if not tbl[arg_15_4] and not self:get(self.SETTING_NAMES[tbl[arg_15_4] .. "_VISUAL"]) then
+					if mood_to_name[mood_name] and vmf_mod:get(vmf_mod.SETTING_NAMES[mood_to_name[mood_name] .. "_VISUAL"]) then
 						return
 					end
 
-					if (arg_15_4 == "skill_huntsman_surge" or arg_15_4 == "skill_huntsman_stealth" or self:get(self.SETTING_NAMES.HUNTSMAN_VISUAL) or arg_15_4 == "wounded" or arg_15_4 == "bleeding_out" or self:get(self.SETTING_NAMES.WOUNDED) or arg_15_4 ~= "knocked_down" or not self:get(self.SETTING_NAMES.KNOCKED_DOWN)) and arg_15_4 ~= "heal_medkit" or not self:get(self.SETTING_NAMES.HEALING) then
+					if ((mood_name == "skill_huntsman_surge" or mood_name == "skill_huntsman_stealth") and vmf_mod:get(vmf_mod.SETTING_NAMES.HUNTSMAN_VISUAL) or (mood_name == "wounded" or mood_name == "bleeding_out") and vmf_mod:get(vmf_mod.SETTING_NAMES.WOUNDED) or mood_name ~= "knocked_down" or not vmf_mod:get(vmf_mod.SETTING_NAMES.KNOCKED_DOWN)) and mood_name == "heal_medkit" and vmf_mod:get(vmf_mod.SETTING_NAMES.HEALING) then
 						return
 					end
 
-					return arg_15_2(arg_15_3, arg_15_4, ...)
+					return hooked_function(self, mood_name, ...)
 				end
 			}
 		},
 		override_hooks = {
 			{
 				name = "BuffFunctionTemplates.functions.apply_huntsman_activated_ability",
-				func = function (self, arg_16_1, arg_16_2, arg_16_3, ...)
+				func = function (vmf_mod, mod_func, mod_name, hooked_function, ...)
 					-- function 16
-					if not self:get(self.SETTING_NAMES.HUNTSMAN_VISUAL) then
-						local flow_event = Unit.flow_event
-						local play_remote_hud_sound_event = PlayerUnitFirstPerson.play_remote_hud_sound_event
-						local play_remote_hud_sound_event_2 = PlayerBotUnitFirstPerson.play_remote_hud_sound_event
+					if vmf_mod:get(vmf_mod.SETTING_NAMES.HUNTSMAN_VISUAL) then
+						local Unit_flow_event = Unit.flow_event
+						local PlayerUnitFirstPerson_play_remote_hud_sound_event = PlayerUnitFirstPerson.play_remote_hud_sound_event
+						local PlayerBotUnitFirstPerson_play_remote_hud_sound_event = PlayerBotUnitFirstPerson.play_remote_hud_sound_event
 
-						local function fn()
+						local function nop()
 							-- function 17
 							return
 						end
 
-						Unit.flow_event = fn
-						PlayerUnitFirstPerson.play_remote_hud_sound_event = fn
-						PlayerBotUnitFirstPerson.play_remote_hud_sound_event = fn
+						Unit.flow_event = nop
+						PlayerUnitFirstPerson.play_remote_hud_sound_event = nop
+						PlayerBotUnitFirstPerson.play_remote_hud_sound_event = nop
 
-						local tbl = {
-							arg_16_3(...)
+						local result = {
+							hooked_function(...)
 						}
 
-						Unit.flow_event = flow_event
-						PlayerUnitFirstPerson.play_remote_hud_sound_event = play_remote_hud_sound_event
-						PlayerBotUnitFirstPerson.play_remote_hud_sound_event = play_remote_hud_sound_event_2
+						Unit.flow_event = Unit_flow_event
+						PlayerUnitFirstPerson.play_remote_hud_sound_event = PlayerUnitFirstPerson_play_remote_hud_sound_event
+						PlayerBotUnitFirstPerson.play_remote_hud_sound_event = PlayerBotUnitFirstPerson_play_remote_hud_sound_event
 
-						return unpack(tbl)
+						return unpack(result)
 					else
-						return arg_16_3(...)
+						return hooked_function(...)
 					end
 				end
 			}
@@ -403,24 +444,24 @@ ModShim.wedges = {
 local ModShim = ModShim
 local warnings = ModShim.warnings
 
-warnings = warnings or {}
+warnings = not not warnings or not not {}
 ModShim.warnings = warnings
 
-local warnings_2 = ModShim.warnings
+local has_printed_warning = ModShim.warnings
 
-local function fn(arg_18_0)
+local function print_deprecated_function_warning(name)
 	-- function 18
-	if not warnings_2[arg_18_0] then
+	if has_printed_warning[name] then
 		return
 	end
 
-	warnings_2[arg_18_0] = true
+	has_printed_warning[name] = true
 
-	if not Managers.mod:developer_mode_enabled() then
-		local format = string.format("Function %q is deprecated!", arg_18_0)
+	if Managers.mod:developer_mode_enabled() then
+		local warning = string.format("Function %q is deprecated!", name)
 
-		Managers.mod:print("warning", "%s", format)
-		print("[ModShim] %s\n%s", format, Script.callstack())
+		Managers.mod:print("warning", "%s", warning)
+		print("[ModShim] %s\n%s", warning, Script.callstack())
 	end
 end
 
@@ -428,245 +469,268 @@ ModShim.init = function (self)
 	-- function 19
 	self._enable_wedges = not MODDED_REALM
 
-	if not self._enable_wedges then
+	if self._enable_wedges then
 		self._wedged_mod_by_id = {}
 		self._ugc_data_by_id = {}
 	end
 
-	if not script_data.debug_mod_shim then
+	if script_data.debug_mod_shim then
 		printf("[ModShim] Initializing ModShim. Wedges enabled: %s.", self._enable_wedges)
 	end
 
-	local patches = ModShim.patches
+	local data_list = ModShim.patches
 
-	for i = 1, #patches do
-		local var_19_1 = patches[i]
-		local name = var_19_1.name
-		local match, var_19_4 = string.match(name, "^([^:.]+)[:.]([^:.]+)$")
+	for i = 1, #data_list do
+		local data = data_list[i]
+		local name = data.name
+		local object_name, method_name = string.match(name, "^([^:.]+)[:.]([^:.]+)$")
 
-		fassert(not match and var_19_4, "Malformed name for shim (expected `object:method` but got %q)", name)
+		fassert(not not object_name and not not method_name, "Malformed name for shim (expected `object:method` but got %q)", name)
 
-		local var_19_5 = rawget(_G, match)
+		local object = rawget(_G, object_name)
 
-		fassert(var_19_5, "Object %q not in the global scope", match)
+		fassert(object, "Object %q not in the global scope", object_name)
 
-		local var_19_6 = rawget(var_19_5, var_19_4)
+		local method = rawget(object, method_name)
 
-		fassert(var_19_6 == nil, "Method %q already defined in object %q", var_19_4, match)
+		fassert(method == nil, "Method %q already defined in object %q", method_name, object_name)
 
-		local func = var_19_1.func
+		local func = data.func
 
-		rawset(var_19_5, var_19_4, function (...)
+		rawset(object, method_name, function (...)
 			-- function 20
-			fn(name)
+			print_deprecated_function_warning(name)
 
 			return func(...)
 		end)
 	end
 end
 
-ModShim._parse_timestamp = function (arg_21_0, arg_21_1)
+ModShim._parse_timestamp = function (self, timestamp)
 	-- function 21
-	local str = "(%d+)/(%d+)/(%d+) (%d+):(%d+):(%d+) (%a+)"
-	local match, var_21_2, var_21_3, var_21_4, var_21_5, var_21_6, var_21_7 = arg_21_1:match(str)
-	local var_21_8 = tonumber(var_21_4)
+	local pattern = "(%d+)/(%d+)/(%d+) (%d+):(%d+):(%d+) (%a+)"
+	local month, day, year, hour, minute, second, period = timestamp:match(pattern)
 
-	if not (var_21_7 ~= "PM" or var_21_8 == 12) then
-		var_21_8 = var_21_8 + 12
-	elseif not (var_21_7 ~= "AM" or var_21_8 == 12) then
-		var_21_8 = 0
+	hour = tonumber(hour)
+
+	if period == "PM" and hour ~= 12 then
+		hour = hour + 12
+	elseif period == "AM" and hour ~= 12 then
+		hour = 0
 	end
 
 	return os.time({
-		month = tonumber(match),
-		day = tonumber(var_21_2),
-		year = tonumber(var_21_3),
-		hour = var_21_8,
-		minute = tonumber(var_21_5),
-		second = tonumber(var_21_6)
+		month = tonumber(month),
+		day = tonumber(day),
+		year = tonumber(year),
+		hour = hour,
+		minute = tonumber(minute),
+		second = tonumber(second)
 	})
 end
 
-ModShim._wedge_hook = function (arg_22_0, arg_22_1, arg_22_2, arg_22_3, arg_22_4, arg_22_5, arg_22_6, arg_22_7, arg_22_8, arg_22_9)
+ModShim._wedge_hook = function (self, vmf_mod, mod_name, hook_func_name, mod_wedge_lookup, object, method, object_name, method_name, wedge_func)
 	-- function 22
-	local var_22_0 = arg_22_1[arg_22_3]
+	local hook_func = vmf_mod[hook_func_name]
 
-	if not var_22_0 then
-		printf("[ModShim] Trying to wedge non existing hook func '%s'. Ignoring.", arg_22_3)
+	if not hook_func then
+		printf("[ModShim] Trying to wedge non existing hook func '%s'. Ignoring.", hook_func_name)
 
 		return
 	end
 
-	local var_22_1 = arg_22_4[arg_22_5]
+	local var_22_0 = mod_wedge_lookup[object]
 
-	var_22_1 = var_22_1 or {}
-	arg_22_4[arg_22_5] = var_22_1
-	arg_22_4[arg_22_5][arg_22_6] = arg_22_9
-	arg_22_4[arg_22_5][arg_22_8] = arg_22_9
+	var_22_0 = not not var_22_0 or not not {}
+	mod_wedge_lookup[object] = var_22_0
+	mod_wedge_lookup[object][method] = wedge_func
+	mod_wedge_lookup[object][method_name] = wedge_func
 
-	local var_22_2 = arg_22_4[arg_22_7]
+	local var_22_1 = mod_wedge_lookup[object_name]
 
-	var_22_2 = var_22_2 or {}
-	arg_22_4[arg_22_7] = var_22_2
-	arg_22_4[arg_22_7][arg_22_6] = arg_22_9
-	arg_22_4[arg_22_7][arg_22_8] = arg_22_9
+	var_22_1 = not not var_22_1 or not not {}
+	mod_wedge_lookup[object_name] = var_22_1
+	mod_wedge_lookup[object_name][method] = wedge_func
+	mod_wedge_lookup[object_name][method_name] = wedge_func
 
-	if not script_data.debug_mod_shim then
-		printf("[ModShim] <%s:%s> wedged %s:%s (%s:%s)", arg_22_2, arg_22_3, arg_22_7, arg_22_8, arg_22_5, arg_22_6)
+	if script_data.debug_mod_shim then
+		printf("[ModShim] <%s:%s> wedged %s:%s (%s:%s)", mod_name, hook_func_name, object_name, method_name, object, method)
 	end
 
-	arg_22_1[arg_22_3] = function (arg_23_0, arg_23_1, arg_23_2, arg_23_3, ...)
+	local function hook_override(_self, hook_obj, hook_method, mod_func, ...)
 		-- function 23
-		local var_23_0 = arg_23_3
-		local var_23_1 = arg_22_4[arg_23_1]
+		local func = mod_func
+		local var_23_0 = mod_wedge_lookup[hook_obj]
 
-		var_23_1 = not var_23_1 and arg_22_4[arg_23_1][arg_23_2]
+		if var_23_0 then
+			-- Nothing
+		end
 
-		if not var_23_1 then
-			printf("[ModShim] <%s> hooking into %s.%s with wedged function", arg_22_2, arg_23_1, arg_23_2)
+		var_23_0 = mod_wedge_lookup[hook_obj][hook_method]
 
-			function var_23_0(arg_24_0, ...)
+		local wedge_func = var_23_0
+
+		::label_23_0::
+
+		if wedge_func then
+			printf("[ModShim] <%s> hooking into %s.%s with wedged function", mod_name, hook_obj, hook_method)
+
+			function func(hooked_function_or_any, ...)
 				-- function 24
-				if not arg_22_1:is_enabled() then
-					if type(arg_24_0) == "function" then
-						return arg_24_0(...)
+				if not vmf_mod:is_enabled() then
+					if type(hooked_function_or_any) == "function" then
+						return hooked_function_or_any(...)
 					end
 
 					return
 				end
 
-				local var_24_0, var_24_1 = pcall(var_23_1, arg_22_1, arg_23_3, arg_22_2, arg_24_0, ...)
+				local wedge_func_ok, wedge_func_result = pcall(wedge_func, vmf_mod, mod_func, mod_name, hooked_function_or_any, ...)
 
-				if not var_24_0 then
-					printf("[ModShim] <%s> Wedge error in '%s:%s': %s. args: %s", arg_22_1:get_internal_data("name"), arg_22_7, arg_22_8, var_24_1, table.tostring({
+				if not wedge_func_ok then
+					printf("[ModShim] <%s> Wedge error in '%s:%s': %s. args: %s", vmf_mod:get_internal_data("name"), object_name, method_name, wedge_func_result, table.tostring({
 						...
 					}))
 					print(Script.callstack())
 
-					return arg_23_3(arg_24_0, ...)
+					return mod_func(hooked_function_or_any, ...)
 				end
 
-				return var_24_1
+				return wedge_func_result
 			end
-		elseif not script_data.debug_mod_shim then
-			printf("[ModShim] <%s> hooking into %s:%s without wedged function", arg_22_2, arg_23_1, arg_23_2)
+		elseif script_data.debug_mod_shim then
+			printf("[ModShim] <%s> hooking into %s:%s without wedged function", mod_name, hook_obj, hook_method)
 		end
 
-		return var_22_0(arg_23_0, arg_23_1, arg_23_2, var_23_0, ...)
+		return hook_func(_self, hook_obj, hook_method, func, ...)
 	end
+
+	vmf_mod[hook_func_name] = hook_override
 end
 
-ModShim._add_hook = function (arg_25_0, arg_25_1, arg_25_2, arg_25_3, arg_25_4, arg_25_5, arg_25_6, arg_25_7, arg_25_8, arg_25_9)
+ModShim._add_hook = function (self, vmf_mod, mod_name, hook_func_name, mod_new_hook_lookup, object, method, object_name, method_name, wedge_func)
 	-- function 25
-	local var_25_0 = arg_25_1[arg_25_3]
+	local hook_func = vmf_mod[hook_func_name]
 
-	if not var_25_0 then
-		printf("[ModShim] Trying to wedge non existing hook func '%s'. Ignoring.", arg_25_3)
+	if not hook_func then
+		printf("[ModShim] Trying to wedge non existing hook func '%s'. Ignoring.", hook_func_name)
 
 		return
 	end
 
-	local tbl = {}
+	local mod_override_upvalue = {}
 
-	var_25_0(arg_25_1, arg_25_5 or arg_25_7, arg_25_8 or arg_25_6, function (arg_26_0, ...)
+	hook_func(vmf_mod, not not object or not not object_name, not not method_name or not not method, function (func, ...)
 		-- function 26
-		if not tbl.func then
-			return tbl.func(arg_26_0, ...)
+		if mod_override_upvalue.func then
+			return mod_override_upvalue.func(func, ...)
 		end
 
-		return arg_25_9(arg_25_1, arg_25_2, arg_26_0, ...)
+		return wedge_func(vmf_mod, mod_name, func, ...)
 	end)
 
-	local var_25_2 = arg_25_4[arg_25_5]
+	local var_25_0 = mod_new_hook_lookup[object]
 
-	var_25_2 = var_25_2 or {}
-	arg_25_4[arg_25_5] = var_25_2
-	arg_25_4[arg_25_5][arg_25_6] = arg_25_9
-	arg_25_4[arg_25_5][arg_25_8] = arg_25_9
+	var_25_0 = not not var_25_0 or not not {}
+	mod_new_hook_lookup[object] = var_25_0
+	mod_new_hook_lookup[object][method] = wedge_func
+	mod_new_hook_lookup[object][method_name] = wedge_func
 
-	local var_25_3 = arg_25_4[arg_25_7]
+	local var_25_1 = mod_new_hook_lookup[object_name]
 
-	var_25_3 = var_25_3 or {}
-	arg_25_4[arg_25_7] = var_25_3
-	arg_25_4[arg_25_7][arg_25_6] = arg_25_9
-	arg_25_4[arg_25_7][arg_25_8] = arg_25_9
+	var_25_1 = not not var_25_1 or not not {}
+	mod_new_hook_lookup[object_name] = var_25_1
+	mod_new_hook_lookup[object_name][method] = wedge_func
+	mod_new_hook_lookup[object_name][method_name] = wedge_func
 
-	if not script_data.debug_mod_shim then
-		printf("[ModShim] <%s:%s> wedged %s:%s (%s:%s)", arg_25_2, arg_25_3, arg_25_7, arg_25_8, arg_25_5, arg_25_6)
+	if script_data.debug_mod_shim then
+		printf("[ModShim] <%s:%s> wedged %s:%s (%s:%s)", mod_name, hook_func_name, object_name, method_name, object, method)
 	end
 
-	arg_25_1[arg_25_3] = function (arg_27_0, arg_27_1, arg_27_2, arg_27_3, ...)
+	local function hook_override(_self, hook_obj, hook_method, mod_func, ...)
 		-- function 27
-		local var_27_0 = arg_27_3
-		local var_27_1 = arg_25_4[arg_27_1]
+		local func = mod_func
+		local var_27_0 = mod_new_hook_lookup[hook_obj]
 
-		var_27_1 = not var_27_1 and arg_25_4[arg_27_1][arg_27_2]
-
-		if not var_27_1 then
-			printf("[ModShim] <%s> overriding wedged function %s.%s with mods own hook", arg_25_2, arg_27_1, arg_27_2)
-
-			tbl.func = arg_27_3
+		if var_27_0 then
+			-- Nothing
 		end
 
-		return var_25_0(arg_27_0, arg_27_1, arg_27_2, var_27_0, ...)
+		var_27_0 = mod_new_hook_lookup[hook_obj][hook_method]
+
+		local wedge_func = var_27_0
+
+		::label_27_0::
+
+		if wedge_func then
+			printf("[ModShim] <%s> overriding wedged function %s.%s with mods own hook", mod_name, hook_obj, hook_method)
+
+			mod_override_upvalue.func = mod_func
+		end
+
+		return hook_func(_self, hook_obj, hook_method, func, ...)
 	end
+
+	vmf_mod[hook_func_name] = hook_override
 end
 
-ModShim._mod_wedges = function (arg_28_0, arg_28_1, arg_28_2)
+ModShim._mod_wedges = function (self, mod_name, timestamp)
 	-- function 28
-	if not arg_28_2 then
-		printf("[ModShim] <%s> Wedges ignored due to not being able to deduce timestamp", arg_28_1)
+	if not timestamp then
+		printf("[ModShim] <%s> Wedges ignored due to not being able to deduce timestamp", mod_name)
 	end
 
-	return (table.select_array(ModShim.wedges, function (arg_29_0, arg_29_1)
+	local mod_wedges = table.select_array(ModShim.wedges, function (_, wedge)
 		-- function 29
-		if not (not arg_29_1.mods and table.contains(arg_29_1.mods, arg_28_1)) then
+		if wedge.mods and not table.contains(wedge.mods, mod_name) then
 			return
 		end
 
-		local _parse_timestamp = arg_28_0:_parse_timestamp(arg_29_1.date)
+		local wedge_date = self:_parse_timestamp(wedge.date)
 
-		if _parse_timestamp < arg_28_2 then
-			printf("[ModShim] <%s> Wedge ignored due to being outdated. Wedge created '%s' (%s), mod updated '%s'", arg_28_1, arg_29_1.date, _parse_timestamp, arg_28_2)
+		if wedge_date < timestamp then
+			printf("[ModShim] <%s> Wedge ignored due to being outdated. Wedge created '%s' (%s), mod updated '%s'", mod_name, wedge.date, wedge_date, timestamp)
 
 			return
 		end
 
-		return arg_29_1
-	end))
+		return wedge
+	end)
+
+	return mod_wedges
 end
 
-ModShim._mod_created = function (self, arg_30_1, arg_30_2)
+ModShim._mod_created = function (self, vmf_mod, mod_name)
 	-- function 30
 	if not self._enable_wedges then
 		return
 	end
 
-	if not script_data.debug_mod_shim then
-		printf("[ModShim] Mod created <%s>", arg_30_2)
+	if script_data.debug_mod_shim then
+		printf("[ModShim] Mod created <%s>", mod_name)
 	end
 
-	local currently_loading_mod = Managers.mod:currently_loading_mod()
+	local mod_data = Managers.mod:currently_loading_mod()
 
-	self:_handle_wedges(arg_30_1, arg_30_2, currently_loading_mod)
+	self:_handle_wedges(vmf_mod, mod_name, mod_data)
 end
 
-ModShim._handle_wedges = function (self, arg_31_1, arg_31_2, arg_31_3)
+ModShim._handle_wedges = function (self, vmf_mod, mod_name, mod_data)
 	-- function 31
-	local _mod_wedges = self:_mod_wedges(arg_31_2, arg_31_3.timestamp)
+	local mod_wedges = self:_mod_wedges(mod_name, mod_data.timestamp)
 
-	if not table.is_empty(_mod_wedges) then
+	if table.is_empty(mod_wedges) then
 		return
 	end
 
-	if not script_data.debug_mod_shim then
+	if script_data.debug_mod_shim then
 		local printf = printf
 		local str = "[ModShim] \tHas wedges: %s%s"
-		local flag = #_mod_wedges > 0
+		local flag = #mod_wedges > 0
 		local str_2
 
-		if #_mod_wedges > 0 then
-			str_2 = "\n\t" .. table.tostring(_mod_wedges)
+		if #mod_wedges > 0 then
+			str_2 = "\n\t" .. table.tostring(mod_wedges)
 
 			if not str_2 then
 				-- Nothing
@@ -680,168 +744,169 @@ ModShim._handle_wedges = function (self, arg_31_1, arg_31_2, arg_31_3)
 		printf(str, flag, str_2)
 	end
 
-	local get_internal_data = arg_31_1:get_internal_data("workshop_id")
+	local mod_id = vmf_mod:get_internal_data("workshop_id")
 
-	self._wedged_mod_by_id[get_internal_data] = arg_31_1
+	self._wedged_mod_by_id[mod_id] = vmf_mod
 
-	local tbl = {}
-	local tbl_2 = {}
+	local mod_override_lookup = {}
+	local mod_new_hook_lookup = {}
 
-	for i = 1, #_mod_wedges do
-		local var_31_8 = _mod_wedges[i]
-		local override_hooks = var_31_8.override_hooks
+	for wedge_i = 1, #mod_wedges do
+		local wedge = mod_wedges[wedge_i]
+		local override_hooks = wedge.override_hooks
 
-		if not override_hooks then
-			self:_handle_hook_overrides(arg_31_1, arg_31_2, arg_31_3, override_hooks, tbl)
+		if override_hooks then
+			self:_handle_hook_overrides(vmf_mod, mod_name, mod_data, override_hooks, mod_override_lookup)
 		end
 
-		local new_hooks = var_31_8.new_hooks
+		local new_hooks = wedge.new_hooks
 
-		if not new_hooks then
-			self:_handle_new_hooks(arg_31_1, arg_31_2, arg_31_3, new_hooks, tbl_2)
+		if new_hooks then
+			self:_handle_new_hooks(vmf_mod, mod_name, mod_data, new_hooks, mod_new_hook_lookup)
 		end
 	end
 end
 
-ModShim._handle_hook_overrides = function (self, arg_32_1, arg_32_2, arg_32_3, arg_32_4, arg_32_5)
+ModShim._handle_hook_overrides = function (self, vmf_mod, mod_name, mod_data, override_hooks, mod_override_lookup)
 	-- function 32
-	for i = 1, #arg_32_4 do
+	for hook_i = 1, #override_hooks do
 		repeat
-			local var_32_0 = arg_32_4[i]
-			local name = var_32_0.name
-			local _G = _G
-			local str = ""
-			local var_32_4
-			local var_32_5
+			local hook = override_hooks[hook_i]
+			local name = hook.name
+			local object = _G
+			local object_name = ""
+			local method_name, prev_separator
 
-			for iter_32_1, iter_32_2 in string.gmatch(name, "([^:.]+)([:.]?-?)") do
-				if iter_32_2 ~= "" then
-					if not var_32_5 then
-						str = str .. var_32_5
+			for match, separator in string.gmatch(name, "([^:.]+)([:.]?-?)") do
+				if separator ~= "" then
+					if prev_separator then
+						object_name = object_name .. prev_separator
 					end
 
-					str = str .. iter_32_1
-					_G = _G[iter_32_1]
+					object_name = object_name .. match
+					object = object[match]
 
-					if not _G then
+					if not object then
 						break
 					end
 				else
-					var_32_4 = iter_32_1
+					method_name = match
 				end
 
-				var_32_5 = iter_32_2
+				prev_separator = separator
 			end
 
-			if not _G then
-				Application.error("[ModShim] Attempting to wedge method '%s' (%s) for mod '%s' but the object '%s' does not exist in the global scope.", var_32_4, name, arg_32_2, str)
+			if not object then
+				Application.error("[ModShim] Attempting to wedge method '%s' (%s) for mod '%s' but the object '%s' does not exist in the global scope.", method_name, name, mod_name, object_name)
 
 				break
 			end
 
-			if type(_G) ~= "table" then
-				Application.error("[ModShim] Attempting to wedge method '%s' (%s) for mod '%s' but the object '%s' is not a table.", var_32_4, name, arg_32_2, str)
+			if type(object) ~= "table" then
+				Application.error("[ModShim] Attempting to wedge method '%s' (%s) for mod '%s' but the object '%s' is not a table.", method_name, name, mod_name, object_name)
 
 				break
 			end
 
-			local var_32_6 = rawget(_G, var_32_4)
+			local method = rawget(object, method_name)
 
-			if not var_32_6 then
-				Application.error("[ModShim] Attempting to wedge method '%s' in '%s' (%s) for mod '%s' but it doesn't exist.", var_32_4, str, name, arg_32_2)
+			if not method then
+				Application.error("[ModShim] Attempting to wedge method '%s' in '%s' (%s) for mod '%s' but it doesn't exist.", method_name, object_name, name, mod_name)
 
 				break
 			end
 
-			if not var_32_0.func then
-				self:_wedge_hook(arg_32_1, arg_32_2, "hook", arg_32_5, _G, var_32_6, str, var_32_4, var_32_0.func)
+			if hook.func then
+				self:_wedge_hook(vmf_mod, mod_name, "hook", mod_override_lookup, object, method, object_name, method_name, hook.func)
 			end
 
-			if not var_32_0.func_safe then
-				self:_wedge_hook(arg_32_1, arg_32_2, "hook_safe", arg_32_5, _G, var_32_6, str, var_32_4, var_32_0.func_safe)
+			if hook.func_safe then
+				self:_wedge_hook(vmf_mod, mod_name, "hook_safe", mod_override_lookup, object, method, object_name, method_name, hook.func_safe)
 			end
 
-			if not var_32_0.func_origin then
-				self:_wedge_hook(arg_32_1, arg_32_2, "hook_origin", arg_32_5, _G, var_32_6, str, var_32_4, var_32_0.func_origin)
+			if hook.func_origin then
+				self:_wedge_hook(vmf_mod, mod_name, "hook_origin", mod_override_lookup, object, method, object_name, method_name, hook.func_origin)
 			end
 		until true
 	end
 end
 
-ModShim._handle_new_hooks = function (self, arg_33_1, arg_33_2, arg_33_3, arg_33_4, arg_33_5)
+ModShim._handle_new_hooks = function (self, vmf_mod, mod_name, mod_data, new_hooks, mod_new_hook_lookup)
 	-- function 33
-	for i = 1, #arg_33_4 do
-		local var_33_0 = arg_33_4[i]
-		local name = var_33_0.name
-		local match, var_33_3 = string.match(name, "^([^:.]+)[:.]([^:.]+)$")
-		local var_33_4 = rawget(_G, match)
+	for hook_i = 1, #new_hooks do
+		local hook = new_hooks[hook_i]
+		local name = hook.name
+		local object_name, method_name = string.match(name, "^([^:.]+)[:.]([^:.]+)$")
+		local object = rawget(_G, object_name)
 
-		if not var_33_4 then
-			Application.error("[ModShim] Attempting to wedge method '%s' in '%s' for mod '%s' but the object does not exist in the global scope.", var_33_3, match, arg_33_2)
-
-			break
-		end
-
-		local var_33_5 = rawget(var_33_4, var_33_3)
-
-		if not var_33_5 then
-			Application.error("[ModShim] Attempting to wedge method '%s' in '%s' for mod '%s' but it doesn't exist.", var_33_3, match, arg_33_2)
+		if not object then
+			Application.error("[ModShim] Attempting to wedge method '%s' in '%s' for mod '%s' but the object does not exist in the global scope.", method_name, object_name, mod_name)
 
 			break
 		end
 
-		if not var_33_0.func then
-			self:_add_hook(arg_33_1, arg_33_2, "hook", arg_33_5, var_33_4, var_33_5, match, var_33_3, var_33_0.func)
+		local method = rawget(object, method_name)
+
+		if not method then
+			Application.error("[ModShim] Attempting to wedge method '%s' in '%s' for mod '%s' but it doesn't exist.", method_name, object_name, mod_name)
+
+			break
 		end
 
-		if not var_33_0.func_safe then
-			self:_add_hook(arg_33_1, arg_33_2, "hook_safe", arg_33_5, var_33_4, var_33_5, match, var_33_3, var_33_0.func_safe)
+		if hook.func then
+			self:_add_hook(vmf_mod, mod_name, "hook", mod_new_hook_lookup, object, method, object_name, method_name, hook.func)
 		end
 
-		if not var_33_0.func_origin then
-			self:_add_hook(arg_33_1, arg_33_2, "hook_origin", arg_33_5, var_33_4, var_33_5, match, var_33_3, var_33_0.func_origin)
+		if hook.func_safe then
+			self:_add_hook(vmf_mod, mod_name, "hook_safe", mod_new_hook_lookup, object, method, object_name, method_name, hook.func_safe)
+		end
+
+		if hook.func_origin then
+			self:_add_hook(vmf_mod, mod_name, "hook_origin", mod_new_hook_lookup, object, method, object_name, method_name, hook.func_origin)
 		end
 	end
 end
 
-ModShim.mod_post_create = function (self, arg_34_1)
+ModShim.mod_post_create = function (self, mod_data)
 	-- function 34
 	if not self._enable_wedges then
 		return
 	end
 
-	if not script_data.debug_mod_shim then
-		printf("[ModShim][mod_post_create] %s %s", arg_34_1.name, table.tostring(arg_34_1, 1))
+	if script_data.debug_mod_shim then
+		printf("[ModShim][mod_post_create] %s %s", mod_data.name, table.tostring(mod_data, 1))
 	end
 
-	local id = arg_34_1.id
+	local mod_id = mod_data.id
+	local workshop_name = mod_data.name
 
-	if arg_34_1.name == "Vermintide Mod Framework" then
-		local mods = get_mod("VMF").mods
+	if workshop_name == "Vermintide Mod Framework" then
+		local mod = get_mod("VMF")
+		local mod_list = mod.mods
 
-		if not getmetatable(mods) then
+		if getmetatable(mod_list) then
 			Application.error("[ModShim] VMF's modlist's metatable is about to be overridden. Disabling ModPatches.")
 
 			return
 		end
 
-		if not script_data.debug_mod_shim then
+		if script_data.debug_mod_shim then
 			print("[ModShim] VFM initialized. Listening to mod creations.")
 		end
 
-		local tbl = {
-			__newindex = function (arg_35_0, arg_35_1, arg_35_2, ...)
+		local mod_create_hook = {
+			__newindex = function (mods, mod_name, vmf_mod, ...)
 				-- function 35
-				rawset(arg_35_0, arg_35_1, arg_35_2, ...)
+				rawset(mods, mod_name, vmf_mod, ...)
 
-				if not script_data.debug_mod_shim then
-					print("[ModShim] mod_create_hook", arg_35_0, arg_35_1, arg_35_2, ...)
+				if script_data.debug_mod_shim then
+					print("[ModShim] mod_create_hook", mods, mod_name, vmf_mod, ...)
 				end
 
-				local var_35_0, var_35_1 = pcall(self._mod_created, self, arg_35_2, arg_35_1, id)
+				local ok, error = pcall(self._mod_created, self, vmf_mod, mod_name, mod_id)
 
-				if not var_35_0 then
-					printf("[ModShim] Error during mod_wedge: %s (%s)", var_35_1, table.tostring({
+				if not ok then
+					printf("[ModShim] Error during mod_wedge: %s (%s)", error, table.tostring({
 						...
 					}))
 					print(Script.callstack())
@@ -849,30 +914,30 @@ ModShim.mod_post_create = function (self, arg_34_1)
 			end
 		}
 
-		setmetatable(mods, tbl)
+		setmetatable(mod_list, mod_create_hook)
 	else
-		local var_34_3 = self._wedged_mod_by_id[id]
+		local vmf_mod = self._wedged_mod_by_id[mod_id]
 
-		if not var_34_3 then
-			local get_internal_data = var_34_3:get_internal_data("name")
-			local _mod_wedges = self:_mod_wedges(get_internal_data, arg_34_1.timestamp)
+		if vmf_mod then
+			local name = vmf_mod:get_internal_data("name")
+			local wedges = self:_mod_wedges(name, mod_data.timestamp)
 
-			for i = 1, #_mod_wedges do
+			for i = 1, #wedges do
 				repeat
-					local initializer = _mod_wedges[i].initializer
+					local initializer = wedges[i].initializer
 
-					if not initializer then
-						printf("[ModShim] <%s> Running initializer for wedge number %s", get_internal_data, i)
+					if initializer then
+						printf("[ModShim] <%s> Running initializer for wedge number %s", name, i)
 
-						local var_34_7, var_34_8 = pcall(initializer, var_34_3)
+						local initializer_ok, error_msg = pcall(initializer, vmf_mod)
 
-						if not var_34_7 then
-							printf("[ModShim] <%s> Initializer error in wedge number %s. Ignoring: %s", get_internal_data, i, var_34_8)
+						if not initializer_ok then
+							printf("[ModShim] <%s> Initializer error in wedge number %s. Ignoring: %s", name, i, error_msg)
 							print(Script.callstack())
 						end
-					end
 
-					break
+						break
+					end
 				until true
 			end
 		end

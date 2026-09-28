@@ -1,49 +1,68 @@
 -- chunkname: @scripts/ui/views/hero_view/windows/hero_window_cosmetics_inventory.lua
 
-local var_0_0 = local_require("scripts/ui/views/hero_view/windows/definitions/hero_window_cosmetics_inventory_definitions")
-local widgets = var_0_0.widgets
-local category_settings = var_0_0.category_settings
-local scenegraph_definition = var_0_0.scenegraph_definition
-local animation_definitions = var_0_0.animation_definitions
-local generic_input_actions = var_0_0.generic_input_actions
-local flag = false
+local definitions = local_require("scripts/ui/views/hero_view/windows/definitions/hero_window_cosmetics_inventory_definitions")
+local widget_definitions = definitions.widgets
+local category_settings = definitions.category_settings
+local scenegraph_definition = definitions.scenegraph_definition
+local animation_definitions = definitions.animation_definitions
+local generic_input_actions = definitions.generic_input_actions
+local DO_RELOAD = false
 
-local function fn(self, arg_1_1)
+local function item_sort_func(item_1, item_2)
 	-- function 1
-	local data = self.data
-	local data_2 = arg_1_1.data
-	local rarity = self.rarity
+	local item_data_1 = item_1.data
+	local item_data_2 = item_2.data
+	local rarity = item_1.rarity
 
-	rarity = rarity or data.rarity
+	if not rarity then
+		-- Nothing
+	end
 
-	local rarity_2 = arg_1_1.rarity
+	rarity = item_data_1.rarity
 
-	rarity_2 = rarity_2 or data_2.rarity
+	local item_1_rarity = rarity
+
+	::label_1_0::
+
+	local rarity_2 = item_2.rarity
+
+	if not rarity_2 then
+		-- Nothing
+	end
+
+	rarity_2 = item_data_2.rarity
+
+	local item_2_rarity = rarity_2
+
+	::label_1_1::
 
 	local item_rarity_order = UISettings.item_rarity_order
-	local var_1_5 = item_rarity_order[rarity]
-	local var_1_6 = item_rarity_order[rarity_2]
-	local backend_id = self.backend_id
-	local backend_id_2 = arg_1_1.backend_id
-	local is_favorite_backend_id = ItemHelper.is_favorite_backend_id(backend_id, self)
+	local item_1_rarity_order = item_rarity_order[item_1_rarity]
+	local item_2_rarity_order = item_rarity_order[item_2_rarity]
+	local item_1_backend_id = item_1.backend_id
+	local item_2_backend_id = item_2.backend_id
+	local item_1_favorited = ItemHelper.is_favorite_backend_id(item_1_backend_id, item_1)
+	local item_2_favorited = ItemHelper.is_favorite_backend_id(item_2_backend_id, item_2)
 
-	if is_favorite_backend_id == ItemHelper.is_favorite_backend_id(backend_id_2, arg_1_1) then
-		if var_1_5 == var_1_6 then
-			local var_1_10 = Localize(data.item_type)
-			local var_1_11 = Localize(data_2.item_type)
+	if item_1_favorited == item_2_favorited then
+		if item_1_rarity_order == item_2_rarity_order then
+			local item_type_1 = Localize(item_data_1.item_type)
+			local item_type_2 = Localize(item_data_2.item_type)
 
-			if var_1_10 == var_1_11 then
-				local get_ui_information_from_item, var_1_13 = UIUtils.get_ui_information_from_item(self)
-				local get_ui_information_from_item_2, var_1_15 = UIUtils.get_ui_information_from_item(arg_1_1)
+			if item_type_1 == item_type_2 then
+				local _, item_1_display_name = UIUtils.get_ui_information_from_item(item_1)
+				local _, item_2_display_name = UIUtils.get_ui_information_from_item(item_2)
+				local item_name_1 = Localize(item_1_display_name)
+				local item_name_2 = Localize(item_2_display_name)
 
-				return Localize(var_1_13) < Localize(var_1_15)
+				return item_name_1 < item_name_2
 			else
-				return var_1_10 < var_1_11
+				return item_type_1 < item_type_2
 			end
 		else
-			return var_1_5 < var_1_6
+			return item_1_rarity_order < item_2_rarity_order
 		end
-	elseif not is_favorite_backend_id then
+	elseif item_1_favorited then
 		return true
 	else
 		return false
@@ -52,17 +71,26 @@ end
 
 local testify = script_data.testify
 
-testify = not testify and require("scripts/ui/views/hero_view/windows/hero_window_cosmetics_inventory_testify")
+if testify then
+	-- Nothing
+end
+
+testify = require("scripts/ui/views/hero_view/windows/hero_window_cosmetics_inventory_testify")
+
+local hero_window_cosmetics_inventory_testify = testify
+
+::label_0_0::
+
 HeroWindowCosmeticsInventory = class(HeroWindowCosmeticsInventory)
 HeroWindowCosmeticsInventory.NAME = "HeroWindowCosmeticsInventory"
 
-HeroWindowCosmeticsInventory.on_enter = function (self, arg_2_1, arg_2_2)
+HeroWindowCosmeticsInventory.on_enter = function (self, params, offset)
 	-- function 2
 	print("[HeroViewWindow] Enter Substate HeroWindowCosmeticsInventory")
 
-	self.parent = arg_2_1.parent
+	self.parent = params.parent
 
-	local ingame_ui_context = arg_2_1.ingame_ui_context
+	local ingame_ui_context = params.ingame_ui_context
 
 	self.ui_renderer = ingame_ui_context.ui_renderer
 	self.ui_top_renderer = ingame_ui_context.ui_top_renderer
@@ -72,57 +100,58 @@ HeroWindowCosmeticsInventory.on_enter = function (self, arg_2_1, arg_2_2)
 		snap_pixel_positions = true
 	}
 
-	local player = Managers.player
+	local player_manager = Managers.player
+	local local_player = player_manager:local_player()
 
-	self._stats_id = player:local_player():stats_id()
-	self.player_manager = player
+	self._stats_id = local_player:stats_id()
+	self.player_manager = player_manager
 	self.peer_id = ingame_ui_context.peer_id
 	self._animations = {}
 
-	self:create_ui_elements(arg_2_1, arg_2_2)
+	self:create_ui_elements(params, offset)
 
-	self.hero_name = arg_2_1.hero_name
-	self.career_index = arg_2_1.career_index
-	self.profile_index = arg_2_1.profile_index
+	self.hero_name = params.hero_name
+	self.career_index = params.career_index
+	self.profile_index = params.profile_index
 
-	local var_2_2 = ItemGridUI:new(category_settings, self._widgets_by_name.item_grid, self.hero_name, self.career_index)
+	local item_grid = ItemGridUI:new(category_settings, self._widgets_by_name.item_grid, self.hero_name, self.career_index)
 
-	self._item_grid = var_2_2
+	self._item_grid = item_grid
 
-	var_2_2:mark_equipped_items(true)
-	var_2_2:mark_locked_items(true)
-	var_2_2:disable_locked_items(true)
-	var_2_2:disable_item_drag()
-	var_2_2:apply_item_sorting_function(fn)
+	item_grid:mark_equipped_items(true)
+	item_grid:mark_locked_items(true)
+	item_grid:disable_locked_items(true)
+	item_grid:disable_item_drag()
+	item_grid:apply_item_sorting_function(item_sort_func)
 end
 
-HeroWindowCosmeticsInventory.create_ui_elements = function (self, arg_3_1, arg_3_2)
+HeroWindowCosmeticsInventory.create_ui_elements = function (self, params, offset)
 	-- function 3
 	self.ui_scenegraph = UISceneGraph.init_scenegraph(scenegraph_definition)
 
-	local tbl = {}
-	local tbl_2 = {}
+	local widgets = {}
+	local widgets_by_name = {}
 
-	for k, v in pairs(widgets) do
-		local var_3_2 = UIWidget.init(v)
+	for name, widget_definition in pairs(widget_definitions) do
+		local widget = UIWidget.init(widget_definition)
 
-		tbl[#tbl + 1] = var_3_2
-		tbl_2[k] = var_3_2
+		widgets[#widgets + 1] = widget
+		widgets_by_name[name] = widget
 	end
 
-	self._widgets = tbl
-	self._widgets_by_name = tbl_2
+	self._widgets = widgets
+	self._widgets_by_name = widgets_by_name
 
 	UIRenderer.clear_scenegraph_queue(self.ui_renderer)
 
 	self.ui_animator = UIAnimator:new(self.ui_scenegraph, animation_definitions)
 
-	if not arg_3_2 then
-		local local_position = self.ui_scenegraph.window.local_position
+	if offset then
+		local window_position = self.ui_scenegraph.window.local_position
 
-		local_position[1] = local_position[1] + arg_3_2[1]
-		local_position[2] = local_position[2] + arg_3_2[2]
-		local_position[3] = local_position[3] + arg_3_2[3]
+		window_position[1] = window_position[1] + offset[1]
+		window_position[2] = window_position[2] + offset[2]
+		window_position[3] = window_position[3] + offset[3]
 	end
 
 	self:_assign_tab_icons()
@@ -130,19 +159,23 @@ end
 
 HeroWindowCosmeticsInventory._assign_tab_icons = function (self)
 	-- function 4
-	local content = self._widgets_by_name.item_tabs.content
-	local amount = content.amount
+	local widget = self._widgets_by_name.item_tabs
+	local widget_content = widget.content
+	local amount = widget_content.amount
 
 	for i = 1, amount do
-		local str = "_" .. tostring(i)
-		local str_2 = "hotspot" .. str
-		local str_3 = "icon" .. str
+		local name_suffix = "_" .. tostring(i)
+		local hotspot_name = "hotspot" .. name_suffix
+		local icon_name = "icon" .. name_suffix
+		local hotspot_content = widget_content[hotspot_name]
+		local category = category_settings[i]
+		local icon = category.icon
 
-		content[str_2][str_3] = category_settings[i].icon
+		hotspot_content[icon_name] = icon
 	end
 end
 
-HeroWindowCosmeticsInventory.on_exit = function (self, arg_5_1)
+HeroWindowCosmeticsInventory.on_exit = function (self, params)
 	-- function 5
 	print("[HeroViewWindow] Exit Substate HeroWindowCosmeticsInventory")
 
@@ -153,77 +186,84 @@ HeroWindowCosmeticsInventory.on_exit = function (self, arg_5_1)
 	self._item_grid = nil
 end
 
-HeroWindowCosmeticsInventory.update = function (self, arg_6_1, arg_6_2)
+HeroWindowCosmeticsInventory.update = function (self, dt, t)
 	-- function 6
-	if not flag then
-		flag = false
+	if DO_RELOAD then
+		DO_RELOAD = false
 
 		self:create_ui_elements()
 	end
 
-	self._item_grid:update(arg_6_1, arg_6_2)
-	self:_update_animations(arg_6_1)
-	self:_handle_input(arg_6_1, arg_6_2)
+	self._item_grid:update(dt, t)
+	self:_update_animations(dt)
+	self:_handle_input(dt, t)
 	self:_update_selected_cosmetic_slot_index()
 	self:_update_loadout_sync()
 	self:_update_page_info()
-	self:draw(arg_6_1)
+	self:draw(dt)
 
-	if not script_data.testify then
-		Testify:poll_requests_through_handler(testify, self)
+	if script_data.testify then
+		Testify:poll_requests_through_handler(hero_window_cosmetics_inventory_testify, self)
 	end
 end
 
-HeroWindowCosmeticsInventory.post_update = function (arg_7_0, arg_7_1, arg_7_2)
+HeroWindowCosmeticsInventory.post_update = function (self, dt, t)
 	-- function 7
 	return
 end
 
-HeroWindowCosmeticsInventory._update_animations = function (self, arg_8_1)
+HeroWindowCosmeticsInventory._update_animations = function (self, dt)
 	-- function 8
-	self.ui_animator:update(arg_8_1)
+	self.ui_animator:update(dt)
 
-	local _animations = self._animations
+	local animations = self._animations
 	local ui_animator = self.ui_animator
 
-	for k, v in pairs(_animations) do
-		if not ui_animator:is_animation_completed(v) then
-			ui_animator:stop_animation(v)
+	for animation_name, animation_id in pairs(animations) do
+		if ui_animator:is_animation_completed(animation_id) then
+			ui_animator:stop_animation(animation_id)
 
-			_animations[k] = nil
+			animations[animation_name] = nil
 		end
 	end
 
-	local _widgets_by_name = self._widgets_by_name
+	local widgets_by_name = self._widgets_by_name
 end
 
-HeroWindowCosmeticsInventory._is_button_pressed = function (arg_9_0, arg_9_1)
+HeroWindowCosmeticsInventory._is_button_pressed = function (self, widget)
 	-- function 9
-	local button_hotspot = arg_9_1.content.button_hotspot
+	local content = widget.content
+	local hotspot = content.button_hotspot
 
-	if not button_hotspot.on_release then
-		button_hotspot.on_release = false
+	if hotspot.on_release then
+		hotspot.on_release = false
 
 		return true
 	end
 end
 
-HeroWindowCosmeticsInventory._is_button_hovered = function (arg_10_0, arg_10_1)
+HeroWindowCosmeticsInventory._is_button_hovered = function (self, widget)
 	-- function 10
-	if not arg_10_1.content.button_hotspot.on_hover_enter then
+	local content = widget.content
+	local hotspot = content.button_hotspot
+
+	if hotspot.on_hover_enter then
 		return true
 	end
 end
 
 HeroWindowCosmeticsInventory._is_inventory_tab_hovered = function (self)
 	-- function 11
-	local content = self._widgets_by_name.item_tabs.content
-	local amount = content.amount
+	local widget = self._widgets_by_name.item_tabs
+	local widget_content = widget.content
+	local amount = widget_content.amount
 
 	for i = 1, amount do
-		local str = "_" .. tostring(i)
+		local name_sufix = "_" .. tostring(i)
+		local hotspot_name = "hotspot" .. name_sufix
+		local hotspot_content = widget_content[hotspot_name]
 
-		if not content["hotspot" .. str].on_hover_enter then
+		if hotspot_content.on_hover_enter then
 			return i
 		end
 	end
@@ -231,206 +271,227 @@ end
 
 HeroWindowCosmeticsInventory._is_inventory_tab_pressed = function (self)
 	-- function 12
-	local content = self._widgets_by_name.item_tabs.content
-	local amount = content.amount
+	local widget = self._widgets_by_name.item_tabs
+	local widget_content = widget.content
+	local amount = widget_content.amount
 
 	for i = 1, amount do
-		local str = "_" .. tostring(i)
-		local var_12_3 = content["hotspot" .. str]
+		local name_sufix = "_" .. tostring(i)
+		local hotspot_name = "hotspot" .. name_sufix
+		local hotspot_content = widget_content[hotspot_name]
 
-		if not (not var_12_3.on_release and var_12_3.is_selected) then
+		if hotspot_content.on_release and not hotspot_content.is_selected then
 			return i
 		end
 	end
 end
 
-HeroWindowCosmeticsInventory._select_tab_by_category_index = function (self, arg_13_1)
+HeroWindowCosmeticsInventory._select_tab_by_category_index = function (self, index)
 	-- function 13
-	local content = self._widgets_by_name.item_tabs.content
-	local amount = content.amount
+	local widget = self._widgets_by_name.item_tabs
+	local widget_content = widget.content
+	local amount = widget_content.amount
 
 	for i = 1, amount do
-		local str = "_" .. tostring(i)
+		local name_sufix = "_" .. tostring(i)
+		local hotspot_name = "hotspot" .. name_sufix
+		local hotspot_content = widget_content[hotspot_name]
 
-		content["hotspot" .. str].is_selected = i == arg_13_1
+		hotspot_content.is_selected = i == index
 	end
 end
 
-HeroWindowCosmeticsInventory._handle_input = function (self, arg_14_1, arg_14_2)
+HeroWindowCosmeticsInventory._handle_input = function (self, dt, t)
 	-- function 14
-	local _widgets_by_name = self._widgets_by_name
+	local widgets_by_name = self._widgets_by_name
 	local parent = self.parent
-	local _item_grid = self._item_grid
-	local flag = false
-	local is_item_pressed, var_14_5 = _item_grid:is_item_pressed(flag)
-	local window_input_service = parent:window_input_service()
+	local item_grid = self._item_grid
+	local allow_single_press = false
+	local item, is_equipped = item_grid:is_item_pressed(allow_single_press)
+	local input_service = parent:window_input_service()
 
-	if not _item_grid:handle_favorite_marking(window_input_service) then
+	if item_grid:handle_favorite_marking(input_service) then
 		self:_play_sound("play_gui_inventory_item_hover")
 	end
 
-	if not _item_grid:is_item_hovered() then
+	if item_grid:is_item_hovered() then
 		self:_play_sound("play_gui_inventory_item_hover")
 	end
 
-	if not (not is_item_pressed and var_14_5) then
-		parent:_set_loadout_item(is_item_pressed)
+	if item and not is_equipped then
+		parent:_set_loadout_item(item)
 		self:_play_sound("play_gui_equipment_equip_hero")
 
-		if is_item_pressed.data.slot_type == "skin" then
+		local item_data = item.data
+		local slot_type = item_data.slot_type
+
+		if slot_type == "skin" then
 			parent:update_skin_sync()
 		end
 	end
 
-	local item_tabs = _widgets_by_name.item_tabs
+	local item_tabs = widgets_by_name.item_tabs
 
-	UIWidgetUtils.animate_default_icon_tabs(item_tabs, arg_14_1)
+	UIWidgetUtils.animate_default_icon_tabs(item_tabs, dt)
 
-	if not self:_is_inventory_tab_hovered() then
+	local tab_index_hovered = self:_is_inventory_tab_hovered()
+
+	if tab_index_hovered then
 		self:_play_sound("play_gui_inventory_tab_hover")
 	end
 
-	local _is_inventory_tab_pressed = self:_is_inventory_tab_pressed()
+	local tab_index_pressed = self:_is_inventory_tab_pressed()
 
-	if not (not _is_inventory_tab_pressed and _is_inventory_tab_pressed == self._selected_cosmetic_slot_index) then
-		parent:set_selected_cosmetic_slot_index(_is_inventory_tab_pressed)
+	if tab_index_pressed and tab_index_pressed ~= self._selected_cosmetic_slot_index then
+		parent:set_selected_cosmetic_slot_index(tab_index_pressed)
 		self:_play_sound("play_gui_inventory_tab_click")
-	elseif not Managers.input:is_device_active("gamepad") then
-		local get_service = Managers.input:get_service("hero_view")
-		local amount = self._widgets_by_name.item_tabs.content.amount
+	elseif Managers.input:is_device_active("gamepad") then
+		local input_service = Managers.input:get_service("hero_view")
+		local widget = self._widgets_by_name.item_tabs
+		local widget_content = widget.content
+		local amount = widget_content.amount
 		local _selected_cosmetic_slot_index = parent._selected_cosmetic_slot_index
 
-		_selected_cosmetic_slot_index = _selected_cosmetic_slot_index or 1
+		if not _selected_cosmetic_slot_index then
+			-- Nothing
+		end
 
-		if not (not get_service:get("cycle_previous") and not (_selected_cosmetic_slot_index > 1)) then
-			parent:set_selected_cosmetic_slot_index(_selected_cosmetic_slot_index - 1)
+		_selected_cosmetic_slot_index = 1
+
+		local current_index = _selected_cosmetic_slot_index
+
+		::label_14_0::
+
+		if input_service:get("cycle_previous") and current_index > 1 then
+			parent:set_selected_cosmetic_slot_index(current_index - 1)
 			self:_play_sound("play_gui_cosmetics_selection_click")
-		elseif not (not get_service:get("cycle_next") and not (_selected_cosmetic_slot_index < amount)) then
-			parent:set_selected_cosmetic_slot_index(_selected_cosmetic_slot_index + 1)
+		elseif input_service:get("cycle_next") and current_index < amount then
+			parent:set_selected_cosmetic_slot_index(current_index + 1)
 			self:_play_sound("play_gui_cosmetics_selection_click")
 		end
 	end
 
-	local page_button_next = _widgets_by_name.page_button_next
-	local page_button_previous = _widgets_by_name.page_button_previous
+	local page_button_next = widgets_by_name.page_button_next
+	local page_button_previous = widgets_by_name.page_button_previous
 
-	UIWidgetUtils.animate_default_button(page_button_next, arg_14_1)
-	UIWidgetUtils.animate_default_button(page_button_previous, arg_14_1)
+	UIWidgetUtils.animate_default_button(page_button_next, dt)
+	UIWidgetUtils.animate_default_button(page_button_previous, dt)
 
-	if self:_is_button_hovered(page_button_next) or not self:_is_button_hovered(page_button_previous) then
+	if self:_is_button_hovered(page_button_next) or self:_is_button_hovered(page_button_previous) then
 		self:_play_sound("play_gui_inventory_next_hover")
 	end
 
-	if not self:_is_button_pressed(page_button_next) then
-		local num = self._current_page + 1
+	if self:_is_button_pressed(page_button_next) then
+		local next_page_index = self._current_page + 1
 
-		_item_grid:set_item_page(num)
+		item_grid:set_item_page(next_page_index)
 		self:_play_sound("play_gui_cosmetics_inventory_next_click")
-	elseif not self:_is_button_pressed(page_button_previous) then
-		local num_2 = self._current_page - 1
+	elseif self:_is_button_pressed(page_button_previous) then
+		local next_page_index = self._current_page - 1
 
-		_item_grid:set_item_page(num_2)
+		item_grid:set_item_page(next_page_index)
 		self:_play_sound("play_gui_cosmetics_inventory_next_click")
 	end
 end
 
 HeroWindowCosmeticsInventory._update_page_info = function (self)
 	-- function 15
-	local get_page_info, var_15_1 = self._item_grid:get_page_info()
+	local current_page, total_pages = self._item_grid:get_page_info()
 
-	if not (get_page_info ~= self._current_page or var_15_1 == self._total_pages) then
-		self._total_pages = var_15_1
-		self._current_page = get_page_info
-		get_page_info = get_page_info or 1
-		var_15_1 = var_15_1 or 1
+	if current_page ~= self._current_page or total_pages ~= self._total_pages then
+		self._total_pages = total_pages
+		self._current_page = current_page
+		current_page = not not current_page or not not 1
+		total_pages = not not total_pages or not not 1
 
-		local _widgets_by_name = self._widgets_by_name
+		local widgets_by_name = self._widgets_by_name
 
-		_widgets_by_name.page_text_left.content.text = tostring(get_page_info)
-		_widgets_by_name.page_text_right.content.text = tostring(var_15_1)
-		_widgets_by_name.page_button_next.content.button_hotspot.disable_button = get_page_info == var_15_1
-		_widgets_by_name.page_button_previous.content.button_hotspot.disable_button = get_page_info == 1
+		widgets_by_name.page_text_left.content.text = tostring(current_page)
+		widgets_by_name.page_text_right.content.text = tostring(total_pages)
+		widgets_by_name.page_button_next.content.button_hotspot.disable_button = current_page == total_pages
+		widgets_by_name.page_button_previous.content.button_hotspot.disable_button = current_page == 1
 	end
 end
 
 HeroWindowCosmeticsInventory._update_selected_cosmetic_slot_index = function (self)
 	-- function 16
-	local get_selected_cosmetic_slot_index = self.parent:get_selected_cosmetic_slot_index()
+	local index = self.parent:get_selected_cosmetic_slot_index()
 
-	if get_selected_cosmetic_slot_index ~= self._selected_cosmetic_slot_index then
-		self._selected_cosmetic_slot_index = get_selected_cosmetic_slot_index
+	if index ~= self._selected_cosmetic_slot_index then
+		self._selected_cosmetic_slot_index = index
 
-		self:_change_category_by_index(get_selected_cosmetic_slot_index)
+		self:_change_category_by_index(index)
 	end
 end
 
 HeroWindowCosmeticsInventory._update_loadout_sync = function (self)
 	-- function 17
-	local _item_grid = self._item_grid
-	local loadout_sync_id = self.parent.loadout_sync_id
+	local item_grid = self._item_grid
+	local parent = self.parent
+	local loadout_sync_id = parent.loadout_sync_id
 
 	if loadout_sync_id ~= self._loadout_sync_id then
 		self._loadout_sync_id = loadout_sync_id
 
-		_item_grid:update_items_status()
+		item_grid:update_items_status()
 	end
 end
 
-HeroWindowCosmeticsInventory._exit = function (self, arg_18_1)
+HeroWindowCosmeticsInventory._exit = function (self, selected_level)
 	-- function 18
 	self.exit = true
-	self.exit_level_id = arg_18_1
+	self.exit_level_id = selected_level
 end
 
-HeroWindowCosmeticsInventory.draw = function (self, arg_19_1)
+HeroWindowCosmeticsInventory.draw = function (self, dt)
 	-- function 19
 	local ui_renderer = self.ui_renderer
 	local ui_top_renderer = self.ui_top_renderer
 	local ui_scenegraph = self.ui_scenegraph
-	local window_input_service = self.parent:window_input_service()
-	local is_device_active = Managers.input:is_device_active("gamepad")
+	local input_service = self.parent:window_input_service()
+	local gamepad_active = Managers.input:is_device_active("gamepad")
 
-	UIRenderer.begin_pass(ui_top_renderer, ui_scenegraph, window_input_service, arg_19_1, nil, self.render_settings)
+	UIRenderer.begin_pass(ui_top_renderer, ui_scenegraph, input_service, dt, nil, self.render_settings)
 
-	for i, v in ipairs(self._widgets) do
-		UIRenderer.draw_widget(ui_top_renderer, v)
+	for _, widget in ipairs(self._widgets) do
+		UIRenderer.draw_widget(ui_top_renderer, widget)
 	end
 
-	local _active_node_widgets = self._active_node_widgets
+	local active_node_widgets = self._active_node_widgets
 
-	if not _active_node_widgets then
-		for i_2, v_2 in ipairs(_active_node_widgets) do
-			UIRenderer.draw_widget(ui_top_renderer, v_2)
+	if active_node_widgets then
+		for _, widget in ipairs(active_node_widgets) do
+			UIRenderer.draw_widget(ui_top_renderer, widget)
 		end
 	end
 
 	UIRenderer.end_pass(ui_top_renderer)
 end
 
-HeroWindowCosmeticsInventory._play_sound = function (self, arg_20_1)
+HeroWindowCosmeticsInventory._play_sound = function (self, event)
 	-- function 20
-	self.parent:play_sound(arg_20_1)
+	self.parent:play_sound(event)
 end
 
-HeroWindowCosmeticsInventory._change_category_by_index = function (self, arg_21_1, arg_21_2)
+HeroWindowCosmeticsInventory._change_category_by_index = function (self, index, force_update)
 	-- function 21
-	self:_select_tab_by_category_index(arg_21_1)
+	self:_select_tab_by_category_index(index)
 
-	if not arg_21_2 then
-		arg_21_1 = self._current_category_index or 1
+	if force_update then
+		index = not not self._current_category_index or not not 1
 	end
 
-	if self._current_category_index == arg_21_1 then
+	if self._current_category_index == index then
 		return
 	end
 
-	self._current_category_index = arg_21_1
+	self._current_category_index = index
 
-	local var_21_0 = category_settings[arg_21_1]
-	local name = var_21_0.name
-	local display_name = var_21_0.display_name
+	local category_setting = category_settings[index]
+	local category_name = category_setting.name
+	local display_name = category_setting.display_name
 
-	self._item_grid:change_category(name)
+	self._item_grid:change_category(category_name)
 
 	self._widgets_by_name.item_grid_header.content.text = display_name
 

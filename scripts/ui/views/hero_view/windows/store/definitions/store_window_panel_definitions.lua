@@ -1,7 +1,7 @@
 -- chunkname: @scripts/ui/views/hero_view/windows/store/definitions/store_window_panel_definitions.lua
 
 local console_menu_scenegraphs = UISettings.console_menu_scenegraphs
-local tbl = {
+local scenegraph_definition = {
 	screen = console_menu_scenegraphs.screen,
 	area = console_menu_scenegraphs.area,
 	area_left = console_menu_scenegraphs.area_left,
@@ -267,7 +267,7 @@ local tbl = {
 		}
 	}
 }
-local tbl_2 = {
+local currency_text_style = {
 	word_wrap = false,
 	upper_case = true,
 	localize = false,
@@ -285,7 +285,7 @@ local tbl_2 = {
 	}
 }
 
-local function fn(arg_1_0, arg_1_1)
+local function create_panel_button_selection(scenegraph_id, size)
 	-- function 1
 	return {
 		element = {
@@ -317,7 +317,7 @@ local function fn(arg_1_0, arg_1_1)
 					}
 				}
 			},
-			size = arg_1_1
+			size = size
 		},
 		style = {
 			edge = {
@@ -358,11 +358,11 @@ local function fn(arg_1_0, arg_1_1)
 			0,
 			0
 		},
-		scenegraph_id = arg_1_0
+		scenegraph_id = scenegraph_id
 	}
 end
 
-local tbl_3 = {
+local widgets = {
 	panel_input_area_1 = UIWidgets.create_simple_texture("xbone_button_icon_lt", "panel_input_area_1"),
 	panel_input_area_2 = UIWidgets.create_simple_texture("xbone_button_icon_rt", "panel_input_area_2"),
 	panel = UIWidgets.create_simple_rect("panel", {
@@ -399,26 +399,26 @@ local tbl_3 = {
 	}),
 	back_button = UIWidgets.create_layout_button("back_button", "layout_button_back", "layout_button_back_glow"),
 	close_button = UIWidgets.create_layout_button("close_button", "layout_button_close", "layout_button_close_glow"),
-	entry_panel_selection = fn("entry_panel_selection", tbl.entry_panel_selection.size),
-	mark_all_seen_button = UIWidgets.create_store_panel_button("mark_all_as_seen", tbl.mark_all_as_seen.size, "mark_all_as_seen", 22)
+	entry_panel_selection = create_panel_button_selection("entry_panel_selection", scenegraph_definition.entry_panel_selection.size),
+	mark_all_seen_button = UIWidgets.create_store_panel_button("mark_all_as_seen", scenegraph_definition.mark_all_as_seen.size, "mark_all_as_seen", 22)
 }
-local tbl_4 = {
+local animation_definitions = {
 	on_enter = {
 		{
 			name = "fade_in",
 			start_progress = 0,
 			end_progress = 0.3,
-			init = function (arg_2_0, arg_2_1, arg_2_2, arg_2_3)
+			init = function (ui_scenegraph, scenegraph_definition, widgets, params)
 				-- function 2
-				arg_2_3.render_settings.alpha_multiplier = 0
+				params.render_settings.alpha_multiplier = 0
 			end,
-			update = function (arg_3_0, arg_3_1, arg_3_2, arg_3_3, arg_3_4)
+			update = function (ui_scenegraph, scenegraph_definition, widgets, progress, params)
 				-- function 3
-				local easeOutCubic = math.easeOutCubic(arg_3_3)
+				local anim_progress = math.easeOutCubic(progress)
 
-				arg_3_4.render_settings.alpha_multiplier = easeOutCubic
+				params.render_settings.alpha_multiplier = anim_progress
 			end,
-			on_complete = function (arg_4_0, arg_4_1, arg_4_2, arg_4_3)
+			on_complete = function (ui_scenegraph, scenegraph_definition, widgets, params)
 				-- function 4
 				return
 			end
@@ -429,17 +429,17 @@ local tbl_4 = {
 			name = "fade_out",
 			start_progress = 0,
 			end_progress = 0.3,
-			init = function (arg_5_0, arg_5_1, arg_5_2, arg_5_3)
+			init = function (ui_scenegraph, scenegraph_definition, widgets, params)
 				-- function 5
-				arg_5_3.render_settings.alpha_multiplier = 1
+				params.render_settings.alpha_multiplier = 1
 			end,
-			update = function (arg_6_0, arg_6_1, arg_6_2, arg_6_3, arg_6_4)
+			update = function (ui_scenegraph, scenegraph_definition, widgets, progress, params)
 				-- function 6
-				local easeOutCubic = math.easeOutCubic(arg_6_3)
+				local anim_progress = math.easeOutCubic(progress)
 
-				arg_6_4.render_settings.alpha_multiplier = 1 - easeOutCubic
+				params.render_settings.alpha_multiplier = 1 - anim_progress
 			end,
-			on_complete = function (arg_7_0, arg_7_1, arg_7_2, arg_7_3)
+			on_complete = function (ui_scenegraph, scenegraph_definition, widgets, params)
 				-- function 7
 				return
 			end
@@ -448,7 +448,7 @@ local tbl_4 = {
 }
 
 return {
-	widgets = tbl_3,
-	scenegraph_definition = tbl,
-	animation_definitions = tbl_4
+	widgets = widgets,
+	scenegraph_definition = scenegraph_definition,
+	animation_definitions = animation_definitions
 }

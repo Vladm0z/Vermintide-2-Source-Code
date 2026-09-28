@@ -4,24 +4,24 @@ require("scripts/entity_system/systems/behaviour/nodes/bt_node")
 
 BTNilAction = class(BTNilAction, BTNode)
 
-BTNilAction.init = function (arg_1_0, ...)
+BTNilAction.init = function (self, ...)
 	-- function 1
-	BTNilAction.super.init(arg_1_0, ...)
+	BTNilAction.super.init(self, ...)
 end
 
 BTNilAction.name = "BTNilAction"
 
-BTNilAction.enter = function (arg_2_0)
+BTNilAction.enter = function (self)
 	-- function 2
 	return
 end
 
-BTNilAction.leave = function (arg_3_0)
+BTNilAction.leave = function (self)
 	-- function 3
 	return
 end
 
-BTNilAction.run = function (arg_4_0, arg_4_1, arg_4_2, arg_4_3, arg_4_4, arg_4_5)
+BTNilAction.run = function (self, unit, blackboard, t, dt, bt_name)
 	-- function 4
 	return "running"
 end

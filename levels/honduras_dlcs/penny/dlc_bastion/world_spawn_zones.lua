@@ -1,6 +1,6 @@
 -- chunkname: @levels/honduras_dlcs/penny/dlc_bastion/world_spawn_zones.lua
 
-local tbl = {
+local path_markers = {
 	{
 		kind = "good",
 		main_path_index = 1,
@@ -380,7 +380,7 @@ local tbl = {
 		}
 	}
 }
-local tbl_2 = {
+local main_paths = {
 	{
 		path_length = 93.72493743896484,
 		travel_dist = {
@@ -2507,8 +2507,8 @@ local tbl_2 = {
 		}
 	}
 }
-local tbl_3 = {}
-local tbl_4 = {
+local crossroads = {}
+local zones = {
 	{
 		unique_zone_id = 1,
 		travel_dist = 10.000000476837158,
@@ -33890,7 +33890,7 @@ local tbl_4 = {
 		}
 	}
 }
-local tbl_5 = {
+local cover_points = {
 	26.389999389648438,
 	56.5099983215332,
 	-24.202714920043945,
@@ -38942,7 +38942,7 @@ local tbl_5 = {
 	0.8320494294166565,
 	-0.5547014474868774
 }
-local tbl_6 = {
+local position_lookup = {
 	{
 		-5.065250396728516,
 		118.715576171875,
@@ -183004,20 +183004,20 @@ local tbl_6 = {
 		-38.7568244934082
 	}
 }
-local num = 28812
-local num_2 = 131
-local num_3 = 1353.2730975151
-local str = "1"
+local number_of_spawns = 28812
+local num_main_zones = 131
+local total_main_path_length = 1353.2730975151
+local spawner_version = "1"
 
 return {
-	version = str,
-	number_of_spawns = num,
-	path_markers = tbl,
-	zones = tbl_4,
-	cover_points = tbl_5,
-	num_main_zones = num_2,
-	position_lookup = tbl_6,
-	main_paths = tbl_2,
-	crossroads = tbl_3,
-	total_main_path_length = num_3
+	version = spawner_version,
+	number_of_spawns = number_of_spawns,
+	path_markers = path_markers,
+	zones = zones,
+	cover_points = cover_points,
+	num_main_zones = num_main_zones,
+	position_lookup = position_lookup,
+	main_paths = main_paths,
+	crossroads = crossroads,
+	total_main_path_length = total_main_path_length
 }

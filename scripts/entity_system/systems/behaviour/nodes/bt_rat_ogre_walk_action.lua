@@ -4,130 +4,135 @@ require("scripts/entity_system/systems/behaviour/nodes/bt_node")
 
 BTRatOgreWalkAction = class(BTRatOgreWalkAction, BTNode)
 
-BTRatOgreWalkAction.init = function (arg_1_0, ...)
+BTRatOgreWalkAction.init = function (self, ...)
 	-- function 1
-	BTRatOgreWalkAction.super.init(arg_1_0, ...)
+	BTRatOgreWalkAction.super.init(self, ...)
 end
 
 BTRatOgreWalkAction.name = "BTRatOgreWalkAction"
 
-local num = 5
+local walk_distance = 5
 
-BTRatOgreWalkAction.enter = function (self, arg_2_1, arg_2_2, arg_2_3)
+BTRatOgreWalkAction.enter = function (self, unit, blackboard, t)
 	-- function 2
-	arg_2_2.action = self._tree_node.action_data
-	arg_2_2.wait_for_ogre = false
+	local action = self._tree_node.action_data
 
-	local navigation_extension = arg_2_2.navigation_extension
-	local var_2_1
+	blackboard.action = action
+	blackboard.wait_for_ogre = false
 
-	if not arg_2_2.patroling then
-		var_2_1 = arg_2_2.patrol_goal_pos:unbox()
+	local navigation_extension = blackboard.navigation_extension
+	local patrol_goal_pos
+
+	if blackboard.patroling then
+		patrol_goal_pos = blackboard.patrol_goal_pos:unbox()
 	else
-		arg_2_2.patroling = {}
-		var_2_1 = self:find_patrol_goal(arg_2_1, arg_2_2, num)
+		blackboard.patroling = {}
+		patrol_goal_pos = self:find_patrol_goal(unit, blackboard, walk_distance)
 
-		if not var_2_1 then
-			arg_2_2.patrol_goal_pos = Vector3Box(var_2_1)
+		if patrol_goal_pos then
+			blackboard.patrol_goal_pos = Vector3Box(patrol_goal_pos)
 		end
 	end
 
-	if not var_2_1 then
-		Managers.state.network:anim_event(arg_2_1, "walk_fwd")
-		arg_2_2.locomotion_extension:set_rotation_speed(10)
-		navigation_extension:move_to(var_2_1)
-		navigation_extension:set_max_speed(arg_2_2.breed.patrol_walk_speed)
+	if patrol_goal_pos then
+		local network_manager = Managers.state.network
+
+		network_manager:anim_event(unit, "walk_fwd")
+		blackboard.locomotion_extension:set_rotation_speed(10)
+		navigation_extension:move_to(patrol_goal_pos)
+		navigation_extension:set_max_speed(blackboard.breed.patrol_walk_speed)
 	else
-		arg_2_2.ratogre_walking = false
+		blackboard.ratogre_walking = false
 	end
 end
 
-BTRatOgreWalkAction.leave = function (arg_3_0, arg_3_1, arg_3_2, arg_3_3, arg_3_4, arg_3_5)
+BTRatOgreWalkAction.leave = function (self, unit, blackboard, t, reason, destroy)
 	-- function 3
-	if arg_3_4 == "aborted" then
-		arg_3_2.wait_for_ogre = true
+	if reason == "aborted" then
+		blackboard.wait_for_ogre = true
 	else
-		arg_3_2.ratogre_walking = false
+		blackboard.ratogre_walking = false
 	end
 end
 
-BTRatOgreWalkAction.run = function (self, arg_4_1, arg_4_2, arg_4_3, arg_4_4)
+BTRatOgreWalkAction.run = function (self, unit, blackboard, t, dt)
 	-- function 4
-	local locomotion_extension = arg_4_2.locomotion_extension
+	local locomotion = blackboard.locomotion_extension
 
-	self:follow(arg_4_1, arg_4_3, arg_4_4, arg_4_2, locomotion_extension)
+	self:follow(unit, t, dt, blackboard, locomotion)
 
 	return "running", "evaluate"
 end
 
-local tbl = {}
+local hit_units = {}
 
-BTRatOgreWalkAction.follow = function (self, arg_5_1, arg_5_2, arg_5_3, arg_5_4, arg_5_5)
+BTRatOgreWalkAction.follow = function (self, unit, t, dt, blackboard, locomotion)
 	-- function 5
-	if arg_5_4.navigation_extension:number_failed_move_attempts() > 1 then
-		arg_5_4.move_state = nil
+	if blackboard.navigation_extension:number_failed_move_attempts() > 1 then
+		blackboard.move_state = nil
 	end
 
-	local navigation_extension = arg_5_4.navigation_extension
-	local num_2 = arg_5_4.patrol_goal_pos:unbox() - POSITION_LOOKUP[arg_5_1]
+	local navigation_extension = blackboard.navigation_extension
+	local patrol_goal_pos = blackboard.patrol_goal_pos:unbox()
+	local to_vec = patrol_goal_pos - POSITION_LOOKUP[unit]
 
-	Vector3.set_z(num_2, 0)
+	Vector3.set_z(to_vec, 0)
 
-	local length = Vector3.length(num_2)
+	local distance = Vector3.length(to_vec)
 
-	if length < 1 then
-		local find_patrol_goal = self:find_patrol_goal(arg_5_1, arg_5_4, num)
+	if distance < 1 then
+		local patrol_goal_pos = self:find_patrol_goal(unit, blackboard, walk_distance)
 
-		arg_5_4.patrol_goal_pos = Vector3Box(find_patrol_goal)
+		blackboard.patrol_goal_pos = Vector3Box(patrol_goal_pos)
 
-		local navigation_extension_2 = arg_5_4.navigation_extension
+		local navigation_extension = blackboard.navigation_extension
 
-		navigation_extension_2:move_to(find_patrol_goal)
-		navigation_extension_2:set_max_speed(arg_5_4.breed.patrol_walk_speed)
+		navigation_extension:move_to(patrol_goal_pos)
+		navigation_extension:set_max_speed(blackboard.breed.patrol_walk_speed)
 	end
 
-	QuickDrawer:sphere(arg_5_4.patrol_goal_pos:unbox(), 1.2 + math.sin(arg_5_2 * 7))
+	QuickDrawer:sphere(blackboard.patrol_goal_pos:unbox(), 1.2 + math.sin(t * 7))
 
-	if not (arg_5_4.move_state == "moving" or not (length > 0.5)) then
-		arg_5_4.move_state = "moving"
+	if blackboard.move_state ~= "moving" and distance > 0.5 then
+		blackboard.move_state = "moving"
 
-		local action_data = self._tree_node.action_data
-		local var_5_6
+		local action = self._tree_node.action_data
+		local start_anim
 
-		Managers.state.network:anim_event(arg_5_1, var_5_6 or action_data.move_anim)
-	elseif not (arg_5_4.move_state == "idle" or not (length < 0.2)) then
-		arg_5_4.move_state = "idle"
+		Managers.state.network:anim_event(unit, not not start_anim or not not action.move_anim)
+	elseif blackboard.move_state ~= "idle" and distance < 0.2 then
+		blackboard.move_state = "idle"
 
-		Managers.state.network:anim_event(arg_5_1, "idle")
+		Managers.state.network:anim_event(unit, "idle")
 	end
 end
 
-BTRatOgreWalkAction.find_patrol_goal = function (arg_6_0, arg_6_1, arg_6_2, arg_6_3)
+BTRatOgreWalkAction.find_patrol_goal = function (self, unit, blackboard, distance_passed_player)
 	-- function 6
-	local conflict = Managers.state.conflict
-	local main_path_info = conflict.main_path_info
-	local main_path_player_info = conflict.main_path_player_info
-	local main_paths = main_path_info.main_paths
-	local var_6_4
-	local closest_pos_at_main_path, var_6_6 = MainPathUtils.closest_pos_at_main_path(main_paths, POSITION_LOOKUP[arg_6_1])
+	local conflict_director = Managers.state.conflict
+	local info = conflict_director.main_path_info
+	local player_info = conflict_director.main_path_player_info
+	local main_paths = info.main_paths
+	local goal_pos
+	local pos_at_path, travel_dist = MainPathUtils.closest_pos_at_main_path(main_paths, POSITION_LOOKUP[unit])
 
-	QuickDrawerStay:sphere(closest_pos_at_main_path, 1.5, Color(0, 100, 255))
+	QuickDrawerStay:sphere(pos_at_path, 1.5, Color(0, 100, 255))
 
-	if not main_path_info.ahead_unit then
-		local var_6_7 = main_path_player_info[main_path_info.ahead_unit]
-		local unbox = var_6_7.path_pos:unbox()
-		local travel_dist = var_6_7.travel_dist
+	if info.ahead_unit then
+		local data = player_info[info.ahead_unit]
+		local enemy_pos_at_path = data.path_pos:unbox()
+		local enemy_travel_dist = data.travel_dist
 
-		QuickDrawerStay:sphere(unbox, 3, Color(255, 10, 255))
+		QuickDrawerStay:sphere(enemy_pos_at_path, 3, Color(255, 10, 255))
 
-		if travel_dist < var_6_6 then
-			var_6_4 = MainPathUtils.point_on_mainpath(main_paths, travel_dist - arg_6_3)
+		if enemy_travel_dist < travel_dist then
+			goal_pos = MainPathUtils.point_on_mainpath(main_paths, enemy_travel_dist - distance_passed_player)
 		else
-			var_6_4 = MainPathUtils.point_on_mainpath(main_paths, travel_dist + arg_6_3)
+			goal_pos = MainPathUtils.point_on_mainpath(main_paths, enemy_travel_dist + distance_passed_player)
 		end
 
-		QuickDrawerStay:sphere(var_6_4, 2, Color(0, 10, 255))
+		QuickDrawerStay:sphere(goal_pos, 2, Color(0, 10, 255))
 	end
 
-	return var_6_4
+	return goal_pos
 end

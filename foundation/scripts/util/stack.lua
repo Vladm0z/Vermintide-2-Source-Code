@@ -7,9 +7,9 @@ Stack.init = function (self)
 	self._stack = {}
 end
 
-Stack.push = function (self, arg_2_1)
+Stack.push = function (self, node)
 	-- function 2
-	table.insert(self._stack, arg_2_1)
+	table.insert(self._stack, node)
 end
 
 Stack.pop = function (self)

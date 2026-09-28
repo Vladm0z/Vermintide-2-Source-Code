@@ -1,6 +1,8 @@
 -- chunkname: @scripts/settings/dlcs/celebrate/celebrate_pickups_settings.lua
 
-DLCSettings.celebrate.pickups = {
+local settings = DLCSettings.celebrate
+
+settings.pickups = {
 	potions = {
 		beer_bottle = {
 			only_once = true,
@@ -20,24 +22,26 @@ DLCSettings.celebrate.pickups = {
 				action = "action_one",
 				sub_action = "default"
 			},
-			on_pick_up_func = function (arg_1_0, arg_1_1, arg_1_2)
+			on_pick_up_func = function (world, interactor_unit, is_server)
 				-- function 1
-				ScriptUnit.extension(arg_1_1, "buff_system"):add_buff("intoxication_base")
+				local buff_extension = ScriptUnit.extension(interactor_unit, "buff_system")
 
-				local player = Managers.player
-				local local_player = player:local_player()
-				local statistics_db = player:statistics_db()
+				buff_extension:add_buff("intoxication_base")
+
+				local player_manager = Managers.player
+				local local_player = player_manager:local_player()
+				local statistics_db = player_manager:statistics_db()
 				local stats_id = local_player:stats_id()
 
 				statistics_db:increment_stat(stats_id, "crawl_total_ales_drunk")
 			end,
-			can_interact_func = function (arg_2_0, arg_2_1, arg_2_2)
+			can_interact_func = function (interactor_unit, interactable_unit, data)
 				-- function 2
-				local extension = ScriptUnit.extension(arg_2_0, "buff_system")
-				local has_buff_type = extension:has_buff_type("beer_bottle_pickup_cooldown")
-				local has_buff_perk = extension:has_buff_perk("falling_down")
+				local buff_extension = ScriptUnit.extension(interactor_unit, "buff_system")
+				local is_in_cooldown = buff_extension:has_buff_type("beer_bottle_pickup_cooldown")
+				local is_falling_down = buff_extension:has_buff_perk("falling_down")
 
-				return not not has_buff_type or not has_buff_perk
+				return not is_in_cooldown and not not not is_falling_down
 			end
 		},
 		beer_bottle_unique = {
@@ -58,20 +62,20 @@ DLCSettings.celebrate.pickups = {
 				action = "action_one",
 				sub_action = "default"
 			},
-			on_pick_up_func = function (arg_3_0, arg_3_1, arg_3_2)
+			on_pick_up_func = function (world, interactor_unit, is_server)
 				-- function 3
-				local extension = ScriptUnit.extension(arg_3_1, "buff_system")
+				local buff_extension = ScriptUnit.extension(interactor_unit, "buff_system")
 
-				extension:add_buff("intoxication_base")
-				extension:add_buff("hinder_career_ability")
+				buff_extension:add_buff("intoxication_base")
+				buff_extension:add_buff("hinder_career_ability")
 			end,
-			can_interact_func = function (arg_4_0, arg_4_1, arg_4_2)
+			can_interact_func = function (interactor_unit, interactable_unit, data)
 				-- function 4
-				local extension = ScriptUnit.extension(arg_4_0, "buff_system")
-				local has_buff_type = extension:has_buff_type("beer_bottle_pickup_cooldown")
-				local has_buff_perk = extension:has_buff_perk("falling_down")
+				local buff_extension = ScriptUnit.extension(interactor_unit, "buff_system")
+				local is_in_cooldown = buff_extension:has_buff_type("beer_bottle_pickup_cooldown")
+				local is_falling_down = buff_extension:has_buff_perk("falling_down")
 
-				return not not has_buff_type or not has_buff_perk
+				return not is_in_cooldown and not not not is_falling_down
 			end
 		}
 	}

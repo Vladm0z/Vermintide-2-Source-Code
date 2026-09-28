@@ -1,10 +1,10 @@
 -- chunkname: @scripts/settings/dlcs/morris/deus_weapons.lua
 
-local tbl = {
+local property_table_mapping = {
 	melee = "deus_melee",
 	ranged = "deus_ranged"
 }
-local tbl_2 = {
+local trait_table_mapping = {
 	melee = "deus_melee",
 	trollhammer_torpedo = "deus_trollhammer_torpedo",
 	ranged_energy = "deus_ranged_energy",
@@ -13,7 +13,7 @@ local tbl_2 = {
 }
 local DeusWeapons = DeusWeapons
 
-DeusWeapons = DeusWeapons or {
+DeusWeapons = not not DeusWeapons or not not {
 	deus_wh_fencing_sword = {
 		base_item = "wh_fencing_sword"
 	},
@@ -1430,7 +1430,7 @@ DeusWeapons = DeusWeapons
 
 local DeusDefaultLoadout = DeusDefaultLoadout
 
-DeusDefaultLoadout = DeusDefaultLoadout or {
+DeusDefaultLoadout = not not DeusDefaultLoadout or not not {
 	wh_zealot = {
 		slot_ranged = "deus_wh_deus_01",
 		slot_melee = "deus_wh_1h_axe"
@@ -1516,7 +1516,7 @@ DeusDefaultLoadout = DeusDefaultLoadout
 
 local DeusStartingWeaponTypeMapping = DeusStartingWeaponTypeMapping
 
-DeusStartingWeaponTypeMapping = DeusStartingWeaponTypeMapping or {
+DeusStartingWeaponTypeMapping = not not DeusStartingWeaponTypeMapping or not not {
 	we_2h_sword = "deus_we_2h_sword",
 	dr_1h_throwing_axes = "deus_dr_1h_throwing_axes",
 	dr_2h_pick = "deus_dr_2h_pick",
@@ -1605,7 +1605,7 @@ DeusStartingWeaponTypeMapping = DeusStartingWeaponTypeMapping
 
 local DeusWeaponGroups = DeusWeaponGroups
 
-DeusWeaponGroups = DeusWeaponGroups or {
+DeusWeaponGroups = not not DeusWeaponGroups or not not {
 	wh_fencing_sword = {
 		default = "deus_wh_fencing_sword",
 		slot_type = "melee",
@@ -2109,7 +2109,7 @@ DeusWeaponGroups = DeusWeaponGroups
 
 local DeusWeaponArchetypes = DeusWeaponArchetypes
 
-DeusWeaponArchetypes = DeusWeaponArchetypes or {
+DeusWeaponArchetypes = not not DeusWeaponArchetypes or not not {
 	attack_speed_on_crit = {
 		traits = {
 			"melee_attack_speed_on_crit"
@@ -2289,7 +2289,7 @@ DeusWeaponArchetypes = DeusWeaponArchetypes
 
 local DeusSlotChance = DeusSlotChance
 
-DeusSlotChance = DeusSlotChance or {
+DeusSlotChance = not not DeusSlotChance or not not {
 	ranged = 40,
 	slot_chance_multiplier = 3,
 	melee = 60
@@ -2298,7 +2298,7 @@ DeusSlotChance = DeusSlotChance
 
 local DeusDropRarityWeights = DeusDropRarityWeights
 
-DeusDropRarityWeights = DeusDropRarityWeights or {
+DeusDropRarityWeights = not not DeusDropRarityWeights or not not {
 	default = {
 		plentiful = {
 			0,
@@ -2356,7 +2356,7 @@ DeusDropRarityWeights = DeusDropRarityWeights
 
 local DeusStarterWeaponPowerLevels = DeusStarterWeaponPowerLevels
 
-DeusStarterWeaponPowerLevels = DeusStarterWeaponPowerLevels or {
+DeusStarterWeaponPowerLevels = not not DeusStarterWeaponPowerLevels or not not {
 	harder = 450,
 	hard = 250,
 	default = 50,
@@ -2368,7 +2368,7 @@ DeusStarterWeaponPowerLevels = DeusStarterWeaponPowerLevels
 
 local DeusDropPowerlevelRanges = DeusDropPowerlevelRanges
 
-DeusDropPowerlevelRanges = DeusDropPowerlevelRanges or {
+DeusDropPowerlevelRanges = not not DeusDropPowerlevelRanges or not not {
 	default = {
 		plentiful = {
 			50,
@@ -2504,51 +2504,51 @@ DeusDropPowerlevelRanges = DeusDropPowerlevelRanges or {
 }
 DeusDropPowerlevelRanges = DeusDropPowerlevelRanges
 
-for k, v in pairs(DeusWeapons) do
-	local var_0_11 = ItemMasterList[v.base_item]
+for _, data in pairs(DeusWeapons) do
+	local base_item = ItemMasterList[data.base_item]
 	local str = "property_table_name"
-	local property_table_name = v.property_table_name
+	local property_table_name = data.property_table_name
 
 	if not property_table_name then
-		property_table_name = tbl[var_0_11.property_table_name]
-		property_table_name = property_table_name or var_0_11.property_table_name
+		property_table_name = property_table_mapping[base_item.property_table_name]
+		property_table_name = not not property_table_name or not not base_item.property_table_name
 	end
 
-	v[str] = property_table_name
+	data[str] = property_table_name
 
 	local str_2 = "trait_table_name"
-	local trait_table_name = v.trait_table_name
+	local trait_table_name = data.trait_table_name
 
 	if not trait_table_name then
-		trait_table_name = tbl_2[var_0_11.trait_table_name]
-		trait_table_name = trait_table_name or var_0_11.trait_table_name
+		trait_table_name = trait_table_mapping[base_item.trait_table_name]
+		trait_table_name = not not trait_table_name or not not base_item.trait_table_name
 	end
 
-	v[str_2] = trait_table_name
+	data[str_2] = trait_table_name
 
-	local var_0_16 = WeaponTraits.combinations[v.trait_table_name]
-	local tbl_3 = {}
+	local trait_combinations = WeaponTraits.combinations[data.trait_table_name]
+	local baked_trait_combinations = {}
 
-	for i, v_2 in ipairs(var_0_16) do
-		local flag = true
+	for _, combination in ipairs(trait_combinations) do
+		local valid = true
 
-		for i_2, v_3 in ipairs(v_2) do
-			local var_0_19 = WeaponTraits.traits[v_3]
+		for _, trait_name in ipairs(combination) do
+			local trait_data = WeaponTraits.traits[trait_name]
 
-			flag = not flag and not var_0_19.compatible_weapon_list and var_0_19.compatible_weapon_list[v.base_item]
+			valid = not not valid and not trait_data.compatible_weapon_list or not not trait_data.compatible_weapon_list[data.base_item]
 		end
 
-		if not flag then
-			tbl_3[#tbl_3 + 1] = v_2
+		if valid then
+			baked_trait_combinations[#baked_trait_combinations + 1] = combination
 		end
 	end
 
-	v.baked_trait_combinations = tbl_3
+	data.baked_trait_combinations = baked_trait_combinations
 end
 
 fassert(DeusStarterWeaponPowerLevels.default, "DeusStarterWeaponPowerLevels must define a default config")
 
-local tbl_4 = {
+local rarities = {
 	"plentiful",
 	"common",
 	"rare",
@@ -2558,85 +2558,85 @@ local tbl_4 = {
 
 fassert(DeusDropRarityWeights.default, "DeusDropRarityWeights must define a default config")
 
-for k_2, v_4 in pairs(DeusDropRarityWeights) do
-	for i_3, v_5 in ipairs(tbl_4) do
-		fassert(v_4[v_5], "DeusDropRarityWeights must contains config for '" .. v_5 .. "'")
+for _, config in pairs(DeusDropRarityWeights) do
+	for _, rarity in ipairs(rarities) do
+		fassert(config[rarity], "DeusDropRarityWeights must contains config for '" .. rarity .. "'")
 	end
 
-	local var_0_21
+	local count
 
-	for k_3, v_6 in pairs(v_4) do
-		fassert(not var_0_21 and #v_6 == var_0_21, "DeusDropRarityWeights weights must all have the same ammount, '" .. k_3 .. "' has a different weight count")
+	for rarity, weights in pairs(config) do
+		fassert(not count or #weights == count, "DeusDropRarityWeights weights must all have the same ammount, '" .. rarity .. "' has a different weight count")
 
-		var_0_21 = #v_6
+		count = #weights
 	end
 end
 
 fassert(DeusDropPowerlevelRanges.default, "DeusDropPowerlevelRanges must define a default config")
 
-for k_4, v_7 in pairs(DeusDropPowerlevelRanges) do
-	for i_4, v_8 in ipairs(tbl_4) do
-		fassert(v_7[v_8], "DeusDropPowerlevelRanges must contains config for '" .. v_8 .. "'")
+for _, config in pairs(DeusDropPowerlevelRanges) do
+	for _, rarity in ipairs(rarities) do
+		fassert(config[rarity], "DeusDropPowerlevelRanges must contains config for '" .. rarity .. "'")
 	end
 
-	for k_5, v_9 in pairs(v_7) do
-		fassert(#v_9 == 2, "DeusDropPowerlevelRanges weights must define only 2 values, a min and a max, '" .. k_5 .. "' has a different weight count")
+	for rarity, weights in pairs(config) do
+		fassert(#weights == 2, "DeusDropPowerlevelRanges weights must define only 2 values, a min and a max, '" .. rarity .. "' has a different weight count")
 	end
 end
 
-for k_6, v_10 in pairs(DeusWeapons) do
-	fassert(v_10.base_item, "DeusWeapon " .. k_6 .. " must provide a base_item.")
-	fassert(ItemMasterList[v_10.base_item], "DeusWeapon " .. k_6 .. " must provide a base_item that exists in the base game ItemMasterList.")
+for key, item in pairs(DeusWeapons) do
+	fassert(item.base_item, "DeusWeapon " .. key .. " must provide a base_item.")
+	fassert(ItemMasterList[item.base_item], "DeusWeapon " .. key .. " must provide a base_item that exists in the base game ItemMasterList.")
 
-	if not v_10.archetypes then
-		fassert(not v_10.fixed_traits, "DeusWeapons item " .. k_6 .. " provides fixed traits and archetypes. Provide only one or the other.")
-		fassert(not v_10.fixed_properties, "DeusWeapons item " .. k_6 .. " provides fixed properties and archetypes. Provide only one or the other.")
+	if item.archetypes then
+		fassert(not item.fixed_traits, "DeusWeapons item " .. key .. " provides fixed traits and archetypes. Provide only one or the other.")
+		fassert(not item.fixed_properties, "DeusWeapons item " .. key .. " provides fixed properties and archetypes. Provide only one or the other.")
 
-		for i_5, v_11 in ipairs(v_10.archetypes) do
-			fassert(DeusWeaponArchetypes[v_11], "DeusWeapons item " .. k_6 .. " deus_archetype " .. v_11 .. " is not defined in DeusWeaponArchetypes")
+		for i, archetype in ipairs(item.archetypes) do
+			fassert(DeusWeaponArchetypes[archetype], "DeusWeapons item " .. key .. " deus_archetype " .. archetype .. " is not defined in DeusWeaponArchetypes")
 		end
 	end
 end
 
-for k_7, v_12 in pairs(DeusWeaponGroups) do
-	fassert(v_12.default, "DeusWeaponGroup " .. k_7 .. " needs to have a default item defined")
-	fassert(DeusWeapons[v_12.default], "DeusWeaponGroup " .. k_7 .. " default item not found in DeusWeapons")
-	fassert(v_12.can_wield, "DeusWeaponGroup " .. k_7 .. " needs to have can_wield defined")
-	fassert(v_12.slot_type, "DeusWeaponGroup " .. k_7 .. " needs to have slot_type defined")
+for group_key, group in pairs(DeusWeaponGroups) do
+	fassert(group.default, "DeusWeaponGroup " .. group_key .. " needs to have a default item defined")
+	fassert(DeusWeapons[group.default], "DeusWeaponGroup " .. group_key .. " default item not found in DeusWeapons")
+	fassert(group.can_wield, "DeusWeaponGroup " .. group_key .. " needs to have can_wield defined")
+	fassert(group.slot_type, "DeusWeaponGroup " .. group_key .. " needs to have slot_type defined")
 
-	if not v_12.items_per_rarity then
-		for k_8, v_13 in pairs(v_12.items_per_rarity) do
-			for i_6, v_14 in ipairs(v_13) do
-				local var_0_22 = DeusWeapons[v_14]
+	if group.items_per_rarity then
+		for _, items in pairs(group.items_per_rarity) do
+			for i, item_key in ipairs(items) do
+				local deus_item_data = DeusWeapons[item_key]
 
-				fassert(var_0_22, "DeusWeaponGroup " .. k_7 .. " item " .. v_14 .. " not found in DeusWeapons")
+				fassert(deus_item_data, "DeusWeaponGroup " .. group_key .. " item " .. item_key .. " not found in DeusWeapons")
 
-				local var_0_23 = ItemMasterList[var_0_22.base_item]
+				local base_item_data = ItemMasterList[deus_item_data.base_item]
 
-				table.sort(var_0_23.can_wield)
-				table.sort(v_12.can_wield)
-				fassert(table.compare(var_0_23.can_wield, v_12.can_wield), "DeusWeaponGroup " .. k_7 .. " " .. table.tostring(var_0_23.can_wield) .. " item " .. v_14 .. " " .. table.tostring(v_12.can_wield) .. " has mismatching can_wield")
+				table.sort(base_item_data.can_wield)
+				table.sort(group.can_wield)
+				fassert(table.compare(base_item_data.can_wield, group.can_wield), "DeusWeaponGroup " .. group_key .. " " .. table.tostring(base_item_data.can_wield) .. " item " .. item_key .. " " .. table.tostring(group.can_wield) .. " has mismatching can_wield")
 			end
 		end
 	end
 end
 
-local function fn(arg_1_0)
+local function readonlytable(table)
 	-- function 1
-	return setmetatable(arg_1_0, {
-		__newindex = function (arg_2_0, arg_2_1, arg_2_2)
+	return setmetatable(table, {
+		__newindex = function (table, key, value)
 			-- function 2
 			error("Trying to modify read only table. (debug only assert)")
 		end
 	})
 end
 
-fn(DeusDefaultLoadout)
-fn(DeusDropPowerlevelRanges)
-fn(DeusDropRarityWeights)
-fn(DeusSlotChance)
-fn(DeusStarterWeaponPowerLevels)
-fn(DeusStartingWeaponTypeMapping)
-fn(DeusWeaponArchetypes)
-fn(DeusWeaponGroups)
-fn(DeusWeapons)
+readonlytable(DeusDefaultLoadout)
+readonlytable(DeusDropPowerlevelRanges)
+readonlytable(DeusDropRarityWeights)
+readonlytable(DeusSlotChance)
+readonlytable(DeusStarterWeaponPowerLevels)
+readonlytable(DeusStartingWeaponTypeMapping)
+readonlytable(DeusWeaponArchetypes)
+readonlytable(DeusWeaponGroups)
+readonlytable(DeusWeapons)

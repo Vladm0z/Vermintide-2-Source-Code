@@ -2,24 +2,24 @@
 
 local CameraSettings = CameraSettings
 
-CameraSettings = CameraSettings or {}
+CameraSettings = not not CameraSettings or not not {}
 CameraSettings = CameraSettings
 PITCH_SPEED = 480
 YAW_SPEED = 480
 
 local CameraTweaks = CameraTweaks
 
-CameraTweaks = CameraTweaks or {}
+CameraTweaks = not not CameraTweaks or not not {}
 CameraTweaks = CameraTweaks
 CameraTweaks.zoom = {
 	scale = 0.1,
-	interpolation_function = function (arg_1_0, arg_1_1, arg_1_2)
+	interpolation_function = function (current, target, dt)
 		-- function 1
-		return math.lerp(arg_1_0, arg_1_1, arg_1_2 * 7)
+		return math.lerp(current, target, dt * 7)
 	end
 }
 
-local tbl = {
+local THIRD_PERSON_TRANSITIONS = {
 	revive = CameraTransitionTemplates.reviving,
 	heal_self = CameraTransitionTemplates.reviving,
 	emotes = CameraTransitionTemplates.reviving,
@@ -66,7 +66,7 @@ CameraSettings.first_person = {
 				x = 0,
 				y = 0
 			},
-			node_transitions = tbl
+			node_transitions = THIRD_PERSON_TRANSITIONS
 		},
 		{
 			_node = {
@@ -82,7 +82,7 @@ CameraSettings.first_person = {
 				node_transitions = table.merge({
 					first_person_node = CameraTransitionTemplates.zoom,
 					increased_zoom_in = CameraTransitionTemplates.zoom
-				}, tbl)
+				}, THIRD_PERSON_TRANSITIONS)
 			}
 		},
 		{
@@ -99,7 +99,7 @@ CameraSettings.first_person = {
 				node_transitions = table.merge({
 					first_person_node = CameraTransitionTemplates.zoom,
 					increased_zoom_in = CameraTransitionTemplates.zoom
-				}, tbl)
+				}, THIRD_PERSON_TRANSITIONS)
 			}
 		},
 		{
@@ -114,7 +114,7 @@ CameraSettings.first_person = {
 				node_transitions = table.merge({
 					zoom_in = CameraTransitionTemplates.zoom,
 					increased_zoom_in = CameraTransitionTemplates.zoom
-				}, tbl)
+				}, THIRD_PERSON_TRANSITIONS)
 			}
 		},
 		{
@@ -129,7 +129,7 @@ CameraSettings.first_person = {
 				node_transitions = table.merge({
 					zoom_in = CameraTransitionTemplates.zoom,
 					increased_zoom_in = CameraTransitionTemplates.zoom
-				}, tbl)
+				}, THIRD_PERSON_TRANSITIONS)
 			}
 		},
 		{
@@ -147,7 +147,7 @@ CameraSettings.first_person = {
 					first_person_node = CameraTransitionTemplates.zoom,
 					zoom_in = CameraTransitionTemplates.zoom,
 					zoom_in_trueflight = CameraTransitionTemplates.zoom
-				}, tbl)
+				}, THIRD_PERSON_TRANSITIONS)
 			}
 		},
 		{
@@ -165,7 +165,7 @@ CameraSettings.first_person = {
 					first_person_node = CameraTransitionTemplates.zoom,
 					zoom_in = CameraTransitionTemplates.zoom,
 					zoom_in_trueflight = CameraTransitionTemplates.zoom
-				}, tbl)
+				}, THIRD_PERSON_TRANSITIONS)
 			}
 		},
 		{
@@ -178,7 +178,7 @@ CameraSettings.first_person = {
 					x = 0,
 					y = 0
 				},
-				node_transitions = tbl
+				node_transitions = THIRD_PERSON_TRANSITIONS
 			}
 		},
 		{
@@ -252,9 +252,9 @@ CameraSettings.first_person = {
 								x = 0,
 								y = -5
 							},
-							scale_function = function (arg_2_0)
+							scale_function = function (scale)
 								-- function 2
-								return arg_2_0
+								return scale
 							end,
 							node_transitions = {
 								first_person_node = CameraTransitionTemplates.first_person
@@ -287,7 +287,7 @@ CameraSettings.first_person = {
 						},
 						node_transitions = table.merge({
 							first_person_node = CameraTransitionTemplates.first_person
-						}, tbl)
+						}, THIRD_PERSON_TRANSITIONS)
 					}
 				},
 				{
@@ -329,7 +329,7 @@ CameraSettings.first_person = {
 						},
 						node_transitions = table.merge({
 							first_person_node = CameraTransitionTemplates.first_person
-						}, tbl)
+						}, THIRD_PERSON_TRANSITIONS)
 					}
 				},
 				{
@@ -413,7 +413,7 @@ CameraSettings.first_person = {
 						},
 						node_transitions = table.merge({
 							first_person_node = CameraTransitionTemplates.first_person_fast
-						}, tbl)
+						}, THIRD_PERSON_TRANSITIONS)
 					}
 				},
 				{
@@ -427,7 +427,7 @@ CameraSettings.first_person = {
 						},
 						node_transitions = table.merge({
 							first_person_node = CameraTransitionTemplates.first_person_fast
-						}, tbl)
+						}, THIRD_PERSON_TRANSITIONS)
 					}
 				}
 			}
@@ -435,7 +435,7 @@ CameraSettings.first_person = {
 	}
 }
 
-if not script_data.debug_third_person then
+if script_data.debug_third_person then
 	CameraSettings.first_person[1]._node.offset_position.y = -3
 end
 
@@ -556,9 +556,9 @@ CameraSettings.player_dead = {
 								x = 0,
 								y = -2
 							},
-							scale_function = function (arg_3_0)
+							scale_function = function (scale)
 								-- function 3
-								return arg_3_0
+								return scale
 							end
 						},
 						{

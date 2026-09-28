@@ -1,6 +1,6 @@
 -- chunkname: @scripts/entity_system/systems/behaviour/trees/chaos/chaos_fanatic_behavior.lua
 
-local chaos_fanatic = BreedActions.chaos_fanatic
+local ACTIONS = BreedActions.chaos_fanatic
 
 BreedBehaviors.fanatic = {
 	"BTSelector",
@@ -23,13 +23,13 @@ BreedBehaviors.fanatic = {
 		"BTStaggerAction",
 		name = "stagger",
 		condition = "stagger",
-		action_data = chaos_fanatic.stagger
+		action_data = ACTIONS.stagger
 	},
 	{
 		"BTBlockedAction",
 		name = "blocked",
 		condition = "blocked",
-		action_data = chaos_fanatic.blocked
+		action_data = ACTIONS.blocked
 	},
 	{
 		"BTSelector",
@@ -42,7 +42,7 @@ BreedBehaviors.fanatic = {
 			"BTClimbAction",
 			name = "climb",
 			condition = "at_climb_smartobject",
-			action_data = chaos_fanatic.climb
+			action_data = ACTIONS.climb
 		},
 		{
 			"BTJumpAcrossAction",
@@ -53,7 +53,7 @@ BreedBehaviors.fanatic = {
 			"BTSmashDoorAction",
 			name = "smash_door",
 			condition = "at_door_smartobject",
-			action_data = chaos_fanatic.smash_door
+			action_data = ACTIONS.smash_door
 		},
 		condition = "at_smartobject",
 		name = "smartobject"
@@ -62,37 +62,37 @@ BreedBehaviors.fanatic = {
 		"BTHesitateAction",
 		name = "hesitate",
 		condition = "is_alerted",
-		action_data = chaos_fanatic.alerted
+		action_data = ACTIONS.alerted
 	},
 	{
 		"BTUtilityNode",
-		action_data = chaos_fanatic.utility_action,
+		action_data = ACTIONS.utility_action,
 		{
 			"BTCombatStepAction",
 			name = "combat_step",
-			action_data = chaos_fanatic.combat_step
+			action_data = ACTIONS.combat_step
 		},
 		{
 			"BTClanRatFollowAction",
 			name = "follow",
-			action_data = chaos_fanatic.follow
+			action_data = ACTIONS.follow
 		},
 		{
 			"BTAttackAction",
 			name = "running_attack",
 			condition = "ask_target_before_attacking",
-			action_data = chaos_fanatic.running_attack
+			action_data = ACTIONS.running_attack
 		},
 		{
 			"BTAttackAction",
 			name = "normal_attack",
 			condition = "ask_target_before_attacking",
-			action_data = chaos_fanatic.normal_attack
+			action_data = ACTIONS.normal_attack
 		},
 		{
 			"BTCombatShoutAction",
 			name = "combat_shout",
-			action_data = chaos_fanatic.combat_shout
+			action_data = ACTIONS.combat_shout
 		},
 		name = "in_combat",
 		condition = "confirmed_player_sighting"
@@ -101,24 +101,24 @@ BreedBehaviors.fanatic = {
 		"BTAlertedAction",
 		name = "alerted",
 		condition = "player_spotted",
-		action_data = chaos_fanatic.alerted
+		action_data = ACTIONS.alerted
 	},
 	{
 		"BTMoveToGoalAction",
 		name = "move_to_goal",
 		condition = "has_goal_destination",
-		action_data = chaos_fanatic.follow
+		action_data = ACTIONS.follow
 	},
 	{
 		"BTIdleAction",
 		name = "idle",
 		condition = "no_target",
-		action_data = chaos_fanatic.idle
+		action_data = ACTIONS.idle
 	},
 	{
 		"BTFallbackIdleAction",
 		name = "fallback_idle",
-		action_data = chaos_fanatic.fallback_idle
+		action_data = ACTIONS.fallback_idle
 	},
 	name = "fanatic"
 }

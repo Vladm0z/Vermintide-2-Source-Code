@@ -1,8 +1,8 @@
 -- chunkname: @scripts/ui/views/tutorial_tooltip_ui_definitions.lua
 
-local flag = true
-local num = 4
-local tbl = {
+local RETAINED_MODE_ENABLED = true
+local NUMBER_OF_TOOLTIP_INPUT_WIDGETS = 4
+local scenegraph_definition = {
 	root = {
 		is_root = true,
 		size = {
@@ -113,19 +113,19 @@ local tbl = {
 	}
 }
 
-local function fn(arg_1_0)
+local function create_tutorial_tooltip_input_description_definitions(amount)
 	-- function 1
-	local tbl_2 = {}
+	local input_description_widgets = {}
 
-	for i = 1, arg_1_0 do
-		local str = "input_description_root_" .. i
-		local str_2 = "input_description_" .. i
-		local str_3 = "input_description_prefix_text_" .. i
-		local str_4 = "input_description_suffix_text_" .. i
-		local str_5 = "input_description_button_text_" .. i
-		local str_6 = "input_description_icon_" .. i
+	for i = 1, amount do
+		local scenegraph_root_id = "input_description_root_" .. i
+		local scenegraph_id = "input_description_" .. i
+		local scenegraph_prefix_text_id = "input_description_prefix_text_" .. i
+		local scenegraph_suffix_text_id = "input_description_suffix_text_" .. i
+		local scenegraph_button_text_id = "input_description_button_text_" .. i
+		local scenegraph_icon_id = "input_description_icon_" .. i
 
-		tbl[str] = {
+		scenegraph_definition[scenegraph_root_id] = {
 			vertical_alignment = "center",
 			parent = "tutorial_tooltip_input_field",
 			horizontal_alignment = "top",
@@ -139,10 +139,10 @@ local function fn(arg_1_0)
 				1
 			}
 		}
-		tbl[str_2] = {
+		scenegraph_definition[scenegraph_id] = {
 			vertical_alignment = "center",
 			horizontal_alignment = "center",
-			parent = str,
+			parent = scenegraph_root_id,
 			size = {
 				0,
 				0
@@ -153,10 +153,10 @@ local function fn(arg_1_0)
 				1
 			}
 		}
-		tbl[str_5] = {
+		scenegraph_definition[scenegraph_button_text_id] = {
 			vertical_alignment = "center",
 			horizontal_alignment = "center",
-			parent = str_6,
+			parent = scenegraph_icon_id,
 			size = {
 				0,
 				40
@@ -167,10 +167,10 @@ local function fn(arg_1_0)
 				2
 			}
 		}
-		tbl[str_6] = {
+		scenegraph_definition[scenegraph_icon_id] = {
 			vertical_alignment = "center",
 			horizontal_alignment = "left",
-			parent = str_2,
+			parent = scenegraph_id,
 			size = {
 				0,
 				40
@@ -181,10 +181,10 @@ local function fn(arg_1_0)
 				1
 			}
 		}
-		tbl[str_3] = {
+		scenegraph_definition[scenegraph_prefix_text_id] = {
 			vertical_alignment = "center",
 			horizontal_alignment = "left",
-			parent = str_6,
+			parent = scenegraph_icon_id,
 			size = {
 				0,
 				40
@@ -195,10 +195,10 @@ local function fn(arg_1_0)
 				1
 			}
 		}
-		tbl[str_4] = {
+		scenegraph_definition[scenegraph_suffix_text_id] = {
 			vertical_alignment = "center",
 			horizontal_alignment = "right",
-			parent = str_6,
+			parent = scenegraph_icon_id,
 			size = {
 				0,
 				40
@@ -210,48 +210,48 @@ local function fn(arg_1_0)
 			}
 		}
 
-		local tbl_3 = {
+		local widget_definition = {
 			element = {
 				passes = {
 					{
 						style_id = "prefix_text",
 						pass_type = "text",
 						text_id = "prefix_text",
-						retained_mode = flag,
-						content_check_function = function (self)
+						retained_mode = RETAINED_MODE_ENABLED,
+						content_check_function = function (content)
 							-- function 2
-							return self.prefix_text ~= ""
+							return content.prefix_text ~= ""
 						end
 					},
 					{
 						style_id = "suffix_text",
 						pass_type = "text",
 						text_id = "suffix_text",
-						retained_mode = flag,
-						content_check_function = function (self)
+						retained_mode = RETAINED_MODE_ENABLED,
+						content_check_function = function (content)
 							-- function 3
-							return self.suffix_text ~= ""
+							return content.suffix_text ~= ""
 						end
 					},
 					{
 						style_id = "button_text",
 						pass_type = "text",
 						text_id = "button_text",
-						retained_mode = flag,
-						content_check_function = function (self)
+						retained_mode = RETAINED_MODE_ENABLED,
+						content_check_function = function (content)
 							-- function 4
-							return self.button_text ~= ""
+							return content.button_text ~= ""
 						end
 					},
 					{
 						pass_type = "multi_texture",
 						style_id = "icon",
 						texture_id = "icon",
-						content_check_function = function (self)
+						content_check_function = function (content)
 							-- function 5
-							local icon = self.icon
+							local icon = content.icon
 
-							return not icon and #icon > 0
+							return not not icon and #icon > 0
 						end
 					}
 				}
@@ -280,7 +280,7 @@ local function fn(arg_1_0)
 						0,
 						1
 					},
-					scenegraph_id = str_3
+					scenegraph_id = scenegraph_prefix_text_id
 				},
 				suffix_text = {
 					word_wrap = false,
@@ -297,7 +297,7 @@ local function fn(arg_1_0)
 						0,
 						1
 					},
-					scenegraph_id = str_4
+					scenegraph_id = scenegraph_suffix_text_id
 				},
 				button_text = {
 					word_wrap = false,
@@ -314,7 +314,7 @@ local function fn(arg_1_0)
 						0,
 						1
 					},
-					scenegraph_id = str_5
+					scenegraph_id = scenegraph_button_text_id
 				},
 				icon = {
 					texture_sizes = {
@@ -334,19 +334,19 @@ local function fn(arg_1_0)
 						255,
 						255
 					},
-					scenegraph_id = str_6
+					scenegraph_id = scenegraph_icon_id
 				}
 			},
-			scenegraph_id = str_2
+			scenegraph_id = scenegraph_id
 		}
 
-		tbl_2[#tbl_2 + 1] = UIWidget.init(tbl_3)
+		input_description_widgets[#input_description_widgets + 1] = UIWidget.init(widget_definition)
 	end
 
-	return tbl_2
+	return input_description_widgets
 end
 
-local tbl_2 = {
+local widget_definitions = {
 	tutorial_tooltip = {
 		scenegraph_id = "tutorial_tooltip",
 		element = {
@@ -355,13 +355,13 @@ local tbl_2 = {
 					texture_id = "background",
 					style_id = "background",
 					pass_type = "rotated_texture",
-					retained_mode = flag
+					retained_mode = RETAINED_MODE_ENABLED
 				},
 				{
 					style_id = "description",
 					pass_type = "text",
 					text_id = "description",
-					retained_mode = flag
+					retained_mode = RETAINED_MODE_ENABLED
 				}
 			}
 		},
@@ -409,11 +409,11 @@ local tbl_2 = {
 		}
 	}
 }
-local var_0_5 = fn(num)
+local tutorial_tooltip_input_widgets = create_tutorial_tooltip_input_description_definitions(NUMBER_OF_TOOLTIP_INPUT_WIDGETS)
 
 return {
-	scenegraph = tbl,
-	widgets = tbl_2,
-	tutorial_tooltip_input_widgets = var_0_5,
-	NUMBER_OF_TOOLTIP_INPUT_WIDGETS = num
+	scenegraph = scenegraph_definition,
+	widgets = widget_definitions,
+	tutorial_tooltip_input_widgets = tutorial_tooltip_input_widgets,
+	NUMBER_OF_TOOLTIP_INPUT_WIDGETS = NUMBER_OF_TOOLTIP_INPUT_WIDGETS
 }

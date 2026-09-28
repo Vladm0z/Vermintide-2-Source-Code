@@ -1,6 +1,6 @@
 -- chunkname: @scripts/settings/dlcs/penny/penny_unit_extension_templates.lua
 
-return {
+local unit_extension_templates = {
 	ai_unit_chaos_exalted_sorcerer_drachenfels = {
 		base_template = "ai_unit_base",
 		go_type = "ai_lord_with_inventory",
@@ -24,3 +24,5 @@ return {
 		}
 	}
 }
+
+return unit_extension_templates

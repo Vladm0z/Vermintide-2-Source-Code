@@ -2,73 +2,96 @@
 
 require("scripts/ui/act_presentation/act_presentation_ui")
 
-local var_0_0 = local_require("scripts/ui/act_presentation/act_presentation_ui_definitions")
+local definitions = local_require("scripts/ui/act_presentation/act_presentation_ui_definitions")
 
 DeusJourneyPresentationUI = class(DeusJourneyPresentationUI, ActPresentationUI)
 
 DeusJourneyPresentationUI.create_ui_elements = function (self)
 	-- function 1
-	self._widgets, self._widgets_by_name = UIUtils.create_widgets(var_0_0.deus_widgets)
-	self._ui_scenegraph = UISceneGraph.init_scenegraph(var_0_0.scenegraph_definition)
-	self._ui_animator = UIAnimator:new(self._ui_scenegraph, var_0_0.deus_animations)
+	self._widgets, self._widgets_by_name = UIUtils.create_widgets(definitions.deus_widgets)
+	self._ui_scenegraph = UISceneGraph.init_scenegraph(definitions.scenegraph_definition)
+	self._ui_animator = UIAnimator:new(self._ui_scenegraph, definitions.deus_animations)
 	self._animations = {}
 end
 
-DeusJourneyPresentationUI.start = function (self, arg_2_1, arg_2_2)
+DeusJourneyPresentationUI.start = function (self, journey_name, previous_completed_difficulty_index)
 	-- function 2
 	self._presentation_aborted = nil
-	self._journey_name = arg_2_1
+	self._journey_name = journey_name
 
-	local var_2_0 = DeusJourneySettings[arg_2_1]
-	local _widgets_by_name = self._widgets_by_name
+	local journey_data = DeusJourneySettings[journey_name]
+	local widgets_by_name = self._widgets_by_name
 
-	self:_set_presentation_info(var_2_0, arg_2_1)
+	self:_set_presentation_info(journey_data, journey_name)
 
-	_widgets_by_name.act_title.content.text = ""
+	widgets_by_name.act_title.content.text = ""
 
 	local statistics_db = self.statistics_db
 	local stats_id = self.stats_id
-	local completed_journey_difficulty_index = LevelUnlockUtils.completed_journey_difficulty_index(statistics_db, stats_id, arg_2_1)
+	local completed_journey_difficulty_index = LevelUnlockUtils.completed_journey_difficulty_index(statistics_db, stats_id, journey_name)
 
-	completed_journey_difficulty_index = completed_journey_difficulty_index or 0
+	if not completed_journey_difficulty_index then
+		-- Nothing
+	end
 
-	local flag = arg_2_2 < completed_journey_difficulty_index
+	completed_journey_difficulty_index = 0
 
-	_widgets_by_name.level.content.locked = flag
+	local difficulty_complete_index = completed_journey_difficulty_index
 
-	local tbl = {
+	::label_2_0::
+
+	local first_time_completed = previous_completed_difficulty_index < difficulty_complete_index
+	local widget_name = "level"
+	local widget = widgets_by_name[widget_name]
+	local content = widget.content
+
+	content.locked = first_time_completed
+
+	local animation_params = {
 		wwise_world = self.wwise_world,
-		journey_name = arg_2_1,
+		journey_name = journey_name,
 		widget = self._widgets_by_name.level,
-		first_time = flag,
-		previous_difficulty_index = arg_2_2,
-		difficulty_index = completed_journey_difficulty_index,
+		first_time = first_time_completed,
+		previous_difficulty_index = previous_completed_difficulty_index,
+		difficulty_index = difficulty_complete_index,
 		render_settings = self.render_settings
 	}
 
-	self.animation_params = tbl
+	self.animation_params = animation_params
 
-	local flag_2
+	local str
 
-	flag_2 = not flag and "enter_first_time" and "enter"
+	if first_time_completed then
+		str = "enter_first_time"
 
-	self:start_presentation_animation(flag_2, tbl)
+		goto label_2_1
+	end
+
+	str = "enter"
+
+	local animation_name = str
+
+	::label_2_1::
+
+	self:start_presentation_animation(animation_name, animation_params)
 
 	self.active = true
 end
 
-DeusJourneyPresentationUI._set_presentation_info = function (self, arg_3_1, arg_3_2)
+DeusJourneyPresentationUI._set_presentation_info = function (self, journey_data, journey_name)
 	-- function 3
-	local display_name = arg_3_1.display_name
-	local level_image = arg_3_1.level_image
-	local _widgets_by_name = self._widgets_by_name
+	local level_display_name = journey_data.display_name
+	local level_image = journey_data.level_image
+	local widgets_by_name = self._widgets_by_name
 
-	_widgets_by_name.level.content.level_icon = level_image
+	widgets_by_name.level.content.level_icon = level_image
 
-	local dominant_god = Managers.backend:get_interface("deus"):get_journey_cycle().journey_data[arg_3_2].dominant_god
-	local var_3_4 = DeusThemeSettings[dominant_god]
+	local backend = Managers.backend:get_interface("deus")
+	local journey_cycle = backend:get_journey_cycle()
+	local theme = journey_cycle.journey_data[journey_name].dominant_god
+	local theme_settings = DeusThemeSettings[theme]
 
-	_widgets_by_name.level.content.theme_icon = var_3_4.text_icon
-	_widgets_by_name.level_title.content.text = Localize(display_name)
-	_widgets_by_name.level.style.purple_glow.color[1] = 0
+	widgets_by_name.level.content.theme_icon = theme_settings.text_icon
+	widgets_by_name.level_title.content.text = Localize(level_display_name)
+	widgets_by_name.level.style.purple_glow.color[1] = 0
 end

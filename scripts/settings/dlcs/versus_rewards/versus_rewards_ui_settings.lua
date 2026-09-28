@@ -1,11 +1,11 @@
 -- chunkname: @scripts/settings/dlcs/versus_rewards/versus_rewards_ui_settings.lua
 
-local versus_rewards = DLCSettings.versus_rewards
+local settings = DLCSettings.versus_rewards
 
-versus_rewards.ui_materials = {
+settings.ui_materials = {
 	"materials/ui/ui_1080p_versus_rewards_atlas"
 }
-versus_rewards.ui_texture_settings = {
+settings.ui_texture_settings = {
 	filenames = {
 		"scripts/ui/atlas_settings/gui_versus_rewards_atlas"
 	},

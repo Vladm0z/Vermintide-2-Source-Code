@@ -2,37 +2,37 @@
 
 require("scripts/ui/views/menu_world_previewer")
 
-local var_0_0 = local_require("scripts/ui/views/hero_view/windows/definitions/hero_window_gotwf_item_preview_definitions")
-local scenegraph_definition = var_0_0.scenegraph_definition
-local top_widgets = var_0_0.top_widgets
-local loading_widgets = var_0_0.loading_widgets
-local create_claimed_widget = var_0_0.create_claimed_widget
-local create_painting_widget = var_0_0.create_painting_widget
-local create_texture_widget = var_0_0.create_texture_widget
-local animation_definitions = var_0_0.animation_definitions
-local num = 10
-local num_2 = 800
-local num_3 = 140
-local str = "gui/1080p/single_textures/generic/transparent_placeholder_texture"
+local definitions = local_require("scripts/ui/views/hero_view/windows/definitions/hero_window_gotwf_item_preview_definitions")
+local scenegraph_definition = definitions.scenegraph_definition
+local top_widget_definitions = definitions.top_widgets
+local loading_widget_definitions = definitions.loading_widgets
+local create_claimed_widget_func = definitions.create_claimed_widget
+local create_painting_widget = definitions.create_painting_widget
+local create_texture_widget = definitions.create_texture_widget
+local animation_definitions = definitions.animation_definitions
+local LIST_SPACING = 10
+local LIST_MAX_WIDTH = 800
+local CONSOLE_PRICE_WIDTH = 140
+local PRODUCT_PLACEHOLDER_TEXTURE_PATH = "gui/1080p/single_textures/generic/transparent_placeholder_texture"
 
 HeroWindowGotwfItemPreview = class(HeroWindowGotwfItemPreview)
 HeroWindowGotwfItemPreview.NAME = "HeroWindowGotwfItemPreview"
 
-HeroWindowGotwfItemPreview.on_enter = function (self, arg_1_1, arg_1_2)
+HeroWindowGotwfItemPreview.on_enter = function (self, params, offset)
 	-- function 1
 	print("[HeroViewWindow] Enter Substate HeroWindowGotwfItemPreview")
 
-	self._params = arg_1_1
-	self._parent = arg_1_1.parent
+	self._params = params
+	self._parent = params.parent
 
-	local ingame_ui_context = arg_1_1.ingame_ui_context
+	local ingame_ui_context = params.ingame_ui_context
 
 	self._ingame_ui_context = ingame_ui_context
 
-	local get_renderers, var_1_2 = self._parent:get_renderers()
+	local ui_renderer, ui_top_renderer = self._parent:get_renderers()
 
-	self._ui_renderer = get_renderers
-	self._ui_top_renderer = var_1_2
+	self._ui_renderer = ui_renderer
+	self._ui_top_renderer = ui_top_renderer
 	self._render_settings = {
 		snap_pixel_positions = true
 	}
@@ -42,32 +42,32 @@ HeroWindowGotwfItemPreview.on_enter = function (self, arg_1_1, arg_1_2)
 	self._loaded_package_names = {}
 	self._cloned_materials_by_reference = {}
 
-	self:_create_ui_elements(arg_1_1, arg_1_2)
+	self:_create_ui_elements(params, offset)
 	self:_start_transition_animation("on_enter")
 end
 
-HeroWindowGotwfItemPreview._start_transition_animation = function (self, arg_2_1)
+HeroWindowGotwfItemPreview._start_transition_animation = function (self, animation_name)
 	-- function 2
-	local tbl = {
+	local params = {
 		render_settings = self._render_settings
 	}
-	local _top_widgets_by_name = self._top_widgets_by_name
-	local var_2_2 = self._animations[arg_2_1]
+	local widgets = self._top_widgets_by_name
+	local old_anim_id = self._animations[animation_name]
 
-	if not var_2_2 then
-		self._ui_animator:stop_animation(var_2_2)
+	if old_anim_id then
+		self._ui_animator:stop_animation(old_anim_id)
 
-		self._animations[arg_2_1] = nil
+		self._animations[animation_name] = nil
 	end
 
-	local start_animation = self._ui_animator:start_animation(arg_2_1, _top_widgets_by_name, scenegraph_definition, tbl)
+	local anim_id = self._ui_animator:start_animation(animation_name, widgets, scenegraph_definition, params)
 
-	self._animations[arg_2_1] = start_animation
+	self._animations[animation_name] = anim_id
 end
 
-HeroWindowGotwfItemPreview._create_viewport_definition = function (arg_3_0)
+HeroWindowGotwfItemPreview._create_viewport_definition = function (self)
 	-- function 3
-	local str = "environment/ui_store_preview"
+	local shading_environment = "environment/ui_store_preview"
 
 	return {
 		scenegraph_id = "viewport",
@@ -83,7 +83,7 @@ HeroWindowGotwfItemPreview._create_viewport_definition = function (arg_3_0)
 				level_name = "levels/ui_store_preview/world",
 				enable_sub_gui = false,
 				fov = 65,
-				shading_environment = str,
+				shading_environment = shading_environment,
 				object_sets = LevelResource.object_set_names("levels/ui_store_preview/world"),
 				camera_position = {
 					0,
@@ -109,9 +109,9 @@ HeroWindowGotwfItemPreview._create_viewport_definition = function (arg_3_0)
 	}
 end
 
-HeroWindowGotwfItemPreview._create_ui_elements = function (self, arg_4_1, arg_4_2)
+HeroWindowGotwfItemPreview._create_ui_elements = function (self, params, offset)
 	-- function 4
-	if not self._viewport_widget then
+	if self._viewport_widget then
 		UIWidget.destroy(self._ui_renderer, self._viewport_widget)
 
 		self._viewport_widget = nil
@@ -119,54 +119,54 @@ HeroWindowGotwfItemPreview._create_ui_elements = function (self, arg_4_1, arg_4_
 
 	self._ui_scenegraph = UISceneGraph.init_scenegraph(scenegraph_definition)
 
-	local tbl = {}
-	local tbl_2 = {}
+	local top_widgets = {}
+	local top_widgets_by_name = {}
 
-	for k, v in pairs(top_widgets) do
-		local var_4_2 = UIWidget.init(v)
+	for name, widget_definition in pairs(top_widget_definitions) do
+		local widget = UIWidget.init(widget_definition)
 
-		tbl[#tbl + 1] = var_4_2
-		tbl_2[k] = var_4_2
+		top_widgets[#top_widgets + 1] = widget
+		top_widgets_by_name[name] = widget
 	end
 
-	self._top_widgets = tbl
-	self._top_widgets_by_name = tbl_2
+	self._top_widgets = top_widgets
+	self._top_widgets_by_name = top_widgets_by_name
 
-	local var_4_3 = create_claimed_widget(self._ui_renderer)
-	local var_4_4 = UIWidget.init(var_4_3)
+	local claimed_widget_definition = create_claimed_widget_func(self._ui_renderer)
+	local widget = UIWidget.init(claimed_widget_definition)
 
-	self._top_widgets[#self._top_widgets + 1] = var_4_4
-	self._top_widgets_by_name.claimed = var_4_4
+	self._top_widgets[#self._top_widgets + 1] = widget
+	self._top_widgets_by_name.claimed = widget
 
-	local tbl_3 = {}
-	local tbl_4 = {}
+	local loading_widgets = {}
+	local loading_widgets_by_name = {}
 
-	for k_2, v_2 in pairs(loading_widgets) do
-		local var_4_7 = UIWidget.init(v_2)
+	for name, widget_definition in pairs(loading_widget_definitions) do
+		local widget = UIWidget.init(widget_definition)
 
-		tbl_3[#tbl_3 + 1] = var_4_7
-		tbl_4[k_2] = var_4_7
+		loading_widgets[#loading_widgets + 1] = widget
+		loading_widgets_by_name[name] = widget
 	end
 
-	self._loading_widgets = tbl_3
-	self._loading_widgets_by_name = tbl_4
+	self._loading_widgets = loading_widgets
+	self._loading_widgets_by_name = loading_widgets_by_name
 
 	UIRenderer.clear_scenegraph_queue(self._ui_renderer)
 
 	self._ui_animator = UIAnimator:new(self._ui_scenegraph, animation_definitions)
 
-	if not arg_4_2 then
-		local local_position = self._ui_scenegraph.window.local_position
+	if offset then
+		local window_position = self._ui_scenegraph.window.local_position
 
-		local_position[1] = local_position[1] + arg_4_2[1]
-		local_position[2] = local_position[2] + arg_4_2[2]
-		local_position[3] = local_position[3] + arg_4_2[3]
+		window_position[1] = window_position[1] + offset[1]
+		window_position[2] = window_position[2] + offset[2]
+		window_position[3] = window_position[3] + offset[3]
 	end
 
 	self._viewport_widget_definition = self:_create_viewport_definition()
 end
 
-HeroWindowGotwfItemPreview.on_exit = function (self, arg_5_1, arg_5_2)
+HeroWindowGotwfItemPreview.on_exit = function (self, params, force_unload)
 	-- function 5
 	print("[HeroViewWindow] Exit Substate HeroWindowGotwfItemPreview")
 
@@ -176,78 +176,79 @@ HeroWindowGotwfItemPreview.on_exit = function (self, arg_5_1, arg_5_2)
 	self:_destroy_previewers()
 	self:_destroy_viewport_gui()
 
-	if not self._viewport_widget then
+	if self._viewport_widget then
 		UIWidget.destroy(self._ui_renderer, self._viewport_widget)
 
 		self._viewport_widget = nil
 	end
 
-	local _loaded_package_names = self._loaded_package_names
+	local loaded_package_names = self._loaded_package_names
 
-	for k, v in pairs(_loaded_package_names) do
-		self:_unload_texture_by_reference(k)
+	for reference_name, package_name in pairs(loaded_package_names) do
+		self:_unload_texture_by_reference(reference_name)
 	end
 end
 
-HeroWindowGotwfItemPreview.update = function (self, arg_6_1, arg_6_2)
+HeroWindowGotwfItemPreview.update = function (self, dt, t)
 	-- function 6
-	self:_update_animations(arg_6_1)
+	self:_update_animations(dt)
 	self:_sync_layout_path()
-	self:_update_previewers(arg_6_1, arg_6_2)
+	self:_update_previewers(dt, t)
 end
 
-HeroWindowGotwfItemPreview._update_previewers = function (self, arg_7_1, arg_7_2)
+HeroWindowGotwfItemPreview._update_previewers = function (self, dt, t)
 	-- function 7
-	if not self._selected_product then
-		local window_input_service = self._parent:window_input_service()
-		local flag = false
-		local flag_2 = false
+	if self._selected_product then
+		local input_service = self._parent:window_input_service()
+		local input_handled, input_hovered = false, false
 
-		if not self._world_previewer then
-			local input_blocked = self._parent:input_blocked()
+		if self._world_previewer then
+			local parent = self._parent
+			local input_disabled = parent:input_blocked()
 
-			self._world_previewer:update(arg_7_1, arg_7_2, input_blocked)
+			self._world_previewer:update(dt, t, input_disabled)
 		end
 
-		if not self._item_previewer then
+		if self._item_previewer then
 			local viewport_button = self._top_widgets_by_name.viewport_button
-			local is_button_hover = UIUtils.is_button_hover(viewport_button)
-			local is_device_active = Managers.input:is_device_active("gamepad")
-			local flag_3 = not not flag or not not flag_2 or is_device_active or is_button_hover
+			local is_hover = UIUtils.is_button_hover(viewport_button)
+			local gamepad_active = Managers.input:is_device_active("gamepad")
+			local allow_preview_input = not input_handled and not input_hovered and not not gamepad_active or not not is_hover
 
-			self._item_previewer:update(arg_7_1, arg_7_2, not flag_3 and window_input_service)
+			self._item_previewer:update(dt, t, not not allow_preview_input and not not input_service)
 		end
 	end
 end
 
-HeroWindowGotwfItemPreview._register_object_sets = function (self, arg_8_1, arg_8_2)
+HeroWindowGotwfItemPreview._register_object_sets = function (self, viewport_widget, viewport_definition)
 	-- function 8
-	local viewport = arg_8_2.style.viewport
-	local style = arg_8_1.style
-	local content = arg_8_1.content
-	local var_8_3 = arg_8_1.element.pass_data[1]
-	local level_name = viewport.level_name
-	local tbl = {}
-	local object_set_names = LevelResource.object_set_names(level_name)
+	local viewport_definition_style = viewport_definition.style.viewport
+	local viewport_widget_style = viewport_widget.style
+	local viewport_widget_content = viewport_widget.content
+	local viewport_widget_element = viewport_widget.element
+	local pass_data = viewport_widget_element.pass_data[1]
+	local level_name = viewport_definition_style.level_name
+	local object_sets = {}
+	local available_level_sets = LevelResource.object_set_names(level_name)
 
-	for i, v in ipairs(object_set_names) do
-		tbl[v] = {
+	for _, set_name in ipairs(available_level_sets) do
+		object_sets[set_name] = {
 			set_enabled = true,
-			units = LevelResource.unit_indices_in_object_set(level_name, v)
+			units = LevelResource.unit_indices_in_object_set(level_name, set_name)
 		}
 	end
 
-	content.object_set_data = {
-		world = var_8_3.world,
-		level = var_8_3.level,
-		object_sets = tbl,
+	viewport_widget_content.object_set_data = {
+		world = pass_data.world,
+		level = pass_data.level,
+		object_sets = object_sets,
 		level_name = level_name
 	}
 
 	self:_show_object_set(nil, true)
 end
 
-HeroWindowGotwfItemPreview._show_object_set = function (self, arg_9_1, arg_9_2)
+HeroWindowGotwfItemPreview._show_object_set = function (self, object_set_name, force_disable)
 	-- function 9
 	if not self._viewport_widget then
 		print("[HeroWindowGotwfItemPreview:show_object_set] Viewport not initiated")
@@ -255,74 +256,77 @@ HeroWindowGotwfItemPreview._show_object_set = function (self, arg_9_1, arg_9_2)
 		return
 	end
 
-	local object_set_data = self._viewport_widget.content.object_set_data
+	local viewport_widget_content = self._viewport_widget.content
+	local object_set_data = viewport_widget_content.object_set_data
 	local world = object_set_data.world
 	local level = object_set_data.level
 	local level_name = object_set_data.level_name
 	local object_sets = object_set_data.object_sets
 
-	if not (object_sets[arg_9_1] or arg_9_2) then
-		print(string.format("[HeroWindowGotwfItemPreview:show_object_set] No object set called %q in level %q", arg_9_1, level_name))
+	if not object_sets[object_set_name] and not force_disable then
+		print(string.format("[HeroWindowGotwfItemPreview:show_object_set] No object set called %q in level %q", object_set_name, level_name))
 
 		return
 	end
 
-	for k, v in pairs(object_sets) do
-		local set_enabled = v.set_enabled
+	for set_name, object_set_data in pairs(object_sets) do
+		local set_enabled = object_set_data.set_enabled
 
-		if not (not set_enabled and k == arg_9_1) then
-			local units = v.units
+		if set_enabled and set_name ~= object_set_name then
+			local units = object_set_data.units
 
-			for i, v_2 in ipairs(units) do
-				local unit_by_index = Level.unit_by_index(level, v_2)
+			for _, unit_index in ipairs(units) do
+				local unit = Level.unit_by_index(level, unit_index)
 
-				Unit.set_unit_visibility(unit_by_index, false)
+				Unit.set_unit_visibility(unit, false)
 			end
 
-			v.set_enabled = false
-		elseif not (set_enabled or k ~= arg_9_1) then
-			local units_2 = v.units
+			object_set_data.set_enabled = false
+		elseif not set_enabled and set_name == object_set_name then
+			local units = object_set_data.units
 
-			for i_2, v_3 in ipairs(units_2) do
-				local unit_by_index_2 = Level.unit_by_index(level, v_3)
+			for _, unit_index in ipairs(units) do
+				local unit = Level.unit_by_index(level, unit_index)
 
-				Unit.set_unit_visibility(unit_by_index_2, true)
+				Unit.set_unit_visibility(unit, true)
 
-				if not Unit.has_data(unit_by_index_2, "LevelEditor", "is_gizmo_unit") then
-					local get_data = Unit.get_data(unit_by_index_2, "LevelEditor", "is_gizmo_unit")
-					local is_a = Unit.is_a(unit_by_index_2, "core/stingray_renderer/helper_units/reflection_probe/reflection_probe")
+				if Unit.has_data(unit, "LevelEditor", "is_gizmo_unit") then
+					local is_gizmo = Unit.get_data(unit, "LevelEditor", "is_gizmo_unit")
+					local is_reflection_probe = Unit.is_a(unit, "core/stingray_renderer/helper_units/reflection_probe/reflection_probe")
 
-					if not (not get_data and is_a) then
-						Unit.flow_event(unit_by_index_2, "hide_helper_mesh")
+					if is_gizmo and not is_reflection_probe then
+						Unit.flow_event(unit, "hide_helper_mesh")
 					end
 				end
 			end
 
-			v.set_enabled = true
+			object_set_data.set_enabled = true
 		end
 	end
 
-	print("Showing object set:", arg_9_1)
+	print("Showing object set:", object_set_name)
 end
 
-HeroWindowGotwfItemPreview._update_environment = function (self, arg_10_1, arg_10_2)
+HeroWindowGotwfItemPreview._update_environment = function (self, item_preview_environment, force_default)
 	-- function 10
 	if not self._viewport_widget then
 		return
 	end
 
-	local flag = arg_10_1 or "default"
-	local world = self._viewport_widget.content.object_set_data.world
-	local get_data = World.get_data(world, "shading_settings")
-	local flag_2
+	local item_preview_environment = not not item_preview_environment or not not "default"
+	local viewport_widget_content = self._viewport_widget.content
+	local object_set_data = viewport_widget_content.object_set_data
+	local world = object_set_data.world
+	local shading_settings = World.get_data(world, "shading_settings")
+	local flag
 
-	flag_2 = not arg_10_2 and "default" and flag
-	get_data[1] = flag_2
+	flag = (not force_default or not "default") and not not item_preview_environment
+	shading_settings[1] = flag
 end
 
 HeroWindowGotwfItemPreview._destroy_viewport_gui = function (self)
 	-- function 11
-	if not self._viewport_gui then
+	if self._viewport_gui then
 		local world = Managers.world:world("item_preview")
 
 		World.destroy_gui(world, self._viewport_gui)
@@ -334,73 +338,73 @@ end
 HeroWindowGotwfItemPreview._create_viewport_gui = function (self)
 	-- function 12
 	local world = Managers.world:world("item_preview")
-	local flag = false
-	local _is_in_inn = self._is_in_inn
-	local current_mechanism_name = Managers.mechanism:current_mechanism_name()
+	local is_tutorial = false
+	local is_in_inn = self._is_in_inn
+	local mechanism_key = Managers.mechanism:current_mechanism_name()
 
 	self._viewport_gui = World.create_screen_gui(world, "immediate", "material", "materials/ui/ui_1080p_lock_test")
 
-	local resolution, var_12_5 = Gui.resolution()
+	local w, h = Gui.resolution()
 
 	self._gui_resolution = {
-		resolution,
-		var_12_5
+		w,
+		h
 	}
 end
 
-HeroWindowGotwfItemPreview.post_update = function (self, arg_13_1, arg_13_2)
+HeroWindowGotwfItemPreview.post_update = function (self, dt, t)
 	-- function 13
-	if not (not self._viewport_widget_definition and self._viewport_widget) then
+	if self._viewport_widget_definition and not self._viewport_widget then
 		self._viewport_widget = UIWidget.init(self._viewport_widget_definition)
 
 		self:_register_object_sets(self._viewport_widget, self._viewport_widget_definition)
 	end
 
-	self:_update_loading_overlay_fadeout_animation(arg_13_1)
-	self:_update_delayed_item_unit_presentation(arg_13_1)
+	self:_update_loading_overlay_fadeout_animation(dt)
+	self:_update_delayed_item_unit_presentation(dt)
 
-	if not self._viewport_widget then
+	if self._viewport_widget then
 		self:_sync_presentation_item()
 	end
 
-	if not self._world_previewer then
-		self._world_previewer:post_update(arg_13_1, arg_13_2)
+	if self._world_previewer then
+		self._world_previewer:post_update(dt, t)
 	end
 
-	if not self._item_previewer then
-		self._item_previewer:post_update(arg_13_1, arg_13_2)
+	if self._item_previewer then
+		self._item_previewer:post_update(dt, t)
 	end
 
-	if not self._selected_product then
-		self:draw(arg_13_1)
+	if self._selected_product then
+		self:draw(dt)
 	end
 end
 
-HeroWindowGotwfItemPreview._update_animations = function (self, arg_14_1)
+HeroWindowGotwfItemPreview._update_animations = function (self, dt)
 	-- function 14
-	local _ui_animations = self._ui_animations
-	local _animations = self._animations
-	local _ui_animator = self._ui_animator
+	local ui_animations = self._ui_animations
+	local animations = self._animations
+	local ui_animator = self._ui_animator
 
-	for k, v in pairs(self._ui_animations) do
-		UIAnimation.update(v, arg_14_1)
+	for name, animation in pairs(self._ui_animations) do
+		UIAnimation.update(animation, dt)
 
-		if not UIAnimation.completed(v) then
-			self._ui_animations[k] = nil
+		if UIAnimation.completed(animation) then
+			self._ui_animations[name] = nil
 		end
 	end
 
-	_ui_animator:update(arg_14_1)
+	ui_animator:update(dt)
 
-	for k_2, v_2 in pairs(_animations) do
-		if not _ui_animator:is_animation_completed(v_2) then
-			_ui_animator:stop_animation(v_2)
+	for animation_name, animation_id in pairs(animations) do
+		if ui_animator:is_animation_completed(animation_id) then
+			ui_animator:stop_animation(animation_id)
 
-			_animations[k_2] = nil
+			animations[animation_name] = nil
 		end
 	end
 
-	self:_update_title_edge_animation(arg_14_1)
+	self:_update_title_edge_animation(dt)
 end
 
 HeroWindowGotwfItemPreview._exit = function (self)
@@ -408,101 +412,107 @@ HeroWindowGotwfItemPreview._exit = function (self)
 	self.exit = true
 end
 
-HeroWindowGotwfItemPreview._get_alpha_multiplier = function (self, arg_16_1, arg_16_2)
+HeroWindowGotwfItemPreview._get_alpha_multiplier = function (self, widget, alpha_multiplier)
 	-- function 16
-	local _render_settings = self._render_settings
-	local alpha_multiplier = arg_16_1.alpha_multiplier
+	local render_settings = self._render_settings
+	local widget_alpha_multiplier = widget.alpha_multiplier
 
-	if not alpha_multiplier then
-		return math.min(alpha_multiplier, arg_16_2)
+	if widget_alpha_multiplier then
+		return math.min(widget_alpha_multiplier, alpha_multiplier)
 	end
 
-	return arg_16_2
+	return alpha_multiplier
 end
 
-HeroWindowGotwfItemPreview.draw = function (self, arg_17_1)
+HeroWindowGotwfItemPreview.draw = function (self, dt)
 	-- function 17
-	local _ui_renderer = self._ui_renderer
-	local _ui_top_renderer = self._ui_top_renderer
-	local _ui_scenegraph = self._ui_scenegraph
-	local window_input_service = self._parent:window_input_service()
-	local _render_settings = self._render_settings
-	local alpha_multiplier = _render_settings.alpha_multiplier
+	local ui_renderer = self._ui_renderer
+	local ui_top_renderer = self._ui_top_renderer
+	local ui_scenegraph = self._ui_scenegraph
+	local input_service = self._parent:window_input_service()
+	local render_settings = self._render_settings
+	local alpha_multiplier = render_settings.alpha_multiplier
 
-	UIRenderer.begin_pass(_ui_top_renderer, _ui_scenegraph, window_input_service, arg_17_1, nil, _render_settings)
+	UIRenderer.begin_pass(ui_top_renderer, ui_scenegraph, input_service, dt, nil, render_settings)
 
-	for i, v in ipairs(self._top_widgets) do
-		_render_settings.alpha_multiplier = self:_get_alpha_multiplier(v, alpha_multiplier)
+	for _, widget in ipairs(self._top_widgets) do
+		render_settings.alpha_multiplier = self:_get_alpha_multiplier(widget, alpha_multiplier)
 
-		UIRenderer.draw_widget(_ui_top_renderer, v)
+		UIRenderer.draw_widget(ui_top_renderer, widget)
 	end
 
-	if not self._item_texture_widget then
-		_render_settings.alpha_multiplier = self:_get_alpha_multiplier(self._item_texture_widget, alpha_multiplier)
+	if self._item_texture_widget then
+		render_settings.alpha_multiplier = self:_get_alpha_multiplier(self._item_texture_widget, alpha_multiplier)
 
-		UIRenderer.draw_widget(_ui_top_renderer, self._item_texture_widget)
+		UIRenderer.draw_widget(ui_top_renderer, self._item_texture_widget)
 	end
 
-	if not self._show_loading_overlay then
-		for i_2, v_2 in ipairs(self._loading_widgets) do
-			_render_settings.alpha_multiplier = self:_get_alpha_multiplier(v_2, alpha_multiplier)
+	if self._show_loading_overlay then
+		for _, widget in ipairs(self._loading_widgets) do
+			render_settings.alpha_multiplier = self:_get_alpha_multiplier(widget, alpha_multiplier)
 
-			UIRenderer.draw_widget(_ui_top_renderer, v_2)
+			UIRenderer.draw_widget(ui_top_renderer, widget)
 		end
 	end
 
-	UIRenderer.end_pass(_ui_top_renderer)
+	UIRenderer.end_pass(ui_top_renderer)
 
-	if not self._viewport_widget then
-		UIRenderer.begin_pass(_ui_renderer, _ui_scenegraph, window_input_service, arg_17_1, nil, _render_settings)
-		UIRenderer.draw_widget(_ui_renderer, self._viewport_widget)
-		UIRenderer.end_pass(_ui_renderer)
+	if self._viewport_widget then
+		UIRenderer.begin_pass(ui_renderer, ui_scenegraph, input_service, dt, nil, render_settings)
+		UIRenderer.draw_widget(ui_renderer, self._viewport_widget)
+		UIRenderer.end_pass(ui_renderer)
 		self:_render_viewport_mask()
 	end
 
-	_render_settings.alpha_multiplier = alpha_multiplier
+	render_settings.alpha_multiplier = alpha_multiplier
 end
 
-local tbl = {}
+local EMPTY_TABLE = {}
 
 HeroWindowGotwfItemPreview._render_viewport_mask = function (self)
 	-- function 18
-	local resolution, var_18_1 = Application.resolution()
+	local w, h = Application.resolution()
 	local _gui_resolution = self._gui_resolution
 
-	_gui_resolution = _gui_resolution or tbl
+	if not _gui_resolution then
+		-- Nothing
+	end
 
-	if not (not self._viewport_gui and _gui_resolution[1] ~= resolution or _gui_resolution[2] == var_18_1) then
+	_gui_resolution = EMPTY_TABLE
+
+	local gui_resolution = _gui_resolution
+
+	::label_18_0::
+
+	if not self._viewport_gui or gui_resolution[1] ~= w or gui_resolution[2] ~= h then
 		self:_destroy_viewport_gui()
 		self:_create_viewport_gui()
 	end
 
-	local _viewport_gui = self._viewport_gui
-	local content = self._viewport_widget.content
-	local viewport_size_y = content.viewport_size_y
-	local viewport_size_y_2 = content.viewport_size_y
-	local num = viewport_size_y * resolution * 0.285
-	local num_2 = viewport_size_y_2 * var_18_1 * 0.26
+	local viewport_gui = self._viewport_gui
+	local viewport_widget = self._viewport_widget
+	local viewport_widget_content = viewport_widget.content
+	local viewport_size_x = viewport_widget_content.viewport_size_y
+	local viewport_size_y = viewport_widget_content.viewport_size_y
+	local x, y = viewport_size_x * w * 0.285, viewport_size_y * h * 0.26
 
-	Gui.bitmap(_viewport_gui, "gui_lock_test_viewport_mask", Vector3(0, 0, 2), Vector2(num, num_2))
-	Gui.bitmap(_viewport_gui, "gui_lock_test_viewport_mask", Vector3(resolution * viewport_size_y - num, 0, 2), Vector2(num, num_2))
+	Gui.bitmap(viewport_gui, "gui_lock_test_viewport_mask", Vector3(0, 0, 2), Vector2(x, y))
+	Gui.bitmap(viewport_gui, "gui_lock_test_viewport_mask", Vector3(w * viewport_size_x - x, 0, 2), Vector2(x, y))
 
-	local var_18_9 = num
-	local num_3 = viewport_size_y_2 * var_18_1 * 0.2
+	local x, y = x, viewport_size_y * h * 0.2
 
-	Gui.bitmap(_viewport_gui, "gui_lock_test_viewport_mask", Vector3(0, var_18_1 * viewport_size_y_2 - num_3, 2), Vector2(var_18_9, num_3))
-	Gui.bitmap(_viewport_gui, "gui_lock_test_viewport_mask", Vector3(resolution * viewport_size_y - var_18_9, var_18_1 * viewport_size_y_2 - num_3, 2), Vector2(var_18_9, num_3))
+	Gui.bitmap(viewport_gui, "gui_lock_test_viewport_mask", Vector3(0, h * viewport_size_y - y, 2), Vector2(x, y))
+	Gui.bitmap(viewport_gui, "gui_lock_test_viewport_mask", Vector3(w * viewport_size_x - x, h * viewport_size_y - y, 2), Vector2(x, y))
 
-	local num_4 = viewport_size_y * resolution * 0.09
-	local num_5 = viewport_size_y_2 * var_18_1
+	local x, y = viewport_size_x * w * 0.09, viewport_size_y * h
 
-	Gui.bitmap(_viewport_gui, "gui_lock_test_viewport_mask", Vector3(0, 0, 2), Vector2(num_4, num_5))
-	Gui.bitmap(_viewport_gui, "gui_lock_test_viewport_mask", Vector3(resolution * viewport_size_y - num_4, 0, 2), Vector2(num_4, num_5))
+	Gui.bitmap(viewport_gui, "gui_lock_test_viewport_mask", Vector3(0, 0, 2), Vector2(x, y))
+	Gui.bitmap(viewport_gui, "gui_lock_test_viewport_mask", Vector3(w * viewport_size_x - x, 0, 2), Vector2(x, y))
 end
 
-HeroWindowGotwfItemPreview._play_sound = function (self, arg_19_1)
+HeroWindowGotwfItemPreview._play_sound = function (self, event)
 	-- function 19
-	self._parent:play_sound(arg_19_1)
+	self._parent:play_sound(event)
 end
 
 HeroWindowGotwfItemPreview._start_loading_overlay = function (self)
@@ -510,32 +520,37 @@ HeroWindowGotwfItemPreview._start_loading_overlay = function (self)
 	self._show_loading_overlay = true
 	self._fadeout_loading_overlay = nil
 	self._fadeout_progress = nil
-	self._loading_widgets_by_name.loading_icon.style.texture_id.color[1] = 255
+
+	local loading_widgets_by_name = self._loading_widgets_by_name
+	local loading_icon = loading_widgets_by_name.loading_icon
+
+	loading_icon.style.texture_id.color[1] = 255
 end
 
-HeroWindowGotwfItemPreview._update_loading_overlay_fadeout_animation = function (self, arg_21_1)
+HeroWindowGotwfItemPreview._update_loading_overlay_fadeout_animation = function (self, dt)
 	-- function 21
-	if self._fadeout_loading_overlay or not self._show_loading_overlay then
+	if not self._fadeout_loading_overlay and self._show_loading_overlay then
 		return
 	end
 
-	local _loading_widgets_by_name = self._loading_widgets_by_name
-	local num = 255
-	local num_2 = 0
-	local num_3 = 9
+	local loading_widgets_by_name = self._loading_widgets_by_name
+	local start = 255
+	local target = 0
+	local speed = 9
 	local min = math.min
-	local num_4 = 1
+	local num = 1
 	local _fadeout_progress = self._fadeout_progress
 
-	_fadeout_progress = _fadeout_progress or 0
+	_fadeout_progress = not not _fadeout_progress or not not 0
 
-	local var_21_7 = min(num_4, _fadeout_progress + num_3 * arg_21_1)
-	local lerp = math.lerp(num, num_2, math.easeInCubic(var_21_7))
+	local progress = min(num, _fadeout_progress + speed * dt)
+	local alpha = math.lerp(start, target, math.easeInCubic(progress))
+	local loading_icon = loading_widgets_by_name.loading_icon
 
-	_loading_widgets_by_name.loading_icon.style.texture_id.color[1] = lerp
-	self._fadeout_progress = var_21_7
+	loading_icon.style.texture_id.color[1] = alpha
+	self._fadeout_progress = progress
 
-	if var_21_7 == 1 then
+	if progress == 1 then
 		self._fadeout_loading_overlay = nil
 		self._fadeout_progress = nil
 		self._show_loading_overlay = false
@@ -544,20 +559,20 @@ end
 
 HeroWindowGotwfItemPreview._destroy_previewers = function (self)
 	-- function 22
-	local _item_previewer = self._item_previewer
+	local item_previewer = self._item_previewer
 
-	if not _item_previewer then
-		_item_previewer:destroy()
+	if item_previewer then
+		item_previewer:destroy()
 
 		self._item_previewer = nil
 	end
 
-	local _world_previewer = self._world_previewer
+	local world_previewer = self._world_previewer
 
-	if not _world_previewer then
-		_world_previewer:prepare_exit()
-		_world_previewer:on_exit()
-		_world_previewer:destroy()
+	if world_previewer then
+		world_previewer:prepare_exit()
+		world_previewer:on_exit()
+		world_previewer:destroy()
 
 		self._world_previewer = nil
 	end
@@ -565,149 +580,155 @@ HeroWindowGotwfItemPreview._destroy_previewers = function (self)
 	self._item_texture_widget = nil
 end
 
-HeroWindowGotwfItemPreview._sync_presentation_item = function (self, arg_23_1)
+HeroWindowGotwfItemPreview._sync_presentation_item = function (self, force_update)
 	-- function 23
-	local selected_item = self._params.selected_item
+	local params = self._params
+	local selected_product = params.selected_item
 
-	if selected_item ~= self._selected_product or not arg_23_1 then
-		local flag = not selected_item and not self._selected_product and self._selected_product.item_id ~= selected_item.item_id or selected_item.reward_type == "currency"
+	if selected_product ~= self._selected_product or force_update then
+		local reset_presentation = not selected_product or not self._selected_product or self._selected_product.item_id ~= selected_product.item_id or selected_product.reward_type == "currency"
 
-		self._selected_product = selected_item
+		self._selected_product = selected_product
 
-		local var_23_2 = selected_item
+		local item = selected_product
 
-		if not flag then
+		if reset_presentation then
 			self._delayed_item_unit_presentation_delay = nil
 
 			self:_destroy_previewers()
 
-			if not self._selected_product then
+			if self._selected_product then
 				self:_start_loading_overlay()
-				self:_present_item(var_23_2)
+				self:_present_item(item)
 			end
 		end
 	end
 end
 
-local tbl_2 = {}
+local EMPTY_TABLE = {}
 
-HeroWindowGotwfItemPreview._present_item = function (self, arg_24_1)
+HeroWindowGotwfItemPreview._present_item = function (self, item)
 	-- function 24
-	local var_24_0
-	local var_24_1
-	local item_id = arg_24_1.item_id
-	local reward_type = arg_24_1.reward_type
-	local var_24_4 = tbl_2
-	local var_24_5
+	local slot_type, item_type
+	local item_id = item.item_id
+	local reward_type = item.reward_type
+	local masterlist_item = EMPTY_TABLE
+	local painting
 
 	if reward_type == "keep_decoration_painting" then
-		var_24_5 = Paintings[arg_24_1.item_id]
+		painting = Paintings[item.item_id]
 	elseif reward_type == "chips" then
-		var_24_4 = Currencies[arg_24_1.item_id]
+		masterlist_item = Currencies[item.item_id]
 	elseif reward_type == "currency" then
-		var_24_4 = BackendUtils.get_fake_currency_item(arg_24_1.currency_code, arg_24_1.amount)
+		masterlist_item = BackendUtils.get_fake_currency_item(item.currency_code, item.amount)
 	else
-		var_24_4 = ItemMasterList[arg_24_1.item_id]
+		masterlist_item = ItemMasterList[item.item_id]
 	end
 
-	if not var_24_4 then
+	if not masterlist_item then
 		return
 	end
 
-	local item_type = var_24_4.item_type
-	local slot_type = var_24_4.slot_type
-	local can_wield = var_24_4.can_wield
-	local display_name = var_24_4.display_name
-	local item_preview_environment = var_24_4.item_preview_environment
-	local item_preview_object_set_name = var_24_4.item_preview_object_set_name
-	local str = ""
-	local str_2 = ""
-	local str_3 = ""
-	local str_4 = ""
-	local _get_can_wield_display_text, var_24_17 = self:_get_can_wield_display_text(can_wield)
+	local item_type = masterlist_item.item_type
+	local slot_type = masterlist_item.slot_type
+	local can_wield = masterlist_item.can_wield
+	local display_name = masterlist_item.display_name
+	local item_preview_environment = masterlist_item.item_preview_environment
+	local item_preview_object_set_name = masterlist_item.item_preview_object_set_name
+	local type_title_text = ""
+	local disclaimer_text = ""
+	local description_text = ""
+	local amount_text = ""
+	local sub_title_text, career_title_text = self:_get_can_wield_display_text(can_wield)
 
-	if not (slot_type == "melee" or slot_type == "ranged" or slot_type ~= "weapon_skin") then
-		local item_type_2 = ItemMasterList[var_24_4.matching_item_key].item_type
+	if slot_type == "melee" or slot_type == "ranged" or slot_type == "weapon_skin" then
+		local matching_item_type = ItemMasterList[masterlist_item.matching_item_key].item_type
 
-		str = Localize(item_type_2)
-		str_2 = Localize(item_type)
-		item_preview_environment = item_preview_environment or "weapons_default_01"
-		item_preview_object_set_name = item_preview_object_set_name or "flow_weapon_lights"
+		type_title_text = Localize(matching_item_type)
+		disclaimer_text = Localize(item_type)
+		item_preview_environment = not not item_preview_environment or not not "weapons_default_01"
+		item_preview_object_set_name = not not item_preview_object_set_name or not not "flow_weapon_lights"
 	elseif slot_type == "hat" then
-		str = Localize(item_type)
-		item_preview_environment = item_preview_environment or "hats_default_01"
-		item_preview_object_set_name = item_preview_object_set_name or "flow_hat_lights"
+		type_title_text = Localize(item_type)
+		item_preview_environment = not not item_preview_environment or not not "hats_default_01"
+		item_preview_object_set_name = not not item_preview_object_set_name or not not "flow_hat_lights"
 	elseif slot_type == "skin" then
-		str = Localize(item_type)
+		type_title_text = Localize(item_type)
 
-		local name = var_24_4.name
-		local var_24_20 = Cosmetics[name]
+		local item_name = masterlist_item.name
+		local skin_data = Cosmetics[item_name]
 
-		if not var_24_20 and not var_24_20.always_hide_attachment_slots then
-			str_2 = Localize("menu_store_product_hero_skin_disclaimer_02_desc")
+		if skin_data and skin_data.always_hide_attachment_slots then
+			disclaimer_text = Localize("menu_store_product_hero_skin_disclaimer_02_desc")
 		else
-			str_2 = Localize("menu_store_product_hero_skin_disclaimer_desc")
+			disclaimer_text = Localize("menu_store_product_hero_skin_disclaimer_desc")
 		end
 
-		item_preview_object_set_name = item_preview_object_set_name or "flow_character_lights"
-	elseif not var_24_5 then
-		display_name = var_24_5.display_name
-		str = Localize("interaction_painting")
-		str_3 = Localize(var_24_5.description)
-		_get_can_wield_display_text = ""
-		var_24_17 = ""
+		item_preview_object_set_name = not not item_preview_object_set_name or not not "flow_character_lights"
+	elseif painting then
+		display_name = painting.display_name
+		type_title_text = Localize("interaction_painting")
+		description_text = Localize(painting.description)
+		sub_title_text = ""
+		career_title_text = ""
 	elseif slot_type == "chips" then
-		local amount = arg_24_1.amount
+		local amount = item.amount
 
-		str = Localize(item_type)
-		str_3 = Localize(var_24_4.description)
-		str_4 = not amount and amount .. " " .. Localize("menu_store_panel_currency_tooltip_title") and ""
-		_get_can_wield_display_text = ""
-		var_24_17 = ""
+		type_title_text = Localize(item_type)
+		description_text = Localize(masterlist_item.description)
+		amount_text = (not amount or not (amount .. " " .. Localize("menu_store_panel_currency_tooltip_title"))) and not not ""
+		sub_title_text = ""
+		career_title_text = ""
 	elseif slot_type == "versus_currency_name" then
-		local amount_2 = arg_24_1.amount
+		local amount = item.amount
 
-		str_3 = Localize(var_24_4.description)
-		str_4 = not amount_2 and string.format(Localize("achv_menu_vs_currency_reward_claimed"), amount_2) and ""
-		str = Localize("hero_view_prestige_reward")
+		description_text = Localize(masterlist_item.description)
+		amount_text = (not amount or not string.format(Localize("achv_menu_vs_currency_reward_claimed"), amount)) and not not ""
+		type_title_text = Localize("hero_view_prestige_reward")
 		display_name = "versus_currency_name"
-		_get_can_wield_display_text = ""
-		var_24_17 = ""
+		sub_title_text = ""
+		career_title_text = ""
 	elseif slot_type == "crafting_material" then
-		local amount_3 = arg_24_1.amount
+		local amount = item.amount
 
-		str = Localize(item_type)
-		str_3 = Localize(var_24_4.description)
-		str_4 = not amount_3 and amount_3 .. " " .. Localize(var_24_4.display_name) and ""
-		_get_can_wield_display_text = ""
-		var_24_17 = ""
+		type_title_text = Localize(item_type)
+		description_text = Localize(masterlist_item.description)
+		amount_text = (not amount or not (amount .. " " .. Localize(masterlist_item.display_name))) and not not ""
+		sub_title_text = ""
+		career_title_text = ""
 	else
-		str = Localize(item_type)
-		str_3 = Localize(var_24_4.description)
-		_get_can_wield_display_text = ""
-		var_24_17 = ""
+		type_title_text = Localize(item_type)
+		description_text = Localize(masterlist_item.description)
+		sub_title_text = ""
+		career_title_text = ""
 	end
 
 	if reward_type == "bundle_item" then
-		local bundle_item_id = arg_24_1.bundle_item_id
-		local var_24_25 = ItemMasterList[bundle_item_id]
+		local bundle_item_id = item.bundle_item_id
+		local bundle_item = ItemMasterList[bundle_item_id]
 
-		str = not var_24_25.information_text and Localize(var_24_25.information_text) and str
-		str_3 = not var_24_25.description and Localize(var_24_25.description) and str_3
-		_get_can_wield_display_text = ""
-		var_24_17 = ""
+		if bundle_item.information_text and not Localize(bundle_item.information_text) then
+			-- Nothing
+		end
+
+		if bundle_item.description and not Localize(bundle_item.description) then
+			-- Nothing
+		end
+
+		sub_title_text = ""
+		career_title_text = ""
 	end
 
 	self:_show_object_set(item_preview_object_set_name)
 	self:_update_environment(item_preview_environment)
 	self:_set_title_name(Localize(display_name))
-	self:_set_sub_title_name(_get_can_wield_display_text)
-	self:_set_description_text(str_3)
+	self:_set_sub_title_name(sub_title_text)
+	self:_set_description_text(description_text)
 	self:_set_sub_title_alpha_multiplier(1)
-	self:_set_type_title_name(str)
-	self:_set_career_title_name(var_24_17)
-	self:_set_disclaimer_text(str_2)
-	self:_set_amount_text(str_4)
+	self:_set_type_title_name(type_title_text)
+	self:_set_career_title_name(career_title_text)
+	self:_set_disclaimer_text(disclaimer_text)
+	self:_set_amount_text(amount_text)
 	self:_update_claimed_status()
 	self:_start_transition_animation("info_animation")
 
@@ -716,49 +737,53 @@ end
 
 HeroWindowGotwfItemPreview._update_claimed_status = function (self)
 	-- function 25
-	local selected_item_claimed = self._params.selected_item_claimed
-	local selected_item_already_owned = self._params.selected_item_already_owned
-	local claimed = self._top_widgets_by_name.claimed
+	local claimed = self._params.selected_item_claimed
+	local already_owned = self._params.selected_item_already_owned
+	local widget = self._top_widgets_by_name.claimed
 
-	claimed.content.visible = selected_item_claimed
-	claimed.content.already_owned = selected_item_already_owned
+	widget.content.visible = claimed
+	widget.content.already_owned = already_owned
 end
 
-HeroWindowGotwfItemPreview._create_material_instance = function (arg_26_0, arg_26_1, arg_26_2, arg_26_3, arg_26_4)
+HeroWindowGotwfItemPreview._create_material_instance = function (self, gui, new_material_name, template_material_name, reference_name)
 	-- function 26
-	arg_26_0._cloned_materials_by_reference[arg_26_4] = arg_26_2
+	local cloned_materials_by_reference = self._cloned_materials_by_reference
 
-	return Gui.clone_material_from_template(arg_26_1, arg_26_2, arg_26_3)
+	cloned_materials_by_reference[reference_name] = new_material_name
+
+	return Gui.clone_material_from_template(gui, new_material_name, template_material_name)
 end
 
-HeroWindowGotwfItemPreview._set_material_diffuse = function (arg_27_0, arg_27_1, arg_27_2, arg_27_3)
+HeroWindowGotwfItemPreview._set_material_diffuse = function (self, gui, material_name, texture_path)
 	-- function 27
-	local material = Gui.material(arg_27_1, arg_27_2)
+	local material = Gui.material(gui, material_name)
 
-	if not material then
-		Material.set_texture(material, "diffuse_map", arg_27_3)
+	if material then
+		Material.set_texture(material, "diffuse_map", texture_path)
 	end
 end
 
-HeroWindowGotwfItemPreview._load_texture_package = function (arg_28_0, arg_28_1, arg_28_2, arg_28_3)
+HeroWindowGotwfItemPreview._load_texture_package = function (self, package_name, reference_name, callback)
 	-- function 28
-	local flag = true
-	local flag_2 = false
+	local asynchronous = true
+	local prioritize = false
 
-	Managers.package:load(arg_28_1, arg_28_2, arg_28_3, flag, flag_2)
+	Managers.package:load(package_name, reference_name, callback, asynchronous, prioritize)
 
-	arg_28_0._loaded_package_names[arg_28_2] = arg_28_1
+	local loaded_package_names = self._loaded_package_names
+
+	loaded_package_names[reference_name] = package_name
 end
 
-HeroWindowGotwfItemPreview._is_unique_reference_to_material = function (self, arg_29_1)
+HeroWindowGotwfItemPreview._is_unique_reference_to_material = function (self, reference_name)
 	-- function 29
-	local _cloned_materials_by_reference = self._cloned_materials_by_reference
-	local var_29_1 = _cloned_materials_by_reference[arg_29_1]
+	local cloned_materials_by_reference = self._cloned_materials_by_reference
+	local material_name = cloned_materials_by_reference[reference_name]
 
-	fassert(var_29_1, "[HeroWindowGotwfItemPreview] - Could not find a used material for reference name: (%s)", arg_29_1)
+	fassert(material_name, "[HeroWindowGotwfItemPreview] - Could not find a used material for reference name: (%s)", reference_name)
 
-	for k, v in pairs(_cloned_materials_by_reference) do
-		if not (var_29_1 ~= v or arg_29_1 == k) then
+	for key, value in pairs(cloned_materials_by_reference) do
+		if material_name == value and reference_name ~= key then
 			return false
 		end
 	end
@@ -766,125 +791,129 @@ HeroWindowGotwfItemPreview._is_unique_reference_to_material = function (self, ar
 	return true
 end
 
-HeroWindowGotwfItemPreview._unload_texture_by_reference = function (self, arg_30_1)
+HeroWindowGotwfItemPreview._unload_texture_by_reference = function (self, reference_name)
 	-- function 30
-	local _loaded_package_names = self._loaded_package_names
-	local _cloned_materials_by_reference = self._cloned_materials_by_reference
-	local var_30_2 = _loaded_package_names[arg_30_1]
+	local loaded_package_names = self._loaded_package_names
+	local cloned_materials_by_reference = self._cloned_materials_by_reference
+	local package_name = loaded_package_names[reference_name]
 
-	fassert(var_30_2, "[HeroWindowGotwfOverview] - Could not find a package to unload for reference name: (%s)", arg_30_1)
-	Managers.package:unload(var_30_2, arg_30_1)
+	fassert(package_name, "[HeroWindowGotwfOverview] - Could not find a package to unload for reference name: (%s)", reference_name)
+	Managers.package:unload(package_name, reference_name)
 
-	_loaded_package_names[arg_30_1] = nil
+	loaded_package_names[reference_name] = nil
 
-	if not self:_is_unique_reference_to_material(arg_30_1) then
-		local var_30_3 = _cloned_materials_by_reference[arg_30_1]
-		local gui = self._ui_top_renderer.gui
+	if self:_is_unique_reference_to_material(reference_name) then
+		local material_name = cloned_materials_by_reference[reference_name]
+		local ui_top_renderer = self._ui_top_renderer
+		local top_gui = ui_top_renderer.gui
 
-		self:_set_material_diffuse(gui, var_30_3, str)
+		self:_set_material_diffuse(top_gui, material_name, PRODUCT_PLACEHOLDER_TEXTURE_PATH)
 	end
 
-	_cloned_materials_by_reference[arg_30_1] = nil
+	cloned_materials_by_reference[reference_name] = nil
 end
 
-HeroWindowGotwfItemPreview._delayed_item_unit_presentation = function (self, arg_31_1)
+HeroWindowGotwfItemPreview._delayed_item_unit_presentation = function (self, item)
 	-- function 31
-	if arg_31_1.reward_type == "keep_decoration_painting" then
-		self:_setup_painting_presentation(arg_31_1)
+	local reward_type = item.reward_type
+
+	if reward_type == "keep_decoration_painting" then
+		self:_setup_painting_presentation(item)
 	else
-		self:_setup_item_presentation(arg_31_1)
+		self:_setup_item_presentation(item)
 	end
 end
 
-HeroWindowGotwfItemPreview._setup_painting_presentation = function (self, arg_32_1)
+HeroWindowGotwfItemPreview._setup_painting_presentation = function (self, item)
 	-- function 32
-	local item_id = arg_32_1.item_id
-	local var_32_1 = Paintings[item_id]
+	local item_name = item.item_id
+	local painting_data = Paintings[item_name]
 
-	if not (not var_32_1 and item_id ~= "hidden") then
+	if not painting_data or item_name == "hidden" then
 		return
 	end
 
-	local gui = self._ui_top_renderer.gui
-	local var_32_3
-	local str = "keep_painting_" .. item_id
-	local flag = string.find(item_id, "_none") ~= nil
+	local ui_top_renderer = self._ui_top_renderer
+	local top_gui = ui_top_renderer.gui
+	local package_name
+	local subpath = "keep_painting_" .. item_name
+	local no_package_required = string.find(item_name, "_none") ~= nil
 
-	if not flag then
-		var_32_3 = "resource_packages/keep_paintings/" .. str
+	if not no_package_required then
+		package_name = "resource_packages/keep_paintings/" .. subpath
 	end
 
 	local _reference_id = self._reference_id
 
-	_reference_id = _reference_id or 0
+	_reference_id = not not _reference_id or not not 0
 	self._reference_id = _reference_id + 1
 
-	local str_2 = item_id .. "_" .. self._reference_id
-	local str_3 = "keep_painting_" .. item_id
-	local str_4 = "template_store_diffuse_masked"
+	local reference_name = item_name .. "_" .. self._reference_id
+	local texture_name = "keep_painting_" .. item_name
+	local template_material_name = "template_store_diffuse_masked"
 
-	self:_create_material_instance(gui, str_3, str_4, str_2)
+	self:_create_material_instance(top_gui, texture_name, template_material_name, reference_name)
 
-	local function fn()
+	local function callback()
 		-- function 33
-		local var_33_0 = create_painting_widget()
-		local var_33_1 = UIWidget.init(var_33_0)
-		local content = var_33_1.content
-		local style = var_33_1.style
+		local widget_definition = create_painting_widget()
+		local widget = UIWidget.init(widget_definition)
+		local content = widget.content
+		local style = widget.style
 
-		self._item_texture_widget = var_33_1
+		self._item_texture_widget = widget
 
-		local str_2 = "units/gameplay/keep_paintings/materials/" .. str .. "/" .. str .. "_df"
+		local texture_path = "units/gameplay/keep_paintings/materials/" .. subpath .. "/" .. subpath .. "_df"
 
-		self:_set_material_diffuse(gui, str_3, str_2)
+		self:_set_material_diffuse(top_gui, texture_name, texture_path)
 
-		local num = 2
-		local num_2 = 150 * num
-		local num_3 = 0.125
+		local icon_scale = 2
+		local base_size = 150 * icon_scale
+		local padding = 0.125
 
-		if var_32_1.orientation == "horizontal" then
+		if painting_data.orientation == "horizontal" then
 			content.painting = {
-				texture_id = str_3,
+				texture_id = texture_name,
 				uvs = {
 					{
 						0,
-						num_3
+						padding
 					},
 					{
 						1,
-						1 - num_3
+						1 - padding
 					}
 				}
 			}
 			style.painting.texture_size = {
-				num_2,
-				num_2 * (1 - 2 * num_3)
+				base_size,
+				base_size * (1 - 2 * padding)
 			}
 			style.painting_frame.area_size = {
-				num_2,
-				num_2 * (1 - 2 * num_3)
+				base_size,
+				base_size * (1 - 2 * padding)
 			}
 		else
 			content.painting = {
-				texture_id = str_3,
+				texture_id = texture_name,
 				uvs = {
 					{
-						num_3,
+						padding,
 						0
 					},
 					{
-						1 - num_3,
+						1 - padding,
 						1
 					}
 				}
 			}
 			style.painting.texture_size = {
-				num_2 * (1 - 2 * num_3),
-				num_2
+				base_size * (1 - 2 * padding),
+				base_size
 			}
 			style.painting_frame.area_size = {
-				num_2 * (1 - 2 * num_3),
-				num_2
+				base_size * (1 - 2 * padding),
+				base_size
 			}
 		end
 
@@ -893,269 +922,332 @@ HeroWindowGotwfItemPreview._setup_painting_presentation = function (self, arg_32
 		Renderer.request_textures_to_highest_mip_level()
 	end
 
-	if not flag then
-		fn()
+	if no_package_required then
+		callback()
 	else
-		self:_load_texture_package(var_32_3, str_2, fn)
+		self:_load_texture_package(package_name, reference_name, callback)
 	end
 end
 
-HeroWindowGotwfItemPreview._setup_item_presentation = function (self, arg_34_1)
+HeroWindowGotwfItemPreview._setup_item_presentation = function (self, item)
 	-- function 34
-	local item_id = arg_34_1.item_id
-	local reward_type = arg_34_1.reward_type
-	local var_34_2
+	local item_key = item.item_id
+	local reward_type = item.reward_type
+	local masterlist_item
 
 	if reward_type == "chips" then
-		var_34_2 = Currencies[item_id]
+		masterlist_item = Currencies[item_key]
 	elseif reward_type == "currency" then
-		var_34_2, item_id = BackendUtils.get_fake_currency_item(arg_34_1.currency_code, arg_34_1.amount)
+		masterlist_item, item_key = BackendUtils.get_fake_currency_item(item.currency_code, item.amount)
 	else
-		var_34_2 = ItemMasterList[item_id]
+		masterlist_item = ItemMasterList[item_key]
 	end
 
-	local slot_type = var_34_2.slot_type
-	local _viewport_widget = self._viewport_widget
-	local var_34_5 = _viewport_widget.element.pass_data[1]
-	local viewport = var_34_5.viewport
-	local world = var_34_5.world
+	local slot_type = masterlist_item.slot_type
+	local viewport_widget = self._viewport_widget
+	local viewport_pass_data = viewport_widget.element.pass_data[1]
+	local viewport = viewport_pass_data.viewport
+	local world = viewport_pass_data.world
 
-	if not (slot_type == "melee" or slot_type == "ranged" or slot_type ~= "weapon_skin") then
-		local tbl = {
+	if slot_type == "melee" or slot_type == "ranged" or slot_type == "weapon_skin" then
+		local preview_position = {
 			0,
 			0,
 			0
 		}
-		local var_34_9
-		local flag = true
-		local var_34_11
-		local flag_2 = true
+		local unique_id, invert_start_rotation, display_unit_key = nil, true
+		local use_highest_mip_levels = true
 		local camera = ScriptViewport.camera(viewport)
 
 		ScriptCamera.set_local_rotation(camera, QuaternionBox(0, 0, 1, 0):unbox())
 
-		local tbl_2 = {
-			data = var_34_2
+		local item = {
+			data = masterlist_item
 		}
-		local var_34_15 = LootItemUnitPreviewer:new(tbl_2, tbl, world, viewport, var_34_9, flag, var_34_11, flag_2)
-		local var_34_16 = callback(self, "cb_unit_spawned_item_preview", var_34_15, item_id)
+		local item_previewer = LootItemUnitPreviewer:new(item, preview_position, world, viewport, unique_id, invert_start_rotation, display_unit_key, use_highest_mip_levels)
+		local callback = callback(self, "cb_unit_spawned_item_preview", item_previewer, item_key)
 
-		var_34_15:activate_auto_spin()
-		var_34_15:register_spawn_callback(var_34_16)
+		item_previewer:activate_auto_spin()
+		item_previewer:register_spawn_callback(callback)
 
-		self._item_previewer = var_34_15
+		self._item_previewer = item_previewer
 	elseif slot_type == "hat" then
-		local var_34_17 = MenuWorldPreviewer:new(self._ingame_ui_context, UISettings.hero_hat_camera_position_by_character, "HeroWindowGotwfItemPreview")
+		local world_previewer = MenuWorldPreviewer:new(self._ingame_ui_context, UISettings.hero_hat_camera_position_by_character, "HeroWindowGotwfItemPreview")
 
-		var_34_17:on_enter(_viewport_widget)
+		world_previewer:on_enter(viewport_widget)
 
-		self._world_previewer = var_34_17
+		self._world_previewer = world_previewer
 
-		local _get_hero_wield_info_by_item, var_34_19, var_34_20, var_34_21 = self:_get_hero_wield_info_by_item(var_34_2)
-		local base_skin = CareerSettings[var_34_20].base_skin
+		local profile_name, profile_index, career_name, career_index = self:_get_hero_wield_info_by_item(masterlist_item)
+		local career_settings = CareerSettings[career_name]
+		local base_skin = career_settings.base_skin
 
-		self:_spawn_hero_with_hat(var_34_17, _get_hero_wield_info_by_item, var_34_21, base_skin, item_id)
+		self:_spawn_hero_with_hat(world_previewer, profile_name, career_index, base_skin, item_key)
 	elseif slot_type == "skin" then
-		local var_34_23 = MenuWorldPreviewer:new(self._ingame_ui_context, UISettings.hero_skin_camera_position_by_character, "HeroWindowGotwfItemPreview")
+		local world_previewer = MenuWorldPreviewer:new(self._ingame_ui_context, UISettings.hero_skin_camera_position_by_character, "HeroWindowGotwfItemPreview")
 
-		var_34_23:on_enter(_viewport_widget)
+		world_previewer:on_enter(viewport_widget)
 
-		self._world_previewer = var_34_23
+		self._world_previewer = world_previewer
 
-		local var_34_24 = item_id
-		local _get_hero_wield_info_by_item_2, var_34_26, var_34_27, var_34_28 = self:_get_hero_wield_info_by_item(var_34_2)
+		local optional_skin = item_key
+		local profile_name, profile_index, career_name, career_index = self:_get_hero_wield_info_by_item(masterlist_item)
 
-		self:_spawn_hero_skin(var_34_23, _get_hero_wield_info_by_item_2, var_34_28, var_34_24)
+		self:_spawn_hero_skin(world_previewer, profile_name, career_index, optional_skin)
 	elseif slot_type == "frame" then
-		local str = "item_texture"
-		local temporary_template = var_34_2.temporary_template
+		local scenegraph_id = "item_texture"
+		local temporary_template = masterlist_item.temporary_template
 
-		temporary_template = temporary_template or "default"
-
-		local num = 1.5
-		local var_34_32
-		local flag_3 = false
-		local flag_4 = true
-		local create_base_portrait_frame = UIWidgets.create_base_portrait_frame(str, temporary_template, num, var_34_32, flag_3, flag_4)
-
-		self._item_texture_widget = UIWidget.init(create_base_portrait_frame)
-		self._fadeout_loading_overlay = true
-	elseif not (slot_type == "loot_chest" or slot_type == "chips" or slot_type == "crafting_material" or slot_type ~= "versus_currency_name") then
-		local _reference_id = self._reference_id
-
-		_reference_id = _reference_id or 0
-		self._reference_id = _reference_id + 1
-
-		local str_2 = item_id .. "_" .. self._reference_id
-
-		if slot_type == "chips" then
-			item_id = "shillings_medium"
-		elseif slot_type == "versus_currency_name" then
-			item_id = "versus_currency_small"
-		elseif slot_type == "loot_chest" then
-			item_id = "loot_chest_generic"
+		if not temporary_template then
+			-- Nothing
 		end
 
-		local store_icon_override_key = var_34_2.store_icon_override_key
-		local str_3 = "store_item_icon_" .. (store_icon_override_key or item_id)
-		local str_4 = "resource_packages/store/item_icons/" .. str_3
+		temporary_template = "default"
 
-		if not Application.can_get("package", str_4) then
-			local var_34_41
-			local str_5 = "item_texture"
-			local var_34_43
-			local var_34_44
-			local var_34_45
-			local var_34_46
-			local tbl_3 = {
+		local frame_name = temporary_template
+
+		::label_34_0::
+
+		local scale = 1.5
+		local offset
+		local masked = false
+		local skip_offset = true
+		local widget_definition = UIWidgets.create_base_portrait_frame(scenegraph_id, frame_name, scale, offset, masked, skip_offset)
+
+		self._item_texture_widget = UIWidget.init(widget_definition)
+		self._fadeout_loading_overlay = true
+	elseif slot_type == "loot_chest" or slot_type == "chips" or slot_type == "crafting_material" or slot_type == "versus_currency_name" then
+		local _reference_id = self._reference_id
+
+		_reference_id = not not _reference_id or not not 0
+		self._reference_id = _reference_id + 1
+
+		local reference_name = item_key .. "_" .. self._reference_id
+
+		if slot_type == "chips" then
+			item_key = "shillings_medium"
+		elseif slot_type == "versus_currency_name" then
+			item_key = "versus_currency_small"
+		elseif slot_type == "loot_chest" then
+			item_key = "loot_chest_generic"
+		end
+
+		local store_icon_override_key = masterlist_item.store_icon_override_key
+		local texture_name = "store_item_icon_" .. (not not store_icon_override_key or not not item_key)
+		local package_name = "resource_packages/store/item_icons/" .. texture_name
+		local package_available = Application.can_get("package", package_name)
+
+		if package_available then
+			local texture_id
+			local scenegraph_id = "item_texture"
+			local masked, retained, color, offset
+			local texture_size = {
 				390,
 				330
 			}
-			local var_34_48 = create_texture_widget(var_34_41, str_5, var_34_43, var_34_44, var_34_45, var_34_46, tbl_3)
-			local var_34_49 = UIWidget.init(var_34_48)
-			local content = var_34_49.content
+			local widget_definition = create_texture_widget(texture_id, scenegraph_id, masked, retained, color, offset, texture_size)
+			local widget = UIWidget.init(widget_definition)
+			local content = widget.content
 
-			content.reference_name = str_2
+			content.reference_name = reference_name
 
-			local gui = self._ui_top_renderer.gui
-			local str_6
+			local ui_top_renderer = self._ui_top_renderer
+			local top_gui = ui_top_renderer.gui
+			local str
 
-			if not var_34_43 then
-				str_6 = str_3 .. "_masked"
+			if masked then
+				str = texture_name .. "_masked"
 
-				if not str_6 then
+				if not str then
 					-- Nothing
 				end
 			end
 
-			str_6 = str_3
+			str = texture_name
+
+			local new_material_name = str
 
 			do
-				local flag_5
+				local str_2
 			end
 
-			::label_34_0::
+			::label_34_1::
 
-			flag_5 = not var_34_43 and "template_store_diffuse_masked" and "template_store_diffuse"
+			if masked then
+				str_2 = "template_store_diffuse_masked"
 
-			self:_create_material_instance(gui, str_6, flag_5, str_2)
+				goto label_34_2
+			end
 
-			local function fn()
+			str_2 = "template_store_diffuse"
+
+			local template_material_name = str_2
+
+			::label_34_2::
+
+			self:_create_material_instance(top_gui, new_material_name, template_material_name, reference_name)
+
+			local function callback()
 				-- function 35
-				local str = "gui/1080p/single_textures/store_item_icons/" .. str_3 .. "/" .. str_3
+				local texture_path = "gui/1080p/single_textures/store_item_icons/" .. texture_name .. "/" .. texture_name
 
-				self:_set_material_diffuse(gui, str_6, str)
+				self:_set_material_diffuse(top_gui, new_material_name, texture_path)
 
-				content.texture_id = str_6
+				content.texture_id = new_material_name
 				self._fadeout_loading_overlay = true
 			end
 
-			self:_load_texture_package(str_4, str_2, fn)
+			self:_load_texture_package(package_name, reference_name, callback)
 
-			self._item_texture_widget = var_34_49
+			self._item_texture_widget = widget
 		else
-			Application.warning("Icon package not accessable for product_id: (%s) and texture_name: (%s)", item_id, str_3)
+			Application.warning("Icon package not accessable for product_id: (%s) and texture_name: (%s)", item_key, texture_name)
 		end
 	end
 end
 
-HeroWindowGotwfItemPreview._update_delayed_item_unit_presentation = function (self, arg_36_1)
+HeroWindowGotwfItemPreview._update_delayed_item_unit_presentation = function (self, dt)
 	-- function 36
-	local _delayed_item_unit_presentation_delay = self._delayed_item_unit_presentation_delay
+	local delay = self._delayed_item_unit_presentation_delay
 
-	if not _delayed_item_unit_presentation_delay then
+	if not delay then
 		return
 	end
 
-	local max = math.max(_delayed_item_unit_presentation_delay - arg_36_1, 0)
+	delay = math.max(delay - dt, 0)
 
-	if max == 0 then
+	if delay == 0 then
 		self._delayed_item_unit_presentation_delay = nil
 
-		local _selected_product = self._selected_product
+		local selected_product = self._selected_product
+		local item = selected_product
 
-		self:_delayed_item_unit_presentation(_selected_product)
+		self:_delayed_item_unit_presentation(item)
 	else
-		self._delayed_item_unit_presentation_delay = max
+		self._delayed_item_unit_presentation_delay = delay
 	end
 end
 
-HeroWindowGotwfItemPreview._set_title_name = function (arg_37_0, arg_37_1)
+HeroWindowGotwfItemPreview._set_title_name = function (self, text)
 	-- function 37
-	arg_37_0._top_widgets_by_name.title_text.content.text = arg_37_1
+	local widget = self._top_widgets_by_name.title_text
+
+	widget.content.text = text
 end
 
-HeroWindowGotwfItemPreview._set_sub_title_name = function (arg_38_0, arg_38_1)
+HeroWindowGotwfItemPreview._set_sub_title_name = function (self, text)
 	-- function 38
-	arg_38_0._top_widgets_by_name.sub_title_text.content.text = arg_38_1
+	local widget = self._top_widgets_by_name.sub_title_text
+
+	widget.content.text = text
 end
 
-HeroWindowGotwfItemPreview._set_description_text = function (arg_39_0, arg_39_1)
+HeroWindowGotwfItemPreview._set_description_text = function (self, text)
 	-- function 39
-	arg_39_0._top_widgets_by_name.description_text.content.text = arg_39_1
+	local widget = self._top_widgets_by_name.description_text
+
+	widget.content.text = text
 end
 
-HeroWindowGotwfItemPreview._set_sub_title_alpha_multiplier = function (arg_40_0, arg_40_1)
+HeroWindowGotwfItemPreview._set_sub_title_alpha_multiplier = function (self, alpha_multiplier)
 	-- function 40
-	arg_40_0._top_widgets_by_name.sub_title_text.alpha_multiplier = arg_40_1
+	local widget = self._top_widgets_by_name.sub_title_text
+
+	widget.alpha_multiplier = alpha_multiplier
 end
 
-HeroWindowGotwfItemPreview._set_type_title_name = function (arg_41_0, arg_41_1)
+HeroWindowGotwfItemPreview._set_type_title_name = function (self, text)
 	-- function 41
-	arg_41_0._top_widgets_by_name.type_title_text.content.text = arg_41_1
+	local widget = self._top_widgets_by_name.type_title_text
+
+	widget.content.text = text
 end
 
-HeroWindowGotwfItemPreview._set_career_title_name = function (arg_42_0, arg_42_1)
+HeroWindowGotwfItemPreview._set_career_title_name = function (self, text)
 	-- function 42
-	arg_42_0._top_widgets_by_name.career_title_text.content.text = arg_42_1
+	local widget = self._top_widgets_by_name.career_title_text
+
+	widget.content.text = text
 end
 
-HeroWindowGotwfItemPreview._set_disclaimer_text = function (self, arg_43_1)
+HeroWindowGotwfItemPreview._set_disclaimer_text = function (self, text)
 	-- function 43
-	self._disclaimer_text = arg_43_1
-	self._top_widgets_by_name.disclaimer_text.content.text = arg_43_1
+	self._disclaimer_text = text
+
+	local widget = self._top_widgets_by_name.disclaimer_text
+
+	widget.content.text = text
 
 	self:_update_info_text_alignment()
 end
 
-HeroWindowGotwfItemPreview._set_amount_text = function (arg_44_0, arg_44_1)
+HeroWindowGotwfItemPreview._set_amount_text = function (self, text)
 	-- function 44
-	arg_44_0._top_widgets_by_name.amount_text.content.text = arg_44_1
+	local widget = self._top_widgets_by_name.amount_text
+
+	widget.content.text = text
 end
 
 HeroWindowGotwfItemPreview._update_info_text_alignment = function (self)
 	-- function 45
-	local expire_timer_text = self._top_widgets_by_name.expire_timer_text
-	local disclaimer_text = self._top_widgets_by_name.disclaimer_text
-	local disclaimer_divider = self._top_widgets_by_name.disclaimer_divider
+	local expire_widget = self._top_widgets_by_name.expire_timer_text
+	local disclaimer_widget = self._top_widgets_by_name.disclaimer_text
+	local divider_widget = self._top_widgets_by_name.disclaimer_divider
 	local _expire_text = self._expire_text
 
-	_expire_text = not _expire_text and self._expire_text ~= ""
+	if _expire_text then
+		-- Nothing
+	end
+
+	if self._expire_text == "" then
+		_expire_text = false
+
+		goto label_45_0
+	end
+
+	_expire_text = true
+
+	local has_expire_text = _expire_text
+
+	::label_45_0::
 
 	local _disclaimer_text = self._disclaimer_text
 
-	_disclaimer_text = not _disclaimer_text and self._disclaimer_text ~= ""
-
-	local var_45_5
-	local var_45_6
-
-	if not _expire_text then
-		if not _disclaimer_text then
-			var_45_5 = expire_timer_text
-			var_45_6 = disclaimer_text
-		else
-			var_45_6 = expire_timer_text
-		end
-	elseif not _disclaimer_text then
-		var_45_6 = disclaimer_text
+	if _disclaimer_text then
+		-- Nothing
 	end
 
-	local flag = _expire_text or _disclaimer_text
-	local _ui_renderer = self._ui_renderer
+	if self._disclaimer_text == "" then
+		_disclaimer_text = false
+
+		goto label_45_1
+	end
+
+	_disclaimer_text = true
+
+	local has_disclaimer_text = _disclaimer_text
+
+	::label_45_1::
+
+	local text_widget_1, text_widget_2
+
+	if has_expire_text then
+		if has_disclaimer_text then
+			text_widget_1 = expire_widget
+			text_widget_2 = disclaimer_widget
+		else
+			text_widget_2 = expire_widget
+		end
+	elseif has_disclaimer_text then
+		text_widget_2 = disclaimer_widget
+	end
+
+	local has_info_text = not not has_expire_text or not not has_disclaimer_text
+	local ui_renderer = self._ui_renderer
 	local get_text_width
 
-	if not var_45_5 then
-		get_text_width = UIUtils.get_text_width(_ui_renderer, var_45_5.style.text, var_45_5.content.text)
+	if text_widget_1 then
+		get_text_width = UIUtils.get_text_width(ui_renderer, text_widget_1.style.text, text_widget_1.content.text)
 
 		if not get_text_width then
 			-- Nothing
@@ -1164,14 +1256,16 @@ HeroWindowGotwfItemPreview._update_info_text_alignment = function (self)
 
 	get_text_width = 0
 
+	local text_1_width = get_text_width
+
 	do
 		local get_text_width_2
 	end
 
-	::label_45_0::
+	::label_45_2::
 
-	if not var_45_6 then
-		get_text_width_2 = UIUtils.get_text_width(_ui_renderer, var_45_6.style.text, var_45_6.content.text)
+	if text_widget_2 then
+		get_text_width_2 = UIUtils.get_text_width(ui_renderer, text_widget_2.style.text, text_widget_2.content.text)
 
 		if not get_text_width_2 then
 			-- Nothing
@@ -1180,164 +1274,176 @@ HeroWindowGotwfItemPreview._update_info_text_alignment = function (self)
 
 	get_text_width_2 = 0
 
-	::label_45_1::
+	local text_2_width = get_text_width_2
 
-	local num = 14
-	local var_45_12 = scenegraph_definition[disclaimer_divider.scenegraph_id].size[1]
-	local num_2 = get_text_width + get_text_width_2 + var_45_12
-	local num_3 = get_text_width / 2 - num_2 / 2 - num / 2
-	local num_4 = num_3 + get_text_width / 2 + var_45_12 / 2 + num / 2
-	local num_5 = num_4 + get_text_width_2 / 2 + var_45_12 / 2 + num / 2
+	::label_45_3::
 
-	if not var_45_5 then
-		var_45_5.offset[1] = num_3
+	local spacing = 14
+	local divider_width = scenegraph_definition[divider_widget.scenegraph_id].size[1]
+	local total_length = text_1_width + text_2_width + divider_width
+	local text_1_x = text_1_width / 2 - total_length / 2 - spacing / 2
+	local divider_x = text_1_x + text_1_width / 2 + divider_width / 2 + spacing / 2
+	local text_2_x = divider_x + text_2_width / 2 + divider_width / 2 + spacing / 2
+
+	if text_widget_1 then
+		text_widget_1.offset[1] = text_1_x
 	end
 
-	if not var_45_6 then
-		var_45_6.offset[1] = num_5
+	if text_widget_2 then
+		text_widget_2.offset[1] = text_2_x
 	end
 
-	disclaimer_divider.offset[1] = num_4
-	disclaimer_divider.content.visible = flag
+	divider_widget.offset[1] = divider_x
+	divider_widget.content.visible = has_info_text
 end
 
-HeroWindowGotwfItemPreview.cb_unit_spawned_item_preview = function (self, arg_46_1, arg_46_2)
+HeroWindowGotwfItemPreview.cb_unit_spawned_item_preview = function (self, item_previewer, item_key)
 	-- function 46
-	local flag = true
+	local ignore_spin = true
 
-	arg_46_1:present_item(arg_46_2, flag)
+	item_previewer:present_item(item_key, ignore_spin)
 
 	self._fadeout_loading_overlay = true
 end
 
-HeroWindowGotwfItemPreview._spawn_hero_skin = function (arg_47_0, arg_47_1, arg_47_2, arg_47_3, arg_47_4)
+HeroWindowGotwfItemPreview._spawn_hero_skin = function (self, world_previewer, hero_name, career_index, optional_skin)
 	-- function 47
-	local var_47_0 = callback(arg_47_0, "cb_hero_unit_spawned_skin_preview", arg_47_1, arg_47_2, arg_47_3)
+	local callback = callback(self, "cb_hero_unit_spawned_skin_preview", world_previewer, hero_name, career_index)
 
-	arg_47_1:request_spawn_hero_unit(arg_47_2, arg_47_3, false, var_47_0, 1, nil, arg_47_4)
+	world_previewer:request_spawn_hero_unit(hero_name, career_index, false, callback, 1, nil, optional_skin)
 end
 
-HeroWindowGotwfItemPreview._spawn_hero_with_hat = function (arg_48_0, arg_48_1, arg_48_2, arg_48_3, arg_48_4, arg_48_5)
+HeroWindowGotwfItemPreview._spawn_hero_with_hat = function (self, world_previewer, hero_name, career_index, optional_skin, item_name)
 	-- function 48
-	local var_48_0 = callback(arg_48_0, "cb_hero_unit_spawned_hat_preview", arg_48_1, arg_48_2, arg_48_3, arg_48_5)
+	local callback = callback(self, "cb_hero_unit_spawned_hat_preview", world_previewer, hero_name, career_index, item_name)
 
-	arg_48_1:request_spawn_hero_unit(arg_48_2, arg_48_3, false, var_48_0, 1, nil, arg_48_4)
+	world_previewer:request_spawn_hero_unit(hero_name, career_index, false, callback, 1, nil, optional_skin)
 end
 
-HeroWindowGotwfItemPreview.cb_hero_unit_spawned_skin_preview = function (self, arg_49_1, arg_49_2, arg_49_3)
+HeroWindowGotwfItemPreview.cb_hero_unit_spawned_skin_preview = function (self, world_previewer, hero_name, career_index)
 	-- function 49
-	local var_49_0 = FindProfileIndex(arg_49_2)
-	local var_49_1 = SPProfiles[var_49_0].careers[arg_49_3]
-	local str = "store_idle"
-	local preview_items = var_49_1.preview_items
+	local profile_index = FindProfileIndex(hero_name)
+	local profile = SPProfiles[profile_index]
+	local careers = profile.careers
+	local career_settings = careers[career_index]
+	local preview_idle_animation = "store_idle"
+	local preview_items = career_settings.preview_items
 
-	if not preview_items then
-		for i, v in ipairs(preview_items) do
-			local item_name = v.item_name
-			local slot_type = ItemMasterList[item_name].slot_type
+	if preview_items then
+		for _, item_data in ipairs(preview_items) do
+			local item_name = item_data.item_name
+			local item_template = ItemMasterList[item_name]
+			local slot_type = item_template.slot_type
 
-			if not (slot_type == "melee" or slot_type == "ranged") then
-				local var_49_6 = InventorySettings.slot_names_by_type[slot_type][1]
-				local var_49_7 = InventorySettings.slots_by_name[var_49_6]
+			if slot_type ~= "melee" and slot_type ~= "ranged" then
+				local slot_names = InventorySettings.slot_names_by_type[slot_type]
+				local slot_name = slot_names[1]
+				local slot = InventorySettings.slots_by_name[slot_name]
 
-				arg_49_1:equip_item(item_name, var_49_7)
+				world_previewer:equip_item(item_name, slot)
 			end
 		end
 	end
 
-	if not str then
-		arg_49_1:play_character_animation(str)
+	if preview_idle_animation then
+		world_previewer:play_character_animation(preview_idle_animation)
 	end
 
 	self._fadeout_loading_overlay = true
 end
 
-HeroWindowGotwfItemPreview.cb_hero_unit_spawned_hat_preview = function (self, arg_50_1, arg_50_2, arg_50_3, arg_50_4)
+HeroWindowGotwfItemPreview.cb_hero_unit_spawned_hat_preview = function (self, world_previewer, hero_name, career_index, hat_item_name)
 	-- function 50
-	local var_50_0 = FindProfileIndex(arg_50_2)
-	local var_50_1 = SPProfiles[var_50_0].careers[arg_50_3]
-	local str = "store_idle"
-	local preview_items = var_50_1.preview_items
-	local slot_hat = InventorySettings.slots_by_name.slot_hat
+	local profile_index = FindProfileIndex(hero_name)
+	local profile = SPProfiles[profile_index]
+	local careers = profile.careers
+	local career_settings = careers[career_index]
+	local preview_idle_animation = "store_idle"
+	local preview_items = career_settings.preview_items
+	local hat_slot = InventorySettings.slots_by_name.slot_hat
 
-	arg_50_1:equip_item(arg_50_4, slot_hat)
+	world_previewer:equip_item(hat_item_name, hat_slot)
 
-	if not preview_items then
-		for i, v in ipairs(preview_items) do
-			local item_name = v.item_name
-			local slot_type = ItemMasterList[item_name].slot_type
+	if preview_items then
+		for _, item_data in ipairs(preview_items) do
+			local item_name = item_data.item_name
+			local item_template = ItemMasterList[item_name]
+			local slot_type = item_template.slot_type
 
-			if not (slot_type == "melee" or slot_type == "ranged" or slot_type == "hat") then
-				local var_50_7 = InventorySettings.slot_names_by_type[slot_type][1]
-				local var_50_8 = InventorySettings.slots_by_name[var_50_7]
+			if slot_type ~= "melee" and slot_type ~= "ranged" and slot_type ~= "hat" then
+				local slot_names = InventorySettings.slot_names_by_type[slot_type]
+				local slot_name = slot_names[1]
+				local slot = InventorySettings.slots_by_name[slot_name]
 
-				arg_50_1:equip_item(item_name, var_50_8)
+				world_previewer:equip_item(item_name, slot)
 			end
 		end
 	end
 
-	if not str then
-		arg_50_1:play_character_animation(str)
+	if preview_idle_animation then
+		world_previewer:play_character_animation(preview_idle_animation)
 	end
 
 	self._fadeout_loading_overlay = true
 end
 
-HeroWindowGotwfItemPreview._get_can_wield_display_text = function (arg_51_0, arg_51_1)
+HeroWindowGotwfItemPreview._get_can_wield_display_text = function (self, can_wield)
 	-- function 51
-	local str = ""
-	local str_2 = ""
+	local hero_text = ""
+	local career_text = ""
 
-	if not arg_51_1 then
-		local num = 0
-		local num_2 = 0
+	if can_wield then
+		local added_heroes = 0
+		local added_careers = 0
 
-		for i, v in ipairs(arg_51_1) do
-			local var_51_4 = CareerSettings[v]
-			local profile_name = var_51_4.profile_name
-			local var_51_6 = FindProfileIndex(profile_name)
-			local character_name = SPProfiles[var_51_6].character_name
+		for _, career_name in ipairs(can_wield) do
+			local career_settings = CareerSettings[career_name]
+			local profile_name = career_settings.profile_name
+			local profile_index = FindProfileIndex(profile_name)
+			local profile = SPProfiles[profile_index]
+			local hero_display_name = profile.character_name
 
-			if num_2 > 0 then
-				str_2 = str_2 .. ", "
+			if added_careers > 0 then
+				career_text = career_text .. ", "
 			end
 
-			num_2 = num_2 + 1
+			added_careers = added_careers + 1
 
-			local display_name = var_51_4.display_name
+			local career_display_name = career_settings.display_name
 
-			str_2 = str_2 .. Localize(display_name)
+			career_text = career_text .. Localize(career_display_name)
 
-			local var_51_9 = Localize(character_name)
+			local hero_display_name_localized = Localize(hero_display_name)
 
-			if not string.find(str, var_51_9) then
-				if num > 0 then
-					str = str .. ", "
+			if not string.find(hero_text, hero_display_name_localized) then
+				if added_heroes > 0 then
+					hero_text = hero_text .. ", "
 				end
 
-				num = num + 1
-				str = str .. var_51_9
+				added_heroes = added_heroes + 1
+				hero_text = hero_text .. hero_display_name_localized
 			end
 		end
 	end
 
-	return str, str_2
+	return hero_text, career_text
 end
 
-HeroWindowGotwfItemPreview._get_hero_wield_info_by_item = function (arg_52_0, arg_52_1)
+HeroWindowGotwfItemPreview._get_hero_wield_info_by_item = function (self, item)
 	-- function 52
-	local var_52_0 = arg_52_1.can_wield[1]
+	local can_wield = item.can_wield
+	local career_name = can_wield[1]
 
-	for i, v in ipairs(SPProfiles) do
-		local careers = v.careers
+	for _, profile_settings in ipairs(SPProfiles) do
+		local careers = profile_settings.careers
 
-		for i_2, v_2 in ipairs(careers) do
-			if v_2.name == var_52_0 then
-				local display_name = v.display_name
-				local var_52_3 = FindProfileIndex(display_name)
-				local sort_order = v_2.sort_order
+		for index, career_settings in ipairs(careers) do
+			if career_settings.name == career_name then
+				local profile_name = profile_settings.display_name
+				local profile_index = FindProfileIndex(profile_name)
+				local career_index = career_settings.sort_order
 
-				return display_name, var_52_3, var_52_0, sort_order
+				return profile_name, profile_index, career_name, career_index
 			end
 		end
 	end
@@ -1345,44 +1451,48 @@ end
 
 HeroWindowGotwfItemPreview._sync_layout_path = function (self)
 	-- function 53
-	local _parent = self._parent
-	local _old_layout_name = self._old_layout_name
-	local get_layout_name = _parent:get_layout_name()
+	local parent = self._parent
+	local old_layout_name = self._old_layout_name
+	local layout_name = parent:get_layout_name()
 
-	if get_layout_name ~= _old_layout_name then
-		self._old_layout_name = get_layout_name
+	if layout_name ~= old_layout_name then
+		self._old_layout_name = layout_name
 	end
 end
 
-HeroWindowGotwfItemPreview._update_title_edge_animation = function (self, arg_54_1)
+HeroWindowGotwfItemPreview._update_title_edge_animation = function (self, dt)
 	-- function 54
-	local _title_edge_animation_data = self._title_edge_animation_data
+	local title_edge_animation_data = self._title_edge_animation_data
 
-	if not _title_edge_animation_data then
+	if not title_edge_animation_data then
 		return
 	end
 
-	local duration = _title_edge_animation_data.duration
+	local duration = title_edge_animation_data.duration
 
 	if not duration then
 		return
 	end
 
-	local max = math.max(duration - arg_54_1, 0)
-	local start_length = _title_edge_animation_data.start_length
-	local target_length = _title_edge_animation_data.target_length
-	local total_duration = _title_edge_animation_data.total_duration
-	local easeOutCubic = math.easeOutCubic
-	local num = 1 - max / total_duration
-	local var_54_8 = easeOutCubic(num)
-	local num_2 = start_length + (target_length - start_length) * var_54_8
-	local title_edge = self._item_widgets_by_name.title_edge
+	duration = math.max(duration - dt, 0)
 
-	self._ui_scenegraph[title_edge.scenegraph_id].size[1] = num_2
+	local start_length = title_edge_animation_data.start_length
+	local target_length = title_edge_animation_data.target_length
+	local total_duration = title_edge_animation_data.total_duration
+	local easing = math.easeOutCubic
+	local progress = 1 - duration / total_duration
+	local anim_progress = easing(progress)
+	local animation_length = (target_length - start_length) * anim_progress
+	local current_length = start_length + animation_length
+	local item_widgets_by_name = self._item_widgets_by_name
+	local title_edge = item_widgets_by_name.title_edge
+	local ui_scenegraph = self._ui_scenegraph
 
-	if max == 0 then
-		_title_edge_animation_data.duration = nil
+	ui_scenegraph[title_edge.scenegraph_id].size[1] = current_length
+
+	if duration == 0 then
+		title_edge_animation_data.duration = nil
 	else
-		_title_edge_animation_data.duration = max
+		title_edge_animation_data.duration = duration
 	end
 end

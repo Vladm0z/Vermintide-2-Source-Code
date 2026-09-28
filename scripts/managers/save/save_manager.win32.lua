@@ -4,9 +4,9 @@ require("scripts/managers/save/script_save_token")
 
 SaveManager = class(SaveManager)
 
-SaveManager.init = function (self, arg_1_1)
+SaveManager.init = function (self, disable_cloud_save)
 	-- function 1
-	if (arg_1_1 or not rawget(_G, "Steam")) and not Cloud.enabled() then
+	if not disable_cloud_save and rawget(_G, "Steam") and Cloud.enabled() then
 		fassert(rawget(_G, "Steam"), "Steam is required for cloud saves")
 
 		self._impl = Cloud
@@ -15,11 +15,11 @@ SaveManager.init = function (self, arg_1_1)
 	end
 end
 
-SaveManager.auto_save = function (self, arg_2_1, arg_2_2, arg_2_3, arg_2_4)
+SaveManager.auto_save = function (self, file_name, data, callback, force_local_save)
 	-- function 2
 	local SaveSystem
 
-	if not arg_2_4 then
+	if force_local_save then
 		SaveSystem = SaveSystem
 
 		if not SaveSystem then
@@ -28,22 +28,24 @@ SaveManager.auto_save = function (self, arg_2_1, arg_2_2, arg_2_3, arg_2_4)
 	end
 
 	SaveSystem = self._impl
+
+	local system = SaveSystem
 
 	::label_2_0::
 
-	local auto_save = SaveSystem.auto_save(arg_2_1, arg_2_2)
-	local var_2_2 = ScriptSaveToken:new(SaveSystem, auto_save)
+	local token = system.auto_save(file_name, data)
+	local save_token = ScriptSaveToken:new(system, token)
 
-	Managers.token:register_token(var_2_2, arg_2_3)
+	Managers.token:register_token(save_token, callback)
 
-	return var_2_2
+	return save_token
 end
 
-SaveManager.auto_load = function (self, arg_3_1, arg_3_2, arg_3_3)
+SaveManager.auto_load = function (self, file_name, callback, force_local_save)
 	-- function 3
 	local SaveSystem
 
-	if not arg_3_3 then
+	if force_local_save then
 		SaveSystem = SaveSystem
 
 		if not SaveSystem then
@@ -53,12 +55,14 @@ SaveManager.auto_load = function (self, arg_3_1, arg_3_2, arg_3_3)
 
 	SaveSystem = self._impl
 
+	local system = SaveSystem
+
 	::label_3_0::
 
-	local auto_load = SaveSystem.auto_load(arg_3_1)
-	local var_3_2 = ScriptSaveToken:new(SaveSystem, auto_load)
+	local token = system.auto_load(file_name)
+	local save_token = ScriptSaveToken:new(system, token)
 
-	Managers.token:register_token(var_3_2, arg_3_2)
+	Managers.token:register_token(save_token, callback)
 
-	return var_3_2
+	return save_token
 end

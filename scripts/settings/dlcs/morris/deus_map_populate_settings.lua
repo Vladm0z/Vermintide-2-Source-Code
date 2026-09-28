@@ -1,6 +1,6 @@
 -- chunkname: @scripts/settings/dlcs/morris/deus_map_populate_settings.lua
 
-local tbl = {
+local all_curses = {
 	nurgle = {
 		"curse_corrupted_flesh",
 		"curse_rotten_miasma",
@@ -26,7 +26,7 @@ local tbl = {
 		"curse_belakor_totems"
 	}
 }
-local tbl_2 = {
+local default_config = {
 	CURSES_HOT_SPOT_MAX_RANGE = 0.3,
 	CURSES_HOT_SPOTS_MAX_COUNT = 1,
 	CURSES_HOT_SPOT_MIN_RANGE = 0.2,
@@ -43,8 +43,8 @@ local tbl_2 = {
 		"slaanesh"
 	},
 	AVAILABLE_CURSES = {
-		SIGNATURE = tbl,
-		TRAVEL = tbl,
+		SIGNATURE = all_curses,
+		TRAVEL = all_curses,
 		ARENA = {
 			nurgle = {
 				"curse_corrupted_flesh",
@@ -285,7 +285,7 @@ local tbl_2 = {
 }
 
 DEUS_MAP_POPULATE_SETTINGS = {}
-DEUS_MAP_POPULATE_SETTINGS.journey_ruin = table.clone(tbl_2)
+DEUS_MAP_POPULATE_SETTINGS.journey_ruin = table.clone(default_config)
 DEUS_MAP_POPULATE_SETTINGS.journey_ruin.MUTATORS = {
 	SIGNATURE = {
 		"deus_pacing_tweak",
@@ -502,7 +502,7 @@ DEUS_MAP_POPULATE_SETTINGS.journey_ruin.LEVEL_AVAILABILITY = {
 		}
 	}
 }
-DEUS_MAP_POPULATE_SETTINGS.journey_cave = table.clone(tbl_2)
+DEUS_MAP_POPULATE_SETTINGS.journey_cave = table.clone(default_config)
 DEUS_MAP_POPULATE_SETTINGS.journey_cave.MUTATORS = {
 	SIGNATURE = {
 		"deus_pacing_tweak",
@@ -718,7 +718,7 @@ DEUS_MAP_POPULATE_SETTINGS.journey_cave.LEVEL_AVAILABILITY = {
 		}
 	}
 }
-DEUS_MAP_POPULATE_SETTINGS.journey_ice = table.clone(tbl_2)
+DEUS_MAP_POPULATE_SETTINGS.journey_ice = table.clone(default_config)
 DEUS_MAP_POPULATE_SETTINGS.journey_ice.MUTATORS = {
 	SIGNATURE = {
 		"deus_pacing_tweak",
@@ -934,7 +934,7 @@ DEUS_MAP_POPULATE_SETTINGS.journey_ice.LEVEL_AVAILABILITY = {
 		}
 	}
 }
-DEUS_MAP_POPULATE_SETTINGS.journey_citadel = table.clone(tbl_2)
+DEUS_MAP_POPULATE_SETTINGS.journey_citadel = table.clone(default_config)
 DEUS_MAP_POPULATE_SETTINGS.journey_citadel.SPECIFIC_SIGNATURE_LEVEL = "sig_citadel"
 DEUS_MAP_POPULATE_SETTINGS.journey_citadel.LABEL_OVERRIDES = {
 	"last_signature_level_is_specific_level"

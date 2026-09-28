@@ -4,83 +4,83 @@ require("foundation/scripts/util/table")
 require("scripts/settings/unit_variation_settings")
 require("scripts/settings/unit_gib_settings")
 
-local num = 3
-local num_2 = 2
-local num_3 = 0.15
+local enemy_dissovle_time = 3
+local enemy_darken_time = 2
+local enemy_darken_to_value = 0.15
 
-function flow_callback_enemy_dissolve_data(arg_1_0)
+function flow_callback_enemy_dissolve_data(params)
 	-- function 1
 	return {
-		dissovle_time = num,
-		darken_time = num_2,
-		darken_to = num_3
+		dissovle_time = enemy_dissovle_time,
+		darken_time = enemy_darken_time,
+		darken_to = enemy_darken_to_value
 	}
 end
 
-function flow_callback_enemy_dissolve_darken_vector(arg_2_0)
+function flow_callback_enemy_dissolve_darken_vector(params)
 	-- function 2
 	return {
-		darken_vector = Vector3(1, num_3, num_2)
+		darken_vector = Vector3(1, enemy_darken_to_value, enemy_darken_time)
 	}
 end
 
-local function fn(arg_3_0, arg_3_1, arg_3_2, arg_3_3, arg_3_4)
+local function enemy_variation_tint_meshes(unit, meshes, material, variable, value)
 	-- function 3
-	for i = 1, #arg_3_1 do
-		if not Unit.has_mesh(arg_3_0, arg_3_1[i]) then
-			local mesh = Unit.mesh(arg_3_0, arg_3_1[i])
-			local material = Mesh.material(mesh, arg_3_2)
+	for i = 1, #meshes do
+		if Unit.has_mesh(unit, meshes[i]) then
+			local current_mesh = Unit.mesh(unit, meshes[i])
+			local current_material = Mesh.material(current_mesh, material)
 
-			Material.set_scalar(material, arg_3_3, arg_3_4)
+			Material.set_scalar(current_material, variable, value)
 		end
 	end
 end
 
-local function fn_2(arg_4_0, arg_4_1, arg_4_2, arg_4_3)
+local function enemy_variation_tint_part(unit, outfit_units, variation, material_result)
 	-- function 4
-	local random = math.random(arg_4_2.min, arg_4_2.max)
+	local variable_value = math.random(variation.min, variation.max)
 
-	if arg_4_2.scale ~= nil then
-		random = random * arg_4_2.scale
+	if variation.scale ~= nil then
+		variable_value = variable_value * variation.scale
 	end
 
-	local meshes = arg_4_2.meshes
+	local meshes = variation.meshes
 
 	if not meshes then
-		for i = 1, #arg_4_2.variables do
-			Unit.set_scalar_for_material_table(arg_4_0, arg_4_2.materials, arg_4_2.variables[i], random)
+		for j = 1, #variation.variables do
+			Unit.set_scalar_for_material_table(unit, variation.materials, variation.variables[j], variable_value)
 
-			if arg_4_1 ~= nil then
-				for j = 1, #arg_4_1 do
-					local var_4_2 = arg_4_1[j]
+			if outfit_units ~= nil then
+				for k = 1, #outfit_units do
+					local outfit_unit = outfit_units[k]
 
-					Unit.set_scalar_for_material_table(var_4_2, arg_4_2.materials, arg_4_2.variables[i], random)
+					Unit.set_scalar_for_material_table(outfit_unit, variation.materials, variation.variables[j], variable_value)
 				end
 			end
 		end
 	else
-		for k = 1, #arg_4_2.materials do
-			for l = 1, #arg_4_2.variables do
-				fn(arg_4_0, meshes, arg_4_2.materials[k], arg_4_2.variables[l], random)
+		for i = 1, #variation.materials do
+			for j = 1, #variation.variables do
+				enemy_variation_tint_meshes(unit, meshes, variation.materials[i], variation.variables[j], variable_value)
 
-				if arg_4_1 ~= nil then
-					for i4 = 1, #arg_4_1 do
-						local var_4_3 = arg_4_1[i4]
+				if outfit_units ~= nil then
+					for k = 1, #outfit_units do
+						local outfit_unit = outfit_units[k]
 
-						fn(var_4_3, meshes, arg_4_2.materials[k], arg_4_2.variables[l], random)
+						enemy_variation_tint_meshes(outfit_unit, meshes, variation.materials[i], variation.variables[j], variable_value)
 					end
 				end
 			end
 		end
 	end
 
-	for i5 = 1, #arg_4_2.materials do
-		for i6 = 1, #arg_4_2.variables do
-			table.insert(arg_4_3, {
-				material = arg_4_2.materials[i5],
-				variable = arg_4_2.variables[i6],
-				value = random,
-				meshes = arg_4_2.meshes
+	for i = 1, #variation.materials do
+		for j = 1, #variation.variables do
+			table.insert(material_result, {
+				material = variation.materials[i],
+				variable = variation.variables[j],
+				value = variable_value,
+				meshes = variation.meshes
 			})
 		end
 	end
@@ -88,105 +88,105 @@ local function fn_2(arg_4_0, arg_4_1, arg_4_2, arg_4_3)
 	return {}
 end
 
-local function fn_3(arg_5_0, arg_5_1, arg_5_2, arg_5_3, arg_5_4)
+local function enemy_variation_tint_materials(unit, outfit_units, variationsettings, material_sections, material_result)
 	-- function 5
-	for i = 1, #arg_5_3 do
-		fn_2(arg_5_0, arg_5_1, arg_5_2.material_variations[arg_5_3[i]], arg_5_4)
+	for i = 1, #material_sections do
+		enemy_variation_tint_part(unit, outfit_units, variationsettings.material_variations[material_sections[i]], material_result)
 	end
 end
 
-local function fn_4(arg_6_0, arg_6_1, arg_6_2, arg_6_3, arg_6_4, arg_6_5)
+local function enemy_variation_enable_parts(unit, outfit_units, variationsettings, body_parts, group_result, material_result)
 	-- function 6
-	for i = 1, #arg_6_3 do
-		local var_6_0 = arg_6_3[i]
-		local var_6_1 = arg_6_2.body_parts[var_6_0]
-		local var_6_2 = var_6_1[math.random(#var_6_1)]
+	for i = 1, #body_parts do
+		local body_part = body_parts[i]
+		local part_settings = variationsettings.body_parts[body_part]
+		local variation = part_settings[math.random(#part_settings)]
 
-		if not var_6_2.group then
-			Unit.set_visibility(arg_6_0, var_6_2.group, true)
-			table.insert(arg_6_4, var_6_2.group)
+		if variation.group then
+			Unit.set_visibility(unit, variation.group, true)
+			table.insert(group_result, variation.group)
 
-			if arg_6_2.material_variations ~= nil then
-				local var_6_3 = arg_6_2.material_variations[var_6_2.group]
+			if variationsettings.material_variations ~= nil then
+				local tint_variation = variationsettings.material_variations[variation.group]
 
-				if not var_6_3 then
-					fn_2(arg_6_0, arg_6_1, var_6_3, arg_6_5)
+				if tint_variation then
+					enemy_variation_tint_part(unit, outfit_units, tint_variation, material_result)
 				end
 			end
 		end
 
-		if not var_6_2.enables then
-			fn_4(arg_6_0, arg_6_1, arg_6_2, var_6_2.enables, arg_6_4, arg_6_5)
+		if variation.enables then
+			enemy_variation_enable_parts(unit, outfit_units, variationsettings, variation.enables, group_result, material_result)
 		end
 	end
 end
 
-local function fn_5(arg_7_0, arg_7_1, arg_7_2, arg_7_3)
+local function enemy_variation_scale_nodes(unit, outfit_units, variationsettings, scaling_result)
 	-- function 7
-	local var_7_0
+	local node_id
 
-	for k, v in pairs(arg_7_2.scale_variation) do
-		for k_2 = 1, #v do
-			if v[k_2] ~= nil then
-				if not Unit.has_node(arg_7_0, v[k_2]) then
-					local node = Unit.node(arg_7_0, v[k_2])
+	for _, scale_nodes in pairs(variationsettings.scale_variation) do
+		for j = 1, #scale_nodes do
+			if scale_nodes[j] ~= nil then
+				if Unit.has_node(unit, scale_nodes[j]) then
+					node_id = Unit.node(unit, scale_nodes[j])
 
-					Unit.set_local_scale(arg_7_0, node, Vector3(0, 0, 0))
+					Unit.set_local_scale(unit, node_id, Vector3(0, 0, 0))
 				end
 
-				if arg_7_1 ~= nil then
-					for l = 1, #arg_7_1 do
-						if not Unit.has_node(arg_7_1[l], v[k_2]) then
-							local node_2 = Unit.node(arg_7_1[l], v[k_2])
+				if outfit_units ~= nil then
+					for k = 1, #outfit_units do
+						if Unit.has_node(outfit_units[k], scale_nodes[j]) then
+							node_id = Unit.node(outfit_units[k], scale_nodes[j])
 
-							Unit.set_local_scale(arg_7_1[l], node_2, Vector3(0, 0, 0))
+							Unit.set_local_scale(outfit_units[k], node_id, Vector3(0, 0, 0))
 						end
 					end
 				end
 
-				arg_7_3[v[k_2]] = 0
+				scaling_result[scale_nodes[j]] = 0
 			end
 		end
 
-		local var_7_3 = v[math.random(#v)]
+		local node_to_scale_up = scale_nodes[math.random(#scale_nodes)]
 
-		if var_7_3 ~= nil then
-			if not Unit.has_node(arg_7_0, var_7_3) then
-				local node_3 = Unit.node(arg_7_0, var_7_3)
+		if node_to_scale_up ~= nil then
+			if Unit.has_node(unit, node_to_scale_up) then
+				node_id = Unit.node(unit, node_to_scale_up)
 
-				Unit.set_local_scale(arg_7_0, node_3, Vector3(1, 1, 1))
+				Unit.set_local_scale(unit, node_id, Vector3(1, 1, 1))
 			end
 
-			if arg_7_1 ~= nil then
-				for i4 = 1, #arg_7_1 do
-					if not Unit.has_node(arg_7_1[i4], var_7_3) then
-						local node_4 = Unit.node(arg_7_1[i4], var_7_3)
+			if outfit_units ~= nil then
+				for k = 1, #outfit_units do
+					if Unit.has_node(outfit_units[k], node_to_scale_up) then
+						node_id = Unit.node(outfit_units[k], node_to_scale_up)
 
-						Unit.set_local_scale(arg_7_1[i4], node_4, Vector3(1, 1, 1))
+						Unit.set_local_scale(outfit_units[k], node_id, Vector3(1, 1, 1))
 					end
 				end
 			end
 
-			arg_7_3[var_7_3] = 1
+			scaling_result[node_to_scale_up] = 1
 		end
 	end
 end
 
-function flow_callback_enemy_variation(self)
+function flow_callback_enemy_variation(params)
 	-- function 8
-	local unit = self.unit
-	local breed_type = self.breed_type
-	local get_data = Unit.get_data(unit, "breed")
+	local unit = params.unit
+	local breed_type = params.breed_type
+	local breed = Unit.get_data(unit, "breed")
 
-	if get_data ~= nil then
-		breed_type = get_data.name
+	if breed ~= nil then
+		breed_type = breed.name
 	end
 
 	if breed_type == nil then
 		return {}
 	end
 
-	if not self.baked then
+	if params.baked then
 		breed_type = breed_type .. "_baked"
 	end
 
@@ -194,287 +194,311 @@ function flow_callback_enemy_variation(self)
 		return {}
 	end
 
-	local var_8_3 = UnitVariationSettings[breed_type]
-	local tbl = {}
-	local tbl_2 = {}
-	local tbl_3 = {}
-	local tbl_4 = {}
-	local tbl_5 = {}
-	local tbl_6 = {}
+	local variationsettings = UnitVariationSettings[breed_type]
+	local variation_result = {}
+	local material_result = {}
+	local group_result = {}
+	local scaling_result = {}
+	local outfit_units = {}
+	local helmet_units = {}
 
 	if ScriptUnit ~= nil then
-		local has_extension = ScriptUnit.has_extension(unit, "ai_inventory_system")
+		local unit_inventory_extension = ScriptUnit.has_extension(unit, "ai_inventory_system")
 
-		if has_extension ~= nil then
-			tbl_5 = has_extension.inventory_item_outfit_units
-			tbl_6 = has_extension.inventory_item_helmet_units
+		if unit_inventory_extension ~= nil then
+			outfit_units = unit_inventory_extension.inventory_item_outfit_units
+			helmet_units = unit_inventory_extension.inventory_item_helmet_units
 		end
 	else
-		tbl_5 = Unit.get_data(unit, "outfit_items") or {}
-		tbl_6 = Unit.get_data(unit, "helmet_items") or {}
+		outfit_units = not not Unit.get_data(unit, "outfit_items") or not not {}
+		helmet_units = not not Unit.get_data(unit, "helmet_items") or not not {}
 	end
 
-	if tbl_5 ~= nil then
-		for i = 1, #tbl_5 do
-			local get_data_2 = Unit.get_data(tbl_5[i], "gib_variation")
+	if outfit_units ~= nil then
+		for k = 1, #outfit_units do
+			local outfit_variation = Unit.get_data(outfit_units[k], "gib_variation")
 
-			if get_data_2 ~= nil then
-				table.insert(tbl_3, get_data_2)
+			if outfit_variation ~= nil then
+				table.insert(group_result, outfit_variation)
 			end
 		end
 	end
 
-	if tbl_6 ~= nil then
-		tbl_5 = table.shallow_copy(tbl_5)
+	if helmet_units ~= nil then
+		outfit_units = table.shallow_copy(outfit_units)
 
-		for j = 1, #tbl_6 do
-			table.insert(tbl_5, tbl_6[j])
+		for i = 1, #helmet_units do
+			table.insert(outfit_units, helmet_units[i])
 		end
 	end
 
-	if var_8_3.materials_enabled_from_start ~= nil then
-		fn_3(unit, tbl_5, var_8_3, var_8_3.materials_enabled_from_start, tbl_2)
+	if variationsettings.materials_enabled_from_start ~= nil then
+		enemy_variation_tint_materials(unit, outfit_units, variationsettings, variationsettings.materials_enabled_from_start, material_result)
 	end
 
-	if var_8_3.enabled_from_start ~= nil then
-		if not Unit.has_visibility_group(unit, "all") then
+	if variationsettings.enabled_from_start ~= nil then
+		if Unit.has_visibility_group(unit, "all") then
 			Unit.set_visibility(unit, "all", false)
 		end
 
-		fn_4(unit, tbl_5, var_8_3, var_8_3.enabled_from_start, tbl_3, tbl_2)
+		enemy_variation_enable_parts(unit, outfit_units, variationsettings, variationsettings.enabled_from_start, group_result, material_result)
 	end
 
-	if var_8_3.scale_variation ~= nil then
-		fn_5(unit, tbl_5, var_8_3, tbl_4)
+	if variationsettings.scale_variation ~= nil then
+		enemy_variation_scale_nodes(unit, outfit_units, variationsettings, scaling_result)
 	end
 
-	tbl.groups = tbl_3
-	tbl.materials = tbl_2
-	tbl.scaling = tbl_4
+	variation_result.groups = group_result
+	variation_result.materials = material_result
+	variation_result.scaling = scaling_result
 
-	Unit.set_data(unit, "variation_data", tbl)
+	Unit.set_data(unit, "variation_data", variation_result)
 	Unit.set_data(unit, "dismember_filter", {})
 
 	return {}
 end
 
-local function fn_6(arg_9_0, arg_9_1)
+local function enemy_dismember_can_spawn_gib(unit, bodypart)
 	-- function 9
-	local get_data = Unit.get_data(arg_9_0, "dismember_filter")
+	local get_data = Unit.get_data(unit, "dismember_filter")
 
-	get_data = get_data or {}
+	if not get_data then
+		-- Nothing
+	end
 
-	if not table.contains(get_data, arg_9_1) then
+	get_data = {}
+
+	local dismember_filter = get_data
+
+	::label_9_0::
+
+	if table.contains(dismember_filter, bodypart) then
 		return false
 	end
 
 	return true
 end
 
-local function fn_7(arg_10_0, arg_10_1, arg_10_2)
+local function enemy_dismember_set_dismember_filter(unit, bodypart, gibsettings)
 	-- function 10
-	local get_data = Unit.get_data(arg_10_0, "dismember_filter")
+	local get_data = Unit.get_data(unit, "dismember_filter")
 
-	get_data = get_data or {}
-
-	if not table.contains(get_data, arg_10_1) then
-		table.insert(get_data, arg_10_1)
+	if not get_data then
+		-- Nothing
 	end
 
-	if arg_10_2.disable_gibs ~= nil then
-		for i = 1, #arg_10_2.disable_gibs do
-			if not table.contains(get_data, arg_10_2.disable_gibs[i]) then
-				table.insert(get_data, arg_10_2.disable_gibs[i])
+	get_data = {}
+
+	local dismember_filter = get_data
+
+	::label_10_0::
+
+	if not table.contains(dismember_filter, bodypart) then
+		table.insert(dismember_filter, bodypart)
+	end
+
+	if gibsettings.disable_gibs ~= nil then
+		for i = 1, #gibsettings.disable_gibs do
+			if not table.contains(dismember_filter, gibsettings.disable_gibs[i]) then
+				table.insert(dismember_filter, gibsettings.disable_gibs[i])
 			end
 		end
 	end
 
-	Unit.set_data(arg_10_0, "dismember_filter", get_data)
+	Unit.set_data(unit, "dismember_filter", dismember_filter)
 end
 
-local function fn_8(arg_11_0, arg_11_1)
+local function enemy_dismember_get_helmet_units(unit, unit_inventory_extension)
 	-- function 11
-	local tbl = {}
+	local helmet_units = {}
 
-	if arg_11_1 ~= nil then
-		tbl = arg_11_1.inventory_item_helmet_units
+	if unit_inventory_extension ~= nil then
+		helmet_units = unit_inventory_extension.inventory_item_helmet_units
 	else
-		tbl = Unit.get_data(arg_11_0, "helmet_items") or {}
+		helmet_units = not not Unit.get_data(unit, "helmet_items") or not not {}
 	end
 
-	return tbl
+	return helmet_units
 end
 
-local function fn_9(arg_12_0, arg_12_1, arg_12_2)
+local function enemy_dismember_disable_helmets(unit, unit_inventory_extension, gibsettings)
 	-- function 12
-	if arg_12_2.gib_helmet_link_node ~= nil then
-		local var_12_0 = fn_8(arg_12_0, arg_12_1)
+	if gibsettings.gib_helmet_link_node ~= nil then
+		local helmet_units = enemy_dismember_get_helmet_units(unit, unit_inventory_extension)
 
-		for i = 1, #var_12_0 do
-			if not Unit.has_animation_state_machine(var_12_0[i]) then
-				Unit.disable_animation_state_machine(var_12_0[i])
+		for i = 1, #helmet_units do
+			if Unit.has_animation_state_machine(helmet_units[i]) then
+				Unit.disable_animation_state_machine(helmet_units[i])
 			end
 		end
 	end
 end
 
-local function fn_10(self, arg_13_1, arg_13_2, arg_13_3, arg_13_4, arg_13_5, arg_13_6)
+local function enemy_dismember_spawn_gib(unit_spawner, unit, world, gibsettings, force_multiplier, unit_inventory_extension, unit_ai_system_extension)
 	-- function 13
-	local node = Unit.node(arg_13_1, arg_13_3.gib_parent_align_node)
-	local world_rotation = Unit.world_rotation(arg_13_1, node)
-	local world_position = Unit.world_position(arg_13_1, node)
+	local node_id = Unit.node(unit, gibsettings.gib_parent_align_node)
+	local rot, pos = Unit.world_rotation(unit, node_id), Unit.world_position(unit, node_id)
 
-	if not Vector3.is_valid(world_position) then
+	if not Vector3.is_valid(pos) then
 		return
 	end
 
-	local from_quaternion_position = Matrix4x4.from_quaternion_position(world_rotation, world_position)
+	local spawn_pose = Matrix4x4.from_quaternion_position(rot, pos)
 
-	if arg_13_3.gib_disable_auto_scale ~= true then
-		local local_scale = Unit.local_scale(arg_13_1, 1)
+	if gibsettings.gib_disable_auto_scale ~= true then
+		local unit_scale = Unit.local_scale(unit, 1)
 
-		if arg_13_6 ~= nil then
-			local _size_variation = arg_13_6._size_variation
+		if unit_ai_system_extension ~= nil then
+			local _size_variation = unit_ai_system_extension._size_variation
 
-			_size_variation = _size_variation or 1
-			local_scale = Vector3(_size_variation, _size_variation, _size_variation)
+			if not _size_variation then
+				-- Nothing
+			end
+
+			_size_variation = 1
+
+			local scale = _size_variation
+
+			::label_13_0::
+
+			unit_scale = Vector3(scale, scale, scale)
 		end
 
-		Matrix4x4.set_scale(from_quaternion_position, local_scale)
+		Matrix4x4.set_scale(spawn_pose, unit_scale)
 	end
 
-	local var_13_6
+	local gib_unit
 
-	if self ~= nil then
-		if arg_13_3.gib_unit_template ~= nil then
-			var_13_6 = self:spawn_local_unit_with_extensions(arg_13_3.gib_unit, arg_13_3.gib_unit_template, nil, from_quaternion_position)
+	if unit_spawner ~= nil then
+		if gibsettings.gib_unit_template ~= nil then
+			gib_unit = unit_spawner:spawn_local_unit_with_extensions(gibsettings.gib_unit, gibsettings.gib_unit_template, nil, spawn_pose)
 		else
-			var_13_6 = self:spawn_local_unit(arg_13_3.gib_unit, from_quaternion_position)
+			gib_unit = unit_spawner:spawn_local_unit(gibsettings.gib_unit, spawn_pose)
 		end
 	else
-		var_13_6 = World.spawn_unit(arg_13_2, arg_13_3.gib_unit, from_quaternion_position)
+		gib_unit = World.spawn_unit(world, gibsettings.gib_unit, spawn_pose)
 	end
 
-	if arg_13_3.gib_helmet_link_node ~= nil then
-		local var_13_7 = fn_8(arg_13_1, arg_13_5)
+	if gibsettings.gib_helmet_link_node ~= nil then
+		local helmet_units = enemy_dismember_get_helmet_units(unit, unit_inventory_extension)
 
-		for i = 1, #var_13_7 do
-			World.unlink_unit(arg_13_2, var_13_7[i])
-			World.link_unit(Unit.world(var_13_6), var_13_7[i], var_13_6, Unit.node(var_13_6, arg_13_3.gib_helmet_link_node))
-			Unit.set_shader_pass_flag_for_meshes_in_unit_and_childs(var_13_7[i], "outline_unit", false)
+		for i = 1, #helmet_units do
+			World.unlink_unit(world, helmet_units[i])
+			World.link_unit(Unit.world(gib_unit), helmet_units[i], gib_unit, Unit.node(gib_unit, gibsettings.gib_helmet_link_node))
+			Unit.set_shader_pass_flag_for_meshes_in_unit_and_childs(helmet_units[i], "outline_unit", false)
 		end
 	end
 
-	local actor = Unit.actor(var_13_6, arg_13_3.gib_push_actor)
+	local actor = Unit.actor(gib_unit, gibsettings.gib_push_actor)
 
 	if not actor then
 		-- Nothing
 	else
-		if not Unit.has_node(var_13_6, "a_push") then
-			node = Unit.node(var_13_6, "a_push")
+		if Unit.has_node(gib_unit, "a_push") then
+			node_id = Unit.node(gib_unit, "a_push")
 		else
-			node = Script.index_offset()
+			node_id = Script.index_offset()
 		end
 
-		if arg_13_4 ~= 1 then
-			Actor.add_velocity(actor, Quaternion.rotate(Unit.world_rotation(var_13_6, node), Vector3(2 + math.random(-0.5, 0.5), math.random(-1, 1), math.random(-1, 1))) * (arg_13_3.gib_push_force * 0.75) * arg_13_4)
-			Actor.add_angular_velocity(actor, Vector3(math.random(0, 2), math.random(0, 2), math.random(0, 2)) * arg_13_4)
+		if force_multiplier ~= 1 then
+			Actor.add_velocity(actor, Quaternion.rotate(Unit.world_rotation(gib_unit, node_id), Vector3(2 + math.random(-0.5, 0.5), math.random(-1, 1), math.random(-1, 1))) * (gibsettings.gib_push_force * 0.75) * force_multiplier)
+			Actor.add_angular_velocity(actor, Vector3(math.random(0, 2), math.random(0, 2), math.random(0, 2)) * force_multiplier)
 		else
-			Actor.add_velocity(actor, Quaternion.rotate(Unit.world_rotation(var_13_6, node), Vector3(2 + 0.5 * math.random(), math.random() - 0.5, math.random() - 0.5)) * arg_13_3.gib_push_force)
+			Actor.add_velocity(actor, Quaternion.rotate(Unit.world_rotation(gib_unit, node_id), Vector3(2 + 0.5 * math.random(), math.random() - 0.5, math.random() - 0.5)) * gibsettings.gib_push_force)
 		end
 	end
 
-	return var_13_6
+	return gib_unit
 end
 
-local function fn_11(self, arg_14_1, arg_14_2, arg_14_3, arg_14_4)
+local function enemy_dismember_spawn_stump(unit_spawner, unit, world, gibsettings, pulp)
 	-- function 14
-	local node = Unit.node(arg_14_1, arg_14_3.stump_parent_align_node)
-	local var_14_1
+	local node_id = Unit.node(unit, gibsettings.stump_parent_align_node)
+	local stump_unit_name
 
-	if not arg_14_4 and not arg_14_3.pulp_stump_unit then
-		if type(arg_14_3.pulp_stump_unit) == "table" then
-			var_14_1 = arg_14_3.pulp_stump_unit[Math.random(1, #arg_14_3.pulp_stump_unit)]
+	if pulp and gibsettings.pulp_stump_unit then
+		if type(gibsettings.pulp_stump_unit) == "table" then
+			stump_unit_name = gibsettings.pulp_stump_unit[Math.random(1, #gibsettings.pulp_stump_unit)]
 		else
-			var_14_1 = arg_14_3.pulp_stump_unit
+			stump_unit_name = gibsettings.pulp_stump_unit
 		end
 	else
-		var_14_1 = arg_14_3.stump_unit
+		stump_unit_name = gibsettings.stump_unit
 	end
 
-	local var_14_2
+	local stump_unit
 
-	if self ~= nil then
-		var_14_2 = self:spawn_local_unit(var_14_1, Unit.world_position(arg_14_1, node), Unit.world_rotation(arg_14_1, node))
+	if unit_spawner ~= nil then
+		stump_unit = unit_spawner:spawn_local_unit(stump_unit_name, Unit.world_position(unit, node_id), Unit.world_rotation(unit, node_id))
 	else
-		var_14_2 = World.spawn_unit(arg_14_2, var_14_1, Unit.world_position(arg_14_1, node), Unit.world_rotation(arg_14_1, node))
+		stump_unit = World.spawn_unit(world, stump_unit_name, Unit.world_position(unit, node_id), Unit.world_rotation(unit, node_id))
 	end
 
-	local stump_link_nodes = arg_14_3.stump_link_nodes
-	local parent_link_nodes = arg_14_3.parent_link_nodes
+	local stump_link_nodes = gibsettings.stump_link_nodes
+	local parent_link_nodes = gibsettings.parent_link_nodes
 
-	World.link_unit(arg_14_2, var_14_2, Script.index_offset(), arg_14_1, Unit.node(arg_14_1, parent_link_nodes[1]))
+	World.link_unit(world, stump_unit, Script.index_offset(), unit, Unit.node(unit, parent_link_nodes[1]))
 
 	for i = 1, #parent_link_nodes do
-		local node_2 = Unit.node(arg_14_1, parent_link_nodes[i])
-		local node_3 = Unit.node(var_14_2, stump_link_nodes[i])
+		local parent_node_id = Unit.node(unit, parent_link_nodes[i])
+		local stump_node_id = Unit.node(stump_unit, stump_link_nodes[i])
 
-		World.link_unit(arg_14_2, var_14_2, node_3, arg_14_1, node_2)
+		World.link_unit(world, stump_unit, stump_node_id, unit, parent_node_id)
 	end
 
-	if not Unit.has_lod_object(arg_14_1, "lod") and not Unit.has_lod_object(var_14_2, "lod") then
-		local lod_object = Unit.lod_object(arg_14_1, "lod")
-		local lod_object_2 = Unit.lod_object(var_14_2, "lod")
+	if Unit.has_lod_object(unit, "lod") and Unit.has_lod_object(stump_unit, "lod") then
+		local unit_lod_object = Unit.lod_object(unit, "lod")
+		local stump_unit_lod_object = Unit.lod_object(stump_unit, "lod")
 
-		LODObject.set_bounding_volume(lod_object_2, LODObject.bounding_volume(lod_object))
-		World.link_unit(arg_14_2, var_14_2, LODObject.node(lod_object_2), arg_14_1, LODObject.node(lod_object))
+		LODObject.set_bounding_volume(stump_unit_lod_object, LODObject.bounding_volume(unit_lod_object))
+		World.link_unit(world, stump_unit, LODObject.node(stump_unit_lod_object), unit, LODObject.node(unit_lod_object))
 	end
 
-	return var_14_2
+	return stump_unit
 end
 
-local function fn_12(arg_15_0, arg_15_1)
+local function enemy_dismember_set_variations_on_unit(new_unit, variation_data)
 	-- function 15
-	for k, v in pairs(arg_15_1.materials) do
-		local meshes = v.meshes
+	for _, material_data in pairs(variation_data.materials) do
+		local meshes = material_data.meshes
 
 		if not meshes then
-			Unit.set_scalar_for_material(arg_15_0, v.material, v.variable, v.value)
+			Unit.set_scalar_for_material(new_unit, material_data.material, material_data.variable, material_data.value)
 		else
-			fn(arg_15_0, meshes, v.material, v.variable, v.value)
+			enemy_variation_tint_meshes(new_unit, meshes, material_data.material, material_data.variable, material_data.value)
 		end
 	end
 
-	if not Unit.has_visibility_group(arg_15_0, "all") then
-		Unit.set_visibility(arg_15_0, "all", false)
+	if Unit.has_visibility_group(new_unit, "all") then
+		Unit.set_visibility(new_unit, "all", false)
 
-		for k_2 = 1, #arg_15_1.groups do
-			if not Unit.has_visibility_group(arg_15_0, arg_15_1.groups[k_2]) then
-				Unit.set_visibility(arg_15_0, arg_15_1.groups[k_2], true)
+		for i = 1, #variation_data.groups do
+			if Unit.has_visibility_group(new_unit, variation_data.groups[i]) then
+				Unit.set_visibility(new_unit, variation_data.groups[i], true)
 			end
 		end
 	end
 
-	for k_3, v_2 in pairs(arg_15_1.scaling) do
-		if not Unit.has_node(arg_15_0, k_3) then
-			local node = Unit.node(arg_15_0, k_3)
+	for node_name, scale_value in pairs(variation_data.scaling) do
+		if Unit.has_node(new_unit, node_name) then
+			local node_id = Unit.node(new_unit, node_name)
 
-			Unit.set_local_scale(arg_15_0, node, Vector3(v_2, v_2, v_2))
+			Unit.set_local_scale(new_unit, node_id, Vector3(scale_value, scale_value, scale_value))
 		end
 	end
 end
 
-local function fn_13(arg_16_0)
+local function enemy_dismember_enable_snow_state_on_unit(unit)
 	-- function 16
-	local num_meshes = Unit.num_meshes(arg_16_0)
+	local num_meshes = Unit.num_meshes(unit)
 	local index_offset = Script.index_offset()
-	local num = 1 - index_offset
+	local end_offset = 1 - index_offset
 
-	for i = index_offset, num_meshes - num do
-		local mesh = Unit.mesh(arg_16_0, i)
+	for i = index_offset, num_meshes - end_offset do
+		local mesh = Unit.mesh(unit, i)
 		local num_materials = Mesh.num_materials(mesh)
 
-		for j = index_offset, num_materials - num do
+		for j = index_offset, num_materials - end_offset do
 			local material = Mesh.material(mesh, j)
 
 			Material.set_scalar(material, "snow", 1)
@@ -482,90 +506,92 @@ local function fn_13(arg_16_0)
 	end
 end
 
-local function fn_14(arg_17_0, arg_17_1)
+local function enemy_dismember_set_baked_variations_on_unit(new_unit, baked_variation)
 	-- function 17
-	if not Unit.has_visibility_group(arg_17_0, "all") then
-		Unit.set_visibility(arg_17_0, "all", false)
+	if Unit.has_visibility_group(new_unit, "all") then
+		Unit.set_visibility(new_unit, "all", false)
 
-		if not Unit.has_visibility_group(arg_17_0, "var" .. arg_17_1) then
-			Unit.set_visibility(arg_17_0, "var" .. arg_17_1, true)
+		if Unit.has_visibility_group(new_unit, "var" .. baked_variation) then
+			Unit.set_visibility(new_unit, "var" .. baked_variation, true)
 		end
 	end
 end
 
-local function fn_15(arg_18_0, arg_18_1, arg_18_2)
+local function enemy_dismember_set_variations(unit, gib_unit, stump_unit)
 	-- function 18
-	local get_data = Unit.get_data(arg_18_0, "variation_data")
-	local get_data_2 = Unit.get_data(arg_18_0, "gib_variation")
+	local variation_data = Unit.get_data(unit, "variation_data")
+	local baked_variation = Unit.get_data(unit, "gib_variation")
 
-	if not (get_data ~= nil or get_data_2 ~= nil) then
+	if variation_data == nil and baked_variation == nil then
 		return
 	end
 
-	if get_data ~= nil then
-		if arg_18_1 ~= nil then
-			fn_12(arg_18_1, get_data)
+	if variation_data ~= nil then
+		if gib_unit ~= nil then
+			enemy_dismember_set_variations_on_unit(gib_unit, variation_data)
 		end
 
-		if arg_18_2 ~= nil then
-			fn_12(arg_18_2, get_data)
+		if stump_unit ~= nil then
+			enemy_dismember_set_variations_on_unit(stump_unit, variation_data)
 		end
 	end
 
-	if get_data_2 ~= nil then
-		if arg_18_1 ~= nil then
-			fn_14(arg_18_1, get_data_2)
+	if baked_variation ~= nil then
+		if gib_unit ~= nil then
+			enemy_dismember_set_baked_variations_on_unit(gib_unit, baked_variation)
 		end
 
-		if arg_18_2 ~= nil then
-			fn_14(arg_18_2, get_data_2)
+		if stump_unit ~= nil then
+			enemy_dismember_set_baked_variations_on_unit(stump_unit, baked_variation)
 		end
 	end
 end
 
-local function fn_16(arg_19_0, arg_19_1, arg_19_2)
+local function enemy_dismember_kill_actors(unit, actors, unit_inventory_extension)
 	-- function 19
-	if arg_19_2 ~= nil then
-		local disabled_actors = arg_19_2.disabled_actors
+	if unit_inventory_extension ~= nil then
+		local disabled_actors = unit_inventory_extension.disabled_actors
 
-		for i = 1, #arg_19_1 do
-			local actor = Unit.actor(arg_19_0, arg_19_1[i])
+		for i = 1, #actors do
+			local unit_actor = Unit.actor(unit, actors[i])
 
-			if not actor then
-				Actor.set_scene_query_enabled(actor, false)
-				Actor.set_collision_filter(actor, "filter_ragdoll_secondary")
+			if unit_actor then
+				Actor.set_scene_query_enabled(unit_actor, false)
+				Actor.set_collision_filter(unit_actor, "filter_ragdoll_secondary")
 
 				if disabled_actors ~= nil then
-					table.insert(disabled_actors, arg_19_1[i])
+					table.insert(disabled_actors, actors[i])
 				end
 			end
 		end
 
-		arg_19_2.disabled_actors = disabled_actors
+		unit_inventory_extension.disabled_actors = disabled_actors
 	else
-		for j = 1, #arg_19_1 do
-			if Unit.actor(arg_19_0, arg_19_1[j]) ~= nil then
-				Unit.destroy_actor(arg_19_0, arg_19_1[j])
+		for i = 1, #actors do
+			local current_actor = Unit.actor(unit, actors[i])
+
+			if current_actor ~= nil then
+				Unit.destroy_actor(unit, actors[i])
 			end
 		end
 	end
 end
 
-local function fn_17(self, arg_20_1)
+local function enemy_dismember(params, spawn_gib)
 	-- function 20
-	local unit = self.unit
-	local breed_type = self.breed_type
-	local get_data = Unit.get_data(unit, "breed")
+	local unit = params.unit
+	local breed_type = params.breed_type
+	local breed = Unit.get_data(unit, "breed")
 
-	if get_data ~= nil then
-		breed_type = get_data.name
+	if breed ~= nil then
+		breed_type = breed.name
 	end
 
 	if breed_type == nil then
 		return
 	end
 
-	if not self.baked then
+	if params.baked then
 		breed_type = breed_type .. "_baked"
 	end
 
@@ -573,191 +599,216 @@ local function fn_17(self, arg_20_1)
 		return
 	end
 
-	local bodypart = self.bodypart
+	local bodypart = params.bodypart
 
 	if UnitGibSettings[breed_type].parts[bodypart] == nil then
 		return
 	end
 
-	local var_20_4 = UnitGibSettings[breed_type].parts[bodypart]
+	local gibsettings = UnitGibSettings[breed_type].parts[bodypart]
+	local can_spawn_gib = enemy_dismember_can_spawn_gib(unit, bodypart)
 
-	if not fn_6(unit, bodypart) then
+	if not can_spawn_gib then
 		return
 	end
 
 	local world = Unit.world(unit)
-	local var_20_6
-	local var_20_7
-	local var_20_8
-	local var_20_9
+	local node_id, unit_inventory_extension, unit_ai_system_extension, unit_spawner
 
 	if ScriptUnit ~= nil then
-		var_20_7 = ScriptUnit.has_extension(unit, "ai_inventory_system")
-		var_20_8 = ScriptUnit.has_extension(unit, "ai_system")
-		var_20_9 = Managers.state.unit_spawner
+		unit_inventory_extension = ScriptUnit.has_extension(unit, "ai_inventory_system")
+		unit_ai_system_extension = ScriptUnit.has_extension(unit, "ai_system")
+		unit_spawner = Managers.state.unit_spawner
 
-		if not ScriptUnit.has_extension(unit, "projectile_linker_system") then
-			Managers.state.entity:system("projectile_linker_system"):clear_linked_projectiles(unit)
+		if ScriptUnit.has_extension(unit, "projectile_linker_system") then
+			local projectile_linker_system = Managers.state.entity:system("projectile_linker_system")
+
+			projectile_linker_system:clear_linked_projectiles(unit)
 		end
 	end
 
-	local var_20_10
+	local gib_unit
 
-	if not arg_20_1 then
-		var_20_10 = fn_10(var_20_9, unit, world, var_20_4, 1, var_20_7, var_20_8)
+	if spawn_gib then
+		gib_unit = enemy_dismember_spawn_gib(unit_spawner, unit, world, gibsettings, 1, unit_inventory_extension, unit_ai_system_extension)
 	else
-		fn_9(unit, var_20_7, var_20_4)
+		enemy_dismember_disable_helmets(unit, unit_inventory_extension, gibsettings)
 	end
 
-	fn_16(unit, var_20_4.parent_destroy_actors, var_20_7)
-	fn_16(unit, var_20_4.ragdoll_destroy_actors, nil)
+	enemy_dismember_kill_actors(unit, gibsettings.parent_destroy_actors, unit_inventory_extension)
+	enemy_dismember_kill_actors(unit, gibsettings.ragdoll_destroy_actors, nil)
 
-	local var_20_11 = fn_11(var_20_9, unit, world, var_20_4, not arg_20_1)
+	local stump_unit = enemy_dismember_spawn_stump(unit_spawner, unit, world, gibsettings, not spawn_gib)
 
-	fn_15(unit, var_20_10, var_20_11)
+	enemy_dismember_set_variations(unit, gib_unit, stump_unit)
 
-	if not Unit.get_data(unit, "was_burned") then
-		Unit.flow_event(var_20_11, "lua_already_burned")
+	if Unit.get_data(unit, "was_burned") then
+		Unit.flow_event(stump_unit, "lua_already_burned")
 
-		if var_20_10 ~= nil then
-			Unit.flow_event(var_20_10, "lua_already_burned")
+		if gib_unit ~= nil then
+			Unit.flow_event(gib_unit, "lua_already_burned")
 		end
 	end
 
-	if not Unit.get_data(unit, "snow_state") then
-		fn_13(var_20_11)
+	if Unit.get_data(unit, "snow_state") then
+		enemy_dismember_enable_snow_state_on_unit(stump_unit)
 
-		if var_20_10 ~= nil then
-			fn_13(var_20_10)
+		if gib_unit ~= nil then
+			enemy_dismember_enable_snow_state_on_unit(gib_unit)
 		end
 	end
 
-	local var_20_12
+	local gibbed_nodes
 
-	if var_20_7 ~= nil then
-		var_20_12 = var_20_7.gibbed_nodes or {}
+	if unit_inventory_extension ~= nil then
+		gibbed_nodes = not not unit_inventory_extension.gibbed_nodes or not not {}
 	end
 
-	for i = 1, #var_20_4.parent_scale_nodes do
-		local node = Unit.node(unit, var_20_4.parent_scale_nodes[i])
+	for i = 1, #gibsettings.parent_scale_nodes do
+		node_id = Unit.node(unit, gibsettings.parent_scale_nodes[i])
 
-		Unit.set_local_scale(unit, node, Vector3(var_20_4.parent_scale, var_20_4.parent_scale, var_20_4.parent_scale))
+		Unit.set_local_scale(unit, node_id, Vector3(gibsettings.parent_scale, gibsettings.parent_scale, gibsettings.parent_scale))
 
-		if var_20_12 ~= nil then
-			var_20_12[#var_20_12 + 1] = node
+		if gibbed_nodes ~= nil then
+			gibbed_nodes[#gibbed_nodes + 1] = node_id
 		end
 	end
 
-	if var_20_7 ~= nil then
-		var_20_7.gibbed_nodes = var_20_12
+	if unit_inventory_extension ~= nil then
+		unit_inventory_extension.gibbed_nodes = gibbed_nodes
 	end
 
-	if var_20_4.parent_hide_group == nil or not Unit.has_visibility_group(unit, var_20_4.parent_hide_group) then
-		Unit.set_visibility(unit, var_20_4.parent_hide_group, false)
+	if gibsettings.parent_hide_group ~= nil and Unit.has_visibility_group(unit, gibsettings.parent_hide_group) then
+		Unit.set_visibility(unit, gibsettings.parent_hide_group, false)
 	end
 
-	if var_20_4.send_outfit_event ~= nil then
-		if var_20_7 ~= nil then
-			for j = 1, #var_20_7.inventory_item_outfit_units do
-				Unit.flow_event(var_20_7.inventory_item_outfit_units[j], var_20_4.send_outfit_event)
+	if gibsettings.send_outfit_event ~= nil then
+		if unit_inventory_extension ~= nil then
+			for i = 1, #unit_inventory_extension.inventory_item_outfit_units do
+				Unit.flow_event(unit_inventory_extension.inventory_item_outfit_units[i], gibsettings.send_outfit_event)
 			end
 		else
-			local get_data_2 = Unit.get_data(unit, "outfit_items")
+			local get_data = Unit.get_data(unit, "outfit_items")
 
-			get_data_2 = get_data_2 or {}
+			if not get_data then
+				-- Nothing
+			end
 
-			for k = 1, #get_data_2 do
-				Unit.flow_event(get_data_2[k], var_20_4.send_outfit_event)
+			get_data = {}
+
+			local outfit_items = get_data
+
+			::label_20_0::
+
+			for i = 1, #outfit_items do
+				Unit.flow_event(outfit_items[i], gibsettings.send_outfit_event)
 			end
 		end
 	end
 
-	if BloodSettings == nil or not BloodSettings.enemy_blood.enabled then
-		local node_2 = Unit.node(var_20_11, "a_vfx")
+	if BloodSettings == nil or BloodSettings.enemy_blood.enabled then
+		node_id = Unit.node(stump_unit, "a_vfx")
 
-		if var_20_4.vfx ~= nil then
-			local create_particles = World.create_particles(world, var_20_4.vfx, Unit.world_position(var_20_11, node_2), Unit.world_rotation(var_20_11, node_2))
+		if gibsettings.vfx ~= nil then
+			local vfx_id = World.create_particles(world, gibsettings.vfx, Unit.world_position(stump_unit, node_id), Unit.world_rotation(stump_unit, node_id))
 
-			World.link_particles(world, create_particles, var_20_11, node_2, Matrix4x4.identity(), "destroy")
+			World.link_particles(world, vfx_id, stump_unit, node_id, Matrix4x4.identity(), "destroy")
 		end
 
-		if not (var_20_10 ~= nil or var_20_4.pulp_vfx == nil) then
-			local create_particles_2 = World.create_particles(world, var_20_4.pulp_vfx, Unit.world_position(var_20_11, node_2), Unit.world_rotation(var_20_11, node_2))
+		if gib_unit == nil and gibsettings.pulp_vfx ~= nil then
+			local vfx_id = World.create_particles(world, gibsettings.pulp_vfx, Unit.world_position(stump_unit, node_id), Unit.world_rotation(stump_unit, node_id))
 
-			World.link_particles(world, create_particles_2, var_20_11, node_2, Matrix4x4.identity(), "destroy")
+			World.link_particles(world, vfx_id, stump_unit, node_id, Matrix4x4.identity(), "destroy")
 		end
 	end
 
-	if not (arg_20_1 or bodypart ~= "head") then
+	if not spawn_gib and bodypart == "head" then
 		local wwise_world = Wwise.wwise_world(world)
-		local node_3 = Unit.node(var_20_11, "a_vfx")
 
-		WwiseWorld.trigger_event(wwise_world, "Play_combat_enemy_head_crush", var_20_11, node_3)
+		node_id = Unit.node(stump_unit, "a_vfx")
+
+		WwiseWorld.trigger_event(wwise_world, "Play_combat_enemy_head_crush", stump_unit, node_id)
 	end
 
-	if ScriptUnit == nil or not var_20_4.stop_death_sound then
-		local has_extension = ScriptUnit.has_extension(unit, "hit_reaction_system")
+	if ScriptUnit ~= nil and gibsettings.stop_death_sound then
+		local hit_reaction_extension = ScriptUnit.has_extension(unit, "hit_reaction_system")
 
-		if not has_extension then
-			local wwise_world_2 = Wwise.wwise_world(world)
-			local death_sound_event_id = has_extension:death_sound_event_id()
+		if hit_reaction_extension then
+			local wwise_world = Wwise.wwise_world(world)
+			local playing_id = hit_reaction_extension:death_sound_event_id()
 
-			if not death_sound_event_id then
-				WwiseWorld.stop_event(wwise_world_2, death_sound_event_id)
+			if playing_id then
+				WwiseWorld.stop_event(wwise_world, playing_id)
 			end
 		end
 	end
 
-	if var_20_7 ~= nil then
-		if var_20_10 ~= nil then
-			local gib_items = var_20_7.gib_items
+	if unit_inventory_extension ~= nil then
+		if gib_unit ~= nil then
+			local gib_items = unit_inventory_extension.gib_items
 
-			table.insert(gib_items, var_20_10)
+			table.insert(gib_items, gib_unit)
 
-			var_20_7.gib_items = gib_items
+			unit_inventory_extension.gib_items = gib_items
 		end
 
-		local stump_items = var_20_7.stump_items
+		local stump_items = unit_inventory_extension.stump_items
 
-		table.insert(stump_items, var_20_11)
+		table.insert(stump_items, stump_unit)
 
-		var_20_7.stump_items = stump_items
+		unit_inventory_extension.stump_items = stump_items
 	else
-		if var_20_10 ~= nil then
-			local get_data_3 = Unit.get_data(unit, "gib_items")
+		if gib_unit ~= nil then
+			local get_data_2 = Unit.get_data(unit, "gib_items")
 
-			get_data_3 = get_data_3 or {}
+			if not get_data_2 then
+				-- Nothing
+			end
 
-			table.insert(get_data_3, var_20_10)
-			Unit.set_data(unit, "gib_items", get_data_3)
+			get_data_2 = {}
+
+			local gib_items = get_data_2
+
+			::label_20_1::
+
+			table.insert(gib_items, gib_unit)
+			Unit.set_data(unit, "gib_items", gib_items)
 		end
 
-		local get_data_4 = Unit.get_data(unit, "stump_items")
+		local get_data_3 = Unit.get_data(unit, "stump_items")
 
-		get_data_4 = get_data_4 or {}
+		if not get_data_3 then
+			-- Nothing
+		end
 
-		table.insert(get_data_4, var_20_11)
-		Unit.set_data(unit, "stump_items", get_data_4)
+		get_data_3 = {}
+
+		local stump_items = get_data_3
+
+		::label_20_2::
+
+		table.insert(stump_items, stump_unit)
+		Unit.set_data(unit, "stump_items", stump_items)
 	end
 
-	fn_7(unit, bodypart, var_20_4)
+	enemy_dismember_set_dismember_filter(unit, bodypart, gibsettings)
 end
 
-function enemy_explode(self)
+function enemy_explode(params)
 	-- function 21
-	local unit = self.unit
-	local breed_type = self.breed_type
-	local get_data = Unit.get_data(unit, "breed")
+	local unit = params.unit
+	local breed_type = params.breed_type
+	local breed = Unit.get_data(unit, "breed")
 
-	if get_data ~= nil then
-		breed_type = get_data.name
+	if breed ~= nil then
+		breed_type = breed.name
 	end
 
 	if breed_type == nil then
 		return
 	end
 
-	if not self.baked then
+	if params.baked then
 		breed_type = breed_type .. "_baked"
 	end
 
@@ -769,113 +820,112 @@ function enemy_explode(self)
 		return
 	end
 
-	local explode = UnitGibSettings[breed_type].explode
+	local explodesettings = UnitGibSettings[breed_type].explode
 
-	if explode.part_combos == nil then
+	if explodesettings.part_combos == nil then
 		return
 	end
 
 	local world = Unit.world(unit)
-	local var_21_5
-	local var_21_6
+	local unit_inventory_extension, unit_spawner
 
 	if ScriptUnit ~= nil then
-		var_21_5 = ScriptUnit.has_extension(unit, "ai_inventory_system")
-		var_21_6 = Managers.state.unit_spawner
+		unit_inventory_extension = ScriptUnit.has_extension(unit, "ai_inventory_system")
+		unit_spawner = Managers.state.unit_spawner
 	end
 
-	if var_21_5 ~= nil then
-		if #var_21_5.stump_items ~= 0 then
+	if unit_inventory_extension ~= nil then
+		if #unit_inventory_extension.stump_items ~= 0 then
 			return
 		end
 	elseif Unit.get_data(unit, "stump_items") ~= nil then
 		return
 	end
 
-	if not Unit.get_data(unit, "exploded") then
+	if Unit.get_data(unit, "exploded") then
 		return
 	end
 
-	local var_21_7
+	local already_burned
 
-	if not Unit.get_data(unit, "was_burned") then
-		var_21_7 = true
+	if Unit.get_data(unit, "was_burned") then
+		already_burned = true
 	end
 
-	local var_21_8 = explode.part_combos[math.random(#explode.part_combos)]
-	local flag = false
-	local num = 1
+	local part_combo = explodesettings.part_combos[math.random(#explodesettings.part_combos)]
+	local relinked_helmet = false
+	local push_force_multiplier = 1
 
-	if type(explode.push_force_multiplier) == "number" then
-		num = explode.push_force_multiplier
+	if type(explodesettings.push_force_multiplier) == "number" then
+		push_force_multiplier = explodesettings.push_force_multiplier
 	end
 
-	for i = 1, #var_21_8 do
-		if UnitGibSettings[breed_type].parts[var_21_8[i]] == nil then
+	for i = 1, #part_combo do
+		if UnitGibSettings[breed_type].parts[part_combo[i]] == nil then
 			-- Nothing
 		else
-			local var_21_11 = UnitGibSettings[breed_type].parts[var_21_8[i]]
-			local var_21_12 = fn_10(var_21_6, unit, world, var_21_11, num, var_21_5)
+			local gibsettings = UnitGibSettings[breed_type].parts[part_combo[i]]
+			local gib_unit = enemy_dismember_spawn_gib(unit_spawner, unit, world, gibsettings, push_force_multiplier, unit_inventory_extension)
 
-			fn_15(unit, var_21_12, nil)
+			enemy_dismember_set_variations(unit, gib_unit, nil)
 
-			if not var_21_7 then
-				Unit.flow_event(var_21_12, "lua_already_burned")
+			if already_burned then
+				Unit.flow_event(gib_unit, "lua_already_burned")
 			end
 
-			Unit.flow_event(var_21_12, "lua_start_despawn_timer")
+			Unit.flow_event(gib_unit, "lua_start_despawn_timer")
 
-			if var_21_11.gib_helmet_link_node ~= nil then
-				flag = true
+			if gibsettings.gib_helmet_link_node ~= nil then
+				relinked_helmet = true
 			end
 		end
 	end
 
-	if not ((BloodSettings == nil or not BloodSettings.enemy_blood.enabled) and explode.vfx_align_node == nil) then
-		local node = Unit.node(unit, explode.vfx_align_node)
+	if (BloodSettings == nil or BloodSettings.enemy_blood.enabled) and explodesettings.vfx_align_node ~= nil then
+		local node_id = Unit.node(unit, explodesettings.vfx_align_node)
 
-		if explode.vfx ~= nil then
-			local create_particles = World.create_particles(world, explode.vfx, Unit.world_position(unit, node), Unit.world_rotation(unit, node))
+		if explodesettings.vfx ~= nil then
+			local vfx_id = World.create_particles(world, explodesettings.vfx, Unit.world_position(unit, node_id), Unit.world_rotation(unit, node_id))
 
-			World.link_particles(world, create_particles, unit, node, Matrix4x4.identity(), "destroy")
+			World.link_particles(world, vfx_id, unit, node_id, Matrix4x4.identity(), "destroy")
 		end
 	end
 
-	local tbl = {}
+	local outfit_items = {}
 
-	if var_21_5 ~= nil then
-		tbl = var_21_5.inventory_item_outfit_units or {}
+	if unit_inventory_extension ~= nil then
+		outfit_items = not not unit_inventory_extension.inventory_item_outfit_units or not not {}
 	else
-		tbl = Unit.get_data(unit, "outfit_items") or {}
+		outfit_items = not not Unit.get_data(unit, "outfit_items") or not not {}
 	end
 
-	for j = 1, #tbl do
-		Unit.set_unit_visibility(tbl[j], false)
+	for i = 1, #outfit_items do
+		Unit.set_unit_visibility(outfit_items[i], false)
 	end
 
-	local parts = UnitGibSettings[breed_type].parts
+	local gibsettings_combo_parts = UnitGibSettings[breed_type].parts
 
-	for k = 1, #var_21_8 do
-		local var_21_17 = parts[var_21_8[k]]
+	for i = 1, #part_combo do
+		local gibsetting_part = gibsettings_combo_parts[part_combo[i]]
 
-		if not (not var_21_17 and var_21_17.send_outfit_event == nil) then
-			for l = 1, #tbl do
-				Unit.flow_event(tbl[l], var_21_17.send_outfit_event)
+		if gibsetting_part and gibsetting_part.send_outfit_event ~= nil then
+			for i = 1, #outfit_items do
+				Unit.flow_event(outfit_items[i], gibsetting_part.send_outfit_event)
 			end
 		end
 	end
 
-	local var_21_18 = fn_8(unit, var_21_5)
+	local helmet_units = enemy_dismember_get_helmet_units(unit, unit_inventory_extension)
 
-	for i4 = 1, #var_21_18 do
-		if flag == false then
-			Unit.set_unit_visibility(var_21_18[i4], false)
+	for i = 1, #helmet_units do
+		if relinked_helmet == false then
+			Unit.set_unit_visibility(helmet_units[i], false)
 		else
-			if var_21_5 == nil then
+			if unit_inventory_extension == nil then
 				Unit.set_data(unit, "helmet_items", {})
 			end
 
-			Unit.flow_event(var_21_18[i4], "lua_start_despawn_timer")
+			Unit.flow_event(helmet_units[i], "lua_start_despawn_timer")
 		end
 	end
 
@@ -884,51 +934,67 @@ function enemy_explode(self)
 	Unit.set_data(unit, "exploded", true)
 end
 
-function flow_callback_enemy_gib(arg_22_0)
+function flow_callback_enemy_gib(params)
 	-- function 22
-	if BloodSettings == nil or not BloodSettings.dismemberment.enabled then
-		fn_17(arg_22_0, true)
+	if BloodSettings == nil or BloodSettings.dismemberment.enabled then
+		enemy_dismember(params, true)
 	end
 
 	return {}
 end
 
-function flow_callback_enemy_set_base_variation(self)
+function flow_callback_enemy_set_base_variation(params)
 	-- function 23
-	local unit = self.unit
-	local tbl = {
-		groups = {},
-		materials = {},
-		scaling = {}
-	}
+	local unit = params.unit
+	local variation_result = {}
 
-	Unit.set_data(unit, "variation_data", tbl)
+	variation_result.groups = {}
+	variation_result.materials = {}
+	variation_result.scaling = {}
+
+	Unit.set_data(unit, "variation_data", variation_result)
 end
 
-function flow_callback_enemy_gib_prop_cleanup(self)
+function flow_callback_enemy_gib_prop_cleanup(params)
 	-- function 24
-	local unit = self.unit
+	local unit = params.unit
 	local get_data = Unit.get_data(unit, "gib_items")
 
-	get_data = get_data or {}
+	if not get_data then
+		-- Nothing
+	end
+
+	get_data = {}
+
+	local gib_items = get_data
+
+	::label_24_0::
 
 	local get_data_2 = Unit.get_data(unit, "stump_items")
 
-	get_data_2 = get_data_2 or {}
+	if not get_data_2 then
+		-- Nothing
+	end
 
-	local remove_gibs = self.remove_gibs
+	get_data_2 = {}
+
+	local stump_items = get_data_2
+
+	::label_24_1::
+
+	local remove_gibs = params.remove_gibs
 
 	if ScriptUnit ~= nil then
 		if remove_gibs == true then
-			for i = 1, #get_data do
-				Managers.state.unit_spawner:mark_for_deletion(get_data[i])
+			for i = 1, #gib_items do
+				Managers.state.unit_spawner:mark_for_deletion(gib_items[i])
 			end
 
 			Unit.set_data(unit, "gib_items", {})
 		end
 
-		for j = 1, #get_data_2 do
-			Managers.state.unit_spawner:mark_for_deletion(get_data_2[j])
+		for i = 1, #stump_items do
+			Managers.state.unit_spawner:mark_for_deletion(stump_items[i])
 		end
 
 		Unit.set_data(unit, "stump_items", {})
@@ -937,19 +1003,19 @@ function flow_callback_enemy_gib_prop_cleanup(self)
 	return {}
 end
 
-function flow_callback_enemy_pulp(arg_25_0)
+function flow_callback_enemy_pulp(params)
 	-- function 25
-	if BloodSettings == nil or not BloodSettings.dismemberment.enabled then
-		fn_17(arg_25_0, false)
+	if BloodSettings == nil or BloodSettings.dismemberment.enabled then
+		enemy_dismember(params, false)
 	end
 
 	return {}
 end
 
-function flow_callback_enemy_explode(arg_26_0)
+function flow_callback_enemy_explode(params)
 	-- function 26
-	if BloodSettings == nil or not BloodSettings.dismemberment.enabled then
-		enemy_explode(arg_26_0)
+	if BloodSettings == nil or BloodSettings.dismemberment.enabled then
+		enemy_explode(params)
 	end
 
 	return {}

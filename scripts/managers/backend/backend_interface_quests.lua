@@ -2,7 +2,7 @@
 
 require("scripts/managers/backend/data_server_queue")
 
-local function fn(...)
+local function dprint(...)
 	-- function 1
 	print("[BackendInterfaceQuests]", ...)
 end
@@ -21,13 +21,13 @@ BackendInterfaceQuests.init = function (self)
 	self._reward_queue = {}
 end
 
-BackendInterfaceQuests.setup = function (self, arg_3_1)
+BackendInterfaceQuests.setup = function (self, data_server_queue)
 	-- function 3
-	self:_register_executors(arg_3_1)
+	self:_register_executors(data_server_queue)
 
-	self._queue = arg_3_1
+	self._queue = data_server_queue
 
-	local tbl = {
+	local param_config = {
 		reset_contracts = true,
 		reset_quests = true
 	}
@@ -40,192 +40,194 @@ BackendInterfaceQuests.initiated = function (self)
 	return self._initiated
 end
 
-BackendInterfaceQuests._register_executors = function (arg_5_0, arg_5_1)
+BackendInterfaceQuests._register_executors = function (self, queue)
 	-- function 5
-	arg_5_1:register_executor("quests", callback(arg_5_0, "_command_quests"))
-	arg_5_1:register_executor("contracts", callback(arg_5_0, "_command_contracts"))
-	arg_5_1:register_executor("contract_update", callback(arg_5_0, "_command_contract_update"))
-	arg_5_1:register_executor("contract_delete", callback(arg_5_0, "_command_contract_delete"))
-	arg_5_1:register_executor("quest_update", callback(arg_5_0, "_command_quest_update"))
-	arg_5_1:register_executor("quest_delete", callback(arg_5_0, "_command_quest_delete"))
-	arg_5_1:register_executor("rewarded", callback(arg_5_0, "_command_rewarded"))
-	arg_5_1:register_executor("expire_times", callback(arg_5_0, "_command_expire_times"))
-	arg_5_1:register_executor("status", callback(arg_5_0, "_command_status"))
+	queue:register_executor("quests", callback(self, "_command_quests"))
+	queue:register_executor("contracts", callback(self, "_command_contracts"))
+	queue:register_executor("contract_update", callback(self, "_command_contract_update"))
+	queue:register_executor("contract_delete", callback(self, "_command_contract_delete"))
+	queue:register_executor("quest_update", callback(self, "_command_quest_update"))
+	queue:register_executor("quest_delete", callback(self, "_command_quest_delete"))
+	queue:register_executor("rewarded", callback(self, "_command_rewarded"))
+	queue:register_executor("expire_times", callback(self, "_command_expire_times"))
+	queue:register_executor("status", callback(self, "_command_status"))
 end
 
-BackendInterfaceQuests._command_quests = function (self, arg_6_1)
+BackendInterfaceQuests._command_quests = function (self, quests)
 	-- function 6
-	fn("_command_quests")
+	dprint("_command_quests")
 
 	self._initiated = true
-	self._quests = arg_6_1
+	self._quests = quests
 	self._quests_dirty = true
 
 	table.clear(self._available_quests)
 
-	for k, v in pairs(arg_6_1) do
-		if not v.active then
-			self._active_quest = v
+	for quest_id, quest in pairs(quests) do
+		if quest.active then
+			self._active_quest = quest
 		else
-			self._available_quests[k] = v
+			self._available_quests[quest_id] = quest
 		end
 	end
 end
 
-BackendInterfaceQuests._command_contracts = function (self, arg_7_1)
+BackendInterfaceQuests._command_contracts = function (self, contracts)
 	-- function 7
-	fn("_command_contracts")
+	dprint("_command_contracts")
 
-	self._contracts = arg_7_1
+	self._contracts = contracts
 	self._contracts_dirty = true
 
 	table.clear(self._active_contracts)
 	table.clear(self._available_contracts)
 
-	for k, v in pairs(arg_7_1) do
-		if not v.active then
-			self._active_contracts[k] = v
+	for contract_id, contract in pairs(contracts) do
+		if contract.active then
+			self._active_contracts[contract_id] = contract
 		else
-			self._available_contracts[k] = v
+			self._available_contracts[contract_id] = contract
 		end
 
-		local difficulty = v.requirements.difficulty
+		local backend_difficulty = contract.requirements.difficulty
 
-		v.requirements.difficulty = Difficulties[difficulty]
+		contract.requirements.difficulty = Difficulties[backend_difficulty]
 	end
 end
 
-BackendInterfaceQuests._command_contract_update = function (self, arg_8_1)
+BackendInterfaceQuests._command_contract_update = function (self, contract_update)
 	-- function 8
-	fn("_command_contract_update")
+	dprint("_command_contract_update")
 
 	self._contracts_dirty = true
 
-	local id = arg_8_1.id
-	local var_8_1 = self._contracts[id]
-	local data = arg_8_1.data
+	local id = contract_update.id
+	local contract = self._contracts[id]
+	local data = contract_update.data
 
-	for k, v in pairs(data) do
-		var_8_1[k] = v
+	for key, value in pairs(data) do
+		contract[key] = value
 
-		if k == "active" then
-			if not v then
+		if key == "active" then
+			if value then
 				self._available_contracts[id] = nil
-				self._active_contracts[id] = var_8_1
+				self._active_contracts[id] = contract
 			else
-				self._available_contracts[id] = var_8_1
+				self._available_contracts[id] = contract
 				self._active_contracts[id] = nil
 			end
-		elseif k == "requirements" then
-			local difficulty = v.difficulty
+		elseif key == "requirements" then
+			local backend_difficulty = value.difficulty
 
-			var_8_1.requirements.difficulty = Difficulties[difficulty]
+			contract.requirements.difficulty = Difficulties[backend_difficulty]
 		end
 	end
 end
 
-BackendInterfaceQuests._command_contract_delete = function (self, arg_9_1)
+BackendInterfaceQuests._command_contract_delete = function (self, contract_delete)
 	-- function 9
-	fn("_command_contract_delete")
+	dprint("_command_contract_delete")
 
 	self._contracts_dirty = true
 
-	local id = arg_9_1.id
+	local id = contract_delete.id
 
 	self._contracts[id] = nil
 
-	local _active_contracts = self._active_contracts
+	local active_contracts = self._active_contracts
 
-	if not _active_contracts[id] then
-		_active_contracts[id] = nil
+	if active_contracts[id] then
+		active_contracts[id] = nil
 	end
 end
 
-BackendInterfaceQuests._command_quest_update = function (self, arg_10_1)
+BackendInterfaceQuests._command_quest_update = function (self, quest_update)
 	-- function 10
-	fn("_command_quest_update")
+	dprint("_command_quest_update")
 
 	self._quests_dirty = true
 
-	local id = arg_10_1.id
-	local var_10_1 = self._quests[id]
-	local data = arg_10_1.data
+	local id = quest_update.id
+	local quest = self._quests[id]
+	local data = quest_update.data
 
-	for k, v in pairs(data) do
-		var_10_1[k] = v
+	for key, value in pairs(data) do
+		quest[key] = value
 
-		if k == "active" then
-			if not v then
+		if key == "active" then
+			if value then
 				self._available_quests[id] = nil
-				self._active_quest = var_10_1
+				self._active_quest = quest
 			else
-				self._available_quests[id] = var_10_1
+				self._available_quests[id] = quest
 				self._active_quest = nil
 			end
 		end
 	end
 end
 
-BackendInterfaceQuests._command_quest_delete = function (self, arg_11_1)
+BackendInterfaceQuests._command_quest_delete = function (self, quest_delete)
 	-- function 11
-	fn("_command_quest_delete")
+	dprint("_command_quest_delete")
 
 	self._quests_dirty = true
 
-	local id = arg_11_1.id
+	local id = quest_delete.id
 
 	self._quests[id] = nil
 
-	local _active_quest = self._active_quest
+	local active_quest = self._active_quest
 
-	if not (not _active_quest and _active_quest.id ~= id) then
+	if active_quest and active_quest.id == id then
 		self._active_quest = nil
 	end
 end
 
-BackendInterfaceQuests._command_rewarded = function (self, arg_12_1)
+BackendInterfaceQuests._command_rewarded = function (self, rewarded)
 	-- function 12
-	fn("_command_rewarded")
+	dprint("_command_rewarded")
 
-	for i, v in ipairs(arg_12_1) do
-		if v.type == "item" then
-			({})[1] = v.data
-
-			table.insert(self._reward_queue, v)
-		elseif v.type == "token" then
-			local tbl = {
-				type = v.token_type,
-				amount = v.amount
+	for _, reward in ipairs(rewarded) do
+		if reward.type == "item" then
+			local gui_reward = {
+				reward.data
 			}
 
-			table.insert(self._reward_queue, v)
+			table.insert(self._reward_queue, reward)
+		elseif reward.type == "token" then
+			local gui_reward = {
+				type = reward.token_type,
+				amount = reward.amount
+			}
+
+			table.insert(self._reward_queue, reward)
 		end
 	end
 end
 
-BackendInterfaceQuests._command_expire_times = function (self, arg_13_1)
+BackendInterfaceQuests._command_expire_times = function (self, expire_times)
 	-- function 13
-	fn("_command_expire_times")
+	dprint("_command_expire_times")
 
 	self._expire_times_dirty = true
-	self._expire_times = arg_13_1
+	self._expire_times = expire_times
 end
 
-BackendInterfaceQuests._command_status = function (self, arg_14_1)
+BackendInterfaceQuests._command_status = function (self, status)
 	-- function 14
-	fn("_command_status", arg_14_1)
+	dprint("_command_status", status)
 
 	self._status_dirty = true
-	self._status = arg_14_1
+	self._status = status
 end
 
 BackendInterfaceQuests.are_quests_dirty = function (self)
 	-- function 15
-	local _quests_dirty = self._quests_dirty
+	local dirty = self._quests_dirty
 
 	self._quests_dirty = false
 
-	return _quests_dirty
+	return dirty
 end
 
 BackendInterfaceQuests.get_quests = function (self)
@@ -243,27 +245,27 @@ BackendInterfaceQuests.get_active_quest = function (self)
 	return self._active_quest
 end
 
-BackendInterfaceQuests.set_active_quest = function (self, arg_19_1, arg_19_2)
+BackendInterfaceQuests.set_active_quest = function (self, quest_id, active)
 	-- function 19
-	local add_item = self._queue:add_item("qnc_set_quest_active_1", "quest_id", cjson.encode(arg_19_1), "active", cjson.encode(arg_19_2))
+	local token = self._queue:add_item("qnc_set_quest_active_1", "quest_id", cjson.encode(quest_id), "active", cjson.encode(active))
 
-	self._tokens[#self._tokens + 1] = add_item
+	self._tokens[#self._tokens + 1] = token
 end
 
-BackendInterfaceQuests.complete_quest = function (self, arg_20_1)
+BackendInterfaceQuests.complete_quest = function (self, quest_id)
 	-- function 20
-	local add_item = self._queue:add_item("qnc_turn_in_quest_1", "quest_id", cjson.encode(arg_20_1))
+	local token = self._queue:add_item("qnc_turn_in_quest_1", "quest_id", cjson.encode(quest_id))
 
-	self._tokens[#self._tokens + 1] = add_item
+	self._tokens[#self._tokens + 1] = token
 end
 
 BackendInterfaceQuests.are_contracts_dirty = function (self)
 	-- function 21
-	local _contracts_dirty = self._contracts_dirty
+	local dirty = self._contracts_dirty
 
 	self._contracts_dirty = false
 
-	return _contracts_dirty
+	return dirty
 end
 
 BackendInterfaceQuests.get_contracts = function (self)
@@ -281,103 +283,105 @@ BackendInterfaceQuests.get_active_contracts = function (self)
 	return self._active_contracts
 end
 
-BackendInterfaceQuests.set_contract_active = function (self, arg_25_1, arg_25_2)
+BackendInterfaceQuests.set_contract_active = function (self, contract_id, active)
 	-- function 25
-	local add_item = self._queue:add_item("qnc_set_contract_active_1", "contract_id", cjson.encode(arg_25_1), "active", cjson.encode(arg_25_2))
+	local token = self._queue:add_item("qnc_set_contract_active_1", "contract_id", cjson.encode(contract_id), "active", cjson.encode(active))
 
-	self._tokens[#self._tokens + 1] = add_item
+	self._tokens[#self._tokens + 1] = token
 end
 
-BackendInterfaceQuests.add_contract_progress = function (self, arg_26_1, arg_26_2, arg_26_3)
+BackendInterfaceQuests.add_contract_progress = function (self, contract_id, level, amount)
 	-- function 26
-	local add_item = self._queue:add_item("qnc_add_contract_progress_1", "contract_id", cjson.encode(arg_26_1), "level", cjson.encode(arg_26_2), "task_amount", cjson.encode(arg_26_3))
+	local token = self._queue:add_item("qnc_add_contract_progress_1", "contract_id", cjson.encode(contract_id), "level", cjson.encode(level), "task_amount", cjson.encode(amount))
 
-	self._tokens[#self._tokens + 1] = add_item
+	self._tokens[#self._tokens + 1] = token
 end
 
-BackendInterfaceQuests.add_all_contract_progress = function (self, arg_27_1)
+BackendInterfaceQuests.add_all_contract_progress = function (self, contract_id)
 	-- function 27
-	local add_item = self._queue:add_item("qnc_add_all_contract_progress_1", "contract_id", cjson.encode(arg_27_1))
+	local token = self._queue:add_item("qnc_add_all_contract_progress_1", "contract_id", cjson.encode(contract_id))
 
-	self._tokens[#self._tokens + 1] = add_item
+	self._tokens[#self._tokens + 1] = token
 end
 
 BackendInterfaceQuests.poll_reward = function (self)
 	-- function 28
 	if not table.is_empty(self._reward_queue) then
-		return (table.remove(self._reward_queue, 1))
+		local reward = table.remove(self._reward_queue, 1)
+
+		return reward
 	end
 end
 
-BackendInterfaceQuests.complete_contract = function (self, arg_29_1)
+BackendInterfaceQuests.complete_contract = function (self, contract_id)
 	-- function 29
-	local add_item = self._queue:add_item("qnc_turn_in_contract_1", "contract_id", cjson.encode(arg_29_1))
+	local token = self._queue:add_item("qnc_turn_in_contract_1", "contract_id", cjson.encode(contract_id))
 
-	self._tokens[#self._tokens + 1] = add_item
+	self._tokens[#self._tokens + 1] = token
 end
 
-BackendInterfaceQuests.reset_quests_and_contracts = function (self, arg_30_1, arg_30_2)
+BackendInterfaceQuests.reset_quests_and_contracts = function (self, reset_quests, reset_contracts)
 	-- function 30
-	local encode = cjson.encode({
-		reset_quests = arg_30_1,
-		reset_contracts = arg_30_2
+	local config = cjson.encode({
+		reset_quests = reset_quests,
+		reset_contracts = reset_contracts
 	})
-	local add_item = self._queue:add_item("qnc_reset_1", "param_config", encode)
+	local token = self._queue:add_item("qnc_reset_1", "param_config", config)
 
-	self._tokens[#self._tokens + 1] = add_item
+	self._tokens[#self._tokens + 1] = token
 
-	local add_item_2 = self._queue:add_item("qnc_get_state_1")
+	local token2 = self._queue:add_item("qnc_get_state_1")
 
-	self._tokens[#self._tokens + 1] = add_item_2
+	self._tokens[#self._tokens + 1] = token2
 end
 
-local num = 0
+local time_offset = 0
 
-BackendInterfaceQuests.reset_quests_and_contracts_with_time_offset = function (self, arg_31_1, arg_31_2, arg_31_3)
+BackendInterfaceQuests.reset_quests_and_contracts_with_time_offset = function (self, reset_quests, reset_contracts, add_time_offset)
 	-- function 31
-	local encode = cjson.encode({
-		reset_quests = arg_31_1,
-		reset_contracts = arg_31_2
+	local config = cjson.encode({
+		reset_quests = reset_quests,
+		reset_contracts = reset_contracts
 	})
-	local add_item = self._queue:add_item("qnc_reset_1", "param_config", encode)
+	local token = self._queue:add_item("qnc_reset_1", "param_config", config)
 
-	self._tokens[#self._tokens + 1] = add_item
+	self._tokens[#self._tokens + 1] = token
 
-	if not arg_31_3 then
-		num = num + arg_31_3
+	if add_time_offset then
+		time_offset = time_offset + add_time_offset
 	else
-		num = 0
+		time_offset = 0
 	end
 
-	local num_2 = os.time() + num
-	local add_item_2 = self._queue:add_item("get_quest_state_debug_1", "debug_time", num_2)
+	local debug_time = os.time() + time_offset
+	local token2 = self._queue:add_item("get_quest_state_debug_1", "debug_time", debug_time)
 
-	self._tokens[#self._tokens + 1] = add_item_2
+	self._tokens[#self._tokens + 1] = token2
 end
 
 BackendInterfaceQuests.query_quests_and_contracts = function (self)
 	-- function 32
-	local add_item = self._queue:add_item("qnc_get_state_1")
+	local token = self._queue:add_item("qnc_get_state_1")
 
-	self._tokens[#self._tokens + 1] = add_item
+	self._tokens[#self._tokens + 1] = token
 end
 
 BackendInterfaceQuests.query_expire_times = function (self)
 	-- function 33
-	fn("query_expire_times")
+	dprint("query_expire_times")
 
-	local add_item = self._queue:add_item("qnc_get_expire_times_1")
+	local token = self._queue:add_item("qnc_get_expire_times_1")
 
-	self._tokens[#self._tokens + 1] = add_item
+	self._tokens[#self._tokens + 1] = token
 end
 
 BackendInterfaceQuests.are_expire_times_dirty = function (self)
 	-- function 34
-	local _expire_times_dirty = self._expire_times_dirty
+	local dirty = self._expire_times_dirty
 
 	self._expire_times_dirty = false
 
-	return _expire_times_dirty
+	return dirty
 end
 
 BackendInterfaceQuests.get_expire_times = function (self)
@@ -387,11 +391,11 @@ end
 
 BackendInterfaceQuests.are_status_dirty = function (self)
 	-- function 36
-	local _status_dirty = self._status_dirty
+	local dirty = self._status_dirty
 
 	self._status_dirty = false
 
-	return _status_dirty
+	return dirty
 end
 
 BackendInterfaceQuests.get_status = function (self)

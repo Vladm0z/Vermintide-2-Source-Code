@@ -1,13 +1,13 @@
 -- chunkname: @scripts/ui/views/character_selection_view/states/definitions/character_selection_state_character_definitions.lua
 
-local num = 426
-local num_2 = 240
-local tbl = {
+local video_window_width = 426
+local video_window_height = 240
+local career_info_size = {
 	450,
 	170
 }
-local num_3 = 6
-local tbl_2 = {
+local NUM_PERKS = 6
+local scenegraph_definition = {
 	screen = {
 		scale = "fit",
 		size = {
@@ -206,7 +206,7 @@ local tbl_2 = {
 		parent = "right_side_root",
 		horizontal_alignment = "right",
 		size = {
-			tbl[1] + 20,
+			career_info_size[1] + 20,
 			885
 		},
 		position = {
@@ -220,8 +220,8 @@ local tbl_2 = {
 		parent = "info_window",
 		horizontal_alignment = "center",
 		size = {
-			num,
-			num_2
+			video_window_width,
+			video_window_height
 		},
 		position = {
 			0,
@@ -262,7 +262,7 @@ local tbl_2 = {
 		parent = "info_window",
 		horizontal_alignment = "center",
 		size = {
-			tbl[1] + 20,
+			career_info_size[1] + 20,
 			625
 		},
 		position = {
@@ -278,7 +278,7 @@ local tbl_2 = {
 		vertical_alignment = "top",
 		parent = "scrollbar_window",
 		horizontal_alignment = "center",
-		size = tbl,
+		size = career_info_size,
 		position = {
 			0,
 			0,
@@ -318,7 +318,7 @@ local tbl_2 = {
 		parent = "passive_window",
 		horizontal_alignment = "left",
 		size = {
-			tbl[1] * 0.65,
+			career_info_size[1] * 0.65,
 			50
 		},
 		position = {
@@ -346,7 +346,7 @@ local tbl_2 = {
 		parent = "passive_window",
 		horizontal_alignment = "right",
 		size = {
-			tbl[1] * 0.3,
+			career_info_size[1] * 0.3,
 			50
 		},
 		position = {
@@ -360,8 +360,8 @@ local tbl_2 = {
 		parent = "passive_icon",
 		horizontal_alignment = "left",
 		size = {
-			tbl[1] - 110,
-			tbl[2] - 90
+			career_info_size[1] - 110,
+			career_info_size[2] - 90
 		},
 		position = {
 			90,
@@ -373,10 +373,10 @@ local tbl_2 = {
 		vertical_alignment = "top",
 		parent = "passive_window",
 		horizontal_alignment = "left",
-		size = tbl,
+		size = career_info_size,
 		position = {
 			0,
-			-tbl[2],
+			-career_info_size[2],
 			1
 		}
 	},
@@ -413,7 +413,7 @@ local tbl_2 = {
 		parent = "active_window",
 		horizontal_alignment = "left",
 		size = {
-			tbl[1] * 0.6,
+			career_info_size[1] * 0.6,
 			50
 		},
 		position = {
@@ -441,7 +441,7 @@ local tbl_2 = {
 		parent = "active_window",
 		horizontal_alignment = "right",
 		size = {
-			tbl[1] * 0.3,
+			career_info_size[1] * 0.3,
 			50
 		},
 		position = {
@@ -455,8 +455,8 @@ local tbl_2 = {
 		parent = "active_icon",
 		horizontal_alignment = "left",
 		size = {
-			tbl[1] - 110,
-			tbl[2] - 90
+			career_info_size[1] - 110,
+			career_info_size[2] - 90
 		},
 		position = {
 			90,
@@ -469,7 +469,7 @@ local tbl_2 = {
 		parent = "active_window",
 		horizontal_alignment = "left",
 		size = {
-			tbl[1] * 0.6,
+			career_info_size[1] * 0.6,
 			50
 		},
 		position = {
@@ -551,17 +551,17 @@ local tbl_2 = {
 	}
 }
 
-for i = 1, num_3 do
-	local num_4 = i - 1
+for i = 1, NUM_PERKS do
+	local parent = i - 1
 
 	if i == 1 then
-		num_4 = "anchor"
+		parent = "anchor"
 	end
 
-	tbl_2["career_perk_" .. i] = {
+	scenegraph_definition["career_perk_" .. i] = {
 		vertical_alignment = "bottom",
 		horizontal_alignment = "left",
-		parent = "career_perk_" .. num_4,
+		parent = "career_perk_" .. parent,
 		size = {
 			410,
 			1
@@ -574,7 +574,7 @@ for i = 1, num_3 do
 	}
 end
 
-local tbl_3 = {
+local description_text_style = {
 	word_wrap = true,
 	use_shadow = true,
 	localize = false,
@@ -590,7 +590,7 @@ local tbl_3 = {
 		2
 	}
 }
-local tbl_4 = {
+local type_title_text_style = {
 	word_wrap = true,
 	use_shadow = true,
 	localize = false,
@@ -606,7 +606,7 @@ local tbl_4 = {
 		2
 	}
 }
-local tbl_5 = {
+local sub_title_text_style = {
 	font_size = 32,
 	upper_case = false,
 	localize = false,
@@ -623,7 +623,7 @@ local tbl_5 = {
 		2
 	}
 }
-local tbl_6 = {
+local hero_career_style = {
 	font_size = 40,
 	upper_case = true,
 	localize = false,
@@ -640,7 +640,7 @@ local tbl_6 = {
 		2
 	}
 }
-local tbl_7 = {
+local hero_name_style = {
 	word_wrap = true,
 	font_size = 30,
 	localize = false,
@@ -655,7 +655,7 @@ local tbl_7 = {
 		2
 	}
 }
-local tbl_8 = {
+local hero_level_style = {
 	word_wrap = true,
 	font_size = 52,
 	localize = false,
@@ -670,7 +670,7 @@ local tbl_8 = {
 		2
 	}
 }
-local tbl_9 = {
+local bot_header_text_style = {
 	word_wrap = false,
 	upper_case = true,
 	localize = true,
@@ -686,11 +686,11 @@ local tbl_9 = {
 		20
 	}
 }
-local tbl_10 = {
+local empty_hero_widget_size = {
 	110,
 	130
 }
-local tbl_11 = {
+local empty_hero_widget = {
 	scenegraph_id = "hero_root",
 	offset = {
 		0,
@@ -711,12 +711,23 @@ local tbl_11 = {
 				style_id = "icon",
 				texture_id = "icon",
 				pass_type = "texture",
-				content_change_function = function (self, arg_1_1)
+				content_change_function = function (content, style)
 					-- function 1
-					local flag
+					local num
 
-					flag = not self.is_hover and 255 and 184
-					arg_1_1.color[1] = math.ceil(arg_1_1.color[1] + 0.1 * (flag - arg_1_1.color[1]))
+					if content.is_hover then
+						num = 255
+
+						goto label_1_0
+					end
+
+					num = 184
+
+					local target = num
+
+					::label_1_0::
+
+					style.color[1] = math.ceil(style.color[1] + 0.1 * (target - style.color[1]))
 				end
 			}
 		}
@@ -727,7 +738,7 @@ local tbl_11 = {
 	},
 	style = {
 		bg = {
-			texture_size = tbl_10,
+			texture_size = empty_hero_widget_size,
 			offset = {
 				0,
 				0,
@@ -748,7 +759,7 @@ local tbl_11 = {
 	}
 }
 
-local function fn(arg_2_0, arg_2_1)
+local function create_info_text(text, scenegraph_id)
 	-- function 2
 	return {
 		element = {
@@ -757,32 +768,32 @@ local function fn(arg_2_0, arg_2_1)
 					style_id = "text",
 					pass_type = "text",
 					text_id = "text",
-					content_change_function = function (self, arg_3_1)
+					content_change_function = function (content, style)
 						-- function 3
 						local locked_text_color
 
-						if not self.locked then
-							locked_text_color = arg_3_1.locked_text_color
+						if content.locked then
+							locked_text_color = style.locked_text_color
 
 							if not locked_text_color then
 								-- Nothing
 							end
 						end
 
-						locked_text_color = arg_3_1.default_text_color
+						locked_text_color = style.default_text_color
 
 						::label_3_0::
 
-						arg_3_1.text_color = locked_text_color
+						style.text_color = locked_text_color
 					end
 				},
 				{
 					style_id = "text_shadow",
 					pass_type = "text",
 					text_id = "text",
-					content_check_function = function (self)
+					content_check_function = function (content)
 						-- function 4
-						return self.use_shadow
+						return content.use_shadow
 					end
 				}
 			}
@@ -790,8 +801,8 @@ local function fn(arg_2_0, arg_2_1)
 		content = {
 			use_shadow = true,
 			disable_with_gamepad = true,
-			text = arg_2_0,
-			original_text = arg_2_0
+			text = text,
+			original_text = text
 		},
 		style = {
 			text = {
@@ -832,12 +843,12 @@ local function fn(arg_2_0, arg_2_1)
 			0,
 			0
 		},
-		scenegraph_id = arg_2_1
+		scenegraph_id = scenegraph_id
 	}
 end
 
-local flag = true
-local tbl_12 = {
+local disable_with_gamepad = true
+local widgets = {
 	background = UIWidgets.create_simple_rect("screen", {
 		0,
 		0,
@@ -854,9 +865,9 @@ local tbl_12 = {
 			0
 		}
 	}, "bottom_panel", nil, nil, UISettings.console_menu_rect_color),
-	info_window_background = UIWidgets.create_rect_with_outer_frame("info_window", tbl_2.info_window.size, "frame_outer_fade_02", 0, UISettings.console_menu_rect_color),
+	info_window_background = UIWidgets.create_rect_with_outer_frame("info_window", scenegraph_definition.info_window.size, "frame_outer_fade_02", 0, UISettings.console_menu_rect_color),
 	mask = UIWidgets.create_simple_texture("mask_rect", "scrollbar_anchor"),
-	info_window_video = UIWidgets.create_frame("info_window_video", tbl_2.info_window_video.size, "menu_frame_06"),
+	info_window_video = UIWidgets.create_frame("info_window_video", scenegraph_definition.info_window_video.size, "menu_frame_06"),
 	info_video_edge_left = UIWidgets.create_simple_texture("frame_detail_03", "info_video_edge_left"),
 	info_video_edge_right = UIWidgets.create_simple_uv_texture("frame_detail_03", {
 		{
@@ -868,28 +879,28 @@ local tbl_12 = {
 			1
 		}
 	}, "info_video_edge_right"),
-	perk_title_text = UIWidgets.create_simple_text(Localize("hero_view_perk_title"), "perk_title_text", nil, nil, tbl_5),
+	perk_title_text = UIWidgets.create_simple_text(Localize("hero_view_perk_title"), "perk_title_text", nil, nil, sub_title_text_style),
 	perk_title_divider = UIWidgets.create_simple_texture("infoslate_frame_02_horizontal", "perk_title_divider", true),
-	passive_title_text = UIWidgets.create_simple_text("n/a", "passive_title_text", nil, nil, tbl_5),
-	passive_type_title = UIWidgets.create_simple_text(Localize("hero_view_passive_ability"), "passive_type_title", nil, nil, tbl_4),
+	passive_title_text = UIWidgets.create_simple_text("n/a", "passive_title_text", nil, nil, sub_title_text_style),
+	passive_type_title = UIWidgets.create_simple_text(Localize("hero_view_passive_ability"), "passive_type_title", nil, nil, type_title_text_style),
 	passive_title_divider = UIWidgets.create_simple_texture("infoslate_frame_02_horizontal", "passive_title_divider", true),
-	passive_description_text = UIWidgets.create_simple_text("n/a", "passive_description_text", nil, nil, tbl_3),
+	passive_description_text = UIWidgets.create_simple_text("n/a", "passive_description_text", nil, nil, description_text_style),
 	passive_icon = UIWidgets.create_simple_texture("icons_placeholder", "passive_icon", true),
 	passive_icon_frame = UIWidgets.create_simple_texture("talent_frame", "passive_icon_frame", true),
-	active_title_text = UIWidgets.create_simple_text("n/a", "active_title_text", nil, nil, tbl_5),
-	active_type_title = UIWidgets.create_simple_text(Localize("hero_view_activated_ability"), "active_type_title", nil, nil, tbl_4),
+	active_title_text = UIWidgets.create_simple_text("n/a", "active_title_text", nil, nil, sub_title_text_style),
+	active_type_title = UIWidgets.create_simple_text(Localize("hero_view_activated_ability"), "active_type_title", nil, nil, type_title_text_style),
 	active_title_divider = UIWidgets.create_simple_texture("infoslate_frame_02_horizontal", "active_title_divider", true),
-	active_description_text = UIWidgets.create_simple_text("n/a", "active_description_text", nil, nil, tbl_3),
+	active_description_text = UIWidgets.create_simple_text("n/a", "active_description_text", nil, nil, description_text_style),
 	active_icon = UIWidgets.create_simple_texture("icons_placeholder", "active_icon", true),
 	active_icon_frame = UIWidgets.create_simple_texture("talent_frame", "active_icon_frame", true)
 }
 
-for j = 1, num_3 do
-	tbl_12["career_perk_" .. j] = UIWidgets.create_career_perk_text("career_perk_" .. j)
+for i = 1, NUM_PERKS do
+	widgets["career_perk_" .. i] = UIWidgets.create_career_perk_text("career_perk_" .. i)
 end
 
-local tbl_13 = {
-	locked_info_text = fn(Localize("career_locked_info"), "locked_info_text"),
+local info_widgets = {
+	locked_info_text = create_info_text(Localize("career_locked_info"), "locked_info_text"),
 	hero_info_panel = UIWidgets.create_simple_texture("item_slot_side_fade", "hero_info_panel", nil, nil, {
 		255,
 		0,
@@ -900,18 +911,18 @@ local tbl_13 = {
 	hero_info_level_bg = UIWidgets.create_simple_texture("hero_level_bg", "hero_info_level_bg"),
 	hero_info_divider = UIWidgets.create_simple_texture("divider_vertical_hero_middle", "hero_info_divider"),
 	hero_info_divider_edge = UIWidgets.create_simple_texture("divider_vertical_hero_end", "hero_info_divider_edge"),
-	info_career_name = UIWidgets.create_simple_text("n/a", "info_career_name", nil, nil, tbl_6),
-	info_hero_name = UIWidgets.create_simple_text("n/a", "info_hero_name", nil, nil, tbl_7),
-	info_hero_level = UIWidgets.create_simple_text("n/a", "info_hero_level", nil, nil, tbl_8),
-	select_button = UIWidgets.create_default_button("select_button", tbl_2.select_button.size, nil, nil, Localize("input_description_confirm"), nil, nil, nil, nil, flag),
-	bot_priority_button = UIWidgets.create_default_button("bot_priority_button", tbl_2.bot_priority_button.size, nil, nil, Localize("input_description_prio_bot"), nil, nil, nil, nil, flag)
+	info_career_name = UIWidgets.create_simple_text("n/a", "info_career_name", nil, nil, hero_career_style),
+	info_hero_name = UIWidgets.create_simple_text("n/a", "info_hero_name", nil, nil, hero_name_style),
+	info_hero_level = UIWidgets.create_simple_text("n/a", "info_hero_level", nil, nil, hero_level_style),
+	select_button = UIWidgets.create_default_button("select_button", scenegraph_definition.select_button.size, nil, nil, Localize("input_description_confirm"), nil, nil, nil, nil, disable_with_gamepad),
+	bot_priority_button = UIWidgets.create_default_button("bot_priority_button", scenegraph_definition.bot_priority_button.size, nil, nil, Localize("input_description_prio_bot"), nil, nil, nil, nil, disable_with_gamepad)
 }
-local tbl_14 = {
-	bot_header_text = UIWidgets.create_simple_text("input_description_prio_bot", "locked_info_text", nil, nil, tbl_9),
-	bot_info_text = fn(Localize("assign_career_tooltip"), "locked_info_text"),
-	back_button = UIWidgets.create_default_button("back_button", tbl_2.back_button.size, nil, nil, Localize("back_menu_button_name"), nil, nil, nil, nil, flag)
+local bot_selection_widgets = {
+	bot_header_text = UIWidgets.create_simple_text("input_description_prio_bot", "locked_info_text", nil, nil, bot_header_text_style),
+	bot_info_text = create_info_text(Localize("assign_career_tooltip"), "locked_info_text"),
+	back_button = UIWidgets.create_default_button("back_button", scenegraph_definition.back_button.size, nil, nil, Localize("back_menu_button_name"), nil, nil, nil, nil, disable_with_gamepad)
 }
-local tbl_15 = {
+local generic_input_actions = {
 	default = {
 		{
 			input_action = "refresh",
@@ -971,29 +982,29 @@ local tbl_15 = {
 		}
 	}
 }
-local tbl_16 = {
+local animation_definitions = {
 	on_enter = {
 		{
 			name = "fade_in",
 			start_progress = 0,
 			end_progress = 0.3,
-			init = function (arg_5_0, arg_5_1, arg_5_2, arg_5_3)
+			init = function (ui_scenegraph, scenegraph_definition, widgets, params)
 				-- function 5
-				arg_5_3.render_settings.main_alpha_multiplier = 0
-				arg_5_3.render_settings.info_alpha_multiplier = 0
-				arg_5_3.render_settings.bot_selection_window_multiplier = 0
+				params.render_settings.main_alpha_multiplier = 0
+				params.render_settings.info_alpha_multiplier = 0
+				params.render_settings.bot_selection_window_multiplier = 0
 			end,
-			update = function (arg_6_0, arg_6_1, arg_6_2, arg_6_3, arg_6_4)
+			update = function (ui_scenegraph, scenegraph_definition, widgets, progress, params)
 				-- function 6
-				local easeOutCubic = math.easeOutCubic(arg_6_3)
+				local anim_progress = math.easeOutCubic(progress)
 
-				arg_6_4.render_settings.main_alpha_multiplier = easeOutCubic
-				arg_6_4.render_settings.info_alpha_multiplier = easeOutCubic
-				arg_6_4.render_settings.bot_selection_alpha_multiplier = 0
-				arg_6_0.left_side_root.local_position[1] = arg_6_1.left_side_root.position[1] + -100 * (1 - easeOutCubic)
-				arg_6_0.right_side_root.local_position[1] = arg_6_1.right_side_root.position[1] + 100 * (1 - easeOutCubic)
+				params.render_settings.main_alpha_multiplier = anim_progress
+				params.render_settings.info_alpha_multiplier = anim_progress
+				params.render_settings.bot_selection_alpha_multiplier = 0
+				ui_scenegraph.left_side_root.local_position[1] = scenegraph_definition.left_side_root.position[1] + -100 * (1 - anim_progress)
+				ui_scenegraph.right_side_root.local_position[1] = scenegraph_definition.right_side_root.position[1] + 100 * (1 - anim_progress)
 			end,
-			on_complete = function (arg_7_0, arg_7_1, arg_7_2, arg_7_3)
+			on_complete = function (ui_scenegraph, scenegraph_definition, widgets, params)
 				-- function 7
 				return
 			end
@@ -1004,23 +1015,23 @@ local tbl_16 = {
 			name = "fade_out",
 			start_progress = 0,
 			end_progress = 1,
-			init = function (arg_8_0, arg_8_1, arg_8_2, arg_8_3)
+			init = function (ui_scenegraph, scenegraph_definition, widgets, params)
 				-- function 8
-				arg_8_3.render_settings.main_alpha_multiplier = 1
-				arg_8_3.render_settings.info_alpha_multiplier = 1
-				arg_8_3.render_settings.bot_selection_alpha_multiplier = 0
+				params.render_settings.main_alpha_multiplier = 1
+				params.render_settings.info_alpha_multiplier = 1
+				params.render_settings.bot_selection_alpha_multiplier = 0
 			end,
-			update = function (arg_9_0, arg_9_1, arg_9_2, arg_9_3, arg_9_4)
+			update = function (ui_scenegraph, scenegraph_definition, widgets, progress, params)
 				-- function 9
-				local easeOutCubic = math.easeOutCubic(arg_9_3)
+				local anim_progress = math.easeOutCubic(progress)
 
-				arg_9_4.render_settings.main_alpha_multiplier = 1 - easeOutCubic
-				arg_9_4.render_settings.info_alpha_multiplier = 1 - easeOutCubic
-				arg_9_4.render_settings.bot_selection_alpha_multiplier = 0
-				arg_9_0.left_side_root.local_position[1] = arg_9_1.left_side_root.position[1] + -100 * easeOutCubic
-				arg_9_0.right_side_root.local_position[1] = arg_9_1.right_side_root.position[1] + 100 * easeOutCubic
+				params.render_settings.main_alpha_multiplier = 1 - anim_progress
+				params.render_settings.info_alpha_multiplier = 1 - anim_progress
+				params.render_settings.bot_selection_alpha_multiplier = 0
+				ui_scenegraph.left_side_root.local_position[1] = scenegraph_definition.left_side_root.position[1] + -100 * anim_progress
+				ui_scenegraph.right_side_root.local_position[1] = scenegraph_definition.right_side_root.position[1] + 100 * anim_progress
 			end,
-			on_complete = function (arg_10_0, arg_10_1, arg_10_2, arg_10_3)
+			on_complete = function (ui_scenegraph, scenegraph_definition, widgets, params)
 				-- function 10
 				return
 			end
@@ -1031,20 +1042,20 @@ local tbl_16 = {
 			name = "fade_in",
 			start_progress = 0,
 			end_progress = 0.3,
-			init = function (arg_11_0, arg_11_1, arg_11_2, arg_11_3)
+			init = function (ui_scenegraph, scenegraph_definition, widgets, params)
 				-- function 11
-				arg_11_3.render_settings.info_alpha_multiplier = 0
-				arg_11_3.render_settings.bot_selection_alpha_multiplier = 0
+				params.render_settings.info_alpha_multiplier = 0
+				params.render_settings.bot_selection_alpha_multiplier = 0
 			end,
-			update = function (arg_12_0, arg_12_1, arg_12_2, arg_12_3, arg_12_4)
+			update = function (ui_scenegraph, scenegraph_definition, widgets, progress, params)
 				-- function 12
-				local easeOutCubic = math.easeOutCubic(arg_12_3)
+				local anim_progress = math.easeOutCubic(progress)
 
-				arg_12_4.render_settings.bot_selection_alpha_multiplier = easeOutCubic
-				arg_12_4.render_settings.info_alpha_multiplier = 0
-				arg_12_0.left_side_root.local_position[1] = arg_12_1.left_side_root.position[1] + -100 * (1 - easeOutCubic)
+				params.render_settings.bot_selection_alpha_multiplier = anim_progress
+				params.render_settings.info_alpha_multiplier = 0
+				ui_scenegraph.left_side_root.local_position[1] = scenegraph_definition.left_side_root.position[1] + -100 * (1 - anim_progress)
 			end,
-			on_complete = function (arg_13_0, arg_13_1, arg_13_2, arg_13_3)
+			on_complete = function (ui_scenegraph, scenegraph_definition, widgets, params)
 				-- function 13
 				return
 			end
@@ -1055,20 +1066,20 @@ local tbl_16 = {
 			name = "fade_out",
 			start_progress = 0,
 			end_progress = 0.3,
-			init = function (arg_14_0, arg_14_1, arg_14_2, arg_14_3)
+			init = function (ui_scenegraph, scenegraph_definition, widgets, params)
 				-- function 14
-				arg_14_3.render_settings.info_alpha_multiplier = 0
-				arg_14_3.render_settings.bot_selection_alpha_multiplier = 0
+				params.render_settings.info_alpha_multiplier = 0
+				params.render_settings.bot_selection_alpha_multiplier = 0
 			end,
-			update = function (arg_15_0, arg_15_1, arg_15_2, arg_15_3, arg_15_4)
+			update = function (ui_scenegraph, scenegraph_definition, widgets, progress, params)
 				-- function 15
-				local easeOutCubic = math.easeOutCubic(arg_15_3)
+				local anim_progress = math.easeOutCubic(progress)
 
-				arg_15_4.render_settings.info_alpha_multiplier = easeOutCubic
-				arg_15_4.render_settings.bot_selection_alpha_multiplier = 0
-				arg_15_0.left_side_root.local_position[1] = arg_15_1.left_side_root.position[1] + -100 * (1 - easeOutCubic)
+				params.render_settings.info_alpha_multiplier = anim_progress
+				params.render_settings.bot_selection_alpha_multiplier = 0
+				ui_scenegraph.left_side_root.local_position[1] = scenegraph_definition.left_side_root.position[1] + -100 * (1 - anim_progress)
 			end,
-			on_complete = function (arg_16_0, arg_16_1, arg_16_2, arg_16_3)
+			on_complete = function (ui_scenegraph, scenegraph_definition, widgets, params)
 				-- function 16
 				return
 			end
@@ -1077,15 +1088,15 @@ local tbl_16 = {
 }
 
 return {
-	widgets = tbl_12,
-	info_widgets = tbl_13,
-	bot_selection_widgets = tbl_14,
-	hero_widget = UIWidgets.create_hero_widget("hero_root", tbl_2.hero_root.size),
-	empty_hero_widget = tbl_11,
-	hero_icon_widget = UIWidgets.create_hero_icon_widget("hero_icon_root", tbl_2.hero_icon_root.size),
-	character_selection_widgets = tbl_12,
-	generic_input_actions = tbl_15,
-	scenegraph_definition = tbl_2,
-	animation_definitions = tbl_16,
-	NUM_PERKS = num_3
+	widgets = widgets,
+	info_widgets = info_widgets,
+	bot_selection_widgets = bot_selection_widgets,
+	hero_widget = UIWidgets.create_hero_widget("hero_root", scenegraph_definition.hero_root.size),
+	empty_hero_widget = empty_hero_widget,
+	hero_icon_widget = UIWidgets.create_hero_icon_widget("hero_icon_root", scenegraph_definition.hero_icon_root.size),
+	character_selection_widgets = widgets,
+	generic_input_actions = generic_input_actions,
+	scenegraph_definition = scenegraph_definition,
+	animation_definitions = animation_definitions,
+	NUM_PERKS = NUM_PERKS
 }

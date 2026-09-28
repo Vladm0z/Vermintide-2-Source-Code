@@ -2,82 +2,79 @@
 
 ActionDetonate = class(ActionDetonate, ActionBase)
 
-ActionDetonate.init = function (self, arg_1_1, arg_1_2, arg_1_3, arg_1_4, arg_1_5, arg_1_6, arg_1_7, arg_1_8)
+ActionDetonate.init = function (self, world, item_name, is_server, owner_unit, damage_unit, first_person_unit, weapon_unit, weapon_system)
 	-- function 1
-	ActionDetonate.super.init(self, arg_1_1, arg_1_2, arg_1_3, arg_1_4, arg_1_5, arg_1_6, arg_1_7, arg_1_8)
+	ActionDetonate.super.init(self, world, item_name, is_server, owner_unit, damage_unit, first_person_unit, weapon_unit, weapon_system)
 
-	self.ammo_extension = ScriptUnit.has_extension(arg_1_7, "ammo_system")
-	self.inventory_extension = ScriptUnit.extension(arg_1_4, "inventory_system")
-	self.overcharge_extension = ScriptUnit.extension(arg_1_4, "overcharge_system")
-	self.first_person_extension = ScriptUnit.has_extension(arg_1_4, "first_person_system")
-	self.owner_buff_extension = ScriptUnit.extension(arg_1_4, "buff_system")
-	self.weapon_extension = ScriptUnit.extension(arg_1_7, "weapon_system")
-	self.status_extension = ScriptUnit.extension(arg_1_4, "status_system")
-	self.hud_extension = ScriptUnit.has_extension(arg_1_4, "hud_system")
-	self.owner_unit = arg_1_4
+	self.ammo_extension = ScriptUnit.has_extension(weapon_unit, "ammo_system")
+	self.inventory_extension = ScriptUnit.extension(owner_unit, "inventory_system")
+	self.overcharge_extension = ScriptUnit.extension(owner_unit, "overcharge_system")
+	self.first_person_extension = ScriptUnit.has_extension(owner_unit, "first_person_system")
+	self.owner_buff_extension = ScriptUnit.extension(owner_unit, "buff_system")
+	self.weapon_extension = ScriptUnit.extension(weapon_unit, "weapon_system")
+	self.status_extension = ScriptUnit.extension(owner_unit, "status_system")
+	self.hud_extension = ScriptUnit.has_extension(owner_unit, "hud_system")
+	self.owner_unit = owner_unit
 
-	if not self.first_person_extension then
+	if self.first_person_extension then
 		self.first_person_unit = self.first_person_extension:get_first_person_unit()
 	end
 
 	self._rumble_effect_id = false
-	self.unit_id = Managers.state.network.unit_storage:go_id(arg_1_4)
+	self.unit_id = Managers.state.network.unit_storage:go_id(owner_unit)
 end
 
-ActionDetonate.client_owner_start_action = function (self, arg_2_1, arg_2_2, arg_2_3, arg_2_4)
+ActionDetonate.client_owner_start_action = function (self, new_action, t, chain_action_data, power_level)
 	-- function 2
-	ActionDetonate.super.client_owner_start_action(self, arg_2_1, arg_2_2, arg_2_3, arg_2_4)
+	ActionDetonate.super.client_owner_start_action(self, new_action, t, chain_action_data, power_level)
 
 	local owner_unit = self.owner_unit
-	local detonate_delay_start = arg_2_1.detonate_delay_start
-	local detonation_order = arg_2_1.detonation_order
-	local system = Managers.state.entity:system("projectile_system")
-	local get_indexed_projectile_count = system:get_indexed_projectile_count(owner_unit)
-	local var_2_5
-	local var_2_6
-	local var_2_7
-	local num
+	local detonate_delay = new_action.detonate_delay_start
+	local detonation_order = new_action.detonation_order
+	local projectile_system = Managers.state.entity:system("projectile_system")
+	local active_skull_count = projectile_system:get_indexed_projectile_count(owner_unit)
+	local start_idx, end_idx, increment
 
 	if detonation_order == "front_first" then
-		var_2_5 = get_indexed_projectile_count
-		var_2_6 = math.max(get_indexed_projectile_count - arg_2_1.num_to_detonate, 1)
-		num = -1
+		start_idx = active_skull_count
+		end_idx = math.max(active_skull_count - new_action.num_to_detonate, 1)
+		increment = -1
 	else
-		var_2_5 = 1
-		var_2_6 = math.min(arg_2_1.num_to_detonate, get_indexed_projectile_count)
-		num = 1
+		start_idx = 1
+		end_idx = math.min(new_action.num_to_detonate, active_skull_count)
+		increment = 1
 	end
 
-	local flag = false
+	local detonated = false
 
-	for i = var_2_5, var_2_6, num do
-		local get_and_delete_indexed_projectile = system:get_and_delete_indexed_projectile(owner_unit, i, true)
-		local has_extension = ScriptUnit.has_extension(get_and_delete_indexed_projectile, "projectile_system")
+	for i = start_idx, end_idx, increment do
+		local projectile = projectile_system:get_and_delete_indexed_projectile(owner_unit, i, true)
+		local projectile_extension = ScriptUnit.has_extension(projectile, "projectile_system")
 
-		if not has_extension then
-			has_extension:queue_delayed_external_event("detonate", arg_2_2 + detonate_delay_start, true)
+		if projectile_extension then
+			projectile_extension:queue_delayed_external_event("detonate", t + detonate_delay, true)
 
-			detonate_delay_start = detonate_delay_start + arg_2_1.detonate_delay_increment
-			flag = true
+			detonate_delay = detonate_delay + new_action.detonate_delay_increment
+			detonated = true
 		end
 	end
 
-	if not flag and not self.first_person_extension then
+	if detonated and self.first_person_extension then
 		self.first_person_extension:animation_event("shake_minimal")
 	end
 end
 
-ActionDetonate.client_owner_post_update = function (arg_3_0, arg_3_1, arg_3_2, arg_3_3, arg_3_4)
+ActionDetonate.client_owner_post_update = function (self, dt, t, world, can_damage)
 	-- function 3
 	return
 end
 
-ActionDetonate.finish = function (arg_4_0, arg_4_1)
+ActionDetonate.finish = function (self, reason)
 	-- function 4
-	ActionDetonate.super.finish(arg_4_0, arg_4_1)
+	ActionDetonate.super.finish(self, reason)
 end
 
-ActionDetonate.destroy = function (arg_5_0)
+ActionDetonate.destroy = function (self)
 	-- function 5
 	return
 end

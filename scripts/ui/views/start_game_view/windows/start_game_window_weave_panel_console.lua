@@ -1,24 +1,24 @@
 -- chunkname: @scripts/ui/views/start_game_view/windows/start_game_window_weave_panel_console.lua
 
-local var_0_0 = local_require("scripts/ui/views/start_game_view/windows/definitions/start_game_window_weave_panel_console_definitions")
-local widgets = var_0_0.widgets
-local title_button_definitions = var_0_0.title_button_definitions
-local scenegraph_definition = var_0_0.scenegraph_definition
-local animation_definitions = var_0_0.animation_definitions
-local str = "cycle_next"
-local str_2 = "cycle_previous"
+local definitions = local_require("scripts/ui/views/start_game_view/windows/definitions/start_game_window_weave_panel_console_definitions")
+local widget_definitions = definitions.widgets
+local title_button_definitions = definitions.title_button_definitions
+local scenegraph_definition = definitions.scenegraph_definition
+local animation_definitions = definitions.animation_definitions
+local INPUT_ACTION_NEXT = "cycle_next"
+local INPUT_ACTION_PREVIOUS = "cycle_previous"
 
 StartGameWindowWeavePanelConsole = class(StartGameWindowWeavePanelConsole)
 StartGameWindowWeavePanelConsole.NAME = "StartGameWindowWeavePanelConsole"
 
-StartGameWindowWeavePanelConsole.on_enter = function (self, arg_1_1, arg_1_2)
+StartGameWindowWeavePanelConsole.on_enter = function (self, params, offset)
 	-- function 1
 	print("[StartGameWindow] Enter Substate StartGameWindowWeavePanelConsole")
 
-	self._params = arg_1_1
-	self._parent = arg_1_1.parent
+	self._params = params
+	self._parent = params.parent
 
-	local ingame_ui_context = arg_1_1.ingame_ui_context
+	local ingame_ui_context = params.ingame_ui_context
 
 	self._ingame_ui = ingame_ui_context.ingame_ui
 	self._ui_renderer = ingame_ui_context.ui_renderer
@@ -28,260 +28,304 @@ StartGameWindowWeavePanelConsole.on_enter = function (self, arg_1_1, arg_1_2)
 	self._render_settings = {
 		snap_pixel_positions = true
 	}
-	self._layout_settings = arg_1_1.layout_settings
+	self._layout_settings = params.layout_settings
 	self._animations = {}
 	self._ui_animations = {}
 
-	self:_create_ui_elements(arg_1_1, arg_1_2)
+	self:_create_ui_elements(params, offset)
 	self:_setup_input_buttons()
 end
 
-StartGameWindowWeavePanelConsole._create_ui_elements = function (self, arg_2_1, arg_2_2)
+StartGameWindowWeavePanelConsole._create_ui_elements = function (self, params, offset)
 	-- function 2
 	self._ui_scenegraph = UISceneGraph.init_scenegraph(scenegraph_definition)
-	self._widgets, self._widgets_by_name = UIUtils.create_widgets(widgets)
+	self._widgets, self._widgets_by_name = UIUtils.create_widgets(widget_definitions)
 
-	local tbl = {}
-	local window_layouts = self._layout_settings.window_layouts
-	local str = "game_option"
-	local size = scenegraph_definition[str].size
-	local num = 28
-	local str_2 = "center"
-	local tbl_2 = {
+	local title_button_widgets = {}
+	local layout_settings = self._layout_settings
+	local window_layouts = layout_settings.window_layouts
+	local scenegraph_id = "game_option"
+	local size = scenegraph_definition[scenegraph_id].size
+	local font_size = 28
+	local optional_horizontal_alignment = "center"
+	local temp_text_style = {
 		upper_case = true,
 		localize = true,
 		dynamic_font_size = true,
 		word_wrap = false,
 		font_type = "hell_shark_header",
-		font_size = num
+		font_size = font_size
 	}
-	local _parent = self._parent
-	local num_2 = 0
+	local parent = self._parent
+	local total_length = 0
 
-	for i, v in ipairs(window_layouts) do
-		if not v.panel_sorting and not _parent:can_add_layout(v) then
-			local name = v.name
-			local display_name = v.display_name
+	for index, settings in ipairs(window_layouts) do
+		if settings.panel_sorting and parent:can_add_layout(settings) then
+			local settings_name = settings.name
+			local display_name_2 = settings.display_name
 
-			display_name = display_name or "n/a"
+			if not display_name_2 then
+				-- Nothing
+			end
 
-			local _get_text_width = self:_get_text_width(tbl_2, display_name)
-			local tbl_3 = {
-				math.min(_get_text_width + 40, 400),
+			display_name_2 = "n/a"
+
+			local display_name = display_name_2
+
+			::label_2_0::
+
+			local text_width = self:_get_text_width(temp_text_style, display_name)
+			local option_size = {
+				math.min(text_width + 40, 400),
 				size[2]
 			}
-			local tbl_4 = {
-				num_2,
+			local optional_offset = {
+				total_length,
 				0,
 				0
 			}
-			local create_weave_panel_button = UIWidgets.create_weave_panel_button(str, tbl_3, display_name, num, tbl_4, str_2)
+			local widget_definition = UIWidgets.create_weave_panel_button(scenegraph_id, option_size, display_name, font_size, optional_offset, optional_horizontal_alignment)
 
-			num_2 = num_2 + tbl_3[1]
+			total_length = total_length + option_size[1]
 
-			local var_2_15 = UIWidget.init(create_weave_panel_button)
+			local widget = UIWidget.init(widget_definition)
 
-			self:_set_text_button_size(var_2_15, tbl_3[1])
+			self:_set_text_button_size(widget, option_size[1])
 
-			var_2_15.content.layout_name = name
-			tbl[#tbl + 1] = var_2_15
+			local content = widget.content
+
+			content.layout_name = settings_name
+			title_button_widgets[#title_button_widgets + 1] = widget
 		end
 	end
 
-	self._ui_scenegraph.panel_entry_area.size[1] = num_2
-	self._title_button_widgets = tbl
+	self._ui_scenegraph.panel_entry_area.size[1] = total_length
+	self._title_button_widgets = title_button_widgets
 
 	UIRenderer.clear_scenegraph_queue(self._ui_renderer)
 
 	self._ui_animator = UIAnimator:new(self._ui_scenegraph, animation_definitions)
 end
 
-StartGameWindowWeavePanelConsole.on_exit = function (self, arg_3_1)
+StartGameWindowWeavePanelConsole.on_exit = function (self, params)
 	-- function 3
 	print("[StartGameWindow] Exit Substate StartGameWindowWeavePanelConsole")
 
 	self._ui_animator = nil
 end
 
-StartGameWindowWeavePanelConsole.update = function (self, arg_4_1, arg_4_2)
+StartGameWindowWeavePanelConsole.update = function (self, dt, t)
 	-- function 4
-	if not DO_RELOAD then
+	if DO_RELOAD then
 		self:_create_ui_elements()
 	end
 
 	self:_handle_gamepad_activity()
 	self:_update_selected_option()
-	self:_update_animations(arg_4_1)
-	self:_draw(arg_4_1)
+	self:_update_animations(dt)
+	self:_draw(dt)
 end
 
-StartGameWindowWeavePanelConsole.post_update = function (self, arg_5_1, arg_5_2)
+StartGameWindowWeavePanelConsole.post_update = function (self, dt, t)
 	-- function 5
-	self:_handle_input(arg_5_1, arg_5_2)
+	self:_handle_input(dt, t)
 end
 
-StartGameWindowWeavePanelConsole._update_animations = function (self, arg_6_1)
+StartGameWindowWeavePanelConsole._update_animations = function (self, dt)
 	-- function 6
-	local _ui_animations = self._ui_animations
-	local _animations = self._animations
-	local _ui_animator = self._ui_animator
+	local ui_animations = self._ui_animations
+	local animations = self._animations
+	local ui_animator = self._ui_animator
 
-	for k, v in pairs(self._ui_animations) do
-		UIAnimation.update(v, arg_6_1)
+	for name, animation in pairs(self._ui_animations) do
+		UIAnimation.update(animation, dt)
 
-		if not UIAnimation.completed(v) then
-			self._ui_animations[k] = nil
+		if UIAnimation.completed(animation) then
+			self._ui_animations[name] = nil
 		end
 	end
 
-	_ui_animator:update(arg_6_1)
+	ui_animator:update(dt)
 
-	for k_2, v_2 in pairs(_animations) do
-		if not _ui_animator:is_animation_completed(v_2) then
-			_ui_animator:stop_animation(v_2)
+	for animation_name, animation_id in pairs(animations) do
+		if ui_animator:is_animation_completed(animation_id) then
+			ui_animator:stop_animation(animation_id)
 
-			_animations[k_2] = nil
+			animations[animation_name] = nil
 		end
 	end
 
-	local _title_button_widgets = self._title_button_widgets
+	local title_button_widgets = self._title_button_widgets
 
-	for i, v_3 in ipairs(_title_button_widgets) do
-		self:_animate_title_entry(v_3, arg_6_1)
+	for i, widget in ipairs(title_button_widgets) do
+		self:_animate_title_entry(widget, dt)
 	end
 
-	self:_update_panel_selection_animation(arg_6_1)
+	self:_update_panel_selection_animation(dt)
 end
 
-StartGameWindowWeavePanelConsole._is_button_pressed = function (arg_7_0, arg_7_1)
+StartGameWindowWeavePanelConsole._is_button_pressed = function (self, widget)
 	-- function 7
-	local content = arg_7_1.content
+	local content = widget.content
 	local button_hotspot = content.button_hotspot
 
-	button_hotspot = button_hotspot or content.button_text
+	if not button_hotspot then
+		-- Nothing
+	end
 
-	if not button_hotspot.on_release then
-		button_hotspot.on_release = false
+	button_hotspot = content.button_text
+
+	local hotspot = button_hotspot
+
+	::label_7_0::
+
+	if hotspot.on_release then
+		hotspot.on_release = false
 
 		return true
 	end
 end
 
-StartGameWindowWeavePanelConsole._is_stepper_button_pressed = function (arg_8_0, arg_8_1)
+StartGameWindowWeavePanelConsole._is_stepper_button_pressed = function (self, widget)
 	-- function 8
-	local content = arg_8_1.content
-	local button_hotspot_left = content.button_hotspot_left
-	local button_hotspot_right = content.button_hotspot_right
+	local content = widget.content
+	local hotspot_left = content.button_hotspot_left
+	local hotspot_right = content.button_hotspot_right
 
-	if not button_hotspot_left.on_release then
-		button_hotspot_left.on_release = false
+	if hotspot_left.on_release then
+		hotspot_left.on_release = false
 
 		return true, -1
-	elseif not button_hotspot_right.on_release then
-		button_hotspot_right.on_release = false
+	elseif hotspot_right.on_release then
+		hotspot_right.on_release = false
 
 		return true, 1
 	end
 end
 
-StartGameWindowWeavePanelConsole._is_button_hover_enter = function (arg_9_0, arg_9_1)
+StartGameWindowWeavePanelConsole._is_button_hover_enter = function (self, widget)
 	-- function 9
-	return arg_9_1.content.button_hotspot.on_hover_enter
+	local content = widget.content
+	local hotspot = content.button_hotspot
+
+	return hotspot.on_hover_enter
 end
 
-StartGameWindowWeavePanelConsole._is_button_hover_exit = function (arg_10_0, arg_10_1)
+StartGameWindowWeavePanelConsole._is_button_hover_exit = function (self, widget)
 	-- function 10
-	return arg_10_1.content.button_hotspot.on_hover_exit
+	local content = widget.content
+	local hotspot = content.button_hotspot
+
+	return hotspot.on_hover_exit
 end
 
-StartGameWindowWeavePanelConsole._is_button_selected = function (arg_11_0, arg_11_1)
+StartGameWindowWeavePanelConsole._is_button_selected = function (self, widget)
 	-- function 11
-	return arg_11_1.content.button_hotspot.is_selected
+	local content = widget.content
+	local hotspot = content.button_hotspot
+
+	return hotspot.is_selected
 end
 
-StartGameWindowWeavePanelConsole._handle_input = function (self, arg_12_1, arg_12_2)
+StartGameWindowWeavePanelConsole._handle_input = function (self, dt, t)
 	-- function 12
-	local _parent = self._parent
-	local _widgets_by_name = self._widgets_by_name
-	local window_input_service = self._parent:window_input_service()
-	local flag = false
-	local _title_button_widgets = self._title_button_widgets
-	local count = #_title_button_widgets
+	local parent = self._parent
+	local widgets_by_name = self._widgets_by_name
+	local input_service = self._parent:window_input_service()
+	local input_made = false
+	local title_button_widgets = self._title_button_widgets
+	local num_title_button_widgets = #title_button_widgets
 
-	for i, v in ipairs(_title_button_widgets) do
-		if not v.content.button_hotspot.is_selected then
-			if not self:_is_button_hover_enter(v) then
+	for i, widget in ipairs(title_button_widgets) do
+		local is_selected = widget.content.button_hotspot.is_selected
+
+		if not is_selected then
+			if self:_is_button_hover_enter(widget) then
 				self:_play_sound("Play_hud_store_button_hover_category")
 			end
 
-			if not self:_is_button_pressed(v) then
+			if self:_is_button_pressed(widget) then
 				self:_on_panel_button_selected(i)
 
-				flag = true
+				input_made = true
 			end
 		end
 	end
 
-	if not flag then
+	if not input_made then
 		local _selected_index = self._selected_index
 
-		_selected_index = _selected_index or 1
+		if not _selected_index then
+			-- Nothing
+		end
 
-		local count_2 = #_title_button_widgets
+		_selected_index = 1
 
-		if not window_input_service:get(str_2) then
+		local current_index = _selected_index
+
+		::label_12_0::
+
+		local max_index = #title_button_widgets
+
+		if input_service:get(INPUT_ACTION_PREVIOUS) then
 			local num
 
-			if _selected_index > 1 then
-				num = _selected_index - 1
+			if current_index > 1 then
+				num = current_index - 1
 
 				if not num then
 					-- Nothing
 				end
 			end
 
-			num = count_2
+			num = max_index
 
-			::label_12_0::
+			local next_index = num
 
-			self:_on_panel_button_selected(num)
-		elseif not window_input_service:get(str) then
-			local num_2 = _selected_index % count_2 + 1
+			::label_12_1::
 
-			self:_on_panel_button_selected(num_2)
+			self:_on_panel_button_selected(next_index)
+		elseif input_service:get(INPUT_ACTION_NEXT) then
+			local next_index = current_index % max_index + 1
+
+			self:_on_panel_button_selected(next_index)
 		end
 	end
 end
 
-StartGameWindowWeavePanelConsole._on_panel_button_selected = function (self, arg_13_1)
+StartGameWindowWeavePanelConsole._on_panel_button_selected = function (self, index)
 	-- function 13
-	local _parent = self._parent
-	local layout_name = self._title_button_widgets[arg_13_1].content.layout_name
+	local parent = self._parent
+	local widget = self._title_button_widgets[index]
+	local layout_name = widget.content.layout_name
 
-	print("_on_panel_button_selected", arg_13_1, layout_name)
-	_parent:set_layout_by_name(layout_name)
+	print("_on_panel_button_selected", index, layout_name)
+	parent:set_layout_by_name(layout_name)
 end
 
-StartGameWindowWeavePanelConsole._set_selected_option = function (self, arg_14_1)
+StartGameWindowWeavePanelConsole._set_selected_option = function (self, index)
 	-- function 14
-	self:_start_panel_selection_animation(self._selected_index, arg_14_1)
+	self:_start_panel_selection_animation(self._selected_index, index)
 
-	local _title_button_widgets = self._title_button_widgets
+	local title_button_widgets = self._title_button_widgets
 
-	for i, v in ipairs(_title_button_widgets) do
-		v.content.button_hotspot.is_selected = i == arg_14_1
+	for i, widget in ipairs(title_button_widgets) do
+		widget.content.button_hotspot.is_selected = i == index
 	end
 end
 
 StartGameWindowWeavePanelConsole._update_selected_option = function (self)
 	-- function 15
-	local get_selected_layout_name = self._parent:get_selected_layout_name()
+	local parent = self._parent
+	local selected_layout_name = parent:get_selected_layout_name()
 
-	if not get_selected_layout_name then
-		local _title_button_widgets = self._title_button_widgets
+	if selected_layout_name then
+		local title_button_widgets = self._title_button_widgets
 
-		for i, v in ipairs(_title_button_widgets) do
-			if not (v.content.layout_name ~= get_selected_layout_name or i == self._selected_index) then
+		for i, widget in ipairs(title_button_widgets) do
+			local layout_name = widget.content.layout_name
+
+			if layout_name == selected_layout_name and i ~= self._selected_index then
 				self:_set_selected_option(i)
 
 				self._selected_index = i
@@ -290,147 +334,152 @@ StartGameWindowWeavePanelConsole._update_selected_option = function (self)
 	end
 end
 
-StartGameWindowWeavePanelConsole._draw = function (self, arg_16_1)
+StartGameWindowWeavePanelConsole._draw = function (self, dt)
 	-- function 16
-	local _ui_renderer = self._ui_renderer
-	local _ui_top_renderer = self._ui_top_renderer
-	local _ui_scenegraph = self._ui_scenegraph
-	local window_input_service = self._parent:window_input_service()
-	local _render_settings = self._render_settings
+	local ui_renderer = self._ui_renderer
+	local ui_top_renderer = self._ui_top_renderer
+	local ui_scenegraph = self._ui_scenegraph
+	local input_service = self._parent:window_input_service()
+	local render_settings = self._render_settings
 
-	UIRenderer.begin_pass(_ui_top_renderer, _ui_scenegraph, window_input_service, arg_16_1, nil, _render_settings)
+	UIRenderer.begin_pass(ui_top_renderer, ui_scenegraph, input_service, dt, nil, render_settings)
 
-	for i, v in ipairs(self._widgets) do
-		UIRenderer.draw_widget(_ui_top_renderer, v)
+	for _, widget in ipairs(self._widgets) do
+		UIRenderer.draw_widget(ui_top_renderer, widget)
 	end
 
-	for i_2, v_2 in ipairs(self._title_button_widgets) do
-		UIRenderer.draw_widget(_ui_top_renderer, v_2)
+	for _, widget in ipairs(self._title_button_widgets) do
+		UIRenderer.draw_widget(ui_top_renderer, widget)
 	end
 
-	UIRenderer.end_pass(_ui_top_renderer)
+	UIRenderer.end_pass(ui_top_renderer)
 end
 
-StartGameWindowWeavePanelConsole._play_sound = function (self, arg_17_1)
+StartGameWindowWeavePanelConsole._play_sound = function (self, event)
 	-- function 17
-	self._parent:play_sound(arg_17_1)
+	self._parent:play_sound(event)
 end
 
 StartGameWindowWeavePanelConsole._setup_input_buttons = function (self)
 	-- function 18
-	local window_input_service = self._parent:window_input_service()
-	local get_gamepad_input_texture_data = UISettings.get_gamepad_input_texture_data(window_input_service, str_2, true)
-	local get_gamepad_input_texture_data_2 = UISettings.get_gamepad_input_texture_data(window_input_service, str, true)
-	local _widgets_by_name = self._widgets_by_name
-	local panel_input_area_1 = _widgets_by_name.panel_input_area_1
-	local panel_input_area_2 = _widgets_by_name.panel_input_area_2
-	local texture_id = panel_input_area_1.style.texture_id
+	local input_service = self._parent:window_input_service()
+	local input_1_texture_data = UISettings.get_gamepad_input_texture_data(input_service, INPUT_ACTION_PREVIOUS, true)
+	local input_2_texture_data = UISettings.get_gamepad_input_texture_data(input_service, INPUT_ACTION_NEXT, true)
+	local widgets_by_name = self._widgets_by_name
+	local input_1_widget = widgets_by_name.panel_input_area_1
+	local input_2_widget = widgets_by_name.panel_input_area_2
+	local icon_style_input_1 = input_1_widget.style.texture_id
 
-	texture_id.horizontal_alignment = "center"
-	texture_id.vertical_alignment = "center"
-	texture_id.texture_size = {
-		get_gamepad_input_texture_data.size[1],
-		get_gamepad_input_texture_data.size[2]
+	icon_style_input_1.horizontal_alignment = "center"
+	icon_style_input_1.vertical_alignment = "center"
+	icon_style_input_1.texture_size = {
+		input_1_texture_data.size[1],
+		input_1_texture_data.size[2]
 	}
-	panel_input_area_1.content.texture_id = get_gamepad_input_texture_data.texture
+	input_1_widget.content.texture_id = input_1_texture_data.texture
 
-	local texture_id_2 = panel_input_area_2.style.texture_id
+	local icon_style_input_2 = input_2_widget.style.texture_id
 
-	texture_id_2.horizontal_alignment = "center"
-	texture_id_2.vertical_alignment = "center"
-	texture_id_2.texture_size = {
-		get_gamepad_input_texture_data_2.size[1],
-		get_gamepad_input_texture_data_2.size[2]
+	icon_style_input_2.horizontal_alignment = "center"
+	icon_style_input_2.vertical_alignment = "center"
+	icon_style_input_2.texture_size = {
+		input_2_texture_data.size[1],
+		input_2_texture_data.size[2]
 	}
-	panel_input_area_2.content.texture_id = get_gamepad_input_texture_data_2.texture
+	input_2_widget.content.texture_id = input_2_texture_data.texture
 end
 
 StartGameWindowWeavePanelConsole._handle_gamepad_activity = function (self)
 	-- function 19
-	local is_device_active = Managers.input:is_device_active("gamepad")
-	local get_most_recent_device = Managers.input:get_most_recent_device()
-	local flag = self.gamepad_active_last_frame == nil or not is_device_active or get_most_recent_device ~= self._most_recent_device
+	local gamepad_active = Managers.input:is_device_active("gamepad")
+	local most_recent_device = Managers.input:get_most_recent_device()
+	local force_update = (self.gamepad_active_last_frame == nil or not not gamepad_active) and most_recent_device ~= self._most_recent_device
 
-	if not is_device_active then
-		if not self.gamepad_active_last_frame and not flag then
+	if gamepad_active then
+		if not self.gamepad_active_last_frame or force_update then
 			self.gamepad_active_last_frame = true
 
-			local _widgets_by_name = self._widgets_by_name
+			local widgets_by_name = self._widgets_by_name
 
-			_widgets_by_name.panel_input_area_1.content.visible = true
-			_widgets_by_name.panel_input_area_2.content.visible = true
+			widgets_by_name.panel_input_area_1.content.visible = true
+			widgets_by_name.panel_input_area_2.content.visible = true
 
 			self:_setup_input_buttons()
 		end
-	elseif self.gamepad_active_last_frame or not flag then
+	elseif self.gamepad_active_last_frame or force_update then
 		self.gamepad_active_last_frame = false
 
-		local _widgets_by_name_2 = self._widgets_by_name
+		local widgets_by_name = self._widgets_by_name
 
-		_widgets_by_name_2.panel_input_area_1.content.visible = false
-		_widgets_by_name_2.panel_input_area_2.content.visible = false
+		widgets_by_name.panel_input_area_1.content.visible = false
+		widgets_by_name.panel_input_area_2.content.visible = false
 	end
 
-	self._most_recent_device = get_most_recent_device
+	self._most_recent_device = most_recent_device
 end
 
-StartGameWindowWeavePanelConsole._set_text_button_size = function (arg_20_0, arg_20_1, arg_20_2)
+StartGameWindowWeavePanelConsole._set_text_button_size = function (self, widget, width)
 	-- function 20
-	arg_20_0._ui_scenegraph[arg_20_1.scenegraph_id].size[1] = arg_20_2
+	local ui_scenegraph = self._ui_scenegraph
+	local scenegraph_id = widget.scenegraph_id
 
-	local style = arg_20_1.style
-	local num = 5
-	local num_2 = arg_20_2 - num * 2
+	ui_scenegraph[scenegraph_id].size[1] = width
 
-	style.text.size[1] = num_2
-	style.text_shadow.size[1] = num_2
-	style.text_hover.size[1] = num_2
-	style.text_disabled.size[1] = num_2
-	style.text.offset[1] = style.text.default_offset[1] + num
-	style.text_shadow.offset[1] = style.text_shadow.default_offset[1] + num
-	style.text_hover.offset[1] = style.text_hover.default_offset[1] + num
-	style.text_disabled.offset[1] = style.text_disabled.default_offset[1] + num
+	local style = widget.style
+	local text_width_offset = 5
+	local text_width = width - text_width_offset * 2
+
+	style.text.size[1] = text_width
+	style.text_shadow.size[1] = text_width
+	style.text_hover.size[1] = text_width
+	style.text_disabled.size[1] = text_width
+	style.text.offset[1] = style.text.default_offset[1] + text_width_offset
+	style.text_shadow.offset[1] = style.text_shadow.default_offset[1] + text_width_offset
+	style.text_hover.offset[1] = style.text_hover.default_offset[1] + text_width_offset
+	style.text_disabled.offset[1] = style.text_disabled.default_offset[1] + text_width_offset
 end
 
-StartGameWindowWeavePanelConsole._get_text_width = function (self, arg_21_1, arg_21_2)
+StartGameWindowWeavePanelConsole._get_text_width = function (self, text_style, text)
 	-- function 21
-	if not arg_21_1.localize then
-		arg_21_2 = Localize(arg_21_2)
+	if text_style.localize then
+		text = Localize(text)
 	end
 
-	if not arg_21_1.upper_case then
-		arg_21_2 = TextToUpper(arg_21_2)
+	if text_style.upper_case then
+		text = TextToUpper(text)
 	end
 
-	local _ui_renderer = self._ui_renderer
-	local var_21_1, var_21_2 = UIFontByResolution(arg_21_1)
-	local text_size, var_21_4, var_21_5 = UIRenderer.text_size(_ui_renderer, arg_21_2, var_21_1[1], var_21_2)
+	local ui_renderer = self._ui_renderer
+	local font, scaled_font_size = UIFontByResolution(text_style)
+	local text_width, text_height, min = UIRenderer.text_size(ui_renderer, text, font[1], scaled_font_size)
 
-	return text_size
+	return text_width
 end
 
-StartGameWindowWeavePanelConsole._set_text_button_horizontal_position = function (arg_22_0, arg_22_1, arg_22_2)
+StartGameWindowWeavePanelConsole._set_text_button_horizontal_position = function (self, widget, x_position)
 	-- function 22
-	arg_22_1.offset[1] = arg_22_2
+	local offset = widget.offset
+
+	offset[1] = x_position
 end
 
-StartGameWindowWeavePanelConsole._animate_title_entry = function (arg_23_0, arg_23_1, arg_23_2)
+StartGameWindowWeavePanelConsole._animate_title_entry = function (self, widget, dt)
 	-- function 23
-	local content = arg_23_1.content
-	local style = arg_23_1.style
-	local button_hotspot = content.button_hotspot
-	local is_hover = button_hotspot.is_hover
-	local is_selected = button_hotspot.is_selected
+	local content = widget.content
+	local style = widget.style
+	local hotspot = content.button_hotspot
+	local is_hover = hotspot.is_hover
+	local is_selected = hotspot.is_selected
 	local is_clicked
 
 	if not is_selected then
-		is_clicked = button_hotspot.is_clicked
+		is_clicked = hotspot.is_clicked
 
-		if not is_clicked then
+		if is_clicked then
 			-- Nothing
 		end
 
-		if button_hotspot.is_clicked ~= 0 then
+		if hotspot.is_clicked ~= 0 then
 			-- Nothing
 		end
 	end
@@ -443,134 +492,178 @@ StartGameWindowWeavePanelConsole._animate_title_entry = function (arg_23_0, arg_
 
 	is_clicked = true
 
+	local input_pressed = is_clicked
+
 	::label_23_1::
 
-	local input_progress = button_hotspot.input_progress
+	local input_progress_2 = hotspot.input_progress
 
-	input_progress = input_progress or 0
+	if not input_progress_2 then
+		-- Nothing
+	end
 
-	local hover_progress = button_hotspot.hover_progress
+	input_progress_2 = 0
 
-	hover_progress = hover_progress or 0
+	local input_progress = input_progress_2
 
-	local selection_progress = button_hotspot.selection_progress
+	::label_23_2::
 
-	selection_progress = selection_progress or 0
+	local hover_progress_2 = hotspot.hover_progress
 
-	local num = 8
-	local num_2 = 20
+	if not hover_progress_2 then
+		-- Nothing
+	end
 
-	if not is_clicked then
-		input_progress = math.min(input_progress + arg_23_2 * num_2, 1)
+	hover_progress_2 = 0
+
+	local hover_progress = hover_progress_2
+
+	::label_23_3::
+
+	local selection_progress_2 = hotspot.selection_progress
+
+	if not selection_progress_2 then
+		-- Nothing
+	end
+
+	selection_progress_2 = 0
+
+	local selection_progress = selection_progress_2
+
+	::label_23_4::
+
+	local speed = 8
+	local input_speed = 20
+
+	if input_pressed then
+		input_progress = math.min(input_progress + dt * input_speed, 1)
 	else
-		input_progress = math.max(input_progress - arg_23_2 * num_2, 0)
+		input_progress = math.max(input_progress - dt * input_speed, 0)
 	end
 
-	local easeOutCubic = math.easeOutCubic(input_progress)
-	local easeInCubic = math.easeInCubic(input_progress)
+	local input_easing_out_progress = math.easeOutCubic(input_progress)
+	local input_easing_in_progress = math.easeInCubic(input_progress)
 
-	if not is_hover then
-		hover_progress = math.min(hover_progress + arg_23_2 * num, 1)
+	if is_hover then
+		hover_progress = math.min(hover_progress + dt * speed, 1)
 	else
-		hover_progress = math.max(hover_progress - arg_23_2 * num, 0)
+		hover_progress = math.max(hover_progress - dt * speed, 0)
 	end
 
-	local easeOutCubic_2 = math.easeOutCubic(hover_progress)
-	local easeInCubic_2 = math.easeInCubic(hover_progress)
+	local hover_easing_out_progress = math.easeOutCubic(hover_progress)
+	local hover_easing_in_progress = math.easeInCubic(hover_progress)
 
-	if not is_selected then
-		selection_progress = math.min(selection_progress + arg_23_2 * num, 1)
+	if is_selected then
+		selection_progress = math.min(selection_progress + dt * speed, 1)
 	else
-		selection_progress = math.max(selection_progress - arg_23_2 * num, 0)
+		selection_progress = math.max(selection_progress - dt * speed, 0)
 	end
 
-	local easeOutCubic_3 = math.easeOutCubic(selection_progress)
-	local easeInCubic_3 = math.easeInCubic(selection_progress)
-	local max = math.max(hover_progress, selection_progress)
-	local max_2 = math.max(easeOutCubic_3, easeOutCubic_2)
-	local max_3 = math.max(easeInCubic_2, easeInCubic_3)
-	local num_3 = 255 * max
+	local select_easing_out_progress = math.easeOutCubic(selection_progress)
+	local select_easing_in_progress = math.easeInCubic(selection_progress)
+	local combined_progress = math.max(hover_progress, selection_progress)
+	local combined_out_progress = math.max(select_easing_out_progress, hover_easing_out_progress)
+	local combined_in_progress = math.max(hover_easing_in_progress, select_easing_in_progress)
+	local hover_alpha = 255 * combined_progress
 
-	if not style.text then
-		local num_4 = 1 * max
+	if style.text then
+		local text_height_offset = 1 * combined_progress
 
-		style.text.offset[2] = -(2 + num_4)
-		style.text_shadow.offset[2] = -(4 + num_4)
-		style.text_hover.offset[2] = -(2 + num_4)
-		style.text_disabled.offset[2] = -(2 + num_4)
+		style.text.offset[2] = -(2 + text_height_offset)
+		style.text_shadow.offset[2] = -(4 + text_height_offset)
+		style.text_hover.offset[2] = -(2 + text_height_offset)
+		style.text_disabled.offset[2] = -(2 + text_height_offset)
 	end
 
-	if not style.new_marker then
-		local num_5 = 0.5 + math.sin(Managers.time:time("ui") * 5) * 0.5
+	if style.new_marker then
+		local new_marker_progress = 0.5 + math.sin(Managers.time:time("ui") * 5) * 0.5
 
-		style.new_marker.color[1] = 100 + 155 * num_5
+		style.new_marker.color[1] = 100 + 155 * new_marker_progress
 	end
 
-	button_hotspot.hover_progress = hover_progress
-	button_hotspot.input_progress = input_progress
-	button_hotspot.selection_progress = selection_progress
+	hotspot.hover_progress = hover_progress
+	hotspot.input_progress = input_progress
+	hotspot.selection_progress = selection_progress
 end
 
-StartGameWindowWeavePanelConsole._start_panel_selection_animation = function (self, arg_24_1, arg_24_2)
+StartGameWindowWeavePanelConsole._start_panel_selection_animation = function (self, previous_selected_index, new_selected_index)
 	-- function 24
-	local entry_panel_selection = self._widgets_by_name.entry_panel_selection
-	local offset = entry_panel_selection.offset
-	local size = entry_panel_selection.content.size
-	local _panel_selection_animation = self._panel_selection_animation
-
-	_panel_selection_animation = _panel_selection_animation or {}
-	self._panel_selection_animation = _panel_selection_animation
-
-	local var_24_4 = offset[1]
-	local var_24_5 = size[1]
-	local var_24_6 = self._title_button_widgets[arg_24_2].offset[1]
-	local var_24_7 = self._title_button_widgets[arg_24_2].content.size[1]
-	local num = 0.3
-
-	_panel_selection_animation.duration = num
-	_panel_selection_animation.total_duration = num
-	_panel_selection_animation.target_offset = var_24_6
-	_panel_selection_animation.start_offset = var_24_4
-	_panel_selection_animation.target_width = var_24_7
-	_panel_selection_animation.start_width = var_24_5
-end
-
-StartGameWindowWeavePanelConsole._update_panel_selection_animation = function (self, arg_25_1)
-	-- function 25
+	local widgets_by_name = self._widgets_by_name
+	local entry_panel_selection = widgets_by_name.entry_panel_selection
+	local selection_offset = entry_panel_selection.offset
+	local selection_size = entry_panel_selection.content.size
 	local _panel_selection_animation = self._panel_selection_animation
 
 	if not _panel_selection_animation then
+		-- Nothing
+	end
+
+	_panel_selection_animation = {}
+
+	local panel_selection_animation = _panel_selection_animation
+
+	::label_24_0::
+
+	self._panel_selection_animation = panel_selection_animation
+
+	local start_offset = selection_offset[1]
+	local start_width = selection_size[1]
+	local target_offset = self._title_button_widgets[new_selected_index].offset[1]
+	local target_width = self._title_button_widgets[new_selected_index].content.size[1]
+	local animation_duration = 0.3
+
+	panel_selection_animation.duration = animation_duration
+	panel_selection_animation.total_duration = animation_duration
+	panel_selection_animation.target_offset = target_offset
+	panel_selection_animation.start_offset = start_offset
+	panel_selection_animation.target_width = target_width
+	panel_selection_animation.start_width = start_width
+end
+
+StartGameWindowWeavePanelConsole._update_panel_selection_animation = function (self, dt)
+	-- function 25
+	local panel_selection_animation = self._panel_selection_animation
+
+	if not panel_selection_animation then
 		return
 	end
 
-	local duration = _panel_selection_animation.duration
+	local duration = panel_selection_animation.duration
 
 	if not duration then
 		return
 	end
 
-	local max = math.max(duration - arg_25_1, 0)
-	local start_offset = _panel_selection_animation.start_offset
-	local target_offset = _panel_selection_animation.target_offset
-	local start_width = _panel_selection_animation.start_width
-	local target_width = _panel_selection_animation.target_width
-	local num = 1 - max / _panel_selection_animation.total_duration
-	local easeOutCubic = math.easeOutCubic(num)
-	local num_2 = start_width + (target_width - start_width) * easeOutCubic
-	local num_3 = start_offset + (target_offset - start_offset) * easeOutCubic
-	local entry_panel_selection = self._widgets_by_name.entry_panel_selection
-	local texture_size = entry_panel_selection.style.write_mask.texture_size
-	local size = entry_panel_selection.content.size
-	local scenegraph_id = entry_panel_selection.scenegraph_id
+	duration = math.max(duration - dt, 0)
 
-	size[1] = num_2
-	texture_size[1] = num_2 * 2
-	self._ui_scenegraph[scenegraph_id].size[1] = num_2
-	entry_panel_selection.offset[1] = num_3
+	local start_offset = panel_selection_animation.start_offset
+	local target_offset = panel_selection_animation.target_offset
+	local start_width = panel_selection_animation.start_width
+	local target_width = panel_selection_animation.target_width
+	local total_duration = panel_selection_animation.total_duration
+	local progress = 1 - duration / total_duration
+	local anim_progress = math.easeOutCubic(progress)
+	local animation_width = (target_width - start_width) * anim_progress
+	local current_width = start_width + animation_width
+	local animation_distance = (target_offset - start_offset) * anim_progress
+	local current_distance = start_offset + animation_distance
+	local widgets_by_name = self._widgets_by_name
+	local entry_panel_selection = widgets_by_name.entry_panel_selection
+	local panel_selection_mask_size = entry_panel_selection.style.write_mask.texture_size
+	local panel_selection_size = entry_panel_selection.content.size
+	local panel_selection_scenegraph_id = entry_panel_selection.scenegraph_id
 
-	if max == 0 then
-		_panel_selection_animation.duration = nil
+	panel_selection_size[1] = current_width
+	panel_selection_mask_size[1] = current_width * 2
+	self._ui_scenegraph[panel_selection_scenegraph_id].size[1] = current_width
+
+	local selection_offset = entry_panel_selection.offset
+
+	selection_offset[1] = current_distance
+
+	if duration == 0 then
+		panel_selection_animation.duration = nil
 	else
-		_panel_selection_animation.duration = max
+		panel_selection_animation.duration = duration
 	end
 end

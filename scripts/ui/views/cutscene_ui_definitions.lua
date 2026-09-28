@@ -1,6 +1,6 @@
 -- chunkname: @scripts/ui/views/cutscene_ui_definitions.lua
 
-local tbl = {
+local scenegraph_definition = {
 	root = {
 		is_root = true,
 		position = {
@@ -97,14 +97,14 @@ local tbl = {
 	}
 }
 
-local function fn(arg_1_0)
+local function make_checkbox(i)
 	-- function 1
-	local menu_frame_06 = UIFrameSettings.menu_frame_06
+	local frame_settings = UIFrameSettings.menu_frame_06
 
 	return {
 		scenegraph_id = "checkbox_pivot",
 		offset = {
-			arg_1_0 * 50,
+			i * 50,
 			0,
 			0
 		},
@@ -114,9 +114,9 @@ local function fn(arg_1_0)
 					pass_type = "texture",
 					style_id = "check",
 					texture_id = "check",
-					content_check_function = function (self)
+					content_check_function = function (content)
 						-- function 2
-						return self.checked
+						return content.checked
 					end
 				},
 				{
@@ -132,7 +132,7 @@ local function fn(arg_1_0)
 		},
 		content = {
 			check = "matchmaking_checkbox",
-			frame = menu_frame_06.texture
+			frame = frame_settings.texture
 		},
 		style = {
 			background = {
@@ -148,8 +148,8 @@ local function fn(arg_1_0)
 					40,
 					40
 				},
-				texture_size = menu_frame_06.texture_size,
-				texture_sizes = menu_frame_06.texture_sizes,
+				texture_size = frame_settings.texture_size,
+				texture_sizes = frame_settings.texture_sizes,
 				offset = {
 					0,
 					0,
@@ -178,11 +178,11 @@ local function fn(arg_1_0)
 	}
 end
 
-local tbl_2 = {
-	checkbox_1 = fn(1),
-	checkbox_2 = fn(2),
-	checkbox_3 = fn(3),
-	checkbox_4 = fn(4),
+local widget_definitions = {
+	checkbox_1 = make_checkbox(1),
+	checkbox_2 = make_checkbox(2),
+	checkbox_3 = make_checkbox(3),
+	checkbox_4 = make_checkbox(4),
 	letterbox = {
 		scenegraph_id = "screen",
 		element = {
@@ -231,17 +231,17 @@ local tbl_2 = {
 					scenegraph_id = "screen",
 					style_id = "fx_fade_rect",
 					pass_type = "rect",
-					content_check_function = function (self, arg_3_1)
+					content_check_function = function (content, style_data)
 						-- function 3
-						if not (not self and arg_3_1) then
+						if not content or not style_data then
 							return
 						end
 
-						local num = self.fx_fade_alpha * 255
+						local alpha = content.fx_fade_alpha * 255
 
-						arg_3_1.color[1] = num
+						style_data.color[1] = alpha
 
-						return num > 0
+						return alpha > 0
 					end
 				}
 			}
@@ -269,17 +269,17 @@ local tbl_2 = {
 				{
 					pass_type = "text",
 					text_id = "text",
-					content_check_function = function (self, arg_4_1)
+					content_check_function = function (content, style_data)
 						-- function 4
-						if not (not self and arg_4_1) then
+						if not content or not style_data then
 							return
 						end
 
-						local num = self.fx_text_popup_alpha * 255
+						local alpha = content.fx_text_popup_alpha * 255
 
-						arg_4_1.text_color[1] = num
+						style_data.text_color[1] = alpha
 
-						return num > 0
+						return alpha > 0
 					end
 				}
 			}
@@ -307,6 +307,6 @@ local tbl_2 = {
 }
 
 return {
-	scenegraph = tbl,
-	widgets = tbl_2
+	scenegraph = scenegraph_definition,
+	widgets = widget_definitions
 }

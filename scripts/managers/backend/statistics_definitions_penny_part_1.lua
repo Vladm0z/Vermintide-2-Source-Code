@@ -1,7 +1,7 @@
 -- chunkname: @scripts/managers/backend/statistics_definitions_penny_part_1.lua
 
 local player = StatisticsDefinitions.player
-local tbl = {
+local database_names = {
 	"penny_portals_portal",
 	"penny_portals_heads",
 	"penny_portals_vintage",
@@ -9,12 +9,12 @@ local tbl = {
 	"penny_portals_cleanser"
 }
 
-for i = 1, #tbl do
-	local var_0_2 = tbl[i]
+for i = 1, #database_names do
+	local name = database_names[i]
 
-	player[var_0_2] = {
+	player[name] = {
 		value = 0,
 		source = "player_data",
-		database_name = var_0_2
+		database_name = name
 	}
 end

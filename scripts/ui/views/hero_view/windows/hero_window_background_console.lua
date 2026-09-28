@@ -3,15 +3,15 @@
 require("scripts/ui/views/menu_world_previewer")
 require("scripts/settings/hero_statistics_template")
 
-local var_0_0 = local_require("scripts/ui/views/hero_view/windows/definitions/hero_window_background_console_definitions")
-local widgets = var_0_0.widgets
-local background_rect = var_0_0.background_rect
-local scenegraph_definition = var_0_0.scenegraph_definition
-local animation_definitions = var_0_0.animation_definitions
-local camera_position_by_character = var_0_0.camera_position_by_character
-local loading_overlay_widgets = var_0_0.loading_overlay_widgets
-local flag = false
-local tbl = {
+local definitions = local_require("scripts/ui/views/hero_view/windows/definitions/hero_window_background_console_definitions")
+local widget_definitions = definitions.widgets
+local background_rect = definitions.background_rect
+local scenegraph_definition = definitions.scenegraph_definition
+local animation_definitions = definitions.animation_definitions
+local camera_position_by_character = definitions.camera_position_by_character
+local loading_overlay_widget_definitions = definitions.loading_overlay_widgets
+local DO_RELOAD = false
+local object_sets_per_layout = {
 	equipment = {
 		equipment_view = true
 	},
@@ -52,7 +52,7 @@ local tbl = {
 		skaven_cosmetics_view = true
 	}
 }
-local tbl_2 = {
+local level_events_per_layout = {
 	equipment = {
 		"equipment_view"
 	},
@@ -93,7 +93,7 @@ local tbl_2 = {
 		"cosmetics_view"
 	}
 }
-local tbl_3 = {
+local character_visibility_per_layout = {
 	cosmetics_selection = true,
 	equipment_selection = true,
 	forge = false,
@@ -107,11 +107,11 @@ local tbl_3 = {
 	pactsworn_equipment = true,
 	talents = false
 }
-local tbl_4 = {
+local camera_move_duration_per_layout = {
 	character_selection = UISettings.console_menu_camera_move_duration
 }
-local tbl_5 = {}
-local tbl_6 = {
+local disable_camera_position_per_layout = {}
+local character_camera_location = {
 	pose_selection = {
 		witch_hunter = {
 			-0.6,
@@ -145,7 +145,7 @@ local tbl_6 = {
 		0
 	}
 }
-local tbl_7 = {
+local MOOD_PER_MECHANISM = {
 	adventure = "default",
 	versus = "menu_versus"
 }
@@ -153,14 +153,14 @@ local tbl_7 = {
 HeroWindowBackgroundConsole = class(HeroWindowBackgroundConsole)
 HeroWindowBackgroundConsole.NAME = "HeroWindowBackgroundConsole"
 
-HeroWindowBackgroundConsole.on_enter = function (self, arg_1_1, arg_1_2)
+HeroWindowBackgroundConsole.on_enter = function (self, params, offset)
 	-- function 1
 	print("[HeroViewWindow] Enter Substate HeroWindowBackgroundConsole")
 
-	self.params = arg_1_1
-	self.parent = arg_1_1.parent
+	self.params = params
+	self.parent = params.parent
 
-	local ingame_ui_context = arg_1_1.ingame_ui_context
+	local ingame_ui_context = params.ingame_ui_context
 
 	self.ingame_ui_context = ingame_ui_context
 	self.ui_renderer = ingame_ui_context.ui_renderer
@@ -171,39 +171,41 @@ HeroWindowBackgroundConsole.on_enter = function (self, arg_1_1, arg_1_2)
 		snap_pixel_positions = true
 	}
 
-	local player = Managers.player
+	local player_manager = Managers.player
+	local local_player = player_manager:local_player()
 
-	self._stats_id = player:local_player():stats_id()
-	self.player_manager = player
+	self._stats_id = local_player:stats_id()
+	self.player_manager = player_manager
 	self.peer_id = ingame_ui_context.peer_id
 	self.is_in_inn = ingame_ui_context.is_in_inn
-	self.force_ingame_menu = arg_1_1.force_ingame_menu
-	self.hero_name = arg_1_1.hero_name
-	self.career_index = arg_1_1.career_index
+	self.force_ingame_menu = params.force_ingame_menu
+	self.hero_name = params.hero_name
+	self.career_index = params.career_index
 	self.skin_sync_id = self.parent.skin_sync_id
-	self._camera_move_duration = not not IS_WINDOWS or UISettings.console_menu_camera_move_duration
+	self._camera_move_duration = not IS_WINDOWS and not not UISettings.console_menu_camera_move_duration
 	self._animations = {}
 
-	self:create_ui_elements(arg_1_1, arg_1_2)
+	self:create_ui_elements(params, offset)
 	Managers.state.event:register(self, "respawn_hero", "respawn_hero")
 	Managers.state.event:register(self, "despawn_hero", "despawn_hero")
 end
 
-HeroWindowBackgroundConsole._get_with_mechanism = function (arg_2_0, arg_2_1)
+HeroWindowBackgroundConsole._get_with_mechanism = function (self, lookup)
 	-- function 2
-	local var_2_0 = arg_2_1[Managers.mechanism:current_mechanism_name()]
+	local mechanism_name = Managers.mechanism:current_mechanism_name()
+	local var_2_0 = lookup[mechanism_name]
 
-	var_2_0 = var_2_0 or arg_2_1.default
+	var_2_0 = not not var_2_0 or not not lookup.default
 
 	return var_2_0
 end
 
-local tbl_8 = {
+local MOOD_PER_MECHANISM = {
 	default = "default",
 	versus = "menu_versus"
 }
 
-HeroWindowBackgroundConsole._create_viewport_definition = function (arg_3_0)
+HeroWindowBackgroundConsole._create_viewport_definition = function (self)
 	-- function 3
 	return {
 		scenegraph_id = "screen",
@@ -245,9 +247,9 @@ HeroWindowBackgroundConsole._create_viewport_definition = function (arg_3_0)
 	}
 end
 
-HeroWindowBackgroundConsole.create_ui_elements = function (self, arg_4_1, arg_4_2)
+HeroWindowBackgroundConsole.create_ui_elements = function (self, params, offset)
 	-- function 4
-	if not self._viewport_widget then
+	if self._viewport_widget then
 		UIWidget.destroy(self.ui_renderer, self._viewport_widget)
 
 		self._viewport_widget = nil
@@ -255,45 +257,45 @@ HeroWindowBackgroundConsole.create_ui_elements = function (self, arg_4_1, arg_4_
 
 	self.ui_scenegraph = UISceneGraph.init_scenegraph(scenegraph_definition)
 
-	local tbl = {}
-	local tbl_2 = {}
+	local widgets = {}
+	local widgets_by_name = {}
 
-	for k, v in pairs(widgets) do
-		local var_4_2 = UIWidget.init(v)
+	for name, widget_definition in pairs(widget_definitions) do
+		local widget = UIWidget.init(widget_definition)
 
-		tbl[#tbl + 1] = var_4_2
-		tbl_2[k] = var_4_2
+		widgets[#widgets + 1] = widget
+		widgets_by_name[name] = widget
 	end
 
-	self._widgets = tbl
-	self._widgets_by_name = tbl_2
+	self._widgets = widgets
+	self._widgets_by_name = widgets_by_name
 
-	local tbl_3 = {}
-	local tbl_4 = {}
+	local loading_overlay_widgets = {}
+	local loading_overlay_widgets_by_name = {}
 
-	for k_2, v_2 in pairs(loading_overlay_widgets) do
-		local var_4_5 = UIWidget.init(v_2)
+	for name, widget_definition in pairs(loading_overlay_widget_definitions) do
+		local widget = UIWidget.init(widget_definition)
 
-		tbl_3[#tbl_3 + 1] = var_4_5
-		tbl_4[k_2] = var_4_5
+		loading_overlay_widgets[#loading_overlay_widgets + 1] = widget
+		loading_overlay_widgets_by_name[name] = widget
 	end
 
-	self._loading_overlay_widgets = tbl_3
-	self._loading_overlay_widgets_by_name = tbl_4
+	self._loading_overlay_widgets = loading_overlay_widgets
+	self._loading_overlay_widgets_by_name = loading_overlay_widgets_by_name
 
 	UIRenderer.clear_scenegraph_queue(self.ui_renderer)
 
 	self.ui_animator = UIAnimator:new(self.ui_scenegraph, animation_definitions)
 
-	if not arg_4_2 then
-		local local_position = self.ui_scenegraph.window.local_position
+	if offset then
+		local window_position = self.ui_scenegraph.window.local_position
 
-		local_position[1] = local_position[1] + arg_4_2[1]
-		local_position[2] = local_position[2] + arg_4_2[2]
-		local_position[3] = local_position[3] + arg_4_2[3]
+		window_position[1] = window_position[1] + offset[1]
+		window_position[2] = window_position[2] + offset[2]
+		window_position[3] = window_position[3] + offset[3]
 	end
 
-	if not (not self.is_in_inn and self.force_ingame_menu) then
+	if self.is_in_inn and not self.force_ingame_menu then
 		self._viewport_widget_definition = self:_create_viewport_definition()
 
 		self:_setup_object_sets()
@@ -302,7 +304,7 @@ HeroWindowBackgroundConsole.create_ui_elements = function (self, arg_4_1, arg_4_
 	end
 
 	if not Development.parameter("hero_statistics") then
-		tbl_2.detailed.content.visible = false
+		widgets_by_name.detailed.content.visible = false
 	end
 end
 
@@ -313,12 +315,12 @@ HeroWindowBackgroundConsole._setup_object_sets = function (self)
 
 	self._object_sets = {}
 
-	for i, v in ipairs(object_set_names) do
-		self._object_sets[v] = LevelResource.unit_indices_in_object_set(level_name, v)
+	for _, object_set_name in ipairs(object_set_names) do
+		self._object_sets[object_set_name] = LevelResource.unit_indices_in_object_set(level_name, object_set_name)
 	end
 end
 
-HeroWindowBackgroundConsole.on_exit = function (self, arg_6_1)
+HeroWindowBackgroundConsole.on_exit = function (self, params)
 	-- function 6
 	print("[HeroViewWindow] Exit Substate HeroWindowBackgroundConsole")
 
@@ -327,151 +329,179 @@ HeroWindowBackgroundConsole.on_exit = function (self, arg_6_1)
 	Managers.state.event:unregister("respawn_hero", self)
 	Managers.state.event:unregister("despawn_hero", self)
 
-	if not self.world_previewer then
+	if self.world_previewer then
 		self.world_previewer:prepare_exit()
 		self.world_previewer:on_exit()
 		self.world_previewer:destroy()
 	end
 
-	if not self._viewport_widget then
+	if self._viewport_widget then
 		UIWidget.destroy(self.ui_renderer, self._viewport_widget)
 
 		self._viewport_widget = nil
 	end
 end
 
-HeroWindowBackgroundConsole.update = function (self, arg_7_1, arg_7_2)
+HeroWindowBackgroundConsole.update = function (self, dt, t)
 	-- function 7
-	if not flag then
-		flag = false
+	if DO_RELOAD then
+		DO_RELOAD = false
 
 		self:create_ui_elements()
 	end
 
-	if not self.world_previewer and not self.hero_unit_spawned then
-		local window_input_service = self.parent:window_input_service()
+	if self.world_previewer and self.hero_unit_spawned then
+		local input_service = self.parent:window_input_service()
 
-		self:_handle_input(window_input_service, arg_7_1, arg_7_2)
-		self:_update_statistics_widget(window_input_service, arg_7_1)
+		self:_handle_input(input_service, dt, t)
+		self:_update_statistics_widget(input_service, dt)
 	end
 
-	self:_update_animations(arg_7_1)
-	self:draw(arg_7_1)
+	self:_update_animations(dt)
+	self:draw(dt)
 
-	if not self.world_previewer then
-		local _statistics_activate = self:_statistics_activate()
+	if self.world_previewer then
+		local statistics_activate = self:_statistics_activate()
+		local disable_hero_unit_input = statistics_activate
 
-		self.world_previewer:update(arg_7_1, arg_7_2, _statistics_activate)
+		self.world_previewer:update(dt, t, disable_hero_unit_input)
 	end
 end
 
-HeroWindowBackgroundConsole._update_character_visibility = function (self, arg_8_1)
+HeroWindowBackgroundConsole._update_character_visibility = function (self, layout_name)
 	-- function 8
-	local var_8_0 = tbl_3[arg_8_1]
+	local var_8_0 = character_visibility_per_layout[layout_name]
 
-	var_8_0 = var_8_0 or false
-
-	local var_8_1 = tbl_4[arg_8_1]
-	local var_8_2 = tbl_5[arg_8_1]
-
-	if self._draw_character ~= var_8_0 then
-		self.world_previewer:_set_character_visibility(var_8_0, var_8_1, var_8_2)
+	if not var_8_0 then
+		-- Nothing
 	end
 
-	self._draw_character = var_8_0
+	var_8_0 = false
 
-	if var_8_0 or not self.params.hero_statistics_active then
+	local draw_character = var_8_0
+
+	::label_8_0::
+
+	local camera_move_duration = camera_move_duration_per_layout[layout_name]
+	local disable_camera_position_update = disable_camera_position_per_layout[layout_name]
+
+	if self._draw_character ~= draw_character then
+		self.world_previewer:_set_character_visibility(draw_character, camera_move_duration, disable_camera_position_update)
+	end
+
+	self._draw_character = draw_character
+
+	if not draw_character and self.params.hero_statistics_active then
 		self:_handle_statistics_pressed()
 	end
 
-	if not var_8_0 then
-		local var_8_3 = tbl_6[arg_8_1]
+	if draw_character then
+		local var_8_1 = character_camera_location[layout_name]
 
-		var_8_3 = var_8_3 or tbl_6.default
-		var_8_3 = var_8_3[self.hero_name] or var_8_3
+		if not var_8_1 then
+			-- Nothing
+		end
 
-		self.world_previewer:set_hero_location_lerped(var_8_3, 0.5)
+		var_8_1 = character_camera_location.default
+
+		local character_location = var_8_1
+
+		::label_8_1::
+
+		character_location = not not character_location[self.hero_name] or not not character_location
+
+		self.world_previewer:set_hero_location_lerped(character_location, 0.5)
 	end
 end
 
-local tbl_9 = {}
+local EMPTY_TABLE = {}
 
-HeroWindowBackgroundConsole._update_level_events = function (self, arg_9_1)
+HeroWindowBackgroundConsole._update_level_events = function (self, layout_name)
 	-- function 9
-	local var_9_0 = tbl_2[arg_9_1]
+	local var_9_0 = level_events_per_layout[layout_name]
 
-	var_9_0 = var_9_0 or tbl_9
+	if not var_9_0 then
+		-- Nothing
+	end
 
-	for i, v in ipairs(var_9_0) do
-		self.world_previewer:trigger_level_event(v)
+	var_9_0 = EMPTY_TABLE
+
+	local level_events_to_trigger = var_9_0
+
+	::label_9_0::
+
+	for _, event_name in ipairs(level_events_to_trigger) do
+		self.world_previewer:trigger_level_event(event_name)
 	end
 end
 
-HeroWindowBackgroundConsole._update_object_sets = function (self, arg_10_1)
+HeroWindowBackgroundConsole._update_object_sets = function (self, layout_name)
 	-- function 10
-	local var_10_0 = tbl[arg_10_1]
+	local object_set_to_enable = object_sets_per_layout[layout_name]
 
-	if not var_10_0.keep_current_object_set then
+	if object_set_to_enable.keep_current_object_set then
 		return
 	end
 
-	for k, v in pairs(self._object_sets) do
-		local var_10_1
+	for object_set_name, object_set_units in pairs(self._object_sets) do
+		local var_10_0
 
-		if not var_10_0 then
-			var_10_1 = var_10_0[k]
+		if object_set_to_enable then
+			var_10_0 = object_set_to_enable[object_set_name]
 
-			if not var_10_1 then
+			if not var_10_0 then
 				-- Nothing
 			end
 		end
 
-		var_10_1 = false
+		var_10_0 = false
+
+		local enable_visibility = var_10_0
 
 		::label_10_0::
 
-		self.world_previewer:show_level_units(v, var_10_1)
+		self.world_previewer:show_level_units(object_set_units, enable_visibility)
 	end
 end
 
-HeroWindowBackgroundConsole.post_update = function (self, arg_11_1, arg_11_2)
+HeroWindowBackgroundConsole.post_update = function (self, dt, t)
 	-- function 11
-	if not (not self._viewport_widget_definition and self._viewport_widget) then
+	if self._viewport_widget_definition and not self._viewport_widget then
 		self._viewport_widget = UIWidget.init(self._viewport_widget_definition)
 		self._fadeout_loading_overlay = true
 	end
 
-	self:_update_loading_overlay_fadeout_animation(arg_11_1)
+	self:_update_loading_overlay_fadeout_animation(dt)
 
-	if self.initialized or not self._viewport_widget then
-		local var_11_0 = MenuWorldPreviewer:new(self.ingame_ui_context, camera_position_by_character, "HeroWindowBackgroundConsole")
+	if not self.initialized and self._viewport_widget then
+		local world_previewer = MenuWorldPreviewer:new(self.ingame_ui_context, camera_position_by_character, "HeroWindowBackgroundConsole")
 
-		local function fn()
+		local function callback()
 			-- function 12
 			self.hero_unit_spawned = true
 		end
 
 		self.hero_unit_spawned = false
 
-		var_11_0:on_enter(self._viewport_widget, self.hero_name)
-		var_11_0:request_spawn_hero_unit(self.hero_name, self.career_index, false, fn, nil, self._camera_move_duration)
+		world_previewer:on_enter(self._viewport_widget, self.hero_name)
+		world_previewer:request_spawn_hero_unit(self.hero_name, self.career_index, false, callback, nil, self._camera_move_duration)
 
-		self.world_previewer = var_11_0
+		self.world_previewer = world_previewer
 		self.initialized = true
 	end
 
-	if not self.world_previewer then
-		local get_layout_name = self.parent:get_layout_name()
+	if self.world_previewer then
+		local layout_name = self.parent:get_layout_name()
 
-		if get_layout_name ~= self._current_layout_name then
-			self:_update_object_sets(get_layout_name)
-			self:_update_level_events(get_layout_name)
-			self:_update_character_visibility(get_layout_name)
+		if layout_name ~= self._current_layout_name then
+			self:_update_object_sets(layout_name)
+			self:_update_level_events(layout_name)
+			self:_update_character_visibility(layout_name)
 
-			self._current_layout_name = get_layout_name
+			self._current_layout_name = layout_name
 		end
 
-		if not self.hero_unit_spawned then
+		if self.hero_unit_spawned then
 			self:_update_skin_sync()
 			self:_update_loadout_sync()
 			self:_update_wielded_slot()
@@ -479,17 +509,17 @@ HeroWindowBackgroundConsole.post_update = function (self, arg_11_1, arg_11_2)
 			self:_update_character_pose_animation_sync()
 		end
 
-		self.world_previewer:post_update(arg_11_1, arg_11_2)
+		self.world_previewer:post_update(dt, t)
 	end
 end
 
-local num = -1
+local FORCE_RESYNC = -1
 
-HeroWindowBackgroundConsole.respawn_hero = function (self, arg_13_1, arg_13_2)
+HeroWindowBackgroundConsole.respawn_hero = function (self, optional_params, override_camera_movement)
 	-- function 13
-	if not arg_13_1 then
-		self.hero_name = arg_13_1.hero_name
-		self.career_index = arg_13_1.career_index
+	if optional_params then
+		self.hero_name = optional_params.hero_name
+		self.career_index = optional_params.career_index
 	end
 
 	local world_previewer = self.world_previewer
@@ -500,30 +530,31 @@ HeroWindowBackgroundConsole.respawn_hero = function (self, arg_13_1, arg_13_2)
 
 	self.hero_unit_spawned = false
 
-	local function fn()
+	local function callback()
 		-- function 14
 		self.hero_unit_spawned = true
-		self._loadout_sync_id = num
+		self._loadout_sync_id = FORCE_RESYNC
 
 		self:_update_loadout_sync()
 
-		self._selected_loadout_slot_index = num
+		self._selected_loadout_slot_index = FORCE_RESYNC
 
 		self:_update_wielded_slot()
 
-		local var_14_0 = FindProfileIndex(self.hero_name)
-		local var_14_1 = SPProfiles[var_14_0]
+		local profile_index = FindProfileIndex(self.hero_name)
+		local profile = SPProfiles[profile_index]
 
-		if var_14_1.affiliation == "dark_pact" then
-			local preview_idle_animation = var_14_1.careers[self.career_index].preview_idle_animation
+		if profile.affiliation == "dark_pact" then
+			local career_data = profile.careers[self.career_index]
+			local preview_animation = career_data.preview_idle_animation
 
-			if not preview_idle_animation then
-				self.world_previewer:play_character_animation(preview_idle_animation)
+			if preview_animation then
+				self.world_previewer:play_character_animation(preview_animation)
 			end
 		end
 	end
 
-	world_previewer:respawn_hero_unit(self.hero_name, self.career_index, false, fn, self._camera_move_duration)
+	world_previewer:respawn_hero_unit(self.hero_name, self.career_index, false, callback, self._camera_move_duration)
 end
 
 HeroWindowBackgroundConsole.despawn_hero = function (self)
@@ -537,29 +568,30 @@ HeroWindowBackgroundConsole.despawn_hero = function (self)
 	world_previewer:hide_character()
 end
 
-HeroWindowBackgroundConsole._update_animations = function (self, arg_16_1)
+HeroWindowBackgroundConsole._update_animations = function (self, dt)
 	-- function 16
-	self.ui_animator:update(arg_16_1)
+	self.ui_animator:update(dt)
 
-	local _animations = self._animations
+	local animations = self._animations
 	local ui_animator = self.ui_animator
 
-	for k, v in pairs(_animations) do
-		if not ui_animator:is_animation_completed(v) then
-			ui_animator:stop_animation(v)
+	for animation_name, animation_id in pairs(animations) do
+		if ui_animator:is_animation_completed(animation_id) then
+			ui_animator:stop_animation(animation_id)
 
-			_animations[k] = nil
+			animations[animation_name] = nil
 		end
 	end
 
-	local _widgets_by_name = self._widgets_by_name
+	local widgets_by_name = self._widgets_by_name
 end
 
 HeroWindowBackgroundConsole._update_temporary_loadout_sync = function (self)
 	-- function 17
-	local temporary_loadout_sync_id = self.parent.temporary_loadout_sync_id
+	local parent = self.parent
+	local temporary_loadout_sync_id = parent.temporary_loadout_sync_id
 
-	if not (not (temporary_loadout_sync_id > 0) or temporary_loadout_sync_id == self._temporary_loadout_sync_id) then
+	if temporary_loadout_sync_id > 0 and temporary_loadout_sync_id ~= self._temporary_loadout_sync_id then
 		self:_populate_temporary_loadout()
 
 		self._temporary_loadout_sync_id = temporary_loadout_sync_id
@@ -568,15 +600,16 @@ end
 
 HeroWindowBackgroundConsole._update_character_pose_animation_sync = function (self)
 	-- function 18
-	local character_pose_animation_sync_id = self.parent.character_pose_animation_sync_id
+	local parent = self.parent
+	local character_pose_animation_sync_id = parent.character_pose_animation_sync_id
 
-	if not (not (character_pose_animation_sync_id > 0) or character_pose_animation_sync_id == self._character_pose_animation_sync_id) then
-		local get_character_animation_event = self.parent:get_character_animation_event()
+	if character_pose_animation_sync_id > 0 and character_pose_animation_sync_id ~= self._character_pose_animation_sync_id then
+		local anim_event = self.parent:get_character_animation_event()
 
-		if not get_character_animation_event then
-			local flag = true
+		if anim_event then
+			local play_pose_animation = true
 
-			self.world_previewer:set_pose_animation(get_character_animation_event, flag)
+			self.world_previewer:set_pose_animation(anim_event, play_pose_animation)
 		else
 			self.world_previewer:reset_pose_animation()
 		end
@@ -587,7 +620,8 @@ end
 
 HeroWindowBackgroundConsole._update_loadout_sync = function (self)
 	-- function 19
-	local loadout_sync_id = self.parent.loadout_sync_id
+	local parent = self.parent
+	local loadout_sync_id = parent.loadout_sync_id
 
 	if loadout_sync_id ~= self._loadout_sync_id then
 		self:_populate_loadout()
@@ -600,29 +634,31 @@ end
 
 HeroWindowBackgroundConsole._update_skin_sync = function (self)
 	-- function 20
-	local skin_sync_id = self.parent.skin_sync_id
+	local parent = self.parent
+	local parent_skin_sync_id = parent.skin_sync_id
 
-	if skin_sync_id ~= self.skin_sync_id then
+	if parent_skin_sync_id ~= self.skin_sync_id then
 		self:respawn_hero()
 
-		self.skin_sync_id = skin_sync_id
+		self.skin_sync_id = parent_skin_sync_id
 	end
 end
 
 HeroWindowBackgroundConsole._update_wielded_slot = function (self)
 	-- function 21
-	local get_selected_loadout_slot_index = self.parent:get_selected_loadout_slot_index()
+	local parent = self.parent
+	local selected_loadout_slot_index = parent:get_selected_loadout_slot_index()
 
-	if get_selected_loadout_slot_index ~= self._selected_loadout_slot_index then
-		local slots_by_slot_index = InventorySettings.slots_by_slot_index
+	if selected_loadout_slot_index ~= self._selected_loadout_slot_index then
+		local slots = InventorySettings.slots_by_slot_index
 
-		for k, v in pairs(slots_by_slot_index) do
-			if v.slot_index == get_selected_loadout_slot_index then
-				local type = v.type
+		for _, slot in pairs(slots) do
+			if slot.slot_index == selected_loadout_slot_index then
+				local slot_type = slot.type
 
-				if not (type == "melee" or type ~= "ranged") then
-					if self.world_previewer:wielded_slot_type() ~= type then
-						self.world_previewer:wield_weapon_slot(type)
+				if slot_type == "melee" or slot_type == "ranged" then
+					if self.world_previewer:wielded_slot_type() ~= slot_type then
+						self.world_previewer:wield_weapon_slot(slot_type)
 					end
 
 					break
@@ -634,17 +670,17 @@ HeroWindowBackgroundConsole._update_wielded_slot = function (self)
 			self.world_previewer:wield_weapon_slot("melee")
 		end
 
-		self._selected_loadout_slot_index = get_selected_loadout_slot_index
+		self._selected_loadout_slot_index = selected_loadout_slot_index
 	end
 end
 
 HeroWindowBackgroundConsole._hero_affiliation = function (self)
 	-- function 22
 	local hero_name = self.hero_name
-	local var_22_1 = FindProfileIndex(hero_name)
-	local var_22_2 = SPProfiles[var_22_1]
+	local profile_index = FindProfileIndex(hero_name)
+	local profile = SPProfiles[profile_index]
 
-	return not var_22_2 and var_22_2.affiliation
+	return not not profile and not not profile.affiliation
 end
 
 HeroWindowBackgroundConsole._populate_loadout = function (self)
@@ -652,89 +688,107 @@ HeroWindowBackgroundConsole._populate_loadout = function (self)
 	local world_previewer = self.world_previewer
 	local hero_name = self.hero_name
 	local career_index = self.career_index
-	local var_23_3 = FindProfileIndex(hero_name)
-	local var_23_4 = SPProfiles[var_23_3].careers[career_index]
-	local name = var_23_4.name
-	local _hero_affiliation = self:_hero_affiliation()
-	local var_23_7 = InventorySettings.slots_per_affiliation[_hero_affiliation]
-	local get = Managers.backend:get_interface("hero_attributes"):get(hero_name, "experience")
+	local profile_index = FindProfileIndex(hero_name)
+	local profile = SPProfiles[profile_index]
+	local career_data = profile.careers[career_index]
+	local career_name = career_data.name
+	local affiliation = self:_hero_affiliation()
+	local slots = InventorySettings.slots_per_affiliation[affiliation]
+	local hero_attributes = Managers.backend:get_interface("hero_attributes")
+	local get = hero_attributes:get(hero_name, "experience")
 
-	get = get or 0
+	if not get then
+		-- Nothing
+	end
 
-	local get_level = ExperienceSettings.get_level(get)
-	local is_unlocked_function, var_23_11, var_23_12, var_23_13 = var_23_4:is_unlocked_function(hero_name, get_level)
+	get = 0
 
-	if not (not not is_unlocked_function or var_23_12) then
-		local preview_items = var_23_4.preview_items
-		local preview_wield_slot = var_23_4.preview_wield_slot
-		local preview_animation = var_23_4.preview_animation
+	local hero_experience = get
 
-		if not preview_items then
-			for i, v in ipairs(preview_items) do
-				local item_name = v.item_name
-				local slot_type = ItemMasterList[item_name].slot_type
-				local var_23_19 = InventorySettings.slot_names_by_type[slot_type][1]
-				local var_23_20 = InventorySettings.slots_by_name[var_23_19]
+	::label_23_0::
 
-				world_previewer:equip_item(item_name, var_23_20)
+	local hero_level = ExperienceSettings.get_level(hero_experience)
+	local is_career_unlocked, reason, dlc_name, localized = career_data:is_unlocked_function(hero_name, hero_level)
+	local is_dlc = not is_career_unlocked and not not dlc_name
+
+	if is_dlc then
+		local preview_items = career_data.preview_items
+		local preview_wield_slot = career_data.preview_wield_slot
+		local preview_animation = career_data.preview_animation
+
+		if preview_items then
+			for _, item_data in ipairs(preview_items) do
+				local item_name = item_data.item_name
+				local item_template = ItemMasterList[item_name]
+				local slot_type = item_template.slot_type
+				local slot_names = InventorySettings.slot_names_by_type[slot_type]
+				local slot_name = slot_names[1]
+				local slot = InventorySettings.slots_by_name[slot_name]
+
+				world_previewer:equip_item(item_name, slot)
 			end
 
-			if not preview_wield_slot then
+			if preview_wield_slot then
 				world_previewer:wield_weapon_slot(preview_wield_slot)
 			end
 		end
 
-		local name_2 = var_23_4.name
-		local get_loadout_item = BackendUtils.get_loadout_item(name_2, "slot_hat")
+		local career_name = career_data.name
+		local item = BackendUtils.get_loadout_item(career_name, "slot_hat")
 
-		if not get_loadout_item then
-			local name_3 = get_loadout_item.data.name
-			local backend_id = get_loadout_item.backend_id
-			local slot_hat = InventorySettings.slots_by_name.slot_hat
+		if item then
+			local item_data = item.data
+			local item_name = item_data.name
+			local backend_id = item.backend_id
+			local slot = InventorySettings.slots_by_name.slot_hat
 
-			world_previewer:equip_item(name_3, slot_hat, backend_id)
+			world_previewer:equip_item(item_name, slot, backend_id)
 		end
 
-		local get_loadout_item_2 = BackendUtils.get_loadout_item(name_2, "slot_skin")
-		local flag = not get_loadout_item_2 and get_loadout_item_2.data
+		local skin_item = BackendUtils.get_loadout_item(career_name, "slot_skin")
+		local skin_item_data = not not skin_item and not not skin_item.data
 
-		preview_animation = not flag and flag.career_select_preview_animation and preview_animation
+		if skin_item_data and not skin_item_data.career_select_preview_animation then
+			-- Nothing
+		end
 
-		if not preview_animation then
+		if preview_animation then
 			self.world_previewer:play_character_animation(preview_animation)
 		end
 	else
-		local flag_2 = false
+		local post_crashify_exception = false
 
-		for k, v_2 in pairs(var_23_7) do
-			local var_23_29 = InventorySettings.slots_by_name[v_2]
-			local type = var_23_29.type
-			local get_temporary_loadout_item = self.parent:get_temporary_loadout_item(type)
+		for _, slot_name in pairs(slots) do
+			local slot = InventorySettings.slots_by_name[slot_name]
+			local slot_type = slot.type
+			local get_temporary_loadout_item = self.parent:get_temporary_loadout_item(slot_type)
 
-			get_temporary_loadout_item = get_temporary_loadout_item or BackendUtils.get_loadout_item(name, v_2)
+			get_temporary_loadout_item = not not get_temporary_loadout_item or not not BackendUtils.get_loadout_item(career_name, slot_name)
 
-			local var_23_32
+			local item, skip_wield_anim = get_temporary_loadout_item
 
-			if not get_temporary_loadout_item then
-				local name_4 = get_temporary_loadout_item.data.name
-				local type_2 = var_23_29.type
+			if item then
+				local item_data = item.data
+				local item_name = item_data.name
+				local item_slot_type = slot.type
+				local current_item_name = world_previewer:item_name_by_slot_type(item_slot_type)
 
-				if not (name_4 ~= world_previewer:item_name_by_slot_type(type_2) or type_2 == "melee" or type_2 ~= "ranged") then
-					local backend_id_2 = get_temporary_loadout_item.backend_id
-					local get_equipped_item_info = world_previewer:get_equipped_item_info(var_23_29)
+				if item_name ~= current_item_name or item_slot_type == "melee" or item_slot_type == "ranged" then
+					local backend_id = item.backend_id
+					local item_info = world_previewer:get_equipped_item_info(slot)
 
-					if not (not get_equipped_item_info and get_equipped_item_info.backend_id == backend_id_2) then
-						world_previewer:equip_item(name_4, var_23_29, backend_id_2)
+					if not item_info or item_info.backend_id ~= backend_id then
+						world_previewer:equip_item(item_name, slot, backend_id)
 					end
 				end
 			else
-				printf("[Cosmetic] Failed to equip slot %q for career %q in hero previewer", v_2, name)
+				printf("[Cosmetic] Failed to equip slot %q for career %q in hero previewer", slot_name, career_name)
 
-				flag_2 = true
+				post_crashify_exception = true
 			end
 		end
 
-		if not flag_2 then
+		if post_crashify_exception then
 			Crashify.print_exception("[Cosmetic]", "Failed to equip slot for career in hero previewer")
 		end
 	end
@@ -743,147 +797,151 @@ end
 HeroWindowBackgroundConsole._populate_temporary_loadout = function (self)
 	-- function 24
 	local world_previewer = self.world_previewer
-	local slots_by_slot_index = InventorySettings.slots_by_slot_index
+	local slots = InventorySettings.slots_by_slot_index
 	local parent = self.parent
-	local flag = false
+	local post_crashify_exception = false
 
-	for k, v in pairs(slots_by_slot_index) do
-		local type = v.type
-		local get_temporary_loadout_item, var_24_6 = parent:get_temporary_loadout_item(type)
+	for _, slot in pairs(slots) do
+		local slot_type = slot.type
+		local item, skip_wield_anim = parent:get_temporary_loadout_item(slot_type)
 
-		if not get_temporary_loadout_item then
-			local name = get_temporary_loadout_item.data.name
-			local type_2 = v.type
+		if item then
+			local item_data = item.data
+			local item_name = item_data.name
+			local item_slot_type = slot.type
+			local current_item_name = world_previewer:item_name_by_slot_type(item_slot_type)
 
-			if not (name ~= world_previewer:item_name_by_slot_type(type_2) or type_2 == "melee" or type_2 ~= "ranged") then
-				local backend_id = get_temporary_loadout_item.backend_id
-				local get_equipped_item_info = world_previewer:get_equipped_item_info(v)
-				local skin_name = get_equipped_item_info.skin_name
-				local skin = get_temporary_loadout_item.skin
-				local flag_2 = skin_name ~= skin
+			if item_name ~= current_item_name or item_slot_type == "melee" or item_slot_type == "ranged" then
+				local backend_id = item.backend_id
+				local item_info = world_previewer:get_equipped_item_info(slot)
+				local current_skin = item_info.skin_name
+				local optional_skin = item.skin
+				local should_reload_skin = current_skin ~= optional_skin
 
-				if not get_equipped_item_info and get_equipped_item_info.backend_id ~= backend_id or not flag_2 then
-					world_previewer:equip_item(name, v, backend_id, skin, var_24_6)
+				if not item_info or item_info.backend_id ~= backend_id or should_reload_skin then
+					world_previewer:equip_item(item_name, slot, backend_id, optional_skin, skip_wield_anim)
 
-					if not (var_24_6 or type_2 == "melee" or type_2 ~= "ranged") then
-						world_previewer:wield_weapon_slot(type_2)
+					if not skip_wield_anim and (item_slot_type == "melee" or item_slot_type == "ranged") then
+						world_previewer:wield_weapon_slot(item_slot_type)
 					end
-				elseif not (var_24_6 or type_2 == "melee" or type_2 ~= "ranged") then
-					world_previewer:wield_weapon_slot(type_2)
+				elseif not skip_wield_anim and (item_slot_type == "melee" or item_slot_type == "ranged") then
+					world_previewer:wield_weapon_slot(item_slot_type)
 				end
 			end
 		end
 	end
 end
 
-HeroWindowBackgroundConsole._is_button_pressed = function (arg_25_0, arg_25_1)
+HeroWindowBackgroundConsole._is_button_pressed = function (self, widget)
 	-- function 25
-	local button_hotspot = arg_25_1.content.button_hotspot
+	local content = widget.content
+	local hotspot = content.button_hotspot
 
-	if not button_hotspot.on_release then
-		button_hotspot.on_release = false
+	if hotspot.on_release then
+		hotspot.on_release = false
 
 		return true
 	end
 end
 
-HeroWindowBackgroundConsole._is_stepper_button_pressed = function (arg_26_0, arg_26_1)
+HeroWindowBackgroundConsole._is_stepper_button_pressed = function (self, widget)
 	-- function 26
-	local content = arg_26_1.content
-	local button_hotspot_left = content.button_hotspot_left
-	local button_hotspot_right = content.button_hotspot_right
+	local content = widget.content
+	local hotspot_left = content.button_hotspot_left
+	local hotspot_right = content.button_hotspot_right
 
-	if not button_hotspot_left.on_release then
-		button_hotspot_left.on_release = false
+	if hotspot_left.on_release then
+		hotspot_left.on_release = false
 
 		return true, -1
-	elseif not button_hotspot_right.on_release then
-		button_hotspot_right.on_release = false
+	elseif hotspot_right.on_release then
+		hotspot_right.on_release = false
 
 		return true, 1
 	end
 end
 
-HeroWindowBackgroundConsole._handle_input = function (self, arg_27_1, arg_27_2, arg_27_3)
+HeroWindowBackgroundConsole._handle_input = function (self, input_service, dt, t)
 	-- function 27
-	local detailed = self._widgets_by_name.detailed
+	local widgets_by_name = self._widgets_by_name
+	local detailed_widget = widgets_by_name.detailed
 
-	if not self._draw_character then
+	if self._draw_character then
 		-- Nothing
 	end
 end
 
-HeroWindowBackgroundConsole._exit = function (self, arg_28_1)
+HeroWindowBackgroundConsole._exit = function (self, selected_level)
 	-- function 28
 	self.exit = true
-	self.exit_level_id = arg_28_1
+	self.exit_level_id = selected_level
 end
 
-HeroWindowBackgroundConsole.draw = function (self, arg_29_1)
+HeroWindowBackgroundConsole.draw = function (self, dt)
 	-- function 29
 	local ui_renderer = self.ui_renderer
 	local ui_top_renderer = self.ui_top_renderer
 	local ui_scenegraph = self.ui_scenegraph
-	local window_input_service = self.parent:window_input_service()
+	local input_service = self.parent:window_input_service()
 
-	UIRenderer.begin_pass(ui_top_renderer, ui_scenegraph, window_input_service, arg_29_1, nil, self.render_settings)
+	UIRenderer.begin_pass(ui_top_renderer, ui_scenegraph, input_service, dt, nil, self.render_settings)
 
-	for i, v in ipairs(self._widgets) do
-		UIRenderer.draw_widget(ui_top_renderer, v)
+	for _, widget in ipairs(self._widgets) do
+		UIRenderer.draw_widget(ui_top_renderer, widget)
 	end
 
-	if not self._show_loading_overlay then
-		for i_2, v_2 in ipairs(self._loading_overlay_widgets) do
-			UIRenderer.draw_widget(ui_top_renderer, v_2)
+	if self._show_loading_overlay then
+		for _, widget in ipairs(self._loading_overlay_widgets) do
+			UIRenderer.draw_widget(ui_top_renderer, widget)
 		end
 	end
 
 	UIRenderer.end_pass(ui_top_renderer)
 
-	if not self._viewport_widget then
-		UIRenderer.begin_pass(ui_renderer, ui_scenegraph, window_input_service, arg_29_1, nil, self.render_settings)
+	if self._viewport_widget then
+		UIRenderer.begin_pass(ui_renderer, ui_scenegraph, input_service, dt, nil, self.render_settings)
 		UIRenderer.draw_widget(ui_renderer, self._viewport_widget)
 		UIRenderer.end_pass(ui_renderer)
-	elseif not self._background_widget then
-		UIRenderer.begin_pass(ui_renderer, ui_scenegraph, window_input_service, arg_29_1, nil, self.render_settings)
+	elseif self._background_widget then
+		UIRenderer.begin_pass(ui_renderer, ui_scenegraph, input_service, dt, nil, self.render_settings)
 		UIRenderer.draw_widget(ui_renderer, self._background_widget)
 		UIRenderer.end_pass(ui_renderer)
 	end
 end
 
-HeroWindowBackgroundConsole._play_sound = function (self, arg_30_1)
+HeroWindowBackgroundConsole._play_sound = function (self, event)
 	-- function 30
-	self.parent:play_sound(arg_30_1)
+	self.parent:play_sound(event)
 end
 
-HeroWindowBackgroundConsole._update_loading_overlay_fadeout_animation = function (self, arg_31_1)
+HeroWindowBackgroundConsole._update_loading_overlay_fadeout_animation = function (self, dt)
 	-- function 31
 	if not self._fadeout_loading_overlay then
 		return
 	end
 
-	local _loading_overlay_widgets_by_name = self._loading_overlay_widgets_by_name
-	local num = 255
-	local num_2 = 0
-	local num_3 = 9
+	local loading_overlay_widgets_by_name = self._loading_overlay_widgets_by_name
+	local start = 255
+	local target = 0
+	local speed = 9
 	local min = math.min
-	local num_4 = 1
+	local num = 1
 	local _fadeout_progress = self._fadeout_progress
 
-	_fadeout_progress = _fadeout_progress or 0
+	_fadeout_progress = not not _fadeout_progress or not not 0
 
-	local var_31_7 = min(num_4, _fadeout_progress + num_3 * arg_31_1)
-	local lerp = math.lerp(num, num_2, math.easeInCubic(var_31_7))
-	local loading_overlay = _loading_overlay_widgets_by_name.loading_overlay
-	local loading_overlay_loading_glow = _loading_overlay_widgets_by_name.loading_overlay_loading_glow
-	local loading_overlay_loading_frame = _loading_overlay_widgets_by_name.loading_overlay_loading_frame
+	local progress = min(num, _fadeout_progress + speed * dt)
+	local alpha = math.lerp(start, target, math.easeInCubic(progress))
+	local loading_overlay = loading_overlay_widgets_by_name.loading_overlay
+	local loading_overlay_loading_glow = loading_overlay_widgets_by_name.loading_overlay_loading_glow
+	local loading_overlay_loading_frame = loading_overlay_widgets_by_name.loading_overlay_loading_frame
 
-	loading_overlay.style.rect.color[1] = lerp
-	loading_overlay_loading_glow.style.texture_id.color[1] = lerp
-	loading_overlay_loading_frame.style.texture_id.color[1] = lerp
-	self._fadeout_progress = var_31_7
+	loading_overlay.style.rect.color[1] = alpha
+	loading_overlay_loading_glow.style.texture_id.color[1] = alpha
+	loading_overlay_loading_frame.style.texture_id.color[1] = alpha
+	self._fadeout_progress = progress
 
-	if var_31_7 == 1 then
+	if progress == 1 then
 		self._fadeout_loading_overlay = nil
 		self._fadeout_progress = nil
 		self._show_loading_overlay = false
@@ -892,11 +950,11 @@ end
 
 HeroWindowBackgroundConsole._handle_statistics_pressed = function (self)
 	-- function 32
-	local _statistics_activate = self:_statistics_activate()
+	local statistics_activate = self:_statistics_activate()
 
-	self.params.hero_statistics_active = not _statistics_activate
+	self.params.hero_statistics_active = not statistics_activate
 
-	if not _statistics_activate then
+	if statistics_activate then
 		self:_deactivate_statistics()
 	else
 		self:_activate_statistics()
@@ -905,23 +963,29 @@ end
 
 HeroWindowBackgroundConsole._statistics_activate = function (self)
 	-- function 33
-	return self._widgets_by_name.detailed.content.active
+	local widgets_by_name = self._widgets_by_name
+	local widget = widgets_by_name.detailed
+
+	return widget.content.active
 end
 
 HeroWindowBackgroundConsole._activate_statistics = function (self)
 	-- function 34
-	local detailed = self._widgets_by_name.detailed
+	local widgets_by_name = self._widgets_by_name
+	local widget = widgets_by_name.detailed
 
-	detailed.content.active = true
-	detailed.content.list_content.active = true
+	widget.content.active = true
+	widget.content.list_content.active = true
 
-	if detailed.content.scrollbar.percentage < 1 then
-		detailed.content.scrollbar.active = true
+	if widget.content.scrollbar.percentage < 1 then
+		widget.content.scrollbar.active = true
 	else
-		detailed.content.scrollbar.active = false
+		widget.content.scrollbar.active = false
 	end
 
-	detailed.style.drop_down_arrow.angle = math.pi
+	local drop_down_arrow = widget.style.drop_down_arrow
+
+	drop_down_arrow.angle = math.pi
 
 	self:_sync_statistics()
 end
@@ -932,121 +996,128 @@ HeroWindowBackgroundConsole._sync_statistics = function (self)
 		return
 	end
 
-	local HeroStatisticsTemplate = HeroStatisticsTemplate
-	local get_hero_statistics_by_template = UIUtils.get_hero_statistics_by_template(HeroStatisticsTemplate)
+	local template = HeroStatisticsTemplate
+	local layout = UIUtils.get_hero_statistics_by_template(template)
 
-	self:_populate_statistics(get_hero_statistics_by_template)
+	self:_populate_statistics(layout)
 end
 
 HeroWindowBackgroundConsole._deactivate_statistics = function (self)
 	-- function 36
-	local detailed = self._widgets_by_name.detailed
+	local widgets_by_name = self._widgets_by_name
+	local widget = widgets_by_name.detailed
 
-	detailed.content.active = false
-	detailed.content.list_content.active = false
-	detailed.content.scrollbar.active = false
-	detailed.style.drop_down_arrow.angle = 0
+	widget.content.active = false
+	widget.content.list_content.active = false
+	widget.content.scrollbar.active = false
+
+	local drop_down_arrow = widget.style.drop_down_arrow
+
+	drop_down_arrow.angle = 0
 end
 
-HeroWindowBackgroundConsole._update_statistics_widget = function (self, arg_37_1, arg_37_2)
+HeroWindowBackgroundConsole._update_statistics_widget = function (self, input_service, dt)
 	-- function 37
-	local detailed = self._widgets_by_name.detailed
+	local widgets_by_name = self._widgets_by_name
+	local widget = widgets_by_name.detailed
 
-	if not detailed.content.active then
+	if not widget.content.active then
 		return
 	end
 
-	local get = arg_37_1:get("gamepad_right_axis")
+	local gamepad_input_axis = input_service:get("gamepad_right_axis")
 
-	if not (not get and not (Vector3.length(get) > 0.01)) then
-		local scroll_value = detailed.content.scrollbar.scroll_value
+	if gamepad_input_axis and Vector3.length(gamepad_input_axis) > 0.01 then
+		local current_scroll_value = widget.content.scrollbar.scroll_value
 
-		detailed.content.scrollbar.scroll_value = math.clamp(scroll_value + get.y * arg_37_2 * 5, 0, 1)
+		widget.content.scrollbar.scroll_value = math.clamp(current_scroll_value + gamepad_input_axis.y * dt * 5, 0, 1)
 	end
 
-	local size = scenegraph_definition.detailed_button.size
-	local size_2 = scenegraph_definition.detailed_list.size
-	local list_style = detailed.style.list_style
-	local var_37_6 = list_style.list_member_offset[2]
+	local detailed_button_size = scenegraph_definition.detailed_button.size
+	local detailed_list_size = scenegraph_definition.detailed_list.size
+	local list_style = widget.style.list_style
+	local list_member_offset_y = list_style.list_member_offset[2]
 	local num_draws = list_style.num_draws
-	local var_37_8
+	local total_size
 
 	if num_draws == 0 then
-		var_37_8 = math.abs(var_37_6)
+		total_size = math.abs(list_member_offset_y)
 	else
-		var_37_8 = math.abs(var_37_6 * num_draws)
+		total_size = math.abs(list_member_offset_y * num_draws)
 	end
 
-	local max = math.max(var_37_8 - size_2[2], 0)
-	local scenegraph_id = list_style.scenegraph_id
-	local local_position = self.ui_scenegraph[scenegraph_id].local_position
-	local num = 1 - detailed.content.scrollbar.scroll_value
+	local scroll_height = math.max(total_size - detailed_list_size[2], 0)
+	local list_scenegraph_id = list_style.scenegraph_id
+	local scenegraph_node = self.ui_scenegraph[list_scenegraph_id]
+	local scenegraph_pos = scenegraph_node.local_position
+	local value = 1 - widget.content.scrollbar.scroll_value
 
-	local_position[2] = -size[2] + max * num
+	scenegraph_pos[2] = -detailed_button_size[2] + scroll_height * value
 end
 
-HeroWindowBackgroundConsole._populate_statistics = function (self, arg_38_1)
+HeroWindowBackgroundConsole._populate_statistics = function (self, layout)
 	-- function 38
-	local detailed = self._widgets_by_name.detailed
-	local content = detailed.content
-	local list_style = detailed.style.list_style
+	local widgets_by_name = self._widgets_by_name
+	local widget = widgets_by_name.detailed
+	local content = widget.content
+	local style = widget.style.list_style
 	local list_content = content.list_content
-	local item_styles = list_style.item_styles
-	local count = #arg_38_1
+	local item_styles = style.item_styles
+	local num_entries = #layout
 
-	for i = 1, count do
-		local var_38_6 = arg_38_1[i]
-		local str = ""
-		local str_2 = ""
-		local str_3 = ""
-		local type = var_38_6.type
+	for i = 1, num_entries do
+		local entry = layout[i]
+		local title = ""
+		local name = ""
+		local value = ""
+		local entry_type = entry.type
 
-		if type == "title" then
-			str = var_38_6.display_name
-		elseif type == "entry" then
-			str_2 = var_38_6.display_name
-			str_3 = var_38_6.value
+		if entry_type == "title" then
+			title = entry.display_name
+		elseif entry_type == "entry" then
+			name = entry.display_name
+			value = entry.value
 		end
 
-		local var_38_11 = list_content[i]
+		local content = list_content[i]
 
-		var_38_11.name = UIRenderer.crop_text_width(self.ui_renderer, str_2, 300, item_styles[i].name)
-		var_38_11.title = UIRenderer.crop_text_width(self.ui_renderer, str, 300, item_styles[i].title)
-		var_38_11.value = str_3
+		content.name = UIRenderer.crop_text_width(self.ui_renderer, name, 300, item_styles[i].name)
+		content.title = UIRenderer.crop_text_width(self.ui_renderer, title, 300, item_styles[i].title)
+		content.value = value
 	end
 
-	list_style.num_draws = count
+	style.num_draws = num_entries
 
-	self:_setup_tab_scrollbar(detailed)
+	self:_setup_tab_scrollbar(widget)
 end
 
-HeroWindowBackgroundConsole._setup_tab_scrollbar = function (arg_39_0, arg_39_1)
+HeroWindowBackgroundConsole._setup_tab_scrollbar = function (self, widget)
 	-- function 39
-	local size = scenegraph_definition.detailed_button.size
-	local size_2 = scenegraph_definition.detailed_list.size
-	local list_style = arg_39_1.style.list_style
-	local var_39_3 = list_style.list_member_offset[2]
+	local detailed_button_size = scenegraph_definition.detailed_button.size
+	local detailed_list_size = scenegraph_definition.detailed_list.size
+	local list_style = widget.style.list_style
+	local list_member_offset_y = list_style.list_member_offset[2]
 	local num_draws = list_style.num_draws
-	local var_39_5
+	local total_size
 
 	if num_draws == 0 then
-		var_39_5 = math.abs(var_39_3)
+		total_size = math.abs(list_member_offset_y)
 	else
-		var_39_5 = math.abs(var_39_3 * num_draws)
+		total_size = math.abs(list_member_offset_y * num_draws)
 	end
 
-	local min = math.min(size_2[2] / var_39_5, 1)
-	local scrollbar = arg_39_1.content.scrollbar
+	local percentage = math.min(detailed_list_size[2] / total_size, 1)
+	local scrollbar_content = widget.content.scrollbar
 
-	if min < 1 then
-		scrollbar.percentage = min
-		scrollbar.scroll_value = 1
+	if percentage < 1 then
+		scrollbar_content.percentage = percentage
+		scrollbar_content.scroll_value = 1
 
-		local num = 2
+		local scroll_step_multiplier = 2
 
-		scrollbar.scroll_amount = var_39_3 / (var_39_5 - size_2[2]) * num
+		scrollbar_content.scroll_amount = list_member_offset_y / (total_size - detailed_list_size[2]) * scroll_step_multiplier
 	else
-		scrollbar.percentage = 1
-		scrollbar.scroll_value = 1
+		scrollbar_content.percentage = 1
+		scrollbar_content.scroll_value = 1
 	end
 end

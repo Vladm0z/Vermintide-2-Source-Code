@@ -1,15 +1,14 @@
 -- chunkname: @scripts/ui/active_event/active_event_popup_definitions.lua
 
-local num = 1920
-local num_2 = 1080
-local num_3 = 50
-local num_4 = 600
-local num_5 = 900
+local SIZE_X, SIZE_Y = 1920, 1080
+local content_margin = 50
+local window_width = 600
+local window_height = 900
 
 local_require("scripts/ui/views/deus_menu/ui_widgets_deus")
 
-local num_6 = num_4 - num_3 * 2
-local tbl = {
+local content_width = window_width - content_margin * 2
+local scenegraph_definition = {
 	screen = {
 		scale = "fit",
 		position = {
@@ -18,8 +17,8 @@ local tbl = {
 			UILayer.item_display_popup
 		},
 		size = {
-			num,
-			num_2
+			SIZE_X,
+			SIZE_Y
 		}
 	},
 	background = {
@@ -46,8 +45,8 @@ local tbl = {
 			2
 		},
 		size = {
-			num_4,
-			num_5
+			window_width,
+			window_height
 		}
 	},
 	logo = {
@@ -88,8 +87,8 @@ local tbl = {
 			10
 		},
 		size = {
-			num_4,
-			num_5
+			window_width,
+			window_height
 		}
 	},
 	body_text = {
@@ -135,7 +134,7 @@ local tbl = {
 		}
 	}
 }
-local tbl_2 = {
+local title_text_style = {
 	word_wrap = true,
 	upper_case = false,
 	localize = false,
@@ -160,9 +159,9 @@ local tbl_2 = {
 		2
 	}
 }
-local flag = true
-local flag_2 = true
-local tbl_3 = {
+local disable_with_gamepad = true
+local skip_side_detail = true
+local widget_definitions = {
 	logo = UIWidgets.create_simple_texture("hero_view_home_logo", "logo", nil, nil, nil, {
 		-234,
 		-236.39999999999998,
@@ -184,8 +183,8 @@ local tbl_3 = {
 	}),
 	window_top_detail = UIWidgets.create_simple_texture("tab_selection_01_bottom", "window_top_detail"),
 	window_frame = UIWidgets.create_frame("window", {
-		tbl.window.size[1] + 50,
-		tbl.window.size[2] + 50
+		scenegraph_definition.window.size[1] + 50,
+		scenegraph_definition.window.size[2] + 50
 	}, "menu_frame_02", 5),
 	screen_background = UIWidgets.create_simple_rect("screen", {
 		50,
@@ -193,52 +192,70 @@ local tbl_3 = {
 		0,
 		0
 	}),
-	body_text = UIWidgets.create_simple_text("not_assigned", "body_text", nil, nil, tbl_2),
-	close_button = UIWidgets.create_default_button("close_button", tbl.close_button.size, nil, nil, "n/a", nil, nil, nil, 34, flag, flag_2)
+	body_text = UIWidgets.create_simple_text("not_assigned", "body_text", nil, nil, title_text_style),
+	close_button = UIWidgets.create_default_button("close_button", scenegraph_definition.close_button.size, nil, nil, "n/a", nil, nil, nil, 34, disable_with_gamepad, skip_side_detail)
 }
 
-function create_simple_action_button(arg_1_0, arg_1_1, arg_1_2, arg_1_3, arg_1_4, arg_1_5)
+function create_simple_action_button(scenegraph_id, size, button_text, frame_name, background_texture, icon_name)
 	-- function 1
-	arg_1_4 = arg_1_4 or "menu_frame_bg_06"
+	background_texture = not not background_texture or not not "menu_frame_bg_06"
 
-	local get_atlas_settings_by_texture_name = UIAtlasHelper.get_atlas_settings_by_texture_name(arg_1_4)
-	local var_1_1
+	local background_texture_settings = UIAtlasHelper.get_atlas_settings_by_texture_name(background_texture)
+	local var_1_0
 
-	if not arg_1_3 then
-		var_1_1 = UIFrameSettings[arg_1_3]
+	if frame_name then
+		var_1_0 = UIFrameSettings[frame_name]
 
-		if not var_1_1 then
+		if not var_1_0 then
 			-- Nothing
 		end
 	end
 
-	var_1_1 = UIFrameSettings.menu_frame_02
+	var_1_0 = UIFrameSettings.menu_frame_02
+
+	local frame_settings = var_1_0
 
 	::label_1_0::
 
-	local var_1_2 = var_1_1.texture_sizes.corner[1]
+	local frame_width = frame_settings.texture_sizes.corner[1]
 
-	local function fn(arg_2_0, arg_2_1, arg_2_2, arg_2_3)
+	local function animate_button(content, style, hotspot, dt)
 		-- function 2
-		local hover_progress = arg_2_2.hover_progress
+		local hover_progress_2 = hotspot.hover_progress
 
-		hover_progress = hover_progress or 0
+		if not hover_progress_2 then
+			-- Nothing
+		end
 
-		local press_progress = arg_2_2.press_progress
+		hover_progress_2 = 0
 
-		press_progress = press_progress or 1
+		local hover_progress = hover_progress_2
 
-		if not arg_2_1.color then
-			arg_2_1.color[1] = 255 * hover_progress
+		::label_2_0::
 
-			if not arg_2_2.is_hover then
-				arg_2_1.color[1] = 255 * press_progress
+		local press_progress_2 = hotspot.press_progress
+
+		if not press_progress_2 then
+			-- Nothing
+		end
+
+		press_progress_2 = 1
+
+		local press_progress = press_progress_2
+
+		::label_2_1::
+
+		if style.color then
+			style.color[1] = 255 * hover_progress
+
+			if hotspot.is_hover then
+				style.color[1] = 255 * press_progress
 			end
-		elseif not arg_2_1.text_color then
-			arg_2_1.text_color[1] = 255 * hover_progress
+		elseif style.text_color then
+			style.text_color[1] = 255 * hover_progress
 
-			if not arg_2_2.is_hover then
-				arg_2_1.text_color[1] = 255 * press_progress
+			if hotspot.is_hover then
+				style.text_color[1] = 255 * press_progress
 			end
 		end
 	end
@@ -250,36 +267,52 @@ function create_simple_action_button(arg_1_0, arg_1_1, arg_1_2, arg_1_3, arg_1_4
 					style_id = "button_hotspot",
 					pass_type = "hotspot",
 					content_id = "button_hotspot",
-					content_change_function = function (self, arg_3_1, arg_3_2, arg_3_3)
+					content_change_function = function (content, style, _, dt)
 						-- function 3
-						local parent = self.parent
-						local hover_progress = self.hover_progress
+						local parent = content.parent
+						local hover_progress_2 = content.hover_progress
 
-						hover_progress = hover_progress or 0
-
-						local num = 15
-
-						if self.is_hover or not parent.is_gamepad_active or not self.is_selected then
-							hover_progress = math.min(hover_progress + arg_3_3 * num, 1)
-						else
-							hover_progress = math.max(hover_progress - arg_3_3 * num, 0)
+						if not hover_progress_2 then
+							-- Nothing
 						end
 
-						self.hover_progress = hover_progress
+						hover_progress_2 = 0
 
-						local press_progress = self.press_progress
+						local hover_progress = hover_progress_2
 
-						press_progress = press_progress or 1
+						::label_3_0::
 
-						local num_2 = 25
+						local hover_speed = 15
 
-						if not self.is_held then
-							press_progress = math.max(press_progress - arg_3_3 * num_2, 0.5)
+						if content.is_hover or parent.is_gamepad_active and content.is_selected then
+							hover_progress = math.min(hover_progress + dt * hover_speed, 1)
 						else
-							press_progress = math.min(press_progress + arg_3_3 * num_2, 1)
+							hover_progress = math.max(hover_progress - dt * hover_speed, 0)
 						end
 
-						self.press_progress = press_progress
+						content.hover_progress = hover_progress
+
+						local press_progress_2 = content.press_progress
+
+						if not press_progress_2 then
+							-- Nothing
+						end
+
+						press_progress_2 = 1
+
+						local press_progress = press_progress_2
+
+						::label_3_1::
+
+						local press_speed = 25
+
+						if content.is_held then
+							press_progress = math.max(press_progress - dt * press_speed, 0.5)
+						else
+							press_progress = math.min(press_progress + dt * press_speed, 1)
+						end
+
+						content.press_progress = press_progress
 					end
 				},
 				{
@@ -311,33 +344,33 @@ function create_simple_action_button(arg_1_0, arg_1_1, arg_1_2, arg_1_3, arg_1_4
 					style_id = "texture_hover",
 					pass_type = "texture",
 					texture_id = "texture_hover",
-					content_change_function = function (self, arg_4_1, arg_4_2, arg_4_3)
+					content_change_function = function (content, style, _, dt)
 						-- function 4
-						local button_hotspot = self.button_hotspot
+						local hotspot = content.button_hotspot
 
-						fn(self, arg_4_1, button_hotspot, arg_4_3)
+						animate_button(content, style, hotspot, dt)
 					end
 				},
 				{
 					style_id = "button_text",
 					pass_type = "text",
 					text_id = "button_text",
-					content_check_function = function (self)
+					content_check_function = function (content)
 						-- function 5
-						local button_hotspot = self.button_hotspot
+						local button_hotspot = content.button_hotspot
 
-						return (not not button_hotspot.disable_button or not button_hotspot.is_selected) and not button_hotspot.is_hover
+						return not button_hotspot.disable_button and not button_hotspot.is_selected or not not not button_hotspot.is_hover
 					end
 				},
 				{
 					style_id = "button_text_hovered",
 					pass_type = "text",
 					text_id = "button_text",
-					content_change_function = function (self, arg_6_1, arg_6_2, arg_6_3)
+					content_change_function = function (content, style, _, dt)
 						-- function 6
-						local button_hotspot = self.button_hotspot
+						local hotspot = content.button_hotspot
 
-						fn(self, arg_6_1, button_hotspot, arg_6_3)
+						animate_button(content, style, hotspot, dt)
 					end
 				}
 			}
@@ -350,7 +383,7 @@ function create_simple_action_button(arg_1_0, arg_1_1, arg_1_2, arg_1_3, arg_1_4
 			button_hotspot = {
 				allow_multi_hover = true
 			},
-			frame = var_1_1.texture,
+			frame = frame_settings.texture,
 			background = {
 				uvs = {
 					{
@@ -359,16 +392,16 @@ function create_simple_action_button(arg_1_0, arg_1_1, arg_1_2, arg_1_3, arg_1_4
 					},
 					{
 						1,
-						arg_1_1[2] / get_atlas_settings_by_texture_name.size[2]
+						size[2] / background_texture_settings.size[2]
 					}
 				},
-				texture_id = arg_1_4
+				texture_id = background_texture
 			},
-			button_text = arg_1_2 or "n/a"
+			button_text = not not button_text or not not "n/a"
 		},
 		style = {
 			button_hotspot = {
-				size = arg_1_1,
+				size = size,
 				offset = {
 					0,
 					0,
@@ -387,8 +420,8 @@ function create_simple_action_button(arg_1_0, arg_1_1, arg_1_2, arg_1_3, arg_1_4
 					0,
 					0
 				},
-				size = arg_1_1,
-				texture_size = arg_1_1
+				size = size,
+				texture_size = size
 			},
 			background_fade = {
 				color = {
@@ -402,21 +435,21 @@ function create_simple_action_button(arg_1_0, arg_1_1, arg_1_2, arg_1_3, arg_1_4
 					0,
 					1
 				},
-				texture_size = arg_1_1
+				texture_size = size
 			},
 			frame = {
 				vertical_alignment = "center",
 				horizontal_alignment = "center",
 				size = {
-					arg_1_1[1] - 4,
-					arg_1_1[2] - 4
+					size[1] - 4,
+					size[2] - 4
 				},
 				frame_margins = {
 					-4,
 					-4
 				},
-				texture_size = var_1_1.texture_size,
-				texture_sizes = var_1_1.texture_sizes,
+				texture_size = frame_settings.texture_size,
+				texture_sizes = frame_settings.texture_sizes,
 				offset = {
 					0,
 					2,
@@ -449,8 +482,8 @@ function create_simple_action_button(arg_1_0, arg_1_1, arg_1_2, arg_1_3, arg_1_4
 					3
 				},
 				size = {
-					arg_1_1[1],
-					math.min(arg_1_1[2] - 5, 80)
+					size[1],
+					math.min(size[2] - 5, 80)
 				}
 			},
 			glass_top = {
@@ -462,11 +495,11 @@ function create_simple_action_button(arg_1_0, arg_1_1, arg_1_2, arg_1_3, arg_1_4
 				},
 				offset = {
 					0,
-					arg_1_1[2] - 3,
+					size[2] - 3,
 					5
 				},
 				size = {
-					arg_1_1[1],
+					size[1],
 					3
 				}
 			},
@@ -483,7 +516,7 @@ function create_simple_action_button(arg_1_0, arg_1_1, arg_1_2, arg_1_3, arg_1_4
 					5
 				},
 				size = {
-					arg_1_1[1],
+					size[1],
 					3
 				}
 			},
@@ -497,8 +530,8 @@ function create_simple_action_button(arg_1_0, arg_1_1, arg_1_2, arg_1_3, arg_1_4
 				horizontal_alignment = "center",
 				use_shadow = true,
 				dynamic_font_size = true,
-				size = arg_1_1,
-				area_size = arg_1_1,
+				size = size,
+				area_size = size,
 				text_color = Colors.get_color_table_with_alpha("font_button_normal", 255),
 				offset = {
 					0,
@@ -516,8 +549,8 @@ function create_simple_action_button(arg_1_0, arg_1_1, arg_1_2, arg_1_3, arg_1_4
 				horizontal_alignment = "center",
 				use_shadow = true,
 				dynamic_font_size = true,
-				size = arg_1_1,
-				area_size = arg_1_1,
+				size = size,
+				area_size = size,
 				text_color = Colors.get_color_table_with_alpha("white", 255),
 				offset = {
 					0,
@@ -526,7 +559,7 @@ function create_simple_action_button(arg_1_0, arg_1_1, arg_1_2, arg_1_3, arg_1_4
 				}
 			}
 		},
-		scenegraph_id = arg_1_0,
+		scenegraph_id = scenegraph_id,
 		offset = {
 			0,
 			0,
@@ -535,21 +568,21 @@ function create_simple_action_button(arg_1_0, arg_1_1, arg_1_2, arg_1_3, arg_1_4
 	}
 end
 
-local tbl_4 = {
+local animation_definitions = {
 	on_enter = {
 		{
 			name = "fade_in",
 			start_progress = 0,
 			end_progress = 0.5,
-			init = function (arg_7_0, arg_7_1, arg_7_2, arg_7_3)
+			init = function (ui_scenegraph, scenegraph_definition, widgets, params)
 				-- function 7
-				arg_7_3.render_settings.alpha_multiplier = 0
+				params.render_settings.alpha_multiplier = 0
 			end,
-			update = function (arg_8_0, arg_8_1, arg_8_2, arg_8_3, arg_8_4)
+			update = function (ui_scenegraph, scenegraph_definition, widgets, progress, params)
 				-- function 8
-				arg_8_4.render_settings.alpha_multiplier = math.easeOutCubic(arg_8_3)
+				params.render_settings.alpha_multiplier = math.easeOutCubic(progress)
 			end,
-			on_complete = function (arg_9_0, arg_9_1, arg_9_2, arg_9_3)
+			on_complete = function (ui_scenegraph, scenegraph_definition, widgets, params)
 				-- function 9
 				return
 			end
@@ -560,24 +593,24 @@ local tbl_4 = {
 			name = "fade_out",
 			start_progress = 0,
 			end_progress = 0.15,
-			init = function (arg_10_0, arg_10_1, arg_10_2, arg_10_3)
+			init = function (ui_scenegraph, scenegraph_definition, widgets, params)
 				-- function 10
 				return
 			end,
-			update = function (arg_11_0, arg_11_1, arg_11_2, arg_11_3, arg_11_4)
+			update = function (ui_scenegraph, scenegraph_definition, widgets, progress, params)
 				-- function 11
-				arg_11_4.render_settings.alpha_multiplier = 1 - math.easeOutCubic(arg_11_3)
+				params.render_settings.alpha_multiplier = 1 - math.easeOutCubic(progress)
 			end,
-			on_complete = function (arg_12_0, arg_12_1, arg_12_2, arg_12_3)
+			on_complete = function (ui_scenegraph, scenegraph_definition, widgets, params)
 				-- function 12
-				if not arg_12_3.on_exit_func then
-					arg_12_3.on_exit_func()
+				if params.on_exit_func then
+					params.on_exit_func()
 				end
 			end
 		}
 	}
 }
-local tbl_5 = {
+local generic_input_actions = {
 	default = {
 		{
 			input_action = "d_vertical",
@@ -599,9 +632,9 @@ local tbl_5 = {
 }
 
 return {
-	scenegraph_definition = tbl,
-	widget_definitions = tbl_3,
-	animation_definitions = tbl_4,
-	generic_input_actions = tbl_5,
+	scenegraph_definition = scenegraph_definition,
+	widget_definitions = widget_definitions,
+	animation_definitions = animation_definitions,
+	generic_input_actions = generic_input_actions,
 	create_simple_action_button = create_simple_action_button
 }

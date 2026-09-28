@@ -1,10 +1,20 @@
 -- chunkname: @scripts/settings/dlcs/woods/woods_unit_extension_templates.lua
 
-local flag
+local str
 
-flag = not _G.GameSettingsDevelopment and not GameSettingsDevelopment.use_engine_optimized_ai_locomotion and "AILocomotionExtensionC" and "AILocomotionExtension"
+if _G.GameSettingsDevelopment and GameSettingsDevelopment.use_engine_optimized_ai_locomotion then
+	str = "AILocomotionExtensionC"
 
-return {
+	goto label_0_0
+end
+
+str = "AILocomotionExtension"
+
+local ai_locomotion_name = str
+
+::label_0_0::
+
+local unit_extension_templates = {
 	thornsister_thorn_wall_unit = {
 		go_type = "thornsister_thorn_wall_unit",
 		self_owned_extensions = {
@@ -36,3 +46,5 @@ return {
 		}
 	}
 }
+
+return unit_extension_templates

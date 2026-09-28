@@ -1,6 +1,6 @@
 -- chunkname: @scripts/ui/views/end_screens/defeat_end_screen_ui_definitions.lua
 
-local tbl = {
+local scenegraph = {
 	screen = {
 		scale = "fit",
 		position = {
@@ -70,7 +70,7 @@ local tbl = {
 		}
 	}
 }
-local tbl_2 = {
+local title_text_defeat_style = {
 	word_wrap = true,
 	upper_case = true,
 	localize = false,
@@ -86,41 +86,41 @@ local tbl_2 = {
 		2
 	}
 }
-local tbl_3 = {
-	title_text = UIWidgets.create_simple_text(Localize("end_screen_loss"), "title_text_defeat", nil, nil, tbl_2),
+local widgets = {
+	title_text = UIWidgets.create_simple_text(Localize("end_screen_loss"), "title_text_defeat", nil, nil, title_text_defeat_style),
 	banner = UIWidgets.create_simple_texture("end_screen_banner_defeat", "end_screen_banner_defeat"),
 	effect_1 = UIWidgets.create_simple_texture("end_screen_effect_defeat_1", "defeat_effect_1"),
 	effect_2 = UIWidgets.create_simple_texture("end_screen_effect_defeat_2", "defeat_effect_2")
 }
-local tbl_4 = {
+local animations = {
 	defeat = {
 		{
 			name = "entry",
 			start_progress = 1.4,
 			end_progress = 1.8,
-			init = function (arg_1_0, arg_1_1, arg_1_2, arg_1_3)
+			init = function (ui_scenegraph, scenegraph_definition, widgets, params)
 				-- function 1
-				arg_1_2.banner.style.texture_id.color[1] = 0
-				arg_1_2.effect_1.style.texture_id.color[1] = 0
-				arg_1_2.effect_2.style.texture_id.color[1] = 0
-				arg_1_2.title_text.style.text.text_color[1] = 0
-				arg_1_2.title_text.style.text_shadow.text_color[1] = 0
-				arg_1_3.draw_flags.alpha_multiplier = 1
+				widgets.banner.style.texture_id.color[1] = 0
+				widgets.effect_1.style.texture_id.color[1] = 0
+				widgets.effect_2.style.texture_id.color[1] = 0
+				widgets.title_text.style.text.text_color[1] = 0
+				widgets.title_text.style.text_shadow.text_color[1] = 0
+				params.draw_flags.alpha_multiplier = 1
 			end,
-			update = function (arg_2_0, arg_2_1, arg_2_2, arg_2_3, arg_2_4)
+			update = function (ui_scenegraph, scenegraph_definition, widgets, progress, params)
 				-- function 2
-				local easeCubic = math.easeCubic(arg_2_3)
-				local easeCubic_2 = math.easeCubic(1 - arg_2_3)
-				local catmullrom = math.catmullrom(easeCubic_2, 1.8, 0, 1, -1)
+				local anim_fraction = math.easeCubic(progress)
+				local size_fraction = math.easeCubic(1 - progress)
+				local anim_size_fraction = math.catmullrom(size_fraction, 1.8, 0, 1, -1)
 
-				arg_2_2.banner.style.texture_id.color[1] = 255 * easeCubic
+				widgets.banner.style.texture_id.color[1] = 255 * anim_fraction
 
-				local size = arg_2_1.end_screen_banner_defeat.size
+				local banner_default_size = scenegraph_definition.end_screen_banner_defeat.size
 
-				arg_2_0.end_screen_banner_defeat.size[1] = size[1] + size[1] * 3 * catmullrom
-				arg_2_0.end_screen_banner_defeat.size[2] = size[2] + size[2] * 3 * catmullrom
+				ui_scenegraph.end_screen_banner_defeat.size[1] = banner_default_size[1] + banner_default_size[1] * 3 * anim_size_fraction
+				ui_scenegraph.end_screen_banner_defeat.size[2] = banner_default_size[2] + banner_default_size[2] * 3 * anim_size_fraction
 			end,
-			on_complete = function (arg_3_0, arg_3_1, arg_3_2, arg_3_3)
+			on_complete = function (ui_scenegraph, scenegraph_definition, widgets, params)
 				-- function 3
 				return
 			end
@@ -129,27 +129,27 @@ local tbl_4 = {
 			name = "text",
 			start_progress = 1.8,
 			end_progress = 2.2,
-			init = function (arg_4_0, arg_4_1, arg_4_2, arg_4_3)
+			init = function (ui_scenegraph, scenegraph_definition, widgets, params)
 				-- function 4
 				return
 			end,
-			update = function (arg_5_0, arg_5_1, arg_5_2, arg_5_3, arg_5_4)
+			update = function (ui_scenegraph, scenegraph_definition, widgets, progress, params)
 				-- function 5
-				local easeCubic = math.easeCubic(arg_5_3)
-				local ease_in_exp = math.ease_in_exp(1 - arg_5_3)
-				local num = 255 * easeCubic
-				local text = arg_5_2.title_text.style.text
-				local text_shadow = arg_5_2.title_text.style.text_shadow
+				local anim_fraction = math.easeCubic(progress)
+				local anim_font_size_fraction = math.ease_in_exp(1 - progress)
+				local alpha = 255 * anim_fraction
+				local text_style = widgets.title_text.style.text
+				local text_shadow_style = widgets.title_text.style.text_shadow
 
-				text.text_color[1] = num
-				text_shadow.text_color[1] = num
+				text_style.text_color[1] = alpha
+				text_shadow_style.text_color[1] = alpha
 
-				local num_2 = 100 + 100 * ease_in_exp
+				local new_text_size = 100 + 100 * anim_font_size_fraction
 
-				text.font_size = num_2
-				text_shadow.font_size = num_2
+				text_style.font_size = new_text_size
+				text_shadow_style.font_size = new_text_size
 			end,
-			on_complete = function (arg_6_0, arg_6_1, arg_6_2, arg_6_3)
+			on_complete = function (ui_scenegraph, scenegraph_definition, widgets, params)
 				-- function 6
 				return
 			end
@@ -158,17 +158,18 @@ local tbl_4 = {
 			name = "effect_1",
 			start_progress = 1,
 			end_progress = 1.5,
-			init = function (arg_7_0, arg_7_1, arg_7_2, arg_7_3)
+			init = function (ui_scenegraph, scenegraph_definition, widgets, params)
 				-- function 7
 				return
 			end,
-			update = function (arg_8_0, arg_8_1, arg_8_2, arg_8_3, arg_8_4)
+			update = function (ui_scenegraph, scenegraph_definition, widgets, progress, params)
 				-- function 8
-				local num = 255 * math.easeCubic(arg_8_3)
+				local anim_fraction = math.easeCubic(progress)
+				local alpha = 255 * anim_fraction
 
-				arg_8_2.effect_1.style.texture_id.color[1] = num
+				widgets.effect_1.style.texture_id.color[1] = alpha
 			end,
-			on_complete = function (arg_9_0, arg_9_1, arg_9_2, arg_9_3)
+			on_complete = function (ui_scenegraph, scenegraph_definition, widgets, params)
 				-- function 9
 				return
 			end
@@ -177,17 +178,18 @@ local tbl_4 = {
 			name = "effect_2",
 			start_progress = 1.7,
 			end_progress = 3,
-			init = function (arg_10_0, arg_10_1, arg_10_2, arg_10_3)
+			init = function (ui_scenegraph, scenegraph_definition, widgets, params)
 				-- function 10
 				return
 			end,
-			update = function (arg_11_0, arg_11_1, arg_11_2, arg_11_3, arg_11_4)
+			update = function (ui_scenegraph, scenegraph_definition, widgets, progress, params)
 				-- function 11
-				local num = 255 * math.ease_out_quad(arg_11_3)
+				local anim_fraction = math.ease_out_quad(progress)
+				local alpha = 255 * anim_fraction
 
-				arg_11_2.effect_2.style.texture_id.color[1] = num
+				widgets.effect_2.style.texture_id.color[1] = alpha
 			end,
-			on_complete = function (arg_12_0, arg_12_1, arg_12_2, arg_12_3)
+			on_complete = function (ui_scenegraph, scenegraph_definition, widgets, params)
 				-- function 12
 				return
 			end
@@ -196,17 +198,17 @@ local tbl_4 = {
 			name = "fade_out",
 			start_progress = 6,
 			end_progress = 6.5,
-			init = function (arg_13_0, arg_13_1, arg_13_2, arg_13_3)
+			init = function (ui_scenegraph, scenegraph_definition, widgets, params)
 				-- function 13
 				return
 			end,
-			update = function (arg_14_0, arg_14_1, arg_14_2, arg_14_3, arg_14_4)
+			update = function (ui_scenegraph, scenegraph_definition, widgets, progress, params)
 				-- function 14
-				local easeInCubic = math.easeInCubic(arg_14_3)
+				local anim_fraction = math.easeInCubic(progress)
 
-				arg_14_4.draw_flags.alpha_multiplier = 1 - easeInCubic
+				params.draw_flags.alpha_multiplier = 1 - anim_fraction
 			end,
-			on_complete = function (arg_15_0, arg_15_1, arg_15_2, arg_15_3)
+			on_complete = function (ui_scenegraph, scenegraph_definition, widgets, params)
 				-- function 15
 				return
 			end
@@ -215,7 +217,7 @@ local tbl_4 = {
 }
 
 return {
-	scenegraph_definition = tbl,
-	widget_definitions = tbl_3,
-	animation_definitions = tbl_4
+	scenegraph_definition = scenegraph,
+	widget_definitions = widgets,
+	animation_definitions = animations
 }

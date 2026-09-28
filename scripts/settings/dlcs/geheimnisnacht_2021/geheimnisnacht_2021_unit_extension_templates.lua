@@ -1,6 +1,6 @@
 -- chunkname: @scripts/settings/dlcs/geheimnisnacht_2021/geheimnisnacht_2021_unit_extension_templates.lua
 
-return {
+local unit_extension_templates = {
 	geheimnisnacht_2021_altar = {
 		go_type = "geheimnisnacht_2021_altar",
 		self_owned_extensions = {
@@ -19,3 +19,5 @@ return {
 		}
 	}
 }
+
+return unit_extension_templates

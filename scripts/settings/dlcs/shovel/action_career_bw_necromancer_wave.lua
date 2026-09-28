@@ -2,54 +2,54 @@
 
 ActionCareerBWNecromancerWave = class(ActionCareerBWNecromancerWave, ActionBase)
 
-ActionCareerBWNecromancerWave.init = function (self, arg_1_1, arg_1_2, arg_1_3, arg_1_4, arg_1_5, arg_1_6, arg_1_7, arg_1_8)
+ActionCareerBWNecromancerWave.init = function (self, world, item_name, is_server, owner_unit, damage_unit, first_person_unit, weapon_unit, weapon_system)
 	-- function 1
-	ActionCareerBWNecromancerWave.super.init(self, arg_1_1, arg_1_2, arg_1_3, arg_1_4, arg_1_5, arg_1_6, arg_1_7, arg_1_8)
+	ActionCareerBWNecromancerWave.super.init(self, world, item_name, is_server, owner_unit, damage_unit, first_person_unit, weapon_unit, weapon_system)
 
-	self._career_extension = ScriptUnit.extension(arg_1_4, "career_system")
-	self._inventory_extension = ScriptUnit.extension(arg_1_4, "inventory_system")
-	self._first_person_extension = ScriptUnit.has_extension(arg_1_4, "first_person_system")
-	self._talent_extension = ScriptUnit.extension(arg_1_4, "talent_system")
-	self._buff_extension = ScriptUnit.extension(arg_1_4, "buff_system")
+	self._career_extension = ScriptUnit.extension(owner_unit, "career_system")
+	self._inventory_extension = ScriptUnit.extension(owner_unit, "inventory_system")
+	self._first_person_extension = ScriptUnit.has_extension(owner_unit, "first_person_system")
+	self._talent_extension = ScriptUnit.extension(owner_unit, "talent_system")
+	self._buff_extension = ScriptUnit.extension(owner_unit, "buff_system")
 end
 
-ActionCareerBWNecromancerWave.client_owner_start_action = function (self, arg_2_1, arg_2_2, arg_2_3, arg_2_4, arg_2_5)
+ActionCareerBWNecromancerWave.client_owner_start_action = function (self, new_action, t, chain_action_data, power_level, action_init_data)
 	-- function 2
-	arg_2_5 = arg_2_5 or {}
+	action_init_data = not not action_init_data or not not {}
 
-	ActionCareerBWNecromancerWave.super.client_owner_start_action(self, arg_2_1, arg_2_2, arg_2_3, arg_2_4, arg_2_5)
+	ActionCareerBWNecromancerWave.super.client_owner_start_action(self, new_action, t, chain_action_data, power_level, action_init_data)
 
-	if not arg_2_3 then
+	if chain_action_data then
 		self:_play_vo()
 		self._first_person_extension:play_hud_sound_event("Play_career_necro_ability_withering_wave_start", nil, true)
-		self:_spawn_wave(arg_2_3.position:unbox(), arg_2_3.direction:unbox())
+		self:_spawn_wave(chain_action_data.position:unbox(), chain_action_data.direction:unbox())
 		self._career_extension:start_activated_ability_cooldown()
 	end
 end
 
-ActionCareerBWNecromancerWave.client_owner_post_update = function (arg_3_0, arg_3_1, arg_3_2, arg_3_3, arg_3_4, arg_3_5)
+ActionCareerBWNecromancerWave.client_owner_post_update = function (self, dt, t, world, can_damage, current_time_in_action)
 	-- function 3
 	return
 end
 
-ActionCareerBWNecromancerWave.finish = function (self, arg_4_1)
+ActionCareerBWNecromancerWave.finish = function (self, reason)
 	-- function 4
 	self._inventory_extension:wield_previous_non_level_slot()
 end
 
-ActionCareerBWNecromancerWave._spawn_wave = function (self, arg_5_1, arg_5_2)
+ActionCareerBWNecromancerWave._spawn_wave = function (self, position, direction)
 	-- function 5
-	local network = Managers.state.network
-	local unit_game_object_id = network:unit_game_object_id(self.owner_unit)
+	local network_manager = Managers.state.network
+	local source_unit_id = network_manager:unit_game_object_id(self.owner_unit)
 
-	network.network_transmit:send_rpc_server("rpc_necromancer_create_curse_weave", unit_game_object_id, arg_5_1, arg_5_2)
+	network_manager.network_transmit:send_rpc_server("rpc_necromancer_create_curse_weave", source_unit_id, position, direction)
 end
 
 ActionCareerBWNecromancerWave._play_vo = function (self)
 	-- function 6
 	local owner_unit = self.owner_unit
-	local extension_input = ScriptUnit.extension_input(owner_unit, "dialogue_system")
-	local alloc_table = FrameTable.alloc_table()
+	local dialogue_input = ScriptUnit.extension_input(owner_unit, "dialogue_system")
+	local event_data = FrameTable.alloc_table()
 
-	extension_input:trigger_networked_dialogue_event("activate_ability", alloc_table)
+	dialogue_input:trigger_networked_dialogue_event("activate_ability", event_data)
 end

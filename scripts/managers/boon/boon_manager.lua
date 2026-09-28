@@ -4,24 +4,26 @@ require("scripts/managers/challenges/in_game_challenge_rewards")
 
 BoonManager = class(BoonManager)
 
-local function fn(arg_1_0)
+local function validate_boon(boon)
 	-- function 1
 	return true
 end
 
-local function fn_2(self, arg_2_1)
+local function filter_targets(targets, valid_targets)
 	-- function 2
-	if not (not arg_2_1 and self) then
-		return self
+	if not valid_targets or not targets then
+		return targets
 	end
 
-	for i = #self, 1, -1 do
-		if table.index_of(arg_2_1, self[i]) == -1 then
-			table.swap_delete(self, i)
+	for i = #targets, 1, -1 do
+		local idx = table.index_of(valid_targets, targets[i])
+
+		if idx == -1 then
+			table.swap_delete(targets, i)
 		end
 	end
 
-	return self
+	return targets
 end
 
 BoonManager.init = function (self)
@@ -37,170 +39,179 @@ BoonManager.destroy = function (self)
 	self:unregister_rpcs()
 end
 
-local tbl = {}
+local queued_target_filter_table = {}
 
-BoonManager.update = function (self, arg_5_1, arg_5_2)
+BoonManager.update = function (self, dt, t)
 	-- function 5
-	local _spawned_players_queue = self._spawned_players_queue
-	local count = #_spawned_players_queue
-	local _boons = self._boons
+	local spawned_players_queue = self._spawned_players_queue
+	local spawned_players_queue_n = #spawned_players_queue
+	local boons = self._boons
 
-	for i = 1, count do
-		tbl[1] = _spawned_players_queue[i]
+	for target_unit_id = 1, spawned_players_queue_n do
+		queued_target_filter_table[1] = spawned_players_queue[target_unit_id]
 
-		for j = 1, #_boons do
-			self:_activate_boon(_boons[j], tbl)
+		for boon_id = 1, #boons do
+			self:_activate_boon(boons[boon_id], queued_target_filter_table)
 		end
 	end
 
-	table.clear_array(_spawned_players_queue, count)
+	table.clear_array(spawned_players_queue, spawned_players_queue_n)
 end
 
-BoonManager.add_boon = function (self, arg_6_1, arg_6_2, arg_6_3, arg_6_4, arg_6_5)
+BoonManager.add_boon = function (self, owner, reward_id, consume_type, consume_value, reactivation_rule)
 	-- function 6
-	local _unique_id = self._unique_id
+	local unique_id = self._unique_id
 
-	self._unique_id = _unique_id + 1
+	self._unique_id = unique_id + 1
 
-	local tbl = {
+	local new_boon = {
 		active = true,
-		owner = arg_6_1,
-		reward_id = arg_6_2,
-		consume_type = arg_6_3,
-		consume_value = arg_6_4,
-		unique_id = _unique_id,
+		owner = owner,
+		reward_id = reward_id,
+		consume_type = consume_type,
+		consume_value = consume_value,
+		unique_id = unique_id,
 		reward_data = {},
-		reactivation_rule = arg_6_5
+		reactivation_rule = reactivation_rule
 	}
 
-	if not (not fn(tbl) and self:_has_been_consumed(tbl)) then
-		self:_activate_boon(tbl)
+	if validate_boon(new_boon) and not self:_has_been_consumed(new_boon) then
+		self:_activate_boon(new_boon)
 
-		if not self:_has_been_consumed(tbl) then
-			self._boons[#self._boons + 1] = tbl
+		if not self:_has_been_consumed(new_boon) then
+			self._boons[#self._boons + 1] = new_boon
 		end
 	end
 end
 
-BoonManager._activate_boon = function (self, arg_7_1, arg_7_2)
+BoonManager._activate_boon = function (self, boon, valid_targets)
 	-- function 7
-	local get = MechanismOverrides.get(InGameChallengeRewards[arg_7_1.reward_id])
+	local reward = MechanismOverrides.get(InGameChallengeRewards[boon.reward_id])
 
-	if not get and not arg_7_1.active then
-		local var_7_1 = fn_2(InGameChallengeRewardTargets[get.target](arg_7_1.owner), arg_7_2)
+	if reward and boon.active then
+		local targets = filter_targets(InGameChallengeRewardTargets[reward.target](boon.owner), valid_targets)
 
-		if not var_7_1 then
-			local count = #var_7_1
+		if targets then
+			local num_targets = #targets
 
-			if count > 0 then
-				if arg_7_1.consume_type == "charges" then
-					local min = math.min(count, arg_7_1.consume_value)
+			if num_targets > 0 then
+				if boon.consume_type == "charges" then
+					local max_targets = math.min(num_targets, boon.consume_value)
 
-					for i = min, arg_7_1.consume_value, -1 do
-						var_7_1[i] = nil
+					for i = max_targets, boon.consume_value, -1 do
+						targets[i] = nil
 					end
 
-					arg_7_1.consume_value = arg_7_1.consume_value - min
+					boon.consume_value = boon.consume_value - max_targets
 
-					if not self:_has_been_consumed(arg_7_1) then
-						self:remove_boon(arg_7_1.unique_id)
+					if self:_has_been_consumed(boon) then
+						self:remove_boon(boon.unique_id)
 					end
 				end
 
-				local var_7_4 = InGameChallengeRewardTypes[get.type](get, var_7_1, arg_7_1.owner)
+				local reward_data = InGameChallengeRewardTypes[reward.type](reward, targets, boon.owner)
 
-				if not var_7_4 then
-					table.merge(arg_7_1.reward_data, var_7_4)
+				if reward_data then
+					table.merge(boon.reward_data, reward_data)
 				end
 			end
 		end
 	end
 end
 
-BoonManager._deactivate_boon = function (arg_8_0, arg_8_1, arg_8_2)
+BoonManager._deactivate_boon = function (self, boon, valid_targets)
 	-- function 8
-	local get = MechanismOverrides.get(InGameChallengeRewards[arg_8_1.reward_id])
+	local reward = MechanismOverrides.get(InGameChallengeRewards[boon.reward_id])
 
-	if not get and not arg_8_1.reward_data then
-		local var_8_1 = fn_2(InGameChallengeRewardTargets[get.target](arg_8_1.owner), arg_8_2)
+	if reward and boon.reward_data then
+		local targets = filter_targets(InGameChallengeRewardTargets[reward.target](boon.owner), valid_targets)
 
-		if not (not var_8_1 and not (#var_8_1 > 0)) then
-			local var_8_2 = InGameChallengeRewardRevokeTypes[get.type]
+		if targets then
+			local num_targets = #targets
 
-			if not var_8_2 then
-				var_8_2(get, var_8_1, arg_8_1.owner, arg_8_1.reward_data)
+			if num_targets > 0 then
+				local effect_revoke_function = InGameChallengeRewardRevokeTypes[reward.type]
 
-				arg_8_1.reward_data = {}
+				if effect_revoke_function then
+					effect_revoke_function(reward, targets, boon.owner, boon.reward_data)
+
+					boon.reward_data = {}
+				end
 			end
 		end
 	end
 end
 
-BoonManager._activate_player_boons = function (self, arg_9_1, arg_9_2)
+BoonManager._activate_player_boons = function (self, peer_id, local_player_id)
 	-- function 9
-	local unique_player_id = PlayerUtils.unique_player_id(arg_9_1, arg_9_2)
-	local PLAYER_AND_BOT_UNITS = Managers.state.side:get_side_from_player_unique_id(unique_player_id).PLAYER_AND_BOT_UNITS
-	local _boons = self._boons
+	local player_unique_id = PlayerUtils.unique_player_id(peer_id, local_player_id)
+	local side = Managers.state.side:get_side_from_player_unique_id(player_unique_id)
+	local player_and_bot_units = side.PLAYER_AND_BOT_UNITS
+	local boons = self._boons
 
-	for i = 1, #_boons do
-		local var_9_3 = _boons[i]
+	for boon_id = 1, #boons do
+		local current_boon = boons[boon_id]
 
-		if var_9_3.owner ~= unique_player_id or not (not var_9_3.reactivation_rule and var_9_3.reactivation_rule(unique_player_id)) then
-			_boons[i].active = true
+		if current_boon.owner == player_unique_id then
+			local activate = not current_boon.reactivation_rule or not not current_boon.reactivation_rule(player_unique_id)
 
-			self:_activate_boon(_boons[i], PLAYER_AND_BOT_UNITS)
+			if activate then
+				boons[boon_id].active = true
+
+				self:_activate_boon(boons[boon_id], player_and_bot_units)
+			end
 		end
 	end
 end
 
-BoonManager._deactivate_player_boons = function (self, arg_10_1, arg_10_2)
+BoonManager._deactivate_player_boons = function (self, peer_id, local_player_id)
 	-- function 10
-	local unique_player_id = PlayerUtils.unique_player_id(arg_10_1, arg_10_2)
-	local get_party_from_player_id = Managers.party:get_party_from_player_id(arg_10_1, arg_10_2)
-	local flag = not get_party_from_player_id and Managers.state.side.side_by_party[get_party_from_player_id]
-	local flag_2 = not flag and flag.PLAYER_AND_BOT_UNITS
-	local _boons = self._boons
+	local player_unique_id = PlayerUtils.unique_player_id(peer_id, local_player_id)
+	local party = Managers.party:get_party_from_player_id(peer_id, local_player_id)
+	local side = not not party and not not Managers.state.side.side_by_party[party]
+	local player_and_bot_units = not not side and not not side.PLAYER_AND_BOT_UNITS
+	local boons = self._boons
 
-	for i = 1, #_boons do
-		if _boons[i].owner == unique_player_id then
-			self:_deactivate_boon(_boons[i], flag_2)
+	for boon_id = 1, #boons do
+		if boons[boon_id].owner == player_unique_id then
+			self:_deactivate_boon(boons[boon_id], player_and_bot_units)
 
-			_boons[i].active = false
+			boons[boon_id].active = false
 		end
 	end
 end
 
-BoonManager._has_been_consumed = function (arg_11_0, arg_11_1)
+BoonManager._has_been_consumed = function (self, boon)
 	-- function 11
-	if arg_11_1.consume_type == "time" then
+	if boon.consume_type == "time" then
 		return false
 	else
-		return arg_11_1.consume_value <= 0
+		return boon.consume_value <= 0
 	end
 end
 
-BoonManager.remove_boon = function (self, arg_12_1)
+BoonManager.remove_boon = function (self, boon_unique_id)
 	-- function 12
-	local _boons = self._boons
+	local boons = self._boons
 
-	for i = 1, #_boons do
-		if _boons[i].unique_id == arg_12_1 then
-			table.swap_delete(_boons, i)
+	for i = 1, #boons do
+		if boons[i].unique_id == boon_unique_id then
+			table.swap_delete(boons, i)
 
 			return
 		end
 	end
 end
 
-BoonManager.on_round_start = function (self, arg_13_1, arg_13_2)
+BoonManager.on_round_start = function (self, network_event_delegate, event_manager)
 	-- function 13
-	arg_13_2:register(self, "new_player_unit", "on_player_spawned")
-	arg_13_2:register(self, "on_player_joined_party", "on_player_joined_party")
-	arg_13_2:register(self, "on_player_left_party", "on_player_left_party")
-	arg_13_2:register(self, "on_clean_up_server_controlled_buffs", "on_clean_up_server_controlled_buffs")
-	arg_13_2:register(self, "on_bot_added", "on_bot_added")
-	arg_13_2:register(self, "on_bot_removed", "on_bot_removed")
-	self:register_rpcs(arg_13_1)
+	event_manager:register(self, "new_player_unit", "on_player_spawned")
+	event_manager:register(self, "on_player_joined_party", "on_player_joined_party")
+	event_manager:register(self, "on_player_left_party", "on_player_left_party")
+	event_manager:register(self, "on_clean_up_server_controlled_buffs", "on_clean_up_server_controlled_buffs")
+	event_manager:register(self, "on_bot_added", "on_bot_added")
+	event_manager:register(self, "on_bot_removed", "on_bot_removed")
+	self:register_rpcs(network_event_delegate)
 end
 
 BoonManager.on_round_end = function (self)
@@ -208,99 +219,99 @@ BoonManager.on_round_end = function (self)
 	self:unregister_rpcs()
 	table.clear_array(self._spawned_players_queue, #self._spawned_players_queue)
 
-	local event = Managers.state.event
+	local event_manager = Managers.state.event
 
-	event:unregister("on_clean_up_server_controlled_buffs", self)
-	event:unregister("on_player_left_party", self)
-	event:unregister("on_player_joined_party", self)
-	event:unregister("new_player_unit", self)
-	event:unregister("on_bot_added", self)
-	event:unregister("on_bot_removed", self)
+	event_manager:unregister("on_clean_up_server_controlled_buffs", self)
+	event_manager:unregister("on_player_left_party", self)
+	event_manager:unregister("on_player_joined_party", self)
+	event_manager:unregister("new_player_unit", self)
+	event_manager:unregister("on_bot_added", self)
+	event_manager:unregister("on_bot_removed", self)
 
-	local _boons = self._boons
+	local boons = self._boons
 
-	for i = #_boons, 1, -1 do
-		local var_14_2 = _boons[i]
+	for i = #boons, 1, -1 do
+		local boon = boons[i]
 
-		if var_14_2.consume_type == "round" then
-			var_14_2.consume_value = var_14_2.consume_value - 1
+		if boon.consume_type == "round" then
+			boon.consume_value = boon.consume_value - 1
 		end
 
-		if not self:_has_been_consumed(var_14_2) then
-			table.swap_delete(_boons, i)
+		if self:_has_been_consumed(boon) then
+			table.swap_delete(boons, i)
 		end
 	end
 end
 
-BoonManager.on_venture_start = function (arg_15_0)
+BoonManager.on_venture_start = function (self)
 	-- function 15
 	return
 end
 
 BoonManager.on_venture_end = function (self)
 	-- function 16
-	local _boons = self._boons
+	local boons = self._boons
 
-	for i = #_boons, 1, -1 do
-		local var_16_1 = _boons[i]
+	for i = #boons, 1, -1 do
+		local boon = boons[i]
 
-		if var_16_1.consume_type == "venture" then
-			var_16_1.consume_value = var_16_1.consume_value - 1
+		if boon.consume_type == "venture" then
+			boon.consume_value = boon.consume_value - 1
 		end
 
-		if not self:_has_been_consumed(var_16_1) then
-			table.swap_delete(_boons, i)
+		if self:_has_been_consumed(boon) then
+			table.swap_delete(boons, i)
 		end
 	end
 end
 
-BoonManager.on_player_spawned = function (arg_17_0, arg_17_1, arg_17_2, arg_17_3)
+BoonManager.on_player_spawned = function (self, player, unit, unique_id)
 	-- function 17
-	arg_17_0._spawned_players_queue[#arg_17_0._spawned_players_queue + 1] = arg_17_2
+	self._spawned_players_queue[#self._spawned_players_queue + 1] = unit
 end
 
-BoonManager.on_player_joined_party = function (self, arg_18_1, arg_18_2, arg_18_3, arg_18_4, arg_18_5)
+BoonManager.on_player_joined_party = function (self, peer_id, local_player_id, party_id, slot_id, is_bot)
 	-- function 18
-	self:_activate_player_boons(arg_18_1, arg_18_2)
+	self:_activate_player_boons(peer_id, local_player_id)
 end
 
-BoonManager.on_player_left_party = function (self, arg_19_1, arg_19_2, arg_19_3, arg_19_4)
+BoonManager.on_player_left_party = function (self, peer_id, local_player_id, party_id, slot_id_player)
 	-- function 19
-	self:_deactivate_player_boons(arg_19_1, arg_19_2)
+	self:_deactivate_player_boons(peer_id, local_player_id)
 end
 
-BoonManager.on_bot_added = function (self, arg_20_1)
+BoonManager.on_bot_added = function (self, bot_player)
 	-- function 20
-	self:_activate_player_boons(arg_20_1:network_id(), arg_20_1:local_player_id())
+	self:_activate_player_boons(bot_player:network_id(), bot_player:local_player_id())
 end
 
-BoonManager.on_bot_removed = function (self, arg_21_1)
+BoonManager.on_bot_removed = function (self, bot_player)
 	-- function 21
-	self:_deactivate_player_boons(arg_21_1:network_id(), arg_21_1:local_player_id())
+	self:_deactivate_player_boons(bot_player:network_id(), bot_player:local_player_id())
 end
 
-BoonManager.on_clean_up_server_controlled_buffs = function (self, arg_22_1)
+BoonManager.on_clean_up_server_controlled_buffs = function (self, unit)
 	-- function 22
-	local _boons = self._boons
+	local boons = self._boons
 
-	for i = 1, #_boons do
-		local var_22_1 = _boons[i]
-		local get = MechanismOverrides.get(InGameChallengeRewards[var_22_1.reward_id])
+	for i = 1, #boons do
+		local boon = boons[i]
+		local reward = MechanismOverrides.get(InGameChallengeRewards[boon.reward_id])
 
-		if not get and get.type ~= "buff" or not get.server_controlled then
-			var_22_1.reward_data[arg_22_1] = nil
+		if reward and reward.type == "buff" and reward.server_controlled then
+			boon.reward_data[unit] = nil
 		end
 	end
 end
 
-local tbl_2 = {}
+local rpcs = {}
 
-BoonManager.register_rpcs = function (arg_23_0, arg_23_1)
+BoonManager.register_rpcs = function (self, network_event_delegate)
 	-- function 23
 	return
 end
 
-BoonManager.unregister_rpcs = function (arg_24_0)
+BoonManager.unregister_rpcs = function (self)
 	-- function 24
 	return
 end

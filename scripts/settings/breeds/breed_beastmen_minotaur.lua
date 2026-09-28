@@ -1,11 +1,19 @@
 -- chunkname: @scripts/settings/breeds/breed_beastmen_minotaur.lua
 
-local scripts_utils_stagger_types = require("scripts/utils/stagger_types")
+local stagger_types = require("scripts/utils/stagger_types")
 local BotConstants = BotConstants
 
-BotConstants = not BotConstants and BotConstants.default.DEFAULT_BOT_THREAT_DIFFICULTY_DATA
+if BotConstants then
+	-- Nothing
+end
 
-local tbl = {
+BotConstants = BotConstants.default.DEFAULT_BOT_THREAT_DIFFICULTY_DATA
+
+local default_bot_threat_difficulty_data = BotConstants
+
+::label_0_0::
+
+local breed_data = {
 	detection_radius = 9999999,
 	player_locomotion_constrain_radius = 1.5,
 	walk_speed = 5,
@@ -273,19 +281,19 @@ local tbl = {
 	}
 }
 
-Breeds.beastmen_minotaur = table.create_copy(Breeds.beastmen_minotaur, tbl)
+Breeds.beastmen_minotaur = table.create_copy(Breeds.beastmen_minotaur, breed_data)
 
-local tbl_2 = {
+local pushed_data = {
 	ahead_dist = 1,
 	push_width = 3,
 	push_forward_offset = 1,
 	push_stagger_distance = 1,
 	player_pushed_speed = 7,
 	push_stagger_impact = {
-		scripts_utils_stagger_types.medium,
-		scripts_utils_stagger_types.medium,
-		scripts_utils_stagger_types.none,
-		scripts_utils_stagger_types.none
+		stagger_types.medium,
+		stagger_types.medium,
+		stagger_types.none,
+		stagger_types.none
 	},
 	push_stagger_duration = {
 		1.5,
@@ -294,7 +302,7 @@ local tbl_2 = {
 		0
 	}
 }
-local tbl_3 = {
+local AttackIntensityPerDifficulty = {
 	melee_slam = {
 		easy = {
 			running = 2,
@@ -468,7 +476,7 @@ local tbl_3 = {
 		}
 	}
 }
-local tbl_4 = {
+local action_data = {
 	follow = {
 		follow_target_function_name = "_follow_target_rat_ogre",
 		move_anim = "move_start_fwd",
@@ -568,7 +576,7 @@ local tbl_4 = {
 		charge_speed_max = 12,
 		catapult_on_push_z = 4,
 		catapult_on_push_other_targets = true,
-		difficulty_attack_intensity = tbl_3,
+		difficulty_attack_intensity = AttackIntensityPerDifficulty,
 		considerations = UtilityConsiderations.minotaur_charge,
 		charging_distance_thresholds = {
 			far = 10,
@@ -610,11 +618,11 @@ local tbl_4 = {
 		push_ai = {
 			stagger_distance = 1.5,
 			stagger_impact = {
-				scripts_utils_stagger_types.explosion,
-				scripts_utils_stagger_types.explosion,
-				scripts_utils_stagger_types.none,
-				scripts_utils_stagger_types.none,
-				scripts_utils_stagger_types.explosion
+				stagger_types.explosion,
+				stagger_types.explosion,
+				stagger_types.none,
+				stagger_types.none,
+				stagger_types.explosion
 			},
 			stagger_duration = {
 				3,
@@ -662,7 +670,7 @@ local tbl_4 = {
 		unblockable = false,
 		attack_time = 1.3333333333333333,
 		dodge_mitigation_radius_squared = 2.25,
-		difficulty_attack_intensity = tbl_3,
+		difficulty_attack_intensity = AttackIntensityPerDifficulty,
 		considerations = UtilityConsiderations.melee_slam,
 		attack_anim = {
 			"attack_slam",
@@ -673,11 +681,11 @@ local tbl_4 = {
 		blocked_difficulty_damage = BreedTweaks.difficulty_damage.boss_slam_attack_blocked,
 		difficulty_damage = BreedTweaks.difficulty_damage.boss_slam_attack,
 		stagger_impact = {
-			scripts_utils_stagger_types.weak,
-			scripts_utils_stagger_types.medium,
-			scripts_utils_stagger_types.none,
-			scripts_utils_stagger_types.none,
-			scripts_utils_stagger_types.weak
+			stagger_types.weak,
+			stagger_types.medium,
+			stagger_types.none,
+			stagger_types.none,
+			stagger_types.weak
 		},
 		bot_threats = {
 			{
@@ -685,10 +693,10 @@ local tbl_4 = {
 				start_time = 0.16666666666666666
 			}
 		},
-		hit_player_func = function (arg_1_0, arg_1_1, arg_1_2, arg_1_3)
+		hit_player_func = function (unit, blackboard, hit_unit, damage)
 			-- function 1
-			if not arg_1_3 then
-				arg_1_1.has_dealt_damage = true
+			if damage then
+				blackboard.has_dealt_damage = true
 			end
 		end
 	},
@@ -700,7 +708,7 @@ local tbl_4 = {
 		hit_react_type = "medium",
 		attack_intensity_type = "combo",
 		action_weight = 1,
-		difficulty_attack_intensity = tbl_3,
+		difficulty_attack_intensity = AttackIntensityPerDifficulty,
 		considerations = UtilityConsiderations.chaos_spawn_combo,
 		attacks = {
 			{
@@ -723,7 +731,7 @@ local tbl_4 = {
 				attack_anim = {
 					"attack_melee_combo"
 				},
-				push_units_in_the_way = tbl_2,
+				push_units_in_the_way = pushed_data,
 				bot_threats = {
 					{
 						range = 3.5,
@@ -771,7 +779,7 @@ local tbl_4 = {
 		action_weight = 1,
 		ignore_ai_damage = true,
 		damage_type = "cutting",
-		difficulty_attack_intensity = tbl_3,
+		difficulty_attack_intensity = AttackIntensityPerDifficulty,
 		considerations = UtilityConsiderations.minotaur_melee_shove,
 		attacks = {
 			{
@@ -817,11 +825,11 @@ local tbl_4 = {
 				push_ai = {
 					stagger_distance = 3,
 					stagger_impact = {
-						scripts_utils_stagger_types.explosion,
-						scripts_utils_stagger_types.heavy,
-						scripts_utils_stagger_types.none,
-						scripts_utils_stagger_types.none,
-						scripts_utils_stagger_types.explosion
+						stagger_types.explosion,
+						stagger_types.heavy,
+						stagger_types.none,
+						stagger_types.none,
+						stagger_types.explosion
 					},
 					stagger_duration = {
 						4.5,
@@ -831,7 +839,7 @@ local tbl_4 = {
 						4
 					}
 				},
-				bot_threat_difficulty_data = BotConstants,
+				bot_threat_difficulty_data = default_bot_threat_difficulty_data,
 				bot_threats = {
 					attack_left = {
 						{
@@ -872,7 +880,7 @@ local tbl_4 = {
 		action_weight = 1,
 		ignore_ai_damage = true,
 		damage_type = "cutting",
-		difficulty_attack_intensity = tbl_3,
+		difficulty_attack_intensity = AttackIntensityPerDifficulty,
 		considerations = UtilityConsiderations.minotaur_melee_shove,
 		attacks = {
 			{
@@ -911,11 +919,11 @@ local tbl_4 = {
 				push_ai = {
 					stagger_distance = 3,
 					stagger_impact = {
-						scripts_utils_stagger_types.explosion,
-						scripts_utils_stagger_types.heavy,
-						scripts_utils_stagger_types.none,
-						scripts_utils_stagger_types.none,
-						scripts_utils_stagger_types.explosion
+						stagger_types.explosion,
+						stagger_types.heavy,
+						stagger_types.none,
+						stagger_types.none,
+						stagger_types.explosion
 					},
 					stagger_duration = {
 						4.5,
@@ -925,7 +933,7 @@ local tbl_4 = {
 						4
 					}
 				},
-				bot_threat_difficulty_data = BotConstants,
+				bot_threat_difficulty_data = default_bot_threat_difficulty_data,
 				bot_threats = {
 					attack_headbutt = {
 						{
@@ -1028,8 +1036,8 @@ local tbl_4 = {
 	}
 }
 
-tbl_4.anti_ladder_melee_slam = table.clone(tbl_4.melee_slam)
-tbl_4.anti_ladder_melee_slam.considerations = UtilityConsiderations.anti_ladder_melee_slam
-tbl_4.fling_skaven = table.clone(tbl_4.melee_shove)
-tbl_4.fling_skaven.self_running_speed_threshold = 2
-BreedActions.beastmen_minotaur = table.create_copy(BreedActions.beastmen_minotaur, tbl_4)
+action_data.anti_ladder_melee_slam = table.clone(action_data.melee_slam)
+action_data.anti_ladder_melee_slam.considerations = UtilityConsiderations.anti_ladder_melee_slam
+action_data.fling_skaven = table.clone(action_data.melee_shove)
+action_data.fling_skaven.self_running_speed_threshold = 2
+BreedActions.beastmen_minotaur = table.create_copy(BreedActions.beastmen_minotaur, action_data)

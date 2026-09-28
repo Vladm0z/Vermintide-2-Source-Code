@@ -1,645 +1,738 @@
 -- chunkname: @scripts/entity_system/systems/ai/ai_navigation_system.lua
 
-local num = 5
-local num_2 = 1
-local alive = Unit.alive
-local tbl = {
+local WAIT_TIMER_MAX = 5
+local WAIT_TIMER_INCREMENT = 1
+local Unit_alive = Unit.alive
+local extensions = {
 	"AINavigationExtension",
 	"PlayerBotNavigation"
 }
 
 AINavigationSystem = class(AINavigationSystem, ExtensionSystemBase)
 
-AINavigationSystem.init = function (self, arg_1_1, arg_1_2)
+AINavigationSystem.init = function (self, entity_system_creation_context, system_name)
 	-- function 1
-	AINavigationSystem.super.init(self, arg_1_1, arg_1_2, tbl)
+	AINavigationSystem.super.init(self, entity_system_creation_context, system_name, extensions)
 
 	self.unit_extension_data = {}
 	self.frozen_unit_extension_data = {}
 	self.enabled_units = {}
 	self.delayed_units = {}
 	self.navbots_to_release = {}
-	self.nav_world = Managers.state.entity:system("ai_system"):nav_world()
+
+	local nav_world = Managers.state.entity:system("ai_system"):nav_world()
+
+	self.nav_world = nav_world
 	self._nav_safe_callbacks = {}
 end
 
-AINavigationSystem.destroy = function (arg_2_0)
+AINavigationSystem.destroy = function (self)
 	-- function 2
-	AINavigationSystem.super.destroy(arg_2_0)
+	AINavigationSystem.super.destroy(self)
 end
 
-AINavigationSystem.on_add_extension = function (arg_3_0, arg_3_1, arg_3_2, arg_3_3, arg_3_4)
+AINavigationSystem.on_add_extension = function (self, world, unit, extension_name, extension_init_data)
 	-- function 3
-	local on_add_extension = AINavigationSystem.super.on_add_extension(arg_3_0, arg_3_1, arg_3_2, arg_3_3, arg_3_4)
+	local extension = AINavigationSystem.super.on_add_extension(self, world, unit, extension_name, extension_init_data)
 
-	if arg_3_3 == "AINavigationExtension" then
-		arg_3_0.unit_extension_data[arg_3_2] = on_add_extension
+	if extension_name == "AINavigationExtension" then
+		self.unit_extension_data[unit] = extension
 	end
 
-	return on_add_extension
+	return extension
 end
 
-AINavigationSystem.on_remove_extension = function (self, arg_4_1, arg_4_2)
+AINavigationSystem.on_remove_extension = function (self, unit, extension_name)
 	-- function 4
-	self.frozen_unit_extension_data[arg_4_1] = nil
+	self.frozen_unit_extension_data[unit] = nil
 
-	self:_cleanup_extension(arg_4_1, arg_4_2)
-	AINavigationSystem.super.on_remove_extension(self, arg_4_1, arg_4_2)
+	self:_cleanup_extension(unit, extension_name)
+	AINavigationSystem.super.on_remove_extension(self, unit, extension_name)
 end
 
-AINavigationSystem.on_freeze_extension = function (self, arg_5_1, arg_5_2)
+AINavigationSystem.on_freeze_extension = function (self, unit, extension_name)
 	-- function 5
-	local var_5_0 = self.unit_extension_data[arg_5_1]
+	local var_5_0 = self.unit_extension_data[unit]
 
-	var_5_0 = var_5_0 or self.delayed_units[arg_5_1]
+	if not var_5_0 then
+		-- Nothing
+	end
 
-	fassert(var_5_0, "Unit was already frozen.")
+	var_5_0 = self.delayed_units[unit]
 
-	if var_5_0 == nil then
+	local extension = var_5_0
+
+	::label_5_0::
+
+	fassert(extension, "Unit was already frozen.")
+
+	if extension == nil then
 		return
 	end
 
-	self.frozen_unit_extension_data[arg_5_1] = var_5_0
+	self.frozen_unit_extension_data[unit] = extension
 
-	self:_cleanup_extension(arg_5_1, arg_5_2)
+	self:_cleanup_extension(unit, extension_name)
 end
 
-AINavigationSystem._cleanup_extension = function (self, arg_6_1, arg_6_2)
+AINavigationSystem._cleanup_extension = function (self, unit, extension_name)
 	-- function 6
-	self.unit_extension_data[arg_6_1] = nil
-	self.enabled_units[arg_6_1] = nil
+	self.unit_extension_data[unit] = nil
+	self.enabled_units[unit] = nil
 
-	if self.delayed_unit == arg_6_1 then
-		self.delayed_unit = next(self.delayed_units, arg_6_1)
+	if self.delayed_unit == unit then
+		self.delayed_unit = next(self.delayed_units, unit)
 	end
 
-	self.delayed_units[arg_6_1] = nil
+	self.delayed_units[unit] = nil
 end
 
-AINavigationSystem.freeze = function (self, arg_7_1, arg_7_2, arg_7_3)
+AINavigationSystem.freeze = function (self, unit, extension_name, reason)
 	-- function 7
-	local frozen_unit_extension_data = self.frozen_unit_extension_data
+	local frozen_extensions = self.frozen_unit_extension_data
 
-	if not frozen_unit_extension_data[arg_7_1] then
+	if frozen_extensions[unit] then
 		return
 	end
 
-	local var_7_1 = self.unit_extension_data[arg_7_1]
+	local var_7_0 = self.unit_extension_data[unit]
 
-	var_7_1 = var_7_1 or self.delayed_units[arg_7_1]
+	if not var_7_0 then
+		-- Nothing
+	end
 
-	fassert(var_7_1, "Unit to freeze didn't have unfrozen extension")
-	self:_cleanup_extension(arg_7_1, arg_7_2)
+	var_7_0 = self.delayed_units[unit]
 
-	self.unit_extension_data[arg_7_1] = nil
-	frozen_unit_extension_data[arg_7_1] = var_7_1
+	local extension = var_7_0
 
-	var_7_1:freeze()
+	::label_7_0::
+
+	fassert(extension, "Unit to freeze didn't have unfrozen extension")
+	self:_cleanup_extension(unit, extension_name)
+
+	self.unit_extension_data[unit] = nil
+	frozen_extensions[unit] = extension
+
+	extension:freeze()
 end
 
-AINavigationSystem.unfreeze = function (self, arg_8_1)
+AINavigationSystem.unfreeze = function (self, unit)
 	-- function 8
-	local var_8_0 = self.frozen_unit_extension_data[arg_8_1]
+	local extension = self.frozen_unit_extension_data[unit]
 
-	fassert(var_8_0, "Unit to unfreeze didn't have frozen extension")
+	fassert(extension, "Unit to unfreeze didn't have frozen extension")
 
-	self.frozen_unit_extension_data[arg_8_1] = nil
-	self.unit_extension_data[arg_8_1] = var_8_0
+	self.frozen_unit_extension_data[unit] = nil
+	self.unit_extension_data[unit] = extension
 
-	var_8_0:unfreeze()
+	extension:unfreeze()
 end
 
-AINavigationSystem.simulate_dummy_target = function (self, arg_9_1)
+AINavigationSystem.simulate_dummy_target = function (self, t)
 	-- function 9
-	local player_unit = Managers.player:local_player().player_unit
+	local local_player_unit = Managers.player:local_player().player_unit
 
-	if not player_unit then
+	if not local_player_unit then
 		return
 	end
 
-	local var_9_1 = POSITION_LOOKUP[player_unit]
-	local simulate_dummy_target = ConflictUtils.simulate_dummy_target(self.nav_world, var_9_1, arg_9_1)
+	local player_position = POSITION_LOOKUP[local_player_unit]
+	local dummy_pos_on_mesh = ConflictUtils.simulate_dummy_target(self.nav_world, player_position, t)
 
-	if not simulate_dummy_target then
-		QuickDrawer:sphere(simulate_dummy_target, 1)
+	if dummy_pos_on_mesh then
+		QuickDrawer:sphere(dummy_pos_on_mesh, 1)
 
-		for k, v in pairs(self.unit_extension_data) do
-			v._blackboard.goal_destination = Vector3Box(simulate_dummy_target)
+		for unit, extension in pairs(self.unit_extension_data) do
+			extension._blackboard.goal_destination = Vector3Box(dummy_pos_on_mesh)
 
-			v:move_to(simulate_dummy_target)
+			extension:move_to(dummy_pos_on_mesh)
 		end
 	end
 end
 
-AINavigationSystem.update = function (self, arg_10_1, arg_10_2)
+AINavigationSystem.update = function (self, context, t)
 	-- function 10
-	local dt = arg_10_1.dt
+	local dt = context.dt
 
-	self:update_extension("PlayerBotNavigation", dt, arg_10_1, arg_10_2)
+	self:update_extension("PlayerBotNavigation", dt, context, t)
 	self:update_navbots_to_release()
 	self:update_enabled()
-	self:update_destination(arg_10_2)
-	self:update_desired_velocity(arg_10_2, dt)
-	self:update_next_smart_object(arg_10_2, dt)
+	self:update_destination(t)
+	self:update_desired_velocity(t, dt)
+	self:update_next_smart_object(t, dt)
 
 	if not script_data.disable_crowd_dispersion then
 		self:update_dispersion()
 	end
 
-	local _nav_safe_callbacks = self._nav_safe_callbacks
-	local count = #_nav_safe_callbacks
+	local nav_safe_callbacks = self._nav_safe_callbacks
+	local num_callbacks = #nav_safe_callbacks
 
-	if count > 0 then
-		for i = 1, count do
-			_nav_safe_callbacks[i]()
+	if num_callbacks > 0 then
+		for i = 1, num_callbacks do
+			local safe_callback = nav_safe_callbacks[i]
+
+			safe_callback()
 		end
 
-		table.clear(_nav_safe_callbacks)
+		table.clear(nav_safe_callbacks)
 	end
 end
 
-AINavigationSystem.add_safe_navigation_callback = function (arg_11_0, arg_11_1)
+AINavigationSystem.add_safe_navigation_callback = function (self, callback)
 	-- function 11
-	arg_11_0._nav_safe_callbacks[#arg_11_0._nav_safe_callbacks + 1] = arg_11_1
+	self._nav_safe_callbacks[#self._nav_safe_callbacks + 1] = callback
 end
 
-AINavigationSystem.post_update = function (self, arg_12_1, arg_12_2)
+AINavigationSystem.post_update = function (self, context, t)
 	-- function 12
-	local dt = arg_12_1.dt
+	local dt = context.dt
 
 	self:update_position()
 end
 
-AINavigationSystem.add_navbot_to_release = function (self, arg_13_1)
+AINavigationSystem.add_navbot_to_release = function (self, unit)
 	-- function 13
-	local var_13_0 = self.unit_extension_data[arg_13_1]
+	local var_13_0 = self.unit_extension_data[unit]
 
-	var_13_0 = var_13_0 or self.delayed_units[arg_13_1]
-	self.navbots_to_release[arg_13_1] = var_13_0
+	if not var_13_0 then
+		-- Nothing
+	end
+
+	var_13_0 = self.delayed_units[unit]
+
+	local extension = var_13_0
+
+	::label_13_0::
+
+	self.navbots_to_release[unit] = extension
 end
 
 AINavigationSystem.update_navbots_to_release = function (self)
 	-- function 14
-	for k, v in pairs(self.navbots_to_release) do
-		v:release_bot()
+	for unit, extension in pairs(self.navbots_to_release) do
+		extension:release_bot()
 
-		self.navbots_to_release[k] = nil
-		self.enabled_units[k] = nil
+		self.navbots_to_release[unit] = nil
+		self.enabled_units[unit] = nil
 
-		if self.delayed_unit == k then
-			self.delayed_unit = next(self.delayed_units, k)
+		if self.delayed_unit == unit then
+			self.delayed_unit = next(self.delayed_units, unit)
 		end
 
-		self.delayed_units[k] = nil
+		self.delayed_units[unit] = nil
 	end
 end
 
 AINavigationSystem.update_enabled = function (self)
 	-- function 15
-	for k, v in pairs(self.unit_extension_data) do
-		local flag = v._nav_bot == nil or v._enabled
+	for unit, extension in pairs(self.unit_extension_data) do
+		local enabled = extension._nav_bot ~= nil and not not extension._enabled
 
-		self.enabled_units[k] = not flag and v and nil
+		self.enabled_units[unit] = (not enabled or not extension) and not not nil
 	end
 
-	for k_2, v_2 in pairs(self.delayed_units) do
-		local flag_2 = v_2._nav_bot == nil or v_2._enabled
+	for unit, extension in pairs(self.delayed_units) do
+		local enabled = extension._nav_bot ~= nil and not not extension._enabled
 
-		self.enabled_units[k_2] = not flag_2 and v_2 and nil
+		self.enabled_units[unit] = (not enabled or not extension) and not not nil
 	end
 end
 
-AINavigationSystem.update_destination = function (self, arg_16_1)
+AINavigationSystem.update_destination = function (self, t)
 	-- function 16
 	local POSITION_LOOKUP = POSITION_LOOKUP
-	local distance_squared = Vector3.distance_squared
+	local Vec3_dist_sq = Vector3.distance_squared
 	local navigation_group_manager = Managers.state.conflict.navigation_group_manager
 
-	for k, v in pairs(self.enabled_units) do
-		local _nav_bot = v._nav_bot
-		local flag = false
-		local flag_2 = false
+	for unit, extension in pairs(self.enabled_units) do
+		local nav_bot = extension._nav_bot
+		local is_computing_path = false
+		local is_navbot_following_path = false
 
-		if not _nav_bot then
-			flag_2 = GwNavBot.is_following_path(_nav_bot)
-			flag = GwNavBot.is_computing_new_path(_nav_bot)
+		if nav_bot then
+			is_navbot_following_path = GwNavBot.is_following_path(nav_bot)
+			is_computing_path = GwNavBot.is_computing_new_path(nav_bot)
 		end
 
-		local _blackboard = v._blackboard
+		local blackboard = extension._blackboard
 
-		_blackboard.is_navbot_following_path = flag_2
-		v._is_computing_path = flag
-		v._is_navbot_following_path = flag_2
+		blackboard.is_navbot_following_path = is_navbot_following_path
+		extension._is_computing_path = is_computing_path
+		extension._is_navbot_following_path = is_navbot_following_path
 
-		if not (not _nav_bot and flag or not (arg_16_1 > v._wait_timer)) then
-			local var_16_7 = POSITION_LOOKUP[k]
-			local unbox = v._destination:unbox()
-			local unbox_2 = v._wanted_destination:unbox()
-			local flag_3 = true
+		if nav_bot and not is_computing_path and t > extension._wait_timer then
+			local position_unit = POSITION_LOOKUP[unit]
+			local position_current_destination = extension._destination:unbox()
+			local position_wanted_destination = extension._wanted_destination:unbox()
+			local repath_allowed = true
+			local did_pathfind_just_finish = extension._has_started_pathfind
 
-			if not v._has_started_pathfind then
-				v._has_started_pathfind = nil
+			if did_pathfind_just_finish then
+				extension._has_started_pathfind = nil
 
-				local flag_4 = distance_squared(var_16_7, unbox) < 0.01
+				local already_at_current_destination = Vec3_dist_sq(position_unit, position_current_destination) < 0.01
+				local pathfind_was_successful = not not is_navbot_following_path or not not already_at_current_destination
 
-				if not (flag_2 or flag_4) then
-					_blackboard.no_path_found = nil
-					v._failed_move_attempts = 0
+				if pathfind_was_successful then
+					blackboard.no_path_found = nil
+					extension._failed_move_attempts = 0
 
-					if not v._nav_channel_disabled_on_fail then
-						GwNavBot.set_use_channel(_nav_bot, true)
+					if extension._nav_channel_disabled_on_fail then
+						GwNavBot.set_use_channel(nav_bot, true)
 
-						v._nav_channel_disabled_on_fail = false
+						extension._nav_channel_disabled_on_fail = false
 					end
 				else
-					flag_3 = false
-					_blackboard.no_path_found = true
-					v._failed_move_attempts = v._failed_move_attempts + 1
-					v._wait_timer = arg_16_1 + math.min(num, num_2 * v._failed_move_attempts)
+					repath_allowed = false
+					blackboard.no_path_found = true
+					extension._failed_move_attempts = extension._failed_move_attempts + 1
+					extension._wait_timer = t + math.min(WAIT_TIMER_MAX, WAIT_TIMER_INCREMENT * extension._failed_move_attempts)
 
-					if not (not v._far_pathing_allowed and self:setup_far_astar(var_16_7, unbox_2, v, _blackboard, _nav_bot)) then
-						v._failed_move_attempts = v._failed_move_attempts + 1
+					if extension._far_pathing_allowed and not self:setup_far_astar(position_unit, position_wanted_destination, extension, blackboard, nav_bot) then
+						extension._failed_move_attempts = extension._failed_move_attempts + 1
 
-						v._wanted_destination:store(unbox)
+						extension._wanted_destination:store(position_current_destination)
 
-						_blackboard.target_outside_navmesh = true
+						blackboard.target_outside_navmesh = true
 
-						if not RecycleSettings.destroy_no_path_found_time then
-							self.delayed_units[k] = v
-							self.unit_extension_data[k] = nil
-							v.delayed_check_time = arg_16_1 + 1.5
+						if RecycleSettings.destroy_no_path_found_time then
+							self.delayed_units[unit] = extension
+							self.unit_extension_data[unit] = nil
+							extension.delayed_check_time = t + 1.5
 
-							if not v.delayed_max_time then
-								v.delayed_max_time = arg_16_1 + RecycleSettings.destroy_no_path_found_time
+							if not extension.delayed_max_time then
+								extension.delayed_max_time = t + RecycleSettings.destroy_no_path_found_time
 							end
 						end
 					end
 
-					if not _blackboard.breed.use_navigation_path_splines then
-						GwNavBot.set_use_channel(_nav_bot, false)
+					local breed = blackboard.breed
 
-						v._nav_channel_disabled_on_fail = true
+					if breed.use_navigation_path_splines then
+						GwNavBot.set_use_channel(nav_bot, false)
+
+						extension._nav_channel_disabled_on_fail = true
 					end
 				end
 			end
 
-			if not _blackboard.far_path and not flag_2 then
-				local flag_5 = false
+			if blackboard.far_path and is_navbot_following_path then
+				local perform_new_path_attempt = false
+				local path_node_count = extension:get_path_node_count()
 
-				if v:get_path_node_count() > 0 then
-					local get_remaining_distance_from_progress_to_end_of_path = v:get_remaining_distance_from_progress_to_end_of_path()
+				if path_node_count > 0 then
+					local distance_to_end = extension:get_remaining_distance_from_progress_to_end_of_path()
 
-					flag_5 = not get_remaining_distance_from_progress_to_end_of_path and get_remaining_distance_from_progress_to_end_of_path < 1
+					perform_new_path_attempt = not not distance_to_end and distance_to_end < 1
 				end
 
-				if not flag_5 then
-					flag_3 = false
+				if perform_new_path_attempt then
+					repath_allowed = false
 
-					local unbox_3 = v._backup_destination:unbox()
-					local unbox_4 = v._original_backup_destination:unbox()
-					local get_group_from_position = navigation_group_manager:get_group_from_position(unbox_3)
-					local get_group_from_position_2 = navigation_group_manager:get_group_from_position(unbox_4)
-					local current_far_path_index = _blackboard.current_far_path_index
-					local num_far_path_nodes = _blackboard.num_far_path_nodes
-					local var_16_20
+					local backup_destination = extension._backup_destination:unbox()
+					local original_backup_destination = extension._original_backup_destination:unbox()
+					local new_group = navigation_group_manager:get_group_from_position(backup_destination)
+					local old_group = navigation_group_manager:get_group_from_position(original_backup_destination)
+					local far_path_index = blackboard.current_far_path_index
+					local num_far_path_nodes = blackboard.num_far_path_nodes
+					local next_path_pos
 
-					if not (get_group_from_position ~= get_group_from_position_2 or not (current_far_path_index < num_far_path_nodes - 1)) then
-						local far_path = _blackboard.far_path
-						local num_3 = current_far_path_index + 1
+					if new_group == old_group and far_path_index < num_far_path_nodes - 1 then
+						local far_path = blackboard.far_path
+						local next_far_path_index = far_path_index + 1
+						local next_nav_group = far_path[next_far_path_index]
 
-						var_16_20 = far_path[num_3]:get_group_center():unbox()
-						_blackboard.current_far_path_index = num_3
+						next_path_pos = next_nav_group:get_group_center():unbox()
+						blackboard.current_far_path_index = next_far_path_index
 					else
-						_blackboard.far_path = nil
-						_blackboard.current_far_path_index = nil
-						_blackboard.num_far_path_nodes = nil
-						var_16_20 = unbox_3
+						blackboard.far_path = nil
+						blackboard.current_far_path_index = nil
+						blackboard.num_far_path_nodes = nil
+						next_path_pos = backup_destination
 					end
 
-					GwNavBot.compute_new_path(_nav_bot, var_16_20)
-					v._wanted_destination:store(var_16_20)
-					v._destination:store(var_16_20)
+					GwNavBot.compute_new_path(nav_bot, next_path_pos)
+					extension._wanted_destination:store(next_path_pos)
+					extension._destination:store(next_path_pos)
 
-					v._is_computing_path = true
-					v._has_started_pathfind = true
-					_blackboard.next_smart_object_data.next_smart_object_id = nil
+					extension._is_computing_path = true
+					extension._has_started_pathfind = true
+					blackboard.next_smart_object_data.next_smart_object_id = nil
 				end
 			end
 
-			if not flag_3 then
-				local navigation_far_away_distance_sq = _blackboard.breed.navigation_far_away_distance_sq
+			if repath_allowed then
+				local breed = blackboard.breed
+				local navigation_far_away_distance_sq = breed.navigation_far_away_distance_sq
 
-				navigation_far_away_distance_sq = navigation_far_away_distance_sq or 36
+				if not navigation_far_away_distance_sq then
+					-- Nothing
+				end
 
-				local var_16_24 = distance_squared(unbox, unbox_2)
-				local var_16_25 = distance_squared(var_16_7, unbox_2)
-				local flag_6 = navigation_far_away_distance_sq < var_16_25
-				local flag_7 = not flag_6 and var_16_24 > 9 and not not flag_6 or var_16_24 > 0.01
-				local flag_8 = var_16_25 < 0.01
+				navigation_far_away_distance_sq = 36
 
-				if not ((GwNavBot.is_path_recomputation_needed(_nav_bot) or not not flag_8 or not flag_2) and flag_7) then
-					GwNavBot.compute_new_path(_nav_bot, unbox_2)
-					v._destination:store(unbox_2)
+				local far_away_distance_sq = navigation_far_away_distance_sq
 
-					v._is_computing_path = true
-					v._has_started_pathfind = true
-					v._wait_timer = 0
-					_blackboard.next_smart_object_data.next_smart_object_id = nil
+				::label_16_0::
+
+				local destination_change = Vec3_dist_sq(position_current_destination, position_wanted_destination)
+				local dist_to_destination = Vec3_dist_sq(position_unit, position_wanted_destination)
+				local destination_far_away = far_away_distance_sq < dist_to_destination
+				local change_large_enough = (not destination_far_away or not (destination_change > 9)) and not destination_far_away and destination_change > 0.01
+				local already_at_wanted_destination = dist_to_destination < 0.01
+				local is_path_recomputation_needed = GwNavBot.is_path_recomputation_needed(nav_bot)
+				local should_start_new_pathfind = not not is_path_recomputation_needed or not already_at_wanted_destination and not is_navbot_following_path or not not change_large_enough
+
+				if should_start_new_pathfind then
+					GwNavBot.compute_new_path(nav_bot, position_wanted_destination)
+					extension._destination:store(position_wanted_destination)
+
+					extension._is_computing_path = true
+					extension._has_started_pathfind = true
+					extension._wait_timer = 0
+					blackboard.next_smart_object_data.next_smart_object_id = nil
 				end
 			end
 		end
 	end
 
-	self:update_delayed_units(arg_16_1)
+	self:update_delayed_units(t)
 end
 
-AINavigationSystem.update_delayed_units = function (self, arg_17_1)
+AINavigationSystem.update_delayed_units = function (self, t)
 	-- function 17
 	local delayed_units = self.delayed_units
-	local delayed_unit = self.delayed_unit
+	local unit = self.delayed_unit
 
-	if not alive(delayed_unit) then
-		local var_17_2 = delayed_units[delayed_unit]
+	if Unit_alive(unit) then
+		local extension = delayed_units[unit]
 
-		if arg_17_1 > var_17_2.delayed_check_time then
-			self.unit_extension_data[delayed_unit] = var_17_2
-			self.delayed_unit = next(delayed_units, delayed_unit)
-			delayed_units[delayed_unit] = nil
+		if t > extension.delayed_check_time then
+			self.unit_extension_data[unit] = extension
+			self.delayed_unit = next(delayed_units, unit)
+			delayed_units[unit] = nil
 
-			local _nav_bot = var_17_2._nav_bot
+			local nav_bot = extension._nav_bot
 
-			if not _nav_bot and not GwNavBot.is_following_path(_nav_bot) then
-				var_17_2.delayed_max_time = nil
+			if nav_bot and GwNavBot.is_following_path(nav_bot) then
+				extension.delayed_max_time = nil
 
 				return
 			end
 
-			if arg_17_1 > var_17_2.delayed_max_time then
-				if not RecycleSettings.destroy_no_path_only_behind then
-					local conflict = Managers.state.conflict
-					local main_path_info = conflict.main_path_info
+			if t > extension.delayed_max_time then
+				if RecycleSettings.destroy_no_path_only_behind then
+					local conflict_director = Managers.state.conflict
+					local main_path_info = conflict_director.main_path_info
 
-					if not alive(main_path_info.behind_unit) then
-						local var_17_6 = conflict.main_path_player_info[main_path_info.behind_unit]
-						local closest_pos_at_main_path, var_17_8, var_17_9, var_17_10, var_17_11 = MainPathUtils.closest_pos_at_main_path(nil, POSITION_LOOKUP[delayed_unit])
+					if Unit_alive(main_path_info.behind_unit) then
+						local info = conflict_director.main_path_player_info[main_path_info.behind_unit]
+						local _, _, _, _, my_path_index = MainPathUtils.closest_pos_at_main_path(nil, POSITION_LOOKUP[unit])
+						local behind_a_break = my_path_index < info.path_index
 
-						if not (var_17_11 < var_17_6.path_index) then
-							Managers.state.conflict:destroy_unit(delayed_unit, var_17_2._blackboard, "main_path_blocked")
+						if behind_a_break then
+							Managers.state.conflict:destroy_unit(unit, extension._blackboard, "main_path_blocked")
 						end
 					end
 				else
-					Managers.state.conflict:destroy_unit(delayed_unit, var_17_2._blackboard, "no_path_found")
+					Managers.state.conflict:destroy_unit(unit, extension._blackboard, "no_path_found")
 				end
 			end
 		end
 	end
 
-	if self.delayed_unit == delayed_unit then
-		self.delayed_unit = next(delayed_units, delayed_unit)
+	if self.delayed_unit == unit then
+		self.delayed_unit = next(delayed_units, unit)
 	end
 end
 
-AINavigationSystem.setup_far_astar = function (self, arg_18_1, arg_18_2, arg_18_3, arg_18_4, arg_18_5)
+AINavigationSystem.setup_far_astar = function (self, p1, p2, extension, blackboard, nav_bot)
 	-- function 18
-	if not arg_18_4.far_path then
-		arg_18_4.far_path = nil
-		arg_18_4.current_far_path_index = nil
-		arg_18_4.num_far_path_nodes = nil
+	if blackboard.far_path then
+		blackboard.far_path = nil
+		blackboard.current_far_path_index = nil
+		blackboard.num_far_path_nodes = nil
 	end
 
-	local far_astar, var_18_1, var_18_2, var_18_3 = self:far_astar(arg_18_1, arg_18_2)
+	local found_path, next_path_pos, path, num_nodes = self:far_astar(p1, p2)
 
-	if not far_astar then
-		arg_18_3:move_to(var_18_1)
-		arg_18_3._backup_destination:store(arg_18_2)
-		arg_18_3._original_backup_destination:store(arg_18_2)
+	if found_path then
+		extension:move_to(next_path_pos)
+		extension._backup_destination:store(p2)
+		extension._original_backup_destination:store(p2)
 
-		arg_18_4.far_path = var_18_2
-		arg_18_4.current_far_path_index = 2
-		arg_18_4.num_far_path_nodes = var_18_3
+		blackboard.far_path = path
+		blackboard.current_far_path_index = 2
+		blackboard.num_far_path_nodes = num_nodes
 
-		GwNavBot.compute_new_path(arg_18_5, var_18_1)
-		arg_18_3._destination:store(var_18_1)
+		GwNavBot.compute_new_path(nav_bot, next_path_pos)
+		extension._destination:store(next_path_pos)
 
-		arg_18_3._is_computing_path = true
-		arg_18_3._has_started_pathfind = true
-		arg_18_3._wait_timer = 0
-		arg_18_4.next_smart_object_data.next_smart_object_id = nil
+		extension._is_computing_path = true
+		extension._has_started_pathfind = true
+		extension._wait_timer = 0
+		blackboard.next_smart_object_data.next_smart_object_id = nil
 
 		return true
 	end
 end
 
-AINavigationSystem.far_astar = function (arg_19_0, arg_19_1, arg_19_2)
+AINavigationSystem.far_astar = function (self, p1, p2)
 	-- function 19
-	local a_star_cached_between_positions, var_19_1 = Managers.state.conflict.navigation_group_manager:a_star_cached_between_positions(arg_19_1, arg_19_2)
+	local navigation_group_manager = Managers.state.conflict.navigation_group_manager
+	local path, total_path_length = navigation_group_manager:a_star_cached_between_positions(p1, p2)
 
-	if not a_star_cached_between_positions then
+	if not path then
 		return false
 	end
 
-	local count = #a_star_cached_between_positions
+	local num_nodes = #path
 
-	if count <= 1 then
+	if num_nodes <= 1 then
 		return false
 	end
 
-	local unbox = a_star_cached_between_positions[2]:get_group_center():unbox()
+	local nav_group = path[2]
+	local goal_pos = nav_group:get_group_center():unbox()
 
-	return true, unbox, a_star_cached_between_positions, count
+	return true, goal_pos, path, num_nodes
 end
 
-local num_3 = 0.0001
+local SPEED_EPSILON_SQ = 0.0001
 
-AINavigationSystem.update_desired_velocity = function (self, arg_20_1, arg_20_2)
+AINavigationSystem.update_desired_velocity = function (self, t, dt)
 	-- function 20
-	local num = 0
+	local raycasts_done = 0
 	local nav_world = self.nav_world
 
-	for k, v in pairs(self.enabled_units) do
-		local _blackboard = v._blackboard
-		local var_20_3
+	for unit, extension in pairs(self.enabled_units) do
+		local blackboard = extension._blackboard
+		local navbot_velocity
 
-		if _blackboard.move_state ~= "idle" then
-			var_20_3 = GwNavBot.output_velocity(v._nav_bot)
+		if blackboard.move_state ~= "idle" then
+			navbot_velocity = GwNavBot.output_velocity(extension._nav_bot)
 		else
-			var_20_3 = Vector3.zero()
+			navbot_velocity = Vector3.zero()
 		end
 
-		local var_20_4 = var_20_3
-		local var_20_5 = POSITION_LOOKUP[k]
-		local unbox = v._wanted_destination:unbox()
-		local distance_squared = Vector3.distance_squared(var_20_5, unbox)
-		local flag = distance_squared < 0.010000000000000002
-		local length_squared = Vector3.length_squared(var_20_3)
-		local locomotion_extension = _blackboard.locomotion_extension
+		local desired_velocity = navbot_velocity
+		local pos = POSITION_LOOKUP[unit]
+		local wanted_destination = extension._wanted_destination:unbox()
+		local distance_sq_to_destination = Vector3.distance_squared(pos, wanted_destination)
+		local at_destination = distance_sq_to_destination < 0.010000000000000002
+		local navbot_speed_sq = Vector3.length_squared(navbot_velocity)
+		local locomotion_extension = blackboard.locomotion_extension
+		local locomotion_speed_sq = Vector3.length_squared(locomotion_extension:current_velocity())
 
-		if Vector3.length_squared(locomotion_extension:current_velocity()) == 0 then
-			v._interpolating = false
+		if locomotion_speed_sq == 0 then
+			extension._interpolating = false
 		end
 
-		local _is_computing_path = v._is_computing_path
-		local _is_navbot_following_path = v._is_navbot_following_path
+		local is_computing_path = extension._is_computing_path
+		local is_navbot_following_path = extension._is_navbot_following_path
+		local need_to_interpolate = navbot_speed_sq < SPEED_EPSILON_SQ and not at_destination and not not is_computing_path and not not is_navbot_following_path
 
-		if (not (length_squared < num_3) or not not flag or not _is_computing_path) and _is_navbot_following_path or not v._interpolating then
-			v._interpolating = _is_computing_path
+		if need_to_interpolate or extension._interpolating then
+			extension._interpolating = is_computing_path
 
-			if not _is_computing_path then
-				local look = Quaternion.look(Vector3.flat(unbox - var_20_5), Vector3.up())
-				local _max_speed = v._max_speed
+			if is_computing_path then
+				local wanted_rotation = Quaternion.look(Vector3.flat(wanted_destination - pos), Vector3.up())
+				local speed = extension._max_speed
 
-				if not (not (num < 1) or not (arg_20_1 > v._raycast_timer)) then
-					v._raycast_timer = arg_20_1 + 1
-					num = num + 1
+				if raycasts_done < 1 and t > extension._raycast_timer then
+					extension._raycast_timer = t + 1
+					raycasts_done = raycasts_done + 1
 
-					local num_2 = var_20_5 + Quaternion.forward(look) * 2
+					local target_position = pos + Quaternion.forward(wanted_rotation) * 2
+					local result = GwNavQueries.raycango(nav_world, pos, target_position, extension._traverse_logic)
 
-					if not GwNavQueries.raycango(nav_world, var_20_5, num_2, v._traverse_logic) then
-						_blackboard.no_path_found = true
-						v._interpolating = nil
-						_max_speed = 0 or _max_speed
+					if not result then
+						blackboard.no_path_found = true
+						extension._interpolating = nil
+						speed = not not 0 or not not speed
 					end
 				end
 
-				local num_4 = locomotion_extension:get_rotation_speed() * locomotion_extension:get_rotation_speed_modifier() * arg_20_2
+				local rotation_speed = locomotion_extension:get_rotation_speed() * locomotion_extension:get_rotation_speed_modifier() * dt
 
-				if distance_squared < 9 then
-					num_4 = math.min(1, num_4 * 2)
-					_max_speed = _max_speed * 0.5
+				if distance_sq_to_destination < 9 then
+					rotation_speed = math.min(1, rotation_speed * 2)
+					speed = speed * 0.5
 				end
 
-				local world_rotation = Unit.world_rotation(k, 0)
-				local lerp = Quaternion.lerp(world_rotation, look, num_4)
+				local current_rotation = Unit.world_rotation(unit, 0)
+				local new_rotation = Quaternion.lerp(current_rotation, wanted_rotation, rotation_speed)
 
-				locomotion_extension:set_wanted_rotation(lerp)
+				locomotion_extension:set_wanted_rotation(new_rotation)
 
-				var_20_4 = Quaternion.forward(lerp) * _max_speed
+				desired_velocity = Quaternion.forward(new_rotation) * speed
 			end
 		end
 
-		var_20_4.z = 0
+		desired_velocity.z = 0
 
-		local length = Vector3.length(var_20_4)
+		local desired_speed = Vector3.length(desired_velocity)
 
-		v._current_speed = math.min(length, v._max_speed, v._current_speed + arg_20_2 * 3 * v._max_speed)
+		extension._current_speed = math.min(desired_speed, extension._max_speed, extension._current_speed + dt * 3 * extension._max_speed)
+		desired_velocity = Vector3.normalize(desired_velocity) * extension._current_speed
 
-		local num_5 = Vector3.normalize(var_20_4) * v._current_speed
-
-		locomotion_extension:set_wanted_velocity_flat(num_5)
+		locomotion_extension:set_wanted_velocity_flat(desired_velocity)
 	end
 end
 
-AINavigationSystem.update_next_smart_object = function (self, arg_21_1, arg_21_2)
+AINavigationSystem.update_next_smart_object = function (self, t, dt)
 	-- function 21
-	for k, v in pairs(self.enabled_units) do
-		local next_smart_object_data = v._blackboard.next_smart_object_data
-		local GwNavSmartObjectInterval = GwNavSmartObjectInterval
-		local _next_smartobject_interval = v._next_smartobject_interval
-		local num = 2
+	for unit, extension in pairs(self.enabled_units) do
+		local data = extension._blackboard.next_smart_object_data
+		local GNSMOI = GwNavSmartObjectInterval
+		local next_smartobject_interval = extension._next_smartobject_interval
+		local next_smartobject_max_distance = 2
 
-		if not GwNavBot.current_or_next_smartobject_interval(v._nav_bot, _next_smartobject_interval, num) then
-			local entrance_position, var_21_5 = GwNavSmartObjectInterval.entrance_position(_next_smartobject_interval)
-			local exit_position, var_21_7 = GwNavSmartObjectInterval.exit_position(_next_smartobject_interval)
-			local smartobject_id = GwNavSmartObjectInterval.smartobject_id(_next_smartobject_interval)
-			local system = Managers.state.entity:system("nav_graph_system")
+		if GwNavBot.current_or_next_smartobject_interval(extension._nav_bot, next_smartobject_interval, next_smartobject_max_distance) then
+			local entrance_pos, entrance_is_at_bot_progress_on_path = GNSMOI.entrance_position(next_smartobject_interval)
+			local exit_pos, exit_is_at_the_end_of_path = GNSMOI.exit_position(next_smartobject_interval)
+			local next_smart_object_id = GNSMOI.smartobject_id(next_smartobject_interval)
+			local nav_graph_system = Managers.state.entity:system("nav_graph_system")
 
-			if smartobject_id == -1 or not system:get_smart_object_type(smartobject_id) then
-				next_smart_object_data.next_smart_object_id = smartobject_id
+			if next_smart_object_id ~= -1 and nav_graph_system:get_smart_object_type(next_smart_object_id) then
+				data.next_smart_object_id = next_smart_object_id
 
-				next_smart_object_data.entrance_pos:store(entrance_position)
-				next_smart_object_data.exit_pos:store(exit_position)
+				data.entrance_pos:store(entrance_pos)
+				data.exit_pos:store(exit_pos)
 
-				next_smart_object_data.entrance_is_at_bot_progress_on_path = var_21_5
-				next_smart_object_data.exit_is_at_the_end_of_path = var_21_7
+				data.entrance_is_at_bot_progress_on_path = entrance_is_at_bot_progress_on_path
+				data.exit_is_at_the_end_of_path = exit_is_at_the_end_of_path
 
-				fassert(next_smart_object_data.next_smart_object_id)
+				fassert(data.next_smart_object_id)
 
-				next_smart_object_data.smart_object_type = system:get_smart_object_type(next_smart_object_data.next_smart_object_id)
-				next_smart_object_data.smart_object_data = system:get_smart_object_data(next_smart_object_data.next_smart_object_id)
+				data.smart_object_type = nav_graph_system:get_smart_object_type(data.next_smart_object_id)
+				data.smart_object_data = nav_graph_system:get_smart_object_data(data.next_smart_object_id)
 
-				fassert(LAYER_ID_MAPPING[next_smart_object_data.smart_object_type] ~= nil, "Invalid smart object type %s", next_smart_object_data.smart_object_type)
+				fassert(LAYER_ID_MAPPING[data.smart_object_type] ~= nil, "Invalid smart object type %s", data.smart_object_type)
 			end
 		else
-			next_smart_object_data.next_smart_object_id = nil
+			data.next_smart_object_id = nil
 		end
 
-		if not next_smart_object_data.next_smart_object_id then
-			local distance_squared = Vector3.distance_squared(next_smart_object_data.entrance_pos:unbox(), Unit.local_position(v._unit, 0))
+		if data.next_smart_object_id then
+			local dist_sq = Vector3.distance_squared(data.entrance_pos:unbox(), Unit.local_position(extension._unit, 0))
 
-			v._blackboard.is_in_smartobject_range = distance_squared < 1
+			extension._blackboard.is_in_smartobject_range = dist_sq < 1
 		end
 	end
 end
 
-AINavigationSystem.update_dispersion = function (self, arg_22_1, arg_22_2)
+AINavigationSystem.update_dispersion = function (self, t, dt)
 	-- function 22
-	for k, v in pairs(self.enabled_units) do
-		local update_logic_for_crowd_dispersion = GwNavBot.update_logic_for_crowd_dispersion(v._nav_bot)
+	for unit, extension in pairs(self.enabled_units) do
+		local action = GwNavBot.update_logic_for_crowd_dispersion(extension._nav_bot)
 
-		if update_logic_for_crowd_dispersion == 1 then
+		if action == 1 then
 			-- Nothing
-		elseif update_logic_for_crowd_dispersion == 2 then
+		elseif action == 2 then
 			-- Nothing
 		end
 	end
 end
 
-AINavigationSystem.update_position = function (self, arg_23_1, arg_23_2)
+AINavigationSystem.update_position = function (self, t, dt)
 	-- function 23
-	for k, v in pairs(self.enabled_units) do
-		if not v._nav_bot then
-			local local_position = Unit.local_position(v._unit, 0)
+	for unit, extension in pairs(self.enabled_units) do
+		if extension._nav_bot then
+			local position = Unit.local_position(extension._unit, 0)
 
-			GwNavBot.update_position(v._nav_bot, local_position)
+			GwNavBot.update_position(extension._nav_bot, position)
 		end
 	end
 end
 
-AINavigationSystem.update_debug_draw = function (self, arg_24_1)
+AINavigationSystem.update_debug_draw = function (self, t)
 	-- function 24
 	local drawer = Managers.state.debug:drawer({
 		mode = "immediate",
 		name = "AINavigationExtension"
 	})
-	local get = Colors.get("pink")
-	local get_2 = Colors.get("purple")
-	local var_24_3 = Vector3(0, 0, 0.01)
+	local enabled_color = Colors.get("pink")
+	local disabled_color = Colors.get("purple")
+	local offset = Vector3(0, 0, 0.01)
 
-	for k, v in pairs(self.unit_extension_data) do
-		local local_position = Unit.local_position(k, 0)
-		local var_24_5 = self.enabled_units[k]
-		local flag = not var_24_5 and get and get_2
-		local unbox = v._wanted_destination:unbox()
-		local unbox_2 = v._destination:unbox()
+	for unit, extension in pairs(self.unit_extension_data) do
+		local pos = Unit.local_position(unit, 0)
+		local enabled = self.enabled_units[unit]
+		local color = (not enabled or not enabled_color) and not not disabled_color
+		local wanted_destination = extension._wanted_destination:unbox()
+		local destination = extension._destination:unbox()
 
-		drawer:sphere(local_position, 0.1, flag)
-		drawer:sphere(unbox, 0.2, flag)
-		drawer:vector(local_position, unbox - local_position, flag)
+		drawer:sphere(pos, 0.1, color)
+		drawer:sphere(wanted_destination, 0.2, color)
+		drawer:vector(pos, wanted_destination - pos, color)
 
-		if Vector3.distance_squared(unbox, unbox_2) > 0.1 then
-			drawer:vector(local_position + var_24_3, unbox_2 - local_position, Colors.get("green"))
+		if Vector3.distance_squared(wanted_destination, destination) > 0.1 then
+			drawer:vector(pos + offset, destination - pos, Colors.get("green"))
 		end
 
-		if not var_24_5 then
-			local velocity = GwNavBot.velocity(v._nav_bot)
+		if enabled then
+			local velocity = GwNavBot.velocity(extension._nav_bot)
 
 			if Vector3.length(velocity) > 0 then
-				drawer:vector(local_position + Vector3.up(), Vector3.normalize(velocity), flag)
+				drawer:vector(pos + Vector3.up(), Vector3.normalize(velocity), color)
 			end
 		end
 
-		local next_smart_object_data = v._blackboard.next_smart_object_data
+		local blackboard = extension._blackboard
+		local data = blackboard.next_smart_object_data
 
-		if not next_smart_object_data.next_smart_object_id then
-			local unbox_3 = next_smart_object_data.entrance_pos:unbox()
-			local unbox_4 = next_smart_object_data.exit_pos:unbox()
-			local var_24_13 = drawer
+		if data.next_smart_object_id then
+			local entrance_pos = data.entrance_pos:unbox()
+			local exit_pos = data.exit_pos:unbox()
+			local var_24_0 = drawer
 			local sphere = drawer.sphere
-			local var_24_15 = unbox_3
+			local var_24_2 = entrance_pos
 			local num = 0.3
+			local get
+
+			if data.entrance_is_at_bot_progress_on_path then
+				get = Colors.get("pink")
+
+				if not get then
+					-- Nothing
+				end
+			end
+
+			get = Colors.get("red")
+
+			::label_24_0::
+
+			sphere(var_24_0, var_24_2, num, get)
+
+			local var_24_5 = drawer
+			local sphere_2 = drawer.sphere
+			local var_24_7 = exit_pos
+			local num_2 = 0.3
+			local get_2
+
+			if data.exit_is_at_the_end_of_path then
+				get_2 = Colors.get("pink")
+
+				if not get_2 then
+					-- Nothing
+				end
+			end
+
+			get_2 = Colors.get("red")
+
+			::label_24_1::
+
+			sphere_2(var_24_5, var_24_7, num_2, get_2)
+
+			local var_24_10 = drawer
+			local vector = drawer.vector
+			local var_24_12 = entrance_pos
+			local num_3 = exit_pos - entrance_pos
 			local get_3
 
-			if not next_smart_object_data.entrance_is_at_bot_progress_on_path then
+			if data.next_smart_object_id then
 				get_3 = Colors.get("pink")
 
 				if not get_3 then
@@ -649,99 +742,67 @@ AINavigationSystem.update_debug_draw = function (self, arg_24_1)
 
 			get_3 = Colors.get("red")
 
-			::label_24_0::
-
-			sphere(var_24_13, var_24_15, num, get_3)
-
-			local var_24_18 = drawer
-			local sphere_2 = drawer.sphere
-			local var_24_20 = unbox_4
-			local num_2 = 0.3
-			local get_4
-
-			if not next_smart_object_data.exit_is_at_the_end_of_path then
-				get_4 = Colors.get("pink")
-
-				if not get_4 then
-					-- Nothing
-				end
-			end
-
-			get_4 = Colors.get("red")
-
-			::label_24_1::
-
-			sphere_2(var_24_18, var_24_20, num_2, get_4)
-
-			local var_24_23 = drawer
-			local vector = drawer.vector
-			local var_24_25 = unbox_3
-			local num_3 = unbox_4 - unbox_3
-			local get_5
-
-			if not next_smart_object_data.next_smart_object_id then
-				get_5 = Colors.get("pink")
-
-				if not get_5 then
-					-- Nothing
-				end
-			end
-
-			get_5 = Colors.get("red")
-
 			::label_24_2::
 
-			vector(var_24_23, var_24_25, num_3, get_5)
+			vector(var_24_10, var_24_12, num_3, get_3)
 		end
 	end
 
 	local debug_unit = script_data.debug_unit
-	local var_24_29 = self.unit_extension_data[debug_unit]
+	local var_24_15 = self.unit_extension_data[debug_unit]
 
-	var_24_29 = var_24_29 or self.delayed_units[debug_unit]
+	if not var_24_15 then
+		-- Nothing
+	end
 
-	if not alive(debug_unit) and not var_24_29 then
-		local _blackboard = var_24_29._blackboard
+	var_24_15 = self.delayed_units[debug_unit]
+
+	local navigation_extension = var_24_15
+
+	::label_24_3::
+
+	if Unit_alive(debug_unit) and navigation_extension then
+		local blackboard = navigation_extension._blackboard
 
 		if script_data.debug_ai_movement == "text_and_graphics" then
-			self:_debug_draw_text(debug_unit, _blackboard, var_24_29, arg_24_1)
+			self:_debug_draw_text(debug_unit, blackboard, navigation_extension, t)
 		end
 
-		self:_debug_draw_nav_path(drawer, var_24_29)
-		self:_debug_draw_far_path(drawer, debug_unit, _blackboard, var_24_29)
+		self:_debug_draw_nav_path(drawer, navigation_extension)
+		self:_debug_draw_far_path(drawer, debug_unit, blackboard, navigation_extension)
 	end
 end
 
-AINavigationSystem._debug_draw_text = function (self, arg_25_1, arg_25_2, arg_25_3, arg_25_4)
+AINavigationSystem._debug_draw_text = function (self, debug_unit, blackboard, navigation_extension, t)
 	-- function 25
 	Debug.text("AI NAVIGATION DEBUG")
-	Debug.text("  enabled = %s", tostring(self.enabled_units[arg_25_1] ~= nil))
+	Debug.text("  enabled = %s", tostring(self.enabled_units[debug_unit] ~= nil))
 
 	local text = Debug.text
 	local str = "  using far-path = %s"
 	local flag
 
-	flag = not arg_25_2.far_path and "YES" and "NO"
+	flag = (not blackboard.far_path or not "YES") and not not "NO"
 
 	text(str, flag)
-	Debug.text("  has_reached = %s", tostring(arg_25_3:has_reached_destination()))
+	Debug.text("  has_reached = %s", tostring(navigation_extension:has_reached_destination()))
 
 	local text_2 = Debug.text
 	local str_2 = "  remaining path distance = %.2f"
-	local get_remaining_distance_from_progress_to_end_of_path = arg_25_3:get_remaining_distance_from_progress_to_end_of_path()
+	local get_remaining_distance_from_progress_to_end_of_path = navigation_extension:get_remaining_distance_from_progress_to_end_of_path()
 
-	get_remaining_distance_from_progress_to_end_of_path = get_remaining_distance_from_progress_to_end_of_path or 0
+	get_remaining_distance_from_progress_to_end_of_path = not not get_remaining_distance_from_progress_to_end_of_path or not not 0
 
 	text_2(str_2, get_remaining_distance_from_progress_to_end_of_path)
-	Debug.text("  dist to dest = %.2f", tostring(arg_25_3:distance_to_destination()))
-	Debug.text("  current_speed = %.2f", arg_25_3._current_speed)
+	Debug.text("  dist to dest = %.2f", tostring(navigation_extension:distance_to_destination()))
+	Debug.text("  current_speed = %.2f", navigation_extension._current_speed)
 
 	local text_3 = Debug.text
 	local str_3 = "  desired_velocity = %s"
 	local var_25_8
 
-	if not arg_25_3._nav_bot then
-		var_25_8 = tostring(GwNavBot.output_velocity(arg_25_3._nav_bot))
+	if navigation_extension._nav_bot then
+		var_25_8 = tostring(GwNavBot.output_velocity(navigation_extension._nav_bot))
 
 		if not var_25_8 then
 			-- Nothing
@@ -753,48 +814,50 @@ AINavigationSystem._debug_draw_text = function (self, arg_25_1, arg_25_2, arg_25
 	::label_25_0::
 
 	text_3(str_3, var_25_8)
-	Debug.text("  failed_move_attempts = %d", arg_25_3._failed_move_attempts)
-	Debug.text("  no_path_found = %s", tostring(arg_25_2.no_path_found))
-	Debug.text("  is_computing_path = %s", tostring(arg_25_3._is_computing_path))
-	Debug.text("  is_following_path = %s", tostring(arg_25_3:is_following_path()))
-	Debug.text("  interpolating = %s", tostring(arg_25_3._interpolating))
+	Debug.text("  failed_move_attempts = %d", navigation_extension._failed_move_attempts)
+	Debug.text("  no_path_found = %s", tostring(blackboard.no_path_found))
+	Debug.text("  is_computing_path = %s", tostring(navigation_extension._is_computing_path))
+	Debug.text("  is_following_path = %s", tostring(navigation_extension:is_following_path()))
+	Debug.text("  interpolating = %s", tostring(navigation_extension._interpolating))
 
 	local text_4 = Debug.text
 	local str_4 = "  move_state = %s"
 	local tostring = tostring
-	local move_state = arg_25_3._blackboard.move_state
+	local move_state = navigation_extension._blackboard.move_state
 
-	move_state = move_state or "nil"
+	move_state = not not move_state or not not "nil"
 
 	text_4(str_4, tostring(move_state))
-	Debug.text("  btnode = %s", tostring(arg_25_2.btnode_name))
-	Debug.text("  wait_timer = %.1f", math.max(-1, arg_25_3._wait_timer - arg_25_4))
+	Debug.text("  btnode = %s", tostring(blackboard.btnode_name))
+	Debug.text("  wait_timer = %.1f", math.max(-1, navigation_extension._wait_timer - t))
 end
 
-AINavigationSystem._debug_draw_nav_path = function (arg_26_0, arg_26_1, arg_26_2)
+AINavigationSystem._debug_draw_nav_path = function (self, drawer, navigation_extension)
 	-- function 26
-	local _nav_bot = arg_26_2._nav_bot
+	local nav_bot = navigation_extension._nav_bot
 
-	if _nav_bot == nil then
+	if nav_bot == nil then
 		return
 	end
 
-	if not arg_26_2._is_navbot_following_path then
+	local following_path = navigation_extension._is_navbot_following_path
+
+	if not following_path then
 		return
 	end
 
-	local get_path_nodes_count = GwNavBot.get_path_nodes_count(_nav_bot)
+	local node_count = GwNavBot.get_path_nodes_count(nav_bot)
 
-	if get_path_nodes_count > 0 then
-		local var_26_2
-		local get_path_current_node_index = GwNavBot.get_path_current_node_index(_nav_bot)
-		local num = Vector3.up() * 0.05
+	if node_count > 0 then
+		local previous_node_position
+		local current_node_index = GwNavBot.get_path_current_node_index(nav_bot)
+		local offset = Vector3.up() * 0.05
 
-		for i = 0, get_path_nodes_count - 1 do
-			local get_path_node_pos = GwNavBot.get_path_node_pos(_nav_bot, i)
+		for i = 0, node_count - 1 do
+			local position = GwNavBot.get_path_node_pos(nav_bot, i)
 			local get
 
-			if get_path_current_node_index == i then
+			if current_node_index == i then
 				get = Colors.get("green")
 
 				if not get then
@@ -804,67 +867,70 @@ AINavigationSystem._debug_draw_nav_path = function (arg_26_0, arg_26_1, arg_26_2
 
 			get = Colors.get("powder_blue")
 
+			local color = get
+
 			::label_26_0::
 
-			arg_26_1:sphere(get_path_node_pos + num, 0.1, get)
+			drawer:sphere(position + offset, 0.1, color)
 
-			if not var_26_2 then
-				arg_26_1:line(get_path_node_pos + num, var_26_2 + num, Colors.get("powder_blue"))
+			if previous_node_position then
+				drawer:line(position + offset, previous_node_position + offset, Colors.get("powder_blue"))
 			end
 
-			var_26_2 = get_path_node_pos
+			previous_node_position = position
 		end
 	end
 end
 
-AINavigationSystem._debug_draw_far_path = function (arg_27_0, arg_27_1, arg_27_2, arg_27_3, arg_27_4)
+AINavigationSystem._debug_draw_far_path = function (self, drawer, debug_unit, blackboard, navigation_extension)
 	-- function 27
-	local far_path = arg_27_3.far_path
+	local far_path = blackboard.far_path
 
-	if not far_path then
-		local var_27_1 = POSITION_LOOKUP[arg_27_2]
-		local num_far_path_nodes = arg_27_3.num_far_path_nodes
-		local current_far_path_index = arg_27_3.current_far_path_index
-		local var_27_4
+	if far_path then
+		local position_unit = POSITION_LOOKUP[debug_unit]
+		local num_far_path_nodes = blackboard.num_far_path_nodes
+		local current_far_path_index = blackboard.current_far_path_index
+		local previous_node_pos
 
 		for i = 1, num_far_path_nodes do
-			local unbox = far_path[i]:get_group_center():unbox()
-			local flag = not (i < current_far_path_index) or Colors.get("yellow")
-			local num = 0.1
+			local group = far_path[i]
+			local node_pos = group:get_group_center():unbox()
+			local node_color = i < current_far_path_index and not not Colors.get("yellow")
+			local node_size = 0.1
 
 			if i < current_far_path_index then
-				flag = Colors.get("orange")
+				node_color = Colors.get("orange")
 			elseif i == current_far_path_index then
-				flag = Colors.get("green")
-				num = num + math.random() * 0.1
+				node_color = Colors.get("green")
+				node_size = node_size + math.random() * 0.1
 			elseif i < num_far_path_nodes then
-				flag = Colors.get("yellow")
+				node_color = Colors.get("yellow")
 			else
-				flag = Colors.get("black")
+				node_color = Colors.get("black")
 			end
 
-			if not var_27_4 then
-				arg_27_1:line(var_27_4, unbox, flag)
+			if previous_node_pos then
+				drawer:line(previous_node_pos, node_pos, node_color)
 			end
 
-			arg_27_1:sphere(unbox, num, flag)
+			drawer:sphere(node_pos, node_size, node_color)
 
-			var_27_4 = unbox
+			previous_node_pos = node_pos
 		end
 
-		local unbox_2 = arg_27_4._backup_destination:unbox()
+		local real_destination = navigation_extension._backup_destination:unbox()
 
-		arg_27_1:sphere(unbox_2, 0.1, Colors.get("yellow"))
-		arg_27_1:sphere(unbox_2, 0.2, Colors.get("yellow"))
-		arg_27_1:vector(var_27_1, unbox_2 - var_27_1, Colors.get("yellow"))
+		drawer:sphere(real_destination, 0.1, Colors.get("yellow"))
+		drawer:sphere(real_destination, 0.2, Colors.get("yellow"))
+		drawer:vector(position_unit, real_destination - position_unit, Colors.get("yellow"))
 	end
 end
 
 NAVIGATION_RUNNING_IN_THREAD = false
 
-AINavigationSystem.override_nav_funcs = function (arg_28_0)
+AINavigationSystem.override_nav_funcs = function (self)
 	-- function 28
-	local tbl = {
+	local patch_list = {
 		"GwNavWorld",
 		"GwNavBot",
 		"GwNavQueries",
@@ -877,17 +943,17 @@ AINavigationSystem.override_nav_funcs = function (arg_28_0)
 		"GwNavTagVolume"
 	}
 
-	for i = 1, #tbl do
-		local var_28_1 = tbl[i]
-		local var_28_2 = _G[var_28_1]
+	for i = 1, #patch_list do
+		local engine_plugin_name = patch_list[i]
+		local engine_plugin = _G[engine_plugin_name]
 
-		for k, v in pairs(var_28_2) do
-			if not (k == "join_async_update" or k == "kick_async_update") then
-				var_28_2[k] = function (...)
+		for func_name, func in pairs(engine_plugin) do
+			if func_name ~= "join_async_update" and func_name ~= "kick_async_update" then
+				engine_plugin[func_name] = function (...)
 					-- function 29
-					fassert(not NAVIGATION_RUNNING_IN_THREAD, "%s.%s() function was run during navigation running on other thread", var_28_1, k)
+					fassert(not NAVIGATION_RUNNING_IN_THREAD, "%s.%s() function was run during navigation running on other thread", engine_plugin_name, func_name)
 
-					return v(...)
+					return func(...)
 				end
 			end
 		end

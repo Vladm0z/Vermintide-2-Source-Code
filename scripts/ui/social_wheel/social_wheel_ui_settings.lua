@@ -1,206 +1,230 @@
 -- chunkname: @scripts/ui/social_wheel/social_wheel_ui_settings.lua
 
-local function fn(arg_1_0)
+local function fetch_player_from_profile_display_name(wanted_profile_name)
 	-- function 1
-	local players = Managers.player:players()
+	local player_manager = Managers.player
+	local players = player_manager:players()
 
-	for k, v in pairs(players) do
-		if v:profile_display_name() == arg_1_0 then
-			return v
+	for _, player in pairs(players) do
+		local profile_display_name = player:profile_display_name()
+
+		if profile_display_name == wanted_profile_name then
+			return player
 		end
 	end
 end
 
-local function fn_2(arg_2_0, arg_2_1)
+local function get_pickup_event_text(target_unit, event_settings)
 	-- function 2
-	local data = arg_2_1.data
-	local var_2_1 = fn(data)
+	local callee_profile_name = event_settings.data
+	local callee_player = fetch_player_from_profile_display_name(callee_profile_name)
 
-	if not var_2_1 then
-		local get_pickup_settings = ScriptUnit.extension(arg_2_0, "pickup_system"):get_pickup_settings()
-		local alloc_table = FrameTable.alloc_table()
-		local var_2_4
+	if callee_player then
+		local pickup_extension = ScriptUnit.extension(target_unit, "pickup_system")
+		local settings = pickup_extension:get_pickup_settings()
+		local parameters = FrameTable.alloc_table()
+		local event_text_id
 
-		if get_pickup_settings.type == "ammo" then
-			var_2_4 = "social_wheel_pickup_item_ammo_event"
+		if settings.type == "ammo" then
+			event_text_id = "social_wheel_pickup_item_ammo_event"
 		else
-			var_2_4 = "social_wheel_pickup_item_event"
+			event_text_id = "social_wheel_pickup_item_event"
 
-			local get_data = Unit.get_data(arg_2_0, "interaction_data", "hud_description")
+			local item_name = Unit.get_data(target_unit, "interaction_data", "hud_description")
 
-			alloc_table[#alloc_table + 1] = get_data
+			parameters[#parameters + 1] = item_name
 		end
 
-		local profile_index = var_2_1:profile_index()
-		local ingame_short_display_name = SPProfiles[profile_index].ingame_short_display_name
+		local profile_index = callee_player:profile_index()
+		local profile = SPProfiles[profile_index]
+		local display_name_short = profile.ingame_short_display_name
 
-		alloc_table[#alloc_table + 1] = ingame_short_display_name
+		parameters[#parameters + 1] = display_name_short
 
-		return var_2_4, alloc_table
+		return event_text_id, parameters
 	end
 end
 
-local function fn_3(arg_3_0, arg_3_1)
+local function get_drop_event_text(target_unit, event_settings)
 	-- function 3
-	local owner = Managers.player:owner(arg_3_0)
+	local player_manager = Managers.player
+	local callee_player = player_manager:owner(target_unit)
 
-	if not owner then
-		local str = "social_wheel_player_drop_event"
-		local data = arg_3_1.data
-		local hud_description = AllPickups[data].hud_description
-		local profile_index = owner:profile_index()
-		local ingame_short_display_name = SPProfiles[profile_index].ingame_short_display_name
-		local alloc_table = FrameTable.alloc_table()
+	if callee_player then
+		local event_text_id = "social_wheel_player_drop_event"
+		local item_name = event_settings.data
+		local item_data = AllPickups[item_name]
+		local item_hud_description = item_data.hud_description
+		local profile_index = callee_player:profile_index()
+		local profile = SPProfiles[profile_index]
+		local display_name_short = profile.ingame_short_display_name
+		local parameters = FrameTable.alloc_table()
 
-		alloc_table[1] = hud_description
-		alloc_table[2] = ingame_short_display_name
+		parameters[1] = item_hud_description
+		parameters[2] = display_name_short
 
-		return str, alloc_table
+		return event_text_id, parameters
 	end
 end
 
-local function fn_4(arg_4_0, arg_4_1, arg_4_2, arg_4_3)
+local function pickup_item(callee_profile_name, item_unit, caller_player, settings)
 	-- function 4
-	local var_4_0 = fn(arg_4_0)
+	local callee_player = fetch_player_from_profile_display_name(callee_profile_name)
 
-	if not var_4_0 and not arg_4_1 then
-		local player_unit = var_4_0.player_unit
+	if callee_player and item_unit then
+		local callee_player_unit = callee_player.player_unit
+		local ai_bot_group_system = Managers.state.entity:system("ai_bot_group_system")
 
-		Managers.state.entity:system("ai_bot_group_system"):order("pickup", player_unit, arg_4_1, arg_4_2)
+		ai_bot_group_system:order("pickup", callee_player_unit, item_unit, caller_player)
 	end
 end
 
-local function fn_5(self, arg_5_1, arg_5_2, arg_5_3)
+local function play_emote(social_wheel_event_data, pinged_unit, sender_player, social_wheel_category)
 	-- function 5
-	local flag = not arg_5_2 and arg_5_2.player_unit
+	local unit = not not sender_player and not not sender_player.player_unit
 
-	if not flag then
-		local has_extension = ScriptUnit.has_extension(flag, "cosmetic_system")
+	if unit then
+		local cosmetic_extension = ScriptUnit.has_extension(unit, "cosmetic_system")
 
-		if not has_extension then
-			has_extension:queue_3p_emote(self.anim_event, self.hide_weapons)
+		if cosmetic_extension then
+			cosmetic_extension:queue_3p_emote(social_wheel_event_data.anim_event, social_wheel_event_data.hide_weapons)
 		end
 	end
 end
 
-local function fn_6(arg_6_0, arg_6_1, arg_6_2)
+local function drop_item(item_name, callee_player_unit, caller_player)
 	-- function 6
-	Managers.state.entity:system("ai_bot_group_system"):order("drop", arg_6_1, arg_6_0, arg_6_2)
+	local ai_bot_group_system = Managers.state.entity:system("ai_bot_group_system")
+
+	ai_bot_group_system:order("drop", callee_player_unit, item_name, caller_player)
 end
 
-local function fn_7(arg_7_0, arg_7_1)
+local function has_item(item_name, active_context)
 	-- function 7
-	local unit = arg_7_1.unit
+	local player_unit = active_context.unit
+	local player_unit_alive = Unit.alive(player_unit)
 
-	if not Unit.alive(unit) then
+	if not player_unit_alive then
 		return false
 	end
 
-	local slot_name = AllPickups[arg_7_0].slot_name
-	local has_extension = ScriptUnit.has_extension(unit, "inventory_system")
-	local get_slot_data = has_extension:get_slot_data(slot_name)
+	local item = AllPickups[item_name]
+	local slot_name = item.slot_name
+	local inventory_extension = ScriptUnit.has_extension(player_unit, "inventory_system")
+	local slot_data = inventory_extension:get_slot_data(slot_name)
 
-	if not get_slot_data then
-		local get_item_template = has_extension:get_item_template(get_slot_data)
+	if slot_data then
+		local item_template = inventory_extension:get_item_template(slot_data)
 
-		if arg_7_0 == "grimoire" then
-			return get_item_template.is_grimoire
+		if item_name == "grimoire" then
+			return item_template.is_grimoire
 		else
-			return get_item_template.pickup_data.pickup_name == arg_7_0
+			local pickup_data = item_template.pickup_data
+
+			return pickup_data.pickup_name == item_name
 		end
 	else
 		return false
 	end
 end
 
-local function fn_8(arg_8_0, arg_8_1)
+local function is_valid_player_and_target_unit_exclude_local_player(player_profile_name, active_context)
 	-- function 8
-	local unit = arg_8_1.unit
+	local target_unit = active_context.unit
 
-	if not Unit.alive(unit) then
+	if not Unit.alive(target_unit) then
 		return false
 	end
 
-	local local_player = Managers.player:local_player()
-	local var_8_2 = fn(arg_8_0)
+	local player_manager = Managers.player
+	local local_player = player_manager:local_player()
+	local player = fetch_player_from_profile_display_name(player_profile_name)
 
-	if not (not var_8_2 and var_8_2 == local_player or Unit.alive(var_8_2.player_unit)) then
+	if not player or player == local_player or not Unit.alive(player.player_unit) then
 		return false
 	end
 
-	local extension = ScriptUnit.extension(var_8_2.player_unit, "status_system")
+	local status_extension = ScriptUnit.extension(player.player_unit, "status_system")
 
-	if extension:is_ready_for_assisted_respawn() or not extension:is_dead() then
+	if status_extension:is_ready_for_assisted_respawn() or status_extension:is_dead() then
 		return false
 	end
 
-	local flag = not var_8_2:is_player_controlled()
-	local get_pickup_settings = ScriptUnit.extension(unit, "pickup_system"):get_pickup_settings()
+	local is_bot = not player:is_player_controlled()
+	local pickup_extension = ScriptUnit.extension(target_unit, "pickup_system")
+	local settings = pickup_extension:get_pickup_settings()
 
-	if not flag and get_pickup_settings.slot_name == "slot_level_event" and not get_pickup_settings.disallow_bot_pickup then
+	if is_bot and (settings.slot_name == "slot_level_event" or settings.disallow_bot_pickup) then
 		return false
 	else
 		return true
 	end
 end
 
-local function fn_9(self, arg_9_1, arg_9_2, arg_9_3)
+local function is_weapon_pose_available(data, active_context, content, style)
 	-- function 9
-	local pose_index = self.pose_index
-	local player_unit = Managers.player:local_player().player_unit
+	local pose_index = data.pose_index
+	local player = Managers.player:local_player()
+	local player_unit = player.player_unit
 
 	if not ALIVE[player_unit] then
 		return false
 	end
 
-	local item_data = ScriptUnit.extension(player_unit, "inventory_system"):get_wielded_slot_data().item_data
-	local name = item_data.name
+	local inventory_ext = ScriptUnit.extension(player_unit, "inventory_system")
+	local wielded_slot_data = inventory_ext:get_wielded_slot_data()
+	local item_data = wielded_slot_data.item_data
+	local item_name = item_data.name
 	local pose_name = item_data.pose_name
-	local get_unlocked_weapon_poses = Managers.backend:get_interface("items"):get_unlocked_weapon_poses()
-	local var_9_6 = get_unlocked_weapon_poses[name]
+	local backend_crafting = Managers.backend:get_interface("items")
+	local unlocked_weapon_poses = backend_crafting:get_unlocked_weapon_poses()
+	local var_9_0 = unlocked_weapon_poses[item_name]
 
-	var_9_6 = not var_9_6 and get_unlocked_weapon_poses[name][pose_name]
+	var_9_0 = not not var_9_0 and not not unlocked_weapon_poses[item_name][pose_name]
 
-	return var_9_6
+	return var_9_0
 end
 
-local function fn_10(arg_10_0, arg_10_1)
+local function get_ping_hero_event_text(target_unit, event_settings)
 	-- function 10
-	local owner = Managers.player:owner(arg_10_0)
+	local player_manager = Managers.player
+	local callee_player = player_manager:owner(target_unit)
 
-	if not owner then
-		local event_text = arg_10_1.event_text
-		local profile_index = owner:profile_index()
-		local alloc_table
+	if callee_player then
+		local event_text_id = event_settings.event_text
+		local profile_index = callee_player:profile_index()
+		local profile = SPProfiles[profile_index]
+		local display_name_short = profile.ingame_short_display_name
+		local parameters = FrameTable.alloc_table()
 
-		alloc_table[1], alloc_table = SPProfiles[profile_index].ingame_short_display_name, FrameTable.alloc_table()
+		parameters[1] = display_name_short
 
-		return event_text, alloc_table
+		return event_text_id, parameters
 	end
 end
 
 SocialWheelPriority = {
 	{
 		"item",
-		function (arg_11_0, arg_11_1, arg_11_2)
+		function (active_context, player, social_wheel_unit)
 			-- function 11
-			if not arg_11_2 then
+			if not social_wheel_unit then
 				return false
 			end
 
-			if not ScriptUnit.has_extension(arg_11_2, "pickup_system") then
+			if not ScriptUnit.has_extension(social_wheel_unit, "pickup_system") then
 				return false
 			end
 
-			local has_extension = ScriptUnit.has_extension(arg_11_2, "interactable_system")
+			local interactable_ext = ScriptUnit.has_extension(social_wheel_unit, "interactable_system")
 
-			if not has_extension then
+			if not interactable_ext then
 				return false
 			end
 
 			local game_mode = Managers.state.game_mode:game_mode()
 
-			if not (not game_mode.allowed_interactions and game_mode:allowed_interactions(arg_11_1.player_unit, has_extension.interactable_type)) then
+			if game_mode.allowed_interactions and not game_mode:allowed_interactions(player.player_unit, interactable_ext.interactable_type) then
 				return false
 			end
 
@@ -209,59 +233,59 @@ SocialWheelPriority = {
 	},
 	{
 		"friendly_hero_player",
-		function (arg_12_0, arg_12_1, arg_12_2)
+		function (active_context, player, social_wheel_unit)
 			-- function 12
-			local flag = not arg_12_2 and Managers.player:owner(arg_12_2)
+			local target_player = not not social_wheel_unit and not not Managers.player:owner(social_wheel_unit)
 
-			if not flag then
+			if not target_player then
 				return false
 			end
 
-			if flag.player_unit == arg_12_1.player_unit then
+			if target_player.player_unit == player.player_unit then
 				return false
 			end
 
-			local var_12_1 = Managers.state.side.side_by_unit[arg_12_1.player_unit]
+			local player_side = Managers.state.side.side_by_unit[player.player_unit]
 
-			if var_12_1:name() ~= "heroes" then
+			if player_side:name() ~= "heroes" then
 				return false
 			end
 
-			local var_12_2 = Managers.state.side.side_by_unit[flag.player_unit]
+			local target_side = Managers.state.side.side_by_unit[target_player.player_unit]
 
-			return not Managers.state.side:is_enemy_by_side(var_12_1, var_12_2)
+			return not Managers.state.side:is_enemy_by_side(player_side, target_side)
 		end
 	},
 	{
 		"enemy_hero_player",
-		function (arg_13_0, arg_13_1, arg_13_2)
+		function (active_context, player, social_wheel_unit)
 			-- function 13
-			local flag = not arg_13_2 and Managers.player:owner(arg_13_2)
+			local target_player = not not social_wheel_unit and not not Managers.player:owner(social_wheel_unit)
 
-			if not flag then
+			if not target_player then
 				return false
 			end
 
-			local var_13_1 = Managers.state.side.side_by_unit[arg_13_1.player_unit]
+			local player_side = Managers.state.side.side_by_unit[player.player_unit]
 
-			if var_13_1:name() ~= "dark_pact" then
+			if player_side:name() ~= "dark_pact" then
 				return false
 			end
 
-			local var_13_2 = Managers.state.side.side_by_unit[flag.player_unit]
+			local target_side = Managers.state.side.side_by_unit[target_player.player_unit]
 
-			return Managers.state.side:is_enemy_by_side(var_13_1, var_13_2)
+			return Managers.state.side:is_enemy_by_side(player_side, target_side)
 		end
 	}
 }
 
-local tbl = {
+local general_emotes = {
 	{
 		text = "social_wheel_pose_test_01",
 		name = "social_wheel_general_pose_01",
 		icon = "radial_chat_icon_thank_you",
-		execute_func = fn_5,
-		is_valid_func = fn_9,
+		execute_func = play_emote,
+		is_valid_func = is_weapon_pose_available,
 		data = {
 			anim_event = "anim_pose_01",
 			hide_weapons = false,
@@ -273,8 +297,8 @@ local tbl = {
 		text = "social_wheel_pose_test_02",
 		name = "social_wheel_general_pose_02",
 		icon = "radial_chat_icon_thank_you",
-		execute_func = fn_5,
-		is_valid_func = fn_9,
+		execute_func = play_emote,
+		is_valid_func = is_weapon_pose_available,
 		data = {
 			anim_event = "anim_pose_02",
 			hide_weapons = false,
@@ -286,8 +310,8 @@ local tbl = {
 		text = "social_wheel_pose_test_03",
 		name = "social_wheel_general_pose_03",
 		icon = "radial_chat_icon_thank_you",
-		execute_func = fn_5,
-		is_valid_func = fn_9,
+		execute_func = play_emote,
+		is_valid_func = is_weapon_pose_available,
 		data = {
 			anim_event = "anim_pose_03",
 			hide_weapons = false,
@@ -299,8 +323,8 @@ local tbl = {
 		text = "social_wheel_pose_test_04",
 		name = "social_wheel_general_pose_04",
 		icon = "radial_chat_icon_thank_you",
-		execute_func = fn_5,
-		is_valid_func = fn_9,
+		execute_func = play_emote,
+		is_valid_func = is_weapon_pose_available,
 		data = {
 			anim_event = "anim_pose_04",
 			hide_weapons = false,
@@ -312,8 +336,8 @@ local tbl = {
 		text = "social_wheel_pose_test_05",
 		name = "social_wheel_general_pose_05",
 		icon = "radial_chat_icon_thank_you",
-		execute_func = fn_5,
-		is_valid_func = fn_9,
+		execute_func = play_emote,
+		is_valid_func = is_weapon_pose_available,
 		data = {
 			anim_event = "anim_pose_05",
 			hide_weapons = false,
@@ -325,8 +349,8 @@ local tbl = {
 		text = "social_wheel_pose_test_06",
 		name = "social_wheel_general_pose_06",
 		icon = "radial_chat_icon_thank_you",
-		execute_func = fn_5,
-		is_valid_func = fn_9,
+		execute_func = play_emote,
+		is_valid_func = is_weapon_pose_available,
 		data = {
 			anim_event = "anim_pose_06",
 			hide_weapons = false,
@@ -336,12 +360,12 @@ local tbl = {
 	},
 	emotes = true
 }
-local tbl_2 = {
+local unarmed_emotes = {
 	{
 		text = "social_wheel_pose_unarmed_01",
 		name = "social_wheel_general_pose_unarmed_01",
 		icon = "radial_chat_pose_wheel_icon_unarmed",
-		execute_func = fn_5,
+		execute_func = play_emote,
 		data = {
 			anim_event = "anim_pose_unarmed_01",
 			hide_weapons = true
@@ -352,7 +376,7 @@ local tbl_2 = {
 		text = "social_wheel_pose_unarmed_02",
 		name = "social_wheel_general_pose_unarmed_02",
 		icon = "radial_chat_pose_wheel_icon_unarmed",
-		execute_func = fn_5,
+		execute_func = play_emote,
 		data = {
 			anim_event = "anim_pose_unarmed_02",
 			hide_weapons = true
@@ -363,7 +387,7 @@ local tbl_2 = {
 		text = "social_wheel_pose_unarmed_03",
 		name = "social_wheel_general_pose_unarmed_03",
 		icon = "radial_chat_pose_wheel_icon_unarmed",
-		execute_func = fn_5,
+		execute_func = play_emote,
 		data = {
 			anim_event = "anim_pose_unarmed_03",
 			hide_weapons = true
@@ -374,7 +398,7 @@ local tbl_2 = {
 		text = "social_wheel_pose_unarmed_04",
 		name = "social_wheel_general_pose_unarmed_04",
 		icon = "radial_chat_pose_wheel_icon_unarmed",
-		execute_func = fn_5,
+		execute_func = play_emote,
 		data = {
 			anim_event = "anim_pose_unarmed_04",
 			hide_weapons = true
@@ -385,7 +409,7 @@ local tbl_2 = {
 		text = "social_wheel_pose_unarmed_05",
 		name = "social_wheel_general_pose_unarmed_05",
 		icon = "radial_chat_pose_wheel_icon_unarmed",
-		execute_func = fn_5,
+		execute_func = play_emote,
 		data = {
 			anim_event = "anim_pose_unarmed_05",
 			hide_weapons = true
@@ -396,7 +420,7 @@ local tbl_2 = {
 		text = "social_wheel_pose_unarmed_06",
 		name = "social_wheel_general_pose_unarmed_06",
 		icon = "radial_chat_pose_wheel_icon_unarmed",
-		execute_func = fn_5,
+		execute_func = play_emote,
 		data = {
 			anim_event = "anim_pose_unarmed_06",
 			hide_weapons = true
@@ -406,20 +430,20 @@ local tbl_2 = {
 	emotes = true
 }
 
-local function fn_11(arg_14_0, arg_14_1)
+local function clone_wheel_settings(settings, unique_name_postfix)
 	-- function 14
-	local clone = table.clone(arg_14_0)
+	local new_settings = table.clone(settings)
 
-	for i = 1, #clone do
-		clone[i].name = clone[i].name .. arg_14_1
+	for i = 1, #new_settings do
+		new_settings[i].name = new_settings[i].name .. unique_name_postfix
 	end
 
-	return clone
+	return new_settings
 end
 
-local var_0_13 = fn_11(tbl, "_gp")
-local var_0_14 = fn_11(tbl_2, "_gp")
-local var_0_15 = fn_11(tbl_2, "_gp_versus")
+local general_emotes_gamepad = clone_wheel_settings(general_emotes, "_gp")
+local unarmed_emotes_gamepad = clone_wheel_settings(unarmed_emotes, "_gp")
+local unarmed_emotes_gamepad_versus = clone_wheel_settings(unarmed_emotes, "_gp_versus")
 
 SocialWheelSettings = {
 	general = {
@@ -493,7 +517,7 @@ SocialWheelSettings = {
 				ping_type = PingTypes.ACKNOWLEDGE
 			}
 		},
-		tbl_2,
+		unarmed_emotes,
 		wedge_adjustment = 0.85,
 		has_pages = true,
 		individual_bg = true
@@ -555,7 +579,7 @@ SocialWheelSettings = {
 				data = {}
 			}
 		},
-		var_0_14,
+		unarmed_emotes_gamepad,
 		wedge_adjustment = 0.85,
 		has_pages = true,
 		individual_bg = false
@@ -571,9 +595,9 @@ SocialWheelSettings = {
 			name = "social_wheel_item_pick_up_witch_hunter",
 			icon = "radial_chat_icon_saltzpyre",
 			data = "witch_hunter",
-			event_text_func = fn_2,
-			execute_func = fn_4,
-			is_valid_func = fn_8,
+			event_text_func = get_pickup_event_text,
+			execute_func = pickup_item,
+			is_valid_func = is_valid_player_and_target_unit_exclude_local_player,
 			ping_type = PingTypes.PLAYER_PICK_UP
 		},
 		{
@@ -581,9 +605,9 @@ SocialWheelSettings = {
 			name = "social_wheel_item_pick_up_bright_wizard",
 			icon = "radial_chat_icon_sienna",
 			data = "bright_wizard",
-			event_text_func = fn_2,
-			execute_func = fn_4,
-			is_valid_func = fn_8,
+			event_text_func = get_pickup_event_text,
+			execute_func = pickup_item,
+			is_valid_func = is_valid_player_and_target_unit_exclude_local_player,
 			ping_type = PingTypes.PLAYER_PICK_UP
 		},
 		{
@@ -591,9 +615,9 @@ SocialWheelSettings = {
 			name = "social_wheel_item_pick_up_dwarf_ranger",
 			icon = "radial_chat_icon_bardin",
 			data = "dwarf_ranger",
-			event_text_func = fn_2,
-			execute_func = fn_4,
-			is_valid_func = fn_8,
+			event_text_func = get_pickup_event_text,
+			execute_func = pickup_item,
+			is_valid_func = is_valid_player_and_target_unit_exclude_local_player,
 			ping_type = PingTypes.PLAYER_PICK_UP
 		},
 		{
@@ -601,9 +625,9 @@ SocialWheelSettings = {
 			name = "social_wheel_item_pick_up_wood_elf",
 			icon = "radial_chat_icon_kerillian",
 			data = "wood_elf",
-			event_text_func = fn_2,
-			execute_func = fn_4,
-			is_valid_func = fn_8,
+			event_text_func = get_pickup_event_text,
+			execute_func = pickup_item,
+			is_valid_func = is_valid_player_and_target_unit_exclude_local_player,
 			ping_type = PingTypes.PLAYER_PICK_UP
 		},
 		{
@@ -611,9 +635,9 @@ SocialWheelSettings = {
 			name = "social_wheel_item_pick_up_empire_soldier",
 			icon = "radial_chat_icon_kruber",
 			data = "empire_soldier",
-			event_text_func = fn_2,
-			execute_func = fn_4,
-			is_valid_func = fn_8,
+			event_text_func = get_pickup_event_text,
+			execute_func = pickup_item,
+			is_valid_func = is_valid_player_and_target_unit_exclude_local_player,
 			ping_type = PingTypes.PLAYER_PICK_UP
 		},
 		wedge_adjustment = 0.9,
@@ -630,9 +654,9 @@ SocialWheelSettings = {
 			name = "social_wheel_player_drop_grimoire",
 			icon = "radial_chat_icon_drop_grimoire",
 			data = "grimoire",
-			event_text_func = fn_3,
-			execute_func = fn_6,
-			is_valid_func = fn_7,
+			event_text_func = get_drop_event_text,
+			execute_func = drop_item,
+			is_valid_func = has_item,
 			ping_type = PingTypes.CHAT_ONLY
 		},
 		wedge_adjustment = 1,
@@ -646,13 +670,17 @@ SocialWheelSettings = {
 		},
 		validation_function = function ()
 			-- function 15
-			if not (Managers.mechanism:current_mechanism_name() == "versus") then
+			local is_versus = Managers.mechanism:current_mechanism_name() == "versus"
+
+			if not is_versus then
 				return false
 			end
 
-			local game_mode_key = Managers.state.game_mode:game_mode_key()
+			local game_mode = Managers.state.game_mode:game_mode_key()
+			local mechanism_settings = MechanismSettings[Managers.mechanism:current_mechanism_name()]
+			local is_in_versus_gamemode = mechanism_settings.gamemode_lookup.default == game_mode
 
-			return MechanismSettings[Managers.mechanism:current_mechanism_name()].gamemode_lookup.default == game_mode_key
+			return is_in_versus_gamemode
 		end,
 		{
 			{
@@ -733,7 +761,7 @@ SocialWheelSettings = {
 				ping_type = PingTypes.VO_ONLY
 			}
 		},
-		var_0_15,
+		unarmed_emotes_gamepad_versus,
 		wedge_adjustment = 0.85,
 		has_pages = true,
 		individual_bg = false
@@ -746,13 +774,17 @@ SocialWheelSettings = {
 		},
 		validation_function = function ()
 			-- function 16
-			if not (Managers.mechanism:current_mechanism_name() == "versus") then
+			local is_versus = Managers.mechanism:current_mechanism_name() == "versus"
+
+			if not is_versus then
 				return false
 			end
 
-			local game_mode_key = Managers.state.game_mode:game_mode_key()
+			local game_mode = Managers.state.game_mode:game_mode_key()
+			local mechanism_settings = MechanismSettings[Managers.mechanism:current_mechanism_name()]
+			local is_in_versus_gamemode = mechanism_settings.gamemode_lookup.default == game_mode
 
-			return MechanismSettings[Managers.mechanism:current_mechanism_name()].gamemode_lookup.default == game_mode_key
+			return is_in_versus_gamemode
 		end,
 		{
 			{
@@ -848,13 +880,17 @@ SocialWheelSettings = {
 		},
 		validation_function = function ()
 			-- function 17
-			if not (Managers.mechanism:current_mechanism_name() == "versus") then
+			local is_versus = Managers.mechanism:current_mechanism_name() == "versus"
+
+			if not is_versus then
 				return false
 			end
 
-			local game_mode_key = Managers.state.game_mode:game_mode_key()
+			local game_mode = Managers.state.game_mode:game_mode_key()
+			local mechanism_settings = MechanismSettings[Managers.mechanism:current_mechanism_name()]
+			local is_in_versus_gamemode = mechanism_settings.gamemode_lookup.default == game_mode
 
-			return MechanismSettings[Managers.mechanism:current_mechanism_name()].gamemode_lookup.default == game_mode_key
+			return is_in_versus_gamemode
 		end,
 		{
 			{
@@ -864,7 +900,7 @@ SocialWheelSettings = {
 				ping_sound_effect = "versus_ping_marker_imminent",
 				name = "vs_social_wheel_dark_pact_player_ambush",
 				text = "vs_social_wheel_dark_pact_general_ambush",
-				event_text_func = fn_10,
+				event_text_func = get_ping_hero_event_text,
 				data = {},
 				ping_type = PingTypes.ENEMY_AMBUSH
 			},
@@ -875,7 +911,7 @@ SocialWheelSettings = {
 				ping_sound_effect = "versus_ping_marker_tactical",
 				name = "vs_social_wheel_dark_pact_player_cover_me",
 				text = "vs_social_wheel_dark_pact_general_cover_me",
-				event_text_func = fn_10,
+				event_text_func = get_ping_hero_event_text,
 				data = {},
 				ping_type = PingTypes.PLAYER_COVER_ME
 			},
@@ -886,7 +922,7 @@ SocialWheelSettings = {
 				ping_sound_effect = "versus_ping_marker_imminent",
 				name = "vs_social_wheel_dark_pact_player_attack",
 				text = "vs_social_wheel_dark_pact_general_attack",
-				event_text_func = fn_10,
+				event_text_func = get_ping_hero_event_text,
 				data = {},
 				ping_type = PingTypes.ENEMY_ATTACK
 			}
@@ -900,38 +936,54 @@ SocialWheelSettings = {
 
 DLCUtils.dofile("social_wheel_settings")
 
-for k, v in pairs(SocialWheelSettings) do
-	for i, v_2 in ipairs(v) do
-		v_2.index = i
-		v_2.category_name = k
+for category_name, category_settings in pairs(SocialWheelSettings) do
+	for idx, setting in ipairs(category_settings) do
+		setting.index = idx
+		setting.category_name = category_name
 	end
 end
 
 if not rawget(_G, "SocialWheelSettingsLookup") then
 	SocialWheelSettingsLookup = {}
 
-	for k_2, v_3 in pairs(SocialWheelSettings) do
-		if not v_3.has_pages then
-			for i6 = 1, #v_3 do
-				for i_2, v_4 in ipairs(v_3[i6]) do
-					local name = v_4.name
+	for _, category_settings in pairs(SocialWheelSettings) do
+		if category_settings.has_pages then
+			for i = 1, #category_settings do
+				for _, setting in ipairs(category_settings[i]) do
+					local name_2 = setting.name
 
-					name = name or settings.category_name
+					if not name_2 then
+						-- Nothing
+					end
+
+					name_2 = settings.category_name
+
+					local name = name_2
+
+					::label_0_0::
 
 					fassert(SocialWheelSettingsLookup[name] == nil, "You have a duplicate entry in SocialWheelSettings (%s), each entry must have a unique name!", name)
 
-					SocialWheelSettingsLookup[name] = v_4
+					SocialWheelSettingsLookup[name] = setting
 				end
 			end
 		else
-			for i_3, v_5 in ipairs(v_3) do
-				local name_2 = v_5.name
+			for _, setting in ipairs(category_settings) do
+				local name_3 = setting.name
 
-				name_2 = name_2 or v_5.category_name
+				if not name_3 then
+					-- Nothing
+				end
 
-				fassert(SocialWheelSettingsLookup[name_2] == nil, "You have a duplicate entry in SocialWheelSettings (%s), each entry must have a unique name!", name_2)
+				name_3 = setting.category_name
 
-				SocialWheelSettingsLookup[name_2] = v_5
+				local name = name_3
+
+				::label_0_1::
+
+				fassert(SocialWheelSettingsLookup[name] == nil, "You have a duplicate entry in SocialWheelSettings (%s), each entry must have a unique name!", name)
+
+				SocialWheelSettingsLookup[name] = setting
 			end
 		end
 	end
@@ -940,17 +992,17 @@ if not rawget(_G, "SocialWheelSettingsLookup") then
 		"n/a"
 	}
 
-	local num = 13
+	local MAX_WEAPON_POSES = 13
 
-	for i11 = 1, num do
-		SocialWheelSettingsNetworkLookupBase[#SocialWheelSettingsNetworkLookupBase + 1] = string.format("social_wheel_weapon_pose_general_pose_%02d", i11)
+	for i = 1, MAX_WEAPON_POSES do
+		SocialWheelSettingsNetworkLookupBase[#SocialWheelSettingsNetworkLookupBase + 1] = string.format("social_wheel_weapon_pose_general_pose_%02d", i)
 	end
 end
 
 return {
 	functions = {
-		play_emote = fn_5,
-		is_weapon_pose_available = fn_9,
-		clone_wheel_settings = fn_11
+		play_emote = play_emote,
+		is_weapon_pose_available = is_weapon_pose_available,
+		clone_wheel_settings = clone_wheel_settings
 	}
 }

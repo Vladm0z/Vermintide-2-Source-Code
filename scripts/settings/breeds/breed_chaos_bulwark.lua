@@ -1,6 +1,6 @@
 -- chunkname: @scripts/settings/breeds/breed_chaos_bulwark.lua
 
-local tbl = {
+local custom_stagger_types = {
 	ranged_medium = 5,
 	heavy = 3,
 	weak = 1,
@@ -13,23 +13,23 @@ local tbl = {
 	shield_block_stagger = 10,
 	weakspot = 8
 }
-local tbl_2 = {
+local custom_utility_stagger_types = {
 	exploosion = 6,
 	medium = 5.6,
 	weak = 7,
 	heavy = 2
 }
-local tbl_3 = {
+local pushed_data = {
 	ahead_dist = 1.5,
 	push_width = 1.25,
 	push_forward_offset = 1.5,
 	push_stagger_distance = 1,
 	player_pushed_speed = 4,
 	push_stagger_impact = {
-		tbl.medium,
-		tbl.medium,
-		tbl.none,
-		tbl.none
+		custom_stagger_types.medium,
+		custom_stagger_types.medium,
+		custom_stagger_types.none,
+		custom_stagger_types.none
 	},
 	push_stagger_duration = {
 		1.5,
@@ -38,7 +38,7 @@ local tbl_3 = {
 		0
 	}
 }
-local tbl_4 = {
+local breed_data = {
 	shield_burning_block_sound = "Play_weapon_fire_torch_metal_shield_hit",
 	push_sound_event = "Play_generic_pushed_impact_large_armour",
 	walk_speed = 2,
@@ -141,7 +141,7 @@ local tbl_4 = {
 	weapon_reach = 2,
 	trigger_dialogue_on_target_switch = true,
 	shield_stab_block_sound = "stab_hit_shield_metal",
-	displace_players_data = tbl_3,
+	displace_players_data = pushed_data,
 	infighting = InfightingSettings.large,
 	shield_opening_event = {
 		"idle_shield_down",
@@ -209,45 +209,49 @@ local tbl_4 = {
 	},
 	run_on_spawn = AiBreedSnippets.on_chaos_warrior_spawn,
 	run_on_update = AiBreedSnippets.on_chaos_warrior_update,
-	hit_reaction_function = function (arg_1_0, arg_1_1, arg_1_2, arg_1_3, arg_1_4)
+	hit_reaction_function = function (hit_unit, breed, hit_unit_fwd, attack_direction, angle_difference)
 		-- function 1
-		return arg_1_1.hit_reactions.bwd
+		local hit_reactions = breed.hit_reactions
+		local hit_anim = hit_reactions.bwd
+
+		return hit_anim
 	end,
-	handle_stagger_anim_cb = function (arg_2_0, arg_2_1, arg_2_2)
+	handle_stagger_anim_cb = function (unit, blackboard, anim_cb)
 		-- function 2
-		local stagger_level = arg_2_1.stagger_level
-		local flag = false
+		local stagger_level = blackboard.stagger_level
+		local leave_stagger = false
 
-		if not (arg_2_2 ~= "anim_cb_stagger_light_finished" or stagger_level ~= tbl.shield_block_stagger) then
-			flag = true
-		elseif not (arg_2_2 ~= "anim_cb_stagger_medium_finished" or stagger_level ~= tbl.shield_open_stagger) then
-			flag = true
-		elseif arg_2_2 == "anim_cb_stagger_heavy_finished" then
-			flag = true
+		if anim_cb == "anim_cb_stagger_light_finished" and stagger_level == custom_stagger_types.shield_block_stagger then
+			leave_stagger = true
+		elseif anim_cb == "anim_cb_stagger_medium_finished" and stagger_level == custom_stagger_types.shield_open_stagger then
+			leave_stagger = true
+		elseif anim_cb == "anim_cb_stagger_heavy_finished" then
+			leave_stagger = true
 		end
 
-		arg_2_1.stagger_anim_done = flag
+		blackboard.stagger_anim_done = leave_stagger
 	end,
-	stagger_modifier_function = function (arg_3_0, arg_3_1, arg_3_2, arg_3_3, arg_3_4, arg_3_5, arg_3_6)
+	stagger_modifier_function = function (stagger_type, duration, length, hit_zone_name, blackboard, breed, optional_data)
 		-- function 3
-		local flag = not arg_3_6 and arg_3_6.damage_profile
-		local flag_2
+		local damage_profile = not not optional_data and not not optional_data.damage_profile
+		local is_ranged_attack = not not optional_data and not not optional_data.is_ranged
+		local flag
 
-		flag_2 = not (not arg_3_6 and arg_3_6.is_ranged) and "ranged_attack" and not flag or flag.charge_value
-		arg_3_4.latest_hit_charge_value = flag_2
+		flag = (not is_ranged_attack or not "ranged_attack") and not not damage_profile and not not damage_profile.charge_value
+		blackboard.latest_hit_charge_value = flag
 
-		local time = Managers.time:time("game")
+		local t = Managers.time:time("game")
 
-		if arg_3_3 == "weakspot" then
-			arg_3_4.weakspot_hit = true
-			arg_3_0 = 8
-		elseif not (not arg_3_4.stagger_recover_time and not (time < arg_3_4.stagger_recover_time)) then
-			return tbl.none, 0, 0, true
+		if hit_zone_name == "weakspot" then
+			blackboard.weakspot_hit = true
+			stagger_type = 8
+		elseif blackboard.stagger_recover_time and t < blackboard.stagger_recover_time then
+			return custom_stagger_types.none, 0, 0, true
 		end
 
-		arg_3_4.spawn_exit_time = nil
+		blackboard.spawn_exit_time = nil
 
-		return arg_3_0, arg_3_1, arg_3_2
+		return stagger_type, duration, length
 	end,
 	stagger_difficulty_tweak_index = {
 		{
@@ -323,99 +327,109 @@ local tbl_4 = {
 			}
 		}
 	},
-	before_stagger_enter_function = function (arg_4_0, arg_4_1, arg_4_2, arg_4_3, arg_4_4, arg_4_5, arg_4_6)
+	before_stagger_enter_function = function (unit, blackboard, attacker_unit, is_push, stagger_value_to_add, predicted_damage, damage_source)
 		-- function 4
-		local extension = ScriptUnit.extension(arg_4_0, "ai_shield_system")
-		local time = Managers.time:time("game")
-		local breed = arg_4_1.breed
-		local var_4_3 = breed.stagger_modifiers[arg_4_1.latest_hit_charge_value]
+		local ai_shield_extension = ScriptUnit.extension(unit, "ai_shield_system")
+		local t = Managers.time:time("game")
+		local breed = blackboard.breed
+		local var_4_0 = breed.stagger_modifiers[blackboard.latest_hit_charge_value]
 
-		var_4_3 = var_4_3 or breed.stagger_modifiers.default
-
-		local stagger_level = arg_4_1.stagger_level
-
-		stagger_level = stagger_level or tbl.none
-		arg_4_1.stagger_level = stagger_level
-
-		local get_difficulty_rank = Managers.state.difficulty:get_difficulty_rank()
-		local var_4_6 = breed.stagger_difficulty_tweak_index[get_difficulty_rank]
-		local shield_open_stagger_threshold = var_4_6.shield_open_stagger_threshold
-		local shield_block_threshold = var_4_6.shield_block_threshold
-		local stagger_regen_rate = var_4_6.stagger_regen_rate
-		local var_4_10
-
-		if not (not arg_4_1.weakspot_hit and arg_4_1.weakspot_exploded or extension.is_blocking) then
-			var_4_10 = true
-			arg_4_1.weakspot_exploded = true
+		if not var_4_0 then
+			-- Nothing
 		end
 
-		local has_extension = ScriptUnit.has_extension(arg_4_2, "career_system")
+		var_4_0 = breed.stagger_modifiers.default
 
-		if arg_4_6 == "career_ability" then
-			arg_4_4 = var_4_6.shield_open_stagger_threshold - tbl_2.medium
-		elseif arg_4_6 == "charge_ability_hit" then
-			arg_4_4 = var_4_6.shield_open_stagger_threshold - tbl_2.heavy
-		elseif not (arg_4_6 ~= "charge_ability_hit_blast" or not has_extension._career_name ~= "wh_zealot") then
-			arg_4_4 = var_4_6.shield_open_stagger_threshold - tbl_2.exploosion
-		elseif arg_4_6 == "buff" then
-			arg_4_4 = var_4_6.shield_open_stagger_threshold - tbl_2.weak
+		local stagger_modifier = var_4_0
+
+		::label_4_0::
+
+		local stagger_level = blackboard.stagger_level
+
+		stagger_level = not not stagger_level or not not custom_stagger_types.none
+		blackboard.stagger_level = stagger_level
+
+		local difficulty_manager = Managers.state.difficulty
+		local difficulty_rank = difficulty_manager:get_difficulty_rank()
+		local difficulty_tweaks = breed.stagger_difficulty_tweak_index[difficulty_rank]
+		local shield_open_stagger_threshold = difficulty_tweaks.shield_open_stagger_threshold
+		local shield_block_threshold = difficulty_tweaks.shield_block_threshold
+		local stagger_regen_rate = difficulty_tweaks.stagger_regen_rate
+		local weakspot_stagger
+
+		if blackboard.weakspot_hit and not blackboard.weakspot_exploded and not ai_shield_extension.is_blocking then
+			weakspot_stagger = true
+			blackboard.weakspot_exploded = true
 		end
 
-		arg_4_5 = arg_4_5 or 0.1
+		local attacking_unit = ScriptUnit.has_extension(attacker_unit, "career_system")
 
-		local tbl_3 = {
+		if damage_source == "career_ability" then
+			stagger_value_to_add = difficulty_tweaks.shield_open_stagger_threshold - custom_utility_stagger_types.medium
+		elseif damage_source == "charge_ability_hit" then
+			stagger_value_to_add = difficulty_tweaks.shield_open_stagger_threshold - custom_utility_stagger_types.heavy
+		elseif damage_source == "charge_ability_hit_blast" and not attacking_unit._career_name == "wh_zealot" then
+			stagger_value_to_add = difficulty_tweaks.shield_open_stagger_threshold - custom_utility_stagger_types.exploosion
+		elseif damage_source == "buff" then
+			stagger_value_to_add = difficulty_tweaks.shield_open_stagger_threshold - custom_utility_stagger_types.weak
+		end
+
+		predicted_damage = not not predicted_damage or not not 0.1
+
+		local normalizing_value = {
 			0,
 			10
 		}
-		local num = (arg_4_4 + (arg_4_5 - tbl_3[1]) / (tbl_3[2] - tbl_3[1])) * var_4_3
+		local normalized_predicted_damage = (predicted_damage - normalizing_value[1]) / (normalizing_value[2] - normalizing_value[1])
+		local final_stagger_to_add = (stagger_value_to_add + normalized_predicted_damage) * stagger_modifier
 		local lerp = math.lerp
-		local var_4_15 = stagger_regen_rate[1]
-		local var_4_16 = stagger_regen_rate[2]
-		local cached_stagger = arg_4_1.cached_stagger
+		local var_4_3 = stagger_regen_rate[1]
+		local var_4_4 = stagger_regen_rate[2]
+		local cached_stagger = blackboard.cached_stagger
 
-		cached_stagger = cached_stagger or 0.1
+		cached_stagger = not not cached_stagger or not not 0.1
 
-		local var_4_18 = lerp(var_4_15, var_4_16, cached_stagger / shield_open_stagger_threshold)
+		local regen_rate = lerp(var_4_3, var_4_4, cached_stagger / shield_open_stagger_threshold)
 		local clamp = math.clamp
-		local shield_regen_time_stamp = arg_4_1.shield_regen_time_stamp
+		local shield_regen_time_stamp = blackboard.shield_regen_time_stamp
 
-		shield_regen_time_stamp = shield_regen_time_stamp or time
+		shield_regen_time_stamp = not not shield_regen_time_stamp or not not t
 
-		local num_2 = clamp(time - shield_regen_time_stamp, 0, math.huge) * var_4_18
+		local regen = clamp(t - shield_regen_time_stamp, 0, math.huge) * regen_rate
 		local clamp_2 = math.clamp
-		local cached_stagger_2 = arg_4_1.cached_stagger
+		local cached_stagger_2 = blackboard.cached_stagger
 
-		cached_stagger_2 = cached_stagger_2 or 0
-		arg_4_1.stagger = clamp_2(cached_stagger_2 - num_2, 0, math.huge) + num
-		arg_4_1.shield_regen_time_stamp = time
+		cached_stagger_2 = not not cached_stagger_2 or not not 0
+		blackboard.stagger = clamp_2(cached_stagger_2 - regen, 0, math.huge) + final_stagger_to_add
+		blackboard.shield_regen_time_stamp = t
 
-		local flag = shield_block_threshold <= num
-		local flag_2 = shield_open_stagger_threshold <= arg_4_1.stagger
-		local max_stagger_reached = arg_4_1.max_stagger_reached
+		local shield_block_stagger_activated = shield_block_threshold <= final_stagger_to_add
+		local shield_open_stagger_reached = shield_open_stagger_threshold <= blackboard.stagger
+		local max_stagger_reached = blackboard.max_stagger_reached
 
-		max_stagger_reached = not max_stagger_reached and not var_4_10
-		arg_4_1.override_stagger = max_stagger_reached
+		max_stagger_reached = not not max_stagger_reached and not not not weakspot_stagger
+		blackboard.override_stagger = max_stagger_reached
 
-		if arg_4_1.stagger_level == tbl.shield_open_stagger or not var_4_10 then
-			arg_4_1.stagger_level = tbl.heavy
-		elseif not flag_2 then
-			arg_4_1.stagger_level = tbl.shield_open_stagger
-		elseif not flag then
-			arg_4_1.stagger_level = tbl.shield_block_stagger
+		if blackboard.stagger_level == custom_stagger_types.shield_open_stagger or weakspot_stagger then
+			blackboard.stagger_level = custom_stagger_types.heavy
+		elseif shield_open_stagger_reached then
+			blackboard.stagger_level = custom_stagger_types.shield_open_stagger
+		elseif shield_block_stagger_activated then
+			blackboard.stagger_level = custom_stagger_types.shield_block_stagger
 		else
-			arg_4_1.override_stagger = true
+			blackboard.override_stagger = true
 		end
 
-		if not arg_4_1.override_stagger then
-			arg_4_1.staggering_id = arg_4_1.stagger
+		if blackboard.override_stagger then
+			blackboard.staggering_id = blackboard.stagger
 		else
-			arg_4_1.stagger_activated = true
+			blackboard.stagger_activated = true
 		end
 
-		arg_4_1.cached_stagger = arg_4_1.stagger
+		blackboard.cached_stagger = blackboard.stagger
 
-		if not (arg_4_1.max_stagger_reached or arg_4_1.stagger_level == tbl.heavy) then
-			extension:play_shield_hit_sfx(arg_4_1.stagger_level == tbl.shield_open_stagger, arg_4_1.cached_stagger, shield_open_stagger_threshold)
+		if not blackboard.max_stagger_reached and blackboard.stagger_level ~= custom_stagger_types.heavy then
+			ai_shield_extension:play_shield_hit_sfx(blackboard.stagger_level == custom_stagger_types.shield_open_stagger, blackboard.cached_stagger, shield_open_stagger_threshold)
 		end
 	end,
 	hitzone_multiplier_types = {
@@ -616,9 +630,9 @@ local tbl_4 = {
 	}
 }
 
-Breeds.chaos_bulwark = table.create_copy(Breeds.chaos_bulwark, tbl_4)
+Breeds.chaos_bulwark = table.create_copy(Breeds.chaos_bulwark, breed_data)
 
-local tbl_5 = {
+local AttackIntensityPerDifficulty = {
 	normal = {
 		easy = {
 			normal = 3
@@ -745,7 +759,7 @@ local tbl_5 = {
 		}
 	}
 }
-local tbl_6 = {
+local action_data = {
 	idle = {
 		idle = {
 			"idle",
@@ -832,7 +846,7 @@ local tbl_6 = {
 		step_attack_distance = 0.2,
 		bot_threat_start_time_step = 0.5,
 		step_attack_distance_override = 0.7,
-		difficulty_attack_intensity = tbl_5,
+		difficulty_attack_intensity = AttackIntensityPerDifficulty,
 		considerations = UtilityConsiderations.chaos_bulwark_sweep_attack,
 		attack_anim = {
 			"attack_sweep_01",
@@ -883,7 +897,7 @@ local tbl_6 = {
 		player_push_speed_blocked = 8,
 		step_attack_distance_override = 0.7,
 		width = 0.4,
-		difficulty_attack_intensity = tbl_5,
+		difficulty_attack_intensity = AttackIntensityPerDifficulty,
 		considerations = UtilityConsiderations.chaos_bulwark_push_attack,
 		attack_anim = {
 			"attack_quick_01"
@@ -913,7 +927,7 @@ local tbl_6 = {
 		target_running_velocity_threshold = 0,
 		attack_intensity_type = "running",
 		action_weight = 1,
-		difficulty_attack_intensity = tbl_5,
+		difficulty_attack_intensity = AttackIntensityPerDifficulty,
 		considerations = UtilityConsiderations.chaos_bulwark_running_attack,
 		difficulty_damage = BreedTweaks.difficulty_damage.elite_attack,
 		fatigue_type = BreedTweaks.fatigue_types.elite_sweep.running_attack,
@@ -969,7 +983,7 @@ local tbl_6 = {
 		attack_intensity_type = "running",
 		action_weight = 1,
 		no_block_stagger = true,
-		difficulty_attack_intensity = tbl_5,
+		difficulty_attack_intensity = AttackIntensityPerDifficulty,
 		considerations = UtilityConsiderations.chaos_bulwark_running_attack_charging,
 		difficulty_damage = BreedTweaks.difficulty_damage.elite_shield_push,
 		attacks = {
@@ -1024,7 +1038,7 @@ local tbl_6 = {
 		damage_type = "blunt",
 		unblockable = true,
 		max_impact_push_speed = 9,
-		difficulty_attack_intensity = tbl_5,
+		difficulty_attack_intensity = AttackIntensityPerDifficulty,
 		considerations = UtilityConsiderations.chaos_bulwark_push_attack,
 		attack_anim = {
 			"attack_push"
@@ -1058,47 +1072,46 @@ local tbl_6 = {
 		difficulty_duration = BreedTweaks.blocked_duration.chaos_elite
 	},
 	stagger = {
-		custom_enter_function = function (arg_5_0, arg_5_1, arg_5_2, arg_5_3)
+		custom_enter_function = function (unit, blackboard, t, action)
 			-- function 5
-			assert(ScriptUnit.has_extension(arg_5_0, "ai_shield_system"), "chaos bulwark dont have ai_shield_user_extension")
+			assert(ScriptUnit.has_extension(unit, "ai_shield_system"), "chaos bulwark dont have ai_shield_user_extension")
 
-			local extension = ScriptUnit.extension(arg_5_0, "ai_shield_system")
-			local breed = arg_5_1.breed
-			local stagger = arg_5_1.stagger
-			local str = "idle_shield_down"
-			local forward = Quaternion.forward(Unit.local_rotation(arg_5_0, 0))
-			local look = Quaternion.look(forward)
-			local var_5_6
-			local var_5_7
+			local ai_shield_extension = ScriptUnit.extension(unit, "ai_shield_system")
+			local breed = blackboard.breed
+			local stagger = blackboard.stagger
+			local idle_event = "idle_shield_down"
+			local new_impact_dir = Quaternion.forward(Unit.local_rotation(unit, 0))
+			local override_rotation = Quaternion.look(new_impact_dir)
+			local stagger_anims, stagger_time
 
-			if arg_5_1.stagger_level == tbl.shield_block_stagger then
-				var_5_7 = arg_5_1.stagger_time + math.max(0.5, stagger * 0.3) * breed.block_stagger_mod
-				var_5_6 = arg_5_3.stagger_anims[tbl.shield_block_stagger]
+			if blackboard.stagger_level == custom_stagger_types.shield_block_stagger then
+				stagger_time = blackboard.stagger_time + math.max(0.5, stagger * 0.3) * breed.block_stagger_mod
+				stagger_anims = action.stagger_anims[custom_stagger_types.shield_block_stagger]
 
-				arg_5_1.stagger_direction:store(forward)
-				extension:set_is_blocking(true)
-			elseif arg_5_1.stagger_level == tbl.shield_open_stagger then
-				var_5_7 = arg_5_1.stagger_time + stagger * 0.3 * breed.block_stagger_mod_2
-				var_5_6 = arg_5_3.stagger_anims[tbl.shield_open_stagger]
+				blackboard.stagger_direction:store(new_impact_dir)
+				ai_shield_extension:set_is_blocking(true)
+			elseif blackboard.stagger_level == custom_stagger_types.shield_open_stagger then
+				stagger_time = blackboard.stagger_time + stagger * 0.3 * breed.block_stagger_mod_2
+				stagger_anims = action.stagger_anims[custom_stagger_types.shield_open_stagger]
 
-				arg_5_1.stagger_direction:store(forward)
+				blackboard.stagger_direction:store(new_impact_dir)
 
-				arg_5_1.reset_after_stagger = true
+				blackboard.reset_after_stagger = true
 
-				extension:set_is_blocking(false)
+				ai_shield_extension:set_is_blocking(false)
 			else
-				var_5_6 = arg_5_3.stagger_anims[arg_5_1.stagger_type]
-				var_5_7 = arg_5_1.stagger_time + stagger * 0.5 * breed.block_stagger_mod_2
-				look = nil
-				arg_5_1.max_stagger_reached = true
-				arg_5_1.reset_after_stagger = true
+				stagger_anims = action.stagger_anims[blackboard.stagger_type]
+				stagger_time = blackboard.stagger_time + stagger * 0.5 * breed.block_stagger_mod_2
+				override_rotation = nil
+				blackboard.max_stagger_reached = true
+				blackboard.reset_after_stagger = true
 
-				extension:set_is_blocking(false)
+				ai_shield_extension:set_is_blocking(false)
 			end
 
-			arg_5_1.stagger_time = var_5_7
+			blackboard.stagger_time = stagger_time
 
-			return var_5_6, str, str, look
+			return stagger_anims, idle_event, idle_event, override_rotation
 		end,
 		stagger_anims = {
 			{
@@ -1411,4 +1424,4 @@ local tbl_6 = {
 	}
 }
 
-BreedActions.chaos_bulwark = table.create_copy(BreedActions.chaos_bulwark, tbl_6)
+BreedActions.chaos_bulwark = table.create_copy(BreedActions.chaos_bulwark, action_data)

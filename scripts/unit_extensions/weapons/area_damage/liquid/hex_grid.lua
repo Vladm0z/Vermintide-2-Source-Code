@@ -4,14 +4,14 @@ require("scripts/managers/debug/debug_manager")
 
 HexGrid = class(HexGrid)
 
-HexGrid.init = function (self, arg_1_1, arg_1_2, arg_1_3, arg_1_4, arg_1_5)
+HexGrid.init = function (self, center, xy_extents, z_extents, x_cell_size, z_cell_size)
 	-- function 1
-	local right = Vector3.right()
-	local forward = Vector3.forward()
-	local up = Vector3.up()
-	local num = math.tan(math.pi / 3) * 0.5 * arg_1_4
-	local num_2 = math.pi / 3
-	local num_3 = math.pi * 2
+	local x_vector = Vector3.right()
+	local y_vector = Vector3.forward()
+	local z_vector = Vector3.up()
+	local y_cell_size = math.tan(math.pi / 3) * 0.5 * x_cell_size
+	local pi_div_3 = math.pi / 3
+	local two_pi = math.pi * 2
 
 	self._directions = {
 		{
@@ -22,38 +22,38 @@ HexGrid.init = function (self, arg_1_1, arg_1_2, arg_1_3, arg_1_4, arg_1_5)
 		{
 			1,
 			-1,
-			angle = num_3 - num_2
+			angle = two_pi - pi_div_3
 		},
 		{
 			0,
 			-1,
-			angle = num_3 - num_2 * 2
+			angle = two_pi - pi_div_3 * 2
 		},
 		{
 			-1,
 			0,
-			angle = num_3 - num_2 * 3
+			angle = two_pi - pi_div_3 * 3
 		},
 		{
 			-1,
 			1,
-			angle = num_3 - num_2 * 4
+			angle = two_pi - pi_div_3 * 4
 		},
 		{
 			0,
 			1,
-			angle = num_3 - num_2 * 5
+			angle = two_pi - pi_div_3 * 5
 		}
 	}
 
-	local num_4 = arg_1_1 - right * ((arg_1_2 + 1 + arg_1_2 * 0.5) * arg_1_4) - forward * ((arg_1_2 + 1) * num) - up * (arg_1_3 + 1) * arg_1_5
+	local root = center - x_vector * ((xy_extents + 1 + xy_extents * 0.5) * x_cell_size) - y_vector * ((xy_extents + 1) * y_cell_size) - z_vector * (z_extents + 1) * z_cell_size
 
-	self._root_position = Vector3Box(num_4)
-	self._x_cell_size = arg_1_4
-	self._y_cell_size = num
-	self._z_cell_size = arg_1_5
-	self._xy_extents = arg_1_2
-	self._z_extents = arg_1_3
+	self._root_position = Vector3Box(root)
+	self._x_cell_size = x_cell_size
+	self._y_cell_size = y_cell_size
+	self._z_cell_size = z_cell_size
+	self._xy_extents = xy_extents
+	self._z_extents = z_extents
 	self._check_player_units = true
 end
 
@@ -62,130 +62,138 @@ HexGrid.directions = function (self)
 	return self._directions
 end
 
-HexGrid.find_index = function (self, arg_3_1)
+HexGrid.find_index = function (self, position)
 	-- function 3
-	local num = arg_3_1 - self._root_position:unbox()
-	local _x_cell_size = self._x_cell_size
-	local _y_cell_size = self._y_cell_size
-	local _z_cell_size = self._z_cell_size
-	local floor = math.floor(num.y / _y_cell_size + 0.5)
-	local floor_2 = math.floor((num.x - (floor - 1) * 0.5 * _x_cell_size) / _x_cell_size + 0.5)
-	local floor_3 = math.floor(num.z / _z_cell_size + 0.5)
+	local root = self._root_position:unbox()
+	local relative_position = position - root
+	local x_cell_size = self._x_cell_size
+	local y_cell_size = self._y_cell_size
+	local z_cell_size = self._z_cell_size
+	local j = math.floor(relative_position.y / y_cell_size + 0.5)
+	local i = math.floor((relative_position.x - (j - 1) * 0.5 * x_cell_size) / x_cell_size + 0.5)
+	local k = math.floor(relative_position.z / z_cell_size + 0.5)
 
-	return floor_2, floor, floor_3
+	return i, j, k
 end
 
-HexGrid.real_index = function (self, arg_4_1, arg_4_2, arg_4_3)
+HexGrid.real_index = function (self, i, j, k)
 	-- function 4
-	local num = self._xy_extents * 2 + 1
-	local num_2 = num * num
+	local xy_extents = self._xy_extents
+	local row_size = xy_extents * 2 + 1
+	local layer_size = row_size * row_size
 
-	return arg_4_1 + (arg_4_2 - 1) * num + (arg_4_3 - 1) * num_2
+	return i + (j - 1) * row_size + (k - 1) * layer_size
 end
 
-HexGrid.ijk = function (self, arg_5_1)
+HexGrid.ijk = function (self, real_index)
 	-- function 5
-	local num = self._xy_extents * 2 + 1
-	local num_2 = arg_5_1 % num
-	local num_3 = (arg_5_1 - num_2) / num
-	local num_4 = num_3 % num
-	local num_5 = (num_3 - num_4) / num
+	local xy_extents = self._xy_extents
+	local row_size = xy_extents * 2 + 1
+	local i = real_index % row_size
+	local left = (real_index - i) / row_size
+	local j = left % row_size
 
-	return num_2, num_4 + 1, num_5 + 1
+	left = left - j
+
+	local k = left / row_size
+
+	return i, j + 1, k + 1
 end
 
-HexGrid.is_out_of_bounds = function (self, arg_6_1, arg_6_2, arg_6_3)
+HexGrid.is_out_of_bounds = function (self, i, j, k)
 	-- function 6
-	local num = self._xy_extents * 2 + 1
+	local xy_extents = self._xy_extents
+	local row_size = xy_extents * 2 + 1
 
-	return arg_6_1 < 0 or num <= arg_6_1 or arg_6_2 < 0 or num <= arg_6_2 or arg_6_3 < 0
+	return i < 0 or row_size <= i or j < 0 or row_size <= j or k < 0
 end
 
-HexGrid.find_position = function (self, arg_7_1, arg_7_2, arg_7_3)
+HexGrid.find_position = function (self, i, j, k)
 	-- function 7
-	local unbox = self._root_position:unbox()
-	local num = arg_7_3 * self._z_cell_size
-	local num_2 = arg_7_2 * self._y_cell_size
-	local num_3 = (0.5 * (arg_7_2 - 1) + arg_7_1) * self._x_cell_size
+	local root = self._root_position:unbox()
+	local z = k * self._z_cell_size
+	local y = j * self._y_cell_size
+	local x = (0.5 * (j - 1) + i) * self._x_cell_size
 
-	return unbox + Vector3(num_3, num_2, num)
+	return root + Vector3(x, y, z)
 end
 
-HexGrid.sample_grid = function (self, arg_8_1, arg_8_2, arg_8_3)
+HexGrid.sample_grid = function (self, samples, z, multiplier)
 	-- function 8
-	local QuickDrawerStay = QuickDrawerStay
+	local drawer = QuickDrawerStay
 
-	QuickDrawerStay:reset()
+	drawer:reset()
 
-	local _xy_extents = self._xy_extents
-	local num = 1
-	local num_2 = 1
-	local num_3 = _xy_extents * 2 + 1
-	local num_4 = _xy_extents * 2 + 1
-	local unbox = self._root_position:unbox()
-	local num_5 = unbox.x + _xy_extents * self._x_cell_size * (1 - arg_8_3)
-	local num_6 = unbox.x + (_xy_extents * (1 + 1 * arg_8_3) + 1) * self._x_cell_size
-	local num_7 = unbox.y + _xy_extents * self._x_cell_size * (1 - arg_8_3)
-	local num_8 = unbox.y + (_xy_extents * (1 + 1 * arg_8_3) + 1) * self._y_cell_size
-	local random = Math.random
+	local xy_extents = self._xy_extents
+	local min_i, min_j, max_i, max_j = 1, 1, xy_extents * 2 + 1, xy_extents * 2 + 1
+	local root = self._root_position:unbox()
+	local min_x = root.x + xy_extents * self._x_cell_size * (1 - multiplier)
+	local max_x = root.x + (xy_extents * (1 + 1 * multiplier) + 1) * self._x_cell_size
+	local min_y = root.y + xy_extents * self._x_cell_size * (1 - multiplier)
+	local max_y = root.y + (xy_extents * (1 + 1 * multiplier) + 1) * self._y_cell_size
+	local mth_rnd = Math.random
 
-	local function fn(arg_9_0, arg_9_1)
+	local function rnd(min, max)
 		-- function 9
-		return arg_9_0 + random() * (arg_9_1 - arg_9_0)
+		return min + mth_rnd() * (max - min)
 	end
 
-	local var_8_13 = Color(0, 0, 0)
-	local num_9 = num_3 - num
-	local num_10 = num_4 - num_2
-	local flag = true
+	local black = Color(0, 0, 0)
+	local i_span = max_i - min_i
+	local j_span = max_j - min_j
+	local render_outside = true
 
-	for i = 1, arg_8_1 do
-		local var_8_17 = Vector3(fn(num_5, num_6), fn(num_7, num_8), arg_8_2)
-		local find_index, var_8_19, var_8_20 = self:find_index(var_8_17)
-		local var_8_21
+	for index = 1, samples do
+		local point = Vector3(rnd(min_x, max_x), rnd(min_y, max_y), z)
+		local i, j, k = self:find_index(point)
+		local color
 
-		if not (find_index < num or num_3 < find_index or var_8_19 < num_2 or not (num_4 < var_8_19)) then
-			var_8_21 = not flag and var_8_13
+		if i < min_i or max_i < i or j < min_j or max_j < j then
+			color = not not render_outside and not not black
 		else
-			local num_11 = find_index - num
-			local num_12 = var_8_19 - num_2
-			local num_13
+			local i_val = i - min_i
+			local j_val = j - min_j
+			local num
 
-			if num_11 % 2 == 0 then
-				num_13 = 125 * num_11 / num_9
+			if i_val % 2 == 0 then
+				num = 125 * i_val / i_span
 
-				if not num_13 then
+				if not num then
 					-- Nothing
 				end
 			end
 
-			num_13 = 125 + 125 * num_11 / num_9
+			num = 125 + 125 * i_val / i_span
+
+			local r = num
 
 			do
-				local num_14
+				local num_2
 			end
 
 			::label_8_0::
 
-			if num_12 % 2 == 0 then
-				num_14 = 125 * num_12 / num_10
+			if j_val % 2 == 0 then
+				num_2 = 125 * j_val / j_span
 
-				if not num_14 then
+				if not num_2 then
 					-- Nothing
 				end
 			end
 
-			num_14 = 125 + 125 * num_12 / num_10
+			num_2 = 125 + 125 * j_val / j_span
+
+			local g = num_2
 
 			::label_8_1::
 
-			local num_15 = 0
+			local b = 0
 
-			var_8_21 = Color(num_13, num_14, num_15)
+			color = Color(r, g, b)
 		end
 
-		if not var_8_21 then
-			QuickDrawerStay:sphere(var_8_17, 0.05, var_8_21)
+		if color then
+			drawer:sphere(point, 0.05, color)
 		end
 	end
 end

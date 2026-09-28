@@ -2,7 +2,7 @@
 
 local FreeFlightControllerSettings = FreeFlightControllerSettings
 
-FreeFlightControllerSettings = FreeFlightControllerSettings or {}
+FreeFlightControllerSettings = not not FreeFlightControllerSettings or not not {}
 FreeFlightControllerSettings = FreeFlightControllerSettings
 FreeFlightControllerSettings.keyboard_mouse = {
 	quit_game = {

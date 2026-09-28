@@ -1,19 +1,18 @@
 -- chunkname: @scripts/managers/debug/debug.lua
 
-local str = "arial"
-local num = 26
-local str_2 = "materials/fonts/" .. str
+local font, font_size = "arial", 26
+local font_mtrl = "materials/fonts/" .. font
 local Debug = Debug
 
-Debug = Debug or {}
+Debug = not not Debug or not not {}
 Debug = Debug
 
-Debug.setup = function (arg_1_0, arg_1_1)
+Debug.setup = function (world, world_name)
 	-- function 1
 	Debug.active = BUILD ~= "release"
-	Debug.world = arg_1_0
-	Debug.world_name = arg_1_1
-	Debug.gui = World.create_screen_gui(arg_1_0, "material", "materials/fonts/gw_fonts", "immediate")
+	Debug.world = world
+	Debug.world_name = world_name
+	Debug.gui = World.create_screen_gui(world, "material", "materials/fonts/gw_fonts", "immediate")
 	Debug.debug_texts = {}
 	Debug.sticky_texts = {}
 	Debug.line_objects = {}
@@ -26,112 +25,116 @@ Debug.setup = function (arg_1_0, arg_1_1)
 	Debug.num_world_sticky_texts = 0
 end
 
-Debug.font = str
-Debug.font_mtrl = str_2
+Debug.font = font
+Debug.font_mtrl = font_mtrl
 Debug.font_size = 26
 
-Debug.create_line_object = function (arg_2_0)
+Debug.create_line_object = function (name)
 	-- function 2
-	local flag = false
+	local disable_depth_test = false
 
-	Debug.line_objects[arg_2_0] = World.create_line_object(Debug.world, flag)
+	Debug.line_objects[name] = World.create_line_object(Debug.world, disable_depth_test)
 
-	return Debug.line_objects[arg_2_0]
+	return Debug.line_objects[name]
 end
 
 Debug.test_popup = function ()
 	-- function 3
-	local var_3_0 = Localize("popup_debug_header")
-	local str = Localize("popup_debug_message") .. "\nhost_name"
+	local header = Localize("popup_debug_header")
+	local message = Localize("popup_debug_message") .. "\nhost_name"
 
-	Debug.popup_id = Managers.popup:queue_popup(str, var_3_0, "cancel", Localize("popup_choice_cancel"))
+	Debug.popup_id = Managers.popup:queue_popup(message, header, "cancel", Localize("popup_choice_cancel"))
 
 	Managers.popup:activate_timer(Debug.popup_id, 120, "cancel")
 end
 
-Debug.update = function (arg_4_0, arg_4_1)
+Debug.update = function (t, dt)
 	-- function 4
-	if not Debug.active and not script_data and not script_data.disable_debug_draw then
+	if not Debug.active or script_data and script_data.disable_debug_draw then
 		return
 	end
 
-	if not (not Debug.popup_id and Managers.popup:query_result(Debug.popup_id) ~= "cancel") then
-		Managers.popup:cancel_popup(Debug.popup_id)
+	if Debug.popup_id then
+		local result = Managers.popup:query_result(Debug.popup_id)
 
-		Debug.popup_id = nil
+		if result == "cancel" then
+			Managers.popup:cancel_popup(Debug.popup_id)
+
+			Debug.popup_id = nil
+		end
 	end
 
-	local flag = not script_data.hide_debug_text_background
-	local res_w = RESOLUTION_LOOKUP.res_w
-	local res_h = RESOLUTION_LOOKUP.res_h
+	local show_debug_text_background = not script_data.hide_debug_text_background
+	local res_x, res_y = RESOLUTION_LOOKUP.res_w, RESOLUTION_LOOKUP.res_h
 	local gui = Debug.gui
-	local num_2 = res_h - 100
-	local var_4_5 = Color(120, 220, 0)
-	local count = #Debug.debug_texts
+	local pos = res_y - 100
+	local text_color = Color(120, 220, 0)
+	local num_debug_texts = #Debug.debug_texts
+	local max = 100
 
-	if count > 100 then
+	if max < num_debug_texts then
 		-- Nothing
 	end
 
-	local num_3 = Gui.FormatDirectives + Gui.MultiColor
+	local bitmaskflags = Gui.FormatDirectives + Gui.MultiColor
 
-	for i = 1, count do
-		local var_4_8 = Debug.debug_texts[i]
-		local text = var_4_8.text
-		local color = var_4_8.color
-		local var_4_11 = Vector3(130, num_2, 700)
+	for i = 1, num_debug_texts do
+		local data = Debug.debug_texts[i]
+		local text = data.text
+		local instance_text_color = data.color
+		local text_pos = Vector3(130, pos, 700)
 		local text_2 = Gui.text
-		local var_4_13 = gui
-		local var_4_14 = text
-		local var_4_15 = str_2
-		local var_4_16 = num
-		local var_4_17 = str
-		local var_4_18 = var_4_11
+		local var_4_1 = gui
+		local var_4_2 = text
+		local var_4_3 = font_mtrl
+		local var_4_4 = font_size
+		local var_4_5 = font
+		local var_4_6 = text_pos
 		local unbox
 
-		if not color then
-			unbox = color:unbox()
+		if instance_text_color then
+			unbox = instance_text_color:unbox()
 
 			if not unbox then
 				-- Nothing
 			end
 		end
 
-		unbox = var_4_5
+		unbox = text_color
 
 		::label_4_0::
 
-		text_2(var_4_13, var_4_14, var_4_15, var_4_16, var_4_17, var_4_18, unbox, num_3)
+		text_2(var_4_1, var_4_2, var_4_3, var_4_4, var_4_5, var_4_6, unbox, bitmaskflags)
 
-		if not flag then
-			local text_extents, var_4_21 = Gui.text_extents(gui, text, str_2, num)
+		if show_debug_text_background then
+			local text_min, text_max = Gui.text_extents(gui, text, font_mtrl, font_size)
 
-			Gui.rect(gui, var_4_11 + Vector3(-5, -6, -100), Vector3(var_4_21.x - text_extents.x + 20, num + 2, 0), Color(75, 0, 0, 0))
+			Gui.rect(gui, text_pos + Vector3(-5, -6, -100), Vector3(text_max.x - text_min.x + 20, font_size + 2, 0), Color(75, 0, 0, 0))
 		end
 
-		num_2 = num_2 - (num + 2)
+		pos = pos - (font_size + 2)
 		Debug.debug_texts[i] = nil
 	end
 
 	local sticky_texts = Debug.sticky_texts
-	local count_2 = #sticky_texts
+	local num_sticky = #sticky_texts
 
-	if count_2 > 0 then
-		local num_4 = 1
+	if num_sticky > 0 then
+		local i = 1
 
-		while num_4 <= count_2 do
-			local var_4_25, var_4_26 = unpack(sticky_texts[num_4])
+		while i <= num_sticky do
+			local text, display_time = unpack(sticky_texts[i])
 
-			Gui.text(gui, var_4_25, str_2, num, str, Vector3(10, num_2, 700), var_4_5, num_3)
+			Gui.text(gui, text, font_mtrl, font_size, font, Vector3(10, pos, 700), text_color, bitmaskflags)
 
-			num_2 = num_2 - (num + 2)
+			pos = pos - (font_size + 2)
 
-			if var_4_26 < arg_4_0 then
-				table.remove(sticky_texts, num_4)
+			if display_time < t then
+				table.remove(sticky_texts, i)
 
-				count_2 = count_2 - 1
+				num_sticky = num_sticky - 1
 			else
-				num_4 = num_4 + 1
+				i = i + 1
 			end
 		end
 	end
@@ -139,76 +142,93 @@ Debug.update = function (arg_4_0, arg_4_1)
 	Debug.update_world_texts()
 	Debug.update_world_sticky_texts()
 
-	local world = Debug.world
+	local w = Debug.world
 
-	for k, v in pairs(Debug.line_objects) do
-		LineObject.dispatch(world, v)
+	for lo_name, lo in pairs(Debug.line_objects) do
+		LineObject.dispatch(w, lo)
 	end
 
-	if not script_data.debug_cycle_select_inventory_item then
-		local matchmaking = Managers.matchmaking
-		local flag_2 = not matchmaking and matchmaking._ingame_ui
+	if script_data.debug_cycle_select_inventory_item then
+		local matchmaking_manager = Managers.matchmaking
+		local ingame_ui = not not matchmaking_manager and not not matchmaking_manager._ingame_ui
+		local inventory_view = not not ingame_ui and ingame_ui.current_view == "inventory_view"
 
-		if not (not flag_2 and flag_2.current_view == "inventory_view") then
-			local next_select_at = Debug.next_select_at
+		if inventory_view then
+			local next_select_at_2 = Debug.next_select_at
 
-			next_select_at = next_select_at or 0
+			if not next_select_at_2 then
+				-- Nothing
+			end
 
-			if next_select_at < arg_4_0 then
+			next_select_at_2 = 0
+
+			local next_select_at = next_select_at_2
+
+			::label_4_1::
+
+			if next_select_at < t then
 				local previous_selected_item = Debug.previous_selected_item
 
-				previous_selected_item = previous_selected_item or 1
-
-				local num_5 = previous_selected_item + 1
-
-				if num_5 > 7 then
-					num_5 = 1
+				if not previous_selected_item then
+					-- Nothing
 				end
 
-				Debug.previous_selected_item = num_5
-				Debug.select_item = num_5
-				Debug.next_select_at = arg_4_0 + 1
+				previous_selected_item = 1
+
+				local selected_item = previous_selected_item
+
+				::label_4_2::
+
+				local next_select_item = selected_item + 1
+
+				if next_select_item > 7 then
+					next_select_item = 1
+				end
+
+				Debug.previous_selected_item = next_select_item
+				Debug.select_item = next_select_item
+				Debug.next_select_at = t + 1
 			end
 		end
 	end
 end
 
-Debug.cond_text = function (arg_5_0, ...)
+Debug.cond_text = function (c, ...)
 	-- function 5
-	if not arg_5_0 then
+	if c then
 		Debug.text(...)
 	end
 end
 
 Debug.text = function (...)
 	-- function 6
-	if not Debug.active and not script_data and not script_data.disable_debug_draw then
+	if not Debug.active or script_data and script_data.disable_debug_draw then
 		return
 	end
 
-	local alloc_table = FrameTable.alloc_table()
+	local text_table = FrameTable.alloc_table()
 
-	alloc_table.text = string.format(...)
+	text_table.text = string.format(...)
 
-	table.insert(Debug.debug_texts, alloc_table)
+	table.insert(Debug.debug_texts, text_table)
 end
 
-Debug.colored_text = function (arg_7_0, ...)
+Debug.colored_text = function (color, ...)
 	-- function 7
-	if not Debug.active and not script_data and not script_data.disable_debug_draw then
+	if not Debug.active or script_data and script_data.disable_debug_draw then
 		return
 	end
 
-	local alloc_table = FrameTable.alloc_table()
+	local text_table = FrameTable.alloc_table()
 
-	alloc_table.text = string.format(...)
-	alloc_table.color = ColorBox(arg_7_0)
+	text_table.text = string.format(...)
+	text_table.color = ColorBox(color)
 
-	table.insert(Debug.debug_texts, alloc_table)
+	table.insert(Debug.debug_texts, text_table)
 end
 
-local num_2 = 512
-local tbl = {
+local max_world_sticky = 512
+local debug_colors = {
 	red = {
 		255,
 		0,
@@ -252,34 +272,36 @@ Debug.update_world_texts = function ()
 		return
 	end
 
-	local _world_gui = Managers.state.debug_text._world_gui
-	local world_texts = Debug.world_texts
-	local count = #world_texts
-	local main_world = Application.main_world()
+	local world_gui = Managers.state.debug_text._world_gui
+	local wt = Debug.world_texts
+	local num_texts = #wt
+	local world = Application.main_world()
 
-	if not ScriptWorld.has_viewport(main_world, "player_1") then
+	if not ScriptWorld.has_viewport(world, "player_1") then
 		return
 	end
 
 	local viewport = ScriptWorld.viewport(Application.main_world(), "player_1")
-	local camera = ScriptViewport.camera(viewport)
-	local local_pose = Camera.local_pose(camera)
-	local translation = Matrix4x4.translation(local_pose)
+	local cam = ScriptViewport.camera(viewport)
+	local cam_tm = Camera.local_pose(cam)
+	local cam_pos = Matrix4x4.translation(cam_tm)
 
-	for i = 1, count do
-		local var_8_8 = world_texts[i]
-		local var_8_9 = var_8_8[1]
-		local var_8_10 = Vector3(var_8_8[2], var_8_8[3], var_8_8[4])
-		local flat_no_roll = Quaternion.flat_no_roll(Quaternion.look(var_8_10 - translation, Vector3.up()))
-		local num = 0.3
-		local text_extents, var_8_14, var_8_15 = Gui.text_extents(_world_gui, var_8_9, str_2, num)
-		local var_8_16 = var_8_15[1]
-		local num_2 = var_8_10 - Quaternion.right(flat_no_roll) * var_8_16 * 0.5
-		local from_quaternion_position = Matrix4x4.from_quaternion_position(flat_no_roll, num_2)
+	for i = 1, num_texts do
+		local item = wt[i]
+		local text = item[1]
+		local pos = Vector3(item[2], item[3], item[4])
+		local rot = Quaternion.flat_no_roll(Quaternion.look(pos - cam_pos, Vector3.up()))
+		local font_size = 0.3
+		local _, _, extent_3 = Gui.text_extents(world_gui, text, font_mtrl, font_size)
+		local width = extent_3[1]
 
-		Gui.text_3d(_world_gui, var_8_9, str_2, num, str, from_quaternion_position, Vector3.zero(), 1, Color(var_8_8[5], var_8_8[6], var_8_8[7]))
+		pos = pos - Quaternion.right(rot) * width * 0.5
 
-		world_texts[i] = nil
+		local tm = Matrix4x4.from_quaternion_position(rot, pos)
+
+		Gui.text_3d(world_gui, text, font_mtrl, font_size, font, tm, Vector3.zero(), 1, Color(item[5], item[6], item[7]))
+
+		wt[i] = nil
 	end
 end
 
@@ -289,109 +311,129 @@ Debug.update_world_sticky_texts = function ()
 		return
 	end
 
-	local _world_gui = Managers.state.debug_text._world_gui
-	local world_sticky_texts = Debug.world_sticky_texts
-	local num_world_sticky_texts = Debug.num_world_sticky_texts
-	local main_world = Application.main_world()
+	local world_gui = Managers.state.debug_text._world_gui
+	local wt = Debug.world_sticky_texts
+	local num_texts = Debug.num_world_sticky_texts
+	local world = Application.main_world()
 
-	if not ScriptWorld.has_viewport(main_world, "player_1") then
+	if not ScriptWorld.has_viewport(world, "player_1") then
 		return
 	end
 
 	local viewport = ScriptWorld.viewport(Application.main_world(), "player_1")
-	local camera = ScriptViewport.camera(viewport)
-	local local_pose = Camera.local_pose(camera)
-	local translation = Matrix4x4.translation(local_pose)
+	local cam = ScriptViewport.camera(viewport)
+	local cam_tm = Camera.local_pose(cam)
+	local cam_pos = Matrix4x4.translation(cam_tm)
 
-	for i = 1, num_world_sticky_texts do
-		local var_9_8 = world_sticky_texts[i]
-		local var_9_9 = var_9_8[1]
-		local var_9_10 = Vector3(var_9_8[2], var_9_8[3], var_9_8[4])
-		local flat_no_roll = Quaternion.flat_no_roll(Quaternion.look(var_9_10 - translation, Vector3.up()))
-		local num = 0.3
-		local text_extents, var_9_14, var_9_15 = Gui.text_extents(_world_gui, var_9_9, str_2, num)
-		local var_9_16 = var_9_15[1]
-		local num_2 = var_9_10 - Quaternion.right(flat_no_roll) * var_9_16 * 0.5
-		local from_quaternion_position = Matrix4x4.from_quaternion_position(flat_no_roll, num_2)
+	for i = 1, num_texts do
+		local item = wt[i]
+		local text = item[1]
+		local pos = Vector3(item[2], item[3], item[4])
+		local rot = Quaternion.flat_no_roll(Quaternion.look(pos - cam_pos, Vector3.up()))
+		local font_size = 0.3
+		local _, _, extent_3 = Gui.text_extents(world_gui, text, font_mtrl, font_size)
+		local width = extent_3[1]
 
-		Gui.text_3d(_world_gui, var_9_9, str_2, num, str, from_quaternion_position, Vector3.zero(), 1, Color(var_9_8[5], var_9_8[6], var_9_8[7]))
+		pos = pos - Quaternion.right(rot) * width * 0.5
+
+		local tm = Matrix4x4.from_quaternion_position(rot, pos)
+
+		Gui.text_3d(world_gui, text, font_mtrl, font_size, font, tm, Vector3.zero(), 1, Color(item[5], item[6], item[7]))
 	end
 end
 
-Debug.world_text = function (self, arg_10_1, arg_10_2)
+Debug.world_text = function (pos, text, color_name)
 	-- function 10
-	if not Debug.active and not script_data and not script_data.disable_debug_draw then
+	if not Debug.active or script_data and script_data.disable_debug_draw then
 		return
 	end
 
-	local world_texts = Debug.world_texts
-	local var_10_1 = tbl[arg_10_2]
+	local wt = Debug.world_texts
+	local var_10_0 = debug_colors[color_name]
 
-	var_10_1 = var_10_1 or tbl.white
+	if not var_10_0 then
+		-- Nothing
+	end
 
-	local num = #world_texts + 1
+	var_10_0 = debug_colors.white
 
-	if not world_texts[num] then
-		world_texts[num][1] = arg_10_1
-		world_texts[num][2] = self[1]
-		world_texts[num][3] = self[2]
-		world_texts[num][4] = self[3]
-		world_texts[num][5] = var_10_1[1]
-		world_texts[num][6] = var_10_1[2]
-		world_texts[num][7] = var_10_1[3]
+	local color = var_10_0
+
+	::label_10_0::
+
+	local index = #wt + 1
+
+	if wt[index] then
+		wt[index][1] = text
+		wt[index][2] = pos[1]
+		wt[index][3] = pos[2]
+		wt[index][4] = pos[3]
+		wt[index][5] = color[1]
+		wt[index][6] = color[2]
+		wt[index][7] = color[3]
 	else
-		world_texts[num] = {
-			arg_10_1,
-			self[1],
-			self[2],
-			self[3],
-			var_10_1[1],
-			var_10_1[2],
-			var_10_1[3]
+		wt[index] = {
+			text,
+			pos[1],
+			pos[2],
+			pos[3],
+			color[1],
+			color[2],
+			color[3]
 		}
 	end
 end
 
-Debug.world_sticky_text = function (self, arg_11_1, arg_11_2)
+Debug.world_sticky_text = function (pos, text, color_name)
 	-- function 11
-	if not Debug.active and not script_data and not script_data.disable_debug_draw then
+	if not Debug.active or script_data and script_data.disable_debug_draw then
 		return
 	end
 
-	local world_sticky_texts = Debug.world_sticky_texts
-	local num = Debug.world_sticky_index + 1
+	local wt = Debug.world_sticky_texts
+	local index = Debug.world_sticky_index
 
-	if num > num_2 then
-		num = 1
+	index = index + 1
+
+	if index > max_world_sticky then
+		index = 1
 	end
 
-	Debug.num_world_sticky_texts = math.clamp(Debug.num_world_sticky_texts + 1, 0, num_2)
+	Debug.num_world_sticky_texts = math.clamp(Debug.num_world_sticky_texts + 1, 0, max_world_sticky)
 
-	local var_11_2 = tbl[arg_11_2]
+	local var_11_0 = debug_colors[color_name]
 
-	var_11_2 = var_11_2 or tbl.white
+	if not var_11_0 then
+		-- Nothing
+	end
 
-	if not world_sticky_texts[num] then
-		world_sticky_texts[num][1] = arg_11_1
-		world_sticky_texts[num][2] = self[1]
-		world_sticky_texts[num][3] = self[2]
-		world_sticky_texts[num][4] = self[3]
-		world_sticky_texts[num][5] = var_11_2[1]
-		world_sticky_texts[num][6] = var_11_2[2]
-		world_sticky_texts[num][7] = var_11_2[3]
+	var_11_0 = debug_colors.white
+
+	local color = var_11_0
+
+	::label_11_0::
+
+	if wt[index] then
+		wt[index][1] = text
+		wt[index][2] = pos[1]
+		wt[index][3] = pos[2]
+		wt[index][4] = pos[3]
+		wt[index][5] = color[1]
+		wt[index][6] = color[2]
+		wt[index][7] = color[3]
 	else
-		world_sticky_texts[num] = {
-			arg_11_1,
-			self[1],
-			self[2],
-			self[3],
-			var_11_2[1],
-			var_11_2[2],
-			var_11_2[3]
+		wt[index] = {
+			text,
+			pos[1],
+			pos[2],
+			pos[3],
+			color[1],
+			color[2],
+			color[3]
 		}
 	end
 
-	Debug.world_sticky_index = num
+	Debug.world_sticky_index = index
 end
 
 Debug.reset_sticky_world_texts = function ()
@@ -402,299 +444,322 @@ end
 
 Debug.sticky_text = function (...)
 	-- function 13
-	if not Debug.active and not script_data and not script_data.disable_debug_draw then
+	if not Debug.active or script_data and script_data.disable_debug_draw then
 		return
 	end
 
-	local tbl = {
+	local t = {
 		...
 	}
-	local num = 3
+	local delay = 3
 
-	num = tbl[#tbl - 1] ~= "delay" or not tbl[#tbl] or num
+	if t[#t - 1] == "delay" and not t[#t] then
+		-- Nothing
+	end
 
 	table.insert(Debug.sticky_texts, {
 		string.format(...),
-		Managers.time:time("game") + num
+		Managers.time:time("game") + delay
 	})
 end
 
-Debug.drawer = function (arg_14_0, arg_14_1)
+Debug.drawer = function (name, disabled)
 	-- function 14
-	arg_14_0 = arg_14_0 or "default"
+	name = not not name or not not "default"
 
-	local var_14_0 = Debug.line_objects[arg_14_0]
+	local lo = Debug.line_objects[name]
 
-	var_14_0 = var_14_0 or Debug.create_line_object(arg_14_0)
+	lo = not not lo or not not Debug.create_line_object(name)
 
-	return DebugDrawer:new(var_14_0, to_boolean(not arg_14_1))
+	return DebugDrawer:new(lo, to_boolean(not disabled))
 end
 
-Debug.draw_text = function (arg_15_0, arg_15_1, arg_15_2, arg_15_3)
+Debug.draw_text = function (text, text_pos, opt_font_size, opt_color)
 	-- function 15
 	local gui = Debug.gui
-	local flag = arg_15_2 or num
-	local var_15_2 = Vector3(arg_15_1.x, RESOLUTION_LOOKUP.res_h - arg_15_1.y - flag, arg_15_1.z)
+	local size = not not opt_font_size or not not font_size
+	local pos = Vector3(text_pos.x, RESOLUTION_LOOKUP.res_h - text_pos.y - size, text_pos.z)
 
-	Gui.text(gui, arg_15_0, str_2, arg_15_2 or num, str, var_15_2, arg_15_3 or Color(120, 220, 0), "shadow")
+	Gui.text(gui, text, font_mtrl, not not opt_font_size or not not font_size, font, pos, not not opt_color or not not Color(120, 220, 0), "shadow")
 end
 
-Debug.draw_rect = function (self, arg_16_1, arg_16_2)
+Debug.draw_rect = function (pos, size, color)
 	-- function 16
 	local gui = Debug.gui
-	local var_16_1 = Vector3(self.x, RESOLUTION_LOOKUP.res_h - self.y, self.z)
-	local var_16_2 = Vector3(arg_16_1.x, -arg_16_1.y, arg_16_1.z)
+	local inverted_pos = Vector3(pos.x, RESOLUTION_LOOKUP.res_h - pos.y, pos.z)
+	local inverted_size = Vector3(size.x, -size.y, size.z)
 
-	Gui.rect(gui, var_16_1, var_16_2, arg_16_2)
+	Gui.rect(gui, inverted_pos, inverted_size, color)
 end
 
 Debug.teardown = function ()
 	-- function 17
 	Debug.active = false
 
-	local world = Debug.world
+	local w = Debug.world
 
-	for k, v in pairs(Debug.line_objects) do
-		World.destroy_line_object(world, v)
+	for lo_name, lo in pairs(Debug.line_objects) do
+		World.destroy_line_object(w, lo)
 	end
 
 	table.clear(Debug.line_objects)
 end
 
-Debug.animation_log_specific_profile = function (arg_18_0, arg_18_1)
+Debug.animation_log_specific_profile = function (profile, enable)
 	-- function 18
-	local players = Managers.player:players()
+	local player_manager = Managers.player
+	local players = player_manager:players()
 
-	for k, v in pairs(players) do
-		local owned_units = v.owned_units
+	for _, player in pairs(players) do
+		local units = player.owned_units
 
-		for k_2, v_2 in pairs(owned_units) do
-			if not ScriptUnit.has_extension(v_2, "status_system") then
-				local profile_id = ScriptUnit.extension(v_2, "status_system").profile_id
+		for _, unit in pairs(units) do
+			local has_status_extension = ScriptUnit.has_extension(unit, "status_system")
 
-				if SPProfiles[profile_id].display_name == arg_18_0 then
-					print("animation logging enabled for:" .. arg_18_0)
-					Unit.set_animation_logging(v_2, arg_18_1)
+			if has_status_extension then
+				local status_extension = ScriptUnit.extension(unit, "status_system")
+				local profile_id = status_extension.profile_id
+				local profile_data = SPProfiles[profile_id]
+				local profile_display_name = profile_data.display_name
+
+				if profile_display_name == profile then
+					print("animation logging enabled for:" .. profile)
+					Unit.set_animation_logging(unit, enable)
 				end
 			end
 		end
 	end
 end
 
-Debug.spawn_hero = function (arg_19_0)
+Debug.spawn_hero = function (hero_name)
 	-- function 19
-	local hero_spawner_handler = Managers.state.spawn.hero_spawner_handler
+	local spawn_manager = Managers.state.spawn
+	local hero_spawner_handler = spawn_manager.hero_spawner_handler
 	local peer_id = Network.peer_id()
-	local player_from_peer_id = Managers.player:player_from_peer_id(peer_id)
+	local player = Managers.player:player_from_peer_id(peer_id)
 
-	hero_spawner_handler:spawn_hero_request(player_from_peer_id, arg_19_0)
+	hero_spawner_handler:spawn_hero_request(player, hero_name)
 end
 
-Debug.load_level = function (arg_20_0, arg_20_1, arg_20_2)
+Debug.load_level = function (level_name, environment_variation_id, debug_environment_level_flow_event)
 	-- function 20
-	Managers.mechanism:debug_load_level(arg_20_0, arg_20_1)
+	Managers.mechanism:debug_load_level(level_name, environment_variation_id)
 
-	if arg_20_2 ~= nil then
+	if debug_environment_level_flow_event ~= nil then
 		StateIngame._level_flow_events = {
-			arg_20_2
+			debug_environment_level_flow_event
 		}
 	else
 		StateIngame._level_flow_events = nil
 	end
 end
 
-Debug.level_loaded = function (arg_21_0)
+Debug.level_loaded = function (level_name)
 	-- function 21
-	if not Managers.state then
+	local state_managers = Managers.state
+
+	if not state_managers then
 		return false
 	end
 
 	local level_transition_handler = Managers.level_transition_handler
+	local level_key = level_transition_handler:get_current_level_key()
 
-	if level_transition_handler:get_current_level_key() ~= arg_21_0 then
+	if level_key ~= level_name then
 		return false
 	end
 
-	if not level_transition_handler:all_packages_loaded() then
+	local packages_loaded = level_transition_handler:all_packages_loaded()
+
+	if not packages_loaded then
 		return false
 	end
 
 	local peer_id = Network.peer_id()
-	local player_from_peer_id = Managers.player:player_from_peer_id(peer_id)
-	local flag = not player_from_peer_id and player_from_peer_id.player_unit
+	local player = Managers.player:player_from_peer_id(peer_id)
+	local player_unit = not not player and not not player.player_unit
 
-	if not Unit.alive(flag) then
+	if not Unit.alive(player_unit) then
 		return false
 	end
 
 	return true
 end
 
-Debug.visualize_level_unit = function (arg_22_0)
+Debug.visualize_level_unit = function (level_unit_id)
 	-- function 22
-	local _level = Managers.state.networked_flow_state._level
+	local level = Managers.state.networked_flow_state._level
 
-	if not _level then
+	if not level then
 		return
 	end
 
-	local unit_by_index = Level.unit_by_index(_level, arg_22_0)
+	local unit = Level.unit_by_index(level, level_unit_id)
 
-	if not unit_by_index then
+	if not unit then
 		return
 	end
 
-	local world_position = Unit.world_position(unit_by_index, 0)
+	local position = Unit.world_position(unit, 0)
 
-	QuickDrawer:sphere(world_position, 1, Colors.get("medium_aqua_marine"))
+	QuickDrawer:sphere(position, 1, Colors.get("medium_aqua_marine"))
 
 	for i = 1, 20 do
-		QuickDrawer:sphere(world_position, i * 10, Colors.get("medium_aqua_marine"))
+		QuickDrawer:sphere(position, i * 10, Colors.get("medium_aqua_marine"))
 	end
 end
 
 Debug.aim_position = function ()
 	-- function 23
-	local local_player = Managers.player:local_player(1)
-	local player_unit = local_player.player_unit
-	local camera_position = Managers.state.camera:camera_position(local_player.viewport_name)
-	local camera_rotation = Managers.state.camera:camera_rotation(local_player.viewport_name)
-	local forward = Quaternion.forward(camera_rotation)
-	local str = "filter_ray_projectile"
+	local player_manager = Managers.player
+	local player = player_manager:local_player(1)
+	local player_unit = player.player_unit
+	local camera_position = Managers.state.camera:camera_position(player.viewport_name)
+	local camera_rotation = Managers.state.camera:camera_rotation(player.viewport_name)
+	local camera_direction = Quaternion.forward(camera_rotation)
+	local filter = "filter_ray_projectile"
 	local world = Managers.state.spawn.world
-	local get_data = World.get_data(world, "physics_world")
-	local immediate_raycast = PhysicsWorld.immediate_raycast(get_data, camera_position, forward, 100, "all", "collision_filter", str)
+	local physics_world = World.get_data(world, "physics_world")
+	local result = PhysicsWorld.immediate_raycast(physics_world, camera_position, camera_direction, 100, "all", "collision_filter", filter)
 
-	if not immediate_raycast then
-		local count = #immediate_raycast
+	if result then
+		local num_hits = #result
 
-		for i = 1, count do
-			local var_23_10 = immediate_raycast[i]
-			local var_23_11 = var_23_10[4]
+		for i = 1, num_hits do
+			local hit = result[i]
+			local hit_actor = hit[4]
+			local hit_unit = Actor.unit(hit_actor)
+			local attack_hit_self = hit_unit == player_unit
 
-			if not (Actor.unit(var_23_11) == player_unit) then
-				return var_23_10[1], var_23_10[2], var_23_10[3], var_23_10[4]
+			if not attack_hit_self then
+				return hit[1], hit[2], hit[3], hit[4]
 			end
 		end
 	end
 end
 
-Debug.test_spawn_unit = function (arg_24_0, arg_24_1)
+Debug.test_spawn_unit = function (profile_name, career_index)
 	-- function 24
-	arg_24_0 = arg_24_0 or "wood_elf"
-	arg_24_1 = arg_24_1 or 1
+	profile_name = not not profile_name or not not "wood_elf"
+	career_index = not not career_index or not not 1
 
-	local var_24_0 = FindProfileIndex(arg_24_0)
-	local var_24_1 = SPProfiles[var_24_0].careers[arg_24_1]
-	local name = var_24_1.name
-	local get_loadout_item = BackendUtils.get_loadout_item(name, "slot_skin")
-	local flag = not get_loadout_item and get_loadout_item.data
-	local name_2
+	local profile_index = FindProfileIndex(profile_name)
+	local profile = SPProfiles[profile_index]
+	local career = profile.careers[career_index]
+	local career_name = career.name
+	local skin_item = BackendUtils.get_loadout_item(career_name, "slot_skin")
+	local item_data = not not skin_item and not not skin_item.data
+	local name
 
-	if not flag then
-		name_2 = flag.name
+	if item_data then
+		name = item_data.name
 
-		if not name_2 then
+		if not name then
 			-- Nothing
 		end
 	end
 
-	name_2 = var_24_1.base_skin
+	name = career.base_skin
+
+	local skin_name = name
 
 	::label_24_0::
 
-	local tbl = {}
-	local var_24_7 = Cosmetics[name_2]
-	local third_person = var_24_7.third_person
-	local material_changes = var_24_7.material_changes
+	local package_names = {}
+	local skin_data = Cosmetics[skin_name]
+	local unit_name = skin_data.third_person
+	local material_changes = skin_data.material_changes
 
-	tbl[#tbl + 1] = third_person
+	package_names[#package_names + 1] = unit_name
 
-	if not material_changes then
-		local package_name = material_changes.package_name
+	if material_changes then
+		local material_package = material_changes.package_name
 
-		tbl[#tbl + 1] = package_name
+		package_names[#package_names + 1] = material_package
 	end
 
-	for i, v in ipairs(tbl) do
-		Managers.package:load(v, "debug", nil, false)
+	for index, package_name in ipairs(package_names) do
+		Managers.package:load(package_name, "debug", nil, false)
 	end
 
 	local world = Managers.state.spawn.world
-	local aim_position = Debug.aim_position()
-	local third_person_2 = var_24_7.third_person
-	local color_tint = var_24_7.color_tint
-	local spawn_unit = World.spawn_unit(world, third_person_2, aim_position)
-	local material_changes_2 = var_24_7.material_changes
+	local position = Debug.aim_position()
+	local unit_name = skin_data.third_person
+	local tint_data = skin_data.color_tint
+	local character_unit = World.spawn_unit(world, unit_name, position)
+	local material_changes = skin_data.material_changes
 
-	if not material_changes_2 then
-		local third_person_3 = material_changes_2.third_person
+	if material_changes then
+		local third_person_changes = material_changes.third_person
 
-		for k, v_2 in pairs(third_person_3) do
-			Unit.set_material(spawn_unit, k, v_2)
-			Unit.set_material(spawn_unit, k, v_2)
+		for slot_name, material_name in pairs(third_person_changes) do
+			Unit.set_material(character_unit, slot_name, material_name)
+			Unit.set_material(character_unit, slot_name, material_name)
 		end
 	end
 
-	Debug.test_unit = spawn_unit
+	Debug.test_unit = character_unit
 end
 
-Debug.test_despawn_unit = function (arg_25_0, arg_25_1)
+Debug.test_despawn_unit = function (profile_name, career_index)
 	-- function 25
 	local world = Managers.state.spawn.world
-	local test_unit = Debug.test_unit
+	local character_unit = Debug.test_unit
 
-	if not test_unit then
+	if not character_unit then
 		return
 	end
 
-	World.destroy_unit(world, test_unit)
+	World.destroy_unit(world, character_unit)
 
-	arg_25_0 = arg_25_0 or "wood_elf"
-	arg_25_1 = arg_25_1 or 1
+	profile_name = not not profile_name or not not "wood_elf"
+	career_index = not not career_index or not not 1
 
-	local var_25_2 = FindProfileIndex(arg_25_0)
-	local var_25_3 = SPProfiles[var_25_2].careers[arg_25_1]
-	local name = var_25_3.name
-	local get_loadout_item = BackendUtils.get_loadout_item(name, "slot_skin")
-	local flag = not get_loadout_item and get_loadout_item.data
-	local name_2
+	local profile_index = FindProfileIndex(profile_name)
+	local profile = SPProfiles[profile_index]
+	local career = profile.careers[career_index]
+	local career_name = career.name
+	local skin_item = BackendUtils.get_loadout_item(career_name, "slot_skin")
+	local item_data = not not skin_item and not not skin_item.data
+	local name
 
-	if not flag then
-		name_2 = flag.name
+	if item_data then
+		name = item_data.name
 
-		if not name_2 then
+		if not name then
 			-- Nothing
 		end
 	end
 
-	name_2 = var_25_3.base_skin
+	name = career.base_skin
+
+	local skin_name = name
 
 	::label_25_0::
 
-	local tbl = {}
-	local var_25_9 = Cosmetics[name_2]
-	local third_person = var_25_9.third_person
-	local material_changes = var_25_9.material_changes
+	local package_names = {}
+	local skin_data = Cosmetics[skin_name]
+	local unit_name = skin_data.third_person
+	local material_changes = skin_data.material_changes
 
-	tbl[#tbl + 1] = third_person
+	package_names[#package_names + 1] = unit_name
 
-	if not material_changes then
-		local package_name = material_changes.package_name
+	if material_changes then
+		local material_package = material_changes.package_name
 
-		tbl[#tbl + 1] = package_name
+		package_names[#package_names + 1] = material_package
 	end
 
-	for i, v in ipairs(tbl) do
-		Managers.package:unload(v, "debug", nil, false)
+	for index, package_name in ipairs(package_names) do
+		Managers.package:unload(package_name, "debug", nil, false)
 	end
 end
 
 Debug.create_jira_issue = function ()
 	-- function 26
-	local var_26_0, var_26_1 = pcall(require, "core/plugins/reporter")
+	local valid, err = pcall(require, "core/plugins/reporter")
 
-	if not var_26_0 then
+	if valid then
 		Reporter.create_jira_issue("honduras")
 	end
 end
@@ -702,48 +767,48 @@ end
 local Debug_2 = Debug
 local _hook_data = Debug._hook_data
 
-_hook_data = _hook_data or {}
+_hook_data = not not _hook_data or not not {}
 Debug_2._hook_data = _hook_data
 
-Debug.hook = function (arg_27_0, arg_27_1, arg_27_2)
+Debug.hook = function (obj, method, handler)
 	-- function 27
-	local var_27_0 = Debug._hook_data[arg_27_0]
+	local data_for_obj = Debug._hook_data[obj]
 
-	if not var_27_0 then
-		var_27_0 = {}
-		Debug._hook_data[arg_27_0] = var_27_0
+	if not data_for_obj then
+		data_for_obj = {}
+		Debug._hook_data[obj] = data_for_obj
 	end
 
-	local var_27_1 = var_27_0[arg_27_1]
+	local orig = data_for_obj[method]
 
-	if not var_27_1 then
-		var_27_1 = rawget(arg_27_0, arg_27_1)
-		var_27_0[arg_27_1] = var_27_1
+	if not orig then
+		orig = rawget(obj, method)
+		data_for_obj[method] = orig
 
-		assert(var_27_1)
+		assert(orig)
 	end
 
-	rawset(arg_27_0, arg_27_1, function (...)
+	rawset(obj, method, function (...)
 		-- function 28
-		return arg_27_2(var_27_1, ...)
+		return handler(orig, ...)
 	end)
 end
 
-Debug.unhook = function (arg_29_0, arg_29_1, arg_29_2)
+Debug.unhook = function (obj, method, silent)
 	-- function 29
-	local var_29_0 = Debug._hook_data[arg_29_0]
+	local data_for_obj = Debug._hook_data[obj]
 
-	if not var_29_0 then
-		return assert(arg_29_2)
+	if not data_for_obj then
+		return assert(silent)
 	end
 
-	local var_29_1 = var_29_0[arg_29_1]
+	local orig = data_for_obj[method]
 
-	if not var_29_1 then
-		return assert(arg_29_2)
+	if not orig then
+		return assert(silent)
 	end
 
-	rawset(arg_29_0, arg_29_1, var_29_1)
+	rawset(obj, method, orig)
 
 	return true
 end

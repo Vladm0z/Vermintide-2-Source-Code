@@ -2,38 +2,38 @@
 
 local MaterialEffectMappings = MaterialEffectMappings
 
-MaterialEffectMappings = MaterialEffectMappings or {}
+MaterialEffectMappings = not not MaterialEffectMappings or not not {}
 MaterialEffectMappings = MaterialEffectMappings
 
 local MaterialEffectMappingsHotReloadVersion = MaterialEffectMappingsHotReloadVersion
 
-MaterialEffectMappingsHotReloadVersion = MaterialEffectMappingsHotReloadVersion or 0
+MaterialEffectMappingsHotReloadVersion = not not MaterialEffectMappingsHotReloadVersion or not not 0
 MaterialEffectMappingsHotReloadVersion = MaterialEffectMappingsHotReloadVersion + 1
 
-local tbl = {}
-local tbl_2 = {}
-local tbl_3 = {}
+local _added_keys, _removed_keys, _diffing_keys = {}, {}, {}
 
-local function fn(arg_1_0, arg_1_1)
+local function _find_diffs(t1, t2)
 	-- function 1
-	return ""
+	local str = ""
+
+	return str
 end
 
 MaterialEffectMappingsUtility = {
-	add = function (arg_2_0, arg_2_1)
+	add = function (identifier, mappings)
 		-- function 2
-		if not (not MaterialEffectMappings[arg_2_0] and not (MaterialEffectMappingsHotReloadVersion <= 1)) then
-			ferror("MaterialEffectMappings with identifier %s already exists. %s", arg_2_0, fn(MaterialEffectMappings[arg_2_0], arg_2_1))
+		if MaterialEffectMappings[identifier] and MaterialEffectMappingsHotReloadVersion <= 1 then
+			ferror("MaterialEffectMappings with identifier %s already exists. %s", identifier, _find_diffs(MaterialEffectMappings[identifier], mappings))
 		end
 
-		MaterialEffectMappings[arg_2_0] = arg_2_1
+		MaterialEffectMappings[identifier] = mappings
 
-		if not DEDICATED_SERVER then
-			arg_2_1.sound = nil
+		if DEDICATED_SERVER then
+			mappings.sound = nil
 		end
 	end,
-	get = function (arg_3_0)
+	get = function (identifier)
 		-- function 3
-		return MechanismOverrides.get(MaterialEffectMappings[arg_3_0])
+		return MechanismOverrides.get(MaterialEffectMappings[identifier])
 	end
 }

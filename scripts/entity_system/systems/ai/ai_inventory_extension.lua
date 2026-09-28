@@ -2,58 +2,70 @@
 
 AIInventoryExtension = class(AIInventoryExtension)
 
-local function fn(arg_1_0, arg_1_1)
+local function store_scene_graph_data(item_unit, attachment_node_linking)
 	-- function 1
-	local tbl = {}
-	local wielded = arg_1_1.wielded
+	local scene_graph_data = {}
+	local wielded = attachment_node_linking.wielded
 
-	wielded = wielded or arg_1_1
+	if not wielded then
+		-- Nothing
+	end
 
-	for i, v in ipairs(wielded) do
-		local target = v.target
+	wielded = attachment_node_linking
 
-		if target ~= 0 then
+	local node_linking_data = wielded
+
+	::label_1_0::
+
+	for i, attachment_nodes in ipairs(node_linking_data) do
+		local target_node = attachment_nodes.target
+
+		if target_node ~= 0 then
 			local node
 
-			if type(target) == "string" then
-				node = Unit.node(arg_1_0, target)
+			if type(target_node) == "string" then
+				node = Unit.node(item_unit, target_node)
 
 				if not node then
 					-- Nothing
 				end
 			end
 
-			node = target
+			node = target_node
 
-			::label_1_0::
+			local target_node_index = node
 
-			tbl[#tbl + 1] = {
-				i = node,
-				parent = Unit.scene_graph_parent(arg_1_0, node),
-				local_pose = Matrix4x4Box(Unit.local_pose(arg_1_0, node))
+			::label_1_1::
+
+			scene_graph_data[#scene_graph_data + 1] = {
+				i = target_node_index,
+				parent = Unit.scene_graph_parent(item_unit, target_node_index),
+				local_pose = Matrix4x4Box(Unit.local_pose(item_unit, target_node_index))
 			}
 		end
 	end
 
-	Unit.set_data(arg_1_0, "scene_graph_data", tbl)
+	Unit.set_data(item_unit, "scene_graph_data", scene_graph_data)
 end
 
-local function fn_2(arg_2_0, arg_2_1, arg_2_2, arg_2_3)
+local function link_unit(attachment_node_linking, world, target, source)
 	-- function 2
-	for i, v in ipairs(arg_2_0) do
-		local source = v.source
-		local target = v.target
+	for i, attachment_nodes in ipairs(attachment_node_linking) do
+		local source_node = attachment_nodes.source
+		local target_node = attachment_nodes.target
 		local node
 
-		if type(source) == "string" then
-			node = Unit.node(arg_2_3, source)
+		if type(source_node) == "string" then
+			node = Unit.node(source, source_node)
 
 			if not node then
 				-- Nothing
 			end
 		end
 
-		node = source
+		node = source_node
+
+		local source_node_index = node
 
 		do
 			local node_2
@@ -61,152 +73,187 @@ local function fn_2(arg_2_0, arg_2_1, arg_2_2, arg_2_3)
 
 		::label_2_0::
 
-		if type(target) == "string" then
-			node_2 = Unit.node(arg_2_2, target)
+		if type(target_node) == "string" then
+			node_2 = Unit.node(target, target_node)
 
 			if not node_2 then
 				-- Nothing
 			end
 		end
 
-		node_2 = target
+		node_2 = target_node
+
+		local target_node_index = node_2
 
 		::label_2_1::
 
-		World.link_unit(arg_2_1, arg_2_2, node_2, arg_2_3, node)
+		World.link_unit(world, target, target_node_index, source, source_node_index)
 	end
 end
 
-local function fn_3(arg_3_0, arg_3_1)
+local function unlink_unit(item_unit, world)
 	-- function 3
-	local get_data = Unit.get_data(arg_3_0, "scene_graph_data")
+	local get_data = Unit.get_data(item_unit, "scene_graph_data")
 
-	get_data = get_data or {}
+	if not get_data then
+		-- Nothing
+	end
 
-	World.unlink_unit(arg_3_1, arg_3_0)
+	get_data = {}
 
-	for i, v in ipairs(get_data) do
-		Unit.scene_graph_link(arg_3_0, v.i, v.parent)
-		Unit.set_local_pose(arg_3_0, v.i, v.local_pose:unbox())
+	local scene_graph_data = get_data
+
+	::label_3_0::
+
+	World.unlink_unit(world, item_unit)
+
+	for i, link in ipairs(scene_graph_data) do
+		Unit.scene_graph_link(item_unit, link.i, link.parent)
+		Unit.set_local_pose(item_unit, link.i, link.local_pose:unbox())
 	end
 end
 
-AIInventoryExtension._setup_configuration = function (self, arg_4_1, arg_4_2, arg_4_3, arg_4_4)
+AIInventoryExtension._setup_configuration = function (self, unit, start_n, inventory_configuration, item_extension_init_data)
 	-- function 4
-	local items = arg_4_3.items
-	local items_n = arg_4_3.items_n
+	local items, items_n = inventory_configuration.items, inventory_configuration.items_n
 	local inventory_item_units = self.inventory_item_units
 	local inventory_item_units_by_category = self.inventory_item_units_by_category
 	local inventory_item_definitions = self.inventory_item_definitions
 	local unit_spawner = Managers.state.unit_spawner
-	local var_4_6 = arg_4_2
+	local index = start_n
 
 	for i = 1, items_n do
-		var_4_6 = var_4_6 + 1
+		index = index + 1
 
-		local var_4_7 = items[i]
-		local count = var_4_7.count
-		local name = var_4_7.name
-		local var_4_10 = var_4_7[math.random(1, count)]
-		local unit_name = var_4_10.unit_name
-		local unit_extension_template = var_4_10.unit_extension_template
+		local item_category = items[i]
+		local item_category_n = item_category.count
+		local item_category_name = item_category.name
+		local item_index = math.random(1, item_category_n)
+		local item = item_category[item_index]
+		local item_unit_name = item.unit_name
+		local unit_extension_template = item.unit_extension_template
 
-		unit_extension_template = unit_extension_template or "ai_inventory_item"
+		if not unit_extension_template then
+			-- Nothing
+		end
 
-		local flow_event = var_4_10.flow_event
+		unit_extension_template = "ai_inventory_item"
 
-		flow_event = flow_event or nil
+		local item_unit_template_name = unit_extension_template
 
-		if not var_4_10.extension_init_data then
-			for k, v in pairs(var_4_10.extension_init_data) do
-				arg_4_4[k] = v
+		::label_4_0::
 
-				if k == "weapon_system" then
-					arg_4_4[k].owner_unit = arg_4_1
+		local flow_event = item.flow_event
+
+		if not flow_event then
+			-- Nothing
+		end
+
+		flow_event = nil
+
+		local item_flow_event = flow_event
+
+		::label_4_1::
+
+		if item.extension_init_data then
+			for data, value in pairs(item.extension_init_data) do
+				item_extension_init_data[data] = value
+
+				if data == "weapon_system" then
+					item_extension_init_data[data].owner_unit = unit
 				end
 			end
 		end
 
-		local attachment_node_linking = var_4_10.attachment_node_linking
+		local attachment_node_linking = item.attachment_node_linking
 		local unwielded = attachment_node_linking.unwielded
 
-		unwielded = unwielded or attachment_node_linking
+		if not unwielded then
+			-- Nothing
+		end
 
-		local var_4_16
-		local var_4_17
+		unwielded = attachment_node_linking
 
-		for i_2, v_2 in ipairs(unwielded) do
-			if v_2.target == 0 then
-				local source = v_2.source
+		local node_linking_data = unwielded
+
+		::label_4_2::
+
+		local item_position, item_rotation
+
+		for _, data in ipairs(node_linking_data) do
+			if data.target == 0 then
+				local source_node = data.source
 				local node
 
-				if type(source) == "string" then
-					node = Unit.node(arg_4_1, source)
+				if type(source_node) == "string" then
+					node = Unit.node(unit, source_node)
 
 					if not node then
 						-- Nothing
 					end
 				end
 
-				node = source
+				node = source_node
 
-				::label_4_0::
+				local source_node_index = node
 
-				var_4_16 = Unit.world_position(arg_4_1, node)
-				var_4_17 = Unit.world_rotation(arg_4_1, node)
+				::label_4_3::
+
+				item_position = Unit.world_position(unit, source_node_index)
+				item_rotation = Unit.world_rotation(unit, source_node_index)
 
 				break
 			end
 		end
 
-		local spawn_local_unit_with_extensions = unit_spawner:spawn_local_unit_with_extensions(unit_name, unit_extension_template, arg_4_4, var_4_16, var_4_17)
+		local item_unit = unit_spawner:spawn_local_unit_with_extensions(item_unit_name, item_unit_template_name, item_extension_init_data, item_position, item_rotation)
 
-		fn(spawn_local_unit_with_extensions, attachment_node_linking)
-		fn_2(unwielded, self.world, spawn_local_unit_with_extensions, arg_4_1)
+		store_scene_graph_data(item_unit, attachment_node_linking)
+		link_unit(node_linking_data, self.world, item_unit, unit)
 
-		inventory_item_units[var_4_6] = spawn_local_unit_with_extensions
-		inventory_item_units_by_category[name] = spawn_local_unit_with_extensions
-		inventory_item_definitions[var_4_6] = var_4_10
+		inventory_item_units[index] = item_unit
+		inventory_item_units_by_category[item_category_name] = item_unit
+		inventory_item_definitions[index] = item
 
-		if unit_extension_template == "ai_shield_unit" then
-			Unit.set_data(spawn_local_unit_with_extensions, "shield_owner_unit", arg_4_1)
+		if item_unit_template_name == "ai_shield_unit" then
+			Unit.set_data(item_unit, "shield_owner_unit", unit)
 
-			self.inventory_item_shield_unit = spawn_local_unit_with_extensions
+			self.inventory_item_shield_unit = item_unit
 
-			table.insert(self.inventory_item_weapon_units, spawn_local_unit_with_extensions)
-		elseif unit_extension_template == "ai_skin_unit" then
-			self.inventory_item_skin_unit = spawn_local_unit_with_extensions
+			table.insert(self.inventory_item_weapon_units, item_unit)
+		elseif item_unit_template_name == "ai_skin_unit" then
+			self.inventory_item_skin_unit = item_unit
 
-			if not Unit.has_animation_event(spawn_local_unit_with_extensions, "enable") then
-				Unit.animation_event(spawn_local_unit_with_extensions, "enable")
+			if Unit.has_animation_event(item_unit, "enable") then
+				Unit.animation_event(item_unit, "enable")
 			end
-		elseif unit_extension_template == "ai_helmet_unit" then
-			table.insert(self.inventory_item_helmet_units, spawn_local_unit_with_extensions)
-		elseif unit_extension_template == "ai_outfit_unit" then
-			table.insert(self.inventory_item_outfit_units, spawn_local_unit_with_extensions)
+		elseif item_unit_template_name == "ai_helmet_unit" then
+			table.insert(self.inventory_item_helmet_units, item_unit)
+		elseif item_unit_template_name == "ai_outfit_unit" then
+			table.insert(self.inventory_item_outfit_units, item_unit)
 		else
-			table.insert(self.inventory_item_weapon_units, spawn_local_unit_with_extensions)
+			table.insert(self.inventory_item_weapon_units, item_unit)
 		end
 
-		if flow_event ~= nil then
-			Unit.flow_event(arg_4_1, flow_event)
+		if item_flow_event ~= nil then
+			Unit.flow_event(unit, item_flow_event)
 		end
 
-		if not var_4_10.weak_spot and not self.is_server then
-			self.inventory_weak_spot = var_4_10.weak_spot
+		if item.weak_spot and self.is_server then
+			self.inventory_weak_spot = item.weak_spot
 		end
 	end
 
-	Unit.flow_event(arg_4_1, "lua_spawned_inventory")
+	Unit.flow_event(unit, "lua_spawned_inventory")
 
-	return var_4_6
+	return index
 end
 
-AIInventoryExtension.init = function (self, arg_5_1, arg_5_2)
+AIInventoryExtension.init = function (self, unit, extension_init_data)
 	-- function 5
-	self.world = arg_5_2.world
-	self.unit = arg_5_1
-	self.is_server = arg_5_2.is_server
+	self.world = extension_init_data.world
+	self.unit = unit
+	self.is_server = extension_init_data.is_server
 	self.current_item_set_index = 1
 	self.inventory_item_units_by_category = {}
 	self.inventory_item_units = {}
@@ -221,52 +268,63 @@ AIInventoryExtension.init = function (self, arg_5_1, arg_5_2)
 	self.gibbed_nodes = {}
 	self.disabled_actors = {}
 
-	local inventory_configuration_name = arg_5_2.inventory_configuration_name
+	local inventory_configuration_name = extension_init_data.inventory_configuration_name
 
-	if not (not arg_5_2.is_server and inventory_configuration_name) then
-		local inventory_template = arg_5_2.inventory_template
+	if extension_init_data.is_server and not inventory_configuration_name then
+		local inventory_template = extension_init_data.inventory_template
 
-		inventory_template = inventory_template or "default"
-		inventory_configuration_name = AIInventoryTemplates[inventory_template]()
+		if not inventory_template then
+			-- Nothing
+		end
+
+		inventory_template = "default"
+
+		local template_name = inventory_template
+
+		::label_5_0::
+
+		local template_function = AIInventoryTemplates[template_name]
+
+		inventory_configuration_name = template_function()
 	end
 
-	local tbl = {
+	local item_extension_init_data = {
 		ai_inventory_item_system = {
-			wielding_unit = arg_5_1
+			wielding_unit = unit
 		}
 	}
-	local var_5_3 = InventoryConfigurations[inventory_configuration_name]
-	local num = 0
-	local multiple_configurations = var_5_3.multiple_configurations
+	local inventory_configuration = InventoryConfigurations[inventory_configuration_name]
+	local items_n = 0
+	local multiple_configurations = inventory_configuration.multiple_configurations
 
-	if not multiple_configurations then
+	if multiple_configurations then
 		self.item_sets = {}
 
 		for i = 1, #multiple_configurations do
-			local tbl_2 = {
-				start_index = num + 1
+			local item_set = {
+				start_index = items_n + 1
 			}
 
-			self.item_sets[#self.item_sets + 1] = tbl_2
-			var_5_3 = InventoryConfigurations[multiple_configurations[i]]
-			num = self:_setup_configuration(arg_5_1, num, var_5_3, tbl)
-			tbl_2.end_index = num
-			tbl_2.inventory_configuration = var_5_3
-			tbl_2.equip_anim = var_5_3.equip_anim
+			self.item_sets[#self.item_sets + 1] = item_set
+			inventory_configuration = InventoryConfigurations[multiple_configurations[i]]
+			items_n = self:_setup_configuration(unit, items_n, inventory_configuration, item_extension_init_data)
+			item_set.end_index = items_n
+			item_set.inventory_configuration = inventory_configuration
+			item_set.equip_anim = inventory_configuration.equip_anim
 		end
 
-		var_5_3 = InventoryConfigurations[multiple_configurations[1]]
+		inventory_configuration = InventoryConfigurations[multiple_configurations[1]]
 	else
-		num = self:_setup_configuration(arg_5_1, 0, var_5_3, tbl)
+		items_n = self:_setup_configuration(unit, 0, inventory_configuration, item_extension_init_data)
 	end
 
-	self.inventory_items_n = num
+	self.inventory_items_n = items_n
 	self.inventory_configuration_name = inventory_configuration_name
 
-	local anim_state_event = var_5_3.anim_state_event
+	local anim_state_event = inventory_configuration.anim_state_event
 
-	if not anim_state_event then
-		Unit.animation_event(arg_5_1, anim_state_event)
+	if anim_state_event then
+		Unit.animation_event(unit, anim_state_event)
 	end
 end
 
@@ -277,45 +335,45 @@ AIInventoryExtension.destroy = function (self)
 	local world = self.world
 
 	for i = 1, inventory_items_n do
-		local var_6_3 = self.inventory_item_units[i]
+		local item_unit = self.inventory_item_units[i]
 
-		if not Unit.alive(var_6_3) then
-			fn_3(var_6_3, world)
-			unit_spawner:mark_for_deletion(var_6_3)
+		if Unit.alive(item_unit) then
+			unlink_unit(item_unit, world)
+			unit_spawner:mark_for_deletion(item_unit)
 			self:destroy_dropped_items(i)
 		end
 	end
 
-	for j = 1, #self.gib_items do
-		unit_spawner:mark_for_deletion(self.gib_items[j])
+	for i = 1, #self.gib_items do
+		unit_spawner:mark_for_deletion(self.gib_items[i])
 	end
 
 	self.gib_items = {}
 
-	for k = 1, #self.stump_items do
-		unit_spawner:mark_for_deletion(self.stump_items[k])
+	for i = 1, #self.stump_items do
+		unit_spawner:mark_for_deletion(self.stump_items[i])
 	end
 
 	self.stump_items = {}
 end
 
-AIInventoryExtension.destroy_dropped_items = function (self, arg_7_1)
+AIInventoryExtension.destroy_dropped_items = function (self, inventory_item_index)
 	-- function 7
-	local var_7_0 = self.dropped_items[arg_7_1]
+	local dropped_item = self.dropped_items[inventory_item_index]
 	local world = self.world
 
-	if not var_7_0 then
+	if not dropped_item then
 		return
 	end
 
-	if type(var_7_0) == "table" then
-		for k, v in pairs(var_7_0) do
-			World.destroy_unit(world, v)
+	if type(dropped_item) == "table" then
+		for _, dropped_unit in pairs(dropped_item) do
+			World.destroy_unit(world, dropped_unit)
 		end
 
-		table.clear(var_7_0)
+		table.clear(dropped_item)
 	else
-		World.destroy_unit(world, var_7_0)
+		World.destroy_unit(world, dropped_item)
 	end
 end
 
@@ -332,11 +390,11 @@ AIInventoryExtension.freeze = function (self)
 	local unit = self.unit
 
 	for i = 1, inventory_items_n do
-		local var_9_4 = self.inventory_item_units[i]
+		local item_unit = self.inventory_item_units[i]
 
-		if not Unit.alive(var_9_4) then
-			fn_3(var_9_4, self.world)
-			unit_spawner:mark_for_deletion(var_9_4)
+		if Unit.alive(item_unit) then
+			unlink_unit(item_unit, self.world)
+			unit_spawner:mark_for_deletion(item_unit)
 			self:destroy_dropped_items(i)
 		end
 	end
@@ -346,32 +404,32 @@ AIInventoryExtension.freeze = function (self)
 	self.inventory_item_outfit_units = {}
 	self.inventory_item_helmet_units = {}
 
-	local var_9_5 = Vector3(1, 1, 1)
+	local one_scale = Vector3(1, 1, 1)
 
-	for j = 1, #self.gibbed_nodes do
-		Unit.set_local_scale(unit, self.gibbed_nodes[j], var_9_5)
+	for i = 1, #self.gibbed_nodes do
+		Unit.set_local_scale(unit, self.gibbed_nodes[i], one_scale)
 	end
 
 	self.gibbed_nodes = {}
 
-	for k = 1, #self.disabled_actors do
-		local actor = Unit.actor(unit, self.disabled_actors[k])
+	for i = 1, #self.disabled_actors do
+		local unit_actor = Unit.actor(unit, self.disabled_actors[i])
 
-		if not actor then
-			Actor.set_collision_filter(actor, "filter_enemy_hit_box")
+		if unit_actor then
+			Actor.set_collision_filter(unit_actor, "filter_enemy_hit_box")
 		end
 	end
 
 	self.disabled_actors = {}
 
-	for l = 1, #self.gib_items do
-		unit_spawner:mark_for_deletion(self.gib_items[l])
+	for i = 1, #self.gib_items do
+		unit_spawner:mark_for_deletion(self.gib_items[i])
 	end
 
 	self.gib_items = {}
 
-	for i4 = 1, #self.stump_items do
-		unit_spawner:mark_for_deletion(self.stump_items[i4])
+	for i = 1, #self.stump_items do
+		unit_spawner:mark_for_deletion(self.stump_items[i])
 	end
 
 	self.stump_items = {}
@@ -384,67 +442,67 @@ AIInventoryExtension.unfreeze = function (self)
 	self.dropped = false
 	self.wielded = false
 
-	local tbl = {
+	local item_extension_init_data = {
 		ai_inventory_item_system = {
 			wielding_unit = unit
 		}
 	}
-	local var_10_2 = InventoryConfigurations[self.inventory_configuration_name]
-	local num = 0
-	local multiple_configurations = var_10_2.multiple_configurations
+	local inventory_configuration = InventoryConfigurations[self.inventory_configuration_name]
+	local items_n = 0
+	local multiple_configurations = inventory_configuration.multiple_configurations
 
-	if not multiple_configurations then
+	if multiple_configurations then
 		self.item_sets = {}
 
 		for i = 1, #multiple_configurations do
-			local tbl_2 = {
-				start_index = num + 1
+			local item_set = {
+				start_index = items_n + 1
 			}
 
-			self.item_sets[#self.item_sets + 1] = tbl_2
-			var_10_2 = InventoryConfigurations[multiple_configurations[i]]
-			num = self:_setup_configuration(unit, num, var_10_2, tbl)
-			tbl_2.end_index = num
-			tbl_2.inventory_configuration = var_10_2
-			tbl_2.equip_anim = var_10_2.equip_anim
+			self.item_sets[#self.item_sets + 1] = item_set
+			inventory_configuration = InventoryConfigurations[multiple_configurations[i]]
+			items_n = self:_setup_configuration(unit, items_n, inventory_configuration, item_extension_init_data)
+			item_set.end_index = items_n
+			item_set.inventory_configuration = inventory_configuration
+			item_set.equip_anim = inventory_configuration.equip_anim
 		end
 
-		var_10_2 = InventoryConfigurations[multiple_configurations[1]]
+		inventory_configuration = InventoryConfigurations[multiple_configurations[1]]
 	else
-		num = self:_setup_configuration(unit, 0, var_10_2, tbl)
+		items_n = self:_setup_configuration(unit, 0, inventory_configuration, item_extension_init_data)
 	end
 
-	self.inventory_items_n = num
+	self.inventory_items_n = items_n
 
-	local anim_state_event = var_10_2.anim_state_event
+	local anim_state_event = inventory_configuration.anim_state_event
 
-	if not anim_state_event then
+	if anim_state_event then
 		Unit.animation_event(unit, anim_state_event)
 	end
 end
 
-AIInventoryExtension.show_single_item = function (self, arg_11_1, arg_11_2)
+AIInventoryExtension.show_single_item = function (self, item_inventory_index, show)
 	-- function 11
-	if not script_data.ai_debug_inventory then
-		printf("[AIInventorySystem] showing[%s] item_inventory_index[%d]", tostring(arg_11_2), arg_11_1)
+	if script_data.ai_debug_inventory then
+		printf("[AIInventorySystem] showing[%s] item_inventory_index[%d]", tostring(show), item_inventory_index)
 	end
 
-	local var_11_0 = self.inventory_item_units[arg_11_1]
+	local item_unit = self.inventory_item_units[item_inventory_index]
 
-	self.hidden_item_index = arg_11_2 or not arg_11_1 or nil
+	self.hidden_item_index = (show or not item_inventory_index) and not not nil
 
-	Unit.set_unit_visibility(var_11_0, arg_11_2)
+	Unit.set_unit_visibility(item_unit, show)
 end
 
-AIInventoryExtension.get_unit = function (self, arg_12_1)
+AIInventoryExtension.get_unit = function (self, category)
 	-- function 12
-	return self.inventory_item_units_by_category[arg_12_1]
+	return self.inventory_item_units_by_category[category]
 end
 
-AIInventoryExtension.get_item_inventory_index = function (self, arg_13_1)
+AIInventoryExtension.get_item_inventory_index = function (self, item_unit)
 	-- function 13
 	for i = 1, self.inventory_items_n do
-		if self.inventory_item_units[i] == arg_13_1 then
+		if self.inventory_item_units[i] == item_unit then
 			return i
 		end
 	end
@@ -452,293 +510,329 @@ AIInventoryExtension.get_item_inventory_index = function (self, arg_13_1)
 	assert(false, "item_unit not found in ai inventory")
 end
 
-AIInventoryExtension.drop_single_item = function (self, arg_14_1, arg_14_2, arg_14_3)
+AIInventoryExtension.drop_single_item = function (self, item_inventory_index, reason, optional_drop_direction)
 	-- function 14
-	if not script_data.ai_debug_inventory then
-		printf("[AIInventorySystem] dropping item_inventory_index[%d] with [%d] total items in inventory", arg_14_1, self.inventory_items_n)
+	if script_data.ai_debug_inventory then
+		printf("[AIInventorySystem] dropping item_inventory_index[%d] with [%d] total items in inventory", item_inventory_index, self.inventory_items_n)
 	end
 
-	assert(self.inventory_item_units[arg_14_1], "item inventory index out of bounds")
+	assert(self.inventory_item_units[item_inventory_index], "item inventory index out of bounds")
 
-	if self.dropped_items[arg_14_1] ~= nil then
+	if self.dropped_items[item_inventory_index] ~= nil then
 		return false
 	end
 
-	local var_14_0 = self.inventory_item_units[arg_14_1]
-	local has_extension = ScriptUnit.has_extension(var_14_0, "ai_inventory_item_system")
-	local var_14_2 = self.inventory_item_definitions[arg_14_1]
-	local unit_extension_template = var_14_2.unit_extension_template
+	local item_unit = self.inventory_item_units[item_inventory_index]
+	local item_extension = ScriptUnit.has_extension(item_unit, "ai_inventory_item_system")
+	local item = self.inventory_item_definitions[item_inventory_index]
+	local unit_extension_template = item.unit_extension_template
 
-	unit_extension_template = unit_extension_template or "ai_inventory_item"
+	if not unit_extension_template then
+		-- Nothing
+	end
 
-	if not (not has_extension and has_extension.dropped and not var_14_2.drop_reasons[arg_14_2] and unit_extension_template == "ai_helmet_unit" and unit_extension_template == "ai_outfit_unit" and unit_extension_template == "ai_skin_unit") then
-		if var_14_2.drop_unit_name ~= nil then
-			self:_drop_unit(var_14_2.drop_unit_name, var_14_0, var_14_2, arg_14_1, arg_14_2, false, arg_14_3)
-			self:disable_inventory_item(var_14_2, var_14_0)
-		elseif not (var_14_2.drop_unit_names == nil or arg_14_2 ~= "shield_break") then
-			local drop_unit_names = var_14_2.drop_unit_names
+	unit_extension_template = "ai_inventory_item"
 
-			for i = 1, #drop_unit_names do
-				local var_14_5 = drop_unit_names[i]
+	local item_unit_template_name = unit_extension_template
 
-				self:_drop_unit(var_14_5, var_14_0, var_14_2, arg_14_1, arg_14_2, true, arg_14_3)
+	::label_14_0::
+
+	if item_extension and not item_extension.dropped and item.drop_reasons[reason] and item_unit_template_name ~= "ai_helmet_unit" and item_unit_template_name ~= "ai_outfit_unit" and item_unit_template_name ~= "ai_skin_unit" then
+		if item.drop_unit_name ~= nil then
+			self:_drop_unit(item.drop_unit_name, item_unit, item, item_inventory_index, reason, false, optional_drop_direction)
+			self:disable_inventory_item(item, item_unit)
+		elseif item.drop_unit_names ~= nil and reason == "shield_break" then
+			local drop_units = item.drop_unit_names
+
+			for i = 1, #drop_units do
+				local unit_name_to_drop = drop_units[i]
+
+				self:_drop_unit(unit_name_to_drop, item_unit, item, item_inventory_index, reason, true, optional_drop_direction)
 			end
 
-			self:disable_inventory_item(var_14_2, var_14_0)
+			self:disable_inventory_item(item, item_unit)
 		else
-			fn_3(var_14_0, self.world)
-			Unit.set_flow_variable(var_14_0, "lua_drop_reason", arg_14_2)
-			Unit.set_shader_pass_flag_for_meshes_in_unit_and_childs(var_14_0, "outline_unit", false)
-			Unit.flow_event(var_14_0, "lua_dropped")
+			unlink_unit(item_unit, self.world)
+			Unit.set_flow_variable(item_unit, "lua_drop_reason", reason)
+			Unit.set_shader_pass_flag_for_meshes_in_unit_and_childs(item_unit, "outline_unit", false)
+			Unit.flow_event(item_unit, "lua_dropped")
 
-			local create_actor = Unit.create_actor(var_14_0, "rp_dropped")
+			local actor = Unit.create_actor(item_unit, "rp_dropped")
 
-			Actor.add_angular_velocity(create_actor, Vector3(math.random(), math.random(), math.random()) * 5)
-			Actor.add_velocity(create_actor, arg_14_3 or Vector3(2 * math.random() - 0.5, 2 * math.random() - 0.5, 4.5))
+			Actor.add_angular_velocity(actor, Vector3(math.random(), math.random(), math.random()) * 5)
+			Actor.add_velocity(actor, not not optional_drop_direction or not not Vector3(2 * math.random() - 0.5, 2 * math.random() - 0.5, 4.5))
 
-			has_extension.wielding_unit = nil
-			has_extension.dropped = true
-			var_14_2.dropped = true
+			item_extension.wielding_unit = nil
+			item_extension.dropped = true
+			item.dropped = true
 		end
 
-		return true, var_14_0
+		return true, item_unit
 	else
 		return false
 	end
 end
 
-AIInventoryExtension.disable_inventory_item = function (self, arg_15_1, arg_15_2)
+AIInventoryExtension.disable_inventory_item = function (self, item, item_unit)
 	-- function 15
-	local has_extension = ScriptUnit.has_extension(arg_15_2, "ai_inventory_item_system")
-	local num_actors = Unit.num_actors(arg_15_2)
+	local item_system = ScriptUnit.has_extension(item_unit, "ai_inventory_item_system")
+	local num_actors = Unit.num_actors(item_unit)
 
 	for i = 1, num_actors do
-		local actor = Unit.actor(arg_15_2, i)
+		local actor = Unit.actor(item_unit, i)
 
-		if not actor then
+		if actor then
 			Actor.set_collision_enabled(actor, false)
 			Actor.set_scene_query_enabled(actor, false)
 		end
 	end
 
-	World.unlink_unit(self.world, arg_15_2)
-	Unit.set_unit_visibility(arg_15_2, false)
+	World.unlink_unit(self.world, item_unit)
+	Unit.set_unit_visibility(item_unit, false)
 
-	has_extension.wielding_unit = nil
-	has_extension.dropped = true
-	arg_15_1.dropped = true
+	item_system.wielding_unit = nil
+	item_system.dropped = true
+	item.dropped = true
 
-	if not ScriptUnit.has_extension(arg_15_2, "projectile_linker_system") then
-		Managers.state.entity:system("projectile_linker_system"):clear_linked_projectiles(arg_15_2)
+	if ScriptUnit.has_extension(item_unit, "projectile_linker_system") then
+		local projectile_linker_system = Managers.state.entity:system("projectile_linker_system")
+
+		projectile_linker_system:clear_linked_projectiles(item_unit)
 	end
 end
 
-AIInventoryExtension._drop_unit = function (self, arg_16_1, arg_16_2, arg_16_3, arg_16_4, arg_16_5, arg_16_6, arg_16_7)
+AIInventoryExtension._drop_unit = function (self, drop_unit_name, item_unit, item, item_inventory_index, reason, drop_multiple, optional_drop_direction)
 	-- function 16
-	local world_position = Unit.world_position(arg_16_2, 0)
-	local world_rotation = Unit.world_rotation(arg_16_2, 0)
-	local spawn_unit = World.spawn_unit(self.world, arg_16_1, world_position, world_rotation, nil)
+	local position = Unit.world_position(item_unit, 0)
+	local rotation = Unit.world_rotation(item_unit, 0)
+	local new_item_unit = World.spawn_unit(self.world, drop_unit_name, position, rotation, nil)
 
-	Unit.set_flow_variable(spawn_unit, "lua_drop_reason", arg_16_5)
-	Unit.flow_event(spawn_unit, "lua_dropped")
+	Unit.set_flow_variable(new_item_unit, "lua_drop_reason", reason)
+	Unit.flow_event(new_item_unit, "lua_dropped")
 
-	local create_actor = Unit.create_actor(spawn_unit, "rp_dropped")
+	local actor = Unit.create_actor(new_item_unit, "rp_dropped")
 
-	Actor.add_angular_velocity(create_actor, Vector3(math.random(), math.random(), math.random()) * 5)
-	Actor.add_velocity(create_actor, arg_16_7 or Vector3(2 * math.random() - 0.5, 2 * math.random() - 0.5, 4.5))
+	Actor.add_angular_velocity(actor, Vector3(math.random(), math.random(), math.random()) * 5)
+	Actor.add_velocity(actor, not not optional_drop_direction or not not Vector3(2 * math.random() - 0.5, 2 * math.random() - 0.5, 4.5))
 
-	if not arg_16_6 then
-		local dropped_items = self.dropped_items
-		local var_16_5 = self.dropped_items[arg_16_4]
+	if drop_multiple then
+		local dropped_items_2 = self.dropped_items
+		local var_16_1 = self.dropped_items[item_inventory_index]
 
-		var_16_5 = var_16_5 or {}
-		dropped_items[arg_16_4] = var_16_5
+		var_16_1 = not not var_16_1 or not not {}
+		dropped_items_2[item_inventory_index] = var_16_1
 
-		local var_16_6 = self.dropped_items[arg_16_4]
+		local dropped_items = self.dropped_items[item_inventory_index]
 
-		self.dropped_items[arg_16_4][#var_16_6 + 1] = spawn_unit
+		self.dropped_items[item_inventory_index][#dropped_items + 1] = new_item_unit
 	else
-		self.dropped_items[arg_16_4] = spawn_unit
+		self.dropped_items[item_inventory_index] = new_item_unit
 	end
 end
 
-AIInventoryExtension.wield_item_set = function (self, arg_17_1, arg_17_2)
+AIInventoryExtension.wield_item_set = function (self, item_set_index, ignore_animation_event)
 	-- function 17
 	local unit = self.unit
-	local network = Managers.state.network
-	local unit_game_object_id = network:unit_game_object_id(unit)
+	local network_manager = Managers.state.network
+	local unit_id = network_manager:unit_game_object_id(unit)
 
-	network.network_transmit:send_rpc_all("rpc_ai_inventory_wield", unit_game_object_id, arg_17_1)
+	network_manager.network_transmit:send_rpc_all("rpc_ai_inventory_wield", unit_id, item_set_index)
 
-	local var_17_3 = self.item_sets[arg_17_1]
-	local anim_state_event = var_17_3.inventory_configuration.anim_state_event
+	local item_set = self.item_sets[item_set_index]
+	local anim_state_event = item_set.inventory_configuration.anim_state_event
 
-	if arg_17_2 or not anim_state_event then
-		local var_17_5 = BLACKBOARDS[unit]
+	if not ignore_animation_event and anim_state_event then
+		local blackboard = BLACKBOARDS[unit]
 
 		if anim_state_event == "to_combat" then
-			AiUtils.enter_combat(unit, var_17_5)
+			AiUtils.enter_combat(unit, blackboard)
 		elseif anim_state_event == "to_passive" then
-			AiUtils.enter_passive(unit, var_17_5)
-		elseif not anim_state_event then
+			AiUtils.enter_passive(unit, blackboard)
+		elseif anim_state_event then
 			Managers.state.network:anim_event(unit, anim_state_event)
 		end
 	end
 
-	local equip_anim = var_17_3.equip_anim
+	local equip_anim = item_set.equip_anim
 
-	if arg_17_2 or not equip_anim then
+	if not ignore_animation_event and equip_anim then
 		Managers.state.network:anim_event(unit, equip_anim)
 	end
 end
 
-AIInventoryExtension.unwield_set = function (self, arg_18_1)
+AIInventoryExtension.unwield_set = function (self, item_set_index)
 	-- function 18
-	local var_18_0 = self.item_sets[arg_18_1]
+	local item_set = self.item_sets[item_set_index]
 
-	for i = var_18_0.start_index, var_18_0.end_index do
-		local unwielded = self.inventory_item_definitions[i].attachment_node_linking.unwielded
+	for j = item_set.start_index, item_set.end_index do
+		local item = self.inventory_item_definitions[j]
+		local attachment_node_linking = item.attachment_node_linking
+		local unwielded = attachment_node_linking.unwielded
 
-		if not unwielded then
-			local var_18_2 = self.inventory_item_units[i]
+		if unwielded then
+			local item_unit = self.inventory_item_units[j]
 
-			fn_3(var_18_2, self.world)
-			fn_2(unwielded, self.world, var_18_2, self.unit)
+			unlink_unit(item_unit, self.world)
+			link_unit(unwielded, self.world, item_unit, self.unit)
 		end
 	end
 end
 
-AIInventoryExtension.play_hit_sound = function (self, arg_19_1, arg_19_2)
+AIInventoryExtension.play_hit_sound = function (self, victim_unit, damage_type)
 	-- function 19
-	local owner = Managers.player:owner(arg_19_1)
+	local owner = Managers.player:owner(victim_unit)
 	local remote = owner.remote
 
 	if not remote then
-		remote = owner.bot_player
-		remote = remote or false
+		-- Nothing
 	end
+
+	remote = owner.bot_player
+
+	if not remote then
+		-- Nothing
+	end
+
+	remote = false
+
+	local is_husk = remote
+
+	::label_19_0::
 
 	local world = self.world
 	local inventory_configuration_name = self.inventory_configuration_name
-	local enemy_hit_sound = InventoryConfigurations[inventory_configuration_name].enemy_hit_sound
+	local inventory_configuration = InventoryConfigurations[inventory_configuration_name]
+	local enemy_hit_sound = inventory_configuration.enemy_hit_sound
 
-	if arg_19_2 == "blunt" then
+	if damage_type == "blunt" then
 		enemy_hit_sound = "melee"
 	end
 
-	if not enemy_hit_sound then
-		EffectHelper.play_melee_hit_effects_enemy("enemy_hit", enemy_hit_sound, world, arg_19_1, arg_19_2, remote)
+	if enemy_hit_sound then
+		EffectHelper.play_melee_hit_effects_enemy("enemy_hit", enemy_hit_sound, world, victim_unit, damage_type, is_husk)
 	end
 
-	if not self._additional_hit_sounds then
-		local _additional_hit_sounds = self._additional_hit_sounds
+	if self._additional_hit_sounds then
+		local hit_sounds = self._additional_hit_sounds
 
-		for i = 1, #_additional_hit_sounds do
-			local make_unit_auto_source, var_19_7 = WwiseUtils.make_unit_auto_source(world, arg_19_1)
+		for i = 1, #hit_sounds do
+			local source_id, wwise_world = WwiseUtils.make_unit_auto_source(world, victim_unit)
 
-			WwiseWorld.set_switch(var_19_7, "husk", tostring(remote), make_unit_auto_source)
-			WwiseWorld.trigger_event(var_19_7, _additional_hit_sounds[i], make_unit_auto_source)
+			WwiseWorld.set_switch(wwise_world, "husk", tostring(is_husk), source_id)
+			WwiseWorld.trigger_event(wwise_world, hit_sounds[i], source_id)
 		end
 	end
 end
 
-AIInventoryExtension.hot_join_sync = function (self, arg_20_1)
+AIInventoryExtension.hot_join_sync = function (self, peer_id)
 	-- function 20
-	local var_20_0 = PEER_ID_TO_CHANNEL[arg_20_1]
+	local channel_id = PEER_ID_TO_CHANNEL[peer_id]
 
-	if not self.hidden_item_index and not ALIVE[self.unit] then
+	if self.hidden_item_index and ALIVE[self.unit] then
 		local go_id = Managers.state.unit_storage:go_id(self.unit)
 
-		RPC.rpc_ai_show_single_item(var_20_0, go_id, self.hidden_item_index, false)
+		RPC.rpc_ai_show_single_item(channel_id, go_id, self.hidden_item_index, false)
 	end
 
-	if not self.dropped then
+	if self.dropped then
 		-- Nothing
-	elseif not self.wielded then
-		local go_id_2 = Managers.state.unit_storage:go_id(self.unit)
+	elseif self.wielded then
+		local go_id = Managers.state.unit_storage:go_id(self.unit)
 
-		if not go_id_2 then
-			RPC.rpc_ai_inventory_wield(var_20_0, go_id_2, self.current_item_set_index)
+		if go_id then
+			RPC.rpc_ai_inventory_wield(channel_id, go_id, self.current_item_set_index)
 		end
 	end
 end
 
-AIInventoryExtension.add_additional_hit_sfx = function (self, arg_21_1)
+AIInventoryExtension.add_additional_hit_sfx = function (self, additional_sfx_name)
 	-- function 21
-	if not arg_21_1 then
+	if not additional_sfx_name then
 		return nil
 	end
 
-	local _additional_hit_sounds = self._additional_hit_sounds
-	local _additional_hit_sounds_ids = self._additional_hit_sounds_ids
+	local additional_hit_sounds = self._additional_hit_sounds
+	local additional_hit_sounds_ids = self._additional_hit_sounds_ids
 
-	if not _additional_hit_sounds then
-		_additional_hit_sounds = {}
-		self._additional_hit_sounds = _additional_hit_sounds
-		_additional_hit_sounds_ids = {}
-		self._additional_hit_sounds_ids = _additional_hit_sounds_ids
+	if not additional_hit_sounds then
+		additional_hit_sounds = {}
+		self._additional_hit_sounds = additional_hit_sounds
+		additional_hit_sounds_ids = {}
+		self._additional_hit_sounds_ids = additional_hit_sounds_ids
 	end
 
 	local _unique_id = self._unique_id
 
-	_unique_id = _unique_id or 1
-	self._unique_id = _unique_id + 1
-
-	if not _additional_hit_sounds_ids[arg_21_1] then
-		_additional_hit_sounds[#_additional_hit_sounds + 1] = arg_21_1
-		_additional_hit_sounds_ids[arg_21_1] = {
-			_unique_id
-		}
-		_additional_hit_sounds_ids[_unique_id] = arg_21_1
-	else
-		local var_21_3 = _additional_hit_sounds_ids[arg_21_1]
-
-		var_21_3[#var_21_3 + 1] = _unique_id
-		_additional_hit_sounds_ids[_unique_id] = arg_21_1
+	if not _unique_id then
+		-- Nothing
 	end
 
-	return _unique_id
+	_unique_id = 1
+
+	local unique_id = _unique_id
+
+	::label_21_0::
+
+	self._unique_id = unique_id + 1
+
+	local override_ids = additional_hit_sounds_ids[additional_sfx_name]
+
+	if not override_ids then
+		additional_hit_sounds[#additional_hit_sounds + 1] = additional_sfx_name
+		additional_hit_sounds_ids[additional_sfx_name] = {
+			unique_id
+		}
+		additional_hit_sounds_ids[unique_id] = additional_sfx_name
+	else
+		local sfx_unique_ids = additional_hit_sounds_ids[additional_sfx_name]
+		local num_overrides = #sfx_unique_ids
+
+		sfx_unique_ids[num_overrides + 1] = unique_id
+		additional_hit_sounds_ids[unique_id] = additional_sfx_name
+	end
+
+	return unique_id
 end
 
-AIInventoryExtension.remove_additioanl_hit_sfx = function (self, arg_22_1)
+AIInventoryExtension.remove_additioanl_hit_sfx = function (self, override_id)
 	-- function 22
-	local _additional_hit_sounds_ids = self._additional_hit_sounds_ids
+	local additional_hit_sounds_ids = self._additional_hit_sounds_ids
 
-	if not _additional_hit_sounds_ids then
+	if not additional_hit_sounds_ids then
 		return
 	end
 
-	local var_22_1 = _additional_hit_sounds_ids[arg_22_1]
+	local sfx_name = additional_hit_sounds_ids[override_id]
 
-	if not var_22_1 then
+	if not sfx_name then
 		return
 	end
 
-	local var_22_2 = _additional_hit_sounds_ids[var_22_1]
+	local sfx_unique_ids = additional_hit_sounds_ids[sfx_name]
 
-	if not var_22_2 then
+	if not sfx_unique_ids then
 		return
 	end
 
-	local index_of = table.index_of(var_22_2, arg_22_1)
+	local override_index = table.index_of(sfx_unique_ids, override_id)
 
-	if index_of > 0 then
-		table.swap_delete(var_22_2, index_of)
+	if override_index > 0 then
+		table.swap_delete(sfx_unique_ids, override_index)
 
-		_additional_hit_sounds_ids[arg_22_1] = nil
+		additional_hit_sounds_ids[override_id] = nil
 
-		if #var_22_2 == 0 then
-			_additional_hit_sounds_ids[var_22_1] = nil
+		if #sfx_unique_ids == 0 then
+			additional_hit_sounds_ids[sfx_name] = nil
 
-			local _additional_hit_sounds = self._additional_hit_sounds
+			local additional_hit_sounds = self._additional_hit_sounds
 
-			if not _additional_hit_sounds then
-				local index_of_2 = table.index_of(_additional_hit_sounds, var_22_1)
+			if additional_hit_sounds then
+				local sfx_name_id = table.index_of(additional_hit_sounds, sfx_name)
 
-				if index_of_2 > 0 then
-					table.swap_delete(_additional_hit_sounds, index_of_2)
+				if sfx_name_id > 0 then
+					table.swap_delete(additional_hit_sounds, sfx_name_id)
 
-					if #_additional_hit_sounds == 0 then
+					if #additional_hit_sounds == 0 then
 						self._additional_hit_sounds = nil
 					end
 				end

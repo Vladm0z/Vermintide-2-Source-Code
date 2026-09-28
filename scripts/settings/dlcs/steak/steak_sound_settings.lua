@@ -1,8 +1,8 @@
 -- chunkname: @scripts/settings/dlcs/steak/steak_sound_settings.lua
 
-local steak = DLCSettings.steak
+local settings = DLCSettings.steak
 
-steak.dialogue_lookup = {
+settings.dialogue_lookup = {
 	"dialogues/generated/lookup_wood_elf_crater",
 	"dialogues/generated/lookup_empire_soldier_crater",
 	"dialogues/generated/lookup_bright_wizard_crater",
@@ -10,7 +10,7 @@ steak.dialogue_lookup = {
 	"dialogues/generated/lookup_witch_hunter_crater",
 	"dialogues/generated/lookup_hero_conversation_crater"
 }
-steak.dialogue_settings = {
+settings.dialogue_settings = {
 	crater = {
 		"dialogues/generated/wood_elf_crater",
 		"dialogues/generated/empire_soldier_crater",

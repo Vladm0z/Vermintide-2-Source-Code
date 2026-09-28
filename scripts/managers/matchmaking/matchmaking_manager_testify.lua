@@ -1,23 +1,25 @@
 -- chunkname: @scripts/managers/matchmaking/matchmaking_manager_testify.lua
 
-return {
-	wait_for_matchmaking_state = function (self, arg_1_1)
+local MatchmakingManagerTestify = {
+	wait_for_matchmaking_state = function (matchmaking_manager, wanted_state)
 		-- function 1
-		if self:state().NAME ~= arg_1_1 then
+		if matchmaking_manager:state().NAME ~= wanted_state then
 			return Testify.RETRY
 		end
 	end,
-	wait_for_matchmaking_substate = function (self, arg_2_1)
+	wait_for_matchmaking_substate = function (matchmaking_manager, params)
 		-- function 2
-		local state = arg_2_1.state
-		local substate = arg_2_1.substate
+		local wanted_state = params.state
+		local wanted_substate = params.substate
 
-		if not (not state and self:state().NAME == state) then
+		if wanted_state and matchmaking_manager:state().NAME ~= wanted_state then
 			return Testify.RETRY
 		end
 
-		if self:state()._state ~= substate then
+		if matchmaking_manager:state()._state ~= wanted_substate then
 			return Testify.RETRY
 		end
 	end
 }
+
+return MatchmakingManagerTestify

@@ -1,6 +1,6 @@
 -- chunkname: @scripts/settings/breeds/breed_chaos_tentacle.lua
 
-local tbl = {
+local breed_data = {
 	detection_radius = 30,
 	bot_melee_aim_node = "c_bone_0075",
 	target_selection = "pick_closest_target_with_filter",
@@ -165,18 +165,18 @@ local tbl = {
 		0
 	},
 	debug_spawn_optional_data = {
-		prepare_func = function (arg_1_0, arg_1_1)
+		prepare_func = function (breed, extension_init_data)
 			-- function 1
-			arg_1_1.ai_supplementary_system = {
+			extension_init_data.ai_supplementary_system = {
 				tentacle_template_name = "blob"
 			}
 		end
 	}
 }
 
-Breeds.chaos_tentacle = table.create_copy(Breeds.chaos_tentacle, tbl)
+Breeds.chaos_tentacle = table.create_copy(Breeds.chaos_tentacle, breed_data)
 
-local tbl_2 = {
+local action_data = {
 	attack = {
 		cooldown = -1,
 		distance_to_portal_hanging_sq = 9,
@@ -185,4 +185,4 @@ local tbl_2 = {
 	idle = {}
 }
 
-BreedActions.chaos_tentacle = table.create_copy(BreedActions.chaos_tentacle, tbl_2)
+BreedActions.chaos_tentacle = table.create_copy(BreedActions.chaos_tentacle, action_data)

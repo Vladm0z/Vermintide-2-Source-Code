@@ -2,7 +2,7 @@
 
 ImguiCallInterceptor = class(ImguiCallInterceptor)
 
-local function fn(...)
+local function pack(...)
 	-- function 1
 	return {
 		n = select("#", ...),
@@ -10,11 +10,11 @@ local function fn(...)
 	}
 end
 
-local tbl = {}
+local b = {}
 
-local function fn_2(self, ...)
+local function CAPTURE_RETURN_VALUES(entry, ...)
 	-- function 2
-	self.rets = fn(...)
+	entry.rets = pack(...)
 
 	return ...
 end
@@ -22,59 +22,61 @@ end
 local setmetatable = setmetatable
 local __INTERCEPT_CALLS__ = __INTERCEPT_CALLS__
 
-__INTERCEPT_CALLS__ = __INTERCEPT_CALLS__ or {}
+__INTERCEPT_CALLS__ = not not __INTERCEPT_CALLS__ or not not {}
 __INTERCEPT_CALLS__ = setmetatable(__INTERCEPT_CALLS__, {
-	__call = function (self, arg_3_1, arg_3_2, arg_3_3)
+	__call = function (self, obj, method, enabled)
 		-- function 3
-		if type(arg_3_1) == "string" then
-			arg_3_3 = arg_3_2
+		if type(obj) == "string" then
+			enabled = method
 
-			for iter_3_0 in arg_3_1:gmatch("[^\r\n]+") do
-				local match, var_3_1 = string.match(arg_3_1, "([%w_]+)[%:%.]([%w_]+)")
+			for line in obj:gmatch("[^\r\n]+") do
+				local obj_name, method = string.match(obj, "([%w_]+)[%:%.]([%w_]+)")
 
-				self(rawget(_G, match), var_3_1, arg_3_3)
+				self(rawget(_G, obj_name), method, enabled)
 			end
 
 			return
 		end
 
-		local var_3_2 = arg_3_1[arg_3_2]
-		local tbl = {
+		local func = obj[method]
+		local log = {
 			hits = 0,
 			buffer = 50,
-			enabled = arg_3_3 == nil or not not arg_3_3
+			enabled = enabled == nil or not not not not enabled
 		}
 
-		arg_3_1[arg_3_2] = function (...)
+		local function decorator(...)
 			-- function 4
-			if not tbl.enabled then
-				return var_3_2(...)
+			if not log.enabled then
+				return func(...)
 			end
 
-			tbl.hits = tbl.hits + 1
+			log.hits = log.hits + 1
 
-			local time_since_launch = Application.time_since_launch()
-			local tbl_2 = {
-				i = tbl.hits,
-				time = string.format("%d:%.4f", math.floor(time_since_launch / 60), time_since_launch % 60),
-				args = fn(...)
+			local t = Application.time_since_launch()
+			local entry = {
+				i = log.hits,
+				time = string.format("%d:%.4f", math.floor(t / 60), t % 60),
+				args = pack(...)
 			}
 
-			tbl[#tbl + 1] = tbl_2
+			log[#log + 1] = entry
 
-			while #tbl > tbl.buffer do
-				table.remove(tbl, 1)
+			while #log > log.buffer do
+				table.remove(log, 1)
 			end
 
-			return fn_2(tbl_2, var_3_2(...))
+			return CAPTURE_RETURN_VALUES(entry, func(...))
 		end
+
+		obj[method] = decorator
 
 		local format = string.format
 		local str = "%s.%s"
-		local find = table.find(_G, arg_3_1)
+		local find = table.find(_G, obj)
 
-		find = find or arg_3_1
-		self[format(str, find, arg_3_2)] = tbl
+		find = not not find or not not obj
+		self[format(str, find, method)] = log
 	end
 })
 
@@ -85,76 +87,76 @@ ImguiCallInterceptor.init = function (self)
 	self._method_name = ""
 end
 
-ImguiCallInterceptor.update = function (arg_6_0)
+ImguiCallInterceptor.update = function (self)
 	-- function 6
 	return
 end
 
-local str = "Usage:\n\tfunc = __INTERCEPT_CALLS__[[\n\t\tUtilTable.func\n\t\tClassTable:method\n\t\tinstance_table:method\n\t]]\n\t(Note: there's no difference between `.` or `:`)\n\nDescription:\n\tIntercept calls and show input/output data.\n\nExample:\n\t__INTERCEPT_CALLS__ \"WwiseWorld.trigger_event\"\n"
+local USAGE = "Usage:\n\tfunc = __INTERCEPT_CALLS__[[\n\t\tUtilTable.func\n\t\tClassTable:method\n\t\tinstance_table:method\n\t]]\n\t(Note: there's no difference between `.` or `:`)\n\nDescription:\n\tIntercept calls and show input/output data.\n\nExample:\n\t__INTERCEPT_CALLS__ \"WwiseWorld.trigger_event\"\n"
 
 ImguiCallInterceptor.draw = function (self)
 	-- function 7
-	local begin_window = Imgui.begin_window("Call Interceptor")
+	local do_close = Imgui.begin_window("Call Interceptor")
 
 	Imgui.set_window_size(800, 600, "once")
 
-	if not Imgui.tree_node("[[ Call Interceptor Options ]]") then
+	if Imgui.tree_node("[[ Call Interceptor Options ]]") then
 		self._is_persistent = Imgui.checkbox("Is persistent", not not self._is_persistent)
 		self._obj_name = Imgui.input_text("Object", self._obj_name)
 		self._method_name = Imgui.input_text("Method", self._method_name)
 
-		if not Imgui.button("Intercept") and not pcall(__INTERCEPT_CALLS__, rawget(_G, self._obj_name), self._method_name) then
+		if Imgui.button("Intercept") and pcall(__INTERCEPT_CALLS__, rawget(_G, self._obj_name), self._method_name) then
 			self._obj_name = ""
 			self._method_name = ""
 		end
 
-		for iter_7_0 in string.gmatch(str, "[^\n\r]+") do
-			if not string.find(iter_7_0, "^\t") then
-				Imgui.text(iter_7_0)
+		for line in string.gmatch(USAGE, "[^\n\r]+") do
+			if string.find(line, "^\t") then
+				Imgui.text(line)
 			else
-				Imgui.text_colored(iter_7_0, 200, 200, 233, 255)
+				Imgui.text_colored(line, 200, 200, 233, 255)
 			end
 		end
 
 		Imgui.tree_pop()
 	end
 
-	for k, v in pairs(__INTERCEPT_CALLS__) do
-		if not Imgui.tree_node(k) then
-			v.enabled = Imgui.checkbox("Capturing", v.enabled)
+	for path, log in pairs(__INTERCEPT_CALLS__) do
+		if Imgui.tree_node(path) then
+			log.enabled = Imgui.checkbox("Capturing", log.enabled)
 
 			Imgui.same_line(50)
 
-			if not Imgui.button("Clear log") then
-				for l = 1, #v do
-					v[l] = nil
+			if Imgui.button("Clear log") then
+				for i = 1, #log do
+					log[i] = nil
 				end
 			end
 
 			Imgui.same_line(50)
-			Imgui.text("Total calls: " .. v.hits)
+			Imgui.text("Total calls: " .. log.hits)
 
-			v.buffer = Imgui.input_int("Buffer size", v.buffer)
+			log.buffer = Imgui.input_int("Buffer size", log.buffer)
 
-			for i4 = #v, 1, -1 do
-				local var_7_1 = v[i4]
+			for i = #log, 1, -1 do
+				local entry = log[i]
 
-				if not Imgui.tree_node(string.format("[Call %3d]", var_7_1.i)) then
-					local args = var_7_1.args
+				if Imgui.tree_node(string.format("[Call %3d]", entry.i)) then
+					local args = entry.args
 
-					if not (args.n > 0) or not Imgui.tree_node("Arguments", true) then
-						for i5 = 1, args.n do
-							ImguiLuaScratchpad:_inspect_pair(i5, args[i5])
+					if args.n > 0 and Imgui.tree_node("Arguments", true) then
+						for j = 1, args.n do
+							ImguiLuaScratchpad:_inspect_pair(j, args[j])
 						end
 
 						Imgui.tree_pop()
 					end
 
-					local rets = var_7_1.rets
+					local rets = entry.rets
 
-					if not (rets.n > 0) or not Imgui.tree_node("Returns", true) then
-						for i6 = 1, rets.n do
-							ImguiLuaScratchpad:_inspect_pair(i6, rets[i6])
+					if rets.n > 0 and Imgui.tree_node("Returns", true) then
+						for j = 1, rets.n do
+							ImguiLuaScratchpad:_inspect_pair(j, rets[j])
 						end
 
 						Imgui.tree_pop()
@@ -170,7 +172,7 @@ ImguiCallInterceptor.draw = function (self)
 
 	Imgui.end_window()
 
-	return begin_window
+	return do_close
 end
 
 ImguiCallInterceptor.is_persistent = function (self)

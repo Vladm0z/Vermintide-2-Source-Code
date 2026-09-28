@@ -2,13 +2,13 @@
 
 local MoverHelper = MoverHelper
 
-MoverHelper = MoverHelper or {}
+MoverHelper = not not MoverHelper or not not {}
 MoverHelper = MoverHelper
 
 local Unit = Unit
 local _set_mover = Unit._set_mover
 
-_set_mover = _set_mover or Unit.set_mover
+_set_mover = not not _set_mover or not not Unit.set_mover
 Unit._set_mover = _set_mover
 
 Unit.set_mover = function ()
@@ -16,9 +16,9 @@ Unit.set_mover = function ()
 	assert(false, "Use your locomotion-extension's mover functions instead of setting mover directly through Unit.set_mover")
 end
 
-MoverHelper.create_collision_state = function (arg_2_0, arg_2_1)
+MoverHelper.create_collision_state = function (unit, actor_name)
 	-- function 2
-	local actor = Unit.actor(arg_2_0, arg_2_1)
+	local actor = Unit.actor(unit, actor_name)
 
 	return {
 		disable_reasons = {},
@@ -33,42 +33,42 @@ MoverHelper.create_mover_state = function ()
 	}
 end
 
-MoverHelper.set_active_mover = function (arg_4_0, arg_4_1, arg_4_2)
+MoverHelper.set_active_mover = function (unit, mover_state, new_active_mover)
 	-- function 4
-	if not Unit.mover(arg_4_0) then
-		Unit._set_mover(arg_4_0, arg_4_2)
+	if Unit.mover(unit) then
+		Unit._set_mover(unit, new_active_mover)
 	end
 
-	arg_4_1.active_mover = arg_4_2
+	mover_state.active_mover = new_active_mover
 end
 
-MoverHelper.set_disable_reason = function (arg_5_0, arg_5_1, arg_5_2, arg_5_3)
+MoverHelper.set_disable_reason = function (unit, mover_state, reason, new_state)
 	-- function 5
-	if arg_5_3 == false then
-		arg_5_3 = nil
+	if new_state == false then
+		new_state = nil
 	end
 
-	local disable_reasons = arg_5_1.disable_reasons
+	local disable_reasons = mover_state.disable_reasons
 
-	disable_reasons[arg_5_2] = arg_5_3
+	disable_reasons[reason] = new_state
 
 	if next(disable_reasons) == nil then
-		Unit._set_mover(arg_5_0, arg_5_1.active_mover)
+		Unit._set_mover(unit, mover_state.active_mover)
 	else
-		Unit._set_mover(arg_5_0, nil)
+		Unit._set_mover(unit, nil)
 	end
 end
 
-MoverHelper.set_collision_disable_reason = function (arg_6_0, arg_6_1, arg_6_2, arg_6_3)
+MoverHelper.set_collision_disable_reason = function (unit, state_data, reason, new_state)
 	-- function 6
-	local disable_reasons = arg_6_1.disable_reasons
+	local disable_reasons = state_data.disable_reasons
 
-	disable_reasons[arg_6_2] = arg_6_3
+	disable_reasons[reason] = new_state
 
-	local actor = arg_6_1.actor
+	local actor = state_data.actor
 
-	for k, v in pairs(disable_reasons) do
-		if not v then
+	for r, state in pairs(disable_reasons) do
+		if state then
 			Actor.set_scene_query_enabled(actor, false)
 
 			return

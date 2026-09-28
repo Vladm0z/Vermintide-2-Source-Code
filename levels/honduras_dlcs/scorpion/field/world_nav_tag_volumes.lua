@@ -1,6 +1,6 @@
 -- chunkname: @levels/honduras_dlcs/scorpion/field/world_nav_tag_volumes.lua
 
-local tbl = {
+local nav_tag_volumes = {
 	volume_barn_nav_tag_no_spawn_3 = {
 		delay_nav_tag_volume_creation = true,
 		alt_max = 20.78048324584961,
@@ -842,9 +842,9 @@ local tbl = {
 		}
 	}
 }
-local str = "1"
+local version = "1"
 
 return {
-	version = str,
-	nav_tag_volumes = tbl
+	version = version,
+	nav_tag_volumes = nav_tag_volumes
 }

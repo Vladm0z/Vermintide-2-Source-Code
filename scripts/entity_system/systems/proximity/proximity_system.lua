@@ -3,34 +3,36 @@
 local script_data = script_data
 local dialogue_debug_proximity_system = script_data.dialogue_debug_proximity_system
 
-dialogue_debug_proximity_system = dialogue_debug_proximity_system or Development.parameter("dialogue_debug_proximity_system")
+dialogue_debug_proximity_system = not not dialogue_debug_proximity_system or not not Development.parameter("dialogue_debug_proximity_system")
 script_data.dialogue_debug_proximity_system = dialogue_debug_proximity_system
 
-local max = math.max(DialogueSettings.enemies_close_distance, DialogueSettings.enemies_distant_distance)
-local max_2 = math.max(DialogueSettings.friends_close_distance, DialogueSettings.friends_distant_distance)
-local raycast_enemy_check_interval = DialogueSettings.raycast_enemy_check_interval
-local hear_enemy_check_interval = DialogueSettings.hear_enemy_check_interval
-local special_proximity_distance = DialogueSettings.special_proximity_distance
-local special_proximity_distance_heard = DialogueSettings.special_proximity_distance_heard
-local num = special_proximity_distance_heard * special_proximity_distance_heard
-local num_2 = 1
-local num_3 = 2
-local num_4 = 3
-local num_5 = 4
+local PROXIMITY_DISTANCE_ENEMIES = math.max(DialogueSettings.enemies_close_distance, DialogueSettings.enemies_distant_distance)
+local PROXIMITY_DISTANCE_FRIENDS = math.max(DialogueSettings.friends_close_distance, DialogueSettings.friends_distant_distance)
+local RAYCAST_ENEMY_CHECK_INTERVAL = DialogueSettings.raycast_enemy_check_interval
+local HEAR_ENEMY_CHECK_INTERVAL = DialogueSettings.hear_enemy_check_interval
+local SPECIAL_PROXIMITY_DISTANCE = DialogueSettings.special_proximity_distance
+local SPECIAL_PROXIMITY_DISTANCE_HEARD = DialogueSettings.special_proximity_distance_heard
+local SPECIAL_PROXIMITY_DISTANCE_HEARD_SQ = SPECIAL_PROXIMITY_DISTANCE_HEARD * SPECIAL_PROXIMITY_DISTANCE_HEARD
+local INDEX_POSITION = 1
+local INDEX_DISTANCE = 2
+local INDEX_NORMAL = 3
+local INDEX_ACTOR = 4
 
 ProximitySystem = class(ProximitySystem, ExtensionSystemBase)
 
-local tbl = {
+local extensions = {
 	"PlayerProximityExtension",
 	"AIProximityExtension"
 }
 
-ProximitySystem.init = function (self, arg_1_1, arg_1_2)
+ProximitySystem.init = function (self, context, system_name)
 	-- function 1
-	arg_1_1.entity_manager:register_system(self, arg_1_2, tbl)
+	local entity_manager = context.entity_manager
 
-	self.world = arg_1_1.world
-	self.physics_world = World.get_data(arg_1_1.world, "physics_world")
+	entity_manager:register_system(self, system_name, extensions)
+
+	self.world = context.world
+	self.physics_world = World.get_data(context.world, "physics_world")
 	self.unit_extension_data = {}
 	self.frozen_unit_extension_data = {}
 	self.player_unit_extensions_map = {}
@@ -38,18 +40,18 @@ ProximitySystem.init = function (self, arg_1_1, arg_1_2)
 	self.special_unit_extension_map = {}
 	self.unit_forwards = {}
 
-	local alloc_table = FrameTable.alloc_table()
+	local all_categories = FrameTable.alloc_table()
 	local sides = Managers.state.side:sides()
 
 	for i = 1, #sides do
-		local var_1_2 = sides[i]
+		local side = sides[i]
 
-		alloc_table[#alloc_table + 1] = var_1_2:name()
+		all_categories[#all_categories + 1] = side:name()
 	end
 
-	self.enemy_broadphase = Broadphase(max, 128, alloc_table)
-	self.special_units_broadphase = Broadphase(special_proximity_distance, 8)
-	self.player_units_broadphase = Broadphase(max_2, 8, alloc_table)
+	self.enemy_broadphase = Broadphase(PROXIMITY_DISTANCE_ENEMIES, 128, all_categories)
+	self.special_units_broadphase = Broadphase(SPECIAL_PROXIMITY_DISTANCE, 8)
+	self.player_units_broadphase = Broadphase(PROXIMITY_DISTANCE_FRIENDS, 8, all_categories)
 	self.enemy_check_raycasts = {}
 	self.raycast_read_index = 1
 	self.raycast_write_index = 1
@@ -64,7 +66,9 @@ ProximitySystem.init = function (self, arg_1_1, arg_1_2)
 	self._spectated_player = nil
 	self._spectated_player_unit = nil
 
-	Managers.state.event:register(self, "on_spectator_target_changed", "on_spectator_target_changed")
+	local event_manager = Managers.state.event
+
+	event_manager:register(self, "on_spectator_target_changed", "on_spectator_target_changed")
 end
 
 ProximitySystem.destroy = function (self)
@@ -72,29 +76,29 @@ ProximitySystem.destroy = function (self)
 	self.unit_extension_data = nil
 end
 
-ProximitySystem.on_spectator_target_changed = function (self, arg_3_1)
+ProximitySystem.on_spectator_target_changed = function (self, spectated_player_unit)
 	-- function 3
-	self._spectated_player_unit = arg_3_1
-	self._spectated_player = Managers.player:owner(arg_3_1)
+	self._spectated_player_unit = spectated_player_unit
+	self._spectated_player = Managers.player:owner(spectated_player_unit)
 	self._is_spectator = true
 end
 
-ProximitySystem.on_add_extension = function (self, arg_4_1, arg_4_2, arg_4_3, arg_4_4)
+ProximitySystem.on_add_extension = function (self, world, unit, extension_name, extension_init_data)
 	-- function 4
-	local side = arg_4_4.side
-	local tbl = {
+	local side = extension_init_data.side
+	local extension = {
 		last_num_friends_nearby = 0,
 		last_num_enemies_nearby = 0,
 		side = side
 	}
 
-	ScriptUnit.set_extension(arg_4_2, "proximity_system", tbl)
+	ScriptUnit.set_extension(unit, "proximity_system", extension)
 
-	self.unit_extension_data[arg_4_2] = tbl
+	self.unit_extension_data[unit] = extension
 
-	if arg_4_3 == "PlayerProximityExtension" then
-		self.player_unit_extensions_map[arg_4_2] = tbl
-		tbl.proximity_types = {
+	if extension_name == "PlayerProximityExtension" then
+		self.player_unit_extensions_map[unit] = extension
+		extension.proximity_types = {
 			friends_close = {
 				cooldown = 0,
 				num = 0,
@@ -165,161 +169,175 @@ ProximitySystem.on_add_extension = function (self, arg_4_1, arg_4_2, arg_4_3, ar
 				broadphase_categories = side.enemy_broadphase_categories
 			}
 		}
-		tbl.raycast_timer = 0
-		tbl.hear_timer = 0
-		tbl.player_broadphase_id = Broadphase.add(self.player_units_broadphase, arg_4_2, Unit.world_position(arg_4_2, 0), 0.5, arg_4_4.side.broadphase_category)
+		extension.raycast_timer = 0
+		extension.hear_timer = 0
+		extension.player_broadphase_id = Broadphase.add(self.player_units_broadphase, unit, Unit.world_position(unit, 0), 0.5, extension_init_data.side.broadphase_category)
 
-		local breed = arg_4_4.breed
+		local breed_2 = extension_init_data.breed
 
-		breed = breed or arg_4_4.profile.breed
-
-		if not breed and not breed.proximity_system_check then
-			tbl.special_broadphase_id = Broadphase.add(self.special_units_broadphase, arg_4_2, Unit.world_position(arg_4_2, 0), 0.5)
-			self.special_unit_extension_map[arg_4_2] = tbl
+		if not breed_2 then
+			-- Nothing
 		end
 
-		tbl.bot_reaction_times = {}
-		tbl.has_been_seen = false
-	elseif arg_4_3 == "AIProximityExtension" then
-		tbl.enemy_broadphase_id = Broadphase.add(self.enemy_broadphase, arg_4_2, Unit.world_position(arg_4_2, 0), 0.5)
-		tbl.bot_reaction_times = {}
-		tbl.has_been_seen = false
-		self.ai_unit_extensions_map[arg_4_2] = tbl
+		breed_2 = extension_init_data.profile.breed
 
-		if not arg_4_4.breed.proximity_system_check then
-			tbl.special_broadphase_id = Broadphase.add(self.special_units_broadphase, arg_4_2, Unit.world_position(arg_4_2, 0), 0.5)
-			self.special_unit_extension_map[arg_4_2] = tbl
+		local breed = breed_2
+
+		::label_4_0::
+
+		if breed and breed.proximity_system_check then
+			extension.special_broadphase_id = Broadphase.add(self.special_units_broadphase, unit, Unit.world_position(unit, 0), 0.5)
+			self.special_unit_extension_map[unit] = extension
+		end
+
+		extension.bot_reaction_times = {}
+		extension.has_been_seen = false
+	elseif extension_name == "AIProximityExtension" then
+		extension.enemy_broadphase_id = Broadphase.add(self.enemy_broadphase, unit, Unit.world_position(unit, 0), 0.5)
+		extension.bot_reaction_times = {}
+		extension.has_been_seen = false
+		self.ai_unit_extensions_map[unit] = extension
+
+		local breed = extension_init_data.breed
+
+		if breed.proximity_system_check then
+			extension.special_broadphase_id = Broadphase.add(self.special_units_broadphase, unit, Unit.world_position(unit, 0), 0.5)
+			self.special_unit_extension_map[unit] = extension
 		end
 	end
 
-	return tbl
+	return extension
 end
 
-ProximitySystem.extensions_ready = function (self, arg_5_1, arg_5_2, arg_5_3)
+ProximitySystem.extensions_ready = function (self, world, unit, extension_name)
 	-- function 5
-	if arg_5_3 == "PlayerProximityExtension" then
-		local var_5_0 = self.player_unit_extensions_map[arg_5_2]
+	if extension_name == "PlayerProximityExtension" then
+		local extension = self.player_unit_extensions_map[unit]
 
-		if not var_5_0.side then
+		if extension.side then
 			return
 		end
 
-		var_5_0.side = Managers.state.side.side_by_unit[arg_5_2]
+		local side = Managers.state.side.side_by_unit[unit]
+
+		extension.side = side
 	end
 end
 
-ProximitySystem.on_remove_extension = function (self, arg_6_1, arg_6_2)
+ProximitySystem.on_remove_extension = function (self, unit, extension_name)
 	-- function 6
-	self.frozen_unit_extension_data[arg_6_1] = nil
+	self.frozen_unit_extension_data[unit] = nil
 
-	self:_cleanup_extension(arg_6_1, arg_6_2)
-	ScriptUnit.remove_extension(arg_6_1, self.NAME)
+	self:_cleanup_extension(unit, extension_name)
+	ScriptUnit.remove_extension(unit, self.NAME)
 end
 
-ProximitySystem.on_freeze_extension = function (self, arg_7_1, arg_7_2)
+ProximitySystem.on_freeze_extension = function (self, unit, extension_name)
 	-- function 7
-	local var_7_0 = self.unit_extension_data[arg_7_1]
+	local extension = self.unit_extension_data[unit]
 
-	fassert(var_7_0, "Unit was already frozen.")
+	fassert(extension, "Unit was already frozen.")
 
-	self.frozen_unit_extension_data[arg_7_1] = var_7_0
+	self.frozen_unit_extension_data[unit] = extension
 
-	self:_cleanup_extension(arg_7_1, arg_7_2)
+	self:_cleanup_extension(unit, extension_name)
 end
 
-ProximitySystem._cleanup_extension = function (self, arg_8_1, arg_8_2)
+ProximitySystem._cleanup_extension = function (self, unit, extension_name)
 	-- function 8
-	local var_8_0 = self.unit_extension_data[arg_8_1]
+	local extension = self.unit_extension_data[unit]
 
-	if var_8_0 == nil then
+	if extension == nil then
 		return
 	end
 
-	if not var_8_0.enemy_broadphase_id then
-		Broadphase.remove(self.enemy_broadphase, var_8_0.enemy_broadphase_id)
+	if extension.enemy_broadphase_id then
+		Broadphase.remove(self.enemy_broadphase, extension.enemy_broadphase_id)
 
-		var_8_0.enemy_broadphase_id = nil
+		extension.enemy_broadphase_id = nil
 	end
 
-	if not var_8_0.player_broadphase_id then
-		Broadphase.remove(self.player_units_broadphase, var_8_0.player_broadphase_id)
+	if extension.player_broadphase_id then
+		Broadphase.remove(self.player_units_broadphase, extension.player_broadphase_id)
 
-		var_8_0.player_broadphase_id = nil
+		extension.player_broadphase_id = nil
 	end
 
-	if not var_8_0.special_broadphase_id then
-		Broadphase.remove(self.special_units_broadphase, var_8_0.special_broadphase_id)
+	if extension.special_broadphase_id then
+		Broadphase.remove(self.special_units_broadphase, extension.special_broadphase_id)
 
-		var_8_0.special_broadphase_id = nil
+		extension.special_broadphase_id = nil
 	end
 
-	self.unit_extension_data[arg_8_1] = nil
-	self.player_unit_extensions_map[arg_8_1] = nil
-	self.ai_unit_extensions_map[arg_8_1] = nil
-	self.special_unit_extension_map[arg_8_1] = nil
+	self.unit_extension_data[unit] = nil
+	self.player_unit_extensions_map[unit] = nil
+	self.ai_unit_extensions_map[unit] = nil
+	self.special_unit_extension_map[unit] = nil
 end
 
-ProximitySystem.freeze = function (self, arg_9_1, arg_9_2, arg_9_3)
+ProximitySystem.freeze = function (self, unit, extension_name, reason)
 	-- function 9
-	local frozen_unit_extension_data = self.frozen_unit_extension_data
+	local frozen_extensions = self.frozen_unit_extension_data
 
-	if not frozen_unit_extension_data[arg_9_1] then
+	if frozen_extensions[unit] then
 		return
 	end
 
-	local var_9_1 = self.unit_extension_data[arg_9_1]
+	local extension = self.unit_extension_data[unit]
 
-	fassert(var_9_1, "Unit to freeze didn't have unfrozen extension")
-	self:_cleanup_extension(arg_9_1, arg_9_2)
+	fassert(extension, "Unit to freeze didn't have unfrozen extension")
+	self:_cleanup_extension(unit, extension_name)
 
-	self.unit_extension_data[arg_9_1] = nil
-	frozen_unit_extension_data[arg_9_1] = var_9_1
+	self.unit_extension_data[unit] = nil
+	frozen_extensions[unit] = extension
 end
 
-ProximitySystem.unfreeze = function (self, arg_10_1, arg_10_2)
+ProximitySystem.unfreeze = function (self, unit, extension_name)
 	-- function 10
-	local var_10_0 = self.frozen_unit_extension_data[arg_10_1]
+	local extension = self.frozen_unit_extension_data[unit]
 
-	fassert(var_10_0, "Unit to unfreeze didn't have frozen extension")
+	fassert(extension, "Unit to unfreeze didn't have frozen extension")
 
-	self.frozen_unit_extension_data[arg_10_1] = nil
-	self.unit_extension_data[arg_10_1] = var_10_0
+	self.frozen_unit_extension_data[unit] = nil
+	self.unit_extension_data[unit] = extension
 
-	fassert(arg_10_2 == "AIProximityExtension", "Unexpected unfreeze extension")
+	fassert(extension_name == "AIProximityExtension", "Unexpected unfreeze extension")
 
-	var_10_0.enemy_broadphase_id = Broadphase.add(self.enemy_broadphase, arg_10_1, Unit.world_position(arg_10_1, 0), 0.5)
-	var_10_0.bot_reaction_times = {}
-	var_10_0.has_been_seen = false
-	self.ai_unit_extensions_map[arg_10_1] = var_10_0
+	extension.enemy_broadphase_id = Broadphase.add(self.enemy_broadphase, unit, Unit.world_position(unit, 0), 0.5)
+	extension.bot_reaction_times = {}
+	extension.has_been_seen = false
+	self.ai_unit_extensions_map[unit] = extension
 
-	if not Unit.get_data(arg_10_1, "breed").proximity_system_check then
-		var_10_0.special_broadphase_id = Broadphase.add(self.special_units_broadphase, arg_10_1, Unit.world_position(arg_10_1, 0), 0.5)
-		self.special_unit_extension_map[arg_10_1] = var_10_0
+	local breed = Unit.get_data(unit, "breed")
+
+	if breed.proximity_system_check then
+		extension.special_broadphase_id = Broadphase.add(self.special_units_broadphase, unit, Unit.world_position(unit, 0), 0.5)
+		self.special_unit_extension_map[unit] = extension
 	end
 end
 
-local function fn(arg_11_0, arg_11_1, arg_11_2)
+local function check_raycast_center(physics_world, unit, target)
 	-- function 11
-	local world_position = Unit.world_position(arg_11_1, Unit.node(arg_11_1, "camera_attach"))
-	local box, var_11_2 = Unit.box(arg_11_2)
-	local translation = Matrix4x4.translation(box)
-	local normalize = Vector3.normalize(translation - world_position)
-	local length = Vector3.length(translation - world_position)
-	local immediate_raycast = PhysicsWorld.immediate_raycast(arg_11_0, world_position, normalize, length, "all", "types", "both", "collision_filter", "filter_lookat_object_ray")
+	local ray_position = Unit.world_position(unit, Unit.node(unit, "camera_attach"))
+	local unit_center_matrix, _ = Unit.box(target)
+	local ray_target = Matrix4x4.translation(unit_center_matrix)
+	local ray_direction = Vector3.normalize(ray_target - ray_position)
+	local ray_length = Vector3.length(ray_target - ray_position)
+	local hits = PhysicsWorld.immediate_raycast(physics_world, ray_position, ray_direction, ray_length, "all", "types", "both", "collision_filter", "filter_lookat_object_ray")
 
-	if not immediate_raycast then
-		for i, v in ipairs(immediate_raycast) do
-			local unit = Actor.unit(v[num_5])
+	if hits then
+		for i, hit_data in ipairs(hits) do
+			local hit_unit = Actor.unit(hit_data[INDEX_ACTOR])
 
-			if unit ~= arg_11_1 then
-				if unit == arg_11_2 then
-					if not script_data.debug_has_been_seen then
-						QuickDrawerStay:line(world_position, v[num_2], Color(0, 255, 0))
-						QuickDrawerStay:line(v[num_2], world_position + normalize * length, Color(255, 0, 0))
+			if hit_unit ~= unit then
+				if hit_unit == target then
+					if script_data.debug_has_been_seen then
+						QuickDrawerStay:line(ray_position, hit_data[INDEX_POSITION], Color(0, 255, 0))
+						QuickDrawerStay:line(hit_data[INDEX_POSITION], ray_position + ray_direction * ray_length, Color(255, 0, 0))
 					end
 
 					return true
-				elseif not Unit.get_data(unit, "breed") then
+				elseif not Unit.get_data(hit_unit, "breed") then
 					return false
 				end
 			end
@@ -327,30 +345,32 @@ local function fn(arg_11_0, arg_11_1, arg_11_2)
 	end
 end
 
-local function fn_2(arg_12_0, arg_12_1)
+local function _aim_direction(unit, network_manager)
 	-- function 12
-	local game = arg_12_1:game()
+	local game = network_manager:game()
 
-	if not game then
-		local unit_game_object_id = arg_12_1:unit_game_object_id(arg_12_0)
+	if game then
+		local game_object_id = network_manager:unit_game_object_id(unit)
+		local dir = GameSession.game_object_field(game, game_object_id, "aim_direction")
 
-		return (GameSession.game_object_field(game, unit_game_object_id, "aim_direction"))
+		return dir
 	else
-		local world_rotation = Unit.world_rotation(arg_12_0, 0)
+		local rot = Unit.world_rotation(unit, 0)
+		local dir = Quaternion.forward(rot)
 
-		return (Quaternion.forward(world_rotation))
+		return dir
 	end
 end
 
-local tbl_2 = {}
+local nearby_units = {}
 
-ProximitySystem.update = function (self, arg_13_1, arg_13_2)
+ProximitySystem.update = function (self, context, t)
 	-- function 13
-	if not script_data.debug_has_been_seen then
-		for k, v in pairs(self.unit_extension_data) do
+	if script_data.debug_has_been_seen then
+		for unit, extension in pairs(self.unit_extension_data) do
 			local var_13_0
 
-			if not v.has_been_seen then
+			if extension.has_been_seen then
 				var_13_0 = Color(0, 255, 0)
 
 				if not var_13_0 then
@@ -360,25 +380,27 @@ ProximitySystem.update = function (self, arg_13_1, arg_13_2)
 
 			var_13_0 = Color(255, 0, 0)
 
+			local color = var_13_0
+
 			::label_13_0::
 
-			QuickDrawer:sphere(Unit.local_position(k, 0) + Vector3.up(), 2, var_13_0)
+			QuickDrawer:sphere(Unit.local_position(unit, 0) + Vector3.up(), 2, color)
 		end
 	end
 end
 
-ProximitySystem._valid_dialogue_unit = function (arg_14_0, arg_14_1, arg_14_2)
+ProximitySystem._valid_dialogue_unit = function (self, unit, proximity_type)
 	-- function 14
-	local has_extension = ScriptUnit.has_extension(arg_14_1, "ghost_mode_system")
+	local ghost_mode_extension = ScriptUnit.has_extension(unit, "ghost_mode_system")
 
-	if not has_extension and not has_extension:is_in_ghost_mode() then
+	if ghost_mode_extension and ghost_mode_extension:is_in_ghost_mode() then
 		return false
 	end
 
-	if arg_14_2 == "vs_passing_hoisted_hero" then
-		local has_extension_2 = ScriptUnit.has_extension(arg_14_1, "status_system")
+	if proximity_type == "vs_passing_hoisted_hero" then
+		local status_extension = ScriptUnit.has_extension(unit, "status_system")
 
-		if not (not has_extension_2 and has_extension_2:is_grabbed_by_pack_master()) then
+		if not status_extension or not status_extension:is_grabbed_by_pack_master() then
 			return false
 		end
 	end
@@ -386,182 +408,188 @@ ProximitySystem._valid_dialogue_unit = function (arg_14_0, arg_14_1, arg_14_2)
 	return true
 end
 
-ProximitySystem.physics_async_update = function (self, arg_15_1, arg_15_2)
+ProximitySystem.physics_async_update = function (self, context, t)
 	-- function 15
-	local var_15_0 = tbl_2
-	local dt = arg_15_1.dt
-	local move = Broadphase.move
-	local local_position = Unit.local_position
+	local nearby_units = nearby_units
+	local dt = context.dt
+	local Broadphase_move = Broadphase.move
+	local Unit_local_position = Unit.local_position
 	local enemy_broadphase = self.enemy_broadphase
 
-	for k, v in pairs(self.ai_unit_extensions_map) do
-		local var_15_5 = local_position(k, 0)
+	for unit, extension in pairs(self.ai_unit_extensions_map) do
+		local position = Unit_local_position(unit, 0)
 
-		if not var_15_5 then
-			move(enemy_broadphase, v.enemy_broadphase_id, var_15_5)
+		if position then
+			Broadphase_move(enemy_broadphase, extension.enemy_broadphase_id, position)
 		end
 	end
 
-	local player_unit_extensions_map = self.player_unit_extensions_map
-	local player_units_broadphase = self.player_units_broadphase
+	local player_unit_extensions_map, player_units_broadphase = self.player_unit_extensions_map, self.player_units_broadphase
 
-	for k_2, v_2 in pairs(player_unit_extensions_map) do
-		local var_15_8 = local_position(k_2, 0)
+	for unit, extension in pairs(player_unit_extensions_map) do
+		local position = Unit_local_position(unit, 0)
 
-		if not var_15_8 then
-			move(player_units_broadphase, v_2.player_broadphase_id, var_15_8)
+		if position then
+			Broadphase_move(player_units_broadphase, extension.player_broadphase_id, position)
 		end
 	end
 
 	local special_units_broadphase = self.special_units_broadphase
 
-	for k_3, v_3 in pairs(self.special_unit_extension_map) do
-		local var_15_10 = local_position(k_3, 0)
+	for unit, extension in pairs(self.special_unit_extension_map) do
+		local position = Unit_local_position(unit, 0)
 
-		if not var_15_10 then
-			move(special_units_broadphase, v_3.special_broadphase_id, var_15_10)
+		if position then
+			Broadphase_move(special_units_broadphase, extension.special_broadphase_id, position)
 		end
 	end
 
 	local enemy_check_raycasts = self.enemy_check_raycasts
-	local raycast_read_index = self.raycast_read_index
-	local raycast_write_index = self.raycast_write_index
-	local raycast_max_index = self.raycast_max_index
-	local network = Managers.state.network
+	local ray_read_index = self.raycast_read_index
+	local ray_write_index = self.raycast_write_index
+	local ray_max = self.raycast_max_index
+	local network_manager = Managers.state.network
 
-	for k_4, v_4 in pairs(player_unit_extensions_map) do
+	for unit, extension in pairs(player_unit_extensions_map) do
 		repeat
-			local var_15_16 = local_position(k_4, 0)
+			local position = Unit_local_position(unit, 0)
 
-			if not var_15_16 then
+			if not position then
 				break
 			end
 
-			local enemy_units_lookup = v_4.side.enemy_units_lookup
+			local side = extension.side
+			local enemy_units_lookup = side.enemy_units_lookup
 
-			for k_5, v_5 in pairs(v_4.proximity_types) do
+			for proximity_type, proximity_data in pairs(extension.proximity_types) do
 				repeat
-					v_5.cooldown = v_5.cooldown - dt
+					proximity_data.cooldown = proximity_data.cooldown - dt
 
-					if v_5.cooldown > 0 then
+					if proximity_data.cooldown > 0 then
 						break
 					end
 
-					v_5.cooldown = DialogueSettings.proximity_trigger_interval
+					proximity_data.cooldown = DialogueSettings.proximity_trigger_interval
 
-					if not v_5.disable_in_ghost_mode then
-						local has_extension = ScriptUnit.has_extension(k_4, "ghost_mode_system")
+					if proximity_data.disable_in_ghost_mode then
+						local ghost_mode_extension = ScriptUnit.has_extension(unit, "ghost_mode_system")
 
-						if not has_extension and not has_extension:is_in_ghost_mode() then
+						if ghost_mode_extension and ghost_mode_extension:is_in_ghost_mode() then
 							break
 						end
 					end
 
-					local distance = v_5.distance
-					local broadphase_categories = v_5.broadphase_categories
-					local broadphase_pairs = v_5.broadphase_pairs
-					local num_2 = v_5.num
-					local num_3 = 0
+					local radius = proximity_data.distance
+					local broadphase_categories = proximity_data.broadphase_categories
+					local broadphase_pairs = proximity_data.broadphase_pairs
+					local last_num_matching_units = proximity_data.num
+					local num_matching_units = 0
 
-					for i10 = 1, #broadphase_pairs do
-						local broadphase = broadphase_pairs[i10].broadphase
-						local query = Broadphase.query(broadphase, var_15_16, distance, var_15_0, broadphase_categories)
-						local check = broadphase_pairs[i10].check
+					for pair_i = 1, #broadphase_pairs do
+						local broadphase = broadphase_pairs[pair_i].broadphase
+						local num_nearby_units = Broadphase.query(broadphase, position, radius, nearby_units, broadphase_categories)
+						local check = broadphase_pairs[pair_i].check
 
-						for i11 = 1, query do
-							local var_15_27 = var_15_0[i11]
+						for check_i = 1, num_nearby_units do
+							local nearby_unit = nearby_units[check_i]
 
-							if (var_15_27 == k_4 or not check[var_15_27]) and not self:_valid_dialogue_unit(var_15_27, k_5) then
-								num_3 = num_3 + 1
+							if nearby_unit ~= unit and check[nearby_unit] and self:_valid_dialogue_unit(nearby_unit, proximity_type) then
+								num_matching_units = num_matching_units + 1
 							end
 						end
 					end
 
-					if num_2 ~= num_3 then
-						v_5.num = num_3
+					if last_num_matching_units ~= num_matching_units then
+						proximity_data.num = num_matching_units
 
-						local extension_input = ScriptUnit.extension_input(k_4, "dialogue_system")
-						local alloc_table = FrameTable.alloc_table()
+						local dialogue_input = ScriptUnit.extension_input(unit, "dialogue_system")
+						local event_data = FrameTable.alloc_table()
 
-						alloc_table.num_units = num_3
+						event_data.num_units = num_matching_units
 
-						extension_input:trigger_dialogue_event(k_5, alloc_table)
+						dialogue_input:trigger_dialogue_event(proximity_type, event_data)
 					end
 				until true
 			end
 
-			local num_4 = v_4.raycast_timer + dt
-			local num_5 = v_4.hear_timer + dt
-			local var_15_32
-			local var_15_33
+			local raycast_timer = extension.raycast_timer + dt
+			local hear_timer = extension.hear_timer + dt
+			local cast_ray, heard
 
-			if num_4 > raycast_enemy_check_interval then
-				local var_15_34 = fn_2(k_4, network)
-				local flat = Vector3.flat(var_15_16)
+			if raycast_timer > RAYCAST_ENEMY_CHECK_INTERVAL then
+				local my_direction = _aim_direction(unit, network_manager)
+				local my_pos_flat = Vector3.flat(position)
 
-				var_15_34.z = 0
+				my_direction.z = 0
 
-				local var_15_36 = special_proximity_distance
-				local query_2 = Broadphase.query(special_units_broadphase, var_15_16, var_15_36, var_15_0)
+				local radius = SPECIAL_PROXIMITY_DISTANCE
+				local num_nearby_units = Broadphase.query(special_units_broadphase, position, radius, nearby_units)
 
-				for i12 = 1, query_2 do
-					local var_15_38 = var_15_0[i12]
+				for i = 1, num_nearby_units do
+					local nearby_unit = nearby_units[i]
 
-					var_15_0[i12] = nil
+					nearby_units[i] = nil
 
-					local var_15_39 = HEALTH_ALIVE[var_15_38]
+					local is_alive = HEALTH_ALIVE[nearby_unit]
 
-					if (var_15_38 == k_4 or not var_15_39) and not enemy_units_lookup[var_15_38] and not self:_valid_dialogue_unit(var_15_38, nil) then
-						local var_15_40 = local_position(var_15_38, 0)
-						local flat_2 = Vector3.flat(var_15_40)
-						local num_6 = flat_2 - flat
-						local normalize = Vector3.normalize(num_6)
+					if nearby_unit ~= unit and is_alive and enemy_units_lookup[nearby_unit] and self:_valid_dialogue_unit(nearby_unit, nil) then
+						local nearby_unit_pos = Unit_local_position(nearby_unit, 0)
+						local nearby_unit_pos_flat = Vector3.flat(nearby_unit_pos)
+						local direction_unit_nearby_unit = nearby_unit_pos_flat - my_pos_flat
 
-						if not (not (num_5 > hear_enemy_check_interval) or not (Vector3.distance_squared(var_15_40, var_15_16) < num)) then
-							local extension_input_2 = ScriptUnit.extension_input(k_4, "dialogue_system")
-							local alloc_table_2 = FrameTable.alloc_table()
-							local get_data = Unit.get_data(var_15_38, "breed")
+						direction_unit_nearby_unit = Vector3.normalize(direction_unit_nearby_unit)
 
-							if not get_data then
-								alloc_table_2.enemy_tag = get_data.name
+						if hear_timer > HEAR_ENEMY_CHECK_INTERVAL then
+							local distance_sq = Vector3.distance_squared(nearby_unit_pos, position)
 
-								assert(alloc_table_2.enemy_tag)
+							if distance_sq < SPECIAL_PROXIMITY_DISTANCE_HEARD_SQ then
+								local dialogue_input = ScriptUnit.extension_input(unit, "dialogue_system")
+								local event_data = FrameTable.alloc_table()
+								local breed = Unit.get_data(nearby_unit, "breed")
 
-								alloc_table_2.enemy_unit = var_15_38
-								alloc_table_2.distance = Vector3.distance(flat_2, flat)
+								if breed then
+									event_data.enemy_tag = breed.name
 
-								extension_input_2:trigger_dialogue_event("heard_enemy", alloc_table_2)
+									assert(event_data.enemy_tag)
 
-								var_15_33 = true
+									event_data.enemy_unit = nearby_unit
+									event_data.distance = Vector3.distance(nearby_unit_pos_flat, my_pos_flat)
+
+									dialogue_input:trigger_dialogue_event("heard_enemy", event_data)
+
+									heard = true
+								end
 							end
 						end
 
-						if Vector3.dot(normalize, var_15_34) > 0.7 then
-							var_15_32 = true
-							enemy_check_raycasts[raycast_write_index] = k_4
-							enemy_check_raycasts[raycast_write_index + 1] = var_15_38
-							raycast_write_index = (raycast_write_index + 1) % raycast_max_index + 1
+						local result = Vector3.dot(direction_unit_nearby_unit, my_direction)
 
-							if raycast_read_index == raycast_write_index then
-								raycast_read_index = (raycast_read_index + 1) % raycast_max_index + 1
+						if result > 0.7 then
+							cast_ray = true
+							enemy_check_raycasts[ray_write_index] = unit
+							enemy_check_raycasts[ray_write_index + 1] = nearby_unit
+							ray_write_index = (ray_write_index + 1) % ray_max + 1
+
+							if ray_read_index == ray_write_index then
+								ray_read_index = (ray_read_index + 1) % ray_max + 1
 							end
 						end
 					end
 				end
 			end
 
-			if not var_15_32 then
-				num_4 = 0
+			if cast_ray then
+				raycast_timer = 0
 			end
 
-			if not var_15_33 then
-				num_5 = 0
+			if heard then
+				hear_timer = 0
 			end
 
-			self.raycast_read_index = raycast_read_index
-			self.raycast_write_index = raycast_write_index
-			v_4.hear_timer = num_5
-			v_4.raycast_timer = num_4
+			self.raycast_read_index = ray_read_index
+			self.raycast_write_index = ray_write_index
+			extension.hear_timer = hear_timer
+			extension.raycast_timer = raycast_timer
 		until true
 	end
 
@@ -569,64 +597,66 @@ ProximitySystem.physics_async_update = function (self, arg_15_1, arg_15_2)
 	self:_update_nearby_enemies()
 end
 
-local num_6 = 12
-local flow_event = Unit.flow_event
-local alive = Unit.alive
+local MAX_ALLOWED_FX = 12
+local Unit_flow_event = Unit.flow_event
+local Unit_alive = Unit.alive
 
-local function fn_3(self, arg_16_1, arg_16_2)
+local function swap_erase(l, i, j)
 	-- function 16
-	local var_16_0 = self[arg_16_2]
+	local v = l[j]
 
-	self[arg_16_1] = var_16_0
-	self[arg_16_2] = nil
+	l[i] = v
+	l[j] = nil
 
-	return var_16_0
+	return v
 end
 
-local function fn_4(self, arg_17_1, arg_17_2)
+local function swap(l, i, j)
 	-- function 17
-	local var_17_0 = self[arg_17_2]
+	local v = l[j]
 
-	self[arg_17_2] = self[arg_17_1]
-	self[arg_17_1] = var_17_0
+	l[j] = l[i]
+	l[i] = v
 
-	return var_17_0
+	return v
 end
 
-local function fn_5(arg_18_0, arg_18_1, arg_18_2)
+local function remove_element(list, index, list_len)
 	-- function 18
-	return fn_3(arg_18_0, arg_18_1, arg_18_2), arg_18_2 - 1
+	local next_unit = swap_erase(list, index, list_len)
+
+	return next_unit, list_len - 1
 end
 
-local function fn_6(self, arg_19_1, arg_19_2)
+local function fx_list_add(old_list, new_list, unit)
 	-- function 19
-	if not self[arg_19_2] then
-		self[arg_19_2] = nil
+	if old_list[unit] then
+		old_list[unit] = nil
 	else
-		flow_event(arg_19_2, "enable_proximity_fx")
+		Unit_flow_event(unit, "enable_proximity_fx")
 	end
 
-	arg_19_1[arg_19_2] = true
+	new_list[unit] = true
 end
 
-local function fn_7(self, arg_20_1, arg_20_2)
+local function fx_list_remove(old_list, new_list, unit)
 	-- function 20
-	if not self[arg_20_2] then
-		flow_event(arg_20_2, "disable_proximity_fx")
+	if old_list[unit] then
+		Unit_flow_event(unit, "disable_proximity_fx")
 
-		self[arg_20_2] = nil
+		old_list[unit] = nil
 	end
 end
 
 ProximitySystem._update_nearby_boss = function (self)
 	-- function 21
-	if not DEDICATED_SERVER then
+	if DEDICATED_SERVER then
 		return
 	end
 
 	local _spectated_player
 
-	if not self._is_spectator then
+	if self._is_spectator then
 		_spectated_player = self._spectated_player
 
 		if not _spectated_player then
@@ -636,35 +666,37 @@ ProximitySystem._update_nearby_boss = function (self)
 
 	_spectated_player = Managers.player:local_player()
 
+	local local_player = _spectated_player
+
 	::label_21_0::
 
-	if not _spectated_player then
+	if not local_player then
 		return
 	end
 
-	local player_unit = _spectated_player.player_unit
+	local player_unit = local_player.player_unit
 
 	if not player_unit then
 		return
 	end
 
-	local _broadphase_result = self._broadphase_result
-	local local_position = Unit.local_position(player_unit, 0)
+	local broadphase_result = self._broadphase_result
+	local player_position = Unit.local_position(player_unit, 0)
 
-	if not local_position then
+	if not player_position then
 		return
 	end
 
-	local query = Broadphase.query(self.enemy_broadphase, local_position, 3, _broadphase_result)
-	local system = Managers.state.entity:system("ai_system")
+	local num_units = Broadphase.query(self.enemy_broadphase, player_position, 3, broadphase_result)
+	local ai_system = Managers.state.entity:system("ai_system")
 
-	for i = 1, query do
-		local var_21_6 = _broadphase_result[i]
-		local get_data = Unit.get_data(var_21_6, "breed")
-		local get_attributes = system:get_attributes(var_21_6)
+	for i = 1, num_units do
+		local unit = broadphase_result[i]
+		local breed = Unit.get_data(unit, "breed")
+		local attributes = ai_system:get_attributes(unit)
 
-		if not get_data and not get_data.boss and get_data.server_controlled_health_bar and not get_attributes.grudge_marked or not self:_valid_dialogue_unit(var_21_6, nil) then
-			self.closest_boss_unit = var_21_6
+		if (not breed or not breed.boss or breed.server_controlled_health_bar) and attributes.grudge_marked and self:_valid_dialogue_unit(unit, nil) then
+			self.closest_boss_unit = unit
 
 			break
 		end
@@ -673,22 +705,22 @@ end
 
 ProximitySystem._update_nearby_enemies = function (self)
 	-- function 22
-	if not DEDICATED_SERVER then
+	if DEDICATED_SERVER then
 		return
 	end
 
-	local _old_nearby = self._old_nearby
-	local _new_nearby = self._new_nearby
-	local _broadphase_result = self._broadphase_result
+	local old_nearby = self._old_nearby
+	local new_nearby = self._new_nearby
+	local broadphase_result = self._broadphase_result
 
-	table.clear(_new_nearby)
+	table.clear(new_nearby)
 
-	local _pseudo_sorted_list = self._pseudo_sorted_list
-	local _old_enabled_fx = self._old_enabled_fx
-	local _new_enabled_fx = self._new_enabled_fx
+	local list = self._pseudo_sorted_list
+	local old_enabled_fx = self._old_enabled_fx
+	local new_enabled_fx = self._new_enabled_fx
 	local tbl
 
-	if not self._is_spectator then
+	if self._is_spectator then
 		tbl = {
 			self._spectated_player
 		}
@@ -700,216 +732,230 @@ ProximitySystem._update_nearby_enemies = function (self)
 
 	tbl = Managers.player:players_at_peer(Network.peer_id())
 
+	local local_players = tbl
+
 	::label_22_0::
 
-	local var_22_7 = Vector3(0, 0, 0)
-	local num = 0
-	local camera = Managers.state.camera
+	local player_pos = Vector3(0, 0, 0)
+	local num_players = 0
+	local camera_manager = Managers.state.camera
 
-	for k, v in pairs(tbl) do
-		if not self._is_spectator then
-			var_22_7 = Unit.world_position(v.player_unit, 0)
-			num = num + 1
-		elseif not v.bot_player then
-			var_22_7 = camera:camera_position(v.viewport_name)
-			num = num + 1
+	for _, player in pairs(local_players) do
+		if self._is_spectator then
+			player_pos = Unit.world_position(player.player_unit, 0)
+			num_players = num_players + 1
+		elseif not player.bot_player then
+			player_pos = camera_manager:camera_position(player.viewport_name)
+			num_players = num_players + 1
 		end
 	end
 
-	if num > 0 then
-		local num_2 = var_22_7 / num
-		local count = #_pseudo_sorted_list
-		local query = Broadphase.query(self.enemy_broadphase, num_2, 30, _broadphase_result)
+	if num_players > 0 then
+		player_pos = player_pos / num_players
 
-		for k_2 = 1, query do
-			local var_22_13 = _broadphase_result[k_2]
+		local list_len = #list
+		local num_units = Broadphase.query(self.enemy_broadphase, player_pos, 30, broadphase_result)
 
-			if not self:_valid_dialogue_unit(var_22_13, nil) then
-				_new_nearby[var_22_13] = Vector3.distance_squared(Unit.local_position(var_22_13, 0), num_2)
+		for i = 1, num_units do
+			local unit = broadphase_result[i]
 
-				if not _old_nearby[var_22_13] then
-					count = count + 1
-					_pseudo_sorted_list[count] = var_22_13
+			if self:_valid_dialogue_unit(unit, nil) then
+				new_nearby[unit] = Vector3.distance_squared(Unit.local_position(unit, 0), player_pos)
+
+				if not old_nearby[unit] then
+					list_len = list_len + 1
+					list[list_len] = unit
 				end
 			end
 		end
 
 		local max_allowed_proximity_fx = script_data.max_allowed_proximity_fx
 
-		max_allowed_proximity_fx = max_allowed_proximity_fx or num_6
+		if not max_allowed_proximity_fx then
+			-- Nothing
+		end
 
-		local var_22_15 = _pseudo_sorted_list[1]
+		max_allowed_proximity_fx = MAX_ALLOWED_FX
 
-		if not var_22_15 then
-			local var_22_16 = _new_nearby[var_22_15]
+		local max_allowed = max_allowed_proximity_fx
 
-			while not (var_22_16 or not (count > 0)) do
-				var_22_15, count = fn_5(_pseudo_sorted_list, 1, count)
-				var_22_16 = _new_nearby[var_22_15]
+		::label_22_1::
+
+		local higher_unit = list[1]
+
+		if higher_unit then
+			local higher_unit_dist = new_nearby[higher_unit]
+
+			while not higher_unit_dist and list_len > 0 do
+				higher_unit, list_len = remove_element(list, 1, list_len)
+				higher_unit_dist = new_nearby[higher_unit]
 			end
 
-			local var_22_17
-			local num_3 = 1
+			local lower_index
+			local higher_index = 1
 
-			while num_3 <= count do
-				local var_22_19 = num_3
+			while higher_index <= list_len do
+				lower_index = higher_index
+				higher_index = higher_index + 1
 
-				num_3 = num_3 + 1
+				local lower_unit = higher_unit
+				local lower_unit_dist = higher_unit_dist
 
-				local var_22_20 = var_22_15
-				local var_22_21 = var_22_16
+				higher_unit = list[higher_index]
+				higher_unit_dist = new_nearby[higher_unit]
 
-				var_22_15 = _pseudo_sorted_list[num_3]
-				var_22_16 = _new_nearby[var_22_15]
-
-				while not (var_22_16 or not (num_3 <= count)) do
-					var_22_15, count = fn_5(_pseudo_sorted_list, num_3, count)
-					var_22_16 = _new_nearby[var_22_15]
+				while not higher_unit_dist and higher_index <= list_len do
+					higher_unit, list_len = remove_element(list, higher_index, list_len)
+					higher_unit_dist = new_nearby[higher_unit]
 				end
 
-				if not (not var_22_16 and not (var_22_16 < var_22_21)) then
-					fn_4(_pseudo_sorted_list, var_22_19, num_3)
+				if higher_unit_dist and higher_unit_dist < lower_unit_dist then
+					swap(list, lower_index, higher_index)
 
-					var_22_15 = var_22_20
-					var_22_16 = var_22_21
+					higher_unit = lower_unit
+					higher_unit_dist = lower_unit_dist
 				end
 
-				if not alive(_pseudo_sorted_list[var_22_19]) then
-					table.dump(_old_enabled_fx, "old_enabled_fx", 2)
-					table.dump(_new_enabled_fx, "new_enabled_fx", 2)
-					table.dump(_old_nearby, "old_nearby", 2)
-					table.dump(_new_nearby, "new_nearby", 2)
-					table.dump(_pseudo_sorted_list, "list", 2)
+				if not Unit_alive(list[lower_index]) then
+					table.dump(old_enabled_fx, "old_enabled_fx", 2)
+					table.dump(new_enabled_fx, "new_enabled_fx", 2)
+					table.dump(old_nearby, "old_nearby", 2)
+					table.dump(new_nearby, "new_nearby", 2)
+					table.dump(list, "list", 2)
 					assert(false, "Detected deleted unit in proximity fx list.")
 				end
 
-				local var_22_22 = _pseudo_sorted_list[var_22_19]
+				local unit = list[lower_index]
 
-				if var_22_19 <= max_allowed_proximity_fx then
-					fn_6(_old_enabled_fx, _new_enabled_fx, var_22_22)
+				if lower_index <= max_allowed then
+					fx_list_add(old_enabled_fx, new_enabled_fx, unit)
 
-					local has_extension = ScriptUnit.has_extension(var_22_22, "aim_system")
+					local aim_extension = ScriptUnit.has_extension(unit, "aim_system")
 
-					if not has_extension then
-						has_extension:set_enabled(true)
+					if aim_extension then
+						aim_extension:set_enabled(true)
 					end
 				else
-					fn_7(_old_enabled_fx, _new_enabled_fx, var_22_22)
+					fx_list_remove(old_enabled_fx, new_enabled_fx, unit)
 
-					local has_extension_2 = ScriptUnit.has_extension(var_22_22, "aim_system")
+					local aim_extension = ScriptUnit.has_extension(unit, "aim_system")
 
-					if not has_extension_2 then
-						has_extension_2:set_enabled(false)
+					if aim_extension then
+						aim_extension:set_enabled(false)
 					end
 				end
 			end
 
-			if not var_22_16 then
-				if num_3 <= max_allowed_proximity_fx then
-					fn_6(_old_enabled_fx, _new_enabled_fx, var_22_15)
+			if higher_unit_dist then
+				if higher_index <= max_allowed then
+					fx_list_add(old_enabled_fx, new_enabled_fx, higher_unit)
 				else
-					fn_7(_old_enabled_fx, _new_enabled_fx, var_22_15)
+					fx_list_remove(old_enabled_fx, new_enabled_fx, higher_unit)
 				end
 			end
 
-			self:_clear_old_enabled_fx(_old_enabled_fx)
-			self:_nearby_enemies_debug(_pseudo_sorted_list, _new_nearby, _new_enabled_fx)
+			self:_clear_old_enabled_fx(old_enabled_fx)
+			self:_nearby_enemies_debug(list, new_nearby, new_enabled_fx)
 
-			self._old_enabled_fx = _new_enabled_fx
-			self._new_enabled_fx = _old_enabled_fx
+			self._old_enabled_fx = new_enabled_fx
+			self._new_enabled_fx = old_enabled_fx
 		end
 	end
 
-	self._old_nearby = _new_nearby
-	self._new_nearby = _old_nearby
+	self._old_nearby = new_nearby
+	self._new_nearby = old_nearby
 end
 
-ProximitySystem._nearby_enemies_debug = function (arg_23_0, arg_23_1, arg_23_2, arg_23_3)
+ProximitySystem._nearby_enemies_debug = function (self, list, new_nearby, new_enabled_fx)
 	-- function 23
-	if not script_data.debug_proximity_fx then
-		for i, v in ipairs(arg_23_1) do
-			local var_23_0 = arg_23_2[v]
+	if script_data.debug_proximity_fx then
+		for i, unit in ipairs(list) do
+			local dist_sq = new_nearby[unit]
 
-			if not var_23_0 then
-				local sqrt = math.sqrt(var_23_0)
-				local num = 255 - math.min(sqrt * 8, 255)
-				local var_23_3 = arg_23_3[v]
-				local var_23_4
+			if dist_sq then
+				local dist = math.sqrt(dist_sq)
+				local brightness = 255 - math.min(dist * 8, 255)
+				local enabled = new_enabled_fx[unit]
+				local color
 
-				if not var_23_3 then
-					var_23_4 = Color(num, num, 255)
+				if enabled then
+					color = Color(brightness, brightness, 255)
 				else
-					var_23_4 = Color(num, 255, num)
+					color = Color(brightness, 255, brightness)
 				end
 
 				local colored_text = Debug.colored_text
-				local var_23_6 = var_23_4
-				local var_23_7 = tostring(Unit.get_data(v, "debug_random"))
+				local var_23_1 = color
+				local var_23_2 = tostring(Unit.get_data(unit, "debug_random"))
 				local flag
 
-				flag = not var_23_3 and " enabled " and " disabled "
+				flag = (not enabled or not " enabled ") and not not " disabled "
 
-				colored_text(var_23_6, var_23_7 .. flag .. string.format("%.2f", sqrt))
+				colored_text(var_23_1, var_23_2 .. flag .. string.format("%.2f", dist))
 			else
 				print("ERROR", i)
 			end
 		end
 
-		for k, v_2 in pairs(arg_23_3) do
-			QuickDrawer:sphere(Unit.local_position(k, 0), 1.2, Color(0, 255, 0))
+		for unit, _ in pairs(new_enabled_fx) do
+			QuickDrawer:sphere(Unit.local_position(unit, 0), 1.2, Color(0, 255, 0))
 		end
 	end
 end
 
-ProximitySystem._clear_old_enabled_fx = function (arg_24_0, arg_24_1)
+ProximitySystem._clear_old_enabled_fx = function (self, old_enabled_fx)
 	-- function 24
-	for k, v in pairs(arg_24_1) do
-		if not alive(k) then
-			flow_event(k, "disable_proximity_fx")
+	for unit, _ in pairs(old_enabled_fx) do
+		if Unit_alive(unit) then
+			Unit_flow_event(unit, "disable_proximity_fx")
 		end
 	end
 
-	table.clear(arg_24_1)
+	table.clear(old_enabled_fx)
 end
 
-ProximitySystem.post_update = function (self, arg_25_1, arg_25_2)
+ProximitySystem.post_update = function (self, context, t)
 	-- function 25
 	local enemy_check_raycasts = self.enemy_check_raycasts
 	local physics_world = self.physics_world
-	local system = Managers.state.entity:system("darkness_system")
-	local raycast_read_index = self.raycast_read_index
+	local darkness_system = Managers.state.entity:system("darkness_system")
+	local read_index = self.raycast_read_index
 
-	if raycast_read_index ~= self.raycast_write_index then
-		self.raycast_read_index = (raycast_read_index + 1) % self.raycast_max_index + 1
+	if read_index ~= self.raycast_write_index then
+		self.raycast_read_index = (read_index + 1) % self.raycast_max_index + 1
 
-		local var_25_4 = enemy_check_raycasts[raycast_read_index]
-		local var_25_5 = enemy_check_raycasts[raycast_read_index + 1]
+		local unit = enemy_check_raycasts[read_index]
+		local nearby_unit = enemy_check_raycasts[read_index + 1]
 
-		if not alive(var_25_4) and not alive(var_25_5) then
-			local world_position = Unit.world_position(var_25_5, 0)
+		if Unit_alive(unit) and Unit_alive(nearby_unit) then
+			local nearby_unit_pos = Unit.world_position(nearby_unit, 0)
+			local did_hit = not darkness_system:is_in_darkness(nearby_unit_pos) and not not check_raycast_center(physics_world, unit, nearby_unit)
 
-			if not (not not system:is_in_darkness(world_position) or fn(physics_world, var_25_4, var_25_5)) then
-				local flat = Vector3.flat(world_position)
-				local local_position = Unit.local_position(var_25_4, 0)
-				local flat_2 = Vector3.flat(local_position)
-				local extension_input = ScriptUnit.extension_input(var_25_4, "dialogue_system")
-				local alloc_table = FrameTable.alloc_table()
+			if did_hit then
+				local nearby_unit_pos_flat = Vector3.flat(nearby_unit_pos)
+				local position = Unit.local_position(unit, 0)
+				local my_pos_flat = Vector3.flat(position)
+				local dialogue_input = ScriptUnit.extension_input(unit, "dialogue_system")
+				local event_data = FrameTable.alloc_table()
 
-				alloc_table.enemy_tag = Unit.get_data(var_25_5, "breed").name
+				event_data.enemy_tag = Unit.get_data(nearby_unit, "breed").name
 
-				assert(alloc_table.enemy_tag)
+				assert(event_data.enemy_tag)
 
-				alloc_table.enemy_unit = var_25_5
-				alloc_table.distance = Vector3.distance(flat, flat_2)
-				ScriptUnit.extension(var_25_5, "proximity_system").has_been_seen = true
+				event_data.enemy_unit = nearby_unit
+				event_data.distance = Vector3.distance(nearby_unit_pos_flat, my_pos_flat)
 
-				extension_input:trigger_dialogue_event("seen_enemy", alloc_table)
+				local proximity_ext = ScriptUnit.extension(nearby_unit, "proximity_system")
+
+				proximity_ext.has_been_seen = true
+
+				dialogue_input:trigger_dialogue_event("seen_enemy", event_data)
 			end
 		end
 	end
 end
 
-ProximitySystem.hot_join_sync = function (arg_26_0, arg_26_1)
+ProximitySystem.hot_join_sync = function (self, sender)
 	-- function 26
 	return
 end

@@ -2,23 +2,32 @@
 
 local WorldMarkerTemplates = WorldMarkerTemplates
 
-WorldMarkerTemplates = WorldMarkerTemplates or {}
+WorldMarkerTemplates = not not WorldMarkerTemplates or not not {}
 WorldMarkerTemplates = WorldMarkerTemplates
 
-local str = "text_box"
-local var_0_2 = WorldMarkerTemplates[str]
+local NAME = "text_box"
+local var_0_1 = WorldMarkerTemplates[NAME]
 
-var_0_2 = var_0_2 or {}
-WorldMarkerTemplates[str] = var_0_2
-var_0_2.max_distance = 20
-var_0_2.screen_clamp = false
-var_0_2.screen_margins = nil
+if not var_0_1 then
+	-- Nothing
+end
 
-var_0_2.create_widget_definition = function (arg_1_0)
+var_0_1 = {}
+
+local template = var_0_1
+
+::label_0_0::
+
+WorldMarkerTemplates[NAME] = template
+template.max_distance = 20
+template.screen_clamp = false
+template.screen_margins = nil
+
+template.create_widget_definition = function (scenegraph_id)
 	-- function 1
-	local str = "shadow_frame_02"
-	local var_1_1 = UIFrameSettings[str]
-	local var_1_2 = var_1_1.texture_sizes.horizontal[2]
+	local frame_name = "shadow_frame_02"
+	local frame_settings = UIFrameSettings[frame_name]
+	local frame_height = frame_settings.texture_sizes.horizontal[2]
 
 	return {
 		element = {
@@ -32,11 +41,11 @@ var_0_2.create_widget_definition = function (arg_1_0)
 					pass_type = "texture",
 					style_id = "icon",
 					texture_id = "icon",
-					content_check_function = function (self)
+					content_check_function = function (content)
 						-- function 2
-						local scale_progress = self.scale_progress
+						local scale_progress = content.scale_progress
 
-						return not scale_progress and scale_progress < 1
+						return not not scale_progress and scale_progress < 1
 					end
 				},
 				{
@@ -47,11 +56,11 @@ var_0_2.create_widget_definition = function (arg_1_0)
 					style_id = "text",
 					pass_type = "text",
 					text_id = "text",
-					content_check_function = function (self)
+					content_check_function = function (content)
 						-- function 3
-						local text_progress = self.text_progress
+						local text_progress = content.text_progress
 
-						return not text_progress and text_progress > 0
+						return not not text_progress and text_progress > 0
 					end
 				}
 			}
@@ -60,7 +69,7 @@ var_0_2.create_widget_definition = function (arg_1_0)
 			icon = "icon_property_stamina",
 			text = "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.",
 			icon_pulse = "icon_property_stamina",
-			frame = var_1_1.texture
+			frame = frame_settings.texture
 		},
 		style = {
 			text = {
@@ -144,11 +153,11 @@ var_0_2.create_widget_definition = function (arg_1_0)
 					50
 				},
 				frame_margins = {
-					-var_1_2,
-					-var_1_2
+					-frame_height,
+					-frame_height
 				},
-				texture_size = var_1_1.texture_size,
-				texture_sizes = var_1_1.texture_sizes,
+				texture_size = frame_settings.texture_size,
+				texture_sizes = frame_settings.texture_sizes,
 				color = {
 					255,
 					255,
@@ -167,104 +176,127 @@ var_0_2.create_widget_definition = function (arg_1_0)
 			0,
 			0
 		},
-		scenegraph_id = arg_1_0
+		scenegraph_id = scenegraph_id
 	}
 end
 
-var_0_2.check_widget_visible = function (self, arg_4_1, arg_4_2)
+template.check_widget_visible = function (widget, vertical_pixel_overlap, horizontal_pixel_overlap)
 	-- function 4
-	local texture_size = self.style.background.texture_size
+	local style = widget.style
+	local background_style = style.background
+	local background_size = background_style.texture_size
 
-	if not (not arg_4_2 and not (arg_4_2 > texture_size[1] * 0.5)) then
+	if horizontal_pixel_overlap and horizontal_pixel_overlap > background_size[1] * 0.5 then
 		return false
 	end
 
-	if not (not arg_4_1 and not (arg_4_1 > texture_size[2] * 0.5)) then
+	if vertical_pixel_overlap and vertical_pixel_overlap > background_size[2] * 0.5 then
 		return false
 	end
 
 	return true
 end
 
-var_0_2.on_enter = function (arg_5_0)
+template.on_enter = function (widget)
 	-- function 5
-	arg_5_0.content.spawn_progress_timer = 0
+	local content = widget.content
+
+	content.spawn_progress_timer = 0
 end
 
-var_0_2.update_function = function (arg_6_0, arg_6_1, arg_6_2, arg_6_3, arg_6_4, arg_6_5)
+template.update_function = function (ui_renderer, widget, marker, settings, dt, t)
 	-- function 6
-	local flag = false
-	local content = arg_6_1.content
-	local style = arg_6_1.style
+	local animating = false
+	local content = widget.content
+	local style = widget.style
 	local is_under = content.is_under
 	local distance = content.distance
 	local angle = content.angle
-	local num = 3
-	local scale_progress = content.scale_progress
+	local scale_speed = 3
+	local scale_progress_2 = content.scale_progress
 
-	scale_progress = scale_progress or 0
+	if not scale_progress_2 then
+		-- Nothing
+	end
 
-	local text_progress = content.text_progress
+	scale_progress_2 = 0
 
-	text_progress = text_progress or 0
+	local scale_progress = scale_progress_2
+
+	::label_6_0::
+
+	local text_progress_2 = content.text_progress
+
+	if not text_progress_2 then
+		-- Nothing
+	end
+
+	text_progress_2 = 0
+
+	local text_progress = text_progress_2
+
+	::label_6_1::
 
 	if distance <= 5 then
-		scale_progress = math.min(scale_progress + arg_6_4 * num, 1)
+		scale_progress = math.min(scale_progress + dt * scale_speed, 1)
 	elseif text_progress == 0 then
-		scale_progress = math.max(scale_progress - arg_6_4 * num, 0)
+		scale_progress = math.max(scale_progress - dt * scale_speed, 0)
 	end
 
-	if not (scale_progress ~= 1 or not (distance <= 5)) then
-		text_progress = math.min(text_progress + arg_6_4 * num, 1)
+	if scale_progress == 1 and distance <= 5 then
+		text_progress = math.min(text_progress + dt * scale_speed, 1)
 	else
-		text_progress = math.max(text_progress - arg_6_4 * num, 0)
+		text_progress = math.max(text_progress - dt * scale_speed, 0)
 	end
 
-	local easeCubic = math.easeCubic(text_progress)
-	local easeCubic_2 = math.easeCubic(scale_progress)
+	local text_anim_progress = math.easeCubic(text_progress)
+	local anim_progress = math.easeCubic(scale_progress)
 	local text = content.text
-	local text_2 = style.text
-	local size = text_2.size
-	local offset = text_2.offset
-	local text_color = text_2.text_color
+	local text_style = style.text
+	local text_size = text_style.size
+	local text_offset = text_style.offset
+	local text_color = text_style.text_color
 	local text_width = content.text_width
 	local text_height = content.text_height
 
 	if not text_width then
-		text_width = UIUtils.get_text_width(arg_6_0, text_2, text)
+		text_width = UIUtils.get_text_width(ui_renderer, text_style, text)
 		text_width = math.min(text_width, 600)
-		size[1] = text_width
-		text_height = UIUtils.get_text_height(arg_6_0, size, text_2, text)
+		text_size[1] = text_width
+		text_height = UIUtils.get_text_height(ui_renderer, text_size, text_style, text)
 		content.text_width = text_width
 		content.text_height = text_height
 	end
 
-	text_color[1] = 255 * easeCubic
-	style.icon.color[1] = 255 - 255 * scale_progress
+	text_color[1] = 255 * text_anim_progress
 
-	local background = style.background
-	local color = background.color
-	local texture_size = background.texture_size
-	local default_size = background.default_size
-	local num_2 = text_width * easeCubic_2
-	local num_3 = text_height * easeCubic_2
+	local icon_style = style.icon
+	local icon_color = icon_style.color
 
-	texture_size[1] = default_size[1] + num_2
-	texture_size[2] = default_size[2] + num_3
+	icon_color[1] = 255 - 255 * scale_progress
 
-	local area_size = style.frame.area_size
+	local background_style = style.background
+	local background_color = background_style.color
+	local background_size = background_style.texture_size
+	local background_default_size = background_style.default_size
+	local new_width = text_width * anim_progress
+	local new_height = text_height * anim_progress
 
-	area_size[1] = texture_size[1]
-	area_size[2] = texture_size[2]
-	size[1] = text_width
-	size[2] = text_height
-	offset[1] = -text_width / 2
-	offset[2] = -text_height / 2
+	background_size[1] = background_default_size[1] + new_width
+	background_size[2] = background_default_size[2] + new_height
 
-	local flag_2 = scale_progress ~= content.scale_progress or text_progress ~= content.text_progress
+	local frame_style = style.frame
+	local frame_size = frame_style.area_size
 
+	frame_size[1] = background_size[1]
+	frame_size[2] = background_size[2]
+	text_size[1] = text_width
+	text_size[2] = text_height
+	text_offset[1] = -text_width / 2
+	text_offset[2] = -text_height / 2
+	animating = scale_progress ~= content.scale_progress or text_progress ~= content.text_progress
 	content.scale_progress = scale_progress
 	content.text_progress = text_progress
 
-	return flag_2
+	return animating
 end

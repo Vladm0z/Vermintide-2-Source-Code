@@ -2,7 +2,7 @@
 
 require("scripts/settings/dlcs/belakor/belakor_balancing")
 
-local tbl = {
+local breed_data = {
 	immediate_threat = true,
 	height = 2.6,
 	no_blood_splatter_on_damage = true,
@@ -40,36 +40,63 @@ local tbl = {
 			}
 		}
 	},
-	modify_extension_init_data = function (arg_1_0, arg_1_1, arg_1_2)
+	modify_extension_init_data = function (breed, is_husk, extension_init_data)
 		-- function 1
-		local death_system = arg_1_2.death_system
+		local death_system = extension_init_data.death_system
 
-		death_system = death_system or {}
-		death_system.death_reaction_template = "ai_default"
-		death_system.is_husk = arg_1_1
-		arg_1_2.death_system = death_system
+		if not death_system then
+			-- Nothing
+		end
 
-		local hit_reaction_system = arg_1_2.hit_reaction_system
+		death_system = {}
 
-		hit_reaction_system = hit_reaction_system or {}
-		hit_reaction_system.hit_reaction_template = "level_object"
-		hit_reaction_system.is_husk = arg_1_1
-		arg_1_2.hit_reaction_system = hit_reaction_system
+		local death_system_data = death_system
 
-		local ping_system = arg_1_2.ping_system
+		::label_1_0::
 
-		ping_system = ping_system or {}
-		ping_system.always_pingable = true
-		arg_1_2.ping_system = ping_system
+		death_system_data.death_reaction_template = "ai_default"
+		death_system_data.is_husk = is_husk
+		extension_init_data.death_system = death_system_data
+
+		local hit_reaction_system = extension_init_data.hit_reaction_system
+
+		if not hit_reaction_system then
+			-- Nothing
+		end
+
+		hit_reaction_system = {}
+
+		local hit_reaction_system_data = hit_reaction_system
+
+		::label_1_1::
+
+		hit_reaction_system_data.hit_reaction_template = "level_object"
+		hit_reaction_system_data.is_husk = is_husk
+		extension_init_data.hit_reaction_system = hit_reaction_system_data
+
+		local ping_system = extension_init_data.ping_system
+
+		if not ping_system then
+			-- Nothing
+		end
+
+		ping_system = {}
+
+		local ping_system_data = ping_system
+
+		::label_1_2::
+
+		ping_system_data.always_pingable = true
+		extension_init_data.ping_system = ping_system_data
 	end,
 	debug_spawn_optional_data = {
-		prepare_func = function (self, arg_2_1)
+		prepare_func = function (breed, extension_init_data)
 			-- function 2
-			local flag = false
+			local is_husk = false
 
-			self.modify_extension_init_data(self, flag, arg_2_1)
+			breed.modify_extension_init_data(breed, is_husk, extension_init_data)
 		end
 	}
 }
 
-Breeds.shadow_totem = table.create_copy(Breeds.shadow_totem, tbl)
+Breeds.shadow_totem = table.create_copy(Breeds.shadow_totem, breed_data)

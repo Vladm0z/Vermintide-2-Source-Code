@@ -9584,10 +9584,10 @@ MaterialEffectMappingsUtility.add("enemy_light_weapon_drop", {
 
 MaterialIDToName = {}
 
-for k, v in pairs(MaterialEffectSettings.material_contexts) do
-	MaterialIDToName[k] = {}
+for context_name, context_materials in pairs(MaterialEffectSettings.material_contexts) do
+	MaterialIDToName[context_name] = {}
 
-	for i, v_2 in ipairs(v) do
-		MaterialIDToName[k][Unit.material_id(v_2)] = v_2
+	for _, material_name in ipairs(context_materials) do
+		MaterialIDToName[context_name][Unit.material_id(material_name)] = material_name
 	end
 end

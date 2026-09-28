@@ -6,58 +6,58 @@ require("scripts/entity_system/systems/behaviour/nodes/bt_conditions")
 require("scripts/entity_system/systems/behaviour/nodes/bt_leave_hooks")
 require("scripts/entity_system/systems/behaviour/nodes/bt_enter_hooks")
 
-local BTConditions = BTConditions
-local BTEnterHooks = BTEnterHooks
-local BTLeaveHooks = BTLeaveHooks
+local CONDITIONS = BTConditions
+local ENTER_HOOKS = BTEnterHooks
+local LEAVE_HOOKS = BTLeaveHooks
 
-BTNode.init = function (self, arg_1_1, arg_1_2, arg_1_3, arg_1_4, arg_1_5, arg_1_6)
+BTNode.init = function (self, identifier, parent, condition_name, enter_hook_name, leave_hook_name, tree_node)
 	-- function 1
-	self._parent = arg_1_2
-	self._identifier = arg_1_1
-	self._tree_node = arg_1_6
+	self._parent = parent
+	self._identifier = identifier
+	self._tree_node = tree_node
 
-	local var_1_0 = BTConditions[arg_1_3]
+	local condition = CONDITIONS[condition_name]
 
-	fassert(var_1_0, "No condition called %q", arg_1_3)
+	fassert(condition, "No condition called %q", condition_name)
 
-	self._condition_name = arg_1_3
+	self._condition_name = condition_name
 
-	if not arg_1_4 then
-		local var_1_1 = BTEnterHooks[arg_1_4]
+	if enter_hook_name then
+		local enter_hook = ENTER_HOOKS[enter_hook_name]
 
-		if not var_1_1 then
+		if enter_hook then
 			self.old_enter = self.enter
 
-			self.enter = function (arg_2_0, arg_2_1, arg_2_2, arg_2_3)
+			self.enter = function (_self, unit, blackboard, t)
 				-- function 2
-				var_1_1(arg_2_1, arg_2_2, arg_2_3)
-				self.old_enter(arg_2_0, arg_2_1, arg_2_2, arg_2_3)
+				enter_hook(unit, blackboard, t)
+				self.old_enter(_self, unit, blackboard, t)
 			end
 		else
-			error("No behaviour tree enter hook called %q", arg_1_4)
+			error("No behaviour tree enter hook called %q", enter_hook_name)
 		end
 	end
 
-	if not arg_1_5 then
-		local var_1_2 = BTLeaveHooks[arg_1_5]
+	if leave_hook_name then
+		local leave_hook = LEAVE_HOOKS[leave_hook_name]
 
-		if not var_1_2 then
+		if leave_hook then
 			self.old_leave = self.leave
 
-			self.leave = function (arg_3_0, arg_3_1, arg_3_2, arg_3_3)
+			self.leave = function (_self, unit, blackboard, t)
 				-- function 3
-				var_1_2(arg_3_1, arg_3_2, arg_3_3)
-				self.old_leave(arg_3_0, arg_3_1, arg_3_2, arg_3_3)
+				leave_hook(unit, blackboard, t)
+				self.old_leave(_self, unit, blackboard, t)
 			end
 		else
-			ferror("No behaviour tree leave hook called %q", arg_1_5)
+			ferror("No behaviour tree leave hook called %q", leave_hook_name)
 		end
 	end
 end
 
-BTNode.condition = function (self, arg_4_1)
+BTNode.condition = function (self, blackboard)
 	-- function 4
-	return BTConditions[self._condition_name](arg_4_1, self._tree_node.condition_args, self._tree_node.action_data)
+	return CONDITIONS[self._condition_name](blackboard, self._tree_node.condition_args, self._tree_node.action_data)
 end
 
 BTNode.id = function (self)
@@ -65,21 +65,21 @@ BTNode.id = function (self)
 	return self._identifier
 end
 
-BTNode.evaluate = function (self, arg_6_1, arg_6_2, arg_6_3, arg_6_4)
+BTNode.evaluate = function (self, unit, blackboard, t, dt)
 	-- function 6
-	if not self:condition(arg_6_2) then
+	if not self:condition(blackboard) then
 		return "failed"
 	end
 
-	return self:run(arg_6_1, arg_6_2, arg_6_3, arg_6_4)
+	return self:run(unit, blackboard, t, dt)
 end
 
-BTNode.enter = function (arg_7_0, arg_7_1, arg_7_2, arg_7_3, arg_7_4)
+BTNode.enter = function (self, unit, ai_data, t, dt)
 	-- function 7
 	return
 end
 
-BTNode.leave = function (arg_8_0, arg_8_1, arg_8_2, arg_8_3, arg_8_4)
+BTNode.leave = function (self, unit, ai_data, t, dt)
 	-- function 8
 	return
 end
@@ -89,35 +89,37 @@ BTNode.parent = function (self)
 	return self._parent
 end
 
-BTNode.run = function (self, arg_10_1, arg_10_2, arg_10_3, arg_10_4)
+BTNode.run = function (self, unit, ai_data, t, dt)
 	-- function 10
 	error(false, "Implement in inherited class: " .. self:name())
 end
 
-BTNode.set_running_child = function (self, arg_11_1, arg_11_2, arg_11_3, arg_11_4, arg_11_5, arg_11_6)
+BTNode.set_running_child = function (self, unit, blackboard, t, node, reason, destroy)
 	-- function 11
-	local _identifier = self._identifier
-	local var_11_1 = arg_11_2.running_nodes[_identifier]
+	local identifier = self._identifier
+	local old_node = blackboard.running_nodes[identifier]
 
-	if var_11_1 == arg_11_4 then
+	if old_node == node then
 		return
 	end
 
-	arg_11_2.running_nodes[_identifier] = arg_11_4
+	blackboard.running_nodes[identifier] = node
 
-	if not var_11_1 then
-		var_11_1:set_running_child(arg_11_1, arg_11_2, arg_11_3, nil, arg_11_5, arg_11_6)
-		var_11_1:leave(arg_11_1, arg_11_2, arg_11_3, arg_11_5, arg_11_6)
-	elseif not (self._parent == nil or arg_11_4 == nil) then
-		self._parent:set_running_child(arg_11_1, arg_11_2, arg_11_3, self, "aborted", arg_11_6)
+	if old_node then
+		old_node:set_running_child(unit, blackboard, t, nil, reason, destroy)
+		old_node:leave(unit, blackboard, t, reason, destroy)
+	elseif self._parent ~= nil and node ~= nil then
+		self._parent:set_running_child(unit, blackboard, t, self, "aborted", destroy)
 	end
 
-	if not arg_11_4 then
-		arg_11_4:enter(arg_11_1, arg_11_2, arg_11_3)
+	if node then
+		node:enter(unit, blackboard, t)
 	end
 end
 
-BTNode.current_running_child = function (self, arg_12_1)
+BTNode.current_running_child = function (self, blackboard)
 	-- function 12
-	return arg_12_1.running_nodes[self._identifier]
+	local node = blackboard.running_nodes[self._identifier]
+
+	return node
 end

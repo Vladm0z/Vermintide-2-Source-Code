@@ -2,15 +2,15 @@
 
 local IDENTITY = IDENTITY
 
-IDENTITY = IDENTITY or function (arg_1_0)
+IDENTITY = not not IDENTITY or not not function (x)
 	-- function 1
-	return arg_1_0
+	return x
 end
 IDENTITY = IDENTITY
 
 local NOP = NOP
 
-NOP = NOP or function ()
+NOP = not not NOP or not not function ()
 	-- function 2
 	return
 end
@@ -18,7 +18,7 @@ NOP = NOP
 
 local TABLE_NEW = TABLE_NEW
 
-TABLE_NEW = TABLE_NEW or function ()
+TABLE_NEW = not not TABLE_NEW or not not function ()
 	-- function 3
 	return {}
 end
@@ -26,12 +26,12 @@ TABLE_NEW = TABLE_NEW
 
 local CONST = CONST
 
-CONST = CONST or setmetatable({}, {
-	__call = function (self, arg_4_1)
+CONST = not not CONST or not not setmetatable({}, {
+	__call = function (self, x)
 		-- function 4
 		local NOP
 
-		if arg_4_1 == nil then
+		if x == nil then
 			NOP = NOP
 
 			if not NOP then
@@ -39,168 +39,166 @@ CONST = CONST or setmetatable({}, {
 			end
 		end
 
-		NOP = self[arg_4_1]
+		NOP = self[x]
 
 		::label_4_0::
 
 		return NOP
 	end,
-	__index = function (self, arg_5_1)
+	__index = function (self, x)
 		-- function 5
-		local function fn()
+		local function f()
 			-- function 6
-			return arg_5_1
+			return x
 		end
 
-		self[arg_5_1] = fn
+		self[x] = f
 
-		return fn
+		return f
 	end
 })
 CONST = CONST
 
-local format = string.format
+local string_format = string.format
 
-function printf(arg_7_0, ...)
+function printf(f, ...)
 	-- function 7
-	print(format(arg_7_0, ...))
+	print(string_format(f, ...))
 end
 
-function sprintf(arg_8_0, ...)
+function sprintf(f, ...)
 	-- function 8
-	return format(arg_8_0, ...)
+	return string_format(f, ...)
 end
 
 function cprint(...)
 	-- function 9
 	print(...)
 
-	if not IS_WINDOWS then
+	if IS_WINDOWS then
 		CommandWindow.print(...)
 	end
 end
 
-function cprintf(arg_10_0, ...)
+function cprintf(f, ...)
 	-- function 10
-	local var_10_0 = format(arg_10_0, ...)
+	local s = string_format(f, ...)
 
-	print(var_10_0)
+	print(s)
 
-	if not IS_WINDOWS and not DEDICATED_SERVER then
-		CommandWindow.print(var_10_0)
+	if IS_WINDOWS and DEDICATED_SERVER then
+		CommandWindow.print(s)
 	end
 end
 
-function to_boolean(arg_11_0)
+function to_boolean(a)
 	-- function 11
-	local var_11_0 = type(arg_11_0)
+	local t = type(a)
 
-	if var_11_0 == "number" then
-		return arg_11_0 ~= 0
-	elseif var_11_0 == "string" then
-		return arg_11_0 == "true"
-	elseif var_11_0 == "boolean" then
-		return arg_11_0
-	elseif var_11_0 == "nil" then
+	if t == "number" then
+		return a ~= 0
+	elseif t == "string" then
+		return a == "true"
+	elseif t == "boolean" then
+		return a
+	elseif t == "nil" then
 		return false
-	elseif var_11_0 == "table" then
+	elseif t == "table" then
 		return true
 	end
 
-	ferror("unsupported type(%s)", type(arg_11_0))
+	ferror("unsupported type(%s)", type(a))
 
 	return false
 end
 
-function bool_string(arg_12_0)
+function bool_string(b)
 	-- function 12
 	local flag
 
-	flag = not to_boolean(arg_12_0) and "true" and "false"
+	flag = (not to_boolean(b) or not "true") and not not "false"
 
 	return flag
 end
 
-function vector_string(self)
+function vector_string(v)
 	-- function 13
-	local var_13_0 = self[1]
-	local var_13_1 = self[2]
-	local var_13_2 = self[3]
+	local x, y, z = v[1], v[2], v[3]
 
-	return string.format("x(%.2f) y(%.2f) z(%.2f)", var_13_0, var_13_1, var_13_2)
+	return string.format("x(%.2f) y(%.2f) z(%.2f)", x, y, z)
 end
 
-function T(arg_14_0, arg_14_1)
+function T(v1, v2)
 	-- function 14
-	if arg_14_0 ~= nil then
-		return arg_14_0
+	if v1 ~= nil then
+		return v1
 	else
-		return arg_14_1
+		return v2
 	end
 end
 
 local varargs = varargs
 
-varargs = varargs or {}
+varargs = not not varargs or not not {}
 varargs = varargs
 
 varargs.to_table = function (...)
 	-- function 15
-	local tbl = {}
-	local var_15_1 = select("#", ...)
+	local values = {}
+	local num_args = select("#", ...)
 
-	for i = 1, var_15_1 do
-		local var_15_2 = select(i, ...)
+	for i = 1, num_args do
+		local val = select(i, ...)
 
-		table.insert(tbl, var_15_2)
+		table.insert(values, val)
 	end
 
-	return tbl, #tbl
+	return values, #values
 end
 
-varargs.join = function (arg_16_0, ...)
+varargs.join = function (delimiter, ...)
 	-- function 16
-	local str = ""
-	local var_16_1 = select("#", ...)
+	local output = ""
+	local num_args = select("#", ...)
 
-	for i = 1, var_16_1 - 1 do
-		local var_16_2 = select(i, ...)
+	for i = 1, num_args - 1 do
+		local val = select(i, ...)
 
-		str = str .. tostring(var_16_2) .. arg_16_0
+		output = output .. tostring(val) .. delimiter
 	end
 
-	return str .. tostring(select(var_16_1, ...))
+	return output .. tostring(select(num_args, ...))
 end
 
-function split_string(self)
+function split_string(s)
 	-- function 17
-	local tbl = {}
+	local parts = {}
 
-	for iter_17_0 in self:gmatch("(%S+)") do
-		tbl[#tbl + 1] = iter_17_0
+	for part in s:gmatch("(%S+)") do
+		parts[#parts + 1] = part
 	end
 
-	return tbl
+	return parts
 end
 
-function unpack_string(arg_18_0)
+function unpack_string(s)
 	-- function 18
-	return unpack(split_string(arg_18_0))
+	return unpack(split_string(s))
 end
 
-function ituple(arg_19_0)
+function ituple(t)
 	-- function 19
-	return ituple_iterator, arg_19_0, -1
+	return ituple_iterator, t, -1
 end
 
-function ituple_iterator(self, arg_20_1)
+function ituple_iterator(t, k)
 	-- function 20
-	local num = arg_20_1 + 2
-	local var_20_1 = self[num]
+	local k1 = k + 2
+	local val1 = t[k1]
 
-	if var_20_1 == nil then
+	if val1 == nil then
 		return
 	end
 
-	return num, var_20_1, self[arg_20_1 + 3]
+	return k1, val1, t[k + 3]
 end

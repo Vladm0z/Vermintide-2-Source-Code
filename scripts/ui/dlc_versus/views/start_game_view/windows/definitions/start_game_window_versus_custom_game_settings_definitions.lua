@@ -1,6 +1,6 @@
 -- chunkname: @scripts/ui/dlc_versus/views/start_game_view/windows/definitions/start_game_window_versus_custom_game_settings_definitions.lua
 
-local tbl = {
+local scenegraph_definition = {
 	root = {
 		is_root = true,
 		size = {
@@ -43,14 +43,14 @@ local tbl = {
 	}
 }
 
-local function fn(arg_1_0, arg_1_1)
+local function create_list_mask(scenegraph_id, size)
 	-- function 1
-	arg_1_1 = arg_1_1 or {
+	size = not not size or not not {
 		600,
 		380
 	}
 
-	return {
+	local definition = {
 		element = {
 			passes = {
 				{
@@ -71,7 +71,7 @@ local function fn(arg_1_0, arg_1_1)
 		},
 		style = {
 			mask = {
-				texture_size = arg_1_1,
+				texture_size = size,
 				offset = {
 					0,
 					0,
@@ -80,7 +80,7 @@ local function fn(arg_1_0, arg_1_1)
 				color = Colors.get_color_table_with_alpha("white", 255)
 			},
 			hotspot = {
-				size = arg_1_1,
+				size = size,
 				offset = {
 					0,
 					0,
@@ -94,18 +94,20 @@ local function fn(arg_1_0, arg_1_1)
 			0,
 			0
 		},
-		scenegraph_id = arg_1_0
+		scenegraph_id = scenegraph_id
 	}
+
+	return definition
 end
 
-local tbl_2 = {
-	background = UIWidgets.create_rect_with_outer_frame("container", tbl.container.size, "frame_outer_fade_02", nil, UISettings.console_start_game_menu_rect_color),
-	mask = fn("container", tbl.container.size)
+local widget_definitions = {
+	background = UIWidgets.create_rect_with_outer_frame("container", scenegraph_definition.container.size, "frame_outer_fade_02", nil, UISettings.console_start_game_menu_rect_color),
+	mask = create_list_mask("container", scenegraph_definition.container.size)
 }
-local tbl_3 = {}
+local animation_definitions = {}
 
 return {
-	scenegraph_definition = tbl,
-	widget_definitions = tbl_2,
-	animation_definitions = tbl_3
+	scenegraph_definition = scenegraph_definition,
+	widget_definitions = widget_definitions,
+	animation_definitions = animation_definitions
 }

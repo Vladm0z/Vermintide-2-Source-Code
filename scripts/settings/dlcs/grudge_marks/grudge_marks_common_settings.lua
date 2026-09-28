@@ -1,12 +1,12 @@
 -- chunkname: @scripts/settings/dlcs/grudge_marks/grudge_marks_common_settings.lua
 
-local grudge_marks = DLCSettings.grudge_marks
+local settings = DLCSettings.grudge_marks
 
-grudge_marks.challenge_categories = {}
-grudge_marks.statistics_definitions = {
+settings.challenge_categories = {}
+settings.statistics_definitions = {
 	"scripts/managers/backend/statistics_definitions_grudge_marks"
 }
-grudge_marks.statistics_lookup = {
+settings.statistics_lookup = {
 	"grudge_mark_kills_we_thornsister",
 	"grudge_mark_kills_we_shade",
 	"grudge_mark_kills_bw_adept",
@@ -25,16 +25,16 @@ grudge_marks.statistics_lookup = {
 	"grudge_mark_kills_bw_scholar",
 	"grudge_mark_kills_bw_unchained"
 }
-grudge_marks.anim_lookup = {}
-grudge_marks.effects = {
+settings.anim_lookup = {}
+settings.effects = {
 	"fx/grudge_marks_shadow_step",
 	"fx/grudge_marks_illusionist"
 }
-grudge_marks.unlock_settings = {}
-grudge_marks.material_effect_mappings_file_names = {
+settings.unlock_settings = {}
+settings.material_effect_mappings_file_names = {
 	"scripts/settings/material_effect_mappings_grudge_marks"
 }
-grudge_marks.explosion_templates = {
+settings.explosion_templates = {
 	grudge_mark_shockwave = {
 		explosion = {
 			radius = 4.5,

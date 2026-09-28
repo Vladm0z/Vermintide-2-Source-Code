@@ -2,15 +2,15 @@
 
 require("scripts/settings/breeds/breed_chaos_mutator_sorcerer")
 
-local clone = table.clone(Breeds.chaos_mutator_sorcerer)
+local breed_data = table.clone(Breeds.chaos_mutator_sorcerer)
 
-clone.unit_template = "ai_unit_curse_corruptor_sorcerer"
-clone.behavior = "curse_mutator_sorcerer"
-Breeds.curse_mutator_sorcerer = table.create_copy(Breeds.curse_mutator_sorcerer, clone)
+breed_data.unit_template = "ai_unit_curse_corruptor_sorcerer"
+breed_data.behavior = "curse_mutator_sorcerer"
+Breeds.curse_mutator_sorcerer = table.create_copy(Breeds.curse_mutator_sorcerer, breed_data)
 
-local clone_2 = table.clone(BreedActions.chaos_mutator_sorcerer)
+local action_data = table.clone(BreedActions.chaos_mutator_sorcerer)
 
-clone_2.grab_attack.grab_delay = 2
-clone_2.follow.fast_move_speed = 0.5
-clone_2.follow.slow_move_speed = 3
-BreedActions.curse_mutator_sorcerer = table.create_copy(BreedActions.curse_mutator_sorcerer, clone_2)
+action_data.grab_attack.grab_delay = 2
+action_data.follow.fast_move_speed = 0.5
+action_data.follow.slow_move_speed = 3
+BreedActions.curse_mutator_sorcerer = table.create_copy(BreedActions.curse_mutator_sorcerer, action_data)

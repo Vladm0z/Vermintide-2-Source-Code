@@ -1,64 +1,64 @@
 -- chunkname: @scripts/tests/testify_snippets.lua
 
-local tbl = {
-	load_level = function (arg_1_0)
-		-- function 1
-		Testify:make_request("load_level", arg_1_0)
-		Testify:make_request("wait_for_level_to_be_loaded")
-	end
-}
+local TestifySnippets = {}
 
-tbl.disable_level_intro_dialogue = function ()
+TestifySnippets.load_level = function (level_settings)
+	-- function 1
+	Testify:make_request("load_level", level_settings)
+	Testify:make_request("wait_for_level_to_be_loaded")
+end
+
+TestifySnippets.disable_level_intro_dialogue = function ()
 	-- function 2
-	tbl.set_script_data({
+	TestifySnippets.set_script_data({
 		disable_level_intro_dialogue = true
 	})
 end
 
-tbl.set_player_profile = function (arg_3_0, arg_3_1)
+TestifySnippets.set_player_profile = function (profile_name, career_name)
 	-- function 3
 	Testify:make_request("set_player_profile", {
-		profile_name = arg_3_0,
-		career_name = arg_3_1
+		profile_name = profile_name,
+		career_name = career_name
 	})
 	Testify:make_request("wait_for_player_to_spawn")
 end
 
-tbl.set_bot_profile = function (arg_4_0, arg_4_1)
+TestifySnippets.set_bot_profile = function (profile_name, career_name)
 	-- function 4
 	Testify:make_request("set_bot_profile", {
-		profile_name = arg_4_0,
-		career_name = arg_4_1
+		profile_name = profile_name,
+		career_name = career_name
 	})
 	Testify:make_request("disable_bots")
 	Testify:make_request("enable_bots")
 	Testify:make_request("wait_for_bots_to_spawn")
 end
 
-tbl.set_script_data = function (arg_5_0)
+TestifySnippets.set_script_data = function (options)
 	-- function 5
-	Testify:make_request("set_script_data", arg_5_0)
+	Testify:make_request("set_script_data", options)
 end
 
-tbl.wait = function (arg_6_0)
+TestifySnippets.wait = function (seconds)
 	-- function 6
-	local clock = os.clock()
+	local now = os.clock()
 
-	while arg_6_0 > os.clock() - clock do
+	while seconds > os.clock() - now do
 		coroutine.yield()
 	end
 end
 
-tbl.load_weave = function (arg_7_0)
+TestifySnippets.load_weave = function (weave_name)
 	-- function 7
-	Testify:make_request("set_next_weave", arg_7_0)
-	Testify:make_request("load_weave", arg_7_0)
+	Testify:make_request("set_next_weave", weave_name)
+	Testify:make_request("load_weave", weave_name)
 	Testify:make_request("wait_for_level_to_be_loaded")
 end
 
-tbl.disable_ai = function ()
+TestifySnippets.disable_ai = function ()
 	-- function 8
-	tbl.set_script_data({
+	TestifySnippets.set_script_data({
 		ai_mini_patrol_disabled = true,
 		disable_plague_sorcerer = true,
 		ai_roaming_spawning_disabled = true,
@@ -81,52 +81,53 @@ tbl.disable_ai = function ()
 	})
 end
 
-tbl.open_hero_view = function ()
+TestifySnippets.open_hero_view = function ()
 	-- function 9
-	local tbl = {
+	local params = {
 		transition = "hero_view_force",
 		transition_params = {
 			menu_state_name = "overview"
 		}
 	}
 
-	Testify:make_request("transition_with_fade", tbl)
+	Testify:make_request("transition_with_fade", params)
 	Testify:make_request("wait_for_hero_view")
 end
 
-tbl.open_cosmetics_inventory = function ()
+TestifySnippets.open_cosmetics_inventory = function ()
 	-- function 10
 	Testify:make_request("set_hero_window_layout", 4)
 	Testify:make_request("wait_for_cosmetics_inventory_window")
 end
 
-tbl.equip_hats = function ()
+TestifySnippets.equip_hats = function ()
 	-- function 11
-	local content = Testify:make_request("get_hero_window_cosmetics_inventory_item_grid")._widget.content
+	local item_grid = Testify:make_request("get_hero_window_cosmetics_inventory_item_grid")
+	local content = item_grid._widget.content
 	local rows = content.rows
 	local columns = content.columns
 
 	for i = 1, rows do
 		for j = 1, columns do
-			local str = "_" .. i .. "_" .. j
-			local str_2 = "hotspot" .. str
-			local var_11_5 = content[str_2]
-			local reserved = var_11_5.reserved
-			local unwieldable = var_11_5.unwieldable
+			local name_suffix = "_" .. i .. "_" .. j
+			local hotspot_name = "hotspot" .. name_suffix
+			local slot_hotspot = content[hotspot_name]
+			local reserved = slot_hotspot.reserved
+			local unwieldable = slot_hotspot.unwieldable
 
-			if not (reserved or unwieldable) then
-				local tbl = {
+			if not reserved and not unwieldable then
+				local params = {
 					value = true,
-					hotspot_name = str_2
+					hotspot_name = hotspot_name
 				}
 
-				Testify:make_request("set_slot_hotspot_on_right_click", tbl)
+				Testify:make_request("set_slot_hotspot_on_right_click", params)
 			end
 		end
 	end
 end
 
-tbl.versus_server_wait_for_full_server = function ()
+TestifySnippets.versus_server_wait_for_full_server = function ()
 	-- function 12
 	Testify:make_request("wait_for_game_mode_state", {
 		state = "dedicated_server_waiting_for_fully_reserved",
@@ -138,7 +139,7 @@ tbl.versus_server_wait_for_full_server = function ()
 	})
 end
 
-tbl.versus_client_wait_for_full_server = function ()
+TestifySnippets.versus_client_wait_for_full_server = function ()
 	-- function 13
 	Testify:make_request("wait_for_matchmaking_substate", {
 		substate = "waiting_for_join_message",
@@ -148,67 +149,70 @@ tbl.versus_client_wait_for_full_server = function ()
 	Testify:make_request("wait_for_matchmaking_state", "MatchmakingStateJoinGame")
 end
 
-tbl.versus_complete_all_objectives = function ()
+TestifySnippets.versus_complete_all_objectives = function ()
 	-- function 14
-	local flag = false
+	local early_end = false
 
 	Testify:make_request("wait_for_objectives_to_activate")
 
-	local var_14_1 = tonumber(Testify:make_request("get_current_main_objective"))
-	local var_14_2 = tonumber(Testify:make_request("get_num_main_objectives"))
+	local current_main_objective = tonumber(Testify:make_request("get_current_main_objective"))
+	local num_main_objectives = tonumber(Testify:make_request("get_num_main_objectives"))
 
-	while not (not var_14_1 and not (var_14_1 <= var_14_2)) do
-		tbl.versus_complete_next_objective()
-		tbl.wait(1)
+	while current_main_objective and current_main_objective <= num_main_objectives do
+		TestifySnippets.versus_complete_next_objective()
+		TestifySnippets.wait(1)
 
-		if not Testify:make_request("versus_party_won_early") then
+		local party_won_early = Testify:make_request("versus_party_won_early")
+
+		if party_won_early then
 			return true
 		end
 
-		var_14_1 = Testify:make_request("get_current_main_objective")
+		current_main_objective = Testify:make_request("get_current_main_objective")
 	end
 
 	return false
 end
 
-tbl.versus_complete_next_objective = function ()
+TestifySnippets.versus_complete_next_objective = function ()
 	-- function 15
-	local make_request = Testify:make_request("versus_objective_type")
+	local objective_type = Testify:make_request("versus_objective_type")
+	local num_human_players_in_hero_party = tonumber(Testify:make_request("num_human_players_on_side", "heroes"))
 
-	if not (tonumber(Testify:make_request("num_human_players_on_side", "heroes")) == 0 or make_request ~= "objective_not_supported") then
-		tbl.wait(1)
+	if num_human_players_in_hero_party == 0 or objective_type == "objective_not_supported" then
+		TestifySnippets.wait(1)
 		Testify:make_request("versus_complete_objectives")
-		tbl.wait(1)
-	elseif not (make_request == "objective_volume" or make_request ~= "objective_capture_point") then
-		local var_15_1
+		TestifySnippets.wait(1)
+	elseif objective_type == "objective_volume" or objective_type == "objective_capture_point" then
+		local num_players_inside
 
-		if make_request == "objective_volume" then
-			var_15_1 = Testify:make_request("versus_volume_objective_get_num_players_inside")
+		if objective_type == "objective_volume" then
+			num_players_inside = Testify:make_request("versus_volume_objective_get_num_players_inside")
 		else
-			var_15_1 = Testify:make_request("versus_capture_point_objective_get_num_players_inside")
+			num_players_inside = Testify:make_request("versus_capture_point_objective_get_num_players_inside")
 		end
 
-		if var_15_1 < 1 then
-			local make_request_2 = Testify:make_request("versus_current_objective_position")
-			local var_15_3
-			local main_path_position = make_request_2.main_path_position
-			local random_position = make_request_2.random_position
+		if num_players_inside < 1 then
+			local objective_data = Testify:make_request("versus_current_objective_position")
+			local boxed_position
+			local main_path_pos = objective_data.main_path_position
+			local random_pos = objective_data.random_position
 
-			if Vector3.distance(main_path_position, random_position) > 10 then
-				var_15_3 = Vector3Box(random_position)
+			if Vector3.distance(main_path_pos, random_pos) > 10 then
+				boxed_position = Vector3Box(random_pos)
 			else
-				var_15_3 = Vector3Box(main_path_position)
+				boxed_position = Vector3Box(main_path_pos)
 			end
 
-			Testify:make_request("teleport_all_players_to_position", var_15_3)
+			Testify:make_request("teleport_all_players_to_position", boxed_position)
 		end
-	elseif make_request == "objective_interact" then
-		local make_request_3 = Testify:make_request("versus_current_objective_position")
-		local var_15_7 = Vector3Box(make_request_3.position)
+	elseif objective_type == "objective_interact" then
+		local objective_data = Testify:make_request("versus_current_objective_position")
+		local boxed_position = Vector3Box(objective_data.position)
 
-		Testify:make_request("teleport_all_players_to_position", var_15_7)
+		Testify:make_request("teleport_all_players_to_position", boxed_position)
 		Testify:make_request("versus_objective_simulate_interaction")
 	end
 end
 
-return tbl
+return TestifySnippets

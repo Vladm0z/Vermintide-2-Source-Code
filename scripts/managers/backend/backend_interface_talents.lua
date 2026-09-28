@@ -2,7 +2,7 @@
 
 BackendInterfaceTalents = class(BackendInterfaceTalents)
 
-BackendInterfaceTalents.init = function (arg_1_0)
+BackendInterfaceTalents.init = function (self)
 	-- function 1
 	return
 end

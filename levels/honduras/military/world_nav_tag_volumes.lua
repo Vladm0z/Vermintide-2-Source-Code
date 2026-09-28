@@ -1,6 +1,6 @@
 -- chunkname: @levels/honduras/military/world_nav_tag_volumes.lua
 
-local tbl = {
+local nav_tag_volumes = {
 	volume_104 = {
 		delay_nav_tag_volume_creation = true,
 		alt_max = 59,
@@ -3759,9 +3759,9 @@ local tbl = {
 		}
 	}
 }
-local str = "1"
+local version = "1"
 
 return {
-	version = str,
-	nav_tag_volumes = tbl
+	version = version,
+	nav_tag_volumes = nav_tag_volumes
 }

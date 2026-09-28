@@ -4,46 +4,46 @@ require("scripts/entity_system/systems/behaviour/nodes/bt_node")
 
 BTTransformAction = class(BTTransformAction, BTNode)
 
-BTTransformAction.init = function (arg_1_0, ...)
+BTTransformAction.init = function (self, ...)
 	-- function 1
-	BTTransformAction.super.init(arg_1_0, ...)
+	BTTransformAction.super.init(self, ...)
 end
 
 BTTransformAction.name = "BTTransformAction"
 
-BTTransformAction.enter = function (self, arg_2_1, arg_2_2, arg_2_3)
+BTTransformAction.enter = function (self, unit, blackboard, t)
 	-- function 2
-	arg_2_2.action = self._tree_node.action_data
-	arg_2_2.active_node = BTTransformAction
+	blackboard.action = self._tree_node.action_data
+	blackboard.active_node = BTTransformAction
 
-	local action = arg_2_2.action
-	local network = Managers.state.network
+	local action = blackboard.action
+	local network_manager = Managers.state.network
 	local transform_animation = action.transform_animation
 
-	if not transform_animation then
-		network:anim_event(arg_2_1, transform_animation)
+	if transform_animation then
+		network_manager:anim_event(unit, transform_animation)
 	else
-		arg_2_2.transform_anim_finished = true
+		blackboard.transform_anim_finished = true
 	end
 
-	local navigation_extension = arg_2_2.navigation_extension
+	local navigation_extension = blackboard.navigation_extension
 
 	navigation_extension:set_enabled(false)
 	navigation_extension:set_max_speed(0)
-	arg_2_2.locomotion_extension:set_wanted_velocity(Vector3(0, 0, 0))
+	blackboard.locomotion_extension:set_wanted_velocity(Vector3(0, 0, 0))
 end
 
-BTTransformAction.leave = function (self, arg_3_1, arg_3_2, arg_3_3, arg_3_4, arg_3_5)
+BTTransformAction.leave = function (self, unit, blackboard, t, reason, destroy)
 	-- function 3
-	if not arg_3_2.has_transformed then
-		self:transform(arg_3_1, arg_3_2)
+	if not blackboard.has_transformed then
+		self:transform(unit, blackboard)
 	end
 end
 
-BTTransformAction.run = function (self, arg_4_1, arg_4_2, arg_4_3, arg_4_4)
+BTTransformAction.run = function (self, unit, blackboard, t, dt)
 	-- function 4
-	if not (not arg_4_2.transform_anim_finished and arg_4_2.has_transformed) then
-		self:transform(arg_4_1, arg_4_2)
+	if blackboard.transform_anim_finished and not blackboard.has_transformed then
+		self:transform(unit, blackboard)
 
 		return "done"
 	end
@@ -51,47 +51,53 @@ BTTransformAction.run = function (self, arg_4_1, arg_4_2, arg_4_3, arg_4_4)
 	return "running"
 end
 
-BTTransformAction.anim_cb_transform_finished = function (arg_5_0, arg_5_1, arg_5_2)
+BTTransformAction.anim_cb_transform_finished = function (self, unit, blackboard)
 	-- function 5
-	arg_5_2.transform_anim_finished = true
+	blackboard.transform_anim_finished = true
 end
 
-BTTransformAction.transform = function (arg_6_0, arg_6_1, arg_6_2)
+BTTransformAction.transform = function (self, unit, blackboard)
 	-- function 6
-	local action = arg_6_2.action
+	local action = blackboard.action
 	local transfer_health_percentage = action.transfer_health_percentage
-	local tbl = {
-		original_hp_percentage = ScriptUnit.extension(arg_6_1, "health_system"):current_health_percent(),
-		spawned_func = function (arg_7_0, arg_7_1, arg_7_2)
-			-- function 7
-			if not transfer_health_percentage then
-				local original_hp_percentage = arg_7_2.original_hp_percentage
-				local extension = ScriptUnit.extension(arg_7_0, "health_system")
-				local num = extension:get_max_health() * (1 - math.max(original_hp_percentage, 0.1))
+	local optional_data = {}
 
-				extension:set_current_damage(num)
+	optional_data.original_hp_percentage = ScriptUnit.extension(unit, "health_system"):current_health_percent()
 
-				local game_object_or_level_id, var_7_4 = Managers.state.network:game_object_or_level_id(arg_7_0)
-				local var_7_5 = NetworkLookup.health_statuses[extension.state]
+	optional_data.spawned_func = function (transformed_unit, breed, optional_data)
+		-- function 7
+		if transfer_health_percentage then
+			local original_hp_percentage = optional_data.original_hp_percentage
+			local health_extension = ScriptUnit.extension(transformed_unit, "health_system")
+			local max_health = health_extension:get_max_health()
+			local damage = max_health * (1 - math.max(original_hp_percentage, 0.1))
 
-				Managers.state.network.network_transmit:send_rpc_clients("rpc_sync_damage_taken", game_object_or_level_id, var_7_4, false, num, var_7_5)
-			end
+			health_extension:set_current_damage(damage)
+
+			local network_manager = Managers.state.network
+			local go_id, is_level_unit = network_manager:game_object_or_level_id(transformed_unit)
+			local state = NetworkLookup.health_statuses[health_extension.state]
+
+			Managers.state.network.network_transmit:send_rpc_clients("rpc_sync_damage_taken", go_id, is_level_unit, false, damage, state)
 		end
-	}
-	local var_6_3 = Breeds[action.wanted_breed_transform]
-	local str = "misc"
-	local conflict = Managers.state.conflict
-	local var_6_6
+	end
 
-	if not arg_6_1 then
-		var_6_6 = POSITION_LOOKUP[arg_6_1]
+	local breed = Breeds[action.wanted_breed_transform]
+	local spawn_category = "misc"
+	local conflict_director = Managers.state.conflict
+	local var_6_0
 
-		if not var_6_6 then
+	if unit then
+		var_6_0 = POSITION_LOOKUP[unit]
+
+		if not var_6_0 then
 			-- Nothing
 		end
 	end
 
-	var_6_6 = Unit.world_position(arg_6_1, 0)
+	var_6_0 = Unit.world_position(unit, 0)
+
+	local position = var_6_0
 
 	do
 		local local_rotation
@@ -99,8 +105,8 @@ BTTransformAction.transform = function (arg_6_0, arg_6_1, arg_6_2)
 
 	::label_6_0::
 
-	if not arg_6_1 then
-		local_rotation = Unit.local_rotation(arg_6_1, 0)
+	if unit then
+		local_rotation = Unit.local_rotation(unit, 0)
 
 		if not local_rotation then
 			-- Nothing
@@ -109,13 +115,15 @@ BTTransformAction.transform = function (arg_6_0, arg_6_1, arg_6_2)
 
 	local_rotation = Quaternion.identity()
 
+	local rotation = local_rotation
+
 	::label_6_1::
 
-	if not var_6_6 and not local_rotation then
-		conflict:spawn_queued_unit(var_6_3, Vector3Box(var_6_6), QuaternionBox(local_rotation), str, nil, nil, tbl)
+	if position and rotation then
+		conflict_director:spawn_queued_unit(breed, Vector3Box(position), QuaternionBox(rotation), spawn_category, nil, nil, optional_data)
 	end
 
-	conflict:destroy_unit(arg_6_1, arg_6_2, "boss_transformation")
+	conflict_director:destroy_unit(unit, blackboard, "boss_transformation")
 
-	arg_6_2.has_transformed = true
+	blackboard.has_transformed = true
 end

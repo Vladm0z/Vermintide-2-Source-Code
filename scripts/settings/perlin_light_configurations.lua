@@ -2,7 +2,7 @@
 
 local PerlinLightConfigurations = PerlinLightConfigurations
 
-PerlinLightConfigurations = PerlinLightConfigurations or {}
+PerlinLightConfigurations = not not PerlinLightConfigurations or not not {}
 PerlinLightConfigurations = PerlinLightConfigurations
 PerlinLightConfigurations_reload = true
 PerlinLightConfigurations.default = {

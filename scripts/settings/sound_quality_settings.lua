@@ -1,8 +1,8 @@
 -- chunkname: @scripts/settings/sound_quality_settings.lua
 
-local PLATFORM = PLATFORM
+local platform = PLATFORM
 
-if not IS_WINDOWS then
+if IS_WINDOWS then
 	SoundQualitySettings = {
 		templates = {
 			low = {
@@ -22,7 +22,7 @@ if not IS_WINDOWS then
 			}
 		}
 	}
-elseif not IS_LINUX then
+elseif IS_LINUX then
 	SoundQualitySettings = {
 		templates = {
 			low = {
@@ -42,7 +42,7 @@ elseif not IS_LINUX then
 			}
 		}
 	}
-elseif not IS_XB1 then
+elseif IS_XB1 then
 	SoundQualitySettings = {
 		templates = {
 			low = {
@@ -62,7 +62,7 @@ elseif not IS_XB1 then
 			}
 		}
 	}
-elseif not IS_PS4 then
+elseif IS_PS4 then
 	SoundQualitySettings = {
 		templates = {
 			low = {
@@ -86,33 +86,33 @@ end
 
 assert(SoundQualitySettings, "No SoundQualitySettings set?")
 
-SoundQualitySettings.get_quality_template = function (arg_1_0)
+SoundQualitySettings.get_quality_template = function (sound_quality)
 	-- function 1
-	local var_1_0 = SoundQualitySettings.templates[arg_1_0]
+	local quality_template = SoundQualitySettings.templates[sound_quality]
 
-	if not var_1_0 then
-		local get = DefaultUserSettings.get("user_settings", "sound_quality")
+	if not quality_template then
+		local default_sound_quality = DefaultUserSettings.get("user_settings", "sound_quality")
 
-		var_1_0 = SoundQualitySettings.templates[get]
+		quality_template = SoundQualitySettings.templates[default_sound_quality]
 
 		if not LEVEL_EDITOR_TEST then
-			printf("[SoundQualitySettings] No quality template for %q, using default %q", arg_1_0, get)
+			printf("[SoundQualitySettings] No quality template for %q, using default %q", sound_quality, default_sound_quality)
 		end
 	end
 
-	return var_1_0
+	return quality_template
 end
 
-SoundQualitySettings.set_sound_quality = function (arg_2_0, arg_2_1)
+SoundQualitySettings.set_sound_quality = function (wwise_world, sound_quality)
 	-- function 2
-	local get_quality_template = SoundQualitySettings.get_quality_template(arg_2_1)
-	local sound_performance = get_quality_template.sound_performance
+	local quality_template = SoundQualitySettings.get_quality_template(sound_quality)
+	local sound_performance = quality_template.sound_performance
 
-	WwiseWorld.set_global_parameter(arg_2_0, "sound_performance", sound_performance)
+	WwiseWorld.set_global_parameter(wwise_world, "sound_performance", sound_performance)
 
-	local max_num_voices = get_quality_template.max_num_voices
+	local max_num_voices = quality_template.max_num_voices
 
 	Wwise.set_max_num_voices(max_num_voices)
 
-	local occlusion = get_quality_template.occlusion
+	local occlusion = quality_template.occlusion
 end

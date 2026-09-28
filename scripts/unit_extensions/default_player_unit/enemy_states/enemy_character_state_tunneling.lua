@@ -2,7 +2,7 @@
 
 EnemyCharacterStateTunneling = class(EnemyCharacterStateTunneling, EnemyCharacterState)
 
-local tbl = {
+local entrance_data = {
 	chimney = {
 		"enter_teleporter_1m",
 		false
@@ -24,7 +24,7 @@ local tbl = {
 		false
 	}
 }
-local tbl_2 = {
+local exit_data = {
 	chimney = {
 		"exit_teleporter_chimney",
 		0,
@@ -52,158 +52,163 @@ local tbl_2 = {
 	}
 }
 
-EnemyCharacterStateTunneling.init = function (arg_1_0, arg_1_1)
+EnemyCharacterStateTunneling.init = function (self, character_state_init_context)
 	-- function 1
-	EnemyCharacterStateTunneling.super.init(arg_1_0, arg_1_1, "tunneling")
+	EnemyCharacterStateTunneling.super.init(self, character_state_init_context, "tunneling")
 end
 
-EnemyCharacterStateTunneling.on_enter = function (self, arg_2_1, arg_2_2, arg_2_3, arg_2_4, arg_2_5, arg_2_6, arg_2_7)
+EnemyCharacterStateTunneling.on_enter = function (self, unit, input, dt, context, t, previous_state, params)
 	-- function 2
-	local _input_extension = self._input_extension
-	local _first_person_extension = self._first_person_extension
-	local _status_extension = self._status_extension
-	local _inventory_extension = self._inventory_extension
-	local _health_extension = self._health_extension
-	local _locomotion_extension = self._locomotion_extension
-	local _interactor_extension = self._interactor_extension
+	local input_extension = self._input_extension
+	local first_person_extension = self._first_person_extension
+	local status_extension = self._status_extension
+	local inventory_extension = self._inventory_extension
+	local health_extension = self._health_extension
+	local locomotion_extension = self._locomotion_extension
+	local interactor_extension = self._interactor_extension
+	local game_mode = Managers.state.game_mode:game_mode()
 
-	self.pactsworn_video_transition_view = Managers.state.game_mode:game_mode().pactsworn_video_transition_view
+	self.pactsworn_video_transition_view = game_mode.pactsworn_video_transition_view
 	self.transition_manager = Managers.transition
 
-	local interactable_unit = _interactor_extension:interactable_unit()
-	local extension = ScriptUnit.extension(interactable_unit, "door_system")
-	local partner_unit = extension.partner_unit
+	local enter_unit = interactor_extension:interactable_unit()
+	local enter_crawl_space_extension = ScriptUnit.extension(enter_unit, "door_system")
+	local exit_unit = enter_crawl_space_extension.partner_unit
 
-	self.id = extension.id
+	self.id = enter_crawl_space_extension.id
 
-	assert(partner_unit, "Crawl Space is missing a partner unit. Either it has no partner, or the id is wrong.")
+	assert(exit_unit, "Crawl Space is missing a partner unit. Either it has no partner, or the id is wrong.")
 
-	local extension_2 = ScriptUnit.extension(partner_unit, "door_system")
+	local exit_crawl_space_extension = ScriptUnit.extension(exit_unit, "door_system")
 
-	self.exit_unit = partner_unit
-	self.enter_pos = extension.enter_pos
+	self.exit_unit = exit_unit
+	self.enter_pos = enter_crawl_space_extension.enter_pos
 
-	local enter_rot = extension.enter_rot
+	local enter_rot = enter_crawl_space_extension.enter_rot
 
 	self.enter_rot = enter_rot
 
-	local num = -Vector3Box.unbox(extension_2.enter_rot)
+	local exit_rot = -Vector3Box.unbox(exit_crawl_space_extension.enter_rot)
 
-	self.exit_rot = QuaternionBox(Quaternion.look(num))
+	self.exit_rot = QuaternionBox(Quaternion.look(exit_rot))
 	self.wanted_rot = self.enter_rot
 
-	local entrance_type = extension.entrance_type
-	local entrance_type_2 = extension_2.entrance_type
+	local entrance_type = enter_crawl_space_extension.entrance_type
+	local exit_type = exit_crawl_space_extension.entrance_type
 
-	self._player = Managers.player:owner(arg_2_1)
-	self.exit_anim = tbl_2[entrance_type_2][1]
-	self.forward_offset = tbl_2[entrance_type_2][2]
-	self.height_offset = tbl_2[entrance_type_2][3]
+	self._player = Managers.player:owner(unit)
+	self.exit_anim = exit_data[exit_type][1]
+	self.forward_offset = exit_data[exit_type][2]
+	self.height_offset = exit_data[exit_type][3]
 
-	local var_2_15 = tbl[entrance_type][2]
-	local var_2_16
+	local fixed_start_position = entrance_data[entrance_type][2]
+	local wanted_pos
 
-	if not var_2_15 then
-		var_2_16 = self.enter_pos:unbox()
+	if fixed_start_position then
+		wanted_pos = self.enter_pos:unbox()
 	else
-		local num_2 = Unit.local_position(interactable_unit, 0) + Vector3.normalize(enter_rot:unbox()) * 0.5
+		local enter_unit_pos = Unit.local_position(enter_unit, 0)
+		local enter_unit_center_pos = enter_unit_pos + Vector3.normalize(enter_rot:unbox()) * 0.5
 		local z = self.enter_pos.z
 		local flag
 
-		flag = entrance_type ~= "manhole" or not 1 or 0
-		num_2.z = z + flag
+		flag = (entrance_type ~= "manhole" or not 1) and not not 0
+		enter_unit_center_pos.z = z + flag
 
-		local num_3 = POSITION_LOOKUP[arg_2_1] - num_2
+		local direction = POSITION_LOOKUP[unit] - enter_unit_center_pos
 
-		num_3.z = 0
+		direction.z = 0
 
-		local num_4 = 1.5
+		local distance_from_center = 1.5
 
-		var_2_16 = num_2 + Vector3.normalize(num_3) * num_4
-		self.wanted_rot = Vector3Box(-num_3)
+		wanted_pos = enter_unit_center_pos + Vector3.normalize(direction) * distance_from_center
+		self.wanted_rot = Vector3Box(-direction)
 	end
 
-	self.alignment_vector = Vector3Box(var_2_16 - POSITION_LOOKUP[arg_2_1])
+	self.alignment_vector = Vector3Box(wanted_pos - POSITION_LOOKUP[unit])
 	self.alignment_total_t = 0.25
 	self.alignment_time_t = self.alignment_total_t
 
-	_locomotion_extension:enable_animation_driven_movement_with_rotation_no_mover()
+	locomotion_extension:enable_animation_driven_movement_with_rotation_no_mover()
 
-	local var_2_22 = tbl[entrance_type][1]
+	local entrance_anim = entrance_data[entrance_type][1]
 
-	CharacterStateHelper.play_animation_event(arg_2_1, var_2_22)
+	CharacterStateHelper.play_animation_event(unit, entrance_anim)
 	CharacterStateHelper.change_camera_state(self._player, "follow_third_person_tunneling")
 
-	local flag_2 = false
-	local var_2_24
-	local flag_3 = false
+	local active = false
+	local override
+	local unarmed = false
 
-	if not _status_extension:get_unarmed() then
-		flag_3 = true
+	if status_extension:get_unarmed() then
+		unarmed = true
 	end
 
-	_first_person_extension:set_first_person_mode(flag_2, var_2_24, flag_3)
-	CharacterStateHelper.update_weapon_actions(arg_2_5, arg_2_1, _input_extension, _inventory_extension, _health_extension)
-	_status_extension:set_should_tunnel(false)
+	first_person_extension:set_first_person_mode(active, override, unarmed)
+	CharacterStateHelper.update_weapon_actions(t, unit, input_extension, inventory_extension, health_extension)
+	status_extension:set_should_tunnel(false)
 	self:set_breed_action("tunneling")
 
 	self.state = "init"
 end
 
-EnemyCharacterStateTunneling.update = function (self, arg_3_1, arg_3_2, arg_3_3, arg_3_4, arg_3_5)
+EnemyCharacterStateTunneling.update = function (self, unit, input, dt, context, t)
 	-- function 3
-	local var_3_0 = BLACKBOARDS[arg_3_1]
-	local _csm = self._csm
-	local _input_extension = self._input_extension
-	local _status_extension = self._status_extension
-	local _first_person_extension = self._first_person_extension
-	local _locomotion_extension = self._locomotion_extension
-	local _inventory_extension = self._inventory_extension
+	local blackboard = BLACKBOARDS[unit]
+	local csm = self._csm
+	local input_extension = self._input_extension
+	local status_extension = self._status_extension
+	local first_person_extension = self._first_person_extension
+	local locomotion_extension = self._locomotion_extension
+	local inventory_extension = self._inventory_extension
 
-	CharacterStateHelper.look(_input_extension, self._player.viewport_name, _first_person_extension, _status_extension, _inventory_extension)
+	CharacterStateHelper.look(input_extension, self._player.viewport_name, first_person_extension, status_extension, inventory_extension)
 
-	if not CharacterStateHelper.do_common_state_transitions(_status_extension, _csm) then
+	if CharacterStateHelper.do_common_state_transitions(status_extension, csm) then
 		return
 	end
 
 	if self.alignment_time_t > 0 then
-		local num = Vector3Box.unbox(self.alignment_vector) * arg_3_3 / self.alignment_total_t
-		local var_3_8 = POSITION_LOOKUP[arg_3_1]
-		local mover = Unit.mover(arg_3_1)
+		local alignment_vector = Vector3Box.unbox(self.alignment_vector)
+		local alignment = alignment_vector * dt / self.alignment_total_t
+		local pos = POSITION_LOOKUP[unit]
+		local mover = Unit.mover(unit)
 
-		Mover.set_position(mover, var_3_8 + num)
-		Unit.set_local_position(arg_3_1, 0, var_3_8 + num)
+		Mover.set_position(mover, pos + alignment)
+		Unit.set_local_position(unit, 0, pos + alignment)
 
-		self.alignment_time_t = self.alignment_time_t - arg_3_3
+		self.alignment_time_t = self.alignment_time_t - dt
 	end
 
-	if self.state ~= "init" or not var_3_0.tunneling_begin then
-		self.fade_t = arg_3_5 + 0.5
+	if self.state == "init" and blackboard.tunneling_begin then
+		local fade_time = 0.5
 
-		local num_2 = 5
+		self.fade_t = t + fade_time
 
-		self.transition_manager:fade_in(num_2)
+		local fade_speed = 5
+
+		self.transition_manager:fade_in(fade_speed)
 
 		self.state = "fade_in"
 	end
 
-	if not (self.state ~= "fade_in" or not (arg_3_5 > self.fade_t)) then
-		local unbox = QuaternionBox.unbox(self.exit_rot)
+	if self.state == "fade_in" and t > self.fade_t then
+		local exit_rot = QuaternionBox.unbox(self.exit_rot)
 
-		self._first_person_extension:force_look_rotation(unbox)
+		self._first_person_extension:force_look_rotation(exit_rot)
 
-		local forward = Quaternion.forward(unbox)
+		local dir_vector = Quaternion.forward(exit_rot)
 
-		self.wanted_rot = Vector3Box(forward)
+		self.wanted_rot = Vector3Box(dir_vector)
 
-		local num_3 = forward * self.forward_offset + Vector3.up() * self.height_offset
-		local num_4 = Unit.local_position(self.exit_unit, 0) + num_3
-		local mover_2 = Unit.mover(arg_3_1)
+		local offset = dir_vector * self.forward_offset + Vector3.up() * self.height_offset
+		local exit_pos = Unit.local_position(self.exit_unit, 0) + offset
+		local mover = Unit.mover(unit)
 
-		Mover.set_position(mover_2, num_4)
-		Unit.set_local_position(arg_3_1, 0, num_4)
-		_status_extension:set_invisible(true, nil, "tunneling")
-		_locomotion_extension:set_mover_filter_property("dark_pact_noclip", true)
+		Mover.set_position(mover, exit_pos)
+		Unit.set_local_position(unit, 0, exit_pos)
+		status_extension:set_invisible(true, nil, "tunneling")
+		locomotion_extension:set_mover_filter_property("dark_pact_noclip", true)
 
 		self.state = "transition_video"
 		self.sub_state = "start_video"
@@ -211,102 +216,109 @@ EnemyCharacterStateTunneling.update = function (self, arg_3_1, arg_3_2, arg_3_3,
 
 	if self.state == "transition_video" then
 		if self.sub_state == "start_video" then
-			local num_5 = 5
-			local num_6 = self.id % 4 + 1
+			local fade_speed = 5
+			local index = self.id % 4 + 1
 
-			self.transition_manager:fade_out(num_5)
-			self.pactsworn_video_transition_view:play_video(num_6)
+			self.transition_manager:fade_out(fade_speed)
+			self.pactsworn_video_transition_view:play_video(index)
 			self.pactsworn_video_transition_view:enable_video(true)
 
 			self.sub_state = "playing_video"
-			self.end_video_t = arg_3_5 + 3
+			self.end_video_t = t + 3
 		elseif self.sub_state == "playing_video" then
-			if self.end_video_t - arg_3_5 < 0.25 then
-				local num_7 = 10
+			if self.end_video_t - t < 0.25 then
+				local fade_speed = 10
 
-				self.transition_manager:fade_in(num_7)
+				self.transition_manager:fade_in(fade_speed)
 
 				self.sub_state = "end_video"
 			end
-		elseif not (self.sub_state ~= "end_video" or not (arg_3_5 > self.end_video_t)) then
-			self.fade_t = arg_3_5 + 0.25
+		elseif self.sub_state == "end_video" and t > self.end_video_t then
+			local fade_time = 0.25
 
-			local num_8 = 5
+			self.fade_t = t + fade_time
 
-			self.transition_manager:fade_out(num_8)
+			local fade_speed = 5
+
+			self.transition_manager:fade_out(fade_speed)
 			self.pactsworn_video_transition_view:enable_video(false)
 
-			local system = Managers.state.entity:system("camera_system")
-			local unbox_2 = QuaternionBox.unbox(self.exit_rot)
-			local num_9 = Quaternion.forward(unbox_2) + Quaternion.right(unbox_2) + Vector3.up() * 0.5
-			local num_10 = Unit.local_position(self.exit_unit, 0) + num_9 * 2
+			local camera_system = Managers.state.entity:system("camera_system")
+			local exit_rotation = QuaternionBox.unbox(self.exit_rot)
+			local dir_vector = Quaternion.forward(exit_rotation) + Quaternion.right(exit_rotation) + Vector3.up() * 0.5
+			local exit_pos = Unit.local_position(self.exit_unit, 0)
+			local new_cam_pos = exit_pos + dir_vector * 2
 
-			system:update_tunnel_camera_position(self._player, num_10)
+			camera_system:update_tunnel_camera_position(self._player, new_cam_pos)
 
-			local exit_anim = self.exit_anim
+			local move_anim = self.exit_anim
 
-			CharacterStateHelper.play_animation_event(arg_3_1, exit_anim)
-			CharacterStateHelper.look(_input_extension, self._player.viewport_name, _first_person_extension, _status_extension, _inventory_extension, nil, Vector3(-2, 0, 0))
+			CharacterStateHelper.play_animation_event(unit, move_anim)
+			CharacterStateHelper.look(input_extension, self._player.viewport_name, first_person_extension, status_extension, inventory_extension, nil, Vector3(-2, 0, 0))
 
 			self.end_video_t = nil
 			self.state = "fade_out"
 		end
 	end
 
-	if not (self.state ~= "fade_out" or not (arg_3_5 > self.fade_t)) then
-		_status_extension:set_invisible(false, nil, "tunneling")
+	if self.state == "fade_out" and t > self.fade_t then
+		status_extension:set_invisible(false, nil, "tunneling")
 
 		self.state = "end"
 	end
 
-	if self.state ~= "end" or not var_3_0.tunneling_finished then
-		_locomotion_extension:set_mover_filter_property("dark_pact_noclip", false)
-		_first_person_extension:force_look_rotation(QuaternionBox.unbox(self.exit_rot), 0.1)
+	if self.state == "end" and blackboard.tunneling_finished then
+		locomotion_extension:set_mover_filter_property("dark_pact_noclip", false)
+		first_person_extension:force_look_rotation(QuaternionBox.unbox(self.exit_rot), 0.1)
 		self:start_camera_transition()
 		self:to_movement_state()
 	end
 
-	local unbox_3 = self.wanted_rot:unbox()
+	local wanted_rot = self.wanted_rot:unbox()
 
-	Unit.set_local_rotation(arg_3_1, 0, Quaternion.look(unbox_3))
+	Unit.set_local_rotation(unit, 0, Quaternion.look(wanted_rot))
 end
 
-EnemyCharacterStateTunneling.on_exit = function (self, arg_4_1, arg_4_2, arg_4_3, arg_4_4, arg_4_5, arg_4_6)
+EnemyCharacterStateTunneling.on_exit = function (self, unit, input, dt, context, t, next_state)
 	-- function 4
-	local var_4_0 = BLACKBOARDS[arg_4_1]
+	local blackboard = BLACKBOARDS[unit]
 
-	if not var_4_0 then
-		var_4_0.tunneling_begin = nil
-		var_4_0.tunneling_finished = nil
+	if blackboard then
+		blackboard.tunneling_begin = nil
+		blackboard.tunneling_finished = nil
 	end
 
-	if not self._status_extension:get_unarmed() then
-		CharacterStateHelper.play_animation_event(arg_4_1, "to_unarmed")
+	local status_extension = self._status_extension
+
+	if status_extension:get_unarmed() then
+		CharacterStateHelper.play_animation_event(unit, "to_unarmed")
 	end
 
 	self:grant_control_to_player()
 	self:set_breed_action("n/a")
 
-	ScriptUnit.extension(arg_4_1, "hit_reaction_system").force_ragdoll_on_death = nil
+	local hit_reaction_extension = ScriptUnit.extension(unit, "hit_reaction_system")
+
+	hit_reaction_extension.force_ragdoll_on_death = nil
 end
 
 EnemyCharacterStateTunneling.grant_control_to_player = function (self)
 	-- function 5
-	local _locomotion_extension = self._locomotion_extension
-	local animation_wanted_root_pose = Unit.animation_wanted_root_pose(self._unit)
+	local locomotion_extension = self._locomotion_extension
+	local wanted_pose = Unit.animation_wanted_root_pose(self._unit)
 
-	_locomotion_extension:teleport_to(Matrix4x4.translation(animation_wanted_root_pose))
-	_locomotion_extension:set_wanted_velocity(Vector3.zero())
-	_locomotion_extension:enable_script_driven_movement()
-	_locomotion_extension:set_animation_translation_scale(Vector3(1, 1, 1))
-	_locomotion_extension:force_on_ground(true)
+	locomotion_extension:teleport_to(Matrix4x4.translation(wanted_pose))
+	locomotion_extension:set_wanted_velocity(Vector3.zero())
+	locomotion_extension:enable_script_driven_movement()
+	locomotion_extension:set_animation_translation_scale(Vector3(1, 1, 1))
+	locomotion_extension:force_on_ground(true)
 end
 
 EnemyCharacterStateTunneling.start_camera_transition = function (self)
 	-- function 6
-	local _first_person_extension = self._first_person_extension
+	local first_person_extension = self._first_person_extension
 
 	CharacterStateHelper.change_camera_state(self._player, "follow")
-	CharacterStateHelper.play_animation_event_first_person(_first_person_extension, "idle")
-	_first_person_extension:toggle_visibility(0.4)
+	CharacterStateHelper.play_animation_event_first_person(first_person_extension, "idle")
+	first_person_extension:toggle_visibility(0.4)
 end

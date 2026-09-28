@@ -2,142 +2,148 @@
 
 LiquidAreaDamageHuskExtension = class(LiquidAreaDamageHuskExtension)
 
-LiquidAreaDamageHuskExtension.init = function (self, arg_1_1, arg_1_2, arg_1_3)
+LiquidAreaDamageHuskExtension.init = function (self, extension_init_context, unit, extension_init_data)
 	-- function 1
-	local world = arg_1_1.world
+	local world = extension_init_context.world
 
-	self._unit = arg_1_2
+	self._unit = unit
 	self._blobs = {}
 	self._world = world
-	self._source_attacker_unit = arg_1_3.source_unit
+	self._source_attacker_unit = extension_init_data.source_unit
 	self._nav_world = Managers.state.entity:system("ai_system"):nav_world()
 
-	local liquid_template = arg_1_3.liquid_template
-	local var_1_2 = LiquidAreaDamageTemplates.templates[liquid_template]
+	local template_name = extension_init_data.liquid_template
+	local template = LiquidAreaDamageTemplates.templates[template_name]
 
-	self._fx_name_filled = var_1_2.fx_name_filled
-	self._fx_name_rim = var_1_2.fx_name_rim
-	self._liquid_area_damage_template = liquid_template
+	self._fx_name_filled = template.fx_name_filled
+	self._fx_name_rim = template.fx_name_rim
+	self._liquid_area_damage_template = template_name
 
 	Unit.set_unit_visibility(self._unit, false)
 
-	local sfx_name_start = var_1_2.sfx_name_start
+	local sfx_name_start = template.sfx_name_start
 
 	self._sfx_name_start = sfx_name_start
-	self._sfx_name_stop = var_1_2.sfx_name_stop
+	self._sfx_name_stop = template.sfx_name_stop
 
-	if not sfx_name_start then
-		WwiseUtils.trigger_unit_event(world, sfx_name_start, arg_1_2, 0)
+	if sfx_name_start then
+		WwiseUtils.trigger_unit_event(world, sfx_name_start, unit, 0)
 	end
 
-	local init_function = var_1_2.init_function
+	local init_function = template.init_function
 
-	if not init_function then
-		local time = Managers.time:time("game")
+	if init_function then
+		local t = Managers.time:time("game")
 
-		LiquidAreaDamageTemplates[init_function](self, time)
+		LiquidAreaDamageTemplates[init_function](self, t)
 	end
 
-	local update_function = var_1_2.update_function
+	local update_function = template.update_function
 
-	if not update_function then
+	if update_function then
 		self._liquid_update_function = LiquidAreaDamageTemplates[update_function]
 	end
 end
 
-LiquidAreaDamageHuskExtension._get_rotation_from_navmesh = function (self, arg_2_1)
+LiquidAreaDamageHuskExtension._get_rotation_from_navmesh = function (self, position)
 	-- function 2
-	local _nav_world = self._nav_world
-	local triangle_from_position, var_2_2, var_2_3, var_2_4, var_2_5 = GwNavQueries.triangle_from_position(_nav_world, arg_2_1, 2, 2)
-	local var_2_6
+	local nav_world = self._nav_world
+	local success, z, vertex_1, vertex_2, vertex_3 = GwNavQueries.triangle_from_position(nav_world, position, 2, 2)
+	local rotation
 
-	if not triangle_from_position then
-		local normalize = Vector3.normalize(var_2_4 - var_2_3)
-		local normalize_2 = Vector3.normalize(var_2_5 - var_2_3)
-		local normalize_3 = Vector3.normalize(Vector3.cross(normalize, normalize_2))
+	if success then
+		local v1_to_v2 = Vector3.normalize(vertex_2 - vertex_1)
+		local v1_to_v3 = Vector3.normalize(vertex_3 - vertex_1)
+		local normal = Vector3.normalize(Vector3.cross(v1_to_v2, v1_to_v3))
 
-		var_2_6 = Quaternion.look(normalize, normalize_3)
+		rotation = Quaternion.look(v1_to_v2, normal)
 	else
-		var_2_6 = Quaternion.identity()
+		rotation = Quaternion.identity()
 	end
 
-	return var_2_6
+	return rotation
 end
 
-LiquidAreaDamageHuskExtension.add_damage_blob = function (self, arg_3_1, arg_3_2, arg_3_3)
+LiquidAreaDamageHuskExtension.add_damage_blob = function (self, blob_id, position, is_filled)
 	-- function 3
-	local var_3_0
-	local _fx_name_rim = self._fx_name_rim
+	local fx_id
+	local fx_name_rim = self._fx_name_rim
 
-	if script_data.debug_liquid_system or not _fx_name_rim then
-		local _get_rotation_from_navmesh = self:_get_rotation_from_navmesh(arg_3_2)
+	if not script_data.debug_liquid_system and fx_name_rim then
+		local rotation = self:_get_rotation_from_navmesh(position)
 
-		var_3_0 = World.create_particles(self._world, _fx_name_rim, arg_3_2, _get_rotation_from_navmesh)
+		fx_id = World.create_particles(self._world, fx_name_rim, position, rotation)
 	end
 
-	self._blobs[arg_3_1] = {
-		fx_id = var_3_0,
-		position = Vector3Box(arg_3_2),
-		full = arg_3_3
+	self._blobs[blob_id] = {
+		fx_id = fx_id,
+		position = Vector3Box(position),
+		full = is_filled
 	}
 
-	if not arg_3_3 then
-		self:set_damage_blob_filled(arg_3_1)
+	if is_filled then
+		self:set_damage_blob_filled(blob_id)
 	end
 end
 
-LiquidAreaDamageHuskExtension.set_damage_blob_filled = function (self, arg_4_1)
+LiquidAreaDamageHuskExtension.set_damage_blob_filled = function (self, blob_id)
 	-- function 4
-	local var_4_0 = self._blobs[arg_4_1]
-	local fx_id = var_4_0.fx_id
-	local _world = self._world
+	local blob = self._blobs[blob_id]
+	local fx_id = blob.fx_id
+	local world = self._world
 
-	if not fx_id then
-		World.stop_spawning_particles(_world, fx_id)
+	if fx_id then
+		World.stop_spawning_particles(world, fx_id)
 	end
 
-	local _fx_name_filled = self._fx_name_filled
+	local fx_name_filled = self._fx_name_filled
 
-	if script_data.debug_liquid_system or not _fx_name_filled then
-		local unbox = var_4_0.position:unbox()
-		local _get_rotation_from_navmesh = self:_get_rotation_from_navmesh(unbox)
+	if not script_data.debug_liquid_system and fx_name_filled then
+		local position = blob.position:unbox()
+		local rotation = self:_get_rotation_from_navmesh(position)
 
-		var_4_0.fx_id = World.create_particles(_world, _fx_name_filled, unbox, _get_rotation_from_navmesh)
+		blob.fx_id = World.create_particles(world, fx_name_filled, position, rotation)
 	else
-		var_4_0.fx_id = nil
+		blob.fx_id = nil
 	end
 
-	var_4_0.full = true
+	blob.full = true
 end
 
-LiquidAreaDamageHuskExtension.remove_damage_blob = function (arg_5_0, arg_5_1)
+LiquidAreaDamageHuskExtension.remove_damage_blob = function (self, blob_id)
 	-- function 5
 	return
 end
 
-LiquidAreaDamageHuskExtension.update = function (self, arg_6_1, arg_6_2, arg_6_3, arg_6_4, arg_6_5)
+LiquidAreaDamageHuskExtension.update = function (self, unit, input, dt, context, t)
 	-- function 6
-	if not (not self._liquid_update_function and self._liquid_update_function(self, arg_6_5, arg_6_3)) then
-		self._liquid_update_function = nil
+	local liquid_update_function = self._liquid_update_function
+
+	if liquid_update_function then
+		local result = self._liquid_update_function(self, t, dt)
+
+		if not result then
+			self._liquid_update_function = nil
+		end
 	end
 end
 
 LiquidAreaDamageHuskExtension.destroy = function (self)
 	-- function 7
-	local _world = self._world
-	local _sfx_name_stop = self._sfx_name_stop
+	local world = self._world
+	local sfx_name_stop = self._sfx_name_stop
 
-	if not _sfx_name_stop then
-		local _unit = self._unit
+	if sfx_name_stop then
+		local liquid_unit = self._unit
 
-		WwiseUtils.trigger_unit_event(_world, _sfx_name_stop, _unit, 0)
+		WwiseUtils.trigger_unit_event(world, sfx_name_stop, liquid_unit, 0)
 	end
 
-	for k, v in pairs(self._blobs) do
-		local fx_id = v.fx_id
+	for blob_id, blob in pairs(self._blobs) do
+		local fx_id = blob.fx_id
 
-		if not fx_id then
-			World.stop_spawning_particles(_world, fx_id)
+		if fx_id then
+			World.stop_spawning_particles(world, fx_id)
 		end
 	end
 end

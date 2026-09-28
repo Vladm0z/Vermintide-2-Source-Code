@@ -2,7 +2,7 @@
 
 local OutlineSettingsVS = OutlineSettingsVS
 
-OutlineSettingsVS = OutlineSettingsVS or {}
+OutlineSettingsVS = not not OutlineSettingsVS or not not {}
 OutlineSettingsVS = OutlineSettingsVS
 OutlineSettingsVS.colors = {
 	ally = {
@@ -55,6 +55,6 @@ OutlineSettingsVS.templates = {
 	}
 }
 
-for k, v in pairs(OutlineSettingsVS.colors) do
-	v.name = k
+for name, settings in pairs(OutlineSettingsVS.colors) do
+	settings.name = name
 end

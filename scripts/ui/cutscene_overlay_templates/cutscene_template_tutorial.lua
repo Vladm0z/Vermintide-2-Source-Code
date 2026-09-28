@@ -1,7 +1,7 @@
 -- chunkname: @scripts/ui/cutscene_overlay_templates/cutscene_template_tutorial.lua
 
-local scripts_ui_cutscene_overlay_templates_cutscene_utils = require("scripts/ui/cutscene_overlay_templates/cutscene_utils")
-local tbl = {
+local utils = require("scripts/ui/cutscene_overlay_templates/cutscene_utils")
+local template_settings = {
 	template_1 = {
 		{
 			fade_out_duration = 0.4,
@@ -179,8 +179,8 @@ local tbl = {
 	}
 }
 
-scripts_ui_cutscene_overlay_templates_cutscene_utils.convert_string_timestamps_to_seconds(tbl)
+utils.convert_string_timestamps_to_seconds(template_settings)
 
 return {
-	templates = tbl
+	templates = template_settings
 }

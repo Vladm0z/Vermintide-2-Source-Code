@@ -8,50 +8,50 @@ UnlockReminderPopup.create_ui_elements = function (self)
 	-- function 1
 	UnlockReminderPopup.super.create_ui_elements(self)
 
-	local _common_settings = self._common_settings
+	local reminder_settings = self._common_settings
 
-	self._widgets_by_name.window_background.content.texture_id = _common_settings.background_texture
+	self._widgets_by_name.window_background.content.texture_id = reminder_settings.background_texture
 
 	local content = self._widgets_by_name.body_text.content
-	local var_1_2
+	local var_1_1
 
-	if not _common_settings.body_text then
-		var_1_2 = Localize(_common_settings.body_text)
+	if reminder_settings.body_text then
+		var_1_1 = Localize(reminder_settings.body_text)
 
-		if not var_1_2 then
+		if not var_1_1 then
 			-- Nothing
 		end
 	end
 
-	var_1_2 = ""
+	var_1_1 = ""
 
 	::label_1_0::
 
-	content.text = var_1_2
-	self._widgets_by_name.ok_button.content.title_text = Localize(_common_settings.button_text)
+	content.text = var_1_1
+	self._widgets_by_name.ok_button.content.title_text = Localize(reminder_settings.button_text)
 
-	if not _common_settings.top_detail_texture then
-		self._widgets_by_name.window_top_detail.content.texture_id = _common_settings.top_detail_texture.texture
-		self._widgets_by_name.window_top_detail.style.texture_id.size = _common_settings.top_detail_texture.size
-		self._widgets_by_name.window_top_detail.style.texture_id.offset = _common_settings.top_detail_texture.offset
+	if reminder_settings.top_detail_texture then
+		self._widgets_by_name.window_top_detail.content.texture_id = reminder_settings.top_detail_texture.texture
+		self._widgets_by_name.window_top_detail.style.texture_id.size = reminder_settings.top_detail_texture.size
+		self._widgets_by_name.window_top_detail.style.texture_id.offset = reminder_settings.top_detail_texture.offset
 	end
 end
 
-UnlockReminderPopup.update = function (self, arg_2_1)
+UnlockReminderPopup.update = function (self, dt)
 	-- function 2
-	UnlockReminderPopup.super.update(self, arg_2_1)
+	UnlockReminderPopup.super.update(self, dt)
 
-	if not (not self:should_show() and self._has_widget_been_closed) then
+	if self:should_show() and not self._has_widget_been_closed then
 		self:show()
 	end
 end
 
-UnlockReminderPopup._handle_input = function (self, arg_3_1)
+UnlockReminderPopup._handle_input = function (self, dt)
 	-- function 3
-	local _get_input_service = self:_get_input_service()
-	local _widgets_by_name = self._widgets_by_name
+	local input_service = self:_get_input_service()
+	local widgets_by_name = self._widgets_by_name
 
-	if self._has_widget_been_closed or UIUtils.is_button_pressed(_widgets_by_name.ok_button) or _get_input_service:get("back", true) or not _get_input_service:get("confirm_press", true) then
+	if not self._has_widget_been_closed and (UIUtils.is_button_pressed(widgets_by_name.ok_button) or input_service:get("back", true) or input_service:get("confirm_press", true)) then
 		self._has_widget_been_closed = true
 		SaveData.new_dlcs_unlocks[self._dlc_name] = false
 
@@ -74,36 +74,36 @@ UnlockReminderPopup.hide = function (self)
 	self._exit_anim_id = self:_start_transition_animation("on_exit")
 end
 
-UnlockReminderPopup._start_transition_animation = function (self, arg_6_1)
+UnlockReminderPopup._start_transition_animation = function (self, animation_name)
 	-- function 6
-	return self._ui_animator:start_animation(arg_6_1, nil, self._common_settings.definitions.scenegraph_definition, {
+	return self._ui_animator:start_animation(animation_name, nil, self._common_settings.definitions.scenegraph_definition, {
 		wwise_world = self._wwise_world,
 		render_settings = self._render_settings
 	})
 end
 
-UnlockReminderPopup._update_animations = function (self, arg_7_1)
+UnlockReminderPopup._update_animations = function (self, dt)
 	-- function 7
-	UnlockReminderPopup.super._update_animations(self, arg_7_1)
+	UnlockReminderPopup.super._update_animations(self, dt)
 
-	if not self._exit_anim_id and not self._ui_animator:is_animation_completed(self._exit_anim_id) then
+	if self._exit_anim_id and self._ui_animator:is_animation_completed(self._exit_anim_id) then
 		self._is_visible = false
 	end
 
-	local _widgets_by_name = self._widgets_by_name
+	local widgets_by_name = self._widgets_by_name
 
-	UIWidgetUtils.animate_default_button(_widgets_by_name.ok_button, arg_7_1)
+	UIWidgetUtils.animate_default_button(widgets_by_name.ok_button, dt)
 end
 
 UnlockReminderPopup.should_show = function (self)
 	-- function 8
 	local is_in_inn = self._ui_context.is_in_inn
 
-	if not is_in_inn then
-		if not (Managers.popup:has_popup() ~= false or self._ui_context.ingame_ui.current_view ~= nil) then
+	if is_in_inn then
+		if Managers.popup:has_popup() == false and self._ui_context.ingame_ui.current_view == nil then
 			is_in_inn = self._ui_context.ingame_ui.has_left_menu
 
-			if not is_in_inn then
+			if is_in_inn then
 				is_in_inn = not self._is_visible
 			end
 		else

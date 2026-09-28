@@ -1,9 +1,9 @@
 -- chunkname: @scripts/ui/hint_ui/hint_templates.lua
 
-local var_0_0 = dofile("scripts/settings/objective_templates_vs")
+local ObjectiveTypes = dofile("scripts/settings/objective_templates_vs")
 local HintTemplates = HintTemplates
 
-HintTemplates = HintTemplates or {}
+HintTemplates = not not HintTemplates or not not {}
 HintTemplates = HintTemplates
 HintTemplates.first_time_pactsworn = {
 	data = {
@@ -22,27 +22,36 @@ HintTemplates.first_time_pactsworn = {
 			input_service_name = "Player"
 		}
 	},
-	condition_function = function (self, arg_1_1, arg_1_2)
+	condition_function = function (data, dt, t)
 		-- function 1
-		local current_mechanism_name = Managers.mechanism:current_mechanism_name()
+		local mechanism_name = Managers.mechanism:current_mechanism_name()
 		local game_mode_key = Managers.state.game_mode:game_mode_key()
 
-		if not (current_mechanism_name ~= self.mechanism_name or game_mode_key ~= self.game_mode_key) then
+		if mechanism_name == data.mechanism_name and game_mode_key == data.game_mode_key then
 			local player = Managers.player
 
-			player = not player and Managers.player:local_player()
+			if player then
+				-- Nothing
+			end
 
-			if not player then
-				local get_party = player:get_party()
-				local flag = not get_party and Managers.state.side.side_by_party[get_party]
+			player = Managers.player:local_player()
 
-				if not flag then
-					local name = flag:name()
-					local player_unit = player.player_unit
-					local has_extension = ScriptUnit.has_extension(player_unit, "ghost_mode_system")
-					local flag_2 = not has_extension and has_extension:is_in_ghost_mode()
+			local local_player = player
 
-					if not (not name and name == self.side) and not flag_2 then
+			::label_1_0::
+
+			if local_player then
+				local local_party = local_player:get_party()
+				local local_side = not not local_party and not not Managers.state.side.side_by_party[local_party]
+
+				if local_side then
+					local side_name = local_side:name()
+					local local_player_unit = local_player.player_unit
+					local ghost_mode_ext = ScriptUnit.has_extension(local_player_unit, "ghost_mode_system")
+					local is_in_ghost_mode = not not ghost_mode_ext and not not ghost_mode_ext:is_in_ghost_mode()
+					local is_dark_pact = not not side_name and side_name == data.side
+
+					if is_dark_pact and is_in_ghost_mode then
 						return true
 					end
 				end
@@ -69,32 +78,44 @@ HintTemplates.horde_ability = {
 			input_service_name = "Player"
 		}
 	},
-	condition_function = function (self, arg_2_1, arg_2_2)
+	condition_function = function (data, dt, t)
 		-- function 2
-		local current_mechanism_name = Managers.mechanism:current_mechanism_name()
+		local mechanism_name = Managers.mechanism:current_mechanism_name()
 		local game_mode_key = Managers.state.game_mode:game_mode_key()
 
-		if not (current_mechanism_name ~= self.mechanism_name or game_mode_key ~= self.game_mode_key) then
+		if mechanism_name == data.mechanism_name and game_mode_key == data.game_mode_key then
 			local player = Managers.player
 
-			player = not player and Managers.player:local_player()
+			if player then
+				-- Nothing
+			end
 
-			if not player then
-				local get_party = player:get_party()
-				local flag = not get_party and Managers.state.side.side_by_party[get_party]
+			player = Managers.player:local_player()
 
-				if not (not flag and flag:name() ~= self.side) then
-					local player_unit = player.player_unit
+			local local_player = player
 
-					if not ALIVE[player_unit] then
-						local has_extension = ScriptUnit.has_extension(player_unit, "versus_horde_ability_system")
+			::label_2_0::
 
-						if not has_extension then
-							local get_ability_charge = has_extension:get_ability_charge(arg_2_2)
-							local cooldown = has_extension:cooldown()
+			if local_player then
+				local local_party = local_player:get_party()
+				local local_side = not not local_party and not not Managers.state.side.side_by_party[local_party]
 
-							if not (not get_ability_charge and not (cooldown <= get_ability_charge)) then
-								return true
+				if local_side then
+					local side_name = local_side:name()
+
+					if side_name == data.side then
+						local player_unit = local_player.player_unit
+
+						if ALIVE[player_unit] then
+							local horde_ability_extension = ScriptUnit.has_extension(player_unit, "versus_horde_ability_system")
+
+							if horde_ability_extension then
+								local ability_charge = horde_ability_extension:get_ability_charge(t)
+								local ability_cooldown = horde_ability_extension:cooldown()
+
+								if ability_charge and ability_cooldown <= ability_charge then
+									return true
+								end
 							end
 						end
 					end
@@ -118,25 +139,37 @@ HintTemplates.scoring_points = {
 		class_name = "HintUIVersusHowToPlay",
 		definitions = local_require("scripts/ui/hint_ui/hint_ui_versus_how_to_play_definitions")
 	},
-	condition_function = function (self, arg_3_1, arg_3_2)
+	condition_function = function (data, dt, t)
 		-- function 3
-		local current_mechanism_name = Managers.mechanism:current_mechanism_name()
+		local mechanism_name = Managers.mechanism:current_mechanism_name()
 		local game_mode_key = Managers.state.game_mode:game_mode_key()
 
-		if not (current_mechanism_name ~= self.mechanism_name or game_mode_key ~= self.game_mode_key) then
+		if mechanism_name == data.mechanism_name and game_mode_key == data.game_mode_key then
 			local player = Managers.player
 
-			player = not player and Managers.player:local_player()
+			if player then
+				-- Nothing
+			end
 
-			if not player then
-				local get_party = player:get_party()
-				local flag = not get_party and Managers.state.side.side_by_party[get_party]
+			player = Managers.player:local_player()
 
-				if not (not flag and flag:name() ~= self.side) then
-					local player_unit = player.player_unit
+			local local_player = player
 
-					if not ALIVE[player_unit] then
-						return true
+			::label_3_0::
+
+			if local_player then
+				local local_party = local_player:get_party()
+				local local_side = not not local_party and not not Managers.state.side.side_by_party[local_party]
+
+				if local_side then
+					local side_name = local_side:name()
+
+					if side_name == data.side then
+						local player_unit = local_player.player_unit
+
+						if ALIVE[player_unit] then
+							return true
+						end
 					end
 				end
 			end
@@ -213,33 +246,57 @@ HintTemplates.healing = {
 			input_service_name = "Player"
 		}
 	},
-	condition_function = function (self, arg_4_1, arg_4_2)
+	condition_function = function (data, dt, t)
 		-- function 4
-		local current_mechanism_name = Managers.mechanism:current_mechanism_name()
+		local mechanism_name = Managers.mechanism:current_mechanism_name()
 		local game_mode_key = Managers.state.game_mode:game_mode_key()
 
-		if not (current_mechanism_name ~= self.mechanism_name or game_mode_key ~= self.game_mode_key) then
+		if mechanism_name == data.mechanism_name and game_mode_key == data.game_mode_key then
 			local player = Managers.player
 
-			player = not player and Managers.player:local_player()
+			if player then
+				-- Nothing
+			end
 
-			if not player then
-				local get_party = player:get_party()
-				local flag = not get_party and Managers.state.side.side_by_party[get_party]
+			player = Managers.player:local_player()
 
-				if not (not flag and flag:name() ~= self.side) then
-					local player_unit = player.player_unit
+			local local_player = player
 
-					if not ALIVE[player_unit] then
-						local extension = ScriptUnit.extension(player_unit, "status_system")
-						local extension_2 = ScriptUnit.extension(player_unit, "health_system")
-						local get_slot_data = ScriptUnit.extension(player_unit, "inventory_system"):get_slot_data("slot_healthkit")
-						local flag_2
+			::label_4_0::
 
-						flag_2 = not (not extension and extension:is_dead()) and 0 and extension_2:current_health_percent()
+			if local_player then
+				local local_party = local_player:get_party()
+				local local_side = not not local_party and not not Managers.state.side.side_by_party[local_party]
 
-						if not (flag_2 <= 0.2) or not get_slot_data then
-							return true
+				if local_side then
+					local side_name = local_side:name()
+
+					if side_name == data.side then
+						local player_unit = local_player.player_unit
+
+						if ALIVE[player_unit] then
+							local status_extension = ScriptUnit.extension(player_unit, "status_system")
+							local health_extension = ScriptUnit.extension(player_unit, "health_system")
+							local inventory_extension = ScriptUnit.extension(player_unit, "inventory_system")
+							local has_healing_item = inventory_extension:get_slot_data("slot_healthkit")
+							local is_dead = not not status_extension and not not status_extension:is_dead()
+							local num
+
+							if is_dead then
+								num = 0
+
+								goto label_4_1
+							end
+
+							num = health_extension:current_health_percent()
+
+							local total_health_percent = num
+
+							::label_4_1::
+
+							if total_health_percent <= 0.2 and has_healing_item then
+								return true
+							end
 						end
 					end
 				end
@@ -266,25 +323,42 @@ HintTemplates.bombs = {
 			input_service_name = "Player"
 		}
 	},
-	condition_function = function (self, arg_5_1, arg_5_2)
+	condition_function = function (data, dt, t)
 		-- function 5
-		local current_mechanism_name = Managers.mechanism:current_mechanism_name()
+		local mechanism_name = Managers.mechanism:current_mechanism_name()
 		local game_mode_key = Managers.state.game_mode:game_mode_key()
 
-		if not (current_mechanism_name ~= self.mechanism_name or game_mode_key ~= self.game_mode_key) then
+		if mechanism_name == data.mechanism_name and game_mode_key == data.game_mode_key then
 			local player = Managers.player
 
-			player = not player and Managers.player:local_player()
+			if player then
+				-- Nothing
+			end
 
-			if not player then
-				local get_party = player:get_party()
-				local flag = not get_party and Managers.state.side.side_by_party[get_party]
+			player = Managers.player:local_player()
 
-				if not (not flag and flag:name() ~= self.side) then
-					local player_unit = player.player_unit
+			local local_player = player
 
-					if not ALIVE[player_unit] and not ScriptUnit.extension(player_unit, "inventory_system"):get_slot_data("slot_grenade") then
-						return true
+			::label_5_0::
+
+			if local_player then
+				local local_party = local_player:get_party()
+				local local_side = not not local_party and not not Managers.state.side.side_by_party[local_party]
+
+				if local_side then
+					local side_name = local_side:name()
+
+					if side_name == data.side then
+						local player_unit = local_player.player_unit
+
+						if ALIVE[player_unit] then
+							local inventory_extension = ScriptUnit.extension(player_unit, "inventory_system")
+							local has_bomb_item = inventory_extension:get_slot_data("slot_grenade")
+
+							if has_bomb_item then
+								return true
+							end
+						end
 					end
 				end
 			end
@@ -310,25 +384,42 @@ HintTemplates.wounds = {
 			input_service_name = "Player"
 		}
 	},
-	condition_function = function (self, arg_6_1, arg_6_2)
+	condition_function = function (data, dt, t)
 		-- function 6
-		local current_mechanism_name = Managers.mechanism:current_mechanism_name()
+		local mechanism_name = Managers.mechanism:current_mechanism_name()
 		local game_mode_key = Managers.state.game_mode:game_mode_key()
 
-		if not (current_mechanism_name ~= self.mechanism_name or game_mode_key ~= self.game_mode_key) then
+		if mechanism_name == data.mechanism_name and game_mode_key == data.game_mode_key then
 			local player = Managers.player
 
-			player = not player and Managers.player:local_player()
+			if player then
+				-- Nothing
+			end
 
-			if not player then
-				local get_party = player:get_party()
-				local flag = not get_party and Managers.state.side.side_by_party[get_party]
+			player = Managers.player:local_player()
 
-				if not (not flag and flag:name() ~= self.side) then
-					local player_unit = player.player_unit
+			local local_player = player
 
-					if not ALIVE[player_unit] and not ScriptUnit.extension(player_unit, "status_system"):wounded_and_on_last_wound() then
-						return true
+			::label_6_0::
+
+			if local_player then
+				local local_party = local_player:get_party()
+				local local_side = not not local_party and not not Managers.state.side.side_by_party[local_party]
+
+				if local_side then
+					local side_name = local_side:name()
+
+					if side_name == data.side then
+						local player_unit = local_player.player_unit
+
+						if ALIVE[player_unit] then
+							local status_extension = ScriptUnit.extension(player_unit, "status_system")
+							local last_wound = status_extension:wounded_and_on_last_wound()
+
+							if last_wound then
+								return true
+							end
+						end
 					end
 				end
 			end
@@ -370,17 +461,25 @@ HintTemplates.all_chat = {
 			input_service_name = "chat_input"
 		}
 	},
-	condition_function = function (self, arg_7_1, arg_7_2)
+	condition_function = function (data, dt, t)
 		-- function 7
-		if not Managers.input:is_device_active("gamepad") then
+		if Managers.input:is_device_active("gamepad") then
 			return false
 		end
 
-		local current_mechanism_name = Managers.mechanism:current_mechanism_name()
+		local mechanism_name = Managers.mechanism:current_mechanism_name()
 		local game_mode_key = Managers.state.game_mode:game_mode_key()
 
-		if not ((current_mechanism_name ~= self.mechanism_name or game_mode_key ~= self.game_mode_key or not Managers.chat:chat_is_focused()) and Managers.chat:current_view_and_color() ~= "All") then
-			return true
+		if mechanism_name == data.mechanism_name and game_mode_key == data.game_mode_key then
+			local chat_manager = Managers.chat
+
+			if chat_manager:chat_is_focused() then
+				local view_name = Managers.chat:current_view_and_color()
+
+				if view_name == "All" then
+					return true
+				end
+			end
 		end
 
 		return false
@@ -399,25 +498,41 @@ HintTemplates.capture_objective = {
 		class_name = "HintUIVersusHowToPlay",
 		definitions = local_require("scripts/ui/hint_ui/hint_ui_versus_how_to_play_definitions")
 	},
-	condition_function = function (self, arg_8_1, arg_8_2)
+	condition_function = function (data, dt, t)
 		-- function 8
-		local current_mechanism_name = Managers.mechanism:current_mechanism_name()
+		local mechanism_name = Managers.mechanism:current_mechanism_name()
 		local game_mode_key = Managers.state.game_mode:game_mode_key()
 
-		if not (current_mechanism_name ~= self.mechanism_name or game_mode_key ~= self.game_mode_key) then
+		if mechanism_name == data.mechanism_name and game_mode_key == data.game_mode_key then
 			local player = Managers.player
 
-			player = not player and Managers.player:local_player()
+			if player then
+				-- Nothing
+			end
 
-			if not player then
-				local get_party = player:get_party()
-				local flag = not get_party and Managers.state.side.side_by_party[get_party]
+			player = Managers.player:local_player()
 
-				if not (not flag and flag:name() ~= self.side) then
-					local system = Managers.state.entity:system("objective_system")
+			local local_player = player
 
-					if not (not system and not system:is_active() and system:current_objective_type() ~= "objective_capture_point") then
-						return true
+			::label_8_0::
+
+			if local_player then
+				local local_party = local_player:get_party()
+				local local_side = not not local_party and not not Managers.state.side.side_by_party[local_party]
+
+				if local_side then
+					local side_name = local_side:name()
+
+					if side_name == data.side then
+						local objective_system = Managers.state.entity:system("objective_system")
+
+						if objective_system and objective_system:is_active() then
+							local objective_type = objective_system:current_objective_type()
+
+							if objective_type == "objective_capture_point" then
+								return true
+							end
+						end
 					end
 				end
 			end
@@ -439,25 +554,41 @@ HintTemplates.payload_objective = {
 		class_name = "HintUIVersusHowToPlay",
 		definitions = local_require("scripts/ui/hint_ui/hint_ui_versus_how_to_play_definitions")
 	},
-	condition_function = function (self, arg_9_1, arg_9_2)
+	condition_function = function (data, dt, t)
 		-- function 9
-		local current_mechanism_name = Managers.mechanism:current_mechanism_name()
+		local mechanism_name = Managers.mechanism:current_mechanism_name()
 		local game_mode_key = Managers.state.game_mode:game_mode_key()
 
-		if not (current_mechanism_name ~= self.mechanism_name or game_mode_key ~= self.game_mode_key) then
+		if mechanism_name == data.mechanism_name and game_mode_key == data.game_mode_key then
 			local player = Managers.player
 
-			player = not player and Managers.player:local_player()
+			if player then
+				-- Nothing
+			end
 
-			if not player then
-				local get_party = player:get_party()
-				local flag = not get_party and Managers.state.side.side_by_party[get_party]
+			player = Managers.player:local_player()
 
-				if not (not flag and flag:name() ~= self.side) then
-					local system = Managers.state.entity:system("objective_system")
+			local local_player = player
 
-					if not (not system and not system:is_active() and system:current_objective_type() ~= "objective_payload") then
-						return true
+			::label_9_0::
+
+			if local_player then
+				local local_party = local_player:get_party()
+				local local_side = not not local_party and not not Managers.state.side.side_by_party[local_party]
+
+				if local_side then
+					local side_name = local_side:name()
+
+					if side_name == data.side then
+						local objective_system = Managers.state.entity:system("objective_system")
+
+						if objective_system and objective_system:is_active() then
+							local objective_type = objective_system:current_objective_type()
+
+							if objective_type == "objective_payload" then
+								return true
+							end
+						end
 					end
 				end
 			end
@@ -479,25 +610,41 @@ HintTemplates.safe_zone = {
 		class_name = "HintUIVersusHowToPlay",
 		definitions = local_require("scripts/ui/hint_ui/hint_ui_versus_how_to_play_definitions")
 	},
-	condition_function = function (self, arg_10_1, arg_10_2)
+	condition_function = function (data, dt, t)
 		-- function 10
-		local current_mechanism_name = Managers.mechanism:current_mechanism_name()
+		local mechanism_name = Managers.mechanism:current_mechanism_name()
 		local game_mode_key = Managers.state.game_mode:game_mode_key()
 
-		if not (current_mechanism_name ~= self.mechanism_name or game_mode_key ~= self.game_mode_key) then
+		if mechanism_name == data.mechanism_name and game_mode_key == data.game_mode_key then
 			local player = Managers.player
 
-			player = not player and Managers.player:local_player()
+			if player then
+				-- Nothing
+			end
 
-			if not player then
-				local get_party = player:get_party()
-				local flag = not get_party and Managers.state.side.side_by_party[get_party]
+			player = Managers.player:local_player()
 
-				if not (not flag and flag:name() ~= self.side) then
-					local system = Managers.state.entity:system("objective_system")
+			local local_player = player
 
-					if not (not system and not system:is_active() and system:current_objective_type() ~= "objective_safehouse") then
-						return true
+			::label_10_0::
+
+			if local_player then
+				local local_party = local_player:get_party()
+				local local_side = not not local_party and not not Managers.state.side.side_by_party[local_party]
+
+				if local_side then
+					local side_name = local_side:name()
+
+					if side_name == data.side then
+						local objective_system = Managers.state.entity:system("objective_system")
+
+						if objective_system and objective_system:is_active() then
+							local objective_type = objective_system:current_objective_type()
+
+							if objective_type == "objective_safehouse" then
+								return true
+							end
+						end
 					end
 				end
 			end
@@ -519,25 +666,41 @@ HintTemplates.socket_objective = {
 		class_name = "HintUIVersusHowToPlay",
 		definitions = local_require("scripts/ui/hint_ui/hint_ui_versus_how_to_play_definitions")
 	},
-	condition_function = function (self, arg_11_1, arg_11_2)
+	condition_function = function (data, dt, t)
 		-- function 11
-		local current_mechanism_name = Managers.mechanism:current_mechanism_name()
+		local mechanism_name = Managers.mechanism:current_mechanism_name()
 		local game_mode_key = Managers.state.game_mode:game_mode_key()
 
-		if not (current_mechanism_name ~= self.mechanism_name or game_mode_key ~= self.game_mode_key) then
+		if mechanism_name == data.mechanism_name and game_mode_key == data.game_mode_key then
 			local player = Managers.player
 
-			player = not player and Managers.player:local_player()
+			if player then
+				-- Nothing
+			end
 
-			if not player then
-				local get_party = player:get_party()
-				local flag = not get_party and Managers.state.side.side_by_party[get_party]
+			player = Managers.player:local_player()
 
-				if not (not flag and flag:name() ~= self.side) then
-					local system = Managers.state.entity:system("objective_system")
+			local local_player = player
 
-					if not (not system and not system:is_active() and system:current_objective_type() ~= "objective_socket") then
-						return true
+			::label_11_0::
+
+			if local_player then
+				local local_party = local_player:get_party()
+				local local_side = not not local_party and not not Managers.state.side.side_by_party[local_party]
+
+				if local_side then
+					local side_name = local_side:name()
+
+					if side_name == data.side then
+						local objective_system = Managers.state.entity:system("objective_system")
+
+						if objective_system and objective_system:is_active() then
+							local objective_type = objective_system:current_objective_type()
+
+							if objective_type == "objective_socket" then
+								return true
+							end
+						end
 					end
 				end
 			end
@@ -559,25 +722,41 @@ HintTemplates.target_objective = {
 		class_name = "HintUIVersusHowToPlay",
 		definitions = local_require("scripts/ui/hint_ui/hint_ui_versus_how_to_play_definitions")
 	},
-	condition_function = function (self, arg_12_1, arg_12_2)
+	condition_function = function (data, dt, t)
 		-- function 12
-		local current_mechanism_name = Managers.mechanism:current_mechanism_name()
+		local mechanism_name = Managers.mechanism:current_mechanism_name()
 		local game_mode_key = Managers.state.game_mode:game_mode_key()
 
-		if not (current_mechanism_name ~= self.mechanism_name or game_mode_key ~= self.game_mode_key) then
+		if mechanism_name == data.mechanism_name and game_mode_key == data.game_mode_key then
 			local player = Managers.player
 
-			player = not player and Managers.player:local_player()
+			if player then
+				-- Nothing
+			end
 
-			if not player then
-				local get_party = player:get_party()
-				local flag = not get_party and Managers.state.side.side_by_party[get_party]
+			player = Managers.player:local_player()
 
-				if not (not flag and flag:name() ~= self.side) then
-					local system = Managers.state.entity:system("objective_system")
+			local local_player = player
 
-					if not (not system and not system:is_active() and system:current_objective_type() ~= "objective_target") then
-						return true
+			::label_12_0::
+
+			if local_player then
+				local local_party = local_player:get_party()
+				local local_side = not not local_party and not not Managers.state.side.side_by_party[local_party]
+
+				if local_side then
+					local side_name = local_side:name()
+
+					if side_name == data.side then
+						local objective_system = Managers.state.entity:system("objective_system")
+
+						if objective_system and objective_system:is_active() then
+							local objective_type = objective_system:current_objective_type()
+
+							if objective_type == "objective_target" then
+								return true
+							end
+						end
 					end
 				end
 			end
@@ -599,25 +778,41 @@ HintTemplates.survive_event = {
 		class_name = "HintUIVersusHowToPlay",
 		definitions = local_require("scripts/ui/hint_ui/hint_ui_versus_how_to_play_definitions")
 	},
-	condition_function = function (self, arg_13_1, arg_13_2)
+	condition_function = function (data, dt, t)
 		-- function 13
-		local current_mechanism_name = Managers.mechanism:current_mechanism_name()
+		local mechanism_name = Managers.mechanism:current_mechanism_name()
 		local game_mode_key = Managers.state.game_mode:game_mode_key()
 
-		if not (current_mechanism_name ~= self.mechanism_name or game_mode_key ~= self.game_mode_key) then
+		if mechanism_name == data.mechanism_name and game_mode_key == data.game_mode_key then
 			local player = Managers.player
 
-			player = not player and Managers.player:local_player()
+			if player then
+				-- Nothing
+			end
 
-			if not player then
-				local get_party = player:get_party()
-				local flag = not get_party and Managers.state.side.side_by_party[get_party]
+			player = Managers.player:local_player()
 
-				if not (not flag and flag:name() ~= self.side) then
-					local system = Managers.state.entity:system("objective_system")
+			local local_player = player
 
-					if not (not system and not system:is_active() and system:current_objective_type() ~= "objective_survive") then
-						return true
+			::label_13_0::
+
+			if local_player then
+				local local_party = local_player:get_party()
+				local local_side = not not local_party and not not Managers.state.side.side_by_party[local_party]
+
+				if local_side then
+					local side_name = local_side:name()
+
+					if side_name == data.side then
+						local objective_system = Managers.state.entity:system("objective_system")
+
+						if objective_system and objective_system:is_active() then
+							local objective_type = objective_system:current_objective_type()
+
+							if objective_type == "objective_survive" then
+								return true
+							end
+						end
 					end
 				end
 			end
@@ -643,25 +838,41 @@ HintTemplates.interact_objective = {
 			input_service_name = "Player"
 		}
 	},
-	condition_function = function (self, arg_14_1, arg_14_2)
+	condition_function = function (data, dt, t)
 		-- function 14
-		local current_mechanism_name = Managers.mechanism:current_mechanism_name()
+		local mechanism_name = Managers.mechanism:current_mechanism_name()
 		local game_mode_key = Managers.state.game_mode:game_mode_key()
 
-		if not (current_mechanism_name ~= self.mechanism_name or game_mode_key ~= self.game_mode_key) then
+		if mechanism_name == data.mechanism_name and game_mode_key == data.game_mode_key then
 			local player = Managers.player
 
-			player = not player and Managers.player:local_player()
+			if player then
+				-- Nothing
+			end
 
-			if not player then
-				local get_party = player:get_party()
-				local flag = not get_party and Managers.state.side.side_by_party[get_party]
+			player = Managers.player:local_player()
 
-				if not (not flag and flag:name() ~= self.side) then
-					local system = Managers.state.entity:system("objective_system")
+			local local_player = player
 
-					if not (not system and not system:is_active() and system:current_objective_type() ~= "objective_interact") then
-						return true
+			::label_14_0::
+
+			if local_player then
+				local local_party = local_player:get_party()
+				local local_side = not not local_party and not not Managers.state.side.side_by_party[local_party]
+
+				if local_side then
+					local side_name = local_side:name()
+
+					if side_name == data.side then
+						local objective_system = Managers.state.entity:system("objective_system")
+
+						if objective_system and objective_system:is_active() then
+							local objective_type = objective_system:current_objective_type()
+
+							if objective_type == "objective_interact" then
+								return true
+							end
+						end
 					end
 				end
 			end
@@ -683,29 +894,41 @@ HintTemplates.reach_objective = {
 		class_name = "HintUIVersusHowToPlay",
 		definitions = local_require("scripts/ui/hint_ui/hint_ui_versus_how_to_play_definitions")
 	},
-	condition_function = function (self, arg_15_1, arg_15_2)
+	condition_function = function (data, dt, t)
 		-- function 15
-		local current_mechanism_name = Managers.mechanism:current_mechanism_name()
+		local mechanism_name = Managers.mechanism:current_mechanism_name()
 		local game_mode_key = Managers.state.game_mode:game_mode_key()
 
-		if not (current_mechanism_name ~= self.mechanism_name or game_mode_key ~= self.game_mode_key) then
+		if mechanism_name == data.mechanism_name and game_mode_key == data.game_mode_key then
 			local player = Managers.player
 
-			player = not player and Managers.player:local_player()
+			if player then
+				-- Nothing
+			end
 
-			if not player then
-				local get_party = player:get_party()
-				local flag = not get_party and Managers.state.side.side_by_party[get_party]
+			player = Managers.player:local_player()
 
-				if not (not flag and flag:name() ~= self.side) then
-					local system = Managers.state.entity:system("objective_system")
+			local local_player = player
 
-					if not system and not system:is_active() then
-						local current_objective_type = system:current_objective_type()
-						local flag_2 = system:current_objective_index() == 1
+			::label_15_0::
 
-						if not (current_objective_type ~= "objective_reach" or flag_2) then
-							return true
+			if local_player then
+				local local_party = local_player:get_party()
+				local local_side = not not local_party and not not Managers.state.side.side_by_party[local_party]
+
+				if local_side then
+					local side_name = local_side:name()
+
+					if side_name == data.side then
+						local objective_system = Managers.state.entity:system("objective_system")
+
+						if objective_system and objective_system:is_active() then
+							local objective_type = objective_system:current_objective_type()
+							local is_first_objective = objective_system:current_objective_index() == 1
+
+							if objective_type == "objective_reach" and not is_first_objective then
+								return true
+							end
 						end
 					end
 				end

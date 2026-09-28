@@ -1,25 +1,25 @@
 -- chunkname: @scripts/ui/views/hero_view/windows/store/definitions/store_window_category_list_definitions.lua
 
 local console_menu_scenegraphs = UISettings.console_menu_scenegraphs
-local tbl = {
+local list_size = {
 	550,
 	700
 }
-local tbl_2 = {
+local list_entry_size = {
 	550,
 	80
 }
-local tbl_3 = {
+local list_scrollbar_size = {
 	16,
-	tbl[2]
+	list_size[2]
 }
-local tbl_4 = {
+local scenegraph_definition = {
 	screen = console_menu_scenegraphs.screen,
 	list_window = {
 		vertical_alignment = "top",
 		parent = "screen",
 		horizontal_alignment = "left",
-		size = tbl,
+		size = list_size,
 		position = {
 			130,
 			-215,
@@ -30,10 +30,10 @@ local tbl_4 = {
 		vertical_alignment = "top",
 		parent = "list_window",
 		horizontal_alignment = "left",
-		size = tbl,
+		size = list_size,
 		position = {
 			0,
-			-tbl[2],
+			-list_size[2],
 			0
 		}
 	},
@@ -41,7 +41,7 @@ local tbl_4 = {
 		vertical_alignment = "top",
 		parent = "list_window",
 		horizontal_alignment = "left",
-		size = tbl_3,
+		size = list_scrollbar_size,
 		position = {
 			-58,
 			0,
@@ -64,10 +64,11 @@ local tbl_4 = {
 	}
 }
 
-local function fn(arg_1_0, arg_1_1, arg_1_2, arg_1_3)
+local function create_list_mask(scenegraph_id, list_scenegraph_id, size, entry_size)
 	-- function 1
-	local var_1_0 = UIFrameSettings.frame_outer_glow_04_big.texture_sizes.horizontal[2]
-	local tbl = {
+	local entry_hover_frame_settings = UIFrameSettings.frame_outer_glow_04_big
+	local entry_hover_frame_spacing = entry_hover_frame_settings.texture_sizes.horizontal[2]
+	local element = {
 		passes = {
 			{
 				style_id = "hotspot",
@@ -96,7 +97,7 @@ local function fn(arg_1_0, arg_1_1, arg_1_2, arg_1_3)
 			}
 		}
 	}
-	local tbl_2 = {
+	local content = {
 		mask_edge = "mask_rect_edge_fade",
 		mask_texture = "mask_rect",
 		list_hotspot = {},
@@ -107,11 +108,11 @@ local function fn(arg_1_0, arg_1_1, arg_1_2, arg_1_3)
 			scroll_value = 1
 		}
 	}
-	local tbl_3 = {
+	local style = {
 		hotspot = {
 			size = {
-				arg_1_2[1],
-				arg_1_2[2]
+				size[1],
+				size[2]
 			},
 			offset = {
 				0,
@@ -121,8 +122,8 @@ local function fn(arg_1_0, arg_1_1, arg_1_2, arg_1_3)
 		},
 		list_hotspot = {
 			size = {
-				arg_1_2[1] + var_1_0 * 2,
-				arg_1_2[2] + var_1_0 * 2
+				size[1] + entry_hover_frame_spacing * 2,
+				size[2] + entry_hover_frame_spacing * 2
 			},
 			color = {
 				255,
@@ -131,15 +132,15 @@ local function fn(arg_1_0, arg_1_1, arg_1_2, arg_1_3)
 				255
 			},
 			offset = {
-				-var_1_0,
-				-var_1_0,
+				-entry_hover_frame_spacing,
+				-entry_hover_frame_spacing,
 				0
 			}
 		},
 		mask = {
 			size = {
-				arg_1_2[1] + var_1_0 * 2,
-				arg_1_2[2]
+				size[1] + entry_hover_frame_spacing * 2,
+				size[2]
 			},
 			color = {
 				255,
@@ -148,15 +149,15 @@ local function fn(arg_1_0, arg_1_1, arg_1_2, arg_1_3)
 				255
 			},
 			offset = {
-				-var_1_0,
+				-entry_hover_frame_spacing,
 				0,
 				0
 			}
 		},
 		mask_top = {
 			size = {
-				arg_1_2[1] + var_1_0 * 2,
-				var_1_0
+				size[1] + entry_hover_frame_spacing * 2,
+				entry_hover_frame_spacing
 			},
 			color = {
 				255,
@@ -165,15 +166,15 @@ local function fn(arg_1_0, arg_1_1, arg_1_2, arg_1_3)
 				255
 			},
 			offset = {
-				-var_1_0,
-				arg_1_2[2],
+				-entry_hover_frame_spacing,
+				size[2],
 				0
 			}
 		},
 		mask_bottom = {
 			size = {
-				arg_1_2[1] + var_1_0 * 2,
-				var_1_0
+				size[1] + entry_hover_frame_spacing * 2,
+				entry_hover_frame_spacing
 			},
 			color = {
 				255,
@@ -182,77 +183,86 @@ local function fn(arg_1_0, arg_1_1, arg_1_2, arg_1_3)
 				255
 			},
 			offset = {
-				-var_1_0,
-				-var_1_0,
+				-entry_hover_frame_spacing,
+				-entry_hover_frame_spacing,
 				0
 			},
 			angle = math.pi,
 			pivot = {
-				(arg_1_2[1] + var_1_0 * 2) / 2,
-				var_1_0 / 2
+				(size[1] + entry_hover_frame_spacing * 2) / 2,
+				entry_hover_frame_spacing / 2
 			}
 		}
 	}
+	local widget = {}
 
-	return {
-		element = tbl,
-		content = tbl_2,
-		style = tbl_3,
-		offset = {
-			0,
-			0,
-			0
-		},
-		scenegraph_id = arg_1_0
+	widget.element = element
+	widget.content = content
+	widget.style = style
+	widget.offset = {
+		0,
+		0,
+		0
 	}
+	widget.scenegraph_id = scenegraph_id
+
+	return widget
 end
 
-local tbl_5 = {
-	list = fn("list_window", "list", tbl, tbl_2),
-	list_scrollbar = UIWidgets.create_chain_scrollbar("list_scrollbar", "list_window", tbl_4.list_scrollbar.size, "gold", true)
+local widgets = {
+	list = create_list_mask("list_window", "list", list_size, list_entry_size),
+	list_scrollbar = UIWidgets.create_chain_scrollbar("list_scrollbar", "list_window", scenegraph_definition.list_scrollbar.size, "gold", true)
 }
-local tbl_6 = {
+local animation_definitions = {
 	on_enter = {
 		{
 			name = "fade_in",
 			start_progress = 0,
 			end_progress = 0.3,
-			init = function (arg_2_0, arg_2_1, arg_2_2, arg_2_3)
+			init = function (ui_scenegraph, scenegraph_definition, widgets, params)
 				-- function 2
-				arg_2_3.render_settings.alpha_multiplier = 0
-				arg_2_3.mask_default_width = arg_2_2.widgets_by_name.list.style.mask.size[1]
+				params.render_settings.alpha_multiplier = 0
+
+				local widgets_by_name = widgets.widgets_by_name
+				local list_widget = widgets_by_name.list
+				local style = list_widget.style
+				local mask_style = style.mask
+				local mask_default_width = mask_style.size[1]
+
+				params.mask_default_width = mask_default_width
 			end,
-			update = function (arg_3_0, arg_3_1, arg_3_2, arg_3_3, arg_3_4)
+			update = function (ui_scenegraph, scenegraph_definition, widgets, progress, params)
 				-- function 3
-				local easeOutCubic = math.easeOutCubic(arg_3_3)
+				local anim_progress = math.easeOutCubic(progress)
 
-				arg_3_4.render_settings.alpha_multiplier = easeOutCubic
+				params.render_settings.alpha_multiplier = anim_progress
 
-				local widgets_by_name = arg_3_2.widgets_by_name
-				local list_widgets = arg_3_2.list_widgets
-				local num = 0
+				local widgets_by_name = widgets.widgets_by_name
+				local list_widgets = widgets.list_widgets
+				local longest_anim_distance = 0
 
-				for i, v in ipairs(list_widgets) do
-					local content = v.content
-					local offset = v.offset
-					local default_offset = v.default_offset
+				for index, widget in ipairs(list_widgets) do
+					local content = widget.content
+					local offset = widget.offset
+					local default_offset = widget.default_offset
 					local row = content.row
 					local column = content.column
-					local min = math.min(row * 50 + column * 20, 300)
+					local anim_offset = math.min(row * 50 + column * 20, 300)
 
-					offset[1] = math.floor(default_offset[1] + min - min * easeOutCubic)
-					num = math.max(num, min)
+					offset[1] = math.floor(default_offset[1] + anim_offset - anim_offset * anim_progress)
+					longest_anim_distance = math.max(longest_anim_distance, anim_offset)
 				end
 
-				local mask_default_width = arg_3_4.mask_default_width
-				local floor = math.floor(mask_default_width + num - num * easeOutCubic)
-				local style = widgets_by_name.list.style
+				local mask_default_width = params.mask_default_width
+				local mask_size = math.floor(mask_default_width + longest_anim_distance - longest_anim_distance * anim_progress)
+				local list_widget = widgets_by_name.list
+				local style = list_widget.style
 
-				style.mask.size[1] = floor
-				style.mask_top.size[1] = floor
-				style.mask_bottom.size[1] = floor
+				style.mask.size[1] = mask_size
+				style.mask_top.size[1] = mask_size
+				style.mask_bottom.size[1] = mask_size
 			end,
-			on_complete = function (arg_4_0, arg_4_1, arg_4_2, arg_4_3)
+			on_complete = function (ui_scenegraph, scenegraph_definition, widgets, params)
 				-- function 4
 				return
 			end
@@ -263,17 +273,17 @@ local tbl_6 = {
 			name = "fade_out",
 			start_progress = 0,
 			end_progress = 0.3,
-			init = function (arg_5_0, arg_5_1, arg_5_2, arg_5_3)
+			init = function (ui_scenegraph, scenegraph_definition, widgets, params)
 				-- function 5
-				arg_5_3.render_settings.alpha_multiplier = 1
+				params.render_settings.alpha_multiplier = 1
 			end,
-			update = function (arg_6_0, arg_6_1, arg_6_2, arg_6_3, arg_6_4)
+			update = function (ui_scenegraph, scenegraph_definition, widgets, progress, params)
 				-- function 6
-				local easeOutCubic = math.easeOutCubic(arg_6_3)
+				local anim_progress = math.easeOutCubic(progress)
 
-				arg_6_4.render_settings.alpha_multiplier = 1 - easeOutCubic
+				params.render_settings.alpha_multiplier = 1 - anim_progress
 			end,
-			on_complete = function (arg_7_0, arg_7_1, arg_7_2, arg_7_3)
+			on_complete = function (ui_scenegraph, scenegraph_definition, widgets, params)
 				-- function 7
 				return
 			end
@@ -282,8 +292,8 @@ local tbl_6 = {
 }
 
 return {
-	widgets = tbl_5,
+	widgets = widgets,
 	title_button_definitions = title_button_definitions,
-	scenegraph_definition = tbl_4,
-	animation_definitions = tbl_6
+	scenegraph_definition = scenegraph_definition,
+	animation_definitions = animation_definitions
 }

@@ -1,10 +1,10 @@
 -- chunkname: @scripts/settings/terror_events/terror_events_warcamp.lua
 
-local scripts_settings_terror_events_terror_event_utils = require("scripts/settings/terror_events/terror_event_utils")
-local count_event_breed = scripts_settings_terror_events_terror_event_utils.count_event_breed
-local HARDER = scripts_settings_terror_events_terror_event_utils.HARDER
-local HARDEST = scripts_settings_terror_events_terror_event_utils.HARDEST
-local tbl = {
+local TerrorEventUtils = require("scripts/settings/terror_events/terror_event_utils")
+local count_event_breed = TerrorEventUtils.count_event_breed
+local HARDER = TerrorEventUtils.HARDER
+local HARDEST = TerrorEventUtils.HARDEST
+local terror_event_blueprints = {
 	generic_disable_specials = GenericTerrorEvents.generic_disable_specials,
 	generic_enable_specials = GenericTerrorEvents.generic_enable_specials,
 	generic_disable_pacing = GenericTerrorEvents.generic_disable_pacing,
@@ -58,9 +58,9 @@ local tbl = {
 		{
 			"continue_when",
 			duration = 40,
-			condition = function (arg_1_0)
+			condition = function (t)
 				-- function 1
-				return not (count_event_breed("chaos_berzerker") < 3) or not (count_event_breed("chaos_raider") < 3) or not (count_event_breed("chaos_marauder") < 3) or count_event_breed("chaos_marauder_with_shield") < 2
+				return count_event_breed("chaos_berzerker") < 3 and count_event_breed("chaos_raider") < 3 and count_event_breed("chaos_marauder") < 3 and count_event_breed("chaos_marauder_with_shield") < 2
 			end
 		},
 		{
@@ -118,9 +118,9 @@ local tbl = {
 		{
 			"continue_when",
 			duration = 40,
-			condition = function (arg_2_0)
+			condition = function (t)
 				-- function 2
-				return not (count_event_breed("chaos_berzerker") < 2) or not (count_event_breed("chaos_raider") < 3) or not (count_event_breed("chaos_marauder") < 3) or count_event_breed("chaos_marauder_with_shield") < 2
+				return count_event_breed("chaos_berzerker") < 2 and count_event_breed("chaos_raider") < 3 and count_event_breed("chaos_marauder") < 3 and count_event_breed("chaos_marauder_with_shield") < 2
 			end
 		},
 		{
@@ -185,9 +185,9 @@ local tbl = {
 		{
 			"continue_when",
 			duration = 40,
-			condition = function (arg_3_0)
+			condition = function (t)
 				-- function 3
-				return not (count_event_breed("chaos_berzerker") < 3) or not (count_event_breed("chaos_raider") < 3) or not (count_event_breed("chaos_marauder") < 3) or count_event_breed("chaos_marauder_with_shield") < 2
+				return count_event_breed("chaos_berzerker") < 3 and count_event_breed("chaos_raider") < 3 and count_event_breed("chaos_marauder") < 3 and count_event_breed("chaos_marauder_with_shield") < 2
 			end
 		},
 		{
@@ -218,9 +218,9 @@ local tbl = {
 		{
 			"continue_when",
 			duration = 40,
-			condition = function (arg_4_0)
+			condition = function (t)
 				-- function 4
-				return not (count_event_breed("chaos_berzerker") < 3) or not (count_event_breed("chaos_raider") < 3) or not (count_event_breed("chaos_marauder") < 3) or count_event_breed("chaos_marauder_with_shield") < 2
+				return count_event_breed("chaos_berzerker") < 3 and count_event_breed("chaos_raider") < 3 and count_event_breed("chaos_marauder") < 3 and count_event_breed("chaos_marauder_with_shield") < 2
 			end
 		},
 		{
@@ -250,9 +250,9 @@ local tbl = {
 		{
 			"continue_when",
 			duration = 40,
-			condition = function (arg_5_0)
+			condition = function (t)
 				-- function 5
-				return not (count_event_breed("chaos_berzerker") < 3) or not (count_event_breed("chaos_raider") < 3) or not (count_event_breed("chaos_marauder") < 3) or count_event_breed("chaos_marauder_with_shield") < 2
+				return count_event_breed("chaos_berzerker") < 3 and count_event_breed("chaos_raider") < 3 and count_event_breed("chaos_marauder") < 3 and count_event_breed("chaos_marauder_with_shield") < 2
 			end
 		},
 		{
@@ -278,9 +278,9 @@ local tbl = {
 		{
 			"continue_when",
 			duration = 40,
-			condition = function (arg_6_0)
+			condition = function (t)
 				-- function 6
-				return not (count_event_breed("chaos_berzerker") < 3) or not (count_event_breed("chaos_raider") < 3) or not (count_event_breed("chaos_marauder") < 3) or count_event_breed("chaos_marauder_with_shield") < 2
+				return count_event_breed("chaos_berzerker") < 3 and count_event_breed("chaos_raider") < 3 and count_event_breed("chaos_marauder") < 3 and count_event_breed("chaos_marauder_with_shield") < 2
 			end
 		},
 		{
@@ -301,14 +301,14 @@ local tbl = {
 		{
 			"continue_when",
 			duration = 80,
-			condition = function (arg_7_0)
+			condition = function (t)
 				-- function 7
 				return count_event_breed("chaos_exalted_champion_warcamp") == 1
 			end
 		},
 		{
 			"continue_when",
-			condition = function (arg_8_0)
+			condition = function (t)
 				-- function 8
 				return count_event_breed("chaos_exalted_champion_warcamp") < 1
 			end
@@ -390,9 +390,9 @@ local tbl = {
 		{
 			"continue_when",
 			duration = 30,
-			condition = function (arg_9_0)
+			condition = function (t)
 				-- function 9
-				return not (count_event_breed("chaos_berzerker") < 3) or not (count_event_breed("chaos_raider") < 3) or not (count_event_breed("chaos_marauder") < 3) or not (count_event_breed("chaos_marauder_with_shield") < 2) or count_event_breed("chaos_fanatic") < 4
+				return count_event_breed("chaos_berzerker") < 3 and count_event_breed("chaos_raider") < 3 and count_event_breed("chaos_marauder") < 3 and count_event_breed("chaos_marauder_with_shield") < 2 and count_event_breed("chaos_fanatic") < 4
 			end
 		},
 		{
@@ -446,9 +446,9 @@ local tbl = {
 		{
 			"continue_when",
 			duration = 80,
-			condition = function (arg_10_0)
+			condition = function (t)
 				-- function 10
-				return not (count_event_breed("chaos_berzerker") < 3) or not (count_event_breed("chaos_raider") < 3) or not (count_event_breed("chaos_marauder") < 3) or count_event_breed("chaos_marauder_with_shield") < 2
+				return count_event_breed("chaos_berzerker") < 3 and count_event_breed("chaos_raider") < 3 and count_event_breed("chaos_marauder") < 3 and count_event_breed("chaos_marauder_with_shield") < 2
 			end
 		},
 		{
@@ -459,5 +459,5 @@ local tbl = {
 }
 
 return {
-	tbl
+	terror_event_blueprints
 }

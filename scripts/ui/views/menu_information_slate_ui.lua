@@ -1,27 +1,27 @@
 -- chunkname: @scripts/ui/views/menu_information_slate_ui.lua
 
-local var_0_0 = local_require("scripts/ui/views/menu_information_slate_ui_definitions")
-local scenegraph_definition = var_0_0.scenegraph_definition
-local widget_definitions = var_0_0.widget_definitions
-local animation_definitions = var_0_0.animation_definitions
-local body_parsing_data = var_0_0.body_parsing_data
-local create_switch_panel_func = var_0_0.create_switch_panel_func
+local definitions = local_require("scripts/ui/views/menu_information_slate_ui_definitions")
+local scenegraph_definition = definitions.scenegraph_definition
+local widget_definitions = definitions.widget_definitions
+local animation_definitions = definitions.animation_definitions
+local body_parsing_data = definitions.body_parsing_data
+local create_switch_panel_func = definitions.create_switch_panel_func
 
 MenuInformationSlateUI = class(MenuInformationSlateUI)
 
-local str = "gui/1080p/single_textures/generic/transparent_placeholder_texture"
-local str_2 = "cdn.fatsharkgames.se"
-local str_3 = "vermintide2"
-local str_4 = "information.json"
+local PRODUCT_PLACEHOLDER_TEXTURE_PATH = "gui/1080p/single_textures/generic/transparent_placeholder_texture"
+local CDN_SERVER = "cdn.fatsharkgames.se"
+local FOLDER = "vermintide2"
+local CDN_URL = "information.json"
 
-if not IS_CONSOLE then
-	str_4 = "information_" .. PLATFORM .. ".json"
+if IS_CONSOLE then
+	CDN_URL = "information_" .. PLATFORM .. ".json"
 end
 
-MenuInformationSlateUI.init = function (self, arg_1_1, arg_1_2)
+MenuInformationSlateUI.init = function (self, ui_renderer, input_service)
 	-- function 1
-	self._ui_renderer = arg_1_1
-	self._input_service = arg_1_2
+	self._ui_renderer = ui_renderer
+	self._input_service = input_service
 	self._render_settings = {
 		alpha_multiplier = 1,
 		snap_pixel_positions = true
@@ -37,31 +37,31 @@ MenuInformationSlateUI.init = function (self, arg_1_1, arg_1_2)
 	self:_fetch_backend_information()
 end
 
-MenuInformationSlateUI._start_animation = function (self, arg_2_1)
+MenuInformationSlateUI._start_animation = function (self, animation_name)
 	-- function 2
 	if not self._information_available then
 		return
 	end
 
-	local tbl = {
+	local params = {
 		render_settings = self._render_settings,
 		ui_scenegraph = self._ui_scenegraph
 	}
-	local _widgets_by_name = self._widgets_by_name
-	local var_2_2 = self._animations[arg_2_1]
+	local widgets = self._widgets_by_name
+	local current_anim_id = self._animations[animation_name]
 
-	if not var_2_2 then
-		self._ui_animator:stop_animation(var_2_2)
+	if current_anim_id then
+		self._ui_animator:stop_animation(current_anim_id)
 	end
 
-	local start_animation = self._ui_animator:start_animation(arg_2_1, _widgets_by_name, scenegraph_definition, tbl)
+	local anim_id = self._ui_animator:start_animation(animation_name, widgets, scenegraph_definition, params)
 
-	self._animations[arg_2_1] = start_animation
+	self._animations[animation_name] = anim_id
 end
 
 MenuInformationSlateUI.show = function (self)
 	-- function 3
-	if not (not self._information_data and not (#self._information_data > 1)) then
+	if self._information_data and #self._information_data > 1 then
 		self:_start_animation("animate_switch_panel_in")
 	end
 
@@ -70,7 +70,7 @@ end
 
 MenuInformationSlateUI.hide = function (self)
 	-- function 4
-	if not (not self._information_data and not (#self._information_data > 1)) then
+	if self._information_data and #self._information_data > 1 then
 		self:_start_animation("animate_switch_panel_out")
 	end
 
@@ -93,45 +93,53 @@ end
 
 MenuInformationSlateUI._reset = function (self)
 	-- function 6
-	for k, v in pairs(self._animations) do
-		self._ui_animator:stop_animation(v)
+	for key, id in pairs(self._animations) do
+		self._ui_animator:stop_animation(id)
 	end
 
 	table.clear(self._animations)
 	table.clear(self._ui_animations)
 
-	local tbl = {}
-	local tbl_2 = {}
+	local widgets = {}
+	local widgets_by_name = {}
 
-	for k_2, v_2 in pairs(widget_definitions) do
-		local var_6_2 = UIWidget.init(v_2)
+	for widget_name, widget_definition in pairs(widget_definitions) do
+		local widget = UIWidget.init(widget_definition)
 
-		tbl_2[k_2] = var_6_2
-		tbl[#tbl + 1] = var_6_2
+		widgets_by_name[widget_name] = widget
+		widgets[#widgets + 1] = widget
 	end
 
-	self._widgets = tbl
-	self._widgets_by_name = tbl_2
+	self._widgets = widgets
+	self._widgets_by_name = widgets_by_name
 	self._body_widgets = {}
 end
 
 MenuInformationSlateUI._fetch_backend_information = function (self)
 	-- function 7
-	if not IS_CONSOLE then
-		self:_fetch_cdn_data(str_3 .. "/" .. str_4, callback(self, "_parse_cdn_data"))
+	if IS_CONSOLE then
+		self:_fetch_cdn_data(FOLDER .. "/" .. CDN_URL, callback(self, "_parse_cdn_data"))
 	else
-		local get_title_data = Managers.backend:get_title_data("information")
-		local flag = not get_title_data and cjson.decode(get_title_data)
+		local information_data_json = Managers.backend:get_title_data("information")
+		local information_data = not not information_data_json and not not cjson.decode(information_data_json)
 
-		if not (not flag and table.is_empty(flag)) then
-			self._information_data = flag
+		if information_data and not table.is_empty(information_data) then
+			self._information_data = information_data
 
-			local var_7_2 = flag[1]
+			local var_7_0 = information_data[1]
 
-			var_7_2 = var_7_2 or flag
+			if not var_7_0 then
+				-- Nothing
+			end
+
+			var_7_0 = information_data
+
+			local slate_data = var_7_0
+
+			::label_7_0::
 
 			self:_create_ui_elements()
-			self:_parse_information_data(var_7_2)
+			self:_parse_information_data(slate_data)
 
 			if #self._information_data > 1 then
 				self:_create_switch_panel()
@@ -143,94 +151,110 @@ MenuInformationSlateUI._fetch_backend_information = function (self)
 	end
 end
 
-local function fn(arg_8_0, arg_8_1, arg_8_2, arg_8_3, arg_8_4)
+local function _callback_wrapper(success, http_code, response_headers, data, userdata_callback)
 	-- function 8
-	local tbl = {
+	local info = {
 		done = false
 	}
 
-	if not (not arg_8_0 and not (arg_8_1 >= 200) or not (arg_8_1 < 300)) then
-		tbl.done = true
-		tbl.data = arg_8_3
+	if success and http_code >= 200 and http_code < 300 then
+		info.done = true
+		info.data = data
 	end
 
-	arg_8_4(tbl)
+	userdata_callback(info)
 end
 
-MenuInformationSlateUI._fetch_cdn_data = function (arg_9_0, arg_9_1, arg_9_2)
+MenuInformationSlateUI._fetch_cdn_data = function (self, url, callback)
 	-- function 9
-	if not rawget(_G, "Http") then
-		local get_uri = Http.get_uri(str_2, 80, arg_9_1)
+	if rawget(_G, "Http") then
+		local message = Http.get_uri(CDN_SERVER, 80, url)
 
-		if not get_uri then
-			local find = string.find(get_uri, "HTTP/1.1 200 OK")
-
-			find = find or string.find(get_uri, "HTTP/1.0 200 OK")
+		if message then
+			local find = string.find(message, "HTTP/1.1 200 OK")
 
 			if not find then
-				local find_2, var_9_3 = string.find(get_uri, "\r\n\r\n")
-				local str = ""
+				-- Nothing
+			end
 
-				if not var_9_3 then
-					str = string.sub(get_uri, var_9_3 + 1)
+			find = string.find(message, "HTTP/1.0 200 OK")
+
+			local is_ok = find
+
+			::label_9_0::
+
+			if is_ok then
+				local start_idx, end_idx = string.find(message, "\r\n\r\n")
+				local formatted_message = ""
+
+				if end_idx then
+					formatted_message = string.sub(message, end_idx + 1)
 				end
 
-				local tbl = {
+				local info = {
 					success = true,
 					done = true,
-					message = str
+					message = formatted_message
 				}
 
-				arg_9_2(tbl)
+				callback(info)
 			else
-				local tbl_2 = {
+				local info = {
 					done = true,
 					message = "CDN data fetch failed",
 					success = false
 				}
 
-				arg_9_2(tbl_2)
+				callback(info)
 			end
 		else
-			local tbl_3 = {
+			local info = {
 				done = true,
 				message = "CDN data not available",
 				success = false
 			}
 
-			arg_9_2(tbl_3)
+			callback(info)
 		end
 	else
-		local tbl_4 = {
+		local info = {
 			done = true,
 			message = "This executable is built without Http. Menu Slate UI will be unavailable.",
 			success = false
 		}
 
-		arg_9_2(tbl_4)
+		callback(info)
 	end
 end
 
-MenuInformationSlateUI._parse_cdn_data = function (self, arg_10_1)
+MenuInformationSlateUI._parse_cdn_data = function (self, info)
 	-- function 10
-	if not arg_10_1.success then
-		Application.warning("[MenuInformationSlateUI] " .. arg_10_1.message)
+	if not info.success then
+		Application.warning("[MenuInformationSlateUI] " .. info.message)
 
 		return
 	end
 
-	local message = arg_10_1.message
-	local flag = not message and cjson.decode(message)
+	local json_data = info.message
+	local data = not not json_data and not not cjson.decode(json_data)
 
-	if not (not flag and table.is_empty(flag)) then
-		self._information_data = flag
+	if data and not table.is_empty(data) then
+		self._information_data = data
 
-		local var_10_2 = flag[1]
+		local var_10_0 = data[1]
 
-		var_10_2 = var_10_2 or flag
+		if not var_10_0 then
+			-- Nothing
+		end
+
+		var_10_0 = data
+
+		local slate_data = var_10_0
+
+		::label_10_0::
 
 		self:_create_ui_elements()
-		self:_parse_information_data(var_10_2)
+		self:_parse_information_data(slate_data)
 
 		if #self._information_data > 1 then
 			self:_create_switch_panel()
@@ -245,379 +269,403 @@ MenuInformationSlateUI._create_switch_panel = function (self)
 	-- function 11
 	self._ui_scenegraph.panel.local_position[2] = scenegraph_definition.panel.position[2] - 50
 
-	local var_11_0 = create_switch_panel_func(self._information_data)
-	local var_11_1 = UIWidget.init(var_11_0)
+	local switch_panel_widget_def = create_switch_panel_func(self._information_data)
+	local switch_panel_widget = UIWidget.init(switch_panel_widget_def)
 
-	var_11_1.content.current_index = self._current_information_data_index
-	self._switch_widget = var_11_1
-	self._widgets_by_name.switch_panel = var_11_1
+	switch_panel_widget.content.current_index = self._current_information_data_index
+	self._switch_widget = switch_panel_widget
+	self._widgets_by_name.switch_panel = switch_panel_widget
 end
 
-MenuInformationSlateUI._parse_information_data = function (self, arg_12_1)
+MenuInformationSlateUI._parse_information_data = function (self, information_data)
 	-- function 12
-	local alert_name = arg_12_1.alert_name
-	local alert_color = arg_12_1.alert_color
-	local header = arg_12_1.header
-	local sub_header = arg_12_1.sub_header
+	local alert_type = information_data.alert_name
+	local alert_color = information_data.alert_color
+	local header = information_data.header
+	local sub_header = information_data.sub_header
+	local widget = self._widgets_by_name.alert_name
 
-	self._widgets_by_name.alert_name.content.text = alert_name
-	self._widgets_by_name.dot.style.texture_id.color = alert_color
-	self._widgets_by_name.dot_glow.style.texture_id.color = alert_color
-	self._widgets_by_name.top_banner.style.rect.color = alert_color
-	self._widgets_by_name.header.content.text = header
-	self._widgets_by_name.sub_header.content.text = sub_header
+	widget.content.text = alert_type
 
-	local body = arg_12_1.body
-	local num = 0
+	local widget = self._widgets_by_name.dot
 
-	if not body then
-		for i, v in ipairs(body) do
-			local type = v.type
-			local var_12_7 = self["_parse_" .. type .. "_data"]
+	widget.style.texture_id.color = alert_color
 
-			if not var_12_7 then
-				num = var_12_7(self, v, i, num)
+	local widget = self._widgets_by_name.dot_glow
+
+	widget.style.texture_id.color = alert_color
+
+	local widget = self._widgets_by_name.top_banner
+
+	widget.style.rect.color = alert_color
+
+	local widget = self._widgets_by_name.header
+
+	widget.content.text = header
+
+	local widget = self._widgets_by_name.sub_header
+
+	widget.content.text = sub_header
+
+	local body = information_data.body
+	local offset = 0
+
+	if body then
+		for idx, section_data in ipairs(body) do
+			local section_type = section_data.type
+			local func = self["_parse_" .. section_type .. "_data"]
+
+			if func then
+				offset = func(self, section_data, idx, offset)
 			else
-				fassert(false, "[MenuInformationSlateUi] There is no parse function for type %q", type)
+				fassert(false, "[MenuInformationSlateUi] There is no parse function for type %q", section_type)
 			end
 		end
 	end
 
-	local num_2 = math.abs(num) - 590
+	local excess = math.abs(offset) - 590
 
-	if num_2 > 0 then
-		local _ui_scenegraph = self._ui_scenegraph
-		local str = "body_anchor"
-		local str_2 = "scrolbar_window"
-		local var_12_12 = num_2
-		local flag = false
-		local var_12_14
-		local var_12_15
+	if excess > 0 then
+		local ui_scenegraph = self._ui_scenegraph
+		local scroll_area_scenegraph_id = "body_anchor"
+		local scroll_area_anchor_scenegraph_id = "scrolbar_window"
+		local excess_area = excess
+		local enable_auto_scroll = false
+		local optional_scroll_area_hotspot_widget, horizontal_scrollbar
 
-		self._scrollbar_ui = ScrollbarUI:new(_ui_scenegraph, str, str_2, var_12_12, flag, var_12_14, var_12_15)
+		self._scrollbar_ui = ScrollbarUI:new(ui_scenegraph, scroll_area_scenegraph_id, scroll_area_anchor_scenegraph_id, excess_area, enable_auto_scroll, optional_scroll_area_hotspot_widget, horizontal_scrollbar)
 	else
 		self._scrollbar_ui = nil
 
-		local str_3 = "body_anchor"
+		local scroll_area_scenegraph_id = "body_anchor"
 
-		self._ui_scenegraph[str_3].local_position[2] = 0
+		self._ui_scenegraph[scroll_area_scenegraph_id].local_position[2] = 0
 	end
 
 	self._information_available = true
 end
 
-MenuInformationSlateUI._parse_text_data = function (self, arg_13_1, arg_13_2, arg_13_3)
+MenuInformationSlateUI._parse_text_data = function (self, data, idx, offset)
 	-- function 13
-	local text = body_parsing_data.text
-	local spacing = text.spacing
-	local clone = table.clone(text.default_text_style)
-	local font_size = arg_13_1.font_size
+	local text_body_parsing_data = body_parsing_data.text
+	local spacing = text_body_parsing_data.spacing
+	local text_style = table.clone(text_body_parsing_data.default_text_style)
+	local font_size_2 = data.font_size
 
-	font_size = font_size or clone.font_size
-	clone.font_size = font_size
+	font_size_2 = not not font_size_2 or not not text_style.font_size
+	text_style.font_size = font_size_2
 
-	local font_type = arg_13_1.font_type
+	local font_type = data.font_type
 
-	font_type = font_type or clone.font_type
-	clone.font_type = font_type
+	font_type = not not font_type or not not text_style.font_type
+	text_style.font_type = font_type
 
-	local color = arg_13_1.color
+	local color = data.color
 
-	color = color or clone.text_color
-	clone.text_color = color
+	color = not not color or not not text_style.text_color
+	text_style.text_color = color
 
-	local text_2 = arg_13_1.text
-	local hint = arg_13_1.hint
-	local var_13_8, var_13_9 = UIFontByResolution(clone)
-	local var_13_10 = var_13_8[1]
-	local var_13_11 = var_13_9
+	local text = data.text
+	local hint = data.hint
+	local font, size_of_font = UIFontByResolution(text_style)
+	local font_material, font_size = font[1], size_of_font
 	local gui = self._ui_renderer.gui
-	local var_13_13, var_13_14, var_13_15 = UIGetFontHeight(gui, clone.font_type, var_13_11)
+	local _, font_min, font_max = UIGetFontHeight(gui, text_style.font_type, font_size)
 	local inv_scale = RESOLUTION_LOOKUP.inv_scale
-	local num = (var_13_15 - var_13_14) * inv_scale
+	local full_font_height = (font_max - font_min) * inv_scale
 
 	if hint == "bullet_points" then
-		clone.offset[1] = 20
-		arg_13_3 = arg_13_3 + spacing
+		text_style.offset[1] = 20
+		offset = offset + spacing
 
-		local num_2 = 1
-		local split_deprecated = string.split_deprecated(text_2, "|")
+		local indent = 1
+		local bullet_points = string.split_deprecated(text, "|")
 
-		for i, v in ipairs(split_deprecated) do
-			local match = string.match(v, "%$INDENT;[%a%d_]*:")
+		for bullet_point_idx, bullet_point in ipairs(bullet_points) do
+			local indent_macro = string.match(bullet_point, "%$INDENT;[%a%d_]*:")
 
-			if not match then
-				local find = string.find(match, ";")
+			if indent_macro then
+				local arg_start = string.find(indent_macro, ";")
 
-				num_2 = tonumber(string.sub(match, find + 1, -2))
+				indent = tonumber(string.sub(indent_macro, arg_start + 1, -2))
 			end
 
-			local clone_2 = table.clone(clone)
+			local bullet_point_text_style = table.clone(text_style)
 
-			clone_2.offset[1] = clone_2.offset[1] + (num_2 - 1) * 30
-			clone_2.area_size = {
-				405 - 30 * (num_2 - 1),
+			bullet_point_text_style.offset[1] = bullet_point_text_style.offset[1] + (indent - 1) * 30
+			bullet_point_text_style.area_size = {
+				405 - 30 * (indent - 1),
 				50
 			}
-			v = string.gsub(v, "%$INDENT;[%a%d_]*:", "")
+			bullet_point = string.gsub(bullet_point, "%$INDENT;[%a%d_]*:", "")
 
-			local create_simple_text = UIWidgets.create_simple_text(v, "body_anchor", nil, nil, clone_2)
-			local var_13_24 = UIWidget.init(create_simple_text)
+			local widget_definition = UIWidgets.create_simple_text(bullet_point, "body_anchor", nil, nil, bullet_point_text_style)
+			local widget = UIWidget.init(widget_definition)
 
-			self._body_widgets[#self._body_widgets + 1] = var_13_24
-			self._widgets_by_name["text_" .. arg_13_2 .. "_bullet_point_" .. i] = var_13_24
-			var_13_24.offset[2] = arg_13_3
+			self._body_widgets[#self._body_widgets + 1] = widget
+			self._widgets_by_name["text_" .. idx .. "_bullet_point_" .. bullet_point_idx] = widget
+			widget.offset[2] = offset
 
-			local var_13_25
-			local var_13_26
-			local var_13_27
-			local flag = true
+			local dot_widget, inner_dot_widget, dash_widget
+			local masked = true
 
-			if num_2 > 2 then
-				local create_simple_texture = UIWidgets.create_simple_texture("rect_masked", "body_anchor", flag, nil, {
+			if indent > 2 then
+				local widget_definition = UIWidgets.create_simple_texture("rect_masked", "body_anchor", masked, nil, {
 					255,
 					192,
 					192,
 					192
 				}, {
-					clone_2.offset[1] - 30 + 10,
-					arg_13_3 - 3 - 8,
+					bullet_point_text_style.offset[1] - 30 + 10,
+					offset - 3 - 8,
 					1
 				}, {
 					5,
 					5
 				})
 
-				create_simple_texture.style.texture_id.horizontal_alignment = "left"
-				create_simple_texture.style.texture_id.vertical_alignment = "top"
-				var_13_27 = UIWidget.init(create_simple_texture)
-				self._body_widgets[#self._body_widgets + 1] = var_13_27
-				self._widgets_by_name["text_" .. arg_13_2 .. "_bullet_point_dash_" .. i] = var_13_27
+				widget_definition.style.texture_id.horizontal_alignment = "left"
+				widget_definition.style.texture_id.vertical_alignment = "top"
+				dash_widget = UIWidget.init(widget_definition)
+				self._body_widgets[#self._body_widgets + 1] = dash_widget
+				self._widgets_by_name["text_" .. idx .. "_bullet_point_dash_" .. bullet_point_idx] = dash_widget
 			else
-				local create_simple_texture_2 = UIWidgets.create_simple_texture("dot", "body_anchor", flag, nil, {
+				local widget_definition = UIWidgets.create_simple_texture("dot", "body_anchor", masked, nil, {
 					255,
 					192,
 					192,
 					192
 				}, {
-					clone_2.offset[1] - 30,
-					arg_13_3 - 3,
+					bullet_point_text_style.offset[1] - 30,
+					offset - 3,
 					1
 				}, {
 					20,
 					20
 				})
 
-				create_simple_texture_2.style.texture_id.horizontal_alignment = "left"
-				create_simple_texture_2.style.texture_id.vertical_alignment = "top"
-				var_13_25 = UIWidget.init(create_simple_texture_2)
-				self._body_widgets[#self._body_widgets + 1] = var_13_25
-				self._widgets_by_name["text_" .. arg_13_2 .. "_bullet_point_dot_" .. i] = var_13_25
+				widget_definition.style.texture_id.horizontal_alignment = "left"
+				widget_definition.style.texture_id.vertical_alignment = "top"
+				dot_widget = UIWidget.init(widget_definition)
+				self._body_widgets[#self._body_widgets + 1] = dot_widget
+				self._widgets_by_name["text_" .. idx .. "_bullet_point_dot_" .. bullet_point_idx] = dot_widget
 
-				if num_2 == 2 then
-					local flag_2 = true
-					local create_simple_texture_3 = UIWidgets.create_simple_texture("dot", "body_anchor", flag_2, nil, {
+				if indent == 2 then
+					local masked = true
+					local widget_definition = UIWidgets.create_simple_texture("dot", "body_anchor", masked, nil, {
 						255,
 						0,
 						0,
 						0
 					}, {
-						clone_2.offset[1] - 30 + 3,
-						arg_13_3 - 3 - 3,
+						bullet_point_text_style.offset[1] - 30 + 3,
+						offset - 3 - 3,
 						2
 					}, {
 						14,
 						14
 					})
 
-					create_simple_texture_3.style.texture_id.horizontal_alignment = "left"
-					create_simple_texture_3.style.texture_id.vertical_alignment = "top"
-					var_13_26 = UIWidget.init(create_simple_texture_3)
-					self._body_widgets[#self._body_widgets + 1] = var_13_26
-					self._widgets_by_name["text_" .. arg_13_2 .. "_bullet_point_inner_dot_" .. i] = var_13_26
+					widget_definition.style.texture_id.horizontal_alignment = "left"
+					widget_definition.style.texture_id.vertical_alignment = "top"
+					inner_dot_widget = UIWidget.init(widget_definition)
+					self._body_widgets[#self._body_widgets + 1] = inner_dot_widget
+					self._widgets_by_name["text_" .. idx .. "_bullet_point_inner_dot_" .. bullet_point_idx] = inner_dot_widget
 				end
 			end
 
-			local word_wrap, var_13_34 = UIRenderer.word_wrap(self._ui_renderer, v, var_13_10, var_13_11, clone_2.area_size[1])
+			local rows, return_indices = UIRenderer.word_wrap(self._ui_renderer, bullet_point, font_material, font_size, bullet_point_text_style.area_size[1])
 
-			var_13_24.widget_height = num * #word_wrap
+			widget.widget_height = full_font_height * #rows
 
-			if not var_13_25 then
-				var_13_25.widget_height = var_13_24.widget_height
+			if dot_widget then
+				dot_widget.widget_height = widget.widget_height
 			end
 
-			if not var_13_26 then
-				var_13_26.widget_height = var_13_24.widget_height
+			if inner_dot_widget then
+				inner_dot_widget.widget_height = widget.widget_height
 			end
 
-			if not var_13_27 then
-				var_13_27.widget_height = var_13_24.widget_height
+			if dash_widget then
+				dash_widget.widget_height = widget.widget_height
 			end
 
-			local num_3 = arg_13_3 - var_13_24.widget_height
-			local num_4
+			local num = offset - widget.widget_height
+			local num_2
 
-			if #word_wrap > 1 then
-				num_4 = spacing * 0.5
+			if #rows > 1 then
+				num_2 = spacing * 0.5
 
-				if not num_4 then
+				if not num_2 then
 					-- Nothing
 				end
 			end
 
-			num_4 = 0
+			num_2 = 0
 
 			::label_13_0::
 
-			arg_13_3 = num_3 - num_4
+			offset = num - num_2
 		end
 
-		arg_13_3 = arg_13_3 - spacing
+		offset = offset - spacing
 	else
-		local create_simple_text_2 = UIWidgets.create_simple_text(text_2, "body_anchor", nil, nil, clone)
-		local var_13_38 = UIWidget.init(create_simple_text_2)
+		local widget_definition = UIWidgets.create_simple_text(text, "body_anchor", nil, nil, text_style)
+		local widget = UIWidget.init(widget_definition)
 
-		self._body_widgets[#self._body_widgets + 1] = var_13_38
-		self._widgets_by_name["text_" .. arg_13_2] = var_13_38
-		var_13_38.offset[2] = arg_13_3
+		self._body_widgets[#self._body_widgets + 1] = widget
+		self._widgets_by_name["text_" .. idx] = widget
+		widget.offset[2] = offset
 
-		local word_wrap_2, var_13_40 = UIRenderer.word_wrap(self._ui_renderer, text_2, var_13_10, var_13_11, self._ui_scenegraph.body_anchor.size[1])
+		local rows, return_indices = UIRenderer.word_wrap(self._ui_renderer, text, font_material, font_size, self._ui_scenegraph.body_anchor.size[1])
 
-		var_13_38.widget_height = num * #word_wrap_2
-		arg_13_3 = arg_13_3 - var_13_38.widget_height - spacing
+		widget.widget_height = full_font_height * #rows
+		offset = offset - widget.widget_height - spacing
 	end
 
-	return arg_13_3
+	return offset
 end
 
-MenuInformationSlateUI._parse_image_data = function (self, arg_14_1, arg_14_2, arg_14_3)
+MenuInformationSlateUI._parse_image_data = function (self, data, idx, offset)
 	-- function 14
-	local image = body_parsing_data.image
-	local image_name = arg_14_1.image_name
-	local image_size = arg_14_1.image_size
-	local flag = true
-	local str = "image_" .. arg_14_2
-	local var_14_5 = image_size[2]
+	local image_body_parsing_data = body_parsing_data.image
+	local image_name = data.image_name
+	local image_size = data.image_size
+	local masked = true
+	local reference_name = "image_" .. idx
+	local widget_height = image_size[2]
 
-	local function fn()
+	local function widget_cb()
 		-- function 15
-		local var_15_0 = self._cloned_materials_by_reference[str]
-		local create_simple_texture = UIWidgets.create_simple_texture(var_15_0, "body_anchor")
+		local material = self._cloned_materials_by_reference[reference_name]
+		local widget_definition = UIWidgets.create_simple_texture(material, "body_anchor")
 
-		create_simple_texture.style.texture_id.horizontal_alignment = "left"
-		create_simple_texture.style.texture_id.vertical_alignment = "top"
+		widget_definition.style.texture_id.horizontal_alignment = "left"
+		widget_definition.style.texture_id.vertical_alignment = "top"
 
-		local var_15_2 = UIWidget.init(create_simple_texture)
+		local widget = UIWidget.init(widget_definition)
 
-		var_15_2.offset[2] = arg_14_3
-		var_15_2.style.texture_id.texture_size = image_size
-		self._body_widgets[#self._body_widgets + 1] = var_15_2
-		self._widgets_by_name[str] = var_15_2
-		var_15_2.widget_height = var_14_5
-		var_15_2.is_image = true
+		widget.offset[2] = offset
+		widget.style.texture_id.texture_size = image_size
+		self._body_widgets[#self._body_widgets + 1] = widget
+		self._widgets_by_name[reference_name] = widget
+		widget.widget_height = widget_height
+		widget.is_image = true
 	end
 
-	self:_setup_backend_image_material(image_name, flag, str, fn)
+	self:_setup_backend_image_material(image_name, masked, reference_name, widget_cb)
 
-	return arg_14_3 - var_14_5 - image.spacing
+	return offset - widget_height - image_body_parsing_data.spacing
 end
 
-MenuInformationSlateUI._setup_backend_image_material = function (self, arg_16_1, arg_16_2, arg_16_3, arg_16_4)
+MenuInformationSlateUI._setup_backend_image_material = function (self, texture_name, masked, reference_name, widget_cb)
 	-- function 16
-	local flag = arg_16_3 or arg_16_1
-	local str = "MenuInformationSlateUI_" .. flag
-	local flag_2
+	local reference_name = not not reference_name or not not texture_name
+	local material_name = "MenuInformationSlateUI_" .. reference_name
+	local str
 
-	flag_2 = not arg_16_2 and "template_diffuse_masked" and "template_diffuse"
+	if masked then
+		str = "template_diffuse_masked"
 
-	self:_create_material_instance(str, flag_2, flag)
+		goto label_16_0
+	end
 
-	if not IS_CONSOLE then
-		self._material_references_to_unload[flag] = true
+	str = "template_diffuse"
 
-		local flag_3 = false
-		local var_16_4 = callback(self, "_cb_on_backend_image_loaded", str, flag, arg_16_4, arg_16_1, flag_3)
+	local template_material_name = str
 
-		Managers.url_loader:load_resource(flag, "http://" .. str_2 .. "/" .. str_3 .. "/" .. arg_16_1 .. ".dds", var_16_4, Application.guid())
+	::label_16_0::
+
+	self:_create_material_instance(material_name, template_material_name, reference_name)
+
+	if IS_CONSOLE then
+		self._material_references_to_unload[reference_name] = true
+
+		local use_amazon_cdn_fallback = false
+		local cb = callback(self, "_cb_on_backend_image_loaded", material_name, reference_name, widget_cb, texture_name, use_amazon_cdn_fallback)
+
+		Managers.url_loader:load_resource(reference_name, "http://" .. CDN_SERVER .. "/" .. FOLDER .. "/" .. texture_name .. ".dds", cb, Application.guid())
 	else
-		local get_interface = Managers.backend:get_interface("cdn")
-		local var_16_6 = callback(self, "_cb_on_backend_url_loaded", arg_16_1, flag, str, arg_16_4)
+		local cdn = Managers.backend:get_interface("cdn")
+		local cb = callback(self, "_cb_on_backend_url_loaded", texture_name, reference_name, material_name, widget_cb)
 
-		get_interface:get_resource_urls({
-			arg_16_1
-		}, var_16_6)
+		cdn:get_resource_urls({
+			texture_name
+		}, cb)
 	end
 end
 
-MenuInformationSlateUI._create_material_instance = function (self, arg_17_1, arg_17_2, arg_17_3)
+MenuInformationSlateUI._create_material_instance = function (self, new_material_name, template_material_name, reference_name)
 	-- function 17
-	self._cloned_materials_by_reference[arg_17_3] = arg_17_1
+	local cloned_materials_by_reference = self._cloned_materials_by_reference
 
-	return Gui.clone_material_from_template(self._ui_renderer.gui, arg_17_1, arg_17_2)
+	cloned_materials_by_reference[reference_name] = new_material_name
+
+	return Gui.clone_material_from_template(self._ui_renderer.gui, new_material_name, template_material_name)
 end
 
-MenuInformationSlateUI._cb_on_backend_url_loaded = function (arg_18_0, arg_18_1, arg_18_2, arg_18_3, arg_18_4, arg_18_5)
+MenuInformationSlateUI._cb_on_backend_url_loaded = function (self, texture_name, reference_name, material_name, widget_cb, result)
 	-- function 18
-	local var_18_0 = arg_18_5[arg_18_1]
+	local texture_url = result[texture_name]
 
-	if not var_18_0 then
-		local flag = false
+	if not texture_url then
+		local use_amazon_cdn_fallback = false
 
-		arg_18_0._material_references_to_unload[arg_18_2] = true
+		self._material_references_to_unload[reference_name] = true
 
-		local var_18_2 = callback(arg_18_0, "_cb_on_backend_image_loaded", arg_18_3, arg_18_2, arg_18_4, arg_18_1, flag)
+		local cb = callback(self, "_cb_on_backend_image_loaded", material_name, reference_name, widget_cb, texture_name, use_amazon_cdn_fallback)
 
-		Managers.url_loader:load_resource(arg_18_2, "http://" .. str_2 .. "/" .. str_3 .. "/" .. arg_18_1 .. ".dds", var_18_2, Application.guid())
+		Managers.url_loader:load_resource(reference_name, "http://" .. CDN_SERVER .. "/" .. FOLDER .. "/" .. texture_name .. ".dds", cb, Application.guid())
 
 		return
 	end
 
-	arg_18_0._material_references_to_unload[arg_18_2] = true
+	self._material_references_to_unload[reference_name] = true
 
-	local flag_2 = true
-	local var_18_4 = callback(arg_18_0, "_cb_on_backend_image_loaded", arg_18_3, arg_18_2, arg_18_4, arg_18_1, flag_2)
+	local use_amazon_cdn_fallback = true
+	local cb = callback(self, "_cb_on_backend_image_loaded", material_name, reference_name, widget_cb, texture_name, use_amazon_cdn_fallback)
 
-	Managers.url_loader:load_resource(arg_18_2, var_18_0, var_18_4, arg_18_1)
+	Managers.url_loader:load_resource(reference_name, texture_url, cb, texture_name)
 end
 
-MenuInformationSlateUI._cb_on_backend_image_loaded = function (self, arg_19_1, arg_19_2, arg_19_3, arg_19_4, arg_19_5, arg_19_6)
+MenuInformationSlateUI._cb_on_backend_image_loaded = function (self, material_name, reference_name, widget_cb, texture_name, use_amazon_cdn_fallback, texture_resource)
 	-- function 19
-	if not self._cloned_materials_by_reference[arg_19_2] then
+	if not self._cloned_materials_by_reference[reference_name] then
 		return
 	end
 
-	if not arg_19_6 then
-		self:_set_material_diffuse_by_resource(arg_19_1, arg_19_6)
-		arg_19_3()
-	elseif not arg_19_5 then
-		local flag = false
+	if texture_resource then
+		self:_set_material_diffuse_by_resource(material_name, texture_resource)
+		widget_cb()
+	elseif use_amazon_cdn_fallback then
+		local use_amazon_cdn_fallback = false
 
-		self._material_references_to_unload[arg_19_2] = true
+		self._material_references_to_unload[reference_name] = true
 
-		local var_19_1 = callback(self, "_cb_on_backend_image_loaded", arg_19_1, arg_19_2, arg_19_3, arg_19_4, flag)
+		local cb = callback(self, "_cb_on_backend_image_loaded", material_name, reference_name, widget_cb, texture_name, use_amazon_cdn_fallback)
 
-		Managers.url_loader:load_resource(arg_19_2, "http://" .. str_2 .. "/" .. str_3 .. "/" .. arg_19_4 .. ".dds", var_19_1, Application.guid())
+		Managers.url_loader:load_resource(reference_name, "http://" .. CDN_SERVER .. "/" .. FOLDER .. "/" .. texture_name .. ".dds", cb, Application.guid())
 	else
-		self._material_references_to_unload[arg_19_2] = nil
+		self._material_references_to_unload[reference_name] = nil
 
-		Application.warning(string.format("[StoreWindowFeatured] - Failed loading image for reference name: (%s)", arg_19_2))
+		Application.warning(string.format("[StoreWindowFeatured] - Failed loading image for reference name: (%s)", reference_name))
 	end
 end
 
-MenuInformationSlateUI._set_material_diffuse_by_resource = function (self, arg_20_1, arg_20_2)
+MenuInformationSlateUI._set_material_diffuse_by_resource = function (self, material_name, texture_resource)
 	-- function 20
-	local material = Gui.material(self._ui_renderer.gui, arg_20_1)
+	local material = Gui.material(self._ui_renderer.gui, material_name)
 
-	if not material then
-		Material.set_resource(material, "diffuse_map", arg_20_2)
+	if material then
+		Material.set_resource(material, "diffuse_map", texture_resource)
 	end
 end
 
-MenuInformationSlateUI._update_input = function (self, arg_21_1, arg_21_2)
+MenuInformationSlateUI._update_input = function (self, dt, t)
 	-- function 21
 	local get
 
-	if not IS_CONSOLE then
+	if IS_CONSOLE then
 		get = self._input_service:get("start_press")
 
 		if not get then
@@ -627,16 +675,26 @@ MenuInformationSlateUI._update_input = function (self, arg_21_1, arg_21_2)
 
 	get = self._input_service:get("special_1_press")
 
+	local input_pressed = get
+
 	::label_21_0::
 
-	get = get or UIUtils.is_button_pressed(self._widgets_by_name.more_information, "hotspot")
-	get = get or UIUtils.is_button_pressed(self._widgets_by_name.less_information, "hotspot")
+	input_pressed = not not input_pressed or not not UIUtils.is_button_pressed(self._widgets_by_name.more_information, "hotspot")
+	input_pressed = not not input_pressed or not not UIUtils.is_button_pressed(self._widgets_by_name.less_information, "hotspot")
 
 	local expand = self._animations.expand
 
-	expand = expand or self._animations.collapse
+	if not expand then
+		-- Nothing
+	end
 
-	if not (not get and expand) then
+	expand = self._animations.collapse
+
+	local is_animating = expand
+
+	::label_21_1::
+
+	if input_pressed and not is_animating then
 		if not self._expanded then
 			self._expanded = true
 
@@ -650,18 +708,18 @@ MenuInformationSlateUI._update_input = function (self, arg_21_1, arg_21_2)
 		end
 
 		return
-	elseif UIUtils.is_button_hover_enter(self._widgets_by_name.more_information, "hotspot") or not UIUtils.is_button_hover_enter(self._widgets_by_name.less_information, "hotspot") then
+	elseif UIUtils.is_button_hover_enter(self._widgets_by_name.more_information, "hotspot") or UIUtils.is_button_hover_enter(self._widgets_by_name.less_information, "hotspot") then
 		self:_play_sound("play_gui_info_slate_more_information_hover")
 	end
 
 	if #self._information_data > 1 then
-		local _current_information_data_index = self._current_information_data_index
-		local switch_panel = self._widgets_by_name.switch_panel
+		local old_index = self._current_information_data_index
+		local widget = self._widgets_by_name.switch_panel
 
 		for i = 1, #self._information_data do
-			local str = "slate_" .. i
+			local slate_name = "slate_" .. i
 
-			if not UIUtils.is_button_pressed(switch_panel, str .. "_hotspot") then
+			if UIUtils.is_button_pressed(widget, slate_name .. "_hotspot") then
 				self:_play_sound("play_gui_info_slate_tab_clicked")
 
 				if i ~= self._current_information_data_index then
@@ -669,26 +727,26 @@ MenuInformationSlateUI._update_input = function (self, arg_21_1, arg_21_2)
 
 					break
 				end
-			elseif not UIUtils.is_button_hover_enter(switch_panel, str .. "_hotspot") then
+			elseif UIUtils.is_button_hover_enter(widget, slate_name .. "_hotspot") then
 				self:_play_sound("play_gui_info_slate_tab_hover")
 
 				break
 			end
 		end
 
-		if UIUtils.is_button_pressed(switch_panel, "left_arrow_hotspot") or self._input_service:get("previous") or not IS_WINDOWS or not self._input_service:get("left") then
+		if UIUtils.is_button_pressed(widget, "left_arrow_hotspot") or self._input_service:get("previous") or IS_WINDOWS and self._input_service:get("left") then
 			self._current_information_data_index = math.max(self._current_information_data_index - 1, 1)
 
 			self:_play_sound("play_gui_info_slate_tab_arrow_clicked")
-		elseif UIUtils.is_button_pressed(switch_panel, "right_arrow_hotspot") or self._input_service:get("next") or not IS_WINDOWS or not self._input_service:get("right") then
+		elseif UIUtils.is_button_pressed(widget, "right_arrow_hotspot") or self._input_service:get("next") or IS_WINDOWS and self._input_service:get("right") then
 			self._current_information_data_index = math.min(self._current_information_data_index + 1, #self._information_data)
 
 			self:_play_sound("play_gui_info_slate_tab_arrow_clicked")
-		elseif UIUtils.is_button_hover_enter(switch_panel, "left_arrow_hotspot") or not UIUtils.is_button_hover_enter(switch_panel, "right_arrow_hotspot") then
+		elseif UIUtils.is_button_hover_enter(widget, "left_arrow_hotspot") or UIUtils.is_button_hover_enter(widget, "right_arrow_hotspot") then
 			self:_play_sound("play_gui_info_slate_tab_arrow_hover")
 		end
 
-		if _current_information_data_index ~= self._current_information_data_index then
+		if old_index ~= self._current_information_data_index then
 			self:_populate_info_slate()
 		end
 	end
@@ -696,13 +754,13 @@ end
 
 MenuInformationSlateUI._populate_info_slate = function (self)
 	-- function 22
-	local var_22_0 = self._information_data[self._current_information_data_index]
+	local slate_data = self._information_data[self._current_information_data_index]
 
 	self:_reset()
-	self:_parse_information_data(var_22_0)
+	self:_parse_information_data(slate_data)
 	self:_create_switch_panel()
 
-	if not self._expanded then
+	if self._expanded then
 		self:_start_animation("expand_instantly")
 	else
 		self:_start_animation("collapse_instantly")
@@ -712,91 +770,92 @@ MenuInformationSlateUI._populate_info_slate = function (self)
 	self:_play_sound("play_gui_info_slate_tab_changed")
 end
 
-MenuInformationSlateUI._update_animations = function (self, arg_23_1, arg_23_2)
+MenuInformationSlateUI._update_animations = function (self, dt, t)
 	-- function 23
-	local _ui_animations = self._ui_animations
-	local _animations = self._animations
-	local _ui_animator = self._ui_animator
+	local ui_animations = self._ui_animations
+	local animations = self._animations
+	local ui_animator = self._ui_animator
 
-	for k, v in pairs(self._ui_animations) do
-		UIAnimation.update(v, arg_23_1)
+	for name, animation in pairs(self._ui_animations) do
+		UIAnimation.update(animation, dt)
 
-		if not UIAnimation.completed(v) then
-			self._ui_animations[k] = nil
+		if UIAnimation.completed(animation) then
+			self._ui_animations[name] = nil
 		end
 	end
 
-	_ui_animator:update(arg_23_1)
+	ui_animator:update(dt)
 
-	for k_2, v_2 in pairs(_animations) do
-		if not _ui_animator:is_animation_completed(v_2) then
-			_ui_animator:stop_animation(v_2)
+	for animation_name, animation_id in pairs(animations) do
+		if ui_animator:is_animation_completed(animation_id) then
+			ui_animator:stop_animation(animation_id)
 
-			_animations[k_2] = nil
+			animations[animation_name] = nil
 		end
 	end
 end
 
-MenuInformationSlateUI.update = function (self, arg_24_1, arg_24_2)
+MenuInformationSlateUI.update = function (self, dt, t)
 	-- function 24
 	if not self._information_available then
 		return
 	end
 
-	self:_update_animations(arg_24_1, arg_24_2)
-	self:_update_input(arg_24_1, arg_24_2)
-	self:_draw(arg_24_1, arg_24_2)
+	self:_update_animations(dt, t)
+	self:_update_input(dt, t)
+	self:_draw(dt, t)
 end
 
-MenuInformationSlateUI._draw = function (self, arg_25_1, arg_25_2)
+MenuInformationSlateUI._draw = function (self, dt, t)
 	-- function 25
-	local _ui_renderer = self._ui_renderer
-	local _ui_scenegraph = self._ui_scenegraph
-	local _input_service = self._input_service
-	local _render_settings = self._render_settings
+	local ui_renderer = self._ui_renderer
+	local ui_scenegraph = self._ui_scenegraph
+	local input_service = self._input_service
+	local render_settings = self._render_settings
 
-	UIRenderer.begin_pass(_ui_renderer, _ui_scenegraph, _input_service, arg_25_1, nil, _render_settings)
+	UIRenderer.begin_pass(ui_renderer, ui_scenegraph, input_service, dt, nil, render_settings)
 
-	for i, v in ipairs(self._widgets) do
-		UIRenderer.draw_widget(_ui_renderer, v)
+	for _, widget in ipairs(self._widgets) do
+		UIRenderer.draw_widget(ui_renderer, widget)
 	end
 
-	if not (self._expanded or table.is_empty(self._animations)) then
-		local var_25_4 = self._ui_scenegraph.body_anchor.local_position[2]
-		local num = 0
-		local num_2 = -var_0_0.panel_scroll_area
+	if self._expanded or not table.is_empty(self._animations) then
+		local anchor_offset = self._ui_scenegraph.body_anchor.local_position[2]
+		local start_pos = 0
+		local end_pos = -definitions.panel_scroll_area
 
-		for i_2, v_2 in ipairs(self._body_widgets) do
-			local num_3 = v_2.offset[2] + var_25_4
+		for _, widget in ipairs(self._body_widgets) do
+			local widget_offset = widget.offset[2] + anchor_offset
+			local widget_end_point = widget_offset - widget.widget_height
 
-			if not (not (num > num_3 - v_2.widget_height) or not (num_2 < num_3)) then
-				UIRenderer.draw_widget(_ui_renderer, v_2)
+			if widget_end_point < start_pos and end_pos < widget_offset then
+				UIRenderer.draw_widget(ui_renderer, widget)
 			end
 		end
 	end
 
-	if not self._switch_widget then
-		local alpha_multiplier = _render_settings.alpha_multiplier
+	if self._switch_widget then
+		local alpha_multiplier = render_settings.alpha_multiplier
 
-		_render_settings.alpha_multiplier = self._switch_widget.content.alpha_value
+		render_settings.alpha_multiplier = self._switch_widget.content.alpha_value
 
-		UIRenderer.draw_widget(_ui_renderer, self._switch_widget)
+		UIRenderer.draw_widget(ui_renderer, self._switch_widget)
 
-		_render_settings.alpha_multiplier = alpha_multiplier
+		render_settings.alpha_multiplier = alpha_multiplier
 	end
 
-	UIRenderer.end_pass(_ui_renderer)
+	UIRenderer.end_pass(ui_renderer)
 
-	if not self._expanded then
-		local alpha_multiplier_2 = _render_settings.alpha_multiplier
+	if self._expanded then
+		local alpha_multiplier = render_settings.alpha_multiplier
 
-		_render_settings.alpha_multiplier = _render_settings.scrollbar_alpha
+		render_settings.alpha_multiplier = render_settings.scrollbar_alpha
 
-		if not self._scrollbar_ui then
-			self._scrollbar_ui:update(arg_25_1, arg_25_2, _ui_renderer, _input_service, _render_settings)
+		if self._scrollbar_ui then
+			self._scrollbar_ui:update(dt, t, ui_renderer, input_service, render_settings)
 		end
 
-		_render_settings.alpha_multiplier = alpha_multiplier_2
+		render_settings.alpha_multiplier = alpha_multiplier
 	end
 end
 
@@ -805,15 +864,15 @@ MenuInformationSlateUI.destroy = function (self)
 	self:_reset_cloned_materials()
 end
 
-MenuInformationSlateUI._is_unique_reference_to_material = function (self, arg_27_1)
+MenuInformationSlateUI._is_unique_reference_to_material = function (self, reference_name)
 	-- function 27
-	local _cloned_materials_by_reference = self._cloned_materials_by_reference
-	local var_27_1 = _cloned_materials_by_reference[arg_27_1]
+	local cloned_materials_by_reference = self._cloned_materials_by_reference
+	local material_name = cloned_materials_by_reference[reference_name]
 
-	fassert(var_27_1, "[MenuInformationSlateUI] - Could not find a used material for reference name: (%s)", arg_27_1)
+	fassert(material_name, "[MenuInformationSlateUI] - Could not find a used material for reference name: (%s)", reference_name)
 
-	for k, v in pairs(_cloned_materials_by_reference) do
-		if not (var_27_1 ~= v or arg_27_1 == k) then
+	for key, value in pairs(cloned_materials_by_reference) do
+		if material_name == value and reference_name ~= key then
 			return false
 		end
 	end
@@ -821,37 +880,38 @@ MenuInformationSlateUI._is_unique_reference_to_material = function (self, arg_27
 	return true
 end
 
-MenuInformationSlateUI._set_material_diffuse_by_path = function (arg_28_0, arg_28_1, arg_28_2, arg_28_3)
+MenuInformationSlateUI._set_material_diffuse_by_path = function (self, gui, material_name, texture_path)
 	-- function 28
-	local material = Gui.material(arg_28_1, arg_28_2)
+	local material = Gui.material(gui, material_name)
 
-	if not material then
-		Material.set_texture(material, "diffuse_map", arg_28_3)
+	if material then
+		Material.set_texture(material, "diffuse_map", texture_path)
 	end
 end
 
 MenuInformationSlateUI._reset_cloned_materials = function (self)
 	-- function 29
-	local gui = self._ui_renderer.gui
-	local _material_references_to_unload = self._material_references_to_unload
-	local _cloned_materials_by_reference = self._cloned_materials_by_reference
+	local ui_renderer = self._ui_renderer
+	local gui = ui_renderer.gui
+	local material_references_to_unload = self._material_references_to_unload
+	local cloned_materials_by_reference = self._cloned_materials_by_reference
 
-	for k, v in pairs(_cloned_materials_by_reference) do
-		if not _material_references_to_unload[k] then
-			_material_references_to_unload[k] = nil
+	for reference_name, material_name in pairs(cloned_materials_by_reference) do
+		if material_references_to_unload[reference_name] then
+			material_references_to_unload[reference_name] = nil
 
-			Managers.url_loader:unload_resource(k)
+			Managers.url_loader:unload_resource(reference_name)
 		end
 
-		if not self:_is_unique_reference_to_material(k) then
-			self:_set_material_diffuse_by_path(gui, v, str)
+		if self:_is_unique_reference_to_material(reference_name) then
+			self:_set_material_diffuse_by_path(gui, material_name, PRODUCT_PLACEHOLDER_TEXTURE_PATH)
 		end
 
-		_cloned_materials_by_reference[k] = nil
+		cloned_materials_by_reference[reference_name] = nil
 	end
 end
 
-MenuInformationSlateUI._play_sound = function (arg_30_0, arg_30_1)
+MenuInformationSlateUI._play_sound = function (self, event)
 	-- function 30
-	return Managers.music:trigger_event(arg_30_1)
+	return Managers.music:trigger_event(event)
 end

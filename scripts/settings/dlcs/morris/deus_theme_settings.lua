@@ -4,7 +4,7 @@ require("scripts/utils/colors")
 
 local DeusThemeSettings = DeusThemeSettings
 
-DeusThemeSettings = DeusThemeSettings or {
+DeusThemeSettings = not not DeusThemeSettings or not not {
 	wastes = {
 		journey_title = "deus_theme_title_wastes",
 		journey_description = "deus_theme_description_wastes",
@@ -123,7 +123,7 @@ DeusThemeSettings = DeusThemeSettings
 
 local DEUS_THEME_TYPES = DEUS_THEME_TYPES
 
-DEUS_THEME_TYPES = DEUS_THEME_TYPES or {
+DEUS_THEME_TYPES = not not DEUS_THEME_TYPES or not not {
 	WASTES = "wastes",
 	TZEENTCH = "tzeentch",
 	SLAANESH = "slaanesh",
@@ -135,7 +135,7 @@ DEUS_THEME_TYPES = DEUS_THEME_TYPES
 
 local DEUS_THEME_INDEX = DEUS_THEME_INDEX
 
-DEUS_THEME_INDEX = DEUS_THEME_INDEX or {
+DEUS_THEME_INDEX = not not DEUS_THEME_INDEX or not not {
 	"wastes",
 	"khorne",
 	"nurgle",
@@ -147,7 +147,7 @@ DEUS_THEME_INDEX = DEUS_THEME_INDEX
 
 local DEUS_GOD_TYPES = DEUS_GOD_TYPES
 
-DEUS_GOD_TYPES = DEUS_GOD_TYPES or {
+DEUS_GOD_TYPES = not not DEUS_GOD_TYPES or not not {
 	NURGLE = "nurgle",
 	TZEENTCH = "tzeentch",
 	SLAANESH = "slaanesh",
@@ -158,7 +158,7 @@ DEUS_GOD_TYPES = DEUS_GOD_TYPES
 
 local DEUS_GOD_INDEX = DEUS_GOD_INDEX
 
-DEUS_GOD_INDEX = DEUS_GOD_INDEX or {
+DEUS_GOD_INDEX = not not DEUS_GOD_INDEX or not not {
 	"khorne",
 	"nurgle",
 	"tzeentch",

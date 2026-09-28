@@ -4,24 +4,24 @@ require("scripts/unit_extensions/default_player_unit/cosmetic/player_unit_cosmet
 
 CosmeticSystem = class(CosmeticSystem, ExtensionSystemBase)
 
-local tbl = {
+local RPCS = {
 	"rpc_set_equipped_frame",
 	"rpc_server_request_emote",
 	"rpc_server_cancel_emote"
 }
-local tbl_2 = {
+local extension_list = {
 	"PlayerUnitCosmeticExtension"
 }
 
-CosmeticSystem.init = function (self, arg_1_1, arg_1_2)
+CosmeticSystem.init = function (self, entity_system_creation_context, system_name)
 	-- function 1
-	table.dump(arg_1_1, "entity_system_creation_context")
-	CosmeticSystem.super.init(self, arg_1_1, arg_1_2, tbl_2)
+	table.dump(entity_system_creation_context, "entity_system_creation_context")
+	CosmeticSystem.super.init(self, entity_system_creation_context, system_name, extension_list)
 
-	self.profile_synchronizer = arg_1_1.profile_synchronizer
-	self._network_event_delegate = arg_1_1.network_event_delegate
+	self.profile_synchronizer = entity_system_creation_context.profile_synchronizer
+	self._network_event_delegate = entity_system_creation_context.network_event_delegate
 
-	self._network_event_delegate:register(self, unpack(tbl))
+	self._network_event_delegate:register(self, unpack(RPCS))
 
 	self._emote_states = {}
 end
@@ -33,102 +33,109 @@ CosmeticSystem.destroy = function (self)
 	self._network_event_delegate = nil
 end
 
-CosmeticSystem.on_add_extension = function (self, arg_3_1, arg_3_2, arg_3_3, arg_3_4)
+CosmeticSystem.on_add_extension = function (self, world, unit, extension_name, extension_init_data)
 	-- function 3
-	arg_3_4.is_server = self.is_server
+	extension_init_data.is_server = self.is_server
 
-	return CosmeticSystem.super.on_add_extension(self, arg_3_1, arg_3_2, arg_3_3, arg_3_4)
+	return CosmeticSystem.super.on_add_extension(self, world, unit, extension_name, extension_init_data)
 end
 
-CosmeticSystem.get_equipped_frame = function (arg_4_0, arg_4_1)
+CosmeticSystem.get_equipped_frame = function (self, unit)
 	-- function 4
-	local str = "default"
+	local player_portrait_frame = "default"
 
-	if not Unit.alive(arg_4_1) then
-		str = ScriptUnit.extension(arg_4_1, "cosmetic_system"):get_equipped_frame_name()
+	if Unit.alive(unit) then
+		local ext = ScriptUnit.extension(unit, "cosmetic_system")
+		local frame_name = ext:get_equipped_frame_name()
+
+		player_portrait_frame = frame_name
 	end
 
-	return str
+	return player_portrait_frame
 end
 
-CosmeticSystem.set_equipped_frame = function (self, arg_5_1, arg_5_2)
+CosmeticSystem.set_equipped_frame = function (self, unit, frame_name)
 	-- function 5
-	ScriptUnit.extension(arg_5_1, "cosmetic_system"):set_equipped_frame(arg_5_2)
+	local ext = ScriptUnit.extension(unit, "cosmetic_system")
 
-	local go_id = self.unit_storage:go_id(arg_5_1)
-	local var_5_1 = NetworkLookup.cosmetics[arg_5_2]
+	ext:set_equipped_frame(frame_name)
 
-	if not self.is_server then
-		self.network_transmit:send_rpc_clients("rpc_set_equipped_frame", go_id, var_5_1)
+	local unit_id = self.unit_storage:go_id(unit)
+	local frame_name_id = NetworkLookup.cosmetics[frame_name]
+
+	if self.is_server then
+		self.network_transmit:send_rpc_clients("rpc_set_equipped_frame", unit_id, frame_name_id)
 	else
-		self.network_transmit:send_rpc_server("rpc_set_equipped_frame", go_id, var_5_1)
+		self.network_transmit:send_rpc_server("rpc_set_equipped_frame", unit_id, frame_name_id)
 	end
 end
 
-CosmeticSystem.rpc_set_equipped_frame = function (self, arg_6_1, arg_6_2, arg_6_3)
+CosmeticSystem.rpc_set_equipped_frame = function (self, channel_id, unit_id, frame_name_id)
 	-- function 6
-	if not self.is_server then
-		local var_6_0 = CHANNEL_TO_PEER_ID[arg_6_1]
+	if self.is_server then
+		local peer_id = CHANNEL_TO_PEER_ID[channel_id]
 
-		self.network_transmit:send_rpc_clients_except("rpc_set_equipped_frame", var_6_0, arg_6_2, arg_6_3)
+		self.network_transmit:send_rpc_clients_except("rpc_set_equipped_frame", peer_id, unit_id, frame_name_id)
 	end
 
-	local unit = self.unit_storage:unit(arg_6_2)
-	local var_6_2 = NetworkLookup.cosmetics[arg_6_3]
+	local unit = self.unit_storage:unit(unit_id)
+	local frame_name = NetworkLookup.cosmetics[frame_name_id]
 
-	if not Unit.alive(unit) then
-		ScriptUnit.extension(unit, "cosmetic_system"):set_equipped_frame(var_6_2)
+	if Unit.alive(unit) then
+		local ext = ScriptUnit.extension(unit, "cosmetic_system")
+
+		ext:set_equipped_frame(frame_name)
 	end
 end
 
-CosmeticSystem.rpc_server_request_emote = function (self, arg_7_1, arg_7_2, arg_7_3, arg_7_4)
+CosmeticSystem.rpc_server_request_emote = function (self, channel_id, unit_id, anim_event_id, hide_weapons)
 	-- function 7
 	fassert(self.is_server, "Error! Only the server should process emote requests.")
 
-	local unit = self.unit_storage:unit(arg_7_2)
+	local unit = self.unit_storage:unit(unit_id)
 
-	if not unit and not ALIVE[unit] then
-		local var_7_1 = NetworkLookup.anims[arg_7_3]
+	if unit and ALIVE[unit] then
+		local anim_event = NetworkLookup.anims[anim_event_id]
 
-		self._emote_states[arg_7_2] = {
-			anim_event = var_7_1,
-			hide_weapons = arg_7_4
+		self._emote_states[unit_id] = {
+			anim_event = anim_event,
+			hide_weapons = hide_weapons
 		}
 
-		CharacterStateHelper.play_animation_event(unit, var_7_1)
+		CharacterStateHelper.play_animation_event(unit, anim_event)
 
-		local has_extension = ScriptUnit.has_extension(unit, "inventory_system")
+		local inventory_extension = ScriptUnit.has_extension(unit, "inventory_system")
 
-		CharacterStateHelper.show_inventory_3p(unit, not arg_7_4, true, true, has_extension)
+		CharacterStateHelper.show_inventory_3p(unit, not hide_weapons, true, true, inventory_extension)
 	end
 end
 
-CosmeticSystem.rpc_server_cancel_emote = function (self, arg_8_1, arg_8_2)
+CosmeticSystem.rpc_server_cancel_emote = function (self, channel_id, unit_id)
 	-- function 8
 	fassert(self.is_server, "Error! Only the server should cancel emotes.")
 
-	local unit = self.unit_storage:unit(arg_8_2)
+	local unit = self.unit_storage:unit(unit_id)
 
-	if not unit and not ALIVE[unit] then
+	if unit and ALIVE[unit] then
 		CharacterStateHelper.play_animation_event(unit, "anim_pose_cancel")
 
-		local has_extension = ScriptUnit.has_extension(unit, "inventory_system")
+		local inventory_extension = ScriptUnit.has_extension(unit, "inventory_system")
 
-		CharacterStateHelper.show_inventory_3p(unit, true, true, true, has_extension)
+		CharacterStateHelper.show_inventory_3p(unit, true, true, true, inventory_extension)
 	end
 
-	self._emote_states[arg_8_2] = nil
+	self._emote_states[unit_id] = nil
 end
 
-CosmeticSystem.hot_join_sync = function (self, arg_9_1)
+CosmeticSystem.hot_join_sync = function (self, peer_id)
 	-- function 9
 	local network_transmit = self.network_transmit
 	local unit_storage = self.unit_storage
 
-	for k, v in pairs(self._emote_states) do
-		local var_9_2 = NetworkLookup.anims[v.anim_event]
+	for unit_id, emote_state in pairs(self._emote_states) do
+		local event_id = NetworkLookup.anims[emote_state.anim_event]
 
-		network_transmit:send_rpc("rpc_anim_event", arg_9_1, var_9_2, k)
-		network_transmit:send_rpc("rpc_show_inventory", arg_9_1, k, not v.hide_weapons)
+		network_transmit:send_rpc("rpc_anim_event", peer_id, event_id, unit_id)
+		network_transmit:send_rpc("rpc_show_inventory", peer_id, unit_id, not emote_state.hide_weapons)
 	end
 end

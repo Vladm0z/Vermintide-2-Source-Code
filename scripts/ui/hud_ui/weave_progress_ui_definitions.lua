@@ -1,30 +1,29 @@
 -- chunkname: @scripts/ui/hud_ui/weave_progress_ui_definitions.lua
 
-local num = 1920
-local num_2 = 1080
-local num_3 = 1.5
-local tbl = {
-	250 * num_3,
-	22 * num_3
+local SIZE_X, SIZE_Y = 1920, 1080
+local multiplier = 1.5
+local BAR_SIZE = {
+	250 * multiplier,
+	22 * multiplier
 }
-local tbl_2 = {
-	21 * num_3,
-	21 * num_3
+local TIP_SIZE = {
+	21 * multiplier,
+	21 * multiplier
 }
-local tbl_3 = {
+local ICON_SIZE = {
 	42.5,
 	42.5
 }
-local tbl_4 = {
-	325 * num_3,
-	50 * num_3
+local WINDOW_SIZE = {
+	325 * multiplier,
+	50 * multiplier
 }
-local num_4 = 1
-local tbl_5 = {
-	325 * num_4,
-	50 * num_4
+local progress_ui_multiplier = 1
+local PROGRESS_UI_WINDOW_SIZE = {
+	325 * progress_ui_multiplier,
+	50 * progress_ui_multiplier
 }
-local tbl_6 = {
+local scenegraph_definition = {
 	screen = {
 		scale = "fit",
 		position = {
@@ -33,8 +32,8 @@ local tbl_6 = {
 			UILayer.hud
 		},
 		size = {
-			num,
-			num_2
+			SIZE_X,
+			SIZE_Y
 		}
 	},
 	progress_ui = {
@@ -46,7 +45,7 @@ local tbl_6 = {
 			-25,
 			0
 		},
-		size = tbl_5
+		size = PROGRESS_UI_WINDOW_SIZE
 	},
 	progress_window = {
 		vertical_alignment = "top",
@@ -57,7 +56,7 @@ local tbl_6 = {
 			-20,
 			0
 		},
-		size = tbl_4
+		size = WINDOW_SIZE
 	},
 	progress_icon = {
 		vertical_alignment = "center",
@@ -68,7 +67,7 @@ local tbl_6 = {
 			0,
 			1
 		},
-		size = tbl_3
+		size = ICON_SIZE
 	},
 	progress_bar = {
 		vertical_alignment = "center",
@@ -79,13 +78,13 @@ local tbl_6 = {
 			0,
 			1
 		},
-		size = tbl
+		size = BAR_SIZE
 	}
 }
 
-local function fn(arg_1_0, arg_1_1)
+local function create_progress_bar(scenegraph_id, texture)
 	-- function 1
-	local button_frame_02 = UIFrameSettings.button_frame_02
+	local frame_settings = UIFrameSettings.button_frame_02
 
 	return {
 		element = {
@@ -108,19 +107,19 @@ local function fn(arg_1_0, arg_1_1)
 					style_id = "progress_bar_fill",
 					pass_type = "texture_uv",
 					content_id = "progress_bar_fill_id",
-					content_change_function = function (self, arg_2_1)
+					content_change_function = function (content, style)
 						-- function 2
-						arg_2_1.texture_size[1] = self.parent.bar_progress * tbl[1]
-						self.uvs[2][1] = self.parent.bar_progress
+						style.texture_size[1] = content.parent.bar_progress * BAR_SIZE[1]
+						content.uvs[2][1] = content.parent.bar_progress
 					end
 				},
 				{
 					style_id = "progress_bar_tip",
 					texture_id = "progress_bar_tip_id",
 					pass_type = "texture",
-					content_change_function = function (self, arg_3_1)
+					content_change_function = function (content, style)
 						-- function 3
-						arg_3_1.offset[1] = self.bar_progress * tbl[1] - 4
+						style.offset[1] = content.bar_progress * BAR_SIZE[1] - 4
 					end
 				},
 				{
@@ -142,36 +141,36 @@ local function fn(arg_1_0, arg_1_1)
 					style_id = "progress_bar_fill_bg",
 					pass_type = "texture_uv",
 					content_id = "progress_bar_fill_bg_id",
-					content_check_function = function (self, arg_4_1)
+					content_check_function = function (content, style)
 						-- function 4
-						return self.parent.bar_progress < self.parent.progress
+						return content.parent.bar_progress < content.parent.progress
 					end,
-					content_change_function = function (self, arg_5_1)
+					content_change_function = function (content, style)
 						-- function 5
-						arg_5_1.texture_size[1] = self.parent.progress * tbl[1]
-						self.uvs[2][1] = self.parent.progress
+						style.texture_size[1] = content.parent.progress * BAR_SIZE[1]
+						content.uvs[2][1] = content.parent.progress
 					end
 				},
 				{
 					style_id = "glow",
 					pass_type = "texture_uv",
 					content_id = "glow_id",
-					content_check_function = function (self, arg_6_1)
+					content_check_function = function (content, style)
 						-- function 6
-						return self.parent.bar_progress < self.parent.progress or self.parent.bar_progress == 1
+						return content.parent.bar_progress < content.parent.progress or content.parent.bar_progress == 1
 					end,
-					content_change_function = function (self, arg_7_1, arg_7_2, arg_7_3)
+					content_change_function = function (content, style, ui_animation, dt)
 						-- function 7
-						if self.parent.bar_progress == 1 then
-							self.timer = self.timer + arg_7_3 * 3
-							arg_7_1.color[1] = 96 + math.cos(self.timer) * 96
-							arg_7_1.texture_size[1] = tbl[1]
-							arg_7_1.offset[1] = 0
+						if content.parent.bar_progress == 1 then
+							content.timer = content.timer + dt * 3
+							style.color[1] = 96 + math.cos(content.timer) * 96
+							style.texture_size[1] = BAR_SIZE[1]
+							style.offset[1] = 0
 						else
-							self.uvs[1][1] = 1 - (self.parent.progress - self.parent.bar_progress)
-							self.uvs[2][1] = 1
-							arg_7_1.offset[1] = self.parent.bar_progress * tbl[1]
-							arg_7_1.texture_size[1] = (self.parent.progress - self.parent.bar_progress) * tbl[1]
+							content.uvs[1][1] = 1 - (content.parent.progress - content.parent.bar_progress)
+							content.uvs[2][1] = 1
+							style.offset[1] = content.parent.bar_progress * BAR_SIZE[1]
+							style.texture_size[1] = (content.parent.progress - content.parent.bar_progress) * BAR_SIZE[1]
 						end
 					end
 				},
@@ -179,13 +178,13 @@ local function fn(arg_1_0, arg_1_1)
 					style_id = "progress_bar_glow_tip",
 					texture_id = "progress_bar_tip_id",
 					pass_type = "texture",
-					content_check_function = function (self, arg_8_1)
+					content_check_function = function (content, style)
 						-- function 8
-						return self.bar_progress < self.progress
+						return content.bar_progress < content.progress
 					end,
-					content_change_function = function (self, arg_9_1)
+					content_change_function = function (content, style)
 						-- function 9
-						arg_9_1.offset[1] = self.progress * tbl[1] - 4
+						style.offset[1] = content.progress * BAR_SIZE[1] - 4
 					end
 				},
 				{
@@ -255,7 +254,7 @@ local function fn(arg_1_0, arg_1_1)
 					}
 				}
 			},
-			frame_id = button_frame_02.texture,
+			frame_id = frame_settings.texture,
 			progress_bar_end_left_id = {
 				texture_id = "weave_bar_end",
 				uvs = {
@@ -331,8 +330,8 @@ local function fn(arg_1_0, arg_1_1)
 					0
 				},
 				texture_size = {
-					tbl[1] + 15,
-					tbl[2] + 18
+					BAR_SIZE[1] + 15,
+					BAR_SIZE[2] + 18
 				}
 			},
 			mask_top = {
@@ -346,12 +345,12 @@ local function fn(arg_1_0, arg_1_1)
 				},
 				offset = {
 					0,
-					tbl[2] * 0.25,
+					BAR_SIZE[2] * 0.25,
 					10
 				},
 				texture_size = {
-					tbl[1] - 17 * num_3 * 2,
-					tbl[2] * 0.4
+					BAR_SIZE[1] - 17 * multiplier * 2,
+					BAR_SIZE[2] * 0.4
 				}
 			},
 			mask_bottom = {
@@ -365,12 +364,12 @@ local function fn(arg_1_0, arg_1_1)
 				},
 				offset = {
 					0,
-					-tbl[2] * 0.25,
+					-BAR_SIZE[2] * 0.25,
 					10
 				},
 				texture_size = {
-					tbl[1] - 17 * num_3 * 2,
-					tbl[2] * 0.4
+					BAR_SIZE[1] - 17 * multiplier * 2,
+					BAR_SIZE[2] * 0.4
 				}
 			},
 			glass = {
@@ -386,8 +385,8 @@ local function fn(arg_1_0, arg_1_1)
 					4
 				},
 				texture_size = {
-					tbl[1],
-					tbl[2]
+					BAR_SIZE[1],
+					BAR_SIZE[2]
 				}
 			},
 			progress_bar_fill = {
@@ -400,8 +399,8 @@ local function fn(arg_1_0, arg_1_1)
 					3
 				},
 				texture_size = {
-					tbl[1],
-					tbl[2] + 22
+					BAR_SIZE[1],
+					BAR_SIZE[2] + 22
 				}
 			},
 			progress_bar_tip = {
@@ -412,7 +411,7 @@ local function fn(arg_1_0, arg_1_1)
 					255,
 					255
 				},
-				texture_size = tbl_2,
+				texture_size = TIP_SIZE,
 				offset = {
 					0,
 					0,
@@ -431,8 +430,8 @@ local function fn(arg_1_0, arg_1_1)
 					0,
 					5
 				},
-				texture_size = button_frame_02.texture_size,
-				texture_sizes = button_frame_02.texture_sizes
+				texture_size = frame_settings.texture_size,
+				texture_sizes = frame_settings.texture_sizes
 			},
 			progress_bar_end_right = {
 				vertical_alignment = "center",
@@ -449,8 +448,8 @@ local function fn(arg_1_0, arg_1_1)
 					5
 				},
 				texture_size = {
-					17 * num_3,
-					21 * num_3
+					17 * multiplier,
+					21 * multiplier
 				}
 			},
 			progress_bar_end_left = {
@@ -468,8 +467,8 @@ local function fn(arg_1_0, arg_1_1)
 					5
 				},
 				texture_size = {
-					17 * num_3,
-					21 * num_3
+					17 * multiplier,
+					21 * multiplier
 				}
 			},
 			progress_bar_fill_bg = {
@@ -483,7 +482,7 @@ local function fn(arg_1_0, arg_1_1)
 				},
 				texture_size = {
 					0,
-					tbl[2] + 22
+					BAR_SIZE[2] + 22
 				}
 			},
 			glow = {
@@ -501,8 +500,8 @@ local function fn(arg_1_0, arg_1_1)
 					6
 				},
 				texture_size = {
-					tbl[1],
-					tbl[2] + 16
+					BAR_SIZE[1],
+					BAR_SIZE[2] + 16
 				}
 			},
 			progress_bar_glow_tip = {
@@ -513,7 +512,7 @@ local function fn(arg_1_0, arg_1_1)
 					255,
 					255
 				},
-				texture_size = tbl_2,
+				texture_size = TIP_SIZE,
 				offset = {
 					0,
 					0,
@@ -521,29 +520,29 @@ local function fn(arg_1_0, arg_1_1)
 				}
 			}
 		},
-		scenegraph_id = arg_1_0
+		scenegraph_id = scenegraph_id
 	}
 end
 
-local function fn_2(arg_10_0)
+local function create_progress_ui(scenegraph_id)
 	-- function 10
-	local str = "weaves_essence_bar_backdrop"
-	local get_atlas_settings_by_texture_name = UIAtlasHelper.get_atlas_settings_by_texture_name(str)
-	local str_2 = "weaves_essence_bar_fill"
-	local get_atlas_settings_by_texture_name_2 = UIAtlasHelper.get_atlas_settings_by_texture_name(str_2)
-	local str_3 = "weaves_essence_bar_bg"
-	local get_atlas_settings_by_texture_name_3 = UIAtlasHelper.get_atlas_settings_by_texture_name(str_3)
-	local str_4 = "weaves_essence_bar_edge_glow"
-	local get_atlas_settings_by_texture_name_4 = UIAtlasHelper.get_atlas_settings_by_texture_name(str_4)
-	local str_5 = "weaves_essence_bar_backdrop_highlight"
-	local get_atlas_settings_by_texture_name_5 = UIAtlasHelper.get_atlas_settings_by_texture_name(str_5)
-	local str_6 = "icon_essence_small"
-	local get_atlas_settings_by_texture_name_6 = UIAtlasHelper.get_atlas_settings_by_texture_name(str_6)
-	local str_7 = "weaves_icon_boss"
-	local get_atlas_settings_by_texture_name_7 = UIAtlasHelper.get_atlas_settings_by_texture_name(str_7)
-	local str_8 = "weaves_icon_boss_greyscale"
-	local get_atlas_settings_by_texture_name_8 = UIAtlasHelper.get_atlas_settings_by_texture_name(str_8)
-	local essence = WeaveSettings.score[#WeaveSettings.score].essence
+	local background_texture = "weaves_essence_bar_backdrop"
+	local background_texture_settings = UIAtlasHelper.get_atlas_settings_by_texture_name(background_texture)
+	local bar_texture = "weaves_essence_bar_fill"
+	local bar_texture_settings = UIAtlasHelper.get_atlas_settings_by_texture_name(bar_texture)
+	local bar_bg_texture = "weaves_essence_bar_bg"
+	local bar_bg_texture_settings = UIAtlasHelper.get_atlas_settings_by_texture_name(bar_bg_texture)
+	local bar_edge_glow_texture = "weaves_essence_bar_edge_glow"
+	local bar_edge_glow_texture_settings = UIAtlasHelper.get_atlas_settings_by_texture_name(bar_edge_glow_texture)
+	local background_filled_texture = "weaves_essence_bar_backdrop_highlight"
+	local background_filled_texture_settings = UIAtlasHelper.get_atlas_settings_by_texture_name(background_filled_texture)
+	local essence_icon_texture = "icon_essence_small"
+	local essence_icon_texture_settings = UIAtlasHelper.get_atlas_settings_by_texture_name(essence_icon_texture)
+	local bubble_icon_texture = "weaves_icon_boss"
+	local bubble_icon_texture_settings = UIAtlasHelper.get_atlas_settings_by_texture_name(bubble_icon_texture)
+	local bubble_icon_grayscale_texture = "weaves_icon_boss_greyscale"
+	local bubble_icon_grayscale_texture_settings = UIAtlasHelper.get_atlas_settings_by_texture_name(bubble_icon_grayscale_texture)
+	local max_essence = WeaveSettings.score[#WeaveSettings.score].essence
 
 	return {
 		element = {
@@ -567,66 +566,68 @@ local function fn_2(arg_10_0)
 					style_id = "bar",
 					pass_type = "texture_uv",
 					content_id = "bar_content",
-					content_change_function = function (self, arg_11_1)
+					content_change_function = function (content, style)
 						-- function 11
-						local bar_progress = self.parent.bar_progress
+						local parent_content = content.parent
+						local progress = parent_content.bar_progress
+						local uvs = content.uvs
 
-						self.uvs[2][1] = bar_progress
+						uvs[2][1] = progress
 
-						local base_offset_x = arg_11_1.base_offset_x
+						local base_offset_x = style.base_offset_x
 
-						arg_11_1.texture_size[1] = bar_progress * get_atlas_settings_by_texture_name_2.size[1]
+						style.texture_size[1] = progress * bar_texture_settings.size[1]
 					end
 				},
 				{
 					style_id = "bar_glow",
 					pass_type = "rect",
-					content_change_function = function (self, arg_12_1)
+					content_change_function = function (content, style)
 						-- function 12
-						local progress = self.progress
+						local progress = content.progress
 
-						arg_12_1.texture_size[1] = progress * get_atlas_settings_by_texture_name_2.size[1]
+						style.texture_size[1] = progress * bar_texture_settings.size[1]
 					end
 				},
 				{
 					style_id = "bar_edge_glow",
 					texture_id = "bar_edge_glow_id",
 					pass_type = "texture",
-					content_change_function = function (self, arg_13_1)
+					content_change_function = function (content, style)
 						-- function 13
-						local var_13_0 = get_atlas_settings_by_texture_name_2.size[1]
-						local bar_progress = self.bar_progress
-						local base_offset_x = arg_13_1.base_offset_x
+						local size = bar_texture_settings.size[1]
+						local progress = content.bar_progress
+						local base_offset_x = style.base_offset_x
 
-						arg_13_1.offset[1] = base_offset_x + bar_progress * var_13_0
+						style.offset[1] = base_offset_x + progress * size
 
 						local time = Managers.time:time("main")
 
-						arg_13_1.color[1] = 192 + 63 * math.sin(time * 4)
+						style.color[1] = 192 + 63 * math.sin(time * 4)
 					end
 				},
 				{
 					pass_type = "texture",
 					style_id = "bubble_icon",
 					texture_id = "bubble_icon_id",
-					content_check_function = function (self)
+					content_check_function = function (content)
 						-- function 14
-						local bar_cutoff = self.bar_cutoff
+						local bar_cutoff = content.bar_cutoff
 						local current_bar_score = Managers.weave:current_bar_score()
 
-						return not (bar_cutoff < 100) or bar_cutoff <= current_bar_score
+						return bar_cutoff < 100 and bar_cutoff <= current_bar_score
 					end
 				},
 				{
 					pass_type = "texture",
 					style_id = "bubble_icon",
 					texture_id = "bubble_icon_grayscale_id",
-					content_check_function = function (self)
+					content_check_function = function (content)
 						-- function 15
-						local bar_cutoff = self.bar_cutoff
+						local bar_cutoff = content.bar_cutoff
 						local current_bar_score = Managers.weave:current_bar_score()
 
-						return not (bar_cutoff < 100) or current_bar_score < bar_cutoff
+						return bar_cutoff < 100 and current_bar_score < bar_cutoff
 					end
 				},
 				{
@@ -663,13 +664,13 @@ local function fn_2(arg_10_0)
 			essence_id = "Essence:",
 			bar_progress = 0,
 			standard_objective_text_id = "objective_kill_enemies",
-			bubble_icon_id = str_7,
-			bubble_icon_grayscale_id = str_8,
-			essence_icon_id = str_6,
-			background_id = str,
-			background_filled_id = str_5,
+			bubble_icon_id = bubble_icon_texture,
+			bubble_icon_grayscale_id = bubble_icon_grayscale_texture,
+			essence_icon_id = essence_icon_texture,
+			background_id = background_texture,
+			background_filled_id = background_filled_texture,
 			bar_content = {
-				texture_id = str_2,
+				texture_id = bar_texture,
 				uvs = {
 					{
 						0,
@@ -681,15 +682,15 @@ local function fn_2(arg_10_0)
 					}
 				}
 			},
-			bar_edge_glow_id = str_4,
-			bar_bg_id = str_3,
-			essence_amount_id = essence .. "/" .. essence
+			bar_edge_glow_id = bar_edge_glow_texture,
+			bar_bg_id = bar_bg_texture,
+			essence_amount_id = max_essence .. "/" .. max_essence
 		},
 		style = {
 			background = {
 				vertical_alignment = "top",
 				horizontal_alignment = "right",
-				texture_size = get_atlas_settings_by_texture_name.size,
+				texture_size = background_texture_settings.size,
 				color = {
 					255,
 					255,
@@ -705,7 +706,7 @@ local function fn_2(arg_10_0)
 			background_filled = {
 				vertical_alignment = "top",
 				horizontal_alignment = "right",
-				texture_size = get_atlas_settings_by_texture_name_5.size,
+				texture_size = background_filled_texture_settings.size,
 				color = {
 					0,
 					255,
@@ -721,7 +722,7 @@ local function fn_2(arg_10_0)
 			essence_icon = {
 				vertical_alignment = "center",
 				horizontal_alignment = "left",
-				texture_size = get_atlas_settings_by_texture_name_6.size,
+				texture_size = essence_icon_texture_settings.size,
 				color = {
 					255,
 					255,
@@ -737,7 +738,7 @@ local function fn_2(arg_10_0)
 			bar = {
 				vertical_alignment = "center",
 				horizontal_alignment = "left",
-				texture_size = get_atlas_settings_by_texture_name_2.size,
+				texture_size = bar_texture_settings.size,
 				color = {
 					255,
 					255,
@@ -773,7 +774,7 @@ local function fn_2(arg_10_0)
 				vertical_alignment = "center",
 				base_offset_x = 57,
 				horizontal_alignment = "left",
-				texture_size = get_atlas_settings_by_texture_name_4.size,
+				texture_size = bar_edge_glow_texture_settings.size,
 				color = {
 					255,
 					255,
@@ -789,7 +790,7 @@ local function fn_2(arg_10_0)
 			bubble_icon = {
 				vertical_alignment = "center",
 				horizontal_alignment = "left",
-				texture_size = get_atlas_settings_by_texture_name_7.size,
+				texture_size = bubble_icon_texture_settings.size,
 				color = {
 					255,
 					255,
@@ -801,12 +802,12 @@ local function fn_2(arg_10_0)
 					5,
 					10
 				},
-				base_offset_x = 53 + get_atlas_settings_by_texture_name_7.size[1] * 0.5
+				base_offset_x = 53 + bubble_icon_texture_settings.size[1] * 0.5
 			},
 			bar_bg = {
 				vertical_alignment = "center",
 				horizontal_alignment = "center",
-				texture_size = get_atlas_settings_by_texture_name_3.size,
+				texture_size = bar_bg_texture_settings.size,
 				color = {
 					255,
 					255,
@@ -920,8 +921,8 @@ local function fn_2(arg_10_0)
 					1
 				},
 				size = {
-					tbl_5[1] - 80,
-					tbl_5[2]
+					PROGRESS_UI_WINDOW_SIZE[1] - 80,
+					PROGRESS_UI_WINDOW_SIZE[2]
 				}
 			},
 			standard_objective_shadow = {
@@ -945,8 +946,8 @@ local function fn_2(arg_10_0)
 					0
 				},
 				size = {
-					tbl_5[1] - 80,
-					tbl_5[2]
+					PROGRESS_UI_WINDOW_SIZE[1] - 80,
+					PROGRESS_UI_WINDOW_SIZE[2]
 				}
 			},
 			bonus_time = {
@@ -990,13 +991,13 @@ local function fn_2(arg_10_0)
 				}
 			}
 		},
-		scenegraph_id = arg_10_0
+		scenegraph_id = scenegraph_id
 	}
 end
 
-local function fn_3()
+local function create_bonus_objective_header_func()
 	-- function 16
-	local str = "progress_ui"
+	local scenegraph_id = "progress_ui"
 
 	return {
 		element = {
@@ -1053,19 +1054,19 @@ local function fn_3()
 				}
 			}
 		},
-		scenegraph_id = str
+		scenegraph_id = scenegraph_id
 	}
 end
 
-local function fn_4(arg_17_0, arg_17_1, arg_17_2, arg_17_3)
+local function create_bonus_objective_func(display_name, index, stack_name, objective_name)
 	-- function 17
-	local str = "progress_ui"
-	local str_2 = "matchmaking_checkbox"
-	local get_atlas_settings_by_texture_name = UIAtlasHelper.get_atlas_settings_by_texture_name(str_2)
-	local str_3 = "weaves_objective_bullet"
-	local get_atlas_settings_by_texture_name_2 = UIAtlasHelper.get_atlas_settings_by_texture_name(str_3)
-	local str_4 = "icon_essence_small"
-	local get_atlas_settings_by_texture_name_3 = UIAtlasHelper.get_atlas_settings_by_texture_name(str_4)
+	local scenegraph_id = "progress_ui"
+	local checkmark_texture = "matchmaking_checkbox"
+	local checkmark_texture_settings = UIAtlasHelper.get_atlas_settings_by_texture_name(checkmark_texture)
+	local bullet_texture = "weaves_objective_bullet"
+	local bullet_texture_settings = UIAtlasHelper.get_atlas_settings_by_texture_name(bullet_texture)
+	local essence_icon_texture = "icon_essence_small"
+	local essence_icon_texture_settings = UIAtlasHelper.get_atlas_settings_by_texture_name(essence_icon_texture)
 
 	return {
 		element = {
@@ -1073,54 +1074,54 @@ local function fn_4(arg_17_0, arg_17_1, arg_17_2, arg_17_3)
 				{
 					style_id = "stroke",
 					pass_type = "rect",
-					content_check_function = function (self)
+					content_check_function = function (content)
 						-- function 18
-						return self.is_done
+						return content.is_done
 					end
 				},
 				{
 					pass_type = "texture",
 					style_id = "bullet",
 					texture_id = "bullet_id",
-					content_check_function = function (self)
+					content_check_function = function (content)
 						-- function 19
-						return not self.is_done
+						return not content.is_done
 					end
 				},
 				{
 					pass_type = "texture",
 					style_id = "checkmark",
 					texture_id = "checkmark_id",
-					content_check_function = function (self)
+					content_check_function = function (content)
 						-- function 20
-						return self.is_done
+						return content.is_done
 					end
 				},
 				{
 					pass_type = "texture",
 					style_id = "checkmark_shadow",
 					texture_id = "checkmark_id",
-					content_check_function = function (self)
+					content_check_function = function (content)
 						-- function 21
-						return self.is_done
+						return content.is_done
 					end
 				},
 				{
 					style_id = "objective_name",
 					pass_type = "text",
 					text_id = "objective_name_id",
-					content_change_function = function (self)
+					content_change_function = function (content)
 						-- function 22
-						if not self.stack then
+						if not content.stack then
 							return
 						end
 
-						self.objective_name_id = self.base_objective_name_id
+						content.objective_name_id = content.base_objective_name_id
 
-						local stack = self.stack
-						local done_stack = self.done_stack
+						local stack = content.stack
+						local done_stack = content.done_stack
 
-						self.objective_name_id = self.objective_name_id .. " " .. table.size(done_stack) .. "/" .. table.size(stack)
+						content.objective_name_id = content.objective_name_id .. " " .. table.size(done_stack) .. "/" .. table.size(stack)
 					end
 				},
 				{
@@ -1133,23 +1134,23 @@ local function fn_4(arg_17_0, arg_17_1, arg_17_2, arg_17_3)
 		content = {
 			is_done = false,
 			show_marker = false,
-			essence_icon_id = str_4,
-			checkmark_id = str_2,
-			bullet_id = str_3,
-			base_objective_name_id = Localize(arg_17_0),
-			objective_name_id = Localize(arg_17_0),
-			stack = not arg_17_3 and {
-				arg_17_3
+			essence_icon_id = essence_icon_texture,
+			checkmark_id = checkmark_texture,
+			bullet_id = bullet_texture,
+			base_objective_name_id = Localize(display_name),
+			objective_name_id = Localize(display_name),
+			stack = not not objective_name and not not {
+				objective_name
 			},
 			done_stack = {},
-			stack_name = arg_17_2,
-			is_done_func = function (self, arg_23_1)
+			stack_name = stack_name,
+			is_done_func = function (content, objective_name)
 				-- function 23
-				if not (self.is_done or self.stack ~= false) then
+				if content.is_done or content.stack == false then
 					return true
 				end
 
-				return table.find(self.done_stack, arg_23_1)
+				return table.find(content.done_stack, objective_name)
 			end
 		},
 		style = {
@@ -1170,7 +1171,7 @@ local function fn_4(arg_17_0, arg_17_1, arg_17_2, arg_17_3)
 			bullet = {
 				vertical_alignment = "top",
 				horizontal_alignment = "left",
-				texture_size = get_atlas_settings_by_texture_name_2.size,
+				texture_size = bullet_texture_settings.size,
 				text_color = Colors.get_color_table_with_alpha("white", 255),
 				offset = {
 					65,
@@ -1182,8 +1183,8 @@ local function fn_4(arg_17_0, arg_17_1, arg_17_2, arg_17_3)
 				vertical_alignment = "center",
 				horizontal_alignment = "center",
 				texture_size = {
-					get_atlas_settings_by_texture_name.size[1] * 0.5,
-					get_atlas_settings_by_texture_name.size[2] * 0.5
+					checkmark_texture_settings.size[1] * 0.5,
+					checkmark_texture_settings.size[2] * 0.5
 				},
 				color = Colors.get_color_table_with_alpha("font_title", 255),
 				offset = {
@@ -1196,8 +1197,8 @@ local function fn_4(arg_17_0, arg_17_1, arg_17_2, arg_17_3)
 				vertical_alignment = "center",
 				horizontal_alignment = "center",
 				texture_size = {
-					get_atlas_settings_by_texture_name.size[1],
-					get_atlas_settings_by_texture_name.size[2]
+					checkmark_texture_settings.size[1],
+					checkmark_texture_settings.size[2]
 				},
 				color = Colors.get_color_table_with_alpha("black", 255),
 				offset = {
@@ -1245,8 +1246,8 @@ local function fn_4(arg_17_0, arg_17_1, arg_17_2, arg_17_3)
 				vertical_alignment = "bottom",
 				horizontal_alignment = "left",
 				texture_size = {
-					get_atlas_settings_by_texture_name_3.size[1] * 0.75,
-					get_atlas_settings_by_texture_name_3.size[2] * 0.75
+					essence_icon_texture_settings.size[1] * 0.75,
+					essence_icon_texture_settings.size[2] * 0.75
 				},
 				color = Colors.get_color_table_with_alpha("white", 255),
 				offset = {
@@ -1256,22 +1257,22 @@ local function fn_4(arg_17_0, arg_17_1, arg_17_2, arg_17_3)
 				}
 			}
 		},
-		scenegraph_id = str,
+		scenegraph_id = scenegraph_id,
 		offset = {
 			0,
-			-50 + arg_17_1 * -25,
+			-50 + index * -25,
 			5
 		}
 	}
 end
 
-local tbl_7 = {
-	progress_ui = fn_2("progress_ui")
+local widgets = {
+	progress_ui = create_progress_ui("progress_ui")
 }
 
 return {
-	scenegraph_definition = tbl_6,
-	create_bonus_objective_header_func = fn_3,
-	create_bonus_objective_func = fn_4,
-	widgets = tbl_7
+	scenegraph_definition = scenegraph_definition,
+	create_bonus_objective_header_func = create_bonus_objective_header_func,
+	create_bonus_objective_func = create_bonus_objective_func,
+	widgets = widgets
 }

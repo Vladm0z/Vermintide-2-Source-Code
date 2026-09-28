@@ -2,7 +2,7 @@
 
 local PowerLevelTemplates = PowerLevelTemplates
 
-PowerLevelTemplates = PowerLevelTemplates or {}
+PowerLevelTemplates = not not PowerLevelTemplates or not not {}
 PowerLevelTemplates = PowerLevelTemplates
 PowerLevelTemplates.critical_strike_pull_smiter_L = {
 	attack_armor_power_modifer = {

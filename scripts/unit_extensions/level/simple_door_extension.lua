@@ -2,23 +2,23 @@
 
 SimpleDoorExtension = class(SimpleDoorExtension)
 
-local num = 30
-local alive = Unit.alive
+local SIMPLE_ANIMATION_FPS = 30
+local unit_alive = Unit.alive
 
-SimpleDoorExtension.init = function (self, arg_1_1, arg_1_2, arg_1_3)
+SimpleDoorExtension.init = function (self, extension_init_context, unit, extension_init_data)
 	-- function 1
-	local world = arg_1_1.world
+	local world = extension_init_context.world
 
-	self.unit = arg_1_2
+	self.unit = unit
 	self.world = world
 	self.is_server = Managers.player.is_server
 	self.ignore_umbra = not World.umbra_available(world)
-	self.is_umbra_gate = Unit.get_data(arg_1_2, "umbra_gate")
+	self.is_umbra_gate = Unit.get_data(unit, "umbra_gate")
 
-	local get_data = Unit.get_data(arg_1_2, "door_state")
+	local door_state = Unit.get_data(unit, "door_state")
 	local flag
 
-	flag = (get_data ~= 0 or not "open_forward" or get_data ~= 1) and "closed"
+	flag = (door_state ~= 0 or not "open_forward") and door_state == 1 and not not "closed"
 	self.current_state = flag
 	self.animation_stop_time = 0
 end
@@ -35,24 +35,24 @@ SimpleDoorExtension.destroy_box_obstacle = function (self)
 	-- function 3
 	local obstacle = self.obstacle
 
-	if not obstacle then
+	if obstacle then
 		GwNavBoxObstacle.destroy(obstacle)
 	end
 end
 
-SimpleDoorExtension.extensions_ready = function (arg_4_0)
+SimpleDoorExtension.extensions_ready = function (self)
 	-- function 4
 	return
 end
 
-SimpleDoorExtension.interacted_with = function (arg_5_0, arg_5_1)
+SimpleDoorExtension.interacted_with = function (self, interacting_unit)
 	-- function 5
 	return
 end
 
 SimpleDoorExtension.is_opening = function (self)
 	-- function 6
-	return self.current_state == "closed" or self.animation_stop_time
+	return self.current_state ~= "closed" and not not self.animation_stop_time
 end
 
 SimpleDoorExtension.is_open = function (self)
@@ -65,27 +65,30 @@ SimpleDoorExtension.get_current_state = function (self)
 	return self.current_state
 end
 
-SimpleDoorExtension.set_door_state_and_duration = function (self, arg_9_1, arg_9_2, arg_9_3)
+SimpleDoorExtension.set_door_state_and_duration = function (self, new_state, frames, speed)
 	-- function 9
-	if self.current_state == arg_9_1 then
+	local current_state = self.current_state
+
+	if current_state == new_state then
 		return
 	end
 
 	local unit = self.unit
-	local flag = arg_9_1 == "closed"
+	local closed = new_state == "closed"
 
-	if flag or self.ignore_umbra or not self.is_umbra_gate then
-		World.umbra_set_gate_closed(self.world, unit, flag)
+	if not closed and not self.ignore_umbra and self.is_umbra_gate then
+		World.umbra_set_gate_closed(self.world, unit, closed)
 	end
 
-	self.current_state = arg_9_1
+	self.current_state = new_state
 
-	local num_2 = arg_9_2 / num / arg_9_3
+	local animation_length = frames / SIMPLE_ANIMATION_FPS / speed
+	local t = Managers.time:time("game")
 
-	self.animation_stop_time = Managers.time:time("game") + num_2
+	self.animation_stop_time = t + animation_length
 end
 
-SimpleDoorExtension.hot_join_sync = function (arg_10_0, arg_10_1)
+SimpleDoorExtension.hot_join_sync = function (self, sender)
 	-- function 10
 	return
 end
@@ -96,37 +99,36 @@ SimpleDoorExtension.update_nav_obstacle = function (self)
 	local obstacle = self.obstacle
 
 	if obstacle == nil then
-		local var_11_2
+		local transform
 		local unit = self.unit
-		local GLOBAL_AI_NAVWORLD = GLOBAL_AI_NAVWORLD
-		local var_11_5
+		local nav_world = GLOBAL_AI_NAVWORLD
 
-		obstacle, var_11_5 = NavigationUtils.create_exclusive_box_obstacle_from_unit_data(GLOBAL_AI_NAVWORLD, unit)
+		obstacle, transform = NavigationUtils.create_exclusive_box_obstacle_from_unit_data(nav_world, unit)
 
 		GwNavBoxObstacle.add_to_world(obstacle)
-		GwNavBoxObstacle.set_transform(obstacle, var_11_5)
+		GwNavBoxObstacle.set_transform(obstacle, transform)
 
 		self.obstacle = obstacle
 	end
 
-	local flag = current_state == "closed"
+	local does_trigger = current_state == "closed"
 
-	GwNavBoxObstacle.set_does_trigger_tagvolume(obstacle, flag)
+	GwNavBoxObstacle.set_does_trigger_tagvolume(obstacle, does_trigger)
 end
 
-SimpleDoorExtension.update = function (self, arg_12_1, arg_12_2, arg_12_3, arg_12_4, arg_12_5)
+SimpleDoorExtension.update = function (self, unit, input, dt, context, t)
 	-- function 12
 	local animation_stop_time = self.animation_stop_time
 
-	if not (not animation_stop_time and not (animation_stop_time <= arg_12_5)) then
+	if animation_stop_time and animation_stop_time <= t then
 		self:update_nav_obstacle()
 
 		self.animation_stop_time = nil
 
-		local flag = self.current_state == "closed"
+		local closed = self.current_state == "closed"
 
-		if not flag and self.ignore_umbra or not self.is_umbra_gate then
-			World.umbra_set_gate_closed(self.world, arg_12_1, flag)
+		if closed and not self.ignore_umbra and self.is_umbra_gate then
+			World.umbra_set_gate_closed(self.world, unit, closed)
 		end
 	end
 end

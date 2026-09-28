@@ -2,158 +2,164 @@
 
 local KeystrokeHelper = KeystrokeHelper
 
-KeystrokeHelper = KeystrokeHelper or {}
+KeystrokeHelper = not not KeystrokeHelper or not not {}
 KeystrokeHelper = KeystrokeHelper
 
-KeystrokeHelper.num_utf8chars = function (arg_1_0)
+KeystrokeHelper.num_utf8chars = function (text)
 	-- function 1
-	local count = #arg_1_0
-	local num = 1
-	local num_2 = 0
-	local var_1_3
+	local length = #text
+	local index = 1
+	local num_chars = 0
+	local _
 
-	while num <= count do
-		local location
-
-		location, num = Utf8.location(arg_1_0, num)
-		num_2 = num_2 + 1
+	while index <= length do
+		_, index = Utf8.location(text, index)
+		num_chars = num_chars + 1
 	end
 
-	return num_2
+	return num_chars
 end
 
-local tbl = {}
+local _reusable_text_table = {}
 
-KeystrokeHelper.parse_strokes = function (arg_2_0, arg_2_1, arg_2_2, arg_2_3, arg_2_4)
+KeystrokeHelper.parse_strokes = function (text, index, mode, keystrokes, optional_text_length_cap)
 	-- function 2
-	table.clear(tbl)
+	table.clear(_reusable_text_table)
 
-	local _build_utf8_table = KeystrokeHelper._build_utf8_table(arg_2_0, tbl)
+	local text_table = KeystrokeHelper._build_utf8_table(text, _reusable_text_table)
 
-	for i, v in ipairs(arg_2_3) do
-		if type(v) == "string" then
-			if not arg_2_4 then
-				if arg_2_4 > #_build_utf8_table then
-					arg_2_1, arg_2_2 = KeystrokeHelper._add_character(_build_utf8_table, v, arg_2_1, arg_2_2)
+	for _, stroke in ipairs(keystrokes) do
+		if type(stroke) == "string" then
+			if optional_text_length_cap then
+				if optional_text_length_cap > #text_table then
+					index, mode = KeystrokeHelper._add_character(text_table, stroke, index, mode)
 				end
 			else
-				arg_2_1, arg_2_2 = KeystrokeHelper._add_character(_build_utf8_table, v, arg_2_1, arg_2_2)
+				index, mode = KeystrokeHelper._add_character(text_table, stroke, index, mode)
 			end
-		elseif v == Keyboard.ENTER then
+		elseif stroke == Keyboard.ENTER then
 			break
-		elseif not KeystrokeHelper[v] then
-			arg_2_1, arg_2_2 = KeystrokeHelper[v](_build_utf8_table, arg_2_1, arg_2_2, arg_2_4)
+		elseif KeystrokeHelper[stroke] then
+			index, mode = KeystrokeHelper[stroke](text_table, index, mode, optional_text_length_cap)
 		end
 	end
 
-	return table.concat(_build_utf8_table), arg_2_1, arg_2_2
+	return table.concat(text_table), index, mode
 end
 
-KeystrokeHelper._build_utf8_table = function (arg_3_0, arg_3_1)
+KeystrokeHelper._build_utf8_table = function (text, external_table)
 	-- function 3
-	local flag = arg_3_1 or {}
-	local num = 1
-	local num_2 = 1
-	local count = #arg_3_0
+	local text_table = not not external_table or not not {}
+	local character_index = 1
+	local index = 1
+	local length = #text
 
-	while num_2 <= count do
-		local location, var_3_5 = Utf8.location(arg_3_0, num_2)
+	while index <= length do
+		local _, end_index = Utf8.location(text, index)
 
-		flag[num] = string.sub(arg_3_0, num_2, var_3_5 - 1)
-		num = num + 1
-		num_2 = var_3_5
+		text_table[character_index] = string.sub(text, index, end_index - 1)
+		character_index = character_index + 1
+		index = end_index
 	end
 
-	return flag
+	return text_table
 end
 
-KeystrokeHelper._add_character = function (self, arg_4_1, arg_4_2, arg_4_3)
+KeystrokeHelper._add_character = function (text_table, text, index, mode)
 	-- function 4
-	if arg_4_3 == "insert" then
-		table.insert(self, arg_4_2, arg_4_1)
+	if mode == "insert" then
+		table.insert(text_table, index, text)
 	else
-		self[arg_4_2] = arg_4_1
+		text_table[index] = text
 	end
 
-	return arg_4_2 + 1, arg_4_3
+	return index + 1, mode
 end
 
-KeystrokeHelper[Keyboard.LEFT] = function (arg_5_0, arg_5_1, arg_5_2)
+KeystrokeHelper[Keyboard.LEFT] = function (text_table, index, mode)
 	-- function 5
-	return math.max(arg_5_1 - 1, 1), arg_5_2
+	return math.max(index - 1, 1), mode
 end
-KeystrokeHelper[Keyboard.RIGHT] = function (arg_6_0, arg_6_1, arg_6_2)
+KeystrokeHelper[Keyboard.RIGHT] = function (text_table, index, mode)
 	-- function 6
-	return math.min(arg_6_1 + 1, #arg_6_0 + 1), arg_6_2
+	return math.min(index + 1, #text_table + 1), mode
 end
 KeystrokeHelper[Keyboard.UP] = nil
 KeystrokeHelper[Keyboard.DOWN] = nil
-KeystrokeHelper[Keyboard.INSERT] = function (arg_7_0, arg_7_1, arg_7_2)
+KeystrokeHelper[Keyboard.INSERT] = function (text_table, index, mode)
 	-- function 7
-	local var_7_0 = arg_7_1
+	local var_7_0 = index
 	local flag
 
-	flag = arg_7_2 ~= "insert" or not "overwrite" or "insert"
+	flag = (mode ~= "insert" or not "overwrite") and not not "insert"
 
 	return var_7_0, flag
 end
-KeystrokeHelper[Keyboard.HOME] = function (arg_8_0, arg_8_1, arg_8_2)
+KeystrokeHelper[Keyboard.HOME] = function (text_table, index, mode)
 	-- function 8
-	return 1, arg_8_2
+	return 1, mode
 end
-KeystrokeHelper[Keyboard.END] = function (arg_9_0, arg_9_1, arg_9_2)
+KeystrokeHelper[Keyboard.END] = function (text_table, index, mode)
 	-- function 9
-	return #arg_9_0 + 1, arg_9_2
+	return #text_table + 1, mode
 end
-KeystrokeHelper[Keyboard.BACKSPACE] = function (arg_10_0, arg_10_1, arg_10_2)
+KeystrokeHelper[Keyboard.BACKSPACE] = function (text_table, index, mode)
 	-- function 10
-	local num = arg_10_1 - 1
+	local backspace_index = index - 1
 
-	if num < 1 then
-		return arg_10_1, arg_10_2
+	if backspace_index < 1 then
+		return index, mode
 	end
 
-	table.remove(arg_10_0, num)
+	table.remove(text_table, backspace_index)
 
-	return num, arg_10_2
+	return backspace_index, mode
 end
 KeystrokeHelper[Keyboard.TAB] = nil
 KeystrokeHelper[Keyboard.PAGE_UP] = nil
 KeystrokeHelper[Keyboard.PAGE_DOWN] = nil
 KeystrokeHelper[Keyboard.ESCAPE] = nil
-KeystrokeHelper[Keyboard.DELETE] = function (self, arg_11_1, arg_11_2)
+KeystrokeHelper[Keyboard.DELETE] = function (text_table, index, mode)
 	-- function 11
-	if not self[arg_11_1] then
-		table.remove(self, arg_11_1)
+	if text_table[index] then
+		table.remove(text_table, index)
 	end
 
-	return arg_11_1, arg_11_2
+	return index, mode
 end
 
-local tbl_2 = {}
+local clipboard_table = {}
 
-KeystrokeHelper[Keyboard.F9] = function (self, arg_12_1, arg_12_2, arg_12_3)
+KeystrokeHelper[Keyboard.F9] = function (text_table, index, mode, max_length)
 	-- function 12
 	local get = Clipboard.get()
 
-	get = get or ""
-
-	if not Utf8.valid(get) then
-		get = string.gsub(get, "[^ -~]+", "")
+	if not get then
+		-- Nothing
 	end
 
-	table.clear(tbl_2)
-	KeystrokeHelper._build_utf8_table(get, tbl_2)
+	get = ""
 
-	local count = #tbl_2
+	local clipboard = get
 
-	if not arg_12_3 then
-		count = math.min(count, arg_12_3 - #self)
+	::label_12_0::
+
+	if not Utf8.valid(clipboard) then
+		clipboard = string.gsub(clipboard, "[^ -~]+", "")
 	end
 
-	for i = 1, count do
-		self[#self + 1] = tbl_2[i]
+	table.clear(clipboard_table)
+	KeystrokeHelper._build_utf8_table(clipboard, clipboard_table)
+
+	local n = #clipboard_table
+
+	if max_length then
+		n = math.min(n, max_length - #text_table)
 	end
 
-	return arg_12_1 + count, arg_12_2
+	for i = 1, n do
+		text_table[#text_table + 1] = clipboard_table[i]
+	end
+
+	return index + n, mode
 end

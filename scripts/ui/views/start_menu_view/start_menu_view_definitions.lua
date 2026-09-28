@@ -2,7 +2,7 @@
 
 local_require("scripts/ui/ui_widgets")
 
-local tbl = {
+local scenegraph_definition = {
 	root_1 = {
 		is_root = true,
 		size = {
@@ -96,7 +96,7 @@ local tbl = {
 		}
 	}
 }
-local tbl_2 = {
+local settings_by_screen = {
 	{
 		description = "switch character here",
 		name = "overview",
@@ -176,7 +176,7 @@ local tbl_2 = {
 		end
 	}
 }
-local tbl_3 = {
+local widgets_definitions = {
 	viewport = {
 		scenegraph_id = "dead_space_filler",
 		element = {
@@ -218,8 +218,8 @@ local tbl_3 = {
 	exit_button = UIWidgets.create_simple_two_state_button("exit_button", "tabs_icon_close", "tabs_icon_close_glow"),
 	console_cursor = UIWidgets.create_console_cursor("console_cursor")
 }
-local tbl_4 = {}
-local tbl_5 = {
+local animations = {}
+local attachments = {
 	witch_hunter = {
 		{
 			unit_name = "units/beings/player/witch_hunter/headpiece/wh_hat_03",
@@ -275,7 +275,7 @@ local tbl_5 = {
 		}
 	}
 }
-local tbl_6 = {
+local flow_events = {
 	witch_hunter = {
 		hovered = "witch_hunter_hovered",
 		available = "witch_hunter_available",
@@ -319,10 +319,10 @@ local tbl_6 = {
 }
 
 return {
-	scenegraph_definition = tbl,
-	widgets_definitions = tbl_3,
-	settings_by_screen = tbl_2,
-	attachments = tbl_5,
-	flow_events = tbl_6,
-	animations = tbl_4
+	scenegraph_definition = scenegraph_definition,
+	widgets_definitions = widgets_definitions,
+	settings_by_screen = settings_by_screen,
+	attachments = attachments,
+	flow_events = flow_events,
+	animations = animations
 }

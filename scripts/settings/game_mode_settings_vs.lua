@@ -42,13 +42,13 @@ GameModeSettings.versus.ping_mode = {
 	}
 }
 
-GameModeSettings.versus.positive_reinforcement_check = function (arg_1_0, arg_1_1, arg_1_2)
+GameModeSettings.versus.positive_reinforcement_check = function (predicate, breed_attacker, breed_killed)
 	-- function 1
-	local is_player = arg_1_2.is_player
+	local is_player = breed_killed.is_player
 
 	if not is_player then
-		is_player = arg_1_2.boss
-		is_player = is_player or arg_1_2.special
+		is_player = breed_killed.boss
+		is_player = not not is_player or not not breed_killed.special
 	end
 
 	return is_player
@@ -507,7 +507,7 @@ GameModeSettings.versus.side_settings = {
 }
 GameModeSettings.versus.dark_pact_minimum_spawn_time = 5
 
-local delayed_death_time = GameModeSettings.versus.side_settings.dark_pact.spawn_times.delayed_death_time
+local death_time = GameModeSettings.versus.side_settings.dark_pact.spawn_times.delayed_death_time
 
 GameModeSettings.versus.dark_pact_respawn_timers = {
 	{

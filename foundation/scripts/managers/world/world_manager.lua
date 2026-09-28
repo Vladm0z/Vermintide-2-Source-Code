@@ -16,154 +16,154 @@ WorldManager.init = function (self)
 	self._wwise_worlds = {}
 end
 
-WorldManager.create_world = function (self, arg_2_1, arg_2_2, arg_2_3, arg_2_4, ...)
+WorldManager.create_world = function (self, name, shading_environment, shading_callback, layer, ...)
 	-- function 2
-	fassert(self._worlds[arg_2_1] == nil, "World %q already exists", arg_2_1)
+	fassert(self._worlds[name] == nil, "World %q already exists", name)
 
-	local flag = true
-	local var_2_1 = select("#", ...)
+	local has_physics_world = true
+	local n_varargs = select("#", ...)
 
-	for i = 1, var_2_1 do
+	for i = 1, n_varargs do
 		if select(i, ...) == Application.DISABLE_PHYSICS then
-			flag = false
+			has_physics_world = false
 		end
 	end
 
-	local new_world = Application.new_world(arg_2_1, ...)
+	local world = Application.new_world(name, ...)
 
-	World.set_data(new_world, "name", arg_2_1)
-	World.set_data(new_world, "layer", arg_2_4 or 1)
-	World.set_data(new_world, "active", true)
-	World.set_data(new_world, "has_physics_world", flag)
+	World.set_data(world, "name", name)
+	World.set_data(world, "layer", not not layer or not not 1)
+	World.set_data(world, "active", true)
+	World.set_data(world, "has_physics_world", has_physics_world)
 
-	if not flag then
-		local physics_world = World.physics_world(new_world)
+	if has_physics_world then
+		local physics_world = World.physics_world(world)
 
-		World.set_data(new_world, "physics_world", physics_world)
+		World.set_data(world, "physics_world", physics_world)
 	end
 
-	if not arg_2_2 then
-		ScriptWorld.create_shading_environment(new_world, arg_2_2, arg_2_3, "default")
+	if shading_environment then
+		ScriptWorld.create_shading_environment(world, shading_environment, shading_callback, "default")
 	end
 
-	World.set_data(new_world, "levels", {})
-	World.set_data(new_world, "viewports", {})
-	World.set_data(new_world, "free_flight_viewports", {})
-	World.set_data(new_world, "render_queue", {})
+	World.set_data(world, "levels", {})
+	World.set_data(world, "viewports", {})
+	World.set_data(world, "free_flight_viewports", {})
+	World.set_data(world, "render_queue", {})
 
-	self._worlds[arg_2_1] = new_world
-	self._wwise_worlds[new_world] = Wwise.wwise_world(new_world)
+	self._worlds[name] = world
+	self._wwise_worlds[world] = Wwise.wwise_world(world)
 
 	self:_sort_update_queue()
 
-	return new_world
+	return world
 end
 
-WorldManager.wwise_world = function (self, arg_3_1)
+WorldManager.wwise_world = function (self, world)
 	-- function 3
-	return self._wwise_worlds[arg_3_1]
+	return self._wwise_worlds[world]
 end
 
-WorldManager.destroy_world = function (self, arg_4_1)
+WorldManager.destroy_world = function (self, world_or_name)
 	-- function 4
-	if not self.locked then
-		self._queued_worlds_to_release[arg_4_1] = true
+	if self.locked then
+		self._queued_worlds_to_release[world_or_name] = true
 
 		return
 	end
 
-	local var_4_0
+	local name
 
-	if type(arg_4_1) == "string" then
-		var_4_0 = arg_4_1
+	if type(world_or_name) == "string" then
+		name = world_or_name
 	else
-		var_4_0 = World.get_data(arg_4_1, "name")
+		name = World.get_data(world_or_name, "name")
 	end
 
-	local var_4_1 = self._worlds[var_4_0]
+	local world = self._worlds[name]
 
-	if var_4_1 == nil then
-		var_4_1 = self._disabled_worlds[var_4_0]
+	if world == nil then
+		world = self._disabled_worlds[name]
 	end
 
-	assert(var_4_1, "World %q doesn't exist", var_4_0)
+	assert(world, "World %q doesn't exist", name)
 
 	local free_overlaps = PhysicsWorld.free_overlaps
 
-	if not free_overlaps and not World.get_data(var_4_1, "has_physics_world") then
-		local get_data = World.get_data(var_4_1, "physics_world")
+	if free_overlaps and World.get_data(world, "has_physics_world") then
+		local physics_world = World.get_data(world, "physics_world")
 
-		free_overlaps(get_data)
+		free_overlaps(physics_world)
 	end
 
-	Application.release_world(var_4_1)
+	Application.release_world(world)
 
-	self._worlds[var_4_0] = nil
-	self._disabled_worlds[var_4_0] = nil
-	self._anim_update_callbacks[var_4_1] = nil
-	self._scene_update_callbacks[var_4_1] = nil
-	self._update_done_callbacks[var_4_1] = nil
-	self._wwise_worlds[var_4_1] = nil
+	self._worlds[name] = nil
+	self._disabled_worlds[name] = nil
+	self._anim_update_callbacks[world] = nil
+	self._scene_update_callbacks[world] = nil
+	self._update_done_callbacks[world] = nil
+	self._wwise_worlds[world] = nil
 
 	self:_sort_update_queue()
 end
 
-WorldManager.has_world = function (self, arg_5_1)
+WorldManager.has_world = function (self, name)
 	-- function 5
 	local _worlds = self._worlds
 
-	_worlds = not _worlds and self._worlds[arg_5_1] ~= nil
+	_worlds = not not _worlds and self._worlds[name] ~= nil
 
 	return _worlds
 end
 
-WorldManager.world = function (self, arg_6_1)
+WorldManager.world = function (self, name)
 	-- function 6
-	fassert(self._worlds[arg_6_1], "World %q doesn't exist", arg_6_1)
+	fassert(self._worlds[name], "World %q doesn't exist", name)
 
-	return self._worlds[arg_6_1]
+	return self._worlds[name]
 end
 
-WorldManager.update = function (self, arg_7_1, arg_7_2)
+WorldManager.update = function (self, dt, t)
 	-- function 7
 	self.locked = true
 
-	for i, v in ipairs(self._update_queue) do
-		ScriptWorld.update(v, arg_7_1, arg_7_2, self._anim_update_callbacks[v], self._scene_update_callbacks[v], self._update_done_callbacks[v])
+	for _, world in ipairs(self._update_queue) do
+		ScriptWorld.update(world, dt, t, self._anim_update_callbacks[world], self._scene_update_callbacks[world], self._update_done_callbacks[world])
 	end
 
 	self.locked = false
 
-	for k, v_2 in pairs(self._queued_worlds_to_release) do
-		self:destroy_world(k)
+	for world_or_name, _ in pairs(self._queued_worlds_to_release) do
+		self:destroy_world(world_or_name)
 
-		self._queued_worlds_to_release[k] = nil
+		self._queued_worlds_to_release[world_or_name] = nil
 	end
 end
 
 WorldManager.render = function (self)
 	-- function 8
-	for i, v in ipairs(self._update_queue) do
-		ScriptWorld.render(v)
+	for _, world in ipairs(self._update_queue) do
+		ScriptWorld.render(world)
 	end
 end
 
-WorldManager.enable_world = function (self, arg_9_1, arg_9_2)
+WorldManager.enable_world = function (self, name, enabled)
 	-- function 9
-	if not arg_9_2 then
-		local var_9_0 = self._disabled_worlds[arg_9_1]
+	if enabled then
+		local world = self._disabled_worlds[name]
 
-		assert(var_9_0, "Tried to enable world %q that wasn't disabled", arg_9_1)
+		assert(world, "Tried to enable world %q that wasn't disabled", name)
 
-		self._worlds[arg_9_1] = var_9_0
-		self._disabled_worlds[arg_9_1] = nil
+		self._worlds[name] = world
+		self._disabled_worlds[name] = nil
 	else
-		local var_9_1 = self._worlds[arg_9_1]
+		local world = self._worlds[name]
 
-		assert(var_9_1, "Tried to disable world %q that wasn't enabled", arg_9_1)
+		assert(world, "Tried to disable world %q that wasn't enabled", name)
 
-		self._disabled_worlds[arg_9_1] = var_9_1
-		self._worlds[arg_9_1] = nil
+		self._disabled_worlds[name] = world
+		self._worlds[name] = nil
 	end
 
 	self:_sort_update_queue()
@@ -171,8 +171,8 @@ end
 
 WorldManager.destroy = function (self)
 	-- function 10
-	for k, v in pairs(self._worlds) do
-		self:destroy_world(k)
+	for name, _ in pairs(self._worlds) do
+		self:destroy_world(name)
 	end
 end
 
@@ -180,29 +180,29 @@ WorldManager._sort_update_queue = function (self)
 	-- function 11
 	self._update_queue = {}
 
-	for k, v in pairs(self._worlds) do
-		self._update_queue[#self._update_queue + 1] = v
+	for name, world in pairs(self._worlds) do
+		self._update_queue[#self._update_queue + 1] = world
 	end
 
-	local function fn(arg_12_0, arg_12_1)
+	local function comparator(w1, w2)
 		-- function 12
-		return World.get_data(arg_12_0, "layer") < World.get_data(arg_12_1, "layer")
+		return World.get_data(w1, "layer") < World.get_data(w2, "layer")
 	end
 
-	table.sort(self._update_queue, fn)
+	table.sort(self._update_queue, comparator)
 end
 
-WorldManager.set_anim_update_callback = function (arg_13_0, arg_13_1, arg_13_2)
+WorldManager.set_anim_update_callback = function (self, world, callback)
 	-- function 13
-	arg_13_0._anim_update_callbacks[arg_13_1] = arg_13_2
+	self._anim_update_callbacks[world] = callback
 end
 
-WorldManager.set_scene_update_callback = function (arg_14_0, arg_14_1, arg_14_2)
+WorldManager.set_scene_update_callback = function (self, world, callback)
 	-- function 14
-	arg_14_0._scene_update_callbacks[arg_14_1] = arg_14_2
+	self._scene_update_callbacks[world] = callback
 end
 
-WorldManager.set_update_done_callback = function (arg_15_0, arg_15_1, arg_15_2)
+WorldManager.set_update_done_callback = function (self, world, callback)
 	-- function 15
-	arg_15_0._update_done_callbacks[arg_15_1] = arg_15_2
+	self._update_done_callbacks[world] = callback
 end

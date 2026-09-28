@@ -1,6 +1,6 @@
 -- chunkname: @scripts/settings/breeds/breed_beastmen_standard_bearer.lua
 
-local tbl = {
+local breed_data = {
 	detection_radius = 60,
 	radius = 1,
 	walk_speed = 2.75,
@@ -301,43 +301,43 @@ local tbl = {
 		j_lefthand = 0.2,
 		j_rightforearm = 0.2
 	},
-	additional_breed_packages_to_load = function (arg_1_0)
+	additional_breed_packages_to_load = function (difficulty)
 		-- function 1
-		local var_1_0 = BreedTweaks.standard_bearer_spawn_list[arg_1_0]
-		local tbl = {}
+		local spawn_list = BreedTweaks.standard_bearer_spawn_list[difficulty]
+		local additional_breeds = {}
 
-		if not (not var_1_0 and not (#var_1_0 > 0)) then
-			for i = 1, #var_1_0 do
-				tbl[#tbl + 1] = var_1_0[i]
+		if spawn_list and #spawn_list > 0 then
+			for i = 1, #spawn_list do
+				additional_breeds[#additional_breeds + 1] = spawn_list[i]
 			end
 		end
 
-		return tbl
+		return additional_breeds
 	end
 }
 
-Breeds.beastmen_standard_bearer = table.create_copy(Breeds.beastmen_standard_bearer, tbl)
+Breeds.beastmen_standard_bearer = table.create_copy(Breeds.beastmen_standard_bearer, breed_data)
 
-local tbl_2 = {
+local breed_data_crater = {
 	dialogue_source_name = "beastmen_standard_bearer_crater",
 	debug_spawn_category = "Misc"
 }
 
-for k, v in pairs(tbl) do
-	local var_0_2 = tbl_2[k]
+for key, value in pairs(breed_data) do
+	local keep_value = breed_data_crater[key]
 
-	if var_0_2 == "SET_TO_NIL" then
-		tbl_2[k] = nil
-	elseif var_0_2 ~= nil then
-		tbl_2[k] = var_0_2
+	if keep_value == "SET_TO_NIL" then
+		breed_data_crater[key] = nil
+	elseif keep_value ~= nil then
+		breed_data_crater[key] = keep_value
 	else
-		tbl_2[k] = v
+		breed_data_crater[key] = value
 	end
 end
 
-Breeds.beastmen_standard_bearer_crater = table.create_copy(Breeds.beastmen_standard_bearer_crater, tbl_2)
+Breeds.beastmen_standard_bearer_crater = table.create_copy(Breeds.beastmen_standard_bearer_crater, breed_data_crater)
 
-local tbl_3 = {
+local AttackIntensityPerDifficulty = {
 	sweep = {
 		easy = {
 			normal = 1.5,
@@ -473,7 +473,7 @@ local tbl_3 = {
 		}
 	}
 }
-local tbl_4 = {
+local action_data = {
 	alerted = {
 		no_hesitation = true,
 		cooldown = -1,
@@ -610,7 +610,7 @@ local tbl_4 = {
 		attack_intensity_type = "cleave",
 		move_anim = "move_fwd",
 		width = 0.4,
-		difficulty_attack_intensity = tbl_3,
+		difficulty_attack_intensity = AttackIntensityPerDifficulty,
 		knocked_down_attack_anim = {
 			"attack_downed"
 		},
@@ -642,7 +642,7 @@ local tbl_4 = {
 		attack_intensity_type = "sweep",
 		move_anim = "move_fwd",
 		width = 2,
-		difficulty_attack_intensity = tbl_3,
+		difficulty_attack_intensity = AttackIntensityPerDifficulty,
 		attack_anim = {
 			"attack_pounce",
 			"attack_pounce_2"
@@ -676,7 +676,7 @@ local tbl_4 = {
 		damage_type = "blunt",
 		unblockable = true,
 		attack_anim = "attack_push",
-		difficulty_attack_intensity = tbl_3,
+		difficulty_attack_intensity = AttackIntensityPerDifficulty,
 		considerations = UtilityConsiderations.storm_vermin_push_attack,
 		ignore_staggers = {
 			true,
@@ -711,27 +711,26 @@ local tbl_4 = {
 		difficulty_duration = BreedTweaks.blocked_duration.beastmen_elite
 	},
 	stagger = {
-		custom_enter_function = function (arg_2_0, arg_2_1, arg_2_2, arg_2_3)
+		custom_enter_function = function (unit, blackboard, t, action)
 			-- function 2
-			local charge_stagger = arg_2_1.charge_stagger
-			local var_2_1
-			local var_2_2
+			local charge_stagger = blackboard.charge_stagger
+			local stagger_anims, override_rotation
 
-			if not charge_stagger then
-				var_2_1 = arg_2_3.charge_stagger_anims[arg_2_1.stagger_type]
-				arg_2_1.charge_stagger = nil
+			if charge_stagger then
+				stagger_anims = action.charge_stagger_anims[blackboard.stagger_type]
+				blackboard.charge_stagger = nil
 
-				local unbox = arg_2_1.stagger_direction:unbox()
-				local num = Quaternion.forward(Unit.local_rotation(arg_2_0, 0)) + Vector3.flat(unbox) * 0.5
+				local impact_dir = blackboard.stagger_direction:unbox()
+				local new_impact_dir = Quaternion.forward(Unit.local_rotation(unit, 0)) + Vector3.flat(impact_dir) * 0.5
 
-				arg_2_1.stagger_direction:store(Vector3.normalize(num))
+				blackboard.stagger_direction:store(Vector3.normalize(new_impact_dir))
 
-				var_2_2 = Quaternion.look(Vector3.normalize(num))
+				override_rotation = Quaternion.look(Vector3.normalize(new_impact_dir))
 			else
-				var_2_1 = arg_2_3.stagger_anims[arg_2_1.stagger_type]
+				stagger_anims = action.stagger_anims[blackboard.stagger_type]
 			end
 
-			return var_2_1, "idle", nil, var_2_2
+			return stagger_anims, "idle", nil, override_rotation
 		end,
 		stagger_anims = {
 			{
@@ -993,4 +992,4 @@ local tbl_4 = {
 	}
 }
 
-BreedActions.beastmen_standard_bearer = table.create_copy(BreedActions.beastmen_standard_bearer, tbl_4)
+BreedActions.beastmen_standard_bearer = table.create_copy(BreedActions.beastmen_standard_bearer, action_data)

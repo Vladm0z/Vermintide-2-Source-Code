@@ -1,65 +1,65 @@
 -- chunkname: @scripts/game_state/server_join_state_machine.lua
 
-local var_0_0 = class(FindServerState)
+local FindServerState = class(FindServerState)
 
-var_0_0.NAME = "FindServerState"
+FindServerState.NAME = "FindServerState"
 
-var_0_0.init = function (self, arg_1_1, arg_1_2, arg_1_3, arg_1_4)
+FindServerState.init = function (self, state_machine, search_type, network_options, ip_port)
 	-- function 1
-	print("Attempting " .. arg_1_2 .. " search for game server " .. arg_1_4)
-	assert(arg_1_2 == "internet" or arg_1_2 == "lan")
+	print("Attempting " .. search_type .. " search for game server " .. ip_port)
+	assert(search_type == "internet" or search_type == "lan")
 
-	self._search_type = arg_1_2
-	self._network_options = arg_1_3
-	self._ip_port = arg_1_4
+	self._search_type = search_type
+	self._network_options = network_options
+	self._ip_port = ip_port
 end
 
-var_0_0.enter = function (self)
+FindServerState.enter = function (self)
 	-- function 2
 	self._finder = GameServerFinder:new(self._network_options)
 
 	self._finder:set_search_type(self._search_type)
 
-	local tbl = {
+	local game_server_requirements = {
 		server_browser_filters = {
 			dedicated = "valuenotused",
 			gamedir = Managers.mechanism:server_universe()
 		},
 		matchmaking_filters = {}
 	}
-	local flag = true
+	local skip_verify_lobby_data = true
 
-	self._finder:add_filter_requirements(tbl, flag)
+	self._finder:add_filter_requirements(game_server_requirements, skip_verify_lobby_data)
 	self._finder:refresh()
 end
 
-var_0_0.destroy = function (self)
+FindServerState.destroy = function (self)
 	-- function 3
 	self._finder:destroy()
 
 	self._finder = nil
 end
 
-var_0_0.update = function (self, arg_4_1)
+FindServerState.update = function (self, dt)
 	-- function 4
-	self._finder:update(arg_4_1)
+	self._finder:update(dt)
 
-	if not self._finder:is_refreshing() then
+	if self._finder:is_refreshing() then
 		return
 	end
 
 	local servers = self._finder:servers()
 
-	for i, v in ipairs(servers) do
-		if v.server_info.ip_port == self._ip_port then
+	for _, server in ipairs(servers) do
+		if server.server_info.ip_port == self._ip_port then
 			print("Found server " .. self._ip_port)
 
-			if not v.server_info.password then
+			if server.server_info.password then
 				return "password_required"
 			else
-				local str = ""
+				local password = ""
 
-				return "password_not_required", str
+				return "password_not_required", password
 			end
 		end
 	end
@@ -69,104 +69,104 @@ var_0_0.update = function (self, arg_4_1)
 	return "server_not_found"
 end
 
-local var_0_1 = class(FindServerLANState, var_0_0)
+local FindServerLANState = class(FindServerLANState, FindServerState)
 
-var_0_1.NAME = "FindServerLANState"
+FindServerLANState.NAME = "FindServerLANState"
 
-var_0_1.init = function (self, arg_5_1, arg_5_2, arg_5_3)
+FindServerLANState.init = function (self, state_machine, network_options, ip_port)
 	-- function 5
-	self.super.init(self, arg_5_1, "lan", arg_5_2, arg_5_3)
+	self.super.init(self, state_machine, "lan", network_options, ip_port)
 end
 
-local var_0_2 = class(FindServerInternetState, var_0_0)
+local FindServerInternetState = class(FindServerInternetState, FindServerState)
 
-var_0_2.NAME = "FindServerInternetState"
+FindServerInternetState.NAME = "FindServerInternetState"
 
-var_0_2.init = function (self, arg_6_1, arg_6_2, arg_6_3)
+FindServerInternetState.init = function (self, state_machine, network_options, ip_port)
 	-- function 6
-	self.super.init(self, arg_6_1, "internet", arg_6_2, arg_6_3)
+	self.super.init(self, state_machine, "internet", network_options, ip_port)
 end
 
-local var_0_3 = class(PasswordDialogState)
+local PasswordDialogState = class(PasswordDialogState)
 
-var_0_3.NAME = "PasswordDialogState"
+PasswordDialogState.NAME = "PasswordDialogState"
 
-var_0_3.init = function (self, arg_7_1)
+PasswordDialogState.init = function (self, state_machine)
 	-- function 7
 	self._popup_id = Managers.popup:queue_password_popup(Localize("lb_password"), Localize("lb_password_protected"), "ok", Localize("lb_ok"), "cancel", Localize("lb_cancel"))
 end
 
-var_0_3.destroy = function (self)
+PasswordDialogState.destroy = function (self)
 	-- function 8
 	Managers.popup:cancel_popup(self._popup_id)
 
 	self._popup_id = nil
 end
 
-var_0_3.update = function (self)
+PasswordDialogState.update = function (self)
 	-- function 9
-	local query_result, var_9_1 = Managers.popup:query_result(self._popup_id)
+	local result, params = Managers.popup:query_result(self._popup_id)
 
-	if not query_result then
-		if query_result == "ok" then
-			local input = var_9_1.input
+	if result then
+		if result == "ok" then
+			local password = params.input
 
-			return "password_entered", input
+			return "password_entered", password
 		else
 			return "password_cancelled"
 		end
 	end
 end
 
-local var_0_4 = class(ServerJoinState)
+local ServerJoinState = class(ServerJoinState)
 
-var_0_4.NAME = "ServerJoinState"
+ServerJoinState.NAME = "ServerJoinState"
 
-var_0_4.init = function (self, arg_10_1)
+ServerJoinState.init = function (self, state_machine)
 	-- function 10
-	self._sm = arg_10_1
+	self._sm = state_machine
 end
 
-var_0_4.enter = function (arg_11_0, arg_11_1)
+ServerJoinState.enter = function (self, password)
 	-- function 11
-	arg_11_0._sm._action = "join"
-	arg_11_0._sm._password = arg_11_1
+	self._sm._action = "join"
+	self._sm._password = password
 end
 
-local var_0_5 = class(AbortState)
+local AbortState = class(AbortState)
 
-var_0_5.NAME = "AbortState"
+AbortState.NAME = "AbortState"
 
-var_0_5.init = function (arg_12_0, arg_12_1)
+AbortState.init = function (self, state_machine)
 	-- function 12
-	arg_12_1._action = "cancel"
-	arg_12_1._password = ""
+	state_machine._action = "cancel"
+	state_machine._password = ""
 end
 
 ServerJoinStateMachine = class(ServerJoinStateMachine, VisualStateMachine)
 
-ServerJoinStateMachine.init = function (self, arg_13_1, arg_13_2, arg_13_3)
+ServerJoinStateMachine.init = function (self, network_options, ip_port, user_data)
 	-- function 13
-	local var_13_0
+	local parent
 
-	self.super.init(self, "ServerJoinStateMachine", var_13_0, arg_13_1, arg_13_2)
+	self.super.init(self, "ServerJoinStateMachine", parent, network_options, ip_port)
 
 	self._has_result = false
 	self._server_data = nil
-	self._ip_port = arg_13_2
-	self._user_data = arg_13_3
+	self._ip_port = ip_port
+	self._user_data = user_data
 	self._action = nil
 	self._password = nil
 
-	self:add_transition("FindServerInternetState", "password_required", var_0_3)
-	self:add_transition("FindServerInternetState", "password_not_required", var_0_4)
-	self:add_transition("FindServerInternetState", "server_not_found", var_0_1)
-	self:add_transition("FindServerLANState", "password_required", var_0_3)
-	self:add_transition("FindServerLANState", "password_not_required", var_0_4)
-	self:add_transition("FindServerLANState", "server_not_found", var_0_3)
-	self:add_transition("PasswordDialogState", "password_entered", var_0_4)
-	self:add_transition("PasswordDialogState", "password_cancelled", var_0_5)
-	self:set_initial_state(var_0_2)
+	self:add_transition("FindServerInternetState", "password_required", PasswordDialogState)
+	self:add_transition("FindServerInternetState", "password_not_required", ServerJoinState)
+	self:add_transition("FindServerInternetState", "server_not_found", FindServerLANState)
+	self:add_transition("FindServerLANState", "password_required", PasswordDialogState)
+	self:add_transition("FindServerLANState", "password_not_required", ServerJoinState)
+	self:add_transition("FindServerLANState", "server_not_found", PasswordDialogState)
+	self:add_transition("PasswordDialogState", "password_entered", ServerJoinState)
+	self:add_transition("PasswordDialogState", "password_cancelled", AbortState)
+	self:set_initial_state(FindServerInternetState)
 end
 
 ServerJoinStateMachine.result = function (self)

@@ -11,60 +11,60 @@ end
 
 UIManager.destroy = function (self)
 	-- function 2
-	if not self._ingame_ui then
+	if self._ingame_ui then
 		print("[UIManager] Warning: destroy_ingame_ui was not called before destroy")
 	end
 end
 
-UIManager.create_ingame_ui = function (self, arg_3_1, arg_3_2)
+UIManager.create_ingame_ui = function (self, ingame_ui_context, loading_subtitle_gui)
 	-- function 3
-	self._ingame_ui_context = arg_3_1
-	self._loading_subtitle_gui = arg_3_2
+	self._ingame_ui_context = ingame_ui_context
+	self._loading_subtitle_gui = loading_subtitle_gui
 
-	if not self._ingame_ui then
+	if self._ingame_ui then
 		print("[UIManager] Warning: destroy_ingame_ui was not called before create_ingame_ui")
 		self._ingame_ui:destroy()
 	end
 
-	self._ingame_ui = IngameUI:new(arg_3_1)
+	self._ingame_ui = IngameUI:new(ingame_ui_context)
 	self._ui_enabled = true
 end
 
-UIManager.create_ui_renderer = function (self, arg_4_1, arg_4_2, arg_4_3, arg_4_4)
+UIManager.create_ui_renderer = function (self, world, is_tutorial, is_in_inn, mechanism_key)
 	-- function 4
-	return self._ingame_ui:create_ui_renderer(arg_4_1, arg_4_2, arg_4_3, arg_4_4)
+	return self._ingame_ui:create_ui_renderer(world, is_tutorial, is_in_inn, mechanism_key)
 end
 
 UIManager.destroy_ingame_ui = function (self)
 	-- function 5
-	local _ingame_ui = self._ingame_ui
+	local ingame_ui = self._ingame_ui
 
-	if not _ingame_ui then
-		_ingame_ui:destroy()
+	if ingame_ui then
+		ingame_ui:destroy()
 
 		self._ingame_ui = nil
 	end
 end
 
-UIManager.reload_ingame_ui = function (self, arg_6_1)
+UIManager.reload_ingame_ui = function (self, reload_sources)
 	-- function 6
-	local _ingame_ui = self._ingame_ui
+	local ingame_ui = self._ingame_ui
 
-	if not _ingame_ui then
+	if not ingame_ui then
 		print("[UIManager] Warning: reloading the UI when it wasn't loaded.")
 
 		return
 	end
 
-	local last_transition_name = _ingame_ui.last_transition_name
-	local last_transition_params = _ingame_ui.last_transition_params
+	local current_transition = ingame_ui.last_transition_name
+	local current_params = ingame_ui.last_transition_params
 
-	if not arg_6_1 then
-		for k in pairs(package.loaded) do
-			if not string.find(k, "^scripts/ui") then
-				package.loaded[k] = nil
+	if reload_sources then
+		for script_path in pairs(package.loaded) do
+			if string.find(script_path, "^scripts/ui") then
+				package.loaded[script_path] = nil
 
-				require(k)
+				require(script_path)
 			end
 		end
 	end
@@ -72,8 +72,8 @@ UIManager.reload_ingame_ui = function (self, arg_6_1)
 	self:destroy_ingame_ui()
 	self:create_ingame_ui(self._ingame_ui_context)
 
-	if not last_transition_name then
-		self._ingame_ui:handle_transition(last_transition_name, last_transition_params)
+	if current_transition then
+		self._ingame_ui:handle_transition(current_transition, current_params)
 	end
 end
 
@@ -82,16 +82,16 @@ UIManager.temporary_get_ingame_ui_called_from_state_ingame_running = function (s
 	return self._ingame_ui
 end
 
-UIManager.set_ingame_ui_enabled = function (self, arg_8_1)
+UIManager.set_ingame_ui_enabled = function (self, bool)
 	-- function 8
-	if self._ui_enabled ~= arg_8_1 then
-		self._ui_enabled = arg_8_1
+	if self._ui_enabled ~= bool then
+		self._ui_enabled = bool
 
-		if not arg_8_1 then
-			local _ingame_ui = self._ingame_ui
+		if not bool then
+			local ingame_ui = self._ingame_ui
 
-			if not _ingame_ui then
-				_ingame_ui:suspend_active_view()
+			if ingame_ui then
+				ingame_ui:suspend_active_view()
 			end
 		end
 	end
@@ -109,43 +109,51 @@ UIManager.update = function (self)
 		return
 	end
 
-	local _ingame_ui = self._ingame_ui
+	local ingame_ui = self._ingame_ui
 
-	if not _ingame_ui then
+	if not ingame_ui then
 		return
 	end
 
-	local time_and_delta, var_9_2 = Managers.time:time_and_delta("ui")
+	local t, dt = Managers.time:time_and_delta("ui")
 	local active
 
 	if not script_data.disable_ui then
 		active = DebugScreen.active
 
-		if not active then
+		if active then
 			-- Nothing
 		end
 	end
 
-	active = Managers.state.network:game_session_host() ~= nil
+	if Managers.state.network:game_session_host() == nil then
+		active = false
+
+		goto label_9_0
+	end
+
+	active = true
+
+	local disable_ingame_ui = active
 
 	::label_9_0::
 
-	local _level_end_view_wrapper = self._level_end_view_wrapper
-	local flag = not _level_end_view_wrapper and _level_end_view_wrapper:level_end_view()
+	local level_end_view_wrapper = self._level_end_view_wrapper
+	local level_end_view = not not level_end_view_wrapper and not not level_end_view_wrapper:level_end_view()
 
-	_ingame_ui:update(var_9_2, time_and_delta, active, flag)
+	ingame_ui:update(dt, t, disable_ingame_ui, level_end_view)
 
-	local _loading_subtitle_gui = self._loading_subtitle_gui
+	local loading_subtitle_gui = self._loading_subtitle_gui
 
-	if not _loading_subtitle_gui then
-		_ingame_ui:update_loading_subtitle_gui(_loading_subtitle_gui, var_9_2)
+	if loading_subtitle_gui then
+		ingame_ui:update_loading_subtitle_gui(loading_subtitle_gui, dt)
 
-		if not _loading_subtitle_gui:is_complete() then
+		if loading_subtitle_gui:is_complete() then
 			self._loading_subtitle_gui = nil
 		end
 	end
 
-	if not _ingame_ui:end_screen_active() and not _ingame_ui:end_screen_completed() then
+	if ingame_ui:end_screen_active() and ingame_ui:end_screen_completed() then
 		Managers.state.event:trigger("end_screen_ui_complete")
 	end
 end
@@ -160,103 +168,115 @@ UIManager.end_screen_completed = function (self)
 	return self._ingame_ui:end_screen_completed()
 end
 
-UIManager.activate_end_screen_ui = function (self, arg_12_1, arg_12_2, arg_12_3)
+UIManager.activate_end_screen_ui = function (self, screen_name, screen_config, screen_params)
 	-- function 12
-	self._ingame_ui:activate_end_screen_ui(arg_12_1, arg_12_2, arg_12_3)
+	self._ingame_ui:activate_end_screen_ui(screen_name, screen_config, screen_params)
 end
 
-UIManager.post_update = function (self, arg_13_1, arg_13_2, arg_13_3)
+UIManager.post_update = function (self, dt, t, disable_ingame_ui)
 	-- function 13
-	local _ingame_ui = self._ingame_ui
+	local ingame_ui = self._ingame_ui
 
-	if not _ingame_ui then
-		_ingame_ui:post_update(arg_13_1, arg_13_2, arg_13_3)
+	if ingame_ui then
+		ingame_ui:post_update(dt, t, disable_ingame_ui)
 	end
 end
 
 UIManager.post_render = function (self)
 	-- function 14
-	local _ingame_ui = self._ingame_ui
+	local ingame_ui = self._ingame_ui
 
-	if not _ingame_ui then
-		_ingame_ui:post_render()
+	if ingame_ui then
+		ingame_ui:post_render()
 	end
 end
 
 UIManager.get_transition = function (self)
 	-- function 15
-	local _ingame_ui = self._ingame_ui
+	local ingame_ui = self._ingame_ui
 
-	if not _ingame_ui then
-		return _ingame_ui:get_transition()
+	if ingame_ui then
+		return ingame_ui:get_transition()
 	end
 end
 
-UIManager.restart_game = function (arg_16_0)
+UIManager.restart_game = function (self)
 	-- function 16
-	arg_16_0._ingame_ui.restart_game = true
+	local ingame_ui = self._ingame_ui
+
+	ingame_ui.restart_game = true
 end
 
-UIManager.is_in_view_state = function (self, arg_17_1)
+UIManager.is_in_view_state = function (self, state_name)
 	-- function 17
-	local _ingame_ui = self._ingame_ui
+	local ingame_ui = self._ingame_ui
 
-	if not _ingame_ui then
-		return _ingame_ui:is_in_view_state(arg_17_1)
+	if ingame_ui then
+		return ingame_ui:is_in_view_state(state_name)
 	end
 end
 
-UIManager.get_hud_component = function (self, arg_18_1)
+UIManager.get_hud_component = function (self, component_name)
 	-- function 18
-	return self._ingame_ui:get_hud_component(arg_18_1)
+	local ingame_ui = self._ingame_ui
+
+	return ingame_ui:get_hud_component(component_name)
 end
 
-UIManager.open_popup = function (self, arg_19_1, ...)
+UIManager.open_popup = function (self, popup_name, ...)
 	-- function 19
-	return self._ingame_ui:open_popup(arg_19_1, ...)
+	local ingame_ui = self._ingame_ui
+
+	return ingame_ui:open_popup(popup_name, ...)
 end
 
-UIManager.close_popup = function (self, arg_20_1)
+UIManager.close_popup = function (self, popup_name)
 	-- function 20
-	return self._ingame_ui:close_popup(arg_20_1)
+	local ingame_ui = self._ingame_ui
+
+	return ingame_ui:close_popup(popup_name)
 end
 
-UIManager.get_active_popup = function (self, arg_21_1)
+UIManager.get_active_popup = function (self, popup_name)
 	-- function 21
-	local _ingame_ui = self._ingame_ui
+	local ingame_ui = self._ingame_ui
 
-	if not _ingame_ui then
-		return _ingame_ui:get_active_popup(arg_21_1)
+	if ingame_ui then
+		return ingame_ui:get_active_popup(popup_name)
 	end
 end
 
-UIManager.handle_new_ui_disclaimer = function (self, arg_22_1, arg_22_2)
+UIManager.handle_new_ui_disclaimer = function (self, disclaimer_states, state)
 	-- function 22
-	if Managers.input:is_device_active("gamepad") or not IS_CONSOLE then
+	local gamepad_active = Managers.input:is_device_active("gamepad")
+
+	if gamepad_active or IS_CONSOLE then
 		return
 	end
 
-	local user_setting = Application.user_setting("use_gamepad_menu_layout")
-	local user_setting_2 = Application.user_setting("use_pc_menu_layout")
+	local use_gamepad_layout = Application.user_setting("use_gamepad_menu_layout")
+	local use_pc_menu_layout = Application.user_setting("use_pc_menu_layout")
 
-	if not (user_setting ~= false or user_setting_2 ~= false or arg_22_1[arg_22_2] or arg_22_1[arg_22_2] ~= nil) then
-		self._ingame_ui.weave_onboarding:try_show_tutorial(WeaveUITutorials.new_ui_disclaimer)
+	if use_gamepad_layout == false and use_pc_menu_layout == false and (disclaimer_states[state] or disclaimer_states[state] == nil) then
+		local ingame_ui = self._ingame_ui
+
+		ingame_ui.weave_onboarding:try_show_tutorial(WeaveUITutorials.new_ui_disclaimer)
 		Application.set_user_setting("use_gamepad_menu_layout", nil)
 		Application.save_user_settings()
 	end
 end
 
-UIManager.handle_transition = function (self, arg_23_1, arg_23_2)
+UIManager.handle_transition = function (self, new_transition, params)
 	-- function 23
-	fassert(arg_23_2, "params are a required argument")
+	fassert(params, "params are a required argument")
 
-	local _ingame_ui = self._ingame_ui
+	local ingame_ui = self._ingame_ui
 
-	if not _ingame_ui then
-		if not arg_23_2.use_fade then
-			return _ingame_ui:transition_with_fade(arg_23_1, arg_23_2, arg_23_2.fade_in_speed, arg_23_2.fade_out_speed)
+	if ingame_ui then
+		if params.use_fade then
+			return ingame_ui:transition_with_fade(new_transition, params, params.fade_in_speed, params.fade_out_speed)
 		else
-			return _ingame_ui:handle_transition(arg_23_1, arg_23_2)
+			return ingame_ui:handle_transition(new_transition, params)
 		end
 	end
 end
@@ -268,42 +288,44 @@ end
 
 UIManager._fetch_disabled_ui_layouts = function (self)
 	-- function 25
-	local _disabled_ui_layouts = self._disabled_ui_layouts
+	local disabled_ui_layouts = self._disabled_ui_layouts
 
-	if not _disabled_ui_layouts then
-		local backend = Managers.backend
+	if not disabled_ui_layouts then
+		local backend_manager = Managers.backend
 
-		fassert(backend:get_backend_mirror(), "Backend not created yet")
+		fassert(backend_manager:get_backend_mirror(), "Backend not created yet")
 
-		local get_title_settings = backend:get_title_settings()
+		local title_settings = backend_manager:get_title_settings()
 
-		_disabled_ui_layouts = not get_title_settings and get_title_settings.disabled_ui_layouts and {}
-		self._disabled_ui_layouts = _disabled_ui_layouts
+		disabled_ui_layouts = (not title_settings or not title_settings.disabled_ui_layouts) and not not {}
+		self._disabled_ui_layouts = disabled_ui_layouts
 	end
 
-	return _disabled_ui_layouts
+	return disabled_ui_layouts
 end
 
-local function fn(arg_26_0)
+local function _is_hidden(status)
 	-- function 26
-	return arg_26_0 == "hide"
+	return status == "hide"
 end
 
-local function fn_2(arg_27_0)
+local function _is_disabled(status)
 	-- function 27
-	return arg_27_0 == "disable" or arg_27_0 == true or fn(arg_27_0)
+	return status == "disable" or status == true or not not _is_hidden(status)
 end
 
-UIManager.is_ui_layout_disabled = function (self, arg_28_1)
+UIManager.is_ui_layout_disabled = function (self, layout_name)
 	-- function 28
-	local var_28_0 = self:_fetch_disabled_ui_layouts()[arg_28_1]
+	local disabled_ui_layouts = self:_fetch_disabled_ui_layouts()
+	local status = disabled_ui_layouts[layout_name]
 
-	return fn_2(var_28_0)
+	return _is_disabled(status)
 end
 
-UIManager.is_ui_layout_hidden = function (self, arg_29_1)
+UIManager.is_ui_layout_hidden = function (self, layout_name)
 	-- function 29
-	local var_29_0 = self:_fetch_disabled_ui_layouts()[arg_29_1]
+	local disabled_ui_layouts = self:_fetch_disabled_ui_layouts()
+	local status = disabled_ui_layouts[layout_name]
 
-	return fn(var_29_0)
+	return _is_hidden(status)
 end

@@ -2,22 +2,22 @@
 
 ActionCareerDREngineer = class(ActionCareerDREngineer, ActionMinigun)
 
-local set_flow_variable = Unit.set_flow_variable
-local flow_event = Unit.flow_event
+local unit_set_flow_variable = Unit.set_flow_variable
+local unit_flow_event = Unit.flow_event
 
-ActionCareerDREngineer.init = function (self, arg_1_1, arg_1_2, arg_1_3, arg_1_4, arg_1_5, arg_1_6, arg_1_7, arg_1_8)
+ActionCareerDREngineer.init = function (self, world, item_name, is_server, owner_unit, damage_unit, first_person_unit, weapon_unit, weapon_system)
 	-- function 1
-	ActionCareerDREngineer.super.init(self, arg_1_1, arg_1_2, arg_1_3, arg_1_4, arg_1_5, arg_1_6, arg_1_7, arg_1_8)
+	ActionCareerDREngineer.super.init(self, world, item_name, is_server, owner_unit, damage_unit, first_person_unit, weapon_unit, weapon_system)
 
-	self._talent_extension = ScriptUnit.extension(arg_1_4, "talent_system")
+	self._talent_extension = ScriptUnit.extension(owner_unit, "talent_system")
 end
 
-ActionCareerDREngineer.client_owner_start_action = function (self, arg_2_1, arg_2_2, arg_2_3, arg_2_4, arg_2_5)
+ActionCareerDREngineer.client_owner_start_action = function (self, new_action, t, chain_action_data, power_level, action_init_data)
 	-- function 2
-	ActionCareerDREngineer.super.client_owner_start_action(self, arg_2_1, arg_2_2, arg_2_3, arg_2_4)
+	ActionCareerDREngineer.super.client_owner_start_action(self, new_action, t, chain_action_data, power_level)
 
-	if not self._talent_extension:has_talent("bardin_engineer_reduced_ability_fire_slowdown") then
-		self._max_rps = arg_2_1.max_rps * 1.3
+	if self._talent_extension:has_talent("bardin_engineer_reduced_ability_fire_slowdown") then
+		self._max_rps = new_action.max_rps * 1.3
 
 		if Managers.mechanism:current_mechanism_name() == "versus" then
 			self._current_rps = math.max(self._current_rps, self._max_rps * CareerConstants.dr_engineer.talent_6_2_starting_rps_vs)
@@ -29,7 +29,7 @@ ActionCareerDREngineer.client_owner_start_action = function (self, arg_2_1, arg_
 	Managers.state.achievement:trigger_event("crank_gun_fire_start", self.owner_unit)
 end
 
-ActionCareerDREngineer._update_attack_speed = function (self, arg_3_1)
+ActionCareerDREngineer._update_attack_speed = function (self, t)
 	-- function 3
 	if not self._calculated_attack_speed then
 		self._attack_speed_mod = ActionUtils.get_action_time_scale(self.owner_unit, self.current_action)
@@ -37,87 +37,89 @@ ActionCareerDREngineer._update_attack_speed = function (self, arg_3_1)
 		self.first_person_extension:animation_set_variable("barrel_spin_speed", self._attack_speed_mod)
 	end
 
-	ActionCareerDREngineer.super._update_attack_speed(self, arg_3_1)
+	ActionCareerDREngineer.super._update_attack_speed(self, t)
 end
 
-ActionCareerDREngineer._shoot = function (self, arg_4_1, arg_4_2)
+ActionCareerDREngineer._shoot = function (self, dt, t)
 	-- function 4
-	self:_handle_infinite_stacks(arg_4_1, arg_4_2)
-	ActionCareerDREngineer.super._shoot(self, arg_4_1, arg_4_2)
+	self:_handle_infinite_stacks(dt, t)
+	ActionCareerDREngineer.super._shoot(self, dt, t)
 end
 
-ActionCareerDREngineer._staggered_shot_done = function (self, arg_5_1)
+ActionCareerDREngineer._staggered_shot_done = function (self, t)
 	-- function 5
-	ActionCareerDREngineer.super._staggered_shot_done(self, arg_5_1)
+	ActionCareerDREngineer.super._staggered_shot_done(self, t)
 	Managers.state.achievement:trigger_event("crank_gun_fire", self.owner_unit, 1)
-	flow_event(self.weapon_unit, "lua_finish_shooting")
+	unit_flow_event(self.weapon_unit, "lua_finish_shooting")
 end
 
-ActionCareerDREngineer.finish = function (self, arg_6_1)
+ActionCareerDREngineer.finish = function (self, reason)
 	-- function 6
-	ActionCareerDREngineer.super.finish(self, arg_6_1)
+	ActionCareerDREngineer.super.finish(self, reason)
 
-	local _initial_rounds_per_second = self._initial_rounds_per_second
-	local num = self._max_rps - _initial_rounds_per_second
-	local clamp = math.clamp((self._current_rps - _initial_rounds_per_second) / num, 0, 1)
+	local initial_rps = self._initial_rounds_per_second
+	local rps_range = self._max_rps - initial_rps
+	local windup = math.clamp((self._current_rps - initial_rps) / rps_range, 0, 1)
 
-	Managers.state.event:trigger("on_engineer_weapon_spin_up", clamp)
+	Managers.state.event:trigger("on_engineer_weapon_spin_up", windup)
 end
 
-local num = 1
-local num_2 = 2
+local INDEX_POSITION = 1
+local INDEX_DISTANCE = 2
 
-ActionCareerDREngineer.fire_hitscan = function (self, arg_7_1, arg_7_2, arg_7_3)
+ActionCareerDREngineer.fire_hitscan = function (self, position, direction, range)
 	-- function 7
-	local fire_hitscan = ActionCareerDREngineer.super.fire_hitscan(self, arg_7_1, arg_7_2, arg_7_3)
-	local var_7_1
+	local result = ActionCareerDREngineer.super.fire_hitscan(self, position, direction, range)
+	local var_7_0
 
-	if not fire_hitscan then
-		var_7_1 = fire_hitscan[#fire_hitscan][num]
+	if result then
+		var_7_0 = result[#result][INDEX_POSITION]
+
+		if not var_7_0 then
+			-- Nothing
+		end
+	end
+
+	var_7_0 = position + direction * range
+
+	local end_position = var_7_0
+
+	do
+		local var_7_1
+	end
+
+	::label_7_0::
+
+	if result then
+		var_7_1 = result[#result][INDEX_DISTANCE]
 
 		if not var_7_1 then
 			-- Nothing
 		end
 	end
 
-	var_7_1 = arg_7_1 + arg_7_2 * arg_7_3
-
-	do
-		local var_7_2
-	end
-
-	::label_7_0::
-
-	if not fire_hitscan then
-		var_7_2 = fire_hitscan[#fire_hitscan][num_2]
-
-		if not var_7_2 then
-			-- Nothing
-		end
-	end
-
-	var_7_2 = arg_7_3
+	var_7_1 = range
 
 	::label_7_1::
 
-	local num_3 = var_7_2 * 0.1
+	local life_time = var_7_1 * 0.1
 
-	self:_add_bullet_trail(var_7_1, num_3)
+	self:_add_bullet_trail(end_position, life_time)
 	Managers.state.event:trigger("on_engineer_weapon_fire", self._visual_heat_generation)
 
-	return fire_hitscan
+	return result
 end
 
-ActionCareerDREngineer._add_bullet_trail = function (self, arg_8_1, arg_8_2)
+ActionCareerDREngineer._add_bullet_trail = function (self, end_position, lifetime)
 	-- function 8
 	if not self.is_bot then
 		local weapon_unit = self.weapon_unit
 
-		set_flow_variable(weapon_unit, "is_critical_strike", self._is_critical_strike)
-		set_flow_variable(weapon_unit, "hit_position", arg_8_1)
-		set_flow_variable(weapon_unit, "trail_life", arg_8_2)
-		flow_event(weapon_unit, "lua_bullet_trail")
-		flow_event(weapon_unit, "lua_bullet_trail_set")
+		unit_set_flow_variable(weapon_unit, "is_critical_strike", self._is_critical_strike)
+		unit_set_flow_variable(weapon_unit, "hit_position", end_position)
+		unit_set_flow_variable(weapon_unit, "trail_life", lifetime)
+		unit_flow_event(weapon_unit, "lua_bullet_trail")
+		unit_flow_event(weapon_unit, "lua_bullet_trail_set")
 	end
 end
 
@@ -126,44 +128,44 @@ ActionCareerDREngineer.get_projectile_start_position_rotation = function (self)
 	return self.first_person_extension:get_projectile_start_position_rotation()
 end
 
-ActionCareerDREngineer._handle_infinite_stacks = function (self, arg_10_1, arg_10_2)
+ActionCareerDREngineer._handle_infinite_stacks = function (self, dt, t)
 	-- function 10
 	if not self._talent_extension:has_talent("bardin_engineer_pump_buff_long") then
 		return
 	end
 
-	local get_stacking_buff = self.buff_extension:get_stacking_buff("bardin_engineer_pump_buff")
+	local buff_extension = self.buff_extension
+	local buffs = buff_extension:get_stacking_buff("bardin_engineer_pump_buff")
 
-	if not get_stacking_buff then
-		if not self._first_shot then
-			for i = 1, #get_stacking_buff do
-				if not get_stacking_buff[i].duration then
+	if buffs then
+		if self._first_shot then
+			for i = 1, #buffs do
+				if buffs[i].duration then
 					return
 				end
 			end
 
-			local var_10_1 = get_stacking_buff[1]
+			local first_buff = buffs[1]
 
-			var_10_1.duration = CareerConstants.dr_engineer.talent_4_3_stack_duration
-			var_10_1.start_time = arg_10_2
+			first_buff.duration = CareerConstants.dr_engineer.talent_4_3_stack_duration
+			first_buff.start_time = t
 		else
-			local var_10_2
+			local duration_buff
 
-			for j = 1, #get_stacking_buff do
-				local var_10_3 = get_stacking_buff[j]
+			for i = 1, #buffs do
+				local buff = buffs[i]
 
-				if not var_10_3.duration then
-					var_10_2 = var_10_3
+				if buff.duration then
+					duration_buff = buff
 
 					break
 				end
 			end
 
-			if not var_10_2 then
-				local var_10_4 = get_stacking_buff[1]
-
-				var_10_4.duration = CareerConstants.dr_engineer.talent_4_3_stack_duration
-				var_10_4.start_time = arg_10_2
+			if not duration_buff then
+				duration_buff = buffs[1]
+				duration_buff.duration = CareerConstants.dr_engineer.talent_4_3_stack_duration
+				duration_buff.start_time = t
 
 				return
 			end

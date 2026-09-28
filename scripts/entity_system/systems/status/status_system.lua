@@ -4,7 +4,7 @@ require("scripts/unit_extensions/generic/generic_status_extension")
 
 StatusSystem = class(StatusSystem, ExtensionSystemBase)
 
-local tbl = {
+local RPCS = {
 	"rpc_status_change_bool",
 	"rpc_status_change_int",
 	"rpc_status_change_int_and_unit",
@@ -24,24 +24,24 @@ local tbl = {
 	"rpc_set_override_blocking",
 	"rpc_set_fatigue_points"
 }
-local tbl_2 = {
+local extensions = {
 	"GenericStatusExtension"
 }
 
-DLCUtils.map_list("status_extensions", function (arg_1_0)
+DLCUtils.map_list("status_extensions", function (file)
 	-- function 1
-	tbl_2[#tbl_2 + 1] = require(arg_1_0)
+	extensions[#extensions + 1] = require(file)
 end)
 
-StatusSystem.init = function (self, arg_2_1, arg_2_2)
+StatusSystem.init = function (self, entity_system_creation_context, system_name)
 	-- function 2
-	StatusSystem.super.init(self, arg_2_1, arg_2_2, tbl_2)
+	StatusSystem.super.init(self, entity_system_creation_context, system_name, extensions)
 
-	local network_event_delegate = arg_2_1.network_event_delegate
+	local network_event_delegate = entity_system_creation_context.network_event_delegate
 
 	self.network_event_delegate = network_event_delegate
 
-	network_event_delegate:register(self, unpack(tbl))
+	network_event_delegate:register(self, unpack(RPCS))
 end
 
 StatusSystem.destroy = function (self)
@@ -49,537 +49,550 @@ StatusSystem.destroy = function (self)
 	self.network_event_delegate:unregister(self)
 end
 
-StatusSystem.rpc_hooked_sync = function (self, arg_4_1, arg_4_2, arg_4_3, arg_4_4)
+StatusSystem.rpc_hooked_sync = function (self, channel_id, status_id, game_object_id, time_left)
 	-- function 4
-	local unit = self.unit_storage:unit(arg_4_3)
+	local unit = self.unit_storage:unit(game_object_id)
 
-	if not (not unit and Unit.alive(unit)) then
+	if not unit or not Unit.alive(unit) then
 		return
 	end
 
-	local extension = ScriptUnit.extension(unit, "status_system")
-	local time = Managers.time:time("game")
-	local var_4_3 = NetworkLookup.statuses[arg_4_2]
+	local status_ext = ScriptUnit.extension(unit, "status_system")
+	local t = Managers.time:time("game")
+	local status = NetworkLookup.statuses[status_id]
 
-	if var_4_3 == "pack_master_dropping" then
-		extension.release_falling_time = time + arg_4_4
-	elseif var_4_3 == "pack_master_unhooked" then
-		extension.release_unhook_time_left = time + arg_4_4
+	if status == "pack_master_dropping" then
+		status_ext.release_falling_time = t + time_left
+	elseif status == "pack_master_unhooked" then
+		status_ext.release_unhook_time_left = t + time_left
 	end
 end
 
-StatusSystem.rpc_set_action_data = function (self, arg_5_1, arg_5_2, arg_5_3, arg_5_4)
+StatusSystem.rpc_set_action_data = function (self, channel_id, game_object_id, breed_id, breed_action_id)
 	-- function 5
-	local unit = self.unit_storage:unit(arg_5_2)
+	local unit = self.unit_storage:unit(game_object_id)
 
-	if not (not unit and Unit.alive(unit)) then
+	if not unit or not Unit.alive(unit) then
 		return
 	end
 
-	local extension = ScriptUnit.extension(unit, "status_system")
-	local var_5_2 = NetworkLookup.breeds[arg_5_3]
-	local var_5_3 = NetworkLookup.bt_action_names[arg_5_4]
+	local status_ext = ScriptUnit.extension(unit, "status_system")
+	local breed_name = NetworkLookup.breeds[breed_id]
+	local breed_action_name = NetworkLookup.bt_action_names[breed_action_id]
 
-	extension:set_breed_action(var_5_2, var_5_3)
+	status_ext:set_breed_action(breed_name, breed_action_name)
 end
 
-local tbl_3 = {
-	pushed = function (self, arg_6_1, arg_6_2, arg_6_3, arg_6_4, arg_6_5, arg_6_6, arg_6_7)
+local rpc_status_change_bool_funcs = {
+	pushed = function (status_ext, status, level, status_bool, unit, unit_go_id, other_unit, other_unit_go_id)
 		-- function 6
-		local time = Managers.time:time("game")
+		local t = Managers.time:time("game")
 
-		self:set_pushed(arg_6_3, time)
+		status_ext:set_pushed(status_bool, t)
 
 		return true
 	end,
-	pounced_down = function (self, arg_7_1, arg_7_2, arg_7_3, arg_7_4, arg_7_5, arg_7_6, arg_7_7)
+	pounced_down = function (status_ext, status, level, status_bool, unit, unit_go_id, other_unit, other_unit_go_id)
 		-- function 7
-		self:set_pounced_down(arg_7_3, arg_7_6)
+		status_ext:set_pounced_down(status_bool, other_unit)
 
 		return true
 	end,
-	dead = function (self, arg_8_1, arg_8_2, arg_8_3, arg_8_4, arg_8_5, arg_8_6, arg_8_7)
+	dead = function (status_ext, status, level, status_bool, unit, unit_go_id, other_unit, other_unit_go_id)
 		-- function 8
-		self:set_dead(arg_8_3)
+		status_ext:set_dead(status_bool)
 
 		return true
 	end,
-	knocked_down = function (self, arg_9_1, arg_9_2, arg_9_3, arg_9_4, arg_9_5, arg_9_6, arg_9_7)
+	knocked_down = function (status_ext, status, level, status_bool, unit, unit_go_id, other_unit, other_unit_go_id)
 		-- function 9
-		self:set_knocked_down(arg_9_3)
+		status_ext:set_knocked_down(status_bool)
 
 		return true
 	end,
-	revived = function (self, arg_10_1, arg_10_2, arg_10_3, arg_10_4, arg_10_5, arg_10_6, arg_10_7)
+	revived = function (status_ext, status, level, status_bool, unit, unit_go_id, other_unit, other_unit_go_id)
 		-- function 10
-		self:set_revived(arg_10_3, arg_10_6)
+		status_ext:set_revived(status_bool, other_unit)
 
 		return true
 	end,
-	reviving = function (self, arg_11_1, arg_11_2, arg_11_3, arg_11_4, arg_11_5, arg_11_6, arg_11_7)
+	reviving = function (status_ext, status, level, status_bool, unit, unit_go_id, other_unit, other_unit_go_id)
 		-- function 11
-		self:set_reviving(arg_11_3, arg_11_6)
+		status_ext:set_reviving(status_bool, other_unit)
 
 		return true
 	end,
-	pack_master_pulling = function (self, arg_12_1, arg_12_2, arg_12_3, arg_12_4, arg_12_5, arg_12_6, arg_12_7)
+	pack_master_pulling = function (status_ext, status, level, status_bool, unit, unit_go_id, other_unit, other_unit_go_id)
 		-- function 12
-		local set_pack_master, var_12_1, var_12_2 = self:set_pack_master("pack_master_pulling", arg_12_3, arg_12_6)
+		local set_valid, valid_value, valid_other_unit = status_ext:set_pack_master("pack_master_pulling", status_bool, other_unit)
 
-		return set_pack_master, var_12_1, var_12_2
+		return set_valid, valid_value, valid_other_unit
 	end,
-	pack_master_dragging = function (self, arg_13_1, arg_13_2, arg_13_3, arg_13_4, arg_13_5, arg_13_6, arg_13_7)
+	pack_master_dragging = function (status_ext, status, level, status_bool, unit, unit_go_id, other_unit, other_unit_go_id)
 		-- function 13
-		local set_pack_master, var_13_1, var_13_2 = self:set_pack_master("pack_master_dragging", arg_13_3, arg_13_6)
+		local set_valid, valid_value, valid_other_unit = status_ext:set_pack_master("pack_master_dragging", status_bool, other_unit)
 
-		return set_pack_master, var_13_1, var_13_2
+		return set_valid, valid_value, valid_other_unit
 	end,
-	pack_master_hoisting = function (self, arg_14_1, arg_14_2, arg_14_3, arg_14_4, arg_14_5, arg_14_6, arg_14_7)
+	pack_master_hoisting = function (status_ext, status, level, status_bool, unit, unit_go_id, other_unit, other_unit_go_id)
 		-- function 14
-		local set_pack_master, var_14_1, var_14_2 = self:set_pack_master("pack_master_hoisting", arg_14_3, arg_14_6)
+		local set_valid, valid_value, valid_other_unit = status_ext:set_pack_master("pack_master_hoisting", status_bool, other_unit)
 
-		return set_pack_master, var_14_1, var_14_2
+		return set_valid, valid_value, valid_other_unit
 	end,
-	pack_master_hanging = function (self, arg_15_1, arg_15_2, arg_15_3, arg_15_4, arg_15_5, arg_15_6, arg_15_7)
+	pack_master_hanging = function (status_ext, status, level, status_bool, unit, unit_go_id, other_unit, other_unit_go_id)
 		-- function 15
-		local set_pack_master, var_15_1, var_15_2 = self:set_pack_master("pack_master_hanging", arg_15_3, arg_15_6)
+		local set_valid, valid_value, valid_other_unit = status_ext:set_pack_master("pack_master_hanging", status_bool, other_unit)
 
-		return set_pack_master, var_15_1, var_15_2
+		return set_valid, valid_value, valid_other_unit
 	end,
-	pack_master_dropping = function (self, arg_16_1, arg_16_2, arg_16_3, arg_16_4, arg_16_5, arg_16_6, arg_16_7)
+	pack_master_dropping = function (status_ext, status, level, status_bool, unit, unit_go_id, other_unit, other_unit_go_id)
 		-- function 16
-		local set_pack_master, var_16_1, var_16_2 = self:set_pack_master("pack_master_dropping", arg_16_3, arg_16_6)
+		local set_valid, valid_value, valid_other_unit = status_ext:set_pack_master("pack_master_dropping", status_bool, other_unit)
 
-		return set_pack_master, var_16_1, var_16_2
+		return set_valid, valid_value, valid_other_unit
 	end,
-	pack_master_released = function (self, arg_17_1, arg_17_2, arg_17_3, arg_17_4, arg_17_5, arg_17_6, arg_17_7)
+	pack_master_released = function (status_ext, status, level, status_bool, unit, unit_go_id, other_unit, other_unit_go_id)
 		-- function 17
-		local set_pack_master, var_17_1, var_17_2 = self:set_pack_master("pack_master_released", arg_17_3, arg_17_6)
+		local set_valid, valid_value, valid_other_unit = status_ext:set_pack_master("pack_master_released", status_bool, other_unit)
 
-		return set_pack_master, var_17_1, var_17_2
+		return set_valid, valid_value, valid_other_unit
 	end,
-	pack_master_unhooked = function (self, arg_18_1, arg_18_2, arg_18_3, arg_18_4, arg_18_5, arg_18_6, arg_18_7)
+	pack_master_unhooked = function (status_ext, status, level, status_bool, unit, unit_go_id, other_unit, other_unit_go_id)
 		-- function 18
-		local set_pack_master, var_18_1, var_18_2 = self:set_pack_master("pack_master_unhooked", arg_18_3, arg_18_6)
+		local set_valid, valid_value, valid_other_unit = status_ext:set_pack_master("pack_master_unhooked", status_bool, other_unit)
 
-		return set_pack_master, var_18_1, var_18_2
+		return set_valid, valid_value, valid_other_unit
 	end,
-	chaos_corruptor_grabbed = function (self, arg_19_1, arg_19_2, arg_19_3, arg_19_4, arg_19_5, arg_19_6, arg_19_7)
+	chaos_corruptor_grabbed = function (status_ext, status, level, status_bool, unit, unit_go_id, other_unit, other_unit_go_id)
 		-- function 19
-		self:set_grabbed_by_corruptor(arg_19_1, arg_19_3, arg_19_6)
+		status_ext:set_grabbed_by_corruptor(status, status_bool, other_unit)
 
 		return true
 	end,
-	chaos_corruptor_dragging = function (self, arg_20_1, arg_20_2, arg_20_3, arg_20_4, arg_20_5, arg_20_6, arg_20_7)
+	chaos_corruptor_dragging = function (status_ext, status, level, status_bool, unit, unit_go_id, other_unit, other_unit_go_id)
 		-- function 20
-		self:set_grabbed_by_corruptor(arg_20_1, arg_20_3, arg_20_6)
+		status_ext:set_grabbed_by_corruptor(status, status_bool, other_unit)
 
 		return true
 	end,
-	chaos_corruptor_released = function (self, arg_21_1, arg_21_2, arg_21_3, arg_21_4, arg_21_5, arg_21_6, arg_21_7)
+	chaos_corruptor_released = function (status_ext, status, level, status_bool, unit, unit_go_id, other_unit, other_unit_go_id)
 		-- function 21
-		self:set_grabbed_by_corruptor(arg_21_1, arg_21_3, arg_21_6)
+		status_ext:set_grabbed_by_corruptor(status, status_bool, other_unit)
 
 		return true
 	end,
-	crouching = function (self, arg_22_1, arg_22_2, arg_22_3, arg_22_4, arg_22_5, arg_22_6, arg_22_7)
+	crouching = function (status_ext, status, level, status_bool, unit, unit_go_id, other_unit, other_unit_go_id)
 		-- function 22
-		self:set_crouching(arg_22_3)
+		status_ext:set_crouching(status_bool)
 
 		return true
 	end,
-	pulled_up = function (self, arg_23_1, arg_23_2, arg_23_3, arg_23_4, arg_23_5, arg_23_6, arg_23_7)
+	pulled_up = function (status_ext, status, level, status_bool, unit, unit_go_id, other_unit, other_unit_go_id)
 		-- function 23
-		self:set_pulled_up(arg_23_3, arg_23_6)
+		status_ext:set_pulled_up(status_bool, other_unit)
 
 		return true
 	end,
-	ladder_climbing = function (self, arg_24_1, arg_24_2, arg_24_3, arg_24_4, arg_24_5, arg_24_6, arg_24_7)
+	ladder_climbing = function (status_ext, status, level, status_bool, unit, unit_go_id, other_unit, other_unit_go_id)
 		-- function 24
-		local unit_by_index = Level.unit_by_index(arg_24_2, arg_24_7)
+		local ladder_unit = Level.unit_by_index(level, other_unit_go_id)
 
-		self:set_is_on_ladder(arg_24_3, unit_by_index)
+		status_ext:set_is_on_ladder(status_bool, ladder_unit)
 
 		return true
 	end,
-	ledge_hanging = function (self, arg_25_1, arg_25_2, arg_25_3, arg_25_4, arg_25_5, arg_25_6, arg_25_7)
+	ledge_hanging = function (status_ext, status, level, status_bool, unit, unit_go_id, other_unit, other_unit_go_id)
 		-- function 25
-		local unit_by_index = Level.unit_by_index(arg_25_2, arg_25_7)
+		local ledge_unit = Level.unit_by_index(level, other_unit_go_id)
 
-		self:set_is_ledge_hanging(arg_25_3, unit_by_index)
+		status_ext:set_is_ledge_hanging(status_bool, ledge_unit)
 
 		return true
 	end,
-	ready_for_assisted_respawn = function (self, arg_26_1, arg_26_2, arg_26_3, arg_26_4, arg_26_5, arg_26_6, arg_26_7)
+	ready_for_assisted_respawn = function (status_ext, status, level, status_bool, unit, unit_go_id, other_unit, other_unit_go_id)
 		-- function 26
-		local unit_by_index = Level.unit_by_index(arg_26_2, arg_26_7)
+		local flavour_unit = Level.unit_by_index(level, other_unit_go_id)
 
-		Managers.state.game_mode:player_respawned(self.unit)
-		self:set_ready_for_assisted_respawn(arg_26_3, unit_by_index)
+		Managers.state.game_mode:player_respawned(status_ext.unit)
+		status_ext:set_ready_for_assisted_respawn(status_bool, flavour_unit)
 
 		return true
 	end,
-	assisted_respawning = function (self, arg_27_1, arg_27_2, arg_27_3, arg_27_4, arg_27_5, arg_27_6, arg_27_7)
+	assisted_respawning = function (status_ext, status, level, status_bool, unit, unit_go_id, other_unit, other_unit_go_id)
 		-- function 27
-		self:set_assisted_respawning(arg_27_3, arg_27_6)
+		status_ext:set_assisted_respawning(status_bool, other_unit)
 
 		return true
 	end,
-	respawned = function (self, arg_28_1, arg_28_2, arg_28_3, arg_28_4, arg_28_5, arg_28_6, arg_28_7)
+	respawned = function (status_ext, status, level, status_bool, unit, unit_go_id, other_unit, other_unit_go_id)
 		-- function 28
-		self:set_respawned(arg_28_3)
+		status_ext:set_respawned(status_bool)
 
 		return true
 	end,
-	overcharge_exploding = function (self, arg_29_1, arg_29_2, arg_29_3, arg_29_4, arg_29_5, arg_29_6, arg_29_7)
+	overcharge_exploding = function (status_ext, status, level, status_bool, unit, unit_go_id, other_unit, other_unit_go_id)
 		-- function 29
-		self:set_overcharge_exploding(arg_29_3)
+		status_ext:set_overcharge_exploding(status_bool)
 
 		return true
 	end,
-	dodging = function (self, arg_30_1, arg_30_2, arg_30_3, arg_30_4, arg_30_5, arg_30_6, arg_30_7)
+	dodging = function (status_ext, status, level, status_bool, unit, unit_go_id, other_unit, other_unit_go_id)
 		-- function 30
-		self:set_is_dodging(arg_30_3)
+		status_ext:set_is_dodging(status_bool)
 
 		return true
 	end,
-	grabbed_by_tentacle = function (self, arg_31_1, arg_31_2, arg_31_3, arg_31_4, arg_31_5, arg_31_6, arg_31_7)
+	grabbed_by_tentacle = function (status_ext, status, level, status_bool, unit, unit_go_id, other_unit, other_unit_go_id)
 		-- function 31
-		self:set_grabbed_by_tentacle(arg_31_3, arg_31_6)
+		status_ext:set_grabbed_by_tentacle(status_bool, other_unit)
 
-		local has_extension = ScriptUnit.has_extension(arg_31_6, "ai_supplementary_system")
+		local tentacle_spline_extension = ScriptUnit.has_extension(other_unit, "ai_supplementary_system")
 
-		if not Unit.alive(arg_31_6) then
-			has_extension:set_target_unit(arg_31_4)
+		if Unit.alive(other_unit) then
+			tentacle_spline_extension:set_target_unit(unit)
 		end
 
 		return true
 	end,
-	grabbed_by_chaos_spawn = function (self, arg_32_1, arg_32_2, arg_32_3, arg_32_4, arg_32_5, arg_32_6, arg_32_7)
+	grabbed_by_chaos_spawn = function (status_ext, status, level, status_bool, unit, unit_go_id, other_unit, other_unit_go_id)
 		-- function 32
-		self:set_grabbed_by_chaos_spawn(arg_32_3, arg_32_6)
+		status_ext:set_grabbed_by_chaos_spawn(status_bool, other_unit)
 
 		return true
 	end,
-	in_vortex = function (self, arg_33_1, arg_33_2, arg_33_3, arg_33_4, arg_33_5, arg_33_6, arg_33_7)
+	in_vortex = function (status_ext, status, level, status_bool, unit, unit_go_id, other_unit, other_unit_go_id)
 		-- function 33
-		self:set_in_vortex(arg_33_3, arg_33_6)
+		status_ext:set_in_vortex(status_bool, other_unit)
 
 		return true
 	end,
-	near_vortex = function (self, arg_34_1, arg_34_2, arg_34_3, arg_34_4, arg_34_5, arg_34_6, arg_34_7)
+	near_vortex = function (status_ext, status, level, status_bool, unit, unit_go_id, other_unit, other_unit_go_id)
 		-- function 34
-		self:set_near_vortex(arg_34_3, arg_34_6)
+		status_ext:set_near_vortex(status_bool, other_unit)
 
 		return true
 	end,
-	invisible = function (self, arg_35_1, arg_35_2, arg_35_3, arg_35_4, arg_35_5, arg_35_6, arg_35_7)
+	invisible = function (status_ext, status, level, status_bool, unit, unit_go_id, other_unit, other_unit_go_id)
 		-- function 35
-		self:set_invisible(arg_35_3)
+		status_ext:set_invisible(status_bool)
 
 		return true
 	end,
-	in_end_zone = function (self, arg_36_1, arg_36_2, arg_36_3, arg_36_4, arg_36_5, arg_36_6, arg_36_7)
+	in_end_zone = function (status_ext, status, level, status_bool, unit, unit_go_id, other_unit, other_unit_go_id)
 		-- function 36
-		self:set_in_end_zone(arg_36_3, arg_36_6)
+		status_ext:set_in_end_zone(status_bool, other_unit)
 
 		return true
 	end,
-	in_liquid = function (self, arg_37_1, arg_37_2, arg_37_3, arg_37_4, arg_37_5, arg_37_6, arg_37_7)
+	in_liquid = function (status_ext, status, level, status_bool, unit, unit_go_id, other_unit, other_unit_go_id)
 		-- function 37
-		self:set_in_liquid(arg_37_3, arg_37_6)
+		status_ext:set_in_liquid(status_bool, other_unit)
 
 		return true
 	end,
-	charged = function (self, arg_38_1, arg_38_2, arg_38_3, arg_38_4, arg_38_5, arg_38_6, arg_38_7)
+	charged = function (status_ext, status, level, status_bool, unit, unit_go_id, other_unit, other_unit_go_id)
 		-- function 38
-		local time = Managers.time:time("game")
+		local t = Managers.time:time("game")
 
-		self:set_charged(arg_38_3, time)
+		status_ext:set_charged(status_bool, t)
 
 		return true
 	end,
-	block_broken = function (self, arg_39_1, arg_39_2, arg_39_3, arg_39_4, arg_39_5, arg_39_6, arg_39_7)
+	block_broken = function (status_ext, status, level, status_bool, unit, unit_go_id, other_unit, other_unit_go_id)
 		-- function 39
-		local time = Managers.time:time("game")
+		local t = Managers.time:time("game")
 
-		self:set_block_broken(arg_39_3, time, arg_39_6)
+		status_ext:set_block_broken(status_bool, t, other_unit)
 
 		return true
 	end,
-	gutter_runner_leaping = function (self, arg_40_1, arg_40_2, arg_40_3, arg_40_4, arg_40_5, arg_40_6, arg_40_7)
+	gutter_runner_leaping = function (status_ext, status, level, status_bool, unit, unit_go_id, other_unit, other_unit_go_id)
 		-- function 40
-		self:set_gutter_runner_leaping(arg_40_3)
+		status_ext:set_gutter_runner_leaping(status_bool)
 
 		return true
 	end
 }
 
-StatusSystem.rpc_status_change_bool = function (self, arg_41_1, arg_41_2, arg_41_3, arg_41_4, arg_41_5)
+StatusSystem.rpc_status_change_bool = function (self, channel_id, status_id, status_bool, game_object_id, other_object_id)
 	-- function 41
-	local unit = self.unit_storage:unit(arg_41_4)
+	local unit = self.unit_storage:unit(game_object_id)
 
-	if not (not unit and Unit.alive(unit)) then
+	if not unit or not Unit.alive(unit) then
 		return
 	end
 
-	local unit_2 = self.unit_storage:unit(arg_41_5)
-	local extension = ScriptUnit.extension(unit, "status_system")
-	local var_41_3 = NetworkLookup.statuses[arg_41_2]
-	local current_level = LevelHelper:current_level(self.world)
+	local other_unit = self.unit_storage:unit(other_object_id)
+	local status_ext = ScriptUnit.extension(unit, "status_system")
+	local status = NetworkLookup.statuses[status_id]
+	local level = LevelHelper:current_level(self.world)
 
-	fassert(tbl_3[var_41_3], "Unhandled status %s", var_41_3)
+	fassert(rpc_status_change_bool_funcs[status], "Unhandled status %s", status)
 
-	local var_41_5, var_41_6, var_41_7 = tbl_3[var_41_3](extension, var_41_3, current_level, arg_41_3, unit, arg_41_4, unit_2, arg_41_5)
+	local set_valid, actual_status_bool, actual_other_unit = rpc_status_change_bool_funcs[status](status_ext, status, level, status_bool, unit, game_object_id, other_unit, other_object_id)
 
-	if not Managers.player.is_server then
-		local var_41_8 = CHANNEL_TO_PEER_ID[arg_41_1]
+	if Managers.player.is_server then
+		local peer_id = CHANNEL_TO_PEER_ID[channel_id]
 
-		if not var_41_5 then
-			Managers.state.network.network_transmit:send_rpc_clients_except("rpc_status_change_bool", var_41_8, arg_41_2, arg_41_3, arg_41_4, arg_41_5)
+		if set_valid then
+			Managers.state.network.network_transmit:send_rpc_clients_except("rpc_status_change_bool", peer_id, status_id, status_bool, game_object_id, other_object_id)
 		else
-			arg_41_5 = self.unit_storage:go_id(var_41_7) or NetworkConstants.invalid_game_object_id
+			other_object_id = not not self.unit_storage:go_id(actual_other_unit) or not not NetworkConstants.invalid_game_object_id
 
-			Managers.state.network.network_transmit:send_rpc("rpc_status_change_bool", var_41_8, arg_41_2, var_41_6, arg_41_4, arg_41_5)
+			Managers.state.network.network_transmit:send_rpc("rpc_status_change_bool", peer_id, status_id, actual_status_bool, game_object_id, other_object_id)
 		end
 	end
 end
 
-StatusSystem.rpc_status_change_int = function (self, arg_42_1, arg_42_2, arg_42_3, arg_42_4)
+StatusSystem.rpc_status_change_int = function (self, channel_id, status_id, status_int, game_object_id)
 	-- function 42
-	local unit = self.unit_storage:unit(arg_42_4)
+	local unit = self.unit_storage:unit(game_object_id)
 
-	if not (not unit and Unit.alive(unit)) then
+	if not unit or not Unit.alive(unit) then
 		return
 	end
 
-	local extension = ScriptUnit.extension(unit, "status_system")
-	local var_42_2 = NetworkLookup.statuses[arg_42_2]
+	local status_ext = ScriptUnit.extension(unit, "status_system")
+	local status = NetworkLookup.statuses[status_id]
 
-	if var_42_2 == "grabbed_by_tentacle" then
-		local var_42_3 = NetworkLookup[var_42_2][arg_42_3]
+	if status == "grabbed_by_tentacle" then
+		local sub_status = NetworkLookup[status][status_int]
 
-		extension:set_grabbed_by_tentacle_status(var_42_3)
-	elseif var_42_2 == "grabbed_by_chaos_spawn" then
-		local var_42_4 = NetworkLookup[var_42_2][arg_42_3]
+		status_ext:set_grabbed_by_tentacle_status(sub_status)
+	elseif status == "grabbed_by_chaos_spawn" then
+		local sub_status = NetworkLookup[status][status_int]
 
-		extension:set_grabbed_by_chaos_spawn_status(var_42_4)
+		status_ext:set_grabbed_by_chaos_spawn_status(sub_status)
 	else
-		assert("Unhandled status %s", tostring(var_42_2))
+		assert("Unhandled status %s", tostring(status))
 	end
 
-	if not Managers.player.is_server then
-		local var_42_5 = CHANNEL_TO_PEER_ID[arg_42_1]
+	if Managers.player.is_server then
+		local peer_id = CHANNEL_TO_PEER_ID[channel_id]
 
-		Managers.state.network.network_transmit:send_rpc_clients_except("rpc_status_change_int", var_42_5, arg_42_2, arg_42_3, arg_42_4)
+		Managers.state.network.network_transmit:send_rpc_clients_except("rpc_status_change_int", peer_id, status_id, status_int, game_object_id)
 	end
 end
 
-StatusSystem.rpc_status_change_int_and_unit = function (self, arg_43_1, arg_43_2, arg_43_3, arg_43_4, arg_43_5)
+StatusSystem.rpc_status_change_int_and_unit = function (self, channel_id, status_id, status_int, game_object_id, other_object_id)
 	-- function 43
-	local unit = self.unit_storage:unit(arg_43_4)
+	local unit = self.unit_storage:unit(game_object_id)
 
-	if not (not unit and Unit.alive(unit)) then
+	if not unit or not Unit.alive(unit) then
 		return
 	end
 
-	local unit_2 = self.unit_storage:unit(arg_43_5)
-	local extension = ScriptUnit.extension(unit, "status_system")
-	local var_43_3 = NetworkLookup.statuses[arg_43_2]
+	local other_unit = self.unit_storage:unit(other_object_id)
+	local status_ext = ScriptUnit.extension(unit, "status_system")
+	local status = NetworkLookup.statuses[status_id]
 
-	if var_43_3 == "overpowered" then
-		local flag = arg_43_3 ~= 0
-		local flag_2 = not flag and NetworkLookup.overpowered_templates[arg_43_3]
+	if status == "overpowered" then
+		local is_overpowered = status_int ~= 0
+		local overpowered_template = not not is_overpowered and not not NetworkLookup.overpowered_templates[status_int]
 
-		extension:set_overpowered(flag, not flag and flag_2 and arg_43_3, unit_2)
+		status_ext:set_overpowered(is_overpowered, (not is_overpowered or not overpowered_template) and not not status_int, other_unit)
 	else
-		assert("Unhandled status %s", tostring(var_43_3))
+		assert("Unhandled status %s", tostring(status))
 	end
 
-	if not Managers.player.is_server then
-		local var_43_6 = CHANNEL_TO_PEER_ID[arg_43_1]
+	if Managers.player.is_server then
+		local peer_id = CHANNEL_TO_PEER_ID[channel_id]
 
-		Managers.state.network.network_transmit:send_rpc_clients_except("rpc_status_change_int", var_43_6, arg_43_2, arg_43_3, arg_43_4, arg_43_5)
+		Managers.state.network.network_transmit:send_rpc_clients_except("rpc_status_change_int", peer_id, status_id, status_int, game_object_id, other_object_id)
 	end
 end
 
-StatusSystem.rpc_set_wounded = function (self, arg_44_1, arg_44_2, arg_44_3, arg_44_4)
+StatusSystem.rpc_set_wounded = function (self, channel_id, game_object_id, wounded, reason_id)
 	-- function 44
-	local unit = self.unit_storage:unit(arg_44_2)
+	local unit = self.unit_storage:unit(game_object_id)
 
-	if not (not unit and Unit.alive(unit)) then
+	if not unit or not Unit.alive(unit) then
 		return
 	end
 
-	local extension = ScriptUnit.extension(unit, "status_system")
-	local var_44_2 = NetworkLookup.set_wounded_reasons[arg_44_4]
+	local status_extension = ScriptUnit.extension(unit, "status_system")
+	local reason = NetworkLookup.set_wounded_reasons[reason_id]
 
-	extension:set_wounded(arg_44_3, var_44_2)
+	status_extension:set_wounded(wounded, reason)
 end
 
-StatusSystem.rpc_set_catapulted = function (self, arg_45_1, arg_45_2, arg_45_3, arg_45_4)
+StatusSystem.rpc_set_catapulted = function (self, channel_id, unit_id, catapulted, velocity)
 	-- function 45
-	local unit = self.unit_storage:unit(arg_45_2)
+	local unit = self.unit_storage:unit(unit_id)
 
-	if not (not unit and Unit.alive(unit)) then
+	if not unit or not Unit.alive(unit) then
 		return
 	end
 
-	ScriptUnit.extension(unit, "status_system"):set_catapulted(arg_45_3, arg_45_4)
+	local status_extension = ScriptUnit.extension(unit, "status_system")
 
-	if Managers.player.is_server or not DEDICATED_SERVER then
-		local var_45_1 = CHANNEL_TO_PEER_ID[arg_45_1]
+	status_extension:set_catapulted(catapulted, velocity)
 
-		Managers.state.network.network_transmit:send_rpc_clients_except("rpc_set_catapulted", var_45_1, arg_45_2, arg_45_3, arg_45_4)
+	if Managers.player.is_server or DEDICATED_SERVER then
+		local peer_id = CHANNEL_TO_PEER_ID[channel_id]
+
+		Managers.state.network.network_transmit:send_rpc_clients_except("rpc_set_catapulted", peer_id, unit_id, catapulted, velocity)
 	end
 end
 
-StatusSystem.rpc_set_override_blocking = function (self, arg_46_1, arg_46_2, arg_46_3)
+StatusSystem.rpc_set_override_blocking = function (self, channel_id, unit_id, blocking)
 	-- function 46
-	local unit = self.unit_storage:unit(arg_46_2)
+	local unit = self.unit_storage:unit(unit_id)
 
-	if not (not unit and Unit.alive(unit)) then
+	if not unit or not Unit.alive(unit) then
 		return
 	end
 
-	ScriptUnit.extension(unit, "status_system"):set_override_blocking(arg_46_3 or nil)
+	local status_extension = ScriptUnit.extension(unit, "status_system")
+
+	status_extension:set_override_blocking(not not blocking or not not nil)
 end
 
-StatusSystem.rpc_leap_start = function (self, arg_47_1, arg_47_2)
+StatusSystem.rpc_leap_start = function (self, channel_id, unit_id)
 	-- function 47
-	local unit = self.unit_storage:unit(arg_47_2)
+	local unit = self.unit_storage:unit(unit_id)
 
-	if not (not unit and Unit.alive(unit)) then
+	if not unit or not Unit.alive(unit) then
 		return
 	end
 
-	ScriptUnit.extension(unit, "status_system"):leap_start(unit)
+	local status_extension = ScriptUnit.extension(unit, "status_system")
+
+	status_extension:leap_start(unit)
 end
 
-StatusSystem.rpc_leap_finished = function (self, arg_48_1, arg_48_2)
+StatusSystem.rpc_leap_finished = function (self, channel_id, unit_id)
 	-- function 48
-	local unit = self.unit_storage:unit(arg_48_2)
+	local unit = self.unit_storage:unit(unit_id)
 
-	if not (not unit and Unit.alive(unit)) then
+	if not unit or not Unit.alive(unit) then
 		return
 	end
 
-	ScriptUnit.extension(unit, "status_system"):leap_finished(unit)
+	local status_extension = ScriptUnit.extension(unit, "status_system")
+
+	status_extension:leap_finished(unit)
 end
 
-StatusSystem.rpc_set_blocking = function (self, arg_49_1, arg_49_2, arg_49_3)
+StatusSystem.rpc_set_blocking = function (self, channel_id, game_object_id, blocking)
 	-- function 49
-	local unit = self.unit_storage:unit(arg_49_2)
+	local unit = self.unit_storage:unit(game_object_id)
 
-	if not (not unit and Unit.alive(unit)) then
+	if not unit or not Unit.alive(unit) then
 		return
 	end
 
-	ScriptUnit.extension(unit, "status_system"):set_blocking(arg_49_3)
+	local status_extension = ScriptUnit.extension(unit, "status_system")
 
-	if not self.is_server then
-		local var_49_1 = CHANNEL_TO_PEER_ID[arg_49_1]
+	status_extension:set_blocking(blocking)
 
-		self.network_transmit:send_rpc_clients_except("rpc_set_blocking", var_49_1, arg_49_2, arg_49_3)
+	if self.is_server then
+		local peer_id = CHANNEL_TO_PEER_ID[channel_id]
+
+		self.network_transmit:send_rpc_clients_except("rpc_set_blocking", peer_id, game_object_id, blocking)
 	end
 end
 
-StatusSystem.rpc_set_charge_blocking = function (self, arg_50_1, arg_50_2, arg_50_3)
+StatusSystem.rpc_set_charge_blocking = function (self, channel_id, game_object_id, charge_blocking)
 	-- function 50
-	local unit = self.unit_storage:unit(arg_50_2)
+	local unit = self.unit_storage:unit(game_object_id)
 
-	if not (not unit and Unit.alive(unit)) then
+	if not unit or not Unit.alive(unit) then
 		return
 	end
 
-	ScriptUnit.extension(unit, "status_system"):set_charge_blocking(arg_50_3)
+	local status_extension = ScriptUnit.extension(unit, "status_system")
 
-	if not self.is_server then
-		local var_50_1 = CHANNEL_TO_PEER_ID[arg_50_1]
+	status_extension:set_charge_blocking(charge_blocking)
 
-		self.network_transmit:send_rpc_clients_except("rpc_set_charge_blocking", var_50_1, arg_50_2, arg_50_3)
+	if self.is_server then
+		local peer_id = CHANNEL_TO_PEER_ID[channel_id]
+
+		self.network_transmit:send_rpc_clients_except("rpc_set_charge_blocking", peer_id, game_object_id, charge_blocking)
 	end
 end
 
-StatusSystem.rpc_player_blocked_attack = function (self, arg_51_1, arg_51_2, arg_51_3, arg_51_4, arg_51_5, arg_51_6, arg_51_7, arg_51_8)
+StatusSystem.rpc_player_blocked_attack = function (self, sender, game_object_id, fatigue_type_id, attacking_unit_id, fatigue_point_costs_multiplier, improved_block, attack_direction, attacker_is_level_unit)
 	-- function 51
-	local unit = self.unit_storage:unit(arg_51_2)
-	local game_object_or_level_unit = Managers.state.network:game_object_or_level_unit(arg_51_4, arg_51_8)
+	local unit = self.unit_storage:unit(game_object_id)
+	local attacking_unit = Managers.state.network:game_object_or_level_unit(attacking_unit_id, attacker_is_level_unit)
 
-	if not (not unit and Unit.alive(unit)) then
+	if not unit or not Unit.alive(unit) then
 		return
 	end
 
-	local var_51_2 = NetworkLookup.fatigue_types[arg_51_3]
+	local fatigue_type = NetworkLookup.fatigue_types[fatigue_type_id]
+	local status_extension = ScriptUnit.extension(unit, "status_system")
 
-	ScriptUnit.extension(unit, "status_system"):blocked_attack(var_51_2, game_object_or_level_unit, arg_51_5, arg_51_6, arg_51_7)
+	status_extension:blocked_attack(fatigue_type, attacking_unit, fatigue_point_costs_multiplier, improved_block, attack_direction)
 
-	if not self.is_server then
-		local var_51_3 = CHANNEL_TO_PEER_ID[arg_51_1]
+	if self.is_server then
+		local peer_id = CHANNEL_TO_PEER_ID[sender]
 
-		self.network_transmit:send_rpc_clients_except("rpc_player_blocked_attack", var_51_3, arg_51_2, arg_51_3, arg_51_4, arg_51_5, arg_51_6, arg_51_7, arg_51_8)
+		self.network_transmit:send_rpc_clients_except("rpc_player_blocked_attack", peer_id, game_object_id, fatigue_type_id, attacking_unit_id, fatigue_point_costs_multiplier, improved_block, attack_direction, attacker_is_level_unit)
 	end
 end
 
-StatusSystem.rpc_hot_join_sync_health_status = function (self, arg_52_1, arg_52_2, arg_52_3, arg_52_4, arg_52_5)
+StatusSystem.rpc_hot_join_sync_health_status = function (self, channel_id, game_object_id, wounds, ready_for_assisted_respawn, respawn_unit_game_object_id)
 	-- function 52
-	local unit = self.unit_storage:unit(arg_52_2)
-	local extension = ScriptUnit.extension(unit, "status_system")
+	local unit = self.unit_storage:unit(game_object_id)
+	local status_extension = ScriptUnit.extension(unit, "status_system")
 
-	extension.wounds = arg_52_3
+	status_extension.wounds = wounds
 
-	if not arg_52_4 then
-		extension:set_ready_for_assisted_respawn(arg_52_4, self.unit_storage:unit(arg_52_5))
+	if ready_for_assisted_respawn then
+		status_extension:set_ready_for_assisted_respawn(ready_for_assisted_respawn, self.unit_storage:unit(respawn_unit_game_object_id))
 	end
 end
 
-StatusSystem.rpc_replenish_fatigue = function (self, arg_53_1, arg_53_2, arg_53_3)
+StatusSystem.rpc_replenish_fatigue = function (self, channel_id, game_object_id, fatigue_type_id)
 	-- function 53
 	print("rpc_replenish_fatigue")
 
-	local unit = self.unit_storage:unit(arg_53_2)
-	local var_53_1 = NetworkLookup.fatigue_types[arg_53_3]
+	local unit = self.unit_storage:unit(game_object_id)
+	local fatigue_type = NetworkLookup.fatigue_types[fatigue_type_id]
 
-	StatusUtils.replenish_stamina_local_players(nil, var_53_1)
+	StatusUtils.replenish_stamina_local_players(nil, fatigue_type)
 end
 
-StatusSystem.rpc_replenish_fatigue_other_players = function (self, arg_54_1, arg_54_2)
+StatusSystem.rpc_replenish_fatigue_other_players = function (self, channel_id, fatigue_type_id)
 	-- function 54
-	if not self.is_server then
-		local var_54_0 = CHANNEL_TO_PEER_ID[arg_54_1]
+	if self.is_server then
+		local peer_id = CHANNEL_TO_PEER_ID[channel_id]
 
-		self.network_transmit:send_rpc_clients_except("rpc_replenish_fatigue_other_players", var_54_0, arg_54_2)
+		self.network_transmit:send_rpc_clients_except("rpc_replenish_fatigue_other_players", peer_id, fatigue_type_id)
 	end
 
-	local var_54_1 = NetworkLookup.fatigue_types[arg_54_2]
+	local fatigue_type = NetworkLookup.fatigue_types[fatigue_type_id]
 
-	StatusUtils.replenish_stamina_local_players(nil, var_54_1)
+	StatusUtils.replenish_stamina_local_players(nil, fatigue_type)
 end
 
-StatusSystem.rpc_set_stagger = function (self, arg_55_1, arg_55_2, arg_55_3, arg_55_4, arg_55_5, arg_55_6, arg_55_7, arg_55_8, arg_55_9)
+StatusSystem.rpc_set_stagger = function (self, channel_id, game_object_id, stagger_type, stagger_direction, stagger_length, accumulated_stagger, stagger_time, stagger_animation_scale, always_stagger_suffered)
 	-- function 55
-	local unit = self.unit_storage:unit(arg_55_2)
-	local extension = ScriptUnit.extension(unit, "status_system")
+	local unit = self.unit_storage:unit(game_object_id)
+	local status_extension = ScriptUnit.extension(unit, "status_system")
 
-	fassert(extension.set_stagger_values)
-	extension:set_stagger_values(arg_55_3, arg_55_4, arg_55_5, arg_55_6, arg_55_7, arg_55_8, arg_55_9, false)
+	fassert(status_extension.set_stagger_values)
+	status_extension:set_stagger_values(stagger_type, stagger_direction, stagger_length, accumulated_stagger, stagger_time, stagger_animation_scale, always_stagger_suffered, false)
 end
 
-StatusSystem.rpc_set_fatigue_points = function (self, arg_56_1, arg_56_2, arg_56_3, arg_56_4)
+StatusSystem.rpc_set_fatigue_points = function (self, channel_id, game_object_id, fatigue, fatigue_type_id)
 	-- function 56
-	local unit = self.unit_storage:unit(arg_56_2)
+	local unit = self.unit_storage:unit(game_object_id)
 
-	if not unit then
-		local flag = true
-		local extension = ScriptUnit.extension(unit, "status_system")
-		local var_56_3 = NetworkLookup.fatigue_types[arg_56_4]
+	if unit then
+		local skip_sync = true
+		local status_extension = ScriptUnit.extension(unit, "status_system")
+		local fatigue_type = NetworkLookup.fatigue_types[fatigue_type_id]
 
-		extension:set_fatigue_points(arg_56_3, var_56_3, flag)
+		status_extension:set_fatigue_points(fatigue, fatigue_type, skip_sync)
 
-		if not self.is_server then
-			local var_56_4 = CHANNEL_TO_PEER_ID[arg_56_1]
+		if self.is_server then
+			local peer_id = CHANNEL_TO_PEER_ID[channel_id]
 
-			self.network_transmit:send_rpc_clients_except("rpc_set_fatigue_points", var_56_4, arg_56_2, arg_56_3, arg_56_4)
+			self.network_transmit:send_rpc_clients_except("rpc_set_fatigue_points", peer_id, game_object_id, fatigue, fatigue_type_id)
 		end
 	end
 end

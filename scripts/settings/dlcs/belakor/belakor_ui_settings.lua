@@ -1,11 +1,11 @@
 -- chunkname: @scripts/settings/dlcs/belakor/belakor_ui_settings.lua
 
-local belakor = DLCSettings.belakor
+local settings = DLCSettings.belakor
 
-belakor.ui_materials = {
+settings.ui_materials = {
 	"materials/ui/ui_1080p_belakor_atlas"
 }
-belakor.ui_texture_settings = {
+settings.ui_texture_settings = {
 	filenames = {
 		"scripts/ui/atlas_settings/gui_belakor_atlas"
 	},
@@ -25,6 +25,6 @@ belakor.ui_texture_settings = {
 		}
 	}
 }
-belakor.breed_textures = {
+settings.breed_textures = {
 	shadow_lieutenant = "unit_frame_portrait_enemy_shadowchampion"
 }

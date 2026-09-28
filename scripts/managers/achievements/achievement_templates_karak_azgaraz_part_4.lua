@@ -5,20 +5,20 @@ local add_levels_complete_challenge = AchievementTemplateHelper.add_levels_compl
 local add_meta_challenge = AchievementTemplateHelper.add_meta_challenge
 local achievements = AchievementTemplates.achievements
 local add_console_achievements = AchievementTemplateHelper.add_console_achievements
-local tbl = {}
-local tbl_2 = {}
-local tbl_3 = {}
-local tbl_4 = {
+local XB1_ACHIEVEMENT_ID = {}
+local PS4_ACHIEVEMENT_ID = {}
+local all_difficulties = {}
+local portals = {
 	LevelSettings.dlc_dwarf_whaling
 }
-local tbl_5 = {
+local difficulties = {
 	"normal",
 	"hard",
 	"harder",
 	"hardest",
 	"cataclysm"
 }
-local tbl_6 = {
+local player_facing_diff_names = {
 	hardest = "legend",
 	hard = "veteran",
 	harder = "champion",
@@ -26,14 +26,14 @@ local tbl_6 = {
 	normal = "recruit"
 }
 
-for i = 1, #tbl_5 do
-	local var_0_11 = tbl_5[i]
-	local str = "karak_azgaraz_complete_dlc_dwarf_whaling_" .. tbl_6[var_0_11]
-	local str_2 = "achievement_dwarf_" .. tbl_6[var_0_11]
+for i = 1, #difficulties do
+	local difficulty_name = difficulties[i]
+	local name = "karak_azgaraz_complete_dlc_dwarf_whaling_" .. player_facing_diff_names[difficulty_name]
+	local icon = "achievement_dwarf_" .. player_facing_diff_names[difficulty_name]
 
-	tbl_3[i] = str
+	all_difficulties[i] = name
 
-	add_levels_complete_challenge(achievements, str, tbl_4, DifficultySettings[var_0_11].rank, str_2, nil, tbl[str], tbl_2[str])
+	add_levels_complete_challenge(achievements, name, portals, DifficultySettings[difficulty_name].rank, icon, nil, XB1_ACHIEVEMENT_ID[name], PS4_ACHIEVEMENT_ID[name])
 end
 
 achievements.dwarf_feculent_buboes = {
@@ -44,13 +44,13 @@ achievements.dwarf_feculent_buboes = {
 	events = {
 		"dwarf_feculent_buboes"
 	},
-	completed = function (self, arg_1_1, arg_1_2)
+	completed = function (statistics_db, stats_id, template_data)
 		-- function 1
-		return self:get_persistent_stat(arg_1_1, "dwarf_feculent_buboes") >= 1
+		return statistics_db:get_persistent_stat(stats_id, "dwarf_feculent_buboes") >= 1
 	end,
-	on_event = function (self, arg_2_1, arg_2_2, arg_2_3, arg_2_4)
+	on_event = function (statistics_db, stats_id, template_data, event_name, event_data)
 		-- function 2
-		self:increment_stat(arg_2_1, "dwarf_feculent_buboes")
+		statistics_db:increment_stat(stats_id, "dwarf_feculent_buboes")
 	end
 }
 achievements.dwarf_statue_emote = {
@@ -61,35 +61,39 @@ achievements.dwarf_statue_emote = {
 	events = {
 		"dwarf_statue_emote"
 	},
-	completed = function (self, arg_3_1, arg_3_2)
+	completed = function (statistics_db, stats_id, template_data)
 		-- function 3
-		return self:get_persistent_stat(arg_3_1, "dwarf_statue_emote") >= 1
+		return statistics_db:get_persistent_stat(stats_id, "dwarf_statue_emote") >= 1
 	end,
-	on_event = function (self, arg_4_1, arg_4_2, arg_4_3, arg_4_4)
+	on_event = function (statistics_db, stats_id, template_data, event_name, event_data)
 		-- function 4
-		if not arg_4_4[1] then
-			arg_4_2.end_t = nil
+		local is_inside = event_data[1]
+
+		if not is_inside then
+			template_data.end_t = nil
 
 			return
 		end
 
-		local local_player = Managers.player:local_player()
-		local flag = not local_player and local_player.player_unit
+		local player = Managers.player:local_player()
+		local unit = not not player and not not player.player_unit
 
-		if not flag then
+		if not unit then
 			return
 		end
 
-		local state_machine = ScriptUnit.extension(flag, "character_state_machine_system").state_machine
-		local flag_2 = not state_machine and state_machine.state_current
+		local character_state_machine_ext = ScriptUnit.extension(unit, "character_state_machine_system")
+		local state_machine = character_state_machine_ext.state_machine
+		local current_state = not not state_machine and not not state_machine.state_current
+		local is_emoting = not not current_state and current_state.name == "emote"
 
-		if not (not flag_2 and flag_2.name == "emote") then
-			arg_4_2.end_t = nil
+		if not is_emoting then
+			template_data.end_t = nil
 
 			return
 		end
 
-		self:increment_stat(arg_4_1, "dwarf_statue_emote")
+		statistics_db:increment_stat(stats_id, "dwarf_statue_emote")
 	end
 }
 achievements.dwarf_go_fish = {
@@ -100,17 +104,17 @@ achievements.dwarf_go_fish = {
 	events = {
 		"dwarf_go_fish"
 	},
-	completed = function (self, arg_5_1, arg_5_2)
+	completed = function (statistics_db, stats_id, template_data)
 		-- function 5
-		return self:get_persistent_stat(arg_5_1, "dwarf_go_fish") >= 1
+		return statistics_db:get_persistent_stat(stats_id, "dwarf_go_fish") >= 1
 	end,
-	on_event = function (self, arg_6_1, arg_6_2, arg_6_3, arg_6_4)
+	on_event = function (statistics_db, stats_id, template_data, event_name, event_data)
 		-- function 6
-		self:increment_stat(arg_6_1, "dwarf_go_fish")
+		statistics_db:increment_stat(stats_id, "dwarf_go_fish")
 	end
 }
 
-local num = 75
+local OIL_BARREL_KILL_AMOUNT = 75
 
 achievements.dwarf_barrel_kill = {
 	name = "achv_dwarf_barrel_kill_name",
@@ -120,28 +124,31 @@ achievements.dwarf_barrel_kill = {
 	events = {
 		"register_kill"
 	},
-	completed = function (self, arg_7_1, arg_7_2)
+	completed = function (statistics_db, stats_id, template_data)
 		-- function 7
-		return self:get_persistent_stat(arg_7_1, "dwarf_barrel_kill") >= 1
+		return statistics_db:get_persistent_stat(stats_id, "dwarf_barrel_kill") >= 1
 	end,
-	on_event = function (self, arg_8_1, arg_8_2, arg_8_3, arg_8_4)
+	on_event = function (statistics_db, stats_id, template_data, event_name, event_data)
 		-- function 8
 		local level_key = Managers.state.game_mode:level_key()
 
-		if not (not level_key and level_key == "dlc_dwarf_whaling") then
+		if not level_key or level_key ~= "dlc_dwarf_whaling" then
 			return
 		end
 
-		if not arg_8_2.current_kills then
-			arg_8_2.current_kills = 0
+		if not template_data.current_kills then
+			template_data.current_kills = 0
 		end
 
-		if arg_8_4[3][7] == "lamp_oil_fire" then
-			arg_8_2.current_kills = arg_8_2.current_kills + 1
+		local damage_table = event_data[3]
+		local damage_source = damage_table[7]
+
+		if damage_source == "lamp_oil_fire" then
+			template_data.current_kills = template_data.current_kills + 1
 		end
 
-		if arg_8_2.current_kills >= num then
-			self:increment_stat(arg_8_1, "dwarf_barrel_kill")
+		if template_data.current_kills >= OIL_BARREL_KILL_AMOUNT then
+			statistics_db:increment_stat(stats_id, "dwarf_barrel_kill")
 		end
 	end
 }
@@ -153,16 +160,16 @@ achievements.dwarf_elevator_speedrun = {
 	events = {
 		"dwarf_elevator_speedrun"
 	},
-	completed = function (self, arg_9_1, arg_9_2)
+	completed = function (statistics_db, stats_id, template_data)
 		-- function 9
-		return self:get_persistent_stat(arg_9_1, "dwarf_elevator_speedrun") >= 1
+		return statistics_db:get_persistent_stat(stats_id, "dwarf_elevator_speedrun") >= 1
 	end,
-	on_event = function (self, arg_10_1, arg_10_2, arg_10_3, arg_10_4)
+	on_event = function (statistics_db, stats_id, template_data, event_name, event_data)
 		-- function 10
-		self:increment_stat(arg_10_1, "dwarf_elevator_speedrun")
+		statistics_db:increment_stat(stats_id, "dwarf_elevator_speedrun")
 	end
 }
-whaling_all_challenges = table.clone(tbl_3)
+whaling_all_challenges = table.clone(all_difficulties)
 
 table.remove(whaling_all_challenges, #whaling_all_challenges)
 

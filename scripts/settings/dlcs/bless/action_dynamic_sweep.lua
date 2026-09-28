@@ -2,56 +2,66 @@
 
 ActionDynamicSweep = class(ActionDynamicSweep, ActionSweep)
 
-ActionDynamicSweep.init = function (self, arg_1_1, arg_1_2, arg_1_3, arg_1_4, arg_1_5, arg_1_6, arg_1_7, arg_1_8)
+ActionDynamicSweep.init = function (self, world, item_name, is_server, owner_unit, damage_unit, first_person_unit, weapon_unit, weapon_system)
 	-- function 1
-	ActionDynamicSweep.super.init(self, arg_1_1, arg_1_2, arg_1_3, arg_1_4, arg_1_5, arg_1_6, arg_1_7, arg_1_8)
+	ActionDynamicSweep.super.init(self, world, item_name, is_server, owner_unit, damage_unit, first_person_unit, weapon_unit, weapon_system)
 
-	self.weapon_extension = ScriptUnit.extension(arg_1_7, "weapon_system")
+	self.weapon_extension = ScriptUnit.extension(weapon_unit, "weapon_system")
 end
 
-ActionDynamicSweep._get_damage_profile_name = function (self, arg_2_1, arg_2_2)
+ActionDynamicSweep._get_damage_profile_name = function (self, action_hand, action)
 	-- function 2
-	local get_mode = self.weapon_extension:get_mode()
-	local var_2_1 = arg_2_2.dynamic_profiles[get_mode]
-	local var_2_2
+	local current_mode = self.weapon_extension:get_mode()
+	local dynamic_profiles = action.dynamic_profiles
+	local profile_to_use = dynamic_profiles[current_mode]
+	local var_2_0
 
-	if not arg_2_1 then
-		var_2_2 = arg_2_2["damage_profile_" .. arg_2_1]
+	if action_hand then
+		var_2_0 = action["damage_profile_" .. action_hand]
 
-		if not var_2_2 then
+		if not var_2_0 then
 			-- Nothing
 		end
 	end
 
-	var_2_2 = var_2_1 or "default"
+	var_2_0 = not not profile_to_use or not not "default"
 
 	::label_2_0::
 
-	return var_2_2
+	return var_2_0
 end
 
-ActionDynamicSweep._calculate_attack_direction = function (self, arg_3_1, arg_3_2)
+ActionDynamicSweep._calculate_attack_direction = function (self, action, weapon_rotation)
 	-- function 3
-	local get_mode = self.weapon_extension:get_mode()
-	local var_3_1 = arg_3_1.dynamic_attack_direction[get_mode]
-	local attack_direction = arg_3_1.attack_direction
+	local current_mode = self.weapon_extension:get_mode()
+	local dynamic_attack_directions = action.dynamic_attack_direction
+	local invert_attack_direction = dynamic_attack_directions[current_mode]
+	local attack_direction_2 = action.attack_direction
 
-	attack_direction = attack_direction or "forward"
+	if not attack_direction_2 then
+		-- Nothing
+	end
 
-	local var_3_3 = Quaternion[attack_direction](arg_3_2)
+	attack_direction_2 = "forward"
+
+	local quaternion_axis = attack_direction_2
+
+	::label_3_0::
+
+	local attack_direction = Quaternion[quaternion_axis](weapon_rotation)
 	local num
 
-	if not var_3_1 then
-		num = -var_3_3
+	if invert_attack_direction then
+		num = -attack_direction
 
 		if not num then
 			-- Nothing
 		end
 	end
 
-	num = var_3_3
+	num = attack_direction
 
-	::label_3_0::
+	::label_3_1::
 
 	return num
 end

@@ -1,6 +1,6 @@
 -- chunkname: @levels/debug/ai_benchmark/world_spawn_zones.lua
 
-local tbl = {
+local path_markers = {
 	{
 		main_path_index = 1,
 		crossroads = "",
@@ -24,7 +24,7 @@ local tbl = {
 		}
 	}
 }
-local tbl_2 = {
+local main_paths = {
 	{
 		path_length = 32.684635162353516,
 		travel_dist = {
@@ -51,8 +51,8 @@ local tbl_2 = {
 		}
 	}
 }
-local tbl_3 = {}
-local tbl_4 = {
+local crossroads = {}
+local zones = {
 	{
 		travel_dist = 10.000001907348633,
 		sub_zone_length = 10,
@@ -8987,7 +8987,7 @@ local tbl_4 = {
 		}
 	}
 }
-local tbl_5 = {
+local cover_points = {
 	-57.42749786376953,
 	-128.53500366210938,
 	5.943258285522461,
@@ -12599,7 +12599,7 @@ local tbl_5 = {
 	0.8741587400436401,
 	0.4856402575969696
 }
-local tbl_6 = {
+local position_lookup = {
 	{
 		-62.03489685058594,
 		-118.4306869506836,
@@ -56001,20 +56001,20 @@ local tbl_6 = {
 		8.668749809265137
 	}
 }
-local num = 8680
-local num_2 = 3
-local num_3 = 32.684635162354
-local str = "1"
+local number_of_spawns = 8680
+local num_main_zones = 3
+local total_main_path_length = 32.684635162354
+local spawner_version = "1"
 
 return {
-	version = str,
-	number_of_spawns = num,
-	path_markers = tbl,
-	zones = tbl_4,
-	cover_points = tbl_5,
-	num_main_zones = num_2,
-	position_lookup = tbl_6,
-	main_paths = tbl_2,
-	crossroads = tbl_3,
-	total_main_path_length = num_3
+	version = spawner_version,
+	number_of_spawns = number_of_spawns,
+	path_markers = path_markers,
+	zones = zones,
+	cover_points = cover_points,
+	num_main_zones = num_main_zones,
+	position_lookup = position_lookup,
+	main_paths = main_paths,
+	crossroads = crossroads,
+	total_main_path_length = total_main_path_length
 }

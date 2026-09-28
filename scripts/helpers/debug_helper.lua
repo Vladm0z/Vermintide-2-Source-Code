@@ -2,7 +2,7 @@
 
 local DebugHelper = DebugHelper
 
-DebugHelper = DebugHelper or {}
+DebugHelper = not not DebugHelper or not not {}
 DebugHelper = DebugHelper
 
 DebugHelper.remove_debug_stuff = function ()
@@ -50,24 +50,24 @@ end
 
 DebugHelper.enable_physics_dump = function ()
 	-- function 10
-	local tbl = {
+	local physics_namespaces = {
 		"PhysicsWorld",
 		"Actor",
 		"Mover"
 	}
 
-	for k, v in pairs(tbl) do
-		local var_10_1 = _G[v]
+	for _, namespace in pairs(physics_namespaces) do
+		local namespace_to_debug = _G[namespace]
 
-		for k_2, v_2 in pairs(var_10_1) do
-			if type(v_2) == "function" then
-				var_10_1[k_2] = function (...)
+		for func_name, func in pairs(namespace_to_debug) do
+			if type(func) == "function" then
+				namespace_to_debug[func_name] = function (...)
 					-- function 11
-					local format = string.format("%s.%s() : ", v, k_2)
+					local output = string.format("%s.%s() : ", namespace, func_name)
 
-					print(format, select(2, ...))
+					print(output, select(2, ...))
 
-					return v_2(...)
+					return func(...)
 				end
 			end
 		end

@@ -1,11 +1,11 @@
 -- chunkname: @scripts/settings/dlcs/dwarf_fest/dwarf_fest_level_settings.lua
 
-local dwarf_fest = DLCSettings.dwarf_fest
+local settings = DLCSettings.dwarf_fest
 
-dwarf_fest.level_settings = "levels/honduras_dlcs/dwarf_fest/level_settings_dwarf_fest"
-dwarf_fest.level_unlock_settings = "levels/honduras_dlcs/dwarf_fest/level_unlock_settings_dwarf_fest"
-dwarf_fest.terror_event_blueprints_filename = "scripts/settings/terror_events/terror_events_dlc_dwarf_fest"
-dwarf_fest.missions = {
+settings.level_settings = "levels/honduras_dlcs/dwarf_fest/level_settings_dwarf_fest"
+settings.level_unlock_settings = "levels/honduras_dlcs/dwarf_fest/level_unlock_settings_dwarf_fest"
+settings.terror_event_blueprints_filename = "scripts/settings/terror_events/terror_events_dlc_dwarf_fest"
+settings.missions = {
 	dwarf_fest_reach_entrance = {
 		mission_template_name = "goal",
 		text = "mission_dlc_dwarf_fest_reach_entrance"

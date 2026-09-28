@@ -2,31 +2,31 @@
 
 ImguiUnlockOverride = class(ImguiUnlockOverride)
 
-ImguiUnlockOverride.init = function (arg_1_0)
+ImguiUnlockOverride.init = function (self)
 	-- function 1
 	return
 end
 
-ImguiUnlockOverride.update = function (arg_2_0)
+ImguiUnlockOverride.update = function (self)
 	-- function 2
 	return
 end
 
-local tbl = {}
+local dlc_list = {}
 
-local function fn(self, arg_3_1, arg_3_2)
+local function set_all(t, k, v)
 	-- function 3
-	for i = 1, #arg_3_1 do
-		self[arg_3_1[i]] = arg_3_2
+	for i = 1, #k do
+		t[k[i]] = v
 	end
 end
 
-ImguiUnlockOverride.draw = function (arg_4_0)
+ImguiUnlockOverride.draw = function (self)
 	-- function 4
 	return
 end
 
-ImguiUnlockOverride.is_persistent = function (arg_5_0)
+ImguiUnlockOverride.is_persistent = function (self)
 	-- function 5
 	return false
 end

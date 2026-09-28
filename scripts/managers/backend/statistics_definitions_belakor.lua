@@ -1,7 +1,7 @@
 -- chunkname: @scripts/managers/backend/statistics_definitions_belakor.lua
 
 local player = StatisticsDefinitions.player
-local tbl = {
+local database_names = {
 	"blk_three_champions",
 	"blk_fast_arena",
 	"blk_fast_kill_totems",
@@ -12,12 +12,12 @@ local tbl = {
 	"blk_hitless_skull"
 }
 
-for i = 1, #tbl do
-	local var_0_2 = tbl[i]
+for i = 1, #database_names do
+	local name = database_names[i]
 
-	player[var_0_2] = {
+	player[name] = {
 		value = 0,
 		source = "player_data",
-		database_name = var_0_2
+		database_name = name
 	}
 end

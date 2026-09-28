@@ -2,7 +2,7 @@
 
 local HandbookSettings = HandbookSettings
 
-HandbookSettings = HandbookSettings or {}
+HandbookSettings = not not HandbookSettings or not not {}
 HandbookSettings = HandbookSettings
 HandbookSettings.outline = {
 	{
@@ -150,14 +150,14 @@ HandbookSettings.outline = {
 	}
 }
 
-local function fn()
+local function gamepad_active()
 	-- function 1
 	return Managers.input:is_device_active("gamepad")
 end
 
-local function fn_2()
+local function not_gamepad_active()
 	-- function 2
-	return not fn()
+	return not gamepad_active()
 end
 
 HandbookSettings.popups = {
@@ -198,9 +198,9 @@ HandbookSettings.popups = {
 		triggers = {
 			"keep_menu_left"
 		},
-		custom_condition = function (self)
+		custom_condition = function (context)
 			-- function 3
-			return self:get("player_level") >= 8
+			return context:get("player_level") >= 8
 		end
 	},
 	new_career_unlocked = {
@@ -254,9 +254,9 @@ HandbookSettings.popups = {
 		triggers = {
 			"keep_menu_left"
 		},
-		custom_condition = function (self)
+		custom_condition = function (context)
 			-- function 4
-			return self:get("player_level") >= 15
+			return context:get("player_level") >= 15
 		end
 	},
 	tutorial_introduction = {
@@ -381,7 +381,7 @@ HandbookSettings.pages = {
 		{
 			text = "tutorial_movement_text_01",
 			type = "text",
-			condition_func = fn_2,
+			condition_func = not_gamepad_active,
 			inputs = {
 				"move_forward",
 				"move_left",
@@ -394,7 +394,7 @@ HandbookSettings.pages = {
 		{
 			text = "tutorial_movement_text_01",
 			type = "text",
-			condition_func = fn,
+			condition_func = gamepad_active,
 			inputs = {
 				"move_controller",
 				"move_controller",
@@ -525,7 +525,7 @@ HandbookSettings.pages = {
 			inputs = {
 				"action_career"
 			},
-			condition_func = fn_2
+			condition_func = not_gamepad_active
 		},
 		{
 			text = "tutorial_career_ability_text_01",
@@ -533,7 +533,7 @@ HandbookSettings.pages = {
 			inputs = {
 				"ability"
 			},
-			condition_func = fn
+			condition_func = gamepad_active
 		},
 		display_name = "tutorial_career_ability_header"
 	},
@@ -559,7 +559,7 @@ HandbookSettings.pages = {
 			inputs = {
 				"dodge_hold"
 			},
-			condition_func = fn_2
+			condition_func = not_gamepad_active
 		},
 		{
 			text = "tutorial_dodging_text_01",
@@ -567,7 +567,7 @@ HandbookSettings.pages = {
 			inputs = {
 				"dodge_1"
 			},
-			condition_func = fn
+			condition_func = gamepad_active
 		},
 		display_name = "tutorial_dodging_header"
 	},
@@ -943,7 +943,7 @@ HandbookSettings.pages = {
 			inputs = {
 				"weapon_reload"
 			},
-			condition_func = fn_2
+			condition_func = not_gamepad_active
 		},
 		{
 			text = "tutorial_gutterrunner_text_03",
@@ -951,7 +951,7 @@ HandbookSettings.pages = {
 			inputs = {
 				"weapon_reload_input"
 			},
-			condition_func = fn
+			condition_func = gamepad_active
 		},
 		display_name = "tutorial_gutterrunner_header"
 	},
@@ -993,7 +993,7 @@ HandbookSettings.pages = {
 				"action_one",
 				"weapon_reload"
 			},
-			condition_func = fn_2
+			condition_func = not_gamepad_active
 		},
 		{
 			text = "tutorial_ratling_gunner_text_01",
@@ -1002,7 +1002,7 @@ HandbookSettings.pages = {
 				"action_one",
 				"weapon_reload_input"
 			},
-			condition_func = fn
+			condition_func = gamepad_active
 		},
 		display_name = "tutorial_ratling_gunner_header"
 	},
@@ -1029,7 +1029,7 @@ HandbookSettings.pages = {
 				"action_one",
 				"weapon_reload"
 			},
-			condition_func = fn_2
+			condition_func = not_gamepad_active
 		},
 		{
 			text = "tutorial_warpfire_thrower_text_01",
@@ -1038,7 +1038,7 @@ HandbookSettings.pages = {
 				"action_one",
 				"weapon_reload_input"
 			},
-			condition_func = fn
+			condition_func = gamepad_active
 		},
 		display_name = "tutorial_warpfire_thrower_header"
 	},

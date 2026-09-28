@@ -1,14 +1,14 @@
 -- chunkname: @scripts/ui/views/hero_view/states/definitions/hero_view_state_store_definitions.lua
 
-local tbl = {
+local list_size = {
 	800,
 	700
 }
-local tbl_2 = {
+local list_scrollbar_size = {
 	16,
-	tbl[2]
+	list_size[2]
 }
-local tbl_3 = {
+local scenegraph_definition = {
 	root = {
 		is_root = true,
 		size = {
@@ -93,7 +93,7 @@ local tbl_3 = {
 		vertical_alignment = "top",
 		parent = "screen",
 		horizontal_alignment = "left",
-		size = tbl,
+		size = list_size,
 		position = {
 			130,
 			-215,
@@ -104,10 +104,10 @@ local tbl_3 = {
 		vertical_alignment = "top",
 		parent = "list_window",
 		horizontal_alignment = "left",
-		size = tbl,
+		size = list_size,
 		position = {
 			0,
-			-tbl[2],
+			-list_size[2],
 			0
 		}
 	},
@@ -115,7 +115,7 @@ local tbl_3 = {
 		vertical_alignment = "top",
 		parent = "list_window",
 		horizontal_alignment = "left",
-		size = tbl_2,
+		size = list_scrollbar_size,
 		position = {
 			-58,
 			0,
@@ -207,7 +207,7 @@ local tbl_3 = {
 		}
 	}
 }
-local tbl_4 = {
+local title_text_style = {
 	use_shadow = true,
 	upper_case = false,
 	localize = true,
@@ -223,7 +223,7 @@ local tbl_4 = {
 		2
 	}
 }
-local tbl_5 = {
+local item_name_text_style = {
 	word_wrap = true,
 	upper_case = false,
 	localize = false,
@@ -240,7 +240,7 @@ local tbl_5 = {
 		2
 	}
 }
-local tbl_6 = {
+local widgets = {
 	video_fullscreen_fade = {
 		scenegraph_id = "video_fullscreen_fade",
 		element = {
@@ -252,23 +252,24 @@ local tbl_6 = {
 				{
 					style_id = "rect",
 					pass_type = "rect",
-					content_change_function = function (self, arg_1_1, arg_1_2, arg_1_3)
+					content_change_function = function (content, style, _, dt)
 						-- function 1
-						local progress = self.progress
+						local progress = content.progress
 
 						if not progress then
 							return
 						end
 
-						local min = math.min(progress + arg_1_3, 1)
-						local num = 255 - 255 * math.smoothstep(min, 0, 1)
+						progress = math.min(progress + dt, 1)
 
-						arg_1_1.color[1] = num
+						local alpha = 255 - 255 * math.smoothstep(progress, 0, 1)
 
-						if min == 1 then
-							self.progress = nil
+						style.color[1] = alpha
+
+						if progress == 1 then
+							content.progress = nil
 						else
-							self.progress = min
+							content.progress = progress
 						end
 					end
 				}
@@ -301,7 +302,7 @@ local tbl_6 = {
 		}
 	}
 }
-local tbl_7 = {
+local list_detail_widgets = {
 	list_detail_top_left = UIWidgets.create_simple_uv_texture("divider_skull_left", {
 		{
 			0,
@@ -355,23 +356,23 @@ local tbl_7 = {
 		19
 	})
 }
-local tbl_8 = {
+local animation_definitions = {
 	on_enter = {
 		{
 			name = "fade_in",
 			start_progress = 0,
 			end_progress = 0.3,
-			init = function (arg_2_0, arg_2_1, arg_2_2, arg_2_3)
+			init = function (ui_scenegraph, scenegraph_definition, widgets, params)
 				-- function 2
-				arg_2_3.render_settings.alpha_multiplier = 0
+				params.render_settings.alpha_multiplier = 0
 			end,
-			update = function (arg_3_0, arg_3_1, arg_3_2, arg_3_3, arg_3_4)
+			update = function (ui_scenegraph, scenegraph_definition, widgets, progress, params)
 				-- function 3
-				local easeOutCubic = math.easeOutCubic(arg_3_3)
+				local anim_progress = math.easeOutCubic(progress)
 
-				arg_3_4.render_settings.alpha_multiplier = 1
+				params.render_settings.alpha_multiplier = 1
 			end,
-			on_complete = function (arg_4_0, arg_4_1, arg_4_2, arg_4_3)
+			on_complete = function (ui_scenegraph, scenegraph_definition, widgets, params)
 				-- function 4
 				return
 			end
@@ -382,17 +383,17 @@ local tbl_8 = {
 			name = "fade_out",
 			start_progress = 0,
 			end_progress = 0.3,
-			init = function (arg_5_0, arg_5_1, arg_5_2, arg_5_3)
+			init = function (ui_scenegraph, scenegraph_definition, widgets, params)
 				-- function 5
-				arg_5_3.render_settings.alpha_multiplier = 1
+				params.render_settings.alpha_multiplier = 1
 			end,
-			update = function (arg_6_0, arg_6_1, arg_6_2, arg_6_3, arg_6_4)
+			update = function (ui_scenegraph, scenegraph_definition, widgets, progress, params)
 				-- function 6
-				local easeOutCubic = math.easeOutCubic(arg_6_3)
+				local anim_progress = math.easeOutCubic(progress)
 
-				arg_6_4.render_settings.alpha_multiplier = 1
+				params.render_settings.alpha_multiplier = 1
 			end,
-			on_complete = function (arg_7_0, arg_7_1, arg_7_2, arg_7_3)
+			on_complete = function (ui_scenegraph, scenegraph_definition, widgets, params)
 				-- function 7
 				return
 			end
@@ -403,38 +404,38 @@ local tbl_8 = {
 			name = "fade_in",
 			start_progress = 0,
 			end_progress = 0.3,
-			init = function (arg_8_0, arg_8_1, arg_8_2, arg_8_3)
+			init = function (ui_scenegraph, scenegraph_definition, widgets, params)
 				-- function 8
 				return
 			end,
-			update = function (arg_9_0, arg_9_1, arg_9_2, arg_9_3, arg_9_4)
+			update = function (ui_scenegraph, scenegraph_definition, widgets, progress, params)
 				-- function 9
-				local easeOutCubic = math.easeOutCubic(arg_9_3)
-				local list_detail_top_left = arg_9_2.list_detail_top_left
-				local list_detail_top_right = arg_9_2.list_detail_top_right
-				local list_detail_bottom_left = arg_9_2.list_detail_bottom_left
-				local list_detail_bottom_center = arg_9_2.list_detail_bottom_center
-				local list_detail_top_center = arg_9_2.list_detail_top_center
-				local list_detail_bottom_right = arg_9_2.list_detail_bottom_right
-				local chain = arg_9_2.chain
-				local num = 255 * easeOutCubic
+				local anim_progress = math.easeOutCubic(progress)
+				local list_detail_top_left = widgets.list_detail_top_left
+				local list_detail_top_right = widgets.list_detail_top_right
+				local list_detail_bottom_left = widgets.list_detail_bottom_left
+				local list_detail_bottom_center = widgets.list_detail_bottom_center
+				local list_detail_top_center = widgets.list_detail_top_center
+				local list_detail_bottom_right = widgets.list_detail_bottom_right
+				local chain = widgets.chain
+				local alpha = 255 * anim_progress
 
-				chain.style.tiling_texture.color[1] = num
-				list_detail_top_center.style.tiling_texture.color[1] = num
-				list_detail_bottom_center.style.tiling_texture.color[1] = num
-				list_detail_top_left.style.texture_id.color[1] = num
-				list_detail_bottom_left.style.texture_id.color[1] = num
-				list_detail_top_right.style.texture_id.color[1] = num
-				list_detail_bottom_right.style.texture_id.color[1] = num
+				chain.style.tiling_texture.color[1] = alpha
+				list_detail_top_center.style.tiling_texture.color[1] = alpha
+				list_detail_bottom_center.style.tiling_texture.color[1] = alpha
+				list_detail_top_left.style.texture_id.color[1] = alpha
+				list_detail_bottom_left.style.texture_id.color[1] = alpha
+				list_detail_top_right.style.texture_id.color[1] = alpha
+				list_detail_bottom_right.style.texture_id.color[1] = alpha
 			end,
-			on_complete = function (arg_10_0, arg_10_1, arg_10_2, arg_10_3)
+			on_complete = function (ui_scenegraph, scenegraph_definition, widgets, params)
 				-- function 10
 				return
 			end
 		}
 	}
 }
-local tbl_9 = {
+local generic_input_actions = {
 	{
 		input_action = "confirm",
 		priority = 2,
@@ -448,9 +449,9 @@ local tbl_9 = {
 }
 
 return {
-	widgets = tbl_6,
-	generic_input_actions = tbl_9,
-	list_detail_widgets = tbl_7,
-	scenegraph_definition = tbl_3,
-	animation_definitions = tbl_8
+	widgets = widgets,
+	generic_input_actions = generic_input_actions,
+	list_detail_widgets = list_detail_widgets,
+	scenegraph_definition = scenegraph_definition,
+	animation_definitions = animation_definitions
 }

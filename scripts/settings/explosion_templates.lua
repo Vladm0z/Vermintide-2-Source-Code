@@ -847,27 +847,28 @@ ExplosionTemplates.cannon_ball_throw = {
 			far_scale = 0.15,
 			far_distance = 20
 		},
-		on_death_func = function (arg_1_0)
+		on_death_func = function (hit_unit)
 			-- function 1
-			local tbl = {
+			local stat_names = {
 				"forest_fort_kill_cannonball",
 				"forest_fort_kill_cannonball_cata"
 			}
 
-			for i = 1, #tbl do
-				local get_difficulty = Managers.state.difficulty:get_difficulty()
-				local var_1_2 = QuestSettings.allowed_difficulties[tbl[i]][get_difficulty]
-				local extension = ScriptUnit.extension(arg_1_0, "death_system")
+			for i = 1, #stat_names do
+				local current_difficulty = Managers.state.difficulty:get_difficulty()
+				local allowed_difficulties = QuestSettings.allowed_difficulties[stat_names[i]]
+				local allowed_difficulty = allowed_difficulties[current_difficulty]
+				local death_extension = ScriptUnit.extension(hit_unit, "death_system")
 
-				if not (not var_1_2 and extension:has_death_started()) then
+				if allowed_difficulty and not death_extension:has_death_started() then
 					local local_player = Managers.player:local_player()
-					local has_extension = ScriptUnit.has_extension(local_player.player_unit, "status_system")
+					local status_extension = ScriptUnit.has_extension(local_player.player_unit, "status_system")
 
-					if not (not has_extension and has_extension.completed_cannonball_challenge) then
+					if status_extension and not status_extension.completed_cannonball_challenge then
 						local num
 
-						if not has_extension.num_cannonball_kills then
-							num = has_extension.num_cannonball_kills + 1
+						if status_extension.num_cannonball_kills then
+							num = status_extension.num_cannonball_kills + 1
 
 							if not num then
 								-- Nothing
@@ -878,13 +879,15 @@ ExplosionTemplates.cannon_ball_throw = {
 
 						::label_1_0::
 
-						has_extension.num_cannonball_kills = num
+						status_extension.num_cannonball_kills = num
 
-						if has_extension.num_cannonball_kills >= QuestSettings.forest_fort_kill_cannonball then
-							Managers.player:statistics_db():increment_stat_and_sync_to_clients(tbl[i])
+						if status_extension.num_cannonball_kills >= QuestSettings.forest_fort_kill_cannonball then
+							local statistics_db = Managers.player:statistics_db()
 
-							has_extension.num_cannonball_kills = nil
-							has_extension.completed_cannonball_challenge = true
+							statistics_db:increment_stat_and_sync_to_clients(stat_names[i])
+
+							status_extension.num_cannonball_kills = nil
+							status_extension.completed_cannonball_challenge = true
 						end
 					end
 				end
@@ -1318,62 +1321,64 @@ ExplosionTemplates.grey_seer_warp_lightning_impact = {
 	}
 }
 ExplosionTemplates.chaos_slow_bomb_missile = {
-	server_hit_func = function (arg_2_0, arg_2_1, arg_2_2, arg_2_3, arg_2_4, arg_2_5)
+	server_hit_func = function (projectile_unit, damage_source, owner_unit, hit_position, recent_impacts, explosion_template)
 		-- function 2
-		local var_2_0 = arg_2_4[ProjectileImpactDataIndex.UNIT]
-		local flag = false
-		local var_2_2 = Managers.state.side.side_by_unit[arg_2_2]
+		local hit_unit = recent_impacts[ProjectileImpactDataIndex.UNIT]
+		local hit_player = false
+		local attacker_side = Managers.state.side.side_by_unit[owner_unit]
 
-		if not var_2_2 and not var_2_2.VALID_ENEMY_PLAYERS_AND_BOTS[var_2_0] then
-			local has_extension = ScriptUnit.has_extension(var_2_0, "status_system")
+		if attacker_side and attacker_side.VALID_ENEMY_PLAYERS_AND_BOTS[hit_unit] then
+			local status_extension = ScriptUnit.has_extension(hit_unit, "status_system")
 
-			if not (not has_extension and has_extension:is_disabled()) then
-				flag = true
+			if status_extension and not status_extension:is_disabled() then
+				hit_player = true
 			end
 		end
 
-		if not flag then
-			local true_flight_template = ScriptUnit.extension(arg_2_0, "projectile_locomotion_system").true_flight_template
-			local spawn_overpowering_blob = AiUtils.spawn_overpowering_blob(Managers.state.network, var_2_0, true_flight_template.overpowered_blob_health, true_flight_template.attached_life_time)
-			local str = "slow_bomb"
+		if hit_player then
+			local projectile_locomotion_extension = ScriptUnit.extension(projectile_unit, "projectile_locomotion_system")
+			local missile_template = projectile_locomotion_extension.true_flight_template
+			local blob_unit = AiUtils.spawn_overpowering_blob(Managers.state.network, hit_unit, missile_template.overpowered_blob_health, missile_template.attached_life_time)
+			local overpowered_template_name = "slow_bomb"
 
-			StatusUtils.set_overpowered_network(var_2_0, true, str, spawn_overpowering_blob)
-			Managers.state.unit_spawner:mark_for_deletion(arg_2_0)
+			StatusUtils.set_overpowered_network(hit_unit, true, overpowered_template_name, blob_unit)
+			Managers.state.unit_spawner:mark_for_deletion(projectile_unit)
 		else
-			local var_2_7 = BLACKBOARDS[arg_2_2]
-			local chaos_slow_bomb_missile_missed = ExplosionTemplates.chaos_slow_bomb_missile_missed
+			local blackboard = BLACKBOARDS[owner_unit]
+			local missed_explosion_template = ExplosionTemplates.chaos_slow_bomb_missile_missed
 
-			AiUtils.ai_explosion(arg_2_0, arg_2_2, var_2_7, arg_2_1, chaos_slow_bomb_missile_missed)
+			AiUtils.ai_explosion(projectile_unit, owner_unit, blackboard, damage_source, missed_explosion_template)
 		end
 	end
 }
 ExplosionTemplates.chaos_slow_bomb_missile_new = {
-	server_hit_func = function (arg_3_0, arg_3_1, arg_3_2, arg_3_3, arg_3_4, arg_3_5)
+	server_hit_func = function (projectile_unit, damage_source, owner_unit, hit_position, recent_impacts, explosion_template)
 		-- function 3
-		local var_3_0 = arg_3_4[ProjectileImpactDataIndex.UNIT]
-		local flag = false
-		local var_3_2 = Managers.state.side.side_by_unit[arg_3_2]
+		local hit_unit = recent_impacts[ProjectileImpactDataIndex.UNIT]
+		local hit_player = false
+		local attacker_side = Managers.state.side.side_by_unit[owner_unit]
 
-		if not var_3_2 and not var_3_2.VALID_ENEMY_PLAYERS_AND_BOTS[var_3_0] then
-			local has_extension = ScriptUnit.has_extension(var_3_0, "status_system")
+		if attacker_side and attacker_side.VALID_ENEMY_PLAYERS_AND_BOTS[hit_unit] then
+			local status_extension = ScriptUnit.has_extension(hit_unit, "status_system")
 
-			if not (not has_extension and has_extension:is_disabled()) then
-				flag = true
+			if status_extension and not status_extension:is_disabled() then
+				hit_player = true
 			end
 		end
 
-		if not flag then
-			local true_flight_template = ScriptUnit.extension(arg_3_0, "projectile_locomotion_system").true_flight_template
-			local spawn_overpowering_blob = AiUtils.spawn_overpowering_blob(Managers.state.network, var_3_0, true_flight_template.overpowered_blob_health, true_flight_template.attached_life_time)
-			local str = "fly_bomb"
+		if hit_player then
+			local projectile_locomotion_extension = ScriptUnit.extension(projectile_unit, "projectile_locomotion_system")
+			local missile_template = projectile_locomotion_extension.true_flight_template
+			local blob_unit = AiUtils.spawn_overpowering_blob(Managers.state.network, hit_unit, missile_template.overpowered_blob_health, missile_template.attached_life_time)
+			local overpowered_template_name = "fly_bomb"
 
-			StatusUtils.set_overpowered_network(var_3_0, true, str, spawn_overpowering_blob)
-			Managers.state.unit_spawner:mark_for_deletion(arg_3_0)
+			StatusUtils.set_overpowered_network(hit_unit, true, overpowered_template_name, blob_unit)
+			Managers.state.unit_spawner:mark_for_deletion(projectile_unit)
 		else
-			local var_3_7 = BLACKBOARDS[arg_3_2]
-			local chaos_slow_bomb_missile_missed_new = ExplosionTemplates.chaos_slow_bomb_missile_missed_new
+			local blackboard = BLACKBOARDS[owner_unit]
+			local missed_explosion_template = ExplosionTemplates.chaos_slow_bomb_missile_missed_new
 
-			AiUtils.ai_explosion(arg_3_0, arg_3_2, var_3_7, arg_3_1, chaos_slow_bomb_missile_missed_new)
+			AiUtils.ai_explosion(projectile_unit, owner_unit, blackboard, damage_source, missed_explosion_template)
 		end
 	end
 }
@@ -1658,6 +1663,6 @@ ExplosionTemplates.claw_explosion_dwarf = {
 
 DLCUtils.merge("explosion_templates", ExplosionTemplates)
 
-for k, v in pairs(ExplosionTemplates) do
-	v.name = k
+for name, templates in pairs(ExplosionTemplates) do
+	templates.name = name
 end

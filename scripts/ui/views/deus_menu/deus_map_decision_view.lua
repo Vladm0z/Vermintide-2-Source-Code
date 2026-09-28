@@ -6,15 +6,15 @@ require("scripts/settings/dlcs/morris/deus_map_visibility_settings")
 
 DeusMapDecisionView = class(DeusMapDecisionView, DeusMapView)
 
-local num = 5
-local num_2 = 30
-local num_3 = 5
-local num_4 = 3
-local num_5 = 2
-local num_6 = 0.5
-local num_7 = 1
-local num_8 = 1
-local tbl = {
+local START_COUNTDOWN = 5
+local VOTING_COUNTDOWN = 30
+local VOTING_FINISHING_COUNTDOWN = 5
+local FINAL_COUNTDOWN = 3
+local CAMERA_TRANSITION_DURATION = 2
+local CONTENT_FADE_IN_DURATION = 0.5
+local CONTENT_FADE_OUT_DURATION = 1
+local REAL_PLAYER_LOCAL_ID = 1
+local VISIBILITY_CONFIG = {
 	[DeusMapVisibilitySettings.WEAK_FOG_LEVEL] = {
 		conflict_settings = true,
 		shop = true,
@@ -48,14 +48,14 @@ local tbl = {
 		level = false
 	}
 }
-local tbl_2 = {
+local SOUND_EVENTS = {
 	ingame_final_node_selected = "hud_morris_world_map_level_chosen",
 	token_move = "hud_morris_world_map_token_move",
 	node_hover = "hud_morris_world_map_hover",
 	node_pressed = "hud_morris_world_map_chose_level",
 	shrine_final_node_selected = "hud_morris_map_shrine_open"
 }
-local tbl_3 = {
+local states = {
 	TWITCH_STARTING = "TWITCH_STARTING",
 	VOTING = "VOTING",
 	FINISHED = "FINISHED",
@@ -65,7 +65,7 @@ local tbl_3 = {
 	FINISHING = "FINISHING",
 	STARTING = "STARTING"
 }
-local tbl_4 = {
+local shared_state_spec = {
 	server = {
 		map_state = {
 			default_value = "",
@@ -92,32 +92,32 @@ local tbl_4 = {
 	}
 }
 
-SharedState.validate_spec(tbl_4)
+SharedState.validate_spec(shared_state_spec)
 
-local function fn(self)
+local function get_next_node_types(deus_run_controller)
 	-- function 1
-	local tbl = {}
-	local get_current_node = self:get_current_node()
+	local node_types = {}
+	local current_node = deus_run_controller:get_current_node()
 
-	for i, v in ipairs(get_current_node.next) do
-		local get_node = self:get_node(v)
+	for _, next in ipairs(current_node.next) do
+		local next_node = deus_run_controller:get_node(next)
 
-		table.insert(tbl, get_node.node_type)
+		table.insert(node_types, next_node.node_type)
 	end
 
-	return tbl
+	return node_types
 end
 
-DeusMapDecisionView.init = function (self, arg_2_1)
+DeusMapDecisionView.init = function (self, context)
 	-- function 2
-	self.super.init(self, arg_2_1)
+	self.super.init(self, context)
 
-	self._is_server = arg_2_1.is_server
-	self._server_peer_id = arg_2_1.server_peer_id
-	self._own_peer_id = arg_2_1.own_peer_id
-	self._network_server = arg_2_1.network_server
-	self._wwise_world = arg_2_1.wwise_world
-	self._world = arg_2_1.world
+	self._is_server = context.is_server
+	self._server_peer_id = context.server_peer_id
+	self._own_peer_id = context.own_peer_id
+	self._network_server = context.network_server
+	self._wwise_world = context.wwise_world
+	self._world = context.world
 
 	local event = Managers.state.event
 
@@ -127,114 +127,127 @@ end
 
 DeusMapDecisionView._start = function (self)
 	-- function 3
-	self._state = tbl_3.IDLE
+	self._state = states.IDLE
 
-	local get_current_node_key = self._deus_run_controller:get_current_node_key()
+	local current_node_key = self._deus_run_controller:get_current_node_key()
 
-	self._shared_state = SharedState:new("deus_map_" .. self._deus_run_controller:get_run_id() .. "_" .. get_current_node_key, tbl_4, self._is_server, self._network_server, self._server_peer_id, self._own_peer_id)
+	self._shared_state = SharedState:new("deus_map_" .. self._deus_run_controller:get_run_id() .. "_" .. current_node_key, shared_state_spec, self._is_server, self._network_server, self._server_peer_id, self._own_peer_id)
 
 	self._shared_state:register_rpcs(self._network_event_delegate)
 	self._shared_state:full_sync()
 	self._shared_state:set_own(self._shared_state:get_key("ready"), true)
 
-	local get_current_node = self._deus_run_controller:get_current_node()
+	local current_node = self._deus_run_controller:get_current_node()
 
-	if not self._is_server then
-		local twitch = Managers.twitch
-		local is_connected = twitch:is_connected()
+	if self._is_server then
+		local twitch_manager = Managers.twitch
+		local is_connected = twitch_manager:is_connected()
 
-		is_connected = not is_connected and #get_current_node.next == 2
+		if is_connected then
+			-- Nothing
+		end
 
-		local get_key = self._shared_state:get_key("map_state")
+		if #current_node.next ~= 2 then
+			is_connected = false
 
-		if not is_connected then
-			self._deus_run_controller:request_standard_twitch_level_vote(twitch)
-			self._shared_state:set_server(get_key, tbl_3.TWITCH_STARTING)
+			goto label_3_0
+		end
+
+		is_connected = true
+
+		local is_twitch_voting = is_connected
+
+		::label_3_0::
+
+		local map_state_key = self._shared_state:get_key("map_state")
+
+		if is_twitch_voting then
+			self._deus_run_controller:request_standard_twitch_level_vote(twitch_manager)
+			self._shared_state:set_server(map_state_key, states.TWITCH_STARTING)
 		else
-			self._shared_state:set_server(get_key, tbl_3.STARTING)
+			self._shared_state:set_server(map_state_key, states.STARTING)
 		end
 
 		self._shared_state:set_server(self._shared_state:get_key("final_node_selected"), "")
 
-		local var_3_5
-		local var_3_6 = fn(self._deus_run_controller)
-		local flag
+		local start_dialogue_event
+		local next_node_types = get_next_node_types(self._deus_run_controller)
 
-		flag = not table.contains(var_3_6, "shop") and "deus_before_shrine_tutorial" and "deus_map_tutorial"
+		start_dialogue_event = (not table.contains(next_node_types, "shop") or not "deus_before_shrine_tutorial") and not not "deus_map_tutorial"
 
-		local find_dialogue_unit = LevelHelper:find_dialogue_unit(self._world, "ferry_lady_01")
-		local extension_input = ScriptUnit.extension_input(find_dialogue_unit, "dialogue_system")
-		local alloc_table = FrameTable.alloc_table()
+		local vo_unit = LevelHelper:find_dialogue_unit(self._world, "ferry_lady_01")
+		local dialogue_input = ScriptUnit.extension_input(vo_unit, "dialogue_system")
+		local event_data = FrameTable.alloc_table()
 
-		extension_input:trigger_dialogue_event(flag, alloc_table)
+		dialogue_input:trigger_dialogue_event(start_dialogue_event, event_data)
 	end
 
 	self._shared_state:set_own(self._shared_state:get_key("vote"), "")
 	print("[DeusMapDecisionView] Self vote defaulted")
 
-	if get_current_node_key ~= "start" then
-		self._scene:set_zoomed_camera_to(get_current_node.layout_x, get_current_node.layout_y)
+	if current_node_key ~= "start" then
+		self._scene:set_zoomed_camera_to(current_node.layout_x, current_node.layout_y)
 	end
 
-	self._scene:animate_camera_to(get_current_node.layout_x, get_current_node.layout_y, num_5)
+	self._scene:animate_camera_to(current_node.layout_x, current_node.layout_y, CAMERA_TRANSITION_DURATION)
 
-	local get_journey_name = self._deus_run_controller:get_journey_name()
+	local journey_name = self._deus_run_controller:get_journey_name()
 
-	self._ui:set_journey_name(get_journey_name)
+	self._ui:set_journey_name(journey_name)
 	self._ui:hide_content()
 	self._ui:show_full_screen_rect()
 	self._ui:set_alpha_multiplier(1)
-	self._ui:fade_out(num_5)
+	self._ui:fade_out(CAMERA_TRANSITION_DURATION)
 
-	self._initial_animation_duration_left = num_5
+	self._initial_animation_duration_left = CAMERA_TRANSITION_DURATION
 
-	local get_map_visibility = self._deus_run_controller:get_map_visibility()
+	local visibility_data = self._deus_run_controller:get_map_visibility()
 
-	self._visibility_data = get_map_visibility
+	self._visibility_data = visibility_data
 
-	self._scene:setup_fog(get_map_visibility)
+	self._scene:setup_fog(visibility_data)
 
-	local get_traversed_nodes = self._deus_run_controller:get_traversed_nodes()
-	local str = "start"
+	local traversed_nodes = self._deus_run_controller:get_traversed_nodes()
+	local prev_node = "start"
 
-	self._scene:traversed_node(str)
+	self._scene:traversed_node(prev_node)
 
-	for i = 1, #get_traversed_nodes do
-		local var_3_15 = get_traversed_nodes[i]
+	for i = 1, #traversed_nodes do
+		local node = traversed_nodes[i]
 
-		if var_3_15 ~= "start" then
-			self._scene:traversed_node(var_3_15)
-			self._scene:highlight_edge(str, var_3_15)
+		if node ~= "start" then
+			self._scene:traversed_node(node)
+			self._scene:highlight_edge(prev_node, node)
 
-			str = var_3_15
+			prev_node = node
 		end
 	end
 
-	for i_2, v in ipairs(get_current_node.next) do
-		self._scene:highlight_edge(get_current_node_key, v)
+	for _, next_node_key in ipairs(current_node.next) do
+		self._scene:highlight_edge(current_node_key, next_node_key)
 	end
 
-	local get_unreachable_nodes = self._deus_run_controller:get_unreachable_nodes()
+	local unreachable_nodes = self._deus_run_controller:get_unreachable_nodes()
 
-	for i_3, v_2 in ipairs(get_unreachable_nodes) do
-		self._scene:unreachable_node(v_2)
+	for _, unreachable_node_key in ipairs(unreachable_nodes) do
+		self._scene:unreachable_node(unreachable_node_key)
 	end
 
-	self._scene:select_node(get_current_node_key)
+	self._scene:select_node(current_node_key)
 
-	local get_arena_belakor_node = self._deus_run_controller:get_arena_belakor_node()
-	local has_own_seen_arena_belakor_node = self._deus_run_controller:has_own_seen_arena_belakor_node()
+	local arena_belakor_node = self._deus_run_controller:get_arena_belakor_node()
+	local seen_arena_belakor_node = self._deus_run_controller:has_own_seen_arena_belakor_node()
 
-	if not (not get_arena_belakor_node and has_own_seen_arena_belakor_node) then
-		self._scene:animate_arena_belakor_node(get_arena_belakor_node)
+	if arena_belakor_node and not seen_arena_belakor_node then
+		self._scene:animate_arena_belakor_node(arena_belakor_node)
 	end
 end
 
-DeusMapDecisionView.register_rpcs = function (self, arg_4_1, arg_4_2)
+DeusMapDecisionView.register_rpcs = function (self, network_event_delegate, network_transmit)
 	-- function 4
-	DeusMapDecisionView.super.register_rpcs(self, arg_4_1, arg_4_2)
+	DeusMapDecisionView.super.register_rpcs(self, network_event_delegate, network_transmit)
 
-	self._network_event_delegate = arg_4_1
+	self._network_event_delegate = network_event_delegate
 end
 
 DeusMapDecisionView.unregister_rpcs = function (self)
@@ -249,27 +262,27 @@ DeusMapDecisionView.destroy = function (self)
 	DeusMapDecisionView.super.destroy(self)
 	self:unregister_rpcs()
 
-	if not self._shared_state then
+	if self._shared_state then
 		self._shared_state:destroy()
 
 		self._shared_state = nil
 	end
 end
 
-DeusMapDecisionView._update = function (self, arg_7_1, arg_7_2)
+DeusMapDecisionView._update = function (self, dt, t)
 	-- function 7
-	local get_revision = self._shared_state:get_revision()
-	local get_state_revision = self._deus_run_controller:get_state_revision()
+	local shared_state_revision = self._shared_state:get_revision()
+	local run_state_revision = self._deus_run_controller:get_state_revision()
 
-	if not (self._shared_state_revision ~= get_revision or self._run_state_revision == get_state_revision) then
+	if self._shared_state_revision ~= shared_state_revision or self._run_state_revision ~= run_state_revision then
 		self:_update_player_state()
 
-		self._shared_state_revision = get_revision
-		self._run_state_revision = get_state_revision
+		self._shared_state_revision = shared_state_revision
+		self._run_state_revision = run_state_revision
 	end
 
-	if not self._initial_animation_duration_left then
-		self._initial_animation_duration_left = self._initial_animation_duration_left - arg_7_1
+	if self._initial_animation_duration_left then
+		self._initial_animation_duration_left = self._initial_animation_duration_left - dt
 
 		if self._initial_animation_duration_left <= 0 then
 			self._initial_animation_duration_left = nil
@@ -277,123 +290,131 @@ DeusMapDecisionView._update = function (self, arg_7_1, arg_7_2)
 			self._ui:show_content()
 			self._ui:hide_full_screen_rect()
 			self._ui:set_alpha_multiplier(0)
-			self._ui:fade_in(num_6)
+			self._ui:fade_in(CONTENT_FADE_IN_DURATION)
 		end
 	end
 
-	local get_server = self._shared_state:get_server(self._shared_state:get_key("map_state"))
+	local state = self._shared_state:get_server(self._shared_state:get_key("map_state"))
 
-	if not self._is_server then
-		local _check_transition = self:_check_transition(get_server)
+	if self._is_server then
+		local new_state = self:_check_transition(state)
 
-		if _check_transition ~= get_server then
-			self._shared_state:set_server(self._shared_state:get_key("map_state"), _check_transition)
+		if new_state ~= state then
+			self._shared_state:set_server(self._shared_state:get_key("map_state"), new_state)
 
-			get_server = _check_transition
+			state = new_state
 		end
 	end
 
-	if self._prev_state ~= get_server then
-		if get_server == tbl_3.TWITCH_STARTING then
-			self:_on_enter_starting(arg_7_1, arg_7_2)
-		elseif get_server == tbl_3.STARTING then
-			self:_on_enter_starting(arg_7_1, arg_7_2)
-		elseif get_server == tbl_3.WAITING then
-			self:_on_enter_waiting(arg_7_1, arg_7_2)
-		elseif get_server == tbl_3.TWITCH_WAITING then
-			self:_on_enter_waiting(arg_7_1, arg_7_2)
-		elseif get_server == tbl_3.VOTING then
-			self:_on_enter_voting(arg_7_1, arg_7_2)
-		elseif get_server == tbl_3.VOTING_FINISHING then
-			self:_on_enter_voting_finishing(arg_7_1, arg_7_2)
-		elseif get_server == tbl_3.FINISHING then
-			self:_on_enter_finishing(arg_7_1, arg_7_2)
-		elseif get_server == tbl_3.FINISHED then
-			self:_on_enter_finished(arg_7_1, arg_7_2)
+	if self._prev_state ~= state then
+		if state == states.TWITCH_STARTING then
+			self:_on_enter_starting(dt, t)
+		elseif state == states.STARTING then
+			self:_on_enter_starting(dt, t)
+		elseif state == states.WAITING then
+			self:_on_enter_waiting(dt, t)
+		elseif state == states.TWITCH_WAITING then
+			self:_on_enter_waiting(dt, t)
+		elseif state == states.VOTING then
+			self:_on_enter_voting(dt, t)
+		elseif state == states.VOTING_FINISHING then
+			self:_on_enter_voting_finishing(dt, t)
+		elseif state == states.FINISHING then
+			self:_on_enter_finishing(dt, t)
+		elseif state == states.FINISHED then
+			self:_on_enter_finished(dt, t)
 		end
 	end
 
-	if get_server == tbl_3.TWITCH_STARTING then
-		self:_update_during_starting(arg_7_1, arg_7_2)
-	elseif get_server == tbl_3.STARTING then
-		self:_update_during_starting(arg_7_1, arg_7_2)
-	elseif get_server == tbl_3.WAITING then
-		self:_update_during_waiting(arg_7_1, arg_7_2)
-	elseif get_server == tbl_3.VOTING then
-		self:_update_during_voting(arg_7_1, arg_7_2)
-	elseif get_server == tbl_3.VOTING_FINISHING then
-		self:_update_during_voting_finishing(arg_7_1, arg_7_2)
-	elseif get_server == tbl_3.FINISHING then
-		self:_update_during_finishing(arg_7_1, arg_7_2)
+	if state == states.TWITCH_STARTING then
+		self:_update_during_starting(dt, t)
+	elseif state == states.STARTING then
+		self:_update_during_starting(dt, t)
+	elseif state == states.WAITING then
+		self:_update_during_waiting(dt, t)
+	elseif state == states.VOTING then
+		self:_update_during_voting(dt, t)
+	elseif state == states.VOTING_FINISHING then
+		self:_update_during_voting_finishing(dt, t)
+	elseif state == states.FINISHING then
+		self:_update_during_finishing(dt, t)
 	end
 
-	self._prev_state = get_server
+	self._prev_state = state
 end
 
-DeusMapDecisionView._get_rpcs = function (arg_8_0)
+DeusMapDecisionView._get_rpcs = function (self)
 	-- function 8
 	return nil
 end
 
-DeusMapDecisionView._node_pressed = function (self, arg_9_1)
+DeusMapDecisionView._node_pressed = function (self, node_key)
 	-- function 9
-	if self._prev_state == tbl_3.TWITCH_WAITING then
+	if self._prev_state == states.TWITCH_WAITING then
 		return
 	end
 
 	local get_own = self._shared_state:get_own(self._shared_state:get_key("vote"))
 
-	get_own = get_own or ""
-
-	local get_current_node_key = self._deus_run_controller:get_current_node_key()
-	local get_graph_data = self._deus_run_controller:get_graph_data()
-	local var_9_3 = get_graph_data[arg_9_1]
-	local var_9_4 = get_graph_data[get_own]
-
-	if get_own ~= "" then
-		self._scene:unselect_node(get_own)
-
-		for i, v in ipairs(var_9_4.next) do
-			self._scene:unhighlight_edge(get_own, v)
-		end
-	else
-		self._scene:unselect_node(get_current_node_key)
+	if not get_own then
+		-- Nothing
 	end
 
-	if get_own == arg_9_1 then
-		if not Managers.input:is_device_active("gamepad") then
-			self._scene:select_node(get_current_node_key, tbl_2.token_move)
+	get_own = ""
+
+	local previous_node_key = get_own
+
+	::label_9_0::
+
+	local current_node_key = self._deus_run_controller:get_current_node_key()
+	local graph_data = self._deus_run_controller:get_graph_data()
+	local node = graph_data[node_key]
+	local prev_node = graph_data[previous_node_key]
+
+	if previous_node_key ~= "" then
+		self._scene:unselect_node(previous_node_key)
+
+		for _, next in ipairs(prev_node.next) do
+			self._scene:unhighlight_edge(previous_node_key, next)
+		end
+	else
+		self._scene:unselect_node(current_node_key)
+	end
+
+	if previous_node_key == node_key then
+		if Managers.input:is_device_active("gamepad") then
+			self._scene:select_node(current_node_key, SOUND_EVENTS.token_move)
 			self._shared_state:set_own(self._shared_state:get_key("vote"), "")
 			print("[DeusMapDecisionView] Self removed vote")
 		else
-			self._scene:select_node(get_own, tbl_2.token_move)
-			self._shared_state:set_own(self._shared_state:get_key("vote"), get_own)
+			self._scene:select_node(previous_node_key, SOUND_EVENTS.token_move)
+			self._shared_state:set_own(self._shared_state:get_key("vote"), previous_node_key)
 			print("[DeusMapDecisionView] Self replaced vote")
 
-			for i_2, v_2 in ipairs(var_9_3.next) do
-				self._scene:highlight_edge(get_own, v_2)
+			for _, next in ipairs(node.next) do
+				self._scene:highlight_edge(previous_node_key, next)
 			end
 		end
 	else
-		self._scene:select_node(arg_9_1, tbl_2.token_move)
-		self._shared_state:set_own(self._shared_state:get_key("vote"), arg_9_1)
-		print("[DeusMapDecisionView] Self voted for", arg_9_1)
+		self._scene:select_node(node_key, SOUND_EVENTS.token_move)
+		self._shared_state:set_own(self._shared_state:get_key("vote"), node_key)
+		print("[DeusMapDecisionView] Self voted for", node_key)
 
-		for i_3, v_3 in ipairs(var_9_3.next) do
-			self._scene:highlight_edge(arg_9_1, v_3)
+		for _, next in ipairs(node.next) do
+			self._scene:highlight_edge(node_key, next)
 		end
 	end
 
-	if self._hovered_node == arg_9_1 then
-		self:_enable_hover(arg_9_1)
+	if self._hovered_node == node_key then
+		self:_enable_hover(node_key)
 	end
 
-	self:_play_sound(tbl_2.node_pressed)
+	self:_play_sound(SOUND_EVENTS.node_pressed)
 end
 
-DeusMapDecisionView._node_hovered = function (self, arg_10_1)
+DeusMapDecisionView._node_hovered = function (self, node_key)
 	-- function 10
-	self:_enable_hover(arg_10_1)
+	self:_enable_hover(node_key)
 end
 
 DeusMapDecisionView._node_unhovered = function (self)
@@ -401,83 +422,84 @@ DeusMapDecisionView._node_unhovered = function (self)
 	self:_disable_hover()
 end
 
-DeusMapDecisionView._check_transition = function (self, arg_12_1)
+DeusMapDecisionView._check_transition = function (self, state)
 	-- function 12
-	if arg_12_1 == tbl_3.TWITCH_STARTING then
-		if self._starting_countdown == 0 or not self:_are_all_peers_ready() then
-			return tbl_3.TWITCH_WAITING
+	if state == states.TWITCH_STARTING then
+		if self._starting_countdown == 0 or self:_are_all_peers_ready() then
+			return states.TWITCH_WAITING
 		end
-	elseif arg_12_1 == tbl_3.STARTING then
-		if self._starting_countdown == 0 or not self:_are_all_peers_ready() then
-			return tbl_3.WAITING
+	elseif state == states.STARTING then
+		if self._starting_countdown == 0 or self:_are_all_peers_ready() then
+			return states.WAITING
 		end
-	elseif arg_12_1 == tbl_3.TWITCH_WAITING then
-		if not self:_get_twitch_vote() then
+	elseif state == states.TWITCH_WAITING then
+		if self:_get_twitch_vote() then
 			self:_handle_twitch_waiting_end()
 
-			return tbl_3.FINISHING
+			return states.FINISHING
 		end
-	elseif arg_12_1 == tbl_3.WAITING then
-		if not self:_did_someone_vote() then
-			return tbl_3.VOTING
+	elseif state == states.WAITING then
+		if self:_did_someone_vote() then
+			return states.VOTING
 		end
-	elseif arg_12_1 == tbl_3.VOTING then
+	elseif state == states.VOTING then
 		if not self:_did_someone_vote() then
-			return tbl_3.WAITING
+			return states.WAITING
 		end
 
-		if not self:_did_everyone_vote() then
-			return tbl_3.VOTING_FINISHING
+		if self:_did_everyone_vote() then
+			return states.VOTING_FINISHING
 		end
 
 		if self._voting_countdown == 0 then
 			self:_handle_voting_end()
 
-			return tbl_3.FINISHING
+			return states.FINISHING
 		end
-	elseif arg_12_1 == tbl_3.VOTING_FINISHING then
+	elseif state == states.VOTING_FINISHING then
 		if not self:_did_someone_vote() then
-			return tbl_3.WAITING
+			return states.WAITING
 		end
 
 		if self._voting_countdown == 0 then
 			self:_handle_voting_end()
 
-			return tbl_3.FINISHING
+			return states.FINISHING
 		end
-	elseif not (arg_12_1 ~= tbl_3.FINISHING or self._final_countdown ~= 0) then
-		return tbl_3.FINISHED
+	elseif state == states.FINISHING and self._final_countdown == 0 then
+		return states.FINISHED
 	end
 
-	return arg_12_1
+	return state
 end
 
-DeusMapDecisionView._enable_hover = function (self, arg_13_1)
+DeusMapDecisionView._enable_hover = function (self, node_key)
 	-- function 13
-	if not self._hovered_node then
+	if self._hovered_node then
 		self:_disable_hover()
 	end
 
-	local var_13_0 = self._deus_run_controller:get_graph_data()[arg_13_1]
-	local var_13_1 = self._visibility_data[arg_13_1]
-	local var_13_2 = tbl[var_13_1]
-	local level = var_13_2.level
-	local theme = var_13_2.theme
-	local minor_modifier = var_13_2.minor_modifier
-	local conflict_settings = var_13_2.conflict_settings
-	local terror_event_power_up = var_13_2.terror_event_power_up
-	local get_current_node = self._deus_run_controller:get_current_node()
-	local get_own_peer_id = self._deus_run_controller:get_own_peer_id()
-	local get_player_profile, var_13_11 = self._deus_run_controller:get_player_profile(get_own_peer_id, num_8)
+	local graph_data = self._deus_run_controller:get_graph_data()
+	local node = graph_data[node_key]
+	local visibility_level = self._visibility_data[node_key]
+	local visibility_config = VISIBILITY_CONFIG[visibility_level]
+	local reveal_base_level = visibility_config.level
+	local reveal_theme = visibility_config.theme
+	local reveal_minor_modifier = visibility_config.minor_modifier
+	local reveal_conflict_settings = visibility_config.conflict_settings
+	local reveal_terror_event_power_up = visibility_config.terror_event_power_up
+	local current_node = self._deus_run_controller:get_current_node()
+	local own_peer_id = self._deus_run_controller:get_own_peer_id()
+	local profile_index, career_index = self._deus_run_controller:get_player_profile(own_peer_id, REAL_PLAYER_LOCAL_ID)
 	local _ui = self._ui
-	local var_13_13 = _ui
+	local var_13_1 = _ui
 	local enable_hover_text = _ui.enable_hover_text
-	local get_screen_pos_of_node = self._scene:get_screen_pos_of_node(arg_13_1)
-	local level_type = var_13_0.level_type
+	local get_screen_pos_of_node = self._scene:get_screen_pos_of_node(node_key)
+	local level_type = node.level_type
 	local base_level
 
-	if not level then
-		base_level = var_13_0.base_level
+	if reveal_base_level then
+		base_level = node.base_level
 
 		if not base_level then
 			-- Nothing
@@ -487,20 +509,20 @@ DeusMapDecisionView._enable_hover = function (self, arg_13_1)
 	base_level = nil
 
 	do
-		local theme_2
+		local theme
 	end
 
 	::label_13_0::
 
-	if not theme then
-		theme_2 = var_13_0.theme
+	if reveal_theme then
+		theme = node.theme
 
-		if not theme_2 then
+		if not theme then
 			-- Nothing
 		end
 	end
 
-	theme_2 = nil
+	theme = nil
 
 	do
 		local minor_modifier_group
@@ -508,8 +530,8 @@ DeusMapDecisionView._enable_hover = function (self, arg_13_1)
 
 	::label_13_1::
 
-	if not minor_modifier then
-		minor_modifier_group = var_13_0.minor_modifier_group
+	if reveal_minor_modifier then
+		minor_modifier_group = node.minor_modifier_group
 
 		if not minor_modifier_group then
 			-- Nothing
@@ -519,36 +541,36 @@ DeusMapDecisionView._enable_hover = function (self, arg_13_1)
 	minor_modifier_group = nil
 
 	do
-		local conflict_settings_2
+		local conflict_settings
 	end
 
 	::label_13_2::
 
-	if not conflict_settings then
-		conflict_settings_2 = var_13_0.conflict_settings
+	if reveal_conflict_settings then
+		conflict_settings = node.conflict_settings
 
-		if not conflict_settings_2 then
+		if not conflict_settings then
 			-- Nothing
 		end
 	end
 
-	conflict_settings_2 = nil
+	conflict_settings = nil
 
 	do
-		local terror_event_power_up_2
+		local terror_event_power_up
 	end
 
 	::label_13_3::
 
-	if not terror_event_power_up then
-		terror_event_power_up_2 = var_13_0.terror_event_power_up
+	if reveal_terror_event_power_up then
+		terror_event_power_up = node.terror_event_power_up
 
-		if not terror_event_power_up_2 then
+		if not terror_event_power_up then
 			-- Nothing
 		end
 	end
 
-	terror_event_power_up_2 = nil
+	terror_event_power_up = nil
 
 	do
 		local grant_random_power_up_count
@@ -556,8 +578,8 @@ DeusMapDecisionView._enable_hover = function (self, arg_13_1)
 
 	::label_13_4::
 
-	if not terror_event_power_up then
-		grant_random_power_up_count = var_13_0.grant_random_power_up_count
+	if reveal_terror_event_power_up then
+		grant_random_power_up_count = node.grant_random_power_up_count
 
 		if not grant_random_power_up_count then
 			-- Nothing
@@ -572,8 +594,8 @@ DeusMapDecisionView._enable_hover = function (self, arg_13_1)
 
 	::label_13_5::
 
-	if not terror_event_power_up then
-		terror_event_power_up_rarity = var_13_0.terror_event_power_up_rarity
+	if reveal_terror_event_power_up then
+		terror_event_power_up_rarity = node.terror_event_power_up_rarity
 
 		if not terror_event_power_up_rarity then
 			-- Nothing
@@ -584,12 +606,12 @@ DeusMapDecisionView._enable_hover = function (self, arg_13_1)
 
 	::label_13_6::
 
-	enable_hover_text(var_13_13, get_screen_pos_of_node, level_type, base_level, theme_2, minor_modifier_group, conflict_settings_2, terror_event_power_up_2, grant_random_power_up_count, terror_event_power_up_rarity, self._shared_state:get_own(self._shared_state:get_key("vote")) == arg_13_1, table.contains(get_current_node.next, arg_13_1), get_player_profile, var_13_11)
-	self._scene:hover_node(arg_13_1)
+	enable_hover_text(var_13_1, get_screen_pos_of_node, level_type, base_level, theme, minor_modifier_group, conflict_settings, terror_event_power_up, grant_random_power_up_count, terror_event_power_up_rarity, self._shared_state:get_own(self._shared_state:get_key("vote")) == node_key, table.contains(current_node.next, node_key), profile_index, career_index)
+	self._scene:hover_node(node_key)
 
-	self._hovered_node = arg_13_1
+	self._hovered_node = node_key
 
-	self:_play_sound(tbl_2.node_hover)
+	self:_play_sound(SOUND_EVENTS.node_hover)
 end
 
 DeusMapDecisionView._disable_hover = function (self)
@@ -600,122 +622,131 @@ DeusMapDecisionView._disable_hover = function (self)
 	self._hovered_node = nil
 end
 
-DeusMapDecisionView._on_enter_starting = function (self, arg_15_1, arg_15_2)
+DeusMapDecisionView._on_enter_starting = function (self, dt, t)
 	-- function 15
 	self._ui:set_general_info(Localize("deus_map_info_waiting_title"), Localize("deus_map_info_waiting_desc"))
 
-	self._starting_countdown = num
+	self._starting_countdown = START_COUNTDOWN
 end
 
-DeusMapDecisionView._update_during_starting = function (self, arg_16_1, arg_16_2)
+DeusMapDecisionView._update_during_starting = function (self, dt, t)
 	-- function 16
-	self._starting_countdown = math.max(0, self._starting_countdown - arg_16_1)
+	self._starting_countdown = math.max(0, self._starting_countdown - dt)
 
 	self._ui:update_timer(self._starting_countdown)
 end
 
-DeusMapDecisionView._on_enter_waiting = function (self, arg_17_1, arg_17_2)
+DeusMapDecisionView._on_enter_waiting = function (self, dt, t)
 	-- function 17
 	self._ui:set_general_info(Localize("deus_map_info_voting_title"), Localize("deus_map_info_voting_desc"))
 
-	local get_current_node = self._deus_run_controller:get_current_node()
+	local current_node = self._deus_run_controller:get_current_node()
 
-	for i, v in ipairs(get_current_node.next) do
-		self._scene:selectable_node(v)
+	for _, next in ipairs(current_node.next) do
+		self._scene:selectable_node(next)
 	end
 
 	self._ui:hide_timer()
 end
 
-DeusMapDecisionView._update_during_waiting = function (arg_18_0, arg_18_1, arg_18_2)
+DeusMapDecisionView._update_during_waiting = function (self, dt, t)
 	-- function 18
 	return
 end
 
-DeusMapDecisionView._on_enter_voting = function (self, arg_19_1, arg_19_2)
+DeusMapDecisionView._on_enter_voting = function (self, dt, t)
 	-- function 19
-	local get_current_node = self._deus_run_controller:get_current_node()
+	local current_node = self._deus_run_controller:get_current_node()
 
-	for i, v in ipairs(get_current_node.next) do
-		self._scene:selectable_node(v)
+	for _, next in ipairs(current_node.next) do
+		self._scene:selectable_node(next)
 	end
 
-	if not self._voting_countdown then
-		self._voting_countdown = math.max(self._voting_countdown, num_3)
+	if self._voting_countdown then
+		self._voting_countdown = math.max(self._voting_countdown, VOTING_FINISHING_COUNTDOWN)
 	else
-		self._voting_countdown = num_2
+		self._voting_countdown = VOTING_COUNTDOWN
 	end
 end
 
-DeusMapDecisionView._update_during_voting = function (self, arg_20_1, arg_20_2)
+DeusMapDecisionView._update_during_voting = function (self, dt, t)
 	-- function 20
-	self._voting_countdown = math.max(0, self._voting_countdown - arg_20_1)
+	self._voting_countdown = math.max(0, self._voting_countdown - dt)
 
 	self._ui:update_timer(self._voting_countdown)
 end
 
-DeusMapDecisionView._on_enter_voting_finishing = function (self, arg_21_1, arg_21_2)
+DeusMapDecisionView._on_enter_voting_finishing = function (self, dt, t)
 	-- function 21
-	local get_current_node = self._deus_run_controller:get_current_node()
+	local current_node = self._deus_run_controller:get_current_node()
 
-	for i, v in ipairs(get_current_node.next) do
-		self._scene:selectable_node(v)
+	for _, next in ipairs(current_node.next) do
+		self._scene:selectable_node(next)
 	end
 
-	if not self._voting_countdown then
-		self._voting_countdown = math.min(self._voting_countdown, num_3)
+	if self._voting_countdown then
+		self._voting_countdown = math.min(self._voting_countdown, VOTING_FINISHING_COUNTDOWN)
 	else
-		self._voting_countdown = num_3
+		self._voting_countdown = VOTING_FINISHING_COUNTDOWN
 	end
 end
 
-DeusMapDecisionView._update_during_voting_finishing = function (self, arg_22_1, arg_22_2)
+DeusMapDecisionView._update_during_voting_finishing = function (self, dt, t)
 	-- function 22
-	self._voting_countdown = math.max(0, self._voting_countdown - arg_22_1)
+	self._voting_countdown = math.max(0, self._voting_countdown - dt)
 
 	self._ui:update_timer(self._voting_countdown)
 end
 
-DeusMapDecisionView._on_enter_finishing = function (self, arg_23_1, arg_23_2)
+DeusMapDecisionView._on_enter_finishing = function (self, dt, t)
 	-- function 23
-	self._final_countdown = num_4
+	self._final_countdown = FINAL_COUNTDOWN
 
-	local get_current_node_key = self._deus_run_controller:get_current_node_key()
-	local get_current_node = self._deus_run_controller:get_current_node()
+	local current_node_key = self._deus_run_controller:get_current_node_key()
+	local current_node = self._deus_run_controller:get_current_node()
 	local get_own = self._shared_state:get_own(self._shared_state:get_key("vote"))
 
-	get_own = get_own or ""
-
-	if get_own ~= "" then
-		self._scene:unselect_node(get_own)
+	if not get_own then
+		-- Nothing
 	end
 
-	local get_server = self._shared_state:get_server(self._shared_state:get_key("final_node_selected"))
-	local var_23_4 = self._deus_run_controller:get_graph_data()[get_server]
+	get_own = ""
 
-	for i, v in ipairs(get_current_node.next) do
-		self._scene:unselectable_node(v)
+	local vote = get_own
 
-		if v ~= get_server then
-			self._scene:unhighlight_edge(get_current_node_key, v)
+	::label_23_0::
+
+	if vote ~= "" then
+		self._scene:unselect_node(vote)
+	end
+
+	local final_node_key = self._shared_state:get_server(self._shared_state:get_key("final_node_selected"))
+	local deus_graph_data = self._deus_run_controller:get_graph_data()
+	local final_node = deus_graph_data[final_node_key]
+
+	for _, next in ipairs(current_node.next) do
+		self._scene:unselectable_node(next)
+
+		if next ~= final_node_key then
+			self._scene:unhighlight_edge(current_node_key, next)
 		end
 	end
 
-	self._scene:set_final_node(get_server)
-	self._scene:zoom_camera_to(var_23_4.layout_x, var_23_4.layout_y, num_5)
-	self._ui:set_general_info(Localize("deus_map_info_finishing_title"), string.format(Localize("deus_map_info_finishing_desc"), Localize(var_23_4.base_level .. "_" .. "title")))
+	self._scene:set_final_node(final_node_key)
+	self._scene:zoom_camera_to(final_node.layout_x, final_node.layout_y, CAMERA_TRANSITION_DURATION)
+	self._ui:set_general_info(Localize("deus_map_info_finishing_title"), string.format(Localize("deus_map_info_finishing_desc"), Localize(final_node.base_level .. "_" .. "title")))
 	self._deus_run_controller:map_finished_voting()
 end
 
-DeusMapDecisionView._on_enter_finished = function (self, arg_24_1, arg_24_2)
+DeusMapDecisionView._on_enter_finished = function (self, dt, t)
 	-- function 24
-	local _finish_cb = self._finish_cb
+	local finish_cb = self._finish_cb
 
-	if not _finish_cb then
+	if finish_cb then
 		self._finish_cb = nil
 
-		_finish_cb(self._shared_state:get_server(self._shared_state:get_key("final_node_selected")))
-		self._ui:fade_out(num_7)
+		finish_cb(self._shared_state:get_server(self._shared_state:get_key("final_node_selected")))
+		self._ui:fade_out(CONTENT_FADE_OUT_DURATION)
 	end
 
 	Managers.state.event:trigger("close_ingame_menu")
@@ -730,7 +761,7 @@ DeusMapDecisionView._finish = function (self)
 	self._starting_countdown = nil
 	self._final_countdown = nil
 
-	if not self._shared_state then
+	if self._shared_state then
 		self._shared_state:unregister_rpcs()
 		self._shared_state:destroy()
 
@@ -738,59 +769,69 @@ DeusMapDecisionView._finish = function (self)
 	end
 end
 
-DeusMapDecisionView._update_during_finishing = function (self, arg_26_1, arg_26_2)
+DeusMapDecisionView._update_during_finishing = function (self, dt, t)
 	-- function 26
-	self._final_countdown = math.max(0, self._final_countdown - arg_26_1)
+	self._final_countdown = math.max(0, self._final_countdown - dt)
 
 	self._ui:update_timer(self._final_countdown, Localize("game_starts_prepare"))
 end
 
 DeusMapDecisionView._update_player_state = function (self)
 	-- function 27
-	local tbl = {}
-	local peer_id = Network.peer_id()
-	local get_graph_data = self._deus_run_controller:get_graph_data()
-	local var_27_3
-	local get_peers = self._deus_run_controller:get_peers()
+	local player_data = {}
+	local local_peer_id = Network.peer_id()
+	local deus_graph_data = self._deus_run_controller:get_graph_data()
+	local local_peer_index
+	local peers = self._deus_run_controller:get_peers()
 
-	for i, v in ipairs(get_peers) do
-		if peer_id == v then
-			var_27_3 = i
+	for i, peer_id in ipairs(peers) do
+		if local_peer_id == peer_id then
+			local_peer_index = i
 		end
 
-		local tbl_2 = {}
-		local get_player_profile, var_27_7 = self._deus_run_controller:get_player_profile(v, num_8)
+		local data = {}
+		local profile_index, career_index = self._deus_run_controller:get_player_profile(peer_id, REAL_PLAYER_LOCAL_ID)
 
-		if not (get_player_profile == 0 or var_27_7 == 0) then
-			tbl_2.profile_index = get_player_profile
-			tbl_2.career_index = var_27_7
-			tbl_2.level = self._deus_run_controller:get_player_level(v, tbl_2.profile_index)
-			tbl_2.versus_level = self._deus_run_controller:get_versus_player_level(v)
-			tbl_2.frame = self._deus_run_controller:get_player_frame(v, tbl_2.profile_index, tbl_2.career_index)
-			tbl_2.name = self._deus_run_controller:get_player_name(v)
+		if profile_index ~= 0 and career_index ~= 0 then
+			data.profile_index = profile_index
+			data.career_index = career_index
+			data.level = self._deus_run_controller:get_player_level(peer_id, data.profile_index)
+			data.versus_level = self._deus_run_controller:get_versus_player_level(peer_id)
+			data.frame = self._deus_run_controller:get_player_frame(peer_id, data.profile_index, data.career_index)
+			data.name = self._deus_run_controller:get_player_name(peer_id)
 
-			local get_player_health_percentage = self._deus_run_controller:get_player_health_percentage(v, num_8)
+			local get_player_health_percentage = self._deus_run_controller:get_player_health_percentage(peer_id, REAL_PLAYER_LOCAL_ID)
 
-			get_player_health_percentage = get_player_health_percentage or 1
-			tbl_2.health_percentage = get_player_health_percentage
-			tbl_2.healthkit_consumable = self._deus_run_controller:get_player_consumable_healthkit_slot(v, num_8)
-			tbl_2.potion_consumable = self._deus_run_controller:get_player_consumable_potion_slot(v, num_8)
-			tbl_2.grenade_consumable = self._deus_run_controller:get_player_consumable_grenade_slot(v, num_8)
-			tbl_2.ammo_percentage = self._deus_run_controller:get_player_ranged_ammo(v, num_8)
+			get_player_health_percentage = not not get_player_health_percentage or not not 1
+			data.health_percentage = get_player_health_percentage
+			data.healthkit_consumable = self._deus_run_controller:get_player_consumable_healthkit_slot(peer_id, REAL_PLAYER_LOCAL_ID)
+			data.potion_consumable = self._deus_run_controller:get_player_consumable_potion_slot(peer_id, REAL_PLAYER_LOCAL_ID)
+			data.grenade_consumable = self._deus_run_controller:get_player_consumable_grenade_slot(peer_id, REAL_PLAYER_LOCAL_ID)
+			data.ammo_percentage = self._deus_run_controller:get_player_ranged_ammo(peer_id, REAL_PLAYER_LOCAL_ID)
 
-			local get_player_soft_currency = self._deus_run_controller:get_player_soft_currency(v)
+			local get_player_soft_currency = self._deus_run_controller:get_player_soft_currency(peer_id)
 
-			get_player_soft_currency = get_player_soft_currency or 0
-			tbl_2.soft_currency = get_player_soft_currency
+			get_player_soft_currency = not not get_player_soft_currency or not not 0
+			data.soft_currency = get_player_soft_currency
 
-			local get_peer = self._shared_state:get_peer(v, self._shared_state:get_key("vote"))
+			local get_peer = self._shared_state:get_peer(peer_id, self._shared_state:get_key("vote"))
 
-			get_peer = get_peer or ""
+			if not get_peer then
+				-- Nothing
+			end
 
-			local base_level
+			get_peer = ""
 
-			if get_peer ~= "" then
-				base_level = get_graph_data[get_peer].base_level
+			local vote = get_peer
+
+			do
+				local base_level
+			end
+
+			::label_27_0::
+
+			if vote ~= "" then
+				base_level = deus_graph_data[vote].base_level
 
 				if not base_level then
 					-- Nothing
@@ -799,131 +840,148 @@ DeusMapDecisionView._update_player_state = function (self)
 
 			base_level = nil
 
-			::label_27_0::
+			::label_27_1::
 
-			tbl_2.vote = base_level
+			data.vote = base_level
 		else
-			tbl_2.profile_index = 0
-			tbl_2.career_index = 0
-			tbl_2.level = 1
-			tbl_2.versus_level = 0
-			tbl_2.frame = "default"
-			tbl_2.health_percentage = 1
-			tbl_2.soft_currency = 0
+			data.profile_index = 0
+			data.career_index = 0
+			data.level = 1
+			data.versus_level = 0
+			data.frame = "default"
+			data.health_percentage = 1
+			data.soft_currency = 0
 		end
 
-		table.insert(tbl, tbl_2)
+		table.insert(player_data, data)
 	end
 
-	if not var_27_3 then
-		tbl[var_27_3], tbl[1] = tbl[1], tbl[var_27_3]
+	if local_peer_index then
+		local first_player_data = player_data[1]
+
+		player_data[1] = player_data[local_peer_index]
+		player_data[local_peer_index] = first_player_data
 	end
 
-	self._ui:update_player_data(tbl)
+	self._ui:update_player_data(player_data)
 
-	local get_current_node_key = self._deus_run_controller:get_current_node_key()
-	local tbl_3 = {
+	local current_node_key = self._deus_run_controller:get_current_node_key()
+	local profile_indexes_missing = {
 		true,
 		true,
 		true,
 		true,
 		true
 	}
-	local get_server = self._shared_state:get_server(self._shared_state:get_key("final_node_selected"))
+	local final_node_selected = self._shared_state:get_server(self._shared_state:get_key("final_node_selected"))
 
-	for i_2, v_2 in ipairs(get_peers) do
-		local get_player_profile_2, var_27_16 = self._deus_run_controller:get_player_profile(v_2, num_8)
+	for index, peer_id in ipairs(peers) do
+		local profile_index, _ = self._deus_run_controller:get_player_profile(peer_id, REAL_PLAYER_LOCAL_ID)
 
-		if get_player_profile_2 ~= 0 then
-			local get_peer_2 = self._shared_state:get_peer(v_2, self._shared_state:get_key("vote"))
-			local flag = not get_server and get_server ~= "" and get_server and not get_peer_2 or get_peer_2 ~= "" and get_peer_2 and get_current_node_key
+		if profile_index ~= 0 then
+			local vote = self._shared_state:get_peer(peer_id, self._shared_state:get_key("vote"))
+			local node_key = (not final_node_selected or final_node_selected == "" or not final_node_selected) and (not vote or vote == "" or not vote) and not not current_node_key
 
-			self._scene:place_token(get_player_profile_2, i_2, flag)
+			self._scene:place_token(profile_index, index, node_key)
 
-			tbl_3[get_player_profile_2] = false
+			profile_indexes_missing[profile_index] = false
 		end
 	end
 
-	for k, v_3 in pairs(tbl_3) do
-		if not v_3 then
-			self._scene:hide_token(k)
+	for profile_index, missing in pairs(profile_indexes_missing) do
+		if missing then
+			self._scene:hide_token(profile_index)
 		end
 	end
 
-	local get_own_peer_id = self._deus_run_controller:get_own_peer_id()
-	local get_player_profile_3, var_27_21 = self._deus_run_controller:get_player_profile(get_own_peer_id, num_8)
+	local own_peer_id = self._deus_run_controller:get_own_peer_id()
+	local own_profile_index, _ = self._deus_run_controller:get_player_profile(own_peer_id, REAL_PLAYER_LOCAL_ID)
 
-	if get_player_profile_3 ~= 0 then
-		local display_name = SPProfiles[get_player_profile_3].display_name
+	if own_profile_index ~= 0 then
+		local profile_settings = SPProfiles[own_profile_index]
+		local hero_name = profile_settings.display_name
 
-		self._scene:set_own_hero_name(display_name)
+		self._scene:set_own_hero_name(hero_name)
 	end
 end
 
 DeusMapDecisionView._handle_voting_end = function (self)
 	-- function 28
-	local _deus_run_controller = self._deus_run_controller
-	local tbl = {}
-	local num = 0
+	local deus_run_controller = self._deus_run_controller
+	local votes = {}
+	local max_vote_count = 0
 
-	for i, v in ipairs(_deus_run_controller:get_peers()) do
-		local get_peer = self._shared_state:get_peer(v, self._shared_state:get_key("vote"))
+	for _, peer_id in ipairs(deus_run_controller:get_peers()) do
+		local get_peer = self._shared_state:get_peer(peer_id, self._shared_state:get_key("vote"))
 
-		get_peer = get_peer or ""
+		if not get_peer then
+			-- Nothing
+		end
 
-		if get_peer ~= "" then
-			local var_28_4 = tbl[get_peer]
-			local flag
+		get_peer = ""
 
-			flag = not var_28_4 and var_28_4 + 1 and 1
-			tbl[get_peer] = flag
+		local vote = get_peer
 
-			printf("[DeusMapDecisionView] Voting ended. %s voted for %s.", v, get_peer)
+		::label_28_0::
 
-			if num < flag then
-				num = flag
+		if vote ~= "" then
+			local vote_count = votes[vote]
+
+			vote_count = (not vote_count or not (vote_count + 1)) and not not 1
+			votes[vote] = vote_count
+
+			printf("[DeusMapDecisionView] Voting ended. %s voted for %s.", peer_id, vote)
+
+			if max_vote_count < vote_count then
+				max_vote_count = vote_count
 			end
 		end
 	end
 
-	local tbl_3 = {}
+	local max_votes = {}
 
-	for k, v_2 in pairs(tbl) do
-		if num <= v_2 then
-			tbl_3[#tbl_3 + 1] = k
+	for vote, vote_count in pairs(votes) do
+		if max_vote_count <= vote_count then
+			max_votes[#max_votes + 1] = vote
 		end
 	end
 
-	local get_current_node = _deus_run_controller:get_current_node()
+	local current_node = deus_run_controller:get_current_node()
 
-	if #tbl_3 == 0 then
-		for i_2, v_3 in ipairs(get_current_node.next) do
-			tbl_3[#tbl_3 + 1] = v_3
+	if #max_votes == 0 then
+		for _, node in ipairs(current_node.next) do
+			max_votes[#max_votes + 1] = node
 		end
 	end
 
-	local var_28_8 = tbl_3[Math.random(1, #tbl_3)]
+	local random_index = Math.random(1, #max_votes)
+	local next_node_key = max_votes[random_index]
 
-	self._shared_state:set_server(self._shared_state:get_key("final_node_selected"), var_28_8)
+	self._shared_state:set_server(self._shared_state:get_key("final_node_selected"), next_node_key)
 
-	if _deus_run_controller:get_graph_data()[var_28_8].node_type == "shop" then
-		self:_play_networked_2d_sound(tbl_2.shrine_final_node_selected)
+	local graph_data = deus_run_controller:get_graph_data()
+	local node = graph_data[next_node_key]
+
+	if node.node_type == "shop" then
+		self:_play_networked_2d_sound(SOUND_EVENTS.shrine_final_node_selected)
 	else
-		self:_play_networked_2d_sound(tbl_2.ingame_final_node_selected)
+		self:_play_networked_2d_sound(SOUND_EVENTS.ingame_final_node_selected)
 	end
 end
 
 DeusMapDecisionView._handle_twitch_waiting_end = function (self)
 	-- function 29
-	local _get_twitch_vote = self:_get_twitch_vote()
+	local twitch_vote = self:_get_twitch_vote()
 
-	self._shared_state:set_server(self._shared_state:get_key("final_node_selected"), _get_twitch_vote)
+	self._shared_state:set_server(self._shared_state:get_key("final_node_selected"), twitch_vote)
 end
 
 DeusMapDecisionView._are_all_peers_ready = function (self)
 	-- function 30
-	for i, v in ipairs(self._deus_run_controller:get_peers()) do
-		if self._shared_state:get_peer(v, self._shared_state:get_key("ready")) ~= true then
+	for _, peer_id in ipairs(self._deus_run_controller:get_peers()) do
+		local ready_state = self._shared_state:get_peer(peer_id, self._shared_state:get_key("ready"))
+
+		if ready_state ~= true then
 			return false
 		end
 	end
@@ -935,10 +993,18 @@ DeusMapDecisionView._get_twitch_vote = function (self)
 	-- function 31
 	local _is_server = self._is_server
 
-	_is_server = not _is_server and self._deus_run_controller:get_twitch_level_vote()
+	if _is_server then
+		-- Nothing
+	end
 
-	if not _is_server then
-		return _is_server
+	_is_server = self._deus_run_controller:get_twitch_level_vote()
+
+	local twitch_vote = _is_server
+
+	::label_31_0::
+
+	if twitch_vote then
+		return twitch_vote
 	else
 		return nil
 	end
@@ -946,10 +1012,10 @@ end
 
 DeusMapDecisionView._did_someone_vote = function (self)
 	-- function 32
-	for i, v in ipairs(self._deus_run_controller:get_peers()) do
-		local get_peer = self._shared_state:get_peer(v, self._shared_state:get_key("vote"))
+	for _, peer_id in ipairs(self._deus_run_controller:get_peers()) do
+		local vote = self._shared_state:get_peer(peer_id, self._shared_state:get_key("vote"))
 
-		if not (get_peer == nil or get_peer == "") then
+		if vote ~= nil and vote ~= "" then
 			return true
 		end
 	end
@@ -959,12 +1025,20 @@ end
 
 DeusMapDecisionView._did_everyone_vote = function (self)
 	-- function 33
-	for i, v in ipairs(self._deus_run_controller:get_peers()) do
-		local get_peer = self._shared_state:get_peer(v, self._shared_state:get_key("vote"))
+	for _, peer_id in ipairs(self._deus_run_controller:get_peers()) do
+		local get_peer = self._shared_state:get_peer(peer_id, self._shared_state:get_key("vote"))
 
-		get_peer = get_peer or ""
+		if not get_peer then
+			-- Nothing
+		end
 
-		if get_peer == "" then
+		get_peer = ""
+
+		local vote = get_peer
+
+		::label_33_0::
+
+		if vote == "" then
 			return false
 		end
 	end
@@ -972,22 +1046,24 @@ DeusMapDecisionView._did_everyone_vote = function (self)
 	return true
 end
 
-DeusMapDecisionView._play_sound = function (self, arg_34_1)
+DeusMapDecisionView._play_sound = function (self, event)
 	-- function 34
-	WwiseWorld.trigger_event(self._wwise_world, arg_34_1)
+	WwiseWorld.trigger_event(self._wwise_world, event)
 end
 
-DeusMapDecisionView._play_networked_2d_sound = function (arg_35_0, arg_35_1)
+DeusMapDecisionView._play_networked_2d_sound = function (self, event)
 	-- function 35
-	Managers.state.entity:system("audio_system"):play_2d_audio_event(arg_35_1)
+	local audio_system = Managers.state.entity:system("audio_system")
+
+	audio_system:play_2d_audio_event(event)
 end
 
-DeusMapDecisionView.on_ingame_menu_opened = function (arg_36_0)
+DeusMapDecisionView.on_ingame_menu_opened = function (self)
 	-- function 36
 	Managers.input:disable_gamepad_cursor()
 end
 
-DeusMapDecisionView.on_ingame_menu_closed = function (arg_37_0)
+DeusMapDecisionView.on_ingame_menu_closed = function (self)
 	-- function 37
 	Managers.input:enable_gamepad_cursor()
 end

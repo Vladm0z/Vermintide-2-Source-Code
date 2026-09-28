@@ -3,51 +3,51 @@
 VersusTargetObjectiveExtension = class(VersusTargetObjectiveExtension, BaseObjectiveExtension)
 VersusTargetObjectiveExtension.NAME = "VersusTargetObjectiveExtension"
 
-VersusTargetObjectiveExtension._set_objective_data = function (self, arg_1_1)
+VersusTargetObjectiveExtension._set_objective_data = function (self, objective_data)
 	-- function 1
-	local target = GameModeSettings.versus.objectives.target
-	local num_sections = arg_1_1.num_sections
+	local target_default_settings = GameModeSettings.versus.objectives.target
+	local num_sections = objective_data.num_sections
 
-	num_sections = num_sections or target.num_sections
+	num_sections = not not num_sections or not not target_default_settings.num_sections
 	self._num_sections = num_sections
 
-	local score_per_section = arg_1_1.score_per_section
+	local score_per_section = objective_data.score_per_section
 
-	score_per_section = score_per_section or target.score_per_section
+	score_per_section = not not score_per_section or not not target_default_settings.score_per_section
 	self._score_per_section = score_per_section
 
-	local time_per_section = arg_1_1.time_per_section
+	local time_per_section = objective_data.time_per_section
 
-	time_per_section = time_per_section or target.time_per_section
+	time_per_section = not not time_per_section or not not target_default_settings.time_per_section
 	self._time_per_section = time_per_section
 
-	local score_for_completion = arg_1_1.score_for_completion
+	local score_for_completion = objective_data.score_for_completion
 
-	score_for_completion = score_for_completion or target.score_for_completion
+	score_for_completion = not not score_for_completion or not not target_default_settings.score_for_completion
 	self._score_for_completion = score_for_completion
 
-	local time_for_completion = arg_1_1.time_for_completion
+	local time_for_completion = objective_data.time_for_completion
 
-	time_for_completion = time_for_completion or target.time_for_completion
+	time_for_completion = not not time_for_completion or not not target_default_settings.time_for_completion
 	self._time_for_completion = time_for_completion
 
-	local on_last_leaf_complete_sound_event = arg_1_1.on_last_leaf_complete_sound_event
+	local on_last_leaf_complete_sound_event = objective_data.on_last_leaf_complete_sound_event
 
-	on_last_leaf_complete_sound_event = on_last_leaf_complete_sound_event or target.on_last_leaf_complete_sound_event
+	on_last_leaf_complete_sound_event = not not on_last_leaf_complete_sound_event or not not target_default_settings.on_last_leaf_complete_sound_event
 	self._on_last_leaf_complete_sound_event = on_last_leaf_complete_sound_event
 
-	local on_leaf_complete_sound_event = arg_1_1.on_leaf_complete_sound_event
+	local on_leaf_complete_sound_event = objective_data.on_leaf_complete_sound_event
 
-	on_leaf_complete_sound_event = on_leaf_complete_sound_event or target.on_leaf_complete_sound_event
+	on_leaf_complete_sound_event = not not on_leaf_complete_sound_event or not not target_default_settings.on_leaf_complete_sound_event
 	self._on_leaf_complete_sound_event = on_leaf_complete_sound_event
 
-	local on_section_progress_sound_event = arg_1_1.on_section_progress_sound_event
+	local on_section_progress_sound_event = objective_data.on_section_progress_sound_event
 
-	on_section_progress_sound_event = on_section_progress_sound_event or target.on_section_progress_sound_event
+	on_section_progress_sound_event = not not on_section_progress_sound_event or not not target_default_settings.on_section_progress_sound_event
 	self._on_section_progress_sound_event = on_section_progress_sound_event
 end
 
-VersusTargetObjectiveExtension._activate = function (arg_2_0)
+VersusTargetObjectiveExtension._activate = function (self)
 	-- function 2
 	return
 end
@@ -59,26 +59,28 @@ VersusTargetObjectiveExtension.extensions_ready = function (self)
 	self._health = self._max_health
 end
 
-VersusTargetObjectiveExtension._deactivate = function (arg_4_0)
+VersusTargetObjectiveExtension._deactivate = function (self)
 	-- function 4
 	return
 end
 
-VersusTargetObjectiveExtension._store_position = function (arg_5_0)
+VersusTargetObjectiveExtension._store_position = function (self)
 	-- function 5
 	return
 end
 
-VersusTargetObjectiveExtension._server_update = function (self, arg_6_1, arg_6_2)
+VersusTargetObjectiveExtension._server_update = function (self, dt, t)
 	-- function 6
 	self._health = self._health_extension:current_health()
 
-	if self:get_percentage_done() >= (self._current_section + 1) * (1 / self._num_sections) then
+	local percentage_done = self:get_percentage_done()
+
+	if percentage_done >= (self._current_section + 1) * (1 / self._num_sections) then
 		self:on_section_completed()
 	end
 end
 
-VersusTargetObjectiveExtension._client_update = function (self, arg_7_1, arg_7_2)
+VersusTargetObjectiveExtension._client_update = function (self, dt, t)
 	-- function 7
 	self._health = self._health_extension:current_health()
 end

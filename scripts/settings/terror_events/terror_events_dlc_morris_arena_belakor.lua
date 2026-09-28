@@ -1,3653 +1,3665 @@
 -- chunkname: @scripts/settings/terror_events/terror_events_dlc_morris_arena_belakor.lua
 
-local scripts_settings_terror_events_terror_event_utils = require("scripts/settings/terror_events/terror_event_utils")
-local HARDEST = scripts_settings_terror_events_terror_event_utils.HARDEST
-local num = 8
-local num_2 = 16
-local num_3 = 2
-local num_4 = 4
-local num_5 = 4
-local num_6 = 9
-local num_7 = 9
-local num_8 = 9
-local num_9 = 4
-local num_10 = 4
-local tbl = {
+local TerrorEventUtils = require("scripts/settings/terror_events/terror_event_utils")
+local HARDEST = TerrorEventUtils.HARDEST
+local SHORT = 8
+local LONG = 16
+local AROUND_STATUE_SPAWNS_DELAY_WAVE_1 = 2
+local AROUND_STATUE_SPAWNS_DELAY_WAVE_2 = 4
+local AROUND_STATUE_SPAWNS_DELAY_SPAWN = 4
+local AROUND_STATUE_SPAWNS_SPAWN_DISTANCE_SHORT = 9
+local AROUND_STATUE_SPAWNS_SPAWN_SPAWN_DISTANCE_MED = 9
+local AROUND_STATUE_SPAWNS_SPAWN_DISTANCE_LONG = 9
+local AROUND_STATUE_SPAWNS_SPREAD_TIGHT = 4
+local AROUND_STATUE_SPAWNS_SPREAD_MED = 4
+local DECAL_RADIUS_MAP = {
 	default = 1,
 	special = 1.2,
 	elite = 1.2,
 	boss = 2
 }
-local str = "units/decals/deus_decal_aoe_cursedchest_01"
-local str_2 = "fx/cursed_chest_spawn_01_portal"
+local SPAWN_DECAL_UNIT_NAME = "units/decals/deus_decal_aoe_cursedchest_01"
+local SPAWN_PARTICLE_NAME = "fx/cursed_chest_spawn_01_portal"
 
-local function fn(self, arg_1_1, arg_1_2, arg_1_3)
+local function spawn_decal_func(event, element, boxed_spawn_pos, breed_name)
 	-- function 1
-	local decal_map = self.decal_map
+	local decal_map_2 = event.decal_map
 
-	decal_map = decal_map or {}
-	self.decal_map = decal_map
+	if not decal_map_2 then
+		-- Nothing
+	end
 
-	local var_1_1 = Breeds[arg_1_3]
-	local var_1_2
+	decal_map_2 = {}
 
-	if not var_1_1.boss then
-		var_1_2 = tbl.boss
-	elseif not var_1_1.special then
-		var_1_2 = tbl.special
-	elseif not var_1_1.elite then
-		var_1_2 = tbl.elite
+	local decal_map = decal_map_2
+
+	::label_1_0::
+
+	event.decal_map = decal_map
+
+	local breed = Breeds[breed_name]
+	local spawn_radius
+
+	if breed.boss then
+		spawn_radius = DECAL_RADIUS_MAP.boss
+	elseif breed.special then
+		spawn_radius = DECAL_RADIUS_MAP.special
+	elseif breed.elite then
+		spawn_radius = DECAL_RADIUS_MAP.elite
 	else
-		var_1_2 = tbl.default
+		spawn_radius = DECAL_RADIUS_MAP.default
 	end
 
-	local unbox = arg_1_2:unbox()
-	local var_1_4
-	local var_1_5
-	local from_quaternion_position = Matrix4x4.from_quaternion_position(Quaternion.identity(), unbox)
-	local var_1_7 = var_1_2
+	local spawn_pos = boxed_spawn_pos:unbox()
+	local decal_unit, decal_unit_go_id
+	local decal_spawn_pose = Matrix4x4.from_quaternion_position(Quaternion.identity(), spawn_pos)
+	local decal_radius = spawn_radius
 
-	Matrix4x4.set_scale(from_quaternion_position, Vector3(var_1_7, var_1_7, var_1_7))
+	Matrix4x4.set_scale(decal_spawn_pose, Vector3(decal_radius, decal_radius, decal_radius))
 
-	local spawn_network_unit, var_1_9 = Managers.state.unit_spawner:spawn_network_unit(str, "network_synched_dummy_unit", nil, from_quaternion_position)
-	local var_1_10 = str_2
-	local var_1_11 = Vector3(0, 0, 0)
-	local identity = Quaternion.identity()
-	local flag = true
-	local num = 0
+	decal_unit, decal_unit_go_id = Managers.state.unit_spawner:spawn_network_unit(SPAWN_DECAL_UNIT_NAME, "network_synched_dummy_unit", nil, decal_spawn_pose)
 
-	Managers.state.event:trigger("event_play_particle_effect", var_1_10, spawn_network_unit, num, var_1_11, identity, flag)
-	Managers.state.network.network_transmit:send_rpc_clients("rpc_play_particle_effect", NetworkLookup.effects[var_1_10], var_1_9, num, var_1_11, identity, flag)
+	local particle_name = SPAWN_PARTICLE_NAME
+	local offset = Vector3(0, 0, 0)
+	local rotation_offset = Quaternion.identity()
+	local linked = true
+	local object = 0
 
-	decal_map[arg_1_2] = spawn_network_unit
+	Managers.state.event:trigger("event_play_particle_effect", particle_name, decal_unit, object, offset, rotation_offset, linked)
+
+	local network_manager = Managers.state.network
+
+	network_manager.network_transmit:send_rpc_clients("rpc_play_particle_effect", NetworkLookup.effects[particle_name], decal_unit_go_id, object, offset, rotation_offset, linked)
+
+	decal_map[boxed_spawn_pos] = decal_unit
 end
 
-local function fn_2(self, arg_2_1, arg_2_2)
+local function cursed_chest_enemy_despawn_decal_func(event, element, boxed_spawn_pos)
 	-- function 2
-	local decal_map = self.decal_map
-	local flag = not decal_map and decal_map[arg_2_2]
+	local decal_map = event.decal_map
+	local unit = not not decal_map and not not decal_map[boxed_spawn_pos]
 
-	if not flag then
-		Managers.state.unit_spawner:mark_for_deletion(flag)
+	if unit then
+		Managers.state.unit_spawner:mark_for_deletion(unit)
 
-		decal_map[arg_2_2] = nil
+		decal_map[boxed_spawn_pos] = nil
 	end
 end
 
-local tbl_2 = {
-	arena_belakor_terror_phase_1 = {
-		{
-			"inject_event",
-			event_name = "arena_belakor_terror_phase_1_start"
+local terror_event_blueprints = {}
+
+terror_event_blueprints.arena_belakor_terror_phase_1 = {
+	{
+		"inject_event",
+		event_name = "arena_belakor_terror_phase_1_start"
+	},
+	{
+		"inject_event",
+		event_name = "arena_belakor_terror_phase_1_sequence"
+	}
+}
+terror_event_blueprints.arena_belakor_terror_phase_1_start = {
+	{
+		"set_master_event_running",
+		name = "arena_belakor_terror"
+	},
+	{
+		"control_pacing",
+		enable = false
+	},
+	{
+		"control_specials",
+		enable = false
+	},
+	{
+		"enable_bots_in_carry_event"
+	},
+	{
+		"set_freeze_condition",
+		max_active_enemies = 100
+	},
+	{
+		"set_wwise_override_state",
+		name = "terror_mb4"
+	}
+}
+terror_event_blueprints.arena_belakor_terror_phase_1_sequence = {
+	{
+		"inject_event",
+		event_name_list = {
+			"arena_belakor_terror_phase_1_skaven",
+			"arena_belakor_terror_phase_1_chaos"
 		},
-		{
-			"inject_event",
-			event_name = "arena_belakor_terror_phase_1_sequence"
+		faction_requirement_list = {
+			"skaven",
+			"chaos"
 		}
 	},
-	arena_belakor_terror_phase_1_start = {
-		{
-			"set_master_event_running",
-			name = "arena_belakor_terror"
+	{
+		"inject_event",
+		event_name_list = {
+			"arena_belakor_terror_phase_1_beastmen",
+			"arena_belakor_terror_phase_1_skaven"
 		},
-		{
-			"control_pacing",
-			enable = false
-		},
-		{
-			"control_specials",
-			enable = false
-		},
-		{
-			"enable_bots_in_carry_event"
-		},
-		{
-			"set_freeze_condition",
-			max_active_enemies = 100
-		},
-		{
-			"set_wwise_override_state",
-			name = "terror_mb4"
+		faction_requirement_list = {
+			"skaven",
+			"beastmen"
 		}
 	},
-	arena_belakor_terror_phase_1_sequence = {
-		{
-			"inject_event",
-			event_name_list = {
-				"arena_belakor_terror_phase_1_skaven",
-				"arena_belakor_terror_phase_1_chaos"
-			},
-			faction_requirement_list = {
-				"skaven",
-				"chaos"
-			}
+	{
+		"inject_event",
+		event_name_list = {
+			"arena_belakor_terror_phase_1_chaos",
+			"arena_belakor_terror_phase_1_beastmen"
 		},
-		{
-			"inject_event",
-			event_name_list = {
-				"arena_belakor_terror_phase_1_beastmen",
-				"arena_belakor_terror_phase_1_skaven"
-			},
-			faction_requirement_list = {
-				"skaven",
-				"beastmen"
-			}
-		},
-		{
-			"inject_event",
-			event_name_list = {
-				"arena_belakor_terror_phase_1_chaos",
-				"arena_belakor_terror_phase_1_beastmen"
-			},
-			faction_requirement_list = {
-				"chaos",
-				"beastmen"
-			}
+		faction_requirement_list = {
+			"chaos",
+			"beastmen"
+		}
+	}
+}
+terror_event_blueprints.arena_belakor_terror_phase_1_skaven = {
+	{
+		"set_master_event_running",
+		name = "arena_belakor_terror"
+	},
+	{
+		"play_stinger",
+		stinger_name = "enemy_horde_stinger"
+	},
+	{
+		"flow_event",
+		flow_event_name = "arena_belakor_terror_skaven_special"
+	},
+	{
+		"event_horde",
+		limit_spawners = 2,
+		spawn_counter_category = "main",
+		composition_type = "event_small",
+		spawner_ids = {
+			"terror_event_a",
+			"terror_event_b"
 		}
 	},
-	arena_belakor_terror_phase_1_skaven = {
-		{
-			"set_master_event_running",
-			name = "arena_belakor_terror"
-		},
-		{
-			"play_stinger",
-			stinger_name = "enemy_horde_stinger"
-		},
-		{
-			"flow_event",
-			flow_event_name = "arena_belakor_terror_skaven_special"
-		},
-		{
-			"event_horde",
-			limit_spawners = 2,
-			spawn_counter_category = "main",
-			composition_type = "event_small",
-			spawner_ids = {
-				"terror_event_a",
-				"terror_event_b"
-			}
-		},
-		{
-			"delay",
-			duration = num
-		},
-		{
-			"event_horde",
-			limit_spawners = 2,
-			spawn_counter_category = "main",
-			composition_type = "event_small",
-			spawner_ids = {
-				"terror_event_a",
-				"terror_event_b"
-			}
-		},
-		{
-			"delay",
-			duration = num
-		},
-		{
-			"event_horde",
-			limit_spawners = 2,
-			spawn_counter_category = "main",
-			composition_type = "event_small",
-			spawner_ids = {
-				"terror_event_a",
-				"terror_event_b"
-			}
-		},
-		{
-			"delay",
-			duration = num
-		},
-		{
-			"event_horde",
-			limit_spawners = 2,
-			spawn_counter_category = "main",
-			composition_type = "event_small",
-			spawner_ids = {
-				"terror_event_a",
-				"terror_event_b"
-			}
-		},
-		{
-			"delay",
-			duration = num
-		},
-		{
-			"continue_when_spawned_count",
-			duration = 60,
-			condition = function (self)
-				-- function 3
-				return self.main < 10
-			end
-		},
-		{
-			"flow_event",
-			flow_event_name = "arena_belakor_terror_phase_1_done"
+	{
+		"delay",
+		duration = SHORT
+	},
+	{
+		"event_horde",
+		limit_spawners = 2,
+		spawn_counter_category = "main",
+		composition_type = "event_small",
+		spawner_ids = {
+			"terror_event_a",
+			"terror_event_b"
 		}
 	},
-	arena_belakor_terror_phase_1_chaos = {
-		{
-			"set_master_event_running",
-			name = "arena_belakor_terror"
-		},
-		{
-			"play_stinger",
-			stinger_name = "enemy_horde_chaos_stinger"
-		},
-		{
-			"flow_event",
-			flow_event_name = "arena_belakor_terror_chaos_special"
-		},
-		{
-			"event_horde",
-			limit_spawners = 2,
-			spawn_counter_category = "main",
-			composition_type = "event_small_chaos",
-			spawner_ids = {
-				"terror_event_a",
-				"terror_event_b"
-			}
-		},
-		{
-			"delay",
-			duration = num
-		},
-		{
-			"event_horde",
-			limit_spawners = 2,
-			spawn_counter_category = "main",
-			composition_type = "event_small_chaos",
-			spawner_ids = {
-				"terror_event_a",
-				"terror_event_b"
-			}
-		},
-		{
-			"delay",
-			duration = num
-		},
-		{
-			"event_horde",
-			limit_spawners = 2,
-			spawn_counter_category = "main",
-			composition_type = "event_small_chaos",
-			spawner_ids = {
-				"terror_event_a",
-				"terror_event_b"
-			}
-		},
-		{
-			"delay",
-			duration = num
-		},
-		{
-			"event_horde",
-			limit_spawners = 2,
-			spawn_counter_category = "main",
-			composition_type = "event_small_chaos",
-			spawner_ids = {
-				"terror_event_a",
-				"terror_event_b"
-			}
-		},
-		{
-			"delay",
-			duration = num
-		},
-		{
-			"continue_when_spawned_count",
-			duration = 60,
-			condition = function (self)
-				-- function 4
-				return self.main < 10
-			end
-		},
-		{
-			"flow_event",
-			flow_event_name = "arena_belakor_terror_phase_1_done"
+	{
+		"delay",
+		duration = SHORT
+	},
+	{
+		"event_horde",
+		limit_spawners = 2,
+		spawn_counter_category = "main",
+		composition_type = "event_small",
+		spawner_ids = {
+			"terror_event_a",
+			"terror_event_b"
 		}
 	},
-	arena_belakor_terror_phase_1_beastmen = {
-		{
-			"set_master_event_running",
-			name = "arena_belakor_terror"
-		},
-		{
-			"play_stinger",
-			stinger_name = "enemy_horde_beastmen_stinger"
-		},
-		{
-			"flow_event",
-			flow_event_name = "arena_belakor_terror_beastmen_special"
-		},
-		{
-			"event_horde",
-			limit_spawners = 2,
-			spawn_counter_category = "main",
-			composition_type = "event_small_beastmen",
-			spawner_ids = {
-				"terror_event_a",
-				"terror_event_b"
-			}
-		},
-		{
-			"delay",
-			duration = num
-		},
-		{
-			"event_horde",
-			limit_spawners = 2,
-			spawn_counter_category = "main",
-			composition_type = "event_small_beastmen",
-			spawner_ids = {
-				"terror_event_a",
-				"terror_event_b"
-			}
-		},
-		{
-			"delay",
-			duration = num
-		},
-		{
-			"event_horde",
-			limit_spawners = 2,
-			spawn_counter_category = "main",
-			composition_type = "event_small_beastmen",
-			spawner_ids = {
-				"terror_event_a",
-				"terror_event_b"
-			}
-		},
-		{
-			"delay",
-			duration = num
-		},
-		{
-			"event_horde",
-			limit_spawners = 2,
-			spawn_counter_category = "main",
-			composition_type = "event_small_beastmen",
-			spawner_ids = {
-				"terror_event_a",
-				"terror_event_b"
-			}
-		},
-		{
-			"delay",
-			duration = num
-		},
-		{
-			"continue_when_spawned_count",
-			duration = 60,
-			condition = function (self)
-				-- function 5
-				return self.main < 10
-			end
-		},
-		{
-			"flow_event",
-			flow_event_name = "arena_belakor_terror_phase_1_done"
+	{
+		"delay",
+		duration = SHORT
+	},
+	{
+		"event_horde",
+		limit_spawners = 2,
+		spawn_counter_category = "main",
+		composition_type = "event_small",
+		spawner_ids = {
+			"terror_event_a",
+			"terror_event_b"
 		}
 	},
-	arena_belakor_terror_end = {
-		{
-			"continue_when_spawned_count",
-			duration = 60,
-			condition = function (self)
-				-- function 6
-				return not (self.boss <= 0) or not (self.main <= 0) or self.elite <= 0
-			end
-		},
-		{
-			"flow_event",
-			flow_event_name = "arena_belakor_terror_done"
-		},
-		{
-			"disable_bots_in_carry_event"
-		},
-		{
-			"set_wwise_override_state",
-			name = "terror_mb4"
+	{
+		"delay",
+		duration = SHORT
+	},
+	{
+		"continue_when_spawned_count",
+		duration = 60,
+		condition = function (counter)
+			-- function 3
+			return counter.main < 10
+		end
+	},
+	{
+		"flow_event",
+		flow_event_name = "arena_belakor_terror_phase_1_done"
+	}
+}
+terror_event_blueprints.arena_belakor_terror_phase_1_chaos = {
+	{
+		"set_master_event_running",
+		name = "arena_belakor_terror"
+	},
+	{
+		"play_stinger",
+		stinger_name = "enemy_horde_chaos_stinger"
+	},
+	{
+		"flow_event",
+		flow_event_name = "arena_belakor_terror_chaos_special"
+	},
+	{
+		"event_horde",
+		limit_spawners = 2,
+		spawn_counter_category = "main",
+		composition_type = "event_small_chaos",
+		spawner_ids = {
+			"terror_event_a",
+			"terror_event_b"
 		}
 	},
-	arena_belakor_terror_specials = {
-		{
-			"inject_event",
-			event_name_list = {
-				"arena_belakor_terror_skaven_specials",
-				"arena_belakor_terror_chaos_specials"
-			},
-			faction_requirement_list = {
-				"skaven",
-				"chaos"
-			}
-		},
-		{
-			"inject_event",
-			event_name_list = {
-				"arena_belakor_terror_skaven_specials",
-				"arena_belakor_terror_beastmen_specials"
-			},
-			faction_requirement_list = {
-				"skaven",
-				"beastmen"
-			}
-		},
-		{
-			"inject_event",
-			event_name_list = {
-				"arena_belakor_terror_chaos_specials",
-				"arena_belakor_terror_beastmen_specials"
-			},
-			faction_requirement_list = {
-				"chaos",
-				"beastmen"
-			}
+	{
+		"delay",
+		duration = SHORT
+	},
+	{
+		"event_horde",
+		limit_spawners = 2,
+		spawn_counter_category = "main",
+		composition_type = "event_small_chaos",
+		spawner_ids = {
+			"terror_event_a",
+			"terror_event_b"
 		}
 	},
-	arena_belakor_terror_skaven_specials = {
-		{
-			"set_master_event_running",
-			name = "arena_belakor_terror"
-		},
-		{
-			"spawn_at_raw",
-			spawn_counter_category = "special",
-			spawner_id = "arena_belakor_specials",
-			breed_name = {
-				"skaven_warpfire_thrower",
-				"skaven_gutter_runner",
-				"skaven_poison_wind_globadier",
-				"skaven_pack_master",
-				"skaven_ratling_gunner"
-			},
-			difficulty_amount = {
-				hardest = 2,
-				hard = 1,
-				harder = 2,
-				cataclysm = 2,
-				normal = 1
-			}
-		},
-		{
-			"spawn_at_raw",
-			spawner_id = "arena_belakor_specials",
-			spawn_counter_category = "special",
-			breed_name = {
-				"skaven_warpfire_thrower",
-				"skaven_gutter_runner",
-				"skaven_poison_wind_globadier",
-				"skaven_pack_master",
-				"skaven_ratling_gunner"
-			},
-			difficulty_amount = {
-				hardest = 1,
-				hard = 1,
-				harder = 1,
-				cataclysm = 2,
-				normal = 1
-			},
-			difficulty_requirement = HARDEST
-		},
-		{
-			"delay",
-			duration = 10
-		},
-		{
-			"continue_when_spawned_count",
-			duration = 60,
-			condition = function (self)
-				-- function 7
-				return self.special < 1
-			end
-		},
-		{
-			"flow_event",
-			flow_event_name = "arena_belakor_terror_specials_done"
+	{
+		"delay",
+		duration = SHORT
+	},
+	{
+		"event_horde",
+		limit_spawners = 2,
+		spawn_counter_category = "main",
+		composition_type = "event_small_chaos",
+		spawner_ids = {
+			"terror_event_a",
+			"terror_event_b"
 		}
 	},
-	arena_belakor_terror_chaos_specials = {
-		{
-			"set_master_event_running",
-			name = "arena_belakor_terror"
-		},
-		{
-			"spawn_at_raw",
-			spawn_counter_category = "special",
-			spawner_id = "arena_belakor_specials",
-			breed_name = {
-				"chaos_corruptor_sorcerer",
-				"chaos_vortex_sorcerer"
-			},
-			difficulty_amount = {
-				hardest = 2,
-				hard = 1,
-				harder = 2,
-				cataclysm = 2,
-				normal = 1
-			}
-		},
-		{
-			"spawn_at_raw",
-			spawner_id = "arena_belakor_specials",
-			spawn_counter_category = "special",
-			breed_name = {
-				"chaos_corruptor_sorcerer",
-				"chaos_vortex_sorcerer"
-			},
-			difficulty_amount = {
-				hardest = 1,
-				hard = 1,
-				harder = 2,
-				cataclysm = 2,
-				normal = 1
-			},
-			difficulty_requirement = HARDEST
-		},
-		{
-			"delay",
-			duration = 10
-		},
-		{
-			"continue_when_spawned_count",
-			duration = 60,
-			condition = function (self)
-				-- function 8
-				return self.special < 1
-			end
-		},
-		{
-			"flow_event",
-			flow_event_name = "arena_belakor_terror_specials_done"
+	{
+		"delay",
+		duration = SHORT
+	},
+	{
+		"event_horde",
+		limit_spawners = 2,
+		spawn_counter_category = "main",
+		composition_type = "event_small_chaos",
+		spawner_ids = {
+			"terror_event_a",
+			"terror_event_b"
 		}
 	},
-	arena_belakor_terror_beastmen_specials = {
-		{
-			"set_master_event_running",
-			name = "arena_belakor_terror"
-		},
-		{
-			"spawn_at_raw",
-			spawn_counter_category = "special",
-			breed_name = "beastmen_standard_bearer",
-			spawner_id = "arena_belakor_specials",
-			difficulty_amount = {
-				hardest = 2,
-				hard = 1,
-				harder = 2,
-				cataclysm = 2,
-				normal = 1
-			}
-		},
-		{
-			"delay",
-			duration = 10
-		},
-		{
-			"continue_when_spawned_count",
-			duration = 60,
-			condition = function (self)
-				-- function 9
-				return self.special < 1
-			end
-		},
-		{
-			"flow_event",
-			flow_event_name = "arena_belakor_terror_specials_done"
+	{
+		"delay",
+		duration = SHORT
+	},
+	{
+		"continue_when_spawned_count",
+		duration = 60,
+		condition = function (counter)
+			-- function 4
+			return counter.main < 10
+		end
+	},
+	{
+		"flow_event",
+		flow_event_name = "arena_belakor_terror_phase_1_done"
+	}
+}
+terror_event_blueprints.arena_belakor_terror_phase_1_beastmen = {
+	{
+		"set_master_event_running",
+		name = "arena_belakor_terror"
+	},
+	{
+		"play_stinger",
+		stinger_name = "enemy_horde_beastmen_stinger"
+	},
+	{
+		"flow_event",
+		flow_event_name = "arena_belakor_terror_beastmen_special"
+	},
+	{
+		"event_horde",
+		limit_spawners = 2,
+		spawn_counter_category = "main",
+		composition_type = "event_small_beastmen",
+		spawner_ids = {
+			"terror_event_a",
+			"terror_event_b"
 		}
 	},
-	arena_belakor_terror_phase_2 = {
-		{
-			"inject_event",
-			event_name = "arena_belakor_terror_phase_2_start"
-		},
-		{
-			"inject_event",
-			event_name = "arena_belakor_terror_phase_2_sequence"
+	{
+		"delay",
+		duration = SHORT
+	},
+	{
+		"event_horde",
+		limit_spawners = 2,
+		spawn_counter_category = "main",
+		composition_type = "event_small_beastmen",
+		spawner_ids = {
+			"terror_event_a",
+			"terror_event_b"
 		}
 	},
-	arena_belakor_terror_phase_2_start = {
-		{
-			"set_master_event_running",
-			name = "arena_belakor_terror"
-		},
-		{
-			"control_pacing",
-			enable = false
-		},
-		{
-			"control_specials",
-			enable = false
-		},
-		{
-			"enable_bots_in_carry_event"
-		},
-		{
-			"set_freeze_condition",
-			max_active_enemies = 100
-		},
-		{
-			"set_wwise_override_state",
-			name = "terror_mb4"
+	{
+		"delay",
+		duration = SHORT
+	},
+	{
+		"event_horde",
+		limit_spawners = 2,
+		spawn_counter_category = "main",
+		composition_type = "event_small_beastmen",
+		spawner_ids = {
+			"terror_event_a",
+			"terror_event_b"
 		}
 	},
-	arena_belakor_terror_phase_2_sequence = {
-		{
-			"inject_event",
-			event_name_list = {
-				"arena_belakor_terror_phase_2_skaven",
-				"arena_belakor_terror_phase_2_chaos"
-			},
-			faction_requirement_list = {
-				"skaven",
-				"chaos"
-			}
-		},
-		{
-			"inject_event",
-			event_name_list = {
-				"arena_belakor_terror_phase_2_beastmen",
-				"arena_belakor_terror_phase_2_skaven"
-			},
-			faction_requirement_list = {
-				"skaven",
-				"beastmen"
-			}
-		},
-		{
-			"inject_event",
-			event_name_list = {
-				"arena_belakor_terror_phase_2_chaos",
-				"arena_belakor_terror_phase_2_beastmen"
-			},
-			faction_requirement_list = {
-				"chaos",
-				"beastmen"
-			}
+	{
+		"delay",
+		duration = SHORT
+	},
+	{
+		"event_horde",
+		limit_spawners = 2,
+		spawn_counter_category = "main",
+		composition_type = "event_small_beastmen",
+		spawner_ids = {
+			"terror_event_a",
+			"terror_event_b"
 		}
 	},
-	arena_belakor_terror_phase_2_skaven = {
-		{
-			"set_master_event_running",
-			name = "arena_belakor_terror"
+	{
+		"delay",
+		duration = SHORT
+	},
+	{
+		"continue_when_spawned_count",
+		duration = 60,
+		condition = function (counter)
+			-- function 5
+			return counter.main < 10
+		end
+	},
+	{
+		"flow_event",
+		flow_event_name = "arena_belakor_terror_phase_1_done"
+	}
+}
+terror_event_blueprints.arena_belakor_terror_end = {
+	{
+		"continue_when_spawned_count",
+		duration = 60,
+		condition = function (counter)
+			-- function 6
+			return counter.boss <= 0 and counter.main <= 0 and counter.elite <= 0
+		end
+	},
+	{
+		"flow_event",
+		flow_event_name = "arena_belakor_terror_done"
+	},
+	{
+		"disable_bots_in_carry_event"
+	},
+	{
+		"set_wwise_override_state",
+		name = "terror_mb4"
+	}
+}
+terror_event_blueprints.arena_belakor_terror_specials = {
+	{
+		"inject_event",
+		event_name_list = {
+			"arena_belakor_terror_skaven_specials",
+			"arena_belakor_terror_chaos_specials"
 		},
-		{
-			"play_stinger",
-			stinger_name = "enemy_horde_stinger"
-		},
-		{
-			"flow_event",
-			flow_event_name = "arena_belakor_terror_skaven_special"
-		},
-		{
-			"event_horde",
-			limit_spawners = 2,
-			spawn_counter_category = "main",
-			composition_type = "event_medium",
-			spawner_ids = {
-				"terror_event_c"
-			}
-		},
-		{
-			"delay",
-			duration = num_2
-		},
-		{
-			"event_horde",
-			limit_spawners = 2,
-			spawn_counter_category = "main",
-			composition_type = "event_medium",
-			spawner_ids = {
-				"terror_event_c"
-			}
-		},
-		{
-			"delay",
-			duration = num_2
-		},
-		{
-			"event_horde",
-			limit_spawners = 2,
-			spawn_counter_category = "main",
-			composition_type = "event_medium",
-			spawner_ids = {
-				"terror_event_c"
-			}
-		},
-		{
-			"delay",
-			duration = num_2
-		},
-		{
-			"event_horde",
-			limit_spawners = 2,
-			spawn_counter_category = "main",
-			composition_type = "event_medium",
-			spawner_ids = {
-				"terror_event_c"
-			}
-		},
-		{
-			"delay",
-			duration = num_2
-		},
-		{
-			"continue_when_spawned_count",
-			duration = 60,
-			condition = function (self)
-				-- function 10
-				return self.main < 10
-			end
-		},
-		{
-			"flow_event",
-			flow_event_name = "arena_belakor_terror_phase_2_done"
+		faction_requirement_list = {
+			"skaven",
+			"chaos"
 		}
 	},
-	arena_belakor_terror_phase_2_chaos = {
-		{
-			"set_master_event_running",
-			name = "arena_belakor_terror"
+	{
+		"inject_event",
+		event_name_list = {
+			"arena_belakor_terror_skaven_specials",
+			"arena_belakor_terror_beastmen_specials"
 		},
-		{
-			"play_stinger",
-			stinger_name = "enemy_horde_chaos_stinger"
-		},
-		{
-			"flow_event",
-			flow_event_name = "arena_belakor_terror_chaos_special"
-		},
-		{
-			"event_horde",
-			limit_spawners = 2,
-			spawn_counter_category = "main",
-			composition_type = "event_medium_chaos",
-			spawner_ids = {
-				"terror_event_c"
-			}
-		},
-		{
-			"delay",
-			duration = num_2
-		},
-		{
-			"event_horde",
-			limit_spawners = 2,
-			spawn_counter_category = "main",
-			composition_type = "event_medium_chaos",
-			spawner_ids = {
-				"terror_event_c"
-			}
-		},
-		{
-			"delay",
-			duration = num_2
-		},
-		{
-			"event_horde",
-			limit_spawners = 2,
-			spawn_counter_category = "main",
-			composition_type = "event_medium_chaos",
-			spawner_ids = {
-				"terror_event_c"
-			}
-		},
-		{
-			"delay",
-			duration = num_2
-		},
-		{
-			"event_horde",
-			limit_spawners = 2,
-			spawn_counter_category = "main",
-			composition_type = "event_medium_chaos",
-			spawner_ids = {
-				"terror_event_c"
-			}
-		},
-		{
-			"delay",
-			duration = num_2
-		},
-		{
-			"continue_when_spawned_count",
-			duration = 60,
-			condition = function (self)
-				-- function 11
-				return self.main < 10
-			end
-		},
-		{
-			"flow_event",
-			flow_event_name = "arena_belakor_terror_phase_2_done"
+		faction_requirement_list = {
+			"skaven",
+			"beastmen"
 		}
 	},
-	arena_belakor_terror_phase_2_beastmen = {
-		{
-			"set_master_event_running",
-			name = "arena_belakor_terror"
+	{
+		"inject_event",
+		event_name_list = {
+			"arena_belakor_terror_chaos_specials",
+			"arena_belakor_terror_beastmen_specials"
 		},
-		{
-			"play_stinger",
-			stinger_name = "enemy_horde_beastmen_stinger"
+		faction_requirement_list = {
+			"chaos",
+			"beastmen"
+		}
+	}
+}
+terror_event_blueprints.arena_belakor_terror_skaven_specials = {
+	{
+		"set_master_event_running",
+		name = "arena_belakor_terror"
+	},
+	{
+		"spawn_at_raw",
+		spawn_counter_category = "special",
+		spawner_id = "arena_belakor_specials",
+		breed_name = {
+			"skaven_warpfire_thrower",
+			"skaven_gutter_runner",
+			"skaven_poison_wind_globadier",
+			"skaven_pack_master",
+			"skaven_ratling_gunner"
 		},
-		{
-			"flow_event",
-			flow_event_name = "arena_belakor_terror_beastmen_special"
-		},
-		{
-			"event_horde",
-			limit_spawners = 2,
-			spawn_counter_category = "main",
-			composition_type = "event_medium_beastmen",
-			spawner_ids = {
-				"terror_event_c"
-			}
-		},
-		{
-			"delay",
-			duration = num_2
-		},
-		{
-			"event_horde",
-			limit_spawners = 2,
-			spawn_counter_category = "main",
-			composition_type = "event_medium_beastmen",
-			spawner_ids = {
-				"terror_event_c"
-			}
-		},
-		{
-			"delay",
-			duration = num_2
-		},
-		{
-			"event_horde",
-			limit_spawners = 2,
-			spawn_counter_category = "main",
-			composition_type = "event_medium_beastmen",
-			spawner_ids = {
-				"terror_event_c"
-			}
-		},
-		{
-			"delay",
-			duration = num_2
-		},
-		{
-			"event_horde",
-			limit_spawners = 2,
-			spawn_counter_category = "main",
-			composition_type = "event_medium_beastmen",
-			spawner_ids = {
-				"terror_event_c"
-			}
-		},
-		{
-			"delay",
-			duration = num_2
-		},
-		{
-			"continue_when_spawned_count",
-			duration = 60,
-			condition = function (self)
-				-- function 12
-				return self.main < 10
-			end
-		},
-		{
-			"flow_event",
-			flow_event_name = "arena_belakor_terror_phase_2_done"
+		difficulty_amount = {
+			hardest = 2,
+			hard = 1,
+			harder = 2,
+			cataclysm = 2,
+			normal = 1
 		}
 	},
-	arena_belakor_around_statue_spawns = {
-		{
-			"inject_event",
-			event_name_list = {
-				"arena_belakor_around_statue_spawns_faction_skaven",
-				"arena_belakor_around_statue_spawns_faction_chaos",
-				"arena_belakor_around_statue_spawns_faction_chaos"
-			},
-			faction_requirement_list = {
-				"skaven",
-				"chaos"
-			}
+	{
+		"spawn_at_raw",
+		spawner_id = "arena_belakor_specials",
+		spawn_counter_category = "special",
+		breed_name = {
+			"skaven_warpfire_thrower",
+			"skaven_gutter_runner",
+			"skaven_poison_wind_globadier",
+			"skaven_pack_master",
+			"skaven_ratling_gunner"
 		},
-		{
-			"inject_event",
-			event_name_list = {
-				"arena_belakor_around_statue_spawns_faction_skaven",
-				"arena_belakor_around_statue_spawns_faction_beastmen",
-				"arena_belakor_around_statue_spawns_faction_beastmen"
-			},
-			faction_requirement_list = {
-				"skaven",
-				"beastmen"
-			}
+		difficulty_amount = {
+			hardest = 1,
+			hard = 1,
+			harder = 1,
+			cataclysm = 2,
+			normal = 1
 		},
-		{
-			"inject_event",
-			event_name_list = {
-				"arena_belakor_around_statue_spawns_faction_chaos",
-				"arena_belakor_around_statue_spawns_faction_beastmen"
-			},
-			faction_requirement_list = {
-				"chaos",
-				"beastmen"
-			}
+		difficulty_requirement = HARDEST
+	},
+	{
+		"delay",
+		duration = 10
+	},
+	{
+		"continue_when_spawned_count",
+		duration = 60,
+		condition = function (counter)
+			-- function 7
+			return counter.special < 1
+		end
+	},
+	{
+		"flow_event",
+		flow_event_name = "arena_belakor_terror_specials_done"
+	}
+}
+terror_event_blueprints.arena_belakor_terror_chaos_specials = {
+	{
+		"set_master_event_running",
+		name = "arena_belakor_terror"
+	},
+	{
+		"spawn_at_raw",
+		spawn_counter_category = "special",
+		spawner_id = "arena_belakor_specials",
+		breed_name = {
+			"chaos_corruptor_sorcerer",
+			"chaos_vortex_sorcerer"
+		},
+		difficulty_amount = {
+			hardest = 2,
+			hard = 1,
+			harder = 2,
+			cataclysm = 2,
+			normal = 1
 		}
 	},
-	arena_belakor_around_statue_spawns_faction_skaven = {
+	{
+		"spawn_at_raw",
+		spawner_id = "arena_belakor_specials",
+		spawn_counter_category = "special",
+		breed_name = {
+			"chaos_corruptor_sorcerer",
+			"chaos_vortex_sorcerer"
+		},
+		difficulty_amount = {
+			hardest = 1,
+			hard = 1,
+			harder = 2,
+			cataclysm = 2,
+			normal = 1
+		},
+		difficulty_requirement = HARDEST
+	},
+	{
+		"delay",
+		duration = 10
+	},
+	{
+		"continue_when_spawned_count",
+		duration = 60,
+		condition = function (counter)
+			-- function 8
+			return counter.special < 1
+		end
+	},
+	{
+		"flow_event",
+		flow_event_name = "arena_belakor_terror_specials_done"
+	}
+}
+terror_event_blueprints.arena_belakor_terror_beastmen_specials = {
+	{
+		"set_master_event_running",
+		name = "arena_belakor_terror"
+	},
+	{
+		"spawn_at_raw",
+		spawn_counter_category = "special",
+		breed_name = "beastmen_standard_bearer",
+		spawner_id = "arena_belakor_specials",
+		difficulty_amount = {
+			hardest = 2,
+			hard = 1,
+			harder = 2,
+			cataclysm = 2,
+			normal = 1
+		}
+	},
+	{
+		"delay",
+		duration = 10
+	},
+	{
+		"continue_when_spawned_count",
+		duration = 60,
+		condition = function (counter)
+			-- function 9
+			return counter.special < 1
+		end
+	},
+	{
+		"flow_event",
+		flow_event_name = "arena_belakor_terror_specials_done"
+	}
+}
+terror_event_blueprints.arena_belakor_terror_phase_2 = {
+	{
+		"inject_event",
+		event_name = "arena_belakor_terror_phase_2_start"
+	},
+	{
+		"inject_event",
+		event_name = "arena_belakor_terror_phase_2_sequence"
+	}
+}
+terror_event_blueprints.arena_belakor_terror_phase_2_start = {
+	{
+		"set_master_event_running",
+		name = "arena_belakor_terror"
+	},
+	{
+		"control_pacing",
+		enable = false
+	},
+	{
+		"control_specials",
+		enable = false
+	},
+	{
+		"enable_bots_in_carry_event"
+	},
+	{
+		"set_freeze_condition",
+		max_active_enemies = 100
+	},
+	{
+		"set_wwise_override_state",
+		name = "terror_mb4"
+	}
+}
+terror_event_blueprints.arena_belakor_terror_phase_2_sequence = {
+	{
+		"inject_event",
+		event_name_list = {
+			"arena_belakor_terror_phase_2_skaven",
+			"arena_belakor_terror_phase_2_chaos"
+		},
+		faction_requirement_list = {
+			"skaven",
+			"chaos"
+		}
+	},
+	{
+		"inject_event",
+		event_name_list = {
+			"arena_belakor_terror_phase_2_beastmen",
+			"arena_belakor_terror_phase_2_skaven"
+		},
+		faction_requirement_list = {
+			"skaven",
+			"beastmen"
+		}
+	},
+	{
+		"inject_event",
+		event_name_list = {
+			"arena_belakor_terror_phase_2_chaos",
+			"arena_belakor_terror_phase_2_beastmen"
+		},
+		faction_requirement_list = {
+			"chaos",
+			"beastmen"
+		}
+	}
+}
+terror_event_blueprints.arena_belakor_terror_phase_2_skaven = {
+	{
+		"set_master_event_running",
+		name = "arena_belakor_terror"
+	},
+	{
+		"play_stinger",
+		stinger_name = "enemy_horde_stinger"
+	},
+	{
+		"flow_event",
+		flow_event_name = "arena_belakor_terror_skaven_special"
+	},
+	{
+		"event_horde",
+		limit_spawners = 2,
+		spawn_counter_category = "main",
+		composition_type = "event_medium",
+		spawner_ids = {
+			"terror_event_c"
+		}
+	},
+	{
+		"delay",
+		duration = LONG
+	},
+	{
+		"event_horde",
+		limit_spawners = 2,
+		spawn_counter_category = "main",
+		composition_type = "event_medium",
+		spawner_ids = {
+			"terror_event_c"
+		}
+	},
+	{
+		"delay",
+		duration = LONG
+	},
+	{
+		"event_horde",
+		limit_spawners = 2,
+		spawn_counter_category = "main",
+		composition_type = "event_medium",
+		spawner_ids = {
+			"terror_event_c"
+		}
+	},
+	{
+		"delay",
+		duration = LONG
+	},
+	{
+		"event_horde",
+		limit_spawners = 2,
+		spawn_counter_category = "main",
+		composition_type = "event_medium",
+		spawner_ids = {
+			"terror_event_c"
+		}
+	},
+	{
+		"delay",
+		duration = LONG
+	},
+	{
+		"continue_when_spawned_count",
+		duration = 60,
+		condition = function (counter)
+			-- function 10
+			return counter.main < 10
+		end
+	},
+	{
+		"flow_event",
+		flow_event_name = "arena_belakor_terror_phase_2_done"
+	}
+}
+terror_event_blueprints.arena_belakor_terror_phase_2_chaos = {
+	{
+		"set_master_event_running",
+		name = "arena_belakor_terror"
+	},
+	{
+		"play_stinger",
+		stinger_name = "enemy_horde_chaos_stinger"
+	},
+	{
+		"flow_event",
+		flow_event_name = "arena_belakor_terror_chaos_special"
+	},
+	{
+		"event_horde",
+		limit_spawners = 2,
+		spawn_counter_category = "main",
+		composition_type = "event_medium_chaos",
+		spawner_ids = {
+			"terror_event_c"
+		}
+	},
+	{
+		"delay",
+		duration = LONG
+	},
+	{
+		"event_horde",
+		limit_spawners = 2,
+		spawn_counter_category = "main",
+		composition_type = "event_medium_chaos",
+		spawner_ids = {
+			"terror_event_c"
+		}
+	},
+	{
+		"delay",
+		duration = LONG
+	},
+	{
+		"event_horde",
+		limit_spawners = 2,
+		spawn_counter_category = "main",
+		composition_type = "event_medium_chaos",
+		spawner_ids = {
+			"terror_event_c"
+		}
+	},
+	{
+		"delay",
+		duration = LONG
+	},
+	{
+		"event_horde",
+		limit_spawners = 2,
+		spawn_counter_category = "main",
+		composition_type = "event_medium_chaos",
+		spawner_ids = {
+			"terror_event_c"
+		}
+	},
+	{
+		"delay",
+		duration = LONG
+	},
+	{
+		"continue_when_spawned_count",
+		duration = 60,
+		condition = function (counter)
+			-- function 11
+			return counter.main < 10
+		end
+	},
+	{
+		"flow_event",
+		flow_event_name = "arena_belakor_terror_phase_2_done"
+	}
+}
+terror_event_blueprints.arena_belakor_terror_phase_2_beastmen = {
+	{
+		"set_master_event_running",
+		name = "arena_belakor_terror"
+	},
+	{
+		"play_stinger",
+		stinger_name = "enemy_horde_beastmen_stinger"
+	},
+	{
+		"flow_event",
+		flow_event_name = "arena_belakor_terror_beastmen_special"
+	},
+	{
+		"event_horde",
+		limit_spawners = 2,
+		spawn_counter_category = "main",
+		composition_type = "event_medium_beastmen",
+		spawner_ids = {
+			"terror_event_c"
+		}
+	},
+	{
+		"delay",
+		duration = LONG
+	},
+	{
+		"event_horde",
+		limit_spawners = 2,
+		spawn_counter_category = "main",
+		composition_type = "event_medium_beastmen",
+		spawner_ids = {
+			"terror_event_c"
+		}
+	},
+	{
+		"delay",
+		duration = LONG
+	},
+	{
+		"event_horde",
+		limit_spawners = 2,
+		spawn_counter_category = "main",
+		composition_type = "event_medium_beastmen",
+		spawner_ids = {
+			"terror_event_c"
+		}
+	},
+	{
+		"delay",
+		duration = LONG
+	},
+	{
+		"event_horde",
+		limit_spawners = 2,
+		spawn_counter_category = "main",
+		composition_type = "event_medium_beastmen",
+		spawner_ids = {
+			"terror_event_c"
+		}
+	},
+	{
+		"delay",
+		duration = LONG
+	},
+	{
+		"continue_when_spawned_count",
+		duration = 60,
+		condition = function (counter)
+			-- function 12
+			return counter.main < 10
+		end
+	},
+	{
+		"flow_event",
+		flow_event_name = "arena_belakor_terror_phase_2_done"
+	}
+}
+terror_event_blueprints.arena_belakor_around_statue_spawns = {
+	{
+		"inject_event",
+		event_name_list = {
+			"arena_belakor_around_statue_spawns_faction_skaven",
+			"arena_belakor_around_statue_spawns_faction_chaos",
+			"arena_belakor_around_statue_spawns_faction_chaos"
+		},
+		faction_requirement_list = {
+			"skaven",
+			"chaos"
+		}
+	},
+	{
+		"inject_event",
+		event_name_list = {
+			"arena_belakor_around_statue_spawns_faction_skaven",
+			"arena_belakor_around_statue_spawns_faction_beastmen",
+			"arena_belakor_around_statue_spawns_faction_beastmen"
+		},
+		faction_requirement_list = {
+			"skaven",
+			"beastmen"
+		}
+	},
+	{
+		"inject_event",
+		event_name_list = {
+			"arena_belakor_around_statue_spawns_faction_chaos",
+			"arena_belakor_around_statue_spawns_faction_beastmen"
+		},
+		faction_requirement_list = {
+			"chaos",
+			"beastmen"
+		}
+	}
+}
+terror_event_blueprints.arena_belakor_around_statue_spawns_faction_skaven = {
+	{
+		"one_of",
 		{
-			"one_of",
 			{
-				{
-					"inject_event",
-					weighted_event_names = {
-						{
-							weight = 3,
-							event_name = "arena_belakor_around_statue_spawns_vermin_shielded"
-						},
-						{
-							weight = 3,
-							event_name = "arena_belakor_around_statue_spawns_stormvermin"
-						},
-						{
-							weight = 3,
-							event_name = "arena_belakor_around_statue_spawns_plague_monks"
-						},
-						{
-							weight = 3,
-							event_name = "arena_belakor_around_statue_spawns_skaven_warpfire_thrower"
-						},
-						{
-							weight = 3,
-							event_name = "arena_belakor_around_statue_spawns_skaven_ratling_gunner"
-						},
-						{
-							weight = 3,
-							event_name = "arena_belakor_around_statue_spawns_skaven_poison_wind_globadier"
-						},
-						{
-							weight = 3,
-							event_name = "arena_belakor_around_statue_spawns_skaven_rat_ogre"
-						},
-						{
-							weight = 3,
-							event_name = "arena_belakor_around_statue_spawns_skaven_stormfiend"
-						}
+				"inject_event",
+				weighted_event_names = {
+					{
+						weight = 3,
+						event_name = "arena_belakor_around_statue_spawns_vermin_shielded"
+					},
+					{
+						weight = 3,
+						event_name = "arena_belakor_around_statue_spawns_stormvermin"
+					},
+					{
+						weight = 3,
+						event_name = "arena_belakor_around_statue_spawns_plague_monks"
+					},
+					{
+						weight = 3,
+						event_name = "arena_belakor_around_statue_spawns_skaven_warpfire_thrower"
+					},
+					{
+						weight = 3,
+						event_name = "arena_belakor_around_statue_spawns_skaven_ratling_gunner"
+					},
+					{
+						weight = 3,
+						event_name = "arena_belakor_around_statue_spawns_skaven_poison_wind_globadier"
+					},
+					{
+						weight = 3,
+						event_name = "arena_belakor_around_statue_spawns_skaven_rat_ogre"
+					},
+					{
+						weight = 3,
+						event_name = "arena_belakor_around_statue_spawns_skaven_stormfiend"
 					}
 				}
 			}
 		}
+	}
+}
+terror_event_blueprints.arena_belakor_around_statue_spawns_stormvermin = {
+	{
+		"delay",
+		duration = AROUND_STATUE_SPAWNS_DELAY_WAVE_1
 	},
-	arena_belakor_around_statue_spawns_stormvermin = {
-		{
-			"delay",
-			duration = num_3
+	{
+		"spawn_around_origin_unit",
+		breed_name = "skaven_storm_vermin_commander",
+		spawn_counter_category = "cursed_chest_enemies",
+		difficulty_amount = {
+			hardest = 7,
+			hard = 5,
+			harder = 6,
+			cataclysm = 8,
+			normal = 4
 		},
-		{
-			"spawn_around_origin_unit",
-			breed_name = "skaven_storm_vermin_commander",
-			spawn_counter_category = "cursed_chest_enemies",
-			difficulty_amount = {
-				hardest = 7,
-				hard = 5,
-				harder = 6,
-				cataclysm = 8,
-				normal = 4
-			},
-			min_distance = num_6 - num_9 * 0.5,
-			max_distance = num_6 + num_9 * 0.5,
-			pre_spawn_unit_func = fn,
-			post_spawn_unit_func = fn_2,
-			spawn_delay = num_5
-		},
-		{
-			"delay",
-			duration = num_4
-		},
-		{
-			"continue_when_spawned_count",
-			duration = 20,
-			condition = function (self)
-				-- function 13
-				return self.cursed_chest_enemies <= 4
-			end
-		},
-		{
-			"spawn_around_origin_unit",
-			breed_name = "skaven_storm_vermin_commander",
-			spawn_counter_category = "cursed_chest_enemies",
-			difficulty_amount = {
-				hardest = 7,
-				hard = 5,
-				harder = 6,
-				cataclysm = 8,
-				normal = 4
-			},
-			min_distance = num_6 - num_9 * 0.5,
-			max_distance = num_6 + num_9 * 0.5,
-			pre_spawn_unit_func = fn,
-			post_spawn_unit_func = fn_2,
-			spawn_delay = num_5
-		},
-		{
-			"delay",
-			duration = num_4
-		},
-		{
-			"continue_when_spawned_count",
-			duration = 20,
-			condition = function (self)
-				-- function 14
-				return self.cursed_chest_enemies <= 4
-			end
-		},
-		{
-			"spawn_around_origin_unit",
-			breed_name = "skaven_storm_vermin_commander",
-			spawn_counter_category = "cursed_chest_enemies",
-			difficulty_amount = {
-				hardest = 7,
-				hard = 5,
-				harder = 6,
-				cataclysm = 8,
-				normal = 4
-			},
-			min_distance = num_6 - num_9 * 0.5,
-			max_distance = num_6 + num_9 * 0.5,
-			pre_spawn_unit_func = fn,
-			post_spawn_unit_func = fn_2,
-			spawn_delay = num_5
-		},
-		{
-			"delay",
-			duration = 1
-		},
-		{
-			"continue_when_spawned_count",
-			duration = 20,
-			condition = function (self)
-				-- function 15
-				return self.cursed_chest_enemies > 0
-			end
-		},
-		{
-			"continue_when_spawned_count",
-			duration = 120,
-			condition = function (self)
-				-- function 16
-				return self.cursed_chest_enemies <= 0
-			end
-		}
+		min_distance = AROUND_STATUE_SPAWNS_SPAWN_DISTANCE_SHORT - AROUND_STATUE_SPAWNS_SPREAD_TIGHT * 0.5,
+		max_distance = AROUND_STATUE_SPAWNS_SPAWN_DISTANCE_SHORT + AROUND_STATUE_SPAWNS_SPREAD_TIGHT * 0.5,
+		pre_spawn_unit_func = spawn_decal_func,
+		post_spawn_unit_func = cursed_chest_enemy_despawn_decal_func,
+		spawn_delay = AROUND_STATUE_SPAWNS_DELAY_SPAWN
 	},
-	arena_belakor_around_statue_spawns_vermin_shielded = {
-		{
-			"delay",
-			duration = num_3
-		},
-		{
-			"spawn_around_origin_unit",
-			breed_name = "skaven_storm_vermin_with_shield",
-			spawn_counter_category = "cursed_chest_enemies",
-			difficulty_amount = {
-				hardest = 5,
-				hard = 3,
-				harder = 4,
-				cataclysm = 6,
-				normal = 2
-			},
-			min_distance = num_6 - num_9 * 0.5,
-			max_distance = num_6 + num_9 * 0.5,
-			pre_spawn_unit_func = fn,
-			post_spawn_unit_func = fn_2,
-			spawn_delay = num_5
-		},
-		{
-			"spawn_around_origin_unit",
-			breed_name = "skaven_clan_rat_with_shield",
-			spawn_counter_category = "cursed_chest_enemies",
-			difficulty_amount = {
-				hardest = 8,
-				hard = 7,
-				harder = 7,
-				cataclysm = 8,
-				normal = 6
-			},
-			min_distance = num_6 - num_9 * 0.5,
-			max_distance = num_6 + num_9 * 0.5,
-			pre_spawn_unit_func = fn,
-			post_spawn_unit_func = fn_2,
-			spawn_delay = num_5
-		},
-		{
-			"delay",
-			duration = num_4
-		},
-		{
-			"continue_when_spawned_count",
-			duration = 20,
-			condition = function (self)
-				-- function 17
-				return self.cursed_chest_enemies <= 5
-			end
-		},
-		{
-			"spawn_around_origin_unit",
-			breed_name = "skaven_storm_vermin_with_shield",
-			spawn_counter_category = "cursed_chest_enemies",
-			difficulty_amount = {
-				hardest = 5,
-				hard = 3,
-				harder = 4,
-				cataclysm = 6,
-				normal = 2
-			},
-			min_distance = num_6 - num_9 * 0.5,
-			max_distance = num_6 + num_9 * 0.5,
-			pre_spawn_unit_func = fn,
-			post_spawn_unit_func = fn_2,
-			spawn_delay = num_5
-		},
-		{
-			"spawn_around_origin_unit",
-			breed_name = "skaven_clan_rat_with_shield",
-			spawn_counter_category = "cursed_chest_enemies",
-			difficulty_amount = {
-				hardest = 8,
-				hard = 7,
-				harder = 7,
-				cataclysm = 8,
-				normal = 6
-			},
-			min_distance = num_6 - num_9 * 0.5,
-			max_distance = num_6 + num_9 * 0.5,
-			pre_spawn_unit_func = fn,
-			post_spawn_unit_func = fn_2,
-			spawn_delay = num_5
-		},
-		{
-			"delay",
-			duration = 1
-		},
-		{
-			"continue_when_spawned_count",
-			duration = 20,
-			condition = function (self)
-				-- function 18
-				return self.cursed_chest_enemies > 0
-			end
-		},
-		{
-			"continue_when_spawned_count",
-			duration = 120,
-			condition = function (self)
-				-- function 19
-				return self.cursed_chest_enemies <= 0
-			end
-		}
+	{
+		"delay",
+		duration = AROUND_STATUE_SPAWNS_DELAY_WAVE_2
 	},
-	arena_belakor_around_statue_spawns_plague_monks = {
-		{
-			"delay",
-			duration = num_3
-		},
-		{
-			"spawn_around_origin_unit",
-			breed_name = "skaven_plague_monk",
-			spawn_counter_category = "cursed_chest_enemies",
-			difficulty_amount = {
-				hardest = 4,
-				hard = 3,
-				harder = 3,
-				cataclysm = 5,
-				normal = 2
-			},
-			min_distance = num_6 - num_10 * 0.5,
-			max_distance = num_6 + num_10 * 0.5,
-			pre_spawn_unit_func = fn,
-			post_spawn_unit_func = fn_2,
-			spawn_delay = num_5
-		},
-		{
-			"spawn_around_origin_unit",
-			breed_name = "skaven_clan_rat",
-			spawn_counter_category = "cursed_chest_enemies",
-			difficulty_amount = {
-				hardest = 10,
-				hard = 7,
-				harder = 9,
-				cataclysm = 12,
-				normal = 6
-			},
-			min_distance = num_6 - num_10 * 0.5,
-			max_distance = num_6 + num_10 * 0.5,
-			pre_spawn_unit_func = fn,
-			post_spawn_unit_func = fn_2,
-			spawn_delay = num_5
-		},
-		{
-			"delay",
-			duration = num_4
-		},
-		{
-			"continue_when_spawned_count",
-			duration = 20,
-			condition = function (self)
-				-- function 20
-				return self.cursed_chest_enemies <= 5
-			end
-		},
-		{
-			"spawn_around_origin_unit",
-			spawn_counter_category = "cursed_chest_enemies",
-			breed_name = "skaven_plague_monk",
-			distance_to_players = 3,
-			difficulty_amount = {
-				hardest = 4,
-				hard = 3,
-				harder = 3,
-				cataclysm = 5,
-				normal = 2
-			},
-			min_distance = num_6 - num_10 * 0.5,
-			max_distance = num_6 + num_10 * 0.5,
-			pre_spawn_unit_func = fn,
-			post_spawn_unit_func = fn_2,
-			spawn_delay = num_5
-		},
-		{
-			"spawn_around_origin_unit",
-			breed_name = "skaven_clan_rat",
-			spawn_counter_category = "cursed_chest_enemies",
-			difficulty_amount = {
-				hardest = 10,
-				hard = 7,
-				harder = 9,
-				cataclysm = 12,
-				normal = 6
-			},
-			min_distance = num_6 - num_10 * 0.5,
-			max_distance = num_6 + num_10 * 0.5,
-			pre_spawn_unit_func = fn,
-			post_spawn_unit_func = fn_2,
-			spawn_delay = num_5
-		},
-		{
-			"delay",
-			duration = num_4
-		},
-		{
-			"continue_when_spawned_count",
-			duration = 20,
-			condition = function (self)
-				-- function 21
-				return self.cursed_chest_enemies <= 5
-			end
-		},
-		{
-			"spawn_around_origin_unit",
-			breed_name = "skaven_plague_monk",
-			spawn_counter_category = "cursed_chest_enemies",
-			difficulty_amount = {
-				hardest = 5,
-				hard = 3,
-				harder = 3,
-				cataclysm = 6,
-				normal = 2
-			},
-			min_distance = num_6 - num_10 * 0.5,
-			max_distance = num_6 + num_10 * 0.5,
-			pre_spawn_unit_func = fn,
-			post_spawn_unit_func = fn_2,
-			spawn_delay = num_5
-		},
-		{
-			"spawn_around_origin_unit",
-			breed_name = "skaven_clan_rat",
-			spawn_counter_category = "cursed_chest_enemies",
-			difficulty_amount = {
-				hardest = 10,
-				hard = 7,
-				harder = 9,
-				cataclysm = 12,
-				normal = 6
-			},
-			min_distance = num_6 - num_10 * 0.5,
-			max_distance = num_6 + num_10 * 0.5,
-			pre_spawn_unit_func = fn,
-			post_spawn_unit_func = fn_2,
-			spawn_delay = num_5
-		},
-		{
-			"delay",
-			duration = 1
-		},
-		{
-			"continue_when_spawned_count",
-			duration = 20,
-			condition = function (self)
-				-- function 22
-				return self.cursed_chest_enemies > 0
-			end
-		},
-		{
-			"continue_when_spawned_count",
-			duration = 120,
-			condition = function (self)
-				-- function 23
-				return self.cursed_chest_enemies <= 0
-			end
-		}
+	{
+		"continue_when_spawned_count",
+		duration = 20,
+		condition = function (counter)
+			-- function 13
+			return counter.cursed_chest_enemies <= 4
+		end
 	},
-	arena_belakor_around_statue_spawns_skaven_warpfire_thrower = {
-		{
-			"delay",
-			duration = num_3
+	{
+		"spawn_around_origin_unit",
+		breed_name = "skaven_storm_vermin_commander",
+		spawn_counter_category = "cursed_chest_enemies",
+		difficulty_amount = {
+			hardest = 7,
+			hard = 5,
+			harder = 6,
+			cataclysm = 8,
+			normal = 4
 		},
-		{
-			"spawn_around_origin_unit",
-			breed_name = "skaven_warpfire_thrower",
-			spawn_counter_category = "cursed_chest_elites",
-			difficulty_amount = {
-				hardest = 2,
-				hard = 2,
-				harder = 2,
-				cataclysm = 3,
-				normal = 2
-			},
-			min_distance = num_6 - num_10 * 0.5,
-			max_distance = num_6 + num_10 * 0.5,
-			pre_spawn_unit_func = fn,
-			post_spawn_unit_func = fn_2,
-			spawn_delay = num_5
-		},
-		{
-			"spawn_around_origin_unit",
-			breed_name = "skaven_clan_rat",
-			spawn_counter_category = "cursed_chest_enemies",
-			difficulty_amount = {
-				hardest = 16,
-				hard = 12,
-				harder = 14,
-				cataclysm = 18,
-				normal = 10
-			},
-			min_distance = num_6 - num_10 * 0.5,
-			max_distance = num_6 + num_10 * 0.5,
-			pre_spawn_unit_func = fn,
-			post_spawn_unit_func = fn_2,
-			spawn_delay = num_5
-		},
-		{
-			"delay",
-			duration = num_4
-		},
-		{
-			"continue_when_spawned_count",
-			duration = 20,
-			condition = function (self)
-				-- function 24
-				return self.cursed_chest_elites <= 2
-			end
-		},
-		{
-			"continue_when_spawned_count",
-			duration = 20,
-			condition = function (self)
-				-- function 25
-				return self.cursed_chest_enemies <= 5
-			end
-		},
-		{
-			"spawn_around_origin_unit",
-			breed_name = "skaven_warpfire_thrower",
-			spawn_counter_category = "cursed_chest_elites",
-			difficulty_amount = {
-				hardest = 2,
-				hard = 2,
-				harder = 2,
-				cataclysm = 3,
-				normal = 2
-			},
-			min_distance = num_6 - num_10 * 0.5,
-			max_distance = num_6 + num_10 * 0.5,
-			pre_spawn_unit_func = fn,
-			post_spawn_unit_func = fn_2,
-			spawn_delay = num_5
-		},
-		{
-			"spawn_around_origin_unit",
-			breed_name = "skaven_clan_rat",
-			spawn_counter_category = "cursed_chest_enemies",
-			difficulty_amount = {
-				hardest = 16,
-				hard = 12,
-				harder = 14,
-				cataclysm = 18,
-				normal = 10
-			},
-			min_distance = num_6 - num_10 * 0.5,
-			max_distance = num_6 + num_10 * 0.5,
-			pre_spawn_unit_func = fn,
-			post_spawn_unit_func = fn_2,
-			spawn_delay = num_5
-		},
-		{
-			"delay",
-			duration = num_4
-		},
-		{
-			"continue_when_spawned_count",
-			duration = 20,
-			condition = function (self)
-				-- function 26
-				return self.cursed_chest_elites <= 2
-			end
-		},
-		{
-			"continue_when_spawned_count",
-			duration = 20,
-			condition = function (self)
-				-- function 27
-				return self.cursed_chest_enemies <= 5
-			end
-		},
-		{
-			"spawn_around_origin_unit",
-			breed_name = "skaven_warpfire_thrower",
-			spawn_counter_category = "cursed_chest_elites",
-			difficulty_amount = {
-				hardest = 2,
-				hard = 2,
-				harder = 2,
-				cataclysm = 3,
-				normal = 2
-			},
-			min_distance = num_6 - num_10 * 0.5,
-			max_distance = num_6 + num_10 * 0.5,
-			pre_spawn_unit_func = fn,
-			post_spawn_unit_func = fn_2,
-			spawn_delay = num_5
-		},
-		{
-			"spawn_around_origin_unit",
-			breed_name = "skaven_clan_rat",
-			spawn_counter_category = "cursed_chest_enemies",
-			difficulty_amount = {
-				hardest = 16,
-				hard = 12,
-				harder = 14,
-				cataclysm = 18,
-				normal = 10
-			},
-			min_distance = num_6 - num_10 * 0.5,
-			max_distance = num_6 + num_10 * 0.5,
-			pre_spawn_unit_func = fn,
-			post_spawn_unit_func = fn_2,
-			spawn_delay = num_5
-		},
-		{
-			"delay",
-			duration = 1
-		},
-		{
-			"continue_when_spawned_count",
-			duration = 20,
-			condition = function (self)
-				-- function 28
-				return self.cursed_chest_enemies > 0
-			end
-		},
-		{
-			"continue_when_spawned_count",
-			duration = 20,
-			condition = function (self)
-				-- function 29
-				return self.cursed_chest_elites <= 2
-			end
-		},
-		{
-			"continue_when_spawned_count",
-			duration = 120,
-			condition = function (self)
-				-- function 30
-				return self.cursed_chest_enemies <= 0
-			end
-		}
+		min_distance = AROUND_STATUE_SPAWNS_SPAWN_DISTANCE_SHORT - AROUND_STATUE_SPAWNS_SPREAD_TIGHT * 0.5,
+		max_distance = AROUND_STATUE_SPAWNS_SPAWN_DISTANCE_SHORT + AROUND_STATUE_SPAWNS_SPREAD_TIGHT * 0.5,
+		pre_spawn_unit_func = spawn_decal_func,
+		post_spawn_unit_func = cursed_chest_enemy_despawn_decal_func,
+		spawn_delay = AROUND_STATUE_SPAWNS_DELAY_SPAWN
 	},
-	arena_belakor_around_statue_spawns_skaven_ratling_gunner = {
-		{
-			"delay",
-			duration = num_3
-		},
-		{
-			"spawn_around_origin_unit",
-			breed_name = "skaven_ratling_gunner",
-			spawn_counter_category = "cursed_chest_elites",
-			difficulty_amount = {
-				hardest = 2,
-				hard = 2,
-				harder = 2,
-				cataclysm = 3,
-				normal = 2
-			},
-			min_distance = num_7 - num_10 * 0.5,
-			max_distance = num_7 + num_10 * 0.5,
-			pre_spawn_unit_func = fn,
-			post_spawn_unit_func = fn_2,
-			spawn_delay = num_5
-		},
-		{
-			"spawn_around_origin_unit",
-			breed_name = "skaven_clan_rat",
-			spawn_counter_category = "cursed_chest_enemies",
-			difficulty_amount = {
-				hardest = 16,
-				hard = 12,
-				harder = 14,
-				cataclysm = 18,
-				normal = 10
-			},
-			min_distance = num_6 - num_10 * 0.5,
-			max_distance = num_6 + num_10 * 0.5,
-			pre_spawn_unit_func = fn,
-			post_spawn_unit_func = fn_2,
-			spawn_delay = num_5
-		},
-		{
-			"delay",
-			duration = num_4
-		},
-		{
-			"continue_when_spawned_count",
-			duration = 20,
-			condition = function (self)
-				-- function 31
-				return self.cursed_chest_elites <= 2
-			end
-		},
-		{
-			"continue_when_spawned_count",
-			duration = 20,
-			condition = function (self)
-				-- function 32
-				return self.cursed_chest_enemies <= 5
-			end
-		},
-		{
-			"spawn_around_origin_unit",
-			breed_name = "skaven_ratling_gunner",
-			spawn_counter_category = "cursed_chest_elites",
-			difficulty_amount = {
-				hardest = 2,
-				hard = 2,
-				harder = 2,
-				cataclysm = 3,
-				normal = 2
-			},
-			min_distance = num_7 - num_10 * 0.5,
-			max_distance = num_7 + num_10 * 0.5,
-			pre_spawn_unit_func = fn,
-			post_spawn_unit_func = fn_2,
-			spawn_delay = num_5
-		},
-		{
-			"spawn_around_origin_unit",
-			breed_name = "skaven_clan_rat",
-			spawn_counter_category = "cursed_chest_enemies",
-			difficulty_amount = {
-				hardest = 16,
-				hard = 12,
-				harder = 14,
-				cataclysm = 18,
-				normal = 10
-			},
-			min_distance = num_6 - num_10 * 0.5,
-			max_distance = num_6 + num_10 * 0.5,
-			pre_spawn_unit_func = fn,
-			post_spawn_unit_func = fn_2,
-			spawn_delay = num_5
-		},
-		{
-			"delay",
-			duration = num_4
-		},
-		{
-			"continue_when_spawned_count",
-			duration = 20,
-			condition = function (self)
-				-- function 33
-				return self.cursed_chest_elites <= 2
-			end
-		},
-		{
-			"continue_when_spawned_count",
-			duration = 20,
-			condition = function (self)
-				-- function 34
-				return self.cursed_chest_enemies <= 5
-			end
-		},
-		{
-			"spawn_around_origin_unit",
-			breed_name = "skaven_ratling_gunner",
-			spawn_counter_category = "cursed_chest_elites",
-			difficulty_amount = {
-				hardest = 2,
-				hard = 2,
-				harder = 2,
-				cataclysm = 3,
-				normal = 2
-			},
-			min_distance = num_7 - num_10 * 0.5,
-			max_distance = num_7 + num_10 * 0.5,
-			pre_spawn_unit_func = fn,
-			post_spawn_unit_func = fn_2,
-			spawn_delay = num_5
-		},
-		{
-			"spawn_around_origin_unit",
-			breed_name = "skaven_clan_rat",
-			spawn_counter_category = "cursed_chest_enemies",
-			difficulty_amount = {
-				hardest = 16,
-				hard = 12,
-				harder = 14,
-				cataclysm = 18,
-				normal = 10
-			},
-			min_distance = num_6 - num_10 * 0.5,
-			max_distance = num_6 + num_10 * 0.5,
-			pre_spawn_unit_func = fn,
-			post_spawn_unit_func = fn_2,
-			spawn_delay = num_5
-		},
-		{
-			"delay",
-			duration = 1
-		},
-		{
-			"continue_when_spawned_count",
-			duration = 20,
-			condition = function (self)
-				-- function 35
-				return self.cursed_chest_enemies > 0
-			end
-		},
-		{
-			"continue_when_spawned_count",
-			duration = 20,
-			condition = function (self)
-				-- function 36
-				return self.cursed_chest_elites <= 2
-			end
-		},
-		{
-			"continue_when_spawned_count",
-			duration = 120,
-			condition = function (self)
-				-- function 37
-				return self.cursed_chest_enemies <= 0
-			end
-		}
+	{
+		"delay",
+		duration = AROUND_STATUE_SPAWNS_DELAY_WAVE_2
 	},
-	arena_belakor_around_statue_spawns_skaven_poison_wind_globadier = {
-		{
-			"delay",
-			duration = num_3
-		},
-		{
-			"spawn_around_origin_unit",
-			breed_name = "skaven_poison_wind_globadier",
-			spawn_counter_category = "cursed_chest_elites",
-			difficulty_amount = {
-				hardest = 2,
-				hard = 2,
-				harder = 2,
-				cataclysm = 3,
-				normal = 2
-			},
-			min_distance = num_7 - num_10 * 0.5,
-			max_distance = num_7 + num_10 * 0.5,
-			pre_spawn_unit_func = fn,
-			post_spawn_unit_func = fn_2,
-			spawn_delay = num_5
-		},
-		{
-			"spawn_around_origin_unit",
-			breed_name = "skaven_clan_rat",
-			spawn_counter_category = "cursed_chest_enemies",
-			difficulty_amount = {
-				hardest = 16,
-				hard = 12,
-				harder = 14,
-				cataclysm = 18,
-				normal = 10
-			},
-			min_distance = num_6 - num_10 * 0.5,
-			max_distance = num_6 + num_10 * 0.5,
-			pre_spawn_unit_func = fn,
-			post_spawn_unit_func = fn_2,
-			spawn_delay = num_5
-		},
-		{
-			"delay",
-			duration = num_4
-		},
-		{
-			"continue_when_spawned_count",
-			duration = 20,
-			condition = function (self)
-				-- function 38
-				return self.cursed_chest_elites <= 2
-			end
-		},
-		{
-			"continue_when_spawned_count",
-			duration = 20,
-			condition = function (self)
-				-- function 39
-				return self.cursed_chest_enemies <= 5
-			end
-		},
-		{
-			"spawn_around_origin_unit",
-			breed_name = "skaven_poison_wind_globadier",
-			spawn_counter_category = "cursed_chest_elites",
-			difficulty_amount = {
-				hardest = 2,
-				hard = 2,
-				harder = 2,
-				cataclysm = 3,
-				normal = 2
-			},
-			min_distance = num_7 - num_10 * 0.5,
-			max_distance = num_7 + num_10 * 0.5,
-			pre_spawn_unit_func = fn,
-			post_spawn_unit_func = fn_2,
-			spawn_delay = num_5
-		},
-		{
-			"spawn_around_origin_unit",
-			breed_name = "skaven_clan_rat",
-			spawn_counter_category = "cursed_chest_enemies",
-			difficulty_amount = {
-				hardest = 16,
-				hard = 12,
-				harder = 14,
-				cataclysm = 18,
-				normal = 10
-			},
-			min_distance = num_6 - num_10 * 0.5,
-			max_distance = num_6 + num_10 * 0.5,
-			pre_spawn_unit_func = fn,
-			post_spawn_unit_func = fn_2,
-			spawn_delay = num_5
-		},
-		{
-			"delay",
-			duration = num_4
-		},
-		{
-			"continue_when_spawned_count",
-			duration = 20,
-			condition = function (self)
-				-- function 40
-				return self.cursed_chest_elites <= 2
-			end
-		},
-		{
-			"continue_when_spawned_count",
-			duration = 20,
-			condition = function (self)
-				-- function 41
-				return self.cursed_chest_enemies <= 5
-			end
-		},
-		{
-			"spawn_around_origin_unit",
-			breed_name = "skaven_poison_wind_globadier",
-			spawn_counter_category = "cursed_chest_elites",
-			difficulty_amount = {
-				hardest = 2,
-				hard = 2,
-				harder = 2,
-				cataclysm = 3,
-				normal = 2
-			},
-			min_distance = num_7 - num_10 * 0.5,
-			max_distance = num_7 + num_10 * 0.5,
-			pre_spawn_unit_func = fn,
-			post_spawn_unit_func = fn_2,
-			spawn_delay = num_5
-		},
-		{
-			"spawn_around_origin_unit",
-			breed_name = "skaven_clan_rat",
-			spawn_counter_category = "cursed_chest_enemies",
-			difficulty_amount = {
-				hardest = 16,
-				hard = 12,
-				harder = 14,
-				cataclysm = 18,
-				normal = 10
-			},
-			min_distance = num_6 - num_10 * 0.5,
-			max_distance = num_6 + num_10 * 0.5,
-			pre_spawn_unit_func = fn,
-			post_spawn_unit_func = fn_2,
-			spawn_delay = num_5
-		},
-		{
-			"delay",
-			duration = 1
-		},
-		{
-			"continue_when_spawned_count",
-			duration = 20,
-			condition = function (self)
-				-- function 42
-				return self.cursed_chest_enemies > 0
-			end
-		},
-		{
-			"continue_when_spawned_count",
-			duration = 20,
-			condition = function (self)
-				-- function 43
-				return self.cursed_chest_elites <= 2
-			end
-		},
-		{
-			"continue_when_spawned_count",
-			duration = 120,
-			condition = function (self)
-				-- function 44
-				return self.cursed_chest_enemies <= 0
-			end
-		}
+	{
+		"continue_when_spawned_count",
+		duration = 20,
+		condition = function (counter)
+			-- function 14
+			return counter.cursed_chest_enemies <= 4
+		end
 	},
-	arena_belakor_around_statue_spawns_skaven_rat_ogre = {
-		{
-			"delay",
-			duration = num_3
+	{
+		"spawn_around_origin_unit",
+		breed_name = "skaven_storm_vermin_commander",
+		spawn_counter_category = "cursed_chest_enemies",
+		difficulty_amount = {
+			hardest = 7,
+			hard = 5,
+			harder = 6,
+			cataclysm = 8,
+			normal = 4
 		},
-		{
-			"spawn_around_origin_unit",
-			breed_name = "skaven_rat_ogre",
-			spawn_counter_category = "cursed_chest_enemies",
-			min_distance = num_8 - num_10 * 0.5,
-			max_distance = num_8 + num_10 * 0.5,
-			pre_spawn_unit_func = fn,
-			post_spawn_unit_func = fn_2,
-			spawn_delay = num_5,
-			pre_spawn_func = scripts_settings_terror_events_terror_event_utils.add_enhancements_for_difficulty
-		},
-		{
-			"spawn_around_origin_unit",
-			breed_name = "skaven_clan_rat",
-			spawn_counter_category = "cursed_chest_enemies",
-			difficulty_amount = {
-				hardest = 16,
-				hard = 12,
-				harder = 14,
-				cataclysm = 18,
-				normal = 10
-			},
-			min_distance = num_6 - num_10 * 0.5,
-			max_distance = num_6 + num_10 * 0.5,
-			pre_spawn_unit_func = fn,
-			post_spawn_unit_func = fn_2,
-			spawn_delay = num_5
-		},
-		{
-			"delay",
-			duration = 1
-		},
-		{
-			"continue_when_spawned_count",
-			duration = 20,
-			condition = function (self)
-				-- function 45
-				return self.cursed_chest_enemies > 0
-			end
-		},
-		{
-			"continue_when_spawned_count",
-			duration = 120,
-			condition = function (self)
-				-- function 46
-				return self.cursed_chest_enemies <= 0
-			end
-		}
+		min_distance = AROUND_STATUE_SPAWNS_SPAWN_DISTANCE_SHORT - AROUND_STATUE_SPAWNS_SPREAD_TIGHT * 0.5,
+		max_distance = AROUND_STATUE_SPAWNS_SPAWN_DISTANCE_SHORT + AROUND_STATUE_SPAWNS_SPREAD_TIGHT * 0.5,
+		pre_spawn_unit_func = spawn_decal_func,
+		post_spawn_unit_func = cursed_chest_enemy_despawn_decal_func,
+		spawn_delay = AROUND_STATUE_SPAWNS_DELAY_SPAWN
 	},
-	arena_belakor_around_statue_spawns_skaven_stormfiend = {
-		{
-			"delay",
-			duration = num_3
-		},
-		{
-			"spawn_around_origin_unit",
-			breed_name = "skaven_stormfiend",
-			spawn_counter_category = "cursed_chest_enemies",
-			min_distance = num_8 - num_10 * 0.5,
-			max_distance = num_8 + num_10 * 0.5,
-			pre_spawn_unit_func = fn,
-			post_spawn_unit_func = fn_2,
-			spawn_delay = num_5,
-			pre_spawn_func = scripts_settings_terror_events_terror_event_utils.add_enhancements_for_difficulty
-		},
-		{
-			"spawn_around_origin_unit",
-			breed_name = "skaven_clan_rat",
-			spawn_counter_category = "cursed_chest_enemies",
-			difficulty_amount = {
-				hardest = 16,
-				hard = 12,
-				harder = 14,
-				cataclysm = 18,
-				normal = 10
-			},
-			min_distance = num_6 - num_10 * 0.5,
-			max_distance = num_6 + num_10 * 0.5,
-			pre_spawn_unit_func = fn,
-			post_spawn_unit_func = fn_2,
-			spawn_delay = num_5
-		},
-		{
-			"delay",
-			duration = 1
-		},
-		{
-			"continue_when_spawned_count",
-			duration = 20,
-			condition = function (self)
-				-- function 47
-				return self.cursed_chest_enemies > 0
-			end
-		},
-		{
-			"continue_when_spawned_count",
-			duration = 120,
-			condition = function (self)
-				-- function 48
-				return self.cursed_chest_enemies <= 0
-			end
-		}
+	{
+		"delay",
+		duration = 1
 	},
-	arena_belakor_around_statue_spawns_faction_chaos = {
+	{
+		"continue_when_spawned_count",
+		duration = 20,
+		condition = function (counter)
+			-- function 15
+			return counter.cursed_chest_enemies > 0
+		end
+	},
+	{
+		"continue_when_spawned_count",
+		duration = 120,
+		condition = function (counter)
+			-- function 16
+			return counter.cursed_chest_enemies <= 0
+		end
+	}
+}
+terror_event_blueprints.arena_belakor_around_statue_spawns_vermin_shielded = {
+	{
+		"delay",
+		duration = AROUND_STATUE_SPAWNS_DELAY_WAVE_1
+	},
+	{
+		"spawn_around_origin_unit",
+		breed_name = "skaven_storm_vermin_with_shield",
+		spawn_counter_category = "cursed_chest_enemies",
+		difficulty_amount = {
+			hardest = 5,
+			hard = 3,
+			harder = 4,
+			cataclysm = 6,
+			normal = 2
+		},
+		min_distance = AROUND_STATUE_SPAWNS_SPAWN_DISTANCE_SHORT - AROUND_STATUE_SPAWNS_SPREAD_TIGHT * 0.5,
+		max_distance = AROUND_STATUE_SPAWNS_SPAWN_DISTANCE_SHORT + AROUND_STATUE_SPAWNS_SPREAD_TIGHT * 0.5,
+		pre_spawn_unit_func = spawn_decal_func,
+		post_spawn_unit_func = cursed_chest_enemy_despawn_decal_func,
+		spawn_delay = AROUND_STATUE_SPAWNS_DELAY_SPAWN
+	},
+	{
+		"spawn_around_origin_unit",
+		breed_name = "skaven_clan_rat_with_shield",
+		spawn_counter_category = "cursed_chest_enemies",
+		difficulty_amount = {
+			hardest = 8,
+			hard = 7,
+			harder = 7,
+			cataclysm = 8,
+			normal = 6
+		},
+		min_distance = AROUND_STATUE_SPAWNS_SPAWN_DISTANCE_SHORT - AROUND_STATUE_SPAWNS_SPREAD_TIGHT * 0.5,
+		max_distance = AROUND_STATUE_SPAWNS_SPAWN_DISTANCE_SHORT + AROUND_STATUE_SPAWNS_SPREAD_TIGHT * 0.5,
+		pre_spawn_unit_func = spawn_decal_func,
+		post_spawn_unit_func = cursed_chest_enemy_despawn_decal_func,
+		spawn_delay = AROUND_STATUE_SPAWNS_DELAY_SPAWN
+	},
+	{
+		"delay",
+		duration = AROUND_STATUE_SPAWNS_DELAY_WAVE_2
+	},
+	{
+		"continue_when_spawned_count",
+		duration = 20,
+		condition = function (counter)
+			-- function 17
+			return counter.cursed_chest_enemies <= 5
+		end
+	},
+	{
+		"spawn_around_origin_unit",
+		breed_name = "skaven_storm_vermin_with_shield",
+		spawn_counter_category = "cursed_chest_enemies",
+		difficulty_amount = {
+			hardest = 5,
+			hard = 3,
+			harder = 4,
+			cataclysm = 6,
+			normal = 2
+		},
+		min_distance = AROUND_STATUE_SPAWNS_SPAWN_DISTANCE_SHORT - AROUND_STATUE_SPAWNS_SPREAD_TIGHT * 0.5,
+		max_distance = AROUND_STATUE_SPAWNS_SPAWN_DISTANCE_SHORT + AROUND_STATUE_SPAWNS_SPREAD_TIGHT * 0.5,
+		pre_spawn_unit_func = spawn_decal_func,
+		post_spawn_unit_func = cursed_chest_enemy_despawn_decal_func,
+		spawn_delay = AROUND_STATUE_SPAWNS_DELAY_SPAWN
+	},
+	{
+		"spawn_around_origin_unit",
+		breed_name = "skaven_clan_rat_with_shield",
+		spawn_counter_category = "cursed_chest_enemies",
+		difficulty_amount = {
+			hardest = 8,
+			hard = 7,
+			harder = 7,
+			cataclysm = 8,
+			normal = 6
+		},
+		min_distance = AROUND_STATUE_SPAWNS_SPAWN_DISTANCE_SHORT - AROUND_STATUE_SPAWNS_SPREAD_TIGHT * 0.5,
+		max_distance = AROUND_STATUE_SPAWNS_SPAWN_DISTANCE_SHORT + AROUND_STATUE_SPAWNS_SPREAD_TIGHT * 0.5,
+		pre_spawn_unit_func = spawn_decal_func,
+		post_spawn_unit_func = cursed_chest_enemy_despawn_decal_func,
+		spawn_delay = AROUND_STATUE_SPAWNS_DELAY_SPAWN
+	},
+	{
+		"delay",
+		duration = 1
+	},
+	{
+		"continue_when_spawned_count",
+		duration = 20,
+		condition = function (counter)
+			-- function 18
+			return counter.cursed_chest_enemies > 0
+		end
+	},
+	{
+		"continue_when_spawned_count",
+		duration = 120,
+		condition = function (counter)
+			-- function 19
+			return counter.cursed_chest_enemies <= 0
+		end
+	}
+}
+terror_event_blueprints.arena_belakor_around_statue_spawns_plague_monks = {
+	{
+		"delay",
+		duration = AROUND_STATUE_SPAWNS_DELAY_WAVE_1
+	},
+	{
+		"spawn_around_origin_unit",
+		breed_name = "skaven_plague_monk",
+		spawn_counter_category = "cursed_chest_enemies",
+		difficulty_amount = {
+			hardest = 4,
+			hard = 3,
+			harder = 3,
+			cataclysm = 5,
+			normal = 2
+		},
+		min_distance = AROUND_STATUE_SPAWNS_SPAWN_DISTANCE_SHORT - AROUND_STATUE_SPAWNS_SPREAD_MED * 0.5,
+		max_distance = AROUND_STATUE_SPAWNS_SPAWN_DISTANCE_SHORT + AROUND_STATUE_SPAWNS_SPREAD_MED * 0.5,
+		pre_spawn_unit_func = spawn_decal_func,
+		post_spawn_unit_func = cursed_chest_enemy_despawn_decal_func,
+		spawn_delay = AROUND_STATUE_SPAWNS_DELAY_SPAWN
+	},
+	{
+		"spawn_around_origin_unit",
+		breed_name = "skaven_clan_rat",
+		spawn_counter_category = "cursed_chest_enemies",
+		difficulty_amount = {
+			hardest = 10,
+			hard = 7,
+			harder = 9,
+			cataclysm = 12,
+			normal = 6
+		},
+		min_distance = AROUND_STATUE_SPAWNS_SPAWN_DISTANCE_SHORT - AROUND_STATUE_SPAWNS_SPREAD_MED * 0.5,
+		max_distance = AROUND_STATUE_SPAWNS_SPAWN_DISTANCE_SHORT + AROUND_STATUE_SPAWNS_SPREAD_MED * 0.5,
+		pre_spawn_unit_func = spawn_decal_func,
+		post_spawn_unit_func = cursed_chest_enemy_despawn_decal_func,
+		spawn_delay = AROUND_STATUE_SPAWNS_DELAY_SPAWN
+	},
+	{
+		"delay",
+		duration = AROUND_STATUE_SPAWNS_DELAY_WAVE_2
+	},
+	{
+		"continue_when_spawned_count",
+		duration = 20,
+		condition = function (counter)
+			-- function 20
+			return counter.cursed_chest_enemies <= 5
+		end
+	},
+	{
+		"spawn_around_origin_unit",
+		spawn_counter_category = "cursed_chest_enemies",
+		breed_name = "skaven_plague_monk",
+		distance_to_players = 3,
+		difficulty_amount = {
+			hardest = 4,
+			hard = 3,
+			harder = 3,
+			cataclysm = 5,
+			normal = 2
+		},
+		min_distance = AROUND_STATUE_SPAWNS_SPAWN_DISTANCE_SHORT - AROUND_STATUE_SPAWNS_SPREAD_MED * 0.5,
+		max_distance = AROUND_STATUE_SPAWNS_SPAWN_DISTANCE_SHORT + AROUND_STATUE_SPAWNS_SPREAD_MED * 0.5,
+		pre_spawn_unit_func = spawn_decal_func,
+		post_spawn_unit_func = cursed_chest_enemy_despawn_decal_func,
+		spawn_delay = AROUND_STATUE_SPAWNS_DELAY_SPAWN
+	},
+	{
+		"spawn_around_origin_unit",
+		breed_name = "skaven_clan_rat",
+		spawn_counter_category = "cursed_chest_enemies",
+		difficulty_amount = {
+			hardest = 10,
+			hard = 7,
+			harder = 9,
+			cataclysm = 12,
+			normal = 6
+		},
+		min_distance = AROUND_STATUE_SPAWNS_SPAWN_DISTANCE_SHORT - AROUND_STATUE_SPAWNS_SPREAD_MED * 0.5,
+		max_distance = AROUND_STATUE_SPAWNS_SPAWN_DISTANCE_SHORT + AROUND_STATUE_SPAWNS_SPREAD_MED * 0.5,
+		pre_spawn_unit_func = spawn_decal_func,
+		post_spawn_unit_func = cursed_chest_enemy_despawn_decal_func,
+		spawn_delay = AROUND_STATUE_SPAWNS_DELAY_SPAWN
+	},
+	{
+		"delay",
+		duration = AROUND_STATUE_SPAWNS_DELAY_WAVE_2
+	},
+	{
+		"continue_when_spawned_count",
+		duration = 20,
+		condition = function (counter)
+			-- function 21
+			return counter.cursed_chest_enemies <= 5
+		end
+	},
+	{
+		"spawn_around_origin_unit",
+		breed_name = "skaven_plague_monk",
+		spawn_counter_category = "cursed_chest_enemies",
+		difficulty_amount = {
+			hardest = 5,
+			hard = 3,
+			harder = 3,
+			cataclysm = 6,
+			normal = 2
+		},
+		min_distance = AROUND_STATUE_SPAWNS_SPAWN_DISTANCE_SHORT - AROUND_STATUE_SPAWNS_SPREAD_MED * 0.5,
+		max_distance = AROUND_STATUE_SPAWNS_SPAWN_DISTANCE_SHORT + AROUND_STATUE_SPAWNS_SPREAD_MED * 0.5,
+		pre_spawn_unit_func = spawn_decal_func,
+		post_spawn_unit_func = cursed_chest_enemy_despawn_decal_func,
+		spawn_delay = AROUND_STATUE_SPAWNS_DELAY_SPAWN
+	},
+	{
+		"spawn_around_origin_unit",
+		breed_name = "skaven_clan_rat",
+		spawn_counter_category = "cursed_chest_enemies",
+		difficulty_amount = {
+			hardest = 10,
+			hard = 7,
+			harder = 9,
+			cataclysm = 12,
+			normal = 6
+		},
+		min_distance = AROUND_STATUE_SPAWNS_SPAWN_DISTANCE_SHORT - AROUND_STATUE_SPAWNS_SPREAD_MED * 0.5,
+		max_distance = AROUND_STATUE_SPAWNS_SPAWN_DISTANCE_SHORT + AROUND_STATUE_SPAWNS_SPREAD_MED * 0.5,
+		pre_spawn_unit_func = spawn_decal_func,
+		post_spawn_unit_func = cursed_chest_enemy_despawn_decal_func,
+		spawn_delay = AROUND_STATUE_SPAWNS_DELAY_SPAWN
+	},
+	{
+		"delay",
+		duration = 1
+	},
+	{
+		"continue_when_spawned_count",
+		duration = 20,
+		condition = function (counter)
+			-- function 22
+			return counter.cursed_chest_enemies > 0
+		end
+	},
+	{
+		"continue_when_spawned_count",
+		duration = 120,
+		condition = function (counter)
+			-- function 23
+			return counter.cursed_chest_enemies <= 0
+		end
+	}
+}
+terror_event_blueprints.arena_belakor_around_statue_spawns_skaven_warpfire_thrower = {
+	{
+		"delay",
+		duration = AROUND_STATUE_SPAWNS_DELAY_WAVE_1
+	},
+	{
+		"spawn_around_origin_unit",
+		breed_name = "skaven_warpfire_thrower",
+		spawn_counter_category = "cursed_chest_elites",
+		difficulty_amount = {
+			hardest = 2,
+			hard = 2,
+			harder = 2,
+			cataclysm = 3,
+			normal = 2
+		},
+		min_distance = AROUND_STATUE_SPAWNS_SPAWN_DISTANCE_SHORT - AROUND_STATUE_SPAWNS_SPREAD_MED * 0.5,
+		max_distance = AROUND_STATUE_SPAWNS_SPAWN_DISTANCE_SHORT + AROUND_STATUE_SPAWNS_SPREAD_MED * 0.5,
+		pre_spawn_unit_func = spawn_decal_func,
+		post_spawn_unit_func = cursed_chest_enemy_despawn_decal_func,
+		spawn_delay = AROUND_STATUE_SPAWNS_DELAY_SPAWN
+	},
+	{
+		"spawn_around_origin_unit",
+		breed_name = "skaven_clan_rat",
+		spawn_counter_category = "cursed_chest_enemies",
+		difficulty_amount = {
+			hardest = 16,
+			hard = 12,
+			harder = 14,
+			cataclysm = 18,
+			normal = 10
+		},
+		min_distance = AROUND_STATUE_SPAWNS_SPAWN_DISTANCE_SHORT - AROUND_STATUE_SPAWNS_SPREAD_MED * 0.5,
+		max_distance = AROUND_STATUE_SPAWNS_SPAWN_DISTANCE_SHORT + AROUND_STATUE_SPAWNS_SPREAD_MED * 0.5,
+		pre_spawn_unit_func = spawn_decal_func,
+		post_spawn_unit_func = cursed_chest_enemy_despawn_decal_func,
+		spawn_delay = AROUND_STATUE_SPAWNS_DELAY_SPAWN
+	},
+	{
+		"delay",
+		duration = AROUND_STATUE_SPAWNS_DELAY_WAVE_2
+	},
+	{
+		"continue_when_spawned_count",
+		duration = 20,
+		condition = function (counter)
+			-- function 24
+			return counter.cursed_chest_elites <= 2
+		end
+	},
+	{
+		"continue_when_spawned_count",
+		duration = 20,
+		condition = function (counter)
+			-- function 25
+			return counter.cursed_chest_enemies <= 5
+		end
+	},
+	{
+		"spawn_around_origin_unit",
+		breed_name = "skaven_warpfire_thrower",
+		spawn_counter_category = "cursed_chest_elites",
+		difficulty_amount = {
+			hardest = 2,
+			hard = 2,
+			harder = 2,
+			cataclysm = 3,
+			normal = 2
+		},
+		min_distance = AROUND_STATUE_SPAWNS_SPAWN_DISTANCE_SHORT - AROUND_STATUE_SPAWNS_SPREAD_MED * 0.5,
+		max_distance = AROUND_STATUE_SPAWNS_SPAWN_DISTANCE_SHORT + AROUND_STATUE_SPAWNS_SPREAD_MED * 0.5,
+		pre_spawn_unit_func = spawn_decal_func,
+		post_spawn_unit_func = cursed_chest_enemy_despawn_decal_func,
+		spawn_delay = AROUND_STATUE_SPAWNS_DELAY_SPAWN
+	},
+	{
+		"spawn_around_origin_unit",
+		breed_name = "skaven_clan_rat",
+		spawn_counter_category = "cursed_chest_enemies",
+		difficulty_amount = {
+			hardest = 16,
+			hard = 12,
+			harder = 14,
+			cataclysm = 18,
+			normal = 10
+		},
+		min_distance = AROUND_STATUE_SPAWNS_SPAWN_DISTANCE_SHORT - AROUND_STATUE_SPAWNS_SPREAD_MED * 0.5,
+		max_distance = AROUND_STATUE_SPAWNS_SPAWN_DISTANCE_SHORT + AROUND_STATUE_SPAWNS_SPREAD_MED * 0.5,
+		pre_spawn_unit_func = spawn_decal_func,
+		post_spawn_unit_func = cursed_chest_enemy_despawn_decal_func,
+		spawn_delay = AROUND_STATUE_SPAWNS_DELAY_SPAWN
+	},
+	{
+		"delay",
+		duration = AROUND_STATUE_SPAWNS_DELAY_WAVE_2
+	},
+	{
+		"continue_when_spawned_count",
+		duration = 20,
+		condition = function (counter)
+			-- function 26
+			return counter.cursed_chest_elites <= 2
+		end
+	},
+	{
+		"continue_when_spawned_count",
+		duration = 20,
+		condition = function (counter)
+			-- function 27
+			return counter.cursed_chest_enemies <= 5
+		end
+	},
+	{
+		"spawn_around_origin_unit",
+		breed_name = "skaven_warpfire_thrower",
+		spawn_counter_category = "cursed_chest_elites",
+		difficulty_amount = {
+			hardest = 2,
+			hard = 2,
+			harder = 2,
+			cataclysm = 3,
+			normal = 2
+		},
+		min_distance = AROUND_STATUE_SPAWNS_SPAWN_DISTANCE_SHORT - AROUND_STATUE_SPAWNS_SPREAD_MED * 0.5,
+		max_distance = AROUND_STATUE_SPAWNS_SPAWN_DISTANCE_SHORT + AROUND_STATUE_SPAWNS_SPREAD_MED * 0.5,
+		pre_spawn_unit_func = spawn_decal_func,
+		post_spawn_unit_func = cursed_chest_enemy_despawn_decal_func,
+		spawn_delay = AROUND_STATUE_SPAWNS_DELAY_SPAWN
+	},
+	{
+		"spawn_around_origin_unit",
+		breed_name = "skaven_clan_rat",
+		spawn_counter_category = "cursed_chest_enemies",
+		difficulty_amount = {
+			hardest = 16,
+			hard = 12,
+			harder = 14,
+			cataclysm = 18,
+			normal = 10
+		},
+		min_distance = AROUND_STATUE_SPAWNS_SPAWN_DISTANCE_SHORT - AROUND_STATUE_SPAWNS_SPREAD_MED * 0.5,
+		max_distance = AROUND_STATUE_SPAWNS_SPAWN_DISTANCE_SHORT + AROUND_STATUE_SPAWNS_SPREAD_MED * 0.5,
+		pre_spawn_unit_func = spawn_decal_func,
+		post_spawn_unit_func = cursed_chest_enemy_despawn_decal_func,
+		spawn_delay = AROUND_STATUE_SPAWNS_DELAY_SPAWN
+	},
+	{
+		"delay",
+		duration = 1
+	},
+	{
+		"continue_when_spawned_count",
+		duration = 20,
+		condition = function (counter)
+			-- function 28
+			return counter.cursed_chest_enemies > 0
+		end
+	},
+	{
+		"continue_when_spawned_count",
+		duration = 20,
+		condition = function (counter)
+			-- function 29
+			return counter.cursed_chest_elites <= 2
+		end
+	},
+	{
+		"continue_when_spawned_count",
+		duration = 120,
+		condition = function (counter)
+			-- function 30
+			return counter.cursed_chest_enemies <= 0
+		end
+	}
+}
+terror_event_blueprints.arena_belakor_around_statue_spawns_skaven_ratling_gunner = {
+	{
+		"delay",
+		duration = AROUND_STATUE_SPAWNS_DELAY_WAVE_1
+	},
+	{
+		"spawn_around_origin_unit",
+		breed_name = "skaven_ratling_gunner",
+		spawn_counter_category = "cursed_chest_elites",
+		difficulty_amount = {
+			hardest = 2,
+			hard = 2,
+			harder = 2,
+			cataclysm = 3,
+			normal = 2
+		},
+		min_distance = AROUND_STATUE_SPAWNS_SPAWN_SPAWN_DISTANCE_MED - AROUND_STATUE_SPAWNS_SPREAD_MED * 0.5,
+		max_distance = AROUND_STATUE_SPAWNS_SPAWN_SPAWN_DISTANCE_MED + AROUND_STATUE_SPAWNS_SPREAD_MED * 0.5,
+		pre_spawn_unit_func = spawn_decal_func,
+		post_spawn_unit_func = cursed_chest_enemy_despawn_decal_func,
+		spawn_delay = AROUND_STATUE_SPAWNS_DELAY_SPAWN
+	},
+	{
+		"spawn_around_origin_unit",
+		breed_name = "skaven_clan_rat",
+		spawn_counter_category = "cursed_chest_enemies",
+		difficulty_amount = {
+			hardest = 16,
+			hard = 12,
+			harder = 14,
+			cataclysm = 18,
+			normal = 10
+		},
+		min_distance = AROUND_STATUE_SPAWNS_SPAWN_DISTANCE_SHORT - AROUND_STATUE_SPAWNS_SPREAD_MED * 0.5,
+		max_distance = AROUND_STATUE_SPAWNS_SPAWN_DISTANCE_SHORT + AROUND_STATUE_SPAWNS_SPREAD_MED * 0.5,
+		pre_spawn_unit_func = spawn_decal_func,
+		post_spawn_unit_func = cursed_chest_enemy_despawn_decal_func,
+		spawn_delay = AROUND_STATUE_SPAWNS_DELAY_SPAWN
+	},
+	{
+		"delay",
+		duration = AROUND_STATUE_SPAWNS_DELAY_WAVE_2
+	},
+	{
+		"continue_when_spawned_count",
+		duration = 20,
+		condition = function (counter)
+			-- function 31
+			return counter.cursed_chest_elites <= 2
+		end
+	},
+	{
+		"continue_when_spawned_count",
+		duration = 20,
+		condition = function (counter)
+			-- function 32
+			return counter.cursed_chest_enemies <= 5
+		end
+	},
+	{
+		"spawn_around_origin_unit",
+		breed_name = "skaven_ratling_gunner",
+		spawn_counter_category = "cursed_chest_elites",
+		difficulty_amount = {
+			hardest = 2,
+			hard = 2,
+			harder = 2,
+			cataclysm = 3,
+			normal = 2
+		},
+		min_distance = AROUND_STATUE_SPAWNS_SPAWN_SPAWN_DISTANCE_MED - AROUND_STATUE_SPAWNS_SPREAD_MED * 0.5,
+		max_distance = AROUND_STATUE_SPAWNS_SPAWN_SPAWN_DISTANCE_MED + AROUND_STATUE_SPAWNS_SPREAD_MED * 0.5,
+		pre_spawn_unit_func = spawn_decal_func,
+		post_spawn_unit_func = cursed_chest_enemy_despawn_decal_func,
+		spawn_delay = AROUND_STATUE_SPAWNS_DELAY_SPAWN
+	},
+	{
+		"spawn_around_origin_unit",
+		breed_name = "skaven_clan_rat",
+		spawn_counter_category = "cursed_chest_enemies",
+		difficulty_amount = {
+			hardest = 16,
+			hard = 12,
+			harder = 14,
+			cataclysm = 18,
+			normal = 10
+		},
+		min_distance = AROUND_STATUE_SPAWNS_SPAWN_DISTANCE_SHORT - AROUND_STATUE_SPAWNS_SPREAD_MED * 0.5,
+		max_distance = AROUND_STATUE_SPAWNS_SPAWN_DISTANCE_SHORT + AROUND_STATUE_SPAWNS_SPREAD_MED * 0.5,
+		pre_spawn_unit_func = spawn_decal_func,
+		post_spawn_unit_func = cursed_chest_enemy_despawn_decal_func,
+		spawn_delay = AROUND_STATUE_SPAWNS_DELAY_SPAWN
+	},
+	{
+		"delay",
+		duration = AROUND_STATUE_SPAWNS_DELAY_WAVE_2
+	},
+	{
+		"continue_when_spawned_count",
+		duration = 20,
+		condition = function (counter)
+			-- function 33
+			return counter.cursed_chest_elites <= 2
+		end
+	},
+	{
+		"continue_when_spawned_count",
+		duration = 20,
+		condition = function (counter)
+			-- function 34
+			return counter.cursed_chest_enemies <= 5
+		end
+	},
+	{
+		"spawn_around_origin_unit",
+		breed_name = "skaven_ratling_gunner",
+		spawn_counter_category = "cursed_chest_elites",
+		difficulty_amount = {
+			hardest = 2,
+			hard = 2,
+			harder = 2,
+			cataclysm = 3,
+			normal = 2
+		},
+		min_distance = AROUND_STATUE_SPAWNS_SPAWN_SPAWN_DISTANCE_MED - AROUND_STATUE_SPAWNS_SPREAD_MED * 0.5,
+		max_distance = AROUND_STATUE_SPAWNS_SPAWN_SPAWN_DISTANCE_MED + AROUND_STATUE_SPAWNS_SPREAD_MED * 0.5,
+		pre_spawn_unit_func = spawn_decal_func,
+		post_spawn_unit_func = cursed_chest_enemy_despawn_decal_func,
+		spawn_delay = AROUND_STATUE_SPAWNS_DELAY_SPAWN
+	},
+	{
+		"spawn_around_origin_unit",
+		breed_name = "skaven_clan_rat",
+		spawn_counter_category = "cursed_chest_enemies",
+		difficulty_amount = {
+			hardest = 16,
+			hard = 12,
+			harder = 14,
+			cataclysm = 18,
+			normal = 10
+		},
+		min_distance = AROUND_STATUE_SPAWNS_SPAWN_DISTANCE_SHORT - AROUND_STATUE_SPAWNS_SPREAD_MED * 0.5,
+		max_distance = AROUND_STATUE_SPAWNS_SPAWN_DISTANCE_SHORT + AROUND_STATUE_SPAWNS_SPREAD_MED * 0.5,
+		pre_spawn_unit_func = spawn_decal_func,
+		post_spawn_unit_func = cursed_chest_enemy_despawn_decal_func,
+		spawn_delay = AROUND_STATUE_SPAWNS_DELAY_SPAWN
+	},
+	{
+		"delay",
+		duration = 1
+	},
+	{
+		"continue_when_spawned_count",
+		duration = 20,
+		condition = function (counter)
+			-- function 35
+			return counter.cursed_chest_enemies > 0
+		end
+	},
+	{
+		"continue_when_spawned_count",
+		duration = 20,
+		condition = function (counter)
+			-- function 36
+			return counter.cursed_chest_elites <= 2
+		end
+	},
+	{
+		"continue_when_spawned_count",
+		duration = 120,
+		condition = function (counter)
+			-- function 37
+			return counter.cursed_chest_enemies <= 0
+		end
+	}
+}
+terror_event_blueprints.arena_belakor_around_statue_spawns_skaven_poison_wind_globadier = {
+	{
+		"delay",
+		duration = AROUND_STATUE_SPAWNS_DELAY_WAVE_1
+	},
+	{
+		"spawn_around_origin_unit",
+		breed_name = "skaven_poison_wind_globadier",
+		spawn_counter_category = "cursed_chest_elites",
+		difficulty_amount = {
+			hardest = 2,
+			hard = 2,
+			harder = 2,
+			cataclysm = 3,
+			normal = 2
+		},
+		min_distance = AROUND_STATUE_SPAWNS_SPAWN_SPAWN_DISTANCE_MED - AROUND_STATUE_SPAWNS_SPREAD_MED * 0.5,
+		max_distance = AROUND_STATUE_SPAWNS_SPAWN_SPAWN_DISTANCE_MED + AROUND_STATUE_SPAWNS_SPREAD_MED * 0.5,
+		pre_spawn_unit_func = spawn_decal_func,
+		post_spawn_unit_func = cursed_chest_enemy_despawn_decal_func,
+		spawn_delay = AROUND_STATUE_SPAWNS_DELAY_SPAWN
+	},
+	{
+		"spawn_around_origin_unit",
+		breed_name = "skaven_clan_rat",
+		spawn_counter_category = "cursed_chest_enemies",
+		difficulty_amount = {
+			hardest = 16,
+			hard = 12,
+			harder = 14,
+			cataclysm = 18,
+			normal = 10
+		},
+		min_distance = AROUND_STATUE_SPAWNS_SPAWN_DISTANCE_SHORT - AROUND_STATUE_SPAWNS_SPREAD_MED * 0.5,
+		max_distance = AROUND_STATUE_SPAWNS_SPAWN_DISTANCE_SHORT + AROUND_STATUE_SPAWNS_SPREAD_MED * 0.5,
+		pre_spawn_unit_func = spawn_decal_func,
+		post_spawn_unit_func = cursed_chest_enemy_despawn_decal_func,
+		spawn_delay = AROUND_STATUE_SPAWNS_DELAY_SPAWN
+	},
+	{
+		"delay",
+		duration = AROUND_STATUE_SPAWNS_DELAY_WAVE_2
+	},
+	{
+		"continue_when_spawned_count",
+		duration = 20,
+		condition = function (counter)
+			-- function 38
+			return counter.cursed_chest_elites <= 2
+		end
+	},
+	{
+		"continue_when_spawned_count",
+		duration = 20,
+		condition = function (counter)
+			-- function 39
+			return counter.cursed_chest_enemies <= 5
+		end
+	},
+	{
+		"spawn_around_origin_unit",
+		breed_name = "skaven_poison_wind_globadier",
+		spawn_counter_category = "cursed_chest_elites",
+		difficulty_amount = {
+			hardest = 2,
+			hard = 2,
+			harder = 2,
+			cataclysm = 3,
+			normal = 2
+		},
+		min_distance = AROUND_STATUE_SPAWNS_SPAWN_SPAWN_DISTANCE_MED - AROUND_STATUE_SPAWNS_SPREAD_MED * 0.5,
+		max_distance = AROUND_STATUE_SPAWNS_SPAWN_SPAWN_DISTANCE_MED + AROUND_STATUE_SPAWNS_SPREAD_MED * 0.5,
+		pre_spawn_unit_func = spawn_decal_func,
+		post_spawn_unit_func = cursed_chest_enemy_despawn_decal_func,
+		spawn_delay = AROUND_STATUE_SPAWNS_DELAY_SPAWN
+	},
+	{
+		"spawn_around_origin_unit",
+		breed_name = "skaven_clan_rat",
+		spawn_counter_category = "cursed_chest_enemies",
+		difficulty_amount = {
+			hardest = 16,
+			hard = 12,
+			harder = 14,
+			cataclysm = 18,
+			normal = 10
+		},
+		min_distance = AROUND_STATUE_SPAWNS_SPAWN_DISTANCE_SHORT - AROUND_STATUE_SPAWNS_SPREAD_MED * 0.5,
+		max_distance = AROUND_STATUE_SPAWNS_SPAWN_DISTANCE_SHORT + AROUND_STATUE_SPAWNS_SPREAD_MED * 0.5,
+		pre_spawn_unit_func = spawn_decal_func,
+		post_spawn_unit_func = cursed_chest_enemy_despawn_decal_func,
+		spawn_delay = AROUND_STATUE_SPAWNS_DELAY_SPAWN
+	},
+	{
+		"delay",
+		duration = AROUND_STATUE_SPAWNS_DELAY_WAVE_2
+	},
+	{
+		"continue_when_spawned_count",
+		duration = 20,
+		condition = function (counter)
+			-- function 40
+			return counter.cursed_chest_elites <= 2
+		end
+	},
+	{
+		"continue_when_spawned_count",
+		duration = 20,
+		condition = function (counter)
+			-- function 41
+			return counter.cursed_chest_enemies <= 5
+		end
+	},
+	{
+		"spawn_around_origin_unit",
+		breed_name = "skaven_poison_wind_globadier",
+		spawn_counter_category = "cursed_chest_elites",
+		difficulty_amount = {
+			hardest = 2,
+			hard = 2,
+			harder = 2,
+			cataclysm = 3,
+			normal = 2
+		},
+		min_distance = AROUND_STATUE_SPAWNS_SPAWN_SPAWN_DISTANCE_MED - AROUND_STATUE_SPAWNS_SPREAD_MED * 0.5,
+		max_distance = AROUND_STATUE_SPAWNS_SPAWN_SPAWN_DISTANCE_MED + AROUND_STATUE_SPAWNS_SPREAD_MED * 0.5,
+		pre_spawn_unit_func = spawn_decal_func,
+		post_spawn_unit_func = cursed_chest_enemy_despawn_decal_func,
+		spawn_delay = AROUND_STATUE_SPAWNS_DELAY_SPAWN
+	},
+	{
+		"spawn_around_origin_unit",
+		breed_name = "skaven_clan_rat",
+		spawn_counter_category = "cursed_chest_enemies",
+		difficulty_amount = {
+			hardest = 16,
+			hard = 12,
+			harder = 14,
+			cataclysm = 18,
+			normal = 10
+		},
+		min_distance = AROUND_STATUE_SPAWNS_SPAWN_DISTANCE_SHORT - AROUND_STATUE_SPAWNS_SPREAD_MED * 0.5,
+		max_distance = AROUND_STATUE_SPAWNS_SPAWN_DISTANCE_SHORT + AROUND_STATUE_SPAWNS_SPREAD_MED * 0.5,
+		pre_spawn_unit_func = spawn_decal_func,
+		post_spawn_unit_func = cursed_chest_enemy_despawn_decal_func,
+		spawn_delay = AROUND_STATUE_SPAWNS_DELAY_SPAWN
+	},
+	{
+		"delay",
+		duration = 1
+	},
+	{
+		"continue_when_spawned_count",
+		duration = 20,
+		condition = function (counter)
+			-- function 42
+			return counter.cursed_chest_enemies > 0
+		end
+	},
+	{
+		"continue_when_spawned_count",
+		duration = 20,
+		condition = function (counter)
+			-- function 43
+			return counter.cursed_chest_elites <= 2
+		end
+	},
+	{
+		"continue_when_spawned_count",
+		duration = 120,
+		condition = function (counter)
+			-- function 44
+			return counter.cursed_chest_enemies <= 0
+		end
+	}
+}
+terror_event_blueprints.arena_belakor_around_statue_spawns_skaven_rat_ogre = {
+	{
+		"delay",
+		duration = AROUND_STATUE_SPAWNS_DELAY_WAVE_1
+	},
+	{
+		"spawn_around_origin_unit",
+		breed_name = "skaven_rat_ogre",
+		spawn_counter_category = "cursed_chest_enemies",
+		min_distance = AROUND_STATUE_SPAWNS_SPAWN_DISTANCE_LONG - AROUND_STATUE_SPAWNS_SPREAD_MED * 0.5,
+		max_distance = AROUND_STATUE_SPAWNS_SPAWN_DISTANCE_LONG + AROUND_STATUE_SPAWNS_SPREAD_MED * 0.5,
+		pre_spawn_unit_func = spawn_decal_func,
+		post_spawn_unit_func = cursed_chest_enemy_despawn_decal_func,
+		spawn_delay = AROUND_STATUE_SPAWNS_DELAY_SPAWN,
+		pre_spawn_func = TerrorEventUtils.add_enhancements_for_difficulty
+	},
+	{
+		"spawn_around_origin_unit",
+		breed_name = "skaven_clan_rat",
+		spawn_counter_category = "cursed_chest_enemies",
+		difficulty_amount = {
+			hardest = 16,
+			hard = 12,
+			harder = 14,
+			cataclysm = 18,
+			normal = 10
+		},
+		min_distance = AROUND_STATUE_SPAWNS_SPAWN_DISTANCE_SHORT - AROUND_STATUE_SPAWNS_SPREAD_MED * 0.5,
+		max_distance = AROUND_STATUE_SPAWNS_SPAWN_DISTANCE_SHORT + AROUND_STATUE_SPAWNS_SPREAD_MED * 0.5,
+		pre_spawn_unit_func = spawn_decal_func,
+		post_spawn_unit_func = cursed_chest_enemy_despawn_decal_func,
+		spawn_delay = AROUND_STATUE_SPAWNS_DELAY_SPAWN
+	},
+	{
+		"delay",
+		duration = 1
+	},
+	{
+		"continue_when_spawned_count",
+		duration = 20,
+		condition = function (counter)
+			-- function 45
+			return counter.cursed_chest_enemies > 0
+		end
+	},
+	{
+		"continue_when_spawned_count",
+		duration = 120,
+		condition = function (counter)
+			-- function 46
+			return counter.cursed_chest_enemies <= 0
+		end
+	}
+}
+terror_event_blueprints.arena_belakor_around_statue_spawns_skaven_stormfiend = {
+	{
+		"delay",
+		duration = AROUND_STATUE_SPAWNS_DELAY_WAVE_1
+	},
+	{
+		"spawn_around_origin_unit",
+		breed_name = "skaven_stormfiend",
+		spawn_counter_category = "cursed_chest_enemies",
+		min_distance = AROUND_STATUE_SPAWNS_SPAWN_DISTANCE_LONG - AROUND_STATUE_SPAWNS_SPREAD_MED * 0.5,
+		max_distance = AROUND_STATUE_SPAWNS_SPAWN_DISTANCE_LONG + AROUND_STATUE_SPAWNS_SPREAD_MED * 0.5,
+		pre_spawn_unit_func = spawn_decal_func,
+		post_spawn_unit_func = cursed_chest_enemy_despawn_decal_func,
+		spawn_delay = AROUND_STATUE_SPAWNS_DELAY_SPAWN,
+		pre_spawn_func = TerrorEventUtils.add_enhancements_for_difficulty
+	},
+	{
+		"spawn_around_origin_unit",
+		breed_name = "skaven_clan_rat",
+		spawn_counter_category = "cursed_chest_enemies",
+		difficulty_amount = {
+			hardest = 16,
+			hard = 12,
+			harder = 14,
+			cataclysm = 18,
+			normal = 10
+		},
+		min_distance = AROUND_STATUE_SPAWNS_SPAWN_DISTANCE_SHORT - AROUND_STATUE_SPAWNS_SPREAD_MED * 0.5,
+		max_distance = AROUND_STATUE_SPAWNS_SPAWN_DISTANCE_SHORT + AROUND_STATUE_SPAWNS_SPREAD_MED * 0.5,
+		pre_spawn_unit_func = spawn_decal_func,
+		post_spawn_unit_func = cursed_chest_enemy_despawn_decal_func,
+		spawn_delay = AROUND_STATUE_SPAWNS_DELAY_SPAWN
+	},
+	{
+		"delay",
+		duration = 1
+	},
+	{
+		"continue_when_spawned_count",
+		duration = 20,
+		condition = function (counter)
+			-- function 47
+			return counter.cursed_chest_enemies > 0
+		end
+	},
+	{
+		"continue_when_spawned_count",
+		duration = 120,
+		condition = function (counter)
+			-- function 48
+			return counter.cursed_chest_enemies <= 0
+		end
+	}
+}
+terror_event_blueprints.arena_belakor_around_statue_spawns_faction_chaos = {
+	{
+		"one_of",
 		{
-			"one_of",
 			{
-				{
-					"inject_event",
-					weighted_event_names = {
-						{
-							weight = 3,
-							event_name = "arena_belakor_around_statue_spawns_chaos_raider"
-						},
-						{
-							weight = 3,
-							event_name = "arena_belakor_around_statue_spawns_chaos_berzerker"
-						},
-						{
-							weight = 3,
-							event_name = "arena_belakor_around_statue_spawns_chaos_warrior"
-						},
-						{
-							weight = 3,
-							event_name = "arena_belakor_around_statue_spawns_chaos_vortex_sorcerer"
-						},
-						{
-							weight = 3,
-							event_name = "arena_belakor_around_statue_spawns_chaos_corruptor_sorcerer"
-						},
-						{
-							weight = 3,
-							event_name = "arena_belakor_around_statue_spawns_chaos_troll"
-						},
-						{
-							weight = 3,
-							event_name = "arena_belakor_around_statue_spawns_chaos_spawn"
-						}
+				"inject_event",
+				weighted_event_names = {
+					{
+						weight = 3,
+						event_name = "arena_belakor_around_statue_spawns_chaos_raider"
+					},
+					{
+						weight = 3,
+						event_name = "arena_belakor_around_statue_spawns_chaos_berzerker"
+					},
+					{
+						weight = 3,
+						event_name = "arena_belakor_around_statue_spawns_chaos_warrior"
+					},
+					{
+						weight = 3,
+						event_name = "arena_belakor_around_statue_spawns_chaos_vortex_sorcerer"
+					},
+					{
+						weight = 3,
+						event_name = "arena_belakor_around_statue_spawns_chaos_corruptor_sorcerer"
+					},
+					{
+						weight = 3,
+						event_name = "arena_belakor_around_statue_spawns_chaos_troll"
+					},
+					{
+						weight = 3,
+						event_name = "arena_belakor_around_statue_spawns_chaos_spawn"
 					}
 				}
 			}
 		}
+	}
+}
+terror_event_blueprints.arena_belakor_around_statue_spawns_chaos_raider = {
+	{
+		"delay",
+		duration = AROUND_STATUE_SPAWNS_DELAY_WAVE_1
 	},
-	arena_belakor_around_statue_spawns_chaos_raider = {
-		{
-			"delay",
-			duration = num_3
+	{
+		"spawn_around_origin_unit",
+		breed_name = "chaos_raider",
+		spawn_delay = 4,
+		spawn_counter_category = "cursed_chest_enemies",
+		difficulty_amount = {
+			hardest = 5,
+			hard = 3,
+			harder = 4,
+			cataclysm = 6,
+			normal = 2
 		},
-		{
-			"spawn_around_origin_unit",
-			breed_name = "chaos_raider",
-			spawn_delay = 4,
-			spawn_counter_category = "cursed_chest_enemies",
-			difficulty_amount = {
-				hardest = 5,
-				hard = 3,
-				harder = 4,
-				cataclysm = 6,
-				normal = 2
-			},
-			min_distance = num_6 - num_10 * 0.5,
-			max_distance = num_6 + num_10 * 0.5,
-			pre_spawn_unit_func = fn,
-			post_spawn_unit_func = fn_2
-		},
-		{
-			"spawn_around_origin_unit",
-			breed_name = "chaos_marauder",
-			spawn_delay = 4,
-			spawn_counter_category = "cursed_chest_enemies",
-			difficulty_amount = {
-				hardest = 8,
-				hard = 7,
-				harder = 7,
-				cataclysm = 8,
-				normal = 6
-			},
-			min_distance = num_6 - num_10 * 0.5,
-			max_distance = num_6 + num_10 * 0.5,
-			pre_spawn_unit_func = fn,
-			post_spawn_unit_func = fn_2
-		},
-		{
-			"delay",
-			duration = num_4
-		},
-		{
-			"continue_when_spawned_count",
-			duration = 120,
-			condition = function (self)
-				-- function 49
-				return self.cursed_chest_enemies <= 5
-			end
-		},
-		{
-			"spawn_around_origin_unit",
-			breed_name = "chaos_raider",
-			spawn_counter_category = "cursed_chest_enemies",
-			difficulty_amount = {
-				hardest = 5,
-				hard = 3,
-				harder = 4,
-				cataclysm = 6,
-				normal = 2
-			},
-			min_distance = num_6 - num_10 * 0.5,
-			max_distance = num_6 + num_10 * 0.5,
-			pre_spawn_unit_func = fn,
-			post_spawn_unit_func = fn_2,
-			spawn_delay = num_5
-		},
-		{
-			"spawn_around_origin_unit",
-			breed_name = "chaos_marauder",
-			spawn_counter_category = "cursed_chest_enemies",
-			difficulty_amount = {
-				hardest = 8,
-				hard = 7,
-				harder = 7,
-				cataclysm = 8,
-				normal = 6
-			},
-			min_distance = num_6 - num_10 * 0.5,
-			max_distance = num_6 + num_10 * 0.5,
-			pre_spawn_unit_func = fn,
-			post_spawn_unit_func = fn_2,
-			spawn_delay = num_5
-		},
-		{
-			"delay",
-			duration = num_4
-		},
-		{
-			"continue_when_spawned_count",
-			duration = 120,
-			condition = function (self)
-				-- function 50
-				return self.cursed_chest_enemies <= 5
-			end
-		},
-		{
-			"spawn_around_origin_unit",
-			breed_name = "chaos_raider",
-			spawn_counter_category = "cursed_chest_enemies",
-			difficulty_amount = {
-				hardest = 5,
-				hard = 3,
-				harder = 4,
-				cataclysm = 6,
-				normal = 2
-			},
-			min_distance = num_6 - num_10 * 0.5,
-			max_distance = num_6 + num_10 * 0.5,
-			pre_spawn_unit_func = fn,
-			post_spawn_unit_func = fn_2,
-			spawn_delay = num_5
-		},
-		{
-			"spawn_around_origin_unit",
-			breed_name = "chaos_marauder",
-			spawn_counter_category = "cursed_chest_enemies",
-			difficulty_amount = {
-				hardest = 8,
-				hard = 7,
-				harder = 7,
-				cataclysm = 8,
-				normal = 6
-			},
-			min_distance = num_6 - num_10 * 0.5,
-			max_distance = num_6 + num_10 * 0.5,
-			pre_spawn_unit_func = fn,
-			post_spawn_unit_func = fn_2,
-			spawn_delay = num_5
-		},
-		{
-			"delay",
-			duration = 1
-		},
-		{
-			"continue_when_spawned_count",
-			duration = 20,
-			condition = function (self)
-				-- function 51
-				return self.cursed_chest_enemies > 0
-			end
-		},
-		{
-			"continue_when_spawned_count",
-			duration = 120,
-			condition = function (self)
-				-- function 52
-				return self.cursed_chest_enemies <= 0
-			end
-		}
+		min_distance = AROUND_STATUE_SPAWNS_SPAWN_DISTANCE_SHORT - AROUND_STATUE_SPAWNS_SPREAD_MED * 0.5,
+		max_distance = AROUND_STATUE_SPAWNS_SPAWN_DISTANCE_SHORT + AROUND_STATUE_SPAWNS_SPREAD_MED * 0.5,
+		pre_spawn_unit_func = spawn_decal_func,
+		post_spawn_unit_func = cursed_chest_enemy_despawn_decal_func
 	},
-	arena_belakor_around_statue_spawns_chaos_berzerker = {
-		{
-			"delay",
-			duration = num_3
+	{
+		"spawn_around_origin_unit",
+		breed_name = "chaos_marauder",
+		spawn_delay = 4,
+		spawn_counter_category = "cursed_chest_enemies",
+		difficulty_amount = {
+			hardest = 8,
+			hard = 7,
+			harder = 7,
+			cataclysm = 8,
+			normal = 6
 		},
-		{
-			"spawn_around_origin_unit",
-			breed_name = "chaos_berzerker",
-			spawn_counter_category = "cursed_chest_enemies",
-			difficulty_amount = {
-				hardest = 4,
-				hard = 3,
-				harder = 3,
-				cataclysm = 4,
-				normal = 2
-			},
-			min_distance = num_6 - num_10 * 0.5,
-			max_distance = num_6 + num_10 * 0.5,
-			pre_spawn_unit_func = fn,
-			post_spawn_unit_func = fn_2,
-			spawn_delay = num_5
-		},
-		{
-			"spawn_around_origin_unit",
-			breed_name = "chaos_marauder",
-			spawn_counter_category = "cursed_chest_enemies",
-			difficulty_amount = {
-				hardest = 7,
-				hard = 5,
-				harder = 6,
-				cataclysm = 8,
-				normal = 5
-			},
-			min_distance = num_6 - num_10 * 0.5,
-			max_distance = num_6 + num_10 * 0.5,
-			pre_spawn_unit_func = fn,
-			post_spawn_unit_func = fn_2,
-			spawn_delay = num_5
-		},
-		{
-			"delay",
-			duration = num_4
-		},
-		{
-			"continue_when_spawned_count",
-			duration = 120,
-			condition = function (self)
-				-- function 53
-				return self.cursed_chest_enemies <= 5
-			end
-		},
-		{
-			"spawn_around_origin_unit",
-			breed_name = "chaos_berzerker",
-			spawn_counter_category = "cursed_chest_enemies",
-			difficulty_amount = {
-				hardest = 4,
-				hard = 3,
-				harder = 3,
-				cataclysm = 4,
-				normal = 2
-			},
-			min_distance = num_6 - num_10 * 0.5,
-			max_distance = num_6 + num_10 * 0.5,
-			pre_spawn_unit_func = fn,
-			post_spawn_unit_func = fn_2,
-			spawn_delay = num_5
-		},
-		{
-			"spawn_around_origin_unit",
-			breed_name = "chaos_marauder",
-			spawn_counter_category = "cursed_chest_enemies",
-			difficulty_amount = {
-				hardest = 7,
-				hard = 5,
-				harder = 6,
-				cataclysm = 8,
-				normal = 5
-			},
-			min_distance = num_6 - num_10 * 0.5,
-			max_distance = num_6 + num_10 * 0.5,
-			pre_spawn_unit_func = fn,
-			post_spawn_unit_func = fn_2,
-			spawn_delay = num_5
-		},
-		{
-			"delay",
-			duration = num_4
-		},
-		{
-			"continue_when_spawned_count",
-			duration = 120,
-			condition = function (self)
-				-- function 54
-				return self.cursed_chest_enemies <= 5
-			end
-		},
-		{
-			"spawn_around_origin_unit",
-			breed_name = "chaos_berzerker",
-			spawn_counter_category = "cursed_chest_enemies",
-			difficulty_amount = {
-				hardest = 4,
-				hard = 3,
-				harder = 3,
-				cataclysm = 4,
-				normal = 2
-			},
-			min_distance = num_6 - num_10 * 0.5,
-			max_distance = num_6 + num_10 * 0.5,
-			pre_spawn_unit_func = fn,
-			post_spawn_unit_func = fn_2,
-			spawn_delay = num_5
-		},
-		{
-			"spawn_around_origin_unit",
-			breed_name = "chaos_marauder",
-			spawn_counter_category = "cursed_chest_enemies",
-			difficulty_amount = {
-				hardest = 7,
-				hard = 5,
-				harder = 6,
-				cataclysm = 8,
-				normal = 5
-			},
-			min_distance = num_6 - num_10 * 0.5,
-			max_distance = num_6 + num_10 * 0.5,
-			pre_spawn_unit_func = fn,
-			post_spawn_unit_func = fn_2,
-			spawn_delay = num_5
-		},
-		{
-			"delay",
-			duration = 1
-		},
-		{
-			"continue_when_spawned_count",
-			duration = 20,
-			condition = function (self)
-				-- function 55
-				return self.cursed_chest_enemies > 0
-			end
-		},
-		{
-			"continue_when_spawned_count",
-			duration = 120,
-			condition = function (self)
-				-- function 56
-				return self.cursed_chest_enemies <= 0
-			end
-		}
+		min_distance = AROUND_STATUE_SPAWNS_SPAWN_DISTANCE_SHORT - AROUND_STATUE_SPAWNS_SPREAD_MED * 0.5,
+		max_distance = AROUND_STATUE_SPAWNS_SPAWN_DISTANCE_SHORT + AROUND_STATUE_SPAWNS_SPREAD_MED * 0.5,
+		pre_spawn_unit_func = spawn_decal_func,
+		post_spawn_unit_func = cursed_chest_enemy_despawn_decal_func
 	},
-	arena_belakor_around_statue_spawns_chaos_warrior = {
-		{
-			"delay",
-			duration = num_3
-		},
-		{
-			"spawn_around_origin_unit",
-			breed_name = "chaos_warrior",
-			spawn_counter_category = "cursed_chest_enemies",
-			difficulty_amount = {
-				hardest = 3,
-				hard = 2,
-				harder = 3,
-				cataclysm = 4,
-				normal = 2
-			},
-			min_distance = num_6 - num_10 * 0.5,
-			max_distance = num_6 + num_10 * 0.5,
-			pre_spawn_unit_func = fn,
-			post_spawn_unit_func = fn_2,
-			spawn_delay = num_5
-		},
-		{
-			"spawn_around_origin_unit",
-			breed_name = "chaos_fanatic",
-			spawn_counter_category = "cursed_chest_enemies",
-			difficulty_amount = {
-				hardest = 38,
-				hard = 32,
-				harder = 34,
-				cataclysm = 40,
-				normal = 30
-			},
-			min_distance = num_6 - num_10 * 0.5,
-			max_distance = num_6 + num_10 * 0.5,
-			pre_spawn_unit_func = fn,
-			post_spawn_unit_func = fn_2,
-			spawn_delay = num_5
-		},
-		{
-			"delay",
-			duration = num_4
-		},
-		{
-			"continue_when_spawned_count",
-			duration = 120,
-			condition = function (self)
-				-- function 57
-				return self.cursed_chest_enemies <= 4
-			end
-		},
-		{
-			"spawn_around_origin_unit",
-			breed_name = "chaos_warrior",
-			spawn_counter_category = "cursed_chest_enemies",
-			difficulty_amount = {
-				hardest = 3,
-				hard = 2,
-				harder = 3,
-				cataclysm = 4,
-				normal = 2
-			},
-			min_distance = num_6 - num_10 * 0.5,
-			max_distance = num_6 + num_10 * 0.5,
-			pre_spawn_unit_func = fn,
-			post_spawn_unit_func = fn_2,
-			spawn_delay = num_5
-		},
-		{
-			"spawn_around_origin_unit",
-			breed_name = "chaos_marauder",
-			spawn_counter_category = "cursed_chest_enemies",
-			difficulty_amount = {
-				hardest = 8,
-				hard = 6,
-				harder = 7,
-				cataclysm = 10,
-				normal = 6
-			},
-			min_distance = num_6 - num_10 * 0.5,
-			max_distance = num_6 + num_10 * 0.5,
-			pre_spawn_unit_func = fn,
-			post_spawn_unit_func = fn_2,
-			spawn_delay = num_5
-		},
-		{
-			"delay",
-			duration = num_4
-		},
-		{
-			"continue_when_spawned_count",
-			duration = 120,
-			condition = function (self)
-				-- function 58
-				return self.cursed_chest_enemies <= 4
-			end
-		},
-		{
-			"spawn_around_origin_unit",
-			breed_name = "chaos_warrior",
-			spawn_counter_category = "cursed_chest_enemies",
-			difficulty_amount = {
-				hardest = 3,
-				hard = 2,
-				harder = 3,
-				cataclysm = 4,
-				normal = 2
-			},
-			min_distance = num_6 - num_10 * 0.5,
-			max_distance = num_6 + num_10 * 0.5,
-			pre_spawn_unit_func = fn,
-			post_spawn_unit_func = fn_2,
-			spawn_delay = num_5
-		},
-		{
-			"spawn_around_origin_unit",
-			breed_name = "chaos_marauder",
-			spawn_counter_category = "cursed_chest_enemies",
-			difficulty_amount = {
-				hardest = 8,
-				hard = 6,
-				harder = 7,
-				cataclysm = 10,
-				normal = 6
-			},
-			min_distance = num_6 - num_10 * 0.5,
-			max_distance = num_6 + num_10 * 0.5,
-			pre_spawn_unit_func = fn,
-			post_spawn_unit_func = fn_2,
-			spawn_delay = num_5
-		},
-		{
-			"delay",
-			duration = 1
-		},
-		{
-			"continue_when_spawned_count",
-			duration = 20,
-			condition = function (self)
-				-- function 59
-				return self.cursed_chest_enemies > 0
-			end
-		},
-		{
-			"continue_when_spawned_count",
-			duration = 120,
-			condition = function (self)
-				-- function 60
-				return self.cursed_chest_enemies <= 0
-			end
-		}
+	{
+		"delay",
+		duration = AROUND_STATUE_SPAWNS_DELAY_WAVE_2
 	},
-	arena_belakor_around_statue_spawns_chaos_vortex_sorcerer = {
-		{
-			"delay",
-			duration = num_3
-		},
-		{
-			"spawn_around_origin_unit",
-			breed_name = "chaos_fanatic",
-			spawn_counter_category = "cursed_chest_enemies",
-			difficulty_amount = {
-				hardest = 38,
-				hard = 32,
-				harder = 34,
-				cataclysm = 40,
-				normal = 30
-			},
-			min_distance = num_6 - num_10 * 0.5,
-			max_distance = num_6 + num_10 * 0.5,
-			pre_spawn_unit_func = fn,
-			post_spawn_unit_func = fn_2,
-			spawn_delay = num_5
-		},
-		{
-			"spawn_around_origin_unit",
-			breed_name = "chaos_vortex_sorcerer",
-			spawn_counter_category = "cursed_chest_elites",
-			difficulty_amount = {
-				hardest = 2,
-				hard = 2,
-				harder = 2,
-				cataclysm = 2,
-				normal = 2
-			},
-			min_distance = num_8 - num_10 * 0.5,
-			max_distance = num_8 + num_10 * 0.5,
-			pre_spawn_unit_func = fn,
-			post_spawn_unit_func = fn_2,
-			spawn_delay = num_5
-		},
-		{
-			"delay",
-			duration = num_4
-		},
-		{
-			"continue_when_spawned_count",
-			duration = 120,
-			condition = function (self)
-				-- function 61
-				return self.cursed_chest_enemies <= 6
-			end
-		},
-		{
-			"continue_when_spawned_count",
-			duration = 10,
-			condition = function (self)
-				-- function 62
-				return self.cursed_chest_elites <= 2
-			end
-		},
-		{
-			"spawn_around_origin_unit",
-			breed_name = "chaos_fanatic",
-			spawn_counter_category = "cursed_chest_enemies",
-			difficulty_amount = {
-				hardest = 38,
-				hard = 32,
-				harder = 34,
-				cataclysm = 40,
-				normal = 30
-			},
-			min_distance = num_6 - num_10 * 0.5,
-			max_distance = num_6 + num_10 * 0.5,
-			pre_spawn_unit_func = fn,
-			post_spawn_unit_func = fn_2,
-			spawn_delay = num_5
-		},
-		{
-			"spawn_around_origin_unit",
-			breed_name = "chaos_vortex_sorcerer",
-			spawn_counter_category = "cursed_chest_elites",
-			difficulty_amount = {
-				hardest = 2,
-				hard = 2,
-				harder = 2,
-				cataclysm = 2,
-				normal = 2
-			},
-			min_distance = num_8 - num_10 * 0.5,
-			max_distance = num_8 + num_10 * 0.5,
-			pre_spawn_unit_func = fn,
-			post_spawn_unit_func = fn_2,
-			spawn_delay = num_5
-		},
-		{
-			"delay",
-			duration = num_4
-		},
-		{
-			"continue_when_spawned_count",
-			duration = 120,
-			condition = function (self)
-				-- function 63
-				return self.cursed_chest_enemies <= 6
-			end
-		},
-		{
-			"continue_when_spawned_count",
-			duration = 10,
-			condition = function (self)
-				-- function 64
-				return self.cursed_chest_elites <= 2
-			end
-		},
-		{
-			"spawn_around_origin_unit",
-			breed_name = "chaos_fanatic",
-			spawn_counter_category = "cursed_chest_enemies",
-			difficulty_amount = {
-				hardest = 38,
-				hard = 32,
-				harder = 34,
-				cataclysm = 40,
-				normal = 30
-			},
-			min_distance = num_6 - num_10 * 0.5,
-			max_distance = num_6 + num_10 * 0.5,
-			pre_spawn_unit_func = fn,
-			post_spawn_unit_func = fn_2,
-			spawn_delay = num_5
-		},
-		{
-			"spawn_around_origin_unit",
-			breed_name = "chaos_vortex_sorcerer",
-			spawn_counter_category = "cursed_chest_elites",
-			difficulty_amount = {
-				hardest = 2,
-				hard = 2,
-				harder = 2,
-				cataclysm = 2,
-				normal = 2
-			},
-			min_distance = num_8 - num_10 * 0.5,
-			max_distance = num_8 + num_10 * 0.5,
-			pre_spawn_unit_func = fn,
-			post_spawn_unit_func = fn_2,
-			spawn_delay = num_5
-		},
-		{
-			"continue_when_spawned_count",
-			duration = 20,
-			condition = function (self)
-				-- function 65
-				return self.cursed_chest_enemies > 0
-			end
-		},
-		{
-			"continue_when_spawned_count",
-			duration = 120,
-			condition = function (self)
-				-- function 66
-				return self.cursed_chest_enemies <= 0
-			end
-		}
+	{
+		"continue_when_spawned_count",
+		duration = 120,
+		condition = function (counter)
+			-- function 49
+			return counter.cursed_chest_enemies <= 5
+		end
 	},
-	arena_belakor_around_statue_spawns_chaos_corruptor_sorcerer = {
-		{
-			"delay",
-			duration = num_3
+	{
+		"spawn_around_origin_unit",
+		breed_name = "chaos_raider",
+		spawn_counter_category = "cursed_chest_enemies",
+		difficulty_amount = {
+			hardest = 5,
+			hard = 3,
+			harder = 4,
+			cataclysm = 6,
+			normal = 2
 		},
-		{
-			"spawn_around_origin_unit",
-			breed_name = "chaos_fanatic",
-			spawn_counter_category = "cursed_chest_enemies",
-			difficulty_amount = {
-				hardest = 38,
-				hard = 32,
-				harder = 34,
-				cataclysm = 40,
-				normal = 30
-			},
-			min_distance = num_6 - num_10 * 0.5,
-			max_distance = num_6 + num_10 * 0.5,
-			pre_spawn_unit_func = fn,
-			post_spawn_unit_func = fn_2,
-			spawn_delay = num_5
-		},
-		{
-			"spawn_around_origin_unit",
-			breed_name = "chaos_corruptor_sorcerer",
-			spawn_counter_category = "cursed_chest_elites",
-			difficulty_amount = {
-				hardest = 2,
-				hard = 2,
-				harder = 2,
-				cataclysm = 2,
-				normal = 2
-			},
-			min_distance = num_8 - num_10 * 0.5,
-			max_distance = num_8 + num_10 * 0.5,
-			pre_spawn_unit_func = fn,
-			post_spawn_unit_func = fn_2,
-			spawn_delay = num_5
-		},
-		{
-			"delay",
-			duration = num_4
-		},
-		{
-			"continue_when_spawned_count",
-			duration = 120,
-			condition = function (self)
-				-- function 67
-				return self.cursed_chest_enemies <= 6
-			end
-		},
-		{
-			"continue_when_spawned_count",
-			duration = 10,
-			condition = function (self)
-				-- function 68
-				return self.cursed_chest_elites <= 2
-			end
-		},
-		{
-			"spawn_around_origin_unit",
-			breed_name = "chaos_fanatic",
-			spawn_counter_category = "cursed_chest_enemies",
-			difficulty_amount = {
-				hardest = 38,
-				hard = 32,
-				harder = 34,
-				cataclysm = 40,
-				normal = 30
-			},
-			min_distance = num_6 - num_10 * 0.5,
-			max_distance = num_6 + num_10 * 0.5,
-			pre_spawn_unit_func = fn,
-			post_spawn_unit_func = fn_2,
-			spawn_delay = num_5
-		},
-		{
-			"spawn_around_origin_unit",
-			breed_name = "chaos_corruptor_sorcerer",
-			spawn_counter_category = "cursed_chest_elites",
-			difficulty_amount = {
-				hardest = 2,
-				hard = 2,
-				harder = 2,
-				cataclysm = 2,
-				normal = 2
-			},
-			min_distance = num_8 - num_10 * 0.5,
-			max_distance = num_8 + num_10 * 0.5,
-			pre_spawn_unit_func = fn,
-			post_spawn_unit_func = fn_2,
-			spawn_delay = num_5
-		},
-		{
-			"delay",
-			duration = num_4
-		},
-		{
-			"continue_when_spawned_count",
-			duration = 120,
-			condition = function (self)
-				-- function 69
-				return self.cursed_chest_enemies <= 6
-			end
-		},
-		{
-			"continue_when_spawned_count",
-			duration = 10,
-			condition = function (self)
-				-- function 70
-				return self.cursed_chest_elites <= 2
-			end
-		},
-		{
-			"spawn_around_origin_unit",
-			breed_name = "chaos_fanatic",
-			spawn_counter_category = "cursed_chest_enemies",
-			difficulty_amount = {
-				hardest = 38,
-				hard = 32,
-				harder = 34,
-				cataclysm = 40,
-				normal = 30
-			},
-			min_distance = num_6 - num_10 * 0.5,
-			max_distance = num_6 + num_10 * 0.5,
-			pre_spawn_unit_func = fn,
-			post_spawn_unit_func = fn_2,
-			spawn_delay = num_5
-		},
-		{
-			"spawn_around_origin_unit",
-			breed_name = "chaos_corruptor_sorcerer",
-			spawn_counter_category = "cursed_chest_elites",
-			difficulty_amount = {
-				hardest = 2,
-				hard = 2,
-				harder = 2,
-				cataclysm = 2,
-				normal = 2
-			},
-			min_distance = num_8 - num_10 * 0.5,
-			max_distance = num_8 + num_10 * 0.5,
-			pre_spawn_unit_func = fn,
-			post_spawn_unit_func = fn_2,
-			spawn_delay = num_5
-		},
-		{
-			"continue_when_spawned_count",
-			duration = 20,
-			condition = function (self)
-				-- function 71
-				return self.cursed_chest_enemies > 0
-			end
-		},
-		{
-			"continue_when_spawned_count",
-			duration = 120,
-			condition = function (self)
-				-- function 72
-				return self.cursed_chest_enemies <= 0
-			end
-		}
+		min_distance = AROUND_STATUE_SPAWNS_SPAWN_DISTANCE_SHORT - AROUND_STATUE_SPAWNS_SPREAD_MED * 0.5,
+		max_distance = AROUND_STATUE_SPAWNS_SPAWN_DISTANCE_SHORT + AROUND_STATUE_SPAWNS_SPREAD_MED * 0.5,
+		pre_spawn_unit_func = spawn_decal_func,
+		post_spawn_unit_func = cursed_chest_enemy_despawn_decal_func,
+		spawn_delay = AROUND_STATUE_SPAWNS_DELAY_SPAWN
 	},
-	arena_belakor_around_statue_spawns_chaos_troll = {
-		{
-			"delay",
-			duration = num_3
+	{
+		"spawn_around_origin_unit",
+		breed_name = "chaos_marauder",
+		spawn_counter_category = "cursed_chest_enemies",
+		difficulty_amount = {
+			hardest = 8,
+			hard = 7,
+			harder = 7,
+			cataclysm = 8,
+			normal = 6
 		},
-		{
-			"spawn_around_origin_unit",
-			breed_name = "chaos_troll",
-			spawn_counter_category = "cursed_chest_enemies",
-			min_distance = num_8 - num_10 * 0.5,
-			max_distance = num_8 + num_10 * 0.5,
-			pre_spawn_unit_func = fn,
-			post_spawn_unit_func = fn_2,
-			spawn_delay = num_5,
-			pre_spawn_func = scripts_settings_terror_events_terror_event_utils.add_enhancements_for_difficulty
-		},
-		{
-			"spawn_around_origin_unit",
-			breed_name = "chaos_fanatic",
-			spawn_counter_category = "cursed_chest_enemies",
-			difficulty_amount = {
-				hardest = 14,
-				hard = 10,
-				harder = 12,
-				cataclysm = 16,
-				normal = 8
-			},
-			min_distance = num_6 - num_10 * 0.5,
-			max_distance = num_6 + num_10 * 0.5,
-			pre_spawn_unit_func = fn,
-			post_spawn_unit_func = fn_2,
-			spawn_delay = num_5
-		},
-		{
-			"delay",
-			duration = 10
-		},
-		{
-			"spawn_around_origin_unit",
-			breed_name = "chaos_fanatic",
-			spawn_counter_category = "cursed_chest_enemies",
-			difficulty_amount = {
-				hardest = 14,
-				hard = 10,
-				harder = 12,
-				cataclysm = 16,
-				normal = 8
-			},
-			min_distance = num_6 - num_10 * 0.5,
-			max_distance = num_6 + num_10 * 0.5,
-			pre_spawn_unit_func = fn,
-			post_spawn_unit_func = fn_2,
-			spawn_delay = num_5
-		},
-		{
-			"delay",
-			duration = 1
-		},
-		{
-			"continue_when_spawned_count",
-			duration = 20,
-			condition = function (self)
-				-- function 73
-				return self.cursed_chest_enemies > 0
-			end
-		},
-		{
-			"continue_when_spawned_count",
-			duration = 120,
-			condition = function (self)
-				-- function 74
-				return self.cursed_chest_enemies <= 0
-			end
-		}
+		min_distance = AROUND_STATUE_SPAWNS_SPAWN_DISTANCE_SHORT - AROUND_STATUE_SPAWNS_SPREAD_MED * 0.5,
+		max_distance = AROUND_STATUE_SPAWNS_SPAWN_DISTANCE_SHORT + AROUND_STATUE_SPAWNS_SPREAD_MED * 0.5,
+		pre_spawn_unit_func = spawn_decal_func,
+		post_spawn_unit_func = cursed_chest_enemy_despawn_decal_func,
+		spawn_delay = AROUND_STATUE_SPAWNS_DELAY_SPAWN
 	},
-	arena_belakor_around_statue_spawns_chaos_spawn = {
-		{
-			"delay",
-			duration = num_3
-		},
-		{
-			"spawn_around_origin_unit",
-			breed_name = "chaos_spawn",
-			spawn_counter_category = "cursed_chest_enemies",
-			min_distance = num_8 - num_10 * 0.5,
-			max_distance = num_8 + num_10 * 0.5,
-			pre_spawn_unit_func = fn,
-			post_spawn_unit_func = fn_2,
-			spawn_delay = num_5,
-			pre_spawn_func = scripts_settings_terror_events_terror_event_utils.add_enhancements_for_difficulty
-		},
-		{
-			"spawn_around_origin_unit",
-			breed_name = "chaos_marauder",
-			spawn_counter_category = "cursed_chest_enemies",
-			difficulty_amount = {
-				hardest = 14,
-				hard = 10,
-				harder = 12,
-				cataclysm = 16,
-				normal = 8
-			},
-			min_distance = num_6 - num_10 * 0.5,
-			max_distance = num_6 + num_10 * 0.5,
-			pre_spawn_unit_func = fn,
-			post_spawn_unit_func = fn_2,
-			spawn_delay = num_5
-		},
-		{
-			"delay",
-			duration = 1
-		},
-		{
-			"continue_when_spawned_count",
-			duration = 20,
-			condition = function (self)
-				-- function 75
-				return self.cursed_chest_enemies > 0
-			end
-		},
-		{
-			"continue_when_spawned_count",
-			duration = 120,
-			condition = function (self)
-				-- function 76
-				return self.cursed_chest_enemies <= 0
-			end
-		}
+	{
+		"delay",
+		duration = AROUND_STATUE_SPAWNS_DELAY_WAVE_2
 	},
-	arena_belakor_around_statue_spawns_faction_beastmen = {
+	{
+		"continue_when_spawned_count",
+		duration = 120,
+		condition = function (counter)
+			-- function 50
+			return counter.cursed_chest_enemies <= 5
+		end
+	},
+	{
+		"spawn_around_origin_unit",
+		breed_name = "chaos_raider",
+		spawn_counter_category = "cursed_chest_enemies",
+		difficulty_amount = {
+			hardest = 5,
+			hard = 3,
+			harder = 4,
+			cataclysm = 6,
+			normal = 2
+		},
+		min_distance = AROUND_STATUE_SPAWNS_SPAWN_DISTANCE_SHORT - AROUND_STATUE_SPAWNS_SPREAD_MED * 0.5,
+		max_distance = AROUND_STATUE_SPAWNS_SPAWN_DISTANCE_SHORT + AROUND_STATUE_SPAWNS_SPREAD_MED * 0.5,
+		pre_spawn_unit_func = spawn_decal_func,
+		post_spawn_unit_func = cursed_chest_enemy_despawn_decal_func,
+		spawn_delay = AROUND_STATUE_SPAWNS_DELAY_SPAWN
+	},
+	{
+		"spawn_around_origin_unit",
+		breed_name = "chaos_marauder",
+		spawn_counter_category = "cursed_chest_enemies",
+		difficulty_amount = {
+			hardest = 8,
+			hard = 7,
+			harder = 7,
+			cataclysm = 8,
+			normal = 6
+		},
+		min_distance = AROUND_STATUE_SPAWNS_SPAWN_DISTANCE_SHORT - AROUND_STATUE_SPAWNS_SPREAD_MED * 0.5,
+		max_distance = AROUND_STATUE_SPAWNS_SPAWN_DISTANCE_SHORT + AROUND_STATUE_SPAWNS_SPREAD_MED * 0.5,
+		pre_spawn_unit_func = spawn_decal_func,
+		post_spawn_unit_func = cursed_chest_enemy_despawn_decal_func,
+		spawn_delay = AROUND_STATUE_SPAWNS_DELAY_SPAWN
+	},
+	{
+		"delay",
+		duration = 1
+	},
+	{
+		"continue_when_spawned_count",
+		duration = 20,
+		condition = function (counter)
+			-- function 51
+			return counter.cursed_chest_enemies > 0
+		end
+	},
+	{
+		"continue_when_spawned_count",
+		duration = 120,
+		condition = function (counter)
+			-- function 52
+			return counter.cursed_chest_enemies <= 0
+		end
+	}
+}
+terror_event_blueprints.arena_belakor_around_statue_spawns_chaos_berzerker = {
+	{
+		"delay",
+		duration = AROUND_STATUE_SPAWNS_DELAY_WAVE_1
+	},
+	{
+		"spawn_around_origin_unit",
+		breed_name = "chaos_berzerker",
+		spawn_counter_category = "cursed_chest_enemies",
+		difficulty_amount = {
+			hardest = 4,
+			hard = 3,
+			harder = 3,
+			cataclysm = 4,
+			normal = 2
+		},
+		min_distance = AROUND_STATUE_SPAWNS_SPAWN_DISTANCE_SHORT - AROUND_STATUE_SPAWNS_SPREAD_MED * 0.5,
+		max_distance = AROUND_STATUE_SPAWNS_SPAWN_DISTANCE_SHORT + AROUND_STATUE_SPAWNS_SPREAD_MED * 0.5,
+		pre_spawn_unit_func = spawn_decal_func,
+		post_spawn_unit_func = cursed_chest_enemy_despawn_decal_func,
+		spawn_delay = AROUND_STATUE_SPAWNS_DELAY_SPAWN
+	},
+	{
+		"spawn_around_origin_unit",
+		breed_name = "chaos_marauder",
+		spawn_counter_category = "cursed_chest_enemies",
+		difficulty_amount = {
+			hardest = 7,
+			hard = 5,
+			harder = 6,
+			cataclysm = 8,
+			normal = 5
+		},
+		min_distance = AROUND_STATUE_SPAWNS_SPAWN_DISTANCE_SHORT - AROUND_STATUE_SPAWNS_SPREAD_MED * 0.5,
+		max_distance = AROUND_STATUE_SPAWNS_SPAWN_DISTANCE_SHORT + AROUND_STATUE_SPAWNS_SPREAD_MED * 0.5,
+		pre_spawn_unit_func = spawn_decal_func,
+		post_spawn_unit_func = cursed_chest_enemy_despawn_decal_func,
+		spawn_delay = AROUND_STATUE_SPAWNS_DELAY_SPAWN
+	},
+	{
+		"delay",
+		duration = AROUND_STATUE_SPAWNS_DELAY_WAVE_2
+	},
+	{
+		"continue_when_spawned_count",
+		duration = 120,
+		condition = function (counter)
+			-- function 53
+			return counter.cursed_chest_enemies <= 5
+		end
+	},
+	{
+		"spawn_around_origin_unit",
+		breed_name = "chaos_berzerker",
+		spawn_counter_category = "cursed_chest_enemies",
+		difficulty_amount = {
+			hardest = 4,
+			hard = 3,
+			harder = 3,
+			cataclysm = 4,
+			normal = 2
+		},
+		min_distance = AROUND_STATUE_SPAWNS_SPAWN_DISTANCE_SHORT - AROUND_STATUE_SPAWNS_SPREAD_MED * 0.5,
+		max_distance = AROUND_STATUE_SPAWNS_SPAWN_DISTANCE_SHORT + AROUND_STATUE_SPAWNS_SPREAD_MED * 0.5,
+		pre_spawn_unit_func = spawn_decal_func,
+		post_spawn_unit_func = cursed_chest_enemy_despawn_decal_func,
+		spawn_delay = AROUND_STATUE_SPAWNS_DELAY_SPAWN
+	},
+	{
+		"spawn_around_origin_unit",
+		breed_name = "chaos_marauder",
+		spawn_counter_category = "cursed_chest_enemies",
+		difficulty_amount = {
+			hardest = 7,
+			hard = 5,
+			harder = 6,
+			cataclysm = 8,
+			normal = 5
+		},
+		min_distance = AROUND_STATUE_SPAWNS_SPAWN_DISTANCE_SHORT - AROUND_STATUE_SPAWNS_SPREAD_MED * 0.5,
+		max_distance = AROUND_STATUE_SPAWNS_SPAWN_DISTANCE_SHORT + AROUND_STATUE_SPAWNS_SPREAD_MED * 0.5,
+		pre_spawn_unit_func = spawn_decal_func,
+		post_spawn_unit_func = cursed_chest_enemy_despawn_decal_func,
+		spawn_delay = AROUND_STATUE_SPAWNS_DELAY_SPAWN
+	},
+	{
+		"delay",
+		duration = AROUND_STATUE_SPAWNS_DELAY_WAVE_2
+	},
+	{
+		"continue_when_spawned_count",
+		duration = 120,
+		condition = function (counter)
+			-- function 54
+			return counter.cursed_chest_enemies <= 5
+		end
+	},
+	{
+		"spawn_around_origin_unit",
+		breed_name = "chaos_berzerker",
+		spawn_counter_category = "cursed_chest_enemies",
+		difficulty_amount = {
+			hardest = 4,
+			hard = 3,
+			harder = 3,
+			cataclysm = 4,
+			normal = 2
+		},
+		min_distance = AROUND_STATUE_SPAWNS_SPAWN_DISTANCE_SHORT - AROUND_STATUE_SPAWNS_SPREAD_MED * 0.5,
+		max_distance = AROUND_STATUE_SPAWNS_SPAWN_DISTANCE_SHORT + AROUND_STATUE_SPAWNS_SPREAD_MED * 0.5,
+		pre_spawn_unit_func = spawn_decal_func,
+		post_spawn_unit_func = cursed_chest_enemy_despawn_decal_func,
+		spawn_delay = AROUND_STATUE_SPAWNS_DELAY_SPAWN
+	},
+	{
+		"spawn_around_origin_unit",
+		breed_name = "chaos_marauder",
+		spawn_counter_category = "cursed_chest_enemies",
+		difficulty_amount = {
+			hardest = 7,
+			hard = 5,
+			harder = 6,
+			cataclysm = 8,
+			normal = 5
+		},
+		min_distance = AROUND_STATUE_SPAWNS_SPAWN_DISTANCE_SHORT - AROUND_STATUE_SPAWNS_SPREAD_MED * 0.5,
+		max_distance = AROUND_STATUE_SPAWNS_SPAWN_DISTANCE_SHORT + AROUND_STATUE_SPAWNS_SPREAD_MED * 0.5,
+		pre_spawn_unit_func = spawn_decal_func,
+		post_spawn_unit_func = cursed_chest_enemy_despawn_decal_func,
+		spawn_delay = AROUND_STATUE_SPAWNS_DELAY_SPAWN
+	},
+	{
+		"delay",
+		duration = 1
+	},
+	{
+		"continue_when_spawned_count",
+		duration = 20,
+		condition = function (counter)
+			-- function 55
+			return counter.cursed_chest_enemies > 0
+		end
+	},
+	{
+		"continue_when_spawned_count",
+		duration = 120,
+		condition = function (counter)
+			-- function 56
+			return counter.cursed_chest_enemies <= 0
+		end
+	}
+}
+terror_event_blueprints.arena_belakor_around_statue_spawns_chaos_warrior = {
+	{
+		"delay",
+		duration = AROUND_STATUE_SPAWNS_DELAY_WAVE_1
+	},
+	{
+		"spawn_around_origin_unit",
+		breed_name = "chaos_warrior",
+		spawn_counter_category = "cursed_chest_enemies",
+		difficulty_amount = {
+			hardest = 3,
+			hard = 2,
+			harder = 3,
+			cataclysm = 4,
+			normal = 2
+		},
+		min_distance = AROUND_STATUE_SPAWNS_SPAWN_DISTANCE_SHORT - AROUND_STATUE_SPAWNS_SPREAD_MED * 0.5,
+		max_distance = AROUND_STATUE_SPAWNS_SPAWN_DISTANCE_SHORT + AROUND_STATUE_SPAWNS_SPREAD_MED * 0.5,
+		pre_spawn_unit_func = spawn_decal_func,
+		post_spawn_unit_func = cursed_chest_enemy_despawn_decal_func,
+		spawn_delay = AROUND_STATUE_SPAWNS_DELAY_SPAWN
+	},
+	{
+		"spawn_around_origin_unit",
+		breed_name = "chaos_fanatic",
+		spawn_counter_category = "cursed_chest_enemies",
+		difficulty_amount = {
+			hardest = 38,
+			hard = 32,
+			harder = 34,
+			cataclysm = 40,
+			normal = 30
+		},
+		min_distance = AROUND_STATUE_SPAWNS_SPAWN_DISTANCE_SHORT - AROUND_STATUE_SPAWNS_SPREAD_MED * 0.5,
+		max_distance = AROUND_STATUE_SPAWNS_SPAWN_DISTANCE_SHORT + AROUND_STATUE_SPAWNS_SPREAD_MED * 0.5,
+		pre_spawn_unit_func = spawn_decal_func,
+		post_spawn_unit_func = cursed_chest_enemy_despawn_decal_func,
+		spawn_delay = AROUND_STATUE_SPAWNS_DELAY_SPAWN
+	},
+	{
+		"delay",
+		duration = AROUND_STATUE_SPAWNS_DELAY_WAVE_2
+	},
+	{
+		"continue_when_spawned_count",
+		duration = 120,
+		condition = function (counter)
+			-- function 57
+			return counter.cursed_chest_enemies <= 4
+		end
+	},
+	{
+		"spawn_around_origin_unit",
+		breed_name = "chaos_warrior",
+		spawn_counter_category = "cursed_chest_enemies",
+		difficulty_amount = {
+			hardest = 3,
+			hard = 2,
+			harder = 3,
+			cataclysm = 4,
+			normal = 2
+		},
+		min_distance = AROUND_STATUE_SPAWNS_SPAWN_DISTANCE_SHORT - AROUND_STATUE_SPAWNS_SPREAD_MED * 0.5,
+		max_distance = AROUND_STATUE_SPAWNS_SPAWN_DISTANCE_SHORT + AROUND_STATUE_SPAWNS_SPREAD_MED * 0.5,
+		pre_spawn_unit_func = spawn_decal_func,
+		post_spawn_unit_func = cursed_chest_enemy_despawn_decal_func,
+		spawn_delay = AROUND_STATUE_SPAWNS_DELAY_SPAWN
+	},
+	{
+		"spawn_around_origin_unit",
+		breed_name = "chaos_marauder",
+		spawn_counter_category = "cursed_chest_enemies",
+		difficulty_amount = {
+			hardest = 8,
+			hard = 6,
+			harder = 7,
+			cataclysm = 10,
+			normal = 6
+		},
+		min_distance = AROUND_STATUE_SPAWNS_SPAWN_DISTANCE_SHORT - AROUND_STATUE_SPAWNS_SPREAD_MED * 0.5,
+		max_distance = AROUND_STATUE_SPAWNS_SPAWN_DISTANCE_SHORT + AROUND_STATUE_SPAWNS_SPREAD_MED * 0.5,
+		pre_spawn_unit_func = spawn_decal_func,
+		post_spawn_unit_func = cursed_chest_enemy_despawn_decal_func,
+		spawn_delay = AROUND_STATUE_SPAWNS_DELAY_SPAWN
+	},
+	{
+		"delay",
+		duration = AROUND_STATUE_SPAWNS_DELAY_WAVE_2
+	},
+	{
+		"continue_when_spawned_count",
+		duration = 120,
+		condition = function (counter)
+			-- function 58
+			return counter.cursed_chest_enemies <= 4
+		end
+	},
+	{
+		"spawn_around_origin_unit",
+		breed_name = "chaos_warrior",
+		spawn_counter_category = "cursed_chest_enemies",
+		difficulty_amount = {
+			hardest = 3,
+			hard = 2,
+			harder = 3,
+			cataclysm = 4,
+			normal = 2
+		},
+		min_distance = AROUND_STATUE_SPAWNS_SPAWN_DISTANCE_SHORT - AROUND_STATUE_SPAWNS_SPREAD_MED * 0.5,
+		max_distance = AROUND_STATUE_SPAWNS_SPAWN_DISTANCE_SHORT + AROUND_STATUE_SPAWNS_SPREAD_MED * 0.5,
+		pre_spawn_unit_func = spawn_decal_func,
+		post_spawn_unit_func = cursed_chest_enemy_despawn_decal_func,
+		spawn_delay = AROUND_STATUE_SPAWNS_DELAY_SPAWN
+	},
+	{
+		"spawn_around_origin_unit",
+		breed_name = "chaos_marauder",
+		spawn_counter_category = "cursed_chest_enemies",
+		difficulty_amount = {
+			hardest = 8,
+			hard = 6,
+			harder = 7,
+			cataclysm = 10,
+			normal = 6
+		},
+		min_distance = AROUND_STATUE_SPAWNS_SPAWN_DISTANCE_SHORT - AROUND_STATUE_SPAWNS_SPREAD_MED * 0.5,
+		max_distance = AROUND_STATUE_SPAWNS_SPAWN_DISTANCE_SHORT + AROUND_STATUE_SPAWNS_SPREAD_MED * 0.5,
+		pre_spawn_unit_func = spawn_decal_func,
+		post_spawn_unit_func = cursed_chest_enemy_despawn_decal_func,
+		spawn_delay = AROUND_STATUE_SPAWNS_DELAY_SPAWN
+	},
+	{
+		"delay",
+		duration = 1
+	},
+	{
+		"continue_when_spawned_count",
+		duration = 20,
+		condition = function (counter)
+			-- function 59
+			return counter.cursed_chest_enemies > 0
+		end
+	},
+	{
+		"continue_when_spawned_count",
+		duration = 120,
+		condition = function (counter)
+			-- function 60
+			return counter.cursed_chest_enemies <= 0
+		end
+	}
+}
+terror_event_blueprints.arena_belakor_around_statue_spawns_chaos_vortex_sorcerer = {
+	{
+		"delay",
+		duration = AROUND_STATUE_SPAWNS_DELAY_WAVE_1
+	},
+	{
+		"spawn_around_origin_unit",
+		breed_name = "chaos_fanatic",
+		spawn_counter_category = "cursed_chest_enemies",
+		difficulty_amount = {
+			hardest = 38,
+			hard = 32,
+			harder = 34,
+			cataclysm = 40,
+			normal = 30
+		},
+		min_distance = AROUND_STATUE_SPAWNS_SPAWN_DISTANCE_SHORT - AROUND_STATUE_SPAWNS_SPREAD_MED * 0.5,
+		max_distance = AROUND_STATUE_SPAWNS_SPAWN_DISTANCE_SHORT + AROUND_STATUE_SPAWNS_SPREAD_MED * 0.5,
+		pre_spawn_unit_func = spawn_decal_func,
+		post_spawn_unit_func = cursed_chest_enemy_despawn_decal_func,
+		spawn_delay = AROUND_STATUE_SPAWNS_DELAY_SPAWN
+	},
+	{
+		"spawn_around_origin_unit",
+		breed_name = "chaos_vortex_sorcerer",
+		spawn_counter_category = "cursed_chest_elites",
+		difficulty_amount = {
+			hardest = 2,
+			hard = 2,
+			harder = 2,
+			cataclysm = 2,
+			normal = 2
+		},
+		min_distance = AROUND_STATUE_SPAWNS_SPAWN_DISTANCE_LONG - AROUND_STATUE_SPAWNS_SPREAD_MED * 0.5,
+		max_distance = AROUND_STATUE_SPAWNS_SPAWN_DISTANCE_LONG + AROUND_STATUE_SPAWNS_SPREAD_MED * 0.5,
+		pre_spawn_unit_func = spawn_decal_func,
+		post_spawn_unit_func = cursed_chest_enemy_despawn_decal_func,
+		spawn_delay = AROUND_STATUE_SPAWNS_DELAY_SPAWN
+	},
+	{
+		"delay",
+		duration = AROUND_STATUE_SPAWNS_DELAY_WAVE_2
+	},
+	{
+		"continue_when_spawned_count",
+		duration = 120,
+		condition = function (counter)
+			-- function 61
+			return counter.cursed_chest_enemies <= 6
+		end
+	},
+	{
+		"continue_when_spawned_count",
+		duration = 10,
+		condition = function (counter)
+			-- function 62
+			return counter.cursed_chest_elites <= 2
+		end
+	},
+	{
+		"spawn_around_origin_unit",
+		breed_name = "chaos_fanatic",
+		spawn_counter_category = "cursed_chest_enemies",
+		difficulty_amount = {
+			hardest = 38,
+			hard = 32,
+			harder = 34,
+			cataclysm = 40,
+			normal = 30
+		},
+		min_distance = AROUND_STATUE_SPAWNS_SPAWN_DISTANCE_SHORT - AROUND_STATUE_SPAWNS_SPREAD_MED * 0.5,
+		max_distance = AROUND_STATUE_SPAWNS_SPAWN_DISTANCE_SHORT + AROUND_STATUE_SPAWNS_SPREAD_MED * 0.5,
+		pre_spawn_unit_func = spawn_decal_func,
+		post_spawn_unit_func = cursed_chest_enemy_despawn_decal_func,
+		spawn_delay = AROUND_STATUE_SPAWNS_DELAY_SPAWN
+	},
+	{
+		"spawn_around_origin_unit",
+		breed_name = "chaos_vortex_sorcerer",
+		spawn_counter_category = "cursed_chest_elites",
+		difficulty_amount = {
+			hardest = 2,
+			hard = 2,
+			harder = 2,
+			cataclysm = 2,
+			normal = 2
+		},
+		min_distance = AROUND_STATUE_SPAWNS_SPAWN_DISTANCE_LONG - AROUND_STATUE_SPAWNS_SPREAD_MED * 0.5,
+		max_distance = AROUND_STATUE_SPAWNS_SPAWN_DISTANCE_LONG + AROUND_STATUE_SPAWNS_SPREAD_MED * 0.5,
+		pre_spawn_unit_func = spawn_decal_func,
+		post_spawn_unit_func = cursed_chest_enemy_despawn_decal_func,
+		spawn_delay = AROUND_STATUE_SPAWNS_DELAY_SPAWN
+	},
+	{
+		"delay",
+		duration = AROUND_STATUE_SPAWNS_DELAY_WAVE_2
+	},
+	{
+		"continue_when_spawned_count",
+		duration = 120,
+		condition = function (counter)
+			-- function 63
+			return counter.cursed_chest_enemies <= 6
+		end
+	},
+	{
+		"continue_when_spawned_count",
+		duration = 10,
+		condition = function (counter)
+			-- function 64
+			return counter.cursed_chest_elites <= 2
+		end
+	},
+	{
+		"spawn_around_origin_unit",
+		breed_name = "chaos_fanatic",
+		spawn_counter_category = "cursed_chest_enemies",
+		difficulty_amount = {
+			hardest = 38,
+			hard = 32,
+			harder = 34,
+			cataclysm = 40,
+			normal = 30
+		},
+		min_distance = AROUND_STATUE_SPAWNS_SPAWN_DISTANCE_SHORT - AROUND_STATUE_SPAWNS_SPREAD_MED * 0.5,
+		max_distance = AROUND_STATUE_SPAWNS_SPAWN_DISTANCE_SHORT + AROUND_STATUE_SPAWNS_SPREAD_MED * 0.5,
+		pre_spawn_unit_func = spawn_decal_func,
+		post_spawn_unit_func = cursed_chest_enemy_despawn_decal_func,
+		spawn_delay = AROUND_STATUE_SPAWNS_DELAY_SPAWN
+	},
+	{
+		"spawn_around_origin_unit",
+		breed_name = "chaos_vortex_sorcerer",
+		spawn_counter_category = "cursed_chest_elites",
+		difficulty_amount = {
+			hardest = 2,
+			hard = 2,
+			harder = 2,
+			cataclysm = 2,
+			normal = 2
+		},
+		min_distance = AROUND_STATUE_SPAWNS_SPAWN_DISTANCE_LONG - AROUND_STATUE_SPAWNS_SPREAD_MED * 0.5,
+		max_distance = AROUND_STATUE_SPAWNS_SPAWN_DISTANCE_LONG + AROUND_STATUE_SPAWNS_SPREAD_MED * 0.5,
+		pre_spawn_unit_func = spawn_decal_func,
+		post_spawn_unit_func = cursed_chest_enemy_despawn_decal_func,
+		spawn_delay = AROUND_STATUE_SPAWNS_DELAY_SPAWN
+	},
+	{
+		"continue_when_spawned_count",
+		duration = 20,
+		condition = function (counter)
+			-- function 65
+			return counter.cursed_chest_enemies > 0
+		end
+	},
+	{
+		"continue_when_spawned_count",
+		duration = 120,
+		condition = function (counter)
+			-- function 66
+			return counter.cursed_chest_enemies <= 0
+		end
+	}
+}
+terror_event_blueprints.arena_belakor_around_statue_spawns_chaos_corruptor_sorcerer = {
+	{
+		"delay",
+		duration = AROUND_STATUE_SPAWNS_DELAY_WAVE_1
+	},
+	{
+		"spawn_around_origin_unit",
+		breed_name = "chaos_fanatic",
+		spawn_counter_category = "cursed_chest_enemies",
+		difficulty_amount = {
+			hardest = 38,
+			hard = 32,
+			harder = 34,
+			cataclysm = 40,
+			normal = 30
+		},
+		min_distance = AROUND_STATUE_SPAWNS_SPAWN_DISTANCE_SHORT - AROUND_STATUE_SPAWNS_SPREAD_MED * 0.5,
+		max_distance = AROUND_STATUE_SPAWNS_SPAWN_DISTANCE_SHORT + AROUND_STATUE_SPAWNS_SPREAD_MED * 0.5,
+		pre_spawn_unit_func = spawn_decal_func,
+		post_spawn_unit_func = cursed_chest_enemy_despawn_decal_func,
+		spawn_delay = AROUND_STATUE_SPAWNS_DELAY_SPAWN
+	},
+	{
+		"spawn_around_origin_unit",
+		breed_name = "chaos_corruptor_sorcerer",
+		spawn_counter_category = "cursed_chest_elites",
+		difficulty_amount = {
+			hardest = 2,
+			hard = 2,
+			harder = 2,
+			cataclysm = 2,
+			normal = 2
+		},
+		min_distance = AROUND_STATUE_SPAWNS_SPAWN_DISTANCE_LONG - AROUND_STATUE_SPAWNS_SPREAD_MED * 0.5,
+		max_distance = AROUND_STATUE_SPAWNS_SPAWN_DISTANCE_LONG + AROUND_STATUE_SPAWNS_SPREAD_MED * 0.5,
+		pre_spawn_unit_func = spawn_decal_func,
+		post_spawn_unit_func = cursed_chest_enemy_despawn_decal_func,
+		spawn_delay = AROUND_STATUE_SPAWNS_DELAY_SPAWN
+	},
+	{
+		"delay",
+		duration = AROUND_STATUE_SPAWNS_DELAY_WAVE_2
+	},
+	{
+		"continue_when_spawned_count",
+		duration = 120,
+		condition = function (counter)
+			-- function 67
+			return counter.cursed_chest_enemies <= 6
+		end
+	},
+	{
+		"continue_when_spawned_count",
+		duration = 10,
+		condition = function (counter)
+			-- function 68
+			return counter.cursed_chest_elites <= 2
+		end
+	},
+	{
+		"spawn_around_origin_unit",
+		breed_name = "chaos_fanatic",
+		spawn_counter_category = "cursed_chest_enemies",
+		difficulty_amount = {
+			hardest = 38,
+			hard = 32,
+			harder = 34,
+			cataclysm = 40,
+			normal = 30
+		},
+		min_distance = AROUND_STATUE_SPAWNS_SPAWN_DISTANCE_SHORT - AROUND_STATUE_SPAWNS_SPREAD_MED * 0.5,
+		max_distance = AROUND_STATUE_SPAWNS_SPAWN_DISTANCE_SHORT + AROUND_STATUE_SPAWNS_SPREAD_MED * 0.5,
+		pre_spawn_unit_func = spawn_decal_func,
+		post_spawn_unit_func = cursed_chest_enemy_despawn_decal_func,
+		spawn_delay = AROUND_STATUE_SPAWNS_DELAY_SPAWN
+	},
+	{
+		"spawn_around_origin_unit",
+		breed_name = "chaos_corruptor_sorcerer",
+		spawn_counter_category = "cursed_chest_elites",
+		difficulty_amount = {
+			hardest = 2,
+			hard = 2,
+			harder = 2,
+			cataclysm = 2,
+			normal = 2
+		},
+		min_distance = AROUND_STATUE_SPAWNS_SPAWN_DISTANCE_LONG - AROUND_STATUE_SPAWNS_SPREAD_MED * 0.5,
+		max_distance = AROUND_STATUE_SPAWNS_SPAWN_DISTANCE_LONG + AROUND_STATUE_SPAWNS_SPREAD_MED * 0.5,
+		pre_spawn_unit_func = spawn_decal_func,
+		post_spawn_unit_func = cursed_chest_enemy_despawn_decal_func,
+		spawn_delay = AROUND_STATUE_SPAWNS_DELAY_SPAWN
+	},
+	{
+		"delay",
+		duration = AROUND_STATUE_SPAWNS_DELAY_WAVE_2
+	},
+	{
+		"continue_when_spawned_count",
+		duration = 120,
+		condition = function (counter)
+			-- function 69
+			return counter.cursed_chest_enemies <= 6
+		end
+	},
+	{
+		"continue_when_spawned_count",
+		duration = 10,
+		condition = function (counter)
+			-- function 70
+			return counter.cursed_chest_elites <= 2
+		end
+	},
+	{
+		"spawn_around_origin_unit",
+		breed_name = "chaos_fanatic",
+		spawn_counter_category = "cursed_chest_enemies",
+		difficulty_amount = {
+			hardest = 38,
+			hard = 32,
+			harder = 34,
+			cataclysm = 40,
+			normal = 30
+		},
+		min_distance = AROUND_STATUE_SPAWNS_SPAWN_DISTANCE_SHORT - AROUND_STATUE_SPAWNS_SPREAD_MED * 0.5,
+		max_distance = AROUND_STATUE_SPAWNS_SPAWN_DISTANCE_SHORT + AROUND_STATUE_SPAWNS_SPREAD_MED * 0.5,
+		pre_spawn_unit_func = spawn_decal_func,
+		post_spawn_unit_func = cursed_chest_enemy_despawn_decal_func,
+		spawn_delay = AROUND_STATUE_SPAWNS_DELAY_SPAWN
+	},
+	{
+		"spawn_around_origin_unit",
+		breed_name = "chaos_corruptor_sorcerer",
+		spawn_counter_category = "cursed_chest_elites",
+		difficulty_amount = {
+			hardest = 2,
+			hard = 2,
+			harder = 2,
+			cataclysm = 2,
+			normal = 2
+		},
+		min_distance = AROUND_STATUE_SPAWNS_SPAWN_DISTANCE_LONG - AROUND_STATUE_SPAWNS_SPREAD_MED * 0.5,
+		max_distance = AROUND_STATUE_SPAWNS_SPAWN_DISTANCE_LONG + AROUND_STATUE_SPAWNS_SPREAD_MED * 0.5,
+		pre_spawn_unit_func = spawn_decal_func,
+		post_spawn_unit_func = cursed_chest_enemy_despawn_decal_func,
+		spawn_delay = AROUND_STATUE_SPAWNS_DELAY_SPAWN
+	},
+	{
+		"continue_when_spawned_count",
+		duration = 20,
+		condition = function (counter)
+			-- function 71
+			return counter.cursed_chest_enemies > 0
+		end
+	},
+	{
+		"continue_when_spawned_count",
+		duration = 120,
+		condition = function (counter)
+			-- function 72
+			return counter.cursed_chest_enemies <= 0
+		end
+	}
+}
+terror_event_blueprints.arena_belakor_around_statue_spawns_chaos_troll = {
+	{
+		"delay",
+		duration = AROUND_STATUE_SPAWNS_DELAY_WAVE_1
+	},
+	{
+		"spawn_around_origin_unit",
+		breed_name = "chaos_troll",
+		spawn_counter_category = "cursed_chest_enemies",
+		min_distance = AROUND_STATUE_SPAWNS_SPAWN_DISTANCE_LONG - AROUND_STATUE_SPAWNS_SPREAD_MED * 0.5,
+		max_distance = AROUND_STATUE_SPAWNS_SPAWN_DISTANCE_LONG + AROUND_STATUE_SPAWNS_SPREAD_MED * 0.5,
+		pre_spawn_unit_func = spawn_decal_func,
+		post_spawn_unit_func = cursed_chest_enemy_despawn_decal_func,
+		spawn_delay = AROUND_STATUE_SPAWNS_DELAY_SPAWN,
+		pre_spawn_func = TerrorEventUtils.add_enhancements_for_difficulty
+	},
+	{
+		"spawn_around_origin_unit",
+		breed_name = "chaos_fanatic",
+		spawn_counter_category = "cursed_chest_enemies",
+		difficulty_amount = {
+			hardest = 14,
+			hard = 10,
+			harder = 12,
+			cataclysm = 16,
+			normal = 8
+		},
+		min_distance = AROUND_STATUE_SPAWNS_SPAWN_DISTANCE_SHORT - AROUND_STATUE_SPAWNS_SPREAD_MED * 0.5,
+		max_distance = AROUND_STATUE_SPAWNS_SPAWN_DISTANCE_SHORT + AROUND_STATUE_SPAWNS_SPREAD_MED * 0.5,
+		pre_spawn_unit_func = spawn_decal_func,
+		post_spawn_unit_func = cursed_chest_enemy_despawn_decal_func,
+		spawn_delay = AROUND_STATUE_SPAWNS_DELAY_SPAWN
+	},
+	{
+		"delay",
+		duration = 10
+	},
+	{
+		"spawn_around_origin_unit",
+		breed_name = "chaos_fanatic",
+		spawn_counter_category = "cursed_chest_enemies",
+		difficulty_amount = {
+			hardest = 14,
+			hard = 10,
+			harder = 12,
+			cataclysm = 16,
+			normal = 8
+		},
+		min_distance = AROUND_STATUE_SPAWNS_SPAWN_DISTANCE_SHORT - AROUND_STATUE_SPAWNS_SPREAD_MED * 0.5,
+		max_distance = AROUND_STATUE_SPAWNS_SPAWN_DISTANCE_SHORT + AROUND_STATUE_SPAWNS_SPREAD_MED * 0.5,
+		pre_spawn_unit_func = spawn_decal_func,
+		post_spawn_unit_func = cursed_chest_enemy_despawn_decal_func,
+		spawn_delay = AROUND_STATUE_SPAWNS_DELAY_SPAWN
+	},
+	{
+		"delay",
+		duration = 1
+	},
+	{
+		"continue_when_spawned_count",
+		duration = 20,
+		condition = function (counter)
+			-- function 73
+			return counter.cursed_chest_enemies > 0
+		end
+	},
+	{
+		"continue_when_spawned_count",
+		duration = 120,
+		condition = function (counter)
+			-- function 74
+			return counter.cursed_chest_enemies <= 0
+		end
+	}
+}
+terror_event_blueprints.arena_belakor_around_statue_spawns_chaos_spawn = {
+	{
+		"delay",
+		duration = AROUND_STATUE_SPAWNS_DELAY_WAVE_1
+	},
+	{
+		"spawn_around_origin_unit",
+		breed_name = "chaos_spawn",
+		spawn_counter_category = "cursed_chest_enemies",
+		min_distance = AROUND_STATUE_SPAWNS_SPAWN_DISTANCE_LONG - AROUND_STATUE_SPAWNS_SPREAD_MED * 0.5,
+		max_distance = AROUND_STATUE_SPAWNS_SPAWN_DISTANCE_LONG + AROUND_STATUE_SPAWNS_SPREAD_MED * 0.5,
+		pre_spawn_unit_func = spawn_decal_func,
+		post_spawn_unit_func = cursed_chest_enemy_despawn_decal_func,
+		spawn_delay = AROUND_STATUE_SPAWNS_DELAY_SPAWN,
+		pre_spawn_func = TerrorEventUtils.add_enhancements_for_difficulty
+	},
+	{
+		"spawn_around_origin_unit",
+		breed_name = "chaos_marauder",
+		spawn_counter_category = "cursed_chest_enemies",
+		difficulty_amount = {
+			hardest = 14,
+			hard = 10,
+			harder = 12,
+			cataclysm = 16,
+			normal = 8
+		},
+		min_distance = AROUND_STATUE_SPAWNS_SPAWN_DISTANCE_SHORT - AROUND_STATUE_SPAWNS_SPREAD_MED * 0.5,
+		max_distance = AROUND_STATUE_SPAWNS_SPAWN_DISTANCE_SHORT + AROUND_STATUE_SPAWNS_SPREAD_MED * 0.5,
+		pre_spawn_unit_func = spawn_decal_func,
+		post_spawn_unit_func = cursed_chest_enemy_despawn_decal_func,
+		spawn_delay = AROUND_STATUE_SPAWNS_DELAY_SPAWN
+	},
+	{
+		"delay",
+		duration = 1
+	},
+	{
+		"continue_when_spawned_count",
+		duration = 20,
+		condition = function (counter)
+			-- function 75
+			return counter.cursed_chest_enemies > 0
+		end
+	},
+	{
+		"continue_when_spawned_count",
+		duration = 120,
+		condition = function (counter)
+			-- function 76
+			return counter.cursed_chest_enemies <= 0
+		end
+	}
+}
+terror_event_blueprints.arena_belakor_around_statue_spawns_faction_beastmen = {
+	{
+		"one_of",
 		{
-			"one_of",
 			{
-				{
-					"inject_event",
-					weighted_event_names = {
-						{
-							weight = 3,
-							event_name = "arena_belakor_around_statue_spawns_beastmen_bestigor_bearer"
-						},
-						{
-							weight = 3,
-							event_name = "arena_belakor_around_statue_spawns_beastmen_horde_bearer"
-						},
-						{
-							weight = 3,
-							event_name = "arena_belakor_around_statue_spawns_beastmen_ungor_archer"
-						},
-						{
-							weight = 3,
-							event_name = "arena_belakor_around_statue_spawns_beastmen_bestigor"
-						},
-						{
-							weight = 3,
-							event_name = "arena_belakor_around_statue_spawns_beastmen_minotaur"
-						}
+				"inject_event",
+				weighted_event_names = {
+					{
+						weight = 3,
+						event_name = "arena_belakor_around_statue_spawns_beastmen_bestigor_bearer"
+					},
+					{
+						weight = 3,
+						event_name = "arena_belakor_around_statue_spawns_beastmen_horde_bearer"
+					},
+					{
+						weight = 3,
+						event_name = "arena_belakor_around_statue_spawns_beastmen_ungor_archer"
+					},
+					{
+						weight = 3,
+						event_name = "arena_belakor_around_statue_spawns_beastmen_bestigor"
+					},
+					{
+						weight = 3,
+						event_name = "arena_belakor_around_statue_spawns_beastmen_minotaur"
 					}
 				}
 			}
 		}
+	}
+}
+terror_event_blueprints.arena_belakor_around_statue_spawns_beastmen_bestigor_bearer = {
+	{
+		"delay",
+		duration = AROUND_STATUE_SPAWNS_DELAY_WAVE_1
 	},
-	arena_belakor_around_statue_spawns_beastmen_bestigor_bearer = {
-		{
-			"delay",
-			duration = num_3
+	{
+		"spawn_around_origin_unit",
+		breed_name = "beastmen_bestigor",
+		spawn_counter_category = "cursed_chest_enemies",
+		difficulty_amount = {
+			hardest = 3,
+			hard = 2,
+			harder = 3,
+			cataclysm = 4,
+			normal = 2
 		},
-		{
-			"spawn_around_origin_unit",
-			breed_name = "beastmen_bestigor",
-			spawn_counter_category = "cursed_chest_enemies",
-			difficulty_amount = {
-				hardest = 3,
-				hard = 2,
-				harder = 3,
-				cataclysm = 4,
-				normal = 2
-			},
-			min_distance = num_6 - num_10 * 0.5,
-			max_distance = num_6 + num_10 * 0.5,
-			pre_spawn_unit_func = fn,
-			post_spawn_unit_func = fn_2,
-			spawn_delay = num_5
-		},
-		{
-			"spawn_around_origin_unit",
-			breed_name = "beastmen_standard_bearer",
-			spawn_counter_category = "cursed_chest_enemies",
-			difficulty_amount = {
-				hardest = 3,
-				hard = 2,
-				harder = 2,
-				cataclysm = 3,
-				normal = 1
-			},
-			min_distance = num_6 - num_10 * 0.5,
-			max_distance = num_6 + num_10 * 0.5,
-			pre_spawn_unit_func = fn,
-			post_spawn_unit_func = fn_2,
-			spawn_delay = num_5
-		},
-		{
-			"delay",
-			duration = num_4
-		},
-		{
-			"continue_when_spawned_count",
-			duration = 120,
-			condition = function (self)
-				-- function 77
-				return self.cursed_chest_enemies <= 2
-			end
-		},
-		{
-			"spawn_around_origin_unit",
-			breed_name = "beastmen_bestigor",
-			spawn_counter_category = "cursed_chest_enemies",
-			difficulty_amount = {
-				hardest = 3,
-				hard = 2,
-				harder = 3,
-				cataclysm = 4,
-				normal = 2
-			},
-			min_distance = num_6 - num_10 * 0.5,
-			max_distance = num_6 + num_10 * 0.5,
-			pre_spawn_unit_func = fn,
-			post_spawn_unit_func = fn_2,
-			spawn_delay = num_5
-		},
-		{
-			"spawn_around_origin_unit",
-			breed_name = "beastmen_standard_bearer",
-			spawn_counter_category = "cursed_chest_enemies",
-			difficulty_amount = {
-				hardest = 3,
-				hard = 2,
-				harder = 2,
-				cataclysm = 3,
-				normal = 1
-			},
-			min_distance = num_6 - num_10 * 0.5,
-			max_distance = num_6 + num_10 * 0.5,
-			pre_spawn_unit_func = fn,
-			post_spawn_unit_func = fn_2,
-			spawn_delay = num_5
-		},
-		{
-			"delay",
-			duration = num_4
-		},
-		{
-			"continue_when_spawned_count",
-			duration = 120,
-			condition = function (self)
-				-- function 78
-				return self.cursed_chest_enemies <= 2
-			end
-		},
-		{
-			"spawn_around_origin_unit",
-			breed_name = "beastmen_bestigor",
-			spawn_counter_category = "cursed_chest_enemies",
-			difficulty_amount = {
-				hardest = 5,
-				hard = 3,
-				harder = 4,
-				cataclysm = 6,
-				normal = 2
-			},
-			min_distance = num_6 - num_10 * 0.5,
-			max_distance = num_6 + num_10 * 0.5,
-			pre_spawn_unit_func = fn,
-			post_spawn_unit_func = fn_2,
-			spawn_delay = num_5
-		},
-		{
-			"spawn_around_origin_unit",
-			breed_name = "beastmen_standard_bearer",
-			spawn_counter_category = "cursed_chest_enemies",
-			difficulty_amount = {
-				hardest = 3,
-				hard = 2,
-				harder = 2,
-				cataclysm = 3,
-				normal = 1
-			},
-			min_distance = num_6 - num_10 * 0.5,
-			max_distance = num_6 + num_10 * 0.5,
-			pre_spawn_unit_func = fn,
-			post_spawn_unit_func = fn_2,
-			spawn_delay = num_5
-		},
-		{
-			"delay",
-			duration = 1
-		},
-		{
-			"continue_when_spawned_count",
-			duration = 20,
-			condition = function (self)
-				-- function 79
-				return self.cursed_chest_enemies > 0
-			end
-		},
-		{
-			"continue_when_spawned_count",
-			duration = 120,
-			condition = function (self)
-				-- function 80
-				return self.cursed_chest_enemies <= 0
-			end
-		}
+		min_distance = AROUND_STATUE_SPAWNS_SPAWN_DISTANCE_SHORT - AROUND_STATUE_SPAWNS_SPREAD_MED * 0.5,
+		max_distance = AROUND_STATUE_SPAWNS_SPAWN_DISTANCE_SHORT + AROUND_STATUE_SPAWNS_SPREAD_MED * 0.5,
+		pre_spawn_unit_func = spawn_decal_func,
+		post_spawn_unit_func = cursed_chest_enemy_despawn_decal_func,
+		spawn_delay = AROUND_STATUE_SPAWNS_DELAY_SPAWN
 	},
-	arena_belakor_around_statue_spawns_beastmen_horde_bearer = {
-		{
-			"delay",
-			duration = num_3
+	{
+		"spawn_around_origin_unit",
+		breed_name = "beastmen_standard_bearer",
+		spawn_counter_category = "cursed_chest_enemies",
+		difficulty_amount = {
+			hardest = 3,
+			hard = 2,
+			harder = 2,
+			cataclysm = 3,
+			normal = 1
 		},
-		{
-			"spawn_around_origin_unit",
-			breed_name = "beastmen_standard_bearer",
-			spawn_counter_category = "cursed_chest_elites",
-			difficulty_amount = {
-				hardest = 2,
-				hard = 2,
-				harder = 2,
-				cataclysm = 2,
-				normal = 1
-			},
-			min_distance = num_6 - num_10 * 0.5,
-			max_distance = num_6 + num_10 * 0.5,
-			pre_spawn_unit_func = fn,
-			post_spawn_unit_func = fn_2,
-			spawn_delay = num_5
-		},
-		{
-			"spawn_around_origin_unit",
-			breed_name = "beastmen_ungor",
-			spawn_counter_category = "cursed_chest_enemies",
-			difficulty_amount = {
-				hardest = 38,
-				hard = 32,
-				harder = 34,
-				cataclysm = 40,
-				normal = 30
-			},
-			min_distance = num_6 - num_10 * 0.5,
-			max_distance = num_6 + num_10 * 0.5,
-			pre_spawn_unit_func = fn,
-			post_spawn_unit_func = fn_2,
-			spawn_delay = num_5
-		},
-		{
-			"delay",
-			duration = num_4
-		},
-		{
-			"continue_when_spawned_count",
-			duration = 20,
-			condition = function (self)
-				-- function 81
-				return self.cursed_chest_elites <= 2
-			end
-		},
-		{
-			"continue_when_spawned_count",
-			duration = 20,
-			condition = function (self)
-				-- function 82
-				return self.cursed_chest_enemies <= 10
-			end
-		},
-		{
-			"spawn_around_origin_unit",
-			breed_name = "beastmen_standard_bearer",
-			spawn_counter_category = "cursed_chest_elites",
-			difficulty_amount = {
-				hardest = 2,
-				hard = 2,
-				harder = 2,
-				cataclysm = 2,
-				normal = 1
-			},
-			min_distance = num_6 - num_10 * 0.5,
-			max_distance = num_6 + num_10 * 0.5,
-			pre_spawn_unit_func = fn,
-			post_spawn_unit_func = fn_2,
-			spawn_delay = num_5
-		},
-		{
-			"spawn_around_origin_unit",
-			breed_name = "beastmen_ungor",
-			spawn_counter_category = "cursed_chest_enemies",
-			difficulty_amount = {
-				hardest = 38,
-				hard = 32,
-				harder = 34,
-				cataclysm = 40,
-				normal = 30
-			},
-			min_distance = num_6 - num_10 * 0.5,
-			max_distance = num_6 + num_10 * 0.5,
-			pre_spawn_unit_func = fn,
-			post_spawn_unit_func = fn_2,
-			spawn_delay = num_5
-		},
-		{
-			"delay",
-			duration = num_4
-		},
-		{
-			"continue_when_spawned_count",
-			duration = 20,
-			condition = function (self)
-				-- function 83
-				return self.cursed_chest_elites <= 2
-			end
-		},
-		{
-			"continue_when_spawned_count",
-			duration = 20,
-			condition = function (self)
-				-- function 84
-				return self.cursed_chest_enemies <= 10
-			end
-		},
-		{
-			"spawn_around_origin_unit",
-			breed_name = "beastmen_standard_bearer",
-			spawn_counter_category = "cursed_chest_elites",
-			difficulty_amount = {
-				hardest = 2,
-				hard = 2,
-				harder = 2,
-				cataclysm = 2,
-				normal = 1
-			},
-			min_distance = num_6 - num_10 * 0.5,
-			max_distance = num_6 + num_10 * 0.5,
-			pre_spawn_unit_func = fn,
-			post_spawn_unit_func = fn_2,
-			spawn_delay = num_5
-		},
-		{
-			"spawn_around_origin_unit",
-			breed_name = "beastmen_ungor",
-			spawn_counter_category = "cursed_chest_enemies",
-			difficulty_amount = {
-				hardest = 38,
-				hard = 32,
-				harder = 34,
-				cataclysm = 40,
-				normal = 30
-			},
-			min_distance = num_6 - num_10 * 0.5,
-			max_distance = num_6 + num_10 * 0.5,
-			pre_spawn_unit_func = fn,
-			post_spawn_unit_func = fn_2,
-			spawn_delay = num_5
-		},
-		{
-			"delay",
-			duration = num_4
-		},
-		{
-			"continue_when_spawned_count",
-			duration = 20,
-			condition = function (self)
-				-- function 85
-				return self.cursed_chest_enemies > 0
-			end
-		},
-		{
-			"continue_when_spawned_count",
-			duration = 120,
-			condition = function (self)
-				-- function 86
-				return self.cursed_chest_elites <= 0
-			end
-		},
-		{
-			"continue_when_spawned_count",
-			duration = 120,
-			condition = function (self)
-				-- function 87
-				return self.cursed_chest_enemies <= 0
-			end
-		}
+		min_distance = AROUND_STATUE_SPAWNS_SPAWN_DISTANCE_SHORT - AROUND_STATUE_SPAWNS_SPREAD_MED * 0.5,
+		max_distance = AROUND_STATUE_SPAWNS_SPAWN_DISTANCE_SHORT + AROUND_STATUE_SPAWNS_SPREAD_MED * 0.5,
+		pre_spawn_unit_func = spawn_decal_func,
+		post_spawn_unit_func = cursed_chest_enemy_despawn_decal_func,
+		spawn_delay = AROUND_STATUE_SPAWNS_DELAY_SPAWN
 	},
-	arena_belakor_around_statue_spawns_beastmen_ungor_archer = {
-		{
-			"delay",
-			duration = num_3
-		},
-		{
-			"spawn_around_origin_unit",
-			breed_name = "beastmen_ungor_archer",
-			spawn_counter_category = "cursed_chest_enemies",
-			difficulty_amount = {
-				hardest = 14,
-				hard = 12,
-				harder = 12,
-				cataclysm = 16,
-				normal = 10
-			},
-			min_distance = num_7 - num_10 * 0.5,
-			max_distance = num_7 + num_10 * 0.5,
-			pre_spawn_unit_func = fn,
-			post_spawn_unit_func = fn_2,
-			spawn_delay = num_5
-		},
-		{
-			"spawn_around_origin_unit",
-			breed_name = "beastmen_ungor",
-			spawn_counter_category = "cursed_chest_enemies",
-			difficulty_amount = {
-				hardest = 38,
-				hard = 32,
-				harder = 34,
-				cataclysm = 40,
-				normal = 30
-			},
-			min_distance = num_6 - num_10 * 0.5,
-			max_distance = num_6 + num_10 * 0.5,
-			pre_spawn_unit_func = fn,
-			post_spawn_unit_func = fn_2,
-			spawn_delay = num_5
-		},
-		{
-			"delay",
-			duration = num_4
-		},
-		{
-			"continue_when_spawned_count",
-			duration = 10,
-			condition = function (self)
-				-- function 88
-				return self.cursed_chest_enemies <= 0
-			end
-		},
-		{
-			"spawn_around_origin_unit",
-			breed_name = "beastmen_ungor_archer",
-			spawn_counter_category = "cursed_chest_enemies",
-			difficulty_amount = {
-				hardest = 14,
-				hard = 12,
-				harder = 12,
-				cataclysm = 16,
-				normal = 10
-			},
-			min_distance = num_7 - num_10 * 0.5,
-			max_distance = num_7 + num_10 * 0.5,
-			pre_spawn_unit_func = fn,
-			post_spawn_unit_func = fn_2,
-			spawn_delay = num_5
-		},
-		{
-			"spawn_around_origin_unit",
-			breed_name = "beastmen_ungor",
-			spawn_counter_category = "cursed_chest_enemies",
-			difficulty_amount = {
-				hardest = 38,
-				hard = 32,
-				harder = 34,
-				cataclysm = 40,
-				normal = 30
-			},
-			min_distance = num_6 - num_10 * 0.5,
-			max_distance = num_6 + num_10 * 0.5,
-			pre_spawn_unit_func = fn,
-			post_spawn_unit_func = fn_2,
-			spawn_delay = num_5
-		},
-		{
-			"delay",
-			duration = num_4
-		},
-		{
-			"continue_when_spawned_count",
-			duration = 10,
-			condition = function (self)
-				-- function 89
-				return self.cursed_chest_enemies <= 0
-			end
-		},
-		{
-			"spawn_around_origin_unit",
-			breed_name = "beastmen_ungor_archer",
-			spawn_counter_category = "cursed_chest_enemies",
-			difficulty_amount = {
-				hardest = 14,
-				hard = 12,
-				harder = 12,
-				cataclysm = 16,
-				normal = 10
-			},
-			min_distance = num_7 - num_10 * 0.5,
-			max_distance = num_7 + num_10 * 0.5,
-			pre_spawn_unit_func = fn,
-			post_spawn_unit_func = fn_2,
-			spawn_delay = num_5
-		},
-		{
-			"spawn_around_origin_unit",
-			breed_name = "beastmen_ungor",
-			spawn_counter_category = "cursed_chest_enemies",
-			difficulty_amount = {
-				hardest = 38,
-				hard = 32,
-				harder = 34,
-				cataclysm = 40,
-				normal = 30
-			},
-			min_distance = num_6 - num_10 * 0.5,
-			max_distance = num_6 + num_10 * 0.5,
-			pre_spawn_unit_func = fn,
-			post_spawn_unit_func = fn_2,
-			spawn_delay = num_5
-		},
-		{
-			"delay",
-			duration = 1
-		},
-		{
-			"continue_when_spawned_count",
-			duration = 20,
-			condition = function (self)
-				-- function 90
-				return self.cursed_chest_enemies > 0
-			end
-		},
-		{
-			"continue_when_spawned_count",
-			duration = 120,
-			condition = function (self)
-				-- function 91
-				return self.cursed_chest_enemies <= 0
-			end
-		}
+	{
+		"delay",
+		duration = AROUND_STATUE_SPAWNS_DELAY_WAVE_2
 	},
-	arena_belakor_around_statue_spawns_beastmen_bestigor = {
-		{
-			"spawn_around_origin_unit",
-			breed_name = "beastmen_bestigor",
-			spawn_counter_category = "cursed_chest_enemies",
-			difficulty_amount = {
-				hardest = 4,
-				hard = 3,
-				harder = 4,
-				cataclysm = 4,
-				normal = 2
-			},
-			min_distance = num_6 - num_10 * 0.5,
-			max_distance = num_6 + num_10 * 0.5,
-			pre_spawn_unit_func = fn,
-			post_spawn_unit_func = fn_2,
-			spawn_delay = num_5
-		},
-		{
-			"spawn_around_origin_unit",
-			breed_name = "beastmen_gor",
-			spawn_counter_category = "cursed_chest_enemies",
-			difficulty_amount = {
-				hardest = 5,
-				hard = 5,
-				harder = 5,
-				cataclysm = 5,
-				normal = 5
-			},
-			min_distance = num_6 - num_10 * 0.5,
-			max_distance = num_6 + num_10 * 0.5,
-			pre_spawn_unit_func = fn,
-			post_spawn_unit_func = fn_2,
-			spawn_delay = num_5
-		},
-		{
-			"delay",
-			duration = num_4
-		},
-		{
-			"continue_when_spawned_count",
-			duration = 120,
-			condition = function (self)
-				-- function 92
-				return self.cursed_chest_enemies <= 2
-			end
-		},
-		{
-			"spawn_around_origin_unit",
-			breed_name = "beastmen_bestigor",
-			spawn_counter_category = "cursed_chest_enemies",
-			difficulty_amount = {
-				hardest = 4,
-				hard = 3,
-				harder = 4,
-				cataclysm = 4,
-				normal = 2
-			},
-			min_distance = num_6 - num_10 * 0.5,
-			max_distance = num_6 + num_10 * 0.5,
-			pre_spawn_unit_func = fn,
-			post_spawn_unit_func = fn_2,
-			spawn_delay = num_5
-		},
-		{
-			"spawn_around_origin_unit",
-			breed_name = "beastmen_gor",
-			spawn_counter_category = "cursed_chest_enemies",
-			difficulty_amount = {
-				hardest = 5,
-				hard = 5,
-				harder = 5,
-				cataclysm = 5,
-				normal = 5
-			},
-			min_distance = num_6 - num_10 * 0.5,
-			max_distance = num_6 + num_10 * 0.5,
-			pre_spawn_unit_func = fn,
-			post_spawn_unit_func = fn_2,
-			spawn_delay = num_5
-		},
-		{
-			"delay",
-			duration = num_4
-		},
-		{
-			"continue_when_spawned_count",
-			duration = 120,
-			condition = function (self)
-				-- function 93
-				return self.cursed_chest_enemies <= 2
-			end
-		},
-		{
-			"spawn_around_origin_unit",
-			breed_name = "beastmen_bestigor",
-			spawn_counter_category = "cursed_chest_enemies",
-			difficulty_amount = {
-				hardest = 4,
-				hard = 3,
-				harder = 4,
-				cataclysm = 4,
-				normal = 2
-			},
-			min_distance = num_6 - num_10 * 0.5,
-			max_distance = num_6 + num_10 * 0.5,
-			pre_spawn_unit_func = fn,
-			post_spawn_unit_func = fn_2,
-			spawn_delay = num_5
-		},
-		{
-			"spawn_around_origin_unit",
-			breed_name = "beastmen_gor",
-			spawn_counter_category = "cursed_chest_enemies",
-			difficulty_amount = {
-				hardest = 5,
-				hard = 5,
-				harder = 5,
-				cataclysm = 5,
-				normal = 5
-			},
-			min_distance = num_6 - num_10 * 0.5,
-			max_distance = num_6 + num_10 * 0.5,
-			pre_spawn_unit_func = fn,
-			post_spawn_unit_func = fn_2,
-			spawn_delay = num_5
-		},
-		{
-			"delay",
-			duration = 1
-		},
-		{
-			"continue_when_spawned_count",
-			duration = 20,
-			condition = function (self)
-				-- function 94
-				return self.cursed_chest_enemies > 0
-			end
-		},
-		{
-			"continue_when_spawned_count",
-			duration = 120,
-			condition = function (self)
-				-- function 95
-				return self.cursed_chest_enemies <= 0
-			end
-		}
+	{
+		"continue_when_spawned_count",
+		duration = 120,
+		condition = function (counter)
+			-- function 77
+			return counter.cursed_chest_enemies <= 2
+		end
 	},
-	arena_belakor_around_statue_spawns_beastmen_minotaur = {
-		{
-			"delay",
-			duration = num_3
+	{
+		"spawn_around_origin_unit",
+		breed_name = "beastmen_bestigor",
+		spawn_counter_category = "cursed_chest_enemies",
+		difficulty_amount = {
+			hardest = 3,
+			hard = 2,
+			harder = 3,
+			cataclysm = 4,
+			normal = 2
 		},
-		{
-			"spawn_around_origin_unit",
-			breed_name = "beastmen_minotaur",
-			spawn_counter_category = "cursed_chest_enemies",
-			min_distance = num_8 - num_10 * 0.5,
-			max_distance = num_8 + num_10 * 0.5,
-			pre_spawn_unit_func = fn,
-			post_spawn_unit_func = fn_2,
-			spawn_delay = num_5,
-			pre_spawn_func = scripts_settings_terror_events_terror_event_utils.add_enhancements_for_difficulty
+		min_distance = AROUND_STATUE_SPAWNS_SPAWN_DISTANCE_SHORT - AROUND_STATUE_SPAWNS_SPREAD_MED * 0.5,
+		max_distance = AROUND_STATUE_SPAWNS_SPAWN_DISTANCE_SHORT + AROUND_STATUE_SPAWNS_SPREAD_MED * 0.5,
+		pre_spawn_unit_func = spawn_decal_func,
+		post_spawn_unit_func = cursed_chest_enemy_despawn_decal_func,
+		spawn_delay = AROUND_STATUE_SPAWNS_DELAY_SPAWN
+	},
+	{
+		"spawn_around_origin_unit",
+		breed_name = "beastmen_standard_bearer",
+		spawn_counter_category = "cursed_chest_enemies",
+		difficulty_amount = {
+			hardest = 3,
+			hard = 2,
+			harder = 2,
+			cataclysm = 3,
+			normal = 1
 		},
-		{
-			"spawn_around_origin_unit",
-			breed_name = "beastmen_gor",
-			spawn_counter_category = "cursed_chest_enemies",
-			difficulty_amount = {
-				hardest = 14,
-				hard = 10,
-				harder = 12,
-				cataclysm = 16,
-				normal = 8
-			},
-			min_distance = num_6 - num_10 * 0.5,
-			max_distance = num_6 + num_10 * 0.5,
-			pre_spawn_unit_func = fn,
-			post_spawn_unit_func = fn_2,
-			spawn_delay = num_5
+		min_distance = AROUND_STATUE_SPAWNS_SPAWN_DISTANCE_SHORT - AROUND_STATUE_SPAWNS_SPREAD_MED * 0.5,
+		max_distance = AROUND_STATUE_SPAWNS_SPAWN_DISTANCE_SHORT + AROUND_STATUE_SPAWNS_SPREAD_MED * 0.5,
+		pre_spawn_unit_func = spawn_decal_func,
+		post_spawn_unit_func = cursed_chest_enemy_despawn_decal_func,
+		spawn_delay = AROUND_STATUE_SPAWNS_DELAY_SPAWN
+	},
+	{
+		"delay",
+		duration = AROUND_STATUE_SPAWNS_DELAY_WAVE_2
+	},
+	{
+		"continue_when_spawned_count",
+		duration = 120,
+		condition = function (counter)
+			-- function 78
+			return counter.cursed_chest_enemies <= 2
+		end
+	},
+	{
+		"spawn_around_origin_unit",
+		breed_name = "beastmen_bestigor",
+		spawn_counter_category = "cursed_chest_enemies",
+		difficulty_amount = {
+			hardest = 5,
+			hard = 3,
+			harder = 4,
+			cataclysm = 6,
+			normal = 2
 		},
-		{
-			"delay",
-			duration = 1
+		min_distance = AROUND_STATUE_SPAWNS_SPAWN_DISTANCE_SHORT - AROUND_STATUE_SPAWNS_SPREAD_MED * 0.5,
+		max_distance = AROUND_STATUE_SPAWNS_SPAWN_DISTANCE_SHORT + AROUND_STATUE_SPAWNS_SPREAD_MED * 0.5,
+		pre_spawn_unit_func = spawn_decal_func,
+		post_spawn_unit_func = cursed_chest_enemy_despawn_decal_func,
+		spawn_delay = AROUND_STATUE_SPAWNS_DELAY_SPAWN
+	},
+	{
+		"spawn_around_origin_unit",
+		breed_name = "beastmen_standard_bearer",
+		spawn_counter_category = "cursed_chest_enemies",
+		difficulty_amount = {
+			hardest = 3,
+			hard = 2,
+			harder = 2,
+			cataclysm = 3,
+			normal = 1
 		},
-		{
-			"continue_when_spawned_count",
-			duration = 20,
-			condition = function (self)
-				-- function 96
-				return self.cursed_chest_enemies > 0
-			end
+		min_distance = AROUND_STATUE_SPAWNS_SPAWN_DISTANCE_SHORT - AROUND_STATUE_SPAWNS_SPREAD_MED * 0.5,
+		max_distance = AROUND_STATUE_SPAWNS_SPAWN_DISTANCE_SHORT + AROUND_STATUE_SPAWNS_SPREAD_MED * 0.5,
+		pre_spawn_unit_func = spawn_decal_func,
+		post_spawn_unit_func = cursed_chest_enemy_despawn_decal_func,
+		spawn_delay = AROUND_STATUE_SPAWNS_DELAY_SPAWN
+	},
+	{
+		"delay",
+		duration = 1
+	},
+	{
+		"continue_when_spawned_count",
+		duration = 20,
+		condition = function (counter)
+			-- function 79
+			return counter.cursed_chest_enemies > 0
+		end
+	},
+	{
+		"continue_when_spawned_count",
+		duration = 120,
+		condition = function (counter)
+			-- function 80
+			return counter.cursed_chest_enemies <= 0
+		end
+	}
+}
+terror_event_blueprints.arena_belakor_around_statue_spawns_beastmen_horde_bearer = {
+	{
+		"delay",
+		duration = AROUND_STATUE_SPAWNS_DELAY_WAVE_1
+	},
+	{
+		"spawn_around_origin_unit",
+		breed_name = "beastmen_standard_bearer",
+		spawn_counter_category = "cursed_chest_elites",
+		difficulty_amount = {
+			hardest = 2,
+			hard = 2,
+			harder = 2,
+			cataclysm = 2,
+			normal = 1
 		},
-		{
-			"continue_when_spawned_count",
-			duration = 120,
-			condition = function (self)
-				-- function 97
-				return self.cursed_chest_enemies <= 0
-			end
-		}
+		min_distance = AROUND_STATUE_SPAWNS_SPAWN_DISTANCE_SHORT - AROUND_STATUE_SPAWNS_SPREAD_MED * 0.5,
+		max_distance = AROUND_STATUE_SPAWNS_SPAWN_DISTANCE_SHORT + AROUND_STATUE_SPAWNS_SPREAD_MED * 0.5,
+		pre_spawn_unit_func = spawn_decal_func,
+		post_spawn_unit_func = cursed_chest_enemy_despawn_decal_func,
+		spawn_delay = AROUND_STATUE_SPAWNS_DELAY_SPAWN
+	},
+	{
+		"spawn_around_origin_unit",
+		breed_name = "beastmen_ungor",
+		spawn_counter_category = "cursed_chest_enemies",
+		difficulty_amount = {
+			hardest = 38,
+			hard = 32,
+			harder = 34,
+			cataclysm = 40,
+			normal = 30
+		},
+		min_distance = AROUND_STATUE_SPAWNS_SPAWN_DISTANCE_SHORT - AROUND_STATUE_SPAWNS_SPREAD_MED * 0.5,
+		max_distance = AROUND_STATUE_SPAWNS_SPAWN_DISTANCE_SHORT + AROUND_STATUE_SPAWNS_SPREAD_MED * 0.5,
+		pre_spawn_unit_func = spawn_decal_func,
+		post_spawn_unit_func = cursed_chest_enemy_despawn_decal_func,
+		spawn_delay = AROUND_STATUE_SPAWNS_DELAY_SPAWN
+	},
+	{
+		"delay",
+		duration = AROUND_STATUE_SPAWNS_DELAY_WAVE_2
+	},
+	{
+		"continue_when_spawned_count",
+		duration = 20,
+		condition = function (counter)
+			-- function 81
+			return counter.cursed_chest_elites <= 2
+		end
+	},
+	{
+		"continue_when_spawned_count",
+		duration = 20,
+		condition = function (counter)
+			-- function 82
+			return counter.cursed_chest_enemies <= 10
+		end
+	},
+	{
+		"spawn_around_origin_unit",
+		breed_name = "beastmen_standard_bearer",
+		spawn_counter_category = "cursed_chest_elites",
+		difficulty_amount = {
+			hardest = 2,
+			hard = 2,
+			harder = 2,
+			cataclysm = 2,
+			normal = 1
+		},
+		min_distance = AROUND_STATUE_SPAWNS_SPAWN_DISTANCE_SHORT - AROUND_STATUE_SPAWNS_SPREAD_MED * 0.5,
+		max_distance = AROUND_STATUE_SPAWNS_SPAWN_DISTANCE_SHORT + AROUND_STATUE_SPAWNS_SPREAD_MED * 0.5,
+		pre_spawn_unit_func = spawn_decal_func,
+		post_spawn_unit_func = cursed_chest_enemy_despawn_decal_func,
+		spawn_delay = AROUND_STATUE_SPAWNS_DELAY_SPAWN
+	},
+	{
+		"spawn_around_origin_unit",
+		breed_name = "beastmen_ungor",
+		spawn_counter_category = "cursed_chest_enemies",
+		difficulty_amount = {
+			hardest = 38,
+			hard = 32,
+			harder = 34,
+			cataclysm = 40,
+			normal = 30
+		},
+		min_distance = AROUND_STATUE_SPAWNS_SPAWN_DISTANCE_SHORT - AROUND_STATUE_SPAWNS_SPREAD_MED * 0.5,
+		max_distance = AROUND_STATUE_SPAWNS_SPAWN_DISTANCE_SHORT + AROUND_STATUE_SPAWNS_SPREAD_MED * 0.5,
+		pre_spawn_unit_func = spawn_decal_func,
+		post_spawn_unit_func = cursed_chest_enemy_despawn_decal_func,
+		spawn_delay = AROUND_STATUE_SPAWNS_DELAY_SPAWN
+	},
+	{
+		"delay",
+		duration = AROUND_STATUE_SPAWNS_DELAY_WAVE_2
+	},
+	{
+		"continue_when_spawned_count",
+		duration = 20,
+		condition = function (counter)
+			-- function 83
+			return counter.cursed_chest_elites <= 2
+		end
+	},
+	{
+		"continue_when_spawned_count",
+		duration = 20,
+		condition = function (counter)
+			-- function 84
+			return counter.cursed_chest_enemies <= 10
+		end
+	},
+	{
+		"spawn_around_origin_unit",
+		breed_name = "beastmen_standard_bearer",
+		spawn_counter_category = "cursed_chest_elites",
+		difficulty_amount = {
+			hardest = 2,
+			hard = 2,
+			harder = 2,
+			cataclysm = 2,
+			normal = 1
+		},
+		min_distance = AROUND_STATUE_SPAWNS_SPAWN_DISTANCE_SHORT - AROUND_STATUE_SPAWNS_SPREAD_MED * 0.5,
+		max_distance = AROUND_STATUE_SPAWNS_SPAWN_DISTANCE_SHORT + AROUND_STATUE_SPAWNS_SPREAD_MED * 0.5,
+		pre_spawn_unit_func = spawn_decal_func,
+		post_spawn_unit_func = cursed_chest_enemy_despawn_decal_func,
+		spawn_delay = AROUND_STATUE_SPAWNS_DELAY_SPAWN
+	},
+	{
+		"spawn_around_origin_unit",
+		breed_name = "beastmen_ungor",
+		spawn_counter_category = "cursed_chest_enemies",
+		difficulty_amount = {
+			hardest = 38,
+			hard = 32,
+			harder = 34,
+			cataclysm = 40,
+			normal = 30
+		},
+		min_distance = AROUND_STATUE_SPAWNS_SPAWN_DISTANCE_SHORT - AROUND_STATUE_SPAWNS_SPREAD_MED * 0.5,
+		max_distance = AROUND_STATUE_SPAWNS_SPAWN_DISTANCE_SHORT + AROUND_STATUE_SPAWNS_SPREAD_MED * 0.5,
+		pre_spawn_unit_func = spawn_decal_func,
+		post_spawn_unit_func = cursed_chest_enemy_despawn_decal_func,
+		spawn_delay = AROUND_STATUE_SPAWNS_DELAY_SPAWN
+	},
+	{
+		"delay",
+		duration = AROUND_STATUE_SPAWNS_DELAY_WAVE_2
+	},
+	{
+		"continue_when_spawned_count",
+		duration = 20,
+		condition = function (counter)
+			-- function 85
+			return counter.cursed_chest_enemies > 0
+		end
+	},
+	{
+		"continue_when_spawned_count",
+		duration = 120,
+		condition = function (counter)
+			-- function 86
+			return counter.cursed_chest_elites <= 0
+		end
+	},
+	{
+		"continue_when_spawned_count",
+		duration = 120,
+		condition = function (counter)
+			-- function 87
+			return counter.cursed_chest_enemies <= 0
+		end
+	}
+}
+terror_event_blueprints.arena_belakor_around_statue_spawns_beastmen_ungor_archer = {
+	{
+		"delay",
+		duration = AROUND_STATUE_SPAWNS_DELAY_WAVE_1
+	},
+	{
+		"spawn_around_origin_unit",
+		breed_name = "beastmen_ungor_archer",
+		spawn_counter_category = "cursed_chest_enemies",
+		difficulty_amount = {
+			hardest = 14,
+			hard = 12,
+			harder = 12,
+			cataclysm = 16,
+			normal = 10
+		},
+		min_distance = AROUND_STATUE_SPAWNS_SPAWN_SPAWN_DISTANCE_MED - AROUND_STATUE_SPAWNS_SPREAD_MED * 0.5,
+		max_distance = AROUND_STATUE_SPAWNS_SPAWN_SPAWN_DISTANCE_MED + AROUND_STATUE_SPAWNS_SPREAD_MED * 0.5,
+		pre_spawn_unit_func = spawn_decal_func,
+		post_spawn_unit_func = cursed_chest_enemy_despawn_decal_func,
+		spawn_delay = AROUND_STATUE_SPAWNS_DELAY_SPAWN
+	},
+	{
+		"spawn_around_origin_unit",
+		breed_name = "beastmen_ungor",
+		spawn_counter_category = "cursed_chest_enemies",
+		difficulty_amount = {
+			hardest = 38,
+			hard = 32,
+			harder = 34,
+			cataclysm = 40,
+			normal = 30
+		},
+		min_distance = AROUND_STATUE_SPAWNS_SPAWN_DISTANCE_SHORT - AROUND_STATUE_SPAWNS_SPREAD_MED * 0.5,
+		max_distance = AROUND_STATUE_SPAWNS_SPAWN_DISTANCE_SHORT + AROUND_STATUE_SPAWNS_SPREAD_MED * 0.5,
+		pre_spawn_unit_func = spawn_decal_func,
+		post_spawn_unit_func = cursed_chest_enemy_despawn_decal_func,
+		spawn_delay = AROUND_STATUE_SPAWNS_DELAY_SPAWN
+	},
+	{
+		"delay",
+		duration = AROUND_STATUE_SPAWNS_DELAY_WAVE_2
+	},
+	{
+		"continue_when_spawned_count",
+		duration = 10,
+		condition = function (counter)
+			-- function 88
+			return counter.cursed_chest_enemies <= 0
+		end
+	},
+	{
+		"spawn_around_origin_unit",
+		breed_name = "beastmen_ungor_archer",
+		spawn_counter_category = "cursed_chest_enemies",
+		difficulty_amount = {
+			hardest = 14,
+			hard = 12,
+			harder = 12,
+			cataclysm = 16,
+			normal = 10
+		},
+		min_distance = AROUND_STATUE_SPAWNS_SPAWN_SPAWN_DISTANCE_MED - AROUND_STATUE_SPAWNS_SPREAD_MED * 0.5,
+		max_distance = AROUND_STATUE_SPAWNS_SPAWN_SPAWN_DISTANCE_MED + AROUND_STATUE_SPAWNS_SPREAD_MED * 0.5,
+		pre_spawn_unit_func = spawn_decal_func,
+		post_spawn_unit_func = cursed_chest_enemy_despawn_decal_func,
+		spawn_delay = AROUND_STATUE_SPAWNS_DELAY_SPAWN
+	},
+	{
+		"spawn_around_origin_unit",
+		breed_name = "beastmen_ungor",
+		spawn_counter_category = "cursed_chest_enemies",
+		difficulty_amount = {
+			hardest = 38,
+			hard = 32,
+			harder = 34,
+			cataclysm = 40,
+			normal = 30
+		},
+		min_distance = AROUND_STATUE_SPAWNS_SPAWN_DISTANCE_SHORT - AROUND_STATUE_SPAWNS_SPREAD_MED * 0.5,
+		max_distance = AROUND_STATUE_SPAWNS_SPAWN_DISTANCE_SHORT + AROUND_STATUE_SPAWNS_SPREAD_MED * 0.5,
+		pre_spawn_unit_func = spawn_decal_func,
+		post_spawn_unit_func = cursed_chest_enemy_despawn_decal_func,
+		spawn_delay = AROUND_STATUE_SPAWNS_DELAY_SPAWN
+	},
+	{
+		"delay",
+		duration = AROUND_STATUE_SPAWNS_DELAY_WAVE_2
+	},
+	{
+		"continue_when_spawned_count",
+		duration = 10,
+		condition = function (counter)
+			-- function 89
+			return counter.cursed_chest_enemies <= 0
+		end
+	},
+	{
+		"spawn_around_origin_unit",
+		breed_name = "beastmen_ungor_archer",
+		spawn_counter_category = "cursed_chest_enemies",
+		difficulty_amount = {
+			hardest = 14,
+			hard = 12,
+			harder = 12,
+			cataclysm = 16,
+			normal = 10
+		},
+		min_distance = AROUND_STATUE_SPAWNS_SPAWN_SPAWN_DISTANCE_MED - AROUND_STATUE_SPAWNS_SPREAD_MED * 0.5,
+		max_distance = AROUND_STATUE_SPAWNS_SPAWN_SPAWN_DISTANCE_MED + AROUND_STATUE_SPAWNS_SPREAD_MED * 0.5,
+		pre_spawn_unit_func = spawn_decal_func,
+		post_spawn_unit_func = cursed_chest_enemy_despawn_decal_func,
+		spawn_delay = AROUND_STATUE_SPAWNS_DELAY_SPAWN
+	},
+	{
+		"spawn_around_origin_unit",
+		breed_name = "beastmen_ungor",
+		spawn_counter_category = "cursed_chest_enemies",
+		difficulty_amount = {
+			hardest = 38,
+			hard = 32,
+			harder = 34,
+			cataclysm = 40,
+			normal = 30
+		},
+		min_distance = AROUND_STATUE_SPAWNS_SPAWN_DISTANCE_SHORT - AROUND_STATUE_SPAWNS_SPREAD_MED * 0.5,
+		max_distance = AROUND_STATUE_SPAWNS_SPAWN_DISTANCE_SHORT + AROUND_STATUE_SPAWNS_SPREAD_MED * 0.5,
+		pre_spawn_unit_func = spawn_decal_func,
+		post_spawn_unit_func = cursed_chest_enemy_despawn_decal_func,
+		spawn_delay = AROUND_STATUE_SPAWNS_DELAY_SPAWN
+	},
+	{
+		"delay",
+		duration = 1
+	},
+	{
+		"continue_when_spawned_count",
+		duration = 20,
+		condition = function (counter)
+			-- function 90
+			return counter.cursed_chest_enemies > 0
+		end
+	},
+	{
+		"continue_when_spawned_count",
+		duration = 120,
+		condition = function (counter)
+			-- function 91
+			return counter.cursed_chest_enemies <= 0
+		end
+	}
+}
+terror_event_blueprints.arena_belakor_around_statue_spawns_beastmen_bestigor = {
+	{
+		"spawn_around_origin_unit",
+		breed_name = "beastmen_bestigor",
+		spawn_counter_category = "cursed_chest_enemies",
+		difficulty_amount = {
+			hardest = 4,
+			hard = 3,
+			harder = 4,
+			cataclysm = 4,
+			normal = 2
+		},
+		min_distance = AROUND_STATUE_SPAWNS_SPAWN_DISTANCE_SHORT - AROUND_STATUE_SPAWNS_SPREAD_MED * 0.5,
+		max_distance = AROUND_STATUE_SPAWNS_SPAWN_DISTANCE_SHORT + AROUND_STATUE_SPAWNS_SPREAD_MED * 0.5,
+		pre_spawn_unit_func = spawn_decal_func,
+		post_spawn_unit_func = cursed_chest_enemy_despawn_decal_func,
+		spawn_delay = AROUND_STATUE_SPAWNS_DELAY_SPAWN
+	},
+	{
+		"spawn_around_origin_unit",
+		breed_name = "beastmen_gor",
+		spawn_counter_category = "cursed_chest_enemies",
+		difficulty_amount = {
+			hardest = 5,
+			hard = 5,
+			harder = 5,
+			cataclysm = 5,
+			normal = 5
+		},
+		min_distance = AROUND_STATUE_SPAWNS_SPAWN_DISTANCE_SHORT - AROUND_STATUE_SPAWNS_SPREAD_MED * 0.5,
+		max_distance = AROUND_STATUE_SPAWNS_SPAWN_DISTANCE_SHORT + AROUND_STATUE_SPAWNS_SPREAD_MED * 0.5,
+		pre_spawn_unit_func = spawn_decal_func,
+		post_spawn_unit_func = cursed_chest_enemy_despawn_decal_func,
+		spawn_delay = AROUND_STATUE_SPAWNS_DELAY_SPAWN
+	},
+	{
+		"delay",
+		duration = AROUND_STATUE_SPAWNS_DELAY_WAVE_2
+	},
+	{
+		"continue_when_spawned_count",
+		duration = 120,
+		condition = function (counter)
+			-- function 92
+			return counter.cursed_chest_enemies <= 2
+		end
+	},
+	{
+		"spawn_around_origin_unit",
+		breed_name = "beastmen_bestigor",
+		spawn_counter_category = "cursed_chest_enemies",
+		difficulty_amount = {
+			hardest = 4,
+			hard = 3,
+			harder = 4,
+			cataclysm = 4,
+			normal = 2
+		},
+		min_distance = AROUND_STATUE_SPAWNS_SPAWN_DISTANCE_SHORT - AROUND_STATUE_SPAWNS_SPREAD_MED * 0.5,
+		max_distance = AROUND_STATUE_SPAWNS_SPAWN_DISTANCE_SHORT + AROUND_STATUE_SPAWNS_SPREAD_MED * 0.5,
+		pre_spawn_unit_func = spawn_decal_func,
+		post_spawn_unit_func = cursed_chest_enemy_despawn_decal_func,
+		spawn_delay = AROUND_STATUE_SPAWNS_DELAY_SPAWN
+	},
+	{
+		"spawn_around_origin_unit",
+		breed_name = "beastmen_gor",
+		spawn_counter_category = "cursed_chest_enemies",
+		difficulty_amount = {
+			hardest = 5,
+			hard = 5,
+			harder = 5,
+			cataclysm = 5,
+			normal = 5
+		},
+		min_distance = AROUND_STATUE_SPAWNS_SPAWN_DISTANCE_SHORT - AROUND_STATUE_SPAWNS_SPREAD_MED * 0.5,
+		max_distance = AROUND_STATUE_SPAWNS_SPAWN_DISTANCE_SHORT + AROUND_STATUE_SPAWNS_SPREAD_MED * 0.5,
+		pre_spawn_unit_func = spawn_decal_func,
+		post_spawn_unit_func = cursed_chest_enemy_despawn_decal_func,
+		spawn_delay = AROUND_STATUE_SPAWNS_DELAY_SPAWN
+	},
+	{
+		"delay",
+		duration = AROUND_STATUE_SPAWNS_DELAY_WAVE_2
+	},
+	{
+		"continue_when_spawned_count",
+		duration = 120,
+		condition = function (counter)
+			-- function 93
+			return counter.cursed_chest_enemies <= 2
+		end
+	},
+	{
+		"spawn_around_origin_unit",
+		breed_name = "beastmen_bestigor",
+		spawn_counter_category = "cursed_chest_enemies",
+		difficulty_amount = {
+			hardest = 4,
+			hard = 3,
+			harder = 4,
+			cataclysm = 4,
+			normal = 2
+		},
+		min_distance = AROUND_STATUE_SPAWNS_SPAWN_DISTANCE_SHORT - AROUND_STATUE_SPAWNS_SPREAD_MED * 0.5,
+		max_distance = AROUND_STATUE_SPAWNS_SPAWN_DISTANCE_SHORT + AROUND_STATUE_SPAWNS_SPREAD_MED * 0.5,
+		pre_spawn_unit_func = spawn_decal_func,
+		post_spawn_unit_func = cursed_chest_enemy_despawn_decal_func,
+		spawn_delay = AROUND_STATUE_SPAWNS_DELAY_SPAWN
+	},
+	{
+		"spawn_around_origin_unit",
+		breed_name = "beastmen_gor",
+		spawn_counter_category = "cursed_chest_enemies",
+		difficulty_amount = {
+			hardest = 5,
+			hard = 5,
+			harder = 5,
+			cataclysm = 5,
+			normal = 5
+		},
+		min_distance = AROUND_STATUE_SPAWNS_SPAWN_DISTANCE_SHORT - AROUND_STATUE_SPAWNS_SPREAD_MED * 0.5,
+		max_distance = AROUND_STATUE_SPAWNS_SPAWN_DISTANCE_SHORT + AROUND_STATUE_SPAWNS_SPREAD_MED * 0.5,
+		pre_spawn_unit_func = spawn_decal_func,
+		post_spawn_unit_func = cursed_chest_enemy_despawn_decal_func,
+		spawn_delay = AROUND_STATUE_SPAWNS_DELAY_SPAWN
+	},
+	{
+		"delay",
+		duration = 1
+	},
+	{
+		"continue_when_spawned_count",
+		duration = 20,
+		condition = function (counter)
+			-- function 94
+			return counter.cursed_chest_enemies > 0
+		end
+	},
+	{
+		"continue_when_spawned_count",
+		duration = 120,
+		condition = function (counter)
+			-- function 95
+			return counter.cursed_chest_enemies <= 0
+		end
+	}
+}
+terror_event_blueprints.arena_belakor_around_statue_spawns_beastmen_minotaur = {
+	{
+		"delay",
+		duration = AROUND_STATUE_SPAWNS_DELAY_WAVE_1
+	},
+	{
+		"spawn_around_origin_unit",
+		breed_name = "beastmen_minotaur",
+		spawn_counter_category = "cursed_chest_enemies",
+		min_distance = AROUND_STATUE_SPAWNS_SPAWN_DISTANCE_LONG - AROUND_STATUE_SPAWNS_SPREAD_MED * 0.5,
+		max_distance = AROUND_STATUE_SPAWNS_SPAWN_DISTANCE_LONG + AROUND_STATUE_SPAWNS_SPREAD_MED * 0.5,
+		pre_spawn_unit_func = spawn_decal_func,
+		post_spawn_unit_func = cursed_chest_enemy_despawn_decal_func,
+		spawn_delay = AROUND_STATUE_SPAWNS_DELAY_SPAWN,
+		pre_spawn_func = TerrorEventUtils.add_enhancements_for_difficulty
+	},
+	{
+		"spawn_around_origin_unit",
+		breed_name = "beastmen_gor",
+		spawn_counter_category = "cursed_chest_enemies",
+		difficulty_amount = {
+			hardest = 14,
+			hard = 10,
+			harder = 12,
+			cataclysm = 16,
+			normal = 8
+		},
+		min_distance = AROUND_STATUE_SPAWNS_SPAWN_DISTANCE_SHORT - AROUND_STATUE_SPAWNS_SPREAD_MED * 0.5,
+		max_distance = AROUND_STATUE_SPAWNS_SPAWN_DISTANCE_SHORT + AROUND_STATUE_SPAWNS_SPREAD_MED * 0.5,
+		pre_spawn_unit_func = spawn_decal_func,
+		post_spawn_unit_func = cursed_chest_enemy_despawn_decal_func,
+		spawn_delay = AROUND_STATUE_SPAWNS_DELAY_SPAWN
+	},
+	{
+		"delay",
+		duration = 1
+	},
+	{
+		"continue_when_spawned_count",
+		duration = 20,
+		condition = function (counter)
+			-- function 96
+			return counter.cursed_chest_enemies > 0
+		end
+	},
+	{
+		"continue_when_spawned_count",
+		duration = 120,
+		condition = function (counter)
+			-- function 97
+			return counter.cursed_chest_enemies <= 0
+		end
 	}
 }
 
 return {
-	tbl_2
+	terror_event_blueprints
 }

@@ -2,15 +2,15 @@
 
 PlayerCharacterStateGrabbedByChaosSpawn = class(PlayerCharacterStateGrabbedByChaosSpawn, PlayerCharacterState)
 
-local POSITION_LOOKUP = POSITION_LOOKUP
-local play_animation_event = CharacterStateHelper.play_animation_event
+local position_lookup = POSITION_LOOKUP
+local anim_event = CharacterStateHelper.play_animation_event
 
-PlayerCharacterStateGrabbedByChaosSpawn.init = function (arg_1_0, arg_1_1)
+PlayerCharacterStateGrabbedByChaosSpawn.init = function (self, character_state_init_context)
 	-- function 1
-	PlayerCharacterState.init(arg_1_0, arg_1_1, "grabbed_by_chaos_spawn")
+	PlayerCharacterState.init(self, character_state_init_context, "grabbed_by_chaos_spawn")
 end
 
-PlayerCharacterStateGrabbedByChaosSpawn.on_enter = function (self, arg_2_1, arg_2_2, arg_2_3, arg_2_4, arg_2_5, arg_2_6)
+PlayerCharacterStateGrabbedByChaosSpawn.on_enter = function (self, unit, input, dt, context, t, previous_state)
 	-- function 2
 	local inventory_extension = self.inventory_extension
 	local career_extension = self.career_extension
@@ -18,17 +18,23 @@ PlayerCharacterStateGrabbedByChaosSpawn.on_enter = function (self, arg_2_1, arg_
 	CharacterStateHelper.stop_weapon_actions(inventory_extension, "grabbed")
 	CharacterStateHelper.stop_career_abilities(career_extension, "grabbed")
 	inventory_extension:check_and_drop_pickups("grabbed_by_chaos_spawn")
-	self.first_person_extension:set_first_person_mode(false)
+
+	local first_person_extension = self.first_person_extension
+
+	first_person_extension:set_first_person_mode(false)
 
 	local status_extension = self.status_extension
-	local grabbed_by_chaos_spawn_unit = status_extension.grabbed_by_chaos_spawn_unit
+	local chaos_spawn_unit = status_extension.grabbed_by_chaos_spawn_unit
 
-	self.chaos_spawn_unit = grabbed_by_chaos_spawn_unit
-	self.breed = Unit.get_data(grabbed_by_chaos_spawn_unit, "breed")
+	self.chaos_spawn_unit = chaos_spawn_unit
+
+	local breed = Unit.get_data(chaos_spawn_unit, "breed")
+
+	self.breed = breed
 
 	local player = self.player
 
-	player = not player and self.player.bot_player
+	player = not not player and not not self.player.bot_player
 	self.is_bot = player
 
 	CharacterStateHelper.change_camera_state(self.player, "chaos_spawn_grabbed")
@@ -41,21 +47,21 @@ PlayerCharacterStateGrabbedByChaosSpawn.on_enter = function (self, arg_2_1, arg_
 	locomotion_extension:enable_script_driven_no_mover_movement()
 	locomotion_extension:enable_rotation_towards_velocity(false)
 
-	local grabbed_by_chaos_spawn_status, var_2_7 = CharacterStateHelper.grabbed_by_chaos_spawn_status(status_extension)
+	local grabbed_by_chaos_spawn_status, status_count = CharacterStateHelper.grabbed_by_chaos_spawn_status(status_extension)
 	local states = PlayerCharacterStateGrabbedByChaosSpawn.states
 
-	if not states[grabbed_by_chaos_spawn_status].enter then
-		states[grabbed_by_chaos_spawn_status].enter(self, arg_2_1, arg_2_5)
+	if states[grabbed_by_chaos_spawn_status].enter then
+		states[grabbed_by_chaos_spawn_status].enter(self, unit, t)
 	end
 
 	self.grabbed_by_chaos_spawn_status = grabbed_by_chaos_spawn_status
-	self.status_count = var_2_7
+	self.status_count = status_count
 
-	LocomotionUtils.enable_linked_movement(self.world, arg_2_1, self.chaos_spawn_unit, 0, Vector3.zero())
+	LocomotionUtils.enable_linked_movement(self.world, unit, self.chaos_spawn_unit, 0, Vector3.zero())
 
-	local flag = self.camera_state ~= "first_person" or false
+	local include_local_player = self.camera_state ~= "first_person" or not not false
 
-	CharacterStateHelper.show_inventory_3p(arg_2_1, false, flag, self.is_server, self.inventory_extension)
+	CharacterStateHelper.show_inventory_3p(unit, false, include_local_player, self.is_server, self.inventory_extension)
 
 	self.grabbed_screen_space_particle_1 = self.first_person_extension:create_screen_particles("fx/screenspace_chaos_spawn_tentacles_02")
 
@@ -64,43 +70,47 @@ PlayerCharacterStateGrabbedByChaosSpawn.on_enter = function (self, arg_2_1, arg_
 	end
 end
 
-PlayerCharacterStateGrabbedByChaosSpawn.on_exit = function (self, arg_3_1, arg_3_2, arg_3_3, arg_3_4, arg_3_5, arg_3_6)
+PlayerCharacterStateGrabbedByChaosSpawn.on_exit = function (self, unit, input, dt, context, t, next_state)
 	-- function 3
 	local status_extension = self.status_extension
-	local var_3_1 = ALIVE[self.chaos_spawn_unit]
-	local var_3_2
+	local chaos_spawn_alive = ALIVE[self.chaos_spawn_unit]
+	local pos
 
-	if not var_3_1 and not status_extension:is_catapulted() then
-		local node = Unit.node(arg_3_1, "j_leftfoot")
-		local node_2 = Unit.node(arg_3_1, "j_rightfoot")
+	if chaos_spawn_alive and status_extension:is_catapulted() then
+		local node1 = Unit.node(unit, "j_leftfoot")
+		local node2 = Unit.node(unit, "j_rightfoot")
+		local pos1 = Unit.world_position(unit, node1)
+		local pos2 = Unit.world_position(unit, node2)
 
-		var_3_2 = (Unit.world_position(arg_3_1, node) + Unit.world_position(arg_3_1, node_2)) / 2
+		pos = (pos1 + pos2) / 2
 	else
-		var_3_2 = Unit.world_position(arg_3_1, Unit.node(arg_3_1, "root_point"))
+		pos = Unit.world_position(unit, Unit.node(unit, "root_point"))
 	end
 
-	LocomotionUtils.disable_linked_movement(arg_3_1)
+	LocomotionUtils.disable_linked_movement(unit)
 
 	local locomotion_extension = self.locomotion_extension
 	local current_rotation = locomotion_extension:current_rotation()
 
-	locomotion_extension:teleport_to(var_3_2, current_rotation)
+	locomotion_extension:teleport_to(pos, current_rotation)
 
-	if not self.is_server and not var_3_1 then
-		StatusUtils.set_grabbed_by_chaos_spawn_network(arg_3_1, false, self.chaos_spawn_unit)
+	if self.is_server and chaos_spawn_alive then
+		StatusUtils.set_grabbed_by_chaos_spawn_network(unit, false, self.chaos_spawn_unit)
 	else
 		status_extension:set_grabbed_by_chaos_spawn(false)
 	end
 
-	local flag = self.camera_state ~= "first_person" or false
+	local camera_state = self.camera_state
+	local include_local_player = camera_state ~= "first_person" or not not false
 
-	CharacterStateHelper.show_inventory_3p(arg_3_1, true, flag, self.is_server, self.inventory_extension)
+	CharacterStateHelper.show_inventory_3p(unit, true, include_local_player, self.is_server, self.inventory_extension)
 	CharacterStateHelper.change_camera_state(self.player, "follow")
 	self.first_person_extension:toggle_visibility(CameraTransitionSettings.perspective_transition_time)
 
 	local player = self.player
+	local camera_system = Managers.state.entity:system("camera_system")
 
-	Managers.state.entity:system("camera_system"):set_follow_unit(player)
+	camera_system:set_follow_unit(player)
 
 	self.camera_state = nil
 	self.grabbed_by_chaos_spawn_status = nil
@@ -108,7 +118,7 @@ PlayerCharacterStateGrabbedByChaosSpawn.on_exit = function (self, arg_3_1, arg_3
 
 	local inventory_extension = self.inventory_extension
 
-	if not (not inventory_extension and inventory_extension:get_wielded_slot_name() ~= "slot_career_skill_weapon") then
+	if inventory_extension and inventory_extension:get_wielded_slot_name() == "slot_career_skill_weapon" then
 		inventory_extension:wield_previous_weapon()
 	else
 		inventory_extension:rewield_wielded_slot()
@@ -125,106 +135,106 @@ end
 
 PlayerCharacterStateGrabbedByChaosSpawn.states = {
 	grabbed = {
-		enter = function (arg_4_0, arg_4_1, arg_4_2)
+		enter = function (parent, unit, t)
 			-- function 4
-			play_animation_event(arg_4_1, "attack_grab_player")
+			anim_event(unit, "attack_grab_player")
 		end,
-		run = function (arg_5_0, arg_5_1, arg_5_2, arg_5_3)
+		run = function (parent, unit, t, dt)
 			-- function 5
 			return
 		end,
-		leave = function (arg_6_0, arg_6_1)
+		leave = function (parent, unit)
 			-- function 6
 			return
 		end
 	},
 	beating_with = {
-		enter = function (arg_7_0, arg_7_1, arg_7_2)
+		enter = function (parent, unit, t)
 			-- function 7
-			play_animation_event(arg_7_1, "attack_grabbed_smash")
+			anim_event(unit, "attack_grabbed_smash")
 		end,
-		run = function (arg_8_0, arg_8_1, arg_8_2, arg_8_3)
+		run = function (parent, unit, t, dt)
 			-- function 8
 			return
 		end,
-		leave = function (arg_9_0, arg_9_1)
+		leave = function (parent, unit)
 			-- function 9
 			return
 		end
 	},
 	thrown_away = {
-		enter = function (arg_10_0, arg_10_1, arg_10_2)
+		enter = function (parent, unit, t)
 			-- function 10
-			play_animation_event(arg_10_1, "attack_grabbed_throw")
+			anim_event(unit, "attack_grabbed_throw")
 		end,
-		run = function (arg_11_0, arg_11_1, arg_11_2, arg_11_3)
+		run = function (parent, unit, t, dt)
 			-- function 11
 			return
 		end,
-		leave = function (arg_12_0, arg_12_1)
+		leave = function (parent, unit)
 			-- function 12
 			return
 		end
 	},
 	chewed_on = {
-		enter = function (self, arg_13_1, arg_13_2)
+		enter = function (parent, unit, t)
 			-- function 13
-			play_animation_event(arg_13_1, "attack_grabbed_eat_start")
+			anim_event(unit, "attack_grabbed_eat_start")
 
-			self.roar_screen_space_particle_timer = arg_13_2 + 1.1
+			parent.roar_screen_space_particle_timer = t + 1.1
 		end,
-		run = function (self, arg_14_1, arg_14_2, arg_14_3)
+		run = function (parent, unit, t, dt)
 			-- function 14
-			if not (self.roar_screen_space_particle_1 or not (arg_14_2 > self.roar_screen_space_particle_timer)) then
-				self.roar_screen_space_particle_1 = self.first_person_extension:create_screen_particles("fx/screenspace_chaos_spawn_tentacles_01")
+			if not parent.roar_screen_space_particle_1 and t > parent.roar_screen_space_particle_timer then
+				parent.roar_screen_space_particle_1 = parent.first_person_extension:create_screen_particles("fx/screenspace_chaos_spawn_tentacles_01")
 			end
 		end,
-		leave = function (self, arg_15_1)
+		leave = function (parent, unit)
 			-- function 15
-			if not self.roar_screen_space_particle_1 then
-				self.first_person_extension:stop_spawning_screen_particles(self.roar_screen_space_particle_1)
+			if parent.roar_screen_space_particle_1 then
+				parent.first_person_extension:stop_spawning_screen_particles(parent.roar_screen_space_particle_1)
 
-				self.roar_screen_space_particle_1 = nil
+				parent.roar_screen_space_particle_1 = nil
 			end
 		end
 	},
 	idle = {
-		enter = function (arg_16_0, arg_16_1, arg_16_2)
+		enter = function (parent, unit, t)
 			-- function 16
-			play_animation_event(arg_16_1, "idle_grabbed")
+			anim_event(unit, "idle_grabbed")
 		end,
-		run = function (arg_17_0, arg_17_1, arg_17_2, arg_17_3)
+		run = function (parent, unit, t, dt)
 			-- function 17
 			return
 		end,
-		leave = function (arg_18_0, arg_18_1)
+		leave = function (parent, unit)
 			-- function 18
 			return
 		end
 	}
 }
 
-PlayerCharacterStateGrabbedByChaosSpawn.update = function (self, arg_19_1, arg_19_2, arg_19_3, arg_19_4, arg_19_5)
+PlayerCharacterStateGrabbedByChaosSpawn.update = function (self, unit, input, dt, context, t)
 	-- function 19
 	local csm = self.csm
 	local input_extension = self.input_extension
 	local status_extension = self.status_extension
 	local chaos_spawn_unit = self.chaos_spawn_unit
-	local is_catapulted, var_19_5 = CharacterStateHelper.is_catapulted(status_extension)
+	local is_catapulted, direction = CharacterStateHelper.is_catapulted(status_extension)
 
-	if not is_catapulted then
-		local tbl = {
+	if is_catapulted then
+		local params = {
 			sound_event = "Play_enemy_sorcerer_vortex_throw_player",
-			direction = var_19_5
+			direction = direction
 		}
 
-		csm:change_state("catapulted", tbl)
+		csm:change_state("catapulted", params)
 
 		return
 	end
 
-	if not (not status_extension.grabbed_by_chaos_spawn and HEALTH_ALIVE[chaos_spawn_unit]) then
-		if not CharacterStateHelper.is_waiting_for_assisted_respawn(status_extension) then
+	if not status_extension.grabbed_by_chaos_spawn or not HEALTH_ALIVE[chaos_spawn_unit] then
+		if CharacterStateHelper.is_waiting_for_assisted_respawn(status_extension) then
 			csm:change_state("waiting_for_assisted_respawn")
 		else
 			csm:change_state("standing")
@@ -233,39 +243,39 @@ PlayerCharacterStateGrabbedByChaosSpawn.update = function (self, arg_19_1, arg_1
 		return
 	end
 
-	local grabbed_by_chaos_spawn_status, var_19_8 = CharacterStateHelper.grabbed_by_chaos_spawn_status(status_extension)
+	local grabbed_by_chaos_spawn_status, status_count = CharacterStateHelper.grabbed_by_chaos_spawn_status(status_extension)
 	local states = PlayerCharacterStateGrabbedByChaosSpawn.states
 
-	if var_19_8 ~= self.status_count then
-		local grabbed_by_chaos_spawn_status_2 = self.grabbed_by_chaos_spawn_status
+	if status_count ~= self.status_count then
+		local last_state = self.grabbed_by_chaos_spawn_status
 
-		if not states[grabbed_by_chaos_spawn_status_2].leave then
-			states[grabbed_by_chaos_spawn_status_2].leave(self, arg_19_1)
+		if states[last_state].leave then
+			states[last_state].leave(self, unit)
 		end
 
-		if not states[grabbed_by_chaos_spawn_status].enter then
-			states[grabbed_by_chaos_spawn_status].enter(self, arg_19_1, arg_19_5)
+		if states[grabbed_by_chaos_spawn_status].enter then
+			states[grabbed_by_chaos_spawn_status].enter(self, unit, t)
 		end
 
 		self.grabbed_by_chaos_spawn_status = grabbed_by_chaos_spawn_status
-		self.status_count = var_19_8
+		self.status_count = status_count
 	end
 
-	if not CharacterStateHelper.is_knocked_down(status_extension) then
+	if CharacterStateHelper.is_knocked_down(status_extension) then
 		csm:change_state("knocked_down")
 
 		return
-	elseif not CharacterStateHelper.is_dead(status_extension) then
+	elseif CharacterStateHelper.is_dead(status_extension) then
 		csm:change_state("dead")
 
 		return
 	end
 
-	states[grabbed_by_chaos_spawn_status].run(self, arg_19_1, arg_19_5, arg_19_3)
+	states[grabbed_by_chaos_spawn_status].run(self, unit, t, dt)
 
-	local local_rotation = Unit.local_rotation(chaos_spawn_unit, 0)
+	local rot = Unit.local_rotation(chaos_spawn_unit, 0)
 
-	Unit.set_local_rotation(arg_19_1, 0, local_rotation)
+	Unit.set_local_rotation(unit, 0, rot)
 
 	local player = self.player
 

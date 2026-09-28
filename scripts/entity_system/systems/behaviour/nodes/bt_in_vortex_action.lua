@@ -4,192 +4,225 @@ require("scripts/entity_system/systems/behaviour/nodes/bt_node")
 
 BTInVortexAction = class(BTInVortexAction, BTNode)
 
-BTInVortexAction.init = function (arg_1_0, ...)
+BTInVortexAction.init = function (self, ...)
 	-- function 1
-	BTInVortexAction.super.init(arg_1_0, ...)
+	BTInVortexAction.super.init(self, ...)
 end
 
 BTInVortexAction.name = "BTInVortexAction"
 
-BTInVortexAction.enter = function (arg_2_0, arg_2_1, arg_2_2, arg_2_3)
+BTInVortexAction.enter = function (self, unit, blackboard, t)
 	-- function 2
-	arg_2_2.navigation_extension:set_enabled(false)
+	local navigation_extension = blackboard.navigation_extension
 
-	local locomotion_extension = arg_2_2.locomotion_extension
+	navigation_extension:set_enabled(false)
+
+	local locomotion_extension = blackboard.locomotion_extension
 
 	locomotion_extension:set_movement_type("script_driven")
 	locomotion_extension:set_wanted_rotation(nil)
 
-	arg_2_2.in_vortex_state = "in_vortex_init"
-	arg_2_2.stagger_prohibited = true
-	arg_2_2.move_state = "idle"
-	ScriptUnit.extension(arg_2_1, "hit_reaction_system").force_ragdoll_on_death = true
+	blackboard.in_vortex_state = "in_vortex_init"
+	blackboard.stagger_prohibited = true
+	blackboard.move_state = "idle"
 
-	local has_extension = ScriptUnit.has_extension(arg_2_1, "ai_shield_system")
+	local hit_reaction_extension = ScriptUnit.extension(unit, "hit_reaction_system")
 
-	if not has_extension then
-		has_extension:set_is_blocking(false)
+	hit_reaction_extension.force_ragdoll_on_death = true
+
+	local shield_extension = ScriptUnit.has_extension(unit, "ai_shield_system")
+
+	if shield_extension then
+		shield_extension:set_is_blocking(false)
 	end
 end
 
-BTInVortexAction.leave = function (arg_3_0, arg_3_1, arg_3_2, arg_3_3, arg_3_4, arg_3_5)
+BTInVortexAction.leave = function (self, unit, blackboard, t, reason, destroy)
 	-- function 3
-	if not arg_3_5 then
-		LocomotionUtils.set_animation_driven_movement(arg_3_1, false, false)
+	if not destroy then
+		LocomotionUtils.set_animation_driven_movement(unit, false, false)
 	end
 
-	if not (not HEALTH_ALIVE[arg_3_1] and arg_3_5) then
-		arg_3_2.locomotion_extension:set_movement_type("snap_to_navmesh")
+	if HEALTH_ALIVE[unit] and not destroy then
+		local locomotion_extension = blackboard.locomotion_extension
 
-		local navigation_extension = arg_3_2.navigation_extension
+		locomotion_extension:set_movement_type("snap_to_navmesh")
+
+		local navigation_extension = blackboard.navigation_extension
 
 		navigation_extension:set_enabled(true)
 
-		local var_3_1 = navigation_extension
+		local var_3_0 = navigation_extension
 		local reset_destination = navigation_extension.reset_destination
-		local var_3_3 = POSITION_LOOKUP[arg_3_1]
+		local var_3_2 = POSITION_LOOKUP[unit]
 
-		var_3_3 = var_3_3 or Unit.local_position(arg_3_1, 0)
+		var_3_2 = not not var_3_2 or not not Unit.local_position(unit, 0)
 
-		reset_destination(var_3_1, var_3_3)
+		reset_destination(var_3_0, var_3_2)
 
-		local has_extension = ScriptUnit.has_extension(arg_3_1, "ai_shield_system")
+		local shield_extension = ScriptUnit.has_extension(unit, "ai_shield_system")
 
-		if not has_extension then
-			has_extension:set_is_blocking(true)
+		if shield_extension then
+			shield_extension:set_is_blocking(true)
 		end
 	end
 
-	arg_3_2.in_vortex = false
-	arg_3_2.stagger_prohibited = nil
-	ScriptUnit.extension(arg_3_1, "hit_reaction_system").force_ragdoll_on_death = nil
+	blackboard.in_vortex = false
+	blackboard.stagger_prohibited = nil
+
+	local hit_reaction_extension = ScriptUnit.extension(unit, "hit_reaction_system")
+
+	hit_reaction_extension.force_ragdoll_on_death = nil
 end
 
-BTInVortexAction.run = function (arg_4_0, arg_4_1, arg_4_2, arg_4_3, arg_4_4)
+BTInVortexAction.run = function (self, unit, blackboard, t, dt)
 	-- function 4
-	local in_vortex_state = arg_4_2.in_vortex_state
+	local state = blackboard.in_vortex_state
 
-	if in_vortex_state == "in_vortex_init" then
-		if not arg_4_2.umbral_leap then
-			Managers.state.network:anim_event(arg_4_1, "umbral_leap")
+	if state == "in_vortex_init" then
+		if blackboard.umbral_leap then
+			local network_manager = Managers.state.network
 
-			arg_4_2.in_vortex_state = "in_umbral_leap"
+			network_manager:anim_event(unit, "umbral_leap")
 
-			local locomotion_extension = arg_4_2.locomotion_extension
+			blackboard.in_vortex_state = "in_umbral_leap"
+
+			local locomotion_extension = blackboard.locomotion_extension
 
 			locomotion_extension:set_wanted_velocity(Vector3.zero())
 			locomotion_extension:set_movement_type("script_driven")
 			locomotion_extension:set_affected_by_gravity(false)
 
-			arg_4_2.umbral_leap = false
-			arg_4_2.umbral_leap_jump_start = arg_4_3
+			blackboard.umbral_leap = false
+			blackboard.umbral_leap_jump_start = t
 		else
-			Managers.state.network:anim_event(arg_4_1, "vortex_loop")
+			local network_manager = Managers.state.network
 
-			arg_4_2.in_vortex_state = "in_vortex"
+			network_manager:anim_event(unit, "vortex_loop")
+
+			blackboard.in_vortex_state = "in_vortex"
 		end
-	elseif in_vortex_state == "in_umbral_leap" then
-		if not arg_4_2.umbral_leap_destination then
-			ConflictUtils.teleport_ai_unit(arg_4_1, arg_4_2.umbral_leap_destination:unbox())
+	elseif state == "in_umbral_leap" then
+		if blackboard.umbral_leap_destination then
+			ConflictUtils.teleport_ai_unit(unit, blackboard.umbral_leap_destination:unbox())
 
-			arg_4_2.umbral_leap_destination = nil
-			arg_4_2.in_vortex_state = "umbral_leap_landing"
+			blackboard.umbral_leap_destination = nil
+			blackboard.in_vortex_state = "umbral_leap_landing"
 		else
-			local num = arg_4_3 - arg_4_2.umbral_leap_jump_start
-			local num_2 = 0
+			local jump_time = t - blackboard.umbral_leap_jump_start
+			local z_speed = 0
 
-			if num > 0.4 then
-				num_2 = 9.8
+			if jump_time > 0.4 then
+				z_speed = 9.8
 			end
 
-			arg_4_2.locomotion_extension:set_wanted_velocity(Vector3(0, 0, num_2))
+			local locomotion_extension = blackboard.locomotion_extension
+
+			locomotion_extension:set_wanted_velocity(Vector3(0, 0, z_speed))
 		end
-	elseif in_vortex_state == "ejected_from_vortex" then
-		local num_3 = arg_4_2.ejected_from_vortex:unbox() - Vector3(0, 0, 9.82) * arg_4_4
+	elseif state == "ejected_from_vortex" then
+		local velocity = blackboard.ejected_from_vortex:unbox()
 
-		arg_4_2.locomotion_extension:set_wanted_velocity(num_3)
-		arg_4_2.ejected_from_vortex:store(num_3)
+		velocity = velocity - Vector3(0, 0, 9.82) * dt
 
-		local mover = Unit.mover(arg_4_1)
+		local locomotion_extension = blackboard.locomotion_extension
 
-		if not Mover.collides_down(mover) then
-			local num_4 = num_3 - Vector3.normalize(num_3) * arg_4_4
+		locomotion_extension:set_wanted_velocity(velocity)
+		blackboard.ejected_from_vortex:store(velocity)
 
-			arg_4_2.ejected_from_vortex:store(num_4)
+		local mover = Unit.mover(unit)
+		local mover_collides_down = Mover.collides_down(mover)
 
-			local nav_world = arg_4_2.nav_world
-			local var_4_8 = POSITION_LOOKUP[arg_4_1]
-			local pos_on_mesh = LocomotionUtils.pos_on_mesh(nav_world, var_4_8, 1, 1)
+		if mover_collides_down then
+			velocity = velocity - Vector3.normalize(velocity) * dt
 
-			if pos_on_mesh == nil then
-				local num_5 = 0.5
-				local num_6 = 0.5
-				local num_7 = 0.5
+			blackboard.ejected_from_vortex:store(velocity)
 
-				pos_on_mesh = GwNavQueries.inside_position_from_outside_position(nav_world, var_4_8, num_5, num_5, num_6, num_7)
+			local nav_world = blackboard.nav_world
+			local position = POSITION_LOOKUP[unit]
+			local nav_position = LocomotionUtils.pos_on_mesh(nav_world, position, 1, 1)
 
-				if pos_on_mesh == nil then
-					local str = "forced"
-					local var_4_14 = Vector3(0, 0, -1)
+			if nav_position == nil then
+				local vertical_range = 0.5
+				local horizontal_tolerance = 0.5
+				local distance_from_obstacle = 0.5
 
-					AiUtils.kill_unit(arg_4_1, nil, nil, str, var_4_14)
+				nav_position = GwNavQueries.inside_position_from_outside_position(nav_world, position, vertical_range, vertical_range, horizontal_tolerance, distance_from_obstacle)
+
+				if nav_position == nil then
+					local damage_type = "forced"
+					local damage_direction = Vector3(0, 0, -1)
+
+					AiUtils.kill_unit(unit, nil, nil, damage_type, damage_direction)
 
 					return "failed"
 				end
 			end
 
-			Unit.set_local_position(arg_4_1, 0, pos_on_mesh)
+			Unit.set_local_position(unit, 0, nav_position)
 
-			if not arg_4_2.breed.die_on_vortex_land then
-				local flag
+			if not blackboard.breed.die_on_vortex_land then
+				local str
 
-				flag = not arg_4_2.sot_landing and "sot_landing" and "vortex_landing"
+				if blackboard.sot_landing then
+					str = "sot_landing"
 
-				Managers.state.network:anim_event(arg_4_1, flag)
+					goto label_4_0
+				end
+
+				str = "vortex_landing"
+
+				local anim_event = str
+
+				::label_4_0::
+
+				Managers.state.network:anim_event(unit, anim_event)
 			end
 
-			arg_4_2.in_vortex_state = "waiting_to_land"
+			blackboard.in_vortex_state = "waiting_to_land"
 
-			local extension_input = ScriptUnit.extension_input(arg_4_1, "dialogue_system")
-			local alloc_table = FrameTable.alloc_table()
+			local dialogue_input = ScriptUnit.extension_input(unit, "dialogue_system")
+			local event_data = FrameTable.alloc_table()
 
-			extension_input:trigger_networked_dialogue_event("landing", alloc_table)
+			dialogue_input:trigger_networked_dialogue_event("landing", event_data)
 
-			if not arg_4_2.thornsister_vortex then
-				arg_4_2.thornsister_vortex = nil
-				arg_4_2.thornsister_vortex_ext = nil
+			if blackboard.thornsister_vortex then
+				blackboard.thornsister_vortex = nil
+				blackboard.thornsister_vortex_ext = nil
 			else
-				LocomotionUtils.set_animation_driven_movement(arg_4_1, true, true, false)
+				LocomotionUtils.set_animation_driven_movement(unit, true, true, false)
 			end
 		end
-	elseif in_vortex_state == "umbral_leap_landing" then
-		Managers.state.network:anim_event(arg_4_1, "idle")
+	elseif state == "umbral_leap_landing" then
+		Managers.state.network:anim_event(unit, "idle")
 
-		local locomotion_extension_2 = arg_4_2.locomotion_extension
+		local locomotion_extension = blackboard.locomotion_extension
 
-		locomotion_extension_2:set_wanted_velocity(Vector3.zero())
-		locomotion_extension_2:set_affected_by_gravity(true)
-		locomotion_extension_2:set_movement_type("constrained_by_mover")
+		locomotion_extension:set_wanted_velocity(Vector3.zero())
+		locomotion_extension:set_affected_by_gravity(true)
+		locomotion_extension:set_movement_type("constrained_by_mover")
 
-		arg_4_2.umbral_leap_velocity = nil
-		arg_4_2.landing_finished = nil
-		arg_4_2.in_vortex_state = "landed"
-		arg_4_2.stagger = false
+		blackboard.umbral_leap_velocity = nil
+		blackboard.landing_finished = nil
+		blackboard.in_vortex_state = "landed"
+		blackboard.stagger = false
 
 		return "done"
-	elseif in_vortex_state == "waiting_to_land" then
-		if arg_4_2.breed.die_on_vortex_land or not arg_4_2.landing_finished then
-			arg_4_2.locomotion_extension:set_wanted_velocity(Vector3.zero())
+	elseif state == "waiting_to_land" then
+		if not blackboard.breed.die_on_vortex_land and blackboard.landing_finished then
+			local locomotion_extension = blackboard.locomotion_extension
 
-			arg_4_2.landing_finished = nil
-			arg_4_2.in_vortex_state = "landed"
+			locomotion_extension:set_wanted_velocity(Vector3.zero())
+
+			blackboard.landing_finished = nil
+			blackboard.in_vortex_state = "landed"
 
 			return "done"
-		elseif not arg_4_2.breed.die_on_vortex_land then
-			local str_2 = "forced"
-			local var_4_20 = Vector3(0, 0, -1)
+		elseif blackboard.breed.die_on_vortex_land then
+			local damage_type = "forced"
+			local damage_direction = Vector3(0, 0, -1)
 
-			AiUtils.kill_unit(arg_4_1, nil, nil, str_2, var_4_20)
+			AiUtils.kill_unit(unit, nil, nil, damage_type, damage_direction)
 		end
 	end
 

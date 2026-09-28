@@ -2,25 +2,25 @@
 
 ActionLunge = class(ActionLunge, ActionSweep)
 
-ActionLunge.init = function (self, arg_1_1, arg_1_2, arg_1_3, arg_1_4, arg_1_5, arg_1_6, arg_1_7, arg_1_8)
+ActionLunge.init = function (self, world, item_name, is_server, owner_unit, damage_unit, first_person_unit, weapon_unit, weapon_system)
 	-- function 1
-	ActionLunge.super.init(self, arg_1_1, arg_1_2, arg_1_3, arg_1_4, arg_1_5, arg_1_6, arg_1_7, arg_1_8)
+	ActionLunge.super.init(self, world, item_name, is_server, owner_unit, damage_unit, first_person_unit, weapon_unit, weapon_system)
 
-	self._status_extension = ScriptUnit.extension(arg_1_4, "status_system")
-	self._first_person_extension = ScriptUnit.extension(arg_1_4, "first_person_system")
+	self._status_extension = ScriptUnit.extension(owner_unit, "status_system")
+	self._first_person_extension = ScriptUnit.extension(owner_unit, "first_person_system")
 end
 
-ActionLunge.client_owner_start_action = function (self, arg_2_1, arg_2_2, arg_2_3, arg_2_4, arg_2_5)
+ActionLunge.client_owner_start_action = function (self, new_action, t, chain_action_data, power_level, action_init_data)
 	-- function 2
-	local _status_extension = self._status_extension
+	local status_extension = self._status_extension
 
-	if not _status_extension.do_lunge then
+	if status_extension.do_lunge then
 		return
 	end
 
-	local lunge_settings = arg_2_1.lunge_settings
+	local lunge_settings = new_action.lunge_settings
 
-	_status_extension.do_lunge = {
+	status_extension.do_lunge = {
 		allow_rotation = false,
 		noclip = false,
 		dodge = false,
@@ -41,5 +41,5 @@ ActionLunge.client_owner_start_action = function (self, arg_2_1, arg_2_2, arg_2_
 		}
 	}
 
-	ActionLunge.super.client_owner_start_action(self, arg_2_1, arg_2_2, arg_2_3, arg_2_4, arg_2_5)
+	ActionLunge.super.client_owner_start_action(self, new_action, t, chain_action_data, power_level, action_init_data)
 end

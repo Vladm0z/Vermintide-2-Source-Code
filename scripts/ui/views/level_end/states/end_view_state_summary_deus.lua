@@ -5,23 +5,37 @@ require("scripts/ui/views/level_end/states/end_view_state_summary")
 EndViewStateSummaryDeus = class(EndViewStateSummaryDeus, EndViewStateSummary)
 EndViewStateSummaryDeus.NAME = "EndViewStateSummaryDeus"
 
-EndViewStateSummaryDeus.on_enter = function (self, arg_1_1)
+EndViewStateSummaryDeus.on_enter = function (self, params)
 	-- function 1
-	self.super.on_enter(self, arg_1_1)
+	self.super.on_enter(self, params)
 
-	self._widgets_by_name.summary_title.content.text = Localize("expedition_summary")
+	local summary_title = self._widgets_by_name.summary_title
 
-	if not self.game_won then
-		self._widgets_by_name.deus_progress_reset_text.content.visible = false
+	summary_title.content.text = Localize("expedition_summary")
+
+	if self.game_won then
+		local deus_progress_reset_text = self._widgets_by_name.deus_progress_reset_text
+
+		deus_progress_reset_text.content.visible = false
 	end
 
-	local get_rolled_over_soft_currency = Managers.backend:get_interface("deus"):get_rolled_over_soft_currency()
+	local deus_backend = Managers.backend:get_interface("deus")
+	local get_rolled_over_soft_currency = deus_backend:get_rolled_over_soft_currency()
 
-	get_rolled_over_soft_currency = get_rolled_over_soft_currency or 0
-	self._widgets_by_name.coins_retained_total_text.content.coin_count_text = string.format("%d", get_rolled_over_soft_currency)
+	if not get_rolled_over_soft_currency then
+		-- Nothing
+	end
+
+	get_rolled_over_soft_currency = 0
+
+	local coin_count = get_rolled_over_soft_currency
+
+	::label_1_0::
+
+	self._widgets_by_name.coins_retained_total_text.content.coin_count_text = string.format("%d", coin_count)
 end
 
-EndViewStateSummaryDeus._get_definitions = function (arg_2_0)
+EndViewStateSummaryDeus._get_definitions = function (self)
 	-- function 2
 	return local_require("scripts/ui/views/level_end/states/definitions/end_view_state_summary_deus_definitions")
 end

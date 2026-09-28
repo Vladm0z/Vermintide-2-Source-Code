@@ -1,6 +1,6 @@
 -- chunkname: @scripts/ui/views/hero_view/states/hero_window_layout.lua
 
-local tbl = {
+local windows = {
 	options = {
 		class_name = "HeroWindowOptions",
 		name = "options"
@@ -44,7 +44,7 @@ local tbl = {
 		name = "cosmetics_inventory"
 	}
 }
-local tbl_2 = {
+local window_layouts = {
 	{
 		sound_event_enter = "play_gui_equipment_button",
 		name = "equipment",
@@ -77,9 +77,9 @@ local tbl_2 = {
 			inventory = 3,
 			crafting = 2
 		},
-		can_add_function = function (arg_1_0)
+		can_add_function = function (mechanism_name)
 			-- function 1
-			return arg_1_0 == "versus" or arg_1_0 ~= "inn_vs"
+			return mechanism_name ~= "versus" and mechanism_name ~= "inn_vs"
 		end
 	},
 	{
@@ -103,10 +103,10 @@ local tbl_2 = {
 		}
 	}
 }
-local num = 5
+local MAX_ACTIVE_WINDOWS = 5
 
 return {
-	max_active_windows = num,
-	windows = tbl,
-	window_layouts = tbl_2
+	max_active_windows = MAX_ACTIVE_WINDOWS,
+	windows = windows,
+	window_layouts = window_layouts
 }

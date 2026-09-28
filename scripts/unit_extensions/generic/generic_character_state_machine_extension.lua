@@ -39,22 +39,22 @@ DLCUtils.dofile_list("character_states")
 
 GenericCharacterStateMachineExtension = class(GenericCharacterStateMachineExtension)
 
-GenericCharacterStateMachineExtension.init = function (self, arg_1_1, arg_1_2, arg_1_3)
+GenericCharacterStateMachineExtension.init = function (self, extension_init_context, unit, extension_init_data)
 	-- function 1
-	self.world = arg_1_1.world
-	self.network_transmit = arg_1_1.network_transmit
-	self.unit_storage = arg_1_1.unit_storage
-	self.unit = arg_1_2
-	self.player = arg_1_3.player
-	self.start_state = arg_1_3.start_state
-	self.character_state_class_list = arg_1_3.character_state_class_list
-	self.nav_world = arg_1_3.nav_world
+	self.world = extension_init_context.world
+	self.network_transmit = extension_init_context.network_transmit
+	self.unit_storage = extension_init_context.unit_storage
+	self.unit = unit
+	self.player = extension_init_data.player
+	self.start_state = extension_init_data.start_state
+	self.character_state_class_list = extension_init_data.character_state_class_list
+	self.nav_world = extension_init_data.nav_world
 	self.state_machine = GenericStateMachine:new(self.world, self.unit)
 end
 
 GenericCharacterStateMachineExtension.extensions_ready = function (self)
 	-- function 2
-	local tbl = {
+	local character_state_init_context = {
 		world = self.world,
 		unit = self.unit,
 		player = self.player,
@@ -63,28 +63,28 @@ GenericCharacterStateMachineExtension.extensions_ready = function (self)
 		unit_storage = self.unit_storage,
 		nav_world = self.nav_world
 	}
-	local tbl_2 = {}
+	local states = {}
 	local character_state_class_list = self.character_state_class_list
 
 	for i = 1, #character_state_class_list do
-		local var_2_3 = character_state_class_list[i]:new(tbl)
-		local name = var_2_3.name
+		local state_instance = character_state_class_list[i]:new(character_state_init_context)
+		local name = state_instance.name
 
-		assert(not name and tbl_2[name] == nil)
+		assert(not not name and states[name] == nil)
 
-		tbl_2[name] = var_2_3
+		states[name] = state_instance
 	end
 
 	local start_state = self.start_state
 
-	self.state_machine:post_init(tbl_2, start_state)
+	self.state_machine:post_init(states, start_state)
 end
 
 GenericCharacterStateMachineExtension.destroy = function (self)
 	-- function 3
-	local flag = true
+	local is_destroy = true
 
-	self.state_machine:exit_current_state(flag)
+	self.state_machine:exit_current_state(is_destroy)
 end
 
 GenericCharacterStateMachineExtension.reset = function (self)
@@ -92,9 +92,9 @@ GenericCharacterStateMachineExtension.reset = function (self)
 	self.state_machine:reset()
 end
 
-GenericCharacterStateMachineExtension.update = function (self, arg_5_1, arg_5_2, arg_5_3, arg_5_4, arg_5_5)
+GenericCharacterStateMachineExtension.update = function (self, unit, input, dt, context, t)
 	-- function 5
-	self.state_machine:update(arg_5_1, arg_5_2, arg_5_3, arg_5_4, arg_5_5)
+	self.state_machine:update(unit, input, dt, context, t)
 end
 
 GenericCharacterStateMachineExtension.current_state = function (self)

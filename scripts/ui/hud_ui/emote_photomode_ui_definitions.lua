@@ -1,17 +1,16 @@
 -- chunkname: @scripts/ui/hud_ui/emote_photomode_ui_definitions.lua
 
-local num = 1920
-local num_2 = 1080
-local num_3 = 45
-local tbl = {
+local SIZE_X, SIZE_Y = 1920, 1080
+local ROW_SIZE = 45
+local WINDOW_SIZE_PC = {
 	325,
-	num_3 * 2
+	ROW_SIZE * 2
 }
-local tbl_2 = {
+local WINDOW_SIZE_GAMEPAD = {
 	325,
-	num_3 * 4
+	ROW_SIZE * 4
 }
-local tbl_3 = {
+local scenegraph_definition = {
 	screen = {
 		scale = "fit",
 		position = {
@@ -20,8 +19,8 @@ local tbl_3 = {
 			UILayer.hud
 		},
 		size = {
-			num,
-			num_2
+			SIZE_X,
+			SIZE_Y
 		}
 	},
 	controls_pc = {
@@ -33,7 +32,7 @@ local tbl_3 = {
 			-20,
 			0
 		},
-		size = tbl
+		size = WINDOW_SIZE_PC
 	},
 	controls_gamepad = {
 		vertical_alignment = "top",
@@ -44,11 +43,11 @@ local tbl_3 = {
 			-20,
 			0
 		},
-		size = tbl_2
+		size = WINDOW_SIZE_GAMEPAD
 	}
 }
 
-local function fn(arg_1_0, arg_1_1, arg_1_2, arg_1_3)
+local function create_input_widget(scenegraph_id, display_name, input_action, row)
 	-- function 1
 	return {
 		element = {
@@ -66,7 +65,7 @@ local function fn(arg_1_0, arg_1_1, arg_1_2, arg_1_3)
 			}
 		},
 		content = {
-			text_id = Localize(arg_1_1) .. ": $KEY;Player__" .. arg_1_2 .. ":"
+			text_id = Localize(display_name) .. ": $KEY;Player__" .. input_action .. ":"
 		},
 		style = {
 			text = {
@@ -105,14 +104,14 @@ local function fn(arg_1_0, arg_1_1, arg_1_2, arg_1_3)
 		},
 		offset = {
 			0,
-			-arg_1_3 * num_3,
+			-row * ROW_SIZE,
 			0
 		},
-		scenegraph_id = arg_1_0
+		scenegraph_id = scenegraph_id
 	}
 end
 
-local function fn_2(arg_2_0, arg_2_1)
+local function create_background(scenegraph_id, color)
 	-- function 2
 	return {
 		element = {
@@ -149,7 +148,7 @@ local function fn_2(arg_2_0, arg_2_1)
 			test = {
 				vertical_alignment = "right",
 				horizontal_alignment = "bottom",
-				color = arg_2_1 or {
+				color = not not color or not not {
 					255,
 					255,
 					255,
@@ -161,8 +160,8 @@ local function fn_2(arg_2_0, arg_2_1)
 					-5
 				},
 				texture_size = {
-					tbl_3[arg_2_0].size[1],
-					tbl_3[arg_2_0].size[2] + num_3
+					scenegraph_definition[scenegraph_id].size[1],
+					scenegraph_definition[scenegraph_id].size[2] + ROW_SIZE
 				}
 			},
 			mask_vertical = {
@@ -181,12 +180,12 @@ local function fn_2(arg_2_0, arg_2_1)
 					0
 				},
 				pivot = {
-					(tbl_3[arg_2_0].size[2] + num_3 + 50) * 0.5,
-					tbl_3[arg_2_0].size[1] * 0.5
+					(scenegraph_definition[scenegraph_id].size[2] + ROW_SIZE + 50) * 0.5,
+					scenegraph_definition[scenegraph_id].size[1] * 0.5
 				},
 				texture_size = {
-					tbl_3[arg_2_0].size[2] + num_3 + 50,
-					tbl_3[arg_2_0].size[1]
+					scenegraph_definition[scenegraph_id].size[2] + ROW_SIZE + 50,
+					scenegraph_definition[scenegraph_id].size[1]
 				}
 			},
 			background = {
@@ -205,8 +204,8 @@ local function fn_2(arg_2_0, arg_2_1)
 					0
 				},
 				texture_size = {
-					tbl_3[arg_2_0].size[1],
-					tbl_3[arg_2_0].size[2] + num_3
+					scenegraph_definition[scenegraph_id].size[1],
+					scenegraph_definition[scenegraph_id].size[2] + ROW_SIZE
 				}
 			}
 		},
@@ -215,39 +214,39 @@ local function fn_2(arg_2_0, arg_2_1)
 			0,
 			0
 		},
-		scenegraph_id = arg_2_0
+		scenegraph_id = scenegraph_id
 	}
 end
 
-local tbl_4 = {}
-local num_4 = 2
-local tbl_5 = {
-	rect = fn_2("controls_pc", {
+local widgets = {}
+local num_elements = 2
+local widgets_pc = {
+	rect = create_background("controls_pc", {
 		70,
 		0,
 		0,
 		0
-	}, num_4),
-	hide_hud = fn("controls_pc", "photomode_hide_hud", "emote_toggle_hud_visibility", 0),
-	zoom_mouse = fn("controls_pc", "photomode_camera_zoom", "emote_camera_zoom", 1)
+	}, num_elements),
+	hide_hud = create_input_widget("controls_pc", "photomode_hide_hud", "emote_toggle_hud_visibility", 0),
+	zoom_mouse = create_input_widget("controls_pc", "photomode_camera_zoom", "emote_camera_zoom", 1)
 }
-local num_5 = 4
-local tbl_6 = {
-	rect = fn_2("controls_gamepad", {
+local num_elements = 4
+local widgets_gamepad = {
+	rect = create_background("controls_gamepad", {
 		255,
 		255,
 		255,
 		255
-	}, num_5),
-	hide_hud = fn("controls_gamepad", "photomode_hide_hud", "emote_toggle_hud_visibility", 0),
-	zoom_in_gamepad = fn("controls_gamepad", "photomode_camera_zoom_in", "emote_camera_zoom_in", 1),
-	zoom_out_gamepad = fn("controls_gamepad", "photomode_camera_zoom_out", "emote_camera_zoom_out", 2),
-	exit_gamepad = fn("controls_gamepad", "exit", "crouch", 3)
+	}, num_elements),
+	hide_hud = create_input_widget("controls_gamepad", "photomode_hide_hud", "emote_toggle_hud_visibility", 0),
+	zoom_in_gamepad = create_input_widget("controls_gamepad", "photomode_camera_zoom_in", "emote_camera_zoom_in", 1),
+	zoom_out_gamepad = create_input_widget("controls_gamepad", "photomode_camera_zoom_out", "emote_camera_zoom_out", 2),
+	exit_gamepad = create_input_widget("controls_gamepad", "exit", "crouch", 3)
 }
 
 return {
-	scenegraph_definition = tbl_3,
-	widgets = tbl_4,
-	widgets_pc = tbl_5,
-	widgets_gamepad = tbl_6
+	scenegraph_definition = scenegraph_definition,
+	widgets = widgets,
+	widgets_pc = widgets_pc,
+	widgets_gamepad = widgets_gamepad
 }

@@ -1,16 +1,18 @@
 -- chunkname: @scripts/managers/entity/entity_manager2.lua
 
-local var_0_0 = (function (arg_1_0)
+local function readonlytable(table)
 	-- function 1
 	return setmetatable({}, {
 		__metatable = false,
-		__index = arg_1_0,
-		__newindex = function (arg_2_0, arg_2_1, arg_2_2)
+		__index = table,
+		__newindex = function (table, key, value)
 			-- function 2
 			error("Coder trying to modify EntityManager's read-only empty table. Don't do it!")
 		end
 	})
-end)({})
+end
+
+local EMPTY_TABLE = readonlytable({})
 
 EntityManager2 = class(EntityManager2)
 
@@ -27,42 +29,42 @@ EntityManager2.init = function (self)
 	self._networked_flow_state = Managers.state.networked_flow_state
 end
 
-EntityManager2.set_extension_extractor_function = function (self, arg_4_1)
+EntityManager2.set_extension_extractor_function = function (self, extension_extractor_function)
 	-- function 4
-	self.extension_extractor_function = arg_4_1
+	self.extension_extractor_function = extension_extractor_function
 end
 
-EntityManager2.register_system = function (self, arg_5_1, arg_5_2, arg_5_3)
+EntityManager2.register_system = function (self, system, system_name, extension_list)
 	-- function 5
-	assert(self._systems[arg_5_2] == nil, string.format("Tried to register system whose name '%s' was already registered.", arg_5_2))
+	assert(self._systems[system_name] == nil, string.format("Tried to register system whose name '%s' was already registered.", system_name))
 
-	self._systems[arg_5_2] = arg_5_1
-	arg_5_1.NAME = arg_5_2
+	self._systems[system_name] = system
+	system.NAME = system_name
 
-	for i, v in ipairs(arg_5_3) do
-		self._extension_to_system_map[v] = arg_5_2
+	for i, extension in ipairs(extension_list) do
+		self._extension_to_system_map[extension] = system_name
 	end
 
-	GarbageLeakDetector.register_object(arg_5_1, arg_5_2)
+	GarbageLeakDetector.register_object(system, system_name)
 end
 
-EntityManager2.system = function (self, arg_6_1)
+EntityManager2.system = function (self, system_name)
 	-- function 6
-	return self._systems[arg_6_1]
+	return self._systems[system_name]
 end
 
-EntityManager2.system_by_extension = function (self, arg_7_1)
+EntityManager2.system_by_extension = function (self, extension_name)
 	-- function 7
-	local var_7_0 = self._extension_to_system_map[arg_7_1]
+	local system_name = self._extension_to_system_map[extension_name]
 
-	return not var_7_0 and self._systems[var_7_0]
+	return not not system_name and not not self._systems[system_name]
 end
 
-EntityManager2.get_entities = function (self, arg_8_1)
+EntityManager2.get_entities = function (self, extension_name)
 	-- function 8
-	local var_8_0 = self._extensions[arg_8_1]
+	local var_8_0 = self._extensions[extension_name]
 
-	var_8_0 = var_8_0 or var_0_0
+	var_8_0 = not not var_8_0 or not not EMPTY_TABLE
 
 	return var_8_0
 end
@@ -80,381 +82,396 @@ EntityManager2.destroy = function (self)
 	GarbageLeakDetector.register_object(self, "EntityManager")
 end
 
-EntityManager2.add_unit_extensions = function (self, arg_10_1, arg_10_2, arg_10_3, arg_10_4)
+EntityManager2.add_unit_extensions = function (self, world, unit, unit_template_name, all_extension_init_data)
 	-- function 10
-	arg_10_4 = arg_10_4 or var_0_0
+	all_extension_init_data = not not all_extension_init_data or not not EMPTY_TABLE
 
-	local _ignore_extensions_list = self._ignore_extensions_list
-	local _extension_to_system_map = self._extension_to_system_map
-	local _units = self._units
-	local _extensions = self._extensions
-	local _systems = self._systems
-	local extension_extractor_function, var_10_6 = self.extension_extractor_function(arg_10_2, arg_10_3)
+	local ignore_extensions_list = self._ignore_extensions_list
+	local extension_to_system_map = self._extension_to_system_map
+	local self_units, self_extensions, self_systems = self._units, self._extensions, self._systems
+	local extensions_list, num_extensions = self.extension_extractor_function(unit, unit_template_name)
 
-	if not (not arg_10_3 and self.system_to_extension_per_unit_type_map[extension_extractor_function] ~= nil) then
-		local tbl = {}
+	if unit_template_name and self.system_to_extension_per_unit_type_map[extensions_list] == nil then
+		local reverse_lookup = {}
 
-		for i = 1, var_10_6 do
+		for i = 1, num_extensions do
 			repeat
-				local var_10_8 = extension_extractor_function[i]
+				local extension_name = extensions_list[i]
 
-				if not _ignore_extensions_list[var_10_8] then
+				if ignore_extensions_list[extension_name] then
 					break
 				end
 
-				local var_10_9 = self._extension_to_system_map[var_10_8]
+				local system_name = self._extension_to_system_map[extension_name]
 
-				if not var_10_9 then
-					tbl[var_10_9] = var_10_8
+				if system_name then
+					reverse_lookup[system_name] = extension_name
 				end
 			until true
 		end
 
-		self.system_to_extension_per_unit_type_map[extension_extractor_function] = tbl
+		self.system_to_extension_per_unit_type_map[extensions_list] = reverse_lookup
 	end
 
-	local _unit_extensions_list = self._unit_extensions_list
+	local unit_extensions_list = self._unit_extensions_list
 
-	assert(not _unit_extensions_list[arg_10_2], "Adding extensions to a unit that already has extensions added!")
+	assert(not unit_extensions_list[unit], "Adding extensions to a unit that already has extensions added!")
 
-	_unit_extensions_list[arg_10_2] = extension_extractor_function
+	unit_extensions_list[unit] = extensions_list
 
-	if var_10_6 == 0 then
-		if arg_10_3 ~= nil then
-			Unit.flow_event(arg_10_2, "unit_registered")
+	if num_extensions == 0 then
+		if unit_template_name ~= nil then
+			Unit.flow_event(unit, "unit_registered")
 		end
 
 		return false
 	end
 
-	for j = 1, var_10_6 do
+	for i = 1, num_extensions do
 		repeat
-			local var_10_11 = extension_extractor_function[j]
+			local extension_name = extensions_list[i]
 
-			if not _ignore_extensions_list[var_10_11] then
+			if ignore_extensions_list[extension_name] then
 				break
 			end
 
-			local var_10_12 = _extension_to_system_map[var_10_11]
+			local extension_system_name = extension_to_system_map[extension_name]
 
-			assert(var_10_12, string.format("No such registered extension %q", var_10_11))
+			assert(extension_system_name, string.format("No such registered extension %q", extension_name))
 
-			local var_10_13 = arg_10_4[var_10_12]
+			local var_10_0 = all_extension_init_data[extension_system_name]
 
-			var_10_13 = var_10_13 or var_0_0
+			if not var_10_0 then
+				-- Nothing
+			end
 
-			assert(_extension_to_system_map[var_10_11])
+			var_10_0 = EMPTY_TABLE
 
-			local var_10_14 = _systems[var_10_12]
+			local extension_init_data = var_10_0
 
-			assert(var_10_14 ~= nil, string.format("Adding extension %q with no system is registered.", var_10_11))
+			::label_10_0::
 
-			local on_add_extension = var_10_14:on_add_extension(arg_10_1, arg_10_2, var_10_11, var_10_13)
+			assert(extension_to_system_map[extension_name])
 
-			assert(on_add_extension, string.format("System (%s) must return the created extension (%s)", var_10_12, var_10_11))
+			local system = self_systems[extension_system_name]
 
-			local var_10_16 = _extensions[var_10_11]
+			assert(system ~= nil, string.format("Adding extension %q with no system is registered.", extension_name))
 
-			var_10_16 = var_10_16 or {}
-			_extensions[var_10_11] = var_10_16
+			local extension = system:on_add_extension(world, unit, extension_name, extension_init_data)
 
-			local var_10_17 = _units[arg_10_2]
+			assert(extension, string.format("System (%s) must return the created extension (%s)", extension_system_name, extension_name))
 
-			var_10_17 = var_10_17 or {}
-			_units[arg_10_2] = var_10_17
-			_units[arg_10_2][var_10_11] = on_add_extension
+			local var_10_1 = self_extensions[extension_name]
 
-			assert(on_add_extension ~= var_0_0)
+			var_10_1 = not not var_10_1 or not not {}
+			self_extensions[extension_name] = var_10_1
+
+			local var_10_2 = self_units[unit]
+
+			var_10_2 = not not var_10_2 or not not {}
+			self_units[unit] = var_10_2
+			self_units[unit][extension_name] = extension
+
+			assert(extension ~= EMPTY_TABLE)
 		until true
 	end
 
-	local var_10_18 = _units[arg_10_2]
+	local extensions = self_units[unit]
 
-	for k = 1, var_10_6 do
+	for i = 1, num_extensions do
 		repeat
-			local var_10_19 = extension_extractor_function[k]
+			local extension_name = extensions_list[i]
 
-			if not _ignore_extensions_list[var_10_19] then
+			if ignore_extensions_list[extension_name] then
 				break
 			end
 
-			local var_10_20 = var_10_18[var_10_19]
+			local extension = extensions[extension_name]
 
-			if var_10_20.extensions_ready ~= nil then
-				var_10_20:extensions_ready(arg_10_1, arg_10_2)
+			if extension.extensions_ready ~= nil then
+				extension:extensions_ready(world, unit)
 			end
 
-			local var_10_21 = _systems[_extension_to_system_map[var_10_19]]
+			local extension_system_name = extension_to_system_map[extension_name]
+			local system = self_systems[extension_system_name]
 
-			if var_10_21.extensions_ready ~= nil then
-				var_10_21:extensions_ready(arg_10_1, arg_10_2, var_10_19)
+			if system.extensions_ready ~= nil then
+				system:extensions_ready(world, unit, extension_name)
 			end
 		until true
 	end
 
-	Unit.flow_event(arg_10_2, "unit_registered")
+	Unit.flow_event(unit, "unit_registered")
 
 	return true
 end
 
-EntityManager2.sync_unit_extensions = function (self, arg_11_1, arg_11_2)
+EntityManager2.sync_unit_extensions = function (self, unit, go_id)
 	-- function 11
-	local var_11_0 = self._units[arg_11_1]
+	local extensions = self._units[unit]
 
-	if not var_11_0 then
-		local _extension_to_system_map = self._extension_to_system_map
-		local _systems = self._systems
+	if extensions then
+		local extension_to_system_map = self._extension_to_system_map
+		local self_systems = self._systems
 
-		for k, v in pairs(var_11_0) do
-			if v.game_object_initialized ~= nil then
-				v:game_object_initialized(arg_11_1, arg_11_2)
+		for extension_name, extension in pairs(extensions) do
+			if extension.game_object_initialized ~= nil then
+				extension:game_object_initialized(unit, go_id)
 			end
 
-			local var_11_3 = _systems[_extension_to_system_map[k]]
+			local extension_system_name = extension_to_system_map[extension_name]
+			local system = self_systems[extension_system_name]
 
-			if var_11_3.game_object_initialized ~= nil then
-				var_11_3:game_object_initialized(arg_11_1, arg_11_2)
+			if system.game_object_initialized ~= nil then
+				system:game_object_initialized(unit, go_id)
 			end
 		end
 	end
 end
 
-EntityManager2.hot_join_sync = function (arg_12_0, arg_12_1)
+EntityManager2.hot_join_sync = function (self, unit)
 	-- function 12
-	local extensions = ScriptUnit.extensions(arg_12_1)
+	local unit_extensions = ScriptUnit.extensions(unit)
 
-	if not extensions then
+	if not unit_extensions then
 		return
 	end
 
-	for k, v in pairs(extensions) do
-		if not v.hot_join_sync then
-			v:hot_join_sync(Managers.state.network:game_session_host())
+	for system_name, extension in pairs(unit_extensions) do
+		if extension.hot_join_sync then
+			extension:hot_join_sync(Managers.state.network:game_session_host())
 		end
 	end
 end
 
-local tbl = {}
+local TEMP_TABLE = {}
 
-EntityManager2.register_unit = function (self, arg_13_1, arg_13_2, arg_13_3, ...)
+EntityManager2.register_unit = function (self, world, unit, maybe_init_data, ...)
 	-- function 13
-	local var_13_0
+	local extension_init_data
 
-	if type(arg_13_3) == "table" then
-		var_13_0 = arg_13_3
+	if type(maybe_init_data) == "table" then
+		extension_init_data = maybe_init_data
 	else
-		var_13_0 = {
-			arg_13_3,
+		extension_init_data = {
+			maybe_init_data,
 			...
 		}
 	end
 
-	if not self:add_unit_extensions(arg_13_1, arg_13_2, nil, var_13_0) then
-		tbl[1] = arg_13_2
+	if self:add_unit_extensions(world, unit, nil, extension_init_data) then
+		TEMP_TABLE[1] = unit
 
-		self:register_units_extensions(tbl, 1)
+		self:register_units_extensions(TEMP_TABLE, 1)
 	end
 end
 
-EntityManager2.add_and_register_units = function (self, arg_14_1, arg_14_2, arg_14_3)
+EntityManager2.add_and_register_units = function (self, world, unit_list, num_units)
 	-- function 14
-	arg_14_3 = arg_14_3 or #arg_14_2
+	num_units = not not num_units or not not #unit_list
 
-	local temp_table = self.temp_table
-	local num = 0
+	local added_list = self.temp_table
+	local num_added = 0
 
-	for i = 1, arg_14_3 do
-		local var_14_2 = arg_14_2[i]
-		local get_data = Unit.get_data(var_14_2, "unit_template")
+	for i = 1, num_units do
+		local unit = unit_list[i]
+		local unit_template = Unit.get_data(unit, "unit_template")
 
-		if not self:add_unit_extensions(arg_14_1, var_14_2, get_data) then
-			num = num + 1
-			temp_table[num] = var_14_2
+		if self:add_unit_extensions(world, unit, unit_template) then
+			num_added = num_added + 1
+			added_list[num_added] = unit
 		end
 	end
 
-	if num > 0 then
-		self:register_units_extensions(temp_table, num)
+	if num_added > 0 then
+		self:register_units_extensions(added_list, num_added)
 	end
 end
 
-EntityManager2.register_units_extensions = function (self, arg_15_1, arg_15_2)
+EntityManager2.register_units_extensions = function (self, unit_list, num_units)
 	-- function 15
-	local _units = self._units
-	local _extensions = self._extensions
+	local self_units = self._units
+	local self_extensions = self._extensions
 
-	for i = 1, arg_15_2 do
+	for i = 1, num_units do
 		repeat
-			local var_15_2 = arg_15_1[i]
-			local var_15_3 = _units[var_15_2]
+			local unit = unit_list[i]
+			local unit_extensions = self_units[unit]
 
-			if not var_15_3 then
+			if not unit_extensions then
 				break
 			end
 
-			for k, v in pairs(var_15_3) do
-				assert(not _extensions[k][var_15_2], string.format("Unit %q already has extension %s registered.", var_15_2, k))
+			for extension_name, extension in pairs(unit_extensions) do
+				assert(not self_extensions[extension_name][unit], string.format("Unit %q already has extension %s registered.", unit, extension_name))
 
-				_extensions[k][var_15_2] = v
+				self_extensions[extension_name][unit] = extension
 			end
 		until true
 	end
 end
 
-EntityManager2.remove_extensions_from_unit = function (self, arg_16_1, arg_16_2)
+EntityManager2.remove_extensions_from_unit = function (self, unit, extensions_to_remove)
 	-- function 16
-	local _unit_extensions_list = self._unit_extensions_list
-	local _extensions = self._extensions
-	local destroy_extension = ScriptUnit.destroy_extension
-	local extensions = ScriptUnit.extensions(arg_16_1)
-	local var_16_4 = _unit_extensions_list[arg_16_1]
+	local unit_extensions_list = self._unit_extensions_list
+	local self_extensions = self._extensions
+	local ScriptUnit_destroy_extension = ScriptUnit.destroy_extension
+	local unit_extensions = ScriptUnit.extensions(unit)
+	local extensions_list = unit_extensions_list[unit]
 
-	if not var_16_4 then
+	if not extensions_list then
 		return
 	end
 
-	local count = #var_16_4
+	local num_ext = #extensions_list
 
-	for i, v in ipairs(arg_16_2) do
-		local NAME = self:system_by_extension(v).NAME
+	for _, extension_name in ipairs(extensions_to_remove) do
+		local system = self:system_by_extension(extension_name)
+		local system_name = system.NAME
 
-		destroy_extension(arg_16_1, NAME)
+		ScriptUnit_destroy_extension(unit, system_name)
 	end
 
-	for i_2, v_2 in ipairs(arg_16_2) do
-		local system_by_extension = self:system_by_extension(v_2)
+	for _, extension_name in ipairs(extensions_to_remove) do
+		local system = self:system_by_extension(extension_name)
 
-		system_by_extension:on_remove_extension(arg_16_1, v_2)
-		assert(not ScriptUnit.has_extension(arg_16_1, system_by_extension.NAME), string.format("Extension was not properly destroyed for extension %s", v_2))
+		system:on_remove_extension(unit, extension_name)
+		assert(not ScriptUnit.has_extension(unit, system.NAME), string.format("Extension was not properly destroyed for extension %s", extension_name))
 
-		_extensions[v_2][arg_16_1] = nil
+		self_extensions[extension_name][unit] = nil
 	end
 end
 
-EntityManager2.freeze_extensions = function (self, arg_17_1, arg_17_2, arg_17_3)
+EntityManager2.freeze_extensions = function (self, unit, extensions_to_freeze, freeze_reason)
 	-- function 17
-	for i = #arg_17_2, 1, -1 do
-		local var_17_0 = arg_17_2[i]
-		local system_by_extension = self:system_by_extension(var_17_0)
+	local num_extensions_to_freeze = #extensions_to_freeze
 
-		if not system_by_extension and not system_by_extension.on_freeze_extension then
-			system_by_extension:on_freeze_extension(arg_17_1, var_17_0, arg_17_3)
+	for i = num_extensions_to_freeze, 1, -1 do
+		local extension_name = extensions_to_freeze[i]
+		local system = self:system_by_extension(extension_name)
+
+		if system and system.on_freeze_extension then
+			system:on_freeze_extension(unit, extension_name, freeze_reason)
 		end
 	end
 end
 
-EntityManager2.unregister_units = function (self, arg_18_1, arg_18_2)
+EntityManager2.unregister_units = function (self, units, num_units)
 	-- function 18
-	local _networked_flow_state = self._networked_flow_state
-	local _units = self._units
-	local _extensions = self._extensions
+	local networked_flow_state = self._networked_flow_state
+	local self_units, self_extensions = self._units, self._extensions
 	local extension_extractor_function = self.extension_extractor_function
-	local _unit_extensions_list = self._unit_extensions_list
-	local destroy_extension = ScriptUnit.destroy_extension
-	local has_extension = ScriptUnit.has_extension
-	local _ignore_extensions_list = self._ignore_extensions_list
+	local unit_extensions_list = self._unit_extensions_list
+	local ScriptUnit_destroy_extension = ScriptUnit.destroy_extension
+	local ScriptUnit_has_extension = ScriptUnit.has_extension
+	local ignore_extensions_list = self._ignore_extensions_list
 
-	for i = 1, arg_18_2 do
+	for i = 1, num_units do
 		repeat
-			local var_18_8 = arg_18_1[i]
+			local unit = units[i]
 
-			POSITION_LOOKUP[var_18_8] = nil
+			POSITION_LOOKUP[unit] = nil
 
-			local extensions = ScriptUnit.extensions(var_18_8)
+			local unit_extensions = ScriptUnit.extensions(unit)
 
-			if not extensions then
+			if not unit_extensions then
 				break
 			end
 
-			local var_18_10 = _unit_extensions_list[var_18_8]
+			local extensions_list = unit_extensions_list[unit]
 
-			if not var_18_10 then
+			if not extensions_list then
 				break
 			end
 
-			for j = #var_18_10, 1, -1 do
-				local var_18_11 = var_18_10[j]
-				local system_by_extension = self:system_by_extension(var_18_11)
+			local extensions_list_n = #extensions_list
 
-				if system_by_extension ~= nil then
-					local NAME = system_by_extension.NAME
+			for i = extensions_list_n, 1, -1 do
+				local extension_name = extensions_list[i]
+				local system = self:system_by_extension(extension_name)
 
-					if not has_extension(var_18_8, NAME) then
-						destroy_extension(var_18_8, NAME)
+				if system ~= nil then
+					local system_name = system.NAME
+
+					if ScriptUnit_has_extension(unit, system_name) then
+						ScriptUnit_destroy_extension(unit, system_name)
 					end
 				end
 			end
 
-			local var_18_14 = self.system_to_extension_per_unit_type_map[var_18_10]
+			local system_to_extension_map = self.system_to_extension_per_unit_type_map[extensions_list]
 
-			if not var_18_14 then
-				for k, v in pairs(extensions) do
-					local var_18_15 = var_18_14[k]
-					local var_18_16 = self._systems[k]
+			if system_to_extension_map then
+				for system_name, _ in pairs(unit_extensions) do
+					local extension_name = system_to_extension_map[system_name]
+					local system = self._systems[system_name]
 
-					var_18_16:on_remove_extension(var_18_8, var_18_15)
-					assert(not ScriptUnit.has_extension(var_18_8, var_18_16.NAME), string.format("Extension was not properly destroyed for extension %s", var_18_15))
+					system:on_remove_extension(unit, extension_name)
+					assert(not ScriptUnit.has_extension(unit, system.NAME), string.format("Extension was not properly destroyed for extension %s", extension_name))
 
-					_extensions[var_18_15][var_18_8] = nil
+					self_extensions[extension_name][unit] = nil
 				end
 			else
-				for i4 = #var_18_10, 1, -1 do
-					local var_18_17 = var_18_10[i4]
+				for i = #extensions_list, 1, -1 do
+					local extension_name = extensions_list[i]
 
-					if not _ignore_extensions_list[var_18_17] then
-						local system_by_extension_2 = self:system_by_extension(var_18_17)
+					if not ignore_extensions_list[extension_name] then
+						local system = self:system_by_extension(extension_name)
 
-						system_by_extension_2:on_remove_extension(var_18_8, var_18_17)
-						assert(not ScriptUnit.has_extension(var_18_8, system_by_extension_2.NAME), string.format("Extension was not properly destroyed for extension %s", var_18_17))
+						system:on_remove_extension(unit, extension_name)
+						assert(not ScriptUnit.has_extension(unit, system.NAME), string.format("Extension was not properly destroyed for extension %s", extension_name))
 
-						_extensions[var_18_17][var_18_8] = nil
+						self_extensions[extension_name][unit] = nil
 					end
 				end
 			end
 
-			_networked_flow_state:clear_object_state(var_18_8)
-			ScriptUnit.remove_unit(var_18_8)
+			networked_flow_state:clear_object_state(unit)
+			ScriptUnit.remove_unit(unit)
 
-			_units[var_18_8] = nil
-			_unit_extensions_list[var_18_8] = nil
+			self_units[unit] = nil
+			unit_extensions_list[unit] = nil
 		until true
 	end
 end
 
-EntityManager2.game_object_unit_destroyed = function (self, arg_19_1)
+EntityManager2.game_object_unit_destroyed = function (self, unit)
 	-- function 19
-	local var_19_0 = self._unit_extensions_list[arg_19_1]
-	local extensions = ScriptUnit.extensions(arg_19_1)
+	local unit_extensions_list = self._unit_extensions_list
+	local extensions_list = unit_extensions_list[unit]
+	local unit_extensions = ScriptUnit.extensions(unit)
 
-	if not extensions then
+	if not unit_extensions then
 		return
 	end
 
-	for k, v in pairs(extensions) do
-		local var_19_2 = self._systems[k]
-		local extension = ScriptUnit.extension(arg_19_1, k)
+	for system_name, _ in pairs(unit_extensions) do
+		local system = self._systems[system_name]
+		local extension = ScriptUnit.extension(unit, system_name)
 
-		if not extension.game_object_unit_destroyed then
+		if extension.game_object_unit_destroyed then
 			extension:game_object_unit_destroyed()
 		end
 	end
 end
 
-EntityManager2.add_ignore_extensions = function (self, arg_20_1)
+EntityManager2.add_ignore_extensions = function (self, ignore_extensions)
 	-- function 20
-	local _ignore_extensions_list = self._ignore_extensions_list
-	local count = #arg_20_1
+	local ignore_extensions_list = self._ignore_extensions_list
+	local num_extensions = #ignore_extensions
 
-	for i = 1, count do
-		_ignore_extensions_list[arg_20_1[i]] = true
+	for i = 1, num_extensions do
+		local extension_name = ignore_extensions[i]
+
+		ignore_extensions_list[extension_name] = true
 	end
 end
 
-local tbl_2 = {}
+local TEMP_UNIT_TABLE = {}
 
-EntityManager2.unregister_unit = function (self, arg_21_1)
+EntityManager2.unregister_unit = function (self, unit)
 	-- function 21
-	tbl_2[1] = arg_21_1
+	TEMP_UNIT_TABLE[1] = unit
 
-	self:unregister_units(tbl_2, 1)
+	self:unregister_units(TEMP_UNIT_TABLE, 1)
 end

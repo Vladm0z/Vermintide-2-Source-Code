@@ -1,8 +1,8 @@
 -- chunkname: @scripts/ui/views/level_end/states/end_view_state_score_vs_tabs/end_view_state_score_vs_tab_details_definitions.lua
 
-local num = 40
-local num_2 = 450
-local tbl = {
+local cell_height = 40
+local section_size = 450
+local scenegraph_definition = {
 	screen = {
 		scale = "fit",
 		position = {
@@ -40,7 +40,7 @@ local tbl = {
 		},
 		size = {
 			370,
-			num * 2
+			cell_height * 2
 		}
 	},
 	local_heroes_score_title = {
@@ -53,8 +53,8 @@ local tbl = {
 			10
 		},
 		size = {
-			num_2,
-			num * 2
+			section_size,
+			cell_height * 2
 		}
 	},
 	local_pactsworn_score_title = {
@@ -62,13 +62,13 @@ local tbl = {
 		parent = "local_heroes_score_title",
 		horizontal_alignment = "left",
 		position = {
-			num_2 + 20,
+			section_size + 20,
 			0,
 			10
 		},
 		size = {
-			num_2,
-			num * 2
+			section_size,
+			cell_height * 2
 		}
 	},
 	local_pactsworn_score_edge = {
@@ -76,13 +76,13 @@ local tbl = {
 		parent = "local_pactsworn_score_title",
 		horizontal_alignment = "left",
 		position = {
-			num_2,
+			section_size,
 			0,
 			10
 		},
 		size = {
 			200,
-			num * 2
+			cell_height * 2
 		}
 	},
 	local_flag = {
@@ -124,7 +124,7 @@ local tbl = {
 		},
 		size = {
 			270,
-			num
+			cell_height
 		}
 	},
 	local_anchor = {
@@ -137,8 +137,8 @@ local tbl = {
 			10
 		},
 		size = {
-			num_2,
-			num
+			section_size,
+			cell_height
 		}
 	},
 	local_pact_anchor = {
@@ -146,13 +146,13 @@ local tbl = {
 		parent = "local_anchor",
 		horizontal_alignment = "left",
 		position = {
-			num_2 + 20,
+			section_size + 20,
 			0,
 			0
 		},
 		size = {
-			num_2,
-			num
+			section_size,
+			cell_height
 		}
 	},
 	local_color_edge = {
@@ -166,7 +166,7 @@ local tbl = {
 		},
 		size = {
 			4,
-			num * 5
+			cell_height * 5
 		}
 	},
 	local_score_bg = {
@@ -222,7 +222,7 @@ local tbl = {
 		},
 		size = {
 			270,
-			num * 2
+			cell_height * 2
 		}
 	},
 	local_names_grid = {
@@ -235,8 +235,8 @@ local tbl = {
 			1
 		},
 		size = {
-			num_2,
-			num * 5
+			section_size,
+			cell_height * 5
 		}
 	},
 	local_heroes_grid = {
@@ -245,12 +245,12 @@ local tbl = {
 		horizontal_alignment = "right",
 		position = {
 			0,
-			num,
+			cell_height,
 			1
 		},
 		size = {
-			num_2,
-			num * 6
+			section_size,
+			cell_height * 6
 		}
 	},
 	local_heroes_score_grid = {
@@ -259,12 +259,12 @@ local tbl = {
 		horizontal_alignment = "right",
 		position = {
 			0,
-			num,
+			cell_height,
 			1
 		},
 		size = {
-			num_2,
-			num * 5
+			section_size,
+			cell_height * 5
 		}
 	},
 	local_heroes_header_grid = {
@@ -273,12 +273,12 @@ local tbl = {
 		horizontal_alignment = "right",
 		position = {
 			0,
-			num,
+			cell_height,
 			1
 		},
 		size = {
-			num_2,
-			num
+			section_size,
+			cell_height
 		}
 	},
 	local_pact_grid = {
@@ -287,12 +287,12 @@ local tbl = {
 		horizontal_alignment = "right",
 		position = {
 			0,
-			num,
+			cell_height,
 			1
 		},
 		size = {
-			num_2,
-			num * 6
+			section_size,
+			cell_height * 6
 		}
 	},
 	local_pact_score_grid = {
@@ -301,12 +301,12 @@ local tbl = {
 		horizontal_alignment = "right",
 		position = {
 			0,
-			num,
+			cell_height,
 			1
 		},
 		size = {
-			num_2,
-			num * 5
+			section_size,
+			cell_height * 5
 		}
 	},
 	local_pact_header_grid = {
@@ -315,12 +315,12 @@ local tbl = {
 		horizontal_alignment = "left",
 		position = {
 			0,
-			num,
+			cell_height,
 			1
 		},
 		size = {
-			num_2,
-			num
+			section_size,
+			cell_height
 		}
 	},
 	opponent_team_anchor = {
@@ -334,7 +334,7 @@ local tbl = {
 		},
 		size = {
 			370,
-			num * 2
+			cell_height * 2
 		}
 	},
 	opponent_heroes_score_title = {
@@ -347,8 +347,8 @@ local tbl = {
 			10
 		},
 		size = {
-			num_2,
-			num * 2
+			section_size,
+			cell_height * 2
 		}
 	},
 	opponent_pactsworn_score_title = {
@@ -356,13 +356,13 @@ local tbl = {
 		parent = "opponent_heroes_score_title",
 		horizontal_alignment = "left",
 		position = {
-			num_2 + 20,
+			section_size + 20,
 			0,
 			10
 		},
 		size = {
-			num_2,
-			num * 2
+			section_size,
+			cell_height * 2
 		}
 	},
 	opponent_pactsworn_score_edge = {
@@ -370,13 +370,13 @@ local tbl = {
 		parent = "opponent_pactsworn_score_title",
 		horizontal_alignment = "left",
 		position = {
-			num_2,
+			section_size,
 			0,
 			10
 		},
 		size = {
 			200,
-			num * 2
+			cell_height * 2
 		}
 	},
 	opponent_flag = {
@@ -418,7 +418,7 @@ local tbl = {
 		},
 		size = {
 			270,
-			num
+			cell_height
 		}
 	},
 	opponent_anchor = {
@@ -431,8 +431,8 @@ local tbl = {
 			10
 		},
 		size = {
-			num_2,
-			num
+			section_size,
+			cell_height
 		}
 	},
 	opponent_pact_anchor = {
@@ -440,13 +440,13 @@ local tbl = {
 		parent = "opponent_anchor",
 		horizontal_alignment = "left",
 		position = {
-			num_2 + 20,
+			section_size + 20,
 			0,
 			0
 		},
 		size = {
-			num_2,
-			num
+			section_size,
+			cell_height
 		}
 	},
 	opponent_color_edge = {
@@ -460,7 +460,7 @@ local tbl = {
 		},
 		size = {
 			4,
-			num * 5
+			cell_height * 5
 		}
 	},
 	opponent_score_bg = {
@@ -516,7 +516,7 @@ local tbl = {
 		},
 		size = {
 			270,
-			num * 2
+			cell_height * 2
 		}
 	},
 	opponent_names_grid = {
@@ -529,8 +529,8 @@ local tbl = {
 			1
 		},
 		size = {
-			num_2,
-			num * 5
+			section_size,
+			cell_height * 5
 		}
 	},
 	opponent_heroes_grid = {
@@ -539,12 +539,12 @@ local tbl = {
 		horizontal_alignment = "right",
 		position = {
 			0,
-			num,
+			cell_height,
 			1
 		},
 		size = {
-			num_2,
-			num * 6
+			section_size,
+			cell_height * 6
 		}
 	},
 	opponent_heroes_score_grid = {
@@ -553,12 +553,12 @@ local tbl = {
 		horizontal_alignment = "right",
 		position = {
 			0,
-			num,
+			cell_height,
 			1
 		},
 		size = {
-			num_2,
-			num * 5
+			section_size,
+			cell_height * 5
 		}
 	},
 	opponent_pact_grid = {
@@ -567,12 +567,12 @@ local tbl = {
 		horizontal_alignment = "right",
 		position = {
 			0,
-			num,
+			cell_height,
 			1
 		},
 		size = {
-			num_2,
-			num * 6
+			section_size,
+			cell_height * 6
 		}
 	},
 	opponent_pact_score_grid = {
@@ -581,12 +581,12 @@ local tbl = {
 		horizontal_alignment = "right",
 		position = {
 			0,
-			num,
+			cell_height,
 			1
 		},
 		size = {
-			num_2,
-			num * 5
+			section_size,
+			cell_height * 5
 		}
 	},
 	heroes_header_bg = {
@@ -595,12 +595,12 @@ local tbl = {
 		horizontal_alignment = "right",
 		position = {
 			0,
-			num,
+			cell_height,
 			0
 		},
 		size = {
-			num_2,
-			num
+			section_size,
+			cell_height
 		}
 	},
 	pact_header_bg = {
@@ -609,66 +609,68 @@ local tbl = {
 		horizontal_alignment = "right",
 		position = {
 			0,
-			num,
+			cell_height,
 			0
 		},
 		size = {
-			num_2,
-			num
+			section_size,
+			cell_height
 		}
 	}
 }
-local tbl_2 = {
+local header_bg_color = {
 	255,
 	24,
 	24,
 	24
 }
-local tbl_3 = {
+local selected_color = {
 	255,
 	226,
 	220,
 	209
 }
-local get_color_table_with_alpha = Colors.get_color_table_with_alpha("local_player_team", 255)
-local get_color_table_with_alpha_2 = Colors.get_color_table_with_alpha("local_player_team_lighter", 255)
-local get_color_table_with_alpha_3 = Colors.get_color_table_with_alpha("local_player_team_darker", 255)
-local get_color_table_with_alpha_4 = Colors.get_color_table_with_alpha("opponent_team", 255)
-local get_color_table_with_alpha_5 = Colors.get_color_table_with_alpha("opponent_team_lighter", 255)
-local get_color_table_with_alpha_6 = Colors.get_color_table_with_alpha("opponent_team_darkened", 255)
-local get_table = Colors.get_table("local_scoreboard_entry_dark")
-local get_table_2 = Colors.get_table("local_scoreboard_entry")
-local get_table_3 = Colors.get_table("opponent_scoreboard_entry_dark")
-local get_table_4 = Colors.get_table("opponent_scoreboard_entry")
+local local_team_color = Colors.get_color_table_with_alpha("local_player_team", 255)
+local local_team_color_light = Colors.get_color_table_with_alpha("local_player_team_lighter", 255)
+local local_team_color_dark = Colors.get_color_table_with_alpha("local_player_team_darker", 255)
+local opponent_team_color = Colors.get_color_table_with_alpha("opponent_team", 255)
+local opponent_team_color_light = Colors.get_color_table_with_alpha("opponent_team_lighter", 255)
+local opponent_team_color_dark = Colors.get_color_table_with_alpha("opponent_team_darkened", 255)
+local local_even_field_color = Colors.get_table("local_scoreboard_entry_dark")
+local local_uneven_field_color = Colors.get_table("local_scoreboard_entry")
+local opponent_even_field_color = Colors.get_table("opponent_scoreboard_entry_dark")
+local opponent_uneven_field_color = Colors.get_table("opponent_scoreboard_entry")
 
-local function fn(arg_1_0, arg_1_1, arg_1_2, arg_1_3, arg_1_4)
+local function create_grid(scenegraph_id, num_rows, num_columns, line_width, color)
 	-- function 1
-	local flag = arg_1_4 or {
+	local color = not not color or not not {
 		255,
 		10,
 		10,
 		10
 	}
-	local size = tbl[arg_1_0].size
+	local scenegraph_data = scenegraph_definition[scenegraph_id]
+	local size = scenegraph_data.size
 
-	size[2] = arg_1_1 * num
+	size[2] = num_rows * cell_height
 
-	local tbl_2 = {
+	local widget = {
 		element = {
 			passes = {}
 		},
 		content = {},
 		style = {},
-		scenegraph_id = arg_1_0,
+		scenegraph_id = scenegraph_id,
 		offset = {
 			0,
 			0,
 			0
 		}
 	}
-	local passes = tbl_2.element.passes
-	local content = tbl_2.content
-	local style = tbl_2.style
+	local element = widget.element
+	local passes = element.passes
+	local content = widget.content
+	local style = widget.style
 
 	passes[#passes + 1] = {
 		pass_type = "rect",
@@ -690,37 +692,37 @@ local function fn(arg_1_0, arg_1_1, arg_1_2, arg_1_3, arg_1_4)
 		vertical_alignment = "top",
 		horizontal_alignment = "left",
 		texture_size = {
-			arg_1_3,
+			line_width,
 			size[2]
 		},
-		color = flag
+		color = color
 	}
 	style.right_border = {
 		vertical_alignment = "top",
 		horizontal_alignment = "right",
 		texture_size = {
-			arg_1_3,
+			line_width,
 			size[2]
 		},
-		color = flag
+		color = color
 	}
 	style.top_border = {
 		vertical_alignment = "top",
 		horizontal_alignment = "left",
 		texture_size = {
 			size[1],
-			arg_1_3
+			line_width
 		},
-		color = flag
+		color = color
 	}
 	style.bottom_border = {
 		vertical_alignment = "top",
 		horizontal_alignment = "left",
 		texture_size = {
 			size[1],
-			-arg_1_3
+			-line_width
 		},
-		color = flag,
+		color = color,
 		offset = {
 			0,
 			-size[2],
@@ -728,9 +730,9 @@ local function fn(arg_1_0, arg_1_1, arg_1_2, arg_1_3, arg_1_4)
 		}
 	}
 
-	local num_2 = size[2] / arg_1_1
+	local offset_y = size[2] / num_rows
 
-	for i = 1, arg_1_1 - 1 do
+	for i = 1, num_rows - 1 do
 		passes[#passes + 1] = {
 			pass_type = "rect",
 			style_id = "row_edge_" .. i
@@ -740,44 +742,44 @@ local function fn(arg_1_0, arg_1_1, arg_1_2, arg_1_3, arg_1_4)
 			horizontal_alignment = "left",
 			texture_size = {
 				size[1],
-				arg_1_3
+				line_width
 			},
 			offset = {
 				0,
-				-num_2 * i + arg_1_3 * 0.5,
+				-offset_y * i + line_width * 0.5,
 				0
 			},
-			color = flag
+			color = color
 		}
 	end
 
-	local num_3 = size[1] / arg_1_2
+	local offset_x = size[1] / num_columns
 
-	for j = 1, arg_1_2 - 1 do
+	for i = 1, num_columns - 1 do
 		passes[#passes + 1] = {
 			pass_type = "rect",
-			style_id = "column_edge_" .. j
+			style_id = "column_edge_" .. i
 		}
-		style["column_edge_" .. j] = {
+		style["column_edge_" .. i] = {
 			vertical_alignment = "top",
 			horizontal_alignment = "left",
 			texture_size = {
-				arg_1_3,
+				line_width,
 				size[2]
 			},
 			offset = {
-				num_3 * j,
+				offset_x * i,
 				0,
 				0
 			},
-			color = flag
+			color = color
 		}
 	end
 
-	return tbl_2
+	return widget
 end
 
-local tbl_4 = {
+local team_score_style = {
 	word_wrap = false,
 	upper_case = true,
 	localize = false,
@@ -793,7 +795,7 @@ local tbl_4 = {
 		10
 	}
 }
-local tbl_5 = {
+local score_style = {
 	word_wrap = false,
 	upper_case = false,
 	localize = false,
@@ -802,7 +804,7 @@ local tbl_5 = {
 	vertical_alignment = "center",
 	dynamic_font_size = true,
 	font_type = "hell_shark_header",
-	text_color = tbl_3,
+	text_color = selected_color,
 	offset = {
 		0,
 		-2,
@@ -813,7 +815,7 @@ local tbl_5 = {
 		0
 	}
 }
-local tbl_6 = {
+local title_style = {
 	word_wrap = false,
 	upper_case = false,
 	localize = false,
@@ -833,7 +835,7 @@ local tbl_6 = {
 		0
 	}
 }
-local tbl_7 = {
+local team_title_style = {
 	word_wrap = false,
 	upper_case = true,
 	localize = true,
@@ -853,7 +855,7 @@ local tbl_7 = {
 		0
 	}
 }
-local tbl_8 = {
+local team_type_style = {
 	word_wrap = false,
 	upper_case = false,
 	localize = true,
@@ -862,7 +864,7 @@ local tbl_8 = {
 	vertical_alignment = "center",
 	dynamic_font_size = true,
 	font_type = "hell_shark",
-	text_color = tbl_3,
+	text_color = selected_color,
 	offset = {
 		12,
 		18,
@@ -873,7 +875,7 @@ local tbl_8 = {
 		0
 	}
 }
-local tbl_9 = {
+local side_title_style = {
 	word_wrap = false,
 	upper_case = true,
 	localize = true,
@@ -882,7 +884,7 @@ local tbl_9 = {
 	vertical_alignment = "center",
 	dynamic_font_size = true,
 	font_type = "hell_shark",
-	text_color = tbl_3,
+	text_color = selected_color,
 	offset = {
 		0,
 		-2,
@@ -894,31 +896,32 @@ local tbl_9 = {
 	}
 }
 
-local function fn_2(arg_2_0, arg_2_1, arg_2_2)
+local function create_side_title(scenegraph_id, text, color)
 	-- function 2
-	local var_2_0 = tbl[arg_2_0]
-	local clone = table.clone(var_2_0.size)
-	local clone_2 = table.clone(tbl_9)
+	local scenegraph_data = scenegraph_definition[scenegraph_id]
+	local size = table.clone(scenegraph_data.size)
+	local internal_title_style = table.clone(side_title_style)
 
-	clone_2.text_color = arg_2_2
-	clone_2.size = clone
+	internal_title_style.text_color = color
+	internal_title_style.size = size
 
-	local tbl_2 = {
+	local widget = {
 		element = {
 			passes = {}
 		},
 		content = {},
 		style = {},
-		scenegraph_id = arg_2_0,
+		scenegraph_id = scenegraph_id,
 		offset = {
 			0,
 			27,
 			0
 		}
 	}
-	local passes = tbl_2.element.passes
-	local content = tbl_2.content
-	local style = tbl_2.style
+	local element = widget.element
+	local passes = element.passes
+	local content = widget.content
+	local style = widget.style
 
 	passes[#passes + 1] = {
 		style_id = "title",
@@ -930,9 +933,9 @@ local function fn_2(arg_2_0, arg_2_1, arg_2_2)
 		pass_type = "text",
 		text_id = "title"
 	}
-	content.title = tostring(arg_2_1)
-	style.title = clone_2
-	style.title_shadow = table.clone(clone_2)
+	content.title = tostring(text)
+	style.title = internal_title_style
+	style.title_shadow = table.clone(internal_title_style)
 	style.title_shadow.text_color = {
 		255,
 		0,
@@ -947,9 +950,9 @@ local function fn_2(arg_2_0, arg_2_1, arg_2_2)
 	style.underline = {
 		vertical_alignment = "bottom",
 		horizontal_alignment = "center",
-		color = arg_2_2,
+		color = color,
 		texture_size = {
-			clone[1],
+			size[1],
 			4
 		}
 	}
@@ -969,7 +972,7 @@ local function fn_2(arg_2_0, arg_2_1, arg_2_2)
 	style.left_gradient = {
 		vertical_alignment = "bottom",
 		horizontal_alignment = "left",
-		color = arg_2_2,
+		color = color,
 		texture_size = {
 			4,
 			8
@@ -983,7 +986,7 @@ local function fn_2(arg_2_0, arg_2_1, arg_2_2)
 	style.right_gradient = {
 		vertical_alignment = "bottom",
 		horizontal_alignment = "right",
-		color = arg_2_2,
+		color = color,
 		texture_size = {
 			4,
 			10
@@ -995,46 +998,47 @@ local function fn_2(arg_2_0, arg_2_1, arg_2_2)
 		}
 	}
 
-	return tbl_2
+	return widget
 end
 
-local function fn_3(arg_3_0, arg_3_1, arg_3_2, arg_3_3, arg_3_4, arg_3_5, arg_3_6, arg_3_7)
+local function create_stats(scenegraph_id, fields, optional_font_size, offset, is_me, skip_highscores, highscores, optional_team)
 	-- function 3
-	local size = tbl[arg_3_0].size
-	local num = 12
-	local tbl_2 = {
-		size[1] / #arg_3_1,
+	local scenegraph_data = scenegraph_definition[scenegraph_id]
+	local size = scenegraph_data.size
+	local padding = 12
+	local cell_size = {
+		size[1] / #fields,
 		size[2]
 	}
-	local clone = table.clone(tbl_5)
+	local internal_score_style = table.clone(score_style)
 
-	clone.font_size = arg_3_2 or clone.font_size
+	internal_score_style.font_size = not not optional_font_size or not not internal_score_style.font_size
 
-	local tbl_3
+	local tbl
 
-	if not arg_3_4 then
-		tbl_3 = {
+	if is_me then
+		tbl = {
 			255,
 			177,
 			144,
 			31
 		}
 
-		if not tbl_3 then
+		if not tbl then
 			-- Nothing
 		end
 	end
 
-	tbl_3 = clone.text_color
+	tbl = internal_score_style.text_color
 
 	::label_3_0::
 
-	clone.text_color = tbl_3
+	internal_score_style.text_color = tbl
 
-	if not arg_3_7 then
+	if optional_team then
 		local get_color_table_with_alpha
 
-		if arg_3_7 == "local_team" then
+		if optional_team == "local_team" then
 			get_color_table_with_alpha = Colors.get_color_table_with_alpha("local_player_team_lighter", 255)
 
 			if not get_color_table_with_alpha then
@@ -1046,95 +1050,96 @@ local function fn_3(arg_3_0, arg_3_1, arg_3_2, arg_3_3, arg_3_4, arg_3_5, arg_3_
 
 		::label_3_1::
 
-		clone.text_color = get_color_table_with_alpha
+		internal_score_style.text_color = get_color_table_with_alpha
 	end
 
-	local tbl_4 = {
+	local widget = {
 		element = {
 			passes = {}
 		},
 		content = {},
 		style = {},
-		scenegraph_id = arg_3_0,
-		offset = arg_3_3 or {
+		scenegraph_id = scenegraph_id,
+		offset = not not offset or not not {
 			0,
 			0,
 			0
 		}
 	}
-	local passes = tbl_4.element.passes
-	local content = tbl_4.content
-	local style = tbl_4.style
+	local element = widget.element
+	local passes = element.passes
+	local content = widget.content
+	local style = widget.style
 
-	for i = 1, #arg_3_1 do
-		local str = "stat_" .. i
+	for i = 1, #fields do
+		local id = "stat_" .. i
 
 		passes[#passes + 1] = {
 			pass_type = "text",
-			text_id = str,
-			style_id = str
+			text_id = id,
+			style_id = id
 		}
 
-		if not arg_3_5 then
+		if not skip_highscores then
 			passes[#passes + 1] = {
 				pass_type = "texture",
 				texture_id = "highscore_marker",
-				style_id = str .. "_highscore_marker",
-				content_check_function = function (self, arg_4_1)
+				style_id = id .. "_highscore_marker",
+				content_check_function = function (content, style)
 					-- function 4
-					return self[str .. "_is_highscore"]
+					return content[id .. "_is_highscore"]
 				end
 			}
 			passes[#passes + 1] = {
 				pass_type = "texture",
 				texture_id = "highscore_marker",
-				style_id = str .. "_highscore_marker_shadow",
-				content_check_function = function (self, arg_5_1)
+				style_id = id .. "_highscore_marker_shadow",
+				content_check_function = function (content, style)
 					-- function 5
-					return self[str .. "_is_highscore"]
+					return content[id .. "_is_highscore"]
 				end
 			}
 		end
 
 		passes[#passes + 1] = {
 			pass_type = "text",
-			text_id = str,
-			style_id = str .. "_shadow"
+			text_id = id,
+			style_id = id .. "_shadow"
 		}
 
-		local var_3_11 = arg_3_1[i]
+		local value = fields[i]
 
-		if type(var_3_11) == "number" then
-			var_3_11 = math.round(var_3_11)
+		if type(value) == "number" then
+			value = math.round(value)
 		end
 
-		content[str] = tostring(var_3_11)
+		content[id] = tostring(value)
 		content.highscore_marker = "scoreboard_marker"
-		content.offset = arg_3_3
-		content[str .. "_is_highscore"] = (arg_3_5 or arg_3_6 or arg_3_6[i] ~= var_3_11 or not (var_3_11 > 0)) and false
-		style[str] = table.clone(clone)
-		style[str].offset[1] = (i - 1) * tbl_2[1] + num
-		style[str].size = {
-			tbl_2[1] - num * 2,
-			tbl_2[2]
+		content.offset = offset
+		content[id .. "_is_highscore"] = (skip_highscores or not highscores or highscores[i] ~= value or not (value > 0)) and not not false
+		style[id] = table.clone(internal_score_style)
+		style[id].offset[1] = (i - 1) * cell_size[1] + padding
+		style[id].size = {
+			cell_size[1] - padding * 2,
+			cell_size[2]
 		}
-		style[str .. "_shadow"] = table.clone(clone)
-		style[str .. "_shadow"].offset = {
-			(i - 1) * tbl_2[1] + 2 + num,
+		style[id .. "_shadow"] = table.clone(internal_score_style)
+		style[id .. "_shadow"].offset = {
+			(i - 1) * cell_size[1] + 2 + padding,
 			-3,
 			-1
 		}
-		style[str .. "_shadow"].size = {
-			tbl_2[1] - num * 2,
-			tbl_2[2]
+		style[id .. "_shadow"].size = {
+			cell_size[1] - padding * 2,
+			cell_size[2]
 		}
-		style[str .. "_shadow"].text_color = {
+		style[id .. "_shadow"].text_color = {
 			255,
 			0,
 			0,
 			0
 		}
-		style[str .. "_highscore_marker"] = {
+		style[id .. "_highscore_marker"] = {
 			vertical_alignment = "center",
 			horizontal_alignment = "center",
 			texture_size = {
@@ -1142,16 +1147,16 @@ local function fn_3(arg_3_0, arg_3_1, arg_3_2, arg_3_3, arg_3_4, arg_3_5, arg_3_
 				39
 			},
 			offset = {
-				(i - 1) * tbl_2[1],
+				(i - 1) * cell_size[1],
 				0,
 				5
 			},
 			size = {
-				tbl_2[1],
-				tbl_2[2]
+				cell_size[1],
+				cell_size[2]
 			}
 		}
-		style[str .. "_highscore_marker_shadow"] = {
+		style[id .. "_highscore_marker_shadow"] = {
 			vertical_alignment = "center",
 			horizontal_alignment = "center",
 			texture_size = {
@@ -1165,70 +1170,71 @@ local function fn_3(arg_3_0, arg_3_1, arg_3_2, arg_3_3, arg_3_4, arg_3_5, arg_3_
 				0
 			},
 			offset = {
-				(i - 1) * tbl_2[1] + 1,
+				(i - 1) * cell_size[1] + 1,
 				-1,
 				4
 			},
 			size = {
-				tbl_2[1],
-				tbl_2[2]
+				cell_size[1],
+				cell_size[2]
 			}
 		}
 	end
 
-	return tbl_4
+	return widget
 end
 
-local function fn_4(arg_6_0, arg_6_1, arg_6_2, arg_6_3, arg_6_4, arg_6_5)
+local function create_title(scenegraph_id, title, optional_font_size, offset, is_me, team)
 	-- function 6
-	local var_6_0 = tbl[arg_6_0]
-	local clone = table.clone(var_6_0.size)
+	local scenegraph_data = scenegraph_definition[scenegraph_id]
+	local size = table.clone(scenegraph_data.size)
 
-	clone[1] = 170
+	size[1] = 170
 
-	local var_6_2 = tbl_3
-	local clone_2 = table.clone(tbl_6)
+	local team_color = selected_color
+	local internal_title_style = table.clone(title_style)
 
-	clone_2.font_size = arg_6_2 or clone_2.font_size
+	internal_title_style.font_size = not not optional_font_size or not not internal_title_style.font_size
 
-	local tbl_2
+	local tbl
 
-	if not arg_6_4 then
-		tbl_2 = {
+	if is_me then
+		tbl = {
 			255,
 			177,
 			144,
 			31
 		}
 
-		if not tbl_2 then
+		if not tbl then
 			-- Nothing
 		end
 	end
 
-	tbl_2 = var_6_2
+	tbl = team_color
 
 	::label_6_0::
 
-	clone_2.text_color = tbl_2
-	clone_2.size = clone
+	internal_title_style.text_color = tbl
+	internal_title_style.size = size
 
-	local tbl_4 = {
+	local widget = {
 		element = {
 			passes = {}
 		},
 		content = {},
 		style = {},
-		scenegraph_id = arg_6_0,
-		offset = arg_6_3 or {
+		scenegraph_id = scenegraph_id,
+		offset = not not offset or not not {
 			0,
 			0,
 			0
 		}
 	}
-	local passes = tbl_4.element.passes
-	local content = tbl_4.content
-	local style = tbl_4.style
+	local element = widget.element
+	local passes = element.passes
+	local content = widget.content
+	local style = widget.style
 
 	passes[#passes + 1] = {
 		style_id = "title",
@@ -1240,9 +1246,9 @@ local function fn_4(arg_6_0, arg_6_1, arg_6_2, arg_6_3, arg_6_4, arg_6_5)
 		pass_type = "text",
 		text_id = "title"
 	}
-	content.title = tostring(arg_6_1)
-	style.title = clone_2
-	style.title_shadow = table.clone(clone_2)
+	content.title = tostring(title)
+	style.title = internal_title_style
+	style.title_shadow = table.clone(internal_title_style)
 	style.title_shadow.text_color = {
 		255,
 		0,
@@ -1255,68 +1261,122 @@ local function fn_4(arg_6_0, arg_6_1, arg_6_2, arg_6_3, arg_6_4, arg_6_5)
 		-1
 	}
 
-	return tbl_4
+	return widget
 end
 
-local function fn_5(arg_7_0, arg_7_1, arg_7_2)
+local function create_team_title(team, local_team_name, opponent_team_name)
 	-- function 7
-	local flag = arg_7_0 == "local_team"
-	local flag_2
+	local is_local_team = team == "local_team"
+	local str
 
-	flag_2 = not flag and "local_title" and "opponent_title"
+	if is_local_team then
+		str = "local_title"
 
-	local var_7_2 = tbl[flag_2]
-	local clone = table.clone(var_7_2.size)
-	local flag_3 = not flag and arg_7_1 and arg_7_2
-	local var_7_5 = UISettings.teams_ui_assets[flag_3]
-
-	if not (not flag and get_color_table_with_alpha) then
-		local var_7_6 = get_color_table_with_alpha_4
+		goto label_7_0
 	end
 
-	if not (not flag and get_color_table_with_alpha_2) then
-		local var_7_7 = get_color_table_with_alpha_5
-	end
+	str = "opponent_title"
 
-	if not (not flag and get_color_table_with_alpha_3) then
-		local var_7_8 = get_color_table_with_alpha_6
-	end
+	local scenegraph_id = str
 
-	local get_color_table_with_alpha_7
+	::label_7_0::
 
-	if not flag then
-		get_color_table_with_alpha_7 = Colors.get_color_table_with_alpha("local_player_team_lighter", 255)
+	local scenegraph_data = scenegraph_definition[scenegraph_id]
+	local size = table.clone(scenegraph_data.size)
+	local team_name = (not is_local_team or not local_team_name) and not not opponent_team_name
+	local team_settings = UISettings.teams_ui_assets[team_name]
+	local var_7_1
 
-		if not get_color_table_with_alpha_7 then
+	if is_local_team then
+		var_7_1 = local_team_color
+
+		if not var_7_1 then
 			-- Nothing
 		end
 	end
 
-	get_color_table_with_alpha_7 = Colors.get_color_table_with_alpha("opponent_team_lighter", 255)
+	var_7_1 = opponent_team_color
 
-	::label_7_0::
+	local team_color = var_7_1
 
-	local clone_2 = table.clone(tbl_7)
+	do
+		local var_7_2
+	end
 
-	clone_2.size = clone
-	clone_2.text_color = get_color_table_with_alpha_7
+	::label_7_1::
 
-	local tbl_2 = {
+	if is_local_team then
+		var_7_2 = local_team_color_light
+
+		if not var_7_2 then
+			-- Nothing
+		end
+	end
+
+	var_7_2 = opponent_team_color_light
+
+	local team_color_light = var_7_2
+
+	do
+		local var_7_3
+	end
+
+	::label_7_2::
+
+	if is_local_team then
+		var_7_3 = local_team_color_dark
+
+		if not var_7_3 then
+			-- Nothing
+		end
+	end
+
+	var_7_3 = opponent_team_color_dark
+
+	local team_color_dark = var_7_3
+
+	do
+		local get_color_table_with_alpha
+	end
+
+	::label_7_3::
+
+	if is_local_team then
+		get_color_table_with_alpha = Colors.get_color_table_with_alpha("local_player_team_lighter", 255)
+
+		if not get_color_table_with_alpha then
+			-- Nothing
+		end
+	end
+
+	get_color_table_with_alpha = Colors.get_color_table_with_alpha("opponent_team_lighter", 255)
+
+	local title_color = get_color_table_with_alpha
+
+	::label_7_4::
+
+	local internal_title_style = table.clone(team_title_style)
+
+	internal_title_style.size = size
+	internal_title_style.text_color = title_color
+
+	local widget = {
 		element = {
 			passes = {}
 		},
 		content = {},
 		style = {},
-		scenegraph_id = flag_2,
+		scenegraph_id = scenegraph_id,
 		offset = {
 			0,
 			0,
 			0
 		}
 	}
-	local passes = tbl_2.element.passes
-	local content = tbl_2.content
-	local style = tbl_2.style
+	local element = widget.element
+	local passes = element.passes
+	local content = widget.content
+	local style = widget.style
 
 	passes[#passes + 1] = {
 		style_id = "title",
@@ -1328,9 +1388,9 @@ local function fn_5(arg_7_0, arg_7_1, arg_7_2)
 		pass_type = "text",
 		text_id = "title"
 	}
-	content.title = var_7_5.display_name
-	style.title = clone_2
-	style.title_shadow = table.clone(clone_2)
+	content.title = team_settings.display_name
+	style.title = internal_title_style
+	style.title_shadow = table.clone(internal_title_style)
 	style.title_shadow.text_color = {
 		255,
 		0,
@@ -1351,16 +1411,16 @@ local function fn_5(arg_7_0, arg_7_1, arg_7_2)
 		text_id = "team_type"
 	}
 
-	local flag_4
+	local flag
 
-	flag_4 = not flag and "vs_lobby_your_team" and "vs_lobby_enemy_team"
-	content.team_type = flag_4
+	flag = (not is_local_team or not "vs_lobby_your_team") and not not "vs_lobby_enemy_team"
+	content.team_type = flag
 
-	local clone_3 = table.clone(tbl_8)
+	local internal_type_style = table.clone(team_type_style)
 
-	clone_3.size = clone
-	style.team_type = clone_3
-	style.team_type_shadow = table.clone(clone_3)
+	internal_type_style.size = size
+	style.team_type = internal_type_style
+	style.team_type_shadow = table.clone(internal_type_style)
 	style.team_type_shadow.text_color = {
 		255,
 		0,
@@ -1371,18 +1431,18 @@ local function fn_5(arg_7_0, arg_7_1, arg_7_2)
 	style.team_type_shadow.offset[2] = style.team_type_shadow.offset[2] - 2
 	style.team_type_shadow.offset[3] = style.team_type_shadow.offset[3] - 1
 
-	return tbl_2
+	return widget
 end
 
-local tbl_10 = {
+local widget_definitions = {
 	background = UIWidgets.create_simple_rect("screen", {
 		128,
 		0,
 		0,
 		0
 	}),
-	heroes_side_title = fn_2("local_heroes_header_grid", "vs_as_heroes", tbl_3),
-	pactsworn_side_title = fn_2("local_pact_header_grid", "vs_as_pactsworn", tbl_3),
+	heroes_side_title = create_side_title("local_heroes_header_grid", "vs_as_heroes", selected_color),
+	pactsworn_side_title = create_side_title("local_pact_header_grid", "vs_as_pactsworn", selected_color),
 	local_gradient = UIWidgets.create_simple_uv_texture("horizontal_gradient", {
 		{
 			1,
@@ -1415,11 +1475,21 @@ local tbl_10 = {
 	})
 }
 
-local function fn_6(arg_8_0)
+local function create_winner_icon(winning_team)
 	-- function 8
-	local flag
+	local str
 
-	flag = arg_8_0 ~= "local_team" or not "local_winner_icon" or "opponent_winner_icon"
+	if winning_team == "local_team" then
+		str = "local_winner_icon"
+
+		goto label_8_0
+	end
+
+	str = "opponent_winner_icon"
+
+	local scenegraph_id = str
+
+	::label_8_0::
 
 	return {
 		element = {
@@ -1502,30 +1572,33 @@ local function fn_6(arg_8_0)
 			0,
 			0
 		},
-		scenegraph_id = flag
+		scenegraph_id = scenegraph_id
 	}
 end
 
-local function fn_7(arg_9_0, arg_9_1, arg_9_2)
+local function create_flag(team, local_team_name, opponent_team_name)
 	-- function 9
-	local str = "icons_placeholder"
-	local str_2 = ""
-	local str_3
+	local texture_name = "icons_placeholder"
+	local scenegraph_id = ""
 
-	if arg_9_0 == "local_team" then
-		str = UISettings.teams_ui_assets[arg_9_1].local_flag_texture or str
-		str_3 = "local_flag"
+	if team == "local_team" then
+		local team_settings = UISettings.teams_ui_assets[local_team_name]
+
+		texture_name = not not team_settings.local_flag_texture or not not texture_name
+		scenegraph_id = "local_flag"
 	else
-		str = UISettings.teams_ui_assets[arg_9_2].opponent_flag_texture or str
-		str_3 = "opponent_flag"
+		local team_settings = UISettings.teams_ui_assets[opponent_team_name]
+
+		texture_name = not not team_settings.opponent_flag_texture or not not texture_name
+		scenegraph_id = "opponent_flag"
 	end
 
-	return UIWidgets.create_simple_texture(str, str_3)
+	return UIWidgets.create_simple_texture(texture_name, scenegraph_id)
 end
 
-local function fn_8(arg_10_0, arg_10_1, arg_10_2)
+local function create_edge(scenegraph_id, color, size_y)
 	-- function 10
-	local size = tbl[arg_10_0].size
+	local size = scenegraph_definition[scenegraph_id].size
 
 	return {
 		element = {
@@ -1541,7 +1614,7 @@ local function fn_8(arg_10_0, arg_10_1, arg_10_2)
 			rect = {
 				vertical_alignment = "top",
 				horizontal_alignment = "left",
-				color = arg_10_1 or {
+				color = not not color or not not {
 					255,
 					255,
 					255,
@@ -1554,7 +1627,7 @@ local function fn_8(arg_10_0, arg_10_1, arg_10_2)
 				},
 				texture_size = {
 					size[1],
-					arg_10_2
+					size_y
 				}
 			}
 		},
@@ -1563,72 +1636,72 @@ local function fn_8(arg_10_0, arg_10_1, arg_10_2)
 			0,
 			0
 		},
-		scenegraph_id = arg_10_0
+		scenegraph_id = scenegraph_id
 	}
 end
 
-local function fn_9(arg_11_0, arg_11_1, arg_11_2, arg_11_3, arg_11_4, arg_11_5)
+local function create_fields(anchor, num_fields, base_name, widgets, even_field_color, uneven_field_color)
 	-- function 11
-	local size = tbl[arg_11_0].size
+	local field_size = scenegraph_definition[anchor].size
 
-	for i = 1, arg_11_1 do
-		local tbl_2 = {
+	for i = 1, num_fields do
+		local offset = {
 			0,
-			(i - 1) * -size[2]
+			(i - 1) * -field_size[2]
 		}
-		local flag = (i % 2 ~= 0 or not arg_11_4 or arg_11_5) and {
+		local color = (i % 2 ~= 0 or not even_field_color) and not not uneven_field_color or not not {
 			128,
 			0,
 			0,
 			0
 		}
 
-		arg_11_3[arg_11_2 .. "_" .. i] = UIWidgets.create_simple_rect(arg_11_0, flag, nil, tbl_2)
+		widgets[base_name .. "_" .. i] = UIWidgets.create_simple_rect(anchor, color, nil, offset)
 	end
 end
 
-local function fn_10(arg_12_0, arg_12_1, arg_12_2)
+local function create_team_grid_fields(team, num_fields, ui_scenegraph)
 	-- function 12
-	local tbl_2 = {}
+	local widgets = {}
 
-	if arg_12_0 == "local_team" then
-		fn_9("local_team_anchor", 1, "local_team", tbl_2)
-		fn_9("local_heroes_score_title", 1, "local_team_heroes", tbl_2)
-		fn_9("local_pactsworn_score_title", 1, "local_team_pactsworn", tbl_2)
-		fn_9("local_names_anchor", arg_12_1, "local_names", tbl_2, get_table, get_table_2)
-		fn_9("local_anchor", arg_12_1, "local_heroes", tbl_2, get_table, get_table_2)
-		fn_9("local_pact_anchor", arg_12_1, "local_pact", tbl_2, get_table, get_table_2)
+	if team == "local_team" then
+		create_fields("local_team_anchor", 1, "local_team", widgets)
+		create_fields("local_heroes_score_title", 1, "local_team_heroes", widgets)
+		create_fields("local_pactsworn_score_title", 1, "local_team_pactsworn", widgets)
+		create_fields("local_names_anchor", num_fields, "local_names", widgets, local_even_field_color, local_uneven_field_color)
+		create_fields("local_anchor", num_fields, "local_heroes", widgets, local_even_field_color, local_uneven_field_color)
+		create_fields("local_pact_anchor", num_fields, "local_pact", widgets, local_even_field_color, local_uneven_field_color)
 
-		arg_12_2.opponent_team_anchor.local_position[2] = tbl.local_team_anchor.position[2] - 5 * num - tbl.local_team_anchor.size[2]
+		ui_scenegraph.opponent_team_anchor.local_position[2] = scenegraph_definition.local_team_anchor.position[2] - 5 * cell_height - scenegraph_definition.local_team_anchor.size[2]
 	else
-		fn_9("opponent_team_anchor", 1, "opponent_team", tbl_2)
-		fn_9("opponent_heroes_score_title", 1, "opponent_team_heroes", tbl_2)
-		fn_9("opponent_pactsworn_score_title", 1, "opponent_team_pactsworn", tbl_2)
-		fn_9("opponent_names_anchor", arg_12_1, "opponent_names", tbl_2, get_table_3, get_table_4)
-		fn_9("opponent_anchor", arg_12_1, "opponent_heroes", tbl_2, get_table_3, get_table_4)
-		fn_9("opponent_pact_anchor", arg_12_1, "opponent_pact", tbl_2, get_table_3, get_table_4)
+		create_fields("opponent_team_anchor", 1, "opponent_team", widgets)
+		create_fields("opponent_heroes_score_title", 1, "opponent_team_heroes", widgets)
+		create_fields("opponent_pactsworn_score_title", 1, "opponent_team_pactsworn", widgets)
+		create_fields("opponent_names_anchor", num_fields, "opponent_names", widgets, opponent_even_field_color, opponent_uneven_field_color)
+		create_fields("opponent_anchor", num_fields, "opponent_heroes", widgets, opponent_even_field_color, opponent_uneven_field_color)
+		create_fields("opponent_pact_anchor", num_fields, "opponent_pact", widgets, opponent_even_field_color, opponent_uneven_field_color)
 	end
 
-	return tbl_2
+	return widgets
 end
 
-local tbl_11 = {
+local animation_definitions = {
 	on_enter = {
 		{
 			name = "fade_in",
 			start_progress = 0,
 			end_progress = 0.3,
-			init = function (arg_13_0, arg_13_1, arg_13_2, arg_13_3)
+			init = function (ui_scenegraph, scenegraph_definition, widgets, params)
 				-- function 13
-				arg_13_3.render_settings.alpha_multiplier = 0
+				params.render_settings.alpha_multiplier = 0
 			end,
-			update = function (arg_14_0, arg_14_1, arg_14_2, arg_14_3, arg_14_4)
+			update = function (ui_scenegraph, scenegraph_definition, widgets, progress, params)
 				-- function 14
-				local easeOutCubic = math.easeOutCubic(arg_14_3)
+				local anim_progress = math.easeOutCubic(progress)
 
-				arg_14_4.render_settings.alpha_multiplier = easeOutCubic
+				params.render_settings.alpha_multiplier = anim_progress
 			end,
-			on_complete = function (arg_15_0, arg_15_1, arg_15_2, arg_15_3)
+			on_complete = function (ui_scenegraph, scenegraph_definition, widgets, params)
 				-- function 15
 				return
 			end
@@ -1639,17 +1712,17 @@ local tbl_11 = {
 			name = "fade_out",
 			start_progress = 0,
 			end_progress = 0.3,
-			init = function (arg_16_0, arg_16_1, arg_16_2, arg_16_3)
+			init = function (ui_scenegraph, scenegraph_definition, widgets, params)
 				-- function 16
-				arg_16_3.render_settings.alpha_multiplier = 1
+				params.render_settings.alpha_multiplier = 1
 			end,
-			update = function (arg_17_0, arg_17_1, arg_17_2, arg_17_3, arg_17_4)
+			update = function (ui_scenegraph, scenegraph_definition, widgets, progress, params)
 				-- function 17
-				local easeOutCubic = math.easeOutCubic(arg_17_3)
+				local anim_progress = math.easeOutCubic(progress)
 
-				arg_17_4.render_settings.alpha_multiplier = 1 - easeOutCubic
+				params.render_settings.alpha_multiplier = 1 - anim_progress
 			end,
-			on_complete = function (arg_18_0, arg_18_1, arg_18_2, arg_18_3)
+			on_complete = function (ui_scenegraph, scenegraph_definition, widgets, params)
 				-- function 18
 				return
 			end
@@ -1658,13 +1731,13 @@ local tbl_11 = {
 }
 
 return {
-	scenegraph_definition = tbl,
-	widget_definitions = tbl_10,
-	animation_definitions = tbl_11,
-	create_stats_func = fn_3,
-	create_title_func = fn_4,
-	create_team_grid_fields_func = fn_10,
-	create_team_title_func = fn_5,
-	create_flag_func = fn_7,
-	create_winner_icon_func = fn_6
+	scenegraph_definition = scenegraph_definition,
+	widget_definitions = widget_definitions,
+	animation_definitions = animation_definitions,
+	create_stats_func = create_stats,
+	create_title_func = create_title,
+	create_team_grid_fields_func = create_team_grid_fields,
+	create_team_title_func = create_team_title,
+	create_flag_func = create_flag,
+	create_winner_icon_func = create_winner_icon
 }

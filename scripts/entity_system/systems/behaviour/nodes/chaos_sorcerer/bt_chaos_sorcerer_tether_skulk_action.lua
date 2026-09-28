@@ -7,268 +7,300 @@ BTChaosSorcererTetherSkulkAction = class(BTChaosSorcererTetherSkulkAction, BTNod
 local BTChaosSorcererTetherSkulkAction = BTChaosSorcererTetherSkulkAction
 local POSITION_LOOKUP = POSITION_LOOKUP
 
-BTChaosSorcererTetherSkulkAction.init = function (arg_1_0, ...)
+BTChaosSorcererTetherSkulkAction.init = function (self, ...)
 	-- function 1
-	BTChaosSorcererTetherSkulkAction.super.init(arg_1_0, ...)
+	BTChaosSorcererTetherSkulkAction.super.init(self, ...)
 end
 
 BTChaosSorcererTetherSkulkAction.name = "BTChaosSorcererTetherSkulkAction"
 
-BTChaosSorcererTetherSkulkAction.enter = function (self, arg_2_1, arg_2_2, arg_2_3)
+BTChaosSorcererTetherSkulkAction.enter = function (self, unit, blackboard, t)
 	-- function 2
-	local action_data = self._tree_node.action_data
-	local skulk_data = arg_2_2.skulk_data
+	local action = self._tree_node.action_data
+	local skulk_data_2 = blackboard.skulk_data
 
-	skulk_data = skulk_data or {}
-	arg_2_2.skulk_data = skulk_data
+	if not skulk_data_2 then
+		-- Nothing
+	end
+
+	skulk_data_2 = {}
+
+	local skulk_data = skulk_data_2
+
+	::label_2_0::
+
+	blackboard.skulk_data = skulk_data
 
 	local direction = skulk_data.direction
 
 	if not direction then
-		direction = action_data.direction
-		direction = direction or 1 - math.random(0, 1) * 2
+		direction = action.direction
+		direction = not not direction or not not (1 - math.random(0, 1) * 2)
 	end
 
 	skulk_data.direction = direction
 
 	local radius = skulk_data.radius
 
-	radius = radius or arg_2_2.target_dist
+	radius = not not radius or not not blackboard.target_dist
 	skulk_data.radius = radius
 
 	local last_reference_pos = skulk_data.last_reference_pos
 
-	last_reference_pos = last_reference_pos or Vector3Box()
+	last_reference_pos = not not last_reference_pos or not not Vector3Box()
 	skulk_data.last_reference_pos = last_reference_pos
 
 	skulk_data.last_reference_pos:store(Vector3.zero())
 
-	arg_2_2.action = action_data
+	blackboard.action = action
 
-	if arg_2_2.move_state ~= "idle" then
-		self:idle(arg_2_1, arg_2_2)
+	if blackboard.move_state ~= "idle" then
+		self:idle(unit, blackboard)
 	end
 
-	LocomotionUtils.set_animation_driven_movement(arg_2_1, false)
+	LocomotionUtils.set_animation_driven_movement(unit, false)
 
-	if not arg_2_2.move_pos then
-		local unbox = arg_2_2.move_pos:unbox()
+	if blackboard.move_pos then
+		local move_pos = blackboard.move_pos:unbox()
 
-		self:move_to(unbox, arg_2_1, arg_2_2)
+		self:move_to(move_pos, unit, blackboard)
 	end
 
-	arg_2_2.health_extension = ScriptUnit.extension(arg_2_1, "health_system")
+	blackboard.health_extension = ScriptUnit.extension(unit, "health_system")
 
-	arg_2_2.locomotion_extension:use_lerp_rotation(true)
-	arg_2_2.locomotion_extension:set_rotation_speed(math.pi)
+	blackboard.locomotion_extension:use_lerp_rotation(true)
+	blackboard.locomotion_extension:set_rotation_speed(math.pi)
 end
 
-BTChaosSorcererTetherSkulkAction.leave = function (self, arg_3_1, arg_3_2, arg_3_3, arg_3_4, arg_3_5)
+BTChaosSorcererTetherSkulkAction.leave = function (self, unit, blackboard, t, reason, destroy)
 	-- function 3
-	local skulk_data = arg_3_2.skulk_data
-	local get_default_breed_move_speed = AiUtils.get_default_breed_move_speed(arg_3_1, arg_3_2)
-	local navigation_extension = arg_3_2.navigation_extension
+	local skulk_data = blackboard.skulk_data
+	local default_move_speed = AiUtils.get_default_breed_move_speed(unit, blackboard)
+	local navigation_extension = blackboard.navigation_extension
 
-	navigation_extension:set_max_speed(get_default_breed_move_speed)
+	navigation_extension:set_max_speed(default_move_speed)
 
-	if arg_3_4 == "aborted" then
-		local is_following_path = navigation_extension:is_following_path()
+	if reason == "aborted" then
+		local path_found = navigation_extension:is_following_path()
 
-		if not (not arg_3_2.move_pos and not is_following_path and arg_3_2.move_state ~= "idle") then
-			self:start_move_animation(arg_3_1, arg_3_2)
+		if blackboard.move_pos and path_found and blackboard.move_state == "idle" then
+			self:start_move_animation(unit, blackboard)
 		end
 	end
 
 	skulk_data.animation_state = nil
-	arg_3_2.action = nil
+	blackboard.action = nil
 
-	arg_3_2.locomotion_extension:use_lerp_rotation(false)
-	arg_3_2.locomotion_extension:set_rotation_speed(nil)
+	blackboard.locomotion_extension:use_lerp_rotation(false)
+	blackboard.locomotion_extension:set_rotation_speed(nil)
 
-	if arg_3_4 == "failed" then
-		arg_3_2.target_unit = nil
+	if reason == "failed" then
+		blackboard.target_unit = nil
 	end
 end
 
-BTChaosSorcererTetherSkulkAction.run = function (self, arg_4_1, arg_4_2, arg_4_3, arg_4_4)
+BTChaosSorcererTetherSkulkAction.run = function (self, unit, blackboard, t, dt)
 	-- function 4
-	if not Unit.alive(arg_4_2.target_unit) then
+	if not Unit.alive(blackboard.target_unit) then
 		return "failed"
 	end
 
-	local navigation_extension = arg_4_2.navigation_extension
-	local is_following_path = navigation_extension:is_following_path()
-	local number_failed_move_attempts = navigation_extension:number_failed_move_attempts()
+	local ai_navigation = blackboard.navigation_extension
+	local path_found = ai_navigation:is_following_path()
+	local failed_attempts = ai_navigation:number_failed_move_attempts()
 
-	if not (not arg_4_2.move_pos and not is_following_path and arg_4_2.move_state ~= "idle") then
-		self:start_move_animation(arg_4_1, arg_4_2)
+	if blackboard.move_pos and path_found and blackboard.move_state == "idle" then
+		self:start_move_animation(unit, blackboard)
 	end
 
-	if not (not arg_4_2.vanish_timer and not (arg_4_3 < arg_4_2.vanish_timer)) then
-		Managers.state.entity:system("ping_system"):remove_ping_from_unit(arg_4_1)
+	if blackboard.vanish_timer and t < blackboard.vanish_timer then
+		local ping_system = Managers.state.entity:system("ping_system")
+
+		ping_system:remove_ping_from_unit(unit)
 
 		return "running"
 	end
 
-	if not arg_4_2.move_pos then
-		if not (self:at_goal(arg_4_1, arg_4_2) or not (number_failed_move_attempts > 0)) then
-			arg_4_2.move_pos = nil
+	local position = blackboard.move_pos
+
+	if position then
+		local at_goal = self:at_goal(unit, blackboard)
+
+		if at_goal or failed_attempts > 0 then
+			blackboard.move_pos = nil
 		end
 
 		return "running"
 	end
 
-	local get_skulk_target = self:get_skulk_target(arg_4_1, arg_4_2)
+	position = self:get_skulk_target(unit, blackboard)
 
-	if not get_skulk_target then
-		self:move_to(get_skulk_target, arg_4_1, arg_4_2)
+	if position then
+		self:move_to(position, unit, blackboard)
 
 		return "running"
 	end
 
-	if arg_4_2.move_state ~= "idle" then
-		self:idle(arg_4_1, arg_4_2)
+	if blackboard.move_state ~= "idle" then
+		self:idle(unit, blackboard)
 	end
 
 	return "running"
 end
 
-BTChaosSorcererTetherSkulkAction.at_goal = function (arg_5_0, arg_5_1, arg_5_2)
+BTChaosSorcererTetherSkulkAction.at_goal = function (self, unit, blackboard)
 	-- function 5
-	local move_pos = arg_5_2.move_pos
-	local var_5_1 = POSITION_LOOKUP[arg_5_1]
+	local position_boxed = blackboard.move_pos
+	local unit_position = POSITION_LOOKUP[unit]
 
-	if not move_pos then
+	if not position_boxed then
 		return false
 	end
 
-	local unbox = move_pos:unbox()
+	local goal_position = position_boxed:unbox()
 
-	if (unbox[3] - var_5_1[3])^2 > 0.5 then
+	if (goal_position[3] - unit_position[3])^2 > 0.5 then
 		return false
 	end
 
-	return (unbox[1] - var_5_1[1])^2 + (unbox[2] - var_5_1[2])^2 < 1
+	return (goal_position[1] - unit_position[1])^2 + (goal_position[2] - unit_position[2])^2 < 1
 end
 
-BTChaosSorcererTetherSkulkAction.move_to = function (arg_6_0, arg_6_1, arg_6_2, arg_6_3)
+BTChaosSorcererTetherSkulkAction.move_to = function (self, position, unit, blackboard)
 	-- function 6
-	arg_6_3.navigation_extension:move_to(arg_6_1)
+	local ai_navigation = blackboard.navigation_extension
 
-	arg_6_3.move_pos = Vector3Box(arg_6_1)
+	ai_navigation:move_to(position)
+
+	blackboard.move_pos = Vector3Box(position)
 end
 
-BTChaosSorcererTetherSkulkAction.idle = function (self, arg_7_1, arg_7_2)
+BTChaosSorcererTetherSkulkAction.idle = function (self, unit, blackboard)
 	-- function 7
-	self:anim_event(arg_7_1, arg_7_2, "idle")
+	self:anim_event(unit, blackboard, "idle")
 
-	arg_7_2.move_state = "idle"
+	blackboard.move_state = "idle"
 end
 
-BTChaosSorcererTetherSkulkAction.start_move_animation = function (self, arg_8_1, arg_8_2)
+BTChaosSorcererTetherSkulkAction.start_move_animation = function (self, unit, blackboard)
 	-- function 8
-	local move_animation = arg_8_2.action.move_animation
+	local move_animation = blackboard.action.move_animation
 
-	self:anim_event(arg_8_1, arg_8_2, move_animation)
+	self:anim_event(unit, blackboard, move_animation)
 
-	arg_8_2.move_state = "moving"
+	blackboard.move_state = "moving"
 end
 
-BTChaosSorcererTetherSkulkAction.anim_event = function (arg_9_0, arg_9_1, arg_9_2, arg_9_3)
+BTChaosSorcererTetherSkulkAction.anim_event = function (self, unit, blackboard, anim)
 	-- function 9
-	local skulk_data = arg_9_2.skulk_data
+	local skulk_data = blackboard.skulk_data
 
-	if skulk_data.animation_state ~= arg_9_3 then
-		Managers.state.network:anim_event(arg_9_1, arg_9_3)
+	if skulk_data.animation_state ~= anim then
+		Managers.state.network:anim_event(unit, anim)
 
-		skulk_data.animation_state = arg_9_3
+		skulk_data.animation_state = anim
 	end
 end
 
-local num = 30
+local TRIES = 30
 
-BTChaosSorcererTetherSkulkAction.get_skulk_target = function (arg_10_0, arg_10_1, arg_10_2, arg_10_3)
+BTChaosSorcererTetherSkulkAction.get_skulk_target = function (self, unit, blackboard, teleporting)
 	-- function 10
-	local target_unit = arg_10_2.target_unit
+	local target_unit = blackboard.target_unit
 
 	if not target_unit then
 		return
 	end
 
-	local action = arg_10_2.action
-	local skulk_data = arg_10_2.skulk_data
+	local action = blackboard.action
+	local skulk_data = blackboard.skulk_data
 	local direction = skulk_data.direction
-	local var_10_4 = POSITION_LOOKUP[target_unit]
-	local var_10_5 = POSITION_LOOKUP[arg_10_1]
-	local unbox = skulk_data.last_reference_pos:unbox()
+	local target_position = POSITION_LOOKUP[target_unit]
+	local unit_position = POSITION_LOOKUP[unit]
+	local last_reference_pos = skulk_data.last_reference_pos:unbox()
 
-	if Vector3.length_squared(unbox) <= 0 then
-		unbox = var_10_5
+	if Vector3.length_squared(last_reference_pos) <= 0 then
+		last_reference_pos = unit_position
 	end
 
-	local num_2 = var_10_4 - unbox
-	local normalize = Vector3.normalize(num_2)
-	local preferred_distance_variance = action.preferred_distance_variance
+	local to_target = target_position - last_reference_pos
+	local dir = Vector3.normalize(to_target)
+	local preferred_distance_variance_2 = action.preferred_distance_variance
 
-	preferred_distance_variance = preferred_distance_variance or 0
+	if not preferred_distance_variance_2 then
+		-- Nothing
+	end
 
-	local preferred_distance = action.preferred_distance
+	preferred_distance_variance_2 = 0
 
-	preferred_distance = preferred_distance or 20
+	local preferred_distance_variance = preferred_distance_variance_2
 
-	local num_3 = preferred_distance + math.lerp(-preferred_distance_variance, preferred_distance_variance, math.random())
-	local distance_before_turn = action.distance_before_turn
+	::label_10_0::
 
-	distance_before_turn = distance_before_turn or 5
+	local preferred_distance_2 = action.preferred_distance
 
-	local num_4 = num_3 * 2 * math.pi
+	preferred_distance_2 = not not preferred_distance_2 or not not 20
 
-	assert(distance_before_turn < num_4 * 0.25, "preferred distance is too small to move %s units before turning. Minimum %s (quarter of the circumference)", distance_before_turn, num_4 * 0.25)
+	local preferred_distance = preferred_distance_2 + math.lerp(-preferred_distance_variance, preferred_distance_variance, math.random())
+	local distance_before_turn_2 = action.distance_before_turn
 
-	local num_5 = math.tau * (distance_before_turn / num_4)
-	local num_6 = Quaternion.rotate(Quaternion.axis_angle(Vector3.up() * direction, num_5), -normalize) * num_3
-	local num_7 = var_10_4 + num_6
-	local num_8 = num_7 - var_10_5
+	if not distance_before_turn_2 then
+		-- Nothing
+	end
+
+	distance_before_turn_2 = 5
+
+	local distance_before_turn = distance_before_turn_2
+
+	::label_10_1::
+
+	local circumference = preferred_distance * 2 * math.pi
+
+	assert(distance_before_turn < circumference * 0.25, "preferred distance is too small to move %s units before turning. Minimum %s (quarter of the circumference)", distance_before_turn, circumference * 0.25)
+
+	local pie_angle = math.tau * (distance_before_turn / circumference)
+	local target_to_wanted = Quaternion.rotate(Quaternion.axis_angle(Vector3.up() * direction, pie_angle), -dir) * preferred_distance
+	local wanted_pos_on_circle = target_position + target_to_wanted
+	local to_circle = wanted_pos_on_circle - unit_position
 	local raycango = GwNavQueries.raycango
-	local nav_world = arg_10_2.nav_world
-	local traverse_logic = arg_10_2.navigation_extension:traverse_logic()
-	local num_9 = math.pi * 2 / num
-	local axis_angle = Quaternion.axis_angle(Vector3(0, 0, math.sign(Vector3.cross(num_6, num_8)[3])), num_9)
-	local normalize_2 = Vector3.normalize(num_8)
-	local var_10_24
-	local var_10_25
+	local nav_world = blackboard.nav_world
+	local traverse_logic = blackboard.navigation_extension:traverse_logic()
+	local angle_per_try = math.pi * 2 / TRIES
+	local axis_angle = Quaternion.axis_angle(Vector3(0, 0, math.sign(Vector3.cross(target_to_wanted, to_circle)[3])), angle_per_try)
+	local wanted_dir = Vector3.normalize(to_circle)
+	local pos, fallback_pos
 
-	for i = 1, num do
-		local num_10 = var_10_5 + normalize_2 * distance_before_turn
+	for i = 1, TRIES do
+		local new_pos = unit_position + wanted_dir * distance_before_turn
 
-		num_10 = LocomotionUtils.pos_on_mesh(nav_world, num_10, 5, 5) or num_10
+		new_pos = not not LocomotionUtils.pos_on_mesh(nav_world, new_pos, 5, 5) or not not new_pos
 
-		local var_10_27, var_10_28 = raycango(nav_world, var_10_5, num_10, traverse_logic)
+		local success, hit = raycango(nav_world, unit_position, new_pos, traverse_logic)
 
-		if not var_10_27 then
-			local pos_on_mesh = LocomotionUtils.pos_on_mesh(nav_world, num_10, 2, 2)
+		if success then
+			new_pos = LocomotionUtils.pos_on_mesh(nav_world, new_pos, 2, 2)
 
-			if not pos_on_mesh then
-				var_10_24 = pos_on_mesh
+			if new_pos then
+				pos = new_pos
 			end
 
 			break
 		end
 
-		if not var_10_28 then
-			local pos_on_mesh_2 = LocomotionUtils.pos_on_mesh(nav_world, var_10_5 + (var_10_28 - var_10_5) * 0.5, 1, 1)
+		if hit then
+			local new_fallback_pos = LocomotionUtils.pos_on_mesh(nav_world, unit_position + (hit - unit_position) * 0.5, 1, 1)
 
-			if not pos_on_mesh_2 then
-				var_10_25 = pos_on_mesh_2
+			if new_fallback_pos then
+				fallback_pos = new_fallback_pos
 			end
 		end
 
-		normalize_2 = Quaternion.rotate(axis_angle, normalize_2)
+		wanted_dir = Quaternion.rotate(axis_angle, wanted_dir)
 	end
 
-	var_10_24 = var_10_24 or var_10_25
+	pos = not not pos or not not fallback_pos
 
-	skulk_data.last_reference_pos:store(num_7)
+	skulk_data.last_reference_pos:store(wanted_pos_on_circle)
 
-	return var_10_24
+	return pos
 end

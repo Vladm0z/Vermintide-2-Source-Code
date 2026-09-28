@@ -1,6 +1,6 @@
 -- chunkname: @scripts/settings/breeds/breed_skaven_storm_vermin_champion.lua
 
-local tbl = {
+local breed_data = {
 	death_sound_event = "Play_stormvermin_die_vce",
 	walk_speed = 2,
 	perception = "perception_rat_ogre",
@@ -302,9 +302,9 @@ local tbl = {
 	}
 }
 
-Breeds.skaven_storm_vermin_champion = table.create_copy(Breeds.skaven_storm_vermin_champion, tbl)
+Breeds.skaven_storm_vermin_champion = table.create_copy(Breeds.skaven_storm_vermin_champion, breed_data)
 
-local tbl_2 = {
+local action_data = {
 	follow = {
 		follow_target_function_name = "_follow_target_rat_ogre",
 		cooldown = -1,
@@ -481,11 +481,11 @@ local tbl_2 = {
 			},
 			{
 				attack_anim = "attack_spin",
-				ready_function = function (arg_1_0, arg_1_1, arg_1_2)
+				ready_function = function (unit, blackboard, t)
 					-- function 1
-					local num = arg_1_2 - arg_1_1.attack_sequence_start_time
+					local charge_t = t - blackboard.attack_sequence_start_time
 
-					return (not (num > 1.5) or not (arg_1_1.surrounding_players > 0)) and num > 2.5
+					return (not (charge_t > 1.5) or not (blackboard.surrounding_players > 0)) and charge_t > 2.5
 				end
 			}
 		},
@@ -738,14 +738,14 @@ local tbl_2 = {
 			true,
 			false
 		},
-		range = function (arg_2_0)
+		range = function (t_value)
 			-- function 2
-			if arg_2_0 < 0.65 then
+			if t_value < 0.65 then
 				return 0.4
 			else
-				local min = math.min((arg_2_0 - 0.65) * 4, 1)
+				local scaled_t = math.min((t_value - 0.65) * 4, 1)
 
-				return math.lerp(0.4, 2.95, min)
+				return math.lerp(0.4, 2.95, scaled_t)
 			end
 		end
 	},
@@ -1146,4 +1146,4 @@ local tbl_2 = {
 	}
 }
 
-BreedActions.skaven_storm_vermin_champion = table.create_copy(BreedActions.skaven_storm_vermin_champion, tbl_2)
+BreedActions.skaven_storm_vermin_champion = table.create_copy(BreedActions.skaven_storm_vermin_champion, action_data)

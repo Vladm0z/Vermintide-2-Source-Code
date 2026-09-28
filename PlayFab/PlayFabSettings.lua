@@ -1,6 +1,6 @@
 -- chunkname: @PlayFab/PlayFabSettings.lua
 
-return {
+local PlayFabSettings = {
 	_internalSettings = {
 		buildIdentifier = "jbuild_luasdk_1",
 		sdkVersionString = "LuaSdk_0.21.170828"
@@ -11,3 +11,5 @@ return {
 		AD_TYPE_IDFA = "Idfa"
 	}
 }
+
+return PlayFabSettings

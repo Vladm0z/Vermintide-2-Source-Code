@@ -1,13 +1,13 @@
 -- chunkname: @scripts/settings/dlcs/morris/twitch_vote_templates_morris.lua
 
-local function fn(arg_1_0, ...)
+local function debug_print(message, ...)
 	-- function 1
-	if not DEBUG_TWITCH then
-		print("[Twitch] " .. string.format(arg_1_0, ...))
+	if DEBUG_TWITCH then
+		print("[Twitch] " .. string.format(message, ...))
 	end
 end
 
-local tbl = {
+local vote_level_template = {
 	cost = 0,
 	use_frame_texture = true,
 	texture_id = "level_image_any",
@@ -18,22 +18,28 @@ local tbl = {
 	},
 	condition_func = function ()
 		-- function 2
-		return Managers.state.game_mode:game_mode_key() == "map_deus"
+		local game_mode_name = Managers.state.game_mode:game_mode_key()
+
+		return game_mode_name == "map_deus"
 	end,
-	on_success = function (arg_3_0, arg_3_1, arg_3_2)
+	on_success = function (is_server, vote_index, vote_template)
 		-- function 3
-		if not arg_3_0 then
-			local level_name = arg_3_2.level_name
+		if is_server then
+			local level_name = vote_template.level_name
 
-			fn("Level %s was selected", level_name)
+			debug_print("Level %s was selected", level_name)
 
-			local get_deus_run_controller = Managers.mechanism:game_mechanism():get_deus_run_controller()
-			local get_graph_data = get_deus_run_controller:get_graph_data()
-			local next = get_deus_run_controller:get_current_node().next
+			local mechanism = Managers.mechanism:game_mechanism()
+			local run_controller = mechanism:get_deus_run_controller()
+			local graph = run_controller:get_graph_data()
+			local node = run_controller:get_current_node()
+			local next_node_keys = node.next
 
-			for i, v in ipairs(next) do
-				if get_graph_data[v].base_level == level_name then
-					get_deus_run_controller:set_twitch_level_vote(v)
+			for _, next_node_key in ipairs(next_node_keys) do
+				local next_node = graph[next_node_key]
+
+				if next_node.base_level == level_name then
+					run_controller:set_twitch_level_vote(next_node_key)
 
 					return
 				end
@@ -45,42 +51,42 @@ local tbl = {
 }
 local TwitchVoteDeusSelectLevelNames = TwitchVoteDeusSelectLevelNames
 
-TwitchVoteDeusSelectLevelNames = TwitchVoteDeusSelectLevelNames or {}
+TwitchVoteDeusSelectLevelNames = not not TwitchVoteDeusSelectLevelNames or not not {}
 TwitchVoteDeusSelectLevelNames = TwitchVoteDeusSelectLevelNames
 
-for k, v in pairs(DEUS_LEVEL_SETTINGS) do
-	local base_level_name = v.base_level_name
-	local clone = table.clone(tbl)
+for _, level_settings in pairs(DEUS_LEVEL_SETTINGS) do
+	local base_level_name = level_settings.base_level_name
+	local new_vote_template = table.clone(vote_level_template)
 
-	clone.text = v.display_name
-	clone.level_name = base_level_name
+	new_vote_template.text = level_settings.display_name
+	new_vote_template.level_name = base_level_name
 
-	local texture_id = v.texture_id
+	local texture_id = level_settings.texture_id
 
-	if not texture_id then
-		clone.texture_id = texture_id
+	if texture_id then
+		new_vote_template.texture_id = texture_id
 	end
 
-	local str = "twitch_vote_deus_select_level_" .. base_level_name
+	local new_vote_template_name = "twitch_vote_deus_select_level_" .. base_level_name
 
-	TwitchVoteTemplates[str] = clone
-	TwitchVoteDeusSelectLevelNames[base_level_name] = str
+	TwitchVoteTemplates[new_vote_template_name] = new_vote_template
+	TwitchVoteDeusSelectLevelNames[base_level_name] = new_vote_template_name
 end
 
-for k_2, v_2 in pairs(DeusShopSettings.shop_types) do
-	local clone_2 = table.clone(tbl)
+for shop_name, settings in pairs(DeusShopSettings.shop_types) do
+	local new_vote_template = table.clone(vote_level_template)
 
-	clone_2.text = k_2 .. "_title"
-	clone_2.level_name = k_2
+	new_vote_template.text = shop_name .. "_title"
+	new_vote_template.level_name = shop_name
 
-	local twitch_icon = v_2.twitch_icon
+	local texture_id = settings.twitch_icon
 
-	if not twitch_icon then
-		clone_2.texture_id = twitch_icon
+	if texture_id then
+		new_vote_template.texture_id = texture_id
 	end
 
-	local str_2 = "twitch_vote_deus_select_level_" .. k_2
+	local new_vote_template_name = "twitch_vote_deus_select_level_" .. shop_name
 
-	TwitchVoteTemplates[str_2] = clone_2
-	TwitchVoteDeusSelectLevelNames[k_2] = str_2
+	TwitchVoteTemplates[new_vote_template_name] = new_vote_template
+	TwitchVoteDeusSelectLevelNames[shop_name] = new_vote_template_name
 end

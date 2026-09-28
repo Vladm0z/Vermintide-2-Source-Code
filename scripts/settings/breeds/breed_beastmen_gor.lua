@@ -1,7 +1,7 @@
 -- chunkname: @scripts/settings/breeds/breed_beastmen_gor.lua
 
-local scripts_utils_stagger_types = require("scripts/utils/stagger_types")
-local tbl = {
+local stagger_types = require("scripts/utils/stagger_types")
+local breed_data = {
 	detection_radius = 12,
 	hit_effect_template = "HitEffectsBeastmenGor",
 	walk_speed = 2.75,
@@ -117,21 +117,21 @@ local tbl = {
 		walk_animation_merge_options = {},
 		move_animation_merge_options = {}
 	},
-	stagger_modifier_function = function (arg_1_0, arg_1_1, arg_1_2, arg_1_3, arg_1_4, arg_1_5)
+	stagger_modifier_function = function (stagger_type, duration, length, hit_zone_name, blackboard, breed)
 		-- function 1
-		if arg_1_4.stagger_type == scripts_utils_stagger_types.heavy then
-			if arg_1_0 ~= scripts_utils_stagger_types.heavy or not arg_1_4.heavy_stagger_immune_time then
-				arg_1_0 = scripts_utils_stagger_types.heavy
-				arg_1_1 = 0
-				arg_1_2 = 0
-			elseif arg_1_0 == scripts_utils_stagger_types.heavy or not arg_1_4.stagger_immune_time then
-				arg_1_0 = scripts_utils_stagger_types.none
-				arg_1_1 = 0
-				arg_1_2 = 0
+		if blackboard.stagger_type == stagger_types.heavy then
+			if stagger_type == stagger_types.heavy and blackboard.heavy_stagger_immune_time then
+				stagger_type = stagger_types.heavy
+				duration = 0
+				length = 0
+			elseif stagger_type ~= stagger_types.heavy and blackboard.stagger_immune_time then
+				stagger_type = stagger_types.none
+				duration = 0
+				length = 0
 			end
 		end
 
-		return arg_1_0, arg_1_1, arg_1_2
+		return stagger_type, duration, length
 	end,
 	hitzone_multiplier_types = {
 		head = "headshot"
@@ -283,8 +283,8 @@ local tbl = {
 	}
 }
 
-Breeds.beastmen_gor = table.create_copy(Breeds.beastmen_gor, tbl)
-Breeds.beastmen_gor_dummy = table.create_copy(Breeds.beastmen_gor_dummy, tbl)
+Breeds.beastmen_gor = table.create_copy(Breeds.beastmen_gor, breed_data)
+Breeds.beastmen_gor_dummy = table.create_copy(Breeds.beastmen_gor_dummy, breed_data)
 Breeds.beastmen_gor_dummy.behavior = "beastmen_dummy"
 Breeds.beastmen_gor_dummy.horde_behavior = "beastmen_dummy"
 Breeds.beastmen_gor_dummy.debug_spawn_category = "Misc"
@@ -292,7 +292,7 @@ Breeds.beastmen_gor_dummy.perception = "perception_no_seeing"
 Breeds.beastmen_gor_dummy.wield_inventory_on_spawn = true
 Breeds.beastmen_gor_dummy.is_always_spawnable = nil
 
-local tbl_2 = {
+local AttackIntensityPerDifficulty = {
 	normal = {
 		easy = {
 			running = 2.5,
@@ -370,7 +370,7 @@ local tbl_2 = {
 		}
 	}
 }
-local tbl_3 = {
+local action_data = {
 	idle = {
 		anim_cycle_index = 0,
 		animations = {
@@ -457,7 +457,7 @@ local tbl_3 = {
 		player_push_speed = 3,
 		attack_intensity_type = "running",
 		action_weight = 10,
-		difficulty_attack_intensity = tbl_2,
+		difficulty_attack_intensity = AttackIntensityPerDifficulty,
 		considerations = UtilityConsiderations.beastmen_gor_running_attack,
 		default_attack = {
 			anims = {
@@ -483,7 +483,7 @@ local tbl_3 = {
 		player_push_speed = 3,
 		attack_intensity_type = "normal",
 		action_weight = 1,
-		difficulty_attack_intensity = tbl_2,
+		difficulty_attack_intensity = AttackIntensityPerDifficulty,
 		considerations = UtilityConsiderations.beastmen_gor_attack,
 		dodge_window_start = BreedTweaks.dodge_windows.normal_attack,
 		dodge_window_duration = BreedTweaks.dodge_window_durations.normal_attack,
@@ -593,7 +593,7 @@ local tbl_3 = {
 		attack_intensity_type = "normal",
 		action_weight = 2,
 		player_push_speed_blocked = 6,
-		difficulty_attack_intensity = tbl_2,
+		difficulty_attack_intensity = AttackIntensityPerDifficulty,
 		considerations = UtilityConsiderations.beastmen_gor_headbutt_attack,
 		dodge_window_start = BreedTweaks.dodge_windows.fast_attack,
 		dodge_window_duration = BreedTweaks.dodge_window_durations.normal_attack,
@@ -714,25 +714,27 @@ local tbl_3 = {
 	},
 	stagger = {
 		scale_animation_speeds = true,
-		custom_enter_function = function (arg_2_0, arg_2_1, arg_2_2, arg_2_3)
+		custom_enter_function = function (unit, blackboard, t, action)
 			-- function 2
-			if not arg_2_1.standard_bearer_stagger then
-				local var_2_0 = arg_2_3.standard_stagger_anims[arg_2_1.stagger_type]
+			if blackboard.standard_bearer_stagger then
+				local stagger_anims = action.standard_stagger_anims[blackboard.stagger_type]
 
-				arg_2_1.standard_bearer_stagger = nil
+				blackboard.standard_bearer_stagger = nil
 
-				return var_2_0, "idle"
+				return stagger_anims, "idle"
 			end
 
-			if arg_2_1.stagger_type == scripts_utils_stagger_types.heavy then
-				arg_2_1.stagger_immune_time = arg_2_2 + 2.25
-				arg_2_1.heavy_stagger_immune_time = arg_2_2 + 2
-			elseif arg_2_1.stagger_type == scripts_utils_stagger_types.explosion then
-				arg_2_1.stagger_immune_time = arg_2_2 + 3.5
-				arg_2_1.heavy_stagger_immune_time = arg_2_2 + 3
+			if blackboard.stagger_type == stagger_types.heavy then
+				blackboard.stagger_immune_time = t + 2.25
+				blackboard.heavy_stagger_immune_time = t + 2
+			elseif blackboard.stagger_type == stagger_types.explosion then
+				blackboard.stagger_immune_time = t + 3.5
+				blackboard.heavy_stagger_immune_time = t + 3
 			end
 
-			return arg_2_3.stagger_anims[arg_2_1.stagger_type], "idle"
+			local stagger_anims = action.stagger_anims[blackboard.stagger_type]
+
+			return stagger_anims, "idle"
 		end,
 		stagger_anims = {
 			{
@@ -1068,4 +1070,4 @@ local tbl_3 = {
 	}
 }
 
-BreedActions.beastmen_gor = table.create_copy(BreedActions.beastmen_gor, tbl_3)
+BreedActions.beastmen_gor = table.create_copy(BreedActions.beastmen_gor, action_data)

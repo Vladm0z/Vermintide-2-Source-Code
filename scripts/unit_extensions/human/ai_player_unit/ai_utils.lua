@@ -1,26 +1,26 @@
 -- chunkname: @scripts/unit_extensions/human/ai_player_unit/ai_utils.lua
 
-local scripts_utils_stagger_types = require("scripts/utils/stagger_types")
+local stagger_types = require("scripts/utils/stagger_types")
 
 require("scripts/entity_system/systems/behaviour/utility/utility")
 
-local get_data = Unit.get_data
+local unit_get_data = Unit.get_data
 local script_data = script_data
-local alive = Unit.alive
-local local_rotation = Unit.local_rotation
-local animation_event = Unit.animation_event
+local unit_alive = Unit.alive
+local unit_local_rotation = Unit.local_rotation
+local unit_animation_event = Unit.animation_event
 local BLACKBOARDS = BLACKBOARDS
 
 function aiprint(...)
 	-- function 1
-	if not script_data.debug_ai_movement then
+	if script_data.debug_ai_movement then
 		print(...)
 	end
 end
 
 local AiUtils = AiUtils
 
-AiUtils = AiUtils or {}
+AiUtils = not not AiUtils or not not {}
 AiUtils = AiUtils
 BreedCategory = {
 	Boss = 8,
@@ -32,403 +32,470 @@ BreedCategory = {
 	Berserker = 4
 }
 
-AiUtils.has_breed_categories = function (arg_2_0, arg_2_1)
+AiUtils.has_breed_categories = function (owned_flags, effective_against)
 	-- function 2
-	return bit.band(arg_2_0, arg_2_1) == arg_2_0
+	return bit.band(owned_flags, effective_against) == owned_flags
 end
 
-AiUtils.special_dead_cleanup = function (arg_3_0, arg_3_1)
+AiUtils.special_dead_cleanup = function (unit, blackboard)
 	-- function 3
-	if not arg_3_1.target_unit then
+	if not blackboard.target_unit then
 		return
 	end
 
-	arg_3_1.group_blackboard.special_targets[arg_3_1.target_unit] = nil
-	arg_3_1.group_blackboard.disabled_by_special[arg_3_1.target_unit] = nil
+	local special_targets = blackboard.group_blackboard.special_targets
+
+	special_targets[blackboard.target_unit] = nil
+
+	local disabled_by_special = blackboard.group_blackboard.disabled_by_special
+
+	disabled_by_special[blackboard.target_unit] = nil
 end
 
-AiUtils.aggro_unit_of_enemy = function (arg_4_0, arg_4_1)
+AiUtils.aggro_unit_of_enemy = function (unit, enemy_unit)
 	-- function 4
-	arg_4_1 = AiUtils.get_actual_attacker_unit(arg_4_1)
+	enemy_unit = AiUtils.get_actual_attacker_unit(enemy_unit)
 
-	if not ALIVE[arg_4_1] then
+	if not ALIVE[enemy_unit] then
 		return
 	end
 
-	local has_extension = ScriptUnit.has_extension(arg_4_0, "ai_system")
+	local ai_simple_extension = ScriptUnit.has_extension(unit, "ai_system")
 
-	if not has_extension then
-		has_extension:enemy_aggro(arg_4_0, arg_4_1)
+	if ai_simple_extension then
+		ai_simple_extension:enemy_aggro(unit, enemy_unit)
 	end
 end
 
-AiUtils.activate_unit = function (self)
+AiUtils.activate_unit = function (blackboard)
 	-- function 5
-	if not self.activation_lock then
+	if blackboard.activation_lock then
 		return
 	end
 
-	local breed = self.breed
+	local breed = blackboard.breed
 
-	if not (self.confirmed_player_sighting or breed.ignore_activate_unit) then
-		local unit = self.unit
+	if not blackboard.confirmed_player_sighting and not breed.ignore_activate_unit then
+		local unit = blackboard.unit
 
 		if not HEALTH_ALIVE[unit] then
 			return
 		end
 
-		Managers.state.event:trigger("ai_unit_activated", unit, breed.name, self.master_event_id)
+		Managers.state.event:trigger("ai_unit_activated", unit, breed.name, blackboard.master_event_id)
 
-		self.confirmed_player_sighting = true
-		self.activated = true
+		blackboard.confirmed_player_sighting = true
+		blackboard.activated = true
 	end
 end
 
-AiUtils.deactivate_unit = function (self)
+AiUtils.deactivate_unit = function (blackboard)
 	-- function 6
-	if not self.confirmed_player_sighting then
-		local breed = self.breed
-		local unit = self.unit
+	if blackboard.confirmed_player_sighting then
+		local breed = blackboard.breed
+		local unit = blackboard.unit
 
-		Managers.state.event:trigger("ai_unit_deactivated", unit, breed.name, self.master_event_id)
+		Managers.state.event:trigger("ai_unit_deactivated", unit, breed.name, blackboard.master_event_id)
 
-		self.confirmed_player_sighting = false
-		self.activated = false
+		blackboard.confirmed_player_sighting = false
+		blackboard.activated = false
 	end
 end
 
-AiUtils.enter_combat = function (arg_7_0, arg_7_1)
+AiUtils.enter_combat = function (unit, blackboard)
 	-- function 7
-	Managers.state.network:anim_event(arg_7_0, "to_combat")
+	Managers.state.network:anim_event(unit, "to_combat")
 
-	arg_7_1.in_combat = true
+	blackboard.in_combat = true
 end
 
-AiUtils.enter_passive = function (arg_8_0, arg_8_1)
+AiUtils.enter_passive = function (unit, blackboard)
 	-- function 8
-	Managers.state.network:anim_event(arg_8_0, "to_passive")
+	Managers.state.network:anim_event(unit, "to_passive")
 
-	arg_8_1.in_combat = false
+	blackboard.in_combat = false
 end
 
-AiUtils.in_combat = function (self)
+AiUtils.in_combat = function (blackboard)
 	-- function 9
-	return self.in_combat
+	return blackboard.in_combat
 end
 
-AiUtils.stormvermin_champion_hack_check_ward = function (arg_10_0, arg_10_1)
+AiUtils.stormvermin_champion_hack_check_ward = function (unit, blackboard)
 	-- function 10
-	if not (not arg_10_1.ward_active and arg_10_1.defensive_mode_duration) then
-		arg_10_1.ward_active = false
+	if blackboard.ward_active and not blackboard.defensive_mode_duration then
+		blackboard.ward_active = false
 
-		AiUtils.stormvermin_champion_set_ward_state(arg_10_0, false, true)
+		AiUtils.stormvermin_champion_set_ward_state(unit, false, true)
 	end
 end
 
-AiUtils.stormvermin_champion_set_ward_state = function (arg_11_0, arg_11_1, arg_11_2)
+AiUtils.stormvermin_champion_set_ward_state = function (unit, state, is_server)
 	-- function 11
-	local actor = Unit.actor(arg_11_0, "c_trophy_rack_ward")
+	local actor = Unit.actor(unit, "c_trophy_rack_ward")
 
-	if not actor then
-		Actor.set_scene_query_enabled(actor, arg_11_1)
+	if actor then
+		Actor.set_scene_query_enabled(actor, state)
 	end
 
-	if not arg_11_1 then
-		Unit.flow_event(arg_11_0, "skulls_glow_on")
+	if state then
+		Unit.flow_event(unit, "skulls_glow_on")
 	else
-		Unit.flow_event(arg_11_0, "skulls_glow_off")
+		Unit.flow_event(unit, "skulls_glow_off")
 	end
 
-	if not arg_11_2 then
-		local network = Managers.state.network
-		local unit_game_object_id = network:unit_game_object_id(arg_11_0)
+	if is_server then
+		local network_manager = Managers.state.network
+		local unit_id = network_manager:unit_game_object_id(unit)
 
-		network.network_transmit:send_rpc_clients("rpc_set_ward_state", unit_game_object_id, arg_11_1)
+		network_manager.network_transmit:send_rpc_clients("rpc_set_ward_state", unit_id, state)
 	end
 end
 
-AiUtils.chaos_exalted_champion_set_shield_state = function (arg_12_0, arg_12_1, arg_12_2)
+AiUtils.chaos_exalted_champion_set_shield_state = function (unit, state, is_server)
 	-- function 12
-	if not arg_12_1 then
-		Unit.flow_event(arg_12_0, "chaos_shields_on")
+	if state then
+		Unit.flow_event(unit, "chaos_shields_on")
 	else
-		Unit.flow_event(arg_12_0, "chaos_shields_off")
+		Unit.flow_event(unit, "chaos_shields_off")
 	end
 end
 
-AiUtils.alert_unit_of_enemy = function (arg_13_0, arg_13_1)
+AiUtils.alert_unit_of_enemy = function (unit_to_alert, attacker_unit)
 	-- function 13
-	arg_13_1 = AiUtils.get_actual_attacker_unit(arg_13_1)
+	attacker_unit = AiUtils.get_actual_attacker_unit(attacker_unit)
 
-	if not HEALTH_ALIVE[arg_13_1] then
+	if not HEALTH_ALIVE[attacker_unit] then
 		return
 	end
 
-	local has_extension = ScriptUnit.has_extension(arg_13_0, "ai_system")
+	local ai_simple_extension = ScriptUnit.has_extension(unit_to_alert, "ai_system")
 
-	if not has_extension then
-		has_extension:enemy_alert(arg_13_0, arg_13_1)
+	if ai_simple_extension then
+		ai_simple_extension:enemy_alert(unit_to_alert, attacker_unit)
 	end
 end
 
-AiUtils.alert_unit = function (arg_14_0, arg_14_1)
+AiUtils.alert_unit = function (attacker_unit, unit_to_alert)
 	-- function 14
-	local network = Managers.state.network
+	local network_manager = Managers.state.network
 
-	if not network.is_server then
-		AiUtils.alert_unit_of_enemy(arg_14_1, arg_14_0)
+	if network_manager.is_server then
+		AiUtils.alert_unit_of_enemy(unit_to_alert, attacker_unit)
 	else
-		local unit_game_object_id = network:unit_game_object_id(arg_14_0)
-		local unit_game_object_id_2 = network:unit_game_object_id(arg_14_1)
+		local attacker_unit_id = network_manager:unit_game_object_id(attacker_unit)
+		local alert_unit_id = network_manager:unit_game_object_id(unit_to_alert)
 
-		network.network_transmit:send_rpc_server("rpc_alert_enemy", unit_game_object_id_2, unit_game_object_id)
+		network_manager.network_transmit:send_rpc_server("rpc_alert_enemy", alert_unit_id, attacker_unit_id)
 	end
 end
 
-local tbl = {}
+local broadphase_query_result = {}
 
-AiUtils.alert_nearby_friends_of_enemy = function (arg_15_0, arg_15_1, arg_15_2, arg_15_3)
+AiUtils.alert_nearby_friends_of_enemy = function (unit, broadphase, enemy_unit, range)
 	-- function 15
-	arg_15_3 = arg_15_3 or 5
-	arg_15_2 = AiUtils.get_actual_attacker_unit(arg_15_2)
+	range = not not range or not not 5
+	enemy_unit = AiUtils.get_actual_attacker_unit(enemy_unit)
 
-	if not ALIVE[arg_15_2] then
+	if not ALIVE[enemy_unit] then
 		return
 	end
 
-	local query = Broadphase.query(arg_15_1, Unit.local_position(arg_15_0, 0), arg_15_3, tbl)
+	local num_results = Broadphase.query(broadphase, Unit.local_position(unit, 0), range, broadphase_query_result)
 
-	for i = 1, query do
-		local var_15_1 = tbl[i]
+	for i = 1, num_results do
+		local other_unit = broadphase_query_result[i]
 
-		if var_15_1 ~= arg_15_0 then
-			local has_extension = ScriptUnit.has_extension(var_15_1, "ai_system")
+		if other_unit ~= unit then
+			local ai_simple_extension = ScriptUnit.has_extension(other_unit, "ai_system")
 
-			if not has_extension then
-				has_extension:enemy_alert(arg_15_0, arg_15_2)
+			if ai_simple_extension then
+				ai_simple_extension:enemy_alert(unit, enemy_unit)
 			end
 		end
 
-		tbl[i] = nil
+		broadphase_query_result[i] = nil
 	end
 end
 
-AiUtils.print = function (arg_16_0, ...)
+AiUtils.print = function (debug_parameter, ...)
 	-- function 16
-	if not Development.parameter(arg_16_0) then
+	if Development.parameter(debug_parameter) then
 		print(...)
 	end
 end
 
-AiUtils.printf = function (arg_17_0, ...)
+AiUtils.printf = function (debug_parameter, ...)
 	-- function 17
-	if not Development.parameter(arg_17_0) then
+	if Development.parameter(debug_parameter) then
 		printf(...)
 	end
 end
 
-AiUtils.breed_name = function (arg_18_0)
+AiUtils.breed_name = function (unit)
 	-- function 18
-	return Unit.get_data(arg_18_0, "breed").name
+	return Unit.get_data(unit, "breed").name
 end
 
-AiUtils.stagger_target = function (arg_19_0, arg_19_1, arg_19_2, arg_19_3, arg_19_4, arg_19_5, arg_19_6, arg_19_7, arg_19_8, arg_19_9)
+AiUtils.stagger_target = function (unit, hit_unit, distance, impact, direction, t, duration_table, attack_template, hit_zone_name, blocked)
 	-- function 19
-	local calculate_stagger, var_19_1 = DamageUtils.calculate_stagger(arg_19_3, arg_19_6, arg_19_1, arg_19_0, arg_19_7, arg_19_8, arg_19_9)
+	local stagger_type, stagger_duration = DamageUtils.calculate_stagger(impact, duration_table, hit_unit, unit, attack_template, hit_zone_name, blocked)
 
-	if calculate_stagger > 0 then
-		local var_19_2 = BLACKBOARDS[arg_19_1]
+	if stagger_type > 0 then
+		local hit_unit_blackboard = BLACKBOARDS[hit_unit]
 
-		AiUtils.stagger(arg_19_1, var_19_2, arg_19_0, arg_19_4, arg_19_2, calculate_stagger, var_19_1, nil, arg_19_5)
+		AiUtils.stagger(hit_unit, hit_unit_blackboard, unit, direction, distance, stagger_type, stagger_duration, nil, t)
 	end
 end
 
-AiUtils.calculate_ai_stagger_strength = function (self, arg_20_1, arg_20_2, arg_20_3, arg_20_4, arg_20_5)
+AiUtils.calculate_ai_stagger_strength = function (attacker_blackboard, target_blackboard, t, apply_toughness_break, reset_stagger_level, reset_multiplier)
 	-- function 20
-	local ai_toughness_break_t = arg_20_1.ai_toughness_break_t
+	local ai_toughness_break_t = target_blackboard.ai_toughness_break_t
 
-	ai_toughness_break_t = ai_toughness_break_t or 0
+	if not ai_toughness_break_t then
+		-- Nothing
+	end
 
-	local num = arg_20_2 - ai_toughness_break_t
+	ai_toughness_break_t = 0
+
+	local target_break_t = ai_toughness_break_t
+
+	::label_20_0::
+
+	local toughness_break_decay = t - target_break_t
 	local max = math.max
-	local ai_toughness_break = arg_20_1.ai_toughness_break
+	local ai_toughness_break = target_blackboard.ai_toughness_break
 
-	ai_toughness_break = ai_toughness_break or 0
+	ai_toughness_break = not not ai_toughness_break or not not 0
 
-	local var_20_4 = max(ai_toughness_break - num, 0)
-	local ai_toughness = arg_20_1.breed.ai_toughness
+	local toughness_break = max(ai_toughness_break - toughness_break_decay, 0)
+	local ai_toughness = target_blackboard.breed.ai_toughness
 
-	ai_toughness = ai_toughness or 0
+	ai_toughness = not not ai_toughness or not not 0
 
-	local num_2 = ai_toughness - var_20_4
-	local ai_strength = self.breed.ai_strength
+	local target_toughness = ai_toughness - toughness_break
+	local ai_strength = attacker_blackboard.breed.ai_strength
 
-	ai_strength = ai_strength or 0
+	if not ai_strength then
+		-- Nothing
+	end
 
-	local round = math.round(math.clamp(ai_strength - num_2, scripts_utils_stagger_types.none, scripts_utils_stagger_types.heavy))
+	ai_strength = 0
 
-	if not arg_20_3 then
-		arg_20_1.ai_toughness_break = var_20_4 + ai_strength
-		arg_20_1.ai_toughness_break_t = arg_20_2
+	local attacker_strength = ai_strength
 
-		if not (not arg_20_4 and not (arg_20_4 <= round)) then
-			arg_20_1.ai_toughness_break = arg_20_1.ai_toughness_break * arg_20_5
+	::label_20_1::
+
+	local stagger_strength = math.round(math.clamp(attacker_strength - target_toughness, stagger_types.none, stagger_types.heavy))
+
+	if apply_toughness_break then
+		target_blackboard.ai_toughness_break = toughness_break + attacker_strength
+		target_blackboard.ai_toughness_break_t = t
+
+		if reset_stagger_level and reset_stagger_level <= stagger_strength then
+			target_blackboard.ai_toughness_break = target_blackboard.ai_toughness_break * reset_multiplier
 		end
 	end
 
-	return round
+	return stagger_strength
 end
 
-AiUtils.calculate_ai_stagger_impact = function (arg_21_0)
+AiUtils.calculate_ai_stagger_impact = function (stagger_strength)
 	-- function 21
-	local num = (0.15 + 0.1 * math.random()) * arg_21_0
+	local distance = (0.15 + 0.1 * math.random()) * stagger_strength
+	local impact = {
+		stagger_strength
+	}
 
-	return {
-		arg_21_0
-	}, num
+	return impact, distance
 end
 
-AiUtils.damage_target = function (arg_22_0, arg_22_1, arg_22_2, arg_22_3, arg_22_4)
+AiUtils.damage_target = function (target_unit, attacker_unit, action, damage, damage_source)
 	-- function 22
-	arg_22_3 = DamageUtils.calculate_damage(arg_22_3, arg_22_0, arg_22_1)
+	damage = DamageUtils.calculate_damage(damage, target_unit, attacker_unit)
 
-	local var_22_0 = POSITION_LOOKUP[arg_22_1]
+	local var_22_0 = POSITION_LOOKUP[attacker_unit]
 
-	var_22_0 = var_22_0 or Unit.world_position(arg_22_1, 0)
+	if not var_22_0 then
+		-- Nothing
+	end
 
-	local var_22_1 = POSITION_LOOKUP[arg_22_0]
+	var_22_0 = Unit.world_position(attacker_unit, 0)
 
-	var_22_1 = var_22_1 or Unit.world_position(arg_22_0, 0)
+	local attacker_pos = var_22_0
 
-	local normalize = Vector3.normalize(var_22_1 - var_22_0)
-	local game_object_or_level_id, var_22_4 = Managers.state.network:game_object_or_level_id(arg_22_0)
+	::label_22_0::
 
-	arg_22_4 = arg_22_4 or AiUtils.breed_name(arg_22_1)
+	local var_22_1 = POSITION_LOOKUP[target_unit]
 
-	local var_22_5
-	local var_22_6
-	local var_22_7 = BLACKBOARDS[arg_22_1]
-	local flag = not var_22_7 and var_22_7.commander_unit
+	if not var_22_1 then
+		-- Nothing
+	end
 
-	if not var_22_4 then
-		var_22_5 = DamageUtils.add_damage_network(arg_22_0, arg_22_1, arg_22_3, "torso", arg_22_2.damage_type, nil, normalize, arg_22_4, nil, flag, nil, arg_22_2.hit_react_type, nil, nil, nil, nil, nil, nil, 1)
+	var_22_1 = Unit.world_position(target_unit, 0)
+
+	local target_pos = var_22_1
+
+	::label_22_1::
+
+	local damage_direction = Vector3.normalize(target_pos - attacker_pos)
+	local _, is_level_unit = Managers.state.network:game_object_or_level_id(target_unit)
+
+	damage_source = not not damage_source or not not AiUtils.breed_name(attacker_unit)
+
+	local inflicted_damage, source_attacker_unit
+	local attacker_blackboard = BLACKBOARDS[attacker_unit]
+
+	source_attacker_unit = not not attacker_blackboard and not not attacker_blackboard.commander_unit
+
+	if is_level_unit then
+		inflicted_damage = DamageUtils.add_damage_network(target_unit, attacker_unit, damage, "torso", action.damage_type, nil, damage_direction, damage_source, nil, source_attacker_unit, nil, action.hit_react_type, nil, nil, nil, nil, nil, nil, 1)
 	else
-		local difficulty = Managers.state.difficulty
-		local get_difficulty_settings = difficulty:get_difficulty_settings()
-		local diminishing_damage = arg_22_2.diminishing_damage
-		local has_extension = ScriptUnit.has_extension(arg_22_0, "ai_slot_system")
+		local difficulty_manager = Managers.state.difficulty
+		local difficulty_settings = difficulty_manager:get_difficulty_settings()
+		local diminishing_damage_data = action.diminishing_damage
+		local target_slot_extension = ScriptUnit.has_extension(target_unit, "ai_slot_system")
 
-		if not diminishing_damage and not has_extension and not has_extension.has_slots_attached then
-			local delayed_num_occupied_slots = has_extension.delayed_num_occupied_slots
+		if diminishing_damage_data and target_slot_extension and target_slot_extension.has_slots_attached then
+			local slots_n = target_slot_extension.delayed_num_occupied_slots
 
-			if delayed_num_occupied_slots > 0 then
-				local damage = diminishing_damage[math.min(delayed_num_occupied_slots, 9)].damage
-				local damage_2 = diminishing_damage[1].damage
-				local weave = Managers.weave
+			if slots_n > 0 then
+				local diminishing_damage = diminishing_damage_data[math.min(slots_n, 9)].damage
+				local max_diminishing_damage = diminishing_damage_data[1].damage
+				local weave_manager = Managers.weave
 
-				if not weave:get_active_weave() then
-					local get_scaling_value = weave:get_scaling_value("diminishing_damage")
+				if weave_manager:get_active_weave() then
+					local scaling_value = weave_manager:get_scaling_value("diminishing_damage")
 
-					damage = math.lerp(damage, damage_2, get_scaling_value)
+					diminishing_damage = math.lerp(diminishing_damage, max_diminishing_damage, scaling_value)
 				end
 
-				arg_22_3 = arg_22_3 * damage
+				local damage_modifier = diminishing_damage
+
+				damage = damage * damage_modifier
 			end
 		end
 
-		local is_player_unit = DamageUtils.is_player_unit(arg_22_0)
+		local is_player_unit = DamageUtils.is_player_unit(target_unit)
 
-		if not is_player_unit then
-			local get_difficulty_rank = difficulty:get_difficulty_rank()
+		if is_player_unit then
+			local difficulty_rank = difficulty_manager:get_difficulty_rank()
 
-			if not (not get_difficulty_rank and not (get_difficulty_rank < 3)) then
-				local has_extension_2 = ScriptUnit.has_extension(arg_22_0, "status_system")
+			if difficulty_rank and difficulty_rank < 3 then
+				local player_status_extension = ScriptUnit.has_extension(target_unit, "status_system")
 
-				if not has_extension_2 and not has_extension_2:is_knocked_down() then
-					local knocked_down_damage_multiplier = get_difficulty_settings.knocked_down_damage_multiplier
+				if player_status_extension and player_status_extension:is_knocked_down() then
+					local knocked_down_damage_multiplier_2 = difficulty_settings.knocked_down_damage_multiplier
 
-					knocked_down_damage_multiplier = knocked_down_damage_multiplier or 1
-					arg_22_3 = arg_22_3 * knocked_down_damage_multiplier
+					if not knocked_down_damage_multiplier_2 then
+						-- Nothing
+					end
+
+					knocked_down_damage_multiplier_2 = 1
+
+					local knocked_down_damage_multiplier = knocked_down_damage_multiplier_2
+
+					::label_22_2::
+
+					damage = damage * knocked_down_damage_multiplier
 				end
 
-				local has_extension_3 = ScriptUnit.has_extension(arg_22_0, "health_system")
+				local target_unit_health_extension = ScriptUnit.has_extension(target_unit, "health_system")
 
-				if not has_extension_3 then
-					local damage_percent_cap = get_difficulty_settings.damage_percent_cap
-					local num = has_extension_3:get_max_health() * damage_percent_cap
+				if target_unit_health_extension then
+					local damage_percent_cap = difficulty_settings.damage_percent_cap
+					local max_health = target_unit_health_extension:get_max_health()
+					local damage_cap = max_health * damage_percent_cap
 
-					arg_22_3 = math.clamp(arg_22_3, 0, num)
+					damage = math.clamp(damage, 0, damage_cap)
 				end
 
-				local damage_multiplier = get_difficulty_settings.damage_multiplier
+				local damage_multiplier_2 = difficulty_settings.damage_multiplier
 
-				damage_multiplier = damage_multiplier or 1
-				arg_22_3 = arg_22_3 * damage_multiplier
+				if not damage_multiplier_2 then
+					-- Nothing
+				end
+
+				damage_multiplier_2 = 1
+
+				local damage_multiplier = damage_multiplier_2
+
+				::label_22_3::
+
+				damage = damage * damage_multiplier
 			end
 		else
-			local var_22_26 = BLACKBOARDS[arg_22_0]
+			local target_blackboard = BLACKBOARDS[target_unit]
 
-			if not var_22_26 and not var_22_7 then
-				local time = Managers.time:time("game")
-				local breed = var_22_7.breed
-				local breed_2 = var_22_26.breed
-				local var_22_30
+			if target_blackboard and attacker_blackboard then
+				local t = Managers.time:time("game")
+				local attacker_breed = attacker_blackboard.breed
+				local target_breed = target_blackboard.breed
+				local stagger_strength
 
-				if not (not arg_22_2.unblockable and arg_22_2.attack_intensity_type ~= "push") then
-					var_22_30 = scripts_utils_stagger_types[arg_22_2.hit_react_type]
+				if action.unblockable and action.attack_intensity_type == "push" then
+					stagger_strength = stagger_types[action.hit_react_type]
 				end
 
-				var_22_30 = var_22_30 or AiUtils.calculate_ai_stagger_strength(var_22_7, var_22_26, time, true, scripts_utils_stagger_types.medium, 0.25)
+				stagger_strength = not not stagger_strength or not not AiUtils.calculate_ai_stagger_strength(attacker_blackboard, target_blackboard, t, true, stagger_types.medium, 0.25)
 
-				if var_22_30 <= 0 then
-					if (not breed_2.strong_hit_reacts and var_22_26.past_damage_in_attack == false or not var_22_26.stagger) and not var_22_26.stagger_anim_done then
-						local forward = Quaternion.forward(local_rotation(arg_22_0, 0))
-						local flat_angle = Vector3.flat_angle(normalize, forward)
-						local var_22_33
+				if stagger_strength <= 0 then
+					if target_breed.strong_hit_reacts and target_blackboard.past_damage_in_attack ~= false and (not target_blackboard.stagger or target_blackboard.stagger_anim_done) then
+						local hit_unit_dir = Quaternion.forward(unit_local_rotation(target_unit, 0))
+						local angle_difference = Vector3.flat_angle(damage_direction, hit_unit_dir)
+						local hit_anim_list
 
-						if not (flat_angle < -math.pi * 0.75 or not (flat_angle > math.pi * 0.75)) then
-							var_22_33 = breed_2.strong_hit_reacts.bwd
-						elseif flat_angle < -math.pi * 0.25 then
-							var_22_33 = breed_2.strong_hit_reacts.left
-						elseif flat_angle < math.pi * 0.25 then
-							var_22_33 = breed_2.strong_hit_reacts.fwd
+						if angle_difference < -math.pi * 0.75 or angle_difference > math.pi * 0.75 then
+							hit_anim_list = target_breed.strong_hit_reacts.bwd
+						elseif angle_difference < -math.pi * 0.25 then
+							hit_anim_list = target_breed.strong_hit_reacts.left
+						elseif angle_difference < math.pi * 0.25 then
+							hit_anim_list = target_breed.strong_hit_reacts.fwd
 						else
-							var_22_33 = breed_2.strong_hit_reacts.right
+							hit_anim_list = target_breed.strong_hit_reacts.right
 						end
 
-						if not var_22_33 then
-							local var_22_34 = var_22_33[math.random(1, #var_22_33)]
+						if hit_anim_list then
+							local hit_anim = hit_anim_list[math.random(1, #hit_anim_list)]
 
-							animation_event(arg_22_0, var_22_34)
+							unit_animation_event(target_unit, hit_anim)
 						end
-					elseif not breed_2.disable_local_hit_reactions then
-						local forward_2 = Quaternion.forward(local_rotation(arg_22_0, 0))
-						local flat_angle_2 = Vector3.flat_angle(forward_2, normalize)
-						local var_22_37
-						local flag_2
+					elseif not target_breed.disable_local_hit_reactions then
+						local hit_unit_dir = Quaternion.forward(unit_local_rotation(target_unit, 0))
+						local angle_difference = Vector3.flat_angle(hit_unit_dir, damage_direction)
+						local hit_anim
 
-						flag_2 = (flat_angle_2 < -math.pi * 0.75 or flat_angle_2 > math.pi * 0.75 or "hit_reaction_backward" or not (flat_angle_2 < -math.pi * 0.25) or not "hit_reaction_left" or not (flat_angle_2 < math.pi * 0.25)) and (not "hit_reaction_forward" or "hit_reaction_right")
+						hit_anim = ((angle_difference < -math.pi * 0.75 or angle_difference > math.pi * 0.75) and not not "hit_reaction_backward" or not (angle_difference < -math.pi * 0.25) or not "hit_reaction_left") and (not (angle_difference < math.pi * 0.25) or not "hit_reaction_forward") and not not "hit_reaction_right"
 
-						if not flag_2 then
-							animation_event(arg_22_0, flag_2)
+						if hit_anim then
+							unit_animation_event(target_unit, hit_anim)
 						end
 					end
 				else
-					local calculate_ai_stagger_impact, var_22_40 = AiUtils.calculate_ai_stagger_impact(var_22_30)
+					local impact, distance = AiUtils.calculate_ai_stagger_impact(stagger_strength)
 
-					AiUtils.stagger_target(arg_22_1, arg_22_0, var_22_40, calculate_ai_stagger_impact, normalize, time)
+					AiUtils.stagger_target(attacker_unit, target_unit, distance, impact, damage_direction, t)
 				end
 
-				local damage_multiplier_vs_ai = breed.damage_multiplier_vs_ai
+				local damage_multiplier_vs_ai_2 = attacker_breed.damage_multiplier_vs_ai
 
-				damage_multiplier_vs_ai = damage_multiplier_vs_ai or 0.25
-				arg_22_3 = arg_22_3 * damage_multiplier_vs_ai
+				if not damage_multiplier_vs_ai_2 then
+					-- Nothing
+				end
 
-				local var_22_42
-				local hitzone_armor_categories = breed_2.hitzone_armor_categories
+				damage_multiplier_vs_ai_2 = 0.25
+
+				local damage_multiplier_vs_ai = damage_multiplier_vs_ai_2
+
+				::label_22_4::
+
+				damage = damage * damage_multiplier_vs_ai
+
+				local hit_effect
+				local hitzone_armor_categories = target_breed.hitzone_armor_categories
 				local torso
 
-				if not hitzone_armor_categories then
+				if hitzone_armor_categories then
 					torso = hitzone_armor_categories.torso
 
 					if not torso then
@@ -436,76 +503,100 @@ AiUtils.damage_target = function (arg_22_0, arg_22_1, arg_22_2, arg_22_3, arg_22
 					end
 				end
 
-				torso = breed_2.armor_category
+				torso = target_breed.armor_category
 
-				::label_22_0::
+				local target_unit_armor = torso
 
-				if not (not (arg_22_3 < 0.25) or torso ~= 2) then
-					var_22_42 = "fx/hit_armored"
-				elseif not breed_2.no_blood_splatter_on_damage then
-					var_22_42 = BloodSettings:get_hit_effect_for_race(breed_2.race) or breed_2.hit_effect
+				::label_22_5::
+
+				if damage < 0.25 and target_unit_armor == 2 then
+					hit_effect = "fx/hit_armored"
+				elseif not target_breed.no_blood_splatter_on_damage then
+					hit_effect = not not BloodSettings:get_hit_effect_for_race(target_breed.race) or not not target_breed.hit_effect
 				end
 
-				if not var_22_42 then
-					local world = var_22_26.world
-					local torso_2 = breed_2.hit_zones_lookup.torso
+				if hit_effect then
+					local world = target_blackboard.world
+					local torso_2 = target_breed.hit_zones_lookup.torso
 
-					torso_2 = torso_2 or 0
+					if not torso_2 then
+						-- Nothing
+					end
 
-					local num_2 = Unit.world_position(arg_22_0, torso_2) + Vector3(0, 0, math.random() * breed_2.aoe_height * 0.1)
+					torso_2 = 0
 
-					EffectHelper.player_melee_hit_particles(world, var_22_42, num_2, normalize, arg_22_2.damage_type, arg_22_0, arg_22_3)
+					local hit_node_id = torso_2
+
+					::label_22_6::
+
+					local hit_position = Unit.world_position(target_unit, hit_node_id) + Vector3(0, 0, math.random() * target_breed.aoe_height * 0.1)
+
+					EffectHelper.player_melee_hit_particles(world, hit_effect, hit_position, damage_direction, action.damage_type, target_unit, damage)
 				end
 			end
 		end
 
-		var_22_5 = DamageUtils.add_damage_network(arg_22_0, arg_22_1, arg_22_3, "torso", arg_22_2.damage_type, nil, normalize, arg_22_4, nil, flag, nil, arg_22_2.hit_react_type, nil, nil, nil, nil, nil, nil, 1)
+		inflicted_damage = DamageUtils.add_damage_network(target_unit, attacker_unit, damage, "torso", action.damage_type, nil, damage_direction, damage_source, nil, source_attacker_unit, nil, action.hit_react_type, nil, nil, nil, nil, nil, nil, 1)
 
-		local player_push_speed = arg_22_2.player_push_speed
+		local push_speed = action.player_push_speed
 
-		if not (not is_player_unit and not player_push_speed and ScriptUnit.extension(arg_22_0, "status_system"):is_disabled()) then
-			ScriptUnit.extension(arg_22_0, "locomotion_system"):add_external_velocity(player_push_speed * normalize, arg_22_2.max_player_push_speed)
+		if is_player_unit and push_speed then
+			local target_status_extension = ScriptUnit.extension(target_unit, "status_system")
+
+			if not target_status_extension:is_disabled() then
+				local player_locomotion = ScriptUnit.extension(target_unit, "locomotion_system")
+
+				player_locomotion:add_external_velocity(push_speed * damage_direction, action.max_player_push_speed)
+			end
 		end
 	end
 
-	local var_22_49 = BLACKBOARDS[arg_22_1]
+	local blackboard = BLACKBOARDS[attacker_unit]
 
-	if not var_22_49 then
-		var_22_49.hit_through_block = false
+	if blackboard then
+		blackboard.hit_through_block = false
 	end
 
-	return var_22_5
+	return inflicted_damage
 end
 
-AiUtils.add_attack_intensity = function (arg_23_0, arg_23_1, arg_23_2)
+AiUtils.add_attack_intensity = function (target_unit, action, blackboard)
 	-- function 23
-	local has_extension = ScriptUnit.has_extension(arg_23_0, "attack_intensity_system")
+	local target_unit_attack_intensity_extension = ScriptUnit.has_extension(target_unit, "attack_intensity_system")
 
-	if not has_extension then
+	if not target_unit_attack_intensity_extension then
 		return
 	end
 
-	local attack_intensity_type = arg_23_1.attack_intensity_type
+	local attack_intensity_type = action.attack_intensity_type
 
 	if not attack_intensity_type then
 		return
 	end
 
-	local get_difficulty = Managers.state.difficulty:get_difficulty()
-	local difficulty_attack_intensity = arg_23_1.difficulty_attack_intensity
+	local difficulty = Managers.state.difficulty:get_difficulty()
+	local difficulty_attack_intensity = action.difficulty_attack_intensity
 
-	difficulty_attack_intensity = not difficulty_attack_intensity and arg_23_1.difficulty_attack_intensity[attack_intensity_type][get_difficulty]
+	if difficulty_attack_intensity then
+		-- Nothing
+	end
 
-	if not difficulty_attack_intensity then
+	difficulty_attack_intensity = action.difficulty_attack_intensity[attack_intensity_type][difficulty]
+
+	local difficulty_attack_intensity_settings = difficulty_attack_intensity
+
+	::label_23_0::
+
+	if not difficulty_attack_intensity_settings then
 		return
 	end
 
-	local add_random_intensity = arg_23_1.add_random_intensity
+	local add_random_intensity = action.add_random_intensity
 
-	for k, v in pairs(difficulty_attack_intensity) do
+	for intensity_type, intensity in pairs(difficulty_attack_intensity_settings) do
 		local num
 
-		if not add_random_intensity then
+		if add_random_intensity then
 			num = 0.75 + 0.5 * math.random()
 
 			if not num then
@@ -515,35 +606,53 @@ AiUtils.add_attack_intensity = function (arg_23_0, arg_23_1, arg_23_2)
 
 		num = 1
 
-		::label_23_0::
+		local random_intensity = num
 
-		local num_2 = v * num
+		::label_23_1::
 
-		has_extension:add_attack_intensity(k, num_2)
+		local final_attack_intensity = intensity * random_intensity
+
+		target_unit_attack_intensity_extension:add_attack_intensity(intensity_type, final_attack_intensity)
 	end
 end
 
-AiUtils.poison_explode_unit = function (arg_24_0, arg_24_1, arg_24_2)
+AiUtils.poison_explode_unit = function (unit, action, blackboard)
 	-- function 24
-	local local_position = Unit.local_position(arg_24_0, 0)
-	local get_difficulty_rank = Managers.state.difficulty:get_difficulty_rank()
-	local var_24_2 = arg_24_1.aoe_dot_damage[get_difficulty_rank]
+	local position = Unit.local_position(unit, 0)
+	local difficulty_rank = Managers.state.difficulty:get_difficulty_rank()
+	local var_24_0 = action.aoe_dot_damage[difficulty_rank]
 
-	var_24_2 = var_24_2 or arg_24_1.aoe_dot_damage[2]
+	if not var_24_0 then
+		-- Nothing
+	end
 
-	local calculate_damage = DamageUtils.calculate_damage(var_24_2)
-	local var_24_4 = arg_24_1.aoe_init_damage[get_difficulty_rank]
+	var_24_0 = action.aoe_dot_damage[2]
 
-	var_24_4 = var_24_4 or arg_24_1.aoe_init_damage[2]
+	local aoe_dot_damage_table = var_24_0
 
-	local calculate_damage_2 = DamageUtils.calculate_damage(var_24_4)
-	local aoe_dot_damage_interval = arg_24_1.aoe_dot_damage_interval
-	local radius = arg_24_1.radius
-	local initial_radius = arg_24_1.initial_radius
-	local duration = arg_24_1.duration
-	local create_nav_tag_volume = arg_24_1.create_nav_tag_volume
-	local nav_tag_volume_layer = arg_24_1.nav_tag_volume_layer
-	local tbl = {
+	::label_24_0::
+
+	local aoe_dot_damage = DamageUtils.calculate_damage(aoe_dot_damage_table)
+	local var_24_1 = action.aoe_init_damage[difficulty_rank]
+
+	if not var_24_1 then
+		-- Nothing
+	end
+
+	var_24_1 = action.aoe_init_damage[2]
+
+	local aoe_init_damage_table = var_24_1
+
+	::label_24_1::
+
+	local aoe_init_damage = DamageUtils.calculate_damage(aoe_init_damage_table)
+	local aoe_dot_damage_interval = action.aoe_dot_damage_interval
+	local radius = action.radius
+	local initial_radius = action.initial_radius
+	local duration = action.duration
+	local create_nav_tag_volume = action.create_nav_tag_volume
+	local nav_tag_volume_layer = action.nav_tag_volume_layer
+	local extension_init_data = {
 		area_damage_system = {
 			area_damage_template = "globadier_area_dot_damage",
 			invisible_unit = true,
@@ -552,497 +661,540 @@ AiUtils.poison_explode_unit = function (arg_24_0, arg_24_1, arg_24_2)
 			dot_effect_name = "fx/wpnfx_poison_wind_globe_impact",
 			extra_dot_effect_name = "fx/chr_gutter_death",
 			damage_players = true,
-			aoe_dot_damage = calculate_damage,
-			aoe_init_damage = calculate_damage_2,
+			aoe_dot_damage = aoe_dot_damage,
+			aoe_init_damage = aoe_init_damage,
 			aoe_dot_damage_interval = aoe_dot_damage_interval,
 			radius = radius,
 			initial_radius = initial_radius,
 			life_time = duration,
-			damage_source = arg_24_2.breed.name,
+			damage_source = blackboard.breed.name,
 			create_nav_tag_volume = create_nav_tag_volume,
 			nav_tag_volume_layer = nav_tag_volume_layer,
-			source_attacker_unit = arg_24_0
+			source_attacker_unit = unit
 		}
 	}
-	local str = "units/weapons/projectile/poison_wind_globe/poison_wind_globe"
-	local spawn_network_unit = Managers.state.unit_spawner:spawn_network_unit(str, "aoe_unit", tbl, local_position)
-	local go_id = Managers.state.unit_storage:go_id(spawn_network_unit)
+	local aoe_unit_name = "units/weapons/projectile/poison_wind_globe/poison_wind_globe"
+	local aoe_unit = Managers.state.unit_spawner:spawn_network_unit(aoe_unit_name, "aoe_unit", extension_init_data, position)
+	local unit_id = Managers.state.unit_storage:go_id(aoe_unit)
 
-	Unit.set_unit_visibility(spawn_network_unit, false)
+	Unit.set_unit_visibility(aoe_unit, false)
 
-	local world = arg_24_2.world
+	local world = blackboard.world
 
 	assert(world)
-	Managers.state.network.network_transmit:send_rpc_all("rpc_area_damage", go_id, local_position)
-	Managers.state.unit_spawner:mark_for_deletion(arg_24_0)
+	Managers.state.network.network_transmit:send_rpc_all("rpc_area_damage", unit_id, position)
+	Managers.state.unit_spawner:mark_for_deletion(unit)
 end
 
-AiUtils.warpfire_explode_unit = function (arg_25_0, arg_25_1)
+AiUtils.warpfire_explode_unit = function (unit, blackboard)
 	-- function 25
-	local world = arg_25_1.world
-	local get_template = ExplosionUtils.get_template("warpfire_explosion")
-	local node = Unit.node(arg_25_0, "j_backpack")
-	local world_position = Unit.world_position(arg_25_0, node)
-	local go_id = Managers.state.unit_storage:go_id(arg_25_0)
-	local warpfire_explosion = NetworkLookup.explosion_templates.warpfire_explosion
-	local name = arg_25_1.breed.name
-	local var_25_7 = NetworkLookup.damage_sources[name]
+	local world = blackboard.world
+	local explosion_template = ExplosionUtils.get_template("warpfire_explosion")
+	local node = Unit.node(unit, "j_backpack")
+	local explosion_position = Unit.world_position(unit, node)
+	local attacker_unit_id = Managers.state.unit_storage:go_id(unit)
+	local explosion_template_id = NetworkLookup.explosion_templates.warpfire_explosion
+	local damage_source = blackboard.breed.name
+	local damage_source_id = NetworkLookup.damage_sources[damage_source]
 
-	Unit.flow_event(arg_25_0, "lua_hide_backpack")
+	Unit.flow_event(unit, "lua_hide_backpack")
 
-	local actor = Unit.actor(arg_25_0, "c_backpack")
+	local actor = Unit.actor(unit, "c_backpack")
 
 	Actor.set_collision_filter(actor, "filter_trigger")
 	Actor.set_scene_query_enabled(actor, false)
-	DamageUtils.create_explosion(world, arg_25_0, world_position, Quaternion.identity(), get_template, 1, name, true, false, arg_25_0, 0, false)
-	Managers.state.network.network_transmit:send_rpc_clients("rpc_create_explosion", go_id, false, world_position, Quaternion.identity(), warpfire_explosion, 1, var_25_7, 0, false, go_id)
+	DamageUtils.create_explosion(world, unit, explosion_position, Quaternion.identity(), explosion_template, 1, damage_source, true, false, unit, 0, false)
+	Managers.state.network.network_transmit:send_rpc_clients("rpc_create_explosion", attacker_unit_id, false, explosion_position, Quaternion.identity(), explosion_template_id, 1, damage_source_id, 0, false, attacker_unit_id)
 
-	local var_25_9 = POSITION_LOOKUP[arg_25_0]
+	local position = POSITION_LOOKUP[unit]
 	local nav_world = Managers.state.entity:system("ai_system"):nav_world()
-	local get_close_pos_below_on_mesh = LocomotionUtils.get_close_pos_below_on_mesh(nav_world, var_25_9, 4)
+	local position_on_navmesh = LocomotionUtils.get_close_pos_below_on_mesh(nav_world, position, 4)
 
-	if not get_close_pos_below_on_mesh then
-		local local_rotation = Unit.local_rotation(arg_25_0, 0)
-		local forward = Quaternion.forward(local_rotation)
-		local flat = Vector3.flat(forward)
-		local tbl = {
+	if position_on_navmesh then
+		local rotation = Unit.local_rotation(unit, 0)
+		local direction = Quaternion.forward(rotation)
+
+		direction = Vector3.flat(direction)
+
+		local extension_init_data = {
 			area_damage_system = {
 				liquid_template = "warpfire_death_fire",
-				flow_dir = flat,
-				source_unit = arg_25_0
+				flow_dir = direction,
+				source_unit = unit
 			}
 		}
-		local str = "units/hub_elements/empty"
-		local spawn_network_unit = Managers.state.unit_spawner:spawn_network_unit(str, "liquid_aoe_unit", tbl, get_close_pos_below_on_mesh)
+		local aoe_unit_name = "units/hub_elements/empty"
+		local liquid_aoe_unit = Managers.state.unit_spawner:spawn_network_unit(aoe_unit_name, "liquid_aoe_unit", extension_init_data, position_on_navmesh)
+		local liquid_area_damage_extension = ScriptUnit.extension(liquid_aoe_unit, "area_damage_system")
 
-		ScriptUnit.extension(spawn_network_unit, "area_damage_system"):ready()
+		liquid_area_damage_extension:ready()
 	end
 end
 
-AiUtils.chaos_zombie_explosion = function (arg_26_0, arg_26_1, arg_26_2, arg_26_3)
+AiUtils.chaos_zombie_explosion = function (unit, action, blackboard, delete_unit)
 	-- function 26
-	local local_position = Unit.local_position(arg_26_0, 0)
-	local name = arg_26_2.breed.name
-	local world = arg_26_2.world
-	local num = local_position + Vector3.up()
-	local get_template = ExplosionUtils.get_template("chaos_zombie_explosion")
+	local position = Unit.local_position(unit, 0)
+	local damage_source = blackboard.breed.name
+	local world = blackboard.world
+	local explosion_position = position + Vector3.up()
+	local explosion_template = ExplosionUtils.get_template("chaos_zombie_explosion")
 
-	DamageUtils.create_explosion(world, arg_26_0, num, Quaternion.identity(), get_template, 1, name, true, false, arg_26_0, 0, false)
+	DamageUtils.create_explosion(world, unit, explosion_position, Quaternion.identity(), explosion_template, 1, damage_source, true, false, unit, 0, false)
 
-	local go_id = Managers.state.unit_storage:go_id(arg_26_0)
-	local chaos_zombie_explosion = NetworkLookup.explosion_templates.chaos_zombie_explosion
-	local var_26_7 = NetworkLookup.damage_sources[name]
+	local attacker_unit_id = Managers.state.unit_storage:go_id(unit)
+	local explosion_template_id = NetworkLookup.explosion_templates.chaos_zombie_explosion
+	local damage_source_id = NetworkLookup.damage_sources[damage_source]
 
-	Managers.state.network.network_transmit:send_rpc_clients("rpc_create_explosion", go_id, false, num, Quaternion.identity(), chaos_zombie_explosion, 1, var_26_7, 0, false, go_id)
+	Managers.state.network.network_transmit:send_rpc_clients("rpc_create_explosion", attacker_unit_id, false, explosion_position, Quaternion.identity(), explosion_template_id, 1, damage_source_id, 0, false, attacker_unit_id)
 
-	if not arg_26_3 then
-		Managers.state.unit_spawner:mark_for_deletion(arg_26_0)
+	if delete_unit then
+		Managers.state.unit_spawner:mark_for_deletion(unit)
 	end
 
-	local up = Quaternion.up(Unit.local_rotation(arg_26_0, 0))
+	local blood_dir = Quaternion.up(Unit.local_rotation(unit, 0))
 
-	Managers.state.blood:add_blood_ball(local_position, up, "default", arg_26_0)
+	Managers.state.blood:add_blood_ball(position, blood_dir, "default", unit)
 end
 
-AiUtils.generic_mutator_explosion = function (arg_27_0, arg_27_1, arg_27_2, arg_27_3)
+AiUtils.generic_mutator_explosion = function (unit, blackboard, explosion_template_name, do_damage)
 	-- function 27
-	local local_position = Unit.local_position(arg_27_0, 0)
-	local get_difficulty_rank = Managers.state.difficulty:get_difficulty_rank()
-	local name = arg_27_1.breed.name
-	local world = arg_27_1.world
-	local num = local_position + Vector3.up()
-	local get_template = ExplosionUtils.get_template(arg_27_2)
+	local position = Unit.local_position(unit, 0)
+	local difficulty_rank = Managers.state.difficulty:get_difficulty_rank()
+	local damage_source = blackboard.breed.name
+	local world = blackboard.world
+	local explosion_position = position + Vector3.up()
+	local explosion_template = ExplosionUtils.get_template(explosion_template_name)
 
-	DamageUtils.create_explosion(world, not arg_27_3 and arg_27_0, num, Quaternion.identity(), get_template, 1, name, true, false, arg_27_0, 0, false)
+	DamageUtils.create_explosion(world, not not do_damage and not not unit, explosion_position, Quaternion.identity(), explosion_template, 1, damage_source, true, false, unit, 0, false)
 
-	local go_id = Managers.state.unit_storage:go_id(arg_27_0)
-	local var_27_7 = NetworkLookup.explosion_templates[arg_27_2]
-	local var_27_8 = NetworkLookup.damage_sources[name]
+	local attacker_unit_id = Managers.state.unit_storage:go_id(unit)
+	local explosion_template_id = NetworkLookup.explosion_templates[explosion_template_name]
+	local damage_source_id = NetworkLookup.damage_sources[damage_source]
 
-	Managers.state.network.network_transmit:send_rpc_clients("rpc_create_explosion", go_id, false, num, Quaternion.identity(), var_27_7, 1, var_27_8, 0, false, go_id)
+	Managers.state.network.network_transmit:send_rpc_clients("rpc_create_explosion", attacker_unit_id, false, explosion_position, Quaternion.identity(), explosion_template_id, 1, damage_source_id, 0, false, attacker_unit_id)
 
-	local up = Quaternion.up(Unit.local_rotation(arg_27_0, 0))
+	local blood_dir = Quaternion.up(Unit.local_rotation(unit, 0))
 
-	Managers.state.blood:add_blood_ball(local_position, up, "default", arg_27_0)
+	Managers.state.blood:add_blood_ball(position, blood_dir, "default", unit)
 end
 
-AiUtils.ai_explosion = function (arg_28_0, arg_28_1, arg_28_2, arg_28_3, arg_28_4)
+AiUtils.ai_explosion = function (exploding_unit, owner_unit, blackboard, damage_source, explosion_template)
 	-- function 28
-	local local_position = Unit.local_position(arg_28_0, 0)
-	local name = arg_28_2.breed.name
-	local world = arg_28_2.world
+	local explosion_position = Unit.local_position(exploding_unit, 0)
+	local damage_source = blackboard.breed.name
+	local world = blackboard.world
 
-	DamageUtils.create_explosion(world, arg_28_0, local_position, Quaternion.identity(), arg_28_4, 1, name, true, false, arg_28_1, false)
+	DamageUtils.create_explosion(world, exploding_unit, explosion_position, Quaternion.identity(), explosion_template, 1, damage_source, true, false, owner_unit, false)
 
-	local go_id = Managers.state.unit_storage:go_id(arg_28_1)
-	local var_28_4 = NetworkLookup.explosion_templates[arg_28_4.name]
-	local var_28_5 = NetworkLookup.damage_sources[name]
+	local attacker_unit_id = Managers.state.unit_storage:go_id(owner_unit)
+	local explosion_template_id = NetworkLookup.explosion_templates[explosion_template.name]
+	local damage_source_id = NetworkLookup.damage_sources[damage_source]
 
-	Managers.state.network.network_transmit:send_rpc_clients("rpc_create_explosion", go_id, false, local_position, Quaternion.identity(), var_28_4, 1, var_28_5, 0, false, go_id)
-	Managers.state.unit_spawner:mark_for_deletion(arg_28_0)
+	Managers.state.network.network_transmit:send_rpc_clients("rpc_create_explosion", attacker_unit_id, false, explosion_position, Quaternion.identity(), explosion_template_id, 1, damage_source_id, 0, false, attacker_unit_id)
+	Managers.state.unit_spawner:mark_for_deletion(exploding_unit)
 end
 
-AiUtils.loot_rat_explosion = function (arg_29_0, arg_29_1, arg_29_2, arg_29_3, arg_29_4)
+AiUtils.loot_rat_explosion = function (exploding_unit, owner_unit, blackboard, damage_source, explosion_template)
 	-- function 29
-	local local_position = Unit.local_position(arg_29_0, 0)
-	local name = arg_29_2.breed.name
-	local world = arg_29_2.world
+	local explosion_position = Unit.local_position(exploding_unit, 0)
+	local damage_source = blackboard.breed.name
+	local world = blackboard.world
 
-	DamageUtils.create_explosion(world, arg_29_0, local_position, Quaternion.identity(), arg_29_4, 1, name, true, false, arg_29_1, false)
+	DamageUtils.create_explosion(world, exploding_unit, explosion_position, Quaternion.identity(), explosion_template, 1, damage_source, true, false, owner_unit, false)
 
-	local go_id = Managers.state.unit_storage:go_id(arg_29_1)
-	local var_29_4 = NetworkLookup.explosion_templates[arg_29_4.name]
-	local var_29_5 = NetworkLookup.damage_sources[name]
+	local attacker_unit_id = Managers.state.unit_storage:go_id(owner_unit)
+	local explosion_template_id = NetworkLookup.explosion_templates[explosion_template.name]
+	local damage_source_id = NetworkLookup.damage_sources[damage_source]
 
-	Managers.state.network.network_transmit:send_rpc_clients("rpc_create_explosion", go_id, false, local_position, Quaternion.identity(), var_29_4, 1, var_29_5, 0, false, go_id)
+	Managers.state.network.network_transmit:send_rpc_clients("rpc_create_explosion", attacker_unit_id, false, explosion_position, Quaternion.identity(), explosion_template_id, 1, damage_source_id, 0, false, attacker_unit_id)
 
-	arg_29_2.delete_at_t = Managers.time:time("game") + 0.1
+	blackboard.delete_at_t = Managers.time:time("game") + 0.1
 end
 
-AiUtils.spawn_overpowering_blob = function (self, arg_30_1, arg_30_2, arg_30_3)
+AiUtils.spawn_overpowering_blob = function (network_manager, target_unit, blob_health, life_time)
 	-- function 30
-	local var_30_0 = POSITION_LOOKUP[arg_30_1]
-	local str = "units/weapons/enemy/wpn_overpowering_blob/wpn_overpowering_blob"
-	local tbl = {
+	local position = POSITION_LOOKUP[target_unit]
+	local blob_unit_name = "units/weapons/enemy/wpn_overpowering_blob/wpn_overpowering_blob"
+	local extension_init_data = {
 		health_system = {
-			health = arg_30_2,
-			target_unit = arg_30_1,
-			life_time = arg_30_3
+			health = blob_health,
+			target_unit = target_unit,
+			life_time = life_time
 		},
 		death_system = {
 			death_reaction_template = "lure_unit"
 		}
 	}
-	local var_30_3 = Vector3(1, 1, 1)
-	local from_quaternion_position = Matrix4x4.from_quaternion_position(Quaternion.identity(), var_30_0)
+	local size = Vector3(1, 1, 1)
+	local pose = Matrix4x4.from_quaternion_position(Quaternion.identity(), position)
 
-	Matrix4x4.set_scale(from_quaternion_position, Vector3(var_30_3[1], var_30_3[2], var_30_3[3]))
+	Matrix4x4.set_scale(pose, Vector3(size[1], size[2], size[3]))
 
-	local spawn_network_unit = Managers.state.unit_spawner:spawn_network_unit(str, "overpowering_blob_unit", tbl, from_quaternion_position)
-	local node = Unit.node(arg_30_1, "c_spine")
-	local var_30_7 = spawn_network_unit
-	local num = 0
-	local main_world = Application.main_world()
+	local overpowering_blob_unit = Managers.state.unit_spawner:spawn_network_unit(blob_unit_name, "overpowering_blob_unit", extension_init_data, pose)
+	local parent_node = Unit.node(target_unit, "c_spine")
+	local child_unit = overpowering_blob_unit
+	local child_node = 0
+	local world = Application.main_world()
 
-	World.link_unit(main_world, var_30_7, arg_30_1, node)
+	World.link_unit(world, child_unit, target_unit, parent_node)
 
-	local unit_game_object_id = self:unit_game_object_id(var_30_7)
-	local unit_game_object_id_2 = self:unit_game_object_id(arg_30_1)
+	local child_unit_id = network_manager:unit_game_object_id(child_unit)
+	local parent_unit_id = network_manager:unit_game_object_id(target_unit)
 
-	self.network_transmit:send_rpc_clients("rpc_link_unit", unit_game_object_id, num, unit_game_object_id_2, node)
+	network_manager.network_transmit:send_rpc_clients("rpc_link_unit", child_unit_id, child_node, parent_unit_id, parent_node)
 
-	return spawn_network_unit
+	return overpowering_blob_unit
 end
 
-AiUtils.broadphase_query = function (arg_31_0, arg_31_1, arg_31_2, arg_31_3)
+AiUtils.broadphase_query = function (position, radius, result_table, broadphase_categories)
 	-- function 31
-	fassert(arg_31_2, "No result_table given to AiUtils,broadphase_query")
+	fassert(result_table, "No result_table given to AiUtils,broadphase_query")
 
-	local broadphase = Managers.state.entity:system("ai_system").group_blackboard.broadphase
+	local ai_system = Managers.state.entity:system("ai_system")
+	local broadphase = ai_system.group_blackboard.broadphase
+	local num_hits = Broadphase.query(broadphase, position, radius, result_table, broadphase_categories)
 
-	return (Broadphase.query(broadphase, arg_31_0, arg_31_1, arg_31_2, arg_31_3))
+	return num_hits
 end
 
-AiUtils.get_angle_between_vectors = function (self, arg_32_1)
+AiUtils.get_angle_between_vectors = function (vector_1, vector_2)
 	-- function 32
-	self = Vector3.normalize(Vector3.flat(self))
-	arg_32_1 = Vector3.normalize(Vector3.flat(arg_32_1))
+	vector_1 = Vector3.normalize(Vector3.flat(vector_1))
+	vector_2 = Vector3.normalize(Vector3.flat(vector_2))
 
-	local num = math.atan2(self.y, self.x) - math.atan2(arg_32_1.y, arg_32_1.x)
-	local radians_to_degrees = math.radians_to_degrees(num)
+	local radians = math.atan2(vector_1.y, vector_1.x) - math.atan2(vector_2.y, vector_2.x)
+	local degrees = math.radians_to_degrees(radians)
+	local angle = math.abs(degrees)
 
-	return math.abs(radians_to_degrees), radians_to_degrees, num
+	return angle, degrees, radians
 end
 
-AiUtils.rotate_vector = function (self, arg_33_1)
+AiUtils.rotate_vector = function (vector, radians)
 	-- function 33
-	local length = Vector3.length(self)
-	local num = math.atan2(self.y, self.x) + arg_33_1
-	local cos = math.cos(num)
-	local sin = math.sin(num)
+	local length = Vector3.length(vector)
+	local l_radians = math.atan2(vector.y, vector.x)
 
-	return Vector3(cos, sin, 0) * length
+	l_radians = l_radians + radians
+
+	local x = math.cos(l_radians)
+	local y = math.sin(l_radians)
+	local return_vector = Vector3(x, y, 0)
+
+	return_vector = return_vector * length
+
+	return return_vector
 end
 
-AiUtils.constrain_radians = function (arg_34_0)
+AiUtils.constrain_radians = function (radians)
 	-- function 34
-	if arg_34_0 > math.pi then
-		arg_34_0 = -math.pi + (arg_34_0 - math.pi)
-	elseif arg_34_0 < -math.pi then
-		arg_34_0 = math.pi + (arg_34_0 + math.pi)
+	if radians > math.pi then
+		radians = -math.pi + (radians - math.pi)
+	elseif radians < -math.pi then
+		radians = math.pi + (radians + math.pi)
 	end
 
-	return arg_34_0
+	return radians
 end
 
-AiUtils.calculate_oobb = function (arg_35_0, arg_35_1, arg_35_2, arg_35_3, arg_35_4)
+AiUtils.calculate_oobb = function (range, self_pos, self_rot, height, width)
 	-- function 35
-	local flag = arg_35_3 or 2
-	local num = (arg_35_4 or 2) * 0.5
-	local num_2 = arg_35_0 * 0.5
-	local num_3 = flag * 0.5
-	local var_35_4 = Vector3(num, num_2, num_3)
-	local num_4 = Quaternion.rotate(arg_35_2, Vector3.forward()) * num_2
-	local num_5 = Vector3.up() * num_3
+	local height = not not height or not not 2
+	local width = not not width or not not 2
+	local half_width = width * 0.5
+	local half_range = range * 0.5
+	local half_height = height * 0.5
+	local size = Vector3(half_width, half_range, half_height)
+	local forward = Quaternion.rotate(self_rot, Vector3.forward()) * half_range
+	local up = Vector3.up() * half_height
+	local oobb_pos = self_pos + forward + up
 
-	return arg_35_1 + num_4 + num_5, arg_35_2, var_35_4
+	return oobb_pos, self_rot, size
 end
 
-local num = 0
+local previous_random_value = 0
 
-AiUtils.calculate_bot_threat_time = function (self)
+AiUtils.calculate_bot_threat_time = function (bot_threat)
 	-- function 36
-	local duration = self.duration
-	local max_start_delay = self.max_start_delay
+	local duration = bot_threat.duration
+	local max_start_delay_2 = bot_threat.max_start_delay
 
-	max_start_delay = max_start_delay or 0
-
-	local random = math.random()
-	local num_2 = num + random
-
-	if num_2 > 1 then
-		num_2 = random
+	if not max_start_delay_2 then
+		-- Nothing
 	end
 
-	local num_3 = num_2 * max_start_delay
-	local num_4 = self.start_time + num_3
+	max_start_delay_2 = 0
 
-	num = num_2
+	local max_start_delay = max_start_delay_2
 
-	return num_4, duration - num_3
+	::label_36_0::
+
+	local current_random_value = math.random()
+	local sum_random = previous_random_value + current_random_value
+
+	if sum_random > 1 then
+		sum_random = current_random_value
+	end
+
+	local start_delay = sum_random * max_start_delay
+	local start_time = bot_threat.start_time + start_delay
+
+	previous_random_value = sum_random
+
+	return start_time, duration - start_delay
 end
 
-AiUtils.get_actual_attacker_unit = function (arg_37_0)
+AiUtils.get_actual_attacker_unit = function (attacker_unit)
 	-- function 37
-	local has_extension = ScriptUnit.has_extension(arg_37_0, "projectile_system")
+	local projectile_extension = ScriptUnit.has_extension(attacker_unit, "projectile_system")
 
-	if not has_extension and ScriptUnit.has_extension(arg_37_0, "limited_item_track_system") or not ALIVE[has_extension.owner_unit] then
-		return has_extension.owner_unit
+	if projectile_extension and not ScriptUnit.has_extension(attacker_unit, "limited_item_track_system") and ALIVE[projectile_extension.owner_unit] then
+		return projectile_extension.owner_unit
 	end
 
-	local has_extension_2 = ScriptUnit.has_extension(arg_37_0, "area_damage_system")
+	local area_damage_system = ScriptUnit.has_extension(attacker_unit, "area_damage_system")
 
-	if not has_extension_2 then
-		local owner_player = has_extension_2.owner_player
+	if area_damage_system then
+		local owner_player = area_damage_system.owner_player
 
-		if not owner_player and not ALIVE[owner_player.player_unit] then
+		if owner_player and ALIVE[owner_player.player_unit] then
 			return owner_player.player_unit
 		end
 	end
 
-	return arg_37_0
+	return attacker_unit
 end
 
-AiUtils.get_actual_attacker_breed = function (arg_38_0, arg_38_1, arg_38_2, arg_38_3, arg_38_4)
+AiUtils.get_actual_attacker_breed = function (attacker_breed, victim_unit, damage_source_name, attacker_unit, attacker_player)
 	-- function 38
-	local has_extension = ScriptUnit.has_extension(arg_38_1, "status_system")
-	local flag = not has_extension and has_extension:query_pack_master_player()
+	local status_extension = ScriptUnit.has_extension(victim_unit, "status_system")
+	local packmaster_player = not not status_extension and not not status_extension:query_pack_master_player()
 
-	if not (not flag and flag ~= arg_38_4 or arg_38_2 ~= "skaven_pack_master") then
+	if packmaster_player and packmaster_player == attacker_player and damage_source_name == "skaven_pack_master" then
 		return PlayerBreeds.vs_packmaster
 	end
 
-	local has_source_attacker_unit_data = Managers.state.entity:system("area_damage_system"):has_source_attacker_unit_data(arg_38_3)
+	local area_damage_system = Managers.state.entity:system("area_damage_system")
+	local source_attacker_unit_data = area_damage_system:has_source_attacker_unit_data(attacker_unit)
 
-	if not has_source_attacker_unit_data then
-		return has_source_attacker_unit_data.breed
+	if source_attacker_unit_data then
+		return source_attacker_unit_data.breed
 	end
 
-	if not arg_38_4 then
-		local profile_index = arg_38_4:profile_index()
-		local career_index = arg_38_4:career_index()
+	if attacker_player then
+		local profile_index, career_index = attacker_player:profile_index(), attacker_player:career_index()
 
-		if not profile_index and not career_index then
+		if profile_index and career_index then
 			return SPProfiles[profile_index].careers[career_index].breed
 		end
 	end
 
-	return arg_38_0
+	return attacker_breed
 end
 
-AiUtils.get_actual_attacker_player = function (arg_39_0, arg_39_1, arg_39_2)
+AiUtils.get_actual_attacker_player = function (attacker_unit, victim_unit, damage_source_name)
 	-- function 39
-	local owner = Managers.player:owner(arg_39_0)
-	local has_extension = ScriptUnit.has_extension(arg_39_0, "projectile_system")
+	local attacker_player = Managers.player:owner(attacker_unit)
+	local projectile_extension = ScriptUnit.has_extension(attacker_unit, "projectile_system")
 
-	if not (not has_extension and ScriptUnit.has_extension(arg_39_0, "limited_item_track_system")) then
-		local owner_unit = has_extension.owner_unit
-		local owner_2 = Managers.player:owner(owner_unit)
+	if projectile_extension and not ScriptUnit.has_extension(attacker_unit, "limited_item_track_system") then
+		local owner_unit = projectile_extension.owner_unit
+		local owner_player = Managers.player:owner(owner_unit)
 
-		if not owner_2 then
-			return owner_2
-		end
-	end
-
-	local has_extension_2 = ScriptUnit.has_extension(arg_39_0, "area_damage_system")
-
-	if not has_extension_2 then
-		local owner_player = has_extension_2.owner_player
-
-		if not owner_player then
+		if owner_player then
 			return owner_player
 		end
 	end
 
-	if arg_39_2 == "skaven_pack_master" then
-		local has_extension_3 = ScriptUnit.has_extension(arg_39_1, "status_system")
-		local flag = not has_extension_3 and has_extension_3:query_pack_master_player()
+	local area_damage_system = ScriptUnit.has_extension(attacker_unit, "area_damage_system")
 
-		if not flag then
-			return flag
+	if area_damage_system then
+		local owner_player = area_damage_system.owner_player
+
+		if owner_player then
+			return owner_player
 		end
 	end
 
-	local get_commander_unit = Managers.state.entity:system("ai_commander_system"):get_commander_unit(arg_39_0)
-	local owner_3 = Managers.player:owner(get_commander_unit)
+	if damage_source_name == "skaven_pack_master" then
+		local status_extension = ScriptUnit.has_extension(victim_unit, "status_system")
+		local actual_player = not not status_extension and not not status_extension:query_pack_master_player()
 
-	if not owner_3 then
-		return owner_3
+		if actual_player then
+			return actual_player
+		end
 	end
 
-	return owner
+	local commander_system = Managers.state.entity:system("ai_commander_system")
+	local commander_unit = commander_system:get_commander_unit(attacker_unit)
+	local commander_player = Managers.player:owner(commander_unit)
+
+	if commander_player then
+		return commander_player
+	end
+
+	return attacker_player
 end
 
-AiUtils.unit_breed = function (arg_40_0)
+AiUtils.unit_breed = function (unit)
 	-- function 40
-	if not ALIVE[arg_40_0] then
+	if not ALIVE[unit] then
 		return
 	end
 
-	return get_data(arg_40_0, "breed")
+	return unit_get_data(unit, "breed")
 end
 
-AiUtils.downed_duration = function (self)
+AiUtils.downed_duration = function (action)
 	-- function 41
-	local downed_duration = self.downed_duration
+	local downed_duration = action.downed_duration
 
 	if type(downed_duration) == "table" then
-		return downed_duration[Managers.state.difficulty:get_difficulty_rank()]
+		local difficulty_rank = Managers.state.difficulty:get_difficulty_rank()
+
+		return downed_duration[difficulty_rank]
 	end
 
 	return downed_duration
 end
 
-AiUtils.client_predicted_unit_alive = function (arg_42_0)
+AiUtils.client_predicted_unit_alive = function (unit)
 	-- function 42
-	if not alive(arg_42_0) then
+	if not unit_alive(unit) then
 		return false
 	end
 
-	local has_extension = ScriptUnit.has_extension(arg_42_0, "health_system")
+	local health_extension = ScriptUnit.has_extension(unit, "health_system")
+	local is_predicted_alive = not not health_extension and not not health_extension:client_predicted_is_alive()
 
-	return not has_extension and has_extension:client_predicted_is_alive()
+	return is_predicted_alive
 end
 
-AiUtils.unit_invincible = function (arg_43_0)
+AiUtils.unit_invincible = function (unit)
 	-- function 43
-	if not ALIVE[arg_43_0] then
+	if not ALIVE[unit] then
 		return false
 	end
 
-	local has_extension = ScriptUnit.has_extension(arg_43_0, "health_system")
+	local health_extension = ScriptUnit.has_extension(unit, "health_system")
+	local is_invincible = not not health_extension and not not health_extension:get_is_invincible()
 
-	return not has_extension and has_extension:get_is_invincible()
+	return is_invincible
 end
 
-AiUtils.unit_knocked_down = function (arg_44_0)
+AiUtils.unit_knocked_down = function (unit)
 	-- function 44
-	if not ALIVE[arg_44_0] then
+	if not ALIVE[unit] then
 		return false
 	end
 
-	local has_extension = ScriptUnit.has_extension(arg_44_0, "status_system")
+	local status_extension = ScriptUnit.has_extension(unit, "status_system")
 
-	if not has_extension then
+	if not status_extension then
 		return false
 	end
 
-	return (has_extension:is_knocked_down())
+	local is_knocked_down = status_extension:is_knocked_down()
+
+	return is_knocked_down
 end
 
-AiUtils.unit_disabled = function (arg_45_0)
+AiUtils.unit_disabled = function (unit)
 	-- function 45
-	if not ALIVE[arg_45_0] then
+	if not ALIVE[unit] then
 		return false
 	end
 
-	local has_extension = ScriptUnit.has_extension(arg_45_0, "status_system")
+	local status_extension = ScriptUnit.has_extension(unit, "status_system")
 
-	if not has_extension then
+	if not status_extension then
 		return false
 	end
 
-	return (has_extension:is_disabled())
+	local is_disabled = status_extension:is_disabled()
+
+	return is_disabled
 end
 
-AiUtils.is_unwanted_target = function (self, arg_46_1)
+AiUtils.is_unwanted_target = function (side, enemy_unit)
 	-- function 46
-	if not self.VALID_ENEMY_TARGETS_PLAYERS_AND_BOTS[arg_46_1] and not ScriptUnit.extension(arg_46_1, "status_system"):is_grabbed_by_chaos_spawn() then
-		return true
+	if side.VALID_ENEMY_TARGETS_PLAYERS_AND_BOTS[enemy_unit] then
+		local status_extension = ScriptUnit.extension(enemy_unit, "status_system")
+		local is_grabbed_by_chaos_spawn = status_extension:is_grabbed_by_chaos_spawn()
+
+		if is_grabbed_by_chaos_spawn then
+			return true
+		end
 	end
 
 	return false
 end
 
-AiUtils.is_of_interest_to_gutter_runner = function (arg_47_0, arg_47_1, arg_47_2, arg_47_3)
+AiUtils.is_of_interest_to_gutter_runner = function (gutter_runner_unit, enemy_unit, blackboard, ignore_knocked_down)
 	-- function 47
-	if not Managers.state.side.side_by_unit[arg_47_0].VALID_ENEMY_TARGETS_PLAYERS_AND_BOTS[arg_47_1] then
+	local side = Managers.state.side.side_by_unit[gutter_runner_unit]
+	local valid_targets_player_and_bots = side.VALID_ENEMY_TARGETS_PLAYERS_AND_BOTS
+
+	if not valid_targets_player_and_bots[enemy_unit] then
 		return
 	end
 
-	local var_47_0 = arg_47_2.group_blackboard.disabled_by_special[arg_47_1]
+	local disabled_by_unit = blackboard.group_blackboard.disabled_by_special[enemy_unit]
 
-	if not (not var_47_0 and var_47_0 == arg_47_0) then
+	if disabled_by_unit and disabled_by_unit ~= gutter_runner_unit then
 		return
 	end
 
-	local extension = ScriptUnit.extension(arg_47_1, "status_system")
+	local status_extension = ScriptUnit.extension(enemy_unit, "status_system")
 
-	if not (not extension:is_knocked_down() and arg_47_3) then
+	if status_extension:is_knocked_down() and not ignore_knocked_down then
 		return
 	end
 
-	if not extension:is_grabbed_by_pack_master() then
+	if status_extension:is_grabbed_by_pack_master() then
 		return
 	end
 
-	if not extension:is_grabbed_by_corruptor() then
+	if status_extension:is_grabbed_by_corruptor() then
 		return
 	end
 
-	if not extension:is_grabbed_by_chaos_spawn() then
+	if status_extension:is_grabbed_by_chaos_spawn() then
 		return
 	end
 
-	if not extension:get_is_ledge_hanging() then
+	if status_extension:get_is_ledge_hanging() then
 		return
 	end
 
-	if not (not extension:is_pounced_down() and extension:get_pouncer_unit() == arg_47_0) then
+	if status_extension:is_pounced_down() and status_extension:get_pouncer_unit() ~= gutter_runner_unit then
 		return
 	end
 
-	if not extension.using_transport then
+	if status_extension.using_transport then
 		return
 	end
 
 	return true
 end
 
-AiUtils.is_of_interest_to_packmaster = function (arg_48_0, arg_48_1)
+AiUtils.is_of_interest_to_packmaster = function (packmaster_unit, enemy_unit)
 	-- function 48
-	if not Managers.state.side.side_by_unit[arg_48_0].VALID_ENEMY_TARGETS_PLAYERS_AND_BOTS[arg_48_1] then
-		local extension = ScriptUnit.extension(arg_48_1, "status_system")
-		local is_knocked_down = extension:is_knocked_down()
-		local is_pounced_down = extension:is_pounced_down()
-		local is_grabbed_by_chaos_spawn = extension:is_grabbed_by_chaos_spawn()
-		local flag = not extension:is_grabbed_by_pack_master() and extension:get_pack_master_grabber() ~= arg_48_0
-		local flag_2 = extension.pack_master_status == "pack_master_hanging"
-		local using_transport = extension.using_transport
-		local is_ledge_hanging = extension.is_ledge_hanging
-		local is_grabbed_by_corruptor = extension:is_grabbed_by_corruptor()
+	local side = Managers.state.side.side_by_unit[packmaster_unit]
+	local valid_targets_player_and_bots = side.VALID_ENEMY_TARGETS_PLAYERS_AND_BOTS
 
-		if not (is_knocked_down or is_pounced_down or flag or flag_2 or using_transport or is_ledge_hanging or is_grabbed_by_chaos_spawn or is_grabbed_by_corruptor) then
+	if valid_targets_player_and_bots[enemy_unit] then
+		local status_extension = ScriptUnit.extension(enemy_unit, "status_system")
+		local is_knocked_down = status_extension:is_knocked_down()
+		local is_pounced_down = status_extension:is_pounced_down()
+		local is_grabbed_by_chaos_spawn = status_extension:is_grabbed_by_chaos_spawn()
+		local grabbed = status_extension:is_grabbed_by_pack_master()
+		local is_grabbed_by_other_pack_master = not not grabbed and status_extension:get_pack_master_grabber() ~= packmaster_unit
+		local is_hanging = status_extension.pack_master_status == "pack_master_hanging"
+		local is_using_transport = status_extension.using_transport
+		local ledge_hanging = status_extension.is_ledge_hanging
+		local is_grabbed_by_corruptor = status_extension:is_grabbed_by_corruptor()
+
+		if not is_knocked_down and not is_pounced_down and not is_grabbed_by_other_pack_master and not is_hanging and not is_using_transport and not ledge_hanging and not is_grabbed_by_chaos_spawn and not is_grabbed_by_corruptor then
 			return true
 		end
 	end
@@ -1050,20 +1202,24 @@ AiUtils.is_of_interest_to_packmaster = function (arg_48_0, arg_48_1)
 	return false
 end
 
-AiUtils.is_of_interest_to_corruptor = function (arg_49_0, arg_49_1)
+AiUtils.is_of_interest_to_corruptor = function (corruptor_unit, enemy_unit)
 	-- function 49
-	if not Managers.state.side.side_by_unit[arg_49_0].VALID_ENEMY_TARGETS_PLAYERS_AND_BOTS[arg_49_1] then
-		local extension = ScriptUnit.extension(arg_49_1, "status_system")
-		local is_knocked_down = extension:is_knocked_down()
-		local is_pounced_down = extension:is_pounced_down()
-		local is_grabbed_by_chaos_spawn = extension:is_grabbed_by_chaos_spawn()
-		local flag = not extension:is_grabbed_by_corruptor() and extension.corruptor_unit ~= arg_49_0
-		local flag_2 = extension.pack_master_status == "pack_master_hanging"
-		local using_transport = extension.using_transport
-		local is_ledge_hanging = extension.is_ledge_hanging
-		local is_grabbed_by_pack_master = extension:is_grabbed_by_pack_master()
+	local side = Managers.state.side.side_by_unit[corruptor_unit]
+	local valid_targets_player_and_bots = side.VALID_ENEMY_TARGETS_PLAYERS_AND_BOTS
 
-		if not (is_knocked_down or is_pounced_down or flag or flag_2 or using_transport or is_ledge_hanging or is_grabbed_by_chaos_spawn or is_grabbed_by_pack_master) then
+	if valid_targets_player_and_bots[enemy_unit] then
+		local status_extension = ScriptUnit.extension(enemy_unit, "status_system")
+		local is_knocked_down = status_extension:is_knocked_down()
+		local is_pounced_down = status_extension:is_pounced_down()
+		local is_grabbed_by_chaos_spawn = status_extension:is_grabbed_by_chaos_spawn()
+		local grabbed = status_extension:is_grabbed_by_corruptor()
+		local is_grabbed_by_other_corruptor = not not grabbed and status_extension.corruptor_unit ~= corruptor_unit
+		local is_hanging = status_extension.pack_master_status == "pack_master_hanging"
+		local is_using_transport = status_extension.using_transport
+		local ledge_hanging = status_extension.is_ledge_hanging
+		local is_grabbed_by_pack_master = status_extension:is_grabbed_by_pack_master()
+
+		if not is_knocked_down and not is_pounced_down and not is_grabbed_by_other_corruptor and not is_hanging and not is_using_transport and not ledge_hanging and not is_grabbed_by_chaos_spawn and not is_grabbed_by_pack_master then
 			return true
 		end
 	end
@@ -1071,199 +1227,211 @@ AiUtils.is_of_interest_to_corruptor = function (arg_49_0, arg_49_1)
 	return false
 end
 
-AiUtils.is_of_interest_to_tentacle = function (arg_50_0, arg_50_1)
+AiUtils.is_of_interest_to_tentacle = function (enemy_unit, tentacle_unit)
 	-- function 50
-	local extension = ScriptUnit.extension(arg_50_0, "status_system")
-	local is_knocked_down = extension:is_knocked_down()
-	local is_pounced_down = extension:is_pounced_down()
-	local is_grabbed_by_chaos_spawn = extension:is_grabbed_by_chaos_spawn()
-	local flag = extension.pack_master_status == "pack_master_hanging"
-	local using_transport = extension.using_transport
-	local is_ledge_hanging = extension.is_ledge_hanging
-	local in_end_zone = extension.in_end_zone
-	local is_grabbed_by_corruptor = extension:is_grabbed_by_corruptor()
+	local status_extension = ScriptUnit.extension(enemy_unit, "status_system")
+	local is_knocked_down = status_extension:is_knocked_down()
+	local is_pounced_down = status_extension:is_pounced_down()
+	local is_grabbed_by_chaos_spawn = status_extension:is_grabbed_by_chaos_spawn()
+	local is_hanging = status_extension.pack_master_status == "pack_master_hanging"
+	local is_using_transport = status_extension.using_transport
+	local ledge_hanging = status_extension.is_ledge_hanging
+	local in_end_zone = status_extension.in_end_zone
+	local is_grabbed_by_corruptor = status_extension:is_grabbed_by_corruptor()
 
-	if not (is_knocked_down or is_pounced_down or flag or using_transport or is_ledge_hanging or is_grabbed_by_chaos_spawn or in_end_zone or is_grabbed_by_corruptor) then
+	if not is_knocked_down and not is_pounced_down and not is_hanging and not is_using_transport and not ledge_hanging and not is_grabbed_by_chaos_spawn and not in_end_zone and not is_grabbed_by_corruptor then
 		return true
 	end
 
 	return false
 end
 
-AiUtils.is_of_interest_to_vortex = function (arg_51_0)
+AiUtils.is_of_interest_to_vortex = function (enemy_unit)
 	-- function 51
-	local extension = ScriptUnit.extension(arg_51_0, "status_system")
-	local is_knocked_down = extension:is_knocked_down()
-	local is_pounced_down = extension:is_pounced_down()
-	local is_grabbed_by_pack_master = extension:is_grabbed_by_pack_master()
-	local flag = extension.pack_master_status == "pack_master_hanging"
-	local using_transport = extension.using_transport
-	local is_ledge_hanging = extension.is_ledge_hanging
-	local is_grabbed_by_chaos_spawn = extension:is_grabbed_by_chaos_spawn()
-	local is_in_vortex = extension:is_in_vortex()
-	local in_end_zone = extension.in_end_zone
-	local is_grabbed_by_corruptor = extension:is_grabbed_by_corruptor()
+	local status_extension = ScriptUnit.extension(enemy_unit, "status_system")
+	local is_knocked_down = status_extension:is_knocked_down()
+	local is_pounced_down = status_extension:is_pounced_down()
+	local grabbed = status_extension:is_grabbed_by_pack_master()
+	local is_hanging = status_extension.pack_master_status == "pack_master_hanging"
+	local is_using_transport = status_extension.using_transport
+	local ledge_hanging = status_extension.is_ledge_hanging
+	local is_grabbed_by_chaos_spawn = status_extension:is_grabbed_by_chaos_spawn()
+	local is_in_vortex = status_extension:is_in_vortex()
+	local in_end_zone = status_extension.in_end_zone
+	local is_grabbed_by_corruptor = status_extension:is_grabbed_by_corruptor()
 
-	if not (is_knocked_down or is_pounced_down or is_grabbed_by_pack_master or flag or using_transport or is_ledge_hanging or is_grabbed_by_chaos_spawn or is_in_vortex or in_end_zone or is_grabbed_by_corruptor) then
+	if not is_knocked_down and not is_pounced_down and not grabbed and not is_hanging and not is_using_transport and not ledge_hanging and not is_grabbed_by_chaos_spawn and not is_in_vortex and not in_end_zone and not is_grabbed_by_corruptor then
 		return true
 	end
 
 	return false
 end
 
-AiUtils.is_of_interest_plague_wave_sorcerer = function (arg_52_0)
+AiUtils.is_of_interest_plague_wave_sorcerer = function (enemy_unit)
 	-- function 52
-	local has_extension = ScriptUnit.has_extension(arg_52_0, "status_system")
+	local status_extension = ScriptUnit.has_extension(enemy_unit, "status_system")
 
-	if not has_extension then
+	if not status_extension then
 		return false
 	end
 
-	local is_knocked_down = has_extension:is_knocked_down()
-	local is_pounced_down = has_extension:is_pounced_down()
-	local is_grabbed_by_pack_master = has_extension:is_grabbed_by_pack_master()
-	local flag = has_extension.pack_master_status == "pack_master_hanging"
-	local using_transport = has_extension.using_transport
-	local is_ledge_hanging = has_extension.is_ledge_hanging
-	local is_grabbed_by_chaos_spawn = has_extension:is_grabbed_by_chaos_spawn()
-	local overpowered = has_extension.overpowered
-	local in_end_zone = has_extension.in_end_zone
+	local is_knocked_down = status_extension:is_knocked_down()
+	local is_pounced_down = status_extension:is_pounced_down()
+	local grabbed = status_extension:is_grabbed_by_pack_master()
+	local is_hanging = status_extension.pack_master_status == "pack_master_hanging"
+	local is_using_transport = status_extension.using_transport
+	local ledge_hanging = status_extension.is_ledge_hanging
+	local is_grabbed_by_chaos_spawn = status_extension:is_grabbed_by_chaos_spawn()
+	local overpowered = status_extension.overpowered
+	local in_end_zone = status_extension.in_end_zone
 
-	if not (is_knocked_down or is_pounced_down or is_grabbed_by_pack_master or flag or using_transport or is_ledge_hanging or is_grabbed_by_chaos_spawn or overpowered or in_end_zone) then
+	if not is_knocked_down and not is_pounced_down and not grabbed and not is_hanging and not is_using_transport and not ledge_hanging and not is_grabbed_by_chaos_spawn and not overpowered and not in_end_zone then
 		return true
 	end
 
 	return false
 end
 
-AiUtils.is_of_interest_boss_sorcerer = function (arg_53_0)
+AiUtils.is_of_interest_boss_sorcerer = function (enemy_unit)
 	-- function 53
-	local extension = ScriptUnit.extension(arg_53_0, "status_system")
-	local is_knocked_down = extension:is_knocked_down()
-	local is_pounced_down = extension:is_pounced_down()
-	local is_grabbed_by_pack_master = extension:is_grabbed_by_pack_master()
-	local flag = extension.pack_master_status == "pack_master_hanging"
-	local using_transport = extension.using_transport
-	local is_ledge_hanging = extension.is_ledge_hanging
-	local is_grabbed_by_chaos_spawn = extension:is_grabbed_by_chaos_spawn()
-	local is_in_vortex = extension:is_in_vortex()
-	local overpowered = extension.overpowered
+	local status_extension = ScriptUnit.extension(enemy_unit, "status_system")
+	local is_knocked_down = status_extension:is_knocked_down()
+	local is_pounced_down = status_extension:is_pounced_down()
+	local grabbed = status_extension:is_grabbed_by_pack_master()
+	local is_hanging = status_extension.pack_master_status == "pack_master_hanging"
+	local is_using_transport = status_extension.using_transport
+	local ledge_hanging = status_extension.is_ledge_hanging
+	local is_grabbed_by_chaos_spawn = status_extension:is_grabbed_by_chaos_spawn()
+	local is_in_vortex = status_extension:is_in_vortex()
+	local overpowered = status_extension.overpowered
 
-	if not (is_knocked_down or is_pounced_down or is_grabbed_by_pack_master or flag or using_transport or is_ledge_hanging or is_grabbed_by_chaos_spawn or is_in_vortex or overpowered) then
+	if not is_knocked_down and not is_pounced_down and not grabbed and not is_hanging and not is_using_transport and not ledge_hanging and not is_grabbed_by_chaos_spawn and not is_in_vortex and not overpowered then
 		return true
 	end
 
 	return false
 end
 
-AiUtils.is_of_interest_stormfiend_demo = function (arg_54_0)
+AiUtils.is_of_interest_stormfiend_demo = function (enemy_unit)
 	-- function 54
-	return not Managers.player:unit_owner(arg_54_0).bot_player
+	local player_manager = Managers.player
+	local player = player_manager:unit_owner(enemy_unit)
+
+	return not player.bot_player
 end
 
-AiUtils.show_polearm = function (arg_55_0, arg_55_1)
+AiUtils.show_polearm = function (packmaster_unit, show)
 	-- function 55
-	local num = 1
-	local go_id = Managers.state.unit_storage:go_id(arg_55_0)
-	local network = Managers.state.network
+	local item_inventory_index = 1
+	local go_id = Managers.state.unit_storage:go_id(packmaster_unit)
+	local network_manager = Managers.state.network
 
-	if not network:game() then
-		network.network_transmit:send_rpc_all("rpc_ai_show_single_item", go_id, num, arg_55_1)
+	if network_manager:game() then
+		network_manager.network_transmit:send_rpc_all("rpc_ai_show_single_item", go_id, item_inventory_index, show)
 	end
 end
 
-AiUtils.stagger = function (arg_56_0, arg_56_1, arg_56_2, arg_56_3, arg_56_4, arg_56_5, arg_56_6, arg_56_7, arg_56_8, arg_56_9, arg_56_10, arg_56_11, arg_56_12, arg_56_13, arg_56_14)
+AiUtils.stagger = function (unit, blackboard, attacker_unit, stagger_direction, stagger_length, stagger_type, stagger_duration, stagger_animation_scale, t, stagger_value, always_stagger, is_push, should_play_push_sound, optional_predicted_damage, damage_source)
 	-- function 56
-	fassert(arg_56_5 > 0, "Tried to use invalid stagger type %q", arg_56_5)
+	fassert(stagger_type > 0, "Tried to use invalid stagger type %q", stagger_type)
 
-	local flag = not arg_56_1.stagger and arg_56_1.stagger_type == scripts_utils_stagger_types.explosion
-	local flag_2 = arg_56_5 == scripts_utils_stagger_types.explosion
+	local is_staggered = blackboard.stagger
+	local current_stagger_is_explosion = not not is_staggered and blackboard.stagger_type == stagger_types.explosion
+	local new_stagger_is_explosion = stagger_type == stagger_types.explosion
 
-	if not ((arg_56_10 or arg_56_11 or not flag) and flag_2) then
+	if not always_stagger and not is_push and current_stagger_is_explosion and not new_stagger_is_explosion then
 		return
 	end
 
-	local breed = arg_56_1.breed
+	local breed = blackboard.breed
 
-	if not (not breed.boss_staggers and not (arg_56_5 < scripts_utils_stagger_types.explosion)) then
+	if breed.boss_staggers and stagger_type < stagger_types.explosion then
 		return
 	end
 
-	local stagger_modifier = Managers.state.difficulty:get_difficulty_settings().stagger_modifier
+	local difficulty_modifier = Managers.state.difficulty:get_difficulty_settings().stagger_modifier
 
-	arg_56_1.pushing_unit = arg_56_2
-	arg_56_1.stagger_direction = Vector3Box(arg_56_3)
-	arg_56_1.stagger_length = arg_56_4
-	arg_56_1.stagger_time = arg_56_6 * stagger_modifier + arg_56_8
+	blackboard.pushing_unit = attacker_unit
+	blackboard.stagger_direction = Vector3Box(stagger_direction)
+	blackboard.stagger_length = stagger_length
+	blackboard.stagger_time = stagger_duration * difficulty_modifier + t
 
-	local flag_3 = arg_56_9 or 1
+	local stagger_value_to_add = not not stagger_value or not not 1
 	local num
 
-	if not arg_56_1.stagger then
-		num = arg_56_1.stagger + flag_3
+	if blackboard.stagger then
+		num = blackboard.stagger + stagger_value_to_add
 
 		if not num then
 			-- Nothing
 		end
 	end
 
-	num = flag_3
+	num = stagger_value_to_add
 
 	::label_56_0::
 
-	arg_56_1.stagger = num
-	arg_56_1.stagger_type = arg_56_5
-	arg_56_1.stagger_animation_scale = arg_56_7
-	arg_56_1.always_stagger_suffered = arg_56_10
-	arg_56_1.stagger_was_push = arg_56_11
+	blackboard.stagger = num
+	blackboard.stagger_type = stagger_type
+	blackboard.stagger_animation_scale = stagger_animation_scale
+	blackboard.always_stagger_suffered = always_stagger
+	blackboard.stagger_was_push = is_push
 
-	local has_extension = ScriptUnit.has_extension(arg_56_0, "ai_shield_system")
+	local shield_extension = ScriptUnit.has_extension(unit, "ai_shield_system")
 
-	if not (not has_extension and (has_extension.is_blocking or not arg_56_1.attack_token or not arg_56_1.stagger) and not (arg_56_1.stagger < 3)) then
-		arg_56_1.stagger = 3
+	if shield_extension and not shield_extension.is_blocking and blackboard.attack_token and blackboard.stagger and blackboard.stagger < 3 then
+		blackboard.stagger = 3
 	end
 
-	if arg_56_0 == arg_56_2 or not ScriptUnit.has_extension(arg_56_0, "ai_system") then
-		local extension = ScriptUnit.extension(arg_56_0, "ai_system")
+	if unit ~= attacker_unit and ScriptUnit.has_extension(unit, "ai_system") then
+		local ai_extension = ScriptUnit.extension(unit, "ai_system")
 
-		if not breed.using_combo and not arg_56_10 then
-			Unit.set_data(arg_56_2, "last_combo_t", arg_56_8)
+		if breed.using_combo and always_stagger then
+			Unit.set_data(attacker_unit, "last_combo_t", t)
 		end
 
-		if not breed.before_stagger_enter_function then
-			breed.before_stagger_enter_function(arg_56_0, arg_56_1, arg_56_2, arg_56_11, flag_3, arg_56_13, arg_56_14)
+		if breed.before_stagger_enter_function then
+			breed.before_stagger_enter_function(unit, blackboard, attacker_unit, is_push, stagger_value_to_add, optional_predicted_damage, damage_source)
 		end
 
-		if not extension.attacked then
-			extension:attacked(arg_56_2, arg_56_8)
+		if ai_extension.attacked then
+			ai_extension:attacked(attacker_unit, t)
 		end
 	end
 
-	if not arg_56_12 then
-		local push_sound_event = arg_56_1.breed.push_sound_event
+	if should_play_push_sound then
+		local push_sound_event_2 = blackboard.breed.push_sound_event
 
-		push_sound_event = push_sound_event or "Play_generic_pushed_impact_small"
+		if not push_sound_event_2 then
+			-- Nothing
+		end
 
-		Managers.state.entity:system("audio_system"):play_audio_unit_event(push_sound_event, arg_56_0)
+		push_sound_event_2 = "Play_generic_pushed_impact_small"
+
+		local push_sound_event = push_sound_event_2
+
+		::label_56_1::
+
+		Managers.state.entity:system("audio_system"):play_audio_unit_event(push_sound_event, unit)
 	end
 end
 
-AiUtils.override_stagger = function (arg_57_0, arg_57_1, arg_57_2, arg_57_3, arg_57_4, arg_57_5, arg_57_6, arg_57_7, arg_57_8, arg_57_9)
+AiUtils.override_stagger = function (unit, blackboard, attacker_unit, stagger_direction, stagger_length, stagger_type, stagger_duration, stagger_animation_scale, t, is_push)
 	-- function 57
-	local active_node = arg_57_1.active_node
+	local active_node = blackboard.active_node
 
-	if not (not active_node and active_node.stagger_override) then
+	if not active_node or not active_node.stagger_override then
 		return false
 	end
 
-	if not active_node:stagger_override(arg_57_0, arg_57_1, arg_57_2, arg_57_3, arg_57_4, arg_57_5, arg_57_6, arg_57_7, arg_57_8, arg_57_9) then
-		assert(arg_57_5 > scripts_utils_stagger_types.none, "Tried to use invalid stagger type %q", arg_57_5)
+	if active_node:stagger_override(unit, blackboard, attacker_unit, stagger_direction, stagger_length, stagger_type, stagger_duration, stagger_animation_scale, t, is_push) then
+		assert(stagger_type > stagger_types.none, "Tried to use invalid stagger type %q", stagger_type)
 
-		if arg_57_0 == arg_57_2 or not ScriptUnit.has_extension(arg_57_0, "ai_system") then
-			local extension = ScriptUnit.extension(arg_57_0, "ai_system")
+		if unit ~= attacker_unit and ScriptUnit.has_extension(unit, "ai_system") then
+			local ai_extension = ScriptUnit.extension(unit, "ai_system")
 
-			if not extension.attacked then
-				extension:attacked(arg_57_2, arg_57_8)
+			if ai_extension.attacked then
+				ai_extension:attacked(attacker_unit, t)
 			end
 		end
 
@@ -1273,358 +1441,407 @@ AiUtils.override_stagger = function (arg_57_0, arg_57_1, arg_57_2, arg_57_3, arg
 	return false
 end
 
-AiUtils.random = function (arg_58_0, arg_58_1)
+AiUtils.random = function (value1, value2)
 	-- function 58
-	return arg_58_0 + Math.random() * (arg_58_1 - arg_58_0)
+	return value1 + Math.random() * (value2 - value1)
 end
 
-local num_2 = 10
-local num_3 = 4
-local num_4 = 8
-local num_5 = 0
+local MAX_TRIES = 10
+local MIN_ANGLE_STEP = 4
+local MAX_ANGLE_STEP = 8
+local MIN_ANGLE = 0
 
-AiUtils.advance_towards_target = function (arg_59_0, arg_59_1, arg_59_2, arg_59_3, arg_59_4, arg_59_5, arg_59_6, arg_59_7, arg_59_8, arg_59_9, arg_59_10)
+AiUtils.advance_towards_target = function (unit, blackboard, min_distance, max_distance, min_angle_step, max_angle_step, min_angle, max_tries, direction, above, below)
 	-- function 59
-	local target_unit = arg_59_1.target_unit
+	local target_unit = blackboard.target_unit
 
 	if not HEALTH_ALIVE[target_unit] then
 		return
 	end
 
-	local var_59_1 = num_2
-	local flag = arg_59_4 or num_3
-	local flag_2 = arg_59_5 or num_4
-	local flag_3 = arg_59_6 or num_5
+	local max_tries = MAX_TRIES
+	local min_angle_step = not not min_angle_step or not not MIN_ANGLE_STEP
+	local max_angle_step = not not max_angle_step or not not MAX_ANGLE_STEP
+	local min_angle = not not min_angle or not not MIN_ANGLE
 
-	arg_59_8 = arg_59_8 or 1 - math.random(0, 1) * 2
+	direction = not not direction or not not (1 - math.random(0, 1) * 2)
 
-	local var_59_5 = POSITION_LOOKUP[arg_59_0]
-	local var_59_6 = POSITION_LOOKUP[target_unit]
+	local from_position = POSITION_LOOKUP[unit]
+	local target_position = POSITION_LOOKUP[target_unit]
 
-	for i = 1, 2 do
-		for j = 1, var_59_1 do
-			local num = flag_3 + math.random(flag * j, flag_2 * j) * arg_59_8
-			local outside_goal, var_59_9 = LocomotionUtils.outside_goal(arg_59_1.nav_world, var_59_5, var_59_6, arg_59_2, arg_59_3, num, 3, arg_59_9, arg_59_10)
+	for j = 1, 2 do
+		for i = 1, max_tries do
+			local angle = min_angle + math.random(min_angle_step * i, max_angle_step * i) * direction
+			local position, wanted_distance = LocomotionUtils.outside_goal(blackboard.nav_world, from_position, target_position, min_distance, max_distance, angle, 3, above, below)
 
-			if not outside_goal then
-				return outside_goal, var_59_9, arg_59_8
+			if position then
+				return position, wanted_distance, direction
 			end
 		end
 
-		arg_59_8 = -arg_59_8
+		direction = -direction
 	end
 
 	return false
 end
 
-AiUtils.temp_anim_event = function (arg_60_0, arg_60_1, arg_60_2)
+AiUtils.temp_anim_event = function (unit, anim, time)
 	-- function 60
-	local str = "temp_anim_event"
-	local node = Unit.node(arg_60_0, "c_head")
-	local str_2 = "player_1"
-	local var_60_3 = Vector3(255, 0, 0)
-	local var_60_4 = Vector3(0, 0, 1)
-	local num = 0.5
-	local var_60_6 = arg_60_1
+	local category_name = "temp_anim_event"
+	local head_node = Unit.node(unit, "c_head")
+	local viewport_name = "player_1"
+	local color_vector = Vector3(255, 0, 0)
+	local offset_vector = Vector3(0, 0, 1)
+	local text_size = 0.5
+	local text = anim
 
-	if not arg_60_2 then
-		var_60_6 = arg_60_1 .. ": " .. math.round_with_precision(arg_60_2, 1)
+	if time then
+		text = anim .. ": " .. math.round_with_precision(time, 1)
 	end
 
-	Managers.state.debug_text:clear_unit_text(arg_60_0, str)
-	Managers.state.debug_text:output_unit_text(var_60_6, num, arg_60_0, node, var_60_4, nil, str, var_60_3, str_2)
+	Managers.state.debug_text:clear_unit_text(unit, category_name)
+	Managers.state.debug_text:output_unit_text(text, text_size, unit, head_node, offset_vector, nil, category_name, color_vector, viewport_name)
 end
 
-AiUtils.clear_temp_anim_event = function (arg_61_0)
+AiUtils.clear_temp_anim_event = function (unit)
 	-- function 61
-	local str = "temp_anim_event"
+	local category_name = "temp_anim_event"
 
-	Managers.state.debug_text:clear_unit_text(arg_61_0, str)
+	Managers.state.debug_text:clear_unit_text(unit, category_name)
 end
 
-AiUtils.anim_event = function (arg_62_0, arg_62_1, arg_62_2)
+AiUtils.anim_event = function (unit, data, anim_event)
 	-- function 62
-	if not (not arg_62_1.anim_event and arg_62_1.anim_event ~= arg_62_2) then
+	if data.anim_event and data.anim_event == anim_event then
 		return
 	end
 
-	Managers.state.network:anim_event(arg_62_0, arg_62_2)
+	Managers.state.network:anim_event(unit, anim_event)
 
-	arg_62_1.anim_event = arg_62_2
+	data.anim_event = anim_event
 end
 
-AiUtils.get_default_breed_move_speed = function (arg_63_0, arg_63_1)
+AiUtils.get_default_breed_move_speed = function (unit, blackboard)
 	-- function 63
-	local var_63_0
-	local breed = arg_63_1.breed
+	local move_speed
+	local breed = blackboard.breed
 
-	if not arg_63_1.is_passive then
-		var_63_0 = breed.passive_walk_speed or breed.walk_speed
+	if blackboard.is_passive then
+		move_speed = not not breed.passive_walk_speed or not not breed.walk_speed
 	else
-		var_63_0 = breed.run_speed
+		move_speed = breed.run_speed
 	end
 
-	return var_63_0
+	return move_speed
 end
 
-AiUtils.clear_anim_event = function (self)
+AiUtils.clear_anim_event = function (data)
 	-- function 64
-	self.anim_event = nil
+	data.anim_event = nil
 end
 
-AiUtils.set_default_anim_constraint = function (arg_65_0, arg_65_1)
+AiUtils.set_default_anim_constraint = function (unit, constraint_target)
 	-- function 65
-	local var_65_0 = POSITION_LOOKUP[arg_65_0]
-	local world_rotation = Unit.world_rotation(arg_65_0, 0)
-	local num = var_65_0 + Quaternion.forward(world_rotation) * 5 + Vector3.up() * 1.25
+	local position = POSITION_LOOKUP[unit]
+	local rotation = Unit.world_rotation(unit, 0)
+	local rotation_forward = Quaternion.forward(rotation)
+	local aim_target = position + rotation_forward * 5 + Vector3.up() * 1.25
 
-	Unit.animation_set_constraint_target(arg_65_0, arg_65_1, num)
+	Unit.animation_set_constraint_target(unit, constraint_target, aim_target)
 end
 
-AiUtils.ninja_vanish_when_taking_damage = function (arg_66_0, arg_66_1)
+AiUtils.ninja_vanish_when_taking_damage = function (unit, blackboard)
 	-- function 66
-	local recent_damages, var_66_1 = ScriptUnit.extension(arg_66_0, "health_system"):recent_damages()
+	local health_extension = ScriptUnit.extension(unit, "health_system")
+	local _, nr_damages = health_extension:recent_damages()
 
-	if var_66_1 > 0 then
-		arg_66_1.ninja_vanish = true
+	if nr_damages > 0 then
+		blackboard.ninja_vanish = true
 	end
 end
 
-AiUtils.initialize_cost_table = function (arg_67_0, arg_67_1)
+AiUtils.initialize_cost_table = function (navtag_layer_cost_table, allowed_layers)
 	-- function 67
-	for i, v in ipairs(LAYER_ID_MAPPING) do
-		local var_67_0 = arg_67_1[v]
+	for layer_id, layer_name in ipairs(LAYER_ID_MAPPING) do
+		local layer_cost = allowed_layers[layer_name]
 
-		if not (var_67_0 == 0 or var_67_0 ~= nil) then
-			GwNavTagLayerCostTable.forbid_layer(arg_67_0, i)
+		if layer_cost == 0 or layer_cost == nil then
+			GwNavTagLayerCostTable.forbid_layer(navtag_layer_cost_table, layer_id)
 		else
-			GwNavTagLayerCostTable.allow_layer(arg_67_0, i)
-			GwNavTagLayerCostTable.set_layer_cost_multiplier(arg_67_0, i, var_67_0)
+			GwNavTagLayerCostTable.allow_layer(navtag_layer_cost_table, layer_id)
+			GwNavTagLayerCostTable.set_layer_cost_multiplier(navtag_layer_cost_table, layer_id, layer_cost)
 		end
 	end
 end
 
-AiUtils.initialize_nav_cost_map_cost_table = function (arg_68_0, arg_68_1, arg_68_2)
+AiUtils.initialize_nav_cost_map_cost_table = function (cost_table, allowed_layers, default_cost)
 	-- function 68
-	for i, v in ipairs(NAV_COST_MAP_LAYER_ID_MAPPING) do
+	for layer_id, layer_name in ipairs(NAV_COST_MAP_LAYER_ID_MAPPING) do
 		local var_68_0
 
-		if not arg_68_1 then
-			var_68_0 = arg_68_1[v]
+		if allowed_layers then
+			var_68_0 = allowed_layers[layer_name]
 
 			if not var_68_0 then
 				-- Nothing
 			end
 		end
 
-		var_68_0 = arg_68_2 or 0
+		if not default_cost then
+			-- Nothing
+		end
 
 		::label_68_0::
 
-		GwNavCostMap.cost_table_set_cost(arg_68_0, i, var_68_0)
+		var_68_0 = 0
+
+		local layer_cost = var_68_0
+
+		::label_68_1::
+
+		GwNavCostMap.cost_table_set_cost(cost_table, layer_id, layer_cost)
 	end
 end
 
-AiUtils.kill_unit = function (arg_69_0, arg_69_1, arg_69_2, arg_69_3, arg_69_4, arg_69_5)
+AiUtils.kill_unit = function (victim_unit, attacker_unit, hit_zone_name, damage_type, damage_direction, damage_source)
 	-- function 69
-	local max = NetworkConstants.damage.max
+	local damage_amount = NetworkConstants.damage.max
 
-	arg_69_1 = arg_69_1 or arg_69_0
+	attacker_unit = not not attacker_unit or not not victim_unit
 
-	if not HEALTH_ALIVE[arg_69_0] then
-		arg_69_2 = arg_69_2 or "full"
-		arg_69_3 = arg_69_3 or "kinetic"
-		arg_69_5 = arg_69_5 or "suicide"
-		arg_69_4 = arg_69_4 or Vector3(0, 0, 1)
+	if HEALTH_ALIVE[victim_unit] then
+		hit_zone_name = not not hit_zone_name or not not "full"
+		damage_type = not not damage_type or not not "kinetic"
+		damage_source = not not damage_source or not not "suicide"
+		damage_direction = not not damage_direction or not not Vector3(0, 0, 1)
 
-		local current_health = ScriptUnit.extension(arg_69_0, "health_system"):current_health()
-		local flag = true
+		local health = ScriptUnit.extension(victim_unit, "health_system"):current_health()
+		local skip_buffs = true
 
-		for i = 1, math.ceil(current_health / max) do
-			DamageUtils.add_damage_network(arg_69_0, arg_69_1, max, arg_69_2, arg_69_3, nil, arg_69_4, arg_69_5, nil, nil, nil, nil, false, false, nil, nil, nil, flag, 1)
+		for i = 1, math.ceil(health / damage_amount) do
+			DamageUtils.add_damage_network(victim_unit, attacker_unit, damage_amount, hit_zone_name, damage_type, nil, damage_direction, damage_source, nil, nil, nil, nil, false, false, nil, nil, nil, skip_buffs, 1)
 		end
 	end
 end
 
-local tbl_2 = {
+local DEFAULT_AGGRO_MULTIPLIERS = {
 	ranged = 1,
 	melee = 1,
 	grenade = 1
 }
 
-AiUtils.update_aggro = function (arg_70_0, arg_70_1, arg_70_2, arg_70_3, arg_70_4)
+AiUtils.update_aggro = function (unit, blackboard, breed, t, dt)
 	-- function 70
-	local aggro_list = arg_70_1.aggro_list
-	local recent_damages, var_70_2 = ScriptUnit.extension(arg_70_0, "health_system"):recent_damages()
-	local num = arg_70_4 * arg_70_2.perception_weights.aggro_decay_per_sec
+	local aggro_list = blackboard.aggro_list
+	local health_extension = ScriptUnit.extension(unit, "health_system")
+	local strided_array, array_length = health_extension:recent_damages()
+	local aggro_decay = dt * breed.perception_weights.aggro_decay_per_sec
 
-	for k, v in pairs(aggro_list) do
-		aggro_list[k] = math.clamp(v - num, 0, 100)
+	for enemy_unit, aggro in pairs(aggro_list) do
+		aggro_list[enemy_unit] = math.clamp(aggro - aggro_decay, 0, 100)
 	end
 
-	local aggro_multipliers = arg_70_2.perception_weights.aggro_multipliers
+	local aggro_multipliers_2 = breed.perception_weights.aggro_multipliers
 
-	aggro_multipliers = aggro_multipliers or tbl_2
+	if not aggro_multipliers_2 then
+		-- Nothing
+	end
 
-	if var_70_2 > 0 then
-		local STRIDE = DamageDataIndex.STRIDE
-		local num_2 = 0
+	aggro_multipliers_2 = DEFAULT_AGGRO_MULTIPLIERS
 
-		for k_2 = 1, var_70_2 / STRIDE do
-			local var_70_7 = recent_damages[num_2 + DamageDataIndex.ATTACKER]
-			local var_70_8 = recent_damages[num_2 + DamageDataIndex.DAMAGE_AMOUNT]
-			local var_70_9 = recent_damages[num_2 + DamageDataIndex.DAMAGE_SOURCE_NAME]
-			local var_70_10 = rawget(ItemMasterList, var_70_9)
+	local aggro_multipliers = aggro_multipliers_2
 
-			if not var_70_10 then
-				local var_70_11 = aggro_multipliers[var_70_10.slot_type]
+	::label_70_0::
 
-				var_70_11 = var_70_11 or 1
-				var_70_8 = var_70_8 * var_70_11
+	if array_length > 0 then
+		local stride = DamageDataIndex.STRIDE
+		local index = 0
+
+		for i = 1, array_length / stride do
+			local attacker_unit = strided_array[index + DamageDataIndex.ATTACKER]
+			local damage_amount = strided_array[index + DamageDataIndex.DAMAGE_AMOUNT]
+			local damage_source = strided_array[index + DamageDataIndex.DAMAGE_SOURCE_NAME]
+			local master_list_item = rawget(ItemMasterList, damage_source)
+
+			if master_list_item then
+				local slot_type = master_list_item.slot_type
+				local var_70_1 = aggro_multipliers[slot_type]
+
+				if not var_70_1 then
+					-- Nothing
+				end
+
+				var_70_1 = 1
+
+				local multiplier = var_70_1
+
+				::label_70_1::
+
+				damage_amount = damage_amount * multiplier
 			end
 
-			local var_70_12 = aggro_list[var_70_7]
+			local aggro = aggro_list[attacker_unit]
 
-			if not var_70_12 then
-				aggro_list[var_70_7] = var_70_12 + var_70_8
+			if aggro then
+				aggro = aggro + damage_amount
+				aggro_list[attacker_unit] = aggro
 			else
-				aggro_list[var_70_7] = var_70_8
+				aggro_list[attacker_unit] = damage_amount
 			end
 
-			num_2 = num_2 + STRIDE
+			index = index + stride
 		end
 	end
 end
 
-AiUtils.debug_bot_transitions = function (arg_71_0, arg_71_1, arg_71_2, arg_71_3)
+AiUtils.debug_bot_transitions = function (gui, t, x1, y1)
 	-- function 71
-	local num = 16
-	local str = "arial"
-	local str_2 = "materials/fonts/" .. str
-	local res_w = RESOLUTION_LOOKUP.res_w
-	local res_h = RESOLUTION_LOOKUP.res_h
-	local num_2 = 20
-	local num_3 = 20
-	local num_4 = 330
-	local num_5 = 20
+	local tiny_font_size = 16
+	local tiny_font = "arial"
+	local tiny_font_mtrl = "materials/fonts/" .. tiny_font
+	local resx, resy = RESOLUTION_LOOKUP.res_w, RESOLUTION_LOOKUP.res_h
+	local borderx, bordery = 20, 20
+	local debug_win_width = 330
+	local layer = 20
 
-	arg_71_2 = arg_71_2 + num_2 + 20
-	arg_71_3 = arg_71_3 + num_3 + 20
+	x1 = x1 + borderx + 20
+	y1 = y1 + bordery + 20
 
-	local var_71_9 = arg_71_3
-	local get_color_with_alpha = Colors.get_color_with_alpha("lavender", 255)
-	local get_color_with_alpha_2 = Colors.get_color_with_alpha("sky_blue", 255)
-	local get_color_with_alpha_3 = Colors.get_color_with_alpha("orange", 255)
+	local y2 = y1
+	local running_color = Colors.get_color_with_alpha("lavender", 255)
+	local unrun_color = Colors.get_color_with_alpha("sky_blue", 255)
+	local header_color = Colors.get_color_with_alpha("orange", 255)
 
-	ScriptGUI.ictext(arg_71_0, res_w, res_h, "BOT TRANSITIONS: ", str_2, num, str, arg_71_2 - 10, var_71_9, num_5, get_color_with_alpha_3)
+	ScriptGUI.ictext(gui, resx, resy, "BOT TRANSITIONS: ", tiny_font_mtrl, tiny_font_size, tiny_font, x1 - 10, y2, layer, header_color)
 
-	local num_6 = var_71_9 + 20
-	local human_and_bot_players = Managers.player:human_and_bot_players()
+	y2 = y2 + 20
 
-	for k, v in pairs(human_and_bot_players) do
-		if not v.bot_player then
-			local player_unit = v.player_unit
+	local players = Managers.player:human_and_bot_players()
 
-			if not ALIVE[player_unit] then
-				local profile_index = v:profile_index()
-				local var_71_17 = SPProfiles[profile_index]
-				local flag = not var_71_17 and var_71_17.unit_name
-				local _active_nav_transitions = ScriptUnit.extension(player_unit, "ai_navigation_system")._active_nav_transitions
-				local str_3 = "[" .. flag .. "]"
+	for _, player in pairs(players) do
+		if player.bot_player then
+			local unit = player.player_unit
 
-				ScriptGUI.ictext(arg_71_0, res_w, res_h, str_3, str_2, num, str, arg_71_2 - 10, num_6, num_5, get_color_with_alpha)
+			if ALIVE[unit] then
+				local profile_index = player:profile_index()
+				local profile = SPProfiles[profile_index]
+				local unit_name = not not profile and not not profile.unit_name
+				local navigation_extension = ScriptUnit.extension(unit, "ai_navigation_system")
+				local transitions = navigation_extension._active_nav_transitions
+				local bot_text = "[" .. unit_name .. "]"
 
-				num_6 = num_6 + 20
+				ScriptGUI.ictext(gui, resx, resy, bot_text, tiny_font_mtrl, tiny_font_size, tiny_font, x1 - 10, y2, layer, running_color)
+
+				y2 = y2 + 20
 				k = 1
 
-				for k_2, v_2 in pairs(_active_nav_transitions) do
-					local format = string.format("    %d) %s", k, tostring(Unit.debug_name(k_2)))
+				for t_unit, _ in pairs(transitions) do
+					local s = string.format("    %d) %s", k, tostring(Unit.debug_name(t_unit)))
 
-					ScriptGUI.ictext(arg_71_0, res_w, res_h, format, str_2, num, str, arg_71_2 - 10, num_6, num_5, get_color_with_alpha_2)
+					ScriptGUI.ictext(gui, resx, resy, s, tiny_font_mtrl, tiny_font_size, tiny_font, x1 - 10, y2, layer, unrun_color)
 
-					num_6 = num_6 + 20
+					y2 = y2 + 20
 					k = k + 1
 				end
 			end
 		end
 	end
 
-	local num_7 = num_6 + 20
+	y2 = y2 + 20
 
-	ScriptGUI.icrect(arg_71_0, res_w, res_h, num_2, num_3, arg_71_2 + num_4, num_7, num_5 - 1, Color(200, 20, 20, 20))
+	ScriptGUI.icrect(gui, resx, resy, borderx, bordery, x1 + debug_win_width, y2, layer - 1, Color(200, 20, 20, 20))
 end
 
-AiUtils.push_intersecting_players = function (arg_72_0, arg_72_1, arg_72_2, arg_72_3, arg_72_4, arg_72_5, arg_72_6, ...)
+AiUtils.push_intersecting_players = function (unit, source_unit, displaced_units, data, t, dt, hit_func, ...)
 	-- function 72
-	local forward = Quaternion.forward(Unit.local_rotation(arg_72_0, 0))
-	local local_position = Unit.local_position(arg_72_0, 0)
-	local num = local_position + forward * arg_72_3.push_forward_offset
-	local num_2 = arg_72_3.push_width * 1.5
-	local dodged_width = arg_72_3.dodged_width
+	local self_forward = Quaternion.forward(Unit.local_rotation(unit, 0))
+	local self_pos = Unit.local_position(unit, 0)
+	local push_pos = self_pos + self_forward * data.push_forward_offset
+	local radius = data.push_width * 1.5
+	local dodged_width = data.dodged_width
 
-	dodged_width = not dodged_width and arg_72_3.dodged_width * 1.5
-
-	local num_3 = local_position + forward * 3
-
-	if not (not HEALTH_ALIVE[arg_72_1] and arg_72_1) then
+	if dodged_width then
 		-- Nothing
 	end
 
+	dodged_width = data.dodged_width * 1.5
+
+	local dodge_radius = dodged_width
+
 	::label_72_0::
 
-	local var_72_6 = HEALTH_ALIVE[arg_72_0]
+	local forward_pos = self_pos + self_forward * 3
 
-	var_72_6 = not var_72_6 and arg_72_0
+	if not HEALTH_ALIVE[source_unit] or not source_unit then
+		-- Nothing
+	end
 
 	::label_72_1::
 
-	local var_72_7 = Managers.state.side.side_by_unit[var_72_6]
-	local flag = not var_72_7 and var_72_7.ENEMY_PLAYER_AND_BOT_UNITS
+	local var_72_1 = HEALTH_ALIVE[unit]
 
-	if not flag then
-		for i = 1, #flag do
-			local var_72_9 = num_2
-			local var_72_10 = flag[i]
+	if var_72_1 then
+		-- Nothing
+	end
 
-			if not arg_72_2[var_72_10] then
-				if arg_72_4 > arg_72_2[var_72_10] then
-					arg_72_2[var_72_10] = nil
+	var_72_1 = unit
+
+	local side_unit = var_72_1
+
+	::label_72_2::
+
+	local side = Managers.state.side.side_by_unit[side_unit]
+	local enemy_player_and_bot_units = not not side and not not side.ENEMY_PLAYER_AND_BOT_UNITS
+
+	if enemy_player_and_bot_units then
+		for i = 1, #enemy_player_and_bot_units do
+			local push_radius = radius
+			local hit_unit = enemy_player_and_bot_units[i]
+
+			if displaced_units[hit_unit] then
+				if t > displaced_units[hit_unit] then
+					displaced_units[hit_unit] = nil
 				end
 			else
-				local local_position_2 = Unit.local_position(var_72_10, 0)
-				local num_4 = local_position_2 - num
+				local other_pos = Unit.local_position(hit_unit, 0)
+				local to_target = other_pos - push_pos
 
-				if not dodged_width then
-					local has_extension = ScriptUnit.has_extension(var_72_10, "status_system")
+				if dodge_radius then
+					local status_extension = ScriptUnit.has_extension(hit_unit, "status_system")
 
-					if not has_extension and not has_extension:get_is_dodging() then
-						var_72_9 = dodged_width
+					if status_extension and status_extension:get_is_dodging() then
+						push_radius = dodge_radius
 					end
 				end
 
-				if var_72_9 > Vector3.length(num_4) then
-					local num_5 = arg_72_3.push_width * arg_72_3.push_width
-					local closest_point_on_line = Geometry.closest_point_on_line(local_position_2, local_position, num_3)
-					local num_6 = local_position_2 - closest_point_on_line
+				if push_radius > Vector3.length(to_target) then
+					local push_width_sqr = data.push_width * data.push_width
+					local pos_projected_on_forward_move_dir = Geometry.closest_point_on_line(other_pos, self_pos, forward_pos)
+					local side_vector = other_pos - pos_projected_on_forward_move_dir
 
-					if num_5 > Vector3.length_squared(num_6) then
-						local distance = Vector3.distance(local_position, closest_point_on_line)
+					if push_width_sqr > Vector3.length_squared(side_vector) then
+						local ahead_dist = Vector3.distance(self_pos, pos_projected_on_forward_move_dir)
 
-						if not (not (distance < arg_72_3.ahead_dist) or ScriptUnit.has_extension(var_72_10, "status_system").knocked_down) then
-							if not arg_72_2[var_72_10] then
-								local num_7 = arg_72_3.player_pushed_speed * Vector3.normalize(local_position_2 - local_position)
-								local extension = ScriptUnit.extension(var_72_10, "locomotion_system")
-								local num_8 = 1 - distance / arg_72_3.ahead_dist
-								local num_9 = num_8 * num_8
+						if ahead_dist < data.ahead_dist then
+							local target_status_extension = ScriptUnit.has_extension(hit_unit, "status_system")
 
-								extension:add_external_velocity(num_7 * num_9)
+							if not target_status_extension.knocked_down then
+								if not displaced_units[hit_unit] then
+									local pushed_velocity = data.player_pushed_speed * Vector3.normalize(other_pos - self_pos)
+									local locomotion_extension = ScriptUnit.extension(hit_unit, "locomotion_system")
+									local push_scaler = 1 - ahead_dist / data.ahead_dist
 
-								if not arg_72_6 then
-									arg_72_6(var_72_10, arg_72_0, ...)
+									push_scaler = push_scaler * push_scaler
+
+									locomotion_extension:add_external_velocity(pushed_velocity * push_scaler)
+
+									if hit_func then
+										hit_func(hit_unit, unit, ...)
+									end
 								end
-							end
 
-							arg_72_2[var_72_10] = arg_72_4 + 0.1
+								displaced_units[hit_unit] = t + 0.1
+							end
 						end
 					end
 				end
@@ -1633,152 +1850,164 @@ AiUtils.push_intersecting_players = function (arg_72_0, arg_72_1, arg_72_2, arg_
 	end
 end
 
-AiUtils.set_material_property = function (arg_73_0, arg_73_1, arg_73_2, arg_73_3, arg_73_4, arg_73_5)
+AiUtils.set_material_property = function (unit, variable_name, material_name, value, all_meshes, mesh_name)
 	-- function 73
-	if not arg_73_4 then
-		local var_73_0
+	if all_meshes then
+		local mesh
 
-		for i = 0, Unit.num_meshes(arg_73_0) - 1 do
-			local mesh = Unit.mesh(arg_73_0, i)
+		for i = 0, Unit.num_meshes(unit) - 1 do
+			mesh = Unit.mesh(unit, i)
 
-			if not Mesh.has_material(mesh, arg_73_2) then
-				local material = Mesh.material(mesh, arg_73_2)
+			if Mesh.has_material(mesh, material_name) then
+				local material = Mesh.material(mesh, material_name)
 
-				Material.set_scalar(material, arg_73_1, arg_73_3)
+				Material.set_scalar(material, variable_name, value)
 			end
 		end
 	else
-		local mesh_2 = Unit.mesh(arg_73_0, arg_73_5)
-		local material_2 = Mesh.material(mesh_2, arg_73_2)
+		local mesh = Unit.mesh(unit, mesh_name)
+		local material = Mesh.material(mesh, material_name)
 
-		Material.set_scalar(material_2, arg_73_1, arg_73_3)
+		Material.set_scalar(material, variable_name, value)
 	end
 end
 
-AiUtils.allow_smart_object_layers = function (self, arg_74_1)
+AiUtils.allow_smart_object_layers = function (navigation_extension, status)
 	-- function 74
-	self:allow_layer("ledges", arg_74_1)
-	self:allow_layer("ledges_with_fence", arg_74_1)
-	self:allow_layer("doors", arg_74_1)
-	self:allow_layer("planks", arg_74_1)
-	self:allow_layer("jumps", arg_74_1)
-	self:allow_layer("teleporters", arg_74_1)
+	navigation_extension:allow_layer("ledges", status)
+	navigation_extension:allow_layer("ledges_with_fence", status)
+	navigation_extension:allow_layer("doors", status)
+	navigation_extension:allow_layer("planks", status)
+	navigation_extension:allow_layer("jumps", status)
+	navigation_extension:allow_layer("teleporters", status)
 end
 
-AiUtils.shield_user = function (arg_75_0)
+AiUtils.shield_user = function (unit)
 	-- function 75
-	if not ScriptUnit.has_extension(arg_75_0, "ai_shield_system") then
+	if not ScriptUnit.has_extension(unit, "ai_shield_system") then
 		return false
 	end
 
-	return not ScriptUnit.extension(arg_75_0, "ai_shield_system").broken_shield
+	local ai_shield_extension = ScriptUnit.extension(unit, "ai_shield_system")
+	local broken_shield = ai_shield_extension.broken_shield
+	local using_shield = not broken_shield
+
+	return using_shield
 end
 
-AiUtils.attack_is_shield_blocked = function (arg_76_0, arg_76_1, arg_76_2, arg_76_3)
+AiUtils.attack_is_shield_blocked = function (hit_unit, attacker_unit, trueflight_blocking, hit_direction)
 	-- function 76
-	assert(arg_76_1)
+	assert(attacker_unit)
 
-	if not ScriptUnit.has_extension(arg_76_0, "ai_shield_system") then
+	if not ScriptUnit.has_extension(hit_unit, "ai_shield_system") then
 		return false
 	end
 
-	return (ScriptUnit.extension(arg_76_0, "ai_shield_system"):can_block_attack(arg_76_1, arg_76_2, arg_76_3))
+	local ai_shield_extension = ScriptUnit.extension(hit_unit, "ai_shield_system")
+	local shield_blocked = ai_shield_extension:can_block_attack(attacker_unit, trueflight_blocking, hit_direction)
+
+	return shield_blocked
 end
 
-AiUtils.attack_is_dodged = function (arg_77_0)
+AiUtils.attack_is_dodged = function (hit_unit)
 	-- function 77
-	local go_id = Managers.state.unit_storage:go_id(arg_77_0)
+	local game_object_id = Managers.state.unit_storage:go_id(hit_unit)
 	local game = Managers.state.network:game()
+	local dodged = GameSession.game_object_field(game, game_object_id, "is_dodging")
 
-	return (GameSession.game_object_field(game, go_id, "is_dodging"))
+	return dodged
 end
 
-AiUtils.unit_is_flanking_player = function (arg_78_0, arg_78_1, arg_78_2)
+AiUtils.unit_is_flanking_player = function (enemy_unit, player_unit, optional_rotation)
 	-- function 78
-	local network = Managers.state.network
-	local unit_game_object_id = network:unit_game_object_id(arg_78_1)
-	local game = network:game()
+	local network_manager = Managers.state.network
+	local player_unit_id = network_manager:unit_game_object_id(player_unit)
+	local game = network_manager:game()
 
-	if not game and not unit_game_object_id then
-		local normalize = Vector3.normalize(POSITION_LOOKUP[arg_78_0] - POSITION_LOOKUP[arg_78_1])
-		local flag = arg_78_2 or GameSession.game_object_field(game, unit_game_object_id, "aim_direction")
-		local forward = Quaternion.forward(Quaternion.look(flag))
+	if game and player_unit_id then
+		local to_target_vec = Vector3.normalize(POSITION_LOOKUP[enemy_unit] - POSITION_LOOKUP[player_unit])
+		local player_rot = not not optional_rotation or not not GameSession.game_object_field(game, player_unit_id, "aim_direction")
+		local unit_fwd_dir = Quaternion.forward(Quaternion.look(player_rot))
+		local is_behind = Vector3.dot(to_target_vec, unit_fwd_dir) < 0.4
 
-		return Vector3.dot(normalize, forward) < 0.4
+		return is_behind
 	end
 
 	return false
 end
 
-local num_6 = 0.0001
+local MIN_DIST_SQR = 0.0001
 
-AiUtils.remove_bad_boxed_spline_points = function (self, arg_79_1)
+AiUtils.remove_bad_boxed_spline_points = function (source_points, spline_name)
 	-- function 79
-	local tbl = {}
-	local unbox = self[1]:unbox()
-	local var_79_2
+	local points = {}
+	local pA = source_points[1]:unbox()
+	local pB
 
-	tbl[1] = unbox
+	points[1] = pA
 
-	for i = 2, #self do
-		local unbox_2 = self[i]:unbox()
+	for i = 2, #source_points do
+		pB = source_points[i]:unbox()
 
-		if Vector3.distance_squared(unbox, unbox_2) > num_6 then
-			tbl[#tbl + 1] = unbox_2
-			unbox = unbox_2
+		local dist = Vector3.distance_squared(pA, pB)
+
+		if dist > MIN_DIST_SQR then
+			points[#points + 1] = pB
+			pA = pB
 		else
-			print("SPLINE HAS FAULTY POINTS (create_formation_data):", arg_79_1, i)
+			print("SPLINE HAS FAULTY POINTS (create_formation_data):", spline_name, i)
 		end
 	end
 
-	return tbl
+	return points
 end
 
-AiUtils.remove_bad_spline_points = function (self, arg_80_1)
+AiUtils.remove_bad_spline_points = function (source_points, spline_name)
 	-- function 80
-	local tbl = {}
-	local var_80_1 = self[1]
-	local var_80_2
+	local points = {}
+	local pA, pB = source_points[1]
 
-	tbl[1] = var_80_1
+	points[1] = pA
 
-	for i = 2, #self do
-		local var_80_3 = self[i]
+	for i = 2, #source_points do
+		pB = source_points[i]
 
-		if Vector3.distance_squared(var_80_1, var_80_3) > num_6 then
-			tbl[#tbl + 1] = var_80_3
-			var_80_1 = var_80_3
+		local dist = Vector3.distance_squared(pA, pB)
+
+		if dist > MIN_DIST_SQR then
+			points[#points + 1] = pB
+			pA = pB
 		else
-			print("SPLINE HAS FAULTY POINTS (create_formation_data):", arg_80_1, i)
+			print("SPLINE HAS FAULTY POINTS (create_formation_data):", spline_name, i)
 		end
 	end
 
-	return tbl
+	return points
 end
 
-AiUtils.get_combat_conditions = function (self)
+AiUtils.get_combat_conditions = function (blackboard)
 	-- function 81
-	local target_unit = self.target_unit
+	local target_unit = blackboard.target_unit
 
-	if not target_unit then
-		local count = #self.proximite_enemies
-		local get_data = Unit.get_data(target_unit, "breed")
+	if target_unit then
+		local num_enemies = #blackboard.proximite_enemies
+		local target_breed = Unit.get_data(target_unit, "breed")
 		local tbl = {}
 		local flag
 
-		flag = (not (count > 3) or not 2 or not (count > 1)) and (not 1 or 0)
+		flag = (not (num_enemies > 3) or not 2) and (not (num_enemies > 1) or not 1) and not not 0
 		tbl.enemy_arc = flag
 
 		local primary_armor_category
 
-		if not get_data then
-			primary_armor_category = get_data.primary_armor_category
+		if target_breed then
+			primary_armor_category = target_breed.primary_armor_category
 
 			if not primary_armor_category then
 				-- Nothing
 			end
 
-			primary_armor_category = get_data.armor_category
+			primary_armor_category = target_breed.armor_category
 
 			if not primary_armor_category then
 				-- Nothing
@@ -1797,12 +2026,12 @@ AiUtils.get_combat_conditions = function (self)
 	return nil
 end
 
-local num_7 = 5
-local tbl_3 = {
+local DEFAULT_MAXIMAL_MELEE_RANGE = 5
+local DEFAULT_ATTACK_META_DATA = {
 	tap_attack = {
 		speed_mod = 1.2,
 		arc = 0,
-		max_range = num_7,
+		max_range = DEFAULT_MAXIMAL_MELEE_RANGE,
 		armor_modifiers = {
 			0.1,
 			0.1,
@@ -1815,7 +2044,7 @@ local tbl_3 = {
 	hold_attack = {
 		speed_mod = 0.8,
 		arc = 2,
-		max_range = num_7,
+		max_range = DEFAULT_MAXIMAL_MELEE_RANGE,
 		armor_modifiers = {
 			0.1,
 			0.1,
@@ -1826,13 +2055,13 @@ local tbl_3 = {
 		}
 	}
 }
-local num_8 = 2
-local tbl_4 = {
+local MAX_ARC = 2
+local ARC_IMPORTANCE = {
 	0,
 	0.2,
 	0.4
 }
-local tbl_5 = {
+local ARMOR_MOD_IMPORTANCE = {
 	0.5,
 	2,
 	1.5,
@@ -1840,7 +2069,7 @@ local tbl_5 = {
 	1.3,
 	2
 }
-local tbl_6 = {
+local ARMOR_ARC_MOD = {
 	1,
 	-1,
 	0,
@@ -1848,294 +2077,324 @@ local tbl_6 = {
 	0,
 	-2
 }
-local abs = math.abs
+local math_abs = math.abs
 
-AiUtils.get_melee_weapon_score = function (self, arg_82_1)
+AiUtils.get_melee_weapon_score = function (conditions, weapon_item_template)
 	-- function 82
-	local attack_meta_data
+	local attack_meta_data_2
 
-	if not arg_82_1 then
-		attack_meta_data = arg_82_1.attack_meta_data
+	if weapon_item_template then
+		attack_meta_data_2 = weapon_item_template.attack_meta_data
 
-		if not attack_meta_data then
+		if not attack_meta_data_2 then
 			-- Nothing
 		end
 	end
 
-	attack_meta_data = tbl_3
+	attack_meta_data_2 = DEFAULT_ATTACK_META_DATA
+
+	local weapon_meta_data = attack_meta_data_2
 
 	::label_82_0::
 
-	local num = -1
-	local str = "tap_attack"
-	local var_82_3 = attack_meta_data[str]
+	local best_utility = -1
+	local best_attack_input = "tap_attack"
+	local best_attack_meta_data = weapon_meta_data[best_attack_input]
 
-	if not self then
-		for k, v in pairs(attack_meta_data) do
-			local num_2 = 0
-			local target_armor = self.target_armor
-			local clamp = math.clamp(self.enemy_arc + tbl_6[target_armor], 0, 2)
-			local num_3 = 1 - abs(clamp - v.arc) / num_8
-			local num_4 = num_2 + tbl_4[clamp + 1] * num_3
-			local armor_modifiers = v.armor_modifiers
+	if conditions then
+		for attack_input, attack_meta_data in pairs(weapon_meta_data) do
+			local utility = 0
+			local target_armor = conditions.target_armor
+			local mod_arc = math.clamp(conditions.enemy_arc + ARMOR_ARC_MOD[target_armor], 0, 2)
+			local arc_diff = 1 - math_abs(mod_arc - attack_meta_data.arc) / MAX_ARC
+			local arc_importnace = ARC_IMPORTANCE[mod_arc + 1]
 
-			if not armor_modifiers then
-				local var_82_10 = armor_modifiers[target_armor]
+			utility = utility + arc_importnace * arc_diff
 
-				var_82_10 = var_82_10 or 0
+			local armor_modifiers = attack_meta_data.armor_modifiers
 
-				local var_82_11 = tbl_5[target_armor]
+			if armor_modifiers then
+				local var_82_1 = armor_modifiers[target_armor]
 
-				var_82_11 = var_82_11 or 1
+				if not var_82_1 then
+					-- Nothing
+				end
 
-				local num_5 = var_82_10 * var_82_11
-				local speed_mod = v.speed_mod
+				var_82_1 = 0
 
-				speed_mod = speed_mod or 1
-				num_4 = num_4 + num_5 * speed_mod
+				local armor_mod = var_82_1
+
+				::label_82_1::
+
+				local var_82_2 = ARMOR_MOD_IMPORTANCE[target_armor]
+
+				if not var_82_2 then
+					-- Nothing
+				end
+
+				var_82_2 = 1
+
+				local armor_relevence = var_82_2
+
+				::label_82_2::
+
+				local num = armor_mod * armor_relevence
+				local speed_mod = attack_meta_data.speed_mod
+
+				speed_mod = not not speed_mod or not not 1
+				utility = utility + num * speed_mod
 			end
 
-			if num < num_4 then
-				num = num_4
-				str = k
-				var_82_3 = v
+			if best_utility < utility then
+				best_utility = utility
+				best_attack_input = attack_input
+				best_attack_meta_data = attack_meta_data
 			end
 		end
 	end
 
-	return str, var_82_3, num
+	return best_attack_input, best_attack_meta_data, best_utility
 end
 
-local num_9 = 0
-local num_10 = 30 - num_9
+local START_THREAT_VALUE = 0
+local MAX_THREAT_VALUE = 30
+local MAX_THREAT_RANGE = MAX_THREAT_VALUE - START_THREAT_VALUE
 
 AiUtils.get_party_danger = function ()
 	-- function 83
-	local conflict = Managers.state.conflict
+	local conflict_director = Managers.state.conflict
 
-	if not conflict then
-		local get_threat_value = conflict:get_threat_value()
+	if conflict_director then
+		local threat_value = conflict_director:get_threat_value()
 
-		return math.clamp((get_threat_value - num_9) / num_10, 0, 1)
+		return math.clamp((threat_value - START_THREAT_VALUE) / MAX_THREAT_RANGE, 0, 1)
 	end
 
 	return 0
 end
 
-AiUtils.get_bot_weapon_extension = function (self)
+AiUtils.get_bot_weapon_extension = function (blackboard)
 	-- function 84
-	if not self then
-		local inventory_extension = self.inventory_extension
-		local get_item_data_and_weapon_extensions, var_84_2, var_84_3 = CharacterStateHelper.get_item_data_and_weapon_extensions(inventory_extension)
-		local get_current_action_data, var_84_5, var_84_6 = CharacterStateHelper.get_current_action_data(var_84_3, var_84_2)
+	if blackboard then
+		local inventory_extension = blackboard.inventory_extension
+		local item_data, right_hand_weapon_extension, left_hand_weapon_extension = CharacterStateHelper.get_item_data_and_weapon_extensions(inventory_extension)
+		local _, current_action_extension, _ = CharacterStateHelper.get_current_action_data(left_hand_weapon_extension, right_hand_weapon_extension)
 
-		if not var_84_5 then
-			return var_84_5
+		if current_action_extension then
+			return current_action_extension
 		end
 
-		local flag = not get_item_data_and_weapon_extensions and BackendUtils.get_item_template(get_item_data_and_weapon_extensions)
+		local item_template = not not item_data and not not BackendUtils.get_item_template(item_data)
 
-		if not flag and not flag.dominant_left then
-			return var_84_3 or var_84_2
+		if item_template and item_template.dominant_left then
+			return not not left_hand_weapon_extension or not not right_hand_weapon_extension
 		else
-			return var_84_2 or var_84_3
+			return not not right_hand_weapon_extension or not not left_hand_weapon_extension
 		end
 	end
 
 	return nil
 end
 
-AiUtils.taunt_unit = function (arg_85_0, arg_85_1, arg_85_2, arg_85_3)
+AiUtils.taunt_unit = function (ai_unit, taunt_unit, duration, taunt_bosses)
 	-- function 85
-	local var_85_0 = BLACKBOARDS[arg_85_0]
+	local blackboard = BLACKBOARDS[ai_unit]
 
-	if not var_85_0 then
-		local breed = var_85_0.breed
+	if blackboard then
+		local breed = blackboard.breed
+		local taunt_target = not not breed and not breed.ignore_taunts and not breed.boss or not not taunt_bosses
 
-		if not ((not breed and not not breed.ignore_taunts or not breed.boss) and arg_85_3) then
-			local time = Managers.time:time("game")
-			local num = time + arg_85_2
+		if taunt_target then
+			local t = Managers.time:time("game")
+			local taunt_end_time = t + duration
 
-			if var_85_0.taunt_unit == arg_85_1 then
-				var_85_0.taunt_end_time = num
+			if blackboard.taunt_unit == taunt_unit then
+				blackboard.taunt_end_time = taunt_end_time
 			else
-				if var_85_0.target_unit == arg_85_1 then
-					var_85_0.no_taunt_hesitate = true
+				if blackboard.target_unit == taunt_unit then
+					blackboard.no_taunt_hesitate = true
 				end
 
-				var_85_0.taunt_unit = arg_85_1
-				var_85_0.taunt_end_time = num
-				var_85_0.target_unit = arg_85_1
-				var_85_0.target_unit_found_time = time
+				blackboard.taunt_unit = taunt_unit
+				blackboard.taunt_end_time = taunt_end_time
+				blackboard.target_unit = taunt_unit
+				blackboard.target_unit_found_time = t
 			end
 		end
 	end
 end
 
-AiUtils.taunt_nearby_units = function (arg_86_0, arg_86_1, arg_86_2, arg_86_3, arg_86_4, arg_86_5)
+AiUtils.taunt_nearby_units = function (unit, radius, duration, t, optional_effect_name, optional_sound_event)
 	-- function 86
-	local var_86_0 = Managers.state.side.side_by_unit[arg_86_0]
-	local var_86_1 = POSITION_LOOKUP[arg_86_0]
-	local alloc_table = FrameTable.alloc_table()
-	local enemy_broadphase_categories = var_86_0.enemy_broadphase_categories
-	local broadphase_query = AiUtils.broadphase_query(var_86_1, arg_86_1, alloc_table, enemy_broadphase_categories)
+	local side = Managers.state.side.side_by_unit[unit]
+	local position = POSITION_LOOKUP[unit]
+	local nearby_ai = FrameTable.alloc_table()
+	local broadphase_categories = side.enemy_broadphase_categories
+	local n_hits = AiUtils.broadphase_query(position, radius, nearby_ai, broadphase_categories)
 
-	for i = 1, broadphase_query do
-		local var_86_5 = alloc_table[i]
-		local var_86_6 = BLACKBOARDS[var_86_5]
-		local override_targets = var_86_6.override_targets
+	for i = 1, n_hits do
+		local ai_unit = nearby_ai[i]
+		local enemy_blackboard = BLACKBOARDS[ai_unit]
+		local override_targets = enemy_blackboard.override_targets
 
 		table.clear(override_targets)
 
-		var_86_6.target_unit = nil
-		override_targets[arg_86_0] = arg_86_3 + arg_86_2
+		enemy_blackboard.target_unit = nil
+		override_targets[unit] = t + duration
 	end
 
-	if not arg_86_4 then
-		local var_86_8 = NetworkLookup.effects[arg_86_4]
-		local num = 0
-		local flag = false
+	if optional_effect_name then
+		local effect_id = NetworkLookup.effects[optional_effect_name]
+		local node_id = 0
+		local linked = false
 
-		Managers.state.network:rpc_play_particle_effect_no_rotation(nil, var_86_8, NetworkConstants.invalid_game_object_id, num, var_86_1, flag)
+		Managers.state.network:rpc_play_particle_effect_no_rotation(nil, effect_id, NetworkConstants.invalid_game_object_id, node_id, position, linked)
 	end
 
-	if not arg_86_5 then
-		Managers.state.entity:system("audio_system"):play_audio_unit_event(arg_86_5, arg_86_0)
+	if optional_sound_event then
+		local audio_system = Managers.state.entity:system("audio_system")
+
+		audio_system:play_audio_unit_event(optional_sound_event, unit)
 	end
 
-	return alloc_table
+	return nearby_ai
 end
 
-AiUtils.calculate_animation_movespeed = function (self, arg_87_1, arg_87_2, arg_87_3)
+AiUtils.calculate_animation_movespeed = function (animation_move_speed_config, unit, target_unit, optional_estimated_attack_time)
 	-- function 87
-	local value = self[1].value
-	local var_87_1 = POSITION_LOOKUP[arg_87_1]
-	local var_87_2 = POSITION_LOOKUP[arg_87_2]
-	local distance = Vector3.distance(var_87_1, var_87_2)
+	local max_value = animation_move_speed_config[1].value
+	local unit_pos, target_pos = POSITION_LOOKUP[unit], POSITION_LOOKUP[target_unit]
+	local distance_to_target = Vector3.distance(unit_pos, target_pos)
 
-	if distance > math.epsilon then
-		local has_extension = ScriptUnit.has_extension(arg_87_2, "locomotion_system")
+	if distance_to_target > math.epsilon then
+		local target_locomotion_ext = ScriptUnit.has_extension(target_unit, "locomotion_system")
 
-		if not has_extension and not has_extension.current_velocity then
-			local current_velocity = has_extension:current_velocity()
+		if target_locomotion_ext and target_locomotion_ext.current_velocity then
+			local target_vel = target_locomotion_ext:current_velocity()
 
-			if Vector3.length_squared(current_velocity) > 0 then
-				local num = current_velocity * (1 + (arg_87_3 or 1))
-				local current_velocity_2 = ScriptUnit.extension(arg_87_1, "locomotion_system"):current_velocity()
-				local length = Vector3.length(current_velocity_2)
+			if Vector3.length_squared(target_vel) > 0 then
+				target_vel = target_vel * (1 + (not not optional_estimated_attack_time or not not 1))
 
-				if length > 0 then
-					local var_87_9 = num
-					local num_2 = Vector3.normalize(var_87_2 - var_87_1) * Vector3.length(num)
-					local num_3 = Vector3.dot(var_87_9, num_2) / distance * num_2
+				local own_locomotion_ext = ScriptUnit.extension(unit, "locomotion_system")
+				local own_velocity = own_locomotion_ext:current_velocity()
+				local own_speed = Vector3.length(own_velocity)
 
-					distance = distance + Vector3.length(num_3 / length)
+				if own_speed > 0 then
+					local u = target_vel
+					local v = Vector3.normalize(target_pos - unit_pos) * Vector3.length(target_vel)
+					local projected_velocity = Vector3.dot(u, v) / distance_to_target * v
+
+					distance_to_target = distance_to_target + Vector3.length(projected_velocity / own_speed)
 				end
 			end
 		end
 	end
 
-	local var_87_12 = value
-	local count = #self
+	local wanted_value, num_configs = max_value, #animation_move_speed_config
 
-	for i = 1, count do
-		local var_87_14 = self[i]
-		local distance_2 = var_87_14.distance
-		local value_2 = var_87_14.value
+	for i = 1, num_configs do
+		local config = animation_move_speed_config[i]
+		local distance, value = config.distance, config.value
 
-		if i < count then
-			local var_87_17 = self[i + 1]
-			local distance_3 = var_87_17.distance
-			local value_3 = var_87_17.value
+		if i < num_configs then
+			local next_config = animation_move_speed_config[i + 1]
+			local next_distance, next_value = next_config.distance, next_config.value
 
-			if distance_3 < distance then
-				local inv_lerp = math.inv_lerp(distance_2, distance_3, distance)
+			if next_distance < distance_to_target then
+				local progress = math.inv_lerp(distance, next_distance, distance_to_target)
 
-				var_87_12 = math.lerp_clamped(value_2, value_3, inv_lerp)
+				wanted_value = math.lerp_clamped(value, next_value, progress)
 
 				break
 			end
 		else
-			var_87_12 = value_2
+			wanted_value = value
 		end
 	end
 
-	return var_87_12
+	return wanted_value
 end
 
-AiUtils.magic_entrance_optional_spawned_func = function (arg_88_0, arg_88_1, arg_88_2)
+AiUtils.magic_entrance_optional_spawned_func = function (unit, breed, optional_data)
 	-- function 88
-	if not (arg_88_1.special or arg_88_1.boss or arg_88_1.cannot_be_aggroed) then
-		local get_random_alive_hero = PlayerUtils.get_random_alive_hero()
+	if not breed.special and not breed.boss and not breed.cannot_be_aggroed then
+		local player_unit = PlayerUtils.get_random_alive_hero()
 
-		AiUtils.aggro_unit_of_enemy(arg_88_0, get_random_alive_hero)
+		AiUtils.aggro_unit_of_enemy(unit, player_unit)
 	end
 
-	local str = "fx/grudge_marks_shadow_step"
-	local var_88_2 = NetworkLookup.effects[str]
-	local num = 0
+	local teleport_effect = "fx/grudge_marks_shadow_step"
+	local effect_name_id = NetworkLookup.effects[teleport_effect]
+	local node_id = 0
+	local network_manager = Managers.state.network
 
-	Managers.state.network:rpc_play_particle_effect_no_rotation(nil, var_88_2, NetworkConstants.invalid_game_object_id, num, POSITION_LOOKUP[arg_88_0], false)
+	network_manager:rpc_play_particle_effect_no_rotation(nil, effect_name_id, NetworkConstants.invalid_game_object_id, node_id, POSITION_LOOKUP[unit], false)
 
-	local var_88_4 = BLACKBOARDS[arg_88_0]
+	local blackboard = BLACKBOARDS[unit]
 
-	if not var_88_4 then
-		Managers.state.entity:system("audio_system"):play_audio_unit_event("Play_normal_spawn_stinger", arg_88_0)
+	if blackboard then
+		local audio_system = Managers.state.entity:system("audio_system")
 
-		local forward = Quaternion.forward(Quaternion.axis_angle(Vector3.up(), math.pi * 2 * math.random()))
-		local num_2 = 0.5
-		local medium = scripts_utils_stagger_types.medium
-		local num_3 = 0.5
-		local time = Managers.time:time("game")
+		audio_system:play_audio_unit_event("Play_normal_spawn_stinger", unit)
 
-		AiUtils.stagger(arg_88_0, var_88_4, arg_88_0, forward, num_2, medium, num_3, nil, time)
+		local direction = Quaternion.forward(Quaternion.axis_angle(Vector3.up(), math.pi * 2 * math.random()))
+		local distance = 0.5
+		local stagger_type = stagger_types.medium
+		local stun_duration = 0.5
+		local t = Managers.time:time("game")
+
+		AiUtils.stagger(unit, blackboard, unit, direction, distance, stagger_type, stun_duration, nil, t)
 	end
 end
 
-AiUtils.is_part_of_patrol = function (arg_89_0)
+AiUtils.is_part_of_patrol = function (unit)
 	-- function 89
-	local go_id = Managers.state.unit_storage:go_id(arg_89_0)
+	local game_object_id = Managers.state.unit_storage:go_id(unit)
 
-	if not go_id then
+	if not game_object_id then
 		return false
 	end
 
-	if not ScriptUnit.has_extension(arg_89_0, "ai_group_system") then
+	if not ScriptUnit.has_extension(unit, "ai_group_system") then
 		return false
 	end
 
 	local game = Managers.state.network:game()
+	local ai_group_id = GameSession.game_object_field(game, game_object_id, "ai_group_id")
 
-	return GameSession.game_object_field(game, go_id, "ai_group_id") ~= AIGroupSystem.invalid_group_uid
+	return ai_group_id ~= AIGroupSystem.invalid_group_uid
 end
 
-AiUtils.is_aggroed = function (arg_90_0)
+AiUtils.is_aggroed = function (unit)
 	-- function 90
-	local go_id = Managers.state.unit_storage:go_id(arg_90_0)
+	local game_object_id = Managers.state.unit_storage:go_id(unit)
 
-	if not go_id then
+	if not game_object_id then
 		return false
 	end
 
 	local game = Managers.state.network:game()
+	local target_unit_id = GameSession.game_object_field(game, game_object_id, "target_unit_id")
 
-	return GameSession.game_object_field(game, go_id, "target_unit_id") ~= NetworkConstants.invalid_game_object_id
+	return target_unit_id ~= NetworkConstants.invalid_game_object_id
 end
 
-AiUtils.breed_height = function (arg_91_0)
+AiUtils.breed_height = function (unit)
 	-- function 91
-	local var_91_0 = BLACKBOARDS[arg_91_0]
-	local breed
+	local bb = BLACKBOARDS[unit]
+	local breed_2
 
-	if not var_91_0 then
-		breed = var_91_0.breed
+	if bb then
+		breed_2 = bb.breed
 
-		if not breed then
+		if not breed_2 then
 			-- Nothing
 		end
 	end
 
-	breed = Unit.get_data(arg_91_0, "breed")
+	breed_2 = Unit.get_data(unit, "breed")
+
+	local breed = breed_2
 
 	::label_91_0::
 
@@ -2145,36 +2404,39 @@ AiUtils.breed_height = function (arg_91_0)
 		return nil
 	end
 
-	return height * Unit.local_scale(arg_91_0, 0)[3]
+	local scale = Unit.local_scale(unit, 0)
+
+	return height * scale[3]
 end
 
-local num_11 = 1
-local tbl_7 = {
+local HEAR_DISTANCE = 1
+local RAYCAST_POINTS = {
 	"j_hips",
 	"j_leftforearm",
 	"j_rightforearm",
 	"j_head"
 }
-local count = #tbl_7
+local NUM_RAYCAST_POINTS = #RAYCAST_POINTS
 
-local function fn(arg_92_0, arg_92_1, arg_92_2)
+local function _line_of_sight_from_point(from_pos, target_unit, point_index)
 	-- function 92
-	local var_92_0 = tbl_7[arg_92_2]
-	local has_node = Unit.has_node(arg_92_1, var_92_0)
-	local var_92_2
+	local point = RAYCAST_POINTS[point_index]
+	local has_node = Unit.has_node(target_unit, point)
+	local tp
 
-	if not has_node then
-		local node = Unit.node(arg_92_1, var_92_0)
-		local get_data = World.get_data(Unit.world(arg_92_1), "physics_world")
-		local world_position = Unit.world_position(arg_92_1, node)
-		local distance = Vector3.distance(arg_92_0, world_position)
-		local var_92_7 = world_position
+	if has_node then
+		local node = Unit.node(target_unit, point)
+		local physics_world = World.get_data(Unit.world(target_unit), "physics_world")
+		local target_pos = Unit.world_position(target_unit, node)
+		local distance = Vector3.distance(from_pos, target_pos)
 
-		if distance > num_11 then
-			local num = (world_position - arg_92_0) / distance
-			local immediate_raycast, var_92_10 = PhysicsWorld.immediate_raycast(get_data, arg_92_0, num, distance, "closest", "types", "statics", "collision_filter", "filter_ai_line_of_sight_check")
+		tp = target_pos
 
-			if not immediate_raycast then
+		if distance > HEAR_DISTANCE then
+			local direction = (target_pos - from_pos) / distance
+			local result, pos = PhysicsWorld.immediate_raycast(physics_world, from_pos, direction, distance, "closest", "types", "statics", "collision_filter", "filter_ai_line_of_sight_check")
+
+			if result then
 				return false
 			end
 		end
@@ -2183,68 +2445,74 @@ local function fn(arg_92_0, arg_92_1, arg_92_2)
 	return true
 end
 
-AiUtils.line_of_sight_from_random_point = function (arg_93_0, arg_93_1, arg_93_2, arg_93_3)
+AiUtils.line_of_sight_from_random_point = function (from_pos, target_unit, optional_num_attempts, optional_index)
 	-- function 93
-	local min = math.min(arg_93_2 or 1, count)
-	local flag = arg_93_3 or math.random(1, count)
-	local var_93_2
+	local num_attempts = math.min(not not optional_num_attempts or not not 1, NUM_RAYCAST_POINTS)
+	local start_index = not not optional_index or not not math.random(1, NUM_RAYCAST_POINTS)
+	local index
 
-	for i = 1, min do
-		var_93_2 = math.index_wrapper(flag + i - 1, count)
+	for i = 1, num_attempts do
+		index = math.index_wrapper(start_index + i - 1, NUM_RAYCAST_POINTS)
 
-		if not fn(arg_93_0, arg_93_1, var_93_2) then
+		if _line_of_sight_from_point(from_pos, target_unit, index) then
 			return true
 		end
 	end
 
-	return false, var_93_2
+	return false, index
 end
 
-AiUtils.bot_melee_aim_pos = function (arg_94_0, arg_94_1, arg_94_2)
+AiUtils.bot_melee_aim_pos = function (targeting_unit, target, optional_aim_position)
 	-- function 94
-	local var_94_0 = BLACKBOARDS[arg_94_1]
-	local flag = not var_94_0 and var_94_0.breed
+	local target_unit_blackboard = BLACKBOARDS[target]
+	local target_breed = not not target_unit_blackboard and not not target_unit_blackboard.breed
 	local bot_melee_aim_node
 
-	if not flag then
-		bot_melee_aim_node = flag.bot_melee_aim_node
+	if target_breed then
+		bot_melee_aim_node = target_breed.bot_melee_aim_node
 
 		if not bot_melee_aim_node then
 			bot_melee_aim_node = "j_spine"
 		end
-	else
-		bot_melee_aim_node = "rp_center"
+
+		goto label_94_0
 	end
 
-	local local_position = Unit.local_position(arg_94_0, 0)
-	local var_94_4
+	bot_melee_aim_node = "rp_center"
 
-	if type(bot_melee_aim_node) == "table" then
-		local huge = math.huge
-		local var_94_6
+	local aim_node = bot_melee_aim_node
 
-		for i = 1, #bot_melee_aim_node do
-			local var_94_7 = bot_melee_aim_node[i]
+	::label_94_0::
 
-			if not Unit.has_node(arg_94_1, var_94_7) then
-				local world_position = Unit.world_position(arg_94_1, Unit.node(arg_94_1, var_94_7))
-				local distance_squared = Vector3.distance_squared(local_position, world_position)
+	local targeting_unit_pos = Unit.local_position(targeting_unit, 0)
+	local aim_pos
 
-				if distance_squared < huge then
-					var_94_6 = world_position
-					huge = distance_squared
+	if type(aim_node) == "table" then
+		local closest_dist = math.huge
+		local closest_pos
+
+		for i = 1, #aim_node do
+			local node = aim_node[i]
+
+			if Unit.has_node(target, node) then
+				local node_pos = Unit.world_position(target, Unit.node(target, node))
+				local dist_sq = Vector3.distance_squared(targeting_unit_pos, node_pos)
+
+				if dist_sq < closest_dist then
+					closest_pos = node_pos
+					closest_dist = dist_sq
 				end
 			end
 		end
 
-		var_94_4 = var_94_6 or Unit.world_position(arg_94_1, 0)
+		aim_pos = not not closest_pos or not not Unit.world_position(target, 0)
 	else
-		var_94_4 = not Unit.has_node(arg_94_1, bot_melee_aim_node) and Unit.world_position(arg_94_1, Unit.node(arg_94_1, bot_melee_aim_node)) and Unit.world_position(arg_94_1, 0)
+		aim_pos = (not Unit.has_node(target, aim_node) or not Unit.world_position(target, Unit.node(target, aim_node))) and not not Unit.world_position(target, 0)
 	end
 
-	if not arg_94_2 then
-		arg_94_2:store(var_94_4)
+	if optional_aim_position then
+		optional_aim_position:store(aim_pos)
 	end
 
-	return var_94_4
+	return aim_pos
 end

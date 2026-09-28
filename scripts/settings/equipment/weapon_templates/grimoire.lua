@@ -1,70 +1,69 @@
 -- chunkname: @scripts/settings/equipment/weapon_templates/grimoire.lua
 
-local tbl = {
-	actions = {
-		action_one = {
-			default = {
-				kind = "melee_start",
-				weapon_action_hand = "left",
-				total_time = math.huge,
-				allowed_chain_actions = {
-					{
-						sub_action = "dummy_action",
-						start_time = 0,
-						action = "action_one",
-						end_time = 0.4,
-						input = "action_one_release"
-					},
-					{
-						sub_action = "action_throw",
-						start_time = 0.5,
-						action = "action_one",
-						auto_chain = true
-					}
+local weapon_template = {}
+
+weapon_template.actions = {
+	action_one = {
+		default = {
+			kind = "melee_start",
+			weapon_action_hand = "left",
+			total_time = math.huge,
+			allowed_chain_actions = {
+				{
+					sub_action = "dummy_action",
+					start_time = 0,
+					action = "action_one",
+					end_time = 0.4,
+					input = "action_one_release"
+				},
+				{
+					sub_action = "action_throw",
+					start_time = 0.5,
+					action = "action_one",
+					auto_chain = true
 				}
-			},
-			dummy_action = {
-				kind = "dummy",
-				weapon_action_hand = "left",
-				total_time = 0,
-				allowed_chain_actions = {}
-			},
-			action_throw = {
-				kind = "throw_grimoire",
-				ammo_usage = 1,
-				anim_end_event = "attack_finished",
-				anim_event = "attack_throw",
-				weapon_action_hand = "left",
-				total_time = 0.7,
-				anim_end_event_condition_func = function (arg_1_0, arg_1_1)
-					-- function 1
-					return arg_1_1 == "new_interupting_action" or arg_1_1 ~= "action_complete"
-				end,
-				allowed_chain_actions = {}
 			}
 		},
-		action_inspect = ActionTemplates.action_inspect_left,
-		action_wield = ActionTemplates.wield_left
+		dummy_action = {
+			kind = "dummy",
+			weapon_action_hand = "left",
+			total_time = 0,
+			allowed_chain_actions = {}
+		},
+		action_throw = {
+			kind = "throw_grimoire",
+			ammo_usage = 1,
+			anim_end_event = "attack_finished",
+			anim_event = "attack_throw",
+			weapon_action_hand = "left",
+			total_time = 0.7,
+			anim_end_event_condition_func = function (unit, end_reason)
+				-- function 1
+				return end_reason ~= "new_interupting_action" and end_reason ~= "action_complete"
+			end,
+			allowed_chain_actions = {}
+		}
 	},
-	ammo_data = {
-		ammo_hand = "left",
-		destroy_when_out_of_ammo = true,
-		max_ammo = 1,
-		ammo_per_clip = 1,
-		reload_time = 0
-	}
+	action_inspect = ActionTemplates.action_inspect_left,
+	action_wield = ActionTemplates.wield_left
 }
-
-tbl.left_hand_unit = "units/weapons/player/wpn_grimoire_01/wpn_grimoire_01"
-tbl.left_hand_attachment_node_linking = AttachmentNodeLinking.one_handed_melee_weapon.left
-tbl.wield_anim = "to_first_aid"
-tbl.state_machine = "units/beings/player/first_person_base/state_machines/common"
-tbl.load_state_machine = false
-tbl.gui_texture = "icons_placeholder_melee_01"
-tbl.is_grimoire = true
-tbl.max_fatigue_points = 1
-tbl.dodge_count = 3
-tbl.buffs = {
+weapon_template.ammo_data = {
+	ammo_hand = "left",
+	destroy_when_out_of_ammo = true,
+	max_ammo = 1,
+	ammo_per_clip = 1,
+	reload_time = 0
+}
+weapon_template.left_hand_unit = "units/weapons/player/wpn_grimoire_01/wpn_grimoire_01"
+weapon_template.left_hand_attachment_node_linking = AttachmentNodeLinking.one_handed_melee_weapon.left
+weapon_template.wield_anim = "to_first_aid"
+weapon_template.state_machine = "units/beings/player/first_person_base/state_machines/common"
+weapon_template.load_state_machine = false
+weapon_template.gui_texture = "icons_placeholder_melee_01"
+weapon_template.is_grimoire = true
+weapon_template.max_fatigue_points = 1
+weapon_template.dodge_count = 3
+weapon_template.buffs = {
 	change_dodge_distance = {
 		external_optional_multiplier = 1.2
 	},
@@ -72,7 +71,7 @@ tbl.buffs = {
 		external_optional_multiplier = 1.2
 	}
 }
-tbl.attack_meta_data = {
+weapon_template.attack_meta_data = {
 	tap_attack = {
 		arc = 0,
 		max_range = math.huge
@@ -97,12 +96,12 @@ tbl.attack_meta_data = {
 	}
 }
 
-WeaponUtils.add_bot_meta_data_chain_actions(tbl.actions, tbl.attack_meta_data.hold_attack.attack_chain.transitions)
+WeaponUtils.add_bot_meta_data_chain_actions(weapon_template.actions, weapon_template.attack_meta_data.hold_attack.attack_chain.transitions)
 
-local clone = table.clone(tbl)
+local wpn_side_objective_tome_01 = table.clone(weapon_template)
 
-clone.left_hand_unit = "units/weapons/player/wpn_side_objective_tome/wpn_side_objective_tome_01"
-clone.actions = {
+wpn_side_objective_tome_01.left_hand_unit = "units/weapons/player/wpn_side_objective_tome/wpn_side_objective_tome_01"
+wpn_side_objective_tome_01.actions = {
 	action_one = {
 		default = {
 			kind = "dummy",
@@ -122,24 +121,24 @@ clone.actions = {
 	action_inspect = ActionTemplates.action_inspect_left,
 	action_wield = ActionTemplates.wield_left
 }
-clone.pickup_data = {
+wpn_side_objective_tome_01.pickup_data = {
 	pickup_name = "tome"
 }
 
-local clone_2 = table.clone(tbl)
-local clone_3 = table.clone(clone)
-local clone_4 = table.clone(ActionTemplates.action_inspect)
+local wpn_grimoire_01 = table.clone(weapon_template)
+local wpn_tome_01 = table.clone(wpn_side_objective_tome_01)
+local inspect_table = table.clone(ActionTemplates.action_inspect)
 
-clone_4.action_inspect_hold.anim_event = "inspect_start_2"
-clone_2.actions.action_inspect = clone_4
-clone_3.actions.action_inspect = clone_4
+inspect_table.action_inspect_hold.anim_event = "inspect_start_2"
+wpn_grimoire_01.actions.action_inspect = inspect_table
+wpn_tome_01.actions.action_inspect = inspect_table
 
-local clone_5 = table.clone(tbl)
+local geheimnisnacht_2021_side_objective = table.clone(weapon_template)
 
-clone_5.is_grimoire = false
-clone_5.is_not_droppable = true
-clone_5.left_hand_unit = "units/weapons/player/pup_ritual_site_01/wpn_ritual_site_01"
-clone_5.actions = {
+geheimnisnacht_2021_side_objective.is_grimoire = false
+geheimnisnacht_2021_side_objective.is_not_droppable = true
+geheimnisnacht_2021_side_objective.left_hand_unit = "units/weapons/player/pup_ritual_site_01/wpn_ritual_site_01"
+geheimnisnacht_2021_side_objective.actions = {
 	action_one = {
 		default = {
 			kind = "melee_start",
@@ -174,9 +173,9 @@ clone_5.actions = {
 			anim_event = "attack_throw",
 			weapon_action_hand = "left",
 			total_time = 1.6,
-			anim_end_event_condition_func = function (arg_2_0, arg_2_1)
+			anim_end_event_condition_func = function (unit, end_reason)
 				-- function 2
-				return arg_2_1 == "new_interupting_action" or arg_2_1 ~= "action_complete"
+				return end_reason ~= "new_interupting_action" and end_reason ~= "action_complete"
 			end,
 			allowed_chain_actions = {}
 		}
@@ -191,13 +190,13 @@ clone_5.actions = {
 			kind = "inspect_geheimnisnacht_2021",
 			hold_input = "action_two_hold",
 			anim_event = "inspect_start",
-			condition_func = function (arg_3_0, arg_3_1)
+			condition_func = function (action_user, input_extension)
 				-- function 3
 				return Managers.input:is_device_active("gamepad")
 			end,
-			anim_end_event_condition_func = function (arg_4_0, arg_4_1)
+			anim_end_event_condition_func = function (unit, end_reason)
 				-- function 4
-				return arg_4_1 ~= "new_interupting_action"
+				return end_reason ~= "new_interupting_action"
 			end,
 			total_time = math.huge,
 			allowed_chain_actions = {},
@@ -213,29 +212,29 @@ clone_5.actions = {
 	action_inspect = table.clone(ActionTemplates.action_inspect),
 	action_wield = ActionTemplates.wield_left
 }
-clone_5.left_hand_attachment_node_linking = AttachmentNodeLinking.one_handed_melee_weapon.left
-clone_5.wield_anim = "to_ritual_skull"
-clone_5.wield_anim_3p = "to_ritual_skull"
-clone_5.state_machine = "units/beings/player/first_person_base/state_machines/misc/ritual_skull"
-clone_5.load_state_machine = false
-clone_5.wield_anim_career = {
+geheimnisnacht_2021_side_objective.left_hand_attachment_node_linking = AttachmentNodeLinking.one_handed_melee_weapon.left
+geheimnisnacht_2021_side_objective.wield_anim = "to_ritual_skull"
+geheimnisnacht_2021_side_objective.wield_anim_3p = "to_ritual_skull"
+geheimnisnacht_2021_side_objective.state_machine = "units/beings/player/first_person_base/state_machines/misc/ritual_skull"
+geheimnisnacht_2021_side_objective.load_state_machine = false
+geheimnisnacht_2021_side_objective.wield_anim_career = {
 	bw_necromancer = "to_ritual_skull_immune",
 	wh_priest = "to_ritual_skull_immune",
 	we_thornsister = "to_ritual_skull_immune",
 	es_questingknight = "to_ritual_skull_immune",
 	dr_slayer = "to_ritual_skull_immune"
 }
-clone_5.wield_anim_career_3p = {
+geheimnisnacht_2021_side_objective.wield_anim_career_3p = {
 	bw_necromancer = "to_ritual_skull",
 	wh_priest = "to_ritual_skull",
 	we_thornsister = "to_ritual_skull",
 	es_questingknight = "to_ritual_skull",
 	dr_slayer = "to_ritual_skull"
 }
-clone_5.actions.action_inspect.action_inspect_hold.kind = "inspect_geheimnisnacht_2021"
+geheimnisnacht_2021_side_objective.actions.action_inspect.action_inspect_hold.kind = "inspect_geheimnisnacht_2021"
 
 return {
-	wpn_grimoire_01 = table.clone(clone_2),
-	wpn_side_objective_tome_01 = table.clone(clone_3),
-	wpn_geheimnisnacht_2021_side_objective = table.clone(clone_5)
+	wpn_grimoire_01 = table.clone(wpn_grimoire_01),
+	wpn_side_objective_tome_01 = table.clone(wpn_tome_01),
+	wpn_geheimnisnacht_2021_side_objective = table.clone(geheimnisnacht_2021_side_objective)
 }

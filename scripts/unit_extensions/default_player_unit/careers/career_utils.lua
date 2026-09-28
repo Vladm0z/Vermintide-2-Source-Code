@@ -5,38 +5,46 @@ require("scripts/managers/game_mode/mechanisms/mechanism_overrides")
 
 CareerUtils = {}
 
-CareerUtils.get_abilities = function (arg_1_0, arg_1_1)
+CareerUtils.get_abilities = function (profile_index, career_index)
 	-- function 1
-	local activated_ability = SPProfiles[arg_1_0].careers[arg_1_1].activated_ability
+	local profile = SPProfiles[profile_index]
+	local career_settings = profile.careers[career_index]
+	local activated_ability = career_settings.activated_ability
 
 	return MechanismOverrides.get(activated_ability)
 end
 
-CareerUtils.get_abilities_by_career = function (self)
+CareerUtils.get_abilities_by_career = function (career_settings)
 	-- function 2
-	local activated_ability = self.activated_ability
+	local activated_ability = career_settings.activated_ability
 
 	return MechanismOverrides.get(activated_ability)
 end
 
-CareerUtils.num_abilities = function (arg_3_0, arg_3_1)
+CareerUtils.num_abilities = function (profile_index, career_index)
 	-- function 3
-	return #CareerUtils.get_abilities(arg_3_0, arg_3_1)
+	local abilities = CareerUtils.get_abilities(profile_index, career_index)
+
+	return #abilities
 end
 
-CareerUtils.get_ability_data = function (arg_4_0, arg_4_1, arg_4_2)
+CareerUtils.get_ability_data = function (profile_index, career_index, ability_index)
 	-- function 4
-	return CareerUtils.get_abilities(arg_4_0, arg_4_1)[arg_4_2]
+	local abilities = CareerUtils.get_abilities(profile_index, career_index)
+
+	return abilities[ability_index]
 end
 
-CareerUtils.get_ability_data_by_career = function (arg_5_0, arg_5_1)
+CareerUtils.get_ability_data_by_career = function (career_settings, ability_index)
 	-- function 5
-	return CareerUtils.get_abilities_by_career(arg_5_0)[arg_5_1]
+	local abilities = CareerUtils.get_abilities_by_career(career_settings)
+
+	return abilities[ability_index]
 end
 
-CareerUtils.get_passive_ability_by_career = function (self)
+CareerUtils.get_passive_ability_by_career = function (career_settings)
 	-- function 6
-	local passive_ability = self.passive_ability
+	local passive_ability = career_settings.passive_ability
 
 	return MechanismOverrides.get(passive_ability)
 end

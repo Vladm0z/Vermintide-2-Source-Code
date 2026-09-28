@@ -4,104 +4,106 @@ return {
 	description = "description_mutator_ticking_bomb",
 	display_name = "display_name_mutator_ticking_bomb",
 	icon = "mutator_icon_ticking_bomb",
-	server_start_function = function (arg_1_0, arg_1_1)
+	server_start_function = function (context, data)
 		-- function 1
-		arg_1_1.buff_name = "mutator_ticking_bomb"
-		arg_1_1.movement_debuff_name = "ticking_bomb_decrease_movement"
-		arg_1_1.buff_system = Managers.state.entity:system("buff_system")
-		arg_1_1.applied_buff_at_t = 0
-		arg_1_1.apply_aoe_threat_after_t = 4
-		arg_1_1.apply_movement_debuff_after_t = 5
-		arg_1_1.player_bomb_data = {}
-		arg_1_1.hero_side = Managers.state.side:get_side_from_name("heroes")
+		data.buff_name = "mutator_ticking_bomb"
+		data.movement_debuff_name = "ticking_bomb_decrease_movement"
+		data.buff_system = Managers.state.entity:system("buff_system")
+		data.applied_buff_at_t = 0
+		data.apply_aoe_threat_after_t = 4
+		data.apply_movement_debuff_after_t = 5
+		data.player_bomb_data = {}
+		data.hero_side = Managers.state.side:get_side_from_name("heroes")
 
-		if not arg_1_1.activated_by_twitch then
-			arg_1_1.template.server_players_left_safe_zone(arg_1_0, arg_1_1)
+		if data.activated_by_twitch then
+			data.template.server_players_left_safe_zone(context, data)
 		end
 	end,
-	server_players_left_safe_zone = function (arg_2_0, arg_2_1)
+	server_players_left_safe_zone = function (context, data)
 		-- function 2
-		arg_2_1.has_left_safe_zone = true
+		data.has_left_safe_zone = true
 
-		local time = Managers.time:time("game")
-		local num = 20
+		local t = Managers.time:time("game")
+		local safe_zone_grace_time = 20
 
-		if not Managers.twitch:is_activated() then
-			num = 5
+		if Managers.twitch:is_activated() then
+			safe_zone_grace_time = 5
 		end
 
-		arg_2_1.apply_bomb_buff_at_t = time + num
+		data.apply_bomb_buff_at_t = t + safe_zone_grace_time
 	end,
-	server_update_function = function (arg_3_0, arg_3_1, arg_3_2, arg_3_3)
+	server_update_function = function (context, data, dt, t)
 		-- function 3
-		if not arg_3_1.has_left_safe_zone then
+		if not data.has_left_safe_zone then
 			return
 		end
 
-		local player_bomb_data = arg_3_1.player_bomb_data
-		local buff_system = arg_3_1.buff_system
+		local player_bomb_data = data.player_bomb_data
+		local buff_system = data.buff_system
 
-		if arg_3_3 > arg_3_1.apply_bomb_buff_at_t then
+		if t > data.apply_bomb_buff_at_t then
 			table.clear(player_bomb_data)
 
-			local PLAYER_UNITS = arg_3_1.hero_side.PLAYER_UNITS
-			local count = #PLAYER_UNITS
-			local random = math.random(1, #PLAYER_UNITS)
+			local hero_side = data.hero_side
+			local current_player_units = hero_side.PLAYER_UNITS
+			local num_current_player_units = #current_player_units
+			local random_num_affected_players = math.random(1, #current_player_units)
 
-			for i = 1, random do
-				local var_3_5 = PLAYER_UNITS[math.random(1, count)]
+			for i = 1, random_num_affected_players do
+				local random_player_unit = current_player_units[math.random(1, num_current_player_units)]
+				local is_alive = HEALTH_ALIVE[random_player_unit]
 
-				if not HEALTH_ALIVE[var_3_5] then
-					buff_system:add_buff(var_3_5, arg_3_1.buff_name, var_3_5)
+				if is_alive then
+					buff_system:add_buff(random_player_unit, data.buff_name, random_player_unit)
 
-					arg_3_1.applied_buff_at_t = arg_3_3
+					data.applied_buff_at_t = t
 
-					local tbl = {
-						player_unit = var_3_5
+					local bomb_data = {
+						player_unit = random_player_unit
 					}
 
-					arg_3_1.applied_bot_threat = nil
-					arg_3_1.should_add_movement_debuff = true
-					player_bomb_data[#player_bomb_data + 1] = tbl
+					data.applied_bot_threat = nil
+					data.should_add_movement_debuff = true
+					player_bomb_data[#player_bomb_data + 1] = bomb_data
 				end
 			end
 
-			local num = math.random(24, 40) + random
+			local random_bomb_delay = math.random(24, 40) + random_num_affected_players
 
-			if not Managers.twitch:is_activated() then
-				num = math.random(12, 20) + random
+			if Managers.twitch:is_activated() then
+				random_bomb_delay = math.random(12, 20) + random_num_affected_players
 			end
 
-			local num_2 = 5 * (4 - count)
+			local player_num_grace = 5 * (4 - num_current_player_units)
 
-			arg_3_1.apply_bomb_buff_at_t = arg_3_3 + num + num_2
+			data.apply_bomb_buff_at_t = t + random_bomb_delay + player_num_grace
 		end
 
-		for j = 1, #player_bomb_data do
-			local var_3_9 = player_bomb_data[j]
-			local player_unit = var_3_9.player_unit
+		for i = 1, #player_bomb_data do
+			local bomb_data = player_bomb_data[i]
+			local player_unit = bomb_data.player_unit
 
 			if not Unit.alive(player_unit) then
-				table.remove(player_bomb_data, j)
+				table.remove(player_bomb_data, i)
 
 				break
 			end
 
-			if not (not (arg_3_3 > arg_3_1.applied_buff_at_t + arg_3_1.apply_aoe_threat_after_t) or var_3_9.applied_bot_threat) then
-				local system = Managers.state.entity:system("ai_bot_group_system")
-				local var_3_12 = POSITION_LOOKUP[player_unit]
-				local num_3 = 4
-				local num_4 = 5
+			if t > data.applied_buff_at_t + data.apply_aoe_threat_after_t and not bomb_data.applied_bot_threat then
+				local ai_bot_group_system = Managers.state.entity:system("ai_bot_group_system")
+				local position = POSITION_LOOKUP[player_unit]
+				local size = 4
+				local duration = 5
 
-				system:aoe_threat_created(var_3_12, "sphere", num_3, nil, num_4, "Ticking Bomb")
+				ai_bot_group_system:aoe_threat_created(position, "sphere", size, nil, duration, "Ticking Bomb")
 
-				var_3_9.applied_bot_threat = true
+				bomb_data.applied_bot_threat = true
 			end
 
-			if not (not (arg_3_3 > arg_3_1.applied_buff_at_t + arg_3_1.apply_movement_debuff_after_t) or var_3_9.applied_movement_debuff) then
-				buff_system:add_buff(player_unit, arg_3_1.movement_debuff_name, player_unit)
+			if t > data.applied_buff_at_t + data.apply_movement_debuff_after_t and not bomb_data.applied_movement_debuff then
+				buff_system:add_buff(player_unit, data.movement_debuff_name, player_unit)
 
-				var_3_9.applied_movement_debuff = true
+				bomb_data.applied_movement_debuff = true
 			end
 		end
 	end

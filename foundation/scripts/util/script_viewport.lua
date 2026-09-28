@@ -2,20 +2,20 @@
 
 local ScriptViewport = ScriptViewport
 
-ScriptViewport = ScriptViewport or {}
+ScriptViewport = not not ScriptViewport or not not {}
 ScriptViewport = ScriptViewport
 
-ScriptViewport.active = function (arg_1_0)
+ScriptViewport.active = function (viewport)
 	-- function 1
-	return Viewport.get_data(arg_1_0, "active")
+	return Viewport.get_data(viewport, "active")
 end
 
-ScriptViewport.camera = function (arg_2_0)
+ScriptViewport.camera = function (viewport)
 	-- function 2
-	return Viewport.get_data(arg_2_0, "camera")
+	return Viewport.get_data(viewport, "camera")
 end
 
-ScriptViewport.shadow_cull_camera = function (arg_3_0)
+ScriptViewport.shadow_cull_camera = function (viewport)
 	-- function 3
-	return Viewport.get_data(arg_3_0, "shadow_cull_camera")
+	return Viewport.get_data(viewport, "shadow_cull_camera")
 end

@@ -4,7 +4,7 @@ require("scripts/settings/dlcs/morris/deus_map_base_gen_settings")
 require("scripts/settings/dlcs/morris/deus_map_seed_whitelist")
 require("scripts/helpers/deus_gen_utils")
 
-local tbl = {
+local node_type_list = {
 	"SIGNATURE",
 	"ARENA",
 	"TRAVEL",
@@ -12,224 +12,228 @@ local tbl = {
 	"SHOP",
 	"START"
 }
-local tbl_2 = {
+local CONNECTION_TYPES = {
 	FINAL = "FINAL",
 	NEW = "NEW",
 	EXISTING = "EXISTING"
 }
 
-local function fn(arg_1_0)
+local function create_indent_string(depth)
 	-- function 1
-	local tbl = {}
+	local ind = {}
 
-	for i = 0, arg_1_0 % 100 do
-		tbl[#tbl + 1] = " "
+	for ii = 0, depth % 100 do
+		ind[#ind + 1] = " "
 	end
 
-	return table.concat(tbl)
+	return table.concat(ind)
 end
 
-local function fn_2(arg_2_0, ...)
+local function dprint(depth, ...)
 	-- function 2
-	if not script_data.deus_base_graph_generator_debug then
-		local var_2_0 = sprintf(...)
+	if script_data.deus_base_graph_generator_debug then
+		local message = sprintf(...)
 
-		print("[deus_base_graph_generator.lua] " .. fn(arg_2_0) .. var_2_0)
+		print("[deus_base_graph_generator.lua] " .. create_indent_string(depth) .. message)
 	end
 end
 
-local function fn_3(arg_3_0)
+local function print_warning(message)
 	-- function 3
-	print("[deus_base_graph_generator.lua] WARNING: " .. arg_3_0)
+	print("[deus_base_graph_generator.lua] WARNING: " .. message)
 end
 
-local function fn_4(arg_4_0, arg_4_1)
+local function get_random_from_weighted_table(random_generator, weighted_table)
 	-- function 4
-	local num = 0
+	local total_weight_sum = 0
 
-	for k, v in pairs(arg_4_1) do
-		num = num + v
+	for key, weight in pairs(weighted_table) do
+		total_weight_sum = total_weight_sum + weight
 	end
 
-	local var_4_1 = arg_4_0(0, num * 100)
-	local num_2 = 0
+	local random = random_generator(0, total_weight_sum * 100)
+	local current_weight_sum = 0
 
-	for k_2, v_2 in pairs(arg_4_1) do
-		num_2 = num_2 + v_2 * 100
+	for key, weight in pairs(weighted_table) do
+		current_weight_sum = current_weight_sum + weight * 100
 
-		if var_4_1 <= num_2 then
-			return k_2
+		if random <= current_weight_sum then
+			return key
 		end
 	end
 
 	return nil
 end
 
-local function fn_5(arg_5_0)
+local function get_random_node_type_list(random_generator)
 	-- function 5
-	local clone = table.clone(tbl)
+	local node_type_list_copy = table.clone(node_type_list)
 
-	for i = #clone, 2, -1 do
-		local var_5_1 = arg_5_0(1, i)
+	for ii = #node_type_list_copy, 2, -1 do
+		local swap = random_generator(1, ii)
 
-		clone[var_5_1], clone[i] = clone[i], clone[var_5_1]
+		node_type_list_copy[swap], node_type_list_copy[ii] = node_type_list_copy[ii], node_type_list_copy[swap]
 	end
 
-	return clone
+	return node_type_list_copy
 end
 
-local function fn_6(arg_6_0, arg_6_1)
+local function get_random_key_list(table1, random_generator)
 	-- function 6
-	local tbl = {}
+	local keys = {}
 
-	for k, v in pairs(arg_6_0) do
-		tbl[#tbl + 1] = k
+	for key, _ in pairs(table1) do
+		keys[#keys + 1] = key
 	end
 
-	table.sort(tbl)
+	table.sort(keys)
 
-	for k_2 = #tbl, 2, -1 do
-		local var_6_1 = arg_6_1(1, k_2)
+	for ii = #keys, 2, -1 do
+		local swap = random_generator(1, ii)
 
-		tbl[var_6_1], tbl[k_2] = tbl[k_2], tbl[var_6_1]
+		keys[swap], keys[ii] = keys[ii], keys[swap]
 	end
 
-	return tbl
+	return keys
 end
 
-local function fn_7(self, arg_7_1)
+local function shuffle_array(table, random_generator)
 	-- function 7
-	for i = #self, 2, -1 do
-		local var_7_0 = arg_7_1(1, i)
+	for ii = #table, 2, -1 do
+		local swap = random_generator(1, ii)
 
-		self[var_7_0], self[i] = self[i], self[var_7_0]
+		table[swap], table[ii] = table[ii], table[swap]
 	end
 
-	return self
+	return table
 end
 
-local function fn_8(self, arg_8_1, arg_8_2)
+local function sequence_fits(allowed_sequence, current_sequence, available_dummies)
 	-- function 8
-	if #self + arg_8_2 < #arg_8_1 then
+	if #allowed_sequence + available_dummies < #current_sequence then
 		return false
 	end
 
-	local num = 0
+	local used_dummies = 0
 
-	for i, v in ipairs(arg_8_1) do
-		if v == "DUMMY" then
-			if arg_8_2 - num <= 0 then
+	for i, node_type in ipairs(current_sequence) do
+		if node_type == "DUMMY" then
+			if available_dummies - used_dummies <= 0 then
 				return false
 			end
 
-			num = num + 1
-		elseif v ~= self[i - num] then
+			used_dummies = used_dummies + 1
+		elseif node_type ~= allowed_sequence[i - used_dummies] then
 			return false
 		end
 	end
 
-	if arg_8_2 - num > 0 then
+	if available_dummies - used_dummies > 0 then
 		return false
 	end
 
-	if #self + arg_8_2 == #arg_8_1 then
-		return self[#self] == arg_8_1[#arg_8_1]
+	if #allowed_sequence + available_dummies == #current_sequence then
+		return allowed_sequence[#allowed_sequence] == current_sequence[#current_sequence]
 	end
 
 	return true
 end
 
-local function fn_9(self, arg_9_1, arg_9_2)
+local function is_node_an_ancestor(nodes, node_key, node_key_to_find)
 	-- function 9
-	for i, v in ipairs(self[arg_9_1].prev) do
-		if v == arg_9_2 then
+	for _, prev_node in ipairs(nodes[node_key].prev) do
+		if prev_node == node_key_to_find then
 			return true
-		elseif not fn_9(self, v, arg_9_2) then
-			return true
+		else
+			local res = is_node_an_ancestor(nodes, prev_node, node_key_to_find)
+
+			if res then
+				return true
+			end
 		end
 	end
 
 	return false
 end
 
-local function fn_10(self, arg_10_1)
+local function get_first_non_dummy_ancestors(nodes, node_key)
 	-- function 10
-	if #self[arg_10_1].prev == 0 then
+	if #nodes[node_key].prev == 0 then
 		return {}
 	end
 
-	local tbl = {}
+	local non_dummy_ancestors = {}
 
-	for i, v in ipairs(self[arg_10_1].prev) do
-		if self[v].type ~= "DUMMY" then
-			tbl[#tbl + 1] = v
+	for _, prev in ipairs(nodes[node_key].prev) do
+		if nodes[prev].type ~= "DUMMY" then
+			non_dummy_ancestors[#non_dummy_ancestors + 1] = prev
 		else
-			local var_10_1 = fn_10(self, v)
+			local other_non_dummy_ancestors = get_first_non_dummy_ancestors(nodes, prev)
 
-			for i_2, v_2 in ipairs(var_10_1) do
-				tbl[#tbl + 1] = v_2
+			for _, other_non_dummy_ancestor in ipairs(other_non_dummy_ancestors) do
+				non_dummy_ancestors[#non_dummy_ancestors + 1] = other_non_dummy_ancestor
 			end
 		end
 	end
 
-	return tbl
+	return non_dummy_ancestors
 end
 
-local function fn_11(self, arg_11_1)
+local function get_first_non_dummy_descendents(nodes, node_key)
 	-- function 11
-	if #self[arg_11_1].next == 0 then
+	if #nodes[node_key].next == 0 then
 		return {}
 	end
 
-	local tbl = {}
+	local non_dummy_descendents = {}
 
-	for i, v in ipairs(self[arg_11_1].next) do
-		if self[v].type ~= "DUMMY" then
-			tbl[#tbl + 1] = v
+	for _, next in ipairs(nodes[node_key].next) do
+		if nodes[next].type ~= "DUMMY" then
+			non_dummy_descendents[#non_dummy_descendents + 1] = next
 		else
-			local var_11_1 = fn_11(self, v)
+			local other_non_dummy_descendents = get_first_non_dummy_descendents(nodes, next)
 
-			for i_2, v_2 in ipairs(var_11_1) do
-				tbl[#tbl + 1] = v_2
+			for _, other_non_dummy_descendent in ipairs(other_non_dummy_descendents) do
+				non_dummy_descendents[#non_dummy_descendents + 1] = other_non_dummy_descendent
 			end
 		end
 	end
 
-	return tbl
+	return non_dummy_descendents
 end
 
-local function fn_12(self, arg_12_1, arg_12_2)
+local function count_ancestors_of_type(nodes, node_key, type)
 	-- function 12
-	if #self[arg_12_1].prev == 0 then
+	if #nodes[node_key].prev == 0 then
 		return {
 			0
 		}
 	end
 
-	local tbl = {}
+	local count_per_path = {}
 
-	for i, v in ipairs(self[arg_12_1].prev) do
-		local num = 0
+	for _, prev in ipairs(nodes[node_key].prev) do
+		local count = 0
 
-		if self[v].type == arg_12_2 then
-			num = num + 1
+		if nodes[prev].type == type then
+			count = count + 1
 		end
 
-		local var_12_2 = fn_12(self, v, arg_12_2)
+		local ancestor_count = count_ancestors_of_type(nodes, prev, type)
 
-		for i_2, v_2 in ipairs(var_12_2) do
-			tbl[#tbl + 1] = num + v_2
+		for _, path_of_ancestor_count in ipairs(ancestor_count) do
+			count_per_path[#count_per_path + 1] = count + path_of_ancestor_count
 		end
 	end
 
-	return tbl
+	return count_per_path
 end
 
-local function fn_13(self, arg_13_1)
+local function node_type_sequences_to_node(nodes, node_key)
 	-- function 13
-	local type = self[arg_13_1].type
+	local type = nodes[node_key].type
 
-	if #self[arg_13_1].prev == 0 then
+	if #nodes[node_key].prev == 0 then
 		return {
 			{
 				type
@@ -237,144 +241,146 @@ local function fn_13(self, arg_13_1)
 		}
 	end
 
-	local tbl = {}
+	local sequences_per_path = {}
 
-	for i, v in ipairs(self[arg_13_1].prev) do
-		local var_13_2 = fn_13(self, v)
+	for _, prev in ipairs(nodes[node_key].prev) do
+		local sequences = node_type_sequences_to_node(nodes, prev)
 
-		for i_2, v_2 in ipairs(var_13_2) do
-			v_2[#v_2 + 1] = type
-			tbl[#tbl + 1] = v_2
+		for _, sequence in ipairs(sequences) do
+			sequence[#sequence + 1] = type
+			sequences_per_path[#sequences_per_path + 1] = sequence
 		end
 	end
 
-	return tbl
+	return sequences_per_path
 end
 
-local function fn_14(self, arg_14_1)
+local function count_ancestors_in_straight_line(nodes, node_key)
 	-- function 14
-	if not (#self[arg_14_1].prev == 0 or not (#self[arg_14_1].prev > 1)) then
+	if #nodes[node_key].prev == 0 or #nodes[node_key].prev > 1 then
 		return 0
 	end
 
-	local var_14_0 = self[arg_14_1].prev[1]
-	local var_14_1 = self[var_14_0]
+	local prev_key = nodes[node_key].prev[1]
+	local prev = nodes[prev_key]
 
-	fassert(var_14_1.connected_to ~= 0, "this should never happen")
+	fassert(prev.connected_to ~= 0, "this should never happen")
 
-	if var_14_1.connected_to > 1 then
+	if prev.connected_to > 1 then
 		return 0
 	end
 
-	local type = self[arg_14_1].type
+	local type = nodes[node_key].type
+	local is_traversed_node = type ~= "DUMMY" and type ~= "SHOP"
 	local flag
 
-	flag = not (type == "DUMMY" or type ~= "SHOP") and 1 and 0
+	flag = (not is_traversed_node or not 1) and not not 0
 
-	return flag + fn_14(self, var_14_0)
+	return flag + count_ancestors_in_straight_line(nodes, prev_key)
 end
 
-local function fn_15(arg_15_0, arg_15_1, arg_15_2, arg_15_3)
+local function is_crossing(from_1, to_1, from_2, to_2)
 	-- function 15
-	return (not (arg_15_2 <= arg_15_0) or not (arg_15_1 < arg_15_3)) and not (arg_15_0 <= arg_15_2) or arg_15_3 < arg_15_1
+	return (not (from_2 <= from_1) or not (to_1 < to_2)) and from_1 <= from_2 and to_2 < to_1
 end
 
-local function fn_16(self, arg_16_1)
+local function get_paths_from(nodes, node_key)
 	-- function 16
-	if #self[arg_16_1].next == 0 then
+	if #nodes[node_key].next == 0 then
 		return {
 			{
-				arg_16_1
+				node_key
 			}
 		}
 	end
 
-	local tbl = {}
+	local paths = {}
 
-	for i, v in ipairs(self[arg_16_1].next) do
-		local var_16_1 = fn_16(self, v)
+	for _, next in ipairs(nodes[node_key].next) do
+		local next_paths = get_paths_from(nodes, next)
 
-		for i_2, v_2 in ipairs(var_16_1) do
-			v_2[#v_2 + 1] = arg_16_1
-			tbl[#tbl + 1] = v_2
+		for _, next_path in ipairs(next_paths) do
+			next_path[#next_path + 1] = node_key
+			paths[#paths + 1] = next_path
 		end
 	end
 
-	return tbl
+	return paths
 end
 
-local function fn_17(self, arg_17_1, arg_17_2)
+local function get_visible_nodes(nodes, node_key, depth)
 	-- function 17
-	local var_17_0 = fn_11(self, arg_17_1)
+	local descendants = get_first_non_dummy_descendents(nodes, node_key)
 
-	if arg_17_2 > 1 then
-		arg_17_2 = arg_17_2 - 1
+	if depth > 1 then
+		depth = depth - 1
 
-		local tbl = {}
+		local all_visible_nodes = {}
 
-		for i, v in ipairs(var_17_0) do
-			tbl[v] = self[v]
+		for _, descendant in ipairs(descendants) do
+			all_visible_nodes[descendant] = nodes[descendant]
 
-			local var_17_2 = fn_17(self, v, arg_17_2)
+			local visibles_from_descendant = get_visible_nodes(nodes, descendant, depth)
 
-			for k, v_2 in pairs(var_17_2) do
-				tbl[k] = v_2
+			for visible_from_descendant_node_key, visible_from_descendant in pairs(visibles_from_descendant) do
+				all_visible_nodes[visible_from_descendant_node_key] = visible_from_descendant
 			end
 		end
 
-		return tbl
+		return all_visible_nodes
 	else
-		local tbl_2 = {}
+		local all_visible_nodes = {}
 
-		for i_2, v_3 in ipairs(var_17_0) do
-			tbl_2[v_3] = self[v_3]
+		for _, descendant in ipairs(descendants) do
+			all_visible_nodes[descendant] = nodes[descendant]
 		end
 
-		return tbl_2
+		return all_visible_nodes
 	end
 end
 
-local tbl_3 = {
-	check_if_not_already_connected = function (arg_18_0, arg_18_1, arg_18_2, arg_18_3)
+local CONNECTION_VALIDATIONS = {
+	check_if_not_already_connected = function (config, nodes, from, to)
 		-- function 18
-		return not table.contains(arg_18_1[arg_18_2].next, arg_18_3)
+		return not table.contains(nodes[from].next, to)
 	end,
-	check_if_does_not_create_cycle = function (arg_19_0, arg_19_1, arg_19_2, arg_19_3)
+	check_if_does_not_create_cycle = function (config, nodes, from, to)
 		-- function 19
-		if arg_19_2 == arg_19_3 then
+		if from == to then
 			return false
 		end
 
-		if not fn_9(arg_19_1, arg_19_2, arg_19_3) then
+		if is_node_an_ancestor(nodes, from, to) then
 			return false
 		end
 
 		return true
 	end,
-	check_if_not_at_max_incoming_connections = function (self, arg_20_1, arg_20_2, arg_20_3)
+	check_if_not_at_max_incoming_connections = function (config, nodes, from, to)
 		-- function 20
-		return #arg_20_1[arg_20_3].prev < self.MAX_INCOMING_CONNECTIONS_PER_NODE
+		return #nodes[to].prev < config.MAX_INCOMING_CONNECTIONS_PER_NODE
 	end,
-	check_if_not_dummy = function (arg_21_0, arg_21_1, arg_21_2, arg_21_3)
+	check_if_not_dummy = function (config, nodes, from, to)
 		-- function 21
-		return arg_21_1[arg_21_3].type ~= "DUMMY"
+		return nodes[to].type ~= "DUMMY"
 	end,
-	check_if_layer_above = function (arg_22_0, arg_22_1, arg_22_2, arg_22_3)
+	check_if_layer_above = function (config, nodes, from, to)
 		-- function 22
-		local var_22_0 = arg_22_1[arg_22_2]
-		local var_22_1 = arg_22_1[arg_22_3]
+		local from_node = nodes[from]
+		local to_node = nodes[to]
+		local result = from_node.layout_x == to_node.layout_x - 1
 
-		return var_22_0.layout_x == var_22_1.layout_x - 1
+		return result
 	end,
-	check_if_does_not_create_crossing = function (arg_23_0, arg_23_1, arg_23_2, arg_23_3)
+	check_if_does_not_create_crossing = function (config, nodes, from, to)
 		-- function 23
-		local var_23_0 = arg_23_1[arg_23_2]
-		local var_23_1 = arg_23_1[arg_23_3]
+		local from_node = nodes[from]
+		local to_node = nodes[to]
 
-		for k, v in pairs(arg_23_1) do
-			if v.layout_x == var_23_0.layout_x then
-				for i, v_2 in ipairs(v.next) do
-					if not fn_15(var_23_0.layout_y, var_23_1.layout_y, v.layout_y, arg_23_1[v_2].layout_y) then
+		for node_key, node in pairs(nodes) do
+			if node.layout_x == from_node.layout_x then
+				for _, next_node_key in ipairs(node.next) do
+					if is_crossing(from_node.layout_y, to_node.layout_y, node.layout_y, nodes[next_node_key].layout_y) then
 						return false
 					end
 				end
@@ -383,34 +389,51 @@ local tbl_3 = {
 
 		return true
 	end,
-	check_if_not_repeating_labels = function (self, arg_24_1, arg_24_2, arg_24_3)
+	check_if_not_repeating_labels = function (config, nodes, from, to)
 		-- function 24
-		local var_24_0 = fn_16(arg_24_1, "start")
+		local all_paths = get_paths_from(nodes, "start")
 
-		for i, v in ipairs(var_24_0) do
-			local tbl = {}
+		for _, path in ipairs(all_paths) do
+			local lookup = {}
 
-			for i_2, v_2 in ipairs(v) do
-				local var_24_2 = fn_17(arg_24_1, v_2, self.LABEL_LOOKAHEAD)
+			for _, node_key in ipairs(path) do
+				local visible_nodes = get_visible_nodes(nodes, node_key, config.LABEL_LOOKAHEAD)
 
-				for k, v_3 in pairs(var_24_2) do
-					if not (not v_3.label and v_3.label == 0) then
-						local var_24_3 = tbl[v_3.type]
+				for visible_node_key, visible_node in pairs(visible_nodes) do
+					if visible_node.label and visible_node.label ~= 0 then
+						local var_24_0 = lookup[visible_node.type]
 
-						var_24_3 = var_24_3 or {}
-						tbl[v_3.type] = var_24_3
-
-						local var_24_4 = var_24_3[v_3.label]
-
-						var_24_4 = var_24_4 or {}
-
-						if not (not (#var_24_4 > 0) or table.contains(var_24_4, k)) then
-							return false
-						else
-							var_24_4[#var_24_4 + 1] = k
+						if not var_24_0 then
+							-- Nothing
 						end
 
-						var_24_3[v_3.label] = var_24_4
+						var_24_0 = {}
+
+						local type_lookup = var_24_0
+
+						::label_24_0::
+
+						lookup[visible_node.type] = type_lookup
+
+						local var_24_1 = type_lookup[visible_node.label]
+
+						if not var_24_1 then
+							-- Nothing
+						end
+
+						var_24_1 = {}
+
+						local label_lookup = var_24_1
+
+						::label_24_1::
+
+						if #label_lookup > 0 and not table.contains(label_lookup, visible_node_key) then
+							return false
+						else
+							label_lookup[#label_lookup + 1] = visible_node_key
+						end
+
+						type_lookup[visible_node.label] = label_lookup
 					end
 				end
 			end
@@ -419,142 +442,146 @@ local tbl_3 = {
 		return true
 	end
 }
-local tbl_4 = {
+local CONNECTION_COUNT_VALIDATIONS = {
 	{
-		check_if_not_over_limit_of_straight_line = function (self, arg_25_1, arg_25_2)
+		check_if_not_over_limit_of_straight_line = function (config, nodes, node_key)
 			-- function 25
-			return fn_14(arg_25_1, arg_25_2) < self.MAX_STRAIGHT_LINE
+			local count = count_ancestors_in_straight_line(nodes, node_key)
+
+			return count < config.MAX_STRAIGHT_LINE
 		end,
-		check_if_not_start_node = function (self, arg_26_1, arg_26_2)
+		check_if_not_start_node = function (config, nodes, node_key)
 			-- function 26
-			return self.MAX_CONNECTIONS_PER_NODE == 1 or arg_26_2 ~= "start"
+			return config.MAX_CONNECTIONS_PER_NODE == 1 or node_key ~= "start"
 		end
 	},
 	{
-		check_if_not_over_max_paths = function (self, arg_27_1, arg_27_2)
+		check_if_not_over_max_paths = function (config, nodes, node_key)
 			-- function 27
-			return #fn_12(arg_27_1, arg_27_2, "TRAVEL") < self.MAX_PATHS
+			local ancestor_count = count_ancestors_of_type(nodes, node_key, "TRAVEL")
+
+			return #ancestor_count < config.MAX_PATHS
 		end,
-		check_if_not_dummy = function (arg_28_0, arg_28_1, arg_28_2)
+		check_if_not_dummy = function (config, nodes, node_key)
 			-- function 28
-			return arg_28_1[arg_28_2].type ~= "DUMMY"
+			return nodes[node_key].type ~= "DUMMY"
 		end,
-		check_if_not_start_node = function (self, arg_29_1, arg_29_2)
+		check_if_not_start_node = function (config, nodes, node_key)
 			-- function 29
-			return self.MAX_CONNECTIONS_PER_NODE == 1 or arg_29_2 ~= "start"
+			return config.MAX_CONNECTIONS_PER_NODE == 1 or node_key ~= "start"
 		end
 	},
 	{
-		enforce_only_start_node = function (self, arg_30_1, arg_30_2)
+		enforce_only_start_node = function (config, nodes, node_key)
 			-- function 30
-			return self.MAX_CONNECTIONS_PER_NODE == 1 or arg_30_2 == "start"
+			return config.MAX_CONNECTIONS_PER_NODE == 1 or node_key == "start"
 		end
 	}
 }
-local tbl_5 = {
+local CONNECTION_TYPE_WEIGHT_TRANSFORMS = {
 	NEW = {
-		discourage_new_nodes_when_near_node_capacity = function (self, arg_31_1, arg_31_2, arg_31_3)
+		discourage_new_nodes_when_near_node_capacity = function (config, nodes, node_key, weight)
 			-- function 31
-			local num = 0
+			local node_count = 0
 
-			for k, v in pairs(arg_31_1) do
-				num = num + 1
+			for key, node in pairs(nodes) do
+				node_count = node_count + 1
 			end
 
-			if num < self.MAX_IDEAL_NODES * 0.5 then
-				return arg_31_3
+			if node_count < config.MAX_IDEAL_NODES * 0.5 then
+				return weight
 			end
 
-			local num_2 = self.MAX_IDEAL_NODES * 0.5
-			local var_31_2 = arg_31_3
-			local num_3 = (num - num_2) / num_2
+			local half_max_nodes = config.MAX_IDEAL_NODES * 0.5
+			local weight_range = weight
+			local percentage_of_nodes_left = (node_count - half_max_nodes) / half_max_nodes
 
-			return math.clamp(var_31_2 - var_31_2 * num_3, 1, var_31_2)
+			return math.clamp(weight_range - weight_range * percentage_of_nodes_left, 1, weight_range)
 		end
 	},
 	EXISTING = {},
 	FINAL = {}
 }
-local tbl_6 = {
-	force_start_on_start_node = function (arg_32_0, arg_32_1, arg_32_2)
+local START_NODE_VALIDATIONS = {
+	force_start_on_start_node = function (config, nodes, node_type)
 		-- function 32
-		return arg_32_2 == "START"
+		return node_type == "START"
 	end
 }
-local tbl_7 = {
-	end_with_arena = function (arg_33_0, arg_33_1, arg_33_2)
+local FINAL_NODE_VALIDATIONS = {
+	end_with_arena = function (config, nodes, node_type)
 		-- function 33
-		return arg_33_2 == "ARENA"
+		return node_type == "ARENA"
 	end,
-	only_one_signature_level_required_before_final_level = function (arg_34_0, arg_34_1, arg_34_2)
+	only_one_signature_level_required_before_final_level = function (config, nodes, node_type)
 		-- function 34
-		local final = arg_34_1.final
+		local current_node = nodes.final
 
-		while not final do
-			if #final.prev ~= 1 then
+		while current_node do
+			if #current_node.prev ~= 1 then
 				return false
 			end
 
-			local var_34_1 = arg_34_1[final.prev[1]]
+			local prev_node = nodes[current_node.prev[1]]
 
-			if var_34_1.type == "SIGNATURE" then
+			if prev_node.type == "SIGNATURE" then
 				return true
 			end
 
-			if var_34_1.type ~= "DUMMY" then
+			if prev_node.type ~= "DUMMY" then
 				return false
 			end
 
-			final = var_34_1
+			current_node = prev_node
 		end
 
 		return false
 	end,
-	check_minimum_nodes = function (self, arg_35_1, arg_35_2)
+	check_minimum_nodes = function (config, nodes, node_type)
 		-- function 35
-		local num = 0
+		local count = 0
 
-		for k, v in pairs(arg_35_1) do
-			if not (k == "final" or not (v.connected_to > #v.next)) then
+		for node_key, node in pairs(nodes) do
+			if node_key ~= "final" and node.connected_to > #node.next then
 				return true
 			end
 
-			num = num + 1
+			count = count + 1
 		end
 
-		return num >= self.MIN_NODES
+		return count >= config.MIN_NODES
 	end
 }
-local tbl_8 = {
+local NODE_TYPE_VALIDATIONS = {
 	ANY = {
-		check_allowed_sequences = function (self, arg_36_1, arg_36_2, arg_36_3)
+		check_allowed_sequences = function (config, nodes, node_key, node_type)
 			-- function 36
-			local ALLOWED_SEQUENCES = self.ALLOWED_SEQUENCES
-			local tbl = {}
+			local allowed_sequences = config.ALLOWED_SEQUENCES
+			local current_sequences = {}
 
-			for i, v in ipairs(arg_36_1[arg_36_2].prev) do
-				local var_36_2 = fn_13(arg_36_1, v)
+			for _, prev in ipairs(nodes[node_key].prev) do
+				local prev_sequences = node_type_sequences_to_node(nodes, prev)
 
-				for i_2, v_2 in ipairs(var_36_2) do
-					v_2[#v_2 + 1] = arg_36_3
-					tbl[#tbl + 1] = v_2
+				for _, prev_sequence in ipairs(prev_sequences) do
+					prev_sequence[#prev_sequence + 1] = node_type
+					current_sequences[#current_sequences + 1] = prev_sequence
 				end
 			end
 
-			for i_3, v_3 in ipairs(tbl) do
-				local flag = false
+			for _, current_sequence in ipairs(current_sequences) do
+				local fit = false
 
-				for i_4, v_4 in ipairs(ALLOWED_SEQUENCES) do
-					local num = self._max_sequence_length - #v_4
+				for _, allowed_sequence in ipairs(allowed_sequences) do
+					local available_dummies = config._max_sequence_length - #allowed_sequence
 
-					if not fn_8(v_4, v_3, num) then
-						flag = true
+					if sequence_fits(allowed_sequence, current_sequence, available_dummies) then
+						fit = true
 
 						break
 					end
 				end
 
-				if not flag then
+				if not fit then
 					return false
 				end
 			end
@@ -563,24 +590,26 @@ local tbl_8 = {
 		end
 	},
 	ARENA = {
-		only_on_final = function (arg_37_0, arg_37_1, arg_37_2)
+		only_on_final = function (config, nodes, node_key)
 			-- function 37
-			return arg_37_2 == "final"
+			return node_key == "final"
 		end
 	},
 	SIGNATURE = {},
 	TRAVEL = {},
 	SHOP = {},
 	DUMMY = {
-		check_if_not_creating_dummy_choice = function (arg_38_0, arg_38_1, arg_38_2)
+		check_if_not_creating_dummy_choice = function (config, nodes, node_key)
 			-- function 38
-			local prev = arg_38_1[arg_38_2].prev
+			local prev = nodes[node_key].prev
 
-			for i, v in ipairs(prev) do
-				local next = arg_38_1[v].next
+			for _, prev_node_key in ipairs(prev) do
+				local prev_next = nodes[prev_node_key].next
 
-				for i_2, v_2 in ipairs(next) do
-					if arg_38_1[v_2].type == "DUMMY" then
+				for _, prev_next_node_key in ipairs(prev_next) do
+					local prev_next_node = nodes[prev_next_node_key]
+
+					if prev_next_node.type == "DUMMY" then
 						return false
 					end
 				end
@@ -588,12 +617,12 @@ local tbl_8 = {
 
 			return true
 		end,
-		check_if_not_creating_consecutive_dummies = function (arg_39_0, arg_39_1, arg_39_2)
+		check_if_not_creating_consecutive_dummies = function (config, nodes, node_key)
 			-- function 39
-			local prev = arg_39_1[arg_39_2].prev
+			local prev = nodes[node_key].prev
 
-			for i, v in ipairs(prev) do
-				if arg_39_1[v].type == "DUMMY" then
+			for _, prev_node_key in ipairs(prev) do
+				if nodes[prev_node_key].type == "DUMMY" then
 					return false
 				end
 			end
@@ -603,25 +632,25 @@ local tbl_8 = {
 	},
 	START = {}
 }
-local tbl_9 = {
-	check_if_not_repeating_label = function (self, arg_40_1, arg_40_2)
+local LABEL_VALIDATIONS = {
+	check_if_not_repeating_label = function (config, nodes, node_key)
 		-- function 40
-		local var_40_0 = fn_16(arg_40_1, "start")
-		local var_40_1 = arg_40_1[arg_40_2]
-		local label = var_40_1.label
-		local type = var_40_1.type
+		local all_paths = get_paths_from(nodes, "start")
+		local node = nodes[node_key]
+		local label = node.label
+		local type = node.type
 
-		for i, v in ipairs(var_40_0) do
-			local var_40_4
+		for _, path in ipairs(all_paths) do
+			local found_node_key
 
-			for i_2, v_2 in ipairs(v) do
-				local var_40_5 = fn_17(arg_40_1, v_2, self.LABEL_LOOKAHEAD)
+			for _, other_node_key in ipairs(path) do
+				local visible_nodes = get_visible_nodes(nodes, other_node_key, config.LABEL_LOOKAHEAD)
 
-				for k, v_3 in pairs(var_40_5) do
-					if not ((v_3.type ~= type or not v_3.label) and v_3.label ~= label) then
-						if not var_40_4 then
-							var_40_4 = k
-						elseif var_40_4 ~= k then
+				for visible_node_key, visible_node in pairs(visible_nodes) do
+					if visible_node.type == type and visible_node.label and visible_node.label == label then
+						if not found_node_key then
+							found_node_key = visible_node_key
+						elseif found_node_key ~= visible_node_key then
 							return false
 						end
 					end
@@ -632,36 +661,38 @@ local tbl_9 = {
 		return true
 	end
 }
-local tbl_10 = {
-	prefer_not_shop_if_already_having_a_shop_choice = function (arg_41_0, arg_41_1, arg_41_2, arg_41_3)
+local NODE_TYPE_SHUFFLERS = {
+	prefer_not_shop_if_already_having_a_shop_choice = function (context, nodes, node_key, node_types)
 		-- function 41
-		local flag = false
-		local var_41_1 = fn_10(arg_41_1, arg_41_2)
+		local needs_reshuffle = false
+		local non_dummy_ancestors = get_first_non_dummy_ancestors(nodes, node_key)
 
-		for i, v in ipairs(var_41_1) do
-			local var_41_2 = fn_11(arg_41_1, v)
+		for _, non_dummy_ancestor in ipairs(non_dummy_ancestors) do
+			local non_dummy_descendents = get_first_non_dummy_descendents(nodes, non_dummy_ancestor)
 
-			for i_2, v_2 in ipairs(var_41_2) do
-				if not (v_2 == arg_41_2 or arg_41_1[v_2].type ~= "SHOP") then
-					flag = true
+			for _, non_dummy_descendent in ipairs(non_dummy_descendents) do
+				if non_dummy_descendent ~= node_key and nodes[non_dummy_descendent].type == "SHOP" then
+					needs_reshuffle = true
 				end
 			end
 		end
 
-		if not flag then
-			arg_41_3[table.index_of(arg_41_3, "SHOP")] = arg_41_3[#arg_41_3]
-			arg_41_3[#arg_41_3] = "SHOP"
+		if needs_reshuffle then
+			local index = table.index_of(node_types, "SHOP")
+
+			node_types[index] = node_types[#node_types]
+			node_types[#node_types] = "SHOP"
 		end
 	end
 }
 
-local function fn_18(self, arg_42_1, arg_42_2, arg_42_3, arg_42_4)
+local function validate_connection_to_existing_node(config, indent, nodes, from, to)
 	-- function 42
-	local CONNECTION_VALIDATIONS = self.CONNECTION_VALIDATIONS
-	local var_42_1 = tbl_3
+	local validator_names = config.CONNECTION_VALIDATIONS
+	local validators = CONNECTION_VALIDATIONS
 
-	for i, v in ipairs(CONNECTION_VALIDATIONS) do
-		if not var_42_1[v](self, arg_42_2, arg_42_3, arg_42_4) then
+	for _, validator_name in ipairs(validator_names) do
+		if not validators[validator_name](config, nodes, from, to) then
 			return false
 		end
 	end
@@ -669,14 +700,14 @@ local function fn_18(self, arg_42_1, arg_42_2, arg_42_3, arg_42_4)
 	return true
 end
 
-local function fn_19(self, arg_43_1, arg_43_2, arg_43_3, arg_43_4)
+local function validate_connection_count(config, indent, nodes, node_key, connection_count)
 	-- function 43
-	local var_43_0 = self.CONNECTION_COUNT_VALIDATIONS[arg_43_4]
-	local var_43_1 = tbl_4[arg_43_4]
+	local validators_connection_count_names = config.CONNECTION_COUNT_VALIDATIONS[connection_count]
+	local validators_connection_count = CONNECTION_COUNT_VALIDATIONS[connection_count]
 
-	if not var_43_0 and not var_43_1 then
-		for i, v in ipairs(var_43_0) do
-			if not var_43_1[v](self, arg_43_2, arg_43_3) then
+	if validators_connection_count_names and validators_connection_count then
+		for _, validator_name in ipairs(validators_connection_count_names) do
+			if not validators_connection_count[validator_name](config, nodes, node_key) then
 				return false
 			end
 		end
@@ -685,35 +716,35 @@ local function fn_19(self, arg_43_1, arg_43_2, arg_43_3, arg_43_4)
 	return true
 end
 
-local function fn_20(self, arg_44_1, arg_44_2, arg_44_3, arg_44_4)
+local function validate_node_type(config, indent, nodes, node_key, node_type)
 	-- function 44
-	if arg_44_3 == "start" then
-		for i, v in ipairs(self.START_NODE_VALIDATIONS) do
-			if not tbl_6[v](self, arg_44_2, arg_44_4) then
+	if node_key == "start" then
+		for _, validator_name in ipairs(config.START_NODE_VALIDATIONS) do
+			if not START_NODE_VALIDATIONS[validator_name](config, nodes, node_type) then
 				return false
 			end
 		end
 	end
 
-	if arg_44_3 == "final" then
-		for i_2, v_2 in ipairs(self.FINAL_NODE_VALIDATIONS) do
-			if not tbl_7[v_2](self, arg_44_2, arg_44_4) then
+	if node_key == "final" then
+		for _, validator_name in ipairs(config.FINAL_NODE_VALIDATIONS) do
+			if not FINAL_NODE_VALIDATIONS[validator_name](config, nodes, node_type) then
 				return false
 			end
 		end
 	end
 
-	for i_3, v_3 in ipairs(self.NODE_TYPE_VALIDATIONS.ANY) do
-		if not tbl_8.ANY[v_3](self, arg_44_2, arg_44_3, arg_44_4) then
+	for _, validator_name in ipairs(config.NODE_TYPE_VALIDATIONS.ANY) do
+		if not NODE_TYPE_VALIDATIONS.ANY[validator_name](config, nodes, node_key, node_type) then
 			return false
 		end
 	end
 
-	local var_44_0 = self.NODE_TYPE_VALIDATIONS[arg_44_4]
-	local var_44_1 = tbl_8[arg_44_4]
+	local validation_list_for_type = config.NODE_TYPE_VALIDATIONS[node_type]
+	local validators_for_type = NODE_TYPE_VALIDATIONS[node_type]
 
-	for i_4, v_4 in ipairs(var_44_0) do
-		if not var_44_1[v_4](self, arg_44_2, arg_44_3, arg_44_4) then
+	for _, validator_name in ipairs(validation_list_for_type) do
+		if not validators_for_type[validator_name](config, nodes, node_key, node_type) then
 			return false
 		end
 	end
@@ -721,14 +752,14 @@ local function fn_20(self, arg_44_1, arg_44_2, arg_44_3, arg_44_4)
 	return true
 end
 
-local function fn_21(arg_45_0, arg_45_1, arg_45_2, arg_45_3)
+local function validate_until_the_end(config, indent, nodes, node_key)
 	-- function 45
-	for k, v in pairs(arg_45_2[arg_45_3].next) do
-		if not fn_20(arg_45_0, arg_45_1, arg_45_2, v, arg_45_2[v].type) then
+	for _, next in pairs(nodes[node_key].next) do
+		if not validate_node_type(config, indent, nodes, next, nodes[next].type) then
 			return false
 		end
 
-		if not fn_21(arg_45_0, arg_45_1, arg_45_2, v) then
+		if not validate_until_the_end(config, indent, nodes, next) then
 			return false
 		end
 	end
@@ -736,79 +767,71 @@ local function fn_21(arg_45_0, arg_45_1, arg_45_2, arg_45_3)
 	return true
 end
 
-local var_0_31
-local var_0_32
-local var_0_33
-local var_0_34
-local var_0_35
-local var_0_36
-local var_0_37
-local var_0_38
+local create_process_node_action, create_assign_node_label_action, create_connect_action, create_connections_action, create_random_connection_action, create_connect_with_type_action, create_new_node_action, create_connection_to_existing_action
 
-local function fn_22(arg_46_0, arg_46_1, arg_46_2, arg_46_3)
+function create_connection_to_existing_action(context, nodes, node_key, to_node_key)
 	-- function 46
-	local var_46_0 = arg_46_1[arg_46_2]
-	local var_46_1 = arg_46_1[arg_46_3]
-	local flag = false
+	local node = nodes[node_key]
+	local to_node = nodes[to_node_key]
+	local connection_made = false
 
-	local function fn()
+	local function revert_func()
 		-- function 47
-		if not flag then
-			var_46_0.next[#var_46_0.next] = nil
-			var_46_1.prev[#var_46_1.prev] = nil
-			flag = false
+		if connection_made then
+			node.next[#node.next] = nil
+			to_node.prev[#to_node.prev] = nil
+			connection_made = false
 		end
 	end
 
-	local function fn_2()
+	local function apply_func()
 		-- function 48
-		var_46_0.next[#var_46_0.next + 1] = arg_46_3
-		var_46_1.prev[#var_46_1.prev + 1] = arg_46_2
-		flag = true
+		node.next[#node.next + 1] = to_node_key
+		to_node.prev[#to_node.prev + 1] = node_key
+		connection_made = true
 	end
 
-	local function fn_3()
+	local function executor()
 		-- function 49
-		fn_2()
+		apply_func()
 
-		if not fn_20(arg_46_0.config, arg_46_0.indent, arg_46_1, arg_46_3, var_46_1.type) and not fn_21(arg_46_0.config, arg_46_0.indent, arg_46_1, arg_46_3) then
+		if validate_node_type(context.config, context.indent, nodes, to_node_key, to_node.type) and validate_until_the_end(context.config, context.indent, nodes, to_node_key) then
 			return true
 		end
 
-		fn()
+		revert_func()
 
 		return false
 	end
 
 	return {
-		name = "connect_to_existing " .. arg_46_2,
+		name = "connect_to_existing " .. node_key,
 		run = function ()
 			-- function 50
-			return fn_3()
+			return executor()
 		end,
 		retry = function ()
 			-- function 51
-			fn()
+			revert_func()
 
 			return false
 		end
 	}
 end
 
-local function fn_23(arg_52_0, arg_52_1, arg_52_2, arg_52_3)
+function create_new_node_action(context, nodes, node_key, name_override)
 	-- function 52
-	local var_52_0 = arg_52_1[arg_52_2]
-	local var_52_1
-	local var_52_2
+	local node = nodes[node_key]
+	local layer, new_node_key
 
-	local function fn()
+	local function executor()
 		-- function 53
-		local node_count = arg_52_0.node_count
-		local var_53_1 = arg_52_0
+		local prev_node_count = context.node_count
+		local var_53_0 = context
 		local num
 
-		if not node_count then
-			num = node_count + 1
+		if prev_node_count then
+			num = prev_node_count + 1
 
 			if not num then
 				-- Nothing
@@ -819,62 +842,62 @@ local function fn_23(arg_52_0, arg_52_1, arg_52_2, arg_52_3)
 
 		::label_53_0::
 
-		var_53_1.node_count = num
+		var_53_0.node_count = num
 
-		local var_53_3 = arg_52_3
+		local var_53_2 = name_override
 
-		var_53_3 = var_53_3 or "node_" .. arg_52_0.node_count
-		var_52_2 = var_53_3
-		var_52_1 = var_52_0.layout_x + 1
+		var_53_2 = not not var_53_2 or not not ("node_" .. context.node_count)
+		new_node_key = var_53_2
+		layer = node.layout_x + 1
 
-		local var_53_4 = arg_52_0.nodes_per_layer[var_52_1]
+		local nodes_for_layer = context.nodes_per_layer[layer]
 
-		if not var_53_4 then
-			var_53_4 = {}
-			arg_52_0.nodes_per_layer[var_52_1] = var_53_4
+		if not nodes_for_layer then
+			nodes_for_layer = {}
+			context.nodes_per_layer[layer] = nodes_for_layer
 		end
 
-		var_53_4[#var_53_4 + 1] = var_52_2
+		nodes_for_layer[#nodes_for_layer + 1] = new_node_key
 
-		local count = #var_53_4
+		local y_position = #nodes_for_layer
 
-		arg_52_1[var_52_2] = {
-			name = var_52_2,
+		nodes[new_node_key] = {
+			name = new_node_key,
 			prev = {
-				arg_52_2
+				node_key
 			},
 			next = {},
-			layout_x = var_52_1,
-			layout_y = count
+			layout_x = layer,
+			layout_y = y_position
 		}
-		var_52_0.next[#var_52_0.next + 1] = var_52_2
+		node.next[#node.next + 1] = new_node_key
 
-		local tbl = {
+		local next_actions = {
 			function ()
 				-- function 54
-				return var_0_31(arg_52_0, arg_52_1, var_52_2)
+				return create_process_node_action(context, nodes, new_node_key)
 			end
 		}
 
-		return true, tbl
+		return true, next_actions
 	end
 
 	return {
-		name = "new_node " .. arg_52_2,
+		name = "new_node " .. node_key,
 		run = function ()
 			-- function 55
-			return fn()
+			return executor()
 		end,
 		retry = function ()
 			-- function 56
-			if not var_52_2 then
-				arg_52_1[var_52_2] = nil
-				var_52_0.next[#var_52_0.next] = nil
-				arg_52_0.node_count = arg_52_0.node_count - 1
+			if new_node_key then
+				nodes[new_node_key] = nil
+				node.next[#node.next] = nil
+				context.node_count = context.node_count - 1
 
-				local var_56_0 = arg_52_0.nodes_per_layer[var_52_1]
+				local nodes_for_layer = context.nodes_per_layer[layer]
 
-				var_56_0[#var_56_0] = nil
+				nodes_for_layer[#nodes_for_layer] = nil
 			end
 
 			return false
@@ -882,77 +905,77 @@ local function fn_23(arg_52_0, arg_52_1, arg_52_2, arg_52_3)
 	}
 end
 
-local function fn_24(arg_57_0, arg_57_1, arg_57_2, arg_57_3)
+function create_connect_with_type_action(context, nodes, node_key, connection_type)
 	-- function 57
-	local function fn()
+	local function create_shuffled_possible_connections()
 		-- function 58
-		return fn_6(arg_57_1, arg_57_0.random_generator)
+		return get_random_key_list(nodes, context.random_generator)
 	end
 
-	local var_57_1
+	local possible_connections
 
-	local function fn_2()
+	local function executor()
 		-- function 59
-		if arg_57_3 == tbl_2.NEW then
-			local tbl = {
+		if connection_type == CONNECTION_TYPES.NEW then
+			local next_actions = {
 				function ()
 					-- function 60
-					return fn_23(arg_57_0, arg_57_1, arg_57_2)
+					return create_new_node_action(context, nodes, node_key)
 				end
 			}
 
-			return true, tbl
-		elseif arg_57_3 == tbl_2.EXISTING then
-			if not var_57_1 then
-				var_57_1 = fn()
+			return true, next_actions
+		elseif connection_type == CONNECTION_TYPES.EXISTING then
+			if not possible_connections then
+				possible_connections = create_shuffled_possible_connections()
 			end
 
-			local var_59_1
+			local connection
 
-			while #var_57_1 > 0 do
-				local var_59_2 = var_57_1[#var_57_1]
+			while #possible_connections > 0 do
+				local possible_connection = possible_connections[#possible_connections]
 
-				var_57_1[#var_57_1] = nil
+				possible_connections[#possible_connections] = nil
 
-				if var_59_2 == "final" or not fn_18(arg_57_0.config, arg_57_0.indent, arg_57_1, arg_57_2, var_59_2) then
-					var_59_1 = var_59_2
+				if possible_connection ~= "final" and validate_connection_to_existing_node(context.config, context.indent, nodes, node_key, possible_connection) then
+					connection = possible_connection
 
 					break
 				end
 			end
 
-			if not var_59_1 then
+			if not connection then
 				return false
 			end
 
-			local tbl_3 = {
+			local next_actions = {
 				function ()
 					-- function 61
-					return fn_22(arg_57_0, arg_57_1, arg_57_2, var_59_1)
+					return create_connection_to_existing_action(context, nodes, node_key, connection)
 				end
 			}
 
-			return true, tbl_3
-		elseif arg_57_3 == tbl_2.FINAL then
-			if not arg_57_1.final then
-				local tbl_4 = {
+			return true, next_actions
+		elseif connection_type == CONNECTION_TYPES.FINAL then
+			if not nodes.final then
+				local next_actions = {
 					function ()
 						-- function 62
-						return fn_23(arg_57_0, arg_57_1, arg_57_2, "final")
+						return create_new_node_action(context, nodes, node_key, "final")
 					end
 				}
 
-				return true, tbl_4
+				return true, next_actions
 			else
-				if not fn_18(arg_57_0.config, arg_57_0.indent, arg_57_1, arg_57_2, "final") then
-					local tbl_5 = {
+				if validate_connection_to_existing_node(context.config, context.indent, nodes, node_key, "final") then
+					local next_actions = {
 						function ()
 							-- function 63
-							return fn_22(arg_57_0, arg_57_1, arg_57_2, "final")
+							return create_connection_to_existing_action(context, nodes, node_key, "final")
 						end
 					}
 
-					return true, tbl_5
+					return true, next_actions
 				end
 
 				return false
@@ -963,19 +986,19 @@ local function fn_24(arg_57_0, arg_57_1, arg_57_2, arg_57_3)
 	end
 
 	return {
-		name = "connection_type " .. arg_57_2 .. " " .. arg_57_3,
+		name = "connection_type " .. node_key .. " " .. connection_type,
 		run = function ()
 			-- function 64
-			return fn_2()
+			return executor()
 		end,
 		retry = function ()
 			-- function 65
-			if arg_57_3 == tbl_2.NEW then
+			if connection_type == CONNECTION_TYPES.NEW then
 				return false
-			elseif arg_57_3 == tbl_2.EXISTING then
-				return fn_2()
-			elseif arg_57_3 == tbl_2.FINAL then
-				if not arg_57_1.final then
+			elseif connection_type == CONNECTION_TYPES.EXISTING then
+				return executor()
+			elseif connection_type == CONNECTION_TYPES.FINAL then
+				if not nodes.final then
 					return false
 				else
 					return false
@@ -987,91 +1010,93 @@ local function fn_24(arg_57_0, arg_57_1, arg_57_2, arg_57_3)
 	}
 end
 
-local function fn_25(arg_66_0, arg_66_1, arg_66_2)
+function create_random_connection_action(context, nodes, node_key)
 	-- function 66
-	local function fn()
+	local function create_weights()
 		-- function 67
-		local tbl = {
-			[tbl_2.NEW] = 100,
-			[tbl_2.EXISTING] = 100,
-			[tbl_2.FINAL] = 100
+		local weights = {
+			[CONNECTION_TYPES.NEW] = 100,
+			[CONNECTION_TYPES.EXISTING] = 100,
+			[CONNECTION_TYPES.FINAL] = 100
 		}
 
-		for k, v in pairs(tbl) do
-			local var_67_1 = arg_66_0.config.CONNECTION_TYPE_WEIGHT_TRANSFORMS[k]
+		for connection_type, weight in pairs(weights) do
+			local transformer_names = context.config.CONNECTION_TYPE_WEIGHT_TRANSFORMS[connection_type]
 
-			for i, v_2 in ipairs(var_67_1) do
-				tbl[k] = tbl_5[k][v_2](arg_66_0.config, arg_66_1, arg_66_2, tbl[k])
+			for _, transformer_name in ipairs(transformer_names) do
+				local transformer = CONNECTION_TYPE_WEIGHT_TRANSFORMS[connection_type][transformer_name]
+
+				weights[connection_type] = transformer(context.config, nodes, node_key, weights[connection_type])
 			end
 		end
 
-		return tbl
+		return weights
 	end
 
-	local var_66_1
+	local weights
 
-	local function fn_2()
+	local function executor()
 		-- function 68
-		if not var_66_1 then
-			var_66_1 = fn()
+		if not weights then
+			weights = create_weights()
 		end
 
-		local var_68_0 = fn_4(arg_66_0.random_generator, var_66_1)
+		local connection_type = get_random_from_weighted_table(context.random_generator, weights)
 
-		if not var_68_0 then
-			var_66_1[var_68_0] = nil
+		if connection_type then
+			weights[connection_type] = nil
 		end
 
-		if not var_68_0 then
+		if not connection_type then
 			return false
 		end
 
-		local tbl = {
+		local next_actions = {
 			function ()
 				-- function 69
-				return fn_24(arg_66_0, arg_66_1, arg_66_2, var_68_0)
+				return create_connect_with_type_action(context, nodes, node_key, connection_type)
 			end
 		}
 
-		return true, tbl
+		return true, next_actions
 	end
 
 	return {
-		name = "connection_type " .. arg_66_2,
+		name = "connection_type " .. node_key,
 		run = function ()
 			-- function 70
-			return fn_2()
+			return executor()
 		end,
 		retry = function ()
 			-- function 71
-			return fn_2()
+			return executor()
 		end
 	}
 end
 
-local function fn_26(arg_72_0, arg_72_1, arg_72_2)
+function create_connections_action(context, nodes, node_key)
 	-- function 72
-	local var_72_0 = arg_72_1[arg_72_2]
+	local node = nodes[node_key]
 
-	local function fn()
+	local function executor()
 		-- function 73
-		local tbl = {}
+		local next_actions = {}
 
-		for i = 1, var_72_0.connected_to do
-			tbl[i] = function ()
+		for i = 1, node.connected_to do
+			next_actions[i] = function ()
 				-- function 74
-				return fn_25(arg_72_0, arg_72_1, arg_72_2)
+				return create_random_connection_action(context, nodes, node_key)
 			end
 		end
 
-		return true, tbl
+		return true, next_actions
 	end
 
 	return {
-		name = "connections " .. arg_72_2,
+		name = "connections " .. node_key,
 		run = function ()
 			-- function 75
-			return fn()
+			return executor()
 		end,
 		retry = function ()
 			-- function 76
@@ -1080,174 +1105,173 @@ local function fn_26(arg_72_0, arg_72_1, arg_72_2)
 	}
 end
 
-local function fn_27(arg_77_0, arg_77_1, arg_77_2)
+function create_connect_action(context, nodes, node_key)
 	-- function 77
-	local var_77_0 = arg_77_1[arg_77_2]
+	local node = nodes[node_key]
 
-	local function fn()
+	local function create_shuffled_connection_count()
 		-- function 78
-		local tbl = {}
+		local connection_count_array = {}
 
-		for i = 1, arg_77_0.config.MAX_CONNECTIONS_PER_NODE do
-			tbl[#tbl + 1] = i
+		for i = 1, context.config.MAX_CONNECTIONS_PER_NODE do
+			connection_count_array[#connection_count_array + 1] = i
 		end
 
-		return fn_7(tbl, arg_77_0.random_generator)
+		return shuffle_array(connection_count_array, context.random_generator)
 	end
 
-	local var_77_2
-	local var_77_3
+	local random_connection_count, last_attempt
 
-	local function fn_2()
+	local function executor()
 		-- function 79
-		if not var_77_2 then
-			var_77_2 = fn()
+		if not random_connection_count then
+			random_connection_count = create_shuffled_connection_count()
 		end
 
-		while #var_77_2 > 0 do
-			local var_79_0 = var_77_2[#var_77_2]
+		while #random_connection_count > 0 do
+			local new_connection_count = random_connection_count[#random_connection_count]
 
-			var_77_2[#var_77_2] = nil
+			random_connection_count[#random_connection_count] = nil
 
-			if not var_77_3 and not (var_79_0 < var_77_3) or not fn_19(arg_77_0.config, arg_77_0.indent, arg_77_1, arg_77_2, var_79_0) then
-				var_77_0.connected_to = var_79_0
+			if (not last_attempt or new_connection_count < last_attempt) and validate_connection_count(context.config, context.indent, nodes, node_key, new_connection_count) then
+				node.connected_to = new_connection_count
 
 				break
 			end
 		end
 
-		if not var_77_0.connected_to then
+		if not node.connected_to then
 			return false
 		end
 
-		var_77_3 = var_77_0.connected_to
+		last_attempt = node.connected_to
 
-		local tbl = {
+		local next_actions = {
 			function ()
 				-- function 80
-				return fn_26(arg_77_0, arg_77_1, arg_77_2)
+				return create_connections_action(context, nodes, node_key)
 			end
 		}
 
-		return true, tbl
+		return true, next_actions
 	end
 
 	return {
-		name = "connect " .. arg_77_2,
+		name = "connect " .. node_key,
 		run = function ()
 			-- function 81
-			return fn_2()
+			return executor()
 		end,
 		retry = function ()
 			-- function 82
-			var_77_0.connected_to = nil
+			node.connected_to = nil
 
-			return fn_2()
+			return executor()
 		end
 	}
 end
 
-local function fn_28(self, arg_83_1, arg_83_2)
+function create_assign_node_label_action(context, nodes, node_key)
 	-- function 83
-	local var_83_0 = arg_83_1[arg_83_2]
-	local type = var_83_0.type
-	local var_83_2
-	local var_83_3 = self.config.LABELLED_NODE_TYPES[type]
+	local node = nodes[node_key]
+	local node_type = node.type
+	local labels_left
+	local should_label = context.config.LABELLED_NODE_TYPES[node_type]
 
-	local function fn()
+	local function executor()
 		-- function 84
-		if not var_83_3 then
-			if not var_83_2 then
-				var_83_2 = {}
+		if should_label then
+			if not labels_left then
+				labels_left = {}
 
-				local flag = false
-				local var_84_1
+				local found_unused_label = false
+				local unused_label_index
 
-				for i = 1, self.config.LABELS_AVAILABLE[type] do
-					local flag_2 = false
+				for i = 1, context.config.LABELS_AVAILABLE[node_type] do
+					local found = false
 
-					for k, v in pairs(arg_83_1) do
-						if not (v.type ~= type or v.label ~= i) then
-							var_83_2[#var_83_2 + 1] = i
-							flag_2 = true
+					for _, other_node in pairs(nodes) do
+						if other_node.type == node_type and other_node.label == i then
+							labels_left[#labels_left + 1] = i
+							found = true
 
 							break
 						end
 					end
 
-					if not (flag_2 or flag) then
-						var_83_2[#var_83_2 + 1] = i
-						var_84_1 = #var_83_2
-						flag = true
+					if not found and not found_unused_label then
+						labels_left[#labels_left + 1] = i
+						unused_label_index = #labels_left
+						found_unused_label = true
 					end
 				end
 
-				if not flag then
-					local var_84_3 = var_83_2[1]
+				if found_unused_label then
+					local val = labels_left[1]
 
-					var_83_2[1] = var_83_2[var_84_1]
-					var_83_2[var_84_1] = var_84_3
+					labels_left[1] = labels_left[unused_label_index]
+					labels_left[unused_label_index] = val
 				end
 			end
 
-			while #var_83_2 > 0 do
-				local var_84_4 = var_83_2[#var_83_2]
+			while #labels_left > 0 do
+				local label_to_try = labels_left[#labels_left]
 
-				var_83_2[#var_83_2] = nil
+				labels_left[#labels_left] = nil
 
-				local LABEL_VALIDATIONS = self.config.LABEL_VALIDATIONS
-				local var_84_6 = tbl_9
+				local validator_names = context.config.LABEL_VALIDATIONS
+				local validators = LABEL_VALIDATIONS
 
-				var_83_0.label = var_84_4
+				node.label = label_to_try
 
-				local flag_3 = false
+				local failed = false
 
-				for i_2, v_2 in ipairs(LABEL_VALIDATIONS) do
-					if not var_84_6[v_2](self.config, arg_83_1, arg_83_2) then
-						flag_3 = true
+				for _, validator_name in ipairs(validator_names) do
+					if not validators[validator_name](context.config, nodes, node_key) then
+						failed = true
 
 						break
 					end
 				end
 
-				if not flag_3 then
-					var_83_0.label = nil
+				if failed then
+					node.label = nil
 				else
 					break
 				end
 			end
 
-			if not var_83_0.label then
+			if not node.label then
 				return false
 			end
 		end
 
-		if arg_83_2 == "final" then
+		if node_key == "final" then
 			return true
 		else
-			local tbl = {
+			local next_actions = {
 				function ()
 					-- function 85
-					return fn_27(self, arg_83_1, arg_83_2)
+					return create_connect_action(context, nodes, node_key)
 				end
 			}
 
-			return true, tbl
+			return true, next_actions
 		end
 	end
 
 	return {
-		name = "node_label " .. arg_83_2,
+		name = "node_label " .. node_key,
 		run = function ()
 			-- function 86
-			return fn()
+			return executor()
 		end,
 		retry = function ()
 			-- function 87
-			if not var_83_3 then
-				var_83_0.label = nil
+			if should_label then
+				node.label = nil
 
-				return fn()
+				return executor()
 			end
 
 			return false
@@ -1255,118 +1279,118 @@ local function fn_28(self, arg_83_1, arg_83_2)
 	}
 end
 
-function var_0_31(arg_88_0, arg_88_1, arg_88_2)
+function create_process_node_action(context, nodes, node_key)
 	-- function 88
-	local var_88_0 = arg_88_1[arg_88_2]
-	local var_88_1
+	local node = nodes[node_key]
+	local shuffled_node_types
 
-	local function fn()
+	local function executor()
 		-- function 89
-		if not var_88_1 then
-			var_88_1 = fn_5(arg_88_0.random_generator)
+		if not shuffled_node_types then
+			shuffled_node_types = get_random_node_type_list(context.random_generator)
 
-			for i, v in ipairs(arg_88_0.config.NODE_TYPE_SHUFFLERS) do
-				tbl_10[v](arg_88_0, arg_88_1, arg_88_2, var_88_1)
+			for _, shuffler_name in ipairs(context.config.NODE_TYPE_SHUFFLERS) do
+				NODE_TYPE_SHUFFLERS[shuffler_name](context, nodes, node_key, shuffled_node_types)
 			end
 
-			table.reverse(var_88_1)
+			table.reverse(shuffled_node_types)
 		end
 
-		while #var_88_1 > 0 do
-			local var_89_0 = var_88_1[#var_88_1]
+		while #shuffled_node_types > 0 do
+			local node_type_to_try = shuffled_node_types[#shuffled_node_types]
 
-			var_88_1[#var_88_1] = nil
+			shuffled_node_types[#shuffled_node_types] = nil
 
-			if not fn_20(arg_88_0.config, arg_88_0.indent, arg_88_1, arg_88_2, var_89_0) then
-				var_88_0.type = var_89_0
+			if validate_node_type(context.config, context.indent, nodes, node_key, node_type_to_try) then
+				node.type = node_type_to_try
 
 				break
 			end
 		end
 
-		if not var_88_0.type then
+		if not node.type then
 			return false
 		end
 
-		local tbl = {
+		local next_actions = {
 			function ()
 				-- function 90
-				return fn_28(arg_88_0, arg_88_1, arg_88_2)
+				return create_assign_node_label_action(context, nodes, node_key)
 			end
 		}
 
-		return true, tbl
+		return true, next_actions
 	end
 
 	return {
-		name = "node " .. arg_88_2,
+		name = "node " .. node_key,
 		run = function ()
 			-- function 91
-			return fn()
+			return executor()
 		end,
 		retry = function ()
 			-- function 92
-			var_88_0.type = nil
+			node.type = nil
 
-			return fn()
+			return executor()
 		end
 	}
 end
 
-local function fn_29(self)
+local function remove_dummy_nodes(nodes)
 	-- function 93
-	local tbl = {}
+	local new_nodes = {}
 
-	for k, v in pairs(self) do
-		if v.type ~= "DUMMY" then
-			tbl[k] = v
+	for node_key, node in pairs(nodes) do
+		if node.type ~= "DUMMY" then
+			new_nodes[node_key] = node
 		else
-			local next = v.next
-			local prev = v.prev
+			local next = node.next
+			local prev = node.prev
 
-			for i, v_2 in ipairs(prev) do
-				local var_93_3 = self[v_2]
-				local tbl_2 = {}
+			for _, prev_node_key in ipairs(prev) do
+				local prev_node = nodes[prev_node_key]
+				local new_next = {}
 
-				for i_2, v_3 in ipairs(var_93_3.next) do
-					if v_3 ~= k then
-						tbl_2[#tbl_2 + 1] = v_3
+				for _, next_node_key in ipairs(prev_node.next) do
+					if next_node_key ~= node_key then
+						new_next[#new_next + 1] = next_node_key
 					end
 				end
 
-				for i_3, v_4 in ipairs(next) do
-					tbl_2[#tbl_2 + 1] = v_4
+				for _, next_node_key in ipairs(next) do
+					new_next[#new_next + 1] = next_node_key
 				end
 
-				var_93_3.next = tbl_2
+				prev_node.next = new_next
 			end
 
-			for i_4, v_5 in ipairs(next) do
-				local var_93_5 = self[v_5]
-				local tbl_3 = {}
+			for _, next_node_key in ipairs(next) do
+				local next_node = nodes[next_node_key]
+				local new_prev = {}
 
-				for i_5, v_6 in ipairs(var_93_5.prev) do
-					if v_6 ~= k then
-						tbl_3[#tbl_3 + 1] = v_6
+				for _, prev_node_key in ipairs(next_node.prev) do
+					if prev_node_key ~= node_key then
+						new_prev[#new_prev + 1] = prev_node_key
 					end
 				end
 
-				for i_6, v_7 in ipairs(prev) do
-					tbl_3[#tbl_3 + 1] = v_7
+				for _, prev_node_key in ipairs(prev) do
+					new_prev[#new_prev + 1] = prev_node_key
 				end
 
-				var_93_5.prev = tbl_3
+				next_node.prev = new_prev
 			end
 		end
 	end
 
-	return tbl
+	return new_nodes
 end
 
-function deus_base_graph_generator(arg_94_0, arg_94_1)
+function deus_base_graph_generator(seed, config)
 	-- function 94
-	local create_random_generator = DeusGenUtils.create_random_generator(arg_94_0)
-	local tbl = {
+	local random_generator = DeusGenUtils.create_random_generator(seed)
+	local nodes = {
 		start = {
 			layout_x = 1,
 			name = "start",
@@ -1375,48 +1399,49 @@ function deus_base_graph_generator(arg_94_0, arg_94_1)
 			next = {}
 		}
 	}
-	local num = 0
+	local max_sequence_length = 0
 
-	for i, v in ipairs(arg_94_1.ALLOWED_SEQUENCES) do
-		num = math.max(#v, num)
+	for _, sequence in ipairs(config.ALLOWED_SEQUENCES) do
+		max_sequence_length = math.max(#sequence, max_sequence_length)
 	end
 
-	arg_94_1._max_sequence_length = num
+	config._max_sequence_length = max_sequence_length
 
-	local tbl_2 = {
-		{
-			"start"
-		}
+	local nodes_per_layer = {}
+
+	nodes_per_layer[1] = {
+		"start"
 	}
-	local tbl_3 = {
+
+	local context = {
 		indent = 0,
-		random_generator = create_random_generator,
-		config = arg_94_1,
-		nodes_per_layer = tbl_2
+		random_generator = random_generator,
+		config = config,
+		nodes_per_layer = nodes_per_layer
 	}
 
-	local function fn(arg_95_0, arg_95_1)
+	local function per_action_callback(action_list, action)
 		-- function 95
-		tbl_3.indent = #arg_95_0
+		context.indent = #action_list
 	end
 
-	local tbl_4 = {
-		var_0_31(tbl_3, tbl, "start")
+	local action_list = {
+		create_process_node_action(context, nodes, "start")
 	}
-	local get_generator = DeusGenEngine.get_generator(tbl_4, fn)
+	local generator = DeusGenEngine.get_generator(action_list, per_action_callback)
 
 	return function ()
 		-- function 96
-		local var_96_0, var_96_1 = get_generator()
+		local done, error_message = generator()
 
-		if not var_96_0 then
-			if not var_96_1 then
-				tbl = fn_29(tbl)
+		if done then
+			if not error_message then
+				nodes = remove_dummy_nodes(nodes)
 			else
-				Application.warning("[deus_base_graph_generator.lua] failed to generate base graph, maybe the settings are impossible to solve? error: " .. (var_96_1 or "N/A"))
+				Application.warning("[deus_base_graph_generator.lua] failed to generate base graph, maybe the settings are impossible to solve? error: " .. (not not error_message or not not "N/A"))
 			end
 		end
 
-		return var_96_0, var_96_1, tbl
+		return done, error_message, nodes
 	end
 end

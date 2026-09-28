@@ -1,8 +1,9 @@
 -- chunkname: @scripts/ui/views/hero_view/windows/definitions/hero_window_hero_power_console_definitions.lua
 
-local size = UISettings.game_start_windows.size
+local window_default_settings = UISettings.game_start_windows
+local window_size = window_default_settings.size
 local console_menu_scenegraphs = UISettings.console_menu_scenegraphs
-local tbl = {
+local scenegraph_definition = {
 	screen = console_menu_scenegraphs.screen,
 	area = console_menu_scenegraphs.area,
 	area_left = console_menu_scenegraphs.area_left,
@@ -79,7 +80,7 @@ local tbl = {
 		}
 	}
 }
-local tbl_2 = {
+local hero_power_number_style = {
 	word_wrap = true,
 	upper_case = true,
 	localize = false,
@@ -95,7 +96,7 @@ local tbl_2 = {
 		2
 	}
 }
-local tbl_3 = {
+local hero_power_text_style = {
 	font_size = 28,
 	upper_case = false,
 	localize = true,
@@ -110,7 +111,7 @@ local tbl_3 = {
 		2
 	}
 }
-local tbl_4 = {
+local widgets = {
 	hero_power_tooltip = {
 		scenegraph_id = "divider",
 		element = {
@@ -121,9 +122,9 @@ local tbl_4 = {
 				},
 				{
 					pass_type = "hero_power_tooltip",
-					content_check_function = function (self)
+					content_check_function = function (content)
 						-- function 1
-						return self.button_hotspot.is_hover
+						return content.button_hotspot.is_hover
 					end
 				},
 				{
@@ -164,26 +165,26 @@ local tbl_4 = {
 	divider = UIWidgets.create_simple_texture("hero_power_bg_console", "divider"),
 	divider_detail_1 = UIWidgets.create_simple_texture("hero_power_eyes_console", "divider_detail_1"),
 	divider_detail_2 = UIWidgets.create_simple_texture("hero_power_glow_console", "divider_detail_2", nil, nil, Colors.get_color_table_with_alpha("font_title", 255)),
-	power_text = UIWidgets.create_simple_text("10", "hero_power_number", nil, nil, tbl_2),
-	power_title = UIWidgets.create_simple_text("hero_power_header", "hero_power_text", nil, nil, tbl_3)
+	power_text = UIWidgets.create_simple_text("10", "hero_power_number", nil, nil, hero_power_number_style),
+	power_title = UIWidgets.create_simple_text("hero_power_header", "hero_power_text", nil, nil, hero_power_text_style)
 }
-local tbl_5 = {
+local animation_definitions = {
 	on_enter = {
 		{
 			name = "fade_in",
 			start_progress = 0,
 			end_progress = 0.3,
-			init = function (arg_2_0, arg_2_1, arg_2_2, arg_2_3)
+			init = function (ui_scenegraph, scenegraph_definition, widgets, params)
 				-- function 2
-				arg_2_3.render_settings.alpha_multiplier = 0
+				params.render_settings.alpha_multiplier = 0
 			end,
-			update = function (arg_3_0, arg_3_1, arg_3_2, arg_3_3, arg_3_4)
+			update = function (ui_scenegraph, scenegraph_definition, widgets, progress, params)
 				-- function 3
-				local easeOutCubic = math.easeOutCubic(arg_3_3)
+				local anim_progress = math.easeOutCubic(progress)
 
-				arg_3_4.render_settings.alpha_multiplier = easeOutCubic
+				params.render_settings.alpha_multiplier = anim_progress
 			end,
-			on_complete = function (arg_4_0, arg_4_1, arg_4_2, arg_4_3)
+			on_complete = function (ui_scenegraph, scenegraph_definition, widgets, params)
 				-- function 4
 				return
 			end
@@ -194,17 +195,17 @@ local tbl_5 = {
 			name = "fade_out",
 			start_progress = 0,
 			end_progress = 0.3,
-			init = function (arg_5_0, arg_5_1, arg_5_2, arg_5_3)
+			init = function (ui_scenegraph, scenegraph_definition, widgets, params)
 				-- function 5
-				arg_5_3.render_settings.alpha_multiplier = 1
+				params.render_settings.alpha_multiplier = 1
 			end,
-			update = function (arg_6_0, arg_6_1, arg_6_2, arg_6_3, arg_6_4)
+			update = function (ui_scenegraph, scenegraph_definition, widgets, progress, params)
 				-- function 6
-				local easeOutCubic = math.easeOutCubic(arg_6_3)
+				local anim_progress = math.easeOutCubic(progress)
 
-				arg_6_4.render_settings.alpha_multiplier = 1 - easeOutCubic
+				params.render_settings.alpha_multiplier = 1 - anim_progress
 			end,
-			on_complete = function (arg_7_0, arg_7_1, arg_7_2, arg_7_3)
+			on_complete = function (ui_scenegraph, scenegraph_definition, widgets, params)
 				-- function 7
 				return
 			end
@@ -213,9 +214,9 @@ local tbl_5 = {
 }
 
 return {
-	widgets = tbl_4,
+	widgets = widgets,
 	node_widgets = node_widgets,
 	category_settings = category_settings,
-	scenegraph_definition = tbl,
-	animation_definitions = tbl_5
+	scenegraph_definition = scenegraph_definition,
+	animation_definitions = animation_definitions
 }

@@ -2,69 +2,70 @@
 
 ActionCareerDREngineerCharge = class(ActionCareerDREngineerCharge, ActionBase)
 
-ActionCareerDREngineerCharge.init = function (self, arg_1_1, arg_1_2, arg_1_3, arg_1_4, arg_1_5, arg_1_6, arg_1_7, arg_1_8)
+ActionCareerDREngineerCharge.init = function (self, world, item_name, is_server, owner_unit, damage_unit, first_person_unit, weapon_unit, weapon_system)
 	-- function 1
-	ActionCareerDREngineerCharge.super.init(self, arg_1_1, arg_1_2, arg_1_3, arg_1_4, arg_1_5, arg_1_6, arg_1_7, arg_1_8)
+	ActionCareerDREngineerCharge.super.init(self, world, item_name, is_server, owner_unit, damage_unit, first_person_unit, weapon_unit, weapon_system)
 
-	self.weapon_extension = ScriptUnit.extension(arg_1_7, "weapon_system")
-	self.career_extension = ScriptUnit.extension(arg_1_4, "career_system")
-	self.buff_extension = ScriptUnit.extension(arg_1_4, "buff_system")
-	self.talent_extension = ScriptUnit.extension(arg_1_4, "talent_system")
-	self.owner_unit = arg_1_4
+	self.weapon_extension = ScriptUnit.extension(weapon_unit, "weapon_system")
+	self.career_extension = ScriptUnit.extension(owner_unit, "career_system")
+	self.buff_extension = ScriptUnit.extension(owner_unit, "buff_system")
+	self.talent_extension = ScriptUnit.extension(owner_unit, "talent_system")
+	self.owner_unit = owner_unit
 	self.audio_loop_id = "engineer_weapon_charge"
 	self._buff_to_add = "bardin_engineer_pump_buff"
 end
 
-ActionCareerDREngineerCharge.client_owner_start_action = function (self, arg_2_1, arg_2_2)
+ActionCareerDREngineerCharge.client_owner_start_action = function (self, new_action, t)
 	-- function 2
-	ActionCareerDREngineerCharge.super.client_owner_start_action(self, arg_2_1, arg_2_2)
+	ActionCareerDREngineerCharge.super.client_owner_start_action(self, new_action, t)
 
-	self.ability_charge_timer = -arg_2_1.initial_charge_delay
+	self.ability_charge_timer = -new_action.initial_charge_delay
 
 	self:start_audio_loop()
 end
 
-ActionCareerDREngineerCharge.client_owner_post_update = function (self, arg_3_1, arg_3_2, arg_3_3, arg_3_4)
+ActionCareerDREngineerCharge.client_owner_post_update = function (self, dt, t, world, can_damage)
 	-- function 3
 	local buff_extension = self.buff_extension
-	local ability_charge_interval = self.current_action.ability_charge_interval
-	local num = self.ability_charge_timer + arg_3_1
+	local current_action = self.current_action
+	local interval = current_action.ability_charge_interval
+	local charge_timer = self.ability_charge_timer + dt
 
-	if ability_charge_interval <= num then
-		local floor = math.floor(num / ability_charge_interval)
+	if interval <= charge_timer then
+		local recharge_instances = math.floor(charge_timer / interval)
 
-		num = num - floor * ability_charge_interval
+		charge_timer = charge_timer - recharge_instances * interval
 
 		local wwise_world = self.wwise_world
-		local _buff_to_add = self._buff_to_add
-		local num_buff_type = buff_extension:num_buff_type(_buff_to_add)
-		local get_buff_type = buff_extension:get_buff_type(_buff_to_add)
+		local buff_to_add = self._buff_to_add
+		local num_stacks = buff_extension:num_buff_type(buff_to_add)
+		local buff_type = buff_extension:get_buff_type(buff_to_add)
 
-		if not get_buff_type then
+		if buff_type then
 			if not self.last_pump_time then
-				self.last_pump_time = arg_3_2
+				self.last_pump_time = t
 			end
 
-			local template = get_buff_type.template
+			local buff_template = buff_type.template
 
-			if not (not (arg_3_2 - self.last_pump_time > 10) or not (num_buff_type >= template.max_stacks)) then
+			if t - self.last_pump_time > 10 and num_stacks >= buff_template.max_stacks then
 				Managers.state.achievement:trigger_event("clutch_pump", self.owner_unit)
 			end
 
-			self.last_pump_time = arg_3_2
+			self.last_pump_time = t
 		end
 
-		WwiseWorld.set_global_parameter(wwise_world, "engineer_charge", num_buff_type + floor)
+		WwiseWorld.set_global_parameter(wwise_world, "engineer_charge", num_stacks + recharge_instances)
 
-		for i = 1, floor do
-			buff_extension:add_buff(_buff_to_add)
+		for i = 1, recharge_instances do
+			buff_extension:add_buff(buff_to_add)
 		end
 	end
 
-	self.ability_charge_timer = num
+	self.ability_charge_timer = charge_timer
 end
 
-ActionCareerDREngineerCharge.finish = function (arg_4_0, arg_4_1)
+ActionCareerDREngineerCharge.finish = function (self, reason)
 	-- function 4
 	return
 end
@@ -72,17 +73,17 @@ end
 ActionCareerDREngineerCharge.start_audio_loop = function (self)
 	-- function 5
 	local current_action = self.current_action
-	local charge_sound_name = current_action.charge_sound_name
-	local charge_sound_stop_event = current_action.charge_sound_stop_event
+	local start_charge_id = current_action.charge_sound_name
+	local stop_charge_id = current_action.charge_sound_stop_event
 
-	if not (not charge_sound_name and charge_sound_stop_event) then
+	if not start_charge_id or not stop_charge_id then
 		return
 	end
 
 	local weapon_extension = self.weapon_extension
-	local charge_sound_husk_name = current_action.charge_sound_husk_name
-	local charge_sound_husk_stop_event = current_action.charge_sound_husk_stop_event
+	local start_charge_husk_id = current_action.charge_sound_husk_name
+	local stop_charge_husk_id = current_action.charge_sound_husk_stop_event
 
-	weapon_extension:add_looping_audio(self.audio_loop_id, charge_sound_name, charge_sound_stop_event, charge_sound_husk_name, charge_sound_husk_stop_event)
+	weapon_extension:add_looping_audio(self.audio_loop_id, start_charge_id, stop_charge_id, start_charge_husk_id, stop_charge_husk_id)
 	weapon_extension:start_looping_audio(self.audio_loop_id)
 end

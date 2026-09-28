@@ -1,6 +1,6 @@
 -- chunkname: @levels/honduras_dlcs/morris/arena_belakor/world_smartobjects.lua
 
-local tbl = {
+local smart_objects = {
 	["ba40e8c4-a969-4a4d-9d15-470c5a4aeef2"] = {
 		{
 			smart_object_index = 229,
@@ -7150,13 +7150,13 @@ local tbl = {
 		}
 	}
 }
-local num = 301
-local str = "v1"
-local str_2 = "2017.MAY.05.05"
+local smart_object_count = 301
+local version = "v1"
+local ledgelator_version = "2017.MAY.05.05"
 
 return {
-	smart_objects = tbl,
-	smart_object_count = num,
-	version = str,
-	ledgelator_version = str_2
+	smart_objects = smart_objects,
+	smart_object_count = smart_object_count,
+	version = version,
+	ledgelator_version = ledgelator_version
 }

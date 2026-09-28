@@ -2,11 +2,11 @@
 
 require("scripts/ui/views/world_hero_previewer")
 
-local degrees_to_radians = math.degrees_to_radians(0)
+local DEFAULT_ANGLE = math.degrees_to_radians(0)
 
 MenuWorldPreviewer = class(MenuWorldPreviewer, HeroPreviewer)
 
-local tbl = {
+local camera_position_by_character = {
 	witch_hunter = {
 		z = 0.4,
 		x = 0,
@@ -79,15 +79,18 @@ local tbl = {
 	}
 }
 
-MenuWorldPreviewer.init = function (self, arg_1_1, arg_1_2, arg_1_3, arg_1_4)
+MenuWorldPreviewer.init = function (self, ingame_ui_context, optional_camera_character_positions, unique_id, delayed_spawn)
 	-- function 1
-	MenuWorldPreviewer.super.init(self, arg_1_1, arg_1_3, arg_1_4)
+	MenuWorldPreviewer.super.init(self, ingame_ui_context, unique_id, delayed_spawn)
 
-	self.input_manager = arg_1_1.input_manager
-	self.ui_renderer = arg_1_1.ui_renderer
-	self._character_camera_positions = arg_1_2 or tbl
-	self.player_manager = Managers.player
-	self.peer_id = arg_1_1.peer_id
+	self.input_manager = ingame_ui_context.input_manager
+	self.ui_renderer = ingame_ui_context.ui_renderer
+	self._character_camera_positions = not not optional_camera_character_positions or not not camera_position_by_character
+
+	local player_manager = Managers.player
+
+	self.player_manager = player_manager
+	self.peer_id = ingame_ui_context.peer_id
 	self._camera_default_position = {
 		z = 0.9,
 		x = 0,
@@ -116,41 +119,41 @@ MenuWorldPreviewer.init = function (self, arg_1_1, arg_1_2, arg_1_3, arg_1_4)
 	self._requested_unit_spawn_queue = {}
 end
 
-MenuWorldPreviewer.set_default_position = function (self, arg_2_1)
+MenuWorldPreviewer.set_default_position = function (self, default_position)
 	-- function 2
-	self._camera_default_position = arg_2_1
+	self._camera_default_position = default_position
 end
 
-MenuWorldPreviewer.set_lookat_target = function (self, arg_3_1)
+MenuWorldPreviewer.set_lookat_target = function (self, lookat_target)
 	-- function 3
-	self._lookat_target = arg_3_1
+	self._lookat_target = lookat_target
 end
 
-MenuWorldPreviewer.destroy = function (arg_4_0)
+MenuWorldPreviewer.destroy = function (self)
 	-- function 4
-	MenuWorldPreviewer.super.destroy(arg_4_0)
+	MenuWorldPreviewer.super.destroy(self)
 	Renderer.set_automatic_streaming(true)
-	GarbageLeakDetector.register_object(arg_4_0, "MenuWorldPreviewer")
+	GarbageLeakDetector.register_object(self, "MenuWorldPreviewer")
 end
 
-MenuWorldPreviewer.on_enter = function (self, arg_5_1, arg_5_2)
+MenuWorldPreviewer.on_enter = function (self, viewport_widget, hero_name)
 	-- function 5
 	MenuWorldPreviewer.super.on_enter(self)
-	self:setup_viewport(arg_5_1, arg_5_2)
+	self:setup_viewport(viewport_widget, hero_name)
 end
 
-MenuWorldPreviewer.setup_viewport = function (self, arg_6_1, arg_6_2)
+MenuWorldPreviewer.setup_viewport = function (self, viewport_widget, hero_name)
 	-- function 6
-	self.viewport_widget = arg_6_1
+	self.viewport_widget = viewport_widget
 
-	local var_6_0 = arg_6_1.element.pass_data[1]
+	local preview_pass_data = viewport_widget.element.pass_data[1]
 
-	self.world = var_6_0.world
-	self.level = var_6_0.level
-	self.viewport = var_6_0.viewport
+	self.world = preview_pass_data.world
+	self.level = preview_pass_data.level
+	self.viewport = preview_pass_data.viewport
 	self.camera = ScriptViewport.camera(self.viewport)
 	self.character_camera_position_adjustments = {}
-	self.hero_name = arg_6_2
+	self.hero_name = hero_name
 	self.character_look_current = {
 		0,
 		3,
@@ -161,66 +164,66 @@ MenuWorldPreviewer.setup_viewport = function (self, arg_6_1, arg_6_2)
 		3,
 		1
 	}
-	self.camera_xy_angle_current = degrees_to_radians
-	self.camera_xy_angle_target = degrees_to_radians
+	self.camera_xy_angle_current = DEFAULT_ANGLE
+	self.camera_xy_angle_target = DEFAULT_ANGLE
 	self._requested_unit_spawn_queue = {}
 	self._units = {}
 end
 
-local tbl_2 = {}
+local EMPTY_TABLE = {}
 
-MenuWorldPreviewer.activate = function (self, arg_7_1, arg_7_2, arg_7_3)
+MenuWorldPreviewer.activate = function (self, activate, viewport_widget, hero_name)
 	-- function 7
 	if not self._delayed_spawn then
 		return
 	end
 
-	if self._activated == arg_7_1 then
+	if self._activated == activate then
 		return
 	end
 
-	if not arg_7_1 then
-		self:setup_viewport(arg_7_2, arg_7_3)
+	if activate then
+		self:setup_viewport(viewport_widget, hero_name)
 
 		local _delayed_hero_spawn_data = self._delayed_hero_spawn_data
 
-		_delayed_hero_spawn_data = _delayed_hero_spawn_data or tbl_2
+		_delayed_hero_spawn_data = not not _delayed_hero_spawn_data or not not EMPTY_TABLE
 		self._requested_hero_spawn_data = _delayed_hero_spawn_data
 
 		local _delayed_unit_spawn_queue = self._delayed_unit_spawn_queue
 
-		_delayed_unit_spawn_queue = _delayed_unit_spawn_queue or tbl_2
+		_delayed_unit_spawn_queue = not not _delayed_unit_spawn_queue or not not EMPTY_TABLE
 		self._requested_unit_spawn_queue = _delayed_unit_spawn_queue
 	else
-		local flag = true
+		local reset_camera = true
 
-		self:clear_units(flag)
+		self:clear_units(reset_camera)
 
 		self.world = nil
 	end
 
-	self._activated = arg_7_1
+	self._activated = activate
 end
 
-MenuWorldPreviewer.trigger_level_event = function (self, arg_8_1)
+MenuWorldPreviewer.trigger_level_event = function (self, event_name)
 	-- function 8
-	Level.trigger_event(self.level, arg_8_1)
+	Level.trigger_event(self.level, event_name)
 end
 
-MenuWorldPreviewer.show_level_units = function (self, arg_9_1, arg_9_2)
+MenuWorldPreviewer.show_level_units = function (self, unit_indices, visibility)
 	-- function 9
 	local level = self.level
 
-	for k, v in pairs(arg_9_1) do
-		local unit_by_index = Level.unit_by_index(level, v)
+	for _, unit_index in pairs(unit_indices) do
+		local unit = Level.unit_by_index(level, unit_index)
 
-		if not Unit.alive(unit_by_index) then
-			Unit.set_unit_visibility(unit_by_index, arg_9_2)
+		if Unit.alive(unit) then
+			Unit.set_unit_visibility(unit, visibility)
 
-			if not arg_9_2 then
-				Unit.flow_event(unit_by_index, "unit_object_set_enabled")
+			if visibility then
+				Unit.flow_event(unit, "unit_object_set_enabled")
 			else
-				Unit.flow_event(unit_by_index, "unit_object_set_disabled")
+				Unit.flow_event(unit, "unit_object_set_disabled")
 			end
 		end
 	end
@@ -231,20 +234,20 @@ MenuWorldPreviewer.has_units_spawned = function (self)
 	return self.character_unit ~= nil
 end
 
-MenuWorldPreviewer.on_exit = function (arg_11_0)
+MenuWorldPreviewer.on_exit = function (self)
 	-- function 11
-	MenuWorldPreviewer.super.on_exit(arg_11_0)
+	MenuWorldPreviewer.super.on_exit(self)
 	Renderer.set_automatic_streaming(true)
 end
 
-MenuWorldPreviewer.update = function (self, arg_12_1, arg_12_2, arg_12_3)
+MenuWorldPreviewer.update = function (self, dt, t, input_disabled)
 	-- function 12
 	local _delayed_unit_spawn_queue = self._delayed_unit_spawn_queue
 
-	_delayed_unit_spawn_queue = _delayed_unit_spawn_queue or tbl_2
+	_delayed_unit_spawn_queue = not not _delayed_unit_spawn_queue or not not EMPTY_TABLE
 	self._requested_unit_spawn_queue = _delayed_unit_spawn_queue
 
-	MenuWorldPreviewer.super.update(self, arg_12_1, arg_12_2)
+	MenuWorldPreviewer.super.update(self, dt, t)
 
 	if not self._activated then
 		return
@@ -252,85 +255,87 @@ MenuWorldPreviewer.update = function (self, arg_12_1, arg_12_2, arg_12_3)
 
 	local character_unit = self.character_unit
 
-	if not character_unit then
+	if character_unit then
 		if self.camera_xy_angle_target > math.pi * 2 then
 			self.camera_xy_angle_current = self.camera_xy_angle_current - math.pi * 2
 			self.camera_xy_angle_target = self.camera_xy_angle_target - math.pi * 2
 		end
 
-		local lerp = math.lerp(self.camera_xy_angle_current, self.camera_xy_angle_target, 0.1)
+		local character_xy_angle_new = math.lerp(self.camera_xy_angle_current, self.camera_xy_angle_target, 0.1)
 
-		self.camera_xy_angle_current = lerp
+		self.camera_xy_angle_current = character_xy_angle_new
 
-		local axis_angle = Quaternion.axis_angle(Vector3(0, 0, 1), -lerp)
+		local player_rotation = Quaternion.axis_angle(Vector3(0, 0, 1), -character_xy_angle_new)
 
-		Unit.set_local_rotation(character_unit, 0, axis_angle)
+		Unit.set_local_rotation(character_unit, 0, player_rotation)
 
-		local unbox = Vector3Aux.unbox(self.character_look_current)
-		local animation_find_constraint_target = Unit.animation_find_constraint_target(character_unit, "aim_constraint_target")
-		local rotate = Quaternion.rotate(axis_angle, unbox)
+		local look_current = Vector3Aux.unbox(self.character_look_current)
+		local aim_constraint_anim_var = Unit.animation_find_constraint_target(character_unit, "aim_constraint_target")
+		local rotated_constraint_position = Quaternion.rotate(player_rotation, look_current)
 
-		Unit.animation_set_constraint_target(character_unit, animation_find_constraint_target, rotate)
+		Unit.animation_set_constraint_target(character_unit, aim_constraint_anim_var, rotated_constraint_position)
 	end
 
-	self:_update_camera_animation_data(self._camera_position_animation_data, arg_12_1)
-	self:_update_camera_animation_data(self._camera_rotation_animation_data, arg_12_1)
-	self:_update_camera_animation_data(self._camera_character_position_animation_data, arg_12_1)
+	self:_update_camera_animation_data(self._camera_position_animation_data, dt)
+	self:_update_camera_animation_data(self._camera_rotation_animation_data, dt)
+	self:_update_camera_animation_data(self._camera_character_position_animation_data, dt)
 
-	local _camera_default_position = self._camera_default_position
-	local zero = Vector3.zero()
+	local camera_default_position = self._camera_default_position
+	local camera_position_new = Vector3.zero()
 
-	zero.x = _camera_default_position.x
-	zero.y = _camera_default_position.y
-	zero.z = _camera_default_position.z
+	camera_position_new.x = camera_default_position.x
+	camera_position_new.y = camera_default_position.y
+	camera_position_new.z = camera_default_position.z
 
-	local unbox_2
+	local unbox
 
-	if not self._lookat_target then
-		unbox_2 = self._lookat_target:unbox()
+	if self._lookat_target then
+		unbox = self._lookat_target:unbox()
 
-		if not unbox_2 then
+		if not unbox then
 			-- Nothing
 		end
 	end
 
-	unbox_2 = Vector3(0, 0, 0.9)
+	unbox = Vector3(0, 0, 0.9)
+
+	local lookat_target = unbox
 
 	::label_12_0::
 
-	local normalize = Vector3.normalize(unbox_2 - zero)
-	local _camera_rotation_animation_data = self._camera_rotation_animation_data
+	local direction = Vector3.normalize(lookat_target - camera_position_new)
+	local camera_rotation_animation_data = self._camera_rotation_animation_data
 
-	normalize.x = normalize.x + _camera_rotation_animation_data.x.value
-	normalize.y = normalize.y + _camera_rotation_animation_data.y.value
-	normalize.z = normalize.z + _camera_rotation_animation_data.z.value
+	direction.x = direction.x + camera_rotation_animation_data.x.value
+	direction.y = direction.y + camera_rotation_animation_data.y.value
+	direction.z = direction.z + camera_rotation_animation_data.z.value
 
-	local look = Quaternion.look(normalize)
+	local rotation = Quaternion.look(direction)
 
-	ScriptCamera.set_local_rotation(self.camera, look)
+	ScriptCamera.set_local_rotation(self.camera, rotation)
 
-	local _camera_position_animation_data = self._camera_position_animation_data
-	local _camera_character_position_animation_data = self._camera_character_position_animation_data
-	local _camera_gamepad_offset_data = self._camera_gamepad_offset_data
+	local camera_position_animation_data = self._camera_position_animation_data
+	local camera_character_position_animation_data = self._camera_character_position_animation_data
+	local camera_gamepad_offset_data = self._camera_gamepad_offset_data
 
-	zero.x = zero.x + _camera_position_animation_data.x.value + _camera_character_position_animation_data.x.value + _camera_gamepad_offset_data[1]
-	zero.y = zero.y + _camera_position_animation_data.y.value + _camera_character_position_animation_data.y.value + _camera_gamepad_offset_data[2]
-	zero.z = zero.z + _camera_position_animation_data.z.value + _camera_character_position_animation_data.z.value + _camera_gamepad_offset_data[3]
+	camera_position_new.x = camera_position_new.x + camera_position_animation_data.x.value + camera_character_position_animation_data.x.value + camera_gamepad_offset_data[1]
+	camera_position_new.y = camera_position_new.y + camera_position_animation_data.y.value + camera_character_position_animation_data.y.value + camera_gamepad_offset_data[2]
+	camera_position_new.z = camera_position_new.z + camera_position_animation_data.z.value + camera_character_position_animation_data.z.value + camera_gamepad_offset_data[3]
 
-	ScriptCamera.set_local_position(self.camera, zero)
+	ScriptCamera.set_local_position(self.camera, camera_position_new)
 
-	local get_service = self.input_manager:get_service("hero_view")
+	local input_service = self.input_manager:get_service("hero_view")
 
-	if arg_12_3 or not self.character_unit_visible then
-		self:handle_mouse_input(get_service, arg_12_1)
-		self:handle_controller_input(get_service, arg_12_1)
+	if not input_disabled and self.character_unit_visible then
+		self:handle_mouse_input(input_service, dt)
+		self:handle_controller_input(input_service, dt)
 	end
 end
 
-MenuWorldPreviewer.post_update = function (self, arg_13_1, arg_13_2)
+MenuWorldPreviewer.post_update = function (self, dt, t)
 	-- function 13
 	self:_handle_unit_spawn_request()
-	MenuWorldPreviewer.super.post_update(self, arg_13_1, arg_13_2)
+	MenuWorldPreviewer.super.post_update(self, dt, t)
 end
 
 MenuWorldPreviewer.force_stream_highest_mip_levels = function (self)
@@ -348,185 +353,196 @@ MenuWorldPreviewer.force_unhide_character = function (self)
 	self._force_hide_character = false
 end
 
-MenuWorldPreviewer._update_units_visibility = function (self, arg_17_1)
+MenuWorldPreviewer._update_units_visibility = function (self, dt)
 	-- function 17
-	if not self._force_hide_character then
+	if self._force_hide_character then
 		return
 	end
 
-	MenuWorldPreviewer.super._update_units_visibility(self, arg_17_1)
+	MenuWorldPreviewer.super._update_units_visibility(self, dt)
 end
 
-MenuWorldPreviewer._set_character_visibility = function (self, arg_18_1, arg_18_2, arg_18_3)
+MenuWorldPreviewer._set_character_visibility = function (self, visible, camera_move_duration, disable_camera_position_update)
 	-- function 18
-	MenuWorldPreviewer.super._set_character_visibility(self, arg_18_1)
+	MenuWorldPreviewer.super._set_character_visibility(self, visible)
 
-	if not arg_18_3 then
+	if disable_camera_position_update then
 		return
 	end
 
-	local flag = arg_18_2 or self._camera_move_duration
+	local camera_move_duration = not not camera_move_duration or not not self._camera_move_duration
 
-	if not flag then
-		local num = 0
-		local num_2 = 0
-		local num_3 = 0
+	if camera_move_duration then
+		local x = 0
+		local y = 0
+		local z = 0
 
-		if not arg_18_1 then
-			local _current_profile_name = self._current_profile_name
+		if visible then
+			local profile_name = self._current_profile_name
 
-			if not _current_profile_name then
-				local _character_camera_positions = self._character_camera_positions
-				local var_18_6 = _character_camera_positions[_current_profile_name]
+			if profile_name then
+				local character_camera_positions = self._character_camera_positions
+				local var_18_0 = character_camera_positions[profile_name]
 
-				var_18_6 = var_18_6 or _character_camera_positions.default
-				num = var_18_6.x
-				num_2 = var_18_6.y
-				num_3 = var_18_6.z
+				if not var_18_0 then
+					-- Nothing
+				end
+
+				var_18_0 = character_camera_positions.default
+
+				local new_character_position = var_18_0
+
+				::label_18_0::
+
+				x = new_character_position.x
+				y = new_character_position.y
+				z = new_character_position.z
 			end
 		end
 
-		self:set_character_axis_offset("x", num, flag, math.easeOutCubic)
-		self:set_character_axis_offset("y", num_2, flag, math.easeOutCubic)
-		self:set_character_axis_offset("z", num_3, flag, math.easeOutCubic)
+		self:set_character_axis_offset("x", x, camera_move_duration, math.easeOutCubic)
+		self:set_character_axis_offset("y", y, camera_move_duration, math.easeOutCubic)
+		self:set_character_axis_offset("z", z, camera_move_duration, math.easeOutCubic)
 	end
 end
 
-MenuWorldPreviewer._update_camera_animation_data = function (arg_19_0, arg_19_1, arg_19_2)
+MenuWorldPreviewer._update_camera_animation_data = function (self, animation_data, dt)
 	-- function 19
-	for k, v in pairs(arg_19_1) do
-		if not v.total_time then
-			local time = v.time
+	for axis, data in pairs(animation_data) do
+		if data.total_time then
+			local old_time = data.time
 
-			v.time = math.min(time + arg_19_2, v.total_time)
+			data.time = math.min(old_time + dt, data.total_time)
 
-			local min = math.min(1, v.time / v.total_time)
-			local func = v.func
-			local num = v.to - v.from
-			local var_19_4
+			local progress = math.min(1, data.time / data.total_time)
+			local func = data.func
+			local num = data.to - data.from
+			local var_19_1
 
-			if not func then
-				var_19_4 = func(min)
+			if func then
+				var_19_1 = func(progress)
 
-				if not var_19_4 then
+				if not var_19_1 then
 					-- Nothing
 				end
 			end
 
-			var_19_4 = min
+			var_19_1 = progress
 
 			::label_19_0::
 
-			v.value = num * var_19_4 + v.from
+			data.value = num * var_19_1 + data.from
 
-			if min == 1 then
-				v.total_time = nil
+			if progress == 1 then
+				data.total_time = nil
 			end
 		end
 	end
 end
 
-MenuWorldPreviewer.set_camera_axis_offset = function (self, arg_20_1, arg_20_2, arg_20_3, arg_20_4, arg_20_5)
+MenuWorldPreviewer.set_camera_axis_offset = function (self, axis, value, animation_time, func_ptr, fixed_position)
 	-- function 20
-	local var_20_0 = self._camera_position_animation_data[arg_20_1]
-	local _camera_default_position = self._camera_default_position
-	local value
+	local data = self._camera_position_animation_data[axis]
+	local camera_default_position = self._camera_default_position
+	local value_2
 
-	if not arg_20_3 then
-		value = var_20_0.value
+	if animation_time then
+		value_2 = data.value
 
-		if not value then
+		if not value_2 then
 			-- Nothing
 		end
 	end
 
-	value = arg_20_2
+	value_2 = value
 
 	::label_20_0::
 
-	var_20_0.from = value
+	data.from = value_2
 
 	local num
 
-	if not arg_20_5 then
-		num = arg_20_2 + -_camera_default_position[arg_20_1]
+	if fixed_position then
+		num = value + -camera_default_position[axis]
 
 		if not num then
 			-- Nothing
 		end
 	end
 
-	num = arg_20_2
+	num = value
 
 	::label_20_1::
 
-	var_20_0.to = num
-	var_20_0.total_time = arg_20_3
-	var_20_0.time = 0
-	var_20_0.func = arg_20_4
-	var_20_0.value = var_20_0.from
+	data.to = num
+	data.total_time = animation_time
+	data.time = 0
+	data.func = func_ptr
+	data.value = data.from
 end
 
-MenuWorldPreviewer.set_camera_gamepad_offset = function (self, arg_21_1)
+MenuWorldPreviewer.set_camera_gamepad_offset = function (self, value)
 	-- function 21
-	self._camera_gamepad_offset_data = arg_21_1
+	self._camera_gamepad_offset_data = value
 end
 
-MenuWorldPreviewer.set_camera_rotation_axis_offset = function (self, arg_22_1, arg_22_2, arg_22_3, arg_22_4)
+MenuWorldPreviewer.set_camera_rotation_axis_offset = function (self, axis, value, animation_time, func_ptr)
 	-- function 22
-	local var_22_0 = self._camera_rotation_animation_data[arg_22_1]
-	local value
+	local data = self._camera_rotation_animation_data[axis]
+	local value_2
 
-	if not arg_22_3 then
-		value = var_22_0.value
+	if animation_time then
+		value_2 = data.value
 
-		if not value then
+		if not value_2 then
 			-- Nothing
 		end
 	end
 
-	value = arg_22_2
+	value_2 = value
 
 	::label_22_0::
 
-	var_22_0.from = value
-	var_22_0.to = arg_22_2
-	var_22_0.total_time = arg_22_3
-	var_22_0.time = 0
-	var_22_0.func = arg_22_4
-	var_22_0.value = var_22_0.from
+	data.from = value_2
+	data.to = value
+	data.total_time = animation_time
+	data.time = 0
+	data.func = func_ptr
+	data.value = data.from
 end
 
-MenuWorldPreviewer.set_character_axis_offset = function (self, arg_23_1, arg_23_2, arg_23_3, arg_23_4)
+MenuWorldPreviewer.set_character_axis_offset = function (self, axis, value, animation_time, func_ptr)
 	-- function 23
-	local var_23_0 = self._camera_character_position_animation_data[arg_23_1]
-	local value
+	local data = self._camera_character_position_animation_data[axis]
+	local value_2
 
-	if not arg_23_3 then
-		value = var_23_0.value
+	if animation_time then
+		value_2 = data.value
 
-		if not value then
+		if not value_2 then
 			-- Nothing
 		end
 	end
 
-	value = arg_23_2
+	value_2 = value
 
 	::label_23_0::
 
-	var_23_0.from = value
-	var_23_0.to = arg_23_2
-	var_23_0.total_time = arg_23_3
-	var_23_0.time = 0
-	var_23_0.func = arg_23_4
-	var_23_0.value = var_23_0.from
+	data.from = value_2
+	data.to = value
+	data.total_time = animation_time
+	data.time = 0
+	data.func = func_ptr
+	data.value = data.from
 end
 
-local tbl_3 = {}
+local mouse_pos_temp = {}
 
-MenuWorldPreviewer.handle_mouse_input = function (self, arg_24_1, arg_24_2)
+MenuWorldPreviewer.handle_mouse_input = function (self, input_service, dt)
 	-- function 24
-	if self.character_unit == nil then
+	local character_unit = self.character_unit
+
+	if character_unit == nil then
 		return
 	end
 
@@ -534,42 +550,47 @@ MenuWorldPreviewer.handle_mouse_input = function (self, arg_24_1, arg_24_2)
 		return
 	end
 
-	local get = arg_24_1:get("cursor")
+	local mouse = input_service:get("cursor")
 
-	if not get then
+	if not mouse then
 		return
 	end
 
-	local button_hotspot = self.viewport_widget.content.button_hotspot
+	local viewport_widget = self.viewport_widget
+	local content = viewport_widget.content
+	local button_hotspot = content.button_hotspot
+	local is_hover = not not button_hotspot and not not button_hotspot.is_hover
 
-	if not (not button_hotspot and button_hotspot.is_hover) then
-		if not arg_24_1:get("left_press") then
+	if is_hover then
+		if input_service:get("left_press") then
 			self.is_moving_camera = true
 			self.last_mouse_position = nil
-		elseif not arg_24_1:get("right_press") then
-			self.camera_xy_angle_target = degrees_to_radians
+		elseif input_service:get("right_press") then
+			self.camera_xy_angle_target = DEFAULT_ANGLE
 		end
 	end
 
 	local is_moving_camera = self.is_moving_camera
-	local get_2 = arg_24_1:get("left_hold")
+	local mouse_hold = input_service:get("left_hold")
 
-	if not is_moving_camera and not get_2 then
-		if not self.last_mouse_position then
-			self.camera_xy_angle_target = self.camera_xy_angle_target - (get.x - self.last_mouse_position[1]) * 0.01
+	if is_moving_camera and mouse_hold then
+		if self.last_mouse_position then
+			self.camera_xy_angle_target = self.camera_xy_angle_target - (mouse.x - self.last_mouse_position[1]) * 0.01
 		end
 
-		tbl_3[1] = get.x
-		tbl_3[2] = get.y
-		self.last_mouse_position = tbl_3
-	elseif not is_moving_camera then
+		mouse_pos_temp[1] = mouse.x
+		mouse_pos_temp[2] = mouse.y
+		self.last_mouse_position = mouse_pos_temp
+	elseif is_moving_camera then
 		self.is_moving_camera = false
 	end
 end
 
-MenuWorldPreviewer.handle_controller_input = function (self, arg_25_1, arg_25_2)
+MenuWorldPreviewer.handle_controller_input = function (self, input_service, dt)
 	-- function 25
-	if self.character_unit == nil then
+	local character_unit = self.character_unit
+
+	if character_unit == nil then
 		return
 	end
 
@@ -577,17 +598,17 @@ MenuWorldPreviewer.handle_controller_input = function (self, arg_25_1, arg_25_2)
 		return
 	end
 
-	local get = arg_25_1:get("gamepad_right_axis")
+	local camera_move = input_service:get("gamepad_right_axis")
 
-	if not (not get and not (Vector3.length(get) > 0.01)) then
-		self.camera_xy_angle_target = self.camera_xy_angle_target + -get.x * arg_25_2 * 5
+	if camera_move and Vector3.length(camera_move) > 0.01 then
+		self.camera_xy_angle_target = self.camera_xy_angle_target + -camera_move.x * dt * 5
 	end
 end
 
-MenuWorldPreviewer.start_character_rotation = function (self, arg_26_1)
+MenuWorldPreviewer.start_character_rotation = function (self, direction)
 	-- function 26
-	if not arg_26_1 then
-		self.rotation_direction = arg_26_1
+	if direction then
+		self.rotation_direction = direction
 	end
 end
 
@@ -596,66 +617,66 @@ MenuWorldPreviewer.end_character_rotation = function (self)
 	print("end_character_rotation", self.rotation_direction)
 end
 
-MenuWorldPreviewer.request_spawn_hero_unit = function (self, arg_28_1, arg_28_2, arg_28_3, arg_28_4, arg_28_5, arg_28_6, arg_28_7, arg_28_8)
+MenuWorldPreviewer.request_spawn_hero_unit = function (self, profile_name, career_index, state_character, callback, optional_scale, camera_move_duration, optional_skin, reset_camera)
 	-- function 28
 	self:clear_asynchronous_data()
 
 	self._requested_hero_spawn_data = {
 		frame_delay = 1,
-		profile_name = arg_28_1,
-		career_index = arg_28_2,
-		state_character = arg_28_3,
-		callback = arg_28_4,
-		optional_scale = arg_28_5,
-		camera_move_duration = arg_28_6,
-		optional_skin = arg_28_7
+		profile_name = profile_name,
+		career_index = career_index,
+		state_character = state_character,
+		callback = callback,
+		optional_scale = optional_scale,
+		camera_move_duration = camera_move_duration,
+		optional_skin = optional_skin
 	}
 
-	if not self._delayed_spawn then
+	if self._delayed_spawn then
 		self._delayed_hero_spawn_data = table.clone(self._requested_hero_spawn_data)
 	end
 
-	self:clear_units(arg_28_8)
+	self:clear_units(reset_camera)
 
 	self._draw_character = true
 end
 
-MenuWorldPreviewer.request_spawn_unit = function (self, arg_29_1, arg_29_2, arg_29_3)
+MenuWorldPreviewer.request_spawn_unit = function (self, unit_name, unit_type, cb)
 	-- function 29
-	local _requested_unit_spawn_queue = self._requested_unit_spawn_queue
+	local queue = self._requested_unit_spawn_queue
 
-	_requested_unit_spawn_queue[#_requested_unit_spawn_queue + 1] = {
+	queue[#queue + 1] = {
 		frame_delay = 1,
-		unit_name = arg_29_1,
-		unit_type = arg_29_2,
-		callback = arg_29_3
+		unit_name = unit_name,
+		unit_type = unit_type,
+		callback = cb
 	}
 
-	if not self._delayed_spawn then
-		self._delayed_unit_spawn_queue = table.clone(_requested_unit_spawn_queue)
+	if self._delayed_spawn then
+		self._delayed_unit_spawn_queue = table.clone(queue)
 	end
 end
 
 MenuWorldPreviewer._handle_hero_spawn_request = function (self)
 	-- function 30
-	if not self._requested_hero_spawn_data then
-		local _requested_hero_spawn_data = self._requested_hero_spawn_data
-		local frame_delay = _requested_hero_spawn_data.frame_delay
+	if self._requested_hero_spawn_data then
+		local requested_hero_spawn_data = self._requested_hero_spawn_data
+		local frame_delay = requested_hero_spawn_data.frame_delay
 
 		if frame_delay == 0 then
-			local profile_name = _requested_hero_spawn_data.profile_name
-			local career_index = _requested_hero_spawn_data.career_index
-			local state_character = _requested_hero_spawn_data.state_character
-			local callback = _requested_hero_spawn_data.callback
-			local optional_scale = _requested_hero_spawn_data.optional_scale
-			local camera_move_duration = _requested_hero_spawn_data.camera_move_duration
-			local optional_skin = _requested_hero_spawn_data.optional_skin
+			local profile_name = requested_hero_spawn_data.profile_name
+			local career_index = requested_hero_spawn_data.career_index
+			local state_character = requested_hero_spawn_data.state_character
+			local callback = requested_hero_spawn_data.callback
+			local optional_scale = requested_hero_spawn_data.optional_scale
+			local camera_move_duration = requested_hero_spawn_data.camera_move_duration
+			local optional_skin = requested_hero_spawn_data.optional_skin
 
 			self:_load_hero_unit(profile_name, career_index, state_character, callback, optional_scale, camera_move_duration, optional_skin)
 
 			self._requested_hero_spawn_data = nil
 		else
-			_requested_hero_spawn_data.frame_delay = frame_delay - 1
+			requested_hero_spawn_data.frame_delay = frame_delay - 1
 		end
 	end
 end
@@ -666,192 +687,210 @@ MenuWorldPreviewer._handle_unit_spawn_request = function (self)
 		return
 	end
 
-	local var_31_0 = self._requested_unit_spawn_queue[1]
-	local frame_delay = var_31_0.frame_delay
+	local unit_data = self._requested_unit_spawn_queue[1]
+	local frame_delay = unit_data.frame_delay
 
 	if frame_delay == 0 then
-		self:_spawn_unit(var_31_0.unit_name, var_31_0)
+		self:_spawn_unit(unit_data.unit_name, unit_data)
 		table.remove(self._requested_unit_spawn_queue, 1)
 	else
-		var_31_0.frame_delay = frame_delay - 1
+		unit_data.frame_delay = frame_delay - 1
 	end
 end
 
-MenuWorldPreviewer._load_hero_unit = function (self, arg_32_1, arg_32_2, arg_32_3, arg_32_4, arg_32_5, arg_32_6, arg_32_7)
+MenuWorldPreviewer._load_hero_unit = function (self, profile_name, career_index, state_character, callback, optional_scale, camera_move_duration, optional_skin)
 	-- function 32
-	self.camera_xy_angle_target = degrees_to_radians
+	self.camera_xy_angle_target = DEFAULT_ANGLE
 
 	if not self._delayed_spawn then
 		self:_unload_all_packages()
 	end
 
-	arg_32_6 = arg_32_6 or 0.01
+	camera_move_duration = not not camera_move_duration or not not 0.01
 
-	local _character_camera_positions = self._character_camera_positions
-	local var_32_1 = _character_camera_positions[arg_32_1]
+	local character_camera_positions = self._character_camera_positions
+	local var_32_0 = character_camera_positions[profile_name]
 
-	var_32_1 = var_32_1 or _character_camera_positions.default
+	if not var_32_0 then
+		-- Nothing
+	end
 
-	self:set_character_axis_offset("x", var_32_1.x, arg_32_6, math.easeOutCubic)
-	self:set_character_axis_offset("y", var_32_1.y, arg_32_6, math.easeOutCubic)
-	self:set_character_axis_offset("z", var_32_1.z, arg_32_6, math.easeOutCubic)
+	var_32_0 = character_camera_positions.default
 
-	self._camera_move_duration = arg_32_6
-	self._current_profile_name = arg_32_1
+	local new_character_position = var_32_0
 
-	local var_32_2 = FindProfileIndex(arg_32_1)
-	local var_32_3 = SPProfiles[var_32_2].careers[arg_32_2]
-	local name = var_32_3.name
-	local get_loadout_item = BackendUtils.get_loadout_item(name, "slot_skin")
-	local flag = not get_loadout_item and get_loadout_item.data
+	::label_32_0::
 
-	if not arg_32_7 then
+	self:set_character_axis_offset("x", new_character_position.x, camera_move_duration, math.easeOutCubic)
+	self:set_character_axis_offset("y", new_character_position.y, camera_move_duration, math.easeOutCubic)
+	self:set_character_axis_offset("z", new_character_position.z, camera_move_duration, math.easeOutCubic)
+
+	self._camera_move_duration = camera_move_duration
+	self._current_profile_name = profile_name
+
+	local profile_index = FindProfileIndex(profile_name)
+	local profile = SPProfiles[profile_index]
+	local career = profile.careers[career_index]
+	local career_name = career.name
+	local skin_item = BackendUtils.get_loadout_item(career_name, "slot_skin")
+	local item_data = not not skin_item and not not skin_item.data
+
+	if not optional_skin then
 		-- Nothing
 	end
 
 	do
-		local name_2
+		local name
 	end
 
-	::label_32_0::
+	::label_32_1::
 
-	if not flag then
-		name_2 = flag.name
+	if item_data then
+		name = item_data.name
 
-		if not name_2 then
+		if not name then
 			-- Nothing
 		end
 	end
 
-	name_2 = var_32_3.base_skin
+	name = career.base_skin
 
-	::label_32_1::
+	local skin_name = name
 
-	GlobalShaderFlags.set_global_shader_flag("NECROMANCER_CAREER_REMAP", name == "bw_necromancer")
+	::label_32_2::
 
-	if not arg_32_3 then
-		name_2 = var_32_3.base_skin
+	GlobalShaderFlags.set_global_shader_flag("NECROMANCER_CAREER_REMAP", career_name == "bw_necromancer")
+
+	if state_character then
+		skin_name = career.base_skin
 	end
 
-	self._current_career_name = name
+	self._current_career_name = career_name
 	self.character_unit_skin_data = nil
 
-	local retrieve_skin_packages_for_preview = CosmeticsUtils.retrieve_skin_packages_for_preview(name_2)
-	local var_32_9 = Cosmetics[name_2]
-
-	self._hero_loading_package_data = {
+	local package_names = CosmeticsUtils.retrieve_skin_packages_for_preview(skin_name)
+	local skin_data = Cosmetics[skin_name]
+	local data = {
 		num_loaded_packages = 0,
-		career_name = name,
-		skin_data = var_32_9,
-		career_index = arg_32_2,
-		optional_scale = arg_32_5,
-		package_names = retrieve_skin_packages_for_preview,
-		num_packages = #retrieve_skin_packages_for_preview,
-		callback = arg_32_4
-	}, self:_load_packages(retrieve_skin_packages_for_preview)
+		career_name = career_name,
+		skin_data = skin_data,
+		career_index = career_index,
+		optional_scale = optional_scale,
+		package_names = package_names,
+		num_packages = #package_names,
+		callback = callback
+	}
+
+	self:_load_packages(package_names)
+
+	self._hero_loading_package_data = data
 end
 
-MenuWorldPreviewer._spawn_hero_unit = function (self, arg_33_1, arg_33_2, arg_33_3)
+MenuWorldPreviewer._spawn_hero_unit = function (self, skin_data, optional_scale, career_index)
 	-- function 33
-	MenuWorldPreviewer.super._spawn_hero_unit(self, arg_33_1, arg_33_2, arg_33_3)
+	MenuWorldPreviewer.super._spawn_hero_unit(self, skin_data, optional_scale, career_index)
 
-	if self._use_highest_mip_levels or not UISettings.wait_for_mip_streaming_character then
+	if self._use_highest_mip_levels or UISettings.wait_for_mip_streaming_character then
 		self:_request_mip_streaming_for_unit(self.character_unit)
 	end
 end
 
-MenuWorldPreviewer.respawn_hero_unit = function (self, arg_34_1, arg_34_2, arg_34_3, arg_34_4, arg_34_5)
+MenuWorldPreviewer.respawn_hero_unit = function (self, profile_name, career_index, state_character, callback, camera_move_duration)
 	-- function 34
-	local flag = true
+	local reset_camera = true
 
-	self:request_spawn_hero_unit(arg_34_1, arg_34_2, arg_34_3, arg_34_4, nil, arg_34_5, nil, flag)
+	self:request_spawn_hero_unit(profile_name, career_index, state_character, callback, nil, camera_move_duration, nil, reset_camera)
 end
 
-MenuWorldPreviewer._spawn_item = function (self, arg_35_1, arg_35_2)
+MenuWorldPreviewer._spawn_item = function (self, item_name, spawn_data)
 	-- function 35
-	if not MenuWorldPreviewer.super._spawn_item(self, arg_35_1, arg_35_2) and self._use_highest_mip_levels and not UISettings.wait_for_mip_streaming_character then
+	local hero_material_changed = MenuWorldPreviewer.super._spawn_item(self, item_name, spawn_data)
+
+	if hero_material_changed and (self._use_highest_mip_levels or UISettings.wait_for_mip_streaming_character) then
 		self:_request_mip_streaming_for_unit(self.character_unit)
 	end
 end
 
-MenuWorldPreviewer._spawn_item_unit = function (self, arg_36_1, arg_36_2, arg_36_3, arg_36_4, arg_36_5, arg_36_6, arg_36_7)
+MenuWorldPreviewer._spawn_item_unit = function (self, unit, item_slot_type, item_template, unit_attachment_node_linking, scene_graph_links, material_settings_name, unit_spawn_data)
 	-- function 36
-	MenuWorldPreviewer.super._spawn_item_unit(self, arg_36_1, arg_36_2, arg_36_3, arg_36_4, arg_36_5, arg_36_6, arg_36_7)
+	MenuWorldPreviewer.super._spawn_item_unit(self, unit, item_slot_type, item_template, unit_attachment_node_linking, scene_graph_links, material_settings_name, unit_spawn_data)
 
-	if self._use_highest_mip_levels or not UISettings.wait_for_mip_streaming_items then
-		self:_request_mip_streaming_for_unit(arg_36_1)
+	if self._use_highest_mip_levels or UISettings.wait_for_mip_streaming_items then
+		self:_request_mip_streaming_for_unit(unit)
 	end
 end
 
-MenuWorldPreviewer._spawn_unit = function (self, arg_37_1, arg_37_2)
+MenuWorldPreviewer._spawn_unit = function (self, unit_name, item_data)
 	-- function 37
-	local spawn_unit = World.spawn_unit(self.world, arg_37_1)
+	local unit = World.spawn_unit(self.world, unit_name)
 
-	self._units[#self._units + 1] = spawn_unit
-	self._hidden_units[spawn_unit] = true
+	self._units[#self._units + 1] = unit
+	self._hidden_units[unit] = true
 
-	Unit.set_unit_visibility(spawn_unit, false)
+	Unit.set_unit_visibility(unit, false)
 
-	local callback = arg_37_2.callback
+	local cb = item_data.callback
 
-	if not callback then
-		callback(spawn_unit)
+	if cb then
+		cb(unit)
 	end
 end
 
-MenuWorldPreviewer.set_unit_location = function (arg_38_0, arg_38_1, arg_38_2)
+MenuWorldPreviewer.set_unit_location = function (self, unit, location)
 	-- function 38
-	if not arg_38_2 and not arg_38_1 and not Unit.alive(arg_38_1) then
-		Unit.set_local_position(arg_38_1, 0, Vector3Aux.unbox(arg_38_2))
+	if location and unit and Unit.alive(unit) then
+		Unit.set_local_position(unit, 0, Vector3Aux.unbox(location))
 	end
 end
 
-MenuWorldPreviewer._destroy_item_units_by_slot = function (self, arg_39_1)
+MenuWorldPreviewer._destroy_item_units_by_slot = function (self, slot_type)
 	-- function 39
 	local world = self.world
-	local _hidden_units = self._hidden_units
-	local _requested_mip_streaming_units = self._requested_mip_streaming_units
-	local spawn_data = self._item_info_by_slot[arg_39_1].spawn_data
+	local hidden_units = self._hidden_units
+	local requested_mip_streaming_units = self._requested_mip_streaming_units
+	local item_info_by_slot = self._item_info_by_slot
+	local data = item_info_by_slot[slot_type]
+	local spawn_data = data.spawn_data
 
-	if not spawn_data then
-		for i, v in ipairs(spawn_data) do
-			local item_slot_type = v.item_slot_type
-			local slot_index = v.slot_index
+	if spawn_data then
+		for _, unit_spawn_data in ipairs(spawn_data) do
+			local item_slot_type = unit_spawn_data.item_slot_type
+			local slot_index = unit_spawn_data.slot_index
 
-			if not (item_slot_type == "melee" or item_slot_type ~= "ranged") then
-				if v.right_hand or not v.despawn_both_hands_units then
-					local right = self._equipment_units[slot_index].right
+			if item_slot_type == "melee" or item_slot_type == "ranged" then
+				if unit_spawn_data.right_hand or unit_spawn_data.despawn_both_hands_units then
+					local old_unit_right = self._equipment_units[slot_index].right
 
-					if right ~= nil then
-						_hidden_units[right] = nil
-						_requested_mip_streaming_units[right] = nil
+					if old_unit_right ~= nil then
+						hidden_units[old_unit_right] = nil
+						requested_mip_streaming_units[old_unit_right] = nil
 
-						World.destroy_unit(world, right)
+						World.destroy_unit(world, old_unit_right)
 
 						self._equipment_units[slot_index].right = nil
 					end
 				end
 
-				if v.left_hand or not v.despawn_both_hands_units then
-					local left = self._equipment_units[slot_index].left
+				if unit_spawn_data.left_hand or unit_spawn_data.despawn_both_hands_units then
+					local old_unit_left = self._equipment_units[slot_index].left
 
-					if left ~= nil then
-						_hidden_units[left] = nil
-						_requested_mip_streaming_units[left] = nil
+					if old_unit_left ~= nil then
+						hidden_units[old_unit_left] = nil
+						requested_mip_streaming_units[old_unit_left] = nil
 
-						World.destroy_unit(world, left)
+						World.destroy_unit(world, old_unit_left)
 
 						self._equipment_units[slot_index].left = nil
 					end
 				end
 			else
-				local var_39_8 = self._equipment_units[slot_index]
+				local old_unit = self._equipment_units[slot_index]
 
-				if var_39_8 ~= nil then
-					_hidden_units[var_39_8] = nil
-					_requested_mip_streaming_units[var_39_8] = nil
+				if old_unit ~= nil then
+					hidden_units[old_unit] = nil
+					requested_mip_streaming_units[old_unit] = nil
 
-					World.destroy_unit(world, var_39_8)
+					World.destroy_unit(world, old_unit)
 
 					self._equipment_units[slot_index] = nil
 				end
@@ -862,32 +901,32 @@ end
 
 MenuWorldPreviewer._reference_name = function (self)
 	-- function 40
-	local str = "MenuWorldPreviewer"
+	local reference_name = "MenuWorldPreviewer"
 
-	if not self.unique_id then
-		str = str .. tostring(self.unique_id)
+	if self.unique_id then
+		reference_name = reference_name .. tostring(self.unique_id)
 	end
 
-	return str
+	return reference_name
 end
 
-MenuWorldPreviewer.clear_units = function (self, arg_41_1)
+MenuWorldPreviewer.clear_units = function (self, reset_camera)
 	-- function 41
 	MenuWorldPreviewer.super.clear_units(self)
 
-	if not arg_41_1 then
-		local _default_animation_data = self._default_animation_data
+	if reset_camera then
+		local default_animation_data = self._default_animation_data
 
-		self:set_character_axis_offset("x", _default_animation_data.x.value, 0.5, math.easeOutCubic)
-		self:set_character_axis_offset("y", _default_animation_data.y.value, 0.5, math.easeOutCubic)
-		self:set_character_axis_offset("z", _default_animation_data.z.value, 0.5, math.easeOutCubic)
+		self:set_character_axis_offset("x", default_animation_data.x.value, 0.5, math.easeOutCubic)
+		self:set_character_axis_offset("y", default_animation_data.y.value, 0.5, math.easeOutCubic)
+		self:set_character_axis_offset("z", default_animation_data.z.value, 0.5, math.easeOutCubic)
 	end
 
-	local _units = self._units
+	local units = self._units
 
-	if not _units then
-		for i = 1, #_units do
-			World.destroy_unit(self.world, _units[i])
+	if units then
+		for i = 1, #units do
+			World.destroy_unit(self.world, units[i])
 		end
 	end
 
@@ -899,14 +938,14 @@ MenuWorldPreviewer.hide_character = function (self)
 	self._draw_character = false
 end
 
-MenuWorldPreviewer.trigger_unit_flow_event = function (arg_43_0, arg_43_1, arg_43_2)
+MenuWorldPreviewer.trigger_unit_flow_event = function (self, unit, event_name)
 	-- function 43
-	if not arg_43_1 and not Unit.alive(arg_43_1) then
-		Unit.flow_event(arg_43_1, arg_43_2)
+	if unit and Unit.alive(unit) then
+		Unit.flow_event(unit, event_name)
 	end
 end
 
-MenuWorldPreviewer.trigger_level_flow_event = function (self, arg_44_1)
+MenuWorldPreviewer.trigger_level_flow_event = function (self, event_name)
 	-- function 44
-	return Level.trigger_event(self.level, arg_44_1)
+	return Level.trigger_event(self.level, event_name)
 end

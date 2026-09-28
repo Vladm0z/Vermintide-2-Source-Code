@@ -2,64 +2,66 @@
 
 GutterRunnerStateProwling = class(GutterRunnerStateProwling, EnemyCharacterState)
 
-GutterRunnerStateProwling.init = function (self, arg_1_1)
+GutterRunnerStateProwling.init = function (self, character_state_init_context)
 	-- function 1
-	EnemyCharacterState.init(self, arg_1_1, "gutter_runner_prowling")
+	EnemyCharacterState.init(self, character_state_init_context, "gutter_runner_prowling")
 
-	local var_1_0 = arg_1_1
+	local context = character_state_init_context
 
 	self.current_movement_speed_scale = 0
 	self.latest_valid_navmesh_position = Vector3Box(math.huge, math.huge, math.huge)
 	self.last_input_direction = Vector3Box(0, 0, 0)
 end
 
-GutterRunnerStateProwling.on_enter = function (self, arg_2_1, arg_2_2, arg_2_3, arg_2_4, arg_2_5, arg_2_6, arg_2_7)
+GutterRunnerStateProwling.on_enter = function (self, unit, input, dt, context, t, previous_state, params)
 	-- function 2
 	self._pounce_ready = false
 
-	local _unit = self._unit
-	local _input_extension = self._input_extension
-	local _first_person_extension = self._first_person_extension
-	local _status_extension = self._status_extension
-	local _inventory_extension = self._inventory_extension
-	local _health_extension = self._health_extension
-	local current_velocity = self._locomotion_extension:current_velocity()
+	local unit = self._unit
+	local input_extension = self._input_extension
+	local first_person_extension = self._first_person_extension
+	local status_extension = self._status_extension
+	local inventory_extension = self._inventory_extension
+	local health_extension = self._health_extension
+	local locomotion_extension = self._locomotion_extension
+	local current_velocity = locomotion_extension:current_velocity()
+	local breed = Unit.get_data(unit, "breed")
 
-	self._breed = Unit.get_data(_unit, "breed")
+	self._breed = breed
 
-	local owner = Managers.player:owner(_unit)
-	local flag = not owner and owner.bot_player
+	local player = Managers.player:owner(unit)
+	local is_bot = not not player and not not player.bot_player
 
-	if arg_2_6 == "standing" then
+	if previous_state == "standing" then
 		self.current_movement_speed_scale = 0
 	else
 		self.current_movement_speed_scale = 1
 	end
 
-	if not flag then
-		local normalize = Vector3.normalize(Vector3.flat(current_velocity))
-		local current_rotation = _first_person_extension:current_rotation()
-		local dot = Vector3.dot(Quaternion.right(current_rotation), normalize)
-		local dot_2 = Vector3.dot(Vector3.normalize(Vector3.flat(Quaternion.forward(current_rotation))), normalize)
-		local var_2_13 = Vector3(dot, dot_2, 0)
+	if not is_bot then
+		local dir = Vector3.normalize(Vector3.flat(current_velocity))
+		local look_rot = first_person_extension:current_rotation()
+		local x = Vector3.dot(Quaternion.right(look_rot), dir)
+		local y = Vector3.dot(Vector3.normalize(Vector3.flat(Quaternion.forward(look_rot))), dir)
+		local local_move_vector = Vector3(x, y, 0)
 
-		self.last_input_direction:store(var_2_13)
+		self.last_input_direction:store(local_move_vector)
 	end
 
-	local get_move_animation, var_2_15 = CharacterStateHelper.get_move_animation(self._locomotion_extension, _input_extension, _status_extension, self.move_anim_3p)
+	local move_anim_3p, move_anim_1p = CharacterStateHelper.get_move_animation(self._locomotion_extension, input_extension, status_extension, self.move_anim_3p)
 
-	self.move_anim_3p = get_move_animation
-	self.move_anim_1p = var_2_15
+	self.move_anim_3p = move_anim_3p
+	self.move_anim_1p = move_anim_1p
 
-	CharacterStateHelper.play_animation_event(_unit, get_move_animation)
-	CharacterStateHelper.play_animation_event_first_person(_first_person_extension, var_2_15)
-	CharacterStateHelper.look(_input_extension, self._player.viewport_name, _first_person_extension, _status_extension, _inventory_extension)
-	CharacterStateHelper.update_weapon_actions(arg_2_5, _unit, _input_extension, _inventory_extension, _health_extension)
-	_first_person_extension:play_unit_sound_event("Play_versus_gutterrunner_jump_attack_enter", _unit, 0)
+	CharacterStateHelper.play_animation_event(unit, move_anim_3p)
+	CharacterStateHelper.play_animation_event_first_person(first_person_extension, move_anim_1p)
+	CharacterStateHelper.look(input_extension, self._player.viewport_name, first_person_extension, status_extension, inventory_extension)
+	CharacterStateHelper.update_weapon_actions(t, unit, input_extension, inventory_extension, health_extension)
+	first_person_extension:play_unit_sound_event("Play_versus_gutterrunner_jump_attack_enter", unit, 0)
 
-	self.is_bot = flag
+	self.is_bot = is_bot
 
-	self:_start_priming(arg_2_5)
+	self:_start_priming(t)
 
 	self._exit_with_priming = true
 
@@ -73,18 +75,18 @@ GutterRunnerStateProwling.on_enter = function (self, arg_2_1, arg_2_2, arg_2_3, 
 	self._ghost_mode_extension:set_external_no_spawn_reason("prowling", true)
 end
 
-GutterRunnerStateProwling.on_exit = function (self, arg_3_1, arg_3_2, arg_3_3, arg_3_4, arg_3_5, arg_3_6, arg_3_7)
+GutterRunnerStateProwling.on_exit = function (self, unit, input, dt, context, t, next_state, is_destroy)
 	-- function 3
-	EnemyCharacterState.on_exit(self, arg_3_1, arg_3_2, arg_3_3, arg_3_4, arg_3_5, arg_3_6)
+	EnemyCharacterState.on_exit(self, unit, input, dt, context, t, next_state)
 
-	if not (arg_3_7 or Managers.state.network:game()) then
+	if is_destroy or not Managers.state.network:game() then
 		return
 	end
 
 	self._pounce_ready = nil
 
 	if not self._exit_with_priming then
-		self:_stop_priming(arg_3_5)
+		self:_stop_priming(t)
 	end
 
 	self:_set_priming_progress(0)
@@ -92,49 +94,52 @@ GutterRunnerStateProwling.on_exit = function (self, arg_3_1, arg_3_2, arg_3_3, a
 	self._ghost_mode_extension:set_external_no_spawn_reason("prowling", nil)
 end
 
-GutterRunnerStateProwling.update = function (self, arg_4_1, arg_4_2, arg_4_3, arg_4_4, arg_4_5)
+GutterRunnerStateProwling.update = function (self, unit, input, dt, context, t)
 	-- function 4
-	local _csm = self._csm
-	local _world = self._world
-	local _unit = self._unit
-	local get_movement_settings_table = PlayerUnitMovementSettings.get_movement_settings_table(_unit)
-	local _input_extension = self._input_extension
-	local _status_extension = self._status_extension
-	local _first_person_extension = self._first_person_extension
-	local _locomotion_extension = self._locomotion_extension
-	local _health_extension = self._health_extension
-	local _inventory_extension = self._inventory_extension
+	local csm = self._csm
+	local world = self._world
+	local unit = self._unit
+	local movement_settings_table = PlayerUnitMovementSettings.get_movement_settings_table(unit)
+	local input_extension = self._input_extension
+	local status_extension = self._status_extension
+	local first_person_extension = self._first_person_extension
+	local locomotion_extension = self._locomotion_extension
+	local health_extension = self._health_extension
+	local inventory_extension = self._inventory_extension
 
-	if not CharacterStateHelper.do_common_state_transitions(_status_extension, _csm) then
+	if CharacterStateHelper.do_common_state_transitions(status_extension, csm) then
 		self._exit_with_priming = false
 
 		return
 	end
 
-	local flag = false
+	local exit = false
+	local released = input_extension:get("dark_pact_action_one_release")
 
-	if not _input_extension:get("dark_pact_action_one_release") then
-		self:_update_priming(arg_4_5, arg_4_3, true)
+	if released then
+		self:_update_priming(t, dt, true)
 
-		if not self._done_priming then
+		if self._done_priming then
 			self:_start_pounce()
 
 			return
 		else
-			flag = true
+			exit = true
 		end
 
 		self._pounce_ready = true
 	else
-		self:_update_priming(arg_4_5, arg_4_3, false)
+		self:_update_priming(t, dt, false)
 	end
 
-	if _input_extension:get("dark_pact_action_two") or not flag then
-		_first_person_extension:play_hud_sound_event("Stop_versus_gutterrunner_jump_charge_loop")
+	local canceled = input_extension:get("dark_pact_action_two")
+
+	if canceled or exit then
+		first_person_extension:play_hud_sound_event("Stop_versus_gutterrunner_jump_charge_loop")
 
 		self._exit_with_priming = false
 
-		_csm:change_state("walking")
+		csm:change_state("walking")
 
 		return
 	end
@@ -142,137 +147,173 @@ GutterRunnerStateProwling.update = function (self, arg_4_1, arg_4_2, arg_4_3, ar
 	local current_movement_speed_scale = self.current_movement_speed_scale
 	local CharacterStateHelper = CharacterStateHelper
 
-	if not _locomotion_extension:is_on_ground() then
-		ScriptUnit.extension(_unit, "whereabouts_system"):set_is_onground()
+	if locomotion_extension:is_on_ground() then
+		ScriptUnit.extension(unit, "whereabouts_system"):set_is_onground()
 	end
 
-	if not CharacterStateHelper.is_using_transport(_status_extension) then
-		_csm:change_state("using_transport")
+	if CharacterStateHelper.is_using_transport(status_extension) then
+		csm:change_state("using_transport")
 
 		return
 	end
 
-	if not CharacterStateHelper.is_pushed(_status_extension) then
-		_status_extension:set_pushed(false)
+	if CharacterStateHelper.is_pushed(status_extension) then
+		status_extension:set_pushed(false)
 
-		local pushed = get_movement_settings_table.stun_settings.pushed
+		local params = movement_settings_table.stun_settings.pushed
+		local hit_react_type = status_extension:hit_react_type()
 
-		pushed.hit_react_type = _status_extension:hit_react_type() .. "_push"
+		params.hit_react_type = hit_react_type .. "_push"
 
-		_csm:change_state("stunned", pushed)
-
-		return
-	end
-
-	if not _locomotion_extension:is_animation_driven() then
-		return
-	end
-
-	local is_device_active = Managers.input:is_device_active("gamepad")
-
-	if not (_csm.state_next or _locomotion_extension:is_on_ground()) then
-		_csm:change_state("falling", self._temp_params)
-		_first_person_extension:change_state("falling")
+		csm:change_state("stunned", params)
 
 		return
 	end
 
-	local owner = Managers.player:owner(_unit)
-	local get_movement_input = CharacterStateHelper.get_movement_input(_input_extension)
-	local has_move_input = CharacterStateHelper.has_move_input(_input_extension)
+	if locomotion_extension:is_animation_driven() then
+		return
+	end
+
+	local gamepad_active = Managers.input:is_device_active("gamepad")
+
+	if not csm.state_next and not locomotion_extension:is_on_ground() then
+		csm:change_state("falling", self._temp_params)
+		first_person_extension:change_state("falling")
+
+		return
+	end
+
+	local player = Managers.player:owner(unit)
+	local move_input = CharacterStateHelper.get_movement_input(input_extension)
+	local is_moving = CharacterStateHelper.has_move_input(input_extension)
 
 	if not self.is_bot then
 		local _breed = self._breed
 
-		_breed = not _breed and self._breed.breed_move_acceleration_up
+		if _breed then
+			-- Nothing
+		end
+
+		_breed = self._breed.breed_move_acceleration_up
+
+		local breed_move_acceleration_up = _breed
+
+		::label_4_0::
 
 		local _breed_2 = self._breed
 
-		_breed_2 = not _breed_2 and self._breed.breed_move_acceleration_down
+		if _breed_2 then
+			-- Nothing
+		end
 
-		local num = _breed * arg_4_3
+		_breed_2 = self._breed.breed_move_acceleration_down
 
-		num = num or get_movement_settings_table.move_acceleration_up * arg_4_3
+		local breed_move_acceleration_down = _breed_2
 
-		local num_2 = _breed_2 * arg_4_3
+		::label_4_1::
 
-		num_2 = num_2 or get_movement_settings_table.move_acceleration_down * arg_4_3
+		local num = breed_move_acceleration_up * dt
 
-		if not has_move_input then
-			current_movement_speed_scale = math.min(1, current_movement_speed_scale + num)
+		if not num then
+			-- Nothing
+		end
 
-			if not is_device_active then
-				current_movement_speed_scale = Vector3.length(get_movement_input) * current_movement_speed_scale
+		num = movement_settings_table.move_acceleration_up * dt
+
+		local move_acceleration_up_dt = num
+
+		::label_4_2::
+
+		local num_2 = breed_move_acceleration_down * dt
+
+		if not num_2 then
+			-- Nothing
+		end
+
+		num_2 = movement_settings_table.move_acceleration_down * dt
+
+		local move_acceleration_down_dt = num_2
+
+		::label_4_3::
+
+		if is_moving then
+			current_movement_speed_scale = math.min(1, current_movement_speed_scale + move_acceleration_up_dt)
+
+			if gamepad_active then
+				current_movement_speed_scale = Vector3.length(move_input) * current_movement_speed_scale
 			end
 		else
-			current_movement_speed_scale = math.max(0, current_movement_speed_scale - num_2)
+			current_movement_speed_scale = math.max(0, current_movement_speed_scale - move_acceleration_down_dt)
 		end
 	else
-		current_movement_speed_scale = not has_move_input and 1 and 0
+		current_movement_speed_scale = (not is_moving or not 1) and not not 0
 	end
 
-	local num_3 = get_movement_settings_table.crouch_move_speed * _status_extension:current_move_speed_multiplier() * current_movement_speed_scale * get_movement_settings_table.player_speed_scale
-	local normalize = Vector3.normalize(get_movement_input)
+	local current_max_move_speed = movement_settings_table.crouch_move_speed
+	local move_speed_multiplier = status_extension:current_move_speed_multiplier()
+	local final_move_speed = current_max_move_speed * move_speed_multiplier * current_movement_speed_scale * movement_settings_table.player_speed_scale
+	local move_input_direction = Vector3.normalize(move_input)
 
-	if Vector3.length_squared(get_movement_input) == 0 then
-		normalize = self.last_input_direction:unbox()
+	if Vector3.length_squared(move_input) == 0 then
+		move_input_direction = self.last_input_direction:unbox()
 	else
-		self.last_input_direction:store(normalize)
+		self.last_input_direction:store(move_input_direction)
 	end
 
-	CharacterStateHelper.move_on_ground(_first_person_extension, _input_extension, _locomotion_extension, normalize, num_3, _unit)
-	CharacterStateHelper.look(_input_extension, self._player.viewport_name, _first_person_extension, _status_extension, _inventory_extension)
+	CharacterStateHelper.move_on_ground(first_person_extension, input_extension, locomotion_extension, move_input_direction, final_move_speed, unit)
+	CharacterStateHelper.look(input_extension, self._player.viewport_name, first_person_extension, status_extension, inventory_extension)
 
-	local get_move_animation, var_4_25 = CharacterStateHelper.get_move_animation(_locomotion_extension, _input_extension, _status_extension, self.move_anim_3p)
+	local move_anim_3p, move_anim_1p = CharacterStateHelper.get_move_animation(locomotion_extension, input_extension, status_extension, self.move_anim_3p)
 
-	if get_move_animation ~= self.move_anim_3p then
-		CharacterStateHelper.play_animation_event(_unit, get_move_animation)
+	if move_anim_3p ~= self.move_anim_3p then
+		CharacterStateHelper.play_animation_event(unit, move_anim_3p)
 
-		self.move_anim_3p = get_move_animation
+		self.move_anim_3p = move_anim_3p
 	end
 
-	if var_4_25 ~= self.move_anim_1p then
-		CharacterStateHelper.play_animation_event_first_person(_first_person_extension, var_4_25)
+	if move_anim_1p ~= self.move_anim_1p then
+		CharacterStateHelper.play_animation_event_first_person(first_person_extension, move_anim_1p)
 
-		self.move_anim_1p = var_4_25
+		self.move_anim_1p = move_anim_1p
 	end
 
 	self.current_movement_speed_scale = current_movement_speed_scale
 end
 
-GutterRunnerStateProwling._start_priming = function (self, arg_5_1)
+GutterRunnerStateProwling._start_priming = function (self, t)
 	-- function 5
-	local _first_person_extension = self._first_person_extension
+	local first_person_extension = self._first_person_extension
 
-	_first_person_extension:play_hud_sound_event("Play_versus_gutterrunner_jump_charge_loop")
+	first_person_extension:play_hud_sound_event("Play_versus_gutterrunner_jump_charge_loop")
 	CharacterStateHelper.play_animation_event(self._unit, "to_crouch")
-	CharacterStateHelper.play_animation_event_first_person(_first_person_extension, "to_crouch")
+	CharacterStateHelper.play_animation_event_first_person(first_person_extension, "to_crouch")
 
-	local _locomotion_extension = self._locomotion_extension
+	local locomotion_extension = self._locomotion_extension
 
 	self._done_priming = false
-	self._prime_time = arg_5_1 + self._breed.pounce_prime_time
+	self._prime_time = t + self._breed.pounce_prime_time
 
-	_first_person_extension:set_wanted_player_height("crouch", arg_5_1, self._breed.pounce_prime_time)
-	_locomotion_extension:set_active_mover("crouch")
+	first_person_extension:set_wanted_player_height("crouch", t, self._breed.pounce_prime_time)
+	locomotion_extension:set_active_mover("crouch")
 end
 
-GutterRunnerStateProwling._set_priming_progress = function (self, arg_6_1)
+GutterRunnerStateProwling._set_priming_progress = function (self, progress)
 	-- function 6
-	local _career_extension = self._career_extension
-	local str = "pounce"
-	local ability_id = _career_extension:ability_id(str)
+	local career_extension = self._career_extension
+	local ability_name = "pounce"
+	local ability_id = career_extension:ability_id(ability_name)
+	local ability_data = career_extension:get_activated_ability_data(ability_id)
 
-	_career_extension:get_activated_ability_data(ability_id).priming_progress = arg_6_1
+	ability_data.priming_progress = progress
 
-	self._first_person_extension:animation_set_variable("pounce_charge", arg_6_1, true)
+	self._first_person_extension:animation_set_variable("pounce_charge", progress, true)
 end
 
-local num = 0.025
+local grace_period = 0.025
 
-GutterRunnerStateProwling._update_priming = function (self, arg_7_1, arg_7_2, arg_7_3)
+GutterRunnerStateProwling._update_priming = function (self, t, dt, allow_grace_period)
 	-- function 7
-	if not ((arg_7_1 > self._prime_time or not arg_7_3) and not (arg_7_1 > self._prime_time - num)) then
+	if t > self._prime_time or allow_grace_period and t > self._prime_time - grace_period then
 		if not self._done_priming then
 			self._first_person_extension:play_hud_sound_event("Play_versus_gutterrunner_jump_charge_end")
 		end
@@ -281,22 +322,23 @@ GutterRunnerStateProwling._update_priming = function (self, arg_7_1, arg_7_2, ar
 	end
 
 	local pounce_prime_time = self._breed.pounce_prime_time
-	local num_2 = math.min(pounce_prime_time - (self._prime_time - arg_7_1), pounce_prime_time) / pounce_prime_time
+	local time_past = math.min(pounce_prime_time - (self._prime_time - t), pounce_prime_time)
+	local time_fraction = time_past / pounce_prime_time
 
-	self:_set_priming_progress(num_2)
+	self:_set_priming_progress(time_fraction)
 end
 
-GutterRunnerStateProwling._stop_priming = function (self, arg_8_1)
+GutterRunnerStateProwling._stop_priming = function (self, t)
 	-- function 8
-	local _first_person_extension = self._first_person_extension
+	local first_person_extension = self._first_person_extension
 
 	CharacterStateHelper.play_animation_event(self._unit, "to_upright")
-	CharacterStateHelper.play_animation_event_first_person(_first_person_extension, "to_upright")
+	CharacterStateHelper.play_animation_event_first_person(first_person_extension, "to_upright")
 
-	local _locomotion_extension = self._locomotion_extension
+	local locomotion_extension = self._locomotion_extension
 
-	_first_person_extension:set_wanted_player_height("stand", arg_8_1)
-	_locomotion_extension:set_active_mover("standing")
+	first_person_extension:set_wanted_player_height("stand", t)
+	locomotion_extension:set_active_mover("standing")
 end
 
 GutterRunnerStateProwling._start_pounce = function (self)
@@ -305,26 +347,30 @@ GutterRunnerStateProwling._start_pounce = function (self)
 		return
 	end
 
-	local _first_person_extension = self._first_person_extension
-	local _world = self._world
-	local _is_server = self._is_server
+	local first_person_extension = self._first_person_extension
+	local world = self._world
+	local is_server = self._is_server
 	local local_player = self.local_player
-	local _status_extension = self._status_extension
-	local _breed = self._breed
-	local pounce_speed = _breed.pounce_speed
-	local current_rotation = _first_person_extension:current_rotation()
-	local forward = Quaternion.forward(current_rotation)
-	local num = Vector3.normalize(forward + Vector3(0, 0, _breed.pounce_upwards_amount)) * pounce_speed
+	local status_extension = self._status_extension
+	local breed = self._breed
+	local jump_speed = breed.pounce_speed
+	local rotation = first_person_extension:current_rotation()
+	local look_direction = Quaternion.forward(rotation)
 
-	_status_extension.do_pounce = {
+	look_direction = Vector3.normalize(look_direction + Vector3(0, 0, breed.pounce_upwards_amount))
+
+	local velocity = look_direction * jump_speed
+
+	status_extension.do_pounce = {
 		anim_start_event = "to_crouch",
-		initial_velocity = Vector3Box(num)
+		initial_velocity = Vector3Box(velocity)
 	}
 
-	local _career_extension = self._career_extension
-	local ability_id = _career_extension:ability_id("pounce")
+	local career_extension = self._career_extension
+	local ability_id = career_extension:ability_id("pounce")
+	local can_use = career_extension:can_use_activated_ability(ability_id)
 
-	if not _career_extension:can_use_activated_ability(ability_id) then
+	if can_use then
 		self._csm:change_state("pouncing")
 	end
 end

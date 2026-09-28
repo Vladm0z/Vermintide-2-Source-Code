@@ -2,112 +2,112 @@
 
 require("foundation/scripts/util/class")
 
-table.is_empty = function (arg_1_0)
+table.is_empty = function (t)
 	-- function 1
-	return next(arg_1_0) == nil
+	return next(t) == nil
 end
 
-table.size = function (arg_2_0)
+table.size = function (t)
 	-- function 2
-	local num = 0
+	local elements = 0
 
-	for k in pairs(arg_2_0) do
-		num = num + 1
+	for _ in pairs(t) do
+		elements = elements + 1
 	end
 
-	return num
+	return elements
 end
 
-if not pcall(require, "table.new") then
-	Script.new_array = function (arg_3_0)
+if pcall(require, "table.new") then
+	Script.new_array = function (narr)
 		-- function 3
-		return table.new(arg_3_0, 0)
+		return table.new(narr, 0)
 	end
 
-	Script.new_map = function (arg_4_0)
+	Script.new_map = function (nrec)
 		-- function 4
-		return table.new(0, arg_4_0)
+		return table.new(0, nrec)
 	end
 
 	Script.new_table = table.new
 end
 
-table.clone = function (arg_5_0, arg_5_1)
+table.clone = function (t, skip_metatable)
 	-- function 5
-	local tbl = {}
+	local clone = {}
 
-	if not arg_5_1 then
-		local var_5_1 = getmetatable(arg_5_0)
+	if not skip_metatable then
+		local mt = getmetatable(t)
 
-		assert(var_5_1 == nil or var_5_1.__mt_cloneable, "Metatables will be sliced off")
+		assert(mt == nil or not not mt.__mt_cloneable, "Metatables will be sliced off")
 	end
 
-	for k, v in pairs(arg_5_0) do
-		if type(v) ~= "table" or not is_class_instance(v) then
-			tbl[k] = v
+	for key, value in pairs(t) do
+		if type(value) ~= "table" or is_class_instance(value) then
+			clone[key] = value
 		else
-			tbl[k] = table.clone(v, arg_5_1)
+			clone[key] = table.clone(value, skip_metatable)
 		end
 	end
 
-	return tbl
+	return clone
 end
 
-table.shallow_copy = function (arg_6_0, arg_6_1, arg_6_2)
+table.shallow_copy = function (t, skip_metatable, out_t)
 	-- function 6
-	local flag = arg_6_2 or {}
+	local copy = not not out_t or not not {}
 
-	if not arg_6_1 then
-		local var_6_1 = getmetatable(arg_6_0)
+	if not skip_metatable then
+		local mt = getmetatable(t)
 
-		assert(var_6_1 == nil or var_6_1.__mt_cloneable, "Metatables will be sliced off")
+		assert(mt == nil or not not mt.__mt_cloneable, "Metatables will be sliced off")
 	end
 
-	for k, v in pairs(arg_6_0) do
-		flag[k] = v
+	for key, value in pairs(t) do
+		copy[key] = value
 	end
 
-	return flag
+	return copy
 end
 
-table.copy_array = function (self, arg_7_1, arg_7_2)
+table.copy_array = function (t, skip_metatable, out_t)
 	-- function 7
-	local flag = arg_7_2 or {}
+	local copy = not not out_t or not not {}
 
-	if not arg_7_1 then
-		local var_7_1 = getmetatable(self)
+	if not skip_metatable then
+		local mt = getmetatable(t)
 
-		assert(var_7_1 == nil or var_7_1.__mt_cloneable, "Metatables will be sliced off")
+		assert(mt == nil or not not mt.__mt_cloneable, "Metatables will be sliced off")
 	end
 
-	for i = 1, #self do
-		flag[i] = self[i]
+	for i = 1, #t do
+		copy[i] = t[i]
 	end
 
-	return flag
+	return copy
 end
 
-table.crop = function (self, arg_8_1)
+table.crop = function (t, index)
 	-- function 8
-	local tbl = {}
-	local num = 0
+	local new_table = {}
+	local new_table_size = 0
 
-	for i = arg_8_1, #self do
-		num = num + 1
-		tbl[num] = self[i]
+	for idx = index, #t do
+		new_table_size = new_table_size + 1
+		new_table[new_table_size] = t[idx]
 	end
 
-	return tbl, num
+	return new_table, new_table_size
 end
 
-table.compare = function (arg_9_0, arg_9_1, arg_9_2)
+table.compare = function (t1, t2, ignore_keys)
 	-- function 9
-	arg_9_2 = arg_9_2 or {}
+	ignore_keys = not not ignore_keys or not not {}
 
-	for k, v in pairs(arg_9_0) do
-		if not table.contains(arg_9_2, k) then
-			for k_2, v_2 in pairs(arg_9_1) do
-				if not (k ~= k_2 or v == v_2) then
+	for key_t1, value_t1 in pairs(t1) do
+		if not table.contains(ignore_keys, key_t1) then
+			for key_t2, value_t2 in pairs(t2) do
+				if key_t1 == key_t2 and value_t1 ~= value_t2 then
 					return false
 				end
 			end
@@ -117,109 +117,109 @@ table.compare = function (arg_9_0, arg_9_1, arg_9_2)
 	return true
 end
 
-table.recursive_compare = function (arg_10_0, arg_10_1)
+table.recursive_compare = function (t1, t2)
 	-- function 10
-	local flag = true
+	local return_value = true
 
-	for k, v in pairs(arg_10_0) do
-		if type(v) == "table" then
-			local var_10_1 = arg_10_1[k]
+	for key_t1, value_t1 in pairs(t1) do
+		if type(value_t1) == "table" then
+			local value_t2 = t2[key_t1]
 
-			if type(var_10_1) == "table" then
-				flag = table.recursive_compare(v, arg_10_1[k])
+			if type(value_t2) == "table" then
+				return_value = table.recursive_compare(value_t1, t2[key_t1])
 
-				if not flag then
+				if not return_value then
 					break
 				end
 			else
-				flag = false
+				return_value = false
 
 				break
 			end
 		else
-			for k_2, v_2 in pairs(arg_10_1) do
-				if not (k ~= k_2 or v == v_2) then
+			for key_t2, value_t2 in pairs(t2) do
+				if key_t1 == key_t2 and value_t1 ~= value_t2 then
 					return false
 				end
 			end
 		end
 	end
 
-	return flag
+	return return_value
 end
 
-table.create_copy = function (self, arg_11_1)
+table.create_copy = function (copy, original)
 	-- function 11
-	if not self then
-		return table.clone(arg_11_1)
+	if not copy then
+		return table.clone(original)
 	else
-		local var_11_0 = getmetatable(arg_11_1)
+		local mt = getmetatable(original)
 
-		assert(var_11_0 == nil or var_11_0.__mt_cloneable, "Metatables will be sliced off")
+		assert(mt == nil or not not mt.__mt_cloneable, "Metatables will be sliced off")
 
-		for k, v in pairs(arg_11_1) do
-			if type(v) ~= "table" or not is_class_instance(v) then
-				self[k] = v
+		for key, value in pairs(original) do
+			if type(value) ~= "table" or is_class_instance(value) then
+				copy[key] = value
 			else
-				self[k] = table.create_copy(self[k], v)
+				copy[key] = table.create_copy(copy[key], value)
 			end
 		end
 
-		for k_2, v_2 in pairs(self) do
-			if arg_11_1[k_2] == nil then
-				self[k_2] = nil
+		for key, _ in pairs(copy) do
+			if original[key] == nil then
+				copy[key] = nil
 			end
 		end
 
-		return self
+		return copy
 	end
 end
 
-table.clone_instance = function (arg_12_0)
+table.clone_instance = function (t)
 	-- function 12
-	local clone = table.clone(arg_12_0)
+	local clone = table.clone(t)
 
-	setmetatable(clone, getmetatable(arg_12_0))
+	setmetatable(clone, getmetatable(t))
 
 	return clone
 end
 
-table.merge = function (self, arg_13_1)
+table.merge = function (dest, source)
 	-- function 13
-	for k, v in pairs(arg_13_1) do
-		self[k] = v
+	for key, value in pairs(source) do
+		dest[key] = value
 	end
 
-	return self
+	return dest
 end
 
-table.merge_recursive = function (self, arg_14_1)
+table.merge_recursive = function (dest, source)
 	-- function 14
-	for k, v in pairs(arg_14_1) do
-		local flag = type(v) == "table"
+	for key, value in pairs(source) do
+		local is_table = type(value) == "table"
 
-		if not (not flag and type(self[k]) ~= "table") then
-			table.merge_recursive(self[k], v)
-		elseif not flag then
-			self[k] = table.clone(v)
+		if is_table and type(dest[key]) == "table" then
+			table.merge_recursive(dest[key], value)
+		elseif is_table then
+			dest[key] = table.clone(value)
 		else
-			self[k] = v
+			dest[key] = value
 		end
 	end
 end
 
-table.merge_varargs = function (arg_15_0, arg_15_1, ...)
+table.merge_varargs = function (args, num_args, ...)
 	-- function 15
-	local tbl = {
-		unpack(arg_15_0, 1, arg_15_1)
+	local merged = {
+		unpack(args, 1, num_args)
 	}
-	local var_15_1 = select("#", ...)
+	local num_varargs = select("#", ...)
 
-	for i = 1, var_15_1 do
-		tbl[arg_15_1 + i] = select(i, ...)
+	for i = 1, num_varargs do
+		merged[num_args + i] = select(i, ...)
 	end
 
-	return tbl, arg_15_1 + var_15_1
+	return merged, num_args + num_varargs
 end
 
 table.pack = function (...)
@@ -229,63 +229,63 @@ table.pack = function (...)
 	}, select("#", ...)
 end
 
-table.append_recursive = function (self, arg_17_1)
+table.append_recursive = function (dest, source)
 	-- function 17
-	for k, v in pairs(arg_17_1) do
-		local flag = type(v) == "table"
+	for key, value in pairs(source) do
+		local is_table = type(value) == "table"
 
-		if not (not flag and type(self[k]) ~= "table") then
-			table.append_recursive(self[k], v)
-		elseif self[k] == nil then
-			if not flag then
-				self[k] = table.clone(v)
+		if is_table and type(dest[key]) == "table" then
+			table.append_recursive(dest[key], value)
+		elseif dest[key] == nil then
+			if is_table then
+				dest[key] = table.clone(value)
 			else
-				self[k] = v
+				dest[key] = value
 			end
 		end
 	end
 end
 
-table.append = function (self, arg_18_1)
+table.append = function (dest, source)
 	-- function 18
-	local count = #self
+	local dest_size = #dest
 
-	for i = 1, #arg_18_1 do
-		count = count + 1
-		self[count] = arg_18_1[i]
+	for i = 1, #source do
+		dest_size = dest_size + 1
+		dest[dest_size] = source[i]
 	end
 
-	return self
+	return dest
 end
 
-table.append_unique = function (self, arg_19_1)
+table.append_unique = function (dest, source)
 	-- function 19
-	local count = #self
+	local dest_size = #dest
 
-	for i = 1, #arg_19_1 do
-		if not table.contains(self, arg_19_1[i]) then
-			count = count + 1
-			self[count] = arg_19_1[i]
+	for i = 1, #source do
+		if not table.contains(dest, source[i]) then
+			dest_size = dest_size + 1
+			dest[dest_size] = source[i]
 		end
 	end
 end
 
-table.append_non_indexed = function (self, arg_20_1)
+table.append_non_indexed = function (dest, source)
 	-- function 20
-	local count = #self
+	local dest_size = #dest
 
-	for k, v in pairs(arg_20_1) do
-		count = count + 1
-		self[count] = v
+	for _, value in pairs(source) do
+		dest_size = dest_size + 1
+		dest[dest_size] = value
 	end
 
-	return self
+	return dest
 end
 
-table.contains = function (arg_21_0, arg_21_1)
+table.contains = function (t, element)
 	-- function 21
-	for k, v in pairs(arg_21_0) do
-		if v == arg_21_1 then
+	for _, value in pairs(t) do
+		if value == element then
 			return true
 		end
 	end
@@ -293,34 +293,34 @@ table.contains = function (arg_21_0, arg_21_1)
 	return false
 end
 
-table.find = function (arg_22_0, arg_22_1)
+table.find = function (t, element)
 	-- function 22
-	for k, v in pairs(arg_22_0) do
-		if v == arg_22_1 then
-			return k
+	for key, value in pairs(t) do
+		if value == element then
+			return key
 		end
 	end
 
 	return nil
 end
 
-table.find_by_key = function (arg_23_0, arg_23_1, arg_23_2)
+table.find_by_key = function (t, search_key, search_value)
 	-- function 23
-	for k, v in pairs(arg_23_0) do
-		if v[arg_23_1] == arg_23_2 then
-			return k, v
+	for key, value in pairs(t) do
+		if value[search_key] == search_value then
+			return key, value
 		end
 	end
 
 	return nil
 end
 
-table.index_of = function (self, arg_24_1, arg_24_2)
+table.index_of = function (t, element, start_index)
 	-- function 24
-	arg_24_2 = arg_24_2 or 1
+	start_index = not not start_index or not not 1
 
-	for i = arg_24_2, #self do
-		if self[i] == arg_24_1 then
+	for i = start_index, #t do
+		if t[i] == element then
 			return i
 		end
 	end
@@ -328,23 +328,23 @@ table.index_of = function (self, arg_24_1, arg_24_2)
 	return -1
 end
 
-table.slice = function (self, arg_25_1, arg_25_2)
+table.slice = function (t, start_index, length)
 	-- function 25
-	local min = math.min(arg_25_1 + arg_25_2 - 1, #self)
-	local tbl = {}
+	local end_index = math.min(start_index + length - 1, #t)
+	local slice = {}
 
-	for i = arg_25_1, min do
-		tbl[#tbl + 1] = self[i]
+	for i = start_index, end_index do
+		slice[#slice + 1] = t[i]
 	end
 
-	return tbl
+	return slice
 end
 
-table.sorted = function (arg_26_0, arg_26_1, arg_26_2)
+table.sorted = function (t, order_func, use_frame_table)
 	-- function 26
 	local alloc_table
 
-	if not arg_26_2 then
+	if use_frame_table then
 		alloc_table = FrameTable.alloc_table()
 
 		if not alloc_table then
@@ -354,133 +354,135 @@ table.sorted = function (arg_26_0, arg_26_1, arg_26_2)
 
 	alloc_table = {}
 
+	local keys = alloc_table
+
 	::label_26_0::
 
-	for k, v in pairs(arg_26_0) do
-		alloc_table[#alloc_table + 1] = k
+	for k, _ in pairs(t) do
+		keys[#keys + 1] = k
 	end
 
-	if not arg_26_1 then
-		table.sort(alloc_table, function (arg_27_0, arg_27_1)
+	if order_func then
+		table.sort(keys, function (a, b)
 			-- function 27
-			return arg_26_1(arg_26_0, arg_27_0, arg_27_1)
+			return order_func(t, a, b)
 		end)
 	else
-		table.sort(alloc_table)
+		table.sort(keys)
 	end
 
-	local num = 0
+	local i = 0
 
 	return function ()
 		-- function 28
-		num = num + 1
+		i = i + 1
 
-		if not alloc_table[num] then
-			return alloc_table[num], arg_26_0[alloc_table[num]]
+		if keys[i] then
+			return keys[i], t[keys[i]]
 		end
 	end
 end
 
-table.reverse = function (self)
+table.reverse = function (t)
 	-- function 29
-	local count = #self
+	local size = #t
 
-	for i = 1, math.floor(count / 2) do
-		self[i], self[count - i + 1] = self[count - i + 1], self[i]
+	for i = 1, math.floor(size / 2) do
+		t[i], t[size - i + 1] = t[size - i + 1], t[i]
 	end
 end
 
-if not pcall(require, "table.clear") then
+if pcall(require, "table.clear") then
 	table.clear = require("table.clear")
 else
-	table.clear = function (self)
+	table.clear = function (t)
 		-- function 30
-		for k in pairs(self) do
-			self[k] = nil
+		for k in pairs(t) do
+			t[k] = nil
 		end
 	end
 end
 
-table.clear_array = function (self, arg_31_1)
+table.clear_array = function (t, n)
 	-- function 31
-	for i = 1, arg_31_1 or #self do
-		self[i] = nil
+	for i = 1, not not n or not not #t do
+		t[i] = nil
 	end
 end
 
-local function fn(arg_32_0, arg_32_1, arg_32_2, arg_32_3, arg_32_4)
+local function table_dump(key, value, depth, max_depth, print_func)
 	-- function 32
-	if arg_32_3 < arg_32_2 then
+	if max_depth < depth then
 		return
 	end
 
-	local rep = string.rep("  ", arg_32_2 + 1)
+	local rep = string.rep("  ", depth + 1)
 	local flag
 
-	flag = arg_32_0 ~= nil or not "" or "[" .. tostring(arg_32_0) .. "]"
+	flag = (key ~= nil or not "") and not not ("[" .. tostring(key) .. "]")
 
-	local str = rep .. flag
+	local prefix = rep .. flag
 
-	if type(arg_32_1) == "table" then
-		local var_32_3 = str
+	if type(value) == "table" then
+		local var_32_2 = prefix
 		local flag_2
 
-		flag_2 = arg_32_0 ~= nil or not "" or " = "
-		str = var_32_3 .. flag_2
+		flag_2 = (key ~= nil or not "") and not not " = "
+		prefix = var_32_2 .. flag_2
 
-		print(str .. "table")
+		print(prefix .. "table")
 
-		if not arg_32_3 then
-			for k, v in pairs(arg_32_1) do
-				fn(k, v, arg_32_2 + 1, arg_32_3, arg_32_4)
+		if max_depth then
+			for key, value in pairs(value) do
+				table_dump(key, value, depth + 1, max_depth, print_func)
 			end
 		end
 
-		local var_32_5 = getmetatable(arg_32_1)
+		local meta = getmetatable(value)
 
-		if not var_32_5 then
-			print(str .. "metatable")
+		if meta then
+			print(prefix .. "metatable")
 
-			if not arg_32_3 then
-				for k_2, v_2 in pairs(var_32_5) do
-					if not (k_2 == "__index" or k_2 == "super") then
-						fn(k_2, v_2, arg_32_2 + 1, arg_32_3, arg_32_4)
+			if max_depth then
+				for key, value in pairs(meta) do
+					if key ~= "__index" and key ~= "super" then
+						table_dump(key, value, depth + 1, max_depth, print_func)
 					end
 				end
 			end
 		end
-	elseif not (type(arg_32_1) == "function" or type(arg_32_1) == "thread" or type(arg_32_1) == "userdata" or arg_32_1 ~= nil) then
-		arg_32_4(str .. " = " .. tostring(arg_32_1))
+	elseif type(value) == "function" or type(value) == "thread" or type(value) == "userdata" or value == nil then
+		print_func(prefix .. " = " .. tostring(value))
 	else
-		arg_32_4(str .. " = " .. tostring(arg_32_1) .. " (" .. type(arg_32_1) .. ")")
+		print_func(prefix .. " = " .. tostring(value) .. " (" .. type(value) .. ")")
 	end
 end
 
-table.dump = function (arg_33_0, arg_33_1, arg_33_2, arg_33_3)
+table.dump = function (t, tag, max_depth, print_func)
 	-- function 33
-	arg_33_3 = arg_33_3 or print
+	print_func = not not print_func or not not print
 
-	if not arg_33_1 then
-		arg_33_3(string.format("<%s>", arg_33_1))
+	if tag then
+		print_func(string.format("<%s>", tag))
 	end
 
-	if not arg_33_0 then
-		for k, v in pairs(arg_33_0) do
-			fn(k, v, 0, arg_33_2 or 0, arg_33_3)
+	if t then
+		for key, value in pairs(t) do
+			table_dump(key, value, 0, not not max_depth or not not 0, print_func)
 		end
 	else
-		arg_33_3("no table!")
+		print_func("no table!")
 	end
 
-	if not arg_33_1 then
-		arg_33_3(string.format("</%s>", arg_33_1))
+	if tag then
+		print_func(string.format("</%s>", tag))
 	end
 end
 
-function is_array(arg_34_0)
+function is_array(t)
 	-- function 34
-	for k, v in pairs(arg_34_0) do
-		if type(k) ~= "number" then
+	for key, _ in pairs(t) do
+		if type(key) ~= "number" then
 			return false
 		end
 	end
@@ -488,600 +490,598 @@ function is_array(arg_34_0)
 	return true
 end
 
-function array_dump_string(arg_35_0, arg_35_1)
+function array_dump_string(t, depth)
 	-- function 35
 	local str = "{\n"
 
-	for i, v in ipairs(arg_35_0) do
-		str = str .. string.rep("\t", arg_35_1) .. value_to_string(v, arg_35_1)
+	for i, value in ipairs(t) do
+		str = str .. string.rep("\t", depth) .. value_to_string(value, depth)
 
-		if next(arg_35_0, i) ~= nil then
+		if next(t, i) ~= nil then
 			str = str .. ",\n"
 		end
 	end
 
-	return str .. "\n" .. string.rep("\t", arg_35_1 - 1) .. "}"
+	return str .. "\n" .. string.rep("\t", depth - 1) .. "}"
 end
 
-function value_to_string(arg_36_0, arg_36_1)
+function value_to_string(v, depth)
 	-- function 36
-	if type(arg_36_0) ~= "table" or not is_array(arg_36_0) then
-		return array_dump_string(arg_36_0, arg_36_1 + 1)
-	elseif type(arg_36_0) == "table" then
-		return table_dump_string(arg_36_0, arg_36_1 + 1)
-	elseif type(arg_36_0) == "string" then
-		return "\"" .. arg_36_0 .. "\""
-	elseif type(arg_36_0) == "boolean" then
-		return tostring(arg_36_0)
+	if type(v) == "table" and is_array(v) then
+		return array_dump_string(v, depth + 1)
+	elseif type(v) == "table" then
+		return table_dump_string(v, depth + 1)
+	elseif type(v) == "string" then
+		return "\"" .. v .. "\""
+	elseif type(v) == "boolean" then
+		return tostring(v)
 	else
-		return arg_36_0
+		return v
 	end
 end
 
-function table_dump_string(arg_37_0, arg_37_1)
+function table_dump_string(t, depth)
 	-- function 37
 	local str = "{\n"
 
-	for k, v in pairs(arg_37_0) do
-		str = str .. string.rep("\t", arg_37_1) .. k .. " = " .. value_to_string(v, arg_37_1)
+	for key, value in pairs(t) do
+		str = str .. string.rep("\t", depth) .. key .. " = " .. value_to_string(value, depth)
 
-		if next(arg_37_0, k) ~= nil then
+		if next(t, key) ~= nil then
 			str = str .. ",\n"
 		end
 	end
 
-	return str .. "\n" .. string.rep("\t", arg_37_1 - 1) .. "}"
+	return str .. "\n" .. string.rep("\t", depth - 1) .. "}"
 end
 
-table.dump_string = function (arg_38_0, arg_38_1)
+table.dump_string = function (t, depth)
 	-- function 38
-	if not is_array(arg_38_0) then
-		return array_dump_string(arg_38_0, arg_38_1 or 1)
+	if is_array(t) then
+		return array_dump_string(t, not not depth or not not 1)
 	else
-		return table_dump_string(arg_38_0, arg_38_1 or 1)
+		return table_dump_string(t, not not depth or not not 1)
 	end
 end
 
-local tbl = {}
+local _buffer = {}
 
-table.minidump = function (arg_39_0, arg_39_1)
+table.minidump = function (t, name)
 	-- function 39
-	local var_39_0 = tbl
-	local num = 1
+	local b, i = _buffer, 1
 
-	if not arg_39_1 then
-		var_39_0[1] = "["
-		var_39_0[2] = arg_39_1
-		var_39_0[3] = "] "
-		num = 4
+	if name then
+		b[1] = "["
+		b[2] = name
+		b[3] = "] "
+		i = 4
 	end
 
-	for k, v in pairs(arg_39_0) do
-		var_39_0[num] = k
-		var_39_0[num + 1] = " = "
-		var_39_0[num + 2] = tostring(v)
-		var_39_0[num + 3] = "; "
-		num = num + 4
+	for key, value in pairs(t) do
+		b[i] = key
+		b[i + 1] = " = "
+		b[i + 2] = tostring(value)
+		b[i + 3] = "; "
+		i = i + 4
 	end
 
-	local concat = table.concat(var_39_0, 1, num - 2)
+	local result = table.concat(b, 1, i - 2)
 
-	table.clear(var_39_0)
+	table.clear(b)
 
-	return concat
+	return result
 end
 
-table.shuffle = function (self, arg_40_1)
+table.shuffle = function (source, seed)
 	-- function 40
-	if not arg_40_1 then
-		for i = #self, 2, -1 do
-			local var_40_0
-			local var_40_1
+	if seed then
+		for ii = #source, 2, -1 do
+			local swap
 
-			arg_40_1, var_40_1 = Math.next_random(arg_40_1, i)
-			self[var_40_1], self[i] = self[i], self[var_40_1]
+			seed, swap = Math.next_random(seed, ii)
+			source[swap], source[ii] = source[ii], source[swap]
 		end
 	else
-		for j = #self, 2, -1 do
-			local random = Math.random(j)
+		for ii = #source, 2, -1 do
+			local swap = Math.random(ii)
 
-			self[random], self[j] = self[j], self[random]
+			source[swap], source[ii] = source[ii], source[swap]
 		end
 	end
 
-	return arg_40_1
+	return seed
 end
 
-table.max = function (arg_41_0)
+table.max = function (t)
 	-- function 41
-	local var_41_0, var_41_1 = next(arg_41_0)
+	local max_key, max_value = next(t)
 
-	for k, v in pairs(arg_41_0) do
-		if var_41_1 < v then
-			var_41_0, var_41_1 = k, v
+	for key, value in pairs(t) do
+		if max_value < value then
+			max_key, max_value = key, value
 		end
 	end
 
-	return var_41_0, var_41_1
+	return max_key, max_value
 end
 
-table.max_func = function (arg_42_0, arg_42_1)
+table.max_func = function (t, func)
 	-- function 42
-	local var_42_0, var_42_1 = next(arg_42_0)
+	local max_key, max_value = next(t)
 
-	for k, v in pairs(arg_42_0) do
-		if arg_42_1(v) > arg_42_1(var_42_1) then
-			var_42_0, var_42_1 = k, v
+	for key, value in pairs(t) do
+		if func(value) > func(max_value) then
+			max_key, max_value = key, value
 		end
 	end
 
-	return var_42_0, var_42_1
+	return max_key, max_value
 end
 
-table.min = function (arg_43_0)
+table.min = function (t)
 	-- function 43
-	local var_43_0, var_43_1 = next(arg_43_0)
+	local min_key, min_value = next(t)
 
-	for k, v in pairs(arg_43_0) do
-		if v < var_43_1 then
-			var_43_0, var_43_1 = k, v
+	for key, value in pairs(t) do
+		if value < min_value then
+			min_key, min_value = key, value
 		end
 	end
 
-	return var_43_0, var_43_1
+	return min_key, min_value
 end
 
-table.for_each = function (self, arg_44_1)
+table.for_each = function (t, f)
 	-- function 44
-	for k, v in pairs(self) do
-		self[k] = arg_44_1(v)
+	for key, value in pairs(t) do
+		t[key] = f(value)
 	end
 end
 
-function _add_tabs(arg_45_0, arg_45_1)
+function _add_tabs(str, tabs)
 	-- function 45
-	for i = 1, arg_45_1 do
-		arg_45_0 = arg_45_0 .. "\t"
+	for i = 1, tabs do
+		str = str .. "\t"
 	end
 
-	return arg_45_0
+	return str
 end
 
-local var_0_2
-local var_0_3
+local _value_to_string_array, _table_tostring_array
 
-local function fn_2(arg_46_0, arg_46_1, arg_46_2, arg_46_3)
+function _value_to_string_array(v, depth, max_depth, skip_private)
 	-- function 46
-	if type(arg_46_0) == "table" then
-		if arg_46_1 <= arg_46_2 then
-			return var_0_3(arg_46_0, arg_46_1 + 1, arg_46_2, arg_46_3)
+	if type(v) == "table" then
+		if depth <= max_depth then
+			return _table_tostring_array(v, depth + 1, max_depth, skip_private)
 		else
 			return {
 				"(rec-limit)"
 			}
 		end
-	elseif type(arg_46_0) == "string" then
+	elseif type(v) == "string" then
 		return {
 			"\"",
-			arg_46_0,
+			v,
 			"\""
 		}
 	else
 		return {
-			tostring(arg_46_0)
+			tostring(v)
 		}
 	end
 end
 
-function var_0_3(self, arg_47_1, arg_47_2, arg_47_3)
+function _table_tostring_array(t, depth, max_depth, skip_private)
 	-- function 47
-	local tbl = {
+	local str = {
 		"{\n"
 	}
-	local rep = string.rep("\t", arg_47_1 - 1)
-	local str = rep .. "\t"
-	local count = #self
+	local last_tabs = string.rep("\t", depth - 1)
+	local tabs = last_tabs .. "\t"
+	local len = #t
 
-	for i = 1, count do
-		tbl[#tbl + 1] = str
+	for i = 1, len do
+		str[#str + 1] = tabs
 
-		table.append(tbl, fn_2(self[i], arg_47_1, arg_47_2, arg_47_3))
+		table.append(str, _value_to_string_array(t[i], depth, max_depth, skip_private))
 
-		tbl[#tbl + 1] = ",\n"
+		str[#str + 1] = ",\n"
 	end
 
-	for k, v in pairs(self) do
-		local flag = type(k) == "number"
+	for key, value in pairs(t) do
+		local is_number = type(key) == "number"
 
-		if not ((flag or arg_47_3 or k:sub(1, 1) ~= "_") and not flag and k < 1 or not (count < k)) then
-			local var_47_5
+		if (is_number or not skip_private or key:sub(1, 1) ~= "_") and (not is_number or key < 1 or len < key) then
+			local key_str
 
-			if not flag then
-				var_47_5 = string.format("[%i]", k)
+			if is_number then
+				key_str = string.format("[%i]", key)
 			else
-				var_47_5 = tostring(k)
+				key_str = tostring(key)
 			end
 
-			tbl[#tbl + 1] = str
-			tbl[#tbl + 1] = var_47_5
-			tbl[#tbl + 1] = " = "
+			str[#str + 1] = tabs
+			str[#str + 1] = key_str
+			str[#str + 1] = " = "
 
-			table.append(tbl, fn_2(v, arg_47_1, arg_47_2, arg_47_3))
+			table.append(str, _value_to_string_array(value, depth, max_depth, skip_private))
 
-			tbl[#tbl + 1] = ",\n"
+			str[#str + 1] = ",\n"
 		end
 	end
 
-	tbl[#tbl + 1] = rep
-	tbl[#tbl + 1] = "}"
+	str[#str + 1] = last_tabs
+	str[#str + 1] = "}"
 
-	return tbl
+	return str
 end
 
-table.tostring = function (arg_48_0, arg_48_1, arg_48_2)
+table.tostring = function (t, max_depth, skip_private)
 	-- function 48
-	return table.concat(var_0_3(arg_48_0, 1, arg_48_1 or 1, arg_48_2))
+	return table.concat(_table_tostring_array(t, 1, not not max_depth or not not 1, skip_private))
 end
 
-table.set = function (arg_49_0, arg_49_1)
+table.set = function (list, set)
 	-- function 49
-	arg_49_1 = arg_49_1 or {}
+	set = not not set or not not {}
 
-	for i, v in ipairs(arg_49_0) do
-		arg_49_1[v] = true
+	for _, l in ipairs(list) do
+		set[l] = true
 	end
 
-	return arg_49_1
+	return set
 end
 
-table.mirror_table = function (arg_50_0, arg_50_1)
+table.mirror_table = function (source, dest)
 	-- function 50
-	assert(arg_50_0 ~= arg_50_1)
+	assert(source ~= dest)
 
-	local flag = arg_50_1 or {}
+	local result = not not dest or not not {}
 
-	for k, v in pairs(arg_50_0) do
-		flag[k] = v
-		flag[v] = k
+	for k, v in pairs(source) do
+		result[k] = v
+		result[v] = k
 	end
 
-	return flag
+	return result
 end
 
-table.mirror_array = function (arg_51_0, arg_51_1)
+table.mirror_array = function (source, dest)
 	-- function 51
-	assert(arg_51_0 ~= arg_51_1)
+	assert(source ~= dest)
 
-	local flag = arg_51_1 or {}
+	local result = not not dest or not not {}
 
-	for i, v in ipairs(arg_51_0) do
-		flag[i] = v
-		flag[v] = i
+	for index, value in ipairs(source) do
+		result[index] = value
+		result[value] = index
 	end
 
-	return flag
+	return result
 end
 
-table.mirror_array_inplace = function (self)
+table.mirror_array_inplace = function (t)
 	-- function 52
-	for i, v in ipairs(self) do
-		self[v] = i
+	for index, value in ipairs(t) do
+		t[value] = index
 	end
 
-	return self
+	return t
 end
 
-table.keys = function (arg_53_0, arg_53_1, arg_53_2)
+table.keys = function (t, out, optional_offset)
 	-- function 53
-	arg_53_1 = arg_53_1 or {}
+	out = not not out or not not {}
 
-	local flag = arg_53_2 or 0
+	local n = not not optional_offset or not not 0
 
-	for k in pairs(arg_53_0) do
-		flag = flag + 1
-		arg_53_1[flag] = k
+	for key in pairs(t) do
+		n = n + 1
+		out[n] = key
 	end
 
-	return arg_53_1, flag
+	return out, n
 end
 
-table.split_unordered = function (arg_54_0)
+table.split_unordered = function (t)
 	-- function 54
-	local tbl = {}
-	local tbl_2 = {}
-	local flag = true
+	local t1, t2 = {}, {}
+	local state = true
 
-	for k, v in pairs(arg_54_0) do
-		if not flag then
-			tbl[k] = v
+	for k, v in pairs(t) do
+		if state then
+			t1[k] = v
 		else
-			tbl_2[k] = v
+			t2[k] = v
 		end
 
-		flag = not flag
+		state = not state
 	end
 
-	return tbl, tbl_2
+	return t1, t2
 end
 
-table.keys_if = function (arg_55_0, arg_55_1, arg_55_2)
+table.keys_if = function (t, out, conditional_func)
 	-- function 55
-	arg_55_1 = arg_55_1 or {}
+	out = not not out or not not {}
 
-	local num = 0
+	local n = 0
 
-	for k, v in pairs(arg_55_0) do
-		if not arg_55_2(k, v) then
-			num = num + 1
-			arg_55_1[num] = k
+	for key, val in pairs(t) do
+		if conditional_func(key, val) then
+			n = n + 1
+			out[n] = key
 		end
 	end
 
-	return arg_55_1, num
+	return out, n
 end
 
-table.values = function (arg_56_0, arg_56_1)
+table.values = function (t, out)
 	-- function 56
-	arg_56_1 = arg_56_1 or {}
+	out = not not out or not not {}
 
-	local num = 0
+	local n = 0
 
-	for k, v in pairs(arg_56_0) do
-		num = num + 1
-		arg_56_1[num] = v
+	for _, val in pairs(t) do
+		n = n + 1
+		out[n] = val
 	end
 
-	return arg_56_1, num
+	return out, n
 end
 
-table.append_varargs = function (self, ...)
+table.append_varargs = function (t, ...)
 	-- function 57
-	local var_57_0 = select("#", ...)
-	local count = #self
+	local num_varargs = select("#", ...)
+	local t_size = #t
 
-	for i = 1, var_57_0 do
-		self[count + i] = select(i, ...)
+	for i = 1, num_varargs do
+		t[t_size + i] = select(i, ...)
 	end
 
-	return self
+	return t
 end
 
-table.array_to_table = function (self, arg_58_1, arg_58_2)
+table.array_to_table = function (array, array_n, out_table)
 	-- function 58
-	for i = 1, arg_58_1, 2 do
-		arg_58_2[self[i]] = self[i + 1]
+	for i = 1, array_n, 2 do
+		local key = array[i]
+		local value = array[i + 1]
+
+		out_table[key] = value
 	end
 end
 
-table.table_to_array = function (arg_59_0, arg_59_1)
+table.table_to_array = function (t, array_out)
 	-- function 59
-	assert(#arg_59_1 == 0)
+	assert(#array_out == 0)
 
-	local num = 0
+	local array_out_n = 0
 
-	for k, v in pairs(arg_59_0) do
-		arg_59_1[num + 1] = k
-		arg_59_1[num + 2] = v
-		num = num + 2
+	for key, value in pairs(t) do
+		array_out[array_out_n + 1] = key
+		array_out[array_out_n + 2] = value
+		array_out_n = array_out_n + 2
 	end
 
-	return num
+	return array_out_n
 end
 
-table.add_meta_logging = function (arg_60_0, arg_60_1, arg_60_2)
+table.add_meta_logging = function (real_table, debug_enabled, debug_name)
 	-- function 60
-	local flag = arg_60_0 or {}
+	local real_table = not not real_table or not not {}
 
-	if not arg_60_1 then
-		local tbl = {
-			__index = function (arg_61_0, arg_61_1)
-				-- function 61
-				local var_61_0 = rawget(flag, arg_61_1)
+	if debug_enabled then
+		local front_table = {}
 
-				print("meta getting", arg_60_2, arg_61_1, var_61_0)
+		front_table.__index = function (table, key)
+			-- function 61
+			local value = rawget(real_table, key)
 
-				return var_61_0
-			end
-		}
+			print("meta getting", debug_name, key, value)
 
-		setmetatable(tbl, tbl)
+			return value
+		end
 
-		tbl.__newindex = function (arg_62_0, arg_62_1, arg_62_2)
+		setmetatable(front_table, front_table)
+
+		front_table.__newindex = function (table, key, value)
 			-- function 62
-			print("meta setting", arg_60_2, arg_62_1, arg_62_2)
-			rawset(flag, arg_62_1, arg_62_2)
+			print("meta setting", debug_name, key, value)
+			rawset(real_table, key, value)
 		end
 
-		return tbl
+		return front_table
 	else
-		return flag
+		return real_table
 	end
 end
 
-local function fn_3(self, arg_63_1)
+local function ripairs_iterator(t, i)
 	-- function 63
-	arg_63_1 = arg_63_1 - 1
+	i = i - 1
 
-	local var_63_0 = self[arg_63_1]
+	local v = t[i]
 
-	if not var_63_0 then
-		return arg_63_1, var_63_0
+	if v then
+		return i, v
 	end
 end
 
-function ripairs(arg_64_0)
+function ripairs(t)
 	-- function 64
-	return fn_3, arg_64_0, #arg_64_0 + 1
+	return ripairs_iterator, t, #t + 1
 end
 
-table.swap_delete = function (self, arg_65_1)
+table.swap_delete = function (t, index)
 	-- function 65
-	local count = #self
-	local var_65_1 = self[arg_65_1]
+	local table_length = #t
+	local orig = t[index]
 
-	self[arg_65_1] = self[count]
-	self[count] = nil
+	t[index] = t[table_length]
+	t[table_length] = nil
 
-	return var_65_1
+	return orig
 end
 
-table.array_remove_if = function (self, arg_66_1)
+table.array_remove_if = function (t, predicate)
 	-- function 66
-	local num = 1
-	local var_66_1
+	local i, v = 1
 
-	for i = 1, #self do
-		local var_66_2
+	for j = 1, #t do
+		v, t[j] = t[j]
 
-		var_66_2, self[i] = self[i]
-
-		if not arg_66_1(var_66_2) then
-			self[num], num = var_66_2, num + 1
+		if not predicate(v) then
+			t[i], i = v, i + 1
 		end
 	end
 end
 
-table.remove_if = function (self, arg_67_1)
+table.remove_if = function (t, predicate)
 	-- function 67
-	for k, v in pairs(self) do
-		if not arg_67_1(k, v) then
-			self[k] = nil
+	for k, v in pairs(t) do
+		if predicate(k, v) then
+			t[k] = nil
 		end
 	end
 end
 
-;({}).__index = function (arg_68_0, arg_68_1)
-	-- function 68
-	return error("Don't know `" .. tostring(arg_68_1) .. "` for enum.")
-end
+local _enum_index_metatable = {
+	__index = function (_, k)
+		-- function 68
+		return error("Don't know `" .. tostring(k) .. "` for enum.")
+	end
+}
 
 table.enum = function (...)
 	-- function 69
-	local tbl = {}
+	local t = {}
 
 	for i = 1, select("#", ...) do
-		local var_69_1 = select(i, ...)
+		local v = select(i, ...)
 
-		tbl[var_69_1] = var_69_1
+		t[v] = v
 	end
 
-	return tbl
+	return t
 end
 
 table.ordered_enum = function (...)
 	-- function 70
-	local tbl = {}
+	local t = {}
 
 	for i = 1, select("#", ...) do
-		local var_70_1 = select(i, ...)
+		local v = select(i, ...)
 
-		tbl[var_70_1] = var_70_1
-		tbl[i] = var_70_1
+		t[v] = v
+		t[i] = v
 	end
 
-	return tbl
+	return t
 end
 
 table.enum_safe = function (...)
 	-- function 71
-	local tbl = {}
+	local t = {}
 
 	for i = 1, select("#", ...) do
-		local var_71_1 = select(i, ...)
+		local v = select(i, ...)
 
-		tbl[var_71_1] = var_71_1
+		t[v] = v
 	end
 
-	return tbl
+	return t
 end
 
-table.map = function (arg_72_0, arg_72_1)
+table.map = function (t, func)
 	-- function 72
-	local tbl = {}
+	local copy = {}
 
-	for k, v in pairs(arg_72_0) do
-		tbl[k] = arg_72_1(v)
+	for k, v in pairs(t) do
+		copy[k] = func(v)
 	end
 
-	return tbl
+	return copy
 end
 
-table.filter = function (arg_73_0, arg_73_1, arg_73_2)
+table.filter = function (t, func, out)
 	-- function 73
-	arg_73_2 = arg_73_2 or {}
+	out = not not out or not not {}
 
-	for k, v in pairs(arg_73_0) do
-		if arg_73_1(v) == true then
-			arg_73_2[k] = v
+	for k, v in pairs(t) do
+		if func(v) == true then
+			out[k] = v
 		end
 	end
 
-	return arg_73_2
+	return out
 end
 
-table.filter_to_array = function (arg_74_0, arg_74_1, arg_74_2)
+table.filter_to_array = function (t, func, out)
 	-- function 74
-	arg_74_2 = arg_74_2 or {}
+	out = not not out or not not {}
 
-	local num = 0
+	local n = 0
 
-	for k, v in pairs(arg_74_0) do
-		if not arg_74_1(v) then
-			num = num + 1
-			arg_74_2[num] = v
+	for k, v in pairs(t) do
+		if func(v) then
+			n = n + 1
+			out[n] = v
 		end
 	end
 
-	return arg_74_2, num
+	return out, n
 end
 
-table.filter_array = function (self, arg_75_1, arg_75_2)
+table.filter_array = function (t, func, out)
 	-- function 75
-	arg_75_2 = arg_75_2 or {}
+	out = not not out or not not {}
 
-	local num = 0
+	local n = 0
 
-	for i = 1, #self do
-		local var_75_1 = self[i]
+	for i = 1, #t do
+		local v = t[i]
 
-		if not arg_75_1(var_75_1) then
-			num = num + 1
-			arg_75_2[num] = var_75_1
+		if func(v) then
+			n = n + 1
+			out[n] = v
 		end
 	end
 
-	return arg_75_2, num
+	return out, n
 end
 
-table.get_value_or_last = function (self, arg_76_1)
+table.get_value_or_last = function (t, index)
 	-- function 76
-	local var_76_0 = self[arg_76_1]
+	local var_76_0 = t[index]
 
-	var_76_0 = var_76_0 or self[#self]
+	var_76_0 = not not var_76_0 or not not t[#t]
 
 	return var_76_0
 end
 
-table.autovivified = function (arg_77_0)
+table.autovivified = function (new)
 	-- function 77
-	arg_77_0 = arg_77_0 or TNEW
+	new = not not new or not not TNEW
 
 	return setmetatable({}, {
-		__index = function (self, arg_78_1)
+		__index = function (self, key)
 			-- function 78
-			local var_78_0 = arg_77_0(arg_78_1)
+			local val = new(key)
 
-			self[arg_78_1] = var_78_0
+			self[key] = val
 
-			return var_78_0
+			return val
 		end
 	})
 end
 
-table.every = function (arg_79_0, arg_79_1)
+table.every = function (t, func)
 	-- function 79
-	for k, v in pairs(arg_79_0) do
-		if not arg_79_1(k, v) then
+	for key, value in pairs(t) do
+		if not func(key, value) then
 			return false
 		end
 	end
@@ -1089,324 +1089,333 @@ table.every = function (arg_79_0, arg_79_1)
 	return true
 end
 
-table.find_func = function (arg_80_0, arg_80_1)
+table.find_func = function (t, func)
 	-- function 80
-	for k, v in pairs(arg_80_0) do
-		if not arg_80_1(k, v) then
-			return k, v
+	for key, value in pairs(t) do
+		if func(key, value) then
+			return key, value
 		end
 	end
 end
 
-table.find_func_array = function (self, arg_81_1)
+table.find_func_array = function (t, func)
 	-- function 81
-	for i = 1, #self do
-		local var_81_0 = self[i]
+	for i = 1, #t do
+		local value = t[i]
 
-		if not arg_81_1(var_81_0) then
-			return i, var_81_0
+		if func(value) then
+			return i, value
 		end
 	end
 end
 
-table.random = function (self)
+table.random = function (t)
 	-- function 82
-	return self[math.random(1, #self)]
+	local index = math.random(1, #t)
+
+	return t[index]
 end
 
-table.recursive_readonlytable = function (arg_83_0)
+table.recursive_readonlytable = function (t)
 	-- function 83
-	setmetatable(arg_83_0, {
-		__newindex = function (arg_84_0, arg_84_1, arg_84_2)
+	setmetatable(t, {
+		__newindex = function (table, key, value)
 			-- function 84
 			error("Trying to modify read only table.")
 		end
 	})
 
-	for k, v in pairs(arg_83_0) do
-		if type(v) == "table" then
-			table.recursive_readonlytable(v)
+	for _, value in pairs(t) do
+		local type = type(value)
+
+		if type == "table" then
+			table.recursive_readonlytable(value)
 		end
 	end
 end
 
-table.flat = function (arg_85_0, arg_85_1, arg_85_2)
+table.flat = function (t, max_depth, current_depth)
 	-- function 85
-	arg_85_1 = arg_85_1 or 1
-	arg_85_2 = (arg_85_2 or 0) + 1
+	max_depth = not not max_depth or not not 1
+	current_depth = (not not current_depth or not not 0) + 1
 
-	local tbl = {}
+	local out = {}
 
-	for k, v in pairs(arg_85_0) do
-		if not (type(v) ~= "table" or not (arg_85_2 <= arg_85_1)) then
-			table.append(tbl, table.flat(v, arg_85_1, arg_85_2))
+	for k, value in pairs(t) do
+		if type(value) == "table" and current_depth <= max_depth then
+			table.append(out, table.flat(value, max_depth, current_depth))
 		else
-			tbl[#tbl + 1] = v
+			out[#out + 1] = value
 		end
 	end
 
-	return tbl
+	return out
 end
 
-table.make_strict = function (arg_86_0, arg_86_1, arg_86_2)
+table.make_strict = function (tab, interface, interface_name)
 	-- function 86
-	assert(getmetatable(arg_86_0) == nil, "Cannot call make_strict on a table with a metatable")
+	assert(getmetatable(tab) == nil, "Cannot call make_strict on a table with a metatable")
 
-	arg_86_2 = arg_86_2 or "strict table"
-	arg_86_1 = arg_86_1 or arg_86_0
+	interface_name = not not interface_name or not not "strict table"
+	interface = not not interface or not not tab
 
-	return setmetatable(arg_86_0, {
-		__class_name = arg_86_2,
-		__index = function (arg_87_0, arg_87_1)
+	return setmetatable(tab, {
+		__class_name = interface_name,
+		__index = function (t, k)
 			-- function 87
-			if arg_86_1[arg_87_1] == nil then
-				ferror("Reading from key %q not in interface <%s>", arg_87_1, arg_86_2)
+			if interface[k] == nil then
+				ferror("Reading from key %q not in interface <%s>", k, interface_name)
 			end
 
 			return nil
 		end,
-		__newindex = function (arg_88_0, arg_88_1, arg_88_2)
+		__newindex = function (t, k, v)
 			-- function 88
-			if arg_86_1[arg_88_1] == nil then
-				ferror("Writing to key %q not in interface <%s>", arg_88_1, arg_86_2)
+			if interface[k] == nil then
+				ferror("Writing to key %q not in interface <%s>", k, interface_name)
 			end
 
-			return rawset(arg_88_0, arg_88_1, arg_88_2)
+			return rawset(t, k, v)
 		end
 	})
 end
 
-table.select_array = function (self, arg_89_1)
+table.select_array = function (t, selector)
 	-- function 89
-	local tbl = {}
+	local new_t = {}
 
-	for i = 1, #self do
-		tbl[#tbl + 1] = arg_89_1(i, self[i])
+	for i = 1, #t do
+		new_t[#new_t + 1] = selector(i, t[i])
 	end
 
-	return tbl
+	return new_t
 end
 
-table.select_map = function (arg_90_0, arg_90_1)
+table.select_map = function (t, selector)
 	-- function 90
-	local tbl = {}
+	local new_t = {}
 
-	for k, v in pairs(arg_90_0) do
-		tbl[k] = arg_90_1(k, v)
+	for k, v in pairs(t) do
+		new_t[k] = selector(k, v)
 	end
 
-	return tbl
+	return new_t
 end
 
-table.array_to_map = function (arg_91_0, arg_91_1)
+table.array_to_map = function (t, converter)
 	-- function 91
-	local tbl = {}
+	local new_t = {}
 
-	for k, v in pairs(arg_91_0) do
-		local var_91_1, var_91_2 = arg_91_1(k, v)
+	for i, v in pairs(t) do
+		local new_k, new_v = converter(i, v)
 
-		tbl[var_91_1] = var_91_2
+		new_t[new_k] = new_v
 	end
 
-	return tbl
+	return new_t
 end
 
-table.map_to_array = function (arg_92_0, arg_92_1)
+table.map_to_array = function (t, converter)
 	-- function 92
-	local tbl = {}
-	local num = 0
+	local new_t = {}
+	local n = 0
 
-	for k, v in pairs(arg_92_0) do
-		local var_92_2 = arg_92_1(k, v)
+	for k, v in pairs(t) do
+		local new_v = converter(k, v)
 
-		if not var_92_2 then
-			num = num + 1
-			tbl[num] = var_92_2
+		if new_v then
+			n = n + 1
+			new_t[n] = new_v
 		end
 	end
 
-	return tbl
+	return new_t
 end
 
-table.remove_empty_values = function (arg_93_0)
+table.remove_empty_values = function (t)
 	-- function 93
-	if not table.is_empty(arg_93_0) then
+	if table.is_empty(t) then
 		return nil
 	end
 
-	local tbl = {}
+	local result = {}
 
-	for k, v in pairs(arg_93_0) do
+	for k, v in pairs(t) do
 		if k ~= StrictNil then
-			local var_93_1 = type(v)
+			local value_type = type(v)
 
-			if var_93_1 == "table" then
+			if value_type == "table" then
 				if not table.is_empty(v) then
-					tbl[k] = table.remove_empty_values(v)
+					result[k] = table.remove_empty_values(v)
 				end
-			elseif not (var_93_1 ~= "string" or v == "") then
-				tbl[k] = v
-			elseif var_93_1 ~= "nil" then
-				tbl[k] = v
+			elseif value_type == "string" and v ~= "" then
+				result[k] = v
+			elseif value_type ~= "nil" then
+				result[k] = v
 			end
 		end
 	end
 
-	if not table.is_empty(tbl) then
+	if table.is_empty(result) then
 		return nil
 	else
-		return tbl
+		return result
 	end
 end
 
-local function fn_4(self, arg_94_1, arg_94_2, arg_94_3)
+local function _qs_partition(arr, low, high, f)
 	-- function 94
-	local var_94_0 = self[arg_94_2]
-	local num = arg_94_1 - 1
+	local pivot = arr[high]
+	local i = low - 1
 
-	for i = arg_94_1, arg_94_2 - 1 do
-		local var_94_2
+	for j = low, high - 1 do
+		local less
 
-		if not arg_94_3 then
-			var_94_2 = arg_94_3(self[i], var_94_0)
+		if f then
+			less = f(arr[j], pivot)
 		else
-			var_94_2 = var_94_0 >= self[i]
+			less = pivot >= arr[j]
 		end
 
-		if not var_94_2 then
-			num = num + 1
-			self[num], self[i] = self[i], self[num]
+		if less then
+			i = i + 1
+			arr[i], arr[j] = arr[j], arr[i]
 		end
 	end
 
-	self[num + 1], self[arg_94_2] = self[arg_94_2], self[num + 1]
+	arr[i + 1], arr[high] = arr[high], arr[i + 1]
 
-	return num + 1
+	return i + 1
 end
 
-local function fn_5(arg_95_0, arg_95_1, arg_95_2, arg_95_3)
+local function _quicksort(arr, low, high, f)
 	-- function 95
-	if arg_95_1 < arg_95_2 then
-		local var_95_0 = fn_4(arg_95_0, arg_95_1, arg_95_2, arg_95_3)
+	if low < high then
+		local pivot = _qs_partition(arr, low, high, f)
 
-		fn_5(arg_95_0, arg_95_1, var_95_0 - 1, arg_95_3)
-		fn_5(arg_95_0, var_95_0 + 1, arg_95_2, arg_95_3)
+		_quicksort(arr, low, pivot - 1, f)
+		_quicksort(arr, pivot + 1, high, f)
 	end
 end
 
-table.sort_span = function (arg_96_0, arg_96_1, arg_96_2, arg_96_3)
+table.sort_span = function (t, start_index, end_index, sort_func)
 	-- function 96
-	fn_5(arg_96_0, arg_96_1, arg_96_2, arg_96_3)
+	_quicksort(t, start_index, end_index, sort_func)
 end
 
-table.array_average = function (self, arg_97_1, arg_97_2)
+table.array_average = function (t, max_num, next_val)
 	-- function 97
-	if not arg_97_2 then
+	if next_val then
 		local index_wrapper = math.index_wrapper
-		local index = self.index
+		local index = t.index
 
-		index = index or 0
+		index = not not index or not not 0
 
-		local var_97_2 = index_wrapper(index + 1, arg_97_1)
+		local idx = index_wrapper(index + 1, max_num)
 
-		self[var_97_2] = arg_97_2
-		self.index = var_97_2
+		t[idx] = next_val
+		t.index = idx
 	end
 
-	local count = #self
-	local num = 0
-	local num_2 = 0
-	local num_3 = 0
+	local num_elements = #t
+	local sum, min, max = 0, 0, 0
 
-	for i = 1, count do
-		local var_97_7 = self[i]
+	for i = 1, num_elements do
+		local d = t[i]
 
-		num = num + var_97_7
-		num_2 = not (var_97_7 < num_2) or not var_97_7 or num_2
-		num_3 = not (num_3 < var_97_7) or not var_97_7 or num_3
+		sum = sum + d
+
+		if d < min and not d then
+			-- Nothing
+		end
+
+		if max < d and not d then
+			-- Nothing
+		end
 	end
 
-	return num / count, num_2, num_3
+	return sum / num_elements, min, max
 end
 
-table.convert_lookup = function (self, arg_98_1)
+table.convert_lookup = function (arr, lookup)
 	-- function 98
-	for i = 1, #self do
-		self[i] = arg_98_1[self[i]]
+	for i = 1, #arr do
+		arr[i] = lookup[arr[i]]
 	end
 
-	return self
+	return arr
 end
 
 table.enum_lookup = function (...)
 	-- function 99
-	local tbl = {
+	local arr = {
 		...
 	}
-	local mirror_array = table.mirror_array(tbl)
+	local lookup = table.mirror_array(arr)
+	local enum = table.ordered_enum(unpack(lookup))
 
-	return table.ordered_enum(unpack(mirror_array)), mirror_array
+	return enum, lookup
 end
 
-table.insert_unique = function (arg_100_0, arg_100_1, arg_100_2)
+table.insert_unique = function (t, value, index)
 	-- function 100
-	if not (table.find(arg_100_0, arg_100_1) or not arg_100_2 or table.insert(arg_100_0, arg_100_2, arg_100_1)) then
-		local insert = table.insert(arg_100_0, arg_100_1)
+	if not table.find(t, value) and (not index or not table.insert(t, index, value)) then
+		local _ = table.insert(t, value)
 	end
 end
 
-table.remove_array_value = function (self, arg_101_1)
+table.remove_array_value = function (t, value)
 	-- function 101
-	local num = 1
-	local num_2 = 1
-	local count = #self
+	local iter_i = 1
+	local move_i = 1
+	local n = #t
 
-	while num <= count do
-		if self[num] == arg_101_1 then
-			self[num] = nil
+	while iter_i <= n do
+		if t[iter_i] == value then
+			t[iter_i] = nil
 		else
-			num_2 = num_2 + 1
+			move_i = move_i + 1
 		end
 
-		num = num + 1
-		self[num_2] = self[num]
+		iter_i = iter_i + 1
+		t[move_i] = t[iter_i]
 	end
 
-	return self
+	return t
 end
 
-table.fill = function (self, arg_102_1, arg_102_2)
+table.fill = function (t, n, value)
 	-- function 102
-	for i = 1, arg_102_1 do
-		self[i] = arg_102_2
+	for i = 1, n do
+		t[i] = value
 	end
 
-	return self
+	return t
 end
 
-table.count_if = function (arg_103_0, arg_103_1)
+table.count_if = function (t, f)
 	-- function 103
-	local num = 0
+	local count = 0
 
-	for k, v in pairs(arg_103_0) do
-		if not arg_103_1(k, v) then
-			num = num + 1
+	for k, v in pairs(t) do
+		if f(k, v) then
+			count = count + 1
 		end
 	end
 
-	return num
+	return count
 end
 
-table.shallow_equal = function (self, arg_104_1)
+table.shallow_equal = function (t1, t2)
 	-- function 104
-	for k, v in pairs(self) do
-		if self[k] ~= arg_104_1[k] then
+	for k, v in pairs(t1) do
+		if t1[k] ~= t2[k] then
 			return false
 		end
 	end
 
-	for k_2, v_2 in pairs(arg_104_1) do
-		if arg_104_1[k_2] ~= self[k_2] then
+	for k, v in pairs(t2) do
+		if t2[k] ~= t1[k] then
 			return false
 		end
 	end
@@ -1414,17 +1423,19 @@ table.shallow_equal = function (self, arg_104_1)
 	return true
 end
 
-table.safe_get = function (arg_105_0, ...)
+table.safe_get = function (t, ...)
 	-- function 105
-	local var_105_0 = arg_105_0
+	local val = t
 
 	for i = 1, select("#", ...) do
-		var_105_0 = var_105_0[select(i, ...)]
+		local key = select(i, ...)
 
-		if not var_105_0 then
+		val = val[key]
+
+		if not val then
 			return nil
 		end
 	end
 
-	return var_105_0
+	return val
 end

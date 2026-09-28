@@ -4,380 +4,404 @@ require("scripts/entity_system/systems/behaviour/nodes/bt_node")
 
 BTErraticFollowAction = class(BTErraticFollowAction, BTNode)
 
-BTErraticFollowAction.init = function (arg_1_0, ...)
+BTErraticFollowAction.init = function (self, ...)
 	-- function 1
-	BTErraticFollowAction.super.init(arg_1_0, ...)
+	BTErraticFollowAction.super.init(self, ...)
 end
 
 BTErraticFollowAction.name = "BTErraticFollowAction"
 
-local flag = false
+local debug_movement = false
 
-BTErraticFollowAction.enter = function (self, arg_2_1, arg_2_2, arg_2_3)
+BTErraticFollowAction.enter = function (self, unit, blackboard, t)
 	-- function 2
-	local action_data = self._tree_node.action_data
+	local action = self._tree_node.action_data
 
-	arg_2_2.action = action_data
-	arg_2_2.remembered_threat_pos = nil
+	blackboard.action = action
+	blackboard.remembered_threat_pos = nil
 
-	local unreachable_timer = arg_2_2.unreachable_timer
+	local unreachable_timer = blackboard.unreachable_timer
 
-	unreachable_timer = unreachable_timer or 0
-	arg_2_2.chasing_timer = unreachable_timer
-	arg_2_2.active_node = self
+	unreachable_timer = not not unreachable_timer or not not 0
+	blackboard.chasing_timer = unreachable_timer
+	blackboard.active_node = self
 
-	local move_state = arg_2_2.move_state
-	local var_2_3 = POSITION_LOOKUP[arg_2_2.target_unit]
-	local get_start_move_animation = AiAnimUtils.get_start_move_animation(arg_2_1, var_2_3, action_data.start_anims_name)
+	local move_state = blackboard.move_state
+	local target_pos = POSITION_LOOKUP[blackboard.target_unit]
+	local animation_name = AiAnimUtils.get_start_move_animation(unit, target_pos, action.start_anims_name)
 
-	if arg_2_2.move_state ~= "moving" then
-		self:_go_moving(arg_2_1, arg_2_2, get_start_move_animation)
+	if blackboard.move_state ~= "moving" then
+		self:_go_moving(unit, blackboard, animation_name)
 	end
 
-	local tutorial_message_template = action_data.tutorial_message_template
+	local tutorial_message_template = action.tutorial_message_template
 
-	if not tutorial_message_template then
-		local var_2_6 = NetworkLookup.tutorials[tutorial_message_template]
-		local var_2_7 = NetworkLookup.tutorials[arg_2_2.breed.name]
+	if tutorial_message_template then
+		local template_id = NetworkLookup.tutorials[tutorial_message_template]
+		local message_id = NetworkLookup.tutorials[blackboard.breed.name]
+		local network_manager = Managers.state.network
 
-		Managers.state.network.network_transmit:send_rpc_all("rpc_tutorial_message", var_2_6, var_2_7)
+		network_manager.network_transmit:send_rpc_all("rpc_tutorial_message", template_id, message_id)
 	end
 
-	if not arg_2_2.random_dirs then
-		arg_2_2.random_dirs = {
-			action_data.move_jump_fwd_anims,
-			action_data.move_jump_right_anims,
-			action_data.move_jump_fwd_anims
+	if not blackboard.random_dirs then
+		blackboard.random_dirs = {
+			action.move_jump_fwd_anims,
+			action.move_jump_right_anims,
+			action.move_jump_fwd_anims
 		}
 	end
 
-	arg_2_2.next_jump_time = arg_2_3 + 1
-	arg_2_2.boss_follow_next_line_of_sight_check_t = arg_2_3
+	blackboard.next_jump_time = t + 1
+	blackboard.boss_follow_next_line_of_sight_check_t = t
 end
 
-BTErraticFollowAction.leave = function (arg_3_0, arg_3_1, arg_3_2, arg_3_3, arg_3_4, arg_3_5)
+BTErraticFollowAction.leave = function (self, unit, blackboard, t, reason, destroy)
 	-- function 3
-	local get_default_breed_move_speed = AiUtils.get_default_breed_move_speed(arg_3_1, arg_3_2)
+	local default_move_speed = AiUtils.get_default_breed_move_speed(unit, blackboard)
+	local navigation_extension = blackboard.navigation_extension
 
-	arg_3_2.navigation_extension:set_max_speed(get_default_breed_move_speed)
+	navigation_extension:set_max_speed(default_move_speed)
 
-	if not (not arg_3_2.is_turning and arg_3_5) then
-		LocomotionUtils.reset_turning(arg_3_1, arg_3_2)
+	if blackboard.is_turning and not destroy then
+		LocomotionUtils.reset_turning(unit, blackboard)
 
-		arg_3_2.is_turning = nil
+		blackboard.is_turning = nil
 	end
 
-	arg_3_2.move_animation_name = nil
-	arg_3_2.animation_rotation_lock = nil
-	arg_3_2.rotate_towards_position = nil
-	arg_3_2.next_turn_at = nil
-	arg_3_2.wanted_destination = nil
-	arg_3_2.anim_cb_rotation_start = nil
-	arg_3_2.anim_cb_move = nil
-	arg_3_2.animation_lean = nil
-	arg_3_2.active_node = nil
-	arg_3_2.boss_follow_next_line_of_sight_check_t = nil
-	arg_3_2.has_los_to_any_player = nil
+	blackboard.move_animation_name = nil
+	blackboard.animation_rotation_lock = nil
+	blackboard.rotate_towards_position = nil
+	blackboard.next_turn_at = nil
+	blackboard.wanted_destination = nil
+	blackboard.anim_cb_rotation_start = nil
+	blackboard.anim_cb_move = nil
+	blackboard.animation_lean = nil
+	blackboard.active_node = nil
+	blackboard.boss_follow_next_line_of_sight_check_t = nil
+	blackboard.has_los_to_any_player = nil
 
-	if not (arg_3_2.move_state ~= "jumping" or arg_3_5) then
-		local locomotion_extension = arg_3_2.locomotion_extension
+	if blackboard.move_state == "jumping" and not destroy then
+		local locomotion_extension = blackboard.locomotion_extension
 
 		locomotion_extension:set_animation_driven(false, true, false)
 		locomotion_extension:use_lerp_rotation(true)
 		locomotion_extension:set_movement_type("snap_to_navmesh")
-		Managers.state.network:anim_event(arg_3_1, "move_fwd")
+		Managers.state.network:anim_event(unit, "move_fwd")
 
-		arg_3_2.move_state = "moving"
+		blackboard.move_state = "moving"
 	end
 end
 
-BTErraticFollowAction.run = function (self, arg_4_1, arg_4_2, arg_4_3, arg_4_4)
+BTErraticFollowAction.run = function (self, unit, blackboard, t, dt)
 	-- function 4
-	local locomotion_extension = arg_4_2.locomotion_extension
+	local locomotion_extension = blackboard.locomotion_extension
+	local move_state = blackboard.move_state
 
-	if arg_4_2.move_state == "jumping" then
+	if move_state == "jumping" then
 		-- Nothing
 	else
-		self:follow(arg_4_1, arg_4_3, arg_4_4, arg_4_2, locomotion_extension)
+		self:follow(unit, t, dt, blackboard, locomotion_extension)
 	end
 
-	arg_4_2.chasing_timer = arg_4_2.chasing_timer + arg_4_4
+	blackboard.chasing_timer = blackboard.chasing_timer + dt
 
 	return "running", "evaluate"
 end
 
-BTErraticFollowAction._go_idle = function (arg_5_0, arg_5_1, arg_5_2, arg_5_3)
+BTErraticFollowAction._go_idle = function (self, unit, blackboard, locomotion_extension)
 	-- function 5
-	arg_5_2.move_state = "idle"
+	blackboard.move_state = "idle"
 
-	Managers.state.network:anim_event(arg_5_1, "idle")
+	Managers.state.network:anim_event(unit, "idle")
 
-	local rotation_towards_unit_flat = LocomotionUtils.rotation_towards_unit_flat(arg_5_1, arg_5_2.target_unit)
+	local rot = LocomotionUtils.rotation_towards_unit_flat(unit, blackboard.target_unit)
 
-	arg_5_3:set_wanted_rotation(rotation_towards_unit_flat)
+	locomotion_extension:set_wanted_rotation(rot)
 end
 
-BTErraticFollowAction._go_moving = function (arg_6_0, arg_6_1, arg_6_2, arg_6_3)
+BTErraticFollowAction._go_moving = function (self, unit, blackboard, move_anim)
 	-- function 6
-	arg_6_2.move_state = "moving"
+	blackboard.move_state = "moving"
 
-	Managers.state.network:anim_event(arg_6_1, arg_6_3)
+	Managers.state.network:anim_event(unit, move_anim)
 end
 
-BTErraticFollowAction._go_walking = function (arg_7_0, arg_7_1, arg_7_2, arg_7_3)
+BTErraticFollowAction._go_walking = function (self, unit, blackboard, walk_anim)
 	-- function 7
-	arg_7_2.move_state = "walking"
+	blackboard.move_state = "walking"
 
-	Managers.state.network:anim_event(arg_7_1, arg_7_3)
+	Managers.state.network:anim_event(unit, walk_anim)
 end
 
-BTErraticFollowAction.follow = function (self, arg_8_1, arg_8_2, arg_8_3, arg_8_4, arg_8_5)
+BTErraticFollowAction.follow = function (self, unit, t, dt, blackboard, locomotion_extension)
 	-- function 8
-	local navigation_extension = arg_8_4.navigation_extension
+	local navigation_extension = blackboard.navigation_extension
 
 	if navigation_extension:number_failed_move_attempts() > 1 then
-		arg_8_4.remembered_threat_pos = false
+		blackboard.remembered_threat_pos = false
 
-		if arg_8_4.move_state ~= "idle" then
-			self:_go_idle(arg_8_1, arg_8_4, arg_8_5)
+		if blackboard.move_state ~= "idle" then
+			self:_go_idle(unit, blackboard, locomotion_extension)
 		end
 	end
 
-	local var_8_1 = POSITION_LOOKUP[arg_8_1]
+	local pos = POSITION_LOOKUP[unit]
 
-	if not (not (arg_8_4.target_dist > 10) or arg_8_4.consecutive_jump or not (arg_8_2 > arg_8_4.next_jump_time)) then
-		arg_8_4.consecutive_jump = false
+	if blackboard.target_dist > 10 and (blackboard.consecutive_jump or t > blackboard.next_jump_time) then
+		blackboard.consecutive_jump = false
 
-		if not self:investigate_jump(arg_8_1, arg_8_2, arg_8_4, var_8_1, arg_8_5) then
-			arg_8_4.next_jump_time = arg_8_2 + math.random() * 4
+		local success = self:investigate_jump(unit, t, blackboard, pos, locomotion_extension)
+
+		if success then
+			blackboard.next_jump_time = t + math.random() * 4
 
 			return
 		else
-			arg_8_4.next_jump_time = arg_8_2 + 2
+			blackboard.next_jump_time = t + 2
 		end
 	end
 
-	if not (not arg_8_4.breed.use_big_boy_turning and arg_8_4.move_state ~= "moving") then
-		local is_turning = arg_8_4.is_turning
-		local flag
+	local breed = blackboard.breed
 
-		flag = not is_turning and "true" and "false"
+	if breed.use_big_boy_turning and blackboard.move_state == "moving" then
+		local is_turning = blackboard.is_turning
+		local str
 
-		Debug.text("move_state:%s turning:%s", arg_8_4.move_state, flag)
+		if is_turning then
+			str = "true"
 
-		if not is_turning then
-			LocomotionUtils.update_turning(arg_8_1, arg_8_2, arg_8_3, arg_8_4)
+			goto label_8_0
+		end
+
+		str = "false"
+
+		local turning = str
+
+		::label_8_0::
+
+		Debug.text("move_state:%s turning:%s", blackboard.move_state, turning)
+
+		if is_turning then
+			LocomotionUtils.update_turning(unit, t, dt, blackboard)
 		else
-			LocomotionUtils.check_start_turning(arg_8_1, arg_8_2, arg_8_3, arg_8_4)
+			LocomotionUtils.check_start_turning(unit, t, dt, blackboard)
 		end
 	end
 
-	local action = arg_8_4.action
-	local is_following_path = navigation_extension:is_following_path()
-	local follow_target_ogre = LocomotionUtils.follow_target_ogre(arg_8_1, arg_8_4, arg_8_2, arg_8_3)
+	local action = blackboard.action
+	local previous_is_on_path = navigation_extension:is_following_path()
+	local new_destination = LocomotionUtils.follow_target_ogre(unit, blackboard, t, dt)
 
-	if not follow_target_ogre then
-		local flat = Vector3.flat(follow_target_ogre - POSITION_LOOKUP[arg_8_1])
-		local length_squared = Vector3.length_squared(flat)
+	if new_destination then
+		local to_vec = Vector3.flat(new_destination - POSITION_LOOKUP[unit])
+		local distance_sq = Vector3.length_squared(to_vec)
 
-		arg_8_4.wanted_destination = Vector3Box(follow_target_ogre)
-		arg_8_4.walking_allowed = not not is_following_path or length_squared <= action.enter_walk_dist_sq
+		blackboard.wanted_destination = Vector3Box(new_destination)
+		blackboard.walking_allowed = not previous_is_on_path and distance_sq <= action.enter_walk_dist_sq
 	end
 
-	if arg_8_2 > arg_8_4.boss_follow_next_line_of_sight_check_t then
-		arg_8_4.has_los_to_any_player = PerceptionUtils.has_line_of_sight_to_any_player(arg_8_1)
-		arg_8_4.boss_follow_next_line_of_sight_check_t = arg_8_2 + 2.5
+	if t > blackboard.boss_follow_next_line_of_sight_check_t then
+		blackboard.has_los_to_any_player = PerceptionUtils.has_line_of_sight_to_any_player(unit)
+		blackboard.boss_follow_next_line_of_sight_check_t = t + 2.5
 	end
 
-	local walking_allowed = arg_8_4.walking_allowed
-	local flat_2 = Vector3.flat(navigation_extension:destination() - POSITION_LOOKUP[arg_8_1])
-	local length_squared_2 = Vector3.length_squared(flat_2)
-	local var_8_12
+	local walking_allowed = blackboard.walking_allowed
+	local to_vec = Vector3.flat(navigation_extension:destination() - POSITION_LOOKUP[unit])
+	local distance_sq = Vector3.length_squared(to_vec)
+	local move_anim
 
-	if not action.override_move_speed then
+	if action.override_move_speed then
 		navigation_extension:set_max_speed(action.override_move_speed)
 	else
-		local breed = arg_8_4.breed
+		local breed = blackboard.breed
 
-		if not (length_squared_2 <= action.enter_walk_dist_sq) or not walking_allowed then
+		if distance_sq <= action.enter_walk_dist_sq and walking_allowed then
 			navigation_extension:set_max_speed(breed.walk_speed)
 
-			var_8_12 = action.walk_anim
-		elseif not (not breed.catch_up_speed and not (length_squared_2 > action.enter_catch_up_dist_sq) or arg_8_4.has_los_to_any_player) then
+			move_anim = action.walk_anim
+		elseif breed.catch_up_speed and distance_sq > action.enter_catch_up_dist_sq and not blackboard.has_los_to_any_player then
 			navigation_extension:set_max_speed(breed.catch_up_speed)
 
-			var_8_12 = action.move_anim
-		elseif length_squared_2 >= action.leave_walk_dist_sq then
+			move_anim = action.move_anim
+		elseif distance_sq >= action.leave_walk_dist_sq then
 			navigation_extension:set_max_speed(breed.run_speed)
 
-			var_8_12 = action.move_anim
-		elseif arg_8_4.move_state == "walking" then
+			move_anim = action.move_anim
+		elseif blackboard.move_state == "walking" then
 			navigation_extension:set_max_speed(breed.walk_speed)
 
-			var_8_12 = action.walk_anim
+			move_anim = action.walk_anim
 		else
 			navigation_extension:set_max_speed(breed.run_speed)
 
-			var_8_12 = action.move_anim
+			move_anim = action.move_anim
 		end
 	end
 
-	local is_following_path_2 = navigation_extension:is_following_path()
+	local is_on_path = navigation_extension:is_following_path()
 
-	if not is_following_path_2 and arg_8_4.move_state == "walking" and not (length_squared_2 <= action.enter_walk_dist_sq) or not walking_allowed then
-		self:_go_walking(arg_8_1, arg_8_4, var_8_12)
-	elseif not (not is_following_path_2 and arg_8_4.move_state == "moving" or not (length_squared_2 >= action.leave_walk_dist_sq)) then
-		self:_go_moving(arg_8_1, arg_8_4, var_8_12)
-	elseif arg_8_4.move_state == "idle" or not navigation_extension:has_reached_destination(0.2) then
-		self:_go_idle(arg_8_1, arg_8_4, arg_8_5)
+	if is_on_path and blackboard.move_state ~= "walking" and distance_sq <= action.enter_walk_dist_sq and walking_allowed then
+		self:_go_walking(unit, blackboard, move_anim)
+	elseif is_on_path and blackboard.move_state ~= "moving" and distance_sq >= action.leave_walk_dist_sq then
+		self:_go_moving(unit, blackboard, move_anim)
+	elseif blackboard.move_state ~= "idle" and navigation_extension:has_reached_destination(0.2) then
+		self:_go_idle(unit, blackboard, locomotion_extension)
 	end
 
-	if not not arg_8_4.animation_rotation_lock then
-		if not arg_8_4.target_outside_navmesh then
-			local rotation_towards_unit_flat = LocomotionUtils.rotation_towards_unit_flat(arg_8_1, arg_8_4.target_unit)
+	local can_rotate = not blackboard.animation_rotation_lock
 
-			arg_8_5:set_wanted_rotation(rotation_towards_unit_flat)
+	if can_rotate then
+		if blackboard.target_outside_navmesh then
+			local rot = LocomotionUtils.rotation_towards_unit_flat(unit, blackboard.target_unit)
+
+			locomotion_extension:set_wanted_rotation(rot)
 		else
-			arg_8_5:set_wanted_rotation(nil)
+			locomotion_extension:set_wanted_rotation(nil)
 		end
 	end
 end
 
-BTErraticFollowAction.check_for_high_jump = function (arg_9_0, arg_9_1, arg_9_2)
+BTErraticFollowAction.check_for_high_jump = function (self, unit, blackboard)
 	-- function 9
-	local get_data = World.get_data(arg_9_2.world, "physics_world")
-	local num = 1.2
-	local var_9_2 = POSITION_LOOKUP[arg_9_1]
-	local normalize = Vector3.normalize(Quaternion.forward(Unit.world_rotation(arg_9_1, 0)))
-	local num_2 = var_9_2 + Vector3(0, 0, 2)
-	local num_3 = num_2 + normalize * 2
-	local immediate_raycast, var_9_7 = PhysicsWorld.immediate_raycast(get_data, num_3, Vector3(0, 0, 1), num, "closest", "collision_filter", "filter_ai_mover")
-	local immediate_raycast_2, var_9_9 = PhysicsWorld.immediate_raycast(get_data, num_2, Vector3(0, 0, 1), num, "closest", "collision_filter", "filter_ai_mover")
+	local physics_world = World.get_data(blackboard.world, "physics_world")
+	local ray_length = 1.2
+	local pos = POSITION_LOOKUP[unit]
+	local fwd = Vector3.normalize(Quaternion.forward(Unit.world_rotation(unit, 0)))
+	local above_pos = pos + Vector3(0, 0, 2)
+	local infront_pos = above_pos + fwd * 2
+	local result, hit_position = PhysicsWorld.immediate_raycast(physics_world, infront_pos, Vector3(0, 0, 1), ray_length, "closest", "collision_filter", "filter_ai_mover")
+	local result2, hit_position2 = PhysicsWorld.immediate_raycast(physics_world, above_pos, Vector3(0, 0, 1), ray_length, "closest", "collision_filter", "filter_ai_mover")
+	local can_jump_high = (not result or not hit_position) and not result2 or not not not hit_position2
 
-	return (not immediate_raycast and not not var_9_7 or not immediate_raycast_2) and not var_9_9
+	return can_jump_high
 end
 
-BTErraticFollowAction.check_dir = function (arg_10_0, arg_10_1, arg_10_2, arg_10_3, arg_10_4, arg_10_5)
+BTErraticFollowAction.check_dir = function (self, p0, travel_dir, nav_world, traverse_logic, data)
 	-- function 10
-	local rotate = Quaternion.rotate(Quaternion(Vector3.up(), arg_10_5.ray_angle), arg_10_2)
-	local num = arg_10_1 + rotate * arg_10_5.ray_dist
-	local raycast, var_10_3 = GwNavQueries.raycast(arg_10_3, arg_10_1, num, arg_10_4)
-	local count = #arg_10_5
+	local jump_dir = Quaternion.rotate(Quaternion(Vector3.up(), data.ray_angle), travel_dir)
+	local p1 = p0 + jump_dir * data.ray_dist
+	local success, hit_pos = GwNavQueries.raycast(nav_world, p0, p1, traverse_logic)
+	local num_fields = #data
 
-	if not raycast then
-		local random = math.random(count)
+	if success then
+		local j = math.random(num_fields)
 
-		for i = 1, count do
-			local var_10_6 = arg_10_5[random]
-			local rotate_2 = Quaternion.rotate(Quaternion(Vector3.up(), var_10_6.ray_angle), rotate)
-			local dot = Vector3.dot(arg_10_2, rotate_2)
-			local num_2 = num + rotate_2 * var_10_6.ray_dist
+		for i = 1, num_fields do
+			local d = data[j]
+			local end_dir = Quaternion.rotate(Quaternion(Vector3.up(), d.ray_angle), jump_dir)
+			local end_dot = Vector3.dot(travel_dir, end_dir)
+			local p2 = p1 + end_dir * d.ray_dist
 
-			if dot <= 0 then
+			if end_dot <= 0 then
 				return false
 			end
 
-			local raycast_2, var_10_11 = GwNavQueries.raycast(arg_10_3, num, num_2, arg_10_4)
+			local success, hit_pos = GwNavQueries.raycast(nav_world, p1, p2, traverse_logic)
 
-			if not raycast_2 then
-				return var_10_6
+			if success then
+				return d
 			end
 
-			random = random + 1
+			j = j + 1
 
-			if count < random then
-				random = 1
+			if num_fields < j then
+				j = 1
 			end
 		end
-	elseif not var_10_3 then
+	elseif hit_pos then
 		return false
 	end
 end
 
-BTErraticFollowAction.debug_ray_casts = function (self, arg_11_1, arg_11_2, arg_11_3, arg_11_4, arg_11_5)
+BTErraticFollowAction.debug_ray_casts = function (self, unit_position, move_dir, nav_world, traverse_logic, action)
 	-- function 11
-	self:check_dir(arg_11_1, arg_11_2, arg_11_3, arg_11_4, arg_11_5.move_jump_left_anims)
-	self:check_dir(arg_11_1, arg_11_2, arg_11_3, arg_11_4, arg_11_5.move_jump_right_anims)
-	self:check_dir(arg_11_1, arg_11_2, arg_11_3, arg_11_4, arg_11_5.move_jump_fwd_anims)
-	self:check_dir(arg_11_1, arg_11_2, arg_11_3, arg_11_4, arg_11_5.move_jump_only_left_anims)
-	self:check_dir(arg_11_1, arg_11_2, arg_11_3, arg_11_4, arg_11_5.move_jump_only_fwd_left_anims)
-	self:check_dir(arg_11_1, arg_11_2, arg_11_3, arg_11_4, arg_11_5.move_jump_only_right_anims)
-	self:check_dir(arg_11_1, arg_11_2, arg_11_3, arg_11_4, arg_11_5.move_jump_only_fwd_right_anims)
+	self:check_dir(unit_position, move_dir, nav_world, traverse_logic, action.move_jump_left_anims)
+	self:check_dir(unit_position, move_dir, nav_world, traverse_logic, action.move_jump_right_anims)
+	self:check_dir(unit_position, move_dir, nav_world, traverse_logic, action.move_jump_fwd_anims)
+	self:check_dir(unit_position, move_dir, nav_world, traverse_logic, action.move_jump_only_left_anims)
+	self:check_dir(unit_position, move_dir, nav_world, traverse_logic, action.move_jump_only_fwd_left_anims)
+	self:check_dir(unit_position, move_dir, nav_world, traverse_logic, action.move_jump_only_right_anims)
+	self:check_dir(unit_position, move_dir, nav_world, traverse_logic, action.move_jump_only_fwd_right_anims)
 end
 
-BTErraticFollowAction.investigate_jump = function (self, arg_12_1, arg_12_2, arg_12_3, arg_12_4, arg_12_5)
+BTErraticFollowAction.investigate_jump = function (self, unit, t, blackboard, unit_position, locomotion_extension)
 	-- function 12
-	local navigation_extension = arg_12_3.navigation_extension
-	local _nav_bot = navigation_extension._nav_bot
-	local get_path_current_node_index = GwNavBot.get_path_current_node_index(_nav_bot)
-	local get_path_nodes_count = GwNavBot.get_path_nodes_count(_nav_bot)
+	local navigation_extension = blackboard.navigation_extension
+	local nav_bot = navigation_extension._nav_bot
+	local node_index = GwNavBot.get_path_current_node_index(nav_bot)
+	local num_index = GwNavBot.get_path_nodes_count(nav_bot)
 
-	if not (get_path_current_node_index < 0 or get_path_current_node_index ~= get_path_nodes_count) then
+	if node_index < 0 or node_index == num_index then
 		return false
 	end
 
-	local action = arg_12_3.action
-	local get_path_node_pos = GwNavBot.get_path_node_pos(_nav_bot, get_path_current_node_index + 1)
-	local normalize = Vector3.normalize(get_path_node_pos - arg_12_4)
-	local forward = Quaternion.forward(Unit.local_rotation(arg_12_1, 0))
-	local dot = Vector3.dot(forward, normalize)
-	local nav_world = arg_12_3.nav_world
+	local action = blackboard.action
+	local sub_goal = GwNavBot.get_path_node_pos(nav_bot, node_index + 1)
+	local travel_dir = Vector3.normalize(sub_goal - unit_position)
+	local move_dir = Quaternion.forward(Unit.local_rotation(unit, 0))
+	local dot = Vector3.dot(move_dir, travel_dir)
+	local nav_world = blackboard.nav_world
 	local traverse_logic = navigation_extension:traverse_logic()
-	local var_12_11
-	local var_12_12
+	local jump_anim, jump_data
+	local moving_towards_target = dot > 0.25
 
-	if not (dot > 0.25) then
-		local random_dirs = arg_12_3.random_dirs
+	if moving_towards_target then
+		local random_dirs = blackboard.random_dirs
 
 		table.shuffle(random_dirs)
 
 		for i = 1, 3 do
-			var_12_12 = self:check_dir(arg_12_4, forward, nav_world, traverse_logic, random_dirs[i])
+			jump_data = self:check_dir(unit_position, move_dir, nav_world, traverse_logic, random_dirs[i])
 
-			if not var_12_12 then
+			if jump_data then
 				break
 			end
 		end
-	elseif not (Vector3.cross(forward, normalize)[3] > 0) then
-		print("moving away from target, need to turn left to get back")
-
-		var_12_12 = self:check_dir(arg_12_4, forward, nav_world, traverse_logic, action.move_jump_only_fwd_left_anims)
-
-		if not var_12_12 then
-			var_12_12 = self:check_dir(arg_12_4, forward, nav_world, traverse_logic, action.move_jump_only_left_anims)
-		end
 	else
-		print("moving away from target, need to turn right to get back")
+		local right_of_to_goal = Vector3.cross(move_dir, travel_dir)[3] > 0
 
-		var_12_12 = self:check_dir(arg_12_4, forward, nav_world, traverse_logic, action.move_jump_only_right_anims)
-		var_12_12 = var_12_12 or self:check_dir(arg_12_4, forward, nav_world, traverse_logic, action.move_jump_only_fwd_right_anims)
+		if right_of_to_goal then
+			print("moving away from target, need to turn left to get back")
 
-		if not var_12_12 then
-			print("fail! could not turn back with, a jump")
+			jump_data = self:check_dir(unit_position, move_dir, nav_world, traverse_logic, action.move_jump_only_fwd_left_anims)
+
+			if not jump_data then
+				jump_data = self:check_dir(unit_position, move_dir, nav_world, traverse_logic, action.move_jump_only_left_anims)
+			end
+		else
+			print("moving away from target, need to turn right to get back")
+
+			jump_data = self:check_dir(unit_position, move_dir, nav_world, traverse_logic, action.move_jump_only_right_anims)
+			jump_data = not not jump_data or not not self:check_dir(unit_position, move_dir, nav_world, traverse_logic, action.move_jump_only_fwd_right_anims)
+
+			if not jump_data then
+				print("fail! could not turn back with, a jump")
+			end
 		end
 	end
 
-	if not var_12_12 then
-		local var_12_14 = var_12_12[1]
+	if jump_data then
+		local jump_anim = jump_data[1]
 
-		if not action.uses_high_jumps and not self:check_for_high_jump(arg_12_1, arg_12_3) then
-			var_12_14 = var_12_14 .. "_high"
+		if action.uses_high_jumps and self:check_for_high_jump(unit, blackboard) then
+			jump_anim = jump_anim .. "_high"
 		end
 
-		arg_12_3.current_jump_data = var_12_12
+		blackboard.current_jump_data = jump_data
 
-		arg_12_5:set_movement_type("snap_to_navmesh")
-		arg_12_5:set_animation_driven(true, false, false)
-		LocomotionUtils.set_animation_translation_scale(arg_12_1, Vector3(1, 1, 1))
-		arg_12_5:use_lerp_rotation(false)
-		Managers.state.network:anim_event(arg_12_1, var_12_14)
+		locomotion_extension:set_movement_type("snap_to_navmesh")
+		locomotion_extension:set_animation_driven(true, false, false)
+		LocomotionUtils.set_animation_translation_scale(unit, Vector3(1, 1, 1))
+		locomotion_extension:use_lerp_rotation(false)
+		Managers.state.network:anim_event(unit, jump_anim)
 
-		arg_12_3.jump_color = {
+		blackboard.jump_color = {
 			math.random(100, 255),
 			math.random(100, 255),
 			math.random(100, 255)
 		}
-		arg_12_3.move_state = "jumping"
+		blackboard.move_state = "jumping"
 
 		return true
 	end
@@ -385,41 +409,53 @@ BTErraticFollowAction.investigate_jump = function (self, arg_12_1, arg_12_2, arg
 	return false
 end
 
-BTErraticFollowAction.get_travel_dir = function (arg_13_0, arg_13_1, arg_13_2, arg_13_3)
+BTErraticFollowAction.get_travel_dir = function (self, unit, blackboard, pos)
 	-- function 13
-	local _nav_bot = arg_13_2.navigation_extension._nav_bot
-	local get_path_current_node_index = GwNavBot.get_path_current_node_index(_nav_bot)
-	local get_path_nodes_count = GwNavBot.get_path_nodes_count(_nav_bot)
+	local navigation_extension = blackboard.navigation_extension
+	local nav_bot = navigation_extension._nav_bot
+	local node_index = GwNavBot.get_path_current_node_index(nav_bot)
+	local num_index = GwNavBot.get_path_nodes_count(nav_bot)
 
-	if not (get_path_current_node_index < 0 or get_path_current_node_index ~= get_path_nodes_count) then
+	if node_index < 0 or node_index == num_index then
 		return
 	end
 
-	local action = arg_13_2.action
-	local get_path_node_pos = GwNavBot.get_path_node_pos(_nav_bot, get_path_current_node_index + 1)
+	local action = blackboard.action
+	local sub_goal = GwNavBot.get_path_node_pos(nav_bot, node_index + 1)
+	local travel_dir = Vector3.normalize(sub_goal - pos)
 
-	return (Vector3.normalize(get_path_node_pos - arg_13_3))
+	return travel_dir
 end
 
-BTErraticFollowAction.anim_cb_move_jump_finished = function (self, arg_14_1, arg_14_2)
+BTErraticFollowAction.anim_cb_move_jump_finished = function (self, unit, blackboard)
 	-- function 14
-	local var_14_0 = POSITION_LOOKUP[arg_14_1]
-	local locomotion_extension = arg_14_2.locomotion_extension
-	local forward = Quaternion.forward(Unit.local_rotation(arg_14_1, 0))
-	local get_travel_dir = self:get_travel_dir(arg_14_1, arg_14_2, var_14_0)
+	local pos = POSITION_LOOKUP[unit]
+	local locomotion_extension = blackboard.locomotion_extension
+	local move_dir = Quaternion.forward(Unit.local_rotation(unit, 0))
+	local get_travel_dir = self:get_travel_dir(unit, blackboard, pos)
 
-	get_travel_dir = get_travel_dir or forward
+	if not get_travel_dir then
+		-- Nothing
+	end
 
-	local dot = Vector3.dot(forward, get_travel_dir)
-	local flag = arg_14_2.target_dist > 10
-	local var_14_6 = POSITION_LOOKUP[arg_14_2.target_unit]
+	get_travel_dir = move_dir
 
-	arg_14_2.navigation_extension:reset_destination(var_14_6)
+	local travel_dir = get_travel_dir
 
-	if not flag then
-		local time = Managers.time:time("game")
+	::label_14_0::
 
-		if not self:investigate_jump(arg_14_1, time, arg_14_2, var_14_0, locomotion_extension) then
+	local dot = Vector3.dot(move_dir, travel_dir)
+	local consecutive_jump = blackboard.target_dist > 10
+	local target_pos = POSITION_LOOKUP[blackboard.target_unit]
+	local navigation_extension = blackboard.navigation_extension
+
+	navigation_extension:reset_destination(target_pos)
+
+	if consecutive_jump then
+		local t = Managers.time:time("game")
+		local success = self:investigate_jump(unit, t, blackboard, pos, locomotion_extension)
+
+		if success then
 			return
 		end
 	end
@@ -427,7 +463,7 @@ BTErraticFollowAction.anim_cb_move_jump_finished = function (self, arg_14_1, arg
 	locomotion_extension:set_animation_driven(false, true, false)
 	locomotion_extension:use_lerp_rotation(true)
 	locomotion_extension:set_movement_type("snap_to_navmesh")
-	Managers.state.network:anim_event(arg_14_1, "move_fwd")
+	Managers.state.network:anim_event(unit, "move_fwd")
 
-	arg_14_2.move_state = "moving"
+	blackboard.move_state = "moving"
 end

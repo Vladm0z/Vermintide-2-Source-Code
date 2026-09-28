@@ -5023,16 +5023,18 @@ OfflineBackendTitleInternalData.Store = {
 	}
 }
 
-for k, v in pairs(OfflineBackendTitleInternalData.Store) do
-	local StoreId = v.StoreId
-	local Store = v.Store
+for _, store_data in pairs(OfflineBackendTitleInternalData.Store) do
+	local store_id = store_data.StoreId
+	local store = store_data.Store
 
-	for k_2 = #Store, 1, -1 do
-		local ItemId = Store[k_2].ItemId
+	for i = #store, 1, -1 do
+		local entry = store[i]
+		local item_id = entry.ItemId
+		local item = ItemMasterList[item_id]
 
-		if not ItemMasterList[ItemId].dlc_name then
-			print(string.format("[OfflineBackendTitleInternalData.Store] Removed Item %q from store %q since it's a DLC item", ItemId, StoreId))
-			table.remove(Store, k_2)
+		if item.dlc_name then
+			print(string.format("[OfflineBackendTitleInternalData.Store] Removed Item %q from store %q since it's a DLC item", item_id, store_id))
+			table.remove(store, i)
 		end
 	end
 end

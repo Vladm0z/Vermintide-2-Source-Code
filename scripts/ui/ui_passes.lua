@@ -8,17 +8,16 @@ require("scripts/utils/utf8_utils")
 require("scripts/ui/ui_passes_tooltips")
 
 local UIRenderer = UIRenderer
-local draw_texture = UIRenderer.draw_texture
-local draw_texture_uv = UIRenderer.draw_texture_uv
+local UIRenderer_draw_texture = UIRenderer.draw_texture
+local UIRenderer_draw_texture_uv = UIRenderer.draw_texture_uv
 local UIInverseScaleVectorToResolution = UIInverseScaleVectorToResolution
 local UIGetFontHeight = UIGetFontHeight
 local UIScaleVectorToResolution = UIScaleVectorToResolution
 local ScaleVectorToResolution = ScaleVectorToResolution
-local string = string
-local math = math
+local string, math = string, math
 local UIPasses = UIPasses
 
-UIPasses = UIPasses or {}
+UIPasses = not not UIPasses or not not {}
 UIPasses = UIPasses
 UIPasses.nop = {
 	init = NOP,
@@ -26,268 +25,278 @@ UIPasses.nop = {
 	update = NOP
 }
 UIPasses.rect = {
-	init = function (self)
+	init = function (pass_definition)
 		-- function 1
-		if not self.retained_mode then
+		if pass_definition.retained_mode then
 			return {
 				dirty = true
 			}
 		end
 	end,
-	destroy = function (arg_2_0, arg_2_1, arg_2_2)
+	destroy = function (ui_renderer, pass_data, pass_definition)
 		-- function 2
-		assert(arg_2_2.retained_mode, "why u destroy immediate pass?")
+		assert(pass_definition.retained_mode, "why u destroy immediate pass?")
 
-		if not arg_2_1.retained_id then
-			UIRenderer.destroy_bitmap(arg_2_0, arg_2_1.retained_id)
+		if pass_data.retained_id then
+			UIRenderer.destroy_bitmap(ui_renderer, pass_data.retained_id)
 
-			arg_2_1.retained_id = nil
+			pass_data.retained_id = nil
 		end
 	end,
-	draw = function (arg_3_0, arg_3_1, arg_3_2, arg_3_3, arg_3_4, arg_3_5, arg_3_6, arg_3_7, arg_3_8, arg_3_9)
+	draw = function (ui_renderer, pass_data, ui_scenegraph, pass_definition, ui_style, ui_content, position, size, input_service, dt)
 		-- function 3
-		local white = Colors.color_definitions.white
+		local color = Colors.color_definitions.white
 
-		if not arg_3_4 then
-			local texture_size = arg_3_4.texture_size
+		if ui_style then
+			local texture_size = ui_style.texture_size
 
-			if not texture_size then
-				UIUtils.align_box_inplace(arg_3_4, arg_3_6, arg_3_7, texture_size)
+			if texture_size then
+				UIUtils.align_box_inplace(ui_style, position, size, texture_size)
 
-				arg_3_7 = texture_size
+				size = texture_size
 			end
 
-			white = arg_3_4.color or white
+			color = not not ui_style.color or not not color
 		end
 
-		if not arg_3_3.retained_mode then
-			local retained_mode = arg_3_3.retained_mode
+		if pass_definition.retained_mode then
+			local retained_mode = pass_definition.retained_mode
 
-			if not retained_mode then
-				if not arg_3_1.retained_id then
-					retained_mode = arg_3_1.retained_id
-
-					if not retained_mode then
-						-- Nothing
-					end
-				end
-
-				retained_mode = true
+			if retained_mode then
+				-- Nothing
 			end
+
+			if pass_data.retained_id then
+				retained_mode = pass_data.retained_id
+
+				if not retained_mode then
+					-- Nothing
+				end
+			end
+
+			retained_mode = true
+
+			local retained_id = retained_mode
 
 			::label_3_0::
 
-			local draw_rect = UIRenderer.draw_rect(arg_3_0, arg_3_6, arg_3_7, white, retained_mode)
-
-			arg_3_1.retained_id = not draw_rect and draw_rect and arg_3_1.retained_id
-			arg_3_1.dirty = false
+			retained_id = UIRenderer.draw_rect(ui_renderer, position, size, color, retained_id)
+			pass_data.retained_id = (not retained_id or not retained_id) and not not pass_data.retained_id
+			pass_data.dirty = false
 		else
-			UIRenderer.draw_rect(arg_3_0, arg_3_6, arg_3_7, white)
+			UIRenderer.draw_rect(ui_renderer, position, size, color)
 		end
 	end
 }
 UIPasses.texture = {
-	init = function (self, arg_4_1, arg_4_2, arg_4_3)
+	init = function (pass_definition, content, style, ui_renderer)
 		-- function 4
-		if not self.clone and not arg_4_3 then
-			local gui = arg_4_3.gui
+		if pass_definition.clone and ui_renderer then
+			local gui = ui_renderer.gui
 
-			if not self.retained_mode then
-				gui = arg_4_3.gui_retained
+			if pass_definition.retained_mode then
+				gui = ui_renderer.gui_retained
 			end
 
-			local texture_id = self.texture_id
+			local texture_id = pass_definition.texture_id
 
-			texture_id = texture_id or "texture_id"
+			texture_id = not not texture_id or not not "texture_id"
 
-			local var_4_2 = arg_4_1[texture_id]
-			local guid = Application.guid()
+			local material_name = content[texture_id]
+			local new_material_name = Application.guid()
 
-			Gui.clone_material_from_template(gui, guid, var_4_2)
+			Gui.clone_material_from_template(gui, new_material_name, material_name)
 
-			self.cloned_material = guid
+			pass_definition.cloned_material = new_material_name
 
-			local texture_id_2 = self.texture_id
+			local texture_id_2 = pass_definition.texture_id
 
-			texture_id_2 = texture_id_2 or "texture_id"
-			arg_4_1[texture_id_2] = guid
+			texture_id_2 = not not texture_id_2 or not not "texture_id"
+			content[texture_id_2] = new_material_name
 		end
 
-		if not self.material_func and not arg_4_3 then
-			local gui_2 = arg_4_3.gui
+		if pass_definition.material_func and ui_renderer then
+			local gui = ui_renderer.gui
 
-			if not self.retained_mode then
-				gui_2 = arg_4_3.gui_retained
+			if pass_definition.retained_mode then
+				gui = ui_renderer.gui_retained
 			end
 
-			local context = self.context
-			local texture_id_3 = self.texture_id
+			local context = pass_definition.context
+			local texture_id_3 = pass_definition.texture_id
 
-			texture_id_3 = texture_id_3 or "texture_id"
+			texture_id_3 = not not texture_id_3 or not not "texture_id"
 
-			local var_4_8 = arg_4_1[texture_id_3]
+			local texture_name = content[texture_id_3]
 
-			self.material_func(gui_2, var_4_8, context)
+			pass_definition.material_func(gui, texture_name, context)
 		end
 
-		if not self.retained_mode then
+		if pass_definition.retained_mode then
 			return {
 				dirty = true
 			}
 		end
 	end,
-	destroy = function (arg_5_0, arg_5_1, arg_5_2)
+	destroy = function (ui_renderer, pass_data, pass_definition)
 		-- function 5
-		assert(arg_5_2.retained_mode, "Attempted to destroy an immediate mode pass")
+		assert(pass_definition.retained_mode, "Attempted to destroy an immediate mode pass")
 
-		if not arg_5_1.retained_id then
-			UIRenderer.destroy_bitmap(arg_5_0, arg_5_1.retained_id)
+		if pass_data.retained_id then
+			UIRenderer.destroy_bitmap(ui_renderer, pass_data.retained_id)
 
-			arg_5_1.retained_id = nil
+			pass_data.retained_id = nil
 		end
 	end,
-	draw = function (arg_6_0, arg_6_1, arg_6_2, arg_6_3, arg_6_4, arg_6_5, arg_6_6, arg_6_7, arg_6_8, arg_6_9)
+	draw = function (ui_renderer, pass_data, ui_scenegraph, pass_definition, ui_style, ui_content, position, size, input_service, dt)
 		-- function 6
-		local texture_id = arg_6_3.texture_id
+		local texture_id = pass_definition.texture_id
 
-		texture_id = texture_id or "texture_id"
+		texture_id = not not texture_id or not not "texture_id"
 
-		local var_6_1 = arg_6_5[texture_id]
-		local var_6_2
-		local var_6_3
-		local var_6_4
-		local var_6_5
-		local var_6_6
+		local texture_name = ui_content[texture_id]
+		local color, masked, saturated, point_sample, viewport_mask
 
-		if not arg_6_4 then
-			local texture_size = arg_6_4.texture_size
+		if ui_style then
+			local texture_size = ui_style.texture_size
 
-			if not texture_size then
-				UIUtils.align_box_inplace(arg_6_4, arg_6_6, arg_6_7, texture_size)
+			if texture_size then
+				UIUtils.align_box_inplace(ui_style, position, size, texture_size)
 
-				arg_6_7 = texture_size
+				size = texture_size
 			end
 
-			var_6_2 = arg_6_4.color
-			var_6_3 = arg_6_4.masked
-			var_6_4 = arg_6_4.saturated
-			var_6_5 = arg_6_4.point_sample
-			var_6_6 = arg_6_4.viewport_mask
+			color = ui_style.color
+			masked = ui_style.masked
+			saturated = ui_style.saturated
+			point_sample = ui_style.point_sample
+			viewport_mask = ui_style.viewport_mask
 		end
 
-		if not arg_6_3.retained_mode then
-			local retained_mode = arg_6_3.retained_mode
+		if pass_definition.retained_mode then
+			local retained_mode = pass_definition.retained_mode
 
-			if not retained_mode then
-				retained_mode = arg_6_1.retained_id
-				retained_mode = retained_mode or true
+			if retained_mode then
+				-- Nothing
 			end
 
-			arg_6_1.retained_id = draw_texture(arg_6_0, var_6_1, arg_6_6, arg_6_7, var_6_2, var_6_3, var_6_4, retained_mode, var_6_5, var_6_6) or arg_6_1.retained_id
-			arg_6_1.dirty = false
+			retained_mode = pass_data.retained_id
+
+			if not retained_mode then
+				-- Nothing
+			end
+
+			retained_mode = true
+
+			local retained_id = retained_mode
+
+			::label_6_0::
+
+			retained_id = UIRenderer_draw_texture(ui_renderer, texture_name, position, size, color, masked, saturated, retained_id, point_sample, viewport_mask)
+			pass_data.retained_id = not not retained_id or not not pass_data.retained_id
+			pass_data.dirty = false
 		else
-			draw_texture(arg_6_0, var_6_1, arg_6_6, arg_6_7, var_6_2, var_6_3, var_6_4, nil, var_6_5, var_6_6)
+			UIRenderer_draw_texture(ui_renderer, texture_name, position, size, color, masked, saturated, nil, point_sample, viewport_mask)
 		end
 	end
 }
 UIPasses.texture_uv = {
-	init = function (self)
+	init = function (pass_definition)
 		-- function 7
-		if not self.retained_mode then
+		if pass_definition.retained_mode then
 			return {
 				dirty = true
 			}
 		end
 
-		return self.content_id
+		return pass_definition.content_id
 	end,
-	destroy = function (arg_8_0, arg_8_1, arg_8_2)
+	destroy = function (ui_renderer, pass_data, pass_definition)
 		-- function 8
-		assert(arg_8_2.retained_mode, "why u destroy immediate pass?")
+		assert(pass_definition.retained_mode, "why u destroy immediate pass?")
 
-		if not arg_8_1.retained_id then
-			UIRenderer.destroy_bitmap(arg_8_0, arg_8_1.retained_id)
+		if pass_data.retained_id then
+			UIRenderer.destroy_bitmap(ui_renderer, pass_data.retained_id)
 
-			arg_8_1.retained_id = nil
+			pass_data.retained_id = nil
 		end
 	end,
-	draw = function (arg_9_0, arg_9_1, arg_9_2, arg_9_3, arg_9_4, arg_9_5, arg_9_6, arg_9_7, arg_9_8, arg_9_9)
+	draw = function (ui_renderer, pass_data, ui_scenegraph, pass_definition, ui_style, ui_content, position, size, input_service, dt)
 		-- function 9
-		local uvs = arg_9_5.uvs
-		local texture_id = arg_9_3.texture_id
+		local uvs = ui_content.uvs
+		local texture_id = pass_definition.texture_id
 
-		texture_id = texture_id or "texture_id"
+		texture_id = not not texture_id or not not "texture_id"
 
-		local var_9_2 = arg_9_5[texture_id]
-		local var_9_3
-		local var_9_4
-		local var_9_5
-		local var_9_6
-		local var_9_7
+		local texture = ui_content[texture_id]
+		local color, masked, saturated, viewport_mask, point_sample
 
-		if not arg_9_4 then
-			local texture_size = arg_9_4.texture_size
+		if ui_style then
+			local texture_size = ui_style.texture_size
 
-			if not texture_size then
-				if arg_9_4.horizontal_alignment == "right" then
-					arg_9_6[1] = arg_9_6[1] + arg_9_7[1] - texture_size[1]
-				elseif arg_9_4.horizontal_alignment == "center" then
-					arg_9_6[1] = arg_9_6[1] + (arg_9_7[1] - texture_size[1]) / 2
+			if texture_size then
+				if ui_style.horizontal_alignment == "right" then
+					position[1] = position[1] + size[1] - texture_size[1]
+				elseif ui_style.horizontal_alignment == "center" then
+					position[1] = position[1] + (size[1] - texture_size[1]) / 2
 				end
 
-				if arg_9_4.vertical_alignment == "center" then
-					arg_9_6[2] = arg_9_6[2] + (arg_9_7[2] - texture_size[2]) / 2
-				elseif arg_9_4.vertical_alignment == "top" then
-					arg_9_6[2] = arg_9_6[2] + arg_9_7[2] - texture_size[2]
+				if ui_style.vertical_alignment == "center" then
+					position[2] = position[2] + (size[2] - texture_size[2]) / 2
+				elseif ui_style.vertical_alignment == "top" then
+					position[2] = position[2] + size[2] - texture_size[2]
 				end
 
-				arg_9_7 = texture_size
+				size = texture_size
 			end
 
-			var_9_3 = arg_9_4.color
-			var_9_4 = arg_9_4.masked
-			var_9_5 = arg_9_4.saturated
-			var_9_7 = arg_9_4.point_sample
-			var_9_6 = arg_9_4.viewport_mask
+			color = ui_style.color
+			masked = ui_style.masked
+			saturated = ui_style.saturated
+			point_sample = ui_style.point_sample
+			viewport_mask = ui_style.viewport_mask
 		end
 
-		if not arg_9_3.retained_mode then
-			local retained_mode = arg_9_3.retained_mode
+		if pass_definition.retained_mode then
+			local retained_mode = pass_definition.retained_mode
 
-			if not retained_mode then
-				if not arg_9_1.retained_id then
-					retained_mode = arg_9_1.retained_id
-
-					if not retained_mode then
-						-- Nothing
-					end
-				end
-
-				retained_mode = true
+			if retained_mode then
+				-- Nothing
 			end
+
+			if pass_data.retained_id then
+				retained_mode = pass_data.retained_id
+
+				if not retained_mode then
+					-- Nothing
+				end
+			end
+
+			retained_mode = true
+
+			local retained_id = retained_mode
 
 			::label_9_0::
 
-			local var_9_10 = draw_texture_uv(arg_9_0, var_9_2, arg_9_6, arg_9_7, uvs, var_9_3, var_9_4, var_9_5, retained_mode, var_9_7, var_9_6)
-
-			arg_9_1.retained_id = not var_9_10 and var_9_10 and arg_9_1.retained_id
-			arg_9_1.dirty = false
+			retained_id = UIRenderer_draw_texture_uv(ui_renderer, texture, position, size, uvs, color, masked, saturated, retained_id, point_sample, viewport_mask)
+			pass_data.retained_id = (not retained_id or not retained_id) and not not pass_data.retained_id
+			pass_data.dirty = false
 		else
-			draw_texture_uv(arg_9_0, var_9_2, arg_9_6, arg_9_7, uvs, var_9_3, var_9_4, var_9_5, nil, var_9_7, var_9_6)
+			UIRenderer_draw_texture_uv(ui_renderer, texture, position, size, uvs, color, masked, saturated, nil, point_sample, viewport_mask)
 		end
 	end
 }
 
-local tbl = {
+local NilCursor = {
 	0,
 	0,
 	0
 }
 
 UIPasses.texture_uv_dynamic_color_uvs_size_offset = {
-	init = function (self)
+	init = function (pass_definition)
 		-- function 10
-		if not self.retained_mode then
+		if pass_definition.retained_mode then
 			return {
 				dirty = true
 			}
@@ -295,407 +304,432 @@ UIPasses.texture_uv_dynamic_color_uvs_size_offset = {
 
 		return nil
 	end,
-	destroy = function (arg_11_0, arg_11_1, arg_11_2)
+	destroy = function (ui_renderer, pass_data, pass_definition)
 		-- function 11
-		assert(arg_11_2.retained_mode, "why u destroy immediate pass?")
+		assert(pass_definition.retained_mode, "why u destroy immediate pass?")
 
-		if not arg_11_1.retained_id then
-			UIRenderer.destroy_bitmap(arg_11_0, arg_11_1.retained_id)
+		if pass_data.retained_id then
+			UIRenderer.destroy_bitmap(ui_renderer, pass_data.retained_id)
 
-			arg_11_1.retained_id = nil
+			pass_data.retained_id = nil
 		end
 	end,
-	draw = function (arg_12_0, arg_12_1, arg_12_2, arg_12_3, arg_12_4, arg_12_5, arg_12_6, arg_12_7, arg_12_8, arg_12_9)
+	draw = function (ui_renderer, pass_data, ui_scenegraph, pass_definition, ui_style, ui_content, position, widget_size, input_service, dt)
 		-- function 12
-		arg_12_5 = not arg_12_3.content_id and arg_12_5[arg_12_3.content_id] and arg_12_5
-		arg_12_4 = not arg_12_3.style_id and arg_12_4[arg_12_3.style_id] and arg_12_4
+		if pass_definition.content_id and not ui_content[pass_definition.content_id] then
+			-- Nothing
+		end
 
-		local dynamic_function, var_12_1, var_12_2, var_12_3 = arg_12_3.dynamic_function(arg_12_5, arg_12_4, arg_12_7, arg_12_9, arg_12_0)
-		local texture_index = arg_12_5.texture_index
-		local var_12_6
+		if pass_definition.style_id and not ui_style[pass_definition.style_id] then
+			-- Nothing
+		end
 
-		if not texture_index then
-			local texture_id = arg_12_3.texture_id
+		local color, uvs, size, offset = pass_definition.dynamic_function(ui_content, ui_style, widget_size, dt, ui_renderer)
+		local texture_index = ui_content.texture_index
+		local var_12_1
 
-			texture_id = texture_id or "texture_id"
-			var_12_6 = arg_12_5[texture_id][texture_index]
+		if texture_index then
+			local texture_id = pass_definition.texture_id
 
-			if not var_12_6 then
+			texture_id = not not texture_id or not not "texture_id"
+			var_12_1 = ui_content[texture_id][texture_index]
+
+			if not var_12_1 then
 				-- Nothing
 			end
 		end
 
 		do
-			local texture_id_2 = arg_12_3.texture_id
+			local texture_id_2 = pass_definition.texture_id
 
-			texture_id_2 = texture_id_2 or "texture_id"
-			var_12_6 = arg_12_5[texture_id_2]
+			texture_id_2 = not not texture_id_2 or not not "texture_id"
+			var_12_1 = ui_content[texture_id_2]
+
+			local texture = var_12_1
 		end
 
 		::label_12_0::
 
-		if not var_12_3 then
-			arg_12_6 = arg_12_6 + Vector3(var_12_3[1], var_12_3[2], var_12_3[3])
+		if offset then
+			position = position + Vector3(offset[1], offset[2], offset[3])
 		end
 
-		if not arg_12_3.retained_mode then
-			local retained_mode = arg_12_3.retained_mode
+		if pass_definition.retained_mode then
+			local retained_mode = pass_definition.retained_mode
 
-			if not retained_mode then
-				if not arg_12_1.retained_id then
-					retained_mode = arg_12_1.retained_id
-
-					if not retained_mode then
-						-- Nothing
-					end
-				end
-
-				retained_mode = true
+			if retained_mode then
+				-- Nothing
 			end
+
+			if pass_data.retained_id then
+				retained_mode = pass_data.retained_id
+
+				if not retained_mode then
+					-- Nothing
+				end
+			end
+
+			retained_mode = true
+
+			local retained_id = retained_mode
 
 			::label_12_1::
 
-			local var_12_9 = draw_texture_uv(arg_12_0, var_12_6, arg_12_6, var_12_2, var_12_1, dynamic_function, not arg_12_4 and arg_12_4.masked, not arg_12_4 and arg_12_4.saturated, retained_mode)
-
-			arg_12_1.retained_id = not var_12_9 and var_12_9 and arg_12_1.retained_id
-			arg_12_1.dirty = false
+			retained_id = UIRenderer_draw_texture_uv(ui_renderer, texture, position, size, uvs, color, not not ui_style and not not ui_style.masked, not not ui_style and not not ui_style.saturated, retained_id)
+			pass_data.retained_id = (not retained_id or not retained_id) and not not pass_data.retained_id
+			pass_data.dirty = false
 		else
-			return draw_texture_uv(arg_12_0, var_12_6, arg_12_6, var_12_2, var_12_1, dynamic_function, not arg_12_4 and arg_12_4.masked, not arg_12_4 and arg_12_4.saturated)
+			return UIRenderer_draw_texture_uv(ui_renderer, texture, position, size, uvs, color, not not ui_style and not not ui_style.masked, not not ui_style and not not ui_style.saturated)
 		end
 
-		return draw_texture_uv(arg_12_0, var_12_6, arg_12_6, var_12_2, var_12_1, dynamic_function, not arg_12_4 and arg_12_4.masked, not arg_12_4 and arg_12_4.saturated)
+		return UIRenderer_draw_texture_uv(ui_renderer, texture, position, size, uvs, color, not not ui_style and not not ui_style.masked, not not ui_style and not not ui_style.saturated)
 	end
 }
 
-local tbl_2 = {
+local element_alignment_position = {
 	0,
 	0,
 	0
 }
 
 UIPasses.list_pass = {
-	init = function (self)
+	init = function (pass_definition)
 		-- function 13
-		local passes = self.passes
-		local count = #passes
-		local tbl = {}
+		local passes = pass_definition.passes
+		local num_passes = #passes
+		local sub_pass_datas = {}
 
-		for i = 1, count do
-			tbl[i] = UIPasses[passes[i].pass_type].init(passes[i])
+		for i = 1, num_passes do
+			sub_pass_datas[i] = UIPasses[passes[i].pass_type].init(passes[i])
 		end
 
 		return {
-			num_passes = count,
-			sub_pass_datas = tbl
+			num_passes = num_passes,
+			sub_pass_datas = sub_pass_datas
 		}
 	end,
-	draw = function (arg_14_0, arg_14_1, arg_14_2, arg_14_3, arg_14_4, arg_14_5, arg_14_6, arg_14_7, arg_14_8, arg_14_9)
+	draw = function (ui_renderer, pass_data, ui_scenegraph, pass_definition, ui_style, ui_content, position, size, input_service, dt)
 		-- function 14
-		local num_list_elements = arg_14_1.num_list_elements
+		local num_list_elements = pass_data.num_list_elements
 
 		if not num_list_elements then
-			num_list_elements = #arg_14_5
-			arg_14_1.num_list_elements = num_list_elements
+			num_list_elements = #ui_content
+			pass_data.num_list_elements = num_list_elements
 		end
 
-		local num_passes = arg_14_1.num_passes
-		local passes = arg_14_3.passes
-		local sub_pass_datas = arg_14_1.sub_pass_datas
-		local list_member_offset = arg_14_4.list_member_offset
-		local alloc_table = FrameTable.alloc_table()
-		local alloc_table_2 = FrameTable.alloc_table()
-		local columns = arg_14_4.columns
-		local column_offset = arg_14_4.column_offset
+		local num_passes = pass_data.num_passes
+		local passes = pass_definition.passes
+		local sub_pass_datas = pass_data.sub_pass_datas
+		local list_member_offset = ui_style.list_member_offset
+		local element_position = FrameTable.alloc_table()
+		local pass_position = FrameTable.alloc_table()
+		local columns = ui_style.columns
+		local column_offset = ui_style.column_offset
 
-		tbl_2[1] = arg_14_6[1]
-		tbl_2[2] = arg_14_6[2]
-		tbl_2[3] = arg_14_6[3]
+		element_alignment_position[1] = position[1]
+		element_alignment_position[2] = position[2]
+		element_alignment_position[3] = position[3]
 
-		local start_index = arg_14_4.start_index
-		local num = arg_14_4.num_draws - 1
-		local min = math.min(start_index + num, num_list_elements)
+		local start_index = ui_style.start_index
+		local num_draws = ui_style.num_draws - 1
+		local stop_index = math.min(start_index + num_draws, num_list_elements)
 
-		if not arg_14_4.scenegraph_id then
-			local size = arg_14_2[arg_14_4.scenegraph_id].size
-			local num_2 = num * list_member_offset[1] + arg_14_7[1]
-			local num_3 = num * list_member_offset[2] + arg_14_7[2]
+		if ui_style.scenegraph_id then
+			local parent_size = ui_scenegraph[ui_style.scenegraph_id].size
+			local total_width = num_draws * list_member_offset[1] + size[1]
+			local total_height = num_draws * list_member_offset[2] + size[2]
 
-			if arg_14_4.horizontal_alignment == "center" then
-				tbl_2[1] = arg_14_6[1] + size[1] / 2 - num_2 / 2
-			elseif arg_14_4.horizontal_alignment == "right" then
-				tbl_2[1] = arg_14_6[1] + size[1] - num_2
+			if ui_style.horizontal_alignment == "center" then
+				element_alignment_position[1] = position[1] + parent_size[1] / 2 - total_width / 2
+			elseif ui_style.horizontal_alignment == "right" then
+				element_alignment_position[1] = position[1] + parent_size[1] - total_width
 			end
 
-			if arg_14_4.vertical_alignment == "center" then
-				tbl_2[2] = arg_14_6[2] + size[2] / 2 - num_3 / 2
-			elseif arg_14_4.vertical_alignment == "top" then
-				tbl_2[2] = arg_14_6[2] + size[2] - math.abs(list_member_offset[2])
+			if ui_style.vertical_alignment == "center" then
+				element_alignment_position[2] = position[2] + parent_size[2] / 2 - total_height / 2
+			elseif ui_style.vertical_alignment == "top" then
+				element_alignment_position[2] = position[2] + parent_size[2] - math.abs(list_member_offset[2])
 			end
 		end
 
-		alloc_table[1] = tbl_2[1]
-		alloc_table[2] = tbl_2[2]
-		alloc_table[3] = tbl_2[3]
+		element_position[1] = element_alignment_position[1]
+		element_position[2] = element_alignment_position[2]
+		element_position[3] = element_alignment_position[3]
 
-		local num_4 = 0
-		local num_5 = 0
+		local index, row_count = 0, 0
 
-		if not IS_PS4 then
-			num_4, num_5 = 0, math.max(start_index - 1, 0)
+		if IS_PS4 then
+			index, row_count = 0, math.max(start_index - 1, 0)
 		end
 
-		local var_14_17
+		local change_row
 
-		for i = start_index, min do
-			num_4 = num_4 + 1
+		for i = start_index, stop_index do
+			index = index + 1
 
-			local var_14_18 = arg_14_5[i]
+			local element_content = ui_content[i]
 
-			var_14_18.parent = arg_14_5.parent
+			element_content.parent = ui_content.parent
 
-			local var_14_19
+			local var_14_0
 
-			if not arg_14_4.item_styles then
-				var_14_19 = arg_14_4.item_styles[i]
+			if ui_style.item_styles then
+				var_14_0 = ui_style.item_styles[i]
 
-				if not var_14_19 then
+				if not var_14_0 then
 					-- Nothing
 				end
 			end
 
-			var_14_19 = arg_14_4
+			var_14_0 = ui_style
+
+			local element_style = var_14_0
 
 			::label_14_0::
 
-			local list_member_offset_2 = var_14_19.list_member_offset
-			local var_14_21
-			local flag
+			local element_list_member_offset = element_style.list_member_offset
+			local column_index
 
-			if not columns then
-				var_14_21 = num_4 % columns
+			if columns then
+				column_index = index % columns
 
-				if var_14_21 == 0 then
-					var_14_21 = columns - 1
-					flag = true
+				if column_index == 0 then
+					column_index = columns - 1
+					change_row = true
 				else
-					var_14_21 = var_14_21 - 1
-					flag = false
+					column_index = column_index - 1
+					change_row = false
 				end
 			else
-				flag = true
+				change_row = true
 			end
 
-			if not list_member_offset_2 then
-				if not var_14_21 then
-					alloc_table[1] = tbl_2[1] + column_offset * var_14_21
-					alloc_table[2] = tbl_2[2] + list_member_offset_2[2] * num_5
-					alloc_table[3] = tbl_2[3] + list_member_offset_2[3]
+			if element_list_member_offset then
+				if column_index then
+					element_position[1] = element_alignment_position[1] + column_offset * column_index
+					element_position[2] = element_alignment_position[2] + element_list_member_offset[2] * row_count
+					element_position[3] = element_alignment_position[3] + element_list_member_offset[3]
 				else
-					alloc_table[1] = tbl_2[1] + list_member_offset_2[1] * num_5
-					alloc_table[2] = tbl_2[2] + list_member_offset_2[2] * num_5
-					alloc_table[3] = tbl_2[3] + list_member_offset_2[3]
+					element_position[1] = element_alignment_position[1] + element_list_member_offset[1] * row_count
+					element_position[2] = element_alignment_position[2] + element_list_member_offset[2] * row_count
+					element_position[3] = element_alignment_position[3] + element_list_member_offset[3]
 				end
-			elseif not var_14_21 then
-				alloc_table[1] = tbl_2[1] + column_offset * var_14_21
-				alloc_table[2] = tbl_2[2] + list_member_offset[2] * num_5
-				alloc_table[3] = tbl_2[3] + list_member_offset[3]
+			elseif column_index then
+				element_position[1] = element_alignment_position[1] + column_offset * column_index
+				element_position[2] = element_alignment_position[2] + list_member_offset[2] * row_count
+				element_position[3] = element_alignment_position[3] + list_member_offset[3]
 			else
-				alloc_table[1] = tbl_2[1] + list_member_offset[1] * num_5
-				alloc_table[2] = tbl_2[2] + list_member_offset[2] * num_5
-				alloc_table[3] = tbl_2[3] + list_member_offset[3]
+				element_position[1] = element_alignment_position[1] + list_member_offset[1] * row_count
+				element_position[2] = element_alignment_position[2] + list_member_offset[2] * row_count
+				element_position[3] = element_alignment_position[3] + list_member_offset[3]
 			end
 
 			for j = 1, num_passes do
-				alloc_table_2[1] = alloc_table[1]
-				alloc_table_2[2] = alloc_table[2]
-				alloc_table_2[3] = alloc_table[3]
+				pass_position[1] = element_position[1]
+				pass_position[2] = element_position[2]
+				pass_position[3] = element_position[3]
 
-				local var_14_23 = passes[j]
-				local content_id = var_14_23.content_id
-				local var_14_25
+				local sub_pass_definition = passes[j]
+				local sub_pass_content_id = sub_pass_definition.content_id
+				local pass_element_content
 
-				if not content_id then
-					var_14_25 = var_14_18[content_id]
-					var_14_25.parent = var_14_18
+				if sub_pass_content_id then
+					pass_element_content = element_content[sub_pass_content_id]
+					pass_element_content.parent = element_content
 				else
-					var_14_25 = var_14_18
+					pass_element_content = element_content
 				end
 
-				local style_id = var_14_23.style_id
-				local var_14_27
+				local sub_pass_style_id = sub_pass_definition.style_id
+				local var_14_1
 
-				if not style_id then
-					var_14_27 = var_14_19[style_id]
+				if sub_pass_style_id then
+					var_14_1 = element_style[sub_pass_style_id]
 
-					if not var_14_27 then
+					if not var_14_1 then
 						-- Nothing
 					end
 				end
 
-				var_14_27 = var_14_19
+				var_14_1 = element_style
+
+				local pass_element_style = var_14_1
 
 				do
-					local var_14_28
+					local var_14_2
 				end
 
 				::label_14_1::
 
-				if not var_14_27 and not var_14_27.size then
-					var_14_28 = Vector2(unpack(var_14_27.size))
+				if pass_element_style and pass_element_style.size then
+					var_14_2 = Vector2(unpack(pass_element_style.size))
 
-					if not var_14_28 then
+					if not var_14_2 then
 						-- Nothing
 					end
 				end
 
-				var_14_28 = arg_14_7
+				var_14_2 = size
+
+				local pass_size = var_14_2
 
 				::label_14_2::
 
-				local flag_2 = not var_14_27 and var_14_27.offset
+				local pass_offset = not not pass_element_style and not not pass_element_style.offset
 
-				if not flag_2 then
-					alloc_table_2[1] = alloc_table_2[1] + flag_2[1]
-					alloc_table_2[2] = alloc_table_2[2] + flag_2[2]
-					alloc_table_2[3] = alloc_table_2[3] + flag_2[3]
+				if pass_offset then
+					pass_position[1] = pass_position[1] + pass_offset[1]
+					pass_position[2] = pass_position[2] + pass_offset[2]
+					pass_position[3] = pass_position[3] + pass_offset[3]
 				end
 
-				local var_14_30 = sub_pass_datas[j]
-				local flag_3 = var_14_25.visible ~= false
-				local content_check_function = var_14_23.content_check_function
+				local sub_pass_data = sub_pass_datas[j]
+				local draw = pass_element_content.visible ~= false
+				local content_check_function = sub_pass_definition.content_check_function
 
-				if not (not content_check_function and content_check_function(var_14_25, var_14_27, i)) then
-					flag_3 = false
+				if content_check_function and not content_check_function(pass_element_content, pass_element_style, i) then
+					draw = false
 				end
 
-				local content_change_function = var_14_23.content_change_function
+				local content_change_function = sub_pass_definition.content_change_function
 
-				if not flag_3 and not content_change_function then
-					content_change_function(var_14_25, var_14_27, i)
+				if draw and content_change_function then
+					content_change_function(pass_element_content, pass_element_style, i)
 				end
 
-				if not flag_3 then
-					UIPasses[var_14_23.pass_type].draw(arg_14_0, var_14_30, arg_14_2, var_14_23, var_14_27, var_14_25, Vector3(unpack(alloc_table_2)), var_14_28, arg_14_8, arg_14_9)
+				if draw then
+					UIPasses[sub_pass_definition.pass_type].draw(ui_renderer, sub_pass_data, ui_scenegraph, sub_pass_definition, pass_element_style, pass_element_content, Vector3(unpack(pass_position)), pass_size, input_service, dt)
 				end
 			end
 
-			if not flag then
-				num_5 = num_5 + 1
+			if change_row then
+				row_count = row_count + 1
 			end
 		end
 	end
 }
 UIPasses.gradient_mask_texture = {
-	init = function (self, arg_15_1, arg_15_2, arg_15_3)
+	init = function (pass_definition, content, style, ui_renderer)
 		-- function 15
-		if not self.clone and not arg_15_3 then
-			local gui = arg_15_3.gui
+		if pass_definition.clone and ui_renderer then
+			local gui = ui_renderer.gui
 
-			if not self.retained_mode then
-				gui = arg_15_3.gui_retained
+			if pass_definition.retained_mode then
+				gui = ui_renderer.gui_retained
 			end
 
-			local texture_id = self.texture_id
+			local texture_id = pass_definition.texture_id
 
-			texture_id = texture_id or "texture_id"
+			texture_id = not not texture_id or not not "texture_id"
 
-			local var_15_2 = arg_15_1[texture_id]
-			local guid = Application.guid()
+			local material_name = content[texture_id]
+			local new_material_name = Application.guid()
 
-			Gui.clone_material_from_template(gui, guid, var_15_2)
+			Gui.clone_material_from_template(gui, new_material_name, material_name)
 
-			self.cloned_material = guid
+			pass_definition.cloned_material = new_material_name
 
-			local texture_id_2 = self.texture_id
+			local texture_id_2 = pass_definition.texture_id
 
-			texture_id_2 = texture_id_2 or "texture_id"
-			arg_15_1[texture_id_2] = guid
+			texture_id_2 = not not texture_id_2 or not not "texture_id"
+			content[texture_id_2] = new_material_name
 
-			if not UIAtlasHelper.has_atlas_settings_by_texture_name(var_15_2) then
-				UIAtlasHelper.add_standalone_texture_by_name(guid)
+			if not UIAtlasHelper.has_atlas_settings_by_texture_name(material_name) then
+				UIAtlasHelper.add_standalone_texture_by_name(new_material_name)
 			end
 		end
 
-		if not self.retained_mode then
+		if pass_definition.retained_mode then
 			return {
 				dirty = true
 			}
 		end
 	end,
-	destroy = function (arg_16_0, arg_16_1, arg_16_2)
+	destroy = function (ui_renderer, pass_data, pass_definition)
 		-- function 16
-		assert(arg_16_2.retained_mode, "why u destroy immediate pass?")
+		assert(pass_definition.retained_mode, "why u destroy immediate pass?")
 
-		if not arg_16_1.retained_id then
-			UIRenderer.destroy_bitmap(arg_16_0, arg_16_1.retained_id)
+		if pass_data.retained_id then
+			UIRenderer.destroy_bitmap(ui_renderer, pass_data.retained_id)
 
-			arg_16_1.retained_id = nil
+			pass_data.retained_id = nil
 		end
 	end,
-	draw = function (arg_17_0, arg_17_1, arg_17_2, arg_17_3, arg_17_4, arg_17_5, arg_17_6, arg_17_7, arg_17_8, arg_17_9)
+	draw = function (ui_renderer, pass_data, ui_scenegraph, pass_definition, ui_style, ui_content, position, size, input_service, dt)
 		-- function 17
-		local var_17_0
-		local flag = false
-		local num = 1
+		local color
+		local masked = false
+		local gradient_threshold = 1
 
-		if not arg_17_4 then
-			local texture_size = arg_17_4.texture_size
+		if ui_style then
+			local texture_size = ui_style.texture_size
 
-			if not texture_size then
-				if arg_17_4.horizontal_alignment == "right" then
-					arg_17_6[1] = arg_17_6[1] + arg_17_7[1] - texture_size[1]
-				elseif arg_17_4.horizontal_alignment == "center" then
-					arg_17_6[1] = arg_17_6[1] + (arg_17_7[1] - texture_size[1]) / 2
+			if texture_size then
+				if ui_style.horizontal_alignment == "right" then
+					position[1] = position[1] + size[1] - texture_size[1]
+				elseif ui_style.horizontal_alignment == "center" then
+					position[1] = position[1] + (size[1] - texture_size[1]) / 2
 				end
 
-				if arg_17_4.vertical_alignment == "center" then
-					arg_17_6[2] = arg_17_6[2] + (arg_17_7[2] - texture_size[2]) / 2
-				elseif arg_17_4.vertical_alignment == "top" then
-					arg_17_6[2] = arg_17_6[2] + arg_17_7[2] - texture_size[2]
+				if ui_style.vertical_alignment == "center" then
+					position[2] = position[2] + (size[2] - texture_size[2]) / 2
+				elseif ui_style.vertical_alignment == "top" then
+					position[2] = position[2] + size[2] - texture_size[2]
 				end
 
-				arg_17_7 = texture_size
+				size = texture_size
 			end
 
-			var_17_0 = arg_17_4.color
-			flag = arg_17_4.masked
-			num = arg_17_4.gradient_threshold or num
+			color = ui_style.color
+			masked = ui_style.masked
+			gradient_threshold = not not ui_style.gradient_threshold or not not gradient_threshold
 		end
 
-		local texture_id = arg_17_3.texture_id
+		local texture_id_2 = pass_definition.texture_id
 
-		texture_id = texture_id or "texture_id"
+		if not texture_id_2 then
+			-- Nothing
+		end
 
-		if not arg_17_3.retained_mode then
-			local retained_mode = arg_17_3.retained_mode
+		texture_id_2 = "texture_id"
 
-			if not retained_mode then
-				if not arg_17_1.retained_id then
-					retained_mode = arg_17_1.retained_id
+		local texture_id = texture_id_2
 
-					if not retained_mode then
-						-- Nothing
-					end
-				end
+		::label_17_0::
 
-				retained_mode = true
+		if pass_definition.retained_mode then
+			local retained_mode = pass_definition.retained_mode
+
+			if retained_mode then
+				-- Nothing
 			end
 
-			::label_17_0::
+			if pass_data.retained_id then
+				retained_mode = pass_data.retained_id
 
-			local draw_gradient_mask_texture = UIRenderer.draw_gradient_mask_texture(arg_17_0, arg_17_5[texture_id], arg_17_6, arg_17_7, var_17_0, flag, num, retained_mode)
+				if not retained_mode then
+					-- Nothing
+				end
+			end
 
-			arg_17_1.retained_id = not draw_gradient_mask_texture and draw_gradient_mask_texture and arg_17_1.retained_id
-			arg_17_1.dirty = false
+			retained_mode = true
+
+			local retained_id = retained_mode
+
+			::label_17_1::
+
+			retained_id = UIRenderer.draw_gradient_mask_texture(ui_renderer, ui_content[texture_id], position, size, color, masked, gradient_threshold, retained_id)
+			pass_data.retained_id = (not retained_id or not retained_id) and not not pass_data.retained_id
+			pass_data.dirty = false
 		else
-			UIRenderer.draw_gradient_mask_texture(arg_17_0, arg_17_5[texture_id], arg_17_6, arg_17_7, var_17_0, flag, num)
+			UIRenderer.draw_gradient_mask_texture(ui_renderer, ui_content[texture_id], position, size, color, masked, gradient_threshold)
 		end
 	end
 }
 UIPasses.texture_frame = {
-	init = function (self, arg_18_1, arg_18_2)
+	init = function (pass_definition, content, style)
 		-- function 18
-		if not self.retained_mode then
+		if pass_definition.retained_mode then
 			return {
 				dirty = true
 			}
@@ -703,270 +737,287 @@ UIPasses.texture_frame = {
 
 		return nil
 	end,
-	destroy = function (arg_19_0, arg_19_1, arg_19_2)
+	destroy = function (ui_renderer, pass_data, pass_definition)
 		-- function 19
-		assert(arg_19_2.retained_mode, "why u destroy immediate pass?")
+		assert(pass_definition.retained_mode, "why u destroy immediate pass?")
 
-		local retained_ids = arg_19_1.retained_ids
+		local retained_ids = pass_data.retained_ids
 
-		if not retained_ids then
+		if retained_ids then
 			for i = 1, #retained_ids do
-				UIRenderer.destroy_bitmap(arg_19_0, retained_ids[i])
+				UIRenderer.destroy_bitmap(ui_renderer, retained_ids[i])
 			end
 
-			arg_19_1.retained_ids = nil
+			pass_data.retained_ids = nil
 		end
 	end,
-	draw = function (arg_20_0, arg_20_1, arg_20_2, arg_20_3, arg_20_4, arg_20_5, arg_20_6, arg_20_7, arg_20_8, arg_20_9)
+	draw = function (ui_renderer, pass_data, ui_scenegraph, pass_definition, ui_style, ui_content, position, size, input_service, dt)
 		-- function 20
-		local var_20_0
-		local var_20_1
-		local var_20_2
-		local var_20_3
-		local var_20_4
-		local var_20_5
-		local var_20_6
-		local var_20_7
-		local var_20_8
-		local var_20_9
-		local var_20_10
-		local texture_id = arg_20_3.texture_id
+		local texture_size, texture_sizes, color, masked, saturated, only_corners, skip_background, use_tiling, mirrored_tiling, gui_position, gui_size
+		local texture_id_2 = pass_definition.texture_id
 
-		texture_id = texture_id or "texture_id"
-
-		if not arg_20_4 then
-			local area_size = arg_20_4.area_size
-
-			if not area_size then
-				if arg_20_4.horizontal_alignment == "right" then
-					arg_20_6[1] = arg_20_6[1] + arg_20_7[1] - area_size[1]
-				elseif arg_20_4.horizontal_alignment == "center" then
-					arg_20_6[1] = arg_20_6[1] + (arg_20_7[1] - area_size[1]) / 2
-				end
-
-				if arg_20_4.vertical_alignment == "center" then
-					arg_20_6[2] = arg_20_6[2] + (arg_20_7[2] - area_size[2]) / 2
-				elseif arg_20_4.vertical_alignment == "top" then
-					arg_20_6[2] = arg_20_6[2] + arg_20_7[2] - area_size[2]
-				end
-
-				var_20_10 = Vector2(area_size[1], area_size[2])
-			end
-
-			local frame_margins = arg_20_4.frame_margins
-
-			if not frame_margins then
-				var_20_9 = Vector3(arg_20_6[1] + frame_margins[1], arg_20_6[2] + frame_margins[2], arg_20_6[3])
-
-				if not var_20_10 then
-					var_20_10[1] = var_20_10[1] - frame_margins[1] * 2
-					var_20_10[2] = var_20_10[2] - frame_margins[2] * 2
-				else
-					var_20_10 = Vector2(arg_20_7[1] - frame_margins[1] * 2, arg_20_7[2] - frame_margins[2] * 2)
-				end
-			end
-
-			var_20_9 = var_20_9 or arg_20_6
-			var_20_10 = var_20_10 or arg_20_7
-			var_20_0 = arg_20_4.texture_size
-			var_20_1 = arg_20_4.texture_sizes
-			var_20_2 = arg_20_4.color
-			var_20_3 = arg_20_4.masked
-			var_20_4 = arg_20_4.saturated
-			var_20_5 = arg_20_4.only_corners
-			var_20_6 = arg_20_4.skip_background
-			var_20_7 = arg_20_4.use_tiling
-			var_20_8 = arg_20_4.mirrored_tiling
+		if not texture_id_2 then
+			-- Nothing
 		end
 
-		if not arg_20_3.retained_mode then
-			local retained_mode = arg_20_3.retained_mode
+		texture_id_2 = "texture_id"
 
-			if not retained_mode then
-				if not arg_20_1.retained_ids then
-					retained_mode = arg_20_1.retained_ids
+		local texture_id = texture_id_2
 
-					if not retained_mode then
-						-- Nothing
-					end
+		::label_20_0::
+
+		if ui_style then
+			local area_size = ui_style.area_size
+
+			if area_size then
+				if ui_style.horizontal_alignment == "right" then
+					position[1] = position[1] + size[1] - area_size[1]
+				elseif ui_style.horizontal_alignment == "center" then
+					position[1] = position[1] + (size[1] - area_size[1]) / 2
 				end
 
-				retained_mode = true
+				if ui_style.vertical_alignment == "center" then
+					position[2] = position[2] + (size[2] - area_size[2]) / 2
+				elseif ui_style.vertical_alignment == "top" then
+					position[2] = position[2] + size[2] - area_size[2]
+				end
+
+				gui_size = Vector2(area_size[1], area_size[2])
 			end
 
-			::label_20_0::
+			local frame_margins = ui_style.frame_margins
 
-			local draw_texture_frame = UIRenderer.draw_texture_frame(arg_20_0, var_20_9, var_20_10, arg_20_5[texture_id], var_20_0, var_20_1, var_20_2, var_20_3, var_20_4, var_20_5, var_20_7, var_20_8, var_20_6, retained_mode)
+			if frame_margins then
+				gui_position = Vector3(position[1] + frame_margins[1], position[2] + frame_margins[2], position[3])
 
-			arg_20_1.retained_ids = not draw_texture_frame and draw_texture_frame and arg_20_1.retained_ids
-			arg_20_1.dirty = false
+				if gui_size then
+					gui_size[1] = gui_size[1] - frame_margins[1] * 2
+					gui_size[2] = gui_size[2] - frame_margins[2] * 2
+				else
+					gui_size = Vector2(size[1] - frame_margins[1] * 2, size[2] - frame_margins[2] * 2)
+				end
+			end
+
+			gui_position = not not gui_position or not not position
+			gui_size = not not gui_size or not not size
+			texture_size = ui_style.texture_size
+			texture_sizes = ui_style.texture_sizes
+			color = ui_style.color
+			masked = ui_style.masked
+			saturated = ui_style.saturated
+			only_corners = ui_style.only_corners
+			skip_background = ui_style.skip_background
+			use_tiling = ui_style.use_tiling
+			mirrored_tiling = ui_style.mirrored_tiling
+		end
+
+		if pass_definition.retained_mode then
+			local retained_mode = pass_definition.retained_mode
+
+			if retained_mode then
+				-- Nothing
+			end
+
+			if pass_data.retained_ids then
+				retained_mode = pass_data.retained_ids
+
+				if not retained_mode then
+					-- Nothing
+				end
+			end
+
+			retained_mode = true
+
+			local retained_ids = retained_mode
+
+			::label_20_1::
+
+			retained_ids = UIRenderer.draw_texture_frame(ui_renderer, gui_position, gui_size, ui_content[texture_id], texture_size, texture_sizes, color, masked, saturated, only_corners, use_tiling, mirrored_tiling, skip_background, retained_ids)
+			pass_data.retained_ids = (not retained_ids or not retained_ids) and not not pass_data.retained_ids
+			pass_data.dirty = false
 		else
-			return UIRenderer.draw_texture_frame(arg_20_0, var_20_9, var_20_10, arg_20_5[texture_id], var_20_0, var_20_1, var_20_2, var_20_3, var_20_4, var_20_5, var_20_7, var_20_8, var_20_6)
+			return UIRenderer.draw_texture_frame(ui_renderer, gui_position, gui_size, ui_content[texture_id], texture_size, texture_sizes, color, masked, saturated, only_corners, use_tiling, mirrored_tiling, skip_background)
 		end
 	end
 }
 UIPasses.shader_tiled_texture = {
-	init = function (self)
+	init = function (pass_definition)
 		-- function 21
-		if not self.retained_mode then
+		if pass_definition.retained_mode then
 			return {
 				dirty = true
 			}
 		end
 	end,
-	destroy = function (arg_22_0, arg_22_1, arg_22_2)
+	destroy = function (ui_renderer, pass_data, pass_definition)
 		-- function 22
-		assert(arg_22_2.retained_mode, "why u destroy immediate pass?")
+		assert(pass_definition.retained_mode, "why u destroy immediate pass?")
 
-		if not arg_22_1.retained_id then
-			UIRenderer.destroy_bitmap(arg_22_0, arg_22_1.retained_id)
+		if pass_data.retained_id then
+			UIRenderer.destroy_bitmap(ui_renderer, pass_data.retained_id)
 
-			arg_22_1.retained_id = nil
+			pass_data.retained_id = nil
 		end
 	end,
-	draw = function (self, arg_23_1, arg_23_2, arg_23_3, arg_23_4, arg_23_5, arg_23_6, arg_23_7, arg_23_8, arg_23_9)
+	draw = function (ui_renderer, pass_data, ui_scenegraph, pass_definition, ui_style, ui_content, position, size, input_service, dt)
 		-- function 23
-		local var_23_0
-		local var_23_1
-		local var_23_2
-		local texture_id = arg_23_3.texture_id
+		local color, masked, saturated
+		local texture_id_2 = pass_definition.texture_id
 
-		texture_id = texture_id or "texture_id"
+		if not texture_id_2 then
+			-- Nothing
+		end
 
-		if not arg_23_4 then
-			local texture_size = arg_23_4.texture_size
+		texture_id_2 = "texture_id"
 
-			if not texture_size then
-				if arg_23_4.horizontal_alignment == "right" then
-					arg_23_6[1] = arg_23_6[1] + arg_23_7[1] - texture_size[1]
-				elseif arg_23_4.horizontal_alignment == "center" then
-					arg_23_6[1] = arg_23_6[1] + (arg_23_7[1] - texture_size[1]) / 2
+		local texture_id = texture_id_2
+
+		::label_23_0::
+
+		if ui_style then
+			local texture_size = ui_style.texture_size
+
+			if texture_size then
+				if ui_style.horizontal_alignment == "right" then
+					position[1] = position[1] + size[1] - texture_size[1]
+				elseif ui_style.horizontal_alignment == "center" then
+					position[1] = position[1] + (size[1] - texture_size[1]) / 2
 				end
 
-				if arg_23_4.vertical_alignment == "center" then
-					arg_23_6[2] = arg_23_6[2] + (arg_23_7[2] - texture_size[2]) / 2
-				elseif arg_23_4.vertical_alignment == "top" then
-					arg_23_6[2] = arg_23_6[2] + arg_23_7[2] - texture_size[2]
+				if ui_style.vertical_alignment == "center" then
+					position[2] = position[2] + (size[2] - texture_size[2]) / 2
+				elseif ui_style.vertical_alignment == "top" then
+					position[2] = position[2] + size[2] - texture_size[2]
 				end
 
-				arg_23_7 = texture_size
+				size = texture_size
 			end
 
-			local tile_size = arg_23_4.tile_size
-			local var_23_6 = Vector2(arg_23_7[1] / tile_size[1], arg_23_7[2] / tile_size[2])
+			local tile_size = ui_style.tile_size
+			local tiles = Vector2(size[1] / tile_size[1], size[2] / tile_size[2])
 			local gui_retained
 
-			if not arg_23_3.retained_mode then
-				gui_retained = self.gui_retained
+			if pass_definition.retained_mode then
+				gui_retained = ui_renderer.gui_retained
 
 				if not gui_retained then
 					-- Nothing
 				end
 			end
 
-			gui_retained = self.gui
+			gui_retained = ui_renderer.gui
 
-			::label_23_0::
-
-			local material = Gui.material(gui_retained, arg_23_5[texture_id])
-
-			Material.set_vector2(material, "tile_multiplier", var_23_6)
-
-			local var_23_9 = Vector2(0, 0)
-
-			if not arg_23_4.tile_offset then
-				if not arg_23_4.tile_offset[1] then
-					var_23_9[1] = arg_23_6[1] / tile_size[1]
-				end
-
-				if not arg_23_4.tile_offset[2] then
-					var_23_9[2] = arg_23_6[2] / tile_size[2]
-				end
-			end
-
-			Material.set_vector2(material, "tile_offset", var_23_9)
-
-			var_23_0 = arg_23_4.color
-			var_23_1 = arg_23_4.masked
-			var_23_2 = arg_23_4.saturated
-		end
-
-		if not arg_23_3.retained_mode then
-			local retained_mode = arg_23_3.retained_mode
-
-			if not retained_mode then
-				if not arg_23_1.retained_id then
-					retained_mode = arg_23_1.retained_id
-
-					if not retained_mode then
-						-- Nothing
-					end
-				end
-
-				retained_mode = true
-			end
+			local gui = gui_retained
 
 			::label_23_1::
 
-			local var_23_11 = draw_texture(self, arg_23_5[texture_id], arg_23_6, arg_23_7, var_23_0, var_23_1, var_23_2, retained_mode)
+			local material = Gui.material(gui, ui_content[texture_id])
 
-			arg_23_1.retained_id = not var_23_11 and var_23_11 and arg_23_1.retained_id
-			arg_23_1.dirty = false
+			Material.set_vector2(material, "tile_multiplier", tiles)
+
+			local tile_offset = Vector2(0, 0)
+
+			if ui_style.tile_offset then
+				if ui_style.tile_offset[1] then
+					tile_offset[1] = position[1] / tile_size[1]
+				end
+
+				if ui_style.tile_offset[2] then
+					tile_offset[2] = position[2] / tile_size[2]
+				end
+			end
+
+			Material.set_vector2(material, "tile_offset", tile_offset)
+
+			color = ui_style.color
+			masked = ui_style.masked
+			saturated = ui_style.saturated
+		end
+
+		if pass_definition.retained_mode then
+			local retained_mode = pass_definition.retained_mode
+
+			if retained_mode then
+				-- Nothing
+			end
+
+			if pass_data.retained_id then
+				retained_mode = pass_data.retained_id
+
+				if not retained_mode then
+					-- Nothing
+				end
+			end
+
+			retained_mode = true
+
+			local retained_id = retained_mode
+
+			::label_23_2::
+
+			retained_id = UIRenderer_draw_texture(ui_renderer, ui_content[texture_id], position, size, color, masked, saturated, retained_id)
+			pass_data.retained_id = (not retained_id or not retained_id) and not not pass_data.retained_id
+			pass_data.dirty = false
 		else
-			draw_texture(self, arg_23_5[texture_id], arg_23_6, arg_23_7, var_23_0, var_23_1, var_23_2)
+			UIRenderer_draw_texture(ui_renderer, ui_content[texture_id], position, size, color, masked, saturated)
 		end
 	end
 }
 UIPasses.tiled_texture = {
-	init = function (arg_24_0)
+	init = function (pass_definition)
 		-- function 24
 		return nil
 	end,
-	draw = function (arg_25_0, arg_25_1, arg_25_2, arg_25_3, arg_25_4, arg_25_5, arg_25_6, arg_25_7, arg_25_8, arg_25_9)
+	draw = function (ui_renderer, pass_data, ui_scenegraph, pass_definition, ui_style, ui_content, position, size, input_service, dt)
 		-- function 25
-		local var_25_0
-		local var_25_1
-		local var_25_2
-		local var_25_3
+		local texture_tiling_size, color, masked, saturated
 
-		if not arg_25_4 then
-			local texture_size = arg_25_4.texture_size
+		if ui_style then
+			local texture_size = ui_style.texture_size
 
-			if not texture_size then
-				if arg_25_4.horizontal_alignment == "right" then
-					arg_25_6[1] = arg_25_6[1] + arg_25_7[1] - texture_size[1]
-				elseif arg_25_4.horizontal_alignment == "center" then
-					arg_25_6[1] = arg_25_6[1] + (arg_25_7[1] - texture_size[1]) / 2
+			if texture_size then
+				if ui_style.horizontal_alignment == "right" then
+					position[1] = position[1] + size[1] - texture_size[1]
+				elseif ui_style.horizontal_alignment == "center" then
+					position[1] = position[1] + (size[1] - texture_size[1]) / 2
 				end
 
-				if arg_25_4.vertical_alignment == "center" then
-					arg_25_6[2] = arg_25_6[2] + (arg_25_7[2] - texture_size[2]) / 2
-				elseif arg_25_4.vertical_alignment == "top" then
-					arg_25_6[2] = arg_25_6[2] + arg_25_7[2] - texture_size[2]
+				if ui_style.vertical_alignment == "center" then
+					position[2] = position[2] + (size[2] - texture_size[2]) / 2
+				elseif ui_style.vertical_alignment == "top" then
+					position[2] = position[2] + size[2] - texture_size[2]
 				end
 
-				arg_25_7 = texture_size
+				size = texture_size
 			end
 
-			var_25_0 = arg_25_4.texture_tiling_size
-			var_25_1 = arg_25_4.color
-			var_25_2 = arg_25_4.masked
-			var_25_3 = arg_25_4.saturated
+			texture_tiling_size = ui_style.texture_tiling_size
+			color = ui_style.color
+			masked = ui_style.masked
+			saturated = ui_style.saturated
 		end
 
-		assert(var_25_0, "Missing texture_tiling_size")
+		assert(texture_tiling_size, "Missing texture_tiling_size")
 
-		local texture_id = arg_25_3.texture_id
+		local texture_id_2 = pass_definition.texture_id
 
-		texture_id = texture_id or "texture_id"
+		if not texture_id_2 then
+			-- Nothing
+		end
 
-		return UIRenderer.draw_tiled_texture(arg_25_0, arg_25_5[texture_id], arg_25_6, arg_25_7, var_25_0, var_25_1, var_25_2, var_25_3)
+		texture_id_2 = "texture_id"
+
+		local texture_id = texture_id_2
+
+		::label_25_0::
+
+		return UIRenderer.draw_tiled_texture(ui_renderer, ui_content[texture_id], position, size, texture_tiling_size, color, masked, saturated)
 	end
 }
 UIPasses.multi_texture = {
-	init = function (self, arg_26_1, arg_26_2)
+	init = function (pass_definition, content, style)
 		-- function 26
-		if not self.retained_mode then
+		if pass_definition.retained_mode then
 			return {
 				dirty = true
 			}
@@ -974,58 +1025,61 @@ UIPasses.multi_texture = {
 
 		return nil
 	end,
-	destroy = function (arg_27_0, arg_27_1, arg_27_2)
+	destroy = function (ui_renderer, pass_data, pass_definition)
 		-- function 27
-		assert(arg_27_2.retained_mode, "why u destroy immediate pass?")
+		assert(pass_definition.retained_mode, "why u destroy immediate pass?")
 
-		local retained_ids = arg_27_1.retained_ids
+		local retained_ids = pass_data.retained_ids
 
-		if not retained_ids then
+		if retained_ids then
 			for i = 1, #retained_ids do
-				UIRenderer.destroy_bitmap(arg_27_0, retained_ids[i])
+				UIRenderer.destroy_bitmap(ui_renderer, retained_ids[i])
 			end
 
-			arg_27_1.retained_ids = nil
+			pass_data.retained_ids = nil
 		end
 	end,
-	draw = function (arg_28_0, arg_28_1, arg_28_2, arg_28_3, arg_28_4, arg_28_5, arg_28_6, arg_28_7, arg_28_8, arg_28_9)
+	draw = function (ui_renderer, pass_data, ui_scenegraph, pass_definition, ui_style, ui_content, position, size, input_service, dt)
 		-- function 28
-		local texture_size = arg_28_4.texture_size
-		local texture_sizes = arg_28_4.texture_sizes
-		local texture_offsets = arg_28_4.texture_offsets
+		local texture_size = ui_style.texture_size
+		local texture_sizes = ui_style.texture_sizes
+		local texture_offsets = ui_style.texture_offsets
 
-		assert(texture_size or texture_sizes, "Missing texture_sizes")
+		assert(not not texture_size or not not texture_sizes, "Missing texture_sizes")
 
-		if not arg_28_3.retained_mode then
-			local retained_mode = arg_28_3.retained_mode
+		if pass_definition.retained_mode then
+			local retained_mode = pass_definition.retained_mode
 
-			if not retained_mode then
-				if not arg_28_1.retained_ids then
-					retained_mode = arg_28_1.retained_ids
-
-					if not retained_mode then
-						-- Nothing
-					end
-				end
-
-				retained_mode = true
+			if retained_mode then
+				-- Nothing
 			end
+
+			if pass_data.retained_ids then
+				retained_mode = pass_data.retained_ids
+
+				if not retained_mode then
+					-- Nothing
+				end
+			end
+
+			retained_mode = true
+
+			local retained_ids = retained_mode
 
 			::label_28_0::
 
-			local draw_multi_texture = UIRenderer.draw_multi_texture(arg_28_0, arg_28_5[arg_28_3.texture_id], arg_28_6, texture_size, texture_sizes, texture_offsets, arg_28_4.tile_sizes, arg_28_4.axis, arg_28_4.spacing, arg_28_4.direction, arg_28_4.draw_count, arg_28_4.texture_colors, arg_28_4.color, arg_28_4.masked, not arg_28_4 and arg_28_4.texture_saturation, not arg_28_4 and arg_28_4.saturated, retained_mode)
-
-			arg_28_1.retained_ids = not draw_multi_texture and draw_multi_texture and arg_28_1.retained_ids
-			arg_28_1.dirty = false
+			retained_ids = UIRenderer.draw_multi_texture(ui_renderer, ui_content[pass_definition.texture_id], position, texture_size, texture_sizes, texture_offsets, ui_style.tile_sizes, ui_style.axis, ui_style.spacing, ui_style.direction, ui_style.draw_count, ui_style.texture_colors, ui_style.color, ui_style.masked, not not ui_style and not not ui_style.texture_saturation, not not ui_style and not not ui_style.saturated, retained_ids)
+			pass_data.retained_ids = (not retained_ids or not retained_ids) and not not pass_data.retained_ids
+			pass_data.dirty = false
 		else
-			return UIRenderer.draw_multi_texture(arg_28_0, arg_28_5[arg_28_3.texture_id], arg_28_6, texture_size, texture_sizes, texture_offsets, arg_28_4.tile_sizes, arg_28_4.axis, arg_28_4.spacing, arg_28_4.direction, arg_28_4.draw_count, arg_28_4.texture_colors, arg_28_4.color, arg_28_4.masked, not arg_28_4 and arg_28_4.texture_saturation, not arg_28_4 and arg_28_4.saturated)
+			return UIRenderer.draw_multi_texture(ui_renderer, ui_content[pass_definition.texture_id], position, texture_size, texture_sizes, texture_offsets, ui_style.tile_sizes, ui_style.axis, ui_style.spacing, ui_style.direction, ui_style.draw_count, ui_style.texture_colors, ui_style.color, ui_style.masked, not not ui_style and not not ui_style.texture_saturation, not not ui_style and not not ui_style.saturated)
 		end
 	end
 }
 UIPasses.centered_texture_amount = {
-	init = function (self)
+	init = function (pass_definition)
 		-- function 29
-		if not self.retained_mode then
+		if pass_definition.retained_mode then
 			return {
 				dirty = true
 			}
@@ -1033,255 +1087,268 @@ UIPasses.centered_texture_amount = {
 
 		return nil
 	end,
-	destroy = function (arg_30_0, arg_30_1, arg_30_2)
+	destroy = function (ui_renderer, pass_data, pass_definition)
 		-- function 30
-		assert(arg_30_2.retained_mode, "why u destroy immediate pass?")
+		assert(pass_definition.retained_mode, "why u destroy immediate pass?")
 
-		local retained_ids = arg_30_1.retained_ids
+		local retained_ids = pass_data.retained_ids
 
-		if not retained_ids then
+		if retained_ids then
 			for i = 1, #retained_ids do
-				UIRenderer.destroy_bitmap(arg_30_0, retained_ids[i])
+				UIRenderer.destroy_bitmap(ui_renderer, retained_ids[i])
 			end
 
-			arg_30_1.retained_ids = nil
+			pass_data.retained_ids = nil
 		end
 	end,
-	draw = function (arg_31_0, arg_31_1, arg_31_2, arg_31_3, arg_31_4, arg_31_5, arg_31_6, arg_31_7, arg_31_8, arg_31_9)
+	draw = function (ui_renderer, pass_data, ui_scenegraph, pass_definition, ui_style, ui_content, position, size, input_service, dt)
 		-- function 31
-		local texture_size = arg_31_4.texture_size
+		local texture_size = ui_style.texture_size
 
 		assert(texture_size, "Missing texture_size")
 
-		local texture_axis = arg_31_4.texture_axis
+		local texture_axis = ui_style.texture_axis
 
 		assert(texture_axis, "Missing texture_axis")
 
-		local texture_amount = arg_31_4.texture_amount
+		local num_of_textures = ui_style.texture_amount
 
-		assert(texture_amount, "Missing texture_amount")
+		assert(num_of_textures, "Missing texture_amount")
 
-		if not arg_31_3.retained_mode then
-			local retained_mode = arg_31_3.retained_mode
+		if pass_definition.retained_mode then
+			local retained_mode = pass_definition.retained_mode
 
-			if not retained_mode then
-				if not arg_31_1.retained_ids then
-					retained_mode = arg_31_1.retained_ids
-
-					if not retained_mode then
-						-- Nothing
-					end
-				end
-
-				retained_mode = true
+			if retained_mode then
+				-- Nothing
 			end
+
+			if pass_data.retained_ids then
+				retained_mode = pass_data.retained_ids
+
+				if not retained_mode then
+					-- Nothing
+				end
+			end
+
+			retained_mode = true
+
+			local retained_ids = retained_mode
 
 			::label_31_0::
 
-			local draw_centered_texture_amount = UIRenderer.draw_centered_texture_amount(arg_31_0, arg_31_5[arg_31_3.texture_id], arg_31_6, arg_31_7, texture_size, texture_amount, texture_axis, not arg_31_4 and arg_31_4.spacing, not arg_31_4 and arg_31_4.color, not arg_31_4 and arg_31_4.texture_colors, not arg_31_4 and arg_31_4.masked, retained_mode)
-
-			arg_31_1.retained_ids = not draw_centered_texture_amount and draw_centered_texture_amount and arg_31_1.retained_ids
-			arg_31_1.dirty = false
+			retained_ids = UIRenderer.draw_centered_texture_amount(ui_renderer, ui_content[pass_definition.texture_id], position, size, texture_size, num_of_textures, texture_axis, not not ui_style and not not ui_style.spacing, not not ui_style and not not ui_style.color, not not ui_style and not not ui_style.texture_colors, not not ui_style and not not ui_style.masked, retained_ids)
+			pass_data.retained_ids = (not retained_ids or not retained_ids) and not not pass_data.retained_ids
+			pass_data.dirty = false
 		else
-			return UIRenderer.draw_centered_texture_amount(arg_31_0, arg_31_5[arg_31_3.texture_id], arg_31_6, arg_31_7, texture_size, texture_amount, texture_axis, not arg_31_4 and arg_31_4.spacing, not arg_31_4 and arg_31_4.color, not arg_31_4 and arg_31_4.texture_colors, not arg_31_4 and arg_31_4.masked)
+			return UIRenderer.draw_centered_texture_amount(ui_renderer, ui_content[pass_definition.texture_id], position, size, texture_size, num_of_textures, texture_axis, not not ui_style and not not ui_style.spacing, not not ui_style and not not ui_style.color, not not ui_style and not not ui_style.texture_colors, not not ui_style and not not ui_style.masked)
 		end
 	end
 }
 UIPasses.rotated_texture = {
-	init = function (self)
+	init = function (pass_definition)
 		-- function 32
-		if not self.retained_mode then
+		if pass_definition.retained_mode then
 			return {
 				dirty = true
 			}
 		end
 	end,
-	destroy = function (arg_33_0, arg_33_1, arg_33_2)
+	destroy = function (ui_renderer, pass_data, pass_definition)
 		-- function 33
-		assert(arg_33_2.retained_mode, "why u destroy immediate pass?")
+		assert(pass_definition.retained_mode, "why u destroy immediate pass?")
 
-		if not arg_33_1.retained_id then
-			UIRenderer.destroy_bitmap(arg_33_0, arg_33_1.retained_id)
+		if pass_data.retained_id then
+			UIRenderer.destroy_bitmap(ui_renderer, pass_data.retained_id)
 
-			arg_33_1.retained_id = nil
+			pass_data.retained_id = nil
 		end
 	end,
-	draw = function (arg_34_0, arg_34_1, arg_34_2, arg_34_3, arg_34_4, arg_34_5, arg_34_6, arg_34_7, arg_34_8, arg_34_9)
+	draw = function (ui_renderer, pass_data, ui_scenegraph, pass_definition, ui_style, ui_content, position, size, input_service, dt)
 		-- function 34
-		local texture_id = arg_34_3.texture_id
+		local texture_id_2 = pass_definition.texture_id
 
-		texture_id = texture_id or "texture_id"
-
-		local var_34_1 = arg_34_5[texture_id]
-		local var_34_2
-		local var_34_3
-		local var_34_4
-		local var_34_5
-		local flag = false
-
-		if not arg_34_4 then
-			local texture_size = arg_34_4.texture_size
-
-			if not texture_size then
-				if arg_34_4.horizontal_alignment == "right" then
-					arg_34_6[1] = arg_34_6[1] + arg_34_7[1] - texture_size[1]
-				elseif arg_34_4.horizontal_alignment == "center" then
-					arg_34_6[1] = arg_34_6[1] + (arg_34_7[1] - texture_size[1]) / 2
-				end
-
-				if arg_34_4.vertical_alignment == "center" then
-					arg_34_6[2] = arg_34_6[2] + (arg_34_7[2] - texture_size[2]) / 2
-				elseif arg_34_4.vertical_alignment == "top" then
-					arg_34_6[2] = arg_34_6[2] + arg_34_7[2] - texture_size[2]
-				end
-
-				arg_34_7 = texture_size
-			end
-
-			var_34_2 = arg_34_4.angle
-			var_34_3 = arg_34_4.pivot
-			var_34_4 = arg_34_4.color
-			var_34_5 = arg_34_4.uvs
-			flag = arg_34_4.masked
+		if not texture_id_2 then
+			-- Nothing
 		end
 
-		if not arg_34_3.retained_mode then
-			local retained_mode = arg_34_3.retained_mode
+		texture_id_2 = "texture_id"
 
-			if not retained_mode then
-				if not arg_34_1.retained_id then
-					retained_mode = arg_34_1.retained_id
+		local texture_id = texture_id_2
 
-					if not retained_mode then
-						-- Nothing
-					end
+		::label_34_0::
+
+		local texture = ui_content[texture_id]
+		local angle, pivot, color, uvs
+		local masked = false
+
+		if ui_style then
+			local texture_size = ui_style.texture_size
+
+			if texture_size then
+				if ui_style.horizontal_alignment == "right" then
+					position[1] = position[1] + size[1] - texture_size[1]
+				elseif ui_style.horizontal_alignment == "center" then
+					position[1] = position[1] + (size[1] - texture_size[1]) / 2
 				end
 
-				retained_mode = true
+				if ui_style.vertical_alignment == "center" then
+					position[2] = position[2] + (size[2] - texture_size[2]) / 2
+				elseif ui_style.vertical_alignment == "top" then
+					position[2] = position[2] + size[2] - texture_size[2]
+				end
+
+				size = texture_size
 			end
 
-			::label_34_0::
+			angle = ui_style.angle
+			pivot = ui_style.pivot
+			color = ui_style.color
+			uvs = ui_style.uvs
+			masked = ui_style.masked
+		end
 
-			local draw_texture_rotated = UIRenderer.draw_texture_rotated(arg_34_0, var_34_1, arg_34_7, arg_34_6, var_34_2, var_34_3, var_34_4, var_34_5, flag, retained_mode)
+		if pass_definition.retained_mode then
+			local retained_mode = pass_definition.retained_mode
 
-			arg_34_1.retained_id = not draw_texture_rotated and draw_texture_rotated and arg_34_1.retained_id
-			arg_34_1.dirty = false
+			if retained_mode then
+				-- Nothing
+			end
+
+			if pass_data.retained_id then
+				retained_mode = pass_data.retained_id
+
+				if not retained_mode then
+					-- Nothing
+				end
+			end
+
+			retained_mode = true
+
+			local retained_id = retained_mode
+
+			::label_34_1::
+
+			retained_id = UIRenderer.draw_texture_rotated(ui_renderer, texture, size, position, angle, pivot, color, uvs, masked, retained_id)
+			pass_data.retained_id = (not retained_id or not retained_id) and not not pass_data.retained_id
+			pass_data.dirty = false
 		else
-			UIRenderer.draw_texture_rotated(arg_34_0, var_34_1, arg_34_7, arg_34_6, var_34_2, var_34_3, var_34_4, var_34_5, flag)
+			UIRenderer.draw_texture_rotated(ui_renderer, texture, size, position, angle, pivot, color, uvs, masked)
 		end
 	end
 }
 UIPasses.rounded_background = {
-	init = function (arg_35_0)
+	init = function (pass_definition)
 		-- function 35
 		return nil
 	end,
-	draw = function (arg_36_0, arg_36_1, arg_36_2, arg_36_3, arg_36_4, arg_36_5, arg_36_6, arg_36_7, arg_36_8, arg_36_9)
+	draw = function (ui_renderer, pass_data, ui_scenegraph, pass_definition, ui_style, ui_content, position, size, input_service, dt)
 		-- function 36
-		local var_36_0
-		local var_36_1
+		local corner_radius, color
 
-		if not arg_36_4 then
-			local rect_size = arg_36_4.rect_size
+		if ui_style then
+			local rect_size = ui_style.rect_size
 
-			if not rect_size then
-				if arg_36_4.horizontal_alignment == "right" then
-					arg_36_6[1] = arg_36_6[1] + arg_36_7[1] - rect_size[1]
-				elseif arg_36_4.horizontal_alignment == "center" then
-					arg_36_6[1] = arg_36_6[1] + (arg_36_7[1] - rect_size[1]) / 2
+			if rect_size then
+				if ui_style.horizontal_alignment == "right" then
+					position[1] = position[1] + size[1] - rect_size[1]
+				elseif ui_style.horizontal_alignment == "center" then
+					position[1] = position[1] + (size[1] - rect_size[1]) / 2
 				end
 
-				if arg_36_4.vertical_alignment == "center" then
-					arg_36_6[2] = arg_36_6[2] + (arg_36_7[2] - rect_size[2]) / 2
-				elseif arg_36_4.vertical_alignment == "top" then
-					arg_36_6[2] = arg_36_6[2] + arg_36_7[2] - rect_size[2]
+				if ui_style.vertical_alignment == "center" then
+					position[2] = position[2] + (size[2] - rect_size[2]) / 2
+				elseif ui_style.vertical_alignment == "top" then
+					position[2] = position[2] + size[2] - rect_size[2]
 				end
 
-				arg_36_7 = rect_size
+				size = rect_size
 			end
 
-			var_36_0 = arg_36_4.corner_radius
-			var_36_1 = arg_36_4.color
+			corner_radius = ui_style.corner_radius
+			color = ui_style.color
 		end
 
-		return UIRenderer.draw_rounded_rect(arg_36_0, arg_36_6, arg_36_7, var_36_0, var_36_1)
+		return UIRenderer.draw_rounded_rect(ui_renderer, position, size, corner_radius, color)
 	end
 }
 UIPasses.triangle = {
-	init = function (self)
+	init = function (pass_definition)
 		-- function 37
-		if not self.retained_mode then
+		if pass_definition.retained_mode then
 			return {
 				dirty = true
 			}
 		end
 	end,
-	destroy = function (arg_38_0, arg_38_1, arg_38_2)
+	destroy = function (ui_renderer, pass_data, pass_definition)
 		-- function 38
-		assert(arg_38_2.retained_mode, "why u destroy immediate pass?")
+		assert(pass_definition.retained_mode, "why u destroy immediate pass?")
 
-		if not arg_38_1.retained_id then
-			UIRenderer.destroy_bitmap(arg_38_0, arg_38_1.retained_id)
+		if pass_data.retained_id then
+			UIRenderer.destroy_bitmap(ui_renderer, pass_data.retained_id)
 
-			arg_38_1.retained_id = nil
+			pass_data.retained_id = nil
 		end
 	end,
-	draw = function (arg_39_0, arg_39_1, arg_39_2, arg_39_3, arg_39_4, arg_39_5, arg_39_6, arg_39_7, arg_39_8, arg_39_9)
+	draw = function (ui_renderer, pass_data, ui_scenegraph, pass_definition, ui_style, ui_content, position, size, input_service, dt)
 		-- function 39
-		if not arg_39_4 then
-			local texture_size = arg_39_4.texture_size
+		if ui_style then
+			local texture_size = ui_style.texture_size
 
-			if not texture_size then
-				if arg_39_4.horizontal_alignment == "right" then
-					arg_39_6[1] = arg_39_6[1] + arg_39_7[1] - texture_size[1]
-				elseif arg_39_4.horizontal_alignment == "center" then
-					arg_39_6[1] = arg_39_6[1] + (arg_39_7[1] - texture_size[1]) / 2
+			if texture_size then
+				if ui_style.horizontal_alignment == "right" then
+					position[1] = position[1] + size[1] - texture_size[1]
+				elseif ui_style.horizontal_alignment == "center" then
+					position[1] = position[1] + (size[1] - texture_size[1]) / 2
 				end
 
-				if arg_39_4.vertical_alignment == "center" then
-					arg_39_6[2] = arg_39_6[2] + (arg_39_7[2] - texture_size[2]) / 2
-				elseif arg_39_4.vertical_alignment == "top" then
-					arg_39_6[2] = arg_39_6[2] + arg_39_7[2] - texture_size[2]
+				if ui_style.vertical_alignment == "center" then
+					position[2] = position[2] + (size[2] - texture_size[2]) / 2
+				elseif ui_style.vertical_alignment == "top" then
+					position[2] = position[2] + size[2] - texture_size[2]
 				end
 
-				arg_39_7 = texture_size
+				size = texture_size
 			end
 		end
 
-		if not arg_39_3.retained_mode then
-			local retained_mode = arg_39_3.retained_mode
+		if pass_definition.retained_mode then
+			local retained_mode = pass_definition.retained_mode
 
-			if not retained_mode then
-				if not arg_39_1.retained_id then
-					retained_mode = arg_39_1.retained_id
-
-					if not retained_mode then
-						-- Nothing
-					end
-				end
-
-				retained_mode = true
+			if retained_mode then
+				-- Nothing
 			end
+
+			if pass_data.retained_id then
+				retained_mode = pass_data.retained_id
+
+				if not retained_mode then
+					-- Nothing
+				end
+			end
+
+			retained_mode = true
+
+			local retained_id = retained_mode
 
 			::label_39_0::
 
-			local draw_triangle = UIRenderer.draw_triangle(arg_39_0, arg_39_6, arg_39_7, arg_39_4, retained_mode)
-
-			arg_39_1.retained_id = not draw_triangle and draw_triangle and arg_39_1.retained_id
-			arg_39_1.dirty = false
+			retained_id = UIRenderer.draw_triangle(ui_renderer, position, size, ui_style, retained_id)
+			pass_data.retained_id = (not retained_id or not retained_id) and not not pass_data.retained_id
+			pass_data.dirty = false
 		else
-			UIRenderer.draw_triangle(arg_39_0, arg_39_6, arg_39_7, arg_39_4)
+			UIRenderer.draw_triangle(ui_renderer, position, size, ui_style)
 		end
 	end
 }
 
-local str = "Vector3"
+local cursor_value_type_name = "Vector3"
 
 UIPasses.scrollbar_hotspot = {
-	init = function (self)
+	init = function (pass_definition)
 		-- function 40
 		return {
-			content_id = self.content_id,
+			content_id = pass_definition.content_id,
 			scrollbar_size = {
 				0,
 				0
@@ -1311,139 +1378,142 @@ UIPasses.scrollbar_hotspot = {
 			}
 		}
 	end,
-	draw = function (arg_41_0, arg_41_1, arg_41_2, arg_41_3, arg_41_4, arg_41_5, arg_41_6, arg_41_7, arg_41_8, arg_41_9)
+	draw = function (ui_renderer, pass_data, ui_scenegraph, pass_definition, ui_style, ui_content, position, size, input_service, dt)
 		-- function 41
-		local var_41_0
-		local str_2 = "cursor"
-		local stack_depth = ShowCursorStack.stack_depth
-		local flag = not arg_41_8 and arg_41_8:has(str_2)
-		local flag_2 = (not (stack_depth > 0) or not flag) and arg_41_8:get(str_2)
+		local is_hover
+		local cursor_name = "cursor"
+		local cursor_stack = ShowCursorStack.stack_depth
+		local has_cursor = not not input_service and not not input_service:has(cursor_name)
+		local cursor = cursor_stack > 0 and not not has_cursor and not not input_service:get(cursor_name)
 
-		if not (not flag_2 and Script.type_name(flag_2) == str) then
-			flag_2 = tbl
+		if not cursor or Script.type_name(cursor) ~= cursor_value_type_name then
+			cursor = NilCursor
 		end
 
-		local is_device_active = Managers.input:is_device_active("gamepad")
-		local var_41_6
+		local gamepad_active = Managers.input:is_device_active("gamepad")
+		local cursor_position
 
-		if not is_device_active then
-			var_41_6 = flag_2
+		if gamepad_active then
+			cursor_position = cursor
 		else
-			var_41_6 = UIInverseScaleVectorToResolution(flag_2)
+			cursor_position = UIInverseScaleVectorToResolution(cursor)
 		end
 
-		local hotspot_position = arg_41_1.hotspot_position
+		local hotspot_position = pass_data.hotspot_position
 
-		hotspot_position[1] = arg_41_6[1]
-		hotspot_position[2] = arg_41_6[2]
-		hotspot_position[3] = arg_41_6[3]
+		hotspot_position[1] = position[1]
+		hotspot_position[2] = position[2]
+		hotspot_position[3] = position[3]
 
-		local hotspot_size = arg_41_1.hotspot_size
+		local hotspot_size = pass_data.hotspot_size
 
-		hotspot_size[1] = arg_41_7[1]
-		hotspot_size[2] = arg_41_7[2]
+		hotspot_size[1] = size[1]
+		hotspot_size[2] = size[2]
 
-		if not arg_41_4.hotspot_width_modifier then
-			local num = hotspot_size[1] * arg_41_4.hotspot_width_modifier
+		if ui_style.hotspot_width_modifier then
+			local size_x = hotspot_size[1] * ui_style.hotspot_width_modifier
 
-			hotspot_size[1] = num
-			hotspot_position[1] = hotspot_position[1] - num / 2 + arg_41_7[1] / 2
+			hotspot_size[1] = size_x
+			hotspot_position[1] = hotspot_position[1] - size_x / 2 + size[1] / 2
 		end
 
-		local point_is_inside_2d_box = math.point_is_inside_2d_box(var_41_6, hotspot_position, hotspot_size)
+		is_hover = math.point_is_inside_2d_box(cursor_position, hotspot_position, hotspot_size)
+		ui_content.is_hover = is_hover
 
-		arg_41_5.is_hover = point_is_inside_2d_box
-
-		local percentage = arg_41_5.percentage
-		local scrollbar_size = arg_41_1.scrollbar_size
+		local percentage = ui_content.percentage
+		local scrollbar_size = pass_data.scrollbar_size
 
 		scrollbar_size[1] = hotspot_size[1]
 
-		local max = math.max(arg_41_4.min_scrollbar_height, hotspot_size[2] * percentage)
+		local scrollbar_height = math.max(ui_style.min_scrollbar_height, hotspot_size[2] * percentage)
 
-		scrollbar_size[2] = max
+		scrollbar_size[2] = scrollbar_height
 
-		local scroll_value = arg_41_5.scroll_value
-		local num_2 = hotspot_size[2] - max
-		local num_3 = num_2 * scroll_value
-		local scrollbar_position = arg_41_1.scrollbar_position
+		local scroll_value = ui_content.scroll_value
+		local bar_move_area = hotspot_size[2] - scrollbar_height
+		local scrollbar_offset_y = bar_move_area * scroll_value
+		local scrollbar_position = pass_data.scrollbar_position
 
 		scrollbar_position[1] = hotspot_position[1]
-		scrollbar_position[2] = hotspot_position[2] + num_3
+		scrollbar_position[2] = hotspot_position[2] + scrollbar_offset_y
 		scrollbar_position[3] = hotspot_position[3] + 1
 
-		local point_is_inside_2d_box_2 = math.point_is_inside_2d_box(var_41_6, scrollbar_position, scrollbar_size)
+		local is_hover_scrollbar = math.point_is_inside_2d_box(cursor_position, scrollbar_position, scrollbar_size)
 
-		arg_41_5.is_hover_scrollbar = point_is_inside_2d_box_2
+		ui_content.is_hover_scrollbar = is_hover_scrollbar
 
-		local flag_3 = not arg_41_8 and arg_41_8:get("left_hold")
+		local left_hold = not not input_service and not not input_service:get("left_hold")
 
-		if not point_is_inside_2d_box_2 then
-			if not flag_3 then
-				arg_41_5.holding = true
+		if is_hover_scrollbar then
+			if left_hold then
+				ui_content.holding = true
 
-				if arg_41_1.start_move_pos[2] == math.huge then
-					arg_41_1.start_move_pos[2] = flag_2[2]
-					arg_41_5.og_scroll_value = arg_41_5.scroll_value
+				if pass_data.start_move_pos[2] == math.huge then
+					pass_data.start_move_pos[2] = cursor[2]
+					ui_content.og_scroll_value = ui_content.scroll_value
 				end
 			end
-		elseif not point_is_inside_2d_box and not flag_3 then
-			arg_41_5.holding = true
+		elseif is_hover and left_hold then
+			ui_content.holding = true
 		end
 
-		local var_41_20
+		local target_value
 
-		if not arg_41_5.holding then
-			if not flag_3 then
-				arg_41_5.holding = false
-				arg_41_1.start_move_pos[2] = math.huge
-			elseif arg_41_1.start_move_pos[2] < math.huge then
-				local var_41_21 = arg_41_1.start_move_pos[2]
-				local num_4 = (flag_2[2] - var_41_21) / num_2
-				local og_scroll_value = arg_41_5.og_scroll_value
+		if ui_content.holding then
+			if not left_hold then
+				ui_content.holding = false
+				pass_data.start_move_pos[2] = math.huge
+			elseif pass_data.start_move_pos[2] < math.huge then
+				local start_y = pass_data.start_move_pos[2]
+				local cursor_y = cursor[2]
+				local diff_y = cursor_y - start_y
+				local delta = diff_y / bar_move_area
+				local og_value = ui_content.og_scroll_value
 
-				var_41_20 = math.clamp(og_scroll_value + num_4, 0, 1)
+				target_value = math.clamp(og_value + delta, 0, 1)
 			else
-				local num_5 = flag_2[2] - hotspot_position[2]
+				local cursor_y = cursor[2]
+				local y_diff = cursor_y - hotspot_position[2]
 
-				var_41_20 = math.clamp(num_5 / num_2, 0, 1)
+				target_value = math.clamp(y_diff / bar_move_area, 0, 1)
 			end
 		end
 
-		local flag_4 = false
-		local scroll_area_position = arg_41_1.scroll_area_position
-		local scroll_area_size = arg_41_4.scroll_area_size
+		local is_hover_scroll_area = false
+		local scroll_area_position = pass_data.scroll_area_position
+		local scroll_area_size = ui_style.scroll_area_size
 
-		if var_41_20 or not scroll_area_size then
-			local scroll_area_offset = arg_41_4.scroll_area_offset
+		if not target_value and scroll_area_size then
+			local scroll_area_offset = ui_style.scroll_area_offset
 
 			scroll_area_position[1] = hotspot_position[1] + scroll_area_offset[1]
 			scroll_area_position[2] = hotspot_position[2] + scroll_area_offset[2]
 			scroll_area_position[3] = hotspot_position[3] + scroll_area_offset[3]
-			flag_4 = math.point_is_inside_2d_box(var_41_6, scroll_area_position, scroll_area_size)
+			is_hover_scroll_area = math.point_is_inside_2d_box(cursor_position, scroll_area_position, scroll_area_size)
 
-			if not flag_4 then
-				local var_41_29 = arg_41_8:get("scroll_axis")[2]
-				local num_6 = arg_41_5.scroll_amount * var_41_29
+			if is_hover_scroll_area then
+				local scroll_axis = input_service:get("scroll_axis")
+				local y = scroll_axis[2]
+				local move = ui_content.scroll_amount * y
 
-				var_41_20 = math.clamp(arg_41_5.scroll_value + num_6, 0, 1)
+				target_value = math.clamp(ui_content.scroll_value + move, 0, 1)
 			end
 		end
 
-		if not var_41_20 then
-			arg_41_5.scroll_value = var_41_20
+		if target_value then
+			ui_content.scroll_value = target_value
 		end
 
-		if not script_data.ui_debug_hover then
-			if not point_is_inside_2d_box then
-				UIRenderer.draw_rect(arg_41_0, Vector3(hotspot_position[1], hotspot_position[2], 999), hotspot_size, {
+		if script_data.ui_debug_hover then
+			if is_hover then
+				UIRenderer.draw_rect(ui_renderer, Vector3(hotspot_position[1], hotspot_position[2], 999), hotspot_size, {
 					128,
 					0,
 					255,
 					0
 				})
 			else
-				UIRenderer.draw_rect(arg_41_0, Vector3(hotspot_position[1], hotspot_position[2], hotspot_position[3] + 1), hotspot_size, {
+				UIRenderer.draw_rect(ui_renderer, Vector3(hotspot_position[1], hotspot_position[2], hotspot_position[3] + 1), hotspot_size, {
 					60,
 					255,
 					0,
@@ -1451,15 +1521,15 @@ UIPasses.scrollbar_hotspot = {
 				})
 			end
 
-			if not point_is_inside_2d_box_2 then
-				UIRenderer.draw_rect(arg_41_0, Vector3(scrollbar_position[1], scrollbar_position[2], 999), scrollbar_size, {
+			if is_hover_scrollbar then
+				UIRenderer.draw_rect(ui_renderer, Vector3(scrollbar_position[1], scrollbar_position[2], 999), scrollbar_size, {
 					128,
 					0,
 					255,
 					0
 				})
 			else
-				UIRenderer.draw_rect(arg_41_0, Vector3(scrollbar_position[1], scrollbar_position[2], scrollbar_position[3] + 1), scrollbar_size, {
+				UIRenderer.draw_rect(ui_renderer, Vector3(scrollbar_position[1], scrollbar_position[2], scrollbar_position[3] + 1), scrollbar_size, {
 					60,
 					255,
 					0,
@@ -1467,15 +1537,15 @@ UIPasses.scrollbar_hotspot = {
 				})
 			end
 
-			if not flag_4 then
-				UIRenderer.draw_rect(arg_41_0, Vector3(scroll_area_position[1], scroll_area_position[2], 999), scroll_area_size, {
+			if is_hover_scroll_area then
+				UIRenderer.draw_rect(ui_renderer, Vector3(scroll_area_position[1], scroll_area_position[2], 999), scroll_area_size, {
 					128,
 					0,
 					255,
 					0
 				})
 			else
-				UIRenderer.draw_rect(arg_41_0, Vector3(scroll_area_position[1], scroll_area_position[2], scroll_area_position[3] + 1), scroll_area_size, {
+				UIRenderer.draw_rect(ui_renderer, Vector3(scroll_area_position[1], scroll_area_position[2], scroll_area_position[3] + 1), scroll_area_size, {
 					60,
 					255,
 					0,
@@ -1486,10 +1556,10 @@ UIPasses.scrollbar_hotspot = {
 	end
 }
 UIPasses.scrollbar = {
-	init = function (self)
+	init = function (pass_definition)
 		-- function 42
 		return {
-			content_id = self.content_id,
+			content_id = pass_definition.content_id,
 			scrollbar_size = {
 				0,
 				0
@@ -1501,726 +1571,795 @@ UIPasses.scrollbar = {
 			}
 		}
 	end,
-	draw = function (arg_43_0, arg_43_1, arg_43_2, arg_43_3, arg_43_4, arg_43_5, arg_43_6, arg_43_7, arg_43_8, arg_43_9)
+	draw = function (ui_renderer, pass_data, ui_scenegraph, pass_definition, ui_style, ui_content, position, size, input_service, dt)
 		-- function 43
-		UIRenderer.draw_rect(arg_43_0, arg_43_6, arg_43_7, arg_43_4.background_color)
+		UIRenderer.draw_rect(ui_renderer, position, size, ui_style.background_color)
 
-		local percentage = arg_43_5.percentage
-		local scrollbar_size = arg_43_1.scrollbar_size
+		local percentage = ui_content.percentage
+		local scrollbar_size = pass_data.scrollbar_size
 
-		scrollbar_size[1] = arg_43_7[1]
+		scrollbar_size[1] = size[1]
 
-		local max = math.max(arg_43_4.min_scrollbar_height, arg_43_7[2] * percentage)
+		local scrollbar_height = math.max(ui_style.min_scrollbar_height, size[2] * percentage)
 
-		scrollbar_size[2] = max
+		scrollbar_size[2] = scrollbar_height
 
-		local scroll_value = arg_43_5.scroll_value
-		local num = (arg_43_7[2] - max) * scroll_value
-		local scrollbar_position = arg_43_1.scrollbar_position
+		local scroll_value = ui_content.scroll_value
+		local bar_move_area = size[2] - scrollbar_height
+		local scrollbar_offset_y = bar_move_area * scroll_value
+		local scrollbar_position = pass_data.scrollbar_position
 
-		scrollbar_position[1] = arg_43_6[1]
-		scrollbar_position[2] = arg_43_6[2] + num
-		scrollbar_position[3] = arg_43_6[3] + 1
+		scrollbar_position[1] = position[1]
+		scrollbar_position[2] = position[2] + scrollbar_offset_y
+		scrollbar_position[3] = position[3] + 1
 
-		UIRenderer.draw_rect(arg_43_0, scrollbar_position, scrollbar_size, arg_43_4.scrollbar_color)
+		UIRenderer.draw_rect(ui_renderer, scrollbar_position, scrollbar_size, ui_style.scrollbar_color)
 	end
 }
 UIPasses.rect_rotated = {
-	init = function (arg_44_0)
+	init = function (pass_definition)
 		-- function 44
 		return nil
 	end,
-	draw = function (arg_45_0, arg_45_1, arg_45_2, arg_45_3, arg_45_4, arg_45_5, arg_45_6, arg_45_7, arg_45_8, arg_45_9)
+	draw = function (ui_renderer, pass_data, ui_scenegraph, pass_definition, ui_style, ui_content, position, size, input_service, dt)
 		-- function 45
-		local num = 0
-		local var_45_1
-		local var_45_2
+		local angle = 0
+		local pivot, color
 
-		if not arg_45_4 then
-			local texture_size = arg_45_4.texture_size
+		if ui_style then
+			local texture_size = ui_style.texture_size
 
-			if not texture_size then
-				if arg_45_4.horizontal_alignment == "right" then
-					arg_45_6[1] = arg_45_6[1] + arg_45_7[1] - texture_size[1]
-				elseif arg_45_4.horizontal_alignment == "center" then
-					arg_45_6[1] = arg_45_6[1] + (arg_45_7[1] - texture_size[1]) / 2
+			if texture_size then
+				if ui_style.horizontal_alignment == "right" then
+					position[1] = position[1] + size[1] - texture_size[1]
+				elseif ui_style.horizontal_alignment == "center" then
+					position[1] = position[1] + (size[1] - texture_size[1]) / 2
 				end
 
-				if arg_45_4.vertical_alignment == "center" then
-					arg_45_6[2] = arg_45_6[2] + (arg_45_7[2] - texture_size[2]) / 2
-				elseif arg_45_4.vertical_alignment == "top" then
-					arg_45_6[2] = arg_45_6[2] + arg_45_7[2] - texture_size[2]
+				if ui_style.vertical_alignment == "center" then
+					position[2] = position[2] + (size[2] - texture_size[2]) / 2
+				elseif ui_style.vertical_alignment == "top" then
+					position[2] = position[2] + size[2] - texture_size[2]
 				end
 
-				arg_45_7 = texture_size
+				size = texture_size
 			end
 
-			num = arg_45_4.angle
-			var_45_1 = arg_45_4.pivot
-			var_45_2 = arg_45_4.color
+			angle = ui_style.angle
+			pivot = ui_style.pivot
+			color = ui_style.color
 		end
 
-		return UIRenderer.draw_rect_rotated(arg_45_0, arg_45_7, arg_45_6, num, var_45_1, var_45_2)
+		return UIRenderer.draw_rect_rotated(ui_renderer, size, position, angle, pivot, color)
 	end
 }
 UIPasses.video = {
-	init = function (arg_46_0)
+	init = function (pass_definition)
 		-- function 46
 		return nil
 	end,
-	draw = function (arg_47_0, arg_47_1, arg_47_2, arg_47_3, arg_47_4, arg_47_5, arg_47_6, arg_47_7, arg_47_8, arg_47_9)
+	draw = function (ui_renderer, pass_data, ui_scenegraph, pass_definition, ui_style, ui_content, position, size, input_service, dt)
 		-- function 47
-		arg_47_5.video_completed = UIRenderer.draw_video(arg_47_0, arg_47_5.material_name, arg_47_6, arg_47_7, arg_47_4.color, arg_47_5.video_player_reference, arg_47_5.video_player)
+		local is_complete = UIRenderer.draw_video(ui_renderer, ui_content.material_name, position, size, ui_style.color, ui_content.video_player_reference, ui_content.video_player)
+
+		ui_content.video_completed = is_complete
 	end
 }
 UIPasses.splash_video = {
-	init = function (arg_48_0)
+	init = function (pass_definition)
 		-- function 48
 		return nil
 	end,
-	draw = function (arg_49_0, arg_49_1, arg_49_2, arg_49_3, arg_49_4, arg_49_5, arg_49_6, arg_49_7, arg_49_8, arg_49_9)
+	draw = function (ui_renderer, pass_data, ui_scenegraph, pass_definition, ui_style, ui_content, position, size, input_service, dt)
 		-- function 49
-		arg_49_5.video_completed = UIRenderer.draw_splash_video(arg_49_0, arg_49_5.material_name, arg_49_6, arg_49_7, arg_49_4.color, arg_49_5.video_player_reference, arg_49_5.video_player)
+		local is_complete = UIRenderer.draw_splash_video(ui_renderer, ui_content.material_name, position, size, ui_style.color, ui_content.video_player_reference, ui_content.video_player)
+
+		ui_content.video_completed = is_complete
 	end
 }
 UIPasses.border = {
-	init = function (arg_50_0)
+	init = function (pass_definition)
 		-- function 50
 		return nil
 	end,
-	draw = function (arg_51_0, arg_51_1, arg_51_2, arg_51_3, arg_51_4, arg_51_5, arg_51_6, arg_51_7, arg_51_8, arg_51_9)
+	draw = function (ui_renderer, pass_data, ui_scenegraph, pass_definition, ui_style, ui_content, position, size, input_service, dt)
 		-- function 51
-		local var_51_0 = arg_51_6
-		local thickness = arg_51_4.thickness
+		local lower_left_corner = position
+		local thickness_2 = ui_style.thickness
 
-		thickness = thickness or 1
+		if not thickness_2 then
+			-- Nothing
+		end
 
-		UIRenderer.draw_rect(arg_51_0, var_51_0, Vector3(thickness, arg_51_7.y, 0), arg_51_4.color)
-		UIRenderer.draw_rect(arg_51_0, var_51_0, Vector3(arg_51_7.x, thickness, 0), arg_51_4.color)
-		UIRenderer.draw_rect(arg_51_0, var_51_0 + Vector3(arg_51_7.x - thickness, 0, 0), Vector3(thickness, arg_51_7.y, 0), arg_51_4.color)
-		UIRenderer.draw_rect(arg_51_0, var_51_0 + Vector3(0, arg_51_7.y - thickness, 0), Vector3(arg_51_7.x, thickness, 0), arg_51_4.color)
+		thickness_2 = 1
+
+		local thickness = thickness_2
+
+		::label_51_0::
+
+		UIRenderer.draw_rect(ui_renderer, lower_left_corner, Vector3(thickness, size.y, 0), ui_style.color)
+		UIRenderer.draw_rect(ui_renderer, lower_left_corner, Vector3(size.x, thickness, 0), ui_style.color)
+		UIRenderer.draw_rect(ui_renderer, lower_left_corner + Vector3(size.x - thickness, 0, 0), Vector3(thickness, size.y, 0), ui_style.color)
+		UIRenderer.draw_rect(ui_renderer, lower_left_corner + Vector3(0, size.y - thickness, 0), Vector3(size.x, thickness, 0), ui_style.color)
 	end
 }
 
-local function fn(arg_52_0, arg_52_1, arg_52_2, arg_52_3, arg_52_4, arg_52_5, arg_52_6)
+local function get_position_offset(text_width, font_height, font_min, font_max, size, origin, data)
 	-- function 52
-	local var_52_0 = Vector3(0, 0, 0)
+	local offset = Vector3(0, 0, 0)
 
-	if arg_52_6.horizontal_alignment == "right" then
-		var_52_0 = Vector3(arg_52_4[1] - arg_52_0, 0, 0)
-	elseif arg_52_6.horizontal_alignment == "center" then
-		local num = (arg_52_4[1] - arg_52_0) / 2
+	if data.horizontal_alignment == "right" then
+		offset = Vector3(size[1] - text_width, 0, 0)
+	elseif data.horizontal_alignment == "center" then
+		local x_offset = (size[1] - text_width) / 2
 
-		var_52_0 = Vector3(num - arg_52_5.x, 0, 0)
+		offset = Vector3(x_offset - origin.x, 0, 0)
 	end
 
 	local inv_scale = RESOLUTION_LOOKUP.inv_scale
 
-	if arg_52_6.vertical_alignment == "center" then
-		local num_2 = (arg_52_4[2] - arg_52_1 * inv_scale * 0.5) / 2
+	if data.vertical_alignment == "center" then
+		local y_offset = (size[2] - font_height * inv_scale * 0.5) / 2
 
-		var_52_0 = var_52_0 + Vector3(0, num_2, 0)
-	elseif arg_52_6.vertical_alignment == "top" then
-		local num_3 = arg_52_4[2] - arg_52_3 * inv_scale
+		offset = offset + Vector3(0, y_offset, 0)
+	elseif data.vertical_alignment == "top" then
+		local y_offset = size[2] - font_max * inv_scale
 
-		var_52_0 = var_52_0 + Vector3(0, num_3, 0)
+		offset = offset + Vector3(0, y_offset, 0)
 	else
-		var_52_0.y = var_52_0.y + math.abs(arg_52_2) * inv_scale
+		offset.y = offset.y + math.abs(font_min) * inv_scale
 	end
 
-	return var_52_0
+	return offset
 end
 
-local tbl_3 = {}
-local tbl_4 = {}
-local tbl_5 = {}
-local tbl_6 = {}
-local tbl_7 = {}
-local tbl_8 = {}
-local tbl_9 = {}
-local tbl_10 = {}
-local str_2 = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz1234567890"
-local str_3 = "{#color(%d,%d,%d)}"
+local link_array = {}
+local message_array = {}
+local name_array = {}
+local name_color_array = {}
+local dev_name_array = {}
+local system_message_array = {}
+local formatted_emojis_array = {}
+local channel_key_size_array = {}
+local base_str = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz1234567890"
+local format_directive_color_string = "{#color(%d,%d,%d)}"
 
 UIPasses.text_area_chat = {
-	init = function (self)
+	init = function (pass_definition)
 		-- function 53
-		assert(self.text_id)
+		assert(pass_definition.text_id)
 
 		return {
 			irc_channel_colors = table.clone(IRC_CHANNEL_COLORS),
-			text_id = self.text_id
+			text_id = pass_definition.text_id
 		}
 	end,
-	draw = function (arg_54_0, arg_54_1, arg_54_2, arg_54_3, arg_54_4, arg_54_5, arg_54_6, arg_54_7, arg_54_8, arg_54_9)
+	draw = function (ui_renderer, pass_data, ui_scenegraph, pass_definition, ui_style, ui_content, position, size, input_service, dt)
 		-- function 54
-		if #arg_54_5.message_tables == 0 then
+		if #ui_content.message_tables == 0 then
 			return
 		end
 
-		table.clear_array(tbl_4, #tbl_4)
-		table.clear(tbl_5)
-		table.clear(tbl_6)
-		table.clear(tbl_7)
-		table.clear(tbl_8)
-		table.clear(tbl_3)
-		table.clear(tbl_9)
-		table.clear(tbl_10)
+		table.clear_array(message_array, #message_array)
+		table.clear(name_array)
+		table.clear(name_color_array)
+		table.clear(dev_name_array)
+		table.clear(system_message_array)
+		table.clear(link_array)
+		table.clear(formatted_emojis_array)
+		table.clear(channel_key_size_array)
 
-		local resolution, var_54_1 = Gui.resolution()
-		local str = resolution .. ":" .. var_54_1 .. "-" .. arg_54_4.font_size
-		local var_54_3
-		local var_54_4
-		local var_54_5
+		local w, h = Gui.resolution()
+		local current_format = w .. ":" .. h .. "-" .. ui_style.font_size
+		local font_material, font_size, font_name
 
-		if not arg_54_4.font_type then
-			local var_54_6, var_54_7 = UIFontByResolution(arg_54_4)
+		if ui_style.font_type then
+			local font, size_of_font = UIFontByResolution(ui_style)
 
-			var_54_3, var_54_4, var_54_5 = var_54_6[1], var_54_7, arg_54_4.font_type
+			font_material, font_size, font_name = font[1], size_of_font, ui_style.font_type
 		end
 
-		local var_54_8 = Vector3(arg_54_7.x, var_54_4, arg_54_7.z)
-		local offset = arg_54_4.offset
+		local row_size = Vector3(size.x, font_size, size.z)
+		local offset = ui_style.offset
 
-		if not offset then
+		if offset then
 			local Vector3 = Vector3
-			local var_54_11 = offset[1]
-			local var_54_12 = offset[2]
-			local var_54_13 = offset[3]
+			local var_54_1 = offset[1]
+			local var_54_2 = offset[2]
+			local var_54_3 = offset[3]
 
-			var_54_13 = var_54_13 or 0
-			arg_54_6 = arg_54_6 + Vector3(var_54_11, var_54_12, var_54_13)
+			var_54_3 = not not var_54_3 or not not 0
+			position = position + Vector3(var_54_1, var_54_2, var_54_3)
 		end
 
-		local var_54_14 = arg_54_4.text_color[1]
-		local irc_channel_colors = arg_54_1.irc_channel_colors
+		local channel_color_alpha = ui_style.text_color[1]
+		local irc_channel_colors = pass_data.irc_channel_colors
 
-		for k, v in pairs(irc_channel_colors) do
-			v[1] = var_54_14
+		for _, channel_color in pairs(irc_channel_colors) do
+			channel_color[1] = channel_color_alpha
 		end
 
 		local inv_scale = RESOLUTION_LOOKUP.inv_scale
-		local var_54_17, var_54_18 = UIFontByResolution(arg_54_4, inv_scale)
-		local var_54_19 = unpack(var_54_17)
-		local text_size, var_54_21, var_54_22 = UIRenderer.text_size(arg_54_0, str_2, var_54_19, arg_54_4.font_size)
-		local text_color = arg_54_4.text_color
-		local default_color = arg_54_4.default_color
-		local name_color = arg_54_4.name_color
-		local name_color_dev = arg_54_4.name_color_dev
-		local name_color_system = arg_54_4.name_color_system
-		local num = 0
+		local font, _ = UIFontByResolution(ui_style, inv_scale)
+		local inv_font_material = unpack(font)
+		local _, _, minimum = UIRenderer.text_size(ui_renderer, base_str, inv_font_material, ui_style.font_size)
+		local color_text = ui_style.text_color
+		local default_color = ui_style.default_color
+		local color_name = ui_style.name_color
+		local color_name_dev = ui_style.name_color_dev
+		local color_name_system = ui_style.name_color_system
+		local num_texts = 0
 
-		for k_2 = 1, #arg_54_5.message_tables do
-			local var_54_29 = arg_54_5.message_tables[k_2]
-			local is_dev = var_54_29.is_dev
-			local is_bot = var_54_29.is_bot
-			local is_system = var_54_29.is_system
-			local is_enemy = var_54_29.is_enemy
-			local trimmed_sender = var_54_29.trimmed_sender
+		for i = 1, #ui_content.message_tables do
+			local message_table = ui_content.message_tables[i]
+			local is_dev = message_table.is_dev
+			local is_bot = message_table.is_bot
+			local is_system = message_table.is_system
+			local is_enemy = message_table.is_enemy
+			local trimmed_sender = message_table.trimmed_sender
 
-			trimmed_sender = trimmed_sender or var_54_29.sender
+			if not trimmed_sender then
+				-- Nothing
+			end
 
-			local message = var_54_29.message
-			local type = var_54_29.type
-			local link = var_54_29.link
-			local emojis = var_54_29.emojis
-			local formatted = var_54_29.formatted
-			local channel_string = var_54_29.channel_string
+			trimmed_sender = message_table.sender
 
-			channel_string = channel_string or ""
+			local sender = trimmed_sender
 
-			if formatted ~= str then
-				local var_54_41
+			::label_54_0::
+
+			local message = message_table.message
+			local message_type = message_table.type
+			local link = message_table.link
+			local emojis = message_table.emojis
+			local formatted = message_table.formatted
+			local channel_string_2 = message_table.channel_string
+
+			if not channel_string_2 then
+				-- Nothing
+			end
+
+			channel_string_2 = ""
+
+			local channel_string = channel_string_2
+
+			::label_54_1::
+
+			if formatted ~= current_format then
+				local message_text
 
 				if channel_string ~= "" then
-					local tbl_2
+					local tbl
 
-					if not is_enemy then
-						tbl_2 = {
+					if is_enemy then
+						tbl = {
 							255,
 							237,
 							48,
 							48
 						}
 
-						if not tbl_2 then
+						if not tbl then
 							-- Nothing
 						end
 					end
 
-					tbl_2 = {
+					tbl = {
 						255,
 						53,
 						161,
 						212
 					}
 
-					::label_54_0::
+					local channel_color = tbl
 
-					channel_string = string.format(str_3, tbl_2[2], tbl_2[3], tbl_2[4]) .. channel_string
+					::label_54_2::
+
+					channel_color = string.format(format_directive_color_string, channel_color[2], channel_color[3], channel_color[4])
+					channel_string = channel_color .. channel_string
 				end
 
-				if not (not default_color and type(default_color) ~= "table") then
-					default_color = string.format(str_3, default_color[2], default_color[3], default_color[4])
+				if default_color and type(default_color) == "table" then
+					default_color = string.format(format_directive_color_string, default_color[2], default_color[3], default_color[4])
 				else
-					default_color = default_color or string.format(str_3, text_color[2], text_color[3], text_color[4])
+					default_color = not not default_color or not not string.format(format_directive_color_string, color_text[2], color_text[3], color_text[4])
 				end
 
-				if not is_system then
-					if not (not name_color_system and type(name_color_system) ~= "table") then
-						name_color_system = string.format(str_3, name_color_system[2], name_color_system[3], name_color_system[4])
+				if is_system then
+					if color_name_system and type(color_name_system) == "table" then
+						color_name_system = string.format(format_directive_color_string, color_name_system[2], color_name_system[3], color_name_system[4])
 					end
 
-					var_54_41 = name_color_system .. trimmed_sender .. default_color .. message
-				elseif not is_dev then
-					if not (not name_color_dev and type(name_color_dev) ~= "table") then
-						name_color_dev = string.format(str_3, name_color_dev[2], name_color_dev[3], name_color_dev[4])
+					message_text = color_name_system .. sender .. default_color .. message
+				elseif is_dev then
+					if color_name_dev and type(color_name_dev) == "table" then
+						color_name_dev = string.format(format_directive_color_string, color_name_dev[2], color_name_dev[3], color_name_dev[4])
 					end
 
-					var_54_41 = channel_string .. name_color_dev .. trimmed_sender .. default_color .. message
+					message_text = channel_string .. color_name_dev .. sender .. default_color .. message
 				else
-					if not (not name_color and type(name_color) ~= "table") then
-						name_color = string.format(str_3, name_color[2], name_color[3], name_color[4])
+					if color_name and type(color_name) == "table" then
+						color_name = string.format(format_directive_color_string, color_name[2], color_name[3], color_name[4])
 					end
 
-					local flag
+					local str_2
 
-					flag = channel_string == "" or not "" or name_color
-					var_54_41 = channel_string .. flag .. trimmed_sender .. default_color .. message
+					if channel_string ~= "" then
+						str_2 = ""
+
+						goto label_54_3
+					end
+
+					str_2 = color_name
+
+					local player_name_color = str_2
+
+					::label_54_3::
+
+					message_text = channel_string .. player_name_color .. sender .. default_color .. message
 				end
 
-				local str_4 = "${e};"
-				local var_54_45 = var_54_41
+				local indicator = "${e};"
+				local text_to_split = message_text
 
-				if not emojis then
-					for i, v_2 in ipairs(emojis) do
-						var_54_45 = string.gsub(var_54_45, v_2.keys, str_4)
+				if emojis then
+					for _, emoji_data in ipairs(emojis) do
+						text_to_split = string.gsub(text_to_split, emoji_data.keys, indicator)
 					end
 				end
 
-				local word_wrap = UIRenderer.word_wrap(arg_54_0, var_54_45, var_54_3, var_54_4, arg_54_7[1], nil, var_54_5)
-				local var_54_47
-				local clone = table.clone(word_wrap)
+				local split_message = UIRenderer.word_wrap(ui_renderer, text_to_split, font_material, font_size, size[1], nil, font_name)
+				local formatted_emojis
+				local formatted_message_array = table.clone(split_message)
 
-				if not emojis then
-					local var_54_49
-					local var_54_50
+				if emojis then
+					local formatted_message, formatted_row
 
-					var_54_47 = {}
+					formatted_emojis = {}
 
-					for i_2, v_3 in ipairs(emojis) do
-						for i_3, v_4 in ipairs(clone) do
-							local find = string.find(v_4, str_4)
+					for _, emoji_data in ipairs(emojis) do
+						for row, split_msg in ipairs(formatted_message_array) do
+							local index = string.find(split_msg, indicator)
 
-							if not find then
-								local sub = string.sub(v_4, 0, math.max(find - 1, 0))
+							if index then
+								local substr = string.sub(split_msg, 0, math.max(index - 1, 0))
 
-								if not Utf8.valid(sub) then
-									print(string.format("%q is not a valid utf-8 string", sub))
+								if not Utf8.valid(substr) then
+									print(string.format("%q is not a valid utf-8 string", substr))
 
 									break
 								end
 
-								local str_5 = "      "
-								local gsub = string.gsub(sub, "{#.-}", "")
-								local get_text_width = UIUtils.get_text_width(arg_54_0, arg_54_4, gsub)
-								local var_54_56 = var_54_47[i_3]
+								local blank_area = "      "
+								local str = string.gsub(substr, "{#.-}", "")
+								local width = UIUtils.get_text_width(ui_renderer, ui_style, str)
+								local var_54_8 = formatted_emojis[row]
 
-								var_54_56 = var_54_56 or {}
-								var_54_47[i_3] = var_54_56
-								var_54_47[i_3][#var_54_47[i_3] + 1] = {
-									data = v_3,
-									offset_x = get_text_width,
-									offset_y = -arg_54_4.emoji_size[2] * 0.3,
-									size = arg_54_4.emoji_size
+								var_54_8 = not not var_54_8 or not not {}
+								formatted_emojis[row] = var_54_8
+								formatted_emojis[row][#formatted_emojis[row] + 1] = {
+									data = emoji_data,
+									offset_x = width,
+									offset_y = -ui_style.emoji_size[2] * 0.3,
+									size = ui_style.emoji_size
 								}
-								var_54_49 = string.gsub(v_4, str_4, str_5, 1)
-								var_54_50 = i_3
+
+								local cropped_msg = string.gsub(split_msg, indicator, blank_area, 1)
+
+								formatted_message = cropped_msg
+								formatted_row = row
 
 								break
 							end
 						end
 
-						if not var_54_49 then
-							clone[var_54_50] = var_54_49
+						if formatted_message then
+							formatted_message_array[formatted_row] = formatted_message
 						end
 					end
 				end
 
-				var_54_29.formatted_emojis = var_54_47
-				var_54_29.formatted_message_array = clone
-				var_54_29.formatted = str
+				message_table.formatted_emojis = formatted_emojis
+				message_table.formatted_message_array = formatted_message_array
+				message_table.formatted = current_format
 			end
 
-			local formatted_message_array = var_54_29.formatted_message_array
-			local formatted_emojis = var_54_29.formatted_emojis
-			local count = #formatted_message_array
+			local formatted_message_array = message_table.formatted_message_array
+			local formatted_emojis = message_table.formatted_emojis
+			local n_rows = #formatted_message_array
 
-			num = num + count
+			num_texts = num_texts + n_rows
 
-			local num_2 = #tbl_4 + 1
+			local row = #message_array + 1
 
-			for i9 = 1, count do
-				tbl_4[num_2] = formatted_message_array[i9]
+			for j = 1, n_rows do
+				message_array[row] = formatted_message_array[j]
 
-				if not is_system then
-					tbl_8[num_2] = formatted_message_array[i9]
+				if is_system then
+					system_message_array[row] = formatted_message_array[j]
 				end
 
-				if i9 == 1 then
-					if not is_dev then
-						tbl_7[#tbl_4] = trimmed_sender
-					elseif not is_bot then
-						tbl_5[num_2] = trimmed_sender
-						tbl_6[num_2] = Colors.get_color_table_with_alpha("dark_gray", var_54_14)
+				if j == 1 then
+					if is_dev then
+						dev_name_array[#message_array] = sender
+					elseif is_bot then
+						name_array[row] = sender
+						name_color_array[row] = Colors.get_color_table_with_alpha("dark_gray", channel_color_alpha)
 					else
-						tbl_5[num_2] = trimmed_sender
+						name_array[row] = sender
 
-						local var_54_61 = tbl_6
-						local var_54_62 = irc_channel_colors[type]
+						local var_54_9 = name_color_array
+						local var_54_10 = irc_channel_colors[message_type]
 
-						var_54_62 = var_54_62 or Colors.get_color_table_with_alpha("gray", var_54_14)
-						var_54_61[num_2] = var_54_62
+						var_54_10 = not not var_54_10 or not not Colors.get_color_table_with_alpha("gray", channel_color_alpha)
+						var_54_9[row] = var_54_10
 					end
 
-					local text_size_2, var_54_64, var_54_65 = UIRenderer.text_size(arg_54_0, channel_string, var_54_3, var_54_4)
+					local x, _, _ = UIRenderer.text_size(ui_renderer, channel_string, font_material, font_size)
 
-					tbl_10[num_2] = text_size_2
+					channel_key_size_array[row] = x
 				end
 
-				if not link then
-					tbl_3[num_2] = link
+				if link then
+					link_array[row] = link
 				end
 
-				if not formatted_emojis and not formatted_emojis[i9] then
-					local var_54_66 = formatted_emojis[i9]
+				if formatted_emojis and formatted_emojis[j] then
+					local formatted_emojis_data = formatted_emojis[j]
 
-					tbl_9[num_2] = var_54_66
+					formatted_emojis_array[row] = formatted_emojis_data
 				end
 
-				num_2 = num_2 + 1
+				row = row + 1
 			end
 		end
 
-		local spacing = arg_54_4.spacing
+		local spacing_2 = ui_style.spacing
 
-		spacing = spacing or 0
-
-		local floor = math.floor(arg_54_7[2] / (arg_54_4.font_size + spacing))
-		local num_3 = floor * arg_54_4.font_size
-		local num_4 = 12
-
-		if num_3 > arg_54_7[2] + num_4 then
-			floor = floor - 1
+		if not spacing_2 then
+			-- Nothing
 		end
 
-		local min = math.min(floor, num)
-		local vertical_alignment = arg_54_4.vertical_alignment
+		spacing_2 = 0
+
+		local spacing = spacing_2
+
+		::label_54_4::
+
+		local num_texts_to_draw = math.floor(size[2] / (ui_style.font_size + spacing))
+		local text_height = num_texts_to_draw * ui_style.font_size
+		local allowed_overlap = 12
+
+		if text_height > size[2] + allowed_overlap then
+			num_texts_to_draw = num_texts_to_draw - 1
+		end
+
+		num_texts_to_draw = math.min(num_texts_to_draw, num_texts)
+
+		local vertical_alignment = ui_style.vertical_alignment
 
 		if vertical_alignment == "top" then
-			arg_54_6 = arg_54_6 + Vector3(0, arg_54_7[2], 0)
+			position = position + Vector3(0, size[2], 0)
 		elseif vertical_alignment == "bottom" then
-			local num_5 = (arg_54_4.font_size + spacing) * (min - 1)
+			local text_area_draw_height = (ui_style.font_size + spacing) * (num_texts_to_draw - 1)
 
-			arg_54_6 = arg_54_6 + Vector3(0, num_5 - var_54_22[2], 0)
+			position = position + Vector3(0, text_area_draw_height - minimum[2], 0)
 		end
 
-		local num_6 = min / num
-		local text_start_offset = arg_54_5.text_start_offset
-		local num_7 = (1 - num_6) * num
-		local modf = math.modf((1 + num_7) * text_start_offset)
-		local min_2 = math.min(num, modf + min)
+		local percent_num_texts_to_draw = num_texts_to_draw / num_texts
+		local text_start_offset = ui_content.text_start_offset
+		local num_texts_to_scale_on = (1 - percent_num_texts_to_draw) * num_texts
+		local start_index = math.modf((1 + num_texts_to_scale_on) * text_start_offset)
+		local stop_index = math.min(num_texts, start_index + num_texts_to_draw)
 
-		for i10 = math.max(1, min_2 - min + 1), min_2 do
-			local var_54_79 = tbl_4[i10]
+		start_index = math.max(1, stop_index - num_texts_to_draw + 1)
 
-			UIRenderer.draw_text(arg_54_0, var_54_79, var_54_3, var_54_4, var_54_5, arg_54_6, text_color)
+		for i = start_index, stop_index do
+			local text = message_array[i]
 
-			if not tbl_3[i10] then
-				local get = arg_54_8:get("cursor")
+			UIRenderer.draw_text(ui_renderer, text, font_material, font_size, font_name, position, color_text)
 
-				get = get or tbl
+			if link_array[i] then
+				local get = input_service:get("cursor")
 
-				local var_54_81 = UIInverseScaleVectorToResolution(get)
+				if not get then
+					-- Nothing
+				end
 
-				if not math.point_is_inside_2d_box(var_54_81, arg_54_6, var_54_8) then
-					UIRenderer.draw_rect(arg_54_0, arg_54_6, var_54_8, Colors.get_color_table_with_alpha("magenta", 50))
+				get = NilCursor
 
-					if not arg_54_8:get("left_press") then
+				local cursor = get
+
+				::label_54_5::
+
+				local cursor_position = UIInverseScaleVectorToResolution(cursor)
+				local is_hover = math.point_is_inside_2d_box(cursor_position, position, row_size)
+
+				if is_hover then
+					UIRenderer.draw_rect(ui_renderer, position, row_size, Colors.get_color_table_with_alpha("magenta", 50))
+
+					if input_service:get("left_press") then
 						print("PRESSED")
 
-						arg_54_5.link_pressed = tbl_3[i10]
+						ui_content.link_pressed = link_array[i]
 					end
 				else
-					UIRenderer.draw_rect(arg_54_0, arg_54_6, var_54_8, Colors.get_color_table_with_alpha("powder_blue", 50))
+					UIRenderer.draw_rect(ui_renderer, position, row_size, Colors.get_color_table_with_alpha("powder_blue", 50))
 				end
 			end
 
-			if not tbl_9[i10] then
-				for i_4, v_5 in ipairs(tbl_9[i10]) do
-					UIRenderer.draw_texture(arg_54_0, v_5.data.texture, arg_54_6 + Vector3(v_5.offset_x, v_5.offset_y, 0), Vector2(v_5.size[1], v_5.size[2]))
+			if formatted_emojis_array[i] then
+				for _, emoji in ipairs(formatted_emojis_array[i]) do
+					UIRenderer.draw_texture(ui_renderer, emoji.data.texture, position + Vector3(emoji.offset_x, emoji.offset_y, 0), Vector2(emoji.size[1], emoji.size[2]))
 				end
 			end
 
-			arg_54_6.y = arg_54_6.y - arg_54_4.font_size - spacing
+			position.y = position.y - ui_style.font_size - spacing
 		end
 	end
 }
 
-local tbl_11 = {}
-local tbl_12 = {}
-local tbl_13 = {}
-local tbl_14 = {}
+local FINAL_REPLACEMENT_STR_LIST = {}
+local REPLACEMENT_STR_LIST = {}
+local INPUT_ACTIONS = {}
+local INPUT_SERVICE_NAMES = {}
 
-local function fn_2(arg_55_0, arg_55_1, arg_55_2, arg_55_3)
+local function extract_button_data_from_text(ui_renderer, ui_style, input_text, prepared_text)
 	-- function 55
-	local var_55_0 = arg_55_2
+	local text = input_text
 
-	if not arg_55_1.localize then
-		var_55_0 = Managers.localizer:simple_lookup(arg_55_2)
+	if ui_style.localize then
+		text = Managers.localizer:simple_lookup(input_text)
 	end
 
-	if not string.find(var_55_0, "%b$;[%a%d_]*:") then
-		table.clear(tbl_13)
+	if not string.find(text, "%b$;[%a%d_]*:") then
+		table.clear(INPUT_ACTIONS)
 
-		return arg_55_3
+		return prepared_text
 	end
 
 	local input = Managers.input
 
-	input = not input and Managers.input:is_device_active("gamepad")
+	if input then
+		-- Nothing
+	end
 
-	local var_55_2
-	local get_input_action, var_55_4
+	input = Managers.input:is_device_active("gamepad")
 
-	get_input_action, tbl_13, var_55_4, tbl_14 = Managers.localizer:get_input_action(var_55_0)
+	local gamepad_active = input
+
+	::label_55_0::
+
+	local _
+
+	_, INPUT_ACTIONS, _, INPUT_SERVICE_NAMES = Managers.localizer:get_input_action(text)
 
 	local inv_scale = RESOLUTION_LOOKUP.inv_scale
 
-	if not tbl_13[1] then
-		table.clear(tbl_11)
-		table.clear(tbl_12)
+	if INPUT_ACTIONS[1] then
+		table.clear(FINAL_REPLACEMENT_STR_LIST)
+		table.clear(REPLACEMENT_STR_LIST)
 
-		for i = 1, #tbl_13 do
-			local var_55_6 = tbl_13[i]
-			local var_55_7 = tbl_14[i]
-			local var_55_8, var_55_9 = UIFontByResolution(arg_55_1)
-			local var_55_10 = var_55_8[1]
-			local var_55_11 = var_55_9
-			local text_size = UIRenderer.text_size(arg_55_0, "½", var_55_10, var_55_11)
-			local num = UIRenderer.text_size(arg_55_0, "½ ", var_55_10, var_55_11) - text_size
+		for i = 1, #INPUT_ACTIONS do
+			local input_action = INPUT_ACTIONS[i]
+			local input_service_name = INPUT_SERVICE_NAMES[i]
+			local font, size_of_font = UIFontByResolution(ui_style)
+			local font_material, font_size = font[1], size_of_font
+			local replacement_width = UIRenderer.text_size(ui_renderer, "½", font_material, font_size)
+			local test_width = UIRenderer.text_size(ui_renderer, "½ ", font_material, font_size)
+			local final_replacement_width = test_width - replacement_width
 
-			if not input then
-				local num_2 = var_55_11 * inv_scale
-				local num_3 = math.ceil(num_2 / num) + 1
+			if gamepad_active then
+				local button_width = font_size * inv_scale
+				local final_replacement_str_iterator = math.ceil(button_width / final_replacement_width) + 1
 
-				tbl_11[i] = string.rep(" ", num_3)
+				FINAL_REPLACEMENT_STR_LIST[i] = string.rep(" ", final_replacement_str_iterator)
 
-				local num_4 = math.ceil(num_2 / text_size) + 1
+				local replacement_str_iterator = math.ceil(button_width / replacement_width) + 1
 
-				tbl_12[i] = string.rep("½", num_4)
+				REPLACEMENT_STR_LIST[i] = string.rep("½", replacement_str_iterator)
 			else
-				local get_gamepad_input_texture_data, var_55_18, var_55_19, var_55_20 = UISettings.get_gamepad_input_texture_data(Managers.input:get_service(var_55_7), var_55_6, input)
+				local _, _, keymap_binding, unassigned = UISettings.get_gamepad_input_texture_data(Managers.input:get_service(input_service_name), input_action, gamepad_active)
 
-				if not (not var_55_19 and var_55_20 and var_55_19[1] ~= "mouse") then
-					local num_5 = var_55_11 * inv_scale
-					local num_6 = math.ceil(num_5 / num) + 1
+				if not keymap_binding or not unassigned and keymap_binding[1] == "mouse" then
+					local button_width = font_size * inv_scale
+					local final_replacement_str_iterator = math.ceil(button_width / final_replacement_width) + 1
 
-					tbl_11[i] = string.rep(" ", num_6)
+					FINAL_REPLACEMENT_STR_LIST[i] = string.rep(" ", final_replacement_str_iterator)
 
-					local num_7 = math.ceil(num_5 / text_size) + 1
+					local replacement_str_iterator = math.ceil(button_width / replacement_width) + 1
 
-					tbl_12[i] = string.rep("½", num_7)
+					REPLACEMENT_STR_LIST[i] = string.rep("½", replacement_str_iterator)
 				else
 					local upper = Utf8.upper
-					local var_55_25
+					local var_55_2
 
-					if not var_55_20 then
-						var_55_25 = Localize(var_55_19[2])
+					if unassigned then
+						var_55_2 = Localize(keymap_binding[2])
 
-						if not var_55_25 then
+						if not var_55_2 then
 							-- Nothing
 						end
 					end
 
-					var_55_25 = Keyboard.button_locale_name(var_55_19[2])
-					var_55_25 = var_55_25 or Localize(UNASSIGNED_KEY)
+					var_55_2 = Keyboard.button_locale_name(keymap_binding[2])
+					var_55_2 = not not var_55_2 or not not Localize(UNASSIGNED_KEY)
 
-					::label_55_0::
+					::label_55_1::
 
-					local var_55_26 = upper(var_55_25)
-					local num_8 = UIRenderer.text_size(arg_55_0, var_55_26, var_55_10, var_55_11) + var_55_11 * inv_scale
-					local ceil = math.ceil(num_8 / num)
+					local localized_button_name = upper(var_55_2)
+					local text_width = UIRenderer.text_size(ui_renderer, localized_button_name, font_material, font_size) + font_size * inv_scale
+					local final_replacement_str_iterator = math.ceil(text_width / final_replacement_width)
 
-					tbl_11[i] = string.rep(" ", ceil)
+					FINAL_REPLACEMENT_STR_LIST[i] = string.rep(" ", final_replacement_str_iterator)
 
-					local ceil_2 = math.ceil(num_8 / text_size)
+					local replacement_str_iterator = math.ceil(text_width / replacement_width)
 
-					tbl_12[i] = string.rep("½", ceil_2)
+					REPLACEMENT_STR_LIST[i] = string.rep("½", replacement_str_iterator)
 				end
 			end
 		end
 
-		local flag = true
-		local num_9 = 1
+		local skip_localization = true
+		local number_of_replacements = 1
 
-		for j = 1, #tbl_12 do
-			var_55_0 = Managers.localizer:replace_macro_in_string(var_55_0, tbl_12[j], flag, num_9)
+		for i = 1, #REPLACEMENT_STR_LIST do
+			text = Managers.localizer:replace_macro_in_string(text, REPLACEMENT_STR_LIST[i], skip_localization, number_of_replacements)
 		end
 
-		table.reverse(tbl_13)
-		table.reverse(tbl_14)
-		table.reverse(tbl_12)
-		table.reverse(tbl_11)
+		table.reverse(INPUT_ACTIONS)
+		table.reverse(INPUT_SERVICE_NAMES)
+		table.reverse(REPLACEMENT_STR_LIST)
+		table.reverse(FINAL_REPLACEMENT_STR_LIST)
 	else
-		var_55_0 = arg_55_3
+		text = prepared_text
 	end
 
-	return var_55_0
+	return text
 end
 
-local tbl_15 = {
+local BUTTON_COLOR = {
 	0,
 	255,
 	255,
 	255
 }
 
-local function fn_3(arg_56_0, arg_56_1, arg_56_2, arg_56_3, arg_56_4, arg_56_5, arg_56_6)
+local function render_buttons_in_text(ui_renderer, text, font_material, font_size, font_name, position, ui_style)
 	-- function 56
-	if not tbl_13[1] then
-		return arg_56_1
+	if not INPUT_ACTIONS[1] then
+		return text
 	end
 
-	local flag = true
+	local found_button = true
 	local inv_scale = RESOLUTION_LOOKUP.inv_scale
 
-	while not flag do
-		local var_56_2 = tbl_13[#tbl_13]
-		local var_56_3 = tbl_14[#tbl_14]
-		local var_56_4 = tbl_12[#tbl_12]
-		local var_56_5 = tbl_11[#tbl_11]
+	while found_button do
+		local current_input_action = INPUT_ACTIONS[#INPUT_ACTIONS]
+		local current_input_service = INPUT_SERVICE_NAMES[#INPUT_SERVICE_NAMES]
+		local current_replacement_str = REPLACEMENT_STR_LIST[#REPLACEMENT_STR_LIST]
+		local current_final_replacement_str = FINAL_REPLACEMENT_STR_LIST[#FINAL_REPLACEMENT_STR_LIST]
 
-		if not (not var_56_2 and not var_56_3 and not var_56_4 and var_56_5) then
-			Crashify.print_exception("Buttons in text", "Text: %q - Input action: %q - input_service: %q - replacement_str: %q - final_replacement_str: %q", tostring(arg_56_1), tostring(var_56_2), tostring(var_56_3), tostring(var_56_4), tostring(var_56_5))
-			table.clear(tbl_13)
-			table.clear(tbl_14)
-			table.clear(tbl_12)
-			table.clear(tbl_11)
+		if not current_input_action or not current_input_service or not current_replacement_str or not current_final_replacement_str then
+			Crashify.print_exception("Buttons in text", "Text: %q - Input action: %q - input_service: %q - replacement_str: %q - final_replacement_str: %q", tostring(text), tostring(current_input_action), tostring(current_input_service), tostring(current_replacement_str), tostring(current_final_replacement_str))
+			table.clear(INPUT_ACTIONS)
+			table.clear(INPUT_SERVICE_NAMES)
+			table.clear(REPLACEMENT_STR_LIST)
+			table.clear(FINAL_REPLACEMENT_STR_LIST)
 
-			return arg_56_1
+			return text
 		end
 
-		local find = string.find(arg_56_1, tbl_12[#tbl_12])
+		local start_idx = string.find(text, REPLACEMENT_STR_LIST[#REPLACEMENT_STR_LIST])
 
-		if not find then
-			local var_56_7 = tbl_13[#tbl_13]
-			local var_56_8 = tbl_14[#tbl_14]
-			local is_device_active = Managers.input:is_device_active("gamepad")
-			local get_gamepad_input_texture_data, var_56_11, var_56_12, var_56_13 = UISettings.get_gamepad_input_texture_data(Managers.input:get_service(var_56_8), var_56_7, is_device_active)
-			local sub = string.sub(arg_56_1, 1, math.max(find, 2))
-			local flag_2 = false
+		if start_idx then
+			local input_action = INPUT_ACTIONS[#INPUT_ACTIONS]
+			local input_service = INPUT_SERVICE_NAMES[#INPUT_SERVICE_NAMES]
+			local gamepad_active = Managers.input:is_device_active("gamepad")
+			local button_texture_data, _, keymap_binding, unassigned = UISettings.get_gamepad_input_texture_data(Managers.input:get_service(input_service), input_action, gamepad_active)
+			local substr = string.sub(text, 1, math.max(start_idx, 2))
+			local was_invalid = false
 
-			while not (Utf8.valid(sub) or not (find > 1)) do
-				find = find - 1
-				sub = string.sub(arg_56_1, 1, math.max(find, 2))
-				flag_2 = true
+			while not Utf8.valid(substr) and start_idx > 1 do
+				start_idx = start_idx - 1
+				substr = string.sub(text, 1, math.max(start_idx, 2))
+				was_invalid = true
 			end
 
-			local text_size = UIRenderer.text_size(arg_56_0, sub, arg_56_2, arg_56_3)
+			local length = UIRenderer.text_size(ui_renderer, substr, font_material, font_size)
 
-			text_size = not (find > 1) or not text_size or 0
+			length = (not (start_idx > 1) or not length) and not not 0
 
-			local flag_3 = false
+			local pos = false
 
-			if not flag_2 then
-				flag_3 = arg_56_5 + Vector3(text_size + arg_56_3 * inv_scale * 0.25, -arg_56_3 * inv_scale * 0.25, 0)
+			if was_invalid then
+				pos = position + Vector3(length + font_size * inv_scale * 0.25, -font_size * inv_scale * 0.25, 0)
 			else
-				flag_3 = arg_56_5 + Vector3(text_size - arg_56_3 * inv_scale * 0.25, -arg_56_3 * inv_scale * 0.25, 0)
+				pos = position + Vector3(length - font_size * inv_scale * 0.25, -font_size * inv_scale * 0.25, 0)
 			end
 
-			if not arg_56_6.skip_button_rendering then
-				if not is_device_active then
-					if not get_gamepad_input_texture_data then
-						tbl_15[1] = arg_56_6.text_color[1]
+			if not ui_style.skip_button_rendering then
+				if gamepad_active then
+					if button_texture_data then
+						BUTTON_COLOR[1] = ui_style.text_color[1]
 
-						draw_texture(arg_56_0, get_gamepad_input_texture_data.texture, flag_3, Vector2(arg_56_3 * inv_scale, arg_56_3 * inv_scale), tbl_15, arg_56_6.masked, arg_56_6.saturated)
+						UIRenderer_draw_texture(ui_renderer, button_texture_data.texture, pos, Vector2(font_size * inv_scale, font_size * inv_scale), BUTTON_COLOR, ui_style.masked, ui_style.saturated)
 					else
-						local num = arg_56_5 + Vector3(text_size, 0, 0)
+						local unassigned_button_pos = position + Vector3(length, 0, 0)
 
-						UIRenderer.draw_text(arg_56_0, "[?]", arg_56_2, arg_56_3, arg_56_4, num, Colors.get_color_table_with_alpha("font_title", 255))
+						UIRenderer.draw_text(ui_renderer, "[?]", font_material, font_size, font_name, unassigned_button_pos, Colors.get_color_table_with_alpha("font_title", 255))
 					end
-				elseif not (not var_56_12 and var_56_13 and var_56_12[1] ~= "mouse") then
-					if not get_gamepad_input_texture_data then
-						local num_2 = get_gamepad_input_texture_data.size[2] / get_gamepad_input_texture_data.size[1]
+				elseif not keymap_binding or not unassigned and keymap_binding[1] == "mouse" then
+					if button_texture_data then
+						local height_multiplier = button_texture_data.size[2] / button_texture_data.size[1]
 
-						tbl_15[1] = arg_56_6.text_color[1]
+						BUTTON_COLOR[1] = ui_style.text_color[1]
 
-						draw_texture(arg_56_0, get_gamepad_input_texture_data.texture, flag_3, Vector2(arg_56_3 * inv_scale, arg_56_3 * inv_scale * num_2), tbl_15, arg_56_6.masked, arg_56_6.saturated)
+						UIRenderer_draw_texture(ui_renderer, button_texture_data.texture, pos, Vector2(font_size * inv_scale, font_size * inv_scale * height_multiplier), BUTTON_COLOR, ui_style.masked, ui_style.saturated)
 					else
-						local num_3 = arg_56_5 + Vector3(text_size, 0, 0)
+						local unassigned_button_pos = position + Vector3(length, 0, 0)
 
-						UIRenderer.draw_text(arg_56_0, "[?]", arg_56_2, arg_56_3, arg_56_4, num_3, Colors.get_color_table_with_alpha("font_title", 255))
+						UIRenderer.draw_text(ui_renderer, "[?]", font_material, font_size, font_name, unassigned_button_pos, Colors.get_color_table_with_alpha("font_title", 255))
 					end
 				else
 					local upper = Utf8.upper
-					local var_56_22
+					local var_56_1
 
-					if not var_56_13 then
-						var_56_22 = Localize(var_56_12[2])
+					if unassigned then
+						var_56_1 = Localize(keymap_binding[2])
 
-						if not var_56_22 then
+						if not var_56_1 then
 							-- Nothing
 						end
 					end
 
-					var_56_22 = Keyboard.button_locale_name(var_56_12[2])
-					var_56_22 = var_56_22 or Localize(UNASSIGNED_KEY)
+					var_56_1 = Keyboard.button_locale_name(keymap_binding[2])
+					var_56_1 = not not var_56_1 or not not Localize(UNASSIGNED_KEY)
 
 					::label_56_0::
 
-					local var_56_23 = upper(var_56_22)
-					local text_size_2, var_56_25 = UIRenderer.text_size(arg_56_0, var_56_23, arg_56_2, arg_56_3)
-					local var_56_26 = get_gamepad_input_texture_data[1]
-					local var_56_27 = get_gamepad_input_texture_data[2]
-					local num_4 = var_56_25 / var_56_26.size[2] * 1.5
-					local var_56_29
+					local localized_button_name = upper(var_56_1)
+					local button_text_length, button_text_height = UIRenderer.text_size(ui_renderer, localized_button_name, font_material, font_size)
+					local left_part = button_texture_data[1]
+					local middle_part = button_texture_data[2]
+					local size_multiplier = button_text_height / left_part.size[2] * 1.5
+					local texture_pos
 
-					if not flag_2 then
-						var_56_29 = arg_56_5 + Vector3(text_size + var_56_26.size[1] * 0.3 * num_4, -var_56_26.size[2] * 0.23 * num_4, 0)
+					if was_invalid then
+						texture_pos = position + Vector3(length + left_part.size[1] * 0.3 * size_multiplier, -left_part.size[2] * 0.23 * size_multiplier, 0)
 					else
-						var_56_29 = arg_56_5 + Vector3(text_size - var_56_26.size[1] * 0.3 * num_4, -var_56_26.size[2] * 0.23 * num_4, 0)
+						texture_pos = position + Vector3(length - left_part.size[1] * 0.3 * size_multiplier, -left_part.size[2] * 0.23 * size_multiplier, 0)
 					end
 
-					draw_texture(arg_56_0, var_56_26.texture, var_56_29, Vector2(var_56_26.size[1] * num_4, var_56_26.size[2] * num_4), {
-						arg_56_6.text_color[1],
+					UIRenderer_draw_texture(ui_renderer, left_part.texture, texture_pos, Vector2(left_part.size[1] * size_multiplier, left_part.size[2] * size_multiplier), {
+						ui_style.text_color[1],
 						255,
 						255,
 						255
-					}, arg_56_6.masked, arg_56_6.saturated)
+					}, ui_style.masked, ui_style.saturated)
 
-					var_56_29[1] = var_56_29[1] + var_56_26.size[1] * num_4
+					texture_pos[1] = texture_pos[1] + left_part.size[1] * size_multiplier
 
-					draw_texture(arg_56_0, var_56_27.texture, var_56_29, Vector2(text_size_2, var_56_27.size[2] * num_4), {
-						arg_56_6.text_color[1],
+					UIRenderer_draw_texture(ui_renderer, middle_part.texture, texture_pos, Vector2(button_text_length, middle_part.size[2] * size_multiplier), {
+						ui_style.text_color[1],
 						255,
 						255,
 						255
-					}, arg_56_6.masked, arg_56_6.saturated)
+					}, ui_style.masked, ui_style.saturated)
 
-					local var_56_30
+					local text_pos
 
-					if not flag_2 then
-						var_56_30 = arg_56_5 + Vector3(text_size + (var_56_26.size[1] * 0.3 * num_4 + var_56_26.size[1] * 0.3 * num_4) * 2, 0, 1)
+					if was_invalid then
+						text_pos = position + Vector3(length + (left_part.size[1] * 0.3 * size_multiplier + left_part.size[1] * 0.3 * size_multiplier) * 2, 0, 1)
 					else
-						var_56_30 = arg_56_5 + Vector3(text_size + var_56_26.size[1] * 0.3 * num_4 + var_56_26.size[1] * 0.3 * num_4, 0, 1)
+						text_pos = position + Vector3(length + left_part.size[1] * 0.3 * size_multiplier + left_part.size[1] * 0.3 * size_multiplier, 0, 1)
 					end
 
-					UIRenderer.draw_text(arg_56_0, var_56_23, arg_56_2, arg_56_3, arg_56_4, var_56_30, arg_56_6.text_color)
+					UIRenderer.draw_text(ui_renderer, localized_button_name, font_material, font_size, font_name, text_pos, ui_style.text_color)
 
-					var_56_29[1] = var_56_29[1] + text_size_2
+					texture_pos[1] = texture_pos[1] + button_text_length
 
-					draw_texture_uv(arg_56_0, var_56_26.texture, var_56_29, Vector2(var_56_26.size[1] * num_4, var_56_26.size[2] * num_4), {
+					UIRenderer_draw_texture_uv(ui_renderer, left_part.texture, texture_pos, Vector2(left_part.size[1] * size_multiplier, left_part.size[2] * size_multiplier), {
 						{
 							1,
 							0
@@ -2230,975 +2369,1158 @@ local function fn_3(arg_56_0, arg_56_1, arg_56_2, arg_56_3, arg_56_4, arg_56_5, 
 							1
 						}
 					}, {
-						arg_56_6.text_color[1],
+						ui_style.text_color[1],
 						255,
 						255,
 						255
-					}, arg_56_6.masked, arg_56_6.saturated)
+					}, ui_style.masked, ui_style.saturated)
 				end
 			end
 
-			arg_56_1 = string.gsub(arg_56_1, tbl_12[#tbl_12], tbl_11[#tbl_11], 1)
-			tbl_13[#tbl_13] = nil
-			tbl_14[#tbl_14] = nil
-			tbl_12[#tbl_12] = nil
-			tbl_11[#tbl_11] = nil
+			text = string.gsub(text, REPLACEMENT_STR_LIST[#REPLACEMENT_STR_LIST], FINAL_REPLACEMENT_STR_LIST[#FINAL_REPLACEMENT_STR_LIST], 1)
+			INPUT_ACTIONS[#INPUT_ACTIONS] = nil
+			INPUT_SERVICE_NAMES[#INPUT_SERVICE_NAMES] = nil
+			REPLACEMENT_STR_LIST[#REPLACEMENT_STR_LIST] = nil
+			FINAL_REPLACEMENT_STR_LIST[#FINAL_REPLACEMENT_STR_LIST] = nil
 		end
 
-		flag = find == nil or #tbl_12 > 0
+		found_button = start_idx ~= nil and #REPLACEMENT_STR_LIST > 0
 	end
 
-	return arg_56_1
+	return text
 end
 
-local function fn_4(arg_57_0, arg_57_1, arg_57_2, arg_57_3, arg_57_4)
+local function get_line_color_override(line_index, line_length, line_global_start_index, global_text_length, ui_style)
 	-- function 57
-	local color_override = arg_57_4.color_override
-	local internal_color_overrides = arg_57_4.internal_color_overrides
+	local color_override = ui_style.color_override
+	local internal_color_overrides = ui_style.internal_color_overrides
 
 	if not internal_color_overrides then
 		internal_color_overrides = {}
-		arg_57_4.internal_color_overrides = internal_color_overrides
+		ui_style.internal_color_overrides = internal_color_overrides
 	end
 
-	local var_57_2 = internal_color_overrides[arg_57_0]
-	local count = #color_override
+	local line_color_override = internal_color_overrides[line_index]
+	local num_color_overrides = #color_override
 
-	if count > 0 then
-		if not var_57_2 then
-			var_57_2 = {}
-			internal_color_overrides[arg_57_0] = var_57_2
+	if num_color_overrides > 0 then
+		if not line_color_override then
+			line_color_override = {}
+			internal_color_overrides[line_index] = line_color_override
 		end
 
-		local max = math.max(count, #var_57_2)
+		local num_updates = math.max(num_color_overrides, #line_color_override)
 
-		for i = 1, max do
-			local flag = true
-			local var_57_6 = color_override[i]
+		for k = 1, num_updates do
+			local clear_line_override = true
+			local override = color_override[k]
 
-			if not var_57_6 then
-				local num = arg_57_0 - 1
-				local color = var_57_6.color
-				local num_2 = var_57_6.start_index + num
-				local num_3 = var_57_6.end_index + num
+			if override then
+				local line_break_adjustment = line_index - 1
+				local color = override.color
+				local start_index = override.start_index + line_break_adjustment
+				local end_index = override.end_index + line_break_adjustment
 
-				if num_2 <= arg_57_2 + arg_57_1 then
-					local var_57_11
-					local var_57_12
+				if start_index <= line_global_start_index + line_length then
+					local line_start_index, line_end_index
+					local color_whole_line = start_index <= line_global_start_index and end_index >= line_global_start_index + line_length
 
-					if not (not (num_2 <= arg_57_2) or num_3 >= arg_57_2 + arg_57_1) then
-						var_57_11 = 1
-						var_57_12 = arg_57_1
+					if color_whole_line then
+						line_start_index = 1
+						line_end_index = line_length
 					else
-						var_57_11 = math.max(1, num_2 - arg_57_2)
+						line_start_index = math.max(1, start_index - line_global_start_index)
 
-						if num_3 <= arg_57_2 + arg_57_1 then
-							var_57_12 = num_3 - arg_57_2
+						if end_index <= line_global_start_index + line_length then
+							line_end_index = end_index - line_global_start_index
 						else
-							var_57_12 = arg_57_1
+							line_end_index = line_length
 						end
 					end
 
-					if not var_57_11 and not var_57_12 then
-						if not var_57_2[i] then
-							var_57_2[i] = {}
+					if line_start_index and line_end_index then
+						if not line_color_override[k] then
+							line_color_override[k] = {}
 						end
 
-						local var_57_13 = var_57_2[i]
+						local line_color_values = line_color_override[k]
 
-						var_57_13.color = Color(color[1], color[2], color[3], color[4])
-						var_57_13.start_index = var_57_11
-						var_57_13.end_index = var_57_12
-						flag = false
+						line_color_values.color = Color(color[1], color[2], color[3], color[4])
+						line_color_values.start_index = line_start_index
+						line_color_values.end_index = line_end_index
+						clear_line_override = false
 					end
 				end
 			end
 
-			if not flag then
-				var_57_2[i] = nil
+			if clear_line_override then
+				line_color_override[k] = nil
 			end
 		end
 	else
 		return nil
 	end
 
-	if not (not var_57_2 and not (#var_57_2 > 0)) then
-		return var_57_2
+	if line_color_override and #line_color_override > 0 then
+		return line_color_override
 	end
 end
 
 UIPasses.text = {
-	init = function (self)
+	init = function (pass_definition)
 		-- function 58
-		assert(self.text_id, "no text id in pass definition. YOU NEEDS IT.")
+		assert(pass_definition.text_id, "no text id in pass definition. YOU NEEDS IT.")
 
 		local tbl = {
-			text_id = self.text_id
+			text_id = pass_definition.text_id
 		}
 		local flag
 
-		flag = not self.retained_mode and true and nil
+		flag = (not pass_definition.retained_mode or not true) and not not nil
 		tbl.dirty = flag
 
 		return tbl
 	end,
-	destroy = function (arg_59_0, arg_59_1, arg_59_2)
+	destroy = function (ui_renderer, pass_data, pass_definition)
 		-- function 59
-		assert(arg_59_2.retained_mode, "why u destroy immediate pass?")
+		assert(pass_definition.retained_mode, "why u destroy immediate pass?")
 
-		local retained_ids = arg_59_1.retained_ids
+		local retained_ids = pass_data.retained_ids
 
-		if not retained_ids then
+		if retained_ids then
 			for i = 1, #retained_ids do
-				UIRenderer.destroy_text(arg_59_0, retained_ids[i])
+				UIRenderer.destroy_text(ui_renderer, retained_ids[i])
 			end
 
-			arg_59_1.retained_ids = nil
+			pass_data.retained_ids = nil
 		end
 	end,
-	draw = function (self, arg_60_1, arg_60_2, arg_60_3, arg_60_4, arg_60_5, arg_60_6, arg_60_7, arg_60_8, arg_60_9)
+	draw = function (ui_renderer, pass_data, ui_scenegraph, pass_definition, ui_style, ui_content, position, size, input_service, dt)
 		-- function 60
-		local var_60_0
+		local retained_ids
 
-		if not arg_60_3.retained_mode then
-			var_60_0 = not arg_60_1.retained_ids and arg_60_1.retained_ids and true
+		if pass_definition.retained_mode then
+			retained_ids = (not pass_data.retained_ids or not pass_data.retained_ids) and not not true
 		end
 
-		local var_60_1
+		local new_retained_ids
 
-		if var_60_0 == true then
-			var_60_1 = {}
+		if retained_ids == true then
+			new_retained_ids = {}
 		end
 
-		local var_60_2 = arg_60_5[arg_60_1.text_id]
+		local text = ui_content[pass_data.text_id]
 
-		if type(var_60_2) ~= "string" then
-			var_60_2 = string.format("%s", var_60_2)
+		if type(text) ~= "string" then
+			text = string.format("%s", text)
 		end
 
-		if not arg_60_4.localize then
-			var_60_2 = Localize(var_60_2)
+		if ui_style.localize then
+			text = Localize(text)
 		end
 
-		if not arg_60_4.upper_case then
-			var_60_2 = Utf8.upper(var_60_2)
+		if ui_style.upper_case then
+			text = Utf8.upper(text)
 		end
 
-		local var_60_3 = var_60_2
-		local var_60_4 = fn_2(self, arg_60_4, arg_60_5[arg_60_1.text_id], var_60_3)
-		local font_size = arg_60_4.font_size
+		local original_text = text
 
-		if not arg_60_4.word_wrap and not arg_60_4.dynamic_font_size_word_wrap then
-			local flag = arg_60_4._dynamic_wraped_text ~= var_60_4 or arg_60_4._dynamic_wraped_scale ~= RESOLUTION_LOOKUP.scale
-			local var_60_7
+		text = extract_button_data_from_text(ui_renderer, ui_style, ui_content[pass_data.text_id], original_text)
 
-			if not flag then
+		local default_font_size = ui_style.font_size
+
+		if ui_style.word_wrap and ui_style.dynamic_font_size_word_wrap then
+			local recalculate = ui_style._dynamic_wraped_text ~= text or ui_style._dynamic_wraped_scale ~= RESOLUTION_LOOKUP.scale
+			local dynamic_wrap_font_size
+
+			if recalculate then
 				local scaled_font_size_by_area = UIRenderer.scaled_font_size_by_area
-				local var_60_9 = self
-				local var_60_10 = var_60_4
-				local area_size = arg_60_4.area_size
+				local var_60_1 = ui_renderer
+				local var_60_2 = text
+				local area_size = ui_style.area_size
 
-				area_size = area_size or arg_60_7
-				var_60_7 = scaled_font_size_by_area(var_60_9, var_60_10, area_size, arg_60_4)
+				area_size = not not area_size or not not size
+				dynamic_wrap_font_size = scaled_font_size_by_area(var_60_1, var_60_2, area_size, ui_style)
 			else
-				var_60_7 = arg_60_4._dynamic_wrap_font_size
+				dynamic_wrap_font_size = ui_style._dynamic_wrap_font_size
 			end
 
-			arg_60_4.font_size = var_60_7
-			arg_60_4._dynamic_wrap_font_size = var_60_7
-			arg_60_4._dynamic_wraped_text = var_60_4
-			arg_60_4._dynamic_wraped_scale = RESOLUTION_LOOKUP.scale
-		elseif not arg_60_4.dynamic_font_size then
+			ui_style.font_size = dynamic_wrap_font_size
+			ui_style._dynamic_wrap_font_size = dynamic_wrap_font_size
+			ui_style._dynamic_wraped_text = text
+			ui_style._dynamic_wraped_scale = RESOLUTION_LOOKUP.scale
+		elseif ui_style.dynamic_font_size then
 			local scaled_font_size_by_width = UIRenderer.scaled_font_size_by_width
-			local var_60_13 = self
-			local var_60_14 = var_60_4
-			local var_60_15
+			local var_60_5 = ui_renderer
+			local var_60_6 = text
+			local var_60_7
 
-			if not arg_60_4.area_size then
-				var_60_15 = arg_60_4.area_size[1]
+			if ui_style.area_size then
+				var_60_7 = ui_style.area_size[1]
 
-				if not var_60_15 then
+				if not var_60_7 then
 					-- Nothing
 				end
 			end
 
-			var_60_15 = arg_60_7[1]
+			var_60_7 = size[1]
 
 			::label_60_0::
 
-			arg_60_4.font_size = scaled_font_size_by_width(var_60_13, var_60_14, var_60_15 - 1, arg_60_4)
+			ui_style.font_size = scaled_font_size_by_width(var_60_5, var_60_6, var_60_7 - 1, ui_style)
 		end
 
-		local var_60_16
-		local var_60_17
-		local var_60_18
+		local font_material, font_size, font_name
 
-		if not arg_60_4.font_type then
-			local var_60_19, var_60_20 = UIFontByResolution(arg_60_4)
+		if ui_style.font_type then
+			local font, size_of_font = UIFontByResolution(ui_style)
 
-			var_60_16, var_60_17, var_60_18 = var_60_19[1], var_60_20, arg_60_4.font_type
+			font_material, font_size, font_name = font[1], size_of_font, ui_style.font_type
 		end
 
-		if not arg_60_4.word_wrap then
-			local length = Utf8.length(var_60_4)
-			local var_60_22, var_60_23, var_60_24 = UIGetFontHeight(self.gui, var_60_18, var_60_17)
+		if ui_style.word_wrap then
+			local global_text_length = Utf8.length(text)
+			local _, font_min, font_max = UIGetFontHeight(ui_renderer.gui, font_name, font_size)
 			local word_wrap = UIRenderer.word_wrap
-			local var_60_26 = self
-			local var_60_27 = var_60_4
-			local var_60_28 = var_60_16
-			local var_60_29 = var_60_17
-			local var_60_30
+			local var_60_9 = ui_renderer
+			local var_60_10 = text
+			local var_60_11 = font_material
+			local var_60_12 = font_size
+			local var_60_13
 
-			if not arg_60_4.area_size then
-				var_60_30 = arg_60_4.area_size[1]
+			if ui_style.area_size then
+				var_60_13 = ui_style.area_size[1]
 
-				if not var_60_30 then
+				if not var_60_13 then
 					-- Nothing
 				end
 			end
 
-			var_60_30 = arg_60_7[1]
+			var_60_13 = size[1]
 
 			::label_60_1::
 
-			local var_60_31 = word_wrap(var_60_26, var_60_27, var_60_28, var_60_29, var_60_30)
-			local text_start_index = arg_60_5.text_start_index
+			local texts = word_wrap(var_60_9, var_60_10, var_60_11, var_60_12, var_60_13)
+			local text_start_index_2 = ui_content.text_start_index
 
-			text_start_index = text_start_index or 1
+			if not text_start_index_2 then
+				-- Nothing
+			end
 
-			local max_texts = arg_60_5.max_texts
+			text_start_index_2 = 1
 
-			max_texts = max_texts or #var_60_31
+			local text_start_index = text_start_index_2
 
-			local min = math.min(#var_60_31 - (text_start_index - 1), max_texts)
+			::label_60_2::
+
+			local max_texts_2 = ui_content.max_texts
+
+			if not max_texts_2 then
+				-- Nothing
+			end
+
+			max_texts_2 = #texts
+
+			local max_texts = max_texts_2
+
+			::label_60_3::
+
+			local num_texts = math.min(#texts - (text_start_index - 1), max_texts)
 			local inv_scale = RESOLUTION_LOOKUP.inv_scale
-			local num = (var_60_24 - var_60_23) * inv_scale
-			local font_height_multiplier = arg_60_4.font_height_multiplier
+			local num = (font_max - font_min) * inv_scale
+			local font_height_multiplier = ui_style.font_height_multiplier
 
-			font_height_multiplier = font_height_multiplier or 1
+			font_height_multiplier = not not font_height_multiplier or not not 1
 
-			local num_2 = num * font_height_multiplier
-			local var_60_39 = Vector3(0, not arg_60_4.grow_downward and num_2 and -num_2, 0)
+			local full_font_height = num * font_height_multiplier
+			local text_offset = Vector3(0, (not ui_style.grow_downward or not full_font_height) and not not -full_font_height, 0)
 
-			if not arg_60_4.dynamic_height then
-				arg_60_7[2] = min * num_2
-				arg_60_6.y = arg_60_6.y - arg_60_7[2]
+			if ui_style.dynamic_height then
+				size[2] = num_texts * full_font_height
+				position.y = position.y - size[2]
 			end
 
-			if arg_60_4.vertical_alignment == "top" then
-				arg_60_6 = arg_60_6 + Vector3(0, arg_60_7[2] - var_60_24 * inv_scale, 0)
-			elseif arg_60_4.vertical_alignment == "center" then
-				arg_60_6[2] = arg_60_6[2] + (arg_60_7[2] - num_2 * 0.5) / 2 + math.max(min - 1, 0) * 0.5 * num_2
+			if ui_style.vertical_alignment == "top" then
+				position = position + Vector3(0, size[2] - font_max * inv_scale, 0)
+			elseif ui_style.vertical_alignment == "center" then
+				position[2] = position[2] + (size[2] - full_font_height * 0.5) / 2 + math.max(num_texts - 1, 0) * 0.5 * full_font_height
 			else
-				arg_60_6 = arg_60_6 + Vector3(0, (min - 1) * num_2 + math.abs(var_60_23) * inv_scale, 0)
+				position = position + Vector3(0, (num_texts - 1) * full_font_height + math.abs(font_min) * inv_scale, 0)
 			end
 
-			local horizontal_alignment = arg_60_4.horizontal_alignment
+			local horizontal_alignment_2 = ui_style.horizontal_alignment
 
-			horizontal_alignment = horizontal_alignment or "left"
+			if not horizontal_alignment_2 then
+				-- Nothing
+			end
 
-			local num_3 = 0
-			local num_4 = 0
+			horizontal_alignment_2 = "left"
+
+			local horizontal_alignment = horizontal_alignment_2
+
+			::label_60_4::
+
+			local line_start_index = 0
+			local horizontal_alignment_multiplier = 0
 
 			if horizontal_alignment == "center" then
-				num_4 = 0.5
+				horizontal_alignment_multiplier = 0.5
 			elseif horizontal_alignment == "right" then
-				num_4 = 1
+				horizontal_alignment_multiplier = 1
 			end
 
-			local num_5 = 0
-			local var_60_44 = Vector3(0, 0, 0)
+			local max_text_width = 0
+			local alignment_offset = Vector3(0, 0, 0)
 
-			for i = 1, min do
-				var_60_4 = var_60_31[i - 1 + text_start_index]
+			for i = 1, num_texts do
+				text = texts[i - 1 + text_start_index]
 
-				local length_2
+				local length
 
-				if not var_60_4 then
-					length_2 = Utf8.length(var_60_4)
+				if text then
+					length = Utf8.length(text)
 
-					if not length_2 then
+					if not length then
 						-- Nothing
 					end
 				end
 
-				length_2 = 0
+				length = 0
 
-				::label_60_2::
+				local text_length = length
 
-				local var_60_46
+				::label_60_5::
+
+				local width
 
 				if horizontal_alignment ~= "left" then
-					var_60_46 = UIRenderer.text_size(self, var_60_4, var_60_16, var_60_17, arg_60_7[2])
-					var_60_44.x = (arg_60_7[1] - var_60_46) * num_4
+					width = UIRenderer.text_size(ui_renderer, text, font_material, font_size, size[2])
+					alignment_offset.x = (size[1] - width) * horizontal_alignment_multiplier
 				end
 
-				if not arg_60_4.draw_text_rect then
-					var_60_46 = var_60_46 or UIRenderer.text_size(self, var_60_4, var_60_16, var_60_17, arg_60_7[2])
-					num_5 = not (num_5 < var_60_46) or not var_60_46 or num_5
+				if ui_style.draw_text_rect then
+					width = not not width or not not UIRenderer.text_size(ui_renderer, text, font_material, font_size, size[2])
+
+					if max_text_width < width and not width then
+						-- Nothing
+					end
 				end
 
-				local text_color = arg_60_4.text_color
+				local color = ui_style.text_color
 
-				if not arg_60_4.line_colors and not arg_60_4.line_colors[i] then
-					text_color = arg_60_4.line_colors[i]
+				if ui_style.line_colors and ui_style.line_colors[i] then
+					color = ui_style.line_colors[i]
 				end
 
-				if not arg_60_4.inject_alpha then
-					var_60_4 = string.format(var_60_4, text_color[1])
+				if ui_style.inject_alpha then
+					text = string.format(text, color[1])
 				end
 
-				local line_color_override = arg_60_4.line_color_override
+				local line_color_override = ui_style.line_color_override
 
-				if not arg_60_4.color_override then
-					line_color_override = fn_4(i, length_2, num_3, length, arg_60_4)
+				if ui_style.color_override then
+					line_color_override = get_line_color_override(i, text_length, line_start_index, global_text_length, ui_style)
 				end
 
-				var_60_4 = fn_3(self, var_60_4, var_60_16, var_60_17, var_60_18, arg_60_6 + var_60_44, arg_60_4)
+				text = render_buttons_in_text(ui_renderer, text, font_material, font_size, font_name, position + alignment_offset, ui_style)
 
-				local flag_2
-
-				flag_2 = not var_60_0 and not var_60_1 and true and var_60_0[i]
-
-				local draw_text = UIRenderer.draw_text(self, var_60_4, var_60_16, var_60_17, var_60_18, arg_60_6 + var_60_44, text_color, flag_2, line_color_override)
-
-				if not var_60_1 then
-					var_60_1[i] = draw_text
+				if retained_ids then
+					-- Nothing
 				end
 
-				arg_60_6 = arg_60_6 + var_60_39
-				num_3 = num_3 + length_2 + 1
+				do
+					local flag
+				end
+
+				::label_60_6::
+
+				if new_retained_ids then
+					flag = true
+
+					goto label_60_7
+				end
+
+				flag = retained_ids[i]
+
+				local retained_id = flag
+
+				::label_60_7::
+
+				retained_id = UIRenderer.draw_text(ui_renderer, text, font_material, font_size, font_name, position + alignment_offset, color, retained_id, line_color_override)
+
+				if new_retained_ids then
+					new_retained_ids[i] = retained_id
+				end
+
+				position = position + text_offset
+				line_start_index = line_start_index + text_length + 1
 			end
 
-			if not arg_60_4.draw_text_rect then
-				local num_6 = 4
-				local num_7 = 4
-				local num_8 = (arg_60_7[1] - num_5) * num_4
-				local num_9 = arg_60_6 - Vector3(num_6 - num_8, num_7 * 2 + var_60_39[2], 1)
-				local var_60_55 = Vector2(num_5 + num_6 * 2, min * -var_60_39[2])
+			if ui_style.draw_text_rect then
+				local padding_x = 4
+				local padding_y = 4
+				local rect_offset_x = (size[1] - max_text_width) * horizontal_alignment_multiplier
+				local rect_pos = position - Vector3(padding_x - rect_offset_x, padding_y * 2 + text_offset[2], 1)
+				local rect_size = Vector2(max_text_width + padding_x * 2, num_texts * -text_offset[2])
 
-				if not arg_60_4.masked then
-					draw_texture(self, "rect_masked", num_9, var_60_55, arg_60_4.rect_color, arg_60_4.masked, not arg_60_4 and arg_60_4.saturated)
+				if ui_style.masked then
+					UIRenderer_draw_texture(ui_renderer, "rect_masked", rect_pos, rect_size, ui_style.rect_color, ui_style.masked, not not ui_style and not not ui_style.saturated)
 				else
-					UIRenderer.draw_rounded_rect(self, num_9, var_60_55, 5, arg_60_4.rect_color)
+					UIRenderer.draw_rounded_rect(ui_renderer, rect_pos, rect_size, 5, ui_style.rect_color)
 
-					if not arg_60_4.draw_rect_border then
-						UIRenderer.draw_rounded_rect(self, num_9 + Vector3(-1, -1, -1), var_60_55 + Vector2(2, 2), 5, arg_60_4.text_color)
+					if ui_style.draw_rect_border then
+						UIRenderer.draw_rounded_rect(ui_renderer, rect_pos + Vector3(-1, -1, -1), rect_size + Vector2(2, 2), 5, ui_style.text_color)
 					end
 				end
 			end
-		elseif not arg_60_4.horizontal_scroll then
-			local text_index = arg_60_5.text_index
-			local length_3 = Utf8.length(var_60_4)
-			local end_index = arg_60_5.end_index
+		elseif ui_style.horizontal_scroll then
+			local start_index = ui_content.text_index
+			local text_length = Utf8.length(text)
+			local end_index_2 = ui_content.end_index
 
-			end_index = end_index or length_3
-
-			local replacing_character = arg_60_4.replacing_character
-
-			if not replacing_character then
-				var_60_4 = string.rep(replacing_character, end_index)
+			if not end_index_2 then
+				-- Nothing
 			end
 
-			local var_60_60
-			local var_60_61
-			local jump_to_end = arg_60_5.jump_to_end
+			end_index_2 = text_length
 
-			jump_to_end = jump_to_end or length_3 < arg_60_5.caret_index
+			local end_index = end_index_2
 
-			if not jump_to_end then
-				end_index = Utf8.length(var_60_4)
-				text_index = end_index
-				arg_60_5.jump_to_end = nil
+			::label_60_8::
 
-				local num_10 = 0
-				local flag_3 = true
+			local replacing_character = ui_style.replacing_character
 
-				while num_10 < arg_60_7[1] do
-					text_index = math.max(text_index - 1, 1)
-					var_60_60 = UTF8Utils.sub_string(var_60_4, text_index, end_index)
-					num_10 = UIRenderer.text_size(self, var_60_60, var_60_16, var_60_17, var_60_18)
+			if replacing_character then
+				text = string.rep(replacing_character, end_index)
+			end
 
-					if text_index == 1 then
-						flag_3 = false
+			local sub_string, sub_string_width
+			local jump_to_end_2 = ui_content.jump_to_end
+
+			if not jump_to_end_2 then
+				-- Nothing
+			end
+
+			if not (text_length < ui_content.caret_index) then
+				jump_to_end_2 = false
+
+				goto label_60_9
+			end
+
+			jump_to_end_2 = true
+
+			local jump_to_end = jump_to_end_2
+
+			::label_60_9::
+
+			if jump_to_end then
+				end_index = Utf8.length(text)
+				start_index = end_index
+				ui_content.jump_to_end = nil
+				sub_string_width = 0
+
+				local end_found = true
+
+				while sub_string_width < size[1] do
+					start_index = math.max(start_index - 1, 1)
+					sub_string = UTF8Utils.sub_string(text, start_index, end_index)
+					sub_string_width = UIRenderer.text_size(ui_renderer, sub_string, font_material, font_size, font_name)
+
+					if start_index == 1 then
+						end_found = false
 
 						break
 					end
 				end
 
-				if not flag_3 then
-					text_index = text_index + 1
-					var_60_60 = UTF8Utils.sub_string(var_60_4, text_index, end_index)
+				if end_found then
+					start_index = start_index + 1
+					sub_string = UTF8Utils.sub_string(text, start_index, end_index)
 				end
 
-				arg_60_5.text_index = text_index
-				arg_60_5.end_index = nil
+				ui_content.text_index = start_index
+				ui_content.end_index = nil
 			else
-				var_60_60 = UTF8Utils.sub_string(var_60_4, text_index, end_index)
+				sub_string = UTF8Utils.sub_string(text, start_index, end_index)
 			end
 
-			local caret_index = arg_60_5.caret_index
+			local caret_index = ui_content.caret_index
 
 			if caret_index > end_index + 1 then
-				arg_60_5.text_index = arg_60_5.text_index + 1
-				arg_60_5.end_index = end_index + 1
-			elseif caret_index < text_index then
-				arg_60_5.text_index = arg_60_5.text_index - 1
-				arg_60_5.end_index = end_index - 1
+				ui_content.text_index = ui_content.text_index + 1
+				ui_content.end_index = end_index + 1
+			elseif caret_index < start_index then
+				ui_content.text_index = ui_content.text_index - 1
+				ui_content.end_index = end_index - 1
 			end
 
-			local caret_size = arg_60_4.caret_size
+			local caret_size = ui_style.caret_size
 
-			if not caret_size then
-				local caret_offset = arg_60_4.caret_offset
-				local sub_string = UTF8Utils.sub_string(var_60_60, 1, arg_60_5.caret_index - arg_60_5.text_index)
-				local text_size = UIRenderer.text_size(self, sub_string, var_60_16, var_60_17, var_60_18)
-				local num_11 = arg_60_6 + Vector3(text_size + caret_offset[1], caret_offset[2], caret_offset[3])
-				local flag_4
+			if caret_size then
+				local caret_offset = ui_style.caret_offset
+				local caret_sub_string = UTF8Utils.sub_string(sub_string, 1, ui_content.caret_index - ui_content.text_index)
+				local caret_position_x = UIRenderer.text_size(ui_renderer, caret_sub_string, font_material, font_size, font_name)
+				local caret_position = position + Vector3(caret_position_x + caret_offset[1], caret_offset[2], caret_offset[3])
 
-				flag_4 = not var_60_0 and not var_60_1 and true and var_60_0[1]
-
-				local draw_text_2 = UIRenderer.draw_text(self, sub_string, var_60_16, var_60_17, var_60_18, arg_60_6, arg_60_4.text_color, flag_4, arg_60_4.color_override)
-
-				if not var_60_1 then
-					var_60_1[1] = draw_text_2
+				if retained_ids then
+					-- Nothing
 				end
 
-				if not arg_60_4.masked then
-					draw_texture(self, "rect_masked", num_11, caret_size, arg_60_4.caret_color, not arg_60_4 and arg_60_4.masked, not arg_60_4 and arg_60_4.saturated)
+				do
+					local flag_2
+				end
+
+				::label_60_10::
+
+				if new_retained_ids then
+					flag_2 = true
+
+					goto label_60_11
+				end
+
+				flag_2 = retained_ids[1]
+
+				local retained_id = flag_2
+
+				::label_60_11::
+
+				retained_id = UIRenderer.draw_text(ui_renderer, caret_sub_string, font_material, font_size, font_name, position, ui_style.text_color, retained_id, ui_style.color_override)
+
+				if new_retained_ids then
+					new_retained_ids[1] = retained_id
+				end
+
+				if ui_style.masked then
+					UIRenderer_draw_texture(ui_renderer, "rect_masked", caret_position, caret_size, ui_style.caret_color, not not ui_style and not not ui_style.masked, not not ui_style and not not ui_style.saturated)
 				else
-					UIRenderer.draw_rect(self, num_11, caret_size, arg_60_4.caret_color)
+					UIRenderer.draw_rect(ui_renderer, caret_position, caret_size, ui_style.caret_color)
 				end
 
-				local sub = string.sub(var_60_60, #sub_string + 1, #var_60_60 + 1)
+				local rest_string = string.sub(sub_string, #caret_sub_string + 1, #sub_string + 1)
 
-				arg_60_6[1] = arg_60_6[1] + text_size
+				position[1] = position[1] + caret_position_x
 
-				UIRenderer.draw_text(self, sub, var_60_16, var_60_17, var_60_18, arg_60_6, arg_60_4.text_color, draw_text_2, arg_60_4.color_override)
+				UIRenderer.draw_text(ui_renderer, rest_string, font_material, font_size, font_name, position, ui_style.text_color, retained_id, ui_style.color_override)
 			else
-				local flag_5
+				if retained_ids then
+					-- Nothing
+				end
 
-				flag_5 = not var_60_0 and not var_60_1 and true and var_60_0[1]
+				do
+					local flag_3
+				end
 
-				local draw_text_3 = UIRenderer.draw_text(self, var_60_60, var_60_16, var_60_17, var_60_18, arg_60_6, arg_60_4.text_color, flag_5, arg_60_4.color_override)
+				::label_60_12::
 
-				if not var_60_1 then
-					var_60_1[1] = draw_text_3
+				if new_retained_ids then
+					flag_3 = true
+
+					goto label_60_13
+				end
+
+				flag_3 = retained_ids[1]
+
+				local retained_id = flag_3
+
+				::label_60_13::
+
+				retained_id = UIRenderer.draw_text(ui_renderer, sub_string, font_material, font_size, font_name, position, ui_style.text_color, retained_id, ui_style.color_override)
+
+				if new_retained_ids then
+					new_retained_ids[1] = retained_id
 				end
 			end
 		else
-			local var_60_76, var_60_77, var_60_78 = UIGetFontHeight(self.gui, var_60_18, var_60_17)
-			local text_size_2, var_60_80, var_60_81 = UIRenderer.text_size(self, var_60_4, var_60_16, var_60_17, var_60_18)
-			local num_12 = arg_60_6 + fn(text_size_2, var_60_76, var_60_77, var_60_78, arg_60_7, var_60_81, arg_60_4)
-			local var_60_83 = fn_3(self, var_60_4, var_60_16, var_60_17, var_60_18, num_12, arg_60_4)
-			local flag_6
+			local font_height, font_min, font_max = UIGetFontHeight(ui_renderer.gui, font_name, font_size)
+			local text_width, _, origin = UIRenderer.text_size(ui_renderer, text, font_material, font_size, font_name)
+			local offset = get_position_offset(text_width, font_height, font_min, font_max, size, origin, ui_style)
+			local new_position = position + offset
 
-			flag_6 = not var_60_0 and not var_60_1 and true and var_60_0[1]
+			text = render_buttons_in_text(ui_renderer, text, font_material, font_size, font_name, new_position, ui_style)
 
-			local draw_text_4 = UIRenderer.draw_text(self, var_60_83, var_60_16, var_60_17, var_60_18, num_12, arg_60_4.text_color, flag_6, arg_60_4.color_override)
+			if retained_ids then
+				-- Nothing
+			end
 
-			if not var_60_1 then
-				var_60_1[1] = draw_text_4
+			do
+				local flag_4
+			end
+
+			::label_60_14::
+
+			if new_retained_ids then
+				flag_4 = true
+
+				goto label_60_15
+			end
+
+			flag_4 = retained_ids[1]
+
+			local retained_id = flag_4
+
+			::label_60_15::
+
+			retained_id = UIRenderer.draw_text(ui_renderer, text, font_material, font_size, font_name, new_position, ui_style.text_color, retained_id, ui_style.color_override)
+
+			if new_retained_ids then
+				new_retained_ids[1] = retained_id
 			end
 		end
 
-		if not arg_60_3.retained_mode then
-			arg_60_1.retained_ids = var_60_1 or arg_60_1.retained_ids
-			arg_60_1.dirty = false
+		if pass_definition.retained_mode then
+			pass_data.retained_ids = not not new_retained_ids or not not pass_data.retained_ids
+			pass_data.dirty = false
 		end
 
-		arg_60_4.font_size = font_size
+		ui_style.font_size = default_font_size
 	end,
-	get_preferred_size = function (self, arg_61_1, arg_61_2, arg_61_3, arg_61_4, arg_61_5, arg_61_6, arg_61_7, arg_61_8)
+	get_preferred_size = function (ui_renderer, pass_data, ui_scenegraph, pass_definition, ui_style, ui_content, input_service, dt, visible)
 		-- function 61
-		local var_61_0 = arg_61_5[arg_61_1.text_id]
-		local var_61_1, var_61_2 = UIFontByResolution(arg_61_4)
-		local font_type = arg_61_4.font_type
-		local var_61_4 = var_61_1[1]
+		local text = ui_content[pass_data.text_id]
+		local font, scaled_font_size = UIFontByResolution(ui_style)
+		local font_type = ui_style.font_type
+		local font_path = font[1]
 
-		if not arg_61_4.localize then
-			var_61_0 = Localize(var_61_0)
+		if ui_style.localize then
+			text = Localize(text)
 		end
 
-		if not arg_61_4.upper_case then
-			var_61_0 = Utf8.upper(var_61_0)
+		if ui_style.upper_case then
+			text = Utf8.upper(text)
 		end
 
-		local var_61_5
-		local var_61_6
+		local width, height
 
-		if not arg_61_4.word_wrap then
-			local var_61_7, var_61_8, var_61_9 = UIGetFontHeight(self.gui, font_type, var_61_2)
-			local word_wrap = UIRenderer.word_wrap(self, var_61_0, var_61_4, var_61_2, arg_61_4.size[1])
-			local num = 1
-			local count = #word_wrap
-			local min = math.min(#word_wrap - (num - 1), count)
+		if ui_style.word_wrap then
+			local _, font_min, font_max = UIGetFontHeight(ui_renderer.gui, font_type, scaled_font_size)
+			local texts = UIRenderer.word_wrap(ui_renderer, text, font_path, scaled_font_size, ui_style.size[1])
+			local text_start_index = 1
+			local max_texts = #texts
+			local num_texts = math.min(#texts - (text_start_index - 1), max_texts)
 			local inv_scale = RESOLUTION_LOOKUP.inv_scale
 
-			var_61_6 = (var_61_9 + math.abs(var_61_8)) * inv_scale * min
-			var_61_5 = arg_61_4.size[1]
+			height = (font_max + math.abs(font_min)) * inv_scale * num_texts
+			width = ui_style.size[1]
 		else
-			var_61_5, var_61_6 = UIRenderer.text_size(self, var_61_0, var_61_1[1], var_61_2)
+			width, height = UIRenderer.text_size(ui_renderer, text, font[1], scaled_font_size)
 		end
 
-		return var_61_5, var_61_6
+		return width, height
 	end
 }
 
-local function fn_5(arg_62_0, arg_62_1, arg_62_2, arg_62_3, arg_62_4, arg_62_5, arg_62_6, arg_62_7)
+local function draw_lorebook_texts(initial_retained_id, section, ui_renderer, position, font_material, font_size, font_name, text_color)
 	-- function 62
-	local width = arg_62_1.width
-	local texts = arg_62_1.texts
-	local num = #texts / 3
-	local var_62_3 = arg_62_0
+	local width = section.width
+	local texts = section.texts
+	local num_texts = #texts / 3
+	local retained_id = initial_retained_id
 
-	for i = 1, num do
-		local var_62_4 = texts[i * 3 - 2]
-		local var_62_5 = texts[i * 3 - 1]
-		local num_2 = arg_62_3 + texts[i * 3]:unbox()
+	for i = 1, num_texts do
+		local text = texts[i * 3 - 2]
+		local justified = texts[i * 3 - 1]
+		local new_position = position + texts[i * 3]:unbox()
 
-		if not var_62_5 then
-			var_62_3 = UIRenderer.draw_justified_text(arg_62_2, var_62_4, arg_62_4, arg_62_5, arg_62_6, num_2, arg_62_7, var_62_3, width)
+		if justified then
+			retained_id = UIRenderer.draw_justified_text(ui_renderer, text, font_material, font_size, font_name, new_position, text_color, retained_id, width)
 		else
-			var_62_3 = UIRenderer.draw_text(arg_62_2, var_62_4, arg_62_4, arg_62_5, arg_62_6, num_2, arg_62_7)
+			retained_id = UIRenderer.draw_text(ui_renderer, text, font_material, font_size, font_name, new_position, text_color)
 		end
 	end
 
-	return var_62_3
+	return retained_id
 end
 
 UIPasses.lorebook_multiple_texts = {
-	init = function (self)
+	init = function (pass_definition)
 		-- function 63
-		assert(self.text_id, "no text id in pass definition. YOU NEEDS IT.")
+		assert(pass_definition.text_id, "no text id in pass definition. YOU NEEDS IT.")
 
 		local tbl = {
-			text_id = self.text_id
+			text_id = pass_definition.text_id
 		}
 		local flag
 
-		flag = not self.retained_mode and true and nil
+		flag = (not pass_definition.retained_mode or not true) and not not nil
 		tbl.dirty = flag
 
 		return tbl
 	end,
-	destroy = function (arg_64_0, arg_64_1, arg_64_2)
+	destroy = function (ui_renderer, pass_data, pass_definition)
 		-- function 64
-		assert(arg_64_2.retained_mode, "why u destroy immediate pass?")
+		assert(pass_definition.retained_mode, "why u destroy immediate pass?")
 
-		if not arg_64_1.retained_id then
-			UIRenderer.destroy_text(arg_64_0, arg_64_1.retained_id)
+		if pass_data.retained_id then
+			UIRenderer.destroy_text(ui_renderer, pass_data.retained_id)
 
-			arg_64_1.retained_id = nil
+			pass_data.retained_id = nil
 		end
 	end,
-	draw = function (arg_65_0, arg_65_1, arg_65_2, arg_65_3, arg_65_4, arg_65_5, arg_65_6, arg_65_7, arg_65_8, arg_65_9)
+	draw = function (ui_renderer, pass_data, ui_scenegraph, pass_definition, ui_style, ui_content, position, size, input_service, dt)
 		-- function 65
-		local var_65_0
+		local retained_id
 
-		if not arg_65_3.retained_mode then
-			var_65_0 = not arg_65_1.retained_id and arg_65_1.retained_id and true
+		if pass_definition.retained_mode then
+			retained_id = (not pass_data.retained_id or not pass_data.retained_id) and not not true
 		end
 
-		local var_65_1
-		local var_65_2
-		local var_65_3
+		local font_material, font_size, font_name
 
-		if not arg_65_4.font_type then
-			local var_65_4, var_65_5 = UIFontByResolution(arg_65_4)
+		if ui_style.font_type then
+			local font, size_of_font = UIFontByResolution(ui_style)
 
-			var_65_1, var_65_2, var_65_3 = var_65_4[1], var_65_5, var_65_4[3]
+			font_material, font_size, font_name = font[1], size_of_font, font[3]
 		else
-			local font = arg_65_4.font
+			local font = ui_style.font
 
-			var_65_1, var_65_2, var_65_3 = font[1], font[2], font[3]
-			var_65_2 = arg_65_4.font_size or var_65_2
+			font_material, font_size, font_name = font[1], font[2], font[3]
+			font_size = not not ui_style.font_size or not not font_size
 		end
 
-		local text_color = arg_65_4.text_color
-		local page = arg_65_5.page
+		local text_color = ui_style.text_color
+		local page = ui_content.page
 		local top = page.top
 
-		arg_65_6.y = arg_65_6.y + arg_65_7[2]
+		position.y = position.y + size[2]
+		retained_id = draw_lorebook_texts(retained_id, top, ui_renderer, position, font_material, font_size, font_name, text_color)
 
-		local var_65_10 = fn_5(var_65_0, top, arg_65_0, arg_65_6, var_65_1, var_65_2, var_65_3, text_color)
 		local center = page.center
-		local var_65_12 = fn_5(var_65_10, center, arg_65_0, arg_65_6, var_65_1, var_65_2, var_65_3, text_color)
-		local bottom = page.bottom
-		local var_65_14 = fn_5(var_65_12, bottom, arg_65_0, arg_65_6, var_65_1, var_65_2, var_65_3, text_color)
 
-		if not arg_65_3.retained_mode then
-			arg_65_1.retained_id = var_65_14 or arg_65_1.retained_id
-			arg_65_1.dirty = false
+		retained_id = draw_lorebook_texts(retained_id, center, ui_renderer, position, font_material, font_size, font_name, text_color)
+
+		local bottom = page.bottom
+
+		retained_id = draw_lorebook_texts(retained_id, bottom, ui_renderer, position, font_material, font_size, font_name, text_color)
+
+		if pass_definition.retained_mode then
+			pass_data.retained_id = not not retained_id or not not pass_data.retained_id
+			pass_data.dirty = false
 		end
 	end
 }
 UIPasses.lorebook_paragraph_divider = {
-	init = function (self)
+	init = function (pass_definition)
 		-- function 66
-		if not self.retained_mode then
+		if pass_definition.retained_mode then
 			return {
 				dirty = true
 			}
 		end
 	end,
-	destroy = function (arg_67_0, arg_67_1, arg_67_2)
+	destroy = function (ui_renderer, pass_data, pass_definition)
 		-- function 67
-		assert(arg_67_2.retained_mode, "why u destroy immediate pass?")
+		assert(pass_definition.retained_mode, "why u destroy immediate pass?")
 
-		if not arg_67_1.retained_id then
-			UIRenderer.destroy_bitmap(arg_67_0, arg_67_1.retained_id)
+		if pass_data.retained_id then
+			UIRenderer.destroy_bitmap(ui_renderer, pass_data.retained_id)
 
-			arg_67_1.retained_id = nil
+			pass_data.retained_id = nil
 		end
 	end,
-	draw = function (arg_68_0, arg_68_1, arg_68_2, arg_68_3, arg_68_4, arg_68_5, arg_68_6, arg_68_7, arg_68_8, arg_68_9)
+	draw = function (ui_renderer, pass_data, ui_scenegraph, pass_definition, ui_style, ui_content, position, size, input_service, dt)
 		-- function 68
-		local positions = arg_68_5.positions
-		local count = #positions
-		local texture_id = arg_68_3.texture_id
+		local divider_positions = ui_content.positions
+		local num_dividers = #divider_positions
+		local texture_id_2 = pass_definition.texture_id
 
-		texture_id = texture_id or "texture_id"
+		if not texture_id_2 then
+			-- Nothing
+		end
 
-		local var_68_3 = arg_68_6[2]
+		texture_id_2 = "texture_id"
 
-		if not arg_68_3.retained_mode then
-			for i = 1, count do
-				arg_68_6[2] = var_68_3 + positions[i]
+		local texture_id = texture_id_2
 
-				local var_68_4 = arg_68_5[texture_id][i]
-				local retained_mode = arg_68_3.retained_mode
+		::label_68_0::
 
-				if not retained_mode then
-					if not arg_68_1.retained_id then
-						retained_mode = arg_68_1.retained_id
+		local initial_y = position[2]
 
-						if not retained_mode then
-							-- Nothing
-						end
-					end
+		if pass_definition.retained_mode then
+			for i = 1, num_dividers do
+				position[2] = initial_y + divider_positions[i]
 
-					retained_mode = true
+				local texture = ui_content[texture_id][i]
+				local retained_mode = pass_definition.retained_mode
+
+				if retained_mode then
+					-- Nothing
 				end
 
-				::label_68_0::
+				if pass_data.retained_id then
+					retained_mode = pass_data.retained_id
 
-				local var_68_6 = draw_texture(arg_68_0, var_68_4, arg_68_6, arg_68_7, not arg_68_4 and arg_68_4.color, not arg_68_4 and arg_68_4.masked, not arg_68_4 and arg_68_4.saturated, retained_mode)
+					if not retained_mode then
+						-- Nothing
+					end
+				end
 
-				arg_68_1.retained_id = not var_68_6 and var_68_6 and arg_68_1.retained_id
-				arg_68_1.dirty = false
+				retained_mode = true
+
+				local retained_id = retained_mode
+
+				::label_68_1::
+
+				retained_id = UIRenderer_draw_texture(ui_renderer, texture, position, size, not not ui_style and not not ui_style.color, not not ui_style and not not ui_style.masked, not not ui_style and not not ui_style.saturated, retained_id)
+				pass_data.retained_id = (not retained_id or not retained_id) and not not pass_data.retained_id
+				pass_data.dirty = false
 			end
 		else
-			for j = 1, count do
-				arg_68_6[2] = var_68_3 + positions[j]
+			for i = 1, num_dividers do
+				position[2] = initial_y + divider_positions[i]
 
-				local var_68_7 = arg_68_5[texture_id][j]
+				local texture = ui_content[texture_id][i]
 
-				draw_texture(arg_68_0, var_68_7, arg_68_6, arg_68_7, not arg_68_4 and arg_68_4.color, not arg_68_4 and arg_68_4.masked, not arg_68_4 and arg_68_4.saturated)
+				UIRenderer_draw_texture(ui_renderer, texture, position, size, not not ui_style and not not ui_style.color, not not ui_style and not not ui_style.masked, not not ui_style and not not ui_style.saturated)
 			end
 		end
 	end
 }
 UIPasses.multiple_texts = {
-	init = function (self)
+	init = function (pass_definition)
 		-- function 69
-		assert(self.texts_id, "no text id in pass definition. YOU NEEDS IT.")
+		assert(pass_definition.texts_id, "no text id in pass definition. YOU NEEDS IT.")
 
 		return {
-			texts_id = self.texts_id
+			texts_id = pass_definition.texts_id
 		}
 	end,
-	draw = function (arg_70_0, arg_70_1, arg_70_2, arg_70_3, arg_70_4, arg_70_5, arg_70_6, arg_70_7, arg_70_8, arg_70_9)
+	draw = function (ui_renderer, pass_data, ui_scenegraph, pass_definition, ui_style, ui_content, position, size, input_service, dt)
 		-- function 70
-		local var_70_0, var_70_1 = UIFontByResolution(arg_70_4)
-		local var_70_2 = var_70_0[1]
-		local var_70_3 = var_70_1
-		local var_70_4 = var_70_0[3]
-		local texts
+		local font, calculated_font_size = UIFontByResolution(ui_style)
+		local font_material, font_size, font_name = font[1], calculated_font_size, font[3]
+		local texts_2
 
-		if not arg_70_5[arg_70_1.texts_id] then
-			texts = arg_70_5[arg_70_1.texts_id].texts
+		if ui_content[pass_data.texts_id] then
+			texts_2 = ui_content[pass_data.texts_id].texts
 
-			if not texts then
+			if not texts_2 then
 				-- Nothing
 			end
 		end
 
-		texts = arg_70_5.texts
+		texts_2 = ui_content.texts
+
+		local texts = texts_2
 
 		::label_70_0::
 
-		local axis = arg_70_4.axis
+		local axis_2 = ui_style.axis
 
-		axis = axis or 2
+		if not axis_2 then
+			-- Nothing
+		end
 
-		local direction = arg_70_4.direction
+		axis_2 = 2
 
-		direction = direction or 1
+		local axis = axis_2
 
-		local flag = direction == 2
+		::label_70_1::
+
+		local direction_2 = ui_style.direction
+
+		if not direction_2 then
+			-- Nothing
+		end
+
+		direction_2 = 1
+
+		local direction = direction_2
+
+		::label_70_2::
+
+		local draw_backwards = direction == 2
 
 		for i = 1, #texts do
-			local var_70_9 = texts[i]
+			local text = texts[i]
 
-			if not arg_70_4.localize then
-				var_70_9 = Localize(var_70_9)
+			if ui_style.localize then
+				text = Localize(text)
 			end
 
-			local text_size, var_70_11 = UIRenderer.text_size(arg_70_0, var_70_9, var_70_2, var_70_3)
-			local var_70_12 = Vector3(0, 0, 0)
+			local width, height = UIRenderer.text_size(ui_renderer, text, font_material, font_size)
+			local alignment_offset = Vector3(0, 0, 0)
 
 			if axis == 2 then
-				if arg_70_4.horizontal_alignment == "center" then
-					var_70_12[1] = arg_70_7[1] * 0.5 - text_size * 0.5
-				elseif arg_70_4.horizontal_alignment == "right" then
-					var_70_12[1] = arg_70_7[1] - text_size
+				if ui_style.horizontal_alignment == "center" then
+					alignment_offset[1] = size[1] * 0.5 - width * 0.5
+				elseif ui_style.horizontal_alignment == "right" then
+					alignment_offset[1] = size[1] - width
 				end
 
-				if arg_70_4.vertical_alignment == "center" then
-					var_70_12[2] = arg_70_7[2] * 0.5 - var_70_11 * 0.5
-				elseif arg_70_4.vertical_alignment == "top" then
-					var_70_12[2] = arg_70_7[2] - var_70_11
+				if ui_style.vertical_alignment == "center" then
+					alignment_offset[2] = size[2] * 0.5 - height * 0.5
+				elseif ui_style.vertical_alignment == "top" then
+					alignment_offset[2] = size[2] - height
 				end
 			else
-				if i ~= 1 or not flag then
-					arg_70_6[axis] = arg_70_6[axis] - arg_70_7[axis]
+				if i == 1 and draw_backwards then
+					position[axis] = position[axis] - size[axis]
 				end
 
-				if arg_70_4.horizontal_alignment == "center" then
-					var_70_12[1] = arg_70_7[1] * 0.5 - text_size * 0.5
-				elseif arg_70_4.horizontal_alignment == "right" then
-					var_70_12[1] = arg_70_7[1] - text_size
+				if ui_style.horizontal_alignment == "center" then
+					alignment_offset[1] = size[1] * 0.5 - width * 0.5
+				elseif ui_style.horizontal_alignment == "right" then
+					alignment_offset[1] = size[1] - width
 				end
 
-				if arg_70_4.vertical_alignment == "center" then
-					var_70_12[2] = arg_70_7[2] * 0.5 - var_70_11 * 0.5
-				elseif arg_70_4.vertical_alignment == "top" then
-					var_70_12[2] = arg_70_7[2] - var_70_11
+				if ui_style.vertical_alignment == "center" then
+					alignment_offset[2] = size[2] * 0.5 - height * 0.5
+				elseif ui_style.vertical_alignment == "top" then
+					alignment_offset[2] = size[2] - height
 				end
 			end
 
-			UIRenderer.draw_text(arg_70_0, var_70_9, var_70_2, var_70_3, var_70_4, arg_70_6 + var_70_12, arg_70_4.text_color)
+			UIRenderer.draw_text(ui_renderer, text, font_material, font_size, font_name, position + alignment_offset, ui_style.text_color)
 
 			if axis == 2 then
-				if not flag then
-					arg_70_6[2] = arg_70_6[2] + arg_70_7[2] + arg_70_4.spacing
+				if draw_backwards then
+					position[2] = position[2] + size[2] + ui_style.spacing
 				else
-					arg_70_6[2] = arg_70_6[2] - arg_70_7[2] - arg_70_4.spacing
+					position[2] = position[2] - size[2] - ui_style.spacing
 				end
-			elseif not flag then
-				arg_70_6[1] = arg_70_6[1] - arg_70_7[1] - arg_70_4.spacing
+			elseif draw_backwards then
+				position[1] = position[1] - size[1] - ui_style.spacing
 			else
-				arg_70_6[1] = arg_70_6[1] + arg_70_7[1] + arg_70_4.spacing
+				position[1] = position[1] + size[1] + ui_style.spacing
 			end
 		end
 	end
 }
 UIPasses.viewport = {
-	init = function (self, arg_71_1, arg_71_2)
+	init = function (pass_definition, widget_content, widget_style)
 		-- function 71
-		local var_71_0 = arg_71_2[self.style_id]
-		local world_flags = var_71_0.world_flags
+		local style = widget_style[pass_definition.style_id]
+		local world_flags_2 = style.world_flags
 
-		world_flags = world_flags or {
+		if not world_flags_2 then
+			-- Nothing
+		end
+
+		world_flags_2 = {
 			Application.DISABLE_SOUND,
 			Application.DISABLE_ESRAM
 		}
 
-		local shading_environment = var_71_0.shading_environment
-		local create_world = Managers.world:create_world(var_71_0.world_name, shading_environment, nil, var_71_0.layer, unpack(world_flags))
-		local viewport_type = var_71_0.viewport_type
+		local world_flags = world_flags_2
 
-		viewport_type = viewport_type or "default"
+		::label_71_0::
 
-		local create_viewport = ScriptWorld.create_viewport(create_world, var_71_0.viewport_name, viewport_type, var_71_0.layer)
-		local level_name = var_71_0.level_name
-		local object_sets = var_71_0.object_sets
-		local var_71_8
+		local shading_environment = style.shading_environment
+		local world = Managers.world:create_world(style.world_name, shading_environment, nil, style.layer, unpack(world_flags))
+		local viewport_type_2 = style.viewport_type
 
-		if not level_name then
-			local var_71_9
-			local var_71_10
-			local var_71_11
-			local mood_setting = var_71_0.mood_setting
-			local flag = false
-
-			var_71_8 = ScriptWorld.spawn_level(create_world, level_name, object_sets, var_71_9, var_71_10, var_71_11, mood_setting, flag)
-
-			Level.spawn_background(var_71_8)
+		if not viewport_type_2 then
+			-- Nothing
 		end
 
-		local flag_2 = true
+		viewport_type_2 = "default"
 
-		ScriptWorld.deactivate_viewport(create_world, create_viewport)
+		local viewport_type = viewport_type_2
 
-		local unbox = Vector3Aux.unbox(var_71_0.camera_position)
-		local unbox_2 = Vector3Aux.unbox(var_71_0.camera_lookat)
-		local normalize = Vector3.normalize(unbox_2 - unbox)
-		local camera = ScriptViewport.camera(create_viewport)
+		::label_71_1::
 
-		ScriptCamera.set_local_position(camera, unbox)
-		ScriptCamera.set_local_rotation(camera, Quaternion.look(normalize))
+		local viewport = ScriptWorld.create_viewport(world, style.viewport_name, viewport_type, style.layer)
+		local level_name = style.level_name
+		local object_sets = style.object_sets
+		local level
 
-		local fov = var_71_0.fov
+		if level_name then
+			local position, rotation, shading_callback
+			local mood_setting = style.mood_setting
+			local time_sliced_spawn = false
 
-		fov = fov or 65
+			level = ScriptWorld.spawn_level(world, level_name, object_sets, position, rotation, shading_callback, mood_setting, time_sliced_spawn)
+
+			Level.spawn_background(level)
+		end
+
+		local deactivated = true
+
+		ScriptWorld.deactivate_viewport(world, viewport)
+
+		local camera_pos = Vector3Aux.unbox(style.camera_position)
+		local camera_lookat = Vector3Aux.unbox(style.camera_lookat)
+		local camera_direction = Vector3.normalize(camera_lookat - camera_pos)
+		local camera = ScriptViewport.camera(viewport)
+
+		ScriptCamera.set_local_position(camera, camera_pos)
+		ScriptCamera.set_local_rotation(camera, Quaternion.look(camera_direction))
+
+		local fov_2 = style.fov
+
+		if not fov_2 then
+			-- Nothing
+		end
+
+		fov_2 = 65
+
+		local fov = fov_2
+
+		::label_71_2::
 
 		Camera.set_vertical_fov(camera, math.pi * fov / 180)
 
-		local var_71_20
+		local ui_renderer
 
-		if not var_71_0.enable_sub_gui then
-			var_71_20 = UIRenderer.create(create_world, "material", "materials/ui/ui_1080p_hud_atlas_textures", "material", "materials/ui/ui_1080p_hud_single_textures", "material", "materials/ui/ui_1080p_menu_atlas_textures", "material", "materials/ui/ui_1080p_menu_single_textures", "material", "materials/ui/ui_1080p_common", "material", "materials/ui/ui_1080p_versus_available_common", "material", "materials/fonts/gw_fonts")
+		if style.enable_sub_gui then
+			ui_renderer = UIRenderer.create(world, "material", "materials/ui/ui_1080p_hud_atlas_textures", "material", "materials/ui/ui_1080p_hud_single_textures", "material", "materials/ui/ui_1080p_menu_atlas_textures", "material", "materials/ui/ui_1080p_menu_single_textures", "material", "materials/ui/ui_1080p_common", "material", "materials/ui/ui_1080p_versus_available_common", "material", "materials/fonts/gw_fonts")
 		end
 
 		return {
-			deactivated = flag_2,
-			world = create_world,
-			world_name = var_71_0.world_name,
-			level = var_71_8,
-			viewport = create_viewport,
-			viewport_name = var_71_0.viewport_name,
-			ui_renderer = var_71_20,
+			deactivated = deactivated,
+			world = world,
+			world_name = style.world_name,
+			level = level,
+			viewport = viewport,
+			viewport_name = style.viewport_name,
+			ui_renderer = ui_renderer,
 			camera = camera
 		}
 	end,
-	destroy = function (arg_72_0, arg_72_1, arg_72_2)
+	destroy = function (ui_renderer, pass_data, pass_definition)
 		-- function 72
-		if not arg_72_1.ui_renderer then
-			UIRenderer.destroy(arg_72_1.ui_renderer, arg_72_1.world)
+		if pass_data.ui_renderer then
+			UIRenderer.destroy(pass_data.ui_renderer, pass_data.world)
 
-			arg_72_1.ui_renderer = nil
+			pass_data.ui_renderer = nil
 		end
 
-		ScriptWorld.destroy_viewport(arg_72_1.world, arg_72_1.viewport_name)
-		Managers.world:destroy_world(arg_72_1.world)
+		ScriptWorld.destroy_viewport(pass_data.world, pass_data.viewport_name)
+		Managers.world:destroy_world(pass_data.world)
 	end,
-	draw = function (arg_73_0, arg_73_1, arg_73_2, arg_73_3, arg_73_4, arg_73_5, arg_73_6, arg_73_7, arg_73_8, arg_73_9)
+	draw = function (ui_renderer, pass_data, ui_scenegraph, pass_definition, ui_style, ui_content, position, size, input_service, dt)
 		-- function 73
-		local viewport_size = arg_73_4.viewport_size
+		local viewport_size = ui_style.viewport_size
 
-		if not viewport_size then
-			if arg_73_4.horizontal_alignment == "right" then
-				arg_73_6[1] = arg_73_6[1] + arg_73_7[1] - viewport_size[1]
-			elseif arg_73_4.horizontal_alignment == "center" then
-				arg_73_6[1] = arg_73_6[1] + (arg_73_7[1] - viewport_size[1]) / 2
+		if viewport_size then
+			if ui_style.horizontal_alignment == "right" then
+				position[1] = position[1] + size[1] - viewport_size[1]
+			elseif ui_style.horizontal_alignment == "center" then
+				position[1] = position[1] + (size[1] - viewport_size[1]) / 2
 			end
 
-			if arg_73_4.vertical_alignment == "center" then
-				arg_73_6[2] = arg_73_6[2] + (arg_73_7[2] - viewport_size[2]) / 2
-			elseif arg_73_4.vertical_alignment == "top" then
-				arg_73_6[2] = arg_73_6[2] + arg_73_7[2] - viewport_size[2]
+			if ui_style.vertical_alignment == "center" then
+				position[2] = position[2] + (size[2] - viewport_size[2]) / 2
+			elseif ui_style.vertical_alignment == "top" then
+				position[2] = position[2] + size[2] - viewport_size[2]
 			end
 
-			arg_73_7 = viewport_size
+			size = viewport_size
 		end
 
-		local var_73_1 = UIScaleVectorToResolution(arg_73_6)
-		local var_73_2 = UIScaleVectorToResolution(arg_73_7)
-		local res_w = RESOLUTION_LOOKUP.res_w
-		local res_h = RESOLUTION_LOOKUP.res_h
-		local zero = Vector3.zero()
+		local scaled_position = UIScaleVectorToResolution(position)
+		local scaled_size = UIScaleVectorToResolution(size)
+		local resx, resy = RESOLUTION_LOOKUP.res_w, RESOLUTION_LOOKUP.res_h
+		local viewport_size = Vector3.zero()
 
-		zero.x = math.clamp(var_73_2.x / res_w, 0, 1)
-		zero.y = math.clamp(var_73_2.y / res_h, 0, 1)
+		viewport_size.x = math.clamp(scaled_size.x / resx, 0, 1)
+		viewport_size.y = math.clamp(scaled_size.y / resy, 0, 1)
 
-		local zero_2 = Vector3.zero()
+		local viewport_position = Vector3.zero()
 
-		zero_2.x = math.clamp(var_73_1.x / res_w, 0, 1)
-		zero_2.y = math.clamp(1 - var_73_1.y / res_h - zero.y, 0, 1)
+		viewport_position.x = math.clamp(scaled_position.x / resx, 0, 1)
+		viewport_position.y = math.clamp(1 - scaled_position.y / resy - viewport_size.y, 0, 1)
 
-		local viewport = arg_73_1.viewport
-		local world = arg_73_1.world
+		local viewport = pass_data.viewport
+		local world = pass_data.world
 
-		if not (res_w < var_73_1.x or not (var_73_1.x < 0)) then
-			if not arg_73_1.deactivated then
+		if resx < scaled_position.x or scaled_position.x < 0 then
+			if not pass_data.deactivated then
 				ScriptWorld.deactivate_viewport(world, viewport)
 			end
 
-			arg_73_1.deactivated = true
-		elseif not arg_73_1.deactivated then
+			pass_data.deactivated = true
+		elseif pass_data.deactivated then
 			ScriptWorld.activate_viewport(world, viewport)
 
-			arg_73_1.deactivated = false
+			pass_data.deactivated = false
 		end
 
-		local flag = false
+		local splitscreen = false
 
-		if not Managers.splitscreen then
-			flag = Managers.splitscreen:active()
+		if Managers.splitscreen then
+			splitscreen = Managers.splitscreen:active()
 		end
 
-		local flag_2
+		local num
 
-		flag_2 = not flag and 0.5 and 1
+		if splitscreen then
+			num = 0.5
 
-		Viewport.set_rect(viewport, zero_2.x * flag_2, zero_2.y * flag_2, zero.x * flag_2, zero.y * flag_2)
+			goto label_73_0
+		end
 
-		arg_73_5.viewport_size_x = zero.x
-		arg_73_5.viewport_size_y = zero.y
-		arg_73_1.viewport_rect_pos_x = zero_2.x
-		arg_73_1.viewport_rect_pos_y = zero_2.y
-		arg_73_1.viewport_rect_size_x = var_73_2.x
-		arg_73_1.viewport_rect_size_y = var_73_2.y
-		arg_73_1.size_scale_x = zero.x
-		arg_73_1.size_scale_y = zero.y
+		num = 1
+
+		local multiplier = num
+
+		::label_73_0::
+
+		Viewport.set_rect(viewport, viewport_position.x * multiplier, viewport_position.y * multiplier, viewport_size.x * multiplier, viewport_size.y * multiplier)
+
+		ui_content.viewport_size_x = viewport_size.x
+		ui_content.viewport_size_y = viewport_size.y
+		pass_data.viewport_rect_pos_x = viewport_position.x
+		pass_data.viewport_rect_pos_y = viewport_position.y
+		pass_data.viewport_rect_size_x = scaled_size.x
+		pass_data.viewport_rect_size_y = scaled_size.y
+		pass_data.size_scale_x = viewport_size.x
+		pass_data.size_scale_y = viewport_size.y
 	end,
-	raycast_at_screen_position = function (self, arg_74_1, arg_74_2, arg_74_3, arg_74_4)
+	raycast_at_screen_position = function (pass_data, screen_position, result_type, range, collision_filter)
 		-- function 74
-		if self.viewport_rect_pos_x == nil then
+		if pass_data.viewport_rect_pos_x == nil then
 			return nil
 		end
 
-		local res_w = RESOLUTION_LOOKUP.res_w
-		local res_h = RESOLUTION_LOOKUP.res_h
-		local zero = Vector3.zero()
-		local num = res_w / res_h
-		local num_2 = 1.7777777777777777
+		local resx, resy = RESOLUTION_LOOKUP.res_w, RESOLUTION_LOOKUP.res_h
+		local camera_space_position = Vector3.zero()
+		local aspect_ratio = resx / resy
+		local default_aspect = 1.7777777777777777
 
-		if num < num_2 then
-			local num_3 = arg_74_1.x / res_w
-			local num_4 = res_h / 9 * 16
+		if aspect_ratio < default_aspect then
+			local scale_x = screen_position.x / resx
+			local width = resy / 9 * 16
 
-			zero.x = res_w * 0.5 - num_4 * 0.5 + num_4 * num_3
+			camera_space_position.x = resx * 0.5 - width * 0.5 + width * scale_x
 
-			local num_5 = arg_74_1.y / res_h
-			local num_6 = self.size_scale_x * res_h
+			local scale_y = screen_position.y / resy
+			local height = pass_data.size_scale_x * resy
 
-			zero.y = res_h * 0.5 - num_6 * 0.5 + num_6 * num_5
-		elseif num_2 < num then
-			local num_7 = arg_74_1.x / res_w
-			local num_8 = self.size_scale_y * res_w
+			camera_space_position.y = resy * 0.5 - height * 0.5 + height * scale_y
+		elseif default_aspect < aspect_ratio then
+			local scale_x = screen_position.x / resx
+			local width = pass_data.size_scale_y * resx
 
-			zero.x = res_w * 0.5 - num_8 * 0.5 + num_8 * num_7
-			zero.y = arg_74_1.y
+			camera_space_position.x = resx * 0.5 - width * 0.5 + width * scale_x
+			camera_space_position.y = screen_position.y
 		else
-			zero.x = arg_74_1.x
-			zero.y = arg_74_1.y
+			camera_space_position.x = screen_position.x
+			camera_space_position.y = screen_position.y
 		end
 
-		local screen_to_world = Camera.screen_to_world(self.camera, zero, 0)
-		local num_9 = Camera.screen_to_world(self.camera, zero + Vector3(0, 0, 0), 1) - screen_to_world
-		local normalize = Vector3.normalize(num_9)
-		local get_data = World.get_data(self.world, "physics_world")
+		local position = Camera.screen_to_world(pass_data.camera, camera_space_position, 0)
+		local direction = Camera.screen_to_world(pass_data.camera, camera_space_position + Vector3(0, 0, 0), 1) - position
+		local raycast_dir = Vector3.normalize(direction)
+		local physics_world = World.get_data(pass_data.world, "physics_world")
 
-		return PhysicsWorld.immediate_raycast(get_data, screen_to_world, normalize, arg_74_3, arg_74_2, "collision_filter", arg_74_4)
+		return PhysicsWorld.immediate_raycast(physics_world, position, raycast_dir, range, result_type, "collision_filter", collision_filter)
 	end
 }
 
 local script_data = script_data
 local ui_debug_hover = script_data.ui_debug_hover
 
-ui_debug_hover = ui_debug_hover or Development.parameter("ui_debug_hover")
+ui_debug_hover = not not ui_debug_hover or not not Development.parameter("ui_debug_hover")
 script_data.ui_debug_hover = ui_debug_hover
 
 local script_data_2 = script_data
 local ui_debug_drag = script_data.ui_debug_drag
 
-ui_debug_drag = ui_debug_drag or Development.parameter("ui_debug_drag")
+ui_debug_drag = not not ui_debug_drag or not not Development.parameter("ui_debug_drag")
 script_data_2.ui_debug_drag = ui_debug_drag
 
-local tbl_16 = {
+local drag_position_table = {
 	0,
 	0,
 	0
@@ -3207,173 +3529,200 @@ local start_drag_threshold = UISettings.start_drag_threshold
 
 UIPasses.is_dragging_item = false
 UIPasses.drag = {
-	init = function (arg_75_0, arg_75_1, arg_75_2)
+	init = function (pass_definition, ui_content, ui_style)
 		-- function 75
 		return nil
 	end,
-	draw = function (arg_76_0, arg_76_1, arg_76_2, arg_76_3, arg_76_4, arg_76_5, arg_76_6, arg_76_7, arg_76_8, arg_76_9)
+	draw = function (ui_renderer, pass_data, ui_scenegraph, pass_definition, ui_style, ui_content, position, size, input_service, dt)
 		-- function 76
-		if not arg_76_5.ui_top_renderer then
-			arg_76_0 = arg_76_5.ui_top_renderer
+		if ui_content.ui_top_renderer then
+			ui_renderer = ui_content.ui_top_renderer
 		end
 
-		if not arg_76_5.on_drag_stopped then
-			arg_76_5.on_drag_stopped = nil
+		if ui_content.on_drag_stopped then
+			ui_content.on_drag_stopped = nil
 			UIPasses.is_dragging_item = false
 		end
 
-		if not arg_76_5.on_drag_started then
-			arg_76_5.on_drag_started = nil
+		if ui_content.on_drag_started then
+			ui_content.on_drag_started = nil
 		end
 
-		if not arg_76_5.drag_disabled then
+		if ui_content.drag_disabled then
 			return
 		end
 
-		if not arg_76_5[arg_76_3.texture_id] then
+		local drag_texture = ui_content[pass_definition.texture_id]
+
+		if not drag_texture then
 			return
 		end
 
-		local get = arg_76_8:get("cursor")
+		local get = input_service:get("cursor")
 
-		get = get or tbl
+		if not get then
+			-- Nothing
+		end
 
-		local var_76_1 = UIInverseScaleVectorToResolution(get)
-		local on_drag_started = arg_76_5.on_drag_started
-		local is_dragging = arg_76_5.is_dragging
+		get = NilCursor
+
+		local cursor = get
+
+		::label_76_0::
+
+		local scaled_cursor = UIInverseScaleVectorToResolution(cursor)
+		local on_drag_started = ui_content.on_drag_started
+		local is_dragging = ui_content.is_dragging
 
 		if not is_dragging then
-			if not arg_76_8:get("left_press") and not math.point_is_inside_2d_box(var_76_1, arg_76_6, arg_76_7) then
-				arg_76_5.hover_start_timer = 0
-			elseif not arg_76_5.hover_start_timer then
-				if not arg_76_8:get("left_hold") then
-					arg_76_5.hover_start_timer = arg_76_5.hover_start_timer + arg_76_9
+			if input_service:get("left_press") and math.point_is_inside_2d_box(scaled_cursor, position, size) then
+				ui_content.hover_start_timer = 0
+			elseif ui_content.hover_start_timer then
+				if input_service:get("left_hold") then
+					ui_content.hover_start_timer = ui_content.hover_start_timer + dt
 				else
-					arg_76_5.hover_start_timer = nil
+					ui_content.hover_start_timer = nil
 				end
 			end
 		end
 
-		local hover_start_timer = arg_76_5.hover_start_timer
+		local hover_start_timer = ui_content.hover_start_timer
 
-		if not (not hover_start_timer and not (hover_start_timer >= start_drag_threshold)) then
-			arg_76_5.hover_start_timer = nil
-			arg_76_5.on_drag_started = true
-			arg_76_5.is_dragging = true
+		if hover_start_timer and hover_start_timer >= start_drag_threshold then
+			ui_content.hover_start_timer = nil
+			ui_content.on_drag_started = true
+			ui_content.is_dragging = true
 			UIPasses.is_dragging_item = true
-		elseif not is_dragging and not arg_76_8:get("left_hold") then
-			if not on_drag_started then
-				arg_76_5.on_drag_started = nil
+		elseif is_dragging and input_service:get("left_hold") then
+			if on_drag_started then
+				ui_content.on_drag_started = nil
 			end
 
-			local drag_texture_size = arg_76_5.drag_texture_size
+			local drag_texture_size = ui_content.drag_texture_size
 
 			assert(drag_texture_size, "Missing texture_size")
 
-			tbl_16[1] = var_76_1.x - drag_texture_size[1] * 0.5
-			tbl_16[2] = var_76_1.y - drag_texture_size[2] * 0.5
-			tbl_16[3] = 999
+			drag_position_table[1] = scaled_cursor.x - drag_texture_size[1] * 0.5
+			drag_position_table[2] = scaled_cursor.y - drag_texture_size[2] * 0.5
+			drag_position_table[3] = 999
 
-			draw_texture(arg_76_0, arg_76_5[arg_76_3.texture_id], tbl_16, drag_texture_size, nil, nil, false)
-		elseif not is_dragging and not arg_76_8:get("left_release") then
-			arg_76_5.is_dragging = nil
-			arg_76_5.on_drag_stopped = true
+			UIRenderer_draw_texture(ui_renderer, ui_content[pass_definition.texture_id], drag_position_table, drag_texture_size, nil, nil, false)
+		elseif is_dragging and input_service:get("left_release") then
+			ui_content.is_dragging = nil
+			ui_content.on_drag_stopped = true
 		end
 
-		if not script_data.ui_debug_drag then
+		if script_data.ui_debug_drag then
 			local draw_rect = UIRenderer.draw_rect
-			local var_76_7 = arg_76_0
-			local num = arg_76_6 + Vector3(0, 0, 1)
-			local var_76_9 = arg_76_7
-			local tbl_2
+			local var_76_2 = ui_renderer
+			local num = position + Vector3(0, 0, 1)
+			local var_76_4 = size
+			local tbl
 
-			if not arg_76_5.is_dragging then
-				tbl_2 = {
+			if ui_content.is_dragging then
+				tbl = {
 					128,
 					0,
 					100,
 					100
 				}
 
-				if not tbl_2 then
+				if not tbl then
 					-- Nothing
 				end
 			end
 
-			tbl_2 = {
+			tbl = {
 				0,
 				0,
 				0,
 				255
 			}
 
-			::label_76_0::
+			::label_76_1::
 
-			draw_rect(var_76_7, num, var_76_9, tbl_2)
+			draw_rect(var_76_2, num, var_76_4, tbl)
 		end
 	end
 }
 
-local tbl_17 = {
+local cursor_position_table = {
 	0,
 	0,
 	0
 }
 
 UIPasses.gamepad_cursor = {
-	init = function (arg_77_0, arg_77_1, arg_77_2)
+	init = function (pass_definition, ui_content, ui_style)
 		-- function 77
 		return nil
 	end,
-	draw = function (arg_78_0, arg_78_1, arg_78_2, arg_78_3, arg_78_4, arg_78_5, arg_78_6, arg_78_7, arg_78_8, arg_78_9)
+	draw = function (ui_renderer, pass_data, ui_scenegraph, pass_definition, ui_style, ui_content, position, size, input_service, dt)
 		-- function 78
 		if not Managers.input:gamepad_cursor_active() then
 			return
 		end
 
-		if not arg_78_5.ui_top_renderer then
-			arg_78_0 = arg_78_5.ui_top_renderer
+		if ui_content.ui_top_renderer then
+			ui_renderer = ui_content.ui_top_renderer
 		end
 
-		local get = arg_78_8:get("cursor")
+		local get = input_service:get("cursor")
 
-		get = get or tbl
+		if not get then
+			-- Nothing
+		end
 
-		local offset = arg_78_4.offset
+		get = NilCursor
 
-		offset = offset or {
+		local cursor = get
+
+		::label_78_0::
+
+		local offset_2 = ui_style.offset
+
+		if not offset_2 then
+			-- Nothing
+		end
+
+		offset_2 = {
 			0,
 			0
 		}
 
-		local var_78_2 = tbl_17
-		local x = get.x
+		local offset = offset_2
 
-		x = x or 0
+		::label_78_1::
+
+		local var_78_2 = cursor_position_table
+		local x = cursor.x
+
+		x = not not x or not not 0
 		var_78_2[1] = x + offset[1]
 
-		local var_78_4 = tbl_17
-		local y = get.y
+		local var_78_4 = cursor_position_table
+		local y = cursor.y
 
-		y = y or 0
+		y = not not y or not not 0
 		var_78_4[2] = y + offset[2]
-		tbl_17[3] = 1000
+		cursor_position_table[3] = 1000
 
-		if not Managers.input:is_device_active("gamepad") then
-			draw_texture(arg_78_0, arg_78_5[arg_78_3.texture_id], tbl_17, arg_78_4.size, nil, nil, false)
+		if Managers.input:is_device_active("gamepad") then
+			UIRenderer_draw_texture(ui_renderer, ui_content[pass_definition.texture_id], cursor_position_table, ui_style.size, nil, nil, false)
 		end
 
-		if not script_data.ui_debug_hover then
-			local var_78_6 = Vector2(GAMEPAD_CURSOR_SIZE * 0.5, GAMEPAD_CURSOR_SIZE * 0.5)
-			local num = Vector3(tbl_17[1], tbl_17[2], tbl_17[3]) + var_78_6 * 0.5
+		if script_data.ui_debug_hover then
+			local cursor_size = Vector2(GAMEPAD_CURSOR_SIZE * 0.5, GAMEPAD_CURSOR_SIZE * 0.5)
+			local cursor_position = Vector3(cursor_position_table[1], cursor_position_table[2], cursor_position_table[3])
+			local pos = cursor_position + cursor_size * 0.5
 
-			UIRenderer.draw_rect(arg_78_0, {
-				num[1],
-				num[2],
-				num[3]
+			UIRenderer.draw_rect(ui_renderer, {
+				pos[1],
+				pos[2],
+				pos[3]
 			}, {
-				var_78_6[1],
-				var_78_6[2]
+				cursor_size[1],
+				cursor_size[2]
 			}, {
 				128,
 				255,
@@ -3382,108 +3731,111 @@ UIPasses.gamepad_cursor = {
 			})
 		end
 
-		if not script_data.ui_debug_drag then
+		if script_data.ui_debug_drag then
 			local draw_rect = UIRenderer.draw_rect
-			local var_78_9 = arg_78_0
-			local num_2 = arg_78_6 + Vector3(0, 0, 1)
-			local var_78_11 = arg_78_7
-			local tbl_2
+			local var_78_7 = ui_renderer
+			local num = position + Vector3(0, 0, 1)
+			local var_78_9 = size
+			local tbl
 
-			if not arg_78_5.is_dragging then
-				tbl_2 = {
+			if ui_content.is_dragging then
+				tbl = {
 					128,
 					0,
 					100,
 					100
 				}
 
-				if not tbl_2 then
+				if not tbl then
 					-- Nothing
 				end
 			end
 
-			tbl_2 = {
+			tbl = {
 				0,
 				0,
 				0,
 				255
 			}
 
-			::label_78_0::
+			::label_78_2::
 
-			draw_rect(var_78_9, num_2, var_78_11, tbl_2)
+			draw_rect(var_78_7, num, var_78_9, tbl)
 		end
 	end
 }
 UIPasses.hover = {
-	init = function (arg_79_0)
+	init = function (pass_definition)
 		-- function 79
 		return nil
 	end,
-	draw = function (self, arg_80_1, arg_80_2, arg_80_3, arg_80_4, arg_80_5, arg_80_6, arg_80_7, arg_80_8, arg_80_9)
+	draw = function (ui_renderer, pass_data, ui_scenegraph, pass_definition, ui_style, ui_content, position, size, input_service, dt)
 		-- function 80
-		local is_hover = arg_80_5.is_hover
-		local var_80_1
+		local was_hover = ui_content.is_hover
+		local is_hover
 		local get
 
-		if not arg_80_8 and not arg_80_8:has("cursor") then
-			get = arg_80_8:get("cursor")
+		if input_service and input_service:has("cursor") then
+			get = input_service:get("cursor")
 
 			if not get then
 				-- Nothing
 			end
 		end
 
-		get = tbl
+		get = NilCursor
+
+		local cursor = get
 
 		::label_80_0::
 
-		if arg_80_5.hover_type == "circle" then
-			local num = self:get_scaling() * arg_80_7 / 2
-			local num_2 = Vector3Aux.flat(ScaleVectorToResolution(arg_80_6)) + num
+		if ui_content.hover_type == "circle" then
+			local half_size = ui_renderer:get_scaling() * size / 2
+			local pos_center = Vector3Aux.flat(ScaleVectorToResolution(position)) + half_size
+			local square_distance = Vector3.distance_squared(Vector3Aux.unbox(cursor), pos_center)
 
-			var_80_1 = Vector3.distance_squared(Vector3Aux.unbox(get), num_2) <= num.x * num.y or false
+			is_hover = square_distance <= half_size.x * half_size.y or not not false
 		else
-			if not arg_80_4 then
-				local area_size = arg_80_4.area_size
+			if ui_style then
+				local area_size = ui_style.area_size
 
-				if not area_size then
-					UIUtils.align_box_inplace(arg_80_4, arg_80_6, arg_80_7, area_size)
+				if area_size then
+					UIUtils.align_box_inplace(ui_style, position, size, area_size)
 
-					arg_80_7 = area_size
+					size = area_size
 				end
 			end
 
-			local is_device_active = Managers.input:is_device_active("gamepad")
-			local var_80_7 = get
+			local gamepad_active = Managers.input:is_device_active("gamepad")
+			local cursor_position = cursor
 
-			if not is_device_active then
-				var_80_7 = UIInverseScaleVectorToResolution(get)
+			if not gamepad_active then
+				cursor_position = UIInverseScaleVectorToResolution(cursor)
 			end
 
-			var_80_1 = math.point_is_inside_2d_box(var_80_7, arg_80_6, arg_80_7)
+			is_hover = math.point_is_inside_2d_box(cursor_position, position, size)
 
-			if not script_data.ui_debug_hover then
+			if script_data.ui_debug_hover then
 				local draw_rect = UIRenderer.draw_rect
-				local var_80_9 = self
-				local num_3 = arg_80_6 + Vector3(0, 0, 1)
-				local var_80_11 = arg_80_7
-				local tbl_2
+				local var_80_2 = ui_renderer
+				local num = position + Vector3(0, 0, 1)
+				local var_80_4 = size
+				local tbl
 
-				if not arg_80_5.is_hover then
-					tbl_2 = {
+				if ui_content.is_hover then
+					tbl = {
 						128,
 						0,
 						255,
 						0
 					}
 
-					if not tbl_2 then
+					if not tbl then
 						-- Nothing
 					end
 				end
 
-				tbl_2 = {
+				tbl = {
 					128,
 					255,
 					0,
@@ -3492,91 +3844,92 @@ UIPasses.hover = {
 
 				::label_80_1::
 
-				draw_rect(var_80_9, num_3, var_80_11, tbl_2)
+				draw_rect(var_80_2, num, var_80_4, tbl)
 			end
 		end
 
-		if not (not var_80_1 and is_hover) then
-			arg_80_5.is_hover = not UIPasses.is_dragging_item
-			arg_80_5.internal_is_hover = true
+		if is_hover and not was_hover then
+			ui_content.is_hover = not UIPasses.is_dragging_item
+			ui_content.internal_is_hover = true
 		end
 
-		if not (not is_hover and var_80_1) then
-			arg_80_5.is_hover = nil
-			arg_80_5.internal_is_hover = nil
+		if was_hover and not is_hover then
+			ui_content.is_hover = nil
+			ui_content.internal_is_hover = nil
 		end
 
-		if var_80_1 or not arg_80_5.internal_is_hover then
-			arg_80_5.internal_is_hover = nil
+		if not is_hover and ui_content.internal_is_hover then
+			ui_content.internal_is_hover = nil
 		end
 	end
 }
 UIPasses.click = {
-	init = function (arg_81_0)
+	init = function (pass_definition)
 		-- function 81
 		return nil
 	end,
-	draw = function (arg_82_0, arg_82_1, arg_82_2, arg_82_3, arg_82_4, arg_82_5, arg_82_6, arg_82_7, arg_82_8, arg_82_9)
+	draw = function (ui_renderer, pass_data, ui_scenegraph, pass_definition, ui_style, ui_content, position, size, input_service, dt)
 		-- function 82
-		if not arg_82_5.is_hover and not arg_82_8:get("left_release") then
-			arg_82_5.is_clicked = 0
+		if ui_content.is_hover and input_service:get("left_release") then
+			ui_content.is_clicked = 0
 		else
-			local is_clicked = arg_82_5.is_clicked
+			local is_clicked = ui_content.is_clicked
 
-			is_clicked = is_clicked or 10
-			arg_82_5.is_clicked = is_clicked + arg_82_9
+			is_clicked = not not is_clicked or not not 10
+			ui_content.is_clicked = is_clicked + dt
 		end
 	end
 }
 UIPasses.generic_tooltip = {
-	init = function (arg_83_0, arg_83_1, arg_83_2)
+	init = function (pass_definition, ui_content, ui_style)
 		-- function 83
-		local tbl = {}
-
-		tbl.passes, tbl.end_pass = {
+		local pass_data = {}
+		local passes = {
 			{
 				data = UITooltipPasses.generic_text.setup_data(),
 				draw = UITooltipPasses.generic_text.draw
 			}
-		}, {
+		}
+
+		pass_data.end_pass = {
 			data = UITooltipPasses.background.setup_data(),
 			draw = UITooltipPasses.background.draw
 		}
-		tbl.size = {
+		pass_data.passes = passes
+		pass_data.size = {
 			400,
 			0
 		}
-		tbl.alpha_multiplier = 1
+		pass_data.alpha_multiplier = 1
 
-		return tbl
+		return pass_data
 	end,
-	draw = function (arg_84_0, arg_84_1, arg_84_2, arg_84_3, arg_84_4, arg_84_5, arg_84_6, arg_84_7, arg_84_8, arg_84_9)
+	draw = function (ui_renderer, pass_data, ui_scenegraph, pass_definition, ui_style, ui_content, position, parent_size, input_service, dt)
 		-- function 84
-		local size = arg_84_1.size
+		local size = pass_data.size
 
 		size[2] = 0
 
-		local flag = false
-		local res_w = RESOLUTION_LOOKUP.res_w
-		local res_h = RESOLUTION_LOOKUP.res_h
+		local draw_downwards = false
+		local res_w, res_h = RESOLUTION_LOOKUP.res_w, RESOLUTION_LOOKUP.res_h
 
-		if arg_84_6[2] + arg_84_7[2] * 0.5 > res_h * 0.5 then
-			flag = true
-			arg_84_6[2] = arg_84_6[2] + arg_84_7[2]
+		if position[2] + parent_size[2] * 0.5 > res_h * 0.5 then
+			draw_downwards = true
+			position[2] = position[2] + parent_size[2]
 		end
 
-		if arg_84_6[1] + arg_84_7[1] * 0.5 > res_w * 0.5 then
-			arg_84_6[1] = arg_84_6[1] - size[1] - 5
+		if position[1] + parent_size[1] * 0.5 > res_w * 0.5 then
+			position[1] = position[1] - size[1] - 5
 		else
-			arg_84_6[1] = arg_84_6[1] + arg_84_7[1] + 5
+			position[1] = position[1] + parent_size[1] + 5
 		end
 
-		local var_84_4 = arg_84_6[1]
-		local var_84_5 = arg_84_6[2]
-		local var_84_6 = arg_84_6[3]
+		local position_x = position[1]
+		local position_y = position[2]
+		local position_z = position[3]
 		local ipairs
 
-		if not flag then
+		if draw_downwards then
 			ipairs = ipairs
 
 			if not ipairs then
@@ -3586,338 +3939,379 @@ UIPasses.generic_tooltip = {
 
 		ipairs = ripairs
 
+		local loop_func = ipairs
+
 		::label_84_0::
 
-		local passes = arg_84_1.passes
-		local flag_2 = true
+		local passes = pass_data.passes
+		local draw = true
 
-		for iter_84_0, iter_84_1 in ipairs(passes) do
-			local data = iter_84_1.data
-			local draw = iter_84_1.draw(data, flag_2, flag, arg_84_0, arg_84_1, arg_84_2, arg_84_3, arg_84_4, arg_84_5, arg_84_6, size, arg_84_8, arg_84_9)
+		for _, tooltip_pass in loop_func(passes) do
+			local data = tooltip_pass.data
+			local pass_height = tooltip_pass.draw(data, draw, draw_downwards, ui_renderer, pass_data, ui_scenegraph, pass_definition, ui_style, ui_content, position, size, input_service, dt)
 
-			size[2] = size[2] + draw
+			size[2] = size[2] + pass_height
 
-			if not flag then
-				arg_84_6[2] = arg_84_6[2] - draw
+			if draw_downwards then
+				position[2] = position[2] - pass_height
 			else
-				arg_84_6[2] = arg_84_6[2] + draw
+				position[2] = position[2] + pass_height
 			end
 		end
 
-		arg_84_6[1] = var_84_4
-		arg_84_6[2] = var_84_5
-		arg_84_6[3] = var_84_6
+		position[1] = position_x
+		position[2] = position_y
+		position[3] = position_z
 
-		local end_pass = arg_84_1.end_pass
+		local end_pass = pass_data.end_pass
 
-		if not end_pass then
-			local data_2 = end_pass.data
+		if end_pass then
+			local data = end_pass.data
 
-			end_pass.draw(data_2, flag_2, flag, arg_84_0, arg_84_1, arg_84_2, arg_84_3, arg_84_4, arg_84_5, arg_84_6, size, arg_84_8, arg_84_9)
+			end_pass.draw(data, draw, draw_downwards, ui_renderer, pass_data, ui_scenegraph, pass_definition, ui_style, ui_content, position, size, input_service, dt)
 		end
 	end
 }
 UIPasses.additional_option_tooltip = {
-	init = function (self, arg_85_1, arg_85_2)
+	init = function (pass_definition, ui_content, ui_style)
 		-- function 85
-		local tbl = {}
-		local content_passes = self.content_passes
+		local pass_data = {}
+		local content_passes = pass_definition.content_passes
 
-		content_passes = content_passes or {
+		if not content_passes then
+			-- Nothing
+		end
+
+		content_passes = {
 			"additional_option_info"
 		}
 
-		local tbl_2 = {}
+		local pass_definitions = content_passes
 
-		for i, v in ipairs(content_passes) do
-			tbl_2[#tbl_2 + 1] = {
-				data = UITooltipPasses[v].setup_data(),
-				draw = UITooltipPasses[v].draw
+		::label_85_0::
+
+		local passes = {}
+
+		for _, pass_name in ipairs(pass_definitions) do
+			passes[#passes + 1] = {
+				data = UITooltipPasses[pass_name].setup_data(),
+				draw = UITooltipPasses[pass_name].draw
 			}
 		end
 
-		tbl.end_pass = {
+		pass_data.end_pass = {
 			data = UITooltipPasses.background.setup_data(),
 			draw = UITooltipPasses.background.draw
 		}
 
-		local flag = not arg_85_2 and arg_85_2[self.style_id]
-		local max_width
+		local style = not not ui_style and not not ui_style[pass_definition.style_id]
+		local max_width_2
 
-		if not flag then
-			max_width = flag.max_width
+		if style then
+			max_width_2 = style.max_width
 
-			if not max_width then
+			if not max_width_2 then
 				-- Nothing
 			end
 		end
 
-		max_width = 400
+		max_width_2 = 400
 
-		::label_85_0::
+		local max_width = max_width_2
 
-		tbl.passes = tbl_2
-		tbl.size = {
+		::label_85_1::
+
+		pass_data.passes = passes
+		pass_data.size = {
 			max_width,
 			0
 		}
-		tbl.alpha_multiplier = 1
+		pass_data.alpha_multiplier = 1
 
-		return tbl
+		return pass_data
 	end,
-	update = function (arg_86_0, arg_86_1, arg_86_2, arg_86_3, arg_86_4, arg_86_5, arg_86_6, arg_86_7, arg_86_8)
+	update = function (ui_renderer, pass_data, ui_scenegraph, pass_definition, ui_style, ui_content, input_service, dt, visible)
 		-- function 86
-		if not arg_86_8 then
-			arg_86_1.alpha_progress = 0
-			arg_86_1.alpha_wait_time = UISettings.tooltip_wait_duration
+		if not visible then
+			pass_data.alpha_progress = 0
+			pass_data.alpha_wait_time = UISettings.tooltip_wait_duration
 		end
 	end,
-	draw = function (arg_87_0, arg_87_1, arg_87_2, arg_87_3, arg_87_4, arg_87_5, arg_87_6, arg_87_7, arg_87_8, arg_87_9)
+	draw = function (ui_renderer, pass_data, ui_scenegraph, pass_definition, ui_style, ui_content, position, parent_size, input_service, dt)
 		-- function 87
-		local var_87_0 = arg_87_5[arg_87_3.additional_option_id]
+		local additional_option_data = ui_content[pass_definition.additional_option_id]
 
-		if not var_87_0 then
+		if not additional_option_data then
 			return
 		end
 
-		if not Managers.input:is_device_active("gamepad") then
+		local gamepad_active = Managers.input:is_device_active("gamepad")
+
+		if gamepad_active then
 			Managers.input:set_showing_tooltip(true)
 		end
 
-		local alpha_wait_time = arg_87_1.alpha_wait_time
-		local alpha_progress = arg_87_1.alpha_progress
+		local alpha_wait_time = pass_data.alpha_wait_time
+		local alpha_progress = pass_data.alpha_progress
 
-		if not alpha_wait_time then
-			local num = alpha_wait_time - arg_87_9
+		if alpha_wait_time then
+			alpha_wait_time = alpha_wait_time - dt
 
-			if num <= 0 then
-				arg_87_1.alpha_wait_time = nil
+			if alpha_wait_time <= 0 then
+				pass_data.alpha_wait_time = nil
 			else
-				arg_87_1.alpha_wait_time = num
+				pass_data.alpha_wait_time = alpha_wait_time
 			end
 
-			arg_87_1.alpha_multiplier = 0
-		elseif not alpha_progress then
+			pass_data.alpha_multiplier = 0
+		elseif alpha_progress then
 			local tooltip_fade_in_speed = UISettings.tooltip_fade_in_speed
-			local min = math.min(alpha_progress + arg_87_9 * tooltip_fade_in_speed, 1)
+			local new_alpha_progress = math.min(alpha_progress + dt * tooltip_fade_in_speed, 1)
 
-			arg_87_1.alpha_multiplier = math.easeOutCubic(min)
+			pass_data.alpha_multiplier = math.easeOutCubic(new_alpha_progress)
 
-			if min == 1 then
-				arg_87_1.alpha_progress = nil
+			if new_alpha_progress == 1 then
+				pass_data.alpha_progress = nil
 			else
-				arg_87_1.alpha_progress = min
+				pass_data.alpha_progress = new_alpha_progress
 			end
 		end
 
-		local var_87_6 = arg_87_6[1]
-		local var_87_7 = arg_87_6[2]
-		local var_87_8 = arg_87_6[3]
-		local size = arg_87_1.size
+		local default_position_x = position[1]
+		local default_position_y = position[2]
+		local default_position_z = position[3]
+		local size = pass_data.size
 
 		size[2] = 0
 
-		local flag = true
+		local draw_downwards = true
 
-		if arg_87_4.horizontal_alignment == "center" then
-			arg_87_6[1] = arg_87_6[1] + arg_87_7[1] / 2 - size[1] / 2
-		elseif arg_87_4.horizontal_alignment == "right" then
-			arg_87_6[1] = arg_87_6[1] + arg_87_7[1] - size[1]
+		if ui_style.horizontal_alignment == "center" then
+			position[1] = position[1] + parent_size[1] / 2 - size[1] / 2
+		elseif ui_style.horizontal_alignment == "right" then
+			position[1] = position[1] + parent_size[1] - size[1]
 		else
-			arg_87_6[1] = arg_87_6[1] - size[1]
+			position[1] = position[1] - size[1]
 		end
 
-		local num_2 = 0
-		local passes = arg_87_1.passes
-		local flag_2 = false
-		local end_pass = arg_87_1.end_pass
+		local tooltip_total_height = 0
+		local passes = pass_data.passes
+		local draw = false
+		local end_pass = pass_data.end_pass
 
-		if not end_pass then
+		if end_pass then
+			local data = end_pass.data
+			local pass_height = end_pass.draw(data, draw, draw_downwards, ui_renderer, pass_data, ui_scenegraph, pass_definition, ui_style, ui_content, position, size, input_service, dt)
+
+			tooltip_total_height = tooltip_total_height + pass_height
+		end
+
+		local frame_margin_2 = end_pass.data.frame_margin
+
+		if not frame_margin_2 then
+			-- Nothing
+		end
+
+		frame_margin_2 = 0
+
+		local frame_margin = frame_margin_2
+
+		::label_87_0::
+
+		for _, tooltip_pass in ipairs(passes) do
+			local data = tooltip_pass.data
+
+			data.frame_margin = frame_margin
+
+			local pass_height = tooltip_pass.draw(data, draw, draw_downwards, ui_renderer, pass_data, ui_scenegraph, pass_definition, ui_style, ui_content, position, size, input_service, dt, additional_option_data)
+
+			tooltip_total_height = tooltip_total_height + pass_height
+		end
+
+		if ui_style.vertical_alignment == "top" then
+			position[2] = position[2] + parent_size[2] + tooltip_total_height
+		else
+			position[2] = position[2] + tooltip_total_height
+		end
+
+		if ui_style.grow_downwards then
+			position[2] = position[2] - tooltip_total_height
+		end
+
+		local position_x = position[1]
+		local position_y = position[2]
+		local position_z = position[3]
+
+		draw = true
+
+		for _, tooltip_pass in ipairs(passes) do
+			local data = tooltip_pass.data
+
+			data.frame_margin = frame_margin
+
+			local pass_height = tooltip_pass.draw(data, draw, draw_downwards, ui_renderer, pass_data, ui_scenegraph, pass_definition, ui_style, ui_content, position, size, input_service, dt, additional_option_data)
+
+			size[2] = size[2] + pass_height
+			position[2] = position[2] - pass_height
+		end
+
+		position[1] = position_x
+		position[2] = position_y
+		position[3] = position_z
+
+		if end_pass then
 			local data = end_pass.data
 
-			num_2 = num_2 + end_pass.draw(data, flag_2, flag, arg_87_0, arg_87_1, arg_87_2, arg_87_3, arg_87_4, arg_87_5, arg_87_6, size, arg_87_8, arg_87_9)
+			end_pass.draw(data, draw, draw_downwards, ui_renderer, pass_data, ui_scenegraph, pass_definition, ui_style, ui_content, position, size, input_service, dt)
 		end
 
-		local frame_margin = end_pass.data.frame_margin
-
-		frame_margin = frame_margin or 0
-
-		for i, v in ipairs(passes) do
-			local data_2 = v.data
-
-			data_2.frame_margin = frame_margin
-			num_2 = num_2 + v.draw(data_2, flag_2, flag, arg_87_0, arg_87_1, arg_87_2, arg_87_3, arg_87_4, arg_87_5, arg_87_6, size, arg_87_8, arg_87_9, var_87_0)
-		end
-
-		if arg_87_4.vertical_alignment == "top" then
-			arg_87_6[2] = arg_87_6[2] + arg_87_7[2] + num_2
-		else
-			arg_87_6[2] = arg_87_6[2] + num_2
-		end
-
-		if not arg_87_4.grow_downwards then
-			arg_87_6[2] = arg_87_6[2] - num_2
-		end
-
-		local var_87_18 = arg_87_6[1]
-		local var_87_19 = arg_87_6[2]
-		local var_87_20 = arg_87_6[3]
-		local flag_3 = true
-
-		for i_2, v_2 in ipairs(passes) do
-			local data_3 = v_2.data
-
-			data_3.frame_margin = frame_margin
-
-			local draw = v_2.draw(data_3, flag_3, flag, arg_87_0, arg_87_1, arg_87_2, arg_87_3, arg_87_4, arg_87_5, arg_87_6, size, arg_87_8, arg_87_9, var_87_0)
-
-			size[2] = size[2] + draw
-			arg_87_6[2] = arg_87_6[2] - draw
-		end
-
-		arg_87_6[1] = var_87_18
-		arg_87_6[2] = var_87_19
-		arg_87_6[3] = var_87_20
-
-		if not end_pass then
-			local data_4 = end_pass.data
-
-			end_pass.draw(data_4, flag_3, flag, arg_87_0, arg_87_1, arg_87_2, arg_87_3, arg_87_4, arg_87_5, arg_87_6, size, arg_87_8, arg_87_9)
-		end
-
-		arg_87_6[1] = var_87_6
-		arg_87_6[2] = var_87_7
-		arg_87_6[3] = var_87_8
+		position[1] = default_position_x
+		position[2] = default_position_y
+		position[3] = default_position_z
 	end
 }
 UIPasses.level_tooltip = {
-	init = function (arg_88_0, arg_88_1, arg_88_2)
+	init = function (pass_definition, ui_content, ui_style)
 		-- function 88
-		local tbl = {}
-
-		tbl.passes, tbl.end_pass = {
+		local pass_data = {}
+		local passes = {
 			{
 				data = UITooltipPasses.level_info.setup_data(),
 				draw = UITooltipPasses.level_info.draw
 			}
-		}, {
+		}
+
+		pass_data.end_pass = {
 			data = UITooltipPasses.background.setup_data(),
 			draw = UITooltipPasses.background.draw
 		}
-		tbl.size = {
+		pass_data.passes = passes
+		pass_data.size = {
 			300,
 			0
 		}
-		tbl.alpha_multiplier = 1
+		pass_data.alpha_multiplier = 1
 
-		return tbl
+		return pass_data
 	end,
-	update = function (arg_89_0, arg_89_1, arg_89_2, arg_89_3, arg_89_4, arg_89_5, arg_89_6, arg_89_7, arg_89_8)
+	update = function (ui_renderer, pass_data, ui_scenegraph, pass_definition, ui_style, ui_content, input_service, dt, visible)
 		-- function 89
-		if not arg_89_8 then
-			arg_89_1.alpha_progress = 0
-			arg_89_1.alpha_wait_time = UISettings.tooltip_wait_duration
+		if not visible then
+			pass_data.alpha_progress = 0
+			pass_data.alpha_wait_time = UISettings.tooltip_wait_duration
 		end
 	end,
-	draw = function (arg_90_0, arg_90_1, arg_90_2, arg_90_3, arg_90_4, arg_90_5, arg_90_6, arg_90_7, arg_90_8, arg_90_9)
+	draw = function (ui_renderer, pass_data, ui_scenegraph, pass_definition, ui_style, ui_content, position, parent_size, input_service, dt)
 		-- function 90
-		local var_90_0 = arg_90_5[arg_90_3.level_id]
+		local level_data = ui_content[pass_definition.level_id]
 
-		if not var_90_0 then
+		if not level_data then
 			return
 		end
 
-		local alpha_wait_time = arg_90_1.alpha_wait_time
-		local alpha_progress = arg_90_1.alpha_progress
+		local alpha_wait_time = pass_data.alpha_wait_time
+		local alpha_progress = pass_data.alpha_progress
 
-		if not alpha_wait_time then
-			local num = alpha_wait_time - arg_90_9
+		if alpha_wait_time then
+			alpha_wait_time = alpha_wait_time - dt
 
-			if num <= 0 then
-				arg_90_1.alpha_wait_time = nil
+			if alpha_wait_time <= 0 then
+				pass_data.alpha_wait_time = nil
 			else
-				arg_90_1.alpha_wait_time = num
+				pass_data.alpha_wait_time = alpha_wait_time
 			end
 
-			arg_90_1.alpha_multiplier = 0
-		elseif not alpha_progress then
+			pass_data.alpha_multiplier = 0
+		elseif alpha_progress then
 			local tooltip_fade_in_speed = UISettings.tooltip_fade_in_speed
-			local min = math.min(alpha_progress + arg_90_9 * tooltip_fade_in_speed, 1)
+			local new_alpha_progress = math.min(alpha_progress + dt * tooltip_fade_in_speed, 1)
 
-			arg_90_1.alpha_multiplier = math.easeOutCubic(min)
+			pass_data.alpha_multiplier = math.easeOutCubic(new_alpha_progress)
 
-			if min == 1 then
-				arg_90_1.alpha_progress = nil
+			if new_alpha_progress == 1 then
+				pass_data.alpha_progress = nil
 			else
-				arg_90_1.alpha_progress = min
+				pass_data.alpha_progress = new_alpha_progress
 			end
 		end
 
-		local size = arg_90_1.size
+		local size = pass_data.size
 
 		size[2] = 0
 
-		local flag = true
+		local draw_downwards = true
 
-		arg_90_6[1] = arg_90_6[1] + arg_90_7[1] / 2 - size[1] / 2
+		position[1] = position[1] + parent_size[1] / 2 - size[1] / 2
 
-		local num_2 = 0
-		local passes = arg_90_1.passes
-		local flag_2 = false
-		local end_pass = arg_90_1.end_pass
+		local tooltip_total_height = 0
+		local passes = pass_data.passes
+		local draw = false
+		local end_pass = pass_data.end_pass
 
-		if not end_pass then
+		if end_pass then
+			local data = end_pass.data
+			local pass_height = end_pass.draw(data, draw, draw_downwards, ui_renderer, pass_data, ui_scenegraph, pass_definition, ui_style, ui_content, position, size, input_service, dt)
+
+			tooltip_total_height = tooltip_total_height + pass_height
+		end
+
+		local frame_margin_2 = end_pass.data.frame_margin
+
+		if not frame_margin_2 then
+			-- Nothing
+		end
+
+		frame_margin_2 = 0
+
+		local frame_margin = frame_margin_2
+
+		::label_90_0::
+
+		for _, tooltip_pass in ipairs(passes) do
+			local data = tooltip_pass.data
+
+			data.frame_margin = frame_margin
+
+			local pass_height = tooltip_pass.draw(data, draw, draw_downwards, ui_renderer, pass_data, ui_scenegraph, pass_definition, ui_style, ui_content, position, size, input_service, dt, level_data)
+
+			tooltip_total_height = tooltip_total_height + pass_height
+		end
+
+		position[2] = position[2] + parent_size[2] + tooltip_total_height
+
+		local position_x = position[1]
+		local position_y = position[2]
+		local position_z = position[3]
+
+		draw = true
+
+		for _, tooltip_pass in ipairs(passes) do
+			local data = tooltip_pass.data
+
+			data.frame_margin = frame_margin
+
+			local pass_height = tooltip_pass.draw(data, draw, draw_downwards, ui_renderer, pass_data, ui_scenegraph, pass_definition, ui_style, ui_content, position, size, input_service, dt, level_data)
+
+			size[2] = size[2] + pass_height
+			position[2] = position[2] - pass_height
+		end
+
+		position[1] = position_x
+		position[2] = position_y
+		position[3] = position_z
+
+		if end_pass then
 			local data = end_pass.data
 
-			num_2 = num_2 + end_pass.draw(data, flag_2, flag, arg_90_0, arg_90_1, arg_90_2, arg_90_3, arg_90_4, arg_90_5, arg_90_6, size, arg_90_8, arg_90_9)
-		end
-
-		local frame_margin = end_pass.data.frame_margin
-
-		frame_margin = frame_margin or 0
-
-		for i, v in ipairs(passes) do
-			local data_2 = v.data
-
-			data_2.frame_margin = frame_margin
-			num_2 = num_2 + v.draw(data_2, flag_2, flag, arg_90_0, arg_90_1, arg_90_2, arg_90_3, arg_90_4, arg_90_5, arg_90_6, size, arg_90_8, arg_90_9, var_90_0)
-		end
-
-		arg_90_6[2] = arg_90_6[2] + arg_90_7[2] + num_2
-
-		local var_90_15 = arg_90_6[1]
-		local var_90_16 = arg_90_6[2]
-		local var_90_17 = arg_90_6[3]
-		local flag_3 = true
-
-		for i_2, v_2 in ipairs(passes) do
-			local data_3 = v_2.data
-
-			data_3.frame_margin = frame_margin
-
-			local draw = v_2.draw(data_3, flag_3, flag, arg_90_0, arg_90_1, arg_90_2, arg_90_3, arg_90_4, arg_90_5, arg_90_6, size, arg_90_8, arg_90_9, var_90_0)
-
-			size[2] = size[2] + draw
-			arg_90_6[2] = arg_90_6[2] - draw
-		end
-
-		arg_90_6[1] = var_90_15
-		arg_90_6[2] = var_90_16
-		arg_90_6[3] = var_90_17
-
-		if not end_pass then
-			local data_4 = end_pass.data
-
-			end_pass.draw(data_4, flag_3, flag, arg_90_0, arg_90_1, arg_90_2, arg_90_3, arg_90_4, arg_90_5, arg_90_6, size, arg_90_8, arg_90_9)
+			end_pass.draw(data, draw, draw_downwards, ui_renderer, pass_data, ui_scenegraph, pass_definition, ui_style, ui_content, position, size, input_service, dt)
 		end
 	end
 }
 UIPasses.hero_power_tooltip = {
-	init = function (arg_91_0, arg_91_1, arg_91_2)
+	init = function (pass_definition, ui_content, ui_style)
 		-- function 91
-		local tbl = {}
-
-		tbl.passes, tbl.end_pass = {
+		local pass_data = {}
+		local passes = {
 			{
 				data = UITooltipPasses.hero_power_title.setup_data(),
 				draw = UITooltipPasses.hero_power_title.draw
@@ -3934,244 +4328,282 @@ UIPasses.hero_power_tooltip = {
 				data = UITooltipPasses.hero_power_description.setup_data(),
 				draw = UITooltipPasses.hero_power_description.draw
 			}
-		}, {
+		}
+
+		pass_data.end_pass = {
 			data = UITooltipPasses.background.setup_data(),
 			draw = UITooltipPasses.background.draw
 		}
-		tbl.size = {
+		pass_data.passes = passes
+		pass_data.size = {
 			400,
 			0
 		}
-		tbl.alpha_multiplier = 1
-		tbl.player = nil
+		pass_data.alpha_multiplier = 1
+		pass_data.player = nil
 
-		return tbl
+		return pass_data
 	end,
-	update = function (arg_92_0, arg_92_1, arg_92_2, arg_92_3, arg_92_4, arg_92_5, arg_92_6, arg_92_7, arg_92_8)
+	update = function (ui_renderer, pass_data, ui_scenegraph, pass_definition, ui_style, ui_content, input_service, dt, visible)
 		-- function 92
-		if not arg_92_8 then
-			arg_92_1.player = nil
-			arg_92_1.alpha_progress = 0
-			arg_92_1.alpha_wait_time = UISettings.tooltip_wait_duration
+		if not visible then
+			pass_data.player = nil
+			pass_data.alpha_progress = 0
+			pass_data.alpha_wait_time = UISettings.tooltip_wait_duration
 		end
 	end,
-	draw = function (arg_93_0, arg_93_1, arg_93_2, arg_93_3, arg_93_4, arg_93_5, arg_93_6, arg_93_7, arg_93_8, arg_93_9)
+	draw = function (ui_renderer, pass_data, ui_scenegraph, pass_definition, ui_style, ui_content, position, parent_size, input_service, dt)
 		-- function 93
-		if not arg_93_1.player then
-			arg_93_1.player = Managers.player:local_player()
+		if not pass_data.player then
+			pass_data.player = Managers.player:local_player()
 		end
 
-		local alpha_wait_time = arg_93_1.alpha_wait_time
-		local alpha_progress = arg_93_1.alpha_progress
+		local alpha_wait_time = pass_data.alpha_wait_time
+		local alpha_progress = pass_data.alpha_progress
 
-		if not alpha_wait_time then
-			local num = alpha_wait_time - arg_93_9
+		if alpha_wait_time then
+			alpha_wait_time = alpha_wait_time - dt
 
-			if num <= 0 then
-				arg_93_1.alpha_wait_time = nil
+			if alpha_wait_time <= 0 then
+				pass_data.alpha_wait_time = nil
 			else
-				arg_93_1.alpha_wait_time = num
+				pass_data.alpha_wait_time = alpha_wait_time
 			end
 
-			arg_93_1.alpha_multiplier = 0
-		elseif not alpha_progress then
+			pass_data.alpha_multiplier = 0
+		elseif alpha_progress then
 			local tooltip_fade_in_speed = UISettings.tooltip_fade_in_speed
-			local min = math.min(alpha_progress + arg_93_9 * tooltip_fade_in_speed, 1)
+			local new_alpha_progress = math.min(alpha_progress + dt * tooltip_fade_in_speed, 1)
 
-			arg_93_1.alpha_multiplier = math.easeOutCubic(min)
+			pass_data.alpha_multiplier = math.easeOutCubic(new_alpha_progress)
 
-			if min == 1 then
-				arg_93_1.alpha_progress = nil
+			if new_alpha_progress == 1 then
+				pass_data.alpha_progress = nil
 			else
-				arg_93_1.alpha_progress = min
+				pass_data.alpha_progress = new_alpha_progress
 			end
 		end
 
-		local size = arg_93_1.size
+		local size = pass_data.size
 
 		size[2] = 0
 
-		local flag = true
-		local num_2 = 0
-		local passes = arg_93_1.passes
-		local flag_2 = false
-		local end_pass = arg_93_1.end_pass
+		local draw_downwards = true
+		local tooltip_total_height = 0
+		local passes = pass_data.passes
+		local draw = false
+		local end_pass = pass_data.end_pass
 
-		if not end_pass then
+		if end_pass then
+			local data = end_pass.data
+			local pass_height = end_pass.draw(data, draw, draw_downwards, ui_renderer, pass_data, ui_scenegraph, pass_definition, ui_style, ui_content, position, size, input_service, dt)
+
+			tooltip_total_height = tooltip_total_height + pass_height
+		end
+
+		local frame_margin_2 = end_pass.data.frame_margin
+
+		if not frame_margin_2 then
+			-- Nothing
+		end
+
+		frame_margin_2 = 0
+
+		local frame_margin = frame_margin_2
+
+		::label_93_0::
+
+		position[1] = position[1] + parent_size[1] + frame_margin
+
+		for _, tooltip_pass in ipairs(passes) do
+			local data = tooltip_pass.data
+
+			data.frame_margin = frame_margin
+
+			local pass_height = tooltip_pass.draw(data, draw, draw_downwards, ui_renderer, pass_data, ui_scenegraph, pass_definition, ui_style, ui_content, position, size, input_service, dt)
+
+			tooltip_total_height = tooltip_total_height + pass_height
+		end
+
+		position[2] = position[2] + tooltip_total_height
+
+		local position_x = position[1]
+		local position_y = position[2]
+		local position_z = position[3]
+
+		draw = true
+
+		for _, tooltip_pass in ipairs(passes) do
+			local data = tooltip_pass.data
+
+			data.frame_margin = frame_margin
+
+			local pass_height = tooltip_pass.draw(data, draw, draw_downwards, ui_renderer, pass_data, ui_scenegraph, pass_definition, ui_style, ui_content, position, size, input_service, dt)
+
+			size[2] = size[2] + pass_height
+			position[2] = position[2] - pass_height
+		end
+
+		position[1] = position_x
+		position[2] = position_y
+		position[3] = position_z
+
+		if end_pass then
 			local data = end_pass.data
 
-			num_2 = num_2 + end_pass.draw(data, flag_2, flag, arg_93_0, arg_93_1, arg_93_2, arg_93_3, arg_93_4, arg_93_5, arg_93_6, size, arg_93_8, arg_93_9)
+			end_pass.draw(data, draw, draw_downwards, ui_renderer, pass_data, ui_scenegraph, pass_definition, ui_style, ui_content, position, size, input_service, dt)
 		end
 
-		local frame_margin = end_pass.data.frame_margin
-
-		frame_margin = frame_margin or 0
-		arg_93_6[1] = arg_93_6[1] + arg_93_7[1] + frame_margin
-
-		for i, v in ipairs(passes) do
-			local data_2 = v.data
-
-			data_2.frame_margin = frame_margin
-			num_2 = num_2 + v.draw(data_2, flag_2, flag, arg_93_0, arg_93_1, arg_93_2, arg_93_3, arg_93_4, arg_93_5, arg_93_6, size, arg_93_8, arg_93_9)
-		end
-
-		arg_93_6[2] = arg_93_6[2] + num_2
-
-		local var_93_14 = arg_93_6[1]
-		local var_93_15 = arg_93_6[2]
-		local var_93_16 = arg_93_6[3]
-		local flag_3 = true
-
-		for i_2, v_2 in ipairs(passes) do
-			local data_3 = v_2.data
-
-			data_3.frame_margin = frame_margin
-
-			local draw = v_2.draw(data_3, flag_3, flag, arg_93_0, arg_93_1, arg_93_2, arg_93_3, arg_93_4, arg_93_5, arg_93_6, size, arg_93_8, arg_93_9)
-
-			size[2] = size[2] + draw
-			arg_93_6[2] = arg_93_6[2] - draw
-		end
-
-		arg_93_6[1] = var_93_14
-		arg_93_6[2] = var_93_15
-		arg_93_6[3] = var_93_16
-
-		if not end_pass then
-			local data_4 = end_pass.data
-
-			end_pass.draw(data_4, flag_3, flag, arg_93_0, arg_93_1, arg_93_2, arg_93_3, arg_93_4, arg_93_5, arg_93_6, size, arg_93_8, arg_93_9)
-		end
-
-		arg_93_6[1] = var_93_14
-		arg_93_6[2] = var_93_15
-		arg_93_6[3] = var_93_16
+		position[1] = position_x
+		position[2] = position_y
+		position[3] = position_z
 	end
 }
 UIPasses.option_tooltip = {
-	init = function (arg_94_0, arg_94_1, arg_94_2)
+	init = function (pass_definition, ui_content, ui_style)
 		-- function 94
-		local tbl = {}
-
-		tbl.passes, tbl.end_pass = {
+		local pass_data = {}
+		local passes = {
 			{
 				data = UITooltipPasses.generic_text.setup_data(),
 				draw = UITooltipPasses.generic_text.draw
 			}
-		}, {
+		}
+
+		pass_data.end_pass = {
 			data = UITooltipPasses.background.setup_data(),
 			draw = UITooltipPasses.background.draw
 		}
-		tbl.size = {
+		pass_data.passes = passes
+		pass_data.size = {
 			600,
 			0
 		}
-		tbl.alpha_multiplier = 1
+		pass_data.alpha_multiplier = 1
 
-		return tbl
+		return pass_data
 	end,
-	update = function (arg_95_0, arg_95_1, arg_95_2, arg_95_3, arg_95_4, arg_95_5, arg_95_6, arg_95_7, arg_95_8)
+	update = function (ui_renderer, pass_data, ui_scenegraph, pass_definition, ui_style, ui_content, input_service, dt, visible)
 		-- function 95
-		if not arg_95_8 then
-			arg_95_1.alpha_progress = 0
-			arg_95_1.alpha_wait_time = UISettings.tooltip_wait_duration
+		if not visible then
+			pass_data.alpha_progress = 0
+			pass_data.alpha_wait_time = UISettings.tooltip_wait_duration
 		end
 	end,
-	draw = function (arg_96_0, arg_96_1, arg_96_2, arg_96_3, arg_96_4, arg_96_5, arg_96_6, arg_96_7, arg_96_8, arg_96_9)
+	draw = function (ui_renderer, pass_data, ui_scenegraph, pass_definition, ui_style, ui_content, position, parent_size, input_service, dt)
 		-- function 96
-		if not Managers.input:is_device_active("gamepad") then
+		local gamepad_active = Managers.input:is_device_active("gamepad")
+
+		if gamepad_active then
 			Managers.input:set_showing_tooltip(true)
 		end
 
-		local alpha_wait_time = arg_96_1.alpha_wait_time
-		local alpha_progress = arg_96_1.alpha_progress
+		local alpha_wait_time = pass_data.alpha_wait_time
+		local alpha_progress = pass_data.alpha_progress
 
-		if not alpha_wait_time then
-			local num = alpha_wait_time - arg_96_9
+		if alpha_wait_time then
+			alpha_wait_time = alpha_wait_time - dt
 
-			if num <= 0 then
-				arg_96_1.alpha_wait_time = nil
+			if alpha_wait_time <= 0 then
+				pass_data.alpha_wait_time = nil
 			else
-				arg_96_1.alpha_wait_time = num
+				pass_data.alpha_wait_time = alpha_wait_time
 			end
 
-			arg_96_1.alpha_multiplier = 0
-		elseif not alpha_progress then
+			pass_data.alpha_multiplier = 0
+		elseif alpha_progress then
 			local tooltip_fade_in_speed = UISettings.tooltip_fade_in_speed
-			local min = math.min(alpha_progress + arg_96_9 * tooltip_fade_in_speed, 1)
+			local new_alpha_progress = math.min(alpha_progress + dt * tooltip_fade_in_speed, 1)
 
-			arg_96_1.alpha_multiplier = math.easeOutCubic(min)
+			pass_data.alpha_multiplier = math.easeOutCubic(new_alpha_progress)
 
-			if min == 1 then
-				arg_96_1.alpha_progress = nil
+			if new_alpha_progress == 1 then
+				pass_data.alpha_progress = nil
 			else
-				arg_96_1.alpha_progress = min
+				pass_data.alpha_progress = new_alpha_progress
 			end
 		end
 
-		local size = arg_96_1.size
+		local size = pass_data.size
 
 		size[2] = 0
 
-		local flag = true
-		local num_2 = 0
-		local passes = arg_96_1.passes
-		local flag_2 = false
-		local end_pass = arg_96_1.end_pass
+		local draw_downwards = true
+		local tooltip_total_height = 0
+		local passes = pass_data.passes
+		local draw = false
+		local end_pass = pass_data.end_pass
 
-		if not end_pass then
+		if end_pass then
+			local data = end_pass.data
+			local pass_height = end_pass.draw(data, draw, draw_downwards, ui_renderer, pass_data, ui_scenegraph, pass_definition, ui_style, ui_content, position, size, input_service, dt)
+
+			tooltip_total_height = tooltip_total_height + pass_height
+		end
+
+		local frame_margin_2 = end_pass.data.frame_margin
+
+		if not frame_margin_2 then
+			-- Nothing
+		end
+
+		frame_margin_2 = 0
+
+		local frame_margin = frame_margin_2
+
+		::label_96_0::
+
+		for _, tooltip_pass in ipairs(passes) do
+			local data = tooltip_pass.data
+
+			data.frame_margin = frame_margin
+
+			local pass_height = tooltip_pass.draw(data, draw, draw_downwards, ui_renderer, pass_data, ui_scenegraph, pass_definition, ui_style, ui_content, position, size, input_service, dt)
+
+			tooltip_total_height = tooltip_total_height + pass_height
+		end
+
+		position[2] = position[2] + parent_size[2] + tooltip_total_height
+
+		local position_x = position[1]
+		local position_y = position[2]
+		local position_z = position[3]
+
+		draw = true
+
+		for _, tooltip_pass in ipairs(passes) do
+			local data = tooltip_pass.data
+
+			data.frame_margin = frame_margin
+
+			local pass_height = tooltip_pass.draw(data, draw, draw_downwards, ui_renderer, pass_data, ui_scenegraph, pass_definition, ui_style, ui_content, position, size, input_service, dt)
+
+			size[2] = size[2] + pass_height
+			position[2] = position[2] - pass_height
+		end
+
+		position[1] = position_x
+		position[2] = position_y
+		position[3] = position_z
+
+		if end_pass then
 			local data = end_pass.data
 
-			num_2 = num_2 + end_pass.draw(data, flag_2, flag, arg_96_0, arg_96_1, arg_96_2, arg_96_3, arg_96_4, arg_96_5, arg_96_6, size, arg_96_8, arg_96_9)
-		end
-
-		local frame_margin = end_pass.data.frame_margin
-
-		frame_margin = frame_margin or 0
-
-		for i, v in ipairs(passes) do
-			local data_2 = v.data
-
-			data_2.frame_margin = frame_margin
-			num_2 = num_2 + v.draw(data_2, flag_2, flag, arg_96_0, arg_96_1, arg_96_2, arg_96_3, arg_96_4, arg_96_5, arg_96_6, size, arg_96_8, arg_96_9)
-		end
-
-		arg_96_6[2] = arg_96_6[2] + arg_96_7[2] + num_2
-
-		local var_96_14 = arg_96_6[1]
-		local var_96_15 = arg_96_6[2]
-		local var_96_16 = arg_96_6[3]
-		local flag_3 = true
-
-		for i_2, v_2 in ipairs(passes) do
-			local data_3 = v_2.data
-
-			data_3.frame_margin = frame_margin
-
-			local draw = v_2.draw(data_3, flag_3, flag, arg_96_0, arg_96_1, arg_96_2, arg_96_3, arg_96_4, arg_96_5, arg_96_6, size, arg_96_8, arg_96_9)
-
-			size[2] = size[2] + draw
-			arg_96_6[2] = arg_96_6[2] - draw
-		end
-
-		arg_96_6[1] = var_96_14
-		arg_96_6[2] = var_96_15
-		arg_96_6[3] = var_96_16
-
-		if not end_pass then
-			local data_4 = end_pass.data
-
-			end_pass.draw(data_4, flag_3, flag, arg_96_0, arg_96_1, arg_96_2, arg_96_3, arg_96_4, arg_96_5, arg_96_6, size, arg_96_8, arg_96_9)
+			end_pass.draw(data, draw, draw_downwards, ui_renderer, pass_data, ui_scenegraph, pass_definition, ui_style, ui_content, position, size, input_service, dt)
 		end
 	end
 }
 UIPasses.item_tooltip = {
-	init = function (self, arg_97_1, arg_97_2)
+	init = function (pass_definition, ui_content, ui_style)
 		-- function 97
-		local tbl = {}
-		local content_passes = self.content_passes
+		local pass_data = {}
+		local content_passes = pass_definition.content_passes
 
-		content_passes = content_passes or {
+		if not content_passes then
+			-- Nothing
+		end
+
+		content_passes = {
 			"equipped_item_title",
 			"item_titles",
 			"skin_applied",
@@ -4203,88 +4635,103 @@ UIPasses.item_tooltip = {
 			"detailed_stats_ranged_heavy"
 		}
 
-		local tbl_2 = {}
-		local pass_styles = arg_97_2.pass_styles
+		local pass_definitions = content_passes
 
-		for i, v in ipairs(content_passes) do
-			local flag = not pass_styles and pass_styles[v]
+		::label_97_0::
 
-			tbl_2[#tbl_2 + 1] = {
-				data = UITooltipPasses[v].setup_data(flag),
-				draw = UITooltipPasses[v].draw
+		local passes = {}
+		local pass_styles = ui_style.pass_styles
+
+		for _, pass_name in ipairs(pass_definitions) do
+			local pass_style = not not pass_styles and not not pass_styles[pass_name]
+
+			passes[#passes + 1] = {
+				data = UITooltipPasses[pass_name].setup_data(pass_style),
+				draw = UITooltipPasses[pass_name].draw
 			}
 		end
 
-		local flag_2 = not pass_styles and pass_styles.item_background
+		local pass_style = not not pass_styles and not not pass_styles.item_background
 
-		tbl.end_pass = {
-			data = UITooltipPasses.item_background.setup_data(flag_2),
+		pass_data.end_pass = {
+			data = UITooltipPasses.item_background.setup_data(pass_style),
 			draw = UITooltipPasses.item_background.draw
 		}
-		tbl.passes = tbl_2
-		tbl.size = {
+		pass_data.passes = passes
+		pass_data.size = {
 			400,
 			0
 		}
-		tbl.alpha_multiplier = 1
-		tbl.items = {}
+		pass_data.alpha_multiplier = 1
+		pass_data.items = {}
 
-		local disable_fade_in = arg_97_1.disable_fade_in
-		local tbl_3
+		local disable_fade_in = ui_content.disable_fade_in
+		local tbl
 
-		if not disable_fade_in then
-			tbl_3 = {
+		if disable_fade_in then
+			tbl = {
 				1,
 				1,
 				1,
 				1
 			}
 
-			if not tbl_3 then
+			if not tbl then
 				-- Nothing
 			end
 		end
 
-		tbl_3 = {
+		tbl = {
 			0,
 			0,
 			0,
 			0
 		}
 
-		::label_97_0::
+		::label_97_1::
 
-		tbl.items_alpha_progress = tbl_3
+		pass_data.items_alpha_progress = tbl
 
-		local flag_3
+		local num
 
-		flag_3 = not disable_fade_in and 0 and UISettings.tooltip_wait_duration
-		tbl.alpha_wait_times = {
-			flag_3,
-			flag_3 * 2,
-			flag_3 * 2,
-			flag_3 * 2
+		if disable_fade_in then
+			num = 0
+
+			goto label_97_2
+		end
+
+		num = UISettings.tooltip_wait_duration
+
+		local tooltip_wait_duration = num
+
+		::label_97_2::
+
+		pass_data.alpha_wait_times = {
+			tooltip_wait_duration,
+			tooltip_wait_duration * 2,
+			tooltip_wait_duration * 2,
+			tooltip_wait_duration * 2
 		}
-		tbl.tooltip_sizes = {}
-		tbl.equipped_items = {}
-		tbl.player = nil
+		pass_data.tooltip_sizes = {}
+		pass_data.equipped_items = {}
+		pass_data.player = nil
 
-		return tbl
+		return pass_data
 	end,
-	update = function (arg_98_0, arg_98_1, arg_98_2, arg_98_3, arg_98_4, arg_98_5, arg_98_6, arg_98_7, arg_98_8)
+	update = function (ui_renderer, pass_data, ui_scenegraph, pass_definition, ui_style, ui_content, input_service, dt, visible)
 		-- function 98
-		if not arg_98_8 then
-			arg_98_1.player = nil
+		if not visible then
+			pass_data.player = nil
 
 			local tooltip_wait_duration = UISettings.tooltip_wait_duration
 
-			arg_98_1.alpha_progress = 0
-			arg_98_1.alpha_wait_time = tooltip_wait_duration
+			pass_data.alpha_progress = 0
+			pass_data.alpha_wait_time = tooltip_wait_duration
 
-			local alpha_wait_times = arg_98_1.alpha_wait_times
-			local items_alpha_progress = arg_98_1.items_alpha_progress
+			local alpha_wait_times = pass_data.alpha_wait_times
+			local items_alpha_progress = pass_data.items_alpha_progress
 
-			if not alpha_wait_times then
+			if alpha_wait_times then
 				for i = 1, 4 do
 					alpha_wait_times[i] = tooltip_wait_duration * 2
 					items_alpha_progress[i] = 0
@@ -4292,107 +4739,136 @@ UIPasses.item_tooltip = {
 			end
 		end
 	end,
-	draw = function (arg_99_0, arg_99_1, arg_99_2, arg_99_3, arg_99_4, arg_99_5, arg_99_6, arg_99_7, arg_99_8, arg_99_9)
+	draw = function (ui_renderer, pass_data, ui_scenegraph, pass_definition, ui_style, ui_content, position, parent_size, input_service, dt)
 		-- function 99
-		if not arg_99_1.player then
-			arg_99_1.player = Managers.player:local_player()
+		if not pass_data.player then
+			pass_data.player = Managers.player:local_player()
 		end
 
-		local var_99_0 = arg_99_5[arg_99_3.item_id]
+		local preview_item = ui_content[pass_definition.item_id]
 
-		if not var_99_0 then
+		if not preview_item then
 			return
 		end
 
-		local items = arg_99_1.items
+		local items = pass_data.items
 
 		table.clear(items)
 
-		items[1] = var_99_0
+		items[1] = preview_item
 
-		local backend_id = var_99_0.backend_id
-		local slot_type = var_99_0.data.slot_type
-		local flag = not not arg_99_5.no_equipped_item or arg_99_5.equipped_item
+		local preview_item_backend_id = preview_item.backend_id
+		local preview_item_data = preview_item.data
+		local slot_type = preview_item_data.slot_type
+		local equipped_item = not ui_content.no_equipped_item and not not ui_content.equipped_item
 
-		if not flag then
-			items[2] = flag
+		if equipped_item then
+			items[2] = equipped_item
 
-			table.clear(arg_99_1.equipped_items)
+			table.clear(pass_data.equipped_items)
 
-			arg_99_1.equipped_items[1] = flag
+			pass_data.equipped_items[1] = equipped_item
 		end
 
-		if (arg_99_5.no_equipped_item or flag or not slot_type) and not InventorySettings.slot_names_by_type[slot_type] then
-			local player = arg_99_1.player
+		if not ui_content.no_equipped_item and not equipped_item and slot_type then
+			local slot_names = InventorySettings.slot_names_by_type[slot_type]
 
-			if not player then
-				local equipped_items = arg_99_1.equipped_items
+			if slot_names then
+				local player = pass_data.player
 
-				table.clear(equipped_items)
+				if player then
+					local equipped_items = pass_data.equipped_items
 
-				local get_interface = Managers.backend:get_interface("items")
-				local profile_index = arg_99_5.profile_index
+					table.clear(equipped_items)
 
-				profile_index = profile_index or player:profile_index()
+					local backend_items = Managers.backend:get_interface("items")
+					local profile_index_2 = ui_content.profile_index
 
-				local career_index = arg_99_5.career_index
+					if not profile_index_2 then
+						-- Nothing
+					end
 
-				career_index = career_index or player:career_index()
+					profile_index_2 = player:profile_index()
 
-				local name = SPProfiles[profile_index].careers[career_index].name
-				local var_99_11 = get_interface:get_loadout()[name]
+					local profile_index = profile_index_2
 
-				for k, v in pairs(var_99_11) do
-					table.insert(equipped_items, get_interface:get_item_from_id(v))
-				end
+					::label_99_0::
 
-				local get_interface_2 = Managers.backend:get_interface("common")
-				local str = "slot_type == " .. slot_type
-				local filter_items = get_interface_2:filter_items(equipped_items, str)
+					local career_index_2 = ui_content.career_index
 
-				arg_99_1.equipped_items = filter_items
+					if not career_index_2 then
+						-- Nothing
+					end
 
-				for i, v_2 in ipairs(filter_items) do
-					if v_2.backend_id ~= backend_id then
-						items[#items + 1] = v_2
+					career_index_2 = player:career_index()
+
+					local career_index = career_index_2
+
+					::label_99_1::
+
+					local hero_data = SPProfiles[profile_index]
+					local career_data = hero_data.careers[career_index]
+					local career_name = career_data.name
+					local loadout = backend_items:get_loadout()[career_name]
+
+					for _, item_id in pairs(loadout) do
+						table.insert(equipped_items, backend_items:get_item_from_id(item_id))
+					end
+
+					local backend_common = Managers.backend:get_interface("common")
+					local item_filter = "slot_type == " .. slot_type
+
+					equipped_items = backend_common:filter_items(equipped_items, item_filter)
+					pass_data.equipped_items = equipped_items
+
+					for _, item in ipairs(equipped_items) do
+						if item.backend_id ~= preview_item_backend_id then
+							items[#items + 1] = item
+						end
 					end
 				end
 			end
 		end
 
 		local scale = RESOLUTION_LOOKUP.scale
-		local inv_scale = RESOLUTION_LOOKUP.inv_scale
-		local var_99_17
-		local size = arg_99_1.size
-		local res_w = RESOLUTION_LOOKUP.res_w
-		local res_h = RESOLUTION_LOOKUP.res_h
-		local var_99_21
-		local num
+		local scale_inversed = RESOLUTION_LOOKUP.inv_scale
+		local wanted_max_height
+		local size = pass_data.size
+		local res_w, res_h = RESOLUTION_LOOKUP.res_w, RESOLUTION_LOOKUP.res_h
+		local direction
 
-		if not (arg_99_5.force_equipped_item_on_left or arg_99_5.force_equipped_item_on_right or not ((arg_99_6[1] + arg_99_7[1] * 0.5) * scale > res_w * 0.5)) then
-			arg_99_6[1] = arg_99_6[1] - size[1] - 5
-			num = -1
+		if ui_content.force_equipped_item_on_left or not ui_content.force_equipped_item_on_right and (position[1] + parent_size[1] * 0.5) * scale > res_w * 0.5 then
+			position[1] = position[1] - size[1] - 5
+			direction = -1
 		else
-			arg_99_6[1] = arg_99_6[1] + arg_99_7[1] + 5
-			num = 1
+			position[1] = position[1] + parent_size[1] + 5
+			direction = 1
 		end
 
-		local var_99_23 = arg_99_6[1]
-		local var_99_24 = arg_99_6[3]
-		local tooltip_sizes = arg_99_1.tooltip_sizes
+		local start_position_x = position[1]
+		local start_position_z = position[3]
+		local tooltip_sizes = pass_data.tooltip_sizes
 
-		for i_2, v_3 in ipairs(items) do
-			local end_pass = arg_99_1.end_pass
-			local frame_margin = end_pass.data.frame_margin
+		for index, item in ipairs(items) do
+			local end_pass = pass_data.end_pass
+			local frame_margin_2 = end_pass.data.frame_margin
 
-			frame_margin = frame_margin or 0
+			if not frame_margin_2 then
+				-- Nothing
+			end
 
-			local passes = arg_99_1.passes
-			local flag_2 = false
-			local flag_3 = true
+			frame_margin_2 = 0
+
+			local frame_margin = frame_margin_2
+
+			::label_99_2::
+
+			local passes = pass_data.passes
+			local draw = false
+			local draw_downwards = true
 			local ipairs
 
-			if not flag_3 then
+			if draw_downwards then
 				ipairs = ipairs
 
 				if not ipairs then
@@ -4402,39 +4878,45 @@ UIPasses.item_tooltip = {
 
 			ipairs = ripairs
 
-			::label_99_0::
+			local loop_func = ipairs
 
-			local num_2 = 0
+			::label_99_3::
 
-			if not end_pass then
+			local tooltip_total_height = 0
+
+			if end_pass then
 				local data = end_pass.data
+				local pass_height = end_pass.draw(data, draw, draw_downwards, ui_renderer, pass_data, ui_scenegraph, pass_definition, ui_style, ui_content, position, size, input_service, dt, item)
 
-				num_2 = num_2 + end_pass.draw(data, flag_2, flag_3, arg_99_0, arg_99_1, arg_99_2, arg_99_3, arg_99_4, arg_99_5, arg_99_6, size, arg_99_8, arg_99_9, v_3)
+				tooltip_total_height = tooltip_total_height + pass_height
 			end
 
-			for iter_99_6, iter_99_7 in ipairs(passes) do
-				local data_2 = iter_99_7.data
+			for _, tooltip_pass in loop_func(passes) do
+				local data = tooltip_pass.data
 
-				data_2.frame_margin = frame_margin
-				num_2 = num_2 + iter_99_7.draw(data_2, flag_2, flag_3, arg_99_0, arg_99_1, arg_99_2, arg_99_3, arg_99_4, arg_99_5, arg_99_6, size, arg_99_8, arg_99_9, v_3)
+				data.frame_margin = frame_margin
+
+				local pass_height = tooltip_pass.draw(data, draw, draw_downwards, ui_renderer, pass_data, ui_scenegraph, pass_definition, ui_style, ui_content, position, size, input_service, dt, item)
+
+				tooltip_total_height = tooltip_total_height + pass_height
 			end
 
-			tooltip_sizes[i_2] = num_2
+			tooltip_sizes[index] = tooltip_total_height
 		end
 
-		local num_3 = 40 * scale
-		local num_4 = 30 * scale
-		local count = #items
-		local alpha_wait_times = arg_99_1.alpha_wait_times
-		local items_alpha_progress = arg_99_1.items_alpha_progress
+		local top_spacing = 40 * scale
+		local equipped_panel_height = 30 * scale
+		local num_items = #items
+		local alpha_wait_times = pass_data.alpha_wait_times
+		local items_alpha_progress = pass_data.items_alpha_progress
 
-		for i_3, v_4 in ipairs(items) do
+		for index, item in ipairs(items) do
 			size[2] = 0
 
-			local flag_4 = true
+			local draw_downwards = true
 			local ipairs_2
 
-			if not flag_4 then
+			if draw_downwards then
 				ipairs_2 = ipairs
 
 				if not ipairs_2 then
@@ -4444,278 +4926,310 @@ UIPasses.item_tooltip = {
 
 			ipairs_2 = ripairs
 
-			::label_99_1::
+			local loop_func = ipairs_2
 
-			local passes_2 = arg_99_1.passes
-			local var_99_43
-			local end_pass_2 = arg_99_1.end_pass
-			local frame_margin_2 = end_pass_2.data.frame_margin
+			::label_99_4::
 
-			frame_margin_2 = frame_margin_2 or 0
+			local passes = pass_data.passes
+			local draw
+			local end_pass = pass_data.end_pass
+			local frame_margin_3 = end_pass.data.frame_margin
 
-			local var_99_46 = tooltip_sizes[i_3]
-			local flag_5 = count == 3
-			local flag_6 = i_3 == 1
-			local var_99_49 = alpha_wait_times[i_3]
+			if not frame_margin_3 then
+				-- Nothing
+			end
 
-			if not var_99_49 then
-				if not (flag_6 or alpha_wait_times[1]) then
-					local num_5 = var_99_49 - arg_99_9
+			frame_margin_3 = 0
 
-					if num_5 <= 0 then
-						alpha_wait_times[i_3] = nil
+			local frame_margin = frame_margin_3
+
+			::label_99_5::
+
+			local tooltip_total_height = tooltip_sizes[index]
+			local has_dubble_compares = num_items == 3
+			local first_item = index == 1
+			local alpha_wait_time = alpha_wait_times[index]
+
+			if alpha_wait_time then
+				if first_item or not alpha_wait_times[1] then
+					alpha_wait_time = alpha_wait_time - dt
+
+					if alpha_wait_time <= 0 then
+						alpha_wait_times[index] = nil
 					else
-						alpha_wait_times[i_3] = num_5
+						alpha_wait_times[index] = alpha_wait_time
 					end
 
-					arg_99_1.alpha_multiplier = 0
+					pass_data.alpha_multiplier = 0
 				end
 			else
-				local var_99_51 = items_alpha_progress[i_3]
+				local alpha_progress = items_alpha_progress[index]
 
-				if not var_99_51 then
+				if alpha_progress then
 					local tooltip_fade_in_speed = UISettings.tooltip_fade_in_speed
-					local min = math.min(var_99_51 + arg_99_9 * tooltip_fade_in_speed, 1)
+					local next_alpha_progress = math.min(alpha_progress + dt * tooltip_fade_in_speed, 1)
 
-					arg_99_1.alpha_multiplier = math.easeOutCubic(min)
+					pass_data.alpha_multiplier = math.easeOutCubic(next_alpha_progress)
 
-					if var_99_51 == 1 then
-						items_alpha_progress[i_3] = nil
+					if alpha_progress == 1 then
+						items_alpha_progress[index] = nil
 					else
-						items_alpha_progress[i_3] = min
+						items_alpha_progress[index] = next_alpha_progress
 					end
 				else
-					arg_99_1.alpha_multiplier = 1
+					pass_data.alpha_multiplier = 1
 				end
 
-				if not flag_6 then
-					local flag_7
+				if first_item then
+					local num
 
-					flag_7 = not arg_99_5.force_top_alignment and 0 and var_99_46
-					arg_99_6[2] = arg_99_6[2] + flag_7 - frame_margin_2 / 2
+					if ui_content.force_top_alignment then
+						num = 0
 
-					local num_6 = arg_99_6[2] * scale + num_3
-
-					if res_h < num_6 then
-						arg_99_6[2] = arg_99_6[2] - (num_6 - res_h) * inv_scale
+						goto label_99_6
 					end
 
-					var_99_17 = arg_99_6[2]
+					num = tooltip_total_height
+
+					local y_offset = num
+
+					::label_99_6::
+
+					position[2] = position[2] + y_offset - frame_margin / 2
+
+					local actual_screen_y_position = position[2] * scale + top_spacing
+
+					if res_h < actual_screen_y_position then
+						position[2] = position[2] - (actual_screen_y_position - res_h) * scale_inversed
+					end
+
+					wanted_max_height = position[2]
 				end
 
-				if not flag_6 then
-					if not (not flag_5 and not (res_h > tooltip_sizes[2] + tooltip_sizes[3])) then
-						arg_99_6[1] = var_99_23 + size[1] * num
+				if not first_item then
+					if has_dubble_compares and res_h > tooltip_sizes[2] + tooltip_sizes[3] then
+						position[1] = start_position_x + size[1] * direction
 
-						if var_99_17 - (tooltip_sizes[2] + tooltip_sizes[3] + num_4 * 2) < 0 then
-							if i_3 > 2 then
-								arg_99_6[1] = arg_99_6[1] + size[1] * num
+						local tooltip_bottom_y_position = wanted_max_height - (tooltip_sizes[2] + tooltip_sizes[3] + equipped_panel_height * 2)
+
+						if tooltip_bottom_y_position < 0 then
+							if index > 2 then
+								position[1] = position[1] + size[1] * direction
 							end
 
-							arg_99_6[2] = var_99_17
-						elseif i_3 == 2 then
-							arg_99_6[2] = var_99_17
+							position[2] = wanted_max_height
+						elseif index == 2 then
+							position[2] = wanted_max_height
 						else
-							arg_99_6[2] = var_99_17 - (tooltip_sizes[2] + num_4 * 2)
+							position[2] = wanted_max_height - (tooltip_sizes[2] + equipped_panel_height * 2)
 						end
 					else
-						arg_99_6[1] = arg_99_6[1] + size[1] * num
+						position[1] = position[1] + size[1] * direction
 
-						local num_7 = var_99_17 - var_99_46
+						local tooltip_bottom_y_position = wanted_max_height - tooltip_total_height
 
-						if num_7 < 0 then
-							arg_99_6[2] = var_99_17 + math.abs(num_7) + num_4
+						if tooltip_bottom_y_position < 0 then
+							position[2] = wanted_max_height + math.abs(tooltip_bottom_y_position) + equipped_panel_height
 						else
-							arg_99_6[2] = var_99_17
+							position[2] = wanted_max_height
 						end
 					end
 				end
 
-				local var_99_57 = arg_99_6[1]
-				local num_8 = arg_99_6[2] + frame_margin_2 / 2 * scale
-				local var_99_59 = arg_99_6[3]
-				local flag_8 = true
+				local position_x = position[1]
+				local position_y = position[2] + frame_margin / 2 * scale
+				local position_z = position[3]
 
-				for iter_99_10, iter_99_11 in ipairs_2(passes_2) do
-					local data_3 = iter_99_11.data
+				draw = true
 
-					data_3.frame_margin = frame_margin_2
-					data_3.equipped_items = arg_99_1.equipped_items
+				for _, tooltip_pass in loop_func(passes) do
+					local data = tooltip_pass.data
 
-					local draw = iter_99_11.draw(data_3, flag_8, flag_4, arg_99_0, arg_99_1, arg_99_2, arg_99_3, arg_99_4, arg_99_5, arg_99_6, size, arg_99_8, arg_99_9, v_4)
+					data.frame_margin = frame_margin
+					data.equipped_items = pass_data.equipped_items
 
-					size[2] = size[2] + draw
+					local pass_height = tooltip_pass.draw(data, draw, draw_downwards, ui_renderer, pass_data, ui_scenegraph, pass_definition, ui_style, ui_content, position, size, input_service, dt, item)
 
-					if not flag_4 then
-						arg_99_6[2] = arg_99_6[2] - draw
+					size[2] = size[2] + pass_height
+
+					if draw_downwards then
+						position[2] = position[2] - pass_height
 					else
-						arg_99_6[2] = arg_99_6[2] + draw
+						position[2] = position[2] + pass_height
 					end
 				end
 
-				arg_99_6[1] = var_99_57
-				arg_99_6[2] = num_8
-				arg_99_6[3] = var_99_59
+				position[1] = position_x
+				position[2] = position_y
+				position[3] = position_z
 
-				if not end_pass_2 then
-					local data_4 = end_pass_2.data
+				if end_pass then
+					local data = end_pass.data
 
-					end_pass_2.draw(data_4, flag_8, flag_4, arg_99_0, arg_99_1, arg_99_2, arg_99_3, arg_99_4, arg_99_5, arg_99_6, size, arg_99_8, arg_99_9, v_4)
+					end_pass.draw(data, draw, draw_downwards, ui_renderer, pass_data, ui_scenegraph, pass_definition, ui_style, ui_content, position, size, input_service, dt, item)
 				end
 			end
 
-			arg_99_6[3] = var_99_24
+			position[3] = start_position_z
 		end
 	end
 }
 UIPasses.talent_tooltip = {
-	init = function (arg_100_0, arg_100_1, arg_100_2)
+	init = function (pass_definition, ui_content, ui_style)
 		-- function 100
-		local tbl = {}
-
-		tbl.passes, tbl.end_pass = {
+		local pass_data = {}
+		local passes = {
 			{
 				data = UITooltipPasses.talent_text.setup_data(),
 				draw = UITooltipPasses.talent_text.draw
 			}
-		}, {
+		}
+
+		pass_data.end_pass = {
 			data = UITooltipPasses.background.setup_data(),
 			draw = UITooltipPasses.background.draw
 		}
-		tbl.size = {
+		pass_data.passes = passes
+		pass_data.size = {
 			400,
 			0
 		}
-		tbl.alpha_multiplier = 1
+		pass_data.alpha_multiplier = 1
 
-		return tbl
+		return pass_data
 	end,
-	update = function (arg_101_0, arg_101_1, arg_101_2, arg_101_3, arg_101_4, arg_101_5, arg_101_6, arg_101_7, arg_101_8)
+	update = function (ui_renderer, pass_data, ui_scenegraph, pass_definition, ui_style, ui_content, input_service, dt, visible)
 		-- function 101
-		if not arg_101_8 then
-			arg_101_1.alpha_progress = 0
-			arg_101_1.alpha_wait_time = UISettings.tooltip_wait_duration
+		if not visible then
+			pass_data.alpha_progress = 0
+			pass_data.alpha_wait_time = UISettings.tooltip_wait_duration
 		end
 	end,
-	draw = function (arg_102_0, arg_102_1, arg_102_2, arg_102_3, arg_102_4, arg_102_5, arg_102_6, arg_102_7, arg_102_8, arg_102_9)
+	draw = function (ui_renderer, pass_data, ui_scenegraph, pass_definition, ui_style, ui_content, position, parent_size, input_service, dt)
 		-- function 102
-		local var_102_0 = arg_102_5[arg_102_3.talent_id]
+		local talent = ui_content[pass_definition.talent_id]
 
-		if not var_102_0 then
+		if not talent then
 			return
 		end
 
-		local alpha_wait_time = arg_102_1.alpha_wait_time
-		local alpha_progress = arg_102_1.alpha_progress
+		local alpha_wait_time = pass_data.alpha_wait_time
+		local alpha_progress = pass_data.alpha_progress
 
-		if not alpha_wait_time then
-			local num = alpha_wait_time - arg_102_9
+		if alpha_wait_time then
+			alpha_wait_time = alpha_wait_time - dt
 
-			if num <= 0 then
-				arg_102_1.alpha_wait_time = nil
+			if alpha_wait_time <= 0 then
+				pass_data.alpha_wait_time = nil
 			else
-				arg_102_1.alpha_wait_time = num
+				pass_data.alpha_wait_time = alpha_wait_time
 			end
 
-			arg_102_1.alpha_multiplier = 0
-		elseif not alpha_progress then
+			pass_data.alpha_multiplier = 0
+		elseif alpha_progress then
 			local tooltip_fade_in_speed = UISettings.tooltip_fade_in_speed
-			local min = math.min(alpha_progress + arg_102_9 * tooltip_fade_in_speed, 1)
+			local next_alpha_progress = math.min(alpha_progress + dt * tooltip_fade_in_speed, 1)
 
-			arg_102_1.alpha_multiplier = math.easeOutCubic(min)
+			pass_data.alpha_multiplier = math.easeOutCubic(next_alpha_progress)
 
-			if min == 1 then
-				arg_102_1.alpha_progress = nil
+			if next_alpha_progress == 1 then
+				pass_data.alpha_progress = nil
 			else
-				arg_102_1.alpha_progress = min
+				pass_data.alpha_progress = next_alpha_progress
 			end
 		end
 
-		local size = arg_102_1.size
+		local size = pass_data.size
 
 		size[2] = 0
 
-		if not arg_102_4.draw_right then
-			arg_102_6[1] = arg_102_6[1] + arg_102_7[1]
+		if ui_style.draw_right then
+			position[1] = position[1] + parent_size[1]
 		else
-			arg_102_6[1] = arg_102_6[1] + 0.5 * (arg_102_7[1] - size[1])
+			position[1] = position[1] + 0.5 * (parent_size[1] - size[1])
 		end
 
-		local passes = arg_102_1.passes
-		local end_pass = arg_102_1.end_pass
-		local frame_margin
+		local passes = pass_data.passes
+		local end_pass = pass_data.end_pass
+		local frame_margin_2
 
-		if not end_pass then
-			frame_margin = end_pass.data.frame_margin
+		if end_pass then
+			frame_margin_2 = end_pass.data.frame_margin
 
-			if not frame_margin then
+			if not frame_margin_2 then
 				-- Nothing
 			end
 		end
 
-		frame_margin = 0
+		frame_margin_2 = 0
+
+		local frame_margin = frame_margin_2
 
 		::label_102_0::
 
-		local flag = arg_102_4.draw_downwards ~= false
+		local draw_downwards = ui_style.draw_downwards ~= false
 
-		if not flag then
-			local num_2 = 0
-			local flag_2 = false
+		if draw_downwards then
+			local tooltip_total_height = 0
+			local draw = false
 
-			if not end_pass then
+			if end_pass then
 				local data = end_pass.data
+				local pass_height = end_pass.draw(data, draw, draw_downwards, ui_renderer, pass_data, ui_scenegraph, pass_definition, ui_style, ui_content, position, size, input_service, dt)
 
-				num_2 = num_2 + end_pass.draw(data, flag_2, flag, arg_102_0, arg_102_1, arg_102_2, arg_102_3, arg_102_4, arg_102_5, arg_102_6, size, arg_102_8, arg_102_9)
+				tooltip_total_height = tooltip_total_height + pass_height
 			end
 
-			for i, v in ipairs(passes) do
-				local data_2 = v.data
+			for _, tooltip_pass in ipairs(passes) do
+				local data = tooltip_pass.data
 
-				data_2.frame_margin = frame_margin
-				num_2 = num_2 + v.draw(data_2, flag_2, flag, arg_102_0, arg_102_1, arg_102_2, arg_102_3, arg_102_4, arg_102_5, arg_102_6, size, arg_102_8, arg_102_9, var_102_0)
+				data.frame_margin = frame_margin
+
+				local pass_height = tooltip_pass.draw(data, draw, draw_downwards, ui_renderer, pass_data, ui_scenegraph, pass_definition, ui_style, ui_content, position, size, input_service, dt, talent)
+
+				tooltip_total_height = tooltip_total_height + pass_height
 			end
 
-			arg_102_6[2] = arg_102_6[2] + arg_102_7[2] + num_2
+			position[2] = position[2] + parent_size[2] + tooltip_total_height
 		end
 
-		local var_102_15 = arg_102_6[1]
-		local var_102_16 = arg_102_6[2]
-		local var_102_17 = arg_102_6[3]
-		local flag_3 = true
+		local position_x = position[1]
+		local position_y = position[2]
+		local position_z = position[3]
+		local draw = true
 
-		for i_2, v_2 in ipairs(passes) do
-			local data_3 = v_2.data
+		for _, tooltip_pass in ipairs(passes) do
+			local data = tooltip_pass.data
 
-			data_3.frame_margin = frame_margin
+			data.frame_margin = frame_margin
 
-			local draw = v_2.draw(data_3, flag_3, flag, arg_102_0, arg_102_1, arg_102_2, arg_102_3, arg_102_4, arg_102_5, arg_102_6, size, arg_102_8, arg_102_9, var_102_0)
+			local pass_height = tooltip_pass.draw(data, draw, draw_downwards, ui_renderer, pass_data, ui_scenegraph, pass_definition, ui_style, ui_content, position, size, input_service, dt, talent)
 
-			size[2] = size[2] + draw
-			arg_102_6[2] = arg_102_6[2] - draw
+			size[2] = size[2] + pass_height
+			position[2] = position[2] - pass_height
 		end
 
-		arg_102_6[1] = var_102_15
-		arg_102_6[2] = var_102_16
-		arg_102_6[3] = var_102_17
+		position[1] = position_x
+		position[2] = position_y
+		position[3] = position_z
 
-		if not end_pass then
-			local data_4 = end_pass.data
+		if end_pass then
+			local data = end_pass.data
 
-			end_pass.draw(data_4, flag_3, flag, arg_102_0, arg_102_1, arg_102_2, arg_102_3, arg_102_4, arg_102_5, arg_102_6, size, arg_102_8, arg_102_9)
+			end_pass.draw(data, draw, draw_downwards, ui_renderer, pass_data, ui_scenegraph, pass_definition, ui_style, ui_content, position, size, input_service, dt)
 		end
 	end
 }
 
-local tbl_18 = {
+local tooltip_size = {
 	0,
 	0
 }
-local tbl_19 = {
+local temp_cursor_pos = {
 	0,
 	0
 }
-local tbl_20 = {
+local tooltip_background_color = {
 	220,
 	3,
 	3,
@@ -4723,362 +5237,422 @@ local tbl_20 = {
 }
 
 UIPasses.tooltip_text = {
-	init = function (self)
+	init = function (pass_definition)
 		-- function 103
-		assert(self.text_id, "no text id in pass definition. YOU NEEDS IT.")
+		assert(pass_definition.text_id, "no text id in pass definition. YOU NEEDS IT.")
 
 		return {
-			text_id = self.text_id
+			text_id = pass_definition.text_id
 		}
 	end,
-	draw = function (self, arg_104_1, arg_104_2, arg_104_3, arg_104_4, arg_104_5, arg_104_6, arg_104_7, arg_104_8, arg_104_9)
+	draw = function (ui_renderer, pass_data, ui_scenegraph, pass_definition, ui_style, ui_content, position, size, input_service, dt)
 		-- function 104
-		arg_104_4.font_size = 18
+		ui_style.font_size = 18
 
-		local var_104_0
-		local var_104_1
-		local var_104_2
+		local font_material, font_size, font_name
 
-		if not arg_104_4.font_type then
-			local var_104_3, var_104_4 = UIFontByResolution(arg_104_4)
+		if ui_style.font_type then
+			local font, size_of_font = UIFontByResolution(ui_style)
 
-			var_104_0, var_104_1, var_104_2 = var_104_3[1], var_104_4, var_104_3[3]
+			font_material, font_size, font_name = font[1], size_of_font, font[3]
 		else
-			local font = arg_104_4.font
+			local font = ui_style.font
 
-			var_104_0, var_104_1, var_104_2 = font[1], font[2], font[3]
-			var_104_1 = arg_104_4.font_size or var_104_1
+			font_material, font_size, font_name = font[1], font[2], font[3]
+			font_size = not not ui_style.font_size or not not font_size
 		end
 
-		local var_104_6 = arg_104_5[arg_104_1.text_id]
+		local text = ui_content[pass_data.text_id]
 
-		if not arg_104_4.localize then
-			var_104_6 = Localize(var_104_6)
+		if ui_style.localize then
+			text = Localize(text)
 		end
 
-		local max_width = arg_104_4.max_width
+		local max_width_2 = ui_style.max_width
 
-		max_width = max_width or arg_104_7[1]
-
-		local var_104_8, var_104_9, var_104_10 = UIGetFontHeight(self.gui, arg_104_4.font_type, var_104_1)
-		local word_wrap = UIRenderer.word_wrap(self, var_104_6, var_104_0, var_104_1, max_width)
-		local text_start_index = arg_104_5.text_start_index
-
-		text_start_index = text_start_index or 1
-
-		local max_texts = arg_104_5.max_texts
-
-		max_texts = max_texts or #word_wrap
-
-		local min = math.min(#word_wrap - (text_start_index - 1), max_texts)
-		local num = (var_104_10 - var_104_9) * RESOLUTION_LOOKUP.inv_scale
-		local var_104_16 = Vector3(0, not arg_104_4.grow_downward and num and -num, 0)
-		local fixed_position = arg_104_4.fixed_position
-
-		if not fixed_position and not arg_104_4.use_fixed_position then
-			tbl_19[1] = arg_104_6[1] + fixed_position[1]
-			tbl_19[2] = arg_104_6[2] + fixed_position[2]
-		else
-			local get = arg_104_8:get("cursor")
-
-			get = get or tbl
-			tbl_19[1] = get[1]
-			tbl_19[2] = get[2]
+		if not max_width_2 then
+			-- Nothing
 		end
 
-		local cursor_offset = arg_104_4.cursor_offset
-		local var_104_20 = tbl_19
-		local var_104_21 = tbl_19[1]
-		local var_104_22
+		max_width_2 = size[1]
 
-		if not cursor_offset then
-			var_104_22 = cursor_offset[1]
-
-			if not var_104_22 then
-				-- Nothing
-			end
-		end
-
-		var_104_22 = 25
+		local max_width = max_width_2
 
 		::label_104_0::
 
-		var_104_20[1] = var_104_21 + var_104_22
+		local _, font_min, font_max = UIGetFontHeight(ui_renderer.gui, ui_style.font_type, font_size)
+		local texts = UIRenderer.word_wrap(ui_renderer, text, font_material, font_size, max_width)
+		local text_start_index_2 = ui_content.text_start_index
 
-		local var_104_23 = tbl_19
-		local var_104_24 = tbl_19[2]
-		local var_104_25
+		if not text_start_index_2 then
+			-- Nothing
+		end
 
-		if not cursor_offset then
-			var_104_25 = cursor_offset[2]
+		text_start_index_2 = 1
 
-			if not var_104_25 then
+		local text_start_index = text_start_index_2
+
+		::label_104_1::
+
+		local max_texts_2 = ui_content.max_texts
+
+		if not max_texts_2 then
+			-- Nothing
+		end
+
+		max_texts_2 = #texts
+
+		local max_texts = max_texts_2
+
+		::label_104_2::
+
+		local num_texts = math.min(#texts - (text_start_index - 1), max_texts)
+		local full_font_height = (font_max - font_min) * RESOLUTION_LOOKUP.inv_scale
+		local text_offset = Vector3(0, (not ui_style.grow_downward or not full_font_height) and not not -full_font_height, 0)
+		local fixed_position = ui_style.fixed_position
+
+		if fixed_position and ui_style.use_fixed_position then
+			temp_cursor_pos[1] = position[1] + fixed_position[1]
+			temp_cursor_pos[2] = position[2] + fixed_position[2]
+		else
+			local get = input_service:get("cursor")
+
+			if not get then
+				-- Nothing
+			end
+
+			get = NilCursor
+
+			local cursor = get
+
+			::label_104_3::
+
+			temp_cursor_pos[1] = cursor[1]
+			temp_cursor_pos[2] = cursor[2]
+		end
+
+		local cursor_offset = ui_style.cursor_offset
+		local var_104_4 = temp_cursor_pos
+		local var_104_5 = temp_cursor_pos[1]
+		local var_104_6
+
+		if cursor_offset then
+			var_104_6 = cursor_offset[1]
+
+			if not var_104_6 then
 				-- Nothing
 			end
 		end
 
-		var_104_25 = 15
+		var_104_6 = 25
 
-		::label_104_1::
+		::label_104_4::
 
-		var_104_23[2] = var_104_24 - var_104_25
+		var_104_4[1] = var_104_5 + var_104_6
 
-		local var_104_26
+		local var_104_7 = temp_cursor_pos
+		local var_104_8 = temp_cursor_pos[2]
+		local var_104_9
 
-		if not Managers.input:is_device_active("gamepad") then
-			var_104_26 = tbl_19
-		elseif not IS_XB1 then
-			var_104_26 = tbl_19
-			var_104_26[2] = 1080 - var_104_26[2] + 20
-		else
-			var_104_26 = UIInverseScaleVectorToResolution(tbl_19)
-		end
+		if cursor_offset then
+			var_104_9 = cursor_offset[2]
 
-		tbl_18[2] = num * min
-		tbl_18[1] = 0
-
-		for i = 1, min do
-			local var_104_27 = word_wrap[i - 1 + text_start_index]
-			local text_size = UIRenderer.text_size(self, var_104_27, var_104_0, var_104_1, tbl_18[2])
-
-			if text_size > tbl_18[1] then
-				tbl_18[1] = text_size
+			if not var_104_9 then
+				-- Nothing
 			end
 		end
 
-		local cursor_side = arg_104_4.cursor_side
-		local draw_downwards = arg_104_4.draw_downwards
+		var_104_9 = 15
 
-		if not (not cursor_side and cursor_side ~= "left") then
-			arg_104_6[1] = var_104_26[1] - tbl_18[1]
+		::label_104_5::
 
-			if not draw_downwards then
-				arg_104_6[2] = var_104_26[2] - num
+		var_104_7[2] = var_104_8 - var_104_9
+
+		local cursor_position
+
+		if Managers.input:is_device_active("gamepad") then
+			cursor_position = temp_cursor_pos
+		elseif IS_XB1 then
+			cursor_position = temp_cursor_pos
+			cursor_position[2] = 1080 - cursor_position[2] + 20
+		else
+			cursor_position = UIInverseScaleVectorToResolution(temp_cursor_pos)
+		end
+
+		tooltip_size[2] = full_font_height * num_texts
+		tooltip_size[1] = 0
+
+		for i = 1, num_texts do
+			local text_line = texts[i - 1 + text_start_index]
+			local width = UIRenderer.text_size(ui_renderer, text_line, font_material, font_size, tooltip_size[2])
+
+			if width > tooltip_size[1] then
+				tooltip_size[1] = width
+			end
+		end
+
+		local cursor_side = ui_style.cursor_side
+		local draw_downwards = ui_style.draw_downwards
+
+		if cursor_side and cursor_side == "left" then
+			position[1] = cursor_position[1] - tooltip_size[1]
+
+			if draw_downwards then
+				position[2] = cursor_position[2] - full_font_height
 			else
-				arg_104_6[2] = var_104_26[2] + (tbl_18[2] - num)
+				position[2] = cursor_position[2] + (tooltip_size[2] - full_font_height)
 			end
 		else
-			arg_104_6[1] = var_104_26[1]
-			arg_104_6[2] = var_104_26[2] - num
+			position[1] = cursor_position[1]
+			position[2] = cursor_position[2] - full_font_height
 		end
 
-		arg_104_6[3] = UILayer.tooltip + 1
+		position[3] = UILayer.tooltip + 1
 
-		for j = 1, min do
-			local var_104_31 = word_wrap[j - 1 + text_start_index]
+		for i = 1, num_texts do
+			local text_line = texts[i - 1 + text_start_index]
 			local last_line_color
 
-			if not (not arg_104_4.last_line_color and j ~= min) then
-				last_line_color = arg_104_4.last_line_color
+			if ui_style.last_line_color and i == num_texts then
+				last_line_color = ui_style.last_line_color
 
 				if not last_line_color then
 					-- Nothing
 				end
 			end
 
-			if not arg_104_4.line_colors then
-				last_line_color = arg_104_4.line_colors[j]
+			if ui_style.line_colors then
+				last_line_color = ui_style.line_colors[i]
 
 				if not last_line_color then
 					-- Nothing
 				end
 			end
 
-			last_line_color = arg_104_4.text_color
+			last_line_color = ui_style.text_color
 
-			::label_104_2::
+			local color = last_line_color
 
-			UIRenderer.draw_text(self, var_104_31, var_104_0, var_104_1, var_104_2, arg_104_6 + 0.25 * var_104_16, last_line_color)
+			::label_104_6::
 
-			if j < min then
-				arg_104_6 = arg_104_6 + var_104_16
+			UIRenderer.draw_text(ui_renderer, text_line, font_material, font_size, font_name, position + 0.25 * text_offset, color)
+
+			if i < num_texts then
+				position = position + text_offset
 			end
 		end
 
-		local num_2 = 4
-		local num_3 = 8
+		local padding_x = 4
+		local padding_y = 8
 
-		arg_104_6[3] = arg_104_6[3] - 1
-		arg_104_6[2] = arg_104_6[2] - (num + var_104_9) - num_3
-		arg_104_6[1] = arg_104_6[1] - 2 - num_2
-		tbl_18[1] = tbl_18[1] + num_2 * 2 * RESOLUTION_LOOKUP.inv_scale
-		tbl_18[2] = tbl_18[2] + num_3 * 2 * RESOLUTION_LOOKUP.inv_scale
+		position[3] = position[3] - 1
+		position[2] = position[2] - (full_font_height + font_min) - padding_y
+		position[1] = position[1] - 2 - padding_x
+		tooltip_size[1] = tooltip_size[1] + padding_x * 2 * RESOLUTION_LOOKUP.inv_scale
+		tooltip_size[2] = tooltip_size[2] + padding_y * 2 * RESOLUTION_LOOKUP.inv_scale
 
-		UIRenderer.draw_rounded_rect(self, arg_104_6, tbl_18, 5, tbl_20)
+		UIRenderer.draw_rounded_rect(ui_renderer, position, tooltip_size, 5, tooltip_background_color)
 	end
 }
 
-local tbl_21 = {
+local rect_text_size = {
 	0,
 	0
 }
 
 UIPasses.rect_text = {
-	init = function (self)
+	init = function (pass_definition)
 		-- function 105
-		assert(self.text_id, "no text id in pass definition. YOU NEEDS IT.")
+		assert(pass_definition.text_id, "no text id in pass definition. YOU NEEDS IT.")
 
 		return {
-			text_id = self.text_id
+			text_id = pass_definition.text_id
 		}
 	end,
-	draw = function (self, arg_106_1, arg_106_2, arg_106_3, arg_106_4, arg_106_5, arg_106_6, arg_106_7, arg_106_8, arg_106_9)
+	draw = function (ui_renderer, pass_data, ui_scenegraph, pass_definition, ui_style, ui_content, position, size, input_service, dt)
 		-- function 106
-		local var_106_0
-		local var_106_1
-		local var_106_2
+		local font_material, font_size, font_name
 
-		if not arg_106_4.font_type then
-			local var_106_3, var_106_4 = UIFontByResolution(arg_106_4)
+		if ui_style.font_type then
+			local font, size_of_font = UIFontByResolution(ui_style)
 
-			var_106_0, var_106_1, var_106_2 = var_106_3[1], var_106_4, var_106_3[3]
+			font_material, font_size, font_name = font[1], size_of_font, font[3]
 		else
-			local font = arg_106_4.font
+			local font = ui_style.font
 
-			var_106_0, var_106_1, var_106_2 = font[1], font[2], font[3]
-			var_106_1 = arg_106_4.font_size or var_106_1
+			font_material, font_size, font_name = font[1], font[2], font[3]
+			font_size = not not ui_style.font_size or not not font_size
 		end
 
-		local var_106_6 = arg_106_5[arg_106_1.text_id]
+		local text = ui_content[pass_data.text_id]
 
-		if not arg_106_4.localize then
-			var_106_6 = Localize(var_106_6)
+		if ui_style.localize then
+			text = Localize(text)
 		end
 
-		local max_width = arg_106_4.max_width
+		local max_width_2 = ui_style.max_width
 
-		max_width = max_width or arg_106_7[1]
+		if not max_width_2 then
+			-- Nothing
+		end
 
-		local var_106_8, var_106_9, var_106_10 = UIGetFontHeight(self.gui, arg_106_4.font_type, var_106_1)
-		local word_wrap = UIRenderer.word_wrap(self, var_106_6, var_106_0, var_106_1, max_width)
-		local text_start_index = arg_106_5.text_start_index
+		max_width_2 = size[1]
 
-		text_start_index = text_start_index or 1
+		local max_width = max_width_2
 
-		local max_texts = arg_106_5.max_texts
+		::label_106_0::
 
-		max_texts = max_texts or #word_wrap
+		local _, font_min, font_max = UIGetFontHeight(ui_renderer.gui, ui_style.font_type, font_size)
+		local texts = UIRenderer.word_wrap(ui_renderer, text, font_material, font_size, max_width)
+		local text_start_index_2 = ui_content.text_start_index
 
-		local min = math.min(#word_wrap - (text_start_index - 1), max_texts)
-		local num = (var_106_10 + math.abs(var_106_9)) * RESOLUTION_LOOKUP.inv_scale
-		local var_106_16 = Vector3(0, not arg_106_4.grow_downward and num and -num, 0)
-		local length = Utf8.length(var_106_6)
+		if not text_start_index_2 then
+			-- Nothing
+		end
 
-		tbl_21[2] = num * min
-		tbl_21[1] = 0
+		text_start_index_2 = 1
 
-		if not arg_106_4.static_rect_width then
-			tbl_21[1] = arg_106_7[1]
+		local text_start_index = text_start_index_2
+
+		::label_106_1::
+
+		local max_texts_2 = ui_content.max_texts
+
+		if not max_texts_2 then
+			-- Nothing
+		end
+
+		max_texts_2 = #texts
+
+		local max_texts = max_texts_2
+
+		::label_106_2::
+
+		local num_texts = math.min(#texts - (text_start_index - 1), max_texts)
+		local full_font_height = (font_max + math.abs(font_min)) * RESOLUTION_LOOKUP.inv_scale
+		local text_offset = Vector3(0, (not ui_style.grow_downward or not full_font_height) and not not -full_font_height, 0)
+		local global_text_length = Utf8.length(text)
+
+		rect_text_size[2] = full_font_height * num_texts
+		rect_text_size[1] = 0
+
+		if ui_style.static_rect_width then
+			rect_text_size[1] = size[1]
 		else
-			for i = 1, min do
-				local var_106_18 = word_wrap[i - 1 + text_start_index]
-				local text_size = UIRenderer.text_size(self, var_106_18, var_106_0, var_106_1, tbl_21[2])
+			for i = 1, num_texts do
+				local text_line = texts[i - 1 + text_start_index]
+				local width = UIRenderer.text_size(ui_renderer, text_line, font_material, font_size, rect_text_size[2])
 
-				if text_size > tbl_21[1] then
-					tbl_21[1] = text_size
+				if width > rect_text_size[1] then
+					rect_text_size[1] = width
 				end
 			end
 		end
 
-		if arg_106_4.horizontal_alignment == "center" then
-			local num_2 = 0
+		if ui_style.horizontal_alignment == "center" then
+			local line_start_index = 0
 
-			for j = 1, min do
-				local var_106_21 = word_wrap[j - 1 + text_start_index]
-				local length_2
+			for i = 1, num_texts do
+				text = texts[i - 1 + text_start_index]
 
-				if not var_106_21 then
-					length_2 = Utf8.length(var_106_21)
+				local length
 
-					if not length_2 then
+				if text then
+					length = Utf8.length(text)
+
+					if not length then
 						-- Nothing
 					end
 				end
 
-				length_2 = 0
+				length = 0
 
-				::label_106_0::
+				local text_length = length
 
-				local text_size_2 = UIRenderer.text_size(self, var_106_21, var_106_0, var_106_1, arg_106_7[2])
-				local var_106_24 = Vector3(arg_106_7[1] / 2 - text_size_2 / 2, 0, 0)
-				local var_106_25
+				::label_106_3::
 
-				if not arg_106_4.color_override then
-					var_106_25 = fn_4(j, length_2, num_2, length, arg_106_4)
+				local width = UIRenderer.text_size(ui_renderer, text, font_material, font_size, size[2])
+				local alignment_offset = Vector3(size[1] / 2 - width / 2, 0, 0)
+				local line_color_override
+
+				if ui_style.color_override then
+					line_color_override = get_line_color_override(i, text_length, line_start_index, global_text_length, ui_style)
 				end
 
-				UIRenderer.draw_text(self, var_106_21, var_106_0, var_106_1, var_106_2, arg_106_6 + var_106_24, arg_106_4.text_color, nil, var_106_25)
+				UIRenderer.draw_text(ui_renderer, text, font_material, font_size, font_name, position + alignment_offset, ui_style.text_color, nil, line_color_override)
 
-				if j < min then
-					arg_106_6 = arg_106_6 + var_106_16
+				if i < num_texts then
+					position = position + text_offset
 				end
 
-				num_2 = num_2 + length_2 + 1
+				line_start_index = line_start_index + text_length + 1
 			end
 		else
-			for k = 1, min do
-				local var_106_26 = word_wrap[k - 1 + text_start_index]
+			for i = 1, num_texts do
+				local text_line = texts[i - 1 + text_start_index]
 				local last_line_color
 
-				if not (not arg_106_4.last_line_color and k ~= min) then
-					last_line_color = arg_106_4.last_line_color
+				if ui_style.last_line_color and i == num_texts then
+					last_line_color = ui_style.last_line_color
 
 					if not last_line_color then
 						-- Nothing
 					end
 				end
 
-				if not arg_106_4.line_colors then
-					last_line_color = arg_106_4.line_colors[k]
+				if ui_style.line_colors then
+					last_line_color = ui_style.line_colors[i]
 
 					if not last_line_color then
 						-- Nothing
 					end
 				end
 
-				last_line_color = arg_106_4.text_color
+				last_line_color = ui_style.text_color
 
-				::label_106_1::
+				local color = last_line_color
 
-				UIRenderer.draw_text(self, var_106_26, var_106_0, var_106_1, var_106_2, arg_106_6, last_line_color)
+				::label_106_4::
 
-				if k < min then
-					arg_106_6 = arg_106_6 + var_106_16
+				UIRenderer.draw_text(ui_renderer, text_line, font_material, font_size, font_name, position, color)
+
+				if i < num_texts then
+					position = position + text_offset
 				end
 			end
 		end
 
-		local num_3 = 4
-		local num_4 = 2
+		local padding_x = 4
+		local padding_y = 2
 
-		arg_106_6[3] = arg_106_6[3] - 1
-		arg_106_6[2] = arg_106_6[2] + var_106_9 * RESOLUTION_LOOKUP.inv_scale
-		tbl_21[1] = tbl_21[1] + num_3 * 4
-		tbl_21[2] = tbl_21[2] + num_4 * 2
+		position[3] = position[3] - 1
+		position[2] = position[2] + font_min * RESOLUTION_LOOKUP.inv_scale
+		rect_text_size[1] = rect_text_size[1] + padding_x * 4
+		rect_text_size[2] = rect_text_size[2] + padding_y * 2
 
-		local var_106_30 = Vector3(0, 0, 0)
+		local rect_alignment_offset = Vector3(0, 0, 0)
 
-		if arg_106_4.horizontal_alignment == "center" then
-			var_106_30 = Vector3(arg_106_7[1] * 0.5 - tbl_21[1] * 0.5, 0, 0)
+		if ui_style.horizontal_alignment == "center" then
+			rect_alignment_offset = Vector3(size[1] * 0.5 - rect_text_size[1] * 0.5, 0, 0)
 		else
-			var_106_30 = Vector3(-num_3 * 2, 0, 0)
+			rect_alignment_offset = Vector3(-padding_x * 2, 0, 0)
 		end
 
-		if not arg_106_4.masked then
-			draw_texture(self, "rect_masked", arg_106_6 + var_106_30, tbl_21, arg_106_4.rect_color, arg_106_4.masked, not arg_106_4 and arg_106_4.saturated)
+		if ui_style.masked then
+			UIRenderer_draw_texture(ui_renderer, "rect_masked", position + rect_alignment_offset, rect_text_size, ui_style.rect_color, ui_style.masked, not not ui_style and not not ui_style.saturated)
 		else
-			UIRenderer.draw_rounded_rect(self, arg_106_6 + var_106_30, tbl_21, 5, arg_106_4.rect_color)
+			UIRenderer.draw_rounded_rect(ui_renderer, position + rect_alignment_offset, rect_text_size, 5, ui_style.rect_color)
 		end
 
-		if not arg_106_4.border then
-			arg_106_6 = Vector3(arg_106_6[1] - arg_106_4.border, arg_106_6[2] - arg_106_4.border, arg_106_6[3] - 1)
-			tbl_21[1] = tbl_21[1] + arg_106_4.border * 2
-			tbl_21[2] = tbl_21[2] + arg_106_4.border * 2
+		if ui_style.border then
+			position = Vector3(position[1] - ui_style.border, position[2] - ui_style.border, position[3] - 1)
+			rect_text_size[1] = rect_text_size[1] + ui_style.border * 2
+			rect_text_size[2] = rect_text_size[2] + ui_style.border * 2
 
-			if not arg_106_4.masked then
-				draw_texture(self, "rect_masked", arg_106_6 + var_106_30, tbl_21, arg_106_4.border_color, arg_106_4.masked, not arg_106_4 and arg_106_4.saturated)
+			if ui_style.masked then
+				UIRenderer_draw_texture(ui_renderer, "rect_masked", position + rect_alignment_offset, rect_text_size, ui_style.border_color, ui_style.masked, not not ui_style and not not ui_style.saturated)
 			else
-				UIRenderer.draw_rounded_rect(self, arg_106_6 + var_106_30, tbl_21, 5, arg_106_4.border_color)
+				UIRenderer.draw_rounded_rect(ui_renderer, position + rect_alignment_offset, rect_text_size, 5, ui_style.border_color)
 			end
 		end
 	end
@@ -5087,103 +5661,104 @@ UIPasses.rect_text = {
 local double_click_threshold = UISettings.double_click_threshold
 
 UIPasses.hotspot = {
-	init = function (arg_107_0, arg_107_1)
+	init = function (pass_definition, content)
 		-- function 107
 		return
 	end,
-	draw = function (arg_108_0, arg_108_1, arg_108_2, arg_108_3, arg_108_4, arg_108_5, arg_108_6, arg_108_7, arg_108_8, arg_108_9)
+	draw = function (ui_renderer, pass_data, ui_scenegraph, pass_definition, ui_style, ui_content, position, size, input_service, dt)
 		-- function 108
-		if not arg_108_4 then
-			local area_size = arg_108_4.area_size
+		if ui_style then
+			local area_size = ui_style.area_size
 
-			if not area_size then
-				if arg_108_4.horizontal_alignment == "right" then
-					arg_108_6[1] = arg_108_6[1] + arg_108_7[1] - area_size[1]
-				elseif arg_108_4.horizontal_alignment == "center" then
-					arg_108_6[1] = arg_108_6[1] + (arg_108_7[1] - area_size[1]) / 2
+			if area_size then
+				if ui_style.horizontal_alignment == "right" then
+					position[1] = position[1] + size[1] - area_size[1]
+				elseif ui_style.horizontal_alignment == "center" then
+					position[1] = position[1] + (size[1] - area_size[1]) / 2
 				end
 
-				if arg_108_4.vertical_alignment == "center" then
-					arg_108_6[2] = arg_108_6[2] + (arg_108_7[2] - area_size[2]) / 2
-				elseif arg_108_4.vertical_alignment == "top" then
-					arg_108_6[2] = arg_108_6[2] + arg_108_7[2] - area_size[2]
+				if ui_style.vertical_alignment == "center" then
+					position[2] = position[2] + (size[2] - area_size[2]) / 2
+				elseif ui_style.vertical_alignment == "top" then
+					position[2] = position[2] + size[2] - area_size[2]
 				end
 
-				arg_108_7 = area_size
+				size = area_size
 			end
 		end
 
-		local input = Managers.input
-		local is_device_active = input:is_device_active("gamepad")
-		local gamepad_cursor_active = input:gamepad_cursor_active()
-		local is_frame_hovering = input:is_frame_hovering()
-		local is_hover = arg_108_5.is_hover
-		local var_108_6
-		local str_2 = "cursor"
-		local stack_depth = ShowCursorStack.stack_depth
-		local flag = not arg_108_8 and arg_108_8:has(str_2)
-		local flag_2 = (not (stack_depth > 0) or not flag) and arg_108_8:get(str_2)
+		local input_manager = Managers.input
+		local gamepad_active = input_manager:is_device_active("gamepad")
+		local gamepad_cursor_active = input_manager:gamepad_cursor_active()
+		local is_already_hovering = input_manager:is_frame_hovering()
+		local was_hover = ui_content.is_hover
+		local is_hover
+		local cursor_name = "cursor"
+		local cursor_stack = ShowCursorStack.stack_depth
+		local has_cursor = not not input_service and not not input_service:has(cursor_name)
+		local cursor = cursor_stack > 0 and not not has_cursor and not not input_service:get(cursor_name)
 
-		if not (not flag_2 and Script.type_name(flag_2) == str) then
-			flag_2 = tbl
+		if not cursor or Script.type_name(cursor) ~= cursor_value_type_name then
+			cursor = NilCursor
 		end
 
-		local var_108_11
+		local cursor_position
 
-		if not (not IS_XB1 and is_device_active) then
-			var_108_11 = Vector3(flag_2[1], 1080 - flag_2[2], flag_2[3])
+		if IS_XB1 and not gamepad_active then
+			cursor_position = Vector3(cursor[1], 1080 - cursor[2], cursor[3])
 		else
-			var_108_11 = UIInverseScaleVectorToResolution(flag_2)
+			cursor_position = UIInverseScaleVectorToResolution(cursor)
 		end
 
-		local hover_type = arg_108_5.hover_type
-		local var_108_13 = arg_108_6
-		local var_108_14 = arg_108_7
+		local hover_type = ui_content.hover_type
+		local pixel_pos = position
+		local pixel_size = size
 
-		if not is_device_active then
+		if gamepad_active then
 			if not gamepad_cursor_active then
-				var_108_6 = false
-			elseif not (not is_frame_hovering and arg_108_5.allow_multi_hover) then
-				var_108_6 = false
+				is_hover = false
+			elseif is_already_hovering and not ui_content.allow_multi_hover then
+				is_hover = false
 			else
 				local scale = RESOLUTION_LOOKUP.scale
 
-				var_108_11[1] = var_108_11[1] * scale
-				var_108_11[2] = var_108_11[2] * scale
+				cursor_position[1] = cursor_position[1] * scale
+				cursor_position[2] = cursor_position[2] * scale
 
-				local var_108_16 = Vector2(GAMEPAD_CURSOR_SIZE * 0.5, GAMEPAD_CURSOR_SIZE * 0.5)
+				local cursor_size = Vector2(GAMEPAD_CURSOR_SIZE * 0.5, GAMEPAD_CURSOR_SIZE * 0.5)
 
-				var_108_6 = math.box_overlap_box(var_108_11 - var_108_16 * 0.5, var_108_16, var_108_13, var_108_14)
+				is_hover = math.box_overlap_box(cursor_position - cursor_size * 0.5, cursor_size, pixel_pos, pixel_size)
 			end
 		elseif hover_type == "circle" then
-			local num = var_108_14 / 2
-			local num_2 = Vector3.flat(var_108_13) + num
+			local half_size = pixel_size / 2
+			local pos_center = Vector3.flat(pixel_pos) + half_size
+			local square_distance = Vector3.distance_squared(cursor_position, pos_center)
 
-			var_108_6 = Vector3.distance_squared(var_108_11, num_2) <= num.x * num.y or false
+			is_hover = square_distance <= half_size.x * half_size.y or not not false
 		else
-			var_108_6 = math.point_is_inside_2d_box(var_108_11, var_108_13, var_108_14)
+			is_hover = math.point_is_inside_2d_box(cursor_position, pixel_pos, pixel_size)
 		end
 
-		arg_108_5.cursor_hover = var_108_6
+		ui_content.cursor_hover = is_hover
 
-		if not arg_108_5.disable_button then
-			var_108_6 = false
+		if ui_content.disable_button then
+			is_hover = false
 		end
 
-		if not (not is_device_active and not var_108_6 and arg_108_5.allow_multi_hover) then
-			input:set_hovering(var_108_6)
+		if gamepad_active and is_hover and not ui_content.allow_multi_hover then
+			input_manager:set_hovering(is_hover)
 		end
 
-		if not script_data.ui_debug_hover then
-			if not arg_108_5.is_hover then
-				UIRenderer.draw_rect(arg_108_0, Vector3(arg_108_6[1], arg_108_6[2], 999), arg_108_7, {
+		if script_data.ui_debug_hover then
+			if ui_content.is_hover then
+				UIRenderer.draw_rect(ui_renderer, Vector3(position[1], position[2], 999), size, {
 					128,
 					0,
 					255,
 					0
 				})
 			else
-				UIRenderer.draw_rect(arg_108_0, arg_108_6 + Vector3(0, 0, 1), arg_108_7, {
+				UIRenderer.draw_rect(ui_renderer, position + Vector3(0, 0, 1), size, {
 					60,
 					255,
 					0,
@@ -5192,311 +5767,340 @@ UIPasses.hotspot = {
 			end
 		end
 
-		arg_108_5.gamepad_active = is_device_active
+		ui_content.gamepad_active = gamepad_active
 
-		if not arg_108_5.on_hover_enter then
-			arg_108_5.on_hover_enter = nil
+		if ui_content.on_hover_enter then
+			ui_content.on_hover_enter = nil
 		end
 
-		if not arg_108_5.on_hover_exit then
-			arg_108_5.on_hover_exit = nil
+		if ui_content.on_hover_exit then
+			ui_content.on_hover_exit = nil
 		end
 
-		if not (not var_108_6 and is_hover) then
-			arg_108_5.on_hover_enter = not UIPasses.is_dragging_item
-			arg_108_5.is_hover = not UIPasses.is_dragging_item
-			arg_108_5.internal_is_hover = true
+		if is_hover and not was_hover then
+			ui_content.on_hover_enter = not UIPasses.is_dragging_item
+			ui_content.is_hover = not UIPasses.is_dragging_item
+			ui_content.internal_is_hover = true
 		end
 
-		if not (not is_hover and var_108_6) then
-			arg_108_5.is_hover = nil
-			arg_108_5.on_hover_exit = true
-			arg_108_5.internal_is_hover = nil
+		if was_hover and not is_hover then
+			ui_content.is_hover = nil
+			ui_content.on_hover_exit = true
+			ui_content.internal_is_hover = nil
 		end
 
-		if not arg_108_5.on_pressed then
-			arg_108_5.on_pressed = nil
+		if ui_content.on_pressed then
+			ui_content.on_pressed = nil
 		end
 
-		if not var_108_6 and not UIPasses.is_dragging_item then
-			var_108_6 = false
-		elseif var_108_6 or not arg_108_5.internal_is_hover then
-			arg_108_5.internal_is_hover = nil
+		if is_hover and UIPasses.is_dragging_item then
+			is_hover = false
+		elseif not is_hover and ui_content.internal_is_hover then
+			ui_content.internal_is_hover = nil
 		end
 
-		local flag_3 = not arg_108_8 and arg_108_8:get("left_press")
-		local flag_4 = not arg_108_8 and arg_108_8:get("left_hold")
-		local is_clicked = arg_108_5.is_clicked
+		local left_pressed = not not input_service and not not input_service:get("left_press")
+		local left_hold = not not input_service and not not input_service:get("left_hold")
+		local is_clicked = ui_content.is_clicked
 
-		is_clicked = not is_clicked and arg_108_5.is_clicked < double_click_threshold
+		if is_clicked then
+			-- Nothing
+		end
 
-		if not var_108_6 then
-			if not arg_108_5.input_pressed then
-				arg_108_5.input_pressed = flag_3
+		if not (ui_content.is_clicked < double_click_threshold) then
+			is_clicked = false
 
-				if not arg_108_5.input_pressed then
-					arg_108_5.on_pressed = true
+			goto label_108_0
+		end
+
+		is_clicked = true
+
+		local double_click_accepted = is_clicked
+
+		::label_108_0::
+
+		if is_hover then
+			if not ui_content.input_pressed then
+				ui_content.input_pressed = left_pressed
+
+				if ui_content.input_pressed then
+					ui_content.on_pressed = true
 				end
 
-				if not flag_4 and not flag_3 then
-					arg_108_5.is_held = true
+				if left_hold and left_pressed then
+					ui_content.is_held = true
 				end
-			elseif not is_clicked then
-				arg_108_5.input_pressed = false
+			elseif not double_click_accepted then
+				ui_content.input_pressed = false
 			end
-		elseif not arg_108_5.input_pressed then
-			arg_108_5.input_pressed = false
+		elseif ui_content.input_pressed then
+			ui_content.input_pressed = false
 		end
 
-		arg_108_5.on_right_click = false
-		arg_108_5.on_double_click = false
+		ui_content.on_right_click = false
+		ui_content.on_double_click = false
 
-		if not flag_4 then
-			arg_108_5.is_held = false
+		if not left_hold then
+			ui_content.is_held = false
 		end
 
-		local get = arg_108_8:get("left_release")
+		local left_release = input_service:get("left_release")
 
-		if not arg_108_5.input_pressed then
-			if not get then
-				arg_108_5.on_release = true
-				arg_108_5.on_left_release = true
-				arg_108_5.is_clicked = 0
+		if ui_content.input_pressed then
+			if left_release then
+				ui_content.on_release = true
+				ui_content.on_left_release = true
+				ui_content.is_clicked = 0
 			else
-				arg_108_5.on_release = false
+				ui_content.on_release = false
 
-				if not flag_3 and is_clicked and not is_device_active then
-					arg_108_5.on_double_click = true
-					arg_108_5.is_clicked = 0
-				elseif not var_108_6 and not flag_4 then
-					arg_108_5.is_clicked = 0
+				if left_pressed and (double_click_accepted or gamepad_active) then
+					ui_content.on_double_click = true
+					ui_content.is_clicked = 0
+				elseif is_hover and left_hold then
+					ui_content.is_clicked = 0
 				else
-					local is_clicked_2 = arg_108_5.is_clicked
+					local is_clicked_2 = ui_content.is_clicked
 
-					is_clicked_2 = is_clicked_2 or 10
-					arg_108_5.is_clicked = is_clicked_2 + arg_108_9
+					is_clicked_2 = not not is_clicked_2 or not not 10
+					ui_content.is_clicked = is_clicked_2 + dt
 				end
 			end
-		elseif not get and not var_108_6 then
-			arg_108_5.on_left_release = true
+		elseif left_release and is_hover then
+			ui_content.on_left_release = true
 		else
-			if not var_108_6 and flag_3 and flag_4 or not arg_108_8:get("right_press") then
-				arg_108_5.on_right_click = true
+			if is_hover and not left_pressed and not left_hold and input_service:get("right_press") then
+				ui_content.on_right_click = true
 			end
 
-			arg_108_5.on_release = false
-			arg_108_5.on_left_release = false
+			ui_content.on_release = false
+			ui_content.on_left_release = false
 
-			local is_clicked_3 = arg_108_5.is_clicked
+			local is_clicked_3 = ui_content.is_clicked
 
-			is_clicked_3 = is_clicked_3 or 10
-			arg_108_5.is_clicked = is_clicked_3 + arg_108_9
+			is_clicked_3 = not not is_clicked_3 or not not 10
+			ui_content.is_clicked = is_clicked_3 + dt
 		end
 	end
 }
 UIPasses.controller_hotspot = {
-	init = function (arg_109_0)
+	init = function (pass_definition)
 		-- function 109
 		return
 	end,
-	draw = function (arg_110_0, arg_110_1, arg_110_2, arg_110_3, arg_110_4, arg_110_5, arg_110_6, arg_110_7, arg_110_8, arg_110_9)
+	draw = function (ui_renderer, pass_data, ui_scenegraph, pass_definition, ui_style, ui_content, position, size, input_service, dt)
 		-- function 110
-		local is_hover = arg_110_5.is_hover
-		local var_110_1
-		local get_controller_cursor_position = arg_110_8:get_controller_cursor_position()
+		local was_hover = ui_content.is_hover
+		local is_hover
+		local get_controller_cursor_position = input_service:get_controller_cursor_position()
 
-		get_controller_cursor_position = get_controller_cursor_position or tbl
+		if not get_controller_cursor_position then
+			-- Nothing
+		end
 
-		local var_110_3 = arg_110_6
-		local var_110_4 = arg_110_7
-		local point_is_inside_2d_box = math.point_is_inside_2d_box(get_controller_cursor_position, var_110_3, var_110_4)
+		get_controller_cursor_position = NilCursor
 
-		if not script_data.ui_debug_hover then
+		local controller_cursor_position = get_controller_cursor_position
+
+		::label_110_0::
+
+		local pixel_pos = position
+		local pixel_size = size
+
+		is_hover = math.point_is_inside_2d_box(controller_cursor_position, pixel_pos, pixel_size)
+
+		if script_data.ui_debug_hover then
 			local draw_rect = UIRenderer.draw_rect
-			local var_110_7 = arg_110_0
-			local num = arg_110_6 + Vector3(0, 0, 1)
-			local var_110_9 = arg_110_7
-			local tbl_2
+			local var_110_2 = ui_renderer
+			local num = position + Vector3(0, 0, 1)
+			local var_110_4 = size
+			local tbl
 
-			if not arg_110_5.is_hover then
-				tbl_2 = {
+			if ui_content.is_hover then
+				tbl = {
 					128,
 					0,
 					255,
 					0
 				}
 
-				if not tbl_2 then
+				if not tbl then
 					-- Nothing
 				end
 			end
 
-			tbl_2 = {
+			tbl = {
 				128,
 				255,
 				0,
 				0
 			}
 
-			::label_110_0::
+			::label_110_1::
 
-			draw_rect(var_110_7, num, var_110_9, tbl_2)
+			draw_rect(var_110_2, num, var_110_4, tbl)
 		end
 
-		if not (not point_is_inside_2d_box and is_hover) then
-			arg_110_5.is_hover = not UIPasses.is_dragging_item
-			arg_110_5.internal_is_hover = true
-			point_is_inside_2d_box = not UIPasses.is_dragging_item
+		if is_hover and not was_hover then
+			ui_content.is_hover = not UIPasses.is_dragging_item
+			ui_content.internal_is_hover = true
+			is_hover = not UIPasses.is_dragging_item
 		end
 
-		if not (not is_hover and point_is_inside_2d_box) then
-			arg_110_5.is_hover = nil
-			arg_110_5.internal_is_hover = nil
+		if was_hover and not is_hover then
+			ui_content.is_hover = nil
+			ui_content.internal_is_hover = nil
 		end
 
-		if not point_is_inside_2d_box and not UIPasses.is_dragging_item then
-			point_is_inside_2d_box = false
-		elseif point_is_inside_2d_box or not arg_110_5.internal_is_hover then
-			arg_110_5.internal_is_hover = nil
+		if is_hover and UIPasses.is_dragging_item then
+			is_hover = false
+		elseif not is_hover and ui_content.internal_is_hover then
+			ui_content.internal_is_hover = nil
 		end
 
-		arg_110_5.on_double_click = false
+		ui_content.on_double_click = false
 
-		if not (point_is_inside_2d_box or arg_110_5.is_clicked ~= 0) then
-			if not arg_110_8:get("confirm") then
-				arg_110_5.on_release = true
-				arg_110_5.is_clicked = 0
+		if is_hover or ui_content.is_clicked == 0 then
+			local left_release = input_service:get("confirm")
+
+			if left_release then
+				ui_content.on_release = true
+				ui_content.is_clicked = 0
 			else
-				arg_110_5.on_release = false
+				ui_content.on_release = false
 
-				local get = arg_110_8:get("confirm_hold")
+				local left_hold = input_service:get("confirm_hold")
 
-				if arg_110_5.is_clicked ~= 0 or not get then
-					arg_110_5.is_clicked = 0
-				elseif not (not arg_110_8:get("confirm_press") and not (arg_110_5.is_clicked < UISettings.double_click_threshold)) then
-					arg_110_5.on_double_click = true
-					arg_110_5.is_clicked = 0
+				if ui_content.is_clicked == 0 and left_hold then
+					ui_content.is_clicked = 0
+				elseif input_service:get("confirm_press") and ui_content.is_clicked < UISettings.double_click_threshold then
+					ui_content.on_double_click = true
+					ui_content.is_clicked = 0
 				else
-					local is_clicked = arg_110_5.is_clicked
+					local is_clicked = ui_content.is_clicked
 
-					is_clicked = is_clicked or 10
-					arg_110_5.is_clicked = is_clicked + arg_110_9
+					is_clicked = not not is_clicked or not not 10
+					ui_content.is_clicked = is_clicked + dt
 				end
 			end
 		else
-			arg_110_5.on_release = false
+			ui_content.on_release = false
 
-			local is_clicked_2 = arg_110_5.is_clicked
+			local is_clicked_2 = ui_content.is_clicked
 
-			is_clicked_2 = is_clicked_2 or 10
-			arg_110_5.is_clicked = is_clicked_2 + arg_110_9
+			is_clicked_2 = not not is_clicked_2 or not not 10
+			ui_content.is_clicked = is_clicked_2 + dt
 		end
 	end
 }
 UIPasses.game_pad_connected = {
-	init = function (arg_111_0)
+	init = function (pass_definition)
 		-- function 111
 		return
 	end,
-	draw = function (arg_112_0, arg_112_1, arg_112_2, arg_112_3, arg_112_4, arg_112_5, arg_112_6, arg_112_7, arg_112_8, arg_112_9)
+	draw = function (ui_renderer, pass_data, ui_scenegraph, pass_definition, ui_style, ui_content, position, size, input_service, dt)
 		-- function 112
-		arg_112_5.gamepad_connected = Managers.input:get_device("gamepad").active()
+		ui_content.gamepad_connected = Managers.input:get_device("gamepad").active()
 	end
 }
 
-local function fn_6(arg_113_0, arg_113_1, arg_113_2, arg_113_3, arg_113_4, arg_113_5, arg_113_6, arg_113_7, arg_113_8, arg_113_9, arg_113_10)
+local function gamepad_button_clicked(ui_renderer, pass_data, ui_scenegraph, pass_definition, ui_style, ui_content, position, size, input_service, dt, button_type)
 	-- function 113
-	if not arg_113_8:get(arg_113_10) then
-		arg_113_5.on_release = true
-		arg_113_5.is_clicked = 0
+	local button_released = input_service:get(button_type)
+
+	if button_released then
+		ui_content.on_release = true
+		ui_content.is_clicked = 0
 	else
-		arg_113_5.on_release = false
+		ui_content.on_release = false
 
-		local is_clicked = arg_113_5.is_clicked
+		local is_clicked = ui_content.is_clicked
 
-		is_clicked = is_clicked or 10
-		arg_113_5.is_clicked = is_clicked + arg_113_9
+		is_clicked = not not is_clicked or not not 10
+		ui_content.is_clicked = is_clicked + dt
 	end
 end
 
 UIPasses.gamepad_button_click_confirm = {
-	init = function (arg_114_0)
+	init = function (pass_definition)
 		-- function 114
 		return
 	end,
-	draw = function (arg_115_0, arg_115_1, arg_115_2, arg_115_3, arg_115_4, arg_115_5, arg_115_6, arg_115_7, arg_115_8, arg_115_9)
+	draw = function (ui_renderer, pass_data, ui_scenegraph, pass_definition, ui_style, ui_content, position, size, input_service, dt)
 		-- function 115
-		fn_6(arg_115_0, arg_115_1, arg_115_2, arg_115_3, arg_115_4, arg_115_5, arg_115_6, arg_115_7, arg_115_8, arg_115_9, "confirm")
+		gamepad_button_clicked(ui_renderer, pass_data, ui_scenegraph, pass_definition, ui_style, ui_content, position, size, input_service, dt, "confirm")
 	end
 }
 UIPasses.gamepad_button_click_back = {
-	init = function (arg_116_0)
+	init = function (pass_definition)
 		-- function 116
 		return
 	end,
-	draw = function (arg_117_0, arg_117_1, arg_117_2, arg_117_3, arg_117_4, arg_117_5, arg_117_6, arg_117_7, arg_117_8, arg_117_9)
+	draw = function (ui_renderer, pass_data, ui_scenegraph, pass_definition, ui_style, ui_content, position, size, input_service, dt)
 		-- function 117
-		fn_6(arg_117_0, arg_117_1, arg_117_2, arg_117_3, arg_117_4, arg_117_5, arg_117_6, arg_117_7, arg_117_8, arg_117_9, "back")
+		gamepad_button_clicked(ui_renderer, pass_data, ui_scenegraph, pass_definition, ui_style, ui_content, position, size, input_service, dt, "back")
 	end
 }
 UIPasses.gamepad_button_click_refresh = {
-	init = function (arg_118_0)
+	init = function (pass_definition)
 		-- function 118
 		return
 	end,
-	draw = function (arg_119_0, arg_119_1, arg_119_2, arg_119_3, arg_119_4, arg_119_5, arg_119_6, arg_119_7, arg_119_8, arg_119_9)
+	draw = function (ui_renderer, pass_data, ui_scenegraph, pass_definition, ui_style, ui_content, position, size, input_service, dt)
 		-- function 119
-		fn_6(arg_119_0, arg_119_1, arg_119_2, arg_119_3, arg_119_4, arg_119_5, arg_119_6, arg_119_7, arg_119_8, arg_119_9, "refresh")
+		gamepad_button_clicked(ui_renderer, pass_data, ui_scenegraph, pass_definition, ui_style, ui_content, position, size, input_service, dt, "refresh")
 	end
 }
 UIPasses.on_click = {
-	init = function (arg_120_0)
+	init = function (pass_definition)
 		-- function 120
 		return
 	end,
-	draw = function (arg_121_0, arg_121_1, arg_121_2, arg_121_3, arg_121_4, arg_121_5, arg_121_6, arg_121_7, arg_121_8, arg_121_9)
+	draw = function (ui_renderer, pass_data, ui_scenegraph, pass_definition, ui_style, ui_content, position, size, input_service, dt)
 		-- function 121
-		if not arg_121_5[arg_121_3.click_check_content_id].on_pressed then
-			arg_121_3.click_function(arg_121_2, arg_121_4, arg_121_5, arg_121_8)
+		if ui_content[pass_definition.click_check_content_id].on_pressed then
+			pass_definition.click_function(ui_scenegraph, ui_style, ui_content, input_service)
 		end
 	end
 }
 UIPasses.on_left_and_right_click = {
-	init = function (arg_122_0)
+	init = function (pass_definition)
 		-- function 122
 		return
 	end,
-	draw = function (arg_123_0, arg_123_1, arg_123_2, arg_123_3, arg_123_4, arg_123_5, arg_123_6, arg_123_7, arg_123_8, arg_123_9)
+	draw = function (ui_renderer, pass_data, ui_scenegraph, pass_definition, ui_style, ui_content, position, size, input_service, dt)
 		-- function 123
-		local var_123_0 = arg_123_5[arg_123_3.click_check_content_id]
+		local hotspot = ui_content[pass_definition.click_check_content_id]
 
-		if var_123_0.on_pressed or not var_123_0.on_right_click then
-			arg_123_3.click_function(arg_123_2, arg_123_4, arg_123_5, arg_123_8)
+		if hotspot.on_pressed or hotspot.on_right_click then
+			pass_definition.click_function(ui_scenegraph, ui_style, ui_content, input_service)
 		end
 	end
 }
 UIPasses.on_double_click = {
-	init = function (arg_124_0)
+	init = function (pass_definition)
 		-- function 124
 		return
 	end,
-	draw = function (arg_125_0, arg_125_1, arg_125_2, arg_125_3, arg_125_4, arg_125_5, arg_125_6, arg_125_7, arg_125_8, arg_125_9)
+	draw = function (ui_renderer, pass_data, ui_scenegraph, pass_definition, ui_style, ui_content, position, size, input_service, dt)
 		-- function 125
-		if not arg_125_5[arg_125_3.click_check_content_id].on_double_click then
-			arg_125_3.click_function(arg_125_2, arg_125_4, arg_125_5, arg_125_8)
+		local click_content = ui_content[pass_definition.click_check_content_id]
+
+		if click_content.on_double_click then
+			pass_definition.click_function(ui_scenegraph, ui_style, ui_content, input_service)
 		end
 	end
 }
 UIPasses.debug_cursor = {
-	init = function (arg_126_0)
+	init = function (pass_definition)
 		-- function 126
 		return nil
 	end,
-	draw = function (arg_127_0, arg_127_1, arg_127_2, arg_127_3, arg_127_4, arg_127_5, arg_127_6, arg_127_7, arg_127_8, arg_127_9)
+	draw = function (ui_renderer, pass_data, ui_scenegraph, pass_definition, ui_style, ui_content, position, size, input_service, dt)
 		-- function 127
 		local green
 
-		if not arg_127_5.is_hover then
+		if ui_content.is_hover then
 			green = Colors.green
 
 			if not green then
@@ -5506,107 +6110,133 @@ UIPasses.debug_cursor = {
 
 		green = Colors.red
 
+		local color = green
+
 		::label_127_0::
 
-		local is_clicked = arg_127_5.is_clicked
+		local is_clicked = ui_content.is_clicked
 
-		is_clicked = is_clicked or 10
+		is_clicked = not not is_clicked or not not 10
 
 		if is_clicked < 0.5 then
-			green = Colors.blue
+			color = Colors.blue
 		end
 
-		UIRenderer.draw_rect(arg_127_0, arg_127_6, arg_127_7, green)
+		UIRenderer.draw_rect(ui_renderer, position, size, color)
 	end
 }
 UIPasses.local_offset = {
-	init = function (arg_128_0)
+	init = function (pass_definition)
 		-- function 128
 		return nil
 	end,
-	draw = function (arg_129_0, arg_129_1, arg_129_2, arg_129_3, arg_129_4, arg_129_5, arg_129_6, arg_129_7, arg_129_8, arg_129_9)
+	draw = function (ui_renderer, pass_data, ui_scenegraph, pass_definition, ui_style, ui_content, position, size, input_service, dt)
 		-- function 129
-		arg_129_3.offset_function(arg_129_2, arg_129_4, arg_129_5, arg_129_0)
+		pass_definition.offset_function(ui_scenegraph, ui_style, ui_content, ui_renderer)
 	end
 }
 UIPasses.scroll = {
-	init = function (arg_130_0)
+	init = function (pass_definition)
 		-- function 130
 		return nil
 	end,
-	draw = function (arg_131_0, arg_131_1, arg_131_2, arg_131_3, arg_131_4, arg_131_5, arg_131_6, arg_131_7, arg_131_8, arg_131_9)
+	draw = function (ui_renderer, pass_data, ui_scenegraph, pass_definition, ui_style, ui_content, position, size, input_service, dt)
 		-- function 131
-		local get = arg_131_8:get("cursor")
+		local get = input_service:get("cursor")
 
-		get = get or tbl
-
-		local var_131_1
-
-		if not Managers.input:is_device_active("gamepad") then
-			var_131_1 = get
-		else
-			var_131_1 = UIInverseScaleVectorToResolution(get)
+		if not get then
+			-- Nothing
 		end
 
-		local point_is_inside_2d_box = math.point_is_inside_2d_box(var_131_1, arg_131_6, arg_131_7)
+		get = NilCursor
 
-		point_is_inside_2d_box = not point_is_inside_2d_box and not UIPasses.is_dragging_item
-		arg_131_5.is_hover = point_is_inside_2d_box
+		local cursor = get
 
-		local get_2 = arg_131_8:get("scroll_axis")
+		::label_131_0::
 
-		if not get_2 then
-			arg_131_3.scroll_function(arg_131_2, arg_131_4, arg_131_5, arg_131_8, get_2, arg_131_9)
+		local cursor_position
+		local gamepad_active = Managers.input:is_device_active("gamepad")
+
+		if gamepad_active then
+			cursor_position = cursor
+		else
+			cursor_position = UIInverseScaleVectorToResolution(cursor)
+		end
+
+		local point_is_inside_2d_box = math.point_is_inside_2d_box(cursor_position, position, size)
+
+		if point_is_inside_2d_box then
+			-- Nothing
+		end
+
+		point_is_inside_2d_box = not UIPasses.is_dragging_item
+
+		local is_hover = point_is_inside_2d_box
+
+		::label_131_1::
+
+		ui_content.is_hover = is_hover
+
+		local scroll_axis = input_service:get("scroll_axis")
+
+		if scroll_axis then
+			pass_definition.scroll_function(ui_scenegraph, ui_style, ui_content, input_service, scroll_axis, dt)
 		end
 	end
 }
 UIPasses.held = {
-	init = function (arg_132_0)
+	init = function (pass_definition)
 		-- function 132
 		return nil
 	end,
-	draw = function (arg_133_0, arg_133_1, arg_133_2, arg_133_3, arg_133_4, arg_133_5, arg_133_6, arg_133_7, arg_133_8, arg_133_9)
+	draw = function (ui_renderer, pass_data, ui_scenegraph, pass_definition, ui_style, ui_content, position, size, input_service, dt)
 		-- function 133
 		local var_133_0
 
-		if not arg_133_3.content_check_hover then
-			var_133_0 = arg_133_5[arg_133_3.content_check_hover]
+		if pass_definition.content_check_hover then
+			var_133_0 = ui_content[pass_definition.content_check_hover]
 
 			if not var_133_0 then
 				-- Nothing
 			end
 		end
 
-		var_133_0 = arg_133_5
+		var_133_0 = ui_content
+
+		local content = var_133_0
 
 		::label_133_0::
 
-		if (var_133_0.is_held or not var_133_0.is_hover) and not arg_133_8:get("left_press") then
-			var_133_0.is_held = true
+		if not content.is_held and content.is_hover and input_service:get("left_press") then
+			content.is_held = true
 		end
 
-		if not var_133_0.is_held then
-			if not arg_133_8:get("left_hold") then
-				if not arg_133_3.held_function then
-					arg_133_3.held_function(arg_133_2, arg_133_4, arg_133_5, arg_133_8)
+		if content.is_held then
+			if input_service:get("left_hold") then
+				if pass_definition.held_function then
+					pass_definition.held_function(ui_scenegraph, ui_style, ui_content, input_service)
 				end
 			else
-				if not arg_133_3.release_function then
-					arg_133_3.release_function(arg_133_2, arg_133_4, arg_133_5, arg_133_8)
+				if pass_definition.release_function then
+					pass_definition.release_function(ui_scenegraph, ui_style, ui_content, input_service)
 				end
 
-				var_133_0.is_held = false
+				content.is_held = false
 			end
 		end
 	end
 }
 UIPasses.item_presentation = {
-	init = function (self, arg_134_1, arg_134_2)
+	init = function (pass_definition, ui_content, ui_style)
 		-- function 134
-		local tbl = {}
-		local content_passes = self.content_passes
+		local pass_data = {}
+		local content_passes = pass_definition.content_passes
 
-		content_passes = content_passes or {
+		if not content_passes then
+			-- Nothing
+		end
+
+		content_passes = {
 			"item_titles",
 			"deed_mission",
 			"deed_difficulty",
@@ -5619,225 +6249,242 @@ UIPasses.item_presentation = {
 			"traits"
 		}
 
-		local tbl_2 = {}
-		local pass_styles = arg_134_2.pass_styles
+		local pass_definitions = content_passes
 
-		for i, v in ipairs(content_passes) do
-			local flag = not pass_styles and pass_styles[v]
+		::label_134_0::
 
-			tbl_2[#tbl_2 + 1] = {
-				data = UITooltipPasses[v].setup_data(flag),
-				draw = UITooltipPasses[v].draw
+		local passes = {}
+		local pass_styles = ui_style.pass_styles
+
+		for _, pass_name in ipairs(pass_definitions) do
+			local pass_style = not not pass_styles and not not pass_styles[pass_name]
+
+			passes[#passes + 1] = {
+				data = UITooltipPasses[pass_name].setup_data(pass_style),
+				draw = UITooltipPasses[pass_name].draw
 			}
 		end
 
-		local flag_2 = not pass_styles and pass_styles.item_background
+		local pass_style = not not pass_styles and not not pass_styles.item_background
 
-		tbl.end_pass = {
-			data = UITooltipPasses.item_background.setup_data(flag_2),
+		pass_data.end_pass = {
+			data = UITooltipPasses.item_background.setup_data(pass_style),
 			draw = UITooltipPasses.item_background.draw
 		}
-		tbl.items = {}
-		tbl.passes = tbl_2
-		tbl.alpha_multiplier = 1
-		tbl.player = nil
-		tbl.force_equipped = arg_134_1.force_equipped
+		pass_data.items = {}
+		pass_data.passes = passes
+		pass_data.alpha_multiplier = 1
+		pass_data.player = nil
+		pass_data.force_equipped = ui_content.force_equipped
 
-		return tbl
+		return pass_data
 	end,
-	draw = function (arg_135_0, arg_135_1, arg_135_2, arg_135_3, arg_135_4, arg_135_5, arg_135_6, arg_135_7, arg_135_8, arg_135_9)
+	draw = function (ui_renderer, pass_data, ui_scenegraph, pass_definition, ui_style, ui_content, position, size, input_service, dt)
 		-- function 135
-		local var_135_0 = arg_135_5[arg_135_3.item_id]
+		local item = ui_content[pass_definition.item_id]
 
-		if not var_135_0 then
+		if not item then
 			return
 		end
 
-		if not arg_135_1.player then
-			arg_135_1.player = Managers.player:local_player()
+		if not pass_data.player then
+			pass_data.player = Managers.player:local_player()
 		end
 
-		arg_135_7[2] = 0
-		arg_135_1.start_layer = arg_135_6[3]
+		size[2] = 0
+		pass_data.start_layer = position[3]
 
-		local flag = true
-		local passes = arg_135_1.passes
-		local flag_2 = false
-		local num = 0
-		local end_pass = arg_135_1.end_pass
-		local draw_end_passes = arg_135_4.draw_end_passes
-		local frame_margin = end_pass.data.frame_margin
+		local draw_downwards = true
+		local passes = pass_data.passes
+		local draw = false
+		local tooltip_total_height = 0
+		local end_pass = pass_data.end_pass
+		local draw_end_passes = ui_style.draw_end_passes
+		local frame_margin_2 = end_pass.data.frame_margin
 
-		frame_margin = frame_margin or 0
+		if not frame_margin_2 then
+			-- Nothing
+		end
 
-		if not arg_135_5.compare_item then
-			local items = arg_135_1.items
+		frame_margin_2 = 0
+
+		local frame_margin = frame_margin_2
+
+		::label_135_0::
+
+		if ui_content.compare_item then
+			local items = pass_data.items
 
 			table.clear(items)
 
-			items[1] = var_135_0
+			items[1] = item
 
-			local compare_item = arg_135_5.compare_item
+			local compare_item = ui_content.compare_item
 
-			if not compare_item then
+			if compare_item then
 				items[2] = compare_item
 			end
 		end
 
-		if not end_pass and not draw_end_passes then
+		if end_pass and draw_end_passes then
 			local data = end_pass.data
+			local pass_height = end_pass.draw(data, draw, draw_downwards, ui_renderer, pass_data, ui_scenegraph, pass_definition, ui_style, ui_content, position, size, input_service, dt, item)
 
-			num = num + end_pass.draw(data, flag_2, flag, arg_135_0, arg_135_1, arg_135_2, arg_135_3, arg_135_4, arg_135_5, arg_135_6, arg_135_7, arg_135_8, arg_135_9, var_135_0)
+			tooltip_total_height = tooltip_total_height + pass_height
 		end
 
-		for i, v in ipairs(passes) do
-			local data_2 = v.data
+		for _, tooltip_pass in ipairs(passes) do
+			local data = tooltip_pass.data
 
-			data_2.frame_margin = frame_margin
-			num = num + v.draw(data_2, flag_2, flag, arg_135_0, arg_135_1, arg_135_2, arg_135_3, arg_135_4, arg_135_5, arg_135_6, arg_135_7, arg_135_8, arg_135_9, var_135_0)
+			data.frame_margin = frame_margin
+
+			local pass_height = tooltip_pass.draw(data, draw, draw_downwards, ui_renderer, pass_data, ui_scenegraph, pass_definition, ui_style, ui_content, position, size, input_service, dt, item)
+
+			tooltip_total_height = tooltip_total_height + pass_height
 		end
 
-		if arg_135_4.vertical_alignment == "center" then
-			arg_135_6[2] = arg_135_6[2] + num / 2 - frame_margin / 2
+		if ui_style.vertical_alignment == "center" then
+			position[2] = position[2] + tooltip_total_height / 2 - frame_margin / 2
 		end
 
-		local var_135_12 = arg_135_6[1]
-		local num_2 = arg_135_6[2] + frame_margin / 2
-		local var_135_14 = arg_135_6[3]
-		local flag_3 = true
+		local position_x = position[1]
+		local position_y = position[2] + frame_margin / 2
+		local position_z = position[3]
 
-		for i_2, v_2 in ipairs(passes) do
-			local data_3 = v_2.data
+		draw = true
 
-			data_3.frame_margin = frame_margin
+		for _, tooltip_pass in ipairs(passes) do
+			local data = tooltip_pass.data
 
-			local draw = v_2.draw(data_3, flag_3, flag, arg_135_0, arg_135_1, arg_135_2, arg_135_3, arg_135_4, arg_135_5, arg_135_6, arg_135_7, arg_135_8, arg_135_9, var_135_0)
+			data.frame_margin = frame_margin
 
-			arg_135_7[2] = arg_135_7[2] + draw
+			local pass_height = tooltip_pass.draw(data, draw, draw_downwards, ui_renderer, pass_data, ui_scenegraph, pass_definition, ui_style, ui_content, position, size, input_service, dt, item)
 
-			if not flag then
-				arg_135_6[2] = arg_135_6[2] - draw
+			size[2] = size[2] + pass_height
+
+			if draw_downwards then
+				position[2] = position[2] - pass_height
 			else
-				arg_135_6[2] = arg_135_6[2] + draw
+				position[2] = position[2] + pass_height
 			end
 		end
 
-		arg_135_6[1] = var_135_12
-		arg_135_6[2] = num_2
-		arg_135_6[3] = var_135_14
+		position[1] = position_x
+		position[2] = position_y
+		position[3] = position_z
 
-		if not end_pass and not draw_end_passes then
-			local data_4 = end_pass.data
+		if end_pass and draw_end_passes then
+			local data = end_pass.data
 
-			end_pass.draw(data_4, flag_3, flag, arg_135_0, arg_135_1, arg_135_2, arg_135_3, arg_135_4, arg_135_5, arg_135_6, arg_135_7, arg_135_8, arg_135_9, var_135_0)
+			end_pass.draw(data, draw, draw_downwards, ui_renderer, pass_data, ui_scenegraph, pass_definition, ui_style, ui_content, position, size, input_service, dt, item)
 		end
 
-		arg_135_4.item_presentation_height = arg_135_7[2]
+		ui_style.item_presentation_height = size[2]
 	end
 }
 UIPasses.keystrokes = {
-	init = function (self)
+	init = function (pass_definition)
 		-- function 136
 		return {
-			input_text_id = self.input_text_id,
+			input_text_id = pass_definition.input_text_id,
 			keystrokes = {}
 		}
 	end,
-	draw = function (arg_137_0, arg_137_1, arg_137_2, arg_137_3, arg_137_4, arg_137_5, arg_137_6, arg_137_7, arg_137_8, arg_137_9)
+	draw = function (ui_renderer, pass_data, ui_scenegraph, pass_definition, ui_style, ui_content, position, size, input_service, dt)
 		-- function 137
-		if not arg_137_5.active then
-			local var_137_0 = arg_137_5[arg_137_1.input_text_id]
-			local caret_index = arg_137_5.caret_index
-			local input_mode = arg_137_5.input_mode
-			local max_length = arg_137_5.max_length
+		if ui_content.active then
+			local input_text = ui_content[pass_data.input_text_id]
+			local caret_index = ui_content.caret_index
+			local input_mode = ui_content.input_mode
+			local max_length = ui_content.max_length
 
 			Managers.chat:block_chat_input_for_one_frame()
-			table.clear(arg_137_1.keystrokes)
+			table.clear(pass_data.keystrokes)
 
-			local keystrokes = Keyboard.keystrokes(arg_137_1.keystrokes)
-			local parse_strokes, var_137_6, var_137_7 = KeystrokeHelper.parse_strokes(var_137_0, caret_index, input_mode, keystrokes, max_length)
+			local keystrokes = Keyboard.keystrokes(pass_data.keystrokes)
+			local new_input_text, new_caret_index, new_input_mode = KeystrokeHelper.parse_strokes(input_text, caret_index, input_mode, keystrokes, max_length)
 
-			arg_137_5[arg_137_1.input_text_id] = parse_strokes
-			arg_137_5.caret_index = var_137_6
-			arg_137_5.input_mode = var_137_7
+			ui_content[pass_data.input_text_id] = new_input_text
+			ui_content.caret_index = new_caret_index
+			ui_content.input_mode = new_input_mode
 		end
 	end
 }
 
-local function fn_7(self, arg_138_1)
+local function run_content_functions_of_auto_layout_sub_pass(sub_pass, index)
 	-- function 138
-	local content_check_function = self.definition.content_check_function
+	local content_check_function = sub_pass.definition.content_check_function
 
-	if not (not content_check_function and content_check_function(self.content, self.style, arg_138_1)) then
-		self.visible = false
+	if content_check_function and not content_check_function(sub_pass.content, sub_pass.style, index) then
+		sub_pass.visible = false
 	end
 
-	local content_change_function = self.definition.content_change_function
+	local content_change_function = sub_pass.definition.content_change_function
 
-	if not self.visible and not content_change_function then
-		content_change_function(self.content, self.style, arg_138_1)
+	if sub_pass.visible and content_change_function then
+		content_change_function(sub_pass.content, sub_pass.style, index)
 	end
 end
 
-local function fn_8(self)
+local function update_auto_layout_sub_pass(sub_pass)
 	-- function 139
-	self.visible = self.content.visible ~= false
+	sub_pass.visible = sub_pass.content.visible ~= false
 end
 
 UIPasses.auto_layout = {
-	init = function (self, arg_140_1, arg_140_2)
+	init = function (pass_definition, ui_content, ui_style)
 		-- function 140
-		local tbl = {}
-		local sub_passes = self.sub_passes
-		local background_passes = self.background_passes
+		local pass_data = {}
+		local sub_pass_definitions = pass_definition.sub_passes
+		local background_definitions = pass_definition.background_passes
 
-		if not self.style_id then
-			arg_140_2 = arg_140_2[self.style_id]
+		if pass_definition.style_id then
+			ui_style = ui_style[pass_definition.style_id]
 
-			fassert(arg_140_2, "could not find style " .. self.style_id .. "in style definitions")
+			fassert(ui_style, "could not find style " .. pass_definition.style_id .. "in style definitions")
 		end
 
-		if not self.content_id then
-			arg_140_1 = arg_140_1[self.content_id]
+		if pass_definition.content_id then
+			ui_content = ui_content[pass_definition.content_id]
 
-			fassert(arg_140_1, "could not find content " .. self.content_id .. "in content definitions")
+			fassert(ui_content, "could not find content " .. pass_definition.content_id .. "in content definitions")
 		end
 
-		local function fn(self, arg_141_1, arg_141_2)
+		local function get_content_and_style(sub_pass_definition, parent_ui_content, parent_ui_style)
 			-- function 141
-			local content_id = self.content_id
-			local var_141_1
+			local sub_pass_content_id = sub_pass_definition.content_id
+			local sub_pass_content
 
-			if not content_id then
-				var_141_1 = arg_141_1[content_id]
-				var_141_1.parent = arg_141_1
+			if sub_pass_content_id then
+				sub_pass_content = parent_ui_content[sub_pass_content_id]
+				sub_pass_content.parent = parent_ui_content
 			else
-				var_141_1 = arg_141_1
+				sub_pass_content = parent_ui_content
 			end
 
-			local style_id = self.style_id
-			local var_141_3
+			local sub_pass_style_id = sub_pass_definition.style_id
+			local sub_pass_style
 
-			if not style_id then
-				var_141_3 = arg_141_2[style_id]
-				var_141_3.parent = arg_141_2
+			if sub_pass_style_id then
+				sub_pass_style = parent_ui_style[sub_pass_style_id]
+				sub_pass_style.parent = parent_ui_style
 			else
-				var_141_3 = arg_141_2
+				sub_pass_style = parent_ui_style
 			end
 
-			return var_141_1, var_141_3
+			return sub_pass_content, sub_pass_style
 		end
 
-		local tbl_2 = {}
+		local passes = {}
 
-		for i, v in ipairs(sub_passes) do
-			local pass_type = v.pass_type
-			local var_140_6 = UIPasses[pass_type]
-			local var_140_7, var_140_8 = fn(v, arg_140_1, arg_140_2)
-			local var_140_9
+		for _, sub_pass_definition in ipairs(sub_pass_definitions) do
+			local pass_name = sub_pass_definition.pass_type
+			local pass = UIPasses[pass_name]
+			local sub_pass_content, sub_pass_style = get_content_and_style(sub_pass_definition, ui_content, ui_style)
+			local debug_color
 
-			if not var_140_8.render_random_debug_color then
-				var_140_9 = {
+			if sub_pass_style.render_random_debug_color then
+				debug_color = {
 					64,
 					math.random(0, 255),
 					math.random(0, 255),
@@ -5845,30 +6492,30 @@ UIPasses.auto_layout = {
 				}
 			end
 
-			tbl_2[#tbl_2 + 1] = {
+			passes[#passes + 1] = {
 				visible = true,
-				definition = v,
-				data = var_140_6.init(v, arg_140_1, arg_140_2),
-				update = var_140_6.update,
-				draw = var_140_6.draw,
-				content = var_140_7,
-				style = var_140_8,
-				get_preferred_size = var_140_6.get_preferred_size,
-				debug_color = var_140_9
+				definition = sub_pass_definition,
+				data = pass.init(sub_pass_definition, ui_content, ui_style),
+				update = pass.update,
+				draw = pass.draw,
+				content = sub_pass_content,
+				style = sub_pass_style,
+				get_preferred_size = pass.get_preferred_size,
+				debug_color = debug_color
 			}
 		end
 
-		local tbl_3 = {}
+		local background_passes = {}
 
-		if not background_passes then
-			for i_2, v_2 in ipairs(background_passes) do
-				local pass_type_2 = v_2.pass_type
-				local var_140_12 = UIPasses[pass_type_2]
-				local var_140_13, var_140_14 = fn(v_2, arg_140_1, arg_140_2)
-				local var_140_15
+		if background_definitions then
+			for _, background_definition in ipairs(background_definitions) do
+				local pass_name = background_definition.pass_type
+				local pass = UIPasses[pass_name]
+				local sub_pass_content, sub_pass_style = get_content_and_style(background_definition, ui_content, ui_style)
+				local debug_color
 
-				if not var_140_14.render_random_debug_color then
-					var_140_15 = {
+				if sub_pass_style.render_random_debug_color then
+					debug_color = {
 						64,
 						math.random(0, 255),
 						math.random(0, 255),
@@ -5876,388 +6523,462 @@ UIPasses.auto_layout = {
 					}
 				end
 
-				tbl_3[#tbl_3 + 1] = {
+				background_passes[#background_passes + 1] = {
 					visible = true,
-					definition = v_2,
-					data = var_140_12.init(v_2, arg_140_1, arg_140_2),
-					update = var_140_12.update,
-					draw = var_140_12.draw,
-					content = var_140_13,
-					style = var_140_14,
-					get_preferred_size = var_140_12.get_preferred_size,
-					debug_color = var_140_15
+					definition = background_definition,
+					data = pass.init(background_definition, ui_content, ui_style),
+					update = pass.update,
+					draw = pass.draw,
+					content = sub_pass_content,
+					style = sub_pass_style,
+					get_preferred_size = pass.get_preferred_size,
+					debug_color = debug_color
 				}
 			end
 		end
 
-		tbl.passes = tbl_2
-		tbl.background_passes = tbl_3
-		tbl._size_table = {
+		pass_data.passes = passes
+		pass_data.background_passes = background_passes
+		pass_data._size_table = {
 			0,
 			0
 		}
 
-		return tbl
+		return pass_data
 	end,
-	update = function (arg_142_0, arg_142_1, arg_142_2, arg_142_3, arg_142_4, arg_142_5, arg_142_6, arg_142_7, arg_142_8)
+	update = function (ui_renderer, pass_data, ui_scenegraph, pass_definition, ui_style, ui_content, input_service, dt, visible)
 		-- function 142
-		local num = 0
-		local num_2 = 0
-		local num_3 = 0
-		local num_4 = 0
-		local layout_delta_x
+		local min_x, min_y, max_x, max_y = 0, 0, 0, 0
+		local layout_delta_x_2
 
-		if not arg_142_4 then
-			layout_delta_x = arg_142_4.layout_delta_x
+		if ui_style then
+			layout_delta_x_2 = ui_style.layout_delta_x
 
-			if not layout_delta_x then
+			if not layout_delta_x_2 then
 				-- Nothing
 			end
 		end
 
-		layout_delta_x = 0
+		layout_delta_x_2 = 0
 
 		do
-			local layout_delta_y
+			local layout_delta_y_2
 		end
 
 		::label_142_0::
 
-		if not arg_142_4 then
-			layout_delta_y = arg_142_4.layout_delta_y
+		if ui_style then
+			layout_delta_y_2 = ui_style.layout_delta_y
 
-			if not layout_delta_y then
+			if not layout_delta_y_2 then
 				-- Nothing
 			end
 		end
 
-		layout_delta_y = 1
+		layout_delta_y_2 = 1
+
+		local layout_delta_x, layout_delta_y = layout_delta_x_2, layout_delta_y_2
 
 		do
-			local flag
+			local num
 		end
 
 		::label_142_1::
 
-		flag = not (layout_delta_x < 0) or not 1 or 0
+		if layout_delta_x < 0 then
+			num = 1
 
-		local flag_2
+			goto label_142_2
+		end
 
-		flag_2 = not (layout_delta_y < 0) or not 1 or 0
+		num = 0
 
-		local num_5 = 0
-		local num_6 = 0
+		local x_correction = num
 
-		for i, v in ipairs(arg_142_1.passes) do
-			fn_8(v, arg_142_5, arg_142_4)
-			fn_7(v, i)
+		do
+			local num_2
+		end
 
-			if not v.update then
-				v.update(arg_142_0, v.data, arg_142_2, v.definition, v.style, v.content, arg_142_6, arg_142_7, v.visible)
+		::label_142_2::
+
+		if layout_delta_y < 0 then
+			num_2 = 1
+
+			goto label_142_3
+		end
+
+		num_2 = 0
+
+		local y_correction = num_2
+
+		::label_142_3::
+
+		local current_pos_x, current_pos_y = 0, 0
+
+		for i, sub_pass in ipairs(pass_data.passes) do
+			update_auto_layout_sub_pass(sub_pass, ui_content, ui_style)
+			run_content_functions_of_auto_layout_sub_pass(sub_pass, i)
+
+			if sub_pass.update then
+				sub_pass.update(ui_renderer, sub_pass.data, ui_scenegraph, sub_pass.definition, sub_pass.style, sub_pass.content, input_service, dt, sub_pass.visible)
 			end
 
-			if not v.visible then
-				local var_142_10
-				local var_142_11
+			if sub_pass.visible then
+				local width, height
 
-				if not v.style and not v.style.size then
-					var_142_10, var_142_11 = v.style.size[1], v.style.size[2]
+				if sub_pass.style and sub_pass.style.size then
+					width, height = sub_pass.style.size[1], sub_pass.style.size[2]
 				end
 
-				if not v.style then
-					if not v.style.dynamic_width then
-						fassert(v.get_preferred_size, "pass of type '" .. v.definition.pass_type .. "' does not support dynamic_size")
+				if sub_pass.style then
+					if sub_pass.style.dynamic_width then
+						fassert(sub_pass.get_preferred_size, "pass of type '" .. sub_pass.definition.pass_type .. "' does not support dynamic_size")
 
-						var_142_10 = v.get_preferred_size(arg_142_0, v.data, arg_142_2, v.definition, v.style, v.content, arg_142_6, arg_142_7, v.visible)
-					elseif not v.style.dynamic_height then
-						fassert(v.get_preferred_size, "pass of type '" .. v.definition.pass_type .. "' does not support dynamic_size")
+						width = sub_pass.get_preferred_size(ui_renderer, sub_pass.data, ui_scenegraph, sub_pass.definition, sub_pass.style, sub_pass.content, input_service, dt, sub_pass.visible)
+					elseif sub_pass.style.dynamic_height then
+						fassert(sub_pass.get_preferred_size, "pass of type '" .. sub_pass.definition.pass_type .. "' does not support dynamic_size")
 
-						local var_142_12
-						local get_preferred_size
+						local _
 
-						get_preferred_size, var_142_11 = v.get_preferred_size(arg_142_0, v.data, arg_142_2, v.definition, v.style, v.content, arg_142_6, arg_142_7, v.visible)
-					elseif not v.style.dynamic_size then
-						fassert(v.get_preferred_size, "pass of type '" .. v.definition.pass_type .. "' does not support dynamic_size")
+						_, height = sub_pass.get_preferred_size(ui_renderer, sub_pass.data, ui_scenegraph, sub_pass.definition, sub_pass.style, sub_pass.content, input_service, dt, sub_pass.visible)
+					elseif sub_pass.style.dynamic_size then
+						fassert(sub_pass.get_preferred_size, "pass of type '" .. sub_pass.definition.pass_type .. "' does not support dynamic_size")
 
-						var_142_10, var_142_11 = v.get_preferred_size(arg_142_0, v.data, arg_142_2, v.definition, v.style, v.content, arg_142_6, arg_142_7, v.visible)
+						width, height = sub_pass.get_preferred_size(ui_renderer, sub_pass.data, ui_scenegraph, sub_pass.definition, sub_pass.style, sub_pass.content, input_service, dt, sub_pass.visible)
 					end
 				end
 
-				var_142_10 = var_142_10 or 0
-				var_142_11 = var_142_11 or 0
+				width = not not width or not not 0
+				height = not not height or not not 0
 
-				local layout_left_padding = v.style.layout_left_padding
+				local layout_left_padding = sub_pass.style.layout_left_padding
 
-				layout_left_padding = layout_left_padding or 0
+				layout_left_padding = not not layout_left_padding or not not 0
 
-				local num_7 = var_142_10 + layout_left_padding
-				local layout_right_padding = v.style.layout_right_padding
+				local num_3 = width + layout_left_padding
+				local layout_right_padding = sub_pass.style.layout_right_padding
 
-				layout_right_padding = layout_right_padding or 0
-				v.wanted_width = num_7 + layout_right_padding
+				layout_right_padding = not not layout_right_padding or not not 0
+				sub_pass.wanted_width = num_3 + layout_right_padding
 
-				local layout_top_padding = v.style.layout_top_padding
+				local layout_top_padding = sub_pass.style.layout_top_padding
 
-				layout_top_padding = layout_top_padding or 0
+				layout_top_padding = not not layout_top_padding or not not 0
 
-				local num_8 = var_142_11 + layout_top_padding
-				local layout_bottom_padding = v.style.layout_bottom_padding
+				local num_4 = height + layout_top_padding
+				local layout_bottom_padding = sub_pass.style.layout_bottom_padding
 
-				layout_bottom_padding = layout_bottom_padding or 0
-				v.wanted_height = num_8 + layout_bottom_padding
-				v.layout_pos_x = num_5 + v.wanted_width * layout_delta_x * flag
-				v.layout_pos_y = num_6 + v.wanted_height * layout_delta_y * flag_2
-				num = math.min(num, v.layout_pos_x)
-				num_2 = math.min(num_2, v.layout_pos_y)
-				num_3 = math.max(num_3, v.layout_pos_x + v.wanted_width)
-				num_4 = math.max(num_4, v.layout_pos_y + v.wanted_height)
+				layout_bottom_padding = not not layout_bottom_padding or not not 0
+				sub_pass.wanted_height = num_4 + layout_bottom_padding
+				sub_pass.layout_pos_x = current_pos_x + sub_pass.wanted_width * layout_delta_x * x_correction
+				sub_pass.layout_pos_y = current_pos_y + sub_pass.wanted_height * layout_delta_y * y_correction
+				min_x = math.min(min_x, sub_pass.layout_pos_x)
+				min_y = math.min(min_y, sub_pass.layout_pos_y)
+				max_x = math.max(max_x, sub_pass.layout_pos_x + sub_pass.wanted_width)
+				max_y = math.max(max_y, sub_pass.layout_pos_y + sub_pass.wanted_height)
 
-				local style = v.style
+				local style = sub_pass.style
 
-				style = not style and v.style.offset
-
-				if not style then
-					v.layout_pos_x = v.layout_pos_x + style[1]
-					v.layout_pos_y = v.layout_pos_y + style[2]
+				if style then
+					-- Nothing
 				end
 
-				num_6 = num_6 + v.wanted_height * layout_delta_y
-				num_5 = num_5 + v.wanted_width * layout_delta_x
+				style = sub_pass.style.offset
+
+				local offset = style
+
+				::label_142_4::
+
+				if offset then
+					sub_pass.layout_pos_x = sub_pass.layout_pos_x + offset[1]
+					sub_pass.layout_pos_y = sub_pass.layout_pos_y + offset[2]
+				end
+
+				current_pos_y = current_pos_y + sub_pass.wanted_height * layout_delta_y
+				current_pos_x = current_pos_x + sub_pass.wanted_width * layout_delta_x
 			end
 		end
 
-		arg_142_1.layout_min_x = num
-		arg_142_1.layout_min_y = num_2
-		arg_142_1.layout_max_x = num_3
-		arg_142_1.layout_max_y = num_4
+		pass_data.layout_min_x = min_x
+		pass_data.layout_min_y = min_y
+		pass_data.layout_max_x = max_x
+		pass_data.layout_max_y = max_y
 
-		for i_2, v_2 in ipairs(arg_142_1.background_passes) do
-			fn_8(v_2, arg_142_5, arg_142_4)
-			fn_7(v_2, i_2)
+		for i, sub_pass in ipairs(pass_data.background_passes) do
+			update_auto_layout_sub_pass(sub_pass, ui_content, ui_style)
+			run_content_functions_of_auto_layout_sub_pass(sub_pass, i)
 
-			if not v_2.update then
-				v_2.update(arg_142_0, v_2.data, arg_142_2, v_2.definition, v_2.style, v_2.content, arg_142_6, arg_142_7, v_2.visible)
+			if sub_pass.update then
+				sub_pass.update(ui_renderer, sub_pass.data, ui_scenegraph, sub_pass.definition, sub_pass.style, sub_pass.content, input_service, dt, sub_pass.visible)
 			end
 		end
 	end,
-	draw = function (arg_143_0, arg_143_1, arg_143_2, arg_143_3, arg_143_4, arg_143_5, arg_143_6, arg_143_7, arg_143_8, arg_143_9)
+	draw = function (ui_renderer, pass_data, ui_scenegraph, pass_definition, ui_style, ui_content, position, parent_size, input_service, dt)
 		-- function 143
-		local num = arg_143_1.layout_max_x - arg_143_1.layout_min_x
-		local num_2 = arg_143_1.layout_max_y - arg_143_1.layout_min_y
-		local var_143_2
-		local var_143_3
+		local total_width = pass_data.layout_max_x - pass_data.layout_min_x
+		local total_height = pass_data.layout_max_y - pass_data.layout_min_y
+		local base_pos_x, base_pos_y
 
-		if arg_143_4.horizontal_alignment == "center" then
-			var_143_2 = arg_143_6[1] + arg_143_7[1] / 2 - num / 2
-		elseif arg_143_4.horizontal_alignment == "right" then
-			var_143_2 = arg_143_6[1] + arg_143_7[1] - num
+		if ui_style.horizontal_alignment == "center" then
+			base_pos_x = position[1] + parent_size[1] / 2 - total_width / 2
+		elseif ui_style.horizontal_alignment == "right" then
+			base_pos_x = position[1] + parent_size[1] - total_width
 		else
-			var_143_2 = arg_143_6[1]
+			base_pos_x = position[1]
 		end
 
-		if arg_143_4.vertical_alignment == "center" then
-			var_143_3 = arg_143_6[2] + arg_143_7[2] / 2 - num_2 / 2
-		elseif arg_143_4.vertical_alignment == "top" then
-			var_143_3 = arg_143_6[2] + arg_143_7[2] - num_2
+		if ui_style.vertical_alignment == "center" then
+			base_pos_y = position[2] + parent_size[2] / 2 - total_height / 2
+		elseif ui_style.vertical_alignment == "top" then
+			base_pos_y = position[2] + parent_size[2] - total_height
 		else
-			var_143_3 = arg_143_6[2]
+			base_pos_y = position[2]
 		end
 
-		local screen_padding = arg_143_4.screen_padding
+		local screen_padding = ui_style.screen_padding
 
-		if not screen_padding then
+		if screen_padding then
 			local inv_scale = RESOLUTION_LOOKUP.inv_scale
-			local num_3 = RESOLUTION_LOOKUP.res_w * inv_scale
-			local num_4 = RESOLUTION_LOOKUP.res_h * inv_scale
-			local top = screen_padding.top
+			local screen_width, screen_height = RESOLUTION_LOOKUP.res_w * inv_scale, RESOLUTION_LOOKUP.res_h * inv_scale
+			local screen_padding_top = screen_padding.top
 
-			if not top then
-				local num_5 = num_4 - top - (var_143_3 + num_2)
+			if screen_padding_top then
+				local top_height_difference = screen_height - screen_padding_top - (base_pos_y + total_height)
 
-				if num_5 < 0 then
-					var_143_3 = var_143_3 + num_5
+				if top_height_difference < 0 then
+					base_pos_y = base_pos_y + top_height_difference
 				end
 			end
 
-			local right = screen_padding.right
+			local screen_padding_right = screen_padding.right
 
-			if not right then
-				local num_6 = num_3 - right - (var_143_2 + num)
+			if screen_padding_right then
+				local right_width_difference = screen_width - screen_padding_right - (base_pos_x + total_width)
 
-				if num_6 < 0 then
-					var_143_2 = var_143_2 + num_6
+				if right_width_difference < 0 then
+					base_pos_x = base_pos_x + right_width_difference
 				end
 			end
 
-			local bottom = screen_padding.bottom
+			local screen_padding_bottom = screen_padding.bottom
 
-			if not bottom then
-				local num_7 = var_143_3 - bottom
+			if screen_padding_bottom then
+				local bottom_height_difference = base_pos_y - screen_padding_bottom
 
-				if num_7 < 0 then
-					var_143_3 = var_143_3 - num_7
+				if bottom_height_difference < 0 then
+					base_pos_y = base_pos_y - bottom_height_difference
 				end
 			end
 
-			local left = screen_padding.left
+			local screen_padding_left = screen_padding.left
 
-			if not left then
-				local num_8 = var_143_2 - left
+			if screen_padding_left then
+				local left_width_difference = base_pos_x - screen_padding_left
 
-				if num_8 < 0 then
-					var_143_2 = var_143_2 - num_8
+				if left_width_difference < 0 then
+					base_pos_x = base_pos_x - left_width_difference
 				end
 			end
 		end
 
-		arg_143_1._size_table[1] = num
-		arg_143_1._size_table[2] = num_2
+		pass_data._size_table[1] = total_width
+		pass_data._size_table[2] = total_height
 
-		local var_143_16 = Vector3(0, 0, 0)
-		local layout_delta_x
+		local pass_position = Vector3(0, 0, 0)
+		local layout_delta_x_2
 
-		if not arg_143_4 then
-			layout_delta_x = arg_143_4.layout_delta_x
+		if ui_style then
+			layout_delta_x_2 = ui_style.layout_delta_x
 
-			if not layout_delta_x then
+			if not layout_delta_x_2 then
 				-- Nothing
 			end
 		end
 
-		layout_delta_x = 0
+		layout_delta_x_2 = 0
 
 		do
-			local layout_delta_y
+			local layout_delta_y_2
 		end
 
 		::label_143_0::
 
-		if not arg_143_4 then
-			layout_delta_y = arg_143_4.layout_delta_y
+		if ui_style then
+			layout_delta_y_2 = ui_style.layout_delta_y
 
-			if not layout_delta_y then
+			if not layout_delta_y_2 then
 				-- Nothing
 			end
 		end
 
-		layout_delta_y = 1
+		layout_delta_y_2 = 1
+
+		local layout_delta_x, layout_delta_y = layout_delta_x_2, layout_delta_y_2
 
 		do
-			local flag
+			local num
 		end
 
 		::label_143_1::
 
-		flag = not (layout_delta_x < 0) or not 1 or 0
+		if layout_delta_x < 0 then
+			num = 1
 
-		local flag_2
+			goto label_143_2
+		end
 
-		flag_2 = not (layout_delta_y < 0) or not 1 or 0
+		num = 0
 
-		local background_passes = arg_143_1.background_passes
+		local x_correction = num
+
+		do
+			local num_2
+		end
+
+		::label_143_2::
+
+		if layout_delta_y < 0 then
+			num_2 = 1
+
+			goto label_143_3
+		end
+
+		num_2 = 0
+
+		local y_correction = num_2
+
+		::label_143_3::
+
+		local background_passes = pass_data.background_passes
 
 		for i = 1, #background_passes do
-			local var_143_22 = background_passes[i]
+			local sub_pass = background_passes[i]
 
-			if not var_143_22.visible then
-				local layout_left_padding = var_143_22.style.layout_left_padding
+			if sub_pass.visible then
+				local layout_left_padding = sub_pass.style.layout_left_padding
 
-				layout_left_padding = layout_left_padding or 0
-				var_143_16.x = var_143_2 - layout_left_padding
+				layout_left_padding = not not layout_left_padding or not not 0
+				pass_position.x = base_pos_x - layout_left_padding
 
-				local layout_bottom_padding = var_143_22.style.layout_bottom_padding
+				local layout_bottom_padding = sub_pass.style.layout_bottom_padding
 
-				layout_bottom_padding = layout_bottom_padding or 0
-				var_143_16.y = var_143_3 - layout_bottom_padding
-				var_143_16.z = arg_143_6[3]
+				layout_bottom_padding = not not layout_bottom_padding or not not 0
+				pass_position.y = base_pos_y - layout_bottom_padding
+				pass_position.z = position[3]
 
-				local style = var_143_22.style
+				local style = sub_pass.style
 
-				style = not style and var_143_22.style.offset
-
-				if not style then
-					var_143_16.x = var_143_16.x + style[1]
-					var_143_16.y = var_143_16.y + style[2]
-					var_143_16.z = var_143_16.z + style[3]
+				if style then
+					-- Nothing
 				end
 
-				local _size_table = arg_143_1._size_table
-				local layout_left_padding_2 = var_143_22.style.layout_left_padding
+				style = sub_pass.style.offset
 
-				layout_left_padding_2 = layout_left_padding_2 or 0
+				local offset = style
 
-				local num_9 = num + layout_left_padding_2
-				local layout_right_padding = var_143_22.style.layout_right_padding
+				::label_143_4::
 
-				layout_right_padding = layout_right_padding or 0
-				_size_table[1] = num_9 + layout_right_padding
-
-				local _size_table_2 = arg_143_1._size_table
-				local layout_bottom_padding_2 = var_143_22.style.layout_bottom_padding
-
-				layout_bottom_padding_2 = layout_bottom_padding_2 or 0
-
-				local num_10 = num_2 + layout_bottom_padding_2
-				local layout_top_padding = var_143_22.style.layout_top_padding
-
-				layout_top_padding = layout_top_padding or 0
-				_size_table_2[2] = num_10 + layout_top_padding
-
-				if not var_143_22.debug_color then
-					UIRenderer.draw_rect(arg_143_0, var_143_16, arg_143_1._size_table, var_143_22.debug_color)
+				if offset then
+					pass_position.x = pass_position.x + offset[1]
+					pass_position.y = pass_position.y + offset[2]
+					pass_position.z = pass_position.z + offset[3]
 				end
 
-				var_143_22.draw(arg_143_0, var_143_22.data, arg_143_2, var_143_22.definition, var_143_22.style, var_143_22.content, var_143_16, arg_143_1._size_table, arg_143_8, arg_143_9)
+				local _size_table = pass_data._size_table
+				local layout_left_padding_2 = sub_pass.style.layout_left_padding
+
+				layout_left_padding_2 = not not layout_left_padding_2 or not not 0
+
+				local num_3 = total_width + layout_left_padding_2
+				local layout_right_padding = sub_pass.style.layout_right_padding
+
+				layout_right_padding = not not layout_right_padding or not not 0
+				_size_table[1] = num_3 + layout_right_padding
+
+				local _size_table_2 = pass_data._size_table
+				local layout_bottom_padding_2 = sub_pass.style.layout_bottom_padding
+
+				layout_bottom_padding_2 = not not layout_bottom_padding_2 or not not 0
+
+				local num_4 = total_height + layout_bottom_padding_2
+				local layout_top_padding = sub_pass.style.layout_top_padding
+
+				layout_top_padding = not not layout_top_padding or not not 0
+				_size_table_2[2] = num_4 + layout_top_padding
+
+				if sub_pass.debug_color then
+					UIRenderer.draw_rect(ui_renderer, pass_position, pass_data._size_table, sub_pass.debug_color)
+				end
+
+				sub_pass.draw(ui_renderer, sub_pass.data, ui_scenegraph, sub_pass.definition, sub_pass.style, sub_pass.content, pass_position, pass_data._size_table, input_service, dt)
 			end
 		end
 
-		local passes = arg_143_1.passes
+		local passes = pass_data.passes
 
-		for j = 1, #passes do
-			local var_143_35 = passes[j]
+		for i = 1, #passes do
+			local sub_pass = passes[i]
 
-			if not var_143_35.visible then
-				var_143_16[1] = var_143_2 + var_143_35.layout_pos_x - num * layout_delta_x * flag
-				var_143_16[2] = var_143_3 + var_143_35.layout_pos_y - num_2 * layout_delta_y * flag_2
-				var_143_16[3] = arg_143_6[3]
+			if sub_pass.visible then
+				pass_position[1] = base_pos_x + sub_pass.layout_pos_x - total_width * layout_delta_x * x_correction
+				pass_position[2] = base_pos_y + sub_pass.layout_pos_y - total_height * layout_delta_y * y_correction
+				pass_position[3] = position[3]
 
-				local style_2 = arg_143_1.style
+				local style_2 = pass_data.style
 
-				style_2 = not style_2 and arg_143_1.style.offset
-
-				if not style_2 then
-					var_143_16[3] = var_143_16[3] + style_2[3]
+				if style_2 then
+					-- Nothing
 				end
 
-				local style_3 = var_143_35.style
+				style_2 = pass_data.style.offset
 
-				style_3 = not style_3 and var_143_35.style.offset
+				local main_offset = style_2
 
-				if not style_3 then
-					var_143_16[3] = var_143_16[3] + style_3[3]
+				::label_143_5::
+
+				if main_offset then
+					pass_position[3] = pass_position[3] + main_offset[3]
 				end
 
-				if var_143_35.definition.pass_type == "auto_layout" then
-					arg_143_1._size_table[1] = num
-					arg_143_1._size_table[2] = num_2
+				local style_3 = sub_pass.style
+
+				if style_3 then
+					-- Nothing
+				end
+
+				style_3 = sub_pass.style.offset
+
+				local sub_pass_offset = style_3
+
+				::label_143_6::
+
+				if sub_pass_offset then
+					pass_position[3] = pass_position[3] + sub_pass_offset[3]
+				end
+
+				local pass_name = sub_pass.definition.pass_type
+
+				if pass_name == "auto_layout" then
+					pass_data._size_table[1] = total_width
+					pass_data._size_table[2] = total_height
 				else
-					arg_143_1._size_table[1] = not var_143_35.style.fill_width and num and var_143_35.wanted_width
-					arg_143_1._size_table[2] = not var_143_35.style.fill_height and num_2 and var_143_35.wanted_height
+					pass_data._size_table[1] = (not sub_pass.style.fill_width or not total_width) and not not sub_pass.wanted_width
+					pass_data._size_table[2] = (not sub_pass.style.fill_height or not total_height) and not not sub_pass.wanted_height
 				end
 
-				if not var_143_35.debug_color then
-					UIRenderer.draw_rect(arg_143_0, var_143_16, arg_143_1._size_table, var_143_35.debug_color)
+				if sub_pass.debug_color then
+					UIRenderer.draw_rect(ui_renderer, pass_position, pass_data._size_table, sub_pass.debug_color)
 				end
 
-				var_143_35.draw(arg_143_0, var_143_35.data, arg_143_2, var_143_35.definition, var_143_35.style, var_143_35.content, var_143_16, arg_143_1._size_table, arg_143_8, arg_143_9)
+				sub_pass.draw(ui_renderer, sub_pass.data, ui_scenegraph, sub_pass.definition, sub_pass.style, sub_pass.content, pass_position, pass_data._size_table, input_service, dt)
 			end
 		end
 	end,
-	get_preferred_size = function (arg_144_0, arg_144_1, arg_144_2, arg_144_3, arg_144_4, arg_144_5, arg_144_6, arg_144_7, arg_144_8)
+	get_preferred_size = function (ui_renderer, pass_data, ui_scenegraph, pass_definition, ui_style, ui_content, input_service, dt, visible)
 		-- function 144
-		local num = arg_144_1.layout_max_x - arg_144_1.layout_min_x
-		local num_2 = arg_144_1.layout_max_y - arg_144_1.layout_min_y
+		local total_width = pass_data.layout_max_x - pass_data.layout_min_x
+		local total_height = pass_data.layout_max_y - pass_data.layout_min_y
 
-		return num, num_2
+		return total_width, total_height
 	end
 }

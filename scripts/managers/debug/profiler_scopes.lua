@@ -1,37 +1,46 @@
 -- chunkname: @scripts/managers/debug/profiler_scopes.lua
 
-local num = 0
-local flag = false
-local flag_2 = false
-local flag_3 = false
-local var_0_4
-local tbl = {}
-local tbl_2 = {}
-local overloaded = overloaded
+local depth = 0
+local dump = false
+local dump_light = false
+local has_started = false
+local last_started
+local started_scopes = {}
+local started_scopes2 = {}
+local overloaded_2 = overloaded
 
-overloaded = overloaded or false
-
-local function fn(arg_1_0)
-	-- function 1
-	local str = ""
-
-	for i = 0, 2 + arg_1_0 do
-		str = str .. "   "
-	end
-
-	return str
+if not overloaded_2 then
+	-- Nothing
 end
 
-local function fn_2()
-	-- function 2
-	local traceback = debug.traceback()
+overloaded_2 = false
 
-	return (string.match(traceback, "\t.-\n\t.-\n\t(.-)\n"))
+local overloaded = overloaded_2
+
+::label_0_0::
+
+local function indent(depth)
+	-- function 1
+	local ind = ""
+
+	for ii = 0, 2 + depth do
+		ind = ind .. "   "
+	end
+
+	return ind
+end
+
+local function get_line()
+	-- function 2
+	local tb = debug.traceback()
+	local result = string.match(tb, "\t.-\n\t.-\n\t(.-)\n")
+
+	return result
 end
 
 function profiler_scopes_trace()
 	-- function 3
-	if not overloaded then
+	if overloaded then
 		return
 	end
 
@@ -42,18 +51,18 @@ function profiler_scopes_dump()
 	-- function 4
 	profiler_scopes_trace()
 
-	flag_2 = true
-	flag = true
+	dump_light = true
+	dump = true
 end
 
 function profiler_scopes_dump_light()
 	-- function 5
 	profiler_scopes_trace()
 
-	flag_2 = true
+	dump_light = true
 end
 
-if Development.parameter("validate_profiling_scopes") or not Development.parameter("debug_profiling_scopes") then
+if Development.parameter("validate_profiling_scopes") or Development.parameter("debug_profiling_scopes") then
 	Application.warning("Enabling profile scope validation")
 	profiler_scopes_dump_light()
 end

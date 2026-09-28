@@ -2,7 +2,7 @@
 
 require("scripts/settings/dlcs/morris/tweak_data/buff_tweak_data")
 
-local tbl = {
+local item_master_list = {
 	belakor_crystal = {
 		temporary_template = "belakor_crystal",
 		slot_type = "healthkit",
@@ -29,4 +29,4 @@ local tbl = {
 	}
 }
 
-table.merge(ItemMasterList, tbl)
+table.merge(ItemMasterList, item_master_list)

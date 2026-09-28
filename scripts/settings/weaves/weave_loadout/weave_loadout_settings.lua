@@ -20,10 +20,10 @@ require("scripts/managers/talents/talent_settings")
 require("scripts/settings/equipment/weave_traits")
 require("scripts/settings/equipment/weave_properties")
 
-local TalentIDLookup = TalentIDLookup
-local properties = WeaveProperties.properties
-local traits = WeaveTraits.traits
-local tbl = {
+local talent_id_lookup = TalentIDLookup
+local weave_properties = WeaveProperties.properties
+local weave_traits = WeaveTraits.traits
+local default_properties = {
 	"weave_attack_speed",
 	"weave_crit_boost",
 	"weave_power_vs_skaven",
@@ -47,7 +47,7 @@ local tbl = {
 	"weave_fatigue_regen",
 	"weave_movespeed"
 }
-local tbl_2 = {
+local default_traits = {
 	"weave_melee_attack_speed_on_crit",
 	"weave_melee_timed_block_cost",
 	"weave_melee_counter_push_power",
@@ -75,61 +75,61 @@ local tbl_2 = {
 	"weave_trinket_increase_grenade_radius",
 	"weave_trinket_grenade_damage_taken"
 }
-local tbl_3 = {}
-local tbl_4 = {}
-local tbl_5 = {}
+local talents_by_career = {}
+local properties_by_career = {}
+local traits_by_career = {}
 
-for k, v in pairs(WeaveLoadoutSettings) do
-	local tbl_6 = {}
+for career_name, settings in pairs(WeaveLoadoutSettings) do
+	local career_talents = {}
 
-	for i, v_2 in ipairs(v.talent_tree) do
-		for i_2, v_3 in ipairs(v_2) do
-			local talent_id = TalentIDLookup[v_3].talent_id
-			local profile_name = CareerSettings[k].profile_name
-			local var_0_11 = Talents[profile_name][talent_id]
+	for tree_row, tier_talents in ipairs(settings.talent_tree) do
+		for tree_column, talent_name in ipairs(tier_talents) do
+			local talent_id = talent_id_lookup[talent_name].talent_id
+			local hero_name = CareerSettings[career_name].profile_name
+			local talent = Talents[hero_name][talent_id]
 
-			fassert(var_0_11, "Talent %q in weave_loadout_settings_%s.lua does not exist", v_3, k)
+			fassert(talent, "Talent %q in weave_loadout_settings_%s.lua does not exist", talent_name, career_name)
 
-			tbl_6[v_3] = {
-				talent = var_0_11,
-				tree_row = i,
-				tree_column = i_2
+			career_talents[talent_name] = {
+				talent = talent,
+				tree_row = tree_row,
+				tree_column = tree_column
 			}
 		end
 	end
 
-	tbl_3[k] = tbl_6
+	talents_by_career[career_name] = career_talents
 
-	local tbl_7 = {}
-	local merge = table.merge(table.clone(tbl), v.properties)
+	local career_properties = {}
+	local properties = table.merge(table.clone(default_properties), settings.properties)
 
-	for i_3, v_4 in ipairs(merge) do
-		local var_0_14 = properties[v_4]
+	for _, property_name in ipairs(properties) do
+		local property = weave_properties[property_name]
 
-		fassert(var_0_14, "Property %q in weave_loadout_settings_%s.lua does not exist", v_4, k)
+		fassert(property, "Property %q in weave_loadout_settings_%s.lua does not exist", property_name, career_name)
 
-		tbl_7[v_4] = var_0_14
+		career_properties[property_name] = property
 	end
 
-	tbl_4[k] = tbl_7
+	properties_by_career[career_name] = career_properties
 
-	local tbl_8 = {}
-	local merge_2 = table.merge(table.clone(tbl_2), v.traits)
+	local career_traits = {}
+	local traits = table.merge(table.clone(default_traits), settings.traits)
 
-	for i_4, v_5 in ipairs(merge_2) do
-		local var_0_17 = traits[v_5]
+	for _, trait_name in ipairs(traits) do
+		local trait = weave_traits[trait_name]
 
-		fassert(var_0_17, "Trait %q in weave_loadout_settings_%s.lua does not exist", v_5, k)
+		fassert(trait, "Trait %q in weave_loadout_settings_%s.lua does not exist", trait_name, career_name)
 
-		tbl_8[v_5] = var_0_17
+		career_traits[trait_name] = trait
 	end
 
-	tbl_5[k] = tbl_8
+	traits_by_career[career_name] = career_traits
 end
 
-WeaveTalentsByCareer = tbl_3
-WeavePropertiesByCareer = tbl_4
-WeaveTraitsByCareer = tbl_5
+WeaveTalentsByCareer = talents_by_career
+WeavePropertiesByCareer = properties_by_career
+WeaveTraitsByCareer = traits_by_career
 WeaveCareerProgression = {
 	properties = {
 		{

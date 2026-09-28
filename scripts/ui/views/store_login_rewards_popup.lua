@@ -1,19 +1,19 @@
 -- chunkname: @scripts/ui/views/store_login_rewards_popup.lua
 
-local var_0_0 = local_require("scripts/ui/views/store_login_rewards_popup_definitions")
+local definitions = local_require("scripts/ui/views/store_login_rewards_popup_definitions")
 
 StoreLoginRewardsPopup = class(StoreLoginRewardsPopup)
 
-local enum = table.enum("refresh", "default", "claiming", "wait_for_backend", "presenting", "exiting", "exited")
+local STATE = table.enum("refresh", "default", "claiming", "wait_for_backend", "presenting", "exiting", "exited")
 
-StoreLoginRewardsPopup.init = function (self, arg_1_1, arg_1_2)
+StoreLoginRewardsPopup.init = function (self, parent, params)
 	-- function 1
-	self._parent = arg_1_1
-	self._ui_renderer = arg_1_2.ui_top_renderer
+	self._parent = parent
+	self._ui_renderer = params.ui_top_renderer
 	self._render_settings = {
 		alpha_multiplier = 1
 	}
-	self._state = enum.refresh
+	self._state = STATE.refresh
 	self._has_claimed_rewards = false
 	self._gamepad_active = false
 	self._cursor_x = nil
@@ -23,15 +23,17 @@ StoreLoginRewardsPopup.init = function (self, arg_1_1, arg_1_2)
 
 	self:_create_ui_elements()
 
-	self._backend_store = Managers.backend:get_interface("peddler")
+	local backend_store = Managers.backend:get_interface("peddler")
+
+	self._backend_store = backend_store
 	self._rewards_claimable = nil
-	self._reward_popup = RewardPopupUI:new(arg_1_2)
+	self._reward_popup = RewardPopupUI:new(params)
 	self._show_gamepad_tooltips = false
 end
 
 StoreLoginRewardsPopup.destroy = function (self)
 	-- function 2
-	if not self._reward_popup then
+	if self._reward_popup then
 		self._reward_popup:destroy()
 
 		self._reward_popup = nil
@@ -40,30 +42,30 @@ end
 
 StoreLoginRewardsPopup._create_ui_elements = function (self)
 	-- function 3
-	self._ui_scenegraph = UISceneGraph.init_scenegraph(var_0_0.scenegraph_definition)
-	self._widgets, self._widgets_by_name = UIUtils.create_widgets(var_0_0.widget_definitions)
-	self._overlay_widgets, self._overlay_widgets_by_name = UIUtils.create_widgets(var_0_0.overlay_widgets_definitions)
-	self._loading_widgets, self._loading_widgets_by_name = UIUtils.create_widgets(var_0_0.loading_widgets_definitions)
-	self._day_widgets = UIUtils.create_widgets(var_0_0.day_widget_definitions)
+	self._ui_scenegraph = UISceneGraph.init_scenegraph(definitions.scenegraph_definition)
+	self._widgets, self._widgets_by_name = UIUtils.create_widgets(definitions.widget_definitions)
+	self._overlay_widgets, self._overlay_widgets_by_name = UIUtils.create_widgets(definitions.overlay_widgets_definitions)
+	self._loading_widgets, self._loading_widgets_by_name = UIUtils.create_widgets(definitions.loading_widgets_definitions)
+	self._day_widgets = UIUtils.create_widgets(definitions.day_widget_definitions)
 	self._reward_widgets = {}
 
 	UIRenderer.clear_scenegraph_queue(self._ui_renderer)
 
 	local input_service = self._parent:input_service()
 
-	self._menu_input_description = MenuInputDescriptionUI:new(nil, self._ui_renderer, input_service, 5, 900, var_0_0.generic_input_actions.default)
+	self._menu_input_description = MenuInputDescriptionUI:new(nil, self._ui_renderer, input_service, 5, 900, definitions.generic_input_actions.default)
 
 	self._menu_input_description:set_input_description(nil)
 
 	self._widgets_by_name.claim_button.content.button_hotspot.disable_button = GameSettingsDevelopment.read_only_backend
-	self._ui_animator = UIAnimator:new(self._ui_scenegraph, var_0_0.animation_definitions)
+	self._ui_animator = UIAnimator:new(self._ui_scenegraph, definitions.animation_definitions)
 	self._animations = {}
 end
 
-StoreLoginRewardsPopup._has_claimed_reward = function (arg_4_0, arg_4_1, arg_4_2)
+StoreLoginRewardsPopup._has_claimed_reward = function (self, claimed_rewards, day_index)
 	-- function 4
-	for i, v in ipairs(arg_4_1) do
-		if arg_4_2 == v then
+	for _, claimed_reward_idx in ipairs(claimed_rewards) do
+		if day_index == claimed_reward_idx then
 			return true
 		end
 	end
@@ -71,9 +73,9 @@ StoreLoginRewardsPopup._has_claimed_reward = function (arg_4_0, arg_4_1, arg_4_2
 	return false
 end
 
-StoreLoginRewardsPopup._setup_rewards_data = function (self, arg_5_1)
+StoreLoginRewardsPopup._setup_rewards_data = function (self, login_rewards)
 	-- function 5
-	if arg_5_1.event_type ~= "personal_time_strike" then
+	if login_rewards.event_type ~= "personal_time_strike" then
 		Managers.ui:handle_transition("close_active", {
 			fade_out_speed = 1,
 			use_fade = true,
@@ -83,34 +85,60 @@ StoreLoginRewardsPopup._setup_rewards_data = function (self, arg_5_1)
 		return
 	end
 
-	local rewards = arg_5_1.rewards
-	local total_claims = arg_5_1.total_claims
+	local rewards = login_rewards.rewards
+	local total_claims = login_rewards.total_claims
 
-	total_claims = total_claims or 0
+	if not total_claims then
+		-- Nothing
+	end
 
-	local _day_widgets = self._day_widgets
-	local _reward_widgets = self._reward_widgets
+	total_claims = 0
 
-	table.clear(_reward_widgets)
+	local reward_index = total_claims
 
-	local _widgets_by_name = self._widgets_by_name
+	::label_5_0::
 
-	self._gamepad_active = Managers.input:is_device_active("gamepad")
+	local day_widgets = self._day_widgets
+	local reward_widgets = self._reward_widgets
+
+	table.clear(reward_widgets)
+
+	local widgets_by_name = self._widgets_by_name
+	local gamepad_active = Managers.input:is_device_active("gamepad")
+
+	self._gamepad_active = gamepad_active
 
 	local _cursor_x = self._cursor_x
 
-	_cursor_x = _cursor_x or math.clamp(total_claims + 1, 1, #rewards)
+	if not _cursor_x then
+		-- Nothing
+	end
+
+	_cursor_x = math.clamp(reward_index + 1, 1, #rewards)
+
+	local cursor_x = _cursor_x
+
+	::label_5_1::
 
 	local _cursor_y = self._cursor_y
 
-	_cursor_y = _cursor_y or 1
-	self._cursor_x = _cursor_x
-	self._cursor_y = _cursor_y
+	if not _cursor_y then
+		-- Nothing
+	end
+
+	_cursor_y = 1
+
+	local cursor_y = _cursor_y
+
+	::label_5_2::
+
+	self._cursor_x = cursor_x
+	self._cursor_y = cursor_y
 
 	local event_type
 
-	if not arg_5_1.event_type then
-		event_type = arg_5_1.event_type
+	if login_rewards.event_type then
+		event_type = login_rewards.event_type
 
 		if not event_type then
 			-- Nothing
@@ -119,131 +147,140 @@ StoreLoginRewardsPopup._setup_rewards_data = function (self, arg_5_1)
 
 	event_type = "personal_time_strike"
 
+	local calendar_type = event_type
+
 	do
-		local claimed_rewards
+		local claimed_rewards_2
 	end
 
-	::label_5_0::
+	::label_5_3::
 
-	if not arg_5_1.claimed_rewards then
-		claimed_rewards = arg_5_1.claimed_rewards
+	if login_rewards.claimed_rewards then
+		claimed_rewards_2 = login_rewards.claimed_rewards
 
-		if not claimed_rewards then
+		if not claimed_rewards_2 then
 			-- Nothing
 		end
 	end
 
-	claimed_rewards = {}
+	claimed_rewards_2 = {}
 
-	::label_5_1::
+	local claimed_rewards = claimed_rewards_2
 
-	local time = os.time(os.date("!*t"))
-	local num = os.time(os.date("!*t", arg_5_1.next_claim_timestamp / 1000)) - time
-	local flag = total_claims ~= #_day_widgets or num <= 0
+	::label_5_4::
 
-	for i = 1, #_day_widgets do
-		local content = _day_widgets[i].content
+	local now = os.time(os.date("!*t"))
+	local next_claim_timestamp = os.time(os.date("!*t", login_rewards.next_claim_timestamp / 1000))
+	local cooldown = next_claim_timestamp - now
+	local is_loop = reward_index == #day_widgets and cooldown <= 0
 
-		content.is_today = not not flag or i == total_claims
+	for day_index = 1, #day_widgets do
+		local day_widget_content = day_widgets[day_index].content
 
-		local var_5_13
+		day_widget_content.is_today = not is_loop and day_index == reward_index
 
-		if event_type == "calendar" then
-			var_5_13 = not self:_has_claimed_reward(claimed_rewards, i) and not flag
+		local is_claimed
+
+		if calendar_type == "calendar" then
+			is_claimed = not not self:_has_claimed_reward(claimed_rewards, day_index) and not not not is_loop
 		else
-			var_5_13 = not not flag or i <= total_claims
+			is_claimed = not is_loop and day_index <= reward_index
 		end
 
-		content.is_claimed = var_5_13
+		day_widget_content.is_claimed = is_claimed
 
-		local var_5_14 = rewards[i]
+		local reward_item_list = rewards[day_index]
 
-		content.reward_count = #var_5_14
-		content.selection_index = self._cursor_x
-		content.calendar_type = event_type
-		content.current_day = total_claims
-		content.is_loop = flag
+		day_widget_content.reward_count = #reward_item_list
+		day_widget_content.selection_index = self._cursor_x
+		day_widget_content.calendar_type = calendar_type
+		day_widget_content.current_day = reward_index
+		day_widget_content.is_loop = is_loop
 
-		for j = 1, #var_5_14 do
-			local create_reward_item_widget = var_0_0.create_reward_item_widget(i, j)
-			local var_5_16 = UIWidget.init(create_reward_item_widget)
+		for item_index = 1, #reward_item_list do
+			local widget_def = definitions.create_reward_item_widget(day_index, item_index)
+			local widget = UIWidget.init(widget_def)
 
-			_reward_widgets[#_reward_widgets + 1] = var_5_16
+			reward_widgets[#reward_widgets + 1] = widget
 
-			local var_5_17 = var_5_14[j]
-			local var_5_18
+			local reward_item = reward_item_list[item_index]
+			local data
 
-			if var_5_17.reward_type == "currency" then
-				var_5_18 = BackendUtils.get_fake_currency_item(var_5_17.currency_code, var_5_17.amount)
+			if reward_item.reward_type == "currency" then
+				data = BackendUtils.get_fake_currency_item(reward_item.currency_code, reward_item.amount)
 			else
-				var_5_18 = ItemMasterList[var_5_17.item_id]
+				data = ItemMasterList[reward_item.item_id]
 			end
 
-			local merge = table.merge({
+			local item = table.merge({
 				backend_id = math.uuid(),
-				data = var_5_18
-			}, var_5_17)
+				data = data
+			}, reward_item)
 
-			fassert(merge.data, "Reward item %s not found in ItemMasterList", var_5_17.item_id)
+			fassert(item.data, "Reward item %s not found in ItemMasterList", reward_item.item_id)
 
-			local rarity = merge.rarity
+			local rarity_2 = item.rarity
 
-			if not rarity then
-				if not merge.data then
-					rarity = merge.data.rarity
-
-					if not rarity then
-						-- Nothing
-					end
-				end
-
-				rarity = "plentiful"
+			if not rarity_2 then
+				-- Nothing
 			end
 
-			::label_5_2::
+			if item.data then
+				rarity_2 = item.data.rarity
 
-			local content_2 = var_5_16.content
+				if not rarity_2 then
+					-- Nothing
+				end
+			end
 
-			content_2.item = merge
+			rarity_2 = "plentiful"
 
-			local get_ui_information_from_item = UIUtils.get_ui_information_from_item(merge)
+			local rarity = rarity_2
 
-			get_ui_information_from_item = get_ui_information_from_item or "icons_placeholder"
-			content_2.item_icon = get_ui_information_from_item
+			::label_5_5::
 
-			local var_5_23 = UISettings.item_rarity_textures[rarity]
+			local content = widget.content
 
-			var_5_23 = var_5_23 or "icons_placeholder"
-			content_2.item_rarity = var_5_23
-			content_2.is_illusion = merge.item_type == "weapon_skin"
-			content_2.day_index = i
-			content_2.item_index = j
+			content.item = item
 
-			local flag_2 = _cursor_x ~= i or _cursor_y == j
+			local get_ui_information_from_item = UIUtils.get_ui_information_from_item(item)
 
-			content_2.is_selected = flag_2
+			get_ui_information_from_item = not not get_ui_information_from_item or not not "icons_placeholder"
+			content.item_icon = get_ui_information_from_item
 
-			if not flag_2 then
-				self._selected_widget = var_5_16
+			local var_5_7 = UISettings.item_rarity_textures[rarity]
+
+			var_5_7 = not not var_5_7 or not not "icons_placeholder"
+			content.item_rarity = var_5_7
+			content.is_illusion = item.item_type == "weapon_skin"
+			content.day_index = day_index
+			content.item_index = item_index
+
+			local has_cursor = cursor_x == day_index and cursor_y == item_index
+
+			content.is_selected = has_cursor
+
+			if has_cursor then
+				self._selected_widget = widget
 			end
 		end
 	end
 
-	local num_2 = 1 + total_claims % #_day_widgets
-	local offset = _day_widgets[num_2].offset
+	local next_reward_index = 1 + reward_index % #day_widgets
+	local day_offset = day_widgets[next_reward_index].offset
 
-	self._ui_scenegraph.claim_button.position[1] = offset[1]
-	self._next_reward_index = num_2
-	self._will_loop = total_claims == #_day_widgets
+	self._ui_scenegraph.claim_button.position[1] = day_offset[1]
+	self._next_reward_index = next_reward_index
+	self._will_loop = reward_index == #day_widgets
 end
 
 StoreLoginRewardsPopup._claim_rewards = function (self)
 	-- function 6
-	if not self._waiting_for_claim then
+	if self._waiting_for_claim then
 		return
 	end
 
-	self._state = enum.claiming
+	self._state = STATE.claiming
 	self._widgets_by_name.claim_button.content.visible = false
 	self._widgets_by_name.claim_button_glow.content.visible = false
 
@@ -251,29 +288,29 @@ StoreLoginRewardsPopup._claim_rewards = function (self)
 
 	self._has_claimed_rewards = true
 
-	local _selected_widget = self._selected_widget
+	local selected_widget = self._selected_widget
 
-	if not _selected_widget then
-		_selected_widget.content.is_selected = false
+	if selected_widget then
+		selected_widget.content.is_selected = false
 		self._selected_widget = nil
 	end
 
 	self._parent:play_sound("Play_hud_daily_reward_claim")
 
-	local _next_reward_index = self._next_reward_index
-	local _day_widgets = self._day_widgets
+	local next_reward_index = self._next_reward_index
+	local day_widgets = self._day_widgets
 
-	for i = 1, #_day_widgets do
-		_day_widgets[i].content.is_today = false
+	for i = 1, #day_widgets do
+		day_widgets[i].content.is_today = false
 	end
 
-	local var_6_3 = _day_widgets[_next_reward_index]
-	local content = var_6_3.content
+	local today_widget = day_widgets[next_reward_index]
+	local content = today_widget.content
 
 	content.is_claimed = true
 	content.is_today = true
 
-	self:_play_animation("on_claim", var_6_3)
+	self:_play_animation("on_claim", today_widget)
 end
 
 StoreLoginRewardsPopup._refresh_login_rewards_cb = function (self)
@@ -281,74 +318,84 @@ StoreLoginRewardsPopup._refresh_login_rewards_cb = function (self)
 	self._waiting_for_refresh = false
 end
 
-StoreLoginRewardsPopup.update = function (self, arg_8_1, arg_8_2, arg_8_3)
+StoreLoginRewardsPopup.update = function (self, input_service, dt, t)
 	-- function 8
-	local _backend_store = self._backend_store
-	local get_login_rewards = _backend_store:get_login_rewards()
-	local time = os.time(os.date("!*t"))
-	local time_2 = os.time(os.date("!*t", get_login_rewards.next_claim_timestamp / 1000))
-	local time_3 = os.time(os.date("!*t", get_login_rewards.end_of_claim_timestamp / 1000))
-	local num = time_2 - time
-	local num_2 = time_3 - time
-	local _state = self._state
-	local _ui_animator = self._ui_animator
-	local _animations = self._animations
+	local backend_store = self._backend_store
+	local login_rewards = backend_store:get_login_rewards()
+	local now = os.time(os.date("!*t"))
+	local next_claim_timestamp = os.time(os.date("!*t", login_rewards.next_claim_timestamp / 1000))
+	local end_of_claim_timestamp = os.time(os.date("!*t", login_rewards.end_of_claim_timestamp / 1000))
+	local cooldown = next_claim_timestamp - now
+	local expiry = end_of_claim_timestamp - now
+	local state = self._state
+	local ui_animator = self._ui_animator
+	local animations = self._animations
 
-	if _state == enum.refresh then
-		if not (not _backend_store:done_claiming_login_rewards() and self._waiting_for_refresh or not (arg_8_3 > self._refresh_cooldown)) then
+	if state == STATE.refresh then
+		if backend_store:done_claiming_login_rewards() and not self._waiting_for_refresh and t > self._refresh_cooldown then
 			self:_play_animation("on_enter")
 			self._parent:play_sound("Play_hud_daily_reward_open")
 
-			self._state = enum.default
+			self._state = STATE.default
 
-			self:_setup_rewards_data(get_login_rewards)
-			self:_update_timer(num, num_2)
+			self:_setup_rewards_data(login_rewards)
+			self:_update_timer(cooldown, expiry)
 
-			self._refresh_cooldown = arg_8_3 + 3
+			self._refresh_cooldown = t + 3
 		end
-	elseif _state == enum.default then
-		if num_2 <= -1 then
-			local var_8_10 = callback(self, "_refresh_login_rewards_cb")
+	elseif state == STATE.default then
+		if expiry <= -1 then
+			local cb = callback(self, "_refresh_login_rewards_cb")
 
-			_backend_store:refresh_login_rewards(var_8_10)
+			backend_store:refresh_login_rewards(cb)
 
 			self._waiting_for_refresh = true
-			self._state = enum.refresh
+			self._state = STATE.refresh
 
 			return
 		end
 
-		self:_update_timer(num, num_2)
-		self:_handle_input(arg_8_1, arg_8_2, arg_8_3)
-		self:_handle_gamepad_input(arg_8_1)
-	elseif _state == enum.claiming then
-		if not _animations.on_claim then
-			self._state = enum.wait_for_backend
+		self:_update_timer(cooldown, expiry)
+		self:_handle_input(input_service, dt, t)
+		self:_handle_gamepad_input(input_service)
+	elseif state == STATE.claiming then
+		if not animations.on_claim then
+			self._state = STATE.wait_for_backend
 
-			local _overlay_widgets_by_name = self._overlay_widgets_by_name
+			local overlay_widgets_by_name = self._overlay_widgets_by_name
 
-			_overlay_widgets_by_name.loading_glow.content.visible = true
-			_overlay_widgets_by_name.loading_frame.content.visible = true
+			overlay_widgets_by_name.loading_glow.content.visible = true
+			overlay_widgets_by_name.loading_frame.content.visible = true
 		end
-	elseif _state == enum.wait_for_backend then
-		if not _backend_store:done_claiming_login_rewards() then
-			local _overlay_widgets_by_name_2 = self._overlay_widgets_by_name
+	elseif state == STATE.wait_for_backend then
+		if backend_store:done_claiming_login_rewards() then
+			local overlay_widgets_by_name = self._overlay_widgets_by_name
 
-			_overlay_widgets_by_name_2.loading_glow.content.visible = false
-			_overlay_widgets_by_name_2.loading_frame.content.visible = false
+			overlay_widgets_by_name.loading_glow.content.visible = false
+			overlay_widgets_by_name.loading_frame.content.visible = false
 
-			self:_setup_rewards_data(get_login_rewards)
+			self:_setup_rewards_data(login_rewards)
 
-			if get_login_rewards.event_type ~= "personal_time_strike" then
+			if login_rewards.event_type ~= "personal_time_strike" then
 				return
 			end
 
-			local rewards = get_login_rewards.rewards
-			local total_claims = get_login_rewards.total_claims
+			local rewards = login_rewards.rewards
+			local total_claims_2 = login_rewards.total_claims
 
-			total_claims = total_claims or 1
+			if not total_claims_2 then
+				-- Nothing
+			end
 
-			local count
+			total_claims_2 = 1
+
+			local total_claims = total_claims_2
+
+			do
+				local count
+			end
+
+			::label_8_0::
 
 			if total_claims == 0 then
 				count = #rewards
@@ -360,49 +407,51 @@ StoreLoginRewardsPopup.update = function (self, arg_8_1, arg_8_2, arg_8_3)
 
 			count = total_claims
 
-			::label_8_0::
+			local reward_index = count
 
-			self:_present_rewards(rewards[count])
+			::label_8_1::
 
-			self._state = enum.presenting
+			self:_present_rewards(rewards[reward_index])
+
+			self._state = STATE.presenting
 		end
-	elseif _state == enum.presenting then
+	elseif state == STATE.presenting then
 		if not self._reward_popup:is_presentation_active() then
-			self._state = enum.default
+			self._state = STATE.default
 		end
-	elseif not (_state ~= enum.exiting or _animations.on_exit) then
-		self._state = enum.exited
+	elseif state == STATE.exiting and not animations.on_exit then
+		self._state = STATE.exited
 	end
 
-	self._reward_popup:update(arg_8_2)
-	self:_update_animations(arg_8_2)
-	self:_draw(_state, arg_8_1, arg_8_2, arg_8_3)
+	self._reward_popup:update(dt)
+	self:_update_animations(dt)
+	self:_draw(state, input_service, dt, t)
 end
 
-StoreLoginRewardsPopup._present_rewards = function (self, arg_9_1)
+StoreLoginRewardsPopup._present_rewards = function (self, rewards)
 	-- function 9
-	local count = #arg_9_1
+	local num_rewards = #rewards
 
-	if count == 0 then
+	if num_rewards == 0 then
 		return
 	end
 
-	local get_interface = Managers.backend:get_interface("items")
-	local tbl = {}
+	local item_interface = Managers.backend:get_interface("items")
+	local presentation_data = {}
 
-	for i = 1, count do
-		local var_9_3 = arg_9_1[i]
-		local reward_type = var_9_3.reward_type
+	for i = 1, num_rewards do
+		local data = rewards[i]
+		local reward_type = data.reward_type
 
-		if not (reward_type == "item" or reward_type == "loot_chest" or reward_type ~= "crafting_material") then
-			local item_id = var_9_3.item_id
-			local var_9_6 = ItemMasterList[item_id]
+		if reward_type == "item" or reward_type == "loot_chest" or reward_type == "crafting_material" then
+			local item_id = data.item_id
+			local item_template = ItemMasterList[item_id]
 
-			tbl[#tbl + 1] = {
+			presentation_data[#presentation_data + 1] = {
 				{
 					widget_type = "description",
 					value = {
-						Localize(var_9_6.display_name),
+						Localize(item_template.display_name),
 						Localize("achv_menu_reward_claimed_title")
 					}
 				},
@@ -412,288 +461,304 @@ StoreLoginRewardsPopup._present_rewards = function (self, arg_9_1)
 				}
 			}
 		elseif reward_type == "loot_chest" then
-			local item_id_2 = var_9_3.item_id
-			local var_9_8 = ItemMasterList[item_id_2]
+			local item_id = data.item_id
+			local item_template = ItemMasterList[item_id]
 
-			tbl[#tbl + 1] = {
+			presentation_data[#presentation_data + 1] = {
 				{
 					widget_type = "description",
 					value = {
-						Localize(var_9_8.display_name),
+						Localize(item_template.display_name),
 						Localize("achv_menu_reward_claimed_title")
 					}
 				},
 				{
 					widget_type = "loot_chest",
-					value = item_id_2
+					value = item_id
 				}
 			}
 		elseif reward_type == "chips" then
-			local item_id_3 = var_9_3.item_id
-			local var_9_10 = ItemMasterList[item_id_3]
-			local amount = var_9_3.amount
+			local item_id = data.item_id
+			local item_template = ItemMasterList[item_id]
+			local amount_2 = data.amount
 
-			if not amount then
-				amount = var_9_10.bundle.BundledVirtualCurrencies.SM
-				amount = amount or 0
+			if not amount_2 then
+				-- Nothing
 			end
 
-			tbl[#tbl + 1] = {
+			amount_2 = item_template.bundle.BundledVirtualCurrencies.SM
+
+			if not amount_2 then
+				-- Nothing
+			end
+
+			amount_2 = 0
+
+			local amount = amount_2
+
+			::label_9_0::
+
+			presentation_data[#presentation_data + 1] = {
 				{
 					widget_type = "description",
 					value = {
-						Localize(var_9_10.display_name),
+						Localize(item_template.display_name),
 						string.format(Localize("achv_menu_curreny_reward_claimed"), amount)
 					}
 				},
 				{
 					widget_type = "icon",
-					value = var_9_10.inventory_icon
+					value = item_template.inventory_icon
 				}
 			}
 		elseif reward_type == "currency" then
-			local get_fake_currency_item, var_9_13, var_9_14 = BackendUtils.get_fake_currency_item(var_9_3.currency_code, var_9_3.amount)
+			local item_template, _, description_str = BackendUtils.get_fake_currency_item(data.currency_code, data.amount)
 
-			tbl[#tbl + 1] = {
+			presentation_data[#presentation_data + 1] = {
 				{
 					widget_type = "description",
 					value = {
-						Localize(get_fake_currency_item.display_name),
-						string.format(Localize(var_9_14), var_9_3.amount)
+						Localize(item_template.display_name),
+						string.format(Localize(description_str), data.amount)
 					}
 				},
 				{
 					widget_type = "icon",
-					value = get_fake_currency_item.inventory_icon
+					value = item_template.inventory_icon
 				}
 			}
 		end
 	end
 
-	if #tbl == 0 then
+	if #presentation_data == 0 then
 		return
 	end
 
-	self._reward_popup:display_presentation(tbl)
+	self._reward_popup:display_presentation(presentation_data)
 
 	self._reward_presentation_active = true
 end
 
-StoreLoginRewardsPopup._update_timer = function (self, arg_10_1, arg_10_2)
+StoreLoginRewardsPopup._update_timer = function (self, cooldown, expiry)
 	-- function 10
-	local _widgets_by_name = self._widgets_by_name
-	local timer = _widgets_by_name.timer
+	local widgets_by_name = self._widgets_by_name
+	local timer_widget = widgets_by_name.timer
 
-	if arg_10_1 <= 0 then
+	if cooldown <= 0 then
 		if self._rewards_claimable ~= true then
 			self._rewards_claimable = true
 
 			self:_play_sound("Play_gui_achivements_menu_claim_reward")
 
-			_widgets_by_name.claim_button.content.visible = true
-			_widgets_by_name.claim_button_glow.content.visible = true
+			widgets_by_name.claim_button.content.visible = true
+			widgets_by_name.claim_button_glow.content.visible = true
 
-			if not self._will_loop then
-				local _day_widgets = self._day_widgets
+			if self._will_loop then
+				local day_widgets = self._day_widgets
 
-				for i = 1, #_day_widgets do
-					local content = _day_widgets[i].content
+				for i = 1, #day_widgets do
+					local content = day_widgets[i].content
 
 					content.is_today = false
 					content.is_claimed = false
 				end
 			end
 
-			timer.style.text.horizontal_alignment = "right"
-			timer.style.text_shadow.horizontal_alignment = "right"
+			timer_widget.style.text.horizontal_alignment = "right"
+			timer_widget.style.text_shadow.horizontal_alignment = "right"
 		end
 
-		local format_duration = UIUtils.format_duration(arg_10_2)
+		local expiry_str = UIUtils.format_duration(expiry)
 
-		timer.content.text = Localize("menu_store_expire_timer_expires_in") .. ": " .. format_duration
+		timer_widget.content.text = Localize("menu_store_expire_timer_expires_in") .. ": " .. expiry_str
 	else
 		if self._rewards_claimable ~= false then
 			self._rewards_claimable = false
-			_widgets_by_name.claim_button.content.visible = false
-			_widgets_by_name.claim_button_glow.content.visible = false
-			timer.style.text.horizontal_alignment = "left"
-			timer.style.text_shadow.horizontal_alignment = "left"
+			widgets_by_name.claim_button.content.visible = false
+			widgets_by_name.claim_button_glow.content.visible = false
+			timer_widget.style.text.horizontal_alignment = "left"
+			timer_widget.style.text_shadow.horizontal_alignment = "left"
 		end
 
-		local format_duration_2 = UIUtils.format_duration(arg_10_1)
+		local cooldown_str = UIUtils.format_duration(cooldown)
 
-		timer.content.text = Localize("store_login_rewards_next_available_in") .. format_duration_2
+		timer_widget.content.text = Localize("store_login_rewards_next_available_in") .. cooldown_str
 	end
 end
 
-StoreLoginRewardsPopup._play_animation = function (self, arg_11_1, arg_11_2)
+StoreLoginRewardsPopup._play_animation = function (self, name, widgets)
 	-- function 11
-	local start_animation = self._ui_animator:start_animation(arg_11_1, arg_11_2 or self._widgets_by_name, self._scenegraph_definition, self._render_settings)
+	local anim_id = self._ui_animator:start_animation(name, not not widgets or not not self._widgets_by_name, self._scenegraph_definition, self._render_settings)
 
-	self._animations[arg_11_1] = start_animation
+	self._animations[name] = anim_id
 end
 
-StoreLoginRewardsPopup._update_animations = function (self, arg_12_1)
+StoreLoginRewardsPopup._update_animations = function (self, dt)
 	-- function 12
-	UIWidgetUtils.animate_default_button(self._widgets_by_name.claim_button, arg_12_1)
-	UIWidgetUtils.animate_default_button(self._widgets_by_name.close_button, arg_12_1)
+	UIWidgetUtils.animate_default_button(self._widgets_by_name.claim_button, dt)
+	UIWidgetUtils.animate_default_button(self._widgets_by_name.close_button, dt)
 
-	local _ui_animator = self._ui_animator
-	local _animations = self._animations
+	local ui_animator = self._ui_animator
+	local animations = self._animations
 
-	_ui_animator:update(arg_12_1)
+	ui_animator:update(dt)
 
-	for k, v in pairs(_animations) do
-		if not _ui_animator:is_animation_completed(v) then
-			_animations[k] = nil
+	for name, id in pairs(animations) do
+		if ui_animator:is_animation_completed(id) then
+			animations[name] = nil
 		end
 	end
 end
 
-StoreLoginRewardsPopup._handle_input = function (self, arg_13_1, arg_13_2, arg_13_3)
+StoreLoginRewardsPopup._handle_input = function (self, input_service, dt, t)
 	-- function 13
-	local _widgets_by_name = self._widgets_by_name
-	local close_button = _widgets_by_name.close_button
-	local claim_button = _widgets_by_name.claim_button
+	local widgets_by_name = self._widgets_by_name
+	local close_button = widgets_by_name.close_button
+	local claim_button = widgets_by_name.claim_button
 
-	if UIUtils.is_button_hover_enter(close_button) or not UIUtils.is_button_hover_enter(claim_button) then
+	if UIUtils.is_button_hover_enter(close_button) or UIUtils.is_button_hover_enter(claim_button) then
 		self:_play_sound("Play_hud_hover")
 	end
 
-	if UIUtils.is_button_pressed(close_button) or not arg_13_1:get("toggle_menu", true) then
+	if UIUtils.is_button_pressed(close_button) or input_service:get("toggle_menu", true) then
 		self:_play_sound("Play_hud_select")
 		self:_play_animation("on_exit")
 
-		self._state = enum.exiting
-	elseif not UIUtils.is_button_pressed(claim_button) then
+		self._state = STATE.exiting
+	elseif UIUtils.is_button_pressed(claim_button) then
 		self:_claim_rewards()
 	end
 end
 
-StoreLoginRewardsPopup._handle_gamepad_input = function (self, arg_14_1)
+StoreLoginRewardsPopup._handle_gamepad_input = function (self, input_service)
 	-- function 14
-	local is_device_active = Managers.input:is_device_active("gamepad")
+	local gamepad_active = Managers.input:is_device_active("gamepad")
 
-	self._gamepad_active = is_device_active
+	self._gamepad_active = gamepad_active
 
-	if not is_device_active then
+	if not gamepad_active then
 		return
 	end
 
-	local _day_widgets = self._day_widgets
-	local _cursor_x = self._cursor_x
-	local flag = false
+	local day_widgets = self._day_widgets
+	local cursor_x = self._cursor_x
+	local modified = false
 
-	if not (_cursor_x < #_day_widgets) or not arg_14_1:get("move_right") then
-		_cursor_x = _cursor_x + 1
-		flag = true
-	elseif not (_cursor_x > 1) or not arg_14_1:get("move_left") then
-		_cursor_x = _cursor_x - 1
-		flag = true
+	if cursor_x < #day_widgets and input_service:get("move_right") then
+		cursor_x = cursor_x + 1
+		modified = true
+	elseif cursor_x > 1 and input_service:get("move_left") then
+		cursor_x = cursor_x - 1
+		modified = true
 	end
 
-	local reward_count = _day_widgets[_cursor_x].content.reward_count
-	local min = math.min(self._cursor_y, reward_count)
+	local reward_count = day_widgets[cursor_x].content.reward_count
+	local cursor_y = math.min(self._cursor_y, reward_count)
 
-	if not (min > 1) or not arg_14_1:get("move_up") then
-		min = min - 1
-		flag = true
-	elseif not (min < reward_count) or not arg_14_1:get("move_down") then
-		min = min + 1
-		flag = true
+	if cursor_y > 1 and input_service:get("move_up") then
+		cursor_y = cursor_y - 1
+		modified = true
+	elseif cursor_y < reward_count and input_service:get("move_down") then
+		cursor_y = cursor_y + 1
+		modified = true
 	end
 
-	if not flag then
-		self._cursor_x = _cursor_x
-		self._cursor_y = min
+	if modified then
+		self._cursor_x = cursor_x
+		self._cursor_y = cursor_y
 
-		local _reward_widgets = self._reward_widgets
+		local reward_widgets = self._reward_widgets
 
-		for i = 1, #_reward_widgets do
-			local var_14_7 = _reward_widgets[i]
-			local content = var_14_7.content
-			local flag_2 = content.day_index ~= _cursor_x or content.item_index == min
+		for i = 1, #reward_widgets do
+			local widget = reward_widgets[i]
+			local content = widget.content
+			local is_selected = content.day_index == cursor_x and content.item_index == cursor_y
 
-			content.is_selected = flag_2
+			content.is_selected = is_selected
 
-			if not flag_2 then
-				self._selected_widget = var_14_7
+			if is_selected then
+				self._selected_widget = widget
 			end
 		end
-	elseif not arg_14_1:get("right_stick_press") then
+	elseif input_service:get("right_stick_press") then
 		self._show_gamepad_tooltips = not self._show_gamepad_tooltips
 
-		local _reward_widgets_2 = self._reward_widgets
+		local reward_widgets = self._reward_widgets
 
-		for j = 1, #_reward_widgets_2 do
-			_reward_widgets_2[j].content.show_tooltips = self._show_gamepad_tooltips
+		for i = 1, #reward_widgets do
+			local widget = reward_widgets[i]
+			local content = widget.content
+
+			content.show_tooltips = self._show_gamepad_tooltips
 		end
-	elseif not (not self._rewards_claimable and not arg_14_1:get("confirm_press") and self._next_reward_index ~= self._cursor_x) then
+	elseif self._rewards_claimable and input_service:get("confirm_press") and self._next_reward_index == self._cursor_x then
 		self:_claim_rewards()
 
 		return
-	elseif not arg_14_1:get("back") then
+	elseif input_service:get("back") then
 		self:_play_animation("on_exit")
 
-		self._state = enum.exiting
+		self._state = STATE.exiting
 
 		return
 	end
 
-	local _day_widgets_2 = self._day_widgets
+	local day_widgets = self._day_widgets
 
-	for k = 1, #_day_widgets_2 do
-		_day_widgets_2[k].content.selection_index = self._cursor_x
+	for day_index = 1, #day_widgets do
+		local content = day_widgets[day_index].content
+
+		content.selection_index = self._cursor_x
 	end
 
-	local str = "default"
+	local input_description = "default"
 
-	if not (not self._rewards_claimable and self._next_reward_index ~= self._cursor_x) then
-		str = "claim_available"
+	if self._rewards_claimable and self._next_reward_index == self._cursor_x then
+		input_description = "claim_available"
 	end
 
-	if str ~= self._input_description then
-		self._menu_input_description:change_generic_actions(var_0_0.generic_input_actions[str])
+	if input_description ~= self._input_description then
+		self._menu_input_description:change_generic_actions(definitions.generic_input_actions[input_description])
 	end
 end
 
-StoreLoginRewardsPopup._draw = function (self, arg_15_1, arg_15_2, arg_15_3, arg_15_4)
+StoreLoginRewardsPopup._draw = function (self, state, input_service, dt, t)
 	-- function 15
-	if arg_15_1 == enum.exited then
+	if state == STATE.exited then
 		return
 	end
 
-	local _ui_renderer = self._ui_renderer
+	local ui_renderer = self._ui_renderer
 
-	UIRenderer.begin_pass(_ui_renderer, self._ui_scenegraph, arg_15_2, arg_15_3, nil, self._render_settings)
+	UIRenderer.begin_pass(ui_renderer, self._ui_scenegraph, input_service, dt, nil, self._render_settings)
 
-	if arg_15_1 == enum.refresh then
-		UIRenderer.draw_all_widgets(_ui_renderer, self._loading_widgets)
+	if state == STATE.refresh then
+		UIRenderer.draw_all_widgets(ui_renderer, self._loading_widgets)
 	else
-		UIRenderer.draw_all_widgets(_ui_renderer, self._widgets)
-		UIRenderer.draw_all_widgets(_ui_renderer, self._day_widgets)
-		UIRenderer.draw_all_widgets(_ui_renderer, self._reward_widgets)
+		UIRenderer.draw_all_widgets(ui_renderer, self._widgets)
+		UIRenderer.draw_all_widgets(ui_renderer, self._day_widgets)
+		UIRenderer.draw_all_widgets(ui_renderer, self._reward_widgets)
 
-		if not (arg_15_1 == enum.wait_for_backend or arg_15_1 ~= enum.presenting) then
-			UIRenderer.draw_all_widgets(_ui_renderer, self._overlay_widgets)
+		if state == STATE.wait_for_backend or state == STATE.presenting then
+			UIRenderer.draw_all_widgets(ui_renderer, self._overlay_widgets)
 		end
 	end
 
-	UIRenderer.end_pass(_ui_renderer)
+	UIRenderer.end_pass(ui_renderer)
 
-	if not self._gamepad_active then
-		self._menu_input_description:draw(_ui_renderer, arg_15_3)
+	if self._gamepad_active then
+		self._menu_input_description:draw(ui_renderer, dt)
 	end
 end
 
 StoreLoginRewardsPopup.is_complete = function (self)
 	-- function 16
-	return self._state == enum.exited
+	return self._state == STATE.exited
 end
 
-StoreLoginRewardsPopup._play_sound = function (self, arg_17_1)
+StoreLoginRewardsPopup._play_sound = function (self, event)
 	-- function 17
-	return self._parent:play_sound(arg_17_1)
+	return self._parent:play_sound(event)
 end
 
 StoreLoginRewardsPopup.has_claimed_rewards = function (self)

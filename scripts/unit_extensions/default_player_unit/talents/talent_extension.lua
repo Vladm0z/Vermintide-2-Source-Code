@@ -2,99 +2,103 @@
 
 TalentExtension = class(TalentExtension)
 
-TalentExtension.init = function (self, arg_1_1, arg_1_2, arg_1_3)
+TalentExtension.init = function (self, extension_init_context, unit, extension_init_data)
 	-- function 1
-	self._unit = arg_1_2
-	self.world = arg_1_1.world
+	self._unit = unit
+	self.world = extension_init_context.world
 	self.is_server = Managers.player.is_server
-	self.player = arg_1_3.player
-	self._profile_index = arg_1_3.profile_index
+	self.player = extension_init_data.player
+	self._profile_index = extension_init_data.profile_index
 	self._talent_buff_ids = {}
 	self.talent_career_skill_index = 1
 end
 
-TalentExtension.extensions_ready = function (self, arg_2_1, arg_2_2)
+TalentExtension.extensions_ready = function (self, world, unit)
 	-- function 2
-	local extension = ScriptUnit.extension(arg_2_2, "career_system")
-	local extension_2 = ScriptUnit.extension(arg_2_2, "inventory_system")
+	local career_extension = ScriptUnit.extension(unit, "career_system")
+	local inventory_extension = ScriptUnit.extension(unit, "inventory_system")
 
-	self.buff_extension = ScriptUnit.extension(arg_2_2, "buff_system")
-	self.career_extension = extension
-	self.inventory_extension = extension_2
+	self.buff_extension = ScriptUnit.extension(unit, "buff_system")
+	self.career_extension = career_extension
+	self.inventory_extension = inventory_extension
 
-	local _profile_index = self._profile_index
-	local var_2_3 = SPProfiles[_profile_index]
-	local career_name
+	local current_hero_index = self._profile_index
+	local current_hero = SPProfiles[current_hero_index]
+	local hero_affiliation = current_hero.affiliation
+	local hero_name = current_hero.display_name
+	local career_name = career_extension:career_name()
 
-	self._hero_affiliation, self._hero_name, career_name = var_2_3.affiliation, var_2_3.display_name, extension:career_name()
+	self._hero_name = hero_name
+	self._hero_affiliation = hero_affiliation
 	self._career_name = career_name
 
-	local get_talent_ids = self:get_talent_ids()
+	local talent_ids = self:get_talent_ids()
 
-	self:_check_talent_package_dendencies(get_talent_ids, true)
-	self:apply_buffs_from_talents(get_talent_ids)
-	self:_update_talent_weapon_index(get_talent_ids)
+	self:_check_talent_package_dendencies(talent_ids, true)
+	self:apply_buffs_from_talents(talent_ids)
+	self:_update_talent_weapon_index(talent_ids)
 	self:_broadcast_talents_changed()
 	self:_check_resync()
 end
 
-TalentExtension.game_object_initialized = function (self, arg_3_1, arg_3_2)
+TalentExtension.game_object_initialized = function (self, unit, unit_go_id)
 	-- function 3
-	local get_talent_ids = self:get_talent_ids()
+	local talent_ids = self:get_talent_ids()
 
-	self:_send_rpc_sync_talents(get_talent_ids)
+	self:_send_rpc_sync_talents(talent_ids)
 end
 
 TalentExtension.talents_changed = function (self)
 	-- function 4
-	local get_talent_ids = self:get_talent_ids()
+	local talent_ids = self:get_talent_ids()
 
-	self:_check_talent_package_dendencies(get_talent_ids)
-	self:apply_buffs_from_talents(get_talent_ids)
-	self:_update_talent_weapon_index(get_talent_ids)
+	self:_check_talent_package_dendencies(talent_ids)
+	self:apply_buffs_from_talents(talent_ids)
+	self:_update_talent_weapon_index(talent_ids)
 	self.inventory_extension:update_career_skill_weapon_slot_safe()
 	self:_check_resync()
 
-	if not Managers.state.network:game() then
-		self:_send_rpc_sync_talents(get_talent_ids)
+	if Managers.state.network:game() then
+		self:_send_rpc_sync_talents(talent_ids)
 	end
 
 	self:_broadcast_talents_changed(false)
 end
 
-TalentExtension._send_rpc_sync_talents = function (self, arg_5_1)
+TalentExtension._send_rpc_sync_talents = function (self, talent_ids)
 	-- function 5
-	local network_transmit = Managers.state.network.network_transmit
-	local go_id = Managers.state.unit_storage:go_id(self._unit)
+	local network_manager = Managers.state.network
+	local network_transmit = network_manager.network_transmit
+	local unit_go_id = Managers.state.unit_storage:go_id(self._unit)
 
-	printf("TalentExtension:_send_rpc_sync_talents %d", go_id)
+	printf("TalentExtension:_send_rpc_sync_talents %d", unit_go_id)
 
-	if not self.is_server then
-		network_transmit:send_rpc_clients("rpc_sync_talents", go_id, arg_5_1)
+	if self.is_server then
+		network_transmit:send_rpc_clients("rpc_sync_talents", unit_go_id, talent_ids)
 	else
-		network_transmit:send_rpc_server("rpc_sync_talents", go_id, arg_5_1)
+		network_transmit:send_rpc_server("rpc_sync_talents", unit_go_id, talent_ids)
 	end
 end
 
-TalentExtension.apply_buffs_from_talents = function (self, arg_6_1)
+TalentExtension.apply_buffs_from_talents = function (self, talent_ids)
 	-- function 6
-	local _hero_name = self._hero_name
+	local hero_name = self._hero_name
 	local buff_extension = self.buff_extension
 	local player = self.player
-	local _talent_buff_ids = self._talent_buff_ids
-	local tbl = {}
+	local talent_buff_ids = self._talent_buff_ids
+	local sub_buffs_per_talent = {}
 
-	for i = 1, #_talent_buff_ids do
-		local var_6_5 = _talent_buff_ids[i]
-		local get_buff_by_id = buff_extension:get_buff_by_id(var_6_5)
+	for i = 1, #talent_buff_ids do
+		local id = talent_buff_ids[i]
+		local buff = buff_extension:get_buff_by_id(id)
 
-		if not get_buff_by_id and not get_buff_by_id.template.restore_sub_buffs then
-			local num_sub_buffs = buff_extension:num_sub_buffs(var_6_5)
+		if buff and buff.template.restore_sub_buffs then
+			local num_sub_buffs = buff_extension:num_sub_buffs(id)
 
 			if num_sub_buffs > 0 then
-				tbl[get_buff_by_id.buff_type] = {
+				sub_buffs_per_talent[buff.buff_type] = {
 					num_buffs = num_sub_buffs,
-					buff_name = get_buff_by_id.template.buff_to_add
+					buff_name = buff.template.buff_to_add
 				}
 			end
 		end
@@ -102,26 +106,34 @@ TalentExtension.apply_buffs_from_talents = function (self, arg_6_1)
 
 	self:_clear_buffs_from_talents()
 
-	if not Managers.state.game_mode:has_activated_mutator("whiterun") then
+	if Managers.state.game_mode:has_activated_mutator("whiterun") then
 		return
 	end
 
 	local is_server = self.is_server
 
-	is_server = not is_server and player.bot_player
+	if is_server then
+		-- Nothing
+	end
 
-	for j = 1, #arg_6_1 do
-		local var_6_9 = arg_6_1[j]
-		local get_talent_by_id = TalentUtils.get_talent_by_id(_hero_name, var_6_9)
+	is_server = player.bot_player
 
-		if not get_talent_by_id then
-			local buffs = get_talent_by_id.buffs
-			local buffer = get_talent_by_id.buffer
+	local is_server_bot = is_server
 
-			if not ((player.local_player or not is_server or not buffer) and buffer == "client" or not self.is_server or buffer == "server" or self.is_server or not player.local_player or buffer == "both" or buffer ~= "all") then
+	::label_6_0::
+
+	for i = 1, #talent_ids do
+		local talent_id = talent_ids[i]
+		local talent_data = TalentUtils.get_talent_by_id(hero_name, talent_id)
+
+		if talent_data then
+			local buffs = talent_data.buffs
+			local buffer = talent_data.buffer
+
+			if (((player.local_player or is_server_bot) and (not buffer or buffer == "client") or not self.is_server or buffer ~= "server") and self.is_server or player.local_player) and buffer == "both" or buffer == "all" then
 				local count
 
-				if not buffs then
+				if buffs then
 					count = #buffs
 
 					if not count then
@@ -131,49 +143,51 @@ TalentExtension.apply_buffs_from_talents = function (self, arg_6_1)
 
 				count = 0
 
-				::label_6_0::
+				local num_buffs = count
 
-				if count > 0 then
-					for k = 1, count do
-						local var_6_14 = buffs[k]
-						local add_buff = buff_extension:add_buff(var_6_14)
-						local var_6_16 = tbl[var_6_14]
+				::label_6_1::
 
-						if not var_6_16 then
-							for l = 1, var_6_16.num_buffs do
-								buff_extension:add_buff(var_6_16.buff_name, {
+				if num_buffs > 0 then
+					for j = 1, num_buffs do
+						local buff_template = buffs[j]
+						local id = buff_extension:add_buff(buff_template)
+						local sub_buffs = sub_buffs_per_talent[buff_template]
+
+						if sub_buffs then
+							for k = 1, sub_buffs.num_buffs do
+								buff_extension:add_buff(sub_buffs.buff_name, {
 									attacker_unit = player.player_unit
 								})
 							end
 						end
 
-						_talent_buff_ids[#_talent_buff_ids + 1] = add_buff
+						talent_buff_ids[#talent_buff_ids + 1] = id
 					end
 				end
 			end
 
-			if player.local_player or not is_server then
-				local client_buffs = get_talent_by_id.client_buffs
+			if player.local_player or is_server_bot then
+				local client_buffs = talent_data.client_buffs
 
-				if not client_buffs then
-					for i4 = 1, #client_buffs do
-						local var_6_18 = client_buffs[i4]
-						local add_buff_2 = buff_extension:add_buff(var_6_18)
+				if client_buffs then
+					for j = 1, #client_buffs do
+						local buff_template = client_buffs[j]
+						local id = buff_extension:add_buff(buff_template)
 
-						_talent_buff_ids[#_talent_buff_ids + 1] = add_buff_2
+						talent_buff_ids[#talent_buff_ids + 1] = id
 					end
 				end
 			end
 
-			if not self.is_server then
-				local server_buffs = get_talent_by_id.server_buffs
+			if self.is_server then
+				local server_buffs = talent_data.server_buffs
 
-				if not server_buffs then
-					for i5 = 1, #server_buffs do
-						local var_6_21 = server_buffs[i5]
-						local add_buff_3 = buff_extension:add_buff(var_6_21)
+				if server_buffs then
+					for j = 1, #server_buffs do
+						local buff_template = server_buffs[j]
+						local id = buff_extension:add_buff(buff_template)
 
-						_talent_buff_ids[#_talent_buff_ids + 1] = add_buff_3
+						talent_buff_ids[#talent_buff_ids + 1] = id
 					end
 				end
 			end
@@ -181,34 +195,34 @@ TalentExtension.apply_buffs_from_talents = function (self, arg_6_1)
 	end
 end
 
-TalentExtension._update_talent_weapon_index = function (self, arg_7_1)
+TalentExtension._update_talent_weapon_index = function (self, talent_ids)
 	-- function 7
-	local flag = not Managers.state.game_mode:has_activated_mutator("whiterun")
-	local talent_career_weapon_index = self.talent_career_weapon_index
+	local talents_available = not Managers.state.game_mode:has_activated_mutator("whiterun")
+	local previous_weapon_index = self.talent_career_weapon_index
 
 	self.talent_career_weapon_index = nil
 	self.talent_career_skill_index = 1
 
-	if not flag then
-		local _hero_name = self._hero_name
+	if talents_available then
+		local hero_name = self._hero_name
 
-		for i = 1, #arg_7_1 do
-			local var_7_3 = arg_7_1[i]
-			local get_talent_by_id = TalentUtils.get_talent_by_id(_hero_name, var_7_3)
+		for i = 1, #talent_ids do
+			local talent_id = talent_ids[i]
+			local talent_data = TalentUtils.get_talent_by_id(hero_name, talent_id)
 
-			if not get_talent_by_id then
-				if not get_talent_by_id.talent_career_skill_index then
-					self.talent_career_skill_index = get_talent_by_id.talent_career_skill_index
+			if talent_data then
+				if talent_data.talent_career_skill_index then
+					self.talent_career_skill_index = talent_data.talent_career_skill_index
 				end
 
-				if not get_talent_by_id.talent_career_weapon_index then
-					self.talent_career_weapon_index = get_talent_by_id.talent_career_weapon_index
+				if talent_data.talent_career_weapon_index then
+					self.talent_career_weapon_index = talent_data.talent_career_weapon_index
 				end
 			end
 		end
 	end
 
-	if not (talent_career_weapon_index == self.talent_career_weapon_index or flag) then
+	if previous_weapon_index ~= self.talent_career_weapon_index and not talents_available then
 		self._needs_loadout_resync = true
 	end
 end
@@ -226,39 +240,41 @@ end
 TalentExtension._clear_buffs_from_talents = function (self)
 	-- function 10
 	local buff_extension = self.buff_extension
-	local _talent_buff_ids = self._talent_buff_ids
-	local count = #_talent_buff_ids
+	local talent_buff_ids = self._talent_buff_ids
+	local num_talent_buff_ids = #talent_buff_ids
 
-	for i = 1, count do
-		local var_10_3 = _talent_buff_ids[i]
+	for i = 1, num_talent_buff_ids do
+		local id = talent_buff_ids[i]
 
-		buff_extension:remove_buff(var_10_3)
+		buff_extension:remove_buff(id)
 	end
 
 	table.clear(self._talent_buff_ids)
 end
 
-TalentExtension.has_talent = function (self, arg_11_1)
+TalentExtension.has_talent = function (self, talent_name)
 	-- function 11
-	if not Managers.state.game_mode:has_activated_mutator("whiterun") then
+	if Managers.state.game_mode:has_activated_mutator("whiterun") then
 		return false
 	end
 
-	local get_talent_ids = self:get_talent_ids()
-	local var_11_1 = TalentIDLookup[arg_11_1]
+	local talent_ids = self:get_talent_ids()
+	local wanted_talent_lookup = TalentIDLookup[talent_name]
 
-	if not var_11_1 then
+	if not wanted_talent_lookup then
 		return false
 	end
 
-	if var_11_1.hero_name ~= self._hero_name then
+	if wanted_talent_lookup.hero_name ~= self._hero_name then
 		return false
 	end
 
-	local talent_id = var_11_1.talent_id
+	local wanted_talent_id = wanted_talent_lookup.talent_id
 
-	for i = 1, #get_talent_ids do
-		if talent_id == get_talent_ids[i] then
+	for i = 1, #talent_ids do
+		local talent_id = talent_ids[i]
+
+		if wanted_talent_id == talent_id then
 			return true
 		end
 	end
@@ -268,35 +284,37 @@ end
 
 TalentExtension.get_talent_ids = function (self)
 	-- function 12
-	local get_talents_interface = Managers.backend:get_talents_interface()
-	local _career_name = self._career_name
-	local bot_player = self.player.bot_player
+	local talent_interface = Managers.backend:get_talents_interface()
+	local career_name = self._career_name
+	local is_bot = self.player.bot_player
+	local talent_ids = talent_interface:get_talent_ids(career_name, nil, is_bot)
 
-	return (get_talents_interface:get_talent_ids(_career_name, nil, bot_player))
+	return talent_ids
 end
 
-TalentExtension.has_talent_perk = function (self, arg_13_1)
+TalentExtension.has_talent_perk = function (self, perk)
 	-- function 13
-	local _hero_name = self._hero_name
+	local hero_name = self._hero_name
+	local hero_affiliation = self._hero_affiliation
 
-	if self._hero_affiliation == "tutorial" then
+	if hero_affiliation == "tutorial" then
 		return
 	end
 
-	local get_talent_ids = self:get_talent_ids()
+	local talent_ids = self:get_talent_ids()
 
-	for i = 1, #get_talent_ids do
-		local var_13_2 = get_talent_ids[i]
-		local get_talent_by_id = TalentUtils.get_talent_by_id(_hero_name, var_13_2)
+	for i = 1, #talent_ids do
+		local talent_id = talent_ids[i]
+		local talent_data = TalentUtils.get_talent_by_id(hero_name, talent_id)
 
-		if not get_talent_by_id then
-			local perks = get_talent_by_id.perks
+		if talent_data then
+			local perks = talent_data.perks
 
-			if not perks then
-				local count = #perks
+			if perks then
+				local num_perks = #perks
 
-				for j = 1, count do
-					if perks[j] == arg_13_1 then
+				for j = 1, num_perks do
+					if perks[j] == perk then
 						return true
 					end
 				end
@@ -307,65 +325,66 @@ end
 
 TalentExtension.get_talent_names = function (self)
 	-- function 14
-	local get_talent_ids = self:get_talent_ids()
-	local tbl = {}
-	local _hero_name = self._hero_name
+	local talent_ids = self:get_talent_ids()
+	local talent_names = {}
+	local hero_name = self._hero_name
 
-	for i, v in ipairs(get_talent_ids) do
-		local get_talent_by_id = TalentUtils.get_talent_by_id(_hero_name, v)
+	for _, talent_id in ipairs(talent_ids) do
+		local talent_data = TalentUtils.get_talent_by_id(hero_name, talent_id)
 
-		tbl[#tbl + 1] = get_talent_by_id.name
+		talent_names[#talent_names + 1] = talent_data.name
 	end
 
-	return tbl
+	return talent_names
 end
 
 TalentExtension._broadcast_talents_changed = function (self)
 	-- function 15
-	local event = Managers.state.event
+	local event_manager = Managers.state.event
 
-	if not event then
-		event:trigger("on_talents_changed", self._unit, self)
+	if event_manager then
+		event_manager:trigger("on_talents_changed", self._unit, self)
 	end
 end
 
-TalentExtension.destroy = function (arg_16_0)
+TalentExtension.destroy = function (self)
 	-- function 16
 	return
 end
 
-TalentExtension.initial_talent_synced = function (arg_17_0)
+TalentExtension.initial_talent_synced = function (self)
 	-- function 17
 	return true
 end
 
-TalentExtension._check_talent_package_dendencies = function (self, arg_18_1, arg_18_2)
+TalentExtension._check_talent_package_dendencies = function (self, talent_ids, initial_setup)
 	-- function 18
-	local tbl = {}
-	local num = 0
-	local _hero_name = self._hero_name
+	local new_dependencies = {}
+	local new_dependencies_n = 0
+	local hero_name = self._hero_name
 
-	for i = 1, #arg_18_1 do
-		local var_18_3 = arg_18_1[i]
+	for i = 1, #talent_ids do
+		local talent_id = talent_ids[i]
+		local talent_data = TalentUtils.get_talent_by_id(hero_name, talent_id)
 
-		if not TalentUtils.get_talent_by_id(_hero_name, var_18_3).requires_packages then
-			num = num + 1
-			tbl[num] = var_18_3
+		if talent_data.requires_packages then
+			new_dependencies_n = new_dependencies_n + 1
+			new_dependencies[new_dependencies_n] = talent_id
 		end
 	end
 
-	table.sort(tbl)
+	table.sort(new_dependencies)
 
-	if not arg_18_2 then
-		self._talent_ids_with_dependencies = tbl
+	if initial_setup then
+		self._talent_ids_with_dependencies = new_dependencies
 	else
-		local _talent_ids_with_dependencies = self._talent_ids_with_dependencies
+		local talent_ids_with_dependencies = self._talent_ids_with_dependencies
 
-		if not (not _talent_ids_with_dependencies and #_talent_ids_with_dependencies == num) then
+		if not talent_ids_with_dependencies or #talent_ids_with_dependencies ~= new_dependencies_n then
 			self._needs_loadout_resync = true
 		else
-			for j = 1, num do
-				if tbl[j] ~= _talent_ids_with_dependencies[j] then
+			for i = 1, new_dependencies_n do
+				if new_dependencies[i] ~= talent_ids_with_dependencies[i] then
 					self._needs_loadout_resync = true
 
 					break
@@ -383,10 +402,10 @@ TalentExtension._check_resync = function (self)
 
 	self._needs_loadout_resync = false
 
-	local network_id = self.player:network_id()
+	local peer_id = self.player:network_id()
 	local local_player_id = self.player:local_player_id()
-	local bot_player = self.player.bot_player
-	local flag = true
+	local is_bot = self.player.bot_player
+	local force_resync = true
 
-	Managers.state.network.profile_synchronizer:resync_loadout(network_id, local_player_id, bot_player, flag)
+	Managers.state.network.profile_synchronizer:resync_loadout(peer_id, local_player_id, is_bot, force_resync)
 end

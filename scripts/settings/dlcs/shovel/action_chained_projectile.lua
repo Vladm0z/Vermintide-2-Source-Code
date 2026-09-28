@@ -2,93 +2,94 @@
 
 ActionChainedProjectile = class(ActionChainedProjectile, ActionBase)
 
-ActionChainedProjectile.init = function (self, arg_1_1, arg_1_2, arg_1_3, arg_1_4, arg_1_5, arg_1_6, arg_1_7, arg_1_8)
+ActionChainedProjectile.init = function (self, world, item_name, is_server, owner_unit, damage_unit, first_person_unit, weapon_unit, weapon_system)
 	-- function 1
-	ActionChainedProjectile.super.init(self, arg_1_1, arg_1_2, arg_1_3, arg_1_4, arg_1_5, arg_1_6, arg_1_7, arg_1_8)
+	ActionChainedProjectile.super.init(self, world, item_name, is_server, owner_unit, damage_unit, first_person_unit, weapon_unit, weapon_system)
 
-	self.ammo_extension = ScriptUnit.has_extension(arg_1_7, "ammo_system")
-	self.inventory_extension = ScriptUnit.extension(arg_1_4, "inventory_system")
-	self.overcharge_extension = ScriptUnit.extension(arg_1_4, "overcharge_system")
-	self.first_person_extension = ScriptUnit.has_extension(arg_1_4, "first_person_system")
-	self.owner_buff_extension = ScriptUnit.extension(arg_1_4, "buff_system")
-	self.weapon_extension = ScriptUnit.extension(arg_1_7, "weapon_system")
-	self.status_extension = ScriptUnit.extension(arg_1_4, "status_system")
-	self.hud_extension = ScriptUnit.has_extension(arg_1_4, "hud_system")
-	self.owner_unit = arg_1_4
+	self.ammo_extension = ScriptUnit.has_extension(weapon_unit, "ammo_system")
+	self.inventory_extension = ScriptUnit.extension(owner_unit, "inventory_system")
+	self.overcharge_extension = ScriptUnit.extension(owner_unit, "overcharge_system")
+	self.first_person_extension = ScriptUnit.has_extension(owner_unit, "first_person_system")
+	self.owner_buff_extension = ScriptUnit.extension(owner_unit, "buff_system")
+	self.weapon_extension = ScriptUnit.extension(weapon_unit, "weapon_system")
+	self.status_extension = ScriptUnit.extension(owner_unit, "status_system")
+	self.hud_extension = ScriptUnit.has_extension(owner_unit, "hud_system")
+	self.owner_unit = owner_unit
 
-	if not self.first_person_extension then
+	if self.first_person_extension then
 		self.first_person_unit = self.first_person_extension:get_first_person_unit()
 	end
 
 	self._rumble_effect_id = false
-	self.unit_id = Managers.state.network.unit_storage:go_id(arg_1_4)
+	self.unit_id = Managers.state.network.unit_storage:go_id(owner_unit)
 	self._audio_system = Managers.state.entity:system("audio_system")
 	self._active_projectiles = Script.new_array(4)
 	self._active_projectiles_n = 0
 	self.fx_spline_ids = {
-		World.find_particles_variable(arg_1_1, "fx/wpnfx_staff_death/curse_spirit", "spline_1"),
-		World.find_particles_variable(arg_1_1, "fx/wpnfx_staff_death/curse_spirit", "spline_2"),
-		World.find_particles_variable(arg_1_1, "fx/wpnfx_staff_death/curse_spirit", "spline_3")
+		World.find_particles_variable(world, "fx/wpnfx_staff_death/curse_spirit", "spline_1"),
+		World.find_particles_variable(world, "fx/wpnfx_staff_death/curse_spirit", "spline_2"),
+		World.find_particles_variable(world, "fx/wpnfx_staff_death/curse_spirit", "spline_3")
 	}
 end
 
-local num = 1
-local num_2 = 2
-local num_3 = 3
-local num_4 = 4
+local RAYCAST_INDEX_POSITION = 1
+local RAYCAST_INDEX_DISTANCE = 2
+local RAYCAST_INDEX_NORMAL = 3
+local RAYCAST_INDEX_ACTOR = 4
 
-ActionChainedProjectile.client_owner_start_action = function (self, arg_2_1, arg_2_2, arg_2_3, arg_2_4)
+ActionChainedProjectile.client_owner_start_action = function (self, new_action, t, chain_action_data, power_level)
 	-- function 2
-	ActionChainedProjectile.super.client_owner_start_action(self, arg_2_1, arg_2_2, arg_2_3, arg_2_4)
+	ActionChainedProjectile.super.client_owner_start_action(self, new_action, t, chain_action_data, power_level)
 
-	self._fire_t = arg_2_2 + arg_2_1.fire_time
+	self._fire_t = t + new_action.fire_time
 	self.state = "waiting_to_shoot"
-	self._power_level = arg_2_4
-	self._fire_sound_event = arg_2_1.fire_sound_event
-	self._chain_sound_event = arg_2_1.chain_sound_event
+	self._power_level = power_level
+	self._fire_sound_event = new_action.fire_sound_event
+	self._chain_sound_event = new_action.chain_sound_event
 end
 
-ActionChainedProjectile.client_owner_post_update = function (self, arg_3_1, arg_3_2, arg_3_3, arg_3_4)
+ActionChainedProjectile.client_owner_post_update = function (self, dt, t, world, can_damage)
 	-- function 3
-	if not (self.state ~= "waiting_to_shoot" or not (arg_3_2 >= self._fire_t)) then
+	if self.state == "waiting_to_shoot" and t >= self._fire_t then
 		self.state = "shooting"
 	end
 
 	if self.state == "shooting" then
 		self.state = "shot"
 
-		self:_shoot(arg_3_2)
+		self:_shoot(t)
 	end
 end
 
-ActionChainedProjectile.finish = function (arg_4_0, arg_4_1)
+ActionChainedProjectile.finish = function (self, reason)
 	-- function 4
-	ActionChainedProjectile.super.finish(arg_4_0, arg_4_1)
+	ActionChainedProjectile.super.finish(self, reason)
 end
 
-ActionChainedProjectile._shoot = function (self, arg_5_1)
+ActionChainedProjectile._shoot = function (self, t)
 	-- function 5
-	local num = 100
-	local num_2 = 0.15
+	local length = 100
+	local hit_radius = 0.15
 	local physics_world = self.physics_world
 	local owner_unit = self.owner_unit
-	local side = Managers.state.side
-	local side_by_unit = side.side_by_unit
-	local var_5_6 = side_by_unit[owner_unit]
-	local get_projectile_start_position_rotation, var_5_8 = self.first_person_extension:get_projectile_start_position_rotation()
-	local forward = Quaternion.forward(var_5_8)
-	local immediate_raycast, var_5_11, var_5_12, var_5_13, var_5_14 = PhysicsWorld.immediate_raycast(physics_world, get_projectile_start_position_rotation, forward, num, "closest", "collision_filter", "filter_player_ray_projectile_static_only")
-	local flag = var_5_12 or num
-	local num_3 = get_projectile_start_position_rotation + forward * flag / 2
-	local num_4 = flag / 2
+	local side_manager = Managers.state.side
+	local side_by_unit = side_manager.side_by_unit
+	local side = side_by_unit[owner_unit]
+	local first_person_extension = self.first_person_extension
+	local player_position, player_rotation = first_person_extension:get_projectile_start_position_rotation()
+	local direction = Quaternion.forward(player_rotation)
+	local static_hit, _, ray_length, hit_surface_normal, static_hit_actor = PhysicsWorld.immediate_raycast(physics_world, player_position, direction, length, "closest", "collision_filter", "filter_player_ray_projectile_static_only")
+	local max_length = not not ray_length or not not length
+	local halfway_position = player_position + direction * max_length / 2
+	local prepare_radius = max_length / 2
 
-	PhysicsWorld.prepare_actors_for_overlap(physics_world, num_3, num_4 * num_4)
+	PhysicsWorld.prepare_actors_for_overlap(physics_world, halfway_position, prepare_radius * prepare_radius)
 
-	local linear_sphere_sweep = PhysicsWorld.linear_sphere_sweep(physics_world, get_projectile_start_position_rotation + forward * (num_2 / 2), get_projectile_start_position_rotation + forward * flag, num_2, 100, "types", "both", "collision_filter", "filter_player_ray_projectile", "report_initial_overlap")
+	local results = PhysicsWorld.linear_sphere_sweep(physics_world, player_position + direction * (hit_radius / 2), player_position + direction * max_length, hit_radius, 100, "types", "both", "collision_filter", "filter_player_ray_projectile", "report_initial_overlap")
 	local count
 
-	if not linear_sphere_sweep then
-		count = #linear_sphere_sweep
+	if results then
+		count = #results
 
 		if not count then
 			-- Nothing
@@ -97,26 +98,30 @@ ActionChainedProjectile._shoot = function (self, arg_5_1)
 
 	count = 0
 
+	local num_results = count
+
 	::label_5_0::
 
-	local var_5_20
+	local best_target_unit
 
-	for i = 1, count do
-		local actor = linear_sphere_sweep[i].actor
+	for i = 1, num_results do
+		local result = results[i]
+		local hit_actor = result.actor
 
-		if not actor then
-			local unit = Actor.unit(actor)
+		if hit_actor then
+			local hit_unit = Actor.unit(hit_actor)
+			local health_extension = ScriptUnit.has_extension(hit_unit, "health_system")
 
-			if not ScriptUnit.has_extension(unit, "health_system") then
-				local var_5_23 = side_by_unit[unit]
+			if health_extension then
+				local hit_unit_side = side_by_unit[hit_unit]
 
-				if not var_5_6 and not var_5_23 and not side:is_enemy_by_side(var_5_6, var_5_23) then
-					local node = Actor.node(actor)
-					local unit_breed = AiUtils.unit_breed(unit)
-					local flag_2 = not unit_breed and unit_breed.hit_zones_lookup[node]
+				if not side or not hit_unit_side or side_manager:is_enemy_by_side(side, hit_unit_side) then
+					local node = Actor.node(hit_actor)
+					local breed = AiUtils.unit_breed(hit_unit)
+					local hit_zone = not not breed and not not breed.hit_zones_lookup[node]
 
-					if not (not flag_2 and flag_2.name == "afro") then
-						var_5_20 = unit
+					if not hit_zone or hit_zone.name ~= "afro" then
+						best_target_unit = hit_unit
 
 						break
 					end
@@ -125,20 +130,23 @@ ActionChainedProjectile._shoot = function (self, arg_5_1)
 		end
 	end
 
-	local var_5_27
-	local num_5 = get_projectile_start_position_rotation + forward * flag
-	local var_5_29
+	local end_pos
+	local attack_distance = max_length
 
-	if not var_5_20 then
-		var_5_29 = var_5_20
+	end_pos = player_position + direction * attack_distance
 
-		local game_object_or_level_id, var_5_31 = Managers.state.network:game_object_or_level_id(var_5_29)
+	local hit_unit
 
-		if not var_5_31 then
+	if best_target_unit then
+		hit_unit = best_target_unit
+
+		local _, is_level_unit = Managers.state.network:game_object_or_level_id(hit_unit)
+
+		if not is_level_unit then
 			local node_2
 
-			if not Unit.has_node(var_5_20, "j_spine") then
-				node_2 = Unit.node(var_5_20, "j_spine")
+			if Unit.has_node(best_target_unit, "j_spine") then
+				node_2 = Unit.node(best_target_unit, "j_spine")
 
 				if not node_2 then
 					-- Nothing
@@ -147,174 +155,194 @@ ActionChainedProjectile._shoot = function (self, arg_5_1)
 
 			node_2 = 0
 
+			local node = node_2
+
 			::label_5_1::
 
-			num_5 = Unit.world_position(var_5_20, node_2)
+			end_pos = Unit.world_position(best_target_unit, node)
 		end
-	elseif not immediate_raycast then
-		local unit_2 = Actor.unit(var_5_14)
-		local game_object_or_level_id_2, var_5_35 = Managers.state.network:game_object_or_level_id(unit_2)
+	elseif static_hit then
+		local static_hit_unit = Actor.unit(static_hit_actor)
+		local _, is_level_unit = Managers.state.network:game_object_or_level_id(static_hit_unit)
 
-		if not var_5_35 then
-			var_5_29 = unit_2
+		if not is_level_unit then
+			hit_unit = static_hit_unit
 		end
 	end
 
-	if not var_5_29 then
+	if hit_unit then
 		local chain_hit_settings = self.current_action.chain_hit_settings
+		local breed = Unit.get_data(hit_unit, "breed")
 
-		if not Unit.get_data(var_5_29, "breed") then
-			self._is_critical_strike = ActionUtils.is_critical_strike(self.owner_unit, self.current_action, arg_5_1)
+		if breed then
+			self._is_critical_strike = ActionUtils.is_critical_strike(self.owner_unit, self.current_action, t)
 
 			self:_handle_critical_strike(self._is_critical_strike, self.buff_extension, self.hud_extension, nil, "on_critical_shot", nil)
 
-			local num_6 = 1
-			local flag_3 = true
-			local charge_value = DamageProfileTemplates[chain_hit_settings.damage_profile].charge_value
+			local hit_index = 1
+			local send_to_server = true
+			local damage_profile = DamageProfileTemplates[chain_hit_settings.damage_profile]
+			local charge_value_2 = damage_profile.charge_value
 
-			charge_value = charge_value or "projectile"
+			if not charge_value_2 then
+				-- Nothing
+			end
 
-			local get_item_buff_type = DamageUtils.get_item_buff_type(self.item_name)
+			charge_value_2 = "projectile"
 
-			DamageUtils.buff_on_attack(self.owner_unit, var_5_29, charge_value, self._is_critical_strike, "full", num_6, flag_3, get_item_buff_type, nil, self.item_name)
+			local charge_value = charge_value_2
+
+			::label_5_2::
+
+			local buff_type = DamageUtils.get_item_buff_type(self.item_name)
+
+			DamageUtils.buff_on_attack(self.owner_unit, hit_unit, charge_value, self._is_critical_strike, "full", hit_index, send_to_server, buff_type, nil, self.item_name)
 		else
 			self._is_critical_strike = false
 		end
 
-		local _power_level = self._power_level
-		local get_ranged_boost, var_5_43 = ActionUtils.get_ranged_boost(owner_unit)
-		local _is_critical_strike = self._is_critical_strike
-		local _active_projectiles = self._active_projectiles
-		local num_7 = self._active_projectiles_n + 1
+		local power_level = self._power_level
+		local _, boost_curve_multiplier = ActionUtils.get_ranged_boost(owner_unit)
+		local is_critical_strike = self._is_critical_strike
+		local active_projectiles = self._active_projectiles
+		local active_projectiles_n = self._active_projectiles_n + 1
 
-		self._active_projectiles_n = num_7
-		_active_projectiles[num_7] = {
+		self._active_projectiles_n = active_projectiles_n
+		active_projectiles[active_projectiles_n] = {
 			chain_count = 0,
 			settings = chain_hit_settings,
-			is_critical_strike = _is_critical_strike,
-			power_level = _power_level,
-			boost_curve_multiplier = var_5_43,
-			next_chain_t = arg_5_1 + (chain_hit_settings.chain_delay - chain_hit_settings.target_selection_delay),
+			is_critical_strike = is_critical_strike,
+			power_level = power_level,
+			boost_curve_multiplier = boost_curve_multiplier,
+			next_chain_t = t + (chain_hit_settings.chain_delay - chain_hit_settings.target_selection_delay),
 			target_selection_t = math.huge,
-			next_target_unit = var_5_29,
+			next_target_unit = hit_unit,
 			hit_units = {
-				[var_5_29] = true
+				[hit_unit] = true
 			},
-			last_chain_pos = Vector3Box(num_5)
+			last_chain_pos = Vector3Box(end_pos)
 		}
-	elseif not var_5_13 then
-		local var_5_47 = var_5_13
-		local reflect = Vector3.reflect(forward, var_5_47)
-		local var_5_49 = NetworkLookup.effects["fx/wpnfx_staff_death/curse_spirit_impact"]
+	elseif hit_surface_normal then
+		local impact_normal = hit_surface_normal
+		local impact_direction = Vector3.reflect(direction, impact_normal)
+		local fx_id = NetworkLookup.effects["fx/wpnfx_staff_death/curse_spirit_impact"]
 
-		if not self.is_server then
-			Managers.state.network:rpc_play_particle_effect(nil, var_5_49, NetworkConstants.invalid_game_object_id, 0, num_5, Quaternion.look(reflect), false)
+		if self.is_server then
+			Managers.state.network:rpc_play_particle_effect(nil, fx_id, NetworkConstants.invalid_game_object_id, 0, end_pos, Quaternion.look(impact_direction), false)
 		else
-			Managers.state.network.network_transmit:send_rpc_server("rpc_play_particle_effect", var_5_49, NetworkConstants.invalid_game_object_id, 0, num_5, Quaternion.look(reflect), false)
+			Managers.state.network.network_transmit:send_rpc_server("rpc_play_particle_effect", fx_id, NetworkConstants.invalid_game_object_id, 0, end_pos, Quaternion.look(impact_direction), false)
 		end
 	end
 
-	local start_offset = self.current_action.start_offset
-	local rotate = Quaternion.rotate(var_5_8, Vector3(math.lerp(start_offset.min[1], start_offset.max[1], math.random()), math.lerp(start_offset.min[2], start_offset.max[2], math.random()), math.lerp(start_offset.min[3], start_offset.max[3], math.random())))
-	local curve_offset = self.current_action.curve_offset
-	local rotate_2 = Quaternion.rotate(var_5_8, Vector3(math.lerp(curve_offset.min[1], curve_offset.max[1], math.random()), math.lerp(curve_offset.min[2], curve_offset.max[2], math.random()), math.lerp(curve_offset.min[3], curve_offset.max[3], math.random())))
-	local node_3 = Unit.node(self.first_person_unit, "j_aim_target")
-	local num_8 = Unit.world_position(self.first_person_unit, node_3) + rotate
-	local num_9 = num_8 + (num_5 - num_8) / 3 + rotate_2
+	local start_offset_limits = self.current_action.start_offset
+	local start_offset = Quaternion.rotate(player_rotation, Vector3(math.lerp(start_offset_limits.min[1], start_offset_limits.max[1], math.random()), math.lerp(start_offset_limits.min[2], start_offset_limits.max[2], math.random()), math.lerp(start_offset_limits.min[3], start_offset_limits.max[3], math.random())))
+	local curve_offset_limits = self.current_action.curve_offset
+	local curve_offset = Quaternion.rotate(player_rotation, Vector3(math.lerp(curve_offset_limits.min[1], curve_offset_limits.max[1], math.random()), math.lerp(curve_offset_limits.min[2], curve_offset_limits.max[2], math.random()), math.lerp(curve_offset_limits.min[3], curve_offset_limits.max[3], math.random())))
+	local start_pos_node = Unit.node(self.first_person_unit, "j_aim_target")
+	local start_pos = Unit.world_position(self.first_person_unit, start_pos_node) + start_offset
+	local mid_point = start_pos + (end_pos - start_pos) / 3 + curve_offset
 
-	self:_play_fx("fx/wpnfx_staff_death/curse_spirit_first", num_8, num_9, num_5, false)
+	self:_play_fx("fx/wpnfx_staff_death/curse_spirit_first", start_pos, mid_point, end_pos, false)
 
 	local current_action = self.current_action
 	local overcharge_type = current_action.overcharge_type
 
-	if not (not overcharge_type and self.extra_buff_shot) then
-		local var_5_59 = PlayerUnitStatusSettings.overcharge_values[overcharge_type]
-		local extension = ScriptUnit.extension(owner_unit, "buff_system")
+	if overcharge_type and not self.extra_buff_shot then
+		local overcharge_amount = PlayerUnitStatusSettings.overcharge_values[overcharge_type]
+		local buff_extension = ScriptUnit.extension(owner_unit, "buff_system")
 
-		if not self._is_critical_strike and not extension:has_buff_perk("no_overcharge_crit") then
-			var_5_59 = 0
+		if self._is_critical_strike and buff_extension:has_buff_perk("no_overcharge_crit") then
+			overcharge_amount = 0
 		end
 
-		if not current_action.scale_overcharge then
-			self.overcharge_extension:add_charge(var_5_59, self.charge_level)
+		if current_action.scale_overcharge then
+			self.overcharge_extension:add_charge(overcharge_amount, self.charge_level)
 		else
-			self.overcharge_extension:add_charge(var_5_59)
+			self.overcharge_extension:add_charge(overcharge_amount)
 		end
 	end
 
 	self:_proc_spell_used(self.owner_buff_extension)
 end
 
-ActionChainedProjectile._apply_damage = function (self, arg_6_1, arg_6_2, arg_6_3, arg_6_4, arg_6_5, arg_6_6, arg_6_7)
+ActionChainedProjectile._apply_damage = function (self, hit_unit, hit_target_index, is_critical_strike, power_level, boost_curve_multiplier, damage_profile, damage_source_position)
 	-- function 6
-	local network = Managers.state.network
-	local unit_game_object_id = network:unit_game_object_id(self.owner_unit)
+	local network_manager = Managers.state.network
+	local attacker_unit_id = network_manager:unit_game_object_id(self.owner_unit)
 
-	self:_handle_critical_strike(arg_6_3, self.owner_buff_extension, self.hud_extension, self.first_person_extension, "on_critical_shot", nil)
+	self:_handle_critical_strike(is_critical_strike, self.owner_buff_extension, self.hud_extension, self.first_person_extension, "on_critical_shot", nil)
 
-	local var_6_2 = NetworkLookup.damage_profiles[arg_6_6]
-	local game_object_or_level_id, var_6_4 = network:game_object_or_level_id(arg_6_1)
-	local var_6_5 = NetworkLookup.damage_sources[self.item_name]
-	local torso = NetworkLookup.hit_zones.torso
-	local num = Unit.world_position(arg_6_1, 0) + Vector3.up()
-	local direction_length, var_6_9 = Vector3.direction_length(num - arg_6_7)
+	local damage_profile_id = NetworkLookup.damage_profiles[damage_profile]
+	local hit_unit_id, is_level_unit = network_manager:game_object_or_level_id(hit_unit)
+	local damage_source_id = NetworkLookup.damage_sources[self.item_name]
+	local hit_zone_id = NetworkLookup.hit_zones.torso
+	local hit_position = Unit.world_position(hit_unit, 0) + Vector3.up()
+	local attack_direction, attack_distance = Vector3.direction_length(hit_position - damage_source_position)
 
-	if not var_6_4 then
-		local str = "full"
-		local num_2 = 1
-		local item_name = self.item_name
-		local var_6_13 = DamageProfileTemplates[arg_6_6]
+	if is_level_unit then
+		local hit_zone_name = "full"
+		local target_index = 1
+		local damage_source = self.item_name
+		local damage_profile_template = DamageProfileTemplates[damage_profile]
 
-		DamageUtils.damage_level_unit(arg_6_1, self.owner_unit, str, arg_6_4, self.melee_boost_curve_multiplier, arg_6_3, var_6_13, num_2, direction_length, item_name)
+		DamageUtils.damage_level_unit(hit_unit, self.owner_unit, hit_zone_name, power_level, self.melee_boost_curve_multiplier, is_critical_strike, damage_profile_template, target_index, attack_direction, damage_source)
 	else
-		self.weapon_system:send_rpc_attack_hit(var_6_5, unit_game_object_id, game_object_or_level_id, torso, num, direction_length, var_6_2, "power_level", arg_6_4, "hit_target_index", arg_6_2, "blocking", false, "shield_break_procced", false, "boost_curve_multiplier", arg_6_5, "is_critical_strike", arg_6_3, "can_damage", true, "can_stagger", true, "first_hit", arg_6_2 == 1)
+		self.weapon_system:send_rpc_attack_hit(damage_source_id, attacker_unit_id, hit_unit_id, hit_zone_id, hit_position, attack_direction, damage_profile_id, "power_level", power_level, "hit_target_index", hit_target_index, "blocking", false, "shield_break_procced", false, "boost_curve_multiplier", boost_curve_multiplier, "is_critical_strike", is_critical_strike, "can_damage", true, "can_stagger", true, "first_hit", hit_target_index == 1)
 	end
 
-	local var_6_14 = NetworkLookup.effects["fx/wpnfx_staff_death/curse_spirit_impact"]
-	local look = Quaternion.look(direction_length)
+	local fx_id = NetworkLookup.effects["fx/wpnfx_staff_death/curse_spirit_impact"]
+	local rotation = Quaternion.look(attack_direction)
 
-	if not self.is_server then
-		Managers.state.network:rpc_play_particle_effect(nil, var_6_14, NetworkConstants.invalid_game_object_id, 0, num, look, false)
+	if self.is_server then
+		Managers.state.network:rpc_play_particle_effect(nil, fx_id, NetworkConstants.invalid_game_object_id, 0, hit_position, rotation, false)
 	else
-		Managers.state.network.network_transmit:send_rpc_server("rpc_play_particle_effect", var_6_14, NetworkConstants.invalid_game_object_id, 0, num, look, false)
+		Managers.state.network.network_transmit:send_rpc_server("rpc_play_particle_effect", fx_id, NetworkConstants.invalid_game_object_id, 0, hit_position, rotation, false)
 	end
 
-	Managers.state.entity:system("audio_system"):play_audio_unit_event("Play_career_necro_passive_shadow_blood", arg_6_1)
+	local audio_system = Managers.state.entity:system("audio_system")
+
+	audio_system:play_audio_unit_event("Play_career_necro_passive_shadow_blood", hit_unit)
 end
 
-ActionChainedProjectile.destroy = function (arg_7_0)
+ActionChainedProjectile.destroy = function (self)
 	-- function 7
 	return
 end
 
-ActionChainedProjectile.passive_update = function (self, arg_8_1, arg_8_2)
+ActionChainedProjectile.passive_update = function (self, dt, t)
 	-- function 8
 	if self._active_projectiles_n <= 0 then
 		return
 	end
 
 	local owner_unit = self.owner_unit
-	local broadphase = Managers.state.entity:system("ai_system").broadphase
-	local var_8_2 = Managers.state.side.side_by_unit[owner_unit]
-	local flag = not var_8_2 and var_8_2.enemy_broadphase_categories
-	local _active_projectiles = self._active_projectiles
+	local ai_broadphase = Managers.state.entity:system("ai_system").broadphase
+	local side_manager = Managers.state.side
+	local side_by_unit = side_manager.side_by_unit
+	local side = side_by_unit[owner_unit]
+	local enemy_categories = not not side and not not side.enemy_broadphase_categories
+	local active_projectiles = self._active_projectiles
 
 	for i = self._active_projectiles_n, 1, -1 do
-		local var_8_5 = _active_projectiles[i]
+		local projectile = active_projectiles[i]
 
-		if not (var_8_5.next_target_unit or not (arg_8_2 >= var_8_5.target_selection_t)) then
-			if not self:_select_next_target(var_8_5, broadphase, flag) then
-				table.swap_delete(_active_projectiles, i)
+		if not projectile.next_target_unit and t >= projectile.target_selection_t then
+			local chain_next = self:_select_next_target(projectile, ai_broadphase, enemy_categories)
+
+			if not chain_next then
+				table.swap_delete(active_projectiles, i)
 
 				self._active_projectiles_n = self._active_projectiles_n - 1
 			end
-		elseif arg_8_2 >= var_8_5.next_chain_t then
-			if not self:_apply_chain_damage(var_8_5, broadphase, flag) then
-				var_8_5.next_target_unit = nil
-				var_8_5.next_chain_t = arg_8_2 + var_8_5.settings.chain_delay
-				var_8_5.target_selection_t = arg_8_2 + var_8_5.settings.target_selection_delay
+		elseif t >= projectile.next_chain_t then
+			local chain_next = self:_apply_chain_damage(projectile, ai_broadphase, enemy_categories)
+
+			if chain_next then
+				projectile.next_target_unit = nil
+				projectile.next_chain_t = t + projectile.settings.chain_delay
+				projectile.target_selection_t = t + projectile.settings.target_selection_delay
 			else
-				table.swap_delete(_active_projectiles, i)
+				table.swap_delete(active_projectiles, i)
 
 				self._active_projectiles_n = self._active_projectiles_n - 1
 			end
@@ -322,46 +350,48 @@ ActionChainedProjectile.passive_update = function (self, arg_8_1, arg_8_2)
 	end
 end
 
-local tbl = {}
+local BROADPHASE_QUERY_TEMP = {}
 
-ActionChainedProjectile._select_next_target = function (self, arg_9_1, arg_9_2, arg_9_3)
+ActionChainedProjectile._select_next_target = function (self, chain_data, ai_broadphase, enemy_categories)
 	-- function 9
-	local settings = arg_9_1.settings
-	local hit_units = arg_9_1.hit_units
-	local unbox = arg_9_1.last_chain_pos:unbox()
+	local settings = chain_data.settings
+	local hit_units = chain_data.hit_units
+	local last_chain_pos = chain_data.last_chain_pos:unbox()
 
-	table.clear(tbl)
+	table.clear(BROADPHASE_QUERY_TEMP)
 
-	local var_9_3 = tbl
-	local query = Broadphase.query(arg_9_2, unbox, settings.chain_distance, var_9_3, arg_9_3)
+	local nearby_enemy_units = BROADPHASE_QUERY_TEMP
+	local num_enemies = Broadphase.query(ai_broadphase, last_chain_pos, settings.chain_distance, nearby_enemy_units, enemy_categories)
 
-	for i = 1, query do
-		local var_9_5 = var_9_3[i]
+	for target_id = 1, num_enemies do
+		local target_unit = nearby_enemy_units[target_id]
 
-		if hit_units[var_9_5] or not HEALTH_ALIVE[var_9_5] then
-			hit_units[var_9_5] = true
+		if not hit_units[target_unit] and HEALTH_ALIVE[target_unit] then
+			hit_units[target_unit] = true
 
-			local node
+			local node_2
 
-			if not Unit.has_node(var_9_5, "j_spine") then
-				node = Unit.node(var_9_5, "j_spine")
+			if Unit.has_node(target_unit, "j_spine") then
+				node_2 = Unit.node(target_unit, "j_spine")
 
-				if not node then
+				if not node_2 then
 					-- Nothing
 				end
 			end
 
-			node = 0
+			node_2 = 0
+
+			local node = node_2
 
 			::label_9_0::
 
-			local world_position = Unit.world_position(var_9_5, node)
-			local var_9_8 = Vector3(math.lerp(-0.5, 0.5, math.random()), math.lerp(-0.5, 0.5, math.random()), math.lerp(-0.5, 0.5, math.random()))
-			local num = unbox + (world_position - unbox) / 2 + var_9_8
+			local next_chain_pos = Unit.world_position(target_unit, node)
+			local mid_offset = Vector3(math.lerp(-0.5, 0.5, math.random()), math.lerp(-0.5, 0.5, math.random()), math.lerp(-0.5, 0.5, math.random()))
+			local mid_point = last_chain_pos + (next_chain_pos - last_chain_pos) / 2 + mid_offset
 
-			self:_play_fx("fx/wpnfx_staff_death/curse_spirit", unbox, num, world_position, true)
+			self:_play_fx("fx/wpnfx_staff_death/curse_spirit", last_chain_pos, mid_point, next_chain_pos, true)
 
-			arg_9_1.next_target_unit = var_9_5
+			chain_data.next_target_unit = target_unit
 
 			return true
 		end
@@ -370,56 +400,56 @@ ActionChainedProjectile._select_next_target = function (self, arg_9_1, arg_9_2, 
 	return false
 end
 
-ActionChainedProjectile._play_fx = function (self, arg_10_1, arg_10_2, arg_10_3, arg_10_4, arg_10_5)
+ActionChainedProjectile._play_fx = function (self, fx_name, point_1, point_2, point_3, is_chain)
 	-- function 10
-	local var_10_0 = NetworkLookup.effects[arg_10_1]
-	local tbl = {
-		arg_10_2,
-		arg_10_3,
-		arg_10_4
+	local fx_name_id = NetworkLookup.effects[fx_name]
+	local spline_points = {
+		point_1,
+		point_2,
+		point_3
 	}
 
-	if not arg_10_5 then
-		if not self._chain_sound_event then
-			self._audio_system:play_audio_position_event(self._chain_sound_event, arg_10_2)
+	if is_chain then
+		if self._chain_sound_event then
+			self._audio_system:play_audio_position_event(self._chain_sound_event, point_1)
 		end
-	elseif not self._fire_sound_event and not self.first_person_extension then
+	elseif self._fire_sound_event and self.first_person_extension then
 		self.first_person_extension:play_hud_sound_event(self._fire_sound_event)
 	end
 
-	if not self.is_server then
-		Managers.state.network:rpc_play_particle_effect_spline(nil, var_10_0, self.fx_spline_ids, tbl)
+	if self.is_server then
+		Managers.state.network:rpc_play_particle_effect_spline(nil, fx_name_id, self.fx_spline_ids, spline_points)
 	else
-		Managers.state.network.network_transmit:send_rpc_server("rpc_play_particle_effect_spline", var_10_0, self.fx_spline_ids, tbl)
+		Managers.state.network.network_transmit:send_rpc_server("rpc_play_particle_effect_spline", fx_name_id, self.fx_spline_ids, spline_points)
 	end
 end
 
-ActionChainedProjectile._apply_chain_damage = function (self, arg_11_1, arg_11_2, arg_11_3)
+ActionChainedProjectile._apply_chain_damage = function (self, chain_data, ai_broadphase, enemy_categories)
 	-- function 11
-	local settings = arg_11_1.settings
-	local num = arg_11_1.chain_count + 1
-	local next_target_unit = arg_11_1.next_target_unit
+	local settings = chain_data.settings
+	local chain_count = chain_data.chain_count + 1
+	local target_unit = chain_data.next_target_unit
 
-	if not HEALTH_ALIVE[next_target_unit] then
-		local unbox = arg_11_1.last_chain_pos:unbox()
+	if HEALTH_ALIVE[target_unit] then
+		local last_chain_pos = chain_data.last_chain_pos:unbox()
 
-		self:_apply_damage(next_target_unit, num + 1, arg_11_1.is_critical_strike, arg_11_1.power_level, arg_11_1.boost_curve_multiplier, settings.damage_profile, unbox)
+		self:_apply_damage(target_unit, chain_count + 1, chain_data.is_critical_strike, chain_data.power_level, chain_data.boost_curve_multiplier, settings.damage_profile, last_chain_pos)
 	end
 
-	if not (not ALIVE[next_target_unit] and not (num <= settings.max_chain_count)) then
-		local var_11_4
+	if ALIVE[target_unit] and chain_count <= settings.max_chain_count then
+		local next_chain_pos
 
-		if not Unit.has_node(next_target_unit, "j_spine") then
-			local node = Unit.node(next_target_unit, "j_spine")
+		if Unit.has_node(target_unit, "j_spine") then
+			local node = Unit.node(target_unit, "j_spine")
 
-			var_11_4 = Unit.world_position(next_target_unit, node)
+			next_chain_pos = Unit.world_position(target_unit, node)
 		else
-			var_11_4 = Unit.world_position(next_target_unit, 0) + Vector3.up() * 0.8
+			next_chain_pos = Unit.world_position(target_unit, 0) + Vector3.up() * 0.8
 		end
 
-		arg_11_1.chain_count = num
+		chain_data.chain_count = chain_count
 
-		arg_11_1.last_chain_pos:store(var_11_4)
+		chain_data.last_chain_pos:store(next_chain_pos)
 
 		return true
 	else

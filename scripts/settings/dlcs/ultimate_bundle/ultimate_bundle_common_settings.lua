@@ -1,6 +1,8 @@
 -- chunkname: @scripts/settings/dlcs/ultimate_bundle/ultimate_bundle_common_settings.lua
 
-DLCSettings.ultimate_bundle.unlock_settings = {
+local settings = DLCSettings.ultimate_bundle
+
+settings.unlock_settings = {
 	ultimate_bundle = {
 		id = "47329",
 		class = "UnlockDlcBundle",

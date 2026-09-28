@@ -1,11 +1,11 @@
 -- chunkname: @scripts/settings/terror_events/terror_events_dlc_dwarf_beacons.lua
 
-local scripts_settings_terror_events_terror_event_utils = require("scripts/settings/terror_events/terror_event_utils")
-local count_event_breed = scripts_settings_terror_events_terror_event_utils.count_event_breed
-local HARD = scripts_settings_terror_events_terror_event_utils.HARD
-local HARDER = scripts_settings_terror_events_terror_event_utils.HARDER
-local HARDEST = scripts_settings_terror_events_terror_event_utils.HARDEST
-local tbl = {
+local TerrorEventUtils = require("scripts/settings/terror_events/terror_event_utils")
+local count_event_breed = TerrorEventUtils.count_event_breed
+local HARD = TerrorEventUtils.HARD
+local HARDER = TerrorEventUtils.HARDER
+local HARDEST = TerrorEventUtils.HARDEST
+local terror_event_blueprints = {
 	dwarf_disable_pacing = {
 		{
 			"control_pacing",
@@ -43,9 +43,9 @@ local tbl = {
 		{
 			"continue_when",
 			duration = 80,
-			condition = function (arg_1_0)
+			condition = function (t)
 				-- function 1
-				return not (count_event_breed("skaven_clan_rat") < 5) or count_event_breed("skaven_slave") < 5
+				return count_event_breed("skaven_clan_rat") < 5 and count_event_breed("skaven_slave") < 5
 			end
 		},
 		{
@@ -76,9 +76,9 @@ local tbl = {
 		{
 			"continue_when",
 			duration = 80,
-			condition = function (arg_2_0)
+			condition = function (t)
 				-- function 2
-				return not (count_event_breed("skaven_clan_rat") < 5) or count_event_breed("skaven_slave") < 5
+				return count_event_breed("skaven_clan_rat") < 5 and count_event_breed("skaven_slave") < 5
 			end
 		},
 		{
@@ -120,9 +120,9 @@ local tbl = {
 		{
 			"continue_when",
 			duration = 80,
-			condition = function (arg_3_0)
+			condition = function (t)
 				-- function 3
-				return not (count_event_breed("skaven_clan_rat") < 5) or count_event_breed("skaven_slave") < 5
+				return count_event_breed("skaven_clan_rat") < 5 and count_event_breed("skaven_slave") < 5
 			end
 		},
 		{
@@ -141,9 +141,9 @@ local tbl = {
 		{
 			"continue_when",
 			duration = 50,
-			condition = function (arg_4_0)
+			condition = function (t)
 				-- function 4
-				return not (count_event_breed("skaven_clan_rat") < 5) or count_event_breed("skaven_slave") < 5
+				return count_event_breed("skaven_clan_rat") < 5 and count_event_breed("skaven_slave") < 5
 			end
 		},
 		{
@@ -162,9 +162,9 @@ local tbl = {
 		{
 			"continue_when",
 			duration = 50,
-			condition = function (arg_5_0)
+			condition = function (t)
 				-- function 5
-				return not (count_event_breed("skaven_clan_rat") < 5) or count_event_breed("skaven_slave") < 5
+				return count_event_breed("skaven_clan_rat") < 5 and count_event_breed("skaven_slave") < 5
 			end
 		},
 		{
@@ -183,9 +183,9 @@ local tbl = {
 		{
 			"continue_when",
 			duration = 50,
-			condition = function (arg_6_0)
+			condition = function (t)
 				-- function 6
-				return not (count_event_breed("skaven_clan_rat") < 5) or count_event_breed("skaven_slave") < 5
+				return count_event_breed("skaven_clan_rat") < 5 and count_event_breed("skaven_slave") < 5
 			end
 		},
 		{
@@ -204,9 +204,9 @@ local tbl = {
 		{
 			"continue_when",
 			duration = 50,
-			condition = function (arg_7_0)
+			condition = function (t)
 				-- function 7
-				return not (count_event_breed("skaven_clan_rat") < 5) or count_event_breed("skaven_slave") < 5
+				return count_event_breed("skaven_clan_rat") < 5 and count_event_breed("skaven_slave") < 5
 			end
 		},
 		{
@@ -225,9 +225,9 @@ local tbl = {
 		{
 			"continue_when",
 			duration = 50,
-			condition = function (arg_8_0)
+			condition = function (t)
 				-- function 8
-				return not (count_event_breed("skaven_clan_rat") < 5) or count_event_breed("skaven_slave") < 5
+				return count_event_breed("skaven_clan_rat") < 5 and count_event_breed("skaven_slave") < 5
 			end
 		},
 		{
@@ -246,9 +246,9 @@ local tbl = {
 		{
 			"continue_when",
 			duration = 50,
-			condition = function (arg_9_0)
+			condition = function (t)
 				-- function 9
-				return not (count_event_breed("skaven_clan_rat") < 5) or count_event_breed("skaven_slave") < 5
+				return count_event_breed("skaven_clan_rat") < 5 and count_event_breed("skaven_slave") < 5
 			end
 		}
 	},
@@ -273,9 +273,9 @@ local tbl = {
 		{
 			"continue_when",
 			duration = 80,
-			condition = function (arg_10_0)
+			condition = function (t)
 				-- function 10
-				return not (count_event_breed("skaven_clan_rat") < 5) or count_event_breed("skaven_slave") < 5
+				return count_event_breed("skaven_clan_rat") < 5 and count_event_breed("skaven_slave") < 5
 			end
 		},
 		{
@@ -306,9 +306,9 @@ local tbl = {
 		{
 			"continue_when",
 			duration = 80,
-			condition = function (arg_11_0)
+			condition = function (t)
 				-- function 11
-				return not (count_event_breed("skaven_clan_rat") < 5) or count_event_breed("skaven_slave") < 5
+				return count_event_breed("skaven_clan_rat") < 5 and count_event_breed("skaven_slave") < 5
 			end
 		},
 		{
@@ -350,9 +350,9 @@ local tbl = {
 		{
 			"continue_when",
 			duration = 80,
-			condition = function (arg_12_0)
+			condition = function (t)
 				-- function 12
-				return not (count_event_breed("skaven_clan_rat") < 5) or count_event_breed("skaven_slave") < 5
+				return count_event_breed("skaven_clan_rat") < 5 and count_event_breed("skaven_slave") < 5
 			end
 		},
 		{
@@ -371,9 +371,9 @@ local tbl = {
 		{
 			"continue_when",
 			duration = 50,
-			condition = function (arg_13_0)
+			condition = function (t)
 				-- function 13
-				return not (count_event_breed("skaven_clan_rat") < 5) or count_event_breed("skaven_slave") < 5
+				return count_event_breed("skaven_clan_rat") < 5 and count_event_breed("skaven_slave") < 5
 			end
 		},
 		{
@@ -402,9 +402,9 @@ local tbl = {
 		{
 			"continue_when",
 			duration = 80,
-			condition = function (arg_14_0)
+			condition = function (t)
 				-- function 14
-				return not (count_event_breed("skaven_clan_rat") < 5) or count_event_breed("skaven_slave") < 5
+				return count_event_breed("skaven_clan_rat") < 5 and count_event_breed("skaven_slave") < 5
 			end
 		},
 		{
@@ -435,9 +435,9 @@ local tbl = {
 		{
 			"continue_when",
 			duration = 80,
-			condition = function (arg_15_0)
+			condition = function (t)
 				-- function 15
-				return not (count_event_breed("skaven_clan_rat") < 5) or count_event_breed("skaven_slave") < 5
+				return count_event_breed("skaven_clan_rat") < 5 and count_event_breed("skaven_slave") < 5
 			end
 		},
 		{
@@ -479,9 +479,9 @@ local tbl = {
 		{
 			"continue_when",
 			duration = 80,
-			condition = function (arg_16_0)
+			condition = function (t)
 				-- function 16
-				return not (count_event_breed("skaven_clan_rat") < 5) or count_event_breed("skaven_slave") < 5
+				return count_event_breed("skaven_clan_rat") < 5 and count_event_breed("skaven_slave") < 5
 			end
 		},
 		{
@@ -500,9 +500,9 @@ local tbl = {
 		{
 			"continue_when",
 			duration = 50,
-			condition = function (arg_17_0)
+			condition = function (t)
 				-- function 17
-				return not (count_event_breed("skaven_clan_rat") < 5) or count_event_breed("skaven_slave") < 5
+				return count_event_breed("skaven_clan_rat") < 5 and count_event_breed("skaven_slave") < 5
 			end
 		},
 		{
@@ -531,9 +531,9 @@ local tbl = {
 		{
 			"continue_when",
 			duration = 80,
-			condition = function (arg_18_0)
+			condition = function (t)
 				-- function 18
-				return not (count_event_breed("skaven_clan_rat") < 5) or count_event_breed("skaven_slave") < 5
+				return count_event_breed("skaven_clan_rat") < 5 and count_event_breed("skaven_slave") < 5
 			end
 		},
 		{
@@ -572,9 +572,9 @@ local tbl = {
 		{
 			"continue_when",
 			duration = 80,
-			condition = function (arg_19_0)
+			condition = function (t)
 				-- function 19
-				return not (count_event_breed("skaven_clan_rat") < 5) or count_event_breed("skaven_slave") < 5
+				return count_event_breed("skaven_clan_rat") < 5 and count_event_breed("skaven_slave") < 5
 			end
 		},
 		{
@@ -623,9 +623,9 @@ local tbl = {
 		{
 			"continue_when",
 			duration = 80,
-			condition = function (arg_20_0)
+			condition = function (t)
 				-- function 20
-				return not (count_event_breed("skaven_clan_rat") < 5) or count_event_breed("skaven_slave") < 5
+				return count_event_breed("skaven_clan_rat") < 5 and count_event_breed("skaven_slave") < 5
 			end
 		},
 		{
@@ -644,9 +644,9 @@ local tbl = {
 		{
 			"continue_when",
 			duration = 50,
-			condition = function (arg_21_0)
+			condition = function (t)
 				-- function 21
-				return not (count_event_breed("skaven_clan_rat") < 5) or count_event_breed("skaven_slave") < 5
+				return count_event_breed("skaven_clan_rat") < 5 and count_event_breed("skaven_slave") < 5
 			end
 		},
 		{
@@ -665,9 +665,9 @@ local tbl = {
 		{
 			"continue_when",
 			duration = 50,
-			condition = function (arg_22_0)
+			condition = function (t)
 				-- function 22
-				return not (count_event_breed("skaven_clan_rat") < 5) or count_event_breed("skaven_slave") < 5
+				return count_event_breed("skaven_clan_rat") < 5 and count_event_breed("skaven_slave") < 5
 			end
 		},
 		{
@@ -686,9 +686,9 @@ local tbl = {
 		{
 			"continue_when",
 			duration = 50,
-			condition = function (arg_23_0)
+			condition = function (t)
 				-- function 23
-				return not (count_event_breed("skaven_clan_rat") < 5) or count_event_breed("skaven_slave") < 5
+				return count_event_breed("skaven_clan_rat") < 5 and count_event_breed("skaven_slave") < 5
 			end
 		},
 		{
@@ -715,9 +715,9 @@ local tbl = {
 		{
 			"continue_when",
 			duration = 50,
-			condition = function (arg_24_0)
+			condition = function (t)
 				-- function 24
-				return not (count_event_breed("skaven_clan_rat") < 5) or count_event_breed("skaven_slave") < 5
+				return count_event_breed("skaven_clan_rat") < 5 and count_event_breed("skaven_slave") < 5
 			end
 		},
 		{
@@ -736,9 +736,9 @@ local tbl = {
 		{
 			"continue_when",
 			duration = 50,
-			condition = function (arg_25_0)
+			condition = function (t)
 				-- function 25
-				return not (count_event_breed("skaven_clan_rat") < 5) or count_event_breed("skaven_slave") < 5
+				return count_event_breed("skaven_clan_rat") < 5 and count_event_breed("skaven_slave") < 5
 			end
 		},
 		{
@@ -757,9 +757,9 @@ local tbl = {
 		{
 			"continue_when",
 			duration = 50,
-			condition = function (arg_26_0)
+			condition = function (t)
 				-- function 26
-				return not (count_event_breed("skaven_clan_rat") < 5) or count_event_breed("skaven_slave") < 5
+				return count_event_breed("skaven_clan_rat") < 5 and count_event_breed("skaven_slave") < 5
 			end
 		},
 		{
@@ -778,9 +778,9 @@ local tbl = {
 		{
 			"continue_when",
 			duration = 50,
-			condition = function (arg_27_0)
+			condition = function (t)
 				-- function 27
-				return not (count_event_breed("skaven_clan_rat") < 5) or count_event_breed("skaven_slave") < 5
+				return count_event_breed("skaven_clan_rat") < 5 and count_event_breed("skaven_slave") < 5
 			end
 		},
 		{
@@ -799,9 +799,9 @@ local tbl = {
 		{
 			"continue_when",
 			duration = 50,
-			condition = function (arg_28_0)
+			condition = function (t)
 				-- function 28
-				return not (count_event_breed("skaven_clan_rat") < 5) or count_event_breed("skaven_slave") < 5
+				return count_event_breed("skaven_clan_rat") < 5 and count_event_breed("skaven_slave") < 5
 			end
 		},
 		{
@@ -820,9 +820,9 @@ local tbl = {
 		{
 			"continue_when",
 			duration = 50,
-			condition = function (arg_29_0)
+			condition = function (t)
 				-- function 29
-				return not (count_event_breed("skaven_clan_rat") < 5) or count_event_breed("skaven_slave") < 5
+				return count_event_breed("skaven_clan_rat") < 5 and count_event_breed("skaven_slave") < 5
 			end
 		},
 		{
@@ -841,9 +841,9 @@ local tbl = {
 		{
 			"continue_when",
 			duration = 50,
-			condition = function (arg_30_0)
+			condition = function (t)
 				-- function 30
-				return not (count_event_breed("skaven_clan_rat") < 5) or count_event_breed("skaven_slave") < 5
+				return count_event_breed("skaven_clan_rat") < 5 and count_event_breed("skaven_slave") < 5
 			end
 		},
 		{
@@ -862,9 +862,9 @@ local tbl = {
 		{
 			"continue_when",
 			duration = 50,
-			condition = function (arg_31_0)
+			condition = function (t)
 				-- function 31
-				return not (count_event_breed("skaven_clan_rat") < 5) or count_event_breed("skaven_slave") < 5
+				return count_event_breed("skaven_clan_rat") < 5 and count_event_breed("skaven_slave") < 5
 			end
 		},
 		{
@@ -883,9 +883,9 @@ local tbl = {
 		{
 			"continue_when",
 			duration = 50,
-			condition = function (arg_32_0)
+			condition = function (t)
 				-- function 32
-				return not (count_event_breed("skaven_clan_rat") < 5) or count_event_breed("skaven_slave") < 5
+				return count_event_breed("skaven_clan_rat") < 5 and count_event_breed("skaven_slave") < 5
 			end
 		},
 		{
@@ -904,9 +904,9 @@ local tbl = {
 		{
 			"continue_when",
 			duration = 50,
-			condition = function (arg_33_0)
+			condition = function (t)
 				-- function 33
-				return not (count_event_breed("skaven_clan_rat") < 5) or count_event_breed("skaven_slave") < 5
+				return count_event_breed("skaven_clan_rat") < 5 and count_event_breed("skaven_slave") < 5
 			end
 		}
 	},
@@ -971,9 +971,9 @@ local tbl = {
 		{
 			"continue_when",
 			duration = 120,
-			condition = function (arg_34_0)
+			condition = function (t)
 				-- function 34
-				return not (count_event_breed("skaven_slave") < 10) or count_event_breed("skaven_clan_rat") < 10
+				return count_event_breed("skaven_slave") < 10 and count_event_breed("skaven_clan_rat") < 10
 			end
 		},
 		{
@@ -1015,9 +1015,9 @@ local tbl = {
 		{
 			"continue_when",
 			duration = 120,
-			condition = function (arg_35_0)
+			condition = function (t)
 				-- function 35
-				return not (count_event_breed("skaven_slave") < 10) or count_event_breed("skaven_clan_rat") < 10
+				return count_event_breed("skaven_slave") < 10 and count_event_breed("skaven_clan_rat") < 10
 			end
 		},
 		{
@@ -1073,9 +1073,9 @@ local tbl = {
 		{
 			"continue_when",
 			duration = 80,
-			condition = function (arg_36_0)
+			condition = function (t)
 				-- function 36
-				return not (count_event_breed("skaven_clan_rat") < 5) or count_event_breed("skaven_slave") < 5
+				return count_event_breed("skaven_clan_rat") < 5 and count_event_breed("skaven_slave") < 5
 			end
 		},
 		{
@@ -1086,5 +1086,5 @@ local tbl = {
 }
 
 return {
-	tbl
+	terror_event_blueprints
 }

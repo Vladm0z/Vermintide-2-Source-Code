@@ -1,12 +1,11 @@
 -- chunkname: @scripts/entity_system/systems/dialogues/tag_query_loader.lua
 
-local var_0_0
-local var_0_1
+local OP, CombiningOP
 
-if not rawget(_G, "RuleDatabase") then
+if rawget(_G, "RuleDatabase") then
 	RuleDatabase.initialize_static_values()
 
-	var_0_0 = {
+	local operator_string_lookup = {
 		GT = "GT",
 		LT = "LT",
 		NEQ = "NEQ",
@@ -20,97 +19,99 @@ if not rawget(_G, "RuleDatabase") then
 		SUB = TagQuery.OP.SUB,
 		NUMSET = TagQuery.OP.NUMSET
 	}
-	var_0_1 = {
+
+	OP = operator_string_lookup
+	CombiningOP = {
 		AND_NEXT = "AND_NEXT",
 		OR_NEXT = "OR_NEXT"
 	}
 else
-	var_0_0 = TagQuery.OP
-	var_0_1 = TagQuery.CombiningOP
+	OP = TagQuery.OP
+	CombiningOP = TagQuery.CombiningOP
 end
 
-local function fn(arg_1_0, ...)
+local function tprint(format, ...)
 	-- function 1
-	if not script_data.dialogue_debug_queries then
-		print(string.format("[TagQueryLoader] " .. arg_1_0, ...))
+	if script_data.dialogue_debug_queries then
+		print(string.format("[TagQueryLoader] " .. format, ...))
 	end
 end
 
 TagQueryLoader = class(TagQueryLoader)
 
-TagQueryLoader.init = function (self, arg_2_1, arg_2_2)
+TagQueryLoader.init = function (self, tagquery_database, dialogues_destination_table)
 	-- function 2
 	self.loaded_files = {}
 	self.file_environment = {
-		OP = var_0_0,
-		CombiningOP = var_0_1,
+		OP = OP,
+		CombiningOP = CombiningOP,
 		math = math,
-		define_rule = function (arg_3_0)
+		define_rule = function (rule_definition)
 			-- function 3
-			arg_2_1:define_rule(arg_3_0)
+			tagquery_database:define_rule(rule_definition)
 		end,
-		add_dialogues = function (arg_4_0)
+		add_dialogues = function (dialogues)
 			-- function 4
-			for k, v in pairs(arg_4_0) do
-				local category = v.category
+			for name, dialogue in pairs(dialogues) do
+				local category = dialogue.category
 
-				category = category or "default"
-				v.category = category
-				arg_2_2[k] = v
+				category = not not category or not not "default"
+				dialogue.category = category
+				dialogues_destination_table[name] = dialogue
 			end
 		end
 	}
-	self.tagquery_database = arg_2_1
+	self.tagquery_database = tagquery_database
 end
 
-function tag_query_errorfunc(arg_5_0)
+function tag_query_errorfunc(arg)
 	-- function 5
-	return arg_5_0 .. "\n" .. debug.traceback()
+	return arg .. "\n" .. debug.traceback()
 end
 
-TagQueryLoader.load_file = function (self, arg_6_1)
+TagQueryLoader.load_file = function (self, filename)
 	-- function 6
-	local var_6_0 = require(arg_6_1)
+	local file_function = require(filename)
 
-	self:_trigger_file_function(arg_6_1, var_6_0)
+	self:_trigger_file_function(filename, file_function)
 end
 
-TagQueryLoader._trigger_file_function = function (self, arg_7_1, arg_7_2)
+TagQueryLoader._trigger_file_function = function (self, filename, file_function)
 	-- function 7
-	setfenv(arg_7_2, self.file_environment)
+	setfenv(file_function, self.file_environment)
 
-	local rules_n = self.tagquery_database.rules_n
+	local num_rules_before = self.tagquery_database.rules_n
 
-	arg_7_2()
+	file_function()
 
-	local num = self.tagquery_database.rules_n - rules_n
+	local rules_read = self.tagquery_database.rules_n - num_rules_before
 
-	fn("Loaded file %s. Read %d rules.", arg_7_1, num)
+	tprint("Loaded file %s. Read %d rules.", filename, rules_read)
 end
 
 TagQueryLoader.unload_files = function (self)
 	-- function 8
-	for i, v in ipairs(self.loaded_files) do
-		if not package.loaded[v] then
+	for _, filename in ipairs(self.loaded_files) do
+		if package.loaded[filename] then
 			local load_order = package.load_order
-			local count = #load_order
-			local var_8_2
+			local n_load_order = #load_order
+			local found_file
 
-			for k = count, 1, -1 do
-				if load_order[k] == v then
-					var_8_2 = true
-					package.loaded[v] = nil
+			for i = n_load_order, 1, -1 do
+				if load_order[i] == filename then
+					found_file = true
+					package.loaded[filename] = nil
 
-					table.remove(load_order, k)
+					table.remove(load_order, i)
 
 					break
 				end
 			end
 
-			fassert(var_8_2)
-			fn("TagQueryLoader: Unloaded file: " .. tostring(v))
+			fassert(found_file)
+			tprint("TagQueryLoader: Unloaded file: " .. tostring(filename))
 		else
-			fn("TagQueryLoader: Could not unload file: " .. tostring(v))
+			tprint("TagQueryLoader: Could not unload file: " .. tostring(filename))
 		end
 	end
 
@@ -119,24 +120,24 @@ TagQueryLoader.unload_files = function (self)
 	self.tagquery_database = nil
 end
 
-TagQueryLoader.load_auto_load_files = function (self, arg_9_1)
+TagQueryLoader.load_auto_load_files = function (self, out_markers)
 	-- function 9
 	local auto_load_files = DialogueSettings.auto_load_files
 
-	for i, v in ipairs(auto_load_files) do
-		local var_9_1 = DialogueSettings.cached_auto_load_files[v]
+	for _, filename in ipairs(auto_load_files) do
+		local file_function = DialogueSettings.cached_auto_load_files[filename]
 
-		if not var_9_1 then
-			self:_trigger_file_function(v, var_9_1)
+		if file_function then
+			self:_trigger_file_function(filename, file_function)
 		end
 
-		local var_9_2 = DialogueSettings.cached_auto_load_files[v .. "_markers"]
+		local markers = DialogueSettings.cached_auto_load_files[filename .. "_markers"]
 
-		if not var_9_2 then
-			for k, v_2 in pairs(var_9_2) do
-				fassert(not arg_9_1[k], "[DialogueSystem] There is already a marker called %s registered", k)
+		if markers then
+			for name, marker in pairs(markers) do
+				fassert(not out_markers[name], "[DialogueSystem] There is already a marker called %s registered", name)
 
-				arg_9_1[k] = v_2
+				out_markers[name] = marker
 			end
 		end
 	end

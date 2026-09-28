@@ -2,7 +2,7 @@
 
 require("scripts/settings/dlcs/belakor/belakor_balancing")
 
-local tbl = {
+local weapon_template = {
 	dodge_count = 1,
 	max_fatigue_points = 1,
 	left_hand_unit = "units/weapons/player/wpn_belakor_crystal/wpn_belakor_crystal",
@@ -25,9 +25,9 @@ local tbl = {
 				uninterruptible = true,
 				anim_event = "attack_throw",
 				total_time = 0.7249999999999999,
-				anim_end_event_condition_func = function (arg_1_0, arg_1_1)
+				anim_end_event_condition_func = function (unit, end_reason)
 					-- function 1
-					return arg_1_1 == "new_interupting_action" or arg_1_1 ~= "action_complete"
+					return end_reason ~= "new_interupting_action" and end_reason ~= "action_complete"
 				end,
 				buff_data = {},
 				allowed_chain_actions = {},
@@ -66,9 +66,9 @@ local tbl = {
 				anim_event = "attack_push",
 				damage_profile_inner = "medium_push",
 				total_time = 0.8,
-				anim_end_event_condition_func = function (arg_2_0, arg_2_1)
+				anim_end_event_condition_func = function (unit, end_reason)
 					-- function 2
-					return arg_2_1 == "new_interupting_action" or arg_2_1 ~= "action_complete"
+					return end_reason ~= "new_interupting_action" and end_reason ~= "action_complete"
 				end,
 				allowed_chain_actions = {
 					{
@@ -79,9 +79,11 @@ local tbl = {
 						input = "action_one"
 					}
 				},
-				condition_func = function (arg_3_0, arg_3_1)
+				condition_func = function (attacker_unit, input_extension)
 					-- function 3
-					return not ScriptUnit.extension(arg_3_0, "status_system"):fatigued()
+					local status_extension = ScriptUnit.extension(attacker_unit, "status_system")
+
+					return not status_extension:fatigued()
 				end
 			}
 		},
@@ -99,9 +101,9 @@ local tbl = {
 				uninterruptible = true,
 				anim_event = "attack_throw",
 				total_time = 0.7249999999999999,
-				anim_end_event_condition_func = function (arg_4_0, arg_4_1)
+				anim_end_event_condition_func = function (unit, end_reason)
 					-- function 4
-					return arg_4_1 == "new_interupting_action" or arg_4_1 ~= "action_complete"
+					return end_reason ~= "new_interupting_action" and end_reason ~= "action_complete"
 				end,
 				buff_data = {
 					{
@@ -146,5 +148,5 @@ local tbl = {
 }
 
 return {
-	belakor_crystal = tbl
+	belakor_crystal = weapon_template
 }

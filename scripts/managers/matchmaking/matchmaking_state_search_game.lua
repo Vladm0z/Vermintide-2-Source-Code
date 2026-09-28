@@ -3,25 +3,25 @@
 MatchmakingStateSearchGame = class(MatchmakingStateSearchGame)
 MatchmakingStateSearchGame.NAME = "MatchmakingStateSearchGame"
 
-MatchmakingStateSearchGame.init = function (self, arg_1_1)
+MatchmakingStateSearchGame.init = function (self, params)
 	-- function 1
-	self._lobby_finder = arg_1_1.lobby_finder
+	self._lobby_finder = params.lobby_finder
 	self._peer_id = Network.peer_id()
-	self._matchmaking_manager = arg_1_1.matchmaking_manager
-	self._network_server = arg_1_1.network_server
-	self._statistics_db = arg_1_1.statistics_db
+	self._matchmaking_manager = params.matchmaking_manager
+	self._network_server = params.network_server
+	self._statistics_db = params.statistics_db
 	Managers.matchmaking.countdown_has_finished = false
 end
 
-MatchmakingStateSearchGame.destroy = function (arg_2_0)
+MatchmakingStateSearchGame.destroy = function (self)
 	-- function 2
 	return
 end
 
-MatchmakingStateSearchGame.on_enter = function (self, arg_3_1)
+MatchmakingStateSearchGame.on_enter = function (self, state_context)
 	-- function 3
-	self.state_context = arg_3_1
-	self.search_config = arg_3_1.search_config
+	self.state_context = state_context
+	self.search_config = state_context.search_config
 
 	self:_start_searching_for_games()
 end
@@ -29,18 +29,19 @@ end
 MatchmakingStateSearchGame._start_searching_for_games = function (self)
 	-- function 4
 	local search_config = self.search_config
-	local tbl = {
+	local current_filters = {
 		difficulty = {
 			comparison = "equal",
 			value = search_config.difficulty
 		}
 	}
+	local quick_game = search_config.quick_game
 
-	if not search_config.quick_game then
+	if not quick_game then
 		local mission_id = search_config.mission_id
 
-		if not mission_id then
-			tbl.selected_mission_id = {
+		if mission_id then
+			current_filters.selected_mission_id = {
 				comparison = "equal",
 				value = mission_id
 			}
@@ -48,8 +49,8 @@ MatchmakingStateSearchGame._start_searching_for_games = function (self)
 
 		local act_key = search_config.act_key
 
-		if not act_key then
-			tbl.act_key = {
+		if act_key then
+			current_filters.act_key = {
 				comparison = "equal",
 				value = act_key
 			}
@@ -58,154 +59,159 @@ MatchmakingStateSearchGame._start_searching_for_games = function (self)
 
 	local matchmaking_type = search_config.matchmaking_type
 
-	if not matchmaking_type then
+	if matchmaking_type then
 		if matchmaking_type == "standard" then
-			local str = "custom"
-			local var_4_6 = NetworkLookup.matchmaking_types[str]
+			local matchmaking_type = "custom"
+			local matchmaking_type_index = NetworkLookup.matchmaking_types[matchmaking_type]
 
-			tbl.matchmaking_type = {
+			current_filters.matchmaking_type = {
 				comparison = "less_or_equal",
-				value = var_4_6
+				value = matchmaking_type_index
 			}
 		else
-			local var_4_7 = NetworkLookup.matchmaking_types[matchmaking_type]
+			local matchmaking_type_index = NetworkLookup.matchmaking_types[matchmaking_type]
 
-			tbl.matchmaking_type = {
+			current_filters.matchmaking_type = {
 				comparison = "equal",
-				value = var_4_7
+				value = matchmaking_type_index
 			}
 		end
 	end
 
-	local is_trusted = Managers.eac:is_trusted()
-	local tbl_2 = {
+	local eac_authorized = Managers.eac:is_trusted()
+	local tbl = {
 		comparison = "equal"
 	}
 	local flag
 
-	flag = not is_trusted and "true" and "false"
-	tbl_2.value = flag
-	tbl.eac_authorized = tbl_2
-	tbl.mechanism = {
+	flag = (not eac_authorized or not "true") and not not "false"
+	tbl.value = flag
+	current_filters.eac_authorized = tbl
+	current_filters.mechanism = {
 		comparison = "equal",
 		value = self.search_config.mechanism
 	}
-	self._current_filters = tbl
+	self._current_filters = current_filters
 	self._current_distance_filter = "close"
 
-	local get_average_power_level = self._matchmaking_manager:get_average_power_level()
-
-	self._current_near_filters = {
+	local average_power_level = self._matchmaking_manager:get_average_power_level()
+	local current_near_filters = {
 		{
 			key = "power_level",
-			value = get_average_power_level
+			value = average_power_level
 		}
 	}
 
+	self._current_near_filters = current_near_filters
+
 	self._matchmaking_manager:setup_filter_requirements(1, self._current_distance_filter, self._current_filters, self._current_near_filters)
 
-	local get_lobby = Managers.lobby:get_lobby("matchmaking_session_lobby")
-	local get_stored_lobby_data = get_lobby:get_stored_lobby_data()
+	local own_lobby = Managers.lobby:get_lobby("matchmaking_session_lobby")
+	local lobby_data = own_lobby:get_stored_lobby_data()
 
-	get_stored_lobby_data.matchmaking = "searching"
-	get_stored_lobby_data.time_of_search = tostring(os.time())
+	lobby_data.matchmaking = "searching"
+	lobby_data.time_of_search = tostring(os.time())
 
-	get_lobby:set_lobby_data(get_stored_lobby_data)
+	own_lobby:set_lobby_data(lobby_data)
 	Managers.level_transition_handler:clear_next_level()
 	self._lobby_finder:refresh()
 	self._matchmaking_manager:send_system_chat_message("matchmaking_status_start_search")
 
-	if not search_config.act_key then
+	if search_config.act_key then
 		self._matchmaking_manager:send_system_chat_message(search_config.act_key)
 	end
 
-	if not search_config.mission_id then
+	if search_config.mission_id then
 		if search_config.mechanism == "weave" then
-			local display_name = WeaveSettings.templates[search_config.mission_id].display_name
+			local weave_template = WeaveSettings.templates[search_config.mission_id]
+			local mission_display_name = weave_template.display_name
 
-			self._matchmaking_manager:send_system_chat_message(display_name)
+			self._matchmaking_manager:send_system_chat_message(mission_display_name)
 		else
-			local display_name_2 = LevelSettings[search_config.mission_id].display_name
+			local mission_display_name = LevelSettings[search_config.mission_id].display_name
 
-			self._matchmaking_manager:send_system_chat_message(display_name_2)
+			self._matchmaking_manager:send_system_chat_message(mission_display_name)
 		end
 	end
 
-	local display_name_3 = DifficultySettings[search_config.difficulty].display_name
+	local difficulty_display_name = DifficultySettings[search_config.difficulty].display_name
 
-	self._matchmaking_manager:send_system_chat_message(display_name_3)
+	self._matchmaking_manager:send_system_chat_message(difficulty_display_name)
 
-	local local_player = Managers.player:local_player()
+	local player = Managers.player:local_player()
 
-	Managers.telemetry_events:matchmaking_search(local_player, self.search_config)
+	Managers.telemetry_events:matchmaking_search(player, self.search_config)
 end
 
-MatchmakingStateSearchGame.on_exit = function (arg_5_0)
+MatchmakingStateSearchGame.on_exit = function (self)
 	-- function 5
 	return
 end
 
-MatchmakingStateSearchGame.update = function (self, arg_6_1, arg_6_2)
+MatchmakingStateSearchGame.update = function (self, dt, t)
 	-- function 6
-	if self._network_server:num_active_peers() > 1 then
+	local num_active_peers = self._network_server:num_active_peers()
+
+	if num_active_peers > 1 then
 		mm_printf("Leaving MatchmakingStateSearchGame and becoming host due to having connections, probably a friend joining.")
 
 		return MatchmakingStateHostGame, self.state_context
 	end
 
-	if not self.state_context.join_lobby_data then
+	if self.state_context.join_lobby_data then
 		self._matchmaking_manager:send_system_chat_message("matchmaking_status_found_game")
 
 		return MatchmakingStateRequestJoinGame, self.state_context
 	end
 
-	self._lobby_finder:update(arg_6_1)
+	self._lobby_finder:update(dt)
 
-	if not self._lobby_finder:is_refreshing() then
+	if self._lobby_finder:is_refreshing() then
 		return
 	end
 
-	local _search_for_game = self:_search_for_game(arg_6_1)
-	local flag = _search_for_game ~= nil
-	local flag_2 = false
+	local new_lobby = self:_search_for_game(dt)
+	local found_new_lobby = new_lobby ~= nil
+	local search_again = false
 
-	if not flag then
-		local _current_distance_filter = self._current_distance_filter
-		local get_next_lobby_distance_filter = LobbyAux.get_next_lobby_distance_filter(_current_distance_filter, MatchmakingSettings.max_distance_filter)
+	if not found_new_lobby then
+		local distance_filter = self._current_distance_filter
+		local next_distance_filter = LobbyAux.get_next_lobby_distance_filter(distance_filter, MatchmakingSettings.max_distance_filter)
 
-		if get_next_lobby_distance_filter ~= nil then
-			mm_printf("Changing distance filter from %s to %s", _current_distance_filter, get_next_lobby_distance_filter)
-			self._matchmaking_manager:setup_filter_requirements(1, get_next_lobby_distance_filter, self._current_filters, self._current_near_filters)
+		if next_distance_filter ~= nil then
+			mm_printf("Changing distance filter from %s to %s", distance_filter, next_distance_filter)
+			self._matchmaking_manager:setup_filter_requirements(1, next_distance_filter, self._current_filters, self._current_near_filters)
 
-			self._current_distance_filter = get_next_lobby_distance_filter
-			flag_2 = true
+			self._current_distance_filter = next_distance_filter
+			search_again = true
 
 			self._matchmaking_manager:send_system_chat_message("matchmaking_status_increased_search_range")
 		end
 
-		if not self.search_config.host_games then
-			flag_2 = self.search_config.host_games == "never"
+		if self.search_config.host_games then
+			search_again = self.search_config.host_games == "never"
 		elseif MatchmakingSettings.host_games == "never" then
-			flag_2 = true
+			search_again = true
 		end
 
-		if not flag_2 then
+		if search_again then
 			self._lobby_finder:refresh()
 		end
 	end
 
-	if not _search_for_game then
-		self.state_context.join_lobby_data = _search_for_game
-	elseif not flag_2 then
+	if new_lobby then
+		self.state_context.join_lobby_data = new_lobby
+	elseif not search_again then
 		self._matchmaking_manager:send_system_chat_message("matchmaking_status_cannot_find_game")
 
-		local local_player = Managers.player:local_player(1)
-		local str = "search_game_timeout"
+		local player = Managers.player:local_player(1)
+		local connection_state = "search_game_timeout"
 		local started_matchmaking_t = self.state_context.started_matchmaking_t
-		local num = Managers.time:time("main") - started_matchmaking_t
-		local strict_matchmaking = self.search_config.strict_matchmaking
+		local main_t = Managers.time:time("main")
+		local time_taken = main_t - started_matchmaking_t
+		local using_strict_matchmaking = self.search_config.strict_matchmaking
 
-		Managers.telemetry_events:matchmaking_search_timeout(local_player, num, self.search_config)
+		Managers.telemetry_events:matchmaking_search_timeout(player, time_taken, self.search_config)
 
 		return MatchmakingStateHostGame, self.state_context
 	end
@@ -213,55 +219,58 @@ MatchmakingStateSearchGame.update = function (self, arg_6_1, arg_6_2)
 	return nil
 end
 
-MatchmakingStateSearchGame._search_for_game = function (self, arg_7_1)
+MatchmakingStateSearchGame._search_for_game = function (self, dt)
 	-- function 7
-	local _get_server_lobbies = self:_get_server_lobbies()
-	local var_7_1
-	local var_7_2
-	local profile_index = Managers.player:player_from_peer_id(self._peer_id):profile_index()
+	local lobbies = self:_get_server_lobbies()
+	local active_lobby, wanted_profile_index
+	local player = Managers.player:player_from_peer_id(self._peer_id)
+	local profile_index = player:profile_index()
+	local wanted_profile = profile_index
 	local search_config = self.search_config
-	local _matchmaking_manager = self._matchmaking_manager
-	local var_7_6
-	local tbl = {}
+	local matchmaking_manager = self._matchmaking_manager
+	local chosen_level
+	local preferred_levels = {}
 	local matchmaking_type = search_config.matchmaking_type
 	local mission_id = search_config.mission_id
 	local preferred_level_keys = search_config.preferred_level_keys
+	local any_level = search_config.any_level
 
-	if not search_config.any_level then
-		tbl = {
+	if any_level then
+		preferred_levels = {
 			"any"
 		}
-	elseif not mission_id then
-		tbl = {
+	elseif mission_id then
+		preferred_levels = {
 			mission_id
 		}
-	elseif not preferred_level_keys then
-		tbl = table.clone(preferred_level_keys)
+	elseif preferred_level_keys then
+		preferred_levels = table.clone(preferred_level_keys)
 
-		if not search_config.include_hub_level then
-			local get_hub_level_key = Managers.mechanism:game_mechanism():get_hub_level_key()
+		if search_config.include_hub_level then
+			local mechanism = Managers.mechanism:game_mechanism()
+			local hub_level_name = mechanism:get_hub_level_key()
 
-			tbl[#tbl + 1] = get_hub_level_key
+			preferred_levels[#preferred_levels + 1] = hub_level_name
 		end
 	else
-		local get_weighed_random_unlocked_level
-
-		get_weighed_random_unlocked_level, tbl = _matchmaking_manager:get_weighed_random_unlocked_level(false, not search_config.quick_game)
+		chosen_level, preferred_levels = matchmaking_manager:get_weighed_random_unlocked_level(false, not search_config.quick_game)
 	end
 
-	return (self:_find_suitable_lobby(_get_server_lobbies, search_config, profile_index, tbl))
+	active_lobby = self:_find_suitable_lobby(lobbies, search_config, wanted_profile, preferred_levels)
+
+	return active_lobby
 end
 
-local tbl = {}
+local server_lobbies = {}
 
 MatchmakingStateSearchGame._get_server_lobbies = function (self)
 	-- function 8
-	local _get_lobbies = self:_get_lobbies()
+	local lobbies = self:_get_lobbies()
 
-	table.clear(tbl)
-	table.merge(tbl, _get_lobbies)
+	table.clear(server_lobbies)
+	table.merge(server_lobbies, lobbies)
 
-	return tbl
+	return server_lobbies
 end
 
 MatchmakingStateSearchGame._get_lobbies = function (self)
@@ -274,23 +283,23 @@ MatchmakingStateSearchGame._get_servers = function (self)
 	return self._game_server_finder:servers()
 end
 
-MatchmakingStateSearchGame._times_party_completed_level = function (self, arg_11_1)
+MatchmakingStateSearchGame._times_party_completed_level = function (self, level_key)
 	-- function 11
-	local num = 0
-	local _statistics_db = self._statistics_db
-	local human_players = Managers.player:human_players()
+	local times_completed = 0
+	local statistics_db = self._statistics_db
+	local players = Managers.player:human_players()
 
-	for k, v in pairs(human_players) do
-		num = num + _statistics_db:get_persistent_stat(v:stats_id(), "completed_levels", arg_11_1)
+	for _, player in pairs(players) do
+		times_completed = times_completed + statistics_db:get_persistent_stat(player:stats_id(), "completed_levels", level_key)
 	end
 
-	return num
+	return times_completed
 end
 
-MatchmakingStateSearchGame._compare_first_prio_lobbies = function (self, arg_12_1, arg_12_2)
+MatchmakingStateSearchGame._compare_first_prio_lobbies = function (self, current_lobby, new_lobby)
 	-- function 12
-	if arg_12_1 == nil then
-		return arg_12_2
+	if current_lobby == nil then
+		return new_lobby
 	end
 
 	local search_config = self.search_config
@@ -298,26 +307,31 @@ MatchmakingStateSearchGame._compare_first_prio_lobbies = function (self, arg_12_
 	local matchmaking_type = search_config.matchmaking_type
 	local mechanism = search_config.mechanism
 
-	if not (mechanism == "deus" or mechanism ~= "weave") then
-		return arg_12_1
+	if mechanism == "deus" or mechanism == "weave" then
+		return current_lobby
 	end
 
-	local selected_mission_id = arg_12_1.selected_mission_id
-	local selected_mission_id_2 = arg_12_2.selected_mission_id
-	local flag = not selected_mission_id and LevelSettings[selected_mission_id]
-	local flag_2 = not selected_mission_id_2 and LevelSettings[selected_mission_id_2]
+	local current_mission_id = current_lobby.selected_mission_id
+	local new_mission_id = new_lobby.selected_mission_id
+	local current_level_settings = not not current_mission_id and not not LevelSettings[current_mission_id]
+	local new_level_settings = not not new_mission_id and not not LevelSettings[new_mission_id]
 
-	if not (not quick_game and not flag and flag.hub_level and not flag_2 and flag_2.hub_level and not (self:_times_party_completed_level(selected_mission_id) > self:_times_party_completed_level(selected_mission_id_2))) then
-		return arg_12_2
+	if quick_game and current_level_settings and not current_level_settings.hub_level and new_level_settings and not new_level_settings.hub_level then
+		local current_times_completed = self:_times_party_completed_level(current_mission_id)
+		local new_times_completed = self:_times_party_completed_level(new_mission_id)
+
+		if new_times_completed < current_times_completed then
+			return new_lobby
+		end
 	end
 
-	return arg_12_1
+	return current_lobby
 end
 
-MatchmakingStateSearchGame._compare_secondary_prio_lobbies = function (self, arg_13_1, arg_13_2)
+MatchmakingStateSearchGame._compare_secondary_prio_lobbies = function (self, current_lobby, new_lobby)
 	-- function 13
-	if arg_13_1 == nil then
-		return arg_13_2
+	if current_lobby == nil then
+		return new_lobby
 	end
 
 	local search_config = self.search_config
@@ -325,132 +339,164 @@ MatchmakingStateSearchGame._compare_secondary_prio_lobbies = function (self, arg
 	local matchmaking_type = search_config.matchmaking_type
 	local mechanism = search_config.mechanism
 
-	if not (mechanism == "deus" or mechanism ~= "weave") then
-		return arg_13_1
+	if mechanism == "deus" or mechanism == "weave" then
+		return current_lobby
 	end
 
-	local selected_mission_id = arg_13_1.selected_mission_id
-	local selected_mission_id_2 = arg_13_2.selected_mission_id
-	local flag = not selected_mission_id and LevelSettings[selected_mission_id]
-	local flag_2 = not selected_mission_id_2 and LevelSettings[selected_mission_id_2]
+	local current_mission_id = current_lobby.selected_mission_id
+	local new_mission_id = new_lobby.selected_mission_id
+	local current_level_settings = not not current_mission_id and not not LevelSettings[current_mission_id]
+	local new_level_settings = not not new_mission_id and not not LevelSettings[new_mission_id]
 
-	if not (not quick_game and not flag and flag.hub_level and not flag_2 and flag_2.hub_level and not (self:_times_party_completed_level(selected_mission_id) > self:_times_party_completed_level(selected_mission_id_2))) then
-		return arg_13_2
+	if quick_game and current_level_settings and not current_level_settings.hub_level and new_level_settings and not new_level_settings.hub_level then
+		local current_times_completed = self:_times_party_completed_level(current_mission_id)
+		local new_times_completed = self:_times_party_completed_level(new_mission_id)
+
+		if new_times_completed < current_times_completed then
+			return new_lobby
+		end
 	end
 
-	return arg_13_1
+	return current_lobby
 end
 
-MatchmakingStateSearchGame._find_suitable_lobby = function (self, arg_14_1, arg_14_2, arg_14_3, arg_14_4)
+MatchmakingStateSearchGame._find_suitable_lobby = function (self, lobbies, search_config, wanted_profile_id, preferred_levels)
 	-- function 14
-	local mission_id = arg_14_2.mission_id
-	local difficulty = arg_14_2.difficulty
-	local matchmaking_type = arg_14_2.matchmaking_type
-	local flag = arg_14_2.mechanism ~= "weave" or not mission_id or "false"
-	local act_key = arg_14_2.act_key
-	local mechanism = arg_14_2.mechanism
-	local strict_matchmaking = arg_14_2.strict_matchmaking
-	local max_distance_filter = arg_14_2.max_distance_filter
+	local selected_mission_id = search_config.mission_id
+	local difficulty = search_config.difficulty
+	local matchmaking_type = search_config.matchmaking_type
+	local weave_name = (search_config.mechanism ~= "weave" or not selected_mission_id) and not not "false"
+	local act_key = search_config.act_key
+	local mechanism = search_config.mechanism
+	local using_strict_matchmaking = search_config.strict_matchmaking
+	local max_distance_filter_2 = search_config.max_distance_filter
 
-	max_distance_filter = max_distance_filter or MatchmakingSettings.max_distance_filter
+	if not max_distance_filter_2 then
+		-- Nothing
+	end
 
-	local flag_2 = self._current_distance_filter == max_distance_filter
+	max_distance_filter_2 = MatchmakingSettings.max_distance_filter
+
+	local max_distance_filter = max_distance_filter_2
+
+	::label_14_0::
+
+	local reached_max_distance = self._current_distance_filter == max_distance_filter
 
 	mm_printf("max_quick_play_search_range: %s", max_distance_filter)
 
-	local user_setting = Application.user_setting("allow_occupied_hero_lobbies")
-	local var_14_10
-	local var_14_11
-	local _matchmaking_manager = self._matchmaking_manager
+	local allow_occupied_hero_lobbies = Application.user_setting("allow_occupied_hero_lobbies")
+	local current_first_prio_lobby, current_secondary_prio_lobby
+	local matchmaking_manager = self._matchmaking_manager
 
-	table.dump(arg_14_4, "preferred levels", 2)
+	table.dump(preferred_levels, "preferred levels", 2)
 
-	for k, v in pairs(arg_14_4) do
-		if not var_14_10 then
+	for _, level_key in pairs(preferred_levels) do
+		if current_first_prio_lobby then
 			break
 		end
 
-		for i, v_2 in ipairs(arg_14_1) do
-			local unique_server_name = v_2.unique_server_name
+		for _, lobby_data in ipairs(lobbies) do
+			local unique_server_name = lobby_data.unique_server_name
 
-			unique_server_name = unique_server_name or v_2.host
+			if not unique_server_name then
+				-- Nothing
+			end
 
-			local lobby_match, var_14_15 = _matchmaking_manager:lobby_match(v_2, act_key, v, difficulty, matchmaking_type, self._peer_id, flag, mechanism)
+			unique_server_name = lobby_data.host
 
-			if not lobby_match then
-				local flag_3 = false
-				local var_14_17
-				local flag_4 = false
-				local selected_mission_id = v_2.selected_mission_id
+			local host_name = unique_server_name
 
-				selected_mission_id = selected_mission_id or v_2.mission_id
+			::label_14_1::
 
-				local quick_game = arg_14_2.quick_game
-				local flag_5 = arg_14_2.matchmaking_type == "event"
+			local lobby_match, reason = matchmaking_manager:lobby_match(lobby_data, act_key, level_key, difficulty, matchmaking_type, self._peer_id, weave_name, mechanism)
 
-				if not (mechanism == "weave" or mission_id or flag_3 or _matchmaking_manager:party_has_level_unlocked(selected_mission_id, quick_game, nil, flag_5)) then
-					flag_3 = true
-					var_14_17 = string.format("Mission(%s) is not unlocked by party", selected_mission_id)
+			if lobby_match then
+				local discard = false
+				local discard_reason
+				local secondary_option = false
+				local selected_mission_id_2 = lobby_data.selected_mission_id
+
+				if not selected_mission_id_2 then
+					-- Nothing
 				end
 
-				if not (flag_3 or _matchmaking_manager:hero_available_in_lobby_data(arg_14_3, v_2)) then
-					local flag_6 = false
+				selected_mission_id_2 = lobby_data.mission_id
 
-					for i4 = 1, 5 do
-						if MatchmakingSettings.hero_search_filter[i4] ~= true or not _matchmaking_manager:hero_available_in_lobby_data(i4, v_2) then
-							flag_6 = true
+				local lobby_mission_id = selected_mission_id_2
 
-							break
+				::label_14_2::
+
+				local ignore_dlc_check = search_config.quick_game
+				local is_event_mode = search_config.matchmaking_type == "event"
+
+				if mechanism ~= "weave" and not selected_mission_id and not discard and not matchmaking_manager:party_has_level_unlocked(lobby_mission_id, ignore_dlc_check, nil, is_event_mode) then
+					discard = true
+					discard_reason = string.format("Mission(%s) is not unlocked by party", lobby_mission_id)
+				end
+
+				if not discard and not matchmaking_manager:hero_available_in_lobby_data(wanted_profile_id, lobby_data) then
+					local any_allowed_hero_available = false
+
+					for i = 1, 5 do
+						if MatchmakingSettings.hero_search_filter[i] == true then
+							local hero_available = matchmaking_manager:hero_available_in_lobby_data(i, lobby_data)
+
+							if hero_available then
+								any_allowed_hero_available = true
+
+								break
+							end
 						end
 					end
 
-					if not flag_6 and not user_setting then
-						flag_4 = true
+					if any_allowed_hero_available and allow_occupied_hero_lobbies then
+						secondary_option = true
 					else
-						flag_3 = true
-						var_14_17 = "hero is unavailable"
+						discard = true
+						discard_reason = "hero is unavailable"
 					end
 				end
 
-				local var_14_23 = LevelSettings[v_2.mission_id]
+				local level_settings = LevelSettings[lobby_data.mission_id]
 
-				if not (flag_3 or var_14_23.hub_level) then
-					if not strict_matchmaking then
-						flag_3 = true
-						var_14_17 = "strict matchmaking"
+				if not discard and not level_settings.hub_level then
+					if using_strict_matchmaking then
+						discard = true
+						discard_reason = "strict matchmaking"
 					else
-						flag_4 = true
+						secondary_option = true
 					end
 				end
 
-				if not ((flag_3 or not strict_matchmaking) and v_2.selected_mission_id == mission_id) then
-					flag_3 = true
-					var_14_17 = "strict matchmaking"
+				if not discard and using_strict_matchmaking and lobby_data.selected_mission_id ~= selected_mission_id then
+					discard = true
+					discard_reason = "strict matchmaking"
 				end
 
-				if not (flag_3 or v_2.host_afk ~= "true") then
-					flag_4 = true
+				if not discard and lobby_data.host_afk == "true" then
+					secondary_option = true
 				end
 
-				if not ((flag_3 or not flag_4) and flag_2) then
-					flag_3 = true
-					var_14_17 = "secondary lobby before reaching max distance"
+				if not discard and secondary_option and not reached_max_distance then
+					discard = true
+					discard_reason = "secondary lobby before reaching max distance"
 				end
 
-				if not flag_3 then
-					if not flag_4 then
-						var_14_10 = self:_compare_first_prio_lobbies(var_14_10, v_2)
+				if not discard then
+					if not secondary_option then
+						current_first_prio_lobby = self:_compare_first_prio_lobbies(current_first_prio_lobby, lobby_data)
 					else
-						var_14_11 = self:_compare_secondary_prio_lobbies(var_14_11, v_2)
+						current_secondary_prio_lobby = self:_compare_secondary_prio_lobbies(current_secondary_prio_lobby, lobby_data)
 					end
 				else
-					mm_printf("Lobby hosted by %s discarded due to '%s'", unique_server_name, var_14_17 or "unknown")
+					mm_printf("Lobby hosted by %s discarded due to '%s'", host_name, not not discard_reason or not not "unknown")
 				end
 			else
-				mm_printf("Lobby hosted by %s failed lobby match due to '%s'", unique_server_name, var_14_15 or "unknown")
+				mm_printf("Lobby hosted by %s failed lobby match due to '%s'", host_name, not not reason or not not "unknown")
 			end
 		end
 	end
 
-	return var_14_10 or var_14_11
+	return not not current_first_prio_lobby or not not current_secondary_prio_lobby
 end

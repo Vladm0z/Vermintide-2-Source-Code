@@ -2,31 +2,32 @@
 
 ActionThrowGeheimnisnacht2021 = class(ActionThrowGeheimnisnacht2021, ActionBase)
 
-ActionThrowGeheimnisnacht2021.init = function (arg_1_0, arg_1_1, arg_1_2, arg_1_3, arg_1_4, arg_1_5, arg_1_6, arg_1_7, arg_1_8)
+ActionThrowGeheimnisnacht2021.init = function (self, world, item_name, is_server, owner_unit, damage_unit, first_person_unit, weapon_unit, weapon_system)
 	-- function 1
-	ActionThrowGeheimnisnacht2021.super.init(arg_1_0, arg_1_1, arg_1_2, arg_1_3, arg_1_4, arg_1_5, arg_1_6, arg_1_7, arg_1_8)
+	ActionThrowGeheimnisnacht2021.super.init(self, world, item_name, is_server, owner_unit, damage_unit, first_person_unit, weapon_unit, weapon_system)
 end
 
-ActionThrowGeheimnisnacht2021.client_owner_start_action = function (self, arg_2_1, arg_2_2)
+ActionThrowGeheimnisnacht2021.client_owner_start_action = function (self, new_action, t)
 	-- function 2
-	ActionThrowGeheimnisnacht2021.super.client_owner_start_action(self, arg_2_1, arg_2_2)
+	ActionThrowGeheimnisnacht2021.super.client_owner_start_action(self, new_action, t)
 
-	self.current_action = arg_2_1
+	self.current_action = new_action
 	self.ammo_extension = ScriptUnit.extension(self.weapon_unit, "ammo_system")
 end
 
-ActionThrowGeheimnisnacht2021.client_owner_post_update = function (arg_3_0, arg_3_1, arg_3_2, arg_3_3, arg_3_4)
+ActionThrowGeheimnisnacht2021.client_owner_post_update = function (self, dt, t, world, can_damage)
 	-- function 3
 	return
 end
 
-ActionThrowGeheimnisnacht2021.finish = function (self, arg_4_1)
+ActionThrowGeheimnisnacht2021.finish = function (self, reason)
 	-- function 4
-	if arg_4_1 ~= "action_complete" then
+	if reason ~= "action_complete" then
 		return
 	end
 
-	local ammo_usage = self.current_action.ammo_usage
+	local current_action = self.current_action
+	local ammo_usage = current_action.ammo_usage
 
 	self.ammo_extension:use_ammo(ammo_usage)
 end

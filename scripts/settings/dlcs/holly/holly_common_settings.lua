@@ -1,8 +1,8 @@
 -- chunkname: @scripts/settings/dlcs/holly/holly_common_settings.lua
 
-local holly = DLCSettings.holly
+local settings = DLCSettings.holly
 
-holly.unlock_settings = {
+settings.unlock_settings = {
 	holly = {
 		id = "975400",
 		class = "UnlockDlc",
@@ -11,14 +11,14 @@ holly.unlock_settings = {
 		}
 	}
 }
-holly.unlock_settings_xb1 = {
+settings.unlock_settings_xb1 = {
 	holly = {
 		id = "2370E217-689D-4EFB-B31E-6F5D47237922",
 		backend_reward_id = "holly",
 		class = "UnlockDlc"
 	}
 }
-holly.unlock_settings_ps4 = {
+settings.unlock_settings_ps4 = {
 	CUSA13595_00 = {
 		holly = {
 			id = "55e08f1c10be40a1bab40c582b408994",
@@ -36,6 +36,6 @@ holly.unlock_settings_ps4 = {
 		}
 	}
 }
-holly.statistics_definitions = {
+settings.statistics_definitions = {
 	"scripts/managers/backend/statistics_definitions_holly"
 }

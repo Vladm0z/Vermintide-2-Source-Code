@@ -1,6 +1,6 @@
 -- chunkname: @scripts/settings/breeds/breed_chaos_skeleton.lua
 
-local tbl = {
+local breed_data = {
 	detection_radius = 18,
 	ai_strength = 1,
 	walk_speed = 1.6,
@@ -123,21 +123,21 @@ local tbl = {
 		40,
 		40
 	},
-	stagger_modifier_function = function (arg_1_0, arg_1_1, arg_1_2, arg_1_3, arg_1_4, arg_1_5)
+	stagger_modifier_function = function (stagger, duration, length, hit_zone_name, blackboard, breed)
 		-- function 1
-		if arg_1_4.stagger_type == 3 then
-			if arg_1_0 ~= 3 or not arg_1_4.heavy_stagger_immune_time then
-				arg_1_0 = 0
-				arg_1_1 = 0
-				arg_1_2 = 0
-			elseif arg_1_0 == 3 or not arg_1_4.stagger_immune_time then
-				arg_1_0 = 0
-				arg_1_1 = 0
-				arg_1_2 = 0
+		if blackboard.stagger_type == 3 then
+			if stagger == 3 and blackboard.heavy_stagger_immune_time then
+				stagger = 0
+				duration = 0
+				length = 0
+			elseif stagger ~= 3 and blackboard.stagger_immune_time then
+				stagger = 0
+				duration = 0
+				length = 0
 			end
 		end
 
-		return arg_1_0, arg_1_1, arg_1_2
+		return stagger, duration, length
 	end,
 	BTHesitationVariations = {
 		hesitate = {
@@ -327,9 +327,9 @@ local tbl = {
 	}
 }
 
-Breeds.chaos_skeleton = table.create_copy(Breeds.chaos_skeleton, tbl)
+Breeds.chaos_skeleton = table.create_copy(Breeds.chaos_skeleton, breed_data)
 
-local tbl_2 = {
+local AttackIntensityPerDifficulty = {
 	normal = {
 		easy = {
 			normal = 2
@@ -383,7 +383,7 @@ local tbl_2 = {
 		}
 	}
 }
-local tbl_3 = {
+local action_data = {
 	idle = {
 		anim_cycle_index = 0,
 		animations = {
@@ -561,7 +561,7 @@ local tbl_3 = {
 		player_push_speed = 3,
 		attack_intensity_type = "running",
 		action_weight = 10,
-		difficulty_attack_intensity = tbl_2,
+		difficulty_attack_intensity = AttackIntensityPerDifficulty,
 		considerations = UtilityConsiderations.marauder_running_attack,
 		default_attack = {
 			anims = {
@@ -589,7 +589,7 @@ local tbl_3 = {
 		player_push_speed = 5,
 		attack_intensity_type = "normal",
 		action_weight = 1,
-		difficulty_attack_intensity = tbl_2,
+		difficulty_attack_intensity = AttackIntensityPerDifficulty,
 		considerations = UtilityConsiderations.marauder_attack,
 		dodge_window_start = BreedTweaks.dodge_windows.normal_attack,
 		dodge_window_duration = BreedTweaks.dodge_window_durations.normal_attack,
@@ -731,7 +731,7 @@ local tbl_3 = {
 		player_push_speed = 5,
 		attack_intensity_type = "normal",
 		action_weight = 1,
-		difficulty_attack_intensity = tbl_2,
+		difficulty_attack_intensity = AttackIntensityPerDifficulty,
 		considerations = UtilityConsiderations.marauder_attack,
 		default_attack = {
 			anims = {
@@ -798,17 +798,19 @@ local tbl_3 = {
 	},
 	stagger = {
 		scale_animation_speeds = true,
-		custom_enter_function = function (arg_2_0, arg_2_1, arg_2_2, arg_2_3)
+		custom_enter_function = function (unit, blackboard, t, action)
 			-- function 2
-			if arg_2_1.stagger_type == 3 then
-				arg_2_1.stagger_immune_time = arg_2_2 + 2.25
-				arg_2_1.heavy_stagger_immune_time = arg_2_2 + 1.5
-			elseif arg_2_1.stagger_type == 6 then
-				arg_2_1.stagger_immune_time = arg_2_2 + 3.5
-				arg_2_1.heavy_stagger_immune_time = arg_2_2 + 3
+			if blackboard.stagger_type == 3 then
+				blackboard.stagger_immune_time = t + 2.25
+				blackboard.heavy_stagger_immune_time = t + 1.5
+			elseif blackboard.stagger_type == 6 then
+				blackboard.stagger_immune_time = t + 3.5
+				blackboard.heavy_stagger_immune_time = t + 3
 			end
 
-			return arg_2_3.stagger_anims[arg_2_1.stagger_type], "idle"
+			local stagger_anims = action.stagger_anims[blackboard.stagger_type]
+
+			return stagger_anims, "idle"
 		end,
 		stagger_anims = {
 			{
@@ -1059,5 +1061,5 @@ local tbl_3 = {
 	}
 }
 
-tbl_3.fallback_idle = tbl_3.idle
-BreedActions.chaos_skeleton = table.create_copy(BreedActions.chaos_skeleton, tbl_3)
+action_data.fallback_idle = action_data.idle
+BreedActions.chaos_skeleton = table.create_copy(BreedActions.chaos_skeleton, action_data)

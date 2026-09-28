@@ -5,49 +5,49 @@ require("scripts/entity_system/systems/sound_environment/sound_environment_syste
 
 SoundEnvironmentSystemDummy = class(SoundEnvironmentSystemDummy, ExtensionSystemBase)
 
-local tbl = {}
-local tbl_2 = {}
+local RPCS = {}
+local extensions = {}
 
-SoundEnvironmentSystemDummy.init = function (self, arg_1_1, arg_1_2)
+SoundEnvironmentSystemDummy.init = function (self, entity_system_creation_context, system_name)
 	-- function 1
-	SoundEnvironmentSystemDummy.super.init(self, arg_1_1, arg_1_2, tbl_2)
+	SoundEnvironmentSystemDummy.super.init(self, entity_system_creation_context, system_name, extensions)
 
 	local world = self.world
 
 	self.wwise_world = Managers.world:wwise_world(world)
 end
 
-SoundEnvironmentSystemDummy.register_sound_environment = function (arg_2_0, arg_2_1, arg_2_2, arg_2_3, arg_2_4, arg_2_5, arg_2_6)
+SoundEnvironmentSystemDummy.register_sound_environment = function (self, volume_name, prio, ambient_sound_event, fade_time, aux_bus_name, environment_state)
 	-- function 2
 	return
 end
 
-SoundEnvironmentSystemDummy.set_source_environment = function (arg_3_0, arg_3_1, arg_3_2)
+SoundEnvironmentSystemDummy.set_source_environment = function (self, source, position)
 	-- function 3
 	return
 end
 
-SoundEnvironmentSystemDummy.register_source_environment_update = function (arg_4_0, arg_4_1, arg_4_2, arg_4_3)
+SoundEnvironmentSystemDummy.register_source_environment_update = function (self, source, unit, object)
 	-- function 4
 	return
 end
 
-SoundEnvironmentSystemDummy.unregister_source_environment_update = function (arg_5_0, arg_5_1)
+SoundEnvironmentSystemDummy.unregister_source_environment_update = function (self, source)
 	-- function 5
 	return
 end
 
-SoundEnvironmentSystemDummy.local_player_created = function (arg_6_0, arg_6_1)
+SoundEnvironmentSystemDummy.local_player_created = function (self, player)
 	-- function 6
 	return
 end
 
-SoundEnvironmentSystemDummy.update = function (arg_7_0, arg_7_1, arg_7_2)
+SoundEnvironmentSystemDummy.update = function (self, context, t)
 	-- function 7
 	return
 end
 
-SoundEnvironmentSystemDummy.enter_environment = function (arg_8_0, arg_8_1, arg_8_2, arg_8_3)
+SoundEnvironmentSystemDummy.enter_environment = function (self, t, volume_name, current_environment_name)
 	-- function 8
 	return
 end

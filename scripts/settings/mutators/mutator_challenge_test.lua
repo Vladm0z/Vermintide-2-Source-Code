@@ -2,7 +2,7 @@
 
 require("scripts/settings/dlcs/morris/deus_blessing_settings")
 
-local tbl = {
+local challenge_settings = {
 	reward = "deus_power_up_quest_test_reward_01",
 	type = "kill_elites",
 	category = "deus_mutator",
@@ -19,25 +19,29 @@ local tbl = {
 }
 
 return {
-	server_start_function = function (arg_1_0, arg_1_1, arg_1_2)
+	server_start_function = function (context, data, unit)
 		-- function 1
-		local challenge = Managers.venture.challenge
-		local get_difficulty = Managers.state.difficulty:get_difficulty()
-		local rank = DifficultySettings[get_difficulty].rank
-		local reward = tbl.reward
-		local flag = false
-		local category = tbl.category
-		local unique_id = Managers.player:local_player():unique_id()
-		local flag_2 = false
+		local challenge_manager = Managers.venture.challenge
+		local difficulty = Managers.state.difficulty:get_difficulty()
+		local difficulty_rank = DifficultySettings[difficulty].rank
+		local challenge_reward = challenge_settings.reward
+		local is_repeatable = false
+		local category = challenge_settings.category
+		local player = Managers.player:local_player()
+		local player_unique_id = player:unique_id()
+		local auto_resume = false
+		local challenge = challenge_manager:add_challenge(challenge_settings.type, is_repeatable, category, challenge_reward, player_unique_id, challenge_settings.amount[difficulty_rank], auto_resume)
 
-		arg_1_1.challenge = challenge:add_challenge(tbl.type, flag, category, reward, unique_id, tbl.amount[rank], flag_2)
+		data.challenge = challenge
 	end,
-	server_stop_function = function (arg_2_0, arg_2_1, arg_2_2)
+	server_stop_function = function (context, data, unit)
 		-- function 2
-		local challenge = arg_2_1.challenge
+		local challenge = data.challenge
 
-		if not challenge then
-			Managers.venture.challenge:remove_challenge(challenge)
+		if challenge then
+			local challenge_manager = Managers.venture.challenge
+
+			challenge_manager:remove_challenge(challenge)
 		end
 	end
 }

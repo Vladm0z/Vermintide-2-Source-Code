@@ -1,36 +1,36 @@
 -- chunkname: @scripts/ui/views/start_game_view/windows/definitions/start_game_window_mission_selection_definitions.lua
 
-local game_start_windows = UISettings.game_start_windows
-local frame = game_start_windows.frame
-local size = game_start_windows.size
-local spacing = game_start_windows.spacing
-local var_0_4 = UIFrameSettings[frame].texture_sizes.vertical[1]
-local num = size[1] - (var_0_4 * 2 + 60)
-local tbl = {
-	size[1] * 2 + spacing,
-	size[2]
+local window_default_settings = UISettings.game_start_windows
+local window_frame = window_default_settings.frame
+local window_size = window_default_settings.size
+local window_spacing = window_default_settings.spacing
+local window_frame_width = UIFrameSettings[window_frame].texture_sizes.vertical[1]
+local window_text_width = window_size[1] - (window_frame_width * 2 + 60)
+local large_window_size = {
+	window_size[1] * 2 + window_spacing,
+	window_size[2]
 }
-local tbl_2 = {
-	size[1],
-	size[2]
+local info_window_size = {
+	window_size[1],
+	window_size[2]
 }
-local tbl_3 = {
+local animation_definitions = {
 	on_enter = {
 		{
 			name = "fade_in",
 			start_progress = 0,
 			end_progress = 0.3,
-			init = function (arg_1_0, arg_1_1, arg_1_2, arg_1_3)
+			init = function (ui_scenegraph, scenegraph_definition, widgets, params)
 				-- function 1
-				arg_1_3.render_settings.alpha_multiplier = 0
+				params.render_settings.alpha_multiplier = 0
 			end,
-			update = function (arg_2_0, arg_2_1, arg_2_2, arg_2_3, arg_2_4)
+			update = function (ui_scenegraph, scenegraph_definition, widgets, progress, params)
 				-- function 2
-				local easeOutCubic = math.easeOutCubic(arg_2_3)
+				local anim_progress = math.easeOutCubic(progress)
 
-				arg_2_4.render_settings.alpha_multiplier = easeOutCubic
+				params.render_settings.alpha_multiplier = anim_progress
 			end,
-			on_complete = function (arg_3_0, arg_3_1, arg_3_2, arg_3_3)
+			on_complete = function (ui_scenegraph, scenegraph_definition, widgets, params)
 				-- function 3
 				return
 			end
@@ -41,24 +41,24 @@ local tbl_3 = {
 			name = "fade_out",
 			start_progress = 0,
 			end_progress = 0.3,
-			init = function (arg_4_0, arg_4_1, arg_4_2, arg_4_3)
+			init = function (ui_scenegraph, scenegraph_definition, widgets, params)
 				-- function 4
-				arg_4_3.render_settings.alpha_multiplier = 1
+				params.render_settings.alpha_multiplier = 1
 			end,
-			update = function (arg_5_0, arg_5_1, arg_5_2, arg_5_3, arg_5_4)
+			update = function (ui_scenegraph, scenegraph_definition, widgets, progress, params)
 				-- function 5
-				local easeOutCubic = math.easeOutCubic(arg_5_3)
+				local anim_progress = math.easeOutCubic(progress)
 
-				arg_5_4.render_settings.alpha_multiplier = 1 - easeOutCubic
+				params.render_settings.alpha_multiplier = 1 - anim_progress
 			end,
-			on_complete = function (arg_6_0, arg_6_1, arg_6_2, arg_6_3)
+			on_complete = function (ui_scenegraph, scenegraph_definition, widgets, params)
 				-- function 6
 				return
 			end
 		}
 	}
 }
-local tbl_4 = {
+local scenegraph_definition = {
 	root = {
 		is_root = true,
 		size = {
@@ -101,9 +101,9 @@ local tbl_4 = {
 		vertical_alignment = "center",
 		parent = "menu_root",
 		horizontal_alignment = "center",
-		size = tbl,
+		size = large_window_size,
 		position = {
-			size[1] / 2 + spacing / 2,
+			window_size[1] / 2 + window_spacing / 2,
 			0,
 			1
 		}
@@ -113,7 +113,7 @@ local tbl_4 = {
 		parent = "window",
 		horizontal_alignment = "center",
 		size = {
-			tbl[1],
+			large_window_size[1],
 			770
 		},
 		position = {
@@ -126,9 +126,9 @@ local tbl_4 = {
 		vertical_alignment = "center",
 		parent = "window",
 		horizontal_alignment = "right",
-		size = size,
+		size = window_size,
 		position = {
-			tbl_2[1] + spacing,
+			info_window_size[1] + window_spacing,
 			0,
 			1
 		}
@@ -138,7 +138,7 @@ local tbl_4 = {
 		parent = "window",
 		horizontal_alignment = "left",
 		size = {
-			tbl[1] - 256,
+			large_window_size[1] - 256,
 			256
 		},
 		position = {
@@ -194,7 +194,7 @@ local tbl_4 = {
 		parent = "window",
 		horizontal_alignment = "center",
 		size = {
-			tbl[1],
+			large_window_size[1],
 			200
 		},
 		position = {
@@ -208,7 +208,7 @@ local tbl_4 = {
 		parent = "window",
 		horizontal_alignment = "center",
 		size = {
-			tbl[1],
+			large_window_size[1],
 			0
 		},
 		position = {
@@ -222,7 +222,7 @@ local tbl_4 = {
 		parent = "title_divider",
 		horizontal_alignment = "center",
 		size = {
-			tbl[1],
+			large_window_size[1],
 			52
 		},
 		position = {
@@ -236,8 +236,8 @@ local tbl_4 = {
 		parent = "info_window",
 		horizontal_alignment = "center",
 		size = {
-			num,
-			size[2] / 2
+			window_text_width,
+			window_size[2] / 2
 		},
 		position = {
 			0,
@@ -306,7 +306,7 @@ local tbl_4 = {
 		parent = "level_title_divider",
 		horizontal_alignment = "center",
 		size = {
-			num,
+			window_text_width,
 			50
 		},
 		position = {
@@ -320,7 +320,7 @@ local tbl_4 = {
 		parent = "level_title_divider",
 		horizontal_alignment = "center",
 		size = {
-			num,
+			window_text_width,
 			50
 		},
 		position = {
@@ -344,7 +344,7 @@ local tbl_4 = {
 		}
 	}
 }
-local tbl_5 = {
+local description_text_style = {
 	word_wrap = true,
 	font_size = 18,
 	localize = false,
@@ -359,7 +359,7 @@ local tbl_5 = {
 		2
 	}
 }
-local tbl_6 = {
+local level_text_style = {
 	font_size = 36,
 	upper_case = true,
 	localize = false,
@@ -376,7 +376,7 @@ local tbl_6 = {
 		2
 	}
 }
-local tbl_7 = {
+local mission_selection_title_text_style = {
 	font_size = 36,
 	upper_case = true,
 	localize = false,
@@ -392,7 +392,7 @@ local tbl_7 = {
 		2
 	}
 }
-local tbl_8 = {
+local helper_text_style = {
 	font_size = 36,
 	upper_case = true,
 	localize = false,
@@ -409,43 +409,43 @@ local tbl_8 = {
 	}
 }
 
-local function fn(arg_7_0, arg_7_1)
+local function create_level_widget(scenegraph_id, optional_offset)
 	-- function 7
-	local tbl = {
+	local size = {
 		180,
 		180
 	}
-	local tbl_2 = {
+	local widget = {
 		element = {}
 	}
-	local tbl_3 = {
+	local passes = {
 		{
 			style_id = "icon",
 			pass_type = "hotspot",
 			content_id = "button_hotspot",
-			content_check_function = function (self)
+			content_check_function = function (content)
 				-- function 8
-				return not self.parent.locked
+				return not content.parent.locked
 			end
 		},
 		{
 			style_id = "icon",
 			pass_type = "level_tooltip",
 			level_id = "level_data",
-			content_check_function = function (self)
+			content_check_function = function (content)
 				-- function 9
-				return self.button_hotspot.is_hover
+				return content.button_hotspot.is_hover
 			end
 		},
 		{
 			pass_type = "texture",
 			style_id = "icon_glow",
 			texture_id = "icon_glow",
-			content_check_function = function (self)
+			content_check_function = function (content)
 				-- function 10
-				local is_hover = self.button_hotspot.is_hover
+				local is_hover = content.button_hotspot.is_hover
 
-				is_hover = is_hover or self.button_hotspot.is_selected
+				is_hover = not not is_hover or not not content.button_hotspot.is_selected
 
 				return is_hover
 			end
@@ -454,36 +454,36 @@ local function fn(arg_7_0, arg_7_1)
 			pass_type = "texture",
 			style_id = "icon",
 			texture_id = "icon",
-			content_check_function = function (self)
+			content_check_function = function (content)
 				-- function 11
-				return not self.locked
+				return not content.locked
 			end
 		},
 		{
 			pass_type = "texture",
 			style_id = "icon_locked",
 			texture_id = "icon",
-			content_check_function = function (self)
+			content_check_function = function (content)
 				-- function 12
-				return self.locked
+				return content.locked
 			end
 		},
 		{
 			pass_type = "texture",
 			style_id = "lock",
 			texture_id = "lock",
-			content_check_function = function (self)
+			content_check_function = function (content)
 				-- function 13
-				return self.locked
+				return content.locked
 			end
 		},
 		{
 			pass_type = "texture",
 			style_id = "lock_fade",
 			texture_id = "lock_fade",
-			content_check_function = function (self)
+			content_check_function = function (content)
 				-- function 14
-				return self.locked
+				return content.locked
 			end
 		},
 		{
@@ -500,22 +500,22 @@ local function fn(arg_7_0, arg_7_1)
 			pass_type = "rotated_texture",
 			style_id = "path",
 			texture_id = "path",
-			content_check_function = function (self)
+			content_check_function = function (content)
 				-- function 15
-				return self.draw_path
+				return content.draw_path
 			end
 		},
 		{
 			pass_type = "rotated_texture",
 			style_id = "path_glow",
 			texture_id = "path_glow",
-			content_check_function = function (self)
+			content_check_function = function (content)
 				-- function 16
-				local draw_path = self.draw_path
+				local draw_path = content.draw_path
 
-				if not draw_path then
-					draw_path = self.draw_path_fill
-					draw_path = not draw_path and not self.locked
+				if draw_path then
+					draw_path = content.draw_path_fill
+					draw_path = not not draw_path and not not not content.locked
 				end
 
 				return draw_path
@@ -525,13 +525,13 @@ local function fn(arg_7_0, arg_7_1)
 			pass_type = "texture",
 			style_id = "boss_icon",
 			texture_id = "boss_icon",
-			content_check_function = function (self)
+			content_check_function = function (content)
 				-- function 17
-				return self.boss_level
+				return content.boss_level
 			end
 		}
 	}
-	local tbl_4 = {
+	local content = {
 		frame = "map_frame_00",
 		locked = true,
 		path = "mission_select_screen_trail",
@@ -547,7 +547,7 @@ local function fn(arg_7_0, arg_7_1)
 		icon_glow = "map_frame_glow",
 		button_hotspot = {}
 	}
-	local tbl_5 = {
+	local style = {
 		path = {
 			vertical_alignment = "center",
 			horizontal_alignment = "left",
@@ -561,7 +561,7 @@ local function fn(arg_7_0, arg_7_1)
 				13
 			},
 			offset = {
-				tbl[1] / 2,
+				size[1] / 2,
 				0,
 				1
 			},
@@ -585,7 +585,7 @@ local function fn(arg_7_0, arg_7_1)
 				43
 			},
 			offset = {
-				tbl[1] / 2,
+				size[1] / 2,
 				0,
 				2
 			},
@@ -751,22 +751,22 @@ local function fn(arg_7_0, arg_7_1)
 		}
 	}
 
-	tbl_2.element.passes = tbl_3
-	tbl_2.content = tbl_4
-	tbl_2.style = tbl_5
-	tbl_2.offset = arg_7_1 or {
+	widget.element.passes = passes
+	widget.content = content
+	widget.style = style
+	widget.offset = not not optional_offset or not not {
 		0,
 		0,
 		0
 	}
-	tbl_2.scenegraph_id = arg_7_0
+	widget.scenegraph_id = scenegraph_id
 
-	return tbl_2
+	return widget
 end
 
-local function fn_2(arg_18_0, arg_18_1)
+local function create_window_divider(scenegraph_id, size)
 	-- function 18
-	return {
+	local widget = {
 		element = {
 			passes = {
 				{
@@ -805,11 +805,11 @@ local function fn_2(arg_18_0, arg_18_1)
 					6
 				},
 				size = {
-					arg_18_1[1] - 10,
+					size[1] - 10,
 					5
 				},
 				texture_tiling_size = {
-					arg_18_1[1] - 10,
+					size[1] - 10,
 					5
 				}
 			},
@@ -838,7 +838,7 @@ local function fn_2(arg_18_0, arg_18_1)
 					255
 				},
 				offset = {
-					arg_18_1[1] - 12,
+					size[1] - 12,
 					-6,
 					10
 				},
@@ -848,34 +848,38 @@ local function fn_2(arg_18_0, arg_18_1)
 				}
 			}
 		},
-		scenegraph_id = arg_18_0,
+		scenegraph_id = scenegraph_id,
 		offset = {
 			0,
 			0,
 			0
 		}
 	}
+
+	return widget
 end
 
-local flag = true
-local tbl_9 = {
+local disable_with_gamepad = true
+local widgets = {
 	background_fade = UIWidgets.create_simple_texture("options_window_fade_01", "info_window", nil, nil, nil, nil),
 	background_mask = UIWidgets.create_simple_texture("mask_rect", "info_window"),
-	info_window = UIWidgets.create_frame("info_window", size, frame, 10),
-	window = UIWidgets.create_frame("window", tbl, frame, 10),
-	level_title = UIWidgets.create_simple_text("level_title", "level_title", nil, nil, tbl_6),
-	selected_level = fn("level_texture_frame"),
+	info_window = UIWidgets.create_frame("info_window", window_size, window_frame, 10),
+	window = UIWidgets.create_frame("window", large_window_size, window_frame, 10),
+	level_title = UIWidgets.create_simple_text("level_title", "level_title", nil, nil, level_text_style),
+	selected_level = create_level_widget("level_texture_frame"),
 	window_background = UIWidgets.create_simple_texture("mission_select_screen_bg", "window_background"),
 	level_title_divider = UIWidgets.create_simple_texture("divider_01_top", "level_title_divider"),
-	description_text = UIWidgets.create_simple_text("", "description_text", nil, nil, tbl_5),
-	helper_text = UIWidgets.create_simple_text(Localize("tutorial_map"), "helper_text", nil, nil, tbl_8),
-	mission_selection_title = UIWidgets.create_simple_text(Localize("start_game_window_mission_selection_header"), "mission_selection_title", nil, nil, tbl_7),
-	title_divider = fn_2("title_divider", tbl_4.title_divider.size),
-	select_button = UIWidgets.create_default_button("select_button", tbl_4.select_button.size, nil, nil, Localize("menu_select"), 32, nil, nil, nil, flag)
+	description_text = UIWidgets.create_simple_text("", "description_text", nil, nil, description_text_style),
+	helper_text = UIWidgets.create_simple_text(Localize("tutorial_map"), "helper_text", nil, nil, helper_text_style),
+	mission_selection_title = UIWidgets.create_simple_text(Localize("start_game_window_mission_selection_header"), "mission_selection_title", nil, nil, mission_selection_title_text_style),
+	title_divider = create_window_divider("title_divider", scenegraph_definition.title_divider.size),
+	select_button = UIWidgets.create_default_button("select_button", scenegraph_definition.select_button.size, nil, nil, Localize("menu_select"), 32, nil, nil, nil, disable_with_gamepad)
 }
 
 for i = 1, 20 do
-	tbl_4["level_root_" .. i] = {
+	local scenegraph_id = "level_root_" .. i
+
+	scenegraph_definition[scenegraph_id] = {
 		vertical_alignment = "center",
 		parent = "level_root_node",
 		horizontal_alignment = "center",
@@ -892,9 +896,9 @@ for i = 1, 20 do
 end
 
 return {
-	widgets = tbl_9,
-	large_window_size = tbl,
-	scenegraph_definition = tbl_4,
-	animation_definitions = tbl_3,
-	create_level_widget = fn
+	widgets = widgets,
+	large_window_size = large_window_size,
+	scenegraph_definition = scenegraph_definition,
+	animation_definitions = animation_definitions,
+	create_level_widget = create_level_widget
 }

@@ -2,7 +2,7 @@
 
 BackendInterfaceHeroAttributesTutorial = class(BackendInterfaceHeroAttributesTutorial)
 
-local tbl = {
+local DEFAULT_ATTRIBUTES = {
 	dwarf_ranger_career = 1,
 	empire_soldier_tutorial_career = 1,
 	wood_elf_experience = 0,
@@ -23,9 +23,9 @@ local tbl = {
 	empire_soldier_tutorial_experience = 0
 }
 
-BackendInterfaceHeroAttributesTutorial.init = function (self, arg_1_1)
+BackendInterfaceHeroAttributesTutorial.init = function (self, backend_mirror)
 	-- function 1
-	self._attributes = table.clone(tbl)
+	self._attributes = table.clone(DEFAULT_ATTRIBUTES)
 	self._initialized = true
 end
 
@@ -34,37 +34,37 @@ BackendInterfaceHeroAttributesTutorial.ready = function (self)
 	return self._initialized
 end
 
-BackendInterfaceHeroAttributesTutorial.update = function (arg_3_0, arg_3_1)
+BackendInterfaceHeroAttributesTutorial.update = function (self, dt)
 	-- function 3
 	return
 end
 
-BackendInterfaceHeroAttributesTutorial.get = function (self, arg_4_1, arg_4_2)
+BackendInterfaceHeroAttributesTutorial.get = function (self, hero, attribute)
 	-- function 4
-	local str = arg_4_1 .. "_" .. arg_4_2
-	local var_4_1 = self._attributes[str]
+	local key = hero .. "_" .. attribute
+	local var_4_0 = self._attributes[key]
 
-	var_4_1 = var_4_1 or tbl[str]
+	var_4_0 = not not var_4_0 or not not DEFAULT_ATTRIBUTES[key]
 
-	return var_4_1
+	return var_4_0
 end
 
-BackendInterfaceHeroAttributesTutorial.set = function (arg_5_0, arg_5_1, arg_5_2, arg_5_3)
+BackendInterfaceHeroAttributesTutorial.set = function (self, hero, attribute, value)
 	-- function 5
 	return
 end
 
-BackendInterfaceHeroAttributesTutorial.prestige = function (arg_6_0, arg_6_1, arg_6_2)
+BackendInterfaceHeroAttributesTutorial.prestige = function (self, hero_name, callback_function)
 	-- function 6
 	return
 end
 
-BackendInterfaceHeroAttributesTutorial.prestige_request_cb = function (arg_7_0, arg_7_1, arg_7_2, arg_7_3)
+BackendInterfaceHeroAttributesTutorial.prestige_request_cb = function (self, hero_name, callback_function, result)
 	-- function 7
 	return
 end
 
-BackendInterfaceHeroAttributesTutorial.save = function (arg_8_0, arg_8_1)
+BackendInterfaceHeroAttributesTutorial.save = function (self, save_hero_attributes_cb)
 	-- function 8
 	return false
 end

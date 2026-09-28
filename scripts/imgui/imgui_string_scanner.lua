@@ -8,55 +8,55 @@ ImguiStringScanner.init = function (self)
 	self._query = ""
 end
 
-ImguiStringScanner.update = function (arg_2_0, arg_2_1)
+ImguiStringScanner.update = function (self, dt)
 	-- function 2
 	return
 end
 
 ImguiStringScanner.draw = function (self)
 	-- function 3
-	local begin_window = Imgui.begin_window("String Scanner")
+	local do_close = Imgui.begin_window("String Scanner")
 
 	if not rawget(Script, "string_scan") then
 		Imgui.text("Required engine functionality is not available.")
 		Imgui.end_window()
 
-		return begin_window
+		return do_close
 	end
 
-	local input_text = Imgui.input_text("Query", self._query)
+	local query = Imgui.input_text("Query", self._query)
 
-	self._query = input_text
+	self._query = query
 
-	local _results = self._results
+	local results = self._results
 
-	if not Imgui.button("Run search") then
-		local string_scan = Script.string_scan()
+	if Imgui.button("Run search") then
+		local string_lut = Script.string_scan()
 
-		table.clear(_results)
+		table.clear(results)
 
-		local lower = string.lower(input_text)
+		query = string.lower(query)
 
-		for k, v in pairs(string_scan) do
-			k = string.lower(k)
+		for str, file in pairs(string_lut) do
+			str = string.lower(str)
 
-			if not string.find(k, lower) then
-				_results[#_results + 1] = k .. "\t" .. v
+			if string.find(str, query) then
+				results[#results + 1] = str .. "\t" .. file
 			end
 		end
 
-		table.sort(_results)
+		table.sort(results)
 	end
 
 	Imgui.begin_child_window("strings", 0, 0, true)
 	Imgui.columns(2, true)
 
-	for k_2 = 1, #_results do
-		local match, var_3_6 = string.match(_results[k_2], "^([^\t]+)\t(.*)$")
+	for i = 1, #results do
+		local str, file = string.match(results[i], "^([^\t]+)\t(.*)$")
 
-		Imgui.text(match)
+		Imgui.text(str)
 		Imgui.next_column()
-		Imgui.text(var_3_6)
+		Imgui.text(file)
 		Imgui.next_column()
 	end
 
@@ -64,10 +64,10 @@ ImguiStringScanner.draw = function (self)
 	Imgui.end_child_window()
 	Imgui.end_window()
 
-	return begin_window
+	return do_close
 end
 
-ImguiStringScanner.is_persistent = function (arg_4_0)
+ImguiStringScanner.is_persistent = function (self)
 	-- function 4
 	return false
 end

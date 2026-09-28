@@ -1,6 +1,6 @@
 -- chunkname: @scripts/settings/breeds/breed_chaos_zombie.lua
 
-local tbl = {
+local breed_data = {
 	detection_radius = 12,
 	walk_speed = 2.5,
 	flingable = true,
@@ -251,9 +251,9 @@ local tbl = {
 	}
 }
 
-Breeds.chaos_zombie = table.create_copy(Breeds.chaos_zombie, tbl)
+Breeds.chaos_zombie = table.create_copy(Breeds.chaos_zombie, breed_data)
 
-local tbl_2 = {
+local action_data = {
 	idle = {
 		anim_cycle_index = 0,
 		animations = {
@@ -464,5 +464,5 @@ local tbl_2 = {
 	}
 }
 
-tbl_2.fallback_idle = tbl_2.idle
-BreedActions.chaos_zombie = table.create_copy(BreedActions.chaos_zombie, tbl_2)
+action_data.fallback_idle = action_data.idle
+BreedActions.chaos_zombie = table.create_copy(BreedActions.chaos_zombie, action_data)

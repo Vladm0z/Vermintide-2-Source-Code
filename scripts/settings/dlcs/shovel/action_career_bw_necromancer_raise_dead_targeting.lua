@@ -1,26 +1,26 @@
 -- chunkname: @scripts/settings/dlcs/shovel/action_career_bw_necromancer_raise_dead_targeting.lua
 
-local str = "fx/bw_necromancer_ability_indicator"
-local num = 15
-local num_2 = -12
+local DECAL_NAME = "fx/bw_necromancer_ability_indicator"
+local RAYCAST_SPEED = 15
+local RAYCAST_GRAVITY = -12
 
 ActionCareerBWNecromancerRaiseDeadTargeting = class(ActionCareerBWNecromancerRaiseDeadTargeting, ActionBase)
 
-ActionCareerBWNecromancerRaiseDeadTargeting.init = function (self, arg_1_1, arg_1_2, arg_1_3, arg_1_4, arg_1_5, arg_1_6, arg_1_7, arg_1_8)
+ActionCareerBWNecromancerRaiseDeadTargeting.init = function (self, world, item_name, is_server, owner_unit, damage_unit, first_person_unit, weapon_unit, weapon_system)
 	-- function 1
-	ActionCareerBWNecromancerRaiseDeadTargeting.super.init(self, arg_1_1, arg_1_2, arg_1_3, arg_1_4, arg_1_5, arg_1_6, arg_1_7, arg_1_8)
+	ActionCareerBWNecromancerRaiseDeadTargeting.super.init(self, world, item_name, is_server, owner_unit, damage_unit, first_person_unit, weapon_unit, weapon_system)
 
 	self._ai_navigation_system = Managers.state.entity:system("ai_navigation_system")
-	self._first_person_extension = ScriptUnit.has_extension(arg_1_4, "first_person_system")
-	self._inventory_extension = ScriptUnit.extension(arg_1_4, "inventory_system")
-	self._weapon_extension = ScriptUnit.extension(arg_1_7, "weapon_system")
-	self._career_extension = ScriptUnit.extension(arg_1_4, "career_system")
-	self._buff_extension = ScriptUnit.extension(arg_1_4, "buff_system")
-	self._world = arg_1_1
-	self._owner_unit = arg_1_4
+	self._first_person_extension = ScriptUnit.has_extension(owner_unit, "first_person_system")
+	self._inventory_extension = ScriptUnit.extension(owner_unit, "inventory_system")
+	self._weapon_extension = ScriptUnit.extension(weapon_unit, "weapon_system")
+	self._career_extension = ScriptUnit.extension(owner_unit, "career_system")
+	self._buff_extension = ScriptUnit.extension(owner_unit, "buff_system")
+	self._world = world
+	self._owner_unit = owner_unit
 	self._last_valid_spawn_position = Vector3Box()
 	self._fp_rotation = QuaternionBox()
-	self._decal_diameter_id = World.find_particles_variable(self._world, str, "diameter")
+	self._decal_diameter_id = World.find_particles_variable(self._world, DECAL_NAME, "diameter")
 	self._unit_spawner = Managers.state.unit_spawner
 	self._buff_unit_params = {
 		is_husk = true
@@ -28,191 +28,197 @@ ActionCareerBWNecromancerRaiseDeadTargeting.init = function (self, arg_1_1, arg_
 
 	self._nav_callback = function ()
 		-- function 2
-		local time = Managers.time:time("game")
+		local t = Managers.time:time("game")
 
-		self:_update_targeting(time)
+		self:_update_targeting(t)
 	end
 end
 
-ActionCareerBWNecromancerRaiseDeadTargeting.client_owner_start_action = function (self, arg_3_1, arg_3_2, arg_3_3, arg_3_4, arg_3_5)
+ActionCareerBWNecromancerRaiseDeadTargeting.client_owner_start_action = function (self, new_action, t, chain_action_data, power_level, action_init_data)
 	-- function 3
-	arg_3_5 = arg_3_5 or {}
+	action_init_data = not not action_init_data or not not {}
 
-	ActionCareerBWNecromancerRaiseDeadTargeting.super.client_owner_start_action(self, arg_3_1, arg_3_2, arg_3_3, arg_3_4, arg_3_5)
+	ActionCareerBWNecromancerRaiseDeadTargeting.super.client_owner_start_action(self, new_action, t, chain_action_data, power_level, action_init_data)
 	self._weapon_extension:set_mode(true)
 
-	local breed_to_spawn = arg_3_1.breed_to_spawn
-	local has_extension = ScriptUnit.has_extension(self._owner_unit, "talent_system")
+	local breed_to_spawn = new_action.breed_to_spawn
+	local talent_ext = ScriptUnit.has_extension(self._owner_unit, "talent_system")
 
-	if not has_extension and not has_extension:has_talent("sienna_necromancer_6_3_2") then
-		breed_to_spawn = arg_3_1.faster_breed_to_spawn
+	if talent_ext and talent_ext:has_talent("sienna_necromancer_6_3_2") then
+		breed_to_spawn = new_action.faster_breed_to_spawn
 	end
 
 	self._spawn_data = {
-		cooldown_leeway = arg_3_1.cooldown_leeway,
-		cooldown_per_spawn_percent = arg_3_1.cooldown_per_spawn_percent,
-		controlled_unit_template = arg_3_1.controlled_unit_template,
+		cooldown_leeway = new_action.cooldown_leeway,
+		cooldown_per_spawn_percent = new_action.cooldown_per_spawn_percent,
+		controlled_unit_template = new_action.controlled_unit_template,
 		breed_to_spawn = breed_to_spawn,
-		spawns_per_second = arg_3_1.spawns_per_second,
+		spawns_per_second = new_action.spawns_per_second,
 		target_center = Vector3Box()
 	}
 
-	local _owner_unit = self._owner_unit
+	local owner_unit = self._owner_unit
 
-	self._first_person_extension:play_unit_sound_event("Play_career_necro_ability_raise_dead_target", _owner_unit, 0, false)
+	self._first_person_extension:play_unit_sound_event("Play_career_necro_ability_raise_dead_target", owner_unit, 0, false)
 
 	self._valid = false
-	self._diameter = arg_3_1.radius * 2
+	self._diameter = new_action.radius * 2
 
 	self:_start_targeting()
 	self._ai_navigation_system:add_safe_navigation_callback(self._nav_callback)
 end
 
-ActionCareerBWNecromancerRaiseDeadTargeting.client_owner_post_update = function (self, arg_4_1, arg_4_2, arg_4_3, arg_4_4, arg_4_5)
+ActionCareerBWNecromancerRaiseDeadTargeting.client_owner_post_update = function (self, dt, t, world, can_damage, current_time_in_action)
 	-- function 4
 	self._ai_navigation_system:add_safe_navigation_callback(self._nav_callback)
 end
 
 ActionCareerBWNecromancerRaiseDeadTargeting._start_targeting = function (self)
 	-- function 5
-	local _world = self._world
+	local world = self._world
 
-	self._spawn_decal_id = World.create_particles(_world, str, Vector3(0, 0, -600))
+	self._spawn_decal_id = World.create_particles(world, DECAL_NAME, Vector3(0, 0, -600))
 
-	World.set_particles_variable(_world, self._spawn_decal_id, self._decal_diameter_id, Vector3(self._diameter, self._diameter, 1))
+	World.set_particles_variable(world, self._spawn_decal_id, self._decal_diameter_id, Vector3(self._diameter, self._diameter, 1))
 
-	local var_5_1 = POSITION_LOOKUP[self._owner_unit]
+	local owner_pos = POSITION_LOOKUP[self._owner_unit]
 
-	self._last_valid_spawn_position:store(var_5_1)
+	self._last_valid_spawn_position:store(owner_pos)
 end
 
-ActionCareerBWNecromancerRaiseDeadTargeting._update_targeting = function (self, arg_6_1)
+ActionCareerBWNecromancerRaiseDeadTargeting._update_targeting = function (self, t)
 	-- function 6
-	local _get_projectile_position, var_6_1 = self:_get_projectile_position(num)
-	local _world = self._world
+	local good_target, target_pos = self:_get_projectile_position(RAYCAST_SPEED)
+	local world = self._world
 
-	if not _get_projectile_position then
+	if good_target then
 		self._valid = true
 
-		self._spawn_data.target_center:store(var_6_1)
-		World.move_particles(_world, self._spawn_decal_id, var_6_1)
+		self._spawn_data.target_center:store(target_pos)
+		World.move_particles(world, self._spawn_decal_id, target_pos)
 	end
 end
 
 ActionCareerBWNecromancerRaiseDeadTargeting._get_projectile_position = function (self)
 	-- function 7
-	local _world = self._world
-	local get_data = World.get_data(_world, "physics_world")
-	local str = "filter_adept_teleport"
-	local _get_first_person_position_direction, var_7_4 = self:_get_first_person_position_direction()
-	local num_3 = var_7_4 * num
-	local var_7_6 = Vector3(0, 0, num_2)
-	local ground_target, var_7_8 = WeaponHelper:ground_target(get_data, self._owner_unit, _get_first_person_position_direction, num_3, var_7_6, str)
+	local world = self._world
+	local physics_world = World.get_data(world, "physics_world")
+	local collision_filter = "filter_adept_teleport"
+	local player_position, raycast_direction = self:_get_first_person_position_direction()
+	local velocity = raycast_direction * RAYCAST_SPEED
+	local gravity = Vector3(0, 0, RAYCAST_GRAVITY)
+	local good_target_position, target_position = WeaponHelper:ground_target(physics_world, self._owner_unit, player_position, velocity, gravity, collision_filter)
 
-	if not ground_target then
+	if good_target_position then
 		local nav_world = Managers.state.entity:system("ai_system"):nav_world()
-		local num_4 = 1
-		local num_5 = 1
-		local pos_on_mesh = LocomotionUtils.pos_on_mesh(nav_world, var_7_8, num_4, num_5)
+		local above, below = 1, 1
+		local nav_position = LocomotionUtils.pos_on_mesh(nav_world, target_position, above, below)
 
-		if not pos_on_mesh then
-			local num_6 = 3
-			local num_7 = 0.5
+		if not nav_position then
+			local horizontal_tolerance = 3
+			local distance_from_obstacle = 0.5
 
-			pos_on_mesh = GwNavQueries.inside_position_from_outside_position(nav_world, var_7_8, num_4, num_5, num_6, num_7)
+			nav_position = GwNavQueries.inside_position_from_outside_position(nav_world, target_position, above, below, horizontal_tolerance, distance_from_obstacle)
 		end
 
-		ground_target = not not pos_on_mesh
-		var_7_8 = pos_on_mesh
+		good_target_position = not not nav_position
+		target_position = nav_position
 	end
 
-	return ground_target, var_7_8
+	return good_target_position, target_position
 end
 
 ActionCareerBWNecromancerRaiseDeadTargeting._get_first_person_position_direction = function (self)
 	-- function 8
-	local _first_person_extension = self._first_person_extension
-	local current_position = _first_person_extension:current_position()
-	local current_rotation = _first_person_extension:current_rotation()
-	local rad = math.rad(45)
-	local rad_2 = math.rad(12.5)
-	local yaw = Quaternion.yaw(current_rotation)
-	local clamp = math.clamp(Quaternion.pitch(current_rotation), -rad, rad_2)
-	local var_8_7 = Quaternion(Vector3.up(), yaw)
-	local var_8_8 = Quaternion(Vector3.right(), clamp)
-	local multiply = Quaternion.multiply(var_8_7, var_8_8)
-	local forward = Quaternion.forward(multiply)
+	local first_person_extension = self._first_person_extension
+	local player_position = first_person_extension:current_position()
+	local player_rotation = first_person_extension:current_rotation()
+	local min_pitch = math.rad(45)
+	local max_pitch = math.rad(12.5)
+	local yaw = Quaternion.yaw(player_rotation)
+	local pitch = math.clamp(Quaternion.pitch(player_rotation), -min_pitch, max_pitch)
+	local yaw_rotation = Quaternion(Vector3.up(), yaw)
+	local pitch_rotation = Quaternion(Vector3.right(), pitch)
+	local raycast_rotation = Quaternion.multiply(yaw_rotation, pitch_rotation)
+	local raycast_direction = Quaternion.forward(raycast_rotation)
 
-	return current_position, forward
+	return player_position, raycast_direction
 end
 
-ActionCareerBWNecromancerRaiseDeadTargeting.finish = function (self, arg_9_1, arg_9_2)
+ActionCareerBWNecromancerRaiseDeadTargeting.finish = function (self, reason, data)
 	-- function 9
-	local _world = self._world
-	local _spawn_decal_id = self._spawn_decal_id
+	local world = self._world
+	local decal_id = self._spawn_decal_id
 
-	World.destroy_particles(_world, _spawn_decal_id)
+	World.destroy_particles(world, decal_id)
 
-	if not ((arg_9_1 ~= "new_interupting_action" or not self._valid) and arg_9_2.new_sub_action ~= "spawn_summon_area") then
-		local unbox = self._spawn_data.target_center:unbox()
-		local create_shared_lifetime_buff_unit = self._buff_extension:create_shared_lifetime_buff_unit(unbox)
-		local alloc_table = FrameTable.alloc_table()
+	if reason == "new_interupting_action" and self._valid and data.new_sub_action == "spawn_summon_area" then
+		local target_center = self._spawn_data.target_center:unbox()
+		local buff_unit = self._buff_extension:create_shared_lifetime_buff_unit(target_center)
+		local params = FrameTable.alloc_table()
 
-		alloc_table.source_attacker_unit = self._owner_unit
+		params.source_attacker_unit = self._owner_unit
 
-		local add_buff_synced = Managers.state.entity:system("buff_system"):add_buff_synced(create_shared_lifetime_buff_unit, "raise_dead_ability", BuffSyncType.All, alloc_table)
+		local buff_system = Managers.state.entity:system("buff_system")
+		local buff_id = buff_system:add_buff_synced(buff_unit, "raise_dead_ability", BuffSyncType.All, params)
+		local buff_extension = ScriptUnit.extension(buff_unit, "buff_system")
+		local buff = buff_extension:get_buff_by_id(buff_id)
 
-		ScriptUnit.extension(create_shared_lifetime_buff_unit, "buff_system"):get_buff_by_id(add_buff_synced).spawn_data = self._spawn_data
+		buff.spawn_data = self._spawn_data
 
-		local _owner_unit = self._owner_unit
-		local extension_input = ScriptUnit.extension_input(_owner_unit, "dialogue_system")
-		local alloc_table_2 = FrameTable.alloc_table()
+		local owner_unit = self._owner_unit
+		local dialogue_input = ScriptUnit.extension_input(owner_unit, "dialogue_system")
+		local event_data = FrameTable.alloc_table()
 
-		extension_input:trigger_networked_dialogue_event("activate_ability", alloc_table_2)
+		dialogue_input:trigger_networked_dialogue_event("activate_ability", event_data)
 
 		local network_transmit = Managers.state.network.network_transmit
-		local str = "career_necro_skeleton_spawn"
+		local sound_to_play = "career_necro_skeleton_spawn"
+		local audio_system = Managers.state.entity:system("audio_system")
 
-		Managers.state.entity:system("audio_system"):play_audio_position_event(str, unbox)
-		self._first_person_extension:play_unit_sound_event("Play_career_necro_ability_raise_dead_cast", _owner_unit, 0, false)
-		self._first_person_extension:play_remote_unit_sound_event("Play_career_necro_ability_raise_dead_cast_husk", _owner_unit, 0)
+		audio_system:play_audio_position_event(sound_to_play, target_center)
+		self._first_person_extension:play_unit_sound_event("Play_career_necro_ability_raise_dead_cast", owner_unit, 0, false)
+		self._first_person_extension:play_remote_unit_sound_event("Play_career_necro_ability_raise_dead_cast_husk", owner_unit, 0)
 
-		local _is_server = self._is_server
-		local str_2 = "sienna_necromancer_ability_stagger"
-		local has_extension = ScriptUnit.has_extension(self._owner_unit, "talent_system")
+		local is_server = self._is_server
+		local explosion_template_name = "sienna_necromancer_ability_stagger"
+		local talent_ext = ScriptUnit.has_extension(self._owner_unit, "talent_system")
 
-		if not has_extension and not has_extension:has_talent("sienna_necromancer_6_2") then
-			str_2 = "sienna_necromancer_ability_stagger_improved"
+		if talent_ext and talent_ext:has_talent("sienna_necromancer_6_2") then
+			explosion_template_name = "sienna_necromancer_ability_stagger_improved"
 		end
 
-		local _world_2 = self._world
-		local get_template = ExplosionUtils.get_template(str_2)
-		local num = 1
-		local str_3 = "career_ability"
-		local flag = false
-		local identity = Quaternion.identity()
-		local get_career_power_level = self._career_extension:get_career_power_level()
+		local world = self._world
+		local explosion_template = ExplosionUtils.get_template(explosion_template_name)
+		local scale = 1
+		local damage_source = "career_ability"
+		local is_husk = false
+		local rotation = Quaternion.identity()
+		local career_power_level = self._career_extension:get_career_power_level()
 
-		DamageUtils.create_explosion(_world_2, _owner_unit, unbox, identity, get_template, num, str_3, _is_server, flag, _owner_unit, get_career_power_level, false, _owner_unit)
+		DamageUtils.create_explosion(world, owner_unit, target_center, rotation, explosion_template, scale, damage_source, is_server, is_husk, owner_unit, career_power_level, false, owner_unit)
 
-		local var_9_21 = NetworkLookup.explosion_templates[str_2]
-		local var_9_22 = NetworkLookup.damage_sources[str_3]
-		local go_id = Managers.state.unit_storage:go_id(_owner_unit)
+		local explosion_template_id = NetworkLookup.explosion_templates[explosion_template_name]
+		local damage_source_id = NetworkLookup.damage_sources[damage_source]
+		local owner_go_id = Managers.state.unit_storage:go_id(owner_unit)
 
-		if not _is_server then
-			network_transmit:send_rpc_clients("rpc_create_explosion", go_id, false, unbox, identity, var_9_21, num, var_9_22, get_career_power_level, false, go_id)
+		if is_server then
+			network_transmit:send_rpc_clients("rpc_create_explosion", owner_go_id, false, target_center, rotation, explosion_template_id, scale, damage_source_id, career_power_level, false, owner_go_id)
 		else
-			network_transmit:send_rpc_server("rpc_create_explosion", go_id, false, unbox, identity, var_9_21, num, var_9_22, get_career_power_level, false, go_id)
+			network_transmit:send_rpc_server("rpc_create_explosion", owner_go_id, false, target_center, rotation, explosion_template_id, scale, damage_source_id, career_power_level, false, owner_go_id)
 		end
 
-		local str_4 = "fx/necromancer_wave_round"
-		local var_9_25 = NetworkLookup.effects[str_4]
-		local num_2 = 0
-		local flag_2 = false
+		local effect_name = "fx/necromancer_wave_round"
+		local effect_id = NetworkLookup.effects[effect_name]
+		local node_id = 0
+		local linked = false
 
-		network_transmit:send_rpc_server("rpc_play_particle_effect_no_rotation", var_9_25, NetworkConstants.invalid_game_object_id, num_2, unbox, flag_2)
+		network_transmit:send_rpc_server("rpc_play_particle_effect_no_rotation", effect_id, NetworkConstants.invalid_game_object_id, node_id, target_center, linked)
 		self._career_extension:start_activated_ability_cooldown()
-		self._career_extension:get_passive_ability_by_name("bw_necromancer"):store_buff_unit(create_shared_lifetime_buff_unit)
+
+		local passive_ability = self._career_extension:get_passive_ability_by_name("bw_necromancer")
+
+		passive_ability:store_buff_unit(buff_unit)
 	end
 
 	return nil

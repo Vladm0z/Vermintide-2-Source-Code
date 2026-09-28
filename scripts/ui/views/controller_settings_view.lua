@@ -2,14 +2,14 @@
 
 ControllerSettingsView = class(ControllerSettingsView)
 
-ControllerSettingsView.init = function (self, arg_1_1)
+ControllerSettingsView.init = function (self, ingame_ui_context)
 	-- function 1
-	self.ui_renderer = arg_1_1.ui_renderer
-	self.input_manager = arg_1_1.input_manager
-	self.ingame_ui = arg_1_1.ingame_ui
+	self.ui_renderer = ingame_ui_context.ui_renderer
+	self.input_manager = ingame_ui_context.input_manager
+	self.ingame_ui = ingame_ui_context.ingame_ui
 end
 
-local tbl = {
+local controller_settings_to_add = {
 	{
 		"Player",
 		PlayerControllerKeymaps
@@ -23,7 +23,7 @@ local tbl = {
 		ChatControllerSettings
 	}
 }
-local tbl_2 = {
+local scenegraph_definition = {
 	root = {
 		is_root = true,
 		position = {
@@ -56,24 +56,24 @@ UIElements.KeyBindElement = {
 			style_id = "text",
 			pass_type = "text",
 			text_id = "text_field",
-			content_check_function = function (self)
+			content_check_function = function (content)
 				-- function 2
-				return self.button_hotspot.is_hover
+				return content.button_hotspot.is_hover
 			end
 		},
 		{
 			style_id = "hover_text",
 			pass_type = "text",
 			text_id = "text_field",
-			content_check_function = function (self)
+			content_check_function = function (content)
 				-- function 3
-				return self.button_hotspot.is_hover
+				return content.button_hotspot.is_hover
 			end
 		}
 	}
 }
 
-local tbl_3 = {
+local widget_definition = {
 	scenegraph_id = "",
 	element = UIElements.KeyBindElement,
 	content = {
@@ -96,44 +96,45 @@ local tbl_3 = {
 	}
 }
 
-local function fn(self, arg_4_1)
+local function get_button_name(input_service, keymap)
 	-- function 4
-	local var_4_0 = arg_4_1[1]
-	local var_4_1 = self.mapped_devices[var_4_0][1]
-	local var_4_2 = arg_4_1[3]
-	local var_4_3 = arg_4_1[2]
-	local var_4_4
+	local device_type = keymap[1]
+	local device_list = input_service.mapped_devices[device_type]
+	local input_device = device_list[1]
+	local button_type = keymap[3]
+	local button_index = keymap[2]
+	local text
 
-	if var_4_2 == "axis" then
-		var_4_4 = var_4_1.axis_name(var_4_3)
+	if button_type == "axis" then
+		text = input_device.axis_name(button_index)
 	else
-		var_4_4 = var_4_1.button_name(var_4_3)
+		text = input_device.button_name(button_index)
 	end
 
-	return var_4_4
+	return text
 end
 
 ControllerSettingsView.create_ui_elements = function (self)
 	-- function 5
-	local tbl_4 = {}
-	local num = 0
-	local var_5_2 = tbl_2
-	local var_5_3 = tbl_3
+	local ui_widgets = {}
+	local n_widgets = 0
+	local scenegraph_definition = scenegraph_definition
+	local widget_definition = widget_definition
 	local input_manager = self.input_manager
 
-	for i, v in ipairs(tbl) do
-		local var_5_5 = v[1]
+	for _, settings_data in ipairs(controller_settings_to_add) do
+		local service_name = settings_data[1]
 
-		num = num + 1
-		var_5_3.content[var_5_5] = var_5_5
-		UIElements.KeyBindElement.passes[3].text_id = var_5_5
-		UIElements.KeyBindElement.passes[4].text_id = var_5_5
-		var_5_3.scenegraph_id = var_5_5
-		var_5_2[var_5_5] = {
+		n_widgets = n_widgets + 1
+		widget_definition.content[service_name] = service_name
+		UIElements.KeyBindElement.passes[3].text_id = service_name
+		UIElements.KeyBindElement.passes[4].text_id = service_name
+		widget_definition.scenegraph_id = service_name
+		scenegraph_definition[service_name] = {
 			parent = "widget_start",
 			offset = {
 				0,
-				-num * 16,
+				-n_widgets * 16,
 				1
 			},
 			size = {
@@ -141,39 +142,39 @@ ControllerSettingsView.create_ui_elements = function (self)
 				16
 			}
 		}
-		tbl_4[num] = UIWidget.init(var_5_3)
+		ui_widgets[n_widgets] = UIWidget.init(widget_definition)
 
-		local get_service = input_manager:get_service(var_5_5)
+		local input_service = input_manager:get_service(service_name)
 
-		for k, v_2 in pairs(v[2]) do
-			num = num + 1
+		for map_name, _ in pairs(settings_data[2]) do
+			n_widgets = n_widgets + 1
 
-			local get_keymapping = get_service:get_keymapping(k)
-			local var_5_8 = get_keymapping.input_mappings[1]
-			local var_5_9 = get_keymapping.input_mappings[2]
-			local str = "-"
-			local str_2 = "-"
+			local keymapping = input_service:get_keymapping(map_name)
+			local keymap_1 = keymapping.input_mappings[1]
+			local keymap_2 = keymapping.input_mappings[2]
+			local keymap_1_text = "-"
+			local keymap_2_text = "-"
 
-			if not var_5_8 then
-				str = fn(get_service, var_5_8)
+			if keymap_1 then
+				keymap_1_text = get_button_name(input_service, keymap_1)
 			end
 
-			if not var_5_9 then
-				str_2 = fn(get_service, var_5_9)
+			if keymap_2 then
+				keymap_2_text = get_button_name(input_service, keymap_2)
 			end
 
-			local str_3 = "index_" .. tostring(num)
-			local format = string.format("%s: %20s | %-20s", k, str, str_2)
+			local index_name = "index_" .. tostring(n_widgets)
+			local total_text = string.format("%s: %20s | %-20s", map_name, keymap_1_text, keymap_2_text)
 
-			var_5_3.content[str_3] = format
-			UIElements.KeyBindElement.passes[3].text_id = str_3
-			UIElements.KeyBindElement.passes[4].text_id = str_3
-			var_5_3.scenegraph_id = str_3
-			var_5_2[str_3] = {
+			widget_definition.content[index_name] = total_text
+			UIElements.KeyBindElement.passes[3].text_id = index_name
+			UIElements.KeyBindElement.passes[4].text_id = index_name
+			widget_definition.scenegraph_id = index_name
+			scenegraph_definition[index_name] = {
 				parent = "widget_start",
 				offset = {
 					0,
-					-num * 16,
+					-n_widgets * 16,
 					1
 				},
 				size = {
@@ -181,12 +182,12 @@ ControllerSettingsView.create_ui_elements = function (self)
 					16
 				}
 			}
-			tbl_4[num] = UIWidget.init(var_5_3)
+			ui_widgets[n_widgets] = UIWidget.init(widget_definition)
 		end
 	end
 
-	self.ui_scenegraph = UISceneGraph.init_scenegraph(var_5_2)
-	self.ui_widgets = tbl_4
+	self.ui_scenegraph = UISceneGraph.init_scenegraph(scenegraph_definition)
+	self.ui_widgets = ui_widgets
 end
 
 ControllerSettingsView.on_enter = function (self)
@@ -194,25 +195,25 @@ ControllerSettingsView.on_enter = function (self)
 	self:create_ui_elements()
 end
 
-ControllerSettingsView.destroy = function (arg_7_0)
+ControllerSettingsView.destroy = function (self)
 	-- function 7
 	return
 end
 
-ControllerSettingsView.update = function (self, arg_8_1)
+ControllerSettingsView.update = function (self, dt)
 	-- function 8
 	local ui_renderer = self.ui_renderer
-	local get_service = self.input_manager:get_service("ingame_menu")
+	local input_service = self.input_manager:get_service("ingame_menu")
 
-	UIRenderer.begin_pass(ui_renderer, self.ui_scenegraph, get_service, arg_8_1)
+	UIRenderer.begin_pass(ui_renderer, self.ui_scenegraph, input_service, dt)
 
-	for i, v in ipairs(self.ui_widgets) do
-		UIRenderer.draw_widget(ui_renderer, v)
+	for i, ui_widget in ipairs(self.ui_widgets) do
+		UIRenderer.draw_widget(ui_renderer, ui_widget)
 	end
 
 	UIRenderer.end_pass(ui_renderer)
 
-	if get_service:get("toggle_menu") or not get_service:get("back") then
+	if input_service:get("toggle_menu") or input_service:get("back") then
 		self.ingame_ui:handle_transition("ingame_menu", "OptionsMenu")
 	end
 end

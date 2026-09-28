@@ -1,11 +1,11 @@
 -- chunkname: @scripts/managers/matchmaking/matchmaking_state_flexmatch_host.lua
 
-local scripts_managers_backend_playfab_settings_flexmatch_queue_status = require("scripts/managers/backend_playfab/settings/flexmatch_queue_status")
+local FlexmatchQueueStatus = require("scripts/managers/backend_playfab/settings/flexmatch_queue_status")
 
 MatchmakingStateFlexmatchHost = class(MatchmakingStateFlexmatchHost)
 MatchmakingStateFlexmatchHost.NAME = "MatchmakingStateFlexmatchHost"
 
-local tbl = {
+local MatchmakingState = {
 	CollectingTickets = "CollectingTickets",
 	RequestingRegions = "RequestingRegions",
 	Succeeded = "Succeeded",
@@ -16,29 +16,29 @@ local tbl = {
 	WaitingForMatchmaking = "WaitingForMatchmaking",
 	Init = "Init"
 }
-local num = 3
-local num_2 = 10
-local num_3 = 30
-local num_4 = 60
-local num_5 = 5
-local num_6 = 2
-local tbl_2 = {}
+local PingCount = 3
+local TimeOutCheckingLatency = 10
+local TimeoutCollectingTickets = 30
+local TimeoutWaitingForMatchmaking = 60
+local TimeBetweenMatchmakeUpdates = 5
+local TimeoutWaitingForPing = 2
+local EMPTY_TABLE = {}
 
-local function fn(arg_1_0, ...)
+local function flexmatch_printf(text, ...)
 	-- function 1
-	arg_1_0 = "[Flexmatch] " .. arg_1_0
+	text = "[Flexmatch] " .. text
 
-	printf(arg_1_0, ...)
+	printf(text, ...)
 end
 
-MatchmakingStateFlexmatchHost.init = function (self, arg_2_1)
+MatchmakingStateFlexmatchHost.init = function (self, params)
 	-- function 2
-	self._network_transmit = arg_2_1.network_transmit
-	self._network_options = arg_2_1.network_options
-	self._lobby = arg_2_1.lobby
+	self._network_transmit = params.network_transmit
+	self._network_options = params.network_options
+	self._lobby = params.lobby
 end
 
-MatchmakingStateFlexmatchHost.terminate = function (arg_3_0)
+MatchmakingStateFlexmatchHost.terminate = function (self)
 	-- function 3
 	return
 end
@@ -48,11 +48,12 @@ MatchmakingStateFlexmatchHost.destroy = function (self)
 	self:_cleanup()
 end
 
-MatchmakingStateFlexmatchHost.on_enter = function (self, arg_5_1)
+MatchmakingStateFlexmatchHost.on_enter = function (self, state_context)
 	-- function 5
-	self._state_context = arg_5_1
+	self._state_context = state_context
 
-	local lobby_members = arg_5_1.search_config.party_lobby_host.lobby_members
+	local search_config = state_context.search_config
+	local lobby_members = search_config.party_lobby_host.lobby_members
 
 	self._tt_next_matchmaking_check = 0
 	self._timeout = math.huge
@@ -60,14 +61,14 @@ MatchmakingStateFlexmatchHost.on_enter = function (self, arg_5_1)
 	self._estimated_wait_time = -1
 	self._queue_tickets = {}
 
-	for k, v in pairs(lobby_members.members) do
-		self._queue_tickets[k] = false
+	for peer_id, _ in pairs(lobby_members.members) do
+		self._queue_tickets[peer_id] = false
 	end
 
 	Managers.state.event:register(self, "friend_party_peer_left", "on_friend_party_peer_left")
 
 	self._region_latency = {}
-	self._state = tbl.Init
+	self._state = MatchmakingState.Init
 end
 
 MatchmakingStateFlexmatchHost.on_exit = function (self)
@@ -75,160 +76,162 @@ MatchmakingStateFlexmatchHost.on_exit = function (self)
 	self:_cleanup()
 end
 
-MatchmakingStateFlexmatchHost.update = function (self, arg_7_1, arg_7_2)
+MatchmakingStateFlexmatchHost.update = function (self, dt, t)
 	-- function 7
-	if self._state == tbl.Init then
-		self._state = tbl.RequestingRegions
-	elseif self._state == tbl.RequestingRegions then
-		return self:_update_requesting_regions(arg_7_1, arg_7_2)
-	elseif self._state == tbl.CheckingLatency then
-		return self:_update_checking_latency(arg_7_1, arg_7_2)
-	elseif self._state == tbl.RequestingTicket then
-		return self:_update_requesting_ticket(arg_7_1, arg_7_2)
-	elseif self._state == tbl.CollectingTickets then
-		return self:_update_collecting_tickets(arg_7_1, arg_7_2)
-	elseif self._state == tbl.StartingMatchmaking then
-		return self:_update_starting_matchmaking(arg_7_1, arg_7_2)
-	elseif self._state == tbl.WaitingForMatchmaking then
-		return self:_update_waiting_for_matchmaking(arg_7_1, arg_7_2)
-	elseif self._state == tbl.InQueue then
-		return self:_update_in_queue(arg_7_1, arg_7_2)
-	elseif self._state == tbl.Succeeded then
-		return self:_update_succeeded(arg_7_1, arg_7_2)
+	if self._state == MatchmakingState.Init then
+		self._state = MatchmakingState.RequestingRegions
+	elseif self._state == MatchmakingState.RequestingRegions then
+		return self:_update_requesting_regions(dt, t)
+	elseif self._state == MatchmakingState.CheckingLatency then
+		return self:_update_checking_latency(dt, t)
+	elseif self._state == MatchmakingState.RequestingTicket then
+		return self:_update_requesting_ticket(dt, t)
+	elseif self._state == MatchmakingState.CollectingTickets then
+		return self:_update_collecting_tickets(dt, t)
+	elseif self._state == MatchmakingState.StartingMatchmaking then
+		return self:_update_starting_matchmaking(dt, t)
+	elseif self._state == MatchmakingState.WaitingForMatchmaking then
+		return self:_update_waiting_for_matchmaking(dt, t)
+	elseif self._state == MatchmakingState.InQueue then
+		return self:_update_in_queue(dt, t)
+	elseif self._state == MatchmakingState.Succeeded then
+		return self:_update_succeeded(dt, t)
 	else
-		self:_temp_update(arg_7_1)
+		self:_temp_update(dt)
 		fassert(false, "Unknown state: %s", self._state)
 	end
 end
 
-MatchmakingStateFlexmatchHost._update_requesting_regions = function (self, arg_8_1, arg_8_2)
+MatchmakingStateFlexmatchHost._update_requesting_regions = function (self, dt, t)
 	-- function 8
-	if not self._requesting_regions then
+	if self._requesting_regions then
 		return
 	end
 
-	local get_interface = Managers.backend:get_interface("versus")
+	local interface = Managers.backend:get_interface("versus")
 
-	if not get_interface then
+	if not interface then
 		return self:_cancel_matchmaking("Failed to find versus interface")
 	end
 
 	self._requesting_regions = true
 
-	local var_8_1 = callback(self, "_request_regions_cb")
+	local cb = callback(self, "_request_regions_cb")
 
-	get_interface:request_regions(var_8_1)
+	interface:request_regions(cb)
 	self._network_transmit:send_rpc_clients("rpc_matchmaking_ticket_request")
 
-	self._timeout = arg_8_2 + num_3 + num_2
+	self._timeout = t + TimeoutCollectingTickets + TimeOutCheckingLatency
 end
 
-MatchmakingStateFlexmatchHost._update_checking_latency = function (self, arg_9_1, arg_9_2)
+MatchmakingStateFlexmatchHost._update_checking_latency = function (self, dt, t)
 	-- function 9
-	if arg_9_2 >= self._timeout then
+	if t >= self._timeout then
 		return self:_cancel_matchmaking("Failed to get latency before timeout")
 	end
 
-	if not self._requesting_latency then
+	if self._requesting_latency then
 		return
 	end
 
-	if not Managers.backend:get_interface("versus") then
+	local interface = Managers.backend:get_interface("versus")
+
+	if not interface then
 		return self:_cancel_matchmaking("Failed to find versus interface")
 	end
 
-	Managers.ping:ping_multiple_times(num_6, self._regions, num, callback(self, "_ping_cb"))
+	Managers.ping:ping_multiple_times(TimeoutWaitingForPing, self._regions, PingCount, callback(self, "_ping_cb"))
 
 	self._requesting_latency = true
 end
 
-MatchmakingStateFlexmatchHost._ping_cb = function (self, arg_10_1, arg_10_2)
+MatchmakingStateFlexmatchHost._ping_cb = function (self, result, data)
 	-- function 10
-	if not self._ignore_results then
+	if self._ignore_results then
 		return
 	end
 
-	if not arg_10_1 then
+	if not result then
 		return self:_cancel_matchmaking("Failed to get latency")
 	end
 
-	self._region_latency = arg_10_2
-	self._state = tbl.RequestingTicket
+	self._region_latency = data
+	self._state = MatchmakingState.RequestingTicket
 end
 
-MatchmakingStateFlexmatchHost._update_requesting_ticket = function (self, arg_11_1, arg_11_2)
+MatchmakingStateFlexmatchHost._update_requesting_ticket = function (self, dt, t)
 	-- function 11
-	local get_interface = Managers.backend:get_interface("versus")
+	local interface = Managers.backend:get_interface("versus")
 
-	if not get_interface then
+	if not interface then
 		return self:_cancel_matchmaking("Failed to find versus interface")
 	end
 
-	local var_11_1 = callback(self, "_request_matchmaking_ticket_cb")
+	local cb = callback(self, "_request_matchmaking_ticket_cb")
 
-	get_interface:request_matchmaking_ticket(self._region_latency, var_11_1)
+	interface:request_matchmaking_ticket(self._region_latency, cb)
 
-	self._state = tbl.CollectingTickets
+	self._state = MatchmakingState.CollectingTickets
 end
 
-MatchmakingStateFlexmatchHost._update_collecting_tickets = function (self, arg_12_1, arg_12_2)
+MatchmakingStateFlexmatchHost._update_collecting_tickets = function (self, dt, t)
 	-- function 12
-	if arg_12_2 >= self._timeout then
+	if t >= self._timeout then
 		self:_cancel_matchmaking("Failed to collect tickets before timeout")
 
-		for k, v in pairs(self._queue_tickets) do
-			if not v then
-				fn("Missing ticket from: %s", k)
+		for peer_id, ticket in pairs(self._queue_tickets) do
+			if not ticket then
+				flexmatch_printf("Missing ticket from: %s", peer_id)
 			end
 		end
 
 		return
 	end
 
-	for k_2, v_2 in pairs(self._queue_tickets) do
-		if not v_2 then
+	for peer_id, ticket in pairs(self._queue_tickets) do
+		if not ticket then
 			return
 		end
 	end
 
-	self._state = tbl.StartingMatchmaking
+	self._state = MatchmakingState.StartingMatchmaking
 end
 
-MatchmakingStateFlexmatchHost._update_starting_matchmaking = function (self, arg_13_1, arg_13_2)
+MatchmakingStateFlexmatchHost._update_starting_matchmaking = function (self, dt, t)
 	-- function 13
-	fn("Starting matchmaking")
+	flexmatch_printf("Starting matchmaking")
 	Managers.backend:get_interface("versus"):start_matchmaking(self._queue_tickets, callback(self, "_start_matchmaking_cb"))
 
-	self._timeout = arg_13_2 + num_4
-	self._state = tbl.WaitingForMatchmaking
+	self._timeout = t + TimeoutWaitingForMatchmaking
+	self._state = MatchmakingState.WaitingForMatchmaking
 end
 
-MatchmakingStateFlexmatchHost._update_waiting_for_matchmaking = function (self, arg_14_1, arg_14_2)
+MatchmakingStateFlexmatchHost._update_waiting_for_matchmaking = function (self, dt, t)
 	-- function 14
-	if arg_14_2 >= self._timeout then
+	if t >= self._timeout then
 		return self:_cancel_matchmaking("Failed to start matchmaking before timeout")
 	end
 end
 
-MatchmakingStateFlexmatchHost._update_in_queue = function (self, arg_15_1, arg_15_2)
+MatchmakingStateFlexmatchHost._update_in_queue = function (self, dt, t)
 	-- function 15
-	if arg_15_2 >= self._timeout then
+	if t >= self._timeout then
 		return self:_cancel_matchmaking("Failed to get response from matchmaking before timeout")
 	end
 
-	if not (self._matchmaking_check_in_progress or not (arg_15_2 >= self._tt_next_matchmaking_check)) then
+	if not self._matchmaking_check_in_progress and t >= self._tt_next_matchmaking_check then
 		self._matchmaking_check_in_progress = true
 
 		Managers.backend:get_interface("versus"):fetch_matchmaking_session_data(callback(self, "_fetch_matchmaking_cb"))
 	end
 end
 
-MatchmakingStateFlexmatchHost._update_succeeded = function (self, arg_16_1, arg_16_2)
+MatchmakingStateFlexmatchHost._update_succeeded = function (self, dt, t)
 	-- function 16
-	local format = string.format("%s:%s", self._connection_info.ipAddress, self._connection_info.port)
+	local ip_port = string.format("%s:%s", self._connection_info.ipAddress, self._connection_info.port)
 
 	self._state_context.server_info = {
-		ip_port = format
+		ip_port = ip_port
 	}
 	self._state_context.game_session_id = self._game_session_id
 	self._state_context.is_flexmatch = true
@@ -236,127 +239,127 @@ MatchmakingStateFlexmatchHost._update_succeeded = function (self, arg_16_1, arg_
 	return MatchmakingStateReserveLobby, self._state_context
 end
 
-MatchmakingStateFlexmatchHost._request_regions_cb = function (self, arg_17_1)
+MatchmakingStateFlexmatchHost._request_regions_cb = function (self, result)
 	-- function 17
-	if not self._ignore_results then
+	if self._ignore_results then
 		return
 	end
 
-	if not (not arg_17_1.success and arg_17_1.regions) then
+	if not result.success or not result.regions then
 		return self:_cancel_matchmaking("Requesting regions failed")
 	end
 
-	self._regions = arg_17_1.regions
-	self._base_url = arg_17_1.url
-	self._state = tbl.CheckingLatency
+	self._regions = result.regions
+	self._base_url = result.url
+	self._state = MatchmakingState.CheckingLatency
 end
 
-MatchmakingStateFlexmatchHost._request_matchmaking_ticket_cb = function (self, arg_18_1)
+MatchmakingStateFlexmatchHost._request_matchmaking_ticket_cb = function (self, result)
 	-- function 18
-	if not self._ignore_results then
+	if self._ignore_results then
 		return
 	end
 
-	if not arg_18_1.success then
-		if arg_18_1.errorCode == 404 then
-			local var_18_0 = Localize("wrong_game_version")
+	if not result.success then
+		if result.errorCode == 404 then
+			local text = Localize("wrong_game_version")
 
-			Managers.simple_popup:queue_popup(var_18_0, Localize("popup_needs_restart_topic"), "confirm", Localize("button_ok"))
+			Managers.simple_popup:queue_popup(text, Localize("popup_needs_restart_topic"), "confirm", Localize("button_ok"))
 		end
 
 		return self:_cancel_matchmaking("Requesting matchmaking ticket failed")
 	end
 
-	self._queue_tickets[Network.peer_id()] = arg_18_1.ticket
+	self._queue_tickets[Network.peer_id()] = result.ticket
 end
 
-MatchmakingStateFlexmatchHost._start_matchmaking_cb = function (self, arg_19_1, arg_19_2, arg_19_3, arg_19_4)
+MatchmakingStateFlexmatchHost._start_matchmaking_cb = function (self, result, code, headers, data)
 	-- function 19
-	if not (not arg_19_1 and arg_19_2 == 200) then
-		return self:_cancel_matchmaking("Starting matchmaking request failed. result: %s, code: %s", arg_19_1, tostring(arg_19_2))
+	if not result or code ~= 200 then
+		return self:_cancel_matchmaking("Starting matchmaking request failed. result: %s, code: %s", result, tostring(code))
 	end
 
-	self._matchmaking_session_id = arg_19_4.matchmakingSessionId
-	self._queue_status = arg_19_4.status
-	self._estimated_wait_time = arg_19_4.estimatedWaitTime
+	self._matchmaking_session_id = data.matchmakingSessionId
+	self._queue_status = data.status
+	self._estimated_wait_time = data.estimatedWaitTime
 
-	if not self._ignore_results then
+	if self._ignore_results then
 		return self:_cancel_matchmaking()
 	end
 
-	fn("session id: %s", self._matchmaking_session_id)
+	flexmatch_printf("session id: %s", self._matchmaking_session_id)
 
-	if self._queue_status == scripts_managers_backend_playfab_settings_flexmatch_queue_status.Queued then
-		self._state = tbl.InQueue
+	if self._queue_status == FlexmatchQueueStatus.Queued then
+		self._state = MatchmakingState.InQueue
 
-		local net_pack_flexmatch_ticket = NetworkUtils.net_pack_flexmatch_ticket(self._matchmaking_session_id)
+		local packed_session_id = NetworkUtils.net_pack_flexmatch_ticket(self._matchmaking_session_id)
 
-		self._network_transmit:send_rpc_clients("rpc_matchmaking_queue_session_data", net_pack_flexmatch_ticket, self._estimated_wait_time)
-	elseif not (self._queue_status == scripts_managers_backend_playfab_settings_flexmatch_queue_status.Failed or self._queue_status == scripts_managers_backend_playfab_settings_flexmatch_queue_status.TimedOut or self._queue_status ~= scripts_managers_backend_playfab_settings_flexmatch_queue_status.Cancelled) then
+		self._network_transmit:send_rpc_clients("rpc_matchmaking_queue_session_data", packed_session_id, self._estimated_wait_time)
+	elseif self._queue_status == FlexmatchQueueStatus.Failed or self._queue_status == FlexmatchQueueStatus.TimedOut or self._queue_status == FlexmatchQueueStatus.Cancelled then
 		return self:_cancel_matchmaking("Got unexpected queue status: %s", self._queue_status)
-	elseif self._queue_status == scripts_managers_backend_playfab_settings_flexmatch_queue_status.Succeeded then
-		self._game_session_id = arg_19_4.gameSessionId
-		self._connection_info = arg_19_4.connectionInfo
-		self._state = tbl.Succeeded
+	elseif self._queue_status == FlexmatchQueueStatus.Succeeded then
+		self._game_session_id = data.gameSessionId
+		self._connection_info = data.connectionInfo
+		self._state = MatchmakingState.Succeeded
 
-		local var_19_1 = fn
+		local var_19_0 = flexmatch_printf
 		local str = "Matchmaking successful. ipAddress: %s | port: %s | name: %s"
 		local ipAddress = self._connection_info.ipAddress
 		local port = self._connection_info.port
 		local name = self._connection_info.name
 
-		name = name or "???"
+		name = not not name or not not "???"
 
-		var_19_1(str, ipAddress, port, name)
+		var_19_0(str, ipAddress, port, name)
 	else
 		return self:_cancel_matchmaking("Got unexpected queue status: %s", self._queue_status)
 	end
 end
 
-MatchmakingStateFlexmatchHost._fetch_matchmaking_cb = function (self, arg_20_1, arg_20_2, arg_20_3, arg_20_4)
+MatchmakingStateFlexmatchHost._fetch_matchmaking_cb = function (self, result, code, headers, data)
 	-- function 20
-	if not self._ignore_results then
+	if self._ignore_results then
 		return
 	end
 
-	if not (not arg_20_1 and arg_20_2 == 200) then
-		return self:_cancel_matchmaking("Checking matchmaking request failed. result: %s, code: %s", arg_20_1, tostring(arg_20_2))
+	if not result or code ~= 200 then
+		return self:_cancel_matchmaking("Checking matchmaking request failed. result: %s, code: %s", result, tostring(code))
 	end
 
-	self._queue_status = arg_20_4.status
+	self._queue_status = data.status
 
-	local estimatedWaitTime = arg_20_4.estimatedWaitTime
+	local eta = data.estimatedWaitTime
 
 	self._matchmaking_check_in_progress = false
 
-	if self._queue_status == scripts_managers_backend_playfab_settings_flexmatch_queue_status.Succeeded then
-		self._game_session_id = arg_20_4.gameSessionId
-		self._connection_info = arg_20_4.connectionInfo
-		self._state = tbl.Succeeded
+	if self._queue_status == FlexmatchQueueStatus.Succeeded then
+		self._game_session_id = data.gameSessionId
+		self._connection_info = data.connectionInfo
+		self._state = MatchmakingState.Succeeded
 
-		local var_20_1 = fn
+		local var_20_0 = flexmatch_printf
 		local str = "Matchmaking successful. ipAddress: %s | port: %s | name: %s"
 		local ipAddress = self._connection_info.ipAddress
 		local port = self._connection_info.port
 		local name = self._connection_info.name
 
-		name = name or "???"
+		name = not not name or not not "???"
 
-		var_20_1(str, ipAddress, port, name)
-	elseif self._queue_status == scripts_managers_backend_playfab_settings_flexmatch_queue_status.Queued then
-		local time = Managers.time:time("main")
+		var_20_0(str, ipAddress, port, name)
+	elseif self._queue_status == FlexmatchQueueStatus.Queued then
+		local t = Managers.time:time("main")
 
-		self._tt_next_matchmaking_check = time + num_5
-		self._timeout = time + num_4
+		self._tt_next_matchmaking_check = t + TimeBetweenMatchmakeUpdates
+		self._timeout = t + TimeoutWaitingForMatchmaking
 
-		if estimatedWaitTime ~= self._estimated_wait_time then
-			self._estimated_wait_time = estimatedWaitTime
+		if eta ~= self._estimated_wait_time then
+			self._estimated_wait_time = eta
 
-			local net_pack_flexmatch_ticket = NetworkUtils.net_pack_flexmatch_ticket(self._matchmaking_session_id)
+			local packed_session_id = NetworkUtils.net_pack_flexmatch_ticket(self._matchmaking_session_id)
 
-			self._network_transmit:send_rpc_clients("rpc_matchmaking_queue_session_data", net_pack_flexmatch_ticket, estimatedWaitTime)
+			self._network_transmit:send_rpc_clients("rpc_matchmaking_queue_session_data", packed_session_id, eta)
 		end
-	elseif not (self._queue_status == scripts_managers_backend_playfab_settings_flexmatch_queue_status.Failed or self._queue_status == scripts_managers_backend_playfab_settings_flexmatch_queue_status.TimedOut or self._queue_status ~= scripts_managers_backend_playfab_settings_flexmatch_queue_status.Cancelled) then
+	elseif self._queue_status == FlexmatchQueueStatus.Failed or self._queue_status == FlexmatchQueueStatus.TimedOut or self._queue_status == FlexmatchQueueStatus.Cancelled then
 		return self:_cancel_matchmaking("Got unexpected queue status: %s", self._queue_status)
 	else
 		return self:_cancel_matchmaking("Got unexpected queue status: %s", self._queue_status)
@@ -365,10 +368,10 @@ end
 
 MatchmakingStateFlexmatchHost._cleanup = function (self)
 	-- function 21
-	local event = Managers.state.event
+	local event_manager = Managers.state.event
 
-	if not event then
-		event:unregister("friend_party_peer_left", self)
+	if event_manager then
+		event_manager:unregister("friend_party_peer_left", self)
 	end
 
 	self._ignore_results = true
@@ -380,43 +383,43 @@ MatchmakingStateFlexmatchHost._cleanup = function (self)
 	self._queue_status = nil
 end
 
-MatchmakingStateFlexmatchHost.on_friend_party_peer_left = function (self, arg_22_1, arg_22_2, arg_22_3)
+MatchmakingStateFlexmatchHost.on_friend_party_peer_left = function (self, peer_id, approved_for_joining, peer_state)
 	-- function 22
-	if not arg_22_2 then
+	if approved_for_joining then
 		return self:_cancel_matchmaking("Player left party")
 	end
 end
 
-MatchmakingStateFlexmatchHost._cancel_matchmaking = function (self, arg_23_1, ...)
+MatchmakingStateFlexmatchHost._cancel_matchmaking = function (self, reason, ...)
 	-- function 23
-	if not arg_23_1 then
-		fn("Cancelling matchmaking")
-		fn(arg_23_1, ...)
+	if reason then
+		flexmatch_printf("Cancelling matchmaking")
+		flexmatch_printf(reason, ...)
 	end
 
-	if not self._matchmaking_session_id then
+	if self._matchmaking_session_id then
 		Managers.backend:get_interface("versus"):cancel_matchmaking(callback(self, "_cancel_matchmaking_cb"))
 	elseif not self._ignore_results then
 		Managers.matchmaking:cancel_matchmaking()
 	end
 end
 
-MatchmakingStateFlexmatchHost._cancel_matchmaking_cb = function (self, arg_24_1, arg_24_2, arg_24_3, arg_24_4)
+MatchmakingStateFlexmatchHost._cancel_matchmaking_cb = function (self, result, code, headers, data)
 	-- function 24
-	fn("Matchmaking cancelled")
+	flexmatch_printf("Matchmaking cancelled")
 
 	self._matchmaking_session_id = nil
 
-	if not self._ignore_results then
+	if self._ignore_results then
 		return
 	end
 
 	Managers.matchmaking:cancel_matchmaking()
 end
 
-MatchmakingStateFlexmatchHost.rpc_matchmaking_ticket_response = function (arg_25_0, arg_25_1, arg_25_2)
+MatchmakingStateFlexmatchHost.rpc_matchmaking_ticket_response = function (self, channel_id, packed_ticket)
 	-- function 25
-	local var_25_0 = CHANNEL_TO_PEER_ID[arg_25_1]
+	local peer_id = CHANNEL_TO_PEER_ID[channel_id]
 
-	arg_25_0._queue_tickets[var_25_0] = NetworkUtils.unnet_pack_flexmatch_ticket(arg_25_2)
+	self._queue_tickets[peer_id] = NetworkUtils.unnet_pack_flexmatch_ticket(packed_ticket)
 end

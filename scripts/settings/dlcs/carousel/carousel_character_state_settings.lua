@@ -1,6 +1,8 @@
 -- chunkname: @scripts/settings/dlcs/carousel/carousel_character_state_settings.lua
 
-DLCSettings.carousel.character_states = {
+local settings = DLCSettings.carousel
+
+settings.character_states = {
 	"scripts/unit_extensions/default_player_unit/enemy_states/enemy_character_state",
 	"scripts/unit_extensions/default_player_unit/enemy_states/enemy_character_state_catapulted",
 	"scripts/unit_extensions/default_player_unit/enemy_states/enemy_character_state_animated_jump",

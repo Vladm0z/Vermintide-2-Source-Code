@@ -2,59 +2,60 @@
 
 LocomotionTemplates.AILocomotionExtensionC = {}
 
-LocomotionTemplates.AILocomotionExtensionC.init = function (arg_1_0, arg_1_1)
+LocomotionTemplates.AILocomotionExtensionC.init = function (data, nav_world)
 	-- function 1
 	return
 end
 
-LocomotionTemplates.AILocomotionExtensionC.update = function (arg_2_0, arg_2_1, arg_2_2)
+LocomotionTemplates.AILocomotionExtensionC.update = function (data, t, dt)
 	-- function 2
-	local ai_locomotion_update = EngineOptimizedExtensions.ai_locomotion_update(arg_2_1, arg_2_2)
+	local units_to_kill = EngineOptimizedExtensions.ai_locomotion_update(t, dt)
 
-	if not ai_locomotion_update then
-		local extension = ScriptUnit.extension
-		local has_extension = ScriptUnit.has_extension
-		local conflict = Managers.state.conflict
+	if units_to_kill then
+		local ScriptUnit_extension = ScriptUnit.extension
+		local ScriptUnit_has_extension = ScriptUnit.has_extension
+		local conflict_director = Managers.state.conflict
 		local statistics_db = Managers.player:statistics_db()
-		local network = Managers.state.network
-		local network_transmit = network.network_transmit
-		local alloc_table = FrameTable.alloc_table()
+		local network_manager = Managers.state.network
+		local network_transmit = network_manager.network_transmit
+		local killing_blow = FrameTable.alloc_table()
 
-		alloc_table[DamageDataIndex.DAMAGE_AMOUNT] = NetworkConstants.damage.max
-		alloc_table[DamageDataIndex.DAMAGE_TYPE] = "forced"
-		alloc_table[DamageDataIndex.HIT_ZONE] = "full"
-		alloc_table[DamageDataIndex.DIRECTION] = Vector3.down()
-		alloc_table[DamageDataIndex.DAMAGE_SOURCE_NAME] = "suicide"
-		alloc_table[DamageDataIndex.HIT_RAGDOLL_ACTOR_NAME] = "n/a"
-		alloc_table[DamageDataIndex.HIT_REACT_TYPE] = "light"
-		alloc_table[DamageDataIndex.CRITICAL_HIT] = false
-		alloc_table[DamageDataIndex.FIRST_HIT] = true
-		alloc_table[DamageDataIndex.TOTAL_HITS] = 1
-		alloc_table[DamageDataIndex.BACKSTAB_MULTIPLIER] = 1
-		alloc_table[DamageDataIndex.TARGET_INDEX] = 1
+		killing_blow[DamageDataIndex.DAMAGE_AMOUNT] = NetworkConstants.damage.max
+		killing_blow[DamageDataIndex.DAMAGE_TYPE] = "forced"
+		killing_blow[DamageDataIndex.HIT_ZONE] = "full"
+		killing_blow[DamageDataIndex.DIRECTION] = Vector3.down()
+		killing_blow[DamageDataIndex.DAMAGE_SOURCE_NAME] = "suicide"
+		killing_blow[DamageDataIndex.HIT_RAGDOLL_ACTOR_NAME] = "n/a"
+		killing_blow[DamageDataIndex.HIT_REACT_TYPE] = "light"
+		killing_blow[DamageDataIndex.CRITICAL_HIT] = false
+		killing_blow[DamageDataIndex.FIRST_HIT] = true
+		killing_blow[DamageDataIndex.TOTAL_HITS] = 1
+		killing_blow[DamageDataIndex.BACKSTAB_MULTIPLIER] = 1
+		killing_blow[DamageDataIndex.TARGET_INDEX] = 1
 
-		for i = 1, #ai_locomotion_update do
+		for i = 1, #units_to_kill do
 			print("Destroying unit since outside mesh or world")
 
-			local var_2_8 = ai_locomotion_update[i]
-			local _blackboard = extension(var_2_8, "ai_system")._blackboard
+			local unit = units_to_kill[i]
+			local ai_extension = ScriptUnit_extension(unit, "ai_system")
+			local blackboard = ai_extension._blackboard
 
-			alloc_table[DamageDataIndex.ATTACKER] = var_2_8
-			alloc_table[DamageDataIndex.POSITION] = Unit.world_position(var_2_8, 0)
-			alloc_table[DamageDataIndex.SOURCE_ATTACKER_UNIT] = var_2_8
+			killing_blow[DamageDataIndex.ATTACKER] = unit
+			killing_blow[DamageDataIndex.POSITION] = Unit.world_position(unit, 0)
+			killing_blow[DamageDataIndex.SOURCE_ATTACKER_UNIT] = unit
 
-			local var_2_10 = has_extension(var_2_8, "buff_system")
+			local buff_extenstion = ScriptUnit_has_extension(unit, "buff_system")
 
-			if not var_2_10 then
-				var_2_10:trigger_procs("on_death", var_2_8)
+			if buff_extenstion then
+				buff_extenstion:trigger_procs("on_death", unit)
 			end
 
-			StatisticsUtil.register_kill(var_2_8, alloc_table, statistics_db, true)
+			StatisticsUtil.register_kill(unit, killing_blow, statistics_db, true)
 
-			local unit_game_object_id = network:unit_game_object_id(var_2_8)
+			local unit_game_object_id = network_manager:unit_game_object_id(unit)
 
 			network_transmit:send_rpc_clients("rpc_register_kill", unit_game_object_id)
-			conflict:destroy_unit(var_2_8, _blackboard, "out_of_range")
+			conflict_director:destroy_unit(unit, blackboard, "out_of_range")
 		end
 	end
 end

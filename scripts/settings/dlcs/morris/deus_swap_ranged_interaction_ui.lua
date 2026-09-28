@@ -5,16 +5,16 @@ require("scripts/settings/dlcs/morris/deus_swap_weapon_interaction_ui")
 DeusSwapRangedInteractionUI = class(DeusSwapRangedInteractionUI, DeusSwapWeaponInteractionUI)
 DeusSwapRangedInteractionUI.TYPE = "swap_ranged"
 
-DeusSwapRangedInteractionUI.init = function (self, arg_1_1, arg_1_2)
+DeusSwapRangedInteractionUI.init = function (self, parent, ingame_ui_context)
 	-- function 1
-	DeusSwapRangedInteractionUI.super.init(self, arg_1_1, arg_1_2)
+	DeusSwapRangedInteractionUI.super.init(self, parent, ingame_ui_context)
 
 	self._type = "ranged"
 end
 
-DeusSwapRangedInteractionUI.chest_unlock_failed = function (self, arg_2_1)
+DeusSwapRangedInteractionUI.chest_unlock_failed = function (self, chest_type)
 	-- function 2
-	if arg_2_1 == DeusSwapRangedInteractionUI.TYPE then
+	if chest_type == DeusSwapRangedInteractionUI.TYPE then
 		self:_start_animation("chest_unlock_failed")
 	end
 end

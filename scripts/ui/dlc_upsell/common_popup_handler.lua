@@ -8,19 +8,30 @@ require("scripts/ui/active_event/active_event_popup")
 
 CommonPopupHandler = class(CommonPopupHandler)
 
-CommonPopupHandler.init = function (self, arg_1_1)
+CommonPopupHandler.init = function (self, context)
 	-- function 1
-	self._context = arg_1_1
+	self._context = context
 	self._popups = {}
 	self._n_popups = 0
 	self._popup_ids = 0
 
-	local menu_active = arg_1_1.ingame_ui.menu_active
+	local menu_active_2 = context.ingame_ui.menu_active
 
-	if not menu_active then
-		menu_active = arg_1_1.ingame_ui.current_view
-		menu_active = menu_active or arg_1_1.ingame_ui._transition_fade_data
+	if not menu_active_2 then
+		-- Nothing
 	end
+
+	menu_active_2 = context.ingame_ui.current_view
+
+	if not menu_active_2 then
+		-- Nothing
+	end
+
+	menu_active_2 = context.ingame_ui._transition_fade_data
+
+	local menu_active = menu_active_2
+
+	::label_1_0::
 
 	self._menu_active = menu_active
 
@@ -32,91 +43,95 @@ CommonPopupHandler.destroy = function (self)
 	Managers.state.event:unregister("ui_show_popup", self)
 
 	for i = 1, self._n_popups do
-		local var_2_0 = self._popups[i]
+		local popup = self._popups[i]
 
-		if not var_2_0 then
-			var_2_0:delete()
+		if popup then
+			popup:delete()
 
 			self._popups[i] = nil
 		end
 	end
 end
 
-CommonPopupHandler.update = function (self, arg_3_1, arg_3_2)
+CommonPopupHandler.update = function (self, dt, t)
 	-- function 3
-	local var_3_0 = self._popups[self._n_popups]
+	local popup = self._popups[self._n_popups]
 
-	if not var_3_0 then
+	if not popup then
 		return
 	end
 
-	local state = Managers.state
+	local managers_state = Managers.state
 
-	if not state and not state.voting:vote_in_progress() and not Managers.popup:has_popup() then
-		var_3_0:hide()
+	if managers_state and managers_state.voting:vote_in_progress() and Managers.popup:has_popup() then
+		popup:hide()
 
 		return
 	end
 
-	var_3_0:update(arg_3_1)
+	popup:update(dt)
 
-	if not var_3_0:exit_done() then
-		var_3_0:delete()
+	if popup:exit_done() then
+		popup:delete()
 
 		self._popups[self._n_popups] = nil
 		self._n_popups = self._n_popups - 1
 	end
 end
 
-CommonPopupHandler.queue_popup = function (self, arg_4_1)
+CommonPopupHandler.queue_popup = function (self, ui_popup)
 	-- function 4
-	local _n_popups = self._n_popups
-	local _popups = self._popups
-	local num = _n_popups + 1
+	local n_popups, popups = self._n_popups, self._popups
 
-	self._n_popups = num
+	n_popups = n_popups + 1
+	self._n_popups = n_popups
 	self._popup_ids = self._popup_ids + 1
 
-	local var_4_3 = tostring(self._popup_ids)
+	local popup_id = tostring(self._popup_ids)
 
-	arg_4_1.popup_id = var_4_3
+	ui_popup.popup_id = popup_id
 
-	if not (num > 1) or not _popups[num - 1]:is_popup_showing() then
-		table.insert(_popups, 1, arg_4_1)
+	if n_popups > 1 then
+		local previous_popup_showing = popups[n_popups - 1]:is_popup_showing()
 
-		self._popups = _popups
+		if previous_popup_showing then
+			table.insert(popups, 1, ui_popup)
 
-		return var_4_3
+			self._popups = popups
+
+			return popup_id
+		end
 	end
 
-	_popups[num] = arg_4_1
-	self._popups = _popups
+	popups[n_popups] = ui_popup
+	self._popups = popups
 
-	return var_4_3
+	return popup_id
 end
 
-CommonPopupHandler.ui_show_popup = function (self, arg_5_1, arg_5_2)
+CommonPopupHandler.ui_show_popup = function (self, popup_name, type)
 	-- function 5
-	local var_5_0 = CommonPopupSettings[arg_5_1]
+	local popup_settings = CommonPopupSettings[popup_name]
 
-	if not var_5_0 then
-		printf("No popup settings for DLC %q", arg_5_1)
+	if not popup_settings then
+		printf("No popup settings for DLC %q", popup_name)
 
 		return
 	end
 
-	if var_5_0.popup_type == arg_5_2 then
-		self:new_popup(arg_5_1, var_5_0)
+	if popup_settings.popup_type == type then
+		self:new_popup(popup_name, popup_settings)
 
 		return
 	end
 end
 
-CommonPopupHandler.new_popup = function (self, arg_6_1, arg_6_2)
+CommonPopupHandler.new_popup = function (self, popup_name, popup_settings)
 	-- function 6
-	local var_6_0 = rawget(_G, arg_6_2.class_name):new(self._context, arg_6_1, arg_6_2)
+	local popup_class = rawget(_G, popup_settings.class_name)
+	local popup = popup_class:new(self._context, popup_name, popup_settings)
 
-	self:queue_popup(var_6_0)
+	self:queue_popup(popup)
 end
 
 CommonPopupHandler._is_menu_active = function (self)
@@ -125,7 +140,7 @@ CommonPopupHandler._is_menu_active = function (self)
 
 	if not menu_active then
 		menu_active = self._context.ingame_ui.current_view
-		menu_active = menu_active or self._context.ingame_ui._transition_fade_data
+		menu_active = not not menu_active or not not self._context.ingame_ui._transition_fade_data
 	end
 
 	return menu_active

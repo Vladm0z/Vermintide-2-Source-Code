@@ -1,73 +1,73 @@
 -- chunkname: @foundation/scripts/util/state_machine.lua
 
-local tbl = {}
+local profiler_names = {}
 
-local function fn(arg_1_0, arg_1_1)
+local function profiler_scope(state_name, scope_type)
 	-- function 1
-	assert(arg_1_0, "State without name not allowed.")
+	assert(state_name, "State without name not allowed.")
 
-	local var_1_0 = tbl[arg_1_0]
+	local scope = profiler_names[state_name]
 
-	if var_1_0 == nil then
-		var_1_0 = {
-			create = arg_1_0 .. ":new",
-			enter = arg_1_0 .. ":on_enter",
-			exit = arg_1_0 .. ":on_exit"
+	if scope == nil then
+		scope = {
+			create = state_name .. ":new",
+			enter = state_name .. ":on_enter",
+			exit = state_name .. ":on_exit"
 		}
-		tbl[arg_1_0] = var_1_0
+		profiler_names[state_name] = scope
 	end
 
-	local var_1_1 = var_1_0[arg_1_1]
+	local scope_name = scope[scope_type]
 
-	assert(var_1_1)
+	assert(scope_name)
 
-	return var_1_1
+	return scope_name
 end
 
 StateMachine = class(StateMachine)
 
-local function fn_2(arg_2_0, ...)
+local function debug_print(format, ...)
 	-- function 2
-	cprintf("[StateMachine] " .. arg_2_0, ...)
+	cprintf("[StateMachine] " .. format, ...)
 end
 
-StateMachine.init = function (self, arg_3_1, arg_3_2, arg_3_3, arg_3_4)
+StateMachine.init = function (self, parent, start_state, params, profiling_debugging_enabled)
 	-- function 3
-	self._parent = arg_3_1
-	self._params = arg_3_3
-	self._profiling_debugging_enabled = arg_3_4
+	self._parent = parent
+	self._params = params
+	self._profiling_debugging_enabled = profiling_debugging_enabled
 
-	self:_change_state(arg_3_2, arg_3_3)
+	self:_change_state(start_state, params)
 end
 
-StateMachine._change_state = function (self, arg_4_1, arg_4_2)
+StateMachine._change_state = function (self, new_state, params)
 	-- function 4
-	if not self._state then
-		if not self._state.on_exit and not self._profiling_debugging_enabled then
-			local var_4_0 = fn(self._state.NAME, "exit")
+	if self._state then
+		if self._state.on_exit and self._profiling_debugging_enabled then
+			local scope_name = profiler_scope(self._state.NAME, "exit")
 
 			self._state:on_exit()
-		elseif not self._state.on_exit then
+		elseif self._state.on_exit then
 			self._state:on_exit()
 		end
 	end
 
-	if not self._profiling_debugging_enabled then
-		local var_4_1 = fn(arg_4_1.NAME, "create")
+	if self._profiling_debugging_enabled then
+		local scope_name = profiler_scope(new_state.NAME, "create")
 
-		self._state = arg_4_1:new()
+		self._state = new_state:new()
 	else
-		self._state = arg_4_1:new()
+		self._state = new_state:new()
 	end
 
 	self._state.parent = self._parent
 
-	if not self._state.on_enter and not self._profiling_debugging_enabled then
-		local var_4_2 = fn(self._state.NAME, "enter")
+	if self._state.on_enter and self._profiling_debugging_enabled then
+		local scope_name = profiler_scope(self._state.NAME, "enter")
 
-		self._state:on_enter(arg_4_2)
-	elseif not self._state.on_enter then
-		self._state:on_enter(arg_4_2)
+		self._state:on_enter(params)
+	elseif self._state.on_enter then
+		self._state:on_enter(params)
 	end
 end
 
@@ -76,25 +76,25 @@ StateMachine.state = function (self)
 	return self._state
 end
 
-StateMachine.update = function (self, arg_6_1, arg_6_2)
+StateMachine.update = function (self, dt, t)
 	-- function 6
-	local update = self._state:update(arg_6_1, arg_6_2)
+	local new_state = self._state:update(dt, t)
 
-	if not update then
-		self:_change_state(update, self._params)
+	if new_state then
+		self:_change_state(new_state, self._params)
 	end
 end
 
 StateMachine.destroy = function (self, ...)
 	-- function 7
-	if not self._state and not self._state.on_exit then
+	if self._state and self._state.on_exit then
 		self._state:on_exit(...)
 	end
 end
 
 StateMachine.on_close = function (self)
 	-- function 8
-	if not self._state and not self._state.on_close then
+	if self._state and self._state.on_close then
 		return self._state:on_close()
 	end
 

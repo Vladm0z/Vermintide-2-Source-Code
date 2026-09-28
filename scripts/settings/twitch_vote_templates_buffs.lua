@@ -1,18 +1,18 @@
 -- chunkname: @scripts/settings/twitch_vote_templates_buffs.lua
 
-local function fn(arg_1_0, ...)
+local function debug_print(message, ...)
 	-- function 1
-	if not DEBUG_TWITCH then
-		print("[Twitch] " .. string.format(arg_1_0, ...))
+	if DEBUG_TWITCH then
+		print("[Twitch] " .. string.format(message, ...))
 	end
 end
 
 local TwitchVoteTemplates = TwitchVoteTemplates
 
-TwitchVoteTemplates = TwitchVoteTemplates or {}
+TwitchVoteTemplates = not not TwitchVoteTemplates or not not {}
 TwitchVoteTemplates = TwitchVoteTemplates
 
-local TwitchSettings = TwitchSettings
+local twitch_settings = TwitchSettings
 
 TwitchVoteTemplates.twitch_add_speed_potion_buff = {
 	cost = -200,
@@ -25,23 +25,23 @@ TwitchVoteTemplates.twitch_add_speed_potion_buff = {
 	},
 	condition_func = function ()
 		-- function 2
-		return not TwitchSettings.disable_positive_votes
+		return not twitch_settings.disable_positive_votes
 	end,
-	on_success = function (arg_3_0)
+	on_success = function (is_server)
 		-- function 3
-		if not arg_3_0 then
-			fn("[TWITCH VOTE] Speed boosting all players")
+		if is_server then
+			debug_print("[TWITCH VOTE] Speed boosting all players")
 
-			local human_and_bot_players = Managers.player:human_and_bot_players()
+			local players = Managers.player:human_and_bot_players()
 
-			for k, v in pairs(human_and_bot_players) do
-				local player_unit = v.player_unit
+			for _, player in pairs(players) do
+				local unit = player.player_unit
 
-				if not Unit.alive(player_unit) then
-					local system = Managers.state.entity:system("buff_system")
-					local flag = false
+				if Unit.alive(unit) then
+					local buff_system = Managers.state.entity:system("buff_system")
+					local server_controlled = false
 
-					system:add_buff(player_unit, "twitch_speed_boost", player_unit, flag)
+					buff_system:add_buff(unit, "twitch_speed_boost", unit, server_controlled)
 				end
 			end
 		end
@@ -58,23 +58,23 @@ TwitchVoteTemplates.twitch_add_damage_potion_buff = {
 	},
 	condition_func = function ()
 		-- function 4
-		return not TwitchSettings.disable_positive_votes
+		return not twitch_settings.disable_positive_votes
 	end,
-	on_success = function (arg_5_0)
+	on_success = function (is_server)
 		-- function 5
-		if not arg_5_0 then
-			fn("[TWITCH VOTE] Damage boosting all players")
+		if is_server then
+			debug_print("[TWITCH VOTE] Damage boosting all players")
 
-			local human_and_bot_players = Managers.player:human_and_bot_players()
+			local players = Managers.player:human_and_bot_players()
 
-			for k, v in pairs(human_and_bot_players) do
-				local player_unit = v.player_unit
+			for _, player in pairs(players) do
+				local unit = player.player_unit
 
-				if not Unit.alive(player_unit) then
-					local system = Managers.state.entity:system("buff_system")
-					local flag = false
+				if Unit.alive(unit) then
+					local buff_system = Managers.state.entity:system("buff_system")
+					local server_controlled = false
 
-					system:add_buff(player_unit, "twitch_damage_boost", player_unit, flag)
+					buff_system:add_buff(unit, "twitch_damage_boost", unit, server_controlled)
 				end
 			end
 		end
@@ -91,23 +91,23 @@ TwitchVoteTemplates.twitch_add_cooldown_potion_buff = {
 	},
 	condition_func = function ()
 		-- function 6
-		return not TwitchSettings.disable_positive_votes
+		return not twitch_settings.disable_positive_votes
 	end,
-	on_success = function (arg_7_0)
+	on_success = function (is_server)
 		-- function 7
-		if not arg_7_0 then
-			fn("[TWITCH VOTE] Cooldown boosting all players")
+		if is_server then
+			debug_print("[TWITCH VOTE] Cooldown boosting all players")
 
-			local human_and_bot_players = Managers.player:human_and_bot_players()
+			local players = Managers.player:human_and_bot_players()
 
-			for k, v in pairs(human_and_bot_players) do
-				local player_unit = v.player_unit
+			for _, player in pairs(players) do
+				local unit = player.player_unit
 
-				if not Unit.alive(player_unit) then
-					local system = Managers.state.entity:system("buff_system")
-					local flag = false
+				if Unit.alive(unit) then
+					local buff_system = Managers.state.entity:system("buff_system")
+					local server_controlled = false
 
-					system:add_buff(player_unit, "twitch_cooldown_reduction_boost", player_unit, flag)
+					buff_system:add_buff(unit, "twitch_cooldown_reduction_boost", unit, server_controlled)
 				end
 			end
 		end
@@ -122,21 +122,21 @@ TwitchVoteTemplates.twitch_grimoire_health_debuff = {
 		70,
 		70
 	},
-	on_success = function (arg_8_0)
+	on_success = function (is_server)
 		-- function 8
-		if not arg_8_0 then
-			fn("[TWITCH VOTE] Adding grimoire health debuff")
+		if is_server then
+			debug_print("[TWITCH VOTE] Adding grimoire health debuff")
 
-			local human_and_bot_players = Managers.player:human_and_bot_players()
+			local players = Managers.player:human_and_bot_players()
 
-			for k, v in pairs(human_and_bot_players) do
-				local player_unit = v.player_unit
+			for _, player in pairs(players) do
+				local unit = player.player_unit
 
-				if not Unit.alive(player_unit) then
-					local system = Managers.state.entity:system("buff_system")
-					local flag = false
+				if Unit.alive(unit) then
+					local buff_system = Managers.state.entity:system("buff_system")
+					local server_controlled = false
 
-					system:add_buff(player_unit, "twitch_grimoire_health_debuff", player_unit, flag)
+					buff_system:add_buff(unit, "twitch_grimoire_health_debuff", unit, server_controlled)
 				end
 			end
 		end
@@ -153,36 +153,36 @@ TwitchVoteTemplates.twitch_no_overcharge_no_ammo_reloads = {
 	},
 	condition_func = function ()
 		-- function 9
-		return not TwitchSettings.disable_positive_votes
+		return not twitch_settings.disable_positive_votes
 	end,
-	on_success = function (arg_10_0)
+	on_success = function (is_server)
 		-- function 10
-		if not arg_10_0 then
-			fn("[TWITCH VOTE] Adding no overcharge/no ammo reloads buff")
+		if is_server then
+			debug_print("[TWITCH VOTE] Adding no overcharge/no ammo reloads buff")
 
-			local human_and_bot_players = Managers.player:human_and_bot_players()
+			local players = Managers.player:human_and_bot_players()
 
-			for k, v in pairs(human_and_bot_players) do
-				local player_unit = v.player_unit
+			for _, player in pairs(players) do
+				local unit = player.player_unit
 
-				if not Unit.alive(player_unit) then
-					local system = Managers.state.entity:system("buff_system")
-					local flag = false
+				if Unit.alive(unit) then
+					local buff_system = Managers.state.entity:system("buff_system")
+					local server_controlled = false
 
-					system:add_buff(player_unit, "twitch_no_overcharge_no_ammo_reloads", player_unit, flag)
+					buff_system:add_buff(unit, "twitch_no_overcharge_no_ammo_reloads", unit, server_controlled)
 
-					local str = "slot_ranged"
-					local num = 1
-					local extension = ScriptUnit.extension(player_unit, "inventory_system")
-					local get_slot_data = extension:get_slot_data(str)
-					local right_unit_1p = get_slot_data.right_unit_1p
-					local left_unit_1p = get_slot_data.left_unit_1p
-					local has_extension = ScriptUnit.has_extension(right_unit_1p, "ammo_system")
-					local has_extension_2 = ScriptUnit.has_extension(left_unit_1p, "ammo_system")
-					local flag_2 = has_extension or has_extension_2
+					local weapon_slot = "slot_ranged"
+					local ammo_amount = 1
+					local inventory_extension = ScriptUnit.extension(unit, "inventory_system")
+					local slot_data = inventory_extension:get_slot_data(weapon_slot)
+					local right_unit_1p = slot_data.right_unit_1p
+					local left_unit_1p = slot_data.left_unit_1p
+					local right_hand_ammo_extension = ScriptUnit.has_extension(right_unit_1p, "ammo_system")
+					local left_hand_ammo_extension = ScriptUnit.has_extension(left_unit_1p, "ammo_system")
+					local ammo_extension = not not right_hand_ammo_extension or not not left_hand_ammo_extension
 
-					if not (not flag_2 and extension:is_ammo_blocked()) then
-						flag_2:add_ammo(num)
+					if ammo_extension and not inventory_extension:is_ammo_blocked() then
+						ammo_extension:add_ammo(ammo_amount)
 					end
 				end
 			end
@@ -200,23 +200,23 @@ TwitchVoteTemplates.twitch_health_regen = {
 	},
 	condition_func = function ()
 		-- function 11
-		return not TwitchSettings.disable_positive_votes
+		return not twitch_settings.disable_positive_votes
 	end,
-	on_success = function (arg_12_0)
+	on_success = function (is_server)
 		-- function 12
-		if not arg_12_0 then
-			fn("[TWITCH VOTE] Adding health regen for all")
+		if is_server then
+			debug_print("[TWITCH VOTE] Adding health regen for all")
 
-			local human_and_bot_players = Managers.player:human_and_bot_players()
+			local players = Managers.player:human_and_bot_players()
 
-			for k, v in pairs(human_and_bot_players) do
-				local player_unit = v.player_unit
+			for _, player in pairs(players) do
+				local unit = player.player_unit
 
-				if not Unit.alive(player_unit) then
-					local system = Managers.state.entity:system("buff_system")
-					local flag = false
+				if Unit.alive(unit) then
+					local buff_system = Managers.state.entity:system("buff_system")
+					local server_controlled = false
 
-					system:add_buff(player_unit, "twitch_health_regen", player_unit, flag)
+					buff_system:add_buff(unit, "twitch_health_regen", unit, server_controlled)
 				end
 			end
 		end
@@ -232,25 +232,27 @@ TwitchVoteTemplates.twitch_health_degen = {
 		70,
 		70
 	},
-	on_success = function (arg_13_0, arg_13_1)
+	on_success = function (is_server, vote_index)
 		-- function 13
-		if not arg_13_0 then
-			fn("[TWITCH VOTE] Adding health degen for one")
+		if is_server then
+			debug_print("[TWITCH VOTE] Adding health degen for one")
 
-			local human_and_bot_players = Managers.player:human_and_bot_players()
-			local display_name = SPProfiles[arg_13_1].display_name
+			local players = Managers.player:human_and_bot_players()
+			local selected_display_name = SPProfiles[vote_index].display_name
 
-			for k, v in pairs(human_and_bot_players) do
-				local profile_index = v:profile_index()
+			for _, player in pairs(players) do
+				local profile_index = player:profile_index()
+				local profile = SPProfiles[profile_index]
+				local display_name = profile.display_name
 
-				if SPProfiles[profile_index].display_name == display_name then
-					local player_unit = v.player_unit
+				if display_name == selected_display_name then
+					local unit = player.player_unit
 
-					if not Unit.alive(player_unit) then
-						local system = Managers.state.entity:system("buff_system")
-						local flag = false
+					if Unit.alive(unit) then
+						local buff_system = Managers.state.entity:system("buff_system")
+						local server_controlled = false
 
-						system:add_buff(player_unit, "twitch_health_degen", player_unit, flag)
+						buff_system:add_buff(unit, "twitch_health_degen", unit, server_controlled)
 					end
 				end
 			end
@@ -268,23 +270,25 @@ TwitchVoteTemplates.twitch_vote_activate_root_all = {
 	},
 	condition_func = function ()
 		-- function 14
-		return Managers.state.conflict.pacing:get_pacing_intensity() >= 80
+		local total_intensity = Managers.state.conflict.pacing:get_pacing_intensity()
+
+		return total_intensity >= 80
 	end,
-	on_success = function (arg_15_0, arg_15_1)
+	on_success = function (is_server, vote_index)
 		-- function 15
-		if not arg_15_0 then
-			fn("[TWITCH VOTE] Adding root for all")
+		if is_server then
+			debug_print("[TWITCH VOTE] Adding root for all")
 
-			local human_and_bot_players = Managers.player:human_and_bot_players()
+			local players = Managers.player:human_and_bot_players()
 
-			for k, v in pairs(human_and_bot_players) do
-				local player_unit = v.player_unit
+			for _, player in pairs(players) do
+				local unit = player.player_unit
 
-				if not Unit.alive(player_unit) then
-					local system = Managers.state.entity:system("buff_system")
-					local flag = false
+				if Unit.alive(unit) then
+					local buff_system = Managers.state.entity:system("buff_system")
+					local server_controlled = false
 
-					system:add_buff(player_unit, "twitch_vote_buff_root", player_unit, flag)
+					buff_system:add_buff(unit, "twitch_vote_buff_root", unit, server_controlled)
 				end
 			end
 		end
@@ -302,27 +306,31 @@ TwitchVoteTemplates.twitch_vote_activate_root = {
 	},
 	condition_func = function ()
 		-- function 16
-		return Managers.state.conflict.pacing:get_pacing_intensity() >= 80
+		local total_intensity = Managers.state.conflict.pacing:get_pacing_intensity()
+
+		return total_intensity >= 80
 	end,
-	on_success = function (arg_17_0, arg_17_1)
+	on_success = function (is_server, vote_index)
 		-- function 17
-		if not arg_17_0 then
-			fn("[TWITCH VOTE] Adding root for one")
+		if is_server then
+			debug_print("[TWITCH VOTE] Adding root for one")
 
-			local human_and_bot_players = Managers.player:human_and_bot_players()
-			local display_name = SPProfiles[arg_17_1].display_name
+			local players = Managers.player:human_and_bot_players()
+			local selected_display_name = SPProfiles[vote_index].display_name
 
-			for k, v in pairs(human_and_bot_players) do
-				local profile_index = v:profile_index()
+			for _, player in pairs(players) do
+				local profile_index = player:profile_index()
+				local profile = SPProfiles[profile_index]
+				local display_name = profile.display_name
 
-				if SPProfiles[profile_index].display_name == display_name then
-					local player_unit = v.player_unit
+				if display_name == selected_display_name then
+					local unit = player.player_unit
 
-					if not Unit.alive(player_unit) then
-						local system = Managers.state.entity:system("buff_system")
-						local flag = false
+					if Unit.alive(unit) then
+						local buff_system = Managers.state.entity:system("buff_system")
+						local server_controlled = false
 
-						system:add_buff(player_unit, "twitch_vote_buff_root", player_unit, flag)
+						buff_system:add_buff(unit, "twitch_vote_buff_root", unit, server_controlled)
 					end
 				end
 			end
@@ -339,25 +347,27 @@ TwitchVoteTemplates.twitch_vote_hemmoraghe = {
 		70,
 		70
 	},
-	on_success = function (arg_18_0, arg_18_1)
+	on_success = function (is_server, vote_index)
 		-- function 18
-		if not arg_18_0 then
-			fn("[TWITCH VOTE] Adding hemmoraghe for one")
+		if is_server then
+			debug_print("[TWITCH VOTE] Adding hemmoraghe for one")
 
-			local human_and_bot_players = Managers.player:human_and_bot_players()
-			local display_name = SPProfiles[arg_18_1].display_name
+			local players = Managers.player:human_and_bot_players()
+			local selected_display_name = SPProfiles[vote_index].display_name
 
-			for k, v in pairs(human_and_bot_players) do
-				local profile_index = v:profile_index()
+			for _, player in pairs(players) do
+				local profile_index = player:profile_index()
+				local profile = SPProfiles[profile_index]
+				local display_name = profile.display_name
 
-				if SPProfiles[profile_index].display_name == display_name then
-					local player_unit = v.player_unit
+				if display_name == selected_display_name then
+					local unit = player.player_unit
 
-					if not Unit.alive(player_unit) then
-						local system = Managers.state.entity:system("buff_system")
-						local flag = false
+					if Unit.alive(unit) then
+						local buff_system = Managers.state.entity:system("buff_system")
+						local server_controlled = false
 
-						system:add_buff(player_unit, "twitch_vote_buff_hemmoraghe", player_unit, flag)
+						buff_system:add_buff(unit, "twitch_vote_buff_hemmoraghe", unit, server_controlled)
 					end
 				end
 			end
@@ -375,22 +385,23 @@ TwitchVoteTemplates.twitch_vote_full_temp_hp = {
 	},
 	condition_func = function ()
 		-- function 19
-		return not TwitchSettings.disable_positive_votes
+		return not twitch_settings.disable_positive_votes
 	end,
-	on_success = function (arg_20_0, arg_20_1)
+	on_success = function (is_server, vote_index)
 		-- function 20
-		if not arg_20_0 then
-			fn("[TWITCH VOTE] Adding twitch_vote_full_temp_hp")
+		if is_server then
+			debug_print("[TWITCH VOTE] Adding twitch_vote_full_temp_hp")
 
-			local human_and_bot_players = Managers.player:human_and_bot_players()
+			local players = Managers.player:human_and_bot_players()
 
-			for k, v in pairs(human_and_bot_players) do
-				local player_unit = v.player_unit
+			for _, player in pairs(players) do
+				local unit = player.player_unit
 
-				if not Unit.alive(player_unit) then
-					local get_max_health = ScriptUnit.extension(player_unit, "health_system"):get_max_health()
+				if Unit.alive(unit) then
+					local health_extension = ScriptUnit.extension(unit, "health_system")
+					local heal_amount = health_extension:get_max_health()
 
-					DamageUtils.heal_network(player_unit, player_unit, get_max_health, "healing_draught_temp_health")
+					DamageUtils.heal_network(unit, unit, heal_amount, "healing_draught_temp_health")
 				end
 			end
 		end
@@ -407,23 +418,23 @@ TwitchVoteTemplates.twitch_vote_critical_strikes = {
 	},
 	condition_func = function ()
 		-- function 21
-		return not TwitchSettings.disable_positive_votes
+		return not twitch_settings.disable_positive_votes
 	end,
-	on_success = function (arg_22_0, arg_22_1)
+	on_success = function (is_server, vote_index)
 		-- function 22
-		if not arg_22_0 then
-			fn("[TWITCH VOTE] Adding twitch_vote_invisibility")
+		if is_server then
+			debug_print("[TWITCH VOTE] Adding twitch_vote_invisibility")
 
-			local human_and_bot_players = Managers.player:human_and_bot_players()
+			local players = Managers.player:human_and_bot_players()
 
-			for k, v in pairs(human_and_bot_players) do
-				local player_unit = v.player_unit
+			for _, player in pairs(players) do
+				local unit = player.player_unit
 
-				if not Unit.alive(player_unit) then
-					local system = Managers.state.entity:system("buff_system")
-					local flag = false
+				if Unit.alive(unit) then
+					local buff_system = Managers.state.entity:system("buff_system")
+					local server_controlled = false
 
-					system:add_buff(player_unit, "twitch_vote_buff_critical_strikes", player_unit, flag)
+					buff_system:add_buff(unit, "twitch_vote_buff_critical_strikes", unit, server_controlled)
 				end
 			end
 		end
@@ -441,27 +452,29 @@ TwitchVoteTemplates.twitch_vote_infinite_bombs = {
 	},
 	condition_func = function ()
 		-- function 23
-		return not TwitchSettings.disable_positive_votes
+		return not twitch_settings.disable_positive_votes
 	end,
-	on_success = function (arg_24_0, arg_24_1)
+	on_success = function (is_server, vote_index)
 		-- function 24
-		if not arg_24_0 then
-			fn("[TWITCH VOTE] Adding twitch_vote_infinite_bombs for one")
+		if is_server then
+			debug_print("[TWITCH VOTE] Adding twitch_vote_infinite_bombs for one")
 
-			local human_and_bot_players = Managers.player:human_and_bot_players()
-			local display_name = SPProfiles[arg_24_1].display_name
+			local players = Managers.player:human_and_bot_players()
+			local selected_display_name = SPProfiles[vote_index].display_name
 
-			for k, v in pairs(human_and_bot_players) do
-				local profile_index = v:profile_index()
+			for _, player in pairs(players) do
+				local profile_index = player:profile_index()
+				local profile = SPProfiles[profile_index]
+				local display_name = profile.display_name
 
-				if SPProfiles[profile_index].display_name == display_name then
-					local player_unit = v.player_unit
+				if display_name == selected_display_name then
+					local unit = player.player_unit
 
-					if not Unit.alive(player_unit) then
-						local system = Managers.state.entity:system("buff_system")
-						local flag = false
+					if Unit.alive(unit) then
+						local buff_system = Managers.state.entity:system("buff_system")
+						local server_controlled = false
 
-						system:add_buff(player_unit, "twitch_vote_buff_infinite_bombs", player_unit, flag)
+						buff_system:add_buff(unit, "twitch_vote_buff_infinite_bombs", unit, server_controlled)
 					end
 				end
 			end
@@ -480,29 +493,31 @@ TwitchVoteTemplates.twitch_vote_invincibility = {
 	},
 	condition_func = function ()
 		-- function 25
-		local get_pacing_intensity = Managers.state.conflict.pacing:get_pacing_intensity()
+		local total_intensity = Managers.state.conflict.pacing:get_pacing_intensity()
 
-		return not not TwitchSettings.disable_positive_votes or get_pacing_intensity >= 100
+		return not twitch_settings.disable_positive_votes and total_intensity >= 100
 	end,
-	on_success = function (arg_26_0, arg_26_1)
+	on_success = function (is_server, vote_index)
 		-- function 26
-		if not arg_26_0 then
-			fn("[TWITCH VOTE] Adding twitch_vote_invincibility for one")
+		if is_server then
+			debug_print("[TWITCH VOTE] Adding twitch_vote_invincibility for one")
 
-			local human_and_bot_players = Managers.player:human_and_bot_players()
-			local display_name = SPProfiles[arg_26_1].display_name
+			local players = Managers.player:human_and_bot_players()
+			local selected_display_name = SPProfiles[vote_index].display_name
 
-			for k, v in pairs(human_and_bot_players) do
-				local profile_index = v:profile_index()
+			for _, player in pairs(players) do
+				local profile_index = player:profile_index()
+				local profile = SPProfiles[profile_index]
+				local display_name = profile.display_name
 
-				if SPProfiles[profile_index].display_name == display_name then
-					local player_unit = v.player_unit
+				if display_name == selected_display_name then
+					local unit = player.player_unit
 
-					if not Unit.alive(player_unit) then
-						local system = Managers.state.entity:system("buff_system")
-						local flag = false
+					if Unit.alive(unit) then
+						local buff_system = Managers.state.entity:system("buff_system")
+						local server_controlled = false
 
-						system:add_buff(player_unit, "twitch_vote_buff_invincibility", player_unit, flag)
+						buff_system:add_buff(unit, "twitch_vote_buff_invincibility", unit, server_controlled)
 					end
 				end
 			end

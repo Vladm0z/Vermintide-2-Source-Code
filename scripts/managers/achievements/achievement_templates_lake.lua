@@ -11,46 +11,46 @@ local add_health_challenge = AchievementTemplateHelper.add_health_challenge
 local add_stat_count_challenge = AchievementTemplateHelper.add_stat_count_challenge
 local PLACEHOLDER_ICON = AchievementTemplateHelper.PLACEHOLDER_ICON
 local achievements = AchievementTemplates.achievements
-local lake = DLCSettings.lake
-local tbl = {}
-local tbl_2 = {}
-local tbl_3 = {
+local achievement_settings = DLCSettings.lake
+local XB1_ACHIEVEMENT_ID = {}
+local PS4_ACHIEVEMENT_ID = {}
+local difficulties = {
 	"normal",
 	"hard",
 	"harder",
 	"hardest",
 	"cataclysm"
 }
-local HelmgartLevels = HelmgartLevels
+local main_game_levels = HelmgartLevels
 
-add_event_challenge(achievements, "lake_charge_stagger", nil, nil, "lake_upgrade", tbl.lake_charge_stagger, tbl_2.lake_charge_stagger)
-add_event_challenge(achievements, "lake_bastard_block", nil, nil, "lake_upgrade", tbl.lake_bastard_block, tbl_2.lake_bastard_block)
+add_event_challenge(achievements, "lake_charge_stagger", nil, nil, "lake_upgrade", XB1_ACHIEVEMENT_ID.lake_charge_stagger, PS4_ACHIEVEMENT_ID.lake_charge_stagger)
+add_event_challenge(achievements, "lake_bastard_block", nil, nil, "lake_upgrade", XB1_ACHIEVEMENT_ID.lake_bastard_block, PS4_ACHIEVEMENT_ID.lake_bastard_block)
 add_event_challenge(achievements, "lake_speed_quest", nil, {
-	lake.speed_quest_complete_time
+	achievement_settings.speed_quest_complete_time
 }, "lake_upgrade", nil, nil)
 add_event_challenge(achievements, "lake_timing_quest", nil, {
-	lake.timing_quest_complete_margain
+	achievement_settings.timing_quest_complete_margain
 }, "lake_upgrade", nil, nil)
 
-local tbl_4 = {
+local harder_difficulties = {
 	"harder",
 	"hardest",
 	"cataclysm"
 }
 
-add_career_mission_count_challenge(achievements, "lake_complete_100_missions", "completed_career_levels", "es_questingknight", tbl_3, 100, nil, nil, "lake_upgrade", nil, nil)
+add_career_mission_count_challenge(achievements, "lake_complete_100_missions", "completed_career_levels", "es_questingknight", difficulties, 100, nil, nil, "lake_upgrade", nil, nil)
 add_health_challenge(achievements, "lake_untouchable", "es_questingknight", 0.9, nil, "lake_upgrade", nil, nil)
 
-local tbl_5 = {}
-local tbl_6 = {}
+local elite_breeds = {}
+local boss_breeds = {}
 
-for k, v in pairs(Breeds) do
-	if Breeds[k].elite == true then
-		tbl_5[#tbl_5 + 1] = k
+for breed_name, breed in pairs(Breeds) do
+	if Breeds[breed_name].elite == true then
+		elite_breeds[#elite_breeds + 1] = breed_name
 	end
 
-	if Breeds[k].boss == true then
-		tbl_6[#tbl_6 + 1] = k
+	if Breeds[breed_name].boss == true then
+		boss_breeds[#boss_breeds + 1] = breed_name
 	end
 end
 
@@ -60,77 +60,79 @@ achievements.lake_kill_register = {
 	events = {
 		"register_kill"
 	},
-	completed = function (self, arg_1_1, arg_1_2)
+	completed = function (statistics_db, stats_id, template_data)
 		-- function 1
-		local num = 0
+		local max_count = 0
 
-		for i = 1, #tbl_6 do
-			num = num + self:get_persistent_stat(arg_1_1, "weapon_kills_per_breed", "markus_questingknight_career_skill_weapon", tbl_6[i])
+		for i = 1, #boss_breeds do
+			local count = statistics_db:get_persistent_stat(stats_id, "weapon_kills_per_breed", "markus_questingknight_career_skill_weapon", boss_breeds[i])
+
+			max_count = max_count + count
 		end
 
-		return num >= 5
+		return max_count >= 5
 	end,
-	on_event = function (self, arg_2_1, arg_2_2, arg_2_3, arg_2_4)
+	on_event = function (statistics_db, stats_id, template_data, event_name, event_data)
 		-- function 2
-		local var_2_0 = arg_2_4[3]
-		local flag = not var_2_0 and var_2_0[DamageDataIndex.ATTACKER]
+		local damage_data = event_data[3]
+		local attacker_unit = not not damage_data and not not damage_data[DamageDataIndex.ATTACKER]
 
-		if not ALIVE[flag] then
+		if not ALIVE[attacker_unit] then
 			return
 		end
 
 		local local_player = Managers.player:local_player()
-		local flag_2 = not local_player and local_player.player_unit
+		local local_player_unit = not not local_player and not not local_player.player_unit
 
-		if not (not flag_2 and flag_2 == flag) then
+		if not local_player_unit or local_player_unit ~= attacker_unit then
 			return
 		end
 
-		local has_extension = ScriptUnit.has_extension(flag, "career_system")
+		local career_extension = ScriptUnit.has_extension(attacker_unit, "career_system")
 
-		if not (not has_extension and has_extension:career_name() == "es_questingknight") then
+		if not career_extension or career_extension:career_name() ~= "es_questingknight" then
 			return false
 		end
 
-		local var_2_5 = var_2_0[DamageDataIndex.DAMAGE_SOURCE_NAME]
+		local damage_source = damage_data[DamageDataIndex.DAMAGE_SOURCE_NAME]
 
-		if not (not var_2_5 and var_2_5 == "markus_questingknight_career_skill_weapon") then
+		if not damage_source or damage_source ~= "markus_questingknight_career_skill_weapon" then
 			return false
 		end
 
-		local var_2_6 = arg_2_4[4]
+		local killed_breed = event_data[4]
 
-		if not table.contains(tbl_6, var_2_6.name) then
+		if not table.contains(boss_breeds, killed_breed.name) then
 			return false
 		end
 
-		if not var_2_5 and not var_2_6 and not var_2_6.name then
-			self:increment_stat(arg_2_1, "weapon_kills_per_breed", var_2_5, var_2_6.name)
+		if damage_source and killed_breed and killed_breed.name then
+			statistics_db:increment_stat(stats_id, "weapon_kills_per_breed", damage_source, killed_breed.name)
 		end
 	end
 }
 
 add_weapon_kills_per_breeds_challenge(achievements, "lake_boss_killblow", {
 	"markus_questingknight_career_skill_weapon"
-}, tbl_6, 5, nil, "lake_upgrade", true, nil, nil)
+}, boss_breeds, 5, nil, "lake_upgrade", true, nil, nil)
 
-local act_1 = GameActs.act_1
-local act_2 = GameActs.act_2
-local act_3 = GameActs.act_3
-local rank = DifficultySettings.hardest.rank
+local act_1_levels = GameActs.act_1
+local act_2_levels = GameActs.act_2
+local act_3_levels = GameActs.act_3
+local diff = DifficultySettings.hardest.rank
 
-add_levels_complete_per_hero_challenge(achievements, "lake_mission_streak_act1_legend", act_1, rank, "es_questingknight", true, nil, "lake_upgrade", tbl.lake_mission_streak_act1, tbl_2.lake_mission_streak_act1)
-add_levels_complete_per_hero_challenge(achievements, "lake_mission_streak_act2_legend", act_2, rank, "es_questingknight", true, nil, "lake_upgrade", tbl.lake_mission_streak_act2, tbl_2.lake_mission_streak_act2)
-add_levels_complete_per_hero_challenge(achievements, "lake_mission_streak_act3_legend", act_3, rank, "es_questingknight", true, nil, "lake_upgrade", tbl.lake_mission_streak_act3, tbl_2.lake_mission_streak_act3)
+add_levels_complete_per_hero_challenge(achievements, "lake_mission_streak_act1_legend", act_1_levels, diff, "es_questingknight", true, nil, "lake_upgrade", XB1_ACHIEVEMENT_ID.lake_mission_streak_act1, PS4_ACHIEVEMENT_ID.lake_mission_streak_act1)
+add_levels_complete_per_hero_challenge(achievements, "lake_mission_streak_act2_legend", act_2_levels, diff, "es_questingknight", true, nil, "lake_upgrade", XB1_ACHIEVEMENT_ID.lake_mission_streak_act2, PS4_ACHIEVEMENT_ID.lake_mission_streak_act2)
+add_levels_complete_per_hero_challenge(achievements, "lake_mission_streak_act3_legend", act_3_levels, diff, "es_questingknight", true, nil, "lake_upgrade", XB1_ACHIEVEMENT_ID.lake_mission_streak_act3, PS4_ACHIEVEMENT_ID.lake_mission_streak_act3)
 
-for k_2 = 1, #tbl_3 do
-	local var_0_23 = tbl_3[k_2]
-	local str = "lake_complete_all_helmgart_levels_" .. DifficultyMapping[var_0_23]
+for i = 1, #difficulties do
+	local difficulty_key = difficulties[i]
+	local name = "lake_complete_all_helmgart_levels_" .. DifficultyMapping[difficulty_key]
 
-	add_levels_complete_per_hero_challenge(achievements, str, HelmgartLevels, DifficultySettings[var_0_23].rank, "es_questingknight", false, nil, "lake_upgrade", tbl.complete_all_helmgart_levels, tbl_2.complete_all_helmgart_levels)
+	add_levels_complete_per_hero_challenge(achievements, name, main_game_levels, DifficultySettings[difficulty_key].rank, "es_questingknight", false, nil, "lake_upgrade", XB1_ACHIEVEMENT_ID.complete_all_helmgart_levels, PS4_ACHIEVEMENT_ID.complete_all_helmgart_levels)
 end
 
-local tbl_7 = {
+local all_challenges = {
 	"lake_complete_all_helmgart_levels_recruit_es_questingknight",
 	"lake_complete_all_helmgart_levels_veteran_es_questingknight",
 	"lake_complete_all_helmgart_levels_champion_es_questingknight",
@@ -147,7 +149,7 @@ local tbl_7 = {
 	"lake_timing_quest"
 }
 
-add_meta_challenge(achievements, "complete_all_grailknight_challenges", tbl_7, nil, "lake_upgrade", nil, nil)
+add_meta_challenge(achievements, "complete_all_grailknight_challenges", all_challenges, nil, "lake_upgrade", nil, nil)
 
 QuestSettings.track_bastard_block_breeds.hero_es_questingknight = true
 QuestSettings.track_charge_stagger_breeds.es_questingknight = true

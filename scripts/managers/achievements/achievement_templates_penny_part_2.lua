@@ -5,31 +5,31 @@ local add_levels_complete_challenge = AchievementTemplateHelper.add_levels_compl
 local add_meta_challenge = AchievementTemplateHelper.add_meta_challenge
 local PLACEHOLDER_ICON = AchievementTemplateHelper.PLACEHOLDER_ICON
 local achievements = AchievementTemplates.achievements
-local tbl = {
+local XB1_ACHIEVEMENT_ID = {
 	penny_bastion_sprinter = 89,
 	penny_bastion_torch = 88
 }
-local tbl_2 = {
+local PS4_ACHIEVEMENT_ID = {
 	penny_bastion_sprinter = "082"
 }
-local num = 50
+local bastion_sprinter = 50
 
-add_event_challenge(achievements, "penny_portals_grapes", nil, nil, nil, tbl.penny_portals_grapes, tbl_2.penny_portals_grapes)
-add_event_challenge(achievements, "penny_portals_coop", nil, nil, nil, tbl.penny_portals_coop, tbl_2.penny_portals_coop)
-add_event_challenge(achievements, "penny_portals_templerun", nil, nil, nil, tbl.penny_portals_templerun, tbl_2.penny_portals_templerun)
-add_event_challenge(achievements, "penny_portals_careful", nil, nil, nil, tbl.penny_portals_careful, tbl_2.penny_portals_careful)
-add_event_challenge(achievements, "penny_bastion_journal", nil, nil, nil, tbl.penny_bastion_journal, tbl_2.penny_bastion_journal)
-add_event_challenge(achievements, "penny_bastion_overstay", nil, nil, nil, tbl.penny_bastion_overstay, tbl_2.penny_bastion_overstay)
+add_event_challenge(achievements, "penny_portals_grapes", nil, nil, nil, XB1_ACHIEVEMENT_ID.penny_portals_grapes, PS4_ACHIEVEMENT_ID.penny_portals_grapes)
+add_event_challenge(achievements, "penny_portals_coop", nil, nil, nil, XB1_ACHIEVEMENT_ID.penny_portals_coop, PS4_ACHIEVEMENT_ID.penny_portals_coop)
+add_event_challenge(achievements, "penny_portals_templerun", nil, nil, nil, XB1_ACHIEVEMENT_ID.penny_portals_templerun, PS4_ACHIEVEMENT_ID.penny_portals_templerun)
+add_event_challenge(achievements, "penny_portals_careful", nil, nil, nil, XB1_ACHIEVEMENT_ID.penny_portals_careful, PS4_ACHIEVEMENT_ID.penny_portals_careful)
+add_event_challenge(achievements, "penny_bastion_journal", nil, nil, nil, XB1_ACHIEVEMENT_ID.penny_bastion_journal, PS4_ACHIEVEMENT_ID.penny_bastion_journal)
+add_event_challenge(achievements, "penny_bastion_overstay", nil, nil, nil, XB1_ACHIEVEMENT_ID.penny_bastion_overstay, PS4_ACHIEVEMENT_ID.penny_bastion_overstay)
 add_event_challenge(achievements, "penny_bastion_sprinter", nil, {
-	num
-}, nil, tbl.penny_bastion_sprinter, tbl_2.penny_bastion_sprinter)
-add_event_challenge(achievements, "penny_bastion_yorick", nil, nil, nil, tbl.penny_bastion_yorick, tbl_2.penny_bastion_yorick)
-add_event_challenge(achievements, "penny_bastion_torch", nil, nil, nil, tbl.penny_bastion_torch, tbl_2.penny_bastion_torch)
+	bastion_sprinter
+}, nil, XB1_ACHIEVEMENT_ID.penny_bastion_sprinter, PS4_ACHIEVEMENT_ID.penny_bastion_sprinter)
+add_event_challenge(achievements, "penny_bastion_yorick", nil, nil, nil, XB1_ACHIEVEMENT_ID.penny_bastion_yorick, PS4_ACHIEVEMENT_ID.penny_bastion_yorick)
+add_event_challenge(achievements, "penny_bastion_torch", nil, nil, nil, XB1_ACHIEVEMENT_ID.penny_bastion_torch, PS4_ACHIEVEMENT_ID.penny_bastion_torch)
 
-local tbl_3 = {
+local bastion = {
 	LevelSettings.dlc_bastion
 }
-local tbl_4 = {
+local difficulties = {
 	"normal",
 	"hard",
 	"harder",
@@ -37,12 +37,12 @@ local tbl_4 = {
 	"cataclysm"
 }
 
-for i = 1, #tbl_4 do
-	local var_0_10 = tbl_4[i]
-	local var_0_11 = DifficultyMapping[var_0_10]
-	local str = "penny_complete_bastion_" .. var_0_11
+for i = 1, #difficulties do
+	local difficulty_key = difficulties[i]
+	local difficulty_name = DifficultyMapping[difficulty_key]
+	local name = "penny_complete_bastion_" .. difficulty_name
 
-	add_levels_complete_challenge(achievements, str, tbl_3, DifficultySettings[var_0_10].rank, nil, nil, tbl[str], tbl_2[str])
+	add_levels_complete_challenge(achievements, name, bastion, DifficultySettings[difficulty_key].rank, nil, nil, XB1_ACHIEVEMENT_ID[name], PS4_ACHIEVEMENT_ID[name])
 end
 
 add_meta_challenge(achievements, "penny_complete_bastion", {

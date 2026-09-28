@@ -1,11 +1,11 @@
 -- chunkname: @scripts/settings/dlcs/geheimnisnacht_2021/geheimnisnacht_2021_interactions.lua
 
-local flag = true
-local flag_2 = false
+local SERVER_INTERACT = true
+local CLIENT_INTERACT = false
 local InteractionDefinitions = InteractionDefinitions
 local geheimnisnacht_2021_altar = InteractionDefinitions.geheimnisnacht_2021_altar
 
-geheimnisnacht_2021_altar = geheimnisnacht_2021_altar or table.clone(InteractionDefinitions.smartobject)
+geheimnisnacht_2021_altar = not not geheimnisnacht_2021_altar or not not table.clone(InteractionDefinitions.smartobject)
 InteractionDefinitions.geheimnisnacht_2021_altar = geheimnisnacht_2021_altar
 InteractionDefinitions.geheimnisnacht_2021_altar.config = {
 	only_once = true,
@@ -16,101 +16,111 @@ InteractionDefinitions.geheimnisnacht_2021_altar.config = {
 	block_other_interactions = true
 }
 
-InteractionDefinitions.geheimnisnacht_2021_altar.server.stop = function (arg_1_0, arg_1_1, arg_1_2, arg_1_3, arg_1_4, arg_1_5, arg_1_6)
+InteractionDefinitions.geheimnisnacht_2021_altar.server.stop = function (world, interactor_unit, interactable_unit, data, config, t, result)
 	-- function 1
-	local flag_2 = arg_1_6 == InteractionResult.SUCCESS
+	local success = result == InteractionResult.SUCCESS
 
-	if not flag_2 then
-		local get_level_seed = Managers.mechanism:get_level_seed()
-		local local_position = Unit.local_position(arg_1_2, 0)
+	if success then
+		local seed = Managers.mechanism:get_level_seed()
+		local altar_position = Unit.local_position(interactable_unit, 0)
 		local nav_world = Managers.state.conflict.nav_world
-		local get_pos_towards_goal = ConflictUtils.get_pos_towards_goal(nav_world, local_position, 15, 1)
-		local var_1_5
+		local origin_position = ConflictUtils.get_pos_towards_goal(nav_world, altar_position, 15, 1)
+		local var_1_0
 
-		if not get_pos_towards_goal then
-			var_1_5 = Vector3Box(get_pos_towards_goal)
+		if origin_position then
+			var_1_0 = Vector3Box(origin_position)
 
-			if not var_1_5 then
+			if not var_1_0 then
 				-- Nothing
 			end
 		end
 
-		var_1_5 = nil
+		var_1_0 = nil
+
+		local boxed_pos = var_1_0
 
 		::label_1_0::
 
-		Managers.state.conflict:start_terror_event("geheimnisnacht_2021_event", get_level_seed, nil, var_1_5)
+		Managers.state.conflict:start_terror_event("geheimnisnacht_2021_event", seed, nil, boxed_pos)
 	end
 
-	ScriptUnit.extension(arg_1_2, "props_system"):on_interact(flag, flag_2)
+	local altar_extension = ScriptUnit.extension(interactable_unit, "props_system")
 
-	local str = "lua_interaction_stopped_smartobject_" .. InteractionResult[arg_1_6]
+	altar_extension:on_interact(SERVER_INTERACT, success)
 
-	Unit.flow_event(arg_1_2, str)
+	local local_flow_event = "lua_interaction_stopped_smartobject_" .. InteractionResult[result]
+
+	Unit.flow_event(interactable_unit, local_flow_event)
 end
 
-InteractionDefinitions.geheimnisnacht_2021_altar.client.stop = function (arg_2_0, arg_2_1, arg_2_2, arg_2_3, arg_2_4, arg_2_5, arg_2_6)
+InteractionDefinitions.geheimnisnacht_2021_altar.client.stop = function (world, interactor_unit, interactable_unit, data, config, t, result)
 	-- function 2
-	InteractionDefinitions.smartobject.client.stop(arg_2_0, arg_2_1, arg_2_2, arg_2_3, arg_2_4, arg_2_5, arg_2_6)
+	InteractionDefinitions.smartobject.client.stop(world, interactor_unit, interactable_unit, data, config, t, result)
 
-	local has_extension = ScriptUnit.has_extension(arg_2_2, "props_system")
+	local altar_extension = ScriptUnit.has_extension(interactable_unit, "props_system")
 
-	if not has_extension then
-		has_extension:on_interact(flag_2)
+	if altar_extension then
+		altar_extension:on_interact(CLIENT_INTERACT)
 	end
 end
 
-InteractionDefinitions.geheimnisnacht_2021_altar.server.can_interact = function (arg_3_0, arg_3_1)
+InteractionDefinitions.geheimnisnacht_2021_altar.server.can_interact = function (interactor_unit, interactable_unit)
 	-- function 3
-	if not ScriptUnit.extension(arg_3_1, "props_system"):can_interact() then
+	local altar_extension = ScriptUnit.extension(interactable_unit, "props_system")
+
+	if not altar_extension:can_interact() then
 		return
 	end
 
-	local get_data = Unit.get_data(arg_3_1, "interaction_data", "custom_interaction_check_name")
+	local custom_interaction_check_name = Unit.get_data(interactable_unit, "interaction_data", "custom_interaction_check_name")
 
-	if not (not get_data and not InteractionCustomChecks[get_data] and InteractionCustomChecks[get_data](arg_3_0, arg_3_1)) then
+	if custom_interaction_check_name and InteractionCustomChecks[custom_interaction_check_name] and not InteractionCustomChecks[custom_interaction_check_name](interactor_unit, interactable_unit) then
 		return false
 	end
 
-	return not Unit.get_data(arg_3_1, "interaction_data", "used")
+	local used = Unit.get_data(interactable_unit, "interaction_data", "used")
+
+	return not used
 end
 
-InteractionDefinitions.geheimnisnacht_2021_altar.client.can_interact = function (arg_4_0, arg_4_1, arg_4_2, arg_4_3)
+InteractionDefinitions.geheimnisnacht_2021_altar.client.can_interact = function (interactor_unit, interactable_unit, data, config)
 	-- function 4
-	if not ScriptUnit.extension(arg_4_1, "props_system"):can_interact() then
+	local altar_extension = ScriptUnit.extension(interactable_unit, "props_system")
+
+	if not altar_extension:can_interact() then
 		return
 	end
 
-	local get_data = Unit.get_data(arg_4_1, "interaction_data", "custom_interaction_check_name")
+	local custom_interaction_check_name = Unit.get_data(interactable_unit, "interaction_data", "custom_interaction_check_name")
 
-	if not (not get_data and not InteractionCustomChecks[get_data] and InteractionCustomChecks[get_data](arg_4_0, arg_4_1)) then
+	if custom_interaction_check_name and InteractionCustomChecks[custom_interaction_check_name] and not InteractionCustomChecks[custom_interaction_check_name](interactor_unit, interactable_unit) then
 		return false
 	end
 
-	local get_data_2 = Unit.get_data(arg_4_1, "interaction_data", "used")
-	local get_data_3 = Unit.get_data(arg_4_1, "interaction_data", "being_used")
+	local used = Unit.get_data(interactable_unit, "interaction_data", "used")
+	local being_used = Unit.get_data(interactable_unit, "interaction_data", "being_used")
 
-	return not not get_data_2 or not get_data_3
+	return not used and not not not being_used
 end
 
-InteractionDefinitions.geheimnisnacht_2021_altar.client.start = function (arg_5_0, arg_5_1, arg_5_2, arg_5_3, arg_5_4, arg_5_5)
+InteractionDefinitions.geheimnisnacht_2021_altar.client.start = function (world, interactor_unit, interactable_unit, data, config, t)
 	-- function 5
-	InteractionDefinitions.smartobject.client.start(arg_5_0, arg_5_1, arg_5_2, arg_5_3, arg_5_4, arg_5_5)
+	InteractionDefinitions.smartobject.client.start(world, interactor_unit, interactable_unit, data, config, t)
 
-	local has_extension = ScriptUnit.has_extension(arg_5_2, "props_system")
+	local altar_extension = ScriptUnit.has_extension(interactable_unit, "props_system")
 
-	if not has_extension then
-		has_extension:on_interact_start(flag_2)
+	if altar_extension then
+		altar_extension:on_interact_start(CLIENT_INTERACT)
 	end
 end
 
-InteractionDefinitions.geheimnisnacht_2021_altar.server.start = function (arg_6_0, arg_6_1, arg_6_2, arg_6_3, arg_6_4, arg_6_5)
+InteractionDefinitions.geheimnisnacht_2021_altar.server.start = function (world, interactor_unit, interactable_unit, data, config, t)
 	-- function 6
-	InteractionDefinitions.smartobject.server.start(arg_6_0, arg_6_1, arg_6_2, arg_6_3, arg_6_4, arg_6_5)
+	InteractionDefinitions.smartobject.server.start(world, interactor_unit, interactable_unit, data, config, t)
 
-	local has_extension = ScriptUnit.has_extension(arg_6_2, "props_system")
+	local altar_extension = ScriptUnit.has_extension(interactable_unit, "props_system")
 
-	if not has_extension then
-		has_extension:on_interact_start(flag)
+	if altar_extension then
+		altar_extension:on_interact_start(SERVER_INTERACT)
 	end
 end

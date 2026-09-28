@@ -19,7 +19,7 @@ AreaSettings.holly = {
 	},
 	create_mission_background_widget = function ()
 		-- function 1
-		return {
+		local widget = {
 			scenegraph_id = "dlc_background",
 			element = {
 				passes = {
@@ -72,6 +72,8 @@ AreaSettings.holly = {
 				0
 			}
 		}
+
+		return widget
 	end
 }
 ActSettings.act_holly = {

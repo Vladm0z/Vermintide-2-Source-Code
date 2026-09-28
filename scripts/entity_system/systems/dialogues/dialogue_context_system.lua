@@ -1,14 +1,16 @@
 -- chunkname: @scripts/entity_system/systems/dialogues/dialogue_context_system.lua
 
-local tbl = {
+local extensions = {
 	"GenericDialogueContextExtension"
 }
 
 DialogueContextSystem = class(DialogueContextSystem, ExtensionSystemBase)
 
-DialogueContextSystem.init = function (self, arg_1_1, arg_1_2)
+DialogueContextSystem.init = function (self, context, system_name)
 	-- function 1
-	arg_1_1.entity_manager:register_system(self, arg_1_2, tbl)
+	local entity_manager = context.entity_manager
+
+	entity_manager:register_system(self, system_name, extensions)
 
 	self._next_player_key = nil
 	self._unit_extension_data = {}
@@ -21,70 +23,71 @@ DialogueContextSystem.destroy = function (self)
 	self._unit_extension_data = nil
 end
 
-DialogueContextSystem.on_add_extension = function (arg_3_0, arg_3_1, arg_3_2, arg_3_3, arg_3_4)
+DialogueContextSystem.on_add_extension = function (self, world, unit, extension_name, extension_init_data)
 	-- function 3
-	local context = ScriptUnit.extension(arg_3_2, "dialogue_system").context
+	local context = ScriptUnit.extension(unit, "dialogue_system").context
 
-	fassert(arg_3_4.profile, "Missing profile!")
+	fassert(extension_init_data.profile, "Missing profile!")
 
-	context.player_profile = arg_3_4.profile.character_vo
+	context.player_profile = extension_init_data.profile.character_vo
 
-	local tbl = {
+	local extension = {
 		context = context
 	}
 
-	ScriptUnit.set_extension(arg_3_2, "dialogue_context_system", tbl, {})
+	ScriptUnit.set_extension(unit, "dialogue_context_system", extension, {})
 
-	arg_3_0._unit_extension_data[arg_3_2] = tbl
+	self._unit_extension_data[unit] = extension
 
-	return tbl
+	return extension
 end
 
-DialogueContextSystem.on_remove_extension = function (self, arg_4_1, arg_4_2)
+DialogueContextSystem.on_remove_extension = function (self, unit, extension_name)
 	-- function 4
-	self._unit_extension_data[arg_4_1] = nil
+	self._unit_extension_data[unit] = nil
 
-	ScriptUnit.remove_extension(arg_4_1, self.NAME)
+	ScriptUnit.remove_extension(unit, self.NAME)
 end
 
-DialogueContextSystem.extensions_ready = function (self, arg_5_1, arg_5_2, arg_5_3)
+DialogueContextSystem.extensions_ready = function (self, world, unit, extension_name)
 	-- function 5
-	local extension = ScriptUnit.extension(arg_5_2, "health_system")
-	local extension_2 = ScriptUnit.extension(arg_5_2, "status_system")
-	local extension_3 = ScriptUnit.extension(arg_5_2, "proximity_system")
-	local var_5_3 = self._unit_extension_data[arg_5_2]
+	local health_extension = ScriptUnit.extension(unit, "health_system")
+	local status_extension = ScriptUnit.extension(unit, "status_system")
+	local proximity_extension = ScriptUnit.extension(unit, "proximity_system")
+	local extension = self._unit_extension_data[unit]
 
-	var_5_3.health_extension = extension
-	var_5_3.status_extension = extension_2
-	var_5_3.proximity_extension = extension_3
+	extension.health_extension = health_extension
+	extension.status_extension = status_extension
+	extension.proximity_extension = proximity_extension
 end
 
-DialogueContextSystem.update = function (self, arg_6_1, arg_6_2)
+DialogueContextSystem.update = function (self, system_context, t)
 	-- function 6
-	if not (not self._next_player_key and Unit.alive(self._next_player_key)) then
+	if self._next_player_key and not Unit.alive(self._next_player_key) then
 		self._next_player_key = nil
 	end
 
-	local var_6_0, var_6_1 = next(self._unit_extension_data, self._next_player_key)
+	local next_player_key, extension = next(self._unit_extension_data, self._next_player_key)
 
-	self._next_player_key = var_6_0
+	self._next_player_key = next_player_key
 
-	if not var_6_0 then
+	if not next_player_key then
 		return
 	end
 
-	local context = var_6_1.context
+	local context = extension.context
 
-	context.health = var_6_1.health_extension:current_health_percent()
+	context.health = extension.health_extension:current_health_percent()
 
-	local status_extension = var_6_1.status_extension
+	local status_extension = extension.status_extension
 
 	context.is_pounced_down = not not status_extension:is_pounced_down()
 	context.is_knocked_down = not not status_extension:is_knocked_down()
 	context.intensity = status_extension:get_pacing_intensity()
 	context.pacing_state = Managers.state.conflict.pacing.pacing_state
 
-	local proximity_types = var_6_1.proximity_extension.proximity_types
+	local proximity_extension = extension.proximity_extension
+	local proximity_types = proximity_extension.proximity_types
 
 	context.friends_close = proximity_types.friends_close.num
 	context.friends_distant = proximity_types.friends_distant.num
@@ -92,12 +95,14 @@ DialogueContextSystem.update = function (self, arg_6_1, arg_6_2)
 	context.enemies_distant = proximity_types.enemies_distant.num
 end
 
-DialogueContextSystem.hot_join_sync = function (arg_7_0, arg_7_1)
+DialogueContextSystem.hot_join_sync = function (self, sender)
 	-- function 7
 	return
 end
 
-DialogueContextSystem.set_context_value = function (arg_8_0, arg_8_1, arg_8_2, arg_8_3)
+DialogueContextSystem.set_context_value = function (self, unit, key, value)
 	-- function 8
-	arg_8_0._unit_extension_data[arg_8_1].context[arg_8_2] = arg_8_3
+	local extension = self._unit_extension_data[unit]
+
+	extension.context[key] = value
 end

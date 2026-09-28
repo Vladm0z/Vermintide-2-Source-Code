@@ -4,33 +4,41 @@ require("scripts/entity_system/systems/behaviour/nodes/bt_node")
 
 BTBotHealAction = class(BTBotHealAction, BTNode)
 
-BTBotHealAction.init = function (arg_1_0, ...)
+BTBotHealAction.init = function (self, ...)
 	-- function 1
-	BTBotHealAction.super.init(arg_1_0, ...)
+	BTBotHealAction.super.init(self, ...)
 end
 
 BTBotHealAction.name = "BTBotHealAction"
 
-BTBotHealAction.enter = function (arg_2_0, arg_2_1, arg_2_2, arg_2_3)
+BTBotHealAction.enter = function (self, unit, blackboard, t)
 	-- function 2
-	arg_2_2.starting_health_percent = arg_2_2.health_extension:current_health_percent()
-	arg_2_2.is_healing_self = true
+	local health_extension = blackboard.health_extension
+	local health_percent = health_extension:current_health_percent()
+
+	blackboard.starting_health_percent = health_percent
+	blackboard.is_healing_self = true
 end
 
-BTBotHealAction.leave = function (arg_3_0, arg_3_1, arg_3_2, arg_3_3, arg_3_4, arg_3_5)
+BTBotHealAction.leave = function (self, unit, blackboard, t, reason, destroy)
 	-- function 3
-	arg_3_2.force_use_health_pickup = nil
-	arg_3_2.starting_health_percent = nil
-	arg_3_2.is_healing_self = false
+	blackboard.force_use_health_pickup = nil
+	blackboard.starting_health_percent = nil
+	blackboard.is_healing_self = false
 end
 
-BTBotHealAction.run = function (arg_4_0, arg_4_1, arg_4_2, arg_4_3, arg_4_4)
+BTBotHealAction.run = function (self, unit, blackboard, t, dt)
 	-- function 4
-	if not (not arg_4_2.force_use_health_pickup and not (arg_4_2.health_extension:current_health_percent() > arg_4_2.starting_health_percent)) then
-		return "done"
+	if blackboard.force_use_health_pickup then
+		local health_extension = blackboard.health_extension
+		local health_percent = health_extension:current_health_percent()
+
+		if health_percent > blackboard.starting_health_percent then
+			return "done"
+		end
 	end
 
-	arg_4_2.input_extension:hold_attack()
+	blackboard.input_extension:hold_attack()
 
 	return "running"
 end

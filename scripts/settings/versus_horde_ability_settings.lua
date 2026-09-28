@@ -1,6 +1,6 @@
 -- chunkname: @scripts/settings/versus_horde_ability_settings.lua
 
-return {
+local horde_ability_settings = {
 	save_charges_between_rounds = true,
 	enable_activation_in_ghost_mode = true,
 	horde_units_batch_sync_interval = 1,
@@ -84,3 +84,5 @@ return {
 		}
 	}
 }
+
+return horde_ability_settings

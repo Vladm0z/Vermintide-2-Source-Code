@@ -6,7 +6,7 @@ require("scripts/helpers/weave_utils")
 
 BackendInterfaceWeavesPlayFab = class(BackendInterfaceWeavesPlayFab)
 
-local tbl = {
+local LOADOUT_INTERFACE_OVERRIDES = {
 	slot_pose = "items",
 	slot_hat = "items",
 	slot_skin = "items",
@@ -15,47 +15,47 @@ local tbl = {
 	slot_ranged = "weaves"
 }
 
-local function fn(arg_1_0)
+local function career_magic_level_to_power_level(magic_level)
 	-- function 1
-	local PowerLevelFromMagicLevel = PowerLevelFromMagicLevel
+	local settings = PowerLevelFromMagicLevel
 
-	return math.min(math.ceil(math.clamp(arg_1_0 * PowerLevelFromMagicLevel.amulet_power_level_per_magic_level, 0, PowerLevelFromMagicLevel.power_level_per_magic_level)), PowerLevelFromMagicLevel.max_power_level)
+	return math.min(math.ceil(math.clamp(magic_level * settings.amulet_power_level_per_magic_level, 0, settings.power_level_per_magic_level)), settings.max_power_level)
 end
 
-BackendInterfaceWeavesPlayFab.init = function (self, arg_2_1)
+BackendInterfaceWeavesPlayFab.init = function (self, backend_mirror)
 	-- function 2
-	self._backend_mirror = arg_2_1
+	self._backend_mirror = backend_mirror
 	self._dirty_loadouts = {}
 
-	local get_weaves_progression_settings = arg_2_1:get_weaves_progression_settings()
+	local progression_settings = backend_mirror:get_weaves_progression_settings()
 
-	self:_validate_backend_progression_settings(get_weaves_progression_settings)
+	self:_validate_backend_progression_settings(progression_settings)
 
-	self._progression_settings = get_weaves_progression_settings
-	self._forge_level = arg_2_1:get_read_only_data("weaves_forge_level")
+	self._progression_settings = progression_settings
+	self._forge_level = backend_mirror:get_read_only_data("weaves_forge_level")
 	self._loadouts = self:_parse_loadouts()
 	self._career_progress = self:_parse_career_progress()
 
-	local get_all_inventory_items = arg_2_1:get_all_inventory_items()
+	local inventory_items = backend_mirror:get_all_inventory_items()
 
-	for k, v in pairs(get_all_inventory_items) do
-		if not v.magic_level then
-			v.power_level = WeaveUtils.magic_level_to_power_level(v.magic_level)
+	for _, item in pairs(inventory_items) do
+		if item.magic_level then
+			item.power_level = WeaveUtils.magic_level_to_power_level(item.magic_level)
 		end
 	end
 
-	local tbl_2 = {}
+	local valid_loadout_slots = {}
 
-	for k_2, v_2 in pairs(tbl) do
-		if v_2 == "weaves" then
-			tbl_2[k_2] = true
+	for slot_name, interface_name in pairs(LOADOUT_INTERFACE_OVERRIDES) do
+		if interface_name == "weaves" then
+			valid_loadout_slots[slot_name] = true
 		end
 	end
 
-	self._valid_loadout_slots = tbl_2
+	self._valid_loadout_slots = valid_loadout_slots
 
 	if not script_data.disable_weave_loadout then
-		Managers.backend:add_loadout_interface_override("weave", tbl)
+		Managers.backend:add_loadout_interface_override("weave", LOADOUT_INTERFACE_OVERRIDES)
 	end
 
 	if not script_data.disable_weave_talents then
@@ -72,133 +72,137 @@ BackendInterfaceWeavesPlayFab.init = function (self, arg_2_1)
 	self._leaderboard_request_error = false
 end
 
-BackendInterfaceWeavesPlayFab._validate_backend_progression_settings = function (arg_3_0, arg_3_1)
+BackendInterfaceWeavesPlayFab._validate_backend_progression_settings = function (self, progression_settings)
 	-- function 3
-	for k, v in pairs(WeaveLoadoutSettings) do
-		for i, v_2 in ipairs(v.properties) do
-			local var_3_0 = arg_3_1.properties[v_2]
+	for career_name, settings in pairs(WeaveLoadoutSettings) do
+		for _, property_name in ipairs(settings.properties) do
+			local progression_data = progression_settings.properties[property_name]
 
-			if not (not var_3_0 and not var_3_0.mastery_costs and var_3_0.required_forge_level) then
-				Application.warning("[BackendInterfaceWeavesPlayFab] Configuration not found or incomplete for property %q in weave_progression_settings", v_2)
+			if not progression_data or not progression_data.mastery_costs or not progression_data.required_forge_level then
+				Application.warning("[BackendInterfaceWeavesPlayFab] Configuration not found or incomplete for property %q in weave_progression_settings", property_name)
 			end
 		end
 
-		for i_2, v_3 in ipairs(v.traits) do
-			local var_3_1 = arg_3_1.traits[v_3]
+		for _, trait_name in ipairs(settings.traits) do
+			local progression_data = progression_settings.traits[trait_name]
 
-			if not (not var_3_1 and not var_3_1.mastery_cost and var_3_1.required_forge_level) then
-				Application.warning("[BackendInterfaceWeavesPlayFab] Configuration not found or incomplete for trait %q in weave_progression_settings", v_3)
+			if not progression_data or not progression_data.mastery_cost or not progression_data.required_forge_level then
+				Application.warning("[BackendInterfaceWeavesPlayFab] Configuration not found or incomplete for trait %q in weave_progression_settings", trait_name)
 			end
 		end
 
-		for i_3, v_4 in ipairs(v.talent_tree) do
-			for i_4, v_5 in ipairs(v_4) do
-				local var_3_2 = arg_3_1.talents[v_5]
+		for tree_row, tier_talents in ipairs(settings.talent_tree) do
+			for tree_column, talent_name in ipairs(tier_talents) do
+				local progression_data = progression_settings.talents[talent_name]
 
-				if not (not var_3_2 and var_3_2.mastery_cost) then
-					Application.warning("[BackendInterfaceWeavesPlayFab] Configuration not found or incomplete for talent %q in weave_progression_settings", v_5)
+				if not progression_data or not progression_data.mastery_cost then
+					Application.warning("[BackendInterfaceWeavesPlayFab] Configuration not found or incomplete for talent %q in weave_progression_settings", talent_name)
 				end
 			end
 		end
 	end
 
-	for k_2, v_6 in pairs(ItemMasterList) do
-		local rarity = v_6.rarity
-		local slot_type = v_6.slot_type
+	for item_name, item_data in pairs(ItemMasterList) do
+		local rarity = item_data.rarity
+		local slot_type = item_data.slot_type
 
-		if not (not rarity and (rarity ~= "magic" or not slot_type or slot_type == "melee" or slot_type == "ranged") and arg_3_1.items[k_2]) then
-			Application.warning("[BackendInterfaceWeavesPlayFab] Configuration not found or incomplete for item %q in weave_progression_settings", k_2)
+		if rarity and rarity == "magic" and slot_type and (slot_type == "melee" or slot_type == "ranged") then
+			local progression_data = progression_settings.items[item_name]
+
+			if not progression_data then
+				Application.warning("[BackendInterfaceWeavesPlayFab] Configuration not found or incomplete for item %q in weave_progression_settings", item_name)
+			end
 		end
 	end
 end
 
 BackendInterfaceWeavesPlayFab._parse_loadouts = function (self)
 	-- function 4
-	local tbl = {}
+	local loadouts = {}
 
-	for k, v in pairs(CareerSettings) do
-		if not v.playfab_name then
-			if not v.excluded_from_weave_loadouts then
-				local is_dlc_unlocked = v.is_dlc_unlocked()
+	for career_name, settings in pairs(CareerSettings) do
+		if settings.playfab_name then
+			if not settings.excluded_from_weave_loadouts then
+				local dlc_unlocked = settings.is_dlc_unlocked()
 
-				if is_dlc_unlocked == nil or not is_dlc_unlocked then
-					local get_read_only_data = self._backend_mirror:get_read_only_data("weaves_loadout_" .. k)
-					local flag = not get_read_only_data and cjson.decode(get_read_only_data)
+				if dlc_unlocked == nil or dlc_unlocked then
+					local loadout_json = self._backend_mirror:get_read_only_data("weaves_loadout_" .. career_name)
+					local loadout = not not loadout_json and not not cjson.decode(loadout_json)
 
-					tbl[k] = flag
+					loadouts[career_name] = loadout
 
-					self:_validate_loadout(k, flag)
+					self:_validate_loadout(career_name, loadout)
 				end
 			else
-				Application.warning("[BackendInterfaceWeavesPlayFab] Career %q excluded from weaves", k)
+				Application.warning("[BackendInterfaceWeavesPlayFab] Career %q excluded from weaves", career_name)
 			end
 		end
 	end
 
-	for k_2, v_2 in pairs(tbl) do
-		for k_3, v_3 in pairs(v_2.item_loadouts) do
-			self:_update_item_custom_data(k_3, v_3)
+	for career_name, loadout in pairs(loadouts) do
+		for item_backend_id, item_loadout in pairs(loadout.item_loadouts) do
+			self:_update_item_custom_data(item_backend_id, item_loadout)
 		end
 	end
 
-	return tbl
+	return loadouts
 end
 
-BackendInterfaceWeavesPlayFab._validate_loadout = function (self, arg_5_1, arg_5_2)
+BackendInterfaceWeavesPlayFab._validate_loadout = function (self, career_name, loadout)
 	-- function 5
-	local _dirty_loadouts = self._dirty_loadouts
+	local dirty_loadouts = self._dirty_loadouts
 
-	if not arg_5_2.properties then
-		local var_5_1 = WeavePropertiesByCareer[arg_5_1]
+	if loadout.properties then
+		local properties_data = WeavePropertiesByCareer[career_name]
 
-		for k, v in pairs(arg_5_2.properties) do
-			if not var_5_1[k] then
-				print("[BackendInterfaceWeavesPlayFab] Loadout property not found in local settings, removing it from the loadout!", arg_5_1, k)
+		for property_name, property_slots in pairs(loadout.properties) do
+			if not properties_data[property_name] then
+				print("[BackendInterfaceWeavesPlayFab] Loadout property not found in local settings, removing it from the loadout!", career_name, property_name)
 
-				arg_5_2.properties[k] = nil
-				_dirty_loadouts[arg_5_1] = true
+				loadout.properties[property_name] = nil
+				dirty_loadouts[career_name] = true
 			end
 		end
 	end
 
-	if not arg_5_2.traits then
-		local var_5_2 = WeaveTraitsByCareer[arg_5_1]
+	if loadout.traits then
+		local traits_data = WeaveTraitsByCareer[career_name]
 
-		for k_2, v_2 in pairs(arg_5_2.traits) do
-			if not var_5_2[k_2] then
-				print("[BackendInterfaceWeavesPlayFab] Loadout trait not found in local settings, removing it from the loadout!", arg_5_1, k_2)
+		for trait_name, _ in pairs(loadout.traits) do
+			if not traits_data[trait_name] then
+				print("[BackendInterfaceWeavesPlayFab] Loadout trait not found in local settings, removing it from the loadout!", career_name, trait_name)
 
-				arg_5_2.traits[k_2] = nil
-				_dirty_loadouts[arg_5_1] = true
+				loadout.traits[trait_name] = nil
+				dirty_loadouts[career_name] = true
 			end
 		end
 	end
 
-	if not arg_5_2.talents then
-		local var_5_3 = WeaveTalentsByCareer[arg_5_1]
+	if loadout.talents then
+		local talents_data = WeaveTalentsByCareer[career_name]
 
-		for k_3, v_3 in pairs(arg_5_2.talents) do
-			if not var_5_3[k_3] then
-				print("[BackendInterfaceWeavesPlayFab] Loadout talent not found in local settings, removing it from the loadout!", arg_5_1, k_3)
+		for talent_name, _ in pairs(loadout.talents) do
+			if not talents_data[talent_name] then
+				print("[BackendInterfaceWeavesPlayFab] Loadout talent not found in local settings, removing it from the loadout!", career_name, talent_name)
 
-				arg_5_2.talents[k_3] = nil
-				_dirty_loadouts[arg_5_1] = true
+				loadout.talents[talent_name] = nil
+				dirty_loadouts[career_name] = true
 			end
 		end
 	end
 
-	if not arg_5_2.item_loadouts then
-		local get_all_inventory_items = self._backend_mirror:get_all_inventory_items()
+	if loadout.item_loadouts then
+		local inventory_items = self._backend_mirror:get_all_inventory_items()
 
-		for k_4, v_4 in pairs(arg_5_2.item_loadouts) do
-			local var_5_5 = get_all_inventory_items[k_4]
+		for item_backend_id, item_loadout in pairs(loadout.item_loadouts) do
+			local item = inventory_items[item_backend_id]
 
-			if not (not var_5_5 and var_5_5.rarity == "magic") then
-				print("[BackendInterfaceWeavesPlayFab] Loadout weapon not found in local settings, removing it from the loadout!", arg_5_1, k_4)
+			if not item or item.rarity ~= "magic" then
+				print("[BackendInterfaceWeavesPlayFab] Loadout weapon not found in local settings, removing it from the loadout!", career_name, item_backend_id)
 
-				arg_5_2.item_loadouts[k_4] = nil
+				loadout.item_loadouts[item_backend_id] = nil
 			else
-				self:_validate_loadout(arg_5_1, v_4)
+				self:_validate_loadout(career_name, item_loadout)
 			end
 		end
 	end
@@ -206,16 +210,17 @@ end
 
 BackendInterfaceWeavesPlayFab._parse_career_progress = function (self)
 	-- function 6
-	local get_read_only_data = self._backend_mirror:get_read_only_data("weaves_career_progress")
+	local progress_json = self._backend_mirror:get_read_only_data("weaves_career_progress")
+	local progress = cjson.decode(progress_json)
 
-	return (cjson.decode(get_read_only_data))
+	return progress
 end
 
 BackendInterfaceWeavesPlayFab._new_id = function (self)
 	-- function 7
 	local num
 
-	if not self._last_id then
+	if self._last_id then
 		num = self._last_id + 1
 
 		if not num then
@@ -232,262 +237,298 @@ BackendInterfaceWeavesPlayFab._new_id = function (self)
 	return self._last_id
 end
 
-BackendInterfaceWeavesPlayFab._create_leaderboard_entry = function (self, arg_8_1, arg_8_2, arg_8_3)
+BackendInterfaceWeavesPlayFab._create_leaderboard_entry = function (self, data, previous_tier, previous_score)
 	-- function 8
-	if not arg_8_1 then
-		return {
+	if not data then
+		local entry = {
 			score = "-",
 			name = "-",
 			weave = "-",
 			ranking = "-",
 			local_player = false
 		}
+
+		return entry
 	end
 
-	local num = arg_8_1.Position + 1
-	local Profile = arg_8_1.Profile
-	local LinkedAccounts = Profile.LinkedAccounts
-	local var_8_3
-	local var_8_4
-	local var_8_5
+	local position = data.Position + 1
+	local profile = data.Profile
+	local linked_accounts = profile.LinkedAccounts
+	local name, position_text, platform_user_id
 
-	for i = 1, #LinkedAccounts do
-		local var_8_6 = LinkedAccounts[i]
+	for i = 1, #linked_accounts do
+		local account_data = linked_accounts[i]
 
-		if var_8_6.Platform == "Steam" then
-			var_8_3 = var_8_6.Username
-			var_8_5 = var_8_6.PlatformUserId
-		elseif var_8_6.Platform == "XBoxLive" then
-			var_8_3 = var_8_6.Username
-			var_8_5 = var_8_6.PlatformUserId
-		elseif var_8_6.Platform == "PSN" then
-			var_8_3 = var_8_6.Username
-			var_8_5 = var_8_6.PlatformUserId
+		if account_data.Platform == "Steam" then
+			name = account_data.Username
+			platform_user_id = account_data.PlatformUserId
+		elseif account_data.Platform == "XBoxLive" then
+			name = account_data.Username
+			platform_user_id = account_data.PlatformUserId
+		elseif account_data.Platform == "PSN" then
+			name = account_data.Username
+			platform_user_id = account_data.PlatformUserId
 		end
 	end
 
-	local convert_weave_score, var_8_8, var_8_9 = BackendUtils.convert_weave_score(arg_8_1.StatValue)
-	local flag = Profile.PlayerId == self._backend_mirror:get_playfab_id()
+	local tier, score, career_name = BackendUtils.convert_weave_score(data.StatValue)
+	local local_player = profile.PlayerId == self._backend_mirror:get_playfab_id()
 
-	if not (var_8_8 ~= arg_8_3 or convert_weave_score ~= arg_8_2) then
-		var_8_4 = ""
+	if score == previous_score and tier == previous_tier then
+		position_text = ""
 	end
 
-	return {
-		name = var_8_3,
-		career_name = var_8_9,
-		ranking = var_8_4 or num,
-		real_ranking = num,
-		weave = convert_weave_score,
-		score = var_8_8,
-		local_player = flag,
-		platform_user_id = var_8_5
+	local entry = {
+		name = name,
+		career_name = career_name,
+		ranking = not not position_text or not not position,
+		real_ranking = position,
+		weave = tier,
+		score = score,
+		local_player = local_player,
+		platform_user_id = platform_user_id
 	}
+
+	return entry
 end
 
-BackendInterfaceWeavesPlayFab._get_magic_inventory_item = function (self, arg_9_1)
+BackendInterfaceWeavesPlayFab._get_magic_inventory_item = function (self, item_backend_id)
 	-- function 9
-	local var_9_0 = self._backend_mirror:get_all_inventory_items()[arg_9_1]
+	local inventory_items = self._backend_mirror:get_all_inventory_items()
+	local item = inventory_items[item_backend_id]
 
-	fassert(var_9_0, "[BackendInterfaceWeavesPlayFab] Item %q doesn't exist", tostring(arg_9_1))
-	fassert(var_9_0.rarity == "magic", "[BackendInterfaceWeavesPlayFab] Item %q is not magic", tostring(arg_9_1))
+	fassert(item, "[BackendInterfaceWeavesPlayFab] Item %q doesn't exist", tostring(item_backend_id))
+	fassert(item.rarity == "magic", "[BackendInterfaceWeavesPlayFab] Item %q is not magic", tostring(item_backend_id))
 
-	return var_9_0
+	return item
 end
 
-BackendInterfaceWeavesPlayFab._update_item_custom_data = function (self, arg_10_1, arg_10_2)
+BackendInterfaceWeavesPlayFab._update_item_custom_data = function (self, item_backend_id, item_loadout)
 	-- function 10
-	local _get_magic_inventory_item = self:_get_magic_inventory_item(arg_10_1)
-	local _progression_settings = self._progression_settings
+	local item = self:_get_magic_inventory_item(item_backend_id)
+	local progression_settings = self._progression_settings
 
-	if not arg_10_2.properties then
-		if not _get_magic_inventory_item.properties then
-			table.clear(_get_magic_inventory_item.properties)
+	if item_loadout.properties then
+		if item.properties then
+			table.clear(item.properties)
 		else
-			_get_magic_inventory_item.properties = {}
+			item.properties = {}
 		end
 
-		for k, v in pairs(arg_10_2.properties) do
-			local num = #v / #self:get_property_mastery_costs(k)
+		for property_name, property_slots in pairs(item_loadout.properties) do
+			local num_slots = #property_slots
+			local costs = self:get_property_mastery_costs(property_name)
+			local max_num_slots = #costs
+			local value = num_slots / max_num_slots
 
-			_get_magic_inventory_item.properties[k] = num
+			item.properties[property_name] = value
 		end
 	else
-		_get_magic_inventory_item.properties = nil
+		item.properties = nil
 	end
 
-	if not arg_10_2.traits then
-		if not _get_magic_inventory_item.traits then
-			table.clear(_get_magic_inventory_item.traits)
+	if item_loadout.traits then
+		if item.traits then
+			table.clear(item.traits)
 		else
-			_get_magic_inventory_item.traits = {}
+			item.traits = {}
 		end
 
-		for k_2, v_2 in pairs(arg_10_2.traits) do
-			_get_magic_inventory_item.traits[#_get_magic_inventory_item.traits + 1] = k_2
+		for trait_name, _ in pairs(item_loadout.traits) do
+			item.traits[#item.traits + 1] = trait_name
 		end
 	else
-		_get_magic_inventory_item.traits = nil
+		item.traits = nil
 	end
 end
 
-BackendInterfaceWeavesPlayFab._get_loadout_mastery_cost = function (self, arg_11_1)
+BackendInterfaceWeavesPlayFab._get_loadout_mastery_cost = function (self, loadout)
 	-- function 11
-	local num = 0
-	local _progression_settings = self._progression_settings
+	local total_cost = 0
+	local progression_settings = self._progression_settings
 
-	if not arg_11_1.properties then
-		for k, v in pairs(arg_11_1.properties) do
-			local get_property_mastery_costs = self:get_property_mastery_costs(k)
+	if loadout.properties then
+		for property_name, property_slots in pairs(loadout.properties) do
+			local costs = self:get_property_mastery_costs(property_name)
 
-			for k_2 = 1, #v do
-				num = num + get_property_mastery_costs[k_2]
+			for i = 1, #property_slots do
+				total_cost = total_cost + costs[i]
 			end
 		end
 	end
 
-	if not arg_11_1.traits then
-		for k_3, v_2 in pairs(arg_11_1.traits) do
-			num = num + self:get_trait_mastery_cost(k_3)
+	if loadout.traits then
+		for trait_name, _ in pairs(loadout.traits) do
+			local cost = self:get_trait_mastery_cost(trait_name)
+
+			total_cost = total_cost + cost
 		end
 	end
 
-	if not arg_11_1.talents then
-		for k_4, v_3 in pairs(arg_11_1.talents) do
-			num = num + self:get_talent_mastery_cost(k_4)
+	if loadout.talents then
+		for talent_name, _ in pairs(loadout.talents) do
+			local cost = self:get_talent_mastery_cost(talent_name)
+
+			total_cost = total_cost + cost
 		end
 	end
 
-	return num
+	return total_cost
 end
 
-BackendInterfaceWeavesPlayFab.ready = function (arg_12_0)
+BackendInterfaceWeavesPlayFab.ready = function (self)
 	-- function 12
 	return true
 end
 
-BackendInterfaceWeavesPlayFab.submit_scores = function (self, arg_13_1, arg_13_2, arg_13_3)
+BackendInterfaceWeavesPlayFab.submit_scores = function (self, tier, score, num_players)
 	-- function 13
-	local human_players = Managers.player:human_players()
-	local tbl = {}
+	local players = Managers.player:human_players()
+	local scores_by_platform_id = {}
 
-	for k, v in pairs(human_players) do
-		local platform_id = v:platform_id()
+	for _, player in pairs(players) do
+		local platform_id = player:platform_id()
 
 		if not IS_XB1 then
 			platform_id = Application.hex64_to_dec(platform_id)
 		end
 
-		local career_name = v:career_name()
+		local career_name = player:career_name()
+		local weave_score = BackendUtils.calculate_weave_score(tier, score, career_name)
 
-		tbl[platform_id] = BackendUtils.calculate_weave_score(arg_13_1, arg_13_2, career_name)
+		scores_by_platform_id[platform_id] = weave_score
 	end
 
-	local tbl_2 = {
+	local submit_weave_score_request = {
 		FunctionName = "submitWeaveScore",
 		FunctionParameter = {
-			scores_by_platform_id = tbl,
-			num_players = arg_13_3
+			scores_by_platform_id = scores_by_platform_id,
+			num_players = num_players
 		}
 	}
-	local var_13_5 = callback(self, "submit_weave_score_request_cb")
+	local success_callback = callback(self, "submit_weave_score_request_cb")
+	local request_queue = self._backend_mirror:request_queue()
 
-	self._backend_mirror:request_queue():enqueue(tbl_2, var_13_5, true)
+	request_queue:enqueue(submit_weave_score_request, success_callback, true)
 end
 
-BackendInterfaceWeavesPlayFab.submit_weave_score_request_cb = function (arg_14_0)
+BackendInterfaceWeavesPlayFab.submit_weave_score_request_cb = function (self)
 	-- function 14
 	return
 end
 
-BackendInterfaceWeavesPlayFab.request_player_rank = function (self, arg_15_1, arg_15_2, arg_15_3)
+BackendInterfaceWeavesPlayFab.request_player_rank = function (self, stat_name, leaderboard_type, external_error_cb)
 	-- function 15
-	local tbl = {
+	local player_rank_request = {
 		MaxResultsCount = 1,
-		StatisticName = arg_15_1,
+		StatisticName = stat_name,
 		ProfileConstraints = {
 			ShowLinkedAccounts = true
 		}
 	}
 
-	if not IS_XB1 then
-		tbl.XboxToken = Managers.account:get_xsts_token()
+	if IS_XB1 then
+		player_rank_request.XboxToken = Managers.account:get_xsts_token()
 	end
 
-	local var_15_1 = callback(self, "player_rank_request_cb")
-	local var_15_2 = callback(self, "player_rank_request_failed_cb", arg_15_3)
+	local success_callback = callback(self, "player_rank_request_cb")
+	local fail_callback = callback(self, "player_rank_request_failed_cb", external_error_cb)
 	local request_queue = self._backend_mirror:request_queue()
-	local flag
+	local str
 
-	flag = arg_15_2 ~= "friends" or not "GetFriendLeaderboardAroundPlayer" or "GetLeaderboardAroundPlayer"
+	if leaderboard_type == "friends" then
+		str = "GetFriendLeaderboardAroundPlayer"
 
-	request_queue:enqueue_api_request(flag, tbl, var_15_1, var_15_2)
+		goto label_15_0
+	end
+
+	str = "GetLeaderboardAroundPlayer"
+
+	local request_function = str
+
+	::label_15_0::
+
+	request_queue:enqueue_api_request(request_function, player_rank_request, success_callback, fail_callback)
 
 	self._requesting_leaderboard = self._requesting_leaderboard + 1
 end
 
-BackendInterfaceWeavesPlayFab.player_rank_request_cb = function (self, arg_16_1)
+BackendInterfaceWeavesPlayFab.player_rank_request_cb = function (self, result)
 	-- function 16
-	local var_16_0 = arg_16_1.Leaderboard[1]
+	local data = result.Leaderboard[1]
+	local stat_value = not not data and not not data.StatValue
 
-	if (not var_16_0 and var_16_0.StatValue) == 0 then
-		var_16_0 = nil
+	if stat_value == 0 then
+		data = nil
 	end
 
-	self._player_entry, self._requesting_leaderboard = self:_create_leaderboard_entry(var_16_0), self._requesting_leaderboard - 1
+	local leaderboard_entry = self:_create_leaderboard_entry(data)
+
+	self._requesting_leaderboard = self._requesting_leaderboard - 1
+	self._player_entry = leaderboard_entry
 	self._leaderboard_player_rank_error = false
 end
 
-BackendInterfaceWeavesPlayFab.request_leaderboard_around_player = function (self, arg_17_1, arg_17_2, arg_17_3, arg_17_4)
+BackendInterfaceWeavesPlayFab.request_leaderboard_around_player = function (self, stat_name, leaderboard_type, max_result_count, external_error_cb)
 	-- function 17
-	local tbl = {
-		MaxResultsCount = arg_17_3 or 1,
-		StatisticName = arg_17_1,
+	local request_leaderboard_around_player = {
+		MaxResultsCount = not not max_result_count or not not 1,
+		StatisticName = stat_name,
 		ProfileConstraints = {
 			ShowLinkedAccounts = true
 		}
 	}
 
-	if not IS_XB1 then
-		tbl.XboxToken = Managers.account:get_xsts_token()
+	if IS_XB1 then
+		request_leaderboard_around_player.XboxToken = Managers.account:get_xsts_token()
 	end
 
-	local var_17_1 = callback(self, "request_leaderboard_around_player_cb")
-	local var_17_2 = callback(self, "request_leaderboard_failed_cb", arg_17_4)
+	local success_callback = callback(self, "request_leaderboard_around_player_cb")
+	local fail_callback = callback(self, "request_leaderboard_failed_cb", external_error_cb)
 	local request_queue = self._backend_mirror:request_queue()
-	local flag
+	local str
 
-	flag = arg_17_2 ~= "friends" or not "GetFriendLeaderboardAroundPlayer" or "GetLeaderboardAroundPlayer"
+	if leaderboard_type == "friends" then
+		str = "GetFriendLeaderboardAroundPlayer"
 
-	request_queue:enqueue_api_request(flag, tbl, var_17_1, var_17_2)
+		goto label_17_0
+	end
+
+	str = "GetLeaderboardAroundPlayer"
+
+	local request_function = str
+
+	::label_17_0::
+
+	request_queue:enqueue_api_request(request_function, request_leaderboard_around_player, success_callback, fail_callback)
 
 	self._requesting_leaderboard = self._requesting_leaderboard + 1
 	self._leaderboard_request_error = false
 end
 
-BackendInterfaceWeavesPlayFab.request_leaderboard_around_player_cb = function (self, arg_18_1)
+BackendInterfaceWeavesPlayFab.request_leaderboard_around_player_cb = function (self, result)
 	-- function 18
-	local Leaderboard = arg_18_1.Leaderboard
+	local leaderboard = result.Leaderboard
 
 	table.clear(self._leaderboard_entries)
 
-	local num = 1
+	local idx = 1
 
-	for i = 1, #Leaderboard do
-		local var_18_2 = Leaderboard[i]
-		local var_18_3
+	for i = 1, #leaderboard do
+		local data = leaderboard[i]
+		local entry
 
-		if var_18_2.StatValue ~= 0 then
-			local flag = not (num > 1) or self._leaderboard_entries[num - 1].score
-			local flag_2 = not (num > 1) or self._leaderboard_entries[num - 1].weave
-			local _create_leaderboard_entry = self:_create_leaderboard_entry(var_18_2, flag_2, flag)
+		if data.StatValue ~= 0 then
+			local previous_score = idx > 1 and not not self._leaderboard_entries[idx - 1].score
+			local previous_tier = idx > 1 and not not self._leaderboard_entries[idx - 1].weave
+			local entry = self:_create_leaderboard_entry(data, previous_tier, previous_score)
 
-			self._leaderboard_entries[num] = _create_leaderboard_entry
-			num = num + 1
+			self._leaderboard_entries[idx] = entry
+			idx = idx + 1
 		end
 
-		if var_18_2.Profile.PlayerId == self._backend_mirror:get_playfab_id() then
-			self._player_entry = var_18_3
+		if data.Profile.PlayerId == self._backend_mirror:get_playfab_id() then
+			self._player_entry = entry
 		end
 	end
 
@@ -499,46 +540,56 @@ BackendInterfaceWeavesPlayFab.get_player_entry = function (self)
 	return self._player_entry
 end
 
-BackendInterfaceWeavesPlayFab.request_leaderboard = function (self, arg_20_1, arg_20_2, arg_20_3, arg_20_4)
+BackendInterfaceWeavesPlayFab.request_leaderboard = function (self, stat_name, start_position, leaderboard_type, external_error_cb)
 	-- function 20
-	local tbl = {
+	local leaderboard_request = {
 		MaxResultsCount = 100,
-		StatisticName = arg_20_1,
+		StatisticName = stat_name,
 		ProfileConstraints = {
 			ShowLinkedAccounts = true
 		},
-		StartPosition = arg_20_2
+		StartPosition = start_position
 	}
 
-	if not IS_XB1 then
-		tbl.XboxToken = Managers.account:get_xsts_token()
+	if IS_XB1 then
+		leaderboard_request.XboxToken = Managers.account:get_xsts_token()
 	end
 
-	local var_20_1 = callback(self, "leaderboard_request_cb")
-	local var_20_2 = callback(self, "request_leaderboard_failed_cb", arg_20_4)
+	local success_callback = callback(self, "leaderboard_request_cb")
+	local fail_callback = callback(self, "request_leaderboard_failed_cb", external_error_cb)
 	local request_queue = self._backend_mirror:request_queue()
-	local flag
+	local str
 
-	flag = arg_20_3 ~= "friends" or not "GetFriendLeaderboard" or "GetLeaderboard"
+	if leaderboard_type == "friends" then
+		str = "GetFriendLeaderboard"
 
-	request_queue:enqueue_api_request(flag, tbl, var_20_1, var_20_2)
+		goto label_20_0
+	end
+
+	str = "GetLeaderboard"
+
+	local request_function = str
+
+	::label_20_0::
+
+	request_queue:enqueue_api_request(request_function, leaderboard_request, success_callback, fail_callback)
 
 	self._requesting_leaderboard = self._requesting_leaderboard + 1
 end
 
-BackendInterfaceWeavesPlayFab.leaderboard_request_cb = function (self, arg_21_1)
+BackendInterfaceWeavesPlayFab.leaderboard_request_cb = function (self, result)
 	-- function 21
-	local Leaderboard = arg_21_1.Leaderboard
+	local leaderboard = result.Leaderboard
 
 	table.clear(self._leaderboard_entries)
 
-	for i = 1, #Leaderboard do
-		local var_21_1 = Leaderboard[i]
-		local flag = not (i > 1) or self._leaderboard_entries[i - 1].score
-		local flag_2 = not (i > 1) or self._leaderboard_entries[i - 1].weave
-		local _create_leaderboard_entry = self:_create_leaderboard_entry(var_21_1, flag_2, flag)
+	for i = 1, #leaderboard do
+		local data = leaderboard[i]
+		local previous_score = i > 1 and not not self._leaderboard_entries[i - 1].score
+		local previous_tier = i > 1 and not not self._leaderboard_entries[i - 1].weave
+		local entry = self:_create_leaderboard_entry(data, previous_tier, previous_score)
 
-		self._leaderboard_entries[i] = _create_leaderboard_entry
+		self._leaderboard_entries[i] = entry
 	end
 
 	self._requesting_leaderboard = self._requesting_leaderboard - 1
@@ -559,68 +610,68 @@ BackendInterfaceWeavesPlayFab.has_leaderboard_request_failed = function (self)
 	-- function 24
 	local _leaderboard_player_rank_error = self._leaderboard_player_rank_error
 
-	_leaderboard_player_rank_error = _leaderboard_player_rank_error or self._leaderboard_request_error
+	_leaderboard_player_rank_error = not not _leaderboard_player_rank_error or not not self._leaderboard_request_error
 
 	return _leaderboard_player_rank_error
 end
 
-BackendInterfaceWeavesPlayFab.player_rank_request_failed_cb = function (self, arg_25_1, arg_25_2, arg_25_3)
+BackendInterfaceWeavesPlayFab.player_rank_request_failed_cb = function (self, external_error_cb, result, reenable_queue_function)
 	-- function 25
 	self._requesting_leaderboard = self._requesting_leaderboard - 1
 	self._leaderboard_player_rank_error = true
 	self._player_entry = self:_create_leaderboard_entry(nil)
 
-	if not arg_25_1 then
-		arg_25_1(arg_25_2)
+	if external_error_cb then
+		external_error_cb(result)
 	end
 
-	arg_25_3()
+	reenable_queue_function()
 end
 
-BackendInterfaceWeavesPlayFab.request_leaderboard_failed_cb = function (self, arg_26_1, arg_26_2, arg_26_3)
+BackendInterfaceWeavesPlayFab.request_leaderboard_failed_cb = function (self, external_error_cb, result, reenable_queue_function)
 	-- function 26
 	self._requesting_leaderboard = self._requesting_leaderboard - 1
 	self._leaderboard_request_error = true
 
 	table.clear(self._leaderboard_entries)
 
-	if not arg_26_1 then
-		arg_26_1(arg_26_2)
+	if external_error_cb then
+		external_error_cb(result)
 	end
 
-	arg_26_3()
+	reenable_queue_function()
 end
 
-BackendInterfaceWeavesPlayFab.get_mastery = function (self, arg_27_1, arg_27_2)
+BackendInterfaceWeavesPlayFab.get_mastery = function (self, career_name, optional_item_backend_id)
 	-- function 27
-	local WeaveMasterySettings = WeaveMasterySettings
-	local var_27_1 = self._loadouts[arg_27_1]
-	local var_27_2
+	local mastery_settings = WeaveMasterySettings
+	local loadout = self._loadouts[career_name]
+	local initial_mastery
 
-	if not arg_27_2 then
-		var_27_1 = var_27_1.item_loadouts[arg_27_2]
+	if optional_item_backend_id then
+		loadout = loadout.item_loadouts[optional_item_backend_id]
 
-		local get_item_magic_level = self:get_item_magic_level(arg_27_2)
+		local magic_level = self:get_item_magic_level(optional_item_backend_id)
 
-		var_27_2 = (get_item_magic_level - 1) * WeaveMasterySettings.item_mastery_per_magic_level
+		initial_mastery = (magic_level - 1) * mastery_settings.item_mastery_per_magic_level
 
-		if get_item_magic_level >= self:max_magic_level() then
-			var_27_2 = get_item_magic_level * WeaveMasterySettings.item_mastery_per_magic_level
+		if magic_level >= self:max_magic_level() then
+			initial_mastery = magic_level * mastery_settings.item_mastery_per_magic_level
 		end
 	else
-		local get_career_magic_level = self:get_career_magic_level(arg_27_1)
+		local magic_level = self:get_career_magic_level(career_name)
 
-		var_27_2 = (get_career_magic_level - 1) * WeaveMasterySettings.career_mastery_per_magic_level
+		initial_mastery = (magic_level - 1) * mastery_settings.career_mastery_per_magic_level
 
-		if get_career_magic_level >= self:max_magic_level() then
-			var_27_2 = get_career_magic_level * WeaveMasterySettings.career_mastery_per_magic_level
+		if magic_level >= self:max_magic_level() then
+			initial_mastery = magic_level * mastery_settings.career_mastery_per_magic_level
 		end
 	end
 
 	local _get_loadout_mastery_cost
 
-	if not var_27_1 then
-		_get_loadout_mastery_cost = self:_get_loadout_mastery_cost(var_27_1)
+	if loadout then
+		_get_loadout_mastery_cost = self:_get_loadout_mastery_cost(loadout)
 
 		if not _get_loadout_mastery_cost then
 			-- Nothing
@@ -629,11 +680,13 @@ BackendInterfaceWeavesPlayFab.get_mastery = function (self, arg_27_1, arg_27_2)
 
 	_get_loadout_mastery_cost = 0
 
+	local total_cost = _get_loadout_mastery_cost
+
 	::label_27_0::
 
-	local num = var_27_2 - _get_loadout_mastery_cost
+	local current_mastery = initial_mastery - total_cost
 
-	return var_27_2, num
+	return initial_mastery, current_mastery
 end
 
 BackendInterfaceWeavesPlayFab.get_essence = function (self)
@@ -651,91 +704,108 @@ BackendInterfaceWeavesPlayFab.get_maximum_essence = function (self)
 	return self._backend_mirror:get_maximum_essence()
 end
 
-BackendInterfaceWeavesPlayFab.get_average_power_level = function (self, arg_31_1)
+BackendInterfaceWeavesPlayFab.get_average_power_level = function (self, career_name)
 	-- function 31
-	local var_31_0 = self._loadouts[arg_31_1]
-	local num = self:_get_magic_inventory_item(var_31_0.slot_melee).power_level + self:_get_magic_inventory_item(var_31_0.slot_ranged).power_level
-	local get_career_power_level = self:get_career_power_level(arg_31_1)
-	local ceil = math.ceil(num * 0.5)
+	local loadout = self._loadouts[career_name]
+	local melee_item = self:_get_magic_inventory_item(loadout.slot_melee)
+	local sum = melee_item.power_level
+	local ranged_item = self:_get_magic_inventory_item(loadout.slot_ranged)
 
-	if not get_career_power_level then
-		ceil = ceil + get_career_power_level
+	sum = sum + ranged_item.power_level
+
+	local career_power_level = self:get_career_power_level(career_name)
+	local result = math.ceil(sum * 0.5)
+
+	if career_power_level then
+		result = result + career_power_level
 	end
 
-	return ceil
+	return result
 end
 
-BackendInterfaceWeavesPlayFab.get_total_magic_level = function (self, arg_32_1)
+BackendInterfaceWeavesPlayFab.get_total_magic_level = function (self, career_name)
 	-- function 32
-	local get_career_magic_level = self:get_career_magic_level(arg_32_1)
-	local var_32_1 = self._loadouts[arg_32_1]
+	local sum = self:get_career_magic_level(career_name)
+	local loadout = self._loadouts[career_name]
 
-	return get_career_magic_level + self:get_item_magic_level(var_32_1.slot_melee) + self:get_item_magic_level(var_32_1.slot_ranged)
+	sum = sum + self:get_item_magic_level(loadout.slot_melee)
+	sum = sum + self:get_item_magic_level(loadout.slot_ranged)
+
+	return sum
 end
 
 BackendInterfaceWeavesPlayFab.max_magic_level = function (self)
 	-- function 33
-	return #self._progression_settings.magic_levels
+	local magic_levels = self._progression_settings.magic_levels
+	local num_levels = #magic_levels
+
+	return num_levels
 end
 
-BackendInterfaceWeavesPlayFab.get_career_power_level = function (self, arg_34_1)
+BackendInterfaceWeavesPlayFab.get_career_power_level = function (self, career_name)
 	-- function 34
-	local get_career_magic_level = self:get_career_magic_level(arg_34_1)
-	local var_34_1 = fn(get_career_magic_level)
+	local magic_level = self:get_career_magic_level(career_name)
+	local power_level = career_magic_level_to_power_level(magic_level)
 
-	if var_34_1 == 0 then
+	if power_level == 0 then
 		return nil
 	end
 
-	return var_34_1
+	return power_level
 end
 
-BackendInterfaceWeavesPlayFab.get_career_magic_level = function (self, arg_35_1)
+BackendInterfaceWeavesPlayFab.get_career_magic_level = function (self, career_name)
 	-- function 35
-	return self._career_progress[arg_35_1].magic_level
+	local progress = self._career_progress[career_name]
+	local magic_level = progress.magic_level
+
+	return magic_level
 end
 
-BackendInterfaceWeavesPlayFab.career_upgrade_cost = function (self, arg_36_1, arg_36_2)
+BackendInterfaceWeavesPlayFab.career_upgrade_cost = function (self, num_levels, career_name)
 	-- function 36
-	local get_career_magic_level = self:get_career_magic_level(arg_36_2)
-	local clamp = math.clamp(get_career_magic_level + arg_36_1, 1, self:max_magic_level())
+	local current_magic_level = self:get_career_magic_level(career_name)
+	local new_magic_level = math.clamp(current_magic_level + num_levels, 1, self:max_magic_level())
 
-	if clamp == get_career_magic_level then
+	if new_magic_level == current_magic_level then
 		return nil, nil
 	end
 
-	local num = 0
+	local essence_cost = 0
 
-	for i = get_career_magic_level + 1, clamp do
-		num = num + self._progression_settings.magic_levels[i].essence_cost
+	for i = current_magic_level + 1, new_magic_level do
+		local magic_level_settings = self._progression_settings.magic_levels[i]
+
+		essence_cost = essence_cost + magic_level_settings.essence_cost
 	end
 
-	return num, clamp
+	return essence_cost, new_magic_level
 end
 
-BackendInterfaceWeavesPlayFab.upgrade_career_magic_level = function (self, arg_37_1, arg_37_2, arg_37_3)
+BackendInterfaceWeavesPlayFab.upgrade_career_magic_level = function (self, num_levels, career_name, external_cb)
 	-- function 37
-	local career_upgrade_cost, var_37_1 = self:career_upgrade_cost(arg_37_1, arg_37_2)
+	local cost, new_magic_level = self:career_upgrade_cost(num_levels, career_name)
 
-	if not career_upgrade_cost then
-		arg_37_3(false)
+	if not cost then
+		external_cb(false)
 
 		return
 	end
 
-	local tbl = {
+	local request = {
 		FunctionName = "upgradeCareerMagicLevel",
 		FunctionParameter = {
-			career_name = arg_37_2,
-			new_magic_level = var_37_1,
-			cost = career_upgrade_cost
+			career_name = career_name,
+			new_magic_level = new_magic_level,
+			cost = cost
 		}
 	}
+	local request_queue = self._backend_mirror:request_queue()
 
-	self._backend_mirror:request_queue():enqueue(tbl, callback(self, "upgrade_career_magic_level_cb", arg_37_3), true)
+	request_queue:enqueue(request, callback(self, "upgrade_career_magic_level_cb", external_cb), true)
 end
 
-local tbl_2 = {
+local CAREER_ID_LOOKUP = {
 	"dr_ranger",
 	"dr_slayer",
 	"dr_ironbreaker",
@@ -758,207 +828,217 @@ local tbl_2 = {
 	"bw_necromancer"
 }
 
-BackendInterfaceWeavesPlayFab.upgrade_career_magic_level_cb = function (self, arg_38_1, arg_38_2)
+BackendInterfaceWeavesPlayFab.upgrade_career_magic_level_cb = function (self, external_cb, result)
 	-- function 38
-	local FunctionResult = arg_38_2.FunctionResult
-	local error_message = FunctionResult.error_message
+	local function_result = result.FunctionResult
+	local error_message = function_result.error_message
 
-	if not error_message then
+	if error_message then
 		print("[BackendInterfaceQuestsPlayfab] Error from backend when upgrading career magic level: ", tostring(error_message))
 
-		if not arg_38_1 then
-			arg_38_1(false)
+		if external_cb then
+			external_cb(false)
 		end
 
 		return
 	end
 
-	local career_name = FunctionResult.career_name
-	local new_magic_level = FunctionResult.new_magic_level
-	local new_essence = FunctionResult.new_essence
+	local career_name = function_result.career_name
+	local new_magic_level = function_result.new_magic_level
+	local new_essence = function_result.new_essence
+	local upgrade_all_career_magic_levels = function_result.upgrade_all_career_magic_levels
 
-	if not FunctionResult.upgrade_all_career_magic_levels then
-		for i = 1, #tbl_2 do
-			local var_38_5 = tbl_2[i]
-			local var_38_6 = self._career_progress[var_38_5]
+	if upgrade_all_career_magic_levels then
+		for i = 1, #CAREER_ID_LOOKUP do
+			local name = CAREER_ID_LOOKUP[i]
+			local progress = self._career_progress[name]
 
-			if not var_38_6 then
-				var_38_6.magic_level = new_magic_level
+			if progress then
+				progress.magic_level = new_magic_level
 			end
 		end
 	else
-		local var_38_7 = self._career_progress[career_name]
+		local progress = self._career_progress[career_name]
 
-		if not var_38_7 then
-			var_38_7.magic_level = new_magic_level
+		if progress then
+			progress.magic_level = new_magic_level
 		end
 	end
 
 	self._backend_mirror:set_essence(new_essence)
 
-	if not arg_38_1 then
-		arg_38_1(true)
+	if external_cb then
+		external_cb(true)
 	end
 end
 
-BackendInterfaceWeavesPlayFab.get_item_magic_level = function (self, arg_39_1)
+BackendInterfaceWeavesPlayFab.get_item_magic_level = function (self, item_backend_id)
 	-- function 39
-	return self:_get_magic_inventory_item(arg_39_1).magic_level
+	local item = self:_get_magic_inventory_item(item_backend_id)
+	local magic_level = item.magic_level
+
+	return magic_level
 end
 
-BackendInterfaceWeavesPlayFab.get_item_power_level = function (self, arg_40_1)
+BackendInterfaceWeavesPlayFab.get_item_power_level = function (self, item_backend_id)
 	-- function 40
-	local get_item_magic_level = self:get_item_magic_level(arg_40_1)
+	local magic_level = self:get_item_magic_level(item_backend_id)
+	local power_level = WeaveUtils.magic_level_to_power_level(magic_level)
 
-	return (WeaveUtils.magic_level_to_power_level(get_item_magic_level))
+	return power_level
 end
 
-BackendInterfaceWeavesPlayFab.magic_item_upgrade_cost = function (self, arg_41_1, arg_41_2)
+BackendInterfaceWeavesPlayFab.magic_item_upgrade_cost = function (self, num_levels, item_backend_id)
 	-- function 41
-	local get_item_magic_level = self:get_item_magic_level(arg_41_2)
-	local clamp = math.clamp(get_item_magic_level + arg_41_1, 1, self:max_magic_level())
+	local current_magic_level = self:get_item_magic_level(item_backend_id)
+	local new_magic_level = math.clamp(current_magic_level + num_levels, 1, self:max_magic_level())
 
-	if clamp == get_item_magic_level then
+	if new_magic_level == current_magic_level then
 		return nil, nil
 	end
 
-	local num = 0
+	local essence_cost = 0
 
-	for i = get_item_magic_level + 1, clamp do
-		num = num + self._progression_settings.magic_levels[i].essence_cost
+	for i = current_magic_level + 1, new_magic_level do
+		local magic_level_settings = self._progression_settings.magic_levels[i]
+
+		essence_cost = essence_cost + magic_level_settings.essence_cost
 	end
 
-	return num, clamp
+	return essence_cost, new_magic_level
 end
 
-BackendInterfaceWeavesPlayFab.upgrade_item_magic_level = function (self, arg_42_1, arg_42_2, arg_42_3)
+BackendInterfaceWeavesPlayFab.upgrade_item_magic_level = function (self, num_levels, item_backend_id, external_cb)
 	-- function 42
-	local magic_item_upgrade_cost, var_42_1 = self:magic_item_upgrade_cost(arg_42_1, arg_42_2)
+	local cost, new_magic_level = self:magic_item_upgrade_cost(num_levels, item_backend_id)
 
-	if not magic_item_upgrade_cost then
-		arg_42_3(false)
+	if not cost then
+		external_cb(false)
 
 		return
 	end
 
-	local tbl = {
+	local request = {
 		FunctionName = "upgradeItemMagicLevel",
 		FunctionParameter = {
-			item_backend_id = arg_42_2,
-			new_magic_level = var_42_1,
-			cost = magic_item_upgrade_cost
+			item_backend_id = item_backend_id,
+			new_magic_level = new_magic_level,
+			cost = cost
 		}
 	}
+	local request_queue = self._backend_mirror:request_queue()
 
-	self._backend_mirror:request_queue():enqueue(tbl, callback(self, "upgrade_item_magic_level_cb", arg_42_3), true)
+	request_queue:enqueue(request, callback(self, "upgrade_item_magic_level_cb", external_cb), true)
 end
 
-BackendInterfaceWeavesPlayFab.upgrade_item_magic_level_cb = function (self, arg_43_1, arg_43_2)
+BackendInterfaceWeavesPlayFab.upgrade_item_magic_level_cb = function (self, external_cb, result)
 	-- function 43
-	local FunctionResult = arg_43_2.FunctionResult
-	local error_message = FunctionResult.error_message
+	local function_result = result.FunctionResult
+	local error_message = function_result.error_message
 
-	if not error_message then
+	if error_message then
 		print("[BackendInterfaceQuestsPlayfab] Error from backend when upgrading item magic level: ", tostring(error_message))
 
-		if not arg_43_1 then
-			arg_43_1(false)
+		if external_cb then
+			external_cb(false)
 		end
 
 		return
 	end
 
-	local item_id = FunctionResult.item_id
-	local essence_cost = FunctionResult.essence_cost
-	local item_backend_id = FunctionResult.item_backend_id
-	local new_magic_level = FunctionResult.new_magic_level
-	local new_essence = FunctionResult.new_essence
+	local item_id = function_result.item_id
+	local essence_cost = function_result.essence_cost
+	local item_backend_id = function_result.item_backend_id
+	local new_magic_level = function_result.new_magic_level
+	local new_essence = function_result.new_essence
 
 	Managers.telemetry_events:magic_item_level_upgraded(item_id, essence_cost, new_magic_level)
 
-	local _backend_mirror = self._backend_mirror
+	local backend_mirror = self._backend_mirror
 
-	_backend_mirror:update_item_field(item_backend_id, "magic_level", new_magic_level)
+	backend_mirror:update_item_field(item_backend_id, "magic_level", new_magic_level)
 
-	local magic_level_to_power_level = WeaveUtils.magic_level_to_power_level(new_magic_level)
+	local new_power_level = WeaveUtils.magic_level_to_power_level(new_magic_level)
 
-	_backend_mirror:update_item_field(item_backend_id, "power_level", magic_level_to_power_level)
-	_backend_mirror:set_essence(new_essence)
+	backend_mirror:update_item_field(item_backend_id, "power_level", new_power_level)
+	backend_mirror:set_essence(new_essence)
 
-	if not arg_43_1 then
-		arg_43_1(true)
+	if external_cb then
+		external_cb(true)
 	end
 end
 
-BackendInterfaceWeavesPlayFab.magic_item_cost = function (self, arg_44_1)
+BackendInterfaceWeavesPlayFab.magic_item_cost = function (self, item_id)
 	-- function 44
-	local var_44_0 = self._progression_settings.items[arg_44_1]
+	local item_settings = self._progression_settings.items[item_id]
+	local essence_cost = not not item_settings and not not item_settings.essence_cost
 
-	return not var_44_0 and var_44_0.essence_cost
+	return essence_cost
 end
 
-BackendInterfaceWeavesPlayFab.buy_magic_item = function (self, arg_45_1, arg_45_2)
+BackendInterfaceWeavesPlayFab.buy_magic_item = function (self, item_id, external_cb)
 	-- function 45
-	local magic_item_cost = self:magic_item_cost(arg_45_1)
+	local cost = self:magic_item_cost(item_id)
 
-	if not magic_item_cost then
-		arg_45_2(false)
+	if not cost then
+		external_cb(false)
 
 		return
 	end
 
-	local tbl = {
+	local request = {
 		FunctionName = "buyMagicItem",
 		FunctionParameter = {
-			item_id = arg_45_1,
-			cost = magic_item_cost
+			item_id = item_id,
+			cost = cost
 		}
 	}
+	local request_queue = self._backend_mirror:request_queue()
 
-	self._backend_mirror:request_queue():enqueue(tbl, callback(self, "buy_magic_item_cb", arg_45_2), true)
+	request_queue:enqueue(request, callback(self, "buy_magic_item_cb", external_cb), true)
 end
 
-BackendInterfaceWeavesPlayFab.buy_magic_item_cb = function (self, arg_46_1, arg_46_2)
+BackendInterfaceWeavesPlayFab.buy_magic_item_cb = function (self, external_cb, result)
 	-- function 46
-	local FunctionResult = arg_46_2.FunctionResult
-	local error_message = FunctionResult.error_message
+	local function_result = result.FunctionResult
+	local error_message = function_result.error_message
 
-	if not error_message then
+	if error_message then
 		print("[BackendInterfaceQuestsPlayfab] Error from backend when buying magic item: ", tostring(error_message))
 
-		if not arg_46_1 then
-			arg_46_1(false)
+		if external_cb then
+			external_cb(false)
 		end
 
 		return
 	end
 
-	local item_grant_results = FunctionResult.item_grant_results
-	local new_essence = FunctionResult.new_essence
-	local new_weapon_skins = FunctionResult.new_weapon_skins
-	local _backend_mirror = self._backend_mirror
+	local grant_results = function_result.item_grant_results
+	local new_essence = function_result.new_essence
+	local new_weapon_skins = function_result.new_weapon_skins
+	local backend_mirror = self._backend_mirror
 
-	for i = 1, #item_grant_results do
-		local var_46_6 = item_grant_results[i]
-		local ItemInstanceId = var_46_6.ItemInstanceId
+	for i = 1, #grant_results do
+		local item = grant_results[i]
+		local backend_id = item.ItemInstanceId
 
-		_backend_mirror:add_item(ItemInstanceId, var_46_6)
+		backend_mirror:add_item(backend_id, item)
 
-		var_46_6.power_level = WeaveUtils.magic_level_to_power_level(var_46_6.CustomData.magic_level)
+		item.power_level = WeaveUtils.magic_level_to_power_level(item.CustomData.magic_level)
 	end
 
-	_backend_mirror:set_essence(new_essence)
+	backend_mirror:set_essence(new_essence)
 
-	if not new_weapon_skins then
-		for j = 1, #new_weapon_skins do
-			local var_46_8 = new_weapon_skins[j]
+	if new_weapon_skins then
+		for i = 1, #new_weapon_skins do
+			local weapon_skin_name = new_weapon_skins[i]
 
-			_backend_mirror:add_unlocked_weapon_skin(var_46_8)
+			backend_mirror:add_unlocked_weapon_skin(weapon_skin_name)
 		end
 	end
 
-	if not arg_46_1 then
-		arg_46_1(true)
+	if external_cb then
+		external_cb(true)
 	end
 end
 
@@ -969,455 +1049,517 @@ end
 
 BackendInterfaceWeavesPlayFab.forge_max_level = function (self)
 	-- function 48
-	return #self._progression_settings.forge_levels
+	local forge_levels = self._progression_settings.forge_levels
+	local num_levels = #forge_levels
+
+	return num_levels
 end
 
 BackendInterfaceWeavesPlayFab.forge_magic_level_cap = function (self)
 	-- function 49
-	local _forge_level = self._forge_level
+	local forge_level = self._forge_level
+	local forge_level_settings = self._progression_settings.forge_levels[forge_level]
+	local magic_level_cap = forge_level_settings.magic_level_cap
 
-	return self._progression_settings.forge_levels[_forge_level].magic_level_cap
+	return magic_level_cap
 end
 
-BackendInterfaceWeavesPlayFab.forge_upgrade_cost = function (self, arg_50_1)
+BackendInterfaceWeavesPlayFab.forge_upgrade_cost = function (self, num_levels)
 	-- function 50
-	local _forge_level = self._forge_level
-	local clamp = math.clamp(_forge_level + arg_50_1, 1, self:forge_max_level())
+	local current_forge_level = self._forge_level
+	local new_forge_level = math.clamp(current_forge_level + num_levels, 1, self:forge_max_level())
 
-	if clamp == _forge_level then
+	if new_forge_level == current_forge_level then
 		return nil, nil
 	end
 
-	local num = 0
+	local essence_cost = 0
 
-	for i = _forge_level + 1, clamp do
-		num = num + self._progression_settings.forge_levels[i].essence_cost
+	for i = current_forge_level + 1, new_forge_level do
+		local forge_level_settings = self._progression_settings.forge_levels[i]
+
+		essence_cost = essence_cost + forge_level_settings.essence_cost
 	end
 
-	return num, clamp
+	return essence_cost, new_forge_level
 end
 
-BackendInterfaceWeavesPlayFab.upgrade_forge = function (self, arg_51_1, arg_51_2)
+BackendInterfaceWeavesPlayFab.upgrade_forge = function (self, num_levels, external_cb)
 	-- function 51
-	local forge_upgrade_cost, var_51_1 = self:forge_upgrade_cost(arg_51_1)
+	local cost, new_forge_level = self:forge_upgrade_cost(num_levels)
 
-	if not forge_upgrade_cost then
-		arg_51_2(false)
+	if not cost then
+		external_cb(false)
 
 		return
 	end
 
-	local tbl = {
+	local request = {
 		FunctionName = "upgradeWeaveForge",
 		FunctionParameter = {
-			new_forge_level = var_51_1,
-			cost = forge_upgrade_cost
+			new_forge_level = new_forge_level,
+			cost = cost
 		}
 	}
+	local request_queue = self._backend_mirror:request_queue()
 
-	self._backend_mirror:request_queue():enqueue(tbl, callback(self, "upgrade_forge_cb", arg_51_2), true)
+	request_queue:enqueue(request, callback(self, "upgrade_forge_cb", external_cb), true)
 end
 
-BackendInterfaceWeavesPlayFab.upgrade_forge_cb = function (self, arg_52_1, arg_52_2)
+BackendInterfaceWeavesPlayFab.upgrade_forge_cb = function (self, external_cb, result)
 	-- function 52
-	local FunctionResult = arg_52_2.FunctionResult
-	local error_message = FunctionResult.error_message
+	local function_result = result.FunctionResult
+	local error_message = function_result.error_message
 
-	if not error_message then
+	if error_message then
 		print("[BackendInterfaceQuestsPlayfab] Error from backend when upgrading the forge: ", tostring(error_message))
 
-		if not arg_52_1 then
-			arg_52_1(false)
+		if external_cb then
+			external_cb(false)
 		end
 
 		return
 	end
 
-	local new_essence
+	local new_forge_level = function_result.new_forge_level
+	local new_essence = function_result.new_essence
 
-	self._forge_level, new_essence = FunctionResult.new_forge_level, FunctionResult.new_essence
+	self._forge_level = new_forge_level
 
 	self._backend_mirror:set_essence(new_essence)
 
-	if not arg_52_1 then
-		arg_52_1(true)
+	if external_cb then
+		external_cb(true)
 	end
 end
 
-BackendInterfaceWeavesPlayFab.get_property_mastery_costs = function (self, arg_53_1)
+BackendInterfaceWeavesPlayFab.get_property_mastery_costs = function (self, property_name)
 	-- function 53
-	return self._progression_settings.properties[arg_53_1].mastery_costs
+	local progression_settings = self._progression_settings
+	local progression_data = progression_settings.properties[property_name]
+	local mastery_costs = progression_data.mastery_costs
+
+	return mastery_costs
 end
 
-BackendInterfaceWeavesPlayFab.get_property_required_forge_level = function (self, arg_54_1)
+BackendInterfaceWeavesPlayFab.get_property_required_forge_level = function (self, property_name)
 	-- function 54
-	return self._progression_settings.properties[arg_54_1].required_forge_level
+	local progression_settings = self._progression_settings
+	local progression_data = progression_settings.properties[property_name]
+	local required_forge_level = progression_data.required_forge_level
+
+	return required_forge_level
 end
 
-BackendInterfaceWeavesPlayFab.set_loadout_property = function (self, arg_55_1, arg_55_2, arg_55_3, arg_55_4)
+BackendInterfaceWeavesPlayFab.set_loadout_property = function (self, career_name, property_name, slot_index, optional_item_backend_id)
 	-- function 55
-	local var_55_0 = WeavePropertiesByCareer[arg_55_1][arg_55_2]
+	local property_data = WeavePropertiesByCareer[career_name][property_name]
 
-	fassert(var_55_0, "[BackendInterfaceWeavesPlayFab] Property %q not found for %q", arg_55_2, arg_55_1)
+	fassert(property_data, "[BackendInterfaceWeavesPlayFab] Property %q not found for %q", property_name, career_name)
 
-	local var_55_1 = self._loadouts[arg_55_1]
+	local loadout = self._loadouts[career_name]
 
-	if not arg_55_4 then
-		local var_55_2 = var_55_1.item_loadouts[arg_55_4]
+	if optional_item_backend_id then
+		local item_loadout = loadout.item_loadouts[optional_item_backend_id]
 
-		if not var_55_2 then
-			var_55_2 = {
+		if not item_loadout then
+			item_loadout = {
 				properties = {},
 				traits = {}
 			}
-			var_55_1.item_loadouts[arg_55_4] = var_55_2
+			loadout.item_loadouts[optional_item_backend_id] = item_loadout
 		end
 
-		var_55_1 = var_55_2
+		loadout = item_loadout
 	end
 
-	local var_55_3 = var_55_1.properties[arg_55_2]
+	local property_slots = loadout.properties[property_name]
 
-	if not var_55_3 then
-		var_55_3 = {}
-		var_55_1.properties[arg_55_2] = var_55_3
+	if not property_slots then
+		property_slots = {}
+		loadout.properties[property_name] = property_slots
 	end
 
-	for k, v in pairs(var_55_1.properties) do
-		if not table.contains(v, arg_55_3) then
+	for _, slots in pairs(loadout.properties) do
+		if table.contains(slots, slot_index) then
 			return
 		end
 	end
 
-	local get_property_mastery_costs = self:get_property_mastery_costs(arg_55_2)
+	local costs = self:get_property_mastery_costs(property_name)
 
-	if #var_55_3 == #get_property_mastery_costs then
+	if #property_slots == #costs then
 		return
 	end
 
-	var_55_3[#var_55_3 + 1] = arg_55_3
+	property_slots[#property_slots + 1] = slot_index
 
-	if not arg_55_4 then
-		self:_update_item_custom_data(arg_55_4, var_55_1)
+	if optional_item_backend_id then
+		self:_update_item_custom_data(optional_item_backend_id, loadout)
 	end
 
-	self._dirty_loadouts[arg_55_1] = true
+	self._dirty_loadouts[career_name] = true
 end
 
-BackendInterfaceWeavesPlayFab.remove_loadout_property = function (self, arg_56_1, arg_56_2, arg_56_3, arg_56_4)
+BackendInterfaceWeavesPlayFab.remove_loadout_property = function (self, career_name, property_name, slot_index, optional_item_backend_id)
 	-- function 56
-	local var_56_0 = self._loadouts[arg_56_1]
+	local loadout = self._loadouts[career_name]
 
-	if not arg_56_4 then
-		var_56_0 = var_56_0.item_loadouts[arg_56_4]
+	if optional_item_backend_id then
+		loadout = loadout.item_loadouts[optional_item_backend_id]
 	end
 
-	local var_56_1 = var_56_0.properties[arg_56_2]
-	local find = table.find(var_56_1, arg_56_3)
+	local property_slots = loadout.properties[property_name]
+	local index_to_remove = table.find(property_slots, slot_index)
 
-	table.remove(var_56_1, find)
+	table.remove(property_slots, index_to_remove)
 
-	if #var_56_1 == 0 then
-		var_56_0.properties[arg_56_2] = nil
+	if #property_slots == 0 then
+		loadout.properties[property_name] = nil
 	end
 
-	if not arg_56_4 then
-		self:_update_item_custom_data(arg_56_4, var_56_0)
+	if optional_item_backend_id then
+		self:_update_item_custom_data(optional_item_backend_id, loadout)
 	end
 
-	self._dirty_loadouts[arg_56_1] = true
+	self._dirty_loadouts[career_name] = true
 end
 
-BackendInterfaceWeavesPlayFab.get_loadout_properties = function (self, arg_57_1, arg_57_2)
+BackendInterfaceWeavesPlayFab.get_loadout_properties = function (self, career_name, optional_item_backend_id)
 	-- function 57
-	local var_57_0 = self._loadouts[arg_57_1]
-	local var_57_1
+	local loadout = self._loadouts[career_name]
+	local properties
 
-	if not arg_57_2 then
-		local var_57_2 = var_57_0.item_loadouts[arg_57_2]
+	if optional_item_backend_id then
+		local item_loadout = loadout.item_loadouts[optional_item_backend_id]
 
-		var_57_1 = not var_57_2 and var_57_2.properties and {}
+		properties = (not item_loadout or not item_loadout.properties) and not not {}
 	else
-		var_57_1 = var_57_0.properties
+		properties = loadout.properties
 	end
 
-	return var_57_1
+	return properties
 end
 
-BackendInterfaceWeavesPlayFab.get_trait_mastery_cost = function (self, arg_58_1)
+BackendInterfaceWeavesPlayFab.get_trait_mastery_cost = function (self, trait_name)
 	-- function 58
-	return self._progression_settings.traits[arg_58_1].mastery_cost
+	local progression_settings = self._progression_settings
+	local progression_data = progression_settings.traits[trait_name]
+	local mastery_cost = progression_data.mastery_cost
+
+	return mastery_cost
 end
 
-BackendInterfaceWeavesPlayFab.get_trait_required_forge_level = function (self, arg_59_1)
+BackendInterfaceWeavesPlayFab.get_trait_required_forge_level = function (self, trait_name)
 	-- function 59
-	return self._progression_settings.traits[arg_59_1].required_forge_level
+	local progression_settings = self._progression_settings
+	local progression_data = progression_settings.traits[trait_name]
+	local required_forge_level = progression_data.required_forge_level
+
+	return required_forge_level
 end
 
-BackendInterfaceWeavesPlayFab.set_loadout_trait = function (self, arg_60_1, arg_60_2, arg_60_3, arg_60_4)
+BackendInterfaceWeavesPlayFab.set_loadout_trait = function (self, career_name, trait_name, slot_index, optional_item_backend_id)
 	-- function 60
-	local var_60_0 = WeaveTraitsByCareer[arg_60_1][arg_60_2]
+	local trait_data = WeaveTraitsByCareer[career_name][trait_name]
 
-	fassert(var_60_0, "[BackendInterfaceWeavesPlayFab] Trait %q not allowed for %q", arg_60_2, arg_60_1)
+	fassert(trait_data, "[BackendInterfaceWeavesPlayFab] Trait %q not allowed for %q", trait_name, career_name)
 
-	local var_60_1 = self._loadouts[arg_60_1]
+	local loadout = self._loadouts[career_name]
 
-	if not arg_60_4 then
-		local var_60_2 = var_60_1.item_loadouts[arg_60_4]
+	if optional_item_backend_id then
+		local item_loadout = loadout.item_loadouts[optional_item_backend_id]
 
-		if not var_60_2 then
-			var_60_2 = {
+		if not item_loadout then
+			item_loadout = {
 				properties = {},
 				traits = {}
 			}
-			var_60_1.item_loadouts[arg_60_4] = var_60_2
+			loadout.item_loadouts[optional_item_backend_id] = item_loadout
 		end
 
-		var_60_1 = var_60_2
+		loadout = item_loadout
 	end
 
-	if not var_60_1.traits[arg_60_2] then
+	if loadout.traits[trait_name] then
 		return
 	end
 
-	for k, v in pairs(var_60_1.traits) do
-		if v == arg_60_3 then
+	for _, index in pairs(loadout.traits) do
+		if index == slot_index then
 			return
 		end
 	end
 
-	var_60_1.traits[arg_60_2] = arg_60_3
+	loadout.traits[trait_name] = slot_index
 
-	if not arg_60_4 then
-		self:_update_item_custom_data(arg_60_4, var_60_1)
+	if optional_item_backend_id then
+		self:_update_item_custom_data(optional_item_backend_id, loadout)
 	end
 
-	self._dirty_loadouts[arg_60_1] = true
+	self._dirty_loadouts[career_name] = true
 end
 
-BackendInterfaceWeavesPlayFab.remove_loadout_trait = function (self, arg_61_1, arg_61_2, arg_61_3)
+BackendInterfaceWeavesPlayFab.remove_loadout_trait = function (self, career_name, trait_name, optional_item_backend_id)
 	-- function 61
-	local var_61_0 = self._loadouts[arg_61_1]
+	local loadout = self._loadouts[career_name]
 
-	if not arg_61_3 then
-		var_61_0 = var_61_0.item_loadouts[arg_61_3]
+	if optional_item_backend_id then
+		loadout = loadout.item_loadouts[optional_item_backend_id]
 	end
 
-	var_61_0.traits[arg_61_2] = nil
+	loadout.traits[trait_name] = nil
 
-	if not arg_61_3 then
-		self:_update_item_custom_data(arg_61_3, var_61_0)
+	if optional_item_backend_id then
+		self:_update_item_custom_data(optional_item_backend_id, loadout)
 	end
 
-	self._dirty_loadouts[arg_61_1] = true
+	self._dirty_loadouts[career_name] = true
 end
 
-BackendInterfaceWeavesPlayFab.get_loadout_traits = function (self, arg_62_1, arg_62_2)
+BackendInterfaceWeavesPlayFab.get_loadout_traits = function (self, career_name, optional_item_backend_id)
 	-- function 62
-	local var_62_0 = self._loadouts[arg_62_1]
-	local var_62_1
+	local loadout = self._loadouts[career_name]
+	local traits
 
-	if not arg_62_2 then
-		local var_62_2 = var_62_0.item_loadouts[arg_62_2]
+	if optional_item_backend_id then
+		local item_loadout = loadout.item_loadouts[optional_item_backend_id]
 
-		var_62_1 = not var_62_2 and var_62_2.traits and {}
+		traits = (not item_loadout or not item_loadout.traits) and not not {}
 	else
-		var_62_1 = var_62_0.traits
+		traits = loadout.traits
 	end
 
-	return var_62_1
+	return traits
 end
 
-BackendInterfaceWeavesPlayFab.apply_career_item_loadouts = function (self, arg_63_1)
+BackendInterfaceWeavesPlayFab.apply_career_item_loadouts = function (self, career_name)
 	-- function 63
-	if not arg_63_1 then
-		local var_63_0 = self._loadouts[arg_63_1]
-		local flag = not var_63_0 and var_63_0.item_loadouts
+	if career_name then
+		local loadout = self._loadouts[career_name]
+		local item_loadouts = not not loadout and not not loadout.item_loadouts
 
-		if not flag then
-			local slot_melee = var_63_0.slot_melee
+		if item_loadouts then
+			local melee_item = loadout.slot_melee
 
-			if not slot_melee then
-				local var_63_3 = flag[slot_melee]
+			if melee_item then
+				local var_63_0 = item_loadouts[melee_item]
 
-				var_63_3 = var_63_3 or {}
+				if not var_63_0 then
+					-- Nothing
+				end
 
-				self:_update_item_custom_data(slot_melee, var_63_3)
+				var_63_0 = {}
+
+				local melee_loadout = var_63_0
+
+				::label_63_0::
+
+				self:_update_item_custom_data(melee_item, melee_loadout)
 			end
 
-			local slot_ranged = var_63_0.slot_ranged
+			local ranged_item = loadout.slot_ranged
 
-			if not slot_ranged then
-				local var_63_5 = flag[slot_ranged]
+			if ranged_item then
+				local var_63_1 = item_loadouts[ranged_item]
 
-				var_63_5 = var_63_5 or {}
+				if not var_63_1 then
+					-- Nothing
+				end
 
-				self:_update_item_custom_data(slot_ranged, var_63_5)
+				var_63_1 = {}
+
+				local ranged_loadout = var_63_1
+
+				::label_63_1::
+
+				self:_update_item_custom_data(ranged_item, ranged_loadout)
 			end
 		end
 	end
 end
 
-BackendInterfaceWeavesPlayFab.get_talent_mastery_cost = function (self, arg_64_1)
+BackendInterfaceWeavesPlayFab.get_talent_mastery_cost = function (self, talent_name)
 	-- function 64
-	return self._progression_settings.talents[arg_64_1].mastery_cost
+	local progression_settings = self._progression_settings
+	local progression_data = progression_settings.talents[talent_name]
+	local mastery_cost = progression_data.mastery_cost
+
+	return mastery_cost
 end
 
-BackendInterfaceWeavesPlayFab.get_talent_required_forge_level = function (self, arg_65_1)
+BackendInterfaceWeavesPlayFab.get_talent_required_forge_level = function (self, talent_name)
 	-- function 65
-	return self._progression_settings.talents[arg_65_1].required_forge_level
+	local progression_settings = self._progression_settings
+	local progression_data = progression_settings.talents[talent_name]
+	local required_forge_level = progression_data.required_forge_level
+
+	return required_forge_level
 end
 
-BackendInterfaceWeavesPlayFab.set_loadout_talent = function (self, arg_66_1, arg_66_2, arg_66_3)
+BackendInterfaceWeavesPlayFab.set_loadout_talent = function (self, career_name, talent_name, slot_index)
 	-- function 66
-	local var_66_0 = WeaveTalentsByCareer[arg_66_1][arg_66_2]
+	local talent_data = WeaveTalentsByCareer[career_name][talent_name]
 
-	fassert(var_66_0, "[BackendInterfaceWeavesPlayFab] Talent %q not allowed for %q", arg_66_2, arg_66_1)
+	fassert(talent_data, "[BackendInterfaceWeavesPlayFab] Talent %q not allowed for %q", talent_name, career_name)
 
-	local tree_row = var_66_0.tree_row
-	local talents = self._loadouts[arg_66_1].talents
+	local talent_tier = talent_data.tree_row
+	local loadout = self._loadouts[career_name]
+	local loadout_talents = loadout.talents
 
-	if not talents[arg_66_2] then
+	if loadout_talents[talent_name] then
 		return
 	end
 
-	for k, v in pairs(talents) do
-		if v == arg_66_3 then
+	for loadout_talent_name, index in pairs(loadout_talents) do
+		if index == slot_index then
 			return
 		end
 
-		if tree_row == WeaveTalentsByCareer[arg_66_1][k].tree_row then
+		local loadout_talent_data = WeaveTalentsByCareer[career_name][loadout_talent_name]
+		local loadout_talent_tier = loadout_talent_data.tree_row
+
+		if talent_tier == loadout_talent_tier then
 			return
 		end
 	end
 
-	talents[arg_66_2] = arg_66_3
-	self._dirty_loadouts[arg_66_1] = true
+	loadout_talents[talent_name] = slot_index
+	self._dirty_loadouts[career_name] = true
 end
 
-BackendInterfaceWeavesPlayFab.remove_loadout_talent = function (self, arg_67_1, arg_67_2)
+BackendInterfaceWeavesPlayFab.remove_loadout_talent = function (self, career_name, talent_name)
 	-- function 67
-	local talents = self._loadouts[arg_67_1].talents
+	local loadout = self._loadouts[career_name]
+	local loadout_talents = loadout.talents
 
-	fassert(talents[arg_67_2], "[BackendInterfaceWeavesPlayFab] Talent %q not found in loadout for %q", arg_67_2, arg_67_1)
+	fassert(loadout_talents[talent_name], "[BackendInterfaceWeavesPlayFab] Talent %q not found in loadout for %q", talent_name, career_name)
 
-	talents[arg_67_2] = nil
-	self._dirty_loadouts[arg_67_1] = true
+	loadout_talents[talent_name] = nil
+	self._dirty_loadouts[career_name] = true
 end
 
-BackendInterfaceWeavesPlayFab.get_loadout_talents = function (self, arg_68_1)
+BackendInterfaceWeavesPlayFab.get_loadout_talents = function (self, career_name)
 	-- function 68
-	return self._loadouts[arg_68_1].talents
+	local loadout = self._loadouts[career_name]
+	local loadout_talents = loadout.talents
+
+	return loadout_talents
 end
 
-BackendInterfaceWeavesPlayFab.get_talent_ids = function (self, arg_69_1)
+BackendInterfaceWeavesPlayFab.get_talent_ids = function (self, career_name)
 	-- function 69
-	local get_talent_tree = self:get_talent_tree(arg_69_1)
-	local tbl = {}
-	local get_talents = self:get_talents(arg_69_1)
+	local talent_tree = self:get_talent_tree(career_name)
+	local talent_ids = {}
+	local talents = self:get_talents(career_name)
 
-	if not get_talents then
-		for i = 1, #get_talents do
-			local var_69_3 = get_talents[i]
+	if talents then
+		for i = 1, #talents do
+			local column = talents[i]
 
-			if var_69_3 ~= 0 then
-				local var_69_4 = get_talent_tree[i][var_69_3]
-				local var_69_5 = TalentIDLookup[var_69_4]
+			if column ~= 0 then
+				local talent_name = talent_tree[i][column]
+				local talent_lookup = TalentIDLookup[talent_name]
 
-				if not var_69_5 and not var_69_5.talent_id then
-					tbl[#tbl + 1] = var_69_5.talent_id
+				if talent_lookup and talent_lookup.talent_id then
+					talent_ids[#talent_ids + 1] = talent_lookup.talent_id
 				end
 			end
 		end
 	end
 
-	return tbl
+	return talent_ids
 end
 
-BackendInterfaceWeavesPlayFab.get_talent_tree = function (arg_70_0, arg_70_1)
+BackendInterfaceWeavesPlayFab.get_talent_tree = function (self, career_name)
 	-- function 70
-	local var_70_0 = WeaveLoadoutSettings[arg_70_1]
+	local loadout_settings = WeaveLoadoutSettings[career_name]
+	local talent_tree = not not loadout_settings and not not loadout_settings.talent_tree
 
-	return not var_70_0 and var_70_0.talent_tree
+	return talent_tree
 end
 
-local tbl_3 = {}
+local TALENTS_RETURN_TABLE = {}
 
-BackendInterfaceWeavesPlayFab.get_talents = function (self, arg_71_1)
+BackendInterfaceWeavesPlayFab.get_talents = function (self, career_name)
 	-- function 71
-	local talents = self._loadouts[arg_71_1].talents
-	local get_talent_tree = self:get_talent_tree(arg_71_1)
+	local loadout = self._loadouts[career_name]
+	local loadout_talents = loadout.talents
+	local tree = self:get_talent_tree(career_name)
 
-	table.clear(tbl_3)
+	table.clear(TALENTS_RETURN_TABLE)
 
-	for i = 1, #get_talent_tree do
-		tbl_3[i] = 0
+	for i = 1, #tree do
+		TALENTS_RETURN_TABLE[i] = 0
 	end
 
-	for k, v in pairs(talents) do
-		local var_71_2 = WeaveTalentsByCareer[arg_71_1][k]
-		local tree_row = var_71_2.tree_row
-		local tree_column = var_71_2.tree_column
+	for talent_name, _ in pairs(loadout_talents) do
+		local talent_data = WeaveTalentsByCareer[career_name][talent_name]
+		local tree_row = talent_data.tree_row
+		local tree_column = talent_data.tree_column
 
-		tbl_3[tree_row] = tree_column
+		TALENTS_RETURN_TABLE[tree_row] = tree_column
 	end
 
-	return tbl_3
+	return TALENTS_RETURN_TABLE
 end
 
-BackendInterfaceWeavesPlayFab.get_total_power_level = function (self, arg_72_1, arg_72_2)
+BackendInterfaceWeavesPlayFab.get_total_power_level = function (self, profile_name, career_name)
 	-- function 72
-	return self:get_average_power_level(arg_72_2)
+	return self:get_average_power_level(career_name)
 end
 
-BackendInterfaceWeavesPlayFab.has_loadout_item_id = function (self, arg_73_1, arg_73_2)
+BackendInterfaceWeavesPlayFab.has_loadout_item_id = function (self, career_name, item_id)
 	-- function 73
-	local var_73_0 = self._loadouts[arg_73_1]
+	local loadout = self._loadouts[career_name]
 
-	for k, v in pairs(var_73_0) do
-		if v == arg_73_2 then
+	for slot_name, id in pairs(loadout) do
+		if id == item_id then
 			return true
 		end
 	end
 end
 
-BackendInterfaceWeavesPlayFab.get_loadout_item_id = function (self, arg_74_1, arg_74_2)
+BackendInterfaceWeavesPlayFab.get_loadout_item_id = function (self, career_name, slot_name)
 	-- function 74
-	fassert(self._valid_loadout_slots[arg_74_2], "[BackendInterfaceWeavesPlayFab] Loadout in slot %q shouldn't be fetched from the weaves interface", tostring(arg_74_2))
+	fassert(self._valid_loadout_slots[slot_name], "[BackendInterfaceWeavesPlayFab] Loadout in slot %q shouldn't be fetched from the weaves interface", tostring(slot_name))
 
-	return self._loadouts[arg_74_1][arg_74_2]
+	local loadout = self._loadouts[career_name]
+	local item_backend_id = loadout[slot_name]
+
+	return item_backend_id
 end
 
-BackendInterfaceWeavesPlayFab.set_loadout_item = function (self, arg_75_1, arg_75_2, arg_75_3)
+BackendInterfaceWeavesPlayFab.set_loadout_item = function (self, item_backend_id, career_name, slot_name)
 	-- function 75
-	fassert(self._valid_loadout_slots[arg_75_3], "[BackendInterfaceWeavesPlayFab] Loadout in slot %q shouldn't be set in the weaves interface", tostring(arg_75_3))
+	fassert(self._valid_loadout_slots[slot_name], "[BackendInterfaceWeavesPlayFab] Loadout in slot %q shouldn't be set in the weaves interface", tostring(slot_name))
 
-	local get_all_inventory_items = self._backend_mirror:get_all_inventory_items()
-	local var_75_1
+	local all_items = self._backend_mirror:get_all_inventory_items()
+	local item
 
-	if not arg_75_1 then
-		var_75_1 = get_all_inventory_items[arg_75_1]
+	if item_backend_id then
+		item = all_items[item_backend_id]
 
-		fassert(var_75_1, "[BackendInterfaceWeavesPlayFab] Item %q doesn't exist", tostring(arg_75_1))
+		fassert(item, "[BackendInterfaceWeavesPlayFab] Item %q doesn't exist", tostring(item_backend_id))
 	end
 
-	if not var_75_1 then
-		print("[BackendInterfaceWeavesPlayFab] Attempted to equip weapon that doesn't exist:", arg_75_1, arg_75_2, arg_75_3)
+	if not item then
+		print("[BackendInterfaceWeavesPlayFab] Attempted to equip weapon that doesn't exist:", item_backend_id, career_name, slot_name)
 
 		return false
 	end
 
-	if var_75_1.rarity ~= "magic" then
-		print("[BackendInterfaceWeavesPlayFab] Attempted to equip non magic weapon in weaves:", arg_75_1, arg_75_2, arg_75_3)
+	if item.rarity ~= "magic" then
+		print("[BackendInterfaceWeavesPlayFab] Attempted to equip non magic weapon in weaves:", item_backend_id, career_name, slot_name)
 
 		return false
 	end
 
-	local var_75_2 = self._loadouts[arg_75_2]
+	local loadout = self._loadouts[career_name]
 
-	if var_75_2[arg_75_3] ~= arg_75_1 then
-		var_75_2[arg_75_3] = arg_75_1
-		self._dirty_loadouts[arg_75_2] = true
+	if loadout[slot_name] ~= item_backend_id then
+		loadout[slot_name] = item_backend_id
+		self._dirty_loadouts[career_name] = true
 	end
 
 	return true
@@ -1425,23 +1567,23 @@ end
 
 BackendInterfaceWeavesPlayFab.get_dirty_user_data = function (self)
 	-- function 76
-	local flag = false
-	local tbl = {}
-	local _dirty_loadouts = self._dirty_loadouts
-	local _loadouts = self._loadouts
+	local has_dirty_data = false
+	local dirty_data = {}
+	local dirty_loadouts = self._dirty_loadouts
+	local loadouts = self._loadouts
 
-	for k, v in pairs(_dirty_loadouts) do
-		flag = true
+	for career_name, _ in pairs(dirty_loadouts) do
+		has_dirty_data = true
 
-		local loadouts = tbl.loadouts
+		local loadouts_2 = dirty_data.loadouts
 
-		loadouts = loadouts or {}
-		tbl.loadouts = loadouts
-		tbl.loadouts[k] = table.clone(_loadouts[k])
+		loadouts_2 = not not loadouts_2 or not not {}
+		dirty_data.loadouts = loadouts_2
+		dirty_data.loadouts[career_name] = table.clone(loadouts[career_name])
 	end
 
-	if not flag then
-		return tbl
+	if has_dirty_data then
+		return dirty_data
 	end
 end
 

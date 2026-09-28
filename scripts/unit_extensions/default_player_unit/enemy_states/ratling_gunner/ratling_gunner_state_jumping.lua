@@ -2,51 +2,71 @@
 
 RatlingGunnerStateJumping = class(RatlingGunnerStateJumping, EnemyCharacterStateJumping)
 
-RatlingGunnerStateJumping.init = function (self, arg_1_1)
+RatlingGunnerStateJumping.init = function (self, character_state_init_context)
 	-- function 1
-	RatlingGunnerStateJumping.super.init(self, arg_1_1)
+	RatlingGunnerStateJumping.super.init(self, character_state_init_context)
 
 	self._fire_ability_id = self._career_extension:ability_id("fire")
 	self._reload_ability_id = self._career_extension:ability_id("reload")
 end
 
-RatlingGunnerStateJumping.update = function (self, arg_2_1, arg_2_2, arg_2_3, arg_2_4, arg_2_5)
+RatlingGunnerStateJumping.update = function (self, unit, input, dt, context, t)
 	-- function 2
-	local common_state_changes = self:common_state_changes()
+	local handled = self:common_state_changes()
 
-	if not common_state_changes then
+	if handled then
 		return
 	end
 
-	local _csm = self._csm
-	local _career_extension = self._career_extension
+	local csm = self._csm
+	local career_extension = self._career_extension
 
-	if not common_state_changes then
-		CharacterStateHelper.update_weapon_actions(arg_2_5, arg_2_1, self._input_extension, self._inventory_extension, self._health_extension)
+	if not handled then
+		CharacterStateHelper.update_weapon_actions(t, unit, self._input_extension, self._inventory_extension, self._health_extension)
 	end
 
-	local is_in_ghost_mode = self._ghost_mode_extension:is_in_ghost_mode()
-	local common_movement = self:common_movement(is_in_ghost_mode, arg_2_3, arg_2_1)
+	local ghost_mode_extension = self._ghost_mode_extension
+	local in_ghost_mode = ghost_mode_extension:is_in_ghost_mode()
+
+	handled = self:common_movement(in_ghost_mode, dt, unit)
 end
 
 RatlingGunnerStateJumping.debug_display_ammo = function (self)
 	-- function 3
-	local _unit = self._unit
-	local attack_pattern_data = BLACKBOARDS[_unit].attack_pattern_data
+	local unit = self._unit
+	local blackboard = BLACKBOARDS[unit]
+	local attack_pattern_data = blackboard.attack_pattern_data
 
-	attack_pattern_data = attack_pattern_data or {}
+	if not attack_pattern_data then
+		-- Nothing
+	end
 
-	local current_ammo = attack_pattern_data.current_ammo
+	attack_pattern_data = {}
 
-	current_ammo = current_ammo or self._breed.max_ammo
+	local data = attack_pattern_data
 
-	local res_w = RESOLUTION_LOOKUP.res_w
-	local num = RESOLUTION_LOOKUP.res_h * 0.85
-	local num_2 = res_w * 0.87
-	local var_3_6 = Color(100, 255, 0)
-	local var_3_7 = Vector3(num_2, num, 10)
-	local num_3 = 40
-	local format = string.format("Ammo: %2d", current_ammo)
+	::label_3_0::
 
-	Debug.draw_text(format, var_3_7, num_3, var_3_6)
+	local current_ammo_2 = data.current_ammo
+
+	if not current_ammo_2 then
+		-- Nothing
+	end
+
+	current_ammo_2 = self._breed.max_ammo
+
+	local current_ammo = current_ammo_2
+
+	::label_3_1::
+
+	local screen_width = RESOLUTION_LOOKUP.res_w
+	local screen_height = RESOLUTION_LOOKUP.res_h
+	local pos_y = screen_height * 0.85
+	local pos_x = screen_width * 0.87
+	local color = Color(100, 255, 0)
+	local text_pos = Vector3(pos_x, pos_y, 10)
+	local font_size = 40
+	local string_ammo = string.format("Ammo: %2d", current_ammo)
+
+	Debug.draw_text(string_ammo, text_pos, font_size, color)
 end

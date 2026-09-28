@@ -2,78 +2,78 @@
 
 AdventureProfileRules = class(AdventureProfileRules)
 
-AdventureProfileRules.init = function (self, arg_1_1, arg_1_2)
+AdventureProfileRules.init = function (self, profile_synchronizer, network_server)
 	-- function 1
-	self._profile_synchronizer = arg_1_1
-	self._network_server = arg_1_2
+	self._profile_synchronizer = profile_synchronizer
+	self._network_server = network_server
 end
 
-AdventureProfileRules._profile_career_exists = function (arg_2_0, arg_2_1, arg_2_2)
+AdventureProfileRules._profile_career_exists = function (self, profile_index, career_index)
 	-- function 2
-	local var_2_0 = SPProfiles[arg_2_1]
-	local flag = not var_2_0 and var_2_0.careers
+	local profile = SPProfiles[profile_index]
+	local careers = not not profile and not not profile.careers
+	local career = not not careers and not not careers[career_index]
 
-	return (not flag and flag[arg_2_2]) ~= nil
+	return career ~= nil
 end
 
-AdventureProfileRules._profile_career_unlocked = function (arg_3_0, arg_3_1, arg_3_2)
+AdventureProfileRules._profile_career_unlocked = function (self, profile_index, career_index)
 	-- function 3
-	local var_3_0 = SPProfiles[arg_3_1]
-	local flag = not var_3_0 and var_3_0.careers
-	local flag_2 = not flag and flag[arg_3_2]
+	local profile = SPProfiles[profile_index]
+	local careers = not not profile and not not profile.careers
+	local career = not not careers and not not careers[career_index]
 
-	return not flag_2 and flag_2:is_unlocked_function(var_3_0.display_name, ExperienceSettings.max_level)
+	return not not career and not not career:is_unlocked_function(profile.display_name, ExperienceSettings.max_level)
 end
 
-AdventureProfileRules.handle_profile_delegation_for_joining_player = function (self, arg_4_1, arg_4_2)
+AdventureProfileRules.handle_profile_delegation_for_joining_player = function (self, peer_id, local_player_id)
 	-- function 4
-	local _profile_synchronizer = self._profile_synchronizer
-	local var_4_1
-	local var_4_2
-	local profile_by_peer, var_4_4 = _profile_synchronizer:profile_by_peer(arg_4_1, arg_4_2)
-	local reserved_party_id_by_peer = Managers.mechanism:reserved_party_id_by_peer(arg_4_1)
+	local profile_synchronizer = self._profile_synchronizer
+	local new_profile_index, new_career_index
+	local current_profile_index, current_career_index = profile_synchronizer:profile_by_peer(peer_id, local_player_id)
+	local party_id = Managers.mechanism:reserved_party_id_by_peer(peer_id)
 
-	if not profile_by_peer then
-		local peer_wanted_profile, var_4_7 = self._network_server:peer_wanted_profile(arg_4_1, arg_4_2)
-		local get_profile_index_reservation = _profile_synchronizer:get_profile_index_reservation(reserved_party_id_by_peer, peer_wanted_profile)
+	if not current_profile_index then
+		local wanted_profile_index, wanted_career_index = self._network_server:peer_wanted_profile(peer_id, local_player_id)
+		local current_reserver = profile_synchronizer:get_profile_index_reservation(party_id, wanted_profile_index)
 
-		if not (not get_profile_index_reservation and get_profile_index_reservation ~= arg_4_1) then
-			var_4_1, var_4_2 = peer_wanted_profile, var_4_7
+		if not current_reserver or current_reserver == peer_id then
+			new_profile_index, new_career_index = wanted_profile_index, wanted_career_index
 		else
-			var_4_1, var_4_2 = _profile_synchronizer:get_first_free_profile(reserved_party_id_by_peer)
+			new_profile_index, new_career_index = profile_synchronizer:get_first_free_profile(party_id)
 		end
 	end
 
-	if not var_4_1 then
-		local var_4_9 = SPProfiles[var_4_1]
+	if new_profile_index then
+		local profile = SPProfiles[new_profile_index]
 
-		if not (not var_4_9 and var_4_9.affiliation == "heroes") then
-			var_4_1, var_4_2 = _profile_synchronizer:get_first_free_profile(reserved_party_id_by_peer)
+		if not profile or profile.affiliation ~= "heroes" then
+			new_profile_index, new_career_index = profile_synchronizer:get_first_free_profile(party_id)
 		end
 
-		if not var_4_2 then
-			if not self:_profile_career_exists(var_4_1, var_4_2) then
-				print("Career " .. var_4_2 .. " does not exist, switching to career index 1")
+		if new_career_index then
+			if not self:_profile_career_exists(new_profile_index, new_career_index) then
+				print("Career " .. new_career_index .. " does not exist, switching to career index 1")
 
-				var_4_2 = 1
+				new_career_index = 1
 			end
 
-			if not (Network.peer_id() ~= arg_4_1 or self:_profile_career_unlocked(var_4_1, var_4_2)) then
-				print("Missing career: " .. var_4_2 .. " unlock requirements, switching to career index 1")
+			if Network.peer_id() == peer_id and not self:_profile_career_unlocked(new_profile_index, new_career_index) then
+				print("Missing career: " .. new_career_index .. " unlock requirements, switching to career index 1")
 
-				var_4_2 = 1
+				new_career_index = 1
 			end
 
-			local flag = false
-			local try_reserve_profile_for_peer_by_mechanism = Managers.mechanism:try_reserve_profile_for_peer_by_mechanism(arg_4_1, var_4_1, var_4_2, false)
+			local is_bot = false
+			local success = Managers.mechanism:try_reserve_profile_for_peer_by_mechanism(peer_id, new_profile_index, new_career_index, false)
 
-			fassert(try_reserve_profile_for_peer_by_mechanism, "this should always succeed since we checked everything before")
-			_profile_synchronizer:assign_full_profile(arg_4_1, arg_4_2, var_4_1, var_4_2, flag)
+			fassert(success, "this should always succeed since we checked everything before")
+			profile_synchronizer:assign_full_profile(peer_id, local_player_id, new_profile_index, new_career_index, is_bot)
 		else
-			local get_player_status = Managers.party:get_player_status(arg_4_1, arg_4_2)
+			local status = Managers.party:get_player_status(peer_id, local_player_id)
 
-			get_player_status.profile_index = profile_by_peer
-			get_player_status.career_index = var_4_4
+			status.profile_index = current_profile_index
+			status.career_index = current_career_index
 		end
 	end
 end

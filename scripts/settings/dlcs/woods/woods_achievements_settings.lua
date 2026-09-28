@@ -1,8 +1,8 @@
 -- chunkname: @scripts/settings/dlcs/woods/woods_achievements_settings.lua
 
-local woods = DLCSettings.woods
+local settings = DLCSettings.woods
 
-woods.achievement_outline = {
+settings.achievement_outline = {
 	heroes = {
 		categories = {
 			{
@@ -35,7 +35,7 @@ woods.achievement_outline = {
 		}
 	}
 }
-woods.achievement_template_file_names = {
+settings.achievement_template_file_names = {
 	"scripts/managers/achievements/achievement_templates_woods"
 }
-woods.achievement_events = {}
+settings.achievement_events = {}

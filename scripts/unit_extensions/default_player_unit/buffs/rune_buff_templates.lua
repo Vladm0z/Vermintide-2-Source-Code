@@ -2,7 +2,7 @@
 
 local RuneBuffTemplates = RuneBuffTemplates
 
-RuneBuffTemplates = RuneBuffTemplates or {}
+RuneBuffTemplates = not not RuneBuffTemplates or not not {}
 RuneBuffTemplates = RuneBuffTemplates
 RuneBuffTemplates.rune_square_damage = {
 	buffs = {

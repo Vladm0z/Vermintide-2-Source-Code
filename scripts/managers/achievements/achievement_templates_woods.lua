@@ -1,7 +1,7 @@
 -- chunkname: @scripts/managers/achievements/achievement_templates_woods.lua
 
 local achievements = AchievementTemplates.achievements
-local woods = DLCSettings.woods
+local achievement_settings = DLCSettings.woods
 local add_levels_complete_per_hero_challenge = AchievementTemplateHelper.add_levels_complete_per_hero_challenge
 local add_weapon_kill_challenge = AchievementTemplateHelper.add_weapon_kill_challenge
 local add_career_mission_count_challenge = AchievementTemplateHelper.add_career_mission_count_challenge
@@ -10,30 +10,30 @@ local add_multi_stat_count_challenge = AchievementTemplateHelper.add_multi_stat_
 local add_event_challenge = AchievementTemplateHelper.add_event_challenge
 local add_stat_count_challenge = AchievementTemplateHelper.add_stat_count_challenge
 
-local function fn(arg_1_0, arg_1_1)
+local function rpc_increment_stat(unit, stat_name)
 	-- function 1
-	local unit_owner = Managers.player:unit_owner(arg_1_0)
+	local player = Managers.player:unit_owner(unit)
 
-	if not (not unit_owner and unit_owner.bot_player) then
-		local network_id = unit_owner:network_id()
-		local network = Managers.state.network
-		local var_1_3 = NetworkLookup.statistics[arg_1_1]
+	if player and not player.bot_player then
+		local peer_id = player:network_id()
+		local network_manager = Managers.state.network
+		local stat_id = NetworkLookup.statistics[stat_name]
 
-		network.network_transmit:send_rpc("rpc_increment_stat", network_id, var_1_3)
+		network_manager.network_transmit:send_rpc("rpc_increment_stat", peer_id, stat_id)
 	end
 end
 
-local tbl = {}
-local tbl_2 = {}
-local num = 1
-local num_2 = 2
-local num_3 = 3
-local num_4 = 4
-local num_5 = 1
-local num_6 = 2
-local num_7 = 3
-local num_8 = 4
-local num_9 = 5
+local XB1_ACHIEVEMENT_ID = {}
+local PS4_ACHIEVEMENT_ID = {}
+local register_kill_stats_id = 1
+local register_kill_victim_unit = 2
+local register_kill_damage_data = 3
+local register_kill_victim_breed = 4
+local register_damage_stats_id = 1
+local register_damage_victim_unit = 2
+local register_damage_damage_data = 3
+local register_damage_attacker_unit = 4
+local register_damage_target_breed = 5
 
 achievements.woods_javelin_melee = {
 	name = "achv_woods_javelin_melee_name",
@@ -45,46 +45,47 @@ achievements.woods_javelin_melee = {
 	events = {
 		"register_kill"
 	},
-	progress = function (self, arg_2_1, arg_2_2)
+	progress = function (statistics_db, stats_id, template_data)
 		-- function 2
-		local get_persistent_stat = self:get_persistent_stat(arg_2_1, "woods_javelin_melee_kills")
+		local completed = statistics_db:get_persistent_stat(stats_id, "woods_javelin_melee_kills")
 
 		return {
-			get_persistent_stat,
+			completed,
 			500
 		}
 	end,
-	completed = function (self, arg_3_1, arg_3_2)
+	completed = function (statistics_db, stats_id, template_data)
 		-- function 3
-		return self:get_persistent_stat(arg_3_1, "woods_javelin_melee_kills") >= 500
+		return statistics_db:get_persistent_stat(stats_id, "woods_javelin_melee_kills") >= 500
 	end,
-	on_event = function (self, arg_4_1, arg_4_2, arg_4_3, arg_4_4)
+	on_event = function (statistics_db, stats_id, template_data, event_name, event_data)
 		-- function 4
-		local var_4_0 = arg_4_4[num_3]
-		local var_4_1 = var_4_0[DamageDataIndex.SOURCE_ATTACKER_UNIT]
-		local player_unit = Managers.player:local_player().player_unit
+		local damage_data = event_data[register_kill_damage_data]
+		local attacker_unit = damage_data[DamageDataIndex.SOURCE_ATTACKER_UNIT]
+		local local_player_unit = Managers.player:local_player().player_unit
 
-		if not (not var_4_1 and player_unit == var_4_1) then
+		if not attacker_unit or local_player_unit ~= attacker_unit then
 			return
 		end
 
-		local var_4_3 = var_4_0[DamageDataIndex.DAMAGE_SOURCE_NAME]
-		local var_4_4 = rawget(ItemMasterList, var_4_3)
+		local damage_source = damage_data[DamageDataIndex.DAMAGE_SOURCE_NAME]
+		local item = rawget(ItemMasterList, damage_source)
+		local is_javelin = not not item and item.item_type == "we_javelin"
 
-		if not (not var_4_4 and var_4_4.item_type == "we_javelin") then
+		if not is_javelin then
 			return
 		end
 
-		local var_4_5 = var_4_0[DamageDataIndex.ATTACK_TYPE]
+		local attack_type = damage_data[DamageDataIndex.ATTACK_TYPE]
 
-		if not (not var_4_5 and var_4_5 == "light_attack" or var_4_5 ~= "heavy_attack") then
-			local has_extension = ScriptUnit.has_extension(var_4_1, "career_system")
+		if attack_type and (attack_type == "light_attack" or attack_type == "heavy_attack") then
+			local career_extension = ScriptUnit.has_extension(attacker_unit, "career_system")
 
-			if not (not has_extension and has_extension:career_name() == "we_thornsister") then
+			if not career_extension or career_extension:career_name() ~= "we_thornsister" then
 				return
 			end
 
-			self:increment_stat(arg_4_1, "woods_javelin_melee_kills")
+			statistics_db:increment_stat(stats_id, "woods_javelin_melee_kills")
 		end
 	end
 }
@@ -98,45 +99,47 @@ achievements.woods_javelin_combo = {
 	events = {
 		"register_kill"
 	},
-	completed = function (self, arg_5_1, arg_5_2)
+	completed = function (statistics_db, stats_id, template_data)
 		-- function 5
-		return self:get_persistent_stat(arg_5_1, "woods_javelin_combo") > 0
+		return statistics_db:get_persistent_stat(stats_id, "woods_javelin_combo") > 0
 	end,
-	on_event = function (self, arg_6_1, arg_6_2, arg_6_3, arg_6_4)
+	on_event = function (statistics_db, stats_id, template_data, event_name, event_data)
 		-- function 6
-		local var_6_0 = arg_6_4[num_3]
-		local var_6_1 = var_6_0[DamageDataIndex.SOURCE_ATTACKER_UNIT]
-		local player_unit = Managers.player:local_player().player_unit
+		local damage_data = event_data[register_kill_damage_data]
+		local attacker_unit = damage_data[DamageDataIndex.SOURCE_ATTACKER_UNIT]
+		local local_player_unit = Managers.player:local_player().player_unit
 
-		if not (not var_6_1 and player_unit == var_6_1) then
+		if not attacker_unit or local_player_unit ~= attacker_unit then
 			return
 		end
 
-		local var_6_3 = var_6_0[DamageDataIndex.DAMAGE_SOURCE_NAME]
-		local var_6_4 = rawget(ItemMasterList, var_6_3)
+		local damage_source = damage_data[DamageDataIndex.DAMAGE_SOURCE_NAME]
+		local item = rawget(ItemMasterList, damage_source)
+		local is_javelin = not not item and item.item_type == "we_javelin"
 
-		if not (not var_6_4 and var_6_4.item_type == "we_javelin") then
+		if not is_javelin then
 			return
 		end
 
-		local has_extension = ScriptUnit.has_extension(var_6_1, "career_system")
+		local career_extension = ScriptUnit.has_extension(attacker_unit, "career_system")
 
-		if not (not has_extension and has_extension:career_name() == "we_thornsister") then
+		if not career_extension or career_extension:career_name() ~= "we_thornsister" then
 			return
 		end
 
-		local var_6_6 = arg_6_4[num_4]
-		local var_6_7 = var_6_0[DamageDataIndex.ATTACK_TYPE]
+		local victim_breed = event_data[register_kill_victim_breed]
+		local attack_type = damage_data[DamageDataIndex.ATTACK_TYPE]
 
-		if not (not var_6_7 and var_6_7 == "light_attack" or var_6_7 ~= "heavy_attack") then
-			if not var_6_6 and not var_6_6.elite then
-				arg_6_2.timed_kill = Managers.time:time("game")
+		if attack_type and (attack_type == "light_attack" or attack_type == "heavy_attack") then
+			if victim_breed and victim_breed.elite then
+				template_data.timed_kill = Managers.time:time("game")
 			end
-		elseif not var_6_7 and (var_6_7 ~= "projectile" or not arg_6_2.timed_kill) and not var_6_6 and not var_6_6.special then
-			local num = Managers.time:time("game") - arg_6_2.timed_kill
+		elseif attack_type and attack_type == "projectile" and template_data.timed_kill and victim_breed and victim_breed.special then
+			local t = Managers.time:time("game")
+			local margain = t - template_data.timed_kill
 
-			if not (not (num > 0) or not (num < 3)) then
-				self:increment_stat(arg_6_1, "woods_javelin_combo")
+			if margain > 0 and margain < 3 then
+				statistics_db:increment_stat(stats_id, "woods_javelin_combo")
 			end
 		end
 	end
@@ -151,40 +154,42 @@ achievements.woods_wall_kill_grind = {
 	events = {
 		"register_kill"
 	},
-	progress = function (self, arg_7_1, arg_7_2)
+	progress = function (statistics_db, stats_id, template_data)
 		-- function 7
-		local get_persistent_stat = self:get_persistent_stat(arg_7_1, "woods_wall_kill")
+		local completed = statistics_db:get_persistent_stat(stats_id, "woods_wall_kill")
 
 		return {
-			get_persistent_stat,
+			completed,
 			500
 		}
 	end,
-	completed = function (self, arg_8_1, arg_8_2)
+	completed = function (statistics_db, stats_id, template_data)
 		-- function 8
-		return self:get_persistent_stat(arg_8_1, "woods_wall_kill") >= 500
+		return statistics_db:get_persistent_stat(stats_id, "woods_wall_kill") >= 500
 	end,
-	on_event = function (self, arg_9_1, arg_9_2, arg_9_3, arg_9_4)
+	on_event = function (statistics_db, stats_id, template_data, event_name, event_data)
 		-- function 9
-		local var_9_0 = arg_9_4[num_3]
-		local var_9_1 = var_9_0[DamageDataIndex.ATTACKER]
-		local player_unit = Managers.player:local_player().player_unit
+		local damage_data = event_data[register_kill_damage_data]
+		local attacker_unit = damage_data[DamageDataIndex.ATTACKER]
+		local local_player_unit = Managers.player:local_player().player_unit
 
-		if not (not var_9_1 and player_unit == var_9_1) then
+		if not attacker_unit or local_player_unit ~= attacker_unit then
 			return
 		end
 
-		if var_9_0[DamageDataIndex.DAMAGE_SOURCE_NAME] ~= "career_ability" then
+		local damage_source = damage_data[DamageDataIndex.DAMAGE_SOURCE_NAME]
+
+		if damage_source ~= "career_ability" then
 			return
 		end
 
-		local has_extension = ScriptUnit.has_extension(var_9_1, "career_system")
+		local career_extension = ScriptUnit.has_extension(attacker_unit, "career_system")
 
-		if not (not has_extension and has_extension:career_name() == "we_thornsister") then
+		if not career_extension or career_extension:career_name() ~= "we_thornsister" then
 			return
 		end
 
-		self:increment_stat(arg_9_1, "woods_wall_kill")
+		statistics_db:increment_stat(stats_id, "woods_wall_kill")
 	end
 }
 achievements.woods_lifted_kill = {
@@ -199,46 +204,47 @@ achievements.woods_lifted_kill = {
 	events = {
 		"register_kill"
 	},
-	progress = function (self, arg_10_1, arg_10_2)
+	progress = function (statistics_db, stats_id, template_data)
 		-- function 10
-		local get_persistent_stat = self:get_persistent_stat(arg_10_1, "woods_lift_kills")
+		local completed = statistics_db:get_persistent_stat(stats_id, "woods_lift_kills")
 
 		return {
-			get_persistent_stat,
+			completed,
 			250
 		}
 	end,
-	completed = function (self, arg_11_1, arg_11_2)
+	completed = function (statistics_db, stats_id, template_data)
 		-- function 11
-		return self:get_persistent_stat(arg_11_1, "woods_lift_kills") >= 250
+		return statistics_db:get_persistent_stat(stats_id, "woods_lift_kills") >= 250
 	end,
-	on_event = function (arg_12_0, arg_12_1, arg_12_2, arg_12_3, arg_12_4)
+	on_event = function (statistics_db, stats_id, template_data, event_name, event_data)
 		-- function 12
 		if not Managers.state.network.is_server then
 			return
 		end
 
-		local var_12_0 = arg_12_4[num_3][DamageDataIndex.ATTACKER]
+		local damage_data = event_data[register_kill_damage_data]
+		local attacker_unit = damage_data[DamageDataIndex.ATTACKER]
 
-		if not var_12_0 then
+		if not attacker_unit then
 			return false
 		end
 
-		local has_extension = ScriptUnit.has_extension(var_12_0, "career_system")
+		local career_extension = ScriptUnit.has_extension(attacker_unit, "career_system")
 
-		if not (not has_extension and has_extension:career_name() == "we_thornsister") then
+		if not career_extension or career_extension:career_name() ~= "we_thornsister" then
 			return
 		end
 
-		local var_12_2 = arg_12_4[num_2]
-		local var_12_3 = BLACKBOARDS[var_12_2]
+		local victim_unit = event_data[register_kill_victim_unit]
+		local bb = BLACKBOARDS[victim_unit]
 
-		if not var_12_3 then
+		if not bb then
 			return
 		end
 
-		if not var_12_3.in_vortex then
-			fn(var_12_0, "woods_lift_kills")
+		if bb.in_vortex then
+			rpc_increment_stat(attacker_unit, "woods_lift_kills")
 		end
 	end
 }
@@ -254,54 +260,55 @@ achievements.woods_triple_lift = {
 	events = {
 		"vortex_caught_unit"
 	},
-	completed = function (self, arg_13_1, arg_13_2)
+	completed = function (statistics_db, stats_id, template_data)
 		-- function 13
-		return self:get_persistent_stat(arg_13_1, "woods_triple_lift") > 0
+		return statistics_db:get_persistent_stat(stats_id, "woods_triple_lift") > 0
 	end,
-	on_event = function (arg_14_0, arg_14_1, arg_14_2, arg_14_3, arg_14_4)
+	on_event = function (statistics_db, stats_id, template_data, event_name, event_data)
 		-- function 14
 		if not Managers.state.network.is_server then
 			return
 		end
 
-		local var_14_0 = arg_14_4[1]
-		local var_14_1 = arg_14_4[2]
-		local has_extension = ScriptUnit.has_extension(var_14_0, "career_system")
+		local attacker_unit = event_data[1]
+		local lifted_unit = event_data[2]
+		local career_extension = ScriptUnit.has_extension(attacker_unit, "career_system")
 
-		if not (not has_extension and has_extension:career_name() == "we_thornsister") then
+		if not career_extension or career_extension:career_name() ~= "we_thornsister" then
 			return
 		end
 
-		local breed = BLACKBOARDS[var_14_1].breed
+		local lifted_bb = BLACKBOARDS[lifted_unit]
+		local lifted_breed = lifted_bb.breed
 
-		if not (not breed and breed.special) then
+		if not lifted_breed or not lifted_breed.special then
 			return
 		end
 
-		if not arg_14_2.lifted_units then
-			arg_14_2.lifted_units = {}
+		if not template_data.lifted_units then
+			template_data.lifted_units = {}
 		end
 
-		arg_14_2.lifted_units[var_14_1] = true
+		template_data.lifted_units[lifted_unit] = true
 
-		local num = 0
+		local num_vortexed_units = 0
 
-		for k, v in pairs(arg_14_2.lifted_units) do
-			if not HEALTH_ALIVE[k] then
-				local var_14_5 = BLACKBOARDS[k]
+		for unit, data in pairs(template_data.lifted_units) do
+			if HEALTH_ALIVE[unit] then
+				local bb = BLACKBOARDS[unit]
 
-				if not (not var_14_5 and not var_14_5.in_vortex_state and var_14_5.in_vortex_state == "in_vortex_init" or var_14_5.in_vortex_state ~= "in_vortex") then
-					num = num + 1
+				if bb and bb.in_vortex_state and (bb.in_vortex_state == "in_vortex_init" or bb.in_vortex_state == "in_vortex") then
+					num_vortexed_units = num_vortexed_units + 1
 				else
-					arg_14_2.lifted_units[k] = nil
+					template_data.lifted_units[unit] = nil
 				end
 			else
-				arg_14_2.lifted_units[k] = nil
+				template_data.lifted_units[unit] = nil
 			end
 		end
 
-		if num >= 3 then
-			fn(var_14_0, "woods_triple_lift")
+		if num_vortexed_units >= 3 then
+			rpc_increment_stat(attacker_unit, "woods_triple_lift")
 		end
 	end
 }
@@ -315,51 +322,54 @@ achievements.woods_heal_grind = {
 	events = {
 		"register_heal"
 	},
-	progress = function (self, arg_15_1, arg_15_2)
+	progress = function (statistics_db, stats_id, template_data)
 		-- function 15
-		local get_persistent_stat = self:get_persistent_stat(arg_15_1, "woods_amount_healed")
+		local completed = statistics_db:get_persistent_stat(stats_id, "woods_amount_healed")
 
 		return {
-			get_persistent_stat,
+			completed,
 			2000
 		}
 	end,
-	completed = function (self, arg_16_1, arg_16_2)
+	completed = function (statistics_db, stats_id, template_data)
 		-- function 16
-		return self:get_persistent_stat(arg_16_1, "woods_amount_healed") > 2000
+		return statistics_db:get_persistent_stat(stats_id, "woods_amount_healed") > 2000
 	end,
-	on_event = function (self, arg_17_1, arg_17_2, arg_17_3, arg_17_4)
+	on_event = function (statistics_db, stats_id, template_data, event_name, event_data)
 		-- function 17
-		local var_17_0 = arg_17_4[1]
-		local player_unit = Managers.player:local_player().player_unit
+		local healing_unit = event_data[1]
+		local local_player_unit = Managers.player:local_player().player_unit
 
-		if not (not var_17_0 and player_unit == var_17_0) then
+		if not healing_unit or local_player_unit ~= healing_unit then
 			return
 		end
 
-		local var_17_2 = arg_17_4[4]
-		local var_17_3 = arg_17_4[3]
+		local heal_type = event_data[4]
+		local amount_healed = event_data[3]
 
-		if not (var_17_2 == "heal_from_proc" or var_17_2 ~= "career_skill") then
+		if heal_type == "heal_from_proc" or heal_type == "career_skill" then
 			return
 		end
 
-		local get_current_level_keys = Managers.level_transition_handler:get_current_level_keys()
-		local var_17_5 = LevelSettings[get_current_level_keys]
+		local level_transition_handler = Managers.level_transition_handler
+		local level_key = level_transition_handler:get_current_level_keys()
+		local level_settings = LevelSettings[level_key]
+		local is_hub_level = not not level_settings and not not level_settings.hub_level
 
-		if not (not var_17_5 and var_17_5.hub_level) then
+		if is_hub_level then
 			return
 		end
 
-		local has_extension = ScriptUnit.has_extension(var_17_0, "career_system")
+		local career_extension = ScriptUnit.has_extension(healing_unit, "career_system")
 
-		if not (not has_extension and has_extension:career_name() == "we_thornsister") then
+		if not career_extension or career_extension:career_name() ~= "we_thornsister" then
 			return
 		end
 
-		local num = self:get_persistent_stat(arg_17_1, "woods_amount_healed") + var_17_3
+		local old_amount = statistics_db:get_persistent_stat(stats_id, "woods_amount_healed")
+		local new_amount = old_amount + amount_healed
 
-		self:set_stat(arg_17_1, "woods_amount_healed", num)
+		statistics_db:set_stat(stats_id, "woods_amount_healed", new_amount)
 	end
 }
 achievements.woods_bleed_grind = {
@@ -372,48 +382,51 @@ achievements.woods_bleed_grind = {
 	events = {
 		"register_damage"
 	},
-	progress = function (self, arg_18_1, arg_18_2)
+	progress = function (statistics_db, stats_id, template_data)
 		-- function 18
-		local get_persistent_stat = self:get_persistent_stat(arg_18_1, "woods_bleed_tics")
+		local completed = statistics_db:get_persistent_stat(stats_id, "woods_bleed_tics")
 
 		return {
-			get_persistent_stat,
+			completed,
 			2000
 		}
 	end,
-	completed = function (self, arg_19_1, arg_19_2)
+	completed = function (statistics_db, stats_id, template_data)
 		-- function 19
-		return self:get_persistent_stat(arg_19_1, "woods_bleed_tics") > 2000
+		return statistics_db:get_persistent_stat(stats_id, "woods_bleed_tics") > 2000
 	end,
-	on_event = function (self, arg_20_1, arg_20_2, arg_20_3, arg_20_4)
+	on_event = function (statistics_db, stats_id, template_data, event_name, event_data)
 		-- function 20
-		local var_20_0 = arg_20_4[num_7][DamageDataIndex.DAMAGE_TYPE]
+		local damage_data = event_data[register_damage_damage_data]
+		local damage_type = damage_data[DamageDataIndex.DAMAGE_TYPE]
 
-		if not (not var_20_0 and var_20_0 == "bleed") then
+		if not damage_type or damage_type ~= "bleed" then
 			return
 		end
 
-		local get_current_level_keys = Managers.level_transition_handler:get_current_level_keys()
-		local var_20_2 = LevelSettings[get_current_level_keys]
+		local level_transition_handler = Managers.level_transition_handler
+		local level_key = level_transition_handler:get_current_level_keys()
+		local level_settings = LevelSettings[level_key]
+		local is_hub_level = not not level_settings and not not level_settings.hub_level
 
-		if not (not var_20_2 and var_20_2.hub_level) then
+		if is_hub_level then
 			return
 		end
 
-		local var_20_3 = arg_20_4[num_8]
-		local player_unit = Managers.player:local_player().player_unit
+		local attacker_unit = event_data[register_damage_attacker_unit]
+		local local_player_unit = Managers.player:local_player().player_unit
 
-		if not (not var_20_3 and player_unit == var_20_3) then
+		if not attacker_unit or local_player_unit ~= attacker_unit then
 			return
 		end
 
-		local has_extension = ScriptUnit.has_extension(var_20_3, "career_system")
+		local career_extension = ScriptUnit.has_extension(attacker_unit, "career_system")
 
-		if not (not has_extension and has_extension:career_name() == "we_thornsister") then
+		if not career_extension or career_extension:career_name() ~= "we_thornsister" then
 			return
 		end
 
-		self:increment_stat(arg_20_1, "woods_bleed_tics")
+		statistics_db:increment_stat(stats_id, "woods_bleed_tics")
 	end
 }
 achievements.woods_chaos_pinata = {
@@ -430,92 +443,94 @@ achievements.woods_chaos_pinata = {
 		"register_damage",
 		"register_kill"
 	},
-	completed = function (self, arg_21_1, arg_21_2)
+	completed = function (statistics_db, stats_id, template_data)
 		-- function 21
-		return self:get_persistent_stat(arg_21_1, "woods_chaos_pinata") > 0
+		return statistics_db:get_persistent_stat(stats_id, "woods_chaos_pinata") > 0
 	end,
-	on_event = function (arg_22_0, arg_22_1, arg_22_2, arg_22_3, arg_22_4)
+	on_event = function (statistics_db, stats_id, template_data, event_name, event_data)
 		-- function 22
 		if not Managers.state.network.is_server then
 			return
 		end
 
-		if arg_22_3 == "vortex_caught_unit" then
-			local var_22_0 = arg_22_4[1]
-			local var_22_1 = arg_22_4[2]
-			local has_extension = ScriptUnit.has_extension(var_22_0, "career_system")
+		if event_name == "vortex_caught_unit" then
+			local attacker_unit = event_data[1]
+			local lifted_unit = event_data[2]
+			local career_extension = ScriptUnit.has_extension(attacker_unit, "career_system")
 
-			if not (not has_extension and has_extension:career_name() == "we_thornsister") then
+			if not career_extension or career_extension:career_name() ~= "we_thornsister" then
 				return
 			end
 
-			local breed = BLACKBOARDS[var_22_1].breed
+			local lifted_bb = BLACKBOARDS[lifted_unit]
+			local lifted_breed = lifted_bb.breed
 
-			if not (not breed and not breed.name and breed.name == "chaos_warrior") then
+			if not lifted_breed or not lifted_breed.name or lifted_breed.name ~= "chaos_warrior" then
 				return
 			end
 
-			if not arg_22_2.lifted_units then
-				arg_22_2.lifted_units = {}
+			if not template_data.lifted_units then
+				template_data.lifted_units = {}
 			end
 
-			arg_22_2.lifted_units[var_22_1] = {}
+			template_data.lifted_units[lifted_unit] = {}
 
-			for k, v in pairs(arg_22_2.lifted_units) do
-				if not HEALTH_ALIVE[k] then
-					arg_22_2.lifted_units[k] = nil
+			for unit, data in pairs(template_data.lifted_units) do
+				if not HEALTH_ALIVE[unit] then
+					template_data.lifted_units[unit] = nil
 				end
 			end
-		elseif arg_22_3 == "register_damage" then
-			local var_22_4 = arg_22_4[num_6]
+		elseif event_name == "register_damage" then
+			local victim_unit = event_data[register_damage_victim_unit]
 
-			if not (not arg_22_2.lifted_units and arg_22_2.lifted_units[var_22_4]) then
+			if not template_data.lifted_units or not template_data.lifted_units[victim_unit] then
 				return
 			end
 
-			local var_22_5 = arg_22_4[num_7][DamageDataIndex.ATTACK_TYPE]
+			local damage_data = event_data[register_damage_damage_data]
+			local attack_type = damage_data[DamageDataIndex.ATTACK_TYPE]
 
-			if not (not var_22_5 and var_22_5 == "light_attack" and var_22_5 == "heavy_attack") then
+			if not attack_type or attack_type ~= "light_attack" and attack_type ~= "heavy_attack" then
 				return
 			end
 
-			local var_22_6 = arg_22_4[num_8]
+			local attacker_unit = event_data[register_damage_attacker_unit]
 
-			if not var_22_6 then
+			if not attacker_unit then
 				return
 			end
 
-			local var_22_7 = arg_22_2.lifted_units[var_22_4]
-			local get_data = Unit.get_data(var_22_6, "breed")
+			local unit_list = template_data.lifted_units[victim_unit]
+			local attacker_breed = Unit.get_data(attacker_unit, "breed")
 
-			if not get_data and not get_data.is_hero then
-				var_22_7[var_22_6] = true
+			if attacker_breed and attacker_breed.is_hero then
+				unit_list[attacker_unit] = true
 			end
 		else
-			local var_22_9 = arg_22_4[num_2]
+			local victim_unit = event_data[register_kill_victim_unit]
 
-			if not (not arg_22_2.lifted_units and arg_22_2.lifted_units[var_22_9]) then
+			if not template_data.lifted_units or not template_data.lifted_units[victim_unit] then
 				return
 			end
 
-			local var_22_10 = BLACKBOARDS[var_22_9]
+			local bb = BLACKBOARDS[victim_unit]
 
-			if not (not var_22_10 and not var_22_10.in_vortex_state and var_22_10.in_vortex_state == "in_vortex_init" or var_22_10.in_vortex_state ~= "in_vortex") then
-				local num = 0
-				local var_22_12
+			if bb and bb.in_vortex_state and (bb.in_vortex_state == "in_vortex_init" or bb.in_vortex_state == "in_vortex") then
+				local num_hits = 0
+				local sott_unit
 
-				for k_2, v_2 in pairs(arg_22_2.lifted_units[var_22_9]) do
-					num = num + 1
+				for unit, data in pairs(template_data.lifted_units[victim_unit]) do
+					num_hits = num_hits + 1
 
-					local has_extension_2 = ScriptUnit.has_extension(k_2, "career_system")
+					local career_extension = ScriptUnit.has_extension(unit, "career_system")
 
-					if not (not has_extension_2 and has_extension_2:career_name() ~= "we_thornsister") then
-						var_22_12 = k_2
+					if career_extension and career_extension:career_name() == "we_thornsister" then
+						sott_unit = unit
 					end
 				end
 
-				if not (num >= 2) or not var_22_12 then
-					fn(var_22_12, "woods_chaos_pinata")
+				if num_hits >= 2 and sott_unit then
+					rpc_increment_stat(sott_unit, "woods_chaos_pinata")
 				end
 			end
 		end
@@ -531,59 +546,63 @@ achievements.woods_ability_combo = {
 	events = {
 		"any_ability_used"
 	},
-	completed = function (self, arg_23_1, arg_23_2)
+	completed = function (statistics_db, stats_id, template_data)
 		-- function 23
-		return self:get_persistent_stat(arg_23_1, "woods_ability_combo") > 0
+		return statistics_db:get_persistent_stat(stats_id, "woods_ability_combo") > 0
 	end,
-	on_event = function (self, arg_24_1, arg_24_2, arg_24_3, arg_24_4)
+	on_event = function (statistics_db, stats_id, template_data, event_name, event_data)
 		-- function 24
-		local player_unit = Managers.player:local_player().player_unit
-		local has_extension = ScriptUnit.has_extension(player_unit, "career_system")
+		local local_player_unit = Managers.player:local_player().player_unit
+		local career_extension = ScriptUnit.has_extension(local_player_unit, "career_system")
 
-		if not (not has_extension and has_extension:career_name() == "we_thornsister") then
+		if not career_extension or career_extension:career_name() ~= "we_thornsister" then
 			return
 		end
 
-		local var_24_2 = arg_24_4[1]
-		local has_extension_2 = ScriptUnit.has_extension(var_24_2, "career_system")
+		local using_unit = event_data[1]
+		local using_career_extension = ScriptUnit.has_extension(using_unit, "career_system")
 
-		if not (not has_extension_2 and has_extension_2:career_name() == "we_thornsister") then
+		if not using_career_extension or using_career_extension:career_name() ~= "we_thornsister" then
 			return
 		end
 
-		local get_current_level_keys = Managers.level_transition_handler:get_current_level_keys()
-		local var_24_5 = LevelSettings[get_current_level_keys]
+		local level_transition_handler = Managers.level_transition_handler
+		local level_key = level_transition_handler:get_current_level_keys()
+		local level_settings = LevelSettings[level_key]
+		local is_hub_level = not not level_settings and not not level_settings.hub_level
 
-		if not (not var_24_5 and var_24_5.hub_level) then
+		if is_hub_level then
 			return
 		end
 
-		local time = Managers.time:time("game")
+		local t = Managers.time:time("game")
 
-		if not arg_24_2.use_times then
-			arg_24_2.use_times = {}
+		if not template_data.use_times then
+			template_data.use_times = {}
 		end
 
-		local use_times = arg_24_2.use_times
+		local use_times = template_data.use_times
 
 		if #use_times >= 5 then
 			table.remove(use_times, 1)
 		end
 
-		use_times[#use_times + 1] = time
+		use_times[#use_times + 1] = t
 
 		if #use_times >= 5 then
-			local flag = true
-			local var_24_9 = use_times[1]
+			local passed = true
+			local time_to_check = use_times[1]
 
 			for i = 1, #use_times do
-				if use_times[i] - var_24_9 > 10 then
-					flag = false
+				local checked_time = use_times[i]
+
+				if checked_time - time_to_check > 10 then
+					passed = false
 				end
 			end
 
-			if not flag then
-				self:increment_stat(arg_24_1, "woods_ability_combo")
+			if passed then
+				statistics_db:increment_stat(stats_id, "woods_ability_combo")
 			end
 		end
 	end
@@ -598,40 +617,40 @@ achievements.woods_wall_tank = {
 	events = {
 		"register_thorn_wall_damage"
 	},
-	progress = function (self, arg_25_1, arg_25_2)
+	progress = function (statistics_db, stats_id, template_data)
 		-- function 25
-		local get_persistent_stat = self:get_persistent_stat(arg_25_1, "woods_wall_hits_soaked")
+		local completed = statistics_db:get_persistent_stat(stats_id, "woods_wall_hits_soaked")
 
 		return {
-			get_persistent_stat,
+			completed,
 			1000
 		}
 	end,
-	completed = function (self, arg_26_1, arg_26_2)
+	completed = function (statistics_db, stats_id, template_data)
 		-- function 26
-		return self:get_persistent_stat(arg_26_1, "woods_wall_hits_soaked") > 1000
+		return statistics_db:get_persistent_stat(stats_id, "woods_wall_hits_soaked") > 1000
 	end,
-	on_event = function (self, arg_27_1, arg_27_2, arg_27_3, arg_27_4)
+	on_event = function (statistics_db, stats_id, template_data, event_name, event_data)
 		-- function 27
-		local player_unit = Managers.player:local_player().player_unit
-		local has_extension = ScriptUnit.has_extension(player_unit, "career_system")
+		local local_player_unit = Managers.player:local_player().player_unit
+		local career_extension = ScriptUnit.has_extension(local_player_unit, "career_system")
 
-		if not (not has_extension and has_extension:career_name() == "we_thornsister") then
+		if not career_extension or career_extension:career_name() ~= "we_thornsister" then
 			return
 		end
 
-		local var_27_2 = arg_27_4[1]
-		local var_27_3 = arg_27_4[2]
-		local var_27_4 = arg_27_4[4]
-		local get_data = Unit.get_data(var_27_3, "breed")
+		local thorn_wall_unit = event_data[1]
+		local attacker_unit = event_data[2]
+		local attack_type = event_data[4]
+		local attacker_breed = Unit.get_data(attacker_unit, "breed")
 
-		if not (not get_data and get_data.is_hero) then
-			if not var_27_4 then
-				if var_27_4 ~= "projectile" then
-					self:increment_stat(arg_27_1, "woods_wall_hits_soaked")
+		if attacker_breed and not attacker_breed.is_hero then
+			if attack_type then
+				if attack_type ~= "projectile" then
+					statistics_db:increment_stat(stats_id, "woods_wall_hits_soaked")
 				end
 			else
-				self:increment_stat(arg_27_1, "woods_wall_hits_soaked")
+				statistics_db:increment_stat(stats_id, "woods_wall_hits_soaked")
 			end
 		end
 	end
@@ -646,35 +665,35 @@ achievements.woods_wall_block_ratling = {
 	events = {
 		"register_thorn_wall_damage"
 	},
-	progress = function (self, arg_28_1, arg_28_2)
+	progress = function (statistics_db, stats_id, template_data)
 		-- function 28
-		local get_persistent_stat = self:get_persistent_stat(arg_28_1, "woods_ratling_shots_soaked")
+		local completed = statistics_db:get_persistent_stat(stats_id, "woods_ratling_shots_soaked")
 
 		return {
-			get_persistent_stat,
+			completed,
 			500
 		}
 	end,
-	completed = function (self, arg_29_1, arg_29_2)
+	completed = function (statistics_db, stats_id, template_data)
 		-- function 29
-		return self:get_persistent_stat(arg_29_1, "woods_ratling_shots_soaked") >= 500
+		return statistics_db:get_persistent_stat(stats_id, "woods_ratling_shots_soaked") >= 500
 	end,
-	on_event = function (self, arg_30_1, arg_30_2, arg_30_3, arg_30_4)
+	on_event = function (statistics_db, stats_id, template_data, event_name, event_data)
 		-- function 30
-		local player_unit = Managers.player:local_player().player_unit
-		local has_extension = ScriptUnit.has_extension(player_unit, "career_system")
+		local local_player_unit = Managers.player:local_player().player_unit
+		local career_extension = ScriptUnit.has_extension(local_player_unit, "career_system")
 
-		if not (not has_extension and has_extension:career_name() == "we_thornsister") then
+		if not career_extension or career_extension:career_name() ~= "we_thornsister" then
 			return
 		end
 
-		local var_30_2 = arg_30_4[1]
-		local var_30_3 = arg_30_4[2]
-		local var_30_4 = arg_30_4[4]
-		local get_data = Unit.get_data(var_30_3, "breed")
+		local thorn_wall_unit = event_data[1]
+		local attacker_unit = event_data[2]
+		local attack_type = event_data[4]
+		local attacker_breed = Unit.get_data(attacker_unit, "breed")
 
-		if not (not get_data and get_data.name ~= "skaven_ratling_gunner" and not var_30_4 and var_30_4 ~= "projectile") then
-			self:increment_stat(arg_30_1, "woods_ratling_shots_soaked")
+		if attacker_breed and attacker_breed.name == "skaven_ratling_gunner" and attack_type and attack_type == "projectile" then
+			statistics_db:increment_stat(stats_id, "woods_ratling_shots_soaked")
 		end
 	end
 }
@@ -689,83 +708,87 @@ achievements.woods_bleed_boss = {
 		"register_damage",
 		"register_kill"
 	},
-	completed = function (self, arg_31_1, arg_31_2)
+	completed = function (statistics_db, stats_id, template_data)
 		-- function 31
-		return self:get_persistent_stat(arg_31_1, "woods_bleed_boss") > 0
+		return statistics_db:get_persistent_stat(stats_id, "woods_bleed_boss") > 0
 	end,
-	on_event = function (self, arg_32_1, arg_32_2, arg_32_3, arg_32_4)
+	on_event = function (statistics_db, stats_id, template_data, event_name, event_data)
 		-- function 32
-		if arg_32_3 == "register_damage" then
-			local var_32_0 = arg_32_4[num_9]
+		if event_name == "register_damage" then
+			local target_breed = event_data[register_damage_target_breed]
 
-			if not (not var_32_0 and var_32_0.boss) then
+			if not target_breed or not target_breed.boss then
 				return
 			end
 
-			local var_32_1 = arg_32_4[num_7]
-			local var_32_2 = var_32_1[DamageDataIndex.DAMAGE_TYPE]
+			local damage_data = event_data[register_damage_damage_data]
+			local damage_type = damage_data[DamageDataIndex.DAMAGE_TYPE]
 
-			if not (not var_32_2 and var_32_2 == "bleed") then
+			if not damage_type or damage_type ~= "bleed" then
 				return
 			end
 
-			local var_32_3 = arg_32_4[num_8]
-			local player_unit = Managers.player:local_player().player_unit
+			local attacker_unit = event_data[register_damage_attacker_unit]
+			local local_player_unit = Managers.player:local_player().player_unit
 
-			if not (not var_32_3 and player_unit == var_32_3) then
+			if not attacker_unit or local_player_unit ~= attacker_unit then
 				return
 			end
 
-			local has_extension = ScriptUnit.has_extension(var_32_3, "career_system")
+			local career_extension = ScriptUnit.has_extension(attacker_unit, "career_system")
 
-			if not (not has_extension and has_extension:career_name() == "we_thornsister") then
+			if not career_extension or career_extension:career_name() ~= "we_thornsister" then
 				return
 			end
 
-			local var_32_6 = arg_32_4[num_6]
+			local target_unit = event_data[register_damage_victim_unit]
 
-			if not arg_32_2.target_bosses then
-				arg_32_2.target_bosses = {}
+			if not template_data.target_bosses then
+				template_data.target_bosses = {}
 			end
 
-			if not arg_32_2.target_max_healths then
-				arg_32_2.target_max_healths = {}
+			if not template_data.target_max_healths then
+				template_data.target_max_healths = {}
 			end
 
-			if not arg_32_2.target_bosses[var_32_6] then
-				arg_32_2.target_bosses[var_32_6] = 0
+			if not template_data.target_bosses[target_unit] then
+				template_data.target_bosses[target_unit] = 0
 			end
 
-			arg_32_2.target_bosses[var_32_6] = arg_32_2.target_bosses[var_32_6] + var_32_1[DamageDataIndex.DAMAGE_AMOUNT]
+			template_data.target_bosses[target_unit] = template_data.target_bosses[target_unit] + damage_data[DamageDataIndex.DAMAGE_AMOUNT]
 
-			local has_extension_2 = ScriptUnit.has_extension(var_32_6, "health_system")
+			local target_health_extension = ScriptUnit.has_extension(target_unit, "health_system")
 
-			if not has_extension_2 then
+			if not target_health_extension then
 				return
 			end
 
-			local var_32_8 = arg_32_2.target_max_healths[var_32_6]
+			local max_health = template_data.target_max_healths[target_unit]
 
-			if not var_32_8 then
-				var_32_8 = has_extension_2:get_max_health()
-				arg_32_2.target_max_healths[var_32_6] = var_32_8
+			if not max_health then
+				max_health = target_health_extension:get_max_health()
+				template_data.target_max_healths[target_unit] = max_health
 			end
 
-			if arg_32_2.target_bosses[var_32_6] / var_32_8 > 0.2 then
-				self:increment_stat(arg_32_1, "woods_bleed_boss")
+			local damage_percent = template_data.target_bosses[target_unit] / max_health
+
+			if damage_percent > 0.2 then
+				statistics_db:increment_stat(stats_id, "woods_bleed_boss")
 			end
 		else
-			if not arg_32_2.target_bosses then
+			if not template_data.target_bosses then
 				return
 			end
 
-			if not arg_32_4[num_4].boss then
-				for k, v in pairs(arg_32_2.target_bosses) do
-					if not HEALTH_ALIVE[k] then
-						arg_32_2.target_bosses[k] = nil
+			local victim_breed = event_data[register_kill_victim_breed]
 
-						if not arg_32_2.target_max_healths and not arg_32_2.target_max_healths[k] then
-							arg_32_2.target_max_healths[k] = nil
+			if victim_breed.boss then
+				for unit, damage_total in pairs(template_data.target_bosses) do
+					if not HEALTH_ALIVE[unit] then
+						template_data.target_bosses[unit] = nil
+
+						if template_data.target_max_healths and template_data.target_max_healths[unit] then
+							template_data.target_max_healths[unit] = nil
 						end
 					end
 				end
@@ -785,32 +808,34 @@ achievements.woods_wall_kill_gutter = {
 	events = {
 		"register_damage"
 	},
-	completed = function (self, arg_33_1, arg_33_2)
+	completed = function (statistics_db, stats_id, template_data)
 		-- function 33
-		return self:get_persistent_stat(arg_33_1, "woods_wall_kill_gutter") > 0
+		return statistics_db:get_persistent_stat(stats_id, "woods_wall_kill_gutter") > 0
 	end,
-	on_event = function (arg_34_0, arg_34_1, arg_34_2, arg_34_3, arg_34_4)
+	on_event = function (statistics_db, stats_id, template_data, event_name, event_data)
 		-- function 34
 		if not Managers.state.network.is_server then
 			return
 		end
 
-		local var_34_0 = arg_34_4[5]
-		local name = var_34_0.name
-		local flag = not var_34_0 and name == "skaven_gutter_runner"
-		local var_34_3 = arg_34_4[3]
-		local var_34_4 = var_34_3[DamageDataIndex.DAMAGE_SOURCE_NAME]
-		local flag_2 = not var_34_3 and var_34_4 == "career_ability"
-		local var_34_6 = var_34_3[DamageDataIndex.ATTACKER]
-		local has_extension = ScriptUnit.has_extension(var_34_6, "career_system")
-		local flag_3 = not has_extension and has_extension:career_name() == "we_thornsister"
+		local target_breed = event_data[5]
+		local target_name = target_breed.name
+		local is_gutter_runner = not not target_breed and target_name == "skaven_gutter_runner"
+		local damage_data = event_data[3]
+		local damage_source = damage_data[DamageDataIndex.DAMAGE_SOURCE_NAME]
+		local is_career_ability = not not damage_data and damage_source == "career_ability"
+		local attacker_unit = damage_data[DamageDataIndex.ATTACKER]
+		local career_extension = ScriptUnit.has_extension(attacker_unit, "career_system")
+		local is_thornsister = not not career_extension and career_extension:career_name() == "we_thornsister"
 
-		if not flag and not flag_2 and not flag_3 then
-			local var_34_9 = arg_34_4[2]
-			local jump_data = BLACKBOARDS[var_34_9].jump_data
+		if is_gutter_runner and is_career_ability and is_thornsister then
+			local target_unit = event_data[2]
+			local blackboard = BLACKBOARDS[target_unit]
+			local jump_data = blackboard.jump_data
+			local is_jumping = not not jump_data and jump_data.state == "in_air" or jump_data.state == "in_air_no_target" or jump_data.state == "snapping"
 
-			if not (not jump_data and jump_data.state == "in_air" and jump_data.state == "in_air_no_target" and jump_data.state == "snapping") then
-				fn(var_34_6, "woods_wall_kill_gutter")
+			if is_jumping then
+				rpc_increment_stat(attacker_unit, "woods_wall_kill_gutter")
 			end
 		end
 	end
@@ -827,72 +852,73 @@ achievements.woods_wall_dual_save = {
 	events = {
 		"register_damage"
 	},
-	completed = function (self, arg_35_1, arg_35_2)
+	completed = function (statistics_db, stats_id, template_data)
 		-- function 35
-		return self:get_persistent_stat(arg_35_1, "woods_wall_dual_save") > 0
+		return statistics_db:get_persistent_stat(stats_id, "woods_wall_dual_save") > 0
 	end,
-	on_event = function (arg_36_0, arg_36_1, arg_36_2, arg_36_3, arg_36_4)
+	on_event = function (statistics_db, stats_id, template_data, event_name, event_data)
 		-- function 36
 		if not Managers.state.network.is_server then
 			return
 		end
 
-		local var_36_0 = arg_36_4[num_7]
+		local damage_data = event_data[register_damage_damage_data]
+		local damage_source = damage_data[DamageDataIndex.DAMAGE_SOURCE_NAME]
 
-		if var_36_0[DamageDataIndex.DAMAGE_SOURCE_NAME] ~= "career_ability" then
+		if damage_source ~= "career_ability" then
 			return
 		end
 
-		local var_36_1 = arg_36_4[num_9]
+		local target_breed = event_data[register_damage_target_breed]
 
-		if not (not var_36_1 and var_36_1.special) then
+		if not target_breed or not target_breed.special then
 			return
 		end
 
-		local var_36_2 = var_36_0[DamageDataIndex.ATTACKER]
-		local has_extension = ScriptUnit.has_extension(var_36_2, "career_system")
+		local attacker_unit = damage_data[DamageDataIndex.ATTACKER]
+		local career_extension = ScriptUnit.has_extension(attacker_unit, "career_system")
 
-		if not (not has_extension and has_extension:career_name() == "we_thornsister") then
+		if not career_extension or career_extension:career_name() ~= "we_thornsister" then
 			return
 		end
 
-		local var_36_4 = arg_36_4[num_2]
-		local var_36_5 = BLACKBOARDS[var_36_4]
+		local victim_unit = event_data[register_kill_victim_unit]
+		local bb = BLACKBOARDS[victim_unit]
 
-		if not var_36_1.name then
+		if not target_breed.name then
 			return
 		end
 
-		local flag = false
+		local hit_disabling_special = false
 
-		if var_36_1.name == "skaven_pack_master" then
-			local action = var_36_5.action
-			local flag_2 = not action and action.name
+		if target_breed.name == "skaven_pack_master" then
+			local action = bb.action
+			local action_name = not not action and not not action.name
 
-			if not (flag_2 == "pull" or flag_2 == "initial_pull" or flag_2 == "drag" or flag_2 ~= "hoist") then
-				flag = true
+			if action_name == "pull" or action_name == "initial_pull" or action_name == "drag" or action_name == "hoist" then
+				hit_disabling_special = true
 			end
-		elseif var_36_1.name == "skaven_gutter_runner" then
-			if not var_36_5.pouncing_target then
-				flag = true
+		elseif target_breed.name == "skaven_gutter_runner" then
+			if bb.pouncing_target then
+				hit_disabling_special = true
 			end
-		elseif var_36_1.name ~= "chaos_corruptor_sorcerer" or not var_36_5.grabbed_unit then
-			flag = true
+		elseif target_breed.name == "chaos_corruptor_sorcerer" and bb.grabbed_unit then
+			hit_disabling_special = true
 		end
 
-		if not flag then
-			local time = Managers.time:time("game")
-			local last_timed_interrupt = arg_36_2.last_timed_interrupt
+		if hit_disabling_special then
+			local t = Managers.time:time("game")
+			local last_interrupt = template_data.last_timed_interrupt
 
-			if not last_timed_interrupt then
-				local num = time - last_timed_interrupt
+			if last_interrupt then
+				local margain = t - last_interrupt
 
-				if not (not (num < 0.5) or not (num > -0.1)) then
-					fn(var_36_2, "woods_wall_dual_save")
+				if margain < 0.5 and margain > -0.1 then
+					rpc_increment_stat(attacker_unit, "woods_wall_dual_save")
 				end
 			end
 
-			arg_36_2.last_timed_interrupt = time
+			template_data.last_timed_interrupt = t
 		end
 	end
 }
@@ -908,49 +934,52 @@ achievements.woods_free_ability_grind = {
 	events = {
 		"free_cast_used"
 	},
-	progress = function (self, arg_37_1, arg_37_2)
+	progress = function (statistics_db, stats_id, template_data)
 		-- function 37
-		local get_persistent_stat = self:get_persistent_stat(arg_37_1, "woods_free_abilities_used")
+		local completed = statistics_db:get_persistent_stat(stats_id, "woods_free_abilities_used")
 
 		return {
-			get_persistent_stat,
+			completed,
 			50
 		}
 	end,
-	completed = function (self, arg_38_1, arg_38_2)
+	completed = function (statistics_db, stats_id, template_data)
 		-- function 38
-		return self:get_persistent_stat(arg_38_1, "woods_free_abilities_used") >= 50
+		return statistics_db:get_persistent_stat(stats_id, "woods_free_abilities_used") >= 50
 	end,
-	on_event = function (self, arg_39_1, arg_39_2, arg_39_3, arg_39_4)
+	on_event = function (statistics_db, stats_id, template_data, event_name, event_data)
 		-- function 39
-		local var_39_0 = arg_39_4[2]
+		local buffing_unit = event_data[2]
+		local local_player_unit = Managers.player:local_player().player_unit
 
-		if var_39_0 ~= Managers.player:local_player().player_unit then
+		if buffing_unit ~= local_player_unit then
 			return
 		end
 
-		local get_current_level_keys = Managers.level_transition_handler:get_current_level_keys()
-		local var_39_2 = LevelSettings[get_current_level_keys]
+		local level_transition_handler = Managers.level_transition_handler
+		local level_key = level_transition_handler:get_current_level_keys()
+		local level_settings = LevelSettings[level_key]
+		local is_hub_level = not not level_settings and not not level_settings.hub_level
 
-		if not (not var_39_2 and var_39_2.hub_level) then
+		if is_hub_level then
 			return
 		end
 
-		local has_extension = ScriptUnit.has_extension(var_39_0, "career_system")
+		local career_extension = ScriptUnit.has_extension(buffing_unit, "career_system")
 
-		if not (not has_extension and has_extension:career_name() == "we_thornsister") then
+		if not career_extension or career_extension:career_name() ~= "we_thornsister" then
 			return
 		end
 
-		self:increment_stat(arg_39_1, "woods_free_abilities_used")
+		statistics_db:increment_stat(stats_id, "woods_free_abilities_used")
 	end
 }
 
-local act_1 = GameActs.act_1
-local act_2 = GameActs.act_2
-local act_3 = GameActs.act_3
-local HelmgartLevels = HelmgartLevels
-local tbl_3 = {
+local act_1_levels = GameActs.act_1
+local act_2_levels = GameActs.act_2
+local act_3_levels = GameActs.act_3
+local main_game_levels = HelmgartLevels
+local difficulties = {
 	"normal",
 	"hard",
 	"harder",
@@ -958,18 +987,18 @@ local tbl_3 = {
 	"cataclysm"
 }
 
-for i = 1, #tbl_3 do
-	local var_0_26 = tbl_3[i]
-	local var_0_27 = DifficultyMapping[var_0_26]
-	local str = "woods_complete_all_helmgart_levels_" .. var_0_27
-	local str_2 = "achievement_trophy_" .. var_0_27 .. "_thornsister"
+for i = 1, #difficulties do
+	local difficulty_key = difficulties[i]
+	local difficulty_name = DifficultyMapping[difficulty_key]
+	local name = "woods_complete_all_helmgart_levels_" .. difficulty_name
+	local icon = "achievement_trophy_" .. difficulty_name .. "_thornsister"
 
-	add_levels_complete_per_hero_challenge(achievements, str, HelmgartLevels, DifficultySettings[var_0_26].rank, "we_thornsister", false, str_2, "woods", nil, nil)
+	add_levels_complete_per_hero_challenge(achievements, name, main_game_levels, DifficultySettings[difficulty_key].rank, "we_thornsister", false, icon, "woods", nil, nil)
 end
 
-add_career_mission_count_challenge(achievements, "woods_complete_25_missions", "completed_career_levels", "we_thornsister", tbl_3, 25, nil, "achievement_trophy_thornsister_bitter_rose_among_thorns", "woods", nil, nil)
+add_career_mission_count_challenge(achievements, "woods_complete_25_missions", "completed_career_levels", "we_thornsister", difficulties, 25, nil, "achievement_trophy_thornsister_bitter_rose_among_thorns", "woods", nil, nil)
 
-local tbl_4 = {
+local all_challenges = {
 	"woods_complete_all_helmgart_levels_recruit_we_thornsister",
 	"woods_complete_all_helmgart_levels_veteran_we_thornsister",
 	"woods_complete_all_helmgart_levels_champion_we_thornsister",
@@ -992,4 +1021,4 @@ local tbl_4 = {
 	"woods_free_ability_grind"
 }
 
-add_meta_challenge(achievements, "complete_all_thorn_sister_challenges", tbl_4, "achievement_trophy_thornsister_reborn_through_the_weave", "woods", nil, nil)
+add_meta_challenge(achievements, "complete_all_thorn_sister_challenges", all_challenges, "achievement_trophy_thornsister_reborn_through_the_weave", "woods", nil, nil)

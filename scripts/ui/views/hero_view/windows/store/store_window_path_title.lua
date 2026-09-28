@@ -1,115 +1,133 @@
 -- chunkname: @scripts/ui/views/hero_view/windows/store/store_window_path_title.lua
 
-local var_0_0 = local_require("scripts/ui/views/hero_view/windows/store/definitions/store_window_path_title_definitions")
-local widgets = var_0_0.widgets
-local scenegraph_definition = var_0_0.scenegraph_definition
-local animation_definitions = var_0_0.animation_definitions
-local create_breadcrumbs_definition = var_0_0.create_breadcrumbs_definition
+local definitions = local_require("scripts/ui/views/hero_view/windows/store/definitions/store_window_path_title_definitions")
+local widget_definitions = definitions.widgets
+local scenegraph_definition = definitions.scenegraph_definition
+local animation_definitions = definitions.animation_definitions
+local create_breadcrumbs_definition = definitions.create_breadcrumbs_definition
 
 StoreWindowPathTitle = class(StoreWindowPathTitle)
 StoreWindowPathTitle.NAME = "StoreWindowPathTitle"
 
-StoreWindowPathTitle.on_enter = function (self, arg_1_1, arg_1_2)
+StoreWindowPathTitle.on_enter = function (self, params, offset)
 	-- function 1
 	print("[HeroViewWindow] Enter Substate StoreWindowPathTitle")
 
-	self._params = arg_1_1
-	self._parent = arg_1_1.parent
+	self._params = params
+	self._parent = params.parent
 
-	local get_renderers, var_1_1 = self._parent:get_renderers()
+	local ui_renderer, ui_top_renderer = self._parent:get_renderers()
 
-	self._ui_renderer = get_renderers
-	self._ui_top_renderer = var_1_1
+	self._ui_renderer = ui_renderer
+	self._ui_top_renderer = ui_top_renderer
 	self._render_settings = {
 		snap_pixel_positions = true
 	}
-	self._layout_settings = arg_1_1.layout_settings
+	self._layout_settings = params.layout_settings
 	self._animations = {}
 
-	self:_create_ui_elements(arg_1_1, arg_1_2)
+	self:_create_ui_elements(params, offset)
 end
 
-StoreWindowPathTitle._create_ui_elements = function (self, arg_2_1, arg_2_2)
+StoreWindowPathTitle._create_ui_elements = function (self, params, offset)
 	-- function 2
 	self._ui_scenegraph = UISceneGraph.init_scenegraph(scenegraph_definition)
 
-	local tbl = {}
-	local tbl_2 = {}
+	local widgets = {}
+	local widgets_by_name = {}
 
-	for k, v in pairs(widgets) do
-		local var_2_2 = UIWidget.init(v)
+	for name, widget_definition in pairs(widget_definitions) do
+		local widget = UIWidget.init(widget_definition)
 
-		tbl[#tbl + 1] = var_2_2
-		tbl_2[k] = var_2_2
+		widgets[#widgets + 1] = widget
+		widgets_by_name[name] = widget
 	end
 
-	self._widgets = tbl
-	self._widgets_by_name = tbl_2
+	self._widgets = widgets
+	self._widgets_by_name = widgets_by_name
 
 	UIRenderer.clear_scenegraph_queue(self._ui_renderer)
 
 	self._ui_animator = UIAnimator:new(self._ui_scenegraph, animation_definitions)
 
-	if not arg_2_2 then
-		local local_position = self._ui_scenegraph.window.local_position
+	if offset then
+		local window_position = self._ui_scenegraph.window.local_position
 
-		local_position[1] = local_position[1] + arg_2_2[1]
-		local_position[2] = local_position[2] + arg_2_2[2]
-		local_position[3] = local_position[3] + arg_2_2[3]
+		window_position[1] = window_position[1] + offset[1]
+		window_position[2] = window_position[2] + offset[2]
+		window_position[3] = window_position[3] + offset[3]
 	end
 end
 
 StoreWindowPathTitle._sync_layout_path = function (self)
 	-- function 3
-	local get_store_path = self._parent:get_store_path()
-	local structure = StoreLayoutConfig.structure
+	local parent = self._parent
+	local path = parent:get_store_path()
+	local path_structure = StoreLayoutConfig.structure
 	local pages = StoreLayoutConfig.pages
 	local _saved_path = self._saved_path
 
-	_saved_path = _saved_path or {}
+	if not _saved_path then
+		-- Nothing
+	end
 
-	local flag = false
-	local count = #get_store_path
+	_saved_path = {}
 
-	if count ~= #_saved_path then
-		flag = true
+	local saved_path = _saved_path
+
+	::label_3_0::
+
+	local path_differs = false
+	local path_length = #path
+	local saved_path_length = #saved_path
+
+	if path_length ~= saved_path_length then
+		path_differs = true
 	else
-		for i = 1, #get_store_path do
-			if get_store_path[i] ~= _saved_path[i] then
-				flag = true
+		for i = 1, #path do
+			if path[i] ~= saved_path[i] then
+				path_differs = true
 
 				break
 			end
 		end
 	end
 
-	if not flag then
-		self._saved_path = table.clone(get_store_path)
+	if path_differs then
+		self._saved_path = table.clone(path)
 
-		local tbl = {}
+		local breadcrumb_widgets = {}
 
-		for i_2, v in ipairs(get_store_path) do
-			local flag_2 = v == "item_details"
-			local var_3_8 = pages[v]
+		for i, page_name in ipairs(path) do
+			local display_selected_product = page_name == "item_details"
+			local var_3_1 = pages[page_name]
 
-			var_3_8 = var_3_8 or self._parent:get_temporary_page(v)
-
-			local _create_breadcrumb_widget = self:_create_breadcrumb_widget()
-			local var_3_10
-
-			if not flag_2 then
-				var_3_10 = self:_get_selected_product_display_name()
-			else
-				var_3_10 = not var_3_8 and var_3_8.display_name and v
+			if not var_3_1 then
+				-- Nothing
 			end
 
-			_create_breadcrumb_widget.content.text = Localize(var_3_10)
-			_create_breadcrumb_widget.content.page_name = v
-			_create_breadcrumb_widget.content.button_hotspot.is_selected = i_2 == count
-			tbl[#tbl + 1] = _create_breadcrumb_widget
+			var_3_1 = self._parent:get_temporary_page(page_name)
+
+			local page = var_3_1
+
+			::label_3_1::
+
+			local widget = self:_create_breadcrumb_widget()
+			local display_name
+
+			if display_selected_product then
+				display_name = self:_get_selected_product_display_name()
+			else
+				display_name = (not page or not page.display_name) and not not page_name
+			end
+
+			widget.content.text = Localize(display_name)
+			widget.content.page_name = page_name
+			widget.content.button_hotspot.is_selected = i == path_length
+			breadcrumb_widgets[#breadcrumb_widgets + 1] = widget
 		end
 
-		self._breadcrumb_widgets = tbl
+		self._breadcrumb_widgets = breadcrumb_widgets
 
 		self:_setup_breadcrumb_widgets()
 	end
@@ -118,15 +136,17 @@ end
 StoreWindowPathTitle._get_selected_product_display_name = function (self)
 	-- function 4
 	local selected_product = self._params.selected_product
-	local flag = not selected_product and selected_product.type
+	local product_type = not not selected_product and not not selected_product.type
 
-	if flag == "item" then
+	if product_type == "item" then
 		local item = selected_product.item
-		local get_ui_information_from_item, var_4_4, var_4_5 = UIUtils.get_ui_information_from_item(item)
+		local inventory_icon, display_name, _ = UIUtils.get_ui_information_from_item(item)
 
-		return var_4_4
-	elseif flag == "dlc" then
-		return selected_product.dlc_settings.name
+		return display_name
+	elseif product_type == "dlc" then
+		local dlc_settings = selected_product.dlc_settings
+
+		return dlc_settings.name
 	else
 		return "n/a"
 	end
@@ -134,145 +154,152 @@ end
 
 StoreWindowPathTitle._setup_breadcrumb_widgets = function (self)
 	-- function 5
-	local num = 0
-	local _breadcrumb_widgets = self._breadcrumb_widgets
-	local count = #_breadcrumb_widgets
+	local total_menu_panel_length = 0
+	local breadcrumb_widgets = self._breadcrumb_widgets
+	local num_buttons = #breadcrumb_widgets
 	local selected_product = self._params.selected_product
 
-	Managers.telemetry_events:store_breadcrumbs_changed(_breadcrumb_widgets, selected_product)
+	Managers.telemetry_events:store_breadcrumbs_changed(breadcrumb_widgets, selected_product)
 
-	local num_2 = 0
-	local num_3 = 2
-	local num_4 = 70
+	local start_position_x = 0
+	local spacing = 2
+	local icon_width = 70
 
-	for i, v in ipairs(_breadcrumb_widgets) do
-		v.offset[1] = num_2
+	for index, widget in ipairs(breadcrumb_widgets) do
+		widget.offset[1] = start_position_x
 
-		local _get_breadcrumb_text_width = self:_get_breadcrumb_text_width(v)
-		local num_5 = num_4 + num_3 + _get_breadcrumb_text_width
+		local text_width = self:_get_breadcrumb_text_width(widget)
+		local widget_width = icon_width + spacing + text_width
 
-		v.style.button_hotspot.size[1] = num_5
-		num_2 = num_2 + num_5
+		widget.style.button_hotspot.size[1] = widget_width
+		start_position_x = start_position_x + widget_width
 	end
 end
 
-StoreWindowPathTitle._get_breadcrumb_text_width = function (self, arg_6_1)
+StoreWindowPathTitle._get_breadcrumb_text_width = function (self, widget)
 	-- function 6
-	local content = arg_6_1.content
-	local text = arg_6_1.style.text
-	local text_2 = content.text
+	local content = widget.content
+	local style = widget.style
+	local text_style = style.text
+	local text = content.text
 
-	if not text.localize then
-		text_2 = Localize(text_2)
+	if text_style.localize then
+		text = Localize(text)
 	end
 
-	if not text.upper_case then
-		text_2 = TextToUpper(text_2)
+	if text_style.upper_case then
+		text = TextToUpper(text)
 	end
 
-	local _ui_scenegraph = self._ui_scenegraph
-	local _ui_renderer = self._ui_renderer
-	local var_6_5, var_6_6 = UIFontByResolution(text)
-	local text_size, var_6_8, var_6_9 = UIRenderer.text_size(_ui_renderer, text_2, var_6_5[1], var_6_6)
+	local ui_scenegraph = self._ui_scenegraph
+	local ui_renderer = self._ui_renderer
+	local font, scaled_font_size = UIFontByResolution(text_style)
+	local text_width, text_height, min = UIRenderer.text_size(ui_renderer, text, font[1], scaled_font_size)
 
-	return text_size
+	return text_width
 end
 
-StoreWindowPathTitle._create_breadcrumb_widget = function (arg_7_0)
+StoreWindowPathTitle._create_breadcrumb_widget = function (self)
 	-- function 7
-	local var_7_0 = create_breadcrumbs_definition()
+	local definition = create_breadcrumbs_definition()
+	local widget = UIWidget.init(definition)
 
-	return (UIWidget.init(var_7_0))
+	return widget
 end
 
-StoreWindowPathTitle.on_exit = function (self, arg_8_1)
+StoreWindowPathTitle.on_exit = function (self, params)
 	-- function 8
 	print("[HeroViewWindow] Exit Substate StoreWindowPathTitle")
 
 	self._ui_animator = nil
 end
 
-StoreWindowPathTitle.update = function (self, arg_9_1, arg_9_2)
+StoreWindowPathTitle.update = function (self, dt, t)
 	-- function 9
 	self:_sync_layout_path()
-	self:_update_animations(arg_9_1)
-	self:_draw(arg_9_1)
+	self:_update_animations(dt)
+	self:_draw(dt)
 end
 
-StoreWindowPathTitle._get_layout_settings_by_name = function (self, arg_10_1)
+StoreWindowPathTitle._get_layout_settings_by_name = function (self, name)
 	-- function 10
-	local window_layouts = self._layout_settings.window_layouts
+	local layout_settings = self._layout_settings
+	local window_layouts = layout_settings.window_layouts
 
-	for i, v in ipairs(window_layouts) do
-		if v.name == arg_10_1 then
-			return v
+	for _, settings in ipairs(window_layouts) do
+		if settings.name == name then
+			return settings
 		end
 	end
 end
 
-StoreWindowPathTitle.post_update = function (self, arg_11_1, arg_11_2)
+StoreWindowPathTitle.post_update = function (self, dt, t)
 	-- function 11
-	local window_input_service = self._parent:window_input_service()
+	local input_service = self._parent:window_input_service()
 
-	self:_handle_input(window_input_service, arg_11_1, arg_11_2)
+	self:_handle_input(input_service, dt, t)
 end
 
-StoreWindowPathTitle._update_animations = function (self, arg_12_1)
+StoreWindowPathTitle._update_animations = function (self, dt)
 	-- function 12
-	self._ui_animator:update(arg_12_1)
+	self._ui_animator:update(dt)
 
-	local _animations = self._animations
-	local _ui_animator = self._ui_animator
+	local animations = self._animations
+	local ui_animator = self._ui_animator
 
-	for k, v in pairs(_animations) do
-		if not _ui_animator:is_animation_completed(v) then
-			_ui_animator:stop_animation(v)
+	for animation_name, animation_id in pairs(animations) do
+		if ui_animator:is_animation_completed(animation_id) then
+			ui_animator:stop_animation(animation_id)
 
-			_animations[k] = nil
+			animations[animation_name] = nil
 		end
 	end
 
-	local _breadcrumb_widgets = self._breadcrumb_widgets
+	local breadcrumb_widgets = self._breadcrumb_widgets
 
-	if not _breadcrumb_widgets then
-		for i, v_2 in ipairs(_breadcrumb_widgets) do
-			self:_animate_breadcrumb_widget(v_2, arg_12_1)
+	if breadcrumb_widgets then
+		for index, widget in ipairs(breadcrumb_widgets) do
+			self:_animate_breadcrumb_widget(widget, dt)
 		end
 	end
 end
 
-StoreWindowPathTitle._is_button_hovered = function (arg_13_0, arg_13_1)
+StoreWindowPathTitle._is_button_hovered = function (self, widget)
 	-- function 13
-	return arg_13_1.content.button_hotspot.on_hover_enter
+	local content = widget.content
+	local hotspot = content.button_hotspot
+
+	return hotspot.on_hover_enter
 end
 
-StoreWindowPathTitle._is_button_pressed = function (arg_14_0, arg_14_1)
+StoreWindowPathTitle._is_button_pressed = function (self, widget)
 	-- function 14
-	local button_hotspot = arg_14_1.content.button_hotspot
+	local content = widget.content
+	local hotspot = content.button_hotspot
 
-	if not button_hotspot.on_release then
-		button_hotspot.on_release = false
+	if hotspot.on_release then
+		hotspot.on_release = false
 
 		return true
 	end
 end
 
-StoreWindowPathTitle._handle_input = function (self, arg_15_1, arg_15_2, arg_15_3)
+StoreWindowPathTitle._handle_input = function (self, input_service, dt, t)
 	-- function 15
-	local _breadcrumb_widgets = self._breadcrumb_widgets
+	local breadcrumb_widgets = self._breadcrumb_widgets
 
-	if not _breadcrumb_widgets then
-		local count = #_breadcrumb_widgets
+	if breadcrumb_widgets then
+		local num_breadcrumb_widgets = #breadcrumb_widgets
 
-		for i, v in ipairs(_breadcrumb_widgets) do
-			if i ~= count then
-				if not self:_is_button_hovered(v) then
+		for index, widget in ipairs(breadcrumb_widgets) do
+			if index ~= num_breadcrumb_widgets then
+				if self:_is_button_hovered(widget) then
 					self:_play_sound("Play_hud_store_button_hover_category")
 				end
 
-				if not self:_is_button_pressed(v) then
+				if self:_is_button_pressed(widget) then
 					self:_play_sound("Play_hud_store_button_back")
-					self:_on_path_index_pressed_pressed(i)
+					self:_on_path_index_pressed_pressed(index)
 
 					break
 				end
@@ -281,115 +308,132 @@ StoreWindowPathTitle._handle_input = function (self, arg_15_1, arg_15_2, arg_15_
 	end
 end
 
-StoreWindowPathTitle._on_path_index_pressed_pressed = function (self, arg_16_1)
+StoreWindowPathTitle._on_path_index_pressed_pressed = function (self, index)
 	-- function 16
-	local _parent = self._parent
-	local get_store_path = _parent:get_store_path()
+	local parent = self._parent
+	local path = parent:get_store_path()
 	local pages = StoreLayoutConfig.pages
-	local tbl = {}
+	local new_path = {}
 
-	for i, v in ipairs(get_store_path) do
-		tbl[i] = v
+	for i, page_name in ipairs(path) do
+		new_path[i] = page_name
 
-		if i == arg_16_1 then
+		if i == index then
 			break
 		end
 	end
 
-	_parent:go_to_store_path(tbl)
+	parent:go_to_store_path(new_path)
 end
 
-StoreWindowPathTitle._draw = function (self, arg_17_1)
+StoreWindowPathTitle._draw = function (self, dt)
 	-- function 17
-	local _ui_renderer = self._ui_renderer
-	local _ui_top_renderer = self._ui_top_renderer
-	local _ui_scenegraph = self._ui_scenegraph
-	local window_input_service = self._parent:window_input_service()
+	local ui_renderer = self._ui_renderer
+	local ui_top_renderer = self._ui_top_renderer
+	local ui_scenegraph = self._ui_scenegraph
+	local input_service = self._parent:window_input_service()
 
-	UIRenderer.begin_pass(_ui_renderer, _ui_scenegraph, window_input_service, arg_17_1, nil, self._render_settings)
+	UIRenderer.begin_pass(ui_renderer, ui_scenegraph, input_service, dt, nil, self._render_settings)
 
-	for i, v in ipairs(self._widgets) do
-		UIRenderer.draw_widget(_ui_renderer, v)
+	for _, widget in ipairs(self._widgets) do
+		UIRenderer.draw_widget(ui_renderer, widget)
 	end
 
-	local _breadcrumb_widgets = self._breadcrumb_widgets
+	local breadcrumb_widgets = self._breadcrumb_widgets
 
-	if not _breadcrumb_widgets then
-		for i_2, v_2 in ipairs(_breadcrumb_widgets) do
-			UIRenderer.draw_widget(_ui_renderer, v_2)
+	if breadcrumb_widgets then
+		for _, widget in ipairs(breadcrumb_widgets) do
+			UIRenderer.draw_widget(ui_renderer, widget)
 		end
 	end
 
-	UIRenderer.end_pass(_ui_renderer)
+	UIRenderer.end_pass(ui_renderer)
 end
 
-StoreWindowPathTitle._play_sound = function (self, arg_18_1)
+StoreWindowPathTitle._play_sound = function (self, event)
 	-- function 18
-	self._parent:play_sound(arg_18_1)
+	self._parent:play_sound(event)
 end
 
-StoreWindowPathTitle._animate_breadcrumb_widget = function (arg_19_0, arg_19_1, arg_19_2)
+StoreWindowPathTitle._animate_breadcrumb_widget = function (self, widget, dt)
 	-- function 19
-	local content = arg_19_1.content
-	local style = arg_19_1.style
-	local button_hotspot = content.button_hotspot
-	local is_hover = button_hotspot.is_hover
-	local is_selected = button_hotspot.is_selected
+	local content = widget.content
+	local style = widget.style
+	local hotspot = content.button_hotspot
+	local is_hover = hotspot.is_hover
+	local is_selected = hotspot.is_selected
+	local is_clicked
 
 	if not is_selected then
-		if not button_hotspot.is_clicked then
+		is_clicked = hotspot.is_clicked
+
+		if is_clicked then
 			-- Nothing
 		end
 
-		if button_hotspot.is_clicked ~= 0 then
+		if hotspot.is_clicked ~= 0 then
 			-- Nothing
 		end
 	end
 
-	do
-		local flag = false
+	is_clicked = false
 
-		goto label_19_1
-	end
+	goto label_19_1
 
 	::label_19_0::
 
-	do
-		local flag_2 = true
-	end
+	is_clicked = true
+
+	local input_pressed = is_clicked
 
 	::label_19_1::
 
-	local hover_progress = button_hotspot.hover_progress
+	local hover_progress_2 = hotspot.hover_progress
 
-	hover_progress = hover_progress or 0
-
-	local selection_progress = button_hotspot.selection_progress
-
-	selection_progress = selection_progress or 0
-
-	local num = 14
-
-	if not is_hover then
-		hover_progress = math.min(hover_progress + arg_19_2 * num, 1)
-	else
-		hover_progress = math.max(hover_progress - arg_19_2 * num, 0)
+	if not hover_progress_2 then
+		-- Nothing
 	end
 
-	if not is_selected then
-		selection_progress = math.min(selection_progress + arg_19_2 * num, 1)
-	else
-		selection_progress = math.max(selection_progress - arg_19_2 * num, 0)
+	hover_progress_2 = 0
+
+	local hover_progress = hover_progress_2
+
+	::label_19_2::
+
+	local selection_progress_2 = hotspot.selection_progress
+
+	if not selection_progress_2 then
+		-- Nothing
 	end
 
-	button_hotspot.hover_progress = hover_progress
-	button_hotspot.selection_progress = selection_progress
+	selection_progress_2 = 0
 
-	local max = math.max(hover_progress, selection_progress)
-	local text = style.text
-	local text_color = text.text_color
-	local default_text_color = text.default_text_color
-	local select_text_color = text.select_text_color
+	local selection_progress = selection_progress_2
 
-	Colors.lerp_color_tables(default_text_color, select_text_color, max, text_color)
+	::label_19_3::
+
+	local speed = 14
+
+	if is_hover then
+		hover_progress = math.min(hover_progress + dt * speed, 1)
+	else
+		hover_progress = math.max(hover_progress - dt * speed, 0)
+	end
+
+	if is_selected then
+		selection_progress = math.min(selection_progress + dt * speed, 1)
+	else
+		selection_progress = math.max(selection_progress - dt * speed, 0)
+	end
+
+	hotspot.hover_progress = hover_progress
+	hotspot.selection_progress = selection_progress
+
+	local combined_progress = math.max(hover_progress, selection_progress)
+	local text_style = style.text
+	local text_color = text_style.text_color
+	local default_text_color = text_style.default_text_color
+	local select_text_color = text_style.select_text_color
+
+	Colors.lerp_color_tables(default_text_color, select_text_color, combined_progress, text_color)
 end

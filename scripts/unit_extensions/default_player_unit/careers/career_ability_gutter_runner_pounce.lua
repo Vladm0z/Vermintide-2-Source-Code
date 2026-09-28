@@ -4,12 +4,12 @@ CareerAbilityGutterRunnerPounce = class(CareerAbilityGutterRunnerPounce, CareerA
 
 CareerAbilityGutterRunnerPounce._ability_available = function (self)
 	-- function 1
-	local _career_extension = self._career_extension
-	local _status_extension = self._status_extension
-	local flag = _career_extension:get_state() == "vs_gutter_runner_smoke_bomb_invisible"
-	local can_use_activated_ability = _career_extension:can_use_activated_ability(1)
-	local is_disabled = _status_extension:is_disabled()
-	local flag_2 = not _status_extension:is_disabled()
+	local career_extension = self._career_extension
+	local status_extension = self._status_extension
+	local in_foff_invis = career_extension:get_state() == "vs_gutter_runner_smoke_bomb_invisible"
+	local can_use = career_extension:can_use_activated_ability(1)
+	local is_disabled = status_extension:is_disabled()
+	local ability_available = not status_extension:is_disabled()
 
-	return not can_use_activated_ability and not not is_disabled and not not flag or flag_2
+	return not not can_use and not is_disabled and not in_foff_invis and not not ability_available
 end

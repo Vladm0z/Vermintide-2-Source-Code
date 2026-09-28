@@ -2,205 +2,226 @@
 
 local TrueFlightUtility = TrueFlightUtility
 
-TrueFlightUtility = TrueFlightUtility or {}
+TrueFlightUtility = not not TrueFlightUtility or not not {}
 TrueFlightUtility = TrueFlightUtility
 
-local var_0_1
-local var_0_2
+local order_upvalue, reference_pos_upvalue
 
-local function fn(arg_1_0, arg_1_1)
+local function _prioritize_specials(unit_a, unit_b)
 	-- function 1
-	local get_data = Unit.get_data(arg_1_0, "breed")
-	local get_data_2 = Unit.get_data(arg_1_1, "breed")
+	local breed_a = Unit.get_data(unit_a, "breed")
+	local breed_b = Unit.get_data(unit_b, "breed")
 
-	if not (not get_data_2 and get_data) then
-		return get_data or not not get_data_2 or var_0_1[arg_1_0] < var_0_1[arg_1_1]
+	if not breed_b or not breed_a then
+		return (not not breed_a or not breed_b) and order_upvalue[unit_a] < order_upvalue[unit_b]
 	end
 
-	local special = get_data.special
+	local special_a = breed_a.special
+	local special_b = breed_b.special
 
-	if special ~= get_data_2.special then
-		return special
+	if special_a ~= special_b then
+		return special_a
 	end
 
-	local elite = get_data.elite
+	local elite_a = breed_a.elite
+	local elite_b = breed_b.elite
 
-	if elite ~= get_data_2.elite then
-		return elite
+	if elite_a ~= elite_b then
+		return elite_a
 	end
 
-	local var_1_4 = POSITION_LOOKUP[arg_1_0]
-	local var_1_5 = POSITION_LOOKUP[arg_1_1]
+	local a_pos = POSITION_LOOKUP[unit_a]
+	local b_pos = POSITION_LOOKUP[unit_b]
 
-	if not (not var_1_4 and var_1_5) then
-		return var_1_4
+	if not a_pos or not b_pos then
+		return a_pos
 	end
 
-	if not var_0_2 then
-		local num = Vector3.distance_squared(var_1_4, var_0_2) - Vector3.distance_squared(var_1_5, var_0_2)
+	if reference_pos_upvalue then
+		local diff = Vector3.distance_squared(a_pos, reference_pos_upvalue) - Vector3.distance_squared(b_pos, reference_pos_upvalue)
 
-		if math.abs(num) < math.epsilon then
-			return num < 0
+		if math.abs(diff) < math.epsilon then
+			local a_closer = diff < 0
+
+			return a_closer
 		end
 	end
 
-	return var_0_1[arg_1_0] < var_0_1[arg_1_1]
+	return order_upvalue[unit_a] < order_upvalue[unit_b]
 end
 
-local function fn_2(arg_2_0, arg_2_1)
+local function _prioritize_elites(unit_a, unit_b)
 	-- function 2
-	local get_data = Unit.get_data(arg_2_0, "breed")
-	local get_data_2 = Unit.get_data(arg_2_1, "breed")
+	local breed_a = Unit.get_data(unit_a, "breed")
+	local breed_b = Unit.get_data(unit_b, "breed")
 
-	if not (not get_data_2 and get_data) then
-		return get_data or not not get_data_2 or var_0_1[arg_2_0] < var_0_1[arg_2_1]
+	if not breed_b or not breed_a then
+		return (not not breed_a or not breed_b) and order_upvalue[unit_a] < order_upvalue[unit_b]
 	end
 
-	local elite = get_data.elite
+	local elite_a = breed_a.elite
+	local elite_b = breed_b.elite
 
-	if elite ~= get_data_2.elite then
-		return elite
+	if elite_a ~= elite_b then
+		return elite_a
 	end
 
-	local special = get_data.special
+	local special_a = breed_a.special
+	local special_b = breed_b.special
 
-	if special ~= get_data_2.special then
-		return special
+	if special_a ~= special_b then
+		return special_a
 	end
 
-	local var_2_4 = POSITION_LOOKUP[arg_2_0]
-	local var_2_5 = POSITION_LOOKUP[arg_2_1]
+	local a_pos = POSITION_LOOKUP[unit_a]
+	local b_pos = POSITION_LOOKUP[unit_b]
 
-	if not (not var_2_4 and var_2_5) then
-		return var_2_4
+	if not a_pos or not b_pos then
+		return a_pos
 	end
 
-	if not var_0_2 then
-		local num = Vector3.distance_squared(var_2_4, var_0_2) - Vector3.distance_squared(var_2_5, var_0_2)
+	if reference_pos_upvalue then
+		local diff = Vector3.distance_squared(a_pos, reference_pos_upvalue) - Vector3.distance_squared(b_pos, reference_pos_upvalue)
 
-		if math.abs(num) < math.epsilon then
-			return num < 0
+		if math.abs(diff) < math.epsilon then
+			local a_closer = diff < 0
+
+			return a_closer
 		end
 	end
 
-	return var_0_1[arg_2_0] < var_0_1[arg_2_1]
+	return order_upvalue[unit_a] < order_upvalue[unit_b]
 end
 
-local function fn_3(arg_3_0, arg_3_1)
+local function _prioritize_bosses(unit_a, unit_b)
 	-- function 3
-	local get_data = Unit.get_data(arg_3_0, "breed")
-	local get_data_2 = Unit.get_data(arg_3_1, "breed")
+	local breed_a = Unit.get_data(unit_a, "breed")
+	local breed_b = Unit.get_data(unit_b, "breed")
 
-	if not (not get_data_2 and get_data) then
-		return get_data or not not get_data_2 or var_0_1[arg_3_0] < var_0_1[arg_3_1]
+	if not breed_b or not breed_a then
+		return (not not breed_a or not breed_b) and order_upvalue[unit_a] < order_upvalue[unit_b]
 	end
 
-	local boss = get_data.boss
+	local boss_a = breed_a.boss
+	local boss_b = breed_b.boss
 
-	if boss ~= get_data_2.boss then
-		return boss
+	if boss_a ~= boss_b then
+		return boss_a
 	end
 
-	return fn_2(arg_3_0, arg_3_1)
+	return _prioritize_elites(unit_a, unit_b)
 end
 
-TrueFlightUtility.sort_prioritize_specials = function (arg_4_0, arg_4_1)
+TrueFlightUtility.sort_prioritize_specials = function (targets, optional_reference_pos)
 	-- function 4
-	var_0_1 = table.mirror_array(arg_4_0, FrameTable.alloc_table())
-	var_0_2 = arg_4_1
+	order_upvalue = table.mirror_array(targets, FrameTable.alloc_table())
+	reference_pos_upvalue = optional_reference_pos
 
-	table.sort(arg_4_0, fn)
+	table.sort(targets, _prioritize_specials)
 
-	return arg_4_0
+	return targets
 end
 
-TrueFlightUtility.sort_prioritize_elites = function (arg_5_0, arg_5_1)
+TrueFlightUtility.sort_prioritize_elites = function (targets, optional_reference_pos)
 	-- function 5
-	var_0_1 = table.mirror_array(arg_5_0, FrameTable.alloc_table())
-	var_0_2 = arg_5_1
+	order_upvalue = table.mirror_array(targets, FrameTable.alloc_table())
+	reference_pos_upvalue = optional_reference_pos
 
-	table.sort(arg_5_0, fn_2)
+	table.sort(targets, _prioritize_elites)
 
-	return arg_5_0
+	return targets
 end
 
-TrueFlightUtility.sort_prioritize_bosses = function (arg_6_0, arg_6_1)
+TrueFlightUtility.sort_prioritize_bosses = function (targets, optional_reference_pos)
 	-- function 6
-	var_0_1 = table.mirror_array(arg_6_0, FrameTable.alloc_table())
-	var_0_2 = arg_6_1
+	order_upvalue = table.mirror_array(targets, FrameTable.alloc_table())
+	reference_pos_upvalue = optional_reference_pos
 
-	table.sort(arg_6_0, fn_3)
+	table.sort(targets, _prioritize_bosses)
 
-	return arg_6_0
+	return targets
 end
 
-local function fn_4(arg_7_0, arg_7_1, arg_7_2, arg_7_3, arg_7_4, arg_7_5, arg_7_6, arg_7_7, arg_7_8, arg_7_9)
+local function _calculate_sort_score(target, source_pos, look_direction, boss_weight, special_weight, elite_weight, max_distance, distance_weight, angle_weight, player_weight)
 	-- function 7
-	local get_data = Unit.get_data(arg_7_0, "breed")
+	local target_breed = Unit.get_data(target, "breed")
 
-	if not get_data then
+	if not target_breed then
 		return 0
 	end
 
-	local var_7_1 = POSITION_LOOKUP[arg_7_0]
-	local height = get_data.height
+	local target_pos = POSITION_LOOKUP[target]
+	local height_2 = target_breed.height
 
-	height = height or 2
+	if not height_2 then
+		-- Nothing
+	end
 
-	local num = height * 0.75
-	local num_2 = num * 1.5
-	local num_3 = var_7_1 + Vector3(0, 0, num) - arg_7_1
-	local length = Vector3.length(num_3)
-	local num_4 = length / math.sqrt(length * length + num_2 * num_2)
+	height_2 = 2
 
-	arg_7_2 = Vector3.normalize(arg_7_2)
+	local height = height_2
 
-	local dot = Vector3.dot(Vector3.normalize(num_3), arg_7_2)
+	::label_7_0::
 
-	if dot < num_4 then
+	local neck_height = height * 0.75
+	local tag_radius = neck_height * 1.5
+
+	target_pos = target_pos + Vector3(0, 0, neck_height)
+
+	local diff = target_pos - source_pos
+	local distance = Vector3.length(diff)
+	local hypothenuse = math.sqrt(distance * distance + tag_radius * tag_radius)
+	local max_angle = distance / hypothenuse
+
+	look_direction = Vector3.normalize(look_direction)
+
+	local angle = Vector3.dot(Vector3.normalize(diff), look_direction)
+
+	if angle < max_angle then
 		return 0
 	end
 
-	local num_5 = math.inv_lerp(math.acos(1 - num_4), 0, math.acos(dot))^2 * arg_7_8
-	local length_2 = Vector3.length(num_3)
+	local angle_score = math.inv_lerp(math.acos(1 - max_angle), 0, math.acos(angle))^2 * angle_weight
+	local dist = Vector3.length(diff)
 
-	if arg_7_6 < length_2 then
+	if max_distance < dist then
 		return 0
 	end
 
-	local num_6 = num_5 + math.inv_lerp(arg_7_6, 0, length_2) * arg_7_7
+	local dist_score = math.inv_lerp(max_distance, 0, dist) * distance_weight
+	local score = angle_score + dist_score
 
-	if not get_data.is_player then
-		num_6 = num_6 * arg_7_9
-	elseif not get_data.elite then
-		num_6 = num_6 * arg_7_5
-	elseif not get_data.special then
-		num_6 = num_6 * arg_7_4
-	elseif not get_data.boss then
-		num_6 = num_6 * arg_7_3
+	if target_breed.is_player then
+		score = score * player_weight
+	elseif target_breed.elite then
+		score = score * elite_weight
+	elseif target_breed.special then
+		score = score * special_weight
+	elseif target_breed.boss then
+		score = score * boss_weight
 	end
 
-	return num_6
+	return score
 end
 
-local tbl = {}
+local SCORES = {}
 
-local function fn_5(arg_8_0, arg_8_1)
+local function _sort_func(target_a, target_b)
 	-- function 8
-	return tbl[arg_8_0] > tbl[arg_8_1]
+	return SCORES[target_a] > SCORES[target_b]
 end
 
-TrueFlightUtility.sort = function (self, arg_9_1, arg_9_2, arg_9_3, arg_9_4, arg_9_5, arg_9_6, arg_9_7, arg_9_8, arg_9_9)
+TrueFlightUtility.sort = function (targets, source_pos, look_direction, boss_weight, special_weight, elite_weight, max_distance, distance_weight, angle_weight, player_weight)
 	-- function 9
-	table.clear(tbl)
+	table.clear(SCORES)
 
-	for i = 1, #self do
-		local var_9_0 = self[i]
+	for i = 1, #targets do
+		local target = targets[i]
 
-		tbl[var_9_0] = fn_4(var_9_0, arg_9_1, arg_9_2, arg_9_3, arg_9_4, arg_9_5, arg_9_6, arg_9_7, arg_9_8, arg_9_9)
+		SCORES[target] = _calculate_sort_score(target, source_pos, look_direction, boss_weight, special_weight, elite_weight, max_distance, distance_weight, angle_weight, player_weight)
 	end
 
-	table.sort(self, fn_5)
+	table.sort(targets, _sort_func)
 
-	return tbl
+	return SCORES
 end

@@ -11,10 +11,12 @@ require("scripts/helpers/loadout_utils")
 PlayerManager = class(PlayerManager)
 PlayerManager.MAX_PLAYERS = 4
 
-local tbl = {}
+local BOT_LOCAL_ID_TABLE = {}
 
 for i = 1, #SPProfiles do
-	tbl[SPProfiles[i].index] = i + 1
+	local profile = SPProfiles[i]
+
+	BOT_LOCAL_ID_TABLE[profile.index] = i + 1
 end
 
 PlayerManager.init = function (self)
@@ -30,33 +32,33 @@ PlayerManager.init = function (self)
 	self._ui_id_increment = 0
 end
 
-local tbl_2 = {
+local RPCS = {
 	"rpc_to_client_spawn_player",
 	"rpc_set_observed_unit",
 	"rpc_sync_loadout_slot"
 }
 
-PlayerManager.set_is_server = function (self, arg_2_1, arg_2_2, arg_2_3)
+PlayerManager.set_is_server = function (self, is_server, network_event_delegate, network_manager)
 	-- function 2
-	self.is_server = arg_2_1
+	self.is_server = is_server
 
-	arg_2_2:register(self, unpack(tbl_2))
+	network_event_delegate:register(self, unpack(RPCS))
 
-	self.network_event_delegate = arg_2_2
-	self.network_manager = arg_2_3
+	self.network_event_delegate = network_event_delegate
+	self.network_manager = network_manager
 
-	for k, v in pairs(self._players) do
-		if not v.remote then
-			v.is_server = arg_2_1
+	for peer_id, player in pairs(self._players) do
+		if not player.remote then
+			player.is_server = is_server
 		end
 
-		v.network_manager = arg_2_3
+		player.network_manager = network_manager
 	end
 end
 
-PlayerManager.set_statistics_db = function (self, arg_3_1)
+PlayerManager.set_statistics_db = function (self, statistics_db)
 	-- function 3
-	self._statistics_db = arg_3_1
+	self._statistics_db = statistics_db
 end
 
 PlayerManager.statistics_db = function (self)
@@ -69,114 +71,118 @@ PlayerManager.player_loadouts = function (self)
 	return self._player_loadouts
 end
 
-PlayerManager.rpc_sync_loadout_slot = function (self, arg_6_1, arg_6_2, arg_6_3, arg_6_4, arg_6_5, arg_6_6, arg_6_7, arg_6_8, arg_6_9, arg_6_10)
+PlayerManager.rpc_sync_loadout_slot = function (self, channel_id, peer_id, local_player_id, slot_id, item_id, rarity_id, power_level, buff_ids, buff_value_type_ids, buff_values)
 	-- function 6
 	if not Managers.state.network:in_game_session() then
 		return
 	end
 
-	local create_loadout_item_from_rpc_data, var_6_1 = LoadoutUtils.create_loadout_item_from_rpc_data(arg_6_4, arg_6_5, arg_6_6, arg_6_7, arg_6_8, arg_6_9, arg_6_10)
-	local unique_player_id = PlayerUtils.unique_player_id(arg_6_2, arg_6_3)
+	local slot_name, item = LoadoutUtils.create_loadout_item_from_rpc_data(slot_id, item_id, rarity_id, power_level, buff_ids, buff_value_type_ids, buff_values)
+	local unique_id = PlayerUtils.unique_player_id(peer_id, local_player_id)
 	local _player_loadouts = self._player_loadouts
-	local var_6_4 = self._player_loadouts[unique_player_id]
+	local var_6_1 = self._player_loadouts[unique_id]
 
-	var_6_4 = var_6_4 or {}
-	_player_loadouts[unique_player_id] = var_6_4
-	self._player_loadouts[unique_player_id][create_loadout_item_from_rpc_data] = var_6_1
+	var_6_1 = not not var_6_1 or not not {}
+	_player_loadouts[unique_id] = var_6_1
+	self._player_loadouts[unique_id][slot_name] = item
 
-	if not (not self.is_server and arg_6_2 == Network.peer_id()) then
-		self.network_manager.network_transmit:send_rpc_clients("rpc_sync_loadout_slot", arg_6_2, arg_6_3, arg_6_4, arg_6_5, arg_6_6, arg_6_7, arg_6_8, arg_6_9, arg_6_10)
+	if self.is_server and peer_id ~= Network.peer_id() then
+		local network_transmit = self.network_manager.network_transmit
+
+		network_transmit:send_rpc_clients("rpc_sync_loadout_slot", peer_id, local_player_id, slot_id, item_id, rarity_id, power_level, buff_ids, buff_value_type_ids, buff_values)
 	end
 end
 
-PlayerManager.rpc_to_client_spawn_player = function (self, arg_7_1, arg_7_2, arg_7_3, arg_7_4, arg_7_5, arg_7_6, arg_7_7, arg_7_8, arg_7_9, arg_7_10, arg_7_11, arg_7_12, arg_7_13, arg_7_14, arg_7_15, arg_7_16)
+PlayerManager.rpc_to_client_spawn_player = function (self, channel_id, local_player_id, profile_index, career_index, position, rotation, is_initial_spawn, ammo_melee_percent_int, ammo_ranged_percent_int, ability_cooldown_percent_int, healthkit_id, potion_id, grenade_id, network_additional_items, network_buff_ids, server_inventory_hash)
 	-- function 7
-	if not script_data.network_debug_connections then
-		printf("PlayerManager:rpc_to_client_spawn_player(%s, %s, %s, %s)", tostring(arg_7_1), tostring(arg_7_3), tostring(arg_7_5), tostring(arg_7_6))
+	if script_data.network_debug_connections then
+		printf("PlayerManager:rpc_to_client_spawn_player(%s, %s, %s, %s)", tostring(channel_id), tostring(profile_index), tostring(position), tostring(rotation))
 	end
 
-	if not (not self.is_server and Managers.state.network:in_game_session()) then
+	if self.is_server and not Managers.state.network:in_game_session() then
 		return
 	end
 
-	local peer_id = Network.peer_id()
-	local player = self:player(peer_id, arg_7_2)
-	local flag = not not player.bot_player
-	local flag_2 = false
+	local my_peer_id = Network.peer_id()
+	local player = self:player(my_peer_id, local_player_id)
+	local is_bot = not not player.bot_player
+	local failed = false
 	local profile_synchronizer = Managers.state.network.profile_synchronizer
+	local loaded_inventory_id = profile_synchronizer:own_loaded_inventory_id()
 
-	if profile_synchronizer:own_loaded_inventory_id() == 0 then
-		flag_2 = true
+	if loaded_inventory_id == 0 then
+		failed = true
 	else
-		local hash_inventory = profile_synchronizer:hash_inventory(arg_7_3, arg_7_4, flag)
-		local cached_inventory_hash = profile_synchronizer:cached_inventory_hash(peer_id, arg_7_2)
+		local latest_inventory_hash = profile_synchronizer:hash_inventory(profile_index, career_index, is_bot)
+		local cached_inventory_hash = profile_synchronizer:cached_inventory_hash(my_peer_id, local_player_id)
 
-		if not (hash_inventory ~= cached_inventory_hash or hash_inventory == string.pad_left(arg_7_16, 16, "0")) then
-			if hash_inventory ~= cached_inventory_hash then
-				local flag_3 = true
+		if latest_inventory_hash ~= cached_inventory_hash or latest_inventory_hash ~= string.pad_left(server_inventory_hash, 16, "0") then
+			if latest_inventory_hash ~= cached_inventory_hash then
+				local force_resync = true
 
-				profile_synchronizer:resync_loadout(peer_id, arg_7_2, flag, flag_3, hash_inventory)
+				profile_synchronizer:resync_loadout(my_peer_id, local_player_id, is_bot, force_resync, latest_inventory_hash)
 			end
 
-			flag_2 = true
+			failed = true
 		end
 	end
 
-	if not flag_2 then
-		self.network_manager.network_transmit:send_rpc_server("rpc_to_server_spawn_failed", arg_7_2)
+	if failed then
+		local network_transmit = self.network_manager.network_transmit
+
+		network_transmit:send_rpc_server("rpc_to_server_spawn_failed", local_player_id)
 
 		return
 	end
 
-	if CHANNEL_TO_PEER_ID[arg_7_1] == peer_id then
+	if CHANNEL_TO_PEER_ID[channel_id] == my_peer_id then
 		Managers.state.game_mode:host_player_spawned()
 	end
 
-	local tbl = {}
+	local initial_buff_names = {}
 
-	if not arg_7_15 then
-		for i, v in ipairs(arg_7_15) do
-			local var_7_9 = NetworkLookup.buff_templates[v]
+	if network_buff_ids then
+		for _, buff_id in ipairs(network_buff_ids) do
+			local buff_name = NetworkLookup.buff_templates[buff_id]
 
-			table.insert(tbl, var_7_9)
+			table.insert(initial_buff_names, buff_name)
 		end
 	end
 
-	local num = arg_7_8 * 0.01
-	local num_2 = arg_7_9 * 0.01
+	local ammo_melee = ammo_melee_percent_int * 0.01
+	local ammo_ranged = ammo_ranged_percent_int * 0.01
 
-	player:set_profile_index(arg_7_3)
-	player:set_career_index(arg_7_4)
+	player:set_profile_index(profile_index)
+	player:set_career_index(career_index)
 
-	local unnetpack_additional_items = SpawningHelper.unnetpack_additional_items(arg_7_14)
+	local additional_items = SpawningHelper.unnetpack_additional_items(network_additional_items)
 	local player_unit = player.player_unit
 
-	if not (player_unit == nil or Unit.alive(player_unit)) then
-		player:spawn(arg_7_5, arg_7_6, arg_7_7, num, num_2, NetworkLookup.item_names[arg_7_11], NetworkLookup.item_names[arg_7_12], NetworkLookup.item_names[arg_7_13], arg_7_10, unnetpack_additional_items, tbl)
+	if player_unit == nil or not Unit.alive(player_unit) then
+		player:spawn(position, rotation, is_initial_spawn, ammo_melee, ammo_ranged, NetworkLookup.item_names[healthkit_id], NetworkLookup.item_names[potion_id], NetworkLookup.item_names[grenade_id], ability_cooldown_percent_int, additional_items, initial_buff_names)
 	else
-		if not player:needs_despawn() then
+		if player:needs_despawn() then
 			Managers.state.spawn:delayed_despawn(player)
 		end
 
-		local var_7_14 = Vector3Box(arg_7_5)
-		local var_7_15 = QuaternionBox(arg_7_6)
+		local position, rotation = Vector3Box(position), QuaternionBox(rotation)
 
-		local function fn()
+		local function respawn_func()
 			-- function 8
-			if not (player._destroyed or player.player_unit) then
-				player:spawn(var_7_14:unbox(), var_7_15:unbox(), arg_7_7, num, num_2, NetworkLookup.item_names[arg_7_11], NetworkLookup.item_names[arg_7_12], NetworkLookup.item_names[arg_7_13], arg_7_10, unnetpack_additional_items, tbl)
+			if not player._destroyed and not player.player_unit then
+				player:spawn(position:unbox(), rotation:unbox(), is_initial_spawn, ammo_melee, ammo_ranged, NetworkLookup.item_names[healthkit_id], NetworkLookup.item_names[potion_id], NetworkLookup.item_names[grenade_id], ability_cooldown_percent_int, additional_items, initial_buff_names)
 			end
 		end
 
-		Managers.state.unit_spawner:add_destroy_listener(player_unit, "delayed_client_spawn_player", fn)
+		Managers.state.unit_spawner:add_destroy_listener(player_unit, "delayed_client_spawn_player", respawn_func)
 	end
 end
 
 PlayerManager.exit_ingame = function (self)
 	-- function 9
-	for k, v in pairs(self._players) do
-		if not v.remote then
-			self:remove_player(v:network_id(), v:local_player_id())
+	for _, player in pairs(self._players) do
+		if player.remote then
+			self:remove_player(player:network_id(), player:local_player_id())
 		end
 	end
 
@@ -186,199 +192,201 @@ PlayerManager.exit_ingame = function (self)
 	self.is_server = nil
 	self.network_manager = nil
 
-	for k_2, v_2 in pairs(self._players) do
-		v_2.network_manager = nil
+	for _, player in pairs(self._players) do
+		player.network_manager = nil
 	end
 end
 
-PlayerManager.assign_unit_ownership = function (arg_10_0, arg_10_1, arg_10_2, arg_10_3)
+PlayerManager.assign_unit_ownership = function (self, unit, player, is_player_unit)
 	-- function 10
-	if not script_data.network_debug_connections then
-		printf("PlayerManager:assign_unit_ownership %s %s %i", arg_10_2:name(), tostring(arg_10_2:network_id()), arg_10_2:local_player_id())
+	if script_data.network_debug_connections then
+		printf("PlayerManager:assign_unit_ownership %s %s %i", player:name(), tostring(player:network_id()), player:local_player_id())
 	end
 
-	arg_10_0._unit_owners[arg_10_1] = arg_10_2
-	arg_10_2.owned_units[arg_10_1] = arg_10_1
+	self._unit_owners[unit] = player
+	player.owned_units[unit] = unit
 
-	if not arg_10_3 then
-		arg_10_0._player_units_owners[arg_10_1] = arg_10_2
+	if is_player_unit then
+		self._player_units_owners[unit] = player
 
-		arg_10_2:set_player_unit(arg_10_1)
+		player:set_player_unit(unit)
 
-		local get_party_from_player_id = Managers.party:get_party_from_player_id(arg_10_2:network_id(), arg_10_2:local_player_id())
-		local side = Managers.state.side
-		local var_10_2 = side.side_by_party[get_party_from_player_id]
+		local party_manager = Managers.party
+		local party = party_manager:get_party_from_player_id(player:network_id(), player:local_player_id())
+		local side_manager = Managers.state.side
+		local side = side_manager.side_by_party[party]
 
-		side:add_player_unit_to_side(arg_10_1, var_10_2.side_id)
+		side_manager:add_player_unit_to_side(unit, side.side_id)
 	end
 
-	Managers.state.unit_spawner:add_destroy_listener(arg_10_1, "player_manager", callback(arg_10_0, "unit_destroy_callback"))
+	Managers.state.unit_spawner:add_destroy_listener(unit, "player_manager", callback(self, "unit_destroy_callback"))
 end
 
-PlayerManager.unit_destroy_callback = function (self, arg_11_1)
+PlayerManager.unit_destroy_callback = function (self, unit)
 	-- function 11
-	self:relinquish_unit_ownership(arg_11_1)
+	self:relinquish_unit_ownership(unit)
 end
 
-PlayerManager.unit_owner = function (self, arg_12_1)
+PlayerManager.unit_owner = function (self, unit)
 	-- function 12
-	return self._unit_owners[arg_12_1]
+	return self._unit_owners[unit]
 end
 
-PlayerManager.player_from_unique_id = function (self, arg_13_1)
+PlayerManager.player_from_unique_id = function (self, unique_id)
 	-- function 13
-	return self._players[arg_13_1]
+	return self._players[unique_id]
 end
 
-PlayerManager.player_from_stats_id = function (self, arg_14_1)
+PlayerManager.player_from_stats_id = function (self, stats_id)
 	-- function 14
-	return self:player_from_unique_id(arg_14_1)
+	return self:player_from_unique_id(stats_id)
 end
 
-PlayerManager.player_from_game_object_id = function (self, arg_15_1)
+PlayerManager.player_from_game_object_id = function (self, game_object_id)
 	-- function 15
-	for k, v in pairs(self._players) do
-		if v.game_object_id == arg_15_1 then
-			return v
+	for _, player in pairs(self._players) do
+		if player.game_object_id == game_object_id then
+			return player
 		end
 	end
 end
 
-PlayerManager.relinquish_unit_ownership = function (self, arg_16_1)
+PlayerManager.relinquish_unit_ownership = function (self, unit)
 	-- function 16
-	fassert(self._unit_owners[arg_16_1], "[PlayerManager:relinquish_unit_ownership] Unit %s ownership cannot be relinquished, not owned.", arg_16_1)
+	fassert(self._unit_owners[unit], "[PlayerManager:relinquish_unit_ownership] Unit %s ownership cannot be relinquished, not owned.", unit)
 
-	local var_16_0 = self._unit_owners[arg_16_1]
-	local var_16_1 = self._player_units_owners[arg_16_1]
+	local unit_owner = self._unit_owners[unit]
+	local player_unit_owner = self._player_units_owners[unit]
 
-	if not var_16_1 then
-		if arg_16_1 == var_16_0.player_unit then
-			var_16_0.player_unit = nil
+	if player_unit_owner then
+		if unit == unit_owner.player_unit then
+			unit_owner.player_unit = nil
 		end
 
-		Managers.state.side:remove_player_unit_from_side(arg_16_1)
+		Managers.state.side:remove_player_unit_from_side(unit)
 
-		self._player_units_owners[arg_16_1] = nil
+		self._player_units_owners[unit] = nil
 
-		Managers.state.event:trigger("player_unit_relinquished", var_16_1, arg_16_1, var_16_1:unique_id())
+		Managers.state.event:trigger("player_unit_relinquished", player_unit_owner, unit, player_unit_owner:unique_id())
 	end
 
-	self._unit_owners[arg_16_1] = nil
-	var_16_0.owned_units[arg_16_1] = nil
+	self._unit_owners[unit] = nil
+	unit_owner.owned_units[unit] = nil
 
-	Managers.state.unit_spawner:remove_destroy_listener(arg_16_1, "player_manager")
+	Managers.state.unit_spawner:remove_destroy_listener(unit, "player_manager")
 end
 
-PlayerManager.add_player = function (self, arg_17_1, arg_17_2, arg_17_3, arg_17_4)
+PlayerManager.add_player = function (self, input_source, viewport_name, viewport_world_name, local_player_id)
 	-- function 17
-	if not script_data.network_debug_connections then
-		printf("PlayerManager:add_player %s", tostring(arg_17_2))
+	if script_data.network_debug_connections then
+		printf("PlayerManager:add_player %s", tostring(viewport_name))
 	end
 
 	local peer_id = Network.peer_id()
-	local unique_player_id = PlayerUtils.unique_player_id(peer_id, arg_17_4)
-	local _create_ui_id = self:_create_ui_id()
-	local player_id = Managers.backend:player_id()
-	local var_17_4 = BulldozerPlayer:new(self.network_manager, arg_17_1, arg_17_2, arg_17_3, self.is_server, arg_17_4, unique_player_id, _create_ui_id, player_id)
+	local unique_id = PlayerUtils.unique_player_id(peer_id, local_player_id)
+	local ui_id = self:_create_ui_id()
+	local backend_id = Managers.backend:player_id()
+	local player = BulldozerPlayer:new(self.network_manager, input_source, viewport_name, viewport_world_name, self.is_server, local_player_id, unique_id, ui_id, backend_id)
 
-	self._players[unique_player_id] = var_17_4
+	self._players[unique_id] = player
 	self._num_human_players = self._num_human_players + 1
-	self._human_players[unique_player_id] = var_17_4
-	self._local_human_player = var_17_4
+	self._human_players[unique_id] = player
+	self._local_human_player = player
 
-	local _players_by_peer = self._players_by_peer
-	local var_17_6 = _players_by_peer[peer_id]
+	local player_table = self._players_by_peer
+	local var_17_0 = player_table[peer_id]
 
-	var_17_6 = var_17_6 or {}
-	_players_by_peer[peer_id] = var_17_6
-	_players_by_peer[peer_id][arg_17_4] = var_17_4
+	var_17_0 = not not var_17_0 or not not {}
+	player_table[peer_id] = var_17_0
+	player_table[peer_id][local_player_id] = player
 
-	local get_stats = Managers.backend:get_interface("statistics"):get_stats()
+	local stats = Managers.backend:get_interface("statistics"):get_stats()
 
-	self._statistics_db:register(var_17_4:stats_id(), "player", get_stats)
-	Managers.party:register_player(var_17_4, unique_player_id)
+	self._statistics_db:register(player:stats_id(), "player", stats)
+	Managers.party:register_player(player, unique_id)
 
-	if not self.is_server and not var_17_4:is_player_controlled() then
-		Managers.telemetry_events:player_joined(var_17_4, self._num_human_players)
+	if self.is_server and player:is_player_controlled() then
+		Managers.telemetry_events:player_joined(player, self._num_human_players)
 	end
 
-	if not IS_WINDOWS then
+	if IS_WINDOWS then
 		Managers.account:update_presence()
 	end
 
-	return var_17_4
+	return player
 end
 
-PlayerManager.add_remote_player = function (self, arg_18_1, arg_18_2, arg_18_3, arg_18_4, arg_18_5)
+PlayerManager.add_remote_player = function (self, peer_id, player_controlled, local_player_id, clan_tag, account_id)
 	-- function 18
-	if not script_data.network_debug_connections then
-		printf("PlayerManager:add_remote_player %s", tostring(arg_18_1))
+	if script_data.network_debug_connections then
+		printf("PlayerManager:add_remote_player %s", tostring(peer_id))
 	end
 
-	local unique_player_id = PlayerUtils.unique_player_id(arg_18_1, arg_18_3)
-	local _create_ui_id = self:_create_ui_id()
-	local var_18_2 = RemotePlayer:new(self.network_manager, arg_18_1, arg_18_2, self.is_server, arg_18_3, unique_player_id, arg_18_4, _create_ui_id, arg_18_5)
-	local network_transmit = Managers.state.network.network_transmit
+	local unique_id = PlayerUtils.unique_player_id(peer_id, local_player_id)
+	local ui_id = self:_create_ui_id()
+	local player = RemotePlayer:new(self.network_manager, peer_id, player_controlled, self.is_server, local_player_id, unique_id, clan_tag, ui_id, account_id)
+	local network_manager = Managers.state.network
+	local network_transmit = network_manager.network_transmit
 
-	self._players[unique_player_id] = var_18_2
+	self._players[unique_id] = player
 
-	if not arg_18_2 then
+	if player_controlled then
 		self._num_human_players = self._num_human_players + 1
-		self._human_players[unique_player_id] = var_18_2
+		self._human_players[unique_id] = player
 
-		if not IS_WINDOWS then
+		if IS_WINDOWS then
 			Managers.account:update_presence()
 		end
 	end
 
-	if not self.is_server and not arg_18_2 then
-		Managers.telemetry_events:player_joined(var_18_2, self._num_human_players)
+	if self.is_server and player_controlled then
+		Managers.telemetry_events:player_joined(player, self._num_human_players)
 	end
 
-	local _players_by_peer = self._players_by_peer
-	local var_18_5 = _players_by_peer[arg_18_1]
+	local player_table = self._players_by_peer
+	local var_18_0 = player_table[peer_id]
 
-	var_18_5 = var_18_5 or {}
-	_players_by_peer[arg_18_1] = var_18_5
-	_players_by_peer[arg_18_1][arg_18_3] = var_18_2
+	var_18_0 = not not var_18_0 or not not {}
+	player_table[peer_id] = var_18_0
+	player_table[peer_id][local_player_id] = player
 
-	self._statistics_db:register(var_18_2:stats_id(), "player")
+	self._statistics_db:register(player:stats_id(), "player")
 	visual_assert(table.size(self._players) <= 4, "Too many players after remote player added.")
-	Managers.party:register_player(var_18_2, unique_player_id)
+	Managers.party:register_player(player, unique_id)
 
-	return var_18_2
+	return player
 end
 
-PlayerManager.player_exists = function (self, arg_19_1, arg_19_2)
+PlayerManager.player_exists = function (self, peer_id, local_player_id)
 	-- function 19
-	local var_19_0 = self._players_by_peer[arg_19_1]
-	local var_19_1
+	local peer_table = self._players_by_peer[peer_id]
+	local var_19_0
 
-	if not var_19_0 then
-		var_19_1 = var_19_0[arg_19_2 or 1]
+	if peer_table then
+		var_19_0 = peer_table[not not local_player_id or not not 1]
 
-		if not var_19_1 then
+		if not var_19_0 then
 			-- Nothing
 		end
 	end
 
-	var_19_1 = false
+	var_19_0 = false
 
 	::label_19_0::
 
-	return var_19_1
+	return var_19_0
 end
 
-PlayerManager.owner = function (self, arg_20_1)
+PlayerManager.owner = function (self, unit)
 	-- function 20
-	return self._unit_owners[arg_20_1]
+	return self._unit_owners[unit]
 end
 
-PlayerManager.is_player_unit = function (self, arg_21_1)
+PlayerManager.is_player_unit = function (self, unit)
 	-- function 21
-	local var_21_0 = self._unit_owners[arg_21_1]
+	local owner = self._unit_owners[unit]
 
-	if not (not var_21_0 and var_21_0.player_unit ~= arg_21_1) then
+	if owner and owner.player_unit == unit then
 		return true
 	end
 
@@ -392,130 +400,130 @@ PlayerManager._create_ui_id = function (self)
 	return self._ui_id_increment
 end
 
-PlayerManager.add_bot_player = function (self, arg_23_1, arg_23_2, arg_23_3, arg_23_4, arg_23_5, arg_23_6)
+PlayerManager.add_bot_player = function (self, player_name, bot_player_peer_id, bot_profile_index, profile_index, career_index, local_player_id)
 	-- function 23
 	local peer_id = Network.peer_id()
-	local unique_player_id = PlayerUtils.unique_player_id(peer_id, arg_23_6)
-	local _create_ui_id = self:_create_ui_id()
-	local var_23_3 = PlayerBot:new(self.network_manager, arg_23_1, arg_23_3, self.is_server, arg_23_4, arg_23_5, arg_23_6, unique_player_id, _create_ui_id)
+	local unique_id = PlayerUtils.unique_player_id(peer_id, local_player_id)
+	local ui_id = self:_create_ui_id()
+	local player = PlayerBot:new(self.network_manager, player_name, bot_profile_index, self.is_server, profile_index, career_index, local_player_id, unique_id, ui_id)
 
-	self._players[unique_player_id] = var_23_3
+	self._players[unique_id] = player
 
-	local _players_by_peer = self._players_by_peer
-	local var_23_5 = _players_by_peer[peer_id]
+	local player_table = self._players_by_peer
+	local var_23_0 = player_table[peer_id]
 
-	var_23_5 = var_23_5 or {}
-	_players_by_peer[peer_id] = var_23_5
-	_players_by_peer[peer_id][arg_23_6] = var_23_3
+	var_23_0 = not not var_23_0 or not not {}
+	player_table[peer_id] = var_23_0
+	player_table[peer_id][local_player_id] = player
 
-	local stats_id = var_23_3:stats_id()
+	local stats_id = player:stats_id()
 
 	self._statistics_db:register(stats_id, "player")
-	Managers.party:register_player(var_23_3, unique_player_id)
+	Managers.party:register_player(player, unique_id)
 
-	return var_23_3
+	return player
 end
 
 PlayerManager.clear_all_players = function (self)
 	-- function 24
-	for k, v in pairs(self._players) do
-		self:remove_player(v:network_id(), v:local_player_id())
+	for unique_id, player in pairs(self._players) do
+		self:remove_player(player:network_id(), player:local_player_id())
 	end
 end
 
-PlayerManager.remove_all_players_from_peer = function (self, arg_25_1)
+PlayerManager.remove_all_players_from_peer = function (self, peer_id)
 	-- function 25
-	local var_25_0 = self._players_by_peer[arg_25_1]
+	local peer_table = self._players_by_peer[peer_id]
 
-	if not var_25_0 then
-		for k, v in pairs(var_25_0) do
-			self:remove_player(arg_25_1, k)
+	if peer_table then
+		for local_player_id, player in pairs(peer_table) do
+			self:remove_player(peer_id, local_player_id)
 		end
 	end
 end
 
-PlayerManager.set_stats_backend = function (self, arg_26_1)
+PlayerManager.set_stats_backend = function (self, player)
 	-- function 26
-	if not arg_26_1.local_player then
-		local tbl = {}
+	if player.local_player then
+		local backend_stats = {}
 
-		self._statistics_db:generate_backend_stats(arg_26_1:stats_id(), tbl)
-		Managers.backend:set_stats(tbl)
+		self._statistics_db:generate_backend_stats(player:stats_id(), backend_stats)
+		Managers.backend:set_stats(backend_stats)
 	end
 end
 
-PlayerManager.remove_player = function (self, arg_27_1, arg_27_2)
+PlayerManager.remove_player = function (self, peer_id, local_player_id)
 	-- function 27
-	if not script_data.network_debug_connections then
-		printf("PlayerManager:remove_player peer_id=%s %i", tostring(arg_27_1), arg_27_2 or -1)
+	if script_data.network_debug_connections then
+		printf("PlayerManager:remove_player peer_id=%s %i", tostring(peer_id), not not local_player_id or not not -1)
 	end
 
-	local unique_player_id = PlayerUtils.unique_player_id(arg_27_1, arg_27_2)
+	local unique_id = PlayerUtils.unique_player_id(peer_id, local_player_id)
 
-	self._player_loadouts[unique_player_id] = nil
+	self._player_loadouts[unique_id] = nil
 
-	local var_27_1 = self._players[unique_player_id]
+	local player = self._players[unique_id]
 
-	if not var_27_1 then
-		if var_27_1 == self._local_human_player then
+	if player then
+		if player == self._local_human_player then
 			self._local_human_player = nil
 		end
 
-		local owned_units = var_27_1.owned_units
+		local owned_units = player.owned_units
 
-		for k, v in pairs(owned_units) do
-			self:relinquish_unit_ownership(k)
+		for unit, _ in pairs(owned_units) do
+			self:relinquish_unit_ownership(unit)
 		end
 
-		self._players[unique_player_id] = nil
-		self._human_players[unique_player_id] = nil
+		self._players[unique_id] = nil
+		self._human_players[unique_id] = nil
 
-		local var_27_3 = self._players_by_peer[arg_27_1]
+		local peer_table = self._players_by_peer[peer_id]
 
-		var_27_3[arg_27_2] = nil
+		peer_table[local_player_id] = nil
 
-		if not table.is_empty(var_27_3) then
-			self._players_by_peer[arg_27_1] = nil
+		if table.is_empty(peer_table) then
+			self._players_by_peer[peer_id] = nil
 		end
 
-		if not var_27_1:is_player_controlled() then
+		if player:is_player_controlled() then
 			self._num_human_players = self._num_human_players - 1
 		end
 
-		if not self.is_server and not var_27_1:is_player_controlled() then
-			Managers.telemetry_events:player_left(var_27_1, self._num_human_players)
+		if self.is_server and player:is_player_controlled() then
+			Managers.telemetry_events:player_left(player, self._num_human_players)
 		end
 
-		self._statistics_db:unregister(var_27_1:stats_id())
-		var_27_1:destroy()
+		self._statistics_db:unregister(player:stats_id())
+		player:destroy()
 
-		if not IS_WINDOWS then
+		if IS_WINDOWS then
 			Managers.account:update_presence()
 		end
 	end
 end
 
-PlayerManager.player = function (self, arg_28_1, arg_28_2)
+PlayerManager.player = function (self, peer_id, local_player_id)
 	-- function 28
-	fassert(not arg_28_1 and arg_28_2, "Required peer id and local player id.")
+	fassert(not not peer_id and not not local_player_id, "Required peer id and local player id.")
 
-	return self:player_from_peer_id(arg_28_1, arg_28_2)
+	return self:player_from_peer_id(peer_id, local_player_id)
 end
 
-PlayerManager.player_from_peer_id = function (self, arg_29_1, arg_29_2)
+PlayerManager.player_from_peer_id = function (self, peer_id, local_player_id)
 	-- function 29
-	local var_29_0 = self._players_by_peer[arg_29_1]
+	local player_table = self._players_by_peer[peer_id]
 
-	if not var_29_0 then
+	if not player_table then
 		return nil
 	end
 
-	return var_29_0[arg_29_2 or 1]
+	return player_table[not not local_player_id or not not 1]
 end
 
-PlayerManager.players_at_peer = function (self, arg_30_1)
+PlayerManager.players_at_peer = function (self, peer_id)
 	-- function 30
-	return self._players_by_peer[arg_30_1]
+	return self._players_by_peer[peer_id]
 end
 
 PlayerManager.human_players = function (self)
@@ -538,112 +546,126 @@ PlayerManager.num_human_players = function (self)
 	return self._num_human_players
 end
 
-PlayerManager.num_alive_allies = function (arg_35_0, arg_35_1)
+PlayerManager.num_alive_allies = function (self, player)
 	-- function 35
-	local human_and_bot_players = Managers.player:human_and_bot_players()
-	local num = 0
+	local players = Managers.player:human_and_bot_players()
+	local num_alive = 0
 
-	for k, v in pairs(human_and_bot_players) do
-		if arg_35_1 ~= v then
-			local player_unit = v.player_unit
+	for _, player_ally in pairs(players) do
+		if player ~= player_ally then
+			local unit = player_ally.player_unit
 
-			if not (not Unit.alive(player_unit) and ScriptUnit.extension(player_unit, "status_system"):is_disabled()) then
-				num = num + 1
+			if Unit.alive(unit) then
+				local status_extension = ScriptUnit.extension(unit, "status_system")
+
+				if not status_extension:is_disabled() then
+					num_alive = num_alive + 1
+				end
 			end
 		end
 	end
 
-	return num
+	return num_alive
 end
 
 PlayerManager.server_player = function (self)
 	-- function 36
-	local network_transmit = Managers.state.network.network_transmit
-	local flag = network_transmit.server_peer_id or network_transmit.peer_id
+	local network_manager = Managers.state.network
+	local network_transmit = network_manager.network_transmit
+	local server_peer_id = network_transmit.server_peer_id
+	local game_owner_peer_id = not not server_peer_id or not not network_transmit.peer_id
 
-	return self:player_from_peer_id(flag, 1)
+	return self:player_from_peer_id(game_owner_peer_id, 1)
 end
 
 PlayerManager.party_leader_player = function (self)
 	-- function 37
-	if not (not Managers.party and Managers.party.leader) then
+	if not Managers.party or not Managers.party.leader then
 		Application.warning("[PlayerManager:party_leader_player] Could not get the party leader -> using local player")
 
 		return Managers.player:local_player()
 	else
-		local leader = Managers.party:leader()
+		local leader_peer_id = Managers.party:leader()
 
-		if not leader then
+		if not leader_peer_id then
 			Application.warning("[PlayerManager:party_leader_player] Could not get the party leader -> using local player")
 
 			return Managers.player:local_player()
 		end
 
-		local player_from_peer_id = self:player_from_peer_id(leader, 1)
+		local party_leader_player = self:player_from_peer_id(leader_peer_id, 1)
 
-		if not player_from_peer_id then
-			Application.warning("[PlayerManager:party_leader_player] Could not fetch party player from peer_id %s", leader)
+		if not party_leader_player then
+			Application.warning("[PlayerManager:party_leader_player] Could not fetch party player from peer_id %s", leader_peer_id)
 		end
 
-		return player_from_peer_id
+		return party_leader_player
 	end
 end
 
-PlayerManager.next_available_local_player_id = function (self, arg_38_1, arg_38_2)
+PlayerManager.next_available_local_player_id = function (self, peer_id, profile_index)
 	-- function 38
-	local num = 2
-	local var_38_1 = self._players_by_peer[arg_38_1]
+	local i = 2
+	local player_table = self._players_by_peer[peer_id]
 
-	if not var_38_1 then
-		if not arg_38_2 then
-			local var_38_2 = tbl[arg_38_2]
+	if player_table then
+		if profile_index then
+			local local_id = BOT_LOCAL_ID_TABLE[profile_index]
 
-			if not (not var_38_2 and var_38_1[var_38_2]) then
-				return var_38_2
+			if local_id and not player_table[local_id] then
+				return local_id
 			end
 
-			Application.warning("[PlayerManager:next_available_local_player_id] static bot local id [%d] for profile [%s] is already in use, falling back to random one.", var_38_2, tostring(arg_38_2))
+			Application.warning("[PlayerManager:next_available_local_player_id] static bot local id [%d] for profile [%s] is already in use, falling back to random one.", local_id, tostring(profile_index))
 		end
 
-		while not var_38_1[num] do
-			num = num + 1
+		while player_table[i] do
+			i = i + 1
 		end
 	end
 
-	return num
+	return i
 end
 
 PlayerManager.num_players = function (self)
 	-- function 39
-	local num = 0
+	local i = 0
 
-	for k, v in pairs(self._players) do
-		num = num + 1
+	for _, _ in pairs(self._players) do
+		i = i + 1
 	end
 
-	return num
+	return i
 end
 
-PlayerManager.local_player = function (self, arg_40_1)
+PlayerManager.local_player = function (self, local_player_id)
 	-- function 40
-	if not DEDICATED_SERVER then
+	if DEDICATED_SERVER then
 		return nil
 	end
 
-	return self:player(Network.peer_id(), arg_40_1 or 1)
+	return self:player(Network.peer_id(), not not local_player_id or not not 1)
 end
 
-PlayerManager.local_player_safe = function (self, arg_41_1)
+PlayerManager.local_player_safe = function (self, local_player_id)
 	-- function 41
 	local state = Managers.state
 
-	state = not state and Managers.state.network
+	if state then
+		-- Nothing
+	end
 
-	if not (not state and state:game()) then
+	state = Managers.state.network
+
+	local network_manager = state
+
+	::label_41_0::
+
+	if not network_manager or not network_manager:game() then
 		return
 	end
 
-	return self:player(Network.peer_id(), arg_41_1 or 1)
+	return self:player(Network.peer_id(), not not local_player_id or not not 1)
 end
 
 PlayerManager.local_human_player = function (self)
@@ -653,15 +675,15 @@ end
 
 PlayerManager.bots = function (self)
 	-- function 43
-	local tbl = {}
+	local player_bots = {}
 
-	for k, v in pairs(self._players) do
-		if not v.bot_player then
-			tbl[#tbl + 1] = v
+	for _, player in pairs(self._players) do
+		if player.bot_player then
+			player_bots[#player_bots + 1] = player
 		end
 	end
 
-	return tbl
+	return player_bots
 end
 
 function DEBUG_PLAYERS()
@@ -670,22 +692,23 @@ function DEBUG_PLAYERS()
 
 	print("players -----------------------------------------------------------")
 
-	for k, v in pairs(players) do
-		print("PLAYER id:" .. tostring(k) .. ", unit:" .. tostring(v.player_unit) .. ", remote:" .. tostring(v.remote) .. ", peer_id:" .. tostring(v.peer_id))
+	for id, player in pairs(players) do
+		print("PLAYER id:" .. tostring(id) .. ", unit:" .. tostring(player.player_unit) .. ", remote:" .. tostring(player.remote) .. ", peer_id:" .. tostring(player.peer_id))
 	end
 
 	print(" ")
 end
 
-PlayerManager.rpc_set_observed_unit = function (self, arg_45_1, arg_45_2, arg_45_3, arg_45_4)
+PlayerManager.rpc_set_observed_unit = function (self, sender, observer_local_player_id, unit_to_observe_id, is_level_unit)
 	-- function 45
 	fassert(self.is_server, "Only server should get this")
 
-	local game_object_or_level_unit = Managers.state.network:game_object_or_level_unit(arg_45_3, arg_45_4)
+	local unit_to_observe = Managers.state.network:game_object_or_level_unit(unit_to_observe_id, is_level_unit)
 
-	if not game_object_or_level_unit then
-		local var_45_1 = CHANNEL_TO_PEER_ID[arg_45_1]
+	if unit_to_observe then
+		local observer_peer_id = CHANNEL_TO_PEER_ID[sender]
+		local observer_player = Managers.player:player(observer_peer_id, observer_local_player_id)
 
-		Managers.player:player(var_45_1, arg_45_2):set_observed_unit(game_object_or_level_unit)
+		observer_player:set_observed_unit(unit_to_observe)
 	end
 end

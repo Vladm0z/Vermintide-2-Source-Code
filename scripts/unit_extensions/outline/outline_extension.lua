@@ -4,11 +4,11 @@ require("scripts/settings/outline_settings")
 
 OutlineExtension = class(OutlineExtension)
 
-OutlineExtension.init = function (self, arg_1_1, arg_1_2)
+OutlineExtension.init = function (self, outline_system, unit)
 	-- function 1
 	self._unique_id = 0
 	self._default_settings = nil
-	self._unit = arg_1_2
+	self._unit = unit
 	self.outlined = false
 	self.reapply = false
 	self.flag = nil
@@ -17,77 +17,79 @@ OutlineExtension.init = function (self, arg_1_1, arg_1_2)
 	self.distance = nil
 	self.method = nil
 	self.outline_settings = {}
-	self._outline_system = arg_1_1
+	self._outline_system = outline_system
 end
 
-OutlineExtension.add_outline = function (self, arg_2_1)
+OutlineExtension.add_outline = function (self, settings)
 	-- function 2
-	local _unique_id = self._unique_id
-	local clone = table.clone(arg_2_1)
+	local unique_id = self._unique_id
+	local settings = table.clone(settings)
 
 	self._unique_id = self._unique_id + 1
 
-	if _unique_id == 0 then
-		self._default_settings = clone
+	if unique_id == 0 then
+		self._default_settings = settings
 	end
 
-	clone._unique_id = _unique_id
+	settings._unique_id = unique_id
 
-	local priority = clone.priority
+	local priority_2 = settings.priority
 
-	priority = priority or 0
-	clone.priority = priority
+	priority_2 = not not priority_2 or not not 0
+	settings.priority = priority_2
 
-	local outline_settings = self.outline_settings
-	local count = #outline_settings
-	local num = count + 1
-	local priority_2 = clone.priority
+	local settings_bucket = self.outline_settings
+	local num_settings_buckets = #settings_bucket
+	local insert_index = num_settings_buckets + 1
+	local priority = settings.priority
 
-	for i = 1, count do
-		if priority_2 >= outline_settings[i][1].priority then
-			num = i
+	for i = 1, num_settings_buckets do
+		local current_bucket = settings_bucket[i][1]
+
+		if priority >= current_bucket.priority then
+			insert_index = i
 
 			break
 		end
 	end
 
-	if not outline_settings[num] then
-		local var_2_7 = outline_settings[num]
+	if settings_bucket[insert_index] then
+		local shared_priority_settings = settings_bucket[insert_index]
 
-		table.insert(var_2_7, 1, clone)
+		table.insert(shared_priority_settings, 1, settings)
 	else
-		outline_settings[num] = {
-			clone
+		settings_bucket[insert_index] = {
+			settings
 		}
 	end
 
-	if num == 1 then
+	if insert_index == 1 then
 		self:_refresh_current_outline()
 	end
 
-	return _unique_id
+	return unique_id
 end
 
-OutlineExtension.remove_outline = function (self, arg_3_1)
+OutlineExtension.remove_outline = function (self, unique_id)
 	-- function 3
-	if not (not arg_3_1 and not (arg_3_1 < 0)) then
+	if not unique_id or unique_id < 0 then
 		return
 	end
 
-	local outline_settings = self.outline_settings
+	local settings_bucket = self.outline_settings
 
-	for i = 1, #outline_settings do
-		local var_3_1 = outline_settings[i]
+	for bucket_id = 1, #settings_bucket do
+		local current_bucket = settings_bucket[bucket_id]
 
-		for j = 1, #var_3_1 do
-			if var_3_1[j]._unique_id == arg_3_1 then
-				table.remove(var_3_1, j)
+		for setting_id = 1, #current_bucket do
+			if current_bucket[setting_id]._unique_id == unique_id then
+				table.remove(current_bucket, setting_id)
 
-				if #var_3_1 == 0 then
-					table.remove(outline_settings, i)
+				if #current_bucket == 0 then
+					table.remove(settings_bucket, bucket_id)
 				end
 
-				if not (i ~= 1 or j ~= 1) then
+				if bucket_id == 1 and setting_id == 1 then
 					self:_refresh_current_outline()
 				end
 
@@ -97,26 +99,26 @@ OutlineExtension.remove_outline = function (self, arg_3_1)
 	end
 end
 
-OutlineExtension.update_outline = function (self, arg_4_1, arg_4_2)
+OutlineExtension.update_outline = function (self, settings, unique_id)
 	-- function 4
-	if not (not arg_4_2 and not (arg_4_2 < 0)) then
+	if not unique_id or unique_id < 0 then
 		return
 	end
 
-	local outline_settings = self.outline_settings
+	local settings_bucket = self.outline_settings
 
-	for i = 1, #outline_settings do
-		local var_4_1 = outline_settings[i]
+	for bucket_id = 1, #settings_bucket do
+		local current_bucket = settings_bucket[bucket_id]
 
-		for j = 1, #var_4_1 do
-			local var_4_2 = var_4_1[j]
+		for setting_id = 1, #current_bucket do
+			local bucket_settings = current_bucket[setting_id]
 
-			if var_4_2._unique_id == arg_4_2 then
-				table.merge(var_4_2, arg_4_1)
+			if bucket_settings._unique_id == unique_id then
+				table.merge(bucket_settings, settings)
 
-				arg_4_1._unique_id = arg_4_2
+				settings._unique_id = unique_id
 
-				if not (i ~= 1 or j ~= 1) then
+				if bucket_id == 1 and setting_id == 1 then
 					self:_refresh_current_outline()
 				end
 			end
@@ -131,22 +133,22 @@ OutlineExtension.reapply_outline = function (self)
 	self._outline_system:mark_outline_dirty(self._unit)
 end
 
-OutlineExtension._refresh_current_outline = function (self, arg_6_1)
+OutlineExtension._refresh_current_outline = function (self, reapply)
 	-- function 6
-	local _default_settings = self._default_settings
-	local var_6_1 = self.outline_settings[1][1]
-	local flag = not var_6_1.outline_color and self.outline_color ~= var_6_1.outline_color
+	local default = self._default_settings
+	local current_settings = self.outline_settings[1][1]
+	local new_color = not current_settings.outline_color or self.outline_color ~= current_settings.outline_color
 	local outline_color
 
-	if not var_6_1.outline_color then
-		outline_color = var_6_1.outline_color
+	if current_settings.outline_color then
+		outline_color = current_settings.outline_color
 
 		if not outline_color then
 			-- Nothing
 		end
 	end
 
-	outline_color = _default_settings.outline_color
+	outline_color = default.outline_color
 
 	::label_6_0::
 
@@ -154,15 +156,15 @@ OutlineExtension._refresh_current_outline = function (self, arg_6_1)
 
 	local distance
 
-	if not var_6_1.distance then
-		distance = var_6_1.distance
+	if current_settings.distance then
+		distance = current_settings.distance
 
 		if not distance then
 			-- Nothing
 		end
 	end
 
-	distance = _default_settings.distance
+	distance = default.distance
 
 	::label_6_1::
 
@@ -170,38 +172,38 @@ OutlineExtension._refresh_current_outline = function (self, arg_6_1)
 
 	local method
 
-	if not var_6_1.method then
-		method = var_6_1.method
+	if current_settings.method then
+		method = current_settings.method
 
 		if not method then
 			-- Nothing
 		end
 	end
 
-	method = _default_settings.method
+	method = default.method
 
 	::label_6_2::
 
 	self.method = method
 	self.prev_flag = self.flag
 
-	local flag_2
+	local flag
 
-	if not var_6_1.flag then
-		flag_2 = var_6_1.flag
+	if current_settings.flag then
+		flag = current_settings.flag
 
-		if not flag_2 then
+		if not flag then
 			-- Nothing
 		end
 	end
 
-	flag_2 = _default_settings.flag
+	flag = default.flag
 
 	::label_6_3::
 
-	self.flag = flag_2
+	self.flag = flag
 
-	if not arg_6_1 then
+	if not reapply then
 		-- Nothing
 	end
 
@@ -209,13 +211,13 @@ OutlineExtension._refresh_current_outline = function (self, arg_6_1)
 
 	local outlined = self.outlined
 
-	outlined = not outlined and flag
+	outlined = not not outlined and not not new_color
 
 	::label_6_5::
 
 	self.reapply = outlined
 
-	if self.reapply or not flag then
+	if self.reapply or new_color then
 		self._outline_system:mark_outline_dirty(self._unit)
 	end
 end
@@ -236,42 +238,39 @@ OutlineExtension.on_unfreeze = function (self)
 	self:_refresh_current_outline()
 end
 
-OutlineExtension.swap_delete_outline = function (self, arg_9_1, arg_9_2)
+OutlineExtension.swap_delete_outline = function (self, new_id, old_id)
 	-- function 9
-	local outline_settings = self.outline_settings
-	local var_9_1
-	local var_9_2
-	local var_9_3
-	local var_9_4
+	local settings_bucket = self.outline_settings
+	local to_bucket_id, to_setting_id, from_bucket_id, from_setting_id
 
-	for i = 1, #outline_settings do
-		local var_9_5 = outline_settings[i]
+	for bucket_id = 1, #settings_bucket do
+		local current_bucket = settings_bucket[bucket_id]
 
-		for j = 1, #var_9_5 do
-			if var_9_5[j]._unique_id == arg_9_1 then
-				var_9_3 = i
-				var_9_4 = j
+		for setting_id = 1, #current_bucket do
+			if current_bucket[setting_id]._unique_id == new_id then
+				from_bucket_id = bucket_id
+				from_setting_id = setting_id
 			end
 
-			if var_9_5[j]._unique_id == arg_9_2 then
-				var_9_1 = i
-				var_9_2 = j
+			if current_bucket[setting_id]._unique_id == old_id then
+				to_bucket_id = bucket_id
+				to_setting_id = setting_id
 			end
 		end
 	end
 
-	local var_9_6 = outline_settings[var_9_3][var_9_4]
+	local new_settings = settings_bucket[from_bucket_id][from_setting_id]
 
-	var_9_6._unique_id = arg_9_2
-	outline_settings[var_9_1][var_9_2] = var_9_6
+	new_settings._unique_id = old_id
+	settings_bucket[to_bucket_id][to_setting_id] = new_settings
 
-	table.remove(outline_settings[var_9_3], var_9_4)
+	table.remove(settings_bucket[from_bucket_id], from_setting_id)
 
-	if #outline_settings[var_9_3] == 0 then
-		table.remove(outline_settings, var_9_3)
+	if #settings_bucket[from_bucket_id] == 0 then
+		table.remove(settings_bucket, from_bucket_id)
 	end
 
-	self._default_settings = var_9_6
+	self._default_settings = new_settings
 
-	self:update_outline(var_9_6, arg_9_2)
+	self:update_outline(new_settings, old_id)
 end

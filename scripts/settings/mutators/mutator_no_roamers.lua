@@ -2,12 +2,12 @@
 
 return {
 	hide_from_player_ui = true,
-	tweak_pack_spawning_settings = function (arg_1_0, arg_1_1)
+	tweak_pack_spawning_settings = function (conflict_director_name, pack_spawning_settings)
 		-- function 1
-		arg_1_1.area_density_coefficient = 0
+		pack_spawning_settings.area_density_coefficient = 0
 
-		for k, v in pairs(arg_1_1.difficulty_overrides) do
-			v.area_density_coefficient = 0
+		for _, difficulty_override in pairs(pack_spawning_settings.difficulty_overrides) do
+			difficulty_override.area_density_coefficient = 0
 		end
 	end
 }

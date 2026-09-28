@@ -1,6 +1,7 @@
 -- chunkname: @scripts/settings/mutators/mutator_curse_greed_pinata.lua
 
-local var_0_0 = require("scripts/settings/mutators/mutator_base_curse_marked_enemies")("curse_greed_pinata_name", "curse_greed_pinata_desc", "deus_curse_slaanesh_01", "curse_greed_pinata_spawner", {
+local mutator_base_curse_marked_enemies = require("scripts/settings/mutators/mutator_base_curse_marked_enemies")
+local mutator_config = mutator_base_curse_marked_enemies("curse_greed_pinata_name", "curse_greed_pinata_desc", "deus_curse_slaanesh_01", "curse_greed_pinata_spawner", {
 	normal = {
 		mark_chance = 1,
 		max_marked_enemies = 2
@@ -46,7 +47,7 @@ local var_0_0 = require("scripts/settings/mutators/mutator_base_curse_marked_ene
 	skaven_storm_vermin_with_shield = true
 })
 
-var_0_0.pickup_system_multipliers = {
+mutator_config.pickup_system_multipliers = {
 	grenades = 0,
 	ammo = 0,
 	deus_potions = 0,
@@ -55,9 +56,9 @@ var_0_0.pickup_system_multipliers = {
 	deus_soft_currency = 0,
 	healing = 0
 }
-var_0_0.packages = {
+mutator_config.packages = {
 	"resource_packages/mutators/mutator_curse_greed_pinata"
 }
-var_0_0.marked_enemy_killed_dialogue_event = "curse_see_objective"
+mutator_config.marked_enemy_killed_dialogue_event = "curse_see_objective"
 
-return var_0_0
+return mutator_config

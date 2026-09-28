@@ -1,42 +1,84 @@
 -- chunkname: @scripts/settings/syntax_watchdog.lua
 
-for k, v in pairs(BossSettings) do
-	local boss_events = v.boss_events
+for name, setting in pairs(BossSettings) do
+	local boss_events = setting.boss_events
 
-	if k ~= "disabled" then
-		for k_2 = 1, #boss_events do
-			local var_0_1 = boss_events[k_2]
-			local var_0_2 = TerrorEventBlueprints[var_0_1]
+	if name ~= "disabled" then
+		for i = 1, #boss_events do
+			local event_name = boss_events[i]
+			local var_0_0 = TerrorEventBlueprints[event_name]
 
-			var_0_2 = var_0_2 or var_0_1 == "nothing"
+			if not var_0_0 then
+				-- Nothing
+			end
 
-			fassert(var_0_2, "BossSettings '%s'.boss_events in conflict_settings.lua, points to a non-existing terror_event '%s'. There is no such event defined in terror_event_blueprints.lua", k, var_0_1)
+			if event_name ~= "nothing" then
+				var_0_0 = false
+
+				goto label_0_0
+			end
+
+			var_0_0 = true
+
+			local exists = var_0_0
+
+			::label_0_0::
+
+			fassert(exists, "BossSettings '%s'.boss_events in conflict_settings.lua, points to a non-existing terror_event '%s'. There is no such event defined in terror_event_blueprints.lua", name, event_name)
 		end
 	end
 
-	local rare_events = v.rare_events
+	local rare_events = setting.rare_events
 
-	if k ~= "disabled" then
-		for l = 1, #rare_events do
-			local var_0_4 = rare_events[l]
-			local var_0_5 = TerrorEventBlueprints[var_0_4]
+	if name ~= "disabled" then
+		for i = 1, #rare_events do
+			local event_name = rare_events[i]
+			local var_0_1 = TerrorEventBlueprints[event_name]
 
-			var_0_5 = var_0_5 or var_0_4 == "nothing"
+			if not var_0_1 then
+				-- Nothing
+			end
 
-			fassert(var_0_5, "BossSettings '%s'.rare_events in conflict_settings.lua, points to a non-existing terror_event '%s'. There is no such event defined in terror_event_blueprints.lua", k, var_0_4)
+			if event_name ~= "nothing" then
+				var_0_1 = false
+
+				goto label_0_1
+			end
+
+			var_0_1 = true
+
+			local exists = var_0_1
+
+			::label_0_1::
+
+			fassert(exists, "BossSettings '%s'.rare_events in conflict_settings.lua, points to a non-existing terror_event '%s'. There is no such event defined in terror_event_blueprints.lua", name, event_name)
 		end
 	end
 end
 
-for i4 = 1, #BreedPacks do
-	local var_0_6 = BreedPacks[i4]
+for i = 1, #BreedPacks do
+	local pack_data = BreedPacks[i]
 
-	fassert(var_0_6.pack_type, "BreedPack %d has a missing 'pack_type' field", i4)
-	fassert(type(var_0_6.spawn_weight) == "number", "BreedPack %d has a missing/faulty spawn_weight. ('%s') ", i4, tostring(var_0_6.spawn_weight))
+	fassert(pack_data.pack_type, "BreedPack %d has a missing 'pack_type' field", i)
+	fassert(type(pack_data.spawn_weight) == "number", "BreedPack %d has a missing/faulty spawn_weight. ('%s') ", i, tostring(pack_data.spawn_weight))
 
-	local members = var_0_6.members
+	local members = pack_data.members
 
-	members = not members and type(var_0_6.members) == "table"
+	if members then
+		-- Nothing
+	end
 
-	fassert(members, "BreedPack %d is missing table filed 'member'.", i4)
+	if type(pack_data.members) ~= "table" then
+		members = false
+
+		goto label_0_2
+	end
+
+	members = true
+
+	local okay = members
+
+	::label_0_2::
+
+	fassert(okay, "BreedPack %d is missing table filed 'member'.", i)
 end

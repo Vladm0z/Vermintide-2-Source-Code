@@ -1,6 +1,6 @@
 -- chunkname: @scripts/entity_system/systems/behaviour/trees/skaven/skaven_ratling_gunner_behavior.lua
 
-local skaven_ratling_gunner = BreedActions.skaven_ratling_gunner
+local ACTIONS = BreedActions.skaven_ratling_gunner
 
 BreedBehaviors.skaven_ratling_gunner = {
 	"BTSelector",
@@ -23,7 +23,7 @@ BreedBehaviors.skaven_ratling_gunner = {
 		"BTStaggerAction",
 		name = "stagger",
 		condition = "stagger",
-		action_data = skaven_ratling_gunner.stagger
+		action_data = ACTIONS.stagger
 	},
 	{
 		"BTSelector",
@@ -46,7 +46,7 @@ BreedBehaviors.skaven_ratling_gunner = {
 			"BTSmashDoorAction",
 			name = "smash_door",
 			condition = "at_door_smartobject",
-			action_data = skaven_ratling_gunner.smash_door
+			action_data = ACTIONS.smash_door
 		},
 		condition = "at_smartobject",
 		name = "smartobject"
@@ -59,19 +59,19 @@ BreedBehaviors.skaven_ratling_gunner = {
 				"BTMoveToPlayersAction",
 				name = "move_to_players",
 				condition = "ratling_gunner_skulked_for_too_long",
-				action_data = skaven_ratling_gunner.move_to_players
+				action_data = ACTIONS.move_to_players
 			},
 			{
 				"BTSequence",
 				{
 					"BTRatlingGunnerApproachAction",
 					name = "lurk",
-					action_data = skaven_ratling_gunner.lurk
+					action_data = ACTIONS.lurk
 				},
 				{
 					"BTRatlingGunnerApproachAction",
 					name = "engage",
-					action_data = skaven_ratling_gunner.engage
+					action_data = ACTIONS.engage
 				},
 				name = "skulk_movement"
 			},
@@ -80,17 +80,17 @@ BreedBehaviors.skaven_ratling_gunner = {
 		{
 			"BTRatlingGunnerWindUpAction",
 			name = "wind_up_ratling_gun",
-			action_data = skaven_ratling_gunner.wind_up_ratling_gun
+			action_data = ACTIONS.wind_up_ratling_gun
 		},
 		{
 			"BTRatlingGunnerShootAction",
 			name = "shoot_ratling_gun",
-			action_data = skaven_ratling_gunner.shoot_ratling_gun
+			action_data = ACTIONS.shoot_ratling_gun
 		},
 		{
 			"BTRatlingGunnerMoveToShootAction",
 			name = "move_to_shoot_position",
-			action_data = skaven_ratling_gunner.move_to_shoot_position
+			action_data = ACTIONS.move_to_shoot_position
 		},
 		name = "attack_pattern"
 	},

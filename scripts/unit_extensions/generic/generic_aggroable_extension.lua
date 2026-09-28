@@ -2,12 +2,12 @@
 
 GenericAggroableExtension = class(GenericAggroableExtension)
 
-GenericAggroableExtension.init = function (self, arg_1_1, arg_1_2, arg_1_3)
+GenericAggroableExtension.init = function (self, extension_init_context, unit, extension_init_data)
 	-- function 1
 	local num
 
-	if not Unit.has_data(arg_1_2, "aggro_modifier_passive") then
-		num = Unit.get_data(arg_1_2, "aggro_modifier_passive") * -1
+	if Unit.has_data(unit, "aggro_modifier_passive") then
+		num = Unit.get_data(unit, "aggro_modifier_passive") * -1
 
 		if not num then
 			-- Nothing
@@ -22,8 +22,8 @@ GenericAggroableExtension.init = function (self, arg_1_1, arg_1_2, arg_1_3)
 
 	local num_2
 
-	if not Unit.has_data(arg_1_2, "aggro_modifier_active") then
-		num_2 = Unit.get_data(arg_1_2, "aggro_modifier_active") * -1
+	if Unit.has_data(unit, "aggro_modifier_active") then
+		num_2 = Unit.get_data(unit, "aggro_modifier_active") * -1
 
 		if not num_2 then
 			-- Nothing
@@ -49,7 +49,7 @@ GenericAggroableExtension.use_active_aggro = function (self)
 	self.aggro_modifier = self.aggro_modifier_active
 end
 
-GenericAggroableExtension.destroy = function (arg_4_0)
+GenericAggroableExtension.destroy = function (self)
 	-- function 4
 	return
 end

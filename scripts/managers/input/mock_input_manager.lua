@@ -11,25 +11,25 @@ MockInputService.init = function (self)
 	}
 end
 
-local tbl = {
+local KEYS = {
 	left_hold = true,
 	left_press = true
 }
 
-MockInputService.get = function (self, arg_2_1)
+MockInputService.get = function (self, key)
 	-- function 2
-	if arg_2_1 == "debug_pixeldistance" then
+	if key == "debug_pixeldistance" then
 		return false
-	elseif arg_2_1 == "cursor" then
+	elseif key == "cursor" then
 		return self._cursor_position
-	elseif not tbl[arg_2_1] then
+	elseif KEYS[key] then
 		return false
 	end
 
-	error(string.format("Wrong parameter %q", tostring(arg_2_1)))
+	error(string.format("Wrong parameter %q", tostring(key)))
 end
 
-MockInputService.is_blocked = function (arg_3_0)
+MockInputService.is_blocked = function (self)
 	-- function 3
 	return true
 end

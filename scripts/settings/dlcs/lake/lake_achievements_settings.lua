@@ -1,8 +1,8 @@
 -- chunkname: @scripts/settings/dlcs/lake/lake_achievements_settings.lua
 
-local lake = DLCSettings.lake
+local settings = DLCSettings.lake
 
-lake.achievement_outline = {
+settings.achievement_outline = {
 	heroes = {
 		categories = {
 			{
@@ -29,80 +29,80 @@ lake.achievement_outline = {
 		}
 	}
 }
-lake.achievement_template_file_names = {
+settings.achievement_template_file_names = {
 	"scripts/managers/achievements/achievement_templates_lake"
 }
-lake.speed_quest_complete_time = 140
-lake.timing_quest_complete_margain = 5
+settings.speed_quest_complete_time = 140
+settings.timing_quest_complete_margain = 5
 
-local var_0_1
+local speed_time
 
-local function fn(self, arg_1_1)
+local function _handle_speed_quest(player, completed)
 	-- function 1
-	local time = Managers.time:time("game")
-	local speed_quest_complete_time = lake.speed_quest_complete_time
+	local t = Managers.time:time("game")
+	local completion_time = settings.speed_quest_complete_time
 
-	if arg_1_1 < 2 then
-		var_0_1 = time
-	elseif not (not (arg_1_1 > 1) or not (time < speed_quest_complete_time)) then
-		local network_id = self:network_id()
-		local str = "lake_speed_quest"
-		local network = Managers.state.network
-		local var_1_5 = NetworkLookup.statistics[str]
+	if completed < 2 then
+		speed_time = t
+	elseif completed > 1 and t < completion_time then
+		local peer_id = player:network_id()
+		local stat_name = "lake_speed_quest"
+		local network_manager = Managers.state.network
+		local stat_id = NetworkLookup.statistics[stat_name]
 
-		network.network_transmit:send_rpc("rpc_increment_stat", network_id, var_1_5)
+		network_manager.network_transmit:send_rpc("rpc_increment_stat", peer_id, stat_id)
 	end
 end
 
-local var_0_3
+local timing_time
 
-local function fn_2(self, arg_2_1)
+local function _handle_timing_quest(player, completed)
 	-- function 2
-	local time = Managers.time:time("game")
-	local timing_quest_complete_margain = lake.timing_quest_complete_margain
+	local t = Managers.time:time("game")
+	local completion_margain = settings.timing_quest_complete_margain
 
-	if arg_2_1 < 2 then
-		var_0_3 = time
-	elseif not ((not (arg_2_1 > 1) or not var_0_3) and not (time < var_0_3 + timing_quest_complete_margain)) then
-		local network_id = self:network_id()
-		local str = "lake_timing_quest"
-		local network = Managers.state.network
-		local var_2_5 = NetworkLookup.statistics[str]
+	if completed < 2 then
+		timing_time = t
+	elseif completed > 1 and timing_time and t < timing_time + completion_margain then
+		local peer_id = player:network_id()
+		local stat_name = "lake_timing_quest"
+		local network_manager = Managers.state.network
+		local stat_id = NetworkLookup.statistics[stat_name]
 
-		network.network_transmit:send_rpc("rpc_increment_stat", network_id, var_2_5)
+		network_manager.network_transmit:send_rpc("rpc_increment_stat", peer_id, stat_id)
 	end
 end
 
-lake.achievement_events = {
-	on_challenge_completed = function (arg_3_0, arg_3_1)
+settings.achievement_events = {
+	on_challenge_completed = function (_, completed_challenge)
 		-- function 3
-		local player = Managers.player
-		local local_player = player:local_player()
+		local player_manager = Managers.player
+		local local_player = player_manager:local_player()
 
-		if not local_player then
+		if local_player then
 			local player_unit = local_player.player_unit
 
 			if not player_unit then
 				return
 			end
 
-			local owner = player:owner(player_unit)
+			local player = player_manager:owner(player_unit)
 
-			if not owner then
+			if not player then
 				return
 			end
 
-			local unique_id = owner:unique_id()
-			local get_completed_challenges_filtered = Managers.venture.challenge:get_completed_challenges_filtered({}, "questing_knight", unique_id)
+			local unique_id = player:unique_id()
+			local completed_challenges = Managers.venture.challenge:get_completed_challenges_filtered({}, "questing_knight", unique_id)
 
-			if not get_completed_challenges_filtered then
+			if not completed_challenges then
 				return
 			end
 
-			local count = #get_completed_challenges_filtered
+			local completed = #completed_challenges
 
-			fn(local_player, count)
-			fn_2(local_player, count)
+			_handle_speed_quest(local_player, completed)
+			_handle_timing_quest(local_player, completed)
 		end
 	end
 }

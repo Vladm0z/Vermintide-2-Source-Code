@@ -1,23 +1,23 @@
 -- chunkname: @scripts/ui/text_popup/text_popup_ui_definitions.lua
 
-local str = "menu_frame_11"
-local var_0_1 = UIFrameSettings[str].texture_sizes.horizontal[2]
-local num = 18
-local num_2 = 1920
-local num_3 = 1080
-local tbl = {
+local frame_settings_name = "menu_frame_11"
+local frame_settings = UIFrameSettings[frame_settings_name]
+local frame_thickness = frame_settings.texture_sizes.horizontal[2]
+local content_top_padding = 18
+local SIZE_X, SIZE_Y = 1920, 1080
+local window_size = {
 	871,
 	730
 }
-local tbl_2 = {
-	tbl[2] - var_0_1 * 2,
-	tbl[2] - var_0_1 * 2 - num * 2
+local window_inside_size = {
+	window_size[2] - frame_thickness * 2,
+	window_size[2] - frame_thickness * 2 - content_top_padding * 2
 }
-local tbl_3 = {
+local scrollbar_size = {
 	16,
-	tbl[2] - 42
+	window_size[2] - 42
 }
-local tbl_4 = {
+local scenegraph_definition = {
 	screen = {
 		scale = "fit",
 		position = {
@@ -26,8 +26,8 @@ local tbl_4 = {
 			UILayer.main_menu
 		},
 		size = {
-			num_2,
-			num_3
+			SIZE_X,
+			SIZE_Y
 		}
 	},
 	background = {
@@ -40,15 +40,15 @@ local tbl_4 = {
 			1
 		},
 		size = {
-			tbl[1],
-			tbl[2]
+			window_size[1],
+			window_size[2]
 		}
 	},
 	window = {
 		vertical_alignment = "center",
 		parent = "background",
 		horizontal_alignment = "center",
-		size = tbl,
+		size = window_size,
 		position = {
 			0,
 			0,
@@ -60,8 +60,8 @@ local tbl_4 = {
 		parent = "window",
 		horizontal_alignment = "center",
 		size = {
-			tbl[1],
-			tbl_2[2] - num
+			window_size[1],
+			window_inside_size[2] - content_top_padding
 		},
 		position = {
 			0,
@@ -74,7 +74,7 @@ local tbl_4 = {
 		parent = "window_mask",
 		horizontal_alignment = "center",
 		size = {
-			tbl[1],
+			window_size[1],
 			30
 		},
 		position = {
@@ -88,7 +88,7 @@ local tbl_4 = {
 		parent = "window_mask",
 		horizontal_alignment = "center",
 		size = {
-			tbl[1],
+			window_size[1],
 			30
 		},
 		position = {
@@ -101,10 +101,10 @@ local tbl_4 = {
 		vertical_alignment = "top",
 		parent = "background",
 		horizontal_alignment = "center",
-		size = tbl_2,
+		size = window_inside_size,
 		position = {
 			0,
-			-(var_0_1 + num),
+			-(frame_thickness + content_top_padding),
 			53
 		}
 	},
@@ -154,7 +154,7 @@ local tbl_4 = {
 		vertical_alignment = "center",
 		parent = "window",
 		horizontal_alignment = "right",
-		size = tbl_3,
+		size = scrollbar_size,
 		position = {
 			-26,
 			0,
@@ -176,7 +176,7 @@ local tbl_4 = {
 		}
 	}
 }
-local tbl_5 = {
+local text_style = {
 	word_wrap = true,
 	upper_case = false,
 	localize = false,
@@ -193,7 +193,7 @@ local tbl_5 = {
 		10
 	}
 }
-local tbl_6 = {
+local header_style = {
 	word_wrap = true,
 	upper_case = true,
 	localize = false,
@@ -210,27 +210,27 @@ local tbl_6 = {
 		10
 	}
 }
-local tbl_7 = {
-	background = UIWidgets.create_background("background", tbl_4.background.size, "menu_frame_bg_02"),
+local widget_definitions = {
+	background = UIWidgets.create_background("background", scenegraph_definition.background.size, "menu_frame_bg_02"),
 	screen = UIWidgets.create_simple_rect("screen", {
 		100,
 		0,
 		0,
 		0
 	}),
-	window_frame = UIWidgets.create_frame("window", tbl_4.window.size, str, 20),
+	window_frame = UIWidgets.create_frame("window", scenegraph_definition.window.size, frame_settings_name, 20),
 	window_mask = UIWidgets.create_simple_texture("mask_rect", "window_mask"),
 	window_mask_bottom = UIWidgets.create_simple_rotated_texture("mask_rect_edge_fade", math.pi, {
-		tbl[1] / 2,
+		window_size[1] / 2,
 		15
 	}, "window_mask_bottom"),
 	window_mask_top = UIWidgets.create_simple_texture("mask_rect_edge_fade", "window_mask_top"),
-	overlay_text = UIWidgets.create_simple_text("", "text_entry", nil, nil, tbl_5),
+	overlay_text = UIWidgets.create_simple_text("", "text_entry", nil, nil, text_style),
 	title = UIWidgets.create_simple_texture("frame_title_bg", "title"),
-	title_bg = UIWidgets.create_background("title_bg", tbl_4.title_bg.size, "menu_frame_bg_02"),
-	title_text = UIWidgets.create_simple_text("", "title_text", nil, nil, tbl_6),
-	ok_button = UIWidgets.create_default_button("ok_button", tbl_4.ok_button.size, nil, nil, Localize("button_ok"), 24, nil, "button_detail_04", 34, true),
-	scrollbar = UIWidgets.create_chain_scrollbar("scrollbar", nil, tbl_4.scrollbar.size),
+	title_bg = UIWidgets.create_background("title_bg", scenegraph_definition.title_bg.size, "menu_frame_bg_02"),
+	title_text = UIWidgets.create_simple_text("", "title_text", nil, nil, header_style),
+	ok_button = UIWidgets.create_default_button("ok_button", scenegraph_definition.ok_button.size, nil, nil, Localize("button_ok"), 24, nil, "button_detail_04", 34, true),
+	scrollbar = UIWidgets.create_chain_scrollbar("scrollbar", nil, scenegraph_definition.scrollbar.size),
 	scroll_content = {
 		scenegraph_id = "window",
 		element = {
@@ -241,38 +241,39 @@ local tbl_7 = {
 				},
 				{
 					pass_type = "scroll",
-					scroll_function = function (arg_1_0, arg_1_1, arg_1_2, arg_1_3, arg_1_4, arg_1_5)
+					scroll_function = function (ui_scenegraph, ui_style, ui_content, input_service, scroll_axis, dt)
 						-- function 1
-						local num = arg_1_4.y * -1
+						local axis_input = scroll_axis.y * -1
 
-						if not (not IS_XB1 and not GameSettingsDevelopment.allow_keyboard_mouse and Managers.input:is_device_active("gamepad")) then
-							num = math.sign(arg_1_4.x) * -1
+						if IS_XB1 and GameSettingsDevelopment.allow_keyboard_mouse and not Managers.input:is_device_active("gamepad") then
+							axis_input = math.sign(scroll_axis.x) * -1
 						end
 
-						local hotspot = arg_1_2.hotspot
+						local hotspot = ui_content.hotspot
 
-						if num == 0 or not hotspot.is_hover then
-							arg_1_2.axis_input = num
-							arg_1_2.scroll_add = num * arg_1_2.scroll_amount
+						if axis_input ~= 0 and hotspot.is_hover then
+							ui_content.axis_input = axis_input
+							ui_content.scroll_add = axis_input * ui_content.scroll_amount
 						else
-							local axis_input = arg_1_2.axis_input
+							axis_input = ui_content.axis_input
 						end
 
-						local scroll_add = arg_1_2.scroll_add
+						local scroll_add = ui_content.scroll_add
 
-						if not scroll_add then
-							local num_2 = scroll_add * (arg_1_5 * 5)
-							local num_3 = scroll_add - num_2
+						if scroll_add then
+							local step = scroll_add * (dt * 5)
 
-							if math.abs(num_3) > 0 then
-								arg_1_2.scroll_add = num_3
+							scroll_add = scroll_add - step
+
+							if math.abs(scroll_add) > 0 then
+								ui_content.scroll_add = scroll_add
 							else
-								arg_1_2.scroll_add = nil
+								ui_content.scroll_add = nil
 							end
 
-							local scroll_value = arg_1_2.scroll_value
+							local current_scroll_value = ui_content.scroll_value
 
-							arg_1_2.scroll_value = math.clamp(scroll_value + num_2, 0, 1)
+							ui_content.scroll_value = math.clamp(current_scroll_value + step, 0, 1)
 						end
 					end
 				}
@@ -288,7 +289,7 @@ local tbl_7 = {
 		style = {}
 	}
 }
-local tbl_8 = {
+local generic_input_actions = {
 	default = {
 		{
 			input_action = "left_stick",
@@ -305,8 +306,8 @@ local tbl_8 = {
 }
 
 return {
-	scenegraph_definition = tbl_4,
-	widget_definitions = tbl_7,
-	scroll_text_style = tbl_5,
-	generic_input_actions = tbl_8
+	scenegraph_definition = scenegraph_definition,
+	widget_definitions = widget_definitions,
+	scroll_text_style = text_style,
+	generic_input_actions = generic_input_actions
 }

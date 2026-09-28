@@ -4,53 +4,53 @@ require("scripts/managers/room/room_handler")
 
 RoomManagerClient = class(RoomManagerClient)
 
-local tbl = {
+local RPCS = {
 	"rpc_inn_room_created",
 	"rpc_inn_room_destroyed"
 }
 
-RoomManagerClient.init = function (self, arg_1_1, arg_1_2)
+RoomManagerClient.init = function (self, world, network_event_delegate)
 	-- function 1
 	self._peer_rooms = {}
 	self._room_order = {}
-	self._room_handler = RoomHandler:new(arg_1_1)
+	self._room_handler = RoomHandler:new(world)
 
-	arg_1_2:register(self, unpack(tbl))
+	network_event_delegate:register(self, unpack(RPCS))
 
-	self._network_event_delegate = arg_1_2
+	self._network_event_delegate = network_event_delegate
 end
 
-RoomManagerClient.setup_level_anchor_points = function (self, arg_2_1)
+RoomManagerClient.setup_level_anchor_points = function (self, level)
 	-- function 2
-	self._room_handler:setup_level_anchor_points(arg_2_1)
+	self._room_handler:setup_level_anchor_points(level)
 end
 
-RoomManagerClient.create_room = function (self, arg_3_1, arg_3_2, arg_3_3)
+RoomManagerClient.create_room = function (self, peer_id, room_id, profile_index)
 	-- function 3
-	local var_3_0 = SPProfiles[arg_3_3]
+	local profile = SPProfiles[profile_index]
 
-	if not self._peer_rooms[arg_3_1] then
+	if self._peer_rooms[peer_id] then
 		return
 	end
 
-	local room_profile = var_3_0.room_profile
+	local room_profile = profile.room_profile
 
-	self._room_handler:create_room(room_profile, arg_3_2)
+	self._room_handler:create_room(room_profile, room_id)
 
-	self._peer_rooms[arg_3_1] = {
-		room_id = arg_3_2
+	self._peer_rooms[peer_id] = {
+		room_id = room_id
 	}
-	self._room_order[arg_3_2] = arg_3_1
+	self._room_order[room_id] = peer_id
 end
 
-RoomManagerClient.destroy_room = function (self, arg_4_1)
+RoomManagerClient.destroy_room = function (self, peer_id)
 	-- function 4
-	local var_4_0 = self._peer_rooms[arg_4_1]
+	local room_info = self._peer_rooms[peer_id]
 
-	self._room_handler:destroy_room(var_4_0.room_id)
+	self._room_handler:destroy_room(room_info.room_id)
 
-	self._room_order[var_4_0.room_id] = nil
-	self._peer_rooms[arg_4_1] = nil
+	self._room_order[room_info.room_id] = nil
+	self._peer_rooms[peer_id] = nil
 end
 
 RoomManagerClient.destroy = function (self)
@@ -64,17 +64,17 @@ RoomManagerClient.destroy = function (self)
 	self._network_event_delegate = nil
 end
 
-RoomManagerClient.rpc_inn_room_created = function (self, arg_6_1, arg_6_2, arg_6_3, arg_6_4)
+RoomManagerClient.rpc_inn_room_created = function (self, channel_id, peer_id, room_id, profile_index)
 	-- function 6
-	self:create_room(arg_6_2, arg_6_3, arg_6_4)
+	self:create_room(peer_id, room_id, profile_index)
 end
 
-RoomManagerClient.rpc_inn_room_destroyed = function (self, arg_7_1, arg_7_2)
+RoomManagerClient.rpc_inn_room_destroyed = function (self, channel_id, peer_id)
 	-- function 7
-	self:destroy_room(arg_7_2)
+	self:destroy_room(peer_id)
 end
 
-RoomManagerClient.get_spawn_point_by_peer = function (self, arg_8_1)
+RoomManagerClient.get_spawn_point_by_peer = function (self, peer_id)
 	-- function 8
-	return self._peer_rooms[arg_8_1].room_id
+	return self._peer_rooms[peer_id].room_id
 end

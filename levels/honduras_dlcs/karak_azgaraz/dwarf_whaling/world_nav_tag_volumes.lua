@@ -1,6 +1,6 @@
 -- chunkname: @levels/honduras_dlcs/karak_azgaraz/dwarf_whaling/world_nav_tag_volumes.lua
 
-local tbl = {
+local nav_tag_volumes = {
 	volume_046 = {
 		delay_nav_tag_volume_creation = true,
 		alt_max = 8.898602485656738,
@@ -1222,9 +1222,9 @@ local tbl = {
 		}
 	}
 }
-local str = "1"
+local version = "1"
 
 return {
-	version = str,
-	nav_tag_volumes = tbl
+	version = version,
+	nav_tag_volumes = nav_tag_volumes
 }

@@ -2,25 +2,25 @@
 
 local core = core
 
-core = core or {}
+core = not not core or not not {}
 core = core
 
 local core_2 = core
 local vis_modes = core.vis_modes
 
-vis_modes = vis_modes or {}
+vis_modes = not not vis_modes or not not {}
 core_2.vis_modes = vis_modes
 
-core.render_vis_on = function (arg_1_0)
+core.render_vis_on = function (settings)
 	-- function 1
-	for k, v in pairs(core.vis_modes) do
-		Application.set_render_setting(v, "false")
+	for _, viz_name in pairs(core.vis_modes) do
+		Application.set_render_setting(viz_name, "false")
 	end
 
-	for k_2, v_2 in pairs(arg_1_0) do
-		Application.set_render_setting(k_2, tostring(v_2))
-		print(k_2 .. ":" .. tostring(v_2))
+	for render_setting, value in pairs(settings) do
+		Application.set_render_setting(render_setting, tostring(value))
+		print(render_setting .. ":" .. tostring(value))
 
-		core.vis_modes[k_2] = k_2
+		core.vis_modes[render_setting] = render_setting
 	end
 end

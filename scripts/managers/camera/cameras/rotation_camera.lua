@@ -12,26 +12,26 @@ RotationCamera.init = function (self, ...)
 	self._offset_yaw = 0
 end
 
-local num = 0.005555555555555556
+local INV_180 = 0.005555555555555556
 
-RotationCamera.parse_parameters = function (self, arg_2_1, arg_2_2)
+RotationCamera.parse_parameters = function (self, camera_settings, parent_node)
 	-- function 2
-	BaseCamera.parse_parameters(self, arg_2_1, arg_2_2)
+	BaseCamera.parse_parameters(self, camera_settings, parent_node)
 
-	if not arg_2_1.offset_pitch then
-		self._offset_pitch = math.pi * arg_2_1.offset_pitch * num
+	if camera_settings.offset_pitch then
+		self._offset_pitch = math.pi * camera_settings.offset_pitch * INV_180
 	end
 
-	if not arg_2_1.offset_yaw then
-		self._offset_yaw = math.pi * arg_2_1.offset_yaw * num
+	if camera_settings.offset_yaw then
+		self._offset_yaw = math.pi * camera_settings.offset_yaw * INV_180
 	end
 end
 
-RotationCamera.update = function (self, arg_3_1, arg_3_2, arg_3_3, arg_3_4)
+RotationCamera.update = function (self, dt, position, rotation, data)
 	-- function 3
-	local var_3_0 = Quaternion(Vector3.up(), self._offset_yaw)
-	local var_3_1 = Quaternion(Vector3.right(), self._offset_pitch)
-	local multiply = Quaternion.multiply(Quaternion.multiply(arg_3_3, var_3_1), var_3_0)
+	local offset_yaw_rot = Quaternion(Vector3.up(), self._offset_yaw)
+	local offset_pitch_rot = Quaternion(Vector3.right(), self._offset_pitch)
+	local new_rot = Quaternion.multiply(Quaternion.multiply(rotation, offset_pitch_rot), offset_yaw_rot)
 
-	BaseCamera.update(self, arg_3_1, arg_3_2, multiply, arg_3_4)
+	BaseCamera.update(self, dt, position, new_rot, data)
 end

@@ -1,12 +1,19 @@
 -- chunkname: @scripts/settings/dlcs/carousel/carousel_ui_settings.lua
 
-local carousel = DLCSettings.carousel
+local settings = DLCSettings.carousel
+local UNASSIGNED_KEY_2 = UNASSIGNED_KEY
 
-if not UNASSIGNED_KEY then
-	local str = "unassigned_keymap"
+if not UNASSIGNED_KEY_2 then
+	-- Nothing
 end
 
-carousel.ui_views = {
+UNASSIGNED_KEY_2 = "unassigned_keymap"
+
+local UNASSIGNED_KEY = UNASSIGNED_KEY_2
+
+::label_0_0::
+
+settings.ui_views = {
 	{
 		file = "scripts/ui/views/versus_menu/base_view"
 	},
@@ -48,7 +55,7 @@ carousel.ui_views = {
 		}
 	}
 }
-carousel.ui_world_marker_templates = {
+settings.ui_world_marker_templates = {
 	"scripts/ui/hud_ui/world_marker_templates/world_marker_template_versus_hero_status",
 	"scripts/ui/hud_ui/world_marker_templates/world_marker_template_versus_objective",
 	"scripts/ui/hud_ui/world_marker_templates/world_marker_template_versus_climbing",
@@ -56,7 +63,7 @@ carousel.ui_world_marker_templates = {
 	"scripts/ui/hud_ui/world_marker_templates/world_marker_template_versus_crawl_spawning",
 	"scripts/ui/hud_ui/world_marker_templates/world_marker_template_versus_pactsworn_ghostmode"
 }
-carousel.ui_end_screens = {
+settings.ui_end_screens = {
 	carousel_round_end = {
 		file_name = "scripts/ui/views/end_screens/versus_round_end_screen_ui",
 		class_name = "VersusRoundEndScreenUI"
@@ -66,10 +73,10 @@ carousel.ui_end_screens = {
 		class_name = "VersusDrawEndScreenUI"
 	}
 }
-carousel.ui_materials = {
+settings.ui_materials = {
 	"materials/ui/ui_1080p_carousel_atlas"
 }
-carousel.ui_texture_settings = {
+settings.ui_texture_settings = {
 	filenames = {
 		"scripts/ui/atlas_settings/gui_carousel_atlas"
 	},
@@ -139,7 +146,7 @@ carousel.ui_texture_settings = {
 		"vs_info_ghost_catchup"
 	}
 }
-carousel.start_game_windows = {
+settings.start_game_windows = {
 	"scripts/ui/dlc_versus/views/start_game_view/windows/start_game_window_versus_panel",
 	"scripts/ui/dlc_versus/views/start_game_view/windows/start_game_window_versus_background",
 	"scripts/ui/dlc_versus/views/start_game_view/windows/start_game_window_versus_quickplay",
@@ -151,7 +158,7 @@ carousel.start_game_windows = {
 	"scripts/ui/dlc_versus/views/start_game_view/windows/start_game_window_versus_custom_game_settings",
 	"scripts/ui/dlc_versus/views/start_game_view/windows/start_game_window_versus_lobby_browser"
 }
-carousel.start_game_layout_console_generic_inputs = {
+settings.start_game_layout_console_generic_inputs = {
 	versus_default = {
 		ignore_generic_actions = true,
 		actions = {
@@ -427,20 +434,20 @@ carousel.start_game_layout_console_generic_inputs = {
 		}
 	}
 }
-carousel.start_game_save_data_table_map = {
+settings.start_game_save_data_table_map = {
 	versus = {
 		custom = "versus_custom",
 		quickplay = "versus_quickplay"
 	}
 }
 
-local versus = carousel.start_game_save_data_table_map.versus
+local versus_save_data_table_map = settings.start_game_save_data_table_map.versus
 
-carousel.start_game_save_data_table_map_console = table.clone(carousel.start_game_save_data_table_map)
+settings.start_game_save_data_table_map_console = table.clone(settings.start_game_save_data_table_map)
 
-local versus_2 = carousel.start_game_save_data_table_map_console.versus
+local versus_save_data_table_map_console = settings.start_game_save_data_table_map_console.versus
 
-carousel.start_game_window_layout_console = {
+settings.start_game_window_layout_console = {
 	windows = {
 		versus_panel = {
 			ignore_alignment = true,
@@ -512,11 +519,11 @@ carousel.start_game_window_layout_console = {
 				versus_quickplay = 3,
 				versus_background = 2
 			},
-			can_add_function = function (self)
+			can_add_function = function (overview)
 				-- function 4
-				return self:is_in_mechanism("versus")
+				return overview:is_in_mechanism("versus")
 			end,
-			save_data_table = versus_2.quickplay
+			save_data_table = versus_save_data_table_map_console.quickplay
 		},
 		{
 			sound_event_enter = "Play_vs_hud_play_menu_category",
@@ -535,11 +542,11 @@ carousel.start_game_window_layout_console = {
 				versus_background = 2,
 				versus_custom_game = 3
 			},
-			can_add_function = function (self)
+			can_add_function = function (overview)
 				-- function 5
-				return self:is_in_mechanism("versus")
+				return overview:is_in_mechanism("versus")
 			end,
-			save_data_table = versus_2.custom
+			save_data_table = versus_save_data_table_map_console.custom
 		},
 		{
 			sound_event_enter = "Play_vs_hud_play_menu_category",
@@ -554,11 +561,11 @@ carousel.start_game_window_layout_console = {
 				versus_background = 2,
 				versus_custom_game_settings = 4
 			},
-			can_add_function = function (self)
+			can_add_function = function (overview)
 				-- function 6
-				return self:is_in_mechanism("versus")
+				return overview:is_in_mechanism("versus")
 			end,
-			save_data_table = versus_2.custom
+			save_data_table = versus_save_data_table_map_console.custom
 		},
 		{
 			sound_event_enter = "play_gui_lobby_button_00_custom",
@@ -570,7 +577,7 @@ carousel.start_game_window_layout_console = {
 				background = 2,
 				versus_mission_selection = 3
 			},
-			save_data_table = versus_2.custom
+			save_data_table = versus_save_data_table_map_console.custom
 		},
 		{
 			sound_event_enter = "Play_vs_hud_play_menu_category",
@@ -585,15 +592,15 @@ carousel.start_game_window_layout_console = {
 				versus_background = 2,
 				versus_lobby_browser = 3
 			},
-			can_add_function = function (self)
+			can_add_function = function (overview)
 				-- function 7
-				local is_in_mechanism = self:is_in_mechanism("versus")
+				local is_in_mechanism = overview:is_in_mechanism("versus")
 
-				is_in_mechanism = not is_in_mechanism and not IS_XB1
+				is_in_mechanism = not not is_in_mechanism and not not not IS_XB1
 
 				return is_in_mechanism
 			end,
-			save_data_table = versus_2.lobby_browser
+			save_data_table = versus_save_data_table_map_console.lobby_browser
 		}
 	},
 	mechanism_quickplay_settings = {
@@ -610,7 +617,7 @@ carousel.start_game_window_layout_console = {
 		mechanism_name = "versus"
 	}
 }
-carousel.controller_settings = {
+settings.controller_settings = {
 	PlayerControllerKeymaps = {
 		win32 = {
 			ping_only_movement = {
@@ -621,8 +628,8 @@ carousel.controller_settings = {
 		}
 	}
 }
-carousel.hud_component_list_path = "scripts/ui/hud_ui/component_list_definitions/hud_component_list_versus"
-carousel.teams_ui_assets = {
+settings.hud_component_list_path = "scripts/ui/hud_ui/component_list_definitions/hud_component_list_versus"
+settings.teams_ui_assets = {
 	undecided = {
 		display_name = "versus_team_name_undecided",
 		team_icon = "icons_placeholder",
@@ -653,19 +660,19 @@ carousel.teams_ui_assets = {
 		background_texture = "team_icon_background"
 	}
 }
-carousel.ui_settings = {
-	teams_ui_assets = carousel.teams_ui_assets
+settings.ui_settings = {
+	teams_ui_assets = settings.teams_ui_assets
 }
-carousel.sides_localization_lookup = {
+settings.sides_localization_lookup = {
 	heroes = "vs_lobby_hero_team_name",
 	spectator = "not_assigned",
 	dark_pact = "vs_lobby_dark_pact_team_name"
 }
-carousel.hero_window_mood_settings = {
+settings.hero_window_mood_settings = {
 	default = "default",
 	pactsworn = "menu_versus"
 }
-carousel.hero_window_pactsworn_stats_by_name = {
+settings.hero_window_pactsworn_stats_by_name = {
 	vs_rat_ogre = {
 		{
 			"eliminations_as_breed",
@@ -745,29 +752,29 @@ carousel.hero_window_pactsworn_stats_by_name = {
 		}
 	}
 }
-carousel.stats_string_lookup = {
+settings.stats_string_lookup = {
 	damage_dealt_as_breed = "inventory_screen_compare_damage_tooltip",
 	vs_game_won = "not_assigned",
 	vs_hero_monster_kill = "not_assigned",
 	eliminations_as_breed = "vs_scoreboard_eliminations"
 }
-carousel.item_type_store_icons = {
+settings.item_type_store_icons = {
 	weapon_pose = "store_tag_icon_pose"
 }
-carousel.stats_icons_lookup = {
+settings.stats_icons_lookup = {
 	damage_dealt_as_breed = "icon_damage",
 	vs_game_won = "icons_placeholder",
 	vs_hero_monster_kill = "icons_placeholder",
 	eliminations_as_breed = "killfeed_icon_12"
 }
-carousel.custom_game_settigns_values_suffix = {
+settings.custom_game_settigns_values_suffix = {
 	percentage = "%",
 	multiplier = "x",
 	distance = " m",
 	time_seconds = " sec",
 	time_minutes = " min"
 }
-carousel.custom_game_ui_settings = {
+settings.custom_game_ui_settings = {
 	early_win_enabled = {
 		widget_type = "stepper",
 		localization_options = {

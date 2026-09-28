@@ -1,28 +1,28 @@
 -- chunkname: @scripts/managers/telemetry/telemetry_rpc_listener.lua
 
-local tbl = {
+local RPCS = {
 	"rpc_to_client_sync_session_id"
 }
 
 TelemetryRPCListener = class(TelemetryRPCListener)
 
-TelemetryRPCListener.init = function (self, arg_1_1)
+TelemetryRPCListener.init = function (self, events)
 	-- function 1
-	self._events = arg_1_1
+	self._events = events
 end
 
-TelemetryRPCListener.register = function (arg_2_0, arg_2_1)
+TelemetryRPCListener.register = function (self, network_event_delegate)
 	-- function 2
-	arg_2_1:register(arg_2_0, unpack(tbl))
+	network_event_delegate:register(self, unpack(RPCS))
 end
 
-TelemetryRPCListener.unregister = function (arg_3_0, arg_3_1)
+TelemetryRPCListener.unregister = function (self, network_event_delegate)
 	-- function 3
-	arg_3_1:unregister(arg_3_0)
+	network_event_delegate:unregister(self)
 end
 
-TelemetryRPCListener.rpc_to_client_sync_session_id = function (self, arg_4_1, arg_4_2)
+TelemetryRPCListener.rpc_to_client_sync_session_id = function (self, channel_id, session_id)
 	-- function 4
-	print("[TelemetryRPCListener] Receiving session id from server", arg_4_2)
-	self._events:server_session_id(arg_4_2)
+	print("[TelemetryRPCListener] Receiving session id from server", session_id)
+	self._events:server_session_id(session_id)
 end

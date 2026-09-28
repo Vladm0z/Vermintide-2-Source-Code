@@ -1,6 +1,6 @@
 -- chunkname: @levels/honduras_dlcs/divine/dlc_reikwald_river/world_nav_tag_volumes.lua
 
-local tbl = {
+local nav_tag_volumes = {
 	volume_navtag_29 = {
 		delay_nav_tag_volume_creation = false,
 		alt_max = 15.274038314819336,
@@ -2156,9 +2156,9 @@ local tbl = {
 		}
 	}
 }
-local str = "1"
+local version = "1"
 
 return {
-	version = str,
-	nav_tag_volumes = tbl
+	version = version,
+	nav_tag_volumes = nav_tag_volumes
 }

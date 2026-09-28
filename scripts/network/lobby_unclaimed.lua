@@ -2,37 +2,37 @@
 
 LobbyUnclaimed = class(LobbyUnclaimed)
 
-LobbyUnclaimed.init = function (arg_1_0)
+LobbyUnclaimed.init = function (self)
 	-- function 1
 	return
 end
 
-LobbyUnclaimed.update = function (arg_2_0, arg_2_1, arg_2_2)
+LobbyUnclaimed.update = function (self, dt, t)
 	-- function 2
 	return
 end
 
-LobbyUnclaimed._handle_state = function (arg_3_0, arg_3_1, arg_3_2)
+LobbyUnclaimed._handle_state = function (self, dt, t)
 	-- function 3
 	return
 end
 
-LobbyUnclaimed._handle_hosting = function (arg_4_0, arg_4_1, arg_4_2)
+LobbyUnclaimed._handle_hosting = function (self, dt, t)
 	-- function 4
 	return
 end
 
-LobbyUnclaimed.lobby = function (arg_5_0)
+LobbyUnclaimed.lobby = function (self)
 	-- function 5
 	return
 end
 
-LobbyUnclaimed.is_host = function (arg_6_0)
+LobbyUnclaimed.is_host = function (self)
 	-- function 6
 	return
 end
 
-LobbyUnclaimed.unregister_rpcs = function (arg_7_0)
+LobbyUnclaimed.unregister_rpcs = function (self)
 	-- function 7
 	return
 end

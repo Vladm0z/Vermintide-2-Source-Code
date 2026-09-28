@@ -1,57 +1,57 @@
 -- chunkname: @foundation/scripts/util/verify_plugins.lua
 
-if not ((true or not IS_WINDOWS) and BUILD ~= "release") then
-	local all_plugin_names = Application.all_plugin_names()
-	local tbl = {
+if false and IS_WINDOWS and BUILD == "release" then
+	local loaded_plugins = Application.all_plugin_names()
+	local plugin_check_list = {
 		"fishtank",
 		"navigation",
 		"rule database",
 		"wwise_plugin"
 	}
 
-	local function fn(arg_1_0, arg_1_1)
+	local function find_in_array(t, element)
 		-- function 1
-		for k, v in pairs(arg_1_0) do
-			if v == arg_1_1 then
-				return k
+		for key, value in pairs(t) do
+			if value == element then
+				return key
 			end
 		end
 
 		return false
 	end
 
-	local str = ""
-	local num = 0
+	local missing_plugins = ""
+	local num_missing = 0
 
-	for i = 1, #tbl do
-		local var_0_5 = tbl[i]
+	for i = 1, #plugin_check_list do
+		local plugin_name = plugin_check_list[i]
 
-		if not fn(all_plugin_names, var_0_5) then
-			print("-> " .. var_0_5 .. " plugin has been loaded.")
+		if find_in_array(loaded_plugins, plugin_name) then
+			print("-> " .. plugin_name .. " plugin has been loaded.")
 		else
-			str = num ~= 0 or not var_0_5 or str .. ", " .. var_0_5
-			num = num + 1
+			missing_plugins = (num_missing ~= 0 or not plugin_name) and not not (missing_plugins .. ", " .. plugin_name)
+			num_missing = num_missing + 1
 		end
 	end
 
-	if num > 0 then
-		local var_0_6
+	if num_missing > 0 then
+		local error_string
 
-		if num > 1 then
-			var_0_6 = string.format("Game could not load the following plugins: %s. Missing files. Please verify game integrity of game cache in steam, or delete local content and download game again.", str)
+		if num_missing > 1 then
+			error_string = string.format("Game could not load the following plugins: %s. Missing files. Please verify game integrity of game cache in steam, or delete local content and download game again.", missing_plugins)
 		else
-			var_0_6 = string.format("Game could not load %s plugin. Missing files. Please verify game integrity of game cache in steam, or delete local content and download game again.", str)
+			error_string = string.format("Game could not load %s plugin. Missing files. Please verify game integrity of game cache in steam, or delete local content and download game again.", missing_plugins)
 		end
 
-		if not rawget(_G, "jit") then
+		if rawget(_G, "jit") then
 			local ffi = require("ffi")
 
 			ffi.cdef("\t\t\t\n\t\t\tint MessageBoxA(void *w, const char *txt, const char *cap, int type);\n\t\t\t")
 
-			local num_2 = 0
-			local MessageBoxA = ffi.C.MessageBoxA(nil, var_0_6, "Missing Plugin/Files Error", num_2)
+			local MB_OK = 0
+			local result = ffi.C.MessageBoxA(nil, error_string, "Missing Plugin/Files Error", MB_OK)
 		end
 
-		error(var_0_6)
+		error(error_string)
 	end
 end

@@ -4,11 +4,11 @@ require("scripts/managers/world_interaction/world_interaction_settings")
 
 WorldInteractionManager = class(WorldInteractionManager)
 
-local tbl = {}
+local ENEMIES = {}
 
-WorldInteractionManager.init = function (self, arg_1_1)
+WorldInteractionManager.init = function (self, world)
 	-- function 1
-	self._world = arg_1_1
+	self._world = world
 	self._water_timer = 0
 	self._water_ripples = {}
 	self._units = {}
@@ -21,238 +21,252 @@ WorldInteractionManager._setup_gui = function (self)
 	self._gui = World.create_screen_gui(self._world, "material", "materials/world_interaction/world_interaction", "immediate")
 end
 
-WorldInteractionManager.add_world_interaction = function (self, arg_3_1, arg_3_2)
+WorldInteractionManager.add_world_interaction = function (self, material, unit)
 	-- function 3
-	self:remove_world_interaction(arg_3_2, arg_3_1)
+	self:remove_world_interaction(unit, material)
 
 	local _units = self._units
-	local var_3_1 = self._units[arg_3_1]
+	local var_3_1 = self._units[material]
 
-	var_3_1 = var_3_1 or {}
-	_units[arg_3_1] = var_3_1
+	var_3_1 = not not var_3_1 or not not {}
+	_units[material] = var_3_1
 
-	local var_3_2 = self._units[arg_3_1]
-	local var_3_3 = self._units[arg_3_1][arg_3_2]
+	local var_3_2 = self._units[material]
+	local var_3_3 = self._units[material][unit]
 
-	var_3_3 = var_3_3 or Managers.time:time("game")
-	var_3_2[arg_3_2] = var_3_3
+	var_3_3 = not not var_3_3 or not not Managers.time:time("game")
+	var_3_2[unit] = var_3_3
 end
 
-WorldInteractionManager.remove_world_interaction = function (self, arg_4_1, arg_4_2)
+WorldInteractionManager.remove_world_interaction = function (self, unit, material_to_ignore)
 	-- function 4
-	for k, v in pairs(self._units) do
-		if not (not arg_4_2 and arg_4_2 == k) then
-			v[arg_4_1] = nil
+	for material, units in pairs(self._units) do
+		if not material_to_ignore or material_to_ignore ~= material then
+			units[unit] = nil
 		end
 	end
 end
 
-WorldInteractionManager._add_water_ripple = function (arg_5_0, arg_5_1, arg_5_2, arg_5_3, arg_5_4, arg_5_5, arg_5_6, arg_5_7, arg_5_8)
+WorldInteractionManager._add_water_ripple = function (self, pos, angle, material, random_size_diff, stretch_multiplier, ref_time, size, multiplier)
 	-- function 5
-	local water = WorldInteractionSettings.water
-	local random_ripple_size_diff = water.random_ripple_size_diff
+	local water_settings = WorldInteractionSettings.water
+	local random_ripple_size_diff = water_settings.random_ripple_size_diff
 
-	arg_5_0._water_ripples[#arg_5_0._water_ripples + 1] = {
+	self._water_ripples[#self._water_ripples + 1] = {
 		timer = 0,
-		pos = Vector3Box(arg_5_1),
+		pos = Vector3Box(pos),
 		size_variable = 1 - random_ripple_size_diff * 0.5 + Math.random() * random_ripple_size_diff,
-		angle = arg_5_2,
-		material = arg_5_3 or water.default_ripple_material,
-		stretch_multiplier = arg_5_5,
-		ref_time = arg_5_6,
-		default_size = arg_5_7,
-		multiplier = arg_5_8
+		angle = angle,
+		material = not not material or not not water_settings.default_ripple_material,
+		stretch_multiplier = stretch_multiplier,
+		ref_time = ref_time,
+		default_size = size,
+		multiplier = multiplier
 	}
 end
 
-WorldInteractionManager.add_simple_effect = function (self, arg_6_1, arg_6_2, arg_6_3, arg_6_4)
+WorldInteractionManager.add_simple_effect = function (self, material, hit_unit, position, unit)
 	-- function 6
-	local local_player = Managers.player:local_player()
-	local flag = not local_player and local_player.player_unit
+	local player_manager = Managers.player
+	local local_player = player_manager:local_player()
+	local player_unit = not not local_player and not not local_player.player_unit
 
-	if not Unit.alive(flag) then
-		local var_6_2 = WorldInteractionSettings[arg_6_1]
-		local num = math.clamp(var_6_2.window_size, 1, 100) * 0.5
-		local var_6_4 = POSITION_LOOKUP[flag]
+	if Unit.alive(player_unit) then
+		local material_settings = WorldInteractionSettings[material]
+		local window_size = math.clamp(material_settings.window_size, 1, 100)
+		local window_distance = window_size * 0.5
+		local player_pos = POSITION_LOOKUP[player_unit]
 
-		if Vector3.distance_squared(var_6_4, arg_6_3) < num * num then
-			self["_add_simple_" .. arg_6_1 .. "_effect"](self, arg_6_2, arg_6_3, arg_6_4)
+		if Vector3.distance_squared(player_pos, position) < window_distance * window_distance then
+			self["_add_simple_" .. material .. "_effect"](self, hit_unit, position, unit)
 		end
 	end
 end
 
-WorldInteractionManager._add_simple_water_effect = function (self, arg_7_1, arg_7_2, arg_7_3)
+WorldInteractionManager._add_simple_water_effect = function (self, hit_unit, position, unit)
 	-- function 7
-	local water = WorldInteractionSettings.water
+	local water_settings = WorldInteractionSettings.water
 	local default_unit_water
 
-	if not arg_7_3 then
-		default_unit_water = water.default_unit_water
+	if unit then
+		default_unit_water = water_settings.default_unit_water
 
 		if not default_unit_water then
 			-- Nothing
 		end
 	end
 
-	default_unit_water = water.default_water
+	default_unit_water = water_settings.default_water
+
+	local water_type_settings = default_unit_water
 
 	::label_7_0::
 
-	local default_material = default_unit_water.default_material
-	local clamp = math.clamp(water.window_size, 1, 100)
-	local stretch_multiplier = default_unit_water.stretch_multiplier
-	local multiplier = default_unit_water.multiplier
-	local timer_ref = default_unit_water.timer_ref
-	local random_size_diff = default_unit_water.random_size_diff
+	local material = water_type_settings.default_material
+	local window_size = math.clamp(water_settings.window_size, 1, 100)
+	local stretch_multiplier = water_type_settings.stretch_multiplier
+	local multiplier = water_type_settings.multiplier
+	local timer_ref = water_type_settings.timer_ref
+	local random_size_diff = water_type_settings.random_size_diff
 	local local_player = Managers.player:local_player()
-	local flag = not local_player and local_player.player_unit
+	local player_unit = not not local_player and not not local_player.player_unit
 
-	if not Unit.alive(flag) then
-		local num = clamp * 0.5
-		local var_7_11 = POSITION_LOOKUP[flag]
-		local start_size = default_unit_water.start_size
+	if Unit.alive(player_unit) then
+		local window_distance = window_size * 0.5
+		local player_pos = POSITION_LOOKUP[player_unit]
+		local start_size = water_type_settings.start_size
 
-		if Vector3.distance_squared(arg_7_2, var_7_11) < num * num then
-			self:_add_water_ripple(arg_7_2, 0, default_material, random_size_diff, stretch_multiplier, timer_ref, start_size, multiplier)
+		if Vector3.distance_squared(position, player_pos) < window_distance * window_distance then
+			self:_add_water_ripple(position, 0, material, random_size_diff, stretch_multiplier, timer_ref, start_size, multiplier)
 		end
 	end
 end
 
-WorldInteractionManager.update = function (self, arg_8_1, arg_8_2)
+WorldInteractionManager.update = function (self, dt, t)
 	-- function 8
-	if not Managers.state.network:game() then
-		self:_update_water(arg_8_1, arg_8_2)
-		self:_update_foliage(arg_8_1, arg_8_2)
+	if Managers.state.network:game() then
+		self:_update_water(dt, t)
+		self:_update_foliage(dt, t)
 	end
 end
 
-WorldInteractionManager._update_water = function (self, arg_9_1, arg_9_2)
+WorldInteractionManager._update_water = function (self, dt, t)
 	-- function 9
-	local water = self._units.water
+	local available_units = self._units.water
 	local local_player = Managers.player:local_player()
-	local flag = not local_player and local_player.player_unit
+	local player_unit = not not local_player and not not local_player.player_unit
 
-	if not Unit.alive(flag) and (#self._water_ripples > 0 or not water or not next(water)) then
+	if Unit.alive(player_unit) and (#self._water_ripples > 0 or available_units and next(available_units)) then
 		self:_cleanup_removed_units()
-		self:_update_water_data(arg_9_1, arg_9_2)
-		self:_update_water_ripples(arg_9_1, arg_9_2)
+		self:_update_water_data(dt, t)
+		self:_update_water_ripples(dt, t)
 	end
 end
 
-local tbl_2 = {}
+local UNITS_TO_REMOVE = {}
 
 WorldInteractionManager._cleanup_removed_units = function (self)
 	-- function 10
-	local unit_death_watch_lookup = Managers.state.spawn.unit_spawner.unit_death_watch_lookup
+	local spawn_manager = Managers.state.spawn
+	local unit_spawner = spawn_manager.unit_spawner
+	local death_watch_lookup = unit_spawner.unit_death_watch_lookup
 
-	table.clear(tbl_2)
+	table.clear(UNITS_TO_REMOVE)
 
-	for k, v in pairs(self._units) do
-		for k_2, v_2 in pairs(v) do
-			if not Unit.alive(k_2) and not unit_death_watch_lookup[k_2] then
-				tbl_2[#tbl_2 + 1] = k_2
+	for material, units in pairs(self._units) do
+		for unit, _ in pairs(units) do
+			if not Unit.alive(unit) or death_watch_lookup[unit] then
+				UNITS_TO_REMOVE[#UNITS_TO_REMOVE + 1] = unit
 			end
 		end
 	end
 
-	for k_3, v_3 in pairs(self._units) do
-		for i, v_4 in ipairs(tbl_2) do
-			v_3[v_4] = nil
+	for material, units in pairs(self._units) do
+		for _, unit in ipairs(UNITS_TO_REMOVE) do
+			units[unit] = nil
 		end
 	end
 end
 
-local tbl_3 = {}
+local COLLECTED_UNITS = {}
 
-WorldInteractionManager._update_water_data = function (self, arg_11_1, arg_11_2)
+WorldInteractionManager._update_water_data = function (self, dt, t)
 	-- function 11
-	local water = WorldInteractionSettings.water
-	local clamp = math.clamp(water.window_size, 1, 100)
-	local water_speed_limit = water.water_speed_limit
-	local ripple_time_step = water.ripple_time_step
-	local max_contributing_units = water.max_contributing_units
+	local water_settings = WorldInteractionSettings.water
+	local window_size = math.clamp(water_settings.window_size, 1, 100)
+	local speed_limit = water_settings.water_speed_limit
+	local ripple_time_step = water_settings.ripple_time_step
+	local max_contributing_units = water_settings.max_contributing_units
 	local _water_timer = self._water_timer
 
-	_water_timer = _water_timer or 0
+	_water_timer = not not _water_timer or not not 0
 	self._water_timer = _water_timer
 
-	local num = 1
+	local current_index = 1
 
 	if ripple_time_step <= self._water_timer then
-		local water_2 = self._units.water
+		local available_units = self._units.water
 		local local_player = Managers.player:local_player()
-		local flag = not local_player and local_player.player_unit
-		local num_2 = clamp * 0.5
-		local var_11_11 = POSITION_LOOKUP[flag]
+		local player_unit = not not local_player and not not local_player.player_unit
+		local window_distance = window_size * 0.5
+		local player_pos = POSITION_LOOKUP[player_unit]
 
-		if not Unit.alive(flag) and not water_2 and not next(water_2) then
+		if Unit.alive(player_unit) and available_units and next(available_units) then
 			local players = Managers.player:players()
 
-			for k, v in pairs(players) do
-				local player_unit = v.player_unit
+			for _, player in pairs(players) do
+				local unit = player.player_unit
 
-				if not water_2[player_unit] then
-					local var_11_14 = POSITION_LOOKUP[player_unit]
+				if available_units[unit] then
+					local unit_pos = POSITION_LOOKUP[unit]
 
-					if not (not var_11_14 and not (Vector3.distance_squared(var_11_14, var_11_11) < num_2 * num_2)) then
-						tbl_3[num] = player_unit
-						num = num + 1
+					if unit_pos and Vector3.distance_squared(unit_pos, player_pos) < window_distance * window_distance then
+						COLLECTED_UNITS[current_index] = unit
+						current_index = current_index + 1
 					end
 				end
 			end
 
-			local broadphase = Managers.state.entity:system("ai_system").broadphase
-			local query = Broadphase.query(broadphase, var_11_11, clamp * 0.5, tbl)
+			local ai_broadphase = Managers.state.entity:system("ai_system").broadphase
+			local num_enemies = Broadphase.query(ai_broadphase, player_pos, window_size * 0.5, ENEMIES)
 
-			for k_2 = 1, query do
-				local var_11_17 = tbl[k_2]
+			for i = 1, num_enemies do
+				local unit = ENEMIES[i]
 
-				if not water_2[var_11_17] then
-					tbl_3[num] = var_11_17
-					num = num + 1
+				if available_units[unit] then
+					COLLECTED_UNITS[current_index] = unit
+					current_index = current_index + 1
 				end
 			end
 
-			local var_11_18 = Vector3(0, 0, 0)
-			local num_3 = water_speed_limit * water_speed_limit
-			local num_4 = 0
+			local origo = Vector3(0, 0, 0)
+			local speed_limit_squared = speed_limit * speed_limit
+			local contributing_units = 0
 
-			for l = 1, num - 1 do
-				local var_11_21 = tbl_3[l]
+			for i = 1, current_index - 1 do
+				local unit = COLLECTED_UNITS[i]
 
-				if not Unit.alive(var_11_21) then
-					local has_extension = ScriptUnit.has_extension(var_11_21, "locomotion_system")
+				if Unit.alive(unit) then
+					local locomotion_ext = ScriptUnit.has_extension(unit, "locomotion_system")
 
-					if not has_extension then
-						local current_velocity = has_extension.current_velocity
+					if locomotion_ext then
+						local current_velocity = locomotion_ext.current_velocity
 
-						current_velocity = not current_velocity and has_extension:current_velocity()
+						if current_velocity then
+							-- Nothing
+						end
 
-						if not (not current_velocity and not (num_3 < Vector3.distance_squared(Vector3.flat(current_velocity), var_11_18))) then
-							local normalize = Vector3.normalize(Vector3(current_velocity[1], current_velocity[2], 0))
-							local dot = Vector3.dot(normalize, Vector3(0, 1, 0))
-							local clamp_2 = math.clamp(dot, -1, 1)
-							local acos = math.acos(clamp_2)
-							local flag_2
+						current_velocity = locomotion_ext:current_velocity()
 
-							flag_2 = not (normalize[1] < 0) or not 1 or -1
+						local dir = current_velocity
 
-							local num_5 = acos * flag_2
-							local var_11_30 = POSITION_LOOKUP[var_11_21]
+						::label_11_0::
 
-							if num_5 == num_5 then
-								self:_add_water_ripple(var_11_30, num_5)
+						if dir and speed_limit_squared < Vector3.distance_squared(Vector3.flat(dir), origo) then
+							local flat_dir = Vector3.normalize(Vector3(dir[1], dir[2], 0))
+							local dot_value = Vector3.dot(flat_dir, Vector3(0, 1, 0))
+							local safe_dot_value = math.clamp(dot_value, -1, 1)
+							local acos = math.acos(safe_dot_value)
+							local flag
 
-								num_4 = num_4 + 1
+							flag = (not (flat_dir[1] < 0) or not 1) and not not -1
 
-								if max_contributing_units <= num_4 then
+							local angle = acos * flag
+							local pos = POSITION_LOOKUP[unit]
+
+							if angle == angle then
+								self:_add_water_ripple(pos, angle)
+
+								contributing_units = contributing_units + 1
+
+								if max_contributing_units <= contributing_units then
 									break
-								elseif arg_11_2 > water_2[var_11_21] then
-									local make_position_auto_source, var_11_32 = WwiseUtils.make_position_auto_source(self._world, var_11_30)
+								elseif t > available_units[unit] then
+									local wwise_source_id, wwise_world = WwiseUtils.make_position_auto_source(self._world, pos)
 
-									WwiseWorld.trigger_event(var_11_32, water.ripple_sound_event, make_position_auto_source)
+									WwiseWorld.trigger_event(wwise_world, water_settings.ripple_sound_event, wwise_source_id)
 
-									water_2[var_11_21] = Managers.time:time("game") + water.ripple_sound_event_delay
+									available_units[unit] = Managers.time:time("game") + water_settings.ripple_sound_event_delay
 								end
 							end
 						end
@@ -264,187 +278,223 @@ WorldInteractionManager._update_water_data = function (self, arg_11_1, arg_11_2)
 		end
 	end
 
-	self._water_timer = self._water_timer + arg_11_1
+	self._water_timer = self._water_timer + dt
 end
 
-local tbl_4 = {}
+local DATA_TO_REMOVE = {}
 
-WorldInteractionManager._update_water_ripples = function (self, arg_12_1, arg_12_2)
+WorldInteractionManager._update_water_ripples = function (self, dt, t)
 	-- function 12
-	table.clear(tbl_4)
+	table.clear(DATA_TO_REMOVE)
 
-	local water = WorldInteractionSettings.water
-	local default_ripple_material = water.default_ripple_material
-	local default_ripple_start_size = water.default_ripple_start_size
-	local default_ripple_multiplier = water.default_ripple_multiplier
-	local default_ripple_timer = water.default_ripple_timer
-	local duplicate_edge_cases = water.duplicate_edge_cases
-	local ripple_stretch_multiplier = water.ripple_stretch_multiplier
-	local resolution, var_12_8 = Gui.resolution()
-	local clamp = math.clamp(water.window_size, 1, 100)
-	local num = 0
-	local var_12_11
-	local count = #self._water_ripples
+	local water_settings = WorldInteractionSettings.water
+	local default_ripple_material = water_settings.default_ripple_material
+	local default_ripple_start_size = water_settings.default_ripple_start_size
+	local default_ripple_multiplier = water_settings.default_ripple_multiplier
+	local default_ripple_timer = water_settings.default_ripple_timer
+	local duplicate_edge_cases = water_settings.duplicate_edge_cases
+	local ripple_stretch_multiplier = water_settings.ripple_stretch_multiplier
+	local w, h = Gui.resolution()
+	local window_size = math.clamp(water_settings.window_size, 1, 100)
+	local counter = 0
+	local water_data
+	local num_water_data = #self._water_ripples
 
-	for i = 1, count do
-		local var_12_13 = self._water_ripples[i]
-		local ref_time = var_12_13.ref_time
+	for idx = 1, num_water_data do
+		water_data = self._water_ripples[idx]
 
-		ref_time = ref_time or default_ripple_timer
+		local ref_time_2 = water_data.ref_time
 
-		local unbox = var_12_13.pos:unbox()
-		local stretch_multiplier = var_12_13.stretch_multiplier
+		if not ref_time_2 then
+			-- Nothing
+		end
 
-		stretch_multiplier = stretch_multiplier or ripple_stretch_multiplier
+		ref_time_2 = default_ripple_timer
 
-		local multiplier = var_12_13.multiplier
+		local ref_time = ref_time_2
 
-		multiplier = multiplier or default_ripple_multiplier
+		::label_12_0::
 
-		local default_size = var_12_13.default_size
+		local pos = water_data.pos:unbox()
+		local stretch_multiplier_2 = water_data.stretch_multiplier
 
-		default_size = default_size or default_ripple_start_size
+		if not stretch_multiplier_2 then
+			-- Nothing
+		end
 
-		local var_12_19 = default_size[1]
-		local size_variable = var_12_13.size_variable
+		stretch_multiplier_2 = ripple_stretch_multiplier
 
-		size_variable = size_variable or 0
+		local stretch_multiplier = stretch_multiplier_2
 
-		local num_2 = var_12_19 * size_variable
-		local easeOutCubic = math.easeOutCubic(var_12_13.timer / ref_time)
-		local lerp = math.lerp(num_2, num_2 * multiplier, easeOutCubic)
-		local var_12_24 = Vector2(unbox[1] % clamp, unbox[2] % clamp)
-		local var_12_25 = Vector2(var_12_24[1] / clamp, var_12_24[2] / clamp)
-		local var_12_26 = Vector3(var_12_25[1] * resolution, var_12_8 - var_12_25[2] * var_12_8, 0)
-		local var_12_27 = Vector2(lerp * stretch_multiplier[1] / clamp * resolution, lerp * stretch_multiplier[2] / clamp * var_12_8)
-		local num_3 = 50
-		local angle = var_12_13.angle
-		local num_4 = var_12_26 - var_12_27 * 0.5
-		local var_12_31 = Rotation2D(Vector3(0, 0, 0), angle, num_4 + var_12_27 * 0.5)
-		local num_5 = 1 - math.pow(var_12_13.timer / ref_time, 3)
-		local num_6 = (1 - easeOutCubic) * 255
+		::label_12_1::
 
-		Gui.bitmap_3d(self._gui, var_12_13.material, var_12_31, num_4, num_3, var_12_27, Color(num_6, 255, 255, 255))
+		local multiplier_2 = water_data.multiplier
 
-		num = num + 1
+		if not multiplier_2 then
+			-- Nothing
+		end
 
-		if not duplicate_edge_cases then
-			if num_4.x < 0 then
-				local num_7 = num_4 + Vector3(resolution, 0, 0)
-				local var_12_35 = Rotation2D(Vector3(0, 0, 0), angle, num_7 + var_12_27 * 0.5)
+		multiplier_2 = default_ripple_multiplier
 
-				Gui.bitmap_3d(self._gui, var_12_13.material, var_12_35, num_7, num_3, var_12_27, Color(num_6, 255, 255, 255))
+		local multiplier = multiplier_2
 
-				num = num + 1
-			elseif resolution < num_4.x + var_12_27.x then
-				local num_8 = num_4 + Vector3(-resolution, 0, 0)
-				local var_12_37 = Rotation2D(Vector3(0, 0, 0), angle, num_8 + var_12_27 * 0.5)
+		::label_12_2::
 
-				Gui.bitmap_3d(self._gui, var_12_13.material, var_12_37, num_8, num_3, var_12_27, Color(num_6, 255, 255, 255))
+		local default_size_2 = water_data.default_size
 
-				num = num + 1
+		if not default_size_2 then
+			-- Nothing
+		end
+
+		default_size_2 = default_ripple_start_size
+
+		local default_size = default_size_2
+
+		::label_12_3::
+
+		local var_12_4 = default_size[1]
+		local size_variable = water_data.size_variable
+
+		size_variable = not not size_variable or not not 0
+
+		local start_size = var_12_4 * size_variable
+		local t = math.easeOutCubic(water_data.timer / ref_time)
+		local size = math.lerp(start_size, start_size * multiplier, t)
+		local relative_world_pos = Vector2(pos[1] % window_size, pos[2] % window_size)
+		local relative_texture_pos = Vector2(relative_world_pos[1] / window_size, relative_world_pos[2] / window_size)
+		local relative_screen_pos = Vector3(relative_texture_pos[1] * w, h - relative_texture_pos[2] * h, 0)
+		local relative_texture_size = Vector2(size * stretch_multiplier[1] / window_size * w, size * stretch_multiplier[2] / window_size * h)
+		local layer = 50
+		local angle = water_data.angle
+		local realtive_start_pos = relative_screen_pos - relative_texture_size * 0.5
+		local tm = Rotation2D(Vector3(0, 0, 0), angle, realtive_start_pos + relative_texture_size * 0.5)
+		local value = 1 - math.pow(water_data.timer / ref_time, 3)
+
+		value = 1 - t
+
+		local alpha = value * 255
+
+		Gui.bitmap_3d(self._gui, water_data.material, tm, realtive_start_pos, layer, relative_texture_size, Color(alpha, 255, 255, 255))
+
+		counter = counter + 1
+
+		if duplicate_edge_cases then
+			if realtive_start_pos.x < 0 then
+				local offset = realtive_start_pos + Vector3(w, 0, 0)
+				local tm = Rotation2D(Vector3(0, 0, 0), angle, offset + relative_texture_size * 0.5)
+
+				Gui.bitmap_3d(self._gui, water_data.material, tm, offset, layer, relative_texture_size, Color(alpha, 255, 255, 255))
+
+				counter = counter + 1
+			elseif w < realtive_start_pos.x + relative_texture_size.x then
+				local offset = realtive_start_pos + Vector3(-w, 0, 0)
+				local tm = Rotation2D(Vector3(0, 0, 0), angle, offset + relative_texture_size * 0.5)
+
+				Gui.bitmap_3d(self._gui, water_data.material, tm, offset, layer, relative_texture_size, Color(alpha, 255, 255, 255))
+
+				counter = counter + 1
 			end
 
-			if num_4.y < 0 then
-				local num_9 = num_4 + Vector3(0, var_12_8, 0)
-				local var_12_39 = Rotation2D(Vector3(0, 0, 0), angle, num_9 + var_12_27 * 0.5)
+			if realtive_start_pos.y < 0 then
+				local offset = realtive_start_pos + Vector3(0, h, 0)
+				local tm = Rotation2D(Vector3(0, 0, 0), angle, offset + relative_texture_size * 0.5)
 
-				Gui.bitmap_3d(self._gui, var_12_13.material, var_12_39, num_9, num_3, var_12_27, Color(num_6, 255, 255, 255))
+				Gui.bitmap_3d(self._gui, water_data.material, tm, offset, layer, relative_texture_size, Color(alpha, 255, 255, 255))
 
-				num = num + 1
-			elseif var_12_8 < num_4.y + var_12_27.x then
-				local num_10 = num_4 + Vector3(0, -var_12_8, 0)
-				local var_12_41 = Rotation2D(Vector3(0, 0, 0), angle, num_10 + var_12_27 * 0.5)
+				counter = counter + 1
+			elseif h < realtive_start_pos.y + relative_texture_size.x then
+				local offset = realtive_start_pos + Vector3(0, -h, 0)
+				local tm = Rotation2D(Vector3(0, 0, 0), angle, offset + relative_texture_size * 0.5)
 
-				Gui.bitmap_3d(self._gui, var_12_13.material, var_12_41, num_10, num_3, var_12_27, Color(num_6, 255, 255, 255))
+				Gui.bitmap_3d(self._gui, water_data.material, tm, offset, layer, relative_texture_size, Color(alpha, 255, 255, 255))
 
-				num = num + 1
+				counter = counter + 1
 			end
 		end
 
-		var_12_13.timer = var_12_13.timer + arg_12_1
+		water_data.timer = water_data.timer + dt
 
-		if ref_time <= var_12_13.timer then
-			tbl_4[#tbl_4 + 1] = i
+		if ref_time <= water_data.timer then
+			DATA_TO_REMOVE[#DATA_TO_REMOVE + 1] = idx
 		end
 	end
 
-	for j = #tbl_4, 1, -1 do
-		local var_12_42 = tbl_4[j]
+	for i = #DATA_TO_REMOVE, 1, -1 do
+		local idx = DATA_TO_REMOVE[i]
 
-		table.remove(self._water_ripples, var_12_42)
+		table.remove(self._water_ripples, idx)
 	end
 end
 
-WorldInteractionManager._update_foliage = function (self, arg_13_1, arg_13_2)
+WorldInteractionManager._update_foliage = function (self, dt, t)
 	-- function 13
 	local local_player = Managers.player:local_player()
-	local flag = not local_player and local_player.player_unit
+	local local_player_unit = not not local_player and not not local_player.player_unit
 
-	if not Unit.alive(flag) then
-		self:_update_foliage_players(arg_13_1, arg_13_2)
-		self:_update_foliage_ai(flag, arg_13_1, arg_13_2)
+	if Unit.alive(local_player_unit) then
+		self:_update_foliage_players(dt, t)
+		self:_update_foliage_ai(local_player_unit, dt, t)
 	end
 end
 
-local tbl_5 = {}
+local TEXTURE_SIZE = {}
 
-WorldInteractionManager._update_foliage_players = function (self, arg_14_1, arg_14_2)
+WorldInteractionManager._update_foliage_players = function (self, dt, t)
 	-- function 14
-	local foliage = WorldInteractionSettings.foliage
-	local default_foliage_material = foliage.default_foliage_material
-	local clamp = math.clamp(foliage.window_size, 1, 100)
-	local default_texture_world_size = foliage.default_texture_world_size
-	local duplicate_edge_cases = foliage.duplicate_edge_cases
-	local local_player_multiplier = foliage.local_player_multiplier
+	local foliage_settings = WorldInteractionSettings.foliage
+	local material_name = foliage_settings.default_foliage_material
+	local window_size = math.clamp(foliage_settings.window_size, 1, 100)
+	local texture_world_size = foliage_settings.default_texture_world_size
+	local duplicate_edge_cases = foliage_settings.duplicate_edge_cases
+	local local_player_multiplier = foliage_settings.local_player_multiplier
 	local players = Managers.player:players()
-	local resolution, var_14_8 = Gui.resolution()
+	local w, h = Gui.resolution()
 
-	for k, v in pairs(players) do
-		local player_unit = v.player_unit
-		local var_14_10 = POSITION_LOOKUP[player_unit]
+	for _, player in pairs(players) do
+		local player_unit = player.player_unit
+		local unit_pos = POSITION_LOOKUP[player_unit]
 
-		if not var_14_10 then
+		if unit_pos then
 			local mover = Unit.mover(player_unit)
 
-			if not Mover.collides_down(mover) then
-				local var_14_12
+			if Mover.collides_down(mover) then
+				local texture_size
 
-				if not v.local_player then
-					tbl_5[1] = default_texture_world_size[1] * local_player_multiplier
-					tbl_5[2] = default_texture_world_size[2] * local_player_multiplier
-					var_14_12 = tbl_5
+				if player.local_player then
+					TEXTURE_SIZE[1] = texture_world_size[1] * local_player_multiplier
+					TEXTURE_SIZE[2] = texture_world_size[2] * local_player_multiplier
+					texture_size = TEXTURE_SIZE
 				else
-					var_14_12 = default_texture_world_size
+					texture_size = texture_world_size
 				end
 
-				local var_14_13 = Vector2(var_14_10[1] % clamp, var_14_10[2] % clamp)
-				local var_14_14 = Vector2(var_14_13[1] / clamp, var_14_13[2] / clamp)
-				local var_14_15 = Vector3(var_14_14[1] * resolution, var_14_8 - var_14_14[2] * var_14_8, 0)
-				local var_14_16 = Vector2(var_14_12[1] / clamp * resolution, var_14_12[2] / clamp * var_14_8)
-				local num = var_14_15 - var_14_16 * 0.5
+				local relative_world_pos = Vector2(unit_pos[1] % window_size, unit_pos[2] % window_size)
+				local relative_texture_pos = Vector2(relative_world_pos[1] / window_size, relative_world_pos[2] / window_size)
+				local relative_screen_pos = Vector3(relative_texture_pos[1] * w, h - relative_texture_pos[2] * h, 0)
+				local relative_texture_size = Vector2(texture_size[1] / window_size * w, texture_size[2] / window_size * h)
+				local realtive_start_pos = relative_screen_pos - relative_texture_size * 0.5
 
-				Gui.bitmap(self._gui, default_foliage_material, num, var_14_16, Color(255, 255, 255, 255))
+				Gui.bitmap(self._gui, material_name, realtive_start_pos, relative_texture_size, Color(255, 255, 255, 255))
 
-				if not duplicate_edge_cases then
-					if num.x < 0 then
-						local num_2 = num + Vector3(resolution, 0, 0)
+				if duplicate_edge_cases then
+					if realtive_start_pos.x < 0 then
+						local offset = realtive_start_pos + Vector3(w, 0, 0)
 
-						Gui.bitmap(self._gui, default_foliage_material, num_2, var_14_16, Color(255, 255, 255, 255))
-					elseif resolution < num.x + var_14_16.x then
-						local num_3 = num + Vector3(-resolution, 0, 0)
+						Gui.bitmap(self._gui, material_name, offset, relative_texture_size, Color(255, 255, 255, 255))
+					elseif w < realtive_start_pos.x + relative_texture_size.x then
+						local offset = realtive_start_pos + Vector3(-w, 0, 0)
 
-						Gui.bitmap(self._gui, default_foliage_material, num_3, var_14_16, Color(255, 255, 255, 255))
+						Gui.bitmap(self._gui, material_name, offset, relative_texture_size, Color(255, 255, 255, 255))
 					end
 
-					if num.y < 0 then
-						local num_4 = num + Vector3(0, var_14_8, 0)
+					if realtive_start_pos.y < 0 then
+						local offset = realtive_start_pos + Vector3(0, h, 0)
 
-						Gui.bitmap(self._gui, default_foliage_material, num_4, var_14_16, Color(255, 255, 255, 255))
-					elseif var_14_8 < num.y + var_14_16.x then
-						local num_5 = num + Vector3(0, -var_14_8, 0)
+						Gui.bitmap(self._gui, material_name, offset, relative_texture_size, Color(255, 255, 255, 255))
+					elseif h < realtive_start_pos.y + relative_texture_size.x then
+						local offset = realtive_start_pos + Vector3(0, -h, 0)
 
-						Gui.bitmap(self._gui, default_foliage_material, num_5, var_14_16, Color(255, 255, 255, 255))
+						Gui.bitmap(self._gui, material_name, offset, relative_texture_size, Color(255, 255, 255, 255))
 					end
 				end
 			end
@@ -452,58 +502,58 @@ WorldInteractionManager._update_foliage_players = function (self, arg_14_1, arg_
 	end
 end
 
-WorldInteractionManager._update_foliage_ai = function (self, arg_15_1, arg_15_2, arg_15_3)
+WorldInteractionManager._update_foliage_ai = function (self, local_player_unit, dt, t)
 	-- function 15
-	local foliage = WorldInteractionSettings.foliage
-	local default_foliage_material = foliage.default_foliage_material
-	local clamp = math.clamp(foliage.window_size, 1, 100)
-	local default_texture_world_size = foliage.default_texture_world_size
-	local duplicate_edge_cases = foliage.duplicate_edge_cases
-	local resolution, var_15_6 = Gui.resolution()
-	local local_position = Unit.local_position(arg_15_1, 0)
-	local broadphase = Managers.state.entity:system("ai_system").broadphase
-	local var_15_9
-	local query = Broadphase.query(broadphase, local_position, clamp * 0.5, tbl)
+	local foliage_settings = WorldInteractionSettings.foliage
+	local material_name = foliage_settings.default_foliage_material
+	local window_size = math.clamp(foliage_settings.window_size, 1, 100)
+	local texture_world_size = foliage_settings.default_texture_world_size
+	local duplicate_edge_cases = foliage_settings.duplicate_edge_cases
+	local w, h = Gui.resolution()
+	local player_pos = Unit.local_position(local_player_unit, 0)
+	local ai_broadphase = Managers.state.entity:system("ai_system").broadphase
+	local ai_unit
+	local num_enemies = Broadphase.query(ai_broadphase, player_pos, window_size * 0.5, ENEMIES)
 
-	for i = 1, query do
-		local var_15_11 = tbl[i]
+	for i = 1, num_enemies do
+		ai_unit = ENEMIES[i]
 
-		if not Unit.alive(var_15_11) then
-			local var_15_12 = POSITION_LOOKUP[var_15_11]
-			local var_15_13 = Vector2(var_15_12[1] % clamp, var_15_12[2] % clamp)
-			local var_15_14 = Vector2(var_15_13[1] / clamp, var_15_13[2] / clamp)
-			local var_15_15 = Vector3(var_15_14[1] * resolution, var_15_6 - var_15_14[2] * var_15_6, 0)
-			local var_15_16 = Vector2(default_texture_world_size[1] / clamp * resolution, default_texture_world_size[2] / clamp * var_15_6)
-			local num = var_15_15 - var_15_16 * 0.5
+		if Unit.alive(ai_unit) then
+			local unit_pos = POSITION_LOOKUP[ai_unit]
+			local relative_world_pos = Vector2(unit_pos[1] % window_size, unit_pos[2] % window_size)
+			local relative_texture_pos = Vector2(relative_world_pos[1] / window_size, relative_world_pos[2] / window_size)
+			local relative_screen_pos = Vector3(relative_texture_pos[1] * w, h - relative_texture_pos[2] * h, 0)
+			local relative_texture_size = Vector2(texture_world_size[1] / window_size * w, texture_world_size[2] / window_size * h)
+			local realtive_start_pos = relative_screen_pos - relative_texture_size * 0.5
 
-			Gui.bitmap(self._gui, default_foliage_material, num, var_15_16, Color(255, 255, 255, 255))
+			Gui.bitmap(self._gui, material_name, realtive_start_pos, relative_texture_size, Color(255, 255, 255, 255))
 
-			if not duplicate_edge_cases then
-				if num.x < 0 then
-					local num_2 = num + Vector3(resolution, 0, 0)
+			if duplicate_edge_cases then
+				if realtive_start_pos.x < 0 then
+					local offset = realtive_start_pos + Vector3(w, 0, 0)
 
-					Gui.bitmap(self._gui, default_foliage_material, num_2, var_15_16, Color(255, 255, 255, 255))
-				elseif resolution < num.x + var_15_16.x then
-					local num_3 = num + Vector3(-resolution, 0, 0)
+					Gui.bitmap(self._gui, material_name, offset, relative_texture_size, Color(255, 255, 255, 255))
+				elseif w < realtive_start_pos.x + relative_texture_size.x then
+					local offset = realtive_start_pos + Vector3(-w, 0, 0)
 
-					Gui.bitmap(self._gui, default_foliage_material, num_3, var_15_16, Color(255, 255, 255, 255))
+					Gui.bitmap(self._gui, material_name, offset, relative_texture_size, Color(255, 255, 255, 255))
 				end
 
-				if num.y < 0 then
-					local num_4 = num + Vector3(0, var_15_6, 0)
+				if realtive_start_pos.y < 0 then
+					local offset = realtive_start_pos + Vector3(0, h, 0)
 
-					Gui.bitmap(self._gui, default_foliage_material, num_4, var_15_16, Color(255, 255, 255, 255))
-				elseif var_15_6 < num.y + var_15_16.x then
-					local num_5 = num + Vector3(0, -var_15_6, 0)
+					Gui.bitmap(self._gui, material_name, offset, relative_texture_size, Color(255, 255, 255, 255))
+				elseif h < realtive_start_pos.y + relative_texture_size.x then
+					local offset = realtive_start_pos + Vector3(0, -h, 0)
 
-					Gui.bitmap(self._gui, default_foliage_material, num_5, var_15_16, Color(255, 255, 255, 255))
+					Gui.bitmap(self._gui, material_name, offset, relative_texture_size, Color(255, 255, 255, 255))
 				end
 			end
 		end
 	end
 end
 
-WorldInteractionManager.destory = function (arg_16_0)
+WorldInteractionManager.destory = function (self)
 	-- function 16
 	return
 end

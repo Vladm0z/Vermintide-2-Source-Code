@@ -2,7 +2,7 @@
 
 local DifficultySettings = DifficultySettings
 
-DifficultySettings = DifficultySettings or {}
+DifficultySettings = not not DifficultySettings or not not {}
 DifficultySettings = DifficultySettings
 DifficultySettings.normal = {
 	completed_frame_texture = "map_frame_01",
@@ -362,46 +362,47 @@ DifficultySettings.versus_base = {
 	}
 }
 
-for k, v in pairs(DifficultySettings) do
-	v.difficulty = k
+for name, setting in pairs(DifficultySettings) do
+	setting.difficulty = name
 end
 
 ExtraDifficultyRequirements = {
 	kill_all_lords_on_legend = {
 		description_text = "achv_scorpion_cataclysm_unlock_kill_all_lords_desc",
-		requirement_function = function (arg_1_0)
+		requirement_function = function (joining_existing_game)
 			-- function 1
-			if not Development.parameter("unlock_all_difficulties") then
+			if Development.parameter("unlock_all_difficulties") then
 				return true
 			end
 
-			if not arg_1_0 then
+			if joining_existing_game then
 				return true
 			end
 
-			local get_stats = Managers.backend:get_stats()
-			local var_1_1 = tonumber(get_stats.kill_chaos_exalted_champion_scorpion_hardest)
+			local backend_stats = Managers.backend:get_stats()
+			local var_1_0 = tonumber(backend_stats.kill_chaos_exalted_champion_scorpion_hardest)
 
-			var_1_1 = var_1_1 or 0
+			var_1_0 = not not var_1_0 or not not 0
 
-			local flag = var_1_1 >= 5
-			local var_1_3 = tonumber(get_stats.kill_chaos_exalted_sorcerer_scorpion_hardest)
+			local champion_completed = var_1_0 >= 5
+			local var_1_1 = tonumber(backend_stats.kill_chaos_exalted_sorcerer_scorpion_hardest)
 
-			var_1_3 = var_1_3 or 0
+			var_1_1 = not not var_1_1 or not not 0
 
-			local flag_2 = var_1_3 >= 5
-			local var_1_5 = tonumber(get_stats.kill_skaven_grey_seer_scorpion_hardest)
+			local sorcerer_completed = var_1_1 >= 5
+			local var_1_2 = tonumber(backend_stats.kill_skaven_grey_seer_scorpion_hardest)
 
-			var_1_5 = var_1_5 or 0
+			var_1_2 = not not var_1_2 or not not 0
 
-			local flag_3 = var_1_5 >= 5
-			local var_1_7 = tonumber(get_stats.kill_skaven_storm_vermin_warlord_scorpion_hardest)
+			local gray_seer_completed = var_1_2 >= 5
+			local var_1_3 = tonumber(backend_stats.kill_skaven_storm_vermin_warlord_scorpion_hardest)
 
-			var_1_7 = var_1_7 or 0
+			var_1_3 = not not var_1_3 or not not 0
 
-			local flag_4 = var_1_7 >= 5
+			local storm_vermin_completed = var_1_3 >= 5
+			local difficulty_approved = not not champion_completed and not not sorcerer_completed and not not gray_seer_completed and not not storm_vermin_completed
 
-			return not flag and not flag_2 and not flag_3 and flag_4
+			return difficulty_approved
 		end
 	}
 }
@@ -410,12 +411,12 @@ DifficultyRankLookup = {}
 MinimumDifficultyRank = math.huge
 MaximumDifficultyRank = 0
 
-for k_2, v_2 in pairs(DifficultySettings) do
-	DifficultyRanks[#DifficultyRanks + 1] = v_2.rank
-	DifficultyRankLookup[v_2.rank] = k_2
-	DifficultyRankLookup[k_2] = v_2.rank
-	MinimumDifficultyRank = math.min(MinimumDifficultyRank, v_2.rank)
-	MaximumDifficultyRank = math.max(MaximumDifficultyRank, v_2.rank)
+for key, settings in pairs(DifficultySettings) do
+	DifficultyRanks[#DifficultyRanks + 1] = settings.rank
+	DifficultyRankLookup[settings.rank] = key
+	DifficultyRankLookup[key] = settings.rank
+	MinimumDifficultyRank = math.min(MinimumDifficultyRank, settings.rank)
+	MaximumDifficultyRank = math.max(MaximumDifficultyRank, settings.rank)
 end
 
 Difficulties = {

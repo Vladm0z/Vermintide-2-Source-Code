@@ -4,43 +4,43 @@ require("scripts/entity_system/systems/behaviour/nodes/bt_node")
 
 BTCritterNurglingWaitAction = class(BTCritterNurglingWaitAction, BTNode)
 
-BTCritterNurglingWaitAction.init = function (arg_1_0, ...)
+BTCritterNurglingWaitAction.init = function (self, ...)
 	-- function 1
-	BTCritterNurglingWaitAction.super.init(arg_1_0, ...)
+	BTCritterNurglingWaitAction.super.init(self, ...)
 end
 
 BTCritterNurglingWaitAction.name = "BTCritterNurglingWaitAction"
 
-BTCritterNurglingWaitAction.enter = function (self, arg_2_1, arg_2_2, arg_2_3)
+BTCritterNurglingWaitAction.enter = function (self, unit, blackboard, t)
 	-- function 2
-	local action_data = self._tree_node.action_data
+	local wait_data = self._tree_node.action_data
 
-	arg_2_2.exit_wait_time = arg_2_3 + Math.random_range(action_data.wait_time_min, action_data.wait_time_max)
+	blackboard.exit_wait_time = t + Math.random_range(wait_data.wait_time_min, wait_data.wait_time_max)
 
-	if arg_2_2.move_state ~= "idle" then
-		self:start_idle_animation(arg_2_1, arg_2_2)
+	if blackboard.move_state ~= "idle" then
+		self:start_idle_animation(unit, blackboard)
 
-		arg_2_2.move_state = "idle"
+		blackboard.move_state = "idle"
 	end
 end
 
-BTCritterNurglingWaitAction.leave = function (arg_3_0, arg_3_1, arg_3_2, arg_3_3, arg_3_4, arg_3_5)
+BTCritterNurglingWaitAction.leave = function (self, unit, blackboard, t, reason, destroy)
 	-- function 3
-	arg_3_2.exit_wait_time = nil
+	blackboard.exit_wait_time = nil
 end
 
-BTCritterNurglingWaitAction.run = function (arg_4_0, arg_4_1, arg_4_2, arg_4_3)
+BTCritterNurglingWaitAction.run = function (self, unit, blackboard, t)
 	-- function 4
-	if arg_4_3 > arg_4_2.exit_wait_time then
+	if t > blackboard.exit_wait_time then
 		return "done"
 	end
 
 	return "running"
 end
 
-BTCritterNurglingWaitAction.start_idle_animation = function (arg_5_0, arg_5_1, arg_5_2)
+BTCritterNurglingWaitAction.start_idle_animation = function (self, unit, blackboard)
 	-- function 5
-	Managers.state.network:anim_event(arg_5_1, "idle")
+	Managers.state.network:anim_event(unit, "idle")
 
-	arg_5_2.move_state = "idle"
+	blackboard.move_state = "idle"
 end

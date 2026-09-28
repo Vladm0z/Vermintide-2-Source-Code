@@ -1,12 +1,12 @@
 -- chunkname: @scripts/settings/dlcs/bless/bless_sound_settings.lua
 
-local bless = DLCSettings.bless
+local settings = DLCSettings.bless
 
-bless.dialogue_lookup = {
+settings.dialogue_lookup = {
 	"dialogues/generated/lookup_witch_hunter_bless",
 	"dialogues/generated/lookup_dlc_bless"
 }
-bless.dialogue_settings = {
+settings.dialogue_settings = {
 	inn_level = {
 		"dialogues/generated/dlc_bless"
 	},
@@ -23,13 +23,13 @@ bless.dialogue_settings = {
 		"dialogues/generated/dlc_bless"
 	}
 }
-bless.dialogue_events = {
+settings.dialogue_events = {
 	"activate_fury"
 }
-bless.auto_load_files = {
+settings.auto_load_files = {
 	"dialogues/generated/witch_hunter_bless"
 }
-bless.network_sound_events = {
+settings.network_sound_events = {
 	"career_talent_priest_bolt_cast",
 	"career_talent_priest_bolt_impact",
 	"career_ability_priest_cast_t1",

@@ -12,40 +12,43 @@ end
 
 game_start_windows = UISettings.game_start_windows_console
 
+local window_default_settings = game_start_windows
+
 ::label_0_0::
 
-local frame = game_start_windows.frame
-local size = game_start_windows.size
-local spacing = game_start_windows.spacing
-local tbl = {
-	size[1] + spacing * 2,
-	size[2] + 60
+local window_frame = window_default_settings.frame
+local small_window_size = window_default_settings.size
+local small_window_spacing = window_default_settings.spacing
+local window_size = {
+	small_window_size[1] + small_window_spacing * 2,
+	small_window_size[2] + 60
 }
-local tbl_2 = {
-	size[1] - 20,
+local game_option_size = {
+	small_window_size[1] - 20,
 	233
 }
-local str = "menu_frame_08"
-local var_0_7 = UIFrameSettings[str].texture_sizes.corner[1]
-local tbl_3 = {
-	tbl_2[1],
+local deed_frame_name = "menu_frame_08"
+local deed_frame_settings = UIFrameSettings[deed_frame_name]
+local deed_frame_width = deed_frame_settings.texture_sizes.corner[1]
+local event_summary_frame_size = {
+	game_option_size[1],
 	449
 }
-local tbl_4 = {
-	tbl_3[1] - 10,
+local event_summary_size = {
+	event_summary_frame_size[1] - 10,
 	0
 }
-local large_window_frame = game_start_windows.large_window_frame
-local var_0_11 = UIFrameSettings[large_window_frame].texture_sizes.vertical[1]
-local tbl_5 = {
-	tbl[1] * 3 + spacing * 2 + var_0_11 * 2,
-	tbl[2] + var_0_11 * 2
+local large_window_frame = window_default_settings.large_window_frame
+local large_window_frame_width = UIFrameSettings[large_window_frame].texture_sizes.vertical[1]
+local inner_window_size = {
+	window_size[1] * 3 + small_window_spacing * 2 + large_window_frame_width * 2,
+	window_size[2] + large_window_frame_width * 2
 }
-local tbl_6 = {
+local info_frame_size = {
 	400,
-	tbl_5[2]
+	inner_window_size[2]
 }
-local tbl_7 = {
+local tbl = {
 	root = {
 		is_root = true,
 		size = {
@@ -102,7 +105,7 @@ local tbl_7 = {
 		vertical_alignment = "center",
 		parent = "screen",
 		horizontal_alignment = "center",
-		size = tbl,
+		size = window_size,
 		position = {
 			0,
 			0,
@@ -114,8 +117,8 @@ local tbl_7 = {
 		parent = "screen",
 		horizontal_alignment = "center",
 		size = {
-			tbl[1] + 30,
-			tbl[2] + 30
+			window_size[1] + 30,
+			window_size[2] + 30
 		},
 		position = {
 			0,
@@ -141,7 +144,7 @@ local tbl_7 = {
 		vertical_alignment = "center",
 		parent = "window",
 		horizontal_alignment = "center",
-		size = tbl,
+		size = window_size,
 		position = {
 			0,
 			0,
@@ -152,7 +155,7 @@ local tbl_7 = {
 		vertical_alignment = "center",
 		parent = "window",
 		horizontal_alignment = "center",
-		size = size,
+		size = small_window_size,
 		position = {
 			0,
 			0,
@@ -160,7 +163,7 @@ local tbl_7 = {
 		}
 	}
 }
-local tbl_8 = {
+local tbl_2 = {
 	vertical_alignment = "top",
 	parent = "button_confirm",
 	horizontal_alignment = "center",
@@ -169,18 +172,18 @@ local tbl_8 = {
 		16
 	}
 }
-local tbl_9 = {
+local tbl_3 = {
 	0,
 	nil,
 	3
 }
 local flag
 
-flag = IS_PS4 or not 25 or 15
-tbl_9[2] = flag
-tbl_8.position = tbl_9
-tbl_7.timer_bg = tbl_8
-tbl_7.timer_fg = {
+flag = (IS_PS4 or not 25) and not not 15
+tbl_3[2] = flag
+tbl_2.position = tbl_3
+tbl.timer_bg = tbl_2
+tbl.timer_fg = {
 	vertical_alignment = "center",
 	parent = "timer_bg",
 	horizontal_alignment = "left",
@@ -194,7 +197,7 @@ tbl_7.timer_fg = {
 		3
 	}
 }
-tbl_7.timer_glow = {
+tbl.timer_glow = {
 	vertical_alignment = "center",
 	parent = "timer_fg",
 	horizontal_alignment = "right",
@@ -209,46 +212,46 @@ tbl_7.timer_glow = {
 	}
 }
 
-local tbl_10 = {
+local tbl_4 = {
 	vertical_alignment = "bottom",
 	parent = "window",
 	horizontal_alignment = "center"
 }
-local tbl_11 = {
-	tbl_2[1] - 60
+local tbl_5 = {
+	game_option_size[1] - 60
 }
 local flag_2
 
-flag_2 = IS_PS4 or not 72 or 0
-tbl_11[2] = flag_2
-tbl_10.size = tbl_11
-tbl_10.position = {
+flag_2 = (IS_PS4 or not 72) and not not 0
+tbl_5[2] = flag_2
+tbl_4.size = tbl_5
+tbl_4.position = {
 	0,
 	38,
 	20
 }
-tbl_7.deus_button_confirm = tbl_10
+tbl.deus_button_confirm = tbl_4
 
-local tbl_12 = {
+local tbl_6 = {
 	vertical_alignment = "bottom",
 	parent = "window",
 	horizontal_alignment = "center"
 }
-local tbl_13 = {
-	tbl_2[1]
+local tbl_7 = {
+	game_option_size[1]
 }
 local flag_3
 
-flag_3 = IS_PS4 or not 72 or 0
-tbl_13[2] = flag_3
-tbl_12.size = tbl_13
-tbl_12.position = {
+flag_3 = (IS_PS4 or not 72) and not not 0
+tbl_7[2] = flag_3
+tbl_6.size = tbl_7
+tbl_6.position = {
 	0,
 	38,
 	20
 }
-tbl_7.button_confirm = tbl_12
-tbl_7.button_abort = {
+tbl.button_confirm = tbl_6
+tbl.button_abort = {
 	vertical_alignment = "bottom",
 	parent = "window",
 	horizontal_alignment = "center",
@@ -262,13 +265,13 @@ tbl_7.button_abort = {
 		22
 	}
 }
-tbl_7.game_options_right_chain = {
+tbl.game_options_right_chain = {
 	vertical_alignment = "top",
 	parent = "window",
 	horizontal_alignment = "center",
 	size = {
 		16,
-		tbl[2]
+		window_size[2]
 	},
 	position = {
 		195,
@@ -276,13 +279,13 @@ tbl_7.game_options_right_chain = {
 		2
 	}
 }
-tbl_7.game_options_left_chain = {
+tbl.game_options_left_chain = {
 	vertical_alignment = "top",
 	parent = "window",
 	horizontal_alignment = "center",
 	size = {
 		16,
-		tbl[2]
+		window_size[2]
 	},
 	position = {
 		-195,
@@ -290,7 +293,7 @@ tbl_7.game_options_left_chain = {
 		2
 	}
 }
-tbl_7.title = {
+tbl.title = {
 	vertical_alignment = "top",
 	parent = "window",
 	horizontal_alignment = "center",
@@ -304,7 +307,7 @@ tbl_7.title = {
 		22
 	}
 }
-tbl_7.title_bg = {
+tbl.title_bg = {
 	vertical_alignment = "top",
 	parent = "title",
 	horizontal_alignment = "center",
@@ -318,7 +321,7 @@ tbl_7.title_bg = {
 		-1
 	}
 }
-tbl_7.title_text = {
+tbl.title_text = {
 	vertical_alignment = "center",
 	parent = "title",
 	horizontal_alignment = "center",
@@ -332,35 +335,35 @@ tbl_7.title_text = {
 		2
 	}
 }
-tbl_7.game_option_1 = {
+tbl.game_option_1 = {
 	vertical_alignment = "top",
 	parent = "window",
 	horizontal_alignment = "center",
-	size = tbl_2,
+	size = game_option_size,
 	position = {
 		0,
 		-36,
 		3
 	}
 }
-tbl_7.game_option_2 = {
+tbl.game_option_2 = {
 	vertical_alignment = "bottom",
 	parent = "game_option_1",
 	horizontal_alignment = "center",
-	size = tbl_2,
+	size = game_option_size,
 	position = {
 		0,
 		-249,
 		0
 	}
 }
-tbl_7.versus_reward_presentation = {
+tbl.versus_reward_presentation = {
 	vertical_alignment = "top",
 	parent = "window",
 	horizontal_alignment = "center",
 	size = {
-		tbl_2[1],
-		tbl_2[2] + 470
+		game_option_size[1],
+		game_option_size[2] + 470
 	},
 	position = {
 		0,
@@ -368,12 +371,12 @@ tbl_7.versus_reward_presentation = {
 		3
 	}
 }
-tbl_7.switch_mechanism_title = {
+tbl.switch_mechanism_title = {
 	vertical_alignment = "top",
 	parent = "window",
 	horizontal_alignment = "center",
 	size = {
-		tbl_2[1],
+		game_option_size[1],
 		100
 	},
 	position = {
@@ -382,12 +385,12 @@ tbl_7.switch_mechanism_title = {
 		2
 	}
 }
-tbl_7.switch_mechanism_subtitle = {
+tbl.switch_mechanism_subtitle = {
 	vertical_alignment = "bottom",
 	parent = "switch_mechanism_title",
 	horizontal_alignment = "center",
 	size = {
-		tbl_2[1],
+		game_option_size[1],
 		40
 	},
 	position = {
@@ -396,12 +399,12 @@ tbl_7.switch_mechanism_subtitle = {
 		2
 	}
 }
-tbl_7.switch_mechanism_description = {
+tbl.switch_mechanism_description = {
 	vertical_alignment = "bottom",
 	parent = "switch_mechanism_subtitle",
 	horizontal_alignment = "center",
 	size = {
-		tbl_2[1] - 40,
+		game_option_size[1] - 40,
 		100
 	},
 	position = {
@@ -410,12 +413,12 @@ tbl_7.switch_mechanism_description = {
 		2
 	}
 }
-tbl_7.journey_name = {
+tbl.journey_name = {
 	vertical_alignment = "top",
 	parent = "game_option_1",
 	horizontal_alignment = "left",
 	size = {
-		tbl_2[1] / 2,
+		game_option_size[1] / 2,
 		30
 	},
 	position = {
@@ -424,12 +427,12 @@ tbl_7.journey_name = {
 		1
 	}
 }
-tbl_7.journey_theme = {
+tbl.journey_theme = {
 	vertical_alignment = "center",
 	parent = "game_option_1",
 	horizontal_alignment = "left",
 	size = {
-		tbl_2[1] / 2,
+		game_option_size[1] / 2,
 		30
 	},
 	position = {
@@ -438,34 +441,34 @@ tbl_7.journey_theme = {
 		1
 	}
 }
-tbl_7.event_summary_frame = {
+tbl.event_summary_frame = {
 	vertical_alignment = "bottom",
 	parent = "game_option_1",
 	horizontal_alignment = "center",
-	size = tbl_3,
+	size = event_summary_frame_size,
 	position = {
 		0,
 		-465,
 		0
 	}
 }
-tbl_7.event_summary = {
+tbl.event_summary = {
 	vertical_alignment = "top",
 	parent = "event_summary_frame",
 	horizontal_alignment = "center",
-	size = tbl_4,
+	size = event_summary_size,
 	position = {
 		0,
 		-10,
 		0
 	}
 }
-tbl_7.additional_option = {
+tbl.additional_option = {
 	vertical_alignment = "bottom",
 	parent = "game_option_2",
 	horizontal_alignment = "center",
 	size = {
-		tbl_2[1],
+		game_option_size[1],
 		200
 	},
 	position = {
@@ -474,12 +477,12 @@ tbl_7.additional_option = {
 		0
 	}
 }
-tbl_7.private_button = {
+tbl.private_button = {
 	vertical_alignment = "bottom",
 	parent = "additional_option",
 	horizontal_alignment = "center",
 	size = {
-		tbl_2[1] - 20,
+		game_option_size[1] - 20,
 		40
 	},
 	position = {
@@ -488,12 +491,12 @@ tbl_7.private_button = {
 		10
 	}
 }
-tbl_7.private_button_frame = {
+tbl.private_button_frame = {
 	vertical_alignment = "bottom",
 	parent = "private_button",
 	horizontal_alignment = "center",
 	size = {
-		tbl_2[1] - 20,
+		game_option_size[1] - 20,
 		45
 	},
 	position = {
@@ -502,12 +505,12 @@ tbl_7.private_button_frame = {
 		10
 	}
 }
-tbl_7.host_button = {
+tbl.host_button = {
 	vertical_alignment = "top",
 	parent = "private_button",
 	horizontal_alignment = "center",
 	size = {
-		tbl_2[1] - 20,
+		game_option_size[1] - 20,
 		40
 	},
 	position = {
@@ -516,12 +519,12 @@ tbl_7.host_button = {
 		10
 	}
 }
-tbl_7.host_button_frame = {
+tbl.host_button_frame = {
 	vertical_alignment = "bottom",
 	parent = "host_button",
 	horizontal_alignment = "center",
 	size = {
-		tbl_2[1] - 20,
+		game_option_size[1] - 20,
 		45
 	},
 	position = {
@@ -530,12 +533,12 @@ tbl_7.host_button_frame = {
 		10
 	}
 }
-tbl_7.strict_matchmaking_button = {
+tbl.strict_matchmaking_button = {
 	vertical_alignment = "top",
 	parent = "host_button",
 	horizontal_alignment = "center",
 	size = {
-		tbl_2[1] - 20,
+		game_option_size[1] - 20,
 		40
 	},
 	position = {
@@ -544,12 +547,12 @@ tbl_7.strict_matchmaking_button = {
 		10
 	}
 }
-tbl_7.strict_matchmaking_button_frame = {
+tbl.strict_matchmaking_button_frame = {
 	vertical_alignment = "bottom",
 	parent = "strict_matchmaking_button",
 	horizontal_alignment = "center",
 	size = {
-		tbl_2[1] - 20,
+		game_option_size[1] - 20,
 		45
 	},
 	position = {
@@ -558,12 +561,12 @@ tbl_7.strict_matchmaking_button_frame = {
 		10
 	}
 }
-tbl_7.reward_presentation = {
+tbl.reward_presentation = {
 	vertical_alignment = "bottom",
 	parent = "game_option_1",
 	horizontal_alignment = "center",
 	size = {
-		tbl_2[1],
+		game_option_size[1],
 		449
 	},
 	position = {
@@ -572,7 +575,7 @@ tbl_7.reward_presentation = {
 		0
 	}
 }
-tbl_7.weave_quickplay_presentation = {
+tbl.weave_quickplay_presentation = {
 	vertical_alignment = "bottom",
 	parent = "game_option_1",
 	horizontal_alignment = "center",
@@ -586,12 +589,12 @@ tbl_7.weave_quickplay_presentation = {
 		0
 	}
 }
-tbl_7.deed_option_bg = {
+tbl.deed_option_bg = {
 	vertical_alignment = "top",
 	parent = "window",
 	horizontal_alignment = "center",
 	size = {
-		tbl_2[1],
+		game_option_size[1],
 		700
 	},
 	position = {
@@ -600,21 +603,21 @@ tbl_7.deed_option_bg = {
 		3
 	}
 }
-tbl_7.item_presentation = {
+tbl.item_presentation = {
 	vertical_alignment = "top",
 	parent = "game_option_1",
 	horizontal_alignment = "center",
 	size = {
-		tbl_2[1] - 10,
+		game_option_size[1] - 10,
 		0
 	},
 	position = {
 		0,
-		-var_0_7,
+		-deed_frame_width,
 		1
 	}
 }
-tbl_7.mutator_icon = {
+tbl.mutator_icon = {
 	vertical_alignment = "top",
 	parent = "event_summary_frame",
 	horizontal_alignment = "left",
@@ -628,7 +631,7 @@ tbl_7.mutator_icon = {
 		5
 	}
 }
-tbl_7.mutator_icon_frame = {
+tbl.mutator_icon_frame = {
 	vertical_alignment = "center",
 	parent = "mutator_icon",
 	horizontal_alignment = "center",
@@ -642,12 +645,12 @@ tbl_7.mutator_icon_frame = {
 		1
 	}
 }
-tbl_7.mutator_title_text = {
+tbl.mutator_title_text = {
 	vertical_alignment = "top",
 	parent = "event_summary_frame",
 	horizontal_alignment = "left",
 	size = {
-		tbl_6[1] * 0.6,
+		info_frame_size[1] * 0.6,
 		50
 	},
 	position = {
@@ -656,7 +659,7 @@ tbl_7.mutator_title_text = {
 		1
 	}
 }
-tbl_7.mutator_title_divider = {
+tbl.mutator_title_divider = {
 	vertical_alignment = "bottom",
 	parent = "mutator_title_text",
 	horizontal_alignment = "left",
@@ -670,12 +673,12 @@ tbl_7.mutator_title_divider = {
 		1
 	}
 }
-tbl_7.mutator_description_text = {
+tbl.mutator_description_text = {
 	vertical_alignment = "top",
 	parent = "mutator_icon",
 	horizontal_alignment = "left",
 	size = {
-		tbl_2[1] - 100,
+		game_option_size[1] - 100,
 		100
 	},
 	position = {
@@ -684,12 +687,12 @@ tbl_7.mutator_description_text = {
 		1
 	}
 }
-tbl_7.objective_title = {
+tbl.objective_title = {
 	vertical_alignment = "top",
 	parent = "event_summary_frame",
 	horizontal_alignment = "center",
 	size = {
-		tbl_2[1],
+		game_option_size[1],
 		40
 	},
 	position = {
@@ -698,12 +701,12 @@ tbl_7.objective_title = {
 		3
 	}
 }
-tbl_7.objective_title_bg = {
+tbl.objective_title_bg = {
 	vertical_alignment = "center",
 	parent = "objective_title",
 	horizontal_alignment = "center",
 	size = {
-		tbl_2[1],
+		game_option_size[1],
 		59
 	},
 	position = {
@@ -712,12 +715,12 @@ tbl_7.objective_title_bg = {
 		-1
 	}
 }
-tbl_7.objective_1 = {
+tbl.objective_1 = {
 	vertical_alignment = "bottom",
 	parent = "objective_title",
 	horizontal_alignment = "center",
 	size = {
-		tbl_6[1],
+		info_frame_size[1],
 		30
 	},
 	position = {
@@ -726,12 +729,12 @@ tbl_7.objective_1 = {
 		3
 	}
 }
-tbl_7.objective_2 = {
+tbl.objective_2 = {
 	vertical_alignment = "bottom",
 	parent = "objective_1",
 	horizontal_alignment = "center",
 	size = {
-		tbl_6[1],
+		info_frame_size[1],
 		30
 	},
 	position = {
@@ -740,12 +743,12 @@ tbl_7.objective_2 = {
 		0
 	}
 }
-tbl_7.private_checkbox = {
+tbl.private_checkbox = {
 	vertical_alignment = "bottom",
 	parent = "event_summary_frame",
 	horizontal_alignment = "center",
 	size = {
-		tbl_2[1] - 20,
+		game_option_size[1] - 20,
 		40
 	},
 	position = {
@@ -754,12 +757,12 @@ tbl_7.private_checkbox = {
 		1
 	}
 }
-tbl_7.game_option_deus_weekly_event = {
+tbl.game_option_deus_weekly_event = {
 	vertical_alignment = "bottom",
 	parent = "game_option_1",
 	horizontal_alignment = "center",
 	size = {
-		tbl_2[1],
+		game_option_size[1],
 		449
 	},
 	position = {
@@ -768,12 +771,12 @@ tbl_7.game_option_deus_weekly_event = {
 		0
 	}
 }
-tbl_7.game_option_deus_weekly = {
+tbl.game_option_deus_weekly = {
 	vertical_alignment = "bottom",
 	parent = "game_option_1",
 	horizontal_alignment = "center",
 	size = {
-		tbl_2[1] - 50,
+		game_option_size[1] - 50,
 		439
 	},
 	position = {
@@ -782,11 +785,11 @@ tbl_7.game_option_deus_weekly = {
 		0
 	}
 }
-tbl_7.game_option_deus_weekly_anchor = {
+tbl.game_option_deus_weekly_anchor = {
 	vertical_alignment = "center",
 	parent = "game_option_deus_weekly"
 }
-tbl_7.scrollbar_window = {
+tbl.scrollbar_window = {
 	parent = "game_option_deus_weekly",
 	position = {
 		-45,
@@ -794,12 +797,13 @@ tbl_7.scrollbar_window = {
 		0
 	},
 	size = {
-		tbl_2[1],
+		game_option_size[1],
 		424
 	}
 }
 
-local tbl_14 = {
+local scenegraph_definition = tbl
+local title_text_style = {
 	use_shadow = true,
 	upper_case = true,
 	localize = false,
@@ -816,83 +820,83 @@ local tbl_14 = {
 	}
 }
 
-local function fn(arg_1_0, arg_1_1, arg_1_2)
+local function deus_weekly_event_create_header(header, offset_y, header_type)
 	-- function 1
-	local tbl = {}
-	local tbl_2 = {}
-	local tbl_3 = {}
-	local tbl_4 = {}
-	local tbl_5 = {}
+	local widget_definition = {}
+	local element = {}
+	local passes = {}
+	local content = {}
+	local style = {}
 
-	tbl_3[#tbl_3 + 1] = {
+	passes[#passes + 1] = {
 		style_id = "header",
 		pass_type = "text",
 		text_id = "header"
 	}
-	tbl_3[#tbl_3 + 1] = {
+	passes[#passes + 1] = {
 		pass_type = "texture",
 		style_id = "plus_horizontal",
 		texture_id = "masked_rect",
-		content_check_function = function (arg_2_0, arg_2_1)
+		content_check_function = function (content, style)
 			-- function 2
-			local var_2_0 = arg_1_2
+			local var_2_0 = header_type
 
-			var_2_0 = not var_2_0 and arg_1_2 == "boon"
+			var_2_0 = not not var_2_0 and header_type == "boon"
 
 			return var_2_0
 		end
 	}
-	tbl_3[#tbl_3 + 1] = {
+	passes[#passes + 1] = {
 		pass_type = "texture",
 		style_id = "plus_vertical",
 		texture_id = "masked_rect",
-		content_check_function = function (arg_3_0, arg_3_1)
+		content_check_function = function (content, style)
 			-- function 3
-			local var_3_0 = arg_1_2
+			local var_3_0 = header_type
 
-			var_3_0 = not var_3_0 and arg_1_2 == "boon"
+			var_3_0 = not not var_3_0 and header_type == "boon"
 
 			return var_3_0
 		end
 	}
-	tbl_3[#tbl_3 + 1] = {
+	passes[#passes + 1] = {
 		pass_type = "texture",
 		style_id = "minus",
 		texture_id = "masked_rect",
-		content_check_function = function (arg_4_0, arg_4_1)
+		content_check_function = function (content, style)
 			-- function 4
-			local var_4_0 = arg_1_2
+			local var_4_0 = header_type
 
-			var_4_0 = not var_4_0 and arg_1_2 == "curse"
+			var_4_0 = not not var_4_0 and header_type == "curse"
 
 			return var_4_0
 		end
 	}
-	tbl_4.header = arg_1_0
-	tbl_4.masked_rect = "rect_masked"
+	content.header = header
+	content.masked_rect = "rect_masked"
 
-	local num = 32
-	local tbl_6 = {
+	local font_size = 32
+	local tbl = {
 		vertical_alignment = "top",
 		upper_case = true,
 		localize = true,
 		horizontal_alignment = "left",
 		font_type = "hell_shark_header_masked",
-		font_size = num,
+		font_size = font_size,
 		text_color = Colors.get_color_table_with_alpha("white", 255)
 	}
-	local tbl_7 = {
+	local tbl_2 = {
 		nil,
 		0,
 		2
 	}
 	local flag
 
-	flag = not arg_1_2 and 25 and 0
-	tbl_7[1] = flag
-	tbl_6.offset = tbl_7
-	tbl_5.header = tbl_6
-	tbl_5.plus_horizontal = {
+	flag = (not header_type or not 25) and not not 0
+	tbl_2[1] = flag
+	tbl.offset = tbl_2
+	style.header = tbl
+	style.plus_horizontal = {
 		vertical_alignment = "top",
 		horizontal_alignment = "left",
 		color = {
@@ -911,7 +915,7 @@ local function fn(arg_1_0, arg_1_1, arg_1_2)
 			0
 		}
 	}
-	tbl_5.plus_vertical = {
+	style.plus_vertical = {
 		vertical_alignment = "top",
 		horizontal_alignment = "left",
 		color = {
@@ -930,7 +934,7 @@ local function fn(arg_1_0, arg_1_1, arg_1_2)
 			0
 		}
 	}
-	tbl_5.minus = {
+	style.minus = {
 		vertical_alignment = "top",
 		horizontal_alignment = "left",
 		color = {
@@ -949,50 +953,50 @@ local function fn(arg_1_0, arg_1_1, arg_1_2)
 			0
 		}
 	}
-	tbl_2.passes = tbl_3
-	tbl.element = tbl_2
-	tbl.content = tbl_4
-	tbl.style = tbl_5
-	tbl.scenegraph_id = "game_option_deus_weekly_anchor"
-	tbl.offset = {
+	element.passes = passes
+	widget_definition.element = element
+	widget_definition.content = content
+	widget_definition.style = style
+	widget_definition.scenegraph_id = "game_option_deus_weekly_anchor"
+	widget_definition.offset = {
 		0,
-		arg_1_1,
+		offset_y,
 		2
 	}
 
-	return tbl
+	return widget_definition
 end
 
-local function fn_2(arg_5_0, arg_5_1, arg_5_2, arg_5_3)
+local function deus_weekly_event_create_entry_widget(icon, title, description, offset_y)
 	-- function 5
-	local tbl = {}
-	local tbl_2 = {}
-	local tbl_3 = {}
-	local tbl_4 = {}
-	local tbl_5 = {}
+	local widget_definition = {}
+	local element = {}
+	local passes = {}
+	local content = {}
+	local style = {}
 
-	tbl_3[#tbl_3 + 1] = {
+	passes[#passes + 1] = {
 		style_id = "title",
 		pass_type = "text",
 		text_id = "title"
 	}
-	tbl_3[#tbl_3 + 1] = {
+	passes[#passes + 1] = {
 		style_id = "desc",
 		pass_type = "text",
 		text_id = "desc"
 	}
-	tbl_3[#tbl_3 + 1] = {
+	passes[#passes + 1] = {
 		pass_type = "texture",
 		style_id = "icon",
 		texture_id = "icon"
 	}
-	tbl_4.title = arg_5_1
-	tbl_4.desc = arg_5_2
-	tbl_4.icon = arg_5_0
+	content.title = title
+	content.desc = description
+	content.icon = icon
 
-	local num = 10
+	local indentation = 10
 
-	tbl_5.title = {
+	style.title = {
 		word_wrap = true,
 		font_size = 22,
 		localize = true,
@@ -1002,16 +1006,16 @@ local function fn_2(arg_5_0, arg_5_1, arg_5_2, arg_5_3)
 		font_type = "hell_shark_masked",
 		text_color = Colors.get_color_table_with_alpha("font_title", 255),
 		offset = {
-			35 + num,
+			35 + indentation,
 			-3,
 			2
 		},
 		area_size = {
-			tbl_7.game_option_deus_weekly.size[1] - 35 - num,
+			scenegraph_definition.game_option_deus_weekly.size[1] - 35 - indentation,
 			50
 		}
 	}
-	tbl_5.desc = {
+	style.desc = {
 		word_wrap = true,
 		horizontal_alignment = "left",
 		localize = false,
@@ -1020,16 +1024,16 @@ local function fn_2(arg_5_0, arg_5_1, arg_5_2, arg_5_3)
 		font_type = "hell_shark_masked",
 		text_color = Colors.get_color_table_with_alpha("font_default", 255),
 		offset = {
-			35 + num,
+			35 + indentation,
 			-30,
 			2
 		},
 		area_size = {
-			tbl_7.game_option_deus_weekly.size[1] - 35 - num,
+			scenegraph_definition.game_option_deus_weekly.size[1] - 35 - indentation,
 			50
 		}
 	}
-	tbl_5.icon = {
+	style.icon = {
 		vertical_alignment = "top",
 		masked = true,
 		horizontal_alignment = "left",
@@ -1044,56 +1048,57 @@ local function fn_2(arg_5_0, arg_5_1, arg_5_2, arg_5_3)
 			25
 		},
 		offset = {
-			num,
+			indentation,
 			-5,
 			0
 		}
 	}
-	tbl_2.passes = tbl_3
-	tbl.element = tbl_2
-	tbl.content = tbl_4
-	tbl.style = tbl_5
-	tbl.scenegraph_id = "game_option_deus_weekly_anchor"
-	tbl.offset = {
+	element.passes = passes
+	widget_definition.element = element
+	widget_definition.content = content
+	widget_definition.style = style
+	widget_definition.scenegraph_id = "game_option_deus_weekly_anchor"
+	widget_definition.offset = {
 		0,
-		arg_5_3,
+		offset_y,
 		2
 	}
 
-	return tbl
+	return widget_definition
 end
 
-local function fn_3(arg_6_0, arg_6_1, arg_6_2, arg_6_3, arg_6_4, arg_6_5)
+local function create_settings_option(scenegraph_id, size, title_text, icon_texture, background_texture, icon_visible)
 	-- function 6
-	arg_6_3 = arg_6_3 or "map_frame_fade"
+	icon_texture = not not icon_texture or not not "map_frame_fade"
 
-	local get_atlas_settings_by_texture_name = UIAtlasHelper.get_atlas_settings_by_texture_name(arg_6_3)
-	local size
+	local icon_texture_settings = UIAtlasHelper.get_atlas_settings_by_texture_name(icon_texture)
+	local size_2
 
-	if not get_atlas_settings_by_texture_name then
-		size = get_atlas_settings_by_texture_name.size
+	if icon_texture_settings then
+		size_2 = icon_texture_settings.size
 
-		if not size then
+		if not size_2 then
 			-- Nothing
 		end
 	end
 
-	size = {
+	size_2 = {
 		150,
 		150
 	}
 
+	local icon_texture_size = size_2
+
 	::label_6_0::
 
-	arg_6_5 = arg_6_5 == nil or arg_6_5
-	arg_6_4 = arg_6_4 or "game_options_bg_02"
+	icon_visible = icon_visible == nil or not not icon_visible
+	background_texture = not not background_texture or not not "game_options_bg_02"
 
-	local get_atlas_settings_by_texture_name_2 = UIAtlasHelper.get_atlas_settings_by_texture_name(arg_6_4)
-	local str = "menu_frame_08"
-	local var_6_4 = UIFrameSettings[str]
-	local var_6_5 = var_6_4.texture_sizes.corner[1]
-
-	return {
+	local background_texture_settings = UIAtlasHelper.get_atlas_settings_by_texture_name(background_texture)
+	local frame_name = "menu_frame_08"
+	local frame_settings = UIFrameSettings[frame_name]
+	local frame_width = frame_settings.texture_sizes.corner[1]
+	local widget = {
 		element = {
 			passes = {
 				{
@@ -1110,18 +1115,18 @@ local function fn_3(arg_6_0, arg_6_1, arg_6_2, arg_6_3, arg_6_4, arg_6_5)
 					texture_id = "icon_frame",
 					style_id = "icon_frame",
 					pass_type = "texture",
-					content_check_function = function (self)
+					content_check_function = function (content)
 						-- function 7
-						return self.icon_visible
+						return content.icon_visible
 					end
 				},
 				{
 					texture_id = "icon",
 					style_id = "icon",
 					pass_type = "texture",
-					content_check_function = function (self)
+					content_check_function = function (content)
 						-- function 8
-						return self.icon_visible
+						return content.icon_visible
 					end
 				},
 				{
@@ -1161,22 +1166,22 @@ local function fn_3(arg_6_0, arg_6_1, arg_6_2, arg_6_3, arg_6_4, arg_6_5)
 			icon_frame = "map_frame_00",
 			title_edge = "game_option_divider",
 			option_text = "",
-			frame = var_6_4.texture,
-			title_text = arg_6_2 or "n/a",
-			icon = arg_6_3,
-			icon_visible = arg_6_5,
+			frame = frame_settings.texture,
+			title_text = not not title_text or not not "n/a",
+			icon = icon_texture,
+			icon_visible = icon_visible,
 			background = {
 				uvs = {
 					{
 						0,
-						1 - math.min(arg_6_1[2] / get_atlas_settings_by_texture_name_2.size[2], 1)
+						1 - math.min(size[2] / background_texture_settings.size[2], 1)
 					},
 					{
-						math.min(arg_6_1[1] / get_atlas_settings_by_texture_name_2.size[1], 1),
+						math.min(size[1] / background_texture_settings.size[1], 1),
 						1
 					}
 				},
-				texture_id = arg_6_4
+				texture_id = background_texture
 			}
 		},
 		style = {
@@ -1192,9 +1197,9 @@ local function fn_3(arg_6_0, arg_6_1, arg_6_2, arg_6_3, arg_6_4, arg_6_5)
 					0,
 					10
 				},
-				size = arg_6_1,
-				texture_size = var_6_4.texture_size,
-				texture_sizes = var_6_4.texture_sizes
+				size = size,
+				texture_size = frame_settings.texture_size,
+				texture_sizes = frame_settings.texture_sizes
 			},
 			background = {
 				texture_tiling_size = {
@@ -1222,9 +1227,9 @@ local function fn_3(arg_6_0, arg_6_1, arg_6_2, arg_6_3, arg_6_4, arg_6_5)
 					255,
 					255
 				},
-				texture_size = size,
+				texture_size = icon_texture_size,
 				offset = {
-					arg_6_1[1] / 2 - 120,
+					size[1] / 2 - 120,
 					0,
 					5
 				}
@@ -1243,14 +1248,14 @@ local function fn_3(arg_6_0, arg_6_1, arg_6_2, arg_6_3, arg_6_4, arg_6_5)
 					255
 				},
 				offset = {
-					arg_6_1[1] / 2 - 120,
+					size[1] / 2 - 120,
 					0,
 					6
 				}
 			},
 			title_bg = {
 				size = {
-					arg_6_1[1],
+					size[1],
 					40
 				},
 				color = {
@@ -1261,13 +1266,13 @@ local function fn_3(arg_6_0, arg_6_1, arg_6_2, arg_6_3, arg_6_4, arg_6_5)
 				},
 				offset = {
 					0,
-					arg_6_1[2] - 38 - var_6_5,
+					size[2] - 38 - frame_width,
 					2
 				}
 			},
 			title_edge = {
 				size = {
-					arg_6_1[1],
+					size[1],
 					5
 				},
 				color = {
@@ -1278,7 +1283,7 @@ local function fn_3(arg_6_0, arg_6_1, arg_6_2, arg_6_3, arg_6_4, arg_6_5)
 				},
 				offset = {
 					0,
-					arg_6_1[2] - 38 - var_6_5,
+					size[2] - 38 - frame_width,
 					4
 				}
 			},
@@ -1293,8 +1298,8 @@ local function fn_3(arg_6_0, arg_6_1, arg_6_2, arg_6_3, arg_6_4, arg_6_5)
 				text_color = Colors.get_color_table_with_alpha("font_title", 255),
 				default_text_color = Colors.get_color_table_with_alpha("font_title", 255),
 				offset = {
-					var_6_5 + 5,
-					-var_6_5,
+					frame_width + 5,
+					-frame_width,
 					10
 				}
 			},
@@ -1309,8 +1314,8 @@ local function fn_3(arg_6_0, arg_6_1, arg_6_2, arg_6_3, arg_6_4, arg_6_5)
 				text_color = Colors.get_color_table_with_alpha("black", 255),
 				default_text_color = Colors.get_color_table_with_alpha("black", 255),
 				offset = {
-					var_6_5 + 5 + 2,
-					-(var_6_5 + 2),
+					frame_width + 5 + 2,
+					-(frame_width + 2),
 					9
 				}
 			},
@@ -1325,7 +1330,7 @@ local function fn_3(arg_6_0, arg_6_1, arg_6_2, arg_6_3, arg_6_4, arg_6_5)
 				text_color = Colors.get_color_table_with_alpha("font_default", 255),
 				default_text_color = Colors.get_color_table_with_alpha("font_default", 255),
 				offset = {
-					var_6_5 + 5,
+					frame_width + 5,
 					-55,
 					10
 				}
@@ -1341,50 +1346,53 @@ local function fn_3(arg_6_0, arg_6_1, arg_6_2, arg_6_3, arg_6_4, arg_6_5)
 				text_color = Colors.get_color_table_with_alpha("black", 255),
 				default_text_color = Colors.get_color_table_with_alpha("black", 255),
 				offset = {
-					var_6_5 + 5 + 2,
+					frame_width + 5 + 2,
 					-57,
 					9
 				}
 			}
 		},
-		scenegraph_id = arg_6_0,
+		scenegraph_id = scenegraph_id,
 		offset = {
 			0,
 			0,
 			0
 		}
 	}
+
+	return widget
 end
 
-local function fn_4(arg_9_0, arg_9_1, arg_9_2, arg_9_3, arg_9_4, arg_9_5)
+local function create_settings_option_deus(scenegraph_id, size, title_text, icon_texture, background_texture, icon_visible)
 	-- function 9
-	arg_9_3 = arg_9_3 or "map_frame_fade"
+	icon_texture = not not icon_texture or not not "map_frame_fade"
 
-	local get_atlas_settings_by_texture_name = UIAtlasHelper.get_atlas_settings_by_texture_name(arg_9_3)
-	local size
+	local icon_texture_settings = UIAtlasHelper.get_atlas_settings_by_texture_name(icon_texture)
+	local size_2
 
-	if not get_atlas_settings_by_texture_name then
-		size = get_atlas_settings_by_texture_name.size
+	if icon_texture_settings then
+		size_2 = icon_texture_settings.size
 
-		if not size then
+		if not size_2 then
 			-- Nothing
 		end
 	end
 
-	size = {
+	size_2 = {
 		150,
 		150
 	}
 
+	local icon_texture_size = size_2
+
 	::label_9_0::
 
-	arg_9_5 = arg_9_5 == nil or arg_9_5
+	icon_visible = icon_visible == nil or not not icon_visible
 
-	local get_atlas_settings_by_texture_name_2 = UIAtlasHelper.get_atlas_settings_by_texture_name("vote_background_morris")
-	local menu_frame_02_morris = UIFrameSettings.menu_frame_02_morris
-	local var_9_4 = menu_frame_02_morris.texture_sizes.corner[1]
-
-	return {
+	local background_texture_settings = UIAtlasHelper.get_atlas_settings_by_texture_name("vote_background_morris")
+	local frame_settings = UIFrameSettings.menu_frame_02_morris
+	local frame_width = frame_settings.texture_sizes.corner[1]
+	local widget = {
 		element = {
 			passes = {
 				{
@@ -1401,31 +1409,31 @@ local function fn_4(arg_9_0, arg_9_1, arg_9_2, arg_9_3, arg_9_4, arg_9_5)
 					pass_type = "rotated_texture",
 					style_id = "icon_mask",
 					texture_id = "icon_mask",
-					content_check_function = function (self)
+					content_check_function = function (content)
 						-- function 10
-						return self.icon_visible
+						return content.icon_visible
 					end
 				},
 				{
 					texture_id = "icon",
 					style_id = "icon",
 					pass_type = "texture",
-					content_check_function = function (self)
+					content_check_function = function (content)
 						-- function 11
-						return self.icon_visible
+						return content.icon_visible
 					end
 				},
 				{
 					texture_id = "journey_border",
 					style_id = "journey_border",
 					pass_type = "texture",
-					content_check_function = function (self)
+					content_check_function = function (content)
 						-- function 12
-						local icon_visible = self.icon_visible
+						local icon_visible = content.icon_visible
 
-						if not icon_visible then
-							icon_visible = self.show_journey_border
-							icon_visible = not icon_visible and not self.with_belakor
+						if icon_visible then
+							icon_visible = content.show_journey_border
+							icon_visible = not not icon_visible and not not not content.with_belakor
 						end
 
 						return icon_visible
@@ -1435,13 +1443,13 @@ local function fn_4(arg_9_0, arg_9_1, arg_9_2, arg_9_3, arg_9_4, arg_9_5)
 					texture_id = "belakor_journey_border",
 					style_id = "belakor_journey_border",
 					pass_type = "texture",
-					content_check_function = function (self)
+					content_check_function = function (content)
 						-- function 13
-						local icon_visible = self.icon_visible
+						local icon_visible = content.icon_visible
 
-						if not icon_visible then
-							icon_visible = self.show_journey_border
-							icon_visible = not icon_visible and self.with_belakor
+						if icon_visible then
+							icon_visible = content.show_journey_border
+							icon_visible = not not icon_visible and not not content.with_belakor
 						end
 
 						return icon_visible
@@ -1476,22 +1484,22 @@ local function fn_4(arg_9_0, arg_9_1, arg_9_2, arg_9_3, arg_9_4, arg_9_5)
 			belakor_journey_border = "vote_icon_border_belakor",
 			option_text = "",
 			icon_mask = "mask_rect",
-			frame = menu_frame_02_morris.texture,
-			title_text = arg_9_2 or "n/a",
-			icon = arg_9_3,
-			icon_visible = arg_9_5,
+			frame = frame_settings.texture,
+			title_text = not not title_text or not not "n/a",
+			icon = icon_texture,
+			icon_visible = icon_visible,
 			background = {
 				uvs = {
 					{
 						0,
-						1 - math.min(arg_9_1[2] / get_atlas_settings_by_texture_name_2.size[2], 1)
+						1 - math.min(size[2] / background_texture_settings.size[2], 1)
 					},
 					{
-						math.min(arg_9_1[1] / get_atlas_settings_by_texture_name_2.size[1], 1),
+						math.min(size[1] / background_texture_settings.size[1], 1),
 						1
 					}
 				},
-				texture_id = get_atlas_settings_by_texture_name_2.texture_name
+				texture_id = background_texture_settings.texture_name
 			}
 		},
 		style = {
@@ -1507,9 +1515,9 @@ local function fn_4(arg_9_0, arg_9_1, arg_9_2, arg_9_3, arg_9_4, arg_9_5)
 					0,
 					10
 				},
-				size = arg_9_1,
-				texture_size = menu_frame_02_morris.texture_size,
-				texture_sizes = menu_frame_02_morris.texture_sizes
+				size = size,
+				texture_size = frame_settings.texture_size,
+				texture_sizes = frame_settings.texture_sizes
 			},
 			background = {
 				color = {
@@ -1543,7 +1551,7 @@ local function fn_4(arg_9_0, arg_9_1, arg_9_2, arg_9_3, arg_9_4, arg_9_5)
 					58.5
 				},
 				offset = {
-					arg_9_1[1] / 2 - 120,
+					size[1] / 2 - 120,
 					0,
 					5
 				}
@@ -1558,9 +1566,9 @@ local function fn_4(arg_9_0, arg_9_1, arg_9_2, arg_9_3, arg_9_4, arg_9_5)
 					255,
 					255
 				},
-				texture_size = size,
+				texture_size = icon_texture_size,
 				offset = {
-					arg_9_1[1] / 2 - 120,
+					size[1] / 2 - 120,
 					0,
 					5
 				}
@@ -1573,7 +1581,7 @@ local function fn_4(arg_9_0, arg_9_1, arg_9_2, arg_9_3, arg_9_4, arg_9_5)
 					180
 				},
 				offset = {
-					arg_9_1[1] / 2 - 120,
+					size[1] / 2 - 120,
 					0,
 					5
 				}
@@ -1586,7 +1594,7 @@ local function fn_4(arg_9_0, arg_9_1, arg_9_2, arg_9_3, arg_9_4, arg_9_5)
 					210
 				},
 				offset = {
-					arg_9_1[1] / 2 - 120,
+					size[1] / 2 - 120,
 					0,
 					5
 				}
@@ -1602,8 +1610,8 @@ local function fn_4(arg_9_0, arg_9_1, arg_9_2, arg_9_3, arg_9_4, arg_9_5)
 				text_color = Colors.get_color_table_with_alpha("font_title", 255),
 				default_text_color = Colors.get_color_table_with_alpha("font_title", 255),
 				offset = {
-					var_9_4 + 5,
-					-var_9_4,
+					frame_width + 5,
+					-frame_width,
 					10
 				}
 			},
@@ -1618,8 +1626,8 @@ local function fn_4(arg_9_0, arg_9_1, arg_9_2, arg_9_3, arg_9_4, arg_9_5)
 				text_color = Colors.get_color_table_with_alpha("black", 255),
 				default_text_color = Colors.get_color_table_with_alpha("black", 255),
 				offset = {
-					var_9_4 + 5 + 2,
-					-(var_9_4 + 2),
+					frame_width + 5 + 2,
+					-(frame_width + 2),
 					9
 				}
 			},
@@ -1634,7 +1642,7 @@ local function fn_4(arg_9_0, arg_9_1, arg_9_2, arg_9_3, arg_9_4, arg_9_5)
 				text_color = Colors.get_color_table_with_alpha("font_default", 255),
 				default_text_color = Colors.get_color_table_with_alpha("font_default", 255),
 				offset = {
-					var_9_4 + 5,
+					frame_width + 5,
 					-55,
 					10
 				}
@@ -1650,50 +1658,53 @@ local function fn_4(arg_9_0, arg_9_1, arg_9_2, arg_9_3, arg_9_4, arg_9_5)
 				text_color = Colors.get_color_table_with_alpha("black", 255),
 				default_text_color = Colors.get_color_table_with_alpha("black", 255),
 				offset = {
-					var_9_4 + 5 + 2,
+					frame_width + 5 + 2,
 					-57,
 					9
 				}
 			}
 		},
-		scenegraph_id = arg_9_0,
+		scenegraph_id = scenegraph_id,
 		offset = {
 			0,
 			0,
 			0
 		}
 	}
+
+	return widget
 end
 
-local function fn_5(arg_14_0, arg_14_1, arg_14_2, arg_14_3, arg_14_4, arg_14_5)
+local function create_settings_option_deus_weekly_event(scenegraph_id, size, title_text, icon_texture, background_texture, icon_visible)
 	-- function 14
-	arg_14_3 = arg_14_3 or "map_frame_fade"
+	icon_texture = not not icon_texture or not not "map_frame_fade"
 
-	local get_atlas_settings_by_texture_name = UIAtlasHelper.get_atlas_settings_by_texture_name(arg_14_3)
-	local size
+	local icon_texture_settings = UIAtlasHelper.get_atlas_settings_by_texture_name(icon_texture)
+	local size_2
 
-	if not get_atlas_settings_by_texture_name then
-		size = get_atlas_settings_by_texture_name.size
+	if icon_texture_settings then
+		size_2 = icon_texture_settings.size
 
-		if not size then
+		if not size_2 then
 			-- Nothing
 		end
 	end
 
-	size = {
+	size_2 = {
 		150,
 		150
 	}
 
+	local icon_texture_size = size_2
+
 	::label_14_0::
 
-	arg_14_5 = arg_14_5 == nil or arg_14_5
+	icon_visible = icon_visible == nil or not not icon_visible
 
-	local get_atlas_settings_by_texture_name_2 = UIAtlasHelper.get_atlas_settings_by_texture_name("vote_background_morris")
-	local menu_frame_02_morris = UIFrameSettings.menu_frame_02_morris
-	local var_14_4 = menu_frame_02_morris.texture_sizes.corner[1]
-
-	return {
+	local background_texture_settings = UIAtlasHelper.get_atlas_settings_by_texture_name("vote_background_morris")
+	local frame_settings = UIFrameSettings.menu_frame_02_morris
+	local frame_width = frame_settings.texture_sizes.corner[1]
+	local widget = {
 		element = {
 			passes = {
 				{
@@ -1710,31 +1721,31 @@ local function fn_5(arg_14_0, arg_14_1, arg_14_2, arg_14_3, arg_14_4, arg_14_5)
 					pass_type = "rotated_texture",
 					style_id = "icon_mask",
 					texture_id = "icon_mask",
-					content_check_function = function (self)
+					content_check_function = function (content)
 						-- function 15
-						return self.icon_visible
+						return content.icon_visible
 					end
 				},
 				{
 					texture_id = "icon",
 					style_id = "icon",
 					pass_type = "texture",
-					content_check_function = function (self)
+					content_check_function = function (content)
 						-- function 16
-						return self.icon_visible
+						return content.icon_visible
 					end
 				},
 				{
 					texture_id = "journey_border",
 					style_id = "journey_border",
 					pass_type = "texture",
-					content_check_function = function (self)
+					content_check_function = function (content)
 						-- function 17
-						local icon_visible = self.icon_visible
+						local icon_visible = content.icon_visible
 
-						if not icon_visible then
-							icon_visible = self.show_journey_border
-							icon_visible = not icon_visible and not self.with_belakor
+						if icon_visible then
+							icon_visible = content.show_journey_border
+							icon_visible = not not icon_visible and not not not content.with_belakor
 						end
 
 						return icon_visible
@@ -1744,13 +1755,13 @@ local function fn_5(arg_14_0, arg_14_1, arg_14_2, arg_14_3, arg_14_4, arg_14_5)
 					texture_id = "belakor_journey_border",
 					style_id = "belakor_journey_border",
 					pass_type = "texture",
-					content_check_function = function (self)
+					content_check_function = function (content)
 						-- function 18
-						local icon_visible = self.icon_visible
+						local icon_visible = content.icon_visible
 
-						if not icon_visible then
-							icon_visible = self.show_journey_border
-							icon_visible = not icon_visible and self.with_belakor
+						if icon_visible then
+							icon_visible = content.show_journey_border
+							icon_visible = not not icon_visible and not not content.with_belakor
 						end
 
 						return icon_visible
@@ -1802,23 +1813,23 @@ local function fn_5(arg_14_0, arg_14_1, arg_14_2, arg_14_3, arg_14_4, arg_14_5)
 			difficulty_icon = "icons_placeholder",
 			option_text = "",
 			icon_mask = "mask_rect",
-			frame = menu_frame_02_morris.texture,
-			title_text = arg_14_2 or "n/a",
-			icon = arg_14_3,
-			icon_visible = arg_14_5,
+			frame = frame_settings.texture,
+			title_text = not not title_text or not not "n/a",
+			icon = icon_texture,
+			icon_visible = icon_visible,
 			difficulty_title_text = Localize("start_game_window_difficulty"),
 			background = {
 				uvs = {
 					{
 						0,
-						1 - math.min(arg_14_1[2] / get_atlas_settings_by_texture_name_2.size[2], 1)
+						1 - math.min(size[2] / background_texture_settings.size[2], 1)
 					},
 					{
-						math.min(arg_14_1[1] / get_atlas_settings_by_texture_name_2.size[1], 1),
+						math.min(size[1] / background_texture_settings.size[1], 1),
 						1
 					}
 				},
-				texture_id = get_atlas_settings_by_texture_name_2.texture_name
+				texture_id = background_texture_settings.texture_name
 			}
 		},
 		style = {
@@ -1834,9 +1845,9 @@ local function fn_5(arg_14_0, arg_14_1, arg_14_2, arg_14_3, arg_14_4, arg_14_5)
 					0,
 					10
 				},
-				size = arg_14_1,
-				texture_size = menu_frame_02_morris.texture_size,
-				texture_sizes = menu_frame_02_morris.texture_sizes
+				size = size,
+				texture_size = frame_settings.texture_size,
+				texture_sizes = frame_settings.texture_sizes
 			},
 			background = {
 				color = {
@@ -1870,7 +1881,7 @@ local function fn_5(arg_14_0, arg_14_1, arg_14_2, arg_14_3, arg_14_4, arg_14_5)
 					58.5
 				},
 				offset = {
-					arg_14_1[1] / 2 - 120,
+					size[1] / 2 - 120,
 					0,
 					5
 				}
@@ -1885,9 +1896,9 @@ local function fn_5(arg_14_0, arg_14_1, arg_14_2, arg_14_3, arg_14_4, arg_14_5)
 					255,
 					255
 				},
-				texture_size = size,
+				texture_size = icon_texture_size,
 				offset = {
-					arg_14_1[1] / 2 - 120,
+					size[1] / 2 - 120,
 					0,
 					5
 				}
@@ -1900,7 +1911,7 @@ local function fn_5(arg_14_0, arg_14_1, arg_14_2, arg_14_3, arg_14_4, arg_14_5)
 					180
 				},
 				offset = {
-					arg_14_1[1] / 2 - 120,
+					size[1] / 2 - 120,
 					0,
 					6
 				}
@@ -1913,7 +1924,7 @@ local function fn_5(arg_14_0, arg_14_1, arg_14_2, arg_14_3, arg_14_4, arg_14_5)
 					210
 				},
 				offset = {
-					arg_14_1[1] / 2 - 120,
+					size[1] / 2 - 120,
 					0,
 					6
 				}
@@ -1929,8 +1940,8 @@ local function fn_5(arg_14_0, arg_14_1, arg_14_2, arg_14_3, arg_14_4, arg_14_5)
 				text_color = Colors.get_color_table_with_alpha("font_title", 255),
 				default_text_color = Colors.get_color_table_with_alpha("font_title", 255),
 				offset = {
-					var_14_4 + 5,
-					-var_14_4 - 5,
+					frame_width + 5,
+					-frame_width - 5,
 					10
 				}
 			},
@@ -1945,8 +1956,8 @@ local function fn_5(arg_14_0, arg_14_1, arg_14_2, arg_14_3, arg_14_4, arg_14_5)
 				text_color = Colors.get_color_table_with_alpha("black", 255),
 				default_text_color = Colors.get_color_table_with_alpha("black", 255),
 				offset = {
-					var_14_4 + 5 + 2,
-					-(var_14_4 + 2) - 5,
+					frame_width + 5 + 2,
+					-(frame_width + 2) - 5,
 					9
 				}
 			},
@@ -1964,7 +1975,7 @@ local function fn_5(arg_14_0, arg_14_1, arg_14_2, arg_14_3, arg_14_4, arg_14_5)
 					40
 				},
 				offset = {
-					var_14_4,
+					frame_width,
 					-135,
 					5
 				}
@@ -1980,7 +1991,7 @@ local function fn_5(arg_14_0, arg_14_1, arg_14_2, arg_14_3, arg_14_4, arg_14_5)
 				text_color = Colors.get_color_table_with_alpha("font_title", 255),
 				default_text_color = Colors.get_color_table_with_alpha("font_title", 255),
 				offset = {
-					var_14_4 + 5 + 40,
+					frame_width + 5 + 40,
 					-135,
 					10
 				}
@@ -1996,7 +2007,7 @@ local function fn_5(arg_14_0, arg_14_1, arg_14_2, arg_14_3, arg_14_4, arg_14_5)
 				text_color = Colors.get_color_table_with_alpha("black", 255),
 				default_text_color = Colors.get_color_table_with_alpha("black", 255),
 				offset = {
-					var_14_4 + 5 + 2 + 40,
+					frame_width + 5 + 2 + 40,
 					-137,
 					9
 				}
@@ -2012,7 +2023,7 @@ local function fn_5(arg_14_0, arg_14_1, arg_14_2, arg_14_3, arg_14_4, arg_14_5)
 				text_color = Colors.get_color_table_with_alpha("font_default", 255),
 				default_text_color = Colors.get_color_table_with_alpha("font_default", 255),
 				offset = {
-					var_14_4 + 5 + 40,
+					frame_width + 5 + 40,
 					-165,
 					10
 				}
@@ -2028,52 +2039,55 @@ local function fn_5(arg_14_0, arg_14_1, arg_14_2, arg_14_3, arg_14_4, arg_14_5)
 				text_color = Colors.get_color_table_with_alpha("black", 255),
 				default_text_color = Colors.get_color_table_with_alpha("black", 255),
 				offset = {
-					var_14_4 + 5 + 2 + 40,
+					frame_width + 5 + 2 + 40,
 					-167,
 					9
 				}
 			}
 		},
-		scenegraph_id = arg_14_0,
+		scenegraph_id = scenegraph_id,
 		offset = {
 			0,
 			0,
 			0
 		}
 	}
+
+	return widget
 end
 
-local function fn_6(arg_19_0, arg_19_1, arg_19_2, arg_19_3, arg_19_4, arg_19_5)
+local function create_weave_settings_option(scenegraph_id, size, title_text, icon_texture, background_texture, icon_visible)
 	-- function 19
-	arg_19_3 = arg_19_3 or "map_frame_fade"
+	icon_texture = not not icon_texture or not not "map_frame_fade"
 
-	local get_atlas_settings_by_texture_name = UIAtlasHelper.get_atlas_settings_by_texture_name(arg_19_3)
-	local size
+	local icon_texture_settings = UIAtlasHelper.get_atlas_settings_by_texture_name(icon_texture)
+	local size_2
 
-	if not get_atlas_settings_by_texture_name then
-		size = get_atlas_settings_by_texture_name.size
+	if icon_texture_settings then
+		size_2 = icon_texture_settings.size
 
-		if not size then
+		if not size_2 then
 			-- Nothing
 		end
 	end
 
-	size = {
+	size_2 = {
 		150,
 		150
 	}
 
+	local icon_texture_size = size_2
+
 	::label_19_0::
 
-	arg_19_5 = arg_19_5 == nil or arg_19_5
-	arg_19_4 = arg_19_4 or "game_options_bg_02"
+	icon_visible = icon_visible == nil or not not icon_visible
+	background_texture = not not background_texture or not not "game_options_bg_02"
 
-	local get_atlas_settings_by_texture_name_2 = UIAtlasHelper.get_atlas_settings_by_texture_name(arg_19_4)
-	local str = "menu_frame_08"
-	local var_19_4 = UIFrameSettings[str]
-	local var_19_5 = var_19_4.texture_sizes.corner[1]
-
-	return {
+	local background_texture_settings = UIAtlasHelper.get_atlas_settings_by_texture_name(background_texture)
+	local frame_name = "menu_frame_08"
+	local frame_settings = UIFrameSettings[frame_name]
+	local frame_width = frame_settings.texture_sizes.corner[1]
+	local widget = {
 		element = {
 			passes = {
 				{
@@ -2090,54 +2104,54 @@ local function fn_6(arg_19_0, arg_19_1, arg_19_2, arg_19_3, arg_19_4, arg_19_5)
 					texture_id = "icon_frame",
 					style_id = "icon_frame",
 					pass_type = "texture",
-					content_check_function = function (self)
+					content_check_function = function (content)
 						-- function 20
-						return self.icon_visible
+						return content.icon_visible
 					end
 				},
 				{
 					texture_id = "icon",
 					style_id = "icon",
 					pass_type = "texture",
-					content_check_function = function (self)
+					content_check_function = function (content)
 						-- function 21
-						return self.icon_visible
+						return content.icon_visible
 					end
 				},
 				{
 					texture_id = "wind_icon",
 					style_id = "wind_icon",
 					pass_type = "texture",
-					content_check_function = function (self)
+					content_check_function = function (content)
 						-- function 22
-						return self.icon_visible
+						return content.icon_visible
 					end
 				},
 				{
 					texture_id = "wind_icon_bg",
 					style_id = "wind_icon_bg",
 					pass_type = "texture",
-					content_check_function = function (self)
+					content_check_function = function (content)
 						-- function 23
-						return self.icon_visible
+						return content.icon_visible
 					end
 				},
 				{
 					texture_id = "wind_icon_glow",
 					style_id = "wind_icon_glow",
 					pass_type = "texture",
-					content_check_function = function (self)
+					content_check_function = function (content)
 						-- function 24
-						return self.icon_visible
+						return content.icon_visible
 					end
 				},
 				{
 					texture_id = "wind_icon_slot",
 					style_id = "wind_icon_slot",
 					pass_type = "texture",
-					content_check_function = function (self)
+					content_check_function = function (content)
 						-- function 25
-						return self.icon_visible
+						return content.icon_visible
 					end
 				},
 				{
@@ -2212,10 +2226,10 @@ local function fn_6(arg_19_0, arg_19_1, arg_19_2, arg_19_3, arg_19_4, arg_19_5)
 			wind_icon = "icon_wind_azyr",
 			title_bg = "playername_bg_02",
 			wind_title = "Wind: ",
-			frame = var_19_4.texture,
-			title_text = arg_19_2 or "n/a",
-			icon = arg_19_3,
-			icon_visible = arg_19_5,
+			frame = frame_settings.texture,
+			title_text = not not title_text or not not "n/a",
+			icon = icon_texture,
+			icon_visible = icon_visible,
 			mission_title = Localize("lb_level") .. ":",
 			mission_name = Localize("level_name_farmlands"),
 			wind_name = Localize("wind_metal_name"),
@@ -2223,14 +2237,14 @@ local function fn_6(arg_19_0, arg_19_1, arg_19_2, arg_19_3, arg_19_4, arg_19_5)
 				uvs = {
 					{
 						0,
-						1 - math.min(arg_19_1[2] / get_atlas_settings_by_texture_name_2.size[2], 1)
+						1 - math.min(size[2] / background_texture_settings.size[2], 1)
 					},
 					{
-						math.min(arg_19_1[1] / get_atlas_settings_by_texture_name_2.size[1], 1),
+						math.min(size[1] / background_texture_settings.size[1], 1),
 						1
 					}
 				},
-				texture_id = arg_19_4
+				texture_id = background_texture
 			}
 		},
 		style = {
@@ -2322,9 +2336,9 @@ local function fn_6(arg_19_0, arg_19_1, arg_19_2, arg_19_3, arg_19_4, arg_19_5)
 					0,
 					10
 				},
-				size = arg_19_1,
-				texture_size = var_19_4.texture_size,
-				texture_sizes = var_19_4.texture_sizes
+				size = size,
+				texture_size = frame_settings.texture_size,
+				texture_sizes = frame_settings.texture_sizes
 			},
 			background = {
 				texture_tiling_size = {
@@ -2352,9 +2366,9 @@ local function fn_6(arg_19_0, arg_19_1, arg_19_2, arg_19_3, arg_19_4, arg_19_5)
 					255,
 					255
 				},
-				texture_size = size,
+				texture_size = icon_texture_size,
 				offset = {
-					arg_19_1[1] / 2 - 120,
+					size[1] / 2 - 120,
 					-15,
 					5
 				}
@@ -2373,14 +2387,14 @@ local function fn_6(arg_19_0, arg_19_1, arg_19_2, arg_19_3, arg_19_4, arg_19_5)
 					255
 				},
 				offset = {
-					arg_19_1[1] / 2 - 120,
+					size[1] / 2 - 120,
 					-15,
 					6
 				}
 			},
 			title_bg = {
 				size = {
-					arg_19_1[1],
+					size[1],
 					40
 				},
 				color = {
@@ -2391,13 +2405,13 @@ local function fn_6(arg_19_0, arg_19_1, arg_19_2, arg_19_3, arg_19_4, arg_19_5)
 				},
 				offset = {
 					0,
-					arg_19_1[2] - 38 - var_19_5,
+					size[2] - 38 - frame_width,
 					2
 				}
 			},
 			title_edge = {
 				size = {
-					arg_19_1[1],
+					size[1],
 					5
 				},
 				color = {
@@ -2408,7 +2422,7 @@ local function fn_6(arg_19_0, arg_19_1, arg_19_2, arg_19_3, arg_19_4, arg_19_5)
 				},
 				offset = {
 					0,
-					arg_19_1[2] - 38 - var_19_5,
+					size[2] - 38 - frame_width,
 					4
 				}
 			},
@@ -2422,14 +2436,14 @@ local function fn_6(arg_19_0, arg_19_1, arg_19_2, arg_19_3, arg_19_4, arg_19_5)
 				dynamic_font_size = true,
 				font_type = "hell_shark_header",
 				size = {
-					tbl_2[1] - (var_19_5 + 10),
-					tbl_2[2]
+					game_option_size[1] - (frame_width + 10),
+					game_option_size[2]
 				},
 				text_color = Colors.get_color_table_with_alpha("font_title", 255),
 				default_text_color = Colors.get_color_table_with_alpha("font_title", 255),
 				offset = {
-					var_19_5 + 5,
-					-var_19_5,
+					frame_width + 5,
+					-frame_width,
 					10
 				}
 			},
@@ -2443,14 +2457,14 @@ local function fn_6(arg_19_0, arg_19_1, arg_19_2, arg_19_3, arg_19_4, arg_19_5)
 				dynamic_font_size = true,
 				font_type = "hell_shark_header",
 				size = {
-					tbl_2[1] - (var_19_5 + 10),
-					tbl_2[2]
+					game_option_size[1] - (frame_width + 10),
+					game_option_size[2]
 				},
 				text_color = Colors.get_color_table_with_alpha("black", 255),
 				default_text_color = Colors.get_color_table_with_alpha("black", 255),
 				offset = {
-					var_19_5 + 5 + 2,
-					-(var_19_5 + 2),
+					frame_width + 5 + 2,
+					-(frame_width + 2),
 					9
 				}
 			},
@@ -2464,14 +2478,14 @@ local function fn_6(arg_19_0, arg_19_1, arg_19_2, arg_19_3, arg_19_4, arg_19_5)
 				dynamic_font_size = true,
 				font_type = "hell_shark_header",
 				size = {
-					tbl_2[1] - (var_19_5 + 10),
-					tbl_2[2]
+					game_option_size[1] - (frame_width + 10),
+					game_option_size[2]
 				},
 				text_color = Colors.get_color_table_with_alpha("font_title", 255),
 				default_text_color = Colors.get_color_table_with_alpha("font_title", 255),
 				offset = {
-					var_19_5 + 5,
-					-var_19_5 - 50,
+					frame_width + 5,
+					-frame_width - 50,
 					12
 				}
 			},
@@ -2485,14 +2499,14 @@ local function fn_6(arg_19_0, arg_19_1, arg_19_2, arg_19_3, arg_19_4, arg_19_5)
 				dynamic_font_size = true,
 				font_type = "hell_shark_header",
 				size = {
-					tbl_2[1] - (var_19_5 + 10),
-					tbl_2[2]
+					game_option_size[1] - (frame_width + 10),
+					game_option_size[2]
 				},
 				text_color = Colors.get_color_table_with_alpha("black", 255),
 				default_text_color = Colors.get_color_table_with_alpha("black", 255),
 				offset = {
-					var_19_5 + 5 + 2,
-					-(var_19_5 + 2) - 50,
+					frame_width + 5 + 2,
+					-(frame_width + 2) - 50,
 					11
 				}
 			},
@@ -2506,14 +2520,14 @@ local function fn_6(arg_19_0, arg_19_1, arg_19_2, arg_19_3, arg_19_4, arg_19_5)
 				dynamic_font_size = true,
 				font_type = "hell_shark_header",
 				size = {
-					tbl_2[1] - (var_19_5 + 10),
-					tbl_2[2]
+					game_option_size[1] - (frame_width + 10),
+					game_option_size[2]
 				},
 				text_color = Colors.get_color_table_with_alpha("font_title", 255),
 				default_text_color = Colors.get_color_table_with_alpha("font_title", 255),
 				offset = {
-					var_19_5 + 5,
-					-var_19_5 - 80,
+					frame_width + 5,
+					-frame_width - 80,
 					12
 				}
 			},
@@ -2527,14 +2541,14 @@ local function fn_6(arg_19_0, arg_19_1, arg_19_2, arg_19_3, arg_19_4, arg_19_5)
 				dynamic_font_size = true,
 				font_type = "hell_shark_header",
 				size = {
-					tbl_2[1] - (var_19_5 + 10),
-					tbl_2[2]
+					game_option_size[1] - (frame_width + 10),
+					game_option_size[2]
 				},
 				text_color = Colors.get_color_table_with_alpha("black", 255),
 				default_text_color = Colors.get_color_table_with_alpha("black", 255),
 				offset = {
-					var_19_5 + 5 + 2,
-					-(var_19_5 + 2) - 80,
+					frame_width + 5 + 2,
+					-(frame_width + 2) - 80,
 					11
 				}
 			},
@@ -2548,14 +2562,14 @@ local function fn_6(arg_19_0, arg_19_1, arg_19_2, arg_19_3, arg_19_4, arg_19_5)
 				dynamic_font_size = true,
 				font_type = "hell_shark_header",
 				size = {
-					tbl_2[1] - (var_19_5 + 10),
-					tbl_2[2]
+					game_option_size[1] - (frame_width + 10),
+					game_option_size[2]
 				},
 				text_color = Colors.get_color_table_with_alpha("white", 255),
 				default_text_color = Colors.get_color_table_with_alpha("white", 255),
 				offset = {
-					var_19_5 + 5,
-					-var_19_5 - 75,
+					frame_width + 5,
+					-frame_width - 75,
 					10
 				}
 			},
@@ -2569,14 +2583,14 @@ local function fn_6(arg_19_0, arg_19_1, arg_19_2, arg_19_3, arg_19_4, arg_19_5)
 				dynamic_font_size = true,
 				font_type = "hell_shark_header",
 				size = {
-					tbl_2[1] - (var_19_5 + 10),
-					tbl_2[2]
+					game_option_size[1] - (frame_width + 10),
+					game_option_size[2]
 				},
 				text_color = Colors.get_color_table_with_alpha("black", 255),
 				default_text_color = Colors.get_color_table_with_alpha("black", 255),
 				offset = {
-					var_19_5 + 5 + 2,
-					-(var_19_5 + 2) - 75,
+					frame_width + 5 + 2,
+					-(frame_width + 2) - 75,
 					9
 				}
 			},
@@ -2590,14 +2604,14 @@ local function fn_6(arg_19_0, arg_19_1, arg_19_2, arg_19_3, arg_19_4, arg_19_5)
 				dynamic_font_size = true,
 				font_type = "hell_shark_header",
 				size = {
-					tbl_2[1] - (var_19_5 + 10),
-					tbl_2[2]
+					game_option_size[1] - (frame_width + 10),
+					game_option_size[2]
 				},
 				text_color = Colors.get_color_table_with_alpha("white", 255),
 				default_text_color = Colors.get_color_table_with_alpha("white", 255),
 				offset = {
-					var_19_5 + 5,
-					-var_19_5 - 100,
+					frame_width + 5,
+					-frame_width - 100,
 					10
 				}
 			},
@@ -2611,14 +2625,14 @@ local function fn_6(arg_19_0, arg_19_1, arg_19_2, arg_19_3, arg_19_4, arg_19_5)
 				dynamic_font_size = true,
 				font_type = "hell_shark_header",
 				size = {
-					tbl_2[1] - (var_19_5 + 10),
-					tbl_2[2]
+					game_option_size[1] - (frame_width + 10),
+					game_option_size[2]
 				},
 				text_color = Colors.get_color_table_with_alpha("black", 255),
 				default_text_color = Colors.get_color_table_with_alpha("black", 255),
 				offset = {
-					var_19_5 + 5 + 2,
-					-(var_19_5 + 2) - 100,
+					frame_width + 5 + 2,
+					-(frame_width + 2) - 100,
 					9
 				}
 			},
@@ -2633,7 +2647,7 @@ local function fn_6(arg_19_0, arg_19_1, arg_19_2, arg_19_3, arg_19_4, arg_19_5)
 				text_color = Colors.get_color_table_with_alpha("font_default", 255),
 				default_text_color = Colors.get_color_table_with_alpha("font_default", 255),
 				offset = {
-					var_19_5 + 5,
+					frame_width + 5,
 					-55,
 					10
 				}
@@ -2649,29 +2663,31 @@ local function fn_6(arg_19_0, arg_19_1, arg_19_2, arg_19_3, arg_19_4, arg_19_5)
 				text_color = Colors.get_color_table_with_alpha("black", 255),
 				default_text_color = Colors.get_color_table_with_alpha("black", 255),
 				offset = {
-					var_19_5 + 5 + 2,
+					frame_width + 5 + 2,
 					-57,
 					9
 				}
 			}
 		},
-		scenegraph_id = arg_19_0,
+		scenegraph_id = scenegraph_id,
 		offset = {
 			0,
 			0,
 			0
 		}
 	}
+
+	return widget
 end
 
-local function fn_7(arg_26_0, arg_26_1, arg_26_2, arg_26_3, arg_26_4)
+local function create_additional_settings_option(scenegraph_id, size, title_text, background_texture, frame_settings_name)
 	-- function 26
-	local get_atlas_settings_by_texture_name = UIAtlasHelper.get_atlas_settings_by_texture_name(arg_26_3 or "game_options_bg_02")
+	local background_texture_settings = UIAtlasHelper.get_atlas_settings_by_texture_name(not not background_texture or not not "game_options_bg_02")
 
-	arg_26_4 = arg_26_4 or "menu_frame_08"
+	frame_settings_name = not not frame_settings_name or not not "menu_frame_08"
 
-	local var_26_1 = UIFrameSettings[arg_26_4]
-	local var_26_2 = var_26_1.texture_sizes.corner[1]
+	local frame_settings = UIFrameSettings[frame_settings_name]
+	local frame_width = frame_settings.texture_sizes.corner[1]
 	local tbl = {
 		element = {
 			passes = {
@@ -2721,20 +2737,20 @@ local function fn_7(arg_26_0, arg_26_1, arg_26_2, arg_26_3, arg_26_4)
 			title_bg = "playername_bg_02",
 			option_text = "",
 			title_edge = "game_option_divider",
-			frame = var_26_1.texture,
-			title_text = arg_26_2 or "n/a",
+			frame = frame_settings.texture,
+			title_text = not not title_text or not not "n/a",
 			background = {
 				uvs = {
 					{
 						0,
-						1 - math.min(arg_26_1[2] / get_atlas_settings_by_texture_name.size[2], 1)
+						1 - math.min(size[2] / background_texture_settings.size[2], 1)
 					},
 					{
-						math.min(arg_26_1[1] / get_atlas_settings_by_texture_name.size[1], 1),
+						math.min(size[1] / background_texture_settings.size[1], 1),
 						1
 					}
 				},
-				texture_id = get_atlas_settings_by_texture_name.texture_name
+				texture_id = background_texture_settings.texture_name
 			}
 		}
 	}
@@ -2751,9 +2767,9 @@ local function fn_7(arg_26_0, arg_26_1, arg_26_2, arg_26_3, arg_26_4)
 				0,
 				10
 			},
-			size = arg_26_1,
-			texture_size = var_26_1.texture_size,
-			texture_sizes = var_26_1.texture_sizes
+			size = size,
+			texture_size = frame_settings.texture_size,
+			texture_sizes = frame_settings.texture_sizes
 		}
 	}
 	local tbl_3 = {
@@ -2770,7 +2786,7 @@ local function fn_7(arg_26_0, arg_26_1, arg_26_2, arg_26_3, arg_26_4)
 	}
 	local flag
 
-	flag = not arg_26_3 and 255 and 0
+	flag = (not background_texture or not 255) and not not 0
 	tbl_4[1] = flag
 	tbl_3.color = tbl_4
 	tbl_3.offset = {
@@ -2781,7 +2797,7 @@ local function fn_7(arg_26_0, arg_26_1, arg_26_2, arg_26_3, arg_26_4)
 	tbl_2.background = tbl_3
 	tbl_2.title_bg = {
 		size = {
-			arg_26_1[1],
+			size[1],
 			40
 		},
 		color = {
@@ -2792,13 +2808,13 @@ local function fn_7(arg_26_0, arg_26_1, arg_26_2, arg_26_3, arg_26_4)
 		},
 		offset = {
 			0,
-			arg_26_1[2] - 38 - var_26_2,
+			size[2] - 38 - frame_width,
 			2
 		}
 	}
 	tbl_2.title_edge = {
 		size = {
-			arg_26_1[1],
+			size[1],
 			5
 		},
 		color = {
@@ -2809,7 +2825,7 @@ local function fn_7(arg_26_0, arg_26_1, arg_26_2, arg_26_3, arg_26_4)
 		},
 		offset = {
 			0,
-			arg_26_1[2] - 38 - var_26_2,
+			size[2] - 38 - frame_width,
 			4
 		}
 	}
@@ -2824,8 +2840,8 @@ local function fn_7(arg_26_0, arg_26_1, arg_26_2, arg_26_3, arg_26_4)
 		text_color = Colors.get_color_table_with_alpha("font_title", 255),
 		default_text_color = Colors.get_color_table_with_alpha("font_title", 255),
 		offset = {
-			var_26_2 + 5,
-			-var_26_2,
+			frame_width + 5,
+			-frame_width,
 			10
 		}
 	}
@@ -2840,8 +2856,8 @@ local function fn_7(arg_26_0, arg_26_1, arg_26_2, arg_26_3, arg_26_4)
 		text_color = Colors.get_color_table_with_alpha("black", 255),
 		default_text_color = Colors.get_color_table_with_alpha("black", 255),
 		offset = {
-			var_26_2 + 5 + 2,
-			-(var_26_2 + 2),
+			frame_width + 5 + 2,
+			-(frame_width + 2),
 			9
 		}
 	}
@@ -2856,7 +2872,7 @@ local function fn_7(arg_26_0, arg_26_1, arg_26_2, arg_26_3, arg_26_4)
 		text_color = Colors.get_color_table_with_alpha("font_default", 255),
 		default_text_color = Colors.get_color_table_with_alpha("font_default", 255),
 		offset = {
-			var_26_2 + 5,
+			frame_width + 5,
 			-55,
 			10
 		}
@@ -2872,33 +2888,34 @@ local function fn_7(arg_26_0, arg_26_1, arg_26_2, arg_26_3, arg_26_4)
 		text_color = Colors.get_color_table_with_alpha("black", 255),
 		default_text_color = Colors.get_color_table_with_alpha("black", 255),
 		offset = {
-			var_26_2 + 5 + 2,
+			frame_width + 5 + 2,
 			-57,
 			9
 		}
 	}
 	tbl.style = tbl_2
-	tbl.scenegraph_id = arg_26_0
+	tbl.scenegraph_id = scenegraph_id
 	tbl.offset = {
 		0,
 		0,
 		0
 	}
 
-	return tbl
+	local widget = tbl
+
+	return widget
 end
 
-local function fn_8(arg_27_0, arg_27_1, arg_27_2)
+local function create_reward_presentation(scenegraph_id, size, frame_settings_name)
 	-- function 27
-	local str = "game_options_bg_05"
-	local get_atlas_settings_by_texture_name = UIAtlasHelper.get_atlas_settings_by_texture_name(str)
+	local background_texture = "game_options_bg_05"
+	local background_texture_settings = UIAtlasHelper.get_atlas_settings_by_texture_name(background_texture)
 
-	arg_27_2 = arg_27_2 or "menu_frame_08"
+	frame_settings_name = not not frame_settings_name or not not "menu_frame_08"
 
-	local var_27_2 = UIFrameSettings[arg_27_2]
-	local var_27_3 = var_27_2.texture_sizes.corner[1]
-
-	return {
+	local frame_settings = UIFrameSettings[frame_settings_name]
+	local frame_width = frame_settings.texture_sizes.corner[1]
+	local widget = {
 		element = {
 			passes = {
 				{
@@ -2951,21 +2968,21 @@ local function fn_8(arg_27_0, arg_27_1, arg_27_2)
 			title_bg = "playername_bg_02",
 			title_edge = "game_option_divider",
 			button_hotspot = {},
-			frame = var_27_2.texture,
+			frame = frame_settings.texture,
 			option_text = Localize("start_game_window_adventure_reward_desc"),
 			title_text = Localize("start_game_window_adventure_reward_title"),
 			background = {
 				uvs = {
 					{
 						0,
-						1 - math.min(arg_27_1[2] / get_atlas_settings_by_texture_name.size[2], 1)
+						1 - math.min(size[2] / background_texture_settings.size[2], 1)
 					},
 					{
-						math.min(arg_27_1[1] / get_atlas_settings_by_texture_name.size[1], 1),
+						math.min(size[1] / background_texture_settings.size[1], 1),
 						1
 					}
 				},
-				texture_id = str
+				texture_id = background_texture
 			}
 		},
 		style = {
@@ -2981,9 +2998,9 @@ local function fn_8(arg_27_0, arg_27_1, arg_27_2)
 					0,
 					10
 				},
-				size = arg_27_1,
-				texture_size = var_27_2.texture_size,
-				texture_sizes = var_27_2.texture_sizes
+				size = size,
+				texture_size = frame_settings.texture_size,
+				texture_sizes = frame_settings.texture_sizes
 			},
 			background = {
 				texture_tiling_size = {
@@ -3004,7 +3021,7 @@ local function fn_8(arg_27_0, arg_27_1, arg_27_2)
 			},
 			title_bg = {
 				size = {
-					arg_27_1[1],
+					size[1],
 					40
 				},
 				color = {
@@ -3015,13 +3032,13 @@ local function fn_8(arg_27_0, arg_27_1, arg_27_2)
 				},
 				offset = {
 					0,
-					arg_27_1[2] - 38 - var_27_3,
+					size[2] - 38 - frame_width,
 					2
 				}
 			},
 			title_edge = {
 				size = {
-					arg_27_1[1],
+					size[1],
 					5
 				},
 				color = {
@@ -3032,7 +3049,7 @@ local function fn_8(arg_27_0, arg_27_1, arg_27_2)
 				},
 				offset = {
 					0,
-					arg_27_1[2] - 38 - var_27_3,
+					size[2] - 38 - frame_width,
 					4
 				}
 			},
@@ -3047,8 +3064,8 @@ local function fn_8(arg_27_0, arg_27_1, arg_27_2)
 				text_color = Colors.get_color_table_with_alpha("font_title", 255),
 				default_text_color = Colors.get_color_table_with_alpha("font_title", 255),
 				offset = {
-					var_27_3 + 5,
-					-var_27_3,
+					frame_width + 5,
+					-frame_width,
 					10
 				}
 			},
@@ -3063,8 +3080,8 @@ local function fn_8(arg_27_0, arg_27_1, arg_27_2)
 				text_color = Colors.get_color_table_with_alpha("black", 255),
 				default_text_color = Colors.get_color_table_with_alpha("black", 255),
 				offset = {
-					var_27_3 + 5 + 2,
-					-(var_27_3 + 2),
+					frame_width + 5 + 2,
+					-(frame_width + 2),
 					9
 				}
 			},
@@ -3079,13 +3096,13 @@ local function fn_8(arg_27_0, arg_27_1, arg_27_2)
 				text_color = Colors.get_color_table_with_alpha("font_default", 255),
 				default_text_color = Colors.get_color_table_with_alpha("font_default", 255),
 				offset = {
-					var_27_3,
-					var_27_3 + 10,
+					frame_width,
+					frame_width + 10,
 					10
 				},
 				size = {
-					arg_27_1[1] - var_27_3 * 2,
-					arg_27_1[2]
+					size[1] - frame_width * 2,
+					size[2]
 				}
 			},
 			option_text_shadow = {
@@ -3099,13 +3116,13 @@ local function fn_8(arg_27_0, arg_27_1, arg_27_2)
 				text_color = Colors.get_color_table_with_alpha("black", 255),
 				default_text_color = Colors.get_color_table_with_alpha("black", 255),
 				offset = {
-					var_27_3 + 2,
-					var_27_3 + 8,
+					frame_width + 2,
+					frame_width + 8,
 					9
 				},
 				size = {
-					arg_27_1[1] - var_27_3 * 2,
-					arg_27_1[2]
+					size[1] - frame_width * 2,
+					size[2]
 				}
 			},
 			button_disabled_rect = {
@@ -3116,36 +3133,37 @@ local function fn_8(arg_27_0, arg_27_1, arg_27_2)
 					5
 				},
 				offset = {
-					var_27_3,
-					var_27_3,
+					frame_width,
+					frame_width,
 					15
 				},
 				size = {
-					arg_27_1[1] - var_27_3 * 2,
-					arg_27_1[2] - var_27_3 * 2
+					size[1] - frame_width * 2,
+					size[2] - frame_width * 2
 				}
 			}
 		},
-		scenegraph_id = arg_27_0,
+		scenegraph_id = scenegraph_id,
 		offset = {
 			0,
 			0,
 			0
 		}
 	}
+
+	return widget
 end
 
-local function fn_9(arg_28_0, arg_28_1, arg_28_2)
+local function create_versus_reward_presentation(scenegraph_id, size, frame_settings_name)
 	-- function 28
-	local str = "game_options_versus"
-	local get_atlas_settings_by_texture_name = UIAtlasHelper.get_atlas_settings_by_texture_name(str)
+	local background_texture = "game_options_versus"
+	local background_texture_settings = UIAtlasHelper.get_atlas_settings_by_texture_name(background_texture)
 
-	arg_28_2 = arg_28_2 or "menu_frame_08"
+	frame_settings_name = not not frame_settings_name or not not "menu_frame_08"
 
-	local var_28_2 = UIFrameSettings[arg_28_2]
-	local var_28_3 = var_28_2.texture_sizes.corner[1]
-
-	return {
+	local frame_settings = UIFrameSettings[frame_settings_name]
+	local frame_width = frame_settings.texture_sizes.corner[1]
+	local widget = {
 		element = {
 			passes = {
 				{
@@ -3188,21 +3206,21 @@ local function fn_9(arg_28_0, arg_28_1, arg_28_2)
 			title_bg = "playername_bg_02",
 			title_edge = "game_option_divider",
 			button_hotspot = {},
-			frame = var_28_2.texture,
+			frame = frame_settings.texture,
 			option_text = Localize("start_game_window_adventure_reward_desc"),
 			title_text = Localize("lb_game_type_versus_quickplay"),
 			background = {
 				uvs = {
 					{
 						0,
-						1 - math.min(arg_28_1[2] / get_atlas_settings_by_texture_name.size[2], 1)
+						1 - math.min(size[2] / background_texture_settings.size[2], 1)
 					},
 					{
-						math.min(arg_28_1[1] / get_atlas_settings_by_texture_name.size[1], 1),
+						math.min(size[1] / background_texture_settings.size[1], 1),
 						1
 					}
 				},
-				texture_id = str
+				texture_id = background_texture
 			}
 		},
 		style = {
@@ -3218,9 +3236,9 @@ local function fn_9(arg_28_0, arg_28_1, arg_28_2)
 					0,
 					10
 				},
-				size = arg_28_1,
-				texture_size = var_28_2.texture_size,
-				texture_sizes = var_28_2.texture_sizes
+				size = size,
+				texture_size = frame_settings.texture_size,
+				texture_sizes = frame_settings.texture_sizes
 			},
 			background = {
 				texture_tiling_size = {
@@ -3241,7 +3259,7 @@ local function fn_9(arg_28_0, arg_28_1, arg_28_2)
 			},
 			title_bg = {
 				size = {
-					arg_28_1[1],
+					size[1],
 					40
 				},
 				color = {
@@ -3252,13 +3270,13 @@ local function fn_9(arg_28_0, arg_28_1, arg_28_2)
 				},
 				offset = {
 					0,
-					arg_28_1[2] - 38 - var_28_3,
+					size[2] - 38 - frame_width,
 					2
 				}
 			},
 			title_edge = {
 				size = {
-					arg_28_1[1],
+					size[1],
 					5
 				},
 				color = {
@@ -3269,7 +3287,7 @@ local function fn_9(arg_28_0, arg_28_1, arg_28_2)
 				},
 				offset = {
 					0,
-					arg_28_1[2] - 38 - var_28_3,
+					size[2] - 38 - frame_width,
 					4
 				}
 			},
@@ -3284,8 +3302,8 @@ local function fn_9(arg_28_0, arg_28_1, arg_28_2)
 				text_color = Colors.get_color_table_with_alpha("font_title", 255),
 				default_text_color = Colors.get_color_table_with_alpha("font_title", 255),
 				offset = {
-					var_28_3 + 5,
-					-var_28_3,
+					frame_width + 5,
+					-frame_width,
 					10
 				}
 			},
@@ -3300,8 +3318,8 @@ local function fn_9(arg_28_0, arg_28_1, arg_28_2)
 				text_color = Colors.get_color_table_with_alpha("black", 255),
 				default_text_color = Colors.get_color_table_with_alpha("black", 255),
 				offset = {
-					var_28_3 + 5 + 2,
-					-(var_28_3 + 2),
+					frame_width + 5 + 2,
+					-(frame_width + 2),
 					9
 				}
 			},
@@ -3316,13 +3334,13 @@ local function fn_9(arg_28_0, arg_28_1, arg_28_2)
 				text_color = Colors.get_color_table_with_alpha("font_default", 255),
 				default_text_color = Colors.get_color_table_with_alpha("font_default", 255),
 				offset = {
-					var_28_3,
-					var_28_3 + 10,
+					frame_width,
+					frame_width + 10,
 					10
 				},
 				size = {
-					arg_28_1[1] - var_28_3 * 2,
-					arg_28_1[2]
+					size[1] - frame_width * 2,
+					size[2]
 				}
 			},
 			option_text_shadow = {
@@ -3336,13 +3354,13 @@ local function fn_9(arg_28_0, arg_28_1, arg_28_2)
 				text_color = Colors.get_color_table_with_alpha("black", 255),
 				default_text_color = Colors.get_color_table_with_alpha("black", 255),
 				offset = {
-					var_28_3 + 2,
-					var_28_3 + 8,
+					frame_width + 2,
+					frame_width + 8,
 					9
 				},
 				size = {
-					arg_28_1[1] - var_28_3 * 2,
-					arg_28_1[2]
+					size[1] - frame_width * 2,
+					size[2]
 				}
 			},
 			button_disabled_rect = {
@@ -3353,34 +3371,35 @@ local function fn_9(arg_28_0, arg_28_1, arg_28_2)
 					5
 				},
 				offset = {
-					var_28_3,
-					var_28_3,
+					frame_width,
+					frame_width,
 					15
 				},
 				size = {
-					arg_28_1[1] - var_28_3 * 2,
-					arg_28_1[2] - var_28_3 * 2
+					size[1] - frame_width * 2,
+					size[2] - frame_width * 2
 				}
 			}
 		},
-		scenegraph_id = arg_28_0,
+		scenegraph_id = scenegraph_id,
 		offset = {
 			0,
 			0,
 			0
 		}
 	}
+
+	return widget
 end
 
-local function fn_10(arg_29_0, arg_29_1)
+local function create_weave_quickplay_presentation(scenegraph_id, size)
 	-- function 29
-	local str = "weaves_icon"
-	local get_atlas_settings_by_texture_name = UIAtlasHelper.get_atlas_settings_by_texture_name(str)
-	local str_2 = "menu_frame_08"
-	local var_29_3 = UIFrameSettings[str_2]
-	local var_29_4 = var_29_3.texture_sizes.corner[1]
-
-	return {
+	local background_texture = "weaves_icon"
+	local background_texture_settings = UIAtlasHelper.get_atlas_settings_by_texture_name(background_texture)
+	local frame_name = "menu_frame_08"
+	local frame_settings = UIFrameSettings[frame_name]
+	local frame_width = frame_settings.texture_sizes.corner[1]
+	local widget = {
 		element = {
 			passes = {
 				{
@@ -3462,21 +3481,21 @@ local function fn_10(arg_29_0, arg_29_1)
 			title_bg = "playername_bg_02",
 			title_edge = "game_option_divider",
 			button_hotspot = {},
-			frame = var_29_3.texture,
+			frame = frame_settings.texture,
 			option_text = Localize("menu_weave_quick_play_body"),
 			title_text = Localize("start_game_window_weave_quickplay_title"),
 			background = {
 				uvs = {
 					{
 						0,
-						1 - math.min(arg_29_1[2] / get_atlas_settings_by_texture_name.size[2], 1)
+						1 - math.min(size[2] / background_texture_settings.size[2], 1)
 					},
 					{
-						math.min(arg_29_1[1] / get_atlas_settings_by_texture_name.size[1], 1),
+						math.min(size[1] / background_texture_settings.size[1], 1),
 						1
 					}
 				},
-				texture_id = str
+				texture_id = background_texture
 			},
 			smoke_1 = {
 				texture_id = "forge_overview_bottom_glow_effect_smoke_1",
@@ -3557,14 +3576,14 @@ local function fn_10(arg_29_0, arg_29_1)
 					0,
 					10
 				},
-				size = arg_29_1,
-				texture_size = var_29_3.texture_size,
-				texture_sizes = var_29_3.texture_sizes
+				size = size,
+				texture_size = frame_settings.texture_size,
+				texture_sizes = frame_settings.texture_sizes
 			},
 			background = {
 				vertical_alignment = "center",
 				horizontal_alignment = "center",
-				texture_size = get_atlas_settings_by_texture_name.size,
+				texture_size = background_texture_settings.size,
 				color = {
 					255,
 					255,
@@ -3587,7 +3606,7 @@ local function fn_10(arg_29_0, arg_29_1)
 			},
 			title_bg = {
 				size = {
-					arg_29_1[1],
+					size[1],
 					40
 				},
 				color = {
@@ -3598,13 +3617,13 @@ local function fn_10(arg_29_0, arg_29_1)
 				},
 				offset = {
 					0,
-					arg_29_1[2] - 38 - var_29_4,
+					size[2] - 38 - frame_width,
 					2
 				}
 			},
 			title_edge = {
 				size = {
-					arg_29_1[1],
+					size[1],
 					5
 				},
 				color = {
@@ -3615,7 +3634,7 @@ local function fn_10(arg_29_0, arg_29_1)
 				},
 				offset = {
 					0,
-					arg_29_1[2] - 38 - var_29_4,
+					size[2] - 38 - frame_width,
 					4
 				}
 			},
@@ -3630,8 +3649,8 @@ local function fn_10(arg_29_0, arg_29_1)
 				text_color = Colors.get_color_table_with_alpha("font_title", 255),
 				default_text_color = Colors.get_color_table_with_alpha("font_title", 255),
 				offset = {
-					var_29_4 + 5,
-					-var_29_4,
+					frame_width + 5,
+					-frame_width,
 					10
 				}
 			},
@@ -3646,8 +3665,8 @@ local function fn_10(arg_29_0, arg_29_1)
 				text_color = Colors.get_color_table_with_alpha("black", 255),
 				default_text_color = Colors.get_color_table_with_alpha("black", 255),
 				offset = {
-					var_29_4 + 5 + 2,
-					-(var_29_4 + 2),
+					frame_width + 5 + 2,
+					-(frame_width + 2),
 					9
 				}
 			},
@@ -3662,13 +3681,13 @@ local function fn_10(arg_29_0, arg_29_1)
 				text_color = Colors.get_color_table_with_alpha("font_default", 255),
 				default_text_color = Colors.get_color_table_with_alpha("font_default", 255),
 				offset = {
-					var_29_4,
-					var_29_4 + 10,
+					frame_width,
+					frame_width + 10,
 					10
 				},
 				size = {
-					arg_29_1[1] - var_29_4 * 2,
-					arg_29_1[2]
+					size[1] - frame_width * 2,
+					size[2]
 				}
 			},
 			option_text_shadow = {
@@ -3682,13 +3701,13 @@ local function fn_10(arg_29_0, arg_29_1)
 				text_color = Colors.get_color_table_with_alpha("black", 255),
 				default_text_color = Colors.get_color_table_with_alpha("black", 255),
 				offset = {
-					var_29_4 + 2,
-					var_29_4 + 8,
+					frame_width + 2,
+					frame_width + 8,
 					9
 				},
 				size = {
-					arg_29_1[1] - var_29_4 * 2,
-					arg_29_1[2]
+					size[1] - frame_width * 2,
+					size[2]
 				}
 			},
 			button_disabled_rect = {
@@ -3699,13 +3718,13 @@ local function fn_10(arg_29_0, arg_29_1)
 					5
 				},
 				offset = {
-					var_29_4,
-					var_29_4,
+					frame_width,
+					frame_width,
 					15
 				},
 				size = {
-					arg_29_1[1] - var_29_4 * 2,
-					arg_29_1[2] - var_29_4 * 2
+					size[1] - frame_width * 2,
+					size[2] - frame_width * 2
 				}
 			},
 			smoke_1 = {
@@ -3729,8 +3748,8 @@ local function fn_10(arg_29_0, arg_29_1)
 					187
 				},
 				size = {
-					arg_29_1[1],
-					arg_29_1[2] * 0.5
+					size[1],
+					size[2] * 0.5
 				},
 				offset = {
 					0,
@@ -3746,8 +3765,8 @@ local function fn_10(arg_29_0, arg_29_1)
 					217
 				},
 				size = {
-					arg_29_1[1],
-					arg_29_1[2] * 0.3
+					size[1],
+					size[2] * 0.3
 				},
 				offset = {
 					0,
@@ -3776,8 +3795,8 @@ local function fn_10(arg_29_0, arg_29_1)
 					255
 				},
 				size = {
-					arg_29_1[1],
-					arg_29_1[2] * 0.7
+					size[1],
+					size[2] * 0.7
 				},
 				offset = {
 					0,
@@ -3786,34 +3805,45 @@ local function fn_10(arg_29_0, arg_29_1)
 				}
 			}
 		},
-		scenegraph_id = arg_29_0,
+		scenegraph_id = scenegraph_id,
 		offset = {
 			0,
 			0,
 			0
 		}
 	}
+
+	return widget
 end
 
-function create_twitch_disclaimer(arg_30_0)
+function create_twitch_disclaimer(is_server)
 	-- function 30
-	local str = "twitch_mode_info"
-	local size = tbl_7[str].size
-	local str_2 = "menu_frame_08"
-	local var_30_3 = UIFrameSettings[str_2]
-	local var_30_4 = var_30_3.texture_sizes.corner[1]
-	local tbl = {
+	local scenegraph_id = "twitch_mode_info"
+	local size = scenegraph_definition[scenegraph_id].size
+	local frame_name = "menu_frame_08"
+	local frame_settings = UIFrameSettings[frame_name]
+	local frame_width = frame_settings.texture_sizes.corner[1]
+	local twitch_scale = {
 		350 / size[1],
 		108 / size[2]
 	}
-	local str_3 = "Twitch"
-	local flag
+	local service_name = "Twitch"
+	local str
 
-	flag = not arg_30_0 and "twitch_warning_text_server" and "twitch_warning_text_client"
+	if is_server then
+		str = "twitch_warning_text_server"
 
-	local format = string.format(Localize(flag), str_3, str_3)
+		goto label_30_0
+	end
 
-	return {
+	str = "twitch_warning_text_client"
+
+	local disclaimer_text_id = str
+
+	::label_30_0::
+
+	local disclaimer_text = string.format(Localize(disclaimer_text_id), service_name, service_name)
+	local widget = {
 		element = {
 			passes = {
 				{
@@ -3867,8 +3897,8 @@ function create_twitch_disclaimer(arg_30_0)
 			title_text = "twitch_disconnect_warning",
 			title_bg = "playername_bg_02",
 			twitch_background_texture_id = "menu_options_button_image_03",
-			frame = var_30_3.texture,
-			disclaimer_text = format
+			frame = frame_settings.texture,
+			disclaimer_text = disclaimer_text
 		},
 		style = {
 			frame = {
@@ -3884,8 +3914,8 @@ function create_twitch_disclaimer(arg_30_0)
 					10
 				},
 				size = size,
-				texture_size = var_30_3.texture_size,
-				texture_sizes = var_30_3.texture_sizes
+				texture_size = frame_settings.texture_size,
+				texture_sizes = frame_settings.texture_sizes
 			},
 			background = {
 				color = {
@@ -3903,8 +3933,8 @@ function create_twitch_disclaimer(arg_30_0)
 			twitch_background = {
 				horizontal_alignment = "right",
 				texture_size = {
-					size[1] * tbl[1],
-					size[2] * tbl[2]
+					size[1] * twitch_scale[1],
+					size[2] * twitch_scale[2]
 				},
 				color = {
 					192,
@@ -3931,7 +3961,7 @@ function create_twitch_disclaimer(arg_30_0)
 				},
 				offset = {
 					0,
-					size[2] - 38 - var_30_4,
+					size[2] - 38 - frame_width,
 					2
 				}
 			},
@@ -3948,7 +3978,7 @@ function create_twitch_disclaimer(arg_30_0)
 				},
 				offset = {
 					0,
-					size[2] - 38 - var_30_4,
+					size[2] - 38 - frame_width,
 					4
 				}
 			},
@@ -3963,8 +3993,8 @@ function create_twitch_disclaimer(arg_30_0)
 				text_color = Colors.get_color_table_with_alpha("red", 255),
 				default_text_color = Colors.get_color_table_with_alpha("red", 255),
 				offset = {
-					var_30_4 + 5,
-					-var_30_4,
+					frame_width + 5,
+					-frame_width,
 					10
 				}
 			},
@@ -3979,8 +4009,8 @@ function create_twitch_disclaimer(arg_30_0)
 				text_color = Colors.get_color_table_with_alpha("black", 255),
 				default_text_color = Colors.get_color_table_with_alpha("black", 255),
 				offset = {
-					var_30_4 + 5 + 2,
-					-(var_30_4 + 2),
+					frame_width + 5 + 2,
+					-(frame_width + 2),
 					9
 				}
 			},
@@ -3999,8 +4029,8 @@ function create_twitch_disclaimer(arg_30_0)
 				text_color = Colors.get_color_table_with_alpha("font_title", 255),
 				default_text_color = Colors.get_color_table_with_alpha("font_title", 255),
 				offset = {
-					var_30_4 + 5,
-					-var_30_4 - 40,
+					frame_width + 5,
+					-frame_width - 40,
 					10
 				}
 			},
@@ -4019,37 +4049,38 @@ function create_twitch_disclaimer(arg_30_0)
 				text_color = Colors.get_color_table_with_alpha("black", 255),
 				default_text_color = Colors.get_color_table_with_alpha("black", 255),
 				offset = {
-					var_30_4 + 5 + 2,
-					-(var_30_4 + 2) - 40,
+					frame_width + 5 + 2,
+					-(frame_width + 2) - 40,
 					9
 				}
 			}
 		},
-		scenegraph_id = str,
+		scenegraph_id = scenegraph_id,
 		offset = {
 			0,
 			0,
 			0
 		}
 	}
+
+	return widget
 end
 
-function create_twitch_mode(arg_31_0)
+function create_twitch_mode(is_server)
 	-- function 31
-	local str = "twitch_mode_info"
-	local size = tbl_7[str].size
-	local str_2 = "menu_frame_08"
-	local var_31_3 = UIFrameSettings[str_2]
-	local var_31_4 = var_31_3.texture_sizes.corner[1]
-	local tbl = {
+	local scenegraph_id = "twitch_mode_info"
+	local size = scenegraph_definition[scenegraph_id].size
+	local frame_name = "menu_frame_08"
+	local frame_settings = UIFrameSettings[frame_name]
+	local frame_width = frame_settings.texture_sizes.corner[1]
+	local twitch_scale = {
 		350 / size[1],
 		108 / size[2]
 	}
-	local str_3 = "Twitch"
-	local var_31_7 = Localize("twitch_info_text_server")
-	local format = string.format(var_31_7, str_3)
-
-	return {
+	local service_name = "Twitch"
+	local info_text_id = Localize("twitch_info_text_server")
+	local info_text = string.format(info_text_id, service_name)
+	local widget = {
 		element = {
 			passes = {
 				{
@@ -4103,8 +4134,8 @@ function create_twitch_mode(arg_31_0)
 			title_text = "twitch_mode",
 			title_bg = "playername_bg_02",
 			twitch_background_texture_id = "menu_options_button_image_03",
-			frame = var_31_3.texture,
-			info_text = format
+			frame = frame_settings.texture,
+			info_text = info_text
 		},
 		style = {
 			frame = {
@@ -4120,8 +4151,8 @@ function create_twitch_mode(arg_31_0)
 					10
 				},
 				size = size,
-				texture_size = var_31_3.texture_size,
-				texture_sizes = var_31_3.texture_sizes
+				texture_size = frame_settings.texture_size,
+				texture_sizes = frame_settings.texture_sizes
 			},
 			background = {
 				color = {
@@ -4139,8 +4170,8 @@ function create_twitch_mode(arg_31_0)
 			twitch_background = {
 				horizontal_alignment = "right",
 				texture_size = {
-					size[1] * tbl[1],
-					size[2] * tbl[2]
+					size[1] * twitch_scale[1],
+					size[2] * twitch_scale[2]
 				},
 				color = {
 					192,
@@ -4167,7 +4198,7 @@ function create_twitch_mode(arg_31_0)
 				},
 				offset = {
 					0,
-					size[2] - 38 - var_31_4,
+					size[2] - 38 - frame_width,
 					2
 				}
 			},
@@ -4184,7 +4215,7 @@ function create_twitch_mode(arg_31_0)
 				},
 				offset = {
 					0,
-					size[2] - 38 - var_31_4,
+					size[2] - 38 - frame_width,
 					4
 				}
 			},
@@ -4199,8 +4230,8 @@ function create_twitch_mode(arg_31_0)
 				text_color = Colors.get_color_table_with_alpha("white", 255),
 				default_text_color = Colors.get_color_table_with_alpha("white", 255),
 				offset = {
-					var_31_4 + 5,
-					-var_31_4,
+					frame_width + 5,
+					-frame_width,
 					10
 				}
 			},
@@ -4215,8 +4246,8 @@ function create_twitch_mode(arg_31_0)
 				text_color = Colors.get_color_table_with_alpha("black", 255),
 				default_text_color = Colors.get_color_table_with_alpha("black", 255),
 				offset = {
-					var_31_4 + 5 + 2,
-					-(var_31_4 + 2),
+					frame_width + 5 + 2,
+					-(frame_width + 2),
 					9
 				}
 			},
@@ -4235,8 +4266,8 @@ function create_twitch_mode(arg_31_0)
 				text_color = Colors.get_color_table_with_alpha("font_title", 255),
 				default_text_color = Colors.get_color_table_with_alpha("font_title", 255),
 				offset = {
-					var_31_4 + 5,
-					-var_31_4 - 40,
+					frame_width + 5,
+					-frame_width - 40,
 					10
 				}
 			},
@@ -4255,22 +4286,24 @@ function create_twitch_mode(arg_31_0)
 				text_color = Colors.get_color_table_with_alpha("black", 255),
 				default_text_color = Colors.get_color_table_with_alpha("black", 255),
 				offset = {
-					var_31_4 + 5 + 2,
-					-(var_31_4 + 2) - 40,
+					frame_width + 5 + 2,
+					-(frame_width + 2) - 40,
 					9
 				}
 			}
 		},
-		scenegraph_id = str,
+		scenegraph_id = scenegraph_id,
 		offset = {
 			0,
 			0,
 			0
 		}
 	}
+
+	return widget
 end
 
-local function fn_11(arg_32_0, arg_32_1)
+local function create_objective(scenegraph_id, size)
 	-- function 32
 	return {
 		element = {
@@ -4279,36 +4312,36 @@ local function fn_11(arg_32_0, arg_32_1)
 					texture_id = "background",
 					style_id = "background",
 					pass_type = "texture",
-					content_check_function = function (self)
+					content_check_function = function (content)
 						-- function 33
-						return self.text ~= "tutorial_no_text"
+						return content.text ~= "tutorial_no_text"
 					end
 				},
 				{
 					texture_id = "icon",
 					style_id = "icon",
 					pass_type = "texture",
-					content_check_function = function (self)
+					content_check_function = function (content)
 						-- function 34
-						return self.text ~= "tutorial_no_text"
+						return content.text ~= "tutorial_no_text"
 					end
 				},
 				{
 					style_id = "text",
 					pass_type = "text",
 					text_id = "text",
-					content_check_function = function (self)
+					content_check_function = function (content)
 						-- function 35
-						return self.text ~= "tutorial_no_text"
+						return content.text ~= "tutorial_no_text"
 					end
 				},
 				{
 					style_id = "text_shadow",
 					pass_type = "text",
 					text_id = "text",
-					content_check_function = function (self)
+					content_check_function = function (content)
 						-- function 36
-						return self.text ~= "tutorial_no_text"
+						return content.text ~= "tutorial_no_text"
 					end
 				}
 			}
@@ -4355,8 +4388,8 @@ local function fn_11(arg_32_0, arg_32_1)
 				dynamic_font_size = true,
 				font_type = "hell_shark",
 				size = {
-					arg_32_1[1] - 60,
-					arg_32_1[2]
+					size[1] - 60,
+					size[2]
 				},
 				text_color = Colors.get_color_table_with_alpha("font_default", 255),
 				offset = {
@@ -4374,8 +4407,8 @@ local function fn_11(arg_32_0, arg_32_1)
 				dynamic_font_size = true,
 				font_type = "hell_shark",
 				size = {
-					arg_32_1[1] - 60,
-					arg_32_1[2]
+					size[1] - 60,
+					size[2]
 				},
 				text_color = Colors.get_color_table_with_alpha("black", 255),
 				offset = {
@@ -4390,38 +4423,38 @@ local function fn_11(arg_32_0, arg_32_1)
 			0,
 			0
 		},
-		scenegraph_id = arg_32_0
+		scenegraph_id = scenegraph_id
 	}
 end
 
-local function fn_12(arg_37_0, arg_37_1)
+local function create_modifier_info(scenegraph_id, icon)
 	-- function 37
-	return {
+	local widget = {
 		element = {
 			passes = {
 				{
 					texture_id = "icon",
 					style_id = "icon",
 					pass_type = "texture",
-					content_check_function = function (self)
+					content_check_function = function (content)
 						-- function 38
-						return #self.text > 0
+						return #content.text > 0
 					end
 				},
 				{
 					style_id = "text",
 					pass_type = "text",
 					text_id = "text",
-					content_check_function = function (self)
+					content_check_function = function (content)
 						-- function 39
-						return #self.text > 0
+						return #content.text > 0
 					end
 				}
 			}
 		},
 		content = {
 			text = "",
-			icon = arg_37_1
+			icon = icon
 		},
 		style = {
 			icon = {
@@ -4461,16 +4494,18 @@ local function fn_12(arg_37_0, arg_37_1)
 				}
 			}
 		},
-		scenegraph_id = arg_37_0,
+		scenegraph_id = scenegraph_id,
 		offset = {
 			0,
 			0,
 			0
 		}
 	}
+
+	return widget
 end
 
-local tbl_15 = {
+local mutator_title_text_style = {
 	font_size = 32,
 	upper_case = false,
 	localize = false,
@@ -4487,7 +4522,7 @@ local tbl_15 = {
 		2
 	}
 }
-local tbl_16 = {
+local mutator_description_text_style = {
 	font_size = 24,
 	use_shadow = true,
 	localize = false,
@@ -4503,7 +4538,7 @@ local tbl_16 = {
 		2
 	}
 }
-local tbl_17 = {
+local objective_title_text_style = {
 	font_size = 28,
 	upper_case = true,
 	localize = true,
@@ -4519,7 +4554,7 @@ local tbl_17 = {
 		2
 	}
 }
-local tbl_18 = {
+local switch_mechanism_title_text_style = {
 	font_size = 55,
 	upper_case = true,
 	localize = true,
@@ -4552,7 +4587,7 @@ local tbl_18 = {
 		2
 	}
 }
-local tbl_19 = {
+local switch_mechanism_subtitle_text_style = {
 	font_size = 32,
 	upper_case = false,
 	localize = true,
@@ -4585,11 +4620,11 @@ local tbl_19 = {
 		2
 	}
 }
-local clone = table.clone(tbl_19)
+local switch_mechanism_description_text_style = table.clone(switch_mechanism_subtitle_text_style)
 
-clone.font_size = 32
+switch_mechanism_description_text_style.font_size = 32
 
-local tbl_20 = {
+local score_text_style = {
 	font_size = 36,
 	upper_case = true,
 	localize = false,
@@ -4605,7 +4640,7 @@ local tbl_20 = {
 		2
 	}
 }
-local tbl_21 = {
+local journey_name_text_style = {
 	font_size = 28,
 	upper_case = false,
 	localize = true,
@@ -4621,8 +4656,8 @@ local tbl_21 = {
 		0
 	}
 }
-local flag_4 = true
-local tbl_22 = {
+local disable_with_gamepad = true
+local widgets = {
 	background = {
 		scenegraph_id = "screen",
 		element = UIElements.SimpleTexture,
@@ -4638,7 +4673,7 @@ local tbl_22 = {
 			}
 		}
 	},
-	window = UIWidgets.create_frame("window", tbl_7.window.size, "menu_frame_11", 10),
+	window = UIWidgets.create_frame("window", scenegraph_definition.window.size, "menu_frame_11", 10),
 	window_background = UIWidgets.create_tiled_texture("window", "menu_frame_bg_01", {
 		960,
 		1080
@@ -4649,8 +4684,8 @@ local tbl_22 = {
 		100
 	}),
 	window_fade = UIWidgets.create_simple_texture("options_window_fade_01", "window_fade"),
-	button_confirm = UIWidgets.create_play_button("button_confirm", tbl_7.button_confirm.size, "n/a", 34, flag_4),
-	button_abort = UIWidgets.create_default_button("button_abort", tbl_7.button_abort.size, nil, nil, "n/a", 24, nil, "button_detail_04", 34, flag_4),
+	button_confirm = UIWidgets.create_play_button("button_confirm", scenegraph_definition.button_confirm.size, "n/a", 34, disable_with_gamepad),
+	button_abort = UIWidgets.create_default_button("button_abort", scenegraph_definition.button_abort.size, nil, nil, "n/a", 24, nil, "button_detail_04", 34, disable_with_gamepad),
 	game_options_left_chain = UIWidgets.create_tiled_texture("game_options_left_chain", "chain_link_01", {
 		16,
 		19
@@ -4660,8 +4695,8 @@ local tbl_22 = {
 		19
 	}),
 	title = UIWidgets.create_simple_texture("frame_title_bg_02", "title"),
-	title_bg = UIWidgets.create_background("title_bg", tbl_7.title_bg.size, "menu_frame_bg_02"),
-	title_text = UIWidgets.create_simple_text("", "title_text", nil, nil, tbl_14),
+	title_bg = UIWidgets.create_background("title_bg", scenegraph_definition.title_bg.size, "menu_frame_bg_02"),
+	title_text = UIWidgets.create_simple_text("", "title_text", nil, nil, title_text_style),
 	timer_bg = UIWidgets.create_simple_texture("timer_bg", "timer_bg"),
 	timer_fg = UIWidgets.create_simple_uv_texture("timer_fg", {
 		{
@@ -4675,7 +4710,7 @@ local tbl_22 = {
 	}, "timer_fg"),
 	timer_glow = UIWidgets.create_simple_texture("timer_detail", "timer_glow")
 }
-local tbl_23 = {
+local widgets_deus = {
 	background = {
 		scenegraph_id = "screen",
 		element = UIElements.SimpleTexture,
@@ -4691,7 +4726,7 @@ local tbl_23 = {
 			}
 		}
 	},
-	deus_window = UIWidgets.create_frame("deus_window", tbl_7.deus_window.size, "menu_frame_04_morris", 10),
+	deus_window = UIWidgets.create_frame("deus_window", scenegraph_definition.deus_window.size, "menu_frame_04_morris", 10),
 	window_background = UIWidgets.create_tiled_texture("window", "menu_frame_bg_01", {
 		960,
 		1080
@@ -4702,8 +4737,8 @@ local tbl_23 = {
 		100
 	}),
 	window_fade = UIWidgets.create_simple_texture("options_window_fade_01", "window_fade"),
-	button_confirm = UIWidgets.create_start_game_deus_play_button("deus_button_confirm", tbl_7.deus_button_confirm.size, "n/a", 34, flag_4),
-	button_abort = UIWidgets.create_deus_default_button("button_abort", tbl_7.button_abort.size, "n/a", 24, flag_4),
+	button_confirm = UIWidgets.create_start_game_deus_play_button("deus_button_confirm", scenegraph_definition.deus_button_confirm.size, "n/a", 34, disable_with_gamepad),
+	button_abort = UIWidgets.create_deus_default_button("button_abort", scenegraph_definition.button_abort.size, "n/a", 24, disable_with_gamepad),
 	game_options_left_chain = UIWidgets.create_tiled_texture("game_options_left_chain", "chain_link_01", {
 		16,
 		19
@@ -4713,7 +4748,7 @@ local tbl_23 = {
 		19
 	}),
 	title = UIWidgets.create_simple_texture("header_vote_morris", "title"),
-	title_text = UIWidgets.create_simple_text("", "title_text", nil, nil, tbl_14),
+	title_text = UIWidgets.create_simple_text("", "title_text", nil, nil, title_text_style),
 	timer_bg = UIWidgets.create_simple_texture("timer_bg_morris", "timer_bg"),
 	timer_fg = UIWidgets.create_simple_uv_texture("timer_fg", {
 		{
@@ -4803,162 +4838,162 @@ local tbl_23 = {
 		}
 	}
 }
-local tbl_24 = {}
-local tbl_25 = {}
-local tbl_26 = {}
+local rating_texture_sizes = {}
+local rating_textures = {}
+local rating_bg_textures = {}
 
 for i = 1, 5 do
-	tbl_25[i] = "icon_score_rating"
-	tbl_26[i] = "icon_score_rating_empty"
-	tbl_24[i] = {
+	rating_textures[i] = "icon_score_rating"
+	rating_bg_textures[i] = "icon_score_rating_empty"
+	rating_texture_sizes[i] = {
 		22,
 		22
 	}
 end
 
-local tbl_27 = {
+local event_summary_passes = {
 	"event_mission",
 	"mutators"
 }
-local tbl_28 = {
-	game_option_1 = fn_3("game_option_1", tbl_7.game_option_1.size, Localize("start_game_window_difficulty"), "difficulty_option_1", "game_options_bg_02"),
-	reward_presentation = fn_8("reward_presentation", tbl_7.reward_presentation.size)
+local adventure_game_widgets = {
+	game_option_1 = create_settings_option("game_option_1", scenegraph_definition.game_option_1.size, Localize("start_game_window_difficulty"), "difficulty_option_1", "game_options_bg_02"),
+	reward_presentation = create_reward_presentation("reward_presentation", scenegraph_definition.reward_presentation.size)
 }
-local tbl_29 = {
-	game_mode_text = UIWidgets.create_simple_text("n/a", "mutator_description_text", nil, nil, tbl_17),
-	frame = UIWidgets.create_frame("deed_option_bg", tbl_7.deed_option_bg.size, str, 20),
+local game_mode_widgets = {
+	game_mode_text = UIWidgets.create_simple_text("n/a", "mutator_description_text", nil, nil, objective_title_text_style),
+	frame = UIWidgets.create_frame("deed_option_bg", scenegraph_definition.deed_option_bg.size, deed_frame_name, 20),
 	bg = UIWidgets.create_simple_texture("game_options_bg_04", "deed_option_bg")
 }
-local tbl_30 = {
-	title = UIWidgets.create_simple_text("n/a", "switch_mechanism_title", nil, nil, tbl_18),
-	subtitle = UIWidgets.create_simple_text("n/a", "switch_mechanism_subtitle", nil, nil, tbl_19),
-	description = UIWidgets.create_simple_text("n/a", "switch_mechanism_description", nil, nil, clone),
-	frame = UIWidgets.create_frame("deed_option_bg", tbl_7.deed_option_bg.size, str, 20),
+local switch_mechanism_widgets = {
+	title = UIWidgets.create_simple_text("n/a", "switch_mechanism_title", nil, nil, switch_mechanism_title_text_style),
+	subtitle = UIWidgets.create_simple_text("n/a", "switch_mechanism_subtitle", nil, nil, switch_mechanism_subtitle_text_style),
+	description = UIWidgets.create_simple_text("n/a", "switch_mechanism_description", nil, nil, switch_mechanism_description_text_style),
+	frame = UIWidgets.create_frame("deed_option_bg", scenegraph_definition.deed_option_bg.size, deed_frame_name, 20),
 	background = UIWidgets.create_simple_texture("vote_switch_mechanism_adventure_background", "deed_option_bg")
 }
-local tbl_31 = {
-	game_option_1 = fn_3("game_option_1", tbl_7.game_option_1.size, Localize("start_game_window_difficulty"), "difficulty_option_1", "game_options_bg_02"),
-	reward_presentation = fn_10("reward_presentation", tbl_7.reward_presentation.size)
+local weave_quickplay_widgets = {
+	game_option_1 = create_settings_option("game_option_1", scenegraph_definition.game_option_1.size, Localize("start_game_window_difficulty"), "difficulty_option_1", "game_options_bg_02"),
+	reward_presentation = create_weave_quickplay_presentation("reward_presentation", scenegraph_definition.reward_presentation.size)
 }
-local tbl_32 = {
-	game_option_1 = fn_3("game_option_1", tbl_7.game_option_1.size, Localize("start_game_window_mission"), nil, "game_options_bg_01"),
-	game_option_2 = fn_3("game_option_2", tbl_7.game_option_2.size, Localize("start_game_window_difficulty"), "difficulty_option_1", "game_options_bg_02"),
-	additional_option = fn_7("additional_option", tbl_7.additional_option.size, Localize("start_game_window_other_options_title"), "game_options_bg_03"),
-	private_frame = UIWidgets.create_frame("private_button_frame", tbl_7.private_button_frame.size, frame, 1),
-	private_button = UIWidgets.create_default_checkbox_button("private_button", tbl_7.private_button.size, Localize("start_game_window_other_options_private"), 24, {
+local custom_game_widgets = {
+	game_option_1 = create_settings_option("game_option_1", scenegraph_definition.game_option_1.size, Localize("start_game_window_mission"), nil, "game_options_bg_01"),
+	game_option_2 = create_settings_option("game_option_2", scenegraph_definition.game_option_2.size, Localize("start_game_window_difficulty"), "difficulty_option_1", "game_options_bg_02"),
+	additional_option = create_additional_settings_option("additional_option", scenegraph_definition.additional_option.size, Localize("start_game_window_other_options_title"), "game_options_bg_03"),
+	private_frame = UIWidgets.create_frame("private_button_frame", scenegraph_definition.private_button_frame.size, window_frame, 1),
+	private_button = UIWidgets.create_default_checkbox_button("private_button", scenegraph_definition.private_button.size, Localize("start_game_window_other_options_private"), 24, {
 		title = Localize("start_game_window_other_options_private"),
 		description = Localize("start_game_window_other_options_private_description")
 	}),
-	host_frame = UIWidgets.create_frame("host_button_frame", tbl_7.host_button_frame.size, frame, 1),
-	host_button = UIWidgets.create_default_checkbox_button("host_button", tbl_7.host_button.size, Localize("start_game_window_other_options_always_host"), 24, {
+	host_frame = UIWidgets.create_frame("host_button_frame", scenegraph_definition.host_button_frame.size, window_frame, 1),
+	host_button = UIWidgets.create_default_checkbox_button("host_button", scenegraph_definition.host_button.size, Localize("start_game_window_other_options_always_host"), 24, {
 		title = Localize("start_game_window_other_options_always_host"),
 		description = Localize("start_game_window_other_options_always_host_description")
 	}),
-	strict_matchmaking_frame = UIWidgets.create_frame("strict_matchmaking_button_frame", tbl_7.strict_matchmaking_button_frame.size, frame, 1),
-	strict_matchmaking_button = UIWidgets.create_default_checkbox_button("strict_matchmaking_button", tbl_7.strict_matchmaking_button.size, Localize("start_game_window_other_options_strict_matchmaking"), 24, {
+	strict_matchmaking_frame = UIWidgets.create_frame("strict_matchmaking_button_frame", scenegraph_definition.strict_matchmaking_button_frame.size, window_frame, 1),
+	strict_matchmaking_button = UIWidgets.create_default_checkbox_button("strict_matchmaking_button", scenegraph_definition.strict_matchmaking_button.size, Localize("start_game_window_other_options_strict_matchmaking"), 24, {
 		title = Localize("start_game_window_other_options_strict_matchmaking"),
 		description = Localize("start_game_window_other_options_strict_matchmaking_description")
 	})
 }
-local tbl_33 = {
-	item_presentation_frame = UIWidgets.create_frame("deed_option_bg", tbl_7.deed_option_bg.size, str, 20),
+local deed_game_widgets = {
+	item_presentation_frame = UIWidgets.create_frame("deed_option_bg", scenegraph_definition.deed_option_bg.size, deed_frame_name, 20),
 	item_presentation_bg = UIWidgets.create_simple_texture("game_options_bg_04", "deed_option_bg"),
 	item_presentation = UIWidgets.create_simple_item_presentation("item_presentation")
 }
-local tbl_34 = {
-	game_option_1 = fn_3("game_option_1", tbl_7.game_option_1.size, Localize("start_game_window_difficulty"), "difficulty_option_1", "game_options_bg_02"),
-	event_summary_frame = UIWidgets.create_background_with_frame("event_summary_frame", tbl_7.event_summary_frame.size, "game_options_bg_04", "menu_frame_08", true),
-	event_summary = UIWidgets.create_simple_item_presentation("event_summary", tbl_27)
+local event_game_widgets = {
+	game_option_1 = create_settings_option("game_option_1", scenegraph_definition.game_option_1.size, Localize("start_game_window_difficulty"), "difficulty_option_1", "game_options_bg_02"),
+	event_summary_frame = UIWidgets.create_background_with_frame("event_summary_frame", scenegraph_definition.event_summary_frame.size, "game_options_bg_04", "menu_frame_08", true),
+	event_summary = UIWidgets.create_simple_item_presentation("event_summary", event_summary_passes)
 }
-local tbl_35 = {
-	game_option_1 = fn_6("game_option_1", tbl_7.game_option_1.size, Localize("start_game_window_mission"), nil, "game_options_bg_01"),
-	event_summary_frame = UIWidgets.create_background_with_frame("event_summary_frame", tbl_7.event_summary_frame.size, "game_options_bg_04", "menu_frame_08", true),
+local weave_game_widgets = {
+	game_option_1 = create_weave_settings_option("game_option_1", scenegraph_definition.game_option_1.size, Localize("start_game_window_mission"), nil, "game_options_bg_01"),
+	event_summary_frame = UIWidgets.create_background_with_frame("event_summary_frame", scenegraph_definition.event_summary_frame.size, "game_options_bg_04", "menu_frame_08", true),
 	mutator_icon = UIWidgets.create_simple_texture("icons_placeholder", "mutator_icon"),
-	mutator_title_text = UIWidgets.create_simple_text("n/a", "mutator_title_text", nil, nil, tbl_15),
+	mutator_title_text = UIWidgets.create_simple_text("n/a", "mutator_title_text", nil, nil, mutator_title_text_style),
 	mutator_title_divider = UIWidgets.create_simple_texture("infoslate_frame_02_horizontal", "mutator_title_divider"),
-	mutator_description_text = UIWidgets.create_simple_text("n/a", "mutator_description_text", nil, nil, tbl_16),
+	mutator_description_text = UIWidgets.create_simple_text("n/a", "mutator_description_text", nil, nil, mutator_description_text_style),
 	objective_title_bg = UIWidgets.create_simple_texture("menu_subheader_bg", "objective_title_bg"),
-	objective_title = UIWidgets.create_simple_text("weave_objective_title", "objective_title", nil, nil, tbl_17),
-	objective_1 = fn_11("objective_1", tbl_7.objective_1.size),
-	objective_2 = fn_11("objective_2", tbl_7.objective_2.size),
-	private_checkbox = UIWidgets.create_default_checkbox_button("private_checkbox", tbl_7.private_checkbox.size, Localize("start_game_window_join_disallowed"), 24, {
+	objective_title = UIWidgets.create_simple_text("weave_objective_title", "objective_title", nil, nil, objective_title_text_style),
+	objective_1 = create_objective("objective_1", scenegraph_definition.objective_1.size),
+	objective_2 = create_objective("objective_2", scenegraph_definition.objective_2.size),
+	private_checkbox = UIWidgets.create_default_checkbox_button("private_checkbox", scenegraph_definition.private_checkbox.size, Localize("start_game_window_join_disallowed"), 24, {
 		title = Localize("start_game_window_join_disallowed"),
 		description = Localize("start_game_window_disallow_join_description")
 	}, true)
 }
-local tbl_36 = {
-	game_option_1 = fn_4("game_option_1", tbl_7.game_option_1.size, Localize("start_game_window_mission"), nil, true),
-	reward_presentation = fn_8("reward_presentation", tbl_7.reward_presentation.size, "menu_frame_02_morris")
+local deus_quickplay_widget = {
+	game_option_1 = create_settings_option_deus("game_option_1", scenegraph_definition.game_option_1.size, Localize("start_game_window_mission"), nil, true),
+	reward_presentation = create_reward_presentation("reward_presentation", scenegraph_definition.reward_presentation.size, "menu_frame_02_morris")
 }
-local str_2 = "menu_frame_01_morris"
-local tbl_37 = {
-	game_option_1 = fn_4("game_option_1", tbl_7.game_option_1.size, Localize("start_game_window_mission"), nil, true),
-	journey_name = UIWidgets.create_simple_text("n/a", "journey_name", nil, nil, tbl_21),
-	journey_theme = fn_12("journey_theme"),
-	game_option_2 = fn_4("game_option_2", tbl_7.game_option_2.size, Localize("start_game_window_difficulty"), "difficulty_option_1", nil),
-	additional_option = fn_7("additional_option", tbl_7.additional_option.size, Localize("start_game_window_other_options_title"), false, "menu_frame_02_morris"),
-	private_frame = UIWidgets.create_frame("private_button_frame", tbl_7.private_button_frame.size, str_2, 1),
-	private_button = UIWidgets.create_default_checkbox_button("private_button", tbl_7.private_button.size, Localize("start_game_window_other_options_private"), 24, {
+local deus_window_frame = "menu_frame_01_morris"
+local deus_custom_widget = {
+	game_option_1 = create_settings_option_deus("game_option_1", scenegraph_definition.game_option_1.size, Localize("start_game_window_mission"), nil, true),
+	journey_name = UIWidgets.create_simple_text("n/a", "journey_name", nil, nil, journey_name_text_style),
+	journey_theme = create_modifier_info("journey_theme"),
+	game_option_2 = create_settings_option_deus("game_option_2", scenegraph_definition.game_option_2.size, Localize("start_game_window_difficulty"), "difficulty_option_1", nil),
+	additional_option = create_additional_settings_option("additional_option", scenegraph_definition.additional_option.size, Localize("start_game_window_other_options_title"), false, "menu_frame_02_morris"),
+	private_frame = UIWidgets.create_frame("private_button_frame", scenegraph_definition.private_button_frame.size, deus_window_frame, 1),
+	private_button = UIWidgets.create_default_checkbox_button("private_button", scenegraph_definition.private_button.size, Localize("start_game_window_other_options_private"), 24, {
 		title = Localize("start_game_window_other_options_private"),
 		description = Localize("start_game_window_other_options_private_description")
 	}, nil, "menu_frame_03_morris"),
-	host_frame = UIWidgets.create_frame("host_button_frame", tbl_7.host_button_frame.size, str_2, 1),
-	host_button = UIWidgets.create_default_checkbox_button("host_button", tbl_7.host_button.size, Localize("start_game_window_other_options_always_host"), 24, {
+	host_frame = UIWidgets.create_frame("host_button_frame", scenegraph_definition.host_button_frame.size, deus_window_frame, 1),
+	host_button = UIWidgets.create_default_checkbox_button("host_button", scenegraph_definition.host_button.size, Localize("start_game_window_other_options_always_host"), 24, {
 		title = Localize("start_game_window_other_options_always_host"),
 		description = Localize("start_game_window_other_options_always_host_description")
 	}, nil, "menu_frame_03_morris"),
-	strict_matchmaking_frame = UIWidgets.create_frame("strict_matchmaking_button_frame", tbl_7.strict_matchmaking_button_frame.size, str_2, 1),
-	strict_matchmaking_button = UIWidgets.create_default_checkbox_button("strict_matchmaking_button", tbl_7.strict_matchmaking_button.size, Localize("start_game_window_other_options_strict_matchmaking"), 24, {
+	strict_matchmaking_frame = UIWidgets.create_frame("strict_matchmaking_button_frame", scenegraph_definition.strict_matchmaking_button_frame.size, deus_window_frame, 1),
+	strict_matchmaking_button = UIWidgets.create_default_checkbox_button("strict_matchmaking_button", scenegraph_definition.strict_matchmaking_button.size, Localize("start_game_window_other_options_strict_matchmaking"), 24, {
 		title = Localize("start_game_window_other_options_strict_matchmaking"),
 		description = Localize("start_game_window_other_options_strict_matchmaking_description")
 	}, nil, "menu_frame_03_morris")
 }
-local str_3 = "menu_frame_01_morris"
-local tbl_38 = {
-	game_option_1 = fn_5("game_option_1", tbl_7.game_option_1.size, Localize("cw_weekly_expedition_name_long"), nil, true),
-	journey_name = UIWidgets.create_simple_text("n/a", "journey_name", nil, nil, tbl_21),
-	journey_theme = fn_12("journey_theme"),
+local deus_window_frame = "menu_frame_01_morris"
+local deus_weekly_event_widgets = {
+	game_option_1 = create_settings_option_deus_weekly_event("game_option_1", scenegraph_definition.game_option_1.size, Localize("cw_weekly_expedition_name_long"), nil, true),
+	journey_name = UIWidgets.create_simple_text("n/a", "journey_name", nil, nil, journey_name_text_style),
+	journey_theme = create_modifier_info("journey_theme"),
 	mask = UIWidgets.create_simple_texture("mask_rect", "game_option_deus_weekly", nil, nil, {
 		255,
 		255,
 		255,
 		255
 	}),
-	deus_weekly_event_frame = UIWidgets.create_background_with_frame("game_option_deus_weekly_event", tbl_7.game_option_deus_weekly_event.size, "vote_switch_mechanism_morris_background", "menu_frame_08", true, {
+	deus_weekly_event_frame = UIWidgets.create_background_with_frame("game_option_deus_weekly_event", scenegraph_definition.game_option_deus_weekly_event.size, "vote_switch_mechanism_morris_background", "menu_frame_08", true, {
 		255,
 		50,
 		50,
 		50
 	})
 }
-local tbl_39 = {
-	reward_presentation = fn_9("versus_reward_presentation", tbl_7.versus_reward_presentation.size)
+local versus_quickplay_widgets = {
+	reward_presentation = create_versus_reward_presentation("versus_reward_presentation", scenegraph_definition.versus_reward_presentation.size)
 }
-local tbl_40 = {
-	game_option_1 = fn_3("game_option_1", tbl_7.game_option_1.size, Localize("start_game_window_mission"), nil, "game_options_bg_01"),
-	game_option_2 = fn_3("game_option_2", tbl_7.game_option_2.size, Localize("start_game_window_difficulty"), "difficulty_option_1", "game_options_bg_02"),
-	additional_option = fn_7("additional_option", tbl_7.additional_option.size, Localize("start_game_window_other_options_title"), "game_options_bg_03"),
-	player_hosted_frame = UIWidgets.create_frame("strict_matchmaking_button_frame", tbl_7.strict_matchmaking_button_frame.size, frame, 1),
-	player_hosted_button = UIWidgets.create_default_checkbox_button("strict_matchmaking_button", tbl_7.strict_matchmaking_button.size, Localize("player_hosted_title"), 24, {
+local versus_custom_widgets = {
+	game_option_1 = create_settings_option("game_option_1", scenegraph_definition.game_option_1.size, Localize("start_game_window_mission"), nil, "game_options_bg_01"),
+	game_option_2 = create_settings_option("game_option_2", scenegraph_definition.game_option_2.size, Localize("start_game_window_difficulty"), "difficulty_option_1", "game_options_bg_02"),
+	additional_option = create_additional_settings_option("additional_option", scenegraph_definition.additional_option.size, Localize("start_game_window_other_options_title"), "game_options_bg_03"),
+	player_hosted_frame = UIWidgets.create_frame("strict_matchmaking_button_frame", scenegraph_definition.strict_matchmaking_button_frame.size, window_frame, 1),
+	player_hosted_button = UIWidgets.create_default_checkbox_button("strict_matchmaking_button", scenegraph_definition.strict_matchmaking_button.size, Localize("player_hosted_title"), 24, {
 		title = Localize("player_hosted_title"),
 		description = Localize("player_hosted_desc")
 	}),
-	dedicated_server_win_frame = UIWidgets.create_frame("host_button_frame", tbl_7.host_button_frame.size, frame, 1),
-	dedicated_server_win_button = UIWidgets.create_default_checkbox_button("host_button", tbl_7.host_button.size, Localize("dedicated_server_win_title"), 24, {
+	dedicated_server_win_frame = UIWidgets.create_frame("host_button_frame", scenegraph_definition.host_button_frame.size, window_frame, 1),
+	dedicated_server_win_button = UIWidgets.create_default_checkbox_button("host_button", scenegraph_definition.host_button.size, Localize("dedicated_server_win_title"), 24, {
 		title = Localize("dedicated_server_win_title"),
 		description = Localize("dedicated_server_win_desc")
 	}),
-	dedicated_server_aws_frame = UIWidgets.create_frame("private_button_frame", tbl_7.private_button_frame.size, frame, 1),
-	dedicated_server_aws_button = UIWidgets.create_default_checkbox_button("private_button", tbl_7.private_button.size, Localize("dedicated_server_aws_title"), 24, {
+	dedicated_server_aws_frame = UIWidgets.create_frame("private_button_frame", scenegraph_definition.private_button_frame.size, window_frame, 1),
+	dedicated_server_aws_button = UIWidgets.create_default_checkbox_button("private_button", scenegraph_definition.private_button.size, Localize("dedicated_server_aws_title"), 24, {
 		title = Localize("dedicated_server_aws_title"),
 		description = Localize("dedicated_server_aws_desc")
 	})
 }
-local tbl_41 = {
+local twitch_mode_widget_funcs = {
 	twitch_disclaimer = create_twitch_disclaimer,
 	twitch_mode = create_twitch_mode
 }
-local tbl_42 = {
+local generic_input_actions = {
 	default = {},
 	default_voting = {
 		actions = {
@@ -4977,24 +5012,24 @@ local tbl_42 = {
 }
 
 return {
-	generic_input_actions = tbl_42,
-	scenegraph_definition = tbl_7,
-	adventure_game_widgets = tbl_28,
-	game_mode_widgets = tbl_29,
-	custom_game_widgets = tbl_32,
-	deed_game_widgets = tbl_33,
-	event_game_widgets = tbl_34,
-	weave_game_widgets = tbl_35,
-	deus_quickplay_widget = tbl_36,
-	deus_custom_widget = tbl_37,
-	weave_quickplay_widgets = tbl_31,
-	twitch_mode_widget_funcs = tbl_41,
-	switch_mechanism_widgets = tbl_30,
-	versus_quickplay_widgets = tbl_39,
-	versus_custom_widgets = tbl_40,
-	widgets = tbl_22,
-	widgets_deus = tbl_23,
-	deus_weekly_event_create_header = fn,
-	deus_weekly_event_create_entry_widget = fn_2,
-	deus_weekly_event_widgets = tbl_38
+	generic_input_actions = generic_input_actions,
+	scenegraph_definition = scenegraph_definition,
+	adventure_game_widgets = adventure_game_widgets,
+	game_mode_widgets = game_mode_widgets,
+	custom_game_widgets = custom_game_widgets,
+	deed_game_widgets = deed_game_widgets,
+	event_game_widgets = event_game_widgets,
+	weave_game_widgets = weave_game_widgets,
+	deus_quickplay_widget = deus_quickplay_widget,
+	deus_custom_widget = deus_custom_widget,
+	weave_quickplay_widgets = weave_quickplay_widgets,
+	twitch_mode_widget_funcs = twitch_mode_widget_funcs,
+	switch_mechanism_widgets = switch_mechanism_widgets,
+	versus_quickplay_widgets = versus_quickplay_widgets,
+	versus_custom_widgets = versus_custom_widgets,
+	widgets = widgets,
+	widgets_deus = widgets_deus,
+	deus_weekly_event_create_header = deus_weekly_event_create_header,
+	deus_weekly_event_create_entry_widget = deus_weekly_event_create_entry_widget,
+	deus_weekly_event_widgets = deus_weekly_event_widgets
 }

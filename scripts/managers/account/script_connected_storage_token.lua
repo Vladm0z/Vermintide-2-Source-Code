@@ -4,57 +4,57 @@ ScriptConnectedStorageToken = class(ScriptConnectedStorageToken, ScriptSaveToken
 
 ScriptConnectedStorageToken.info = function (self)
 	-- function 1
-	local tbl = {}
+	local info = {}
 
 	if self._status == self._adapter.COMPLETED then
 		print("GET STORAGE ID SUCCESS", self._status)
 
-		tbl = {
+		info = {
 			storage_id = self._token
 		}
 	else
 		print("GET STORAGE ID ERROR", self._status)
 
-		tbl = {
+		info = {
 			error = self:_parse_error(self._status)
 		}
 	end
 
-	return tbl
+	return info
 end
 
 ScriptConnectedStorageQueryToken = class(ScriptConnectedStorageQueryToken, ScriptSaveToken)
 
 ScriptConnectedStorageQueryToken.info = function (self)
 	-- function 2
-	local tbl = {}
+	local info = {}
 
 	if self._status == self._adapter.COMPLETED then
-		tbl = self._adapter.query_result(self._token)
+		info = self._adapter.query_result(self._token)
 	else
 		print("QUERY ERROR")
 
-		tbl = {
+		info = {
 			error = self:_parse_error(self._status)
 		}
 	end
 
-	return tbl
+	return info
 end
 
 ScriptConnectedStorageDeleteToken = class(ScriptConnectedStorageDeleteToken, ScriptSaveToken)
 
 ScriptConnectedStorageDeleteToken.info = function (self)
 	-- function 3
-	local tbl = {}
+	local info = {}
 
 	if self._status == self._adapter.ERROR then
 		print("DELETE ERROR")
 
-		tbl = {
+		info = {
 			error = self:_parse_error(self._status)
 		}
 	end
 
-	return tbl
+	return info
 end

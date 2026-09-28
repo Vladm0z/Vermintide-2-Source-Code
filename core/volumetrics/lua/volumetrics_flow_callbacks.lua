@@ -2,51 +2,51 @@
 
 local VolumetricsFlowCallbacks = VolumetricsFlowCallbacks
 
-VolumetricsFlowCallbacks = VolumetricsFlowCallbacks or {}
+VolumetricsFlowCallbacks = not not VolumetricsFlowCallbacks or not not {}
 VolumetricsFlowCallbacks = VolumetricsFlowCallbacks
 
-VolumetricsFlowCallbacks.register_fog_volume = function (self)
+VolumetricsFlowCallbacks.register_fog_volume = function (params)
 	-- function 1
-	local unit = self.unit
-	local get_data = stingray.Unit.get_data(unit, "FogProperties", "albedo", 0)
-	local get_data_2 = stingray.Unit.get_data(unit, "FogProperties", "albedo", 1)
-	local get_data_3 = stingray.Unit.get_data(unit, "FogProperties", "albedo", 2)
-	local var_1_4 = Vector3(get_data, get_data_2, get_data_3)
-	local get_data_4 = stingray.Unit.get_data(unit, "FogProperties", "extinction")
-	local get_data_5 = stingray.Unit.get_data(unit, "FogProperties", "phase")
-	local get_data_6 = stingray.Unit.get_data(unit, "FogProperties", "falloff", 0)
-	local get_data_7 = stingray.Unit.get_data(unit, "FogProperties", "falloff", 1)
-	local get_data_8 = stingray.Unit.get_data(unit, "FogProperties", "falloff", 2)
-	local var_1_10 = Vector3(get_data_6, get_data_7, get_data_8)
+	local unit = params.unit
+	local albedo_r = stingray.Unit.get_data(unit, "FogProperties", "albedo", 0)
+	local albedo_g = stingray.Unit.get_data(unit, "FogProperties", "albedo", 1)
+	local albedo_b = stingray.Unit.get_data(unit, "FogProperties", "albedo", 2)
+	local albedo = Vector3(albedo_r, albedo_g, albedo_b)
+	local extinction = stingray.Unit.get_data(unit, "FogProperties", "extinction")
+	local phase = stingray.Unit.get_data(unit, "FogProperties", "phase")
+	local falloff_x = stingray.Unit.get_data(unit, "FogProperties", "falloff", 0)
+	local falloff_y = stingray.Unit.get_data(unit, "FogProperties", "falloff", 1)
+	local falloff_z = stingray.Unit.get_data(unit, "FogProperties", "falloff", 2)
+	local falloff = Vector3(falloff_x, falloff_y, falloff_z)
 
-	if not unit then
-		stingray.Volumetrics.register_volume(unit, var_1_4, get_data_4, get_data_5, var_1_10)
+	if unit then
+		stingray.Volumetrics.register_volume(unit, albedo, extinction, phase, falloff)
 	end
 end
 
-VolumetricsFlowCallbacks.unregister_fog_volume = function (self)
+VolumetricsFlowCallbacks.unregister_fog_volume = function (params)
 	-- function 2
-	local unit = self.unit
+	local unit = params.unit
 
-	if not unit then
+	if unit then
 		stingray.Volumetrics.unregister_volume(unit)
 	end
 end
 
-VolumetricsFlowCallbacks.register_fog_volume_manual = function (self)
+VolumetricsFlowCallbacks.register_fog_volume_manual = function (params)
 	-- function 3
-	local unit = self.unit
+	local unit = params.unit
 
-	if not unit then
-		stingray.Volumetrics.register_volume(unit, self.albedo, self.extinction, self.phase, self.falloff)
+	if unit then
+		stingray.Volumetrics.register_volume(unit, params.albedo, params.extinction, params.phase, params.falloff)
 	end
 end
 
-VolumetricsFlowCallbacks.update_fog_volume = function (self)
+VolumetricsFlowCallbacks.update_fog_volume = function (params)
 	-- function 4
-	local unit = self.unit
+	local unit = params.unit
 
-	if not unit then
-		stingray.Volumetrics.update_volume(unit, self.albedo, self.extinction, self.phase, self.falloff)
+	if unit then
+		stingray.Volumetrics.update_volume(unit, params.albedo, params.extinction, params.phase, params.falloff)
 	end
 end

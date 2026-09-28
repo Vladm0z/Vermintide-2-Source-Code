@@ -2,31 +2,31 @@
 
 local PLACEHOLDER_ICON = AchievementTemplateHelper.PLACEHOLDER_ICON
 local achievements = AchievementTemplates.achievements
-local belakor = DLCSettings.belakor
+local achievement_settings = DLCSettings.belakor
 local rpc_increment_stat = AchievementTemplateHelper.rpc_increment_stat
 local rpc_modify_stat = AchievementTemplateHelper.rpc_modify_stat
 local add_levels_complete_per_hero_challenge = AchievementTemplateHelper.add_levels_complete_per_hero_challenge
 local add_meta_challenge = AchievementTemplateHelper.add_meta_challenge
-local tbl = {}
-local tbl_2 = {}
-local num = 1
-local num_2 = 2
-local num_3 = 3
-local num_4 = 4
-local num_5 = 5
-local num_6 = 1
-local num_7 = 2
-local num_8 = 3
-local num_9 = 4
+local XB1_ACHIEVEMENT_ID = {}
+local PS4_ACHIEVEMENT_ID = {}
+local register_damage_stats_id = 1
+local register_damage_victim_unit = 2
+local register_damage_damage_data = 3
+local register_damage_attacker_unit = 4
+local register_damage_target_breed = 5
+local register_kill_stats_id = 1
+local register_kill_victim_unit = 2
+local register_kill_damage_data = 3
+local register_kill_victim_breed = 4
 
 achievements.blk_complete_arena = {
 	name = "achv_blk_complete_arena_name",
 	display_completion_ui = true,
 	icon = "achievement_morris_complete_arena",
 	desc = "achv_blk_complete_arena_desc",
-	completed = function (arg_1_0, arg_1_1)
+	completed = function (statistics_db, stats_id)
 		-- function 1
-		return AchievementTemplateHelper.check_level(arg_1_0, arg_1_1, "arena_belakor")
+		return AchievementTemplateHelper.check_level(statistics_db, stats_id, "arena_belakor")
 	end
 }
 achievements.blk_three_champions = {
@@ -38,31 +38,31 @@ achievements.blk_three_champions = {
 		"register_lieutenant_spawned",
 		"register_kill"
 	},
-	completed = function (self, arg_2_1, arg_2_2)
+	completed = function (statistics_db, stats_id, template_data)
 		-- function 2
-		return self:get_persistent_stat(arg_2_1, "blk_three_champions") > 0
+		return statistics_db:get_persistent_stat(stats_id, "blk_three_champions") > 0
 	end,
-	on_event = function (self, arg_3_1, arg_3_2, arg_3_3, arg_3_4)
+	on_event = function (statistics_db, stats_id, template_data, event_name, event_data)
 		-- function 3
-		if arg_3_3 == "register_lieutenant_spawned" then
-			if not arg_3_2.num_champs then
-				arg_3_2.num_champs = 0
+		if event_name == "register_lieutenant_spawned" then
+			if not template_data.num_champs then
+				template_data.num_champs = 0
 			end
 
-			arg_3_2.num_champs = arg_3_2.num_champs + 1
+			template_data.num_champs = template_data.num_champs + 1
 
-			if arg_3_2.num_champs >= 3 then
-				self:increment_stat(arg_3_1, "blk_three_champions")
+			if template_data.num_champs >= 3 then
+				statistics_db:increment_stat(stats_id, "blk_three_champions")
 			end
 		else
-			if not arg_3_2.num_champs then
-				arg_3_2.num_champs = 0
+			if not template_data.num_champs then
+				template_data.num_champs = 0
 			end
 
-			local var_3_0 = arg_3_4[num_9]
+			local killed_breed = event_data[register_kill_victim_breed]
 
-			if not (not var_3_0 and not var_3_0.name and var_3_0.name ~= "shadow_lieutenant") then
-				arg_3_2.num_champs = arg_3_2.num_champs - 1
+			if killed_breed and killed_breed.name and killed_breed.name == "shadow_lieutenant" then
+				template_data.num_champs = template_data.num_champs - 1
 			end
 		end
 	end
@@ -75,27 +75,27 @@ achievements.blk_fast_arena = {
 	events = {
 		"register_locus_destroyed"
 	},
-	completed = function (self, arg_4_1, arg_4_2)
+	completed = function (statistics_db, stats_id, template_data)
 		-- function 4
-		return self:get_persistent_stat(arg_4_1, "blk_fast_arena") >= 1
+		return statistics_db:get_persistent_stat(stats_id, "blk_fast_arena") >= 1
 	end,
-	on_event = function (self, arg_5_1, arg_5_2, arg_5_3, arg_5_4)
+	on_event = function (statistics_db, stats_id, template_data, event_name, event_data)
 		-- function 5
-		local time = Managers.time:time("game")
+		local current_t = Managers.time:time("game")
 
-		if not arg_5_2.locus_destroyed then
-			arg_5_2.locus_destroyed = 0
+		if not template_data.locus_destroyed then
+			template_data.locus_destroyed = 0
 		end
 
-		arg_5_2.locus_destroyed = arg_5_2.locus_destroyed + 1
+		template_data.locus_destroyed = template_data.locus_destroyed + 1
 
-		if not (not (arg_5_2.locus_destroyed >= 3) or not (time <= 240)) then
-			self:increment_stat(arg_5_1, "blk_fast_arena")
+		if template_data.locus_destroyed >= 3 and current_t <= 240 then
+			statistics_db:increment_stat(stats_id, "blk_fast_arena")
 		end
 	end
 }
 
-local num_10 = 10
+local totem_life_time_threshold = 10
 
 achievements.blk_fast_kill_totems = {
 	name = "achv_blk_fast_kill_totems_name",
@@ -106,57 +106,58 @@ achievements.blk_fast_kill_totems = {
 		"register_totem_state_change",
 		"register_completed_level"
 	},
-	completed = function (self, arg_6_1, arg_6_2)
+	completed = function (statistics_db, stats_id, template_data)
 		-- function 6
-		return self:get_persistent_stat(arg_6_1, "blk_fast_kill_totems") >= 1
+		return statistics_db:get_persistent_stat(stats_id, "blk_fast_kill_totems") >= 1
 	end,
-	on_event = function (self, arg_7_1, arg_7_2, arg_7_3, arg_7_4)
+	on_event = function (statistics_db, stats_id, template_data, event_name, event_data)
 		-- function 7
-		if not arg_7_2.failed then
-			if arg_7_3 == "register_totem_state_change" then
-				if not arg_7_2.totem_life_time then
-					arg_7_2.totem_life_time = {}
+		if not template_data.failed then
+			if event_name == "register_totem_state_change" then
+				if not template_data.totem_life_time then
+					template_data.totem_life_time = {}
 				end
 
-				if not arg_7_2.active_totems then
-					arg_7_2.active_totems = 0
+				if not template_data.active_totems then
+					template_data.active_totems = 0
 				end
 
-				local time = Managers.time:time("game")
-				local var_7_1 = arg_7_4[1]
+				local current_t = Managers.time:time("game")
+				local spawned_unit = event_data[1]
+				local has_spawned = event_data[2]
 
-				if arg_7_4[2] == true then
-					arg_7_2.totem_life_time[var_7_1] = time
+				if has_spawned == true then
+					template_data.totem_life_time[spawned_unit] = current_t
 				else
-					local var_7_2 = arg_7_2.totem_life_time[var_7_1]
+					local spawn_time = template_data.totem_life_time[spawned_unit]
 
-					if not (not var_7_2 and not (time - var_7_2 > num_10)) then
-						arg_7_2.failed = true
+					if spawn_time and current_t - spawn_time > totem_life_time_threshold then
+						template_data.failed = true
 					end
 
-					arg_7_2.totem_life_time[var_7_1] = nil
+					template_data.totem_life_time[spawned_unit] = nil
 				end
-			elseif not arg_7_2.totem_life_time then
-				local time_2 = Managers.time:time("game")
-				local flag = false
+			elseif template_data.totem_life_time then
+				local current_t = Managers.time:time("game")
+				local failed = false
 
-				for k, v in pairs(arg_7_2.totem_life_time) do
-					if time_2 - v > num_10 then
-						flag = true
+				for unit, spawn_t in pairs(template_data.totem_life_time) do
+					if current_t - spawn_t > totem_life_time_threshold then
+						failed = true
 
 						break
 					end
 				end
 
-				if flag or not Managers.state.game_mode:has_activated_mutator("curse_belakor_totems") then
-					self:increment_stat(arg_7_1, "blk_fast_kill_totems")
+				if not failed and Managers.state.game_mode:has_activated_mutator("curse_belakor_totems") then
+					statistics_db:increment_stat(stats_id, "blk_fast_kill_totems")
 				end
 			end
 		end
 	end
 }
 
-local num_11 = 2
+local synced_destruction_window = 2
 
 achievements.blk_synced_destruction = {
 	name = "achv_blk_synced_destruction_name",
@@ -166,22 +167,22 @@ achievements.blk_synced_destruction = {
 	events = {
 		"register_locus_destroyed"
 	},
-	completed = function (self, arg_8_1, arg_8_2)
+	completed = function (statistics_db, stats_id, template_data)
 		-- function 8
-		return self:get_persistent_stat(arg_8_1, "blk_synced_destruction") >= 1
+		return statistics_db:get_persistent_stat(stats_id, "blk_synced_destruction") >= 1
 	end,
-	on_event = function (self, arg_9_1, arg_9_2, arg_9_3, arg_9_4)
+	on_event = function (statistics_db, stats_id, template_data, event_name, event_data)
 		-- function 9
-		local time = Managers.time:time("game")
+		local current_t = Managers.time:time("game")
 
-		if not arg_9_2.locus_destroyed then
-			arg_9_2.locus_destroyed = {}
+		if not template_data.locus_destroyed then
+			template_data.locus_destroyed = {}
 		end
 
-		arg_9_2.locus_destroyed[#arg_9_2.locus_destroyed + 1] = time
+		template_data.locus_destroyed[#template_data.locus_destroyed + 1] = current_t
 
-		if not (not (#arg_9_2.locus_destroyed >= 3) or not (arg_9_2.locus_destroyed[#arg_9_2.locus_destroyed] - arg_9_2.locus_destroyed[1] <= num_11)) then
-			self:increment_stat(arg_9_1, "blk_synced_destruction")
+		if #template_data.locus_destroyed >= 3 and template_data.locus_destroyed[#template_data.locus_destroyed] - template_data.locus_destroyed[1] <= synced_destruction_window then
+			statistics_db:increment_stat(stats_id, "blk_synced_destruction")
 		end
 	end
 }
@@ -193,29 +194,30 @@ achievements.blk_white_run = {
 	events = {
 		"register_completed_level"
 	},
-	completed = function (self, arg_10_1, arg_10_2)
+	completed = function (statistics_db, stats_id, template_data)
 		-- function 10
-		return self:get_persistent_stat(arg_10_1, "blk_white_run") >= 1
+		return statistics_db:get_persistent_stat(stats_id, "blk_white_run") >= 1
 	end,
-	on_event = function (self, arg_11_1, arg_11_2, arg_11_3, arg_11_4)
+	on_event = function (statistics_db, stats_id, template_data, event_name, event_data)
 		-- function 11
-		local game_mechanism = Managers.mechanism:game_mechanism()
+		local mechanism = Managers.mechanism:game_mechanism()
 
-		if not (not game_mechanism and game_mechanism.name == "Deus") then
+		if not mechanism or mechanism.name ~= "Deus" then
 			return
 		end
 
-		local get_deus_run_controller = Managers.mechanism:game_mechanism():get_deus_run_controller()
-		local get_own_peer_id = get_deus_run_controller:get_own_peer_id()
-		local get_cursed_chests_purified = get_deus_run_controller:get_cursed_chests_purified(get_own_peer_id)
-		local get_coins_spent = get_deus_run_controller:get_coins_spent()
+		local deus_run_controller = Managers.mechanism:game_mechanism():get_deus_run_controller()
+		local peer_id = deus_run_controller:get_own_peer_id()
+		local cursed_shrine = deus_run_controller:get_cursed_chests_purified(peer_id)
+		local coins_spent = deus_run_controller:get_coins_spent()
+		local level_id = event_data[2]
 
-		if arg_11_4[2] ~= "arena_belakor" then
+		if level_id ~= "arena_belakor" then
 			return
 		end
 
-		if not (get_coins_spent ~= 0 or get_cursed_chests_purified ~= 0) then
-			self:increment_stat(arg_11_1, "blk_white_run")
+		if coins_spent == 0 and cursed_shrine == 0 then
+			statistics_db:increment_stat(stats_id, "blk_white_run")
 		end
 	end
 }
@@ -227,55 +229,57 @@ achievements.blk_clutch_skull = {
 	events = {
 		"register_damage"
 	},
-	progress = function (self, arg_12_1, arg_12_2)
+	progress = function (statistics_db, stats_id, template_data)
 		-- function 12
-		local get_persistent_stat = self:get_persistent_stat(arg_12_1, "blk_clutch_skull")
+		local completed = statistics_db:get_persistent_stat(stats_id, "blk_clutch_skull")
 
 		return {
-			get_persistent_stat,
+			completed,
 			5
 		}
 	end,
-	completed = function (self, arg_13_1, arg_13_2)
+	completed = function (statistics_db, stats_id, template_data)
 		-- function 13
-		return self:get_persistent_stat(arg_13_1, "blk_clutch_skull") >= 5
+		return statistics_db:get_persistent_stat(stats_id, "blk_clutch_skull") >= 5
 	end,
-	on_event = function (self, arg_14_1, arg_14_2, arg_14_3, arg_14_4)
+	on_event = function (statistics_db, stats_id, template_data, event_name, event_data)
 		-- function 14
-		local var_14_0 = arg_14_4[num_5]
-		local var_14_1 = arg_14_4[num_2]
-		local var_14_2 = arg_14_4[num_4]
+		local victim_breed = event_data[register_damage_target_breed]
+		local victim_unit = event_data[register_damage_victim_unit]
+		local attacker_unit = event_data[register_damage_attacker_unit]
+		local local_player_unit = Managers.player:local_player().player_unit
 
-		if Managers.player:local_player().player_unit ~= var_14_2 then
+		if local_player_unit ~= attacker_unit then
 			return
 		end
 
-		if not (not var_14_0 and not var_14_0.name and var_14_0.name ~= "shadow_skull") then
-			local var_14_3 = POSITION_LOOKUP[var_14_1]
-			local var_14_4 = Managers.state.side.side_by_unit[var_14_2]
+		if victim_breed and victim_breed.name and victim_breed.name == "shadow_skull" then
+			local target_pos = POSITION_LOOKUP[victim_unit]
+			local side = Managers.state.side.side_by_unit[attacker_unit]
 
-			if not var_14_4 then
+			if not side then
 				return
 			end
 
-			local PLAYER_AND_BOT_UNITS = var_14_4.PLAYER_AND_BOT_UNITS
-			local count = #PLAYER_AND_BOT_UNITS
-			local flag = false
+			local player_and_bot_units = side.PLAYER_AND_BOT_UNITS
+			local num_units = #player_and_bot_units
+			local saved = false
 
-			for i = 1, count do
-				local var_14_8 = PLAYER_AND_BOT_UNITS[i]
+			for i = 1, num_units do
+				local unit = player_and_bot_units[i]
 
-				if not (not Unit.alive(var_14_8) and var_14_8 == var_14_2) then
-					local var_14_9 = POSITION_LOOKUP[var_14_8]
+				if Unit.alive(unit) and unit ~= attacker_unit then
+					local unit_position = POSITION_LOOKUP[unit]
+					local distance = Vector3.distance(target_pos, unit_position)
 
-					if Vector3.distance(var_14_3, var_14_9) < 3 then
-						flag = true
+					if distance < 3 then
+						saved = true
 					end
 				end
 			end
 
-			if not flag then
-				self:increment_stat(arg_14_1, "blk_clutch_skull")
+			if saved then
+				statistics_db:increment_stat(stats_id, "blk_clutch_skull")
 			end
 		end
 	end
@@ -289,20 +293,20 @@ achievements.blk_no_totem = {
 		"register_kill",
 		"register_completed_level"
 	},
-	completed = function (self, arg_15_1, arg_15_2)
+	completed = function (statistics_db, stats_id, template_data)
 		-- function 15
-		return self:get_persistent_stat(arg_15_1, "blk_no_totem") >= 1
+		return statistics_db:get_persistent_stat(stats_id, "blk_no_totem") >= 1
 	end,
-	on_event = function (self, arg_16_1, arg_16_2, arg_16_3, arg_16_4)
+	on_event = function (statistics_db, stats_id, template_data, event_name, event_data)
 		-- function 16
-		if arg_16_3 == "register_kill" then
-			local var_16_0 = arg_16_4[num_9]
+		if event_name == "register_kill" then
+			local killed_breed = event_data[register_kill_victim_breed]
 
-			if not (not var_16_0 and var_16_0.name ~= "shadow_totem") then
-				arg_16_2.failed = true
+			if killed_breed and killed_breed.name == "shadow_totem" then
+				template_data.failed = true
 			end
-		elseif not (not Managers.state.game_mode:has_activated_mutator("curse_belakor_totems") and arg_16_2.failed) then
-			self:increment_stat(arg_16_1, "blk_no_totem")
+		elseif Managers.state.game_mode:has_activated_mutator("curse_belakor_totems") and not template_data.failed then
+			statistics_db:increment_stat(stats_id, "blk_no_totem")
 		end
 	end
 }
@@ -315,26 +319,27 @@ achievements.blk_hitless_skull = {
 		"register_skull_hit",
 		"register_completed_level"
 	},
-	completed = function (self, arg_17_1, arg_17_2)
+	completed = function (statistics_db, stats_id, template_data)
 		-- function 17
-		return self:get_persistent_stat(arg_17_1, "blk_hitless_skull") >= 1
+		return statistics_db:get_persistent_stat(stats_id, "blk_hitless_skull") >= 1
 	end,
-	on_event = function (self, arg_18_1, arg_18_2, arg_18_3, arg_18_4)
+	on_event = function (statistics_db, stats_id, template_data, event_name, event_data)
 		-- function 18
-		if arg_18_3 == "register_skull_hit" then
-			local var_18_0 = arg_18_4[1]
+		if event_name == "register_skull_hit" then
+			local hit_unit = event_data[1]
 			local local_player = Managers.player:local_player()
+			local local_player_unit = not not local_player and not not local_player.player_unit
 
-			if var_18_0 == (not local_player and local_player.player_unit) then
-				arg_18_2.failed = true
+			if hit_unit == local_player_unit then
+				template_data.failed = true
 			end
-		elseif not (not Managers.state.game_mode:has_activated_mutator("curse_shadow_homing_skulls") and arg_18_2.failed) then
-			self:increment_stat(arg_18_1, "blk_hitless_skull")
+		elseif Managers.state.game_mode:has_activated_mutator("curse_shadow_homing_skulls") and not template_data.failed then
+			statistics_db:increment_stat(stats_id, "blk_hitless_skull")
 		end
 	end
 }
 
-local tbl_3 = {
+local all_challenges = {
 	"blk_complete_arena",
 	"blk_three_champions",
 	"blk_fast_arena",
@@ -346,4 +351,4 @@ local tbl_3 = {
 	"blk_hitless_skull"
 }
 
-add_meta_challenge(achievements, "complete_all_belakor_challenges", tbl_3, "achievement_morris_complete_all_challenges", nil, nil, nil)
+add_meta_challenge(achievements, "complete_all_belakor_challenges", all_challenges, "achievement_morris_complete_all_challenges", nil, nil, nil)

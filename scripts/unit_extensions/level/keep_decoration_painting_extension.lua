@@ -2,61 +2,61 @@
 
 KeepDecorationPaintingExtension = class(KeepDecorationPaintingExtension)
 
-KeepDecorationPaintingExtension.init = function (self, arg_1_1, arg_1_2, arg_1_3)
+KeepDecorationPaintingExtension.init = function (self, extension_init_context, unit, extension_init_data)
 	-- function 1
-	local world = arg_1_1.world
-	local current_level = LevelHelper:current_level(world)
+	local world = extension_init_context.world
+	local level = LevelHelper:current_level(world)
 
 	self.keep_decoration_system = nil
-	self._decoration_settings_key = Unit.get_data(arg_1_2, "decoration_settings_key")
-	self._unit = arg_1_2
+	self._decoration_settings_key = Unit.get_data(unit, "decoration_settings_key")
+	self._unit = unit
 	self._world = world
-	self._level_unit_index = Level.unit_index(current_level, arg_1_2)
+	self._level_unit_index = Level.unit_index(level, unit)
 	self._is_leader = Managers.party:is_leader(Network.peer_id())
 
 	local keep_decoration_paintings = NetworkLookup.keep_decoration_paintings
 
-	keep_decoration_paintings = keep_decoration_paintings or {}
+	keep_decoration_paintings = not not keep_decoration_paintings or not not {}
 	self._paintings_lookup = keep_decoration_paintings
-	self._is_client_painting = Unit.get_data(arg_1_2, "painting_data", "is_client_painting")
+	self._is_client_painting = Unit.get_data(unit, "painting_data", "is_client_painting")
 	self._currently_set_painting = nil
 	self._temporarily_set_frame = nil
 	self._temporarily_set_orientation = nil
 	self._is_hidden = nil
 	self._painting_unit = nil
-	self._start_hidden = Unit.get_data(arg_1_2, "painting_data", "start_hidden")
+	self._start_hidden = Unit.get_data(unit, "painting_data", "start_hidden")
 	self._slow_update_count = 0
 	self._slot = nil
 	self._loading_painting_material = nil
 	self._next_painting = {}
 
-	local get_data = Unit.get_data(arg_1_2, "decoration_settings_key")
-	local var_1_4 = KeepDecorationSettings[get_data]
+	local settings_key = Unit.get_data(unit, "decoration_settings_key")
+	local settings = KeepDecorationSettings[settings_key]
 
-	self._settings = var_1_4
-	self._backend_key = var_1_4.backend_key
+	self._settings = settings
+	self._backend_key = settings.backend_key
 end
 
-KeepDecorationPaintingExtension.interacted_with = function (arg_2_0)
+KeepDecorationPaintingExtension.interacted_with = function (self)
 	-- function 2
 	return
 end
 
 KeepDecorationPaintingExtension.destroy = function (self)
 	-- function 3
-	local _painting_unit = self._painting_unit
+	local unit = self._painting_unit
 
-	if not Unit.alive(_painting_unit) then
-		World.destroy_unit(self._world, _painting_unit)
+	if Unit.alive(unit) then
+		World.destroy_unit(self._world, unit)
 	end
 
-	if not self._current_package_name then
+	if self._current_package_name then
 		self:_unload_painting_material(self._current_package_name)
 
 		self._current_package_name = nil
 	end
 
-	if not self._previous_package_name then
+	if self._previous_package_name then
 		self:_unload_painting_material(self._previous_package_name)
 
 		self._previous_package_name = nil
@@ -79,15 +79,26 @@ KeepDecorationPaintingExtension.extensions_ready = function (self)
 		return
 	end
 
-	local flag
+	local str
 
-	flag = not self._is_client_painting and "hidden" and self:get_selected_decoration()
-	self._current_preview_painting = flag
+	if self._is_client_painting then
+		str = "hidden"
 
-	local function fn()
+		goto label_4_0
+	end
+
+	str = self:get_selected_decoration()
+
+	local selected_painting = str
+
+	::label_4_0::
+
+	self._current_preview_painting = selected_painting
+
+	local function on_material_loaded()
 		-- function 5
-		if not Managers.state.network:in_game_session() then
-			self:_create_game_object(flag)
+		if Managers.state.network:in_game_session() then
+			self:_create_game_object(selected_painting)
 
 			self._loading_painting_material = false
 		else
@@ -95,7 +106,7 @@ KeepDecorationPaintingExtension.extensions_ready = function (self)
 		end
 	end
 
-	self:_load_painting(flag, fn)
+	self:_load_painting(selected_painting, on_material_loaded)
 end
 
 KeepDecorationPaintingExtension.get_settings = function (self)
@@ -112,107 +123,112 @@ KeepDecorationPaintingExtension.can_interact = function (self)
 	return self._go_id
 end
 
-KeepDecorationPaintingExtension.decoration_selected = function (self, arg_8_1)
+KeepDecorationPaintingExtension.decoration_selected = function (self, current_painting)
 	-- function 8
-	self:_load_painting(arg_8_1, nil)
+	self:_load_painting(current_painting, nil)
 end
 
 KeepDecorationPaintingExtension.reset_selection = function (self)
 	-- function 9
-	local _current_preview_painting = self._current_preview_painting
-	local _currently_set_painting = self._currently_set_painting
+	local current_preview_painting = self._current_preview_painting
+	local selected_painting = self._currently_set_painting
 
-	if _currently_set_painting ~= _current_preview_painting then
-		self:_load_painting(_currently_set_painting, nil)
+	if selected_painting ~= current_preview_painting then
+		self:_load_painting(selected_painting, nil)
 	end
 
 	self._current_preview_painting = nil
 end
 
-KeepDecorationPaintingExtension.unequip_decoration = function (self, arg_10_1)
+KeepDecorationPaintingExtension.unequip_decoration = function (self, new_painting)
 	-- function 10
-	local flag = arg_10_1 or "hor_none"
+	local painting = not not new_painting or not not "hor_none"
 
-	self:_load_painting(flag)
+	self:_load_painting(painting)
 	self:sync_decoration()
 end
 
 KeepDecorationPaintingExtension.confirm_selection = function (self)
 	-- function 11
-	local _current_preview_painting = self._current_preview_painting
+	local current_preview_painting = self._current_preview_painting
+	local keep_decoration_system = self.keep_decoration_system
 
-	self.keep_decoration_system:on_painting_set(_current_preview_painting, self)
+	keep_decoration_system:on_painting_set(current_preview_painting, self)
 	self:sync_decoration()
 end
 
 KeepDecorationPaintingExtension.sync_decoration = function (self)
 	-- function 12
-	local _current_preview_painting = self._current_preview_painting
+	local current_preview_painting = self._current_preview_painting
 
-	self:_set_selected_painting(_current_preview_painting)
+	self:_set_selected_painting(current_preview_painting)
 
-	local _go_id = self._go_id
+	local go_id = self._go_id
 
-	if not _go_id then
+	if go_id then
 		local game = Managers.state.network:game()
 
-		GameSession.set_game_object_field(game, _go_id, "painting_index", self._paintings_lookup[_current_preview_painting])
+		GameSession.set_game_object_field(game, go_id, "painting_index", self._paintings_lookup[current_preview_painting])
 	end
 end
 
-KeepDecorationPaintingExtension.hot_join_sync = function (arg_13_0, arg_13_1)
+KeepDecorationPaintingExtension.hot_join_sync = function (self, sender)
 	-- function 13
 	return
 end
 
 KeepDecorationPaintingExtension.distributed_update = function (self)
 	-- function 14
-	if not self._is_leader then
-		if not self._waiting_for_game_session and not Managers.state.network:in_game_session() then
-			local get_selected_decoration = self:get_selected_decoration()
+	if self._is_leader then
+		if self._waiting_for_game_session and Managers.state.network:in_game_session() then
+			local selected_painting = self:get_selected_decoration()
 
-			self:_create_game_object(get_selected_decoration)
+			self:_create_game_object(selected_painting)
 
 			self._waiting_for_game_session = false
 		end
 	else
-		local _go_id = self._go_id
+		local go_id = self._go_id
 
-		if not _go_id then
+		if go_id then
 			local game = Managers.state.network:game()
-			local game_object_field = GameSession.game_object_field(game, _go_id, "painting_index")
+			local painting_index = GameSession.game_object_field(game, go_id, "painting_index")
 
-			if game_object_field ~= self._go_painting_index then
-				self._go_painting_index = game_object_field
+			if painting_index ~= self._go_painting_index then
+				self._go_painting_index = painting_index
 
-				local var_14_4 = self._paintings_lookup[game_object_field]
+				local painting = self._paintings_lookup[painting_index]
 
-				self._currently_set_painting = var_14_4
+				self._currently_set_painting = painting
 
-				self:_load_painting(var_14_4)
+				self:_load_painting(painting)
 			end
 		end
 	end
 
-	local _slow_update_count = self._slow_update_count
+	local slow_update_count = self._slow_update_count
 
-	if _slow_update_count > 25 then
-		_slow_update_count = 0
+	if slow_update_count > 25 then
+		slow_update_count = 0
 
-		if not (not self._start_hidden and Unit.get_data(self._unit, "painting_data", "start_hidden")) then
-			self._start_hidden = false
+		if self._start_hidden then
+			local start_hidden = Unit.get_data(self._unit, "painting_data", "start_hidden")
 
-			local _currently_set_painting = self._currently_set_painting
+			if not start_hidden then
+				self._start_hidden = false
 
-			Unit.set_unit_visibility(self._unit, false)
-			self:_load_painting(_currently_set_painting, nil)
-			self:_show_painting()
+				local painting = self._currently_set_painting
+
+				Unit.set_unit_visibility(self._unit, false)
+				self:_load_painting(painting, nil)
+				self:_show_painting()
+			end
 		end
 	end
 
-	self._slow_update_count = _slow_update_count + 1
+	self._slow_update_count = slow_update_count + 1
 
-	if self._loading_painting_material or not self._next_painting.name then
+	if not self._loading_painting_material and self._next_painting.name then
 		local name = self._next_painting.name
 		local cb_done = self._next_painting.cb_done
 
@@ -221,17 +237,17 @@ KeepDecorationPaintingExtension.distributed_update = function (self)
 	end
 end
 
-KeepDecorationPaintingExtension.set_client_painting = function (self, arg_15_1)
+KeepDecorationPaintingExtension.set_client_painting = function (self, painting)
 	-- function 15
-	self:_load_painting(arg_15_1)
-	self:_set_selected_painting(arg_15_1)
+	self:_load_painting(painting)
+	self:_set_selected_painting(painting)
 
-	local _go_id = self._go_id
+	local go_id = self._go_id
 
-	if not _go_id then
+	if go_id then
 		local game = Managers.state.network:game()
 
-		GameSession.set_game_object_field(game, _go_id, "painting_index", self._paintings_lookup[arg_15_1])
+		GameSession.set_game_object_field(game, go_id, "painting_index", self._paintings_lookup[painting])
 	end
 end
 
@@ -258,137 +274,138 @@ end
 
 KeepDecorationPaintingExtension.get_selected_decoration = function (self)
 	-- function 19
-	if not self._is_leader then
-		local _backend_key = self._backend_key
-		local get_decoration = Managers.backend:get_interface("keep_decorations"):get_decoration(_backend_key)
+	if self._is_leader then
+		local backend_key = self._backend_key
+		local backend_interface = Managers.backend:get_interface("keep_decorations")
+		local selected_painting = backend_interface:get_decoration(backend_key)
 
-		if not (not get_decoration and Paintings[get_decoration]) then
-			get_decoration = DefaultPaintings[1]
+		if not selected_painting or not Paintings[selected_painting] then
+			selected_painting = DefaultPaintings[1]
 		end
 
-		self._currently_set_painting = get_decoration
+		self._currently_set_painting = selected_painting
 
-		return get_decoration
+		return selected_painting
 	else
 		return self._currently_set_painting
 	end
 end
 
-KeepDecorationPaintingExtension._set_selected_painting = function (self, arg_20_1)
+KeepDecorationPaintingExtension._set_selected_painting = function (self, painting)
 	-- function 20
-	local _backend_key = self._backend_key
-	local backend = Managers.backend
-	local get_interface = backend:get_interface("keep_decorations")
+	local backend_key = self._backend_key
+	local backend_manager = Managers.backend
+	local backend_interface = backend_manager:get_interface("keep_decorations")
 
-	self._currently_set_painting = arg_20_1
+	self._currently_set_painting = painting
 
-	get_interface:set_decoration(_backend_key, arg_20_1)
-	backend:commit()
+	backend_interface:set_decoration(backend_key, painting)
+	backend_manager:commit()
 end
 
-KeepDecorationPaintingExtension._load_painting = function (self, arg_21_1, arg_21_2)
+KeepDecorationPaintingExtension._load_painting = function (self, painting, callback)
 	-- function 21
-	arg_21_1 = arg_21_1 or "hor_none"
+	painting = not not painting or not not "hor_none"
 
-	local var_21_0 = Paintings[arg_21_1]
-	local orientation = var_21_0.orientation
-	local frame = var_21_0.frame
+	local painting_data = Paintings[painting]
+	local painting_orientation = painting_data.orientation
+	local painting_frame = painting_data.frame
 
-	self._current_preview_painting = arg_21_1
+	self._current_preview_painting = painting
 
-	if orientation == "vertical" then
+	if painting_orientation == "vertical" then
 		self._slot = "keep_painting_ver_none"
-	elseif orientation == "horizontal" then
+	elseif painting_orientation == "horizontal" then
 		self._slot = "keep_painting_hor_none"
 	end
 
-	if not (self._temporarily_set_frame ~= frame or self._temporarily_set_orientation == orientation) then
-		self:_load_painting_frame(var_21_0)
+	if self._temporarily_set_frame ~= painting_frame or self._temporarily_set_orientation ~= painting_orientation then
+		self:_load_painting_frame(painting_data)
 	end
 
-	if arg_21_1 ~= "hidden" then
-		self:_load_painting_material(arg_21_1, arg_21_2, self._slot)
+	if painting ~= "hidden" then
+		self:_load_painting_material(painting, callback, self._slot)
 
-		if not self._is_hidden then
+		if self._is_hidden then
 			self:_show_painting()
 		end
 	else
-		self:_load_painting_material("hor_none", arg_21_2, self._slot)
+		self:_load_painting_material("hor_none", callback, self._slot)
 		self:_hide_painting()
 	end
 
-	if not self._start_hidden then
+	if self._start_hidden then
 		self:_hide_painting()
 	end
 end
 
-KeepDecorationPaintingExtension._load_painting_frame = function (self, arg_22_1)
+KeepDecorationPaintingExtension._load_painting_frame = function (self, data)
 	-- function 22
-	local orientation = arg_22_1.orientation
-	local frame = arg_22_1.frame
-	local var_22_2
-	local _unit = self._unit
-	local local_position = Unit.local_position(_unit, 0)
-	local local_rotation = Unit.local_rotation(_unit, 0)
-	local local_scale = Unit.local_scale(_unit, 0)
+	local painting_orientation = data.orientation
+	local painting_frame = data.frame
+	local painting_unit
+	local unit = self._unit
+	local position = Unit.local_position(unit, 0)
+	local rotation = Unit.local_rotation(unit, 0)
+	local scale = Unit.local_scale(unit, 0)
 
-	if orientation == "horizontal" then
-		if frame == "wood" then
-			var_22_2 = World.spawn_unit(self._world, "units/gameplay/paintings/keep_painting_wood_long", local_position, local_rotation)
-		elseif frame == "painted" then
-			var_22_2 = World.spawn_unit(self._world, "units/gameplay/paintings/keep_painting_painted_long", local_position, local_rotation)
-		elseif frame == "gold" then
-			var_22_2 = World.spawn_unit(self._world, "units/gameplay/paintings/keep_painting_gold_long", local_position, local_rotation)
+	if painting_orientation == "horizontal" then
+		if painting_frame == "wood" then
+			painting_unit = World.spawn_unit(self._world, "units/gameplay/paintings/keep_painting_wood_long", position, rotation)
+		elseif painting_frame == "painted" then
+			painting_unit = World.spawn_unit(self._world, "units/gameplay/paintings/keep_painting_painted_long", position, rotation)
+		elseif painting_frame == "gold" then
+			painting_unit = World.spawn_unit(self._world, "units/gameplay/paintings/keep_painting_gold_long", position, rotation)
 		end
-	elseif orientation == "vertical" then
-		if frame == "wood" then
-			var_22_2 = World.spawn_unit(self._world, "units/gameplay/paintings/keep_painting_wood_high", local_position, local_rotation)
-		elseif frame == "painted" then
-			var_22_2 = World.spawn_unit(self._world, "units/gameplay/paintings/keep_painting_painted_high", local_position, local_rotation)
-		elseif frame == "gold" then
-			var_22_2 = World.spawn_unit(self._world, "units/gameplay/paintings/keep_painting_gold_high", local_position, local_rotation)
+	elseif painting_orientation == "vertical" then
+		if painting_frame == "wood" then
+			painting_unit = World.spawn_unit(self._world, "units/gameplay/paintings/keep_painting_wood_high", position, rotation)
+		elseif painting_frame == "painted" then
+			painting_unit = World.spawn_unit(self._world, "units/gameplay/paintings/keep_painting_painted_high", position, rotation)
+		elseif painting_frame == "gold" then
+			painting_unit = World.spawn_unit(self._world, "units/gameplay/paintings/keep_painting_gold_high", position, rotation)
 		end
 	end
 
-	Unit.set_local_scale(var_22_2, 0, local_scale)
+	Unit.set_local_scale(painting_unit, 0, scale)
 
-	self._temporarily_set_frame = frame
-	self._temporarily_set_orientation = orientation
+	self._temporarily_set_frame = painting_frame
+	self._temporarily_set_orientation = painting_orientation
 
-	local _painting_unit = self._painting_unit
+	local current_unit = self._painting_unit
 
-	if not _painting_unit then
-		World.destroy_unit(self._world, _painting_unit)
+	if current_unit then
+		World.destroy_unit(self._world, current_unit)
 	end
 
-	self._painting_unit = var_22_2
+	self._painting_unit = painting_unit
 end
 
-KeepDecorationPaintingExtension._load_painting_material = function (self, arg_23_1, arg_23_2)
+KeepDecorationPaintingExtension._load_painting_material = function (self, name, cb_done)
 	-- function 23
-	local str = "keep_painting_" .. arg_23_1
-	local flag = string.find(arg_23_1, "_none") ~= nil
-	local var_23_2
-	local _decoration_settings_key = self._decoration_settings_key
+	local subpath = "keep_painting_" .. name
+	local no_package_required = string.find(name, "_none") ~= nil
+	local package_name
+	local reference_name = self._decoration_settings_key
 
-	if not flag then
-		var_23_2 = "resource_packages/keep_paintings/" .. str
+	if not no_package_required then
+		package_name = "resource_packages/keep_paintings/" .. subpath
 	end
 
-	local _current_package_name = self._current_package_name
+	local previous_package_name = self._current_package_name
 
-	local function fn()
+	local function cb_package_loaded()
 		-- function 24
-		self:_apply_material_by_sub_path(str)
+		self:_apply_material_by_sub_path(subpath)
 
-		if not arg_23_2 then
-			arg_23_2()
+		if cb_done then
+			cb_done()
 		end
 
 		self._loading_painting_material = false
 
-		if not _current_package_name then
-			self:_unload_painting_material(_current_package_name)
+		if previous_package_name then
+			self:_unload_painting_material(previous_package_name)
 
 			self._previous_package_name = nil
 		end
@@ -397,50 +414,50 @@ KeepDecorationPaintingExtension._load_painting_material = function (self, arg_23
 	if not self._loading_painting_material then
 		self._loading_painting_material = true
 		self._previous_package_name = self._current_package_name
-		self._current_package_name = var_23_2
+		self._current_package_name = package_name
 
-		if not flag then
-			fn()
+		if no_package_required then
+			cb_package_loaded()
 		else
-			Managers.package:load(var_23_2, _decoration_settings_key, fn, true)
+			Managers.package:load(package_name, reference_name, cb_package_loaded, true)
 		end
 	else
-		self._next_painting.name = arg_23_1
-		self._next_painting.cb_done = arg_23_2
+		self._next_painting.name = name
+		self._next_painting.cb_done = cb_done
 	end
 end
 
-KeepDecorationPaintingExtension._apply_material_by_sub_path = function (self, arg_25_1)
+KeepDecorationPaintingExtension._apply_material_by_sub_path = function (self, subpath)
 	-- function 25
-	local _painting_unit = self._painting_unit
+	local painting_unit = self._painting_unit
 
-	if not Unit.alive(_painting_unit) then
-		local str = "units/gameplay/keep_paintings/materials/" .. arg_25_1 .. "/" .. arg_25_1
-		local _slot = self._slot
+	if Unit.alive(painting_unit) then
+		local material_path = "units/gameplay/keep_paintings/materials/" .. subpath .. "/" .. subpath
+		local slot = self._slot
 
-		Unit.set_material(_painting_unit, _slot, str)
+		Unit.set_material(painting_unit, slot, material_path)
 	end
 end
 
-KeepDecorationPaintingExtension._unload_painting_material = function (self, arg_26_1)
+KeepDecorationPaintingExtension._unload_painting_material = function (self, package_name)
 	-- function 26
-	local _decoration_settings_key = self._decoration_settings_key
+	local reference_name = self._decoration_settings_key
 
-	if Managers.package:reference_count(arg_26_1, _decoration_settings_key) > 0 then
-		Managers.package:unload(arg_26_1, _decoration_settings_key)
+	if Managers.package:reference_count(package_name, reference_name) > 0 then
+		Managers.package:unload(package_name, reference_name)
 	end
 end
 
-KeepDecorationPaintingExtension._create_game_object = function (self, arg_27_1)
+KeepDecorationPaintingExtension._create_game_object = function (self, painting)
 	-- function 27
-	local tbl = {
+	local go_data_table = {
 		go_type = NetworkLookup.go_types.keep_decoration_painting,
 		level_unit_index = self._level_unit_index,
-		painting_index = self._paintings_lookup[arg_27_1]
+		painting_index = self._paintings_lookup[painting]
 	}
-	local var_27_1 = callback(self, "cb_game_session_disconnect")
+	local callback = callback(self, "cb_game_session_disconnect")
 
-	self._go_id = Managers.state.network:create_game_object("keep_decoration_painting", tbl, var_27_1)
+	self._go_id = Managers.state.network:create_game_object("keep_decoration_painting", go_data_table, callback)
 end
 
 KeepDecorationPaintingExtension.cb_game_session_disconnect = function (self)
@@ -448,17 +465,17 @@ KeepDecorationPaintingExtension.cb_game_session_disconnect = function (self)
 	self._go_id = nil
 end
 
-KeepDecorationPaintingExtension.on_game_object_created = function (self, arg_29_1)
+KeepDecorationPaintingExtension.on_game_object_created = function (self, go_id)
 	-- function 29
 	local game = Managers.state.network:game()
-	local game_object_field = GameSession.game_object_field(game, arg_29_1, "painting_index")
-	local var_29_2 = self._paintings_lookup[game_object_field]
+	local painting_index = GameSession.game_object_field(game, go_id, "painting_index")
+	local painting = self._paintings_lookup[painting_index]
 
-	self:_load_painting(var_29_2, nil)
+	self:_load_painting(painting, nil)
 
-	self._currently_set_painting = var_29_2
-	self._go_painting_index = game_object_field
-	self._go_id = arg_29_1
+	self._currently_set_painting = painting
+	self._go_painting_index = painting_index
+	self._go_id = go_id
 end
 
 KeepDecorationPaintingExtension.on_game_object_destroyed = function (self)

@@ -1,9 +1,9 @@
 -- chunkname: @scripts/settings/dlcs/karak_azgaraz/karak_azgaraz_level_settings_part_4.lua
 
-local karak_azgaraz_part_4 = DLCSettings.karak_azgaraz_part_4
+local settings = DLCSettings.karak_azgaraz_part_4
 
-karak_azgaraz_part_4.level_settings = "levels/honduras_dlcs/karak_azgaraz/level_settings_karak_azgaraz_part_4"
-karak_azgaraz_part_4.missions = {
+settings.level_settings = "levels/honduras_dlcs/karak_azgaraz/level_settings_karak_azgaraz_part_4"
+settings.missions = {
 	dlc_whaling_gather_team = {
 		mission_template_name = "goal",
 		text = "dlc1_5_dwarf_whaling_gather_team"

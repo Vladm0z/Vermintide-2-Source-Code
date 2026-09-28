@@ -46,43 +46,43 @@ Development._hardcoded_benchmark_mode_params = {
 	wanted_profile = "bright_wizard"
 }
 
-local _hardcoded_dev_params = Development._hardcoded_dev_params
+local hardcoded_dev_params = Development._hardcoded_dev_params
 
 if LAUNCH_MODE == "attract_benchmark" then
-	_hardcoded_dev_params = Development._hardcoded_benchmark_mode_params
+	hardcoded_dev_params = Development._hardcoded_benchmark_mode_params
 end
 
-Development.parameter = function (arg_1_0)
+Development.parameter = function (param)
 	-- function 1
-	return _hardcoded_dev_params[arg_1_0]
+	return hardcoded_dev_params[param]
 end
 
-Development.clear_param_cache = function (arg_2_0)
+Development.clear_param_cache = function (param)
 	-- function 2
 	return
 end
 
-Development.set_parameter = function (arg_3_0, arg_3_1)
+Development.set_parameter = function (param, value)
 	-- function 3
 	return
 end
 
 Development.init_parameters = function ()
 	-- function 4
-	for k, v in pairs(_hardcoded_dev_params) do
-		script_data[k] = v
+	for param, value in pairs(hardcoded_dev_params) do
+		script_data[param] = value
 	end
 
 	new_params = {}
 
-	for k_2, v_2 in pairs(_hardcoded_dev_params) do
-		if not k_2:find("_") then
-			new_param = k_2:gsub("_", "-")
-			new_params[new_param] = v_2
+	for param, value in pairs(hardcoded_dev_params) do
+		if param:find("_") then
+			new_param = param:gsub("_", "-")
+			new_params[new_param] = value
 		end
 	end
 
-	for k_3, v_3 in pairs(new_params) do
-		_hardcoded_dev_params[k_3] = v_3
+	for param, value in pairs(new_params) do
+		hardcoded_dev_params[param] = value
 	end
 end

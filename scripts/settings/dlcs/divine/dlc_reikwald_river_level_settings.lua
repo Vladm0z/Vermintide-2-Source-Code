@@ -1,11 +1,11 @@
 -- chunkname: @scripts/settings/dlcs/divine/dlc_reikwald_river_level_settings.lua
 
-local divine = DLCSettings.divine
+local settings = DLCSettings.divine
 
-divine.level_settings = "levels/honduras_dlcs/divine/level_settings_dlc_reikwald_river"
-divine.level_unlock_settings = "levels/honduras_dlcs/divine/level_unlock_settings_divine"
-divine.terror_event_blueprints_filename = "scripts/settings/terror_events/terror_events_dlc_reikwald_river"
-divine.missions = {
+settings.level_settings = "levels/honduras_dlcs/divine/level_settings_dlc_reikwald_river"
+settings.level_unlock_settings = "levels/honduras_dlcs/divine/level_unlock_settings_divine"
+settings.terror_event_blueprints_filename = "scripts/settings/terror_events/terror_events_dlc_reikwald_river"
+settings.missions = {
 	river_reik_look_for_sword = {
 		mission_template_name = "goal",
 		text = "mission_river_reik_look_for_sword"

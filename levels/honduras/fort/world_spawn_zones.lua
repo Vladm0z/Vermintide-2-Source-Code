@@ -1,6 +1,6 @@
 -- chunkname: @levels/honduras/fort/world_spawn_zones.lua
 
-local tbl = {
+local path_markers = {
 	{
 		roaming_set = "random",
 		main_path_index = 1,
@@ -411,7 +411,7 @@ local tbl = {
 		}
 	}
 }
-local tbl_2 = {
+local main_paths = {
 	{
 		path_length = 16.693279266357422,
 		travel_dist = {
@@ -1694,7 +1694,7 @@ local tbl_2 = {
 		}
 	}
 }
-local tbl_3 = {
+local crossroads = {
 	B = {
 		main_path_index = 3,
 		num_roads = 4,
@@ -1712,7 +1712,7 @@ local tbl_3 = {
 		}
 	}
 }
-local tbl_4 = {
+local zones = {
 	{
 		unique_zone_id = 1,
 		roaming_set = "random",
@@ -52268,7 +52268,7 @@ local tbl_4 = {
 		}
 	}
 }
-local tbl_5 = {
+local cover_points = {
 	-34.912498474121094,
 	258.68499755859375,
 	-5.14460563659668,
@@ -57320,7 +57320,7 @@ local tbl_5 = {
 	1,
 	-0
 }
-local tbl_6 = {
+local position_lookup = {
 	{
 		64.61432647705078,
 		391.0847473144531,
@@ -296312,20 +296312,20 @@ local tbl_6 = {
 		4.349637985229492
 	}
 }
-local num = 47798
-local num_2 = 101
-local num_3 = 1075.7453765869
-local str = "1"
+local number_of_spawns = 47798
+local num_main_zones = 101
+local total_main_path_length = 1075.7453765869
+local spawner_version = "1"
 
 return {
-	version = str,
-	number_of_spawns = num,
-	path_markers = tbl,
-	zones = tbl_4,
-	cover_points = tbl_5,
-	num_main_zones = num_2,
-	position_lookup = tbl_6,
-	main_paths = tbl_2,
-	crossroads = tbl_3,
-	total_main_path_length = num_3
+	version = spawner_version,
+	number_of_spawns = number_of_spawns,
+	path_markers = path_markers,
+	zones = zones,
+	cover_points = cover_points,
+	num_main_zones = num_main_zones,
+	position_lookup = position_lookup,
+	main_paths = main_paths,
+	crossroads = crossroads,
+	total_main_path_length = total_main_path_length
 }

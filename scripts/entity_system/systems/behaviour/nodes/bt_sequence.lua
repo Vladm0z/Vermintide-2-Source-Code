@@ -13,50 +13,51 @@ end
 
 BTSequence.name = "BTSequence"
 
-BTSequence.leave = function (self, arg_2_1, arg_2_2, arg_2_3)
+BTSequence.leave = function (self, unit, blackboard, t)
 	-- function 2
-	self:set_running_child(arg_2_1, arg_2_2, arg_2_3, nil, "aborted")
+	self:set_running_child(unit, blackboard, t, nil, "aborted")
 
-	arg_2_2.node_data[self._identifier] = nil
+	blackboard.node_data[self._identifier] = nil
 end
 
-BTSequence.run = function (self, arg_3_1, arg_3_2, arg_3_3, arg_3_4)
+BTSequence.run = function (self, unit, blackboard, t, dt)
 	-- function 3
-	local flag = arg_3_2.node_data[self._identifier] or 1
-	local count = #self._children
+	local node_data = blackboard.node_data[self._identifier]
+	local child_to_run_index = not not node_data or not not 1
+	local num_children = #self._children
 
-	for i = flag, count do
-		local var_3_2 = self._children[i]
+	for i = child_to_run_index, num_children do
+		local child = self._children[i]
 
-		if not var_3_2:condition(arg_3_2) then
-			self:set_running_child(arg_3_1, arg_3_2, arg_3_3, nil, "failed")
+		if not child:condition(blackboard) then
+			self:set_running_child(unit, blackboard, t, nil, "failed")
 
 			return "failed"
 		end
 
-		self:set_running_child(arg_3_1, arg_3_2, arg_3_3, var_3_2, "aborted")
+		self:set_running_child(unit, blackboard, t, child, "aborted")
 
-		local run = var_3_2:run(arg_3_1, arg_3_2, arg_3_3, arg_3_4)
+		local result = child:run(unit, blackboard, t, dt)
 
-		if run == "running" then
-			arg_3_2.node_data[self._identifier] = i
+		if result == "running" then
+			blackboard.node_data[self._identifier] = i
 
-			return run
+			return result
 		else
-			self:set_running_child(arg_3_1, arg_3_2, arg_3_3, nil, run)
+			self:set_running_child(unit, blackboard, t, nil, result)
 
-			if run == "failed" then
+			if result == "failed" then
 				return "failed"
 			end
 		end
 	end
 
-	assert(self:current_running_child(arg_3_2) == nil)
+	assert(self:current_running_child(blackboard) == nil)
 
 	return "done"
 end
 
-BTSequence.add_child = function (arg_4_0, arg_4_1)
+BTSequence.add_child = function (self, node)
 	-- function 4
-	arg_4_0._children[#arg_4_0._children + 1] = arg_4_1
+	self._children[#self._children + 1] = node
 end

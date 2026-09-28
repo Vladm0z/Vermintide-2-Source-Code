@@ -1,15 +1,15 @@
 -- chunkname: @scripts/ui/hud_ui/dark_pact_climbing_ui.lua
 
-local num = 50
-local num_2 = 250
-local num_3 = 0.5
-local num_4 = 400
+local BROADPHASE_SEARCH_RADIUS = 50
+local BROADPHASE_CELLS = 250
+local DISTANCE_CHECK_DELAY = 0.5
+local UPDATE_DISTANCE_SQ = 400
 
 DarkPactClimbingUI = class(DarkPactClimbingUI)
 
-DarkPactClimbingUI.init = function (self, arg_1_1, arg_1_2)
+DarkPactClimbingUI.init = function (self, parent, ingame_ui_context)
 	-- function 1
-	self._local_player = arg_1_2.player
+	self._local_player = ingame_ui_context.player
 	self._raycast_frame_counter = 0
 	self._world_markers_spawned = {}
 	self._next_distance_check_time = -math.huge
@@ -32,70 +32,70 @@ end
 
 DarkPactClimbingUI._register_climb_units = function (self)
 	-- function 3
-	local entity = Managers.state.entity
-	local system = entity:system("door_system")
+	local entity_system = Managers.state.entity
+	local door_system = entity_system:system("door_system")
 
-	self:_add_units_to_broadphase("tunneling", system:get_crawl_space_tunnel_units())
-	self:_add_units_to_broadphase("spawning", system:get_crawl_space_spawner_units())
+	self:_add_units_to_broadphase("tunneling", door_system:get_crawl_space_tunnel_units())
+	self:_add_units_to_broadphase("spawning", door_system:get_crawl_space_spawner_units())
 
-	local level_jump_units = entity:system("nav_graph_system"):level_jump_units()
+	local level_jump_units = entity_system:system("nav_graph_system"):level_jump_units()
 
-	if not level_jump_units then
+	if level_jump_units then
 		self:_add_units_to_broadphase("climbing", table.keys(level_jump_units))
 	end
 
 	self._are_climb_units_registered = true
 end
 
-DarkPactClimbingUI._add_units_to_broadphase = function (self, arg_4_1, arg_4_2)
+DarkPactClimbingUI._add_units_to_broadphase = function (self, unit_type, unit_list)
 	-- function 4
-	if not arg_4_2 then
+	if not unit_list then
 		return
 	end
 
-	for i, v in ipairs(arg_4_2) do
-		if not (not Unit.alive(v) and self._broadphase_types[v]) then
-			Broadphase.add(self._broadphase, v, Unit.world_position(v, 0), 1)
+	for _, unit in ipairs(unit_list) do
+		if Unit.alive(unit) and not self._broadphase_types[unit] then
+			Broadphase.add(self._broadphase, unit, Unit.world_position(unit, 0), 1)
 
-			self._broadphase_types[v] = arg_4_1
+			self._broadphase_types[unit] = unit_type
 		end
 	end
 end
 
 DarkPactClimbingUI._initialize_broadphase = function (self)
 	-- function 5
-	self._broadphase = Broadphase(num, num_2)
+	self._broadphase = Broadphase(BROADPHASE_SEARCH_RADIUS, BROADPHASE_CELLS)
 	self._broadphase_types = {}
 end
 
 DarkPactClimbingUI._initialize_camera = function (self)
 	-- function 6
-	local str = "player_1"
+	local viewport_name = "player_1"
 	local world = Managers.world:world("level_world")
 
-	if not Managers.state.camera:has_viewport(str) then
-		self._camera = ScriptViewport.camera(ScriptWorld.viewport(world, str))
+	if Managers.state.camera:has_viewport(viewport_name) then
+		self._camera = ScriptViewport.camera(ScriptWorld.viewport(world, viewport_name))
 	end
 end
 
-DarkPactClimbingUI._broadphase_check = function (self, arg_7_1)
+DarkPactClimbingUI._broadphase_check = function (self, position)
 	-- function 7
-	local _broadphase_results = self._broadphase_results
+	local broadphase_results = self._broadphase_results
 
-	table.clear(_broadphase_results)
+	table.clear(broadphase_results)
 
-	local query = Broadphase.query(self._broadphase, arg_7_1, num, _broadphase_results)
+	local num_hits = Broadphase.query(self._broadphase, position, BROADPHASE_SEARCH_RADIUS, broadphase_results)
 
-	return _broadphase_results, query
+	return broadphase_results, num_hits
 end
 
-DarkPactClimbingUI.update = function (self, arg_8_1, arg_8_2)
+DarkPactClimbingUI.update = function (self, dt, t)
 	-- function 8
 	if not self._are_climb_units_registered then
 		return
 	end
 
-	if not (not self._visible and Unit.alive(self._local_player.player_unit)) then
+	if not self._visible or not Unit.alive(self._local_player.player_unit) then
 		if not self._markers_cleared then
 			self:_clear_world_markers()
 		end
@@ -103,88 +103,88 @@ DarkPactClimbingUI.update = function (self, arg_8_1, arg_8_2)
 		return
 	end
 
-	local _camera = self._camera
+	local camera = self._camera
 
-	if not _camera then
+	if not camera then
 		return
 	end
 
-	if arg_8_2 < self._next_distance_check_time then
+	if t < self._next_distance_check_time then
 		return
 	end
 
-	self._next_distance_check_time = arg_8_2 + num_3
+	self._next_distance_check_time = t + DISTANCE_CHECK_DELAY
 
-	local local_position = Camera.local_position(_camera)
-	local _previous_position_box = self._previous_position_box
+	local camera_position = Camera.local_position(camera)
+	local previous_position_box = self._previous_position_box
 
-	if Vector3.distance_squared(_previous_position_box:unbox(), local_position) < num_4 then
+	if Vector3.distance_squared(previous_position_box:unbox(), camera_position) < UPDATE_DISTANCE_SQ then
 		return
 	end
 
-	_previous_position_box:store(local_position)
+	previous_position_box:store(camera_position)
 
-	local _broadphase_check, var_8_4 = self:_broadphase_check(local_position)
-	local event = Managers.state.event
+	local broadphase_results, num_hits = self:_broadphase_check(camera_position)
+	local event_manager = Managers.state.event
 
-	for i = 1, var_8_4 do
-		local var_8_6 = _broadphase_check[i]
+	for i = 1, num_hits do
+		local unit = broadphase_results[i]
 
-		if not self:_has_marker_for_unit(var_8_6) then
-			event:trigger("add_world_marker_unit", self._broadphase_types[var_8_6], var_8_6, callback(self, "cb_world_marker_spawned", var_8_6))
+		if not self:_has_marker_for_unit(unit) then
+			event_manager:trigger("add_world_marker_unit", self._broadphase_types[unit], unit, callback(self, "cb_world_marker_spawned", unit))
 		end
 
-		self._keep_marker_lookup[var_8_6] = true
+		self._keep_marker_lookup[unit] = true
 	end
 
 	self:_clear_world_markers_except(self._keep_marker_lookup)
 	table.clear(self._keep_marker_lookup)
 end
 
-DarkPactClimbingUI._has_marker_for_unit = function (self, arg_9_1)
+DarkPactClimbingUI._has_marker_for_unit = function (self, unit)
 	-- function 9
-	return self._world_markers_spawned[arg_9_1]
+	return self._world_markers_spawned[unit]
 end
 
 DarkPactClimbingUI._clear_world_markers = function (self)
 	-- function 10
-	local _world_markers_spawned = self._world_markers_spawned
-	local event = Managers.state.event
+	local world_markers_spawned = self._world_markers_spawned
+	local event_manager = Managers.state.event
 
-	for k, v in pairs(_world_markers_spawned) do
-		event:trigger("event_remove_world_marker", v)
+	for unit, id in pairs(world_markers_spawned) do
+		event_manager:trigger("event_remove_world_marker", id)
 
-		_world_markers_spawned[k] = nil
+		world_markers_spawned[unit] = nil
 	end
 
 	self._markers_cleared = true
 end
 
-DarkPactClimbingUI._clear_world_markers_except = function (self, arg_11_1)
+DarkPactClimbingUI._clear_world_markers_except = function (self, blacklist)
 	-- function 11
-	local _world_markers_spawned = self._world_markers_spawned
-	local event = Managers.state.event
+	local world_markers_spawned = self._world_markers_spawned
+	local event_manager = Managers.state.event
 
-	for k, v in pairs(_world_markers_spawned) do
-		if not arg_11_1[k] then
-			event:trigger("event_remove_world_marker", _world_markers_spawned[k])
+	for unit, id in pairs(world_markers_spawned) do
+		if not blacklist[unit] then
+			event_manager:trigger("event_remove_world_marker", world_markers_spawned[unit])
 
-			_world_markers_spawned[k] = nil
+			world_markers_spawned[unit] = nil
 		end
 	end
 end
 
-DarkPactClimbingUI.cb_world_marker_spawned = function (self, arg_12_1, arg_12_2)
+DarkPactClimbingUI.cb_world_marker_spawned = function (self, unit, marker_id)
 	-- function 12
-	self._world_markers_spawned[arg_12_1] = arg_12_2
+	self._world_markers_spawned[unit] = marker_id
 	self._markers_cleared = false
 end
 
-DarkPactClimbingUI.set_visible = function (self, arg_13_1)
+DarkPactClimbingUI.set_visible = function (self, visible)
 	-- function 13
-	self._visible = arg_13_1
+	self._visible = visible
 
-	if not arg_13_1 then
+	if visible then
 		self:_initialize_camera()
 		self:_initialize_broadphase()
 		self:_register_climb_units()

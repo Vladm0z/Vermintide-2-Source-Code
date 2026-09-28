@@ -4,55 +4,68 @@ require("scripts/entity_system/systems/behaviour/nodes/bt_node")
 
 BTZombieExplodeAction = class(BTZombieExplodeAction, BTNode)
 
-BTZombieExplodeAction.init = function (arg_1_0, ...)
+BTZombieExplodeAction.init = function (self, ...)
 	-- function 1
-	BTZombieExplodeAction.super.init(arg_1_0, ...)
+	BTZombieExplodeAction.super.init(self, ...)
 end
 
 BTZombieExplodeAction.name = "BTZombieExplodeAction"
 
-BTZombieExplodeAction.enter = function (self, arg_2_1, arg_2_2, arg_2_3)
+BTZombieExplodeAction.enter = function (self, unit, blackboard, t)
 	-- function 2
-	local action_data = self._tree_node.action_data
+	local action = self._tree_node.action_data
 
-	arg_2_2.action = action_data
+	blackboard.action = action
 
-	if not action_data.explode_animation then
-		local explode_animation = action_data.explode_animation
+	if action.explode_animation then
+		local explode_animation = action.explode_animation
+		local network_manager = Managers.state.network
 
-		Managers.state.network:anim_event(arg_2_1, explode_animation)
+		network_manager:anim_event(unit, explode_animation)
 
-		arg_2_2.explosion_timer = arg_2_3 + action_data.explosion_at_time
-		arg_2_2.bot_threat_timer = arg_2_3 + action_data.explosion_at_time * 0.75
+		blackboard.explosion_timer = t + action.explosion_at_time
+		blackboard.bot_threat_timer = t + action.explosion_at_time * 0.75
 	else
-		arg_2_2.explosion_timer = arg_2_3
+		blackboard.explosion_timer = t
 	end
 
-	arg_2_2.navigation_extension:set_enabled(false)
+	local navigation_extension = blackboard.navigation_extension
+
+	navigation_extension:set_enabled(false)
 end
 
-BTZombieExplodeAction.leave = function (arg_3_0, arg_3_1, arg_3_2, arg_3_3, arg_3_4, arg_3_5)
+BTZombieExplodeAction.leave = function (self, unit, blackboard, t, reason, destroy)
 	-- function 3
-	arg_3_2.navigation_extension:set_enabled(true)
+	local navigation_extension = blackboard.navigation_extension
+
+	navigation_extension:set_enabled(true)
 end
 
-BTZombieExplodeAction.run = function (self, arg_4_1, arg_4_2, arg_4_3, arg_4_4)
+BTZombieExplodeAction.run = function (self, unit, blackboard, t, dt)
 	-- function 4
-	if not (not arg_4_2.bot_threat_timer and not (arg_4_3 > arg_4_2.bot_threat_timer)) then
-		local action = arg_4_2.action
-		local var_4_1 = POSITION_LOOKUP[arg_4_1]
-		local var_4_2 = Vector3(0, action.radius, 1)
-		local bot_threat_duration = action.bot_threat_duration
+	if blackboard.bot_threat_timer and t > blackboard.bot_threat_timer then
+		local action = blackboard.action
+		local position = POSITION_LOOKUP[unit]
+		local size = Vector3(0, action.radius, 1)
+		local bot_threat_duration_2 = action.bot_threat_duration
 
-		bot_threat_duration = bot_threat_duration or 1.5
+		if not bot_threat_duration_2 then
+			-- Nothing
+		end
 
-		Managers.state.entity:system("ai_bot_group_system"):aoe_threat_created(var_4_1, "cylinder", var_4_2, nil, bot_threat_duration, "Chaos Zombie")
+		bot_threat_duration_2 = 1.5
 
-		arg_4_2.bot_threat_timer = nil
+		local bot_threat_duration = bot_threat_duration_2
+
+		::label_4_0::
+
+		Managers.state.entity:system("ai_bot_group_system"):aoe_threat_created(position, "cylinder", size, nil, bot_threat_duration, "Chaos Zombie")
+
+		blackboard.bot_threat_timer = nil
 	end
 
-	if arg_4_3 > arg_4_2.explosion_timer then
-		self:explode(arg_4_1, arg_4_2, arg_4_3)
+	if t > blackboard.explosion_timer then
+		self:explode(unit, blackboard, t)
 
 		return "done"
 	end
@@ -60,12 +73,12 @@ BTZombieExplodeAction.run = function (self, arg_4_1, arg_4_2, arg_4_3, arg_4_4)
 	return "running"
 end
 
-BTZombieExplodeAction.explode = function (arg_5_0, arg_5_1, arg_5_2, arg_5_3)
+BTZombieExplodeAction.explode = function (self, unit, blackboard, t)
 	-- function 5
-	local str = "kinetic"
-	local var_5_1 = Vector3(0, 0, -1)
+	local damage_type = "kinetic"
+	local damage_direction = Vector3(0, 0, -1)
 
-	arg_5_2.explosion_finished = true
+	blackboard.explosion_finished = true
 
-	AiUtils.kill_unit(arg_5_1, nil, nil, str, var_5_1)
+	AiUtils.kill_unit(unit, nil, nil, damage_type, damage_direction)
 end

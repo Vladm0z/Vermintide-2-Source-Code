@@ -1,11 +1,11 @@
 -- chunkname: @scripts/settings/dlcs/grudge_marks/grudge_marks_sound_settings.lua
 
-local grudge_marks = DLCSettings.grudge_marks
+local settings = DLCSettings.grudge_marks
 
-grudge_marks.dialogue_lookup = {}
-grudge_marks.dialogue_settings = {}
-grudge_marks.auto_load_files = {}
-grudge_marks.network_sound_events = {
+settings.dialogue_lookup = {}
+settings.dialogue_settings = {}
+settings.auto_load_files = {}
+settings.network_sound_events = {
 	"enemy_grudge_raging",
 	"enemy_grudge_shield_start",
 	"enemy_grudge_shield_end",

@@ -2,32 +2,32 @@
 
 ImguiPackageDebug = class(ImguiPackageDebug)
 
-local flag = true
+local SHOULD_RELOAD = true
 
-ImguiPackageDebug.init = function (arg_1_0)
+ImguiPackageDebug.init = function (self)
 	-- function 1
 	return
 end
 
 ImguiPackageDebug._hijack_package_manager = function (self)
 	-- function 2
-	local package = Managers.package
+	local package_manager = Managers.package
 
-	self._old_load_func = package.load
-	self._old_unload_func = package.unload
+	self._old_load_func = package_manager.load
+	self._old_unload_func = package_manager.unload
 
-	PackageManager.load = function (arg_3_0, ...)
+	PackageManager.load = function (this, ...)
 		-- function 3
 		self._refresh_references = true
 
-		self._old_load_func(arg_3_0, ...)
+		self._old_load_func(this, ...)
 	end
 
-	PackageManager.unload = function (arg_4_0, ...)
+	PackageManager.unload = function (this, ...)
 		-- function 4
 		self._refresh_references = true
 
-		self._old_unload_func(arg_4_0, ...)
+		self._old_unload_func(this, ...)
 	end
 
 	self._refresh_references = true
@@ -46,45 +46,45 @@ end
 
 ImguiPackageDebug.update = function (self)
 	-- function 7
-	if not flag then
+	if SHOULD_RELOAD then
 		self:init()
 
-		flag = false
+		SHOULD_RELOAD = false
 	end
 
-	if not self._refresh_references then
+	if self._refresh_references then
 		self._refresh_references = false
 
-		local package = Managers.package
+		local package_manager = Managers.package
 
-		self._packages = self:_steal_and_sort(package._packages)
-		self._asynch_packages = self:_steal_and_sort(package._asynch_packages)
-		self._references = self:_steal_and_sort(package._references)
-		self._queued_async_packages = self:_steal_and_sort(package._queued_async_packages)
-		self._queue_order = self:_steal_and_sort(package._queue_order)
+		self._packages = self:_steal_and_sort(package_manager._packages)
+		self._asynch_packages = self:_steal_and_sort(package_manager._asynch_packages)
+		self._references = self:_steal_and_sort(package_manager._references)
+		self._queued_async_packages = self:_steal_and_sort(package_manager._queued_async_packages)
+		self._queue_order = self:_steal_and_sort(package_manager._queue_order)
 	end
 end
 
-ImguiPackageDebug._steal_and_sort = function (arg_8_0, arg_8_1)
+ImguiPackageDebug._steal_and_sort = function (self, table_to_steal)
 	-- function 8
-	local shallow_copy = table.shallow_copy(arg_8_1)
-	local keys = table.keys(shallow_copy)
+	local copy = table.shallow_copy(table_to_steal)
+	local keys = table.keys(copy)
 
 	table.sort(keys)
 
-	shallow_copy._sorted_keys = keys
+	copy._sorted_keys = keys
 
-	return shallow_copy
+	return copy
 end
 
-ImguiPackageDebug.is_persistent = function (arg_9_0)
+ImguiPackageDebug.is_persistent = function (self)
 	-- function 9
 	return true
 end
 
-ImguiPackageDebug.draw = function (self, arg_10_1)
+ImguiPackageDebug.draw = function (self, is_open)
 	-- function 10
-	local begin_window = Imgui.begin_window("Package Debug")
+	local do_close = Imgui.begin_window("Package Debug")
 
 	self:_display_packages("packages", self._packages)
 	self:_display_packages("async packages", self._asynch_packages)
@@ -93,22 +93,22 @@ ImguiPackageDebug.draw = function (self, arg_10_1)
 	self:_display_queue_order("queue order", self._queue_order)
 	Imgui.end_window()
 
-	return begin_window
+	return do_close
 end
 
-ImguiPackageDebug._display_references = function (arg_11_0, arg_11_1, arg_11_2)
+ImguiPackageDebug._display_references = function (self, name, table_to_display)
 	-- function 11
-	if not Imgui.tree_node(arg_11_1) then
-		if not arg_11_2 then
-			local _sorted_keys = arg_11_2._sorted_keys
+	if Imgui.tree_node(name) then
+		if table_to_display then
+			local keys = table_to_display._sorted_keys
 
-			for i = 1, #_sorted_keys do
-				local var_11_1 = _sorted_keys[i]
-				local var_11_2 = arg_11_2[var_11_1]
+			for i = 1, #keys do
+				local package_name = keys[i]
+				local references = table_to_display[package_name]
 
-				if not Imgui.tree_node(var_11_1) then
-					for k, v in pairs(var_11_2) do
-						Imgui.text(k .. "(" .. v .. ")")
+				if Imgui.tree_node(package_name) then
+					for reference_name, count in pairs(references) do
+						Imgui.text(reference_name .. "(" .. count .. ")")
 						Imgui.separator()
 					end
 				end
@@ -120,16 +120,16 @@ ImguiPackageDebug._display_references = function (arg_11_0, arg_11_1, arg_11_2)
 	end
 end
 
-ImguiPackageDebug._display_packages = function (arg_12_0, arg_12_1, arg_12_2)
+ImguiPackageDebug._display_packages = function (self, name, packages)
 	-- function 12
-	if not Imgui.tree_node(arg_12_1) then
-		if not arg_12_2 then
-			local _sorted_keys = arg_12_2._sorted_keys
+	if Imgui.tree_node(name) then
+		if packages then
+			local keys = packages._sorted_keys
 
-			for i = 1, #_sorted_keys do
-				local var_12_1 = _sorted_keys[i]
+			for i = 1, #keys do
+				local package_name = keys[i]
 
-				Imgui.text(var_12_1)
+				Imgui.text(package_name)
 			end
 		end
 
@@ -138,14 +138,14 @@ ImguiPackageDebug._display_packages = function (arg_12_0, arg_12_1, arg_12_2)
 	end
 end
 
-ImguiPackageDebug._display_queue_order = function (arg_13_0, arg_13_1, arg_13_2)
+ImguiPackageDebug._display_queue_order = function (self, name, queue)
 	-- function 13
-	if not Imgui.tree_node(arg_13_1) then
-		if not arg_13_2 then
-			for i = 1, #arg_13_2 do
-				local var_13_0 = arg_13_2[i]
+	if Imgui.tree_node(name) then
+		if queue then
+			for i = 1, #queue do
+				local package_name = queue[i]
 
-				Imgui.text(i .. ": " .. var_13_0)
+				Imgui.text(i .. ": " .. package_name)
 			end
 		end
 
@@ -154,19 +154,19 @@ ImguiPackageDebug._display_queue_order = function (arg_13_0, arg_13_1, arg_13_2)
 	end
 end
 
-ImguiPackageDebug._display_userdata = function (arg_14_0, arg_14_1, arg_14_2)
+ImguiPackageDebug._display_userdata = function (self, name, table_to_display)
 	-- function 14
-	if not Imgui.tree_node(arg_14_1) then
-		if not arg_14_2 then
-			local _sorted_keys = arg_14_2._sorted_keys
+	if Imgui.tree_node(name) then
+		if table_to_display then
+			local keys = table_to_display._sorted_keys
 
-			for i = 1, #_sorted_keys do
-				local var_14_1 = _sorted_keys[i]
-				local var_14_2 = arg_14_2[var_14_1]
+			for i = 1, #keys do
+				local package_name = keys[i]
+				local references = table_to_display[package_name]
 
-				if not Imgui.tree_node(var_14_1) then
-					for k, v in pairs(var_14_2) do
-						Imgui.text(k .. "(userdata)")
+				if Imgui.tree_node(package_name) then
+					for reference_name, count in pairs(references) do
+						Imgui.text(reference_name .. "(userdata)")
 						Imgui.separator()
 					end
 

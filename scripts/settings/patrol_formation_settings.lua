@@ -2,10 +2,10 @@
 
 require("scripts/settings/difficulty_settings")
 
-local str = ""
+local EMPTY = ""
 local PatrolFormationSettings = PatrolFormationSettings
 
-PatrolFormationSettings = PatrolFormationSettings or {}
+PatrolFormationSettings = not not PatrolFormationSettings or not not {}
 PatrolFormationSettings = PatrolFormationSettings
 PatrolFormationSettings.default_settings = {
 	sounds = {},
@@ -680,10 +680,10 @@ PatrolFormationSettings.storm_vermin_shields_infront = {
 			"skaven_storm_vermin"
 		},
 		{
-			str,
+			EMPTY,
 			"skaven_storm_vermin",
 			"skaven_storm_vermin",
-			str
+			EMPTY
 		}
 	},
 	hardest = {
@@ -713,8 +713,8 @@ PatrolFormationSettings.storm_vermin_shields_infront = {
 		},
 		{
 			"skaven_storm_vermin",
-			str,
-			str,
+			EMPTY,
+			EMPTY,
 			"skaven_storm_vermin"
 		}
 	},
@@ -751,14 +751,14 @@ PatrolFormationSettings.storm_vermin_shields_infront = {
 		},
 		{
 			"skaven_storm_vermin",
-			str,
-			str,
+			EMPTY,
+			EMPTY,
 			"skaven_storm_vermin"
 		},
 		{
 			"skaven_storm_vermin",
-			str,
-			str,
+			EMPTY,
+			EMPTY,
 			"skaven_storm_vermin"
 		}
 	}
@@ -789,22 +789,22 @@ PatrolFormationSettings.offset = {
 	},
 	hard = {
 		{
-			str,
-			str,
+			EMPTY,
+			EMPTY,
 			"skaven_storm_vermin"
 		}
 	},
 	harder = {
 		{
-			str,
-			str,
+			EMPTY,
+			EMPTY,
 			"skaven_storm_vermin"
 		}
 	},
 	hardest = {
 		{
-			str,
-			str,
+			EMPTY,
+			EMPTY,
 			"skaven_storm_vermin"
 		}
 	}
@@ -892,23 +892,23 @@ PatrolFormationSettings.escorted_troll = {
 		},
 		{
 			"chaos_marauder",
-			str,
-			str,
-			str,
+			EMPTY,
+			EMPTY,
+			EMPTY,
 			"chaos_marauder"
 		},
 		{
 			"chaos_marauder",
-			str,
+			EMPTY,
 			"chaos_troll",
-			str,
+			EMPTY,
 			"chaos_marauder"
 		},
 		{
 			"chaos_marauder",
-			str,
-			str,
-			str,
+			EMPTY,
+			EMPTY,
+			EMPTY,
 			"chaos_marauder"
 		},
 		{
@@ -929,23 +929,23 @@ PatrolFormationSettings.escorted_troll = {
 		},
 		{
 			"chaos_marauder",
-			str,
-			str,
-			str,
+			EMPTY,
+			EMPTY,
+			EMPTY,
 			"chaos_marauder"
 		},
 		{
 			"chaos_marauder",
-			str,
+			EMPTY,
 			"chaos_troll",
-			str,
+			EMPTY,
 			"chaos_marauder"
 		},
 		{
 			"chaos_marauder",
-			str,
-			str,
-			str,
+			EMPTY,
+			EMPTY,
+			EMPTY,
 			"chaos_marauder"
 		},
 		{
@@ -966,23 +966,23 @@ PatrolFormationSettings.escorted_troll = {
 		},
 		{
 			"chaos_marauder",
-			str,
-			str,
-			str,
+			EMPTY,
+			EMPTY,
+			EMPTY,
 			"chaos_marauder"
 		},
 		{
 			"chaos_marauder",
-			str,
+			EMPTY,
 			"chaos_troll",
-			str,
+			EMPTY,
 			"chaos_marauder"
 		},
 		{
 			"chaos_marauder",
-			str,
-			str,
-			str,
+			EMPTY,
+			EMPTY,
+			EMPTY,
 			"chaos_marauder"
 		},
 		{
@@ -1003,23 +1003,23 @@ PatrolFormationSettings.escorted_troll = {
 		},
 		{
 			"chaos_marauder",
-			str,
-			str,
-			str,
+			EMPTY,
+			EMPTY,
+			EMPTY,
 			"chaos_marauder"
 		},
 		{
 			"chaos_marauder",
-			str,
+			EMPTY,
 			"chaos_troll",
-			str,
+			EMPTY,
 			"chaos_marauder"
 		},
 		{
 			"chaos_marauder",
-			str,
-			str,
-			str,
+			EMPTY,
+			EMPTY,
+			EMPTY,
 			"chaos_marauder"
 		},
 		{
@@ -1031,23 +1031,23 @@ PatrolFormationSettings.escorted_troll = {
 		},
 		{
 			"chaos_marauder",
-			str,
-			str,
-			str,
+			EMPTY,
+			EMPTY,
+			EMPTY,
 			"chaos_marauder"
 		},
 		{
 			"chaos_marauder",
-			str,
+			EMPTY,
 			"chaos_troll",
-			str,
+			EMPTY,
 			"chaos_marauder"
 		},
 		{
 			"chaos_marauder",
-			str,
-			str,
-			str,
+			EMPTY,
+			EMPTY,
+			EMPTY,
 			"chaos_marauder"
 		},
 		{
@@ -1096,23 +1096,23 @@ PatrolFormationSettings.escorted_rat_ogre = {
 		},
 		{
 			"skaven_storm_vermin",
-			str,
-			str,
-			str,
+			EMPTY,
+			EMPTY,
+			EMPTY,
 			"skaven_storm_vermin"
 		},
 		{
 			"skaven_pack_master",
-			str,
+			EMPTY,
 			"skaven_rat_ogre",
-			str,
+			EMPTY,
 			"skaven_pack_master"
 		},
 		{
 			"skaven_storm_vermin",
-			str,
-			str,
-			str,
+			EMPTY,
+			EMPTY,
+			EMPTY,
 			"skaven_storm_vermin"
 		},
 		{
@@ -1133,23 +1133,23 @@ PatrolFormationSettings.escorted_rat_ogre = {
 		},
 		{
 			"skaven_storm_vermin",
-			str,
-			str,
-			str,
+			EMPTY,
+			EMPTY,
+			EMPTY,
 			"skaven_storm_vermin"
 		},
 		{
 			"skaven_pack_master",
-			str,
+			EMPTY,
 			"skaven_rat_ogre",
-			str,
+			EMPTY,
 			"skaven_pack_master"
 		},
 		{
 			"skaven_storm_vermin",
-			str,
-			str,
-			str,
+			EMPTY,
+			EMPTY,
+			EMPTY,
 			"skaven_storm_vermin"
 		},
 		{
@@ -1170,23 +1170,23 @@ PatrolFormationSettings.escorted_rat_ogre = {
 		},
 		{
 			"skaven_storm_vermin",
-			str,
-			str,
-			str,
+			EMPTY,
+			EMPTY,
+			EMPTY,
 			"skaven_storm_vermin"
 		},
 		{
 			"skaven_storm_vermin",
-			str,
+			EMPTY,
 			"skaven_rat_ogre",
-			str,
+			EMPTY,
 			"skaven_storm_vermin"
 		},
 		{
 			"skaven_storm_vermin",
-			str,
-			str,
-			str,
+			EMPTY,
+			EMPTY,
+			EMPTY,
 			"skaven_storm_vermin"
 		},
 		{
@@ -1198,23 +1198,23 @@ PatrolFormationSettings.escorted_rat_ogre = {
 		},
 		{
 			"skaven_storm_vermin",
-			str,
-			str,
-			str,
+			EMPTY,
+			EMPTY,
+			EMPTY,
 			"skaven_storm_vermin"
 		},
 		{
 			"skaven_storm_vermin",
-			str,
+			EMPTY,
 			"skaven_rat_ogre",
-			str,
+			EMPTY,
 			"skaven_storm_vermin"
 		},
 		{
 			"skaven_storm_vermin",
-			str,
-			str,
-			str,
+			EMPTY,
+			EMPTY,
+			EMPTY,
 			"skaven_storm_vermin"
 		},
 		{
@@ -2940,7 +2940,7 @@ PatrolFormationSettings.double_dragon = {
 	}
 }
 
-local tbl = {
+local slaves = {
 	{
 		"skaven_slave",
 		"skaven_slave",
@@ -3025,10 +3025,10 @@ local tbl = {
 
 PatrolFormationSettings.skaven_slave_patrol = {
 	settings = PatrolFormationSettings.default_settings,
-	normal = tbl,
-	hard = tbl,
-	harder = tbl,
-	hardest = tbl
+	normal = slaves,
+	hard = slaves,
+	harder = slaves,
+	hardest = slaves
 }
 PatrolFormationSettings.chaos_warrior_small = {
 	settings = PatrolFormationSettings.default_marauder_settings,
@@ -3814,18 +3814,17 @@ PatrolFormationSettings.prologue_marauder = {
 DLCUtils.merge("patrol_formation_settings", PatrolFormationSettings)
 DLCUtils.merge("patrol_formations", PatrolFormationSettings)
 
-PatrolFormationSettings.random_roaming_formation = function (self)
+PatrolFormationSettings.random_roaming_formation = function (breed_pack)
 	-- function 1
-	local members = self.members
-	local count = #members
-	local var_1_2
-	local flag
+	local members = breed_pack.members
+	local num_members = #members
+	local formation_name
 
-	flag = (not (count > 9) or not "roaming_size_25" or not (count > 4)) and (not "roaming_size_16" or "roaming_size_9")
+	formation_name = (not (num_members > 9) or not "roaming_size_25") and (not (num_members > 4) or not "roaming_size_16") and not not "roaming_size_9"
 
-	local clone = table.clone(PatrolFormationSettings[flag])
+	local formation = table.clone(PatrolFormationSettings[formation_name])
 
-	clone.speeds = {
+	formation.speeds = {
 		FAST_WALK_SPEED = 2,
 		MEDIUM_WALK_SPEED = 1.9,
 		WALK_SPEED = 1.8,
@@ -3833,29 +3832,31 @@ PatrolFormationSettings.random_roaming_formation = function (self)
 		SLOW_SPLINE_SPEED = 0.1
 	}
 
-	local num = 0
+	local num_formation_slots = 0
 
-	for i, v in ipairs(clone) do
-		for i_2, v_2 in ipairs(v) do
-			num = num + 1
+	for _, row in ipairs(formation) do
+		for _, column in ipairs(row) do
+			num_formation_slots = num_formation_slots + 1
 		end
 	end
 
-	local var_1_6 = num
+	local slots_left = num_formation_slots
 
-	for i_3, v_3 in ipairs(members) do
-		local random = math.random(var_1_6)
-		local name = v_3.name
-		local num_2 = 0
+	for _, breed in ipairs(members) do
+		local slot = math.random(slots_left)
+		local breed_name = breed.name
+		local index = 0
 
-		for i_4, v_4 in ipairs(clone) do
-			for i_5, v_5 in ipairs(v_4) do
-				if not (v_5 == "") then
-					num_2 = num_2 + 1
+		for _, row in ipairs(formation) do
+			for j, column in ipairs(row) do
+				local slot_is_free = column == ""
 
-					if num_2 == random then
-						v_4[i_5] = name
-						var_1_6 = var_1_6 - 1
+				if slot_is_free then
+					index = index + 1
+
+					if index == slot then
+						row[j] = breed_name
+						slots_left = slots_left - 1
 
 						break
 					end
@@ -3864,5 +3865,5 @@ PatrolFormationSettings.random_roaming_formation = function (self)
 		end
 	end
 
-	return clone
+	return formation
 end

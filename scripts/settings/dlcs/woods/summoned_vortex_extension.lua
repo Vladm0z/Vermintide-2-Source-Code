@@ -2,13 +2,13 @@
 
 SummonedVortexExtension = class(SummonedVortexExtension)
 
-local alive = Unit.alive
-local POSITION_LOOKUP = POSITION_LOOKUP
+local unit_alive = Unit.alive
+local position_lookup = POSITION_LOOKUP
 local BLACKBOARDS = BLACKBOARDS
-local num = 36
-local num_2 = 2 * math.pi / num
-local num_3 = 0.5
-local tbl = {
+local NUMBER_OF_RAYCASTS = 36
+local RAYCAST_INVERAL_RAD = 2 * math.pi / NUMBER_OF_RAYCASTS
+local NAV_COST_MAP_UPDATE_INTERVAL = 0.5
+local sot_landing_breeds = {
 	chaos_marauder_with_shield = true,
 	chaos_raider = true,
 	chaos_fanatic = true,
@@ -19,205 +19,242 @@ local tbl = {
 	chaos_marauder = true
 }
 
-SummonedVortexExtension.init = function (self, arg_1_1, arg_1_2, arg_1_3)
+SummonedVortexExtension.init = function (self, extension_init_context, unit, extension_init_data)
 	-- function 1
-	local world = arg_1_1.world
+	local world = extension_init_context.world
 
 	self.world = world
-	self.unit = arg_1_2
+	self.unit = unit
 	self._target_is_caught = false
 
-	local system = Managers.state.entity:system("ai_system")
+	local ai_system = Managers.state.entity:system("ai_system")
 
-	self.ai_system = system
-	self.nav_world = system:nav_world()
+	self.ai_system = ai_system
+	self.nav_world = ai_system:nav_world()
 
-	local side_id = arg_1_3.side_id
+	local side_id = extension_init_data.side_id
+	local side = Managers.state.side:get_side(side_id)
 
-	self._vortex_bp_categories = Managers.state.side:get_side(side_id).enemy_broadphase_categories
+	self._vortex_bp_categories = side.enemy_broadphase_categories
 
-	local vortex_template_name = arg_1_3.vortex_template_name
-	local var_1_4 = VortexTemplates[vortex_template_name]
+	local vortex_template_name = extension_init_data.vortex_template_name
+	local vortex_template = VortexTemplates[vortex_template_name]
 
 	self.vortex_template_name = vortex_template_name
-	self.vortex_template = var_1_4
+	self.vortex_template = vortex_template
 
-	local inner_fx_name = var_1_4.inner_fx_name
-	local var_1_6 = POSITION_LOOKUP[arg_1_2]
-	local create_particles = World.create_particles(world, inner_fx_name, var_1_6)
-	local local_rotation = Unit.local_rotation(arg_1_2, 0)
-	local from_quaternion = Matrix4x4.from_quaternion(local_rotation)
-	local num = var_1_4.full_inner_radius / var_1_4.full_fx_radius
-	local inner_fx_z_scale_multiplier = var_1_4.inner_fx_z_scale_multiplier
+	local inner_fx_name = vortex_template.inner_fx_name
+	local position = position_lookup[unit]
+	local inner_fx_id = World.create_particles(world, inner_fx_name, position)
+	local rotation = Unit.local_rotation(unit, 0)
+	local inner_pose = Matrix4x4.from_quaternion(rotation)
+	local inner_scale_xy = vortex_template.full_inner_radius / vortex_template.full_fx_radius
+	local inner_fx_z_scale_multiplier_2 = vortex_template.inner_fx_z_scale_multiplier
 
-	inner_fx_z_scale_multiplier = inner_fx_z_scale_multiplier or 1
-
-	Matrix4x4.set_scale(from_quaternion, Vector3(num, num, inner_fx_z_scale_multiplier))
-	World.link_particles(world, create_particles, arg_1_2, 0, from_quaternion, "stop")
-
-	self._inner_fx_id = create_particles
-
-	local outer_fx_name = var_1_4.outer_fx_name
-	local create_particles_2 = World.create_particles(world, outer_fx_name, var_1_6)
-	local from_quaternion_2 = Matrix4x4.from_quaternion(local_rotation)
-	local num_2 = var_1_4.full_outer_radius / var_1_4.full_fx_radius
-	local outer_fx_z_scale_multiplier = var_1_4.outer_fx_z_scale_multiplier
-
-	outer_fx_z_scale_multiplier = outer_fx_z_scale_multiplier or 1
-
-	Matrix4x4.set_scale(from_quaternion_2, Vector3(num_2, num_2, outer_fx_z_scale_multiplier))
-	World.link_particles(world, create_particles_2, arg_1_2, 0, from_quaternion_2, "stop")
-
-	self._outer_fx_id = create_particles_2
-	self.current_height_lerp = 0
-	self._target_unit = arg_1_3.target_unit
-
-	if not ALIVE[self._target_unit] then
-		self._target_is_player = BLACKBOARDS[self._target_unit].is_player
+	if not inner_fx_z_scale_multiplier_2 then
+		-- Nothing
 	end
 
-	local inner_decal_unit = arg_1_3.inner_decal_unit
+	inner_fx_z_scale_multiplier_2 = 1
 
-	if not inner_decal_unit then
-		World.link_unit(world, inner_decal_unit, arg_1_2, 0)
-		Unit.set_local_scale(inner_decal_unit, 0, Vector3(num, num, 1))
+	local inner_fx_z_scale_multiplier = inner_fx_z_scale_multiplier_2
+
+	::label_1_0::
+
+	Matrix4x4.set_scale(inner_pose, Vector3(inner_scale_xy, inner_scale_xy, inner_fx_z_scale_multiplier))
+	World.link_particles(world, inner_fx_id, unit, 0, inner_pose, "stop")
+
+	self._inner_fx_id = inner_fx_id
+
+	local outer_fx_name = vortex_template.outer_fx_name
+	local outer_fx_id = World.create_particles(world, outer_fx_name, position)
+	local outer_pose = Matrix4x4.from_quaternion(rotation)
+	local outer_scale_xy = vortex_template.full_outer_radius / vortex_template.full_fx_radius
+	local outer_fx_z_scale_multiplier_2 = vortex_template.outer_fx_z_scale_multiplier
+
+	if not outer_fx_z_scale_multiplier_2 then
+		-- Nothing
+	end
+
+	outer_fx_z_scale_multiplier_2 = 1
+
+	local outer_fx_z_scale_multiplier = outer_fx_z_scale_multiplier_2
+
+	::label_1_1::
+
+	Matrix4x4.set_scale(outer_pose, Vector3(outer_scale_xy, outer_scale_xy, outer_fx_z_scale_multiplier))
+	World.link_particles(world, outer_fx_id, unit, 0, outer_pose, "stop")
+
+	self._outer_fx_id = outer_fx_id
+	self.current_height_lerp = 0
+	self._target_unit = extension_init_data.target_unit
+
+	if ALIVE[self._target_unit] then
+		local target_blackboard = BLACKBOARDS[self._target_unit]
+
+		self._target_is_player = target_blackboard.is_player
+	end
+
+	local inner_decal_unit = extension_init_data.inner_decal_unit
+
+	if inner_decal_unit then
+		World.link_unit(world, inner_decal_unit, unit, 0)
+		Unit.set_local_scale(inner_decal_unit, 0, Vector3(inner_scale_xy, inner_scale_xy, 1))
 		Unit.flow_event(inner_decal_unit, "vortex_spawned")
 
 		self._inner_decal_unit = inner_decal_unit
 	end
 
-	local outer_decal_unit = arg_1_3.outer_decal_unit
+	local outer_decal_unit = extension_init_data.outer_decal_unit
 
-	if not outer_decal_unit then
-		World.link_unit(world, outer_decal_unit, arg_1_2, 0)
-		Unit.set_local_scale(outer_decal_unit, 0, Vector3(num_2, num_2, 1))
+	if outer_decal_unit then
+		World.link_unit(world, outer_decal_unit, unit, 0)
+		Unit.set_local_scale(outer_decal_unit, 0, Vector3(outer_scale_xy, outer_scale_xy, 1))
 		Unit.flow_event(outer_decal_unit, "vortex_spawned")
 
 		self._outer_decal_unit = outer_decal_unit
 	end
 
-	if not var_1_4.use_nav_cost_map_volumes then
-		local full_outer_radius = var_1_4.full_outer_radius
-		local high_cost_nav_cost_map_cost_type = var_1_4.high_cost_nav_cost_map_cost_type
-		local medium_cost_nav_cost_map_cost_type = var_1_4.medium_cost_nav_cost_map_cost_type
+	local use_nav_cost_map_volumes = vortex_template.use_nav_cost_map_volumes
 
-		self:_create_nav_cost_maps(system, var_1_6, full_outer_radius, high_cost_nav_cost_map_cost_type, medium_cost_nav_cost_map_cost_type)
+	if use_nav_cost_map_volumes then
+		local full_outer_radius = vortex_template.full_outer_radius
+		local high_cost_type = vortex_template.high_cost_nav_cost_map_cost_type
+		local medium_cost_type = vortex_template.medium_cost_nav_cost_map_cost_type
+
+		self:_create_nav_cost_maps(ai_system, position, full_outer_radius, high_cost_type, medium_cost_type)
 	end
 
-	local owner_unit = arg_1_3.owner_unit
+	local owner_unit = extension_init_data.owner_unit
 
-	owner_unit = owner_unit or arg_1_2
+	owner_unit = not not owner_unit or not not unit
 	self._owner_unit = owner_unit
 end
 
-SummonedVortexExtension._create_nav_cost_maps = function (arg_2_0, arg_2_1, arg_2_2, arg_2_3, arg_2_4, arg_2_5)
+SummonedVortexExtension._create_nav_cost_maps = function (self, ai_system, position, full_outer_radius, high_cost_type, medium_cost_type)
 	-- function 2
-	arg_2_2 = Vector3Box(arg_2_2)
+	position = Vector3Box(position)
 
-	local function fn()
+	local function safe_navigation_callback()
 		-- function 3
-		if not arg_2_0._nav_cb_blocker then
+		if self._nav_cb_blocker then
 			return
 		end
 
-		local num = 1
-		local from_translation = Matrix4x4.from_translation(arg_2_2:unbox())
-		local var_3_2 = Vector3(arg_2_3, arg_2_3, 1)
-		local create_nav_cost_map = arg_2_1:create_nav_cost_map(arg_2_4, num)
+		local num_volumes = 1
+		local transform = Matrix4x4.from_translation(position:unbox())
+		local scale_vector = Vector3(full_outer_radius, full_outer_radius, 1)
+		local high_cost_map_id = ai_system:create_nav_cost_map(high_cost_type, num_volumes)
 
-		arg_2_0._high_cost_nav_cost_map_volume_id = arg_2_1:add_nav_cost_map_box_volume(from_translation, var_3_2, create_nav_cost_map)
-		arg_2_0._high_cost_nav_cost_map_id = create_nav_cost_map
+		self._high_cost_nav_cost_map_volume_id = ai_system:add_nav_cost_map_box_volume(transform, scale_vector, high_cost_map_id)
+		self._high_cost_nav_cost_map_id = high_cost_map_id
 
-		local create_nav_cost_map_2 = arg_2_1:create_nav_cost_map(arg_2_5, num)
+		local medium_cost_map_id = ai_system:create_nav_cost_map(medium_cost_type, num_volumes)
 
-		arg_2_0._medium_cost_nav_cost_map_volume_id = arg_2_1:add_nav_cost_map_box_volume(from_translation, var_3_2, create_nav_cost_map_2)
-		arg_2_0._medium_cost_nav_cost_map_id = create_nav_cost_map_2
+		self._medium_cost_nav_cost_map_volume_id = ai_system:add_nav_cost_map_box_volume(transform, scale_vector, medium_cost_map_id)
+		self._medium_cost_nav_cost_map_id = medium_cost_map_id
 
-		local time = Managers.time:time("game")
+		local time_manager = Managers.time
+		local t = time_manager:time("game")
 
-		arg_2_0._next_nav_cost_map_update_t = time + num_3
-		arg_2_0._use_nav_cost_map_volumes = true
+		self._next_nav_cost_map_update_t = t + NAV_COST_MAP_UPDATE_INTERVAL
+		self._use_nav_cost_map_volumes = true
 	end
 
-	Managers.state.entity:system("ai_navigation_system"):add_safe_navigation_callback(fn)
+	local ai_navigation_system = Managers.state.entity:system("ai_navigation_system")
+
+	ai_navigation_system:add_safe_navigation_callback(safe_navigation_callback)
 end
 
-SummonedVortexExtension.extensions_ready = function (self, arg_4_1, arg_4_2)
+SummonedVortexExtension.extensions_ready = function (self, world, unit)
 	-- function 4
 	local vortex_template = self.vortex_template
-	local time = Managers.time:time("game")
-	local var_4_2
+	local time_manager = Managers.time
+	local t = time_manager:time("game")
+	local time_of_life
 
-	if not self._target_is_player then
-		var_4_2 = vortex_template.time_of_life_player_target
+	if self._target_is_player then
+		time_of_life = vortex_template.time_of_life_player_target
 	else
-		var_4_2 = vortex_template.time_of_life
+		time_of_life = vortex_template.time_of_life
 	end
 
-	local var_4_3 = num
+	local max_size = NUMBER_OF_RAYCASTS
 
 	self.vortex_data = {
 		height = 5,
 		current_raycast_rad = 0,
 		start_lerp_height = 5,
-		physics_world = World.get_data(arg_4_1, "physics_world"),
+		physics_world = World.get_data(world, "physics_world"),
 		wanted_height = vortex_template.max_height,
 		height_ring_buffer = {
 			write_index = 1,
-			buffer = Script.new_array(var_4_3),
-			max_size = var_4_3
+			buffer = Script.new_array(max_size),
+			max_size = max_size
 		},
 		inner_radius = vortex_template.full_inner_radius,
 		outer_radius = vortex_template.full_outer_radius,
 		fx_radius = vortex_template.full_fx_radius,
-		windup_time = time + vortex_template.windup_time,
-		time_of_death = time + ConflictUtils.random_interval(var_4_2),
+		windup_time = t + vortex_template.windup_time,
+		time_of_death = t + ConflictUtils.random_interval(time_of_life),
 		vortex_template = vortex_template
 	}
 
-	local start_sound_event_name = vortex_template.start_sound_event_name
+	local start_sound_event_name_2 = vortex_template.start_sound_event_name
 
-	start_sound_event_name = start_sound_event_name or "Play_enemy_sorcerer_vortex_loop"
+	if not start_sound_event_name_2 then
+		-- Nothing
+	end
 
-	WwiseUtils.trigger_unit_event(arg_4_1, start_sound_event_name, arg_4_2)
+	start_sound_event_name_2 = "Play_enemy_sorcerer_vortex_loop"
+
+	local start_sound_event_name = start_sound_event_name_2
+
+	::label_4_0::
+
+	WwiseUtils.trigger_unit_event(world, start_sound_event_name, unit)
 end
 
 SummonedVortexExtension.refresh_duration = function (self)
 	-- function 5
-	if not self.vortex_data then
+	local vortex_data = self.vortex_data
+
+	if not vortex_data then
 		return
 	end
 
-	local time = Managers.time:time("game")
+	local t = Managers.time:time("game")
 	local vortex_template = self.vortex_template
-	local random_interval = ConflictUtils.random_interval(vortex_template.time_of_life)
-	local _target_unit = self._target_unit
+	local life_time = ConflictUtils.random_interval(vortex_template.time_of_life)
+	local target_unit = self._target_unit
 
-	if not ALIVE[_target_unit] then
-		self.vortex_data.time_of_death = time + random_interval
+	if not ALIVE[target_unit] then
+		self.vortex_data.time_of_death = t + life_time
 
 		return
 	end
 
-	local name = BLACKBOARDS[_target_unit].breed.name
+	local breed_name = BLACKBOARDS[target_unit].breed.name
 	local reduce_duration_per_breed = vortex_template.reduce_duration_per_breed
-	local var_5_6
+	local var_5_0
 
-	if not reduce_duration_per_breed then
-		var_5_6 = reduce_duration_per_breed[name]
+	if reduce_duration_per_breed then
+		var_5_0 = reduce_duration_per_breed[breed_name]
 
-		if not var_5_6 then
+		if not var_5_0 then
 			-- Nothing
 		end
 	end
 
-	var_5_6 = 1
+	var_5_0 = 1
+
+	local multiplier = var_5_0
 
 	::label_5_0::
 
-	local clamp = math.clamp(random_interval * var_5_6, 0, math.huge)
+	local time_to_add = math.clamp(life_time * multiplier, 0, math.huge)
 
-	self.vortex_data.time_of_death = time + clamp
+	self.vortex_data.time_of_death = t + time_to_add
 end
 
 SummonedVortexExtension.destroy = function (self)
@@ -226,46 +263,54 @@ SummonedVortexExtension.destroy = function (self)
 
 	self._nav_cb_blocker = true
 
-	local _target_unit = self._target_unit
+	local target_unit = self._target_unit
 
-	if not HEALTH_ALIVE[_target_unit] then
-		local var_6_2 = BLACKBOARDS[_target_unit]
+	if HEALTH_ALIVE[target_unit] then
+		local blackboard = BLACKBOARDS[target_unit]
 
-		if not var_6_2 then
-			if not self._target_is_player then
-				StatusUtils.set_in_vortex_network(_target_unit, false, nil)
+		if blackboard then
+			if self._target_is_player then
+				StatusUtils.set_in_vortex_network(target_unit, false, nil)
 			else
-				local var_6_3 = Vector3(0, 0, -6)
-				local locomotion_extension = var_6_2.locomotion_extension
+				local velocity = Vector3(0, 0, -6)
+				local locomotion_extension = blackboard.locomotion_extension
 
-				if not locomotion_extension then
-					locomotion_extension:set_wanted_velocity(var_6_3)
+				if locomotion_extension then
+					locomotion_extension:set_wanted_velocity(velocity)
 					locomotion_extension:set_affected_by_gravity(true)
 					locomotion_extension:set_movement_type("constrained_by_mover")
 				end
 
-				local ejected_from_vortex = var_6_2.ejected_from_vortex
+				local ejected_from_vortex_2 = blackboard.ejected_from_vortex
 
-				ejected_from_vortex = ejected_from_vortex or Vector3Box()
+				if not ejected_from_vortex_2 then
+					-- Nothing
+				end
 
-				ejected_from_vortex:store(var_6_3)
+				ejected_from_vortex_2 = Vector3Box()
 
-				var_6_2.ejected_from_vortex = ejected_from_vortex
-				var_6_2.in_vortex_state = "ejected_from_vortex"
+				local ejected_from_vortex = ejected_from_vortex_2
+
+				::label_6_0::
+
+				ejected_from_vortex:store(velocity)
+
+				blackboard.ejected_from_vortex = ejected_from_vortex
+				blackboard.in_vortex_state = "ejected_from_vortex"
 			end
 		end
 	end
 
-	local _inner_decal_unit = self._inner_decal_unit
+	local inner_decal_unit = self._inner_decal_unit
 
-	if not alive(_inner_decal_unit) then
-		Unit.flow_event(_inner_decal_unit, "vortex_despawned")
+	if unit_alive(inner_decal_unit) then
+		Unit.flow_event(inner_decal_unit, "vortex_despawned")
 	end
 
-	local _outer_decal_unit = self._outer_decal_unit
+	local outer_decal_unit = self._outer_decal_unit
 
-	if not alive(_outer_decal_unit) then
-		Unit.flow_event(_outer_decal_unit, "vortex_despawned")
+	if unit_alive(outer_decal_unit) then
+		Unit.flow_event(outer_decal_unit, "vortex_despawned")
 	end
 
 	table.clear(self.vortex_data)
@@ -273,357 +318,394 @@ SummonedVortexExtension.destroy = function (self)
 	self.vortex_data = nil
 
 	local world = self.world
-	local stop_sound_event_name = self.vortex_template.stop_sound_event_name
+	local stop_sound_event_name_2 = self.vortex_template.stop_sound_event_name
 
-	stop_sound_event_name = stop_sound_event_name or "Stop_enemy_sorcerer_vortex_loop"
+	if not stop_sound_event_name_2 then
+		-- Nothing
+	end
+
+	stop_sound_event_name_2 = "Stop_enemy_sorcerer_vortex_loop"
+
+	local stop_sound_event_name = stop_sound_event_name_2
+
+	::label_6_1::
 
 	WwiseUtils.trigger_unit_event(world, stop_sound_event_name, unit)
 
-	if not self._use_nav_cost_map_volumes then
+	if self._use_nav_cost_map_volumes then
 		local ai_system = self.ai_system
-		local _high_cost_nav_cost_map_id = self._high_cost_nav_cost_map_id
-		local _high_cost_nav_cost_map_volume_id = self._high_cost_nav_cost_map_volume_id
+		local high_cost_cost_map_id = self._high_cost_nav_cost_map_id
+		local high_cost_volume_id = self._high_cost_nav_cost_map_volume_id
 
-		ai_system:remove_nav_cost_map_volume(_high_cost_nav_cost_map_volume_id, _high_cost_nav_cost_map_id)
-		ai_system:destroy_nav_cost_map(_high_cost_nav_cost_map_id)
+		ai_system:remove_nav_cost_map_volume(high_cost_volume_id, high_cost_cost_map_id)
+		ai_system:destroy_nav_cost_map(high_cost_cost_map_id)
 
-		local _medium_cost_nav_cost_map_id = self._medium_cost_nav_cost_map_id
-		local _medium_cost_nav_cost_map_volume_id = self._medium_cost_nav_cost_map_volume_id
+		local medium_cost_cost_map_id = self._medium_cost_nav_cost_map_id
+		local medium_cost_volume_id = self._medium_cost_nav_cost_map_volume_id
 
-		ai_system:remove_nav_cost_map_volume(_medium_cost_nav_cost_map_volume_id, _medium_cost_nav_cost_map_id)
-		ai_system:destroy_nav_cost_map(_medium_cost_nav_cost_map_id)
+		ai_system:remove_nav_cost_map_volume(medium_cost_volume_id, medium_cost_cost_map_id)
+		ai_system:destroy_nav_cost_map(medium_cost_cost_map_id)
 	end
 end
 
-local num_4 = 2
+local HEIGHT_FX_LERP = 2
 
-SummonedVortexExtension.update = function (self, arg_7_1, arg_7_2, arg_7_3, arg_7_4, arg_7_5)
+SummonedVortexExtension.update = function (self, unit, input, dt, context, t)
 	-- function 7
 	local vortex_template = self.vortex_template
 	local vortex_data = self.vortex_data
 
-	if not (arg_7_5 > vortex_data.time_of_death or HEALTH_ALIVE[self._target_unit]) then
+	if t > vortex_data.time_of_death or not HEALTH_ALIVE[self._target_unit] then
 		Managers.state.unit_spawner:mark_for_deletion(self.unit)
 
 		return
 	end
 
-	self:_update_height(arg_7_1, arg_7_5, arg_7_3, vortex_template, vortex_data)
+	self:_update_height(unit, t, dt, vortex_template, vortex_data)
 
 	local inner_radius = vortex_data.inner_radius
 	local outer_radius = vortex_data.outer_radius
 	local fx_radius = vortex_data.fx_radius
-	local var_7_5 = POSITION_LOOKUP[arg_7_1]
+	local position = position_lookup[unit]
 
-	if arg_7_5 > vortex_data.windup_time then
-		self:attract(arg_7_1, arg_7_5, arg_7_3, vortex_template, vortex_data, var_7_5, inner_radius, outer_radius)
+	if t > vortex_data.windup_time then
+		self:attract(unit, t, dt, vortex_template, vortex_data, position, inner_radius, outer_radius)
 	end
 
-	local num = vortex_data.height / vortex_template.max_height
+	local height = vortex_data.height
+	local height_percentage = height / vortex_template.max_height
 	local current_height_lerp = self.current_height_lerp
-	local lerp = math.lerp(current_height_lerp, num, math.min(arg_7_3 * num_4, 1))
+	local height_lerp = math.lerp(current_height_lerp, height_percentage, math.min(dt * HEIGHT_FX_LERP, 1))
 
-	self.current_height_lerp = lerp
+	self.current_height_lerp = height_lerp
 
-	local fx_radius_2 = vortex_data.fx_radius
-	local num_2 = lerp * vortex_template.max_height
+	local scale_xy = vortex_data.fx_radius
+	local scale_z = height_lerp * vortex_template.max_height
 
-	Unit.set_local_scale(arg_7_1, 0, Vector3(fx_radius_2, fx_radius_2, num_2))
+	Unit.set_local_scale(unit, 0, Vector3(scale_xy, scale_xy, scale_z))
 end
 
-local function fn(arg_8_0, arg_8_1, arg_8_2)
+local function position_aligned_on_navmesh_transform(nav_world, position, x_axis)
 	-- function 8
-	local triangle_from_position, var_8_1, var_8_2, var_8_3, var_8_4 = GwNavQueries.triangle_from_position(arg_8_0, arg_8_1, 3, 3)
+	local success, altitude, vertex_1, vertex_2, vertex_3 = GwNavQueries.triangle_from_position(nav_world, position, 3, 3)
 
-	if not triangle_from_position then
-		local normalize = Vector3.normalize(var_8_3 - var_8_2)
-		local normalize_2 = Vector3.normalize(var_8_4 - var_8_2)
-		local normalize_3 = Vector3.normalize(Vector3.cross(normalize, normalize_2))
-		local cross = Vector3.cross(normalize_3, arg_8_2)
-		local look = Quaternion.look(cross, normalize_3)
-		local var_8_10 = Vector3(arg_8_1.x, arg_8_1.y, var_8_1)
+	if success then
+		local v1_to_v2 = Vector3.normalize(vertex_2 - vertex_1)
+		local v1_to_v3 = Vector3.normalize(vertex_3 - vertex_1)
+		local normal = Vector3.normalize(Vector3.cross(v1_to_v2, v1_to_v3))
+		local y_axis = Vector3.cross(normal, x_axis)
+		local rotation = Quaternion.look(y_axis, normal)
+		local position_on_mesh = Vector3(position.x, position.y, altitude)
+		local transform = Matrix4x4.from_quaternion_position(rotation, position_on_mesh)
 
-		return Matrix4x4.from_quaternion_position(look, var_8_10), var_8_10, look, cross
+		return transform, position_on_mesh, rotation, y_axis
 	end
 end
 
-SummonedVortexExtension._update_nav_cost_map_volumes = function (self, arg_9_1, arg_9_2, arg_9_3, arg_9_4, arg_9_5, arg_9_6)
+SummonedVortexExtension._update_nav_cost_map_volumes = function (self, position, full_outer_radius, nav_world, ai_system, navigation_extension, locomotion_extension)
 	-- function 9
-	local current_velocity = arg_9_6:current_velocity()
-	local normalize = Vector3.normalize(current_velocity)
-	local cross = Vector3.cross(normalize, Vector3.up())
-	local var_9_3, var_9_4, var_9_5, var_9_6 = fn(arg_9_3, arg_9_1, cross)
+	local velocity = locomotion_extension:current_velocity()
+	local velocity_normalized = Vector3.normalize(velocity)
+	local x_axis = Vector3.cross(velocity_normalized, Vector3.up())
+	local high_cost_transform, high_cost_position, high_cost_rotation, high_cost_direction = position_aligned_on_navmesh_transform(nav_world, position, x_axis)
 
-	if not var_9_3 then
+	if not high_cost_transform then
 		return
 	end
 
-	local _high_cost_nav_cost_map_id = self._high_cost_nav_cost_map_id
-	local _high_cost_nav_cost_map_volume_id = self._high_cost_nav_cost_map_volume_id
+	local high_cost_map_id = self._high_cost_nav_cost_map_id
+	local high_cost_volume_id = self._high_cost_nav_cost_map_volume_id
 
-	arg_9_4:set_nav_cost_map_volume_transform(_high_cost_nav_cost_map_volume_id, _high_cost_nav_cost_map_id, var_9_3)
+	ai_system:set_nav_cost_map_volume_transform(high_cost_volume_id, high_cost_map_id, high_cost_transform)
 
-	local num = Vector3.length(current_velocity) / arg_9_5:get_max_speed()
-	local lerp = math.lerp(1, 2, num)
-	local var_9_11 = Vector3(arg_9_2, lerp * arg_9_2, 1)
-	local _medium_cost_nav_cost_map_id = self._medium_cost_nav_cost_map_id
-	local _medium_cost_nav_cost_map_volume_id = self._medium_cost_nav_cost_map_volume_id
+	local speed = Vector3.length(velocity)
+	local max_speed = navigation_extension:get_max_speed()
+	local lerp_value = speed / max_speed
+	local scale_value = math.lerp(1, 2, lerp_value)
+	local new_scale = Vector3(full_outer_radius, scale_value * full_outer_radius, 1)
+	local medium_cost_map_id = self._medium_cost_nav_cost_map_id
+	local medium_cost_volume_id = self._medium_cost_nav_cost_map_volume_id
 
-	arg_9_4:set_nav_cost_map_volume_scale(_medium_cost_nav_cost_map_volume_id, _medium_cost_nav_cost_map_id, var_9_11)
+	ai_system:set_nav_cost_map_volume_scale(medium_cost_volume_id, medium_cost_map_id, new_scale)
 
-	local num_2 = var_9_4 + var_9_6 * (0.5 * arg_9_2 * lerp)
-	local from_quaternion_position = Matrix4x4.from_quaternion_position(var_9_5, num_2)
+	local medium_cost_position = high_cost_position + high_cost_direction * (0.5 * full_outer_radius * scale_value)
+	local medium_cost_transform = Matrix4x4.from_quaternion_position(high_cost_rotation, medium_cost_position)
 
-	arg_9_4:set_nav_cost_map_volume_transform(_medium_cost_nav_cost_map_volume_id, _medium_cost_nav_cost_map_id, from_quaternion_position)
+	ai_system:set_nav_cost_map_volume_transform(medium_cost_volume_id, medium_cost_map_id, medium_cost_transform)
 end
 
-local num_5 = 0.25
+local INCREASE_HEIGHT_LERP_PROGRESS_PER_SECOND = 0.25
 
-SummonedVortexExtension._update_height = function (arg_10_0, arg_10_1, arg_10_2, arg_10_3, arg_10_4, arg_10_5)
+SummonedVortexExtension._update_height = function (self, unit, t, dt, vortex_template, vortex_data)
 	-- function 10
-	local num = 1
-	local current_raycast_rad = arg_10_5.current_raycast_rad
-	local inner_radius = arg_10_5.inner_radius
-	local num_2 = POSITION_LOOKUP[arg_10_1] + Vector3(math.cos(current_raycast_rad) * inner_radius, math.sin(current_raycast_rad) * inner_radius, num)
-	local physics_world = arg_10_5.physics_world
-	local height = arg_10_5.height
-	local num_3 = arg_10_4.max_height - num
-	local immediate_raycast, var_10_8, var_10_9, var_10_10, var_10_11 = PhysicsWorld.immediate_raycast(physics_world, num_2, Vector3.up(), num_3, "closest", "collision_filter", "filter_ai_mover")
-	local flag = not immediate_raycast and var_10_9 and num_3
-	local max = math.max(flag, 4)
-	local height_ring_buffer = arg_10_5.height_ring_buffer
+	local check_z_offset = 1
+	local current_raycast_rad = vortex_data.current_raycast_rad
+	local check_radius = vortex_data.inner_radius
+	local unit_position = position_lookup[unit]
+	local ray_source = unit_position + Vector3(math.cos(current_raycast_rad) * check_radius, math.sin(current_raycast_rad) * check_radius, check_z_offset)
+	local physics_world = vortex_data.physics_world
+	local current_height = vortex_data.height
+	local max_height = vortex_template.max_height - check_z_offset
+	local hit, hit_position, hit_distance, _, _ = PhysicsWorld.immediate_raycast(physics_world, ray_source, Vector3.up(), max_height, "closest", "collision_filter", "filter_ai_mover")
+	local new_height = (not hit or not hit_distance) and not not max_height
+
+	new_height = math.max(new_height, 4)
+
+	local height_ring_buffer = vortex_data.height_ring_buffer
 	local buffer = height_ring_buffer.buffer
 	local max_size = height_ring_buffer.max_size
-	local num_4 = max + num
+	local minimum_height = new_height + check_z_offset
 
 	for i = 1, max_size do
-		local var_10_18 = buffer[i]
+		local height = buffer[i]
 
-		if not (not var_10_18 and not (var_10_18 < num_4)) then
-			num_4 = var_10_18
+		if height and height < minimum_height then
+			minimum_height = height
 		end
 	end
 
 	local write_index = height_ring_buffer.write_index
 
-	buffer[write_index] = max + num
+	buffer[write_index] = new_height + check_z_offset
 	height_ring_buffer.write_index = write_index % max_size + 1
 
-	if arg_10_5.wanted_height ~= num_4 then
-		arg_10_5.wanted_height = num_4
-		arg_10_5.start_lerp_height = height
+	if vortex_data.wanted_height ~= minimum_height then
+		vortex_data.wanted_height = minimum_height
+		vortex_data.start_lerp_height = current_height
 	end
 
-	local wanted_height = arg_10_5.wanted_height
+	local wanted_height = vortex_data.wanted_height
 
-	if wanted_height < height then
-		arg_10_5.height = wanted_height
-	elseif height < wanted_height then
-		local start_lerp_height = arg_10_5.start_lerp_height
-		local num_6 = math.abs(height - start_lerp_height) / math.abs(wanted_height - start_lerp_height)
-		local clamp = math.clamp(num_6 + arg_10_3 * num_5, 0, 1)
+	if wanted_height < current_height then
+		vortex_data.height = wanted_height
+	elseif current_height < wanted_height then
+		local start_lerp_height = vortex_data.start_lerp_height
+		local current_lerp_value = math.abs(current_height - start_lerp_height) / math.abs(wanted_height - start_lerp_height)
+		local new_lerp_value = math.clamp(current_lerp_value + dt * INCREASE_HEIGHT_LERP_PROGRESS_PER_SECOND, 0, 1)
 
-		arg_10_5.height = math.lerp(start_lerp_height, wanted_height, clamp)
+		vortex_data.height = math.lerp(start_lerp_height, wanted_height, new_lerp_value)
 	end
 end
 
-SummonedVortexExtension._update_attract_outside_target = function (self, arg_11_1, arg_11_2, arg_11_3, arg_11_4, arg_11_5, arg_11_6, arg_11_7, arg_11_8)
+SummonedVortexExtension._update_attract_outside_target = function (self, vortex_data, vortex_template, center_pos, minimum_height_diff, inner_radius, outer_radius, falloff_radius, dt)
 	-- function 11
-	local _target_unit = self._target_unit
-	local var_11_1 = BLACKBOARDS[_target_unit]
-	local locomotion_extension = var_11_1.locomotion_extension
+	local target_unit = self._target_unit
+	local target_blackboard = BLACKBOARDS[target_unit]
+	local locomotion_extension_2 = target_blackboard.locomotion_extension
 
-	locomotion_extension = locomotion_extension or ScriptUnit.has_extension(_target_unit, "locomotion_system")
+	if not locomotion_extension_2 then
+		-- Nothing
+	end
+
+	locomotion_extension_2 = ScriptUnit.has_extension(target_unit, "locomotion_system")
+
+	local locomotion_extension = locomotion_extension_2
+
+	::label_11_0::
 
 	if not locomotion_extension then
 		return
 	end
 
-	local num = arg_11_3 - POSITION_LOOKUP[_target_unit]
+	local unit_position = position_lookup[target_unit]
+	local suck_dir = center_pos - unit_position
 
-	Vector3.set_z(num, 0)
+	Vector3.set_z(suck_dir, 0)
 
-	local length = Vector3.length(num)
+	local distance = Vector3.length(suck_dir)
 
-	if not self._target_is_player then
-		local num_2 = arg_11_6 + 2
-		local extension = ScriptUnit.extension(_target_unit, "status_system")
+	if self._target_is_player then
+		local near_vortex_distance = outer_radius + 2
+		local target_status_extension = ScriptUnit.extension(target_unit, "status_system")
 
-		if not (extension.near_vortex or not (length < num_2)) then
-			StatusUtils.set_near_vortex_network(_target_unit, true, self.unit)
-		elseif not (extension.near_vortex_unit ~= self.unit or not (num_2 <= length)) then
-			StatusUtils.set_near_vortex_network(_target_unit, false)
+		if not target_status_extension.near_vortex and distance < near_vortex_distance then
+			StatusUtils.set_near_vortex_network(target_unit, true, self.unit)
+		elseif target_status_extension.near_vortex_unit == self.unit and near_vortex_distance <= distance then
+			StatusUtils.set_near_vortex_network(target_unit, false)
 		end
 	end
 
-	if arg_11_5 < length then
-		local num_3 = length - arg_11_5
-		local clamp = math.clamp(1 - num_3 / arg_11_7, 0, 1)
+	if inner_radius < distance then
+		local distance_to_inner_radius = distance - inner_radius
+		local k = math.clamp(1 - distance_to_inner_radius / falloff_radius, 0, 1)
 
-		if not self._target_is_player then
-			local num_4 = arg_11_2.player_attract_speed * clamp * clamp
-			local normalize = Vector3.normalize(num)
+		if self._target_is_player then
+			local player_attract_speed = vortex_template.player_attract_speed
+			local speed = player_attract_speed * k * k
+			local dir = Vector3.normalize(suck_dir)
 
-			locomotion_extension:add_external_velocity(normalize * num_4)
+			locomotion_extension:add_external_velocity(dir * speed)
 		else
-			local num_5 = arg_11_2.ai_attract_speed * clamp * clamp
-			local num_6 = Vector3.normalize(num) * num_5
+			local ai_attract_speed = vortex_template.ai_attract_speed
+			local speed = ai_attract_speed * k * k
+			local dir = Vector3.normalize(suck_dir)
+			local velocity = dir * speed
 
-			locomotion_extension:set_external_velocity(num_6)
+			locomotion_extension:set_external_velocity(velocity)
 		end
 	else
 		self._target_is_caught = true
 
-		local flag = true
+		local set_in_vortex_network_success = true
 
-		if not self._target_is_player then
-			flag = StatusUtils.set_in_vortex_network(_target_unit, true, self.unit)
+		if self._target_is_player then
+			set_in_vortex_network_success = StatusUtils.set_in_vortex_network(target_unit, true, self.unit)
 		else
-			var_11_1.in_vortex_state = "in_vortex_init"
-			var_11_1.in_vortex = true
-			var_11_1.thornsister_vortex = true
-			var_11_1.thornsister_vortex_ext = self
+			target_blackboard.in_vortex_state = "in_vortex_init"
+			target_blackboard.in_vortex = true
+			target_blackboard.thornsister_vortex = true
+			target_blackboard.thornsister_vortex_ext = self
 
-			local name = var_11_1.breed.name
+			local breed_name = target_blackboard.breed.name
 
-			if not tbl[name] then
-				var_11_1.sot_landing = true
+			if sot_landing_breeds[breed_name] then
+				target_blackboard.sot_landing = true
 			end
 
-			local time = Managers.time:time("game")
-			local random_interval = ConflictUtils.random_interval(arg_11_2.time_of_life)
-			local reduce_duration_per_breed = arg_11_2.reduce_duration_per_breed
-			local var_11_18
+			local t = Managers.time:time("game")
+			local life_time = ConflictUtils.random_interval(vortex_template.time_of_life)
+			local reduce_duration_per_breed = vortex_template.reduce_duration_per_breed
+			local var_11_1
 
-			if not reduce_duration_per_breed then
-				var_11_18 = reduce_duration_per_breed[name]
+			if reduce_duration_per_breed then
+				var_11_1 = reduce_duration_per_breed[breed_name]
 
-				if not var_11_18 then
+				if not var_11_1 then
 					-- Nothing
 				end
 			end
 
-			var_11_18 = 1
+			var_11_1 = 1
 
-			::label_11_0::
+			local multiplier = var_11_1
 
-			local clamp_2 = math.clamp(random_interval * var_11_18, 0, math.huge)
+			::label_11_1::
 
-			self.vortex_data.time_of_death = time + clamp_2
+			local time_to_add = math.clamp(life_time * multiplier, 0, math.huge)
 
-			if not ScriptUnit.has_extension(_target_unit, "ai_system") then
-				var_11_1.only_trust_your_own_eyes = false
+			self.vortex_data.time_of_death = t + time_to_add
 
-				AiUtils.aggro_unit_of_enemy(_target_unit, self._owner_unit)
+			local ai_simple_extension = ScriptUnit.has_extension(target_unit, "ai_system")
+
+			if ai_simple_extension then
+				target_blackboard.only_trust_your_own_eyes = false
+
+				AiUtils.aggro_unit_of_enemy(target_unit, self._owner_unit)
 			end
 
-			var_11_1.eject_height = ConflictUtils.random_interval(arg_11_2.ai_eject_height)
+			target_blackboard.eject_height = ConflictUtils.random_interval(vortex_template.ai_eject_height)
 		end
 
-		if not self._target_is_player and not flag then
-			Managers.state.achievement:trigger_event("vortex_caught_unit", self._owner_unit, _target_unit)
+		if not self._target_is_player or set_in_vortex_network_success then
+			Managers.state.achievement:trigger_event("vortex_caught_unit", self._owner_unit, target_unit)
 		end
 	end
 end
 
-SummonedVortexExtension._update_caught_target = function (self, arg_12_1, arg_12_2, arg_12_3, arg_12_4, arg_12_5, arg_12_6)
+SummonedVortexExtension._update_caught_target = function (self, vortex_data, vortex_template, dt, center_pos, inner_radius, allowed_distance)
 	-- function 12
-	local _target_unit = self._target_unit
+	local target_unit = self._target_unit
 
-	if not self._target_is_player then
-		if not ScriptUnit.extension(_target_unit, "status_system"):is_in_vortex() then
-			arg_12_1.time_of_death = 0
+	if self._target_is_player then
+		local target_status_extension = ScriptUnit.extension(target_unit, "status_system")
+
+		if not target_status_extension:is_in_vortex() then
+			vortex_data.time_of_death = 0
 		end
 
 		return
 	end
 
-	local ai_rotation_speed = arg_12_2.ai_rotation_speed
-	local ai_radius_change_speed = arg_12_2.ai_radius_change_speed
-	local ai_ascension_speed = arg_12_2.ai_ascension_speed
-	local ai_max_ascension_height = arg_12_2.ai_max_ascension_height
-	local var_12_5 = arg_12_5
-	local height = arg_12_1.height
-	local up = Vector3.up()
-	local var_12_8 = BLACKBOARDS[_target_unit]
+	local ai_rotation_speed = vortex_template.ai_rotation_speed
+	local ai_radius_change_speed = vortex_template.ai_radius_change_speed
+	local ai_ascension_speed = vortex_template.ai_ascension_speed
+	local ai_max_ascension_height = vortex_template.ai_max_ascension_height
+	local ai_wanted_distance = inner_radius
+	local vortex_height = vortex_data.height
+	local up_direction = Vector3.up()
+	local target_blackboard = BLACKBOARDS[target_unit]
 
-	if var_12_8.in_vortex_state == "in_vortex" then
-		local var_12_9 = POSITION_LOOKUP[_target_unit]
-		local get_vortex_spin_velocity, var_12_11, var_12_12 = LocomotionUtils.get_vortex_spin_velocity(var_12_9, arg_12_4, var_12_5, up, ai_rotation_speed, ai_radius_change_speed, ai_ascension_speed, arg_12_3)
-		local locomotion_extension = var_12_8.locomotion_extension
+	if target_blackboard.in_vortex_state == "in_vortex" then
+		local unit_position = position_lookup[target_unit]
+		local velocity, new_radius, new_height = LocomotionUtils.get_vortex_spin_velocity(unit_position, center_pos, ai_wanted_distance, up_direction, ai_rotation_speed, ai_radius_change_speed, ai_ascension_speed, dt)
+		local locomotion_extension = target_blackboard.locomotion_extension
 
-		locomotion_extension:set_wanted_velocity(get_vortex_spin_velocity)
+		locomotion_extension:set_wanted_velocity(velocity)
 
-		if not (var_12_12 > var_12_8.eject_height or height < var_12_12 or arg_12_6 < var_12_11 or not (ai_max_ascension_height < var_12_12)) then
-			local num = get_vortex_spin_velocity * 0
+		if new_height > target_blackboard.eject_height or vortex_height < new_height or allowed_distance < new_radius or ai_max_ascension_height < new_height then
+			local new_vel = velocity * 0
 
-			locomotion_extension:set_wanted_velocity(num)
+			locomotion_extension:set_wanted_velocity(new_vel)
 		end
-	elseif var_12_8.in_vortex_state == "landed" then
+	elseif target_blackboard.in_vortex_state == "landed" then
 		self._target_unit = nil
 	end
 end
 
-SummonedVortexExtension.attract = function (self, arg_13_1, arg_13_2, arg_13_3, arg_13_4, arg_13_5, arg_13_6, arg_13_7, arg_13_8)
+SummonedVortexExtension.attract = function (self, unit, t, dt, vortex_template, vortex_data, center_pos, inner_radius, outer_radius)
 	-- function 13
-	local num = -0.5
-	local num_2 = arg_13_8 - arg_13_7
-	local num_3 = arg_13_7 + arg_13_4.max_allowed_inner_radius_dist
+	local minimum_height_diff = -0.5
+	local falloff_radius = outer_radius - inner_radius
+	local max_allowed_inner_radius_dist = vortex_template.max_allowed_inner_radius_dist
+	local allowed_distance = inner_radius + max_allowed_inner_radius_dist
 
 	if not self._target_is_caught then
-		self:_update_attract_outside_target(arg_13_5, arg_13_4, arg_13_6, num, arg_13_7, arg_13_8, num_2)
+		self:_update_attract_outside_target(vortex_data, vortex_template, center_pos, minimum_height_diff, inner_radius, outer_radius, falloff_radius)
 	else
-		self:_update_caught_target(arg_13_5, arg_13_4, arg_13_3, arg_13_6, arg_13_7, num_3)
+		self:_update_caught_target(vortex_data, vortex_template, dt, center_pos, inner_radius, allowed_distance)
 	end
 end
 
-SummonedVortexExtension.is_position_inside = function (self, arg_14_1, arg_14_2)
+SummonedVortexExtension.is_position_inside = function (self, position, min_allowed_distance)
 	-- function 14
-	local num = (self.vortex_data.outer_radius + (arg_14_2 or 0))^2
-	local unit = self.unit
-	local var_14_2 = POSITION_LOOKUP[unit]
+	local vortex_data = self.vortex_data
+	local outer_radius = vortex_data.outer_radius
+	local required_distance_sq = (outer_radius + (not not min_allowed_distance or not not 0))^2
+	local self_unit = self.unit
+	local self_position = POSITION_LOOKUP[self_unit]
+	local distance_sq = Vector3.distance_squared(position, self_position)
 
-	return num > Vector3.distance_squared(arg_14_1, var_14_2)
+	return distance_sq < required_distance_sq
 end
 
-local tbl_2 = {}
-local num_6 = 8
-local num_7 = 10
+local spiral = {}
+local spiral_segments = 8
+local spiral_lines = 10
 
-SummonedVortexExtension.debug_render_vortex = function (arg_15_0, arg_15_1, arg_15_2, arg_15_3, arg_15_4, arg_15_5, arg_15_6, arg_15_7, arg_15_8)
+SummonedVortexExtension.debug_render_vortex = function (self, t, dt, pos, fx_radius, inner_radius, outer_radius, spin_speed, height)
 	-- function 15
-	arg_15_4 = arg_15_4 + math.sin(arg_15_1 * 1.7) * 0.4
+	fx_radius = fx_radius + math.sin(t * 1.7) * 0.4
 
-	local num = 2 * math.pi / 6
-	local floor = math.floor(155 / num_6)
-	local num_2 = arg_15_8 / num_6
+	local step = 2 * math.pi / 6
+	local col_delta = math.floor(155 / spiral_segments)
+	local height_step = height / spiral_segments
 
-	for i = 1, num_7 do
-		local num_3 = i * 2 * math.pi / num_7
+	for j = 1, spiral_lines do
+		local alpha = j * 2 * math.pi / spiral_lines
 
-		for j = 1, num_6 do
-			local num_4 = arg_15_4 + 0.5 * (j * j) / num_6
-			local num_5 = arg_15_1 * arg_15_7 + j * num + num_3
+		for i = 1, spiral_segments do
+			local r = fx_radius + 0.5 * (i * i) / spiral_segments
+			local v = t * spin_speed + i * step + alpha
 
-			tbl_2[j] = Vector3(math.sin(num_5) * num_4, math.cos(num_5) * num_4, (j - 1) * num_2)
+			spiral[i] = Vector3(math.sin(v) * r, math.cos(v) * r, (i - 1) * height_step)
 		end
 
-		local num_8 = arg_15_4 + math.sin(arg_15_1) * 0.2
-		local num_9 = arg_15_1 * arg_15_7 + num_3 + 0 * num
-		local var_15_8 = Vector3(math.sin(num_9) * num_8, math.cos(num_9) * num_8, 0)
+		local r = fx_radius + math.sin(t) * 0.2
+		local v = t * spin_speed + alpha + 0 * step
+		local pos1 = Vector3(math.sin(v) * r, math.cos(v) * r, 0)
 
-		QuickDrawer:sphere(arg_15_3 + var_15_8, (math.sin(num_9 * 3) + 1) / 3, Color(155, 255, 155))
+		QuickDrawer:sphere(pos + pos1, (math.sin(v * 3) + 1) / 3, Color(155, 255, 155))
 
-		for k = 1, num_6 do
-			local var_15_9 = tbl_2[k]
-			local var_15_10 = Color(155 - floor * k, 255 - floor * k, 155 - floor * k)
+		for i = 1, spiral_segments do
+			local pos2 = spiral[i]
+			local color = Color(155 - col_delta * i, 255 - col_delta * i, 155 - col_delta * i)
 
-			QuickDrawer:line(arg_15_3 + var_15_8, arg_15_3 + var_15_9, var_15_10)
+			QuickDrawer:line(pos + pos1, pos + pos2, color)
 
-			var_15_8 = var_15_9
+			pos1 = pos2
 		end
 	end
 
-	QuickDrawer:circle(arg_15_3, arg_15_5, Vector3.up(), Colors.get("pink"))
-	QuickDrawer:circle(arg_15_3, arg_15_6, Vector3.up(), Colors.get("lime_green"))
+	QuickDrawer:circle(pos, inner_radius, Vector3.up(), Colors.get("pink"))
+	QuickDrawer:circle(pos, outer_radius, Vector3.up(), Colors.get("lime_green"))
 end

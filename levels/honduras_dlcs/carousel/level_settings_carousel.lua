@@ -1,6 +1,8 @@
 -- chunkname: @levels/honduras_dlcs/carousel/level_settings_carousel.lua
 
-DLCSettings.carousel.missions = {
+local settings = DLCSettings.carousel
+
+settings.missions = {
 	bell_pvp_barrels = {
 		text = "bell_pvp_barrels",
 		mission_template_name = "collect",

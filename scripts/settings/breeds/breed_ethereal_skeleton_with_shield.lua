@@ -1,7 +1,7 @@
 -- chunkname: @scripts/settings/breeds/breed_ethereal_skeleton_with_shield.lua
 
-local scripts_utils_stagger_types = require("scripts/utils/stagger_types")
-local tbl = {
+local stagger_types = require("scripts/utils/stagger_types")
+local breed_data = {
 	detection_radius = 18,
 	radius = 1,
 	walk_speed = 1.8,
@@ -137,21 +137,21 @@ local tbl = {
 		40,
 		40
 	},
-	stagger_modifier_function = function (arg_1_0, arg_1_1, arg_1_2, arg_1_3, arg_1_4, arg_1_5)
+	stagger_modifier_function = function (stagger_type, duration, length, hit_zone_name, blackboard, breed)
 		-- function 1
-		if not (arg_1_4.stagger_type == scripts_utils_stagger_types.heavy or arg_1_4.stagger_type ~= scripts_utils_stagger_types.explosion) then
-			if arg_1_0 ~= scripts_utils_stagger_types.heavy or not arg_1_4.heavy_stagger_immune_time then
-				arg_1_0 = scripts_utils_stagger_types.none
-				arg_1_1 = 0
-				arg_1_2 = 0
-			elseif arg_1_0 == scripts_utils_stagger_types.heavy or not arg_1_4.stagger_immune_time then
-				arg_1_0 = scripts_utils_stagger_types.none
-				arg_1_1 = 0
-				arg_1_2 = 0
+		if blackboard.stagger_type == stagger_types.heavy or blackboard.stagger_type == stagger_types.explosion then
+			if stagger_type == stagger_types.heavy and blackboard.heavy_stagger_immune_time then
+				stagger_type = stagger_types.none
+				duration = 0
+				length = 0
+			elseif stagger_type ~= stagger_types.heavy and blackboard.stagger_immune_time then
+				stagger_type = stagger_types.none
+				duration = 0
+				length = 0
 			end
 		end
 
-		return arg_1_0, arg_1_1, arg_1_2
+		return stagger_type, duration, length
 	end,
 	BTHesitationVariations = {
 		hesitate = {
@@ -346,9 +346,9 @@ local tbl = {
 	}
 }
 
-Breeds.ethereal_skeleton_with_shield = table.create_copy(Breeds.ethereal_skeleton_with_shield, tbl)
+Breeds.ethereal_skeleton_with_shield = table.create_copy(Breeds.ethereal_skeleton_with_shield, breed_data)
 
-local tbl_2 = {
+local AttackIntensityPerDifficulty = {
 	normal = {
 		easy = {
 			normal = 2
@@ -402,7 +402,7 @@ local tbl_2 = {
 		}
 	}
 }
-local tbl_3 = {
+local action_data = {
 	idle = {
 		anim_cycle_index = 0,
 		animations = {
@@ -581,7 +581,7 @@ local tbl_3 = {
 		player_push_speed = 3,
 		attack_intensity_type = "running",
 		action_weight = 10,
-		difficulty_attack_intensity = tbl_2,
+		difficulty_attack_intensity = AttackIntensityPerDifficulty,
 		considerations = UtilityConsiderations.marauder_running_attack,
 		default_attack = {
 			anims = {
@@ -609,7 +609,7 @@ local tbl_3 = {
 		player_push_speed = 5,
 		attack_intensity_type = "normal",
 		action_weight = 1,
-		difficulty_attack_intensity = tbl_2,
+		difficulty_attack_intensity = AttackIntensityPerDifficulty,
 		considerations = UtilityConsiderations.marauder_attack,
 		dodge_window_start = BreedTweaks.dodge_windows.normal_attack,
 		dodge_window_duration = BreedTweaks.dodge_window_durations.normal_attack,
@@ -749,7 +749,7 @@ local tbl_3 = {
 		damage_type = "blunt",
 		unblockable = true,
 		max_impact_push_speed = 18,
-		difficulty_attack_intensity = tbl_2,
+		difficulty_attack_intensity = AttackIntensityPerDifficulty,
 		considerations = UtilityConsiderations.chaos_warrior_push_attack,
 		attack_anim = {
 			"attack_shield_bash"
@@ -810,73 +810,79 @@ local tbl_3 = {
 	},
 	stagger = {
 		scale_animation_speeds = true,
-		custom_enter_function = function (arg_2_0, arg_2_1, arg_2_2, arg_2_3)
+		custom_enter_function = function (unit, blackboard, t, action)
 			-- function 2
-			assert(ScriptUnit.has_extension(arg_2_0, "ai_shield_system"), "chaos_marauder_with_shield dont have ai_shield_user_extension")
+			assert(ScriptUnit.has_extension(unit, "ai_shield_system"), "chaos_marauder_with_shield dont have ai_shield_user_extension")
 
-			if not arg_2_1.shield_breaking_hit then
-				arg_2_1.shield_breaking_hit = false
+			if blackboard.shield_breaking_hit then
+				blackboard.shield_breaking_hit = false
 
-				return arg_2_3.shield_break_anims[arg_2_1.stagger_type], "idle", "to_sword"
+				return action.shield_break_anims[blackboard.stagger_type], "idle", "to_sword"
 			end
 
-			local extension = ScriptUnit.extension(arg_2_0, "ai_shield_system")
-			local var_2_1
-			local var_2_2
-			local flag = false
-			local blocked_previous_attack = extension.blocked_previous_attack
+			local ai_shield_extension = ScriptUnit.extension(unit, "ai_shield_system")
+			local stagger_anims, idle_event
+			local blocked_stagger = false
+			local blocked_previous_attack = ai_shield_extension.blocked_previous_attack
+			local using_shield = not ai_shield_extension.shield_broken
 
-			if not not extension.shield_broken and arg_2_1.stagger_immune_time or not blocked_previous_attack then
-				local flag_2 = arg_2_1.stagger <= 2
+			if using_shield and not blackboard.stagger_immune_time and blocked_previous_attack then
+				local is_blocking = blackboard.stagger <= 2
 
-				extension:set_is_blocking(flag_2)
+				ai_shield_extension:set_is_blocking(is_blocking)
 
-				if not flag_2 then
-					arg_2_1.stagger_time = arg_2_1.stagger_time + math.clamp(0.2 * arg_2_1.stagger, 0, 0.6)
+				if not is_blocking then
+					blackboard.stagger_time = blackboard.stagger_time + math.clamp(0.2 * blackboard.stagger, 0, 0.6)
 				end
 
-				if arg_2_1.blocked or not (arg_2_1.stagger < 3) or not arg_2_3.shield_block_anims then
-					local flag_3 = true
-
-					var_2_1 = arg_2_3.shield_block_anims[arg_2_1.stagger_type]
-					var_2_2 = "idle"
-				elseif arg_2_1.blocked or not (arg_2_1.stagger < 4) or not arg_2_3.shield_stagger_anims then
-					local flag_4 = true
-
-					var_2_1 = arg_2_3.shield_stagger_anims[arg_2_1.stagger_type]
-					var_2_2 = arg_2_1.breed.shield_opening_event or "idle"
+				if not blackboard.blocked and blackboard.stagger < 3 and action.shield_block_anims then
+					blocked_stagger = true
+					stagger_anims = action.shield_block_anims[blackboard.stagger_type]
+					idle_event = "idle"
+				elseif not blackboard.blocked and blackboard.stagger < 4 and action.shield_stagger_anims then
+					blocked_stagger = true
+					stagger_anims = action.shield_stagger_anims[blackboard.stagger_type]
+					idle_event = not not blackboard.breed.shield_opening_event or not not "idle"
 				else
-					var_2_1 = arg_2_3.stagger_anims[arg_2_1.stagger_type]
-					var_2_2 = arg_2_1.breed.shield_opening_event or "idle"
+					stagger_anims = action.stagger_anims[blackboard.stagger_type]
+					idle_event = not not blackboard.breed.shield_opening_event or not not "idle"
 				end
 			else
-				extension:set_is_blocking(false)
+				ai_shield_extension:set_is_blocking(false)
 
-				var_2_1 = arg_2_3.stagger_anims[arg_2_1.stagger_type]
-				var_2_2 = "idle"
+				stagger_anims = action.stagger_anims[blackboard.stagger_type]
+				idle_event = "idle"
 			end
 
-			if arg_2_1.stagger_type == 3 then
-				arg_2_1.stagger_immune_time = arg_2_2 + 2.25
-				arg_2_1.heavy_stagger_immune_time = arg_2_2 + 1.5
-			elseif arg_2_1.stagger_type == 6 then
-				arg_2_1.stagger_immune_time = arg_2_2 + 3.5
-				arg_2_1.heavy_stagger_immune_time = arg_2_2 + 3
+			if blackboard.stagger_type == 3 then
+				blackboard.stagger_immune_time = t + 2.25
+				blackboard.heavy_stagger_immune_time = t + 1.5
+			elseif blackboard.stagger_type == 6 then
+				blackboard.stagger_immune_time = t + 3.5
+				blackboard.heavy_stagger_immune_time = t + 3
 			end
 
-			if not blocked_previous_attack then
-				extension.blocked_previous_attack = false
+			if blocked_previous_attack then
+				ai_shield_extension.blocked_previous_attack = false
 			end
 
-			return var_2_1, var_2_2
+			return stagger_anims, idle_event
 		end,
-		custom_exit_function = function (arg_3_0, arg_3_1, arg_3_2)
+		custom_exit_function = function (unit, blackboard, t)
 			-- function 3
-			local has_extension = ScriptUnit.has_extension(arg_3_0, "ai_shield_system")
+			local has_extension = ScriptUnit.has_extension(unit, "ai_shield_system")
 
-			has_extension = not has_extension and ScriptUnit.extension(arg_3_0, "ai_shield_system")
+			if has_extension then
+				-- Nothing
+			end
 
-			has_extension:set_is_blocking(true)
+			has_extension = ScriptUnit.extension(unit, "ai_shield_system")
+
+			local ai_shield_extension = has_extension
+
+			::label_3_0::
+
+			ai_shield_extension:set_is_blocking(true)
 		end,
 		stagger_anims = {
 			{
@@ -1548,5 +1554,5 @@ local tbl_3 = {
 	follow_owner = {}
 }
 
-tbl_3.fallback_idle = tbl_3.idle
-BreedActions.ethereal_skeleton_with_shield = table.create_copy(BreedActions.ethereal_skeleton_with_shield, tbl_3)
+action_data.fallback_idle = action_data.idle
+BreedActions.ethereal_skeleton_with_shield = table.create_copy(BreedActions.ethereal_skeleton_with_shield, action_data)

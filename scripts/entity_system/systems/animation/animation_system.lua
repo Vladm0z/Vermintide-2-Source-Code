@@ -5,8 +5,8 @@ require("scripts/entity_system/systems/animation/networked_animation_variable_te
 
 AnimationSystem = class(AnimationSystem, ExtensionSystemBase)
 
-local POSITION_LOOKUP = POSITION_LOOKUP
-local tbl = {
+local position_lookup = POSITION_LOOKUP
+local RPCS = {
 	"rpc_sync_anim_state_1",
 	"rpc_sync_anim_state_2",
 	"rpc_sync_anim_state_3",
@@ -28,18 +28,18 @@ local tbl = {
 	"rpc_anim_set_variable_by_time",
 	"rpc_update_anim_variable_done"
 }
-local tbl_2 = {}
+local extensions = {}
 
-AnimationSystem.init = function (self, arg_1_1, arg_1_2)
+AnimationSystem.init = function (self, entity_system_creation_context, system_name)
 	-- function 1
-	AnimationSystem.super.init(self, arg_1_1, arg_1_2, tbl_2)
+	AnimationSystem.super.init(self, entity_system_creation_context, system_name, extensions)
 	Managers.state.event:register(self, "animation_callback", "animation_callback")
 
-	local network_event_delegate = arg_1_1.network_event_delegate
+	local network_event_delegate = entity_system_creation_context.network_event_delegate
 
 	self.network_event_delegate = network_event_delegate
 
-	network_event_delegate:register(self, unpack(tbl))
+	network_event_delegate:register(self, unpack(RPCS))
 
 	self.anim_variable_update_list = {}
 	self._networked_animation_variables = {}
@@ -53,235 +53,248 @@ AnimationSystem.destroy = function (self)
 	self.network_event_delegate:unregister(self)
 end
 
-AnimationSystem.animation_callback = function (self, arg_3_1, arg_3_2, arg_3_3)
+AnimationSystem.animation_callback = function (self, unit, callback, param)
 	-- function 3
-	local var_3_0
+	local cb
 
-	if not self.is_server then
-		local var_3_1 = AnimationCallbackTemplates.server[arg_3_2]
+	if self.is_server then
+		cb = AnimationCallbackTemplates.server[callback]
 
-		if not var_3_1 then
-			var_3_1(arg_3_1, arg_3_3)
+		if cb then
+			cb(unit, param)
 		end
 	end
 
-	local var_3_2 = AnimationCallbackTemplates.client[arg_3_2]
+	cb = AnimationCallbackTemplates.client[callback]
 
-	if not var_3_2 then
-		var_3_2(arg_3_1, arg_3_3)
+	if cb then
+		cb(unit, param)
 	end
 end
 
-AnimationSystem.update = function (self, arg_4_1, arg_4_2)
+AnimationSystem.update = function (self, context, t)
 	-- function 4
-	self:update_anim_variables(arg_4_2)
-	self:_update_networked_anim_variables(arg_4_1.dt, arg_4_2)
+	self:update_anim_variables(t)
+	self:_update_networked_anim_variables(context.dt, t)
 end
 
-AnimationSystem.update_anim_variables = function (self, arg_5_1)
+AnimationSystem.update_anim_variables = function (self, t)
 	-- function 5
-	local var_5_0 = POSITION_LOOKUP
-	local length = Vector3.length
-	local alive = Unit.alive
-	local num = 0
-	local clamp = math.clamp
+	local position_lookup = position_lookup
+	local vector3_length = Vector3.length
+	local unit_alive = Unit.alive
+	local s = 0
+	local math_clamp = math.clamp
 	local animation_set_variable = Unit.animation_set_variable
 
-	for k, v in pairs(self.anim_variable_update_list) do
-		if not var_5_0[k] then
-			local var_5_6
+	for unit, data in pairs(self.anim_variable_update_list) do
+		local pos = position_lookup[unit]
 
-			if not v.goal_pos then
-				local var_5_7 = var_5_0[k]
-				local num_2 = v.goal_pos:unbox() - var_5_7
+		if pos then
+			local anim_value
 
-				if not v.flat_distance then
-					num_2 = Vector3.flat(num_2)
+			if data.goal_pos then
+				local pos = position_lookup[unit]
+				local to_target = data.goal_pos:unbox() - pos
+
+				if data.flat_distance then
+					to_target = Vector3.flat(to_target)
 				end
 
-				local var_5_9 = length(num_2)
-				local scale = v.scale
+				local distance = vector3_length(to_target)
+				local scale = data.scale
 
-				var_5_6 = clamp(scale - scale * var_5_9 / v.initial_distance, 0, scale)
+				anim_value = math_clamp(scale - scale * distance / data.initial_distance, 0, scale)
 			else
-				local num_3 = arg_5_1 - v.start_time
-				local scale_2 = v.scale
+				local jump_time = t - data.start_time
+				local scale = data.scale
 
-				var_5_6 = clamp(scale_2 * num_3 / v.duration, 0, scale_2)
+				anim_value = math_clamp(scale * jump_time / data.duration, 0, scale)
 			end
 
-			animation_set_variable(k, v.anim_variable_index, var_5_6)
+			animation_set_variable(unit, data.anim_variable_index, anim_value)
 
-			num = num + 1
+			s = s + 1
 		else
-			self.anim_variable_update_list[k] = nil
+			self.anim_variable_update_list[unit] = nil
 		end
 	end
 end
 
-AnimationSystem.anim_event = function (self, arg_6_1, arg_6_2, arg_6_3)
+AnimationSystem.anim_event = function (self, unit, event_name, skip_sync)
 	-- function 6
-	if arg_6_3 or not Managers.state.network:game() then
-		local go_id = self.unit_storage:go_id(arg_6_1)
+	if not skip_sync and Managers.state.network:game() then
+		local go_id = self.unit_storage:go_id(unit)
 
-		fassert(go_id, "Unit storage does not have a game object id for %q", arg_6_1)
+		fassert(go_id, "Unit storage does not have a game object id for %q", unit)
 
-		local var_6_1 = NetworkLookup.anims[arg_6_2]
+		local event_id = NetworkLookup.anims[event_name]
 
-		if not self.is_server then
-			self.network_transmit:send_rpc_clients("rpc_anim_event", var_6_1, go_id)
+		if self.is_server then
+			self.network_transmit:send_rpc_clients("rpc_anim_event", event_id, go_id)
 		else
-			self.network_transmit:send_rpc_server("rpc_anim_event", var_6_1, go_id)
+			self.network_transmit:send_rpc_server("rpc_anim_event", event_id, go_id)
 		end
 	end
 
-	self:_init_networked_variables(arg_6_1, arg_6_2)
+	self:_init_networked_variables(unit, event_name)
 
-	return Unit.animation_event(arg_6_1, arg_6_2)
+	return Unit.animation_event(unit, event_name)
 end
 
-AnimationSystem.anim_event_with_variable_float = function (self, arg_7_1, arg_7_2, arg_7_3, arg_7_4, arg_7_5)
+AnimationSystem.anim_event_with_variable_float = function (self, unit, event_name, variable_name, variable_value, skip_sync)
 	-- function 7
-	if arg_7_5 or not Managers.state.network:game() then
-		local go_id = self.unit_storage:go_id(arg_7_1)
+	if not skip_sync and Managers.state.network:game() then
+		local go_id = self.unit_storage:go_id(unit)
 
-		fassert(go_id, "Unit storage does not have a game object id for %q", arg_7_1)
+		fassert(go_id, "Unit storage does not have a game object id for %q", unit)
 
-		local var_7_1 = NetworkLookup.anims[arg_7_2]
-		local var_7_2 = NetworkLookup.anims[arg_7_3]
+		local event_id = NetworkLookup.anims[event_name]
+		local variable_id = NetworkLookup.anims[variable_name]
 
-		if not self.is_server then
-			self.network_transmit:send_rpc_clients("rpc_anim_event_variable_float", var_7_1, go_id, var_7_2, arg_7_4)
+		if self.is_server then
+			self.network_transmit:send_rpc_clients("rpc_anim_event_variable_float", event_id, go_id, variable_id, variable_value)
 		else
-			self.network_transmit:send_rpc_server("rpc_anim_event_variable_float", var_7_1, go_id, var_7_2, arg_7_4)
+			self.network_transmit:send_rpc_server("rpc_anim_event_variable_float", event_id, go_id, variable_id, variable_value)
 		end
 	end
 
-	self:_init_networked_variables(arg_7_1, arg_7_2)
+	self:_init_networked_variables(unit, event_name)
 
-	local animation_find_variable = Unit.animation_find_variable(arg_7_1, arg_7_3)
+	local variable_index = Unit.animation_find_variable(unit, variable_name)
 
-	Unit.animation_set_variable(arg_7_1, animation_find_variable, arg_7_4)
-	Unit.animation_event(arg_7_1, arg_7_2)
+	Unit.animation_set_variable(unit, variable_index, variable_value)
+	Unit.animation_event(unit, event_name)
 end
 
-if not LEVEL_EDITOR_TEST then
-	AnimationSystem.anim_event = function (self, arg_8_1, arg_8_2)
+if LEVEL_EDITOR_TEST then
+	AnimationSystem.anim_event = function (self, unit, event_name)
 		-- function 8
-		self:_init_networked_variables(arg_8_1, arg_8_2)
-		Unit.animation_event(arg_8_1, arg_8_2)
+		self:_init_networked_variables(unit, event_name)
+		Unit.animation_event(unit, event_name)
 	end
 
-	AnimationSystem.anim_event_with_variable_float = function (self, arg_9_1, arg_9_2, arg_9_3, arg_9_4)
+	AnimationSystem.anim_event_with_variable_float = function (self, unit, event_name, variable_name, variable_value)
 		-- function 9
-		self:_init_networked_variables(arg_9_1, arg_9_2)
+		self:_init_networked_variables(unit, event_name)
 
-		local animation_find_variable = Unit.animation_find_variable(arg_9_1, arg_9_3)
+		local variable_index = Unit.animation_find_variable(unit, variable_name)
 
-		Unit.animation_set_variable(arg_9_1, animation_find_variable, arg_9_4)
-		Unit.animation_event(arg_9_1, arg_9_2)
+		Unit.animation_set_variable(unit, variable_index, variable_value)
+		Unit.animation_event(unit, event_name)
 	end
 end
 
-AnimationSystem._init_networked_variables = function (self, arg_10_1, arg_10_2)
+AnimationSystem._init_networked_variables = function (self, unit, event_name)
 	-- function 10
-	self:_remove_networked_variables(arg_10_1)
+	self:_remove_networked_variables(unit)
 
-	if not NetworkedAnimationVariableTemplatesLookup[arg_10_2] then
+	local networked_variables = NetworkedAnimationVariableTemplatesLookup[event_name]
+
+	if not networked_variables then
 		return
 	end
 
-	local get_data = Unit.get_data(arg_10_1, "breed")
+	local breed = Unit.get_data(unit, "breed")
 
-	if not get_data then
+	if not breed then
 		return
 	end
 
-	local networked_animation_variables = get_data.networked_animation_variables
+	local breed_anim_vars = breed.networked_animation_variables
 
-	if not networked_animation_variables then
+	if not breed_anim_vars then
 		return
 	end
 
-	local var_10_2 = networked_animation_variables[arg_10_2]
+	local variable_datas = breed_anim_vars[event_name]
 
-	if not var_10_2 then
+	if not variable_datas then
 		return
 	end
 
-	local _networked_animation_variables = self._networked_animation_variables
+	local networked_anim_vars = self._networked_animation_variables
 
-	if not _networked_animation_variables[arg_10_1] then
-		table.clear(_networked_animation_variables[arg_10_1].updates)
+	if networked_anim_vars[unit] then
+		table.clear(networked_anim_vars[unit].updates)
 	end
 
-	for k, v in pairs(var_10_2) do
-		local tbl = {
-			variable_name = k,
-			variable_index = Unit.animation_find_variable(arg_10_1, k),
-			variable_data = v
+	for variable_name, data in pairs(variable_datas) do
+		local scratchpad = {
+			variable_name = variable_name,
+			variable_index = Unit.animation_find_variable(unit, variable_name),
+			variable_data = data
 		}
-		local var_10_5 = NetworkedAnimationVariableTemplates[k]
+		local template = NetworkedAnimationVariableTemplates[variable_name]
 
-		if not var_10_5.init then
-			var_10_5.init(arg_10_1, tbl)
+		if template.init then
+			template.init(unit, scratchpad)
 		end
 
-		local var_10_6 = _networked_animation_variables[arg_10_1]
+		local var_10_0 = networked_anim_vars[unit]
 
-		var_10_6 = var_10_6 or {
+		if not var_10_0 then
+			-- Nothing
+		end
+
+		var_10_0 = {
 			updates = {}
 		}
 
-		if not var_10_5.update then
-			var_10_6.updates[#var_10_6.updates + 1] = tbl
+		local unit_vars = var_10_0
+
+		::label_10_0::
+
+		if template.update then
+			unit_vars.updates[#unit_vars.updates + 1] = scratchpad
 		end
 
-		var_10_6[#var_10_6 + 1] = tbl
-		_networked_animation_variables[arg_10_1] = var_10_6
+		unit_vars[#unit_vars + 1] = scratchpad
+		networked_anim_vars[unit] = unit_vars
 	end
 end
 
-AnimationSystem._remove_networked_variables = function (self, arg_11_1)
+AnimationSystem._remove_networked_variables = function (self, unit)
 	-- function 11
-	local var_11_0 = self._networked_animation_variables[arg_11_1]
+	local networked_anim_vars = self._networked_animation_variables
+	local unit_vars = networked_anim_vars[unit]
 
-	if not var_11_0 then
-		for i = 1, #var_11_0 do
-			local var_11_1 = var_11_0[i]
-			local variable_name = var_11_1.variable_name
-			local var_11_3 = NetworkedAnimationVariableTemplates[variable_name]
+	if unit_vars then
+		for i = 1, #unit_vars do
+			local scratchpad = unit_vars[i]
+			local var_name = scratchpad.variable_name
+			local template = NetworkedAnimationVariableTemplates[var_name]
 
-			if not var_11_3.stop then
-				var_11_3.stop(arg_11_1, var_11_1)
+			if template.stop then
+				template.stop(unit, scratchpad)
 			end
 
-			var_11_0[i] = nil
+			unit_vars[i] = nil
 		end
 	end
 end
 
-AnimationSystem._update_networked_anim_variables = function (self, arg_12_1, arg_12_2)
+AnimationSystem._update_networked_anim_variables = function (self, dt, t)
 	-- function 12
-	for k, v in pairs(self._networked_animation_variables) do
-		if not (not ALIVE[k] and Unit.has_animation_state_machine(k)) then
-			self:_remove_networked_variables(k)
+	for unit, networked_variables in pairs(self._networked_animation_variables) do
+		if not ALIVE[unit] or not Unit.has_animation_state_machine(unit) then
+			self:_remove_networked_variables(unit)
 		else
-			local updates = v.updates
+			local updates = networked_variables.updates
 
-			for k_2 = 1, #updates do
-				local var_12_1 = updates[k_2]
-				local variable_name = var_12_1.variable_name
+			for i = 1, #updates do
+				local scratchpad = updates[i]
+				local variable_name = scratchpad.variable_name
 
-				NetworkedAnimationVariableTemplates[variable_name].update(k, var_12_1, arg_12_1, arg_12_2)
+				NetworkedAnimationVariableTemplates[variable_name].update(unit, scratchpad, dt, t)
 			end
 		end
 	end
 end
 
-AnimationSystem.rpc_sync_anim_state = function (self, arg_13_1, arg_13_2, ...)
+AnimationSystem.rpc_sync_anim_state = function (self, channel_id, go_id, ...)
 	-- function 13
-	local unit = self.unit_storage:unit(arg_13_2)
+	local unit = self.unit_storage:unit(go_id)
 
 	Unit.animation_set_state(unit, ...)
 end
@@ -299,218 +312,222 @@ AnimationSystem.rpc_sync_anim_state_10 = AnimationSystem.rpc_sync_anim_state
 AnimationSystem.rpc_sync_anim_state_11 = AnimationSystem.rpc_sync_anim_state
 AnimationSystem.rpc_sync_anim_state_12 = AnimationSystem.rpc_sync_anim_state
 
-AnimationSystem.rpc_anim_event_variable_float = function (self, arg_14_1, arg_14_2, arg_14_3, arg_14_4, arg_14_5)
+AnimationSystem.rpc_anim_event_variable_float = function (self, channel_id, anim_id, go_id, variable_id, variable_value)
 	-- function 14
-	local unit = self.unit_storage:unit(arg_14_3)
+	local unit = self.unit_storage:unit(go_id)
 
-	if not (not unit and Unit.alive(unit)) then
+	if not unit or not Unit.alive(unit) then
 		return
 	end
 
-	if not self.is_server then
-		local var_14_1 = CHANNEL_TO_PEER_ID[arg_14_1]
+	if self.is_server then
+		local peer_id = CHANNEL_TO_PEER_ID[channel_id]
 
-		self.network_transmit:send_rpc_clients_except("rpc_anim_event_variable_float", var_14_1, arg_14_2, arg_14_3, arg_14_4, arg_14_5)
+		self.network_transmit:send_rpc_clients_except("rpc_anim_event_variable_float", peer_id, anim_id, go_id, variable_id, variable_value)
 	end
 
-	if not Unit.has_animation_state_machine(unit) then
-		local var_14_2 = NetworkLookup.anims[arg_14_2]
+	if Unit.has_animation_state_machine(unit) then
+		local event = NetworkLookup.anims[anim_id]
 
-		assert(var_14_2, "[GameNetworkManager] Lookup missing for event_id", arg_14_2)
+		assert(event, "[GameNetworkManager] Lookup missing for event_id", anim_id)
 
-		local var_14_3 = NetworkLookup.anims[arg_14_4]
+		local variable_name = NetworkLookup.anims[variable_id]
 
-		self:anim_event_with_variable_float(unit, var_14_2, var_14_3, arg_14_5, true)
+		self:anim_event_with_variable_float(unit, event, variable_name, variable_value, true)
 	end
 end
 
-AnimationSystem.rpc_anim_set_variable_float = function (self, arg_15_1, arg_15_2, arg_15_3, arg_15_4)
+AnimationSystem.rpc_anim_set_variable_float = function (self, channel_id, go_id, variable_id, variable_value)
 	-- function 15
-	local unit = self.unit_storage:unit(arg_15_2)
+	local unit = self.unit_storage:unit(go_id)
 
-	if not (not unit and Unit.alive(unit)) then
+	if not unit or not Unit.alive(unit) then
 		return
 	end
 
-	if not self.is_server then
-		local var_15_1 = CHANNEL_TO_PEER_ID[arg_15_1]
+	if self.is_server then
+		local peer_id = CHANNEL_TO_PEER_ID[channel_id]
 
-		self.network_transmit:send_rpc_clients_except("rpc_anim_set_variable_float", var_15_1, arg_15_2, arg_15_3, arg_15_4)
+		self.network_transmit:send_rpc_clients_except("rpc_anim_set_variable_float", peer_id, go_id, variable_id, variable_value)
 	end
 
-	if not Unit.has_animation_state_machine(unit) then
-		local var_15_2 = NetworkLookup.anims[arg_15_3]
-		local animation_find_variable = Unit.animation_find_variable(unit, var_15_2)
+	if Unit.has_animation_state_machine(unit) then
+		local variable_name = NetworkLookup.anims[variable_id]
+		local variable_index = Unit.animation_find_variable(unit, variable_name)
 
-		Unit.animation_set_variable(unit, animation_find_variable, arg_15_4)
+		Unit.animation_set_variable(unit, variable_index, variable_value)
 	end
 end
 
-AnimationSystem.rpc_anim_set_variable_int = function (self, arg_16_1, arg_16_2, arg_16_3, arg_16_4)
+AnimationSystem.rpc_anim_set_variable_int = function (self, channel_id, go_id, variable_id, variable_value)
 	-- function 16
-	local unit = self.unit_storage:unit(arg_16_2)
+	local unit = self.unit_storage:unit(go_id)
 
-	if not (not unit and Unit.alive(unit)) then
+	if not unit or not Unit.alive(unit) then
 		return
 	end
 
-	if not self.is_server then
-		local var_16_1 = CHANNEL_TO_PEER_ID[arg_16_1]
+	if self.is_server then
+		local peer_id = CHANNEL_TO_PEER_ID[channel_id]
 
-		self.network_transmit:send_rpc_clients_except("rpc_anim_set_variable_int", var_16_1, arg_16_2, arg_16_3, arg_16_4)
+		self.network_transmit:send_rpc_clients_except("rpc_anim_set_variable_int", peer_id, go_id, variable_id, variable_value)
 	end
 
-	if not Unit.has_animation_state_machine(unit) then
-		local var_16_2 = NetworkLookup.anims[arg_16_3]
-		local animation_find_variable = Unit.animation_find_variable(unit, var_16_2)
+	if Unit.has_animation_state_machine(unit) then
+		local variable_name = NetworkLookup.anims[variable_id]
+		local variable_index = Unit.animation_find_variable(unit, variable_name)
 
-		Unit.animation_set_variable(unit, animation_find_variable, arg_16_4)
+		Unit.animation_set_variable(unit, variable_index, variable_value)
 	end
 end
 
-AnimationSystem.rpc_anim_event = function (self, arg_17_1, arg_17_2, arg_17_3)
+AnimationSystem.rpc_anim_event = function (self, channel_id, anim_id, go_id)
 	-- function 17
-	local unit = self.unit_storage:unit(arg_17_3)
+	local unit = self.unit_storage:unit(go_id)
 
-	if not (not unit and Unit.alive(unit)) then
+	if not unit or not Unit.alive(unit) then
 		return
 	end
 
-	if not self.is_server then
-		local var_17_1 = CHANNEL_TO_PEER_ID[arg_17_1]
+	if self.is_server then
+		local peer_id = CHANNEL_TO_PEER_ID[channel_id]
 
-		self.network_transmit:send_rpc_clients_except("rpc_anim_event", var_17_1, arg_17_2, arg_17_3)
+		self.network_transmit:send_rpc_clients_except("rpc_anim_event", peer_id, anim_id, go_id)
 	end
 
-	if not Unit.has_animation_state_machine(unit) then
-		local var_17_2 = NetworkLookup.anims[arg_17_2]
+	if Unit.has_animation_state_machine(unit) then
+		local event = NetworkLookup.anims[anim_id]
 
-		assert(var_17_2, "[GameNetworkManager] Lookup missing for event_id", arg_17_2)
-		self:anim_event(unit, var_17_2, true)
+		assert(event, "[GameNetworkManager] Lookup missing for event_id", anim_id)
+		self:anim_event(unit, event, true)
 	end
 end
 
-AnimationSystem.rpc_link_unit = function (self, arg_18_1, arg_18_2, arg_18_3, arg_18_4, arg_18_5)
+AnimationSystem.rpc_link_unit = function (self, channel_id, child_unit_id, child_node, parent_unit_id, parent_node)
 	-- function 18
-	local unit = self.unit_storage:unit(arg_18_2)
-	local unit_2 = self.unit_storage:unit(arg_18_4)
-	local world = Unit.world(unit_2)
+	local child_unit = self.unit_storage:unit(child_unit_id)
+	local parent_unit = self.unit_storage:unit(parent_unit_id)
+	local world = Unit.world(parent_unit)
 
-	World.link_unit(world, unit, arg_18_3, unit_2, arg_18_5)
+	World.link_unit(world, child_unit, child_node, parent_unit, parent_node)
 end
 
-AnimationSystem.rpc_anim_set_variable_by_distance = function (self, arg_19_1, arg_19_2, arg_19_3, arg_19_4, arg_19_5, arg_19_6)
+AnimationSystem.rpc_anim_set_variable_by_distance = function (self, channel_id, unit_id, anim_variable_index, goal_pos, scale, flat_distance)
 	-- function 19
-	local unit = self.unit_storage:unit(arg_19_2)
+	local unit = self.unit_storage:unit(unit_id)
 
-	self:_set_variable_by_distance(unit, arg_19_3, arg_19_4, arg_19_5, arg_19_6)
+	self:_set_variable_by_distance(unit, anim_variable_index, goal_pos, scale, flat_distance)
 end
 
-AnimationSystem._set_variable_by_distance = function (self, arg_20_1, arg_20_2, arg_20_3, arg_20_4, arg_20_5)
+AnimationSystem._set_variable_by_distance = function (self, unit, anim_variable_index, goal_pos, scale, flat_distance)
 	-- function 20
-	local num = arg_20_3 - POSITION_LOOKUP[arg_20_1]
+	local pos = position_lookup[unit]
+	local to_target = goal_pos - pos
 
-	if not arg_20_5 then
-		num = Vector3.flat(num)
+	if flat_distance then
+		to_target = Vector3.flat(to_target)
 	end
 
-	local length = Vector3.length(num)
+	local initial_distance = Vector3.length(to_target)
 
-	if length < 0.001 then
-		length = 0.001
+	if initial_distance < 0.001 then
+		initial_distance = 0.001
 	end
 
-	local var_20_2 = self.anim_variable_update_list[arg_20_1]
+	local data = self.anim_variable_update_list[unit]
 
-	if not var_20_2 then
-		var_20_2.goal_pos = Vector3Box(arg_20_3)
-		var_20_2.initial_distance = length
-		var_20_2.scale = arg_20_4
-		var_20_2.anim_variable_index = arg_20_2
+	if data then
+		data.goal_pos = Vector3Box(goal_pos)
+		data.initial_distance = initial_distance
+		data.scale = scale
+		data.anim_variable_index = anim_variable_index
 	else
-		self.anim_variable_update_list[arg_20_1] = {
-			unit = arg_20_1,
-			goal_pos = Vector3Box(arg_20_3),
-			anim_variable_index = arg_20_2,
-			initial_distance = length,
-			scale = arg_20_4,
-			flat_distance = arg_20_5
+		self.anim_variable_update_list[unit] = {
+			unit = unit,
+			goal_pos = Vector3Box(goal_pos),
+			anim_variable_index = anim_variable_index,
+			initial_distance = initial_distance,
+			scale = scale,
+			flat_distance = flat_distance
 		}
 	end
 end
 
-AnimationSystem.rpc_anim_set_variable_by_time = function (self, arg_21_1, arg_21_2, arg_21_3, arg_21_4, arg_21_5)
+AnimationSystem.rpc_anim_set_variable_by_time = function (self, channel_id, unit_id, anim_variable_index, int_16bit_duration, scale)
 	-- function 21
-	local unit = self.unit_storage:unit(arg_21_2)
-	local num = arg_21_4 * 0.00390625
+	local unit = self.unit_storage:unit(unit_id)
+	local duration = int_16bit_duration * 0.00390625
 
-	self:_set_variable_by_time(unit, arg_21_3, num, arg_21_5)
+	self:_set_variable_by_time(unit, anim_variable_index, duration, scale)
 end
 
-AnimationSystem._set_variable_by_time = function (self, arg_22_1, arg_22_2, arg_22_3, arg_22_4)
+AnimationSystem._set_variable_by_time = function (self, unit, anim_variable_index, duration, scale)
 	-- function 22
-	local var_22_0 = self.anim_variable_update_list[arg_22_1]
-	local time = Managers.time:time("game")
+	local data = self.anim_variable_update_list[unit]
+	local t = Managers.time:time("game")
 
-	if not var_22_0 then
-		var_22_0.start_time = time
-		var_22_0.duration = arg_22_3
-		var_22_0.scale = arg_22_4
-		var_22_0.anim_variable_index = arg_22_2
+	if data then
+		data.start_time = t
+		data.duration = duration
+		data.scale = scale
+		data.anim_variable_index = anim_variable_index
 	else
-		self.anim_variable_update_list[arg_22_1] = {
-			unit = arg_22_1,
-			start_time = time,
-			duration = arg_22_3,
-			anim_variable_index = arg_22_2,
-			scale = arg_22_4
+		self.anim_variable_update_list[unit] = {
+			unit = unit,
+			start_time = t,
+			duration = duration,
+			anim_variable_index = anim_variable_index,
+			scale = scale
 		}
 	end
 end
 
-AnimationSystem.rpc_update_anim_variable_done = function (self, arg_23_1, arg_23_2)
+AnimationSystem.rpc_update_anim_variable_done = function (self, channel_id, unit_id)
 	-- function 23
-	local unit = self.unit_storage:unit(arg_23_2)
+	local unit = self.unit_storage:unit(unit_id)
 
-	if not self.anim_variable_update_list[unit] then
+	if self.anim_variable_update_list[unit] then
 		self.anim_variable_update_list[unit] = nil
 	end
 end
 
-AnimationSystem.set_update_anim_variable_done = function (self, arg_24_1)
+AnimationSystem.set_update_anim_variable_done = function (self, unit)
 	-- function 24
-	local unit_game_object_id = Managers.state.network:unit_game_object_id(arg_24_1)
+	local network_manager = Managers.state.network
+	local unit_id = network_manager:unit_game_object_id(unit)
 
-	self.network_transmit:send_rpc_clients("rpc_update_anim_variable_done", unit_game_object_id)
+	self.network_transmit:send_rpc_clients("rpc_update_anim_variable_done", unit_id)
 
-	self.anim_variable_update_list[arg_24_1] = nil
+	self.anim_variable_update_list[unit] = nil
 end
 
-AnimationSystem.start_anim_variable_update_by_distance = function (self, arg_25_1, arg_25_2, arg_25_3, arg_25_4, arg_25_5)
+AnimationSystem.start_anim_variable_update_by_distance = function (self, unit, anim_variable_index, goal_pos, scale, flat_distance)
 	-- function 25
-	local unit_game_object_id = Managers.state.network:unit_game_object_id(arg_25_1)
+	local network_manager = Managers.state.network
+	local unit_id = network_manager:unit_game_object_id(unit)
 
-	self.network_transmit:send_rpc_clients("rpc_anim_set_variable_by_distance", unit_game_object_id, arg_25_2, arg_25_3, arg_25_4, arg_25_5)
-	self:_set_variable_by_distance(arg_25_1, arg_25_2, arg_25_3, arg_25_4, arg_25_5)
+	self.network_transmit:send_rpc_clients("rpc_anim_set_variable_by_distance", unit_id, anim_variable_index, goal_pos, scale, flat_distance)
+	self:_set_variable_by_distance(unit, anim_variable_index, goal_pos, scale, flat_distance)
 end
 
-AnimationSystem.start_anim_variable_update_by_time = function (self, arg_26_1, arg_26_2, arg_26_3, arg_26_4)
+AnimationSystem.start_anim_variable_update_by_time = function (self, unit, anim_variable_index, duration, scale)
 	-- function 26
-	local clamp = math.clamp(arg_26_3 * 256, 0, 65535)
-	local unit_game_object_id = Managers.state.network:unit_game_object_id(arg_26_1)
+	local int_16bit_duration = math.clamp(duration * 256, 0, 65535)
+	local network_manager = Managers.state.network
+	local unit_id = network_manager:unit_game_object_id(unit)
 
-	self.network_transmit:send_rpc_clients("rpc_anim_set_variable_by_time", unit_game_object_id, arg_26_2, clamp, arg_26_4)
-	self:_set_variable_by_time(arg_26_1, arg_26_2, arg_26_3, arg_26_4)
+	self.network_transmit:send_rpc_clients("rpc_anim_set_variable_by_time", unit_id, anim_variable_index, int_16bit_duration, scale)
+	self:_set_variable_by_time(unit, anim_variable_index, duration, scale)
 end
 
-AnimationSystem.add_safe_animation_callback = function (arg_27_0, arg_27_1)
+AnimationSystem.add_safe_animation_callback = function (self, cb)
 	-- function 27
-	arg_27_0._animation_safe_callbacks[#arg_27_0._animation_safe_callbacks + 1] = arg_27_1
+	self._animation_safe_callbacks[#self._animation_safe_callbacks + 1] = cb
 end
 
 AnimationSystem.run_safe_animation_callbacks = function (self)
 	-- function 28
-	local _animation_safe_callbacks = self._animation_safe_callbacks
+	local animation_safe_callbacks = self._animation_safe_callbacks
 	local _animation_safe_callbacks_buffer_2
 
 	if self._animation_safe_callbacks == self._animation_safe_callbacks_buffer_1 then
@@ -527,9 +544,11 @@ AnimationSystem.run_safe_animation_callbacks = function (self)
 
 	self._animation_safe_callbacks = _animation_safe_callbacks_buffer_2
 
-	for i = 1, #_animation_safe_callbacks do
-		_animation_safe_callbacks[i]()
+	for i = 1, #animation_safe_callbacks do
+		local safe_callback = animation_safe_callbacks[i]
 
-		_animation_safe_callbacks[i] = nil
+		safe_callback()
+
+		animation_safe_callbacks[i] = nil
 	end
 end

@@ -2,8 +2,9 @@
 
 require("core/gwnav/lua/safe_require")
 
-local var_0_0 = safe_require_guard()
-local var_0_1 = safe_require("core/gwnav/lua/runtime/navclass")(var_0_0)
+local NavMeshCamera = safe_require_guard()
+local NavClass = safe_require("core/gwnav/lua/runtime/navclass")
+local NavMeshCamera = NavClass(NavMeshCamera)
 local Math = stingray.Math
 local Vector2 = stingray.Vector2
 local Vector3 = stingray.Vector3
@@ -22,10 +23,10 @@ local Color = stingray.Color
 local LineObject = stingray.LineObject
 local PhysicsWorld = stingray.PhysicsWorld
 local Level = stingray.Level
-local var_0_20
+local Window
 
-if not stingray.Window then
-	local Window = stingray.Window
+if stingray.Window then
+	Window = stingray.Window
 end
 
 local Script = stingray.Script
@@ -44,11 +45,11 @@ local GwNavGraph = stingray.GwNavGraph
 local GwNavTraversal = stingray.GwNavTraversal
 local GwNavGeneration = stingray.GwNavGeneration
 
-var_0_1.init = function (self, arg_1_1, arg_1_2, arg_1_3)
+NavMeshCamera.init = function (self, camera, unit, nav_world)
 	-- function 1
-	self.camera = arg_1_1
-	self.unit = arg_1_2
-	self.nav_world = arg_1_3
+	self.camera = camera
+	self.unit = unit
+	self.nav_world = nav_world
 	self.translation_speed = 3
 
 	if Application.platform() == "win32" then
@@ -58,21 +59,21 @@ var_0_1.init = function (self, arg_1_1, arg_1_2, arg_1_3)
 	end
 end
 
-var_0_1.update = function (self, arg_2_1)
+NavMeshCamera.update = function (self, dt)
 	-- function 2
-	local tbl = {}
+	local input = {}
 
-	if not (Application.platform() == "win32" or Application.platform() ~= "macosx") then
-		tbl.pan = Mouse.axis(Mouse.axis_id("mouse"))
-		tbl.accelerate = Vector3.y(Mouse.axis(Mouse.axis_id("wheel")))
-		tbl.move = Vector3(Keyboard.button(Keyboard.button_id("d")) - Keyboard.button(Keyboard.button_id("a")), Keyboard.button(Keyboard.button_id("w")) - Keyboard.button(Keyboard.button_id("s")), Keyboard.button(Keyboard.button_id("e")) - Keyboard.button(Keyboard.button_id("q")))
+	if Application.platform() == "win32" or Application.platform() == "macosx" then
+		input.pan = Mouse.axis(Mouse.axis_id("mouse"))
+		input.accelerate = Vector3.y(Mouse.axis(Mouse.axis_id("wheel")))
+		input.move = Vector3(Keyboard.button(Keyboard.button_id("d")) - Keyboard.button(Keyboard.button_id("a")), Keyboard.button(Keyboard.button_id("w")) - Keyboard.button(Keyboard.button_id("s")), Keyboard.button(Keyboard.button_id("e")) - Keyboard.button(Keyboard.button_id("q")))
 	else
 		return
 	end
 
-	local num = self.translation_speed * 0.1
+	local translation_change_speed = self.translation_speed * 0.1
 
-	self.translation_speed = self.translation_speed + tbl.accelerate * num
+	self.translation_speed = self.translation_speed + input.accelerate * translation_change_speed
 
 	if self.translation_speed < 0.001 then
 		self.translation_speed = 0.001
@@ -82,20 +83,22 @@ var_0_1.update = function (self, arg_2_1)
 		self.translation_speed = 1000
 	end
 
-	local local_pose = Camera.local_pose(self.camera)
-	local translation = Matrix4x4.translation(local_pose)
+	local cm = Camera.local_pose(self.camera)
+	local pos = Matrix4x4.translation(cm)
 
-	Matrix4x4.set_translation(local_pose, Vector3(0, 0, 0))
+	Matrix4x4.set_translation(cm, Vector3(0, 0, 0))
 
-	local var_2_4 = Quaternion(Vector3(0, 0, 1), -Vector3.x(tbl.pan) * self.rotation_speed)
-	local var_2_5 = Quaternion(Matrix4x4.x(local_pose), -Vector3.y(tbl.pan) * self.rotation_speed)
-	local multiply = Quaternion.multiply(var_2_4, var_2_5)
-	local multiply_2 = Matrix4x4.multiply(local_pose, Matrix4x4.from_quaternion(multiply))
-	local transform = Matrix4x4.transform(multiply_2, tbl.move * self.translation_speed)
-	local move_on_navmesh = GwNavQueries.move_on_navmesh(self.nav_world, translation, transform, arg_2_1)
+	local q1 = Quaternion(Vector3(0, 0, 1), -Vector3.x(input.pan) * self.rotation_speed)
+	local q2 = Quaternion(Matrix4x4.x(cm), -Vector3.y(input.pan) * self.rotation_speed)
+	local q = Quaternion.multiply(q1, q2)
 
-	Matrix4x4.set_translation(multiply_2, move_on_navmesh)
-	Camera.set_local_pose(self.camera, self.unit, multiply_2)
+	cm = Matrix4x4.multiply(cm, Matrix4x4.from_quaternion(q))
+
+	local velocity = Matrix4x4.transform(cm, input.move * self.translation_speed)
+	local move_on_navmesh = GwNavQueries.move_on_navmesh(self.nav_world, pos, velocity, dt)
+
+	Matrix4x4.set_translation(cm, move_on_navmesh)
+	Camera.set_local_pose(self.camera, self.unit, cm)
 end
 
-return var_0_1
+return NavMeshCamera

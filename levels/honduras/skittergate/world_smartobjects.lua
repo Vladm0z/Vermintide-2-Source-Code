@@ -1,6 +1,6 @@
 -- chunkname: @levels/honduras/skittergate/world_smartobjects.lua
 
-local tbl = {
+local smart_objects = {
 	["6c9ede1d-cf31-4056-9273-ae786bedc2c2"] = {
 		{
 			smart_object_index = 158,
@@ -14283,13 +14283,13 @@ local tbl = {
 		}
 	}
 }
-local num = 605
-local str = "v1"
-local str_2 = "2017.MAY.05.05"
+local smart_object_count = 605
+local version = "v1"
+local ledgelator_version = "2017.MAY.05.05"
 
 return {
-	smart_objects = tbl,
-	smart_object_count = num,
-	version = str,
-	ledgelator_version = str_2
+	smart_objects = smart_objects,
+	smart_object_count = smart_object_count,
+	version = version,
+	ledgelator_version = ledgelator_version
 }

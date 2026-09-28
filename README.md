@@ -13,7 +13,6 @@ The game's LuaJIT bytecode files are prepended with a custom 12-byte Fatshark he
 The raw bytecode is processed using the [LuaJIT Decompiler v2](https://github.com/Vladm0z/luajit-decompiler-v2). The decompiler is configured with the following flags to handle the specific constraints of the game's compiled scripts:
 - `-f` (Force overwrite): Replaces existing files without prompting.
 - `-s` (Silent assertions): Bypasses interactive error prompts and automatically skips files that trigger internal decompiler assertions.
-- `-i` (Ignore debug info): Forces the decompiler to reconstruct control flow, boolean logic, and variable scopes algorithmically, as the game's bytecode is largely stripped of debug symbols.
 - `-u` (Unrestricted ASCII): Disables strict UTF-8 validation and string restrictions for constant outputs.
 
 ### Directory Reconstruction

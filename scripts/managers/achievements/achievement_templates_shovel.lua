@@ -2,36 +2,36 @@
 
 local PLACEHOLDER_ICON = AchievementTemplateHelper.PLACEHOLDER_ICON
 local achievements = AchievementTemplates.achievements
-local shovel = DLCSettings.shovel
+local achievement_settings = DLCSettings.shovel
 local rpc_increment_stat = AchievementTemplateHelper.rpc_increment_stat
 local rpc_modify_stat = AchievementTemplateHelper.rpc_modify_stat
 local add_levels_complete_per_hero_challenge = AchievementTemplateHelper.add_levels_complete_per_hero_challenge
 local add_career_mission_count_challenge = AchievementTemplateHelper.add_career_mission_count_challenge
 local add_meta_challenge = AchievementTemplateHelper.add_meta_challenge
-local tbl = {}
-local tbl_2 = {}
-local num = 1
-local num_2 = 2
-local num_3 = 3
-local num_4 = 4
-local num_5 = 5
-local num_6 = 1
-local num_7 = 2
-local num_8 = 3
-local num_9 = 4
-local num_10 = 1
-local num_11 = 2
-local num_12 = 3
-local num_13 = 4
-local num_14 = 5
-local num_15 = 6
-local num_16 = 7
-local num_17 = 8
-local HelmgartLevels = HelmgartLevels
+local XB1_ACHIEVEMENT_ID = {}
+local PS4_ACHIEVEMENT_ID = {}
+local register_damage_stats_id = 1
+local register_damage_victim_unit = 2
+local register_damage_damage_data = 3
+local register_damage_attacker_unit = 4
+local register_damage_target_breed = 5
+local register_kill_stats_id = 1
+local register_kill_victim_unit = 2
+local register_kill_damage_data = 3
+local register_kill_victim_breed = 4
+local on_hit_hit_unit = 1
+local on_hit_attack_type = 2
+local on_hit_hit_zone_name = 3
+local on_hit_target_number = 4
+local on_hit_buff_type = 5
+local on_hit_is_critical = 6
+local on_hit_unmodified = 7
+local on_hit_unit = 8
+local main_game_levels = HelmgartLevels
 
-add_levels_complete_per_hero_challenge(achievements, "shovel_complete_all_helmgart_levels", HelmgartLevels, 2, "bw_necromancer", false, "unexpected_saviour", "shovel", nil, nil)
+add_levels_complete_per_hero_challenge(achievements, "shovel_complete_all_helmgart_levels", main_game_levels, 2, "bw_necromancer", false, "unexpected_saviour", "shovel", nil, nil)
 
-local tbl_3 = {
+local difficulties = {
 	"normal",
 	"hard",
 	"harder",
@@ -39,9 +39,9 @@ local tbl_3 = {
 	"cataclysm"
 }
 
-add_career_mission_count_challenge(achievements, "shovel_complete_25_missions", "completed_career_levels", "bw_necromancer", tbl_3, 25, nil, "creeping_death", "shovel", nil, nil)
+add_career_mission_count_challenge(achievements, "shovel_complete_25_missions", "completed_career_levels", "bw_necromancer", difficulties, 25, nil, "creeping_death", "shovel", nil, nil)
 
-local num_18 = 2500
+local SAC_VENT_TARGET = 2500
 
 achievements.shovel_sac_vent = {
 	display_completion_ui = true,
@@ -51,53 +51,55 @@ achievements.shovel_sac_vent = {
 	required_dlc = "shovel",
 	desc = function ()
 		-- function 1
-		return string.format(Localize("achv_sac_vent_desc"), num_18)
+		return string.format(Localize("achv_sac_vent_desc"), SAC_VENT_TARGET)
 	end,
 	events = {
 		"sacrifice_skeleton"
 	},
-	progress = function (self, arg_2_1, arg_2_2)
+	progress = function (statistics_db, stats_id, template_data)
 		-- function 2
-		local get_persistent_stat = self:get_persistent_stat(arg_2_1, "shovel_sac_vent")
+		local completed = statistics_db:get_persistent_stat(stats_id, "shovel_sac_vent")
 
 		return {
-			get_persistent_stat,
-			num_18
+			completed,
+			SAC_VENT_TARGET
 		}
 	end,
-	completed = function (self, arg_3_1, arg_3_2)
+	completed = function (statistics_db, stats_id, template_data)
 		-- function 3
-		return self:get_persistent_stat(arg_3_1, "shovel_sac_vent") >= num_18
+		return statistics_db:get_persistent_stat(stats_id, "shovel_sac_vent") >= SAC_VENT_TARGET
 	end,
-	on_event = function (self, arg_4_1, arg_4_2, arg_4_3, arg_4_4)
+	on_event = function (statistics_db, stats_id, template_data, event_name, event_data)
 		-- function 4
-		if not global_is_inside_inn then
+		if global_is_inside_inn then
 			return
 		end
 
 		local local_player = Managers.player:local_player()
-		local flag = not local_player and local_player.player_unit
+		local local_player_unit = not not local_player and not not local_player.player_unit
 
-		if not flag then
+		if not local_player_unit then
 			return
 		end
 
-		if flag ~= arg_4_4[3] then
+		local commander_unit = event_data[3]
+
+		if local_player_unit ~= commander_unit then
 			return
 		end
 
-		local var_4_2 = arg_4_4[2]
+		local overcharge_fraction_lost = event_data[2]
 
-		if var_4_2 > 0 then
-			local num = var_4_2 * 100
+		if overcharge_fraction_lost > 0 then
+			local overcharge_percentage_lost = overcharge_fraction_lost * 100
 
-			self:modify_stat_by_amount(arg_4_1, "shovel_sac_vent", num)
+			statistics_db:modify_stat_by_amount(stats_id, "shovel_sac_vent", overcharge_percentage_lost)
 		end
 	end
 }
 
-local num_19 = 10
-local num_20 = 0.2
+local SACRIFICE_SKELETON_COUNT = 10
+local SACRIFICE_SKELETON_THRESHOLD = 0.2
 
 achievements.shovel_sac_low = {
 	display_completion_ui = true,
@@ -107,52 +109,54 @@ achievements.shovel_sac_low = {
 	required_dlc = "shovel",
 	desc = function ()
 		-- function 5
-		return string.format(Localize("achv_sac_low_desc"), num_19, num_20 * 100)
+		return string.format(Localize("achv_sac_low_desc"), SACRIFICE_SKELETON_COUNT, SACRIFICE_SKELETON_THRESHOLD * 100)
 	end,
 	events = {
 		"sacrifice_skeleton"
 	},
-	completed = function (self, arg_6_1, arg_6_2)
+	completed = function (statistics_db, stats_id, template_data)
 		-- function 6
-		return self:get_persistent_stat(arg_6_1, "shovel_sac_low") >= 1
+		return statistics_db:get_persistent_stat(stats_id, "shovel_sac_low") >= 1
 	end,
-	on_event = function (self, arg_7_1, arg_7_2, arg_7_3, arg_7_4)
+	on_event = function (statistics_db, stats_id, template_data, event_name, event_data)
 		-- function 7
-		if not global_is_inside_inn then
+		if global_is_inside_inn then
 			return
 		end
 
 		local local_player = Managers.player:local_player()
-		local flag = not local_player and local_player.player_unit
+		local local_player_unit = not not local_player and not not local_player.player_unit
 
-		if not flag then
+		if not local_player_unit then
 			return
 		end
 
-		if flag ~= arg_7_4[3] then
+		local commander_unit = event_data[3]
+
+		if local_player_unit ~= commander_unit then
 			return
 		end
 
-		local var_7_2 = arg_7_4[1]
-		local has_extension = ScriptUnit.has_extension(var_7_2, "health_system")
+		local skeleton_unit = event_data[1]
+		local health_extension = ScriptUnit.has_extension(skeleton_unit, "health_system")
 
-		if not (not has_extension and not (has_extension:current_health_percent() > num_20)) then
+		if not health_extension or health_extension:current_health_percent() > SACRIFICE_SKELETON_THRESHOLD then
 			return
 		end
 
-		local count = arg_7_2.count
+		local count = template_data.count
 
-		count = count or 0
-		arg_7_2.count = count + 1
+		count = not not count or not not 0
+		template_data.count = count + 1
 
-		if arg_7_2.count >= num_19 then
-			self:increment_stat(arg_7_1, "shovel_sac_low")
+		if template_data.count >= SACRIFICE_SKELETON_COUNT then
+			statistics_db:increment_stat(stats_id, "shovel_sac_low")
 		end
 	end
 }
 
-local num_21 = 400
-local num_22 = 18
+local FAST_GENERATE_TARGET = 400
+local FAST_GENERATE_TIME = 18
 
 achievements.shovel_fast_generate = {
 	display_completion_ui = true,
@@ -162,77 +166,88 @@ achievements.shovel_fast_generate = {
 	required_dlc = "shovel",
 	desc = function ()
 		-- function 8
-		return string.format(Localize("achv_fast_generate_desc"), num_21, num_22)
+		return string.format(Localize("achv_fast_generate_desc"), FAST_GENERATE_TARGET, FAST_GENERATE_TIME)
 	end,
 	events = {
 		"overcharge_gained"
 	},
-	completed = function (self, arg_9_1, arg_9_2)
+	completed = function (statistics_db, stats_id, template_data)
 		-- function 9
-		return self:get_persistent_stat(arg_9_1, "shovel_fast_generate") >= 1
+		return statistics_db:get_persistent_stat(stats_id, "shovel_fast_generate") >= 1
 	end,
-	on_event = function (self, arg_10_1, arg_10_2, arg_10_3, arg_10_4)
+	on_event = function (statistics_db, stats_id, template_data, event_name, event_data)
 		-- function 10
-		if not global_is_inside_inn then
+		if global_is_inside_inn then
 			return
 		end
 
-		local var_10_0 = arg_10_4[3]
+		local source_unit = event_data[3]
 		local local_player = Managers.player:local_player()
-		local flag = not local_player and local_player.player_unit
+		local local_player_unit = not not local_player and not not local_player.player_unit
 
-		if not (not flag and flag == var_10_0) then
+		if not local_player_unit or local_player_unit ~= source_unit then
 			return
 		end
 
-		local has_extension = ScriptUnit.has_extension(flag, "career_system")
+		local career_extension = ScriptUnit.has_extension(local_player_unit, "career_system")
 
-		if not (not has_extension and has_extension:career_name() == "bw_necromancer") then
+		if not career_extension or career_extension:career_name() ~= "bw_necromancer" then
 			return
 		end
 
-		local var_10_4 = arg_10_4[2]
+		local fraction_gained = event_data[2]
 
-		if var_10_4 <= 0 then
+		if fraction_gained <= 0 then
 			return
 		end
 
-		local num = var_10_4 * 100
-		local total_amount = arg_10_2.total_amount
+		local percentage_gained = fraction_gained * 100
+		local total_amount = template_data.total_amount
 
-		total_amount = total_amount or 0
-		arg_10_2.total_amount = total_amount + num
+		total_amount = not not total_amount or not not 0
+		template_data.total_amount = total_amount + percentage_gained
 
-		local instances = arg_10_2.instances
+		local instances_2 = template_data.instances
 
-		instances = instances or {}
-		arg_10_2.instances = instances
+		if not instances_2 then
+			-- Nothing
+		end
 
-		local time = Managers.time:time("game")
-		local tbl = {
-			time = time,
-			overcharge = num
+		instances_2 = {}
+
+		local instances = instances_2
+
+		::label_10_0::
+
+		template_data.instances = instances
+
+		local t = Managers.time:time("game")
+		local instance = {
+			time = t,
+			overcharge = percentage_gained
 		}
 
-		table.insert(instances, tbl)
+		table.insert(instances, instance)
 
 		repeat
-			if instances[1].time > time - num_22 then
+			local oldest = instances[1]
+
+			if oldest.time > t - FAST_GENERATE_TIME then
 				break
 			end
 
-			local remove = table.remove(instances, 1)
+			local cut_instance = table.remove(instances, 1)
 
-			arg_10_2.total_amount = arg_10_2.total_amount - remove.overcharge
+			template_data.total_amount = template_data.total_amount - cut_instance.overcharge
 		until false
 
-		if arg_10_2.total_amount > num_21 then
-			self:increment_stat(arg_10_1, "shovel_fast_generate")
+		if template_data.total_amount > FAST_GENERATE_TARGET then
+			statistics_db:increment_stat(stats_id, "shovel_fast_generate")
 		end
 	end
 }
 
-local num_23 = 30
+local COMMAND_ELITE_TARGET = 30
 
 achievements.shovel_command_elite = {
 	display_completion_ui = true,
@@ -242,55 +257,56 @@ achievements.shovel_command_elite = {
 	required_dlc = "shovel",
 	desc = function ()
 		-- function 11
-		return string.format(Localize("achv_command_elite_desc"), num_23)
+		return string.format(Localize("achv_command_elite_desc"), COMMAND_ELITE_TARGET)
 	end,
 	events = {
 		"command_attack_unit"
 	},
-	progress = function (self, arg_12_1, arg_12_2)
+	progress = function (statistics_db, stats_id, template_data)
 		-- function 12
-		local get_persistent_stat = self:get_persistent_stat(arg_12_1, "shovel_command_elite")
+		local completed = statistics_db:get_persistent_stat(stats_id, "shovel_command_elite")
 
 		return {
-			get_persistent_stat,
-			num_23
+			completed,
+			COMMAND_ELITE_TARGET
 		}
 	end,
-	completed = function (self, arg_13_1, arg_13_2)
+	completed = function (statistics_db, stats_id, template_data)
 		-- function 13
-		return self:get_persistent_stat(arg_13_1, "shovel_command_elite") >= num_23
+		return statistics_db:get_persistent_stat(stats_id, "shovel_command_elite") >= COMMAND_ELITE_TARGET
 	end,
-	on_event = function (self, arg_14_1, arg_14_2, arg_14_3, arg_14_4)
+	on_event = function (statistics_db, stats_id, template_data, event_name, event_data)
 		-- function 14
-		local var_14_0 = arg_14_4[1]
-		local get_commander_unit = Managers.state.entity:system("ai_commander_system"):get_commander_unit(var_14_0)
+		local controlled_unit = event_data[1]
+		local commander_system = Managers.state.entity:system("ai_commander_system")
+		local controlled_owner = commander_system:get_commander_unit(controlled_unit)
 		local local_player = Managers.player:local_player()
-		local flag = not local_player and local_player.player_unit
+		local local_player_unit = not not local_player and not not local_player.player_unit
 
-		if not (not flag and flag == get_commander_unit) then
+		if not local_player_unit or local_player_unit ~= controlled_owner then
 			return
 		end
 
-		local var_14_4 = arg_14_4[2]
-		local get_data = Unit.get_data(var_14_4, "breed")
+		local target_unit = event_data[2]
+		local breed = Unit.get_data(target_unit, "breed")
 
-		if not (not get_data and get_data.elite) then
+		if not breed or not breed.elite then
 			return
 		end
 
-		local has_extension = ScriptUnit.has_extension(var_14_4, "buff_system")
+		local buff_ext = ScriptUnit.has_extension(target_unit, "buff_system")
 
-		if not has_extension and not has_extension:get_stacking_buff("command_elite_challenge_tracker") then
+		if not buff_ext or buff_ext:get_stacking_buff("command_elite_challenge_tracker") then
 			return
 		end
 
-		has_extension:add_buff("command_elite_challenge_tracker")
-		self:increment_stat(arg_14_1, "shovel_command_elite")
+		buff_ext:add_buff("command_elite_challenge_tracker")
+		statistics_db:increment_stat(stats_id, "shovel_command_elite")
 	end
 }
 
-local num_24 = 30
-local num_25 = 2
+local SKELETON_ATTACK_BIG_TARGET = 30
+local SKELETON_ATTACK_BIG_TIME = 2
 
 achievements.shovel_skeleton_attack_big = {
 	always_run = true,
@@ -301,79 +317,90 @@ achievements.shovel_skeleton_attack_big = {
 	required_dlc = "shovel",
 	desc = function ()
 		-- function 15
-		return string.format(Localize("achv_skeleton_attack_big_desc"), num_25)
+		return string.format(Localize("achv_skeleton_attack_big_desc"), SKELETON_ATTACK_BIG_TIME)
 	end,
 	events = {
 		"on_damage_dealt"
 	},
-	completed = function (self, arg_16_1, arg_16_2)
+	completed = function (statistics_db, stats_id, template_data)
 		-- function 16
-		return self:get_persistent_stat(arg_16_1, "shovel_skeleton_attack_big") >= 1
+		return statistics_db:get_persistent_stat(stats_id, "shovel_skeleton_attack_big") >= 1
 	end,
-	on_event = function (arg_17_0, arg_17_1, arg_17_2, arg_17_3, arg_17_4)
+	on_event = function (statistics_db, stats_id, template_data, event_name, event_data)
 		-- function 17
 		if not Managers.state.network.is_server then
 			return
 		end
 
-		if arg_17_4[3] <= 0 then
+		local damage_done = event_data[3]
+
+		if damage_done <= 0 then
 			return
 		end
 
-		local var_17_0 = arg_17_4[2]
-		local get_commander_unit = Managers.state.entity:system("ai_commander_system"):get_commander_unit(var_17_0)
+		local attacker_unit = event_data[2]
+		local commander_system = Managers.state.entity:system("ai_commander_system")
+		local controlled_owner = commander_system:get_commander_unit(attacker_unit)
 
-		if not get_commander_unit then
+		if not controlled_owner then
 			return
 		end
 
-		local owner = Managers.player:owner(get_commander_unit)
+		local player = Managers.player:owner(controlled_owner)
 
-		if not owner then
+		if not player then
 			return
 		end
 
-		if not arg_17_2[owner:stats_id()] then
+		if template_data[player:stats_id()] then
 			return
 		end
 
-		local var_17_3 = arg_17_4[1]
-		local time = Managers.time:time("game")
-		local damaged_enemies = arg_17_2.damaged_enemies
+		local attacked_unit = event_data[1]
+		local t = Managers.time:time("game")
+		local damaged_enemies_2 = template_data.damaged_enemies
 
-		damaged_enemies = damaged_enemies or {}
-
-		if not damaged_enemies[var_17_3] then
-			local count = arg_17_2.count
-
-			count = count or 0
-			arg_17_2.count = count + 1
+		if not damaged_enemies_2 then
+			-- Nothing
 		end
 
-		damaged_enemies[var_17_3] = time
-		arg_17_2.damaged_enemies = damaged_enemies
+		damaged_enemies_2 = {}
 
-		if arg_17_2.count >= num_24 then
-			local num = time - num_25
+		local damaged_enemies = damaged_enemies_2
 
-			for k, v in pairs(damaged_enemies) do
-				if v < num then
-					damaged_enemies[k] = nil
-					arg_17_2.count = arg_17_2.count - 1
+		::label_17_0::
+
+		if not damaged_enemies[attacked_unit] then
+			local count = template_data.count
+
+			count = not not count or not not 0
+			template_data.count = count + 1
+		end
+
+		damaged_enemies[attacked_unit] = t
+		template_data.damaged_enemies = damaged_enemies
+
+		if template_data.count >= SKELETON_ATTACK_BIG_TARGET then
+			local cutoff_time = t - SKELETON_ATTACK_BIG_TIME
+
+			for damaged_enemy, time in pairs(damaged_enemies) do
+				if time < cutoff_time then
+					damaged_enemies[damaged_enemy] = nil
+					template_data.count = template_data.count - 1
 				end
 			end
 
-			if arg_17_2.count >= num_24 then
-				arg_17_2[owner:stats_id()] = true
+			if template_data.count >= SKELETON_ATTACK_BIG_TARGET then
+				template_data[player:stats_id()] = true
 
-				rpc_increment_stat(get_commander_unit, "shovel_skeleton_attack_big")
+				rpc_increment_stat(controlled_owner, "shovel_skeleton_attack_big")
 			end
 		end
 	end
 }
 
-local num_26 = 400
-local num_27 = 10
+local SKELETON_DEFEND_TARGET = 400
+local SKELETON_DEFEND_TIME = 10
 
 achievements.shovel_skeleton_defend = {
 	always_run = true,
@@ -384,93 +411,105 @@ achievements.shovel_skeleton_defend = {
 	required_dlc = "shovel",
 	desc = function ()
 		-- function 18
-		return string.format(Localize("achv_skeleton_defend_desc"), num_26, num_27)
+		return string.format(Localize("achv_skeleton_defend_desc"), SKELETON_DEFEND_TARGET, SKELETON_DEFEND_TIME)
 	end,
 	events = {
 		"on_damage_dealt"
 	},
-	completed = function (self, arg_19_1, arg_19_2)
+	completed = function (statistics_db, stats_id, template_data)
 		-- function 19
-		return self:get_persistent_stat(arg_19_1, "shovel_skeleton_defend") >= 1
+		return statistics_db:get_persistent_stat(stats_id, "shovel_skeleton_defend") >= 1
 	end,
-	on_event = function (arg_20_0, arg_20_1, arg_20_2, arg_20_3, arg_20_4)
+	on_event = function (statistics_db, stats_id, template_data, event_name, event_data)
 		-- function 20
 		if not Managers.state.network.is_server then
 			return
 		end
 
-		local var_20_0 = arg_20_4[1]
-		local get_commander_unit = Managers.state.entity:system("ai_commander_system"):get_commander_unit(var_20_0)
+		local attacked_unit = event_data[1]
+		local commander_system = Managers.state.entity:system("ai_commander_system")
+		local controlled_owner = commander_system:get_commander_unit(attacked_unit)
 
-		if not get_commander_unit then
+		if not controlled_owner then
 			return
 		end
 
-		local owner = Managers.player:owner(get_commander_unit)
+		local player = Managers.player:owner(controlled_owner)
 
-		if not owner then
+		if not player then
 			return
 		end
 
-		if not arg_20_2[owner:stats_id()] then
+		if template_data[player:stats_id()] then
 			return
 		end
 
-		local var_20_3 = BLACKBOARDS[var_20_0]
+		local bb = BLACKBOARDS[attacked_unit]
 
-		if not (not var_20_3 and var_20_3.command_state == CommandStates.StandingGround) then
+		if not bb or bb.command_state ~= CommandStates.StandingGround then
 			return
 		end
 
-		local var_20_4 = arg_20_4[2]
+		local attacker_unit = event_data[2]
 
-		if not Managers.state.side:is_ally(var_20_0, var_20_4) then
+		if Managers.state.side:is_ally(attacked_unit, attacker_unit) then
 			return
 		end
 
-		local var_20_5 = arg_20_4[3]
+		local damage_amount = event_data[3]
 
-		if var_20_5 <= 0 then
+		if damage_amount <= 0 then
 			return
 		end
 
-		local total_amount = arg_20_2.total_amount
+		local total_amount = template_data.total_amount
 
-		total_amount = total_amount or 0
-		arg_20_2.total_amount = total_amount + var_20_5
+		total_amount = not not total_amount or not not 0
+		template_data.total_amount = total_amount + damage_amount
 
-		local instances = arg_20_2.instances
+		local instances_2 = template_data.instances
 
-		instances = instances or {}
-		arg_20_2.instances = instances
+		if not instances_2 then
+			-- Nothing
+		end
 
-		local time = Managers.time:time("game")
-		local tbl = {
-			time = time,
-			damage = var_20_5
+		instances_2 = {}
+
+		local instances = instances_2
+
+		::label_20_0::
+
+		template_data.instances = instances
+
+		local t = Managers.time:time("game")
+		local instance = {
+			time = t,
+			damage = damage_amount
 		}
 
-		table.insert(instances, tbl)
+		table.insert(instances, instance)
 
 		repeat
-			if instances[1].time > time - num_27 then
+			local oldest = instances[1]
+
+			if oldest.time > t - SKELETON_DEFEND_TIME then
 				break
 			end
 
-			local remove = table.remove(instances, 1)
+			local cut_instance = table.remove(instances, 1)
 
-			arg_20_2.total_amount = arg_20_2.total_amount - remove.damage
+			template_data.total_amount = template_data.total_amount - cut_instance.damage
 		until false
 
-		if arg_20_2.total_amount > num_26 then
-			arg_20_2[owner:stats_id()] = true
+		if template_data.total_amount > SKELETON_DEFEND_TARGET then
+			template_data[player:stats_id()] = true
 
-			rpc_increment_stat(get_commander_unit, "shovel_skeleton_defend")
+			rpc_increment_stat(controlled_owner, "shovel_skeleton_defend")
 		end
 	end
 }
 
-local num_28 = 24
+local MANY_SKELETONS_TARGET = 24
 
 achievements.shovel_many_skeletons = {
 	display_completion_ui = true,
@@ -480,32 +519,34 @@ achievements.shovel_many_skeletons = {
 	required_dlc = "shovel",
 	desc = function ()
 		-- function 21
-		return string.format(Localize("achv_many_skeletons_desc"), num_28)
+		return string.format(Localize("achv_many_skeletons_desc"), MANY_SKELETONS_TARGET)
 	end,
 	events = {
 		"on_controlled_unit_added"
 	},
-	completed = function (self, arg_22_1, arg_22_2)
+	completed = function (statistics_db, stats_id, template_data)
 		-- function 22
-		return self:get_persistent_stat(arg_22_1, "shovel_many_skeletons") >= 1
+		return statistics_db:get_persistent_stat(stats_id, "shovel_many_skeletons") >= 1
 	end,
-	on_event = function (self, arg_23_1, arg_23_2, arg_23_3, arg_23_4)
+	on_event = function (statistics_db, stats_id, template_data, event_name, event_data)
 		-- function 23
-		local var_23_0 = arg_23_4[2]
+		local commander_unit = event_data[2]
 		local local_player = Managers.player:local_player()
-		local flag = not local_player and local_player.player_unit
+		local player_unit = not not local_player and not not local_player.player_unit
 
-		if not (not flag and flag == var_23_0) then
+		if not player_unit or player_unit ~= commander_unit then
 			return
 		end
 
-		if arg_23_4[3]:get_controlled_units_count() >= num_28 then
-			self:increment_stat(arg_23_1, "shovel_many_skeletons")
+		local commander_extension = event_data[3]
+
+		if commander_extension:get_controlled_units_count() >= MANY_SKELETONS_TARGET then
+			statistics_db:increment_stat(stats_id, "shovel_many_skeletons")
 		end
 	end
 }
 
-local num_29 = 150
+local MELEE_BALEFIRE_TARGET = 150
 
 achievements.shovel_melee_balefire = {
 	display_completion_ui = true,
@@ -515,59 +556,59 @@ achievements.shovel_melee_balefire = {
 	required_dlc = "shovel",
 	desc = function ()
 		-- function 24
-		return string.format(Localize("achv_melee_balefire_desc"), num_29)
+		return string.format(Localize("achv_melee_balefire_desc"), MELEE_BALEFIRE_TARGET)
 	end,
 	events = {
 		"register_kill"
 	},
-	progress = function (self, arg_25_1, arg_25_2)
+	progress = function (statistics_db, stats_id, template_data)
 		-- function 25
-		local get_persistent_stat = self:get_persistent_stat(arg_25_1, "shovel_melee_balefire")
+		local completed = statistics_db:get_persistent_stat(stats_id, "shovel_melee_balefire")
 
 		return {
-			get_persistent_stat,
-			num_29
+			completed,
+			MELEE_BALEFIRE_TARGET
 		}
 	end,
-	completed = function (self, arg_26_1, arg_26_2)
+	completed = function (statistics_db, stats_id, template_data)
 		-- function 26
-		return self:get_persistent_stat(arg_26_1, "shovel_melee_balefire") >= num_29
+		return statistics_db:get_persistent_stat(stats_id, "shovel_melee_balefire") >= MELEE_BALEFIRE_TARGET
 	end,
-	on_event = function (self, arg_27_1, arg_27_2, arg_27_3, arg_27_4)
+	on_event = function (statistics_db, stats_id, template_data, event_name, event_data)
 		-- function 27
 		local local_player = Managers.player:local_player()
-		local flag = not local_player and local_player.player_unit
-		local var_27_2 = arg_27_4[num_8]
-		local var_27_3 = var_27_2[DamageDataIndex.ATTACKER]
+		local local_player_unit = not not local_player and not not local_player.player_unit
+		local damage_data = event_data[register_kill_damage_data]
+		local attacker_unit = damage_data[DamageDataIndex.ATTACKER]
 
-		if not (not var_27_3 and flag == var_27_3) then
+		if attacker_unit and local_player_unit ~= attacker_unit then
 			return
 		end
 
-		local var_27_4 = arg_27_4[num_7]
-		local has_status, var_27_6 = Managers.state.status_effect:has_status(var_27_4, "burning_balefire")
+		local victim_unit = event_data[register_kill_victim_unit]
+		local burning_balefire, applied_this_frame = Managers.state.status_effect:has_status(victim_unit, "burning_balefire")
 
-		if not has_status and not var_27_6 then
+		if not burning_balefire or applied_this_frame then
 			return
 		end
 
-		local has_extension = ScriptUnit.has_extension(var_27_3, "career_system")
+		local career_extension = ScriptUnit.has_extension(attacker_unit, "career_system")
 
-		if not (not has_extension and has_extension:career_name() == "bw_necromancer") then
+		if not career_extension or career_extension:career_name() ~= "bw_necromancer" then
 			return
 		end
 
-		local var_27_8 = var_27_2[DamageDataIndex.ATTACK_TYPE]
+		local attack_type = damage_data[DamageDataIndex.ATTACK_TYPE]
 
-		if not (var_27_8 == "light_attack" or var_27_8 == "heavy_attack") then
+		if attack_type ~= "light_attack" and attack_type ~= "heavy_attack" then
 			return
 		end
 
-		self:increment_stat(arg_27_1, "shovel_melee_balefire")
+		statistics_db:increment_stat(stats_id, "shovel_melee_balefire")
 	end
 }
 
-local num_30 = 8
+local FAST_STAFF_ATTACK_TARGET = 8
 
 achievements.shovel_fast_staff_attack = {
 	always_run = true,
@@ -578,83 +619,95 @@ achievements.shovel_fast_staff_attack = {
 	required_dlc = "shovel",
 	desc = function ()
 		-- function 28
-		return string.format(Localize("achv_fast_staff_attack_desc"), num_30)
+		return string.format(Localize("achv_fast_staff_attack_desc"), FAST_STAFF_ATTACK_TARGET)
 	end,
 	events = {
 		"register_ai_stagger"
 	},
-	completed = function (self, arg_29_1, arg_29_2)
+	completed = function (statistics_db, stats_id, template_data)
 		-- function 29
-		return self:get_persistent_stat(arg_29_1, "shovel_fast_staff_attack") >= 1
+		return statistics_db:get_persistent_stat(stats_id, "shovel_fast_staff_attack") >= 1
 	end,
-	on_event = function (arg_30_0, arg_30_1, arg_30_2, arg_30_3, arg_30_4)
+	on_event = function (statistics_db, stats_id, template_data, event_name, event_data)
 		-- function 30
-		local var_30_0 = arg_30_4[1]
-		local var_30_1 = BLACKBOARDS[var_30_0]
+		local attacked_unit = event_data[1]
+		local attacked_bb = BLACKBOARDS[attacked_unit]
 
-		if not (not var_30_1 and var_30_1.breed.elite) then
+		if not attacked_bb or not attacked_bb.breed.elite then
 			return
 		end
 
-		if arg_30_4[3].name ~= "death_staff_curse" then
+		local damage_profile = event_data[3]
+
+		if damage_profile.name ~= "death_staff_curse" then
 			return
 		end
 
-		local var_30_2 = arg_30_4[2]
-		local owner = Managers.player:owner(var_30_2)
+		local instigator = event_data[2]
+		local player = Managers.player:owner(instigator)
 
-		if not owner and not owner.bot_player then
+		if not player or player.bot_player then
 			return
 		end
 
-		if not arg_30_2[owner:stats_id()] then
+		if template_data[player:stats_id()] then
 			return
 		end
 
-		local has_extension = ScriptUnit.has_extension(var_30_2, "career_system")
+		local career_extension = ScriptUnit.has_extension(instigator, "career_system")
 
-		if not (not has_extension and has_extension:career_name() == "bw_necromancer") then
+		if not career_extension or career_extension:career_name() ~= "bw_necromancer" then
 			return
 		end
 
-		local stagger_instances = arg_30_2.stagger_instances
+		local stagger_instances_2 = template_data.stagger_instances
 
-		stagger_instances = stagger_instances or {}
-		arg_30_2.stagger_instances = stagger_instances
-
-		local time = Managers.time:time("game")
-
-		if not stagger_instances[var_30_0] then
-			local num_staggers = arg_30_2.num_staggers
-
-			num_staggers = num_staggers or 0
-			arg_30_2.num_staggers = num_staggers + 1
+		if not stagger_instances_2 then
+			-- Nothing
 		end
 
-		stagger_instances[var_30_0] = time
+		stagger_instances_2 = {}
 
-		local num = 1.75
+		local stagger_instances = stagger_instances_2
 
-		if arg_30_2.num_staggers >= num_30 then
-			for k, v in pairs(stagger_instances) do
-				local var_30_9 = BLACKBOARDS[k]
+		::label_30_0::
 
-				if not (not (not var_30_9 and var_30_9.stagger_time) and not (time > v + num)) then
-					stagger_instances[k] = nil
-					arg_30_2.num_staggers = arg_30_2.num_staggers - 1
+		template_data.stagger_instances = stagger_instances
+
+		local t = Managers.time:time("game")
+
+		if not stagger_instances[attacked_unit] then
+			local num_staggers = template_data.num_staggers
+
+			num_staggers = not not num_staggers or not not 0
+			template_data.num_staggers = num_staggers + 1
+		end
+
+		stagger_instances[attacked_unit] = t
+
+		local stagger_duration = 1.75
+
+		if template_data.num_staggers >= FAST_STAFF_ATTACK_TARGET then
+			for unit, stagger_t in pairs(stagger_instances) do
+				local bb = BLACKBOARDS[unit]
+				local still_in_stagger = not bb or not not bb.stagger_time
+
+				if not still_in_stagger or t > stagger_t + stagger_duration then
+					stagger_instances[unit] = nil
+					template_data.num_staggers = template_data.num_staggers - 1
 				end
 			end
 		end
 
-		if arg_30_2.num_staggers >= num_30 then
-			arg_30_2[owner:stats_id()] = true
+		if template_data.num_staggers >= FAST_STAFF_ATTACK_TARGET then
+			template_data[player:stats_id()] = true
 
-			rpc_increment_stat(var_30_2, "shovel_fast_staff_attack")
+			rpc_increment_stat(instigator, "shovel_fast_staff_attack")
 		end
 	end
 }
 
-local num_31 = 250
+local STAFF_BALEFIRE_TARGET = 250
 
 achievements.shovel_staff_balefire = {
 	always_run = true,
@@ -665,61 +718,72 @@ achievements.shovel_staff_balefire = {
 	required_dlc = "shovel",
 	desc = function ()
 		-- function 31
-		return string.format(Localize("achv_staff_balefire_desc"), num_31)
+		return string.format(Localize("achv_staff_balefire_desc"), STAFF_BALEFIRE_TARGET)
 	end,
 	events = {
 		"on_dot_applied"
 	},
-	completed = function (self, arg_32_1, arg_32_2)
+	completed = function (statistics_db, stats_id, template_data)
 		-- function 32
-		return self:get_persistent_stat(arg_32_1, "shovel_staff_balefire") >= num_31
+		return statistics_db:get_persistent_stat(stats_id, "shovel_staff_balefire") >= STAFF_BALEFIRE_TARGET
 	end,
-	on_event = function (arg_33_0, arg_33_1, arg_33_2, arg_33_3, arg_33_4)
+	on_event = function (statistics_db, stats_id, template_data, event_name, event_data)
 		-- function 33
 		if not Managers.state.network.is_server then
 			return
 		end
 
-		local var_33_0 = arg_33_4[3]
-		local owner = Managers.player:owner(var_33_0)
+		local attacker_unit = event_data[3]
+		local player = Managers.player:owner(attacker_unit)
 
-		if not owner and not owner.bot_player then
+		if not player or player.bot_player then
 			return
 		end
 
-		if arg_33_4[2] ~= "bw_necromancy_staff" then
+		local damage_source = event_data[2]
+
+		if damage_source ~= "bw_necromancy_staff" then
 			return
 		end
 
-		local var_33_2 = arg_33_4[1]
+		local dot_template_name = event_data[1]
 
-		if not BalefireDots[var_33_2] then
+		if not BalefireDots[dot_template_name] then
 			return
 		end
 
-		local has_extension = ScriptUnit.has_extension(var_33_0, "career_system")
+		local career_extension = ScriptUnit.has_extension(attacker_unit, "career_system")
 
-		if not (not has_extension and has_extension:career_name() == "bw_necromancer") then
+		if not career_extension or career_extension:career_name() ~= "bw_necromancer" then
 			return
 		end
 
-		local counter = arg_33_2.counter
+		local counter_2 = template_data.counter
 
-		counter = counter or {}
-		arg_33_2.counter = counter
+		if not counter_2 then
+			-- Nothing
+		end
 
-		local var_33_5 = counter[var_33_0]
+		counter_2 = {}
 
-		var_33_5 = var_33_5 or 0
-		counter[var_33_0] = var_33_5 + 1
+		local counter = counter_2
 
-		if counter[var_33_0] <= num_31 then
-			rpc_increment_stat(var_33_0, "shovel_staff_balefire")
+		::label_33_0::
+
+		template_data.counter = counter
+
+		local var_33_1 = counter[attacker_unit]
+
+		var_33_1 = not not var_33_1 or not not 0
+		counter[attacker_unit] = var_33_1 + 1
+
+		if counter[attacker_unit] <= STAFF_BALEFIRE_TARGET then
+			rpc_increment_stat(attacker_unit, "shovel_staff_balefire")
 		end
 	end
 }
 
-local num_32 = 25
+local BIG_SUCK_TARGET = 25
 
 achievements.shovel_big_suck = {
 	display_completion_ui = true,
@@ -729,64 +793,67 @@ achievements.shovel_big_suck = {
 	required_dlc = "shovel",
 	desc = function ()
 		-- function 34
-		return string.format(Localize("achv_big_suck_desc"), num_32)
+		return string.format(Localize("achv_big_suck_desc"), BIG_SUCK_TARGET)
 	end,
 	events = {
 		"register_kill"
 	},
-	progress = function (self, arg_35_1, arg_35_2)
+	progress = function (statistics_db, stats_id, template_data)
 		-- function 35
-		local get_persistent_stat = self:get_persistent_stat(arg_35_1, "shovel_big_suck")
+		local completed = statistics_db:get_persistent_stat(stats_id, "shovel_big_suck")
 
 		return {
-			get_persistent_stat,
-			num_32
+			completed,
+			BIG_SUCK_TARGET
 		}
 	end,
-	completed = function (self, arg_36_1, arg_36_2)
+	completed = function (statistics_db, stats_id, template_data)
 		-- function 36
-		return self:get_persistent_stat(arg_36_1, "shovel_big_suck") >= num_32
+		return statistics_db:get_persistent_stat(stats_id, "shovel_big_suck") >= BIG_SUCK_TARGET
 	end,
-	on_event = function (self, arg_37_1, arg_37_2, arg_37_3, arg_37_4)
+	on_event = function (statistics_db, stats_id, template_data, event_name, event_data)
 		-- function 37
 		local local_player = Managers.player:local_player()
-		local flag = not local_player and local_player.player_unit
-		local var_37_2 = arg_37_4[num_8]
-		local var_37_3 = var_37_2[DamageDataIndex.ATTACKER]
+		local local_player_unit = not not local_player and not not local_player.player_unit
+		local damage_data = event_data[register_kill_damage_data]
+		local attacker_unit = damage_data[DamageDataIndex.ATTACKER]
 
-		if not (not var_37_3 and flag == var_37_3) then
+		if attacker_unit and local_player_unit ~= attacker_unit then
 			return
 		end
 
-		local var_37_4 = arg_37_4[num_9]
+		local breed = event_data[register_kill_victim_breed]
 
-		if not (not var_37_4 and var_37_4.name == "chaos_warrior") then
+		if not breed or breed.name ~= "chaos_warrior" then
 			return
 		end
 
-		local var_37_5 = var_37_2[DamageDataIndex.DAMAGE_SOURCE_NAME]
-		local var_37_6 = rawget(ItemMasterList, var_37_5)
+		local damage_source = damage_data[DamageDataIndex.DAMAGE_SOURCE_NAME]
+		local item = rawget(ItemMasterList, damage_source)
+		local is_necro_staff = not not item and item.item_type == "bw_necromancy_staff"
 
-		if not (not var_37_6 and var_37_6.item_type == "bw_necromancy_staff") then
+		if not is_necro_staff then
 			return
 		end
 
-		if var_37_2[DamageDataIndex.ATTACK_TYPE] ~= "heavy_instant_projectile" then
+		local attack_type = damage_data[DamageDataIndex.ATTACK_TYPE]
+
+		if attack_type ~= "heavy_instant_projectile" then
 			return
 		end
 
-		local has_extension = ScriptUnit.has_extension(var_37_3, "career_system")
+		local career_extension = ScriptUnit.has_extension(attacker_unit, "career_system")
 
-		if not (not has_extension and has_extension:career_name() == "bw_necromancer") then
+		if not career_extension or career_extension:career_name() ~= "bw_necromancer" then
 			return
 		end
 
-		self:increment_stat(arg_37_1, "shovel_big_suck")
+		statistics_db:increment_stat(stats_id, "shovel_big_suck")
 	end
 }
 
-local num_33 = 15
-local num_34 = 5
+local BIG_CLEAVE_NUM_ENEMIES = 15
+local BIG_CLEAVE_TARGET = 5
 
 achievements.shovel_big_cleave = {
 	display_completion_ui = true,
@@ -796,40 +863,46 @@ achievements.shovel_big_cleave = {
 	required_dlc = "shovel",
 	desc = function ()
 		-- function 38
-		return string.format(Localize("achv_big_cleave_desc"), num_33, num_34)
+		return string.format(Localize("achv_big_cleave_desc"), BIG_CLEAVE_NUM_ENEMIES, BIG_CLEAVE_TARGET)
 	end,
 	events = {
 		"on_hit"
 	},
-	completed = function (self, arg_39_1, arg_39_2)
+	completed = function (statistics_db, stats_id, template_data)
 		-- function 39
-		return self:get_persistent_stat(arg_39_1, "shovel_big_cleave") >= num_34
+		return statistics_db:get_persistent_stat(stats_id, "shovel_big_cleave") >= BIG_CLEAVE_TARGET
 	end,
-	on_event = function (self, arg_40_1, arg_40_2, arg_40_3, arg_40_4)
+	on_event = function (statistics_db, stats_id, template_data, event_name, event_data)
 		-- function 40
-		if arg_40_4[9] ~= "bw_ghost_scythe" then
+		local damage_source = event_data[9]
+
+		if damage_source ~= "bw_ghost_scythe" then
 			return
 		end
 
-		if arg_40_4[2] == "aoe" then
+		local damage_type = event_data[2]
+
+		if damage_type == "aoe" then
 			return
 		end
 
 		local local_player = Managers.player:local_player()
-		local flag = not local_player and local_player.player_unit
-		local var_40_2 = arg_40_4[8]
+		local local_player_unit = not not local_player and not not local_player.player_unit
+		local attacker_unit = event_data[8]
 
-		if not (not var_40_2 and flag == var_40_2) then
+		if attacker_unit and local_player_unit ~= attacker_unit then
 			return
 		end
 
-		if arg_40_4[4] == num_33 + 1 then
-			self:increment_stat(arg_40_1, "shovel_big_cleave")
+		local target_number = event_data[4]
+
+		if target_number == BIG_CLEAVE_NUM_ENEMIES + 1 then
+			statistics_db:increment_stat(stats_id, "shovel_big_cleave")
 		end
 	end
 }
 
-local num_35 = 100
+local HEADSHOT_SCYTHE_TARGET = 100
 
 achievements.shovel_headshot_scythe = {
 	display_completion_ui = true,
@@ -839,55 +912,73 @@ achievements.shovel_headshot_scythe = {
 	required_dlc = "shovel",
 	desc = function ()
 		-- function 41
-		return string.format(Localize("achv_headshot_scythe_desc"), num_35)
+		return string.format(Localize("achv_headshot_scythe_desc"), HEADSHOT_SCYTHE_TARGET)
 	end,
 	events = {
 		"on_hit"
 	},
-	progress = function (self, arg_42_1, arg_42_2)
+	progress = function (statistics_db, stats_id, template_data)
 		-- function 42
-		local get_persistent_stat = self:get_persistent_stat(arg_42_1, "shovel_headshot_scythe")
+		local completed = statistics_db:get_persistent_stat(stats_id, "shovel_headshot_scythe")
 
 		return {
-			get_persistent_stat,
-			num_35
+			completed,
+			HEADSHOT_SCYTHE_TARGET
 		}
 	end,
-	completed = function (self, arg_43_1, arg_43_2)
+	completed = function (statistics_db, stats_id, template_data)
 		-- function 43
-		return self:get_persistent_stat(arg_43_1, "shovel_headshot_scythe") >= num_35
+		return statistics_db:get_persistent_stat(stats_id, "shovel_headshot_scythe") >= HEADSHOT_SCYTHE_TARGET
 	end,
-	on_event = function (self, arg_44_1, arg_44_2, arg_44_3, arg_44_4)
+	on_event = function (statistics_db, stats_id, template_data, event_name, event_data)
 		-- function 44
-		if arg_44_4[9] ~= "bw_ghost_scythe" then
+		local damage_source = event_data[9]
+
+		if damage_source ~= "bw_ghost_scythe" then
 			return
 		end
 
 		local local_player = Managers.player:local_player()
-		local flag = not local_player and local_player.player_unit
-		local var_44_2 = arg_44_4[8]
+		local local_player_unit = not not local_player and not not local_player.player_unit
+		local attacker_unit = event_data[8]
 
-		if not (not var_44_2 and flag == var_44_2) then
+		if attacker_unit and local_player_unit ~= attacker_unit then
 			return
 		end
 
-		if arg_44_4[3] == "head" then
-			self:increment_stat(arg_44_1, "shovel_headshot_scythe")
+		local hit_zone_name = event_data[3]
+
+		if hit_zone_name == "head" then
+			statistics_db:increment_stat(stats_id, "shovel_headshot_scythe")
 		end
 	end
 }
 
-local num_36 = 3
-local num_37 = 4
+local STAFF_GANDALF_GRACE_PERIOD = 3
+local STAFF_GANDALF_MIN_Z_DIFFERENCE = 4
 
-local function fn(self, arg_45_1)
+local function _staff_gandalf_check_tracked_unit(knockback_data, victim_unit)
 	-- function 45
-	local unbox = self.knockback_position:unbox()
-	local is_valid = Unit.is_valid(arg_45_1)
+	local knockback_position = knockback_data.knockback_position:unbox()
+	local is_valid = Unit.is_valid(victim_unit)
 
-	is_valid = not is_valid and not not Unit.is_frozen(arg_45_1) or Unit.local_position(arg_45_1, 0)
+	if is_valid then
+		if not Unit.is_frozen(victim_unit) then
+			is_valid = Unit.local_position(victim_unit, 0)
+		else
+			is_valid = false
+		end
+	end
 
-	if not (not is_valid and not (unbox[3] - is_valid[3] < num_37)) then
+	goto label_45_0
+
+	is_valid = true
+
+	local position = is_valid
+
+	::label_45_0::
+
+	if not position or knockback_position[3] - position[3] < STAFF_GANDALF_MIN_Z_DIFFERENCE then
 		return false
 	end
 
@@ -906,82 +997,98 @@ achievements.shovel_staff_gandalf = {
 		"on_hit",
 		"necromancer_staff_gandalf_delayed_check"
 	},
-	completed = function (self, arg_46_1, arg_46_2)
+	completed = function (statistics_db, stats_id, template_data)
 		-- function 46
-		return self:get_persistent_stat(arg_46_1, "shovel_staff_gandalf") >= 1
+		return statistics_db:get_persistent_stat(stats_id, "shovel_staff_gandalf") >= 1
 	end,
-	on_event = function (self, arg_47_1, arg_47_2, arg_47_3, arg_47_4)
+	on_event = function (statistics_db, stats_id, template_data, event_name, event_data)
 		-- function 47
-		local time = Managers.time:time("game")
+		local t = Managers.time:time("game")
 
-		if arg_47_3 == "register_kill" then
-			local var_47_1 = arg_47_4[num_7]
-			local tracked_units = arg_47_2.tracked_units
+		if event_name == "register_kill" then
+			local victim_unit = event_data[register_kill_victim_unit]
+			local tracked_units = template_data.tracked_units
 
-			tracked_units = not tracked_units and arg_47_2.tracked_units[var_47_1]
+			if tracked_units then
+				-- Nothing
+			end
 
-			if not tracked_units then
+			tracked_units = template_data.tracked_units[victim_unit]
+
+			local unit_data = tracked_units
+
+			::label_47_0::
+
+			if not unit_data then
 				return
 			end
 
-			if time - tracked_units.knockback_time > num_36 then
+			local knockback_time = unit_data.knockback_time
+
+			if t - knockback_time > STAFF_GANDALF_GRACE_PERIOD then
 				return false
 			end
 
-			if not fn(tracked_units, var_47_1) then
-				self:increment_stat(arg_47_1, "shovel_staff_gandalf")
+			if _staff_gandalf_check_tracked_unit(unit_data, victim_unit) then
+				statistics_db:increment_stat(stats_id, "shovel_staff_gandalf")
 
 				return
 			end
-		elseif arg_47_3 == "on_hit" then
-			local var_47_3 = arg_47_4[1]
-			local get_data = Unit.get_data(var_47_3, "breed")
+		elseif event_name == "on_hit" then
+			local victim_unit = event_data[1]
+			local breed = Unit.get_data(victim_unit, "breed")
 
-			if not (not get_data and get_data.name == "chaos_warrior") then
+			if not breed or breed.name ~= "chaos_warrior" then
 				return
 			end
 
-			if arg_47_4[9] ~= "bw_ghost_scythe" then
+			local damage_source = event_data[9]
+
+			if damage_source ~= "bw_ghost_scythe" then
 				return
 			end
 
-			if arg_47_4[2] ~= "aoe" then
+			local attack_type = event_data[2]
+
+			if attack_type ~= "aoe" then
 				return
 			end
 
-			local local_player = Managers.player:local_player()
-			local flag = not local_player and local_player.player_unit
-			local has_extension = ScriptUnit.has_extension(flag, "career_system")
+			local player = Managers.player:local_player()
+			local player_unit = not not player and not not player.player_unit
+			local career_extension = ScriptUnit.has_extension(player_unit, "career_system")
 
-			if not (not has_extension and has_extension:career_name() == "bw_necromancer") then
+			if not career_extension or career_extension:career_name() ~= "bw_necromancer" then
 				return
 			end
 
-			has_extension:get_passive_ability_by_name("bw_necromancer"):achievement_staff_gandalf_trigger(var_47_3, time, math.max(num_36, 6))
+			local passive = career_extension:get_passive_ability_by_name("bw_necromancer")
 
-			local tracked_units_2 = arg_47_2.tracked_units
+			passive:achievement_staff_gandalf_trigger(victim_unit, t, math.max(STAFF_GANDALF_GRACE_PERIOD, 6))
 
-			tracked_units_2 = tracked_units_2 or {}
-			arg_47_2.tracked_units = tracked_units_2
+			local tracked_units_2 = template_data.tracked_units
 
-			local var_47_9 = arg_47_2.tracked_units[var_47_3]
+			tracked_units_2 = not not tracked_units_2 or not not {}
+			template_data.tracked_units = tracked_units_2
 
-			if not var_47_9 then
-				var_47_9.knockback_time = time
+			local existing_data = template_data.tracked_units[victim_unit]
 
-				var_47_9.knockback_position:store(POSITION_LOOKUP[var_47_3])
+			if existing_data then
+				existing_data.knockback_time = t
+
+				existing_data.knockback_position:store(POSITION_LOOKUP[victim_unit])
 			else
-				arg_47_2.tracked_units[var_47_3] = {
-					knockback_time = time,
-					knockback_position = Vector3Box(POSITION_LOOKUP[var_47_3])
+				template_data.tracked_units[victim_unit] = {
+					knockback_time = t,
+					knockback_position = Vector3Box(POSITION_LOOKUP[victim_unit])
 				}
 			end
 		else
-			local var_47_10 = arg_47_4[1]
-			local var_47_11 = arg_47_2.tracked_units[var_47_10]
+			local victim_unit = event_data[1]
+			local unit_data = template_data.tracked_units[victim_unit]
 
-			if not fn(var_47_11, var_47_10) then
-				self:increment_stat(arg_47_1, "shovel_staff_gandalf")
+			if _staff_gandalf_check_tracked_unit(unit_data, victim_unit) then
+				statistics_db:increment_stat(stats_id, "shovel_staff_gandalf")
 
 				return
 			end
@@ -989,7 +1096,7 @@ achievements.shovel_staff_gandalf = {
 	end
 }
 
-local num_38 = 500
+local SKELETON_BALEFIRE_TARGET = 500
 
 achievements.shovel_skeleton_balefire = {
 	always_run = true,
@@ -1000,94 +1107,95 @@ achievements.shovel_skeleton_balefire = {
 	required_dlc = "shovel",
 	desc = function ()
 		-- function 48
-		return string.format(Localize("achv_skeleton_balefire_desc"), num_38)
+		return string.format(Localize("achv_skeleton_balefire_desc"), SKELETON_BALEFIRE_TARGET)
 	end,
 	events = {
 		"on_damage_dealt"
 	},
-	progress = function (self, arg_49_1, arg_49_2)
+	progress = function (statistics_db, stats_id, template_data)
 		-- function 49
-		local get_persistent_stat = self:get_persistent_stat(arg_49_1, "shovel_skeleton_balefire")
+		local completed = statistics_db:get_persistent_stat(stats_id, "shovel_skeleton_balefire")
 
 		return {
-			get_persistent_stat,
-			num_38
+			completed,
+			SKELETON_BALEFIRE_TARGET
 		}
 	end,
-	completed = function (self, arg_50_1, arg_50_2)
+	completed = function (statistics_db, stats_id, template_data)
 		-- function 50
-		return self:get_persistent_stat(arg_50_1, "shovel_skeleton_balefire") >= num_38
+		return statistics_db:get_persistent_stat(stats_id, "shovel_skeleton_balefire") >= SKELETON_BALEFIRE_TARGET
 	end,
-	on_event = function (arg_51_0, arg_51_1, arg_51_2, arg_51_3, arg_51_4)
+	on_event = function (statistics_db, stats_id, template_data, event_name, event_data)
 		-- function 51
 		if not Managers.state.network.is_server then
 			return
 		end
 
-		local var_51_0 = arg_51_4[2]
-		local get_commander_unit = Managers.state.entity:system("ai_commander_system"):get_commander_unit(var_51_0)
+		local attacker_unit = event_data[2]
+		local commander_system = Managers.state.entity:system("ai_commander_system")
+		local controlled_owner = commander_system:get_commander_unit(attacker_unit)
 
-		if not get_commander_unit then
+		if not controlled_owner then
 			return
 		end
 
-		local owner = Managers.player:owner(get_commander_unit)
+		local player = Managers.player:owner(controlled_owner)
 
-		if not owner then
+		if not player then
 			return
 		end
 
-		if not arg_51_2[owner:stats_id()] then
+		if template_data[player:stats_id()] then
 			return
 		end
 
-		local var_51_3 = arg_51_4[1]
-		local has_status, var_51_5 = Managers.state.status_effect:has_status(var_51_3, "burning_balefire")
+		local attacked_unit = event_data[1]
+		local burning_balefire, applied_this_frame = Managers.state.status_effect:has_status(attacked_unit, "burning_balefire")
 
-		if not has_status and not var_51_5 then
+		if not burning_balefire or applied_this_frame then
 			return
 		end
 
-		local count = arg_51_2.count
+		local count = template_data.count
 
-		count = count or {}
-		arg_51_2.count = count
+		count = not not count or not not {}
+		template_data.count = count
 
-		local count_2 = arg_51_2.count
-		local var_51_8 = arg_51_2.count[get_commander_unit]
+		local count_2 = template_data.count
+		local var_51_2 = template_data.count[controlled_owner]
 
-		var_51_8 = var_51_8 or 0
-		count_2[get_commander_unit] = var_51_8 + 1
+		var_51_2 = not not var_51_2 or not not 0
+		count_2[controlled_owner] = var_51_2 + 1
 
-		if arg_51_2.count[get_commander_unit] <= num_38 then
-			rpc_increment_stat(get_commander_unit, "shovel_skeleton_balefire")
+		if template_data.count[controlled_owner] <= SKELETON_BALEFIRE_TARGET then
+			rpc_increment_stat(controlled_owner, "shovel_skeleton_balefire")
 		else
-			arg_51_2[owner:stats_id()] = true
+			template_data[player:stats_id()] = true
 		end
 	end
 }
 
-local function fn_2(self, arg_52_1)
+local function _keep_skeletons_alive_stop_timer(template_data, t)
 	-- function 52
-	if not self.timer_start_t then
-		local num = arg_52_1 - self.timer_start_t
+	if template_data.timer_start_t then
+		local elapsed_time = t - template_data.timer_start_t
 
-		self.total_time = self.total_time + num
+		template_data.total_time = template_data.total_time + elapsed_time
 	end
 
-	self.timer_start_t = nil
+	template_data.timer_start_t = nil
 end
 
-local function fn_3(self, arg_53_1)
+local function _keep_skeletons_alive_start_timer(template_data, t)
 	-- function 53
-	fn_2(self, arg_53_1)
+	_keep_skeletons_alive_stop_timer(template_data, t)
 
-	self.timer_start_t = arg_53_1
+	template_data.timer_start_t = t
 end
 
-local num_39 = 4
-local num_40 = 0.95
-local num_41 = 95
+local KEEP_SKELETONS_ALIVE_NUM = 4
+local KEEP_SKELETONS_ALIVE_TIME_FRACTION = 0.95
+local ALIVE_PERCENT_VISUAL = 95
 
 achievements.shovel_keep_skeletons_alive = {
 	display_completion_ui = true,
@@ -1097,7 +1205,7 @@ achievements.shovel_keep_skeletons_alive = {
 	required_dlc = "shovel",
 	desc = function ()
 		-- function 54
-		return string.format(Localize("achv_keep_skeletons_alive_desc"), num_41)
+		return string.format(Localize("achv_keep_skeletons_alive_desc"), ALIVE_PERCENT_VISUAL)
 	end,
 	events = {
 		"on_controlled_unit_added",
@@ -1105,56 +1213,63 @@ achievements.shovel_keep_skeletons_alive = {
 		"on_round_started",
 		"register_completed_level"
 	},
-	completed = function (self, arg_55_1, arg_55_2)
+	completed = function (statistics_db, stats_id, template_data)
 		-- function 55
-		return self:get_persistent_stat(arg_55_1, "shovel_keep_skeletons_alive") >= 1
+		return statistics_db:get_persistent_stat(stats_id, "shovel_keep_skeletons_alive") >= 1
 	end,
-	on_event = function (self, arg_56_1, arg_56_2, arg_56_3, arg_56_4)
+	on_event = function (statistics_db, stats_id, template_data, event_name, event_data)
 		-- function 56
 		local local_player = Managers.player:local_player()
-		local flag = not local_player and local_player.player_unit
+		local local_player_unit = not not local_player and not not local_player.player_unit
 
-		if not flag then
+		if not local_player_unit then
 			return
 		end
 
-		if ScriptUnit.extension(flag, "career_system"):career_name() ~= "bw_necromancer" then
+		local career_ext = ScriptUnit.extension(local_player_unit, "career_system")
+
+		if career_ext:career_name() ~= "bw_necromancer" then
 			return
 		end
 
-		local time = Managers.time:time("game")
+		local t = Managers.time:time("game")
 
-		if arg_56_3 == "on_round_started" then
-			local level_start_t = arg_56_2.level_start_t
+		if event_name == "on_round_started" then
+			local level_start_t = template_data.level_start_t
 
-			level_start_t = level_start_t or time
-			arg_56_2.level_start_t = level_start_t
-			arg_56_2.total_time = 0
-		elseif not arg_56_2.level_start_t then
+			level_start_t = not not level_start_t or not not t
+			template_data.level_start_t = level_start_t
+			template_data.total_time = 0
+		elseif not template_data.level_start_t then
 			return
-		elseif arg_56_3 == "register_completed_level" then
-			fn_2(arg_56_2, time)
+		elseif event_name == "register_completed_level" then
+			_keep_skeletons_alive_stop_timer(template_data, t)
 
-			local level_start_t_2 = arg_56_2.level_start_t
+			local start_t = template_data.level_start_t
 
-			if not (not level_start_t_2 and level_start_t_2 == time) then
-				local num = time - level_start_t_2
+			if start_t and start_t ~= t then
+				local gametime = t - start_t
+				local skeleton_uptime = template_data.total_time
+				local uptime_fraction = skeleton_uptime / gametime
 
-				if arg_56_2.total_time / num >= num_40 then
-					self:increment_stat(arg_56_1, "shovel_keep_skeletons_alive")
+				if uptime_fraction >= KEEP_SKELETONS_ALIVE_TIME_FRACTION then
+					statistics_db:increment_stat(stats_id, "shovel_keep_skeletons_alive")
 				end
 			end
 		end
 
-		if ScriptUnit.extension(flag, "ai_commander_system"):get_controlled_units_count() < num_39 then
-			fn_2(arg_56_2, time)
+		local commander_extension = ScriptUnit.extension(local_player_unit, "ai_commander_system")
+		local num_controlled_units = commander_extension:get_controlled_units_count()
+
+		if num_controlled_units < KEEP_SKELETONS_ALIVE_NUM then
+			_keep_skeletons_alive_stop_timer(template_data, t)
 		else
-			fn_3(arg_56_2, time)
+			_keep_skeletons_alive_start_timer(template_data, t)
 		end
 	end
 }
 
-local tbl_4 = {
+local all_challenges = {
 	"shovel_complete_all_helmgart_levels_bw_necromancer",
 	"shovel_complete_25_missions_bw_necromancer",
 	"shovel_sac_vent",
@@ -1173,4 +1288,4 @@ local tbl_4 = {
 	"shovel_keep_skeletons_alive"
 }
 
-add_meta_challenge(achievements, "necro_complete_all", tbl_4, "mistress_of_necromancy", "shovel", nil, nil)
+add_meta_challenge(achievements, "necro_complete_all", all_challenges, "mistress_of_necromancy", "shovel", nil, nil)

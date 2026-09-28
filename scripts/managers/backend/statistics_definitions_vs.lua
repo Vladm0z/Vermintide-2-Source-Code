@@ -51,368 +51,368 @@ player.vs_badge_mob_damage_per_breed = {}
 player.vs_badge_warpfire_ambush_per_breed = {}
 player.state_damage_dealt_as_pactsworn_breed = {}
 
-for k, v in pairs(PlayerBreeds) do
-	player.vs_disables_per_breed[k] = {
+for breed_name, breed in pairs(PlayerBreeds) do
+	player.vs_disables_per_breed[breed_name] = {
 		value = 0,
 		sync_on_hot_join = true,
-		name = k
+		name = breed_name
 	}
-	player.vs_knockdowns_per_breed[k] = {
+	player.vs_knockdowns_per_breed[breed_name] = {
 		value = 0,
 		sync_on_hot_join = true,
-		name = k
+		name = breed_name
 	}
 
-	local str = "vs_kills_per_breed_" .. k
-	local str_2 = "vs_badge_knocked_down_target_per_breed" .. k
+	local db_kills_per_breed_name = "vs_kills_per_breed_" .. breed_name
+	local db_knocked_down_name = "vs_badge_knocked_down_target_per_breed" .. breed_name
 
-	player.vs_badge_knocked_down_target_per_breed[k] = {
+	player.vs_badge_knocked_down_target_per_breed[breed_name] = {
 		value = 0,
 		source = "player_data",
-		name = k,
-		database_name = str_2
+		name = breed_name,
+		database_name = db_knocked_down_name
 	}
 
-	local str_3 = "vs_badge_double_kill_per_breed_" .. k
+	local db_double_kill_per_breed_name = "vs_badge_double_kill_per_breed_" .. breed_name
 
-	player.vs_badge_double_kill_per_breed[k] = {
+	player.vs_badge_double_kill_per_breed[breed_name] = {
 		value = 0,
 		source = "player_data",
-		name = k,
-		database_name = str_3
+		name = breed_name,
+		database_name = db_double_kill_per_breed_name
 	}
 
-	local str_4 = "vs_badge_triple_kill_per_breed_" .. k
+	local db_triple_kill_per_breed_name = "vs_badge_triple_kill_per_breed_" .. breed_name
 
-	player.vs_badge_triple_kill_per_breed[k] = {
+	player.vs_badge_triple_kill_per_breed[breed_name] = {
 		value = 0,
 		source = "player_data",
-		name = k,
-		database_name = str_4
+		name = breed_name,
+		database_name = db_triple_kill_per_breed_name
 	}
 
-	local str_5 = "vs_badge_quadra_kill_per_breed_" .. k
+	local db_quadra_kill_per_breed_name = "vs_badge_quadra_kill_per_breed_" .. breed_name
 
-	player.vs_badge_quadra_kill_per_breed[k] = {
+	player.vs_badge_quadra_kill_per_breed[breed_name] = {
 		value = 0,
 		source = "player_data",
-		name = k,
-		database_name = str_5
+		name = breed_name,
+		database_name = db_quadra_kill_per_breed_name
 	}
 
-	local str_6 = "vs_badge_escaped_death_per_breed_" .. k
+	local db_vs_badge_escaped_death_per_breed_name = "vs_badge_escaped_death_per_breed_" .. breed_name
 
-	player.vs_badge_escaped_death_per_breed[k] = {
+	player.vs_badge_escaped_death_per_breed[breed_name] = {
 		value = 0,
 		source = "player_data",
-		name = k,
-		database_name = str_6
+		name = breed_name,
+		database_name = db_vs_badge_escaped_death_per_breed_name
 	}
 
-	local str_7 = "vs_badge_damage_invisible_per_breed_" .. k
+	local db_vs_badge_damage_invisible_per_breed_name = "vs_badge_damage_invisible_per_breed_" .. breed_name
 
-	player.vs_badge_damage_invisible_per_breed[k] = {
+	player.vs_badge_damage_invisible_per_breed[breed_name] = {
 		value = 0,
 		source = "player_data",
-		name = k,
-		database_name = str_7
+		name = breed_name,
+		database_name = db_vs_badge_damage_invisible_per_breed_name
 	}
 
-	local str_8 = "vs_badge_interrupt_hero_per_breed_" .. k
+	local db_vs_badge_interrupt_hero_per_breed_name = "vs_badge_interrupt_hero_per_breed_" .. breed_name
 
-	player.vs_badge_interrupt_hero_per_breed[k] = {
+	player.vs_badge_interrupt_hero_per_breed[breed_name] = {
 		value = 0,
 		source = "player_data",
-		name = k,
-		database_name = str_8
+		name = breed_name,
+		database_name = db_vs_badge_interrupt_hero_per_breed_name
 	}
 
-	local str_9 = "vs_badge_flame_a_hoisted_hero_per_breed_" .. k
+	local db_vs_badge_flame_a_hoisted_hero_name = "vs_badge_flame_a_hoisted_hero_per_breed_" .. breed_name
 
-	player.vs_badge_flame_a_hoisted_hero_per_breed[k] = {
+	player.vs_badge_flame_a_hoisted_hero_per_breed[breed_name] = {
 		value = 0,
 		source = "player_data",
-		name = k,
-		database_name = str_9
+		name = breed_name,
+		database_name = db_vs_badge_flame_a_hoisted_hero_name
 	}
 
-	local str_10 = "vs_badge_ratling_hit_all_heroes_per_breed_" .. k
+	local db_vs_badge_ratling_hit_all_heroes_name = "vs_badge_ratling_hit_all_heroes_per_breed_" .. breed_name
 
-	player.vs_badge_ratling_hit_all_heroes_per_breed[k] = {
+	player.vs_badge_ratling_hit_all_heroes_per_breed[breed_name] = {
 		value = 0,
 		source = "player_data",
-		name = k,
-		database_name = str_10
+		name = breed_name,
+		database_name = db_vs_badge_ratling_hit_all_heroes_name
 	}
 
-	local str_11 = "vs_badge_warpfire_hit_all_heroes_per_breed_" .. k
+	local db_vs_badge_warpfire_hit_all_heroes_name = "vs_badge_warpfire_hit_all_heroes_per_breed_" .. breed_name
 
-	player.vs_badge_warpfire_hit_all_heroes_per_breed[k] = {
+	player.vs_badge_warpfire_hit_all_heroes_per_breed[breed_name] = {
 		value = 0,
 		source = "player_data",
-		name = k,
-		database_name = str_11
+		name = breed_name,
+		database_name = db_vs_badge_warpfire_hit_all_heroes_name
 	}
 
-	local str_12 = "vs_badge_globadier_hit_all_heroes_per_breed_" .. k
+	local db_vs_badge_gloabadier_hit_all_heroes_name = "vs_badge_globadier_hit_all_heroes_per_breed_" .. breed_name
 
-	player.vs_badge_globadier_hit_all_heroes_per_breed[k] = {
+	player.vs_badge_globadier_hit_all_heroes_per_breed[breed_name] = {
 		value = 0,
 		source = "player_data",
-		name = k,
+		name = breed_name,
 		database_name = db_vs_badge_globadier_hit_all_heroes_name
 	}
 
-	local str_13 = "vs_badge_ratling_damage_in_one_clip_per_breed_" .. k
+	local db_vs_badge_ratling_damage_in_one_clip_name = "vs_badge_ratling_damage_in_one_clip_per_breed_" .. breed_name
 
-	player.vs_badge_ratling_damage_in_one_clip_per_breed[k] = {
+	player.vs_badge_ratling_damage_in_one_clip_per_breed[breed_name] = {
 		value = 0,
 		source = "player_data",
-		name = k,
-		database_name = str_13
+		name = breed_name,
+		database_name = db_vs_badge_ratling_damage_in_one_clip_name
 	}
 
-	local str_14 = "vs_badge_warpfire_damage_in_one_clip_per_breed_" .. k
+	local db_vs_badge_warpfire_damage_in_one_clip_name = "vs_badge_warpfire_damage_in_one_clip_per_breed_" .. breed_name
 
-	player.vs_badge_warpfire_damage_in_one_clip_per_breed[k] = {
+	player.vs_badge_warpfire_damage_in_one_clip_per_breed[breed_name] = {
 		value = 0,
 		source = "player_data",
-		name = k,
-		database_name = str_14
+		name = breed_name,
+		database_name = db_vs_badge_warpfire_damage_in_one_clip_name
 	}
 
-	local str_15 = "vs_badge_survive_grenade_per_breed_" .. k
+	local db_vs_badge_survive_grenade_per_breed_name = "vs_badge_survive_grenade_per_breed_" .. breed_name
 
-	player.vs_badge_survive_grenade_per_breed[k] = {
+	player.vs_badge_survive_grenade_per_breed[breed_name] = {
 		value = 0,
 		source = "player_data",
-		name = k,
-		database_name = str_15
+		name = breed_name,
+		database_name = db_vs_badge_survive_grenade_per_breed_name
 	}
 
-	local str_16 = "vs_badge_attack_healing_hero_per_breed_" .. k
+	local db_vs_badge_attack_healing_hero_per_breed_name = "vs_badge_attack_healing_hero_per_breed_" .. breed_name
 
-	player.vs_badge_attack_healing_hero_per_breed[k] = {
+	player.vs_badge_attack_healing_hero_per_breed[breed_name] = {
 		value = 0,
 		source = "player_data",
-		name = k,
-		database_name = str_16
+		name = breed_name,
+		database_name = db_vs_badge_attack_healing_hero_per_breed_name
 	}
 
-	local str_17 = "vs_badge_grab_a_hero_per_breed_" .. k
+	local db_vs_badge_grab_a_hero_per_breed_name = "vs_badge_grab_a_hero_per_breed_" .. breed_name
 
-	player.vs_badge_grab_a_hero_per_breed[k] = {
+	player.vs_badge_grab_a_hero_per_breed[breed_name] = {
 		value = 0,
 		source = "player_data",
-		name = k,
-		database_name = str_17
+		name = breed_name,
+		database_name = db_vs_badge_grab_a_hero_per_breed_name
 	}
 
-	local str_18 = "vs_badge_grab_two_heroes_per_breed_" .. k
+	local db_vs_badge_grab_two_heroes_per_breed_name = "vs_badge_grab_two_heroes_per_breed_" .. breed_name
 
-	player.vs_badge_grab_two_heroes_per_breed[k] = {
+	player.vs_badge_grab_two_heroes_per_breed[breed_name] = {
 		value = 0,
 		source = "player_data",
-		name = k,
-		database_name = str_18
+		name = breed_name,
+		database_name = db_vs_badge_grab_two_heroes_per_breed_name
 	}
 
-	local str_19 = "vs_badge_long_haul_per_breed_" .. k
+	local db_vs_badge_long_haul_per_breed_name = "vs_badge_long_haul_per_breed_" .. breed_name
 
-	player.vs_badge_long_haul_per_breed[k] = {
+	player.vs_badge_long_haul_per_breed[breed_name] = {
 		value = 0,
 		source = "player_data",
-		name = k,
-		database_name = str_19
+		name = breed_name,
+		database_name = db_vs_badge_long_haul_per_breed_name
 	}
 
-	local str_20 = "vs_badge_hit_dodging_hero_per_breed_" .. k
+	local db_vs_badge_hit_dodging_hero_per_breed_name = "vs_badge_hit_dodging_hero_per_breed_" .. breed_name
 
-	player.vs_badge_hit_dodging_hero_per_breed[k] = {
+	player.vs_badge_hit_dodging_hero_per_breed[breed_name] = {
 		value = 0,
 		source = "player_data",
-		name = k,
-		database_name = str_20
+		name = breed_name,
+		database_name = db_vs_badge_hit_dodging_hero_per_breed_name
 	}
 
-	local str_21 = "vs_badge_hoist_hero_per_breed_" .. k
+	local db_vs_badge_hoist_hero_per_breed_name = "vs_badge_hoist_hero_per_breed_" .. breed_name
 
-	player.vs_badge_hoist_hero_per_breed[k] = {
+	player.vs_badge_hoist_hero_per_breed[breed_name] = {
 		value = 0,
 		source = "player_data",
-		name = k,
-		database_name = str_21
+		name = breed_name,
+		database_name = db_vs_badge_hoist_hero_per_breed_name
 	}
 
-	local str_22 = "vs_badge_hit_while_reloading_per_breed_" .. k
+	local db_vs_badge_hit_while_reloading_per_breed_name = "vs_badge_hit_while_reloading_per_breed_" .. breed_name
 
-	player.vs_badge_hit_while_reloading_per_breed[k] = {
+	player.vs_badge_hit_while_reloading_per_breed[breed_name] = {
 		value = 0,
 		source = "player_data",
-		name = k,
-		database_name = str_22
+		name = breed_name,
+		database_name = db_vs_badge_hit_while_reloading_per_breed_name
 	}
 
-	local str_23 = "vs_badge_first_hit_per_breed_" .. k
+	local db_vs_badge_first_hit_per_breed_name = "vs_badge_first_hit_per_breed_" .. breed_name
 
-	player.vs_badge_first_hit_per_breed[k] = {
+	player.vs_badge_first_hit_per_breed[breed_name] = {
 		value = 0,
 		source = "player_data",
-		name = k,
-		database_name = str_23
+		name = breed_name,
+		database_name = db_vs_badge_first_hit_per_breed_name
 	}
 
-	local str_24 = "vs_badge_pounce_hero_per_breed_" .. k
+	local db_vs_badge_pounce_hero_per_breed_name = "vs_badge_pounce_hero_per_breed_" .. breed_name
 
-	player.vs_badge_pounce_hero_per_breed[k] = {
+	player.vs_badge_pounce_hero_per_breed[breed_name] = {
 		value = 0,
 		source = "player_data",
-		name = k,
-		database_name = str_24
+		name = breed_name,
+		database_name = db_vs_badge_pounce_hero_per_breed_name
 	}
 
-	local str_25 = "vs_badge_long_pounce_per_breed_" .. k
+	local db_vs_badge_long_pounce_per_breed_name = "vs_badge_long_pounce_per_breed_" .. breed_name
 
-	player.vs_badge_long_pounce_per_breed[k] = {
+	player.vs_badge_long_pounce_per_breed[breed_name] = {
 		value = 0,
 		source = "player_data",
-		name = k,
-		database_name = str_25
+		name = breed_name,
+		database_name = db_vs_badge_long_pounce_per_breed_name
 	}
 
-	local str_26 = "vs_badge_multiple_pounces_per_breed_" .. k
+	local db_vs_badge_multiple_pounces_per_breed_name = "vs_badge_multiple_pounces_per_breed_" .. breed_name
 
-	player.vs_badge_multiple_pounces_per_breed[k] = {
+	player.vs_badge_multiple_pounces_per_breed[breed_name] = {
 		value = 0,
 		source = "player_data",
-		name = k,
-		database_name = str_26
+		name = breed_name,
+		database_name = db_vs_badge_multiple_pounces_per_breed_name
 	}
 
-	local str_27 = "vs_badge_globe_impact_per_breed_" .. k
+	local db_vs_badge_globe_impact_per_breed_name = "vs_badge_globe_impact_per_breed_" .. breed_name
 
-	player.vs_badge_globe_impact_per_breed[k] = {
+	player.vs_badge_globe_impact_per_breed[breed_name] = {
 		value = 0,
 		source = "player_data",
-		name = k,
-		database_name = str_27
+		name = breed_name,
+		database_name = db_vs_badge_globe_impact_per_breed_name
 	}
 
-	local str_28 = "vs_badge_globe_impact_2_per_breed_" .. k
+	local db_vs_badge_globe_impact_2_per_breed_name = "vs_badge_globe_impact_2_per_breed_" .. breed_name
 
-	player.vs_badge_globe_impact_2_per_breed[k] = {
+	player.vs_badge_globe_impact_2_per_breed[breed_name] = {
 		value = 0,
 		source = "player_data",
-		name = k,
-		database_name = str_28
+		name = breed_name,
+		database_name = db_vs_badge_globe_impact_2_per_breed_name
 	}
 
-	local str_29 = "vs_badge_globe_impact_3_per_breed_" .. k
+	local db_vs_badge_globe_impact_3_per_breed_name = "vs_badge_globe_impact_3_per_breed_" .. breed_name
 
-	player.vs_badge_globe_impact_3_per_breed[k] = {
+	player.vs_badge_globe_impact_3_per_breed[breed_name] = {
 		value = 0,
 		source = "player_data",
-		name = k,
-		database_name = str_29
+		name = breed_name,
+		database_name = db_vs_badge_globe_impact_3_per_breed_name
 	}
 
-	local str_30 = "vs_badge_globe_impact_4_per_breed_" .. k
+	local db_vs_badge_globe_impact_4_per_breed_name = "vs_badge_globe_impact_4_per_breed_" .. breed_name
 
-	player.vs_badge_globe_impact_4_per_breed[k] = {
+	player.vs_badge_globe_impact_4_per_breed[breed_name] = {
 		value = 0,
 		source = "player_data",
-		name = k,
-		database_name = str_30
+		name = breed_name,
+		database_name = db_vs_badge_globe_impact_4_per_breed_name
 	}
 
-	local str_31 = "vs_badge_knock_down_dragged_hero_per_breed_" .. k
+	local db_vs_badge_knock_down_dragged_hero_per_breed_name = "vs_badge_knock_down_dragged_hero_per_breed_" .. breed_name
 
-	player.vs_badge_knock_down_dragged_hero_per_breed[k] = {
+	player.vs_badge_knock_down_dragged_hero_per_breed[breed_name] = {
 		value = 0,
 		source = "player_data",
-		name = k,
-		database_name = str_31
+		name = breed_name,
+		database_name = db_vs_badge_knock_down_dragged_hero_per_breed_name
 	}
 
-	local str_32 = "vs_badge_push_off_per_breed_" .. k
+	local db_vs_badge_push_off_per_breed_name = "vs_badge_push_off_per_breed_" .. breed_name
 
-	player.vs_badge_push_off_per_breed[k] = {
+	player.vs_badge_push_off_per_breed[breed_name] = {
 		value = 0,
 		source = "player_data",
-		name = k,
-		database_name = str_32
+		name = breed_name,
+		database_name = db_vs_badge_push_off_per_breed_name
 	}
 
-	local str_33 = "vs_badge_stabbing_frenzy_per_breed_" .. k
+	local db_vs_badge_stabbing_frenzy_per_breed_name = "vs_badge_stabbing_frenzy_per_breed_" .. breed_name
 
-	player.vs_badge_stabbing_frenzy_per_breed[k] = {
+	player.vs_badge_stabbing_frenzy_per_breed[breed_name] = {
 		value = 0,
 		source = "player_data",
-		name = k,
-		database_name = str_33
+		name = breed_name,
+		database_name = db_vs_badge_stabbing_frenzy_per_breed_name
 	}
 
-	local str_34 = "vs_badge_impact_revive_per_breed_" .. k
+	local db_vs_badge_impact_revive_per_breed_name = "vs_badge_impact_revive_per_breed_" .. breed_name
 
-	player.vs_badge_impact_revive_per_breed[k] = {
+	player.vs_badge_impact_revive_per_breed[breed_name] = {
 		value = 0,
 		source = "player_data",
-		name = k,
-		database_name = str_34
+		name = breed_name,
+		database_name = db_vs_badge_impact_revive_per_breed_name
 	}
 
-	local str_35 = "vs_badge_two_downs_one_clip_per_breed_" .. k
+	local db_vs_badge_two_downs_one_clip_per_breed_name = "vs_badge_two_downs_one_clip_per_breed_" .. breed_name
 
-	player.vs_badge_two_downs_one_clip_per_breed[k] = {
+	player.vs_badge_two_downs_one_clip_per_breed[breed_name] = {
 		value = 0,
 		source = "player_data",
-		name = k,
-		database_name = str_35
+		name = breed_name,
+		database_name = db_vs_badge_two_downs_one_clip_per_breed_name
 	}
 
-	local str_36 = "vs_badge_moving_target_per_breed_" .. k
+	local db_vs_badge_moving_target_per_breed_name = "vs_badge_moving_target_per_breed_" .. breed_name
 
-	player.vs_badge_moving_target_per_breed[k] = {
+	player.vs_badge_moving_target_per_breed[breed_name] = {
 		value = 0,
 		source = "player_data",
-		name = k,
-		database_name = str_36
+		name = breed_name,
+		database_name = db_vs_badge_moving_target_per_breed_name
 	}
 
-	local str_37 = "vs_badge_long_impact_per_breed_" .. k
+	local db_vs_badge_long_impact_per_breed_name = "vs_badge_long_impact_per_breed_" .. breed_name
 
-	player.vs_badge_long_impact_per_breed[k] = {
+	player.vs_badge_long_impact_per_breed[breed_name] = {
 		value = 0,
 		source = "player_data",
-		name = k,
-		database_name = str_37
+		name = breed_name,
+		database_name = db_vs_badge_long_impact_per_breed_name
 	}
 
-	local str_38 = "vs_badge_stealth_pounce_per_breed_" .. k
+	local db_vs_badge_stealth_pounce_per_breed_name = "vs_badge_stealth_pounce_per_breed_" .. breed_name
 
-	player.vs_badge_stealth_pounce_per_breed[k] = {
+	player.vs_badge_stealth_pounce_per_breed[breed_name] = {
 		value = 0,
 		source = "player_data",
-		name = k,
-		database_name = str_38
+		name = breed_name,
+		database_name = db_vs_badge_stealth_pounce_per_breed_name
 	}
 
-	local str_39 = "vs_badge_mob_damage_per_breed_" .. k
+	local db_vs_badge_mob_damage_per_breed_name = "vs_badge_mob_damage_per_breed_" .. breed_name
 
-	player.vs_badge_mob_damage_per_breed[k] = {
+	player.vs_badge_mob_damage_per_breed[breed_name] = {
 		value = 0,
 		source = "player_data",
-		name = k,
-		database_name = str_39
+		name = breed_name,
+		database_name = db_vs_badge_mob_damage_per_breed_name
 	}
 
-	local str_40 = "vs_badge_warpfire_ambush_per_breed_" .. k
+	local db_vs_badge_warpfire_ambush_per_breed_name = "vs_badge_warpfire_ambush_per_breed_" .. breed_name
 
-	player.vs_badge_warpfire_ambush_per_breed[k] = {
+	player.vs_badge_warpfire_ambush_per_breed[breed_name] = {
 		value = 0,
 		source = "player_data",
-		name = k,
-		database_name = str_40
+		name = breed_name,
+		database_name = db_vs_badge_warpfire_ambush_per_breed_name
 	}
 end
 
@@ -552,18 +552,18 @@ player.vs_rat_ogre_hit_leap = {
 	source = "player_data"
 }
 
-local str_41 = "vs_hero_eliminations"
+local db_vs_hero_eliminations = "vs_hero_eliminations"
 
-player[str_41] = {
+player[db_vs_hero_eliminations] = {
 	value = 0,
 	source = "player_data",
-	database_name = str_41
+	database_name = db_vs_hero_eliminations
 }
 
-for k_2, v_2 in pairs(PlayerBreeds) do
-	player.state_damage_dealt_as_pactsworn_breed[k_2] = {
+for breed_name, breed in pairs(PlayerBreeds) do
+	player.state_damage_dealt_as_pactsworn_breed[breed_name] = {
 		value = 0,
-		name = k_2
+		name = breed_name
 	}
 end
 

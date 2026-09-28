@@ -2,43 +2,52 @@
 
 local WorldMarkerTemplates = WorldMarkerTemplates
 
-WorldMarkerTemplates = WorldMarkerTemplates or {}
+WorldMarkerTemplates = not not WorldMarkerTemplates or not not {}
 WorldMarkerTemplates = WorldMarkerTemplates
 
-local str = "ping"
-local var_0_2 = WorldMarkerTemplates[str]
+local NAME = "ping"
+local var_0_1 = WorldMarkerTemplates[NAME]
 
-var_0_2 = var_0_2 or {}
-WorldMarkerTemplates[str] = var_0_2
-var_0_2.max_distance = 200
-var_0_2.screen_clamp = true
-var_0_2.life_time = 15
-var_0_2.position_offset = {
+if not var_0_1 then
+	-- Nothing
+end
+
+var_0_1 = {}
+
+local template = var_0_1
+
+::label_0_0::
+
+WorldMarkerTemplates[NAME] = template
+template.max_distance = 200
+template.screen_clamp = true
+template.life_time = 15
+template.position_offset = {
 	0,
 	0,
 	0.5
 }
-var_0_2.screen_margins = {
+template.screen_margins = {
 	down = 150,
 	up = 150,
 	left = 150,
 	right = 150
 }
 
-local tbl = {
+local WORLD_MARKER_CONTENT_LOOKUP = {
 	"world_marker_response_1",
 	"world_marker_response_2",
 	"world_marker_response_3"
 }
-local tbl_2 = {
+local WORLD_MARKER_ICON_LOOKUP = {
 	"world_marker_icon_response_1",
 	"world_marker_icon_response_2",
 	"world_marker_icon_response_3"
 }
 
-var_0_2.create_widget_definition = function (arg_1_0)
+template.create_widget_definition = function (scenegraph_id)
 	-- function 1
-	local num = 25
+	local arrow_offset = 25
 
 	return {
 		element = {
@@ -57,27 +66,27 @@ var_0_2.create_widget_definition = function (arg_1_0)
 					pass_type = "texture",
 					style_id = "world_marker_icon_response_1",
 					texture_id = "world_marker_icon_response_1",
-					content_check_function = function (self)
+					content_check_function = function (content)
 						-- function 2
-						return self.world_marker_response_1.show
+						return content.world_marker_response_1.show
 					end
 				},
 				{
 					pass_type = "texture",
 					style_id = "world_marker_icon_response_2",
 					texture_id = "world_marker_icon_response_2",
-					content_check_function = function (self)
+					content_check_function = function (content)
 						-- function 3
-						return self.world_marker_response_2.show
+						return content.world_marker_response_2.show
 					end
 				},
 				{
 					pass_type = "texture",
 					style_id = "world_marker_icon_response_3",
 					texture_id = "world_marker_icon_response_3",
-					content_check_function = function (self)
+					content_check_function = function (content)
 						-- function 4
-						return self.world_marker_response_3.show
+						return content.world_marker_response_3.show
 					end
 				},
 				{
@@ -89,16 +98,16 @@ var_0_2.create_widget_definition = function (arg_1_0)
 					pass_type = "rotated_texture",
 					style_id = "arrow",
 					texture_id = "arrow",
-					content_check_function = function (self)
+					content_check_function = function (content)
 						-- function 5
-						return self.is_clamped
+						return content.is_clamped
 					end
 				},
 				{
 					style_id = "text",
 					pass_type = "text",
 					text_id = "text",
-					content_check_function = function (arg_6_0)
+					content_check_function = function (content)
 						-- function 6
 						return Managers.mechanism:current_mechanism_name() ~= "versus"
 					end
@@ -303,7 +312,7 @@ var_0_2.create_widget_definition = function (arg_1_0)
 				horizontal_alignment = "center",
 				angle = 0,
 				pivot = {
-					7 + num,
+					7 + arrow_offset,
 					15
 				},
 				texture_size = {
@@ -321,7 +330,7 @@ var_0_2.create_widget_definition = function (arg_1_0)
 					160
 				},
 				offset = {
-					-num,
+					-arrow_offset,
 					0,
 					0
 				}
@@ -378,13 +387,13 @@ var_0_2.create_widget_definition = function (arg_1_0)
 			0,
 			0
 		},
-		scenegraph_id = arg_1_0
+		scenegraph_id = scenegraph_id
 	}
 end
 
-var_0_2.on_enter = function (self)
+template.on_enter = function (widget)
 	-- function 7
-	local content = self.content
+	local content = widget.content
 
 	content.spawn_progress_timer = 0
 	content.world_marker_response_1 = {}
@@ -392,74 +401,76 @@ var_0_2.on_enter = function (self)
 	content.world_marker_response_3 = {}
 end
 
-local function fn(arg_8_0, arg_8_1, arg_8_2)
+local function update_spawn_pulse_animation(progress_timer, dt, style)
 	-- function 8
-	arg_8_0 = arg_8_0 + arg_8_1
+	progress_timer = progress_timer + dt
 
-	local min = math.min(arg_8_0 / 1, 1)
-	local easeOutCubic = math.easeOutCubic(min)
-	local color = arg_8_2.color
-	local default_color = arg_8_2.default_color
-	local texture_size = arg_8_2.texture_size
-	local default_size = arg_8_2.default_size
+	local progress = math.min(progress_timer / 1, 1)
+	local anim_progress = math.easeOutCubic(progress)
+	local color = style.color
+	local default_color = style.default_color
+	local size = style.texture_size
+	local default_size = style.default_size
 
-	texture_size[1] = default_size[1] + default_size[1] * easeOutCubic
-	texture_size[2] = default_size[2] + default_size[2] * easeOutCubic
-	color[1] = default_color[1] - default_color[1] * easeOutCubic
+	size[1] = default_size[1] + default_size[1] * anim_progress
+	size[2] = default_size[2] + default_size[2] * anim_progress
+	color[1] = default_color[1] - default_color[1] * anim_progress
 
-	return min, min ~= 1
+	return progress, progress ~= 1
 end
 
-local function fn_2(arg_9_0, arg_9_1, arg_9_2)
+local function update_response_animation(progress_timer, dt, style)
 	-- function 9
-	arg_9_0 = arg_9_0 + arg_9_1 * 10
+	progress_timer = progress_timer + dt * 10
 
-	local min = math.min(arg_9_0 / 1, 1)
-	local num = 1 - math.easeOutCubic(min)
-	local color = arg_9_2.color
-	local default_color = arg_9_2.default_color
-	local texture_size = arg_9_2.texture_size
-	local default_size = arg_9_2.default_size
-	local offset = arg_9_2.offset
-	local default_offset = arg_9_2.default_offset
+	local progress = math.min(progress_timer / 1, 1)
+	local anim_progress = 1 - math.easeOutCubic(progress)
+	local color = style.color
+	local default_color = style.default_color
+	local size = style.texture_size
+	local default_size = style.default_size
+	local offset = style.offset
+	local default_offset = style.default_offset
 
-	offset[1] = default_offset[1] + default_offset[1] * 100 * num
-	offset[2] = default_offset[2] + default_offset[2] * 100 * num
-	texture_size[1] = default_size[1] + default_size[1] * 2 * num
-	texture_size[2] = default_size[2] + default_size[2] * 2 * num
-	color[1] = default_color[1] - default_color[1] * num
+	offset[1] = default_offset[1] + default_offset[1] * 100 * anim_progress
+	offset[2] = default_offset[2] + default_offset[2] * 100 * anim_progress
+	size[1] = default_size[1] + default_size[1] * 2 * anim_progress
+	size[2] = default_size[2] + default_size[2] * 2 * anim_progress
+	color[1] = default_color[1] - default_color[1] * anim_progress
 
-	return min, min ~= 1
+	return progress, progress ~= 1
 end
 
-var_0_2.update_function = function (arg_10_0, arg_10_1, arg_10_2, arg_10_3, arg_10_4, arg_10_5)
+template.update_function = function (ui_renderer, widget, marker, settings, dt, t)
 	-- function 10
-	local content = arg_10_1.content
-	local style = arg_10_1.style
+	local content = widget.content
+	local style = widget.style
 	local is_inside_frustum = content.is_inside_frustum
 	local is_under = content.is_under
 	local distance = content.distance
 	local angle = content.angle
 
-	if not content.spawn_progress_timer then
-		local var_10_6, var_10_7 = fn(content.spawn_progress_timer, arg_10_4, style.icon_spawn_pulse)
+	if content.spawn_progress_timer then
+		local progress, in_progress = update_spawn_pulse_animation(content.spawn_progress_timer, dt, style.icon_spawn_pulse)
 
-		content.spawn_progress_timer = not var_10_7 and var_10_6 and nil
+		content.spawn_progress_timer = (not in_progress or not progress) and not not nil
 	end
 
 	for i = 1, 3 do
-		local var_10_8 = tbl[i]
-		local var_10_9 = content[var_10_8]
+		local id = WORLD_MARKER_CONTENT_LOOKUP[i]
+		local response = content[id]
 
-		if not var_10_9.timer then
-			local var_10_10 = tbl_2[i]
-			local var_10_11, var_10_12 = fn_2(var_10_9.timer, arg_10_4, style[var_10_10])
+		if response.timer then
+			local icon_id = WORLD_MARKER_ICON_LOOKUP[i]
+			local progress, in_progress = update_response_animation(response.timer, dt, style[icon_id])
 
-			content[var_10_8].timer = not var_10_12 and var_10_11 and nil
+			content[id].timer = (not in_progress or not progress) and not not nil
 		end
 	end
 
-	style.arrow.angle = angle + math.pi * 0.5
+	local arrow_style = style.arrow
+
+	arrow_style.angle = angle + math.pi * 0.5
 
 	local str
 
@@ -477,15 +488,15 @@ var_0_2.update_function = function (arg_10_0, arg_10_1, arg_10_2, arg_10_3, arg_
 
 	content.distance_text = str
 
-	local clamp = math.clamp(0.3 + (1 - content.forward_dot_dir) * 499.99999999999955, 0, 1)
+	local am = math.clamp(0.3 + (1 - content.forward_dot_dir) * 499.99999999999955, 0, 1)
 
-	if clamp ~= 1 then
-		local num = 255 * clamp
+	if am ~= 1 then
+		local alpha = 255 * am
 
-		style.icon.color[1] = num
-		style.icon_bg.color[1] = num
-		style.arrow.color[1] = num
-		style.text.text_color[1] = num
+		style.icon.color[1] = alpha
+		style.icon_bg.color[1] = alpha
+		style.arrow.color[1] = alpha
+		style.text.text_color[1] = alpha
 	end
 
 	return true

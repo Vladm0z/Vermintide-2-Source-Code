@@ -1,33 +1,33 @@
 -- chunkname: @scripts/settings/dlcs/gecko/gecko_common_settings.lua
 
-local gecko = DLCSettings.gecko
+local settings = DLCSettings.gecko
 
-gecko.network_lookups = {
+settings.network_lookups = {
 	keep_decoration_paintings = "Paintings"
 }
-gecko.keep_decoration_file_names = {
+settings.keep_decoration_file_names = {
 	"scripts/settings/paintings_01"
 }
 
-local str = "resource_packages/keep_paintings/keep_paintings_inn_level_sounds_01"
+local extra_sound_package = "resource_packages/keep_paintings/keep_paintings_inn_level_sounds_01"
 
-gecko.extra_level_packages = {
+settings.extra_level_packages = {
 	inn_level = {
-		str
+		extra_sound_package
 	},
 	inn_level_celebrate = {
-		str
+		extra_sound_package
 	},
 	inn_level_halloween = {
-		str
+		extra_sound_package
 	},
 	inn_level_skulls = {
-		str
+		extra_sound_package
 	},
 	inn_level_sonnstill = {
-		str
+		extra_sound_package
 	},
 	keep_base = {
-		str
+		extra_sound_package
 	}
 }

@@ -2,12 +2,12 @@
 
 CameraState = class(CameraState)
 
-CameraState.init = function (self, arg_1_1, arg_1_2)
+CameraState.init = function (self, character_state_init_context, name)
 	-- function 1
-	self.name = arg_1_2
-	self.world = arg_1_1.world
-	self.unit = arg_1_1.unit
-	self.csm = arg_1_1.csm
+	self.name = name
+	self.world = character_state_init_context.world
+	self.unit = character_state_init_context.unit
+	self.csm = character_state_init_context.csm
 	self.temp_params = {}
 	self.camera_extension = ScriptUnit.extension(self.unit, "camera_system")
 end

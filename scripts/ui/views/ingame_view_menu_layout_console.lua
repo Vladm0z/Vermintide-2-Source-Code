@@ -1,62 +1,104 @@
 -- chunkname: @scripts/ui/views/ingame_view_menu_layout_console.lua
 
-local function fn()
+local function player_stuck_cb()
 	-- function 1
 	local level_key = Managers.state.game_mode:level_key()
-	local local_player = Managers.player:local_player()
+	local player = Managers.player:local_player()
 
-	if not local_player and not Unit.alive(local_player.player_unit) then
-		Managers.telemetry_events:player_stuck(local_player, level_key)
+	if player and Unit.alive(player.player_unit) then
+		Managers.telemetry_events:player_stuck(player, level_key)
 	end
 end
 
-local str = "https://vermintide2beta.com/?utm_medium=referral&utm_campaign=vermintide2beta&utm_source=ingame#challenge"
-local flag
+local tobii_contest_url = "https://vermintide2beta.com/?utm_medium=referral&utm_campaign=vermintide2beta&utm_source=ingame#challenge"
+local str
 
-flag = not IS_XB1 and "leave_party_menu_button_name_xb1" and "leave_party_menu_button_name"
+if IS_XB1 then
+	str = "leave_party_menu_button_name_xb1"
 
-local flag_2
+	goto label_0_0
+end
 
-flag_2 = not IS_XB1 and "disband_party_menu_button_name_xb1" and "disband_party_menu_button_name"
+str = "leave_party_menu_button_name"
 
-local flag_3
+local leave_party_button_text = str
 
-flag_3 = not IS_XB1 and "quit_menu_button_name_xb1" and "quit_menu_button_name_ps4"
+do
+	local str_2
+end
 
-local tbl = {}
+::label_0_0::
+
+if IS_XB1 then
+	str_2 = "disband_party_menu_button_name_xb1"
+
+	goto label_0_1
+end
+
+str_2 = "disband_party_menu_button_name"
+
+local disband_party_button_text = str_2
+
+do
+	local str_3
+end
+
+::label_0_1::
+
+if IS_XB1 then
+	str_3 = "quit_menu_button_name_xb1"
+
+	goto label_0_2
+end
+
+str_3 = "quit_menu_button_name_ps4"
+
+local quit_menu_button_text = str_3
+
+::label_0_2::
+
+local menu_layouts = {}
 
 function demo_inverted_func()
 	-- function 2
-	local get_service = Managers.input:get_service("Player")
+	local input_service = Managers.input:get_service("Player")
 
-	if not IS_WINDOWS then
-		local str = "win32"
+	if IS_WINDOWS then
+		local platform_key = "win32"
+		local input_filters = input_service:get_active_filters(platform_key)
+		local look_filter = input_filters.look
+		local function_data = look_filter.function_data
 		local flag
 
-		flag = get_service:get_active_filters(str).look.function_data.filter_type ~= "scale_vector3" or not "menu_invert_controls" or "menu_non_invert_controls"
+		flag = (function_data.filter_type ~= "scale_vector3" or not "menu_invert_controls") and not not "menu_non_invert_controls"
 
 		return flag
 	else
-		local PLATFORM = PLATFORM
+		local platform_key = PLATFORM
+		local input_filters = input_service:get_active_filters(platform_key)
+		local look_filter = input_filters.look_controller
+		local function_data = look_filter.function_data
 		local flag_2
 
-		flag_2 = get_service:get_active_filters(PLATFORM).look_controller.function_data.filter_type ~= "scale_vector3_xy_accelerated_x" or not "menu_invert_controls" or "menu_non_invert_controls"
+		flag_2 = (function_data.filter_type ~= "scale_vector3_xy_accelerated_x" or not "menu_invert_controls") and not not "menu_non_invert_controls"
 
 		return flag_2
 	end
 end
 
-local function fn_2(self)
+local function can_add_ingame_menu(params)
 	-- function 3
-	return self.force_ingame_menu
+	local variable_name = "force_ingame_menu"
+
+	return params[variable_name]
 end
 
-local function fn_3(arg_4_0)
+local function can_add_versus_menu(params)
 	-- function 4
-	return Managers.state.game_mode:game_mode_key() ~= "inn_vs" or fn_2(arg_4_0)
+	return Managers.state.game_mode:game_mode_key() == "inn_vs" and not not can_add_ingame_menu(params)
 end
 
-local tbl_2 = {
+local default_disable_for_mechanism = {
 	adventure = {
 		matchmaking = false,
 		matchmaking_ready = true,
@@ -73,7 +115,7 @@ local tbl_2 = {
 		not_matchmaking = false
 	}
 }
-local tbl_3 = {
+local disable_for_mechanism_versus_disabled = {
 	adventure = {
 		matchmaking = false,
 		matchmaking_ready = true,
@@ -90,18 +132,18 @@ local tbl_3 = {
 		not_matchmaking = false
 	}
 }
-local tbl_4 = {
+local HANDBOOK_OPTION = {
 	force_ingame_menu = true,
 	display_name = "tutorial_menu_header",
 	force_open = true,
 	fade = false,
 	transition_state = "handbook",
 	transition = "hero_view",
-	disable_for_mechanism = tbl_2
+	disable_for_mechanism = default_disable_for_mechanism
 }
 
-if not IS_PS4 then
-	tbl = {
+if IS_PS4 then
+	menu_layouts = {
 		in_menu = {
 			alone = {
 				{
@@ -115,20 +157,20 @@ if not IS_PS4 then
 					fade = true,
 					transition_state = "character",
 					transition = "character_selection",
-					disable_for_mechanism = tbl_2
+					disable_for_mechanism = default_disable_for_mechanism
 				},
-				tbl_4,
+				HANDBOOK_OPTION,
 				{
 					fade = true,
 					transition = "options_menu",
 					display_name = "options_menu_button_name",
-					disable_for_mechanism = tbl_2
+					disable_for_mechanism = default_disable_for_mechanism
 				},
 				{
 					fade = true,
 					transition = "console_friends_menu",
 					display_name = "console_friends_menu_button_name",
-					disable_for_mechanism = tbl_2
+					disable_for_mechanism = default_disable_for_mechanism
 				},
 				{
 					fade = false,
@@ -138,7 +180,7 @@ if not IS_PS4 then
 				{
 					fade = false,
 					transition = "return_to_title_screen_hero_view",
-					display_name = flag_3
+					display_name = quit_menu_button_text
 				}
 			},
 			host = {
@@ -153,30 +195,30 @@ if not IS_PS4 then
 					fade = true,
 					transition_state = "character",
 					transition = "character_selection",
-					disable_for_mechanism = tbl_2
+					disable_for_mechanism = default_disable_for_mechanism
 				},
-				tbl_4,
+				HANDBOOK_OPTION,
 				{
 					fade = true,
 					transition = "options_menu",
 					display_name = "options_menu_button_name",
-					disable_for_mechanism = tbl_2
+					disable_for_mechanism = default_disable_for_mechanism
 				},
 				{
 					fade = true,
 					transition = "console_friends_menu",
 					display_name = "console_friends_menu_button_name",
-					disable_for_mechanism = tbl_2
+					disable_for_mechanism = default_disable_for_mechanism
 				},
 				{
 					fade = false,
 					transition = "leave_group_hero_view",
-					display_name = flag_2
+					display_name = disband_party_button_text
 				},
 				{
 					fade = false,
 					transition = "return_to_title_screen_hero_view",
-					display_name = flag_3
+					display_name = quit_menu_button_text
 				}
 			},
 			client = {
@@ -191,30 +233,30 @@ if not IS_PS4 then
 					fade = true,
 					transition_state = "character",
 					transition = "character_selection",
-					disable_for_mechanism = tbl_2
+					disable_for_mechanism = default_disable_for_mechanism
 				},
-				tbl_4,
+				HANDBOOK_OPTION,
 				{
 					fade = true,
 					transition = "options_menu",
 					display_name = "options_menu_button_name",
-					disable_for_mechanism = tbl_2
+					disable_for_mechanism = default_disable_for_mechanism
 				},
 				{
 					fade = true,
 					transition = "console_friends_menu",
 					display_name = "console_friends_menu_button_name",
-					disable_for_mechanism = tbl_2
+					disable_for_mechanism = default_disable_for_mechanism
 				},
 				{
 					fade = false,
 					transition = "leave_group_hero_view",
-					display_name = flag
+					display_name = leave_party_button_text
 				},
 				{
 					fade = false,
 					transition = "return_to_title_screen_hero_view",
-					display_name = flag_3
+					display_name = quit_menu_button_text
 				}
 			},
 			demo = {
@@ -248,19 +290,19 @@ if not IS_PS4 then
 					fade = true,
 					transition_state = "character",
 					transition = "character_selection",
-					disable_for_mechanism = tbl_2
+					disable_for_mechanism = default_disable_for_mechanism
 				},
-				tbl_4,
+				HANDBOOK_OPTION,
 				{
 					fade = true,
 					transition = "options_menu",
 					display_name = "options_menu_button_name",
-					disable_for_mechanism = tbl_2
+					disable_for_mechanism = default_disable_for_mechanism
 				},
 				{
 					fade = false,
 					transition = "return_to_title_screen_hero_view",
-					display_name = flag_3
+					display_name = quit_menu_button_text
 				}
 			}
 		},
@@ -275,13 +317,13 @@ if not IS_PS4 then
 					fade = true,
 					transition = "options_menu",
 					display_name = "options_menu_button_name",
-					disable_for_mechanism = tbl_2
+					disable_for_mechanism = default_disable_for_mechanism
 				},
 				{
 					fade = true,
 					transition = "console_friends_menu",
 					display_name = "console_friends_menu_button_name",
-					disable_for_mechanism = tbl_2
+					disable_for_mechanism = default_disable_for_mechanism
 				},
 				{
 					fade = false,
@@ -291,7 +333,7 @@ if not IS_PS4 then
 				{
 					fade = false,
 					transition = "return_to_title_screen_hero_view",
-					display_name = flag_3
+					display_name = quit_menu_button_text
 				}
 			},
 			host = {
@@ -304,23 +346,23 @@ if not IS_PS4 then
 					fade = true,
 					transition = "options_menu",
 					display_name = "options_menu_button_name",
-					disable_for_mechanism = tbl_2
+					disable_for_mechanism = default_disable_for_mechanism
 				},
 				{
 					fade = true,
 					transition = "console_friends_menu",
 					display_name = "console_friends_menu_button_name",
-					disable_for_mechanism = tbl_2
+					disable_for_mechanism = default_disable_for_mechanism
 				},
 				{
 					fade = false,
 					transition = "leave_group_hero_view",
-					display_name = flag_2
+					display_name = disband_party_button_text
 				},
 				{
 					fade = false,
 					transition = "return_to_title_screen_hero_view",
-					display_name = flag_3
+					display_name = quit_menu_button_text
 				}
 			},
 			client = {
@@ -333,23 +375,23 @@ if not IS_PS4 then
 					fade = true,
 					transition = "options_menu",
 					display_name = "options_menu_button_name",
-					disable_for_mechanism = tbl_2
+					disable_for_mechanism = default_disable_for_mechanism
 				},
 				{
 					fade = true,
 					transition = "console_friends_menu",
 					display_name = "console_friends_menu_button_name",
-					disable_for_mechanism = tbl_2
+					disable_for_mechanism = default_disable_for_mechanism
 				},
 				{
 					fade = false,
 					transition = "leave_group_hero_view",
-					display_name = flag
+					display_name = leave_party_button_text
 				},
 				{
 					fade = false,
 					transition = "return_to_title_screen_hero_view",
-					display_name = flag_3
+					display_name = quit_menu_button_text
 				}
 			},
 			tutorial = {
@@ -368,7 +410,7 @@ if not IS_PS4 then
 				},
 				{
 					transition = "return_to_title_screen_hero_view",
-					display_name = flag_3
+					display_name = quit_menu_button_text
 				}
 			},
 			demo = {
@@ -400,7 +442,7 @@ if not IS_PS4 then
 					fade = true,
 					transition = "options_menu",
 					display_name = "options_menu_button_name",
-					disable_for_mechanism = tbl_2
+					disable_for_mechanism = default_disable_for_mechanism
 				},
 				{
 					fade = false,
@@ -410,13 +452,13 @@ if not IS_PS4 then
 				{
 					fade = false,
 					transition = "return_to_title_screen_hero_view",
-					display_name = flag_3
+					display_name = quit_menu_button_text
 				}
 			}
 		}
 	}
-elseif not IS_XB1 then
-	tbl = {
+elseif IS_XB1 then
+	menu_layouts = {
 		in_menu = {
 			alone = {
 				{
@@ -430,20 +472,20 @@ elseif not IS_XB1 then
 					fade = true,
 					transition_state = "character",
 					transition = "character_selection",
-					disable_for_mechanism = tbl_2
+					disable_for_mechanism = default_disable_for_mechanism
 				},
-				tbl_4,
+				HANDBOOK_OPTION,
 				{
 					fade = true,
 					transition = "options_menu",
 					display_name = "options_menu_button_name",
-					disable_for_mechanism = tbl_2
+					disable_for_mechanism = default_disable_for_mechanism
 				},
 				{
 					fade = true,
 					transition = "console_friends_menu",
 					display_name = "console_friends_menu_button_name",
-					disable_for_mechanism = tbl_2
+					disable_for_mechanism = default_disable_for_mechanism
 				},
 				{
 					fade = false,
@@ -453,7 +495,7 @@ elseif not IS_XB1 then
 				{
 					fade = false,
 					transition = "return_to_title_screen_hero_view",
-					display_name = flag_3
+					display_name = quit_menu_button_text
 				}
 			},
 			host = {
@@ -468,30 +510,30 @@ elseif not IS_XB1 then
 					fade = true,
 					transition_state = "character",
 					transition = "character_selection",
-					disable_for_mechanism = tbl_2
+					disable_for_mechanism = default_disable_for_mechanism
 				},
-				tbl_4,
+				HANDBOOK_OPTION,
 				{
 					fade = true,
 					transition = "options_menu",
 					display_name = "options_menu_button_name",
-					disable_for_mechanism = tbl_2
+					disable_for_mechanism = default_disable_for_mechanism
 				},
 				{
 					fade = true,
 					transition = "console_friends_menu",
 					display_name = "console_friends_menu_button_name",
-					disable_for_mechanism = tbl_2
+					disable_for_mechanism = default_disable_for_mechanism
 				},
 				{
 					fade = false,
 					transition = "leave_group_hero_view",
-					display_name = flag_2
+					display_name = disband_party_button_text
 				},
 				{
 					fade = false,
 					transition = "return_to_title_screen_hero_view",
-					display_name = flag_3
+					display_name = quit_menu_button_text
 				}
 			},
 			client = {
@@ -506,30 +548,30 @@ elseif not IS_XB1 then
 					fade = true,
 					transition_state = "character",
 					transition = "character_selection",
-					disable_for_mechanism = tbl_2
+					disable_for_mechanism = default_disable_for_mechanism
 				},
-				tbl_4,
+				HANDBOOK_OPTION,
 				{
 					fade = true,
 					transition = "options_menu",
 					display_name = "options_menu_button_name",
-					disable_for_mechanism = tbl_2
+					disable_for_mechanism = default_disable_for_mechanism
 				},
 				{
 					fade = true,
 					transition = "console_friends_menu",
 					display_name = "console_friends_menu_button_name",
-					disable_for_mechanism = tbl_2
+					disable_for_mechanism = default_disable_for_mechanism
 				},
 				{
 					fade = false,
 					transition = "leave_group_hero_view",
-					display_name = flag
+					display_name = leave_party_button_text
 				},
 				{
 					fade = false,
 					transition = "return_to_title_screen_hero_view",
-					display_name = flag_3
+					display_name = quit_menu_button_text
 				}
 			},
 			demo = {
@@ -563,19 +605,19 @@ elseif not IS_XB1 then
 					fade = true,
 					transition_state = "character",
 					transition = "character_selection",
-					disable_for_mechanism = tbl_2
+					disable_for_mechanism = default_disable_for_mechanism
 				},
-				tbl_4,
+				HANDBOOK_OPTION,
 				{
 					fade = true,
 					transition = "options_menu",
 					display_name = "options_menu_button_name",
-					disable_for_mechanism = tbl_2
+					disable_for_mechanism = default_disable_for_mechanism
 				},
 				{
 					fade = false,
 					transition = "return_to_title_screen_hero_view",
-					display_name = flag_3
+					display_name = quit_menu_button_text
 				}
 			}
 		},
@@ -590,13 +632,13 @@ elseif not IS_XB1 then
 					fade = true,
 					transition = "options_menu",
 					display_name = "options_menu_button_name",
-					disable_for_mechanism = tbl_2
+					disable_for_mechanism = default_disable_for_mechanism
 				},
 				{
 					fade = true,
 					transition = "console_friends_menu",
 					display_name = "console_friends_menu_button_name",
-					disable_for_mechanism = tbl_2
+					disable_for_mechanism = default_disable_for_mechanism
 				},
 				{
 					fade = false,
@@ -606,7 +648,7 @@ elseif not IS_XB1 then
 				{
 					fade = false,
 					transition = "return_to_title_screen_hero_view",
-					display_name = flag_3
+					display_name = quit_menu_button_text
 				}
 			},
 			host = {
@@ -619,23 +661,23 @@ elseif not IS_XB1 then
 					fade = true,
 					transition = "options_menu",
 					display_name = "options_menu_button_name",
-					disable_for_mechanism = tbl_2
+					disable_for_mechanism = default_disable_for_mechanism
 				},
 				{
 					fade = true,
 					transition = "console_friends_menu",
 					display_name = "console_friends_menu_button_name",
-					disable_for_mechanism = tbl_2
+					disable_for_mechanism = default_disable_for_mechanism
 				},
 				{
 					fade = false,
 					transition = "leave_group_hero_view",
-					display_name = flag_2
+					display_name = disband_party_button_text
 				},
 				{
 					fade = false,
 					transition = "return_to_title_screen_hero_view",
-					display_name = flag_3
+					display_name = quit_menu_button_text
 				}
 			},
 			client = {
@@ -648,23 +690,23 @@ elseif not IS_XB1 then
 					fade = true,
 					transition = "options_menu",
 					display_name = "options_menu_button_name",
-					disable_for_mechanism = tbl_2
+					disable_for_mechanism = default_disable_for_mechanism
 				},
 				{
 					fade = true,
 					transition = "console_friends_menu",
 					display_name = "console_friends_menu_button_name",
-					disable_for_mechanism = tbl_2
+					disable_for_mechanism = default_disable_for_mechanism
 				},
 				{
 					fade = false,
 					transition = "leave_group_hero_view",
-					display_name = flag
+					display_name = leave_party_button_text
 				},
 				{
 					fade = false,
 					transition = "return_to_title_screen_hero_view",
-					display_name = flag_3
+					display_name = quit_menu_button_text
 				}
 			},
 			tutorial = {
@@ -683,7 +725,7 @@ elseif not IS_XB1 then
 				},
 				{
 					transition = "return_to_title_screen_hero_view",
-					display_name = flag_3
+					display_name = quit_menu_button_text
 				}
 			},
 			demo = {
@@ -715,7 +757,7 @@ elseif not IS_XB1 then
 					fade = true,
 					transition = "options_menu",
 					display_name = "options_menu_button_name",
-					disable_for_mechanism = tbl_2
+					disable_for_mechanism = default_disable_for_mechanism
 				},
 				{
 					fade = false,
@@ -725,13 +767,13 @@ elseif not IS_XB1 then
 				{
 					fade = false,
 					transition = "return_to_title_screen_hero_view",
-					display_name = flag_3
+					display_name = quit_menu_button_text
 				}
 			}
 		}
 	}
 else
-	tbl = {
+	menu_layouts = {
 		in_menu = {
 			alone = {
 				{
@@ -745,7 +787,7 @@ else
 					fade = true,
 					transition_state = "character",
 					transition = "character_selection",
-					disable_for_mechanism = tbl_2
+					disable_for_mechanism = default_disable_for_mechanism
 				},
 				{
 					display_name = "inventory_menu_button_name",
@@ -754,8 +796,8 @@ else
 					transition_state = "overview",
 					transition = "hero_view",
 					force_open = true,
-					disable_for_mechanism = tbl_2,
-					can_add_function = fn_2
+					disable_for_mechanism = default_disable_for_mechanism,
+					can_add_function = can_add_ingame_menu
 				},
 				{
 					display_name = "interact_loot",
@@ -764,15 +806,15 @@ else
 					transition_state = "loot",
 					transition = "spoils_of_war",
 					force_open = true,
-					disable_for_mechanism = tbl_3,
-					can_add_function = fn_2
+					disable_for_mechanism = disable_for_mechanism_versus_disabled,
+					can_add_function = can_add_ingame_menu
 				},
-				tbl_4,
+				HANDBOOK_OPTION,
 				{
 					fade = true,
 					transition = "options_menu",
 					display_name = "options_menu_button_name",
-					disable_for_mechanism = tbl_2
+					disable_for_mechanism = default_disable_for_mechanism
 				},
 				{
 					fade = false,
@@ -797,7 +839,7 @@ else
 					fade = true,
 					transition_state = "character",
 					transition = "character_selection",
-					disable_for_mechanism = tbl_2
+					disable_for_mechanism = default_disable_for_mechanism
 				},
 				{
 					display_name = "inventory_menu_button_name",
@@ -806,8 +848,8 @@ else
 					transition_state = "overview",
 					transition = "hero_view",
 					force_open = true,
-					disable_for_mechanism = tbl_2,
-					can_add_function = fn_2
+					disable_for_mechanism = default_disable_for_mechanism,
+					can_add_function = can_add_ingame_menu
 				},
 				{
 					display_name = "interact_loot",
@@ -816,20 +858,20 @@ else
 					transition_state = "loot",
 					transition = "spoils_of_war",
 					force_open = true,
-					disable_for_mechanism = tbl_3,
-					can_add_function = fn_2
+					disable_for_mechanism = disable_for_mechanism_versus_disabled,
+					can_add_function = can_add_ingame_menu
 				},
-				tbl_4,
+				HANDBOOK_OPTION,
 				{
 					fade = true,
 					transition = "options_menu",
 					display_name = "options_menu_button_name",
-					disable_for_mechanism = tbl_2
+					disable_for_mechanism = default_disable_for_mechanism
 				},
 				{
 					fade = false,
 					transition = "leave_group_hero_view",
-					display_name = flag_2
+					display_name = disband_party_button_text
 				},
 				{
 					fade = false,
@@ -854,7 +896,7 @@ else
 					fade = true,
 					transition_state = "character",
 					transition = "character_selection",
-					disable_for_mechanism = tbl_2
+					disable_for_mechanism = default_disable_for_mechanism
 				},
 				{
 					display_name = "inventory_menu_button_name",
@@ -863,8 +905,8 @@ else
 					transition_state = "overview",
 					transition = "hero_view",
 					force_open = true,
-					disable_for_mechanism = tbl_2,
-					can_add_function = fn_2
+					disable_for_mechanism = default_disable_for_mechanism,
+					can_add_function = can_add_ingame_menu
 				},
 				{
 					display_name = "interact_loot",
@@ -873,20 +915,20 @@ else
 					transition_state = "loot",
 					transition = "spoils_of_war",
 					force_open = true,
-					disable_for_mechanism = tbl_3,
-					can_add_function = fn_2
+					disable_for_mechanism = disable_for_mechanism_versus_disabled,
+					can_add_function = can_add_ingame_menu
 				},
-				tbl_4,
+				HANDBOOK_OPTION,
 				{
 					fade = true,
 					transition = "options_menu",
 					display_name = "options_menu_button_name",
-					disable_for_mechanism = tbl_2
+					disable_for_mechanism = default_disable_for_mechanism
 				},
 				{
 					fade = false,
 					transition = "leave_group_hero_view",
-					display_name = flag
+					display_name = leave_party_button_text
 				},
 				{
 					fade = false,
@@ -930,7 +972,7 @@ else
 					fade = true,
 					transition = "options_menu",
 					display_name = "options_menu_button_name",
-					disable_for_mechanism = tbl_2
+					disable_for_mechanism = default_disable_for_mechanism
 				},
 				{
 					fade = false,
@@ -953,12 +995,12 @@ else
 					fade = true,
 					transition = "options_menu",
 					display_name = "options_menu_button_name",
-					disable_for_mechanism = tbl_2
+					disable_for_mechanism = default_disable_for_mechanism
 				},
 				{
 					fade = false,
 					transition = "leave_group_hero_view",
-					display_name = flag_2
+					display_name = disband_party_button_text
 				},
 				{
 					fade = false,
@@ -976,12 +1018,12 @@ else
 					fade = true,
 					transition = "options_menu",
 					display_name = "options_menu_button_name",
-					disable_for_mechanism = tbl_2
+					disable_for_mechanism = default_disable_for_mechanism
 				},
 				{
 					fade = false,
 					transition = "leave_group_hero_view",
-					display_name = flag
+					display_name = leave_party_button_text
 				},
 				{
 					fade = false,
@@ -1030,40 +1072,40 @@ else
 	}
 end
 
-if not GameSettingsDevelopment.use_global_chat and not IS_WINDOWS then
-	table.insert(tbl.in_menu.host, 4, {
+if GameSettingsDevelopment.use_global_chat and IS_WINDOWS then
+	table.insert(menu_layouts.in_menu.host, 4, {
 		fade = false,
 		transition = "chat_view",
 		display_name = "chat_menu_button_name"
 	})
-	table.insert(tbl.in_menu.client, 4, {
+	table.insert(menu_layouts.in_menu.client, 4, {
 		fade = false,
 		transition = "chat_view",
 		display_name = "chat_menu_button_name"
 	})
-	table.insert(tbl.in_menu.alone, 4, {
+	table.insert(menu_layouts.in_menu.alone, 4, {
 		fade = false,
 		transition = "chat_view",
 		display_name = "chat_menu_button_name"
 	})
-	table.insert(tbl.in_game.host, 4, {
+	table.insert(menu_layouts.in_game.host, 4, {
 		fade = false,
 		transition = "chat_view",
 		display_name = "chat_menu_button_name"
 	})
-	table.insert(tbl.in_game.client, 4, {
+	table.insert(menu_layouts.in_game.client, 4, {
 		fade = false,
 		transition = "chat_view",
 		display_name = "chat_menu_button_name"
 	})
-	table.insert(tbl.in_game.alone, 4, {
+	table.insert(menu_layouts.in_game.alone, 4, {
 		fade = false,
 		transition = "chat_view",
 		display_name = "chat_menu_button_name"
 	})
 end
 
-local tbl_5 = {
+local full_access_layout = {
 	{
 		display_name = "profile_menu_button_name",
 		fade = true,
@@ -1094,8 +1136,8 @@ local tbl_5 = {
 		transition_state = "overview",
 		transition = "hero_view",
 		force_open = true,
-		disable_for_mechanism = tbl_2,
-		can_add_function = fn_2
+		disable_for_mechanism = default_disable_for_mechanism,
+		can_add_function = can_add_ingame_menu
 	},
 	{
 		requires_player_unit = true,
@@ -1105,8 +1147,8 @@ local tbl_5 = {
 		fade = true,
 		transition = "hero_view",
 		transition_state = "overview",
-		disable_for_mechanism = tbl_2,
-		can_add_function = fn_2
+		disable_for_mechanism = default_disable_for_mechanism,
+		can_add_function = can_add_ingame_menu
 	},
 	{
 		requires_player_unit = true,
@@ -1116,8 +1158,8 @@ local tbl_5 = {
 		fade = true,
 		transition = "hero_view",
 		transition_state = "overview",
-		disable_for_mechanism = tbl_2,
-		can_add_function = fn_2
+		disable_for_mechanism = default_disable_for_mechanism,
+		can_add_function = can_add_ingame_menu
 	},
 	{
 		display_name = "achv_menu_achievements_category_title",
@@ -1131,19 +1173,19 @@ local tbl_5 = {
 		requires_player_unit = true,
 		fade = false,
 		transition = "start_menu_view",
-		disable_for_mechanism = tbl_2
+		disable_for_mechanism = default_disable_for_mechanism
 	},
 	{
 		fade = true,
 		transition = "options_menu",
 		display_name = "options_menu_button_name",
-		disable_for_mechanism = tbl_2
+		disable_for_mechanism = default_disable_for_mechanism
 	},
 	{
 		fade = true,
 		transition = "console_friends_menu",
 		display_name = "map_friend_button_tooltip",
-		disable_for_mechanism = tbl_2
+		disable_for_mechanism = default_disable_for_mechanism
 	},
 	{
 		fade = false,
@@ -1163,6 +1205,6 @@ local tbl_5 = {
 }
 
 return {
-	menu_layouts = tbl,
-	full_access_layout = tbl_5
+	menu_layouts = menu_layouts,
+	full_access_layout = full_access_layout
 }

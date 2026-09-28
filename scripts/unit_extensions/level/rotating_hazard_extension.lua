@@ -2,12 +2,12 @@
 
 RotatingHazardExtension = class(RotatingHazardExtension)
 
-local pi = math.pi
-local num = pi * 2
-local num_2 = 1
-local num_3 = 2
-local num_4 = 3
-local tbl = {
+local PI = math.pi
+local PI_2 = PI * 2
+local STATE_RUNNING = 1
+local STATE_PAUSED = 2
+local STATE_STOPPED = 3
+local SETTINGS = {
 	damage_entry = 40,
 	random_direction = true,
 	anticipation_delay = 5,
@@ -21,7 +21,7 @@ local tbl = {
 	buffs_on_tick = {
 		"wall_slow_debuff"
 	},
-	starting_state = num_4,
+	starting_state = STATE_STOPPED,
 	areas = {
 		{
 			angle_offset = 0,
@@ -39,99 +39,150 @@ local tbl = {
 			flow_name = "second",
 			width = 10,
 			length_offset = 1,
-			angle_offset = pi
+			angle_offset = PI
 		}
 	},
 	init_func = function ()
 		-- function 1
 		return
 	end,
-	update_func = function (arg_2_0, arg_2_1, arg_2_2, arg_2_3, arg_2_4, arg_2_5, arg_2_6, arg_2_7, arg_2_8, arg_2_9)
+	update_func = function (world, unit, settings, state, is_activating, area_settings, area_data, angle, rotation_direction, t)
 		-- function 2
-		if arg_2_4 == true then
+		if is_activating == true then
 			return
 		end
 
-		local num = 7
-		local num_3 = 0.3
-		local num_4 = 0.55
-		local num_5 = 2
-		local num_6 = 2
-		local num_7 = 0
-		local num_8 = 0.3
-		local num_9 = 0.4
-		local num_10 = pi / 15
-		local flag
+		local spawn_start_dist = 7
+		local min_spawn_radius = 0.3
+		local near_spawn_radius = 0.55
+		local far_spawn_radius = 2
+		local near_spawn_center_offset = 2
+		local far_spawn_center_offset = 0
+		local effect_spawn_cooldown = 0.3
+		local close_spawn_penalty = 0.4
+		local effect_spawn_rotation_offset_range = PI / 15
+		local num
 
-		flag = arg_2_3 ~= num_2 or not 1 or 0
+		if state == STATE_RUNNING then
+			num = 1
 
-		local axis_angle = Quaternion.axis_angle(Vector3.up(), arg_2_7 + arg_2_5.angle_offset + math.rad(arg_2_2.rotation_speed) * flag * arg_2_8)
-		local forward = Quaternion.forward(axis_angle)
-		local local_position = Unit.local_position(arg_2_1, 0)
-		local num_11 = arg_2_5.width / 2
-		local PLAYER_UNITS = Managers.state.side:get_side_from_name("heroes").PLAYER_UNITS
-		local last_index = arg_2_6.last_index
+			goto label_2_0
+		end
 
-		last_index = last_index or 1
+		num = 0
 
-		local hand_units_by_player = arg_2_6.hand_units_by_player
+		local lead_time = num
 
-		hand_units_by_player = hand_units_by_player or {}
-		arg_2_6.hand_units_by_player = hand_units_by_player
+		::label_2_0::
 
-		local count = #PLAYER_UNITS
-		local flag_2
+		local area_rotation = Quaternion.axis_angle(Vector3.up(), angle + area_settings.angle_offset + math.rad(settings.rotation_speed) * lead_time * rotation_direction)
+		local area_dir = Quaternion.forward(area_rotation)
+		local wall_pos = Unit.local_position(unit, 0)
+		local wall_half_width = area_settings.width / 2
+		local side = Managers.state.side:get_side_from_name("heroes")
+		local player_units = side.PLAYER_UNITS
+		local last_index_2 = area_data.last_index
 
-		flag_2 = not (count <= last_index) or not 0 or last_index
+		if not last_index_2 then
+			-- Nothing
+		end
 
-		for i = 0, count - 1 do
-			local num_12 = (i + flag_2) % count + 1
-			local var_2_20 = PLAYER_UNITS[num_12]
-			local var_2_21 = arg_2_6[var_2_20]
+		last_index_2 = 1
 
-			if not (not ALIVE[var_2_20] and not var_2_21 and not (var_2_21 <= arg_2_9)) then
-				local var_2_22 = POSITION_LOOKUP[var_2_20]
-				local length = Vector3.length(var_2_22 - local_position)
-				local min = math.min(length / arg_2_5.length, 1)
-				local num_13 = num_11 * min
-				local closest_point_on_line = Geometry.closest_point_on_line(var_2_22, local_position + forward * arg_2_5.length_offset, local_position + forward * arg_2_5.length)
-				local num_14 = var_2_22 - closest_point_on_line
-				local normalize = Vector3.normalize(num_14)
-				local length_2 = Vector3.length(num_14)
+		local last_index = last_index_2
 
-				if length_2 <= num_13 + num then
-					local flag_3 = not (length_2 <= num_13) or not var_2_22 or closest_point_on_line + normalize * num_13
-					local normalize_2 = Vector3.normalize(local_position - flag_3)
-					local length_3 = Vector3.length(local_position - flag_3)
+		::label_2_1::
 
-					if length_3 > arg_2_5.length then
-						flag_3 = flag_3 + normalize_2 * (length_3 - arg_2_5.length)
+		local hand_units_by_player_2 = area_data.hand_units_by_player
+
+		if not hand_units_by_player_2 then
+			-- Nothing
+		end
+
+		hand_units_by_player_2 = {}
+
+		local hand_units_by_player = hand_units_by_player_2
+
+		::label_2_2::
+
+		area_data.hand_units_by_player = hand_units_by_player
+
+		local num_players = #player_units
+		local num_2
+
+		if num_players <= last_index then
+			num_2 = 0
+
+			goto label_2_3
+		end
+
+		num_2 = last_index
+
+		local start_player_unit_idx = num_2
+
+		::label_2_3::
+
+		for i = 0, num_players - 1 do
+			local player_unit_idx = (i + start_player_unit_idx) % num_players + 1
+			local player_unit = player_units[player_unit_idx]
+			local next_fx_t = area_data[player_unit]
+
+			if ALIVE[player_unit] and (not next_fx_t or next_fx_t <= t) then
+				local pos = POSITION_LOOKUP[player_unit]
+				local distance_from_center = Vector3.length(pos - wall_pos)
+				local distance_from_center_t = math.min(distance_from_center / area_settings.length, 1)
+				local width_at_closest_point = wall_half_width * distance_from_center_t
+				local closest_pos = Geometry.closest_point_on_line(pos, wall_pos + area_dir * area_settings.length_offset, wall_pos + area_dir * area_settings.length)
+				local closest_to_player = pos - closest_pos
+				local closest_to_player_dir = Vector3.normalize(closest_to_player)
+				local closest_to_player_dist = Vector3.length(closest_to_player)
+
+				if closest_to_player_dist <= width_at_closest_point + spawn_start_dist then
+					local effect_center = (not (closest_to_player_dist <= width_at_closest_point) or not pos) and not not (closest_pos + closest_to_player_dir * width_at_closest_point)
+					local wall_edge_dir = Vector3.normalize(wall_pos - effect_center)
+					local wall_edge_dist = Vector3.length(wall_pos - effect_center)
+
+					if wall_edge_dist > area_settings.length then
+						local delta_adjustment = wall_edge_dist - area_settings.length
+
+						effect_center = effect_center + wall_edge_dir * delta_adjustment
 					end
 
-					local clamp = math.clamp(1 - length_2 / num_13, 0, 1)
-					local min_2 = math.min(math.lerp(num_4, num_5, clamp), math.max(num_13, num_3))
-					local min_3 = math.min(math.max(length_3 - arg_2_5.length_offset, 0), math.max(arg_2_5.length - length_3, 0))
-					local min_4 = math.min(math.lerp(num_6, num_7, clamp), min_3)
-					local num_15 = flag_3 + normalize_2 * ((math.random() - 0.5) * 2 * min_4)
+					local nearness = math.clamp(1 - closest_to_player_dist / width_at_closest_point, 0, 1)
+					local spawn_radius = math.min(math.lerp(near_spawn_radius, far_spawn_radius, nearness), math.max(width_at_closest_point, min_spawn_radius))
+					local distance_from_closest_edge = math.min(math.max(wall_edge_dist - area_settings.length_offset, 0), math.max(area_settings.length - wall_edge_dist, 0))
+					local spawn_center_offset = math.min(math.lerp(near_spawn_center_offset, far_spawn_center_offset, nearness), distance_from_closest_edge)
+
+					effect_center = effect_center + wall_edge_dir * ((math.random() - 0.5) * 2 * spawn_center_offset)
+
 					local nav_world = Managers.state.entity:system("ai_system"):nav_world()
-					local get_spawn_pos_on_circle = ConflictUtils.get_spawn_pos_on_circle(nav_world, num_15, 0.1, min_2 * 2, 1, false, nil, nil, 5, 5)
+					local nav_pos = ConflictUtils.get_spawn_pos_on_circle(nav_world, effect_center, 0.1, spawn_radius * 2, 1, false, nil, nil, 5, 5)
 
-					if not get_spawn_pos_on_circle then
+					if nav_pos then
 						local up = Vector3.up()
-						local multiply = Quaternion.multiply(Quaternion.look(var_2_22 - get_spawn_pos_on_circle, up), Quaternion.axis_angle(up, (math.random() - 0.5) * num_10))
-						local spawn_unit = World.spawn_unit(arg_2_0, "units/beings/enemies/undead_skeleton_hand/chr_undead_skeleton_hand", get_spawn_pos_on_circle, multiply)
-						local num_16 = 1.75
+						local effect_rot = Quaternion.multiply(Quaternion.look(pos - nav_pos, up), Quaternion.axis_angle(up, (math.random() - 0.5) * effect_spawn_rotation_offset_range))
+						local fx_unit = World.spawn_unit(world, "units/beings/enemies/undead_skeleton_hand/chr_undead_skeleton_hand", nav_pos, effect_rot)
+						local scale = 1.75
 
-						Unit.set_local_scale(spawn_unit, 0, Vector3(num_16, num_16, num_16))
+						Unit.set_local_scale(fx_unit, 0, Vector3(scale, scale, scale))
 
-						arg_2_6[var_2_20] = arg_2_9 + math.max((0.3 - min) / 0.3, 0) * num_9 + num_8
+						area_data[player_unit] = t + math.max((0.3 - distance_from_center_t) / 0.3, 0) * close_spawn_penalty + effect_spawn_cooldown
 
-						local var_2_44 = hand_units_by_player[var_2_20]
+						local var_2_4 = hand_units_by_player[player_unit]
 
-						var_2_44 = var_2_44 or {}
-						hand_units_by_player[var_2_20] = var_2_44
-						var_2_44[spawn_unit] = Unit.animation_find_constraint_target(spawn_unit, "look_at")
-						arg_2_6.last_index = num_12
+						if not var_2_4 then
+							-- Nothing
+						end
+
+						var_2_4 = {}
+
+						local hand_units = var_2_4
+
+						::label_2_4::
+
+						hand_units_by_player[player_unit] = hand_units
+						hand_units[fx_unit] = Unit.animation_find_constraint_target(fx_unit, "look_at")
+						area_data.last_index = player_unit_idx
 
 						break
 					end
@@ -139,47 +190,47 @@ local tbl = {
 			end
 		end
 
-		for k, v in pairs(hand_units_by_player) do
-			local var_2_45 = POSITION_LOOKUP[k]
+		for player_unit, hand_units in pairs(hand_units_by_player) do
+			local player_pos = POSITION_LOOKUP[player_unit]
 
-			if not var_2_45 then
-				for k_2, v_2 in pairs(v) do
-					if not Unit.alive(k_2) then
-						v[k_2] = nil
+			if player_pos then
+				for hand_unit, constraint_target_var in pairs(hand_units) do
+					if not Unit.alive(hand_unit) then
+						hand_units[hand_unit] = nil
 					else
-						Unit.animation_set_constraint_target(k_2, v_2, var_2_45)
+						Unit.animation_set_constraint_target(hand_unit, constraint_target_var, player_pos)
 					end
 				end
 			else
-				hand_units_by_player[k] = nil
+				hand_units_by_player[player_unit] = nil
 			end
 		end
 	end
 }
 
-RotatingHazardExtension.init = function (self, arg_3_1, arg_3_2, arg_3_3)
+RotatingHazardExtension.init = function (self, extension_init_context, unit, extension_init_data)
 	-- function 3
-	local var_3_0 = tbl
+	local settings = SETTINGS
 
-	self._settings = var_3_0
-	self._unit = arg_3_2
-	self._world = arg_3_1.world
-	self._is_server = arg_3_1.is_server
+	self._settings = settings
+	self._unit = unit
+	self._world = extension_init_context.world
+	self._is_server = extension_init_context.is_server
 
-	local state = arg_3_3.state
+	local state = extension_init_data.state
 
-	state = state or var_3_0.starting_state
+	state = not not state or not not settings.starting_state
 	self._state = state
 
-	local start_network_time = arg_3_3.start_network_time
+	local start_network_time = extension_init_data.start_network_time
 
-	start_network_time = start_network_time or Managers.state.network:network_time()
+	start_network_time = not not start_network_time or not not Managers.state.network:network_time()
 	self._start_t = start_network_time
 	self._pause_t = self._start_t
 	self._next_damage_t = 0
 	self._last_update_idx = 0
-	self._num_areas = #var_3_0.areas
-	self._rotation_speed_rad = math.rad(var_3_0.rotation_speed)
+	self._num_areas = #settings.areas
+	self._rotation_speed_rad = math.rad(settings.rotation_speed)
 	self._start_rotation_offset = 0
 	self._rotation_direction = 1
 	self._current_seed = Managers.mechanism:get_level_seed()
@@ -187,61 +238,61 @@ RotatingHazardExtension.init = function (self, arg_3_1, arg_3_2, arg_3_3)
 	self._area_data = {}
 
 	for i = 1, self._num_areas do
-		local var_3_3 = var_3_0.areas[i]
-		local angular_half_size = var_3_3.angular_half_size
+		local area = settings.areas[i]
+		local angular_half_size = area.angular_half_size
 
-		angular_half_size = angular_half_size or math.atan2(var_3_3.width / 2, var_3_3.length)
-		var_3_3.angular_half_size = angular_half_size
+		angular_half_size = not not angular_half_size or not not math.atan2(area.width / 2, area.length)
+		area.angular_half_size = angular_half_size
 		self._area_data[i] = {
 			overlapping_units = {}
 		}
 	end
 end
 
-RotatingHazardExtension.hot_join_sync = function (self, arg_4_1)
+RotatingHazardExtension.hot_join_sync = function (self, peer_id)
 	-- function 4
-	local network = Managers.state.network
-	local game_object_or_level_id, var_4_2 = network:game_object_or_level_id(self._unit)
+	local network_manager = Managers.state.network
+	local go_id, is_level_unit = network_manager:game_object_or_level_id(self._unit)
 
-	if not game_object_or_level_id then
-		network.network_transmit:send_rpc("rpc_sync_rotating_hazard", arg_4_1, game_object_or_level_id, var_4_2, self._start_t, self._pause_t, self._state, self._current_seed)
+	if go_id then
+		network_manager.network_transmit:send_rpc("rpc_sync_rotating_hazard", peer_id, go_id, is_level_unit, self._start_t, self._pause_t, self._state, self._current_seed)
 	end
 end
 
-RotatingHazardExtension.network_sync = function (self, arg_5_1, arg_5_2, arg_5_3, arg_5_4)
+RotatingHazardExtension.network_sync = function (self, start_t, pause_t, state, seed)
 	-- function 5
-	self._start_t = arg_5_1
-	self._pause_t = arg_5_2
-	self._state = arg_5_3
+	self._start_t = start_t
+	self._pause_t = pause_t
+	self._state = state
 	self._is_activating = nil
 
-	if arg_5_3 == num_2 then
+	if state == STATE_RUNNING then
 		for i = 1, self._num_areas do
 			self._area_data[i].last_update_t = nil
 		end
 
-		self:_update_random_settings_from_seed(arg_5_4)
+		self:_update_random_settings_from_seed(seed)
 	end
 
-	if arg_5_3 == num_4 then
+	if state == STATE_STOPPED then
 		Unit.flow_event(self._unit, "stop")
-	elseif arg_5_3 == num_3 then
+	elseif state == STATE_PAUSED then
 		Unit.flow_event(self._unit, "pause")
 	end
 end
 
-RotatingHazardExtension.destroy = function (arg_6_0)
+RotatingHazardExtension.destroy = function (self)
 	-- function 6
 	return
 end
 
-RotatingHazardExtension.start = function (self, arg_7_1)
+RotatingHazardExtension.start = function (self, reset_rotation)
 	-- function 7
-	if not self._is_server and self._state ~= num_2 and not arg_7_1 then
-		self._state = num_2
+	if self._is_server and (self._state ~= STATE_RUNNING or reset_rotation) then
+		self._state = STATE_RUNNING
 		self._is_activating = nil
 
-		if not arg_7_1 then
+		if reset_rotation then
 			self._start_t = Managers.state.network:network_time()
 			self._pause_t = self._start_t
 
@@ -254,200 +305,205 @@ RotatingHazardExtension.start = function (self, arg_7_1)
 			self._start_t = Managers.state.network:network_time() - (self._pause_t - self._start_t)
 		end
 
-		local game_object_or_level_id, var_7_1 = Managers.state.network:game_object_or_level_id(self._unit)
+		local go_id, is_level_unit = Managers.state.network:game_object_or_level_id(self._unit)
 
-		Managers.state.network.network_transmit:send_rpc_clients("rpc_sync_rotating_hazard", game_object_or_level_id, var_7_1, self._start_t, self._pause_t, self._state, self._current_seed)
+		Managers.state.network.network_transmit:send_rpc_clients("rpc_sync_rotating_hazard", go_id, is_level_unit, self._start_t, self._pause_t, self._state, self._current_seed)
 	end
 end
 
-RotatingHazardExtension._update_random_settings_from_seed = function (self, arg_8_1)
+RotatingHazardExtension._update_random_settings_from_seed = function (self, seed)
 	-- function 8
-	local var_8_0 = arg_8_1
-	local var_8_1
-	local _settings = self._settings
+	local new_seed = seed
+	local random_number
+	local settings = self._settings
 
-	if not _settings.random_start_rotation then
-		local var_8_3
-
-		var_8_0, var_8_3 = Math.next_random(var_8_0)
-		self._start_rotation_offset = num * var_8_3
+	if settings.random_start_rotation then
+		new_seed, random_number = Math.next_random(new_seed)
+		self._start_rotation_offset = PI_2 * random_number
 	end
 
-	if not _settings.random_direction then
-		local var_8_4
-
-		var_8_0, var_8_4 = Math.next_random(var_8_0)
+	if settings.random_direction then
+		new_seed, random_number = Math.next_random(new_seed)
 
 		local flag
 
-		flag = not (var_8_4 >= 0.5) or not 1 or -1
+		flag = (not (random_number >= 0.5) or not 1) and not not -1
 		self._rotation_direction = flag
 	end
 
-	self._current_seed = arg_8_1
-	self._next_seed = var_8_0
+	self._current_seed = seed
+	self._next_seed = new_seed
 
 	Unit.set_data(self._unit, "rotation_direction", self._rotation_direction)
 
 	for i = 1, self._num_areas do
-		local var_8_6 = _settings.areas[i]
+		local area = settings.areas[i]
 
-		if not var_8_6.flow_name then
-			local angular_half_size = var_8_6.angular_half_size
-			local angle_offset = var_8_6.angle_offset
-			local axis_angle = Quaternion.axis_angle(Vector3.up(), angle_offset + self._rotation_direction * angular_half_size)
-			local axis_angle_2 = Quaternion.axis_angle(Vector3.up(), angle_offset)
-			local axis_angle_3 = Quaternion.axis_angle(Vector3.up(), angle_offset - self._rotation_direction * angular_half_size)
+		if area.flow_name then
+			local angular_half_size = area.angular_half_size
+			local angle_offset = area.angle_offset
+			local rotation_offset_front = Quaternion.axis_angle(Vector3.up(), angle_offset + self._rotation_direction * angular_half_size)
+			local rotation_offset_center = Quaternion.axis_angle(Vector3.up(), angle_offset)
+			local rotation_offset_back = Quaternion.axis_angle(Vector3.up(), angle_offset - self._rotation_direction * angular_half_size)
 
-			Unit.set_data(self._unit, "fx_rotation", "front", var_8_6.flow_name, axis_angle)
-			Unit.set_data(self._unit, "fx_rotation", "center", var_8_6.flow_name, axis_angle_2)
-			Unit.set_data(self._unit, "fx_rotation", "back", var_8_6.flow_name, axis_angle_3)
+			Unit.set_data(self._unit, "fx_rotation", "front", area.flow_name, rotation_offset_front)
+			Unit.set_data(self._unit, "fx_rotation", "center", area.flow_name, rotation_offset_center)
+			Unit.set_data(self._unit, "fx_rotation", "back", area.flow_name, rotation_offset_back)
 		end
 	end
 end
 
 RotatingHazardExtension.pause = function (self)
 	-- function 9
-	if not (not self._is_server and self._state ~= num_2) then
-		self._state = num_3
+	if self._is_server and self._state == STATE_RUNNING then
+		self._state = STATE_PAUSED
 		self._is_activating = nil
 		self._pause_t = Managers.state.network:network_time()
 
-		local game_object_or_level_id, var_9_1 = Managers.state.network:game_object_or_level_id(self._unit)
+		local go_id, is_level_unit = Managers.state.network:game_object_or_level_id(self._unit)
 
-		Managers.state.network.network_transmit:send_rpc_clients("rpc_sync_rotating_hazard", game_object_or_level_id, var_9_1, self._start_t, self._pause_t, self._state, self._current_seed)
+		Managers.state.network.network_transmit:send_rpc_clients("rpc_sync_rotating_hazard", go_id, is_level_unit, self._start_t, self._pause_t, self._state, self._current_seed)
 		Unit.flow_event(self._unit, "pause")
 	end
 end
 
 RotatingHazardExtension.stop = function (self)
 	-- function 10
-	if not (not self._is_server and self._state == num_4) then
-		if self._state == num_2 then
+	if self._is_server and self._state ~= STATE_STOPPED then
+		if self._state == STATE_RUNNING then
 			self._pause_t = Managers.state.network:network_time()
 		end
 
-		self._state = num_4
+		self._state = STATE_STOPPED
 		self._is_activating = nil
 
-		local game_object_or_level_id, var_10_1 = Managers.state.network:game_object_or_level_id(self._unit)
+		local go_id, is_level_unit = Managers.state.network:game_object_or_level_id(self._unit)
 
-		Managers.state.network.network_transmit:send_rpc_clients("rpc_sync_rotating_hazard", game_object_or_level_id, var_10_1, self._start_t, self._pause_t, self._state, self._current_seed)
+		Managers.state.network.network_transmit:send_rpc_clients("rpc_sync_rotating_hazard", go_id, is_level_unit, self._start_t, self._pause_t, self._state, self._current_seed)
 		Unit.flow_event(self._unit, "stop")
 	end
 end
 
-RotatingHazardExtension.update = function (self, arg_11_1, arg_11_2, arg_11_3, arg_11_4, arg_11_5)
+RotatingHazardExtension.update = function (self, unit, input, dt, context, t)
 	-- function 11
-	local _state = self._state
+	local state = self._state
 
-	if _state == num_4 then
+	if state == STATE_STOPPED then
 		return
 	end
 
-	local network_time = Managers.state.network:network_time()
+	local current_t = Managers.state.network:network_time()
 
-	if _state == num_3 then
-		network_time = self._pause_t
+	if state == STATE_PAUSED then
+		current_t = self._pause_t
 	end
 
-	local _settings = self._settings
-	local anticipation_delay = _settings.anticipation_delay
-	local flag = network_time < anticipation_delay + self._start_t
-	local flag_2 = not flag and network_time and anticipation_delay + self._start_t
-	local num_5 = (self._start_rotation_offset + (network_time - flag_2) * self._rotation_speed_rad * self._rotation_direction) % num
+	local settings = self._settings
+	local anticipation_delay = settings.anticipation_delay
+	local is_activating = current_t < anticipation_delay + self._start_t
+	local real_start_t = (not is_activating or not current_t) and not not (anticipation_delay + self._start_t)
+	local angle = (self._start_rotation_offset + (current_t - real_start_t) * self._rotation_speed_rad * self._rotation_direction) % PI_2
 
-	Unit.set_local_rotation(arg_11_1, 0, Quaternion.axis_angle(Vector3.up(), num_5))
+	Unit.set_local_rotation(unit, 0, Quaternion.axis_angle(Vector3.up(), angle))
 
-	if not (_state ~= num_2 or self._is_activating == flag) then
-		self._is_activating = flag
+	if state == STATE_RUNNING and self._is_activating ~= is_activating then
+		self._is_activating = is_activating
 
-		if not flag then
+		if is_activating then
 			Unit.flow_event(self._unit, "start_anticipation")
 		else
 			Unit.flow_event(self._unit, "start_rotation")
 		end
 	end
 
-	local num_6 = self._last_update_idx % self._num_areas + 1
-	local var_11_8 = self._area_data[num_6]
-	local var_11_9 = _settings.areas[num_6]
+	local current_idx = self._last_update_idx % self._num_areas + 1
+	local area_data = self._area_data[current_idx]
+	local area_settings = settings.areas[current_idx]
 
-	if not (not self._is_server and flag) then
-		self:_update_damage(var_11_9, var_11_8, num_5, arg_11_3, network_time)
+	if self._is_server and not is_activating then
+		self:_update_damage(area_settings, area_data, angle, dt, current_t)
 	end
 
-	_settings.update_func(self._world, arg_11_1, _settings, _state, flag, var_11_9, var_11_8, num_5, self._rotation_direction, arg_11_5)
+	settings.update_func(self._world, unit, settings, state, is_activating, area_settings, area_data, angle, self._rotation_direction, t)
 
-	self._last_update_idx = num_6
+	self._last_update_idx = current_idx
 end
 
-local tbl_2 = {}
+local temp_overlap_table = {}
 
-RotatingHazardExtension._update_damage = function (self, arg_12_1, arg_12_2, arg_12_3, arg_12_4, arg_12_5)
+RotatingHazardExtension._update_damage = function (self, area_settings, area_data, angle, dt, t)
 	-- function 12
-	local last_update_t = arg_12_2.last_update_t
+	local last_update_t_2 = area_data.last_update_t
 
-	last_update_t = last_update_t or arg_12_5
+	if not last_update_t_2 then
+		-- Nothing
+	end
 
-	local angle_offset = arg_12_1.angle_offset
-	local num = (arg_12_5 - last_update_t) * self._rotation_speed_rad
-	local axis_angle = Quaternion.axis_angle(Vector3.up(), arg_12_3 + angle_offset - num / 2)
-	local forward = Quaternion.forward(axis_angle)
-	local num_2 = num / 2 + arg_12_1.angular_half_size
-	local cos = math.cos(num_2)
-	local _settings = self._settings
-	local overlapping_units = arg_12_2.overlapping_units
-	local human_players = Managers.player:human_players()
-	local _unit = self._unit
-	local local_position = Unit.local_position(_unit, 0)
-	local num_3 = arg_12_1.length * arg_12_1.length
-	local num_4 = arg_12_1.length_offset * arg_12_1.length_offset
-	local system = Managers.state.entity:system("buff_system")
+	last_update_t_2 = t
 
-	for k, v in pairs(human_players) do
-		local player_unit = v.player_unit
-		local var_12_16 = POSITION_LOOKUP[player_unit]
+	local last_update_t = last_update_t_2
 
-		if not var_12_16 then
-			local distance_squared = Vector3.distance_squared(var_12_16, local_position)
+	::label_12_0::
 
-			if not (not (num_4 <= distance_squared) or not (distance_squared <= num_3)) then
-				local normalize = Vector3.normalize(Vector3.flat(var_12_16 - local_position))
+	local angle_offset = area_settings.angle_offset
+	local angle_delta_since_last_t = (t - last_update_t) * self._rotation_speed_rad
+	local mid_point_rotation = Quaternion.axis_angle(Vector3.up(), angle + angle_offset - angle_delta_since_last_t / 2)
+	local mid_point_forward = Quaternion.forward(mid_point_rotation)
+	local damage_angular_half_size = angle_delta_since_last_t / 2 + area_settings.angular_half_size
+	local damage_angular_half_cos = math.cos(damage_angular_half_size)
+	local settings = self._settings
+	local overlapping_units = area_data.overlapping_units
+	local players = Managers.player:human_players()
+	local hazard_unit = self._unit
+	local center_position = Unit.local_position(hazard_unit, 0)
+	local distance_limit_sq = area_settings.length * area_settings.length
+	local distance_offset_sq = area_settings.length_offset * area_settings.length_offset
+	local buff_system = Managers.state.entity:system("buff_system")
 
-				if cos <= Vector3.dot(forward, normalize) then
-					tbl_2[player_unit] = true
+	for _, player in pairs(players) do
+		local player_unit = player.player_unit
+		local player_position = POSITION_LOOKUP[player_unit]
+
+		if player_position then
+			local player_distance = Vector3.distance_squared(player_position, center_position)
+
+			if distance_offset_sq <= player_distance and player_distance <= distance_limit_sq then
+				local dir_to_player = Vector3.normalize(Vector3.flat(player_position - center_position))
+
+				if damage_angular_half_cos <= Vector3.dot(mid_point_forward, dir_to_player) then
+					temp_overlap_table[player_unit] = true
 
 					if not overlapping_units[player_unit] then
-						local str = "kinetic"
-						local str_2 = "heavy"
+						local damage_type = "kinetic"
+						local hit_react_type = "heavy"
 
-						DamageUtils.add_damage_network(player_unit, _unit, _settings.damage_entry, "full", str, nil, normalize, nil, nil, _unit, nil, str_2)
+						DamageUtils.add_damage_network(player_unit, hazard_unit, settings.damage_entry, "full", damage_type, nil, dir_to_player, nil, nil, hazard_unit, nil, hit_react_type)
 
-						local buffs_on_entry = _settings.buffs_on_entry
+						local buffs_to_add = settings.buffs_on_entry
 
-						for k_2 = 1, #buffs_on_entry do
-							system:add_buff_synced(player_unit, buffs_on_entry[k_2], BuffSyncType.All)
+						for i = 1, #buffs_to_add do
+							buff_system:add_buff_synced(player_unit, buffs_to_add[i], BuffSyncType.All)
 						end
 
-						overlapping_units[player_unit] = arg_12_5
+						overlapping_units[player_unit] = t
 					else
-						local var_12_22 = overlapping_units[player_unit]
-						local damage_tick_rate = _settings.damage_tick_rate
+						local last_tick_t = overlapping_units[player_unit]
+						local damage_tick_rate = settings.damage_tick_rate
 
-						if arg_12_5 >= var_12_22 + damage_tick_rate then
-							local str_3 = "kinetic"
-							local str_4 = "medium"
+						if t >= last_tick_t + damage_tick_rate then
+							local damage_type = "kinetic"
+							local hit_react_type = "medium"
 
-							DamageUtils.add_damage_network(player_unit, _unit, _settings.damage_tick, "full", str_3, nil, normalize, nil, nil, _unit, nil, str_4, nil, nil, nil, nil, nil, nil, 1)
+							DamageUtils.add_damage_network(player_unit, hazard_unit, settings.damage_tick, "full", damage_type, nil, dir_to_player, nil, nil, hazard_unit, nil, hit_react_type, nil, nil, nil, nil, nil, nil, 1)
 
-							local buffs_on_tick = _settings.buffs_on_tick
+							local buffs_to_add = settings.buffs_on_tick
 
-							for l = 1, #buffs_on_tick do
-								system:add_buff_synced(player_unit, buffs_on_tick[l], BuffSyncType.All)
+							for i = 1, #buffs_to_add do
+								buff_system:add_buff_synced(player_unit, buffs_to_add[i], BuffSyncType.All)
 							end
 
-							overlapping_units[player_unit] = var_12_22 + damage_tick_rate
+							last_tick_t = last_tick_t + damage_tick_rate
+							overlapping_units[player_unit] = last_tick_t
 						end
 					end
 				end
@@ -455,13 +511,13 @@ RotatingHazardExtension._update_damage = function (self, arg_12_1, arg_12_2, arg
 		end
 	end
 
-	for k_3 in pairs(overlapping_units) do
-		if not tbl_2[k_3] then
-			overlapping_units[k_3] = nil
+	for unit in pairs(overlapping_units) do
+		if not temp_overlap_table[unit] then
+			overlapping_units[unit] = nil
 		end
 	end
 
-	table.clear(tbl_2)
+	table.clear(temp_overlap_table)
 
-	arg_12_2.last_update_t = arg_12_5
+	area_data.last_update_t = t
 end

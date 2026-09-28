@@ -4,25 +4,25 @@ require("scripts/entity_system/systems/statistics/statistics_templates")
 
 StatisticsSystem = class(StatisticsSystem, ExtensionSystemBase)
 
-local tbl = {
+local extensions = {
 	"StatisticsExtension"
 }
-local tbl_2 = {
+local CLIENT_RPCS = {
 	"rpc_register_kill"
 }
 
-StatisticsSystem.init = function (self, arg_1_1, arg_1_2)
+StatisticsSystem.init = function (self, context, name)
 	-- function 1
-	StatisticsSystem.super.init(self, arg_1_1, arg_1_2, tbl)
+	StatisticsSystem.super.init(self, context, name, extensions)
 
 	self.unit_extension_data = {}
 
-	local network_event_delegate = arg_1_1.network_event_delegate
+	local network_event_delegate = context.network_event_delegate
 
 	self.network_event_delegate = network_event_delegate
 
 	if not self.is_server then
-		network_event_delegate:register(self, unpack(tbl_2))
+		network_event_delegate:register(self, unpack(CLIENT_RPCS))
 	end
 end
 
@@ -31,88 +31,94 @@ StatisticsSystem.destroy = function (self)
 	self.network_event_delegate:unregister(self)
 end
 
-local tbl_3 = {}
+local dummy_input = {}
 
-StatisticsSystem.on_add_extension = function (self, arg_3_1, arg_3_2, arg_3_3, arg_3_4)
+StatisticsSystem.on_add_extension = function (self, world, unit, extension_name, extension_init_data)
 	-- function 3
-	local template = arg_3_4.template
-	local statistics_id = arg_3_4.statistics_id
+	local template_category_name = extension_init_data.template
+	local statistics_id = extension_init_data.statistics_id
 
-	assert(template, "No statistic template set for statistics extension on unit %s", tostring(arg_3_2))
-	assert(statistics_id, "No statistic id set for statistics extension on unit %s", tostring(arg_3_2))
+	assert(template_category_name, "No statistic template set for statistics extension on unit %s", tostring(unit))
+	assert(statistics_id, "No statistic id set for statistics extension on unit %s", tostring(unit))
 
-	local tbl = {
-		template_category_name = template,
+	local extension = {
+		template_category_name = template_category_name,
 		statistics_id = statistics_id
 	}
-	local var_3_3 = StatisticsTemplateCategories[template]
+	local templates = StatisticsTemplateCategories[template_category_name]
 
-	for i = 1, #var_3_3 do
-		local var_3_4 = var_3_3[i]
+	for i = 1, #templates do
+		local template_name = templates[i]
+		local template = StatisticsTemplates[template_name]
 
-		tbl[var_3_4] = StatisticsTemplates[var_3_4].init()
+		extension[template_name] = template.init()
 	end
 
-	ScriptUnit.set_extension(arg_3_2, self.name, tbl, tbl_3)
+	ScriptUnit.set_extension(unit, self.name, extension, dummy_input)
 
-	self.unit_extension_data[arg_3_2] = tbl
+	self.unit_extension_data[unit] = extension
 
-	return tbl
+	return extension
 end
 
-StatisticsSystem.on_remove_extension = function (self, arg_4_1, arg_4_2)
+StatisticsSystem.on_remove_extension = function (self, unit, extension_name)
 	-- function 4
-	self.unit_extension_data[arg_4_1] = nil
+	self.unit_extension_data[unit] = nil
 
-	ScriptUnit.remove_extension(arg_4_1, self.NAME)
+	ScriptUnit.remove_extension(unit, self.NAME)
 end
 
-StatisticsSystem.update = function (self, arg_5_1, arg_5_2)
+StatisticsSystem.update = function (self, context, t)
 	-- function 5
-	local statistics_db = arg_5_1.statistics_db
+	local statistics_db = context.statistics_db
 	local StatisticsTemplateCategories = StatisticsTemplateCategories
 	local StatisticsTemplates = StatisticsTemplates
 
-	for k, v in pairs(self.unit_extension_data) do
-		if not statistics_db:is_registered(v.statistics_id) then
-			local var_5_3 = StatisticsTemplateCategories[v.template_category_name]
+	for unit, extension in pairs(self.unit_extension_data) do
+		if statistics_db:is_registered(extension.statistics_id) then
+			local template_category_name = extension.template_category_name
+			local templates = StatisticsTemplateCategories[template_category_name]
 
-			for k_2 = 1, #var_5_3 do
-				StatisticsTemplates[var_5_3[k_2]].update(k, v, arg_5_1, arg_5_2)
+			for i = 1, #templates do
+				local template_name = templates[i]
+				local template = StatisticsTemplates[template_name]
+
+				template.update(unit, extension, context, t)
 			end
 		end
 	end
 end
 
-StatisticsSystem.hot_join_sync = function (arg_6_0, arg_6_1)
+StatisticsSystem.hot_join_sync = function (self, sender)
 	-- function 6
 	return
 end
 
-local tbl_4 = {}
+local TEMP_ARGS = {}
 
-StatisticsSystem.rpc_register_kill = function (self, arg_7_1, arg_7_2)
+StatisticsSystem.rpc_register_kill = function (self, channel_id, victim_unit_go_id)
 	-- function 7
-	local unit = self.unit_storage:unit(arg_7_2)
+	local unit_storage = self.unit_storage
+	local victim_unit = unit_storage:unit(victim_unit_go_id)
 
-	table.clear(tbl_4)
+	table.clear(TEMP_ARGS)
 
-	tbl_4[DamageDataIndex.DAMAGE_AMOUNT] = NetworkConstants.damage.max
-	tbl_4[DamageDataIndex.DAMAGE_TYPE] = "forced"
-	tbl_4[DamageDataIndex.ATTACKER] = unit
-	tbl_4[DamageDataIndex.HIT_ZONE] = "full"
-	tbl_4[DamageDataIndex.POSITION] = Unit.world_position(unit, 0)
-	tbl_4[DamageDataIndex.DIRECTION] = Vector3.down()
-	tbl_4[DamageDataIndex.DAMAGE_SOURCE_NAME] = "suicide"
-	tbl_4[DamageDataIndex.HIT_RAGDOLL_ACTOR_NAME] = "n/a"
-	tbl_4[DamageDataIndex.SOURCE_ATTACKER_UNIT] = nil
-	tbl_4[DamageDataIndex.HIT_REACT_TYPE] = "light"
-	tbl_4[DamageDataIndex.CRITICAL_HIT] = false
-	tbl_4[DamageDataIndex.FIRST_HIT] = true
-	tbl_4[DamageDataIndex.TOTAL_HITS] = 0
-	tbl_4[DamageDataIndex.TARGET_INDEX] = 1
+	TEMP_ARGS[DamageDataIndex.DAMAGE_AMOUNT] = NetworkConstants.damage.max
+	TEMP_ARGS[DamageDataIndex.DAMAGE_TYPE] = "forced"
+	TEMP_ARGS[DamageDataIndex.ATTACKER] = victim_unit
+	TEMP_ARGS[DamageDataIndex.HIT_ZONE] = "full"
+	TEMP_ARGS[DamageDataIndex.POSITION] = Unit.world_position(victim_unit, 0)
+	TEMP_ARGS[DamageDataIndex.DIRECTION] = Vector3.down()
+	TEMP_ARGS[DamageDataIndex.DAMAGE_SOURCE_NAME] = "suicide"
+	TEMP_ARGS[DamageDataIndex.HIT_RAGDOLL_ACTOR_NAME] = "n/a"
+	TEMP_ARGS[DamageDataIndex.SOURCE_ATTACKER_UNIT] = nil
+	TEMP_ARGS[DamageDataIndex.HIT_REACT_TYPE] = "light"
+	TEMP_ARGS[DamageDataIndex.CRITICAL_HIT] = false
+	TEMP_ARGS[DamageDataIndex.FIRST_HIT] = true
+	TEMP_ARGS[DamageDataIndex.TOTAL_HITS] = 0
+	TEMP_ARGS[DamageDataIndex.TARGET_INDEX] = 1
 
 	local statistics_db = self.statistics_db
 
-	StatisticsUtil.register_kill(unit, tbl_4, statistics_db, false)
+	StatisticsUtil.register_kill(victim_unit, TEMP_ARGS, statistics_db, false)
 end

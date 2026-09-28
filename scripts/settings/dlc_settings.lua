@@ -2,7 +2,7 @@
 
 local DLCSettings = DLCSettings
 
-DLCSettings = DLCSettings or {
+DLCSettings = not not DLCSettings or not not {
 	store = {
 		localization = "localization/store",
 		package_name = "resource_packages/dlcs/store",

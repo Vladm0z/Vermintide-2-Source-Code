@@ -4,60 +4,62 @@ require("scripts/entity_system/systems/behaviour/nodes/bt_node")
 
 BTTauntAction = class(BTTauntAction, BTNode)
 
-BTTauntAction.init = function (arg_1_0, ...)
+BTTauntAction.init = function (self, ...)
 	-- function 1
-	BTTauntAction.super.init(arg_1_0, ...)
+	BTTauntAction.super.init(self, ...)
 end
 
 BTTauntAction.name = "BTTauntAction"
 
-BTTauntAction.enter = function (self, arg_2_1, arg_2_2, arg_2_3)
+BTTauntAction.enter = function (self, unit, blackboard, t)
 	-- function 2
 	print("TAUNT")
 
-	local action_data = self._tree_node.action_data
-	local var_2_1 = Managers.state.side.side_by_unit[arg_2_1]
-	local var_2_2 = POSITION_LOOKUP[arg_2_1]
-	local radius = action_data.radius
-	local duration = action_data.duration
-	local alloc_table = FrameTable.alloc_table()
-	local enemy_broadphase_categories = var_2_1.enemy_broadphase_categories
-	local broadphase_query = AiUtils.broadphase_query(var_2_2, radius, alloc_table, enemy_broadphase_categories)
+	local action = self._tree_node.action_data
+	local side = Managers.state.side.side_by_unit[unit]
+	local position = POSITION_LOOKUP[unit]
+	local radius = action.radius
+	local taunt_duration = action.duration
+	local nearby_ai = FrameTable.alloc_table()
+	local broadphase_categories = side.enemy_broadphase_categories
+	local n_hits = AiUtils.broadphase_query(position, radius, nearby_ai, broadphase_categories)
 
-	for i = 1, broadphase_query do
-		local var_2_8 = alloc_table[i]
-		local var_2_9 = BLACKBOARDS[var_2_8]
-		local override_targets = var_2_9.override_targets
+	for i = 1, n_hits do
+		local ai_unit = nearby_ai[i]
+		local enemy_blackboard = BLACKBOARDS[ai_unit]
+		local override_targets = enemy_blackboard.override_targets
 
 		table.clear(override_targets)
 
-		var_2_9.target_unit = nil
-		override_targets[arg_2_1] = arg_2_3 + duration
+		enemy_blackboard.target_unit = nil
+		override_targets[unit] = t + taunt_duration
 	end
 
-	local effect_name = action_data.effect_name
+	local effect_name = action.effect_name
 
-	if not effect_name then
-		local var_2_12 = NetworkLookup.effects[effect_name]
-		local num = 0
-		local flag = false
+	if effect_name then
+		local effect_id = NetworkLookup.effects[effect_name]
+		local node_id = 0
+		local linked = false
 
-		Managers.state.network:rpc_play_particle_effect_no_rotation(nil, var_2_12, NetworkConstants.invalid_game_object_id, num, var_2_2, flag)
+		Managers.state.network:rpc_play_particle_effect_no_rotation(nil, effect_id, NetworkConstants.invalid_game_object_id, node_id, position, linked)
 	end
 
-	local sound_event = action_data.sound_event
+	local sound_event = action.sound_event
 
-	if not sound_event then
-		Managers.state.entity:system("audio_system"):play_audio_unit_event(sound_event, arg_2_1)
+	if sound_event then
+		local audio_system = Managers.state.entity:system("audio_system")
+
+		audio_system:play_audio_unit_event(sound_event, unit)
 	end
 end
 
-BTTauntAction.leave = function (arg_3_0, arg_3_1, arg_3_2, arg_3_3, arg_3_4, arg_3_5)
+BTTauntAction.leave = function (self, unit, blackboard, t, reason, destroy)
 	-- function 3
 	return
 end
 
-BTTauntAction.run = function (arg_4_0, arg_4_1, arg_4_2, arg_4_3, arg_4_4)
+BTTauntAction.run = function (self, unit, blackboard, t, dt)
 	-- function 4
 	return "done"
 end

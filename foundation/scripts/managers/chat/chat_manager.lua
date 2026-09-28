@@ -4,13 +4,13 @@ require("scripts/managers/irc/irc_manager")
 require("scripts/ui/views/chat_gui")
 require("scripts/misc/script_retrieve_app_ticket_token")
 
-local scripts_settings_profanity_list = require("scripts/settings/profanity_list")
+local PROFANITY_LIST = require("scripts/settings/profanity_list")
 
-if script_data.honduras_demo or not Development.parameter("attract_mode") then
+if script_data.honduras_demo or Development.parameter("attract_mode") then
 	ChatGuiNull = class(ChatGuiNull)
 
-	for k, v in pairs(ChatGui) do
-		ChatGuiNull[k] = function ()
+	for name, func in pairs(ChatGui) do
+		ChatGuiNull[name] = function ()
 			-- function 1
 			return
 		end
@@ -19,24 +19,32 @@ end
 
 ChatManager = class(ChatManager)
 
-if not MESSAGE_TYPES then
-	local tbl = {
-		[Irc.PRIVATE_MSG] = "Private Message",
-		[Irc.CHANNEL_MSG] = "Channel Message",
-		[Irc.SYSTEM_MSG] = "System Message",
-		[Irc.PARTY_MSG] = "Party Message",
-		[Irc.TEAM_MSG] = "Team Message",
-		[Irc.ALL_MSG] = "All Message"
-	}
+local MESSAGE_TYPES_2 = MESSAGE_TYPES
+
+if not MESSAGE_TYPES_2 then
+	-- Nothing
 end
 
-local tbl_2 = {
+MESSAGE_TYPES_2 = {
+	[Irc.PRIVATE_MSG] = "Private Message",
+	[Irc.CHANNEL_MSG] = "Channel Message",
+	[Irc.SYSTEM_MSG] = "System Message",
+	[Irc.PARTY_MSG] = "Party Message",
+	[Irc.TEAM_MSG] = "Team Message",
+	[Irc.ALL_MSG] = "All Message"
+}
+
+local MESSAGE_TYPES = MESSAGE_TYPES_2
+
+::label_0_0::
+
+local CHAT_VIEWS = {
 	"All",
 	"Channels",
 	"Party",
 	"Private"
 }
-local tbl_3 = {
+local CHAT_VIEW_LUT = {
 	All = {},
 	Channels = {
 		filter = Irc.CHANNEL_MSG
@@ -74,7 +82,7 @@ ChatManager.init = function (self)
 
 	local chat_ignore_list = SaveData.chat_ignore_list
 
-	chat_ignore_list = chat_ignore_list or {}
+	chat_ignore_list = not not chat_ignore_list or not not {}
 	self.peer_ignore_list = chat_ignore_list
 
 	if not DEDICATED_SERVER then
@@ -90,12 +98,12 @@ ChatManager.init = function (self)
 
 	self:add_message_target("Party", Irc.PARTY_MSG, "vs_chat_msg_target_team")
 
-	if (IS_WINDOWS or not IS_LINUX or not GameSettingsDevelopment.use_global_chat) and not rawget(_G, "Steam") then
+	if (IS_WINDOWS or IS_LINUX) and GameSettingsDevelopment.use_global_chat and rawget(_G, "Steam") then
 		Steam.retrieve_encrypted_app_ticket()
 
-		local var_2_1 = ScriptReceiveAppTicketToken:new()
+		local token = ScriptReceiveAppTicketToken:new()
 
-		Managers.token:register_token(var_2_1, callback(self, "cb_encrypted_app_ticket_recieved"), 20)
+		Managers.token:register_token(token, callback(self, "cb_encrypted_app_ticket_recieved"), 20)
 	elseif not rawget(_G, "Steam") then
 		GameSettingsDevelopment.use_global_chat = false
 
@@ -107,67 +115,68 @@ ChatManager.update_ignore_list = function (self)
 	-- function 3
 	local chat_ignore_list = SaveData.chat_ignore_list
 
-	chat_ignore_list = chat_ignore_list or self.peer_ignore_list
+	chat_ignore_list = not not chat_ignore_list or not not self.peer_ignore_list
 	self.peer_ignore_list = chat_ignore_list
 end
 
-ChatManager.cb_encrypted_app_ticket_recieved = function (arg_4_0, arg_4_1)
+ChatManager.cb_encrypted_app_ticket_recieved = function (self, info)
 	-- function 4
-	local var_4_0
+	local password
 
 	print("ENCRYPTED APP TICKET RECIEVED")
 	print("begin")
 
-	if not arg_4_1.error then
+	if info.error then
 		GameSettingsDevelopment.use_global_chat = false
 
-		print("FAILED", arg_4_1.error, arg_4_1.encrypted_app_ticket)
+		print("FAILED", info.error, info.encrypted_app_ticket)
 	else
 		print("SUCCESS:")
-		print(arg_4_1.encrypted_app_ticket)
+		print(info.encrypted_app_ticket)
 
-		var_4_0 = "steam:" .. arg_4_1.encrypted_app_ticket
+		password = "steam:" .. info.encrypted_app_ticket
 	end
 
 	print("end")
 
-	local tbl = {
+	local irc_settings = {
 		port = 6667,
 		allow_send = true,
 		channel_name = "#vermintide_se",
 		address = "172.16.2.24"
 	}
-	local user_name = Steam.user_name()
-	local find, var_4_4 = string.find(user_name, "[0-9]+")
+	local steam_user_name = Steam.user_name()
+	local start_idx, end_idx = string.find(steam_user_name, "[0-9]+")
 
-	if not var_4_4 then
-		user_name = string.sub(user_name, var_4_4 + 1)
+	if end_idx then
+		steam_user_name = string.sub(steam_user_name, end_idx + 1)
 	end
 
-	local str = "_" .. IrcUtils.convert_steam_user_id_to_base_64(Steam.user_id())
-	local len = string.len(str)
-	local gsub = string.gsub(user_name, "%W+", "_")
-	local sub = string.sub(gsub, 1, 30 - len)
+	local suffix = "_" .. IrcUtils.convert_steam_user_id_to_base_64(Steam.user_id())
+	local suffix_length = string.len(suffix)
 
-	if not (sub == "" or sub ~= "_") then
-		sub = "INVALID"
+	steam_user_name = string.gsub(steam_user_name, "%W+", "_")
+	steam_user_name = string.sub(steam_user_name, 1, 30 - suffix_length)
+
+	if steam_user_name == "" or steam_user_name == "_" then
+		steam_user_name = "INVALID"
 	end
 
-	local str_2 = sub .. str
+	local user_name = steam_user_name .. suffix
 
-	Managers.irc:connect(str_2, var_4_0, tbl, callback(arg_4_0, "cb_notify_connected"))
+	Managers.irc:connect(user_name, password, irc_settings, callback(self, "cb_notify_connected"))
 end
 
-ChatManager.cb_notify_connected = function (arg_5_0, arg_5_1)
+ChatManager.cb_notify_connected = function (self, connected)
 	-- function 5
-	if not arg_5_1 then
+	if connected then
 		Application.warning("[ChatManager] Connected to IRC!")
-		Managers.irc:register_message_callback("chat_channel_message", Irc.CHANNEL_MSG, callback(arg_5_0, "cb_channel_msg_received"))
-		Managers.irc:register_message_callback("chat_private_message", Irc.PRIVATE_MSG, callback(arg_5_0, "cb_private_msg_received"))
-		Managers.irc:register_message_callback("chat_system_message", Irc.SYSTEM_MSG, callback(arg_5_0, "cb_system_msg_received"))
-		Managers.irc:register_message_callback("chat_join_message", Irc.JOIN_MSG, callback(arg_5_0, "cb_join_msg_received"))
-		Managers.irc:register_message_callback("chat_leave_message", Irc.LEAVE_MSG, callback(arg_5_0, "cb_leave_msg_received"))
-		Managers.irc:register_message_callback("chat_names_message", Irc.NAMES_MSG, callback(arg_5_0, "cb_names_msg_received"))
+		Managers.irc:register_message_callback("chat_channel_message", Irc.CHANNEL_MSG, callback(self, "cb_channel_msg_received"))
+		Managers.irc:register_message_callback("chat_private_message", Irc.PRIVATE_MSG, callback(self, "cb_private_msg_received"))
+		Managers.irc:register_message_callback("chat_system_message", Irc.SYSTEM_MSG, callback(self, "cb_system_msg_received"))
+		Managers.irc:register_message_callback("chat_join_message", Irc.JOIN_MSG, callback(self, "cb_join_msg_received"))
+		Managers.irc:register_message_callback("chat_leave_message", Irc.LEAVE_MSG, callback(self, "cb_leave_msg_received"))
+		Managers.irc:register_message_callback("chat_names_message", Irc.NAMES_MSG, callback(self, "cb_names_msg_received"))
 	else
 		Application.error("[ChatManager] Disconnected from IRC!")
 		Managers.irc:unregister_message_callback("chat_channel_message")
@@ -179,101 +188,102 @@ ChatManager.cb_notify_connected = function (arg_5_0, arg_5_1)
 	end
 end
 
-ChatManager.cb_channel_msg_received = function (self, arg_6_1, arg_6_2, arg_6_3, arg_6_4, arg_6_5)
+ChatManager.cb_channel_msg_received = function (self, key, message_type, username, message, parameter)
 	-- function 6
-	local check_meta, var_6_1 = self:check_meta(arg_6_4, arg_6_3, arg_6_5)
+	local message, link_data = self:check_meta(message, username, parameter)
 
-	if not check_meta then
-		Managers.chat:add_irc_message(arg_6_2, arg_6_3, check_meta, arg_6_5, var_6_1)
+	if message then
+		Managers.chat:add_irc_message(message_type, username, message, parameter, link_data)
 	end
 end
 
-ChatManager.cb_private_msg_received = function (self, arg_7_1, arg_7_2, arg_7_3, arg_7_4, arg_7_5)
+ChatManager.cb_private_msg_received = function (self, key, message_type, username, message, parameter)
 	-- function 7
-	local check_meta, var_7_1 = self:check_meta(arg_7_4, arg_7_3, arg_7_5)
+	local message, link_data = self:check_meta(message, username, parameter)
 
-	if not check_meta then
-		Managers.chat:add_irc_message(arg_7_2, arg_7_3, check_meta, arg_7_5, var_7_1)
+	if message then
+		Managers.chat:add_irc_message(message_type, username, message, parameter, link_data)
 	end
 end
 
-ChatManager.cb_system_msg_received = function (arg_8_0, arg_8_1, arg_8_2, arg_8_3, arg_8_4, arg_8_5)
+ChatManager.cb_system_msg_received = function (self, key, message_type, username, message, parameter)
 	-- function 8
-	Managers.chat:add_irc_message(arg_8_2, arg_8_3, arg_8_4, arg_8_5)
+	Managers.chat:add_irc_message(message_type, username, message, parameter)
 end
 
-ChatManager.cb_join_msg_received = function (arg_9_0, arg_9_1, arg_9_2, arg_9_3, arg_9_4, arg_9_5)
+ChatManager.cb_join_msg_received = function (self, key, message_type, username, message, parameter)
 	-- function 9
-	arg_9_4 = arg_9_3 .. " " .. arg_9_4 .. arg_9_5
+	message = username .. " " .. message .. parameter
 
-	Managers.chat:add_irc_message(arg_9_2, arg_9_3, arg_9_4, arg_9_5)
+	Managers.chat:add_irc_message(message_type, username, message, parameter)
 end
 
-ChatManager.cb_leave_msg_received = function (arg_10_0, arg_10_1, arg_10_2, arg_10_3, arg_10_4, arg_10_5)
+ChatManager.cb_leave_msg_received = function (self, key, message_type, username, message, parameter)
 	-- function 10
-	arg_10_4 = arg_10_3 .. " " .. arg_10_4 .. arg_10_5
+	message = username .. " " .. message .. parameter
 
-	Managers.chat:add_irc_message(arg_10_2, arg_10_3, arg_10_4, arg_10_5)
+	Managers.chat:add_irc_message(message_type, username, message, parameter)
 end
 
-ChatManager.cb_names_msg_received = function (arg_11_0, arg_11_1, arg_11_2, arg_11_3, arg_11_4, arg_11_5)
+ChatManager.cb_names_msg_received = function (self, key, message_type, username, message, parameter)
 	-- function 11
-	Managers.chat:add_irc_message(arg_11_2, arg_11_3, arg_11_4, arg_11_5)
+	Managers.chat:add_irc_message(message_type, username, message, parameter)
 end
 
-ChatManager.check_meta = function (arg_12_0, arg_12_1, arg_12_2, arg_12_3)
+ChatManager.check_meta = function (self, message, username, parameter)
 	-- function 12
-	if not string.find(arg_12_1, "$LINK;") then
-		local find, var_12_1 = string.find(arg_12_1, "$LINK;")
+	if string.find(message, "$LINK;") then
+		local start_index, end_index = string.find(message, "$LINK;")
 
-		if not var_12_1 then
-			local sub = string.sub(arg_12_1, 1, find - 1)
-			local sub_2 = string.sub(arg_12_1, var_12_1 + 1)
+		if end_index then
+			local new_message = string.sub(message, 1, start_index - 1)
+			local lobby_id = string.sub(message, end_index + 1)
+			local lobby_data = SteamMisc.get_lobby_data(lobby_id)
 
-			if not SteamMisc.get_lobby_data(sub_2) then
-				return sub, {
-					lobby_id = sub_2
+			if lobby_data then
+				return new_message, {
+					lobby_id = lobby_id
 				}
 			else
-				return sub
+				return new_message
 			end
 		end
 
-		return arg_12_1
+		return message
 	end
 
-	return arg_12_1
+	return message
 end
 
-ChatManager.add_message_target = function (self, arg_13_1, arg_13_2, arg_13_3)
+ChatManager.add_message_target = function (self, message_target, message_target_type, message_target_key)
 	-- function 13
-	if not self:_verify_new_target(arg_13_1, arg_13_2) then
+	if self:_verify_new_target(message_target, message_target_type) then
 		self.message_targets[#self.message_targets + 1] = {
-			message_target = arg_13_1,
-			message_target_type = arg_13_2,
-			message_target_key = arg_13_3
+			message_target = message_target,
+			message_target_type = message_target_type,
+			message_target_key = message_target_key
 		}
-		self.message_targets_lut[arg_13_1] = #self.message_targets
+		self.message_targets_lut[message_target] = #self.message_targets
 	end
 end
 
-ChatManager.set_message_target_type = function (self, arg_14_1)
+ChatManager.set_message_target_type = function (self, message_target_type)
 	-- function 14
-	local var_14_0 = self.message_targets_lut[arg_14_1]
+	local message_target_index = self.message_targets_lut[message_target_type]
 
-	fassert(var_14_0, "[ChatManager] There is not message target for Irc target %q", arg_14_1)
+	fassert(message_target_index, "[ChatManager] There is not message target for Irc target %q", message_target_type)
 
-	self.current_message_target_index = var_14_0
+	self.current_message_target_index = message_target_index
 end
 
-ChatManager._verify_new_target = function (self, arg_15_1, arg_15_2)
+ChatManager._verify_new_target = function (self, message_target, message_target_type)
 	-- function 15
-	if not (not arg_15_1 and arg_15_1 ~= "") then
+	if not message_target or message_target == "" then
 		return false
 	end
 
-	for i, v in ipairs(self.message_targets) do
-		if v.message_target == arg_15_1 then
+	for _, info in ipairs(self.message_targets) do
+		if info.message_target == message_target then
 			return false
 		end
 	end
@@ -281,13 +291,13 @@ ChatManager._verify_new_target = function (self, arg_15_1, arg_15_2)
 	return true
 end
 
-ChatManager.remove_message_target = function (self, arg_16_1)
+ChatManager.remove_message_target = function (self, message_target)
 	-- function 16
-	local var_16_0 = self.message_targets_lut[arg_16_1]
+	local target_index = self.message_targets_lut[message_target]
 
-	if not var_16_0 then
-		self.message_targets_lut[arg_16_1] = nil
-		self.message_targets[var_16_0] = nil
+	if target_index then
+		self.message_targets_lut[message_target] = nil
+		self.message_targets[target_index] = nil
 
 		if not self.message_targets[self.current_message_target_index] then
 			self.current_message_target_index = 1
@@ -299,14 +309,14 @@ end
 
 ChatManager.current_view_and_color = function (self)
 	-- function 17
-	local var_17_0 = tbl_2[self.current_view_index]
+	local chat_view_name = CHAT_VIEWS[self.current_view_index]
 
-	return var_17_0, CHAT_VIEW_COLOR[var_17_0]
+	return chat_view_name, CHAT_VIEW_COLOR[chat_view_name]
 end
 
-ChatManager.add_recent_chat_message = function (arg_18_0, arg_18_1)
+ChatManager.add_recent_chat_message = function (self, message)
 	-- function 18
-	arg_18_0.recently_sent_messages[#arg_18_0.recently_sent_messages + 1] = arg_18_1
+	self.recently_sent_messages[#self.recently_sent_messages + 1] = message
 end
 
 ChatManager.get_recently_sent_messages = function (self)
@@ -319,26 +329,26 @@ ChatManager.next_message_target = function (self)
 	self.current_message_target_index = 1 + self.current_message_target_index % #self.message_targets
 
 	local message_target_type = self.message_targets[self.current_message_target_index].message_target_type
-	local var_20_1 = tbl_2[self.current_view_index]
-	local filter = tbl_3[var_20_1].filter
+	local filter_name = CHAT_VIEWS[self.current_view_index]
+	local view_filter = CHAT_VIEW_LUT[filter_name].filter
 
-	if not (var_20_1 == "All" or message_target_type ~= filter) then
+	if filter_name == "All" or message_target_type == view_filter then
 		return
 	end
 
-	local var_20_3 = CHAT_VIEW_TYPE_LUT[message_target_type]
+	local view_name = CHAT_VIEW_TYPE_LUT[message_target_type]
 
-	if not var_20_3 then
+	if not view_name then
 		return
 	end
 
-	local find = table.find(tbl_2, var_20_3)
+	local view_index = table.find(CHAT_VIEWS, view_name)
 
-	if not find then
+	if not view_index then
 		return
 	end
 
-	self:_switch_view_internally(find)
+	self:_switch_view_internally(view_index)
 
 	return true
 end
@@ -350,80 +360,80 @@ end
 
 ChatManager.gui_should_clear = function (self)
 	-- function 22
-	local clear_messages = self.clear_messages
+	local clear = self.clear_messages
 
 	self.clear_messages = nil
 
-	return clear_messages
+	return clear
 end
 
 ChatManager.create_chat_gui = function (self)
 	-- function 23
-	local world = Managers.world:world("top_ingame_view")
+	local top_world = Managers.world:world("top_ingame_view")
 
-	self._ui_top_renderer = UIRenderer.create(world, "material", "materials/ui/ui_1080p_chat", "material", "materials/fonts/gw_fonts")
+	self._ui_top_renderer = UIRenderer.create(top_world, "material", "materials/ui/ui_1080p_chat", "material", "materials/fonts/gw_fonts")
 
-	local tbl = {
+	local context = {
 		input_manager = Managers.input,
 		ui_top_renderer = self._ui_top_renderer,
 		chat_manager = self
 	}
 
-	if not script_data.honduras_demo then
+	if script_data.honduras_demo then
 		self.chat_gui = ChatGuiNull
 	else
-		self.chat_gui = ChatGui:new(tbl)
+		self.chat_gui = ChatGui:new(context)
 	end
 
 	self.gui_enabled = true
 
-	local var_23_2
+	local font_size
 
-	if not LEVEL_EDITOR_TEST then
-		var_23_2 = DefaultUserSettings.get("user_settings", "chat_font_size")
+	if LEVEL_EDITOR_TEST then
+		font_size = DefaultUserSettings.get("user_settings", "chat_font_size")
 	else
-		var_23_2 = Application.user_setting("chat_font_size")
+		font_size = Application.user_setting("chat_font_size")
 	end
 
-	self:set_font_size(var_23_2)
+	self:set_font_size(font_size)
 end
 
-ChatManager.set_profile_synchronizer = function (self, arg_24_1)
+ChatManager.set_profile_synchronizer = function (self, profile_synchronizer)
 	-- function 24
-	if not DEDICATED_SERVER then
+	if DEDICATED_SERVER then
 		Application.warning("Tried to use chat_gui on dedicated server")
 
 		return
 	end
 
-	self.chat_gui:set_profile_synchronizer(arg_24_1)
+	self.chat_gui:set_profile_synchronizer(profile_synchronizer)
 end
 
-ChatManager.set_wwise_world = function (self, arg_25_1)
+ChatManager.set_wwise_world = function (self, wwise_world)
 	-- function 25
-	if not DEDICATED_SERVER then
+	if DEDICATED_SERVER then
 		Application.warning("Tried to use chat_gui on dedicated server")
 
 		return
 	end
 
-	self.chat_gui:set_wwise_world(arg_25_1)
+	self.chat_gui:set_wwise_world(wwise_world)
 end
 
-ChatManager.set_input_manager = function (self, arg_26_1)
+ChatManager.set_input_manager = function (self, input_manager)
 	-- function 26
-	if not DEDICATED_SERVER then
+	if DEDICATED_SERVER then
 		Application.warning("Tried to use chat_gui on dedicated server")
 
 		return
 	end
 
-	self.chat_gui:set_input_manager(arg_26_1)
+	self.chat_gui:set_input_manager(input_manager)
 end
 
 ChatManager.block_chat_input_for_one_frame = function (self)
 	-- function 27
-	if not DEDICATED_SERVER then
+	if DEDICATED_SERVER then
 		Application.warning("Tried to use chat_gui on dedicated server")
 
 		return
@@ -432,11 +442,11 @@ ChatManager.block_chat_input_for_one_frame = function (self)
 	self.chat_gui:block_chat_input_for_one_frame()
 end
 
-ChatManager.register_network_event_delegate = function (self, arg_28_1)
+ChatManager.register_network_event_delegate = function (self, network_event_delegate)
 	-- function 28
-	arg_28_1:register(self, "rpc_chat_message")
+	network_event_delegate:register(self, "rpc_chat_message")
 
-	self.network_event_delegate = arg_28_1
+	self.network_event_delegate = network_event_delegate
 end
 
 ChatManager.unregister_network_event_delegate = function (self)
@@ -446,36 +456,36 @@ ChatManager.unregister_network_event_delegate = function (self)
 	self.network_event_delegate = nil
 end
 
-ChatManager.setup_network_context = function (self, arg_30_1)
+ChatManager.setup_network_context = function (self, network_context)
 	-- function 30
-	print(string.format("[ChatManager] Setting up network context, host_peer_id:%s my_peer_id:%s", arg_30_1.host_peer_id, arg_30_1.my_peer_id))
+	print(string.format("[ChatManager] Setting up network context, host_peer_id:%s my_peer_id:%s", network_context.host_peer_id, network_context.my_peer_id))
 
-	self.is_server = arg_30_1.is_server
-	self.host_peer_id = arg_30_1.host_peer_id
-	self.my_peer_id = arg_30_1.my_peer_id
+	self.is_server = network_context.is_server
+	self.host_peer_id = network_context.host_peer_id
+	self.my_peer_id = network_context.my_peer_id
 end
 
-ChatManager.ignoring_peer_id = function (self, arg_31_1)
+ChatManager.ignoring_peer_id = function (self, peer_id)
 	-- function 31
-	return self.peer_ignore_list[arg_31_1]
+	return self.peer_ignore_list[peer_id]
 end
 
-ChatManager.ignore_peer_id = function (self, arg_32_1)
+ChatManager.ignore_peer_id = function (self, peer_id)
 	-- function 32
-	self.peer_ignore_list[arg_32_1] = true
+	self.peer_ignore_list[peer_id] = true
 
-	if not (rawget(_G, "Steam") or IS_WINDOWS) then
+	if rawget(_G, "Steam") or not IS_WINDOWS then
 		SaveData.chat_ignore_list = self.peer_ignore_list
 
 		Managers.save:auto_save(SaveFileName, SaveData, nil)
 	end
 end
 
-ChatManager.remove_ignore_peer_id = function (self, arg_33_1)
+ChatManager.remove_ignore_peer_id = function (self, peer_id)
 	-- function 33
-	self.peer_ignore_list[arg_33_1] = nil
+	self.peer_ignore_list[peer_id] = nil
 
-	if not (rawget(_G, "Steam") or IS_WINDOWS) then
+	if rawget(_G, "Steam") or not IS_WINDOWS then
 		SaveData.chat_ignore_list = self.peer_ignore_list
 
 		Managers.save:auto_save(SaveFileName, SaveData, nil)
@@ -489,62 +499,62 @@ ChatManager.destroy = function (self)
 
 		self.chat_gui = nil
 
-		local world = Managers.world:world("top_ingame_view")
+		local top_world = Managers.world:world("top_ingame_view")
 
-		UIRenderer.destroy(self._ui_top_renderer, world)
+		UIRenderer.destroy(self._ui_top_renderer, top_world)
 	end
 
 	self.channels = nil
 	self.message_targets = {}
 end
 
-ChatManager.set_font_size = function (self, arg_35_1)
+ChatManager.set_font_size = function (self, font_size)
 	-- function 35
-	if not self.chat_gui then
-		self.chat_gui:set_font_size(arg_35_1)
+	if self.chat_gui then
+		self.chat_gui:set_font_size(font_size)
 	end
 end
 
-ChatManager.set_chat_enabled = function (self, arg_36_1)
+ChatManager.set_chat_enabled = function (self, chat_enabled)
 	-- function 36
-	self._chat_enabled = arg_36_1
+	self._chat_enabled = chat_enabled
 end
 
 ChatManager.is_chat_enabled = function (self)
 	-- function 37
 	local network_handler = Managers.mechanism:network_handler()
 
-	if not (not network_handler and network_handler:get_match_handler()) then
+	if not network_handler or not network_handler:get_match_handler() then
 		return false
 	end
 
 	return self._chat_enabled
 end
 
-ChatManager.register_channel = function (self, arg_38_1, arg_38_2)
+ChatManager.register_channel = function (self, channel_id, members_func)
 	-- function 38
-	print(string.format("[ChatManager] Registering channel %s", arg_38_1))
+	print(string.format("[ChatManager] Registering channel %s", channel_id))
 
 	local channels = self.channels
 
-	if not IS_XB1 then
-		if not channels[arg_38_1] then
-			Application.warning(string.format("[ChatManager] Tried to add already registered channel %q", arg_38_1))
+	if IS_XB1 then
+		if channels[channel_id] then
+			Application.warning(string.format("[ChatManager] Tried to add already registered channel %q", channel_id))
 		end
 	else
-		assert(channels[arg_38_1] == nil, "[ChatManager] Tried to add already registered channel %q", arg_38_1)
+		assert(channels[channel_id] == nil, "[ChatManager] Tried to add already registered channel %q", channel_id)
 	end
 
-	channels[arg_38_1] = {
-		members_func = arg_38_2
+	channels[channel_id] = {
+		members_func = members_func
 	}
 end
 
-ChatManager.unregister_channel = function (arg_39_0, arg_39_1)
+ChatManager.unregister_channel = function (self, channel_id)
 	-- function 39
-	print(string.format("[ChatManager] Unregistering channel %s", arg_39_1))
+	print(string.format("[ChatManager] Unregistering channel %s", channel_id))
 
-	arg_39_0.channels[arg_39_1] = nil
+	self.channels[channel_id] = nil
 end
 
 ChatManager.chat_is_focused = function (self)
@@ -552,378 +562,409 @@ ChatManager.chat_is_focused = function (self)
 	return self.chat_gui.chat_focused
 end
 
-ChatManager.enable_gui = function (self, arg_41_1)
+ChatManager.enable_gui = function (self, enable)
 	-- function 41
-	self.gui_enabled = arg_41_1
+	self.gui_enabled = enable
 end
 
-ChatManager.update = function (self, arg_42_1, arg_42_2, arg_42_3, arg_42_4, arg_42_5)
+ChatManager.update = function (self, dt, t, menu_active, menu_input_service, no_unblock)
 	-- function 42
-	if not (not self.gui_enabled and DEDICATED_SERVER) then
-		self.chat_gui:update(arg_42_1, arg_42_3, arg_42_4, arg_42_5, self:is_chat_enabled())
+	if self.gui_enabled and not DEDICATED_SERVER then
+		self.chat_gui:update(dt, menu_active, menu_input_service, no_unblock, self:is_chat_enabled())
 	end
 end
 
-ChatManager._get_localized_message = function (arg_43_0, arg_43_1, arg_43_2, arg_43_3, arg_43_4)
+ChatManager._get_localized_message = function (self, message, localize, localization_parameters, localize_parameters)
 	-- function 43
-	local var_43_0
+	local localized_parameters
 
-	if not arg_43_4 then
-		var_43_0 = LocalizeArray(arg_43_3, FrameTable.alloc_table())
+	if localize_parameters then
+		localized_parameters = LocalizeArray(localization_parameters, FrameTable.alloc_table())
 	else
-		var_43_0 = arg_43_3
+		localized_parameters = localization_parameters
 	end
 
-	if not arg_43_2 then
-		arg_43_1 = string.format(Localize(arg_43_1), unpack(var_43_0))
-	elseif #var_43_0 > 0 then
-		arg_43_1 = string.format(arg_43_1, unpack(var_43_0))
+	if localize then
+		message = string.format(Localize(message), unpack(localized_parameters))
+	elseif #localized_parameters > 0 then
+		message = string.format(message, unpack(localized_parameters))
 	end
 
-	return arg_43_1
+	return message
 end
 
-ChatManager._get_message_target = function (self, arg_44_1)
+ChatManager._get_message_target = function (self, message_target)
 	-- function 44
-	for i, v in ipairs(self.message_targets) do
-		if arg_44_1 == v.message_target then
-			return v
+	for i, data in ipairs(self.message_targets) do
+		if message_target == data.message_target then
+			return data
 		end
 	end
 end
 
-ChatManager.send_chat_message = function (self, arg_45_1, arg_45_2, arg_45_3, arg_45_4, arg_45_5, arg_45_6, arg_45_7, arg_45_8, arg_45_9, arg_45_10, arg_45_11)
+ChatManager.send_chat_message = function (self, channel_id, local_player_id, original_message, localize, localization_parameters, localize_parameters, recent_message_index, optional_message_target, optional_message_type, optional_message_target_key, sender_peer_id)
 	-- function 45
-	local _handle_command, var_45_1, var_45_2 = self:_handle_command(arg_45_3, arg_45_7, arg_45_8)
+	local command, parameters, context_data = self:_handle_command(original_message, recent_message_index, optional_message_target)
 
-	if not _handle_command then
-		return _handle_command, var_45_1, var_45_2
+	if command then
+		return command, parameters, context_data
 	end
 
-	local var_45_3 = arg_45_3
-	local num = NetworkConstants.max_string_length - 5
+	local message = original_message
+	local max_chat_message_length = NetworkConstants.max_string_length - 5
 
-	if num < #arg_45_3 then
-		var_45_3 = UTF8Utils.clamp_byte_length(var_45_3, num) .. "..."
+	if max_chat_message_length < #original_message then
+		message = UTF8Utils.clamp_byte_length(message, max_chat_message_length) .. "..."
 	end
 
-	fassert(self:has_channel(arg_45_1), "Haven't registered channel: %s", tostring(arg_45_1))
+	fassert(self:has_channel(channel_id), "Haven't registered channel: %s", tostring(channel_id))
 
-	local flag = false
-	local flag_2 = true
-	local my_peer_id = self.my_peer_id
-	local is_dev = SteamHelper.is_dev()
+	local is_system_message = false
+	local pop_chat = true
+	local peer_id = self.my_peer_id
+	local is_dev_2 = SteamHelper.is_dev()
 
-	is_dev = not is_dev and arg_45_2 == 1
-
-	if type(arg_45_5) ~= "table" then
-		arg_45_5[1], arg_45_5 = arg_45_5, FrameTable.alloc_table()
+	if is_dev_2 then
+		-- Nothing
 	end
 
-	local var_45_9
+	if local_player_id ~= 1 then
+		is_dev_2 = false
 
-	if not arg_45_8 then
-		var_45_9 = self:_get_message_target(arg_45_8)
+		goto label_45_0
+	end
+
+	is_dev_2 = true
+
+	local is_dev = is_dev_2
+
+	::label_45_0::
+
+	if type(localization_parameters) ~= "table" then
+		local old_parameter = localization_parameters
+
+		localization_parameters = FrameTable.alloc_table()
+		localization_parameters[1] = old_parameter
+	end
+
+	local message_target_info
+
+	if optional_message_target then
+		message_target_info = self:_get_message_target(optional_message_target)
 	else
-		var_45_9 = self.message_targets[self.current_message_target_index]
+		message_target_info = self.message_targets[self.current_message_target_index]
 	end
 
-	local message_target = var_45_9.message_target
-	local flag_3 = arg_45_9 or var_45_9.message_target_type
-	local flag_4 = arg_45_10 or var_45_9.message_target_key
+	local message_target = message_target_info.message_target
+	local message_type = not not optional_message_type or not not message_target_info.message_target_type
+	local message_target_key = not not optional_message_target_key or not not message_target_info.message_target_key
 
-	if not (flag_3 == Irc.PARTY_MSG or flag_3 == Irc.TEAM_MSG or flag_3 ~= Irc.ALL_MSG) then
-		if not self.is_server then
-			my_peer_id = arg_45_11 or my_peer_id
+	if message_type == Irc.PARTY_MSG or message_type == Irc.TEAM_MSG or message_type == Irc.ALL_MSG then
+		if self.is_server then
+			peer_id = not not sender_peer_id or not not peer_id
 
 			local network_handler = Managers.mechanism:network_handler()
 
-			if not network_handler then
-				network_handler:get_match_handler():send_rpc_others("rpc_chat_message", arg_45_1, my_peer_id, arg_45_2, var_45_3, arg_45_5, arg_45_4, arg_45_6, flag, flag_2, is_dev, flag_3)
+			if network_handler then
+				local match_handler = network_handler:get_match_handler()
+
+				match_handler:send_rpc_others("rpc_chat_message", channel_id, peer_id, local_player_id, message, localization_parameters, localize, localize_parameters, is_system_message, pop_chat, is_dev, message_type)
 			else
 				return
 			end
 		else
-			local network_handler_2 = Managers.mechanism:network_handler()
+			local network_handler = Managers.mechanism:network_handler()
 
-			if not network_handler_2 then
-				network_handler_2:get_match_handler():send_rpc_up("rpc_chat_message", arg_45_1, my_peer_id, arg_45_2, var_45_3, arg_45_5, arg_45_4, arg_45_6, flag, flag_2, is_dev, flag_3)
+			if network_handler then
+				local match_handler = network_handler:get_match_handler()
+
+				match_handler:send_rpc_up("rpc_chat_message", channel_id, peer_id, local_player_id, message, localization_parameters, localize, localize_parameters, is_system_message, pop_chat, is_dev, message_type)
 			else
 				return
 			end
 		end
 
-		if not arg_45_4 then
-			Managers.telemetry_events:chat_message(var_45_3)
+		if not localize then
+			Managers.telemetry_events:chat_message(message)
 		end
-	elseif not (flag_3 == Irc.CHANNEL_MSG or flag_3 ~= Irc.PRIVATE_MSG) then
-		Managers.irc:send_message(var_45_3, message_target)
+	elseif message_type == Irc.CHANNEL_MSG or message_type == Irc.PRIVATE_MSG then
+		Managers.irc:send_message(message, message_target)
 
-		if not rawget(_G, "Steam") then
-			my_peer_id = Steam.user_name()
+		if rawget(_G, "Steam") then
+			peer_id = Steam.user_name()
 		end
 
-		if flag_3 == Irc.CHANNEL_MSG then
-			if not flag_4 then
-				my_peer_id = string.format("[%s] ", Localize(flag_4))
+		if message_type == Irc.CHANNEL_MSG then
+			if message_target_key then
+				peer_id = string.format("[%s] ", Localize(message_target_key))
 			else
-				my_peer_id = string.format("[%s]", message_target)
+				peer_id = string.format("[%s]", message_target)
 			end
-		elseif flag_3 == Irc.PRIVATE_MSG then
-			my_peer_id = "To [" .. message_target .. "]"
+		elseif message_type == Irc.PRIVATE_MSG then
+			peer_id = "To [" .. message_target .. "]"
 		end
 	end
 
-	if not arg_45_7 then
-		self:add_recent_chat_message(var_45_3)
-	elseif self.recently_sent_messages[arg_45_7] ~= var_45_3 then
-		self:add_recent_chat_message(var_45_3)
+	if not recent_message_index then
+		self:add_recent_chat_message(message)
+	else
+		local recent_message = self.recently_sent_messages[recent_message_index]
+
+		if recent_message ~= message then
+			self:add_recent_chat_message(message)
+		end
 	end
 
-	if not (not self:is_channel_member(arg_45_1) and flag or self.peer_ignore_list[my_peer_id]) then
-		local _get_localized_message = self:_get_localized_message(var_45_3, arg_45_4, arg_45_5, arg_45_6)
+	if self:is_channel_member(channel_id) and (is_system_message or not self.peer_ignore_list[peer_id]) then
+		local localized_message = self:_get_localized_message(message, localize, localization_parameters, localize_parameters)
 
-		self:_add_message_to_list(arg_45_1, my_peer_id, arg_45_2, _get_localized_message, flag, flag_2, is_dev, flag_3)
+		self:_add_message_to_list(channel_id, peer_id, local_player_id, localized_message, is_system_message, pop_chat, is_dev, message_type)
 	end
 end
 
-ChatManager.send_system_chat_message = function (self, arg_46_1, arg_46_2, arg_46_3, arg_46_4, arg_46_5)
+ChatManager.send_system_chat_message = function (self, channel_id, message_id, localization_parameters, localize_parameters, pop_chat)
 	-- function 46
-	fassert(self:has_channel(arg_46_1), "Haven't registered channel: %s", tostring(arg_46_1))
+	fassert(self:has_channel(channel_id), "Haven't registered channel: %s", tostring(channel_id))
 
-	local flag = true
+	local localize = true
 
-	if type(arg_46_3) ~= "table" then
-		arg_46_3[1], arg_46_3 = arg_46_3, FrameTable.alloc_table()
+	if type(localization_parameters) ~= "table" then
+		local old_parameter = localization_parameters
+
+		localization_parameters = FrameTable.alloc_table()
+		localization_parameters[1] = old_parameter
 	end
 
-	local flag_2 = true
+	local is_system_message = true
 
-	arg_46_5 = arg_46_5 or false
+	pop_chat = not not pop_chat or not not false
 
-	local flag_3 = false
+	local is_dev = false
 	local my_peer_id = self.my_peer_id
 
-	if not self.is_server then
-		local channel_members = self:channel_members(arg_46_1)
+	if self.is_server then
+		local members = self:channel_members(channel_id)
 
-		for k, v in pairs(channel_members) do
-			if v ~= my_peer_id then
-				local var_46_5 = PEER_ID_TO_CHANNEL[v]
+		for _, member in pairs(members) do
+			if member ~= my_peer_id then
+				local network_channel_id = PEER_ID_TO_CHANNEL[member]
 
-				if not var_46_5 then
-					RPC.rpc_chat_message(var_46_5, arg_46_1, my_peer_id, 0, arg_46_2, arg_46_3, flag, arg_46_4, flag_2, arg_46_5, flag_3, Irc.SYSTEM_MSG)
+				if network_channel_id then
+					RPC.rpc_chat_message(network_channel_id, channel_id, my_peer_id, 0, message_id, localization_parameters, localize, localize_parameters, is_system_message, pop_chat, is_dev, Irc.SYSTEM_MSG)
 				end
 			end
 		end
 	else
 		local host_peer_id = self.host_peer_id
 
-		if not host_peer_id then
-			local var_46_7 = PEER_ID_TO_CHANNEL[host_peer_id]
+		if host_peer_id then
+			local network_channel_id = PEER_ID_TO_CHANNEL[host_peer_id]
 
-			if not var_46_7 then
-				RPC.rpc_chat_message(var_46_7, arg_46_1, my_peer_id, 0, arg_46_2, arg_46_3, flag, arg_46_4, flag_2, arg_46_5, flag_3, Irc.SYSTEM_MSG)
+			if network_channel_id then
+				RPC.rpc_chat_message(network_channel_id, channel_id, my_peer_id, 0, message_id, localization_parameters, localize, localize_parameters, is_system_message, pop_chat, is_dev, Irc.SYSTEM_MSG)
 			end
 		end
 	end
 
-	if not self:is_channel_member(arg_46_1) then
-		local str = "System"
-		local _get_localized_message = self:_get_localized_message(arg_46_2, flag, arg_46_3, arg_46_4)
+	if self:is_channel_member(channel_id) then
+		local message_sender = "System"
+		local localized_message = self:_get_localized_message(message_id, localize, localization_parameters, localize_parameters)
 
-		self:_add_message_to_list(arg_46_1, str, 0, _get_localized_message, flag_2, arg_46_5, flag_3)
+		self:_add_message_to_list(channel_id, message_sender, 0, localized_message, is_system_message, pop_chat, is_dev)
 	end
 end
 
-ChatManager.add_local_system_message = function (self, arg_47_1, arg_47_2, arg_47_3)
+ChatManager.add_local_system_message = function (self, channel_id, message, pop_chat)
 	-- function 47
-	if not self:is_channel_member(arg_47_1) then
-		local str = "System"
-		local flag = true
-		local flag_2 = false
+	if self:is_channel_member(channel_id) then
+		local message_sender = "System"
+		local is_system_message = true
+		local is_dev = false
 
-		self:_add_message_to_list(arg_47_1, str, 0, arg_47_2, flag, arg_47_3, flag_2)
+		self:_add_message_to_list(channel_id, message_sender, 0, message, is_system_message, pop_chat, is_dev)
 	end
 end
 
-ChatManager.add_irc_message = function (self, arg_48_1, arg_48_2, arg_48_3, arg_48_4, arg_48_5)
+ChatManager.add_irc_message = function (self, message_type, username, message, parameter, context)
 	-- function 48
-	local num = 1
-	local tbl = {
-		username = arg_48_2,
-		message = arg_48_3,
-		parameter = arg_48_4
+	local channel_id = 1
+	local data = {
+		username = username,
+		message = message,
+		parameter = parameter
 	}
 
-	if arg_48_1 == Irc.PRIVATE_MSG then
-		local var_48_2 = arg_48_5
+	if message_type == Irc.PRIVATE_MSG then
+		local link_data = context
 
-		if not var_48_2 then
-			self._last_private_message_username = arg_48_2
+		if not link_data then
+			self._last_private_message_username = username
 
-			self:add_message_target(arg_48_2, arg_48_1)
+			self:add_message_target(username, message_type)
 		end
 
-		self:_add_message_to_list(num, arg_48_2, 0, arg_48_3, nil, true, false, arg_48_1, var_48_2, tbl)
-	elseif arg_48_1 == Irc.CHANNEL_MSG then
-		local var_48_3 = arg_48_5
+		self:_add_message_to_list(channel_id, username, 0, message, nil, true, false, message_type, link_data, data)
+	elseif message_type == Irc.CHANNEL_MSG then
+		local link_data = context
 
-		self:_add_message_to_list(num, arg_48_2, 0, arg_48_3, nil, true, false, arg_48_1, var_48_3, tbl)
-	elseif arg_48_1 == Irc.SYSTEM_MSG then
-		self:_add_message_to_list(num, "System", 0, arg_48_3, nil, true, false, arg_48_1, nil, tbl)
-	elseif arg_48_1 == Irc.JOIN_MSG then
-		if arg_48_2 == Managers.irc:user_name() then
-			self:_add_message_to_list(num, "System", 0, arg_48_3, nil, true, false, Irc.SYSTEM_MSG, nil, tbl)
-			self:add_message_target(arg_48_4, Irc.CHANNEL_MSG)
+		self:_add_message_to_list(channel_id, username, 0, message, nil, true, false, message_type, link_data, data)
+	elseif message_type == Irc.SYSTEM_MSG then
+		self:_add_message_to_list(channel_id, "System", 0, message, nil, true, false, message_type, nil, data)
+	elseif message_type == Irc.JOIN_MSG then
+		if username == Managers.irc:user_name() then
+			self:_add_message_to_list(channel_id, "System", 0, message, nil, true, false, Irc.SYSTEM_MSG, nil, data)
+			self:add_message_target(parameter, Irc.CHANNEL_MSG)
 		else
-			self:_add_message_to_list(num, "System", 0, arg_48_3, nil, true, false, Irc.SYSTEM_MSG, nil, tbl)
+			self:_add_message_to_list(channel_id, "System", 0, message, nil, true, false, Irc.SYSTEM_MSG, nil, data)
 		end
-	elseif arg_48_1 == Irc.LEAVE_MSG then
-		if arg_48_2 == Managers.irc:user_name() then
-			self:_add_message_to_list(num, "System", 0, arg_48_3, nil, true, false, Irc.SYSTEM_MSG, nil, tbl)
-			self:remove_message_target(arg_48_4)
+	elseif message_type == Irc.LEAVE_MSG then
+		if username == Managers.irc:user_name() then
+			self:_add_message_to_list(channel_id, "System", 0, message, nil, true, false, Irc.SYSTEM_MSG, nil, data)
+			self:remove_message_target(parameter)
 		else
-			self:_add_message_to_list(num, "System", 0, arg_48_3, nil, true, false, Irc.SYSTEM_MSG, nil, tbl)
+			self:_add_message_to_list(channel_id, "System", 0, message, nil, true, false, Irc.SYSTEM_MSG, nil, data)
 		end
 	end
 end
 
-ChatManager.channel_members = function (self, arg_49_1)
+ChatManager.channel_members = function (self, channel_id)
 	-- function 49
-	local var_49_0 = self.channels[arg_49_1]
+	local channel = self.channels[channel_id]
 
-	fassert(var_49_0, "[ChatManager] Trying to get members from unregistered channel %q", arg_49_1)
+	fassert(channel, "[ChatManager] Trying to get members from unregistered channel %q", channel_id)
 
-	return (var_49_0.members_func())
+	local members = channel.members_func()
+
+	return members
 end
 
-ChatManager.is_channel_member = function (self, arg_50_1)
+ChatManager.is_channel_member = function (self, channel_id)
 	-- function 50
-	local var_50_0 = self.channels[arg_50_1]
+	local channel = self.channels[channel_id]
 
-	if not var_50_0 then
-		return arg_50_1 == 1
+	if not channel then
+		return channel_id == 1
 	end
 
-	local members_func = var_50_0.members_func()
+	local members = channel.members_func()
 	local my_peer_id = self.my_peer_id
 
-	for k, v in pairs(members_func) do
-		if v == my_peer_id then
+	for _, member in pairs(members) do
+		if member == my_peer_id then
 			return true
 		end
 	end
 end
 
-ChatManager.has_channel = function (self, arg_51_1)
+ChatManager.has_channel = function (self, channel_id)
 	-- function 51
-	local var_51_0 = self.channels[arg_51_1]
+	local var_51_0 = self.channels[channel_id]
 
-	var_51_0 = not var_51_0 and true
+	var_51_0 = not not var_51_0 and not not true
 
 	return var_51_0
 end
 
-ChatManager.rpc_chat_message = function (self, arg_52_1, arg_52_2, arg_52_3, arg_52_4, arg_52_5, arg_52_6, arg_52_7, arg_52_8, arg_52_9, arg_52_10, arg_52_11, arg_52_12)
+ChatManager.rpc_chat_message = function (self, sender_channel_id, channel_id, message_sender, local_player_id, message, localization_parameters, localize, localize_parameters, is_system_message, pop_chat, is_dev, message_type)
 	-- function 52
-	if not self:has_channel(arg_52_2) then
+	if not self:has_channel(channel_id) then
 		return
 	end
 
-	local var_52_0 = CHANNEL_TO_PEER_ID[arg_52_1]
+	local sender_peer_id = CHANNEL_TO_PEER_ID[sender_channel_id]
 
-	if not self.is_server then
-		local channel_members = self:channel_members(arg_52_2)
+	if self.is_server then
+		local members = self:channel_members(channel_id)
+		local network_handler = Managers.mechanism:network_handler()
+		local match_handler = network_handler:get_match_handler()
 
-		Managers.mechanism:network_handler():get_match_handler():propagate_rpc_if("rpc_chat_message", var_52_0, function (arg_53_0)
+		match_handler:propagate_rpc_if("rpc_chat_message", sender_peer_id, function (peer_id)
 			-- function 53
-			return table.find(channel_members, arg_53_0)
-		end, arg_52_2, arg_52_3, arg_52_4, arg_52_5, arg_52_6, arg_52_7, arg_52_8, arg_52_9, arg_52_10, arg_52_11, arg_52_12)
+			return table.find(members, peer_id)
+		end, channel_id, message_sender, local_player_id, message, localization_parameters, localize, localize_parameters, is_system_message, pop_chat, is_dev, message_type)
 	end
 
-	if not (not self:is_channel_member(arg_52_2) and arg_52_9 or self.peer_ignore_list[arg_52_3]) then
-		if not arg_52_9 then
-			arg_52_3 = "System"
+	if self:is_channel_member(channel_id) and (is_system_message or not self.peer_ignore_list[message_sender]) then
+		if is_system_message then
+			message_sender = "System"
 		end
 
-		local _get_localized_message = self:_get_localized_message(arg_52_5, arg_52_7, arg_52_6, arg_52_8)
+		local localized_message = self:_get_localized_message(message, localize, localization_parameters, localize_parameters)
 
-		self:_add_message_to_list(arg_52_2, arg_52_3, arg_52_4, _get_localized_message, arg_52_9, arg_52_10, arg_52_11, arg_52_12)
+		self:_add_message_to_list(channel_id, message_sender, local_player_id, localized_message, is_system_message, pop_chat, is_dev, message_type)
 	end
 end
 
-ChatManager._profanity_check = function (arg_54_0, arg_54_1)
+ChatManager._profanity_check = function (self, message)
 	-- function 54
-	for k, v in pairs(scripts_settings_profanity_list) do
-		local find, var_54_1 = string.find(arg_54_1, v)
+	for _, profanity in pairs(PROFANITY_LIST) do
+		local start_index, end_index = string.find(message, profanity)
 
-		while not find do
-			local str = ""
-			local length = Utf8.length(v)
+		while start_index do
+			local replacement_text = ""
+			local length = Utf8.length(profanity)
 
-			for k_2 = 1, length do
-				str = str .. "*"
+			for i = 1, length do
+				replacement_text = replacement_text .. "*"
 			end
 
-			arg_54_1 = string.gsub(arg_54_1, v, str)
-
-			local var_54_4
-
-			find, var_54_4 = string.find(arg_54_1, v)
+			message = string.gsub(message, profanity, replacement_text)
+			start_index, end_index = string.find(message, profanity)
 		end
 	end
 
-	return arg_54_1
+	return message
 end
 
-ChatManager._add_message_to_list = function (self, arg_55_1, arg_55_2, arg_55_3, arg_55_4, arg_55_5, arg_55_6, arg_55_7, arg_55_8, arg_55_9, arg_55_10)
+ChatManager._add_message_to_list = function (self, channel_id, message_sender, local_player_id, message, is_system_message, pop_chat, is_dev, message_type, link, data)
 	-- function 55
-	if not (IS_WINDOWS or self:is_chat_enabled()) then
+	if not IS_WINDOWS and not self:is_chat_enabled() then
 		return
 	end
 
-	local player_from_peer_id = Managers.player:player_from_peer_id(arg_55_2, arg_55_3)
-	local flag = false
+	local player_manager = Managers.player
+	local sender_player = player_manager:player_from_peer_id(message_sender, local_player_id)
+	local is_bot = false
 
-	if not player_from_peer_id and not player_from_peer_id:sync_data_active() then
-		flag = not player_from_peer_id:is_player_controlled()
-		arg_55_7 = arg_55_7 or player_from_peer_id:get_data("is_dev")
+	if sender_player and sender_player:sync_data_active() then
+		is_bot = not sender_player:is_player_controlled()
+		is_dev = not not is_dev or not not sender_player:get_data("is_dev")
 	end
 
-	if not (not Application.user_setting("profanity_check") and arg_55_5) then
-		arg_55_4 = self:_profanity_check(arg_55_4)
+	if Application.user_setting("profanity_check") and not is_system_message then
+		message = self:_profanity_check(message)
 	end
 
-	local flag_2 = false
+	local is_enemy = false
 
-	if not (not player_from_peer_id and DEDICATED_SERVER) then
-		local get_party = Managers.player:local_player():get_party()
-		local flag_3 = not get_party and Managers.state.side.side_by_party[get_party]
-		local flag_4 = not flag_3 and player_from_peer_id:get_party()
-		local flag_5 = not flag_4 and Managers.state.side.side_by_party[flag_4]
+	if sender_player and not DEDICATED_SERVER then
+		local local_player = Managers.player:local_player()
+		local local_party = local_player:get_party()
+		local local_side = not not local_party and not not Managers.state.side.side_by_party[local_party]
+		local remote_party = not not local_side and not not sender_player:get_party()
+		local remote_side = not not remote_party and not not Managers.state.side.side_by_party[remote_party]
 
-		flag_2 = not flag_5 and Managers.state.side:is_enemy_by_side(flag_3, flag_5)
+		is_enemy = not not remote_side and not not Managers.state.side:is_enemy_by_side(local_side, remote_side)
 	end
 
-	local str = ""
-	local flag_6 = false
+	local parsed_message = ""
+	local message_edited = false
 
-	if not arg_55_5 then
-		str = string.gsub(arg_55_4, "{#.*}", "")
-		flag_6 = true
+	if not is_system_message then
+		parsed_message = string.gsub(message, "{#.*}", "")
+		message_edited = true
 	end
 
 	local global_messages = self.global_messages
 	local num = #global_messages + 1
 	local tbl = {
-		channel_id = arg_55_1,
-		message_sender = arg_55_2,
-		local_player_id = arg_55_3,
-		message = not flag_6 and str and arg_55_4
+		channel_id = channel_id,
+		message_sender = message_sender,
+		local_player_id = local_player_id,
+		message = (not message_edited or not parsed_message) and not not message
 	}
 
-	if not arg_55_8 then
+	if not message_type then
 		-- Nothing
 	end
 
@@ -933,7 +974,7 @@ ChatManager._add_message_to_list = function (self, arg_55_1, arg_55_2, arg_55_3,
 
 	::label_55_0::
 
-	if not arg_55_5 then
+	if is_system_message then
 		SYSTEM_MSG = Irc.SYSTEM_MSG
 
 		if not SYSTEM_MSG then
@@ -946,20 +987,20 @@ ChatManager._add_message_to_list = function (self, arg_55_1, arg_55_2, arg_55_3,
 	::label_55_1::
 
 	tbl.type = SYSTEM_MSG
-	tbl.pop_chat = arg_55_6
-	tbl.is_dev = arg_55_7
-	tbl.is_bot = flag
-	tbl.is_enemy = flag_2
-	tbl.link = arg_55_9
-	tbl.data = arg_55_10
-	tbl.is_system_message = arg_55_5
+	tbl.pop_chat = pop_chat
+	tbl.is_dev = is_dev
+	tbl.is_bot = is_bot
+	tbl.is_enemy = is_enemy
+	tbl.link = link
+	tbl.data = data
+	tbl.is_system_message = is_system_message
 	global_messages[num] = tbl
 
 	if not IS_WINDOWS then
 		if not self:is_chat_enabled() then
 			return
 		end
-	elseif not (self:is_chat_enabled() or arg_55_5) then
+	elseif not self:is_chat_enabled() and not is_system_message then
 		return
 	end
 
@@ -967,87 +1008,109 @@ ChatManager._add_message_to_list = function (self, arg_55_1, arg_55_2, arg_55_3,
 
 	chat_messages[#chat_messages + 1] = global_messages[#global_messages]
 
-	if not arg_55_5 then
-		local str_2 = "System"
+	if is_system_message then
+		local sender = "System"
 
-		printf("[ChatManager][%s]%s: %s", arg_55_1, str_2, not flag_6 and str and arg_55_4)
+		printf("[ChatManager][%s]%s: %s", channel_id, sender, (not message_edited or not parsed_message) and not not message)
 	end
 end
 
-ChatManager.get_chat_messages = function (self, arg_56_1, arg_56_2)
+ChatManager.get_chat_messages = function (self, destination_table, filter_name)
 	-- function 56
-	if not arg_56_2 then
+	if not filter_name then
 		-- Nothing
 	end
 
 	::label_56_0::
 
-	local var_56_0 = tbl_2[self.current_view_index]
+	local var_56_0 = CHAT_VIEWS[self.current_view_index]
 
-	var_56_0 = var_56_0 or 1
+	if not var_56_0 then
+		-- Nothing
+	end
+
+	var_56_0 = 1
+
+	local filter_name = var_56_0
 
 	::label_56_1::
 
-	local filter = tbl_3[var_56_0].filter
+	local filter = CHAT_VIEW_LUT[filter_name].filter
 	local chat_messages = self.chat_messages
 
-	for k, v in pairs(chat_messages) do
-		if not (var_56_0 == "All" or v.type ~= filter) then
-			arg_56_1[k] = v
+	for i, message_data in pairs(chat_messages) do
+		if filter_name == "All" or message_data.type == filter then
+			destination_table[i] = message_data
 		end
 
-		chat_messages[k] = nil
+		chat_messages[i] = nil
 	end
 end
 
-ChatManager._switch_view_internally = function (self, arg_57_1)
+ChatManager._switch_view_internally = function (self, view_index)
 	-- function 57
-	self.current_view_index = arg_57_1
+	self.current_view_index = view_index
 
 	local chat_messages = self.chat_messages
 
 	table.clear(chat_messages)
 
-	local var_57_1
-	local var_57_2 = tbl_2[self.current_view_index]
+	local message_data
+	local var_57_0 = CHAT_VIEWS[self.current_view_index]
 
-	var_57_2 = var_57_2 or 1
+	if not var_57_0 then
+		-- Nothing
+	end
 
-	print("Switching Chat View to: " .. string.upper(var_57_2))
+	var_57_0 = 1
 
-	local filter = tbl_3[var_57_2].filter
+	local filter_name = var_57_0
+
+	::label_57_0::
+
+	print("Switching Chat View to: " .. string.upper(filter_name))
+
+	local filter = CHAT_VIEW_LUT[filter_name].filter
 
 	for i = 1, #self.global_messages do
-		local var_57_4 = self.global_messages[i]
+		message_data = self.global_messages[i]
 
-		if not (var_57_2 == "All" or var_57_4.type ~= filter) then
-			chat_messages[#chat_messages + 1] = var_57_4
+		if filter_name == "All" or message_data.type == filter then
+			chat_messages[#chat_messages + 1] = message_data
 		end
 	end
 end
 
-ChatManager.switch_view = function (self, arg_58_1)
+ChatManager.switch_view = function (self, view_index)
 	-- function 58
-	self.current_view_index = 1 + self.current_view_index % #tbl_2
+	self.current_view_index = 1 + self.current_view_index % #CHAT_VIEWS
 
 	local chat_messages = self.chat_messages
 
 	table.clear(chat_messages)
 
-	local var_58_1
-	local var_58_2 = tbl_2[self.current_view_index]
+	local message_data
+	local var_58_0 = CHAT_VIEWS[self.current_view_index]
 
-	var_58_2 = var_58_2 or 1
+	if not var_58_0 then
+		-- Nothing
+	end
 
-	print("Switching Chat View to: " .. string.upper(var_58_2))
+	var_58_0 = 1
 
-	local filter = tbl_3[var_58_2].filter
+	local filter_name = var_58_0
+
+	::label_58_0::
+
+	print("Switching Chat View to: " .. string.upper(filter_name))
+
+	local filter = CHAT_VIEW_LUT[filter_name].filter
 
 	for i = 1, #self.global_messages do
-		local var_58_4 = self.global_messages[i]
+		message_data = self.global_messages[i]
 
-		if not (var_58_2 == "All" or var_58_4.type ~= filter) then
-			chat_messages[#chat_messages + 1] = var_58_4
+		if filter_name == "All" or message_data.type == filter then
+			chat_messages[#chat_messages + 1] = message_data
 		end
 	end
 end
@@ -1070,164 +1133,168 @@ COMMAND_LUT = {
 	["/part"] = "leave"
 }
 
-ChatManager._handle_command = function (self, arg_59_1, arg_59_2, arg_59_3)
+ChatManager._handle_command = function (self, message, recent_message_index, optional_message_target)
 	-- function 59
-	if string.find(arg_59_1, "/") == 1 then
-		local split_deprecated = string.split_deprecated(arg_59_1, " ")
-		local var_59_1 = COMMAND_LUT[split_deprecated[1]]
-		local var_59_2
+	if string.find(message, "/") == 1 then
+		local parameters = string.split_deprecated(message, " ")
+		local command = COMMAND_LUT[parameters[1]]
+		local context_data
 
-		if not var_59_1 then
-			var_59_2 = self[var_59_1](self, split_deprecated, arg_59_1, arg_59_2, arg_59_3)
+		if command then
+			context_data = self[command](self, parameters, message, recent_message_index, optional_message_target)
 		end
 
-		return var_59_1, split_deprecated, var_59_2
+		return command, parameters, context_data
 	end
 
 	return false
 end
 
-ChatManager.join_channel = function (self, arg_60_1)
+ChatManager.join_channel = function (self, parameters)
 	-- function 60
-	if not arg_60_1[2] then
-		Managers.irc:join_channel(arg_60_1[2])
+	if parameters[2] then
+		Managers.irc:join_channel(parameters[2])
 
-		if string.find(arg_60_1[2], "#") == 1 then
-			local lower = string.lower(arg_60_1[2])
+		if string.find(parameters[2], "#") == 1 then
+			local channel_name = string.lower(parameters[2])
 
-			self:add_message_target(lower, Irc.CHANNEL_MSG)
+			self:add_message_target(channel_name, Irc.CHANNEL_MSG)
 
-			local var_60_1 = self.message_targets_lut[lower]
+			local var_60_0 = self.message_targets_lut[channel_name]
 
-			var_60_1 = var_60_1 or self.current_message_target_index
-			self.current_message_target_index = var_60_1
+			var_60_0 = not not var_60_0 or not not self.current_message_target_index
+			self.current_message_target_index = var_60_0
 		end
 	end
 end
 
-ChatManager.game_invite = function (self, arg_61_1, arg_61_2, arg_61_3, arg_61_4)
+ChatManager.game_invite = function (self, parameters, message, recent_message_index, optional_message_target)
 	-- function 61
-	if #arg_61_1 > 0 then
-		local var_61_0
+	if #parameters > 0 then
+		local message_target_data
 
-		if not arg_61_4 then
-			local var_61_1 = self.message_targets_lut[arg_61_4]
+		if optional_message_target then
+			local message_target_index = self.message_targets_lut[optional_message_target]
 
-			if not var_61_1 then
-				print("No such message target:", arg_61_4)
+			if not message_target_index then
+				print("No such message target:", optional_message_target)
 
 				return
 			else
-				var_61_0 = self.message_targets[var_61_1]
+				message_target_data = self.message_targets[message_target_index]
 			end
 		else
-			var_61_0 = self:current_message_target()
+			message_target_data = self:current_message_target()
 		end
 
-		if var_61_0.message_target_type == Irc.PARTY_MSG then
+		if message_target_data.message_target_type == Irc.PARTY_MSG then
 			self:_add_message_to_list(1, "System", 0, "You cannot invite people already in your party", false, true, false, Irc.SYSTEM_MSG)
 
 			return
 		end
 
-		local find, var_61_3 = string.find(arg_61_2, arg_61_1[1])
-		local sub = string.sub(arg_61_2, var_61_3 + 2)
-		local gsub = string.gsub(sub, " ", "")
+		local _, end_index = string.find(message, parameters[1])
+		local message = string.sub(message, end_index + 2)
+		local cropped_msg = string.gsub(message, " ", "")
 
-		if string.len(gsub) == 0 then
+		if string.len(cropped_msg) == 0 then
 			return
 		end
 
-		local id = Managers.state.network:lobby():id()
-		local tbl = {
-			lobby_id = id
+		local lobby_id = Managers.state.network:lobby():id()
+		local link_data = {
+			lobby_id = lobby_id
 		}
-		local str = sub .. "$LINK;" .. id
-		local message_target = var_61_0.message_target
+		local networked_message = message .. "$LINK;" .. lobby_id
+		local channel_or_username = message_target_data.message_target
 
-		print(str, message_target)
-		Managers.irc:send_message(str, message_target)
-		self:_add_message_to_list(1, "LINK", sub, 0, false, true, false, var_61_0.message_target_type, tbl)
+		print(networked_message, channel_or_username)
+		Managers.irc:send_message(networked_message, channel_or_username)
+		self:_add_message_to_list(1, "LINK", message, 0, false, true, false, message_target_data.message_target_type, link_data)
 
-		return tbl
+		return link_data
 	end
 end
 
-ChatManager.send_message = function (self, arg_62_1, arg_62_2, arg_62_3)
+ChatManager.send_message = function (self, parameters, message, recent_message_index)
 	-- function 62
-	if not arg_62_1[2] then
-		local find, var_62_1 = string.find(arg_62_2, arg_62_1[2], 1, true)
-		local sub = string.sub(arg_62_2, var_62_1 + 2)
-		local gsub = string.gsub(sub, " ", "")
+	if parameters[2] then
+		local _, end_index = string.find(message, parameters[2], 1, true)
+		local message = string.sub(message, end_index + 2)
+		local cropped_msg = string.gsub(message, " ", "")
 
-		if string.len(gsub) == 0 then
+		if string.len(cropped_msg) == 0 then
 			return
 		end
 
-		local var_62_4 = arg_62_1[2]
+		local user_name = parameters[2]
 
-		if not Managers.irc:send_message(sub, var_62_4) then
-			self:add_message_target(var_62_4, Irc.PRIVATE_MSG)
+		if Managers.irc:send_message(message, user_name) then
+			self:add_message_target(user_name, Irc.PRIVATE_MSG)
 
-			local var_62_5 = self.message_targets_lut[var_62_4]
+			local var_62_0 = self.message_targets_lut[user_name]
 
-			var_62_5 = var_62_5 or self.current_message_target_index
-			self.current_message_target_index = var_62_5
+			var_62_0 = not not var_62_0 or not not self.current_message_target_index
+			self.current_message_target_index = var_62_0
 
-			local str = "To [" .. var_62_4 .. "]"
+			local name = "To [" .. user_name .. "]"
 
-			if not arg_62_3 then
-				self:add_recent_chat_message(sub)
-			elseif self.recently_sent_messages[arg_62_3] ~= sub then
-				self:add_recent_chat_message(sub)
+			if not recent_message_index then
+				self:add_recent_chat_message(message)
+			else
+				local recent_message = self.recently_sent_messages[recent_message_index]
+
+				if recent_message ~= message then
+					self:add_recent_chat_message(message)
+				end
 			end
 
-			self:_add_message_to_list(1, str, 0, sub, false, true, false, Irc.PRIVATE_MSG)
+			self:_add_message_to_list(1, name, 0, message, false, true, false, Irc.PRIVATE_MSG)
 		end
 	end
 end
 
-ChatManager.leave = function (self, arg_63_1)
+ChatManager.leave = function (self, parameters)
 	-- function 63
-	if not (not arg_63_1[2] and string.find(arg_63_1[2], "#") ~= 1) then
-		local lower = string.lower(arg_63_1[2])
+	if parameters[2] and string.find(parameters[2], "#") == 1 then
+		local channel_name = string.lower(parameters[2])
 
-		Managers.irc:leave_channel(lower)
+		Managers.irc:leave_channel(channel_name)
 
-		if not self:remove_message_target(lower) then
+		if self:remove_message_target(channel_name) then
 			self.current_message_target_index = 1
 		end
 	end
 end
 
-ChatManager.who = function (arg_64_0, arg_64_1)
+ChatManager.who = function (self, parameters)
 	-- function 64
-	if not (not arg_64_1[2] and string.find(arg_64_1[2], "#") ~= 1) then
-		local lower = string.lower(arg_64_1[2])
+	if parameters[2] and string.find(parameters[2], "#") == 1 then
+		local channel_name = string.lower(parameters[2])
 
-		Managers.irc:who(lower)
+		Managers.irc:who(channel_name)
 	end
 end
 
-ChatManager.reply = function (self, arg_65_1, arg_65_2)
+ChatManager.reply = function (self, parameters, message)
 	-- function 65
-	local _last_private_message_username = self._last_private_message_username
+	local user_name = self._last_private_message_username
 
-	if not arg_65_1[2] and not _last_private_message_username then
-		local find, var_65_2 = string.find(arg_65_2, arg_65_1[1])
-		local sub = string.sub(arg_65_2, var_65_2 + 2)
+	if parameters[2] and user_name then
+		local start_index, end_index = string.find(message, parameters[1])
+		local new_message = string.sub(message, end_index + 2)
 
-		Managers.irc:send_message(sub, _last_private_message_username)
+		Managers.irc:send_message(new_message, user_name)
 
-		local var_65_4 = self.message_targets_lut[_last_private_message_username]
+		local var_65_0 = self.message_targets_lut[user_name]
 
-		var_65_4 = var_65_4 or self.current_message_target_index
-		self.current_message_target_index = var_65_4
+		var_65_0 = not not var_65_0 or not not self.current_message_target_index
+		self.current_message_target_index = var_65_0
 
-		local str = "To [" .. _last_private_message_username .. "]"
+		local name = "To [" .. user_name .. "]"
 
-		self:add_recent_chat_message(sub)
-		self:_add_message_to_list(1, str, 0, sub, false, true, false, Irc.PRIVATE_MSG)
+		self:add_recent_chat_message(new_message)
+		self:_add_message_to_list(1, name, 0, new_message, false, true, false, Irc.PRIVATE_MSG)
 	end
 end
 

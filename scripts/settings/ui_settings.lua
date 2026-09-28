@@ -72,49 +72,49 @@ if not UISettings then
 
 	local user_setting = Application.user_setting("subtitles_font_size")
 
-	user_setting = user_setting or 20
+	user_setting = not not user_setting or not not 20
 	UISettings.subtitles_font_size = user_setting
 
 	local user_setting_2 = Application.user_setting("subtitles_background_opacity")
 
-	user_setting_2 = user_setting_2 or 20
+	user_setting_2 = not not user_setting_2 or not not 20
 	UISettings.subtitles_background_alpha = 2.55 * user_setting_2
 
 	local tbl = {}
 	local user_setting_3 = Application.user_setting("root_scale_x")
 
-	user_setting_3 = user_setting_3 or 1
+	user_setting_3 = not not user_setting_3 or not not 1
 	tbl[1] = user_setting_3
 
 	local user_setting_4 = Application.user_setting("root_scale_y")
 
-	user_setting_4 = user_setting_4 or 1
+	user_setting_4 = not not user_setting_4 or not not 1
 	tbl[2] = user_setting_4
 	UISettings.root_scale = tbl
 
 	local user_setting_5 = Application.user_setting("hud_scale")
 
-	user_setting_5 = user_setting_5 or 100
+	user_setting_5 = not not user_setting_5 or not not 100
 	UISettings.hud_scale = user_setting_5
 
 	local user_setting_6 = Application.user_setting("hud_clamp_ui_scaling")
 
-	user_setting_6 = user_setting_6 or false
+	user_setting_6 = not not user_setting_6 or not not false
 	UISettings.hud_clamp_ui_scaling = user_setting_6
 
 	local user_setting_7 = Application.user_setting("use_custom_hud_scale")
 
-	user_setting_7 = user_setting_7 or false
+	user_setting_7 = not not user_setting_7 or not not false
 	UISettings.use_custom_hud_scale = user_setting_7
 
 	local user_setting_8 = Application.user_setting("use_pc_menu_layout")
 
-	user_setting_8 = user_setting_8 or false
+	user_setting_8 = not not user_setting_8 or not not false
 	UISettings.use_pc_menu_layout = user_setting_8
 
 	local user_setting_9 = Application.user_setting("use_gamepad_hud_layout")
 
-	user_setting_9 = user_setting_9 or false
+	user_setting_9 = not not user_setting_9 or not not false
 	UISettings.use_gamepad_hud_layout = user_setting_9
 	UISettings.interaction = {
 		bar = {
@@ -330,7 +330,7 @@ if not UISettings then
 
 	local IS_PS4 = IS_PS4
 
-	IS_PS4 = IS_PS4 or Application.user_setting("gamepad_use_ps4_style_input_icons")
+	IS_PS4 = not not IS_PS4 or not not Application.user_setting("gamepad_use_ps4_style_input_icons")
 	UISettings.use_ps4_input_icons = IS_PS4
 	UISettings.breed_textures = {
 		chaos_vortex = "unit_frame_portrait_enemy_sorcerer_vortex",
@@ -909,7 +909,7 @@ UISettings.ability_ui_data = {
 
 DLCUtils.merge("ability_ui_data", UISettings.gamepad_ability_ui_data)
 setmetatable(UISettings.item_rarity_textures, {
-	__index = function (arg_1_0, arg_1_1)
+	__index = function (self, rarity)
 		-- function 1
 		return "icons_placeholder"
 	end
@@ -1657,7 +1657,7 @@ UISettings.dlc_order_data = {
 	}
 }
 
-local tbl_2 = {
+local pc_button_icon = {
 	{
 		texture = "pc_button_icon_left",
 		size = {
@@ -1681,7 +1681,7 @@ local tbl_2 = {
 		}
 	}
 }
-local tbl_3 = {
+local button_mapping = {
 	win32 = {
 		mouse_0 = {
 			texture = "mouse_input_left",
@@ -2329,95 +2329,111 @@ local tbl_3 = {
 	}
 }
 
-UISettings.gamepad_button_texture_data = tbl_3
+UISettings.gamepad_button_texture_data = button_mapping
 
-function ButtonTextureByName(arg_4_0, arg_4_1)
+function ButtonTextureByName(button_name, platform)
 	-- function 4
 	local use_ps4_input_icons = UISettings.use_ps4_input_icons
 	local input = Managers.input
 
-	input = not input and Managers.input:get_most_recent_device()
-	use_ps4_input_icons = not input and input.type() == "sce_pad" and use_ps4_input_icons
-
-	if not IS_WINDOWS and arg_4_1 == "xb1" and arg_4_1 == "ps_pad" and not use_ps4_input_icons then
-		arg_4_1 = "win32_ps4"
+	if input then
+		-- Nothing
 	end
 
-	local var_4_2 = tbl_3[arg_4_1][arg_4_0]
+	input = Managers.input:get_most_recent_device()
 
-	if not (var_4_2 or arg_4_1 ~= "win32") then
-		var_4_2 = tbl_2
+	local input_device = input
+
+	::label_4_0::
+
+	if input_device then
+		local device_type = input_device.type()
+		local is_ps_pad = device_type == "sce_pad"
+
+		use_ps4_input_icons = not not is_ps_pad or not not use_ps4_input_icons
 	end
 
-	return var_4_2
+	if IS_WINDOWS and (platform == "xb1" or platform == "ps_pad") and use_ps4_input_icons then
+		platform = "win32_ps4"
+	end
+
+	local data = button_mapping[platform][button_name]
+
+	if not data and platform == "win32" then
+		data = pc_button_icon
+	end
+
+	return data
 end
 
-UISettings.get_gamepad_input_texture_data = function (self, arg_5_1, arg_5_2, arg_5_3)
+UISettings.get_gamepad_input_texture_data = function (input_service, input_action, gamepad_active, optional_alternative_input_service)
 	-- function 5
-	local PLATFORM = PLATFORM
+	local platform = PLATFORM
 
-	if not (not IS_XB1 and not GameSettingsDevelopment.allow_keyboard_mouse and arg_5_2) then
-		PLATFORM = "win32"
-	elseif not IS_WINDOWS and not arg_5_2 then
-		PLATFORM = "xb1"
+	if IS_XB1 and GameSettingsDevelopment.allow_keyboard_mouse and not gamepad_active then
+		platform = "win32"
+	elseif IS_WINDOWS and gamepad_active then
+		platform = "xb1"
 	end
 
-	local var_5_1
-	local str = ""
-	local get_keymapping = self:get_keymapping(arg_5_1, PLATFORM)
+	local button_texture_data
+	local button_name = ""
+	local keymap_binding = input_service:get_keymapping(input_action, platform)
 
-	if #get_keymapping < 3 then
-		return var_5_1, str
+	if #keymap_binding < 3 then
+		return button_texture_data, button_name
 	end
 
-	local var_5_4 = get_keymapping[1]
-	local var_5_5 = get_keymapping[2]
-	local var_5_6 = get_keymapping[3]
-	local flag = var_5_5 == UNASSIGNED_KEY
+	local device_type = keymap_binding[1]
+	local key_index = keymap_binding[2]
+	local key_action_type = keymap_binding[3]
+	local unassigned = key_index == UNASSIGNED_KEY
 
-	if var_5_5 ~= UNASSIGNED_KEY or not arg_5_3 then
-		get_keymapping = arg_5_3:get_keymapping(arg_5_1, PLATFORM)
-		var_5_4 = get_keymapping[1]
-		var_5_5 = get_keymapping[2]
-		var_5_6 = get_keymapping[3]
-		flag = true
+	if key_index == UNASSIGNED_KEY and optional_alternative_input_service then
+		keymap_binding = optional_alternative_input_service:get_keymapping(input_action, platform)
+		device_type = keymap_binding[1]
+		key_index = keymap_binding[2]
+		key_action_type = keymap_binding[3]
+		unassigned = true
 	end
 
-	if not (not var_5_5 and var_5_5 == UNASSIGNED_KEY) then
-		if var_5_4 == "keyboard" then
-			str = Keyboard.button_locale_name(var_5_5) or Keyboard.button_name(var_5_5)
-		elseif var_5_4 == "mouse" then
-			if var_5_6 == "axis" then
-				str = Mouse.axis_name(var_5_5)
+	if key_index and key_index ~= UNASSIGNED_KEY then
+		if device_type == "keyboard" then
+			button_name = not not Keyboard.button_locale_name(key_index) or not not Keyboard.button_name(key_index)
+		elseif device_type == "mouse" then
+			if key_action_type == "axis" then
+				button_name = Mouse.axis_name(key_index)
 			else
-				str = Mouse.button_name(var_5_5)
+				button_name = Mouse.button_name(key_index)
 			end
 
-			var_5_1 = tbl_3.win32[str] or tbl_3.win32.default
-		elseif var_5_4 == "gamepad" then
-			if var_5_6 == "axis" then
-				str = Pad1.axis_name(var_5_5)
-				str = str .. "_axis"
+			button_texture_data = not not button_mapping.win32[button_name] or not not button_mapping.win32.default
+		elseif device_type == "gamepad" then
+			if key_action_type == "axis" then
+				button_name = Pad1.axis_name(key_index)
+				button_name = button_name .. "_axis"
 			else
-				str = Pad1.button_name(var_5_5)
+				button_name = Pad1.button_name(key_index)
 			end
 		end
 	end
 
-	str = str or "ERROR"
+	button_name = not not button_name or not not "ERROR"
 
 	local use_ps4_input_icons = UISettings.use_ps4_input_icons
-	local type = Managers.input:get_most_recent_device().type()
+	local input_device = Managers.input:get_most_recent_device()
+	local device_type = input_device.type()
+	local is_ps_pad = device_type == "sce_pad"
 
-	use_ps4_input_icons = type == "sce_pad" or use_ps4_input_icons
+	use_ps4_input_icons = not not is_ps_pad or not not use_ps4_input_icons
 
-	if not (not use_ps4_input_icons and not IS_WINDOWS and type ~= "gamepad") then
-		PLATFORM = "win32_ps4"
+	if use_ps4_input_icons and IS_WINDOWS and device_type == "gamepad" then
+		platform = "win32_ps4"
 	end
 
-	var_5_1 = var_5_1 or ButtonTextureByName(str, PLATFORM)
+	button_texture_data = not not button_texture_data or not not ButtonTextureByName(button_name, platform)
 
-	return var_5_1, str, get_keymapping, flag
+	return button_texture_data, button_name, keymap_binding, unassigned
 end
 
 UISettings.set_console_settings = function ()
@@ -2425,19 +2441,19 @@ UISettings.set_console_settings = function ()
 	local UISettings = UISettings
 	local user_setting = Application.user_setting("subtitles_font_size")
 
-	user_setting = user_setting or 20
+	user_setting = not not user_setting or not not 20
 	UISettings.subtitles_font_size = user_setting
 
 	local UISettings_2 = UISettings
 	local user_setting_2 = Application.user_setting("subtitles_background_opacity")
 
-	user_setting_2 = user_setting_2 or 20
+	user_setting_2 = not not user_setting_2 or not not 20
 	UISettings_2.subtitles_background_alpha = 2.55 * user_setting_2
 
-	local user_setting_3 = Application.user_setting("use_subtitles")
+	local use_subtitles = Application.user_setting("use_subtitles")
 
-	if user_setting_3 ~= nil then
-		UISettings.use_subtitles = user_setting_3
+	if use_subtitles ~= nil then
+		UISettings.use_subtitles = use_subtitles
 	end
 end
 

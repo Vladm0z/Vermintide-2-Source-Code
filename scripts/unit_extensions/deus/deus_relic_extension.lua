@@ -2,129 +2,136 @@
 
 DeusRelicExtension = class(DeusRelicExtension)
 
-local num = 30
-local num_2 = 30
-local num_3 = 5
-local num_4 = 5
-local num_5 = 10
-local num_6 = 5
-local num_7 = 0.5
+local LOST_DISTANCE_THRESHOLD = 30
+local LOST_TIME_THRESHOLD = 30
+local OUT_OF_BOUNDS_DISTANCE_THRESHOLD = 5
+local OUT_OF_BOUNDS_TIME_THRESHOLD = 5
+local OBJECTIVE_MARKER_TIME = 10
+local AHEAD_DISTANCE_RESPAWN = 5
+local OUT_OF_BOUNDS_DISTANCE_TO_OBSTACLE = 0.5
 
-local function fn(arg_1_0, arg_1_1, arg_1_2)
+local function get_squared_distance_to_nav_mesh(nav_world, position, search_radius)
 	-- function 1
-	local var_1_0
-	local triangle_from_position, var_1_2 = GwNavQueries.triangle_from_position(arg_1_0, arg_1_1, arg_1_2, arg_1_2)
+	local nearest_nav_mesh_point
+	local success, altitude = GwNavQueries.triangle_from_position(nav_world, position, search_radius, search_radius)
 
-	if not triangle_from_position then
-		var_1_0 = Vector3(arg_1_1.x, arg_1_1.y, var_1_2)
+	if success then
+		nearest_nav_mesh_point = Vector3(position.x, position.y, altitude)
 	else
-		local inside_position_from_outside_position = GwNavQueries.inside_position_from_outside_position(arg_1_0, arg_1_1, arg_1_2, arg_1_2, arg_1_2, num_7)
+		local inside_position = GwNavQueries.inside_position_from_outside_position(nav_world, position, search_radius, search_radius, search_radius, OUT_OF_BOUNDS_DISTANCE_TO_OBSTACLE)
 
-		if not inside_position_from_outside_position then
-			var_1_0 = inside_position_from_outside_position
+		if inside_position then
+			nearest_nav_mesh_point = inside_position
 		end
 	end
 
-	if not var_1_0 then
+	if not nearest_nav_mesh_point then
 		return nil
 	else
-		return Vector3.length_squared(arg_1_1 - var_1_0)
+		return Vector3.length_squared(position - nearest_nav_mesh_point)
 	end
 end
 
-local function fn_2(arg_2_0, arg_2_1)
+local function get_nearest_player_distance_squared(player_positions, position)
 	-- function 2
-	local huge = math.huge
+	local lowest_distance_squared = math.huge
 
-	for i, v in ipairs(arg_2_0) do
-		local length_squared = Vector3.length_squared(arg_2_1 - v)
+	for _, player_position in ipairs(player_positions) do
+		local distance_squared = Vector3.length_squared(position - player_position)
 
-		huge = math.min(length_squared, huge)
+		lowest_distance_squared = math.min(distance_squared, lowest_distance_squared)
 	end
 
-	return huge
+	return lowest_distance_squared
 end
 
-local function fn_3(arg_3_0)
+local function reset_relic_position(unit)
 	-- function 3
-	local conflict = Managers.state.conflict
-	local get_main_paths = conflict.level_analysis:get_main_paths()
-	local main_path_info = conflict.main_path_info
-	local total_path_dist = MainPathUtils.total_path_dist()
-	local var_3_4
+	local conflict_director = Managers.state.conflict
+	local main_paths = conflict_director.level_analysis:get_main_paths()
+	local main_path_info = conflict_director.main_path_info
+	local max_distance = MainPathUtils.total_path_dist()
+	local ahead_player_travel_dist
 
 	if not main_path_info.ahead_unit then
-		var_3_4 = total_path_dist
+		ahead_player_travel_dist = max_distance
 	else
-		var_3_4 = conflict.main_path_player_info[main_path_info.ahead_unit].travel_dist
+		local ahead_player_info = conflict_director.main_path_player_info[main_path_info.ahead_unit]
+
+		ahead_player_travel_dist = ahead_player_info.travel_dist
 	end
 
-	local num = var_3_4 + num_6
-	local clamp = math.clamp(num, 0, MainPathUtils.total_path_dist() - 0.1)
-	local point_on_mainpath = MainPathUtils.point_on_mainpath(get_main_paths, clamp)
-	local extension = ScriptUnit.extension(arg_3_0, "projectile_locomotion_system")
+	local dist = ahead_player_travel_dist + AHEAD_DISTANCE_RESPAWN
 
-	Actor.teleport_position(extension.physics_actor, point_on_mainpath)
+	dist = math.clamp(dist, 0, MainPathUtils.total_path_dist() - 0.1)
+
+	local position = MainPathUtils.point_on_mainpath(main_paths, dist)
+	local locomotion_extension = ScriptUnit.extension(unit, "projectile_locomotion_system")
+
+	Actor.teleport_position(locomotion_extension.physics_actor, position)
 end
 
-DeusRelicExtension.init = function (self, arg_4_1, arg_4_2, arg_4_3)
+DeusRelicExtension.init = function (self, extension_init_context, unit, extension_init_data)
 	-- function 4
-	self._unit = arg_4_2
+	self._unit = unit
 	self._is_server = Managers.player.is_server
 	self._nav_world = Managers.state.entity:system("ai_system"):nav_world()
 end
 
-DeusRelicExtension.game_object_initialized = function (self, arg_5_1, arg_5_2)
+DeusRelicExtension.game_object_initialized = function (self, unit, go_id)
 	-- function 5
-	self._go_id = arg_5_2
+	self._go_id = go_id
 end
 
 DeusRelicExtension.destroy = function (self)
 	-- function 6
 	local unit_spawner = Managers.state.unit_spawner
-	local _objective_unit = self._objective_unit
+	local objective_unit = self._objective_unit
 
-	if not (not ALIVE[_objective_unit] and unit_spawner:is_marked_for_deletion(_objective_unit)) then
-		unit_spawner:mark_for_deletion(_objective_unit)
+	if ALIVE[objective_unit] and not unit_spawner:is_marked_for_deletion(objective_unit) then
+		unit_spawner:mark_for_deletion(objective_unit)
 
 		self._objective_unit = nil
 	end
 end
 
-DeusRelicExtension.update = function (self, arg_7_1, arg_7_2, arg_7_3, arg_7_4, arg_7_5)
+DeusRelicExtension.update = function (self, unit, input, dt, context, t)
 	-- function 7
-	self:_update_position_resetting(arg_7_1, arg_7_5)
-	self:_update_objective_marker(arg_7_1, arg_7_5)
+	self:_update_position_resetting(unit, t)
+	self:_update_objective_marker(unit, t)
 end
 
-DeusRelicExtension._update_position_resetting = function (self, arg_8_1, arg_8_2)
+DeusRelicExtension._update_position_resetting = function (self, unit, t)
 	-- function 8
-	local var_8_0 = POSITION_LOOKUP[arg_8_1]
-	local var_8_1 = fn(self._nav_world, var_8_0, num_3)
-	local num_5 = num_3 * num_3
+	local relic_position = POSITION_LOOKUP[unit]
+	local squared_distance_to_nav_mesh = get_squared_distance_to_nav_mesh(self._nav_world, relic_position, OUT_OF_BOUNDS_DISTANCE_THRESHOLD)
+	local out_of_bounds_distance_threshold_squared = OUT_OF_BOUNDS_DISTANCE_THRESHOLD * OUT_OF_BOUNDS_DISTANCE_THRESHOLD
 
-	if not (not var_8_1 and not (num_5 < var_8_1)) then
+	if not squared_distance_to_nav_mesh or out_of_bounds_distance_threshold_squared < squared_distance_to_nav_mesh then
 		if not self._out_of_bounds_since then
-			self._out_of_bounds_since = arg_8_2
+			self._out_of_bounds_since = t
 		end
 
-		if arg_8_2 - self._out_of_bounds_since > num_4 then
-			fn_3(arg_8_1)
+		if t - self._out_of_bounds_since > OUT_OF_BOUNDS_TIME_THRESHOLD then
+			reset_relic_position(unit)
 
 			self._out_of_bounds_since = nil
 		end
 	else
 		self._out_of_bounds_since = nil
 
-		local PLAYER_AND_BOT_POSITIONS = Managers.state.side:get_side_from_name("heroes").PLAYER_AND_BOT_POSITIONS
+		local side = Managers.state.side:get_side_from_name("heroes")
+		local other_player_positions = side.PLAYER_AND_BOT_POSITIONS
+		local squared_distance_to_nearest_player = get_nearest_player_distance_squared(other_player_positions, relic_position)
+		local lost_distance_threshold_squared = LOST_DISTANCE_THRESHOLD * LOST_DISTANCE_THRESHOLD
 
-		if fn_2(PLAYER_AND_BOT_POSITIONS, var_8_0) > num * num then
+		if lost_distance_threshold_squared < squared_distance_to_nearest_player then
 			if not self._far_away_since then
-				self._far_away_since = arg_8_2
+				self._far_away_since = t
 			end
 
-			if arg_8_2 - self._far_away_since > num_2 then
-				fn_3(arg_8_1)
+			if t - self._far_away_since > LOST_TIME_THRESHOLD then
+				reset_relic_position(unit)
 
 				self._far_away_since = nil
 			end
@@ -134,29 +141,30 @@ DeusRelicExtension._update_position_resetting = function (self, arg_8_1, arg_8_2
 	end
 end
 
-DeusRelicExtension._update_objective_marker = function (self, arg_9_1, arg_9_2)
+DeusRelicExtension._update_objective_marker = function (self, unit, t)
 	-- function 9
-	if not self._objective_unit then
+	if self._objective_unit then
 		return
 	end
 
 	if not self._alive_since then
-		self._alive_since = arg_9_2
+		self._alive_since = t
 	end
 
-	if arg_9_2 - self._alive_since > num_5 then
-		local str = "units/hub_elements/objective_unit"
-		local spawn_network_unit = Managers.state.unit_spawner:spawn_network_unit(str, "objective_unit", nil, POSITION_LOOKUP[arg_9_1])
+	if t - self._alive_since > OBJECTIVE_MARKER_TIME then
+		local unit_name = "units/hub_elements/objective_unit"
+		local objective_unit = Managers.state.unit_spawner:spawn_network_unit(unit_name, "objective_unit", nil, POSITION_LOOKUP[unit])
+		local objective_unit_extension = ScriptUnit.extension(objective_unit, "tutorial_system")
 
-		ScriptUnit.extension(spawn_network_unit, "tutorial_system"):set_active(true)
-		World.link_unit(Unit.world(arg_9_1), spawn_network_unit, 0, arg_9_1, 0)
+		objective_unit_extension:set_active(true)
+		World.link_unit(Unit.world(unit), objective_unit, 0, unit, 0)
 
-		local network = Managers.state.network
-		local unit_game_object_id = network:unit_game_object_id(spawn_network_unit)
-		local unit_game_object_id_2 = network:unit_game_object_id(arg_9_1)
+		local network_manager = Managers.state.network
+		local child_unit_id = network_manager:unit_game_object_id(objective_unit)
+		local parent_unit_id = network_manager:unit_game_object_id(unit)
 
-		network.network_transmit:send_rpc_clients("rpc_link_unit", unit_game_object_id, 0, unit_game_object_id_2, 0)
+		network_manager.network_transmit:send_rpc_clients("rpc_link_unit", child_unit_id, 0, parent_unit_id, 0)
 
-		self._objective_unit = spawn_network_unit
+		self._objective_unit = objective_unit
 	end
 end

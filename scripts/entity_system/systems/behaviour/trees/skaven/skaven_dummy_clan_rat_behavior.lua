@@ -1,6 +1,6 @@
 -- chunkname: @scripts/entity_system/systems/behaviour/trees/skaven/skaven_dummy_clan_rat_behavior.lua
 
-local skaven_dummy_clan_rat = BreedActions.skaven_dummy_clan_rat
+local ACTIONS = BreedActions.skaven_dummy_clan_rat
 
 BreedBehaviors.dummy_clan_rat = {
 	"BTSelector",
@@ -23,7 +23,7 @@ BreedBehaviors.dummy_clan_rat = {
 		"BTStaggerAction",
 		name = "stagger",
 		condition = "stagger",
-		action_data = skaven_dummy_clan_rat.stagger
+		action_data = ACTIONS.stagger
 	},
 	{
 		"BTSelector",
@@ -46,7 +46,7 @@ BreedBehaviors.dummy_clan_rat = {
 			"BTSmashDoorAction",
 			name = "smash_door",
 			condition = "at_door_smartobject",
-			action_data = skaven_dummy_clan_rat.smash_door
+			action_data = ACTIONS.smash_door
 		},
 		condition = "at_smartobject",
 		name = "smartobject"
@@ -55,7 +55,7 @@ BreedBehaviors.dummy_clan_rat = {
 		"BTMoveToGoalAction",
 		name = "move_to_goal",
 		condition = "has_goal_destination",
-		action_data = skaven_dummy_clan_rat.follow
+		action_data = ACTIONS.follow
 	},
 	{
 		"BTIdleAction",

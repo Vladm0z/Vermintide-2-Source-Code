@@ -2,26 +2,26 @@
 
 LureHealthExtension = class(LureHealthExtension)
 
-LureHealthExtension.init = function (self, arg_1_1, arg_1_2, arg_1_3)
+LureHealthExtension.init = function (self, extension_init_context, unit, extension_init_data)
 	-- function 1
-	self._unit = arg_1_2
+	self._unit = unit
 	self._is_server = Managers.player.is_server
-	self._attached_unit = arg_1_3.attached_unit
-	self._lifetime = Managers.time:time("game") + arg_1_3.duration
+	self._attached_unit = extension_init_data.attached_unit
+	self._lifetime = Managers.time:time("game") + extension_init_data.duration
 	self.damage_buffers = {
 		pdArray.new(),
 		pdArray.new()
 	}
-	self._network_transmit = arg_1_1.network_transmit
+	self._network_transmit = extension_init_context.network_transmit
 	self._is_dead = false
 end
 
-LureHealthExtension.destroy = function (arg_2_0)
+LureHealthExtension.destroy = function (self)
 	-- function 2
 	return
 end
 
-LureHealthExtension.hot_join_sync = function (arg_3_0, arg_3_1)
+LureHealthExtension.hot_join_sync = function (self, sender)
 	-- function 3
 	return
 end
@@ -35,41 +35,43 @@ LureHealthExtension.current_health_percent = function (self)
 	-- function 5
 	local flag
 
-	flag = not self._is_dead and 0 and 1
+	flag = (not self._is_dead or not 0) and not not 1
 
 	return flag
 end
 
-LureHealthExtension.current_health = function (arg_6_0)
+LureHealthExtension.current_health = function (self)
 	-- function 6
 	return 1
 end
 
-LureHealthExtension.get_damage_taken = function (arg_7_0)
+LureHealthExtension.get_damage_taken = function (self)
 	-- function 7
 	return 0
 end
 
-LureHealthExtension.get_max_health = function (arg_8_0)
+LureHealthExtension.get_max_health = function (self)
 	-- function 8
 	return 1
 end
 
 LureHealthExtension.add_damage = function (self, ...)
 	-- function 9
-	if not self._is_server and self._is_dead or not Unit.alive(self._attached_unit) then
+	if self._is_server and not self._is_dead and Unit.alive(self._attached_unit) then
 		ScriptUnit.extension(self._attached_unit, "health_system"):add_damage(...)
 	end
 end
 
-LureHealthExtension.update = function (self, arg_10_1, arg_10_2, arg_10_3)
+LureHealthExtension.update = function (self, dt, context, t)
 	-- function 10
-	if not (not self._is_server and self._is_dead or not (arg_10_3 > self._lifetime)) then
-		Managers.state.entity:system("death_system"):kill_unit(self._unit, {})
+	if self._is_server and not self._is_dead and t > self._lifetime then
+		local death_system = Managers.state.entity:system("death_system")
+
+		death_system:kill_unit(self._unit, {})
 	end
 end
 
-LureHealthExtension.add_heal = function (arg_11_0, ...)
+LureHealthExtension.add_heal = function (self, ...)
 	-- function 11
 	return
 end
@@ -80,7 +82,7 @@ LureHealthExtension.set_dead = function (self)
 	HEALTH_ALIVE[self._unit] = nil
 end
 
-LureHealthExtension.has_assist_shield = function (arg_13_0)
+LureHealthExtension.has_assist_shield = function (self)
 	-- function 13
 	return false
 end
@@ -90,7 +92,7 @@ LureHealthExtension.client_predicted_is_alive = function (self)
 	return self:is_alive()
 end
 
-LureHealthExtension.apply_client_predicted_damage = function (arg_15_0, arg_15_1)
+LureHealthExtension.apply_client_predicted_damage = function (self, predicted_damage)
 	-- function 15
 	return
 end

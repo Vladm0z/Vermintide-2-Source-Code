@@ -2,64 +2,64 @@
 
 local UIWidgets = UIWidgets
 
-UIWidgets = UIWidgets or {}
+UIWidgets = not not UIWidgets or not not {}
 UIWidgets = UIWidgets
 
-UIWidgets.create_leaderboard_entry_definition = function (arg_1_0, arg_1_1, arg_1_2)
+UIWidgets.create_leaderboard_entry_definition = function (scenegraph_id, size, masked)
 	-- function 1
-	local num = 8
-	local num_2 = 4
-	local tbl = {
-		math.floor(arg_1_1[1] * 0.18),
-		arg_1_1[2]
+	local background_spacing = 8
+	local width_spacing = 4
+	local ranking_size = {
+		math.floor(size[1] * 0.18),
+		size[2]
 	}
-	local tbl_2 = {
-		math.floor(arg_1_1[1] * 0.1),
-		arg_1_1[2]
+	local weave_size = {
+		math.floor(size[1] * 0.1),
+		size[2]
 	}
-	local tbl_3 = {
-		math.floor(arg_1_1[1] * 0.15),
-		arg_1_1[2]
+	local score_size = {
+		math.floor(size[1] * 0.15),
+		size[2]
 	}
-	local num_3 = tbl[2] - num
-	local tbl_4 = {
-		num_3,
-		num_3
+	local background_height = ranking_size[2] - background_spacing
+	local career_icon_size = {
+		background_height,
+		background_height
 	}
-	local num_4 = arg_1_1[1] - (tbl[1] + tbl_2[1] + tbl_3[1] + num_2 * 3)
-	local tbl_5 = {
-		math.floor(num_4),
-		arg_1_1[2]
+	local spare_width = size[1] - (ranking_size[1] + weave_size[1] + score_size[1] + width_spacing * 3)
+	local name_size = {
+		math.floor(spare_width),
+		size[2]
 	}
-	local tbl_6 = {
+	local ranking_offset = {
 		0,
 		0,
 		0
 	}
-	local tbl_7 = {
-		tbl_6[2] + tbl[1] + num_2,
+	local name_offset = {
+		ranking_offset[2] + ranking_size[1] + width_spacing,
 		0,
 		0
 	}
-	local tbl_8 = {
-		tbl_7[1] + tbl_5[1] + num_2,
+	local weave_offset = {
+		name_offset[1] + name_size[1] + width_spacing,
 		0,
 		0
 	}
-	local tbl_9 = {
-		tbl_8[1] + tbl_2[1] + num_2,
+	local score_offset = {
+		weave_offset[1] + weave_size[1] + width_spacing,
 		0,
 		0
 	}
-	local str = "menu_frame_17"
-	local var_1_14 = UIFrameSettings[str]
-	local tbl_10 = {
+	local frame_name = "menu_frame_17"
+	local frame_settings = UIFrameSettings[frame_name]
+	local local_player_color = {
 		50,
 		100,
 		65,
 		164
 	}
-	local tbl_11 = {
+	local passes = {
 		{
 			style_id = "name_frame",
 			pass_type = "hotspot",
@@ -69,40 +69,40 @@ UIWidgets.create_leaderboard_entry_definition = function (arg_1_0, arg_1_1, arg_
 			pass_type = "texture",
 			style_id = "ranking_background_local_player",
 			texture_id = "background",
-			content_check_function = function (self)
+			content_check_function = function (content)
 				-- function 2
-				return self.local_player
+				return content.local_player
 			end
 		},
 		{
 			style_id = "ranking_background",
 			texture_id = "background",
 			pass_type = "texture",
-			content_check_function = function (self)
+			content_check_function = function (content)
 				-- function 3
-				return not self.local_player
+				return not content.local_player
 			end,
-			content_change_function = function (self, arg_4_1)
+			content_change_function = function (content, style)
 				-- function 4
-				if not IS_WINDOWS then
+				if IS_WINDOWS then
 					return
 				end
 
 				local selected_color
 
-				if not self.button_hotspot.is_hover then
-					selected_color = arg_4_1.selected_color
+				if content.button_hotspot.is_hover then
+					selected_color = style.selected_color
 
 					if not selected_color then
 						-- Nothing
 					end
 				end
 
-				selected_color = arg_4_1.base_color
+				selected_color = style.base_color
 
 				::label_4_0::
 
-				arg_4_1.color = selected_color
+				style.color = selected_color
 			end
 		},
 		{
@@ -124,40 +124,40 @@ UIWidgets.create_leaderboard_entry_definition = function (arg_1_0, arg_1_1, arg_
 			pass_type = "texture",
 			style_id = "name_background_local_player",
 			texture_id = "background",
-			content_check_function = function (self)
+			content_check_function = function (content)
 				-- function 5
-				return self.local_player
+				return content.local_player
 			end
 		},
 		{
 			style_id = "name_background",
 			texture_id = "background",
 			pass_type = "texture",
-			content_check_function = function (self)
+			content_check_function = function (content)
 				-- function 6
-				return not self.local_player
+				return not content.local_player
 			end,
-			content_change_function = function (self, arg_7_1)
+			content_change_function = function (content, style)
 				-- function 7
-				if not IS_WINDOWS then
+				if IS_WINDOWS then
 					return
 				end
 
 				local selected_color
 
-				if not self.button_hotspot.is_hover then
-					selected_color = arg_7_1.selected_color
+				if content.button_hotspot.is_hover then
+					selected_color = style.selected_color
 
 					if not selected_color then
 						-- Nothing
 					end
 				end
 
-				selected_color = arg_7_1.base_color
+				selected_color = style.base_color
 
 				::label_7_0::
 
-				arg_7_1.color = selected_color
+				style.color = selected_color
 			end
 		},
 		{
@@ -169,9 +169,9 @@ UIWidgets.create_leaderboard_entry_definition = function (arg_1_0, arg_1_1, arg_
 			pass_type = "texture",
 			style_id = "career_icon",
 			texture_id = "career_icon",
-			content_check_function = function (self)
+			content_check_function = function (content)
 				-- function 8
-				return self.career_icon
+				return content.career_icon
 			end
 		},
 		{
@@ -188,40 +188,40 @@ UIWidgets.create_leaderboard_entry_definition = function (arg_1_0, arg_1_1, arg_
 			pass_type = "texture",
 			style_id = "weave_background_local_player",
 			texture_id = "background",
-			content_check_function = function (self)
+			content_check_function = function (content)
 				-- function 9
-				return self.local_player
+				return content.local_player
 			end
 		},
 		{
 			style_id = "weave_background",
 			texture_id = "background",
 			pass_type = "texture",
-			content_check_function = function (self)
+			content_check_function = function (content)
 				-- function 10
-				return not self.local_player
+				return not content.local_player
 			end,
-			content_change_function = function (self, arg_11_1)
+			content_change_function = function (content, style)
 				-- function 11
-				if not IS_WINDOWS then
+				if IS_WINDOWS then
 					return
 				end
 
 				local selected_color
 
-				if not self.button_hotspot.is_hover then
-					selected_color = arg_11_1.selected_color
+				if content.button_hotspot.is_hover then
+					selected_color = style.selected_color
 
 					if not selected_color then
 						-- Nothing
 					end
 				end
 
-				selected_color = arg_11_1.base_color
+				selected_color = style.base_color
 
 				::label_11_0::
 
-				arg_11_1.color = selected_color
+				style.color = selected_color
 			end
 		},
 		{
@@ -243,40 +243,40 @@ UIWidgets.create_leaderboard_entry_definition = function (arg_1_0, arg_1_1, arg_
 			pass_type = "texture",
 			style_id = "score_background_local_player",
 			texture_id = "background",
-			content_check_function = function (self)
+			content_check_function = function (content)
 				-- function 12
-				return self.local_player
+				return content.local_player
 			end
 		},
 		{
 			style_id = "score_background",
 			texture_id = "background",
 			pass_type = "texture",
-			content_check_function = function (self)
+			content_check_function = function (content)
 				-- function 13
-				return not self.local_player
+				return not content.local_player
 			end,
-			content_change_function = function (self, arg_14_1)
+			content_change_function = function (content, style)
 				-- function 14
-				if not IS_WINDOWS then
+				if IS_WINDOWS then
 					return
 				end
 
 				local selected_color
 
-				if not self.button_hotspot.is_hover then
-					selected_color = arg_14_1.selected_color
+				if content.button_hotspot.is_hover then
+					selected_color = style.selected_color
 
 					if not selected_color then
 						-- Nothing
 					end
 				end
 
-				selected_color = arg_14_1.base_color
+				selected_color = style.base_color
 
 				::label_14_0::
 
-				arg_14_1.color = selected_color
+				style.color = selected_color
 			end
 		},
 		{
@@ -295,7 +295,7 @@ UIWidgets.create_leaderboard_entry_definition = function (arg_1_0, arg_1_1, arg_
 			text_id = "score"
 		}
 	}
-	local tbl_12 = {
+	local tbl = {
 		score = "000",
 		name = "Unassigned",
 		weave = "000",
@@ -308,13 +308,14 @@ UIWidgets.create_leaderboard_entry_definition = function (arg_1_0, arg_1_1, arg_
 	}
 	local flag
 
-	flag = not arg_1_2 and "rect_masked" and "simple_rect_texture"
-	tbl_12.background = flag
-	tbl_12.frame = var_1_14.texture
-	tbl_12.size = arg_1_1
+	flag = (not masked or not "rect_masked") and not not "simple_rect_texture"
+	tbl.background = flag
+	tbl.frame = frame_settings.texture
+	tbl.size = size
 
-	local tbl_13 = {}
-	local tbl_14 = {
+	local content = tbl
+	local tbl_2 = {}
+	local tbl_3 = {
 		font_size = 22,
 		upper_case = true,
 		localize = false,
@@ -324,18 +325,18 @@ UIWidgets.create_leaderboard_entry_definition = function (arg_1_0, arg_1_1, arg_
 	}
 	local flag_2
 
-	flag_2 = not arg_1_2 and "hell_shark_masked" and "hell_shark"
-	tbl_14.font_type = flag_2
-	tbl_14.text_color = Colors.get_color_table_with_alpha("font_default", 255)
-	tbl_14.size = tbl
-	tbl_14.offset = {
-		tbl_6[1],
-		tbl_6[2],
-		tbl_6[3] + 2
+	flag_2 = (not masked or not "hell_shark_masked") and not not "hell_shark"
+	tbl_3.font_type = flag_2
+	tbl_3.text_color = Colors.get_color_table_with_alpha("font_default", 255)
+	tbl_3.size = ranking_size
+	tbl_3.offset = {
+		ranking_offset[1],
+		ranking_offset[2],
+		ranking_offset[3] + 2
 	}
-	tbl_13.ranking = tbl_14
+	tbl_2.ranking = tbl_3
 
-	local tbl_15 = {
+	local tbl_4 = {
 		font_size = 22,
 		upper_case = true,
 		localize = false,
@@ -345,34 +346,34 @@ UIWidgets.create_leaderboard_entry_definition = function (arg_1_0, arg_1_1, arg_
 	}
 	local flag_3
 
-	flag_3 = not arg_1_2 and "hell_shark_masked" and "hell_shark"
-	tbl_15.font_type = flag_3
-	tbl_15.text_color = Colors.get_color_table_with_alpha("black", 255)
-	tbl_15.size = tbl
-	tbl_15.offset = {
-		tbl_6[1] + 2,
-		tbl_6[2] - 2,
-		tbl_6[3] + 1
+	flag_3 = (not masked or not "hell_shark_masked") and not not "hell_shark"
+	tbl_4.font_type = flag_3
+	tbl_4.text_color = Colors.get_color_table_with_alpha("black", 255)
+	tbl_4.size = ranking_size
+	tbl_4.offset = {
+		ranking_offset[1] + 2,
+		ranking_offset[2] - 2,
+		ranking_offset[3] + 1
 	}
-	tbl_13.ranking_shadow = tbl_15
-	tbl_13.ranking_frame = {
-		masked = arg_1_2,
-		texture_size = var_1_14.texture_size,
-		texture_sizes = var_1_14.texture_sizes,
+	tbl_2.ranking_shadow = tbl_4
+	tbl_2.ranking_frame = {
+		masked = masked,
+		texture_size = frame_settings.texture_size,
+		texture_sizes = frame_settings.texture_sizes,
 		color = {
 			255,
 			255,
 			255,
 			255
 		},
-		offset = tbl_6,
-		size = tbl
+		offset = ranking_offset,
+		size = ranking_size
 	}
-	tbl_13.ranking_background = {
-		masked = arg_1_2,
+	tbl_2.ranking_background = {
+		masked = masked,
 		size = {
-			tbl[1] - num,
-			tbl[2] - num
+			ranking_size[1] - background_spacing,
+			ranking_size[2] - background_spacing
 		},
 		base_color = {
 			120,
@@ -393,26 +394,26 @@ UIWidgets.create_leaderboard_entry_definition = function (arg_1_0, arg_1_1, arg_
 			0
 		},
 		offset = {
-			tbl_6[1] + num / 2,
-			tbl_6[2] + num / 2,
-			tbl_6[3]
+			ranking_offset[1] + background_spacing / 2,
+			ranking_offset[2] + background_spacing / 2,
+			ranking_offset[3]
 		}
 	}
-	tbl_13.ranking_background_local_player = {
-		masked = arg_1_2,
+	tbl_2.ranking_background_local_player = {
+		masked = masked,
 		size = {
-			tbl[1] - num,
-			tbl[2] - num
+			ranking_size[1] - background_spacing,
+			ranking_size[2] - background_spacing
 		},
-		color = tbl_10,
+		color = local_player_color,
 		offset = {
-			tbl_6[1] + num / 2,
-			tbl_6[2] + num / 2,
-			tbl_6[3]
+			ranking_offset[1] + background_spacing / 2,
+			ranking_offset[2] + background_spacing / 2,
+			ranking_offset[3]
 		}
 	}
 
-	local tbl_16 = {
+	local tbl_5 = {
 		font_size = 22,
 		upper_case = false,
 		localize = false,
@@ -422,21 +423,21 @@ UIWidgets.create_leaderboard_entry_definition = function (arg_1_0, arg_1_1, arg_
 	}
 	local flag_4
 
-	flag_4 = not arg_1_2 and "arial_masked" and "arial"
-	tbl_16.font_type = flag_4
-	tbl_16.text_color = Colors.get_color_table_with_alpha("font_default", 255)
-	tbl_16.size = {
-		tbl_5[1] - (tbl_4[1] + 30),
-		tbl_5[2]
+	flag_4 = (not masked or not "arial_masked") and not not "arial"
+	tbl_5.font_type = flag_4
+	tbl_5.text_color = Colors.get_color_table_with_alpha("font_default", 255)
+	tbl_5.size = {
+		name_size[1] - (career_icon_size[1] + 30),
+		name_size[2]
 	}
-	tbl_16.offset = {
-		tbl_7[1] + tbl_4[1] + 15,
-		tbl_7[2],
-		tbl_7[3] + 2
+	tbl_5.offset = {
+		name_offset[1] + career_icon_size[1] + 15,
+		name_offset[2],
+		name_offset[3] + 2
 	}
-	tbl_13.name = tbl_16
+	tbl_2.name = tbl_5
 
-	local tbl_17 = {
+	local tbl_6 = {
 		font_size = 22,
 		upper_case = false,
 		localize = false,
@@ -446,37 +447,37 @@ UIWidgets.create_leaderboard_entry_definition = function (arg_1_0, arg_1_1, arg_
 	}
 	local flag_5
 
-	flag_5 = not arg_1_2 and "arial_masked" and "arial"
-	tbl_17.font_type = flag_5
-	tbl_17.text_color = Colors.get_color_table_with_alpha("black", 255)
-	tbl_17.size = {
-		tbl_5[1] - (tbl_4[2] + 30),
-		tbl_5[2]
+	flag_5 = (not masked or not "arial_masked") and not not "arial"
+	tbl_6.font_type = flag_5
+	tbl_6.text_color = Colors.get_color_table_with_alpha("black", 255)
+	tbl_6.size = {
+		name_size[1] - (career_icon_size[2] + 30),
+		name_size[2]
 	}
-	tbl_17.offset = {
-		tbl_7[1] + tbl_4[1] + 17,
-		tbl_7[2] - 2,
-		tbl_7[3] + 1
+	tbl_6.offset = {
+		name_offset[1] + career_icon_size[1] + 17,
+		name_offset[2] - 2,
+		name_offset[3] + 1
 	}
-	tbl_13.name_shadow = tbl_17
-	tbl_13.name_frame = {
-		masked = arg_1_2,
-		texture_size = var_1_14.texture_size,
-		texture_sizes = var_1_14.texture_sizes,
+	tbl_2.name_shadow = tbl_6
+	tbl_2.name_frame = {
+		masked = masked,
+		texture_size = frame_settings.texture_size,
+		texture_sizes = frame_settings.texture_sizes,
 		color = {
 			255,
 			255,
 			255,
 			255
 		},
-		offset = tbl_7,
-		size = tbl_5
+		offset = name_offset,
+		size = name_size
 	}
-	tbl_13.name_background = {
-		masked = arg_1_2,
+	tbl_2.name_background = {
+		masked = masked,
 		size = {
-			tbl_5[1] - num,
-			tbl_5[2] - num
+			name_size[1] - background_spacing,
+			name_size[2] - background_spacing
 		},
 		base_color = {
 			120,
@@ -497,27 +498,27 @@ UIWidgets.create_leaderboard_entry_definition = function (arg_1_0, arg_1_1, arg_
 			0
 		},
 		offset = {
-			tbl_7[1] + num / 2,
-			tbl_7[2] + num / 2,
-			tbl_7[3]
+			name_offset[1] + background_spacing / 2,
+			name_offset[2] + background_spacing / 2,
+			name_offset[3]
 		}
 	}
-	tbl_13.name_background_local_player = {
-		masked = arg_1_2,
+	tbl_2.name_background_local_player = {
+		masked = masked,
 		size = {
-			tbl_5[1] - num,
-			tbl_5[2] - num
+			name_size[1] - background_spacing,
+			name_size[2] - background_spacing
 		},
-		color = tbl_10,
+		color = local_player_color,
 		offset = {
-			tbl_7[1] + num / 2,
-			tbl_7[2] + num / 2,
-			tbl_7[3]
+			name_offset[1] + background_spacing / 2,
+			name_offset[2] + background_spacing / 2,
+			name_offset[3]
 		}
 	}
-	tbl_13.career_icon = {
-		masked = arg_1_2,
-		size = tbl_4,
+	tbl_2.career_icon = {
+		masked = masked,
+		size = career_icon_size,
 		color = {
 			255,
 			255,
@@ -525,13 +526,13 @@ UIWidgets.create_leaderboard_entry_definition = function (arg_1_0, arg_1_1, arg_
 			255
 		},
 		offset = {
-			tbl_7[1] + num / 2,
-			tbl_7[2] + num / 2,
-			tbl_7[3]
+			name_offset[1] + background_spacing / 2,
+			name_offset[2] + background_spacing / 2,
+			name_offset[3]
 		}
 	}
 
-	local tbl_18 = {
+	local tbl_7 = {
 		font_size = 22,
 		upper_case = true,
 		localize = false,
@@ -541,18 +542,18 @@ UIWidgets.create_leaderboard_entry_definition = function (arg_1_0, arg_1_1, arg_
 	}
 	local flag_6
 
-	flag_6 = not arg_1_2 and "hell_shark_masked" and "hell_shark"
-	tbl_18.font_type = flag_6
-	tbl_18.text_color = Colors.get_color_table_with_alpha("font_default", 255)
-	tbl_18.size = tbl_2
-	tbl_18.offset = {
-		tbl_8[1],
-		tbl_8[2],
-		tbl_8[3] + 2
+	flag_6 = (not masked or not "hell_shark_masked") and not not "hell_shark"
+	tbl_7.font_type = flag_6
+	tbl_7.text_color = Colors.get_color_table_with_alpha("font_default", 255)
+	tbl_7.size = weave_size
+	tbl_7.offset = {
+		weave_offset[1],
+		weave_offset[2],
+		weave_offset[3] + 2
 	}
-	tbl_13.weave = tbl_18
+	tbl_2.weave = tbl_7
 
-	local tbl_19 = {
+	local tbl_8 = {
 		font_size = 22,
 		upper_case = true,
 		localize = false,
@@ -562,34 +563,34 @@ UIWidgets.create_leaderboard_entry_definition = function (arg_1_0, arg_1_1, arg_
 	}
 	local flag_7
 
-	flag_7 = not arg_1_2 and "hell_shark_masked" and "hell_shark"
-	tbl_19.font_type = flag_7
-	tbl_19.text_color = Colors.get_color_table_with_alpha("black", 255)
-	tbl_19.size = tbl_2
-	tbl_19.offset = {
-		tbl_8[1] + 2,
-		tbl_8[2] - 2,
-		tbl_8[3] + 1
+	flag_7 = (not masked or not "hell_shark_masked") and not not "hell_shark"
+	tbl_8.font_type = flag_7
+	tbl_8.text_color = Colors.get_color_table_with_alpha("black", 255)
+	tbl_8.size = weave_size
+	tbl_8.offset = {
+		weave_offset[1] + 2,
+		weave_offset[2] - 2,
+		weave_offset[3] + 1
 	}
-	tbl_13.weave_shadow = tbl_19
-	tbl_13.weave_frame = {
-		masked = arg_1_2,
-		texture_size = var_1_14.texture_size,
-		texture_sizes = var_1_14.texture_sizes,
+	tbl_2.weave_shadow = tbl_8
+	tbl_2.weave_frame = {
+		masked = masked,
+		texture_size = frame_settings.texture_size,
+		texture_sizes = frame_settings.texture_sizes,
 		color = {
 			255,
 			255,
 			255,
 			255
 		},
-		offset = tbl_8,
-		size = tbl_2
+		offset = weave_offset,
+		size = weave_size
 	}
-	tbl_13.weave_background = {
-		masked = arg_1_2,
+	tbl_2.weave_background = {
+		masked = masked,
 		size = {
-			tbl_2[1] - num,
-			tbl_2[2] - num
+			weave_size[1] - background_spacing,
+			weave_size[2] - background_spacing
 		},
 		base_color = {
 			120,
@@ -610,26 +611,26 @@ UIWidgets.create_leaderboard_entry_definition = function (arg_1_0, arg_1_1, arg_
 			0
 		},
 		offset = {
-			tbl_8[1] + num / 2,
-			tbl_8[2] + num / 2,
-			tbl_8[3]
+			weave_offset[1] + background_spacing / 2,
+			weave_offset[2] + background_spacing / 2,
+			weave_offset[3]
 		}
 	}
-	tbl_13.weave_background_local_player = {
-		masked = arg_1_2,
+	tbl_2.weave_background_local_player = {
+		masked = masked,
 		size = {
-			tbl_2[1] - num,
-			tbl_2[2] - num
+			weave_size[1] - background_spacing,
+			weave_size[2] - background_spacing
 		},
-		color = tbl_10,
+		color = local_player_color,
 		offset = {
-			tbl_8[1] + num / 2,
-			tbl_8[2] + num / 2,
-			tbl_8[3]
+			weave_offset[1] + background_spacing / 2,
+			weave_offset[2] + background_spacing / 2,
+			weave_offset[3]
 		}
 	}
 
-	local tbl_20 = {
+	local tbl_9 = {
 		font_size = 22,
 		upper_case = true,
 		localize = false,
@@ -639,18 +640,18 @@ UIWidgets.create_leaderboard_entry_definition = function (arg_1_0, arg_1_1, arg_
 	}
 	local flag_8
 
-	flag_8 = not arg_1_2 and "hell_shark_masked" and "hell_shark"
-	tbl_20.font_type = flag_8
-	tbl_20.text_color = Colors.get_color_table_with_alpha("font_default", 255)
-	tbl_20.size = tbl_3
-	tbl_20.offset = {
-		tbl_9[1],
-		tbl_9[2],
-		tbl_9[3] + 2
+	flag_8 = (not masked or not "hell_shark_masked") and not not "hell_shark"
+	tbl_9.font_type = flag_8
+	tbl_9.text_color = Colors.get_color_table_with_alpha("font_default", 255)
+	tbl_9.size = score_size
+	tbl_9.offset = {
+		score_offset[1],
+		score_offset[2],
+		score_offset[3] + 2
 	}
-	tbl_13.score = tbl_20
+	tbl_2.score = tbl_9
 
-	local tbl_21 = {
+	local tbl_10 = {
 		font_size = 22,
 		upper_case = true,
 		localize = false,
@@ -660,34 +661,34 @@ UIWidgets.create_leaderboard_entry_definition = function (arg_1_0, arg_1_1, arg_
 	}
 	local flag_9
 
-	flag_9 = not arg_1_2 and "hell_shark_masked" and "hell_shark"
-	tbl_21.font_type = flag_9
-	tbl_21.text_color = Colors.get_color_table_with_alpha("black", 255)
-	tbl_21.size = tbl_3
-	tbl_21.offset = {
-		tbl_9[1] + 2,
-		tbl_9[2] - 2,
-		tbl_9[3] + 1
+	flag_9 = (not masked or not "hell_shark_masked") and not not "hell_shark"
+	tbl_10.font_type = flag_9
+	tbl_10.text_color = Colors.get_color_table_with_alpha("black", 255)
+	tbl_10.size = score_size
+	tbl_10.offset = {
+		score_offset[1] + 2,
+		score_offset[2] - 2,
+		score_offset[3] + 1
 	}
-	tbl_13.score_shadow = tbl_21
-	tbl_13.score_frame = {
-		masked = arg_1_2,
-		texture_size = var_1_14.texture_size,
-		texture_sizes = var_1_14.texture_sizes,
+	tbl_2.score_shadow = tbl_10
+	tbl_2.score_frame = {
+		masked = masked,
+		texture_size = frame_settings.texture_size,
+		texture_sizes = frame_settings.texture_sizes,
 		color = {
 			255,
 			255,
 			255,
 			255
 		},
-		offset = tbl_9,
-		size = tbl_3
+		offset = score_offset,
+		size = score_size
 	}
-	tbl_13.score_background = {
-		masked = arg_1_2,
+	tbl_2.score_background = {
+		masked = masked,
 		size = {
-			tbl_3[1] - num,
-			tbl_3[2] - num
+			score_size[1] - background_spacing,
+			score_size[2] - background_spacing
 		},
 		base_color = {
 			120,
@@ -708,77 +709,91 @@ UIWidgets.create_leaderboard_entry_definition = function (arg_1_0, arg_1_1, arg_
 			0
 		},
 		offset = {
-			tbl_9[1] + num / 2,
-			tbl_9[2] + num / 2,
-			tbl_9[3]
+			score_offset[1] + background_spacing / 2,
+			score_offset[2] + background_spacing / 2,
+			score_offset[3]
 		}
 	}
-	tbl_13.score_background_local_player = {
-		masked = arg_1_2,
+	tbl_2.score_background_local_player = {
+		masked = masked,
 		size = {
-			tbl_3[1] - num,
-			tbl_3[2] - num
+			score_size[1] - background_spacing,
+			score_size[2] - background_spacing
 		},
-		color = tbl_10,
+		color = local_player_color,
 		offset = {
-			tbl_9[1] + num / 2,
-			tbl_9[2] + num / 2,
-			tbl_9[3]
+			score_offset[1] + background_spacing / 2,
+			score_offset[2] + background_spacing / 2,
+			score_offset[3]
 		}
 	}
 
-	return {
-		element = {
-			passes = tbl_11
-		},
-		content = tbl_12,
-		style = tbl_13,
-		offset = {
-			0,
-			0,
-			0
-		},
-		scenegraph_id = arg_1_0
+	local style = tbl_2
+	local widget = {}
+	local element = {}
+
+	element.passes = passes
+	widget.element = element
+	widget.content = content
+	widget.style = style
+	widget.offset = {
+		0,
+		0,
+		0
 	}
+	widget.scenegraph_id = scenegraph_id
+
+	return widget
 end
 
-UIWidgets.create_leaderboard_loading_icon = function (arg_15_0, arg_15_1, arg_15_2)
+UIWidgets.create_leaderboard_loading_icon = function (scenegraph_id, overlay_scenegraph_ids, optional_loading_texture)
 	-- function 15
-	local flag = arg_15_2 or "loot_loading"
-	local size = UIAtlasHelper.get_atlas_settings_by_texture_name(flag).size
-	local tbl = {
+	local loading_texture = not not optional_loading_texture or not not "loot_loading"
+	local loading_texture_settings = UIAtlasHelper.get_atlas_settings_by_texture_name(loading_texture)
+	local loading_texture_size = loading_texture_settings.size
+	local passes = {
 		{
 			style_id = "texture_id",
 			pass_type = "rotated_texture",
 			texture_id = "texture_id",
-			content_change_function = function (arg_16_0, arg_16_1, arg_16_2, arg_16_3)
+			content_change_function = function (content, style, _, dt)
 				-- function 16
-				local progress = arg_16_1.progress
+				local progress_2 = style.progress
 
-				progress = progress or 0
+				if not progress_2 then
+					-- Nothing
+				end
 
-				local num = (progress + arg_16_3) % 1
+				progress_2 = 0
 
-				arg_16_1.angle = math.pow(2, math.smoothstep(num, 0, 1)) * (math.pi * 2)
-				arg_16_1.progress = num
+				local progress = progress_2
+
+				::label_16_0::
+
+				progress = (progress + dt) % 1
+
+				local angle = math.pow(2, math.smoothstep(progress, 0, 1)) * (math.pi * 2)
+
+				style.angle = angle
+				style.progress = progress
 			end
 		}
 	}
-	local tbl_2 = {
-		texture_id = flag
+	local content = {
+		texture_id = loading_texture
 	}
-	local tbl_3 = {
+	local style = {
 		texture_id = {
 			vertical_alignment = "center",
 			angle = 0,
 			horizontal_alignment = "center",
 			texture_size = {
-				size[1],
-				size[2]
+				loading_texture_size[1],
+				loading_texture_size[2]
 			},
 			pivot = {
-				size[1] / 2,
-				size[2] / 2
+				loading_texture_size[1] / 2,
+				loading_texture_size[2] / 2
 			},
 			color = {
 				255,
@@ -794,19 +809,19 @@ UIWidgets.create_leaderboard_loading_icon = function (arg_15_0, arg_15_1, arg_15
 		}
 	}
 
-	if not arg_15_1 then
-		for i = 1, #arg_15_1 do
-			local str = "overlay_" .. i
-			local var_15_6 = arg_15_1[i]
-			local tbl_4 = {
+	if overlay_scenegraph_ids then
+		for i = 1, #overlay_scenegraph_ids do
+			local style_id = "overlay_" .. i
+			local overlay_scenegraph_id = overlay_scenegraph_ids[i]
+			local pass = {
 				pass_type = "rect",
-				style_id = str
+				style_id = style_id
 			}
 
-			table.insert(tbl, tbl_4)
+			table.insert(passes, pass)
 
-			tbl_3[str] = {
-				scenegraph_id = var_15_6,
+			style[style_id] = {
+				scenegraph_id = overlay_scenegraph_id,
 				color = {
 					200,
 					10,
@@ -822,34 +837,36 @@ UIWidgets.create_leaderboard_loading_icon = function (arg_15_0, arg_15_1, arg_15
 		end
 	end
 
-	return {
-		element = {
-			passes = tbl
-		},
-		content = tbl_2,
-		style = tbl_3,
-		offset = {
-			0,
-			0,
-			0
-		},
-		scenegraph_id = arg_15_0
+	local widget = {}
+	local element = {}
+
+	element.passes = passes
+	widget.element = element
+	widget.content = content
+	widget.style = style
+	widget.offset = {
+		0,
+		0,
+		0
 	}
+	widget.scenegraph_id = scenegraph_id
+
+	return widget
 end
 
-UIWidgets.create_leaderboard_error_icon = function (arg_17_0, arg_17_1)
+UIWidgets.create_leaderboard_error_icon = function (scenegraph_id, overlay_scenegraph_ids)
 	-- function 17
-	local tbl = {
+	local passes = {
 		{
 			texture_id = "texture_id",
 			style_id = "texture_id",
 			pass_type = "texture"
 		}
 	}
-	local tbl_2 = {
+	local content = {
 		texture_id = "icon_connection_lost"
 	}
-	local tbl_3 = {
+	local style = {
 		texture_id = {
 			color = {
 				255,
@@ -865,18 +882,18 @@ UIWidgets.create_leaderboard_error_icon = function (arg_17_0, arg_17_1)
 		}
 	}
 
-	for i = 1, #arg_17_1 do
-		local str = "overlay_" .. i
-		local var_17_4 = arg_17_1[i]
-		local tbl_4 = {
+	for i = 1, #overlay_scenegraph_ids do
+		local style_id = "overlay_" .. i
+		local overlay_scenegraph_id = overlay_scenegraph_ids[i]
+		local pass = {
 			pass_type = "rect",
-			style_id = str
+			style_id = style_id
 		}
 
-		table.insert(tbl, tbl_4)
+		table.insert(passes, pass)
 
-		tbl_3[str] = {
-			scenegraph_id = var_17_4,
+		style[style_id] = {
+			scenegraph_id = overlay_scenegraph_id,
 			color = {
 				200,
 				10,
@@ -891,17 +908,19 @@ UIWidgets.create_leaderboard_error_icon = function (arg_17_0, arg_17_1)
 		}
 	end
 
-	return {
-		element = {
-			passes = tbl
-		},
-		content = tbl_2,
-		style = tbl_3,
-		offset = {
-			0,
-			0,
-			0
-		},
-		scenegraph_id = arg_17_0
+	local widget = {}
+	local element = {}
+
+	element.passes = passes
+	widget.element = element
+	widget.content = content
+	widget.style = style
+	widget.offset = {
+		0,
+		0,
+		0
 	}
+	widget.scenegraph_id = scenegraph_id
+
+	return widget
 end

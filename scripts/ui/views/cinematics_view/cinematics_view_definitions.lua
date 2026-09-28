@@ -1,18 +1,18 @@
 -- chunkname: @scripts/ui/views/cinematics_view/cinematics_view_definitions.lua
 
-local tbl = {
+local entry_size = {
 	1200,
 	350
 }
-local tbl_2 = {
+local slate_size = {
 	1200,
 	250
 }
-local tbl_3 = {
+local screen_resolution = {
 	1920,
 	1080
 }
-local tbl_4 = {
+local scenegraph_definition = {
 	root = {
 		is_root = true,
 		position = {
@@ -20,7 +20,7 @@ local tbl_4 = {
 			0,
 			UILayer.options_menu
 		},
-		size = tbl_3
+		size = screen_resolution
 	},
 	screen = {
 		vertical_alignment = "center",
@@ -31,7 +31,7 @@ local tbl_4 = {
 			0,
 			0
 		},
-		size = tbl_3
+		size = screen_resolution
 	},
 	fullscreen_video = {
 		vertical_alignment = "center",
@@ -107,7 +107,7 @@ local tbl_4 = {
 			10
 		},
 		size = {
-			tbl[1],
+			entry_size[1],
 			700
 		}
 	},
@@ -119,7 +119,7 @@ local tbl_4 = {
 			0
 		},
 		size = {
-			tbl[1] + 20,
+			entry_size[1] + 20,
 			700
 		}
 	},
@@ -132,7 +132,7 @@ local tbl_4 = {
 			0
 		},
 		size = {
-			tbl[1] + 20,
+			entry_size[1] + 20,
 			50
 		}
 	},
@@ -145,7 +145,7 @@ local tbl_4 = {
 			0
 		},
 		size = {
-			tbl[1] + 20,
+			entry_size[1] + 20,
 			50
 		}
 	},
@@ -172,7 +172,7 @@ local tbl_4 = {
 			-91,
 			0
 		},
-		size = tbl_2
+		size = slate_size
 	},
 	anchor_point = {
 		parent = "anchor_start"
@@ -192,7 +192,7 @@ local tbl_4 = {
 		}
 	}
 }
-local tbl_5 = {
+local title_text_style = {
 	word_wrap = false,
 	upper_case = true,
 	localize = true,
@@ -207,7 +207,7 @@ local tbl_5 = {
 		1
 	}
 }
-local tbl_6 = {
+local title_text_style_shadow = {
 	word_wrap = false,
 	upper_case = true,
 	localize = true,
@@ -228,9 +228,9 @@ local tbl_6 = {
 	}
 }
 
-local function fn()
+local function create_video_area()
 	-- function 1
-	return {
+	local definition = {
 		scenegraph_id = "video_area",
 		element = {
 			passes = {
@@ -250,85 +250,110 @@ local function fn()
 		},
 		style = {}
 	}
+
+	return definition
 end
 
-local function fn_2(arg_2_0)
+local function create_scrollbar(num_elements)
 	-- function 2
-	local var_2_0 = tbl_4.video_area.size[2]
-	local num = arg_2_0 * tbl[2]
-	local flag
-
-	flag = num <= var_2_0
-
-	local num_2 = var_2_0 / num
-
-	return {
+	local area_length = scenegraph_definition.video_area.size[2]
+	local list_length = num_elements * entry_size[2]
+	local disable = list_length <= area_length
+	local scroller_percentage = area_length / list_length
+	local definition = {
 		scenegraph_id = "scrollbar",
 		element = {
 			passes = {
 				{
 					pass_type = "hotspot",
 					content_id = "hotspot",
-					content_change_function = function (self, arg_3_1)
+					content_change_function = function (content, style)
 						-- function 3
-						local parent = self.parent
+						local parent_content = content.parent
+						local scroller_hotspot = parent_content.scroller_hotspot
 
-						if not parent.scroller_hotspot.selected then
-							parent.scrollbar_hover_progress = 0
+						if scroller_hotspot.selected then
+							parent_content.scrollbar_hover_progress = 0
 
 							return
 						end
 
-						local is_hover = self.is_hover
-						local time_and_delta, var_3_3 = Managers.time:time_and_delta("main")
-						local num = 4
-						local scrollbar_hover_progress = parent.scrollbar_hover_progress
+						local is_hover = content.is_hover
+						local t, dt = Managers.time:time_and_delta("main")
+						local speed = 4
+						local scrollbar_hover_progress_2 = parent_content.scrollbar_hover_progress
 
-						scrollbar_hover_progress = scrollbar_hover_progress or 0
+						if not scrollbar_hover_progress_2 then
+							-- Nothing
+						end
+
+						scrollbar_hover_progress_2 = 0
+
+						local scrollbar_hover_progress = scrollbar_hover_progress_2
+
+						::label_3_0::
 
 						local clamp = math.clamp
-						local num_2 = var_3_3 * num
+						local num = dt * speed
 						local flag
 
-						flag = not is_hover and 1 and -1
-						parent.scrollbar_hover_progress = clamp(scrollbar_hover_progress + num_2 * flag, 0, 1)
+						flag = (not is_hover or not 1) and not not -1
+						scrollbar_hover_progress = clamp(scrollbar_hover_progress + num * flag, 0, 1)
+						parent_content.scrollbar_hover_progress = scrollbar_hover_progress
 					end
 				},
 				{
 					style_id = "scroller",
 					pass_type = "hotspot",
 					content_id = "scroller_hotspot",
-					content_change_function = function (self, arg_4_1)
+					content_change_function = function (content, style)
 						-- function 4
-						local parent = self.parent
-						local is_hover = self.is_hover
+						local parent_content = content.parent
+						local is_hover_2 = content.is_hover
 
-						is_hover = is_hover or self.selected
+						if not is_hover_2 then
+							-- Nothing
+						end
 
-						local time_and_delta, var_4_3 = Managers.time:time_and_delta("main")
-						local num = 4
-						local hover_progress = parent.hover_progress
+						is_hover_2 = content.selected
 
-						hover_progress = hover_progress or 0
+						local is_hover = is_hover_2
+
+						::label_4_0::
+
+						local t, dt = Managers.time:time_and_delta("main")
+						local speed = 4
+						local hover_progress_2 = parent_content.hover_progress
+
+						if not hover_progress_2 then
+							-- Nothing
+						end
+
+						hover_progress_2 = 0
+
+						local hover_progress = hover_progress_2
+
+						::label_4_1::
 
 						local clamp = math.clamp
-						local num_2 = var_4_3 * num
+						local num = dt * speed
 						local flag
 
-						flag = not is_hover and 1 and -1
-						parent.hover_progress = clamp(hover_progress + num_2 * flag, 0, 1)
+						flag = (not is_hover or not 1) and not not -1
+						hover_progress = clamp(hover_progress + num * flag, 0, 1)
+						parent_content.hover_progress = hover_progress
 					end
 				},
 				{
 					style_id = "scrollbar_bg",
 					pass_type = "rounded_background",
-					content_change_function = function (self, arg_5_1)
+					content_change_function = function (content, style)
 						-- function 5
-						local easeOutCubic = math.easeOutCubic(self.scrollbar_hover_progress)
+						local t = math.easeOutCubic(content.scrollbar_hover_progress)
 
-						arg_5_1.color[2] = math.lerp(30, 60, easeOutCubic)
-						arg_5_1.color[3] = math.lerp(30, 60, easeOutCubic)
-						arg_5_1.color[4] = math.lerp(30, 60, easeOutCubic)
+						style.color[2] = math.lerp(30, 60, t)
+						style.color[3] = math.lerp(30, 60, t)
+						style.color[4] = math.lerp(30, 60, t)
 					end
 				},
 				{
@@ -338,14 +363,14 @@ local function fn_2(arg_2_0)
 				{
 					style_id = "scroller",
 					pass_type = "rounded_background",
-					content_change_function = function (self, arg_6_1)
+					content_change_function = function (content, style)
 						-- function 6
-						local scroller_hotspot = self.scroller_hotspot
-						local easeOutCubic = math.easeOutCubic(self.hover_progress)
+						local hotspot = content.scroller_hotspot
+						local t = math.easeOutCubic(content.hover_progress)
 
-						arg_6_1.color[2] = math.lerp(30, 128, easeOutCubic)
-						arg_6_1.color[3] = math.lerp(30, 128, easeOutCubic)
-						arg_6_1.color[4] = math.lerp(30, 128, easeOutCubic)
+						style.color[2] = math.lerp(30, 128, t)
+						style.color[3] = math.lerp(30, 128, t)
+						style.color[4] = math.lerp(30, 128, t)
 					end
 				}
 			}
@@ -354,7 +379,7 @@ local function fn_2(arg_2_0)
 			mask = "mask_rect",
 			hotspot = {},
 			scroller_hotspot = {},
-			num_elements = arg_2_0
+			num_elements = num_elements
 		},
 		style = {
 			scrollbar_bg = {
@@ -380,8 +405,8 @@ local function fn_2(arg_2_0)
 					1
 				},
 				size = {
-					tbl_4.scrollbar.size[1] - 2,
-					tbl_4.scrollbar.size[2] - 2
+					scenegraph_definition.scrollbar.size[1] - 2,
+					scenegraph_definition.scrollbar.size[2] - 2
 				}
 			},
 			scroller = {
@@ -400,19 +425,21 @@ local function fn_2(arg_2_0)
 					2
 				},
 				rect_size = {
-					tbl_4.scrollbar.size[1] - 2,
-					(tbl_4.scrollbar.size[2] - 2) * num_2
+					scenegraph_definition.scrollbar.size[1] - 2,
+					(scenegraph_definition.scrollbar.size[2] - 2) * scroller_percentage
 				},
 				area_size = {
-					tbl_4.scrollbar.size[1] - 2,
-					(tbl_4.scrollbar.size[2] - 2) * num_2
+					scenegraph_definition.scrollbar.size[1] - 2,
+					(scenegraph_definition.scrollbar.size[2] - 2) * scroller_percentage
 				}
 			}
 		}
 	}
+
+	return definition
 end
 
-local tbl_7 = {
+local widget_definitions = {
 	fade_edge = UIWidgets.create_simple_texture("horizontal_gradient", "fade_area_edge", nil, nil, {
 		235,
 		0,
@@ -426,9 +453,9 @@ local tbl_7 = {
 		0,
 		0
 	}),
-	title_text = UIWidgets.create_simple_text("start_menu_cinematics", "canvas", nil, nil, tbl_5),
-	title_text_shadow = UIWidgets.create_simple_text("start_menu_cinematics", "canvas", nil, nil, tbl_6),
-	video_area = fn(),
+	title_text = UIWidgets.create_simple_text("start_menu_cinematics", "canvas", nil, nil, title_text_style),
+	title_text_shadow = UIWidgets.create_simple_text("start_menu_cinematics", "canvas", nil, nil, title_text_style_shadow),
+	video_area = create_video_area(),
 	video_area_top = UIWidgets.create_simple_texture("vertical_gradient_write_mask", "video_area_top"),
 	video_area_bottom = UIWidgets.create_simple_uv_texture("vertical_gradient_write_mask", {
 		{
@@ -441,13 +468,13 @@ local tbl_7 = {
 		}
 	}, "video_area_bottom")
 }
-local tbl_8 = {
+local button_widget_definitions = {
 	back_button = UIWidgets.create_layout_button("back_button", "layout_button_back", "layout_button_back_glow")
 }
 
-local function fn_3(arg_7_0)
+local function create_video_entry(parent)
 	-- function 7
-	return {
+	local definition = {
 		scenegraph_id = "fullscreen_video",
 		element = {
 			passes = {
@@ -456,22 +483,22 @@ local function fn_3(arg_7_0)
 					style_id = "video_style",
 					pass_type = "video",
 					content_id = "video_content",
-					content_check_function = function (self, arg_8_1)
+					content_check_function = function (content, style)
 						-- function 8
-						return arg_7_0:is_video_active(self.video_player_reference)
+						return parent:is_video_active(content.video_player_reference)
 					end
 				},
 				{
 					style_id = "video_fade",
 					pass_type = "rect",
 					scenegraph_id = "fullscreen_video",
-					content_check_function = function (self, arg_9_1)
+					content_check_function = function (content, style)
 						-- function 9
-						local is_video_active = arg_7_0:is_video_active(self.video_content.video_player_reference)
+						local active = parent:is_video_active(content.video_content.video_player_reference)
 						local fade_progress
 
-						if not is_video_active then
-							fade_progress = self.fade_progress
+						if active then
+							fade_progress = content.fade_progress
 
 							if not fade_progress then
 								-- Nothing
@@ -482,39 +509,39 @@ local function fn_3(arg_7_0)
 
 						::label_9_0::
 
-						self.fade_progress = fade_progress
+						content.fade_progress = fade_progress
 
-						return is_video_active
+						return active
 					end,
-					content_change_function = function (self, arg_10_1)
+					content_change_function = function (content, style)
 						-- function 10
-						local fade_progress = self.fade_progress
-						local easeInCubic = math.easeInCubic(fade_progress)
+						local fade_progress = content.fade_progress
+						local alpha = math.easeInCubic(fade_progress)
 
-						arg_10_1.color[1] = (1 - easeInCubic) * 255
+						style.color[1] = (1 - alpha) * 255
 
-						local time_and_delta, var_10_3 = Managers.time:time_and_delta("main")
+						local t, dt = Managers.time:time_and_delta("main")
 
-						self.fade_progress = math.min(fade_progress + var_10_3 * 0.5, 1)
+						content.fade_progress = math.min(fade_progress + dt * 0.5, 1)
 					end
 				},
 				{
 					scenegraph_id = "root",
 					style_id = "video_background",
 					pass_type = "rect",
-					content_check_function = function (self)
+					content_check_function = function (content)
 						-- function 11
-						if not arg_7_0:is_video_active(self.video_content.video_player_reference) then
+						if not parent:is_video_active(content.video_content.video_player_reference) then
 							return false
 						end
 
-						local resolution, var_11_1 = Gui.resolution()
-						local num = resolution / var_11_1
-						local num_2 = 1.7777777777777777
-						local var_11_4 = var_11_1
-						local var_11_5 = resolution
+						local w, h = Gui.resolution()
+						local aspect_ratio = w / h
+						local default_aspect_ratio = 1.7777777777777777
+						local height = h
+						local width = w
 
-						if math.abs(num - num_2) > 0.005 then
+						if math.abs(aspect_ratio - default_aspect_ratio) > 0.005 then
 							return true
 						end
 					end
@@ -570,41 +597,43 @@ local function fn_3(arg_7_0)
 			}
 		}
 	}
+
+	return definition
 end
 
-local function fn_4(self, arg_12_1, arg_12_2, arg_12_3, arg_12_4)
+local function create_cinematic_entry(video_renderer, config, index, seen, parent)
 	-- function 12
-	local header = arg_12_1.header
-	local description = arg_12_1.description
-	local time = arg_12_1.time
-	local release_date = arg_12_1.release_date
-	local var_12_4 = arg_12_3
-	local video_data = arg_12_1.video_data
+	local header = config.header
+	local description = config.description
+	local time = config.time
+	local release_date = config.release_date
+	local seen = seen
+	local video_data = config.video_data
 	local resource = video_data.resource
-	local thumbnail = arg_12_1.thumbnail
-	local str = arg_12_1.header .. " " .. Application.guid()
-	local flag = false
+	local thumbnail = config.thumbnail
+	local reference_name = config.header .. " " .. Application.guid()
+	local set_loop = false
 
-	if not self.video_players[str] then
+	if not video_renderer.video_players[reference_name] then
 		if video_data.set_loop ~= nil then
-			flag = video_data.set_loop
+			set_loop = video_data.set_loop
 		end
 
-		UIRenderer.create_video_player(self, str, self.world, resource, flag)
+		UIRenderer.create_video_player(video_renderer, reference_name, video_renderer.world, resource, set_loop)
 	end
 
-	local var_12_10 = self.video_players[str]
-	local number_of_frames = VideoPlayer.number_of_frames(var_12_10)
+	local video_player = video_renderer.video_players[reference_name]
+	local num_frames = VideoPlayer.number_of_frames(video_player)
 	local frames_per_second = video_data.frames_per_second
 
-	frames_per_second = frames_per_second or 30
+	frames_per_second = not not frames_per_second or not not 30
 
-	local num = number_of_frames / frames_per_second
-	local format_time = UIUtils.format_time(num)
+	local seconds = num_frames / frames_per_second
+	local time = UIUtils.format_time(seconds)
 
-	UIRenderer.destroy_video_player(self, str, self.world)
+	UIRenderer.destroy_video_player(video_renderer, reference_name, video_renderer.world)
 
-	return {
+	local definition = {
 		scenegraph_id = "anchor_point",
 		element = {
 			passes = {
@@ -652,27 +681,35 @@ local function fn_4(self, arg_12_1, arg_12_2, arg_12_3, arg_12_4)
 					style_id = "play_icon",
 					texture_id = "play_icon",
 					pass_type = "texture",
-					content_check_function = function (self, arg_13_1)
+					content_check_function = function (content, style)
 						-- function 13
-						return not arg_12_4:is_video_active(self.video_content.video_player_reference)
+						return not parent:is_video_active(content.video_content.video_player_reference)
 					end,
-					content_change_function = function (self, arg_14_1)
+					content_change_function = function (content, style)
 						-- function 14
 						local is_device_active = Managers.input:is_device_active("gamepad")
 
-						is_device_active = is_device_active or Managers.input:is_device_active("keyboard")
-
 						if not is_device_active then
-							if arg_12_2 == arg_12_4:current_gamepad_selection() then
-								arg_14_1.color[1] = 255
+							-- Nothing
+						end
+
+						is_device_active = Managers.input:is_device_active("keyboard")
+
+						local gamepad_active = is_device_active
+
+						::label_14_0::
+
+						if gamepad_active then
+							if index == parent:current_gamepad_selection() then
+								style.color[1] = 255
 							else
-								arg_14_1.color[1] = 63
+								style.color[1] = 63
 							end
 						else
-							local hover_progress = self.hover_progress
-							local easeOutCubic = math.easeOutCubic(hover_progress)
+							local hover_progress = content.hover_progress
+							local alpha_value = math.easeOutCubic(hover_progress)
 
-							arg_14_1.color[1] = 63 + 192 * easeOutCubic
+							style.color[1] = 63 + 192 * alpha_value
 						end
 					end
 				},
@@ -695,33 +732,34 @@ local function fn_4(self, arg_12_1, arg_12_2, arg_12_3, arg_12_4)
 					style_id = "hotspot",
 					pass_type = "hotspot",
 					content_id = "hotspot",
-					content_check_function = function (self, arg_15_1)
+					content_check_function = function (content, style)
 						-- function 15
-						local parent = self.parent
+						local parent_content = content.parent
 
-						return not arg_12_4:is_video_active(parent.video_content.video_player_reference)
+						return not parent:is_video_active(parent_content.video_content.video_player_reference)
 					end,
-					content_change_function = function (self, arg_16_1)
+					content_change_function = function (content, style)
 						-- function 16
-						local parent = self.parent
+						local parent_content = content.parent
 
-						if not self.on_pressed then
-							local video_content = parent.video_content
+						if content.on_pressed then
+							local video_content = parent_content.video_content
 
-							arg_12_4:activate_video(video_content, arg_12_2)
-						elseif not self.on_hover_enter then
-							arg_12_4:_play_sound("play_gui_start_menu_button_hover")
+							parent:activate_video(video_content, index)
+						elseif content.on_hover_enter then
+							parent:_play_sound("play_gui_start_menu_button_hover")
 						end
 
-						local time_and_delta, var_16_3 = Managers.time:time_and_delta("main")
-						local num = 4
-						local hover_progress = parent.hover_progress
+						local t, dt = Managers.time:time_and_delta("main")
+						local speed = 4
+						local hover_progress = parent_content.hover_progress
 						local clamp = math.clamp
-						local num_2 = var_16_3 * num
+						local num = dt * speed
 						local flag
 
-						flag = not self.is_hover and 1 and -1
-						parent.hover_progress = clamp(hover_progress + num_2 * flag, 0, 1)
+						flag = (not content.is_hover or not 1) and not not -1
+						hover_progress = clamp(hover_progress + num * flag, 0, 1)
+						parent_content.hover_progress = hover_progress
 					end
 				},
 				{
@@ -748,27 +786,35 @@ local function fn_4(self, arg_12_1, arg_12_2, arg_12_3, arg_12_4)
 					style_id = "thumbnail",
 					texture_id = "thumbnail",
 					pass_type = "texture",
-					content_check_function = function (self)
+					content_check_function = function (content)
 						-- function 17
-						return self.thumbnail
+						return content.thumbnail
 					end,
-					content_change_function = function (self, arg_18_1)
+					content_change_function = function (content, style)
 						-- function 18
 						local is_device_active = Managers.input:is_device_active("gamepad")
 
-						is_device_active = is_device_active or Managers.input:is_device_active("keyboard")
-
 						if not is_device_active then
-							if arg_12_2 == arg_12_4:current_gamepad_selection() then
-								arg_18_1.color[1] = 255
+							-- Nothing
+						end
+
+						is_device_active = Managers.input:is_device_active("keyboard")
+
+						local gamepad_active = is_device_active
+
+						::label_18_0::
+
+						if gamepad_active then
+							if index == parent:current_gamepad_selection() then
+								style.color[1] = 255
 							else
-								arg_18_1.color[1] = 63
+								style.color[1] = 63
 							end
 						else
-							local hover_progress = self.hover_progress
-							local easeOutCubic = math.easeOutCubic(hover_progress)
+							local hover_progress = content.hover_progress
+							local alpha_value = math.easeOutCubic(hover_progress)
 
-							arg_18_1.color[1] = 127 + 128 * easeOutCubic
+							style.color[1] = 127 + 128 * alpha_value
 						end
 					end
 				}
@@ -782,14 +828,14 @@ local function fn_4(self, arg_12_1, arg_12_2, arg_12_3, arg_12_4)
 			fullscreen_hotspot = {},
 			header = header,
 			description = description,
-			time = format_time,
+			time = time,
 			release_date = release_date,
-			reference_name = str,
+			reference_name = reference_name,
 			thumbnail = thumbnail,
 			video_content = {
 				video_completed = false,
 				material_name = "video_default",
-				video_player_reference = str,
+				video_player_reference = reference_name,
 				video_data = video_data
 			}
 		},
@@ -809,7 +855,7 @@ local function fn_4(self, arg_12_1, arg_12_2, arg_12_3, arg_12_4)
 					1
 				},
 				texture_size = {
-					tbl_2[1] + 4,
+					slate_size[1] + 4,
 					2
 				}
 			},
@@ -828,7 +874,7 @@ local function fn_4(self, arg_12_1, arg_12_2, arg_12_3, arg_12_4)
 					1
 				},
 				texture_size = {
-					tbl_2[1] + 4,
+					slate_size[1] + 4,
 					2
 				}
 			},
@@ -848,7 +894,7 @@ local function fn_4(self, arg_12_1, arg_12_2, arg_12_3, arg_12_4)
 				},
 				texture_size = {
 					2,
-					tbl_2[2] + 4
+					slate_size[2] + 4
 				}
 			},
 			bg_background_right = {
@@ -867,7 +913,7 @@ local function fn_4(self, arg_12_1, arg_12_2, arg_12_3, arg_12_4)
 				},
 				texture_size = {
 					2,
-					tbl_2[2] + 4
+					slate_size[2] + 4
 				}
 			},
 			fg_background = {
@@ -884,7 +930,7 @@ local function fn_4(self, arg_12_1, arg_12_2, arg_12_3, arg_12_4)
 					0,
 					2
 				},
-				texture_size = tbl_2
+				texture_size = slate_size
 			},
 			header = {
 				word_wrap = false,
@@ -935,8 +981,8 @@ local function fn_4(self, arg_12_1, arg_12_2, arg_12_3, arg_12_4)
 				horizontal_alignment = "left",
 				vertical_alignment = "top",
 				area_size = {
-					tbl_2[1] * 0.62,
-					tbl_2[2] * 0.55
+					slate_size[1] * 0.62,
+					slate_size[2] * 0.55
 				},
 				text_color = {
 					255,
@@ -945,7 +991,7 @@ local function fn_4(self, arg_12_1, arg_12_2, arg_12_3, arg_12_4)
 					118
 				},
 				offset = {
-					tbl_2[1] * 0.35,
+					slate_size[1] * 0.35,
 					-10,
 					3
 				}
@@ -964,7 +1010,7 @@ local function fn_4(self, arg_12_1, arg_12_2, arg_12_3, arg_12_4)
 					118
 				},
 				offset = {
-					tbl_2[1] * 0.35,
+					slate_size[1] * 0.35,
 					35,
 					3
 				}
@@ -983,7 +1029,7 @@ local function fn_4(self, arg_12_1, arg_12_2, arg_12_3, arg_12_4)
 					118
 				},
 				offset = {
-					tbl_2[1] * 0.35,
+					slate_size[1] * 0.35,
 					5,
 					3
 				}
@@ -992,11 +1038,11 @@ local function fn_4(self, arg_12_1, arg_12_2, arg_12_3, arg_12_4)
 				vertical_alignment = "center",
 				horizontal_alignment = "left",
 				texture_size = {
-					tbl[1] * 0.63,
+					entry_size[1] * 0.63,
 					2
 				},
 				offset = {
-					tbl_2[1] * 0.35,
+					slate_size[1] * 0.35,
 					-35,
 					3
 				},
@@ -1127,34 +1173,36 @@ local function fn_4(self, arg_12_1, arg_12_2, arg_12_3, arg_12_4)
 		},
 		offset = {
 			0,
-			-(arg_12_2 - 1) * tbl[2],
+			-(index - 1) * entry_size[2],
 			0
 		}
 	}
+
+	return definition
 end
 
-local tbl_9 = {
+local animation_definitions = {
 	on_enter = {
 		{
 			name = "slide_and_fade_in",
 			start_progress = 0,
 			end_progress = 0.3,
-			init = function (arg_19_0, arg_19_1, arg_19_2, arg_19_3)
+			init = function (ui_scenegraph, scenegraph_definition_data, widgets, params)
 				-- function 19
-				arg_19_3.render_settings.alpha_multiplier = 0
+				params.render_settings.alpha_multiplier = 0
 			end,
-			update = function (arg_20_0, arg_20_1, arg_20_2, arg_20_3, arg_20_4)
+			update = function (ui_scenegraph, scenegraph_definition_data, widgets, progress, params)
 				-- function 20
-				local easeOutCubic = math.easeOutCubic(arg_20_3)
+				local anim_progress = math.easeOutCubic(progress)
 
-				arg_20_0.screen_anchor.local_position[1] = math.lerp(1920, 0, easeOutCubic)
-				arg_20_0.fade_area_bg.local_position[1] = math.lerp(1920 + tbl_4.fade_area_bg.position[1], tbl_4.fade_area_bg.position[1], easeOutCubic)
-				arg_20_0.fade_area_edge.local_position[1] = math.lerp(1920 + tbl_4.fade_area_edge.position[1], tbl_4.fade_area_edge.position[1], easeOutCubic)
-				arg_20_4.render_settings.alpha_multiplier = easeOutCubic * easeOutCubic * easeOutCubic
+				ui_scenegraph.screen_anchor.local_position[1] = math.lerp(1920, 0, anim_progress)
+				ui_scenegraph.fade_area_bg.local_position[1] = math.lerp(1920 + scenegraph_definition.fade_area_bg.position[1], scenegraph_definition.fade_area_bg.position[1], anim_progress)
+				ui_scenegraph.fade_area_edge.local_position[1] = math.lerp(1920 + scenegraph_definition.fade_area_edge.position[1], scenegraph_definition.fade_area_edge.position[1], anim_progress)
+				params.render_settings.alpha_multiplier = anim_progress * anim_progress * anim_progress
 			end,
-			on_complete = function (arg_21_0, arg_21_1, arg_21_2, arg_21_3)
+			on_complete = function (ui_scenegraph, scenegraph_definition_data, widgets, params)
 				-- function 21
-				arg_21_3.render_settings.alpha_multiplier = 1
+				params.render_settings.alpha_multiplier = 1
 			end
 		}
 	},
@@ -1163,27 +1211,27 @@ local tbl_9 = {
 			name = "slide_and_fade_out",
 			start_progress = 0,
 			end_progress = 0.3,
-			init = function (arg_22_0, arg_22_1, arg_22_2, arg_22_3)
+			init = function (ui_scenegraph, scenegraph_definition_data, widgets, params)
 				-- function 22
-				arg_22_3.render_settings.alpha_multiplier = 1
+				params.render_settings.alpha_multiplier = 1
 			end,
-			update = function (arg_23_0, arg_23_1, arg_23_2, arg_23_3, arg_23_4)
+			update = function (ui_scenegraph, scenegraph_definition_data, widgets, progress, params)
 				-- function 23
-				local easeOutCubic = math.easeOutCubic(arg_23_3)
+				local anim_progress = math.easeOutCubic(progress)
 
-				arg_23_0.screen_anchor.local_position[1] = math.lerp(0, 1920, easeOutCubic)
-				arg_23_0.fade_area_bg.local_position[1] = math.lerp(tbl_4.fade_area_bg.position[1], 1920 + tbl_4.fade_area_bg.position[1], easeOutCubic)
-				arg_23_0.fade_area_edge.local_position[1] = math.lerp(tbl_4.fade_area_edge.position[1], 1920 + tbl_4.fade_area_edge.position[1], easeOutCubic)
-				arg_23_4.render_settings.alpha_multiplier = 1 - easeOutCubic * easeOutCubic * easeOutCubic
+				ui_scenegraph.screen_anchor.local_position[1] = math.lerp(0, 1920, anim_progress)
+				ui_scenegraph.fade_area_bg.local_position[1] = math.lerp(scenegraph_definition.fade_area_bg.position[1], 1920 + scenegraph_definition.fade_area_bg.position[1], anim_progress)
+				ui_scenegraph.fade_area_edge.local_position[1] = math.lerp(scenegraph_definition.fade_area_edge.position[1], 1920 + scenegraph_definition.fade_area_edge.position[1], anim_progress)
+				params.render_settings.alpha_multiplier = 1 - anim_progress * anim_progress * anim_progress
 			end,
-			on_complete = function (arg_24_0, arg_24_1, arg_24_2, arg_24_3)
+			on_complete = function (ui_scenegraph, scenegraph_definition_data, widgets, params)
 				-- function 24
-				arg_24_3.render_settings.alpha_multiplier = 0
+				params.render_settings.alpha_multiplier = 0
 			end
 		}
 	}
 }
-local tbl_10 = {
+local generic_input_actions = {
 	default = {
 		{
 			input_action = "d_vertical",
@@ -1205,13 +1253,13 @@ local tbl_10 = {
 }
 
 return {
-	create_video_entry = fn_3,
-	create_cinematic_entry = fn_4,
-	scenegraph_definition = tbl_4,
-	widget_definitions = tbl_7,
-	button_widget_definitions = tbl_8,
-	entry_size = tbl,
-	create_scrollbar = fn_2,
-	animation_definitions = tbl_9,
-	generic_input_actions = tbl_10
+	create_video_entry = create_video_entry,
+	create_cinematic_entry = create_cinematic_entry,
+	scenegraph_definition = scenegraph_definition,
+	widget_definitions = widget_definitions,
+	button_widget_definitions = button_widget_definitions,
+	entry_size = entry_size,
+	create_scrollbar = create_scrollbar,
+	animation_definitions = animation_definitions,
+	generic_input_actions = generic_input_actions
 }

@@ -3,23 +3,23 @@
 BaseObjectiveExtension = class(BaseObjectiveExtension)
 BaseObjectiveExtension.NAME = "BaseObjectiveExtension"
 
-BaseObjectiveExtension.init = function (self, arg_1_1, arg_1_2, arg_1_3)
+BaseObjectiveExtension.init = function (self, extension_init_context, unit, extension_init_data)
 	-- function 1
-	self._is_server = arg_1_1.is_server
-	self._unit = arg_1_2
-	self._world = arg_1_1.world
+	self._is_server = extension_init_context.is_server
+	self._unit = unit
+	self._world = extension_init_context.world
 
-	local objective_name = arg_1_3.objective_name
+	local objective_name = extension_init_data.objective_name
 
-	objective_name = objective_name or Unit.get_data(arg_1_2, "objective_id")
+	objective_name = not not objective_name or not not Unit.get_data(unit, "objective_id")
 	self._objective_name = objective_name
 	self._objecive_system = Managers.state.entity:system("objective_system")
 
 	local _objective_name = self._objective_name
 
 	if not _objective_name then
-		_objective_name = Unit.get_data(arg_1_2, "versus_objective_id")
-		_objective_name = _objective_name or Unit.get_data(arg_1_2, "weave_objective_id")
+		_objective_name = Unit.get_data(unit, "versus_objective_id")
+		_objective_name = not not _objective_name or not not Unit.get_data(unit, "weave_objective_id")
 	end
 
 	self._objective_name = _objective_name
@@ -29,50 +29,50 @@ BaseObjectiveExtension.init = function (self, arg_1_1, arg_1_2, arg_1_3)
 	self._audio_system = Managers.state.entity:system("audio_system")
 	self._wwise_world = Managers.world:wwise_world(self._world)
 
-	local scale = arg_1_3.scale
+	local scale = extension_init_data.scale
 
-	scale = scale or Vector3(1, 1, 1)
+	scale = not not scale or not not Vector3(1, 1, 1)
 	self._scale = scale
 	self._num_sections = 1
 	self._current_section = 0
 	self._percentage = 0
 	self._cached_value = 0
 
-	Unit.set_local_scale(arg_1_2, 0, self._scale)
+	Unit.set_local_scale(unit, 0, self._scale)
 end
 
-BaseObjectiveExtension.set_objective_data = function (self, arg_2_1)
+BaseObjectiveExtension.set_objective_data = function (self, objective_data)
 	-- function 2
-	self._objective_type = arg_2_1.objective_type
-	self._objective_tag = arg_2_1.objective_tag
-	self._on_complete_func = arg_2_1.on_complete_func
+	self._objective_type = objective_data.objective_type
+	self._objective_tag = objective_data.objective_tag
+	self._on_complete_func = objective_data.on_complete_func
 
-	local description = arg_2_1.description
+	local description = objective_data.description
 
-	description = description or "unlocalized_description"
+	description = not not description or not not "unlocalized_description"
 	self._description = description
-	self._display_name = arg_2_1.display_name
+	self._display_name = objective_data.display_name
 
-	local objective_type = arg_2_1.objective_type
+	local objective_type = objective_data.objective_type
 
-	objective_type = objective_type or "icons_placeholder"
+	objective_type = not not objective_type or not not "icons_placeholder"
 	self._objective_icon = objective_type
 
-	local score_for_completion = arg_2_1.score_for_completion
+	local score_for_completion = objective_data.score_for_completion
 
-	score_for_completion = score_for_completion or 0
+	score_for_completion = not not score_for_completion or not not 0
 	self._score_for_completion = score_for_completion
 
-	local time_for_completion = arg_2_1.time_for_completion
+	local time_for_completion = objective_data.time_for_completion
 
-	time_for_completion = time_for_completion or 0
+	time_for_completion = not not time_for_completion or not not 0
 	self._time_for_completion = time_for_completion
-	self._on_last_leaf_complete_sound_event = arg_2_1.on_last_leaf_complete_sound_event
-	self._on_leaf_complete_sound_event = arg_2_1.on_leaf_complete_sound_event
-	self._on_section_progress_sound_event = arg_2_1.on_section_progress_sound_event
-	self._always_show_objective_marker = arg_2_1.always_show_objective_marker
+	self._on_last_leaf_complete_sound_event = objective_data.on_last_leaf_complete_sound_event
+	self._on_leaf_complete_sound_event = objective_data.on_leaf_complete_sound_event
+	self._on_section_progress_sound_event = objective_data.on_section_progress_sound_event
+	self._always_show_objective_marker = objective_data.always_show_objective_marker
 
-	self:_set_objective_data(arg_2_1)
+	self:_set_objective_data(objective_data)
 end
 
 BaseObjectiveExtension.activate = function (self)
@@ -96,9 +96,9 @@ BaseObjectiveExtension._store_local_player = function (self)
 	end
 end
 
-BaseObjectiveExtension.sync_objective = function (self, arg_6_1, arg_6_2)
+BaseObjectiveExtension.sync_objective = function (self, game_object_id, game_session)
 	-- function 6
-	self._game_object_id = arg_6_1
+	self._game_object_id = game_object_id
 end
 
 BaseObjectiveExtension.desync_objective = function (self)
@@ -110,42 +110,52 @@ BaseObjectiveExtension._local_side = function (self)
 	-- function 8
 	local local_player = Managers.player:local_player()
 
-	if not local_player then
-		local network_id = local_player:network_id()
+	if local_player then
+		local peer_id = local_player:network_id()
 		local local_player_id = local_player:local_player_id()
-		local get_party_from_player_id = Managers.party:get_party_from_player_id(network_id, local_player_id)
+		local party = Managers.party:get_party_from_player_id(peer_id, local_player_id)
 
-		if not get_party_from_player_id then
-			self._local_side_cached = Managers.state.side.side_by_party[get_party_from_player_id]
+		if party then
+			self._local_side_cached = Managers.state.side.side_by_party[party]
 		end
 	end
 
 	return self._local_side_cached
 end
 
-BaseObjectiveExtension.complete = function (self, arg_9_1, arg_9_2, arg_9_3)
+BaseObjectiveExtension.complete = function (self, is_root_objective, is_leaf_objective, is_last_leaf_objective)
 	-- function 9
-	if not self._is_server and not self._on_complete_func then
+	if self._is_server and self._on_complete_func then
 		self._on_complete_func(self._unit)
 	end
 
 	if not DEDICATED_SERVER then
-		local _on_leaf_complete_sound_event = self._on_leaf_complete_sound_event
+		local leaf_complete_sound_event = self._on_leaf_complete_sound_event
 		local _on_last_leaf_complete_sound_event = self._on_last_leaf_complete_sound_event
 
-		_on_last_leaf_complete_sound_event = _on_last_leaf_complete_sound_event or _on_leaf_complete_sound_event
+		if not _on_last_leaf_complete_sound_event then
+			-- Nothing
+		end
 
-		if not arg_9_3 and not _on_last_leaf_complete_sound_event then
-			local var_9_2 = _on_last_leaf_complete_sound_event[self:_local_side():name()]
+		_on_last_leaf_complete_sound_event = leaf_complete_sound_event
 
-			if not var_9_2 then
-				self:play_local_sound(var_9_2)
+		local last_leaf_complete_sound_event = _on_last_leaf_complete_sound_event
+
+		::label_9_0::
+
+		if is_last_leaf_objective and last_leaf_complete_sound_event then
+			local side_name = self:_local_side():name()
+			local complete_event = last_leaf_complete_sound_event[side_name]
+
+			if complete_event then
+				self:play_local_sound(complete_event)
 			end
-		elseif not _on_leaf_complete_sound_event and not arg_9_2 then
-			local var_9_3 = _on_leaf_complete_sound_event[self:_local_side():name()]
+		elseif leaf_complete_sound_event and is_leaf_objective then
+			local side_name = self:_local_side():name()
+			local complete_event = leaf_complete_sound_event[side_name]
 
-			if not var_9_3 then
-				self:play_local_sound(var_9_3)
+			if complete_event then
+				self:play_local_sound(complete_event)
 			end
 		end
 	end
@@ -162,19 +172,19 @@ BaseObjectiveExtension.deactivate = function (self)
 	self._activated = false
 end
 
-BaseObjectiveExtension.play_local_sound = function (self, arg_11_1)
+BaseObjectiveExtension.play_local_sound = function (self, event)
 	-- function 11
-	WwiseWorld.trigger_event(self._wwise_world, arg_11_1)
+	WwiseWorld.trigger_event(self._wwise_world, event)
 end
 
-BaseObjectiveExtension.play_local_unit_sound = function (self, arg_12_1)
+BaseObjectiveExtension.play_local_unit_sound = function (self, event)
 	-- function 12
-	WwiseUtils.trigger_unit_event(self._world, arg_12_1, self._unit, 0)
+	WwiseUtils.trigger_unit_event(self._world, event, self._unit, 0)
 end
 
-BaseObjectiveExtension.play_unit_sound = function (self, arg_13_1)
+BaseObjectiveExtension.play_unit_sound = function (self, event)
 	-- function 13
-	self._audio_system:play_audio_unit_event(arg_13_1, self._unit)
+	self._audio_system:play_audio_unit_event(event, self._unit)
 end
 
 BaseObjectiveExtension.unit = function (self)
@@ -187,25 +197,25 @@ BaseObjectiveExtension.display_name = function (self)
 	return self._display_name
 end
 
-BaseObjectiveExtension.is_stacking_objective = function (arg_16_0)
+BaseObjectiveExtension.is_stacking_objective = function (self)
 	-- function 16
 	return false
 end
 
-BaseObjectiveExtension.update = function (self, arg_17_1, arg_17_2)
+BaseObjectiveExtension.update = function (self, dt, t)
 	-- function 17
-	if not script_data.testify and not self.update_testify then
-		self:update_testify(arg_17_1, arg_17_2)
+	if script_data.testify and self.update_testify then
+		self:update_testify(dt, t)
 	end
 
 	if not self._activated then
 		return
 	end
 
-	if not self._is_server then
-		self:_server_update(arg_17_1, arg_17_2)
+	if self._is_server then
+		self:_server_update(dt, t)
 	else
-		self:_client_update(arg_17_1, arg_17_2)
+		self:_client_update(dt, t)
 	end
 end
 
@@ -215,31 +225,32 @@ BaseObjectiveExtension.on_section_completed = function (self)
 
 	Managers.state.event:trigger("obj_objective_section_completed", self)
 
-	if not self:is_done() then
+	if self:is_done() then
 		return
 	end
 
-	local _on_section_progress_sound_event = self._on_section_progress_sound_event
+	local sound_event = self._on_section_progress_sound_event
 
-	if not _on_section_progress_sound_event then
-		local _local_side = self:_local_side()
+	if sound_event then
+		local side = self:_local_side()
 
-		if not _local_side then
-			local var_18_2 = _on_section_progress_sound_event[_local_side:name()]
+		if side then
+			local side_name = side:name()
+			local progress_event = sound_event[side_name]
 
-			if not var_18_2 then
-				self:play_local_sound(var_18_2)
+			if progress_event then
+				self:play_local_sound(progress_event)
 			end
 		end
 	end
 end
 
-BaseObjectiveExtension.server_set_value = function (self, arg_19_1)
+BaseObjectiveExtension.server_set_value = function (self, value)
 	-- function 19
 	local game_session = Network.game_session()
 
-	if not game_session then
-		GameSession.set_game_object_field(game_session, self._game_object_id, "value", math.clamp01(arg_19_1))
+	if game_session then
+		GameSession.set_game_object_field(game_session, self._game_object_id, "value", math.clamp01(value))
 	end
 end
 
@@ -247,7 +258,7 @@ BaseObjectiveExtension.client_get_value = function (self)
 	-- function 20
 	local game_session = Network.game_session()
 
-	if not (not game_session and self._game_object_id) then
+	if not game_session or not self._game_object_id then
 		return self._cached_value
 	end
 
@@ -258,32 +269,32 @@ end
 
 BaseObjectiveExtension._store_position = function (self)
 	-- function 21
-	local local_position = Unit.local_position(self._unit, 0)
+	local position = Unit.local_position(self._unit, 0)
 
-	self._position = Vector3Box(local_position)
+	self._position = Vector3Box(position)
 end
 
-BaseObjectiveExtension._activate = function (arg_22_0)
+BaseObjectiveExtension._activate = function (self)
 	-- function 22
 	error("This function needs to be overwritten")
 end
 
-BaseObjectiveExtension._deactivate = function (arg_23_0)
+BaseObjectiveExtension._deactivate = function (self)
 	-- function 23
 	error("This function needs to be overwritten")
 end
 
-BaseObjectiveExtension._server_update = function (arg_24_0, arg_24_1, arg_24_2)
+BaseObjectiveExtension._server_update = function (self, dt, t)
 	-- function 24
 	error("This function needs to be overwritten")
 end
 
-BaseObjectiveExtension._client_update = function (arg_25_0, arg_25_1, arg_25_2)
+BaseObjectiveExtension._client_update = function (self, dt, t)
 	-- function 25
 	error("This function needs to be overwritten")
 end
 
-BaseObjectiveExtension.get_percentage_done = function (arg_26_0)
+BaseObjectiveExtension.get_percentage_done = function (self)
 	-- function 26
 	error("This function needs to be overwritten")
 end
@@ -330,7 +341,7 @@ end
 
 BaseObjectiveExtension.get_position = function (self)
 	-- function 35
-	if not self._position then
+	if self._position then
 		return self._position:unbox()
 	else
 		return Unit.world_position(self._unit, 0)

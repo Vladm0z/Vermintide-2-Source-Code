@@ -1,17 +1,17 @@
 -- chunkname: @scripts/settings/breeds/breed_skaven_storm_vermin_warlord.lua
 
-local scripts_utils_stagger_types = require("scripts/utils/stagger_types")
-local tbl = {
+local stagger_types = require("scripts/utils/stagger_types")
+local pushed_data = {
 	ahead_dist = 2,
 	push_width = 1.25,
 	push_forward_offset = 1.5,
 	push_stagger_distance = 1,
 	player_pushed_speed = 8,
 	push_stagger_impact = {
-		scripts_utils_stagger_types.medium,
-		scripts_utils_stagger_types.medium,
-		scripts_utils_stagger_types.none,
-		scripts_utils_stagger_types.none
+		stagger_types.medium,
+		stagger_types.medium,
+		stagger_types.none,
+		stagger_types.none
 	},
 	push_stagger_duration = {
 		1.5,
@@ -20,7 +20,7 @@ local tbl = {
 		0
 	}
 }
-local tbl_2 = {
+local WARLORD_ALLOWED_STAGGERS = {
 	true,
 	true,
 	true,
@@ -29,7 +29,7 @@ local tbl_2 = {
 	true,
 	true
 }
-local tbl_3 = {
+local breed_data = {
 	unbreakable_shield = true,
 	walk_speed = 2.545454545454545,
 	radius = 1,
@@ -101,7 +101,7 @@ local tbl_3 = {
 	override_mover_move_distance = 1.5,
 	base_unit = "units/beings/enemies/skaven_stormvermin_champion/chr_skaven_stormvermin_warlord",
 	aoe_height = 1.7,
-	displace_players_data = tbl,
+	displace_players_data = pushed_data,
 	infighting = InfightingSettings.boss,
 	detection_radius = math.huge,
 	perception_weights = {
@@ -160,52 +160,52 @@ local tbl_3 = {
 	run_on_husk_spawn = AiBreedSnippets.on_storm_vermin_champion_husk_spawn,
 	run_on_despawn = AiBreedSnippets.on_storm_vermin_champion_despawn,
 	hot_join_sync = AiBreedSnippets.on_storm_vermin_hot_join_sync,
-	stagger_modifier_function = function (arg_1_0, arg_1_1, arg_1_2, arg_1_3, arg_1_4, arg_1_5)
+	stagger_modifier_function = function (stagger_type, duration, length, hit_zone_name, blackboard, breed)
 		-- function 1
-		if not arg_1_4.unit then
-			return arg_1_0, arg_1_1, arg_1_2
+		if not blackboard.unit then
+			return stagger_type, duration, length
 		end
 
-		local time = Managers.time:time("game")
-		local intro_timer = arg_1_4.intro_timer
+		local t = Managers.time:time("game")
+		local intro_timer = blackboard.intro_timer
 
-		intro_timer = intro_timer or 0
+		intro_timer = not not intro_timer or not not 0
 
-		if time < intro_timer then
-			arg_1_0 = scripts_utils_stagger_types.none
+		if t < intro_timer then
+			stagger_type = stagger_types.none
 
-			return arg_1_0, arg_1_1, arg_1_2
+			return stagger_type, duration, length
 		end
 
-		local extension = ScriptUnit.extension(arg_1_4.unit, "ai_shield_system")
+		local ai_shield_extension = ScriptUnit.extension(blackboard.unit, "ai_shield_system")
 
-		if not (arg_1_4.dual_wield_mode or arg_1_0 == scripts_utils_stagger_types.explosion) then
-			arg_1_0 = scripts_utils_stagger_types.none
+		if not blackboard.dual_wield_mode and stagger_type ~= stagger_types.explosion then
+			stagger_type = stagger_types.none
 
-			extension:set_is_blocking(false)
-		elseif not (not arg_1_4.dual_wield_mode and arg_1_0 == scripts_utils_stagger_types.explosion) then
-			if not (not arg_1_4.next_stagger_block_t and not (time > arg_1_4.next_stagger_block_t)) then
-				local stagger_block_timer = arg_1_4.stagger_block_timer
+			ai_shield_extension:set_is_blocking(false)
+		elseif blackboard.dual_wield_mode and stagger_type ~= stagger_types.explosion then
+			if not blackboard.next_stagger_block_t or t > blackboard.next_stagger_block_t then
+				local stagger_block_timer = blackboard.stagger_block_timer
 
-				stagger_block_timer = stagger_block_timer or time + 3
-				arg_1_4.stagger_block_timer = stagger_block_timer
+				stagger_block_timer = not not stagger_block_timer or not not (t + 3)
+				blackboard.stagger_block_timer = stagger_block_timer
 			else
-				extension:set_is_blocking(false)
+				ai_shield_extension:set_is_blocking(false)
 
-				arg_1_0 = scripts_utils_stagger_types.none
+				stagger_type = stagger_types.none
 			end
 
-			if not (not arg_1_4.stagger_block_timer and not (time > arg_1_4.stagger_block_timer)) then
-				arg_1_4.next_stagger_block_t = time + 10
-				arg_1_4.stagger_block_timer = nil
+			if blackboard.stagger_block_timer and t > blackboard.stagger_block_timer then
+				blackboard.next_stagger_block_t = t + 10
+				blackboard.stagger_block_timer = nil
 
-				extension:set_is_blocking(false)
+				ai_shield_extension:set_is_blocking(false)
 
-				arg_1_0 = scripts_utils_stagger_types.none
+				stagger_type = stagger_types.none
 			end
 		end
 
-		return arg_1_0, arg_1_1, arg_1_2
+		return stagger_type, duration, length
 	end,
 	hitzone_multiplier_types = {
 		head = "headshot",
@@ -412,26 +412,26 @@ local tbl_3 = {
 		"kill_skaven_storm_vermin_warlord_difficulty_rank",
 		"kill_skaven_storm_vermin_warlord_scorpion_hardest"
 	},
-	custom_death_enter_function = function (arg_2_0, arg_2_1, arg_2_2, arg_2_3, arg_2_4, arg_2_5)
+	custom_death_enter_function = function (unit, killer_unit, damage_type, death_hit_zone, t, damage_source)
 		-- function 2
-		if not Unit.alive(arg_2_1) then
+		if not Unit.alive(killer_unit) then
 			return
 		end
 
-		QuestSettings.check_killed_lord_as_last_player_standing(arg_2_1)
+		QuestSettings.check_killed_lord_as_last_player_standing(killer_unit)
 	end
 }
-local tbl_4 = {
+local pushed_data = {
 	ahead_dist = 2.5,
 	push_width = 1.25,
 	push_forward_offset = 0.5,
 	push_stagger_distance = 1,
 	player_pushed_speed = 6,
 	push_stagger_impact = {
-		scripts_utils_stagger_types.medium,
-		scripts_utils_stagger_types.medium,
-		scripts_utils_stagger_types.none,
-		scripts_utils_stagger_types.none
+		stagger_types.medium,
+		stagger_types.medium,
+		stagger_types.none,
+		stagger_types.none
 	},
 	push_stagger_duration = {
 		1.5,
@@ -441,9 +441,9 @@ local tbl_4 = {
 	}
 }
 
-Breeds.skaven_storm_vermin_warlord = table.create_copy(Breeds.skaven_storm_vermin_warlord, tbl_3)
+Breeds.skaven_storm_vermin_warlord = table.create_copy(Breeds.skaven_storm_vermin_warlord, breed_data)
 
-local tbl_5 = {
+local action_data = {
 	follow = {
 		follow_target_function_name = "_follow_target_rat_ogre",
 		move_anim = "move_fwd",
@@ -626,28 +626,33 @@ local tbl_5 = {
 			false,
 			false
 		},
-		hit_ai_func = function (arg_3_0, arg_3_1, arg_3_2)
+		hit_ai_func = function (unit, blackboard, hit_unit)
 			-- function 3
-			local tbl = {
+			local stat_names = {
 				"storm_vermin_warlord_kills_enemies",
 				"storm_vermin_warlord_kills_enemies_cata"
 			}
 
-			for i = 1, #tbl do
-				local get_difficulty = Managers.state.difficulty:get_difficulty()
+			for i = 1, #stat_names do
+				local current_difficulty = Managers.state.difficulty:get_difficulty()
+				local allowed_difficulties = QuestSettings.allowed_difficulties[stat_names[i]]
+				local allowed_difficulty = allowed_difficulties[current_difficulty]
 
-				if not (not QuestSettings.allowed_difficulties[tbl[i]][get_difficulty] and arg_3_1.kill_skaven_challenge_completed) then
-					local flag = BLACKBOARDS[arg_3_2].breed.race == "skaven"
-					local num_times_hit_skaven = arg_3_1.num_times_hit_skaven
+				if allowed_difficulty and not blackboard.kill_skaven_challenge_completed then
+					local hit_unit_blackboard = BLACKBOARDS[hit_unit]
+					local is_skaven = hit_unit_blackboard.breed.race == "skaven"
+					local num_times_hit_skaven = blackboard.num_times_hit_skaven
 
-					if not flag then
-						arg_3_1.num_times_hit_skaven = num_times_hit_skaven + 1
+					if is_skaven then
+						blackboard.num_times_hit_skaven = num_times_hit_skaven + 1
 					end
 
-					if arg_3_1.num_times_hit_skaven >= QuestSettings.storm_vermin_warlord_kills_enemies then
-						Managers.player:statistics_db():increment_stat_and_sync_to_clients(tbl[i])
+					if blackboard.num_times_hit_skaven >= QuestSettings.storm_vermin_warlord_kills_enemies then
+						local statistics_db = Managers.player:statistics_db()
 
-						arg_3_1.kill_skaven_challenge_completed = true
+						statistics_db:increment_stat_and_sync_to_clients(stat_names[i])
+
+						blackboard.kill_skaven_challenge_completed = true
 					end
 				end
 			end
@@ -681,11 +686,11 @@ local tbl_5 = {
 			},
 			{
 				attack_anim = "attack_spin",
-				ready_function = function (arg_4_0, arg_4_1, arg_4_2)
+				ready_function = function (unit, blackboard, t)
 					-- function 4
-					local num = arg_4_2 - arg_4_1.attack_sequence_start_time
+					local charge_t = t - blackboard.attack_sequence_start_time
 
-					return (not (num > 1.5) or not (arg_4_1.surrounding_players > 0)) and num > 2.5
+					return (not (charge_t > 1.5) or not (blackboard.surrounding_players > 0)) and charge_t > 2.5
 				end
 			}
 		},
@@ -719,28 +724,33 @@ local tbl_5 = {
 			true,
 			true
 		},
-		hit_ai_func = function (arg_5_0, arg_5_1, arg_5_2)
+		hit_ai_func = function (unit, blackboard, hit_unit)
 			-- function 5
-			local tbl = {
+			local stat_names = {
 				"storm_vermin_warlord_kills_enemies",
 				"storm_vermin_warlord_kills_enemies_cata"
 			}
 
-			for i = 1, #tbl do
-				local get_difficulty = Managers.state.difficulty:get_difficulty()
+			for i = 1, #stat_names do
+				local current_difficulty = Managers.state.difficulty:get_difficulty()
+				local allowed_difficulties = QuestSettings.allowed_difficulties[stat_names[i]]
+				local allowed_difficulty = allowed_difficulties[current_difficulty]
 
-				if not (not QuestSettings.allowed_difficulties[tbl[i]][get_difficulty] and arg_5_1.kill_skaven_challenge_completed) then
-					local flag = BLACKBOARDS[arg_5_2].breed.race == "skaven"
-					local num_times_hit_skaven = arg_5_1.num_times_hit_skaven
+				if allowed_difficulty and not blackboard.kill_skaven_challenge_completed then
+					local hit_unit_blackboard = BLACKBOARDS[hit_unit]
+					local is_skaven = hit_unit_blackboard.breed.race == "skaven"
+					local num_times_hit_skaven = blackboard.num_times_hit_skaven
 
-					if not flag then
-						arg_5_1.num_times_hit_skaven = num_times_hit_skaven + 1
+					if is_skaven then
+						blackboard.num_times_hit_skaven = num_times_hit_skaven + 1
 					end
 
-					if arg_5_1.num_times_hit_skaven >= QuestSettings.storm_vermin_warlord_kills_enemies then
-						Managers.player:statistics_db():increment_stat_and_sync_to_clients(tbl[i])
+					if blackboard.num_times_hit_skaven >= QuestSettings.storm_vermin_warlord_kills_enemies then
+						local statistics_db = Managers.player:statistics_db()
 
-						arg_5_1.kill_skaven_challenge_completed = true
+						statistics_db:increment_stat_and_sync_to_clients(stat_names[i])
+
+						blackboard.kill_skaven_challenge_completed = true
 					end
 				end
 			end
@@ -993,45 +1003,45 @@ local tbl_5 = {
 		stagger_animation_scale = 3.5,
 		ignore_block_on_leave = true,
 		scale_animation_speeds = true,
-		custom_enter_function = function (arg_6_0, arg_6_1, arg_6_2, arg_6_3)
+		custom_enter_function = function (unit, blackboard, t, action)
 			-- function 6
-			assert(ScriptUnit.has_extension(arg_6_0, "ai_shield_system"), "skaven_storm_vermin_warlord dont have ai_shield_user_extension")
+			assert(ScriptUnit.has_extension(unit, "ai_shield_system"), "skaven_storm_vermin_warlord dont have ai_shield_user_extension")
 
-			local stagger = arg_6_1.stagger
-			local stagger_type = arg_6_1.stagger_type
-			local extension = ScriptUnit.extension(arg_6_0, "ai_shield_system")
-			local flag = not extension.shield_broken
-			local dual_wield_mode = arg_6_1.dual_wield_mode
-			local var_6_5 = arg_6_3.stagger_anims[stagger_type]
-			local str = "idle"
+			local stagger = blackboard.stagger
+			local stagger_type = blackboard.stagger_type
+			local ai_shield_extension = ScriptUnit.extension(unit, "ai_shield_system")
+			local shield_user = not ai_shield_extension.shield_broken
+			local is_dual_wield_mode = blackboard.dual_wield_mode
+			local stagger_anims = action.stagger_anims[stagger_type]
+			local idle_event = "idle"
 
-			if stagger_type == scripts_utils_stagger_types.explosion then
-				return var_6_5, str
+			if stagger_type == stagger_types.explosion then
+				return stagger_anims, idle_event
 			end
 
-			arg_6_1.stagger_ignore_anim_cb = false
+			blackboard.stagger_ignore_anim_cb = false
 
-			if not flag and not stagger and not dual_wield_mode then
-				if not (not arg_6_1.stagger_block_timer and not (arg_6_2 < arg_6_1.stagger_block_timer)) then
-					arg_6_1.stagger_time = arg_6_1.stagger_time + 0.35
+			if shield_user and stagger and is_dual_wield_mode then
+				if blackboard.stagger_block_timer and t < blackboard.stagger_block_timer then
+					blackboard.stagger_time = blackboard.stagger_time + 0.35
 
-					extension:set_is_blocking(true)
+					ai_shield_extension:set_is_blocking(true)
 
-					var_6_5 = arg_6_3.shield_block_anims[stagger_type]
+					stagger_anims = action.shield_block_anims[stagger_type]
 				else
-					arg_6_1.stagger_time = 0
-					var_6_5 = arg_6_3.stagger_anims[stagger_type]
+					blackboard.stagger_time = 0
+					stagger_anims = action.stagger_anims[stagger_type]
 
-					extension:set_is_blocking(false)
+					ai_shield_extension:set_is_blocking(false)
 				end
 			else
-				arg_6_1.stagger_time = 0
-				var_6_5 = arg_6_3.stagger_anims[stagger_type]
+				blackboard.stagger_time = 0
+				stagger_anims = action.stagger_anims[stagger_type]
 
-				extension:set_is_blocking(false)
+				ai_shield_extension:set_is_blocking(false)
 			end
 
-			return var_6_5, str
+			return stagger_anims, idle_event
 		end,
 		stagger_anims = {
 			{
@@ -1833,8 +1843,8 @@ local tbl_5 = {
 				attack_anim = {
 					"attack_combo_1"
 				},
-				staggers_allowed = tbl_2,
-				push_units_in_the_way = tbl_4
+				staggers_allowed = WARLORD_ALLOWED_STAGGERS,
+				push_units_in_the_way = pushed_data
 			},
 			{
 				offset_forward = 0.5,
@@ -1855,8 +1865,8 @@ local tbl_5 = {
 				attack_anim = {
 					"attack_combo_2"
 				},
-				staggers_allowed = tbl_2,
-				push_units_in_the_way = tbl_4
+				staggers_allowed = WARLORD_ALLOWED_STAGGERS,
+				push_units_in_the_way = pushed_data
 			},
 			{
 				rotation_speed = 20,
@@ -1876,8 +1886,8 @@ local tbl_5 = {
 				attack_anim = {
 					"attack_combo_3"
 				},
-				staggers_allowed = tbl_2,
-				push_units_in_the_way = tbl_4
+				staggers_allowed = WARLORD_ALLOWED_STAGGERS,
+				push_units_in_the_way = pushed_data
 			}
 		},
 		difficulty_damage = {
@@ -1892,12 +1902,12 @@ local tbl_5 = {
 			cataclysm_2 = 50
 		},
 		stagger_impact = {
-			scripts_utils_stagger_types.weak,
-			scripts_utils_stagger_types.medium,
-			scripts_utils_stagger_types.none,
-			scripts_utils_stagger_types.none
+			stagger_types.weak,
+			stagger_types.medium,
+			stagger_types.none,
+			stagger_types.none
 		}
 	}
 }
 
-BreedActions.skaven_storm_vermin_warlord = table.create_copy(BreedActions.skaven_storm_vermin_warlord, tbl_5)
+BreedActions.skaven_storm_vermin_warlord = table.create_copy(BreedActions.skaven_storm_vermin_warlord, action_data)

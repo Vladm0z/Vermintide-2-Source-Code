@@ -2,7 +2,7 @@
 
 local TwitchSettings = TwitchSettings
 
-TwitchSettings = TwitchSettings or {
+TwitchSettings = not not TwitchSettings or not not {
 	initial_downtime = 60,
 	cutoff_for_guaranteed_negative_vote = -300,
 	starting_funds = 0,
@@ -78,7 +78,7 @@ TwitchSettings = TwitchSettings
 
 local TwitchVoteTemplates = TwitchVoteTemplates
 
-TwitchVoteTemplates = TwitchVoteTemplates or {}
+TwitchVoteTemplates = not not TwitchVoteTemplates or not not {}
 TwitchVoteTemplates = TwitchVoteTemplates
 
 require("scripts/settings/twitch_vote_templates_buffs")
@@ -86,27 +86,27 @@ require("scripts/settings/twitch_vote_templates_items")
 require("scripts/settings/twitch_vote_templates_spawning")
 require("scripts/settings/twitch_vote_templates_mutators")
 
-for k, v in pairs(DLCSettings) do
-	local twitch_settings = v.twitch_settings
-	local flag = not twitch_settings and twitch_settings.vote_templates_file
+for _, dlc in pairs(DLCSettings) do
+	local dlc_twitch_settings = dlc.twitch_settings
+	local dlc_vote_templates_file = not not dlc_twitch_settings and not not dlc_twitch_settings.vote_templates_file
 
-	if not flag then
-		require(flag)
+	if dlc_vote_templates_file then
+		require(dlc_vote_templates_file)
 	end
 end
 
-local tbl = {}
-local huge = math.huge
+local TEMP_TABLE = {}
+local min_diff = math.huge
 
-for k_2, v_2 in pairs(TwitchVoteTemplates) do
-	tbl[k_2] = k_2
+for name, template in pairs(TwitchVoteTemplates) do
+	TEMP_TABLE[name] = name
 
-	for k_3, v_3 in pairs(TwitchVoteTemplates) do
-		if not tbl[k_3] then
-			local abs = math.abs(v_3.cost + v_2.cost)
+	for compare_name, compare_template in pairs(TwitchVoteTemplates) do
+		if not TEMP_TABLE[compare_name] then
+			local diff = math.abs(compare_template.cost + template.cost)
 
-			if abs < huge then
-				huge = abs
+			if diff < min_diff then
+				min_diff = diff
 			end
 		end
 	end
@@ -121,68 +121,68 @@ TwitchBossEquivalentSpawnTemplatesLookup = {}
 TwitchBossesSpawnBreedNamesLookup = {}
 TwitchSpecialsSpawnBreedNamesLookup = {}
 
-for k_4, v_4 in pairs(TwitchVoteTemplates) do
-	v_4.name = k_4
-	TwitchVoteTemplatesLookup[#TwitchVoteTemplatesLookup + 1] = k_4
+for name, template in pairs(TwitchVoteTemplates) do
+	template.name = name
+	TwitchVoteTemplatesLookup[#TwitchVoteTemplatesLookup + 1] = name
 
-	if not v_4.multiple_choice then
-		TwitchMultipleChoiceVoteTemplatesLookup[#TwitchMultipleChoiceVoteTemplatesLookup + 1] = k_4
+	if template.multiple_choice then
+		TwitchMultipleChoiceVoteTemplatesLookup[#TwitchMultipleChoiceVoteTemplatesLookup + 1] = name
 	else
-		TwitchStandardVoteTemplatesLookup[#TwitchStandardVoteTemplatesLookup + 1] = k_4
+		TwitchStandardVoteTemplatesLookup[#TwitchStandardVoteTemplatesLookup + 1] = name
 	end
 
-	if v_4.cost < 0 then
-		TwitchPositiveVoteTemplatesLookup[#TwitchPositiveVoteTemplatesLookup + 1] = k_4
+	if template.cost < 0 then
+		TwitchPositiveVoteTemplatesLookup[#TwitchPositiveVoteTemplatesLookup + 1] = name
 	else
-		TwitchNegativeVoteTemplatesLookup[#TwitchNegativeVoteTemplatesLookup + 1] = k_4
+		TwitchNegativeVoteTemplatesLookup[#TwitchNegativeVoteTemplatesLookup + 1] = name
 	end
 
-	if not v_4.breed_name then
-		local var_0_7 = Breeds[v_4.breed_name]
+	if template.breed_name then
+		local breed = Breeds[template.breed_name]
 
-		if not var_0_7.boss then
-			v_4.boss = true
-			TwitchBossesSpawnBreedNamesLookup[v_4.breed_name] = v_4
-		elseif not var_0_7.special then
-			v_4.special = true
-			TwitchSpecialsSpawnBreedNamesLookup[v_4.breed_name] = v_4
+		if breed.boss then
+			template.boss = true
+			TwitchBossesSpawnBreedNamesLookup[template.breed_name] = template
+		elseif breed.special then
+			template.special = true
+			TwitchSpecialsSpawnBreedNamesLookup[template.breed_name] = template
 		end
 	end
 
-	if not v_4.boss_equivalent then
-		TwitchBossEquivalentSpawnTemplatesLookup[#TwitchBossEquivalentSpawnTemplatesLookup + 1] = k_4
+	if template.boss_equivalent then
+		TwitchBossEquivalentSpawnTemplatesLookup[#TwitchBossEquivalentSpawnTemplatesLookup + 1] = name
 	end
 end
 
 local TwitchVoteWhitelists = TwitchVoteWhitelists
 
-TwitchVoteWhitelists = TwitchVoteWhitelists or {}
+TwitchVoteWhitelists = not not TwitchVoteWhitelists or not not {}
 TwitchVoteWhitelists = TwitchVoteWhitelists
 
-for k_5, v_5 in pairs(DLCSettings) do
-	local twitch_settings_2 = v_5.twitch_settings
+for _, dlc in pairs(DLCSettings) do
+	local dlc_twitch_settings = dlc.twitch_settings
 
-	if not twitch_settings_2 then
-		local supported_game_modes = twitch_settings_2.supported_game_modes
+	if dlc_twitch_settings then
+		local dlc_supported_game_modes = dlc_twitch_settings.supported_game_modes
 
-		if not supported_game_modes then
-			for k_6, v_6 in pairs(TwitchSettings.supported_game_modes) do
-				table.merge(v_6, supported_game_modes)
+		if dlc_supported_game_modes then
+			for platform, settings in pairs(TwitchSettings.supported_game_modes) do
+				table.merge(settings, dlc_supported_game_modes)
 			end
 		end
 
-		local vote_whitelists = twitch_settings_2.vote_whitelists
+		local dlc_vote_whitelists = dlc_twitch_settings.vote_whitelists
 
-		if not vote_whitelists then
-			for k_7, v_7 in pairs(vote_whitelists) do
-				if not TwitchVoteWhitelists[k_7] then
-					table.merge(TwitchVoteWhitelists[k_7], v_7)
+		if dlc_vote_whitelists then
+			for game_mode, vote_whitelist in pairs(dlc_vote_whitelists) do
+				if TwitchVoteWhitelists[game_mode] then
+					table.merge(TwitchVoteWhitelists[game_mode], vote_whitelist)
 				else
-					TwitchVoteWhitelists[k_7] = v_7
+					TwitchVoteWhitelists[game_mode] = vote_whitelist
 				end
 			end
 		end
 	end
 end
 
-fassert(huge <= TwitchSettings.max_diff, "[TwitchSettings] The minimum difference between vote templates exceeeds %s", TwitchSettings.max_diff)
+fassert(min_diff <= TwitchSettings.max_diff, "[TwitchSettings] The minimum difference between vote templates exceeeds %s", TwitchSettings.max_diff)

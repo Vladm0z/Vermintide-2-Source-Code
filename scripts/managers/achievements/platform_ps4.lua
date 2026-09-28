@@ -1,7 +1,7 @@
 -- chunkname: @scripts/managers/achievements/platform_ps4.lua
 
-return {
-	init = function (arg_1_0)
+local platform_functions = {
+	init = function (achievement_manager)
 		-- function 1
 		return
 	end,
@@ -9,55 +9,57 @@ return {
 		-- function 2
 		return true
 	end,
-	version_result = function (arg_3_0)
+	version_result = function (token)
 		-- function 3
 		return true
 	end,
-	is_unlocked = function (self)
+	is_unlocked = function (template)
 		-- function 4
-		return not self.ID_PS4
+		return not template.ID_PS4
 	end,
-	is_platform_achievement = function (self)
+	is_platform_achievement = function (template)
 		-- function 5
-		return self.ID_PS4
+		return template.ID_PS4
 	end,
-	verify_platform_unlocked = function (self)
+	verify_platform_unlocked = function (template)
 		-- function 6
-		local flag = true
-		local name = self.name
-		local id = self.id
-		local ID_PS4 = self.ID_PS4
+		local verified = true
+		local name = template.name
+		local template_id = template.id
+		local trophy_id = template.ID_PS4
 
-		printf("[Trophies] Verifying - Name: %q. Template: %q. ID: %q", Localize(name), id, ID_PS4)
-		assert(self.ID_PS4, "[AchievementManager] There is no Trophy ID specified for achievement: " .. self.id)
+		printf("[Trophies] Verifying - Name: %q. Template: %q. ID: %q", Localize(name), template_id, trophy_id)
+		assert(template.ID_PS4, "[AchievementManager] There is no Trophy ID specified for achievement: " .. template.id)
 
-		local unlock = Trophies.unlock(Managers.account:initial_user_id(), self.ID_PS4)
+		local token = Trophies.unlock(Managers.account:initial_user_id(), template.ID_PS4)
 
-		return flag, unlock
+		return verified, token
 	end,
-	unlock = function (self)
+	unlock = function (template)
 		-- function 7
-		assert(self.ID_PS4, "[Trophies] There is no Trophy ID specified for achievement: " .. self.id)
+		assert(template.ID_PS4, "[Trophies] There is no Trophy ID specified for achievement: " .. template.id)
 
-		return (Trophies.unlock(Managers.account:initial_user_id(), self.ID_PS4))
+		local token = Trophies.unlock(Managers.account:initial_user_id(), template.ID_PS4)
+
+		return token
 	end,
-	unlock_result = function (arg_8_0, arg_8_1)
+	unlock_result = function (token, template_id)
 		-- function 8
-		local status = Trophies.status(arg_8_0)
+		local result = Trophies.status(token)
 
-		if status == Trophies.STARTED then
+		if result == Trophies.STARTED then
 			return false
 		end
 
-		Trophies.free(arg_8_0)
+		Trophies.free(token)
 
-		if status == Trophies.COMPLETED then
+		if result == Trophies.COMPLETED then
 			return true
-		elseif status == Trophies.ERROR then
-			printf("[Trophies] Failed unlocking trophy - %q", arg_8_1 or "Unknown")
+		elseif result == Trophies.ERROR then
+			printf("[Trophies] Failed unlocking trophy - %q", not not template_id or not not "Unknown")
 
 			return true, "error"
-		elseif status == Trophies.UNKNOWN then
+		elseif result == Trophies.UNKNOWN then
 			return true, "unknown"
 		end
 	end,
@@ -66,3 +68,5 @@ return {
 		errorf("Tried to reset Trophies, not implemented!")
 	end
 }
+
+return platform_functions

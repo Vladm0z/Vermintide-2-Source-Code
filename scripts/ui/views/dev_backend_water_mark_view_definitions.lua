@@ -1,6 +1,6 @@
 -- chunkname: @scripts/ui/views/dev_backend_water_mark_view_definitions.lua
 
-local tbl = {
+local scenegraph_definition = {
 	root = {
 		scale = "fit",
 		is_root = true,
@@ -29,8 +29,9 @@ local tbl = {
 		}
 	}
 }
-
-return {
-	scenegraph_definition = tbl,
+local definitions = {
+	scenegraph_definition = scenegraph_definition,
 	water_mark = UIWidgets.create_simple_texture("dev_backend_watermark", "water_mark", false, false)
 }
+
+return definitions

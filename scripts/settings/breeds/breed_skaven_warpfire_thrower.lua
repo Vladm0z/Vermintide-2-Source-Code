@@ -1,6 +1,6 @@
 -- chunkname: @scripts/settings/breeds/breed_skaven_warpfire_thrower.lua
 
-local scripts_utils_stagger_types = require("scripts/utils/stagger_types")
+local stagger_types = require("scripts/utils/stagger_types")
 local tbl = {
 	threat_value = 8,
 	walk_speed = 2,
@@ -88,7 +88,7 @@ local tbl = {
 }
 local setting = Development.setting("disable_warpfire_thrower")
 
-setting = setting or false
+setting = not not setting or not not false
 tbl.disabled = setting
 tbl.hitzone_multiplier_types = {
 	head = "headshot"
@@ -222,21 +222,23 @@ tbl.nav_cost_map_allowed_layers = {
 	vortex_danger_zone = 1
 }
 
-tbl.custom_death_enter_function = function (arg_1_0, arg_1_1, arg_1_2, arg_1_3)
+tbl.custom_death_enter_function = function (unit, killer_unit, damage_type, death_hit_zone)
 	-- function 1
-	local var_1_0 = BLACKBOARDS[arg_1_0]
+	local blackboard = BLACKBOARDS[unit]
 
-	if not Unit.alive(arg_1_1) then
+	if not Unit.alive(killer_unit) then
 		return
 	end
 
-	QuestSettings.check_warpfire_kill_before_shooting(var_1_0, arg_1_1)
-	QuestSettings.check_warpfire_kill_on_power_cell(arg_1_3, arg_1_1)
+	QuestSettings.check_warpfire_kill_before_shooting(blackboard, killer_unit)
+	QuestSettings.check_warpfire_kill_on_power_cell(death_hit_zone, killer_unit)
 end
 
-Breeds.skaven_warpfire_thrower = table.create_copy(Breeds.skaven_warpfire_thrower, tbl)
+local breed_data = tbl
 
-local tbl_2 = {
+Breeds.skaven_warpfire_thrower = table.create_copy(Breeds.skaven_warpfire_thrower, breed_data)
+
+local action_data = {
 	skulk = {
 		dogpile_aggro_needed = 2,
 		skulk_time = 1,
@@ -289,11 +291,11 @@ local tbl_2 = {
 		ai_push_data = {
 			stagger_distance = 1,
 			stagger_impact = {
-				scripts_utils_stagger_types.medium,
-				scripts_utils_stagger_types.medium,
-				scripts_utils_stagger_types.medium,
-				scripts_utils_stagger_types.weak,
-				scripts_utils_stagger_types.weak
+				stagger_types.medium,
+				stagger_types.medium,
+				stagger_types.medium,
+				stagger_types.weak,
+				stagger_types.weak
 			},
 			stagger_duration = {
 				2,
@@ -444,4 +446,4 @@ local tbl_2 = {
 	}
 }
 
-BreedActions.skaven_warpfire_thrower = table.create_copy(BreedActions.skaven_warpfire_thrower, tbl_2)
+BreedActions.skaven_warpfire_thrower = table.create_copy(BreedActions.skaven_warpfire_thrower, action_data)

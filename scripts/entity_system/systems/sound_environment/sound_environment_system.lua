@@ -4,15 +4,15 @@ require("scripts/helpers/wwise_utils")
 
 SoundEnvironmentSystem = class(SoundEnvironmentSystem, ExtensionSystemBase)
 
-local tbl = {}
-local tbl_2 = {}
-local num = 0.5
-local num_2 = 1 - num
-local num_3 = 1
+local RPCS = {}
+local extensions = {}
+local SOURCE_WEIGHT = 0.5
+local LISTENER_WEIGHT = 1 - SOURCE_WEIGHT
+local FULL_WEIGHT = 1
 
-SoundEnvironmentSystem.init = function (self, arg_1_1, arg_1_2)
+SoundEnvironmentSystem.init = function (self, entity_system_creation_context, system_name)
 	-- function 1
-	SoundEnvironmentSystem.super.init(self, arg_1_1, arg_1_2, tbl_2)
+	SoundEnvironmentSystem.super.init(self, entity_system_creation_context, system_name, extensions)
 
 	self._highest_prio_system = EngineOptimized.highest_prio_environment_init()
 
@@ -26,14 +26,14 @@ SoundEnvironmentSystem.init = function (self, arg_1_1, arg_1_2)
 	self._fade_environments = {}
 	self._current_environment = nil
 
-	local level_key = arg_1_1.startup_data.level_key
-	local var_1_2 = LevelSettings[level_key]
-	local ambient_sound_event = var_1_2.ambient_sound_event
-	local global_environment_fade_time = var_1_2.global_environment_fade_time
-	local player_aux_bus_name = var_1_2.player_aux_bus_name
-	local environment_state = var_1_2.environment_state
+	local level_key = entity_system_creation_context.startup_data.level_key
+	local level_settings = LevelSettings[level_key]
+	local ambient_sound_event = level_settings.ambient_sound_event
+	local global_environment_fade_time = level_settings.global_environment_fade_time
+	local aux_bus_name = level_settings.player_aux_bus_name
+	local environment_state = level_settings.environment_state
 
-	self:register_sound_environment("global", -1, ambient_sound_event, global_environment_fade_time, player_aux_bus_name, environment_state)
+	self:register_sound_environment("global", -1, ambient_sound_event, global_environment_fade_time, aux_bus_name, environment_state)
 	self:enter_environment(0, "global")
 
 	self._updated_sources = {}
@@ -47,7 +47,7 @@ SoundEnvironmentSystem.destroy = function (self)
 	EngineOptimized.highest_prio_environment_destroy(self._highest_prio_system)
 end
 
-local tbl_3 = {
+local environment_base = {
 	aux_bus_name = "",
 	prio = 0,
 	fade_time = 0,
@@ -59,121 +59,133 @@ local tbl_3 = {
 	}
 }
 
-SoundEnvironmentSystem.register_sound_environment = function (self, arg_3_1, arg_3_2, arg_3_3, arg_3_4, arg_3_5, arg_3_6)
+SoundEnvironmentSystem.register_sound_environment = function (self, volume_name, prio, ambient_sound_event, fade_time, aux_bus_name, environment_state)
 	-- function 3
-	fassert(self._environments[arg_3_1] == nil, "Already registered sound environment with name %q", arg_3_1)
+	fassert(self._environments[volume_name] == nil, "Already registered sound environment with name %q", volume_name)
 
-	local var_3_0 = self._environments[arg_3_1]
+	local var_3_0 = self._environments[volume_name]
 
-	var_3_0 = var_3_0 or table.clone(tbl_3)
-	var_3_0.prio = arg_3_2
-
-	if arg_3_3 ~= "" then
-		var_3_0.ambient_sound_event_start = "Play_" .. arg_3_3
-		var_3_0.ambient_sound_event_stop = "Stop_" .. arg_3_3
+	if not var_3_0 then
+		-- Nothing
 	end
 
-	var_3_0.fade_time = arg_3_4 or 1
+	var_3_0 = table.clone(environment_base)
 
-	assert(arg_3_5, "Sound environment lacks auxiliary bus")
+	local environment = var_3_0
 
-	var_3_0.player_aux_bus_name = arg_3_5
-	var_3_0.source_aux_bus_name = arg_3_5 .. "_source"
+	::label_3_0::
 
-	assert(arg_3_6, "Have to set environment state")
+	environment.prio = prio
 
-	var_3_0.environment_state = arg_3_6
-	self._environments[arg_3_1] = var_3_0
+	if ambient_sound_event ~= "" then
+		environment.ambient_sound_event_start = "Play_" .. ambient_sound_event
+		environment.ambient_sound_event_stop = "Stop_" .. ambient_sound_event
+	end
 
-	local tbl = {}
-	local num = 1
+	environment.fade_time = not not fade_time or not not 1
 
-	for k, v in pairs(self._environments) do
-		local prio = v.prio
+	assert(aux_bus_name, "Sound environment lacks auxiliary bus")
 
-		tbl[num] = {
+	environment.player_aux_bus_name = aux_bus_name
+	environment.source_aux_bus_name = aux_bus_name .. "_source"
+
+	assert(environment_state, "Have to set environment state")
+
+	environment.environment_state = environment_state
+	self._environments[volume_name] = environment
+
+	local array_to_sort = {}
+	local count = 1
+
+	for volume_name, data in pairs(self._environments) do
+		local prio = data.prio
+
+		array_to_sort[count] = {
 			p = prio,
-			n = k
+			n = volume_name
 		}
-		num = num + 1
+		count = count + 1
 	end
 
-	table.sort(tbl, function (self, arg_4_1)
+	table.sort(array_to_sort, function (a, b)
 		-- function 4
-		return self.p > arg_4_1.p
+		return a.p > b.p
 	end)
 
-	local tbl_2 = {}
-	local num_2 = num - 1
+	local sorted_environment = {}
 
-	for k_2 = 1, num_2 do
-		tbl_2[k_2] = tbl[k_2].n
+	count = count - 1
+
+	for i = 1, count do
+		sorted_environment[i] = array_to_sort[i].n
 	end
 
-	EngineOptimized.highest_prio_environment_reorder(self._highest_prio_system, unpack(tbl_2))
+	EngineOptimized.highest_prio_environment_reorder(self._highest_prio_system, unpack(sorted_environment))
 end
 
-SoundEnvironmentSystem._highest_prio_environment_at_position = function (self, arg_5_1)
+SoundEnvironmentSystem._highest_prio_environment_at_position = function (self, position)
 	-- function 5
-	local var_5_0
-	local current_level = LevelHelper:current_level(self.world)
+	local highest_prio_env_name
+	local level = LevelHelper:current_level(self.world)
 
-	return (EngineOptimized.highest_prio_environment_at_position(self._highest_prio_system, current_level, arg_5_1))
+	highest_prio_env_name = EngineOptimized.highest_prio_environment_at_position(self._highest_prio_system, level, position)
+
+	return highest_prio_env_name
 end
 
-SoundEnvironmentSystem.set_source_environment = function (self, arg_6_1, arg_6_2)
+SoundEnvironmentSystem.set_source_environment = function (self, source, position)
 	-- function 6
 	if not GameSettingsDevelopment.fade_environments then
 		return
 	end
 
-	if not Vector3.is_valid(arg_6_2) then
+	if not Vector3.is_valid(position) then
 		return
 	end
 
-	local _highest_prio_environment_at_position = self:_highest_prio_environment_at_position(arg_6_2)
-	local _environments = self._environments
+	local volume_name = self:_highest_prio_environment_at_position(position)
+	local environments = self._environments
 	local wwise_world = self.wwise_world
-	local source_aux_bus_name = _environments[_highest_prio_environment_at_position or "global"].source_aux_bus_name
+	local bus_name = environments[not not volume_name or not not "global"].source_aux_bus_name
 
-	assert(source_aux_bus_name, "No source aux environment in %s", _highest_prio_environment_at_position or "global")
-	WwiseWorld.reset_environment_for_source(wwise_world, arg_6_1)
-	WwiseWorld.set_environment_for_source(wwise_world, arg_6_1, source_aux_bus_name, num)
+	assert(bus_name, "No source aux environment in %s", not not volume_name or not not "global")
+	WwiseWorld.reset_environment_for_source(wwise_world, source)
+	WwiseWorld.set_environment_for_source(wwise_world, source, bus_name, SOURCE_WEIGHT)
 
-	local _fade_environments = self._fade_environments
-	local flag = false
-	local _current_environment = self._current_environment
+	local fade_environments = self._fade_environments
+	local added_current_environment = false
+	local current_environment_name = self._current_environment
 
-	for k, v in pairs(_fade_environments) do
-		local var_6_7 = _environments[k]
-		local fade_info = var_6_7.fade_info
+	for volume_name, _ in pairs(fade_environments) do
+		local environment = environments[volume_name]
+		local fade_info = environment.fade_info
 
-		WwiseWorld.set_environment(wwise_world, var_6_7.player_aux_bus_name, fade_info.current_value * num_2)
+		WwiseWorld.set_environment(wwise_world, environment.player_aux_bus_name, fade_info.current_value * LISTENER_WEIGHT)
 
-		flag = flag or k == _current_environment
+		added_current_environment = not not added_current_environment or volume_name == current_environment_name
 	end
 
-	if not flag then
-		local var_6_9 = self._environments[_current_environment]
+	if not added_current_environment then
+		local environment = self._environments[current_environment_name]
 
-		WwiseWorld.set_environment(wwise_world, var_6_9.player_aux_bus_name, num_2)
+		WwiseWorld.set_environment(wwise_world, environment.player_aux_bus_name, LISTENER_WEIGHT)
 	end
 
-	return source_aux_bus_name
+	return bus_name
 end
 
-SoundEnvironmentSystem.register_source_environment_update = function (self, arg_7_1, arg_7_2, arg_7_3)
+SoundEnvironmentSystem.register_source_environment_update = function (self, source, unit, object)
 	-- function 7
 	local _updated_sources = self._updated_sources
 	local num = #self._updated_sources + 1
 	local tbl = {
-		unit = arg_7_2,
-		source = arg_7_1
+		unit = unit,
+		source = source
 	}
 	local node
 
-	if not arg_7_3 then
-		node = Unit.node(arg_7_2, arg_7_3)
+	if object then
+		node = Unit.node(unit, object)
 
 		if not node then
 			-- Nothing
@@ -189,222 +201,233 @@ SoundEnvironmentSystem.register_source_environment_update = function (self, arg_
 	self._num_sources = self._num_sources + 1
 end
 
-SoundEnvironmentSystem.unregister_source_environment_update = function (self, arg_8_1)
+SoundEnvironmentSystem.unregister_source_environment_update = function (self, source)
 	-- function 8
-	local _num_sources = self._num_sources
+	local num_sources = self._num_sources
 
-	for i = 1, _num_sources do
-		if self._updated_sources[i].source == arg_8_1 then
+	for i = 1, num_sources do
+		local data = self._updated_sources[i]
+
+		if data.source == source then
 			table.remove(self._updated_sources, i)
 
-			local _current_source_index = self._current_source_index
+			local current_index = self._current_source_index
 
-			if i < _current_source_index then
-				self._current_source_index = _current_source_index - 1
+			if i < current_index then
+				self._current_source_index = current_index - 1
 			end
 
-			self._num_sources = _num_sources - 1
+			self._num_sources = num_sources - 1
 
 			return
 		end
 	end
 end
 
-local num_4 = 3
-local tbl_4 = {}
+local UPDATE_MAX_AMOUNT = 3
+local sources_to_unregister = {}
 
 SoundEnvironmentSystem._update_source_environments = function (self)
 	-- function 9
-	local _num_sources = self._num_sources
-	local min = math.min(_num_sources, num_4)
-	local min_2 = math.min(self._current_source_index, _num_sources)
-	local _updated_sources = self._updated_sources
-	local has_source = WwiseWorld.has_source
-	local num = 0
+	local num_sources = self._num_sources
+	local amount_to_update = math.min(num_sources, UPDATE_MAX_AMOUNT)
+	local current_index = math.min(self._current_source_index, num_sources)
+	local updated_sources = self._updated_sources
+	local wwise_world_has_source = WwiseWorld.has_source
+	local num_sources_to_unregister = 0
 
-	for i = 1, min do
-		min_2 = min_2 % _num_sources + 1
+	for i = 1, amount_to_update do
+		current_index = current_index % num_sources + 1
 
-		local var_9_6 = _updated_sources[min_2]
-		local source = var_9_6.source
+		local data = updated_sources[current_index]
+		local source = data.source
 
-		if not has_source(self.wwise_world, source) then
-			local world_position = Unit.world_position(var_9_6.unit, var_9_6.node)
-			local set_source_environment = self:set_source_environment(source, world_position)
+		if wwise_world_has_source(self.wwise_world, source) then
+			local pos = Unit.world_position(data.unit, data.node)
+			local bus_name = self:set_source_environment(source, pos)
 		else
-			tbl_4[#tbl_4 + 1] = source
-			num = num + 1
+			sources_to_unregister[#sources_to_unregister + 1] = source
+			num_sources_to_unregister = num_sources_to_unregister + 1
 		end
 	end
 
-	self._current_source_index = min_2
+	self._current_source_index = current_index
 
-	for j = 1, num do
-		local var_9_10 = tbl_4[j]
+	for i = 1, num_sources_to_unregister do
+		local source = sources_to_unregister[i]
 
-		self:unregister_source_environment_update(var_9_10)
+		self:unregister_source_environment_update(source)
 
-		tbl_4[j] = nil
+		sources_to_unregister[i] = nil
 	end
 end
 
-SoundEnvironmentSystem.local_player_created = function (self, arg_10_1)
+SoundEnvironmentSystem.local_player_created = function (self, player)
 	-- function 10
-	self.player = arg_10_1
+	self.player = player
 end
 
-SoundEnvironmentSystem.update = function (self, arg_11_1, arg_11_2)
+SoundEnvironmentSystem.update = function (self, context, t)
 	-- function 11
-	if arg_11_2 > self._check_timer then
-		self._check_timer = arg_11_2 + 1
+	if t > self._check_timer then
+		self._check_timer = t + 1
 
 		if not self.player then
 			return
 		end
 
-		local viewport_name = self.player.viewport_name
-		local listener_pose = Managers.state.camera:listener_pose(viewport_name)
-		local translation = Matrix4x4.translation(listener_pose)
-		local _highest_prio_environment_at_position = self:_highest_prio_environment_at_position(translation)
+		local local_player = self.player
+		local viewport_name = local_player.viewport_name
+		local pose = Managers.state.camera:listener_pose(viewport_name)
+		local position = Matrix4x4.translation(pose)
+		local highest_prio_env_name = self:_highest_prio_environment_at_position(position)
 
-		if not _highest_prio_environment_at_position then
-			if _highest_prio_environment_at_position ~= self._current_environment then
-				self:enter_environment(arg_11_2, _highest_prio_environment_at_position, self._current_environment)
+		if highest_prio_env_name then
+			if highest_prio_env_name ~= self._current_environment then
+				self:enter_environment(t, highest_prio_env_name, self._current_environment)
 			end
 		elseif self._current_environment ~= "global" then
-			self:enter_environment(arg_11_2, "global", self._current_environment)
+			self:enter_environment(t, "global", self._current_environment)
 		end
 	end
 
-	if not GameSettingsDevelopment.fade_environments then
-		self:_update_fade(arg_11_2)
+	if GameSettingsDevelopment.fade_environments then
+		self:_update_fade(t)
 		self:_update_source_environments()
 	end
 end
 
-SoundEnvironmentSystem._update_fade = function (self, arg_12_1)
+SoundEnvironmentSystem._update_fade = function (self, t)
 	-- function 12
 	local wwise_world = self.wwise_world
-	local _environments = self._environments
-	local _fade_environments = self._fade_environments
+	local environments = self._environments
+	local fade_environments = self._fade_environments
 
-	for k, v in pairs(_fade_environments) do
-		local var_12_3 = _environments[k]
-		local fade_info = var_12_3.fade_info
+	for volume_name, _ in pairs(fade_environments) do
+		local environment = environments[volume_name]
+		local fade_info = environment.fade_info
 		local fade_start = fade_info.fade_start
 		local fade_time = fade_info.fade_time
-		local num = arg_12_1 - fade_start
-		local clamp = math.clamp(num / fade_time, 0, 1)
+		local current_time = t - fade_start
+		local delta = math.clamp(current_time / fade_time, 0, 1)
 		local start_value = fade_info.start_value
 		local target_value = fade_info.target_value
-		local lerp = math.lerp(start_value, target_value, clamp)
+		local value = math.lerp(start_value, target_value, delta)
 
-		fade_info.current_value = lerp
+		fade_info.current_value = value
 
-		WwiseWorld.set_environment(wwise_world, var_12_3.player_aux_bus_name, lerp * num_2)
+		WwiseWorld.set_environment(wwise_world, environment.player_aux_bus_name, value * LISTENER_WEIGHT)
 
-		if lerp == target_value then
-			_fade_environments[k] = nil
+		if value == target_value then
+			fade_environments[volume_name] = nil
 		end
 	end
 end
 
-SoundEnvironmentSystem._add_fade_environment = function (self, arg_13_1, arg_13_2, arg_13_3, arg_13_4)
+SoundEnvironmentSystem._add_fade_environment = function (self, t, volume_name, fade_time, target_value)
 	-- function 13
-	local fade_info = self._environments[arg_13_2].fade_info
+	local environment = self._environments[volume_name]
+	local fade_info = environment.fade_info
 
-	fade_info.fade_start = arg_13_1
-	fade_info.fade_time = arg_13_3
+	fade_info.fade_start = t
+	fade_info.fade_time = fade_time
 	fade_info.start_value = fade_info.current_value
-	fade_info.target_value = arg_13_4
-	self._fade_environments[arg_13_2] = true
+	fade_info.target_value = target_value
+	self._fade_environments[volume_name] = true
 end
 
-local num_5 = 3
+local MAX_FADE_ENVIRONMENTS = 3
 
 SoundEnvironmentSystem._clamp_num_fade_environments = function (self)
 	-- function 14
-	local num = 0
-	local var_14_1
-	local huge = math.huge
+	local num_envs = 0
+	local least_env_name
+	local least_env_value = math.huge
 
-	for k, v in pairs(self._fade_environments) do
-		num = num + 1
+	for env_name, _ in pairs(self._fade_environments) do
+		num_envs = num_envs + 1
 
-		local fade_info = self._environments[k].fade_info
+		local fade_info = self._environments[env_name].fade_info
 		local current_value = fade_info.current_value
 
-		if not (fade_info.target_value ~= 0 or not (current_value < huge)) then
-			huge = current_value
-			var_14_1 = k
+		if fade_info.target_value == 0 and current_value < least_env_value then
+			least_env_value = current_value
+			least_env_name = env_name
 		end
 	end
 
-	assert(num <= num_5 + 1, "Too many environments, cleanup failed.")
+	assert(num_envs <= MAX_FADE_ENVIRONMENTS + 1, "Too many environments, cleanup failed.")
 
-	if num > num_5 then
-		local var_14_5 = self._environments[var_14_1]
+	if num_envs > MAX_FADE_ENVIRONMENTS then
+		local env = self._environments[least_env_name]
+		local fade_info = env.fade_info
 
-		var_14_5.fade_info.current_value = 0
-		self._fade_environments[var_14_1] = nil
+		fade_info.current_value = 0
+		self._fade_environments[least_env_name] = nil
 
-		WwiseWorld.set_environment(self.wwise_world, var_14_5.player_aux_bus_name, 0)
+		WwiseWorld.set_environment(self.wwise_world, env.player_aux_bus_name, 0)
 	end
 end
 
-SoundEnvironmentSystem.enter_environment = function (self, arg_15_1, arg_15_2, arg_15_3)
+SoundEnvironmentSystem.enter_environment = function (self, t, volume_name, current_environment_name)
 	-- function 15
-	local var_15_0 = self._environments[arg_15_2]
+	local environment = self._environments[volume_name]
 
-	if not GameSettingsDevelopment.fade_environments then
-		local fade_time = var_15_0.fade_time
-		local fade_info = var_15_0.fade_info
+	if GameSettingsDevelopment.fade_environments then
+		local fade_time = environment.fade_time
+		local fade_info = environment.fade_info
 
 		if fade_info.current_value > 0 then
-			fade_time = fade_time * (1 - fade_info.current_value)
+			local current_value = fade_info.current_value
+			local target_value = 1
+			local delta = target_value - current_value
+
+			fade_time = fade_time * delta
 
 			if fade_time < 0.001 then
 				fade_time = 0.001
 			end
 		end
 
-		self:_add_fade_environment(arg_15_1, arg_15_2, fade_time, 1)
+		self:_add_fade_environment(t, volume_name, fade_time, 1)
 
-		if not arg_15_3 then
-			self:_add_fade_environment(arg_15_1, arg_15_3, fade_time, 0)
+		if current_environment_name then
+			self:_add_fade_environment(t, current_environment_name, fade_time, 0)
 		end
 
 		self:_clamp_num_fade_environments()
 	else
-		self:_set_environment(arg_15_2)
+		self:_set_environment(volume_name)
 	end
 
-	Wwise.set_state("interior_exterior", var_15_0.environment_state)
+	Wwise.set_state("interior_exterior", environment.environment_state)
 
 	local wwise_world = self.wwise_world
 
-	if not arg_15_3 then
-		local ambient_sound_event_stop = self._environments[arg_15_3].ambient_sound_event_stop
+	if current_environment_name then
+		local current_environment = self._environments[current_environment_name]
+		local ambient_sound_event_stop = current_environment.ambient_sound_event_stop
 
-		if not ambient_sound_event_stop then
+		if ambient_sound_event_stop then
 			WwiseWorld.trigger_event(wwise_world, ambient_sound_event_stop)
 		end
 	end
 
-	local ambient_sound_event_start = var_15_0.ambient_sound_event_start
+	local ambient_sound_event_start = environment.ambient_sound_event_start
 
-	if not ambient_sound_event_start then
+	if ambient_sound_event_start then
 		WwiseWorld.trigger_event(wwise_world, ambient_sound_event_start)
 	end
 
-	self._current_environment = arg_15_2
+	self._current_environment = volume_name
 end
 
-SoundEnvironmentSystem._set_environment = function (self, arg_16_1)
+SoundEnvironmentSystem._set_environment = function (self, volume_name)
 	-- function 16
 	local wwise_world = self.wwise_world
-	local var_16_1 = self._environments[arg_16_1]
+	local environments = self._environments
+	local environment = environments[volume_name]
 
 	WwiseWorld.reset_aux_environment(wwise_world)
-	WwiseWorld.set_environment(wwise_world, var_16_1.player_aux_bus_name, num_3)
+	WwiseWorld.set_environment(wwise_world, environment.player_aux_bus_name, FULL_WEIGHT)
 end

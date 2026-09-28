@@ -2,231 +2,233 @@
 
 RewardsPopupUI = class(RewardsPopupUI)
 
-RewardsPopupUI.init = function (self, arg_1_1, arg_1_2)
+RewardsPopupUI.init = function (self, parent, in_game_ui_context)
 	-- function 1
-	self._parent = arg_1_1
-	self._ui_renderer = arg_1_2.ui_renderer
-	self._ingame_ui = arg_1_2.ingame_ui
-	self._input_manager = arg_1_2.input_manager
-	self._world_manager = arg_1_2.world_manager
-	self._wwise_world = arg_1_2.wwise_world
-	self._ui_top_renderer = arg_1_2.ui_top_renderer
+	self._parent = parent
+	self._ui_renderer = in_game_ui_context.ui_renderer
+	self._ingame_ui = in_game_ui_context.ingame_ui
+	self._input_manager = in_game_ui_context.input_manager
+	self._world_manager = in_game_ui_context.world_manager
+	self._wwise_world = in_game_ui_context.wwise_world
+	self._ui_top_renderer = in_game_ui_context.ui_top_renderer
 	self._reward_presentation_queue = {}
 	self._reward_presentation_active = false
 
-	local tbl = {
+	local reward_params = {
 		wwise_world = self._wwise_world,
 		ui_renderer = self._ui_renderer,
 		ui_top_renderer = self._ui_top_renderer,
 		input_manager = self._input_manager
 	}
 
-	self._reward_popup = RewardPopupUI:new(tbl)
+	self._reward_popup = RewardPopupUI:new(reward_params)
 
 	Managers.state.event:register(self, "present_rewards", "present_rewards")
 end
 
-RewardsPopupUI.destroy = function (arg_2_0)
+RewardsPopupUI.destroy = function (self)
 	-- function 2
-	Managers.state.event:unregister("present_rewards", arg_2_0)
+	Managers.state.event:unregister("present_rewards", self)
 end
 
-RewardsPopupUI.update = function (self, arg_3_1, arg_3_2)
+RewardsPopupUI.update = function (self, dt, t)
 	-- function 3
-	if not self._reward_popup then
-		self._reward_popup:update(arg_3_1)
+	if self._reward_popup then
+		self._reward_popup:update(dt)
 		self:_handle_queued_presentations()
 	end
 end
 
-RewardsPopupUI.present_rewards = function (self, arg_4_1)
+RewardsPopupUI.present_rewards = function (self, rewards)
 	-- function 4
-	if #arg_4_1 > 0 then
-		local tbl = {}
-		local get_interface = Managers.backend:get_interface("items")
+	local num_rewards = #rewards
 
-		for i, v in ipairs(arg_4_1) do
-			local type = v.type
-			local sounds = v.sounds
+	if num_rewards > 0 then
+		local presentation_data = {}
+		local backend_manager = Managers.backend
+		local item_interface = backend_manager:get_interface("items")
 
-			if type == "item" or type == "loot_chest" or not CosmeticUtils.is_cosmetic_item(type) then
-				local backend_id = v.backend_id
-				local tbl_2 = {}
-				local get_item_from_id = get_interface:get_item_from_id(backend_id)
-				local tbl_3 = {}
-				local get_ui_information_from_item, var_4_9, var_4_10 = UIUtils.get_ui_information_from_item(get_item_from_id)
+		for _, data in ipairs(rewards) do
+			local reward_type = data.type
+			local sounds = data.sounds
 
-				tbl_3[1] = Localize(var_4_9)
-				tbl_3[2] = Localize("gift_popup_sub_title_halloween")
-				tbl_2[#tbl_2 + 1] = {
+			if reward_type == "item" or reward_type == "loot_chest" or CosmeticUtils.is_cosmetic_item(reward_type) then
+				local backend_id = data.backend_id
+				local entry = {}
+				local reward_item = item_interface:get_item_from_id(backend_id)
+				local description = {}
+				local _, display_name, _ = UIUtils.get_ui_information_from_item(reward_item)
+
+				description[1] = Localize(display_name)
+				description[2] = Localize("gift_popup_sub_title_halloween")
+				entry[#entry + 1] = {
 					widget_type = "description",
-					value = tbl_3
+					value = description
 				}
-				tbl_2[#tbl_2 + 1] = {
+				entry[#entry + 1] = {
 					widget_type = "item",
-					value = get_item_from_id
+					value = reward_item
 				}
-				tbl[#tbl + 1] = tbl_2
-				tbl.sounds = sounds
-			elseif type == "item_tooltip" then
-				local backend_id_2 = v.backend_id
-				local get_item_from_id_2 = get_interface:get_item_from_id(backend_id_2)
-				local tbl_4 = {}
+				presentation_data[#presentation_data + 1] = entry
+				presentation_data.sounds = sounds
+			elseif reward_type == "item_tooltip" then
+				local backend_id = data.backend_id
+				local reward_item = item_interface:get_item_from_id(backend_id)
+				local entry = {}
 
-				tbl_4[#tbl_4 + 1] = {
+				entry[#entry + 1] = {
 					widget_type = "item_tooltip",
-					value = get_item_from_id_2
+					value = reward_item
 				}
-				tbl_4[#tbl_4 + 1] = {
+				entry[#entry + 1] = {
 					widget_type = "item",
-					value = get_item_from_id_2
+					value = reward_item
 				}
-				tbl[#tbl + 1] = tbl_4
-				tbl.sounds = sounds
-			elseif type == "deus_item_tooltip" then
-				local backend_id_3 = v.backend_id
-				local get_item_from_id_3 = get_interface:get_item_from_id(backend_id_3)
-				local tbl_5 = {}
+				presentation_data[#presentation_data + 1] = entry
+				presentation_data.sounds = sounds
+			elseif reward_type == "deus_item_tooltip" then
+				local backend_id = data.backend_id
+				local reward_item = item_interface:get_item_from_id(backend_id)
+				local entry = {}
 
-				tbl_5[#tbl_5 + 1] = {
+				entry[#entry + 1] = {
 					widget_type = "deus_item_tooltip",
-					value = get_item_from_id_3
+					value = reward_item
 				}
-				tbl_5[#tbl_5 + 1] = {
+				entry[#entry + 1] = {
 					widget_type = "deus_item",
-					value = get_item_from_id_3
+					value = reward_item
 				}
 
-				local tbl_6 = {
+				local animation_data = {
 					end_animation = "deus_close",
 					start_animation = "deus_open"
 				}
 
-				tbl[#tbl + 1] = tbl_5
-				tbl.animation_data = tbl_6
-				tbl.keep_input = true
-				tbl.skip_blur = true
-				tbl.sounds = sounds
-			elseif type == "deus_power_up" then
-				local power_up = v.power_up
-				local tbl_7 = {}
+				presentation_data[#presentation_data + 1] = entry
+				presentation_data.animation_data = animation_data
+				presentation_data.keep_input = true
+				presentation_data.skip_blur = true
+				presentation_data.sounds = sounds
+			elseif reward_type == "deus_power_up" then
+				local deus_power_up = data.power_up
+				local entry = {}
 
-				tbl_7[#tbl_7 + 1] = {
+				entry[#entry + 1] = {
 					widget_type = "deus_power_up",
-					value = power_up
+					value = deus_power_up
 				}
-				tbl_7[#tbl_7 + 1] = {
+				entry[#entry + 1] = {
 					widget_type = "deus_icon",
-					value = power_up
+					value = deus_power_up
 				}
 
-				local tbl_8 = {
+				local animation_data = {
 					end_animation = "deus_close",
 					start_animation = "deus_open"
 				}
 
-				tbl[#tbl + 1] = tbl_7
-				tbl.animation_data = tbl_8
-				tbl.keep_input = true
-				tbl.skip_blur = true
+				presentation_data[#presentation_data + 1] = entry
+				presentation_data.animation_data = animation_data
+				presentation_data.keep_input = true
+				presentation_data.skip_blur = true
 
-				local rarity = power_up.rarity
-				local name = power_up.name
-				local var_4_23 = DeusPowerUpSetLookup[rarity][name]
+				local rarity, name = deus_power_up.rarity, deus_power_up.name
+				local power_up_sets = DeusPowerUpSetLookup[rarity][name]
 
-				if not var_4_23 then
-					for k = 1, #var_4_23 do
-						local var_4_24 = var_4_23[k]
+				if power_up_sets then
+					for set_i = 1, #power_up_sets do
+						local power_up_set = power_up_sets[set_i]
 
-						if not var_4_24.progress_sfx and not table.find_func(var_4_24.pieces, function (arg_5_0, arg_5_1)
+						if power_up_set.progress_sfx and table.find_func(power_up_set.pieces, function (_, piece)
 							-- function 5
-							return arg_5_1.name ~= name or arg_5_1.rarity == rarity
+							return piece.name == name and piece.rarity == rarity
 						end) then
-							sounds = not sounds and table.shallow_copy(sounds) and {}
-							sounds[#sounds + 1] = var_4_24.progress_sfx
+							sounds = (not sounds or not table.shallow_copy(sounds)) and not not {}
+							sounds[#sounds + 1] = power_up_set.progress_sfx
 
 							break
-						elseif not var_4_24.completed_sfx and not table.find_func(var_4_24.rewards, function (arg_6_0, arg_6_1)
+						elseif power_up_set.completed_sfx and table.find_func(power_up_set.rewards, function (_, piece)
 							-- function 6
-							return arg_6_1.name ~= name or arg_6_1.rarity == rarity
+							return piece.name == name and piece.rarity == rarity
 						end) then
-							sounds = not sounds and table.shallow_copy(sounds) and {}
-							sounds[#sounds + 1] = var_4_24.completed_sfx
+							sounds = (not sounds or not table.shallow_copy(sounds)) and not not {}
+							sounds[#sounds + 1] = power_up_set.completed_sfx
 
 							break
 						end
 					end
 				end
 
-				tbl.sounds = sounds
-			elseif type == "deus_power_up_end_of_level" then
-				local power_up_2 = v.power_up
-				local tbl_9 = {}
+				presentation_data.sounds = sounds
+			elseif reward_type == "deus_power_up_end_of_level" then
+				local deus_power_up = data.power_up
+				local entry = {}
 
-				tbl_9[#tbl_9 + 1] = {
+				entry[#entry + 1] = {
 					widget_type = "deus_power_up",
-					value = power_up_2
+					value = deus_power_up
 				}
-				tbl_9[#tbl_9 + 1] = {
+				entry[#entry + 1] = {
 					widget_type = "deus_icon",
-					value = power_up_2
+					value = deus_power_up
 				}
 
-				local tbl_10 = {
+				local animation_data = {
 					end_animation = "deus_close",
 					start_animation = "deus_open",
 					animation_wait_time = 6
 				}
 
-				tbl[#tbl + 1] = tbl_9
-				tbl.animation_data = tbl_10
-				tbl.keep_input = true
-				tbl.skip_blur = true
-				tbl.sounds = sounds
-			elseif type == "keep_decoration_painting" then
-				local keep_decoration_name = v.keep_decoration_name
-				local var_4_29 = Paintings[keep_decoration_name]
-				local display_name = var_4_29.display_name
-				local icon = var_4_29.icon
-				local tbl_11 = {}
-				local tbl_12 = {}
+				presentation_data[#presentation_data + 1] = entry
+				presentation_data.animation_data = animation_data
+				presentation_data.keep_input = true
+				presentation_data.skip_blur = true
+				presentation_data.sounds = sounds
+			elseif reward_type == "keep_decoration_painting" then
+				local keep_decoration_name = data.keep_decoration_name
+				local painting_data = Paintings[keep_decoration_name]
+				local display_name = painting_data.display_name
+				local icon = painting_data.icon
+				local description = {}
+				local entry = {}
 
-				tbl_11[1] = Localize(display_name)
-				tbl_11[2] = Localize("gift_popup_sub_title_halloween")
-				tbl_12[#tbl_12 + 1] = {
+				description[1] = Localize(display_name)
+				description[2] = Localize("gift_popup_sub_title_halloween")
+				entry[#entry + 1] = {
 					widget_type = "description",
-					value = tbl_11
+					value = description
 				}
-				tbl_12[#tbl_12 + 1] = {
+				entry[#entry + 1] = {
 					widget_type = "icon",
 					value = icon
 				}
-				tbl[#tbl + 1] = tbl_12
-				tbl.sounds = sounds
-			elseif type == "weapon_skin" then
-				local weapon_skin_name = v.weapon_skin_name
-				local var_4_35 = WeaponSkins.skins[weapon_skin_name]
-				local display_name_2 = var_4_35.display_name
-				local inventory_icon = var_4_35.inventory_icon
-				local tbl_13 = {}
-				local tbl_14 = {}
+				presentation_data[#presentation_data + 1] = entry
+				presentation_data.sounds = sounds
+			elseif reward_type == "weapon_skin" then
+				local weapon_skin_name = data.weapon_skin_name
+				local weapon_skin_data = WeaponSkins.skins[weapon_skin_name]
+				local display_name = weapon_skin_data.display_name
+				local icon = weapon_skin_data.inventory_icon
+				local description = {}
+				local entry = {}
 
-				tbl_13[1] = Localize(display_name_2)
-				tbl_13[2] = Localize("gift_popup_sub_title_halloween")
-				tbl_14[#tbl_14 + 1] = {
+				description[1] = Localize(display_name)
+				description[2] = Localize("gift_popup_sub_title_halloween")
+				entry[#entry + 1] = {
 					widget_type = "description",
-					value = tbl_13
+					value = description
 				}
-				tbl_14[#tbl_14 + 1] = {
+				entry[#entry + 1] = {
 					widget_type = "icon",
-					value = inventory_icon
+					value = icon
 				}
-				tbl[#tbl + 1] = tbl_14
-				tbl.sounds = sounds
+				presentation_data[#presentation_data + 1] = entry
+				presentation_data.sounds = sounds
 			end
 		end
 
-		self:_present_reward(tbl)
+		self:_present_reward(presentation_data)
 	end
 end
 
@@ -242,51 +244,52 @@ end
 
 RewardsPopupUI.all_presentations_done = function (self)
 	-- function 9
-	local flag = not self:_displaying_reward_presentation()
-	local count = #self._reward_presentation_queue
+	local reward_presentation_complete = not self:_displaying_reward_presentation()
+	local reward_queue_length = #self._reward_presentation_queue
 
-	return not flag and count == 0
+	return not not reward_presentation_complete and reward_queue_length == 0
 end
 
 RewardsPopupUI._handle_queued_presentations = function (self)
 	-- function 10
-	if not (self:_is_reward_presentation_complete() or #self._reward_presentation_queue ~= 0 or self:_displaying_reward_presentation()) then
-		local _reward_presentation_queue = self._reward_presentation_queue
+	if self:_is_reward_presentation_complete() or #self._reward_presentation_queue == 0 and not self:_displaying_reward_presentation() then
+		local reward_presentation_queue = self._reward_presentation_queue
+		local num_queued_rewards = #reward_presentation_queue
 
-		if #_reward_presentation_queue > 0 then
-			local remove = table.remove(_reward_presentation_queue, 1)
+		if num_queued_rewards > 0 then
+			local next_reward = table.remove(reward_presentation_queue, 1)
 
-			self:_present_reward(remove)
-		elseif not self._reward_presentation_active then
+			self:_present_reward(next_reward)
+		elseif self._reward_presentation_active then
 			self._reward_presentation_active = false
 		end
 	end
 end
 
-RewardsPopupUI._play_sounds = function (arg_11_0, arg_11_1)
+RewardsPopupUI._play_sounds = function (self, sounds)
 	-- function 11
-	if not arg_11_1 then
+	if not sounds then
 		return
 	end
 
-	for i = 1, #arg_11_1 do
-		local var_11_0 = arg_11_1[i]
+	for i = 1, #sounds do
+		local event_name = sounds[i]
 
-		Managers.music:trigger_event(var_11_0)
+		Managers.music:trigger_event(event_name)
 	end
 end
 
-RewardsPopupUI._present_reward = function (self, arg_12_1)
+RewardsPopupUI._present_reward = function (self, data)
 	-- function 12
-	local _reward_popup = self._reward_popup
+	local reward_popup = self._reward_popup
 
-	if not self:_displaying_reward_presentation() then
-		local _reward_presentation_queue = self._reward_presentation_queue
+	if self:_displaying_reward_presentation() then
+		local reward_presentation_queue = self._reward_presentation_queue
 
-		_reward_presentation_queue[#_reward_presentation_queue + 1] = arg_12_1
+		reward_presentation_queue[#reward_presentation_queue + 1] = data
 	else
-		self:_play_sounds(arg_12_1.sounds)
-		_reward_popup:display_presentation(arg_12_1)
+		self:_play_sounds(data.sounds)
+		reward_popup:display_presentation(data)
 
 		self._reward_presentation_active = true
 	end

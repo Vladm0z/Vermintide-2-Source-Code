@@ -2,26 +2,26 @@
 
 local UIWidgetUtils = UIWidgetUtils
 
-UIWidgetUtils = UIWidgetUtils or {}
+UIWidgetUtils = not not UIWidgetUtils or not not {}
 UIWidgetUtils = UIWidgetUtils
 
-UIWidgetUtils.animate_default_button = function (self, arg_1_1)
+UIWidgetUtils.animate_default_button = function (widget, dt)
 	-- function 1
-	local content = self.content
-	local style = self.style
-	local button_hotspot = content.button_hotspot
-	local is_selected = button_hotspot.is_selected
-	local flag = is_selected or button_hotspot.is_hover
+	local content = widget.content
+	local style = widget.style
+	local hotspot = content.button_hotspot
+	local is_selected = hotspot.is_selected
+	local is_hover = not not is_selected or not not hotspot.is_hover
 	local is_clicked
 
 	if not is_selected then
-		is_clicked = button_hotspot.is_clicked
+		is_clicked = hotspot.is_clicked
 
-		if not is_clicked then
+		if is_clicked then
 			-- Nothing
 		end
 
-		if button_hotspot.is_clicked ~= 0 then
+		if hotspot.is_clicked ~= 0 then
 			-- Nothing
 		end
 	end
@@ -34,126 +34,153 @@ UIWidgetUtils.animate_default_button = function (self, arg_1_1)
 
 	is_clicked = true
 
+	local input_pressed = is_clicked
+
 	::label_1_1::
 
-	local input_progress = button_hotspot.input_progress
+	local input_progress_2 = hotspot.input_progress
 
-	input_progress = input_progress or 0
+	if not input_progress_2 then
+		-- Nothing
+	end
 
-	local hover_progress = button_hotspot.hover_progress
+	input_progress_2 = 0
 
-	hover_progress = hover_progress or 0
+	local input_progress = input_progress_2
 
-	local selection_progress = button_hotspot.selection_progress
+	::label_1_2::
 
-	selection_progress = selection_progress or 0
+	local hover_progress_2 = hotspot.hover_progress
 
-	local num = 8
-	local num_2 = 20
+	if not hover_progress_2 then
+		-- Nothing
+	end
 
-	if not is_clicked then
-		input_progress = math.min(input_progress + arg_1_1 * num_2, 1)
+	hover_progress_2 = 0
+
+	local hover_progress = hover_progress_2
+
+	::label_1_3::
+
+	local selection_progress_2 = hotspot.selection_progress
+
+	if not selection_progress_2 then
+		-- Nothing
+	end
+
+	selection_progress_2 = 0
+
+	local selection_progress = selection_progress_2
+
+	::label_1_4::
+
+	local speed = 8
+	local input_speed = 20
+
+	if input_pressed then
+		input_progress = math.min(input_progress + dt * input_speed, 1)
 	else
-		input_progress = math.max(input_progress - arg_1_1 * num_2, 0)
+		input_progress = math.max(input_progress - dt * input_speed, 0)
 	end
 
-	local easeOutCubic = math.easeOutCubic(input_progress)
-	local easeInCubic = math.easeInCubic(input_progress)
+	local input_easing_out_progress = math.easeOutCubic(input_progress)
+	local input_easing_in_progress = math.easeInCubic(input_progress)
 
-	if not flag then
-		hover_progress = math.min(hover_progress + arg_1_1 * num, 1)
+	if is_hover then
+		hover_progress = math.min(hover_progress + dt * speed, 1)
 	else
-		hover_progress = math.max(hover_progress - arg_1_1 * num, 0)
+		hover_progress = math.max(hover_progress - dt * speed, 0)
 	end
 
-	local easeOutCubic_2 = math.easeOutCubic(hover_progress)
-	local easeInCubic_2 = math.easeInCubic(hover_progress)
+	local hover_easing_out_progress = math.easeOutCubic(hover_progress)
+	local hover_easing_in_progress = math.easeInCubic(hover_progress)
 
-	if not is_selected then
-		selection_progress = math.min(selection_progress + arg_1_1 * num, 1)
+	if is_selected then
+		selection_progress = math.min(selection_progress + dt * speed, 1)
 	else
-		selection_progress = math.max(selection_progress - arg_1_1 * num, 0)
+		selection_progress = math.max(selection_progress - dt * speed, 0)
 	end
 
-	local easeOutCubic_3 = math.easeOutCubic(selection_progress)
-	local easeInCubic_3 = math.easeInCubic(selection_progress)
-	local max = math.max(hover_progress, selection_progress)
-	local max_2 = math.max(easeOutCubic_3, easeOutCubic_2)
-	local max_3 = math.max(easeInCubic_2, easeInCubic_3)
-	local num_3 = 255 * input_progress
-	local clicked_rect = style.clicked_rect
+	local select_easing_out_progress = math.easeOutCubic(selection_progress)
+	local select_easing_in_progress = math.easeInCubic(selection_progress)
+	local combined_progress = math.max(hover_progress, selection_progress)
+	local combined_out_progress = math.max(select_easing_out_progress, hover_easing_out_progress)
+	local combined_in_progress = math.max(hover_easing_in_progress, select_easing_in_progress)
+	local input_alpha = 255 * input_progress
+	local clicked_rect_style = style.clicked_rect
 
-	if not clicked_rect then
-		clicked_rect.color[1] = 100 * input_progress
+	if clicked_rect_style then
+		clicked_rect_style.color[1] = 100 * input_progress
 	end
 
-	local hover_glow = style.hover_glow
+	local hover_glow_style = style.hover_glow
 
-	if not hover_glow then
-		local num_4 = 255 * max
+	if hover_glow_style then
+		local hover_alpha = 255 * combined_progress
 
-		hover_glow.color[1] = num_4
+		hover_glow_style.color[1] = hover_alpha
 	end
 
-	local title_text_disabled = style.title_text_disabled
+	local text_disabled_style = style.title_text_disabled
 
-	if not title_text_disabled then
-		local default_text_color = title_text_disabled.default_text_color
-		local text_color = title_text_disabled.text_color
+	if text_disabled_style then
+		local disabled_default_text_color = text_disabled_style.default_text_color
+		local disabled_text_color = text_disabled_style.text_color
 
-		text_color[2] = default_text_color[2] * 0.4
-		text_color[3] = default_text_color[3] * 0.4
-		text_color[4] = default_text_color[4] * 0.4
+		disabled_text_color[2] = disabled_default_text_color[2] * 0.4
+		disabled_text_color[3] = disabled_default_text_color[3] * 0.4
+		disabled_text_color[4] = disabled_default_text_color[4] * 0.4
 	end
 
-	local icon = style.icon
+	local icon_style = style.icon
 
-	if not icon then
-		local color = icon.color
-		local default_color = icon.default_color
-		local select_color = icon.select_color
+	if icon_style then
+		local icon_color = icon_style.color
+		local icon_default_color = icon_style.default_color
+		local icon_select_color = icon_style.select_color
 
-		Colors.lerp_color_tables(default_color, select_color, max, color)
+		Colors.lerp_color_tables(icon_default_color, icon_select_color, combined_progress, icon_color)
 	end
 
-	local title_text = style.title_text
+	local title_text_style = style.title_text
 
-	if not title_text then
-		local text_color_2 = title_text.text_color
-		local default_text_color_2 = title_text.default_text_color
-		local select_text_color = title_text.select_text_color
+	if title_text_style then
+		local title_text_color = title_text_style.text_color
+		local title_default_text_color = title_text_style.default_text_color
+		local title_select_text_color = title_text_style.select_text_color
 
-		Colors.lerp_color_tables(default_text_color_2, select_text_color, max, text_color_2)
+		Colors.lerp_color_tables(title_default_text_color, title_select_text_color, combined_progress, title_text_color)
 	end
 
-	button_hotspot.hover_progress = hover_progress
-	button_hotspot.input_progress = input_progress
-	button_hotspot.selection_progress = selection_progress
+	hotspot.hover_progress = hover_progress
+	hotspot.input_progress = input_progress
+	hotspot.selection_progress = selection_progress
 end
 
-UIWidgetUtils.animate_default_icon_tabs = function (self, arg_2_1)
+UIWidgetUtils.animate_default_icon_tabs = function (widget, dt)
 	-- function 2
-	local content = self.content
-	local style = self.style
+	local content = widget.content
+	local style = widget.style
 	local amount = content.amount
-	local num = 8
-	local num_2 = 20
+	local speed = 8
+	local input_speed = 20
 
 	for i = 1, amount do
-		local str = "_" .. tostring(i)
-		local var_2_6 = content["hotspot" .. str]
-		local is_hover = var_2_6.is_hover
-		local is_selected = var_2_6.is_selected
+		local name_suffix = "_" .. tostring(i)
+		local hotspot_name = "hotspot" .. name_suffix
+		local hotspot = content[hotspot_name]
+		local is_hover = hotspot.is_hover
+		local is_selected = hotspot.is_selected
 		local is_clicked
 
 		if not is_selected then
-			is_clicked = var_2_6.is_clicked
+			is_clicked = hotspot.is_clicked
 
-			if not is_clicked then
+			if is_clicked then
 				-- Nothing
 			end
 
-			if var_2_6.is_clicked ~= 0 then
+			if hotspot.is_clicked ~= 0 then
 				-- Nothing
 			end
 		end
@@ -166,267 +193,379 @@ UIWidgetUtils.animate_default_icon_tabs = function (self, arg_2_1)
 
 		is_clicked = true
 
+		local input_pressed = is_clicked
+
 		::label_2_1::
 
-		local input_progress = var_2_6.input_progress
+		local input_progress_2 = hotspot.input_progress
 
-		input_progress = input_progress or 0
-
-		local hover_progress = var_2_6.hover_progress
-
-		hover_progress = hover_progress or 0
-
-		local selection_progress = var_2_6.selection_progress
-
-		selection_progress = selection_progress or 0
-
-		if not is_clicked then
-			input_progress = math.min(input_progress + arg_2_1 * num_2, 1)
-		else
-			input_progress = math.max(input_progress - arg_2_1 * num_2, 0)
+		if not input_progress_2 then
+			-- Nothing
 		end
 
-		local easeOutCubic = math.easeOutCubic(input_progress)
-		local easeInCubic = math.easeInCubic(input_progress)
+		input_progress_2 = 0
 
-		if not is_hover then
-			hover_progress = math.min(hover_progress + arg_2_1 * num, 1)
-		else
-			hover_progress = math.max(hover_progress - arg_2_1 * num, 0)
+		local input_progress = input_progress_2
+
+		::label_2_2::
+
+		local hover_progress_2 = hotspot.hover_progress
+
+		if not hover_progress_2 then
+			-- Nothing
 		end
 
-		local easeOutCubic_2 = math.easeOutCubic(hover_progress)
-		local easeInCubic_2 = math.easeInCubic(hover_progress)
+		hover_progress_2 = 0
 
-		if not is_selected then
-			selection_progress = math.min(selection_progress + arg_2_1 * num, 1)
-		else
-			selection_progress = math.max(selection_progress - arg_2_1 * num, 0)
+		local hover_progress = hover_progress_2
+
+		::label_2_3::
+
+		local selection_progress_2 = hotspot.selection_progress
+
+		if not selection_progress_2 then
+			-- Nothing
 		end
 
-		local easeOutCubic_3 = math.easeOutCubic(selection_progress)
-		local easeInCubic_3 = math.easeInCubic(selection_progress)
-		local max = math.max(hover_progress, selection_progress)
-		local max_2 = math.max(easeOutCubic_3, easeOutCubic_2)
-		local max_3 = math.max(easeInCubic_2, easeInCubic_3)
-		local str_2 = "clicked_rect" .. str
-		local num_3 = 255 * input_progress
+		selection_progress_2 = 0
 
-		style[str_2].color[1] = 100 * input_progress
+		local selection_progress = selection_progress_2
 
-		local str_3 = "hover_glow" .. str
-		local num_4 = 255 * max
+		::label_2_4::
 
-		style[str_3].color[1] = num_4
+		if input_pressed then
+			input_progress = math.min(input_progress + dt * input_speed, 1)
+		else
+			input_progress = math.max(input_progress - dt * input_speed, 0)
+		end
 
-		local var_2_26 = style["icon" .. str]
-		local color = var_2_26.color
-		local default_color = var_2_26.default_color
-		local select_color = var_2_26.select_color
+		local input_easing_out_progress = math.easeOutCubic(input_progress)
+		local input_easing_in_progress = math.easeInCubic(input_progress)
 
-		Colors.lerp_color_tables(default_color, select_color, max, color)
+		if is_hover then
+			hover_progress = math.min(hover_progress + dt * speed, 1)
+		else
+			hover_progress = math.max(hover_progress - dt * speed, 0)
+		end
 
-		var_2_6.hover_progress = hover_progress
-		var_2_6.input_progress = input_progress
-		var_2_6.selection_progress = selection_progress
+		local hover_easing_out_progress = math.easeOutCubic(hover_progress)
+		local hover_easing_in_progress = math.easeInCubic(hover_progress)
+
+		if is_selected then
+			selection_progress = math.min(selection_progress + dt * speed, 1)
+		else
+			selection_progress = math.max(selection_progress - dt * speed, 0)
+		end
+
+		local select_easing_out_progress = math.easeOutCubic(selection_progress)
+		local select_easing_in_progress = math.easeInCubic(selection_progress)
+		local combined_progress = math.max(hover_progress, selection_progress)
+		local combined_out_progress = math.max(select_easing_out_progress, hover_easing_out_progress)
+		local combined_in_progress = math.max(hover_easing_in_progress, select_easing_in_progress)
+		local clicked_rect_name = "clicked_rect" .. name_suffix
+		local input_alpha = 255 * input_progress
+
+		style[clicked_rect_name].color[1] = 100 * input_progress
+
+		local hover_glow_name = "hover_glow" .. name_suffix
+		local hover_alpha = 255 * combined_progress
+
+		style[hover_glow_name].color[1] = hover_alpha
+
+		local icon_name = "icon" .. name_suffix
+		local icon_style = style[icon_name]
+		local icon_color = icon_style.color
+		local icon_default_color = icon_style.default_color
+		local icon_select_color = icon_style.select_color
+
+		Colors.lerp_color_tables(icon_default_color, icon_select_color, combined_progress, icon_color)
+
+		hotspot.hover_progress = hover_progress
+		hotspot.input_progress = input_progress
+		hotspot.selection_progress = selection_progress
 	end
 end
 
-UIWidgetUtils.animate_default_checkbox_button = function (self, arg_3_1)
+UIWidgetUtils.animate_default_checkbox_button = function (widget, dt)
 	-- function 3
-	local content = self.content
-	local style = self.style
-	local num = 8
-	local num_2 = 20
-	local button_hotspot = content.button_hotspot
-	local flag = not not button_hotspot.disable_button or button_hotspot.is_hover
-	local flag_2 = not not button_hotspot.disable_button or button_hotspot.is_selected
-	local is_clicked = button_hotspot.is_clicked
+	local content = widget.content
+	local style = widget.style
+	local speed = 8
+	local input_speed = 20
+	local hotspot_name = "button_hotspot"
+	local hotspot = content[hotspot_name]
+	local is_hover = not hotspot.disable_button and not not hotspot.is_hover
+	local is_selected = not hotspot.disable_button and not not hotspot.is_selected
+	local is_clicked = hotspot.is_clicked
 
-	is_clicked = not is_clicked and button_hotspot.is_clicked == 0
+	if is_clicked then
+		-- Nothing
+	end
 
-	local input_progress = button_hotspot.input_progress
+	if hotspot.is_clicked ~= 0 then
+		is_clicked = false
 
-	input_progress = input_progress or 0
+		goto label_3_0
+	end
 
-	local hover_progress = button_hotspot.hover_progress
+	is_clicked = true
 
-	hover_progress = hover_progress or 0
+	local input_pressed = is_clicked
 
-	local selection_progress = button_hotspot.selection_progress
+	::label_3_0::
 
-	selection_progress = selection_progress or 0
+	local input_progress_2 = hotspot.input_progress
 
-	if not is_clicked then
-		input_progress = math.min(input_progress + arg_3_1 * num_2, 1)
+	if not input_progress_2 then
+		-- Nothing
+	end
+
+	input_progress_2 = 0
+
+	local input_progress = input_progress_2
+
+	::label_3_1::
+
+	local hover_progress_2 = hotspot.hover_progress
+
+	if not hover_progress_2 then
+		-- Nothing
+	end
+
+	hover_progress_2 = 0
+
+	local hover_progress = hover_progress_2
+
+	::label_3_2::
+
+	local selection_progress_2 = hotspot.selection_progress
+
+	if not selection_progress_2 then
+		-- Nothing
+	end
+
+	selection_progress_2 = 0
+
+	local selection_progress = selection_progress_2
+
+	::label_3_3::
+
+	if input_pressed then
+		input_progress = math.min(input_progress + dt * input_speed, 1)
 	else
-		input_progress = math.max(input_progress - arg_3_1 * num_2, 0)
+		input_progress = math.max(input_progress - dt * input_speed, 0)
 	end
 
-	local easeOutCubic = math.easeOutCubic(input_progress)
-	local easeInCubic = math.easeInCubic(input_progress)
+	local input_easing_out_progress = math.easeOutCubic(input_progress)
+	local input_easing_in_progress = math.easeInCubic(input_progress)
 
-	if not flag then
-		hover_progress = math.min(hover_progress + arg_3_1 * num, 1)
+	if is_hover then
+		hover_progress = math.min(hover_progress + dt * speed, 1)
 	else
-		hover_progress = math.max(hover_progress - arg_3_1 * num, 0)
+		hover_progress = math.max(hover_progress - dt * speed, 0)
 	end
 
-	local easeOutCubic_2 = math.easeOutCubic(hover_progress)
-	local easeInCubic_2 = math.easeInCubic(hover_progress)
+	local hover_easing_out_progress = math.easeOutCubic(hover_progress)
+	local hover_easing_in_progress = math.easeInCubic(hover_progress)
 
-	if not flag_2 then
-		selection_progress = math.min(selection_progress + arg_3_1 * num, 1)
+	if is_selected then
+		selection_progress = math.min(selection_progress + dt * speed, 1)
 	else
-		selection_progress = math.max(selection_progress - arg_3_1 * num, 0)
+		selection_progress = math.max(selection_progress - dt * speed, 0)
 	end
 
-	local easeOutCubic_3 = math.easeOutCubic(selection_progress)
-	local easeInCubic_3 = math.easeInCubic(selection_progress)
-	local max = math.max(hover_progress, selection_progress)
-	local max_2 = math.max(easeOutCubic_3, easeOutCubic_2)
-	local max_3 = math.max(easeInCubic_2, easeInCubic_3)
-	local num_3 = 255 * input_progress
-	local clicked_rect = style.clicked_rect
+	local select_easing_out_progress = math.easeOutCubic(selection_progress)
+	local select_easing_in_progress = math.easeInCubic(selection_progress)
+	local combined_progress = math.max(hover_progress, selection_progress)
+	local combined_out_progress = math.max(select_easing_out_progress, hover_easing_out_progress)
+	local combined_in_progress = math.max(hover_easing_in_progress, select_easing_in_progress)
+	local input_alpha = 255 * input_progress
+	local clicked_rect_name = "clicked_rect"
+	local clicked_rect_style = style[clicked_rect_name]
 
-	if not clicked_rect then
-		clicked_rect.color[1] = 100 * input_progress
+	if clicked_rect_style then
+		clicked_rect_style.color[1] = 100 * input_progress
 	end
 
-	local num_4 = 255 * hover_progress
-	local hover_glow = style.hover_glow
+	local hover_alpha = 255 * hover_progress
+	local hover_glow_name = "hover_glow"
+	local hover_glow_style = style[hover_glow_name]
 
-	if not hover_glow then
-		hover_glow.color[1] = num_4
+	if hover_glow_style then
+		hover_glow_style.color[1] = hover_alpha
 	end
 
-	local text_disabled = style.text_disabled
-	local default_text_color = text_disabled.default_text_color
-	local text_color = text_disabled.text_color
+	local text_disabled_name = "text_disabled"
+	local text_disabled_style = style[text_disabled_name]
+	local disabled_default_text_color = text_disabled_style.default_text_color
+	local disabled_text_color = text_disabled_style.text_color
 
-	text_color[2] = default_text_color[2] * 0.4
-	text_color[3] = default_text_color[3] * 0.4
-	text_color[4] = default_text_color[4] * 0.4
+	disabled_text_color[2] = disabled_default_text_color[2] * 0.4
+	disabled_text_color[3] = disabled_default_text_color[3] * 0.4
+	disabled_text_color[4] = disabled_default_text_color[4] * 0.4
 
-	local text = style.text
-	local text_color_2 = text.text_color
-	local default_text_color_2 = text.default_text_color
-	local select_text_color = text.select_text_color
+	local text_name = "text"
+	local text_style = style[text_name]
+	local text_color = text_style.text_color
+	local default_text_color = text_style.default_text_color
+	local select_text_color = text_style.select_text_color
 
-	Colors.lerp_color_tables(default_text_color_2, select_text_color, max, text_color_2)
+	Colors.lerp_color_tables(default_text_color, select_text_color, combined_progress, text_color)
 
-	button_hotspot.hover_progress = hover_progress
-	button_hotspot.input_progress = input_progress
-	button_hotspot.selection_progress = selection_progress
+	hotspot.hover_progress = hover_progress
+	hotspot.input_progress = input_progress
+	hotspot.selection_progress = selection_progress
 end
 
-UIWidgetUtils.animate_default_checkbox_button_console = function (self, arg_4_1)
+UIWidgetUtils.animate_default_checkbox_button_console = function (widget, dt)
 	-- function 4
-	local content = self.content
-	local style = self.style
-	local num = 8
-	local num_2 = 20
-	local button_hotspot = content.button_hotspot
-	local flag = not not button_hotspot.disable_button or button_hotspot.is_hover
-	local flag_2 = not not button_hotspot.disable_button or button_hotspot.is_selected
-	local is_clicked = button_hotspot.is_clicked
+	local content = widget.content
+	local style = widget.style
+	local speed = 8
+	local input_speed = 20
+	local hotspot_name = "button_hotspot"
+	local hotspot = content[hotspot_name]
+	local is_hover = not hotspot.disable_button and not not hotspot.is_hover
+	local is_selected = not hotspot.disable_button and not not hotspot.is_selected
+	local is_clicked = hotspot.is_clicked
 
-	is_clicked = not is_clicked and button_hotspot.is_clicked == 0
-
-	local input_progress = button_hotspot.input_progress
-
-	input_progress = input_progress or 0
-
-	local hover_progress = button_hotspot.hover_progress
-
-	hover_progress = hover_progress or 0
-
-	local selection_progress = button_hotspot.selection_progress
-
-	selection_progress = selection_progress or 0
-
-	if not is_clicked then
-		input_progress = math.min(input_progress + arg_4_1 * num_2, 1)
-	else
-		input_progress = math.max(input_progress - arg_4_1 * num_2, 0)
+	if is_clicked then
+		-- Nothing
 	end
 
-	local easeOutCubic = math.easeOutCubic(input_progress)
-	local easeInCubic = math.easeInCubic(input_progress)
+	if hotspot.is_clicked ~= 0 then
+		is_clicked = false
 
-	if not flag then
-		hover_progress = math.min(hover_progress + arg_4_1 * num, 1)
-	else
-		hover_progress = math.max(hover_progress - arg_4_1 * num, 0)
+		goto label_4_0
 	end
 
-	local easeOutCubic_2 = math.easeOutCubic(hover_progress)
-	local easeInCubic_2 = math.easeInCubic(hover_progress)
+	is_clicked = true
 
-	if not flag_2 then
-		selection_progress = math.min(selection_progress + arg_4_1 * num, 1)
-	else
-		selection_progress = math.max(selection_progress - arg_4_1 * num, 0)
+	local input_pressed = is_clicked
+
+	::label_4_0::
+
+	local input_progress_2 = hotspot.input_progress
+
+	if not input_progress_2 then
+		-- Nothing
 	end
 
-	local easeOutCubic_3 = math.easeOutCubic(selection_progress)
-	local easeInCubic_3 = math.easeInCubic(selection_progress)
-	local max = math.max(hover_progress, selection_progress)
-	local max_2 = math.max(easeOutCubic_3, easeOutCubic_2)
-	local max_3 = math.max(easeInCubic_2, easeInCubic_3)
-	local str = "clicked_rect"
-	local num_3 = 255 * input_progress
+	input_progress_2 = 0
 
-	style[str].color[1] = 100 * input_progress
+	local input_progress = input_progress_2
 
-	local str_2 = "hover_glow"
-	local num_4 = 255 * hover_progress
+	::label_4_1::
 
-	style[str_2].color[1] = num_4
+	local hover_progress_2 = hotspot.hover_progress
 
-	local text_disabled = style.text_disabled
-	local default_text_color = text_disabled.default_text_color
-	local text_color = text_disabled.text_color
+	if not hover_progress_2 then
+		-- Nothing
+	end
 
-	text_color[2] = default_text_color[2] * 0.4
-	text_color[3] = default_text_color[3] * 0.4
-	text_color[4] = default_text_color[4] * 0.4
+	hover_progress_2 = 0
 
-	local text = style.text
-	local text_color_2 = text.text_color
-	local default_text_color_2 = text.default_text_color
-	local select_text_color = text.select_text_color
+	local hover_progress = hover_progress_2
 
-	Colors.lerp_color_tables(default_text_color_2, select_text_color, max, text_color_2)
+	::label_4_2::
 
-	button_hotspot.hover_progress = hover_progress
-	button_hotspot.input_progress = input_progress
-	button_hotspot.selection_progress = selection_progress
+	local selection_progress_2 = hotspot.selection_progress
+
+	if not selection_progress_2 then
+		-- Nothing
+	end
+
+	selection_progress_2 = 0
+
+	local selection_progress = selection_progress_2
+
+	::label_4_3::
+
+	if input_pressed then
+		input_progress = math.min(input_progress + dt * input_speed, 1)
+	else
+		input_progress = math.max(input_progress - dt * input_speed, 0)
+	end
+
+	local input_easing_out_progress = math.easeOutCubic(input_progress)
+	local input_easing_in_progress = math.easeInCubic(input_progress)
+
+	if is_hover then
+		hover_progress = math.min(hover_progress + dt * speed, 1)
+	else
+		hover_progress = math.max(hover_progress - dt * speed, 0)
+	end
+
+	local hover_easing_out_progress = math.easeOutCubic(hover_progress)
+	local hover_easing_in_progress = math.easeInCubic(hover_progress)
+
+	if is_selected then
+		selection_progress = math.min(selection_progress + dt * speed, 1)
+	else
+		selection_progress = math.max(selection_progress - dt * speed, 0)
+	end
+
+	local select_easing_out_progress = math.easeOutCubic(selection_progress)
+	local select_easing_in_progress = math.easeInCubic(selection_progress)
+	local combined_progress = math.max(hover_progress, selection_progress)
+	local combined_out_progress = math.max(select_easing_out_progress, hover_easing_out_progress)
+	local combined_in_progress = math.max(hover_easing_in_progress, select_easing_in_progress)
+	local clicked_rect_name = "clicked_rect"
+	local input_alpha = 255 * input_progress
+
+	style[clicked_rect_name].color[1] = 100 * input_progress
+
+	local hover_glow_name = "hover_glow"
+	local hover_alpha = 255 * hover_progress
+
+	style[hover_glow_name].color[1] = hover_alpha
+
+	local text_disabled_name = "text_disabled"
+	local text_disabled_style = style[text_disabled_name]
+	local disabled_default_text_color = text_disabled_style.default_text_color
+	local disabled_text_color = text_disabled_style.text_color
+
+	disabled_text_color[2] = disabled_default_text_color[2] * 0.4
+	disabled_text_color[3] = disabled_default_text_color[3] * 0.4
+	disabled_text_color[4] = disabled_default_text_color[4] * 0.4
+
+	local text_name = "text"
+	local text_style = style[text_name]
+	local text_color = text_style.text_color
+	local default_text_color = text_style.default_text_color
+	local select_text_color = text_style.select_text_color
+
+	Colors.lerp_color_tables(default_text_color, select_text_color, combined_progress, text_color)
+
+	hotspot.hover_progress = hover_progress
+	hotspot.input_progress = input_progress
+	hotspot.selection_progress = selection_progress
 end
 
-UIWidgetUtils.animate_default_text_tabs = function (self, arg_5_1)
+UIWidgetUtils.animate_default_text_tabs = function (widget, dt)
 	-- function 5
-	local content = self.content
-	local style = self.style
+	local content = widget.content
+	local style = widget.style
 	local amount = content.amount
-	local num = 8
-	local num_2 = 20
+	local speed = 8
+	local input_speed = 20
 
 	for i = 1, amount do
-		local str = "_" .. tostring(i)
-		local var_5_6 = content["hotspot" .. str]
-		local is_hover = var_5_6.is_hover
-		local is_selected = var_5_6.is_selected
+		local name_suffix = "_" .. tostring(i)
+		local hotspot_name = "hotspot" .. name_suffix
+		local hotspot = content[hotspot_name]
+		local is_hover = hotspot.is_hover
+		local is_selected = hotspot.is_selected
 		local is_clicked
 
 		if not is_selected then
-			is_clicked = var_5_6.is_clicked
+			is_clicked = hotspot.is_clicked
 
-			if not is_clicked then
+			if is_clicked then
 				-- Nothing
 			end
 
-			if var_5_6.is_clicked ~= 0 then
+			if hotspot.is_clicked ~= 0 then
 				-- Nothing
 			end
 		end
@@ -439,686 +578,906 @@ UIWidgetUtils.animate_default_text_tabs = function (self, arg_5_1)
 
 		is_clicked = true
 
+		local input_pressed = is_clicked
+
 		::label_5_1::
 
-		local input_progress = var_5_6.input_progress
+		local input_progress_2 = hotspot.input_progress
 
-		input_progress = input_progress or 0
-
-		local hover_progress = var_5_6.hover_progress
-
-		hover_progress = hover_progress or 0
-
-		local selection_progress = var_5_6.selection_progress
-
-		selection_progress = selection_progress or 0
-
-		if not is_clicked then
-			input_progress = math.min(input_progress + arg_5_1 * num_2, 1)
-		else
-			input_progress = math.max(input_progress - arg_5_1 * num_2, 0)
+		if not input_progress_2 then
+			-- Nothing
 		end
 
-		local easeOutCubic = math.easeOutCubic(input_progress)
-		local easeInCubic = math.easeInCubic(input_progress)
+		input_progress_2 = 0
 
-		if not is_hover then
-			hover_progress = math.min(hover_progress + arg_5_1 * num, 1)
-		else
-			hover_progress = math.max(hover_progress - arg_5_1 * num, 0)
+		local input_progress = input_progress_2
+
+		::label_5_2::
+
+		local hover_progress_2 = hotspot.hover_progress
+
+		if not hover_progress_2 then
+			-- Nothing
 		end
 
-		local easeOutCubic_2 = math.easeOutCubic(hover_progress)
-		local easeInCubic_2 = math.easeInCubic(hover_progress)
+		hover_progress_2 = 0
 
-		if not is_selected then
-			selection_progress = math.min(selection_progress + arg_5_1 * num, 1)
-		else
-			selection_progress = math.max(selection_progress - arg_5_1 * num, 0)
+		local hover_progress = hover_progress_2
+
+		::label_5_3::
+
+		local selection_progress_2 = hotspot.selection_progress
+
+		if not selection_progress_2 then
+			-- Nothing
 		end
 
-		local easeOutCubic_3 = math.easeOutCubic(selection_progress)
-		local easeInCubic_3 = math.easeInCubic(selection_progress)
-		local max = math.max(hover_progress, selection_progress)
-		local max_2 = math.max(easeOutCubic_3, easeOutCubic_2)
-		local max_3 = math.max(easeInCubic_2, easeInCubic_3)
-		local str_2 = "clicked_rect" .. str
-		local num_3 = 255 * input_progress
+		selection_progress_2 = 0
 
-		style[str_2].color[1] = 100 * input_progress
+		local selection_progress = selection_progress_2
 
-		local str_3 = "hover_glow" .. str
-		local num_4 = 255 * max
+		::label_5_4::
 
-		style[str_3].color[1] = num_4
+		if input_pressed then
+			input_progress = math.min(input_progress + dt * input_speed, 1)
+		else
+			input_progress = math.max(input_progress - dt * input_speed, 0)
+		end
 
-		local var_5_26 = style["text_disabled" .. str]
-		local default_text_color = var_5_26.default_text_color
-		local text_color = var_5_26.text_color
+		local input_easing_out_progress = math.easeOutCubic(input_progress)
+		local input_easing_in_progress = math.easeInCubic(input_progress)
 
-		text_color[2] = default_text_color[2] * 0.4
-		text_color[3] = default_text_color[3] * 0.4
-		text_color[4] = default_text_color[4] * 0.4
+		if is_hover then
+			hover_progress = math.min(hover_progress + dt * speed, 1)
+		else
+			hover_progress = math.max(hover_progress - dt * speed, 0)
+		end
 
-		local var_5_29 = style["text" .. str]
-		local text_color_2 = var_5_29.text_color
-		local default_text_color_2 = var_5_29.default_text_color
-		local select_text_color = var_5_29.select_text_color
+		local hover_easing_out_progress = math.easeOutCubic(hover_progress)
+		local hover_easing_in_progress = math.easeInCubic(hover_progress)
 
-		Colors.lerp_color_tables(default_text_color_2, select_text_color, max, text_color_2)
+		if is_selected then
+			selection_progress = math.min(selection_progress + dt * speed, 1)
+		else
+			selection_progress = math.max(selection_progress - dt * speed, 0)
+		end
 
-		var_5_6.hover_progress = hover_progress
-		var_5_6.input_progress = input_progress
-		var_5_6.selection_progress = selection_progress
+		local select_easing_out_progress = math.easeOutCubic(selection_progress)
+		local select_easing_in_progress = math.easeInCubic(selection_progress)
+		local combined_progress = math.max(hover_progress, selection_progress)
+		local combined_out_progress = math.max(select_easing_out_progress, hover_easing_out_progress)
+		local combined_in_progress = math.max(hover_easing_in_progress, select_easing_in_progress)
+		local clicked_rect_name = "clicked_rect" .. name_suffix
+		local input_alpha = 255 * input_progress
+
+		style[clicked_rect_name].color[1] = 100 * input_progress
+
+		local hover_glow_name = "hover_glow" .. name_suffix
+		local hover_alpha = 255 * combined_progress
+
+		style[hover_glow_name].color[1] = hover_alpha
+
+		local text_disabled_name = "text_disabled" .. name_suffix
+		local text_disabled_style = style[text_disabled_name]
+		local disabled_default_text_color = text_disabled_style.default_text_color
+		local disabled_text_color = text_disabled_style.text_color
+
+		disabled_text_color[2] = disabled_default_text_color[2] * 0.4
+		disabled_text_color[3] = disabled_default_text_color[3] * 0.4
+		disabled_text_color[4] = disabled_default_text_color[4] * 0.4
+
+		local text_name = "text" .. name_suffix
+		local text_style = style[text_name]
+		local text_color = text_style.text_color
+		local default_text_color = text_style.default_text_color
+		local select_text_color = text_style.select_text_color
+
+		Colors.lerp_color_tables(default_text_color, select_text_color, combined_progress, text_color)
+
+		hotspot.hover_progress = hover_progress
+		hotspot.input_progress = input_progress
+		hotspot.selection_progress = selection_progress
 	end
 end
 
-UIWidgetUtils.animate_option_button = function (self, arg_6_1)
+UIWidgetUtils.animate_option_button = function (widget, dt)
 	-- function 6
-	local content = self.content
-	local style = self.style
-	local button_hotspot = content.button_hotspot
+	local content = widget.content
+	local style = widget.style
+	local hotspot = content.button_hotspot
 	local has_focus = content.has_focus
-	local is_hover = button_hotspot.is_hover
+	local is_hover_2 = hotspot.is_hover
 
-	is_hover = is_hover or has_focus
-
-	local is_selected = button_hotspot.is_selected
-	local is_clicked
-
-	if not is_selected then
-		is_clicked = button_hotspot.is_clicked
-
-		if not is_clicked then
-			-- Nothing
-		end
-
-		if button_hotspot.is_clicked ~= 0 then
-			-- Nothing
-		end
+	if not is_hover_2 then
+		-- Nothing
 	end
 
-	is_clicked = false
+	is_hover_2 = has_focus
 
-	goto label_6_1
+	local is_hover = is_hover_2
 
 	::label_6_0::
 
-	is_clicked = true
-
-	::label_6_1::
-
-	local input_progress = button_hotspot.input_progress
-
-	input_progress = input_progress or 0
-
-	local hover_progress = button_hotspot.hover_progress
-
-	hover_progress = hover_progress or 0
-
-	local selection_progress = button_hotspot.selection_progress
-
-	selection_progress = selection_progress or 0
-
-	local num = 8
-	local num_2 = 20
-
-	if not is_clicked then
-		input_progress = math.min(input_progress + arg_6_1 * num_2, 1)
-	else
-		input_progress = math.max(input_progress - arg_6_1 * num_2, 0)
-	end
-
-	local easeOutCubic = math.easeOutCubic(input_progress)
-	local easeInCubic = math.easeInCubic(input_progress)
-
-	if not is_hover then
-		hover_progress = math.min(hover_progress + arg_6_1 * num, 1)
-	else
-		hover_progress = math.max(hover_progress - arg_6_1 * num, 0)
-	end
-
-	local easeOutCubic_2 = math.easeOutCubic(hover_progress)
-	local easeInCubic_2 = math.easeInCubic(hover_progress)
-
-	if not is_selected then
-		selection_progress = math.min(selection_progress + arg_6_1 * num, 1)
-	else
-		selection_progress = math.max(selection_progress - arg_6_1 * num, 0)
-	end
-
-	local easeOutCubic_3 = math.easeOutCubic(selection_progress)
-	local easeInCubic_3 = math.easeInCubic(selection_progress)
-	local max = math.max(hover_progress, selection_progress)
-	local max_2 = math.max(easeOutCubic_3, easeOutCubic_2)
-	local max_3 = math.max(easeInCubic_2, easeInCubic_3)
-	local num_3 = 255 * input_progress
-
-	style.button_clicked_rect.color[1] = 100 * input_progress
-	style.hover_glow.color[1] = 255 * max
-
-	local num_4 = 255 * selection_progress
-
-	style.select_glow.color[1] = num_4
-	style.icon_selected.color[1] = num_4
-	style.skull_select_glow.color[1] = num_4
-	style.icon_bg_glow.color[1] = num_4
-
-	local button_text_disabled = style.button_text_disabled
-	local default_text_color = button_text_disabled.default_text_color
-	local text_color = button_text_disabled.text_color
-
-	text_color[2] = default_text_color[2] * 0.4
-	text_color[3] = default_text_color[3] * 0.4
-	text_color[4] = default_text_color[4] * 0.4
-
-	local button_text = style.button_text
-	local text_color_2 = button_text.text_color
-	local default_text_color_2 = button_text.default_text_color
-	local select_text_color = button_text.select_text_color
-
-	Colors.lerp_color_tables(default_text_color_2, select_text_color, max, text_color_2)
-
-	local color = style.icon.color
-
-	color[2] = text_color_2[2]
-	color[3] = text_color_2[3]
-	color[4] = text_color_2[4]
-
-	local background_icon = style.background_icon
-	local color_2 = background_icon.color
-	local default_color = background_icon.default_color
-
-	color_2[2] = default_color[2] + max * (255 - default_color[2])
-	color_2[3] = default_color[3] + max * (255 - default_color[3])
-	color_2[4] = default_color[4] + max * (255 - default_color[4])
-	button_hotspot.hover_progress = hover_progress
-	button_hotspot.input_progress = input_progress
-	button_hotspot.selection_progress = selection_progress
-end
-
-UIWidgetUtils.animate_start_game_console_setting_button = function (self, arg_7_1)
-	-- function 7
-	local content = self.content
-	local style = self.style
-	local is_selected = content.is_selected
-	local selected_progress = content.selected_progress
-
-	selected_progress = selected_progress or 0
-
-	local num = 15
-
-	if not is_selected then
-		selected_progress = math.min(selected_progress + num * arg_7_1, 1)
-	else
-		selected_progress = math.max(selected_progress - num * arg_7_1, 0)
-	end
-
-	local num_2 = 255 * selected_progress
-
-	style.bg_effect.color[1] = num_2
-	style.icon_texture_glow.color[1] = num_2
-	content.selected_progress = selected_progress
-end
-
-UIWidgetUtils.animate_arrow_button = function (self, arg_8_1)
-	-- function 8
-	local content = self.content
-	local style = self.style
-	local hotspot = content.hotspot
-
-	hotspot = hotspot or content.button_hotspot
-
-	local has_focus = content.has_focus
-	local is_hover = hotspot.is_hover
-
-	is_hover = is_hover or has_focus
-
 	local is_selected = hotspot.is_selected
-
-	if not is_selected then
-		if not hotspot.is_clicked then
-			-- Nothing
-		end
-
-		if hotspot.is_clicked ~= 0 then
-			-- Nothing
-		end
-	end
-
-	do
-		local flag = false
-
-		goto label_8_1
-	end
-
-	::label_8_0::
-
-	do
-		local flag_2 = true
-	end
-
-	::label_8_1::
-
-	local hover_progress = hotspot.hover_progress
-
-	hover_progress = hover_progress or 0
-
-	local selection_progress = hotspot.selection_progress
-
-	selection_progress = selection_progress or 0
-
-	local num = 8
-
-	if not is_hover then
-		hover_progress = math.min(hover_progress + arg_8_1 * num, 1)
-	else
-		hover_progress = math.max(hover_progress - arg_8_1 * num, 0)
-	end
-
-	if not is_selected then
-		selection_progress = math.min(selection_progress + arg_8_1 * num, 1)
-	else
-		selection_progress = math.max(selection_progress - arg_8_1 * num, 0)
-	end
-
-	local max = math.max(hover_progress, selection_progress)
-
-	style.texture_hover_id.color[1] = 255 * max
-	hotspot.hover_progress = hover_progress
-	hotspot.selection_progress = selection_progress
-end
-
-UIWidgetUtils.animate_icon_button = function (self, arg_9_1)
-	-- function 9
-	local content = self.content
-	local style = self.style
-	local hotspot = content.hotspot
-
-	hotspot = hotspot or content.button_hotspot
-
-	local has_focus = content.has_focus
-	local is_hover = hotspot.is_hover
-
-	is_hover = is_hover or has_focus
-
-	local is_selected = hotspot.is_selected
-
-	if not is_selected then
-		if not hotspot.is_clicked then
-			-- Nothing
-		end
-
-		if hotspot.is_clicked ~= 0 then
-			-- Nothing
-		end
-	end
-
-	do
-		local flag = false
-
-		goto label_9_1
-	end
-
-	::label_9_0::
-
-	do
-		local flag_2 = true
-	end
-
-	::label_9_1::
-
-	local hover_progress = hotspot.hover_progress
-
-	hover_progress = hover_progress or 0
-
-	local selection_progress = hotspot.selection_progress
-
-	selection_progress = selection_progress or 0
-
-	local num = 8
-
-	if not is_hover then
-		hover_progress = math.min(hover_progress + arg_9_1 * num, 1)
-	else
-		hover_progress = math.max(hover_progress - arg_9_1 * num, 0)
-	end
-
-	if not is_selected then
-		selection_progress = math.min(selection_progress + arg_9_1 * num, 1)
-	else
-		selection_progress = math.max(selection_progress - arg_9_1 * num, 0)
-	end
-
-	local max = math.max(hover_progress, selection_progress)
-	local texture_hover = style.texture_hover
-
-	Colors.lerp_color_tables(texture_hover.default_color, texture_hover.hover_color, max, texture_hover.color)
-
-	local texture_icon = style.texture_icon
-
-	Colors.lerp_color_tables(texture_icon.default_color, texture_icon.hover_color, max, texture_icon.color)
-
-	hotspot.hover_progress = hover_progress
-	hotspot.selection_progress = selection_progress
-end
-
-UIWidgetUtils.animate_play_button = function (self, arg_10_1)
-	-- function 10
-	local content = self.content
-	local style = self.style
-	local button_hotspot = content.button_hotspot
-	local disable_button = button_hotspot.disable_button
-	local is_selected = button_hotspot.is_selected
-
-	is_selected = is_selected or content.is_selected
-
-	local flag = is_selected or button_hotspot.is_hover
 	local is_clicked
 
 	if not is_selected then
-		is_clicked = button_hotspot.is_clicked
+		is_clicked = hotspot.is_clicked
 
-		if not is_clicked then
+		if is_clicked then
 			-- Nothing
 		end
 
-		if button_hotspot.is_clicked ~= 0 then
+		if hotspot.is_clicked ~= 0 then
 			-- Nothing
 		end
 	end
 
 	is_clicked = false
 
-	goto label_10_1
+	goto label_6_2
 
-	::label_10_0::
+	::label_6_1::
 
 	is_clicked = true
 
-	::label_10_1::
+	local input_pressed = is_clicked
 
-	local input_progress = button_hotspot.input_progress
+	::label_6_2::
 
-	input_progress = input_progress or 0
+	local input_progress_2 = hotspot.input_progress
 
-	local hover_progress = button_hotspot.hover_progress
-
-	hover_progress = hover_progress or 0
-
-	local selection_progress = button_hotspot.selection_progress
-
-	selection_progress = selection_progress or 0
-
-	local num = 8
-	local num_2 = 20
-
-	if not is_clicked then
-		input_progress = math.min(input_progress + arg_10_1 * num_2, 1)
-	else
-		input_progress = math.max(input_progress - arg_10_1 * num_2, 0)
+	if not input_progress_2 then
+		-- Nothing
 	end
 
-	local easeOutCubic = math.easeOutCubic(input_progress)
-	local easeInCubic = math.easeInCubic(input_progress)
+	input_progress_2 = 0
 
-	if not flag then
-		hover_progress = math.min(hover_progress + arg_10_1 * num, 1)
-	else
-		hover_progress = math.max(hover_progress - arg_10_1 * num, 0)
+	local input_progress = input_progress_2
+
+	::label_6_3::
+
+	local hover_progress_2 = hotspot.hover_progress
+
+	if not hover_progress_2 then
+		-- Nothing
 	end
 
-	local easeOutCubic_2 = math.easeOutCubic(hover_progress)
-	local easeInCubic_2 = math.easeInCubic(hover_progress)
+	hover_progress_2 = 0
 
-	if not is_selected then
-		selection_progress = math.min(selection_progress + arg_10_1 * num, 1)
-	else
-		selection_progress = math.max(selection_progress - arg_10_1 * num, 0)
+	local hover_progress = hover_progress_2
+
+	::label_6_4::
+
+	local selection_progress_2 = hotspot.selection_progress
+
+	if not selection_progress_2 then
+		-- Nothing
 	end
 
-	local easeOutCubic_3 = math.easeOutCubic(selection_progress)
-	local easeInCubic_3 = math.easeInCubic(selection_progress)
-	local max = math.max(hover_progress, selection_progress)
-	local max_2 = math.max(easeOutCubic_3, easeOutCubic_2)
-	local max_3 = math.max(easeInCubic_2, easeInCubic_3)
-	local num_3 = 255 * hover_progress
+	selection_progress_2 = 0
 
-	style.text.text_color[1] = 255 - num_3
-	style.text_hover.text_color[1] = num_3
-	style.texture_icon_id.color[1] = 255 - num_3
-	style.texture_icon_hover_id.color[1] = num_3
-	style.texture_text_bg_effect_id.color[1] = num_3
+	local selection_progress = selection_progress_2
 
-	local flag_2
+	::label_6_5::
 
-	flag_2 = not disable_button and 0 and 1
+	local speed = 8
+	local input_speed = 20
 
-	local num_4 = 0.5 + math.sin(Managers.time:time("ui") * 5) * 0.5
-	local max_4 = math.max(num_3, flag_2 * (num_4 * 200 + 55))
+	if input_pressed then
+		input_progress = math.min(input_progress + dt * input_speed, 1)
+	else
+		input_progress = math.max(input_progress - dt * input_speed, 0)
+	end
 
-	style.texture_hover_id.color[1] = max_4
-	button_hotspot.hover_progress = hover_progress
-	button_hotspot.input_progress = input_progress
-	button_hotspot.selection_progress = selection_progress
+	local input_easing_out_progress = math.easeOutCubic(input_progress)
+	local input_easing_in_progress = math.easeInCubic(input_progress)
+
+	if is_hover then
+		hover_progress = math.min(hover_progress + dt * speed, 1)
+	else
+		hover_progress = math.max(hover_progress - dt * speed, 0)
+	end
+
+	local hover_easing_out_progress = math.easeOutCubic(hover_progress)
+	local hover_easing_in_progress = math.easeInCubic(hover_progress)
+
+	if is_selected then
+		selection_progress = math.min(selection_progress + dt * speed, 1)
+	else
+		selection_progress = math.max(selection_progress - dt * speed, 0)
+	end
+
+	local select_easing_out_progress = math.easeOutCubic(selection_progress)
+	local select_easing_in_progress = math.easeInCubic(selection_progress)
+	local combined_progress = math.max(hover_progress, selection_progress)
+	local combined_out_progress = math.max(select_easing_out_progress, hover_easing_out_progress)
+	local combined_in_progress = math.max(hover_easing_in_progress, select_easing_in_progress)
+	local input_alpha = 255 * input_progress
+
+	style.button_clicked_rect.color[1] = 100 * input_progress
+	style.hover_glow.color[1] = 255 * combined_progress
+
+	local select_alpha = 255 * selection_progress
+
+	style.select_glow.color[1] = select_alpha
+	style.icon_selected.color[1] = select_alpha
+	style.skull_select_glow.color[1] = select_alpha
+	style.icon_bg_glow.color[1] = select_alpha
+
+	local text_disabled_style = style.button_text_disabled
+	local disabled_default_text_color = text_disabled_style.default_text_color
+	local disabled_text_color = text_disabled_style.text_color
+
+	disabled_text_color[2] = disabled_default_text_color[2] * 0.4
+	disabled_text_color[3] = disabled_default_text_color[3] * 0.4
+	disabled_text_color[4] = disabled_default_text_color[4] * 0.4
+
+	local button_text_style = style.button_text
+	local button_text_color = button_text_style.text_color
+	local default_text_color = button_text_style.default_text_color
+	local select_text_color = button_text_style.select_text_color
+
+	Colors.lerp_color_tables(default_text_color, select_text_color, combined_progress, button_text_color)
+
+	local icon_color = style.icon.color
+
+	icon_color[2] = button_text_color[2]
+	icon_color[3] = button_text_color[3]
+	icon_color[4] = button_text_color[4]
+
+	local background_icon_style = style.background_icon
+	local background_icon_color = background_icon_style.color
+	local background_icon_default_color = background_icon_style.default_color
+
+	background_icon_color[2] = background_icon_default_color[2] + combined_progress * (255 - background_icon_default_color[2])
+	background_icon_color[3] = background_icon_default_color[3] + combined_progress * (255 - background_icon_default_color[3])
+	background_icon_color[4] = background_icon_default_color[4] + combined_progress * (255 - background_icon_default_color[4])
+	hotspot.hover_progress = hover_progress
+	hotspot.input_progress = input_progress
+	hotspot.selection_progress = selection_progress
 end
 
-UIWidgetUtils.get_level_frame_by_difficulty_index = function (arg_11_0)
-	-- function 11
-	local var_11_0 = DefaultDifficulties[arg_11_0]
+UIWidgetUtils.animate_start_game_console_setting_button = function (widget, dt)
+	-- function 7
+	local content = widget.content
+	local style = widget.style
+	local is_selected = content.is_selected
+	local selected_progress_2 = content.selected_progress
 
-	if not var_11_0 then
-		return DifficultySettings[var_11_0].completed_frame_texture
+	if not selected_progress_2 then
+		-- Nothing
+	end
+
+	selected_progress_2 = 0
+
+	local selected_progress = selected_progress_2
+
+	::label_7_0::
+
+	local speed = 15
+
+	if is_selected then
+		selected_progress = math.min(selected_progress + speed * dt, 1)
+	else
+		selected_progress = math.max(selected_progress - speed * dt, 0)
+	end
+
+	local alpha = 255 * selected_progress
+
+	style.bg_effect.color[1] = alpha
+	style.icon_texture_glow.color[1] = alpha
+	content.selected_progress = selected_progress
+end
+
+UIWidgetUtils.animate_arrow_button = function (widget, dt)
+	-- function 8
+	local content = widget.content
+	local style = widget.style
+	local hotspot_2 = content.hotspot
+
+	if not hotspot_2 then
+		-- Nothing
+	end
+
+	hotspot_2 = content.button_hotspot
+
+	local hotspot = hotspot_2
+
+	::label_8_0::
+
+	local has_focus = content.has_focus
+	local is_hover_2 = hotspot.is_hover
+
+	if not is_hover_2 then
+		-- Nothing
+	end
+
+	is_hover_2 = has_focus
+
+	local is_hover = is_hover_2
+
+	::label_8_1::
+
+	local is_selected = hotspot.is_selected
+	local is_clicked
+
+	if not is_selected then
+		is_clicked = hotspot.is_clicked
+
+		if is_clicked then
+			-- Nothing
+		end
+
+		if hotspot.is_clicked ~= 0 then
+			-- Nothing
+		end
+	end
+
+	is_clicked = false
+
+	goto label_8_3
+
+	::label_8_2::
+
+	is_clicked = true
+
+	local input_pressed = is_clicked
+
+	::label_8_3::
+
+	local hover_progress_2 = hotspot.hover_progress
+
+	if not hover_progress_2 then
+		-- Nothing
+	end
+
+	hover_progress_2 = 0
+
+	local hover_progress = hover_progress_2
+
+	::label_8_4::
+
+	local selection_progress_2 = hotspot.selection_progress
+
+	if not selection_progress_2 then
+		-- Nothing
+	end
+
+	selection_progress_2 = 0
+
+	local selection_progress = selection_progress_2
+
+	::label_8_5::
+
+	local speed = 8
+
+	if is_hover then
+		hover_progress = math.min(hover_progress + dt * speed, 1)
+	else
+		hover_progress = math.max(hover_progress - dt * speed, 0)
+	end
+
+	if is_selected then
+		selection_progress = math.min(selection_progress + dt * speed, 1)
+	else
+		selection_progress = math.max(selection_progress - dt * speed, 0)
+	end
+
+	local combined_progress = math.max(hover_progress, selection_progress)
+
+	style.texture_hover_id.color[1] = 255 * combined_progress
+	hotspot.hover_progress = hover_progress
+	hotspot.selection_progress = selection_progress
+end
+
+UIWidgetUtils.animate_icon_button = function (widget, dt)
+	-- function 9
+	local content = widget.content
+	local style = widget.style
+	local hotspot_2 = content.hotspot
+
+	if not hotspot_2 then
+		-- Nothing
+	end
+
+	hotspot_2 = content.button_hotspot
+
+	local hotspot = hotspot_2
+
+	::label_9_0::
+
+	local has_focus = content.has_focus
+	local is_hover_2 = hotspot.is_hover
+
+	if not is_hover_2 then
+		-- Nothing
+	end
+
+	is_hover_2 = has_focus
+
+	local is_hover = is_hover_2
+
+	::label_9_1::
+
+	local is_selected = hotspot.is_selected
+	local is_clicked
+
+	if not is_selected then
+		is_clicked = hotspot.is_clicked
+
+		if is_clicked then
+			-- Nothing
+		end
+
+		if hotspot.is_clicked ~= 0 then
+			-- Nothing
+		end
+	end
+
+	is_clicked = false
+
+	goto label_9_3
+
+	::label_9_2::
+
+	is_clicked = true
+
+	local input_pressed = is_clicked
+
+	::label_9_3::
+
+	local hover_progress_2 = hotspot.hover_progress
+
+	if not hover_progress_2 then
+		-- Nothing
+	end
+
+	hover_progress_2 = 0
+
+	local hover_progress = hover_progress_2
+
+	::label_9_4::
+
+	local selection_progress_2 = hotspot.selection_progress
+
+	if not selection_progress_2 then
+		-- Nothing
+	end
+
+	selection_progress_2 = 0
+
+	local selection_progress = selection_progress_2
+
+	::label_9_5::
+
+	local speed = 8
+
+	if is_hover then
+		hover_progress = math.min(hover_progress + dt * speed, 1)
+	else
+		hover_progress = math.max(hover_progress - dt * speed, 0)
+	end
+
+	if is_selected then
+		selection_progress = math.min(selection_progress + dt * speed, 1)
+	else
+		selection_progress = math.max(selection_progress - dt * speed, 0)
+	end
+
+	local combined_progress = math.max(hover_progress, selection_progress)
+	local texture_hover_style = style.texture_hover
+
+	Colors.lerp_color_tables(texture_hover_style.default_color, texture_hover_style.hover_color, combined_progress, texture_hover_style.color)
+
+	local texture_icon_style = style.texture_icon
+
+	Colors.lerp_color_tables(texture_icon_style.default_color, texture_icon_style.hover_color, combined_progress, texture_icon_style.color)
+
+	hotspot.hover_progress = hover_progress
+	hotspot.selection_progress = selection_progress
+end
+
+UIWidgetUtils.animate_play_button = function (widget, dt)
+	-- function 10
+	local content = widget.content
+	local style = widget.style
+	local hotspot = content.button_hotspot
+	local is_disabled = hotspot.disable_button
+	local is_selected_2 = hotspot.is_selected
+
+	if not is_selected_2 then
+		-- Nothing
+	end
+
+	is_selected_2 = content.is_selected
+
+	local is_selected = is_selected_2
+
+	::label_10_0::
+
+	local is_hover = not not is_selected or not not hotspot.is_hover
+	local is_clicked
+
+	if not is_selected then
+		is_clicked = hotspot.is_clicked
+
+		if is_clicked then
+			-- Nothing
+		end
+
+		if hotspot.is_clicked ~= 0 then
+			-- Nothing
+		end
+	end
+
+	is_clicked = false
+
+	goto label_10_2
+
+	::label_10_1::
+
+	is_clicked = true
+
+	local input_pressed = is_clicked
+
+	::label_10_2::
+
+	local input_progress_2 = hotspot.input_progress
+
+	if not input_progress_2 then
+		-- Nothing
+	end
+
+	input_progress_2 = 0
+
+	local input_progress = input_progress_2
+
+	::label_10_3::
+
+	local hover_progress_2 = hotspot.hover_progress
+
+	if not hover_progress_2 then
+		-- Nothing
+	end
+
+	hover_progress_2 = 0
+
+	local hover_progress = hover_progress_2
+
+	::label_10_4::
+
+	local selection_progress_2 = hotspot.selection_progress
+
+	if not selection_progress_2 then
+		-- Nothing
+	end
+
+	selection_progress_2 = 0
+
+	local selection_progress = selection_progress_2
+
+	::label_10_5::
+
+	local speed = 8
+	local input_speed = 20
+
+	if input_pressed then
+		input_progress = math.min(input_progress + dt * input_speed, 1)
+	else
+		input_progress = math.max(input_progress - dt * input_speed, 0)
+	end
+
+	local input_easing_out_progress = math.easeOutCubic(input_progress)
+	local input_easing_in_progress = math.easeInCubic(input_progress)
+
+	if is_hover then
+		hover_progress = math.min(hover_progress + dt * speed, 1)
+	else
+		hover_progress = math.max(hover_progress - dt * speed, 0)
+	end
+
+	local hover_easing_out_progress = math.easeOutCubic(hover_progress)
+	local hover_easing_in_progress = math.easeInCubic(hover_progress)
+
+	if is_selected then
+		selection_progress = math.min(selection_progress + dt * speed, 1)
+	else
+		selection_progress = math.max(selection_progress - dt * speed, 0)
+	end
+
+	local select_easing_out_progress = math.easeOutCubic(selection_progress)
+	local select_easing_in_progress = math.easeInCubic(selection_progress)
+	local combined_progress = math.max(hover_progress, selection_progress)
+	local combined_out_progress = math.max(select_easing_out_progress, hover_easing_out_progress)
+	local combined_in_progress = math.max(hover_easing_in_progress, select_easing_in_progress)
+	local hover_alpha = 255 * hover_progress
+
+	style.text.text_color[1] = 255 - hover_alpha
+	style.text_hover.text_color[1] = hover_alpha
+	style.texture_icon_id.color[1] = 255 - hover_alpha
+	style.texture_icon_hover_id.color[1] = hover_alpha
+	style.texture_text_bg_effect_id.color[1] = hover_alpha
+
+	local num
+
+	if is_disabled then
+		num = 0
+
+		goto label_10_6
+	end
+
+	num = 1
+
+	local active_progress = num
+
+	::label_10_6::
+
+	local active_alpha_progress = 0.5 + math.sin(Managers.time:time("ui") * 5) * 0.5
+	local active_alpha = math.max(hover_alpha, active_progress * (active_alpha_progress * 200 + 55))
+
+	style.texture_hover_id.color[1] = active_alpha
+	hotspot.hover_progress = hover_progress
+	hotspot.input_progress = input_progress
+	hotspot.selection_progress = selection_progress
+end
+
+UIWidgetUtils.get_level_frame_by_difficulty_index = function (difficulty_index)
+	-- function 11
+	local difficulty_key = DefaultDifficulties[difficulty_index]
+
+	if difficulty_key then
+		local settings = DifficultySettings[difficulty_key]
+
+		return settings.completed_frame_texture
 	end
 
 	return "map_frame_00"
 end
 
-UIWidgetUtils.animate_game_option_button = function (self, arg_12_1)
+UIWidgetUtils.animate_game_option_button = function (widget, dt)
 	-- function 12
-	local function fn(self, arg_13_1)
+	local function update_progress(hotspot, dt)
 		-- function 13
-		local disable_button = self.disable_button
-		local is_selected = self.is_selected
-		local on_hover_enter = self.on_hover_enter
-		local is_hover = self.is_hover
-		local is_device_active = Managers.input:is_device_active("gamepad")
-		local flag
+		local is_disabled = hotspot.disable_button
+		local is_selected = hotspot.is_selected
+		local on_hover_enter = hotspot.on_hover_enter
+		local is_hover = hotspot.is_hover
+		local gamepad_active = Managers.input:is_device_active("gamepad")
+		local num
 
-		flag = is_hover or not is_selected or 14 or 200
+		if is_hover or is_selected then
+			num = 14
 
-		local num = 3
-		local hover_progress = self.hover_progress
-
-		hover_progress = hover_progress or 0
-
-		local pulse_progress = self.pulse_progress
-
-		pulse_progress = pulse_progress or 1
-
-		local selection_progress = self.selection_progress
-
-		selection_progress = selection_progress or 0
-
-		if not is_hover then
-			hover_progress = math.min(hover_progress + arg_13_1 * flag, 1)
-		else
-			hover_progress = math.max(hover_progress - arg_13_1 * flag, 0)
+			goto label_13_0
 		end
 
-		if not on_hover_enter then
+		num = 200
+
+		local speed = num
+
+		::label_13_0::
+
+		local pulse_speed = 3
+		local hover_progress_2 = hotspot.hover_progress
+
+		if not hover_progress_2 then
+			-- Nothing
+		end
+
+		hover_progress_2 = 0
+
+		local hover_progress = hover_progress_2
+
+		::label_13_1::
+
+		local pulse_progress_2 = hotspot.pulse_progress
+
+		if not pulse_progress_2 then
+			-- Nothing
+		end
+
+		pulse_progress_2 = 1
+
+		local pulse_progress = pulse_progress_2
+
+		::label_13_2::
+
+		local selection_progress_2 = hotspot.selection_progress
+
+		if not selection_progress_2 then
+			-- Nothing
+		end
+
+		selection_progress_2 = 0
+
+		local selection_progress = selection_progress_2
+
+		::label_13_3::
+
+		if is_hover then
+			hover_progress = math.min(hover_progress + dt * speed, 1)
+		else
+			hover_progress = math.max(hover_progress - dt * speed, 0)
+		end
+
+		if on_hover_enter then
 			pulse_progress = 0
 		end
 
-		local min = math.min(pulse_progress + arg_13_1 * num, 1)
+		pulse_progress = math.min(pulse_progress + dt * pulse_speed, 1)
 
-		if not is_selected then
-			selection_progress = math.min(selection_progress + arg_13_1 * flag, 1)
+		if is_selected then
+			selection_progress = math.min(selection_progress + dt * speed, 1)
 		else
-			selection_progress = math.max(selection_progress - arg_13_1 * flag, 0)
+			selection_progress = math.max(selection_progress - dt * speed, 0)
 		end
 
-		self.hover_progress = hover_progress
-		self.pulse_progress = min
-		self.selection_progress = selection_progress
+		hotspot.hover_progress = hover_progress
+		hotspot.pulse_progress = pulse_progress
+		hotspot.selection_progress = selection_progress
 	end
 
-	local content = self.content
-	local style = self.style
+	local content = widget.content
+	local style = widget.style
 	local button_hotspot = content.button_hotspot
 
-	if not button_hotspot then
-		fn(button_hotspot, arg_12_1)
+	if button_hotspot then
+		update_progress(button_hotspot, dt)
 
 		local hover_progress = button_hotspot.hover_progress
 		local pulse_progress = button_hotspot.pulse_progress
 		local selection_progress = button_hotspot.selection_progress
-		local max = math.max(hover_progress, selection_progress)
-		local disable_button = button_hotspot.disable_button
+		local combined_progress = math.max(hover_progress, selection_progress)
+		local is_disabled = button_hotspot.disable_button
 		local is_selected = button_hotspot.is_selected
-		local num = 255 * max
+		local alpha = 255 * combined_progress
 
-		if not style.background then
-			style.background.color[1] = 50 * max
+		if style.background then
+			style.background.color[1] = 50 * combined_progress
 		end
 
-		style.hover_frame.color[1] = num
-		style.inner_frame.color[1] = 200 * max
+		style.hover_frame.color[1] = alpha
+		style.inner_frame.color[1] = 200 * combined_progress
 
-		local icon_texture = style.icon_texture
+		local icon_texture_style = style.icon_texture
 
-		if not icon_texture then
-			local num_2 = 200 + 55 * max
-			local color = icon_texture.color
+		if icon_texture_style then
+			local clolor_value = 200 + 55 * combined_progress
+			local icon_texture_color = icon_texture_style.color
 
-			color[2] = num_2
-			color[3] = num_2
-			color[4] = num_2
+			icon_texture_color[2] = clolor_value
+			icon_texture_color[3] = clolor_value
+			icon_texture_color[4] = clolor_value
 		end
 
-		local icon_texture_locked = style.icon_texture_locked
+		local icon_texture_locked_style = style.icon_texture_locked
 
-		if not icon_texture_locked then
-			local num_3 = 200 + 55 * max
-			local color_2 = icon_texture_locked.color
+		if icon_texture_locked_style then
+			local clolor_value = 200 + 55 * combined_progress
+			local icon_texture_color = icon_texture_locked_style.color
 
-			color_2[2] = num_3
-			color_2[3] = num_3
-			color_2[4] = num_3
+			icon_texture_color[2] = clolor_value
+			icon_texture_color[3] = clolor_value
+			icon_texture_color[4] = clolor_value
 		end
 
-		local num_4 = 255 - 255 * pulse_progress
+		local pulse_alpha = 255 - 255 * pulse_progress
 
-		style.pulse_frame.color[1] = num_4
+		style.pulse_frame.color[1] = pulse_alpha
 
-		local title_text = style.title_text
-		local text_color = title_text.text_color
-		local default_text_color = title_text.default_text_color
+		local title_text_style = style.title_text
+		local text_color = title_text_style.text_color
+		local default_text_color = title_text_style.default_text_color
 
-		if not default_text_color then
-			local select_text_color = title_text.select_text_color
+		if default_text_color then
+			local select_text_color = title_text_style.select_text_color
 
-			Colors.lerp_color_tables(default_text_color, select_text_color, max, text_color)
+			Colors.lerp_color_tables(default_text_color, select_text_color, combined_progress, text_color)
 		end
 
-		local input_text = style.input_text
+		local input_text_style = style.input_text
 
-		if not input_text then
-			local text_color_2 = input_text.text_color
-			local default_text_color_2 = input_text.default_text_color
-			local select_text_color_2 = input_text.select_text_color
+		if input_text_style then
+			local input_text_color = input_text_style.text_color
+			local default_input_text_color = input_text_style.default_text_color
+			local select_text_color = input_text_style.select_text_color
 
-			Colors.lerp_color_tables(default_text_color_2, select_text_color_2, max, text_color_2)
+			Colors.lerp_color_tables(default_input_text_color, select_text_color, combined_progress, input_text_color)
 		end
 
-		local input_text_unavailable = style.input_text_unavailable
+		local input_text_unavailable_style = style.input_text_unavailable
 
-		if not input_text_unavailable then
-			local text_color_3 = input_text_unavailable.text_color
-			local default_text_color_3 = input_text_unavailable.default_text_color
-			local select_text_color_3 = input_text_unavailable.select_text_color
+		if input_text_unavailable_style then
+			local input_text_color = input_text_unavailable_style.text_color
+			local default_input_text_color = input_text_unavailable_style.default_text_color
+			local select_text_color = input_text_unavailable_style.select_text_color
 
-			Colors.lerp_color_tables(default_text_color_3, select_text_color_3, max, text_color_3)
+			Colors.lerp_color_tables(default_input_text_color, select_text_color, combined_progress, input_text_color)
 		end
 
-		local input_text_locked = style.input_text_locked
+		local input_text_locked_style = style.input_text_locked
 
-		if not input_text_locked then
-			local text_color_4 = input_text_locked.text_color
-			local default_text_color_4 = input_text_locked.default_text_color
-			local select_text_color_4 = input_text_locked.select_text_color
+		if input_text_locked_style then
+			local input_text_color = input_text_locked_style.text_color
+			local default_input_text_color = input_text_locked_style.default_text_color
+			local select_text_color = input_text_locked_style.select_text_color
 
-			Colors.lerp_color_tables(default_text_color_4, select_text_color_4, max, text_color_4)
+			Colors.lerp_color_tables(default_input_text_color, select_text_color, combined_progress, input_text_color)
 		end
 
-		local lock_texture = style.lock_texture
+		local input_text_locked_style = style.lock_texture
 
-		if not lock_texture then
-			local color_3 = lock_texture.color
+		if input_text_locked_style then
+			local locked_color = input_text_locked_style.color
 
-			color_3[2] = text_color[2]
-			color_3[3] = text_color[3]
-			color_3[4] = text_color[4]
+			locked_color[2] = text_color[2]
+			locked_color[3] = text_color[3]
+			locked_color[4] = text_color[4]
 		end
 	end
 
 	local num_options = content.num_options
 
-	if not num_options then
+	if num_options then
 		for i = 1, num_options do
-			local var_12_37 = content["button_hotspot_" .. i]
+			local hotspot_name = "button_hotspot_" .. i
+			local hotspot = content[hotspot_name]
 
-			fn(var_12_37, arg_12_1)
+			update_progress(hotspot, dt)
 
-			local hover_progress_2 = var_12_37.hover_progress
-			local selection_progress_2 = var_12_37.selection_progress
-			local disable_button_2 = var_12_37.disable_button
-			local is_selected_2 = var_12_37.is_selected
-			local max_2 = math.max(hover_progress_2, selection_progress_2)
-			local var_12_43 = style["option_text_" .. i]
+			local hover_progress = hotspot.hover_progress
+			local selection_progress = hotspot.selection_progress
+			local is_disabled = hotspot.disable_button
+			local is_selected = hotspot.is_selected
+			local combined_progress = math.max(hover_progress, selection_progress)
+			local option_text_name = "option_text_" .. i
+			local option_text_style = style[option_text_name]
 
-			if not var_12_43 then
-				local text_color_5 = var_12_43.text_color
-				local default_text_color_5 = var_12_43.default_text_color
-				local select_text_color_5 = var_12_43.select_text_color
+			if option_text_style then
+				local text_color = option_text_style.text_color
+				local default_text_color = option_text_style.default_text_color
+				local select_text_color = option_text_style.select_text_color
 
-				Colors.lerp_color_tables(default_text_color_5, select_text_color_5, max_2, text_color_5)
+				Colors.lerp_color_tables(default_text_color, select_text_color, combined_progress, text_color)
 
-				local var_12_47 = style["icon_" .. i]
+				local icon_name = "icon_" .. i
+				local icon_style = style[icon_name]
 
-				if not var_12_47 then
-					var_12_47.color[2] = text_color_5[2]
-					var_12_47.color[3] = text_color_5[3]
-					var_12_47.color[4] = text_color_5[4]
+				if icon_style then
+					icon_style.color[2] = text_color[2]
+					icon_style.color[3] = text_color[3]
+					icon_style.color[4] = text_color[4]
 				end
 			end
 
-			local var_12_48 = style["icon_background_highlight_" .. i]
+			local icon_background_highlight_name = "icon_background_highlight_" .. i
+			local icon_highlight_style = style[icon_background_highlight_name]
 
-			if not var_12_48 then
-				var_12_48.color[1] = max_2 * 255
+			if icon_highlight_style then
+				icon_highlight_style.color[1] = combined_progress * 255
 			end
 		end
 	end
 end
 
-UIWidgetUtils.animate_layout_button = function (self, arg_14_1)
+UIWidgetUtils.animate_layout_button = function (widget, dt)
 	-- function 14
-	local content = self.content
-	local style = self.style
-	local button_hotspot = content.button_hotspot
-	local is_hover = button_hotspot.is_hover
-	local is_selected = button_hotspot.is_selected
+	local content = widget.content
+	local style = widget.style
+	local hotspot = content.button_hotspot
+	local is_hover = hotspot.is_hover
+	local is_selected = hotspot.is_selected
 	local is_clicked
 
 	if not is_selected then
-		is_clicked = button_hotspot.is_clicked
+		is_clicked = hotspot.is_clicked
 
-		if not is_clicked then
+		if is_clicked then
 			-- Nothing
 		end
 
-		if button_hotspot.is_clicked ~= 0 then
+		if hotspot.is_clicked ~= 0 then
 			-- Nothing
 		end
 	end
@@ -1131,75 +1490,101 @@ UIWidgetUtils.animate_layout_button = function (self, arg_14_1)
 
 	is_clicked = true
 
+	local input_pressed = is_clicked
+
 	::label_14_1::
 
-	local input_progress = button_hotspot.input_progress
+	local input_progress_2 = hotspot.input_progress
 
-	input_progress = input_progress or 0
-
-	local hover_progress = button_hotspot.hover_progress
-
-	hover_progress = hover_progress or 0
-
-	local selection_progress = button_hotspot.selection_progress
-
-	selection_progress = selection_progress or 0
-
-	local num = 8
-	local num_2 = 20
-
-	if not is_clicked then
-		input_progress = math.min(input_progress + arg_14_1 * num_2, 1)
-	else
-		input_progress = math.max(input_progress - arg_14_1 * num_2, 0)
+	if not input_progress_2 then
+		-- Nothing
 	end
 
-	local easeOutCubic = math.easeOutCubic(input_progress)
-	local easeInCubic = math.easeInCubic(input_progress)
+	input_progress_2 = 0
 
-	if not is_hover then
-		hover_progress = math.min(hover_progress + arg_14_1 * num, 1)
-	else
-		hover_progress = math.max(hover_progress - arg_14_1 * num, 0)
+	local input_progress = input_progress_2
+
+	::label_14_2::
+
+	local hover_progress_2 = hotspot.hover_progress
+
+	if not hover_progress_2 then
+		-- Nothing
 	end
 
-	local easeOutCubic_2 = math.easeOutCubic(hover_progress)
-	local easeInCubic_2 = math.easeInCubic(hover_progress)
+	hover_progress_2 = 0
 
-	if not is_selected then
-		selection_progress = math.min(selection_progress + arg_14_1 * num, 1)
-	else
-		selection_progress = math.max(selection_progress - arg_14_1 * num, 0)
+	local hover_progress = hover_progress_2
+
+	::label_14_3::
+
+	local selection_progress_2 = hotspot.selection_progress
+
+	if not selection_progress_2 then
+		-- Nothing
 	end
 
-	local easeOutCubic_3 = math.easeOutCubic(selection_progress)
-	local easeInCubic_3 = math.easeInCubic(selection_progress)
-	local max = math.max(hover_progress, selection_progress)
-	local max_2 = math.max(easeOutCubic_3, easeOutCubic_2)
-	local max_3 = math.max(easeInCubic_2, easeInCubic_3)
-	local num_3 = 255 * max
+	selection_progress_2 = 0
 
-	style.texture_id.color[1] = 255 - num_3
-	style.texture_hover_id.color[1] = num_3
-	style.selected_texture.color[1] = num_3
-	button_hotspot.hover_progress = hover_progress
-	button_hotspot.input_progress = input_progress
-	button_hotspot.selection_progress = selection_progress
+	local selection_progress = selection_progress_2
+
+	::label_14_4::
+
+	local speed = 8
+	local input_speed = 20
+
+	if input_pressed then
+		input_progress = math.min(input_progress + dt * input_speed, 1)
+	else
+		input_progress = math.max(input_progress - dt * input_speed, 0)
+	end
+
+	local input_easing_out_progress = math.easeOutCubic(input_progress)
+	local input_easing_in_progress = math.easeInCubic(input_progress)
+
+	if is_hover then
+		hover_progress = math.min(hover_progress + dt * speed, 1)
+	else
+		hover_progress = math.max(hover_progress - dt * speed, 0)
+	end
+
+	local hover_easing_out_progress = math.easeOutCubic(hover_progress)
+	local hover_easing_in_progress = math.easeInCubic(hover_progress)
+
+	if is_selected then
+		selection_progress = math.min(selection_progress + dt * speed, 1)
+	else
+		selection_progress = math.max(selection_progress - dt * speed, 0)
+	end
+
+	local select_easing_out_progress = math.easeOutCubic(selection_progress)
+	local select_easing_in_progress = math.easeInCubic(selection_progress)
+	local combined_progress = math.max(hover_progress, selection_progress)
+	local combined_out_progress = math.max(select_easing_out_progress, hover_easing_out_progress)
+	local combined_in_progress = math.max(hover_easing_in_progress, select_easing_in_progress)
+	local hover_alpha = 255 * combined_progress
+
+	style.texture_id.color[1] = 255 - hover_alpha
+	style.texture_hover_id.color[1] = hover_alpha
+	style.selected_texture.color[1] = hover_alpha
+	hotspot.hover_progress = hover_progress
+	hotspot.input_progress = input_progress
+	hotspot.selection_progress = selection_progress
 end
 
-UIWidgetUtils.reset_layout_button = function (self)
+UIWidgetUtils.reset_layout_button = function (widget)
 	-- function 15
-	local content = self.content
-	local style = self.style
-	local button_hotspot = content.button_hotspot
+	local content = widget.content
+	local style = widget.style
+	local hotspot = content.button_hotspot
 
-	button_hotspot.hover_progress = 0
-	button_hotspot.input_progress = 0
-	button_hotspot.selection_progress = 0
+	hotspot.hover_progress = 0
+	hotspot.input_progress = 0
+	hotspot.selection_progress = 0
 
-	local num = 0
+	local hover_alpha = 0
 
-	style.texture_id.color[1] = 255 - num
-	style.texture_hover_id.color[1] = num
-	style.selected_texture.color[1] = num
+	style.texture_id.color[1] = 255 - hover_alpha
+	style.texture_hover_id.color[1] = hover_alpha
+	style.selected_texture.color[1] = hover_alpha
 end

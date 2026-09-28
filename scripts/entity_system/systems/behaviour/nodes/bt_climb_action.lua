@@ -2,512 +2,559 @@
 
 require("scripts/entity_system/systems/behaviour/nodes/bt_node")
 
-local function fn(self)
+local function randomize(event)
 	-- function 1
-	if type(self) == "table" then
-		return self[Math.random(1, #self)]
+	if type(event) == "table" then
+		return event[Math.random(1, #event)]
 	else
-		return self
+		return event
 	end
 end
 
 BTClimbAction = class(BTClimbAction, BTNode)
 
-BTClimbAction.init = function (arg_2_0, ...)
+BTClimbAction.init = function (self, ...)
 	-- function 2
-	BTClimbAction.super.init(arg_2_0, ...)
+	BTClimbAction.super.init(self, ...)
 end
 
 BTClimbAction.name = "BTClimbAction"
 
-BTClimbAction.enter = function (self, arg_3_1, arg_3_2, arg_3_3)
+BTClimbAction.enter = function (self, unit, blackboard, t)
 	-- function 3
-	local next_smart_object_data = arg_3_2.next_smart_object_data
-	local unbox = next_smart_object_data.entrance_pos:unbox()
-	local unbox_2 = next_smart_object_data.exit_pos:unbox()
+	local next_smart_object_data = blackboard.next_smart_object_data
+	local entrance_pos = next_smart_object_data.entrance_pos:unbox()
+	local exit_pos = next_smart_object_data.exit_pos:unbox()
 	local smart_object_data = next_smart_object_data.smart_object_data
-	local unbox_3 = Vector3Aux.unbox(smart_object_data.ledge_position)
+	local ledge_position = Vector3Aux.unbox(smart_object_data.ledge_position)
 
-	arg_3_2.smart_object_data = smart_object_data
-	arg_3_2.ledge_position = Vector3Box(unbox_3)
-	arg_3_2.climb_upwards = true
-	arg_3_2.climb_entrance_pos = Vector3Box(unbox)
-	arg_3_2.climb_exit_pos = Vector3Box(unbox_2)
-	arg_3_2.climb_action_in_combat = arg_3_2.in_combat
+	blackboard.smart_object_data = smart_object_data
+	blackboard.ledge_position = Vector3Box(ledge_position)
+	blackboard.climb_upwards = true
+	blackboard.climb_entrance_pos = Vector3Box(entrance_pos)
+	blackboard.climb_exit_pos = Vector3Box(exit_pos)
+	blackboard.climb_action_in_combat = blackboard.in_combat
 
 	local action_data = self._tree_node.action_data
 
-	arg_3_2.action = action_data
+	blackboard.action = action_data
 
-	if not action_data and not action_data.catapult_players then
-		arg_3_2.units_catapulted = {}
+	if action_data and action_data.catapult_players then
+		blackboard.units_catapulted = {}
 	end
 
-	local has_extension = ScriptUnit.has_extension(arg_3_1, "ai_shield_system")
+	local shield_extension = ScriptUnit.has_extension(unit, "ai_shield_system")
 
-	if not has_extension then
-		has_extension:set_is_blocking(false)
+	if shield_extension then
+		shield_extension:set_is_blocking(false)
 	end
 
 	if not smart_object_data.is_on_edge then
-		if not smart_object_data.ledge_position1 then
-			local unbox_4 = Vector3Aux.unbox(smart_object_data.ledge_position1)
-			local unbox_5 = Vector3Aux.unbox(smart_object_data.ledge_position2)
-			local flag = not (Vector3.distance_squared(unbox_4, unbox) < Vector3.distance_squared(unbox_5, unbox)) or not unbox_4 or unbox_5
+		if smart_object_data.ledge_position1 then
+			local ledge_position1 = Vector3Aux.unbox(smart_object_data.ledge_position1)
+			local ledge_position2 = Vector3Aux.unbox(smart_object_data.ledge_position2)
+			local closest_ledge_position = (not (Vector3.distance_squared(ledge_position1, entrance_pos) < Vector3.distance_squared(ledge_position2, entrance_pos)) or not ledge_position1) and not not ledge_position2
 
-			arg_3_2.climb_jump_height = flag.z - unbox.z
+			blackboard.climb_jump_height = closest_ledge_position.z - entrance_pos.z
 
-			arg_3_2.ledge_position:store(flag)
+			blackboard.ledge_position:store(closest_ledge_position)
 		else
-			arg_3_2.climb_jump_height = unbox_3.z - unbox.z
+			blackboard.climb_jump_height = ledge_position.z - entrance_pos.z
 
-			if arg_3_2.climb_jump_height < 0 then
+			if blackboard.climb_jump_height < 0 then
 				smart_object_data.is_on_edge = true
 			end
 		end
 	end
 
-	if not smart_object_data.is_on_edge then
-		if unbox.z > unbox_2.z then
-			arg_3_2.climb_jump_height = unbox.z - unbox_2.z
-			arg_3_2.climb_upwards = false
+	if smart_object_data.is_on_edge then
+		if entrance_pos.z > exit_pos.z then
+			blackboard.climb_jump_height = entrance_pos.z - exit_pos.z
+			blackboard.climb_upwards = false
 		else
-			arg_3_2.climb_jump_height = unbox_2.z - unbox.z
+			blackboard.climb_jump_height = exit_pos.z - entrance_pos.z
 		end
 	end
 
-	fassert(arg_3_2.climb_jump_height >= 0, "Ledge with non-positive climb height=%.2f at %s -> %s", arg_3_2.climb_jump_height, tostring(unbox), tostring(unbox_2))
+	fassert(blackboard.climb_jump_height >= 0, "Ledge with non-positive climb height=%.2f at %s -> %s", blackboard.climb_jump_height, tostring(entrance_pos), tostring(exit_pos))
 
-	arg_3_2.climb_ledge_lookat_direction = Vector3Box(Vector3.normalize(Vector3.flat(unbox_2 - unbox)))
+	blackboard.climb_ledge_lookat_direction = Vector3Box(Vector3.normalize(Vector3.flat(exit_pos - entrance_pos)))
 
-	local locomotion_extension = arg_3_2.locomotion_extension
+	local locomotion_extension = blackboard.locomotion_extension
 
 	locomotion_extension:set_affected_by_gravity(false)
 	locomotion_extension:set_movement_type("snap_to_navmesh")
 	locomotion_extension:set_rotation_speed(10)
 
-	arg_3_2.climb_state = "moving_to_within_smartobject_range"
+	blackboard.climb_state = "moving_to_within_smartobject_range"
 end
 
-BTClimbAction.leave = function (arg_4_0, arg_4_1, arg_4_2, arg_4_3, arg_4_4, arg_4_5)
+BTClimbAction.leave = function (self, unit, blackboard, t, reason, destroy)
 	-- function 4
-	arg_4_2.action = nil
-	arg_4_2.climb_spline_ground = nil
-	arg_4_2.climb_spline_ledge = nil
-	arg_4_2.climb_entrance_pos = nil
-	arg_4_2.climb_state = nil
-	arg_4_2.climb_upwards = nil
-	arg_4_2.is_climbing = nil
-	arg_4_2.stagger_prohibited = nil
-	arg_4_2.climb_jump_height = nil
-	arg_4_2.climb_ledge_lookat_direction = nil
-	arg_4_2.climb_entrance_pos = nil
-	arg_4_2.climb_exit_pos = nil
-	arg_4_2.is_smart_objecting = nil
-	arg_4_2.jump_climb_finished = nil
-	arg_4_2.climb_align_end_time = nil
-	arg_4_2.smart_object_data = nil
-	arg_4_2.ledge_position = nil
-	arg_4_2.climb_moving_to_enter_entrance_timeout = nil
-	arg_4_2.units_catapulted = nil
-	arg_4_2.jump_down_land_animation = nil
-	arg_4_2.climb_action_in_combat = nil
+	blackboard.action = nil
+	blackboard.climb_spline_ground = nil
+	blackboard.climb_spline_ledge = nil
+	blackboard.climb_entrance_pos = nil
+	blackboard.climb_state = nil
+	blackboard.climb_upwards = nil
+	blackboard.is_climbing = nil
+	blackboard.stagger_prohibited = nil
+	blackboard.climb_jump_height = nil
+	blackboard.climb_ledge_lookat_direction = nil
+	blackboard.climb_entrance_pos = nil
+	blackboard.climb_exit_pos = nil
+	blackboard.is_smart_objecting = nil
+	blackboard.jump_climb_finished = nil
+	blackboard.climb_align_end_time = nil
+	blackboard.smart_object_data = nil
+	blackboard.ledge_position = nil
+	blackboard.climb_moving_to_enter_entrance_timeout = nil
+	blackboard.units_catapulted = nil
+	blackboard.jump_down_land_animation = nil
+	blackboard.climb_action_in_combat = nil
 
-	if not arg_4_5 then
-		LocomotionUtils.set_animation_translation_scale(arg_4_1, Vector3(1, 1, 1))
-		LocomotionUtils.constrain_on_clients(arg_4_1, false)
-		LocomotionUtils.set_animation_driven_movement(arg_4_1, false)
+	if not destroy then
+		LocomotionUtils.set_animation_translation_scale(unit, Vector3(1, 1, 1))
+		LocomotionUtils.constrain_on_clients(unit, false)
+		LocomotionUtils.set_animation_driven_movement(unit, false)
 
-		local locomotion_extension = arg_4_2.locomotion_extension
+		local locomotion_extension = blackboard.locomotion_extension
 
 		locomotion_extension:set_movement_type("snap_to_navmesh")
 		locomotion_extension:set_affected_by_gravity(true)
 	end
 
-	local navigation_extension = arg_4_2.navigation_extension
+	local navigation_extension = blackboard.navigation_extension
 
 	navigation_extension:set_enabled(true)
 
-	ScriptUnit.extension(arg_4_1, "hit_reaction_system").force_ragdoll_on_death = nil
+	local hit_reaction_extension = ScriptUnit.extension(unit, "hit_reaction_system")
 
-	local has_extension = ScriptUnit.has_extension(arg_4_1, "ai_shield_system")
+	hit_reaction_extension.force_ragdoll_on_death = nil
 
-	if not has_extension then
-		has_extension:set_is_blocking(true)
+	local shield_extension = ScriptUnit.has_extension(unit, "ai_shield_system")
+
+	if shield_extension then
+		shield_extension:set_is_blocking(true)
 	end
 
-	if not navigation_extension:is_using_smart_object() then
-		local use_smart_object = navigation_extension:use_smart_object(false)
+	if navigation_extension:is_using_smart_object() then
+		local success = navigation_extension:use_smart_object(false)
 	end
 end
 
-local num = 2.1
-local num_2 = 0.125
+local CLIMB_HEIGHT_OFFSET_THRESHOLD = 2.1
+local CLIMB_HEIGHT_OFFSET = 0.125
 
-BTClimbAction.run = function (self, arg_5_1, arg_5_2, arg_5_3, arg_5_4)
+BTClimbAction.run = function (self, unit, blackboard, t, dt)
 	-- function 5
-	local navigation_extension = arg_5_2.navigation_extension
-	local locomotion_extension = arg_5_2.locomotion_extension
-	local var_5_2 = POSITION_LOOKUP[arg_5_1]
-	local is_on_edge = arg_5_2.smart_object_data.is_on_edge
+	local navigation_extension = blackboard.navigation_extension
+	local locomotion_extension = blackboard.locomotion_extension
+	local unit_position = POSITION_LOOKUP[unit]
+	local is_on_edge = blackboard.smart_object_data.is_on_edge
 
-	if arg_5_2.smart_object_data ~= arg_5_2.next_smart_object_data.smart_object_data then
+	if blackboard.smart_object_data ~= blackboard.next_smart_object_data.smart_object_data then
 		return "failed"
 	end
 
-	if arg_5_2.climb_action_in_combat ~= arg_5_2.in_combat then
+	if blackboard.climb_action_in_combat ~= blackboard.in_combat then
 		return "failed"
 	end
 
-	if arg_5_2.climb_state == "moving_to_within_smartobject_range" then
-		local normalize = Vector3.normalize(navigation_extension:desired_velocity())
+	if blackboard.climb_state == "moving_to_within_smartobject_range" then
+		local target_dir = Vector3.normalize(navigation_extension:desired_velocity())
 
-		if not (not (Vector3.length(Vector3.flat(normalize)) < 0.05) or not (Vector3.dot(normalize, Vector3.normalize(arg_5_2.climb_exit_pos:unbox() - var_5_2)) > 0.99)) then
-			local climb_moving_to_enter_entrance_timeout = arg_5_2.climb_moving_to_enter_entrance_timeout
+		if Vector3.length(Vector3.flat(target_dir)) < 0.05 and Vector3.dot(target_dir, Vector3.normalize(blackboard.climb_exit_pos:unbox() - unit_position)) > 0.99 then
+			local climb_moving_to_enter_entrance_timeout = blackboard.climb_moving_to_enter_entrance_timeout
 
-			climb_moving_to_enter_entrance_timeout = climb_moving_to_enter_entrance_timeout or arg_5_3 + 0.3
-			arg_5_2.climb_moving_to_enter_entrance_timeout = climb_moving_to_enter_entrance_timeout
+			climb_moving_to_enter_entrance_timeout = not not climb_moving_to_enter_entrance_timeout or not not (t + 0.3)
+			blackboard.climb_moving_to_enter_entrance_timeout = climb_moving_to_enter_entrance_timeout
 		else
-			arg_5_2.climb_moving_to_enter_entrance_timeout = nil
+			blackboard.climb_moving_to_enter_entrance_timeout = nil
 		end
 
-		if not ((arg_5_2.is_in_smartobject_range or not arg_5_2.climb_moving_to_enter_entrance_timeout) and not (arg_5_3 > arg_5_2.climb_moving_to_enter_entrance_timeout)) then
+		if blackboard.is_in_smartobject_range or blackboard.climb_moving_to_enter_entrance_timeout and t > blackboard.climb_moving_to_enter_entrance_timeout then
 			locomotion_extension:set_wanted_velocity(Vector3.zero())
 			locomotion_extension:set_movement_type("script_driven")
 			navigation_extension:set_enabled(false)
 
-			if not navigation_extension:use_smart_object(true) then
-				arg_5_2.is_smart_objecting = true
-				arg_5_2.is_climbing = true
-				arg_5_2.stagger_prohibited = true
-				arg_5_2.climb_state = "moving_to_to_entrance"
+			if navigation_extension:use_smart_object(true) then
+				blackboard.is_smart_objecting = true
+				blackboard.is_climbing = true
+				blackboard.stagger_prohibited = true
+				blackboard.climb_state = "moving_to_to_entrance"
 			else
 				print("BTClimbAction - failing to use smart object")
 
 				return "failed"
 			end
-		elseif not script_data.ai_debug_smartobject then
-			local distance_squared = Vector3.distance_squared(arg_5_2.climb_entrance_pos:unbox(), var_5_2)
+		elseif script_data.ai_debug_smartobject then
+			local dist = Vector3.distance_squared(blackboard.climb_entrance_pos:unbox(), unit_position)
 
-			QuickDrawer:circle(arg_5_2.climb_entrance_pos:unbox(), math.max(distance_squared - 1, 0.5), Vector3.up())
+			QuickDrawer:circle(blackboard.climb_entrance_pos:unbox(), math.max(dist - 1, 0.5), Vector3.up())
 		end
 	end
 
-	if arg_5_2.climb_state == "moving_to_to_entrance" then
-		local unbox = arg_5_2.climb_entrance_pos:unbox()
-		local num_3 = unbox - var_5_2
-		local length = Vector3.length(num_3)
-		local unbox_2 = arg_5_2.climb_ledge_lookat_direction:unbox()
-		local look = Quaternion.look(unbox_2)
+	if blackboard.climb_state == "moving_to_to_entrance" then
+		local entrance_pos = blackboard.climb_entrance_pos:unbox()
+		local vector_to_target = entrance_pos - unit_position
+		local distance_to_target = Vector3.length(vector_to_target)
+		local look_direction_wanted = blackboard.climb_ledge_lookat_direction:unbox()
+		local look_rotation_wanted = Quaternion.look(look_direction_wanted)
 
-		if length > 0.1 then
-			local run_speed = arg_5_2.breed.run_speed
+		if distance_to_target > 0.1 then
+			local speed = blackboard.breed.run_speed
 
-			if length < run_speed * arg_5_4 then
-				run_speed = length / arg_5_4
+			if distance_to_target < speed * dt then
+				speed = distance_to_target / dt
 			end
 
-			local normalize_2 = Vector3.normalize(num_3)
+			local direction_to_target = Vector3.normalize(vector_to_target)
 
-			locomotion_extension:set_wanted_velocity(normalize_2 * run_speed)
-			locomotion_extension:set_wanted_rotation(look)
+			locomotion_extension:set_wanted_velocity(direction_to_target * speed)
+			locomotion_extension:set_wanted_rotation(look_rotation_wanted)
 
-			if not script_data.ai_debug_smartobject then
-				QuickDrawer:vector(var_5_2 + Vector3.up() * 0.3, num_3)
+			if script_data.ai_debug_smartobject then
+				QuickDrawer:vector(unit_position + Vector3.up() * 0.3, vector_to_target)
 			end
 		else
-			locomotion_extension:teleport_to(unbox, look)
+			locomotion_extension:teleport_to(entrance_pos, look_rotation_wanted)
 
-			var_5_2 = unbox
+			unit_position = entrance_pos
 
 			locomotion_extension:set_wanted_velocity(Vector3.zero())
 
-			local unbox_3 = arg_5_2.climb_exit_pos:unbox()
-			local num_4 = arg_5_2.ledge_position:unbox() + Vector3.up()
+			local exit_pos = blackboard.climb_exit_pos:unbox()
+			local ledge_position = blackboard.ledge_position:unbox() + Vector3.up()
 
-			LocomotionUtils.constrain_on_clients(arg_5_1, true, Vector3.min(unbox, unbox_3), Vector3.max(num_4, Vector3.max(unbox, unbox_3)))
-			LocomotionUtils.set_animation_driven_movement(arg_5_1, true, false, false)
+			LocomotionUtils.constrain_on_clients(unit, true, Vector3.min(entrance_pos, exit_pos), Vector3.max(ledge_position, Vector3.max(entrance_pos, exit_pos)))
+			LocomotionUtils.set_animation_driven_movement(unit, true, false, false)
 
-			ScriptUnit.extension(arg_5_1, "hit_reaction_system").force_ragdoll_on_death = true
+			local hit_reaction_extension = ScriptUnit.extension(unit, "hit_reaction_system")
 
-			local var_5_16 = SmartObjectSettings.templates[arg_5_2.breed.smart_object_template]
+			hit_reaction_extension.force_ragdoll_on_death = true
 
-			if not (arg_5_2.climb_upwards or is_on_edge) then
-				local num_5 = 1 / ScriptUnit.extension(arg_5_1, "ai_system"):size_variation()
-				local jump_up_anim_thresholds = var_5_16.jump_up_anim_thresholds
-				local climb_jump_height = arg_5_2.climb_jump_height
+			local smart_object_settings = SmartObjectSettings.templates[blackboard.breed.smart_object_template]
 
-				for i = 1, #jump_up_anim_thresholds do
-					local var_5_20 = jump_up_anim_thresholds[i]
+			if blackboard.climb_upwards or not is_on_edge then
+				local ai_extension = ScriptUnit.extension(unit, "ai_system")
+				local animation_translation_scale = 1 / ai_extension:size_variation()
+				local jump_anim_thresholds = smart_object_settings.jump_up_anim_thresholds
+				local climb_jump_height = blackboard.climb_jump_height
 
-					if climb_jump_height < var_5_20.height_threshold then
+				for i = 1, #jump_anim_thresholds do
+					local jump_anim_threshold = jump_anim_thresholds[i]
+
+					if climb_jump_height < jump_anim_threshold.height_threshold then
 						local animation_edge
 
-						if not is_on_edge then
-							animation_edge = var_5_20.animation_edge
+						if is_on_edge then
+							animation_edge = jump_anim_threshold.animation_edge
 
 							if not animation_edge then
 								-- Nothing
 							end
 						end
 
-						animation_edge = var_5_20.animation_fence
+						animation_edge = jump_anim_threshold.animation_fence
+
+						local jump_anim_name = animation_edge
 
 						::label_5_0::
 
-						Managers.state.network:anim_event(arg_5_1, fn(animation_edge))
+						Managers.state.network:anim_event(unit, randomize(jump_anim_name))
 
-						local fence_vertical_length = var_5_20.fence_vertical_length
+						local fence_vertical_length_2 = jump_anim_threshold.fence_vertical_length
 
-						fence_vertical_length = fence_vertical_length or var_5_20.vertical_length
+						if not fence_vertical_length_2 then
+							-- Nothing
+						end
 
-						local vertical_length = var_5_20.vertical_length
-						local flag = not is_on_edge and vertical_length and fence_vertical_length
+						fence_vertical_length_2 = jump_anim_threshold.vertical_length
 
-						num_5 = num_5 * climb_jump_height / flag
+						local fence_vertical_length = fence_vertical_length_2
+
+						::label_5_1::
+
+						local edge_vertical_length = jump_anim_threshold.vertical_length
+						local anim_distance = (not is_on_edge or not edge_vertical_length) and not not fence_vertical_length
+
+						animation_translation_scale = animation_translation_scale * climb_jump_height / anim_distance
 
 						break
 					end
 				end
 
-				LocomotionUtils.set_animation_translation_scale(arg_5_1, Vector3(1, 1, num_5))
+				LocomotionUtils.set_animation_translation_scale(unit, Vector3(1, 1, animation_translation_scale))
 				locomotion_extension:set_wanted_velocity(Vector3.zero())
 
-				arg_5_2.climb_state = "waiting_for_finished_climb_anim"
+				blackboard.climb_state = "waiting_for_finished_climb_anim"
 			else
-				local jump_down_anim_thresholds = var_5_16.jump_down_anim_thresholds
-				local abs = math.abs(arg_5_2.climb_jump_height)
+				local jump_anim_thresholds = smart_object_settings.jump_down_anim_thresholds
+				local climb_jump_height = math.abs(blackboard.climb_jump_height)
 
-				for j = 1, #jump_down_anim_thresholds do
-					local var_5_27 = jump_down_anim_thresholds[j]
+				for i = 1, #jump_anim_thresholds do
+					local jump_anim_threshold = jump_anim_thresholds[i]
 
-					if abs < var_5_27.height_threshold then
+					if climb_jump_height < jump_anim_threshold.height_threshold then
 						local animation_edge_2
 
-						if not is_on_edge then
-							animation_edge_2 = var_5_27.animation_edge
+						if is_on_edge then
+							animation_edge_2 = jump_anim_threshold.animation_edge
 
 							if not animation_edge_2 then
 								-- Nothing
 							end
 						end
 
-						animation_edge_2 = var_5_27.animation_fence
+						animation_edge_2 = jump_anim_threshold.animation_fence
 
-						::label_5_1::
+						local jump_anim_name = animation_edge_2
 
-						Managers.state.network:anim_event(arg_5_1, fn(animation_edge_2))
+						::label_5_2::
 
-						local animation_land = var_5_27.animation_land
+						Managers.state.network:anim_event(unit, randomize(jump_anim_name))
 
-						animation_land = animation_land or "jump_down_land"
-						arg_5_2.jump_down_land_animation = fn(animation_land)
+						local animation_land = jump_anim_threshold.animation_land
+
+						if not animation_land then
+							-- Nothing
+						end
+
+						animation_land = "jump_down_land"
+
+						local land_animations = animation_land
+
+						::label_5_3::
+
+						blackboard.jump_down_land_animation = randomize(land_animations)
 
 						break
 					end
 				end
 
-				arg_5_2.climb_state = "waiting_to_reach_ground"
+				blackboard.climb_state = "waiting_to_reach_ground"
 			end
 		end
 	end
 
-	if arg_5_2.climb_state == "waiting_for_finished_climb_anim" then
-		local action = arg_5_2.action
-		local flag_2 = not action and action.catapult_players
+	if blackboard.climb_state == "waiting_for_finished_climb_anim" then
+		local action_data = blackboard.action
+		local catapult_players = not not action_data and not not action_data.catapult_players
 
-		if not flag_2 then
-			self:_catapult_players(arg_5_1, arg_5_2, flag_2)
+		if catapult_players then
+			self:_catapult_players(unit, blackboard, catapult_players)
 		end
 
-		if not arg_5_2.jump_climb_finished then
-			arg_5_2.jump_climb_finished = nil
+		if blackboard.jump_climb_finished then
+			blackboard.jump_climb_finished = nil
 
-			local unbox_4 = arg_5_2.climb_exit_pos:unbox()
-			local flag_3 = not is_on_edge and unbox_4 and arg_5_2.ledge_position:unbox()
+			local exit_pos = blackboard.climb_exit_pos:unbox()
+			local move_target = (not is_on_edge or not exit_pos) and not not blackboard.ledge_position:unbox()
 
-			if not is_on_edge then
-				Managers.state.network:anim_event(arg_5_1, "move_fwd")
+			if is_on_edge then
+				Managers.state.network:anim_event(unit, "move_fwd")
 
-				arg_5_2.spawn_to_running = true
+				blackboard.spawn_to_running = true
 
-				locomotion_extension:teleport_to(flag_3)
+				locomotion_extension:teleport_to(move_target)
 
-				local unbox_5 = arg_5_2.climb_entrance_pos:unbox()
+				local entrance_pos = blackboard.climb_entrance_pos:unbox()
+				local climb_jump_height = move_target.z - entrance_pos.z
 
-				if flag_3.z - unbox_5.z < num then
-					navigation_extension:set_navbot_position(flag_3 + Vector3.up() * num_2)
+				if climb_jump_height < CLIMB_HEIGHT_OFFSET_THRESHOLD then
+					navigation_extension:set_navbot_position(move_target + Vector3.up() * CLIMB_HEIGHT_OFFSET)
 				else
-					navigation_extension:set_navbot_position(flag_3)
+					navigation_extension:set_navbot_position(move_target)
 				end
 
 				locomotion_extension:set_wanted_velocity(Vector3.zero())
-				LocomotionUtils.set_animation_driven_movement(arg_5_1, false)
+				LocomotionUtils.set_animation_driven_movement(unit, false)
 
-				arg_5_2.climb_state = "done"
+				blackboard.climb_state = "done"
 			else
-				local jump_down_anim_thresholds_2 = SmartObjectSettings.templates[arg_5_2.breed.smart_object_template].jump_down_anim_thresholds
-				local num_6 = flag_3.z - unbox_4.z
+				local jump_anim_thresholds = SmartObjectSettings.templates[blackboard.breed.smart_object_template].jump_down_anim_thresholds
+				local climb_jump_height = move_target.z - exit_pos.z
 
-				for k = 1, #jump_down_anim_thresholds_2 do
-					local var_5_37 = jump_down_anim_thresholds_2[k]
+				for i = 1, #jump_anim_thresholds do
+					local jump_anim_threshold = jump_anim_thresholds[i]
 
-					if num_6 < var_5_37.height_threshold then
-						local size_variation = ScriptUnit.extension(arg_5_1, "ai_system"):size_variation()
-						local fence_horizontal_length = var_5_37.fence_horizontal_length
-						local num_7 = Vector3.length(Vector3.flat(var_5_2 - unbox_4)) - var_5_37.fence_land_length
-						local clamp = math.clamp(num_7 / (fence_horizontal_length * size_variation), -10, 10)
+					if climb_jump_height < jump_anim_threshold.height_threshold then
+						local ai_extension = ScriptUnit.extension(unit, "ai_system")
+						local ai_size_variation = ai_extension:size_variation()
+						local animation_length = jump_anim_threshold.fence_horizontal_length
+						local flat_distance_to_jump = Vector3.length(Vector3.flat(unit_position - exit_pos))
 
-						LocomotionUtils.set_animation_translation_scale(arg_5_1, Vector3(clamp, clamp, 1))
+						flat_distance_to_jump = flat_distance_to_jump - jump_anim_threshold.fence_land_length
 
-						local animation_fence = var_5_37.animation_fence
+						local animation_translation_scale = math.clamp(flat_distance_to_jump / (animation_length * ai_size_variation), -10, 10)
 
-						Managers.state.network:anim_event(arg_5_1, fn(animation_fence))
+						LocomotionUtils.set_animation_translation_scale(unit, Vector3(animation_translation_scale, animation_translation_scale, 1))
 
-						local animation_land_2 = var_5_37.animation_land
+						local jump_anim_name = jump_anim_threshold.animation_fence
 
-						animation_land_2 = animation_land_2 or "jump_down_land"
-						arg_5_2.jump_down_land_animation = fn(animation_land_2)
+						Managers.state.network:anim_event(unit, randomize(jump_anim_name))
+
+						local animation_land_2 = jump_anim_threshold.animation_land
+
+						if not animation_land_2 then
+							-- Nothing
+						end
+
+						animation_land_2 = "jump_down_land"
+
+						local land_animations = animation_land_2
+
+						::label_5_4::
+
+						blackboard.jump_down_land_animation = randomize(land_animations)
 
 						break
 					end
 				end
 
-				arg_5_2.climb_state = "waiting_to_reach_ground"
+				blackboard.climb_state = "waiting_to_reach_ground"
 			end
 		end
 	end
 
-	if arg_5_2.climb_state == "waiting_to_reach_ground" then
-		local action_2 = arg_5_2.action
-		local flag_4 = not action_2 and action_2.catapult_players
+	if blackboard.climb_state == "waiting_to_reach_ground" then
+		local action_data = blackboard.action
+		local catapult_players = not not action_data and not not action_data.catapult_players
 
-		if not flag_4 then
-			self:_catapult_players(arg_5_1, arg_5_2, flag_4)
+		if catapult_players then
+			self:_catapult_players(unit, blackboard, catapult_players)
 		end
 
-		local unbox_6 = arg_5_2.climb_exit_pos:unbox()
-		local current_velocity = locomotion_extension:current_velocity()
+		local move_target = blackboard.climb_exit_pos:unbox()
+		local velocity = locomotion_extension:current_velocity()
 
-		if var_5_2.z + current_velocity.z * arg_5_4 * 2 <= unbox_6.z then
-			LocomotionUtils.set_animation_driven_movement(arg_5_1, true, false, false)
-			LocomotionUtils.set_animation_translation_scale(arg_5_1, Vector3(1, 1, 1))
+		if unit_position.z + velocity.z * dt * 2 <= move_target.z then
+			LocomotionUtils.set_animation_driven_movement(unit, true, false, false)
+			LocomotionUtils.set_animation_translation_scale(unit, Vector3(1, 1, 1))
 
-			local jump_down_land_animation = arg_5_2.jump_down_land_animation
+			local land_animation = blackboard.jump_down_land_animation
 
-			Managers.state.network:anim_event(arg_5_1, jump_down_land_animation)
+			Managers.state.network:anim_event(unit, land_animation)
 
-			ScriptUnit.extension(arg_5_1, "hit_reaction_system").force_ragdoll_on_death = nil
-			arg_5_2.climb_state = "waiting_for_finished_land_anim"
+			local hit_reaction_extension = ScriptUnit.extension(unit, "hit_reaction_system")
+
+			hit_reaction_extension.force_ragdoll_on_death = nil
+			blackboard.climb_state = "waiting_for_finished_land_anim"
 		end
-	elseif arg_5_2.climb_state == "waiting_for_finished_land_anim" then
-		local unbox_7 = arg_5_2.climb_exit_pos:unbox()
-		local var_5_50 = Vector3(var_5_2.x, var_5_2.y, unbox_7.z)
+	elseif blackboard.climb_state == "waiting_for_finished_land_anim" then
+		local move_target = blackboard.climb_exit_pos:unbox()
+		local ground_target = Vector3(unit_position.x, unit_position.y, move_target.z)
 
-		locomotion_extension:teleport_to(var_5_50)
+		locomotion_extension:teleport_to(ground_target)
 
-		if not arg_5_2.jump_climb_finished then
-			local unbox_8 = arg_5_2.climb_exit_pos:unbox()
+		if blackboard.jump_climb_finished then
+			local move_target = blackboard.climb_exit_pos:unbox()
 
-			LocomotionUtils.set_animation_driven_movement(arg_5_1, false)
-			Managers.state.network:anim_event(arg_5_1, "move_fwd")
+			LocomotionUtils.set_animation_driven_movement(unit, false)
+			Managers.state.network:anim_event(unit, "move_fwd")
 
-			arg_5_2.spawn_to_running = true
+			blackboard.spawn_to_running = true
 
-			local distance = Vector3.distance(var_5_2, unbox_8)
+			local distance = Vector3.distance(unit_position, move_target)
 
 			if distance < 0.01 then
-				local triangle_from_position, var_5_54 = GwNavQueries.triangle_from_position(arg_5_2.nav_world, unbox_8, 0.4, 0.4)
+				local position_on_navmesh, altitude = GwNavQueries.triangle_from_position(blackboard.nav_world, move_target, 0.4, 0.4)
 
-				if not var_5_54 then
-					unbox_8.z = var_5_54
+				if altitude then
+					move_target.z = altitude
 				end
 
-				local unbox_9 = arg_5_2.climb_entrance_pos:unbox()
+				local entrance_pos = blackboard.climb_entrance_pos:unbox()
+				local climb_jump_height = math.abs(move_target.z - entrance_pos.z)
 
-				if math.abs(unbox_8.z - unbox_9.z) < num then
-					navigation_extension:set_navbot_position(unbox_8 + Vector3.up() * num_2)
+				if climb_jump_height < CLIMB_HEIGHT_OFFSET_THRESHOLD then
+					navigation_extension:set_navbot_position(move_target + Vector3.up() * CLIMB_HEIGHT_OFFSET)
 				else
-					navigation_extension:set_navbot_position(unbox_8)
+					navigation_extension:set_navbot_position(move_target)
 				end
 
-				locomotion_extension:teleport_to(unbox_8)
+				locomotion_extension:teleport_to(move_target)
 				locomotion_extension:set_wanted_velocity(Vector3.zero())
 
-				arg_5_2.climb_state = "done"
+				blackboard.climb_state = "done"
 			else
-				arg_5_2.climb_align_end_time = arg_5_3 + distance / arg_5_2.breed.run_speed
-				arg_5_2.climb_state = "aligning_to_navmesh"
+				local speed = blackboard.breed.run_speed
+				local time_to_travel = distance / speed
+
+				blackboard.climb_align_end_time = t + time_to_travel
+				blackboard.climb_state = "aligning_to_navmesh"
 			end
 		end
 	end
 
-	if arg_5_2.climb_state == "aligning_to_navmesh" then
-		local unbox_10 = arg_5_2.climb_exit_pos:unbox()
+	if blackboard.climb_state == "aligning_to_navmesh" then
+		local move_target = blackboard.climb_exit_pos:unbox()
 
-		if arg_5_3 > arg_5_2.climb_align_end_time then
-			local triangle_from_position_2, var_5_58 = GwNavQueries.triangle_from_position(arg_5_2.nav_world, unbox_10, 0.4, 0.4)
+		if t > blackboard.climb_align_end_time then
+			local position_on_navmesh, altitude = GwNavQueries.triangle_from_position(blackboard.nav_world, move_target, 0.4, 0.4)
 
-			if not triangle_from_position_2 then
-				local triangle_from_position_3, var_5_60 = GwNavQueries.triangle_from_position(arg_5_2.nav_world, unbox_10, 1.5, 1.5)
-				local var_5_61 = var_5_60
+			if not position_on_navmesh then
+				position_on_navmesh, altitude = GwNavQueries.triangle_from_position(blackboard.nav_world, move_target, 1.5, 1.5)
 
-				if not triangle_from_position_3 then
-					printf("WTF navmesh pos @ move_target %s, actual altitude=%f", tostring(unbox_10), var_5_61)
+				if position_on_navmesh then
+					printf("WTF navmesh pos @ move_target %s, actual altitude=%f", tostring(move_target), altitude)
 				end
 			end
 
-			navigation_extension:set_navbot_position(unbox_10)
-			locomotion_extension:teleport_to(unbox_10)
+			navigation_extension:set_navbot_position(move_target)
+			locomotion_extension:teleport_to(move_target)
 			locomotion_extension:set_wanted_velocity(Vector3.zero())
 
-			arg_5_2.climb_state = "done"
+			blackboard.climb_state = "done"
 		else
-			local run_speed_2 = arg_5_2.breed.run_speed
-			local num_8 = Vector3.normalize(unbox_10 - var_5_2) * run_speed_2
+			local speed = blackboard.breed.run_speed
+			local direction_to_target = Vector3.normalize(move_target - unit_position)
+			local wanted_velocity = direction_to_target * speed
 
-			locomotion_extension:set_wanted_velocity(num_8)
+			locomotion_extension:set_wanted_velocity(wanted_velocity)
 		end
 	end
 
-	if arg_5_2.climb_state == "done" then
-		arg_5_2.climb_state = "done_for_reals"
-	elseif arg_5_2.climb_state == "done_for_reals" then
-		arg_5_2.climb_state = "done_for_reals2"
-	elseif arg_5_2.climb_state == "done_for_reals2" then
+	if blackboard.climb_state == "done" then
+		blackboard.climb_state = "done_for_reals"
+	elseif blackboard.climb_state == "done_for_reals" then
+		blackboard.climb_state = "done_for_reals2"
+	elseif blackboard.climb_state == "done_for_reals2" then
 		return "done"
 	end
 
 	return "running"
 end
 
-BTClimbAction._catapult_players = function (arg_6_0, arg_6_1, arg_6_2, arg_6_3)
+BTClimbAction._catapult_players = function (self, unit, blackboard, data)
 	-- function 6
-	local shape = arg_6_3.shape
-	local radius = arg_6_3.radius
-	local world_position = Unit.world_position(arg_6_1, 0)
-	local side = arg_6_2.side
-	local ENEMY_PLAYER_AND_BOT_POSITIONS = side.ENEMY_PLAYER_AND_BOT_POSITIONS
-	local ENEMY_PLAYER_AND_BOT_UNITS = side.ENEMY_PLAYER_AND_BOT_UNITS
+	local shape = data.shape
+	local radius = data.radius
+	local pos = Unit.world_position(unit, 0)
+	local side = blackboard.side
+	local PLAYER_AND_BOT_POSITIONS = side.ENEMY_PLAYER_AND_BOT_POSITIONS
+	local PLAYER_AND_BOT_UNITS = side.ENEMY_PLAYER_AND_BOT_UNITS
 
-	for i = 1, #ENEMY_PLAYER_AND_BOT_POSITIONS do
-		local var_6_6 = ENEMY_PLAYER_AND_BOT_POSITIONS[i]
-		local var_6_7 = ENEMY_PLAYER_AND_BOT_UNITS[i]
-		local num = var_6_6 - world_position
-		local length_squared = Vector3.length_squared(num)
+	for i = 1, #PLAYER_AND_BOT_POSITIONS do
+		local player_pos = PLAYER_AND_BOT_POSITIONS[i]
+		local player_unit = PLAYER_AND_BOT_UNITS[i]
+		local offset = player_pos - pos
+		local distance_squared = Vector3.length_squared(offset)
 
-		if not (arg_6_2.units_catapulted[var_6_7] or not (length_squared < radius * radius)) then
-			local speed = arg_6_3.speed
-			local angle = arg_6_3.angle
-			local normalize = Vector3.normalize(Vector3.flat(num))
-			local num_2 = speed * math.cos(angle)
-			local num_3
+		if not blackboard.units_catapulted[player_unit] and distance_squared < radius * radius then
+			local speed = data.speed
+			local angle = data.angle
+			local flat_offset_dir = Vector3.normalize(Vector3.flat(offset))
+			local length = speed * math.cos(angle)
+			local height = speed * math.sin(angle)
+			local push_velocity = flat_offset_dir * length
 
-			num_3.z, num_3 = speed * math.sin(angle), normalize * num_2
+			push_velocity.z = height
 
-			StatusUtils.set_catapulted_network(var_6_7, true, num_3)
+			StatusUtils.set_catapulted_network(player_unit, true, push_velocity)
 
-			arg_6_2.units_catapulted[var_6_7] = var_6_7
+			blackboard.units_catapulted[player_unit] = player_unit
 		end
 	end
 end

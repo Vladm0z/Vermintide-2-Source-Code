@@ -1,6 +1,6 @@
 -- chunkname: @levels/honduras_dlcs/morris/pat_town/world_nav_tag_volumes.lua
 
-local tbl = {
+local nav_tag_volumes = {
 	dz_02 = {
 		delay_nav_tag_volume_creation = true,
 		alt_max = -18.930679321289062,
@@ -273,9 +273,9 @@ local tbl = {
 		}
 	}
 }
-local str = "1"
+local version = "1"
 
 return {
-	version = str,
-	nav_tag_volumes = tbl
+	version = version,
+	nav_tag_volumes = nav_tag_volumes
 }

@@ -5,23 +5,23 @@ require("scripts/helpers/navigation_utils")
 
 local POSITION_LOOKUP = POSITION_LOOKUP
 local BLACKBOARDS = BLACKBOARDS
-local distance_squared = Vector3.distance_squared
-local triangle_from_position = GwNavQueries.triangle_from_position
-local raycast = GwNavQueries.raycast
-local inside_position_from_outside_position = GwNavQueries.inside_position_from_outside_position
+local Vector3_distance_squared = Vector3.distance_squared
+local GwNavQueries_triangle_from_position = GwNavQueries.triangle_from_position
+local GwNavQueries_raycast = GwNavQueries.raycast
+local GwNavQueries_inside_position_from_outside_position = GwNavQueries.inside_position_from_outside_position
 
-local function fn(...)
+local function debug_print(...)
 	-- function 1
-	if not script_data.debug_patrols then
+	if script_data.debug_patrols then
 		print(...)
 	end
 end
 
-local num = math.pi * 0.7
-local num_2 = 2.77
-local num_3 = 5
-local num_4 = 25
-local tbl = {
+local TURN_SPEED = math.pi * 0.7
+local CONTROLLED_ADVANCE_SPEED = 2.77
+local CONTROLLED_ADVANCE_TIME_LIMIT = 5
+local COMBAT_RANGE_SQ = 25
+local NAV_TAG_ALLOWED_LAYERS = {
 	planks = 10,
 	ledges_with_fence = 10,
 	doors = 10,
@@ -31,1133 +31,1161 @@ local tbl = {
 	fire_grenade = 15,
 	bot_ratling_gun_fire = 15
 }
-local tbl_2 = {
+local NAV_COST_MAP_ALLOWED_LAYERS = {
 	plague_wave = 15,
 	troll_bile = 15,
 	lamp_oil_fire = 15,
 	warpfire_thrower_warpfire = 15,
 	stormfiend_warpfire = 20
 }
-local num_5 = 20
-local num_6 = 8
-local num_7 = 5
-local num_8 = num_7^2
-local var_0_17
-local var_0_18
-local var_0_19
-local var_0_20
-local var_0_21
-local var_0_22
-local var_0_23
-local var_0_24
-local var_0_25
-local var_0_26
-local var_0_27
-local var_0_28
-local var_0_29
-local var_0_30
-local var_0_31
-local var_0_32
-local var_0_33
-local var_0_34
-local var_0_35
-local var_0_36
-local var_0_37
-local var_0_38
-local var_0_39
-local var_0_40
-local var_0_41
-local var_0_42
-local var_0_43
-local var_0_44
-local var_0_45
-local var_0_46
-local var_0_47
-local var_0_48
-local var_0_49
-local var_0_50
+local FORMATION_MAX_TIME = 20
+local FORMATION_TIME = 8
+local CIRCULAR_SPLINE_THRESHOLD = 5
+local CIRCULAR_SPLINE_THRESHOLD_SQ = CIRCULAR_SPLINE_THRESHOLD^2
+local play_sound, pick_sound_source_unit, update_animation_triggered_sounds, init_group, set_state, remove_dead_units, calculate_group_middle_position, change_path_direction, unit_animation_event, set_patrol_path_broken, enter_state_find_path_entry, set_path_direction, enter_state_forming, set_forming_positions, set_end_of_spline_positions, debug_draw_formation, check_is_in_formation, update_units, find_position_on_navmesh, enter_state_patrolling, update_spline_anchor_points, update_anchor_positions, update_anchor_direction, check_for_players, check_for_doors, check_prepare_for_combat, enter_state_opening_door, update_state_opening_door, enter_state_controlled_advance, acquire_targets, controlled_advance, prepare_for_combat, cleanup_after_combat, enter_state_combat
 local AIGroupTemplates = AIGroupTemplates
 
-AIGroupTemplates = AIGroupTemplates or {}
+AIGroupTemplates = not not AIGroupTemplates or not not {}
 AIGroupTemplates = AIGroupTemplates
 AIGroupTemplates.spline_patrol = {
 	in_patrol = true,
-	pre_unit_init = function (arg_2_0, arg_2_1)
+	pre_unit_init = function (unit, group)
 		-- function 2
-		BLACKBOARDS[arg_2_0].ignore_interest_points = true
+		local blackboard = BLACKBOARDS[unit]
+
+		blackboard.ignore_interest_points = true
 	end,
-	init = function (arg_3_0, arg_3_1, arg_3_2, arg_3_3)
+	init = function (world, nav_world, group, t)
 		-- function 3
-		var_0_20(arg_3_1, arg_3_2, arg_3_0, arg_3_3)
-		var_0_29(arg_3_1, arg_3_2, nil)
+		init_group(nav_world, group, world, t)
+		enter_state_forming(nav_world, group, nil)
 	end,
-	destroy = function (arg_4_0, arg_4_1, arg_4_2, arg_4_3)
+	destroy = function (world, nav_world, group, unit)
 		-- function 4
-		local nav_data = arg_4_2.nav_data
+		local nav_data = group.nav_data
 
 		GwNavTagLayerCostTable.destroy(nav_data.navtag_layer_cost_table)
 		GwNavCostMap.destroy_tag_cost_table(nav_data.nav_cost_map_cost_table)
 		GwNavTraverseLogic.destroy(nav_data.traverse_logic)
 	end,
-	update = function (arg_5_0, arg_5_1, arg_5_2, arg_5_3, arg_5_4)
+	update = function (world, nav_world, group, t, dt)
 		-- function 5
-		var_0_22(arg_5_2)
-		var_0_40(arg_5_2, arg_5_1, arg_5_3, arg_5_4)
+		remove_dead_units(group)
+		check_for_players(group, nav_world, t, dt)
 
-		if arg_5_2.num_indexed_members == 0 or not arg_5_2.patrol_path_broken then
+		if group.num_indexed_members == 0 or group.patrol_path_broken then
 			return
 		end
 
-		local state = arg_5_2.state
+		local state = group.state
 
 		if state == "find_path_entry" then
 			-- Nothing
 		elseif state == "forming" then
-			var_0_34(arg_5_1, arg_5_2, arg_5_3, arg_5_4)
-			var_0_33(arg_5_2, arg_5_4)
-			var_0_42(arg_5_2, arg_5_3)
+			update_units(nav_world, group, t, dt)
+			check_is_in_formation(group, dt)
+			check_prepare_for_combat(group, t)
 		elseif state == "patrolling" then
-			if not var_0_41(arg_5_2) then
+			local door_found = check_for_doors(group)
+
+			if door_found then
 				return
 			end
 
-			var_0_37(arg_5_1, arg_5_2, arg_5_4)
-			var_0_39(arg_5_1, arg_5_2, arg_5_4)
-			var_0_38(arg_5_1, arg_5_2)
-			var_0_34(arg_5_1, arg_5_2, arg_5_3, arg_5_4)
-			var_0_19(arg_5_2, arg_5_3)
-			var_0_42(arg_5_2, arg_5_3)
+			update_spline_anchor_points(nav_world, group, dt)
+			update_anchor_direction(nav_world, group, dt)
+			update_anchor_positions(nav_world, group)
+			update_units(nav_world, group, t, dt)
+			update_animation_triggered_sounds(group, t)
+			check_prepare_for_combat(group, t)
 		elseif state == "opening_door" then
-			var_0_44(arg_5_2)
+			update_state_opening_door(group)
 		elseif state == "controlled_advance" then
-			var_0_19(arg_5_2, arg_5_3)
-			var_0_47(arg_5_1, arg_5_2, arg_5_3, arg_5_4)
+			update_animation_triggered_sounds(group, t)
+			controlled_advance(nav_world, group, t, dt)
 		elseif state == "in_combat" then
 			-- Nothing
 		end
 	end,
-	setup_group = function (arg_6_0, arg_6_1, arg_6_2, arg_6_3)
+	setup_group = function (world, nav_world, group, first_unit)
 		-- function 6
-		arg_6_2.target_units = {}
+		group.target_units = {}
 	end,
-	BT_debug = function (self)
+	BT_debug = function (group)
 		-- function 7
 		local tbl = {
 			"GROUP_SYSTEM:",
-			(tostring(self.template))
+			(tostring(group.template))
 		}
 		local str = "state:"
-		local state = self.state
+		local state = group.state
 
-		state = state or ""
+		state = not not state or not not ""
 		tbl[3] = str .. state
 
 		local str_2 = "previous_state:"
-		local previous_state = self.previous_state
+		local previous_state = group.previous_state
 
-		previous_state = previous_state or ""
+		previous_state = not not previous_state or not not ""
 		tbl[4] = str_2 .. previous_state
 
 		local str_3 = "num members: "
-		local members_n = self.members_n
+		local members_n = group.members_n
 
-		members_n = members_n or 1
+		members_n = not not members_n or not not 1
 		tbl[5] = str_3 .. members_n
 
 		return tbl
 	end
 }
 
-local function fn_2(self, arg_8_1)
+function play_sound(group, event)
 	-- function 8
-	var_0_18(self)
+	pick_sound_source_unit(group)
 
-	local system = Managers.state.entity:system("audio_system")
-	local var_8_1 = self.formation_settings.sounds[arg_8_1]
+	local audio_system = Managers.state.entity:system("audio_system")
+	local sound_settings = group.formation_settings.sounds
+	local sound_event = sound_settings[event]
 
-	system:play_audio_unit_event(var_8_1, self.wwise_source_unit)
+	audio_system:play_audio_unit_event(sound_event, group.wwise_source_unit)
 end
 
-function var_0_18(self)
+function pick_sound_source_unit(group)
 	-- function 9
-	local ceil = math.ceil(self.num_indexed_members * 0.5)
+	local wanted_unit_i = math.ceil(group.num_indexed_members * 0.5)
+	local wanted_unit = group.indexed_members[wanted_unit_i]
 
-	self.wwise_source_unit = self.indexed_members[ceil]
+	group.wwise_source_unit = wanted_unit
 end
 
-function var_0_19(self, arg_10_1)
+function update_animation_triggered_sounds(group, t)
 	-- function 10
-	local wwise_source_unit = self.wwise_source_unit
+	local source_unit = group.wwise_source_unit
 
-	if not HEALTH_ALIVE[wwise_source_unit] then
-		var_0_18(self)
+	if not HEALTH_ALIVE[source_unit] then
+		pick_sound_source_unit(group)
 
-		wwise_source_unit = self.wwise_source_unit
+		source_unit = group.wwise_source_unit
 	end
 
-	local var_10_1 = BLACKBOARDS[wwise_source_unit]
+	local blackboard = BLACKBOARDS[source_unit]
 
-	if arg_10_1 > self.patrol_sound_at_t then
-		local system = Managers.state.entity:system("audio_system")
-		local sounds = self.formation_settings.sounds
-		local FOLEY = sounds.FOLEY
+	if t > group.patrol_sound_at_t then
+		local audio_system = Managers.state.entity:system("audio_system")
+		local sound_settings = group.formation_settings.sounds
+		local foley_sound = sound_settings.FOLEY
 
-		system:play_audio_unit_event(FOLEY, wwise_source_unit)
+		audio_system:play_audio_unit_event(foley_sound, source_unit)
 
-		if not self.has_extra_breed then
-			local FOLEY_EXTRA = sounds.FOLEY_EXTRA
+		if group.has_extra_breed then
+			local extra_foley_sound = sound_settings.FOLEY_EXTRA
 
-			system:play_audio_unit_event(FOLEY_EXTRA, wwise_source_unit)
+			audio_system:play_audio_unit_event(extra_foley_sound, source_unit)
 		end
 
-		local VOICE = sounds.VOICE
+		local patrol_voice_sound = sound_settings.VOICE
 
-		system:play_audio_unit_event(VOICE, wwise_source_unit)
+		audio_system:play_audio_unit_event(patrol_voice_sound, source_unit)
 
-		self.patrol_sound_at_t = arg_10_1 + 0.5
+		group.patrol_sound_at_t = t + 0.5
 	end
 end
 
-local function fn_3(self, arg_11_1, arg_11_2)
+local function set_spline_speed(spline, speed, group)
 	-- function 11
-	local flag
+	local nav_data = group.nav_data
+	local direction = nav_data.node_direction
+	local num
 
-	flag = arg_11_2.nav_data.node_direction ~= "reversed" or not -1 or 1
+	if direction == "reversed" then
+		num = -1
 
-	local num = arg_11_1 * flag
+		goto label_11_0
+	end
 
-	self:movement():set_speed(num)
+	num = 1
+
+	local direction_modifier = num
+
+	::label_11_0::
+
+	local spline_speed = speed * direction_modifier
+	local movement = spline:movement()
+
+	movement:set_speed(spline_speed)
 end
 
-local function fn_4(self, arg_12_1)
+function set_state(group, state_name)
 	-- function 12
-	fn("[Patrol] Entered state:", arg_12_1)
+	debug_print("[Patrol] Entered state:", state_name)
 
-	self.previous_state = self.state
-	self.state = arg_12_1
+	group.previous_state = group.state
+	group.state = state_name
 end
 
-local tbl_3 = {}
+local dead_units = {}
 
-function var_0_22(self)
+function remove_dead_units(group)
 	-- function 13
-	local flag = false
-	local var_13_1
-	local alive = Unit.alive
-	local indexed_members = self.indexed_members
-	local num_indexed_members = self.num_indexed_members
+	local units_has_died = false
+	local killing_player
+	local Unit_alive = Unit.alive
+	local indexed_members = group.indexed_members
+	local num_indexed_members = group.num_indexed_members
 
 	for i = num_indexed_members, 1, -1 do
-		local var_13_5 = indexed_members[i]
+		local unit = indexed_members[i]
 
-		if not HEALTH_ALIVE[var_13_5] then
+		if not HEALTH_ALIVE[unit] then
 			table.remove(indexed_members, i)
 
 			num_indexed_members = num_indexed_members - 1
-			tbl_3[var_13_5] = true
-			flag = true
+			dead_units[unit] = true
+			units_has_died = true
 
-			if var_13_1 or not alive(var_13_5) then
-				local previous_attacker = BLACKBOARDS[var_13_5].previous_attacker
+			if not killing_player and Unit_alive(unit) then
+				local blackboard = BLACKBOARDS[unit]
+				local previous_attacker = blackboard.previous_attacker
 
-				if not HEALTH_ALIVE[previous_attacker] then
-					var_13_1 = previous_attacker
+				if HEALTH_ALIVE[previous_attacker] then
+					killing_player = previous_attacker
 				end
 			end
 		end
 	end
 
-	self.num_indexed_members = num_indexed_members
+	group.num_indexed_members = num_indexed_members
 
-	if not flag then
-		local anchors = self.anchors
+	if units_has_died then
+		local anchors = group.anchors
+		local num_anchors = #anchors
 
-		for j = #anchors, 1, -1 do
-			local units = anchors[j].units
-			local flag_2 = true
+		for i = num_anchors, 1, -1 do
+			local anchor = anchors[i]
+			local anchor_units = anchor.units
+			local all_units_dead = true
 
-			for k, v in pairs(units) do
-				if not tbl_3[v] then
-					units[k] = nil
+			for j, unit in pairs(anchor_units) do
+				if dead_units[unit] then
+					anchor_units[j] = nil
 				else
-					flag_2 = false
+					all_units_dead = false
 
-					if not var_13_1 then
-						BLACKBOARDS[v].previous_attacker = var_13_1
+					if killing_player then
+						local blackboard = BLACKBOARDS[unit]
+
+						blackboard.previous_attacker = killing_player
 					end
 				end
 			end
 
-			if not flag_2 then
-				table.remove(anchors, j)
+			if all_units_dead then
+				table.remove(anchors, i)
 			end
 		end
 
-		table.clear(tbl_3)
+		table.clear(dead_units)
 	end
 end
 
-local function fn_5(self)
+function calculate_group_middle_position(group)
 	-- function 14
-	local var_14_0 = Vector3(0, 0, 0)
-	local indexed_members = self.indexed_members
-	local num_indexed_members = self.num_indexed_members
+	local middle_position = Vector3(0, 0, 0)
+	local indexed_members = group.indexed_members
+	local num_indexed_members = group.num_indexed_members
 
 	for i = 1, num_indexed_members do
-		local var_14_3 = indexed_members[i]
+		local unit = indexed_members[i]
+		local pos = POSITION_LOOKUP[unit]
 
-		var_14_0 = var_14_0 + POSITION_LOOKUP[var_14_3]
+		middle_position = middle_position + pos
 	end
 
-	return var_14_0 / num_indexed_members
+	middle_position = middle_position / num_indexed_members
+
+	return middle_position
 end
 
-local function fn_6(arg_15_0, arg_15_1, arg_15_2, arg_15_3, arg_15_4, arg_15_5, arg_15_6, arg_15_7, arg_15_8, arg_15_9)
+function find_position_on_navmesh(nav_world, position, origin_position, check1_up, check1_down, check2_up, check2_down, check2_side, check2_obstacle_distance, direction)
 	-- function 15
-	local var_15_0
-	local var_15_1, var_15_2 = triangle_from_position(arg_15_0, arg_15_2, arg_15_3, arg_15_4)
+	local found_position
+	local success, altitude = GwNavQueries_triangle_from_position(nav_world, origin_position, check1_up, check1_down)
 
-	if not var_15_1 then
-		arg_15_2 = Vector3(arg_15_2.x, arg_15_2.y, var_15_2)
+	if success then
+		origin_position = Vector3(origin_position.x, origin_position.y, altitude)
 
-		local var_15_3, var_15_4 = raycast(arg_15_0, arg_15_2, arg_15_1)
+		local _, hit_position = GwNavQueries_raycast(nav_world, origin_position, position)
 
-		var_15_0 = var_15_4
+		found_position = hit_position
 	else
-		local var_15_5
-		local num = 12
-		local normalize = Vector3.normalize(Vector3.flat(arg_15_9))
+		local nav_pos
+		local num_distance_checks = 12
+		local direction_normalized = Vector3.normalize(Vector3.flat(direction))
 
-		for i = 0, num - 1 do
-			local num_2 = arg_15_1 + normalize * (0.5 * i)
-			local var_15_9, var_15_10 = triangle_from_position(arg_15_0, num_2, arg_15_3, arg_15_4)
+		for i = 0, num_distance_checks - 1 do
+			local distance = 0.5 * i
+			local offset_forward = direction_normalized * distance
+			local offset_position = position + offset_forward
+			local success, altitude = GwNavQueries_triangle_from_position(nav_world, offset_position, check1_up, check1_down)
 
-			if not var_15_9 then
-				var_15_5 = Vector3(num_2.x, num_2.y, var_15_10)
+			if success then
+				nav_pos = Vector3(offset_position.x, offset_position.y, altitude)
 
 				break
 			else
-				local var_15_11 = inside_position_from_outside_position(arg_15_0, num_2, arg_15_5, arg_15_6, arg_15_7, arg_15_8)
+				local inside_position = GwNavQueries_inside_position_from_outside_position(nav_world, offset_position, check2_up, check2_down, check2_side, check2_obstacle_distance)
 
-				if not var_15_11 then
-					var_15_5 = var_15_11
+				if inside_position then
+					nav_pos = inside_position
 
 					break
 				end
 			end
 		end
 
-		if not var_15_5 then
-			var_15_0 = var_15_5
+		if nav_pos then
+			found_position = nav_pos
 		else
-			var_15_0 = arg_15_2
+			found_position = origin_position
 		end
 	end
 
-	return var_15_0
+	return found_position
 end
 
-local function fn_7(self)
+function change_path_direction(group)
 	-- function 16
-	local node_direction = self.nav_data.node_direction
-	local flag
+	local nav_data = group.nav_data
+	local current_direction = nav_data.node_direction
+	local str
 
-	flag = node_direction ~= "reversed" or not "forward" or "reversed"
+	if current_direction == "reversed" then
+		str = "forward"
 
-	var_0_28(self, flag, node_direction)
-end
-
-local function fn_8(arg_17_0, arg_17_1)
-	-- function 17
-	local spline_name = arg_17_1.spline_name
-	local current_level = LevelHelper:current_level(arg_17_0)
-	local spline_points = arg_17_1.spline_points
-	local var_17_3
-
-	if not spline_points then
-		local spline_points_2 = arg_17_1.spline_points
-
-		var_17_3 = AiUtils.remove_bad_boxed_spline_points(spline_points_2, spline_name)
-	else
-		local spline = Level.spline(current_level, spline_name)
-
-		var_17_3 = AiUtils.remove_bad_spline_points(spline, spline_name)
+		goto label_16_0
 	end
 
-	local count = #var_17_3
+	str = "reversed"
 
-	if count == 0 then
+	local new_direction = str
+
+	::label_16_0::
+
+	set_path_direction(group, new_direction, current_direction)
+end
+
+local function find_patrol_spline(world, group)
+	-- function 17
+	local spline_name = group.spline_name
+	local level = LevelHelper:current_level(world)
+	local use_way_points = group.spline_points
+	local spline_points
+
+	if use_way_points then
+		local source_points = group.spline_points
+
+		spline_points = AiUtils.remove_bad_boxed_spline_points(source_points, spline_name)
+	else
+		local source_points = Level.spline(level, spline_name)
+
+		spline_points = AiUtils.remove_bad_spline_points(source_points, spline_name)
+	end
+
+	local num_spline_points = #spline_points
+
+	if num_spline_points == 0 then
 		return false
 	end
 
-	local tbl = {
+	local node_data = {
 		forward_list = {},
 		reversed_list = {}
 	}
 
-	for i = 1, count do
-		local var_17_8 = var_17_3[i]
+	for i = 1, num_spline_points do
+		local spline_point = spline_points[i]
 
-		tbl.forward_list[i] = Vector3Box(var_17_8)
+		node_data.forward_list[i] = Vector3Box(spline_point)
 
-		local num = count - i + 1
+		local reversed_index = num_spline_points - i + 1
 
-		tbl.reversed_list[num] = Vector3Box(var_17_8)
+		node_data.reversed_list[reversed_index] = Vector3Box(spline_point)
 	end
 
-	local var_17_10 = var_17_3[1]
-	local var_17_11 = var_17_3[count]
-	local flag = distance_squared(var_17_10, var_17_11) < num_8
-	local anchors = arg_17_1.anchors
-	local count_2 = #anchors
+	local start_position = spline_points[1]
+	local end_position = spline_points[num_spline_points]
+	local distance_sq = Vector3_distance_squared(start_position, end_position)
+	local is_circular_spline = distance_sq < CIRCULAR_SPLINE_THRESHOLD_SQ
+	local anchors = group.anchors
+	local num_anchors = #anchors
 
-	for j = 1, count_2 do
-		local var_17_15 = anchors[j]
-		local str = spline_name .. ":" .. j
+	for i = 1, num_anchors do
+		local anchor = anchors[i]
+		local spline_name = spline_name .. ":" .. i
 
-		if not spline_points then
-			var_17_15.spline = SplineCurve:new(var_17_3, "Hermite", "SplineMovementHermiteInterpolatedMetered", str, 3, arg_17_1.cached_splines)
+		if use_way_points then
+			anchor.spline = SplineCurve:new(spline_points, "Hermite", "SplineMovementHermiteInterpolatedMetered", spline_name, 3, group.cached_splines)
 		else
-			var_17_15.spline = SplineCurve:new(var_17_3, "Bezier", "SplineMovementHermiteInterpolatedMetered", str, 10)
+			anchor.spline = SplineCurve:new(spline_points, "Bezier", "SplineMovementHermiteInterpolatedMetered", spline_name, 10)
 		end
 
-		var_17_15.is_circular_spline = flag
+		anchor.is_circular_spline = is_circular_spline
 	end
 
-	return tbl
+	return node_data
 end
 
-local function fn_9(self)
+local function initialize_spline_to_anchor_start_positions(group)
 	-- function 18
-	local anchors = self.anchors
-	local count = #anchors
+	local anchors = group.anchors
+	local num_anchors = #anchors
 
-	for i = 1, count do
-		local var_18_2 = anchors[i]
-		local unbox = var_18_2.point:unbox()
-		local spline = var_18_2.spline
-		local get_position_on_interpolated_spline, var_18_6, var_18_7 = NavigationUtils.get_position_on_interpolated_spline(spline, unbox)
+	for i = 1, num_anchors do
+		local anchor = anchors[i]
+		local anchor_position = anchor.point:unbox()
+		local spline_curve = anchor.spline
+		local spline_index, subdivision_index, t = NavigationUtils.get_position_on_interpolated_spline(spline_curve, anchor_position)
+		local movement = spline_curve:movement()
 
-		spline:movement():set_spline_index(get_position_on_interpolated_spline, var_18_6, var_18_7)
+		movement:set_spline_index(spline_index, subdivision_index, t)
 	end
 end
 
-local function fn_10(arg_19_0, arg_19_1)
+local function detect_jump_points(nav_world, group)
 	-- function 19
-	local tbl = {}
-	local spline = arg_19_1.anchors[1].spline
-	local movement = spline:movement()
-	local num = 2
-	local num_2 = 3
-	local num_3 = 1
-	local num_4 = 1
-	local splines = spline:splines()
-	local count = #splines
+	local jump_points = {}
+	local anchor = group.anchors[1]
+	local spline_curve = anchor.spline
+	local movement = spline_curve:movement()
+	local start_index, end_index = 2, 3
+	local above, below = 1, 1
+	local splines = spline_curve:splines()
+	local num_splines = #splines
 
-	for i = 1, count do
-		local var_19_9 = splines[i]
-		local points = var_19_9.points
-		local num_5 = (points[num]:unbox() + points[num_2]:unbox()) / 2
+	for i = 1, num_splines do
+		local spline = splines[i]
+		local points = spline.points
+		local start_point, end_point = points[start_index]:unbox(), points[end_index]:unbox()
+		local mid_point = (start_point + end_point) / 2
+		local success = GwNavQueries_triangle_from_position(nav_world, mid_point, above, below)
 
-		if not triangle_from_position(arg_19_0, num_5, num_3, num_4) then
-			local count_2 = #var_19_9.subdivisions
+		if not success then
+			local num_subdivisions = #spline.subdivisions
 
-			tbl[i] = {
+			jump_points[i] = {
 				forward = {
 					next_t = 1,
 					start_subdivision_index = 1,
-					next_subdivsion_index = count_2
+					next_subdivsion_index = num_subdivisions
 				},
 				reversed = {
 					next_t = 0,
 					next_subdivsion_index = 1,
-					start_subdivision_index = count_2
+					start_subdivision_index = num_subdivisions
 				}
 			}
 		end
 	end
 
-	arg_19_1.jump_points = tbl
+	group.jump_points = jump_points
 end
 
-function var_0_20(arg_20_0, arg_20_1, arg_20_2, arg_20_3)
+function init_group(nav_world, group, world, t)
 	-- function 20
-	fassert(arg_20_1.members_n > 0, "Group was initialized with zero members!")
+	fassert(group.members_n > 0, "Group was initialized with zero members!")
 
-	arg_20_1.nav_data = {}
+	group.nav_data = {}
 
-	local var_20_0 = GwNavTagLayerCostTable.create()
+	local navtag_layer_cost_table = GwNavTagLayerCostTable.create()
 
-	table.merge(tbl, NAV_TAG_VOLUME_LAYER_COST_AI)
-	AiUtils.initialize_cost_table(var_20_0, tbl)
+	table.merge(NAV_TAG_ALLOWED_LAYERS, NAV_TAG_VOLUME_LAYER_COST_AI)
+	AiUtils.initialize_cost_table(navtag_layer_cost_table, NAV_TAG_ALLOWED_LAYERS)
 
-	local create_tag_cost_table = GwNavCostMap.create_tag_cost_table()
+	local nav_cost_map_cost_table = GwNavCostMap.create_tag_cost_table()
 
-	AiUtils.initialize_nav_cost_map_cost_table(create_tag_cost_table, tbl_2)
+	AiUtils.initialize_nav_cost_map_cost_table(nav_cost_map_cost_table, NAV_COST_MAP_ALLOWED_LAYERS)
 
-	local var_20_2 = GwNavTraverseLogic.create(arg_20_0, create_tag_cost_table)
+	local traverse_logic = GwNavTraverseLogic.create(nav_world, nav_cost_map_cost_table)
 
-	GwNavTraverseLogic.set_navtag_layer_cost_table(var_20_2, var_20_0)
+	GwNavTraverseLogic.set_navtag_layer_cost_table(traverse_logic, navtag_layer_cost_table)
 
-	arg_20_1.nav_data.navtag_layer_cost_table = var_20_0
-	arg_20_1.nav_data.nav_cost_map_cost_table = create_tag_cost_table
-	arg_20_1.nav_data.traverse_logic = var_20_2
+	group.nav_data.navtag_layer_cost_table = navtag_layer_cost_table
+	group.nav_data.nav_cost_map_cost_table = nav_cost_map_cost_table
+	group.nav_data.traverse_logic = traverse_logic
 
-	local formation_settings = arg_20_1.formation_settings
-	local ANCHOR_OFFSET = formation_settings.offsets.ANCHOR_OFFSET
-	local tbl_3 = {}
-	local count = #arg_20_1.formation
+	local formation_settings = group.formation_settings
+	local anchor_offset = formation_settings.offsets.ANCHOR_OFFSET
+	local anchors = {}
+	local num_anchors = #group.formation
 
-	for i = 1, count do
-		tbl_3[i] = {
+	for i = 1, num_anchors do
+		anchors[i] = {
 			point = Vector3Box(),
 			wanted_direction = Vector3Box(),
 			current_direction = Vector3Box(),
 			units = {}
 		}
 
-		local var_20_7 = arg_20_1.formation[i]
-		local count_2 = #var_20_7
-		local tbl_4 = {}
-		local zero = Vector3.zero()
-		local var_20_11
+		local columns = group.formation[i]
+		local num_columns = #columns
+		local positions = {}
+		local anchor_start_position = Vector3.zero()
+		local anchor_start_direction
 
-		for j = 1, count_2 do
-			local var_20_12 = var_20_7[j]
-			local start_position = var_20_12.start_position
+		for c = 1, num_columns do
+			local data = columns[c]
+			local column_position = data.start_position
 
-			tbl_4[j] = start_position
-			zero = zero + start_position:unbox()
-			var_20_11 = var_20_11 or var_20_12.start_direction:unbox()
+			positions[c] = column_position
+			anchor_start_position = anchor_start_position + column_position:unbox()
+			anchor_start_direction = not not anchor_start_direction or not not data.start_direction:unbox()
 		end
 
-		local num = zero / count_2
+		anchor_start_position = anchor_start_position / num_columns
 
-		tbl_3[i].point:store(num)
+		anchors[i].point:store(anchor_start_position)
 
-		tbl_3[i].positions = tbl_4
+		anchors[i].positions = positions
 
-		tbl_3[i].current_direction:store(var_20_11)
-		tbl_3[i].wanted_direction:store(var_20_11)
+		anchors[i].current_direction:store(anchor_start_direction)
+		anchors[i].wanted_direction:store(anchor_start_direction)
 
-		local num_2 = ANCHOR_OFFSET.y * math.max(count_2 - 1, 1)
+		local anchor_offset_y = anchor_offset.y * math.max(num_columns - 1, 1)
 
-		tbl_3[i].wanted_offset = {
-			num_2,
-			num_2
+		anchors[i].wanted_offset = {
+			anchor_offset_y,
+			anchor_offset_y
 		}
 	end
 
-	arg_20_1.anchors = tbl_3
+	group.anchors = anchors
 
 	local extra_breed_name = formation_settings.extra_breed_name
-	local flag = false
-	local num_3 = 0
-	local tbl_5 = {}
-	local flag_2 = arg_20_1.group_type == "spline_patrol"
+	local group_has_extra_breed = false
+	local num_indexed_members = 0
+	local indexed_members = {}
+	local is_spline_patrol = group.group_type == "spline_patrol"
 
-	for k, v in pairs(arg_20_1.members) do
-		if not HEALTH_ALIVE[k] then
-			local var_20_21 = BLACKBOARDS[k]
+	for unit, _ in pairs(group.members) do
+		if HEALTH_ALIVE[unit] then
+			local blackboard = BLACKBOARDS[unit]
 
-			var_20_21.only_trust_your_own_eyes = flag_2
+			blackboard.only_trust_your_own_eyes = is_spline_patrol
 
-			local breed = var_20_21.breed
+			local breed = blackboard.breed
+			local breed_name = breed.name
 
-			if breed.name == extra_breed_name then
-				flag = true
+			if breed_name == extra_breed_name then
+				group_has_extra_breed = true
 			end
 
-			local navigation_extension = var_20_21.navigation_extension
+			local navigation_extension = blackboard.navigation_extension
 
 			navigation_extension:set_far_pathing_allowed(false)
 
-			if not breed.use_navigation_path_splines then
+			if breed.use_navigation_path_splines then
 				GwNavBot.set_use_channel(navigation_extension._nav_bot, false)
 			end
 
-			local extension = ScriptUnit.extension(k, "ai_group_system")
-			local group_row = extension.group_row
-			local group_column = extension.group_column
-			local var_20_27 = tbl_3[group_row]
+			local group_extension = ScriptUnit.extension(unit, "ai_group_system")
+			local row = group_extension.group_row
+			local column = group_extension.group_column
+			local anchor = anchors[row]
 
-			var_20_27.units[group_column] = k
-			extension.anchor = var_20_27
-			num_3 = num_3 + 1
-			tbl_5[num_3] = k
-			var_20_21.preferred_door_action = "open"
+			anchor.units[column] = unit
+			group_extension.anchor = anchor
+			num_indexed_members = num_indexed_members + 1
+			indexed_members[num_indexed_members] = unit
+			blackboard.preferred_door_action = "open"
 
 			navigation_extension:allow_layer("planks", false)
-			GwNavTagLayerCostTable.forbid_layer(arg_20_1.nav_data.navtag_layer_cost_table, LAYER_ID_MAPPING.planks)
+			GwNavTagLayerCostTable.forbid_layer(group.nav_data.navtag_layer_cost_table, LAYER_ID_MAPPING.planks)
 
-			if not extension.use_patrol_perception then
-				local extension_2 = ScriptUnit.extension(k, "ai_system")
-				local breed_2 = var_20_21.breed
-				local patrol_passive_perception = breed_2.patrol_passive_perception
-				local patrol_passive_target_selection = breed_2.patrol_passive_target_selection
+			local use_patrol_perception = group_extension.use_patrol_perception
 
-				fassert(patrol_passive_perception, "Missing patrol passive perception!")
-				fassert(patrol_passive_target_selection, "Missing patrol passive target selection!")
-				extension_2:set_perception(patrol_passive_perception, patrol_passive_target_selection)
+			if use_patrol_perception then
+				local ai_extension = ScriptUnit.extension(unit, "ai_system")
+				local breed = blackboard.breed
+				local perception_func_name = breed.patrol_passive_perception
+				local target_selection_func_name = breed.patrol_passive_target_selection
+
+				fassert(perception_func_name, "Missing patrol passive perception!")
+				fassert(target_selection_func_name, "Missing patrol passive target selection!")
+				ai_extension:set_perception(perception_func_name, target_selection_func_name)
 			end
 		end
 	end
 
-	arg_20_1.indexed_members = tbl_5
-	arg_20_1.num_indexed_members = num_3
-	arg_20_1.has_extra_breed = flag
-	arg_20_1.attack_latest_t = 0
-	arg_20_1.controlled_advance_distance_check_t = 0
-	arg_20_1.door_unit = nil
-	arg_20_1.use_controlled_advance = formation_settings.use_controlled_advance
-	arg_20_1.patrol_sound_at_t = arg_20_3
+	group.indexed_members = indexed_members
+	group.num_indexed_members = num_indexed_members
+	group.has_extra_breed = group_has_extra_breed
+	group.attack_latest_t = 0
+	group.controlled_advance_distance_check_t = 0
+	group.door_unit = nil
+	group.use_controlled_advance = formation_settings.use_controlled_advance
+	group.patrol_sound_at_t = t
 
-	local var_20_32
+	local var_20_0
 
-	if not flag_2 then
-		var_20_32 = var_0_31
+	if is_spline_patrol then
+		var_20_0 = set_end_of_spline_positions
 
-		if not var_20_32 then
+		if not var_20_0 then
 			-- Nothing
 		end
 	end
 
-	var_20_32 = var_0_30
+	var_20_0 = set_forming_positions
 
 	::label_20_0::
 
-	arg_20_1.end_of_spline_forming_positions_function = var_20_32
+	group.end_of_spline_forming_positions_function = var_20_0
 
-	local var_20_33 = fn_8(arg_20_2, arg_20_1)
+	local node_data = find_patrol_spline(world, group)
 
-	arg_20_1.nav_data.node_data = var_20_33
+	group.nav_data.node_data = node_data
 
-	var_0_28(arg_20_1, "forward")
-	fn_9(arg_20_1)
-	fn_10(arg_20_0, arg_20_1)
+	set_path_direction(group, "forward")
+	initialize_spline_to_anchor_start_positions(group)
+	detect_jump_points(nav_world, group)
 end
 
-local function fn_11(arg_21_0, arg_21_1)
+function enter_state_find_path_entry(nav_world, group)
 	-- function 21
-	fn_4(arg_21_1, "find_path_entry")
+	set_state(group, "find_path_entry")
 
-	local node_list = arg_21_1.nav_data.node_list
-	local var_21_1 = fn_5(arg_21_1)
-	local closest_node_in_node_list = MainPathUtils.closest_node_in_node_list(node_list, var_21_1)
+	local nav_data = group.nav_data
+	local node_list = nav_data.node_list
+	local middle_position = calculate_group_middle_position(group)
+	local closest_node_index = MainPathUtils.closest_node_in_node_list(node_list, middle_position)
+	local new_forming_positions = set_forming_positions(nav_world, group, closest_node_index)
 
-	if not var_0_30(arg_21_0, arg_21_1, closest_node_in_node_list) then
-		fn_9(arg_21_1)
+	if new_forming_positions then
+		initialize_spline_to_anchor_start_positions(group)
 	end
 
-	var_0_36(arg_21_1)
+	enter_state_patrolling(group)
 end
 
-function var_0_28(self, arg_22_1, arg_22_2)
+function set_path_direction(group, direction, current_direction)
 	-- function 22
-	local nav_data = self.nav_data
-	local anchors = self.anchors
-	local count = #anchors
+	local nav_data = group.nav_data
+	local anchors = group.anchors
+	local num_anchors = #anchors
 
-	if arg_22_1 == "forward" then
+	if direction == "forward" then
 		nav_data.node_direction = "forward"
 		nav_data.node_list = nav_data.node_data.forward_list
 
-		if not arg_22_2 then
-			for i = 1, count do
-				local spline = anchors[i].spline
+		if current_direction then
+			for i = 1, num_anchors do
+				local anchor = anchors[i]
+				local spline = anchor.spline
 
 				spline:movement():reset_to_start()
-				fn_3(spline, 0, self)
+				set_spline_speed(spline, 0, group)
 			end
 		end
 	else
 		nav_data.node_direction = "reversed"
 		nav_data.node_list = nav_data.node_data.reversed_list
 
-		if not arg_22_2 then
-			for j = 1, count do
-				local spline_2 = anchors[j].spline
+		if current_direction then
+			for i = 1, num_anchors do
+				local anchor = anchors[i]
+				local spline = anchor.spline
 
-				spline_2:movement():reset_to_end()
-				fn_3(spline_2, 0, self)
+				spline:movement():reset_to_end()
+				set_spline_speed(spline, 0, group)
 			end
 		end
 	end
 end
 
-function var_0_29(arg_23_0, arg_23_1, arg_23_2)
+function enter_state_forming(nav_world, group, set_forming_positions_function)
 	-- function 23
-	fn_4(arg_23_1, "forming")
+	set_state(group, "forming")
 
-	local nav_data = arg_23_1.nav_data
-	local count = #nav_data.node_list
-	local unbox = nav_data.node_list[count]:unbox()
-	local num = 1
-	local num_2 = 1
-	local var_23_5, var_23_6 = triangle_from_position(arg_23_0, unbox, num, num_2)
+	local nav_data = group.nav_data
+	local end_node_index = #nav_data.node_list
+	local goal_destination = nav_data.node_list[end_node_index]:unbox()
+	local above, below = 1, 1
+	local success, altitude = GwNavQueries_triangle_from_position(nav_world, goal_destination, above, below)
 
-	if not var_23_5 then
+	if not success then
 		return
 	end
 
-	unbox.z = var_23_6
+	goal_destination.z = altitude
 
-	local indexed_members = arg_23_1.indexed_members
-	local num_indexed_members = arg_23_1.num_indexed_members
+	local indexed_members = group.indexed_members
+	local num_indexed_members = group.num_indexed_members
 
 	for i = 1, num_indexed_members do
-		local var_23_9 = indexed_members[i]
-		local var_23_10 = BLACKBOARDS[var_23_9]
-		local navigation_extension = var_23_10.navigation_extension
-		local WALK_SPEED = arg_23_1.formation_settings.speeds.WALK_SPEED
+		local unit = indexed_members[i]
+		local blackboard = BLACKBOARDS[unit]
+		local navigation_extension = blackboard.navigation_extension
+		local walk_speed = group.formation_settings.speeds.WALK_SPEED
 
-		navigation_extension:set_max_speed(WALK_SPEED)
+		navigation_extension:set_max_speed(walk_speed)
 
-		var_23_10.goal_destination = nil
-		var_23_10.stored_goal_destination = Vector3Box(unbox)
+		blackboard.goal_destination = nil
+		blackboard.stored_goal_destination = Vector3Box(goal_destination)
 	end
 
-	if not arg_23_2 then
-		local var_23_13, var_23_14 = arg_23_2(arg_23_0, arg_23_1)
+	if set_forming_positions_function then
+		local success, set_spline_positions = set_forming_positions_function(nav_world, group)
 
-		if not var_23_13 then
-			var_0_26(arg_23_1)
-		elseif not var_23_14 then
-			fn_9(arg_23_1)
+		if not success then
+			set_patrol_path_broken(group)
+		elseif set_spline_positions then
+			initialize_spline_to_anchor_start_positions(group)
 		end
 	end
 
-	fn_2(arg_23_1, "FORMATE")
-	fn_2(arg_23_1, "FORMING")
+	play_sound(group, "FORMATE")
+	play_sound(group, "FORMING")
 end
 
-local function fn_12(self)
+function debug_draw_formation(group)
 	-- function 24
 	local drawer = Managers.state.debug:drawer({
 		mode = "retained",
 		name = "patrol_retained"
 	})
-	local debug_text = Managers.state.debug_text
-	local nav_data = self.nav_data
+	local debug_text_manager = Managers.state.debug_text
+	local nav_data = group.nav_data
 	local node_list = nav_data.node_list
 
 	for i = 1, #node_list do
-		local unbox = node_list[i]:unbox()
+		local node = node_list[i]
+		local node_position = node:unbox()
 
-		drawer:sphere(unbox, 0.1, Colors.get("yellow"))
-		debug_text:output_world_text(i, 0.3, unbox + Vector3(0, 0, 0.3), nil, "patrol_world_text", Vector3(255, 255, 0))
+		drawer:sphere(node_position, 0.1, Colors.get("yellow"))
+		debug_text_manager:output_world_text(i, 0.3, node_position + Vector3(0, 0, 0.3), nil, "patrol_world_text", Vector3(255, 255, 0))
 
-		local var_24_5 = nav_data.node_list[i + 1]
+		local next_node = nav_data.node_list[i + 1]
 
-		if not var_24_5 then
-			local unbox_2 = var_24_5:unbox()
+		if next_node then
+			next_node = next_node:unbox()
 
-			drawer:line(unbox, unbox_2, Colors.get("yellow"))
+			drawer:line(node_position, next_node, Colors.get("yellow"))
 		end
 	end
 
-	local anchors = self.anchors
+	local anchors = group.anchors
 
-	for j = 1, #anchors do
-		local var_24_8 = anchors[j]
-		local unbox_3 = var_24_8.point:unbox()
-		local var_24_10 = Vector3(0, 0, 0.2 + j * 0.04)
+	for i = 1, #anchors do
+		local anchor = anchors[i]
+		local anchor_position = anchor.point:unbox()
+		local offset_y = Vector3(0, 0, 0.2 + i * 0.04)
 
-		drawer:sphere(unbox_3, 0.08, Colors.get("pink"))
-		drawer:line(unbox_3, unbox_3 + var_24_10, Colors.get("pink"))
-		drawer:vector(unbox_3 + var_24_10, var_24_8.wanted_direction:unbox() * 0.2, Colors.get("pink"))
+		drawer:sphere(anchor_position, 0.08, Colors.get("pink"))
+		drawer:line(anchor_position, anchor_position + offset_y, Colors.get("pink"))
+		drawer:vector(anchor_position + offset_y, anchor.wanted_direction:unbox() * 0.2, Colors.get("pink"))
 	end
 end
 
-function var_0_31(arg_25_0, arg_25_1)
+function set_end_of_spline_positions(nav_world, group)
 	-- function 25
-	local node_list = arg_25_1.nav_data.node_list
-	local anchors = arg_25_1.anchors
-	local count = #anchors
-	local unbox = node_list[1]:unbox()
-	local unbox_2 = node_list[2]:unbox()
-	local normalize = Vector3.normalize(unbox_2 - unbox)
+	local nav_data = group.nav_data
+	local node_list = nav_data.node_list
+	local anchors = group.anchors
+	local num_anchors = #anchors
+	local first_node = node_list[1]:unbox()
+	local second_node = node_list[2]:unbox()
+	local direction = Vector3.normalize(second_node - first_node)
 
-	for i = 1, count do
-		local var_25_6 = anchors[i]
+	for i = 1, num_anchors do
+		local anchor = anchors[i]
 
-		var_25_6.point:store(unbox)
-		var_25_6.wanted_direction:store(normalize)
-		var_25_6.current_direction:store(normalize)
+		anchor.point:store(first_node)
+		anchor.wanted_direction:store(direction)
+		anchor.current_direction:store(direction)
 	end
 
 	return true, false
 end
 
-function var_0_30(arg_26_0, arg_26_1, arg_26_2)
+function set_forming_positions(nav_world, group, target_node_index)
 	-- function 26
-	local node_list = arg_26_1.nav_data.node_list
-	local anchors = arg_26_1.anchors
-	local count = #anchors
-	local flag = arg_26_2 or 2
-	local max = math.max(flag - 1, 2)
-	local ANCHOR_OFFSET = arg_26_1.formation_settings.offsets.ANCHOR_OFFSET
-	local num = (count - 1) * ANCHOR_OFFSET.x
-	local ray_along_node_list = MainPathUtils.ray_along_node_list(arg_26_0, node_list, max, -1, num)
-	local var_26_8
-	local var_26_9
+	local nav_data = group.nav_data
+	local node_list = nav_data.node_list
+	local anchors = group.anchors
+	local num_anchors = #anchors
+	local target_node_index = not not target_node_index or not not 2
+	local start_node_index = math.max(target_node_index - 1, 2)
+	local anchor_offset = group.formation_settings.offsets.ANCHOR_OFFSET
+	local wanted_distance = (num_anchors - 1) * anchor_offset.x
+	local backward_distance = MainPathUtils.ray_along_node_list(nav_world, node_list, start_node_index, -1, wanted_distance)
+	local anchor_offset_x, node_list_direction
 
-	if ray_along_node_list == num then
-		var_26_8 = ANCHOR_OFFSET.x
-
-		local num_2 = -1
+	if backward_distance == wanted_distance then
+		anchor_offset_x = anchor_offset.x
+		node_list_direction = -1
 	else
-		local ray_along_node_list_2 = MainPathUtils.ray_along_node_list(arg_26_0, node_list, max, 1, num)
+		local forward_distance = MainPathUtils.ray_along_node_list(nav_world, node_list, start_node_index, 1, wanted_distance)
 
-		if ray_along_node_list_2 <= ray_along_node_list then
-			var_26_8 = ray_along_node_list / num * ANCHOR_OFFSET.x
-
-			local num_3 = -1
+		if forward_distance <= backward_distance then
+			anchor_offset_x = backward_distance / wanted_distance * anchor_offset.x
+			node_list_direction = -1
 		else
-			var_26_8 = ray_along_node_list_2 / num * ANCHOR_OFFSET.x
-
-			local num_4 = 1
+			anchor_offset_x = forward_distance / wanted_distance * anchor_offset.x
+			node_list_direction = 1
 		end
 	end
 
-	local num_5 = 1
-	local alloc_table = FrameTable.alloc_table()
+	local NODE_LIST_DIRECTION = 1
+	local points = FrameTable.alloc_table()
 
-	MainPathUtils.find_equidistant_points_in_node_list(node_list, max, num_5, var_26_8, count, alloc_table)
+	MainPathUtils.find_equidistant_points_in_node_list(node_list, start_node_index, NODE_LIST_DIRECTION, anchor_offset_x, num_anchors, points)
 
-	if not (count > #alloc_table) then
+	local num_points = #points
+	local invalid_path = num_points < num_anchors
+
+	if invalid_path then
 		return false, false
 	else
-		table.reverse(alloc_table)
+		table.reverse(points)
 
-		for i = 1, count do
-			local var_26_16 = alloc_table[i]
-			local var_26_17 = var_26_16[1]
-			local var_26_18 = var_26_16[2]
-			local var_26_19 = anchors[i]
+		for i = 1, num_anchors do
+			local point = points[i]
+			local point_position = point[1]
+			local point_forward = point[2]
+			local anchor = anchors[i]
 
-			var_26_19.point:store(var_26_17)
-			var_26_19.wanted_direction:store(var_26_18)
-			var_26_19.current_direction:store(var_26_18)
+			anchor.point:store(point_position)
+			anchor.wanted_direction:store(point_forward)
+			anchor.current_direction:store(point_forward)
 		end
 
 		return true, true
 	end
 end
 
-local num_9 = 1
-local num_10 = 0.25
-local SPLINE_SPEED = PatrolFormationSettings.default_settings.speeds.SPLINE_SPEED
-local num_11 = SPLINE_SPEED + 1.5
-local num_12 = SPLINE_SPEED / 2
-local num_13 = (SPLINE_SPEED * 0.5)^2
+local FAST_WALK_SPEED_THRESHOLD_SQ = 1
+local MEDIUM_WALK_SPEED_THRESHOLD_SQ = 0.25
+local ANCHOR_WANTED_DISTANCE = PatrolFormationSettings.default_settings.speeds.SPLINE_SPEED
+local ANCHOR_LAGGING_BEHIND_THRESHOLD = ANCHOR_WANTED_DISTANCE + 1.5
+local ANCHOR_TOO_CLOSE_THRESHOLD = ANCHOR_WANTED_DISTANCE / 2
+local LAGGING_BEHIND_THRESHOLD_SQ = (ANCHOR_WANTED_DISTANCE * 0.5)^2
 
-local function fn_13(self, arg_27_1)
+local function get_spline_distance_between_anchors(from_anchor, to_anchor)
 	-- function 27
-	local spline = self.spline
-	local spline_2 = arg_27_1.spline
-	local movement = self.spline:movement()
-	local movement_2 = arg_27_1.spline:movement()
-	local current_spline_curve_distance = movement:current_spline_curve_distance()
-	local current_spline_curve_distance_2 = movement_2:current_spline_curve_distance()
+	local from_spline, to_spline = from_anchor.spline, to_anchor.spline
+	local from_spline_movement, to_spline_movement = from_anchor.spline:movement(), to_anchor.spline:movement()
+	local from_spline_distance = from_spline_movement:current_spline_curve_distance()
+	local to_spline_distance = to_spline_movement:current_spline_curve_distance()
+	local delta = math.abs(from_spline_distance - to_spline_distance)
 
-	return (math.abs(current_spline_curve_distance - current_spline_curve_distance_2))
+	return delta
 end
 
-function var_0_34(arg_28_0, arg_28_1, arg_28_2, arg_28_3)
+function update_units(nav_world, group, t, dt)
 	-- function 28
-	local indexed_members = arg_28_1.indexed_members
-	local num_indexed_members = arg_28_1.num_indexed_members
-	local anchors = arg_28_1.anchors
+	local indexed_members = group.indexed_members
+	local num_indexed_members = group.num_indexed_members
+	local anchors = group.anchors
 
 	for i = 1, num_indexed_members do
 		repeat
-			local var_28_3 = indexed_members[i]
-			local var_28_4 = BLACKBOARDS[var_28_3]
-			local var_28_5 = POSITION_LOOKUP[var_28_3]
-			local navigation_extension = var_28_4.navigation_extension
-			local extension = ScriptUnit.extension(var_28_3, "ai_group_system")
-			local anchor = extension.anchor
-			local group_column = extension.group_column
-			local unbox = anchor.positions[group_column]:unbox()
-			local var_28_11 = distance_squared(var_28_5, unbox)
+			local unit = indexed_members[i]
+			local blackboard = BLACKBOARDS[unit]
+			local unit_pos = POSITION_LOOKUP[unit]
+			local navigation_extension = blackboard.navigation_extension
+			local group_extension = ScriptUnit.extension(unit, "ai_group_system")
+			local anchor = group_extension.anchor
+			local anchor_unit_index = group_extension.group_column
+			local anchor_position = anchor.positions[anchor_unit_index]
+			local destination = anchor_position:unbox()
+			local unit_to_formation_pos_distance_sq = Vector3_distance_squared(unit_pos, destination)
 
-			if var_28_11 > num_9 then
-				local FAST_WALK_SPEED = arg_28_1.formation_settings.speeds.FAST_WALK_SPEED
+			if unit_to_formation_pos_distance_sq > FAST_WALK_SPEED_THRESHOLD_SQ then
+				local fast_walk_speed = group.formation_settings.speeds.FAST_WALK_SPEED
 
-				navigation_extension:set_max_speed(FAST_WALK_SPEED)
-			elseif var_28_11 > num_10 then
-				local MEDIUM_WALK_SPEED = arg_28_1.formation_settings.speeds.MEDIUM_WALK_SPEED
+				navigation_extension:set_max_speed(fast_walk_speed)
+			elseif unit_to_formation_pos_distance_sq > MEDIUM_WALK_SPEED_THRESHOLD_SQ then
+				local medium_walk_speed = group.formation_settings.speeds.MEDIUM_WALK_SPEED
 
-				navigation_extension:set_max_speed(MEDIUM_WALK_SPEED)
+				navigation_extension:set_max_speed(medium_walk_speed)
 			else
-				local WALK_SPEED = arg_28_1.formation_settings.speeds.WALK_SPEED
+				local walk_speed = group.formation_settings.speeds.WALK_SPEED
 
-				navigation_extension:set_max_speed(WALK_SPEED)
+				navigation_extension:set_max_speed(walk_speed)
 			end
 
-			if var_28_11 > num_13 then
+			if unit_to_formation_pos_distance_sq > LAGGING_BEHIND_THRESHOLD_SQ then
 				anchor.unit_is_lagging_behind = true
 			end
 
-			if not (anchor.spline:movement():speed() == 0) and not navigation_extension:has_reached_destination() then
-				var_28_4.goal_destination = nil
-			elseif not var_28_4.goal_destination then
-				var_28_4.goal_destination = var_28_4.stored_goal_destination
+			local anchor_is_in_slow_mode = anchor.spline:movement():speed() == 0
+
+			if anchor_is_in_slow_mode and navigation_extension:has_reached_destination() then
+				blackboard.goal_destination = nil
+			elseif not blackboard.goal_destination then
+				blackboard.goal_destination = blackboard.stored_goal_destination
 			end
 
-			local var_28_15, var_28_16 = triangle_from_position(arg_28_0, unbox, 1, 1)
+			local success, altitude = GwNavQueries_triangle_from_position(nav_world, destination, 1, 1)
 
-			if not var_28_15 then
-				navigation_extension:move_to(unbox)
+			if success then
+				navigation_extension:move_to(destination)
 			end
 		until true
 	end
 
-	local count = #anchors
-	local node_direction = arg_28_1.nav_data.node_direction
+	local num_anchors = #anchors
+	local nav_data = group.nav_data
+	local current_direction = nav_data.node_direction
 
-	if arg_28_1.state == "patrolling" then
-		for j = 1, count do
-			local var_28_19 = anchors[j]
-			local current_spline_index = var_28_19.spline:movement():current_spline_index()
-			local unbox_2 = var_28_19.point:unbox()
-			local var_28_22 = anchors[j + 1]
-			local spline = var_28_19.spline
-			local flag = false
+	if group.state == "patrolling" then
+		for i = 1, num_anchors do
+			local anchor = anchors[i]
+			local anchor_spline_index = anchor.spline:movement():current_spline_index()
+			local anchor_position = anchor.point:unbox()
+			local behind_anchor = anchors[i + 1]
+			local spline = anchor.spline
+			local slow_down_needed = false
 
-			if not var_28_19.unit_is_lagging_behind then
-				flag = true
-				var_28_19.unit_is_lagging_behind = false
+			if anchor.unit_is_lagging_behind then
+				slow_down_needed = true
+				anchor.unit_is_lagging_behind = false
 			end
 
-			if not var_28_22 then
-				local current_spline_index_2 = var_28_22.spline:movement():current_spline_index()
-				local flag_2 = node_direction == "forward"
+			if behind_anchor then
+				local behind_anchor_spline_index = behind_anchor.spline:movement():current_spline_index()
+				local is_foward_direction = current_direction == "forward"
 
-				if not (not flag_2 and current_spline_index_2 <= current_spline_index or flag_2 or not (current_spline_index <= current_spline_index_2)) then
-					local var_28_27 = fn_13(var_28_19, var_28_22)
+				if (not is_foward_direction or not (behind_anchor_spline_index <= anchor_spline_index)) and not is_foward_direction and anchor_spline_index <= behind_anchor_spline_index then
+					local distance = get_spline_distance_between_anchors(anchor, behind_anchor)
 
-					if not ((var_28_27 > num_11 or not var_28_19.behind_slow_mode) and not (var_28_27 > SPLINE_SPEED)) then
-						flag = true
-						var_28_19.behind_slow_mode = true
+					if distance > ANCHOR_LAGGING_BEHIND_THRESHOLD or anchor.behind_slow_mode and distance > ANCHOR_WANTED_DISTANCE then
+						slow_down_needed = true
+						anchor.behind_slow_mode = true
 					else
-						var_28_19.behind_slow_mode = false
+						anchor.behind_slow_mode = false
 					end
 				end
 			end
 
-			local var_28_28 = anchors[j - 1]
+			local ahead_anchor = anchors[i - 1]
 
-			if not (not var_28_28 and flag) then
-				local var_28_29 = fn_13(var_28_19, var_28_28)
+			if ahead_anchor and not slow_down_needed then
+				local distance = get_spline_distance_between_anchors(anchor, ahead_anchor)
 
-				if not ((var_28_29 < num_12 or not var_28_19.ahead_slow_mode) and not (var_28_29 < SPLINE_SPEED)) then
-					flag = true
-					var_28_19.ahead_slow_mode = true
+				if distance < ANCHOR_TOO_CLOSE_THRESHOLD or anchor.ahead_slow_mode and distance < ANCHOR_WANTED_DISTANCE then
+					slow_down_needed = true
+					anchor.ahead_slow_mode = true
 				else
-					var_28_19.ahead_slow_mode = false
+					anchor.ahead_slow_mode = false
 				end
 			end
 
-			if not flag then
-				fn_3(spline, 0, arg_28_1)
+			if slow_down_needed then
+				set_spline_speed(spline, 0, group)
 			else
-				fn_3(spline, arg_28_1.formation_settings.speeds.SPLINE_SPEED, arg_28_1)
+				set_spline_speed(spline, group.formation_settings.speeds.SPLINE_SPEED, group)
 			end
 		end
 	end
 end
 
-local num_14 = 0
+local formation_timer = 0
 
-function var_0_33(self, arg_29_1)
+function check_is_in_formation(group, dt)
 	-- function 29
-	num_14 = num_14 + arg_29_1
+	formation_timer = formation_timer + dt
 
-	local flag = true
+	local in_formation = true
 
-	if num_14 < num_5 then
-		local indexed_members = self.indexed_members
-		local num_indexed_members = self.num_indexed_members
+	if formation_timer < FORMATION_MAX_TIME then
+		local indexed_members = group.indexed_members
+		local num_indexed_members = group.num_indexed_members
 
 		for i = 1, num_indexed_members do
-			local var_29_3 = indexed_members[i]
-			local var_29_4 = BLACKBOARDS[var_29_3]
+			local unit = indexed_members[i]
+			local blackboard = BLACKBOARDS[unit]
+			local navigation_extension = blackboard.navigation_extension
+			local has_reached_destination = navigation_extension:has_reached_destination()
 
-			flag = not var_29_4.navigation_extension:has_reached_destination() and not var_29_4.climb_state
+			in_formation = not not has_reached_destination and not not not blackboard.climb_state
 
-			if not flag then
+			if not in_formation then
 				break
 			end
 		end
 	end
 
-	if not self.first_formation_done and not (num_14 >= num_6) or not flag then
-		var_0_36(self)
+	local first_formation_done = group.first_formation_done
 
-		self.first_formation_done = true
+	if not first_formation_done or formation_timer >= FORMATION_TIME and in_formation then
+		enter_state_patrolling(group)
+
+		group.first_formation_done = true
 	end
 end
 
-function var_0_36(self)
+function enter_state_patrolling(group)
 	-- function 30
-	fn_4(self, "patrolling")
+	set_state(group, "patrolling")
 
-	num_14 = 0
+	formation_timer = 0
 
-	local WALK_SPEED = self.formation_settings.speeds.WALK_SPEED
-	local indexed_members = self.indexed_members
-	local num_indexed_members = self.num_indexed_members
+	local walk_speed = group.formation_settings.speeds.WALK_SPEED
+	local indexed_members = group.indexed_members
+	local num_indexed_members = group.num_indexed_members
 
 	for i = 1, num_indexed_members do
-		local var_30_3 = indexed_members[i]
-		local var_30_4 = BLACKBOARDS[var_30_3]
+		local unit = indexed_members[i]
+		local blackboard = BLACKBOARDS[unit]
+		local navigation_extension = blackboard.navigation_extension
 
-		var_30_4.navigation_extension:set_max_speed(WALK_SPEED)
+		navigation_extension:set_max_speed(walk_speed)
 
-		local goal_destination = var_30_4.goal_destination
+		local goal_destination = blackboard.goal_destination
 
-		goal_destination = goal_destination or var_30_4.stored_goal_destination
-		var_30_4.stored_goal_destination = goal_destination
-		var_30_4.goal_destination = var_30_4.stored_goal_destination
-		var_30_4.patrolling = true
+		goal_destination = not not goal_destination or not not blackboard.stored_goal_destination
+		blackboard.stored_goal_destination = goal_destination
+		blackboard.goal_destination = blackboard.stored_goal_destination
+		blackboard.patrolling = true
 	end
 
-	fn_2(self, "FORMATED")
+	play_sound(group, "FORMATED")
 end
 
-function var_0_37(arg_31_0, arg_31_1, arg_31_2)
+function update_spline_anchor_points(nav_world, group, dt)
 	-- function 31
-	local nav_data = arg_31_1.nav_data
-	local var_31_1
-	local length_squared = Vector3.length_squared
-	local is_circular_spline = arg_31_1.anchors[1].is_circular_spline
-	local node_direction = nav_data.node_direction
-	local despawn_at_end = arg_31_1.despawn_at_end
-	local anchors = arg_31_1.anchors
-	local count = #anchors
+	local nav_data = group.nav_data
+	local main_spline_status
+	local Vector3_length_squared = Vector3.length_squared
+	local is_circular_spline = group.anchors[1].is_circular_spline
+	local current_direction = nav_data.node_direction
+	local despawn_at_end = group.despawn_at_end
+	local anchors = group.anchors
+	local num_anchors = #anchors
 
-	for i = 1, count do
+	for i = 1, num_anchors do
 		repeat
-			local var_31_8 = anchors[i]
-			local var_31_9 = arg_31_1.anchors[i - 1]
-			local unbox = var_31_8.point:unbox()
-			local movement = var_31_8.spline:movement()
-			local update = movement:update(arg_31_2)
+			local anchor = anchors[i]
+			local previous_anchor = group.anchors[i - 1]
+			local previous_position = anchor.point:unbox()
+			local spline = anchor.spline
+			local movement = spline:movement()
+			local status = movement:update(dt)
 
-			if not var_31_9 then
-				var_31_1 = update
+			if not previous_anchor then
+				main_spline_status = status
 			end
 
-			local current_position = movement:current_position()
-			local num = current_position - unbox
+			local position = movement:current_position()
+			local direction = position - previous_position
 
-			var_31_8.point:store(current_position)
+			anchor.point:store(position)
 
-			if length_squared(num) > 0 then
-				var_31_8.wanted_direction:store(num)
+			if Vector3_length_squared(direction) > 0 then
+				anchor.wanted_direction:store(direction)
 			end
 
-			if update == "end" then
-				if not is_circular_spline then
+			if status == "end" then
+				if is_circular_spline then
 					movement:reset_to_start()
 
 					break
 				end
 
-				if not despawn_at_end then
-					local units = var_31_8.units
-					local conflict = Managers.state.conflict
+				if despawn_at_end then
+					local anchor_units = anchor.units
+					local conflict_director = Managers.state.conflict
 
-					for k, v in pairs(units) do
-						local var_31_17 = BLACKBOARDS[v]
+					for j, unit in pairs(anchor_units) do
+						local blackboard = BLACKBOARDS[unit]
 
-						conflict:destroy_unit(v, var_31_17, "patrol_finished")
+						conflict_director:destroy_unit(unit, blackboard, "patrol_finished")
 					end
 				end
 			end
 		until true
 	end
 
-	if not ((node_direction ~= "forward" or var_31_1 ~= "end" or node_direction ~= "reversed") and var_31_1 ~= "start" or despawn_at_end or is_circular_spline) then
-		fn_7(arg_31_1)
-		var_0_29(arg_31_0, arg_31_1, arg_31_1.end_of_spline_forming_positions_function)
+	if ((current_direction ~= "forward" or main_spline_status ~= "end") and current_direction == "reversed" and main_spline_status ~= "start" or not despawn_at_end) and not is_circular_spline then
+		change_path_direction(group)
+		enter_state_forming(nav_world, group, group.end_of_spline_forming_positions_function)
 	end
 end
 
-function var_0_38(arg_32_0, arg_32_1)
+function update_anchor_positions(nav_world, group)
 	-- function 32
-	local ANCHOR_OFFSET = arg_32_1.formation_settings.offsets.ANCHOR_OFFSET
-	local num = 0.6
-	local num_2 = 1
-	local num_3 = 1.2
-	local num_4 = 1
-	local num_5 = 1
-	local num_6 = 1
-	local anchors = arg_32_1.anchors
-	local count = #anchors
-	local node_direction = arg_32_1.nav_data.node_direction
-	local jump_points = arg_32_1.jump_points
+	local anchor_offset = group.formation_settings.offsets.ANCHOR_OFFSET
+	local check1_up, check1_down = 0.6, 1
+	local check2_up, check2_down = 1.2, 1
+	local check2_side, check2_obstacle_distance = 1, 1
+	local anchors = group.anchors
+	local num_anchors = #anchors
+	local nav_data = group.nav_data
+	local current_direction = nav_data.node_direction
+	local jump_points = group.jump_points
 
-	for i = 1, count do
-		local var_32_11 = anchors[i]
-		local movement = var_32_11.spline:movement()
+	for i = 1, num_anchors do
+		local anchor = anchors[i]
+		local spline = anchor.spline
+		local movement = spline:movement()
 		local current_spline_index = movement:current_spline_index()
 		local current_subdivision_index = movement:current_subdivision_index()
-		local var_32_15 = jump_points[current_spline_index]
-		local flag = not var_32_15 and var_32_15[node_direction]
+		local jump_data = jump_points[current_spline_index]
+		local jump_data_direction = not not jump_data and not not jump_data[current_direction]
 
-		if not (not flag and flag.start_subdivision_index ~= current_subdivision_index) then
-			local next_subdivsion_index = flag.next_subdivsion_index
-			local next_t = flag.next_t
+		if jump_data_direction and jump_data_direction.start_subdivision_index == current_subdivision_index then
+			local next_subdivsion_index = jump_data_direction.next_subdivsion_index
+			local next_t = jump_data_direction.next_t
 
 			movement:set_spline_index(current_spline_index, next_subdivsion_index, next_t)
 		else
-			local unbox = var_32_11.point:unbox()
-			local unbox_2 = var_32_11.current_direction:unbox()
-			local var_32_21 = Vector3(unbox_2.y, -unbox_2.x, 0)
-			local count_2 = #var_32_11.positions
-			local num_7 = ANCHOR_OFFSET.y * math.max(count_2 - 1, 1)
-			local var_32_24 = var_32_11.wanted_offset[1]
-			local num_8 = unbox - var_32_24 * var_32_21
-			local var_32_26 = var_32_11.wanted_offset[2]
-			local num_9 = unbox + var_32_26 * var_32_21
-			local var_32_28 = fn_6(arg_32_0, num_8, unbox, num, num_2, num_3, num_4, num_5, num_6, unbox_2)
-			local var_32_29 = fn_6(arg_32_0, num_9, unbox, num, num_2, num_3, num_4, num_5, num_6, unbox_2)
-			local sqrt = math.sqrt((var_32_28.x - unbox.x)^2 + (var_32_28.y - unbox.y)^2)
-			local sqrt_2 = math.sqrt((var_32_29.x - unbox.x)^2 + (var_32_29.y - unbox.y)^2)
-			local num_10 = sqrt + sqrt_2
+			local anchor_point = anchor.point:unbox()
+			local anchor_dir = anchor.current_direction:unbox()
+			local dir_normal = Vector3(anchor_dir.y, -anchor_dir.x, 0)
+			local num_positions = #anchor.positions
+			local anchor_offset_y = anchor_offset.y * math.max(num_positions - 1, 1)
+			local wanted_offset_1 = anchor.wanted_offset[1]
+			local wanted_destination_1 = anchor_point - wanted_offset_1 * dir_normal
+			local wanted_offset_2 = anchor.wanted_offset[2]
+			local wanted_destination_2 = anchor_point + wanted_offset_2 * dir_normal
+			local end_point_1 = find_position_on_navmesh(nav_world, wanted_destination_1, anchor_point, check1_up, check1_down, check2_up, check2_down, check2_side, check2_obstacle_distance, anchor_dir)
+			local end_point_2 = find_position_on_navmesh(nav_world, wanted_destination_2, anchor_point, check1_up, check1_down, check2_up, check2_down, check2_side, check2_obstacle_distance, anchor_dir)
+			local distance_1 = math.sqrt((end_point_1.x - anchor_point.x)^2 + (end_point_1.y - anchor_point.y)^2)
+			local distance_2 = math.sqrt((end_point_2.x - anchor_point.x)^2 + (end_point_2.y - anchor_point.y)^2)
+			local total_distance = distance_1 + distance_2
 
-			if num_10 > 0 then
-				local num_11 = sqrt / num_10
-				local num_12 = sqrt_2 / num_10
-				local num_13 = num_11 * num_7 * 2
-				local num_14 = num_12 * num_7 * 2
+			if total_distance > 0 then
+				local distance_1_percent = distance_1 / total_distance
+				local distance_2_percent = distance_2 / total_distance
+				local distributed_distance_1 = distance_1_percent * anchor_offset_y * 2
+				local distributed_distance_2 = distance_2_percent * anchor_offset_y * 2
 
-				var_32_11.wanted_offset[1] = num_13
-				var_32_11.wanted_offset[2] = num_14
+				anchor.wanted_offset[1] = distributed_distance_1
+				anchor.wanted_offset[2] = distributed_distance_2
 			else
-				var_32_11.wanted_offset[1] = num_7
-				var_32_11.wanted_offset[2] = num_7
+				anchor.wanted_offset[1] = anchor_offset_y
+				anchor.wanted_offset[2] = anchor_offset_y
 			end
 
-			if count_2 == 1 then
-				local num_15 = unbox + (var_32_24 - var_32_26) / 2 * var_32_21
-				local var_32_38 = fn_6(arg_32_0, num_15, unbox, num, num_2, num_3, num_4, num_5, num_6, unbox_2)
+			if num_positions == 1 then
+				local offset = (wanted_offset_1 - wanted_offset_2) / 2
+				local wanted_destination = anchor_point + offset * dir_normal
+				local position = find_position_on_navmesh(nav_world, wanted_destination, anchor_point, check1_up, check1_down, check2_up, check2_down, check2_side, check2_obstacle_distance, anchor_dir)
 
-				var_32_11.positions[1]:store(var_32_38)
+				anchor.positions[1]:store(position)
 			else
-				for j = 1, count_2 do
+				for j = 1, num_positions do
 					if j == 1 then
-						var_32_11.positions[j]:store(var_32_28)
-					elseif j == count_2 then
-						var_32_11.positions[j]:store(var_32_29)
+						anchor.positions[j]:store(end_point_1)
+					elseif j == num_positions then
+						anchor.positions[j]:store(end_point_2)
 					else
-						local num_16 = unbox - (var_32_24 - num_7 * 2 * (j - 1) / (count_2 - 1)) * var_32_21
-						local var_32_40 = fn_6(arg_32_0, num_16, unbox, num, num_2, num_3, num_4, num_5, num_6, unbox_2)
+						local offset = wanted_offset_1 - anchor_offset_y * 2 * (j - 1) / (num_positions - 1)
+						local wanted_destination = anchor_point - offset * dir_normal
+						local position = find_position_on_navmesh(nav_world, wanted_destination, anchor_point, check1_up, check1_down, check2_up, check2_down, check2_side, check2_obstacle_distance, anchor_dir)
 
-						var_32_11.positions[j]:store(var_32_40)
+						anchor.positions[j]:store(position)
 					end
 				end
 			end
@@ -1165,454 +1193,492 @@ function var_0_38(arg_32_0, arg_32_1)
 	end
 end
 
-function var_0_39(arg_33_0, arg_33_1, arg_33_2)
+function update_anchor_direction(nav_world, group, dt)
 	-- function 33
-	local nav_data = arg_33_1.nav_data
-	local anchors = arg_33_1.anchors
-	local count = #anchors
+	local nav_data = group.nav_data
+	local anchors = group.anchors
+	local num_anchors = #anchors
 
-	for i = 1, count do
-		local var_33_3 = anchors[i]
-		local unbox = var_33_3.wanted_direction:unbox()
-		local atan2 = math.atan2(unbox.y, unbox.x)
-		local var_33_6
-		local var_33_7 = arg_33_1.anchors[i - 1]
+	for i = 1, num_anchors do
+		local anchor = anchors[i]
+		local wanted_face_dir = anchor.wanted_direction:unbox()
+		local wanted_rad = math.atan2(wanted_face_dir.y, wanted_face_dir.x)
+		local previous_face_rad
+		local previous_anchor = group.anchors[i - 1]
 
-		if not var_33_7 then
-			local unbox_2 = var_33_7.current_direction:unbox()
+		if previous_anchor then
+			local previous_face_dir = previous_anchor.current_direction:unbox()
 
-			var_33_6 = math.atan2(unbox_2.y, unbox_2.x)
+			previous_face_rad = math.atan2(previous_face_dir.y, previous_face_dir.x)
 		else
-			var_33_6 = atan2
+			previous_face_rad = wanted_rad
 		end
 
-		local num_2 = math.abs(atan2) + math.abs(var_33_6)
-		local num_3 = atan2 * var_33_6
-		local num_4 = (atan2 + var_33_6) / 2
+		local testsum = math.abs(wanted_rad) + math.abs(previous_face_rad)
+		local testproduct = wanted_rad * previous_face_rad
 
-		if not (not (num_2 > math.pi) or not (num_3 < 0)) then
-			if num_4 < 0 then
-				num_4 = num_4 + math.pi
+		wanted_rad = (wanted_rad + previous_face_rad) / 2
+
+		if testsum > math.pi and testproduct < 0 then
+			if wanted_rad < 0 then
+				wanted_rad = wanted_rad + math.pi
 			else
-				num_4 = num_4 - math.pi
+				wanted_rad = wanted_rad - math.pi
 			end
 		end
 
-		local current_direction = var_33_3.current_direction
-		local unbox_3 = current_direction:unbox()
-		local atan2_2 = math.atan2(unbox_3.y, unbox_3.x)
-		local num_5 = num_4 - atan2_2
+		local current_direction = anchor.current_direction
+		local face_dir = current_direction:unbox()
+		local face_rad = math.atan2(face_dir.y, face_dir.x)
+		local difference = wanted_rad - face_rad
 
-		if math.abs(num_5) > 0.0001 then
-			local num_6 = num * arg_33_2
+		if math.abs(difference) > 0.0001 then
+			local movement = TURN_SPEED * dt
 
-			if num_5 > math.pi then
-				num_5 = num_5 - math.pi * 2
-			elseif num_5 < -math.pi then
-				num_5 = num_5 + math.pi * 2
+			if difference > math.pi then
+				difference = difference - math.pi * 2
+			elseif difference < -math.pi then
+				difference = difference + math.pi * 2
 			end
 
-			if num_5 < 0 then
-				num_6 = -num_6
+			if difference < 0 then
+				movement = -movement
 			end
 
-			local num_7 = atan2_2 + num_6
+			face_rad = face_rad + movement
 
-			if math.abs(num_6) >= math.abs(num_5) then
-				num_7 = num_4
+			if math.abs(movement) >= math.abs(difference) then
+				face_rad = wanted_rad
 			end
 
-			unbox_3.x = math.cos(num_7)
-			unbox_3.y = math.sin(num_7)
+			face_dir.x = math.cos(face_rad)
+			face_dir.y = math.sin(face_rad)
 		end
 
-		current_direction:store(unbox_3)
+		current_direction:store(face_dir)
 
-		local units = var_33_3.units
+		local anchor_units = anchor.units
 
-		for k, v in pairs(units) do
-			BLACKBOARDS[v].anchor_direction = current_direction
+		for j, unit in pairs(anchor_units) do
+			local blackboard = BLACKBOARDS[unit]
+
+			blackboard.anchor_direction = current_direction
 		end
 	end
 end
 
-function var_0_40(self, arg_34_1, arg_34_2, arg_34_3)
+function check_for_players(group, nav_world, t, dt)
 	-- function 34
-	local target_units = self.target_units
-	local indexed_members = self.indexed_members
-	local num_indexed_members = self.num_indexed_members
-	local use_controlled_advance = self.use_controlled_advance
-	local flag = false
-	local side = self.side
-	local enemy_units_lookup = side.enemy_units_lookup
-	local VALID_ENEMY_TARGETS_PLAYERS_AND_BOTS = side.VALID_ENEMY_TARGETS_PLAYERS_AND_BOTS
+	local group_targets = group.target_units
+	local indexed_members = group.indexed_members
+	local num_indexed_members = group.num_indexed_members
+	local use_controlled_advance = group.use_controlled_advance
+	local someone_is_climbing = false
+	local side = group.side
+	local enemy_units = side.enemy_units_lookup
+	local valid_players = side.VALID_ENEMY_TARGETS_PLAYERS_AND_BOTS
 
 	for i = 1, num_indexed_members do
-		local var_34_8 = indexed_members[i]
-		local var_34_9 = BLACKBOARDS[var_34_8]
-		local target_unit = var_34_9.target_unit
+		local unit = indexed_members[i]
+		local blackboard = BLACKBOARDS[unit]
+		local target_unit_2 = blackboard.target_unit
 
-		target_unit = target_unit or var_34_9.previous_attacker
-
-		if not use_controlled_advance and not var_34_9.climb_state then
-			flag = true
+		if not target_unit_2 then
+			-- Nothing
 		end
 
-		local var_34_11 = BLACKBOARDS[target_unit]
-		local flag_2 = not var_34_11 and var_34_11.is_player
-		local var_34_13
+		target_unit_2 = blackboard.previous_attacker
 
-		if not flag_2 then
-			var_34_13 = VALID_ENEMY_TARGETS_PLAYERS_AND_BOTS[target_unit]
+		local target_unit = target_unit_2
+
+		::label_34_0::
+
+		if use_controlled_advance and blackboard.climb_state then
+			someone_is_climbing = true
+		end
+
+		local target_blackboard = BLACKBOARDS[target_unit]
+		local is_player = not not target_blackboard and not not target_blackboard.is_player
+		local is_valid
+
+		if is_player then
+			is_valid = valid_players[target_unit]
 		else
-			var_34_13 = not enemy_units_lookup[target_unit] and HEALTH_ALIVE[target_unit]
+			is_valid = not not enemy_units[target_unit] and not not HEALTH_ALIVE[target_unit]
 		end
 
-		if not var_34_13 then
-			target_units[target_unit] = true
-		elseif not target_unit then
-			target_units[target_unit] = nil
-			var_34_9.target_unit = nil
-			var_34_9.previous_attacker = nil
+		if is_valid then
+			group_targets[target_unit] = true
+		elseif target_unit then
+			group_targets[target_unit] = nil
+			blackboard.target_unit = nil
+			blackboard.previous_attacker = nil
 		end
 	end
 
-	local flag_3 = next(target_units) ~= nil
+	local has_targets = next(group_targets) ~= nil
 
-	if not (not self.has_targets and flag_3) then
-		var_0_49(self)
-		fn_11(arg_34_1, self)
+	if group.has_targets and not has_targets then
+		cleanup_after_combat(group)
+		enter_state_find_path_entry(nav_world, group)
 	end
 
-	self.someone_is_climbing = flag
-	self.has_targets = flag_3
+	group.someone_is_climbing = someone_is_climbing
+	group.has_targets = has_targets
 end
 
-function var_0_42(self, arg_35_1)
+function check_prepare_for_combat(group, t)
 	-- function 35
-	if not self.has_targets then
-		var_0_48(self)
+	if group.has_targets then
+		prepare_for_combat(group)
 
-		local flag = self.group_type == "roaming_patrol"
+		local is_roaming_patrol = group.group_type == "roaming_patrol"
+		local use_controlled_advance = group.use_controlled_advance
 
-		if not (not self.use_controlled_advance and flag or self.someone_is_climbing) then
-			var_0_45(self, arg_35_1)
+		if use_controlled_advance and not is_roaming_patrol and not group.someone_is_climbing then
+			enter_state_controlled_advance(group, t)
 		else
-			var_0_50(self, arg_35_1)
+			enter_state_combat(group, t)
 		end
 	end
 end
 
-function var_0_41(self)
+function check_for_doors(group)
 	-- function 36
-	local indexed_members = self.indexed_members
-	local num_indexed_members = self.num_indexed_members
+	local indexed_members = group.indexed_members
+	local num_indexed_members = group.num_indexed_members
 
 	for i = 1, num_indexed_members do
-		local var_36_2 = indexed_members[i]
-		local var_36_3 = BLACKBOARDS[var_36_2]
+		local unit = indexed_members[i]
+		local blackboard = BLACKBOARDS[unit]
 
-		if not var_36_3.is_opening_door then
-			local target_unit = var_36_3.smash_door.target_unit
+		if blackboard.is_opening_door then
+			local door_unit = blackboard.smash_door.target_unit
 
-			var_0_43(self, target_unit)
+			enter_state_opening_door(group, door_unit)
 
 			return true
 		end
 	end
 end
 
-function var_0_43(self, arg_37_1)
+function enter_state_opening_door(group, door_unit)
 	-- function 37
-	fn_4(self, "opening_door")
+	set_state(group, "opening_door")
 
-	self.door_unit = arg_37_1
+	group.door_unit = door_unit
 
-	local indexed_members = self.indexed_members
-	local num_indexed_members = self.num_indexed_members
+	local indexed_members = group.indexed_members
+	local num_indexed_members = group.num_indexed_members
 
 	for i = 1, num_indexed_members do
-		local var_37_2 = indexed_members[i]
-		local var_37_3 = BLACKBOARDS[var_37_2]
+		local unit = indexed_members[i]
+		local blackboard = BLACKBOARDS[unit]
 
-		var_37_3.goal_destination = nil
+		blackboard.goal_destination = nil
 
-		var_37_3.navigation_extension:reset_destination()
+		local navigation_extension = blackboard.navigation_extension
+
+		navigation_extension:reset_destination()
 	end
 
-	local anchors = self.anchors
-	local count = #anchors
+	local anchors = group.anchors
+	local num_anchors = #anchors
 
-	for j = 1, count do
-		local spline = anchors[j].spline
-		local SLOW_SPLINE_SPEED = self.formation_settings.speeds.SLOW_SPLINE_SPEED
+	for i = 1, num_anchors do
+		local anchor = anchors[i]
+		local spline = anchor.spline
+		local spline_speed = group.formation_settings.speeds.SLOW_SPLINE_SPEED
 
-		fn_3(spline, SLOW_SPLINE_SPEED, self)
+		set_spline_speed(spline, spline_speed, group)
 	end
 end
 
-function var_0_44(self)
+function update_state_opening_door(group)
 	-- function 38
-	if not ScriptUnit.extension(self.door_unit, "door_system"):is_opening() then
-		self.door_unit = nil
+	local door_extension = ScriptUnit.extension(group.door_unit, "door_system")
 
-		local indexed_members = self.indexed_members
-		local num_indexed_members = self.num_indexed_members
+	if not door_extension:is_opening() then
+		group.door_unit = nil
+
+		local indexed_members = group.indexed_members
+		local num_indexed_members = group.num_indexed_members
 
 		for i = 1, num_indexed_members do
-			local var_38_2 = indexed_members[i]
-			local var_38_3 = BLACKBOARDS[var_38_2]
+			local unit = indexed_members[i]
+			local blackboard = BLACKBOARDS[unit]
 
-			var_38_3.goal_destination = var_38_3.stored_goal_destination
+			blackboard.goal_destination = blackboard.stored_goal_destination
 		end
 
-		local anchors = self.anchors
-		local count = #anchors
+		local anchors = group.anchors
+		local num_anchors = #anchors
 
-		for j = 1, count do
-			local spline = anchors[j].spline
-			local SPLINE_SPEED = self.formation_settings.speeds.SPLINE_SPEED
+		for i = 1, num_anchors do
+			local anchor = anchors[i]
+			local spline = anchor.spline
+			local spline_speed = group.formation_settings.speeds.SPLINE_SPEED
 
-			fn_3(spline, SPLINE_SPEED, self)
+			set_spline_speed(spline, spline_speed, group)
 		end
 
-		fn_4(self, "patrolling")
+		set_state(group, "patrolling")
 	end
 end
 
-function var_0_45(self, arg_39_1)
+function enter_state_controlled_advance(group, t)
 	-- function 39
-	self.attack_latest_t = arg_39_1 + num_3
+	group.attack_latest_t = t + CONTROLLED_ADVANCE_TIME_LIMIT
 
-	local indexed_members = self.indexed_members
-	local num_indexed_members = self.num_indexed_members
+	local indexed_members = group.indexed_members
+	local num_indexed_members = group.num_indexed_members
 
 	for i = 1, num_indexed_members do
-		local var_39_2 = indexed_members[i]
-		local var_39_3 = BLACKBOARDS[var_39_2]
+		local unit = indexed_members[i]
+		local blackboard = BLACKBOARDS[unit]
+		local navigation_extension = blackboard.navigation_extension
 
-		var_39_3.navigation_extension:set_max_speed(num_2)
-		AiUtils.enter_combat(var_39_2, var_39_3)
+		navigation_extension:set_max_speed(CONTROLLED_ADVANCE_SPEED)
+		AiUtils.enter_combat(unit, blackboard)
 	end
 
-	fn_4(self, "controlled_advance")
-	fn_2(self, "PLAYER_SPOTTED")
+	set_state(group, "controlled_advance")
+	play_sound(group, "PLAYER_SPOTTED")
 end
 
-local function fn_14(self)
+function acquire_targets(group)
 	-- function 40
-	local target_units = self.target_units
-	local num = 0
+	local group_targets = group.target_units
+	local target_count = 0
 
-	for k, v in pairs(target_units) do
-		num = num + 1
+	for _, _ in pairs(group_targets) do
+		target_count = target_count + 1
 	end
 
-	local anchors = self.anchors
-	local count = #anchors
-	local max = math.max(1, count / num)
+	local anchors = group.anchors
+	local num_anchors = #anchors
+	local anchors_to_targets_ratio = math.max(1, num_anchors / target_count)
 
-	for k_2 = 1, count do
-		local var_40_5 = anchors[k_2]
-		local ceil = math.ceil(k_2 / max)
-		local num_2 = 1
-		local var_40_8
+	for i = 1, num_anchors do
+		local anchor = anchors[i]
+		local target_unit_index = math.ceil(i / anchors_to_targets_ratio)
+		local current_index = 1
+		local selected_target_unit
 
-		for k_3, v_2 in pairs(target_units) do
-			if ceil <= num_2 then
-				var_40_8 = k_3
+		for target_unit, _ in pairs(group_targets) do
+			if target_unit_index <= current_index then
+				selected_target_unit = target_unit
 
 				break
 			end
 
-			num_2 = num_2 + 1
+			current_index = current_index + 1
 		end
 
-		fassert(var_40_8, "No target from aquire_targets")
+		fassert(selected_target_unit, "No target from aquire_targets")
 
-		var_40_5.target_unit = var_40_8
+		anchor.target_unit = selected_target_unit
 	end
 end
 
-function var_0_47(arg_41_0, arg_41_1, arg_41_2, arg_41_3)
+function controlled_advance(nav_world, group, t, dt)
 	-- function 41
-	local flag = false
+	local should_attack = false
 
-	if arg_41_2 > arg_41_1.controlled_advance_distance_check_t then
-		arg_41_1.controlled_advance_distance_check_t = arg_41_2 + 0.5
+	if t > group.controlled_advance_distance_check_t then
+		group.controlled_advance_distance_check_t = t + 0.5
 
-		local indexed_members = arg_41_1.indexed_members
-		local num_indexed_members = arg_41_1.num_indexed_members
+		local indexed_members = group.indexed_members
+		local num_indexed_members = group.num_indexed_members
 
 		for i = 1, num_indexed_members do
-			local var_41_3 = indexed_members[i]
-			local var_41_4 = POSITION_LOOKUP[var_41_3]
-			local target_units = arg_41_1.target_units
+			local unit = indexed_members[i]
+			local unit_pos = POSITION_LOOKUP[unit]
+			local group_targets = group.target_units
 
-			for k, v in pairs(target_units) do
-				if not HEALTH_ALIVE[k] then
-					local var_41_6 = POSITION_LOOKUP[k]
+			for target_unit, _ in pairs(group_targets) do
+				if HEALTH_ALIVE[target_unit] then
+					local target_pos = POSITION_LOOKUP[target_unit]
+					local distance_sq = Vector3_distance_squared(unit_pos, target_pos)
 
-					if distance_squared(var_41_4, var_41_6) < num_4 then
-						flag = true
+					if distance_sq < COMBAT_RANGE_SQ then
+						should_attack = true
 
 						break
 					end
 				else
-					target_units[k] = nil
+					group_targets[target_unit] = nil
 				end
 			end
 
-			if not flag then
+			if should_attack then
 				break
 			end
 		end
 	end
 
-	if not (flag or not (arg_41_2 > arg_41_1.attack_latest_t)) then
-		var_0_50(arg_41_1, arg_41_2)
+	if should_attack or t > group.attack_latest_t then
+		enter_state_combat(group, t)
 	end
 end
 
-function var_0_48(self)
+function prepare_for_combat(group)
 	-- function 42
-	fn_14(self)
+	acquire_targets(group)
 
-	local network = Managers.state.network
-	local indexed_members = self.indexed_members
-	local num_indexed_members = self.num_indexed_members
+	local network_manager = Managers.state.network
+	local indexed_members = group.indexed_members
+	local num_indexed_members = group.num_indexed_members
 
 	for i = 1, num_indexed_members do
-		local var_42_3 = indexed_members[i]
-		local var_42_4 = BLACKBOARDS[var_42_3]
+		local unit = indexed_members[i]
+		local blackboard = BLACKBOARDS[unit]
 
-		if not ScriptUnit.has_extension(var_42_3, "ai_inventory_system") then
-			local unit_game_object_id = network:unit_game_object_id(var_42_3)
+		if ScriptUnit.has_extension(unit, "ai_inventory_system") then
+			local unit_id = network_manager:unit_game_object_id(unit)
 
-			network.network_transmit:send_rpc_all("rpc_ai_inventory_wield", unit_game_object_id, 1)
+			network_manager.network_transmit:send_rpc_all("rpc_ai_inventory_wield", unit_id, 1)
 		end
 
-		if not ScriptUnit.has_extension(var_42_3, "ai_slot_system") then
-			Managers.state.entity:system("ai_slot_system"):do_slot_search(var_42_3, true)
+		if ScriptUnit.has_extension(unit, "ai_slot_system") then
+			local ai_slot_system = Managers.state.entity:system("ai_slot_system")
+
+			ai_slot_system:do_slot_search(unit, true)
 		end
 
-		if not ScriptUnit.extension(var_42_3, "ai_group_system").use_patrol_perception then
-			local extension = ScriptUnit.extension(var_42_3, "ai_system")
-			local breed = var_42_4.breed
-			local patrol_active_perception = breed.patrol_active_perception
-			local patrol_active_target_selection = breed.patrol_active_target_selection
+		local ai_group_extension = ScriptUnit.extension(unit, "ai_group_system")
+		local use_patrol_perception = ai_group_extension.use_patrol_perception
 
-			extension:set_perception(patrol_active_perception, patrol_active_target_selection)
+		if use_patrol_perception then
+			local ai_extension = ScriptUnit.extension(unit, "ai_system")
+			local breed = blackboard.breed
+			local perception_func_name = breed.patrol_active_perception
+			local target_selection_func_name = breed.patrol_active_target_selection
+
+			ai_extension:set_perception(perception_func_name, target_selection_func_name)
 		end
 
-		var_42_4.preferred_door_action = "smash"
+		blackboard.preferred_door_action = "smash"
 
-		var_42_4.navigation_extension:allow_layer("planks", true)
-		GwNavTagLayerCostTable.allow_layer(self.nav_data.navtag_layer_cost_table, LAYER_ID_MAPPING.planks)
+		blackboard.navigation_extension:allow_layer("planks", true)
+		GwNavTagLayerCostTable.allow_layer(group.nav_data.navtag_layer_cost_table, LAYER_ID_MAPPING.planks)
 	end
 end
 
-function var_0_49(self)
+function cleanup_after_combat(group)
 	-- function 43
-	local indexed_members = self.indexed_members
-	local num_indexed_members = self.num_indexed_members
-	local network = Managers.state.network
+	local indexed_members = group.indexed_members
+	local num_indexed_members = group.num_indexed_members
+	local network_manager = Managers.state.network
 
 	for i = 1, num_indexed_members do
-		local var_43_3 = indexed_members[i]
-		local var_43_4 = BLACKBOARDS[var_43_3]
+		local unit = indexed_members[i]
+		local blackboard = BLACKBOARDS[unit]
 
-		AiUtils.deactivate_unit(var_43_4)
+		AiUtils.deactivate_unit(blackboard)
 
-		local breed = var_43_4.breed
+		local breed = blackboard.breed
 
-		if var_43_4.confirmed_player_sighting or breed.passive_in_patrol == nil or not breed.passive_in_patrol then
-			AiUtils.enter_passive(var_43_3, var_43_4)
+		if not blackboard.confirmed_player_sighting and (breed.passive_in_patrol == nil or breed.passive_in_patrol) then
+			AiUtils.enter_passive(unit, blackboard)
 		end
 
-		if not ScriptUnit.has_extension(var_43_3, "ai_slot_system") then
-			Managers.state.entity:system("ai_slot_system"):do_slot_search(var_43_3, false)
+		if ScriptUnit.has_extension(unit, "ai_slot_system") then
+			local ai_slot_system = Managers.state.entity:system("ai_slot_system")
+
+			ai_slot_system:do_slot_search(unit, false)
 		end
 
-		if not ScriptUnit.extension(var_43_3, "ai_group_system").use_patrol_perception then
-			local extension = ScriptUnit.extension(var_43_3, "ai_system")
-			local patrol_passive_perception = breed.patrol_passive_perception
-			local patrol_passive_target_selection = breed.patrol_passive_target_selection
+		local ai_group_extension = ScriptUnit.extension(unit, "ai_group_system")
+		local use_patrol_perception = ai_group_extension.use_patrol_perception
 
-			extension:set_perception(patrol_passive_perception, patrol_passive_target_selection)
+		if use_patrol_perception then
+			local ai_extension = ScriptUnit.extension(unit, "ai_system")
+			local perception_func_name = breed.patrol_passive_perception
+			local target_selection_func_name = breed.patrol_passive_target_selection
+
+			ai_extension:set_perception(perception_func_name, target_selection_func_name)
 		end
 
-		if not var_43_4.breed.use_navigation_path_splines then
-			GwNavBot.set_use_channel(var_43_4.navigation_extension._nav_bot, false)
+		if blackboard.breed.use_navigation_path_splines then
+			GwNavBot.set_use_channel(blackboard.navigation_extension._nav_bot, false)
 		end
 
-		var_43_4.preferred_door_action = "open"
+		blackboard.preferred_door_action = "open"
 
-		var_43_4.navigation_extension:allow_layer("planks", false)
-		GwNavTagLayerCostTable.forbid_layer(self.nav_data.navtag_layer_cost_table, LAYER_ID_MAPPING.planks)
+		blackboard.navigation_extension:allow_layer("planks", false)
+		GwNavTagLayerCostTable.forbid_layer(group.nav_data.navtag_layer_cost_table, LAYER_ID_MAPPING.planks)
 	end
 
-	self.patrol_in_combat = false
+	group.patrol_in_combat = false
 end
 
-function var_0_50(self, arg_44_1)
+function enter_state_combat(group, t)
 	-- function 44
-	fn_4(self, "in_combat")
+	set_state(group, "in_combat")
 
-	self.patrol_in_combat = true
+	group.patrol_in_combat = true
 
-	local anchors = self.anchors
-	local count = #anchors
+	local anchors = group.anchors
+	local num_anchors = #anchors
 
-	for i = 1, count do
-		local var_44_2 = anchors[i]
-		local target_unit = var_44_2.target_unit
+	for i = 1, num_anchors do
+		local anchor = anchors[i]
+		local target_unit = anchor.target_unit
 
-		if not HEALTH_ALIVE[target_unit] then
-			local units = var_44_2.units
+		if HEALTH_ALIVE[target_unit] then
+			local anchor_units = anchor.units
 
-			for k, v in pairs(units) do
-				local var_44_5 = BLACKBOARDS[v]
+			for j, unit in pairs(anchor_units) do
+				local blackboard = BLACKBOARDS[unit]
 
-				var_44_5.goal_destination = nil
-				var_44_5.target_unit = target_unit
-				var_44_5.target_unit_found_time = arg_44_1
+				blackboard.goal_destination = nil
+				blackboard.target_unit = target_unit
+				blackboard.target_unit_found_time = t
 
-				AiUtils.activate_unit(var_44_5)
+				AiUtils.activate_unit(blackboard)
 
-				if not var_44_5.breed.use_navigation_path_splines then
-					GwNavBot.set_use_channel(var_44_5.navigation_extension._nav_bot, true)
+				if blackboard.breed.use_navigation_path_splines then
+					GwNavBot.set_use_channel(blackboard.navigation_extension._nav_bot, true)
 				end
 			end
 		end
 
-		var_44_2.target_unit = nil
+		anchor.target_unit = nil
 	end
 
-	fn_2(self, "CHARGE")
+	play_sound(group, "CHARGE")
 
-	if not self.has_extra_breed then
-		fn_2(self, "CHARGE_EXTRA")
+	if group.has_extra_breed then
+		play_sound(group, "CHARGE_EXTRA")
 	end
 end
 
-function var_0_26(self)
+function set_patrol_path_broken(group)
 	-- function 45
-	self.patrol_path_broken = true
+	group.patrol_path_broken = true
 
-	local spline_name = self.spline_name
+	local spline_name_2 = group.spline_name
 
-	spline_name = spline_name or ""
+	if not spline_name_2 then
+		-- Nothing
+	end
+
+	spline_name_2 = ""
+
+	local spline_name = spline_name_2
+
+	::label_45_0::
 
 	print("[Patrol] Broken patrol path, spline_name", spline_name)
 
-	local indexed_members = self.indexed_members
-	local num_indexed_members = self.num_indexed_members
+	local members = group.indexed_members
+	local num_indexed_members = group.num_indexed_members
 
 	for i = 1, num_indexed_members do
-		local var_45_3 = indexed_members[i]
-		local var_45_4 = BLACKBOARDS[var_45_3]
+		local unit = members[i]
+		local blackboard = BLACKBOARDS[unit]
 
-		Managers.state.conflict:destroy_unit(var_45_3, var_45_4, "patrol_path_broken")
+		Managers.state.conflict:destroy_unit(unit, blackboard, "patrol_path_broken")
 	end
 end

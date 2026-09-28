@@ -21,86 +21,88 @@ ImguiManager.init = function (self)
 	self._key_bindings = {}
 	self._input_stack = 0
 
-	for k, v in pairs(ImguiConfigurationSettings) do
-		require(v.file)
+	for _, config in pairs(ImguiConfigurationSettings) do
+		require(config.file)
 
-		local var_1_0 = _G[v.class]
+		local class_object = _G[config.class]
 
-		self:add_gui(var_1_0, v.category, v.name)
+		self:add_gui(class_object, config.category, config.name)
 	end
 
 	self:_load_settings()
 end
 
-local function fn(self, arg_2_1)
+local function sorted_index(list, name)
 	-- function 2
-	for i = 1, #self do
-		local name = self[i].name
+	for i = 1, #list do
+		local list_name = list[i].name
 
-		if name == arg_2_1 then
+		if list_name == name then
 			return i, true
-		elseif arg_2_1 < name then
+		elseif name < list_name then
 			return i, false
 		end
 	end
 
-	return #self + 1, false
+	return #list + 1, false
 end
 
-ImguiManager._call_on_guis = function (self, arg_3_1, ...)
+ImguiManager._call_on_guis = function (self, func_name, ...)
 	-- function 3
-	for k, v in pairs(self._guis_by_category) do
-		for k_2, v_2 in pairs(v.list) do
-			local gui = v_2.gui
-			local var_3_1 = gui[arg_3_1]
+	for _, category in pairs(self._guis_by_category) do
+		for _, menu_item in pairs(category.list) do
+			local gui = menu_item.gui
+			local func = gui[func_name]
 
-			if not var_3_1 then
-				var_3_1(gui, ...)
+			if func then
+				func(gui, ...)
 			end
 		end
 	end
 end
 
-ImguiManager.add_gui = function (self, arg_4_1, arg_4_2, arg_4_3, arg_4_4)
+ImguiManager.add_gui = function (self, gui_class, category_name, name, enabled)
 	-- function 4
-	local var_4_0 = arg_4_1:new()
+	local gui = gui_class:new()
 
-	assert(var_4_0.init)
-	assert(var_4_0.update)
-	assert(var_4_0.draw)
-	assert(var_4_0.is_persistent)
+	assert(gui.init)
+	assert(gui.update)
+	assert(gui.draw)
+	assert(gui.is_persistent)
 
-	local var_4_1, var_4_2 = fn(self._guis_by_category, arg_4_2)
+	local category_index, has_category = sorted_index(self._guis_by_category, category_name)
 
-	if not var_4_2 then
-		table.insert(self._guis_by_category, var_4_1, {
-			name = arg_4_2,
+	if not has_category then
+		table.insert(self._guis_by_category, category_index, {
+			name = category_name,
 			list = {}
 		})
 
-		self._key_bindings[arg_4_2] = {}
+		self._key_bindings[category_name] = {}
 	end
 
-	local list = self._guis_by_category[var_4_1].list
-	local var_4_4 = fn(list, arg_4_3)
+	local category_list = self._guis_by_category[category_index].list
+	local gui_index = sorted_index(category_list, name)
 
-	table.insert(list, var_4_4, {
-		gui = var_4_0,
-		name = arg_4_3,
-		enabled = arg_4_4
+	table.insert(category_list, gui_index, {
+		gui = gui,
+		name = name,
+		enabled = enabled
 	})
 
-	if not self._key_bindings[arg_4_2][arg_4_3] then
-		self._key_bindings[arg_4_2][arg_4_3] = {
+	local keybind_settings = self._key_bindings[category_name][name]
+
+	if not keybind_settings then
+		self._key_bindings[category_name][name] = {
 			id = 0,
 			keybind = {}
 		}
 	end
 
-	local var_4_5 = self._key_bindings[arg_4_2]
+	local category_keybinds = self._key_bindings[category_name]
 
-	for k, v in pairs(list) do
-		var_4_5[v.name].id = k
+	for i, menu_item in pairs(category_list) do
+		category_keybinds[menu_item.name].id = i
 	end
 end
 
@@ -109,10 +111,10 @@ ImguiManager.destroy = function (self)
 	return self:_call_on_guis("destroy")
 end
 
-ImguiManager.set_open = function (self, arg_6_1)
+ImguiManager.set_open = function (self, bool)
 	-- function 6
-	if arg_6_1 ~= self._open then
-		if not arg_6_1 then
+	if bool ~= self._open then
+		if bool then
 			Imgui.open_imgui()
 			self:_capture_input()
 		else
@@ -125,45 +127,45 @@ ImguiManager.set_open = function (self, arg_6_1)
 			self._settings = false
 		end
 
-		self._open = arg_6_1
+		self._open = bool
 	end
 end
 
-ImguiManager.update = function (self, arg_7_1, arg_7_2)
+ImguiManager.update = function (self, t, dt)
 	-- function 7
-	if not Keyboard.pressed(Keyboard.button_index("f3")) then
+	if Keyboard.pressed(Keyboard.button_index("f3")) then
 		self:set_open(not self._open)
 	end
 
-	if not self._open then
+	if self._open then
 		self:update_main_menu()
 	end
 
-	self:update_guis(arg_7_1, arg_7_2)
+	self:update_guis(t, dt)
 	self:_update_keybinds()
 end
 
-ImguiManager.post_update = function (self, arg_8_1, arg_8_2)
+ImguiManager.post_update = function (self, t, dt)
 	-- function 8
-	self:post_update_guis(arg_8_1, arg_8_2)
+	self:post_update_guis(t, dt)
 end
 
-ImguiManager.post_update_guis = function (self, arg_9_1, arg_9_2)
+ImguiManager.post_update_guis = function (self, t, dt)
 	-- function 9
-	local _persistant_windows = self._persistant_windows
-	local _open = self._open
+	local prev_persistant = self._persistant_windows
+	local is_open = self._open
 
-	for k, v in pairs(self._guis_by_category) do
-		for k_2, v_2 in pairs(v.list) do
-			if not v_2.enabled then
-				local gui = v_2.gui
+	for _, category in pairs(self._guis_by_category) do
+		for _, menu_item in pairs(category.list) do
+			if menu_item.enabled then
+				local gui = menu_item.gui
 
-				if not gui.post_update then
-					gui:post_update(arg_9_1, arg_9_2, _open)
+				if gui.post_update then
+					gui:post_update(t, dt, is_open)
 
-					if _open or gui:is_persistent() or not v_2.opened_with_keybind then
-						if not gui:post_draw(_open, arg_9_1, arg_9_2) then
-							self:_set_gui_enabled(v_2, false)
+					if is_open or gui:is_persistent() or menu_item.opened_with_keybind then
+						if gui:post_draw(is_open, t, dt) then
+							self:_set_gui_enabled(menu_item, false)
 						end
 
 						self._persistant_windows = self._persistant_windows + 1
@@ -173,26 +175,26 @@ ImguiManager.post_update_guis = function (self, arg_9_1, arg_9_2)
 		end
 	end
 
-	if not (_open or not (_persistant_windows <= 0) or not (self._persistant_windows > 0)) then
+	if not is_open and prev_persistant <= 0 and self._persistant_windows > 0 then
 		Imgui.open_imgui()
-	elseif not (_open or not (_persistant_windows > 0) or not (self._persistant_windows <= 0)) then
+	elseif not is_open and prev_persistant > 0 and self._persistant_windows <= 0 then
 		Imgui.close_imgui()
 	end
 end
 
 ImguiManager.update_main_menu = function (self)
 	-- function 10
-	if not Imgui.begin_main_menu_bar() then
-		for k, v in pairs(self._guis_by_category) do
-			local name = v.name
-			local list = v.list
+	if Imgui.begin_main_menu_bar() then
+		for _, category in pairs(self._guis_by_category) do
+			local category_name = category.name
+			local category_list = category.list
 
-			if not Imgui.begin_menu(name) then
-				for k_2, v_2 in pairs(list) do
-					local _get_keybind_text = self:_get_keybind_text(name, v_2.name)
+			if Imgui.begin_menu(category_name) then
+				for _, menu_item in pairs(category_list) do
+					local keybinds = self:_get_keybind_text(category_name, menu_item.name)
 
-					if not Imgui.menu_item(v_2.name .. _get_keybind_text) then
-						self:_set_gui_enabled(v_2, not v_2.enabled)
+					if Imgui.menu_item(menu_item.name .. keybinds) then
+						self:_set_gui_enabled(menu_item, not menu_item.enabled)
 					end
 				end
 
@@ -200,11 +202,11 @@ ImguiManager.update_main_menu = function (self)
 			end
 		end
 
-		if not Imgui.menu_item("[Keybinds]") then
+		if Imgui.menu_item("[Keybinds]") then
 			self._settings = not self._settings
 		end
 
-		if not Imgui.menu_item("[X]") then
+		if Imgui.menu_item("[X]") then
 			self:set_open(false)
 		end
 
@@ -212,24 +214,24 @@ ImguiManager.update_main_menu = function (self)
 	end
 end
 
-ImguiManager.update_guis = function (self, arg_11_1, arg_11_2)
+ImguiManager.update_guis = function (self, t, dt)
 	-- function 11
-	local _persistant_windows = self._persistant_windows
+	local prev_persistant = self._persistant_windows
 
 	self._persistant_windows = 0
 
-	local _open = self._open
+	local is_open = self._open
 
-	for k, v in pairs(self._guis_by_category) do
-		for k_2, v_2 in pairs(v.list) do
-			if not v_2.enabled then
-				local gui = v_2.gui
+	for _, category in pairs(self._guis_by_category) do
+		for _, menu_item in pairs(category.list) do
+			if menu_item.enabled then
+				local gui = menu_item.gui
 
-				gui:update(arg_11_1, arg_11_2, _open)
+				gui:update(t, dt, is_open)
 
-				if _open or gui:is_persistent() or not v_2.opened_with_keybind then
-					if not gui:draw(_open, arg_11_1, arg_11_2) then
-						self:_set_gui_enabled(v_2, false)
+				if is_open or gui:is_persistent() or menu_item.opened_with_keybind then
+					if gui:draw(is_open, t, dt) then
+						self:_set_gui_enabled(menu_item, false)
 					end
 
 					self._persistant_windows = self._persistant_windows + 1
@@ -238,14 +240,14 @@ ImguiManager.update_guis = function (self, arg_11_1, arg_11_2)
 		end
 	end
 
-	if not (_open or not (_persistant_windows <= 0) or not (self._persistant_windows > 0)) then
+	if not is_open and prev_persistant <= 0 and self._persistant_windows > 0 then
 		Imgui.open_imgui()
-	elseif not (_open or not (_persistant_windows > 0) or not (self._persistant_windows <= 0)) then
+	elseif not is_open and prev_persistant > 0 and self._persistant_windows <= 0 then
 		Imgui.close_imgui()
 	end
 
-	if not self._settings then
-		if not self:_draw_keybind_settings() then
+	if self._settings then
+		if self:_draw_keybind_settings() then
 			self._settings = false
 		end
 	else
@@ -273,77 +275,77 @@ ImguiManager.on_venture_end = function (self, ...)
 	return self:_call_on_guis("on_venture_end", ...)
 end
 
-ImguiManager._input_manager_do = function (arg_16_0, arg_16_1)
+ImguiManager._input_manager_do = function (self, method)
 	-- function 16
-	local input = Managers.input
+	local input_manager = Managers.input
 
-	if not input then
-		if not input:get_input_service("imgui") then
-			input:create_input_service("imgui", "ImguiKeymaps")
-			input:map_device_to_service("imgui", "keyboard")
-			input:map_device_to_service("imgui", "gamepad")
-			input:map_device_to_service("imgui", "mouse")
+	if input_manager then
+		if not input_manager:get_input_service("imgui") then
+			input_manager:create_input_service("imgui", "ImguiKeymaps")
+			input_manager:map_device_to_service("imgui", "keyboard")
+			input_manager:map_device_to_service("imgui", "gamepad")
+			input_manager:map_device_to_service("imgui", "mouse")
 		end
 
-		input[arg_16_1](input, ALL_INPUT_METHODS, 1, "imgui", "ImguiManager")
+		input_manager[method](input_manager, ALL_INPUT_METHODS, 1, "imgui", "ImguiManager")
 	end
 end
 
-ImguiManager._set_gui_enabled = function (self, arg_17_1, arg_17_2, arg_17_3)
+ImguiManager._set_gui_enabled = function (self, menu_item, enabled, capture_input)
 	-- function 17
-	if not arg_17_2 then
-		if not arg_17_1.gui.on_show then
-			arg_17_1.gui:on_show()
+	if enabled then
+		if menu_item.gui.on_show then
+			menu_item.gui:on_show()
 		end
 
-		if not arg_17_3 then
+		if capture_input then
 			self:_capture_input()
 
-			arg_17_1.opened_with_keybind = true
+			menu_item.opened_with_keybind = true
 		end
 	else
-		if not arg_17_1.gui.on_hide then
-			arg_17_1.gui:on_hide()
+		if menu_item.gui.on_hide then
+			menu_item.gui:on_hide()
 		end
 
-		if not arg_17_1.opened_with_keybind then
+		if menu_item.opened_with_keybind then
 			self:_release_input()
 
-			arg_17_1.opened_with_keybind = false
+			menu_item.opened_with_keybind = false
 		end
 	end
 
-	arg_17_1.enabled = arg_17_2
+	menu_item.enabled = enabled
 end
 
 ImguiManager._update_keybinds = function (self)
 	-- function 18
-	for k, v in pairs(self._key_bindings) do
-		for k_2, v_2 in pairs(v) do
-			local keybind = v_2.keybind
-			local count = #keybind
+	for category, items in pairs(self._key_bindings) do
+		for name, val in pairs(items) do
+			local keybind = val.keybind
+			local num_keys = #keybind
 
-			if count > 0 then
-				local flag = true
+			if num_keys > 0 then
+				local modifiers = true
 
-				for i4 = 1, count - 1 do
-					local button_index = Keyboard.button_index(keybind[i4])
+				for i = 1, num_keys - 1 do
+					local key_index = Keyboard.button_index(keybind[i])
 
-					if not (not button_index and not (Keyboard.button(button_index) <= 0)) then
-						flag = false
+					if not key_index or Keyboard.button(key_index) <= 0 then
+						modifiers = false
 
 						break
 					end
 				end
 
-				if not flag then
-					local button_index_2 = Keyboard.button_index(keybind[count])
+				if modifiers then
+					local key_index = Keyboard.button_index(keybind[num_keys])
 
-					if not button_index_2 and not Keyboard.pressed(button_index_2) then
-						local find_by_key, var_18_6 = table.find_by_key(self._guis_by_category, "name", k)
-						local var_18_7 = var_18_6.list[v_2.id]
+					if key_index and Keyboard.pressed(key_index) then
+						local _, category = table.find_by_key(self._guis_by_category, "name", category)
+						local menu_item = category.list[val.id]
 
-						self:_set_gui_enabled(var_18_7, not var_18_7.enabled, true)
+						self:_set_gui_enabled(menu_item, not menu_item.enabled, true)
 					end
 				end
 			end
@@ -353,61 +355,72 @@ end
 
 ImguiManager._draw_keybind_settings = function (self)
 	-- function 19
-	local begin_window = Imgui.begin_window("Keybinds")
+	local do_close = Imgui.begin_window("Keybinds")
 
 	Imgui.text("<esc> to clear keybind")
 
-	for k, v in pairs(self._key_bindings) do
-		Imgui.text(k)
-		Imgui.tree_push(k)
+	for category, items in pairs(self._key_bindings) do
+		Imgui.text(category)
+		Imgui.tree_push(category)
 
-		for k_2, v_2 in pairs(v) do
-			Imgui.tree_push(k_2)
+		for name, val in pairs(items) do
+			Imgui.tree_push(name)
 
-			local keybind = v_2.keybind
+			local keybind = val.keybind
 
-			for i4 = 1, #keybind do
-				local flag
+			for i = 1, #keybind do
+				local selected_for_rebind = self._rebind_action == name and self._rebind_category == category and self._rebind_id == i
+				local str
 
-				flag = not (self._rebind_action ~= k_2 or self._rebind_category ~= k or self._rebind_id == i4) and "<?>" and keybind[i4]
+				if selected_for_rebind then
+					str = "<?>"
 
-				if not Imgui.button(flag) then
-					self._rebind_id = i4
-					self._rebind_action = k_2
-					self._rebind_category = k
+					goto label_19_0
+				end
+
+				str = keybind[i]
+
+				local button_name = str
+
+				::label_19_0::
+
+				if Imgui.button(button_name) then
+					self._rebind_id = i
+					self._rebind_action = name
+					self._rebind_category = category
 				end
 
 				Imgui.same_line()
 			end
 
-			if not Imgui.button("+", 20, 20) then
-				local num = #keybind + 1
+			if Imgui.button("+", 20, 20) then
+				local new_id = #keybind + 1
 
-				keybind[num] = ""
-				self._rebind_id = num
-				self._rebind_action = k_2
-				self._rebind_category = k
+				keybind[new_id] = ""
+				self._rebind_id = new_id
+				self._rebind_action = name
+				self._rebind_category = category
 			end
 
 			Imgui.same_line()
-			Imgui.text(k_2)
+			Imgui.text(name)
 			Imgui.tree_pop()
 		end
 
 		Imgui.tree_pop()
 	end
 
-	if not self._rebind_action then
-		local any_pressed = Keyboard.any_pressed()
+	if self._rebind_action then
+		local input = Keyboard.any_pressed()
 
-		if not any_pressed then
-			local button_name = Keyboard.button_name(any_pressed)
-			local keybind_2 = self._key_bindings[self._rebind_category][self._rebind_action].keybind
+		if input then
+			local input_name = Keyboard.button_name(input)
+			local keybind = self._key_bindings[self._rebind_category][self._rebind_action].keybind
 
-			if button_name == "esc" then
-				table.remove(keybind_2, self._rebind_id)
+			if input_name == "esc" then
+				table.remove(keybind, self._rebind_id)
 			else
-				keybind_2[self._rebind_id] = button_name
+				keybind[self._rebind_id] = input_name
 			end
 
 			self._rebind_action = nil
@@ -420,28 +433,28 @@ ImguiManager._draw_keybind_settings = function (self)
 
 	Imgui.end_window()
 
-	return begin_window
+	return do_close
 end
 
-ImguiManager._get_keybind_text = function (self, arg_20_1, arg_20_2)
+ImguiManager._get_keybind_text = function (self, category_name, menu_item)
 	-- function 20
-	local keybind = self._key_bindings[arg_20_1][arg_20_2].keybind
-	local count = #keybind
+	local keybind = self._key_bindings[category_name][menu_item].keybind
+	local num_keybinds = #keybind
 
-	if count > 0 then
-		local str = " ["
+	if num_keybinds > 0 then
+		local keybind_text = " ["
 
-		for i = 1, count do
+		for i = 1, num_keybinds do
 			if i > 1 then
-				str = str .. "+"
+				keybind_text = keybind_text .. "+"
 			end
 
-			str = str .. keybind[i]
+			keybind_text = keybind_text .. keybind[i]
 		end
 
-		local str_2 = str .. "]"
+		keybind_text = keybind_text .. "]"
 
-		return string.upper(str_2)
+		return string.upper(keybind_text)
 	end
 
 	return ""
@@ -457,29 +470,37 @@ ImguiManager._load_settings = function (self)
 	-- function 22
 	local setting = Development.setting("ImguiManager_keybinds")
 
-	setting = setting or {}
+	if not setting then
+		-- Nothing
+	end
 
-	for k, v in pairs(self._key_bindings) do
-		local var_22_1 = setting[k]
+	setting = {}
 
-		if not var_22_1 then
-			for k_2, v_2 in pairs(v) do
-				local var_22_2 = v[k_2]
+	local keybinds = setting
+
+	::label_22_0::
+
+	for category, items in pairs(self._key_bindings) do
+		local category_binds = keybinds[category]
+
+		if category_binds then
+			for name, val in pairs(items) do
+				local var_22_1 = items[name]
 				local keybind
 
-				if not var_22_1[k_2] then
-					keybind = var_22_1[k_2].keybind
+				if category_binds[name] then
+					keybind = category_binds[name].keybind
 
 					if not keybind then
 						-- Nothing
 					end
 				end
 
-				keybind = v[k_2].keybind
+				keybind = items[name].keybind
 
-				::label_22_0::
+				::label_22_1::
 
-				var_22_2.keybind = keybind
+				var_22_1.keybind = keybind
 			end
 		end
 	end
@@ -487,9 +508,9 @@ end
 
 ImguiManager._capture_input = function (self)
 	-- function 23
-	local _input_stack = self._input_stack
+	local input_stack = self._input_stack
 
-	if _input_stack == 0 then
+	if input_stack == 0 then
 		self:_input_manager_do("capture_input")
 		ShowCursorStack.show("ImguiManager")
 		Imgui.enable_imgui_input_system(Imgui.KEYBOARD)
@@ -497,16 +518,16 @@ ImguiManager._capture_input = function (self)
 		Imgui.enable_imgui_input_system(Imgui.GAMEPAD)
 	end
 
-	self._input_stack = _input_stack + 1
+	self._input_stack = input_stack + 1
 end
 
 ImguiManager._release_input = function (self)
 	-- function 24
-	local num = self._input_stack - 1
+	local input_stack = self._input_stack - 1
 
-	assert(num >= 0, "imgui input stack underflow")
+	assert(input_stack >= 0, "imgui input stack underflow")
 
-	if num == 0 then
+	if input_stack == 0 then
 		self:_input_manager_do("release_input")
 		ShowCursorStack.hide("ImguiManager")
 		Imgui.disable_imgui_input_system(Imgui.KEYBOARD)
@@ -514,44 +535,44 @@ ImguiManager._release_input = function (self)
 		Imgui.disable_imgui_input_system(Imgui.MOUSE)
 	end
 
-	self._input_stack = num
+	self._input_stack = input_stack
 end
 
 local ImguiX = ImguiX
 
-ImguiX = ImguiX or {}
+ImguiX = not not ImguiX or not not {}
 ImguiX = ImguiX
 
-ImguiX.color_edit_4 = function (arg_25_0, arg_25_1, arg_25_2, arg_25_3, arg_25_4)
+ImguiX.color_edit_4 = function (label, a, r, g, b)
 	-- function 25
-	arg_25_2, arg_25_3, arg_25_4, arg_25_1 = Imgui.color_edit_4(arg_25_0, arg_25_2 / 255, arg_25_3 / 255, arg_25_4 / 255, arg_25_1 / 255)
+	r, g, b, a = Imgui.color_edit_4(label, r / 255, g / 255, b / 255, a / 255)
 
-	return arg_25_1 * 255, arg_25_2 * 255, arg_25_3 * 255, arg_25_4 * 255
+	return a * 255, r * 255, g * 255, b * 255
 end
 
-ImguiX.heading = function (arg_26_0, arg_26_1, ...)
+ImguiX.heading = function (key, fmt, ...)
 	-- function 26
-	Imgui.text_colored(arg_26_0 .. ":", 200, 200, 255, 255)
+	Imgui.text_colored(key .. ":", 200, 200, 255, 255)
 	Imgui.same_line()
-	Imgui.text(string.format(arg_26_1, ...))
+	Imgui.text(string.format(fmt, ...))
 end
 
-ImguiX.combo_search = function (arg_27_0, arg_27_1, arg_27_2, arg_27_3, arg_27_4)
+ImguiX.combo_search = function (index, search_results, search_text, data, optional_aliases)
 	-- function 27
-	local input_text = Imgui.input_text("Search", arg_27_2)
+	local new_search_text = Imgui.input_text("Search", search_text)
 
-	if input_text ~= arg_27_2 then
-		arg_27_1 = {}
+	if new_search_text ~= search_text then
+		search_results = {}
 
-		local gsub = string.gsub(string.lower(input_text), " ", ".-")
+		local needle = string.gsub(string.lower(new_search_text), " ", ".-")
 
-		for i, v in ipairs(arg_27_3) do
-			if not string.find(string.lower(v), gsub) then
-				arg_27_1[#arg_27_1 + 1] = v
-			elseif not arg_27_4 then
-				for i_2, v_2 in ipairs(arg_27_4) do
-					if not string.find(string.lower(v_2[i]), gsub) then
-						arg_27_1[#arg_27_1 + 1] = v
+		for i, datum in ipairs(data) do
+			if string.find(string.lower(datum), needle) then
+				search_results[#search_results + 1] = datum
+			elseif optional_aliases then
+				for _, aliases in ipairs(optional_aliases) do
+					if string.find(string.lower(aliases[i]), needle) then
+						search_results[#search_results + 1] = datum
 
 						break
 					end
@@ -559,11 +580,11 @@ ImguiX.combo_search = function (arg_27_0, arg_27_1, arg_27_2, arg_27_3, arg_27_4
 			end
 		end
 
-		arg_27_0 = -1
-		arg_27_2 = input_text
+		index = -1
+		search_text = new_search_text
 	end
 
-	arg_27_0 = Imgui.list_box("##element_select", arg_27_0, arg_27_1, 5)
+	index = Imgui.list_box("##element_select", index, search_results, 5)
 
-	return arg_27_0, arg_27_1, arg_27_2
+	return index, search_results, search_text
 end

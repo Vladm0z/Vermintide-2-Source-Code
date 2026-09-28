@@ -2,17 +2,17 @@
 
 XboxEventManager = class(XboxEventManager)
 
-local num = 2
+local TIME_BETWEEN_EVENTS = 2
 
 XboxEventManager.init = function (self)
 	-- function 1
 	self._events_to_write_queue = {}
 	self._priority_events_queue = {}
 	self._immediate_queue = {}
-	self._timer = num
+	self._timer = TIME_BETWEEN_EVENTS
 end
 
-XboxEventManager.write = function (arg_2_0, arg_2_1, arg_2_2, arg_2_3, arg_2_4, arg_2_5, arg_2_6)
+XboxEventManager.write = function (self, event, event_data, debug_string, debug_print_func, prioritize, skip_wait_time)
 	-- function 2
 	Application.warning("[XboxEventManager:write] No Stats are implemented yet")
 
@@ -23,64 +23,72 @@ XboxEventManager.write = function (arg_2_0, arg_2_1, arg_2_2, arg_2_3, arg_2_4, 
 	local str = "Adding%sEvent: %s"
 	local flag
 
-	flag = not arg_2_5 and " prioritized " and " "
+	flag = (not prioritize or not " prioritized ") and not not " "
 
-	error(format(str, flag, arg_2_1))
+	error(format(str, flag, event))
 
-	if not arg_2_6 then
-		arg_2_0._immediate_queue[#arg_2_0._immediate_queue + 1] = {
-			event = arg_2_1,
-			event_data = arg_2_2,
-			debug_string = string.format("Skipping wait time for event: %s", arg_2_1),
+	if skip_wait_time then
+		self._immediate_queue[#self._immediate_queue + 1] = {
+			event = event,
+			event_data = event_data,
+			debug_string = string.format("Skipping wait time for event: %s", event),
 			debug_print_func = Application.warning
 		}
-	elseif not arg_2_5 then
-		arg_2_0._priority_events_queue[#arg_2_0._priority_events_queue + 1] = {
-			event = arg_2_1,
-			event_data = arg_2_2,
-			debug_string = arg_2_3,
-			debug_print_func = arg_2_4
+	elseif prioritize then
+		self._priority_events_queue[#self._priority_events_queue + 1] = {
+			event = event,
+			event_data = event_data,
+			debug_string = debug_string,
+			debug_print_func = debug_print_func
 		}
 	else
-		arg_2_0._events_to_write_queue[#arg_2_0._events_to_write_queue + 1] = {
-			event = arg_2_1,
-			event_data = arg_2_2,
-			debug_string = arg_2_3,
-			debug_print_func = arg_2_4
+		self._events_to_write_queue[#self._events_to_write_queue + 1] = {
+			event = event,
+			event_data = event_data,
+			debug_string = debug_string,
+			debug_print_func = debug_print_func
 		}
 	end
 end
 
-XboxEventManager.update = function (self, arg_3_1)
+XboxEventManager.update = function (self, dt)
 	-- function 3
-	local var_3_0 = self._priority_events_queue[1]
+	local priority_event = self._priority_events_queue[1]
 
-	if not (var_3_0 or not (self._timer > 0)) then
+	if not priority_event and self._timer > 0 then
 		self:_handle_immediate_event()
 	elseif self._timer <= 0 then
-		if not var_3_0 then
-			self:_handle_priority_event(var_3_0)
+		if priority_event then
+			self:_handle_priority_event(priority_event)
 		else
 			self:_handle_event()
 		end
 
-		self._timer = num
+		self._timer = TIME_BETWEEN_EVENTS
 	end
 
-	self._timer = self._timer - arg_3_1
+	self._timer = self._timer - dt
 end
 
-XboxEventManager._handle_priority_event = function (self, arg_4_1)
+XboxEventManager._handle_priority_event = function (self, priority_event)
 	-- function 4
-	Application.error(string.format("Writing Prioritized Event: %s", arg_4_1.event))
-	Events.write(arg_4_1.event, arg_4_1.event_data)
+	Application.error(string.format("Writing Prioritized Event: %s", priority_event.event))
+	Events.write(priority_event.event, priority_event.event_data)
 
-	if not arg_4_1.debug_string then
-		local debug_print_func = arg_4_1.debug_print_func
+	if priority_event.debug_string then
+		local debug_print_func = priority_event.debug_print_func
 
-		debug_print_func = debug_print_func or print
+		if not debug_print_func then
+			-- Nothing
+		end
 
-		debug_print_func(arg_4_1.debug_string)
+		debug_print_func = print
+
+		local print_func = debug_print_func
+
+		::label_4_0::
+
+		print_func(priority_event.debug_string)
 	end
 
 	table.remove(self._priority_events_queue, 1)
@@ -88,18 +96,26 @@ end
 
 XboxEventManager._handle_event = function (self)
 	-- function 5
-	local var_5_0 = self._events_to_write_queue[1]
+	local current_event = self._events_to_write_queue[1]
 
-	if not var_5_0 then
-		Application.error(string.format("Writing Event: %s", var_5_0.event))
-		Events.write(var_5_0.event, var_5_0.event_data)
+	if current_event then
+		Application.error(string.format("Writing Event: %s", current_event.event))
+		Events.write(current_event.event, current_event.event_data)
 
-		if not var_5_0.debug_string then
-			local debug_print_func = var_5_0.debug_print_func
+		if current_event.debug_string then
+			local debug_print_func = current_event.debug_print_func
 
-			debug_print_func = debug_print_func or print
+			if not debug_print_func then
+				-- Nothing
+			end
 
-			debug_print_func(var_5_0.debug_string)
+			debug_print_func = print
+
+			local print_func = debug_print_func
+
+			::label_5_0::
+
+			print_func(current_event.debug_string)
 		end
 
 		table.remove(self._events_to_write_queue, 1)
@@ -108,18 +124,26 @@ end
 
 XboxEventManager._handle_immediate_event = function (self)
 	-- function 6
-	local var_6_0 = self._immediate_queue[1]
+	local immediate_event = self._immediate_queue[1]
 
-	if not var_6_0 then
-		Application.error(string.format("Writing Event: %s", var_6_0.event))
-		Events.write(var_6_0.event, var_6_0.event_data)
+	if immediate_event then
+		Application.error(string.format("Writing Event: %s", immediate_event.event))
+		Events.write(immediate_event.event, immediate_event.event_data)
 
-		if not var_6_0.debug_string then
-			local debug_print_func = var_6_0.debug_print_func
+		if immediate_event.debug_string then
+			local debug_print_func = immediate_event.debug_print_func
 
-			debug_print_func = debug_print_func or print
+			if not debug_print_func then
+				-- Nothing
+			end
 
-			debug_print_func(var_6_0.debug_string)
+			debug_print_func = print
+
+			local print_func = debug_print_func
+
+			::label_6_0::
+
+			print_func(immediate_event.debug_string)
 		end
 
 		table.remove(self._immediate_queue, 1)
@@ -132,42 +156,66 @@ XboxEventManager.flush = function (self)
 
 	do return end
 
-	for k, v in pairs(self._priority_events_queue) do
-		Application.error(string.format("Writing Event: %s", v.event))
-		Events.write(v.event, v.event_data)
+	for _, current_priority_event in pairs(self._priority_events_queue) do
+		Application.error(string.format("Writing Event: %s", current_priority_event.event))
+		Events.write(current_priority_event.event, current_priority_event.event_data)
 
-		if not v.debug_string then
-			local debug_print_func = v.debug_print_func
+		if current_priority_event.debug_string then
+			local debug_print_func = current_priority_event.debug_print_func
 
-			debug_print_func = debug_print_func or print
+			if not debug_print_func then
+				-- Nothing
+			end
 
-			debug_print_func(v.debug_string)
+			debug_print_func = print
+
+			local print_func = debug_print_func
+
+			::label_7_0::
+
+			print_func(current_priority_event.debug_string)
 		end
 	end
 
-	for k_2, v_2 in pairs(self._events_to_write_queue) do
-		Application.error(string.format("Writing Event: %s", v_2.event))
-		Events.write(v_2.event, v_2.event_data)
+	for _, current_event in pairs(self._events_to_write_queue) do
+		Application.error(string.format("Writing Event: %s", current_event.event))
+		Events.write(current_event.event, current_event.event_data)
 
-		if not v_2.debug_string then
-			local debug_print_func_2 = v_2.debug_print_func
+		if current_event.debug_string then
+			local debug_print_func_2 = current_event.debug_print_func
 
-			debug_print_func_2 = debug_print_func_2 or print
+			if not debug_print_func_2 then
+				-- Nothing
+			end
 
-			debug_print_func_2(v_2.debug_string)
+			debug_print_func_2 = print
+
+			local print_func = debug_print_func_2
+
+			::label_7_1::
+
+			print_func(current_event.debug_string)
 		end
 	end
 
-	for k_3, v_3 in pairs(self._immediate_queue) do
-		Application.error(string.format("Writing Event: %s", v_3.event))
-		Events.write(v_3.event, v_3.event_data)
+	for _, immediate_event in pairs(self._immediate_queue) do
+		Application.error(string.format("Writing Event: %s", immediate_event.event))
+		Events.write(immediate_event.event, immediate_event.event_data)
 
-		if not v_3.debug_string then
-			local debug_print_func_3 = v_3.debug_print_func
+		if immediate_event.debug_string then
+			local debug_print_func_3 = immediate_event.debug_print_func
 
-			debug_print_func_3 = debug_print_func_3 or print
+			if not debug_print_func_3 then
+				-- Nothing
+			end
 
-			debug_print_func_3(v_3.debug_string)
+			debug_print_func_3 = print
+
+			local print_func = debug_print_func_3
+
+			::label_7_2::
+
+			print_func(immediate_event.debug_string)
 		end
 	end
 
@@ -176,7 +224,7 @@ XboxEventManager.flush = function (self)
 	table.clear(self._immediate_queue)
 end
 
-XboxEventManager.destroy = function (arg_8_0)
+XboxEventManager.destroy = function (self)
 	-- function 8
 	return
 end

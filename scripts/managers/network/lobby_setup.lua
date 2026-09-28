@@ -8,7 +8,7 @@ local tbl = {
 }
 local editor_lobby_port
 
-if not LEVEL_EDITOR_TEST then
+if LEVEL_EDITOR_TEST then
 	editor_lobby_port = GameSettingsDevelopment.editor_lobby_port
 
 	if not editor_lobby_port then
@@ -23,19 +23,20 @@ editor_lobby_port = GameSettingsDevelopment.network_port
 tbl.lobby_port = editor_lobby_port
 tbl.ip_address = Network.default_network_address()
 
+local network_options = tbl
 local LobbySetup = LobbySetup
 
-LobbySetup = LobbySetup or {}
+LobbySetup = not not LobbySetup or not not {}
 LobbySetup = LobbySetup
 LobbySetup._lobby_port_increment = 0
 
 LobbySetup.network_hash = function ()
 	-- function 1
-	local config_file_name = tbl.config_file_name
-	local project_hash = tbl.project_hash
-	local flag = true
+	local config_file_name = network_options.config_file_name
+	local project_hash = network_options.project_hash
+	local disable_print = true
 
-	return LobbyAux.create_network_hash(config_file_name, project_hash, flag, flag)
+	return LobbyAux.create_network_hash(config_file_name, project_hash, disable_print, disable_print)
 end
 
 LobbySetup.network_options = function ()
@@ -45,7 +46,7 @@ LobbySetup.network_options = function ()
 	return LobbySetup._network_options
 end
 
-LobbySetup.setup_network_options = function (arg_3_0)
+LobbySetup.setup_network_options = function (increment_lobby_port)
 	-- function 3
 	printf("[LobbySetup] Setting up network options")
 
@@ -53,73 +54,116 @@ LobbySetup.setup_network_options = function (arg_3_0)
 
 	printf("[start_port_range]: %s", start_port_range)
 
-	if not start_port_range then
-		local var_3_1 = tonumber(start_port_range)
-
-		tbl.server_port = var_3_1
-		tbl.query_port = var_3_1 + 1
-		tbl.steam_port = var_3_1 + 2
-		tbl.rcon_port = var_3_1 + 3
+	if start_port_range then
+		start_port_range = tonumber(start_port_range)
+		network_options.server_port = start_port_range
+		network_options.query_port = start_port_range + 1
+		network_options.steam_port = start_port_range + 2
+		network_options.rcon_port = start_port_range + 3
 	else
 		printf("server_port -> cmd-line: %s, settings.ini: %s, mechanism-settings: %s ", script_data.server_port, script_data.settings.server_port, Managers.mechanism:mechanism_setting("server_port"))
 		printf("query_port -> cmd-line: %s, settings.ini: %s, mechanism-settings: %s ", script_data.query_port, script_data.settings.query_port, Managers.mechanism:mechanism_setting("query_port"))
 		printf("steam_port -> cmd-line: %s, settings.ini: %s, mechanism-settings: %s ", script_data.steam_port, script_data.settings.steam_port, Managers.mechanism:mechanism_setting("steam_port"))
 		printf("rcon_port -> cmd-line: %s, settings.ini: %s, mechanism-settings: %s ", script_data.rcon_port, script_data.settings.rcon_port, Managers.mechanism:mechanism_setting("rcon_port"))
 
-		local server_port = script_data.server_port
+		local server_port_2 = script_data.server_port
 
-		if not server_port then
-			server_port = script_data.settings.server_port
-			server_port = server_port or Managers.mechanism:mechanism_setting("server_port")
+		if not server_port_2 then
+			-- Nothing
 		end
 
-		local query_port = script_data.query_port
+		server_port_2 = script_data.settings.server_port
 
-		if not query_port then
-			query_port = script_data.settings.query_port
-			query_port = query_port or Managers.mechanism:mechanism_setting("query_port")
+		if not server_port_2 then
+			-- Nothing
 		end
 
-		local steam_port = script_data.steam_port
+		server_port_2 = Managers.mechanism:mechanism_setting("server_port")
 
-		if not steam_port then
-			steam_port = script_data.settings.steam_port
-			steam_port = steam_port or Managers.mechanism:mechanism_setting("steam_port")
+		local server_port = server_port_2
+
+		::label_3_0::
+
+		local query_port_2 = script_data.query_port
+
+		if not query_port_2 then
+			-- Nothing
 		end
 
-		local rcon_port = script_data.rcon_port
+		query_port_2 = script_data.settings.query_port
 
-		if not rcon_port then
-			rcon_port = script_data.settings.rcon_port
-			rcon_port = rcon_port or Managers.mechanism:mechanism_setting("rcon_port")
+		if not query_port_2 then
+			-- Nothing
 		end
 
-		if not (not arg_3_0 and BUILD == "release") then
+		query_port_2 = Managers.mechanism:mechanism_setting("query_port")
+
+		local query_port = query_port_2
+
+		::label_3_1::
+
+		local steam_port_2 = script_data.steam_port
+
+		if not steam_port_2 then
+			-- Nothing
+		end
+
+		steam_port_2 = script_data.settings.steam_port
+
+		if not steam_port_2 then
+			-- Nothing
+		end
+
+		steam_port_2 = Managers.mechanism:mechanism_setting("steam_port")
+
+		local steam_port = steam_port_2
+
+		::label_3_2::
+
+		local rcon_port_2 = script_data.rcon_port
+
+		if not rcon_port_2 then
+			-- Nothing
+		end
+
+		rcon_port_2 = script_data.settings.rcon_port
+
+		if not rcon_port_2 then
+			-- Nothing
+		end
+
+		rcon_port_2 = Managers.mechanism:mechanism_setting("rcon_port")
+
+		local rcon_port = rcon_port_2
+
+		::label_3_3::
+
+		if increment_lobby_port and BUILD ~= "release" then
 			LobbySetup._lobby_port_increment = LobbySetup._lobby_port_increment + 1
 		end
 
-		if not (IS_WINDOWS or IS_LINUX) then
-			server_port = tbl.lobby_port
+		if not IS_WINDOWS and not IS_LINUX then
+			server_port = network_options.lobby_port
 		end
 
-		tbl.server_port = server_port + LobbySetup._lobby_port_increment
-		tbl.query_port = query_port
-		tbl.steam_port = steam_port
-		tbl.rcon_port = rcon_port
+		network_options.server_port = server_port + LobbySetup._lobby_port_increment
+		network_options.query_port = query_port
+		network_options.steam_port = steam_port
+		network_options.rcon_port = rcon_port
 	end
 
-	local max_instance_members = Managers.mechanism:max_instance_members()
+	local max_members = Managers.mechanism:max_instance_members()
 
-	tbl.max_members = max_instance_members
+	network_options.max_members = max_members
 
-	printf("All ports: server_port %s query_port: %s, steam_port: %s, rcon_port: %s ", tbl.server_port, tbl.query_port, tbl.steam_port, tbl.rcon_port)
+	printf("All ports: server_port %s query_port: %s, steam_port: %s, rcon_port: %s ", network_options.server_port, network_options.query_port, network_options.steam_port, network_options.rcon_port)
 
-	LobbySetup._network_options = tbl
+	LobbySetup._network_options = network_options
 
-	print("LobbySetup:setup_network_options server_port:", tbl.server_port)
+	print("LobbySetup:setup_network_options server_port:", network_options.server_port)
 end
 
 LobbySetup.update_network_options_max_members = function ()
 	-- function 4
-	tbl.max_members = Managers.mechanism:max_instance_members()
+	network_options.max_members = Managers.mechanism:max_instance_members()
 end

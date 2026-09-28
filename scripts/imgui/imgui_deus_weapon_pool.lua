@@ -2,135 +2,163 @@
 
 ImguiDeusWeaponPool = class(ImguiDeusWeaponPool)
 
-ImguiDeusWeaponPool.init = function (arg_1_0)
+ImguiDeusWeaponPool.init = function (self)
 	-- function 1
 	return
 end
 
-ImguiDeusWeaponPool.update = function (arg_2_0)
+ImguiDeusWeaponPool.update = function (self)
 	-- function 2
 	return
 end
 
-ImguiDeusWeaponPool.is_persistent = function (arg_3_0)
+ImguiDeusWeaponPool.is_persistent = function (self)
 	-- function 3
 	return true
 end
 
-ImguiDeusWeaponPool.draw = function (arg_4_0, arg_4_1)
+ImguiDeusWeaponPool.draw = function (self, is_open)
 	-- function 4
-	local begin_window = Imgui.begin_window("DeusWeaponPool", "always_auto_resize")
-	local DeusWeaponGroups = DeusWeaponGroups
-	local state = Managers.state
-	local flag = not state and state.game_mode
+	local do_close = Imgui.begin_window("DeusWeaponPool", "always_auto_resize")
+	local deus_weapon_groups = DeusWeaponGroups
+	local state_managers = Managers.state
+	local game_mode_manager = not not state_managers and not not state_managers.game_mode
+	local game_mode_key = not not game_mode_manager and not not game_mode_manager:game_mode_key()
 
-	if (not flag and flag:game_mode_key()) ~= "deus" then
+	if game_mode_key ~= "deus" then
 		Imgui.text("This UI only works when playing in the deus game mode.")
 	else
-		local game_mechanism = Managers.mechanism:game_mechanism()
-		local RaritySettings = RaritySettings
-		local get_deus_run_controller = game_mechanism:get_deus_run_controller()
-		local get_weapon_pool = get_deus_run_controller:get_weapon_pool()
-		local get_base_weapon_pool = get_deus_run_controller:get_base_weapon_pool()
-		local num = 0
+		local mechanism = Managers.mechanism:game_mechanism()
+		local rarity_settings = RaritySettings
+		local run_controller = mechanism:get_deus_run_controller()
+		local weapon_pool = run_controller:get_weapon_pool()
+		local base_weapon_pool = run_controller:get_base_weapon_pool()
+		local max_entries = 0
 
-		for k, v in pairs(get_base_weapon_pool) do
-			local size = table.size(v)
+		for _, entries in pairs(base_weapon_pool) do
+			local num_entries = table.size(entries)
 
-			if num < size then
-				num = size
+			if max_entries < num_entries then
+				max_entries = num_entries
 			end
 		end
 
-		local keys = table.keys(get_base_weapon_pool)
+		local sorted_rarities = table.keys(base_weapon_pool)
 
-		table.sort(keys, function (arg_5_0, arg_5_1)
+		table.sort(sorted_rarities, function (a, b)
 			-- function 5
-			return RaritySettings[arg_5_0].order < RaritySettings[arg_5_1].order
+			local order_a = rarity_settings[a].order
+			local order_b = rarity_settings[b].order
+
+			return order_a < order_b
 		end)
 
-		for i, v_2 in ipairs(keys) do
-			local num_2 = 120 + num * 25
+		for _, rarity in ipairs(sorted_rarities) do
+			local panel_height = 120 + max_entries * 25
 
-			Imgui.begin_child_window("Panel_" .. v_2, 300, num_2, true)
+			Imgui.begin_child_window("Panel_" .. rarity, 300, panel_height, true)
 
-			local get_table = Colors.get_table(v_2)
+			local color = Colors.get_table(rarity)
 
-			Imgui.text_colored(string.upper(v_2), get_table[2], get_table[3], get_table[4], get_table[1])
+			Imgui.text_colored(string.upper(rarity), color[2], color[3], color[4], color[1])
 
-			local tbl = {}
+			local ordered_draw_data = {}
 
-			for k_2, v_3 in pairs(get_base_weapon_pool[v_2]) do
-				local var_4_15 = get_weapon_pool[v_2][k_2]
-				local flag_2
+			for weapon_group, weapon_key in pairs(base_weapon_pool[rarity]) do
+				local in_pool = weapon_pool[rarity][weapon_group]
+				local str
 
-				flag_2 = not var_4_15 and "-" and "+"
+				if in_pool then
+					str = "-"
 
-				local get_table_2
+					goto label_4_0
+				end
 
-				if not var_4_15 then
-					get_table_2 = Colors.get_table("white")
+				str = "+"
 
-					if not get_table_2 then
+				local button_text = str
+
+				do
+					local get_table
+				end
+
+				::label_4_0::
+
+				if in_pool then
+					get_table = Colors.get_table("white")
+
+					if not get_table then
 						-- Nothing
 					end
 				end
 
-				get_table_2 = Colors.get_table("gray")
+				get_table = Colors.get_table("gray")
 
-				::label_4_0::
+				local text_color = get_table
 
-				local slot_type = DeusWeaponGroups[k_2].slot_type
-				local flag_3
+				::label_4_1::
 
-				flag_3 = slot_type ~= "melee" or not 1 or 0
+				local slot_type = deus_weapon_groups[weapon_group].slot_type
+				local num
 
-				local tbl_2 = {
-					weapon_key = v_3,
-					button_text = flag_2,
-					in_pool = var_4_15,
-					text_color = get_table_2,
+				if slot_type == "melee" then
+					num = 1
+
+					goto label_4_2
+				end
+
+				num = 0
+
+				local order = num
+
+				::label_4_2::
+
+				local draw_data = {
+					weapon_key = weapon_key,
+					button_text = button_text,
+					in_pool = in_pool,
+					text_color = text_color,
 					slot_type = slot_type,
-					order = flag_3
+					order = order
 				}
 
-				table.insert(tbl, tbl_2)
+				table.insert(ordered_draw_data, draw_data)
 			end
 
-			table.sort(tbl, function (self, arg_6_1)
+			table.sort(ordered_draw_data, function (a, b)
 				-- function 6
-				return self.order > arg_6_1.order
+				return a.order > b.order
 			end)
 
-			local flag_4 = false
-			local flag_5 = false
+			local melee_drawn = false
+			local ranged_drawn = false
 
-			for i_2, v_4 in ipairs(tbl) do
-				local weapon_key = v_4.weapon_key
+			for _, draw_data in ipairs(ordered_draw_data) do
+				local weapon_key = draw_data.weapon_key
 
-				if not (v_4.slot_type ~= "melee" or flag_4) then
-					flag_4 = true
+				if draw_data.slot_type == "melee" and not melee_drawn then
+					melee_drawn = true
 
 					Imgui.text("MELEE")
-				elseif not (v_4.slot_type ~= "ranged" or flag_5) then
-					flag_5 = true
+				elseif draw_data.slot_type == "ranged" and not ranged_drawn then
+					ranged_drawn = true
 
 					Imgui.text("RANGED")
 				end
 
 				Imgui.tree_push(weapon_key)
 
-				if not Imgui.button(v_4.button_text, 20, 20) then
-					if not v_4.in_pool then
-						get_deus_run_controller:debug_remove_weapon_from_pool(v_2, weapon_key)
+				if Imgui.button(draw_data.button_text, 20, 20) then
+					if draw_data.in_pool then
+						run_controller:debug_remove_weapon_from_pool(rarity, weapon_key)
 					else
-						get_deus_run_controller:debug_add_weapon_to_pool(v_2, weapon_key)
+						run_controller:debug_add_weapon_to_pool(rarity, weapon_key)
 					end
 				end
 
 				Imgui.same_line()
 
-				local text_color = v_4.text_color
+				local text_color = draw_data.text_color
 
 				Imgui.text_colored(weapon_key, text_color[2], text_color[3], text_color[4], text_color[1])
 				Imgui.tree_pop()
@@ -143,5 +171,5 @@ ImguiDeusWeaponPool.draw = function (arg_4_0, arg_4_1)
 
 	Imgui.end_window()
 
-	return begin_window
+	return do_close
 end

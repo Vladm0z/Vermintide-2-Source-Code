@@ -2,30 +2,30 @@
 
 ActionBase = class(ActionBase)
 
-local flow_event = Unit.flow_event
+local unit_flow_event = Unit.flow_event
 
-ActionBase.init = function (self, arg_1_1, arg_1_2, arg_1_3, arg_1_4, arg_1_5, arg_1_6, arg_1_7, arg_1_8)
+ActionBase.init = function (self, world, item_name, is_server, owner_unit, damage_unit, first_person_unit, weapon_unit, weapon_system)
 	-- function 1
-	self.world = arg_1_1
-	self.physics_world = World.get_data(arg_1_1, "physics_world")
-	self.wwise_world = Managers.world:wwise_world(arg_1_1)
-	self.first_person_unit = arg_1_6
-	self.owner_unit = arg_1_4
-	self.owner = Managers.player:unit_owner(arg_1_4)
-	self.owner_player = Managers.player:owner(arg_1_4)
-	self.weapon_unit = arg_1_7
-	self.item_name = arg_1_2
-	self.weapon_system = arg_1_8
+	self.world = world
+	self.physics_world = World.get_data(world, "physics_world")
+	self.wwise_world = Managers.world:wwise_world(world)
+	self.first_person_unit = first_person_unit
+	self.owner_unit = owner_unit
+	self.owner = Managers.player:unit_owner(owner_unit)
+	self.owner_player = Managers.player:owner(owner_unit)
+	self.weapon_unit = weapon_unit
+	self.item_name = item_name
+	self.weapon_system = weapon_system
 
-	local network = Managers.state.network
+	local network_manager = Managers.state.network
 
-	self.network_manager = network
-	self.network_transmit = network.network_transmit
-	self.is_server = arg_1_3
+	self.network_manager = network_manager
+	self.network_transmit = network_manager.network_transmit
+	self.is_server = is_server
 
 	local owner_player = self.owner_player
 
-	owner_player = not owner_player and self.owner_player.bot_player
+	owner_player = not not owner_player and not not self.owner_player.bot_player
 	self.is_bot = owner_player
 	self._is_critical_strike = false
 	self._fatigue_reset = true
@@ -33,145 +33,147 @@ ActionBase.init = function (self, arg_1_1, arg_1_2, arg_1_3, arg_1_4, arg_1_5, a
 	self._extra_shots_procced = false
 end
 
-ActionBase.client_owner_start_action = function (self, arg_2_1, arg_2_2, arg_2_3, arg_2_4, arg_2_5)
+ActionBase.client_owner_start_action = function (self, new_action, t, chain_action_data, power_level, action_init_data)
 	-- function 2
-	self.current_action = arg_2_1
+	self.current_action = new_action
 
-	ScriptUnit.has_extension(self.owner_unit, "buff_system"):trigger_procs("on_start_action", arg_2_1, arg_2_2, arg_2_3, arg_2_4, arg_2_5)
+	local buff_extension = ScriptUnit.has_extension(self.owner_unit, "buff_system")
+
+	buff_extension:trigger_procs("on_start_action", new_action, t, chain_action_data, power_level, action_init_data)
 
 	self._fatigue_reset = true
 	self._extra_shots_procced = false
-	self.action_start_t = arg_2_2
+	self.action_start_t = t
 end
 
-ActionBase._handle_critical_strike = function (self, arg_3_1, arg_3_2, arg_3_3, arg_3_4, arg_3_5, arg_3_6)
+ActionBase._handle_critical_strike = function (self, is_critical_strike, buff_extension, hud_extension, first_person_extension, proc_type, hud_sound_event)
 	-- function 3
-	if not arg_3_1 then
-		self:_do_critical_strike_fx(arg_3_3, arg_3_4, arg_3_6)
-		self:_do_critical_strike_procs(arg_3_2, arg_3_5)
+	if is_critical_strike then
+		self:_do_critical_strike_fx(hud_extension, first_person_extension, hud_sound_event)
+		self:_do_critical_strike_procs(buff_extension, proc_type)
 	end
 end
 
-ActionBase._do_critical_strike_fx = function (self, arg_4_1, arg_4_2, arg_4_3)
+ActionBase._do_critical_strike_fx = function (self, hud_extension, first_person_extension, hud_sound_event)
 	-- function 4
 	local owner_unit = self.owner_unit
 	local first_person_unit = self.first_person_unit
 
 	if Application.user_setting("weapon_trails") == "normal" then
-		flow_event(owner_unit, "vfx_critical_strike")
-		flow_event(first_person_unit, "vfx_critical_strike")
+		unit_flow_event(owner_unit, "vfx_critical_strike")
+		unit_flow_event(first_person_unit, "vfx_critical_strike")
 	end
 
-	if not arg_4_1 then
-		arg_4_1.show_critical_indication = true
+	if hud_extension then
+		hud_extension.show_critical_indication = true
 	end
 
-	if not arg_4_2 and not arg_4_3 then
-		arg_4_2:play_hud_sound_event(arg_4_3, nil, false)
+	if first_person_extension and hud_sound_event then
+		first_person_extension:play_hud_sound_event(hud_sound_event, nil, false)
 	end
 end
 
-ActionBase._do_critical_strike_procs = function (arg_5_0, arg_5_1, arg_5_2)
+ActionBase._do_critical_strike_procs = function (self, buff_extension, proc_type)
 	-- function 5
-	if not arg_5_1 and not arg_5_2 then
-		arg_5_1:trigger_procs(arg_5_2)
+	if buff_extension and proc_type then
+		buff_extension:trigger_procs(proc_type)
 	end
 end
 
-ActionBase._update_extra_shots = function (self, arg_6_1, arg_6_2, arg_6_3)
+ActionBase._update_extra_shots = function (self, buff_extension, shots_to_consume, override)
 	-- function 6
 	local current_action = self.current_action
 
-	if not current_action and not current_action.no_extra_shots then
+	if current_action and current_action.no_extra_shots then
 		return nil
 	end
 
-	if not self._extra_shots_procced and not arg_6_3 then
-		local apply_buffs_to_value = arg_6_1:apply_buffs_to_value(0, "extra_shot")
+	if not self._extra_shots_procced or override then
+		local extra_shots = buff_extension:apply_buffs_to_value(0, "extra_shot")
 
-		self._extra_shots = math.floor(apply_buffs_to_value)
+		self._extra_shots = math.floor(extra_shots)
 		self._extra_shots_procced = true
 	end
 
 	if self._extra_shots > 0 then
-		if not arg_6_2 then
-			self._extra_shots = self._extra_shots - arg_6_2
+		if shots_to_consume then
+			self._extra_shots = self._extra_shots - shots_to_consume
 		end
 
 		return self._extra_shots
 	end
 end
 
-ActionBase._handle_fatigue = function (self, arg_7_1, arg_7_2, arg_7_3, arg_7_4)
+ActionBase._handle_fatigue = function (self, buff_extension, status_extension, new_action, check_buffs)
 	-- function 7
-	local var_7_0
+	local procced
 
-	if not self._fatigue_reset then
-		if not arg_7_4 then
-			var_7_0 = arg_7_1:has_buff_perk("no_push_fatigue_cost")
+	if self._fatigue_reset then
+		if check_buffs then
+			procced = buff_extension:has_buff_perk("no_push_fatigue_cost")
 		end
 
-		if not var_7_0 then
-			local str = "action_push"
-			local num = 1
+		if not procced then
+			local cost = "action_push"
+			local cost_multiplier = 1
 
-			if not arg_7_3.fatigue_cost then
-				str = arg_7_3.fatigue_cost
+			if new_action.fatigue_cost then
+				cost = new_action.fatigue_cost
 			end
 
-			if not arg_7_1:has_buff_perk("slayer_stamina") then
-				num = 0.5
+			if buff_extension:has_buff_perk("slayer_stamina") then
+				cost_multiplier = 0.5
 			end
 
-			arg_7_2:add_fatigue_points(str, nil, nil, num)
-			arg_7_2:set_has_pushed(arg_7_3.fatigue_regen_delay)
+			status_extension:add_fatigue_points(cost, nil, nil, cost_multiplier)
+			status_extension:set_has_pushed(new_action.fatigue_regen_delay)
 		end
 
 		self._fatigue_reset = false
 	end
 end
 
-ActionBase._proc_spell_used = function (self, arg_8_1)
+ActionBase._proc_spell_used = function (self, buff_extension)
 	-- function 8
 	local current_action = self.current_action
 
-	if not arg_8_1 and not current_action and not current_action.is_spell then
-		arg_8_1:trigger_procs("on_spell_used", current_action)
+	if buff_extension and current_action and current_action.is_spell then
+		buff_extension:trigger_procs("on_spell_used", current_action)
 	end
 end
 
-ActionBase._play_additional_animation = function (self, arg_9_1)
+ActionBase._play_additional_animation = function (self, anim_data)
 	-- function 9
-	if not arg_9_1 and not arg_9_1.variable_name and not arg_9_1.variable_value then
-		if not arg_9_1.third_person then
-			local owner_unit = self.owner_unit
+	if anim_data and anim_data.variable_name and anim_data.variable_value then
+		if anim_data.third_person then
+			local unit = self.owner_unit
 
-			if not owner_unit then
-				if not arg_9_1.anim_event then
-					CharacterStateHelper.play_animation_event_with_variable_float(owner_unit, arg_9_1.anim_event, arg_9_1.variable_name, arg_9_1.variable_value)
+			if unit then
+				if anim_data.anim_event then
+					CharacterStateHelper.play_animation_event_with_variable_float(unit, anim_data.anim_event, anim_data.variable_name, anim_data.variable_value)
 				else
-					CharacterStateHelper.set_animation_variable_float(owner_unit, arg_9_1.variable_name, arg_9_1.variable_value)
+					CharacterStateHelper.set_animation_variable_float(unit, anim_data.variable_name, anim_data.variable_value)
 				end
 			end
 		end
 
-		if not arg_9_1.first_person then
-			local first_person_unit = self.first_person_unit
+		if anim_data.first_person then
+			local unit = self.first_person_unit
 
-			if not first_person_unit then
-				local animation_find_variable = Unit.animation_find_variable(first_person_unit, arg_9_1.variable_name)
+			if unit then
+				local variable_index = Unit.animation_find_variable(unit, anim_data.variable_name)
 
-				Unit.animation_set_variable(first_person_unit, animation_find_variable, arg_9_1.variable_value)
+				Unit.animation_set_variable(unit, variable_index, anim_data.variable_value)
 
-				if not arg_9_1.anim_event then
-					Unit.animation_event(first_person_unit, arg_9_1.anim_event)
+				if anim_data.anim_event then
+					Unit.animation_event(unit, anim_data.anim_event)
 				end
 			end
 		end
 	end
 end
 
-ActionBase.finish = function (arg_10_0, arg_10_1)
+ActionBase.finish = function (self, reason)
 	-- function 10
 	return
 end

@@ -2,34 +2,36 @@
 
 RoundStartedSystem = class(RoundStartedSystem, ExtensionSystemBase)
 
-local tbl = {
+local extensions = {
 	"RoundStartedExtension"
 }
-local tbl_2 = {
+local RPCS = {
 	"rpc_round_started"
 }
 
 RoundStartedExtension = class(RoundStartedExtension)
 
-RoundStartedExtension.init = function (arg_1_0)
+RoundStartedExtension.init = function (self)
 	-- function 1
 	return
 end
 
-RoundStartedExtension.destroy = function (arg_2_0)
+RoundStartedExtension.destroy = function (self)
 	-- function 2
 	return
 end
 
-RoundStartedSystem.init = function (self, arg_3_1, arg_3_2)
+RoundStartedSystem.init = function (self, context, system_name)
 	-- function 3
-	arg_3_1.entity_manager:register_system(self, arg_3_2, tbl)
+	local entity_manager = context.entity_manager
 
-	self._is_server = arg_3_1.is_server
-	self._world = arg_3_1.world
-	self._network_event_delegate = arg_3_1.network_event_delegate
+	entity_manager:register_system(self, system_name, extensions)
 
-	self._network_event_delegate:register(self, unpack(tbl_2))
+	self._is_server = context.is_server
+	self._world = context.world
+	self._network_event_delegate = context.network_event_delegate
+
+	self._network_event_delegate:register(self, unpack(RPCS))
 
 	self._start_area = "start_area"
 	self._round_started = false
@@ -43,40 +45,40 @@ RoundStartedSystem.destroy = function (self)
 	self._network_event_delegate:unregister(self)
 end
 
-RoundStartedSystem.set_start_area = function (self, arg_5_1)
+RoundStartedSystem.set_start_area = function (self, volume_name)
 	-- function 5
-	local current_level = LevelHelper:current_level(self._world)
+	local level = LevelHelper:current_level(self._world)
 	local level_name = LevelHelper:current_level_settings(self._world).level_name
 
-	self._start_area = arg_5_1
+	self._start_area = volume_name
 end
 
-RoundStartedSystem.on_add_extension = function (self, arg_6_1, arg_6_2, arg_6_3, arg_6_4)
+RoundStartedSystem.on_add_extension = function (self, world, unit, extension_name, extension_init_data)
 	-- function 6
-	ScriptUnit.add_extension(nil, arg_6_2, "RoundStartedExtension", self.NAME, arg_6_4)
+	ScriptUnit.add_extension(nil, unit, "RoundStartedExtension", self.NAME, extension_init_data)
 
-	local extension = ScriptUnit.extension(arg_6_2, self.NAME)
+	local ext = ScriptUnit.extension(unit, self.NAME)
 
-	self._units[arg_6_2] = extension
+	self._units[unit] = ext
 
-	return extension
+	return ext
 end
 
-RoundStartedSystem.on_remove_extension = function (self, arg_7_1, arg_7_2)
+RoundStartedSystem.on_remove_extension = function (self, unit, extension_name)
 	-- function 7
-	ScriptUnit.remove_extension(arg_7_1, self.NAME)
+	ScriptUnit.remove_extension(unit, self.NAME)
 
-	self._units[arg_7_1] = nil
+	self._units[unit] = nil
 end
 
-RoundStartedSystem.hot_join_sync = function (arg_8_0, arg_8_1, arg_8_2)
+RoundStartedSystem.hot_join_sync = function (self, sender, player)
 	-- function 8
 	return
 end
 
-RoundStartedSystem.update = function (self, arg_9_1, arg_9_2)
+RoundStartedSystem.update = function (self, context, t)
 	-- function 9
-	if not self._round_started then
+	if self._round_started then
 		return
 	end
 
@@ -86,17 +88,21 @@ RoundStartedSystem.update = function (self, arg_9_1, arg_9_2)
 		return
 	end
 
-	if self:_players_left_start_area() or not self._force_start_round then
+	local started = self:_players_left_start_area()
+
+	if started or self._force_start_round then
 		Managers.state.game_mode:round_started()
 
-		local score_type = LevelHelper:current_level_settings().score_type
+		local level_settings = LevelHelper:current_level_settings()
+		local score_type = level_settings.score_type
 
-		if not score_type then
-			local tbl = {
-				start_time = arg_9_2
+		if score_type then
+			local start_data = {
+				start_time = t
 			}
+			local leaderboard_system = Managers.state.entity:system("leaderboard_system")
 
-			Managers.state.entity:system("leaderboard_system"):round_started(score_type, tbl)
+			leaderboard_system:round_started(score_type, start_data)
 		end
 
 		self:_on_round_started()
@@ -108,7 +114,7 @@ RoundStartedSystem._players_left_start_area = function (self)
 	local checkpoint_data = Managers.state.spawn:checkpoint_data()
 	local safe_zone_volume_name
 
-	if not checkpoint_data then
+	if checkpoint_data then
 		safe_zone_volume_name = checkpoint_data.safe_zone_volume_name
 
 		if not safe_zone_volume_name then
@@ -118,22 +124,24 @@ RoundStartedSystem._players_left_start_area = function (self)
 
 	safe_zone_volume_name = self._start_area
 
+	local volume_name = safe_zone_volume_name
+
 	::label_10_0::
 
-	local current_level = LevelHelper:current_level(self._world)
+	local level = LevelHelper:current_level(self._world)
 
-	if not Level.has_volume(current_level, safe_zone_volume_name) then
-		if not script_data.debug_level then
+	if not Level.has_volume(level, volume_name) then
+		if script_data.debug_level then
 			Application.warning("Level is missing start area.")
 		end
 
 		return self._player_spawned
 	end
 
-	for k, v in pairs(self._units) do
-		local var_10_3 = POSITION_LOOKUP[k]
+	for unit, _ in pairs(self._units) do
+		local pos = POSITION_LOOKUP[unit]
 
-		if not Level.is_point_inside_volume(current_level, safe_zone_volume_name, var_10_3) then
+		if not Level.is_point_inside_volume(level, volume_name, pos) then
 			return true
 		end
 	end
@@ -158,25 +166,25 @@ end
 
 RoundStartedSystem._update_player_moved = function (self)
 	-- function 14
-	if not self._player_moved then
+	if self._player_moved then
 		return true
 	end
 
-	local _player_moved_positions = self._player_moved_positions
-	local num = 2
-	local human_players = Managers.player:human_players()
+	local player_start_positions = self._player_moved_positions
+	local move_dist = 2
+	local players = Managers.player:human_players()
 
-	for k, v in pairs(human_players) do
-		local player_unit = v.player_unit
-		local var_14_4 = POSITION_LOOKUP[player_unit]
+	for unique_id, player in pairs(players) do
+		local player_unit = player.player_unit
+		local player_pos = POSITION_LOOKUP[player_unit]
 
-		if not var_14_4 then
-			local var_14_5 = _player_moved_positions[player_unit]
+		if player_pos then
+			local var_14_0 = player_start_positions[player_unit]
 
-			var_14_5 = var_14_5 or Vector3Box(var_14_4)
-			_player_moved_positions[player_unit] = var_14_5
+			var_14_0 = not not var_14_0 or not not Vector3Box(player_pos)
+			player_start_positions[player_unit] = var_14_0
 
-			if Vector3.distance_squared(var_14_4, _player_moved_positions[player_unit]:unbox()) > num^2 then
+			if Vector3.distance_squared(player_pos, player_start_positions[player_unit]:unbox()) > move_dist^2 then
 				self._player_moved = true
 
 				return true
@@ -192,7 +200,7 @@ RoundStartedSystem._on_round_started = function (self)
 
 	Managers.state.achievement:trigger_event("on_round_started")
 
-	if not self._is_server then
+	if self._is_server then
 		Managers.state.network.network_transmit:send_rpc_clients("rpc_round_started")
 	end
 end

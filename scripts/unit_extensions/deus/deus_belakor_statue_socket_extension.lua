@@ -2,75 +2,79 @@
 
 DeusBelakorStatueSocketExtension = class(DeusBelakorStatueSocketExtension)
 
-local function fn(arg_1_0, arg_1_1)
+local function should_objective_be_active(objective_extension, socket_extension)
 	-- function 1
-	if arg_1_1.num_closed_sockets > 0 then
+	if socket_extension.num_closed_sockets > 0 then
 		return false
 	else
 		local local_player = Managers.player:local_player()
-		local flag = not local_player and local_player.player_unit
+		local local_player_unit = not not local_player and not not local_player.player_unit
 
-		if not flag then
+		if not local_player_unit then
 			return false
 		end
 
-		local has_extension = ScriptUnit.has_extension(flag, "inventory_system")
+		local inventory_extension = ScriptUnit.has_extension(local_player_unit, "inventory_system")
 
-		if not has_extension then
+		if not inventory_extension then
 			return false
 		end
 
-		local get_wielded_slot_name = has_extension:get_wielded_slot_name()
-		local get_slot_data = has_extension:get_slot_data(get_wielded_slot_name)
+		local weapon_slot = inventory_extension:get_wielded_slot_name()
+		local weapon_data = inventory_extension:get_slot_data(weapon_slot)
 
-		if not get_slot_data then
-			local item_data = get_slot_data.item_data
+		if weapon_data then
+			local item_data = weapon_data.item_data
+			local item_name = not not item_data and not not item_data.name
 
-			return (not item_data and item_data.name) == "belakor_crystal"
+			return item_name == "belakor_crystal"
 		end
 	end
 
 	return false
 end
 
-DeusBelakorStatueSocketExtension.init = function (self, arg_2_1, arg_2_2, arg_2_3)
+DeusBelakorStatueSocketExtension.init = function (self, extension_init_context, unit, extension_init_data)
 	-- function 2
-	self._world = arg_2_1.world
-	self._unit = arg_2_2
+	local world = extension_init_context.world
+
+	self._world = world
+	self._unit = unit
 end
 
-DeusBelakorStatueSocketExtension.game_object_initialized = function (arg_3_0, arg_3_1, arg_3_2)
+DeusBelakorStatueSocketExtension.game_object_initialized = function (self, unit, go_id)
 	-- function 3
 	return
 end
 
-DeusBelakorStatueSocketExtension.destroy = function (arg_4_0)
+DeusBelakorStatueSocketExtension.destroy = function (self)
 	-- function 4
 	return
 end
 
-DeusBelakorStatueSocketExtension.extensions_ready = function (self, arg_5_1, arg_5_2)
+DeusBelakorStatueSocketExtension.extensions_ready = function (self, world, unit)
 	-- function 5
-	local extension = ScriptUnit.extension(arg_5_2, "tutorial_system")
+	local objective_unit_extension = ScriptUnit.extension(unit, "tutorial_system")
 
-	extension:set_active(false)
+	objective_unit_extension:set_active(false)
 
-	extension.network_synced = false
-	self._objective_extension = extension
-	self._socket_extension = ScriptUnit.extension(arg_5_2, "objective_socket_system")
+	objective_unit_extension.network_synced = false
+	self._objective_extension = objective_unit_extension
+	self._socket_extension = ScriptUnit.extension(unit, "objective_socket_system")
 end
 
-DeusBelakorStatueSocketExtension.update = function (self, arg_6_1, arg_6_2, arg_6_3, arg_6_4, arg_6_5)
+DeusBelakorStatueSocketExtension.update = function (self, unit, input, dt, context, t)
 	-- function 6
-	local _objective_extension = self._objective_extension
+	local objective_extension = self._objective_extension
 
-	if not _objective_extension then
+	if not objective_extension then
 		return
 	end
 
-	local var_6_1 = fn(_objective_extension, self._socket_extension)
+	local new_value = should_objective_be_active(objective_extension, self._socket_extension)
+	local currently_active = objective_extension.active
 
-	if _objective_extension.active ~= var_6_1 then
-		_objective_extension:set_active(var_6_1)
+	if currently_active ~= new_value then
+		objective_extension:set_active(new_value)
 	end
 end

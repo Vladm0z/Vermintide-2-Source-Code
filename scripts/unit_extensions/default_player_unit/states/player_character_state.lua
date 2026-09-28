@@ -2,20 +2,20 @@
 
 PlayerCharacterState = class(PlayerCharacterState)
 
-PlayerCharacterState.init = function (self, arg_1_1, arg_1_2)
+PlayerCharacterState.init = function (self, character_state_init_context, name)
 	-- function 1
-	local unit = arg_1_1.unit
+	local unit = character_state_init_context.unit
 
-	self.name = arg_1_2
-	self.world = arg_1_1.world
+	self.name = name
+	self.world = character_state_init_context.world
 	self.physics_world = World.get_data(self.world, "physics_world")
 	self.wwise_world = Managers.world:wwise_world(self.world)
 	self.unit = unit
-	self.csm = arg_1_1.csm
-	self.player = arg_1_1.player
-	self.network_transmit = arg_1_1.network_transmit
-	self.unit_storage = arg_1_1.unit_storage
-	self.nav_world = arg_1_1.nav_world
+	self.csm = character_state_init_context.csm
+	self.player = character_state_init_context.player
+	self.network_transmit = character_state_init_context.network_transmit
+	self.unit_storage = character_state_init_context.unit_storage
+	self.nav_world = character_state_init_context.nav_world
 	self.is_server = Managers.player.is_server
 	self.temp_params = {}
 	self.buff_extension = ScriptUnit.extension(unit, "buff_system")
@@ -32,6 +32,6 @@ PlayerCharacterState.init = function (self, arg_1_1, arg_1_2)
 
 	local has_extension = ScriptUnit.has_extension(unit, "ai_system")
 
-	has_extension = not has_extension and ScriptUnit.extension(unit, "ai_system")
+	has_extension = not not has_extension and not not ScriptUnit.extension(unit, "ai_system")
 	self.ai_extension = has_extension
 end

@@ -1,12 +1,12 @@
 -- chunkname: @scripts/settings/dlcs/woods/buff_settings_woods.lua
 
-local scripts_unit_extensions_default_player_unit_buffs_settings_buff_perk_names = require("scripts/unit_extensions/default_player_unit/buffs/settings/buff_perk_names")
-local woods = DLCSettings.woods
-local tbl = {}
-local num = 0.2
-local num_2 = 0.5
+local buff_perks = require("scripts/unit_extensions/default_player_unit/buffs/settings/buff_perk_names")
+local settings = DLCSettings.woods
+local buff_params = {}
+local wall_slow_duration = 0.2
+local wall_sleep_mult = 0.5
 
-woods.buff_templates = {
+settings.buff_templates = {
 	weapon_bleed_dot_javelin = {
 		buffs = {
 			{
@@ -21,7 +21,7 @@ woods.buff_templates = {
 				damage_profile = "bleed_maidenguard",
 				update_func = "apply_dot_damage",
 				perks = {
-					scripts_unit_extensions_default_player_unit_buffs_settings_buff_perk_names.bleeding
+					buff_perks.bleeding
 				}
 			}
 		}
@@ -40,7 +40,7 @@ woods.buff_templates = {
 				damage_profile = "bleed",
 				update_func = "apply_dot_damage",
 				perks = {
-					scripts_unit_extensions_default_player_unit_buffs_settings_buff_perk_names.bleeding
+					buff_perks.bleeding
 				}
 			}
 		}
@@ -62,7 +62,7 @@ woods.buff_templates = {
 				damage_profile = "thorn_sister_poison",
 				update_func = "apply_dot_damage",
 				perks = {
-					scripts_unit_extensions_default_player_unit_buffs_settings_buff_perk_names.poisoned
+					buff_perks.poisoned
 				},
 				mechanism_overrides = {
 					versus = {
@@ -89,7 +89,7 @@ woods.buff_templates = {
 				damage_profile = "thorn_sister_poison",
 				update_func = "apply_dot_damage",
 				perks = {
-					scripts_unit_extensions_default_player_unit_buffs_settings_buff_perk_names.poisoned
+					buff_perks.poisoned
 				}
 			}
 		}
@@ -108,7 +108,7 @@ woods.buff_templates = {
 				damage_profile = "bleed",
 				update_func = "apply_dot_damage",
 				perks = {
-					scripts_unit_extensions_default_player_unit_buffs_settings_buff_perk_names.bleeding
+					buff_perks.bleeding
 				}
 			}
 		}
@@ -122,11 +122,11 @@ woods.buff_templates = {
 				apply_buff_func = "apply_movement_buff",
 				lerp_time = 0.1,
 				max_stacks = 1,
-				multiplier = num_2,
+				multiplier = wall_sleep_mult,
 				path_to_movement_setting_to_modify = {
 					"move_speed"
 				},
-				duration = num
+				duration = wall_slow_duration
 			},
 			{
 				apply_buff_func = "apply_action_lerp_movement_buff",
@@ -137,11 +137,11 @@ woods.buff_templates = {
 				lerp_time = 0.1,
 				max_stacks = 1,
 				update_func = "update_charging_action_lerp_movement_buff",
-				multiplier = num_2,
+				multiplier = wall_sleep_mult,
 				path_to_movement_setting_to_modify = {
 					"crouch_move_speed"
 				},
-				duration = num
+				duration = wall_slow_duration
 			},
 			{
 				apply_buff_func = "apply_action_lerp_movement_buff",
@@ -152,11 +152,11 @@ woods.buff_templates = {
 				lerp_time = 0.1,
 				max_stacks = 1,
 				update_func = "update_charging_action_lerp_movement_buff",
-				multiplier = num_2,
+				multiplier = wall_sleep_mult,
 				path_to_movement_setting_to_modify = {
 					"walk_move_speed"
 				},
-				duration = num
+				duration = wall_slow_duration
 			},
 			{
 				name = "decrease_jump_speed_thorn_sister_wall",
@@ -164,12 +164,12 @@ woods.buff_templates = {
 				max_stacks = 1,
 				remove_buff_func = "remove_movement_buff",
 				apply_buff_func = "apply_movement_buff",
-				multiplier = num_2,
+				multiplier = wall_sleep_mult,
 				path_to_movement_setting_to_modify = {
 					"jump",
 					"initial_vertical_speed"
 				},
-				duration = num
+				duration = wall_slow_duration
 			}
 		}
 	},
@@ -216,507 +216,572 @@ woods.buff_templates = {
 		}
 	}
 }
-woods.proc_functions = {
-	kerillian_thorn_sister_health_conversion = function (arg_1_0, arg_1_1, arg_1_2, arg_1_3)
+settings.proc_functions = {
+	kerillian_thorn_sister_health_conversion = function (owner_unit, buff, params, world)
 		-- function 1
-		if not ALIVE[arg_1_0] then
-			local has_extension = ScriptUnit.has_extension(arg_1_0, "health_system")
+		if ALIVE[owner_unit] then
+			local health_extension = ScriptUnit.has_extension(owner_unit, "health_system")
 
-			if not has_extension then
+			if not health_extension then
 				return
 			end
 
-			local current_temporary_health = has_extension:current_temporary_health()
-			local amount_to_convert = arg_1_1.template.amount_to_convert
-			local num = has_extension:get_max_health() * amount_to_convert
+			local current_temporary_health = health_extension:current_temporary_health()
+			local template = buff.template
+			local percentage_to_convert = template.amount_to_convert
+			local max_health = health_extension:get_max_health()
+			local amount_to_convert = max_health * percentage_to_convert
 
-			if current_temporary_health < num then
-				num = current_temporary_health
+			if current_temporary_health < amount_to_convert then
+				amount_to_convert = current_temporary_health
 			end
 
-			local var_1_4 = POSITION_LOOKUP[arg_1_0]
+			local position = POSITION_LOOKUP[owner_unit]
 
-			if not Managers.state.network.is_server then
-				DamageUtils.heal_network(arg_1_0, arg_1_0, num, "health_conversion")
+			if Managers.state.network.is_server then
+				DamageUtils.heal_network(owner_unit, owner_unit, amount_to_convert, "health_conversion")
 			else
-				local network = Managers.state.network
-				local unit_game_object_id = network:unit_game_object_id(arg_1_0)
-				local health_conversion = NetworkLookup.heal_types.health_conversion
+				local network_manager = Managers.state.network
+				local owner_unit_id = network_manager:unit_game_object_id(owner_unit)
+				local heal_type_id = NetworkLookup.heal_types.health_conversion
 
-				network.network_transmit:send_rpc_server("rpc_request_heal", unit_game_object_id, num, health_conversion)
+				network_manager.network_transmit:send_rpc_server("rpc_request_heal", owner_unit_id, amount_to_convert, heal_type_id)
 			end
 
-			if num > 0 then
-				World.create_particles(arg_1_3, "fx/thornsister_buff", var_1_4, Quaternion.identity())
-				World.create_particles(arg_1_3, "fx/thornsister_buff_screenspace", Vector3(0, 0, 0))
+			if amount_to_convert > 0 then
+				World.create_particles(world, "fx/thornsister_buff", position, Quaternion.identity())
+				World.create_particles(world, "fx/thornsister_buff_screenspace", Vector3(0, 0, 0))
 			end
 		end
 	end,
-	kerillian_thorn_sister_set_back = function (arg_2_0, arg_2_1, arg_2_2, arg_2_3)
+	kerillian_thorn_sister_set_back = function (owner_unit, buff, params, world)
 		-- function 2
-		local var_2_0 = arg_2_2[1]
+		local attacker_unit = params[1]
 
-		if not ALIVE[arg_2_0] and not ALIVE[var_2_0] then
-			if Managers.state.side.side_by_unit[arg_2_0] == Managers.state.side.side_by_unit[var_2_0] then
+		if ALIVE[owner_unit] and ALIVE[attacker_unit] then
+			local side = Managers.state.side.side_by_unit[owner_unit]
+			local attacker_side = Managers.state.side.side_by_unit[attacker_unit]
+
+			if side == attacker_side then
 				return
 			end
 
-			local extension = ScriptUnit.extension(arg_2_0, "buff_system")
+			local buff_extension = ScriptUnit.extension(owner_unit, "buff_system")
 
-			if not extension:has_buff_type("kerillian_thorn_sister_passive_set_back_cooldown") then
-				ScriptUnit.extension(arg_2_0, "career_system"):modify_extra_ability_charge(arg_2_1.template.amount)
-				extension:add_buff("kerillian_thorn_sister_passive_set_back_cooldown")
+			if not buff_extension:has_buff_type("kerillian_thorn_sister_passive_set_back_cooldown") then
+				local career_extension = ScriptUnit.extension(owner_unit, "career_system")
+
+				career_extension:modify_extra_ability_charge(buff.template.amount)
+				buff_extension:add_buff("kerillian_thorn_sister_passive_set_back_cooldown")
 			end
 		end
 	end,
-	thorn_sister_transfer_temp_health_at_full = function (arg_3_0, arg_3_1, arg_3_2, arg_3_3)
+	thorn_sister_transfer_temp_health_at_full = function (owner_unit, buff, params, world)
 		-- function 3
-		local var_3_0 = arg_3_2[3]
-		local var_3_1 = arg_3_2[1]
-		local attacker_unit = arg_3_1.attacker_unit
+		local heal_type = params[3]
+		local healer_unit = params[1]
+		local thornsister_unit = buff.attacker_unit
 
-		if not (not ALIVE[attacker_unit] and attacker_unit ~= arg_3_0) then
+		if not ALIVE[thornsister_unit] or thornsister_unit == owner_unit then
 			return
 		end
 
-		local flag = var_3_1 == arg_3_0
-		local extension = ScriptUnit.extension(arg_3_0, "status_system")
+		local self_heal = healer_unit == owner_unit
+		local status_extension = ScriptUnit.extension(owner_unit, "status_system")
 
-		if not (not flag and extension:is_permanent_heal(var_3_0) or ScriptUnit.extension(arg_3_0, "health_system"):current_health_percent() ~= 1) then
-			local num = arg_3_2[2] * arg_3_1.template.multiplier
+		if self_heal and not status_extension:is_permanent_heal(heal_type) then
+			local health_extension = ScriptUnit.extension(owner_unit, "health_system")
+			local current_health = health_extension:current_health_percent()
 
-			if not ScriptUnit.has_extension(attacker_unit, "status_system"):is_knocked_down() then
-				local has_extension = ScriptUnit.has_extension(attacker_unit, "health_system")
-				local flag_2 = not has_extension and has_extension:current_health_percent()
+			if current_health == 1 then
+				local heal_amount = params[2]
+				local template = buff.template
+				local multiplier = template.multiplier
 
-				if not (not flag_2 and not (flag_2 < 1)) then
-					DamageUtils.heal_network(attacker_unit, arg_3_0, num, "heal_from_proc")
+				heal_amount = heal_amount * multiplier
+
+				local thornsister_status_extension = ScriptUnit.has_extension(thornsister_unit, "status_system")
+
+				if not thornsister_status_extension:is_knocked_down() then
+					local thornsister_health_extension = ScriptUnit.has_extension(thornsister_unit, "health_system")
+					local thornsister_current_health = not not thornsister_health_extension and not not thornsister_health_extension:current_health_percent()
+
+					if thornsister_current_health and thornsister_current_health < 1 then
+						DamageUtils.heal_network(thornsister_unit, owner_unit, heal_amount, "heal_from_proc")
+					end
 				end
 			end
 		end
 	end,
-	add_buff_reff_buff_stack = function (arg_4_0, arg_4_1, arg_4_2)
+	add_buff_reff_buff_stack = function (owner_unit, buff, params)
 		-- function 4
-		local var_4_0 = arg_4_2[1]
+		local triggering_unit = params[1]
 
-		if not (not ALIVE[arg_4_0] and var_4_0 ~= arg_4_0) then
-			local template = arg_4_1.template
-			local buff_to_add = template.buff_to_add
+		if ALIVE[owner_unit] and triggering_unit == owner_unit then
+			local template = buff.template
+			local buff_name = template.buff_to_add
 			local amount_to_add = template.amount_to_add
-			local extension = ScriptUnit.extension(arg_4_0, "buff_system")
+			local buff_extension = ScriptUnit.extension(owner_unit, "buff_system")
 
 			for i = 1, amount_to_add do
-				extension:add_buff(buff_to_add)
+				buff_extension:add_buff(buff_name)
 			end
 		end
 	end,
-	remove_ref_buff_stack_woods = function (arg_5_0, arg_5_1, arg_5_2)
+	remove_ref_buff_stack_woods = function (owner_unit, buff, params)
 		-- function 5
-		if not ALIVE[arg_5_0] then
-			local buff_to_remove = arg_5_1.template.buff_to_remove
-			local extension = ScriptUnit.extension(arg_5_0, "buff_system")
-			local get_stacking_buff = extension:get_stacking_buff(buff_to_remove)
+		if ALIVE[owner_unit] then
+			local buff_template = buff.template
+			local buff_name = buff_template.buff_to_remove
+			local buff_extension = ScriptUnit.extension(owner_unit, "buff_system")
+			local buffs = buff_extension:get_stacking_buff(buff_name)
 
-			if not get_stacking_buff then
-				local count = #get_stacking_buff
+			if buffs then
+				local num_stacks = #buffs
 
-				if count > 0 then
-					local id = get_stacking_buff[count].id
+				if num_stacks > 0 then
+					local buff_id = buffs[num_stacks].id
 
-					extension:remove_buff(id)
+					buff_extension:remove_buff(buff_id)
 				end
 			end
 		end
 	end,
-	thorn_sister_add_bleed_on_hit = function (arg_6_0, arg_6_1, arg_6_2)
+	thorn_sister_add_bleed_on_hit = function (owner_unit, buff, params)
 		-- function 6
-		local var_6_0 = arg_6_2[1]
+		local hit_unit = params[1]
 
-		if not ALIVE[arg_6_0] and not ALIVE[var_6_0] then
-			local bleed = arg_6_1.template.bleed
-			local system = Managers.state.entity:system("buff_system")
-			local get_career_power_level = ScriptUnit.extension(arg_6_0, "career_system"):get_career_power_level()
-			local has_extension = ScriptUnit.has_extension(var_6_0, "buff_system")
+		if ALIVE[owner_unit] and ALIVE[hit_unit] then
+			local template = buff.template
+			local bleed = template.bleed
+			local buff_system = Managers.state.entity:system("buff_system")
+			local career_extension = ScriptUnit.extension(owner_unit, "career_system")
+			local power_level = career_extension:get_career_power_level()
+			local target_buff_extension = ScriptUnit.has_extension(hit_unit, "buff_system")
 
-			if not (not has_extension and has_extension:has_buff_perk(scripts_unit_extensions_default_player_unit_buffs_settings_buff_perk_names.poisoned)) then
+			if not target_buff_extension or not target_buff_extension:has_buff_perk(buff_perks.poisoned) then
 				return false
 			end
 
-			table.clear(tbl)
+			table.clear(buff_params)
 
-			tbl.power_level = get_career_power_level
-			tbl.attacker_unit = arg_6_0
+			buff_params.power_level = power_level
+			buff_params.attacker_unit = owner_unit
 
-			system:add_buff_synced(var_6_0, bleed, BuffSyncType.LocalAndServer, tbl)
+			buff_system:add_buff_synced(hit_unit, bleed, BuffSyncType.LocalAndServer, buff_params)
 		end
 	end,
-	kerillian_thorn_sister_crit_aoe_poison_func = function (arg_7_0, arg_7_1, arg_7_2)
+	kerillian_thorn_sister_crit_aoe_poison_func = function (owner_unit, buff, params)
 		-- function 7
 		if not Managers.state.network.is_server then
 			return
 		end
 
-		local var_7_0 = arg_7_2[4]
+		local hit_num = params[4]
 
-		if not (not ALIVE[arg_7_0] and not (var_7_0 <= 1)) then
-			local system = Managers.state.entity:system("area_damage_system")
-			local get_career_power_level = ScriptUnit.extension(arg_7_0, "career_system"):get_career_power_level()
-			local var_7_3 = arg_7_2[1]
-			local var_7_4 = POSITION_LOOKUP[var_7_3]
-			local str = "buff"
-			local str_2 = "kerillian_thorn_sister_talent_poison_aoe"
-			local has_extension = ScriptUnit.has_extension(arg_7_0, "talent_system")
+		if ALIVE[owner_unit] and hit_num <= 1 then
+			local area_damage_system = Managers.state.entity:system("area_damage_system")
+			local career_extension = ScriptUnit.extension(owner_unit, "career_system")
+			local power_level = career_extension:get_career_power_level()
+			local hit_unit = params[1]
+			local position = POSITION_LOOKUP[hit_unit]
+			local damage_source = "buff"
+			local explosion_template = "kerillian_thorn_sister_talent_poison_aoe"
+			local talent_extension = ScriptUnit.has_extension(owner_unit, "talent_system")
 
-			if not has_extension and not has_extension:has_talent("kerillian_thorn_sister_double_poison") then
-				str_2 = "kerillian_thorn_sister_talent_poison_aoe_improved"
+			if talent_extension and talent_extension:has_talent("kerillian_thorn_sister_double_poison") then
+				explosion_template = "kerillian_thorn_sister_talent_poison_aoe_improved"
 			end
 
-			local identity = Quaternion.identity()
-			local num = 1
-			local flag = false
+			local rotation = Quaternion.identity()
+			local scale = 1
+			local is_critical_strike = false
 
-			system:create_explosion(arg_7_0, var_7_4, identity, str_2, num, str, get_career_power_level, flag)
+			area_damage_system:create_explosion(owner_unit, position, rotation, explosion_template, scale, damage_source, power_level, is_critical_strike)
 		end
 	end,
-	thorn_sister_add_melee_poison = function (arg_8_0, arg_8_1, arg_8_2)
+	thorn_sister_add_melee_poison = function (owner_unit, buff, params)
 		-- function 8
-		local var_8_0 = arg_8_2[1]
+		local hit_unit = params[1]
 
-		if not ALIVE[arg_8_0] and not HEALTH_ALIVE[var_8_0] then
-			local var_8_1 = arg_8_2[2]
+		if ALIVE[owner_unit] and HEALTH_ALIVE[hit_unit] then
+			local attack_type = params[2]
 
-			if not (not var_8_1 and var_8_1 == "light_attack" and var_8_1 == "heavy_attack") then
+			if not attack_type or attack_type ~= "light_attack" and attack_type ~= "heavy_attack" then
 				return
 			end
 
-			local template = arg_8_1.template
+			local template = buff.template
 			local poison = template.poison
-			local has_extension = ScriptUnit.has_extension(arg_8_0, "talent_system")
+			local talent_extension = ScriptUnit.has_extension(owner_unit, "talent_system")
 
-			if not has_extension and not has_extension:has_talent("kerillian_thorn_sister_double_poison") then
+			if talent_extension and talent_extension:has_talent("kerillian_thorn_sister_double_poison") then
 				poison = template.improved_poison
 			end
 
-			local system = Managers.state.entity:system("buff_system")
-			local get_career_power_level = ScriptUnit.extension(arg_8_0, "career_system"):get_career_power_level()
+			local buff_system = Managers.state.entity:system("buff_system")
+			local career_extension = ScriptUnit.extension(owner_unit, "career_system")
+			local power_level = career_extension:get_career_power_level()
+			local target_buff_extension = ScriptUnit.has_extension(hit_unit, "buff_system")
 
-			if not ScriptUnit.has_extension(var_8_0, "buff_system") then
+			if not target_buff_extension then
 				return false
 			end
 
-			table.clear(tbl)
+			table.clear(buff_params)
 
-			tbl.power_level = get_career_power_level
-			tbl.attacker_unit = arg_8_0
+			buff_params.power_level = power_level
+			buff_params.attacker_unit = owner_unit
 
-			system:add_buff_synced(var_8_0, poison, BuffSyncType.LocalAndServer, tbl)
+			buff_system:add_buff_synced(hit_unit, poison, BuffSyncType.LocalAndServer, buff_params)
 		end
 	end,
-	thorn_sister_big_push = function (arg_9_0, arg_9_1, arg_9_2, arg_9_3)
+	thorn_sister_big_push = function (owner_unit, buff, params, world)
 		-- function 9
-		if not (not ALIVE[arg_9_0] and arg_9_2[1].kind ~= "push_stagger" or ScriptUnit.has_extension(arg_9_0, "status_system"):current_fatigue_points() ~= 0) then
-			local extension = ScriptUnit.extension(arg_9_0, "buff_system")
-			local template = arg_9_1.template
-			local buff_to_add = template.buff_to_add
+		if ALIVE[owner_unit] then
+			local new_action = params[1]
+			local kind = new_action.kind
 
-			extension:add_buff(buff_to_add)
+			if kind == "push_stagger" then
+				local status_extension = ScriptUnit.has_extension(owner_unit, "status_system")
+				local current_fatigue = status_extension:current_fatigue_points()
 
-			local buff_to_add_2 = template.buff_to_add_2
+				if current_fatigue == 0 then
+					local buff_extension = ScriptUnit.extension(owner_unit, "buff_system")
+					local template = buff.template
+					local buff_to_add = template.buff_to_add
 
-			Managers.state.entity:system("buff_system"):add_buff(arg_9_0, buff_to_add_2, arg_9_0, false)
+					buff_extension:add_buff(buff_to_add)
 
-			local var_9_4 = POSITION_LOOKUP[arg_9_0]
+					local buff_to_add_2 = template.buff_to_add_2
+					local buff_system = Managers.state.entity:system("buff_system")
 
-			World.create_particles(arg_9_3, "fx/thornsister_push", var_9_4, Quaternion.identity())
-		end
-	end,
-	kerillian_thorn_sister_add_buff_remove = function (arg_10_0, arg_10_1, arg_10_2)
-		-- function 10
-		if not ALIVE[arg_10_0] then
-			local buff_to_add = arg_10_1.template.buff_to_add
+					buff_system:add_buff(owner_unit, buff_to_add_2, owner_unit, false)
 
-			Managers.state.entity:system("buff_system"):add_buff(arg_10_0, buff_to_add, arg_10_0, false)
-			ScriptUnit.extension(arg_10_0, "buff_system"):remove_buff(arg_10_1.id)
-		end
-	end,
-	kerillian_thorn_sister_restore_health_on_ranged_hit = function (arg_11_0, arg_11_1, arg_11_2)
-		-- function 11
-		local var_11_0 = arg_11_2[7]
+					local position = POSITION_LOOKUP[owner_unit]
 
-		if not (not ALIVE[arg_11_0] and not var_11_0 and var_11_0 == "projectile" or var_11_0 == "instant_projectile" or var_11_0 ~= "heavy_instant_projectile") then
-			if not Managers.state.network.is_server then
-				local amount_to_heal = arg_11_1.template.amount_to_heal
-
-				DamageUtils.heal_network(arg_11_0, arg_11_0, amount_to_heal, "career_passive")
-			end
-
-			ScriptUnit.extension(arg_11_0, "buff_system"):remove_buff(arg_11_1.id)
-		end
-	end,
-	kerillian_thorn_sister_wall_buff_enemies = function (arg_12_0, arg_12_1, arg_12_2, arg_12_3, arg_12_4)
-		-- function 12
-		local attacker_unit = arg_12_1.attacker_unit
-		local var_12_1 = arg_12_2[arg_12_4.target_number]
-
-		if not (not ALIVE[arg_12_0] and not ALIVE[attacker_unit] and var_12_1 ~= 1) then
-			local var_12_2 = POSITION_LOOKUP[attacker_unit]
-			local template = arg_12_1.template
-			local radius = template.radius
-			local buff_to_add = template.buff_to_add
-			local alloc_table = FrameTable.alloc_table()
-			local enemy_broadphase = Managers.state.entity:system("proximity_system").enemy_broadphase
-
-			Broadphase.query(enemy_broadphase, var_12_2, radius, alloc_table)
-
-			local side = Managers.state.side
-			local system = Managers.state.entity:system("buff_system")
-
-			for k, v in pairs(alloc_table) do
-				if not ALIVE[v] and not side:is_enemy(arg_12_0, v) then
-					system:add_buff(v, buff_to_add, arg_12_0)
+					World.create_particles(world, "fx/thornsister_push", position, Quaternion.identity())
 				end
 			end
 		end
 	end,
-	add_buff_on_proc_thorn = function (arg_13_0, arg_13_1, arg_13_2)
+	kerillian_thorn_sister_add_buff_remove = function (owner_unit, buff, params)
+		-- function 10
+		if ALIVE[owner_unit] then
+			local buff_to_add = buff.template.buff_to_add
+			local buff_system = Managers.state.entity:system("buff_system")
+
+			buff_system:add_buff(owner_unit, buff_to_add, owner_unit, false)
+
+			local buff_extension = ScriptUnit.extension(owner_unit, "buff_system")
+
+			buff_extension:remove_buff(buff.id)
+		end
+	end,
+	kerillian_thorn_sister_restore_health_on_ranged_hit = function (owner_unit, buff, params)
+		-- function 11
+		local attack_type = params[7]
+
+		if ALIVE[owner_unit] and attack_type and (attack_type == "projectile" or attack_type == "instant_projectile" or attack_type == "heavy_instant_projectile") then
+			if Managers.state.network.is_server then
+				local amount_to_heal = buff.template.amount_to_heal
+
+				DamageUtils.heal_network(owner_unit, owner_unit, amount_to_heal, "career_passive")
+			end
+
+			local buff_extension = ScriptUnit.extension(owner_unit, "buff_system")
+
+			buff_extension:remove_buff(buff.id)
+		end
+	end,
+	kerillian_thorn_sister_wall_buff_enemies = function (owner_unit, buff, params, world, param_order)
+		-- function 12
+		local wall_unit = buff.attacker_unit
+		local target_number = params[param_order.target_number]
+
+		if ALIVE[owner_unit] and ALIVE[wall_unit] and target_number == 1 then
+			local position = POSITION_LOOKUP[wall_unit]
+			local template = buff.template
+			local radius = template.radius
+			local buff_to_add = template.buff_to_add
+			local nearby_enemy_units = FrameTable.alloc_table()
+			local proximity_extension = Managers.state.entity:system("proximity_system")
+			local broadphase = proximity_extension.enemy_broadphase
+
+			Broadphase.query(broadphase, position, radius, nearby_enemy_units)
+
+			local side_manager = Managers.state.side
+			local buff_system = Managers.state.entity:system("buff_system")
+
+			for _, enemy_unit in pairs(nearby_enemy_units) do
+				if ALIVE[enemy_unit] and side_manager:is_enemy(owner_unit, enemy_unit) then
+					buff_system:add_buff(enemy_unit, buff_to_add, owner_unit)
+				end
+			end
+		end
+	end,
+	add_buff_on_proc_thorn = function (owner_unit, buff, params)
 		-- function 13
-		if not ALIVE[arg_13_0] then
-			local system = Managers.state.entity:system("buff_system")
-			local buff_to_add = arg_13_1.template.buff_to_add
+		if ALIVE[owner_unit] then
+			local buff_system = Managers.state.entity:system("buff_system")
+			local buff_to_add = buff.template.buff_to_add
 
-			system:add_buff(arg_13_0, buff_to_add, arg_13_0, false)
+			buff_system:add_buff(owner_unit, buff_to_add, owner_unit, false)
 		end
 	end,
-	kerillian_thorn_sister_reduce_passive_on_elite = function (arg_14_0, arg_14_1, arg_14_2)
+	kerillian_thorn_sister_reduce_passive_on_elite = function (owner_unit, buff, params)
 		-- function 14
-		if not ALIVE[arg_14_0] then
-			local extension = ScriptUnit.extension(arg_14_0, "career_system")
-			local time_removed_per_kill = arg_14_1.template.time_removed_per_kill
+		if ALIVE[owner_unit] then
+			local career_extension = ScriptUnit.extension(owner_unit, "career_system")
+			local template = buff.template
+			local time_removed_per_kill = template.time_removed_per_kill
 
-			time_removed_per_kill = time_removed_per_kill or 0
+			if not time_removed_per_kill then
+				-- Nothing
+			end
 
-			extension:modify_extra_ability_charge(time_removed_per_kill)
+			time_removed_per_kill = 0
+
+			local time_to_remove = time_removed_per_kill
+
+			::label_14_0::
+
+			career_extension:modify_extra_ability_charge(time_to_remove)
 		end
 	end,
-	kerillian_thorn_sister_team_buff_on_passive = function (arg_15_0, arg_15_1, arg_15_2)
+	kerillian_thorn_sister_team_buff_on_passive = function (owner_unit, buff, params)
 		-- function 15
-		if not ALIVE[arg_15_0] then
-			local PLAYER_AND_BOT_UNITS = Managers.state.side.side_by_unit[arg_15_0].PLAYER_AND_BOT_UNITS
-			local count = #PLAYER_AND_BOT_UNITS
-			local num = 40
-			local template = arg_15_1.template
-			local var_15_4 = POSITION_LOOKUP[arg_15_0]
-			local num_2 = num * num
-			local system = Managers.state.entity:system("buff_system")
+		if ALIVE[owner_unit] then
+			local side = Managers.state.side.side_by_unit[owner_unit]
+			local player_and_bot_units = side.PLAYER_AND_BOT_UNITS
+			local num_targets = #player_and_bot_units
+			local range = 40
+			local buff_template = buff.template
+			local owner_position = POSITION_LOOKUP[owner_unit]
+			local range_squared = range * range
+			local buff_system = Managers.state.entity:system("buff_system")
 
-			for i = 1, count do
-				local var_15_7 = PLAYER_AND_BOT_UNITS[i]
-				local var_15_8 = POSITION_LOOKUP[var_15_7]
+			for i = 1, num_targets do
+				local target_unit = player_and_bot_units[i]
+				local ally_position = POSITION_LOOKUP[target_unit]
+				local distance_squared = Vector3.distance_squared(owner_position, ally_position)
 
-				if num_2 > Vector3.distance_squared(var_15_4, var_15_8) then
-					local buff_to_add_1 = template.buff_to_add_1
+				if distance_squared < range_squared then
+					local buff_to_add_1 = buff_template.buff_to_add_1
 
-					system:add_buff(var_15_7, buff_to_add_1, arg_15_0, false)
+					buff_system:add_buff(target_unit, buff_to_add_1, owner_unit, false)
 				end
 			end
 		end
 	end
 }
-woods.buff_function_templates = {
-	kerillian_thorn_sister_healing_wall_buff_counter_remove = function (arg_16_0, arg_16_1, arg_16_2)
+settings.buff_function_templates = {
+	kerillian_thorn_sister_healing_wall_buff_counter_remove = function (unit, buff, params)
 		-- function 16
-		if not ALIVE[arg_16_0] then
-			local extension = ScriptUnit.extension(arg_16_0, "buff_system")
+		if ALIVE[unit] then
+			local buff_extension = ScriptUnit.extension(unit, "buff_system")
+			local num_stacks = buff_extension:num_buff_type(buff.buff_type)
 
-			if extension:num_buff_type(arg_16_1.buff_type) == 1 then
-				local buffs_to_add = arg_16_1.template.add_buffs_data.buffs_to_add
+			if num_stacks == 1 then
+				local template = buff.template
+				local buffs_to_remove = template.add_buffs_data.buffs_to_add
 
-				for i = 1, #buffs_to_add do
-					local get_buff_type = extension:get_buff_type(buffs_to_add[i])
+				for i = 1, #buffs_to_remove do
+					local buff = buff_extension:get_buff_type(buffs_to_remove[i])
 
-					if not get_buff_type then
-						get_buff_type.duration = 0
-						get_buff_type.aborted = 0
+					if buff then
+						buff.duration = 0
+						buff.aborted = 0
 					end
 				end
 			end
 		end
 	end,
-	start_dot_damage_kerillian = function (arg_17_0, arg_17_1, arg_17_2)
+	start_dot_damage_kerillian = function (unit, buff, params)
 		-- function 17
-		local attacker_unit = arg_17_1.attacker_unit
+		local attacker_unit = buff.attacker_unit
 
-		if not ALIVE[attacker_unit] then
-			local has_extension = ScriptUnit.has_extension(attacker_unit, "talent_system")
+		if ALIVE[attacker_unit] then
+			local talent_extension = ScriptUnit.has_extension(attacker_unit, "talent_system")
 
-			if not has_extension and not has_extension:has_talent("kerillian_thorn_sister_phasing") then
-				local has_extension_2 = ScriptUnit.has_extension(attacker_unit, "buff_system")
+			if talent_extension and talent_extension:has_talent("kerillian_thorn_sister_phasing") then
+				local buff_extension = ScriptUnit.has_extension(attacker_unit, "buff_system")
 
-				if not has_extension_2 then
+				if not buff_extension then
 					return
 				end
 
-				arg_17_1.added_id = has_extension_2:add_buff("kerillian_thorn_sister_drain_poison_phasing_tracker")
+				buff.added_id = buff_extension:add_buff("kerillian_thorn_sister_drain_poison_phasing_tracker")
 
-				if has_extension_2:num_buff_type("kerillian_thorn_sister_drain_poison_phasing_tracker") >= 5 then
-					has_extension_2:add_buff("kerillian_thorn_sister_drain_poison_phasing_buff")
+				if buff_extension:num_buff_type("kerillian_thorn_sister_drain_poison_phasing_tracker") >= 5 then
+					buff_extension:add_buff("kerillian_thorn_sister_drain_poison_phasing_buff")
 				end
 			end
 		end
 	end,
-	activate_stacking_buff_on_distance = function (arg_18_0, arg_18_1, arg_18_2)
+	activate_stacking_buff_on_distance = function (owner_unit, buff, params)
 		-- function 18
 		if not Managers.state.network.is_server then
 			return
 		end
 
-		local template = arg_18_1.template
-		local range = arg_18_1.range
-		local num = range * range
-		local var_18_3 = POSITION_LOOKUP[arg_18_0]
+		local template = buff.template
+		local range = buff.range
+		local range_squared = range * range
+		local owner_position = POSITION_LOOKUP[owner_unit]
 		local buff_to_add = template.buff_to_add
-		local system = Managers.state.entity:system("buff_system")
-		local PLAYER_AND_BOT_UNITS = Managers.state.side.side_by_unit[arg_18_0].PLAYER_AND_BOT_UNITS
-		local count = #PLAYER_AND_BOT_UNITS
+		local buff_system = Managers.state.entity:system("buff_system")
+		local side = Managers.state.side.side_by_unit[owner_unit]
+		local player_and_bot_units = side.PLAYER_AND_BOT_UNITS
+		local num_units = #player_and_bot_units
 
-		for i = 1, count do
-			local var_18_8 = PLAYER_AND_BOT_UNITS[i]
-			local buff_instances = arg_18_1.buff_instances
+		for i = 1, num_units do
+			local unit = player_and_bot_units[i]
+			local buff_instances = buff.buff_instances
 
-			buff_instances = not buff_instances and arg_18_1.buff_instances[var_18_8]
+			if buff_instances then
+				-- Nothing
+			end
 
-			if not ALIVE[var_18_8] then
-				local var_18_10 = POSITION_LOOKUP[var_18_8]
-				local distance_squared = Vector3.distance_squared(var_18_3, var_18_10)
+			buff_instances = buff.buff_instances[unit]
 
-				if not (buff_instances or not (distance_squared <= num)) then
-					local add_buff = system:add_buff(var_18_8, buff_to_add, arg_18_0, true)
+			local buff_instance = buff_instances
 
-					if not arg_18_1.buff_instances then
-						arg_18_1.buff_instances[var_18_8] = add_buff
+			::label_18_0::
+
+			if ALIVE[unit] then
+				local unit_position = POSITION_LOOKUP[unit]
+				local distance_squared = Vector3.distance_squared(owner_position, unit_position)
+
+				if not buff_instance and distance_squared <= range_squared then
+					local server_buff_id = buff_system:add_buff(unit, buff_to_add, owner_unit, true)
+
+					if buff.buff_instances then
+						buff.buff_instances[unit] = server_buff_id
 					else
-						arg_18_1.buff_instances = {
-							[var_18_8] = add_buff
+						buff.buff_instances = {
+							[unit] = server_buff_id
 						}
 					end
-				elseif not (not buff_instances and not (num < distance_squared)) then
-					system:remove_server_controlled_buff(var_18_8, buff_instances)
+				elseif buff_instance and range_squared < distance_squared then
+					buff_system:remove_server_controlled_buff(unit, buff_instance)
 
-					arg_18_1.buff_instances[var_18_8] = nil
+					buff.buff_instances[unit] = nil
 				end
-			elseif not buff_instances then
-				arg_18_1.buff_instances[var_18_8] = nil
+			elseif buff_instance then
+				buff.buff_instances[unit] = nil
 			end
 		end
 	end,
-	remove_aura_stacking_buff = function (arg_19_0, arg_19_1, arg_19_2)
+	remove_aura_stacking_buff = function (owner_unit, buff, params)
 		-- function 19
 		if not Managers.state.network.is_server then
 			return
 		end
 
-		local buff_instances = arg_19_1.buff_instances
+		local instances = buff.buff_instances
 
-		if not buff_instances then
-			local system = Managers.state.entity:system("buff_system")
+		if instances then
+			local buff_system = Managers.state.entity:system("buff_system")
 
-			for k, v in pairs(buff_instances) do
-				if not ALIVE[k] then
-					system:remove_server_controlled_buff(k, v)
+			for unit, instance_id in pairs(instances) do
+				if ALIVE[unit] then
+					buff_system:remove_server_controlled_buff(unit, instance_id)
 				end
 			end
 		end
 	end,
-	kerillian_thorn_sister_passive_health_convert = function (arg_20_0, arg_20_1, arg_20_2)
+	kerillian_thorn_sister_passive_health_convert = function (owner_unit, buff, params)
 		-- function 20
 		if not Managers.state.network.is_server then
 			return
 		end
 
-		if not ALIVE[arg_20_0] then
-			local extension = ScriptUnit.extension(arg_20_0, "buff_system")
-			local has_extension = ScriptUnit.has_extension(arg_20_0, "health_system")
-			local template = arg_20_1.template
+		if ALIVE[owner_unit] then
+			local buff_extension = ScriptUnit.extension(owner_unit, "buff_system")
+			local health_extension = ScriptUnit.has_extension(owner_unit, "health_system")
+			local template = buff.template
 			local thp_to_lose = template.thp_to_lose
-			local flag = not has_extension and thp_to_lose < has_extension:current_temporary_health()
+			local has_thp = not not health_extension and thp_to_lose < health_extension:current_temporary_health()
 
-			if not extension:has_buff_type("kerillian_thorn_sister_free_ability_stack") and not flag then
+			if buff_extension:has_buff_type("kerillian_thorn_sister_free_ability_stack") and has_thp then
 				local hp_to_gain = template.hp_to_gain
 
-				DamageUtils.heal_network(arg_20_0, arg_20_0, hp_to_gain, "career_passive")
+				DamageUtils.heal_network(owner_unit, owner_unit, hp_to_gain, "career_passive")
 
 				if thp_to_lose - hp_to_gain > 0 then
-					DamageUtils.add_damage_network(arg_20_0, arg_20_0, thp_to_lose - hp_to_gain, "torso", "life_tap", nil, Vector3(0, 0, 0), "life_tap", nil, arg_20_0, nil, nil, nil, nil, nil, nil, nil, nil, 1)
+					DamageUtils.add_damage_network(owner_unit, owner_unit, thp_to_lose - hp_to_gain, "torso", "life_tap", nil, Vector3(0, 0, 0), "life_tap", nil, owner_unit, nil, nil, nil, nil, nil, nil, nil, nil, 1)
 				end
 			end
 		end
 	end,
-	kerillian_thorn_sister_add_buff_to_attacker = function (arg_21_0, arg_21_1, arg_21_2)
+	kerillian_thorn_sister_add_buff_to_attacker = function (owner_unit, buff, params)
 		-- function 21
-		if not ALIVE[arg_21_0] then
-			local buff_to_add = arg_21_1.template.buff_to_add
-			local attacker_unit = arg_21_1.attacker_unit
-			local has_extension = ScriptUnit.has_extension(attacker_unit, "buff_system")
+		if ALIVE[owner_unit] then
+			local buff_to_add = buff.template.buff_to_add
+			local kerillian_unit = buff.attacker_unit
+			local buff_extension = ScriptUnit.has_extension(kerillian_unit, "buff_system")
 
-			if not has_extension then
-				arg_21_1.added_id = has_extension:add_buff(buff_to_add)
+			if buff_extension then
+				buff.added_id = buff_extension:add_buff(buff_to_add)
 			end
 		end
 	end,
-	kerillian_thorn_sister_remove_buff_from_attacker = function (arg_22_0, arg_22_1, arg_22_2)
+	kerillian_thorn_sister_remove_buff_from_attacker = function (owner_unit, buff, params)
 		-- function 22
-		if not arg_22_1.added_id then
-			local attacker_unit = arg_22_1.attacker_unit
-			local has_extension = ScriptUnit.has_extension(attacker_unit, "buff_system")
+		if buff.added_id then
+			local kerillian_unit = buff.attacker_unit
+			local buff_extension = ScriptUnit.has_extension(kerillian_unit, "buff_system")
 
-			if not has_extension then
-				has_extension:remove_buff(arg_22_1.added_id)
+			if buff_extension then
+				buff_extension:remove_buff(buff.added_id)
 			end
 		end
 	end,
-	buff_system_add_buff = function (arg_23_0, arg_23_1, arg_23_2)
+	buff_system_add_buff = function (owner_unit, buff, params)
 		-- function 23
-		if not ALIVE[arg_23_0] then
-			local buff_to_add = arg_23_1.template.buff_to_add
+		if ALIVE[owner_unit] then
+			local buff_to_add = buff.template.buff_to_add
+			local buff_system = Managers.state.entity:system("buff_system")
 
-			Managers.state.entity:system("buff_system"):add_buff(arg_23_0, buff_to_add, arg_23_0, false)
+			buff_system:add_buff(owner_unit, buff_to_add, owner_unit, false)
 		end
 	end,
-	kerillian_thorn_sister_noclip_on = function (arg_24_0, arg_24_1, arg_24_2)
+	kerillian_thorn_sister_noclip_on = function (owner_unit, buff, params)
 		-- function 24
-		if not ALIVE[arg_24_0] then
-			local has_extension = ScriptUnit.has_extension(arg_24_0, "status_system")
+		if ALIVE[owner_unit] then
+			local status_extension = ScriptUnit.has_extension(owner_unit, "status_system")
 
-			if not has_extension then
-				has_extension:set_noclip(true, "thorn_sister_phasing")
+			if status_extension then
+				status_extension:set_noclip(true, "thorn_sister_phasing")
 			end
 		end
 	end,
-	kerillian_thorn_sister_noclip_off = function (arg_25_0, arg_25_1, arg_25_2)
+	kerillian_thorn_sister_noclip_off = function (owner_unit, buff, params)
 		-- function 25
-		if not ALIVE[arg_25_0] then
-			local has_extension = ScriptUnit.has_extension(arg_25_0, "status_system")
+		if ALIVE[owner_unit] then
+			local status_extension = ScriptUnit.has_extension(owner_unit, "status_system")
 
-			if not has_extension then
-				has_extension:set_noclip(false, "thorn_sister_phasing")
+			if status_extension then
+				status_extension:set_noclip(false, "thorn_sister_phasing")
 			end
 		end
 	end
 }
-woods.stacking_buff_functions = {
-	kerillian_thorn_sister_avatar = function (arg_26_0, arg_26_1)
+settings.stacking_buff_functions = {
+	kerillian_thorn_sister_avatar = function (owner_unit, sub_buff_template)
 		-- function 26
-		if not ALIVE[arg_26_0] then
-			local max_stack_data = arg_26_1.max_stack_data
+		if ALIVE[owner_unit] then
+			local max_stack_data = sub_buff_template.max_stack_data
 
-			if not max_stack_data then
+			if max_stack_data then
 				local buffs_to_add = max_stack_data.buffs_to_add
-				local system = Managers.state.entity:system("buff_system")
+				local buff_system = Managers.state.entity:system("buff_system")
 
 				for i = 1, #buffs_to_add do
-					local var_26_3 = buffs_to_add[i]
+					local buff_to_add = buffs_to_add[i]
 
-					system:add_buff(arg_26_0, var_26_3, arg_26_0, false)
+					buff_system:add_buff(owner_unit, buff_to_add, owner_unit, false)
 				end
 			end
 		end

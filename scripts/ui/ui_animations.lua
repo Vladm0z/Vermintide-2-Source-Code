@@ -4,305 +4,308 @@ require("scripts/utils/varargs")
 
 local UIAnimation = UIAnimation
 
-UIAnimation = UIAnimation or {
+UIAnimation = not not UIAnimation or not not {
 	catmullrom = {
 		num_args = 8,
 		num_data = 1,
-		init = function (self, arg_1_1, arg_1_2, arg_1_3, arg_1_4, arg_1_5, arg_1_6, arg_1_7)
+		init = function (target, target_index, target_value, p0, p1, p2, p3, time)
 			-- function 1
-			if not arg_1_1 then
-				self[arg_1_1] = arg_1_4 * arg_1_2
+			if target_index then
+				target[target_index] = p1 * target_value
 			else
-				local num = arg_1_4 * arg_1_2
+				local start_value = p1 * target_value
 
-				for i = 1, #self do
-					self[i] = num
+				for i = 1, #target do
+					target[i] = start_value
 				end
 			end
 
 			return 0
 		end,
-		update = function (arg_2_0, arg_2_1, arg_2_2, arg_2_3, arg_2_4, arg_2_5, arg_2_6, arg_2_7, arg_2_8, arg_2_9)
+		update = function (dt, target, target_index, target_value, p0, p1, p2, p3, time, progressed_time)
 			-- function 2
-			arg_2_9 = arg_2_9 + arg_2_0
+			progressed_time = progressed_time + dt
 
-			local min = math.min(arg_2_9 / arg_2_8, 1)
-			local num = math.catmullrom(min, arg_2_4, arg_2_5, arg_2_6, arg_2_7) * arg_2_3
+			local progress_fraction = math.min(progressed_time / time, 1)
+			local catmullrom_value = math.catmullrom(progress_fraction, p0, p1, p2, p3)
+			local new_value = catmullrom_value * target_value
 
-			if not arg_2_2 then
-				arg_2_1[arg_2_2] = num
+			if target_index then
+				target[target_index] = new_value
 			else
-				for i = 1, #arg_2_1 do
-					arg_2_1[i] = num
+				for i = 1, #target do
+					target[i] = new_value
 				end
 			end
 
-			return arg_2_9 <= arg_2_8, arg_2_9
+			return progressed_time <= time, progressed_time
 		end
 	},
 	size_offset_scale = {
 		num_args = 9,
 		num_data = 1,
-		init = function (self, arg_3_1, arg_3_2, arg_3_3, arg_3_4, arg_3_5, arg_3_6, arg_3_7, arg_3_8)
+		init = function (target, offset_target, target_index, target_value, p0, p1, p2, p3, time)
 			-- function 3
-			local num = arg_3_5 * arg_3_3
-			local num_2 = (arg_3_3 - num) * 0.5
+			local start_value = p1 * target_value
+			local value_diff = (target_value - start_value) * 0.5
 
-			if not arg_3_2 then
-				self[arg_3_2] = num
-				arg_3_1[arg_3_2] = num_2
+			if target_index then
+				target[target_index] = start_value
+				offset_target[target_index] = value_diff
 			else
-				for i = 1, #self do
-					self[i] = num
-					arg_3_1[i] = num_2
+				for i = 1, #target do
+					target[i] = start_value
+					offset_target[i] = value_diff
 				end
 			end
 
 			return 0
 		end,
-		update = function (arg_4_0, arg_4_1, arg_4_2, arg_4_3, arg_4_4, arg_4_5, arg_4_6, arg_4_7, arg_4_8, arg_4_9, arg_4_10)
+		update = function (dt, target, offset_target, target_index, target_value, p0, p1, p2, p3, time, progressed_time)
 			-- function 4
-			arg_4_10 = arg_4_10 + arg_4_0
+			progressed_time = progressed_time + dt
 
-			local min = math.min(arg_4_10 / arg_4_9, 1)
-			local num = math.catmullrom(min, arg_4_5, arg_4_6, arg_4_7, arg_4_8) * arg_4_4
-			local num_2 = (arg_4_4 - num) * 0.5
+			local progress_fraction = math.min(progressed_time / time, 1)
+			local catmullrom_value = math.catmullrom(progress_fraction, p0, p1, p2, p3)
+			local new_value = catmullrom_value * target_value
+			local value_diff = (target_value - new_value) * 0.5
 
-			if not arg_4_3 then
-				arg_4_1[arg_4_3] = num
-				arg_4_2[i] = num_2
+			if target_index then
+				target[target_index] = new_value
+				offset_target[i] = value_diff
 			else
-				for i = 1, #arg_4_1 do
-					arg_4_1[i] = num
-					arg_4_2[i] = num_2
+				for i = 1, #target do
+					target[i] = new_value
+					offset_target[i] = value_diff
 				end
 			end
 
-			return arg_4_10 <= arg_4_9, arg_4_10
+			return progressed_time <= time, progressed_time
 		end
 	},
 	pulse_animation = {
 		num_args = 5,
 		num_data = 1,
-		init = function (self, arg_5_1, arg_5_2, arg_5_3, arg_5_4)
+		init = function (target, target_index, min, max, speed)
 			-- function 5
-			self[arg_5_1] = arg_5_2
+			target[target_index] = min
 
 			return 0
 		end,
-		update = function (arg_6_0, arg_6_1, arg_6_2, arg_6_3, arg_6_4, arg_6_5, arg_6_6)
+		update = function (dt, target, target_index, min, max, speed, progressed_time)
 			-- function 6
-			arg_6_6 = arg_6_6 + arg_6_0
+			progressed_time = progressed_time + dt
 
-			local sin = math.sin(arg_6_6 * arg_6_5)
+			local wave_value = math.sin(progressed_time * speed)
+			local current_value = min + wave_value * wave_value * (max - min)
 
-			arg_6_1[arg_6_2] = arg_6_3 + sin * sin * (arg_6_4 - arg_6_3)
+			target[target_index] = current_value
 
-			return true, arg_6_6
+			return true, progressed_time
 		end
 	},
 	pulse_animation2 = {
 		num_args = 4,
 		num_data = 1,
-		init = function (arg_7_0, arg_7_1, arg_7_2, arg_7_3, arg_7_4)
+		init = function (target, target_index, min, max, speed)
 			-- function 7
 			return 0
 		end,
-		update = function (arg_8_0, arg_8_1, arg_8_2, arg_8_3, arg_8_4, arg_8_5)
+		update = function (dt, target, min, max, speed, progressed_time)
 			-- function 8
-			arg_8_5 = arg_8_5 + arg_8_0
+			progressed_time = progressed_time + dt
 
-			local sin = math.sin(arg_8_5 * arg_8_4)
+			local wave_value = math.sin(progressed_time * speed)
 
-			for k, v in pairs(arg_8_1) do
-				local num = arg_8_2[k] + sin * sin * (arg_8_3[k] - arg_8_2[k])
+			for target_index, target_value in pairs(target) do
+				local current_value = min[target_index] + wave_value * wave_value * (max[target_index] - min[target_index])
 
-				arg_8_1[k] = math.floor(num)
+				target[target_index] = math.floor(current_value)
 			end
 
-			return true, arg_8_5
+			return true, progressed_time
 		end
 	},
 	pulse_animation3 = {
 		num_args = 6,
 		num_data = 1,
-		init = function (arg_9_0, arg_9_1, arg_9_2, arg_9_3, arg_9_4, arg_9_5)
+		init = function (target, target_index, origin, mod, speed, time)
 			-- function 9
 			return 0
 		end,
-		update = function (arg_10_0, arg_10_1, arg_10_2, arg_10_3, arg_10_4, arg_10_5, arg_10_6, arg_10_7)
+		update = function (dt, target, target_index, origin, mod, speed, time, progressed_time)
 			-- function 10
-			arg_10_7 = arg_10_7 + arg_10_0 * arg_10_5
+			progressed_time = progressed_time + dt * speed
 
-			local flag = arg_10_7 <= arg_10_6 * arg_10_5
-			local var_10_1
+			local alive = progressed_time <= time * speed
+			local value
 
-			if not flag then
-				var_10_1 = math.sirp(arg_10_3, arg_10_4, arg_10_7)
+			if alive then
+				value = math.sirp(origin, mod, progressed_time)
 			else
-				var_10_1 = arg_10_3
+				value = origin
 			end
 
-			arg_10_1[arg_10_2] = var_10_1
+			target[target_index] = value
 
-			return flag, arg_10_7
+			return alive, progressed_time
 		end
 	},
 	text_flash = {
 		num_args = 6,
 		num_data = 1,
-		init = function (arg_11_0, arg_11_1, arg_11_2, arg_11_3, arg_11_4, arg_11_5)
+		init = function (target, target_index, origin, mod, speed, time)
 			-- function 11
 			return 0
 		end,
-		update = function (arg_12_0, arg_12_1, arg_12_2, arg_12_3, arg_12_4, arg_12_5, arg_12_6, arg_12_7)
+		update = function (dt, target, target_index, origin, mod, speed, time, progressed_time)
 			-- function 12
-			arg_12_7 = arg_12_7 + arg_12_0 * arg_12_5
+			progressed_time = progressed_time + dt * speed
 
-			local flag = arg_12_7 <= arg_12_6 * arg_12_5
-			local var_12_1
+			local alive = progressed_time <= time * speed
+			local value
 
-			if not flag then
-				var_12_1 = math.sirp(arg_12_3, arg_12_4, arg_12_7)
+			if alive then
+				value = math.sirp(origin, mod, progressed_time)
 			else
-				var_12_1 = arg_12_3
+				value = origin
 			end
 
-			for i = 2, #arg_12_1 do
-				arg_12_1[i] = var_12_1
+			for i = 2, #target do
+				target[i] = value
 			end
 
-			return flag, arg_12_7
+			return alive, progressed_time
 		end
 	},
 	update_function_by_time = {
 		num_args = 6,
 		num_data = 1,
-		init = function (self, arg_13_1, arg_13_2, arg_13_3, arg_13_4, arg_13_5)
+		init = function (target, target_index, from, to, time, func_ptr)
 			-- function 13
-			self[arg_13_1] = arg_13_2
+			target[target_index] = from
 
 			return 0
 		end,
-		update = function (arg_14_0, arg_14_1, arg_14_2, arg_14_3, arg_14_4, arg_14_5, arg_14_6, arg_14_7)
+		update = function (dt, target, target_index, from, to, time, func_ptr, progressed_time)
 			-- function 14
-			arg_14_7 = arg_14_7 + arg_14_0
-			arg_14_1[arg_14_2] = arg_14_3 + arg_14_6(arg_14_7) * (arg_14_4 - arg_14_3)
+			progressed_time = progressed_time + dt
+			target[target_index] = from + func_ptr(progressed_time) * (to - from)
 
-			return true, arg_14_7
+			return true, progressed_time
 		end
 	},
 	linear_scale2 = {
 		num_args = 6,
 		num_data = 1,
-		init = function (arg_15_0, arg_15_1, arg_15_2, arg_15_3, arg_15_4, arg_15_5)
+		init = function (target, from_x, from_y, to_x, to_y, time)
 			-- function 15
 			return 0
 		end,
-		update = function (arg_16_0, arg_16_1, arg_16_2, arg_16_3, arg_16_4, arg_16_5, arg_16_6, arg_16_7)
+		update = function (dt, target, from_x, from_y, to_x, to_y, time, progressed_time)
 			-- function 16
-			arg_16_7 = arg_16_7 + arg_16_0
+			progressed_time = progressed_time + dt
 
-			local num = arg_16_7 / arg_16_6
+			local delta_time = progressed_time / time
 
-			arg_16_1[1] = (arg_16_4 - arg_16_2) * num + arg_16_2
-			arg_16_1[2] = (arg_16_5 - arg_16_3) * num + arg_16_3
+			target[1] = (to_x - from_x) * delta_time + from_x
+			target[2] = (to_y - from_y) * delta_time + from_y
 
-			return arg_16_7 <= arg_16_6, arg_16_7
+			return progressed_time <= time, progressed_time
 		end
 	},
 	linear_scale_color = {
 		num_args = 8,
 		num_data = 1,
-		init = function (arg_17_0, arg_17_1, arg_17_2, arg_17_3, arg_17_4, arg_17_5, arg_17_6, arg_17_7)
+		init = function (target, from_2, from_3, from_4, to_2, to_3, to_4, time)
 			-- function 17
 			return 0
 		end,
-		update = function (arg_18_0, arg_18_1, arg_18_2, arg_18_3, arg_18_4, arg_18_5, arg_18_6, arg_18_7, arg_18_8, arg_18_9)
+		update = function (dt, target, from_2, from_3, from_4, to_2, to_3, to_4, time, progressed_time)
 			-- function 18
-			arg_18_9 = arg_18_9 + arg_18_0
+			progressed_time = progressed_time + dt
 
-			local min = math.min(1, arg_18_9 / arg_18_8)
+			local delta_time = math.min(1, progressed_time / time)
 
-			arg_18_1[2] = (arg_18_5 - arg_18_2) * min + arg_18_2
-			arg_18_1[3] = (arg_18_6 - arg_18_3) * min + arg_18_3
-			arg_18_1[4] = (arg_18_7 - arg_18_4) * min + arg_18_4
+			target[2] = (to_2 - from_2) * delta_time + from_2
+			target[3] = (to_3 - from_3) * delta_time + from_3
+			target[4] = (to_4 - from_4) * delta_time + from_4
 
-			return arg_18_9 <= arg_18_8, arg_18_9
+			return progressed_time <= time, progressed_time
 		end
 	},
 	function_by_time = {
 		num_args = 6,
 		num_data = 1,
-		init = function (self, arg_19_1, arg_19_2, arg_19_3, arg_19_4, arg_19_5, arg_19_6)
+		init = function (target, target_index, from, to, time, func_ptr, offset_value)
 			-- function 19
-			self[arg_19_1] = arg_19_2
+			target[target_index] = from
 
 			return 0
 		end,
-		update = function (arg_20_0, arg_20_1, arg_20_2, arg_20_3, arg_20_4, arg_20_5, arg_20_6, arg_20_7)
+		update = function (dt, target, target_index, from, to, time, func_ptr, progressed_time)
 			-- function 20
-			arg_20_7 = arg_20_7 + arg_20_0
+			progressed_time = progressed_time + dt
 
-			local min = math.min(1, arg_20_7 / arg_20_5)
+			local delta_time = math.min(1, progressed_time / time)
 
-			arg_20_1[arg_20_2] = arg_20_3 + arg_20_6(min) * (arg_20_4 - arg_20_3)
+			target[target_index] = from + func_ptr(delta_time) * (to - from)
 
-			return arg_20_7 <= arg_20_5, arg_20_7
+			return progressed_time <= time, progressed_time
 		end
 	},
 	function_by_time_with_offset = {
 		num_args = 7,
 		num_data = 1,
-		init = function (self, arg_21_1, arg_21_2, arg_21_3, arg_21_4, arg_21_5, arg_21_6)
+		init = function (target, target_index, from, to, time, offset, func_ptr)
 			-- function 21
-			self[arg_21_1] = arg_21_2
+			target[target_index] = from
 
 			return 0
 		end,
-		update = function (arg_22_0, arg_22_1, arg_22_2, arg_22_3, arg_22_4, arg_22_5, arg_22_6, arg_22_7, arg_22_8)
+		update = function (dt, target, target_index, from, to, time, offset, func_ptr, progressed_time)
 			-- function 22
-			arg_22_8 = arg_22_8 + arg_22_0
+			progressed_time = progressed_time + dt
 
-			local min = math.min(1, arg_22_8 / arg_22_5)
+			local delta_time = math.min(1, progressed_time / time)
 
-			arg_22_1[arg_22_2] = arg_22_3 + arg_22_7(min, arg_22_6) * (arg_22_4 - arg_22_3)
+			target[target_index] = from + func_ptr(delta_time, offset) * (to - from)
 
-			return arg_22_8 <= arg_22_5, arg_22_8
+			return progressed_time <= time, progressed_time
 		end
 	},
 	linear_scale = {
 		num_args = 5,
 		num_data = 1,
-		init = function (self, arg_23_1, arg_23_2, arg_23_3, arg_23_4)
+		init = function (target, target_index, from, to, time)
 			-- function 23
-			self[arg_23_1] = arg_23_2
+			target[target_index] = from
 
 			return 0
 		end,
-		update = function (arg_24_0, arg_24_1, arg_24_2, arg_24_3, arg_24_4, arg_24_5, arg_24_6)
+		update = function (dt, target, target_index, from, to, time, progressed_time)
 			-- function 24
-			arg_24_6 = arg_24_6 + arg_24_0
+			progressed_time = progressed_time + dt
 
-			local min = math.min(1, arg_24_6 / arg_24_5)
+			local delta_time = math.min(1, progressed_time / time)
 
-			arg_24_1[arg_24_2] = (arg_24_4 - arg_24_3) * min + arg_24_3
+			target[target_index] = (to - from) * delta_time + from
 
-			return arg_24_6 <= arg_24_5, arg_24_6
+			return progressed_time <= time, progressed_time
 		end
 	},
 	wait = {
 		num_args = 1,
 		num_data = 1,
-		init = function (arg_25_0)
+		init = function (time)
 			-- function 25
 			return 0
 		end,
-		update = function (arg_26_0, arg_26_1, arg_26_2)
+		update = function (dt, time, progressed_time)
 			-- function 26
-			arg_26_2 = arg_26_2 + arg_26_0
+			progressed_time = progressed_time + dt
 
-			return arg_26_2 <= arg_26_1, arg_26_2
+			return progressed_time <= time, progressed_time
 		end
 	},
 	set_visible = {
@@ -312,9 +315,9 @@ UIAnimation = UIAnimation or {
 			-- function 27
 			return
 		end,
-		update = function (arg_28_0, arg_28_1)
+		update = function (dt, target)
 			-- function 28
-			arg_28_1.visible = true
+			target.visible = true
 
 			return false
 		end
@@ -326,9 +329,9 @@ UIAnimation = UIAnimation or {
 			-- function 29
 			return
 		end,
-		update = function (arg_30_0, arg_30_1)
+		update = function (dt, target)
 			-- function 30
-			arg_30_1.visible = false
+			target.visible = false
 
 			return false
 		end
@@ -336,22 +339,33 @@ UIAnimation = UIAnimation or {
 	picture_sequence = {
 		num_args = 4,
 		num_data = 2,
-		init = function (arg_31_0, arg_31_1, arg_31_2, arg_31_3)
+		init = function (target, target_index, pictures, total_time)
 			-- function 31
-			local num = arg_31_3 / #arg_31_2
+			local num_pictures = #pictures
+			local time_step = total_time / num_pictures
 
-			return 0, num
+			return 0, time_step
 		end,
-		update = function (arg_32_0, arg_32_1, arg_32_2, arg_32_3, arg_32_4, arg_32_5, arg_32_6)
+		update = function (dt, target, target_index, pictures, total_time, progressed_time, time_step)
 			-- function 32
-			arg_32_5 = math.min(arg_32_5 + arg_32_0, arg_32_4)
+			progressed_time = math.min(progressed_time + dt, total_time)
 
-			local var_32_0 = arg_32_3[math.floor(arg_32_5 / arg_32_6) + 1]
+			local picture_id = math.floor(progressed_time / time_step) + 1
+			local var_32_0 = pictures[picture_id]
 
-			var_32_0 = var_32_0 or arg_32_3[#arg_32_3]
-			arg_32_1[arg_32_2] = var_32_0
+			if not var_32_0 then
+				-- Nothing
+			end
 
-			return arg_32_5 < arg_32_4, arg_32_5, arg_32_6
+			var_32_0 = pictures[#pictures]
+
+			local picture = var_32_0
+
+			::label_32_0::
+
+			target[target_index] = picture
+
+			return progressed_time < total_time, progressed_time, time_step
 		end
 	},
 	timestep_setter_tables = {
@@ -361,27 +375,29 @@ UIAnimation = UIAnimation or {
 			-- function 33
 			return 0
 		end,
-		update = function (arg_34_0, arg_34_1, arg_34_2, arg_34_3, arg_34_4, arg_34_5)
+		update = function (dt, target, target_index, timer_steps, values, progressed_time)
 			-- function 34
-			arg_34_5 = arg_34_5 + arg_34_0
+			progressed_time = progressed_time + dt
 
-			local var_34_0
+			local timer_index
 
-			for i, v in ipairs(arg_34_3) do
-				if arg_34_5 < v then
-					var_34_0 = i
+			for i, timer_step in ipairs(timer_steps) do
+				if progressed_time < timer_step then
+					timer_index = i
 
 					break
 				end
 			end
 
-			arg_34_1[arg_34_2] = arg_34_4[var_34_0 or #arg_34_4]
+			local timer_value = values[not not timer_index or not not #values]
+
+			target[target_index] = timer_value
 
 			local flag
 
-			flag = not var_34_0 and true and false
+			flag = (not timer_index or not true) and not not false
 
-			return flag, arg_34_5
+			return flag, progressed_time
 		end
 	}
 }
@@ -389,51 +405,51 @@ UIAnimation = UIAnimation
 
 UIAnimation.init = function (...)
 	-- function 35
-	local tbl = {}
-	local tbl_2 = {
+	local data_array = {}
+	local ui_animation = {
 		current_index = 1,
-		data_array = tbl
+		data_array = data_array
 	}
-	local var_35_2 = select("#", ...)
-	local num = 0
-	local num_2 = 0
+	local num_varargs = select("#", ...)
+	local i = 0
+	local current_index = 0
 
-	while num < var_35_2 do
-		num = num + 1
+	while i < num_varargs do
+		i = i + 1
 
-		local var_35_5 = select(num, ...)
-		local num_args = var_35_5.num_args
+		local animation_type = select(i, ...)
+		local num_args = animation_type.num_args
 
-		tbl[num_2 + 1] = var_35_5
+		data_array[current_index + 1] = animation_type
 
-		for i = 1, num_args do
-			tbl[num_2 + 1 + i] = select(num + i, ...)
+		for j = 1, num_args do
+			data_array[current_index + 1 + j] = select(i + j, ...)
 		end
 
-		num_2 = num_2 + 1 + num_args + var_35_5.num_data
-		num = num + num_args
+		current_index = current_index + 1 + num_args + animation_type.num_data
+		i = i + num_args
 	end
 
-	local num_args_2 = tbl[1].num_args
-	local num_data = tbl[1].num_data
-	local var_35_9 = pack_index[num_data]
-	local var_35_10 = unpack_index[num_args_2]
+	local num_args = data_array[1].num_args
+	local num_data = data_array[1].num_data
+	local pack_func = pack_index[num_data]
+	local unpack_func = unpack_index[num_args]
 
-	var_35_9(tbl, 2 + num_args_2, tbl[1].init(var_35_10(tbl, 2)))
+	pack_func(data_array, 2 + num_args, data_array[1].init(unpack_func(data_array, 2)))
 
-	return tbl_2
+	return ui_animation
 end
 
-local function fn(...)
+local function debug_print_ui_animation(...)
 	-- function 36
 	Application.error("########### ANIMATION ERROR ###########")
 
-	local var_36_0 = select("#", ...)
+	local num_varargs = select("#", ...)
 
-	for i = 1, var_36_0 do
-		local var_36_1 = select(i, ...)
+	for i = 1, num_varargs do
+		local var = select(i, ...)
 
-		Application.error(string.format("Variable %d: %s", i, tostring(var_36_1)))
+		Application.error(string.format("Variable %d: %s", i, tostring(var)))
 	end
 
 	Application.error("########### ANIMATION ERROR END ###########")
@@ -442,83 +458,82 @@ end
 
 UIAnimation.init_debug = function (...)
 	-- function 37
-	local tbl = {}
-	local tbl_2 = {
+	local data_array = {}
+	local ui_animation = {
 		current_index = 1,
-		data_array = tbl
+		data_array = data_array
 	}
-	local var_37_2 = select("#", ...)
-	local num = 0
-	local num_2 = 0
+	local num_varargs = select("#", ...)
+	local i = 0
+	local current_index = 0
 
-	while num < var_37_2 do
-		num = num + 1
+	while i < num_varargs do
+		i = i + 1
 
-		local var_37_5 = select(num, ...)
+		local animation_type = select(i, ...)
 
-		if not (not var_37_5 and type(var_37_5) == "table") then
-			fn(...)
+		if not animation_type or type(animation_type) ~= "table" then
+			debug_print_ui_animation(...)
 
 			return nil
 		end
 
-		local num_args = var_37_5.num_args
+		local num_args = animation_type.num_args
 
-		tbl[num_2 + 1] = var_37_5
+		data_array[current_index + 1] = animation_type
 
-		for i = 1, num_args do
-			tbl[num_2 + 1 + i] = select(num + i, ...)
+		for j = 1, num_args do
+			data_array[current_index + 1 + j] = select(i + j, ...)
 		end
 
-		num_2 = num_2 + 1 + num_args + var_37_5.num_data
-		num = num + num_args
+		current_index = current_index + 1 + num_args + animation_type.num_data
+		i = i + num_args
 	end
 
-	local num_args_2 = tbl[1].num_args
-	local num_data = tbl[1].num_data
-	local var_37_9 = pack_index[num_data]
-	local var_37_10 = unpack_index[num_args_2]
+	local num_args = data_array[1].num_args
+	local num_data = data_array[1].num_data
+	local pack_func = pack_index[num_data]
+	local unpack_func = unpack_index[num_args]
 
-	var_37_9(tbl, 2 + num_args_2, tbl[1].init(var_37_10(tbl, 2)))
+	pack_func(data_array, 2 + num_args, data_array[1].init(unpack_func(data_array, 2)))
 
-	return tbl_2
+	return ui_animation
 end
 
-local function fn_2(arg_38_0, arg_38_1, arg_38_2, arg_38_3, ...)
+local function extract_continue_amount(pack_amount, array, index, continue, ...)
 	-- function 38
-	pack_index[arg_38_0](arg_38_1, arg_38_2, ...)
+	pack_index[pack_amount](array, index, ...)
 
-	return arg_38_3
+	return continue
 end
 
-UIAnimation.update = function (self, arg_39_1)
+UIAnimation.update = function (ui_animation, dt)
 	-- function 39
-	local current_index = self.current_index
-	local data_array = self.data_array
-	local var_39_2 = data_array[current_index]
+	local current_index = ui_animation.current_index
+	local data_array = ui_animation.data_array
+	local animation_type = data_array[current_index]
 
-	if not var_39_2 then
-		local num_args = var_39_2.num_args
-		local num_data = var_39_2.num_data
+	if animation_type then
+		local num_args, num_data = animation_type.num_args, animation_type.num_data
+		local continue = extract_continue_amount(num_data, data_array, current_index + num_args + 1, animation_type.update(dt, unpack_index[num_args + num_data](data_array, current_index + 1)))
 
-		if not fn_2(num_data, data_array, current_index + num_args + 1, var_39_2.update(arg_39_1, unpack_index[num_args + num_data](data_array, current_index + 1))) then
-			local num = current_index + num_args + num_data + 1
+		if not continue then
+			current_index = current_index + num_args + num_data + 1
+			ui_animation.current_index = current_index
 
-			self.current_index = num
+			local new_animation = data_array[current_index]
 
-			local var_39_6 = data_array[num]
+			if new_animation then
+				local pack_func = pack_index[new_animation.num_data]
+				local unpack_func = unpack_index[new_animation.num_args]
 
-			if not var_39_6 then
-				local var_39_7 = pack_index[var_39_6.num_data]
-				local var_39_8 = unpack_index[var_39_6.num_args]
-
-				var_39_7(data_array, num + 1 + var_39_6.num_args, var_39_6.init(var_39_8(data_array, num + 1)))
+				pack_func(data_array, current_index + 1 + new_animation.num_args, new_animation.init(unpack_func(data_array, current_index + 1)))
 			end
 		end
 	end
 end
 
-UIAnimation.completed = function (self)
+UIAnimation.completed = function (ui_animation)
 	-- function 40
-	return self.current_index >= #self.data_array
+	return ui_animation.current_index >= #ui_animation.data_array
 end

@@ -6,7 +6,7 @@ require("scripts/settings/equipment/pickups")
 
 local CanWieldAllItemTemplates = CanWieldAllItemTemplates
 
-CanWieldAllItemTemplates = CanWieldAllItemTemplates or {}
+CanWieldAllItemTemplates = not not CanWieldAllItemTemplates or not not {}
 CanWieldAllItemTemplates = CanWieldAllItemTemplates
 
 table.append(CanWieldAllItemTemplates, {
@@ -30,15 +30,15 @@ table.append(CanWieldAllItemTemplates, {
 
 ItemMasertListUpdateQueue = {}
 
-function UpdateItemMasterList(arg_1_0, arg_1_1)
+function UpdateItemMasterList(item_names, career_name)
 	-- function 1
-	if not table.contains(CanWieldAllItemTemplates, arg_1_1) then
-		table.insert(CanWieldAllItemTemplates, arg_1_1)
+	if not table.contains(CanWieldAllItemTemplates, career_name) then
+		table.insert(CanWieldAllItemTemplates, career_name)
 	end
 
 	table.insert(ItemMasertListUpdateQueue, {
-		arg_1_0,
-		arg_1_1
+		item_names,
+		career_name
 	})
 end
 
@@ -51,63 +51,63 @@ local_require("scripts/settings/equipment/item_master_list_weapon_poses")
 DLCUtils.require_list("item_master_list_file_names", true)
 
 for i = 1, #ItemMasertListUpdateQueue do
-	local var_0_1 = ItemMasertListUpdateQueue[i][1]
-	local var_0_2 = ItemMasertListUpdateQueue[i][2]
+	local item_names = ItemMasertListUpdateQueue[i][1]
+	local career_name = ItemMasertListUpdateQueue[i][2]
 
-	for j = 1, #var_0_1 do
-		local var_0_3 = var_0_1[j]
-		local var_0_4 = ItemMasterList[var_0_3]
+	for item_id = 1, #item_names do
+		local item_name = item_names[item_id]
+		local item = ItemMasterList[item_name]
 
-		fassert(var_0_4, "No such item %s found in item master list while trying to insert career %s", var_0_3, var_0_2)
-		fassert(var_0_4.can_wield ~= CanWieldAllItemTemplates, "Trying to patch item %s that can already be wielded by all careers, you don't need to do that.", var_0_3)
-		table.insert(var_0_4.can_wield, var_0_2)
+		fassert(item, "No such item %s found in item master list while trying to insert career %s", item_name, career_name)
+		fassert(item.can_wield ~= CanWieldAllItemTemplates, "Trying to patch item %s that can already be wielded by all careers, you don't need to do that.", item_name)
+		table.insert(item.can_wield, career_name)
 	end
 end
 
 SteamitemdefidToMasterList = {}
 
-if not HAS_STEAM then
-	for k, v in pairs(ItemMasterList) do
-		local steam_itemdefid = v.steam_itemdefid
+if HAS_STEAM then
+	for item_key, item_data in pairs(ItemMasterList) do
+		local steam_itemdefid = item_data.steam_itemdefid
 
-		if not steam_itemdefid then
+		if steam_itemdefid then
 			fassert(SteamitemdefidToMasterList[steam_itemdefid] == nil, "duplicated steam item server item in ItemMasterList(%s)", steam_itemdefid)
 
-			SteamitemdefidToMasterList[steam_itemdefid] = k
+			SteamitemdefidToMasterList[steam_itemdefid] = item_key
 		end
 	end
 end
 
 MagicItemByUnlockName = {}
 
-for k_2, v_2 in pairs(ItemMasterList) do
-	if not v_2.matching_item_key then
-		local var_0_6 = ItemMasterList[v_2.matching_item_key]
+for item_name, item_data in pairs(ItemMasterList) do
+	if item_data.matching_item_key then
+		local matching_item = ItemMasterList[item_data.matching_item_key]
 
-		fassert(var_0_6, "Missing matching item %s referenced by %s", v_2.matching_item_key, k_2)
+		fassert(matching_item, "Missing matching item %s referenced by %s", item_data.matching_item_key, item_name)
 
-		v_2.can_wield = var_0_6.can_wield
+		item_data.can_wield = matching_item.can_wield
 	end
 
-	if v_2.slot_type == "hat" then
-		if table.find(v_2.can_wield, "bw_unchained") or not table.find(v_2.can_wield, "bw_adept") then
-			v_2.item_preview_environment = "hats_bloom_01"
+	if item_data.slot_type == "hat" then
+		if table.find(item_data.can_wield, "bw_unchained") or table.find(item_data.can_wield, "bw_adept") then
+			item_data.item_preview_environment = "hats_bloom_01"
 		end
-	elseif v_2.slot_type ~= "weapon_skin" or not string.find(k_2, "_runed_") then
-		v_2.item_preview_object_set_name = "flow_rune_weapon_lights"
+	elseif item_data.slot_type == "weapon_skin" and string.find(item_name, "_runed_") then
+		item_data.item_preview_object_set_name = "flow_rune_weapon_lights"
 	end
 
-	if not ((v_2.rarity ~= "magic" or not v_2.required_unlock_item) and v_2.item_type == "weapon_skin") then
-		local required_unlock_item = v_2.required_unlock_item
+	if item_data.rarity == "magic" and item_data.required_unlock_item and item_data.item_type ~= "weapon_skin" then
+		local required_unlock_key = item_data.required_unlock_item
 
-		MagicItemByUnlockName[required_unlock_item] = k_2
+		MagicItemByUnlockName[required_unlock_key] = item_name
 	end
 
-	if v_2.slot_type == "frame" then
-		local display_unit = v_2.display_unit
+	if item_data.slot_type == "frame" then
+		local display_unit = item_data.display_unit
 
-		display_unit = display_unit or "units/weapons/weapon_display/display_portrait_frame"
-		v_2.display_unit = display_unit
+		display_unit = not not display_unit or not not "units/weapons/weapon_display/display_portrait_frame"
+		item_data.display_unit = display_unit
 	end
 end
 
@@ -115,35 +115,35 @@ all_item_types = {}
 
 function parse_item_master_list()
 	-- function 2
-	for k, v in pairs(ItemMasterList) do
-		v.key = k
-		v.name = k
+	for key, item in pairs(ItemMasterList) do
+		item.key = key
+		item.name = key
 
-		if not v.display_name then
-			v.localized_name = Localize(v.display_name)
+		if item.display_name then
+			item.localized_name = Localize(item.display_name)
 		else
-			v.display_name = string.format("No_display_name_for_item_%q", tostring(k))
-			v.localized_name = "<" .. v.display_name .. ">"
+			item.display_name = string.format("No_display_name_for_item_%q", tostring(key))
+			item.localized_name = "<" .. item.display_name .. ">"
 		end
 
-		if not v.item_type then
-			all_item_types[v.item_type] = true
+		if item.item_type then
+			all_item_types[item.item_type] = true
 		end
 	end
 end
 
-if not Managers.localizer then
+if Managers.localizer then
 	parse_item_master_list()
 end
 
 local ItemMasterListMeta = ItemMasterListMeta
 
-ItemMasterListMeta = ItemMasterListMeta or {}
+ItemMasterListMeta = not not ItemMasterListMeta or not not {}
 ItemMasterListMeta = ItemMasterListMeta
 
-ItemMasterListMeta.__index = function (arg_3_0, arg_3_1)
+ItemMasterListMeta.__index = function (table, key)
 	-- function 3
-	Crashify.print_exception("[ItemMasterList]", "ItemMaster List has no item %s", arg_3_1)
+	Crashify.print_exception("[ItemMasterList]", "ItemMaster List has no item %s", key)
 end
 
 setmetatable(ItemMasterList, ItemMasterListMeta)

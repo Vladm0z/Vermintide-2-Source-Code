@@ -1,6 +1,6 @@
 -- chunkname: @levels/honduras_dlcs/morris/sig_gorge/generated/wastes_path2/world_nav_tag_volumes.lua
 
-local tbl = {
+local nav_tag_volumes = {
 	nospawn_terror = {
 		delay_nav_tag_volume_creation = true,
 		alt_max = 103.54752349853516,
@@ -1168,9 +1168,9 @@ local tbl = {
 		}
 	}
 }
-local str = "1"
+local version = "1"
 
 return {
-	version = str,
-	nav_tag_volumes = tbl
+	version = version,
+	nav_tag_volumes = nav_tag_volumes
 }

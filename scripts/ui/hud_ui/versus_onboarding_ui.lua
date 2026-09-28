@@ -1,24 +1,24 @@
 -- chunkname: @scripts/ui/hud_ui/versus_onboarding_ui.lua
 
-local var_0_0 = local_require("scripts/ui/hud_ui/versus_onboarding_ui_definitions")
-local scenegraph = var_0_0.scenegraph
-local widgets = var_0_0.widgets
-local animations_definitions = var_0_0.animations_definitions
+local definitions = local_require("scripts/ui/hud_ui/versus_onboarding_ui_definitions")
+local scenegraph_definition = definitions.scenegraph
+local widget_definitions = definitions.widgets
+local animation_definitions = definitions.animations_definitions
 
 VersusOnboardingUI = class(VersusOnboardingUI)
 
-VersusOnboardingUI.init = function (self, arg_1_1, arg_1_2)
+VersusOnboardingUI.init = function (self, parent, ingame_ui_context)
 	-- function 1
-	self._parent = arg_1_1
-	self._ui_renderer = arg_1_2.ui_renderer
-	self._input_manager = arg_1_2.input_manager
+	self._parent = parent
+	self._ui_renderer = ingame_ui_context.ui_renderer
+	self._input_manager = ingame_ui_context.input_manager
 	self._render_settings = {
 		snap_pixel_positions = true
 	}
-	self._player_manager = arg_1_2.player_manager
-	self._profile_synchronizer = arg_1_2.profile_synchronizer
+	self._player_manager = ingame_ui_context.player_manager
+	self._profile_synchronizer = ingame_ui_context.profile_synchronizer
 
-	local player = arg_1_2.player
+	local player = ingame_ui_context.player
 
 	self._player = player
 	self._peer_id = player:network_id()
@@ -32,286 +32,312 @@ end
 
 VersusOnboardingUI._create_ui_elements = function (self)
 	-- function 2
-	self._ui_scenegraph = UISceneGraph.init_scenegraph(scenegraph)
-	self._ui_animator = UIAnimator:new(self._ui_scenegraph, animations_definitions)
+	self._ui_scenegraph = UISceneGraph.init_scenegraph(scenegraph_definition)
+	self._ui_animator = UIAnimator:new(self._ui_scenegraph, animation_definitions)
 	self._animations = {}
 
-	local var_2_0
-	local name = self._side:name()
+	local widget_def
+	local side_name = self._side:name()
 
-	if name == "heroes" then
-		var_2_0 = UIWidgets.create_hero_onboarding_tutorial_widget("side_pivot_heroes", scenegraph.side_pivot_heroes.size, {
+	if side_name == "heroes" then
+		widget_def = UIWidgets.create_hero_onboarding_tutorial_widget("side_pivot_heroes", scenegraph_definition.side_pivot_heroes.size, {
 			-400,
 			0,
 			5
 		})
-	elseif name == "dark_pact" then
-		var_2_0 = UIWidgets.create_dark_pact_onboarding_tutorial_widget("side_pivot_dark_pact", scenegraph.side_pivot_dark_pact.size, {
+	elseif side_name == "dark_pact" then
+		widget_def = UIWidgets.create_dark_pact_onboarding_tutorial_widget("side_pivot_dark_pact", scenegraph_definition.side_pivot_dark_pact.size, {
 			-400,
 			0,
 			5
 		})
 	end
 
-	if not var_2_0 then
-		self._onboarding_widget = UIWidget.init(var_2_0)
+	if widget_def then
+		self._onboarding_widget = UIWidget.init(widget_def)
 	end
 
 	UIRenderer.clear_scenegraph_queue(self._ui_renderer)
 end
 
-VersusOnboardingUI.destroy = function (arg_3_0)
+VersusOnboardingUI.destroy = function (self)
 	-- function 3
 	return
 end
 
-VersusOnboardingUI._setup_career_info_widget = function (self, arg_4_1, arg_4_2)
+VersusOnboardingUI._setup_career_info_widget = function (self, profile_index, career_index)
 	-- function 4
 	if not self._should_draw then
 		return
 	end
 
-	self._current_profile_index = arg_4_1
-	self._current_career_index = arg_4_2
+	self._current_profile_index = profile_index
+	self._current_career_index = career_index
 
-	local var_4_0
-	local var_4_1
-	local var_4_2
-	local flag = self._side:name() ~= "dark_pact"
+	local profile_settings, info_settings, career_settings
+	local is_hero_side = self._side:name() ~= "dark_pact"
 
-	if not arg_4_1 and not arg_4_2 then
-		var_4_0 = SPProfiles[arg_4_1]
-		var_4_2 = var_4_0.careers[arg_4_2]
-		var_4_1 = not flag and self:_get_hero_side_info(var_4_2) and var_4_2.career_info_settings
+	if profile_index and career_index then
+		profile_settings = SPProfiles[profile_index]
+		career_settings = profile_settings.careers[career_index]
+		info_settings = (not is_hero_side or not self:_get_hero_side_info(career_settings)) and not not career_settings.career_info_settings
 	end
 
-	if not var_4_1 then
-		local _onboarding_widget = self._onboarding_widget
+	if info_settings then
+		local widget = self._onboarding_widget
 
-		self:_populate_help_widget_info(var_4_0, var_4_2, var_4_1, _onboarding_widget, flag)
+		self:_populate_help_widget_info(profile_settings, career_settings, info_settings, widget, is_hero_side)
 	end
 end
 
-VersusOnboardingUI._populate_help_widget_info = function (self, arg_5_1, arg_5_2, arg_5_3, arg_5_4, arg_5_5)
+VersusOnboardingUI._populate_help_widget_info = function (self, profile_settings, career_settings, info_settings, widget, is_hero)
 	-- function 5
-	local content = arg_5_4.content
-	local style = arg_5_4.style
-	local str = ""
-	local is_device_active = self._input_manager:is_device_active("gamepad")
+	local content = widget.content
+	local style = widget.style
+	local abilities_string = ""
+	local gamepad_active = self._input_manager:is_device_active("gamepad")
 
 	for i = 1, 2 do
-		local var_5_4 = arg_5_3[i]
-		local flag = arg_5_3[i + 1] == nil
+		local info = info_settings[i]
+		local is_last = info_settings[i + 1] == nil
 
-		if not var_5_4 then
-			if not arg_5_5 then
-				local str_2 = ""
-				local keybind = var_5_4.keybind
+		if info then
+			if is_hero then
+				local input_str = ""
+				local input_action = info.keybind
 
-				if not keybind then
-					str_2 = not is_device_active and " $KEY;Player__" .. keybind .. ": " and "{#color(193,91,36)}[" .. keybind .. "]{#reset()} : "
+				if input_action then
+					input_str = (not gamepad_active or not (" $KEY;Player__" .. input_action .. ": ")) and not not ("{#color(193,91,36)}[" .. input_action .. "]{#reset()} : ")
 				end
 
-				content["ability_" .. i .. "_icon"] = var_5_4.icon
-				content["ability_" .. i .. "_name"] = str_2 .. Localize(var_5_4.title)
-				content["ability_" .. i .. "_description"] = var_5_4.description
+				content["ability_" .. i .. "_icon"] = info.icon
+				content["ability_" .. i .. "_name"] = input_str .. Localize(info.title)
+				content["ability_" .. i .. "_description"] = info.description
 			else
-				local var_5_8
-				local flag_2 = not is_device_active and var_5_4.gamepad_input and var_5_4.input_action
+				local input_action
 
-				if not flag_2 then
-					local str_3 = " $KEY;Player__" .. flag_2 .. ":"
+				input_action = (not gamepad_active or not info.gamepad_input) and not not info.input_action
 
-					if not var_5_4.double_input then
-						local var_5_11 = str
-						local format = string.format(Localize(var_5_4.description), str_3, str_3)
-						local flag_3
+				if input_action then
+					local str = " $KEY;Player__" .. input_action .. ":"
 
-						flag_3 = not flag and "" and "\n\n"
-						str = var_5_11 .. format .. flag_3
+					if info.double_input then
+						local var_5_0 = abilities_string
+						local format = string.format(Localize(info.description), str, str)
+						local flag
+
+						flag = (not is_last or not "") and not not "\n\n"
+						abilities_string = var_5_0 .. format .. flag
 					else
-						local var_5_14 = str
-						local format_2 = string.format(Localize(var_5_4.description), str_3)
-						local flag_4
+						local var_5_3 = abilities_string
+						local format_2 = string.format(Localize(info.description), str)
+						local flag_2
 
-						flag_4 = not flag and "" and "\n\n"
-						str = var_5_14 .. format_2 .. flag_4
+						flag_2 = (not is_last or not "") and not not "\n\n"
+						abilities_string = var_5_3 .. format_2 .. flag_2
 					end
 				else
-					local var_5_17 = str
-					local var_5_18 = Localize(var_5_4.description)
-					local flag_5
+					local var_5_6 = abilities_string
+					local var_5_7 = Localize(info.description)
+					local flag_3
 
-					flag_5 = not flag and "" and "\n\n"
-					str = var_5_17 .. var_5_18 .. flag_5
+					flag_3 = (not is_last or not "") and not not "\n\n"
+					abilities_string = var_5_6 .. var_5_7 .. flag_3
 				end
 
-				content.abilities_tooltip = str
-				content.description = Localize(arg_5_2.description)
+				content.abilities_tooltip = abilities_string
+				content.description = Localize(career_settings.description)
 			end
 		end
 	end
 
-	content.hero_text = Localize(arg_5_2.name)
+	content.hero_text = Localize(career_settings.name)
 
-	if not arg_5_5 then
-		content.career_icon = UISettings.hero_icons.medium_white[arg_5_1.display_name]
+	if is_hero then
+		local profile_icon = UISettings.hero_icons.medium_white[profile_settings.display_name]
 
-		local get_text_width = UIUtils.get_text_width(self._ui_renderer, style.hero_text, content.hero_text)
-		local num = scenegraph.side_pivot_heroes.size[1] - (get_text_width + 25 + 64)
+		content.career_icon = profile_icon
 
-		style.career_icon.offset[1] = num
+		local width = UIUtils.get_text_width(self._ui_renderer, style.hero_text, content.hero_text)
+		local widget_size = scenegraph_definition.side_pivot_heroes.size
+		local offset_x = widget_size[1] - (width + 25 + 64)
+
+		style.career_icon.offset[1] = offset_x
 	end
 end
 
-VersusOnboardingUI._set_widget_dirty = function (arg_6_0, arg_6_1)
+VersusOnboardingUI._set_widget_dirty = function (self, widget)
 	-- function 6
-	arg_6_1.element.dirty = true
+	widget.element.dirty = true
 end
 
 VersusOnboardingUI._update_career_status = function (self)
 	-- function 7
-	local profile_by_peer, var_7_1 = self._profile_synchronizer:profile_by_peer(self._peer_id, self._local_player_id)
-	local is_device_active = self._input_manager:is_device_active("gamepad")
+	local profile_index, career_index = self._profile_synchronizer:profile_by_peer(self._peer_id, self._local_player_id)
+	local gamepad_active = self._input_manager:is_device_active("gamepad")
 
-	if not (profile_by_peer ~= self._current_profile_index or var_7_1 ~= self._current_career_index or is_device_active == self._gamepad_active) then
-		self._gamepad_active = is_device_active
+	if profile_index ~= self._current_profile_index or career_index ~= self._current_career_index or gamepad_active ~= self._gamepad_active then
+		self._gamepad_active = gamepad_active
 
-		self:_setup_career_info_widget(profile_by_peer, var_7_1)
+		self:_setup_career_info_widget(profile_index, career_index)
 	end
 end
 
 VersusOnboardingUI._update_visibility = function (self)
 	-- function 8
-	local flag
+	local is_dark_pact = self._side:name() == "dark_pact"
+	local local_player_unit = self._local_player.player_unit
+	local ghost_mode_ext = ScriptUnit.has_extension(local_player_unit, "ghost_mode_system")
+	local is_in_ghost_mode = not not ghost_mode_ext and not not ghost_mode_ext:is_in_ghost_mode()
 
-	flag = self._side:name() == "dark_pact"
+	if is_in_ghost_mode and Application.user_setting("toggle_pactsworn_help_ui") then
+		local ingame_ui = Managers.ui:ingame_ui()
+		local hint_handler = ingame_ui.hint_ui_handler
 
-	local player_unit = self._local_player.player_unit
-	local has_extension = ScriptUnit.has_extension(player_unit, "ghost_mode_system")
-	local flag_2 = not has_extension and has_extension:is_in_ghost_mode()
-
-	if not flag_2 and not Application.user_setting("toggle_pactsworn_help_ui") then
-		local hint_ui_handler = Managers.ui:ingame_ui().hint_ui_handler
-
-		if not hint_ui_handler and not hint_ui_handler:is_hint_active() then
+		if hint_handler and hint_handler:is_hint_active() then
 			return false
 		else
 			return true
 		end
 	end
 
-	return not Managers.input:get_service("Player"):get("show_career_help") and not flag_2
+	local input_service = Managers.input:get_service("Player")
+	local held = input_service:get("show_career_help")
+	local show = not not held and not not not is_in_ghost_mode
+
+	return show
 end
 
-VersusOnboardingUI.update = function (self, arg_9_1, arg_9_2)
+VersusOnboardingUI.update = function (self, dt, t)
 	-- function 9
-	local _update_visibility = self:_update_visibility()
+	local should_draw = self:_update_visibility()
 
-	if _update_visibility ~= self._should_draw then
-		if not self._anim_id and not self._ui_animator:is_animation_completed(self._anim_id) then
+	if should_draw ~= self._should_draw then
+		if self._anim_id and self._ui_animator:is_animation_completed(self._anim_id) then
 			self._anim_id = nil
 		end
 
 		if not self._anim_id then
-			local flag
+			local str
 
-			flag = not _update_visibility and "enter" and "exit"
+			if should_draw then
+				str = "enter"
 
-			local _onboarding_widget = self._onboarding_widget
-			local tbl = {
+				goto label_9_0
+			end
+
+			str = "exit"
+
+			local animation_name = str
+
+			::label_9_0::
+
+			local widget = self._onboarding_widget
+			local params = {
 				self = self
 			}
 
-			self._anim_id = self._ui_animator:start_animation(flag, _onboarding_widget, scenegraph, tbl)
+			self._anim_id = self._ui_animator:start_animation(animation_name, widget, scenegraph_definition, params)
 		end
 	end
 
 	self:_update_career_status()
-	self._ui_animator:update(arg_9_1, arg_9_2)
-	self:_draw(arg_9_1)
+	self._ui_animator:update(dt, t)
+	self:_draw(dt)
 end
 
-VersusOnboardingUI._draw = function (self, arg_10_1)
+VersusOnboardingUI._draw = function (self, dt)
 	-- function 10
 	if not self._should_draw then
 		return
 	end
 
-	local _ui_renderer = self._ui_renderer
-	local _ui_scenegraph = self._ui_scenegraph
-	local get_service = self._input_manager:get_service("ingame_menu")
-	local _render_settings = self._render_settings
+	local ui_renderer = self._ui_renderer
+	local ui_scenegraph = self._ui_scenegraph
+	local input_service = self._input_manager:get_service("ingame_menu")
+	local render_settings = self._render_settings
 
-	UIRenderer.begin_pass(_ui_renderer, _ui_scenegraph, get_service, arg_10_1, nil, _render_settings)
+	UIRenderer.begin_pass(ui_renderer, ui_scenegraph, input_service, dt, nil, render_settings)
 
-	if not self._onboarding_widget then
-		UIRenderer.draw_widget(_ui_renderer, self._onboarding_widget)
+	if self._onboarding_widget then
+		UIRenderer.draw_widget(ui_renderer, self._onboarding_widget)
 	end
 
-	UIRenderer.end_pass(_ui_renderer)
+	UIRenderer.end_pass(ui_renderer)
 end
 
-VersusOnboardingUI.get_input_texture_data = function (self, arg_11_1, arg_11_2)
+VersusOnboardingUI.get_input_texture_data = function (self, input_action, gamepad_active)
 	-- function 11
-	local get_service = self._input_manager:get_service("Player")
+	local input_manager = self._input_manager
+	local input_service = input_manager:get_service("Player")
 
-	return UISettings.get_gamepad_input_texture_data(get_service, arg_11_1, arg_11_2)
+	return UISettings.get_gamepad_input_texture_data(input_service, input_action, gamepad_active)
 end
 
-VersusOnboardingUI._get_hero_side_info = function (self, arg_12_1)
+VersusOnboardingUI._get_hero_side_info = function (self, career_settings)
 	-- function 12
-	local is_device_active = self._input_manager:is_device_active("gamepad")
-	local tbl = {}
-	local tbl_2 = {}
-	local name = arg_12_1.name
-	local index = PROFILES_BY_CAREER_NAMES[name].index
-	local var_12_5 = career_index_from_name(index, name)
-	local get_ability_data = CareerUtils.get_ability_data(index, var_12_5, 1)
-	local display_name = get_ability_data.display_name
+	local gamepad_active = self._input_manager:is_device_active("gamepad")
+	local info_settings = {}
+	local career_skill_data = {}
+	local career_name = career_settings.name
+	local profile = PROFILES_BY_CAREER_NAMES[career_name]
+	local profile_index = profile.index
+	local career_index = career_index_from_name(profile_index, career_name)
+	local activated_ability_data = CareerUtils.get_ability_data(profile_index, career_index, 1)
+	local display_name = activated_ability_data.display_name
 
-	display_name = display_name or "PLACEHOLDER"
-	tbl_2.title = display_name
+	display_name = not not display_name or not not "PLACEHOLDER"
+	career_skill_data.title = display_name
 
-	local get_ability_description = UIUtils.get_ability_description(get_ability_data)
+	local get_ability_description = UIUtils.get_ability_description(activated_ability_data)
 
-	get_ability_description = get_ability_description or Localize("PLACEHOLDER")
-	tbl_2.description = get_ability_description
+	get_ability_description = not not get_ability_description or not not Localize("PLACEHOLDER")
+	career_skill_data.description = get_ability_description
 
-	local icon = get_ability_data.icon
+	local icon = activated_ability_data.icon
 
-	icon = icon or "icons_placeholder"
-	tbl_2.icon = icon
-	tbl_2.ability_type = Localize("hero_view_activated_ability")
+	icon = not not icon or not not "icons_placeholder"
+	career_skill_data.icon = icon
+	career_skill_data.ability_type = Localize("hero_view_activated_ability")
 
-	local flag
+	local str
 
-	flag = not is_device_active and "ability" and "action_career"
+	if gamepad_active then
+		str = "ability"
 
-	local get_input_texture_data, var_12_12 = self:get_input_texture_data(flag, is_device_active)
+		goto label_12_0
+	end
 
-	tbl_2.keybind = not is_device_active and flag and var_12_12
+	str = "action_career"
 
-	local tbl_3 = {}
-	local get_passive_ability_by_career = CareerUtils.get_passive_ability_by_career(arg_12_1)
-	local display_name_2 = get_passive_ability_by_career.display_name
+	local input_action = str
 
-	display_name_2 = display_name_2 or "PLACEHOLDER"
-	tbl_3.title = display_name_2
+	::label_12_0::
 
-	local get_ability_description_2 = UIUtils.get_ability_description(get_passive_ability_by_career)
+	local button_texture_data, button_name = self:get_input_texture_data(input_action, gamepad_active)
 
-	get_ability_description_2 = get_ability_description_2 or Localize("PLACEHOLDER")
-	tbl_3.description = get_ability_description_2
+	career_skill_data.keybind = (not gamepad_active or not input_action) and not not button_name
 
-	local icon_2 = get_passive_ability_by_career.icon
+	local passive_skill_data = {}
+	local passive_ability_data = CareerUtils.get_passive_ability_by_career(career_settings)
+	local display_name_2 = passive_ability_data.display_name
 
-	icon_2 = icon_2 or "icons_placeholder"
-	tbl_3.icon = icon_2
-	tbl_3.ability_type = Localize("hero_view_passive_ability")
+	display_name_2 = not not display_name_2 or not not "PLACEHOLDER"
+	passive_skill_data.title = display_name_2
 
-	table.insert(tbl, tbl_2)
-	table.insert(tbl, tbl_3)
+	local get_ability_description_2 = UIUtils.get_ability_description(passive_ability_data)
 
-	return tbl
+	get_ability_description_2 = not not get_ability_description_2 or not not Localize("PLACEHOLDER")
+	passive_skill_data.description = get_ability_description_2
+
+	local icon_2 = passive_ability_data.icon
+
+	icon_2 = not not icon_2 or not not "icons_placeholder"
+	passive_skill_data.icon = icon_2
+	passive_skill_data.ability_type = Localize("hero_view_passive_ability")
+
+	table.insert(info_settings, career_skill_data)
+	table.insert(info_settings, passive_skill_data)
+
+	return info_settings
 end

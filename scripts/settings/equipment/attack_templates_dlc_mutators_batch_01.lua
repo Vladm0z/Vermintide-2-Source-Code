@@ -2,7 +2,7 @@
 
 local AttackTemplates = AttackTemplates
 
-AttackTemplates = AttackTemplates or {}
+AttackTemplates = not not AttackTemplates or not not {}
 AttackTemplates = AttackTemplates
 AttackTemplates.ticking_bomb_explosion = {
 	sound_type = "heavy",

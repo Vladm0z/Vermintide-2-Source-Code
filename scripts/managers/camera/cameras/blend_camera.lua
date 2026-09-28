@@ -4,82 +4,82 @@ require("scripts/managers/camera/cameras/base_camera")
 
 BlendCamera = class(BlendCamera, BaseCamera)
 
-BlendCamera.init = function (self, arg_1_1)
+BlendCamera.init = function (self, root_node)
 	-- function 1
-	BlendCamera.super.init(self, arg_1_1)
+	BlendCamera.super.init(self, root_node)
 
 	self._offset_position = Vector3(0, 0, 0)
 	self._blend_setups = {}
 	self._blend_functions = {
-		match_2d = function (self, arg_2_1)
+		match_2d = function (blend_definition, data)
 			-- function 2
-			local var_2_0 = arg_2_1[self.blend_parameter_x]
-			local var_2_1 = arg_2_1[self.blend_parameter_y]
-			local match_value_x = self.match_value_x
-			local match_value_y = self.match_value_y
+			local blend_x = data[blend_definition.blend_parameter_x]
+			local blend_y = data[blend_definition.blend_parameter_y]
+			local match_x = blend_definition.match_value_x
+			local match_y = blend_definition.match_value_y
 
-			return (1 - math.min(math.abs(var_2_0 - match_value_x), 1)) * (1 - math.min(math.abs(var_2_1 - match_value_y), 1))
+			return (1 - math.min(math.abs(blend_x - match_x), 1)) * (1 - math.min(math.abs(blend_y - match_y), 1))
 		end,
-		match = function (self, arg_3_1)
+		match = function (blend_definition, data)
 			-- function 3
-			local var_3_0 = arg_3_1[self.blend_parameter]
-			local match_value = self.match_value
+			local blend = data[blend_definition.blend_parameter]
+			local match = blend_definition.match_value
 
-			return 1 - math.min(math.abs(var_3_0 - match_value), 1)
+			return 1 - math.min(math.abs(blend - match), 1)
 		end
 	}
 end
 
-BlendCamera.parse_parameters = function (self, arg_4_1, arg_4_2)
+BlendCamera.parse_parameters = function (self, camera_settings, parent_node)
 	-- function 4
-	BlendCamera.super.parse_parameters(self, arg_4_1, arg_4_2)
+	BlendCamera.super.parse_parameters(self, camera_settings, parent_node)
 
-	self._child_node_definitions = arg_4_1.child_node_blend_definitions
+	self._child_node_definitions = camera_settings.child_node_blend_definitions
 end
 
-BlendCamera.add_child_node = function (self, arg_5_1)
+BlendCamera.add_child_node = function (self, node)
 	-- function 5
-	BlendCamera.super.add_child_node(self, arg_5_1)
+	BlendCamera.super.add_child_node(self, node)
 
-	local num = #self._blend_setups + 1
-	local var_5_1 = self._child_node_definitions[num]
+	local child_index = #self._blend_setups + 1
+	local def = self._child_node_definitions[child_index]
 
-	self._blend_setups[num] = {
-		node = arg_5_1,
-		weight_function = self._blend_functions[var_5_1.blend_function],
-		definition = var_5_1
+	self._blend_setups[child_index] = {
+		node = node,
+		weight_function = self._blend_functions[def.blend_function],
+		definition = def
 	}
 end
 
-BlendCamera.update = function (self, arg_6_1, arg_6_2, arg_6_3, arg_6_4)
+BlendCamera.update = function (self, dt, position, rotation, data)
 	-- function 6
 	if self._active_children > 0 then
-		BlendCamera.super.update(self, arg_6_1, arg_6_2, arg_6_3, arg_6_4)
+		BlendCamera.super.update(self, dt, position, rotation, data)
 
 		return
 	end
 
-	local num = 0
-	local var_6_1 = Vector3(0, 0, 0)
+	local total_weight = 0
+	local total_offset = Vector3(0, 0, 0)
 
-	for i, v in ipairs(self._blend_setups) do
-		local node = v.node
+	for child_index, blend_setup in ipairs(self._blend_setups) do
+		local node = blend_setup.node
 
-		node:update(arg_6_1, arg_6_2, arg_6_3, arg_6_4)
+		node:update(dt, position, rotation, data)
 
-		local num_2 = node:position() - arg_6_2
-		local weight_function = v.weight_function(v.definition, arg_6_4)
+		local offset = node:position() - position
+		local weight = blend_setup.weight_function(blend_setup.definition, data)
 
-		num = num + weight_function
+		total_weight = total_weight + weight
 
-		assert(weight_function >= 0, "[BlendCamera:update() individual weight lesser than 0, undefined.")
+		assert(weight >= 0, "[BlendCamera:update() individual weight lesser than 0, undefined.")
 
-		var_6_1 = var_6_1 + num_2 * weight_function
+		total_offset = total_offset + offset * weight
 	end
 
-	assert(num > 0, "[BlendCamera:update() total blend weights are lower than 0")
+	assert(total_weight > 0, "[BlendCamera:update() total blend weights are lower than 0")
 
-	local num_3 = arg_6_2 + var_6_1 / num
+	local new_position = position + total_offset / total_weight
 
-	BlendCamera.super.update(self, arg_6_1, num_3, arg_6_3, arg_6_4)
+	BlendCamera.super.update(self, dt, new_position, rotation, data)
 end

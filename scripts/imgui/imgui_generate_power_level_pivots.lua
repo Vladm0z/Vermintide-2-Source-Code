@@ -1,13 +1,13 @@
 -- chunkname: @scripts/imgui/imgui_generate_power_level_pivots.lua
 
-local scripts_utils_serialize = require("scripts/utils/serialize")
+local serialize = require("scripts/utils/serialize")
 
 ImguiGeneratePowerLevelPivots = class(ImguiGeneratePowerLevelPivots)
 
-local num = 80
-local num_2 = 30
-local num_3 = 30
-local tbl = {
+local GRAPH_STEPS = 80
+local MAX_LEVEL = 30
+local CURSOR_Y_OFFSET = 30
+local pivot_data_passes = {
 	{
 		key = "min",
 		precision = 0.25,
@@ -29,9 +29,9 @@ local tbl = {
 		type = "slider_float",
 		label = "Pivot Power:",
 		column_width = 210,
-		max = function (arg_1_0, arg_1_1, arg_1_2, arg_1_3, arg_1_4, arg_1_5)
+		max = function (self, pivot_key, pivot_data, label, indent, color_key)
 			-- function 1
-			return arg_1_2.max * 2
+			return pivot_data.max * 2
 		end
 	},
 	{
@@ -55,33 +55,33 @@ local tbl = {
 		type = "text",
 		label = "Color:",
 		column_width = 205,
-		data = function (self, arg_2_1, arg_2_2, arg_2_3, arg_2_4, arg_2_5)
+		data = function (self, pivot_key, pivot_data, label, indent, color_key)
 			-- function 2
 			return self._colors
 		end,
-		key = function (arg_3_0, arg_3_1, arg_3_2, arg_3_3, arg_3_4, arg_3_5)
+		key = function (self, pivot_key, pivot_data, label, indent, color_key)
 			-- function 3
-			return arg_3_1 .. "." .. arg_3_5
+			return pivot_key .. "." .. color_key
 		end
 	}
 }
-local num_4 = 0
+local PIVOT_DATA_PASS_WIDTH = 0
 
-for i = 1, #tbl do
-	num_4 = num_4 + tbl[i].column_width
+for i = 1, #pivot_data_passes do
+	PIVOT_DATA_PASS_WIDTH = PIVOT_DATA_PASS_WIDTH + pivot_data_passes[i].column_width
 end
 
-ImguiGeneratePowerLevelPivots.init = function (arg_4_0)
+ImguiGeneratePowerLevelPivots.init = function (self)
 	-- function 4
 	return
 end
 
 ImguiGeneratePowerLevelPivots._lazy_init = function (self)
 	-- function 5
-	local _power_level_settings = self:_power_level_settings()
+	local power_level_settings = self:_power_level_settings()
 	local _default_settings = self._default_settings
 
-	_default_settings = _default_settings or table.clone(_power_level_settings)
+	_default_settings = not not _default_settings or not not table.clone(power_level_settings)
 	self._default_settings = _default_settings
 	self._tabs = {
 		"Graph",
@@ -90,32 +90,32 @@ ImguiGeneratePowerLevelPivots._lazy_init = function (self)
 
 	local _selected_tab = self._selected_tab
 
-	_selected_tab = _selected_tab or "Graph"
+	_selected_tab = not not _selected_tab or not not "Graph"
 	self._selected_tab = _selected_tab
 
-	local num = 0
-	local huge = math.huge
+	local max_power_level = 0
+	local min_power_level = math.huge
 
-	for k, v in pairs(self._default_settings.pivots) do
-		if num < v.hi.max then
-			num = v.hi.max
+	for _, pivots in pairs(self._default_settings.pivots) do
+		if max_power_level < pivots.hi.max then
+			max_power_level = pivots.hi.max
 		end
 
-		if huge > v.hi.min then
-			huge = v.hi.min
+		if min_power_level > pivots.hi.min then
+			min_power_level = pivots.hi.min
 		end
 
-		if num < v.low.max then
-			num = v.low.max
+		if max_power_level < pivots.low.max then
+			max_power_level = pivots.low.max
 		end
 
-		if huge > v.low.min then
-			huge = v.low.min
+		if min_power_level > pivots.low.min then
+			min_power_level = pivots.low.min
 		end
 	end
 
-	self._max_power_level = num
-	self._min_power_level = huge
+	self._max_power_level = max_power_level
+	self._min_power_level = min_power_level
 	self._colors = {
 		normal = {
 			hi = "common",
@@ -155,19 +155,19 @@ ImguiGeneratePowerLevelPivots._lazy_init = function (self)
 			ease = "ease_out_quart"
 		}
 	}
-	self._easing_as_array = table.select_array(self._easing_functions, function (arg_6_0, arg_6_1)
+	self._easing_as_array = table.select_array(self._easing_functions, function (k, v)
 		-- function 6
-		return arg_6_1.ease
+		return v.ease
 	end)
 
 	local _easing_func_index = self._easing_func_index
 
-	_easing_func_index = _easing_func_index or 1
+	_easing_func_index = not not _easing_func_index or not not 1
 	self._easing_func_index = _easing_func_index
 
 	local _history = self._history
 
-	_history = _history or {
+	_history = not not _history or not not {
 		table.clone(self._default_settings)
 	}
 	self._history = _history
@@ -175,41 +175,48 @@ ImguiGeneratePowerLevelPivots._lazy_init = function (self)
 	self._filter = ""
 end
 
-ImguiGeneratePowerLevelPivots.is_persistent = function (arg_7_0)
+ImguiGeneratePowerLevelPivots.is_persistent = function (self)
 	-- function 7
 	return false
 end
 
-ImguiGeneratePowerLevelPivots._power_level_settings = function (arg_8_0)
+ImguiGeneratePowerLevelPivots._power_level_settings = function (self)
 	-- function 8
-	return (Managers.backend:get_interface("loot"):get_power_level_settings())
+	local loot_interface = Managers.backend:get_interface("loot")
+	local power_level_settings = loot_interface:get_power_level_settings()
+
+	return power_level_settings
 end
 
-local flag = true
+local DO_RELOAD = true
 
-ImguiGeneratePowerLevelPivots.update = function (self, arg_9_1, arg_9_2)
+ImguiGeneratePowerLevelPivots.update = function (self, t, dt)
 	-- function 9
 	if not Managers.state.game_mode then
 		return
 	end
 
-	if flag or not self._run_lazy_init then
+	if DO_RELOAD or self._run_lazy_init then
 		self:_lazy_init()
 
-		flag = false
+		DO_RELOAD = false
 	end
 
 	if Keyboard.button(Keyboard.button_index("left ctrl")) > 0 then
-		if not Keyboard.pressed(Keyboard.button_index("z")) then
+		if Keyboard.pressed(Keyboard.button_index("z")) then
 			if self._history_index > 1 then
 				self._history_index = self._history_index - 1
 
-				Managers.backend:get_interface("loot"):debug_override_power_level_settings(table.clone(self._history[self._history_index]))
+				local loot_interface = Managers.backend:get_interface("loot")
+
+				loot_interface:debug_override_power_level_settings(table.clone(self._history[self._history_index]))
 			end
-		elseif not (not Keyboard.pressed(Keyboard.button_index("y")) and not (self._history_index + 1 <= #self._history)) then
+		elseif Keyboard.pressed(Keyboard.button_index("y")) and self._history_index + 1 <= #self._history then
 			self._history_index = self._history_index + 1
 
-			Managers.backend:get_interface("loot"):debug_override_power_level_settings(table.clone(self._history[self._history_index]))
+			local loot_interface = Managers.backend:get_interface("loot")
+
+			loot_interface:debug_override_power_level_settings(table.clone(self._history[self._history_index]))
 		end
 	end
 end
@@ -221,10 +228,10 @@ end
 
 ImguiGeneratePowerLevelPivots.draw = function (self)
 	-- function 11
-	local begin_window, var_11_1 = Imgui.begin_window("Generate Power Level Pivots", "always_auto_resize", "menu_bar")
+	local do_close, is_open = Imgui.begin_window("Generate Power Level Pivots", "always_auto_resize", "menu_bar")
 
-	if not var_11_1 then
-		return begin_window
+	if not is_open then
+		return do_close
 	end
 
 	if not Managers.state.game_mode then
@@ -238,24 +245,26 @@ ImguiGeneratePowerLevelPivots.draw = function (self)
 
 	self._menu_bar_height = 0
 
-	if not Imgui.begin_menu_bar() then
-		for i, v in ipairs(self._tabs) do
+	if Imgui.begin_menu_bar() then
+		for i, tab in ipairs(self._tabs) do
 			local str
 
-			if self._selected_tab ~= v then
-				str = " " .. v .. " "
+			if self._selected_tab ~= tab then
+				str = " " .. tab .. " "
 
 				if not str then
 					-- Nothing
 				end
 			end
 
-			str = "[" .. v .. "]"
+			str = "[" .. tab .. "]"
+
+			local label = str
 
 			::label_11_0::
 
-			if not Imgui.menu_item(str) then
-				self._selected_tab = v
+			if Imgui.menu_item(label) then
+				self._selected_tab = tab
 			end
 		end
 
@@ -264,33 +273,33 @@ ImguiGeneratePowerLevelPivots.draw = function (self)
 		self.asdf, self._menu_bar_height = Imgui.get_item_rect_size()
 	end
 
-	local tbl = {
-		num_4 + 170,
+	local graph_size = {
+		PIVOT_DATA_PASS_WIDTH + 170,
 		500
 	}
-	local num = tbl[2] + 290
+	local window_height = graph_size[2] + 290
 
-	Imgui.begin_child_window("GraphEditor", tbl[1], num, true, "always_auto_resize")
+	Imgui.begin_child_window("GraphEditor", graph_size[1], window_height, true, "always_auto_resize")
 
-	local _selected_tab = self._selected_tab
+	local selected_tab = self._selected_tab
 
-	if _selected_tab == "Graph" then
-		self:_draw_graph(tbl)
-	elseif _selected_tab == "Code" then
-		self:_draw_code(tbl)
+	if selected_tab == "Graph" then
+		self:_draw_graph(graph_size)
+	elseif selected_tab == "Code" then
+		self:_draw_code(graph_size)
 	end
 
 	Imgui.end_child_window()
 	Imgui.same_line()
 
-	local num_2 = 800
+	local summary_width = 800
 
-	Imgui.begin_child_window("Summary", num_2, num, true, "always_auto_resize")
-	self:_draw_summary(num_2)
+	Imgui.begin_child_window("Summary", summary_width, window_height, true, "always_auto_resize")
+	self:_draw_summary(summary_width)
 	Imgui.end_child_window()
 	Imgui.end_window()
 
-	return begin_window
+	return do_close
 end
 
 ImguiGeneratePowerLevelPivots._reset_control_id = function (self)
@@ -305,83 +314,77 @@ ImguiGeneratePowerLevelPivots._next_control_id = function (self)
 	return tostring(self._next_control_id_internal)
 end
 
-ImguiGeneratePowerLevelPivots._nan_backup = function (arg_14_0, arg_14_1, arg_14_2, arg_14_3)
+ImguiGeneratePowerLevelPivots._nan_backup = function (self, v, has_any_nan, nan_context)
 	-- function 14
-	if arg_14_1 ~= arg_14_1 then
-		return 0, true, arg_14_3
+	if v ~= v then
+		return 0, true, nan_context
 	end
 
-	return arg_14_1, arg_14_2, arg_14_3
+	return v, has_any_nan, nan_context
 end
 
-ImguiGeneratePowerLevelPivots._draw_graph = function (self, arg_15_1)
+ImguiGeneratePowerLevelPivots._draw_graph = function (self, size)
 	-- function 15
-	local var_15_0 = Color(180, 100, 100, 100)
-	local var_15_1 = Color(255, 255, 255, 255)
-	local var_15_2 = Color(255, 255, 255, 255)
-	local var_15_3 = Color(255, 255, 255, 255)
-	local var_15_4 = Color(255, 255, 0, 0)
-	local num_4 = 0
-	local num_5 = 0
-	local var_15_7 = arg_15_1[1]
-	local var_15_8 = arg_15_1[2]
-	local num_6 = 20
-	local num_7 = 20
-	local num_8 = 0
-	local num_9 = 0
-	local num_10 = 1
-	local num_11 = 2
-	local num_12 = 10
+	local node_color = Color(180, 100, 100, 100)
+	local outline_color = Color(255, 255, 255, 255)
+	local axis_color = Color(255, 255, 255, 255)
+	local line_color = Color(255, 255, 255, 255)
+	local val_line_color = Color(255, 255, 0, 0)
+	local margin_x, margin_y = 0, 0
+	local size_x, size_y = size[1], size[2]
+	local axis_margin_x, axis_margin_y = 20, 20
+	local axis_offset_x, axis_offset_y = 0, 0
+	local line_thickness = 1
+	local axis_thickness = 2
+	local axis_oversize = 10
 
 	Imgui.channel_split(2)
 	Imgui.channel_set_current(0)
 
-	local get_cursor_screen_pos, var_15_17 = Imgui.get_cursor_screen_pos()
+	local x, y = Imgui.get_cursor_screen_pos()
 
-	Imgui.add_rect_filled(get_cursor_screen_pos + num_4, var_15_17 + num_5, get_cursor_screen_pos + var_15_7 - num_4, var_15_17 + var_15_8 - num_5, var_15_0, 3)
-	Imgui.add_rect(get_cursor_screen_pos + num_4, var_15_17 + num_5, get_cursor_screen_pos + var_15_7 - num_4, var_15_17 + var_15_8 - num_5, var_15_1, 3, 1)
+	Imgui.add_rect_filled(x + margin_x, y + margin_y, x + size_x - margin_x, y + size_y - margin_y, node_color, 3)
+	Imgui.add_rect(x + margin_x, y + margin_y, x + size_x - margin_x, y + size_y - margin_y, outline_color, 3, 1)
 
-	local num_13 = get_cursor_screen_pos + num_4 + num_6 + num_8
-	local num_14 = var_15_17 + num_5 + num_7 + num_9
-	local num_15 = get_cursor_screen_pos - num_4 - num_6 + var_15_7 + num_8
-	local num_16 = var_15_17 - num_5 - num_7 + var_15_8 + num_9
-	local num_17 = num_15 - num_13
-	local num_18 = num_16 - num_14
+	local axis_start_x = x + margin_x + axis_margin_x + axis_offset_x
+	local axis_start_y = y + margin_y + axis_margin_y + axis_offset_y
+	local axis_end_x = x - margin_x - axis_margin_x + size_x + axis_offset_x
+	local axis_end_y = y - margin_y - axis_margin_y + size_y + axis_offset_y
+	local axis_size_x = axis_end_x - axis_start_x
+	local axis_size_y = axis_end_y - axis_start_y
 
-	Imgui.add_line(num_13 - num_12, num_16, num_15 + num_12, num_16, var_15_2, num_11)
-	Imgui.add_line(num_13, num_14 - num_12, num_13, num_16 + num_12, var_15_2, num_11)
+	Imgui.add_line(axis_start_x - axis_oversize, axis_end_y, axis_end_x + axis_oversize, axis_end_y, axis_color, axis_thickness)
+	Imgui.add_line(axis_start_x, axis_start_y - axis_oversize, axis_start_x, axis_end_y + axis_oversize, axis_color, axis_thickness)
 
-	local var_15_24 = Color(100, 255, 255, 255)
+	local threshold_color = Color(100, 255, 255, 255)
 
-	Imgui.add_line(num_13, num_14, num_13 + num_17, num_14, var_15_24)
-	Imgui.add_text("300", num_13, num_14 - 15, Colors.get("white"))
-	Imgui.add_line(num_13, num_14 + num_18 * 0.3333333333333333, num_13 + num_17, num_14 + num_18 * 0.3333333333333333, var_15_24)
-	Imgui.add_text("200", num_13, num_14 + num_18 * 0.3333333333333333 - 15, Colors.get("white"))
-	Imgui.add_line(num_13, num_14 + num_18 * 0.6666666666666666, num_13 + num_17, num_14 + num_18 * 0.6666666666666666, var_15_24)
-	Imgui.add_text("100", num_13, num_14 + num_18 * 0.6666666666666666 - 15, Colors.get("white"))
+	Imgui.add_line(axis_start_x, axis_start_y, axis_start_x + axis_size_x, axis_start_y, threshold_color)
+	Imgui.add_text("300", axis_start_x, axis_start_y - 15, Colors.get("white"))
+	Imgui.add_line(axis_start_x, axis_start_y + axis_size_y * 0.3333333333333333, axis_start_x + axis_size_x, axis_start_y + axis_size_y * 0.3333333333333333, threshold_color)
+	Imgui.add_text("200", axis_start_x, axis_start_y + axis_size_y * 0.3333333333333333 - 15, Colors.get("white"))
+	Imgui.add_line(axis_start_x, axis_start_y + axis_size_y * 0.6666666666666666, axis_start_x + axis_size_x, axis_start_y + axis_size_y * 0.6666666666666666, threshold_color)
+	Imgui.add_text("100", axis_start_x, axis_start_y + axis_size_y * 0.6666666666666666 - 15, Colors.get("white"))
 	Imgui.channel_set_current(1)
 
-	local num_19 = num_13 + 1 / num_2 * num_17
-	local num_20 = num_13 + num_17
-	local var_15_27 = num_14
-	local num_21 = num_14 + num_18 - num_18 * self._min_power_level / self._max_power_level
-	local num_22 = 0
-	local var_15_30
-	local _power_level_settings = self:_power_level_settings()
-	local pivots = _power_level_settings.pivots
-	local clone = table.clone(pivots)
+	local min_x_pos, max_x_pos = axis_start_x + 1 / MAX_LEVEL * axis_size_x, axis_start_x + axis_size_x
+	local min_y_pos, max_y_pos = axis_start_y, axis_start_y + axis_size_y - axis_size_y * self._min_power_level / self._max_power_level
+	local num_errors = 0
+	local key_has_nan
+	local power_level_settings = self:_power_level_settings()
+	local pivots = power_level_settings.pivots
+	local old = table.clone(pivots)
 
-	for k, v in pairs(pivots) do
+	for pivot_key, pivot_data in pairs(pivots) do
 		repeat
-			if not string.find(k, self._filter) then
+			if not string.find(pivot_key, self._filter) then
 				break
 			end
 
-			local _graph_colors = self:_graph_colors(k)
+			local color_tbl = self:_graph_colors(pivot_key)
 			local get
 
-			if not Colors.color_definitions[_graph_colors.hi] then
-				get = Colors.get(_graph_colors.hi)
+			if Colors.color_definitions[color_tbl.hi] then
+				get = Colors.get(color_tbl.hi)
 
 				if not get then
 					-- Nothing
@@ -390,14 +393,16 @@ ImguiGeneratePowerLevelPivots._draw_graph = function (self, arg_15_1)
 
 			get = Colors.get(self._fallback_color)
 
+			local color_hi = get
+
 			do
 				local get_2
 			end
 
 			::label_15_0::
 
-			if not Colors.color_definitions[_graph_colors.low] then
-				get_2 = Colors.get(_graph_colors.low)
+			if Colors.color_definitions[color_tbl.low] then
+				get_2 = Colors.get(color_tbl.low)
 
 				if not get_2 then
 					-- Nothing
@@ -406,106 +411,104 @@ ImguiGeneratePowerLevelPivots._draw_graph = function (self, arg_15_1)
 
 			get_2 = Colors.get(self._fallback_color)
 
+			local color_low = get_2
+
 			::label_15_1::
 
-			local min = v.low.min
-			local max = v.low.max
-			local min_2 = v.hi.min
-			local max_2 = v.hi.max
-			local num_23 = 1 / num_2
-			local calculate_power_level, var_15_43 = LootChestData.calculate_power_level(1, v)
-			local num_24 = calculate_power_level / self._max_power_level
-			local num_25 = var_15_43 / self._max_power_level
-			local var_15_46
-			local var_15_47
-			local _nan_backup, var_15_49 = self:_nan_backup(num_24, var_15_46)
-			local _nan_backup_2, var_15_51 = self:_nan_backup(num_25, var_15_47)
+			local low_min, low_max = pivot_data.low.min, pivot_data.low.max
+			local hi_min, hi_max = pivot_data.hi.min, pivot_data.hi.max
+			local last_x = 1 / MAX_LEVEL
+			local last_low, last_hi = LootChestData.calculate_power_level(1, pivot_data)
+			local last_low_y = last_low / self._max_power_level
+			local last_hi_y = last_hi / self._max_power_level
+			local any_nan_in_low, any_nan_in_hi
+			local last_low_y, any_nan_in_low = self:_nan_backup(last_low_y, any_nan_in_low)
+			local last_hi_y, any_nan_in_hi = self:_nan_backup(last_hi_y, any_nan_in_hi)
 
-			for k_2 = 1, num do
-				local num_26 = k_2 / num
+			for i = 1, GRAPH_STEPS do
+				local x = i / GRAPH_STEPS
 
-				if num_26 * num_2 > 1 then
-					local calculate_power_level_2, var_15_54 = LootChestData.calculate_power_level(num_26 * num_2, v)
-					local num_27 = calculate_power_level_2 / self._max_power_level
-					local num_28 = var_15_54 / self._max_power_level
-					local _nan_backup_3
+				if x * MAX_LEVEL > 1 then
+					local pl_low, pl_hi = LootChestData.calculate_power_level(x * MAX_LEVEL, pivot_data)
+					local low_y = pl_low / self._max_power_level
+					local hi_y = pl_hi / self._max_power_level
 
-					_nan_backup_3, var_15_49 = self:_nan_backup(num_27, var_15_49)
+					low_y, any_nan_in_low = self:_nan_backup(low_y, any_nan_in_low)
+					hi_y, any_nan_in_hi = self:_nan_backup(hi_y, any_nan_in_hi)
 
-					local _nan_backup_4
+					Imgui.add_line(axis_start_x + axis_size_x * last_x, axis_start_y + axis_size_y - axis_size_y * last_hi_y, axis_start_x + axis_size_x * x, axis_start_y + axis_size_y - axis_size_y * hi_y, color_hi, 1.5)
+					Imgui.add_line(axis_start_x + axis_size_x * last_x, axis_start_y + axis_size_y - axis_size_y * last_low_y, axis_start_x + axis_size_x * x, axis_start_y + axis_size_y - axis_size_y * low_y, color_low, 1.5)
 
-					_nan_backup_4, var_15_51 = self:_nan_backup(num_28, var_15_51)
-
-					Imgui.add_line(num_13 + num_17 * num_23, num_14 + num_18 - num_18 * _nan_backup_2, num_13 + num_17 * num_26, num_14 + num_18 - num_18 * _nan_backup_4, get, 1.5)
-					Imgui.add_line(num_13 + num_17 * num_23, num_14 + num_18 - num_18 * _nan_backup, num_13 + num_17 * num_26, num_14 + num_18 - num_18 * _nan_backup_3, get_2, 1.5)
-
-					num_23 = num_26
-					_nan_backup_2 = _nan_backup_4
-					_nan_backup = _nan_backup_3
+					last_x = x
+					last_hi_y = hi_y
+					last_low_y = low_y
 				end
 			end
 
-			if not var_15_49 then
-				num_22 = num_22 + 1
+			if any_nan_in_low then
+				num_errors = num_errors + 1
 
-				local get_cursor_screen_pos_2, var_15_60 = Imgui.get_cursor_screen_pos()
+				local cursor_pos_x, cursor_pos_y = Imgui.get_cursor_screen_pos()
 
-				Imgui.set_cursor_screen_pos(num_13 + 10, num_14 + num_18 - 20 * num_22)
+				Imgui.set_cursor_screen_pos(axis_start_x + 10, axis_start_y + axis_size_y - 20 * num_errors)
 				Imgui.push_style_color(Imgui.COLOR_TEXT, 255, 0, 0, 255)
-				Imgui.text("Error: nan value detected in: " .. k .. "; low")
+				Imgui.text("Error: nan value detected in: " .. pivot_key .. "; low")
 				Imgui.pop_style_color(1)
-				Imgui.set_cursor_screen_pos(get_cursor_screen_pos_2, var_15_60)
+				Imgui.set_cursor_screen_pos(cursor_pos_x, cursor_pos_y)
 			end
 
-			if not var_15_51 then
-				num_22 = num_22 + 1
+			if any_nan_in_hi then
+				num_errors = num_errors + 1
 
-				local get_cursor_screen_pos_3, var_15_62 = Imgui.get_cursor_screen_pos()
+				local cursor_pos_x, cursor_pos_y = Imgui.get_cursor_screen_pos()
 
-				Imgui.set_cursor_screen_pos(num_13 + 10, num_14 + num_18 - 20 * num_22)
+				Imgui.set_cursor_screen_pos(axis_start_x + 10, axis_start_y + axis_size_y - 20 * num_errors)
 				Imgui.push_style_color(Imgui.COLOR_TEXT, 255, 0, 0, 255)
-				Imgui.text("Error: nan value detected in: " .. k .. "; high")
+				Imgui.text("Error: nan value detected in: " .. pivot_key .. "; high")
 				Imgui.pop_style_color(1)
-				Imgui.set_cursor_screen_pos(get_cursor_screen_pos_3, var_15_62)
+				Imgui.set_cursor_screen_pos(cursor_pos_x, cursor_pos_y)
 			end
 		until true
 	end
 
 	Imgui.channels_merge()
-	Imgui.dummy(var_15_7, var_15_8)
+	Imgui.dummy(size_x, size_y)
 
-	local get_item_rect_min, var_15_64 = Imgui.get_item_rect_min()
+	local graph_pos_x, graph_pos_y = Imgui.get_item_rect_min()
 
-	if not Imgui.is_item_hovered() then
-		local axis = Mouse.axis(Mouse.axis_id("cursor"))
-		local get_window_pos, var_15_67 = Imgui.get_window_pos()
-		local resolution, var_15_69 = Application.resolution()
-		local x = axis.x
-		local num_29 = math.clamp(axis.x, num_19, num_20) - num_19
-		local round_to_closest_multiple = math.round_to_closest_multiple(num_29, 1 / num_2 * num_17)
-		local num_30 = num_19 + round_to_closest_multiple
-		local clamp = math.clamp(num_30, num_19, num_20)
-		local clamp_2 = math.clamp(var_15_69 - axis.y + num_3, var_15_27, num_21)
+	if Imgui.is_item_hovered() then
+		local cursor = Mouse.axis(Mouse.axis_id("cursor"))
+		local x, y = Imgui.get_window_pos()
+		local application_x, application_y = Application.resolution()
+		local cursor_x = cursor.x
+		local offset = math.clamp(cursor.x, min_x_pos, max_x_pos) - min_x_pos
 
-		Imgui.add_line(clamp, num_14, clamp, num_14 + num_18, Colors.get("white"))
+		offset = math.round_to_closest_multiple(offset, 1 / MAX_LEVEL * axis_size_x)
+		cursor_x = min_x_pos + offset
 
-		local num_31 = (1 - (clamp_2 - num_14) / num_18) * self._max_power_level
-		local huge = math.huge
-		local num_32 = 0
-		local var_15_79
-		local round = math.round(round_to_closest_multiple / num_17 * num_2)
+		local vertical_line_x = math.clamp(cursor_x, min_x_pos, max_x_pos)
+		local horizontal_line_y = math.clamp(application_y - cursor.y + CURSOR_Y_OFFSET, min_y_pos, max_y_pos)
 
-		for k_3, v_2 in pairs(pivots) do
+		Imgui.add_line(vertical_line_x, axis_start_y, vertical_line_x, axis_start_y + axis_size_y, Colors.get("white"))
+
+		local mouse_multiplier = 1 - (horizontal_line_y - axis_start_y) / axis_size_y
+		local mouse_power_level = mouse_multiplier * self._max_power_level
+		local best_diff = math.huge
+		local best_power_level = 0
+		local best_color
+		local level = math.round(offset / axis_size_x * MAX_LEVEL)
+
+		for pivot_key, pivot_data in pairs(pivots) do
 			repeat
-				if not string.find(k_3, self._filter) then
+				if not string.find(pivot_key, self._filter) then
 					break
 				end
 
-				local _graph_colors_2 = self:_graph_colors(k_3)
+				local color_tbl = self:_graph_colors(pivot_key)
 				local get_3
 
-				if not Colors.color_definitions[_graph_colors_2.hi] then
-					get_3 = Colors.get(_graph_colors_2.hi)
+				if Colors.color_definitions[color_tbl.hi] then
+					get_3 = Colors.get(color_tbl.hi)
 
 					if not get_3 then
 						-- Nothing
@@ -514,14 +517,16 @@ ImguiGeneratePowerLevelPivots._draw_graph = function (self, arg_15_1)
 
 				get_3 = Colors.get(self._fallback_color)
 
+				local color_hi = get_3
+
 				do
 					local get_4
 				end
 
 				::label_15_2::
 
-				if not Colors.color_definitions[_graph_colors_2.low] then
-					get_4 = Colors.get(_graph_colors_2.low)
+				if Colors.color_definitions[color_tbl.low] then
+					get_4 = Colors.get(color_tbl.low)
 
 					if not get_4 then
 						-- Nothing
@@ -530,37 +535,40 @@ ImguiGeneratePowerLevelPivots._draw_graph = function (self, arg_15_1)
 
 				get_4 = Colors.get(self._fallback_color)
 
+				local color_low = get_4
+
 				::label_15_3::
 
-				local num_33 = 1 / num_2
-				local calculate_power_level_3, var_15_86 = LootChestData.calculate_power_level(round, v_2)
-				local round_2, round_3 = math.round(calculate_power_level_3), math.round(var_15_86)
+				local last_x = 1 / MAX_LEVEL
+				local pl_low, pl_hi = LootChestData.calculate_power_level(level, pivot_data)
 
-				if huge > math.abs(round_2 - num_31) then
-					num_32 = round_2
-					huge = math.abs(round_2 - num_31)
-					var_15_79 = get_4
+				pl_low, pl_hi = math.round(pl_low), math.round(pl_hi)
+
+				if best_diff > math.abs(pl_low - mouse_power_level) then
+					best_power_level = pl_low
+					best_diff = math.abs(pl_low - mouse_power_level)
+					best_color = color_low
 				end
 
-				if huge > math.abs(round_3 - num_31) then
-					num_32 = round_3
-					huge = math.abs(round_3 - num_31)
-					var_15_79 = get_3
+				if best_diff > math.abs(pl_hi - mouse_power_level) then
+					best_power_level = pl_hi
+					best_diff = math.abs(pl_hi - mouse_power_level)
+					best_color = color_hi
 				end
 			until true
 		end
 
-		if num_32 ~= 0 then
-			local num_34 = num_14 + num_18 - num_32 / self._max_power_level * num_18
+		if best_power_level ~= 0 then
+			local closest_y = axis_start_y + axis_size_y - best_power_level / self._max_power_level * axis_size_y
 
-			Imgui.add_text(tostring(num_32), clamp + 5, num_34 - 15, var_15_79)
-			Imgui.add_text(tostring(round), clamp, num_14 + num_18, Colors.get("white"))
+			Imgui.add_text(tostring(best_power_level), vertical_line_x + 5, closest_y - 15, best_color)
+			Imgui.add_text(tostring(level), vertical_line_x, axis_start_y + axis_size_y, Colors.get("white"))
 		end
 	end
 
-	Imgui.dummy(var_15_7, 5)
+	Imgui.dummy(size_x, 5)
 	Imgui.separator()
-	Imgui.dummy(var_15_7, 5)
+	Imgui.dummy(size_x, 5)
 	Imgui.tree_push(self:_next_control_id())
 	Imgui.unindent()
 	Imgui.text("Easing Function")
@@ -571,8 +579,8 @@ ImguiGeneratePowerLevelPivots._draw_graph = function (self, arg_15_1)
 	Imgui.indent()
 	Imgui.tree_pop()
 
-	_power_level_settings.easing_function = self._easing_functions[self._easing_func_index].ease
-	_power_level_settings.inverse_easing_function = self._easing_functions[self._easing_func_index].inverse
+	power_level_settings.easing_function = self._easing_functions[self._easing_func_index].ease
+	power_level_settings.inverse_easing_function = self._easing_functions[self._easing_func_index].inverse
 
 	Imgui.same_line()
 	Imgui.indent(350)
@@ -586,30 +594,30 @@ ImguiGeneratePowerLevelPivots._draw_graph = function (self, arg_15_1)
 	Imgui.indent()
 	Imgui.tree_pop()
 	Imgui.unindent(350)
-	Imgui.dummy(var_15_7, 5)
+	Imgui.dummy(size_x, 5)
 	Imgui.separator()
-	Imgui.dummy(var_15_7, 5)
+	Imgui.dummy(size_x, 5)
 	Imgui.columns(8)
 
-	local _sorted_pivot_keys = self:_sorted_pivot_keys(pivots)
-	local var_15_91
+	local keys = self:_sorted_pivot_keys(pivots)
+	local last_pivot
 
-	for i5 = 1, #_sorted_pivot_keys do
+	for i = 1, #keys do
 		repeat
-			local var_15_92 = _sorted_pivot_keys[i5]
+			local pivot_key = keys[i]
 
-			if not string.find(var_15_92, self._filter) then
+			if not string.find(pivot_key, self._filter) then
 				break
 			end
 
-			local var_15_93 = pivots[var_15_92]
+			local pivot_data = pivots[pivot_key]
 
 			Imgui.set_column_width(123)
 			Imgui.tree_push(self:_next_control_id())
 			Imgui.unindent()
 
-			if not Imgui.button("x") then
-				pivots[var_15_92] = nil
+			if Imgui.button("x") then
+				pivots[pivot_key] = nil
 
 				Imgui.indent()
 				Imgui.tree_pop()
@@ -624,7 +632,7 @@ ImguiGeneratePowerLevelPivots._draw_graph = function (self, arg_15_1)
 			local str = ""
 			local _pivot_key_edit
 
-			if self._pivot_key_original == var_15_92 then
+			if self._pivot_key_original == pivot_key then
 				_pivot_key_edit = self._pivot_key_edit
 
 				if not _pivot_key_edit then
@@ -632,24 +640,24 @@ ImguiGeneratePowerLevelPivots._draw_graph = function (self, arg_15_1)
 				end
 			end
 
-			_pivot_key_edit = var_15_92
+			_pivot_key_edit = pivot_key
 
 			::label_15_4::
 
-			local var_15_97 = input_text(str, _pivot_key_edit)
-			local is_item_active = Imgui.is_item_active()
+			local new_key = input_text(str, _pivot_key_edit)
+			local focused = Imgui.is_item_active()
 
 			Imgui.indent()
 			Imgui.tree_pop()
 			Imgui.pop_item_width()
 
-			if not ((is_item_active or var_15_92 == self._pivot_key_original) and var_15_97 == var_15_92) then
-				if not is_item_active then
-					self._pivot_key_edit = var_15_97
-					self._pivot_key_original = var_15_92
+			if (focused or pivot_key == self._pivot_key_original) and new_key ~= pivot_key then
+				if focused then
+					self._pivot_key_edit = new_key
+					self._pivot_key_original = pivot_key
 				else
-					pivots[var_15_92] = nil
-					pivots[var_15_97] = var_15_93
+					pivots[pivot_key] = nil
+					pivots[new_key] = pivot_data
 					self._pivot_key_edit = nil
 					self._pivot_key_original = nil
 
@@ -657,187 +665,206 @@ ImguiGeneratePowerLevelPivots._draw_graph = function (self, arg_15_1)
 				end
 			end
 
-			self:_draw_pivot_edit_row(var_15_92, var_15_93.low, "low", 0, "low")
-			self:_draw_pivot_edit_row(var_15_92, var_15_93.hi, "high", 1, "hi")
+			self:_draw_pivot_edit_row(pivot_key, pivot_data.low, "low", 0, "low")
+			self:_draw_pivot_edit_row(pivot_key, pivot_data.hi, "high", 1, "hi")
 			Imgui.next_column()
 
-			var_15_91 = var_15_93
+			last_pivot = pivot_data
 		until true
 	end
 
 	Imgui.columns(1)
 
-	if not Imgui.button("Add") then
-		local str_2 = ""
+	if Imgui.button("Add") then
+		local name = ""
 
-		while not pivots[str_2] do
-			str_2 = str_2 .. " "
+		while pivots[name] do
+			name = name .. " "
 		end
 
-		local clone_2 = table.clone(var_15_91)
+		local clone = table.clone(last_pivot)
 
-		clone_2 = clone_2 or {
+		clone = not not clone or not not {
 			pivot_level = 30,
 			min = 10,
 			pivot_power = 300,
 			max = 300
 		}
-		pivots[str_2] = clone_2
+		pivots[name] = clone
 	end
 
 	Imgui.same_line()
 
-	if not Imgui.button("Reset") then
-		Managers.backend:get_interface("loot"):debug_override_power_level_settings(self._default_settings)
+	if Imgui.button("Reset") then
+		local loot_interface = Managers.backend:get_interface("loot")
+
+		loot_interface:debug_override_power_level_settings(self._default_settings)
 	end
 
-	if not table.deep_equal(clone, pivots) then
+	if not table.deep_equal(old, pivots) then
 		self._history_index = self._history_index + 1
-		self._history[self._history_index] = table.clone(_power_level_settings)
+		self._history[self._history_index] = table.clone(power_level_settings)
 
-		for i6 = self._history_index + 1, #self._history do
-			self._history[i6] = nil
+		for i = self._history_index + 1, #self._history do
+			self._history[i] = nil
 		end
 	end
 end
 
-ImguiGeneratePowerLevelPivots._draw_pivot_edit_row = function (self, arg_16_1, arg_16_2, arg_16_3, arg_16_4, arg_16_5)
+ImguiGeneratePowerLevelPivots._draw_pivot_edit_row = function (self, pivot_key, pivot_data, label, indent, color_key)
 	-- function 16
-	for i = 1, arg_16_4 do
+	for i = 1, indent do
 		Imgui.next_column()
 	end
 
 	Imgui.next_column()
 	Imgui.set_column_width(50)
-	Imgui.text(arg_16_3)
+	Imgui.text(label)
 
-	for j = 1, #tbl do
+	for i = 1, #pivot_data_passes do
 		Imgui.next_column()
 
-		local var_16_0 = tbl[j]
-		local data
+		local pass = pivot_data_passes[i]
+		local data_2
 
-		if not var_16_0.data then
-			data = var_16_0.data(self, arg_16_1, arg_16_2, arg_16_3, arg_16_4, arg_16_5)
+		if pass.data then
+			data_2 = pass.data(self, pivot_key, pivot_data, label, indent, color_key)
 
-			if not data then
+			if not data_2 then
 				-- Nothing
 			end
 		end
 
-		data = arg_16_2
+		data_2 = pivot_data
+
+		local data = data_2
 
 		::label_16_0::
 
-		local column_width = var_16_0.column_width
-		local label = var_16_0.label
+		local column_width = pass.column_width
+		local label_2 = pass.label
 
-		label = label or var_16_0.key
-
-		local key
-
-		if type(var_16_0.key) == "function" then
-			key = var_16_0.key(self, arg_16_1, arg_16_2, label, arg_16_4, arg_16_5)
-
-			if not key then
-				-- Nothing
-			end
+		if not label_2 then
+			-- Nothing
 		end
 
-		key = var_16_0.key
+		label_2 = pass.key
+
+		local label = label_2
+
+		do
+			local key_2
+		end
 
 		::label_16_1::
 
-		local split = string.split(key, ".")
-		local max
+		if type(pass.key) == "function" then
+			key_2 = pass.key(self, pivot_key, pivot_data, label, indent, color_key)
 
-		if type(var_16_0.max) == "function" then
-			max = var_16_0.max(self, arg_16_1, arg_16_2, label, arg_16_4, arg_16_5)
-
-			if not max then
+			if not key_2 then
 				-- Nothing
 			end
 		end
 
-		max = var_16_0.max
+		key_2 = pass.key
+
+		local key = key_2
 
 		::label_16_2::
 
-		local type = var_16_0.type
+		key = string.split(key, ".")
+
+		local max_2
+
+		if type(pass.max) == "function" then
+			max_2 = pass.max(self, pivot_key, pivot_data, label, indent, color_key)
+
+			if not max_2 then
+				-- Nothing
+			end
+		end
+
+		max_2 = pass.max
+
+		local max = max_2
+
+		::label_16_3::
+
+		local type = pass.type
 
 		Imgui.set_column_width(column_width)
 
-		local num = 0
+		local label_width = 0
 
-		if not label then
-			num = Imgui.calculate_text_size(label)
+		if label then
+			label_width = Imgui.calculate_text_size(label)
 
 			Imgui.text(label)
 			Imgui.same_line()
 		end
 
-		if not split then
+		if key then
 			Imgui.tree_push(self:_next_control_id())
 			Imgui.unindent()
 
-			for k = 1, #split - 1 do
-				data = data[split[k]]
+			for i = 1, #key - 1 do
+				data = data[key[i]]
 			end
 
-			local var_16_9 = split[#split]
+			key = key[#key]
 
-			Imgui.dummy(num, 0)
+			Imgui.dummy(label_width, 0)
 			Imgui.same_line()
-			Imgui.push_item_width(column_width - num)
+			Imgui.push_item_width(column_width - label_width)
 
 			if type == "float" then
 				local input_text = Imgui.input_text
 				local str = ""
 				local tostring = tostring
-				local var_16_13 = data[var_16_9]
+				local var_16_7 = data[key]
 
-				var_16_13 = var_16_13 or 0
-				data[var_16_9] = input_text(str, tostring(var_16_13))
+				var_16_7 = not not var_16_7 or not not 0
+				data[key] = input_text(str, tostring(var_16_7))
 
-				local var_16_14 = tonumber(data[var_16_9])
+				local var_16_8 = tonumber(data[key])
 
-				var_16_14 = var_16_14 or 0
-				data[var_16_9] = var_16_14
+				var_16_8 = not not var_16_8 or not not 0
+				data[key] = var_16_8
 			elseif type == "slider_float" then
 				local slider_float = Imgui.slider_float
 				local str_2 = ""
-				local var_16_17 = data[var_16_9]
-				local min = var_16_0.min
+				local var_16_11 = data[key]
+				local min = pass.min
 
-				min = min or 0
+				min = not not min or not not 0
 
-				local var_16_19 = slider_float(str_2, var_16_17, min, max or 1)
+				local var_16_13 = slider_float(str_2, var_16_11, min, not not max or not not 1)
 
-				var_16_19 = var_16_19 or 0
-				data[var_16_9] = var_16_19
+				var_16_13 = not not var_16_13 or not not 0
+				data[key] = var_16_13
 			elseif type == "slider_int" then
 				local slider_int = Imgui.slider_int
 				local str_3 = ""
-				local var_16_22 = data[var_16_9]
-				local min_2 = var_16_0.min
+				local var_16_16 = data[key]
+				local min_2 = pass.min
 
-				min_2 = min_2 or 0
+				min_2 = not not min_2 or not not 0
 
-				local var_16_24 = slider_int(str_3, var_16_22, min_2, max or 1)
+				local var_16_18 = slider_int(str_3, var_16_16, min_2, not not max or not not 1)
 
-				var_16_24 = var_16_24 or 0
-				data[var_16_9] = var_16_24
+				var_16_18 = not not var_16_18 or not not 0
+				data[key] = var_16_18
 			elseif type == "text" then
-				local input_text_2 = Imgui.input_text("", data[var_16_9])
+				local input_text_2 = Imgui.input_text("", data[key])
 
-				input_text_2 = input_text_2 or ""
-				data[var_16_9] = input_text_2
+				input_text_2 = not not input_text_2 or not not ""
+				data[key] = input_text_2
 			end
 
 			Imgui.pop_item_width()
 
-			if not var_16_0.precision then
-				data[var_16_9] = math.round_to_closest_multiple(data[var_16_9], var_16_0.precision)
+			if pass.precision then
+				data[key] = math.round_to_closest_multiple(data[key], pass.precision)
 			end
 
 			Imgui.indent()
@@ -846,140 +873,143 @@ ImguiGeneratePowerLevelPivots._draw_pivot_edit_row = function (self, arg_16_1, a
 	end
 end
 
-ImguiGeneratePowerLevelPivots._draw_code = function (self, arg_17_1)
+ImguiGeneratePowerLevelPivots._draw_code = function (self, size)
 	-- function 17
-	Imgui.push_item_width(arg_17_1[1])
+	Imgui.push_item_width(size[1])
 
-	local _power_level_settings = self:_power_level_settings()
-	local save_simple = scripts_utils_serialize.save_simple(_power_level_settings)
-	local input_text_multiline = Imgui.input_text_multiline("", save_simple, arg_17_1[2])
-	local var_17_3, var_17_4 = pcall(function ()
+	local settings = self:_power_level_settings()
+	local as_json = serialize.save_simple(settings)
+	local edited = Imgui.input_text_multiline("", as_json, size[2])
+	local compiles, result = pcall(function ()
 		-- function 18
-		return cjson.decode(input_text_multiline)
+		return cjson.decode(edited)
 	end)
 
-	if not var_17_3 then
-		Managers.backend:get_interface("loot"):debug_override_power_level_settings(var_17_4)
-	else
-		local str = "Error: " .. var_17_4
+	if compiles then
+		local loot_interface = Managers.backend:get_interface("loot")
 
-		Imgui.text(str)
+		loot_interface:debug_override_power_level_settings(result)
+	else
+		local error_msg = "Error: " .. result
+
+		Imgui.text(error_msg)
 	end
 
 	Imgui.text("Code doesn't support clipboard. Need to implement serializer.")
 	Imgui.pop_item_width()
 end
 
-ImguiGeneratePowerLevelPivots._draw_summary = function (self, arg_19_1)
+ImguiGeneratePowerLevelPivots._draw_summary = function (self, width)
 	-- function 19
 	local pivots = self:_power_level_settings().pivots
-	local _sorted_pivot_keys = self:_sorted_pivot_keys(pivots)
-	local num = 47
-	local num_3 = (arg_19_1 - 47) / #_sorted_pivot_keys * 0.5
+	local pivot_keys = self:_sorted_pivot_keys(pivots)
+	local level_column_width = 47
+	local column_width = (width - 47) / #pivot_keys * 0.5
 
-	Imgui.columns(1 + #_sorted_pivot_keys * 2)
-	Imgui.set_column_width(num)
+	Imgui.columns(1 + #pivot_keys * 2)
+	Imgui.set_column_width(level_column_width)
 	Imgui.text("Level")
 
-	for i = 1, #_sorted_pivot_keys do
-		local var_19_4 = _sorted_pivot_keys[i]
-		local var_19_5 = pivots[var_19_4]
-		local var_19_6 = DifficultySettings[var_19_4]
-		local var_19_7
+	for i = 1, #pivot_keys do
+		local pivot_key = pivot_keys[i]
+		local pivot_data = pivots[pivot_key]
+		local difficulty_settings = DifficultySettings[pivot_key]
+		local var_19_0
 
-		if not var_19_6 and not var_19_6.display_name then
-			var_19_7 = Localize(var_19_6.display_name)
+		if difficulty_settings and difficulty_settings.display_name then
+			var_19_0 = Localize(difficulty_settings.display_name)
 
-			if not var_19_7 then
+			if not var_19_0 then
 				-- Nothing
 			end
 		end
 
-		var_19_7 = var_19_4
+		var_19_0 = pivot_key
+
+		local name = var_19_0
 
 		::label_19_0::
 
 		Imgui.next_column()
-		Imgui.set_column_width(num_3)
-		Imgui.text(var_19_7 .. " min")
+		Imgui.set_column_width(column_width)
+		Imgui.text(name .. " min")
 		Imgui.next_column()
-		Imgui.set_column_width(num_3)
-		Imgui.text(var_19_7 .. " max")
+		Imgui.set_column_width(column_width)
+		Imgui.text(name .. " max")
 	end
 
 	Imgui.separator()
 
-	for j = 1, num_2 do
+	for level = 1, MAX_LEVEL do
 		Imgui.next_column()
-		Imgui.set_column_width(num)
-		Imgui.text(j)
+		Imgui.set_column_width(level_column_width)
+		Imgui.text(level)
 
-		for k = 1, #_sorted_pivot_keys do
-			local var_19_8 = _sorted_pivot_keys[k]
-			local var_19_9 = pivots[var_19_8]
-			local _graph_colors = self:_graph_colors(var_19_8)
-			local hi = _graph_colors.hi
-			local low = _graph_colors.low
-			local calculate_power_level, var_19_14 = LootChestData.calculate_power_level(j, var_19_9)
+		for key_i = 1, #pivot_keys do
+			local pivot_key = pivot_keys[key_i]
+			local pivot_data = pivots[pivot_key]
+			local colors = self:_graph_colors(pivot_key)
+			local color_hi, color_low = colors.hi, colors.low
+			local pl_low, pl_high = LootChestData.calculate_power_level(level, pivot_data)
 
-			Imgui.push_style_color(Imgui.COLOR_TEXT, unpack(Colors.get_table_rgba(hi)))
+			Imgui.push_style_color(Imgui.COLOR_TEXT, unpack(Colors.get_table_rgba(color_hi)))
 			Imgui.next_column()
-			Imgui.set_column_width(num_3)
-			Imgui.text(math.round(calculate_power_level))
-			Imgui.push_style_color(Imgui.COLOR_TEXT, unpack(Colors.get_table_rgba(low)))
+			Imgui.set_column_width(column_width)
+			Imgui.text(math.round(pl_low))
+			Imgui.push_style_color(Imgui.COLOR_TEXT, unpack(Colors.get_table_rgba(color_low)))
 			Imgui.next_column()
-			Imgui.set_column_width(num_3)
-			Imgui.text(math.round(var_19_14))
+			Imgui.set_column_width(column_width)
+			Imgui.text(math.round(pl_high))
 			Imgui.pop_style_color(2)
 		end
 
 		Imgui.separator()
 
-		if not (j % 5 ~= 0 or j == num_2) then
+		if level % 5 == 0 and level ~= MAX_LEVEL then
 			Imgui.separator()
 		end
 	end
 end
 
-ImguiGeneratePowerLevelPivots._sorted_pivot_keys = function (arg_20_0, arg_20_1)
+ImguiGeneratePowerLevelPivots._sorted_pivot_keys = function (self, pivots)
 	-- function 20
-	local keys = table.keys(arg_20_1)
+	local keys = table.keys(pivots)
 
-	table.sort(keys, function (arg_21_0, arg_21_1)
+	table.sort(keys, function (a, b)
 		-- function 21
-		if not arg_20_0._display_order[arg_21_0] then
-			local var_21_0 = arg_20_0._display_order[arg_21_0]
-			local var_21_1 = arg_20_0._display_order[arg_21_1]
+		if self._display_order[a] then
+			local var_21_0 = self._display_order[a]
+			local var_21_1 = self._display_order[b]
 
-			var_21_1 = var_21_1 or math.huge
+			var_21_1 = not not var_21_1 or not not math.huge
 
 			return var_21_0 < var_21_1
-		elseif not arg_20_0._display_order[arg_21_1] then
+		elseif self._display_order[b] then
 			return false
 		end
 
-		return arg_21_0 < arg_21_1
+		return a < b
 	end)
 
 	return keys
 end
 
-ImguiGeneratePowerLevelPivots._graph_colors = function (self, arg_22_1)
+ImguiGeneratePowerLevelPivots._graph_colors = function (self, key)
 	-- function 22
 	local _colors = self._colors
-	local var_22_1 = self._colors[arg_22_1]
+	local var_22_1 = self._colors[key]
 
-	var_22_1 = var_22_1 or {
+	var_22_1 = not not var_22_1 or not not {
 		hi = self._fallback_color,
 		low = self._fallback_color
 	}
-	_colors[arg_22_1] = var_22_1
+	_colors[key] = var_22_1
 
 	local tbl = {}
 	local hi
 
-	if not Colors.color_definitions[self._colors[arg_22_1].hi] then
-		hi = self._colors[arg_22_1].hi
+	if Colors.color_definitions[self._colors[key].hi] then
+		hi = self._colors[key].hi
 
 		if not hi then
 			-- Nothing
@@ -994,8 +1024,8 @@ ImguiGeneratePowerLevelPivots._graph_colors = function (self, arg_22_1)
 
 	local low
 
-	if not Colors.color_definitions[self._colors[arg_22_1].low] then
-		low = self._colors[arg_22_1].low
+	if Colors.color_definitions[self._colors[key].low] then
+		low = self._colors[key].low
 
 		if not low then
 			-- Nothing
@@ -1008,5 +1038,7 @@ ImguiGeneratePowerLevelPivots._graph_colors = function (self, arg_22_1)
 
 	tbl.low = low
 
-	return tbl
+	local parsed = tbl
+
+	return parsed
 end

@@ -2,33 +2,34 @@
 
 require("scripts/settings/dlcs/morris/deus_theme_settings")
 
-local var_0_0 = local_require("scripts/ui/dlc_morris/views/start_game_view/windows/definitions/start_game_window_deus_journey_selection_definitions")
-local widgets = var_0_0.widgets
-local node_widgets = var_0_0.node_widgets
-local scenegraph_definition = var_0_0.scenegraph_definition
-local animation_definitions = var_0_0.animation_definitions
-local journey_widget_settings = var_0_0.journey_widget_settings
-local str = "confirm_press"
+local definitions = local_require("scripts/ui/dlc_morris/views/start_game_view/windows/definitions/start_game_window_deus_journey_selection_definitions")
+local widget_definitions = definitions.widgets
+local node_widget_definitions = definitions.node_widgets
+local scenegraph_definition = definitions.scenegraph_definition
+local animation_definitions = definitions.animation_definitions
+local journey_widget_settings = definitions.journey_widget_settings
+local SELECTION_INPUT = "confirm_press"
 
-local function fn(self, arg_1_1)
+local function is_journey_cycle_expired(journey_cycle, current_time)
 	-- function 1
-	return self.remaining_time - (arg_1_1 - self.time_of_update) < 0
+	return journey_cycle.remaining_time - (current_time - journey_cycle.time_of_update) < 0
 end
 
 StartGameWindowDeusJourneySelection = class(StartGameWindowDeusJourneySelection)
 StartGameWindowDeusJourneySelection.NAME = "StartGameWindowDeusJourneySelection"
 
-StartGameWindowDeusJourneySelection.on_enter = function (self, arg_2_1, arg_2_2)
+StartGameWindowDeusJourneySelection.on_enter = function (self, params, offset)
 	-- function 2
 	print("[StartGameWindow] Enter Substate StartGameWindowDeusJourneySelection")
 
-	local ingame_ui_context = arg_2_1.ingame_ui_context
-	local player = Managers.player
+	local ingame_ui_context = params.ingame_ui_context
+	local player_manager = Managers.player
+	local local_player = player_manager:local_player()
 
-	self._stats_id = player:local_player():stats_id()
-	self.player_manager = player
+	self._stats_id = local_player:stats_id()
+	self.player_manager = player_manager
 	self.peer_id = ingame_ui_context.peer_id
-	self.parent = arg_2_1.parent
+	self.parent = params.parent
 	self.ui_renderer = ingame_ui_context.ui_renderer
 	self._ui_top_renderer = ingame_ui_context.ui_top_renderer
 	self.input_manager = ingame_ui_context.input_manager
@@ -39,7 +40,7 @@ StartGameWindowDeusJourneySelection.on_enter = function (self, arg_2_1, arg_2_2)
 	self._unlocked_journeys = self:_get_unlocked_journeys()
 	self._animations = {}
 
-	self:create_ui_elements(arg_2_1, arg_2_2)
+	self:create_ui_elements(params, offset)
 	self:_set_presentation_info()
 	self:_setup_journey_widgets()
 	self:_refresh_journey_cycle()
@@ -48,137 +49,143 @@ StartGameWindowDeusJourneySelection.on_enter = function (self, arg_2_1, arg_2_2)
 	self:_start_transition_animation("on_enter")
 end
 
-StartGameWindowDeusJourneySelection._start_transition_animation = function (self, arg_3_1)
+StartGameWindowDeusJourneySelection._start_transition_animation = function (self, animation_name)
 	-- function 3
-	local tbl = {
+	local params = {
 		render_settings = self.render_settings
 	}
-	local tbl_2 = {}
-	local start_animation = self.ui_animator:start_animation(arg_3_1, tbl_2, scenegraph_definition, tbl)
+	local widgets = {}
+	local anim_id = self.ui_animator:start_animation(animation_name, widgets, scenegraph_definition, params)
 
-	self._animations[arg_3_1] = start_animation
+	self._animations[animation_name] = anim_id
 end
 
-StartGameWindowDeusJourneySelection.create_ui_elements = function (self, arg_4_1, arg_4_2)
+StartGameWindowDeusJourneySelection.create_ui_elements = function (self, params, offset)
 	-- function 4
-	local init_scenegraph = UISceneGraph.init_scenegraph(scenegraph_definition)
+	local ui_scenegraph = UISceneGraph.init_scenegraph(scenegraph_definition)
 
-	self.ui_scenegraph = init_scenegraph
+	self.ui_scenegraph = ui_scenegraph
 
-	local tbl = {}
-	local tbl_2 = {}
+	local widgets = {}
+	local widgets_by_name = {}
 
-	for k, v in pairs(widgets) do
-		local var_4_3 = UIWidget.init(v)
+	for name, widget_definition in pairs(widget_definitions) do
+		local widget = UIWidget.init(widget_definition)
 
-		tbl[#tbl + 1] = var_4_3
-		tbl_2[k] = var_4_3
+		widgets[#widgets + 1] = widget
+		widgets_by_name[name] = widget
 	end
 
-	self._widgets = tbl
-	self._widgets_by_name = tbl_2
+	self._widgets = widgets
+	self._widgets_by_name = widgets_by_name
 
-	local tbl_3 = {}
-	local tbl_4 = {}
+	local node_widgets = {}
+	local node_widgets_by_name = {}
 
-	for k_2, v_2 in pairs(node_widgets) do
-		local var_4_6 = UIWidget.init(v_2)
+	for name, widget_definition in pairs(node_widget_definitions) do
+		local widget = UIWidget.init(widget_definition)
 
-		tbl_3[#tbl_3 + 1] = var_4_6
-		tbl_4[k_2] = var_4_6
+		node_widgets[#node_widgets + 1] = widget
+		node_widgets_by_name[name] = widget
 	end
 
-	self._node_widgets = tbl_3
-	self._node_widgets_by_name = tbl_4
+	self._node_widgets = node_widgets
+	self._node_widgets_by_name = node_widgets_by_name
 
 	UIRenderer.clear_scenegraph_queue(self.ui_renderer)
 
-	self.ui_animator = UIAnimator:new(init_scenegraph, animation_definitions)
+	self.ui_animator = UIAnimator:new(ui_scenegraph, animation_definitions)
 
-	if not arg_4_2 then
-		local local_position = init_scenegraph.window.local_position
+	if offset then
+		local window_position = ui_scenegraph.window.local_position
 
-		local_position[1] = local_position[1] + arg_4_2[1]
-		local_position[2] = local_position[2] + arg_4_2[2]
-		local_position[3] = local_position[3] + arg_4_2[3]
+		window_position[1] = window_position[1] + offset[1]
+		window_position[2] = window_position[2] + offset[2]
+		window_position[3] = window_position[3] + offset[3]
 	end
 end
 
 StartGameWindowDeusJourneySelection._get_unlocked_journeys = function (self)
 	-- function 5
-	local tbl = {}
+	local unlocked_journeys = {}
 
-	for i, v in ipairs(LevelUnlockUtils.unlocked_journeys(self.statistics_db, self._stats_id)) do
-		tbl[v] = true
+	for _, journey_name in ipairs(LevelUnlockUtils.unlocked_journeys(self.statistics_db, self._stats_id)) do
+		unlocked_journeys[journey_name] = true
 	end
 
-	return tbl
+	return unlocked_journeys
 end
 
 StartGameWindowDeusJourneySelection._setup_journey_widgets = function (self)
 	-- function 6
-	local _node_widgets = self._node_widgets
+	local node_widgets = self._node_widgets
 	local statistics_db = self.statistics_db
-	local _stats_id = self._stats_id
-	local _unlocked_journeys = self._unlocked_journeys
-	local tbl = {}
-	local num = -365
-	local var_6_6 = journey_widget_settings
-	local AvailableJourneyOrder = AvailableJourneyOrder
+	local stats_id = self._stats_id
+	local unlocked_journeys = self._unlocked_journeys
+	local assigned_widgets = {}
+	local journey_position_x = -365
+	local settings = journey_widget_settings
+	local available_journey_order = AvailableJourneyOrder
 
-	for i, v in ipairs(AvailableJourneyOrder) do
-		local var_6_8 = DeusJourneySettings[v]
-		local num_2 = #tbl + 1
-		local var_6_10 = AvailableJourneyOrder[num_2 + 1]
-		local var_6_11 = _node_widgets[num_2]
-		local content = var_6_11.content
+	for _, journey_name in ipairs(available_journey_order) do
+		local journey_data = DeusJourneySettings[journey_name]
+		local index = #assigned_widgets + 1
+		local next_journey = available_journey_order[index + 1]
+		local widget = node_widgets[index]
+		local content = widget.content
 
-		content.text = Localize(var_6_8.display_name)
+		content.text = Localize(journey_data.display_name)
 
-		local num_3 = var_6_6.width + var_6_6.spacing_x
+		local width_to_next_journey = settings.width + settings.spacing_x
 
-		num = num + num_3
+		journey_position_x = journey_position_x + width_to_next_journey
 
-		local offset = var_6_11.offset
+		local offset = widget.offset
 
-		offset[1] = num
+		offset[1] = journey_position_x
 		offset[2] = 0
 
-		local completed_journey_difficulty_index = LevelUnlockUtils.completed_journey_difficulty_index(statistics_db, _stats_id, v)
-		local get_level_frame_by_difficulty_index = UIWidgetUtils.get_level_frame_by_difficulty_index(completed_journey_difficulty_index)
-		local var_6_17 = _unlocked_journeys[v]
+		local completed_difficulty_index = LevelUnlockUtils.completed_journey_difficulty_index(statistics_db, stats_id, journey_name)
+		local selection_frame_texture = UIWidgetUtils.get_level_frame_by_difficulty_index(completed_difficulty_index)
+		local is_unlocked = unlocked_journeys[journey_name]
 
-		content.icon = var_6_8.level_image
-		content.locked = not var_6_17
-		content.frame = get_level_frame_by_difficulty_index
-		content.journey_name = v
-		content.draw_path = var_6_10 ~= nil
-		content.draw_path_fill = _unlocked_journeys[var_6_10]
-		var_6_11.style.path.texture_size[1] = num_3
-		var_6_11.style.path_glow.texture_size[1] = num_3
-		tbl[num_2] = var_6_11
-		num = num + var_6_6.spacing_x
+		content.icon = journey_data.level_image
+		content.locked = not is_unlocked
+		content.frame = selection_frame_texture
+		content.journey_name = journey_name
+		content.draw_path = next_journey ~= nil
+		content.draw_path_fill = unlocked_journeys[next_journey]
+		widget.style.path.texture_size[1] = width_to_next_journey
+		widget.style.path_glow.texture_size[1] = width_to_next_journey
+		assigned_widgets[index] = widget
+		journey_position_x = journey_position_x + settings.spacing_x
 	end
 
-	self._active_node_widgets = tbl
+	self._active_node_widgets = assigned_widgets
 end
 
 StartGameWindowDeusJourneySelection._get_first_journey_name = function (self)
 	-- function 7
-	local _active_node_widgets = self._active_node_widgets
+	local active_node_widgets = self._active_node_widgets
 
-	if not _active_node_widgets then
-		return _active_node_widgets[1].content.journey_name
+	if active_node_widgets then
+		local widget = active_node_widgets[1]
+		local content = widget.content
+
+		return content.journey_name
 	end
 end
 
-StartGameWindowDeusJourneySelection._is_journey_presented = function (self, arg_8_1)
+StartGameWindowDeusJourneySelection._is_journey_presented = function (self, journey_name)
 	-- function 8
-	local _active_node_widgets = self._active_node_widgets
+	local active_node_widgets = self._active_node_widgets
 
-	if not _active_node_widgets then
-		for i = 1, #_active_node_widgets do
-			if _active_node_widgets[i].content.journey_name == arg_8_1 then
+	if active_node_widgets then
+		for i = 1, #active_node_widgets do
+			local widget = active_node_widgets[i]
+			local content = widget.content
+
+			if content.journey_name == journey_name then
 				return true
 			end
 		end
@@ -187,130 +194,154 @@ StartGameWindowDeusJourneySelection._is_journey_presented = function (self, arg_
 	return false
 end
 
-StartGameWindowDeusJourneySelection._select_journey = function (self, arg_9_1)
+StartGameWindowDeusJourneySelection._select_journey = function (self, selected_journey_name)
 	-- function 9
-	local required_journeys = DeusJourneySettings[arg_9_1].required_journeys
+	local required_journeys = DeusJourneySettings[selected_journey_name].required_journeys
 
-	required_journeys = required_journeys or {}
+	if not required_journeys then
+		-- Nothing
+	end
 
-	local _active_node_widgets = self._active_node_widgets
-	local var_9_2 = self._unlocked_journeys[arg_9_1]
+	required_journeys = {}
 
-	if not _active_node_widgets then
-		for i = 1, #_active_node_widgets do
-			local var_9_3 = _active_node_widgets[i]
-			local content = var_9_3.content
-			local flag = content.journey_name == arg_9_1
+	local required_completed_journeys = required_journeys
 
-			var_9_3.content.button_hotspot.is_selected = flag
+	::label_9_0::
 
-			if not table.contains(required_journeys, content.journey_name) then
+	local active_node_widgets = self._active_node_widgets
+	local unlocked_journeys = self._unlocked_journeys
+	local is_selected_journey_unlocked = unlocked_journeys[selected_journey_name]
+
+	if active_node_widgets then
+		for i = 1, #active_node_widgets do
+			local widget = active_node_widgets[i]
+			local content = widget.content
+			local is_selected = content.journey_name == selected_journey_name
+			local button_hotspot = widget.content.button_hotspot
+
+			button_hotspot.is_selected = is_selected
+
+			local is_a_required_journey = table.contains(required_completed_journeys, content.journey_name)
+
+			if is_a_required_journey then
 				-- Nothing
 			end
 
-			::label_9_0::
+			::label_9_1::
 
 			local locked = content.locked
 
-			locked = locked or not var_9_2
+			if not locked then
+				-- Nothing
+			end
 
-			::label_9_1::
+			locked = not is_selected_journey_unlocked
 
-			content.unlock_guidance = locked
+			local show_unlock_guidance = locked
+
+			::label_9_2::
+
+			content.unlock_guidance = show_unlock_guidance
 		end
 	end
 
-	self._selected_journey_name = arg_9_1
+	self._selected_journey_name = selected_journey_name
 
-	self:_set_presentation_info(arg_9_1)
-	self:_update_modifier_god_info(arg_9_1)
+	self:_set_presentation_info(selected_journey_name)
+	self:_update_modifier_god_info(selected_journey_name)
 end
 
-StartGameWindowDeusJourneySelection._set_presentation_info = function (self, arg_10_1)
+StartGameWindowDeusJourneySelection._set_presentation_info = function (self, journey_name)
 	-- function 10
-	local str = ""
-	local str_2 = ""
-	local var_10_2
-	local flag = false
-	local _widgets_by_name = self._widgets_by_name
-	local content = _widgets_by_name.selected_level.content
+	local journey_name_text = ""
+	local journey_description_text = ""
+	local frame_texture
+	local draw_info = false
+	local widgets_by_name = self._widgets_by_name
+	local selected_journey_widget = widgets_by_name.selected_level
+	local content = selected_journey_widget.content
 
-	if not arg_10_1 then
+	if journey_name then
 		local statistics_db = self.statistics_db
-		local _stats_id = self._stats_id
-		local var_10_8 = DeusJourneySettings[arg_10_1]
-		local level_image = var_10_8.level_image
-		local display_name = var_10_8.display_name
+		local stats_id = self._stats_id
+		local journey_settings = DeusJourneySettings[journey_name]
+		local icon = journey_settings.level_image
+		local display_name = journey_settings.display_name
 
-		str_2 = var_10_8.description
+		journey_description_text = journey_settings.description
 
-		local completed_journey_difficulty_index = LevelUnlockUtils.completed_journey_difficulty_index(statistics_db, _stats_id, arg_10_1)
+		local completed_difficulty_index = LevelUnlockUtils.completed_journey_difficulty_index(statistics_db, stats_id, journey_name)
 
-		var_10_2 = UIWidgetUtils.get_level_frame_by_difficulty_index(completed_journey_difficulty_index)
+		frame_texture = UIWidgetUtils.get_level_frame_by_difficulty_index(completed_difficulty_index)
 
-		if not self._unlocked_journeys[arg_10_1] then
+		local is_unlocked = self._unlocked_journeys[journey_name]
+
+		if is_unlocked then
 			self.parent:set_input_description("select_mission_confirm")
 		else
 			self.parent:set_input_description("select_mission")
 		end
 
-		content.icon = level_image
-		str = Localize(display_name)
-		str_2 = Localize(str_2)
-		flag = true
+		content.icon = icon
+		journey_name_text = Localize(display_name)
+		journey_description_text = Localize(journey_description_text)
+		draw_info = true
 	end
 
-	content.frame = var_10_2
-	content.locked = not flag
-	content.visible = flag
+	content.frame = frame_texture
+	content.locked = not draw_info
+	content.visible = draw_info
 	content.draw_chaos_symbol = false
 	content.button_hotspot.disable_button = true
-	_widgets_by_name.helper_text.content.visible = not flag
-	_widgets_by_name.level_title_divider.content.visible = flag
-	_widgets_by_name.level_title.content.text = str
-	_widgets_by_name.description_text.content.text = str_2
-	_widgets_by_name.locked_text.content.text = ""
+	widgets_by_name.helper_text.content.visible = not draw_info
+	widgets_by_name.level_title_divider.content.visible = draw_info
+	widgets_by_name.level_title.content.text = journey_name_text
+	widgets_by_name.description_text.content.text = journey_description_text
+	widgets_by_name.locked_text.content.text = ""
 end
 
 StartGameWindowDeusJourneySelection._setup_grid_navigation = function (self)
 	-- function 11
-	local tbl = {}
+	local navigation_grid = {}
 
-	for k, v in pairs(self._active_node_widgets) do
-		local content = v.content
+	for _, widget in pairs(self._active_node_widgets) do
+		local content = widget.content
 
-		table.insert(tbl, content.journey_name)
+		table.insert(navigation_grid, content.journey_name)
 	end
 
-	self._navigation_grid = tbl
-	self._current_column = self:_find_journey_location_in_grid(self._selected_journey_name)
+	self._navigation_grid = navigation_grid
+
+	local column = self:_find_journey_location_in_grid(self._selected_journey_name)
+
+	self._current_column = column
 end
 
-StartGameWindowDeusJourneySelection._find_journey_location_in_grid = function (self, arg_12_1)
+StartGameWindowDeusJourneySelection._find_journey_location_in_grid = function (self, journey_name_to_find)
 	-- function 12
-	if not arg_12_1 then
+	if not journey_name_to_find then
 		return 1
 	end
 
-	local _navigation_grid = self._navigation_grid
-	local num = 1
+	local navigation_grid = self._navigation_grid
+	local column = 1
 
-	if not _navigation_grid then
-		for i, v in ipairs(_navigation_grid) do
-			if v == arg_12_1 then
-				num = i
+	if navigation_grid then
+		for index, journey_name in ipairs(navigation_grid) do
+			if journey_name == journey_name_to_find then
+				column = index
 
 				break
 			end
 		end
 	end
 
-	fassert(num, "journey %s does not exist in navigation grid", arg_12_1)
+	fassert(column, "journey %s does not exist in navigation grid", journey_name_to_find)
 
-	return num
+	return column
 end
 
-StartGameWindowDeusJourneySelection.on_exit = function (self, arg_13_1)
+StartGameWindowDeusJourneySelection.on_exit = function (self, params)
 	-- function 13
 	print("[StartGameWindow] Exit Substate StartGameWindowDeusJourneySelection")
 
@@ -319,80 +350,83 @@ StartGameWindowDeusJourneySelection.on_exit = function (self, arg_13_1)
 	self.parent:set_input_description(nil)
 end
 
-StartGameWindowDeusJourneySelection.update = function (self, arg_14_1, arg_14_2)
+StartGameWindowDeusJourneySelection.update = function (self, dt, t)
 	-- function 14
-	local time = Managers.time:time("main")
+	local current_time = Managers.time:time("main")
 
-	self:_update_modifiers(time)
-	self:_update_animations(arg_14_1)
-	self:_handle_input(arg_14_1, arg_14_2)
-	self:draw(arg_14_1)
+	self:_update_modifiers(current_time)
+	self:_update_animations(dt)
+	self:_handle_input(dt, t)
+	self:draw(dt)
 end
 
-StartGameWindowDeusJourneySelection.post_update = function (arg_15_0, arg_15_1, arg_15_2)
+StartGameWindowDeusJourneySelection.post_update = function (self, dt, t)
 	-- function 15
 	return
 end
 
-StartGameWindowDeusJourneySelection._update_modifiers = function (self, arg_16_1)
+StartGameWindowDeusJourneySelection._update_modifiers = function (self, current_time)
 	-- function 16
-	local _journey_cycle = self._journey_cycle
+	local journey_cycle = self._journey_cycle
 
-	if not _journey_cycle and not fn(_journey_cycle, arg_16_1) then
+	if not journey_cycle or is_journey_cycle_expired(journey_cycle, current_time) then
 		self:_refresh_journey_cycle()
 	end
 
-	self:_update_modifier_timer(arg_16_1)
+	self:_update_modifier_timer(current_time)
 end
 
 StartGameWindowDeusJourneySelection._refresh_journey_cycle = function (self)
 	-- function 17
-	self._journey_cycle = Managers.backend:get_interface("deus"):get_journey_cycle()
+	local backend_deus = Managers.backend:get_interface("deus")
+
+	self._journey_cycle = backend_deus:get_journey_cycle()
 
 	self:_on_new_journey_cycle()
 end
 
-StartGameWindowDeusJourneySelection._update_modifier_timer = function (self, arg_18_1)
+StartGameWindowDeusJourneySelection._update_modifier_timer = function (self, current_time)
 	-- function 18
-	local _journey_cycle = self._journey_cycle
-	local num = _journey_cycle.remaining_time - (arg_18_1 - _journey_cycle.time_of_update)
+	local journey_cycle = self._journey_cycle
+	local remaining_time = journey_cycle.remaining_time - (current_time - journey_cycle.time_of_update)
 
-	if num < 0 then
-		num = 0
+	if remaining_time < 0 then
+		remaining_time = 0
 	end
 
 	local floor = math.floor
-	local var_18_3 = floor(num / 86400)
-	local var_18_4 = floor(num / 3600)
-	local num_2 = floor(num / 60) % 60
-	local content = self._widgets_by_name.modifier_timer.content
+	local days = floor(remaining_time / 86400)
+	local hours = floor(remaining_time / 3600)
+	local minutes = floor(remaining_time / 60) % 60
+	local widget = self._widgets_by_name.modifier_timer
+	local content = widget.content
 
-	if num_2 > 0 then
-		local var_18_7 = Localize("deus_start_game_mod_timer")
+	if minutes > 0 then
+		local text_template = Localize("deus_start_game_mod_timer")
 
-		content.time_text = string.format(var_18_7, var_18_3, var_18_4, num_2)
+		content.time_text = string.format(text_template, days, hours, minutes)
 	else
-		local var_18_8 = floor(num)
-		local var_18_9 = Localize("deus_start_game_mod_timer_seconds")
+		local seconds = floor(remaining_time)
+		local text_template = Localize("deus_start_game_mod_timer_seconds")
 
-		content.time_text = string.format(var_18_9, var_18_8)
+		content.time_text = string.format(text_template, seconds)
 	end
 end
 
-StartGameWindowDeusJourneySelection._update_modifier_god_info = function (self, arg_19_1)
+StartGameWindowDeusJourneySelection._update_modifier_god_info = function (self, journey_name)
 	-- function 19
-	local _journey_cycle = self._journey_cycle
-	local modifier_info_god = self._widgets_by_name.modifier_info_god
-	local content = modifier_info_god.content
-	local dominant_god = _journey_cycle.journey_data[arg_19_1].dominant_god
-	local var_19_4 = DeusThemeSettings[dominant_god]
+	local journey_cycle = self._journey_cycle
+	local widget = self._widgets_by_name.modifier_info_god
+	local content = widget.content
+	local theme = journey_cycle.journey_data[journey_name].dominant_god
+	local theme_settings = DeusThemeSettings[theme]
 
-	content.icon = var_19_4.text_icon
-	content.title = var_19_4.journey_title
-	content.description = Localize(var_19_4.journey_description)
+	content.icon = theme_settings.text_icon
+	content.title = theme_settings.journey_title
+	content.description = Localize(theme_settings.journey_description)
 
-	local color = var_19_4.color
-	local style = modifier_info_god.style
+	local color = theme_settings.color
+	local style = widget.style
 
 	style.icon.color = color
 	style.title.text_color = color
@@ -400,260 +434,283 @@ end
 
 StartGameWindowDeusJourneySelection._update_journey_god_icons = function (self)
 	-- function 20
-	local _journey_cycle = self._journey_cycle
+	local journey_cycle = self._journey_cycle
 
-	for i, v in ipairs(self._active_node_widgets) do
-		local content = v.content
-		local dominant_god = _journey_cycle.journey_data[content.journey_name].dominant_god
+	for _, node_widget in ipairs(self._active_node_widgets) do
+		local content = node_widget.content
+		local theme = journey_cycle.journey_data[content.journey_name].dominant_god
+		local theme_settings = DeusThemeSettings[theme]
 
-		content.theme_icon = DeusThemeSettings[dominant_god].icon
+		content.theme_icon = theme_settings.icon
 	end
 end
 
 StartGameWindowDeusJourneySelection._on_new_journey_cycle = function (self)
 	-- function 21
-	local _selected_journey_name = self._selected_journey_name
+	local journey_name = self._selected_journey_name
 
-	if not _selected_journey_name then
-		self:_update_modifier_god_info(_selected_journey_name)
+	if journey_name then
+		self:_update_modifier_god_info(journey_name)
 	end
 
 	self:_update_journey_god_icons()
 end
 
-StartGameWindowDeusJourneySelection._update_animations = function (self, arg_22_1)
+StartGameWindowDeusJourneySelection._update_animations = function (self, dt)
 	-- function 22
 	local ui_animator = self.ui_animator
 
-	ui_animator:update(arg_22_1)
+	ui_animator:update(dt)
 
-	local _animations = self._animations
+	local animations = self._animations
 
-	for k, v in pairs(_animations) do
-		if not ui_animator:is_animation_completed(v) then
-			ui_animator:stop_animation(v)
+	for animation_name, animation_id in pairs(animations) do
+		if ui_animator:is_animation_completed(animation_id) then
+			ui_animator:stop_animation(animation_id)
 
-			_animations[k] = nil
+			animations[animation_name] = nil
 		end
 	end
 
-	local _node_widgets = self._node_widgets
+	local node_widgets = self._node_widgets
 
-	for k_2 = 1, #_node_widgets do
-		local var_22_3 = _node_widgets[k_2]
+	for i = 1, #node_widgets do
+		local node_widget = node_widgets[i]
 
-		self:_animate_node_widget(var_22_3, arg_22_1)
+		self:_animate_node_widget(node_widget, dt)
 	end
 end
 
-StartGameWindowDeusJourneySelection._is_button_pressed = function (arg_23_0, arg_23_1)
+StartGameWindowDeusJourneySelection._is_button_pressed = function (self, widget)
 	-- function 23
-	local button_hotspot = arg_23_1.content.button_hotspot
+	local content = widget.content
+	local hotspot = content.button_hotspot
 
-	if not button_hotspot.on_release then
-		button_hotspot.on_release = false
+	if hotspot.on_release then
+		hotspot.on_release = false
 
 		return true
 	end
 end
 
-StartGameWindowDeusJourneySelection._is_button_hovered = function (arg_24_0, arg_24_1)
+StartGameWindowDeusJourneySelection._is_button_hovered = function (self, widget)
 	-- function 24
-	if not arg_24_1.content.button_hotspot.on_hover_enter then
+	local content = widget.content
+	local hotspot = content.button_hotspot
+
+	if hotspot.on_hover_enter then
 		return true
 	end
 end
 
 StartGameWindowDeusJourneySelection._update_selected_journey = function (self)
 	-- function 25
-	local get_selected_level_id = self.parent:get_selected_level_id()
+	local journey_name = self.parent:get_selected_level_id()
 
-	if not (get_selected_level_id ~= self._selected_journey_name or get_selected_level_id) then
-		if not self:_is_journey_presented(get_selected_level_id) then
-			self:_select_journey(get_selected_level_id)
+	if journey_name ~= self._selected_journey_name or not journey_name then
+		if self:_is_journey_presented(journey_name) then
+			self:_select_journey(journey_name)
 		elseif not self._selected_journey_name then
-			local _get_first_journey_name = self:_get_first_journey_name()
+			local first_journey_name = self:_get_first_journey_name()
 
-			self:_select_journey(_get_first_journey_name)
+			self:_select_journey(first_journey_name)
 		end
 	end
 end
 
 StartGameWindowDeusJourneySelection._update_selection_from_grid = function (self)
 	-- function 26
-	local _current_column = self._current_column
-	local var_26_1 = self._navigation_grid[_current_column]
+	local current_column = self._current_column
+	local selected_journey_name = self._navigation_grid[current_column]
 
-	fassert(var_26_1, "No journey_name at column %s", tostring(_current_column))
-	self:_select_journey(var_26_1)
+	fassert(selected_journey_name, "No journey_name at column %s", tostring(current_column))
+	self:_select_journey(selected_journey_name)
 	self:_play_sound("play_gui_lobby_button_02_mission_act_click")
 end
 
-StartGameWindowDeusJourneySelection._update_grid_column = function (self, arg_27_1)
+StartGameWindowDeusJourneySelection._update_grid_column = function (self, new_column)
 	-- function 27
-	local count = #self._navigation_grid
+	local num_columns = #self._navigation_grid
 
-	self._current_column = math.clamp(arg_27_1, 1, count)
+	self._current_column = math.clamp(new_column, 1, num_columns)
 
 	self:_update_selection_from_grid()
 end
 
-StartGameWindowDeusJourneySelection._update_grid_navigation = function (self, arg_28_1)
+StartGameWindowDeusJourneySelection._update_grid_navigation = function (self, column_change)
 	-- function 28
-	local _find_column = self:_find_column(arg_28_1)
+	local new_column = self:_find_column(column_change)
 
-	if _find_column ~= self._current_column then
-		self:_update_grid_column(_find_column)
+	if new_column ~= self._current_column then
+		self:_update_grid_column(new_column)
 	end
 end
 
-StartGameWindowDeusJourneySelection._find_column = function (self, arg_29_1)
+StartGameWindowDeusJourneySelection._find_column = function (self, column_change)
 	-- function 29
-	if arg_29_1 == 0 then
+	if column_change == 0 then
 		return self._current_column
 	end
 
-	local _current_column = self._current_column
-	local _current_column_2 = self._current_column
-	local _navigation_grid = self._navigation_grid
+	local closest_column = self._current_column
+	local current_column = self._current_column
+	local grid = self._navigation_grid
 
-	if arg_29_1 < 0 then
-		for k, v in pairs(_navigation_grid) do
-			if k < _current_column_2 then
-				_current_column = k
+	if column_change < 0 then
+		for index, _ in pairs(grid) do
+			if index < current_column then
+				closest_column = index
 			else
 				break
 			end
 		end
 	else
-		for k_2, v_2 in pairs(_navigation_grid) do
-			if _current_column_2 < k_2 then
-				_current_column = k_2
+		for index, _ in pairs(grid) do
+			if current_column < index then
+				closest_column = index
 
 				break
 			end
 		end
 	end
 
-	return _current_column
+	return closest_column
 end
 
-StartGameWindowDeusJourneySelection._handle_input = function (self, arg_30_1, arg_30_2)
+StartGameWindowDeusJourneySelection._handle_input = function (self, dt, t)
 	-- function 30
 	local parent = self.parent
-	local window_input_service = parent:window_input_service()
-	local is_device_active = Managers.input:is_device_active("gamepad")
+	local input_service = parent:window_input_service()
+	local gamepad_active = Managers.input:is_device_active("gamepad")
 
-	if not is_device_active then
-		if not window_input_service:get("move_right_hold_continuous") then
+	if gamepad_active then
+		if input_service:get("move_right_hold_continuous") then
 			self:_update_grid_navigation(1)
-		elseif not window_input_service:get("move_left_hold_continuous") then
+		elseif input_service:get("move_left_hold_continuous") then
 			self:_update_grid_navigation(-1)
 		end
 	end
 
-	local _active_node_widgets = self._active_node_widgets
+	local active_node_widgets = self._active_node_widgets
+	local gamepad_confirm_pressed = not not gamepad_active and not not input_service:get(SELECTION_INPUT, true)
 
-	if not (not is_device_active and window_input_service:get(str, true)) and not self._unlocked_journeys[self._selected_journey_name] then
+	if gamepad_confirm_pressed and self._unlocked_journeys[self._selected_journey_name] then
 		self:_play_sound("play_gui_lobby_button_02_mission_select")
 
-		local get_selected_game_mode_layout_name = parent:get_selected_game_mode_layout_name()
+		local game_mode_layout_name = parent:get_selected_game_mode_layout_name()
 
 		parent:set_selected_level_id(self._selected_journey_name)
-		parent:set_layout_by_name(get_selected_game_mode_layout_name)
-	elseif not _active_node_widgets then
-		for i = 1, #_active_node_widgets do
-			local var_30_5 = _active_node_widgets[i]
-			local journey_name = var_30_5.content.journey_name
+		parent:set_layout_by_name(game_mode_layout_name)
+	elseif active_node_widgets then
+		for i = 1, #active_node_widgets do
+			local widget = active_node_widgets[i]
+			local content = widget.content
+			local journey_name = content.journey_name
 
-			if not (not self:_is_button_hovered(var_30_5) and self._selected_journey_name == journey_name) then
+			if self:_is_button_hovered(widget) and self._selected_journey_name ~= journey_name then
 				self:_play_sound("play_gui_lobby_button_02_mission_act_click")
 				self:_select_journey(journey_name)
 			end
 
-			if not self:_is_button_pressed(var_30_5) then
+			if self:_is_button_pressed(widget) then
 				self:_play_sound("play_gui_lobby_button_02_mission_select")
 
-				local get_selected_game_mode_layout_name_2 = parent:get_selected_game_mode_layout_name()
+				local game_mode_layout_name = parent:get_selected_game_mode_layout_name()
 
 				parent:set_selected_level_id(journey_name)
-				parent:set_layout_by_name(get_selected_game_mode_layout_name_2)
+				parent:set_layout_by_name(game_mode_layout_name)
 			end
 		end
 	end
 end
 
-StartGameWindowDeusJourneySelection.draw = function (self, arg_31_1)
+StartGameWindowDeusJourneySelection.draw = function (self, dt)
 	-- function 31
-	local _ui_top_renderer = self._ui_top_renderer
+	local ui_top_renderer = self._ui_top_renderer
 	local ui_scenegraph = self.ui_scenegraph
-	local window_input_service = self.parent:window_input_service()
+	local input_service = self.parent:window_input_service()
 
-	UIRenderer.begin_pass(_ui_top_renderer, ui_scenegraph, window_input_service, arg_31_1, nil, self.render_settings)
+	UIRenderer.begin_pass(ui_top_renderer, ui_scenegraph, input_service, dt, nil, self.render_settings)
 
-	local _widgets = self._widgets
+	local widgets = self._widgets
 
-	for i = 1, #_widgets do
-		local var_31_4 = _widgets[i]
+	for i = 1, #widgets do
+		local widget = widgets[i]
 
-		UIRenderer.draw_widget(_ui_top_renderer, var_31_4)
+		UIRenderer.draw_widget(ui_top_renderer, widget)
 	end
 
-	local _active_node_widgets = self._active_node_widgets
+	local active_node_widgets = self._active_node_widgets
 
-	if not _active_node_widgets then
-		for j = 1, #_active_node_widgets do
-			local var_31_6 = _active_node_widgets[j]
+	if active_node_widgets then
+		for i = 1, #active_node_widgets do
+			local widget = active_node_widgets[i]
 
-			UIRenderer.draw_widget(_ui_top_renderer, var_31_6)
+			UIRenderer.draw_widget(ui_top_renderer, widget)
 		end
 	end
 
-	UIRenderer.end_pass(_ui_top_renderer)
+	UIRenderer.end_pass(ui_top_renderer)
 end
 
-StartGameWindowDeusJourneySelection._play_sound = function (self, arg_32_1)
+StartGameWindowDeusJourneySelection._play_sound = function (self, event)
 	-- function 32
-	self.parent:play_sound(arg_32_1)
+	self.parent:play_sound(event)
 end
 
-StartGameWindowDeusJourneySelection._animate_node_widget = function (arg_33_0, arg_33_1, arg_33_2)
+StartGameWindowDeusJourneySelection._animate_node_widget = function (self, widget, dt)
 	-- function 33
-	local content = arg_33_1.content
-	local button_hotspot = content.button_hotspot
-	local is_selected = button_hotspot.is_selected
-	local selected_progress = button_hotspot.selected_progress
+	local content = widget.content
+	local hotspot = content.button_hotspot
+	local is_selected = hotspot.is_selected
+	local selected_progress_2 = hotspot.selected_progress
 
-	selected_progress = selected_progress or 0
-
-	local num = 9
-
-	if not is_selected then
-		selected_progress = math.min(selected_progress + num * arg_33_2, 1)
-	else
-		selected_progress = math.max(selected_progress - num * arg_33_2, 0)
+	if not selected_progress_2 then
+		-- Nothing
 	end
 
-	local unlock_guidance = content.unlock_guidance
-	local unlock_guidance_progress = content.unlock_guidance_progress
+	selected_progress_2 = 0
 
-	unlock_guidance_progress = unlock_guidance_progress or 0
+	local selected_progress = selected_progress_2
 
-	local num_2 = 2
+	::label_33_0::
 
-	if not unlock_guidance then
-		unlock_guidance_progress = math.min(unlock_guidance_progress + arg_33_2 * num_2, 1)
+	local selected_speed = 9
+
+	if is_selected then
+		selected_progress = math.min(selected_progress + selected_speed * dt, 1)
 	else
-		unlock_guidance_progress = math.max(unlock_guidance_progress - arg_33_2 * num_2, 0)
+		selected_progress = math.max(selected_progress - selected_speed * dt, 0)
 	end
 
-	local style = arg_33_1.style
+	local is_unlock_guidance = content.unlock_guidance
+	local unlock_guidance_progress_2 = content.unlock_guidance_progress
+
+	if not unlock_guidance_progress_2 then
+		-- Nothing
+	end
+
+	unlock_guidance_progress_2 = 0
+
+	local unlock_guidance_progress = unlock_guidance_progress_2
+
+	::label_33_1::
+
+	local unlock_guidance_speed = 2
+
+	if is_unlock_guidance then
+		unlock_guidance_progress = math.min(unlock_guidance_progress + dt * unlock_guidance_speed, 1)
+	else
+		unlock_guidance_progress = math.max(unlock_guidance_progress - dt * unlock_guidance_speed, 0)
+	end
+
+	local style = widget.style
 
 	style.icon_glow.color[1] = 255 * selected_progress
 
-	local max = math.max(math.lerp(-2.5, 1, unlock_guidance_progress), 0)
+	local alpha_modifier = math.max(math.lerp(-2.5, 1, unlock_guidance_progress), 0)
 
-	style.icon_unlock_guidance_glow.color[1] = 255 * max
-	button_hotspot.selected_progress = selected_progress
+	style.icon_unlock_guidance_glow.color[1] = 255 * alpha_modifier
+	hotspot.selected_progress = selected_progress
 	content.unlock_guidance_progress = unlock_guidance_progress
 end

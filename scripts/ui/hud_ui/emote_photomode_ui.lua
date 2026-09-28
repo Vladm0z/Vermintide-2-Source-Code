@@ -1,20 +1,20 @@
 -- chunkname: @scripts/ui/hud_ui/emote_photomode_ui.lua
 
-local var_0_0 = local_require("scripts/ui/hud_ui/emote_photomode_ui_definitions")
-local widgets = var_0_0.widgets
-local widgets_pc = var_0_0.widgets_pc
-local widgets_gamepad = var_0_0.widgets_gamepad
-local scenegraph_definition = var_0_0.scenegraph_definition
+local definitions = local_require("scripts/ui/hud_ui/emote_photomode_ui_definitions")
+local widget_definitions = definitions.widgets
+local widgets_pc_definitions = definitions.widgets_pc
+local widgets_gamepad_definitions = definitions.widgets_gamepad
+local scenegraph_definition = definitions.scenegraph_definition
 
 EmotePhotomodeUI = class(EmotePhotomodeUI)
 
-local flag = false
+local DO_RELOAD = false
 
-EmotePhotomodeUI.init = function (self, arg_1_1, arg_1_2)
+EmotePhotomodeUI.init = function (self, parent, ingame_ui_context)
 	-- function 1
-	self._parent = arg_1_1
-	self._ui_renderer = arg_1_2.ui_renderer
-	self._ingame_ui_context = arg_1_2
+	self._parent = parent
+	self._ui_renderer = ingame_ui_context.ui_renderer
+	self._ingame_ui_context = ingame_ui_context
 	self._render_settings = {}
 
 	self:_create_ui_elements()
@@ -22,7 +22,7 @@ EmotePhotomodeUI.init = function (self, arg_1_1, arg_1_2)
 	self._is_enabled = false
 end
 
-EmotePhotomodeUI.destroy = function (arg_2_0)
+EmotePhotomodeUI.destroy = function (self)
 	-- function 2
 	return
 end
@@ -33,71 +33,73 @@ EmotePhotomodeUI._create_ui_elements = function (self)
 
 	local _render_settings = self._render_settings
 
-	_render_settings = _render_settings or {}
+	_render_settings = not not _render_settings or not not {}
 	self._render_settings = _render_settings
 	self._widgets = {}
 
-	for k, v in pairs(widgets) do
-		local var_3_1 = UIWidget.init(v)
+	for name, widget in pairs(widget_definitions) do
+		local widget = UIWidget.init(widget)
 
-		self._widgets[k] = var_3_1
+		self._widgets[name] = widget
 	end
 
 	self._widgets_pc = {}
 
-	for k_2, v_2 in pairs(widgets_pc) do
-		local var_3_2 = UIWidget.init(v_2)
+	for name, widget in pairs(widgets_pc_definitions) do
+		local widget = UIWidget.init(widget)
 
-		self._widgets_pc[k_2] = var_3_2
+		self._widgets_pc[name] = widget
 	end
 
 	self._widgets_gamepad = {}
 
-	for k_3, v_3 in pairs(widgets_gamepad) do
-		local var_3_3 = UIWidget.init(v_3)
+	for name, widget in pairs(widgets_gamepad_definitions) do
+		local widget = UIWidget.init(widget)
 
-		self._widgets_gamepad[k_3] = var_3_3
+		self._widgets_gamepad[name] = widget
 	end
 
 	UIRenderer.clear_scenegraph_queue(self._ui_renderer)
 end
 
-EmotePhotomodeUI.update = function (self, arg_4_1, arg_4_2)
+EmotePhotomodeUI.update = function (self, dt, t)
 	-- function 4
 	if not self._is_enabled then
 		return
 	end
 
-	self:_draw(arg_4_1, arg_4_2)
+	self:_draw(dt, t)
 end
 
-EmotePhotomodeUI.set_enabled = function (self, arg_5_1)
+EmotePhotomodeUI.set_enabled = function (self, enabled)
 	-- function 5
-	self._is_enabled = arg_5_1
+	self._is_enabled = enabled
 end
 
-EmotePhotomodeUI._draw = function (self, arg_6_1, arg_6_2)
+EmotePhotomodeUI._draw = function (self, dt, t)
 	-- function 6
-	local _ui_renderer = self._ui_renderer
-	local _ui_scenegraph = self._ui_scenegraph
-	local _render_settings = self._render_settings
-	local get_service = Managers.input:get_service("ingame_menu")
+	local ui_renderer = self._ui_renderer
+	local ui_scenegraph = self._ui_scenegraph
+	local render_settings = self._render_settings
+	local input_service = Managers.input:get_service("ingame_menu")
 
-	UIRenderer.begin_pass(_ui_renderer, _ui_scenegraph, get_service, arg_6_1, nil, _render_settings)
+	UIRenderer.begin_pass(ui_renderer, ui_scenegraph, input_service, dt, nil, render_settings)
 
-	for k, v in pairs(self._widgets) do
-		UIRenderer.draw_widget(_ui_renderer, v)
+	for _, widget in pairs(self._widgets) do
+		UIRenderer.draw_widget(ui_renderer, widget)
 	end
 
-	if not Managers.input:is_device_active("gamepad") then
-		for k_2, v_2 in pairs(self._widgets_gamepad) do
-			UIRenderer.draw_widget(_ui_renderer, v_2)
+	local gamepad_active = Managers.input:is_device_active("gamepad")
+
+	if gamepad_active then
+		for _, widget in pairs(self._widgets_gamepad) do
+			UIRenderer.draw_widget(ui_renderer, widget)
 		end
 	else
-		for k_3, v_3 in pairs(self._widgets_pc) do
-			UIRenderer.draw_widget(_ui_renderer, v_3)
+		for _, widget in pairs(self._widgets_pc) do
+			UIRenderer.draw_widget(ui_renderer, widget)
 		end
 	end
 
-	UIRenderer.end_pass(_ui_renderer)
+	UIRenderer.end_pass(ui_renderer)
 end

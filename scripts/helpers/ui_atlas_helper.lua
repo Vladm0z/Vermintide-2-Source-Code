@@ -23,10 +23,10 @@ require("scripts/ui/atlas_settings/gui_pose_items_atlas")
 
 local UIAtlasHelper = UIAtlasHelper
 
-UIAtlasHelper = UIAtlasHelper or {}
+UIAtlasHelper = not not UIAtlasHelper or not not {}
 UIAtlasHelper = UIAtlasHelper
 
-local tbl = {
+local standalone_texture = {
 	loot_presentation_circle_glow_exotic_large = true,
 	loot_presentation_circle_glow_common_large = true,
 	crafting_button_fill = true,
@@ -358,7 +358,7 @@ local tbl = {
 	unit_frame_portrait_bardin_slayer = true,
 	player_hp_bar_color_tint = true
 }
-local tbl_2 = {
+local ui_atlas_setting_tables = {
 	gui_achievement_icons_atlas = achievement_icons_atlas,
 	gui_startup_settings_atlas = startup_settings_atlas,
 	gui_items_atlas = items_atlas,
@@ -380,7 +380,7 @@ local tbl_2 = {
 	gui_lock_test_atlas = lock_test_atlas,
 	gui_pose_items_atlas = pose_items_atlas
 }
-local tbl_3 = {
+local masked_materials = {
 	gui_achievement_icons_atlas = "gui_achievement_icons_atlas_masked",
 	gui_settings_atlas = "gui_settings_atlas_masked",
 	gui_chat_atlas = "gui_chat_atlas_masked",
@@ -397,7 +397,7 @@ local tbl_3 = {
 	gui_icons_atlas = "gui_icons_atlas_masked",
 	gui_items_atlas = "gui_items_atlas_masked"
 }
-local tbl_4 = {
+local saturated_materials = {
 	gui_level_images_atlas = "gui_level_images_atlas_saturated",
 	gui_frames_atlas = "gui_frames_atlas_saturated",
 	gui_pose_items_atlas = "gui_pose_items_atlas_saturated",
@@ -410,7 +410,7 @@ local tbl_4 = {
 	gui_items_atlas = "gui_items_atlas_saturated",
 	gui_mission_selection_atlas = "gui_mission_selection_atlas_saturated"
 }
-local tbl_5 = {
+local masked_saturated_materials = {
 	gui_achievement_icons_atlas = "gui_achievement_icons_atlas_masked_saturated",
 	gui_lock_test_atlas = "gui_lock_test_atlas_masked_saturated",
 	gui_pose_items_atlas = "gui_pose_items_atlas_masked_saturated",
@@ -421,10 +421,10 @@ local tbl_5 = {
 }
 
 if not IS_WINDOWS then
-	tbl_4.gui_map_console_atlas = "gui_map_console_atlas_saturated"
+	saturated_materials.gui_map_console_atlas = "gui_map_console_atlas_saturated"
 end
 
-local tbl_6 = {
+local masked_point_sample_materials = {
 	gui_achievement_icons_atlas = "gui_achievement_icons_atlas_point_sample_masked",
 	gui_settings_atlas = "gui_settings_atlas_point_sample_masked",
 	gui_chat_atlas = "gui_chat_atlas_point_sample_masked",
@@ -438,12 +438,12 @@ local tbl_6 = {
 	gui_icons_atlas = "gui_icons_atlas_point_sample_masked",
 	gui_items_atlas = "gui_items_atlas_point_sample_masked"
 }
-local tbl_7 = {
+local masked_saturated_point_sample_materials = {
 	gui_lock_test_atlas = "gui_lock_test_atlas_point_sample_masked_saturated",
 	gui_icons_atlas = "gui_icons_atlas_point_sample_masked_saturated",
 	gui_hud_atlas = "gui_hud_atlas_point_sample_masked_saturated"
 }
-local tbl_8 = {
+local point_sample_materials = {
 	controller_image_xb1 = "controller_image_xb1_point_sample",
 	gui_settings_atlas = "gui_settings_atlas_point_sample",
 	gui_pose_items_atlas = "gui_pose_items_atlas_point_sample",
@@ -476,205 +476,221 @@ local tbl_8 = {
 	gui_items_atlas = "gui_items_atlas_point_sample",
 	gui_splash_atlas = "gui_splash_atlas_point_sample"
 }
-local tbl_9 = {
+local offscreen_materials = {
 	gui_menus_atlas = "gui_menus_atlas_offscreen",
 	gui_icons_atlas = "gui_icons_atlas_offscreen",
 	gui_items_atlas = "gui_items_atlas_offscreen",
 	gui_frames_atlas = "gui_frames_atlas_offscreen"
 }
-local tbl_10 = {
+local masked_offscreen_materials = {
 	gui_menus_atlas = "gui_menus_atlas_masked_offscreen",
 	gui_icons_atlas = "gui_icons_atlas_masked_offscreen",
 	gui_items_atlas = "gui_items_atlas_masked_offscreen",
 	gui_frames_atlas = "gui_frames_atlas_masked_offscreen"
 }
-local tbl_11 = {
+local masked_point_sample_offscreen_materials = {
 	gui_menus_atlas = "gui_menus_atlas_point_sample_masked_offscreen",
 	gui_icons_atlas = "gui_icons_atlas_point_sample_masked_offscreen",
 	gui_items_atlas = "gui_items_atlas_point_sample_masked_offscreen",
 	gui_frames_atlas = "gui_frames_atlas_point_sample_masked_offscreen"
 }
-local tbl_12 = {
+local point_sample_offscreen_materials = {
 	gui_menus_atlas = "gui_menus_atlas_point_sample_offscreen",
 	gui_icons_atlas = "gui_icons_atlas_point_sample_offscreen",
 	gui_items_atlas = "gui_items_atlas_point_sample_offscreen",
 	gui_frames_atlas = "gui_frames_atlas_point_sample_offscreen"
 }
-local tbl_13 = {
+local saturated_offscreen_materials = {
 	gui_items_atlas = "gui_items_atlas_saturated",
 	gui_icons_atlas = "gui_icons_atlas_saturated"
 }
-local tbl_14 = {
+local viewport_mask_materials = {
 	gui_lock_test_atlas = "gui_lock_test_viewport_mask"
 }
-local tbl_15 = {}
+local ui_atlas_settings = {}
 
-for k, v in pairs(tbl_2) do
-	for k_2, v_2 in pairs(v) do
-		v_2.texture_name = k_2
-		v_2.material_name = k
-		v_2.masked_material_name = tbl_3[k]
-		v_2.point_sample_material_name = tbl_8[k]
-		v_2.masked_point_sample_material_name = tbl_6[k]
-		v_2.saturated_material_name = tbl_4[k]
-		v_2.masked_saturated_material_name = tbl_5[k]
-		v_2.masked_saturated_point_sample_material_name = tbl_7[k]
-		v_2.offscreen_material_name = tbl_9[k]
-		v_2.masked_offscreen_material_name = tbl_10[k]
-		v_2.masked_point_sample_offscreen_material_name = tbl_11[k]
-		v_2.point_sample_offscreen_material_name = tbl_12[k]
-		v_2.saturated_offscreen_material_name = tbl_13[k]
-		v_2.viewport_mask_material_name = tbl_14[k]
+for material, material_settings in pairs(ui_atlas_setting_tables) do
+	for texture_name, settings in pairs(material_settings) do
+		settings.texture_name = texture_name
+		settings.material_name = material
+		settings.masked_material_name = masked_materials[material]
+		settings.point_sample_material_name = point_sample_materials[material]
+		settings.masked_point_sample_material_name = masked_point_sample_materials[material]
+		settings.saturated_material_name = saturated_materials[material]
+		settings.masked_saturated_material_name = masked_saturated_materials[material]
+		settings.masked_saturated_point_sample_material_name = masked_saturated_point_sample_materials[material]
+		settings.offscreen_material_name = offscreen_materials[material]
+		settings.masked_offscreen_material_name = masked_offscreen_materials[material]
+		settings.masked_point_sample_offscreen_material_name = masked_point_sample_offscreen_materials[material]
+		settings.point_sample_offscreen_material_name = point_sample_offscreen_materials[material]
+		settings.saturated_offscreen_material_name = saturated_offscreen_materials[material]
+		settings.viewport_mask_material_name = viewport_mask_materials[material]
 
-		local var_0_16 = tbl_15[k_2]
+		local var_0_1 = ui_atlas_settings[texture_name]
 
-		var_0_16 = not var_0_16 and tbl_15[k_2].material_name
+		if var_0_1 then
+			-- Nothing
+		end
 
-		fassert(tbl_15[k_2] == nil, "[UIAtlasHelper] Texture %q in material %q already exist in material %q. Make sure to use unique texture names.", k_2, k, var_0_16)
+		var_0_1 = ui_atlas_settings[texture_name].material_name
 
-		tbl_15[k_2] = v_2
+		local existing_material_name = var_0_1
+
+		::label_0_0::
+
+		fassert(ui_atlas_settings[texture_name] == nil, "[UIAtlasHelper] Texture %q in material %q already exist in material %q. Make sure to use unique texture names.", texture_name, material, existing_material_name)
+
+		ui_atlas_settings[texture_name] = settings
 	end
 end
 
-for k_3, v_3 in pairs(DLCSettings) do
-	local ui_texture_settings = v_3.ui_texture_settings
+for name, dlc in pairs(DLCSettings) do
+	local dlc_ui_texture_settings = dlc.ui_texture_settings
 
-	if not ui_texture_settings then
-		local filenames = ui_texture_settings.filenames
+	if dlc_ui_texture_settings then
+		local filenames = dlc_ui_texture_settings.filenames
 
-		if not filenames then
-			for i, v_4 in ipairs(filenames) do
-				require(v_4)
+		if filenames then
+			for _, filename in ipairs(filenames) do
+				require(filename)
 			end
 		end
 
-		local single_textures = ui_texture_settings.single_textures
+		local single_textures = dlc_ui_texture_settings.single_textures
 
-		if not single_textures then
-			for i_2, v_5 in ipairs(single_textures) do
-				fassert(tbl[v_5] == nil, "[UIAtlasHelper] Single Texture %q already exists. Make sure to use unique texture names.", v_5)
+		if single_textures then
+			for _, texture_name in ipairs(single_textures) do
+				fassert(standalone_texture[texture_name] == nil, "[UIAtlasHelper] Single Texture %q already exists. Make sure to use unique texture names.", texture_name)
 
-				tbl[v_5] = true
+				standalone_texture[texture_name] = true
 			end
 		end
 
-		local atlas_settings = ui_texture_settings.atlas_settings
+		local atlas_settings = dlc_ui_texture_settings.atlas_settings
 
-		if not atlas_settings then
-			for k_4, v_6 in pairs(atlas_settings) do
-				local var_0_21 = _G[k_4]
+		if atlas_settings then
+			for material, material_settings in pairs(atlas_settings) do
+				local atlas_table = _G[material]
 
-				for k_5, v_7 in pairs(var_0_21) do
-					local clone = table.clone(v_7)
+				for texture_name, texture_settings in pairs(atlas_table) do
+					local settings = table.clone(texture_settings)
 
-					clone.texture_name = k_5
-					clone.material_name = v_6.material_name
-					clone.masked_material_name = v_6.masked_material_name
-					clone.point_sample_material_name = v_6.point_sample_material_name
-					clone.masked_point_sample_material_name = v_6.masked_point_sample_material_name
-					clone.saturated_material_name = v_6.saturated_material_name
-					clone.masked_saturated_material_name = v_6.masked_saturated_material_name
-					clone.masked_saturated_point_sample_material_name = v_6.masked_saturated_point_sample_material_name
-					clone.offscreen_material_name = v_6.offscreen_material_name
-					clone.masked_offscreen_material_name = v_6.masked_offscreen_material_name
-					clone.masked_point_sample_offscreen_material_name = v_6.masked_point_sample_offscreen_material_name
-					clone.point_sample_offscreen_material_name = v_6.point_sample_offscreen_material_name
-					clone.saturated_offscreen_material_name = v_6.saturated_offscreen_material_name
-					clone.viewport_mask_material_name = v_6.viewport_mask_material_name
+					settings.texture_name = texture_name
+					settings.material_name = material_settings.material_name
+					settings.masked_material_name = material_settings.masked_material_name
+					settings.point_sample_material_name = material_settings.point_sample_material_name
+					settings.masked_point_sample_material_name = material_settings.masked_point_sample_material_name
+					settings.saturated_material_name = material_settings.saturated_material_name
+					settings.masked_saturated_material_name = material_settings.masked_saturated_material_name
+					settings.masked_saturated_point_sample_material_name = material_settings.masked_saturated_point_sample_material_name
+					settings.offscreen_material_name = material_settings.offscreen_material_name
+					settings.masked_offscreen_material_name = material_settings.masked_offscreen_material_name
+					settings.masked_point_sample_offscreen_material_name = material_settings.masked_point_sample_offscreen_material_name
+					settings.point_sample_offscreen_material_name = material_settings.point_sample_offscreen_material_name
+					settings.saturated_offscreen_material_name = material_settings.saturated_offscreen_material_name
+					settings.viewport_mask_material_name = material_settings.viewport_mask_material_name
 
-					local var_0_23 = tbl_15[k_5]
+					local var_0_2 = ui_atlas_settings[texture_name]
 
-					var_0_23 = not var_0_23 and tbl_15[k_5].material_name
+					if var_0_2 then
+						-- Nothing
+					end
 
-					fassert(tbl_15[k_5] == nil, "[UIAtlasHelper] Texture %q in material %q already exist in material %q. Make sure to use unique texture names.", k_5, k_4, var_0_23)
+					var_0_2 = ui_atlas_settings[texture_name].material_name
 
-					tbl_15[k_5] = clone
+					local existing_material_name = var_0_2
+
+					::label_0_1::
+
+					fassert(ui_atlas_settings[texture_name] == nil, "[UIAtlasHelper] Texture %q in material %q already exist in material %q. Make sure to use unique texture names.", texture_name, material, existing_material_name)
+
+					ui_atlas_settings[texture_name] = settings
 				end
 			end
 		end
 	end
 end
 
-UIAtlasHelper._ui_atlas_settings = tbl_15
+UIAtlasHelper._ui_atlas_settings = ui_atlas_settings
 
-UIAtlasHelper.get_atlas_settings_by_texture_name = function (arg_1_0)
+UIAtlasHelper.get_atlas_settings_by_texture_name = function (texture_name)
 	-- function 1
-	assert(arg_1_0, "[UIAtlasHelper] Trying to access atlas settings for a texture without a name")
+	assert(texture_name, "[UIAtlasHelper] Trying to access atlas settings for a texture without a name")
 
-	if not tbl[arg_1_0] then
+	if standalone_texture[texture_name] then
 		return
 	end
 
-	fassert(tbl_15[arg_1_0], "[UIAtlasHelper] Atlas texture settings do not exist: %q", arg_1_0)
+	fassert(ui_atlas_settings[texture_name], "[UIAtlasHelper] Atlas texture settings do not exist: %q", texture_name)
 
-	return tbl_15[arg_1_0]
+	return ui_atlas_settings[texture_name]
 end
 
-UIAtlasHelper.has_atlas_settings_by_texture_name = function (arg_2_0)
+UIAtlasHelper.has_atlas_settings_by_texture_name = function (texture_name)
 	-- function 2
-	if not tbl_15[arg_2_0] then
+	if ui_atlas_settings[texture_name] then
 		return true
 	else
 		return false
 	end
 end
 
-UIAtlasHelper.has_texture_by_name = function (arg_3_0)
+UIAtlasHelper.has_texture_by_name = function (texture_name)
 	-- function 3
-	if tbl[arg_3_0] or not tbl_15[arg_3_0] then
+	if standalone_texture[texture_name] or ui_atlas_settings[texture_name] then
 		return true
 	else
 		return false
 	end
 end
 
-UIAtlasHelper.add_standalone_texture_by_name = function (arg_4_0)
+UIAtlasHelper.add_standalone_texture_by_name = function (texture_name)
 	-- function 4
-	if tbl[arg_4_0] or not tbl_15[arg_4_0] then
+	if standalone_texture[texture_name] or ui_atlas_settings[texture_name] then
 		return
 	else
-		tbl[arg_4_0] = true
+		standalone_texture[texture_name] = true
 	end
 end
 
-UIAtlasHelper.get_insignia_texture_settings_from_level = function (arg_5_0)
+UIAtlasHelper.get_insignia_texture_settings_from_level = function (level)
 	-- function 5
-	local min = math.min(arg_5_0, ExperienceSettings.max_versus_level)
-	local tbl = {
+	local level = math.min(level, ExperienceSettings.max_versus_level)
+	local insignia_uv_size = {
 		0.2,
 		0.1
 	}
-	local floor = math.floor((min - 1) / 50)
-	local num = math.floor((min - 1) / 5) % 10
-	local tbl_2 = {
+	local insignia_level = math.floor((level - 1) / 50)
+	local insignia_type = math.floor((level - 1) / 5) % 10
+	local insignia_main_uvs = {
 		{
-			floor * tbl[1],
-			num * tbl[2]
+			insignia_level * insignia_uv_size[1],
+			insignia_type * insignia_uv_size[2]
 		},
 		{
-			floor * tbl[1] + tbl[1],
-			num * tbl[2] + tbl[2]
+			insignia_level * insignia_uv_size[1] + insignia_uv_size[1],
+			insignia_type * insignia_uv_size[2] + insignia_uv_size[2]
 		}
 	}
-	local tbl_3 = {
+	local insignia_addon_uv_size = {
 		0.25,
 		1
 	}
-	local num_2 = math.floor(min - 1) % 5
-	local var_5_7
+	local addon_level = math.floor(level - 1) % 5
+	local insignia_addon_uvs
 
-	if num_2 > 0 then
-		var_5_7 = {
+	if addon_level > 0 then
+		insignia_addon_uvs = {
 			{
-				(num_2 - 1) * tbl_3[1],
+				(addon_level - 1) * insignia_addon_uv_size[1],
 				0
 			},
 			{
-				(num_2 - 1) * tbl_3[1] + tbl_3[1],
+				(addon_level - 1) * insignia_addon_uv_size[1] + insignia_addon_uv_size[1],
 				1
 			}
 		}
 	end
 
-	return tbl_2, var_5_7
+	return insignia_main_uvs, insignia_addon_uvs
 end

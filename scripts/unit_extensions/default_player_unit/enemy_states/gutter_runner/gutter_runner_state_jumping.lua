@@ -2,17 +2,21 @@
 
 GutterRunnerStateJumping = class(GutterRunnerStateJumping, EnemyCharacterStateJumping)
 
-GutterRunnerStateJumping.init = function (arg_1_0, arg_1_1)
+GutterRunnerStateJumping.init = function (self, character_state_init_context)
 	-- function 1
-	GutterRunnerStateJumping.super.init(arg_1_0, arg_1_1)
+	GutterRunnerStateJumping.super.init(self, character_state_init_context)
 end
 
-GutterRunnerStateJumping.update = function (self, arg_2_1, arg_2_2, arg_2_3, arg_2_4, arg_2_5)
+GutterRunnerStateJumping.update = function (self, unit, input, dt, context, t)
 	-- function 2
-	if not self:common_state_changes() then
+	local handled = self:common_state_changes()
+
+	if handled then
 		return
 	end
 
-	local is_in_ghost_mode = self._ghost_mode_extension:is_in_ghost_mode()
-	local common_movement = self:common_movement(is_in_ghost_mode, arg_2_3, arg_2_1)
+	local ghost_mode_extension = self._ghost_mode_extension
+	local in_ghost_mode = ghost_mode_extension:is_in_ghost_mode()
+
+	handled = self:common_movement(in_ghost_mode, dt, unit)
 end

@@ -4,18 +4,18 @@ require("scripts/settings/objective_unit_templates")
 
 ObjectiveItemSpawnerSystem = class(ObjectiveItemSpawnerSystem, ExtensionSystemBase)
 
-ObjectiveItemSpawnerSystem.init = function (self, arg_1_1, arg_1_2, arg_1_3)
+ObjectiveItemSpawnerSystem.init = function (self, entity_system_creation_context, system_name, extensions)
 	-- function 1
-	ObjectiveItemSpawnerSystem.super.init(self, arg_1_1, arg_1_2, arg_1_3)
+	ObjectiveItemSpawnerSystem.super.init(self, entity_system_creation_context, system_name, extensions)
 
 	self._item_spawners = {}
 	self._spawned_items = {}
 
-	local setting = Managers.state.game_mode:setting("static_objective_item_spawners")
+	local static_item_spawners = Managers.state.game_mode:setting("static_objective_item_spawners")
 
-	if not setting then
-		for k, v in pairs(setting) do
-			self._item_spawners[k] = v
+	if static_item_spawners then
+		for spawn_id, spawner_data in pairs(static_item_spawners) do
+			self._item_spawners[spawn_id] = spawner_data
 		end
 	end
 
@@ -23,53 +23,55 @@ ObjectiveItemSpawnerSystem.init = function (self, arg_1_1, arg_1_2, arg_1_3)
 	self._unit_template_id = ""
 end
 
-ObjectiveItemSpawnerSystem.item_gizmo_spawned = function (self, arg_2_1)
+ObjectiveItemSpawnerSystem.item_gizmo_spawned = function (self, unit)
 	-- function 2
-	local template_by_unit, var_2_1 = self:template_by_unit(arg_2_1)
+	local unit_template, spawn_id = self:template_by_unit(unit)
 
-	fassert(template_by_unit, "[ObjectiveItemSpawnerSystem] All item spawners need a unit template")
+	fassert(unit_template, "[ObjectiveItemSpawnerSystem] All item spawners need a unit template")
 
-	self._item_spawners[var_2_1] = {
-		unit = arg_2_1,
-		unit_template = template_by_unit
+	self._item_spawners[spawn_id] = {
+		unit = unit,
+		unit_template = unit_template
 	}
 end
 
-ObjectiveItemSpawnerSystem.template_by_unit = function (arg_3_0, arg_3_1)
+ObjectiveItemSpawnerSystem.template_by_unit = function (self, unit)
 	-- function 3
-	local get_data = Unit.get_data(arg_3_1, "objective_id")
-	local get_data_2 = Unit.get_data(arg_3_1, "unit_template")
+	local spawn_id = Unit.get_data(unit, "objective_id")
+	local unit_template_name = Unit.get_data(unit, "unit_template")
 
-	get_data = get_data or Unit.get_data(arg_3_1, "versus_objective_id") or Unit.get_data(arg_3_1, "weave_objective_id")
-	get_data_2 = get_data_2 or Unit.get_data(arg_3_1, "versus_unit_template") or Unit.get_data(arg_3_1, "weave_unit_template")
+	spawn_id = not not spawn_id or not not Unit.get_data(unit, "versus_objective_id") or not not Unit.get_data(unit, "weave_objective_id")
+	unit_template_name = not not unit_template_name or not not Unit.get_data(unit, "versus_unit_template") or not not Unit.get_data(unit, "weave_unit_template")
 
-	return ObjectiveUnitTemplates[get_data_2], get_data
+	local unit_template = ObjectiveUnitTemplates[unit_template_name]
+
+	return unit_template, spawn_id
 end
 
-ObjectiveItemSpawnerSystem.spawn_item = function (self, arg_4_1, arg_4_2)
+ObjectiveItemSpawnerSystem.spawn_item = function (self, objective_name, objective_data)
 	-- function 4
-	local var_4_0 = self._item_spawners[arg_4_1]
+	local item_spawner_data = self._item_spawners[objective_name]
 
-	if not var_4_0 then
-		local _trigger_spawn, var_4_2 = self:_trigger_spawn(var_4_0, arg_4_1, arg_4_2)
+	if item_spawner_data then
+		local spawned_unit, game_object_id = self:_trigger_spawn(item_spawner_data, objective_name, objective_data)
 
-		if not _trigger_spawn then
-			self._spawned_items[arg_4_1] = {
-				unit = _trigger_spawn,
-				game_object_id = var_4_2
+		if spawned_unit then
+			self._spawned_items[objective_name] = {
+				unit = spawned_unit,
+				game_object_id = game_object_id
 			}
 		end
 	end
 end
 
-ObjectiveItemSpawnerSystem._trigger_spawn = function (self, arg_5_1, arg_5_2, arg_5_3)
+ObjectiveItemSpawnerSystem._trigger_spawn = function (self, item_spawner_data, objective_id, objective_data)
 	-- function 5
-	local unit = arg_5_1.unit
-	local unit_template = arg_5_1.unit_template
+	local item_spawner_unit = item_spawner_data.unit
+	local item_spawner_template = item_spawner_data.unit_template
 	local local_position
 
-	if not unit then
-		local_position = Unit.local_position(unit, 0)
+	if item_spawner_unit then
+		local_position = Unit.local_position(item_spawner_unit, 0)
 
 		if not local_position then
 			-- Nothing
@@ -78,14 +80,16 @@ ObjectiveItemSpawnerSystem._trigger_spawn = function (self, arg_5_1, arg_5_2, ar
 
 	local_position = Vector3(0, 0, 0)
 
+	local position = local_position
+
 	do
 		local local_rotation
 	end
 
 	::label_5_0::
 
-	if not unit then
-		local_rotation = Unit.local_rotation(unit, 0)
+	if item_spawner_unit then
+		local_rotation = Unit.local_rotation(item_spawner_unit, 0)
 
 		if not local_rotation then
 			-- Nothing
@@ -94,28 +98,30 @@ ObjectiveItemSpawnerSystem._trigger_spawn = function (self, arg_5_1, arg_5_2, ar
 
 	local_rotation = Quaternion(Vector3(0, 0, 0), -1)
 
+	local rotation = local_rotation
+
 	::label_5_1::
 
-	local create_extension_init_data_func = unit_template.create_extension_init_data_func(arg_5_2, arg_5_3, unit)
-	local _spawn_unit, var_5_6 = self:_spawn_unit(unit_template, create_extension_init_data_func, local_position, local_rotation)
+	local extension_init_data = item_spawner_template.create_extension_init_data_func(objective_id, objective_data, item_spawner_unit)
+	local spawned_unit, go_id = self:_spawn_unit(item_spawner_template, extension_init_data, position, rotation)
 
-	return _spawn_unit, var_5_6
+	return spawned_unit, go_id
 end
 
-ObjectiveItemSpawnerSystem._spawn_unit = function (arg_6_0, arg_6_1, arg_6_2, arg_6_3, arg_6_4)
+ObjectiveItemSpawnerSystem._spawn_unit = function (self, item_spawner_template, extension_init_data, position, rotation)
 	-- function 6
-	local unit_template_name = arg_6_1.unit_template_name
-	local unit_name = arg_6_1.unit_name
-	local spawn_network_unit, var_6_3 = Managers.state.unit_spawner:spawn_network_unit(unit_name, unit_template_name, arg_6_2, arg_6_3, arg_6_4)
+	local unit_template_name = item_spawner_template.unit_template_name
+	local unit_name = item_spawner_template.unit_name
+	local spawned_unit, game_object_id = Managers.state.unit_spawner:spawn_network_unit(unit_name, unit_template_name, extension_init_data, position, rotation)
 
-	return spawn_network_unit, var_6_3
+	return spawned_unit, game_object_id
 end
 
-ObjectiveItemSpawnerSystem.destroy_objective = function (self, arg_7_1)
+ObjectiveItemSpawnerSystem.destroy_objective = function (self, objective_id)
 	-- function 7
-	local var_7_0 = self._spawned_items[arg_7_1]
+	local objective_data = self._spawned_items[objective_id]
 
-	if not var_7_0 then
-		Managers.state.unit_spawner:mark_for_deletion(var_7_0.unit)
+	if objective_data then
+		Managers.state.unit_spawner:mark_for_deletion(objective_data.unit)
 	end
 end

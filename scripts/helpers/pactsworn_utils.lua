@@ -2,36 +2,36 @@
 
 PactswornUtils = {}
 
-local num = 1
+local RAYCAST_INDEX_POSITION = 1
 
-PactswornUtils.get_hoist_position = function (arg_1_0, arg_1_1, arg_1_2)
+PactswornUtils.get_hoist_position = function (physics_world, unit, grabber_unit)
 	-- function 1
-	local var_1_0 = POSITION_LOOKUP[arg_1_1]
-	local var_1_1 = POSITION_LOOKUP[arg_1_2]
-	local direction_length, var_1_3 = Vector3.direction_length(var_1_0 - var_1_1)
+	local player_position = POSITION_LOOKUP[unit]
+	local packmaster_unit_position = POSITION_LOOKUP[grabber_unit]
+	local direction, length = Vector3.direction_length(player_position - packmaster_unit_position)
 
-	direction_length.z = 0
+	direction.z = 0
 
-	local num_2 = var_1_1 + Vector3.normalize(direction_length) * var_1_3
-	local direction_length_2, var_1_6 = Vector3.direction_length(num_2 - var_1_0)
+	local hoist_position = packmaster_unit_position + Vector3.normalize(direction) * length
+	local ray_dir, ray_length = Vector3.direction_length(hoist_position - player_position)
 
-	if var_1_6 < math.epsilon then
-		return var_1_0
+	if ray_length < math.epsilon then
+		return player_position
 	end
 
-	local immediate_raycast_actors = PhysicsWorld.immediate_raycast_actors(arg_1_0, var_1_0, direction_length_2, var_1_6, "static_collision_filter", "filter_player_ray_projectile_static_only", "max_hits", 1)
+	local result = PhysicsWorld.immediate_raycast_actors(physics_world, player_position, ray_dir, ray_length, "static_collision_filter", "filter_player_ray_projectile_static_only", "max_hits", 1)
 
-	if not immediate_raycast_actors then
-		local var_1_8 = immediate_raycast_actors[1]
+	if result then
+		local hit = result[1]
 
-		if not script_data.vs_debug_hoist then
-			QuickDrawerStay:sphere(var_1_8[num], 0.15, Colors.get("tomato"))
-			QuickDrawerStay:line(var_1_8[num], num_2, Colors.get("tomato"))
-			QuickDrawerStay:sphere(num_2, 0.15, Colors.get("cyan"))
+		if script_data.vs_debug_hoist then
+			QuickDrawerStay:sphere(hit[RAYCAST_INDEX_POSITION], 0.15, Colors.get("tomato"))
+			QuickDrawerStay:line(hit[RAYCAST_INDEX_POSITION], hoist_position, Colors.get("tomato"))
+			QuickDrawerStay:sphere(hoist_position, 0.15, Colors.get("cyan"))
 		end
 
-		num_2 = var_1_8[num]
+		hoist_position = hit[RAYCAST_INDEX_POSITION]
 	end
 
-	return num_2
+	return hoist_position
 end

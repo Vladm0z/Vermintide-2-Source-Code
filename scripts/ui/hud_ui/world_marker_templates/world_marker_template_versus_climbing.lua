@@ -1,34 +1,43 @@
 -- chunkname: @scripts/ui/hud_ui/world_marker_templates/world_marker_template_versus_climbing.lua
 
-local str = "climbing"
+local NAME = "climbing"
 local WorldMarkerTemplates = WorldMarkerTemplates
 
-WorldMarkerTemplates = WorldMarkerTemplates or {}
+WorldMarkerTemplates = not not WorldMarkerTemplates or not not {}
 WorldMarkerTemplates = WorldMarkerTemplates
 
-local var_0_2 = WorldMarkerTemplates[str]
+local var_0_1 = WorldMarkerTemplates[NAME]
 
-var_0_2 = var_0_2 or {}
-WorldMarkerTemplates[str] = var_0_2
-var_0_2.check_line_of_sight = true
-var_0_2.position_offset = {
+if not var_0_1 then
+	-- Nothing
+end
+
+var_0_1 = {}
+
+local template = var_0_1
+
+::label_0_0::
+
+WorldMarkerTemplates[NAME] = template
+template.check_line_of_sight = true
+template.position_offset = {
 	0,
 	0,
 	0
 }
-var_0_2.screen_clamp = false
-var_0_2.max_distance = 15
-var_0_2.fade_distance = 3
-var_0_2.scale_settings = {
+template.screen_clamp = false
+template.max_distance = 15
+template.fade_distance = 3
+template.scale_settings = {
 	end_scale_distance = 4,
 	start_scale_distance = 2,
 	min_scale = 0.25
 }
 
-var_0_2.create_widget_definition = function (arg_1_0)
+template.create_widget_definition = function (scenegraph_id)
 	-- function 1
 	return {
-		scenegraph_id = arg_1_0,
+		scenegraph_id = scenegraph_id,
 		offset = {
 			0,
 			0,
@@ -132,43 +141,46 @@ var_0_2.create_widget_definition = function (arg_1_0)
 	}
 end
 
-var_0_2.on_enter = function (arg_2_0)
+template.on_enter = function (widget)
 	-- function 2
-	arg_2_0.content.progress = 0
+	local content = widget.content
+
+	content.progress = 0
 end
 
-var_0_2.update_function = function (arg_3_0, arg_3_1, arg_3_2, arg_3_3, arg_3_4, arg_3_5)
+template.update_function = function (ui_renderer, widget, marker, settings, dt, t)
 	-- function 3
-	local content = arg_3_1.content
-	local style = arg_3_1.style
-	local icon = style.icon
+	local content = widget.content
+	local style = widget.style
+	local icon_style = style.icon
 	local distance = content.distance
 	local progress = content.progress
-	local unit = arg_3_2.unit
-	local is_enabled = ScriptUnit.extension(unit, "interactable_system"):is_enabled()
-	local get = Managers.input:get_service("Player"):get("action_one_hold")
+	local climb_unit = marker.unit
+	local interactable_extension = ScriptUnit.extension(climb_unit, "interactable_system")
+	local enabled = interactable_extension:is_enabled()
+	local attack_held = Managers.input:get_service("Player"):get("action_one_hold")
 
-	if not (distance <= 3) or arg_3_2.raycast_result or get or not is_enabled then
-		progress = math.min(1, progress + arg_3_4 * 3.5)
+	if distance <= 3 and not marker.raycast_result and not attack_held and enabled then
+		progress = math.min(1, progress + dt * 3.5)
 	else
-		progress = math.max(0, progress - arg_3_4 * 15)
+		progress = math.max(0, progress - dt * 15)
 	end
 
 	content.progress = progress
 	style.background.color[1] = 175 * progress
 
-	if not is_enabled then
-		Colors.copy_to(icon.color, icon.color_disabled)
-	elseif not (arg_3_2.raycast_result or get or is_enabled) then
-		Colors.copy_to(icon.color, icon.color_occluded)
+	if not enabled then
+		Colors.copy_to(icon_style.color, icon_style.color_disabled)
+	elseif marker.raycast_result or attack_held or not enabled then
+		Colors.copy_to(icon_style.color, icon_style.color_occluded)
 	else
-		Colors.lerp_color_tables(icon.color_inactive, icon.color_active, progress, icon.color)
+		Colors.lerp_color_tables(icon_style.color_inactive, icon_style.color_active, progress, icon_style.color)
 	end
 
-	local num = (arg_3_3.max_distance - distance) / arg_3_3.fade_distance
+	local fade_progress = (settings.max_distance - distance) / settings.fade_distance
 
-	if num < 1 then
-		icon.color[1] = icon.color[1] * num
+	if fade_progress < 1 then
+		icon_style.color[1] = icon_style.color[1] * fade_progress
 	end
 
 	return false

@@ -4,89 +4,103 @@ require("scripts/unit_extensions/objective_socket/objective_socket_unit_extensio
 
 ObjectiveSocketSystem = class(ObjectiveSocketSystem, ExtensionSystemBase)
 
-local tbl = {
+local RPCS = {
 	"rpc_objective_entered_socket_zone"
 }
-local tbl_2 = {
+local extensions = {
 	"ObjectiveSocketUnitExtension"
 }
 
-ObjectiveSocketSystem.init = function (self, arg_1_1, arg_1_2)
+ObjectiveSocketSystem.init = function (self, entity_system_creation_context, system_name)
 	-- function 1
-	ObjectiveSocketSystem.super.init(self, arg_1_1, arg_1_2, tbl_2)
+	ObjectiveSocketSystem.super.init(self, entity_system_creation_context, system_name, extensions)
 
-	local network_event_delegate = arg_1_1.network_event_delegate
+	local network_event_delegate = entity_system_creation_context.network_event_delegate
 
-	network_event_delegate:register(self, unpack(tbl))
+	network_event_delegate:register(self, unpack(RPCS))
 
 	self.network_event_delegate = network_event_delegate
 	self.network_manager = Managers.state.network
 	self.socket_extensions = {}
 
-	self.objective_entered_zone_server = function (self, arg_2_1)
+	self.objective_entered_zone_server = function (extension, unit)
 		-- function 2
-		local pick_socket, var_2_1 = self:pick_socket(arg_2_1)
+		local socket, socket_id = extension:pick_socket(unit)
 
-		if not pick_socket then
+		if not socket then
 			return
 		end
 
-		self:objective_entered_zone_client(var_2_1, arg_2_1)
+		extension:objective_entered_zone_client(socket_id, unit)
 
-		if not self.is_server then
-			local game_object_or_level_id, var_2_3 = self.network_manager:game_object_or_level_id(self.unit)
-			local has_extension = ScriptUnit.has_extension(arg_2_1, "limited_item_track_system")
+		if self.is_server then
+			local network_manager = self.network_manager
+			local unit_id, is_level_unit = network_manager:game_object_or_level_id(extension.unit)
+			local limited_item_track_extension = ScriptUnit.has_extension(unit, "limited_item_track_system")
 			local flag
 
-			flag = not has_extension and true and false
+			if limited_item_track_extension then
+				flag = true
 
-			self.network_manager.network_transmit:send_rpc_clients("rpc_objective_entered_socket_zone", game_object_or_level_id, var_2_1, var_2_3, flag)
+				goto label_2_0
+			end
 
-			if not has_extension then
-				local spawner_unit = has_extension.spawner_unit
-				local has_extension_2 = ScriptUnit.has_extension(spawner_unit, "limited_item_track_system")
+			flag = false
 
-				if not has_extension_2 then
-					has_extension_2:socket_item(arg_2_1)
+			local is_limited_objective_unit = flag
+
+			::label_2_0::
+
+			self.network_manager.network_transmit:send_rpc_clients("rpc_objective_entered_socket_zone", unit_id, socket_id, is_level_unit, is_limited_objective_unit)
+
+			if limited_item_track_extension then
+				local spawner_unit = limited_item_track_extension.spawner_unit
+				local limited_item_track_spawner_extension = ScriptUnit.has_extension(spawner_unit, "limited_item_track_system")
+
+				if limited_item_track_spawner_extension then
+					limited_item_track_spawner_extension:socket_item(unit)
 				end
 			end
 
-			Managers.state.unit_spawner:mark_for_deletion(arg_2_1)
-			Managers.state.achievement:trigger_event("objective_entered_socket_zone", false, flag)
+			local unit_spawner = Managers.state.unit_spawner
+
+			unit_spawner:mark_for_deletion(unit)
+			Managers.state.achievement:trigger_event("objective_entered_socket_zone", false, is_limited_objective_unit)
 		end
 	end
 
-	self.objective_entered_zone_client = function (self, arg_3_1, arg_3_2)
+	self.objective_entered_zone_client = function (extension, socket_id, objective_unit)
 		-- function 3
-		local socket_from_id = self:socket_from_id(arg_3_1)
+		local socket = extension:socket_from_id(socket_id)
 
-		fassert(socket_from_id.open == true, "Socket was already occupied.")
+		fassert(socket.open == true, "Socket was already occupied.")
 
-		socket_from_id.open = false
+		socket.open = false
 
-		local num
+		local num_open_sockets = extension.num_open_sockets - 1
+		local num_closed_sockets = extension.num_closed_sockets + 1
 
-		self.num_open_sockets, num = self.num_open_sockets - 1, self.num_closed_sockets + 1
-		self.num_closed_sockets = num
+		extension.num_open_sockets = num_open_sockets
+		extension.num_closed_sockets = num_closed_sockets
 
-		local has_extension = ScriptUnit.has_extension(arg_3_2, "projectile_locomotion_system")
+		local projectile_extension = ScriptUnit.has_extension(objective_unit, "projectile_locomotion_system")
 
-		if not has_extension then
-			local owner_peer_id = has_extension.owner_peer_id
-			local player_from_peer_id = Managers.player:player_from_peer_id(owner_peer_id)
-			local flag = not player_from_peer_id and player_from_peer_id.player_unit
+		if projectile_extension then
+			local owner_peer_id = projectile_extension.owner_peer_id
+			local player = Managers.player:player_from_peer_id(owner_peer_id)
+			local player_unit = not not player and not not player.player_unit
 
-			if not flag then
-				self.owner_of_unit_that_occupied_socket[socket_from_id.socket_name] = flag
+			if player_unit then
+				extension.owner_of_unit_that_occupied_socket[socket.socket_name] = player_unit
 			end
 		end
 
-		local str = "lua_" .. socket_from_id.socket_name .. "_occupied"
+		local flow_event = "lua_" .. socket.socket_name .. "_occupied"
 
-		Unit.flow_event(self.unit, str)
+		Unit.flow_event(extension.unit, flow_event)
 
-		if num == self.num_sockets then
-			Unit.flow_event(self.unit, "lua_all_sockets_occupied")
+		if num_closed_sockets == extension.num_sockets then
+			Unit.flow_event(extension.unit, "lua_all_sockets_occupied")
 		end
 	end
 end
@@ -100,62 +114,68 @@ ObjectiveSocketSystem.destroy = function (self)
 	self.socket_extensions = nil
 end
 
-ObjectiveSocketSystem.on_add_extension = function (self, arg_5_1, arg_5_2, arg_5_3, arg_5_4)
+ObjectiveSocketSystem.on_add_extension = function (self, world, unit, extension_name, extension_init_data)
 	-- function 5
-	local on_add_extension = ObjectiveSocketSystem.super.on_add_extension(self, arg_5_1, arg_5_2, arg_5_3, arg_5_4, self.is_server)
+	local extension = ObjectiveSocketSystem.super.on_add_extension(self, world, unit, extension_name, extension_init_data, self.is_server)
 
-	if not self.is_server then
-		on_add_extension.objective_entered_zone_server = self.objective_entered_zone_server
+	if self.is_server then
+		extension.objective_entered_zone_server = self.objective_entered_zone_server
 	end
 
-	on_add_extension.objective_entered_zone_client = self.objective_entered_zone_client
-	on_add_extension.owner_of_unit_that_occupied_socket = {}
+	extension.objective_entered_zone_client = self.objective_entered_zone_client
+	extension.owner_of_unit_that_occupied_socket = {}
 
-	fassert(self.socket_extensions[arg_5_2] == nil, "This unit already has a socket extension.")
+	fassert(self.socket_extensions[unit] == nil, "This unit already has a socket extension.")
 
-	self.socket_extensions[arg_5_2] = on_add_extension
+	self.socket_extensions[unit] = extension
 
-	return on_add_extension
+	return extension
 end
 
-ObjectiveSocketSystem.on_remove_extension = function (arg_6_0, arg_6_1, arg_6_2)
+ObjectiveSocketSystem.on_remove_extension = function (self, unit, extension_name)
 	-- function 6
-	ObjectiveSocketSystem.super.on_remove_extension(arg_6_0, arg_6_1, arg_6_2)
+	ObjectiveSocketSystem.super.on_remove_extension(self, unit, extension_name)
 
-	arg_6_0.socket_extensions[arg_6_1] = nil
+	self.socket_extensions[unit] = nil
 end
 
-ObjectiveSocketSystem.hot_join_sync = function (self, arg_7_1)
+ObjectiveSocketSystem.hot_join_sync = function (self, peer_id)
 	-- function 7
-	for k, v in pairs(self.socket_extensions) do
-		local sockets = v.sockets
-		local num_sockets = v.num_sockets
-		local game_object_or_level_id, var_7_3 = self.network_manager:game_object_or_level_id(k)
+	for unit, extension in pairs(self.socket_extensions) do
+		local sockets = extension.sockets
+		local num_sockets = extension.num_sockets
+		local unit_id, is_level_unit = self.network_manager:game_object_or_level_id(unit)
 
-		for k_2 = 1, num_sockets do
-			if not sockets[k_2].open then
-				local var_7_4 = PEER_ID_TO_CHANNEL[arg_7_1]
+		for socket_id = 1, num_sockets do
+			local socket = sockets[socket_id]
 
-				RPC.rpc_objective_entered_socket_zone(var_7_4, game_object_or_level_id, k_2, var_7_3, false)
+			if not socket.open then
+				local channel_id = PEER_ID_TO_CHANNEL[peer_id]
+
+				RPC.rpc_objective_entered_socket_zone(channel_id, unit_id, socket_id, is_level_unit, false)
 			end
 		end
 	end
 end
 
-ObjectiveSocketSystem.rpc_objective_entered_socket_zone = function (self, arg_8_1, arg_8_2, arg_8_3, arg_8_4, arg_8_5)
+ObjectiveSocketSystem.rpc_objective_entered_socket_zone = function (self, channel_id, unit_id, socket_id, is_level_unit, is_limited_objective_unit)
 	-- function 8
 	fassert(not self.is_server, "Should only be called on the client")
 
-	local game_object_or_level_unit = self.network_manager:game_object_or_level_unit(arg_8_2, arg_8_4)
+	local unit = self.network_manager:game_object_or_level_unit(unit_id, is_level_unit)
 
-	if not arg_8_5 then
-		Managers.state.achievement:trigger_event("objective_entered_socket_zone", false, arg_8_5)
+	if is_limited_objective_unit then
+		Managers.state.achievement:trigger_event("objective_entered_socket_zone", false, is_limited_objective_unit)
 	end
 
-	ScriptUnit.extension(game_object_or_level_unit, "objective_socket_system"):objective_entered_zone_client(arg_8_3)
+	local objective_socket_extension = ScriptUnit.extension(unit, "objective_socket_system")
+
+	objective_socket_extension:objective_entered_zone_client(socket_id)
 end
 
-ObjectiveSocketSystem.get_owner_of_unit_that_occupied_socket = function (self, arg_9_1, arg_9_2)
+ObjectiveSocketSystem.get_owner_of_unit_that_occupied_socket = function (self, socket_unit, socket_name)
 	-- function 9
-	return self.socket_extensions[arg_9_1].owner_of_unit_that_occupied_socket[arg_9_2]
+	local extension = self.socket_extensions[socket_unit]
+
+	return extension.owner_of_unit_that_occupied_socket[socket_name]
 end

@@ -1,12 +1,12 @@
 -- chunkname: @scripts/settings/dlcs/wizards/wizards_common_settings_part_2.lua
 
-local wizards_part_2 = DLCSettings.wizards_part_2
+local settings = DLCSettings.wizards_part_2
 
-wizards_part_2.entity_extensions = {
+settings.entity_extensions = {
 	"scripts/unit_extensions/wizards/ward_extension",
 	"scripts/unit_extensions/wizards/shockwave_spell_extension"
 }
-wizards_part_2.entity_system_params = {
+settings.entity_system_params = {
 	ward_extension = {
 		system_class_name = "WardSystem",
 		system_name = "ward_system",
@@ -22,16 +22,16 @@ wizards_part_2.entity_system_params = {
 		}
 	}
 }
-wizards_part_2.systems = {
+settings.systems = {
 	"scripts/entity_system/systems/ward/ward_system"
 }
-wizards_part_2.unit_extension_templates = {
+settings.unit_extension_templates = {
 	"scripts/settings/dlcs/wizards/wizards_extension_templates_part_2"
 }
-wizards_part_2.statistics_definitions = {
+settings.statistics_definitions = {
 	"scripts/managers/backend/statistics_definitions_wizards_part_2"
 }
-wizards_part_2.statistics_lookup = {
+settings.statistics_lookup = {
 	"tower_skulls",
 	"tower_wall_illusions",
 	"tower_invisible_bridge",
@@ -40,11 +40,11 @@ wizards_part_2.statistics_lookup = {
 	"tower_created_all_potions",
 	"tower_time_challenge"
 }
-wizards_part_2.network_go_types = {
+settings.network_go_types = {
 	"pickup_projectile_wizards_barrel"
 }
-wizards_part_2.husk_lookup = {}
-wizards_part_2.projectile_units = {
+settings.husk_lookup = {}
+settings.projectile_units = {
 	vfx_scripted_projectile_unit = {
 		dummy_linker_unit_name = "units/weapons/projectile/end_fight_tower/magic_missile_tower",
 		transient_package_loader_ignore = true,
@@ -61,7 +61,7 @@ wizards_part_2.projectile_units = {
 		projectile_unit_name = "units/weapons/projectile/end_fight_tower/olesya_magic_missile_tower"
 	}
 }
-wizards_part_2.projectiles = {
+settings.projectiles = {
 	vfx_scripted_projectile_unit = {
 		projectile_units_template = "vfx_scripted_projectile_unit",
 		radius = 0.2,
@@ -74,20 +74,20 @@ wizards_part_2.projectiles = {
 		impact_collision_filter = "filter_physics_projectile"
 	}
 }
-wizards_part_2.effects = {
+settings.effects = {
 	"fx/ethereal_skulls_teleport_01"
 }
-wizards_part_2.unlock_settings = {
+settings.unlock_settings = {
 	wizards_part_2 = {
 		class = "AlwaysUnlocked"
 	}
 }
-wizards_part_2.unlock_settings_xb1 = {
+settings.unlock_settings_xb1 = {
 	wizards_part_2 = {
 		class = "AlwaysUnlocked"
 	}
 }
-wizards_part_2.unlock_settings_ps4 = {
+settings.unlock_settings_ps4 = {
 	CUSA13595_00 = {
 		wizards_part_2 = {
 			class = "AlwaysUnlocked"
@@ -99,224 +99,235 @@ wizards_part_2.unlock_settings_ps4 = {
 		}
 	}
 }
-wizards_part_2.game_object_initializers = {
-	vfx_scripted_projectile_unit = function (arg_1_0, arg_1_1, arg_1_2, arg_1_3)
+settings.game_object_initializers = {
+	vfx_scripted_projectile_unit = function (unit, unit_name, unit_template, gameobject_functor_context)
 		-- function 1
-		local extension = ScriptUnit.extension(arg_1_0, "projectile_locomotion_system")
-		local angle = extension.angle
-		local target_vector = extension.target_vector
-		local unbox = extension.initial_position_boxed:unbox()
-		local speed = extension.speed
-		local gravity_settings = extension.gravity_settings
-		local trajectory_template_name = extension.trajectory_template_name
-		local rotation_speed = extension.rotation_speed
-		local num = -(extension.t - Managers.time:time("game"))
-		local str = "filter_environment_overlap"
-		local impact_template_name = ScriptUnit.extension(arg_1_0, "projectile_system").impact_template_name
-
-		return {
+		local locomotion_extension = ScriptUnit.extension(unit, "projectile_locomotion_system")
+		local angle = locomotion_extension.angle
+		local target_vector = locomotion_extension.target_vector
+		local initial_position = locomotion_extension.initial_position_boxed:unbox()
+		local speed = locomotion_extension.speed
+		local gravity_settings = locomotion_extension.gravity_settings
+		local trajectory_template_name = locomotion_extension.trajectory_template_name
+		local rotation_speed = locomotion_extension.rotation_speed
+		local fast_forward_time = -(locomotion_extension.t - Managers.time:time("game"))
+		local IMPACT_COLLISION_FILTER = "filter_environment_overlap"
+		local projectile_extension = ScriptUnit.extension(unit, "projectile_system")
+		local impact_template_name = projectile_extension.impact_template_name
+		local data_table = {
 			sphere_radius = 0.5,
 			only_one_impact = true,
 			go_type = NetworkLookup.go_types.vfx_scripted_projectile_unit,
-			husk_unit = NetworkLookup.husks[arg_1_1],
-			position = Unit.local_position(arg_1_0, 0),
-			rotation = Unit.local_rotation(arg_1_0, 0),
+			husk_unit = NetworkLookup.husks[unit_name],
+			position = Unit.local_position(unit, 0),
+			rotation = Unit.local_rotation(unit, 0),
 			angle = angle,
-			initial_position = unbox,
+			initial_position = initial_position,
 			target_vector = target_vector,
 			speed = speed,
 			gravity_settings = NetworkLookup.projectile_gravity_settings[gravity_settings],
 			trajectory_template_name = NetworkLookup.projectile_templates[trajectory_template_name],
-			debug_pos = Unit.local_position(arg_1_0, 0),
-			fast_forward_time = num,
+			debug_pos = Unit.local_position(unit, 0),
+			fast_forward_time = fast_forward_time,
 			impact_template_name = NetworkLookup.projectile_templates[impact_template_name],
-			collision_filter = str
+			collision_filter = IMPACT_COLLISION_FILTER
 		}
+
+		return data_table
 	end
 }
-wizards_part_2.game_object_extractors = {
-	vfx_scripted_projectile_unit = function (arg_2_0, arg_2_1, arg_2_2, arg_2_3, arg_2_4)
+settings.game_object_extractors = {
+	vfx_scripted_projectile_unit = function (game_session, go_id, owner_id, unit, gameobject_functor_context)
 		-- function 2
-		local game_object_field = GameSession.game_object_field(arg_2_0, arg_2_1, "angle")
-		local game_object_field_2 = GameSession.game_object_field(arg_2_0, arg_2_1, "target_vector")
-		local game_object_field_3 = GameSession.game_object_field(arg_2_0, arg_2_1, "initial_position")
-		local game_object_field_4 = GameSession.game_object_field(arg_2_0, arg_2_1, "speed")
-		local game_object_field_5 = GameSession.game_object_field(arg_2_0, arg_2_1, "gravity_settings")
-		local game_object_field_6 = GameSession.game_object_field(arg_2_0, arg_2_1, "trajectory_template_name")
-		local time = Managers.time:time("game")
-		local game_object_field_7 = GameSession.game_object_field(arg_2_0, arg_2_1, "fast_forward_time")
-		local game_object_field_8 = GameSession.game_object_field(arg_2_0, arg_2_1, "impact_template_name")
-		local str = "filter_environment_overlap"
-		local tbl = {
+		local angle = GameSession.game_object_field(game_session, go_id, "angle")
+		local target_vector = GameSession.game_object_field(game_session, go_id, "target_vector")
+		local initial_position = GameSession.game_object_field(game_session, go_id, "initial_position")
+		local speed = GameSession.game_object_field(game_session, go_id, "speed")
+		local gravity_settings = GameSession.game_object_field(game_session, go_id, "gravity_settings")
+		local trajectory_template_name = GameSession.game_object_field(game_session, go_id, "trajectory_template_name")
+		local time_initialized = Managers.time:time("game")
+		local fast_forward_time = GameSession.game_object_field(game_session, go_id, "fast_forward_time")
+		local impact_template_name = GameSession.game_object_field(game_session, go_id, "impact_template_name")
+		local IMPACT_COLLISION_FILTER = "filter_environment_overlap"
+		local extension_init_data = {
 			projectile_locomotion_system = {
 				is_husk = true,
-				angle = game_object_field,
-				speed = game_object_field_4,
-				target_vector = game_object_field_2,
-				initial_position = game_object_field_3,
-				gravity_settings = NetworkLookup.projectile_gravity_settings[game_object_field_5],
-				trajectory_template_name = NetworkLookup.projectile_templates[game_object_field_6],
-				fast_forward_time = game_object_field_7
+				angle = angle,
+				speed = speed,
+				target_vector = target_vector,
+				initial_position = initial_position,
+				gravity_settings = NetworkLookup.projectile_gravity_settings[gravity_settings],
+				trajectory_template_name = NetworkLookup.projectile_templates[trajectory_template_name],
+				fast_forward_time = fast_forward_time
 			},
 			projectile_impact_system = {
 				only_one_impact = true,
 				sphere_radius = 0.5,
-				collision_filter = str
+				collision_filter = IMPACT_COLLISION_FILTER
 			},
 			projectile_system = {
-				impact_template_name = NetworkLookup.projectile_templates[game_object_field_8],
-				time_initialized = time
+				impact_template_name = NetworkLookup.projectile_templates[impact_template_name],
+				time_initialized = time_initialized
 			}
 		}
+		local unit_template_name = "vfx_scripted_projectile_unit"
 
-		return "vfx_scripted_projectile_unit", tbl
+		return unit_template_name, extension_init_data
 	end
 }
-wizards_part_2.ai_group_templates = {
+settings.ai_group_templates = {
 	destructible_defenders = {
-		setup_group = function (arg_3_0, arg_3_1, arg_3_2)
+		setup_group = function (world, nav_world, group)
 			-- function 3
 			return
 		end,
-		init = function (arg_4_0, arg_4_1, arg_4_2, arg_4_3)
+		init = function (world, nav_world, group, t)
 			-- function 4
 			return
 		end,
-		update = function (arg_5_0, arg_5_1, arg_5_2, arg_5_3)
+		update = function (world, nav_world, group, t)
 			-- function 5
 			return
 		end,
-		destroy = function (arg_6_0, arg_6_1, arg_6_2)
+		destroy = function (world, nav_world, group)
 			-- function 6
 			return
 		end,
-		set_group_aggressive = function (arg_7_0, arg_7_1)
+		set_group_aggressive = function (group, preferred_target)
 			-- function 7
-			Managers.state.entity:system("ai_group_system"):run_func_on_all_members(arg_7_0, AIGroupTemplates.destructible_defenders.set_unit_aggressive, arg_7_1)
+			Managers.state.entity:system("ai_group_system"):run_func_on_all_members(group, AIGroupTemplates.destructible_defenders.set_unit_aggressive, preferred_target)
 		end,
-		set_unit_aggressive = function (arg_8_0, arg_8_1, arg_8_2)
+		set_unit_aggressive = function (unit, group, preferred_target)
 			-- function 8
-			if not ALIVE[arg_8_0] then
+			if not ALIVE[unit] then
 				return
 			end
 
-			local var_8_0 = BLACKBOARDS[arg_8_0]
+			local blackboard = BLACKBOARDS[unit]
 
-			if not arg_8_2 then
-				ScriptUnit.extension(arg_8_0, "ai_system"):enemy_aggro(nil, arg_8_2)
+			if preferred_target then
+				local ai_simple = ScriptUnit.extension(unit, "ai_system")
+
+				ai_simple:enemy_aggro(nil, preferred_target)
 			end
 
-			AiUtils.activate_unit(var_8_0)
+			AiUtils.activate_unit(blackboard)
 
-			var_8_0.defend = false
+			blackboard.defend = false
 		end
 	},
 	ethereal_skulls = {
-		try_spawn_group = function (arg_9_0, arg_9_1)
+		try_spawn_group = function (state, interactor_unit)
 			-- function 9
-			local ethereal_skulls = AIGroupTemplates.ethereal_skulls
-			local last_state = ethereal_skulls.last_state
+			local group_template = AIGroupTemplates.ethereal_skulls
+			local last_state = group_template.last_state
 
-			if not (arg_9_0 ~= "picked_up" or last_state == "spawned") then
+			if state ~= "picked_up" or last_state ~= "spawned" then
 				return
 			end
 
-			ethereal_skulls.last_state = arg_9_0
+			group_template.last_state = state
 
-			if not ethereal_skulls.group_size then
-				local get_difficulty_index = Managers.state.difficulty:get_difficulty_index()
+			if not group_template.group_size then
+				local difficulty_index = Managers.state.difficulty:get_difficulty_index()
+				local settings = DLCSettings.wizards_part_2.ethereal_skull_settings
 
-				ethereal_skulls.group_size = DLCSettings.wizards_part_2.ethereal_skull_settings.num_spawned_per_difficulty[get_difficulty_index]
+				group_template.group_size = settings.num_spawned_per_difficulty[difficulty_index]
 			end
 
-			local group_id = ethereal_skulls.group_id
-			local group_size = ethereal_skulls.group_size
-			local get_ai_group = Managers.state.entity:system("ai_group_system"):get_ai_group(group_id)
+			local group_id = group_template.group_id
+			local group_size = group_template.group_size
+			local group = Managers.state.entity:system("ai_group_system"):get_ai_group(group_id)
 
-			if not (not group_id and get_ai_group) then
-				ethereal_skulls.create_group(ethereal_skulls, arg_9_0, arg_9_1, group_size)
+			if not group_id or not group then
+				group_template.create_group(group_template, state, interactor_unit, group_size)
 
 				return
 			end
 
-			local num = group_size - table.size(get_ai_group.members)
+			local num_to_spawn = group_size - table.size(group.members)
 
-			if num > 0 then
-				get_ai_group.num_spawned_members = get_ai_group.num_spawned_members - num
+			if num_to_spawn > 0 then
+				group.num_spawned_members = group.num_spawned_members - num_to_spawn
 
-				ethereal_skulls.add_group_members(arg_9_0, arg_9_1, group_id, group_size, num)
+				group_template.add_group_members(state, interactor_unit, group_id, group_size, num_to_spawn)
 			end
 		end,
-		create_group = function (self, arg_10_1, arg_10_2, arg_10_3)
+		create_group = function (group_template, state, interactor_unit, group_size)
 			-- function 10
-			local generate_group_id = Managers.state.entity:system("ai_group_system"):generate_group_id()
+			local group_id = Managers.state.entity:system("ai_group_system"):generate_group_id()
 
-			self.group_id = generate_group_id
+			group_template.group_id = group_id
 
-			self.add_group_members(arg_10_1, arg_10_2, generate_group_id, arg_10_3, arg_10_3)
+			group_template.add_group_members(state, interactor_unit, group_id, group_size, group_size)
 		end,
-		init = function (arg_11_0, arg_11_1, arg_11_2, arg_11_3)
+		init = function (world, nav_world, group, t)
 			-- function 11
 			return
 		end,
-		update = function (arg_12_0, arg_12_1, arg_12_2, arg_12_3)
+		update = function (world, nav_world, group, t)
 			-- function 12
 			return
 		end,
-		destroy = function (arg_13_0, arg_13_1, arg_13_2)
+		destroy = function (world, nav_world, group)
 			-- function 13
 			return
 		end,
-		add_group_members = function (arg_14_0, arg_14_1, arg_14_2, arg_14_3, arg_14_4)
+		add_group_members = function (state, interactor_unit, group_id, group_size, num_to_spawn)
 			-- function 14
-			local var_14_0 = Vector3(20.5, 76.7, 155.5)
-			local tbl = {
-				sofia_unit_pos = Vector3Box(var_14_0),
-				target = arg_14_1,
-				prepare_func = function (self, arg_15_1)
-					-- function 15
-					local flag = false
+			local sofia_pos = Vector3(20.5, 76.7, 155.5)
+			local optional_data = {}
 
-					self.modify_extension_init_data(self, flag, arg_15_1)
-				end,
-				spawned_func = function (arg_16_0, arg_16_1, arg_16_2)
-					-- function 16
-					local var_16_0 = BLACKBOARDS[arg_16_0]
+			optional_data.sofia_unit_pos = Vector3Box(sofia_pos)
+			optional_data.target = interactor_unit
 
-					if not var_16_0 then
-						var_16_0.sofia_unit_pos = arg_16_2.sofia_unit_pos
-						var_16_0.target = arg_16_2.target
-					end
+			optional_data.prepare_func = function (breed, extension_init_data)
+				-- function 15
+				local is_husk = false
+
+				breed.modify_extension_init_data(breed, is_husk, extension_init_data)
+			end
+
+			optional_data.spawned_func = function (unit, breed, optional_data)
+				-- function 16
+				local blackboard = BLACKBOARDS[unit]
+
+				if blackboard then
+					blackboard.sofia_unit_pos = optional_data.sofia_unit_pos
+					blackboard.target = optional_data.target
 				end
-			}
-			local tbl_2 = {
+			end
+
+			local group_data = {
 				template = "ethereal_skulls",
-				id = arg_14_2,
-				size = arg_14_3
+				id = group_id,
+				size = group_size
 			}
 			local up = Vector3.up()
 			local right = Vector3.right()
-			local identity = Quaternion.identity()
-			local var_14_6 = Vector3(0, 0, 3)
-			local num = 3
-			local num_2 = math.pi * 2 / arg_14_4
+			local spawn_rot = Quaternion.identity()
+			local height = Vector3(0, 0, 3)
+			local dist_from_origin = 3
+			local step = math.pi * 2 / num_to_spawn
 
-			for i = 1, arg_14_4 do
-				local num_3 = var_14_0 + (Quaternion.rotate(Quaternion(up, num_2 * i), right) * num + var_14_6)
+			for i = 1, num_to_spawn do
+				local relative_pos = Quaternion.rotate(Quaternion(up, step * i), right) * dist_from_origin + height
+				local spawn_pos = sofia_pos + relative_pos
 
-				var_14_6.z = var_14_6.z + 0.3
+				height.z = height.z + 0.3
 
-				local str = "fx/ethereal_skulls_teleport_01"
+				local teleport_effect = "fx/ethereal_skulls_teleport_01"
 
-				if not str then
-					local var_14_11 = NetworkLookup.effects[str]
-					local num_4 = 0
-					local identity_2 = Quaternion.identity()
+				if teleport_effect then
+					local effect_name_id = NetworkLookup.effects[teleport_effect]
+					local node_id = 0
+					local rotation_offset = Quaternion.identity()
+					local network_manager = Managers.state.network
 
-					Managers.state.network:rpc_play_particle_effect(nil, var_14_11, NetworkConstants.invalid_game_object_id, num_4, num_3, identity_2, false)
+					network_manager:rpc_play_particle_effect(nil, effect_name_id, NetworkConstants.invalid_game_object_id, node_id, spawn_pos, rotation_offset, false)
 				end
 
-				Managers.state.conflict:spawn_queued_unit(Breeds.tower_homing_skull, Vector3Box(num_3), QuaternionBox(identity), nil, "spawn_idle", nil, tbl, tbl_2)
+				Managers.state.conflict:spawn_queued_unit(Breeds.tower_homing_skull, Vector3Box(spawn_pos), QuaternionBox(spawn_rot), nil, "spawn_idle", nil, optional_data, group_data)
 			end
 		end
 	}

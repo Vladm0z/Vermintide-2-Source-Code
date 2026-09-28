@@ -1,18 +1,28 @@
 -- chunkname: @scripts/ui/views/hero_view/states/definitions/hero_view_state_loot_definitions.lua
 
-local hero_panel_height = UISettings.hero_panel_height
+local panel_height = UISettings.hero_panel_height
 local console_menu_scenegraphs = UISettings.console_menu_scenegraphs
-local console_menu_rect_color = UISettings.console_menu_rect_color
-local tbl = {
+local panel_color = UISettings.console_menu_rect_color
+local grid_size = {
 	520,
 	600
 }
-local flag
+local num
 
-flag = not IS_CONSOLE and 5 and 5
+if IS_CONSOLE then
+	num = 5
 
-local flag_2 = true
-local tbl_2 = {
+	goto label_0_0
+end
+
+num = 5
+
+local num_loot_options = num
+
+::label_0_0::
+
+local USE_DELAYED_SPAWN = true
+local scenegraph_definition = {
 	screen = console_menu_scenegraphs.screen,
 	area = console_menu_scenegraphs.area,
 	area_left = console_menu_scenegraphs.area_left,
@@ -199,7 +209,7 @@ local tbl_2 = {
 		vertical_alignment = "center",
 		parent = "item_grid_root",
 		horizontal_alignment = "left",
-		size = tbl,
+		size = grid_size,
 		position = {
 			50,
 			0,
@@ -740,11 +750,11 @@ local tbl_2 = {
 	}
 }
 
-for i = 1, flag do
-	local num = (i - 1) * 3 + 1
-	local str = "loot_option_" .. num
+for i = 1, num_loot_options do
+	local idx = (i - 1) * 3 + 1
+	local id = "loot_option_" .. idx
 
-	tbl_2[str] = {
+	scenegraph_definition[id] = {
 		vertical_alignment = "center",
 		parent = "loot_options_root",
 		horizontal_alignment = "center",
@@ -758,10 +768,10 @@ for i = 1, flag do
 			1
 		}
 	}
-	tbl_2[str .. "_center"] = {
+	scenegraph_definition[id .. "_center"] = {
 		vertical_alignment = "center",
 		horizontal_alignment = "center",
-		parent = str,
+		parent = id,
 		size = {
 			0,
 			0
@@ -772,10 +782,10 @@ for i = 1, flag do
 			1
 		}
 	}
-	tbl_2["gamepad_tooltip_option_" .. num] = {
+	scenegraph_definition["gamepad_tooltip_option_" .. idx] = {
 		vertical_alignment = "center",
 		horizontal_alignment = "center",
-		parent = str,
+		parent = id,
 		size = {
 			450,
 			0
@@ -787,10 +797,10 @@ for i = 1, flag do
 		}
 	}
 
-	local num_2 = (i - 1) * 3 + 2
-	local str_2 = "loot_option_" .. num_2
+	local idx = (i - 1) * 3 + 2
+	local id = "loot_option_" .. idx
 
-	tbl_2[str_2] = {
+	scenegraph_definition[id] = {
 		vertical_alignment = "center",
 		parent = "loot_options_root",
 		horizontal_alignment = "center",
@@ -804,10 +814,10 @@ for i = 1, flag do
 			1
 		}
 	}
-	tbl_2[str_2 .. "_center"] = {
+	scenegraph_definition[id .. "_center"] = {
 		vertical_alignment = "center",
 		horizontal_alignment = "center",
-		parent = str_2,
+		parent = id,
 		size = {
 			0,
 			0
@@ -818,10 +828,10 @@ for i = 1, flag do
 			1
 		}
 	}
-	tbl_2["gamepad_tooltip_option_" .. num_2] = {
+	scenegraph_definition["gamepad_tooltip_option_" .. idx] = {
 		vertical_alignment = "center",
 		horizontal_alignment = "center",
-		parent = str_2,
+		parent = id,
 		size = {
 			450,
 			0
@@ -833,10 +843,10 @@ for i = 1, flag do
 		}
 	}
 
-	local num_3 = (i - 1) * 3 + 3
-	local str_3 = "loot_option_" .. num_3
+	local idx = (i - 1) * 3 + 3
+	local id = "loot_option_" .. idx
 
-	tbl_2[str_3] = {
+	scenegraph_definition[id] = {
 		vertical_alignment = "center",
 		parent = "loot_options_root",
 		horizontal_alignment = "center",
@@ -850,10 +860,10 @@ for i = 1, flag do
 			1
 		}
 	}
-	tbl_2[str_3 .. "_center"] = {
+	scenegraph_definition[id .. "_center"] = {
 		vertical_alignment = "center",
 		horizontal_alignment = "center",
-		parent = str_3,
+		parent = id,
 		size = {
 			0,
 			0
@@ -864,10 +874,10 @@ for i = 1, flag do
 			1
 		}
 	}
-	tbl_2["gamepad_tooltip_option_" .. num_3] = {
+	scenegraph_definition["gamepad_tooltip_option_" .. idx] = {
 		vertical_alignment = "center",
 		horizontal_alignment = "center",
-		parent = str_3,
+		parent = id,
 		size = {
 			450,
 			0
@@ -880,7 +890,7 @@ for i = 1, flag do
 	}
 end
 
-local tbl_3 = {
+local loot_option_positions_by_amount = {
 	{
 		{
 			0,
@@ -924,7 +934,7 @@ local tbl_3 = {
 		}
 	}
 }
-local tbl_4 = {
+local title_text_style = {
 	word_wrap = true,
 	upper_case = true,
 	localize = false,
@@ -940,7 +950,7 @@ local tbl_4 = {
 		2
 	}
 }
-local tbl_5 = {
+local sub_title_text_style = {
 	word_wrap = true,
 	upper_case = false,
 	localize = false,
@@ -956,7 +966,7 @@ local tbl_5 = {
 		2
 	}
 }
-local tbl_6 = {
+local warning_text_style = {
 	font_size = 36,
 	upper_case = false,
 	localize = false,
@@ -971,7 +981,7 @@ local tbl_6 = {
 		2
 	}
 }
-local tbl_7 = {
+local info_title_text_style = {
 	word_wrap = true,
 	upper_case = false,
 	localize = false,
@@ -987,7 +997,7 @@ local tbl_7 = {
 		2
 	}
 }
-local tbl_8 = {
+local info_text_style = {
 	word_wrap = true,
 	upper_case = false,
 	localize = true,
@@ -1003,7 +1013,7 @@ local tbl_8 = {
 		2
 	}
 }
-local tbl_9 = {
+local page_number_left_text_style = {
 	word_wrap = true,
 	font_size = 26,
 	localize = false,
@@ -1018,7 +1028,7 @@ local tbl_9 = {
 		2
 	}
 }
-local tbl_10 = {
+local page_number_right_text_style = {
 	word_wrap = true,
 	font_size = 26,
 	localize = false,
@@ -1033,7 +1043,7 @@ local tbl_10 = {
 		2
 	}
 }
-local tbl_11 = {
+local page_number_center_text_style = {
 	word_wrap = true,
 	font_size = 26,
 	localize = false,
@@ -1048,7 +1058,7 @@ local tbl_11 = {
 		2
 	}
 }
-local tbl_12 = {
+local item_grid_title_style = {
 	word_wrap = false,
 	font_size = 56,
 	localize = false,
@@ -1063,7 +1073,7 @@ local tbl_12 = {
 		2
 	}
 }
-local tbl_13 = {
+local settings_by_screen = {
 	{
 		description = "n/a",
 		name = "loot",
@@ -1081,13 +1091,13 @@ local tbl_13 = {
 		item_filter = "slot_type == " .. ItemType.LOOT_CHEST
 	}
 }
-local tbl_14 = {}
+local option_icons = {}
 
-for i_2, v in ipairs(tbl_13) do
-	tbl_14[#tbl_14 + 1] = "tabs_icon_all_selected"
+for index, settings in ipairs(settings_by_screen) do
+	option_icons[#option_icons + 1] = "tabs_icon_all_selected"
 end
 
-local tbl_15 = {
+local viewport_widget = {
 	scenegraph_id = "dead_space_filler",
 	element = {
 		passes = {
@@ -1134,7 +1144,7 @@ local tbl_15 = {
 		button_hotspot = {}
 	}
 }
-local tbl_16 = {
+local arrow_right = {
 	scenegraph_id = "arrow_root",
 	element = {
 		passes = {
@@ -1220,7 +1230,7 @@ local tbl_16 = {
 		0
 	}
 }
-local tbl_17 = {
+local arrow_left = {
 	scenegraph_id = "arrow_root",
 	element = {
 		passes = {
@@ -1331,12 +1341,12 @@ local tbl_17 = {
 	}
 }
 
-local function fn(arg_2_0, arg_2_1)
+local function create_loot_preview_widget(scenegraph_id, size)
 	-- function 2
-	local tbl = {
+	local widget = {
 		element = {}
 	}
-	local tbl_2 = {
+	local passes = {
 		{
 			pass_type = "viewport",
 			style_id = "viewport"
@@ -1346,19 +1356,19 @@ local function fn(arg_2_0, arg_2_1)
 			content_id = "button_hotspot"
 		}
 	}
-	local tbl_3 = {
+	local content = {
 		activated = true,
 		button_hotspot = {}
 	}
-	local tbl_4 = {
+	local style = {
 		viewport = {
 			layer = 990,
 			shading_environment = "environment/blank_offscreen_chest_item",
 			viewport_type = "default_forward",
 			enable_sub_gui = false,
 			fov = 65,
-			world_name = arg_2_0,
-			viewport_name = arg_2_0,
+			world_name = scenegraph_id,
+			viewport_name = scenegraph_id,
 			camera_position = {
 				0,
 				0,
@@ -1372,54 +1382,54 @@ local function fn(arg_2_0, arg_2_1)
 		}
 	}
 
-	tbl.element.passes = tbl_2
-	tbl.content = tbl_3
-	tbl.style = tbl_4
-	tbl.offset = {
+	widget.element.passes = passes
+	widget.content = content
+	widget.style = style
+	widget.offset = {
 		0,
 		0,
 		0
 	}
-	tbl.scenegraph_id = arg_2_0
+	widget.scenegraph_id = scenegraph_id
 
-	return tbl
+	return widget
 end
 
-local function fn_2(arg_3_0, arg_3_1)
+local function create_loot_widget(index, size)
 	-- function 3
-	local menu_frame_09 = UIFrameSettings.menu_frame_09
-	local tbl = {
+	local frame_settings = UIFrameSettings.menu_frame_09
+	local texture_size = {
 		80,
 		80
 	}
-	local tbl_2 = {
+	local widget = {
 		element = {}
 	}
-	local tbl_3 = {
+	local passes = {
 		{
 			style_id = "button_hotspot",
 			pass_type = "hotspot",
 			content_id = "button_hotspot",
-			content_check_function = function (self)
+			content_check_function = function (content)
 				-- function 4
-				return not self.parent.presentation_complete
+				return not content.parent.presentation_complete
 			end
 		},
 		{
 			style_id = "item_icon",
 			pass_type = "hotspot",
 			content_id = "item_hotspot",
-			content_check_function = function (self)
+			content_check_function = function (content)
 				-- function 5
-				return self.parent.presentation_complete
+				return content.parent.presentation_complete
 			end
 		},
 		{
 			pass_type = "hotspot",
 			content_id = "item_hotspot_2",
-			content_check_function = function (self)
+			content_check_function = function (content)
 				-- function 6
-				return self.parent.presentation_complete
+				return content.parent.presentation_complete
 			end
 		},
 		{
@@ -1446,13 +1456,21 @@ local function fn_2(arg_3_0, arg_3_1)
 			item_id = "item",
 			style_id = "item_tooltip",
 			pass_type = "item_tooltip",
-			content_check_function = function (self)
+			content_check_function = function (content)
 				-- function 7
-				local is_hover = self.item_hotspot.is_hover
+				local is_hover_2 = content.item_hotspot.is_hover
 
-				is_hover = is_hover or self.item_hotspot_2.is_hover
+				if not is_hover_2 then
+					-- Nothing
+				end
 
-				return not is_hover and self.item
+				is_hover_2 = content.item_hotspot_2.is_hover
+
+				local is_hover = is_hover_2
+
+				::label_7_0::
+
+				return not not is_hover and not not content.item
 			end
 		},
 		{
@@ -1469,11 +1487,12 @@ local function fn_2(arg_3_0, arg_3_1)
 			pass_type = "texture",
 			style_id = "illusion_overlay",
 			texture_id = "illusion_overlay",
-			content_check_function = function (self)
+			content_check_function = function (content)
 				-- function 8
-				local item = self.item
+				local item = content.item
+				local item_skin = not not item and not not item.skin
 
-				if not (not item and item.skin) then
+				if item_skin then
 					return item.data.item_type == "weapon_skin"
 				end
 			end
@@ -1482,13 +1501,13 @@ local function fn_2(arg_3_0, arg_3_1)
 			pass_type = "texture",
 			style_id = "illusion_icon",
 			texture_id = "illusion_icon",
-			content_check_function = function (self)
+			content_check_function = function (content)
 				-- function 9
-				local item = self.item
-				local flag = not item and item.skin
+				local item = content.item
+				local item_skin = not not item and not not item.skin
 
-				if not flag then
-					return item.data.item_type == "weapon_skin" or WeaponSkins.default_skins[item.key] ~= flag
+				if item_skin then
+					return item.data.item_type ~= "weapon_skin" and WeaponSkins.default_skins[item.key] ~= item_skin
 				end
 			end
 		},
@@ -1496,9 +1515,9 @@ local function fn_2(arg_3_0, arg_3_1)
 			pass_type = "texture_frame",
 			style_id = "frame",
 			texture_id = "frame",
-			content_check_function = function (self)
+			content_check_function = function (content)
 				-- function 10
-				return self.draw_frame
+				return content.draw_frame
 			end
 		},
 		{
@@ -1565,51 +1584,61 @@ local function fn_2(arg_3_0, arg_3_1)
 			pass_type = "texture",
 			style_id = "image",
 			texture_id = "image",
-			content_check_function = function (self)
+			content_check_function = function (content)
 				-- function 11
-				return self.image
+				return content.image
 			end
 		},
 		{
 			style_id = "loading_icon",
 			texture_id = "loading_icon",
 			pass_type = "rotated_texture",
-			content_check_function = function (self)
+			content_check_function = function (content)
 				-- function 12
-				return self.is_loading
+				return content.is_loading
 			end,
-			content_change_function = function (arg_13_0, arg_13_1, arg_13_2, arg_13_3)
+			content_change_function = function (content, style, _, dt)
 				-- function 13
-				local progress = arg_13_1.progress
+				local progress_2 = style.progress
 
-				progress = progress or 0
+				if not progress_2 then
+					-- Nothing
+				end
 
-				local num = (progress + arg_13_3) % 1
+				progress_2 = 0
 
-				arg_13_1.angle = math.pow(2, math.smoothstep(num, 0, 1)) * (math.pi * 2)
-				arg_13_1.progress = num
+				local progress = progress_2
+
+				::label_13_0::
+
+				progress = (progress + dt) % 1
+
+				local angle = math.pow(2, math.smoothstep(progress, 0, 1)) * (math.pi * 2)
+
+				style.angle = angle
+				style.progress = progress
 			end
 		},
 		{
 			style_id = "amount_text",
 			pass_type = "text",
 			text_id = "amount_text",
-			content_check_function = function (self)
+			content_check_function = function (content)
 				-- function 14
-				return self.amount_text
+				return content.amount_text
 			end
 		},
 		{
 			style_id = "amount_text_shadow",
 			pass_type = "text",
 			text_id = "amount_text",
-			content_check_function = function (self)
+			content_check_function = function (content)
 				-- function 15
-				return self.amount_text
+				return content.amount_text
 			end
 		}
 	}
-	local tbl_4 = {
+	local content = {
 		loading_icon = "loot_loading",
 		draw_frame = false,
 		lock_glow_1 = "loot_presentation_glow_04",
@@ -1631,7 +1660,7 @@ local function fn_2(arg_3_0, arg_3_1)
 		final_glow = "loot_presentation_circle_glow_plentiful_large",
 		item_name = "n/a",
 		lock_glow_2 = "loot_presentation_glow_03",
-		frame = menu_frame_09.texture,
+		frame = frame_settings.texture,
 		item_hotspot = {},
 		item_hotspot_2 = {
 			allow_multi_hover = true
@@ -1640,24 +1669,24 @@ local function fn_2(arg_3_0, arg_3_1)
 			hover_type = "circle"
 		}
 	}
-	local tbl_5 = {
+	local style = {
 		button_hotspot = {
 			size = {
 				400,
 				400
 			},
 			offset = {
-				arg_3_1[1] / 2 - 200,
-				arg_3_1[2] / 2 - 200,
+				size[1] / 2 - 200,
+				size[2] / 2 - 200,
 				0
 			}
 		},
 		frame = {
 			size = {
-				[2] = arg_3_1[2]
+				[2] = size[2]
 			},
-			texture_size = menu_frame_09.texture_size,
-			texture_sizes = menu_frame_09.texture_sizes,
+			texture_size = frame_settings.texture_size,
+			texture_sizes = frame_settings.texture_sizes,
 			color = {
 				255,
 				255,
@@ -1689,7 +1718,7 @@ local function fn_2(arg_3_0, arg_3_1)
 				255,
 				255
 			},
-			scenegraph_id = "loot_option_" .. arg_3_0 .. "_center",
+			scenegraph_id = "loot_option_" .. index .. "_center",
 			pivot = {
 				75,
 				75
@@ -1713,7 +1742,7 @@ local function fn_2(arg_3_0, arg_3_1)
 				255,
 				255
 			},
-			scenegraph_id = "loot_option_" .. arg_3_0 .. "_center"
+			scenegraph_id = "loot_option_" .. index .. "_center"
 		},
 		amount_text = {
 			font_size = 42,
@@ -1729,7 +1758,7 @@ local function fn_2(arg_3_0, arg_3_1)
 				-100,
 				3
 			},
-			scenegraph_id = "loot_option_" .. arg_3_0 .. "_center"
+			scenegraph_id = "loot_option_" .. index .. "_center"
 		},
 		amount_text_shadow = {
 			font_size = 42,
@@ -1745,7 +1774,7 @@ local function fn_2(arg_3_0, arg_3_1)
 				-102,
 				2
 			},
-			scenegraph_id = "loot_option_" .. arg_3_0 .. "_center"
+			scenegraph_id = "loot_option_" .. index .. "_center"
 		},
 		lock_top = {
 			vertical_alignment = "top",
@@ -2026,7 +2055,7 @@ local function fn_2(arg_3_0, arg_3_1)
 		illusion_overlay = {
 			vertical_alignment = "top",
 			horizontal_alignment = "center",
-			texture_size = tbl,
+			texture_size = texture_size,
 			offset = {
 				0,
 				40,
@@ -2054,9 +2083,9 @@ local function fn_2(arg_3_0, arg_3_1)
 			color = Colors.get_color_table_with_alpha("promo", 255)
 		},
 		item_icon = {
-			size = tbl,
+			size = texture_size,
 			offset = {
-				arg_3_1[1] / 2 - 40,
+				size[1] / 2 - 40,
 				-40,
 				15
 			},
@@ -2070,7 +2099,7 @@ local function fn_2(arg_3_0, arg_3_1)
 		item_icon_rarity = {
 			vertical_alignment = "top",
 			horizontal_alignment = "center",
-			texture_size = tbl,
+			texture_size = texture_size,
 			offset = {
 				0,
 				40,
@@ -2093,12 +2122,12 @@ local function fn_2(arg_3_0, arg_3_1)
 			font_type = "hell_shark_header",
 			text_color = Colors.get_color_table_with_alpha("white", 0),
 			size = {
-				arg_3_1[1],
+				size[1],
 				50
 			},
 			offset = {
 				0,
-				arg_3_1[2] + 182 + 70,
+				size[2] + 182 + 70,
 				30
 			}
 		},
@@ -2112,12 +2141,12 @@ local function fn_2(arg_3_0, arg_3_1)
 			font_type = "hell_shark_header",
 			text_color = Colors.get_color_table_with_alpha("black", 0),
 			size = {
-				arg_3_1[1],
+				size[1],
 				50
 			},
 			offset = {
 				2,
-				arg_3_1[2] + 182 + 70 - 2,
+				size[2] + 182 + 70 - 2,
 				29
 			}
 		},
@@ -2129,12 +2158,12 @@ local function fn_2(arg_3_0, arg_3_1)
 			font_type = "hell_shark",
 			text_color = Colors.get_color_table_with_alpha("white", 0),
 			size = {
-				arg_3_1[1],
+				size[1],
 				50
 			},
 			offset = {
 				0,
-				arg_3_1[2] + 182,
+				size[2] + 182,
 				30
 			}
 		},
@@ -2146,12 +2175,12 @@ local function fn_2(arg_3_0, arg_3_1)
 			font_type = "hell_shark",
 			text_color = Colors.get_color_table_with_alpha("black", 0),
 			size = {
-				arg_3_1[1],
+				size[1],
 				50
 			},
 			offset = {
 				2,
-				arg_3_1[2] + 182 - 2,
+				size[2] + 182 - 2,
 				29
 			}
 		},
@@ -2167,16 +2196,16 @@ local function fn_2(arg_3_0, arg_3_1)
 				Colors.get_color_table_with_alpha("font_title", 255),
 				Colors.get_color_table_with_alpha("white", 255)
 			},
-			size = tbl,
+			size = texture_size,
 			offset = {
-				arg_3_1[1] / 2 - 40,
+				size[1] / 2 - 40,
 				-40,
 				4
 			}
 		}
 	}
 
-	UIWidgets.append_item_frame_pass("item_icon_frame", tbl_3, tbl_4, tbl_5, tbl, {
+	UIWidgets.append_item_frame_pass("item_icon_frame", passes, content, style, texture_size, {
 		0,
 		40,
 		17
@@ -2185,22 +2214,22 @@ local function fn_2(arg_3_0, arg_3_1)
 		horizontal_alignment = "center"
 	}, nil, nil)
 
-	tbl_2.element.passes = tbl_3
-	tbl_2.content = tbl_4
-	tbl_2.style = tbl_5
-	tbl_2.offset = {
+	widget.element.passes = passes
+	widget.content = content
+	widget.style = style
+	widget.offset = {
 		0,
 		0,
 		0
 	}
-	tbl_2.scenegraph_id = "loot_option_" .. arg_3_0
+	widget.scenegraph_id = "loot_option_" .. index
 
-	return tbl_2
+	return widget
 end
 
-local function fn_3(arg_16_0, arg_16_1)
+local function create_window_divider(scenegraph_id, size)
 	-- function 16
-	return {
+	local widget = {
 		element = {
 			passes = {
 				{
@@ -2239,11 +2268,11 @@ local function fn_3(arg_16_0, arg_16_1)
 					6
 				},
 				size = {
-					arg_16_1[1] - 10,
+					size[1] - 10,
 					5
 				},
 				texture_tiling_size = {
-					arg_16_1[1] - 10,
+					size[1] - 10,
 					5
 				}
 			},
@@ -2272,7 +2301,7 @@ local function fn_3(arg_16_0, arg_16_1)
 					255
 				},
 				offset = {
-					arg_16_1[1] - 12,
+					size[1] - 12,
 					-6,
 					10
 				},
@@ -2282,18 +2311,20 @@ local function fn_3(arg_16_0, arg_16_1)
 				}
 			}
 		},
-		scenegraph_id = arg_16_0,
+		scenegraph_id = scenegraph_id,
 		offset = {
 			0,
 			0,
 			0
 		}
 	}
+
+	return widget
 end
 
-local function fn_4(arg_17_0, arg_17_1)
+local function create_vertical_window_divider(scenegraph_id, size)
 	-- function 17
-	return {
+	local widget = {
 		element = {
 			passes = {
 				{
@@ -2333,11 +2364,11 @@ local function fn_4(arg_17_0, arg_17_1)
 				},
 				size = {
 					5,
-					arg_17_1[2] - 9
+					size[2] - 9
 				},
 				texture_tiling_size = {
 					5,
-					arg_17_1[2] - 9
+					size[2] - 9
 				}
 			},
 			edge_holder_top = {
@@ -2349,7 +2380,7 @@ local function fn_4(arg_17_0, arg_17_1)
 				},
 				offset = {
 					-6,
-					arg_17_1[2] - 7,
+					size[2] - 7,
 					10
 				},
 				size = {
@@ -2375,28 +2406,30 @@ local function fn_4(arg_17_0, arg_17_1)
 				}
 			}
 		},
-		scenegraph_id = arg_17_0,
+		scenegraph_id = scenegraph_id,
 		offset = {
 			0,
 			0,
 			0
 		}
 	}
+
+	return widget
 end
 
-local function fn_5(arg_18_0, arg_18_1, arg_18_2, arg_18_3, arg_18_4)
+local function create_chest_indicator_func(index, current_index, rarity_a, rarity_b, rarity_c)
 	-- function 18
-	local num = 20
-	local num_2 = 40
-	local num_3 = num_2 / 5
-	local color = RaritySettings[arg_18_2].color
-	local var_18_4 = RaritySettings[arg_18_3]
-	local flag = not var_18_4 and var_18_4.color
-	local var_18_6 = RaritySettings[arg_18_4]
-	local flag_2 = not var_18_6 and var_18_6.color
-	local flag_3 = arg_18_0 == arg_18_1
-
-	return {
+	local spacing = 20
+	local size = 40
+	local rarity_size = size / 5
+	local rarity_settings_a = RaritySettings[rarity_a]
+	local rarity_color_a = rarity_settings_a.color
+	local rarity_settings_b = RaritySettings[rarity_b]
+	local rarity_color_b = not not rarity_settings_b and not not rarity_settings_b.color
+	local rarity_settings_c = RaritySettings[rarity_c]
+	local rarity_color_c = not not rarity_settings_c and not not rarity_settings_c.color
+	local selected = index == current_index
+	local widget = {
 		scenegraph_id = "chest_indicator_root",
 		element = {
 			passes = {
@@ -2409,27 +2442,27 @@ local function fn_5(arg_18_0, arg_18_1, arg_18_2, arg_18_3, arg_18_4)
 					pass_type = "texture",
 					style_id = "indicator_selected",
 					texture_id = "dot_lit",
-					content_check_function = function (self)
+					content_check_function = function (content)
 						-- function 19
-						return self.selected
+						return content.selected
 					end
 				},
 				{
 					pass_type = "texture",
 					style_id = "indicator_unselected",
 					texture_id = "dot_unlit",
-					content_check_function = function (self)
+					content_check_function = function (content)
 						-- function 20
-						return not self.selected
+						return not content.selected
 					end
 				},
 				{
 					pass_type = "texture",
 					style_id = "texture_hover_id",
 					texture_id = "dot_lit",
-					content_check_function = function (self)
+					content_check_function = function (content)
 						-- function 21
-						return not self.selected
+						return not content.selected
 					end
 				},
 				{
@@ -2441,18 +2474,18 @@ local function fn_5(arg_18_0, arg_18_1, arg_18_2, arg_18_3, arg_18_4)
 					pass_type = "texture",
 					style_id = "rarity_b",
 					texture_id = "rarity_icon",
-					content_check_function = function (arg_22_0)
+					content_check_function = function (content)
 						-- function 22
-						return var_18_4
+						return rarity_settings_b
 					end
 				},
 				{
 					pass_type = "texture",
 					style_id = "rarity_c",
 					texture_id = "rarity_icon",
-					content_check_function = function (arg_23_0)
+					content_check_function = function (content)
 						-- function 23
-						return var_18_6
+						return rarity_settings_c
 					end
 				}
 			}
@@ -2462,8 +2495,8 @@ local function fn_5(arg_18_0, arg_18_1, arg_18_2, arg_18_3, arg_18_4)
 			dot_lit = "dot_on",
 			rarity_icon = "loot_indicator_rarity",
 			button_hotspot = {},
-			index = arg_18_0,
-			selected = flag_3
+			index = index,
+			selected = selected
 		},
 		style = {
 			button_hotspot = {
@@ -2539,10 +2572,10 @@ local function fn_5(arg_18_0, arg_18_1, arg_18_2, arg_18_3, arg_18_4)
 			rarity_a = {
 				vertical_alignment = "bottom",
 				horizontal_alignment = "center",
-				color = color,
+				color = rarity_color_a,
 				offset = {
-					-num_3 * 2,
-					-num_2,
+					-rarity_size * 2,
+					-size,
 					6
 				},
 				texture_size = {
@@ -2553,10 +2586,10 @@ local function fn_5(arg_18_0, arg_18_1, arg_18_2, arg_18_3, arg_18_4)
 			rarity_b = {
 				vertical_alignment = "bottom",
 				horizontal_alignment = "center",
-				color = flag,
+				color = rarity_color_b,
 				offset = {
 					0,
-					-num_2,
+					-size,
 					6
 				},
 				texture_size = {
@@ -2567,10 +2600,10 @@ local function fn_5(arg_18_0, arg_18_1, arg_18_2, arg_18_3, arg_18_4)
 			rarity_c = {
 				vertical_alignment = "bottom",
 				horizontal_alignment = "center",
-				color = flag_2,
+				color = rarity_color_c,
 				offset = {
-					num_3 * 2,
-					-num_2,
+					rarity_size * 2,
+					-size,
 					6
 				},
 				texture_size = {
@@ -2580,23 +2613,25 @@ local function fn_5(arg_18_0, arg_18_1, arg_18_2, arg_18_3, arg_18_4)
 			}
 		},
 		offset = {
-			(arg_18_0 - 1) * (num + num_2),
+			(index - 1) * (spacing + size),
 			0,
 			0
 		}
 	}
+
+	return widget
 end
 
-local flag_3 = true
-local tbl_18 = {
-	chest_title = UIWidgets.create_simple_text("chest_title", "chest_title", nil, nil, tbl_4),
-	chest_sub_title = UIWidgets.create_simple_text("chest_sub_title", "chest_sub_title", nil, nil, tbl_5),
-	info_text_title = UIWidgets.create_simple_text("n/a", "info_title_text", nil, nil, tbl_7),
-	info_text_box = UIWidgets.create_simple_text("loot_opening_screen_desc", "info_text_box", nil, nil, tbl_8),
-	info_window = UIWidgets.create_rect_with_outer_frame("info_window", tbl_2.info_window.size, nil, nil, Colors.get_color_table_with_alpha("console_menu_rect", 210)),
-	item_grid_title = UIWidgets.create_simple_text(string.upper(Localize("hero_window_loot_crates")), "item_grid_title", nil, nil, tbl_12),
+local disable_with_gamepad = true
+local widgets = {
+	chest_title = UIWidgets.create_simple_text("chest_title", "chest_title", nil, nil, title_text_style),
+	chest_sub_title = UIWidgets.create_simple_text("chest_sub_title", "chest_sub_title", nil, nil, sub_title_text_style),
+	info_text_title = UIWidgets.create_simple_text("n/a", "info_title_text", nil, nil, info_title_text_style),
+	info_text_box = UIWidgets.create_simple_text("loot_opening_screen_desc", "info_text_box", nil, nil, info_text_style),
+	info_window = UIWidgets.create_rect_with_outer_frame("info_window", scenegraph_definition.info_window.size, nil, nil, Colors.get_color_table_with_alpha("console_menu_rect", 210)),
+	item_grid_title = UIWidgets.create_simple_text(string.upper(Localize("hero_window_loot_crates")), "item_grid_title", nil, nil, item_grid_title_style),
 	title_top_divider = UIWidgets.create_simple_texture("divider_01_top", "item_grid_title"),
-	item_grid = UIWidgets.create_grid("item_grid", tbl_2.item_grid.size, 5, 4, 16, 16, false),
+	item_grid = UIWidgets.create_grid("item_grid", scenegraph_definition.item_grid.size, 5, 4, 16, 16, false),
 	page_button_next = UIWidgets.create_arrow_button("page_button_next", math.pi),
 	page_button_previous = UIWidgets.create_arrow_button("page_button_previous"),
 	input_icon_next = UIWidgets.create_simple_texture("xbone_button_icon_a", "input_icon_next"),
@@ -2612,13 +2647,13 @@ local tbl_18 = {
 		}
 	}, "input_arrow_next"),
 	input_arrow_previous = UIWidgets.create_simple_texture("settings_arrow_normal", "input_arrow_previous"),
-	page_text_center = UIWidgets.create_simple_text("/", "page_text_area", nil, nil, tbl_11),
-	page_text_left = UIWidgets.create_simple_text("0", "page_text_area", nil, nil, tbl_9),
-	page_text_right = UIWidgets.create_simple_text("0", "page_text_area", nil, nil, tbl_10),
+	page_text_center = UIWidgets.create_simple_text("/", "page_text_area", nil, nil, page_number_center_text_style),
+	page_text_left = UIWidgets.create_simple_text("0", "page_text_area", nil, nil, page_number_left_text_style),
+	page_text_right = UIWidgets.create_simple_text("0", "page_text_area", nil, nil, page_number_right_text_style),
 	page_text_area = UIWidgets.create_simple_texture("tab_menu_bg_03", "page_text_area"),
-	open_button = UIWidgets.create_default_button("open_button", tbl_2.open_button.size, nil, nil, Localize("interaction_action_open") .. " 1", 32, "green", nil, nil, flag_3, false),
-	open_multiple_button = UIWidgets.create_default_button("open_multiple_button", tbl_2.open_multiple_button.size, nil, nil, Localize("interaction_action_open") .. " 5", 32, "green", nil, nil, flag_3, true),
-	close_button = UIWidgets.create_default_button("close_button", tbl_2.close_button.size, nil, nil, Localize("interaction_action_close"), 32, nil, nil, nil, flag_3, true),
+	open_button = UIWidgets.create_default_button("open_button", scenegraph_definition.open_button.size, nil, nil, Localize("interaction_action_open") .. " 1", 32, "green", nil, nil, disable_with_gamepad, false),
+	open_multiple_button = UIWidgets.create_default_button("open_multiple_button", scenegraph_definition.open_multiple_button.size, nil, nil, Localize("interaction_action_open") .. " 5", 32, "green", nil, nil, disable_with_gamepad, true),
+	close_button = UIWidgets.create_default_button("close_button", scenegraph_definition.close_button.size, nil, nil, Localize("interaction_action_close"), 32, nil, nil, nil, disable_with_gamepad, true),
 	item_cap_warning_text = {
 		scenegraph_id = "item_cap_warning_text",
 		element = {
@@ -2646,11 +2681,11 @@ local tbl_18 = {
 					0
 				}
 			},
-			text = tbl_6
+			text = warning_text_style
 		}
 	}
 }
-local tbl_19 = {
+local input_description_widgets = {
 	bottom_panel = UIWidgets.create_simple_uv_texture("menu_panel_bg", {
 		{
 			0,
@@ -2660,9 +2695,9 @@ local tbl_19 = {
 			1,
 			0
 		}
-	}, "bottom_panel", nil, nil, console_menu_rect_color)
+	}, "bottom_panel", nil, nil, panel_color)
 }
-local tbl_20 = {
+local console_tooltip_pass_definition = {
 	"skin_applied",
 	"deed_mission",
 	"deed_difficulty",
@@ -2689,15 +2724,15 @@ local tbl_20 = {
 	"detailed_stats_ranged_heavy",
 	"console_item_background"
 }
-local tbl_21 = {}
+local gamepad_tooltip_widgets = {}
 
-for l = 1, flag do
-	tbl_21["item_tooltip_" .. (l - 1) * 3 + 1] = UIWidgets.create_simple_item_presentation("gamepad_tooltip_option_" .. (l - 1) * 3 + 1, tbl_20)
-	tbl_21["item_tooltip_" .. (l - 1) * 3 + 2] = UIWidgets.create_simple_item_presentation("gamepad_tooltip_option_" .. (l - 1) * 3 + 2, tbl_20)
-	tbl_21["item_tooltip_" .. (l - 1) * 3 + 3] = UIWidgets.create_simple_item_presentation("gamepad_tooltip_option_" .. (l - 1) * 3 + 3, tbl_20)
+for i = 1, num_loot_options do
+	gamepad_tooltip_widgets["item_tooltip_" .. (i - 1) * 3 + 1] = UIWidgets.create_simple_item_presentation("gamepad_tooltip_option_" .. (i - 1) * 3 + 1, console_tooltip_pass_definition)
+	gamepad_tooltip_widgets["item_tooltip_" .. (i - 1) * 3 + 2] = UIWidgets.create_simple_item_presentation("gamepad_tooltip_option_" .. (i - 1) * 3 + 2, console_tooltip_pass_definition)
+	gamepad_tooltip_widgets["item_tooltip_" .. (i - 1) * 3 + 3] = UIWidgets.create_simple_item_presentation("gamepad_tooltip_option_" .. (i - 1) * 3 + 3, console_tooltip_pass_definition)
 end
 
-local tbl_22 = {
+local console_chest_tooltip_pass_definition = {
 	"console_item_titles",
 	"item_information_text",
 	"loot_chest_difficulty",
@@ -2708,50 +2743,50 @@ local tbl_22 = {
 	"console_item_background"
 }
 
-tbl_21.chest_tooltip = UIWidgets.create_simple_item_presentation("gamepad_chest_tooltip", tbl_22)
+gamepad_tooltip_widgets.chest_tooltip = UIWidgets.create_simple_item_presentation("gamepad_chest_tooltip", console_chest_tooltip_pass_definition)
 
-local tbl_23 = {}
+local option_background_widgets = {}
 
-for i4 = 1, flag do
-	tbl_23["loot_background_" .. (i4 - 1) * 3 + 1] = UIWidgets.create_background("loot_option_" .. (i4 - 1) * 3 + 1, tbl_2["loot_option_" .. (i4 - 1) * 3 + 1].size, "item_tooltip_background_old")
-	tbl_23["loot_background_" .. (i4 - 1) * 3 + 2] = UIWidgets.create_background("loot_option_" .. (i4 - 1) * 3 + 2, tbl_2["loot_option_" .. (i4 - 1) * 3 + 2].size, "item_tooltip_background_old")
-	tbl_23["loot_background_" .. (i4 - 1) * 3 + 3] = UIWidgets.create_background("loot_option_" .. (i4 - 1) * 3 + 3, tbl_2["loot_option_" .. (i4 - 1) * 3 + 3].size, "item_tooltip_background_old")
+for i = 1, num_loot_options do
+	option_background_widgets["loot_background_" .. (i - 1) * 3 + 1] = UIWidgets.create_background("loot_option_" .. (i - 1) * 3 + 1, scenegraph_definition["loot_option_" .. (i - 1) * 3 + 1].size, "item_tooltip_background_old")
+	option_background_widgets["loot_background_" .. (i - 1) * 3 + 2] = UIWidgets.create_background("loot_option_" .. (i - 1) * 3 + 2, scenegraph_definition["loot_option_" .. (i - 1) * 3 + 2].size, "item_tooltip_background_old")
+	option_background_widgets["loot_background_" .. (i - 1) * 3 + 3] = UIWidgets.create_background("loot_option_" .. (i - 1) * 3 + 3, scenegraph_definition["loot_option_" .. (i - 1) * 3 + 3].size, "item_tooltip_background_old")
 end
 
-local tbl_24 = {}
+local option_widgets = {}
 
-for i5 = 1, flag do
-	tbl_24["loot_option_" .. (i5 - 1) * 3 + 1] = fn_2((i5 - 1) * 3 + 1, tbl_2["loot_option_" .. (i5 - 1) * 3 + 1].size)
-	tbl_24["loot_option_" .. (i5 - 1) * 3 + 2] = fn_2((i5 - 1) * 3 + 2, tbl_2["loot_option_" .. (i5 - 1) * 3 + 2].size)
-	tbl_24["loot_option_" .. (i5 - 1) * 3 + 3] = fn_2((i5 - 1) * 3 + 3, tbl_2["loot_option_" .. (i5 - 1) * 3 + 3].size)
+for i = 1, num_loot_options do
+	option_widgets["loot_option_" .. (i - 1) * 3 + 1] = create_loot_widget((i - 1) * 3 + 1, scenegraph_definition["loot_option_" .. (i - 1) * 3 + 1].size)
+	option_widgets["loot_option_" .. (i - 1) * 3 + 2] = create_loot_widget((i - 1) * 3 + 2, scenegraph_definition["loot_option_" .. (i - 1) * 3 + 2].size)
+	option_widgets["loot_option_" .. (i - 1) * 3 + 3] = create_loot_widget((i - 1) * 3 + 3, scenegraph_definition["loot_option_" .. (i - 1) * 3 + 3].size)
 end
 
-local tbl_25 = {}
+local preview_widgets = {}
 
-if not flag_2 then
-	tbl_25.loot_option_1 = fn("loot_option_1", tbl_2.loot_option_1.size)
-	tbl_25.loot_option_2 = fn("loot_option_2", tbl_2.loot_option_2.size)
-	tbl_25.loot_option_3 = fn("loot_option_3", tbl_2.loot_option_3.size)
+if USE_DELAYED_SPAWN then
+	preview_widgets.loot_option_1 = create_loot_preview_widget("loot_option_1", scenegraph_definition.loot_option_1.size)
+	preview_widgets.loot_option_2 = create_loot_preview_widget("loot_option_2", scenegraph_definition.loot_option_2.size)
+	preview_widgets.loot_option_3 = create_loot_preview_widget("loot_option_3", scenegraph_definition.loot_option_3.size)
 else
-	for i6 = 1, flag do
-		tbl_25["loot_option_" .. (i6 - 1) * 3 + 1] = fn("loot_option_" .. (i6 - 1) * 3 + 1, tbl_2["loot_option_" .. (i6 - 1) * 3 + 1].size)
-		tbl_25["loot_option_" .. (i6 - 1) * 3 + 2] = fn("loot_option_" .. (i6 - 1) * 3 + 2, tbl_2["loot_option_" .. (i6 - 1) * 3 + 2].size)
-		tbl_25["loot_option_" .. (i6 - 1) * 3 + 3] = fn("loot_option_" .. (i6 - 1) * 3 + 3, tbl_2["loot_option_" .. (i6 - 1) * 3 + 3].size)
+	for i = 1, num_loot_options do
+		preview_widgets["loot_option_" .. (i - 1) * 3 + 1] = create_loot_preview_widget("loot_option_" .. (i - 1) * 3 + 1, scenegraph_definition["loot_option_" .. (i - 1) * 3 + 1].size)
+		preview_widgets["loot_option_" .. (i - 1) * 3 + 2] = create_loot_preview_widget("loot_option_" .. (i - 1) * 3 + 2, scenegraph_definition["loot_option_" .. (i - 1) * 3 + 2].size)
+		preview_widgets["loot_option_" .. (i - 1) * 3 + 3] = create_loot_preview_widget("loot_option_" .. (i - 1) * 3 + 3, scenegraph_definition["loot_option_" .. (i - 1) * 3 + 3].size)
 	end
 end
 
-local tbl_26 = {
-	arrow_right = tbl_16,
-	arrow_left = tbl_17
+local arrow_widgets = {
+	arrow_right = arrow_right,
+	arrow_left = arrow_left
 }
-local create_default_button = UIWidgets.create_default_button("continue_button", tbl_2.continue_button.size, nil, nil, Localize("continue"), 32, nil, nil, nil, flag_3)
-local tbl_27 = {
-	debug_add_chest_1 = UIWidgets.create_default_button("debug_add_chest_1", tbl_2.debug_add_chest_1.size, nil, nil, "DEBUG: Normal Chest", nil, "green"),
-	debug_add_chest_2 = UIWidgets.create_default_button("debug_add_chest_2", tbl_2.debug_add_chest_2.size, nil, nil, "DEBUG: Hard Chest", nil, "green"),
-	debug_add_chest_3 = UIWidgets.create_default_button("debug_add_chest_3", tbl_2.debug_add_chest_3.size, nil, nil, "DEBUG: Nightmare Chest", nil, "green"),
-	debug_add_chest_4 = UIWidgets.create_default_button("debug_add_chest_4", tbl_2.debug_add_chest_4.size, nil, nil, "DEBUG: Cataclysm Chest", nil, "green")
+local continue_button = UIWidgets.create_default_button("continue_button", scenegraph_definition.continue_button.size, nil, nil, Localize("continue"), 32, nil, nil, nil, disable_with_gamepad)
+local debug_button_widgets = {
+	debug_add_chest_1 = UIWidgets.create_default_button("debug_add_chest_1", scenegraph_definition.debug_add_chest_1.size, nil, nil, "DEBUG: Normal Chest", nil, "green"),
+	debug_add_chest_2 = UIWidgets.create_default_button("debug_add_chest_2", scenegraph_definition.debug_add_chest_2.size, nil, nil, "DEBUG: Hard Chest", nil, "green"),
+	debug_add_chest_3 = UIWidgets.create_default_button("debug_add_chest_3", scenegraph_definition.debug_add_chest_3.size, nil, nil, "DEBUG: Nightmare Chest", nil, "green"),
+	debug_add_chest_4 = UIWidgets.create_default_button("debug_add_chest_4", scenegraph_definition.debug_add_chest_4.size, nil, nil, "DEBUG: Cataclysm Chest", nil, "green")
 }
-local tbl_28 = {
+local generic_input_actions = {
 	default = {},
 	chest_selected_single_use = {
 		actions = {
@@ -2940,31 +2975,33 @@ local tbl_28 = {
 		}
 	}
 }
-local tbl_29 = {
+local animation_definitions = {
 	open_loot_widget = {
 		{
 			name = "rumble",
 			start_progress = 0,
 			end_progress = 0.3,
-			init = function (arg_24_0, arg_24_1, arg_24_2, arg_24_3)
+			init = function (ui_scenegraph, scenegraph_definition, widget, params)
 				-- function 24
-				local wwise_world = arg_24_3.wwise_world
+				local wwise_world = params.wwise_world
 
 				WwiseWorld.trigger_event(wwise_world, "play_gui_chest_reward_rumble")
 			end,
-			update = function (arg_25_0, arg_25_1, arg_25_2, arg_25_3, arg_25_4)
+			update = function (ui_scenegraph, scenegraph_definition, widget, progress, params)
 				-- function 25
-				local easeOutCubic = math.easeOutCubic(arg_25_3)
-				local bounce = math.bounce(arg_25_3)
-				local content = arg_25_2.content
-				local style = arg_25_2.style
-				local offset = arg_25_2.offset
-				local size = arg_25_1[arg_25_2.scenegraph_id].size
+				local anim_progress = math.easeOutCubic(progress)
+				local bounce_anim_progress = math.bounce(progress)
+				local content = widget.content
+				local style = widget.style
+				local offset = widget.offset
+				local scenegraph_id = widget.scenegraph_id
+				local definition = scenegraph_definition[scenegraph_id]
+				local definition_size = definition.size
 
-				offset[1] = 5 - 5 * math.catmullrom(bounce, 10, 1, 1, -1)
-				offset[2] = 5 - 5 * math.catmullrom(bounce, -1, 1, 1, 10)
+				offset[1] = 5 - 5 * math.catmullrom(bounce_anim_progress, 10, 1, 1, -1)
+				offset[2] = 5 - 5 * math.catmullrom(bounce_anim_progress, -1, 1, 1, 10)
 			end,
-			on_complete = function (arg_26_0, arg_26_1, arg_26_2, arg_26_3)
+			on_complete = function (ui_scenegraph, scenegraph_definition, widget, params)
 				-- function 26
 				return
 			end
@@ -2973,23 +3010,23 @@ local tbl_29 = {
 			name = "glow_exit",
 			start_progress = 0,
 			end_progress = 0.3,
-			init = function (arg_27_0, arg_27_1, arg_27_2, arg_27_3)
+			init = function (ui_scenegraph, scenegraph_definition, widget, params)
 				-- function 27
 				return
 			end,
-			update = function (arg_28_0, arg_28_1, arg_28_2, arg_28_3, arg_28_4)
+			update = function (ui_scenegraph, scenegraph_definition, widget, progress, params)
 				-- function 28
-				local easeOutCubic = math.easeOutCubic(arg_28_3)
-				local content = arg_28_2.content
-				local style = arg_28_2.style
+				local anim_progress = math.easeOutCubic(progress)
+				local content = widget.content
+				local style = widget.style
 
-				style.lock_bottom_glow.color[1] = math.max(style.lock_bottom_glow.color[1], style.lock_bottom_glow.default_color[1] * easeOutCubic)
-				style.lock_bottom_glow_2.color[1] = math.max(style.lock_bottom_glow_2.color[1], style.lock_bottom_glow_2.default_color[1] * easeOutCubic)
-				style.lock_glow.color[1] = math.min(style.lock_glow.color[1], style.lock_glow.default_color[1] * (1 - easeOutCubic))
-				style.lock_glow_1.color[1] = math.min(style.lock_glow_1.color[1], style.lock_glow_1.default_color[1] * (1 - easeOutCubic))
-				style.lock_glow_2.color[1] = math.min(style.lock_glow_2.color[1], style.lock_glow_2.default_color[1] * (1 - easeOutCubic))
+				style.lock_bottom_glow.color[1] = math.max(style.lock_bottom_glow.color[1], style.lock_bottom_glow.default_color[1] * anim_progress)
+				style.lock_bottom_glow_2.color[1] = math.max(style.lock_bottom_glow_2.color[1], style.lock_bottom_glow_2.default_color[1] * anim_progress)
+				style.lock_glow.color[1] = math.min(style.lock_glow.color[1], style.lock_glow.default_color[1] * (1 - anim_progress))
+				style.lock_glow_1.color[1] = math.min(style.lock_glow_1.color[1], style.lock_glow_1.default_color[1] * (1 - anim_progress))
+				style.lock_glow_2.color[1] = math.min(style.lock_glow_2.color[1], style.lock_glow_2.default_color[1] * (1 - anim_progress))
 			end,
-			on_complete = function (arg_29_0, arg_29_1, arg_29_2, arg_29_3)
+			on_complete = function (ui_scenegraph, scenegraph_definition, widget, params)
 				-- function 29
 				return
 			end
@@ -2998,76 +3035,78 @@ local tbl_29 = {
 			name = "open",
 			start_progress = 0.3,
 			end_progress = 0.6,
-			init = function (arg_30_0, arg_30_1, arg_30_2, arg_30_3)
+			init = function (ui_scenegraph, scenegraph_definition, widget, params)
 				-- function 30
 				return
 			end,
-			update = function (arg_31_0, arg_31_1, arg_31_2, arg_31_3, arg_31_4)
+			update = function (ui_scenegraph, scenegraph_definition, widget, progress, params)
 				-- function 31
-				if not arg_31_4.played_open_sound then
-					local wwise_world = arg_31_4.wwise_world
+				if not params.played_open_sound then
+					local wwise_world = params.wwise_world
 
 					WwiseWorld.trigger_event(wwise_world, "play_gui_chest_reward_open")
 
-					arg_31_4.played_open_sound = true
+					params.played_open_sound = true
 				end
 
-				local easeInCubic = math.easeInCubic(arg_31_3)
-				local content = arg_31_2.content
-				local style = arg_31_2.style
-				local scenegraph_id = arg_31_2.scenegraph_id
-				local size = arg_31_1[scenegraph_id].size
-				local num = easeInCubic * 400
+				local anim_progress = math.easeInCubic(progress)
+				local content = widget.content
+				local style = widget.style
+				local scenegraph_id = widget.scenegraph_id
+				local definition = scenegraph_definition[scenegraph_id]
+				local definition_size = definition.size
+				local new_height = anim_progress * 400
 
-				arg_31_0[scenegraph_id].size[2] = num
+				ui_scenegraph[scenegraph_id].size[2] = new_height
 
-				local reward_option = arg_31_4.reward_option
-				local background = reward_option.background_widget.content.background
-				local uvs = background.uvs
-				local texture_id = background.texture_id
-				local get_atlas_settings_by_texture_name = UIAtlasHelper.get_atlas_settings_by_texture_name(texture_id)
+				local reward_option = params.reward_option
+				local background_widget = reward_option.background_widget
+				local background_content = background_widget.content.background
+				local background_uvs = background_content.uvs
+				local background_texture = background_content.texture_id
+				local background_texture_settings = UIAtlasHelper.get_atlas_settings_by_texture_name(background_texture)
 
-				uvs[2][2] = math.min(num / get_atlas_settings_by_texture_name.size[2], 1)
-				style.item_name.offset[2] = num + 182 + 35
+				background_uvs[2][2] = math.min(new_height / background_texture_settings.size[2], 1)
+				style.item_name.offset[2] = new_height + 182 + 35
 				style.item_name_shadow.offset[2] = style.item_name.offset[2] - 2
-				style.item_type.offset[2] = num + 182 - 5
+				style.item_type.offset[2] = new_height + 182 - 5
 				style.item_type_shadow.offset[2] = style.item_type.offset[2] - 2
-				style.item_icon.offset[2] = num - 40
-				style.item_tooltip.offset[2] = num - 40
+				style.item_icon.offset[2] = new_height - 40
+				style.item_tooltip.offset[2] = new_height - 40
 				content.draw_frame = true
 
-				local frame = style.frame
+				local frame_style = style.frame
 
-				frame.size[2] = num + 20
-				frame.offset[2] = -10
+				frame_style.size[2] = new_height + 20
+				frame_style.offset[2] = -10
 				reward_option.opened = true
 			end,
-			on_complete = function (arg_32_0, arg_32_1, arg_32_2, arg_32_3)
+			on_complete = function (ui_scenegraph, scenegraph_definition, widget, params)
 				-- function 32
-				local flag = true
-				local reward_option = arg_32_3.reward_option
+				local presentation_complete = true
+				local reward_option = params.reward_option
 				local item_previewer = reward_option.item_previewer
 				local reward_key = reward_option.reward_key
 
-				if not item_previewer and not reward_key then
+				if item_previewer and reward_key then
 					item_previewer:present_item(reward_key)
 				end
 
 				local world_previewer = reward_option.world_previewer
 
-				if not world_previewer then
+				if world_previewer then
 					world_previewer:force_unhide_character()
 				end
 
-				reward_option.presentation_complete = flag
-				arg_32_2.content.presentation_complete = flag
+				reward_option.presentation_complete = presentation_complete
+				widget.content.presentation_complete = presentation_complete
 
-				if not arg_32_3.played_opened_sound then
-					local wwise_world = arg_32_3.wwise_world
+				if not params.played_opened_sound then
+					local wwise_world = params.wwise_world
 
 					WwiseWorld.trigger_event(wwise_world, "play_gui_chest_reward_opened")
 
-					arg_32_3.played_opened_sound = true
+					params.played_opened_sound = true
 				end
 			end
 		},
@@ -3075,21 +3114,21 @@ local tbl_29 = {
 			name = "glow_enter",
 			start_progress = 0.6,
 			end_progress = 0.8,
-			init = function (arg_33_0, arg_33_1, arg_33_2, arg_33_3)
+			init = function (ui_scenegraph, scenegraph_definition, widget, params)
 				-- function 33
 				return
 			end,
-			update = function (arg_34_0, arg_34_1, arg_34_2, arg_34_3, arg_34_4)
+			update = function (ui_scenegraph, scenegraph_definition, widget, progress, params)
 				-- function 34
-				local easeOutCubic = math.easeOutCubic(arg_34_3)
-				local content = arg_34_2.content
-				local style = arg_34_2.style
+				local anim_progress = math.easeOutCubic(progress)
+				local content = widget.content
+				local style = widget.style
 
-				style.final_glow.color[1] = math.max(style.final_glow.color[1], style.final_glow.default_color[1] * easeOutCubic)
-				style.final_glow_1.color[1] = math.max(style.final_glow_1.color[1], style.final_glow_1.default_color[1] * easeOutCubic)
-				style.final_glow_2.color[1] = math.max(style.final_glow_2.color[1], style.final_glow_2.default_color[1] * easeOutCubic)
+				style.final_glow.color[1] = math.max(style.final_glow.color[1], style.final_glow.default_color[1] * anim_progress)
+				style.final_glow_1.color[1] = math.max(style.final_glow_1.color[1], style.final_glow_1.default_color[1] * anim_progress)
+				style.final_glow_2.color[1] = math.max(style.final_glow_2.color[1], style.final_glow_2.default_color[1] * anim_progress)
 			end,
-			on_complete = function (arg_35_0, arg_35_1, arg_35_2, arg_35_3)
+			on_complete = function (ui_scenegraph, scenegraph_definition, widget, params)
 				-- function 35
 				return
 			end
@@ -3098,23 +3137,23 @@ local tbl_29 = {
 			name = "fade_in_text",
 			start_progress = 0.8,
 			end_progress = 1.2,
-			init = function (arg_36_0, arg_36_1, arg_36_2, arg_36_3)
+			init = function (ui_scenegraph, scenegraph_definition, widget, params)
 				-- function 36
 				return
 			end,
-			update = function (arg_37_0, arg_37_1, arg_37_2, arg_37_3, arg_37_4)
+			update = function (ui_scenegraph, scenegraph_definition, widget, progress, params)
 				-- function 37
-				local easeOutCubic = math.easeOutCubic(arg_37_3)
-				local content = arg_37_2.content
-				local style = arg_37_2.style
-				local num = 255 * easeOutCubic
+				local anim_progress = math.easeOutCubic(progress)
+				local content = widget.content
+				local style = widget.style
+				local alpha = 255 * anim_progress
 
-				style.item_name.text_color[1] = num
-				style.item_name_shadow.text_color[1] = num
-				style.item_type.text_color[1] = num
-				style.item_type_shadow.text_color[1] = num
+				style.item_name.text_color[1] = alpha
+				style.item_name_shadow.text_color[1] = alpha
+				style.item_type.text_color[1] = alpha
+				style.item_type_shadow.text_color[1] = alpha
 			end,
-			on_complete = function (arg_38_0, arg_38_1, arg_38_2, arg_38_3)
+			on_complete = function (ui_scenegraph, scenegraph_definition, widget, params)
 				-- function 38
 				return
 			end
@@ -3125,17 +3164,17 @@ local tbl_29 = {
 			name = "fade_in",
 			start_progress = 0,
 			end_progress = 0.3,
-			init = function (arg_39_0, arg_39_1, arg_39_2, arg_39_3)
+			init = function (ui_scenegraph, scenegraph_definition, widgets, params)
 				-- function 39
-				arg_39_3.render_settings.alpha_multiplier = 0
+				params.render_settings.alpha_multiplier = 0
 			end,
-			update = function (arg_40_0, arg_40_1, arg_40_2, arg_40_3, arg_40_4)
+			update = function (ui_scenegraph, scenegraph_definition, widgets, progress, params)
 				-- function 40
-				local easeOutCubic = math.easeOutCubic(arg_40_3)
+				local anim_progress = math.easeOutCubic(progress)
 
-				arg_40_4.render_settings.alpha_multiplier = easeOutCubic
+				params.render_settings.alpha_multiplier = anim_progress
 			end,
-			on_complete = function (arg_41_0, arg_41_1, arg_41_2, arg_41_3)
+			on_complete = function (ui_scenegraph, scenegraph_definition, widgets, params)
 				-- function 41
 				return
 			end
@@ -3146,17 +3185,17 @@ local tbl_29 = {
 			name = "fade_out",
 			start_progress = 0,
 			end_progress = 0.3,
-			init = function (arg_42_0, arg_42_1, arg_42_2, arg_42_3)
+			init = function (ui_scenegraph, scenegraph_definition, widgets, params)
 				-- function 42
-				arg_42_3.render_settings.alpha_multiplier = 1
+				params.render_settings.alpha_multiplier = 1
 			end,
-			update = function (arg_43_0, arg_43_1, arg_43_2, arg_43_3, arg_43_4)
+			update = function (ui_scenegraph, scenegraph_definition, widgets, progress, params)
 				-- function 43
-				local easeOutCubic = math.easeOutCubic(arg_43_3)
+				local anim_progress = math.easeOutCubic(progress)
 
-				arg_43_4.render_settings.alpha_multiplier = 1 - easeOutCubic
+				params.render_settings.alpha_multiplier = 1 - anim_progress
 			end,
-			on_complete = function (arg_44_0, arg_44_1, arg_44_2, arg_44_3)
+			on_complete = function (ui_scenegraph, scenegraph_definition, widgets, params)
 				-- function 44
 				return
 			end
@@ -3165,24 +3204,24 @@ local tbl_29 = {
 }
 
 return {
-	USE_DELAYED_SPAWN = flag_2,
-	arrow_widgets = tbl_26,
-	create_chest_indicator_func = fn_5,
-	num_loot_options = flag,
-	loot_option_positions_by_amount = tbl_3,
-	gamepad_tooltip_widgets = tbl_21,
-	input_description_widgets = tbl_19,
-	widgets = tbl_18,
-	option_widgets = tbl_24,
-	debug_button_widgets = tbl_27,
-	option_background_widgets = tbl_23,
-	preview_widgets = tbl_25,
-	viewport_widget = tbl_15,
-	continue_button = create_default_button,
-	settings_by_screen = tbl_13,
-	generic_input_actions = tbl_28,
-	scenegraph_definition = tbl_2,
-	animation_definitions = tbl_29,
+	USE_DELAYED_SPAWN = USE_DELAYED_SPAWN,
+	arrow_widgets = arrow_widgets,
+	create_chest_indicator_func = create_chest_indicator_func,
+	num_loot_options = num_loot_options,
+	loot_option_positions_by_amount = loot_option_positions_by_amount,
+	gamepad_tooltip_widgets = gamepad_tooltip_widgets,
+	input_description_widgets = input_description_widgets,
+	widgets = widgets,
+	option_widgets = option_widgets,
+	debug_button_widgets = debug_button_widgets,
+	option_background_widgets = option_background_widgets,
+	preview_widgets = preview_widgets,
+	viewport_widget = viewport_widget,
+	continue_button = continue_button,
+	settings_by_screen = settings_by_screen,
+	generic_input_actions = generic_input_actions,
+	scenegraph_definition = scenegraph_definition,
+	animation_definitions = animation_definitions,
 	background_fade_definition = UIWidgets.create_simple_rect("dead_space_filler", {
 		0,
 		5,

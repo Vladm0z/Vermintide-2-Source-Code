@@ -2,24 +2,24 @@
 
 NetworkTimerHandler = class(NetworkTimerHandler)
 
-NetworkTimerHandler.init = function (self, arg_1_1, arg_1_2, arg_1_3)
+NetworkTimerHandler.init = function (self, world, network_clock, is_server)
 	-- function 1
 	self._timer_state = "inactive"
-	self._world = arg_1_1
-	self._network_clock = arg_1_2
-	self.is_server = arg_1_3
-	self._gui = World.create_screen_gui(arg_1_1, "material", "materials/fonts/gw_fonts", "immediate")
+	self._world = world
+	self._network_clock = network_clock
+	self.is_server = is_server
+	self._gui = World.create_screen_gui(world, "material", "materials/fonts/gw_fonts", "immediate")
 end
 
-local tbl = {
+local RPCS = {
 	"rpc_start_network_timer"
 }
 
-NetworkTimerHandler.register_rpcs = function (self, arg_2_1)
+NetworkTimerHandler.register_rpcs = function (self, network_event_delegate)
 	-- function 2
-	arg_2_1:register(self, unpack(tbl))
+	network_event_delegate:register(self, unpack(RPCS))
 
-	self._network_event_delegate = arg_2_1
+	self._network_event_delegate = network_event_delegate
 end
 
 NetworkTimerHandler.unregister_rpcs = function (self)
@@ -29,23 +29,27 @@ NetworkTimerHandler.unregister_rpcs = function (self)
 	self._network_event_delegate = nil
 end
 
-NetworkTimerHandler.start_timer_server = function (self, arg_4_1)
+NetworkTimerHandler.start_timer_server = function (self, time)
 	-- function 4
 	assert(self.is_server == true, "Tried starting timer as server; not server")
 
-	local num = self._network_clock:time() + arg_4_1
+	local current_time = self._network_clock:time()
+	local end_time = current_time + time
 
-	self:start_timer_client(num)
-	Managers.state.network.network_transmit:send_rpc_clients("rpc_start_network_timer", num)
+	self:start_timer_client(end_time)
+
+	local network_manager = Managers.state.network
+
+	network_manager.network_transmit:send_rpc_clients("rpc_start_network_timer", end_time)
 end
 
-NetworkTimerHandler.start_timer_client = function (self, arg_5_1)
+NetworkTimerHandler.start_timer_client = function (self, end_time)
 	-- function 5
 	self._timer_state = "active"
-	self._end_time = arg_5_1
+	self._end_time = end_time
 end
 
-NetworkTimerHandler.update = function (self, arg_6_1, arg_6_2)
+NetworkTimerHandler.update = function (self, dt, t)
 	-- function 6
 	if self._timer_state == "inactive" then
 		return
@@ -53,13 +57,15 @@ NetworkTimerHandler.update = function (self, arg_6_1, arg_6_2)
 
 	self:_render_timer()
 
-	if self._network_clock:time() >= self._end_time then
+	local current_time = self._network_clock:time()
+
+	if current_time >= self._end_time then
 		self._timer_state = "inactive"
 		self._end_time = nil
 
-		local current_level = LevelHelper:current_level(self._world)
+		local level = LevelHelper:current_level(self._world)
 
-		Level.trigger_event(current_level, "network_timer_done")
+		Level.trigger_event(level, "network_timer_done")
 	end
 end
 
@@ -69,21 +75,21 @@ NetworkTimerHandler._render_timer = function (self)
 		return
 	end
 
-	local time = self._network_clock:time()
-	local _end_time = self._end_time
-	local var_7_2 = tostring(math.max(0, math.ceil(_end_time - time)))
-	local resolution, var_7_4 = Gui.resolution()
-	local var_7_5 = Vector3(0, 0, 100)
-	local var_7_6 = Vector2(120, 50)
+	local current_time = self._network_clock:time()
+	local end_time = self._end_time
+	local time_left = tostring(math.max(0, math.ceil(end_time - current_time)))
+	local w, h = Gui.resolution()
+	local pos = Vector3(0, 0, 100)
+	local size = Vector2(120, 50)
 
-	Gui.rect(self._gui, var_7_5, var_7_6, Color(150, 102, 255, 102))
+	Gui.rect(self._gui, pos, size, Color(150, 102, 255, 102))
 
-	local var_7_7 = Vector3(20, 15, 110)
-	local str = "arial"
-	local str_2 = "materials/fonts/" .. str
-	local num = 30
+	local text_pos = Vector3(20, 15, 110)
+	local material = "arial"
+	local font = "materials/fonts/" .. material
+	local font_size = 30
 
-	Gui.text(self._gui, var_7_2, str_2, num, str, var_7_7, Color(255, 0, 0, 0))
+	Gui.text(self._gui, time_left, font, font_size, material, text_pos, Color(255, 0, 0, 0))
 end
 
 NetworkTimerHandler.destroy = function (self)
@@ -95,7 +101,7 @@ NetworkTimerHandler.destroy = function (self)
 	self._network_clock = nil
 end
 
-NetworkTimerHandler.rpc_start_network_timer = function (self, arg_9_1, arg_9_2)
+NetworkTimerHandler.rpc_start_network_timer = function (self, channel_id, end_time)
 	-- function 9
-	self:start_timer_client(arg_9_2)
+	self:start_timer_client(end_time)
 end

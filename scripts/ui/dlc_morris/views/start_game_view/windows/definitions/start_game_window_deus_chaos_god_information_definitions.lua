@@ -1,10 +1,10 @@
 -- chunkname: @scripts/ui/dlc_morris/views/start_game_view/windows/definitions/start_game_window_deus_chaos_god_information_definitions.lua
 
-local tbl = {
+local WIDGET_SIZE = {
 	380,
 	200
 }
-local tbl_2 = {
+local scenegraph_definition = {
 	root = {
 		is_root = true,
 		size = {
@@ -48,8 +48,8 @@ local tbl_2 = {
 		parent = "menu_root",
 		horizontal_alignment = "center",
 		size = {
-			tbl[1],
-			tbl[2]
+			WIDGET_SIZE[1],
+			WIDGET_SIZE[2]
 		},
 		position = {
 			150,
@@ -62,8 +62,8 @@ local tbl_2 = {
 		parent = "menu_root",
 		horizontal_alignment = "center",
 		size = {
-			tbl[1],
-			tbl[2]
+			WIDGET_SIZE[1],
+			WIDGET_SIZE[2]
 		},
 		position = {
 			600,
@@ -73,10 +73,10 @@ local tbl_2 = {
 	}
 }
 
-local function fn(arg_1_0)
+local function create_widget(scenegraph_id)
 	-- function 1
-	return {
-		scenegraph_id = arg_1_0,
+	local widget = {
+		scenegraph_id = scenegraph_id,
 		offset = {
 			0,
 			0,
@@ -242,8 +242,8 @@ local function fn(arg_1_0)
 					6
 				},
 				size = {
-					tbl[1] - 30,
-					tbl[2]
+					WIDGET_SIZE[1] - 30,
+					WIDGET_SIZE[2]
 				}
 			},
 			subtitle = {
@@ -262,8 +262,8 @@ local function fn(arg_1_0)
 					7
 				},
 				size = {
-					tbl[1],
-					tbl[2]
+					WIDGET_SIZE[1],
+					WIDGET_SIZE[2]
 				}
 			},
 			body = {
@@ -280,30 +280,32 @@ local function fn(arg_1_0)
 					8
 				},
 				size = {
-					tbl[1] - 80,
-					tbl[2] - 40 - 64
+					WIDGET_SIZE[1] - 80,
+					WIDGET_SIZE[2] - 40 - 64
 				}
 			}
 		}
 	}
+
+	return widget
 end
 
-local tbl_3 = {
-	god_info_widget = fn("window"),
-	belakor_info_widget = fn("extra_curse")
+local widgets = {
+	god_info_widget = create_widget("window"),
+	belakor_info_widget = create_widget("extra_curse")
 }
-local tbl_4 = {
+local animation_definitions = {
 	on_enter = {
 		{
 			name = "fade_in",
 			duration = 0.3,
-			init = function (arg_2_0, arg_2_1, arg_2_2, arg_2_3)
+			init = function (ui_scenegraph, scenegraph_definition, widget, params)
 				-- function 2
-				arg_2_3.render_settings.alpha_multiplier = 0
+				params.render_settings.alpha_multiplier = 0
 			end,
-			update = function (arg_3_0, arg_3_1, arg_3_2, arg_3_3, arg_3_4)
+			update = function (ui_scenegraph, scenegraph_definition, widget, progress, params)
 				-- function 3
-				arg_3_4.render_settings.alpha_multiplier = math.easeOutCubic(arg_3_3)
+				params.render_settings.alpha_multiplier = math.easeOutCubic(progress)
 			end,
 			on_complete = NOP
 		}
@@ -312,13 +314,13 @@ local tbl_4 = {
 		{
 			name = "fade_out",
 			duration = 0.3,
-			init = function (arg_4_0, arg_4_1, arg_4_2, arg_4_3)
+			init = function (ui_scenegraph, scenegraph_definition, widget, params)
 				-- function 4
-				arg_4_3.render_settings.alpha_multiplier = 1
+				params.render_settings.alpha_multiplier = 1
 			end,
-			update = function (arg_5_0, arg_5_1, arg_5_2, arg_5_3, arg_5_4)
+			update = function (ui_scenegraph, scenegraph_definition, widget, progress, params)
 				-- function 5
-				arg_5_4.render_settings.alpha_multiplier = 1
+				params.render_settings.alpha_multiplier = 1
 			end,
 			on_complete = NOP
 		}
@@ -328,22 +330,22 @@ local tbl_4 = {
 			name = "fade_in",
 			delay = 0,
 			duration = 0.5,
-			init = function (arg_6_0, arg_6_1, arg_6_2, arg_6_3)
+			init = function (ui_scenegraph, scenegraph_definition, widget, params)
 				-- function 6
-				local theme_settings = arg_6_3.theme_settings
-				local curse_description_color = theme_settings.curse_description_color
-				local style = arg_6_2.style
+				local theme_settings = params.theme_settings
+				local theme_color = theme_settings.curse_description_color
+				local style = widget.style
 
 				style.glow_top.color[1] = 0
 				style.glow_bottom.color[1] = 0
 				style.glow_icon.color[1] = 0
 
-				Colors.copy_no_alpha_to(style.glow_top.color, curse_description_color)
-				Colors.copy_no_alpha_to(style.glow_bottom.color, curse_description_color)
-				Colors.copy_no_alpha_to(style.glow_icon.color, curse_description_color)
-				Colors.copy_no_alpha_to(style.title.text_color, curse_description_color)
+				Colors.copy_no_alpha_to(style.glow_top.color, theme_color)
+				Colors.copy_no_alpha_to(style.glow_bottom.color, theme_color)
+				Colors.copy_no_alpha_to(style.glow_icon.color, theme_color)
+				Colors.copy_no_alpha_to(style.title.text_color, theme_color)
 
-				local content = arg_6_2.content
+				local content = widget.content
 
 				content.icon = theme_settings.icon
 				content.title = theme_settings.journey_title
@@ -351,23 +353,23 @@ local tbl_4 = {
 				local Localize = Localize
 				local deity_name = theme_settings.deity_name
 
-				deity_name = deity_name or "lb_unknown"
+				deity_name = not not deity_name or not not "lb_unknown"
 
-				local var_6_6 = Localize(deity_name)
+				local localized_deity_name = Localize(deity_name)
 
-				content.body = string.format(Localize("gaze_information"), var_6_6)
+				content.body = string.format(Localize("gaze_information"), localized_deity_name)
 			end,
-			update = function (arg_7_0, arg_7_1, arg_7_2, arg_7_3, arg_7_4)
+			update = function (ui_scenegraph, scenegraph_definition, widget, progress, params)
 				-- function 7
-				local style = arg_7_2.style
+				local style = widget.style
 
-				arg_7_3 = math.easeInCubic(arg_7_3)
+				progress = math.easeInCubic(progress)
 
-				local num = 255 * arg_7_3
+				local alpha = 255 * progress
 
-				style.glow_top.color[1] = num
-				style.glow_bottom.color[1] = num
-				style.glow_icon.color[1] = num
+				style.glow_top.color[1] = alpha
+				style.glow_bottom.color[1] = alpha
+				style.glow_icon.color[1] = alpha
 			end,
 			on_complete = NOP
 		},
@@ -375,14 +377,14 @@ local tbl_4 = {
 			name = "fade_in_icon",
 			delay = 0,
 			duration = 0.25,
-			init = function (arg_8_0, arg_8_1, arg_8_2, arg_8_3)
+			init = function (ui_scenegraph, scenegraph_definition, widget, params)
 				-- function 8
-				arg_8_2.style.icon.color[1] = 0
+				widget.style.icon.color[1] = 0
 			end,
-			update = function (arg_9_0, arg_9_1, arg_9_2, arg_9_3, arg_9_4)
+			update = function (ui_scenegraph, scenegraph_definition, widget, progress, params)
 				-- function 9
-				arg_9_3 = math.easeInCubic(arg_9_3)
-				arg_9_2.style.icon.color[1] = 255 * arg_9_3
+				progress = math.easeInCubic(progress)
+				widget.style.icon.color[1] = 255 * progress
 			end,
 			on_complete = NOP
 		}
@@ -392,22 +394,22 @@ local tbl_4 = {
 			name = "fade_in",
 			delay = 0,
 			duration = 0.5,
-			init = function (arg_10_0, arg_10_1, arg_10_2, arg_10_3)
+			init = function (ui_scenegraph, scenegraph_definition, widget, params)
 				-- function 10
-				local theme_settings = arg_10_3.theme_settings
-				local curse_description_color = theme_settings.curse_description_color
-				local style = arg_10_2.style
+				local theme_settings = params.theme_settings
+				local theme_color = theme_settings.curse_description_color
+				local style = widget.style
 
 				style.glow_top.color[1] = 0
 				style.glow_bottom.color[1] = 0
 				style.glow_icon.color[1] = 0
 
-				Colors.copy_no_alpha_to(style.glow_top.color, curse_description_color)
-				Colors.copy_no_alpha_to(style.glow_bottom.color, curse_description_color)
-				Colors.copy_no_alpha_to(style.glow_icon.color, curse_description_color)
-				Colors.copy_no_alpha_to(style.title.text_color, curse_description_color)
+				Colors.copy_no_alpha_to(style.glow_top.color, theme_color)
+				Colors.copy_no_alpha_to(style.glow_bottom.color, theme_color)
+				Colors.copy_no_alpha_to(style.glow_icon.color, theme_color)
+				Colors.copy_no_alpha_to(style.title.text_color, theme_color)
 
-				local content = arg_10_2.content
+				local content = widget.content
 
 				content.icon = theme_settings.icon
 				content.title = theme_settings.journey_title
@@ -415,23 +417,23 @@ local tbl_4 = {
 				local Localize = Localize
 				local deity_name = theme_settings.deity_name
 
-				deity_name = deity_name or "lb_unknown"
+				deity_name = not not deity_name or not not "lb_unknown"
 
-				local var_10_6 = Localize(deity_name)
+				local localized_deity_name = Localize(deity_name)
 
-				content.body = string.format(Localize("gaze_information"), var_10_6)
+				content.body = string.format(Localize("gaze_information"), localized_deity_name)
 			end,
-			update = function (arg_11_0, arg_11_1, arg_11_2, arg_11_3, arg_11_4)
+			update = function (ui_scenegraph, scenegraph_definition, widget, progress, params)
 				-- function 11
-				local style = arg_11_2.style
+				local style = widget.style
 
-				arg_11_3 = math.easeInCubic(arg_11_3)
+				progress = math.easeInCubic(progress)
 
-				local num = 255 * arg_11_3
+				local alpha = 255 * progress
 
-				style.glow_top.color[1] = num
-				style.glow_bottom.color[1] = num
-				style.glow_icon.color[1] = num
+				style.glow_top.color[1] = alpha
+				style.glow_bottom.color[1] = alpha
+				style.glow_icon.color[1] = alpha
 			end,
 			on_complete = NOP
 		},
@@ -439,14 +441,14 @@ local tbl_4 = {
 			name = "fade_in_icon",
 			delay = 0,
 			duration = 0.25,
-			init = function (arg_12_0, arg_12_1, arg_12_2, arg_12_3)
+			init = function (ui_scenegraph, scenegraph_definition, widget, params)
 				-- function 12
-				arg_12_2.style.icon.color[1] = 0
+				widget.style.icon.color[1] = 0
 			end,
-			update = function (arg_13_0, arg_13_1, arg_13_2, arg_13_3, arg_13_4)
+			update = function (ui_scenegraph, scenegraph_definition, widget, progress, params)
 				-- function 13
-				arg_13_3 = math.easeInCubic(arg_13_3)
-				arg_13_2.style.icon.color[1] = 255 * arg_13_3
+				progress = math.easeInCubic(progress)
+				widget.style.icon.color[1] = 255 * progress
 			end,
 			on_complete = NOP
 		}
@@ -454,7 +456,7 @@ local tbl_4 = {
 }
 
 return {
-	scenegraph_definition = tbl_2,
-	widgets = tbl_3,
-	animation_definitions = tbl_4
+	scenegraph_definition = scenegraph_definition,
+	widgets = widgets,
+	animation_definitions = animation_definitions
 }

@@ -2,34 +2,34 @@
 
 local WorldMarkerTemplates = WorldMarkerTemplates
 
-WorldMarkerTemplates = WorldMarkerTemplates or {}
+WorldMarkerTemplates = not not WorldMarkerTemplates or not not {}
 WorldMarkerTemplates = WorldMarkerTemplates
 
-local versus_objective = WorldMarkerTemplates.versus_objective
+local template = WorldMarkerTemplates.versus_objective
 
-if not versus_objective then
-	versus_objective = {}
-	WorldMarkerTemplates.versus_objective = versus_objective
+if not template then
+	template = {}
+	WorldMarkerTemplates.versus_objective = template
 end
 
-versus_objective.position_offset = {
+template.position_offset = {
 	0,
 	0,
 	2
 }
-versus_objective.max_distance = nil
-versus_objective.screen_clamp = true
-versus_objective.screen_margins = {
+template.max_distance = nil
+template.screen_clamp = true
+template.screen_margins = {
 	down = 150,
 	up = 200,
 	left = 150,
 	right = 150
 }
 
-versus_objective.create_widget_definition = function (arg_1_0)
+template.create_widget_definition = function (scenegraph_id)
 	-- function 1
-	local num = 0.5
-	local num_2 = 60 * num
+	local icon_scale = 0.5
+	local arrow_offset = 60 * icon_scale
 
 	return {
 		element = {
@@ -53,20 +53,20 @@ versus_objective.create_widget_definition = function (arg_1_0)
 					pass_type = "rotated_texture",
 					style_id = "arrow",
 					texture_id = "arrow",
-					content_check_function = function (self)
+					content_check_function = function (content)
 						-- function 2
-						return self.is_clamped
+						return content.is_clamped
 					end
 				},
 				{
 					style_id = "text",
 					pass_type = "text",
 					text_id = "text",
-					content_check_function = function (self)
+					content_check_function = function (content)
 						-- function 3
-						local is_clamped = self.is_clamped
+						local is_clamped = content.is_clamped
 
-						is_clamped = is_clamped or self.distance > 5
+						is_clamped = not not is_clamped or content.distance > 5
 
 						return is_clamped
 					end
@@ -75,11 +75,11 @@ versus_objective.create_widget_definition = function (arg_1_0)
 					style_id = "text_shadow",
 					pass_type = "text",
 					text_id = "text",
-					content_check_function = function (self)
+					content_check_function = function (content)
 						-- function 4
-						local is_clamped = self.is_clamped
+						local is_clamped = content.is_clamped
 
-						is_clamped = is_clamped or self.distance > 5
+						is_clamped = not not is_clamped or content.distance > 5
 
 						return is_clamped
 					end
@@ -98,12 +98,12 @@ versus_objective.create_widget_definition = function (arg_1_0)
 				vertical_alignment = "center",
 				horizontal_alignment = "center",
 				texture_size = {
-					80 * num,
-					80 * num
+					80 * icon_scale,
+					80 * icon_scale
 				},
 				default_size = {
-					80 * num,
-					80 * num
+					80 * icon_scale,
+					80 * icon_scale
 				},
 				color = {
 					255,
@@ -121,12 +121,12 @@ versus_objective.create_widget_definition = function (arg_1_0)
 				vertical_alignment = "center",
 				horizontal_alignment = "center",
 				texture_size = {
-					100 * num,
-					100 * num
+					100 * icon_scale,
+					100 * icon_scale
 				},
 				default_size = {
-					100 * num,
-					100 * num
+					100 * icon_scale,
+					100 * icon_scale
 				},
 				color = {
 					255,
@@ -144,12 +144,12 @@ versus_objective.create_widget_definition = function (arg_1_0)
 				vertical_alignment = "center",
 				horizontal_alignment = "center",
 				texture_size = {
-					100 * num,
-					100 * num
+					100 * icon_scale,
+					100 * icon_scale
 				},
 				default_size = {
-					100 * num,
-					100 * num
+					100 * icon_scale,
+					100 * icon_scale
 				},
 				color = {
 					200,
@@ -167,12 +167,12 @@ versus_objective.create_widget_definition = function (arg_1_0)
 				vertical_alignment = "center",
 				horizontal_alignment = "center",
 				texture_size = {
-					100 * num,
-					100 * num
+					100 * icon_scale,
+					100 * icon_scale
 				},
 				default_size = {
-					100 * num,
-					100 * num
+					100 * icon_scale,
+					100 * icon_scale
 				},
 				color = {
 					200,
@@ -192,7 +192,7 @@ versus_objective.create_widget_definition = function (arg_1_0)
 				angle = 0,
 				pivot = {
 					22,
-					11.5 - num_2
+					11.5 - arrow_offset
 				},
 				texture_size = {
 					44,
@@ -210,7 +210,7 @@ versus_objective.create_widget_definition = function (arg_1_0)
 				},
 				offset = {
 					0,
-					num_2,
+					arrow_offset,
 					0
 				}
 			},
@@ -266,40 +266,40 @@ versus_objective.create_widget_definition = function (arg_1_0)
 			0,
 			0
 		},
-		scenegraph_id = arg_1_0
+		scenegraph_id = scenegraph_id
 	}
 end
 
-versus_objective.on_enter = function (self)
+template.on_enter = function (widget)
 	-- function 5
-	local content = self.content
-	local system = Managers.state.entity:system("objective_system")
+	local content = widget.content
+	local objective_system = Managers.state.entity:system("objective_system")
 
-	self.content.icon = system:current_objective_icon()
+	widget.content.icon = objective_system:current_objective_icon()
 	content.just_entered = true
 	content.t = 0
 end
 
-versus_objective.update_function = function (arg_6_0, arg_6_1, arg_6_2, arg_6_3, arg_6_4, arg_6_5)
+template.update_function = function (ui_renderer, widget, marker, settings, dt, t)
 	-- function 6
-	local content = arg_6_1.content
-	local style = arg_6_1.style
+	local content = widget.content
+	local style = widget.style
 
-	if not content.just_entered then
+	if content.just_entered then
 		content.just_entered = false
-		content.enter_timer = arg_6_5
+		content.enter_timer = t
 	end
 
-	local clamp = math.clamp(0.5 + (1 - content.forward_dot_dir) * 499.99999999999955, 0, 1)
-	local num = arg_6_5 - content.enter_timer
-	local num_2 = 255 * math.easeOutCubic(math.min(num, 1)) * clamp
-	local num_3 = num_2 * 0.7
+	local am = math.clamp(0.5 + (1 - content.forward_dot_dir) * 499.99999999999955, 0, 1)
+	local timer_delta = t - content.enter_timer
+	local alpha = 255 * math.easeOutCubic(math.min(timer_delta, 1)) * am
+	local fade_in_alpha = alpha * 0.7
 
-	style.icon.color[1] = num_3
-	style.background.color[1] = num_3
-	style.arrow.color[1] = num_3
-	style.text.text_color[1] = num_2
-	style.text_shadow.text_color[1] = num_2
+	style.icon.color[1] = fade_in_alpha
+	style.background.color[1] = fade_in_alpha
+	style.arrow.color[1] = fade_in_alpha
+	style.text.text_color[1] = alpha
+	style.text_shadow.text_color[1] = alpha
 	style.arrow.angle = content.angle
 
 	local distance = content.distance
@@ -319,20 +319,20 @@ versus_objective.update_function = function (arg_6_0, arg_6_1, arg_6_2, arg_6_3,
 
 	content.text = str
 
-	local min = math.min(1, 15 / distance)
-	local num_4 = content.t + arg_6_4 * min
+	local df = math.min(1, 15 / distance)
+	local ct = content.t + dt * df
 
-	content.t = num_4
+	content.t = ct
 
 	for i = 1, 2 do
-		local num_5 = 1 - (1 - (num_4 + 0.5 * i) % 1)^2
-		local var_6_11 = style["background_pulse_" .. i]
-		local texture_size = var_6_11.texture_size
-		local default_size = var_6_11.default_size
+		local pulse_progress = 1 - (1 - (ct + 0.5 * i) % 1)^2
+		local bg_pulse_style = style["background_pulse_" .. i]
+		local bg_pulse_size = bg_pulse_style.texture_size
+		local bg_pulse_size_base = bg_pulse_style.default_size
 
-		texture_size[1] = default_size[1] * (1 + num_5)
-		texture_size[2] = default_size[2] * (1 + num_5)
-		var_6_11.color[1] = 255 * (1 - num_5) * min * clamp
+		bg_pulse_size[1] = bg_pulse_size_base[1] * (1 + pulse_progress)
+		bg_pulse_size[2] = bg_pulse_size_base[2] * (1 + pulse_progress)
+		bg_pulse_style.color[1] = 255 * (1 - pulse_progress) * df * am
 	end
 
 	return true

@@ -1,33 +1,33 @@
 -- chunkname: @scripts/entity_system/systems/behaviour/trees/beastmen/beastmen_bestigor_behavior.lua
 
-local beastmen_bestigor = BreedActions.beastmen_bestigor
-local tbl = {
+local ACTIONS = BreedActions.beastmen_bestigor
+local BESTIGOR_COMBAT = {
 	"BTUtilityNode",
-	action_data = beastmen_bestigor.utility_action,
+	action_data = ACTIONS.utility_action,
 	{
 		"BTClanRatFollowAction",
 		name = "follow",
-		action_data = beastmen_bestigor.follow
+		action_data = ACTIONS.follow
 	},
 	{
 		"BTCombatStepAction",
 		name = "combat_step",
-		action_data = beastmen_bestigor.combat_step
+		action_data = ACTIONS.combat_step
 	},
 	{
 		"BTChargeAttackAction",
 		name = "charge_attack",
 		condition = "ask_target_before_attacking",
-		action_data = beastmen_bestigor.charge_attack
+		action_data = ACTIONS.charge_attack
 	},
 	{
 		"BTRandom",
-		action_data = beastmen_bestigor.running_attack,
+		action_data = ACTIONS.running_attack,
 		{
 			"BTStormVerminAttackAction",
 			name = "running_special_attack_sweep",
 			weight = 1,
-			action_data = beastmen_bestigor.special_attack_sweep
+			action_data = ACTIONS.special_attack_sweep
 		},
 		name = "running_attack"
 	},
@@ -35,28 +35,28 @@ local tbl = {
 		"BTStormVerminAttackAction",
 		name = "special_attack_cleave",
 		condition = "ask_target_before_attacking",
-		action_data = beastmen_bestigor.special_attack_cleave
+		action_data = ACTIONS.special_attack_cleave
 	},
 	{
 		"BTStormVerminAttackAction",
 		name = "special_attack_sweep",
 		condition = "ask_target_before_attacking",
-		action_data = beastmen_bestigor.special_attack_sweep
+		action_data = ACTIONS.special_attack_sweep
 	},
 	{
 		"BTStormVerminPushAction",
 		name = "push_attack",
-		action_data = beastmen_bestigor.push_attack
+		action_data = ACTIONS.push_attack
 	},
 	{
 		"BTCombatShoutAction",
 		name = "combat_shout",
-		action_data = beastmen_bestigor.combat_shout
+		action_data = ACTIONS.combat_shout
 	},
 	name = "in_combat",
 	condition = "confirmed_player_sighting"
 }
-local tbl_2 = {
+local BESTIGOR_SMART_OBJECT = {
 	"BTSelector",
 	{
 		"BTTeleportAction",
@@ -77,7 +77,7 @@ local tbl_2 = {
 		"BTSmashDoorAction",
 		name = "smash_door",
 		condition = "at_door_smartobject",
-		action_data = beastmen_bestigor.smash_door
+		action_data = ACTIONS.smash_door
 	},
 	condition = "bestigor_at_smartobject",
 	name = "smartobject"
@@ -109,27 +109,27 @@ BreedBehaviors.bestigor = {
 		"BTStaggerAction",
 		name = "stagger",
 		condition = "stagger",
-		action_data = beastmen_bestigor.stagger
+		action_data = ACTIONS.stagger
 	},
 	{
 		"BTBlockedAction",
 		name = "blocked",
 		condition = "blocked",
-		action_data = beastmen_bestigor.blocked
+		action_data = ACTIONS.blocked
 	},
-	tbl_2,
-	tbl,
+	BESTIGOR_SMART_OBJECT,
+	BESTIGOR_COMBAT,
 	{
 		"BTMoveToGoalAction",
 		name = "move_to_goal",
 		condition = "has_goal_destination",
-		action_data = beastmen_bestigor.follow
+		action_data = ACTIONS.follow
 	},
 	{
 		"BTAlertedAction",
 		name = "alerted",
 		condition = "player_spotted",
-		action_data = beastmen_bestigor.alerted
+		action_data = ACTIONS.alerted
 	},
 	{
 		"BTIdleAction",

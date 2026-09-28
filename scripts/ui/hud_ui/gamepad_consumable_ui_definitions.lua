@@ -1,9 +1,8 @@
 -- chunkname: @scripts/ui/hud_ui/gamepad_consumable_ui_definitions.lua
 
-local num = 1920
-local num_2 = 1080
-local flag = true
-local tbl = {
+local SIZE_X, SIZE_Y = 1920, 1080
+local RETAINED_MODE_ENABLED = true
+local scenegraph_definition = {
 	root = {
 		is_root = true,
 		position = {
@@ -12,8 +11,8 @@ local tbl = {
 			UILayer.hud
 		},
 		size = {
-			num,
-			num_2
+			SIZE_X,
+			SIZE_Y
 		}
 	},
 	pivot = {
@@ -84,7 +83,7 @@ local tbl = {
 	}
 }
 
-local function fn(arg_1_0, arg_1_1, arg_1_2)
+local function create_consumable_widget(angle, icon_offset, ammo_offset)
 	-- function 1
 	return {
 		scenegraph_id = "pivot",
@@ -107,11 +106,11 @@ local function fn(arg_1_0, arg_1_1, arg_1_2)
 					style_id = "texture_icon_lit",
 					pass_type = "texture",
 					retained_mode = true,
-					content_check_function = function (self)
+					content_check_function = function (content)
 						-- function 2
-						local has_data = self.has_data
+						local has_data = content.has_data
 
-						has_data = not has_data and self.wielded
+						has_data = not not has_data and not not content.wielded
 
 						return has_data
 					end
@@ -121,11 +120,11 @@ local function fn(arg_1_0, arg_1_1, arg_1_2)
 					pass_type = "text",
 					text_id = "text_ammo",
 					retained_mode = true,
-					content_check_function = function (self)
+					content_check_function = function (content)
 						-- function 3
-						local has_data = self.has_data
+						local has_data = content.has_data
 
-						has_data = not has_data and self.show_ammo
+						has_data = not not has_data and not not content.show_ammo
 
 						return has_data
 					end
@@ -153,7 +152,7 @@ local function fn(arg_1_0, arg_1_1, arg_1_2)
 					255,
 					255
 				},
-				offset = arg_1_2
+				offset = ammo_offset
 			},
 			texture_bg = {
 				size = {
@@ -233,8 +232,8 @@ local function fn(arg_1_0, arg_1_1, arg_1_2)
 end
 
 local degrees_to_radians = math.degrees_to_radians
-local tbl_2 = {
-	slot_potion = fn(degrees_to_radians(0), {
+local widget_definitions = {
+	slot_potion = create_consumable_widget(degrees_to_radians(0), {
 		-36,
 		-30,
 		2
@@ -243,7 +242,7 @@ local tbl_2 = {
 		-20,
 		3
 	}),
-	slot_grenade = fn(degrees_to_radians(180), {
+	slot_grenade = create_consumable_widget(degrees_to_radians(180), {
 		-26,
 		-30,
 		2
@@ -252,7 +251,7 @@ local tbl_2 = {
 		-20,
 		3
 	}),
-	slot_healthkit = fn(degrees_to_radians(90), {
+	slot_healthkit = create_consumable_widget(degrees_to_radians(90), {
 		-32,
 		-26,
 		2
@@ -264,23 +263,26 @@ local tbl_2 = {
 	selection = UIWidgets.create_gamepad_selection("selection", true),
 	background = UIWidgets.create_simple_texture("player_consumable_bg", "background")
 }
-local tbl_3 = {
+local animations = {
 	pickup = {
 		{
 			name = "fade_in",
 			start_progress = 0,
 			end_progress = 1,
-			init = function (arg_4_0, arg_4_1, arg_4_2, arg_4_3)
+			init = function (ui_scenegraph, scenegraph_definition, widgets, params)
 				-- function 4
 				return
 			end,
-			update = function (arg_5_0, arg_5_1, arg_5_2, arg_5_3, arg_5_4)
+			update = function (ui_scenegraph, scenegraph_definition, widgets, progress, params)
 				-- function 5
-				local easeInCubic = math.easeInCubic(arg_5_3)
+				local anim_fraction = math.easeInCubic(progress)
+				local widget = widgets[1]
+				local highlight_color = widget.style.texture_highlight.color
+				local alpha = 255 * anim_fraction
 
-				arg_5_2[1].style.texture_highlight.color[1] = 255 * easeInCubic
+				highlight_color[1] = alpha
 			end,
-			on_complete = function (arg_6_0, arg_6_1, arg_6_2, arg_6_3)
+			on_complete = function (ui_scenegraph, scenegraph_definition, widgets, params)
 				-- function 6
 				return
 			end
@@ -289,7 +291,7 @@ local tbl_3 = {
 }
 
 return {
-	scenegraph_definition = tbl,
-	widget_definitions = tbl_2,
-	animations = tbl_3
+	scenegraph_definition = scenegraph_definition,
+	widget_definitions = widget_definitions,
+	animations = animations
 }

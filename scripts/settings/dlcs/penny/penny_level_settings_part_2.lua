@@ -1,9 +1,9 @@
 -- chunkname: @scripts/settings/dlcs/penny/penny_level_settings_part_2.lua
 
-local penny_part_2 = DLCSettings.penny_part_2
+local settings = DLCSettings.penny_part_2
 
-penny_part_2.level_settings = "levels/honduras_dlcs/penny/level_settings_penny_part_2"
-penny_part_2.missions = {
+settings.level_settings = "levels/honduras_dlcs/penny/level_settings_penny_part_2"
+settings.missions = {
 	bastion_enter_bastion = {
 		mission_template_name = "goal",
 		text = "mission_bastion_enter_bastion"

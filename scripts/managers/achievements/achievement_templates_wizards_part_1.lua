@@ -5,23 +5,23 @@ local add_levels_complete_challenge = AchievementTemplateHelper.add_levels_compl
 local add_meta_challenge = AchievementTemplateHelper.add_meta_challenge
 local PLACEHOLDER_ICON = AchievementTemplateHelper.PLACEHOLDER_ICON
 local achievements = AchievementTemplates.achievements
-local PLACEHOLDER_ICON_2 = AchievementTemplateHelper.PLACEHOLDER_ICON
+local PLACEHOLDER_ICON = AchievementTemplateHelper.PLACEHOLDER_ICON
 local add_console_achievements = AchievementTemplateHelper.add_console_achievements
-local tbl = {
+local XB1_ACHIEVEMENT_ID = {
 	trail_sleigher = 104,
 	trail_shatterer = 102,
 	trail_beacons_are_lit = 105,
 	onions_complete_trail_legend = 106,
 	trail_cog_strike = 103
 }
-local tbl_2 = {
+local PS4_ACHIEVEMENT_ID = {
 	trail_beacons_are_lit = "087"
 }
-local tbl_3 = {}
-local tbl_4 = {
+local all_difficulties = {}
+local portals = {
 	LevelSettings.dlc_wizards_trail
 }
-local tbl_5 = {
+local difficulties = {
 	"normal",
 	"hard",
 	"harder",
@@ -29,14 +29,14 @@ local tbl_5 = {
 	"cataclysm"
 }
 
-for i = 1, #tbl_5 do
-	local var_0_12 = tbl_5[i]
-	local var_0_13 = DifficultyMapping[var_0_12]
-	local str = "onions_complete_trail_" .. var_0_13
+for i = 1, #difficulties do
+	local difficulty_key = difficulties[i]
+	local difficulty_name = DifficultyMapping[difficulty_key]
+	local name = "onions_complete_trail_" .. difficulty_name
 
-	tbl_3[i] = str
+	all_difficulties[i] = name
 
-	add_levels_complete_challenge(achievements, str, tbl_4, DifficultySettings[var_0_12].rank, "achievement_wizards_trail_complete_" .. var_0_13, nil, tbl[str], tbl_2[str])
+	add_levels_complete_challenge(achievements, name, portals, DifficultySettings[difficulty_key].rank, "achievement_wizards_trail_complete_" .. difficulty_name, nil, XB1_ACHIEVEMENT_ID[name], PS4_ACHIEVEMENT_ID[name])
 end
 
 achievements.trail_cog_strike = {
@@ -48,35 +48,35 @@ achievements.trail_cog_strike = {
 		"on_trail_cog_strike",
 		"on_trail_cog_reset_stat"
 	},
-	completed = function (self, arg_1_1, arg_1_2)
+	completed = function (statistics_db, stats_id, template_data)
 		-- function 1
-		return self:get_persistent_stat(arg_1_1, "trail_cog_strike") >= 1
+		return statistics_db:get_persistent_stat(stats_id, "trail_cog_strike") >= 1
 	end,
-	on_event = function (self, arg_2_1, arg_2_2, arg_2_3, arg_2_4)
+	on_event = function (statistics_db, stats_id, template_data, event_name, event_data)
 		-- function 2
-		if arg_2_3 == "on_trail_cog_strike" then
-			if not (not arg_2_2.current_hits and arg_2_2.units) then
-				arg_2_2.current_hits = 0
-				arg_2_2.units = {}
+		if event_name == "on_trail_cog_strike" then
+			if not template_data.current_hits or not template_data.units then
+				template_data.current_hits = 0
+				template_data.units = {}
 			end
 
-			local var_2_0 = arg_2_4[1]
+			local hit_unit = event_data[1]
 
-			if not arg_2_2.units[var_2_0] then
+			if template_data.units[hit_unit] then
 				return
 			end
 
-			arg_2_2.units[var_2_0] = true
-			arg_2_2.current_hits = arg_2_2.current_hits + 1
+			template_data.units[hit_unit] = true
+			template_data.current_hits = template_data.current_hits + 1
 
-			if arg_2_2.current_hits >= 10 then
-				self:increment_stat(arg_2_1, "trail_cog_strike")
+			if template_data.current_hits >= 10 then
+				statistics_db:increment_stat(stats_id, "trail_cog_strike")
 
-				arg_2_2.current_hits = 0
+				template_data.current_hits = 0
 			end
-		elseif arg_2_3 == "on_trail_cog_reset_stat" then
-			arg_2_2.current_hits = 0
-			arg_2_2.units = {}
+		elseif event_name == "on_trail_cog_reset_stat" then
+			template_data.current_hits = 0
+			template_data.units = {}
 		end
 	end
 }
@@ -85,9 +85,9 @@ achievements.trail_shatterer = {
 	display_completion_ui = true,
 	icon = "achievement_wizards_trail_break_icicles",
 	desc = "achv_onions_icicles_desc",
-	completed = function (self, arg_3_1, arg_3_2)
+	completed = function (statistics_db, stats_id, template_data)
 		-- function 3
-		return self:get_persistent_stat(arg_3_1, "trail_shatterer") >= 1
+		return statistics_db:get_persistent_stat(stats_id, "trail_shatterer") >= 1
 	end
 }
 achievements.trail_sleigher = {
@@ -95,20 +95,28 @@ achievements.trail_sleigher = {
 	display_completion_ui = true,
 	icon = "achievement_wizards_trail_kill_enemies_with_sleigh",
 	desc = "achv_onions_sleigh_kills_desc",
-	progress = function (self, arg_4_1, arg_4_2)
+	progress = function (statistics_db, stats_id, template_data)
 		-- function 4
-		local get_persistent_stat = self:get_persistent_stat(arg_4_1, "trail_sleigher")
+		local get_persistent_stat = statistics_db:get_persistent_stat(stats_id, "trail_sleigher")
 
-		get_persistent_stat = get_persistent_stat or 0
+		if not get_persistent_stat then
+			-- Nothing
+		end
+
+		get_persistent_stat = 0
+
+		local kills = get_persistent_stat
+
+		::label_4_0::
 
 		return {
-			get_persistent_stat,
+			kills,
 			50
 		}
 	end,
-	completed = function (self, arg_5_1, arg_5_2)
+	completed = function (statistics_db, stats_id, template_data)
 		-- function 5
-		return self:get_persistent_stat(arg_5_1, "trail_sleigher") >= 50
+		return statistics_db:get_persistent_stat(stats_id, "trail_sleigher") >= 50
 	end
 }
 achievements.trail_beacons_are_lit = {
@@ -116,52 +124,77 @@ achievements.trail_beacons_are_lit = {
 	display_completion_ui = true,
 	icon = "achievement_wizards_trail_light_bonfires",
 	desc = "achv_onions_light_beacons_desc",
-	progress = function (self, arg_6_1, arg_6_2)
+	progress = function (statistics_db, stats_id, template_data)
 		-- function 6
-		local get_persistent_stat = self:get_persistent_stat(arg_6_1, "trail_bonfire_watch_tower")
+		local get_persistent_stat = statistics_db:get_persistent_stat(stats_id, "trail_bonfire_watch_tower")
 
-		get_persistent_stat = get_persistent_stat or 0
-
-		local get_persistent_stat_2 = self:get_persistent_stat(arg_6_1, "trail_bonfire_river_path")
-
-		get_persistent_stat_2 = get_persistent_stat_2 or 0
-
-		local get_persistent_stat_3 = self:get_persistent_stat(arg_6_1, "trail_bonfire_lookout_point")
-
-		get_persistent_stat_3 = get_persistent_stat_3 or 0
-
-		if get_persistent_stat > 1 then
-			get_persistent_stat = 1
+		if not get_persistent_stat then
+			-- Nothing
 		end
 
-		if get_persistent_stat_2 > 1 then
-			get_persistent_stat_2 = 1
+		get_persistent_stat = 0
+
+		local watch_tower_beacon = get_persistent_stat
+
+		::label_6_0::
+
+		local get_persistent_stat_2 = statistics_db:get_persistent_stat(stats_id, "trail_bonfire_river_path")
+
+		if not get_persistent_stat_2 then
+			-- Nothing
 		end
 
-		if get_persistent_stat_3 > 1 then
-			get_persistent_stat_3 = 1
+		get_persistent_stat_2 = 0
+
+		local river_path_beacon = get_persistent_stat_2
+
+		::label_6_1::
+
+		local get_persistent_stat_3 = statistics_db:get_persistent_stat(stats_id, "trail_bonfire_lookout_point")
+
+		if not get_persistent_stat_3 then
+			-- Nothing
 		end
 
-		local num = 0
-		local num_2 = get_persistent_stat + get_persistent_stat_2 + get_persistent_stat_3
+		get_persistent_stat_3 = 0
+
+		local look_out_beacon = get_persistent_stat_3
+
+		::label_6_2::
+
+		if watch_tower_beacon > 1 then
+			watch_tower_beacon = 1
+		end
+
+		if river_path_beacon > 1 then
+			river_path_beacon = 1
+		end
+
+		if look_out_beacon > 1 then
+			look_out_beacon = 1
+		end
+
+		local number_of_beacons = 0
+
+		number_of_beacons = watch_tower_beacon + river_path_beacon + look_out_beacon
 
 		return {
-			num_2,
+			number_of_beacons,
 			3
 		}
 	end,
-	completed = function (self, arg_7_1, arg_7_2)
+	completed = function (statistics_db, stats_id, template_data)
 		-- function 7
-		local get_persistent_stat = self:get_persistent_stat(arg_7_1, "trail_bonfire_watch_tower")
-		local get_persistent_stat_2 = self:get_persistent_stat(arg_7_1, "trail_bonfire_river_path")
-		local get_persistent_stat_3 = self:get_persistent_stat(arg_7_1, "trail_bonfire_lookout_point")
+		local watch_tower_beacon = statistics_db:get_persistent_stat(stats_id, "trail_bonfire_watch_tower")
+		local river_path_beacon = statistics_db:get_persistent_stat(stats_id, "trail_bonfire_river_path")
+		local look_out_beacon = statistics_db:get_persistent_stat(stats_id, "trail_bonfire_lookout_point")
 
-		if not (not (get_persistent_stat >= 1) or not (get_persistent_stat_2 >= 1) or not (get_persistent_stat_3 >= 1)) then
+		if watch_tower_beacon >= 1 and river_path_beacon >= 1 and look_out_beacon >= 1 then
 			return true
 		end
 	end
 }
-all_trail_challenges = table.clone(tbl_3)
+all_trail_challenges = table.clone(all_difficulties)
 
 table.remove(all_trail_challenges, #all_trail_challenges)
 
@@ -170,5 +203,5 @@ all_trail_challenges[#all_trail_challenges + 1] = "trail_shatterer"
 all_trail_challenges[#all_trail_challenges + 1] = "trail_sleigher"
 all_trail_challenges[#all_trail_challenges + 1] = "trail_beacons_are_lit"
 
-add_meta_challenge(achievements, "onions_complete_all", all_trail_challenges, "achievement_wizards_trail_complete_all_challenges", nil, tbl[name], tbl_2[name])
-add_console_achievements(tbl, tbl_2)
+add_meta_challenge(achievements, "onions_complete_all", all_trail_challenges, "achievement_wizards_trail_complete_all_challenges", nil, XB1_ACHIEVEMENT_ID[name], PS4_ACHIEVEMENT_ID[name])
+add_console_achievements(XB1_ACHIEVEMENT_ID, PS4_ACHIEVEMENT_ID)

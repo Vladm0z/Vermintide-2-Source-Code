@@ -2,10 +2,10 @@
 
 local WeaveProperties = WeaveProperties
 
-WeaveProperties = WeaveProperties or {}
+WeaveProperties = not not WeaveProperties or not not {}
 WeaveProperties = WeaveProperties
 
-local tbl = {
+local buff_tweak_data = {
 	weave_properties_crit_chance = {
 		variable_bonus_max = 0.05
 	},
@@ -244,7 +244,7 @@ WeaveProperties.properties = {
 		description_values = {
 			{
 				value_type = "percent",
-				value = tbl.weave_properties_attack_speed.variable_multiplier_max
+				value = buff_tweak_data.weave_properties_attack_speed.variable_multiplier_max
 			}
 		}
 	},
@@ -258,7 +258,7 @@ WeaveProperties.properties = {
 		description_values = {
 			{
 				value_type = "percent",
-				value = tbl.weave_properties_crit_boost.variable_multiplier_max
+				value = buff_tweak_data.weave_properties_crit_boost.variable_multiplier_max
 			}
 		}
 	},
@@ -272,7 +272,7 @@ WeaveProperties.properties = {
 		description_values = {
 			{
 				value_type = "percent",
-				value = tbl.weave_properties_power_vs_skaven.variable_multiplier_max
+				value = buff_tweak_data.weave_properties_power_vs_skaven.variable_multiplier_max
 			}
 		}
 	},
@@ -286,7 +286,7 @@ WeaveProperties.properties = {
 		description_values = {
 			{
 				value_type = "percent",
-				value = tbl.weave_properties_power_vs_chaos.variable_multiplier_max
+				value = buff_tweak_data.weave_properties_power_vs_chaos.variable_multiplier_max
 			}
 		}
 	},
@@ -300,7 +300,7 @@ WeaveProperties.properties = {
 		description_values = {
 			{
 				value_type = "percent",
-				value = tbl.weave_properties_power_vs_unarmoured.variable_multiplier_max
+				value = buff_tweak_data.weave_properties_power_vs_unarmoured.variable_multiplier_max
 			}
 		}
 	},
@@ -314,7 +314,7 @@ WeaveProperties.properties = {
 		description_values = {
 			{
 				value_type = "percent",
-				value = tbl.weave_properties_power_vs_armoured.variable_multiplier_max
+				value = buff_tweak_data.weave_properties_power_vs_armoured.variable_multiplier_max
 			}
 		}
 	},
@@ -328,7 +328,7 @@ WeaveProperties.properties = {
 		description_values = {
 			{
 				value_type = "percent",
-				value = tbl.weave_properties_power_vs_large.variable_multiplier_max
+				value = buff_tweak_data.weave_properties_power_vs_large.variable_multiplier_max
 			}
 		}
 	},
@@ -342,7 +342,7 @@ WeaveProperties.properties = {
 		description_values = {
 			{
 				value_type = "percent",
-				value = tbl.weave_properties_power_vs_frenzy.variable_multiplier_max
+				value = buff_tweak_data.weave_properties_power_vs_frenzy.variable_multiplier_max
 			}
 		}
 	},
@@ -355,7 +355,7 @@ WeaveProperties.properties = {
 		description_values = {
 			{
 				value_type = "bonus",
-				value = tbl.weave_properties_stamina.variable_bonus_max
+				value = buff_tweak_data.weave_properties_stamina.variable_bonus_max
 			}
 		}
 	},
@@ -369,7 +369,7 @@ WeaveProperties.properties = {
 		description_values = {
 			{
 				value_type = "percent",
-				value = tbl.weave_properties_health.variable_multiplier_max
+				value = buff_tweak_data.weave_properties_health.variable_multiplier_max
 			}
 		}
 	},
@@ -382,7 +382,7 @@ WeaveProperties.properties = {
 		description_values = {
 			{
 				value_type = "percent",
-				value = tbl.weave_properties_push_block_arc.variable_multiplier_max
+				value = buff_tweak_data.weave_properties_push_block_arc.variable_multiplier_max
 			}
 		}
 	},
@@ -395,7 +395,7 @@ WeaveProperties.properties = {
 		description_values = {
 			{
 				value_type = "percent",
-				value = tbl.weave_properties_block_cost.variable_multiplier_max
+				value = buff_tweak_data.weave_properties_block_cost.variable_multiplier_max
 			}
 		}
 	},
@@ -409,7 +409,7 @@ WeaveProperties.properties = {
 		description_values = {
 			{
 				value_type = "percent",
-				value = tbl.weave_properties_protection_skaven.variable_multiplier_max
+				value = buff_tweak_data.weave_properties_protection_skaven.variable_multiplier_max
 			}
 		}
 	},
@@ -423,7 +423,7 @@ WeaveProperties.properties = {
 		description_values = {
 			{
 				value_type = "percent",
-				value = tbl.weave_properties_protection_chaos.variable_multiplier_max
+				value = buff_tweak_data.weave_properties_protection_chaos.variable_multiplier_max
 			}
 		}
 	},
@@ -437,7 +437,7 @@ WeaveProperties.properties = {
 		description_values = {
 			{
 				value_type = "percent",
-				value = tbl.weave_properties_protection_aoe.variable_multiplier_max
+				value = buff_tweak_data.weave_properties_protection_aoe.variable_multiplier_max
 			}
 		}
 	},
@@ -450,7 +450,7 @@ WeaveProperties.properties = {
 		description_values = {
 			{
 				value_type = "percent",
-				value = tbl.weave_properties_crit_chance.variable_bonus_max
+				value = buff_tweak_data.weave_properties_crit_chance.variable_bonus_max
 			}
 		}
 	},
@@ -463,7 +463,7 @@ WeaveProperties.properties = {
 		description_values = {
 			{
 				value_type = "percent",
-				value = tbl.weave_properties_ability_cooldown_reduction.variable_multiplier_max
+				value = buff_tweak_data.weave_properties_ability_cooldown_reduction.variable_multiplier_max
 			}
 		}
 	},
@@ -477,7 +477,7 @@ WeaveProperties.properties = {
 		description_values = {
 			{
 				value_type = "percent",
-				value = tbl.weave_properties_curse_resistance.variable_multiplier_max
+				value = buff_tweak_data.weave_properties_curse_resistance.variable_multiplier_max
 			}
 		}
 	},
@@ -490,7 +490,7 @@ WeaveProperties.properties = {
 		description_values = {
 			{
 				value_type = "percent",
-				value = tbl.weave_properties_respawn_speed.variable_multiplier_max
+				value = buff_tweak_data.weave_properties_respawn_speed.variable_multiplier_max
 			}
 		}
 	},
@@ -504,7 +504,7 @@ WeaveProperties.properties = {
 		description_values = {
 			{
 				value_type = "percent",
-				value = tbl.weave_properties_revive_speed.variable_multiplier_max
+				value = buff_tweak_data.weave_properties_revive_speed.variable_multiplier_max
 			}
 		}
 	},
@@ -517,7 +517,7 @@ WeaveProperties.properties = {
 		description_values = {
 			{
 				value_type = "percent",
-				value = tbl.weave_properties_fatigue_regen.variable_multiplier_max
+				value = buff_tweak_data.weave_properties_fatigue_regen.variable_multiplier_max
 			}
 		}
 	},
@@ -530,18 +530,18 @@ WeaveProperties.properties = {
 		description_values = {
 			{
 				value_type = "baked_percent",
-				value = tbl.weave_properties_movespeed.variable_multiplier_max
+				value = buff_tweak_data.weave_properties_movespeed.variable_multiplier_max
 			}
 		}
 	}
 }
 
-for k, v in pairs(WeaveProperties.properties) do
-	v.name = k
+for name, data in pairs(WeaveProperties.properties) do
+	data.name = name
 end
 
 BuffUtils.copy_talent_buff_names(WeaveProperties.buff_templates)
-BuffUtils.apply_buff_tweak_data(WeaveProperties.buff_templates, tbl)
+BuffUtils.apply_buff_tweak_data(WeaveProperties.buff_templates, buff_tweak_data)
 
 WeaveProperties.categories = {
 	melee = {

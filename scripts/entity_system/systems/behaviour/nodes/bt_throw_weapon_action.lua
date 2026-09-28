@@ -4,188 +4,201 @@ require("scripts/entity_system/systems/behaviour/nodes/bt_node")
 
 BTThrowWeaponAction = class(BTThrowWeaponAction, BTNode)
 
-BTThrowWeaponAction.init = function (arg_1_0, ...)
+BTThrowWeaponAction.init = function (self, ...)
 	-- function 1
-	BTThrowWeaponAction.super.init(arg_1_0, ...)
+	BTThrowWeaponAction.super.init(self, ...)
 end
 
 BTThrowWeaponAction.name = "BTThrowWeaponAction"
 
-BTThrowWeaponAction.enter = function (self, arg_2_1, arg_2_2, arg_2_3)
+BTThrowWeaponAction.enter = function (self, unit, blackboard, t)
 	-- function 2
-	local action_data = self._tree_node.action_data
+	local action = self._tree_node.action_data
 
-	arg_2_2.action = action_data
-	arg_2_2.active_node = BTThrowWeaponAction
-	arg_2_2.move_state = "attacking"
+	blackboard.action = action
+	blackboard.active_node = BTThrowWeaponAction
+	blackboard.move_state = "attacking"
 
-	local throw_animation = action_data.throw_animation
+	local throw_animation = action.throw_animation
 
-	Managers.state.network:anim_event(arg_2_1, throw_animation)
-	Unit.flow_event(arg_2_1, "throw_animation_started")
+	Managers.state.network:anim_event(unit, throw_animation)
+	Unit.flow_event(unit, "throw_animation_started")
 
-	arg_2_2.inventory_extension = ScriptUnit.extension(arg_2_1, "ai_inventory_system")
+	local ai_inventory_extension = ScriptUnit.extension(unit, "ai_inventory_system")
 
-	arg_2_2.navigation_extension:set_enabled(false)
-	arg_2_2.locomotion_extension:set_wanted_velocity(Vector3.zero())
+	blackboard.inventory_extension = ai_inventory_extension
 
-	arg_2_2.thrown_weapon_displaced_units = {}
-	arg_2_2.pushed_position_override = Vector3Box()
-	arg_2_2.hit_units = {}
-	arg_2_2.rotation_timer = arg_2_3 + action_data.rotation_time
+	blackboard.navigation_extension:set_enabled(false)
+	blackboard.locomotion_extension:set_wanted_velocity(Vector3.zero())
 
-	if not action_data.close_attack_time then
-		arg_2_2.close_attack_timer = arg_2_3 + action_data.close_attack_time
+	blackboard.thrown_weapon_displaced_units = {}
+	blackboard.pushed_position_override = Vector3Box()
+	blackboard.hit_units = {}
+	blackboard.rotation_timer = t + action.rotation_time
+
+	if action.close_attack_time then
+		blackboard.close_attack_timer = t + action.close_attack_time
 	end
 end
 
-BTThrowWeaponAction.leave = function (arg_3_0, arg_3_1, arg_3_2, arg_3_3, arg_3_4, arg_3_5)
+BTThrowWeaponAction.leave = function (self, unit, blackboard, t, reason, destroy)
 	-- function 3
-	if not arg_3_5 then
-		arg_3_2.locomotion_extension:set_rotation_speed(nil)
+	if not destroy then
+		local locomotion_extension = blackboard.locomotion_extension
+
+		locomotion_extension:set_rotation_speed(nil)
 	end
 
-	arg_3_2.navigation_extension:set_enabled(true)
+	blackboard.navigation_extension:set_enabled(true)
 
-	if not arg_3_2.thrown_unit and not Unit.alive(arg_3_2.thrown_unit) then
-		Managers.state.entity:system("audio_system"):play_audio_unit_event(arg_3_2.action.stop_sound_id, arg_3_2.thrown_unit)
-		Managers.state.unit_spawner:mark_for_deletion(arg_3_2.thrown_unit)
+	if blackboard.thrown_unit and Unit.alive(blackboard.thrown_unit) then
+		local audio_system = Managers.state.entity:system("audio_system")
 
-		arg_3_2.thrown_unit = nil
+		audio_system:play_audio_unit_event(blackboard.action.stop_sound_id, blackboard.thrown_unit)
+		Managers.state.unit_spawner:mark_for_deletion(blackboard.thrown_unit)
 
-		local network = Managers.state.network
-		local unit_game_object_id = network:unit_game_object_id(arg_3_1)
+		blackboard.thrown_unit = nil
 
-		network.network_transmit:send_rpc_all("rpc_ai_show_single_item", unit_game_object_id, 1, true)
+		local network_manager = Managers.state.network
+		local owner_go_id = network_manager:unit_game_object_id(unit)
+
+		network_manager.network_transmit:send_rpc_all("rpc_ai_show_single_item", owner_go_id, 1, true)
 	end
 
-	arg_3_2.action = nil
-	arg_3_2.active_node = nil
-	arg_3_2.throw_finished = nil
-	arg_3_2.inventory_extension = nil
-	arg_3_2.pushed_position_override = nil
-	arg_3_2.hit_units = nil
-	arg_3_2.catched_weapon = nil
-	arg_3_2.rotation_timer = nil
-	arg_3_2.ignore_thrown_weapon_overlap = nil
+	blackboard.action = nil
+	blackboard.active_node = nil
+	blackboard.throw_finished = nil
+	blackboard.inventory_extension = nil
+	blackboard.pushed_position_override = nil
+	blackboard.hit_units = nil
+	blackboard.catched_weapon = nil
+	blackboard.rotation_timer = nil
+	blackboard.ignore_thrown_weapon_overlap = nil
 
-	Managers.state.network:anim_event(arg_3_1, "move_fwd")
+	Managers.state.network:anim_event(unit, "move_fwd")
 end
 
-BTThrowWeaponAction.anim_cb_throw_weapon = function (arg_4_0, arg_4_1, arg_4_2)
+BTThrowWeaponAction.anim_cb_throw_weapon = function (self, unit, blackboard)
 	-- function 4
-	local action = arg_4_2.action
-	local local_rotation = Unit.local_rotation(arg_4_1, 0)
-	local num = POSITION_LOOKUP[arg_4_1] + Vector3.up() * 2
-	local forward = Quaternion.forward(local_rotation)
-	local world = arg_4_2.world
+	local action = blackboard.action
+	local rotation = Unit.local_rotation(unit, 0)
+	local position = POSITION_LOOKUP[unit] + Vector3.up() * 2
+	local direction = Quaternion.forward(rotation)
+	local world = blackboard.world
 	local physics_world = World.physics_world(world)
-	local immediate_raycast, var_4_7, var_4_8 = PhysicsWorld.immediate_raycast(physics_world, num, forward, 40, "closest", "collision_filter", "filter_ai_line_of_sight_check")
+	local result, hit_position, distance = PhysicsWorld.immediate_raycast(physics_world, position, direction, 40, "closest", "collision_filter", "filter_ai_line_of_sight_check")
 
-	if not immediate_raycast then
-		local network = Managers.state.network
-		local unit_game_object_id = network:unit_game_object_id(arg_4_1)
+	if result then
+		local network_manager = Managers.state.network
+		local owner_go_id = network_manager:unit_game_object_id(unit)
 
-		network.network_transmit:send_rpc_all("rpc_ai_show_single_item", unit_game_object_id, 1, false)
+		network_manager.network_transmit:send_rpc_all("rpc_ai_show_single_item", owner_go_id, 1, false)
 
-		arg_4_2.throw_weapon_goal_position = Vector3Box(var_4_7)
+		blackboard.throw_weapon_goal_position = Vector3Box(hit_position)
 
-		local throw_unit_name = action.throw_unit_name
-		local spawn_network_unit = Managers.state.unit_spawner:spawn_network_unit(throw_unit_name, "thrown_weapon_unit", nil, num)
+		local unit_name = action.throw_unit_name
+		local thrown_unit = Managers.state.unit_spawner:spawn_network_unit(unit_name, "thrown_weapon_unit", nil, position)
 
-		arg_4_2.thrown_unit = spawn_network_unit
-		arg_4_2.thrown_state = "moving_towards_target"
+		blackboard.thrown_unit = thrown_unit
+		blackboard.thrown_state = "moving_towards_target"
 
-		Unit.flow_event(spawn_network_unit, "axe_thrown")
+		Unit.flow_event(thrown_unit, "axe_thrown")
 
-		arg_4_2.initial_throw_direction = Vector3Box(forward)
+		blackboard.initial_throw_direction = Vector3Box(direction)
 
-		Managers.state.entity:system("audio_system"):play_audio_unit_event(action.running_sound_id, arg_4_2.thrown_unit)
+		local audio_system = Managers.state.entity:system("audio_system")
 
-		local calculate_oobb, var_4_14, var_4_15 = AiUtils.calculate_oobb(var_4_8, POSITION_LOOKUP[arg_4_1], local_rotation, 2, action.radius * 1.2)
-		local num_2 = var_4_8 * 0.25
+		audio_system:play_audio_unit_event(action.running_sound_id, blackboard.thrown_unit)
 
-		Managers.state.entity:system("ai_bot_group_system"):aoe_threat_created(calculate_oobb, "oobb", var_4_15, var_4_14, num_2, "Throw Weapon")
+		local obstacle_position, obstacle_rotation, obstacle_size = AiUtils.calculate_oobb(distance, POSITION_LOOKUP[unit], rotation, 2, action.radius * 1.2)
+		local bot_threat_duration = distance * 0.25
+		local ai_bot_group_system = Managers.state.entity:system("ai_bot_group_system")
+
+		ai_bot_group_system:aoe_threat_created(obstacle_position, "oobb", obstacle_size, obstacle_rotation, bot_threat_duration, "Throw Weapon")
 	else
-		arg_4_2.throw_finished = true
+		blackboard.throw_finished = true
 	end
 end
 
-BTThrowWeaponAction.anim_cb_throw_finished = function (arg_5_0, arg_5_1, arg_5_2)
+BTThrowWeaponAction.anim_cb_throw_finished = function (self, unit, blackboard)
 	-- function 5
-	arg_5_2.throw_finished = true
+	blackboard.throw_finished = true
 end
 
-BTThrowWeaponAction.catch_weapon = function (arg_6_0, arg_6_1, arg_6_2)
+BTThrowWeaponAction.catch_weapon = function (self, unit, blackboard)
 	-- function 6
-	local network = Managers.state.network
-	local unit_game_object_id = network:unit_game_object_id(arg_6_1)
+	local network_manager = Managers.state.network
+	local owner_go_id = network_manager:unit_game_object_id(unit)
 
-	network.network_transmit:send_rpc_all("rpc_ai_show_single_item", unit_game_object_id, 1, true)
-	Managers.state.entity:system("audio_system"):play_audio_unit_event(arg_6_2.action.stop_sound_id, arg_6_2.thrown_unit)
+	network_manager.network_transmit:send_rpc_all("rpc_ai_show_single_item", owner_go_id, 1, true)
 
-	local catch_animation = arg_6_2.action.catch_animation
+	local audio_system = Managers.state.entity:system("audio_system")
 
-	Managers.state.network:anim_event(arg_6_1, catch_animation)
+	audio_system:play_audio_unit_event(blackboard.action.stop_sound_id, blackboard.thrown_unit)
 
-	if not arg_6_2.thrown_unit then
-		Managers.state.unit_spawner:mark_for_deletion(arg_6_2.thrown_unit)
+	local action = blackboard.action
+	local catch_animation = action.catch_animation
+
+	Managers.state.network:anim_event(unit, catch_animation)
+
+	if blackboard.thrown_unit then
+		Managers.state.unit_spawner:mark_for_deletion(blackboard.thrown_unit)
 	end
 
-	arg_6_2.throw_weapon_goal_position = nil
-	arg_6_2.thrown_unit = nil
-	arg_6_2.thrown_weapon_direction = nil
-	arg_6_2.catched_weapon = true
-	arg_6_2.close_attack_target = nil
+	blackboard.throw_weapon_goal_position = nil
+	blackboard.thrown_unit = nil
+	blackboard.thrown_weapon_direction = nil
+	blackboard.catched_weapon = true
+	blackboard.close_attack_target = nil
 end
 
-BTThrowWeaponAction.run = function (self, arg_7_1, arg_7_2, arg_7_3, arg_7_4)
+BTThrowWeaponAction.run = function (self, unit, blackboard, t, dt)
 	-- function 7
-	if arg_7_3 < arg_7_2.rotation_timer then
-		local target_unit = arg_7_2.target_unit
+	if t < blackboard.rotation_timer then
+		local target_unit = blackboard.target_unit
 
-		if not target_unit then
-			local rotation_towards_unit_flat = LocomotionUtils.rotation_towards_unit_flat(arg_7_1, target_unit)
+		if target_unit then
+			local rot = LocomotionUtils.rotation_towards_unit_flat(unit, target_unit)
 
-			arg_7_2.locomotion_extension:set_wanted_rotation(rotation_towards_unit_flat)
+			blackboard.locomotion_extension:set_wanted_rotation(rot)
 		end
-	elseif not arg_7_2.close_attack_target then
-		local rotation_towards_unit_flat_2 = LocomotionUtils.rotation_towards_unit_flat(arg_7_1, arg_7_2.close_attack_target)
+	elseif blackboard.close_attack_target then
+		local rot = LocomotionUtils.rotation_towards_unit_flat(unit, blackboard.close_attack_target)
 
-		arg_7_2.locomotion_extension:set_wanted_rotation(rotation_towards_unit_flat_2)
-	elseif not (not arg_7_2.initial_throw_direction and arg_7_2.catched_weapon or not (arg_7_3 > arg_7_2.rotation_timer)) then
-		local look = Quaternion.look(arg_7_2.initial_throw_direction:unbox())
+		blackboard.locomotion_extension:set_wanted_rotation(rot)
+	elseif blackboard.initial_throw_direction and (blackboard.catched_weapon or t > blackboard.rotation_timer) then
+		local rot = Quaternion.look(blackboard.initial_throw_direction:unbox())
 
-		arg_7_2.locomotion_extension:set_wanted_rotation(look)
+		blackboard.locomotion_extension:set_wanted_rotation(rot)
 	end
 
-	if not arg_7_2.throw_finished then
+	if blackboard.throw_finished then
 		return "done"
 	else
-		local var_7_4
+		local has_catched_weapon
 
-		if not arg_7_2.throw_weapon_goal_position then
-			var_7_4 = self:update_thrown_weapon(arg_7_1, arg_7_2, arg_7_4, arg_7_3)
+		if blackboard.throw_weapon_goal_position then
+			has_catched_weapon = self:update_thrown_weapon(unit, blackboard, dt, t)
 		end
 
-		if not var_7_4 and not arg_7_2.thrown_unit then
-			self:catch_weapon(arg_7_1, arg_7_2)
+		if has_catched_weapon and blackboard.thrown_unit then
+			self:catch_weapon(unit, blackboard)
 		end
 
 		return "running"
 	end
 end
 
-BTThrowWeaponAction.update_thrown_weapon = function (self, arg_8_1, arg_8_2, arg_8_3, arg_8_4)
+BTThrowWeaponAction.update_thrown_weapon = function (self, unit, blackboard, dt, t)
 	-- function 8
-	local thrown_unit = arg_8_2.thrown_unit
+	local thrown_unit = blackboard.thrown_unit
 
-	if not (not thrown_unit and Unit.alive(thrown_unit)) then
+	if not thrown_unit or not Unit.alive(thrown_unit) then
 		return
 	end
 
-	local thrown_state = arg_8_2.thrown_state
-	local action = arg_8_2.action
+	local thrown_state = blackboard.thrown_state
+	local action = blackboard.action
 	local throw_speed
 
 	if thrown_state == "moving_towards_target" then
@@ -196,158 +209,187 @@ BTThrowWeaponAction.update_thrown_weapon = function (self, arg_8_1, arg_8_2, arg
 		end
 	end
 
-	throw_speed = thrown_state ~= "returning_to_owner" or action.return_speed
+	if thrown_state == "returning_to_owner" then
+		throw_speed = action.return_speed
+	else
+		throw_speed = false
+	end
+
+	goto label_8_0
+
+	throw_speed = true
+
+	local speed = throw_speed
 
 	::label_8_0::
 
-	local num = POSITION_LOOKUP[arg_8_1] + Vector3.up() * 2
-	local unbox = arg_8_2.throw_weapon_goal_position:unbox()
-	local local_position = Unit.local_position(thrown_unit, 0)
-	local distance = Vector3.distance(unbox, local_position)
-	local normalize = Vector3.normalize(unbox - local_position)
+	local unit_position = POSITION_LOOKUP[unit] + Vector3.up() * 2
+	local wanted_position = blackboard.throw_weapon_goal_position:unbox()
+	local current_position = Unit.local_position(thrown_unit, 0)
+	local distance_to_goal = Vector3.distance(wanted_position, current_position)
+	local direction = Vector3.normalize(wanted_position - current_position)
 
-	if not arg_8_2.thrown_weapon_direction then
-		arg_8_2.thrown_weapon_direction = Vector3Box(normalize)
-		arg_8_2.thrown_weapon_angle = 1
+	if not blackboard.thrown_weapon_direction then
+		blackboard.thrown_weapon_direction = Vector3Box(direction)
+		blackboard.thrown_weapon_angle = 1
 	end
 
 	if thrown_state == "lingering" then
-		if arg_8_4 > arg_8_2.thrown_linger_timer then
-			arg_8_2.thrown_state = "returning_to_owner"
+		if t > blackboard.thrown_linger_timer then
+			blackboard.thrown_state = "returning_to_owner"
 
-			Managers.state.entity:system("audio_system"):play_audio_unit_event(action.pull_sound_id, arg_8_2.thrown_unit)
+			local audio_system = Managers.state.entity:system("audio_system")
+
+			audio_system:play_audio_unit_event(action.pull_sound_id, blackboard.thrown_unit)
 		end
-	elseif distance < 1.5 then
+	elseif distance_to_goal < 1.5 then
 		if thrown_state == "returning_to_owner" then
 			if not action.hit_targets_on_return then
-				arg_8_2.ignore_thrown_weapon_overlap = true
+				blackboard.ignore_thrown_weapon_overlap = true
 			end
 
 			return true
 		end
 
-		local num_2 = local_position + normalize * throw_speed * arg_8_3
+		local position = current_position + direction * speed * dt
 
-		Unit.set_local_position(thrown_unit, 0, num_2)
-		arg_8_2.throw_weapon_goal_position:store(num)
+		Unit.set_local_position(thrown_unit, 0, position)
+		blackboard.throw_weapon_goal_position:store(unit_position)
 
-		arg_8_2.thrown_state = "lingering"
-		arg_8_2.thrown_linger_timer = arg_8_4 + action.arrival_linger_time
+		blackboard.thrown_state = "lingering"
+		blackboard.thrown_linger_timer = t + action.arrival_linger_time
 
-		Managers.state.entity:system("audio_system"):play_audio_unit_event(action.impact_sound_id, arg_8_2.thrown_unit)
+		local audio_system = Managers.state.entity:system("audio_system")
+
+		audio_system:play_audio_unit_event(action.impact_sound_id, blackboard.thrown_unit)
 	else
-		local num_3 = local_position + normalize * throw_speed * arg_8_3
+		local position = current_position + direction * speed * dt
 
-		Unit.set_local_position(thrown_unit, 0, num_3)
+		Unit.set_local_position(thrown_unit, 0, position)
 	end
 
 	if thrown_state == "moving_towards_target" then
-		arg_8_2.thrown_weapon_angle = arg_8_2.thrown_weapon_angle + arg_8_3 * action.rotation_speed
+		blackboard.thrown_weapon_angle = blackboard.thrown_weapon_angle + dt * action.rotation_speed
 
-		local local_rotation = Unit.local_rotation(thrown_unit, 0)
-		local make_axes = Vector3.make_axes(normalize)
-		local look = Quaternion.look(normalize)
-		local multiply = Quaternion.multiply(Quaternion.axis_angle(make_axes, arg_8_2.thrown_weapon_angle), look)
+		local current_rotation = Unit.local_rotation(thrown_unit, 0)
+		local axis = Vector3.make_axes(direction)
+		local rotation_towards_target = Quaternion.look(direction)
+		local rotation = Quaternion.multiply(Quaternion.axis_angle(axis, blackboard.thrown_weapon_angle), rotation_towards_target)
 
-		Unit.set_local_rotation(thrown_unit, 0, multiply)
+		Unit.set_local_rotation(thrown_unit, 0, rotation)
 	else
-		local make_axes_2 = Vector3.make_axes(-normalize)
-		local look_2 = Quaternion.look(-normalize)
-		local multiply_2 = Quaternion.multiply(Quaternion.axis_angle(make_axes_2, 45), look_2)
+		local axis = Vector3.make_axes(-direction)
+		local rotation_towards_target = Quaternion.look(-direction)
+		local rotation = Quaternion.multiply(Quaternion.axis_angle(axis, 45), rotation_towards_target)
 
-		Unit.set_local_rotation(thrown_unit, 0, multiply_2)
+		Unit.set_local_rotation(thrown_unit, 0, rotation)
 	end
 
-	local network = Managers.state.network
-	local unit_game_object_id = network:unit_game_object_id(thrown_unit)
-	local game = network:game()
-	local local_position_2 = Unit.local_position(thrown_unit, 0)
+	local network_manager = Managers.state.network
+	local go_id = network_manager:unit_game_object_id(thrown_unit)
+	local game = network_manager:game()
+	local pos = Unit.local_position(thrown_unit, 0)
 
-	GameSession.set_game_object_field(game, unit_game_object_id, "position", local_position_2)
+	GameSession.set_game_object_field(game, go_id, "position", pos)
 
-	local local_rotation_2 = Unit.local_rotation(thrown_unit, 0)
+	local rot = Unit.local_rotation(thrown_unit, 0)
 
-	GameSession.set_game_object_field(game, unit_game_object_id, "rotation", local_rotation_2)
+	GameSession.set_game_object_field(game, go_id, "rotation", rot)
 
-	local ENEMY_PLAYER_AND_BOT_UNITS = arg_8_2.side.ENEMY_PLAYER_AND_BOT_UNITS
+	local side = blackboard.side
+	local enemy_player_and_bot_units = side.ENEMY_PLAYER_AND_BOT_UNITS
 
-	for i = 1, #ENEMY_PLAYER_AND_BOT_UNITS do
-		local var_8_24 = ENEMY_PLAYER_AND_BOT_UNITS[i]
+	for i = 1, #enemy_player_and_bot_units do
+		local target_unit = enemy_player_and_bot_units[i]
 
-		if not (not Unit.alive(var_8_24) and arg_8_2.ignore_thrown_weapon_overlap) then
-			self:check_overlap(action, arg_8_2.thrown_unit, arg_8_1, arg_8_2, var_8_24)
+		if Unit.alive(target_unit) and not blackboard.ignore_thrown_weapon_overlap then
+			self:check_overlap(action, blackboard.thrown_unit, unit, blackboard, target_unit)
 		end
 
-		if not (not action.use_close_attack and not (arg_8_4 > arg_8_2.close_attack_timer)) then
-			self:attack_close_units(action, arg_8_1, arg_8_2, var_8_24, arg_8_4)
+		if action.use_close_attack and t > blackboard.close_attack_timer then
+			self:attack_close_units(action, unit, blackboard, target_unit, t)
 		end
 	end
 
 	return false
 end
 
-BTThrowWeaponAction.check_overlap = function (arg_9_0, arg_9_1, arg_9_2, arg_9_3, arg_9_4, arg_9_5)
+BTThrowWeaponAction.check_overlap = function (self, action, thrown_unit, unit, blackboard, target_unit)
 	-- function 9
-	local radius = arg_9_1.radius
-	local push_speed = arg_9_1.push_speed
-	local push_speed_z = arg_9_1.push_speed_z
-	local hit_units = arg_9_4.hit_units
-	local var_9_4 = POSITION_LOOKUP[arg_9_5]
-	local flat = Vector3.flat(Unit.local_position(arg_9_2, 0))
-	local num = var_9_4 - Vector3(flat[1], flat[2], var_9_4[3])
-	local length = Vector3.length(Vector3.flat(num))
+	local radius = action.radius
+	local push_speed = action.push_speed
+	local push_speed_z = action.push_speed_z
+	local hit_units = blackboard.hit_units
+	local pos = POSITION_LOOKUP[target_unit]
+	local self_pos = Vector3.flat(Unit.local_position(thrown_unit, 0))
 
-	if not hit_units[arg_9_5] then
-		local extension = ScriptUnit.extension(arg_9_5, "status_system")
+	self_pos = Vector3(self_pos[1], self_pos[2], pos[3])
 
-		if not extension and not extension:get_is_dodging() then
-			radius = arg_9_1.target_dodged_radius
+	local to_target = pos - self_pos
+	local dist = Vector3.length(Vector3.flat(to_target))
+	local hit_unit_id = hit_units[target_unit]
+
+	if not hit_unit_id then
+		local target_status_ext = ScriptUnit.extension(target_unit, "status_system")
+
+		if target_status_ext and target_status_ext:get_is_dodging() then
+			radius = action.target_dodged_radius
 		end
 
-		if not ((not (length < radius) or not extension) and extension:is_invisible()) then
-			local num_2 = push_speed * Vector3.normalize(num)
+		if dist < radius and target_status_ext and not target_status_ext:is_invisible() then
+			local velocity = push_speed * Vector3.normalize(to_target)
 
-			if not push_speed_z then
-				Vector3.set_z(num_2, push_speed_z)
+			if push_speed_z then
+				Vector3.set_z(velocity, push_speed_z)
 			end
 
-			if not arg_9_1.catapult_players then
-				StatusUtils.set_catapulted_network(arg_9_5, true, num_2)
+			if action.catapult_players then
+				StatusUtils.set_catapulted_network(target_unit, true, velocity)
 			else
-				ScriptUnit.extension(arg_9_5, "locomotion_system"):add_external_velocity(num_2)
+				local locomotion_extension = ScriptUnit.extension(target_unit, "locomotion_system")
+
+				locomotion_extension:add_external_velocity(velocity)
 			end
 
-			hit_units[arg_9_5] = true
+			hit_units[target_unit] = true
 
-			if not DamageUtils.check_block(arg_9_3, arg_9_5, arg_9_1.fatigue_type) then
-				AiUtils.damage_target(arg_9_5, arg_9_3, arg_9_1, arg_9_1.damage)
+			local blocked = DamageUtils.check_block(unit, target_unit, action.fatigue_type)
+
+			if not blocked then
+				AiUtils.damage_target(target_unit, unit, action, action.damage)
 			end
 		end
 	end
 end
 
-BTThrowWeaponAction.attack_close_units = function (arg_10_0, arg_10_1, arg_10_2, arg_10_3, arg_10_4, arg_10_5)
+BTThrowWeaponAction.attack_close_units = function (self, action, unit, blackboard, target_unit, t)
 	-- function 10
-	local attack_close_range = arg_10_1.attack_close_range
-	local num = POSITION_LOOKUP[arg_10_4] - Vector3.flat(Unit.local_position(arg_10_2, 0))
+	local attack_range = action.attack_close_range
+	local pos = POSITION_LOOKUP[target_unit]
+	local self_pos = Vector3.flat(Unit.local_position(unit, 0))
+	local to_target = pos - self_pos
+	local dist = Vector3.length(Vector3.flat(to_target))
 
-	if attack_close_range > Vector3.length(Vector3.flat(num)) then
-		Managers.state.network:anim_event(arg_10_2, arg_10_1.close_attack_animation)
+	if dist < attack_range then
+		Managers.state.network:anim_event(unit, action.close_attack_animation)
 
-		arg_10_3.close_attack_timer = arg_10_5 + 3
-		arg_10_3.close_attack_target = arg_10_4
+		blackboard.close_attack_timer = t + 3
+		blackboard.close_attack_target = target_unit
 	end
 end
 
-BTThrowWeaponAction.anim_cb_damage = function (arg_11_0, arg_11_1, arg_11_2)
+BTThrowWeaponAction.anim_cb_damage = function (self, unit, blackboard)
 	-- function 11
-	if not Unit.alive(arg_11_2.close_attack_target) then
+	if not Unit.alive(blackboard.close_attack_target) then
 		return
 	end
 
-	local num = POSITION_LOOKUP[arg_11_2.close_attack_target] - Vector3.flat(Unit.local_position(arg_11_1, 0))
-	local num_2 = 10 * Vector3.normalize(num)
+	local pos = POSITION_LOOKUP[blackboard.close_attack_target]
+	local self_pos = Vector3.flat(Unit.local_position(unit, 0))
+	local to_target = pos - self_pos
+	local velocity = 10 * Vector3.normalize(to_target)
+	local locomotion_extension = ScriptUnit.extension(blackboard.close_attack_target, "locomotion_system")
 
-	ScriptUnit.extension(arg_11_2.close_attack_target, "locomotion_system"):add_external_velocity(num_2)
-	AiUtils.damage_target(arg_11_2.close_attack_target, arg_11_1, arg_11_2.action, arg_11_2.action.close_attack_damage)
+	locomotion_extension:add_external_velocity(velocity)
+	AiUtils.damage_target(blackboard.close_attack_target, unit, blackboard.action, blackboard.action.close_attack_damage)
 end

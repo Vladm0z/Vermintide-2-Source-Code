@@ -2,19 +2,19 @@
 
 CameraTransitionBase = class(CameraTransitionBase)
 
-CameraTransitionBase.init = function (self, arg_1_1, arg_1_2, arg_1_3, arg_1_4)
+CameraTransitionBase.init = function (self, node_1, node_2, duration, speed)
 	-- function 1
-	self._node_1 = arg_1_1
-	self._node_2 = arg_1_2
-	self._duration = arg_1_3
-	self._speed = arg_1_4
+	self._node_1 = node_1
+	self._node_2 = node_2
+	self._duration = duration
+	self._speed = speed
 	self._start_time = Managers.time:time("game")
 	self._time = 0
 end
 
-CameraTransitionBase.update = function (self, arg_2_1, arg_2_2)
+CameraTransitionBase.update = function (self, dt, update_time)
 	-- function 2
-	if not arg_2_2 then
+	if update_time then
 		self._time = Managers.time:time("game") - self._start_time
 	end
 end

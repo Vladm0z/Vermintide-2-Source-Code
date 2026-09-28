@@ -8,80 +8,102 @@ VCEManager.init = function (self)
 	self._vce_free_list = {}
 end
 
-VCEManager.trigger_vce = function (self, arg_2_1, arg_2_2, ...)
+VCEManager.trigger_vce = function (self, vce_unit, wwise_world, ...)
 	-- function 2
-	if not Managers.state.entity:system("dialogue_system"):is_unit_playing_dialogue(arg_2_1) then
+	local dialogue_system = Managers.state.entity:system("dialogue_system")
+
+	if dialogue_system:is_unit_playing_dialogue(vce_unit) then
 		return
 	end
 
-	local trigger_event = WwiseWorld.trigger_event(arg_2_2, ...)
+	local vce_id = WwiseWorld.trigger_event(wwise_world, ...)
 
-	self:_register_vce(arg_2_1, arg_2_2, trigger_event)
+	self:_register_vce(vce_unit, wwise_world, vce_id)
 end
 
-VCEManager.trigger_vce_unit = function (self, arg_3_1, ...)
+VCEManager.trigger_vce_unit = function (self, vce_unit, ...)
 	-- function 3
-	if not Managers.state.entity:system("dialogue_system"):is_unit_playing_dialogue(arg_3_1) then
+	local dialogue_system = Managers.state.entity:system("dialogue_system")
+
+	if dialogue_system:is_unit_playing_dialogue(vce_unit) then
 		return
 	end
 
-	local trigger_unit_event, var_3_1, var_3_2 = WwiseUtils.trigger_unit_event(...)
+	local vce_id, _, wwise_world = WwiseUtils.trigger_unit_event(...)
 
-	self:_register_vce(arg_3_1, var_3_2, trigger_unit_event)
+	self:_register_vce(vce_unit, wwise_world, vce_id)
 end
 
-VCEManager._register_vce = function (self, arg_4_1, arg_4_2, arg_4_3)
+VCEManager._register_vce = function (self, vce_unit, wwise_world, vce_id)
 	-- function 4
-	local _rent_vce_data = self:_rent_vce_data()
+	local vce_data = self:_rent_vce_data()
 
-	_rent_vce_data.vce_id = arg_4_3
-	_rent_vce_data.wwise_world = arg_4_2
+	vce_data.vce_id = vce_id
+	vce_data.wwise_world = wwise_world
 
-	local var_4_1 = self._vce_by_unit[arg_4_1]
+	local var_4_0 = self._vce_by_unit[vce_unit]
 
-	var_4_1 = var_4_1 or {}
-	self._vce_by_unit[arg_4_1] = var_4_1
-	var_4_1[#var_4_1 + 1] = _rent_vce_data
+	if not var_4_0 then
+		-- Nothing
+	end
+
+	var_4_0 = {}
+
+	local vce = var_4_0
+
+	::label_4_0::
+
+	self._vce_by_unit[vce_unit] = vce
+	vce[#vce + 1] = vce_data
 end
 
-VCEManager.interrupt_vce = function (self, arg_5_1)
+VCEManager.interrupt_vce = function (self, unit)
 	-- function 5
-	local var_5_0 = self._vce_by_unit[arg_5_1]
+	local vce = self._vce_by_unit[unit]
 
-	if not var_5_0 then
+	if not vce then
 		return
 	end
 
-	for i = 1, #var_5_0 do
-		local var_5_1 = var_5_0[i]
-		local vce_id = var_5_1.vce_id
-		local wwise_world = var_5_1.wwise_world
+	for i = 1, #vce do
+		local vce_data = vce[i]
+		local vce_id = vce_data.vce_id
+		local wwise_world = vce_data.wwise_world
 
-		if not WwiseWorld.is_playing(wwise_world, vce_id) then
+		if WwiseWorld.is_playing(wwise_world, vce_id) then
 			WwiseWorld.stop_event(wwise_world, vce_id)
 		end
 
-		self:_return_vce_data(var_5_1)
+		self:_return_vce_data(vce_data)
 
-		var_5_0[i] = nil
+		vce[i] = nil
 	end
 end
 
 VCEManager._rent_vce_data = function (self)
 	-- function 6
-	local _vce_free_list = self._vce_free_list
-	local count = #_vce_free_list
-	local var_6_2 = _vce_free_list[count]
+	local free_list = self._vce_free_list
+	local last_idx = #free_list
+	local var_6_0 = free_list[last_idx]
 
-	var_6_2 = var_6_2 or {}
-	_vce_free_list[count] = nil
+	if not var_6_0 then
+		-- Nothing
+	end
 
-	return var_6_2
+	var_6_0 = {}
+
+	local to_return = var_6_0
+
+	::label_6_0::
+
+	free_list[last_idx] = nil
+
+	return to_return
 end
 
-VCEManager._return_vce_data = function (self, arg_7_1)
+VCEManager._return_vce_data = function (self, vce_data)
 	-- function 7
-	local _vce_free_list = self._vce_free_list
+	local free_list = self._vce_free_list
 
-	_vce_free_list[#_vce_free_list] = arg_7_1
+	free_list[#free_list] = vce_data
 end

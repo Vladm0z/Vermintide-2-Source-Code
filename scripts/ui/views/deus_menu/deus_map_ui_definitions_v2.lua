@@ -2,33 +2,33 @@
 
 require("scripts/ui/views/deus_menu/ui_widgets_deus")
 
-local flag = false
-local flag_2 = true
-local tbl = {
+local RETAINED_MODE_ENABLED = false
+local ALLOW_BOON_REMOVAL = true
+local portraits_pos = {
 	UISettings.INSIGNIA_OFFSET + 20,
 	-55,
 	1
 }
-local tbl_2 = {
+local insignias_pos = {
 	-35,
 	0,
 	1
 }
-local tbl_3 = {
+local frame_pos = {
 	0,
 	0,
 	2
 }
-local tbl_4 = {
+local texts_pos = {
 	50 + UISettings.INSIGNIA_OFFSET + 20 + 10,
 	20,
 	0
 }
-local tbl_5 = {
+local full_size = {
 	1920,
 	1080
 }
-local tbl_6 = {
+local scenegraph_definition = {
 	root = {
 		is_root = true,
 		size = {
@@ -158,7 +158,7 @@ local tbl_6 = {
 		vertical_alignment = "center",
 		parent = "player_1",
 		horizontal_alignment = "center",
-		position = tbl,
+		position = portraits_pos,
 		size = {
 			0,
 			0
@@ -168,7 +168,7 @@ local tbl_6 = {
 		vertical_alignment = "top",
 		parent = "player_1",
 		horizontal_alignment = "left",
-		position = tbl_2,
+		position = insignias_pos,
 		size = {
 			0,
 			0
@@ -178,7 +178,7 @@ local tbl_6 = {
 		vertical_alignment = "center",
 		parent = "player_1",
 		horizontal_alignment = "center",
-		position = tbl_4,
+		position = texts_pos,
 		size = {
 			0,
 			0
@@ -188,7 +188,7 @@ local tbl_6 = {
 		vertical_alignment = "center",
 		parent = "player_1",
 		horizontal_alignment = "center",
-		position = tbl_3,
+		position = frame_pos,
 		size = {
 			0,
 			0
@@ -212,7 +212,7 @@ local tbl_6 = {
 		vertical_alignment = "center",
 		parent = "player_2",
 		horizontal_alignment = "center",
-		position = tbl,
+		position = portraits_pos,
 		size = {
 			0,
 			0
@@ -222,7 +222,7 @@ local tbl_6 = {
 		vertical_alignment = "top",
 		parent = "player_2",
 		horizontal_alignment = "left",
-		position = tbl_2,
+		position = insignias_pos,
 		size = {
 			0,
 			0
@@ -232,7 +232,7 @@ local tbl_6 = {
 		vertical_alignment = "center",
 		parent = "player_2",
 		horizontal_alignment = "center",
-		position = tbl_4,
+		position = texts_pos,
 		size = {
 			0,
 			0
@@ -270,7 +270,7 @@ local tbl_6 = {
 		vertical_alignment = "center",
 		parent = "player_3",
 		horizontal_alignment = "center",
-		position = tbl,
+		position = portraits_pos,
 		size = {
 			0,
 			0
@@ -280,7 +280,7 @@ local tbl_6 = {
 		vertical_alignment = "top",
 		parent = "player_3",
 		horizontal_alignment = "left",
-		position = tbl_2,
+		position = insignias_pos,
 		size = {
 			0,
 			0
@@ -290,7 +290,7 @@ local tbl_6 = {
 		vertical_alignment = "center",
 		parent = "player_3",
 		horizontal_alignment = "center",
-		position = tbl_4,
+		position = texts_pos,
 		size = {
 			0,
 			0
@@ -300,7 +300,7 @@ local tbl_6 = {
 		vertical_alignment = "center",
 		parent = "player_3",
 		horizontal_alignment = "center",
-		position = tbl_3,
+		position = frame_pos,
 		size = {
 			0,
 			0
@@ -324,7 +324,7 @@ local tbl_6 = {
 		vertical_alignment = "center",
 		parent = "player_4",
 		horizontal_alignment = "center",
-		position = tbl,
+		position = portraits_pos,
 		size = {
 			0,
 			0
@@ -334,7 +334,7 @@ local tbl_6 = {
 		vertical_alignment = "top",
 		parent = "player_4",
 		horizontal_alignment = "left",
-		position = tbl_2,
+		position = insignias_pos,
 		size = {
 			0,
 			0
@@ -344,7 +344,7 @@ local tbl_6 = {
 		vertical_alignment = "center",
 		parent = "player_4",
 		horizontal_alignment = "center",
-		position = tbl_4,
+		position = texts_pos,
 		size = {
 			0,
 			0
@@ -354,7 +354,7 @@ local tbl_6 = {
 		vertical_alignment = "center",
 		parent = "player_4",
 		horizontal_alignment = "center",
-		position = tbl_3,
+		position = frame_pos,
 		size = {
 			0,
 			0
@@ -374,7 +374,7 @@ local tbl_6 = {
 		horizontal_alignment = "left",
 		size = {
 			585,
-			tbl_5[2]
+			full_size[2]
 		},
 		position = {
 			-225,
@@ -388,7 +388,7 @@ local tbl_6 = {
 		horizontal_alignment = "left",
 		size = {
 			350,
-			tbl_5[2]
+			full_size[2]
 		},
 		position = {
 			0,
@@ -402,7 +402,7 @@ local tbl_6 = {
 		horizontal_alignment = "left",
 		size = {
 			0,
-			tbl_5[2]
+			full_size[2]
 		},
 		position = {
 			-225,
@@ -416,7 +416,7 @@ local tbl_6 = {
 		horizontal_alignment = "left",
 		size = {
 			126,
-			tbl_5[2]
+			full_size[2]
 		},
 		position = {
 			443,
@@ -509,7 +509,7 @@ local tbl_6 = {
 		horizontal_alignment = "center"
 	}
 }
-local tbl_7 = {
+local boons_text_style = {
 	use_shadow = true,
 	upper_case = true,
 	localize = true,
@@ -529,7 +529,7 @@ local tbl_7 = {
 		135
 	}
 }
-local tbl_8 = {
+local input_help_text_style = {
 	font_size = 35,
 	upper_case = true,
 	localize = true,
@@ -545,10 +545,11 @@ local tbl_8 = {
 	}
 }
 
-local function fn(arg_1_0)
+local function create_general_info_widget(scenegraph_id)
 	-- function 1
-	local var_1_0 = UIFrameSettings.frame_outer_fade_02.texture_sizes.horizontal[2]
-	local size = tbl_6[arg_1_0].size
+	local frame_settings = UIFrameSettings.frame_outer_fade_02
+	local edge_height = frame_settings.texture_sizes.horizontal[2]
+	local size = scenegraph_definition[scenegraph_id].size
 
 	return {
 		element = {
@@ -580,18 +581,18 @@ local function fn(arg_1_0)
 				}
 			}
 		},
-		scenegraph_id = arg_1_0
+		scenegraph_id = scenegraph_id
 	}
 end
 
-local function fn_2(arg_2_0)
+local function create_top_info_widget(scenegraph_id)
 	-- function 2
-	local frame_outer_fade_02 = UIFrameSettings.frame_outer_fade_02
-	local var_2_1 = frame_outer_fade_02.texture_sizes.horizontal[2]
-	local size = tbl_6[arg_2_0].size
-	local tbl = {
-		size[1] + var_2_1 * 2,
-		size[2] + var_2_1 * 2
+	local frame_settings = UIFrameSettings.frame_outer_fade_02
+	local edge_height = frame_settings.texture_sizes.horizontal[2]
+	local size = scenegraph_definition[scenegraph_id].size
+	local frame_size = {
+		size[1] + edge_height * 2,
+		size[2] + edge_height * 2
 	}
 
 	return {
@@ -621,18 +622,18 @@ local function fn_2(arg_2_0)
 		content = {
 			title = "deus_map_title",
 			journey_name_label = "journey_cave_name",
-			frame = frame_outer_fade_02.texture
+			frame = frame_settings.texture
 		},
 		style = {
 			frame = {
 				only_corners = false,
 				color = UISettings.console_menu_rect_color,
-				size = tbl,
-				texture_size = frame_outer_fade_02.texture_size,
-				texture_sizes = frame_outer_fade_02.texture_sizes,
+				size = frame_size,
+				texture_size = frame_settings.texture_size,
+				texture_sizes = frame_settings.texture_sizes,
 				offset = {
-					-var_2_1,
-					-var_2_1,
+					-edge_height,
+					-edge_height,
 					0
 				}
 			},
@@ -671,11 +672,11 @@ local function fn_2(arg_2_0)
 				}
 			}
 		},
-		scenegraph_id = arg_2_0
+		scenegraph_id = scenegraph_id
 	}
 end
 
-local tbl_9 = {
+local coins_icon = {
 	offset = {
 		10,
 		-30,
@@ -687,9 +688,9 @@ local tbl_9 = {
 	}
 }
 
-local function fn_3(arg_3_0)
+local function create_player_texts_widget(scenegraph_id)
 	-- function 3
-	local tbl = {
+	local name_text = {
 		vertical_alignment = "center",
 		horizontal_alignment = "left",
 		dynamic_font_size = true,
@@ -706,16 +707,16 @@ local function fn_3(arg_3_0)
 			24
 		}
 	}
-	local clone = table.clone(tbl)
+	local name_text_shadow = table.clone(name_text)
 
-	clone.text_color = Colors.get_color_table_with_alpha("black", 255)
-	clone.offset = {
-		tbl.offset[1] + 2,
-		tbl.offset[2] - 2,
-		tbl.offset[3] - 1
+	name_text_shadow.text_color = Colors.get_color_table_with_alpha("black", 255)
+	name_text_shadow.offset = {
+		name_text.offset[1] + 2,
+		name_text.offset[2] - 2,
+		name_text.offset[3] - 1
 	}
 
-	local tbl_2 = {
+	local coins_text = {
 		vertical_alignment = "center",
 		horizontal_alignment = "left",
 		dynamic_font_size = true,
@@ -723,22 +724,22 @@ local function fn_3(arg_3_0)
 		font_type = "hell_shark",
 		text_color = Colors.get_color_table_with_alpha("font_default", 255),
 		offset = {
-			tbl_9.offset[1] + tbl_9.texture_size[1] + 5,
-			tbl_9.offset[2] - 1,
-			tbl_9.offset[3]
+			coins_icon.offset[1] + coins_icon.texture_size[1] + 5,
+			coins_icon.offset[2] - 1,
+			coins_icon.offset[3]
 		},
 		size = {
 			100,
 			20
 		}
 	}
-	local clone_2 = table.clone(tbl_2)
+	local coins_text_shadow = table.clone(coins_text)
 
-	clone_2.text_color = Colors.get_color_table_with_alpha("black", 255)
-	clone_2.offset = {
-		tbl_2.offset[1] + 2,
-		tbl_2.offset[2] - 2,
-		tbl_2.offset[3] - 1
+	coins_text_shadow.text_color = Colors.get_color_table_with_alpha("black", 255)
+	coins_text_shadow.offset = {
+		coins_text.offset[1] + 2,
+		coins_text.offset[2] - 2,
+		coins_text.offset[3] - 1
 	}
 
 	return {
@@ -748,45 +749,45 @@ local function fn_3(arg_3_0)
 					style_id = "name_text",
 					pass_type = "text",
 					text_id = "name_text",
-					content_check_function = function (self)
+					content_check_function = function (content)
 						-- function 4
-						return self.visible
+						return content.visible
 					end
 				},
 				{
 					style_id = "name_text_shadow",
 					pass_type = "text",
 					text_id = "name_text",
-					content_check_function = function (self)
+					content_check_function = function (content)
 						-- function 5
-						return self.visible
+						return content.visible
 					end
 				},
 				{
 					style_id = "coins_text",
 					pass_type = "text",
 					text_id = "coins_text",
-					content_check_function = function (self)
+					content_check_function = function (content)
 						-- function 6
-						return self.visible
+						return content.visible
 					end
 				},
 				{
 					style_id = "coins_text_shadow",
 					pass_type = "text",
 					text_id = "coins_text",
-					content_check_function = function (self)
+					content_check_function = function (content)
 						-- function 7
-						return self.visible
+						return content.visible
 					end
 				},
 				{
 					pass_type = "texture",
 					style_id = "coins_icon",
 					texture_id = "coins_icon",
-					content_check_function = function (self)
+					content_check_function = function (content)
 						-- function 8
-						return self.visible
+						return content.visible
 					end
 				}
 			}
@@ -798,17 +799,17 @@ local function fn_3(arg_3_0)
 			coins_icon = "deus_icons_coin"
 		},
 		style = {
-			name_text = tbl,
-			name_text_shadow = clone,
-			coins_text = tbl_2,
-			coins_text_shadow = clone_2,
-			coins_icon = tbl_9
+			name_text = name_text,
+			name_text_shadow = name_text_shadow,
+			coins_text = coins_text,
+			coins_text_shadow = coins_text_shadow,
+			coins_icon = coins_icon
 		},
-		scenegraph_id = arg_3_0
+		scenegraph_id = scenegraph_id
 	}
 end
 
-local function fn_4(arg_9_0)
+local function create_node_info_widget(scenegraph_id)
 	-- function 9
 	return {
 		element = {
@@ -833,9 +834,9 @@ local function fn_4(arg_9_0)
 									style_id = "click_to_vote",
 									pass_type = "text",
 									text_id = "click_to_vote",
-									content_check_function = function (self)
+									content_check_function = function (content)
 										-- function 10
-										return self.click_to_vote ~= ""
+										return content.click_to_vote ~= ""
 									end
 								},
 								{
@@ -858,9 +859,9 @@ local function fn_4(arg_9_0)
 						{
 							style_id = "curse_section",
 							pass_type = "auto_layout",
-							content_check_function = function (self)
+							content_check_function = function (content)
 								-- function 11
-								return self.curse_text ~= ""
+								return content.curse_text ~= ""
 							end,
 							sub_passes = {
 								{
@@ -878,9 +879,9 @@ local function fn_4(arg_9_0)
 						{
 							style_id = "breed_section",
 							pass_type = "auto_layout",
-							content_check_function = function (self)
+							content_check_function = function (content)
 								-- function 12
-								return self.breed_text ~= ""
+								return content.breed_text ~= ""
 							end,
 							sub_passes = {
 								{
@@ -899,9 +900,9 @@ local function fn_4(arg_9_0)
 							style_id = "minor_modifier_section",
 							pass_type = "auto_layout",
 							content_id = "minor_modifier_1_section",
-							content_check_function = function (self)
+							content_check_function = function (content)
 								-- function 13
-								return self.text ~= ""
+								return content.text ~= ""
 							end,
 							sub_passes = {
 								{
@@ -920,9 +921,9 @@ local function fn_4(arg_9_0)
 							style_id = "minor_modifier_section",
 							pass_type = "auto_layout",
 							content_id = "minor_modifier_2_section",
-							content_check_function = function (self)
+							content_check_function = function (content)
 								-- function 14
-								return self.text ~= ""
+								return content.text ~= ""
 							end,
 							sub_passes = {
 								{
@@ -941,9 +942,9 @@ local function fn_4(arg_9_0)
 							style_id = "minor_modifier_section",
 							pass_type = "auto_layout",
 							content_id = "minor_modifier_3_section",
-							content_check_function = function (self)
+							content_check_function = function (content)
 								-- function 15
-								return self.text ~= ""
+								return content.text ~= ""
 							end,
 							sub_passes = {
 								{
@@ -961,9 +962,9 @@ local function fn_4(arg_9_0)
 						{
 							style_id = "terror_event_power_up_section",
 							pass_type = "auto_layout",
-							content_check_function = function (self)
+							content_check_function = function (content)
 								-- function 16
-								return self.terror_event_power_up_text ~= ""
+								return content.terror_event_power_up_text ~= ""
 							end,
 							sub_passes = {
 								{
@@ -984,11 +985,11 @@ local function fn_4(arg_9_0)
 							style_id = "frame",
 							pass_type = "texture_frame",
 							texture_id = "frame",
-							content_change_function = function (self, arg_17_1)
+							content_change_function = function (content, style)
 								-- function 17
-								self.frame = UIFrameSettings[self.frame_settings_name].texture
-								arg_17_1.texture_size = UIFrameSettings[self.frame_settings_name].texture_size
-								arg_17_1.texture_sizes = UIFrameSettings[self.frame_settings_name].texture_sizes
+								content.frame = UIFrameSettings[content.frame_settings_name].texture
+								style.texture_size = UIFrameSettings[content.frame_settings_name].texture_size
+								style.texture_sizes = UIFrameSettings[content.frame_settings_name].texture_sizes
 							end
 						},
 						{
@@ -1396,27 +1397,27 @@ local function fn_4(arg_9_0)
 				}
 			}
 		},
-		scenegraph_id = arg_9_0
+		scenegraph_id = scenegraph_id
 	}
 end
 
-local tbl_10 = {
+local animations_definitions = {
 	switch_to_portraits = {
 		{
 			name = "animate_out",
 			start_progress = 0,
 			end_progress = 0.2,
-			init = function (arg_18_0, arg_18_1, arg_18_2, arg_18_3)
+			init = function (ui_scenegraph, scenegraph_definition, widgets, params)
 				-- function 18
 				return
 			end,
-			update = function (self, arg_19_1, arg_19_2, arg_19_3, arg_19_4)
+			update = function (ui_scenegraph, scenegraph_definition, widgets, progress, params)
 				-- function 19
-				local easeOutCubic = math.easeOutCubic(arg_19_3)
+				local anim_progress = math.easeOutCubic(progress)
 
-				self.boon_root.local_position[1] = math.lerp(self.boon_root.local_position[1], arg_19_1.boon_root.position[1], easeOutCubic)
+				ui_scenegraph.boon_root.local_position[1] = math.lerp(ui_scenegraph.boon_root.local_position[1], scenegraph_definition.boon_root.position[1], anim_progress)
 			end,
-			on_complete = function (arg_20_0, arg_20_1, arg_20_2, arg_20_3)
+			on_complete = function (ui_scenegraph, scenegraph_definition, widgets, params)
 				-- function 20
 				return
 			end
@@ -1425,23 +1426,23 @@ local tbl_10 = {
 			name = "animate_in",
 			start_progress = 0.1,
 			end_progress = 0.3,
-			init = function (arg_21_0, arg_21_1, arg_21_2, arg_21_3)
+			init = function (ui_scenegraph, scenegraph_definition, widgets, params)
 				-- function 21
 				return
 			end,
-			update = function (self, arg_22_1, arg_22_2, arg_22_3, arg_22_4)
+			update = function (ui_scenegraph, scenegraph_definition, widgets, progress, params)
 				-- function 22
-				local easeOutCubic = math.easeOutCubic(arg_22_3)
+				local anim_progress = math.easeOutCubic(progress)
 
 				for i = 2, 4 do
-					local str = "player_" .. i
+					local entry = "player_" .. i
 
-					self[str].local_position[1] = math.lerp(self[str].local_position[1], arg_22_1[str].position[1], easeOutCubic)
+					ui_scenegraph[entry].local_position[1] = math.lerp(ui_scenegraph[entry].local_position[1], scenegraph_definition[entry].position[1], anim_progress)
 				end
 			end,
-			on_complete = function (arg_23_0, arg_23_1, arg_23_2, arg_23_3)
+			on_complete = function (ui_scenegraph, scenegraph_definition, widgets, params)
 				-- function 23
-				local num = 0
+				local temp = 0
 			end
 		}
 	},
@@ -1450,59 +1451,59 @@ local tbl_10 = {
 			name = "animate_out",
 			start_progress = 0,
 			end_progress = 0.2,
-			init = function (arg_24_0, arg_24_1, arg_24_2, arg_24_3)
+			init = function (ui_scenegraph, scenegraph_definition, widgets, params)
 				-- function 24
 				return
 			end,
-			update = function (self, arg_25_1, arg_25_2, arg_25_3, arg_25_4)
+			update = function (ui_scenegraph, scenegraph_definition, widgets, progress, params)
 				-- function 25
-				local easeOutCubic = math.easeOutCubic(arg_25_3)
+				local anim_progress = math.easeOutCubic(progress)
 
 				for i = 2, 4 do
-					local str = "player_" .. i
+					local entry = "player_" .. i
 
-					self[str].local_position[1] = math.lerp(self[str].local_position[1], arg_25_1[str].position[1] - 400, easeOutCubic)
+					ui_scenegraph[entry].local_position[1] = math.lerp(ui_scenegraph[entry].local_position[1], scenegraph_definition[entry].position[1] - 400, anim_progress)
 				end
 			end,
-			on_complete = function (arg_26_0, arg_26_1, arg_26_2, arg_26_3)
+			on_complete = function (ui_scenegraph, scenegraph_definition, widgets, params)
 				-- function 26
-				local num = 0
+				local temp = 0
 			end
 		},
 		{
 			name = "animate_in",
 			start_progress = 0.1,
 			end_progress = 0.3,
-			init = function (arg_27_0, arg_27_1, arg_27_2, arg_27_3)
+			init = function (ui_scenegraph, scenegraph_definition, widgets, params)
 				-- function 27
 				return
 			end,
-			update = function (self, arg_28_1, arg_28_2, arg_28_3, arg_28_4)
+			update = function (ui_scenegraph, scenegraph_definition, widgets, progress, params)
 				-- function 28
-				local easeOutCubic = math.easeOutCubic(arg_28_3)
+				local anim_progress = math.easeOutCubic(progress)
 
-				self.boon_root.local_position[1] = math.lerp(self.boon_root.local_position[1], arg_28_1.boon_root.position[1] + 400, easeOutCubic)
+				ui_scenegraph.boon_root.local_position[1] = math.lerp(ui_scenegraph.boon_root.local_position[1], scenegraph_definition.boon_root.position[1] + 400, anim_progress)
 			end,
-			on_complete = function (arg_29_0, arg_29_1, arg_29_2, arg_29_3)
+			on_complete = function (ui_scenegraph, scenegraph_definition, widgets, params)
 				-- function 29
 				return
 			end
 		}
 	}
 }
-local tbl_11 = {
+local widget_definitions = {
 	console_cursor = UIWidgets.create_console_cursor("console_cursor"),
-	top_info = fn_2("top_info"),
-	general_info = fn("general_info"),
-	node_info = fn_4("node_info"),
+	top_info = create_top_info_widget("top_info"),
+	general_info = create_general_info_widget("general_info"),
+	node_info = create_node_info_widget("node_info"),
 	player_1_portrait = UIWidgets.create_deus_player_status_portrait("player_1_portrait", "default", "-"),
-	player_1_texts = fn_3("player_1_texts"),
+	player_1_texts = create_player_texts_widget("player_1_texts"),
 	player_2_portrait = UIWidgets.create_deus_player_status_portrait("player_2_portrait", "default", "-"),
-	player_2_texts = fn_3("player_2_texts"),
+	player_2_texts = create_player_texts_widget("player_2_texts"),
 	player_3_portrait = UIWidgets.create_deus_player_status_portrait("player_3_portrait", "default", "-"),
-	player_3_texts = fn_3("player_3_texts"),
+	player_3_texts = create_player_texts_widget("player_3_texts"),
 	player_4_portrait = UIWidgets.create_deus_player_status_portrait("player_4_portrait", "default", "-"),
-	player_4_texts = fn_3("player_4_texts"),
+	player_4_texts = create_player_texts_widget("player_4_texts"),
 	top_options_background_left = UIWidgets.create_simple_uv_texture("athanor_decoration_headline", {
 		{
 			0.609375,
@@ -1512,7 +1513,7 @@ local tbl_11 = {
 			0,
 			1
 		}
-	}, "top_options_background_left", nil, nil, nil, nil, nil, tbl_6.top_options_background_left.size),
+	}, "top_options_background_left", nil, nil, nil, nil, nil, scenegraph_definition.top_options_background_left.size),
 	options_background_edge_left = UIWidgets.create_simple_uv_texture("shrine_sidebar_background", {
 		{
 			1,
@@ -1543,22 +1544,22 @@ local tbl_11 = {
 		}
 	}, "options_background_mask_left"),
 	power_up_mask = UIWidgets.create_simple_texture("mask_rect", "own_power_up_window"),
-	boons_text = UIWidgets.create_simple_text("menu_weave_forge_options_sub_title_properties_utility", "boons_text", nil, nil, tbl_7),
-	power_up_description = UIWidgets.create_power_up("power_up_description_root", tbl_6.power_up_description_root.size, true, flag_2),
-	portrait_input_helper_text = UIWidgets.create_simple_text("menu_description_show_team", "input_helper_text", nil, nil, tbl_8),
-	boon_input_helper_text = UIWidgets.create_simple_text("menu_description_show_boons", "input_helper_text", nil, nil, tbl_8)
+	boons_text = UIWidgets.create_simple_text("menu_weave_forge_options_sub_title_properties_utility", "boons_text", nil, nil, boons_text_style),
+	power_up_description = UIWidgets.create_power_up("power_up_description_root", scenegraph_definition.power_up_description_root.size, true, ALLOW_BOON_REMOVAL),
+	portrait_input_helper_text = UIWidgets.create_simple_text("menu_description_show_team", "input_helper_text", nil, nil, input_help_text_style),
+	boon_input_helper_text = UIWidgets.create_simple_text("menu_description_show_boons", "input_helper_text", nil, nil, input_help_text_style)
 }
-local tbl_12 = {
+local power_up_widget_size = {
 	64,
 	64
 }
-local tbl_13 = {
+local power_up_widget_spacing = {
 	20,
 	10
 }
-local tbl_14 = {
+local round_power_up_widget_data = {
 	background_icon = "button_frame_01",
-	width = tbl_12[1],
+	width = power_up_widget_size[1],
 	icon_size = {
 		35,
 		35
@@ -1578,9 +1579,9 @@ local tbl_14 = {
 		-1
 	}
 }
-local tbl_15 = {
+local rectangular_power_up_widget_data = {
 	background_icon = "button_frame_01",
-	width = tbl_12[1],
+	width = power_up_widget_size[1],
 	icon_size = {
 		58,
 		58
@@ -1602,12 +1603,12 @@ local tbl_15 = {
 }
 
 return {
-	widget_definitions = tbl_11,
-	scenegraph_definition = tbl_6,
-	animations_definitions = tbl_10,
-	round_power_up_widget_data = tbl_14,
-	rectangular_power_up_widget_data = tbl_15,
-	power_up_widget_size = tbl_12,
-	power_up_widget_spacing = tbl_13,
-	allow_boon_removal = flag_2
+	widget_definitions = widget_definitions,
+	scenegraph_definition = scenegraph_definition,
+	animations_definitions = animations_definitions,
+	round_power_up_widget_data = round_power_up_widget_data,
+	rectangular_power_up_widget_data = rectangular_power_up_widget_data,
+	power_up_widget_size = power_up_widget_size,
+	power_up_widget_spacing = power_up_widget_spacing,
+	allow_boon_removal = ALLOW_BOON_REMOVAL
 }

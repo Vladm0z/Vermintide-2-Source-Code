@@ -1,24 +1,24 @@
 -- chunkname: @scripts/ui/views/lobby_browser_console_ui_definitions.lua
 
-local num = 2
-local num_2 = 10
-local num_3 = 58
-local num_4 = 1200
-local num_5 = 520
-local num_6 = 15
-local num_7 = 40
-local num_8 = 40
-local tbl = {
-	width = num_4 - num_6 - num,
-	height = num_3,
-	spacing = num,
-	num_visible_entries = num_2,
-	window_height = num_2 * num_3 + num * (num_2 - 1),
-	window_width = num_4 + num_5 + num,
-	filter_height = num_7,
-	bottom_border_size = num_8
+local spacing = 2
+local num_visible_entries = 10
+local entry_height = 58
+local browser_width = 1200
+local details_width = 520
+local scroller_width = 15
+local filter_height = 40
+local bottom_border_size = 40
+local element_settings = {
+	width = browser_width - scroller_width - spacing,
+	height = entry_height,
+	spacing = spacing,
+	num_visible_entries = num_visible_entries,
+	window_height = num_visible_entries * entry_height + spacing * (num_visible_entries - 1),
+	window_width = browser_width + details_width + spacing,
+	filter_height = filter_height,
+	bottom_border_size = bottom_border_size
 }
-local tbl_2 = {
+local scenegraph_definition = {
 	root = {
 		is_root = true,
 		size = {
@@ -60,7 +60,7 @@ local tbl_2 = {
 		parent = "screen",
 		horizontal_alignment = "left",
 		size = {
-			tbl.window_width,
+			element_settings.window_width,
 			90
 		},
 		position = {
@@ -88,7 +88,7 @@ local tbl_2 = {
 		parent = "screen",
 		horizontal_alignment = "left",
 		size = {
-			num_4,
+			browser_width,
 			40
 		},
 		position = {
@@ -102,8 +102,8 @@ local tbl_2 = {
 		parent = "lobby_browser_frame",
 		horizontal_alignment = "left",
 		size = {
-			tbl.width,
-			tbl.height
+			element_settings.width,
+			element_settings.height
 		},
 		position = {
 			0,
@@ -116,12 +116,12 @@ local tbl_2 = {
 		parent = "lobby_browser_frame",
 		horizontal_alignment = "left",
 		size = {
-			tbl.window_width,
+			element_settings.window_width,
 			200
 		},
 		position = {
 			0,
-			80 + tbl.spacing * 2,
+			80 + element_settings.spacing * 2,
 			20
 		}
 	},
@@ -130,8 +130,8 @@ local tbl_2 = {
 		parent = "filter_base",
 		horizontal_alignment = "left",
 		size = {
-			num_4 + num_5 + num,
-			tbl.window_height + num_7 * 3 + num * 3
+			browser_width + details_width + spacing,
+			element_settings.window_height + filter_height * 3 + spacing * 3
 		},
 		position = {
 			0,
@@ -145,11 +145,11 @@ local tbl_2 = {
 		horizontal_alignment = "left",
 		size = {
 			520,
-			tbl.window_height
+			element_settings.window_height
 		},
 		position = {
-			num_4 + tbl.spacing,
-			-40 + num,
+			browser_width + element_settings.spacing,
+			-40 + spacing,
 			1
 		}
 	},
@@ -372,11 +372,11 @@ local tbl_2 = {
 		horizontal_alignment = "left",
 		size = {
 			520,
-			tbl.window_height
+			element_settings.window_height
 		},
 		position = {
-			num_4 + tbl.spacing,
-			-40 + num,
+			browser_width + element_settings.spacing,
+			-40 + spacing,
 			1
 		}
 	},
@@ -717,12 +717,12 @@ local tbl_2 = {
 		parent = "filter_base",
 		horizontal_alignment = "left",
 		size = {
-			tbl.window_width / 5,
-			tbl.filter_height
+			element_settings.window_width / 5,
+			element_settings.filter_height
 		},
 		position = {
 			0,
-			-tbl.filter_height - tbl.spacing,
+			-element_settings.filter_height - element_settings.spacing,
 			1
 		}
 	},
@@ -731,12 +731,12 @@ local tbl_2 = {
 		parent = "filter_base",
 		horizontal_alignment = "left",
 		size = {
-			tbl.window_width / 5,
-			tbl.filter_height
+			element_settings.window_width / 5,
+			element_settings.filter_height
 		},
 		position = {
-			tbl.window_width / 5 * 1,
-			-tbl.filter_height - tbl.spacing,
+			element_settings.window_width / 5 * 1,
+			-element_settings.filter_height - element_settings.spacing,
 			1
 		}
 	},
@@ -745,12 +745,12 @@ local tbl_2 = {
 		parent = "filter_base",
 		horizontal_alignment = "left",
 		size = {
-			tbl.window_width / 5,
-			tbl.filter_height
+			element_settings.window_width / 5,
+			element_settings.filter_height
 		},
 		position = {
-			tbl.window_width / 5 * 1,
-			-tbl.filter_height - tbl.spacing,
+			element_settings.window_width / 5 * 1,
+			-element_settings.filter_height - element_settings.spacing,
 			1
 		}
 	},
@@ -759,12 +759,12 @@ local tbl_2 = {
 		parent = "filter_base",
 		horizontal_alignment = "left",
 		size = {
-			tbl.window_width / 5,
-			tbl.filter_height
+			element_settings.window_width / 5,
+			element_settings.filter_height
 		},
 		position = {
-			tbl.window_width / 5 * 2 + tbl.spacing,
-			-tbl.filter_height - tbl.spacing,
+			element_settings.window_width / 5 * 2 + element_settings.spacing,
+			-element_settings.filter_height - element_settings.spacing,
 			1
 		}
 	},
@@ -773,12 +773,12 @@ local tbl_2 = {
 		parent = "filter_base",
 		horizontal_alignment = "left",
 		size = {
-			tbl.window_width / 5,
-			tbl.filter_height
+			element_settings.window_width / 5,
+			element_settings.filter_height
 		},
 		position = {
-			tbl.window_width / 5 * 3 + tbl.spacing,
-			-tbl.filter_height - tbl.spacing,
+			element_settings.window_width / 5 * 3 + element_settings.spacing,
+			-element_settings.filter_height - element_settings.spacing,
 			1
 		}
 	},
@@ -787,12 +787,12 @@ local tbl_2 = {
 		parent = "filter_base",
 		horizontal_alignment = "left",
 		size = {
-			tbl.window_width / 5,
-			tbl.filter_height
+			element_settings.window_width / 5,
+			element_settings.filter_height
 		},
 		position = {
-			tbl.window_width / 5 * 4 + tbl.spacing,
-			-tbl.filter_height - tbl.spacing,
+			element_settings.window_width / 5 * 4 + element_settings.spacing,
+			-element_settings.filter_height - element_settings.spacing,
 			1
 		}
 	},
@@ -825,60 +825,61 @@ local tbl_2 = {
 		}
 	}
 }
-local tbl_3 = {}
-local tbl_4 = {}
-local tbl_5 = {
+local tbl = {}
+local tbl_2 = {}
+local tbl_3 = {
 	name = "fade_in",
 	start_progress = 0
 }
 local flag
 
-flag = not IS_WINDOWS and 0.05 and 0.5
-tbl_5.end_progress = flag
+flag = (not IS_WINDOWS or not 0.05) and not not 0.5
+tbl_3.end_progress = flag
 
-tbl_5.init = function (arg_1_0, arg_1_1, arg_1_2, arg_1_3)
+tbl_3.init = function (ui_scenegraph, scenegraph_definition, widgets, params)
 	-- function 1
-	arg_1_3.render_settings.alpha_multiplier = 0
+	params.render_settings.alpha_multiplier = 0
 end
 
-tbl_5.update = function (arg_2_0, arg_2_1, arg_2_2, arg_2_3, arg_2_4)
+tbl_3.update = function (ui_scenegraph, scenegraph_definition, widgets, progress, params)
 	-- function 2
-	local easeInCubic = math.easeInCubic(arg_2_3)
+	local anim_progress = math.easeInCubic(progress)
 
-	arg_2_4.render_settings.alpha_multiplier = easeInCubic
+	params.render_settings.alpha_multiplier = anim_progress
 end
 
-tbl_5.on_complete = function (arg_3_0, arg_3_1, arg_3_2, arg_3_3)
+tbl_3.on_complete = function (ui_scenegraph, scenegraph_definition, widgets, params)
 	-- function 3
 	return
 end
 
-tbl_4[1] = tbl_5
-tbl_3.on_enter = tbl_4
+tbl_2[1] = tbl_3
+tbl.on_enter = tbl_2
 
-local tbl_6 = {
+local tbl_4 = {
 	{
 		name = "fade_out",
 		start_progress = 0,
 		end_progress = 0.3,
-		init = function (arg_4_0, arg_4_1, arg_4_2, arg_4_3)
+		init = function (ui_scenegraph, scenegraph_definition, widgets, params)
 			-- function 4
-			arg_4_3.render_settings.alpha_multiplier = 1
+			params.render_settings.alpha_multiplier = 1
 		end,
-		update = function (arg_5_0, arg_5_1, arg_5_2, arg_5_3, arg_5_4)
+		update = function (ui_scenegraph, scenegraph_definition, widgets, progress, params)
 			-- function 5
-			arg_5_4.render_settings.alpha_multiplier = 1
+			params.render_settings.alpha_multiplier = 1
 		end,
-		on_complete = function (arg_6_0, arg_6_1, arg_6_2, arg_6_3)
+		on_complete = function (ui_scenegraph, scenegraph_definition, widgets, params)
 			-- function 6
 			return
 		end
 	}
 }
 
-tbl_3.on_exit = tbl_6
+tbl.on_exit = tbl_4
 
-local tbl_7 = {
+local animation_definitions = tbl
+local flag_test = {
 	"ad",
 	"ae",
 	"af",
@@ -1077,7 +1078,7 @@ local tbl_7 = {
 	"zw"
 }
 
-local function fn(arg_7_0)
+local function create_lobby_browser_frame(scenegraph_id)
 	-- function 7
 	return {
 		element = {
@@ -1089,9 +1090,9 @@ local function fn(arg_7_0)
 				{
 					style_id = "dimmer",
 					pass_type = "rect",
-					content_check_function = function (self, arg_8_1)
+					content_check_function = function (content, style)
 						-- function 8
-						return self.filter_active
+						return content.filter_active
 					end
 				},
 				{
@@ -1118,12 +1119,12 @@ local function fn(arg_7_0)
 				{
 					style_id = "scroll_bar",
 					pass_type = "rect",
-					content_change_function = function (self, arg_9_1)
+					content_change_function = function (content, style)
 						-- function 9
-						if self.inner_scroller_hotspot.is_hover or not self.scrollbar_hotspot.is_hover then
-							arg_9_1.color = arg_9_1.selected_color
+						if not content.inner_scroller_hotspot.is_hover and content.scrollbar_hotspot.is_hover then
+							style.color = style.selected_color
 						else
-							arg_9_1.color = arg_9_1.base_color
+							style.color = style.base_color
 						end
 					end
 				},
@@ -1145,9 +1146,9 @@ local function fn(arg_7_0)
 					pass_type = "texture",
 					style_id = "filter_mask",
 					texture_id = "mask_id",
-					content_check_function = function (self, arg_10_1)
+					content_check_function = function (content, style)
 						-- function 10
-						return self.filter_active
+						return content.filter_active
 					end
 				},
 				{
@@ -1194,18 +1195,18 @@ local function fn(arg_7_0)
 					style_id = "timer_text",
 					pass_type = "text",
 					text_id = "timer_text_id",
-					content_change_function = function (self, arg_11_1, arg_11_2, arg_11_3)
+					content_change_function = function (content, style, _, dt)
 						-- function 11
-						local timer = self.timer
+						local timer = content.timer
 
-						timer = timer or 0
-						self.timer = timer + arg_11_3
+						timer = not not timer or not not 0
+						content.timer = timer + dt
 
-						local max = math.max(self.timer, 0)
-						local floor = math.floor(max / 60)
-						local floor_2 = math.floor(floor / 60)
+						local seconds = math.max(content.timer, 0)
+						local minutes = math.floor(seconds / 60)
+						local hours = math.floor(minutes / 60)
 
-						self.timer_text_id = string.format("%02d:%02d:%02d", floor_2, floor - floor_2 * 60, max % 60)
+						content.timer_text_id = string.format("%02d:%02d:%02d", hours, minutes - hours * 60, seconds % 60)
 					end
 				},
 				{
@@ -1221,99 +1222,116 @@ local function fn(arg_7_0)
 				{
 					style_id = "scroller",
 					pass_type = "rect",
-					content_check_function = function (self, arg_12_1)
+					content_check_function = function (content, style)
 						-- function 12
-						local show_scroller = self.show_scroller
+						local show_scroller = content.show_scroller
 
-						show_scroller = not show_scroller and not self.filter_active
+						show_scroller = not not show_scroller and not not not content.filter_active
 
 						return show_scroller
 					end,
-					content_change_function = function (self, arg_13_1)
+					content_change_function = function (content, style)
 						-- function 13
-						local window_height = tbl.window_height
-						local spacing = tbl.spacing
-						local scrollbar_progress = self.scrollbar_progress
-						local var_13_3 = arg_13_1.texture_size[2]
-						local num = -spacing - scrollbar_progress * (window_height + var_13_3)
+						local window_height = element_settings.window_height
+						local element_spacing = element_settings.spacing
+						local scrollbar_progress = content.scrollbar_progress
+						local texture_size_y = style.texture_size[2]
+						local offset_y = -element_spacing - scrollbar_progress * (window_height + texture_size_y)
 
-						arg_13_1.offset[2] = num
+						style.offset[2] = offset_y
 
-						local offset = arg_13_1.offset
-						local var_13_6
+						local offset = style.offset
+						local var_13_1
 
-						if not Math.is_valid(arg_13_1.offset[1]) then
-							var_13_6 = arg_13_1.offset[1]
+						if Math.is_valid(style.offset[1]) then
+							var_13_1 = style.offset[1]
 
-							if not var_13_6 then
+							if not var_13_1 then
 								-- Nothing
 							end
 						end
 
-						var_13_6 = 0
+						var_13_1 = 0
 
 						::label_13_0::
 
-						offset[1] = var_13_6
+						offset[1] = var_13_1
 
-						local offset_2 = arg_13_1.offset
-						local var_13_8
+						local offset_2 = style.offset
+						local var_13_3
 
-						if not Math.is_valid(arg_13_1.offset[2]) then
-							var_13_8 = arg_13_1.offset[2]
+						if Math.is_valid(style.offset[2]) then
+							var_13_3 = style.offset[2]
 
-							if not var_13_8 then
+							if not var_13_3 then
 								-- Nothing
 							end
 						end
 
-						var_13_8 = 0
+						var_13_3 = 0
 
 						::label_13_1::
 
-						offset_2[2] = var_13_8
+						offset_2[2] = var_13_3
 
-						local offset_3 = arg_13_1.offset
-						local var_13_10
+						local offset_3 = style.offset
+						local var_13_5
 
-						if not Math.is_valid(arg_13_1.offset[3]) then
-							var_13_10 = arg_13_1.offset[3]
+						if Math.is_valid(style.offset[3]) then
+							var_13_5 = style.offset[3]
 
-							if not var_13_10 then
+							if not var_13_5 then
 								-- Nothing
 							end
 						end
 
-						var_13_10 = 0
+						var_13_5 = 0
 
 						::label_13_2::
 
-						offset_3[3] = var_13_10
+						offset_3[3] = var_13_5
 					end
 				},
 				{
 					style_id = "inner_scroller",
 					pass_type = "rect",
-					content_check_function = function (self, arg_14_1)
+					content_check_function = function (content, style)
 						-- function 14
-						local show_scroller = self.show_scroller
+						local show_scroller = content.show_scroller
 
-						show_scroller = not show_scroller and not self.filter_active
+						show_scroller = not not show_scroller and not not not content.filter_active
 
 						return show_scroller
 					end,
-					content_change_function = function (self, arg_15_1)
+					content_change_function = function (content, style)
 						-- function 15
-						local window_height = tbl.window_height
-						local num = -tbl.spacing - self.scrollbar_progress * (window_height + arg_15_1.texture_size[2])
+						local window_height = element_settings.window_height
+						local offset_y = -element_settings.spacing - content.scrollbar_progress * (window_height + style.texture_size[2])
 
-						arg_15_1.offset[2] = num
+						style.offset[2] = offset_y
 
-						local offset = arg_15_1.offset
+						local offset = style.offset
+						local var_15_1
+
+						if Math.is_valid(style.offset[1]) then
+							var_15_1 = style.offset[1]
+
+							if not var_15_1 then
+								-- Nothing
+							end
+						end
+
+						var_15_1 = 0
+
+						::label_15_0::
+
+						offset[1] = var_15_1
+
+						local offset_2 = style.offset
 						local var_15_3
 
-						if not Math.is_valid(arg_15_1.offset[1]) then
-							var_15_3 = arg_15_1.offset[1]
+						if Math.is_valid(style.offset[2]) then
+							var_15_3 = style.offset[2]
 
 							if not var_15_3 then
 								-- Nothing
@@ -1322,15 +1340,15 @@ local function fn(arg_7_0)
 
 						var_15_3 = 0
 
-						::label_15_0::
+						::label_15_1::
 
-						offset[1] = var_15_3
+						offset_2[2] = var_15_3
 
-						local offset_2 = arg_15_1.offset
+						local offset_3 = style.offset
 						local var_15_5
 
-						if not Math.is_valid(arg_15_1.offset[2]) then
-							var_15_5 = arg_15_1.offset[2]
+						if Math.is_valid(style.offset[3]) then
+							var_15_5 = style.offset[3]
 
 							if not var_15_5 then
 								-- Nothing
@@ -1339,31 +1357,14 @@ local function fn(arg_7_0)
 
 						var_15_5 = 0
 
-						::label_15_1::
-
-						offset_2[2] = var_15_5
-
-						local offset_3 = arg_15_1.offset
-						local var_15_7
-
-						if not Math.is_valid(arg_15_1.offset[3]) then
-							var_15_7 = arg_15_1.offset[3]
-
-							if not var_15_7 then
-								-- Nothing
-							end
-						end
-
-						var_15_7 = 0
-
 						::label_15_2::
 
-						offset_3[3] = var_15_7
+						offset_3[3] = var_15_5
 
-						if not self.inner_scroller_hotspot.is_hover then
-							arg_15_1.color = arg_15_1.selected_color
+						if content.inner_scroller_hotspot.is_hover then
+							style.color = style.selected_color
 						else
-							arg_15_1.color = arg_15_1.base_color
+							style.color = style.base_color
 						end
 					end
 				},
@@ -1371,19 +1372,19 @@ local function fn(arg_7_0)
 					style_id = "inner_scroller_hotspot",
 					pass_type = "hotspot",
 					content_id = "inner_scroller_hotspot",
-					content_check_function = function (self, arg_16_1)
+					content_check_function = function (content, style)
 						-- function 16
-						local show_scroller = self.parent.show_scroller
+						local show_scroller = content.parent.show_scroller
 
-						show_scroller = not show_scroller and not self.parent.filter_active
+						show_scroller = not not show_scroller and not not not content.parent.filter_active
 
 						return show_scroller
 					end,
-					content_change_function = function (arg_17_0, arg_17_1)
+					content_change_function = function (content, style)
 						-- function 17
-						local inner_scroller = arg_17_1.parent.inner_scroller
+						local inner_scroller_style = style.parent.inner_scroller
 
-						arg_17_1.offset[2] = inner_scroller.offset[2] - arg_17_1.area_size[2]
+						style.offset[2] = inner_scroller_style.offset[2] - style.area_size[2]
 					end
 				}
 			}
@@ -1415,11 +1416,11 @@ local function fn(arg_7_0)
 					0
 				},
 				texture_size = {
-					tbl.window_width + tbl.spacing * 2,
-					num_7
+					element_settings.window_width + element_settings.spacing * 2,
+					filter_height
 				},
 				offset = {
-					-tbl.spacing,
+					-element_settings.spacing,
 					0,
 					0
 				}
@@ -1432,12 +1433,12 @@ local function fn(arg_7_0)
 					0
 				},
 				texture_size = {
-					tbl.window_width,
-					-tbl.window_height - num_7
+					element_settings.window_width,
+					-element_settings.window_height - filter_height
 				},
 				offset = {
 					0,
-					num_7,
+					filter_height,
 					20
 				}
 			},
@@ -1449,11 +1450,11 @@ local function fn(arg_7_0)
 					0
 				},
 				size = {
-					tbl.window_width + tbl.spacing * 7,
-					tbl.spacing * 2
+					element_settings.window_width + element_settings.spacing * 7,
+					element_settings.spacing * 2
 				},
 				offset = {
-					-tbl.spacing * 3.5,
+					-element_settings.spacing * 3.5,
 					126,
 					0
 				}
@@ -1466,12 +1467,12 @@ local function fn(arg_7_0)
 					0
 				},
 				size = {
-					tbl.window_width + tbl.spacing * 2,
-					-num_8
+					element_settings.window_width + element_settings.spacing * 2,
+					-bottom_border_size
 				},
 				offset = {
-					-tbl.spacing,
-					-tbl.window_height - tbl.spacing * 1.5,
+					-element_settings.spacing,
+					-element_settings.window_height - element_settings.spacing * 1.5,
 					0
 				}
 			},
@@ -1484,11 +1485,11 @@ local function fn(arg_7_0)
 				},
 				size = {
 					5,
-					-tbl.window_height - 127 - num_8 - tbl.spacing * 2
+					-element_settings.window_height - 127 - bottom_border_size - element_settings.spacing * 2
 				},
 				offset = {
-					tbl.window_width + tbl.spacing,
-					124 + tbl.spacing * 2,
+					element_settings.window_width + element_settings.spacing,
+					124 + element_settings.spacing * 2,
 					0
 				}
 			},
@@ -1501,17 +1502,17 @@ local function fn(arg_7_0)
 				},
 				size = {
 					5,
-					-tbl.window_height - 127 - num_8 - tbl.spacing * 2
+					-element_settings.window_height - 127 - bottom_border_size - element_settings.spacing * 2
 				},
 				offset = {
-					-tbl.spacing - 5,
-					124 + tbl.spacing * 2,
+					-element_settings.spacing - 5,
+					124 + element_settings.spacing * 2,
 					0
 				}
 			},
 			details_bar = {
 				texture_size = {
-					num_5,
+					details_width,
 					40
 				},
 				color = {
@@ -1521,15 +1522,15 @@ local function fn(arg_7_0)
 					0
 				},
 				offset = {
-					1200 + tbl.spacing,
+					1200 + element_settings.spacing,
 					0,
 					0
 				}
 			},
 			scroll_bar = {
 				texture_size = {
-					num_6,
-					-tbl.window_height
+					scroller_width,
+					-element_settings.window_height
 				},
 				color = {
 					224,
@@ -1550,15 +1551,15 @@ local function fn(arg_7_0)
 					0
 				},
 				offset = {
-					num_4 - num_6,
-					-tbl.spacing,
+					browser_width - scroller_width,
+					-element_settings.spacing,
 					0
 				}
 			},
 			scrollbar_hotspot = {
 				area_size = {
-					num_6,
-					tbl.window_height
+					scroller_width,
+					element_settings.window_height
 				},
 				color = {
 					224,
@@ -1567,69 +1568,69 @@ local function fn(arg_7_0)
 					0
 				},
 				offset = {
-					num_4 - num_6,
-					-tbl.spacing - tbl.window_height,
+					browser_width - scroller_width,
+					-element_settings.spacing - element_settings.window_height,
 					0
 				}
 			},
 			scroller = {
 				texture_size = {
-					num_6,
+					scroller_width,
 					-100
 				},
 				color = Colors.get_color_table_with_alpha("black", 255),
 				offset = {
-					num_4 - num_6,
-					-tbl.spacing,
+					browser_width - scroller_width,
+					-element_settings.spacing,
 					0
 				}
 			},
 			inner_scroller = {
 				texture_size = {
-					num_6 - 4,
+					scroller_width - 4,
 					-100
 				},
 				color = Colors.get_color_table_with_alpha("font_default", 255),
 				base_color = Colors.get_color_table_with_alpha("font_default", 255),
 				selected_color = Colors.get_color_table_with_alpha("white", 255),
 				offset = {
-					num_4 - num_6 + 2,
-					-tbl.spacing,
+					browser_width - scroller_width + 2,
+					-element_settings.spacing,
 					0
 				},
 				base_offset = {
-					num_4 - num_6 + 2,
-					-tbl.spacing,
+					browser_width - scroller_width + 2,
+					-element_settings.spacing,
 					0
 				}
 			},
 			inner_scroller_hotspot = {
 				area_size = {
-					num_6 - 4,
+					scroller_width - 4,
 					-100
 				},
 				offset = {
-					num_4 - num_6 + 2,
-					-tbl.spacing,
+					browser_width - scroller_width + 2,
+					-element_settings.spacing,
 					0
 				}
 			},
 			scroller_hotspot = {
 				vertical_alignment = "bottom",
 				area_size = {
-					num_4,
-					num_3 * num_2 + (num_2 - 1) * num
+					browser_width,
+					entry_height * num_visible_entries + (num_visible_entries - 1) * spacing
 				},
 				offset = {
 					0,
-					-tbl.window_height,
+					-element_settings.window_height,
 					0
 				}
 			},
 			details_background = {
 				texture_size = {
-					num_5,
-					-tbl.window_height
+					details_width,
+					-element_settings.window_height
 				},
 				color = {
 					168,
@@ -1638,15 +1639,15 @@ local function fn(arg_7_0)
 					0
 				},
 				offset = {
-					1200 + tbl.spacing,
-					-tbl.spacing,
+					1200 + element_settings.spacing,
+					-element_settings.spacing,
 					0
 				}
 			},
 			mask = {
 				texture_size = {
-					num_4 - num_6 - tbl.spacing,
-					-tbl.window_height
+					browser_width - scroller_width - element_settings.spacing,
+					-element_settings.window_height
 				},
 				color = {
 					255,
@@ -1656,14 +1657,14 @@ local function fn(arg_7_0)
 				},
 				offset = {
 					0,
-					-tbl.spacing,
+					-element_settings.spacing,
 					0
 				}
 			},
 			filter_mask = {
 				texture_size = {
-					tbl.window_width,
-					-tbl.window_height - tbl.filter_height
+					element_settings.window_width,
+					-element_settings.window_height - element_settings.filter_height
 				},
 				color = {
 					255,
@@ -1673,14 +1674,14 @@ local function fn(arg_7_0)
 				},
 				offset = {
 					0,
-					-tbl.spacing + tbl.filter_height + tbl.spacing,
+					-element_settings.spacing + element_settings.filter_height + element_settings.spacing,
 					5
 				}
 			},
 			host_mask = {
 				texture_size = {
-					tbl.spacing * 0.33,
-					-tbl.window_height
+					element_settings.spacing * 0.33,
+					-element_settings.window_height
 				},
 				color = {
 					1,
@@ -1690,14 +1691,14 @@ local function fn(arg_7_0)
 				},
 				offset = {
 					620,
-					-tbl.spacing,
+					-element_settings.spacing,
 					0
 				}
 			},
 			country_mask = {
 				texture_size = {
-					tbl.spacing * 0.33,
-					-tbl.window_height
+					element_settings.spacing * 0.33,
+					-element_settings.window_height
 				},
 				color = {
 					1,
@@ -1707,14 +1708,14 @@ local function fn(arg_7_0)
 				},
 				offset = {
 					775,
-					-tbl.spacing,
+					-element_settings.spacing,
 					0
 				}
 			},
 			difficulty_mask = {
 				texture_size = {
-					tbl.spacing * 0.33,
-					-tbl.window_height
+					element_settings.spacing * 0.33,
+					-element_settings.window_height
 				},
 				color = {
 					1,
@@ -1724,7 +1725,7 @@ local function fn(arg_7_0)
 				},
 				offset = {
 					1030,
-					-tbl.spacing,
+					-element_settings.spacing,
 					0
 				}
 			},
@@ -1807,7 +1808,7 @@ local function fn(arg_7_0)
 				text_color = Colors.get_color_table_with_alpha("font_default", 255),
 				offset = {
 					13,
-					-tbl.window_height - num_8 - 2,
+					-element_settings.window_height - bottom_border_size - 2,
 					5
 				}
 			},
@@ -1819,8 +1820,8 @@ local function fn(arg_7_0)
 				font_type = "hell_shark",
 				text_color = Colors.get_color_table_with_alpha("font_default", 255),
 				offset = {
-					num_4 - 105,
-					-tbl.window_height - num_8 - 2,
+					browser_width - 105,
+					-element_settings.window_height - bottom_border_size - 2,
 					5
 				}
 			},
@@ -1833,7 +1834,7 @@ local function fn(arg_7_0)
 				text_color = Colors.get_color_table_with_alpha("font_default", 255),
 				offset = {
 					-110,
-					-tbl.window_height - num_8 - 2,
+					-element_settings.window_height - bottom_border_size - 2,
 					5
 				}
 			}
@@ -1843,13 +1844,13 @@ local function fn(arg_7_0)
 			0,
 			0
 		},
-		scenegraph_id = arg_7_0
+		scenegraph_id = scenegraph_id
 	}
 end
 
-local function fn_2(arg_18_0)
+local function create_filter_frame(scenegraph_id)
 	-- function 18
-	local num = tbl.window_width / 5
+	local label_distance = element_settings.window_width / 5
 
 	return {
 		element = {
@@ -1861,220 +1862,220 @@ local function fn_2(arg_18_0)
 				{
 					style_id = "game_type_left_triangle",
 					pass_type = "triangle",
-					content_check_function = function (self, arg_19_1)
+					content_check_function = function (content, style)
 						-- function 19
-						if not self.filter_hotspot_1.disable_button then
+						if content.filter_hotspot_1.disable_button then
 							return false
 						else
-							local is_device_active = Managers.input:is_device_active("gamepad")
+							local gamepad_active = Managers.input:is_device_active("gamepad")
 
-							return not self.filter_selection and self.filter_index == 1 or not is_device_active
+							return (not content.filter_selection or content.filter_index ~= 1) and not not not gamepad_active
 						end
 					end,
-					content_change_function = function (self, arg_20_1)
+					content_change_function = function (content, style)
 						-- function 20
-						if not self.filter_selection and self.filter_index == 1 and not self.filter_hotspot_1.is_hover then
-							arg_20_1.color = arg_20_1.select_color
+						if (not content.filter_selection or content.filter_index ~= 1) and content.filter_hotspot_1.is_hover then
+							style.color = style.select_color
 						else
-							arg_20_1.color = arg_20_1.base_color
+							style.color = style.base_color
 						end
 					end
 				},
 				{
 					style_id = "game_type_right_triangle",
 					pass_type = "triangle",
-					content_check_function = function (self, arg_21_1)
+					content_check_function = function (content, style)
 						-- function 21
-						if not self.filter_hotspot_1.disable_button then
+						if content.filter_hotspot_1.disable_button then
 							return false
 						else
-							local is_device_active = Managers.input:is_device_active("gamepad")
+							local gamepad_active = Managers.input:is_device_active("gamepad")
 
-							return not self.filter_selection and self.filter_index == 1 or not is_device_active
+							return (not content.filter_selection or content.filter_index ~= 1) and not not not gamepad_active
 						end
 					end,
-					content_change_function = function (self, arg_22_1)
+					content_change_function = function (content, style)
 						-- function 22
-						if not self.filter_selection and self.filter_index == 1 and not self.filter_hotspot_1.is_hover then
-							arg_22_1.color = arg_22_1.select_color
+						if (not content.filter_selection or content.filter_index ~= 1) and content.filter_hotspot_1.is_hover then
+							style.color = style.select_color
 						else
-							arg_22_1.color = arg_22_1.base_color
+							style.color = style.base_color
 						end
 					end
 				},
 				{
 					style_id = "level_left_triangle",
 					pass_type = "triangle",
-					content_check_function = function (self, arg_23_1)
+					content_check_function = function (content, style)
 						-- function 23
-						if not self.filter_hotspot_2.disable_button then
+						if content.filter_hotspot_2.disable_button then
 							return false
 						else
-							local is_device_active = Managers.input:is_device_active("gamepad")
+							local gamepad_active = Managers.input:is_device_active("gamepad")
 
-							return not self.filter_selection and self.filter_index == 2 or not is_device_active
+							return (not content.filter_selection or content.filter_index ~= 2) and not not not gamepad_active
 						end
 					end,
-					content_change_function = function (self, arg_24_1)
+					content_change_function = function (content, style)
 						-- function 24
-						if not self.filter_selection and self.filter_index == 2 and not self.filter_hotspot_2.is_hover then
-							arg_24_1.color = arg_24_1.select_color
+						if (not content.filter_selection or content.filter_index ~= 2) and content.filter_hotspot_2.is_hover then
+							style.color = style.select_color
 						else
-							arg_24_1.color = arg_24_1.base_color
+							style.color = style.base_color
 						end
 					end
 				},
 				{
 					style_id = "level_right_triangle",
 					pass_type = "triangle",
-					content_check_function = function (self, arg_25_1)
+					content_check_function = function (content, style)
 						-- function 25
-						if not self.filter_hotspot_2.disable_button then
+						if content.filter_hotspot_2.disable_button then
 							return false
 						else
-							local is_device_active = Managers.input:is_device_active("gamepad")
+							local gamepad_active = Managers.input:is_device_active("gamepad")
 
-							return not self.filter_selection and self.filter_index == 2 or not is_device_active
+							return (not content.filter_selection or content.filter_index ~= 2) and not not not gamepad_active
 						end
 					end,
-					content_change_function = function (self, arg_26_1)
+					content_change_function = function (content, style)
 						-- function 26
-						if not self.filter_selection and self.filter_index == 2 and not self.filter_hotspot_2.is_hover then
-							arg_26_1.color = arg_26_1.select_color
+						if (not content.filter_selection or content.filter_index ~= 2) and content.filter_hotspot_2.is_hover then
+							style.color = style.select_color
 						else
-							arg_26_1.color = arg_26_1.base_color
+							style.color = style.base_color
 						end
 					end
 				},
 				{
 					style_id = "difficulty_left_triangle",
 					pass_type = "triangle",
-					content_check_function = function (self, arg_27_1)
+					content_check_function = function (content, style)
 						-- function 27
-						if not self.filter_hotspot_3.disable_button then
+						if content.filter_hotspot_3.disable_button then
 							return false
 						else
-							local is_device_active = Managers.input:is_device_active("gamepad")
+							local gamepad_active = Managers.input:is_device_active("gamepad")
 
-							return not self.filter_selection and self.filter_index == 3 or not is_device_active
+							return (not content.filter_selection or content.filter_index ~= 3) and not not not gamepad_active
 						end
 					end,
-					content_change_function = function (self, arg_28_1)
+					content_change_function = function (content, style)
 						-- function 28
-						if not self.filter_selection and self.filter_index == 3 and not self.filter_hotspot_3.is_hover then
-							arg_28_1.color = arg_28_1.select_color
+						if (not content.filter_selection or content.filter_index ~= 3) and content.filter_hotspot_3.is_hover then
+							style.color = style.select_color
 						else
-							arg_28_1.color = arg_28_1.base_color
+							style.color = style.base_color
 						end
 					end
 				},
 				{
 					style_id = "difficulty_right_triangle",
 					pass_type = "triangle",
-					content_check_function = function (self, arg_29_1)
+					content_check_function = function (content, style)
 						-- function 29
-						if not self.filter_hotspot_3.disable_button then
+						if content.filter_hotspot_3.disable_button then
 							return false
 						else
-							local is_device_active = Managers.input:is_device_active("gamepad")
+							local gamepad_active = Managers.input:is_device_active("gamepad")
 
-							return not self.filter_selection and self.filter_index == 3 or not is_device_active
+							return (not content.filter_selection or content.filter_index ~= 3) and not not not gamepad_active
 						end
 					end,
-					content_change_function = function (self, arg_30_1)
+					content_change_function = function (content, style)
 						-- function 30
-						if not self.filter_selection and self.filter_index == 3 and not self.filter_hotspot_3.is_hover then
-							arg_30_1.color = arg_30_1.select_color
+						if (not content.filter_selection or content.filter_index ~= 3) and content.filter_hotspot_3.is_hover then
+							style.color = style.select_color
 						else
-							arg_30_1.color = arg_30_1.base_color
+							style.color = style.base_color
 						end
 					end
 				},
 				{
 					style_id = "lobby_filter_left_triangle",
 					pass_type = "triangle",
-					content_check_function = function (self, arg_31_1)
+					content_check_function = function (content, style)
 						-- function 31
-						if not self.filter_hotspot_4.disable_button then
+						if content.filter_hotspot_4.disable_button then
 							return false
 						else
-							local is_device_active = Managers.input:is_device_active("gamepad")
+							local gamepad_active = Managers.input:is_device_active("gamepad")
 
-							return not self.filter_selection and self.filter_index == 4 or not is_device_active
+							return (not content.filter_selection or content.filter_index ~= 4) and not not not gamepad_active
 						end
 					end,
-					content_change_function = function (self, arg_32_1)
+					content_change_function = function (content, style)
 						-- function 32
-						if not self.filter_selection and self.filter_index == 4 and not self.filter_hotspot_4.is_hover then
-							arg_32_1.color = arg_32_1.select_color
+						if (not content.filter_selection or content.filter_index ~= 4) and content.filter_hotspot_4.is_hover then
+							style.color = style.select_color
 						else
-							arg_32_1.color = arg_32_1.base_color
+							style.color = style.base_color
 						end
 					end
 				},
 				{
 					style_id = "lobby_filter_right_triangle",
 					pass_type = "triangle",
-					content_check_function = function (self, arg_33_1)
+					content_check_function = function (content, style)
 						-- function 33
-						if not self.filter_hotspot_4.disable_button then
+						if content.filter_hotspot_4.disable_button then
 							return false
 						else
-							local is_device_active = Managers.input:is_device_active("gamepad")
+							local gamepad_active = Managers.input:is_device_active("gamepad")
 
-							return not self.filter_selection and self.filter_index == 4 or not is_device_active
+							return (not content.filter_selection or content.filter_index ~= 4) and not not not gamepad_active
 						end
 					end,
-					content_change_function = function (self, arg_34_1)
+					content_change_function = function (content, style)
 						-- function 34
-						if not self.filter_selection and self.filter_index == 4 and not self.filter_hotspot_4.is_hover then
-							arg_34_1.color = arg_34_1.select_color
+						if (not content.filter_selection or content.filter_index ~= 4) and content.filter_hotspot_4.is_hover then
+							style.color = style.select_color
 						else
-							arg_34_1.color = arg_34_1.base_color
+							style.color = style.base_color
 						end
 					end
 				},
 				{
 					style_id = "distance_left_triangle",
 					pass_type = "triangle",
-					content_check_function = function (self, arg_35_1)
+					content_check_function = function (content, style)
 						-- function 35
-						if not self.filter_hotspot_5.disable_button then
+						if content.filter_hotspot_5.disable_button then
 							return false
 						else
-							local is_device_active = Managers.input:is_device_active("gamepad")
+							local gamepad_active = Managers.input:is_device_active("gamepad")
 
-							return not self.filter_selection and self.filter_index == 5 or not is_device_active
+							return (not content.filter_selection or content.filter_index ~= 5) and not not not gamepad_active
 						end
 					end,
-					content_change_function = function (self, arg_36_1)
+					content_change_function = function (content, style)
 						-- function 36
-						if not self.filter_selection and self.filter_index == 5 and not self.filter_hotspot_5.is_hover then
-							arg_36_1.color = arg_36_1.select_color
+						if (not content.filter_selection or content.filter_index ~= 5) and content.filter_hotspot_5.is_hover then
+							style.color = style.select_color
 						else
-							arg_36_1.color = arg_36_1.base_color
+							style.color = style.base_color
 						end
 					end
 				},
 				{
 					style_id = "distance_right_triangle",
 					pass_type = "triangle",
-					content_check_function = function (self, arg_37_1)
+					content_check_function = function (content, style)
 						-- function 37
-						if not self.filter_hotspot_5.disable_button then
+						if content.filter_hotspot_5.disable_button then
 							return false
 						else
-							local is_device_active = Managers.input:is_device_active("gamepad")
+							local gamepad_active = Managers.input:is_device_active("gamepad")
 
-							return not self.filter_selection and self.filter_index == 5 or not is_device_active
+							return (not content.filter_selection or content.filter_index ~= 5) and not not not gamepad_active
 						end
 					end,
-					content_change_function = function (self, arg_38_1)
+					content_change_function = function (content, style)
 						-- function 38
-						if not self.filter_selection and self.filter_index == 5 and not self.filter_hotspot_5.is_hover then
-							arg_38_1.color = arg_38_1.select_color
+						if (not content.filter_selection or content.filter_index ~= 5) and content.filter_hotspot_5.is_hover then
+							style.color = style.select_color
 						else
-							arg_38_1.color = arg_38_1.base_color
+							style.color = style.base_color
 						end
 					end
 				},
@@ -2086,12 +2087,12 @@ local function fn_2(arg_18_0)
 				{
 					style_id = "background_1",
 					pass_type = "rect",
-					content_change_function = function (self, arg_39_1)
+					content_change_function = function (content, style)
 						-- function 39
-						if not self.filter_selection and self.filter_index == 1 and not self.filter_hotspot_1.is_hover then
-							arg_39_1.color = arg_39_1.selection_color
+						if (not content.filter_selection or content.filter_index ~= 1) and content.filter_hotspot_1.is_hover then
+							style.color = style.selection_color
 						else
-							arg_39_1.color = arg_39_1.base_color
+							style.color = style.base_color
 						end
 					end
 				},
@@ -2103,12 +2104,12 @@ local function fn_2(arg_18_0)
 				{
 					style_id = "background_2",
 					pass_type = "rect",
-					content_change_function = function (self, arg_40_1)
+					content_change_function = function (content, style)
 						-- function 40
-						if not self.filter_selection and self.filter_index == 2 and not self.filter_hotspot_2.is_hover then
-							arg_40_1.color = arg_40_1.selection_color
+						if (not content.filter_selection or content.filter_index ~= 2) and content.filter_hotspot_2.is_hover then
+							style.color = style.selection_color
 						else
-							arg_40_1.color = arg_40_1.base_color
+							style.color = style.base_color
 						end
 					end
 				},
@@ -2120,12 +2121,12 @@ local function fn_2(arg_18_0)
 				{
 					style_id = "background_3",
 					pass_type = "rect",
-					content_change_function = function (self, arg_41_1)
+					content_change_function = function (content, style)
 						-- function 41
-						if not self.filter_selection and self.filter_index == 3 and not self.filter_hotspot_3.is_hover then
-							arg_41_1.color = arg_41_1.selection_color
+						if (not content.filter_selection or content.filter_index ~= 3) and content.filter_hotspot_3.is_hover then
+							style.color = style.selection_color
 						else
-							arg_41_1.color = arg_41_1.base_color
+							style.color = style.base_color
 						end
 					end
 				},
@@ -2137,12 +2138,12 @@ local function fn_2(arg_18_0)
 				{
 					style_id = "background_4",
 					pass_type = "rect",
-					content_change_function = function (self, arg_42_1)
+					content_change_function = function (content, style)
 						-- function 42
-						if not self.filter_selection and self.filter_index == 4 and not self.filter_hotspot_4.is_hover then
-							arg_42_1.color = arg_42_1.selection_color
+						if (not content.filter_selection or content.filter_index ~= 4) and content.filter_hotspot_4.is_hover then
+							style.color = style.selection_color
 						else
-							arg_42_1.color = arg_42_1.base_color
+							style.color = style.base_color
 						end
 					end
 				},
@@ -2154,12 +2155,12 @@ local function fn_2(arg_18_0)
 				{
 					style_id = "background_5",
 					pass_type = "rect",
-					content_change_function = function (self, arg_43_1)
+					content_change_function = function (content, style)
 						-- function 43
-						if not self.filter_selection and self.filter_index == 5 and not self.filter_hotspot_5.is_hover then
-							arg_43_1.color = arg_43_1.selection_color
+						if (not content.filter_selection or content.filter_index ~= 5) and content.filter_hotspot_5.is_hover then
+							style.color = style.selection_color
 						else
-							arg_43_1.color = arg_43_1.base_color
+							style.color = style.base_color
 						end
 					end
 				},
@@ -2192,14 +2193,14 @@ local function fn_2(arg_18_0)
 					style_id = "game_type_name",
 					pass_type = "text",
 					text_id = "game_type_name",
-					content_change_function = function (self, arg_44_1)
+					content_change_function = function (content, style)
 						-- function 44
-						if not self.filter_hotspot_1.disable_button then
-							arg_44_1.text_color = arg_44_1.disabled_color
-						elseif not self.filter_selection and self.filter_index == 1 and not self.filter_hotspot_1.is_hover then
-							arg_44_1.text_color = arg_44_1.selection_color
+						if content.filter_hotspot_1.disable_button then
+							style.text_color = style.disabled_color
+						elseif (not content.filter_selection or content.filter_index ~= 1) and content.filter_hotspot_1.is_hover then
+							style.text_color = style.selection_color
 						else
-							arg_44_1.text_color = arg_44_1.base_color
+							style.text_color = style.base_color
 						end
 					end
 				},
@@ -2207,14 +2208,14 @@ local function fn_2(arg_18_0)
 					style_id = "mission_name",
 					pass_type = "text",
 					text_id = "mission_name",
-					content_change_function = function (self, arg_45_1)
+					content_change_function = function (content, style)
 						-- function 45
-						if not self.filter_hotspot_2.disable_button then
-							arg_45_1.text_color = arg_45_1.disabled_color
-						elseif not self.filter_selection and self.filter_index == 2 and not self.filter_hotspot_2.is_hover then
-							arg_45_1.text_color = arg_45_1.selection_color
+						if content.filter_hotspot_2.disable_button then
+							style.text_color = style.disabled_color
+						elseif (not content.filter_selection or content.filter_index ~= 2) and content.filter_hotspot_2.is_hover then
+							style.text_color = style.selection_color
 						else
-							arg_45_1.text_color = arg_45_1.base_color
+							style.text_color = style.base_color
 						end
 					end
 				},
@@ -2222,14 +2223,14 @@ local function fn_2(arg_18_0)
 					style_id = "difficulty_name",
 					pass_type = "text",
 					text_id = "difficulty_name",
-					content_change_function = function (self, arg_46_1)
+					content_change_function = function (content, style)
 						-- function 46
-						if not self.filter_hotspot_3.disable_button then
-							arg_46_1.text_color = arg_46_1.disabled_color
-						elseif not self.filter_selection and self.filter_index == 3 and not self.filter_hotspot_3.is_hover then
-							arg_46_1.text_color = arg_46_1.selection_color
+						if content.filter_hotspot_3.disable_button then
+							style.text_color = style.disabled_color
+						elseif (not content.filter_selection or content.filter_index ~= 3) and content.filter_hotspot_3.is_hover then
+							style.text_color = style.selection_color
 						else
-							arg_46_1.text_color = arg_46_1.base_color
+							style.text_color = style.base_color
 						end
 					end
 				},
@@ -2237,14 +2238,14 @@ local function fn_2(arg_18_0)
 					style_id = "show_lobbies_name",
 					pass_type = "text",
 					text_id = "show_lobbies_name",
-					content_change_function = function (self, arg_47_1)
+					content_change_function = function (content, style)
 						-- function 47
-						if not self.filter_hotspot_4.disable_button then
-							arg_47_1.text_color = arg_47_1.disabled_color
-						elseif not self.filter_selection and self.filter_index == 4 and not self.filter_hotspot_4.is_hover then
-							arg_47_1.text_color = arg_47_1.selection_color
+						if content.filter_hotspot_4.disable_button then
+							style.text_color = style.disabled_color
+						elseif (not content.filter_selection or content.filter_index ~= 4) and content.filter_hotspot_4.is_hover then
+							style.text_color = style.selection_color
 						else
-							arg_47_1.text_color = arg_47_1.base_color
+							style.text_color = style.base_color
 						end
 					end
 				},
@@ -2252,14 +2253,14 @@ local function fn_2(arg_18_0)
 					style_id = "distance_name",
 					pass_type = "text",
 					text_id = "distance_name",
-					content_change_function = function (self, arg_48_1)
+					content_change_function = function (content, style)
 						-- function 48
-						if not self.filter_hotspot_5.disable_button then
-							arg_48_1.text_color = arg_48_1.disabled_color
-						elseif not self.filter_selection and self.filter_index == 5 and not self.filter_hotspot_5.is_hover then
-							arg_48_1.text_color = arg_48_1.selection_color
+						if content.filter_hotspot_5.disable_button then
+							style.text_color = style.disabled_color
+						elseif (not content.filter_selection or content.filter_index ~= 5) and content.filter_hotspot_5.is_hover then
+							style.text_color = style.selection_color
 						else
-							arg_48_1.text_color = arg_48_1.base_color
+							style.text_color = style.base_color
 						end
 					end
 				}
@@ -2294,7 +2295,7 @@ local function fn_2(arg_18_0)
 					0
 				},
 				texture_size = {
-					tbl.window_width,
+					element_settings.window_width,
 					40
 				},
 				offset = {
@@ -2320,8 +2321,8 @@ local function fn_2(arg_18_0)
 				base_color = Colors.get_color_table_with_alpha("font_default", 128),
 				color = Colors.get_color_table_with_alpha("font_default", 128),
 				offset = {
-					-25 + num * 1,
-					0 - tbl.filter_height * 1 - tbl.spacing * 2 - 15,
+					-25 + label_distance * 1,
+					0 - element_settings.filter_height * 1 - element_settings.spacing * 2 - 15,
 					1
 				}
 			},
@@ -2342,8 +2343,8 @@ local function fn_2(arg_18_0)
 				base_color = Colors.get_color_table_with_alpha("font_default", 128),
 				color = Colors.get_color_table_with_alpha("font_default", 128),
 				offset = {
-					-25 + num * 1 - 7.5,
-					0 - tbl.filter_height * 1 - tbl.spacing * 2 - 15,
+					-25 + label_distance * 1 - 7.5,
+					0 - element_settings.filter_height * 1 - element_settings.spacing * 2 - 15,
 					1
 				}
 			},
@@ -2364,8 +2365,8 @@ local function fn_2(arg_18_0)
 				base_color = Colors.get_color_table_with_alpha("font_default", 128),
 				color = Colors.get_color_table_with_alpha("font_default", 128),
 				offset = {
-					-25 + num * 2,
-					0 - tbl.filter_height * 1 - tbl.spacing * 2 - 15,
+					-25 + label_distance * 2,
+					0 - element_settings.filter_height * 1 - element_settings.spacing * 2 - 15,
 					1
 				}
 			},
@@ -2386,8 +2387,8 @@ local function fn_2(arg_18_0)
 				base_color = Colors.get_color_table_with_alpha("font_default", 128),
 				color = Colors.get_color_table_with_alpha("font_default", 128),
 				offset = {
-					-25 + num * 2 - 7.5,
-					0 - tbl.filter_height * 1 - tbl.spacing * 2 - 15,
+					-25 + label_distance * 2 - 7.5,
+					0 - element_settings.filter_height * 1 - element_settings.spacing * 2 - 15,
 					1
 				}
 			},
@@ -2408,8 +2409,8 @@ local function fn_2(arg_18_0)
 				base_color = Colors.get_color_table_with_alpha("font_default", 128),
 				color = Colors.get_color_table_with_alpha("font_default", 128),
 				offset = {
-					-25 + num * 3,
-					0 - tbl.filter_height * 1 - tbl.spacing * 2 - 15,
+					-25 + label_distance * 3,
+					0 - element_settings.filter_height * 1 - element_settings.spacing * 2 - 15,
 					1
 				}
 			},
@@ -2430,8 +2431,8 @@ local function fn_2(arg_18_0)
 				base_color = Colors.get_color_table_with_alpha("font_default", 128),
 				color = Colors.get_color_table_with_alpha("font_default", 128),
 				offset = {
-					-25 + num * 3 - 7.5,
-					0 - tbl.filter_height * 1 - tbl.spacing * 2 - 15,
+					-25 + label_distance * 3 - 7.5,
+					0 - element_settings.filter_height * 1 - element_settings.spacing * 2 - 15,
 					1
 				}
 			},
@@ -2452,8 +2453,8 @@ local function fn_2(arg_18_0)
 				base_color = Colors.get_color_table_with_alpha("font_default", 128),
 				color = Colors.get_color_table_with_alpha("font_default", 128),
 				offset = {
-					-25 + num * 4,
-					0 - tbl.filter_height * 1 - tbl.spacing * 2 - 15,
+					-25 + label_distance * 4,
+					0 - element_settings.filter_height * 1 - element_settings.spacing * 2 - 15,
 					1
 				}
 			},
@@ -2474,8 +2475,8 @@ local function fn_2(arg_18_0)
 				base_color = Colors.get_color_table_with_alpha("font_default", 128),
 				color = Colors.get_color_table_with_alpha("font_default", 128),
 				offset = {
-					-25 + num * 4 - 7.5,
-					0 - tbl.filter_height * 1 - tbl.spacing * 2 - 15,
+					-25 + label_distance * 4 - 7.5,
+					0 - element_settings.filter_height * 1 - element_settings.spacing * 2 - 15,
 					1
 				}
 			},
@@ -2496,8 +2497,8 @@ local function fn_2(arg_18_0)
 				base_color = Colors.get_color_table_with_alpha("font_default", 128),
 				color = Colors.get_color_table_with_alpha("font_default", 128),
 				offset = {
-					-25 + num * 5,
-					0 - tbl.filter_height * 1 - tbl.spacing * 2 - 15,
+					-25 + label_distance * 5,
+					0 - element_settings.filter_height * 1 - element_settings.spacing * 2 - 15,
 					1
 				}
 			},
@@ -2518,8 +2519,8 @@ local function fn_2(arg_18_0)
 				base_color = Colors.get_color_table_with_alpha("font_default", 128),
 				color = Colors.get_color_table_with_alpha("font_default", 128),
 				offset = {
-					-25 + num * 5 - 7.5,
-					0 - tbl.filter_height * 1 - tbl.spacing * 2 - 15,
+					-25 + label_distance * 5 - 7.5,
+					0 - element_settings.filter_height * 1 - element_settings.spacing * 2 - 15,
 					1
 				}
 			},
@@ -2532,12 +2533,12 @@ local function fn_2(arg_18_0)
 					255
 				},
 				texture_size = {
-					tbl.window_width,
+					element_settings.window_width,
 					40
 				},
 				offset = {
 					0,
-					-40 - tbl.spacing,
+					-40 - element_settings.spacing,
 					0
 				}
 			},
@@ -2550,12 +2551,12 @@ local function fn_2(arg_18_0)
 					0
 				},
 				texture_size = {
-					tbl.spacing,
+					element_settings.spacing,
 					40
 				},
 				offset = {
-					tbl.window_width / 4,
-					-40 - tbl.spacing,
+					element_settings.window_width / 4,
+					-40 - element_settings.spacing,
 					0
 				}
 			},
@@ -2568,12 +2569,12 @@ local function fn_2(arg_18_0)
 					0
 				},
 				texture_size = {
-					tbl.spacing,
+					element_settings.spacing,
 					40
 				},
 				offset = {
-					tbl.window_width / 4 * 2,
-					-40 - tbl.spacing,
+					element_settings.window_width / 4 * 2,
+					-40 - element_settings.spacing,
 					0
 				}
 			},
@@ -2586,12 +2587,12 @@ local function fn_2(arg_18_0)
 					0
 				},
 				texture_size = {
-					tbl.spacing,
+					element_settings.spacing,
 					40
 				},
 				offset = {
-					tbl.window_width / 4 * 3,
-					-40 - tbl.spacing,
+					element_settings.window_width / 4 * 3,
+					-40 - element_settings.spacing,
 					0
 				}
 			},
@@ -2616,16 +2617,16 @@ local function fn_2(arg_18_0)
 					128
 				},
 				texture_size = {
-					num,
+					label_distance,
 					40
 				},
 				size = {
-					num,
+					label_distance,
 					40
 				},
 				offset = {
 					0,
-					num_7 * 3 - tbl.spacing,
+					filter_height * 3 - element_settings.spacing,
 					0
 				}
 			},
@@ -2650,16 +2651,16 @@ local function fn_2(arg_18_0)
 					128
 				},
 				texture_size = {
-					num - tbl.spacing * 0.5,
+					label_distance - element_settings.spacing * 0.5,
 					40
 				},
 				size = {
-					num,
+					label_distance,
 					40
 				},
 				offset = {
-					num * 1 + tbl.spacing,
-					num_7 * 3 - tbl.spacing,
+					label_distance * 1 + element_settings.spacing,
+					filter_height * 3 - element_settings.spacing,
 					0
 				}
 			},
@@ -2684,16 +2685,16 @@ local function fn_2(arg_18_0)
 					128
 				},
 				texture_size = {
-					num - tbl.spacing * 0.5,
+					label_distance - element_settings.spacing * 0.5,
 					40
 				},
 				size = {
-					num,
+					label_distance,
 					40
 				},
 				offset = {
-					num * 2 + tbl.spacing,
-					num_7 * 3 - tbl.spacing,
+					label_distance * 2 + element_settings.spacing,
+					filter_height * 3 - element_settings.spacing,
 					0
 				}
 			},
@@ -2718,16 +2719,16 @@ local function fn_2(arg_18_0)
 					128
 				},
 				texture_size = {
-					num - tbl.spacing * 0.5,
+					label_distance - element_settings.spacing * 0.5,
 					40
 				},
 				size = {
-					num,
+					label_distance,
 					40
 				},
 				offset = {
-					num * 3 + tbl.spacing,
-					num_7 * 3 - tbl.spacing,
+					label_distance * 3 + element_settings.spacing,
+					filter_height * 3 - element_settings.spacing,
 					0
 				}
 			},
@@ -2752,16 +2753,16 @@ local function fn_2(arg_18_0)
 					128
 				},
 				texture_size = {
-					num - tbl.spacing * 0.5,
+					label_distance - element_settings.spacing * 0.5,
 					40
 				},
 				size = {
-					num,
+					label_distance,
 					40
 				},
 				offset = {
-					num * 4 + tbl.spacing,
-					num_7 * 3 - tbl.spacing,
+					label_distance * 4 + element_settings.spacing,
+					filter_height * 3 - element_settings.spacing,
 					0
 				}
 			},
@@ -2773,11 +2774,11 @@ local function fn_2(arg_18_0)
 				font_type = "hell_shark_header",
 				text_color = Colors.get_color_table_with_alpha("font_default", 255),
 				size = {
-					tbl.window_width,
+					element_settings.window_width,
 					40
 				},
 				offset = {
-					15 + num * 0,
+					15 + label_distance * 0,
 					158,
 					1
 				}
@@ -2798,11 +2799,11 @@ local function fn_2(arg_18_0)
 					60
 				},
 				size = {
-					tbl.window_width,
+					element_settings.window_width,
 					40
 				},
 				offset = {
-					15 + num * 0,
+					15 + label_distance * 0,
 					118,
 					1
 				}
@@ -2815,11 +2816,11 @@ local function fn_2(arg_18_0)
 				font_type = "hell_shark_header",
 				text_color = Colors.get_color_table_with_alpha("font_default", 255),
 				size = {
-					tbl.window_width,
+					element_settings.window_width,
 					40
 				},
 				offset = {
-					15 + num * 1,
+					15 + label_distance * 1,
 					158,
 					1
 				}
@@ -2832,7 +2833,7 @@ local function fn_2(arg_18_0)
 				vertical_alignment = "center",
 				dynamic_font_size = true,
 				area_size = {
-					num - 60,
+					label_distance - 60,
 					100
 				},
 				text_color = Colors.get_color_table_with_alpha("font_default", 255),
@@ -2845,11 +2846,11 @@ local function fn_2(arg_18_0)
 					60
 				},
 				size = {
-					tbl.window_width,
+					element_settings.window_width,
 					40
 				},
 				offset = {
-					15 + num * 1,
+					15 + label_distance * 1,
 					118,
 					1
 				}
@@ -2862,11 +2863,11 @@ local function fn_2(arg_18_0)
 				font_type = "hell_shark_header",
 				text_color = Colors.get_color_table_with_alpha("font_default", 255),
 				size = {
-					tbl.window_width,
+					element_settings.window_width,
 					40
 				},
 				offset = {
-					15 + num * 2,
+					15 + label_distance * 2,
 					158,
 					1
 				}
@@ -2887,11 +2888,11 @@ local function fn_2(arg_18_0)
 					60
 				},
 				size = {
-					tbl.window_width,
+					element_settings.window_width,
 					40
 				},
 				offset = {
-					15 + num * 2,
+					15 + label_distance * 2,
 					118,
 					1
 				}
@@ -2904,11 +2905,11 @@ local function fn_2(arg_18_0)
 				font_type = "hell_shark_header",
 				text_color = Colors.get_color_table_with_alpha("font_default", 255),
 				size = {
-					tbl.window_width,
+					element_settings.window_width,
 					40
 				},
 				offset = {
-					15 + num * 3,
+					15 + label_distance * 3,
 					158,
 					1
 				}
@@ -2929,11 +2930,11 @@ local function fn_2(arg_18_0)
 					60
 				},
 				size = {
-					tbl.window_width,
+					element_settings.window_width,
 					40
 				},
 				offset = {
-					15 + num * 3,
+					15 + label_distance * 3,
 					118,
 					1
 				}
@@ -2946,11 +2947,11 @@ local function fn_2(arg_18_0)
 				font_type = "hell_shark_header",
 				text_color = Colors.get_color_table_with_alpha("font_default", 255),
 				size = {
-					tbl.window_width,
+					element_settings.window_width,
 					40
 				},
 				offset = {
-					15 + num * 4,
+					15 + label_distance * 4,
 					158,
 					1
 				}
@@ -2971,11 +2972,11 @@ local function fn_2(arg_18_0)
 					60
 				},
 				size = {
-					tbl.window_width,
+					element_settings.window_width,
 					40
 				},
 				offset = {
-					15 + num * 4,
+					15 + label_distance * 4,
 					118,
 					1
 				}
@@ -2986,18 +2987,19 @@ local function fn_2(arg_18_0)
 			0,
 			0
 		},
-		scenegraph_id = arg_18_0
+		scenegraph_id = scenegraph_id
 	}
 end
 
-local function fn_3(arg_49_0)
+local function create_level_filter_scroller_func(num_elements)
 	-- function 49
-	local num = tbl.window_height + tbl.filter_height + tbl.spacing
-	local ceil = math.ceil(num / (tbl.filter_height + tbl.spacing) - 1)
+	local max_length = element_settings.window_height + element_settings.filter_height + element_settings.spacing
+	local max_entries = math.ceil(max_length / (element_settings.filter_height + element_settings.spacing) - 1)
+	local visible = max_entries < num_elements
 	local max
 
-	if not (ceil < arg_49_0) then
-		max = math.max(num / (arg_49_0 / ceil), 30)
+	if visible then
+		max = math.max(max_length / (num_elements / max_entries), 30)
 
 		if not max then
 			-- Nothing
@@ -3006,9 +3008,11 @@ local function fn_3(arg_49_0)
 
 	max = 0
 
+	local size_y = max
+
 	::label_49_0::
 
-	local clamp = math.clamp(arg_49_0 * (tbl.filter_height + tbl.spacing), 0, num)
+	local border_length = math.clamp(num_elements * (element_settings.filter_height + element_settings.spacing), 0, max_length)
 
 	return {
 		scenegraph_id = "filter_level_scroller",
@@ -3026,28 +3030,62 @@ local function fn_3(arg_49_0)
 					style_id = "scroller_hotspot",
 					pass_type = "hotspot",
 					content_id = "scroller_hotspot",
-					content_check_function = function (self, arg_50_1)
+					content_check_function = function (content, style)
 						-- function 50
-						local show_scroller = self.parent.show_scroller
+						local show_scroller = content.parent.show_scroller
 
-						show_scroller = not show_scroller and self.parent.active
+						show_scroller = not not show_scroller and not not content.parent.active
 
 						return show_scroller
 					end,
-					content_change_function = function (self, arg_51_1)
+					content_change_function = function (content, style)
 						-- function 51
-						local num = tbl.window_height - tbl.spacing * 2
-						local num_2 = -tbl.filter_height - tbl.spacing
-						local num_3 = num_2 - self.parent.scrollbar_progress * num
-						local num_4 = num_2 - tbl.spacing - self.parent.scrollbar_progress * (num - arg_51_1.area_size[2] - num_2)
+						local scrollbar_length = element_settings.window_height - element_settings.spacing * 2
+						local start_pos = -element_settings.filter_height - element_settings.spacing
+						local offset_y = start_pos - content.parent.scrollbar_progress * scrollbar_length
+						local offset_y = start_pos - element_settings.spacing - content.parent.scrollbar_progress * (scrollbar_length - style.area_size[2] - start_pos)
 
-						arg_51_1.offset[2] = num_4
+						style.offset[2] = offset_y
 
-						local offset = arg_51_1.offset
+						local offset = style.offset
+						local var_51_1
+
+						if Math.is_valid(style.offset[1]) then
+							var_51_1 = style.offset[1]
+
+							if not var_51_1 then
+								-- Nothing
+							end
+						end
+
+						var_51_1 = 0
+
+						::label_51_0::
+
+						offset[1] = var_51_1
+
+						local offset_2 = style.offset
+						local var_51_3
+
+						if Math.is_valid(style.offset[2]) then
+							var_51_3 = style.offset[2]
+
+							if not var_51_3 then
+								-- Nothing
+							end
+						end
+
+						var_51_3 = 0
+
+						::label_51_1::
+
+						offset_2[2] = var_51_3
+
+						local offset_3 = style.offset
 						local var_51_5
 
-						if not Math.is_valid(arg_51_1.offset[1]) then
-							var_51_5 = arg_51_1.offset[1]
+						if Math.is_valid(style.offset[3]) then
+							var_51_5 = style.offset[3]
 
 							if not var_51_5 then
 								-- Nothing
@@ -3056,43 +3094,9 @@ local function fn_3(arg_49_0)
 
 						var_51_5 = 0
 
-						::label_51_0::
-
-						offset[1] = var_51_5
-
-						local offset_2 = arg_51_1.offset
-						local var_51_7
-
-						if not Math.is_valid(arg_51_1.offset[2]) then
-							var_51_7 = arg_51_1.offset[2]
-
-							if not var_51_7 then
-								-- Nothing
-							end
-						end
-
-						var_51_7 = 0
-
-						::label_51_1::
-
-						offset_2[2] = var_51_7
-
-						local offset_3 = arg_51_1.offset
-						local var_51_9
-
-						if not Math.is_valid(arg_51_1.offset[3]) then
-							var_51_9 = arg_51_1.offset[3]
-
-							if not var_51_9 then
-								-- Nothing
-							end
-						end
-
-						var_51_9 = 0
-
 						::label_51_2::
 
-						offset_3[3] = var_51_9
+						offset_3[3] = var_51_5
 					end
 				},
 				{
@@ -3103,28 +3107,62 @@ local function fn_3(arg_49_0)
 				{
 					style_id = "inner_scroller",
 					pass_type = "rect",
-					content_check_function = function (self, arg_52_1)
+					content_check_function = function (content, style)
 						-- function 52
-						local show_scroller = self.show_scroller
+						local show_scroller = content.show_scroller
 
-						show_scroller = not show_scroller and self.active
+						show_scroller = not not show_scroller and not not content.active
 
 						return show_scroller
 					end,
-					content_change_function = function (self, arg_53_1)
+					content_change_function = function (content, style)
 						-- function 53
-						local num = tbl.window_height - tbl.spacing * 2
-						local num_2 = -tbl.filter_height - tbl.spacing
-						local num_3 = num_2 - self.scrollbar_progress * num
-						local num_4 = num_2 - tbl.spacing - self.scrollbar_progress * (num - arg_53_1.texture_size[2] - num_2)
+						local scrollbar_length = element_settings.window_height - element_settings.spacing * 2
+						local start_pos = -element_settings.filter_height - element_settings.spacing
+						local offset_y = start_pos - content.scrollbar_progress * scrollbar_length
+						local offset_y = start_pos - element_settings.spacing - content.scrollbar_progress * (scrollbar_length - style.texture_size[2] - start_pos)
 
-						arg_53_1.offset[2] = num_4
+						style.offset[2] = offset_y
 
-						local offset = arg_53_1.offset
+						local offset = style.offset
+						local var_53_1
+
+						if Math.is_valid(style.offset[1]) then
+							var_53_1 = style.offset[1]
+
+							if not var_53_1 then
+								-- Nothing
+							end
+						end
+
+						var_53_1 = 0
+
+						::label_53_0::
+
+						offset[1] = var_53_1
+
+						local offset_2 = style.offset
+						local var_53_3
+
+						if Math.is_valid(style.offset[2]) then
+							var_53_3 = style.offset[2]
+
+							if not var_53_3 then
+								-- Nothing
+							end
+						end
+
+						var_53_3 = 0
+
+						::label_53_1::
+
+						offset_2[2] = var_53_3
+
+						local offset_3 = style.offset
 						local var_53_5
 
-						if not Math.is_valid(arg_53_1.offset[1]) then
-							var_53_5 = arg_53_1.offset[1]
+						if Math.is_valid(style.offset[3]) then
+							var_53_5 = style.offset[3]
 
 							if not var_53_5 then
 								-- Nothing
@@ -3133,59 +3171,25 @@ local function fn_3(arg_49_0)
 
 						var_53_5 = 0
 
-						::label_53_0::
-
-						offset[1] = var_53_5
-
-						local offset_2 = arg_53_1.offset
-						local var_53_7
-
-						if not Math.is_valid(arg_53_1.offset[2]) then
-							var_53_7 = arg_53_1.offset[2]
-
-							if not var_53_7 then
-								-- Nothing
-							end
-						end
-
-						var_53_7 = 0
-
-						::label_53_1::
-
-						offset_2[2] = var_53_7
-
-						local offset_3 = arg_53_1.offset
-						local var_53_9
-
-						if not Math.is_valid(arg_53_1.offset[3]) then
-							var_53_9 = arg_53_1.offset[3]
-
-							if not var_53_9 then
-								-- Nothing
-							end
-						end
-
-						var_53_9 = 0
-
 						::label_53_2::
 
-						offset_3[3] = var_53_9
+						offset_3[3] = var_53_5
 
 						local highlight_color
 
-						if not self.scroller_hotspot.is_hover then
-							highlight_color = arg_53_1.highlight_color
+						if content.scroller_hotspot.is_hover then
+							highlight_color = style.highlight_color
 
 							if not highlight_color then
 								-- Nothing
 							end
 						end
 
-						highlight_color = arg_53_1.default_color
+						highlight_color = style.default_color
 
 						::label_53_3::
 
-						arg_53_1.color = highlight_color
+						style.color = highlight_color
 					end
 				}
 			}
@@ -3209,12 +3213,12 @@ local function fn_3(arg_49_0)
 					0
 				},
 				texture_size = {
-					num_6 - tbl.spacing,
-					clamp - tbl.spacing
+					scroller_width - element_settings.spacing,
+					border_length - element_settings.spacing
 				},
 				offset = {
 					0,
-					-tbl.spacing - tbl.filter_height,
+					-element_settings.spacing - element_settings.filter_height,
 					0
 				}
 			},
@@ -3222,12 +3226,12 @@ local function fn_3(arg_49_0)
 				vertical_alignment = "top",
 				horizontal_alignment = "right",
 				area_size = {
-					num_6 - tbl.spacing,
-					tbl.window_height + tbl.filter_height
+					scroller_width - element_settings.spacing,
+					element_settings.window_height + element_settings.filter_height
 				},
 				offset = {
-					tbl.spacing,
-					-tbl.spacing - tbl.filter_height,
+					element_settings.spacing,
+					-element_settings.spacing - element_settings.filter_height,
 					-1
 				}
 			},
@@ -3241,12 +3245,12 @@ local function fn_3(arg_49_0)
 					96
 				},
 				texture_size = {
-					num_6 + tbl.spacing * 1,
-					clamp
+					scroller_width + element_settings.spacing * 1,
+					border_length
 				},
 				offset = {
-					tbl.spacing,
-					-tbl.spacing - tbl.filter_height,
+					element_settings.spacing,
+					-element_settings.spacing - element_settings.filter_height,
 					-1
 				}
 			},
@@ -3254,12 +3258,12 @@ local function fn_3(arg_49_0)
 				vertical_alignment = "top",
 				horizontal_alignment = "right",
 				area_size = {
-					num_6 - 4,
-					max
+					scroller_width - 4,
+					size_y
 				},
 				offset = {
 					-1,
-					-tbl.spacing - tbl.filter_height,
+					-element_settings.spacing - element_settings.filter_height,
 					2
 				}
 			},
@@ -3267,15 +3271,15 @@ local function fn_3(arg_49_0)
 				vertical_alignment = "top",
 				horizontal_alignment = "right",
 				texture_size = {
-					num_6 - 4,
-					max
+					scroller_width - 4,
+					size_y
 				},
 				color = Colors.get_color_table_with_alpha("font_default", 255),
 				default_color = Colors.get_color_table_with_alpha("font_default", 255),
 				highlight_color = Colors.get_color_table_with_alpha("white", 255),
 				offset = {
 					-1,
-					-tbl.spacing - tbl.filter_height,
+					-element_settings.spacing - element_settings.filter_height,
 					2
 				}
 			}
@@ -3288,12 +3292,12 @@ local function fn_3(arg_49_0)
 	}
 end
 
-local function fn_4(arg_54_0, arg_54_1, arg_54_2)
+local function create_game_type_filter_entry_func(game_type, game_type_string, offset_y)
 	-- function 54
-	local num = tbl.window_width / 5
-	local var_54_1 = Localize(arg_54_1)
+	local label_distance = element_settings.window_width / 5
+	local game_type_name = Localize(game_type_string)
 
-	print(arg_54_0, arg_54_1, var_54_1)
+	print(game_type, game_type_string, game_type_name)
 
 	return {
 		scenegraph_id = "filter_game_type_entry_anchor",
@@ -3308,12 +3312,12 @@ local function fn_4(arg_54_0, arg_54_1, arg_54_2)
 					style_id = "background",
 					texture_id = "texture_id",
 					pass_type = "texture",
-					content_change_function = function (self, arg_55_1)
+					content_change_function = function (content, style)
 						-- function 55
-						if self.selected or not self.button_hotspot.is_hover then
-							arg_55_1.color = arg_55_1.selection_color
+						if content.selected or content.button_hotspot.is_hover then
+							style.color = style.selection_color
 						else
-							arg_55_1.color = arg_55_1.base_color
+							style.color = style.base_color
 						end
 					end
 				},
@@ -3326,12 +3330,12 @@ local function fn_4(arg_54_0, arg_54_1, arg_54_2)
 					style_id = "game_type",
 					pass_type = "text",
 					text_id = "game_type_id",
-					content_change_function = function (self, arg_56_1)
+					content_change_function = function (content, style)
 						-- function 56
-						if self.selected or not self.button_hotspot.is_hover then
-							arg_56_1.text_color = arg_56_1.selection_color
+						if content.selected or content.button_hotspot.is_hover then
+							style.text_color = style.selection_color
 						else
-							arg_56_1.text_color = arg_56_1.base_color
+							style.text_color = style.base_color
 						end
 					end
 				}
@@ -3340,14 +3344,14 @@ local function fn_4(arg_54_0, arg_54_1, arg_54_2)
 		content = {
 			texture_id = "rect_masked",
 			button_hotspot = {},
-			game_type_id = var_54_1,
-			game_type = arg_54_0
+			game_type_id = game_type_name,
+			game_type = game_type
 		},
 		style = {
 			button_hotspot = {
 				area_size = {
-					tbl.window_width / 5,
-					tbl.filter_height
+					element_settings.window_width / 5,
+					element_settings.filter_height
 				}
 			},
 			background = {
@@ -3371,11 +3375,11 @@ local function fn_4(arg_54_0, arg_54_1, arg_54_2)
 					96
 				},
 				texture_size = {
-					num - tbl.spacing,
-					tbl.filter_height
+					label_distance - element_settings.spacing,
+					element_settings.filter_height
 				},
 				offset = {
-					tbl.spacing,
+					element_settings.spacing,
 					0,
 					1
 				}
@@ -3389,12 +3393,12 @@ local function fn_4(arg_54_0, arg_54_1, arg_54_2)
 					96
 				},
 				texture_size = {
-					num - tbl.spacing + tbl.spacing * 2,
-					tbl.filter_height + tbl.spacing * 2
+					label_distance - element_settings.spacing + element_settings.spacing * 2,
+					element_settings.filter_height + element_settings.spacing * 2
 				},
 				offset = {
 					0,
-					tbl.spacing,
+					element_settings.spacing,
 					0
 				}
 			},
@@ -3421,23 +3425,23 @@ local function fn_4(arg_54_0, arg_54_1, arg_54_2)
 		},
 		offset = {
 			0,
-			arg_54_2,
+			offset_y,
 			0
 		}
 	}
 end
 
-local function fn_5(arg_57_0, arg_57_1)
+local function create_level_filter_entry_func(level, unlocked)
 	-- function 57
-	local num = tbl.window_width / 5
-	local var_57_1 = arg_57_0
+	local label_distance = element_settings.window_width / 5
+	local level_name = level
 
-	if arg_57_0 ~= "any" then
-		local var_57_2 = LevelSettings[arg_57_0]
+	if level ~= "any" then
+		local level_settings = LevelSettings[level]
 
-		var_57_1 = Localize(var_57_2.display_name)
+		level_name = Localize(level_settings.display_name)
 	else
-		var_57_1 = Localize("lobby_browser_mission")
+		level_name = Localize("lobby_browser_mission")
 	end
 
 	return {
@@ -3453,12 +3457,12 @@ local function fn_5(arg_57_0, arg_57_1)
 					style_id = "background",
 					texture_id = "texture_id",
 					pass_type = "texture",
-					content_change_function = function (self, arg_58_1)
+					content_change_function = function (content, style)
 						-- function 58
-						if self.selected or not self.button_hotspot.is_hover then
-							arg_58_1.color = arg_58_1.selection_color
+						if content.selected or content.button_hotspot.is_hover then
+							style.color = style.selection_color
 						else
-							arg_58_1.color = arg_58_1.base_color
+							style.color = style.base_color
 						end
 					end
 				},
@@ -3471,16 +3475,16 @@ local function fn_5(arg_57_0, arg_57_1)
 					style_id = "level_name",
 					pass_type = "text",
 					text_id = "level_name_id",
-					content_check_function = function (self, arg_59_1)
+					content_check_function = function (content, style)
 						-- function 59
-						return self.unlocked
+						return content.unlocked
 					end,
-					content_change_function = function (self, arg_60_1)
+					content_change_function = function (content, style)
 						-- function 60
-						if self.selected or not self.button_hotspot.is_hover then
-							arg_60_1.text_color = arg_60_1.selection_color
+						if content.selected or content.button_hotspot.is_hover then
+							style.text_color = style.selection_color
 						else
-							arg_60_1.text_color = arg_60_1.base_color
+							style.text_color = style.base_color
 						end
 					end
 				},
@@ -3488,9 +3492,9 @@ local function fn_5(arg_57_0, arg_57_1)
 					style_id = "level_name_locked",
 					pass_type = "text",
 					text_id = "level_name_id",
-					content_check_function = function (self, arg_61_1)
+					content_check_function = function (content, style)
 						-- function 61
-						return not self.unlocked
+						return not content.unlocked
 					end
 				}
 			}
@@ -3498,15 +3502,15 @@ local function fn_5(arg_57_0, arg_57_1)
 		content = {
 			texture_id = "rect_masked",
 			button_hotspot = {},
-			level_name_id = var_57_1,
-			level = arg_57_0,
-			unlocked = arg_57_1
+			level_name_id = level_name,
+			level = level,
+			unlocked = unlocked
 		},
 		style = {
 			button_hotspot = {
 				area_size = {
-					tbl.window_width / 5 - 15,
-					tbl.filter_height
+					element_settings.window_width / 5 - 15,
+					element_settings.filter_height
 				}
 			},
 			background = {
@@ -3530,11 +3534,11 @@ local function fn_5(arg_57_0, arg_57_1)
 					96
 				},
 				texture_size = {
-					num - tbl.spacing - num_6,
-					tbl.filter_height
+					label_distance - element_settings.spacing - scroller_width,
+					element_settings.filter_height
 				},
 				offset = {
-					tbl.spacing,
+					element_settings.spacing,
 					0,
 					1
 				}
@@ -3548,12 +3552,12 @@ local function fn_5(arg_57_0, arg_57_1)
 					96
 				},
 				texture_size = {
-					num - tbl.spacing - num_6 + tbl.spacing * 2,
-					tbl.filter_height + tbl.spacing * 2
+					label_distance - element_settings.spacing - scroller_width + element_settings.spacing * 2,
+					element_settings.filter_height + element_settings.spacing * 2
 				},
 				offset = {
 					0,
-					tbl.spacing,
+					element_settings.spacing,
 					0
 				}
 			},
@@ -3565,7 +3569,7 @@ local function fn_5(arg_57_0, arg_57_1)
 				vertical_alignment = "top",
 				dynamic_font_size = true,
 				area_size = {
-					num - tbl.spacing - num_6 - 20,
+					label_distance - element_settings.spacing - scroller_width - 20,
 					100
 				},
 				text_color = Colors.get_color_table_with_alpha("font_default", 255),
@@ -3585,7 +3589,7 @@ local function fn_5(arg_57_0, arg_57_1)
 				vertical_alignment = "top",
 				dynamic_font_size = true,
 				area_size = {
-					num - tbl.spacing - num_6 - 20,
+					label_distance - element_settings.spacing - scroller_width - 20,
 					100
 				},
 				text_color = Colors.get_color_table_with_alpha("very_dark_gray", 255),
@@ -3604,21 +3608,21 @@ local function fn_5(arg_57_0, arg_57_1)
 	}
 end
 
-local function fn_6(arg_62_0, arg_62_1)
+local function create_difficulty_filter_entry_func(difficulty, offset_y)
 	-- function 62
-	local num = tbl.window_width / 5
-	local var_62_1
-	local flag = true
+	local label_distance = element_settings.window_width / 5
+	local difficulty_name
+	local unlocked = true
 
-	if arg_62_0 ~= "any" then
+	if difficulty ~= "any" then
 		local human_players = Managers.player:human_players()
-		local players_below_required_power_level = DifficultyManager.players_below_required_power_level(arg_62_0, human_players)
-		local var_62_5 = DifficultySettings[arg_62_0]
+		local players_below_difficulty = DifficultyManager.players_below_required_power_level(difficulty, human_players)
+		local difficulty_settings = DifficultySettings[difficulty]
 
-		var_62_1 = Localize(var_62_5.display_name)
-		flag = #players_below_required_power_level == 0
+		difficulty_name = Localize(difficulty_settings.display_name)
+		unlocked = #players_below_difficulty == 0
 	else
-		var_62_1 = Localize("lobby_browser_mission")
+		difficulty_name = Localize("lobby_browser_mission")
 	end
 
 	return {
@@ -3632,12 +3636,12 @@ local function fn_6(arg_62_0, arg_62_1)
 				{
 					style_id = "background",
 					pass_type = "rect",
-					content_change_function = function (self, arg_63_1)
+					content_change_function = function (content, style)
 						-- function 63
-						if self.selected or not self.button_hotspot.is_hover then
-							arg_63_1.color = arg_63_1.selection_color
+						if content.selected or content.button_hotspot.is_hover then
+							style.color = style.selection_color
 						else
-							arg_63_1.color = arg_63_1.base_color
+							style.color = style.base_color
 						end
 					end
 				},
@@ -3649,16 +3653,16 @@ local function fn_6(arg_62_0, arg_62_1)
 					style_id = "difficulty_name",
 					pass_type = "text",
 					text_id = "difficulty_name_id",
-					content_check_function = function (self, arg_64_1)
+					content_check_function = function (content, style)
 						-- function 64
-						return self.unlocked
+						return content.unlocked
 					end,
-					content_change_function = function (self, arg_65_1)
+					content_change_function = function (content, style)
 						-- function 65
-						if self.selected or not self.button_hotspot.is_hover then
-							arg_65_1.text_color = arg_65_1.selection_color
+						if content.selected or content.button_hotspot.is_hover then
+							style.text_color = style.selection_color
 						else
-							arg_65_1.text_color = arg_65_1.base_color
+							style.text_color = style.base_color
 						end
 					end
 				},
@@ -3666,18 +3670,18 @@ local function fn_6(arg_62_0, arg_62_1)
 					style_id = "difficulty_name_locked",
 					pass_type = "text",
 					text_id = "difficulty_name_id",
-					content_check_function = function (self, arg_66_1)
+					content_check_function = function (content, style)
 						-- function 66
-						return not self.unlocked
+						return not content.unlocked
 					end
 				}
 			}
 		},
 		content = {
 			button_hotspot = {},
-			difficulty_name_id = var_62_1,
-			difficulty = arg_62_0,
-			unlocked = flag
+			difficulty_name_id = difficulty_name,
+			difficulty = difficulty,
+			unlocked = unlocked
 		},
 		style = {
 			background = {
@@ -3701,8 +3705,8 @@ local function fn_6(arg_62_0, arg_62_1)
 					96
 				},
 				texture_size = {
-					num - tbl.spacing,
-					tbl.filter_height
+					label_distance - element_settings.spacing,
+					element_settings.filter_height
 				},
 				offset = {
 					0,
@@ -3719,12 +3723,12 @@ local function fn_6(arg_62_0, arg_62_1)
 					96
 				},
 				texture_size = {
-					num - tbl.spacing + tbl.spacing * 2,
-					tbl.filter_height + tbl.spacing * 2
+					label_distance - element_settings.spacing + element_settings.spacing * 2,
+					element_settings.filter_height + element_settings.spacing * 2
 				},
 				offset = {
-					-tbl.spacing,
-					tbl.spacing,
+					-element_settings.spacing,
+					element_settings.spacing,
 					0
 				}
 			},
@@ -3759,15 +3763,15 @@ local function fn_6(arg_62_0, arg_62_1)
 		},
 		offset = {
 			0,
-			arg_62_1,
+			offset_y,
 			0
 		}
 	}
 end
 
-local function fn_7(arg_67_0, arg_67_1)
+local function create_lobby_filter_entry_func(lobby_filter, offset_y)
 	-- function 67
-	local num = tbl.window_width / 5
+	local label_distance = element_settings.window_width / 5
 
 	return {
 		scenegraph_id = "filter_lobby_entry_anchor",
@@ -3780,12 +3784,12 @@ local function fn_7(arg_67_0, arg_67_1)
 				{
 					style_id = "background",
 					pass_type = "rect",
-					content_change_function = function (self, arg_68_1)
+					content_change_function = function (content, style)
 						-- function 68
-						if self.selected or not self.button_hotspot.is_hover then
-							arg_68_1.color = arg_68_1.selection_color
+						if content.selected or content.button_hotspot.is_hover then
+							style.color = style.selection_color
 						else
-							arg_68_1.color = arg_68_1.base_color
+							style.color = style.base_color
 						end
 					end
 				},
@@ -3797,12 +3801,12 @@ local function fn_7(arg_67_0, arg_67_1)
 					style_id = "lobby_filter_name",
 					pass_type = "text",
 					text_id = "lobby_filter_name_id",
-					content_change_function = function (self, arg_69_1)
+					content_change_function = function (content, style)
 						-- function 69
-						if self.selected or not self.button_hotspot.is_hover then
-							arg_69_1.text_color = arg_69_1.selection_color
+						if content.selected or content.button_hotspot.is_hover then
+							style.text_color = style.selection_color
 						else
-							arg_69_1.text_color = arg_69_1.base_color
+							style.text_color = style.base_color
 						end
 					end
 				}
@@ -3810,8 +3814,8 @@ local function fn_7(arg_67_0, arg_67_1)
 		},
 		content = {
 			button_hotspot = {},
-			lobby_filter_name_id = Localize(arg_67_0),
-			lobby_filter = arg_67_0
+			lobby_filter_name_id = Localize(lobby_filter),
+			lobby_filter = lobby_filter
 		},
 		style = {
 			background = {
@@ -3835,12 +3839,12 @@ local function fn_7(arg_67_0, arg_67_1)
 					96
 				},
 				texture_size = {
-					num - tbl.spacing,
-					tbl.filter_height
+					label_distance - element_settings.spacing,
+					element_settings.filter_height
 				},
 				size = {
-					num - tbl.spacing,
-					tbl.filter_height
+					label_distance - element_settings.spacing,
+					element_settings.filter_height
 				},
 				offset = {
 					0,
@@ -3857,12 +3861,12 @@ local function fn_7(arg_67_0, arg_67_1)
 					96
 				},
 				texture_size = {
-					num - tbl.spacing + tbl.spacing * 2,
-					tbl.filter_height + tbl.spacing * 2
+					label_distance - element_settings.spacing + element_settings.spacing * 2,
+					element_settings.filter_height + element_settings.spacing * 2
 				},
 				offset = {
-					-tbl.spacing,
-					tbl.spacing,
+					-element_settings.spacing,
+					element_settings.spacing,
 					0
 				}
 			},
@@ -3884,15 +3888,15 @@ local function fn_7(arg_67_0, arg_67_1)
 		},
 		offset = {
 			0,
-			arg_67_1,
+			offset_y,
 			0
 		}
 	}
 end
 
-local function fn_8(arg_70_0, arg_70_1)
+local function create_distance_filter_entry_func(distance, offset_y)
 	-- function 70
-	local num = tbl.window_width / 5
+	local label_distance = element_settings.window_width / 5
 
 	return {
 		scenegraph_id = "filter_distance_entry_anchor",
@@ -3905,12 +3909,12 @@ local function fn_8(arg_70_0, arg_70_1)
 				{
 					style_id = "background",
 					pass_type = "rect",
-					content_change_function = function (self, arg_71_1)
+					content_change_function = function (content, style)
 						-- function 71
-						if self.selected or not self.button_hotspot.is_hover then
-							arg_71_1.color = arg_71_1.selection_color
+						if content.selected or content.button_hotspot.is_hover then
+							style.color = style.selection_color
 						else
-							arg_71_1.color = arg_71_1.base_color
+							style.color = style.base_color
 						end
 					end
 				},
@@ -3922,12 +3926,12 @@ local function fn_8(arg_70_0, arg_70_1)
 					style_id = "distance_name",
 					pass_type = "text",
 					text_id = "distance_name_id",
-					content_change_function = function (self, arg_72_1)
+					content_change_function = function (content, style)
 						-- function 72
-						if self.selected or not self.button_hotspot.is_hover then
-							arg_72_1.text_color = arg_72_1.selection_color
+						if content.selected or content.button_hotspot.is_hover then
+							style.text_color = style.selection_color
 						else
-							arg_72_1.text_color = arg_72_1.base_color
+							style.text_color = style.base_color
 						end
 					end
 				}
@@ -3935,8 +3939,8 @@ local function fn_8(arg_70_0, arg_70_1)
 		},
 		content = {
 			button_hotspot = {},
-			distance_name_id = Localize(arg_70_0),
-			distance = arg_70_0
+			distance_name_id = Localize(distance),
+			distance = distance
 		},
 		style = {
 			background = {
@@ -3960,8 +3964,8 @@ local function fn_8(arg_70_0, arg_70_1)
 					96
 				},
 				texture_size = {
-					num - tbl.spacing,
-					tbl.filter_height
+					label_distance - element_settings.spacing,
+					element_settings.filter_height
 				},
 				offset = {
 					0,
@@ -3978,12 +3982,12 @@ local function fn_8(arg_70_0, arg_70_1)
 					96
 				},
 				texture_size = {
-					num - tbl.spacing + tbl.spacing * 2,
-					tbl.filter_height + tbl.spacing * 2
+					label_distance - element_settings.spacing + element_settings.spacing * 2,
+					element_settings.filter_height + element_settings.spacing * 2
 				},
 				offset = {
-					-tbl.spacing,
-					tbl.spacing,
+					-element_settings.spacing,
+					element_settings.spacing,
 					0
 				}
 			},
@@ -4005,144 +4009,166 @@ local function fn_8(arg_70_0, arg_70_1)
 		},
 		offset = {
 			0,
-			arg_70_1,
+			offset_y,
 			0
 		}
 	}
 end
 
-local function fn_9(arg_73_0, arg_73_1, arg_73_2, arg_73_3, arg_73_4)
+local function create_lobby_entry_func(offset_y, lobby_data, flag_index, joinable, completed_difficulty_index)
 	-- function 73
 	local unique_server_name
 
-	if not IS_WINDOWS then
-		unique_server_name = arg_73_1.unique_server_name
+	if IS_WINDOWS then
+		unique_server_name = lobby_data.unique_server_name
 
 		if not unique_server_name then
 			-- Nothing
 		end
 
-		unique_server_name = arg_73_1.host
+		unique_server_name = lobby_data.host
 
 		if not unique_server_name then
 			-- Nothing
 		end
 	end
 
-	unique_server_name = arg_73_1.name
-	unique_server_name = unique_server_name or "UNKNOWN"
+	unique_server_name = lobby_data.name
+
+	if not unique_server_name then
+		-- Nothing
+	end
+
+	unique_server_name = "UNKNOWN"
+
+	local host_name = unique_server_name
 
 	::label_73_0::
 
-	local var_73_1 = unique_server_name
+	local lobby_name = host_name
 
-	if not (not arg_73_1.custom_server_name and arg_73_1.custom_server_name == "n/a" or arg_73_1.custom_server_name == "") then
-		var_73_1 = string.format("%s: %s", unique_server_name, arg_73_1.custom_server_name)
+	if lobby_data.custom_server_name and lobby_data.custom_server_name ~= "n/a" and lobby_data.custom_server_name ~= "" then
+		lobby_name = string.format("%s: %s", host_name, lobby_data.custom_server_name)
 	end
 
-	local num_players = arg_73_1.num_players
+	local num_players_2 = lobby_data.num_players
 
-	num_players = num_players or 0
+	if not num_players_2 then
+		-- Nothing
+	end
 
-	local mechanism = arg_73_1.mechanism
-	local flag = mechanism ~= "versus" or NetworkLookup.matchmaking_types[tonumber(arg_73_1.matchmaking_type)] == "custom"
-	local difficulty = arg_73_1.difficulty
+	num_players_2 = 0
 
-	difficulty = difficulty or "UNKNOWN"
+	local num_players = num_players_2
 
-	local var_73_6 = DifficultySettings[difficulty]
+	::label_73_1::
 
-	if not var_73_6 then
-		local display_name = var_73_6.display_name
+	local mechanism = lobby_data.mechanism
+	local is_versus_custom_game = mechanism == "versus" and NetworkLookup.matchmaking_types[tonumber(lobby_data.matchmaking_type)] == "custom"
+	local difficulty_2 = lobby_data.difficulty
+
+	if not difficulty_2 then
+		-- Nothing
+	end
+
+	difficulty_2 = "UNKNOWN"
+
+	local difficulty = difficulty_2
+
+	::label_73_2::
+
+	local difficulty_settings = DifficultySettings[difficulty]
+
+	if difficulty_settings then
+		local display_name = difficulty_settings.display_name
 
 		difficulty = Localize(display_name)
 	end
 
-	local str = "UNKNOWN"
-	local str_2 = "any_small_image"
-	local selected_mission_id = arg_73_1.selected_mission_id
+	local selected_level_name = "UNKNOWN"
+	local level_image = "any_small_image"
+	local selected_mission_id = lobby_data.selected_mission_id
 
-	if not (mechanism ~= "weave" or selected_mission_id == "" or selected_mission_id == "false") then
-		str_2 = "weaves_small_image"
+	if mechanism == "weave" and selected_mission_id ~= "" and selected_mission_id ~= "false" then
+		level_image = "weaves_small_image"
 
-		local var_73_11 = selected_mission_id
-		local var_73_12 = WeaveSettings.templates[var_73_11]
-		local find = table.find(WeaveSettings.templates_ordered, var_73_12)
+		local weave_name = selected_mission_id
+		local weave_template = WeaveSettings.templates[weave_name]
+		local weave_index = table.find(WeaveSettings.templates_ordered, weave_template)
 
-		if not var_73_12 then
-			local var_73_14 = LevelSettings[selected_mission_id]
+		if not weave_template then
+			local level_settings = LevelSettings[selected_mission_id]
 			local Localize = Localize
-			local display_name_2 = var_73_14.display_name
+			local display_name_2 = level_settings.display_name
 
-			display_name_2 = display_name_2 or "UNKNOWN"
-			str = Localize(display_name_2)
-		elseif arg_73_1.weave_quick_game == "true" then
-			str = not var_73_12 and Localize(var_73_12.display_name) and Localize("start_game_window_weave_quickplay_title")
+			display_name_2 = not not display_name_2 or not not "UNKNOWN"
+			selected_level_name = Localize(display_name_2)
+		elseif lobby_data.weave_quick_game == "true" then
+			selected_level_name = (not weave_template or not Localize(weave_template.display_name)) and not not Localize("start_game_window_weave_quickplay_title")
 		else
-			str = find .. ". " .. Localize(var_73_12.display_name)
+			selected_level_name = weave_index .. ". " .. Localize(weave_template.display_name)
 		end
 	elseif mechanism == "deus" then
-		str_2 = "deus_small_image"
+		level_image = "deus_small_image"
 
-		local var_73_17 = LevelSettings[selected_mission_id]
+		local level_settings = LevelSettings[selected_mission_id]
 		local Localize_2 = Localize
-		local display_name_3 = var_73_17.display_name
+		local display_name_3 = level_settings.display_name
 
-		display_name_3 = display_name_3 or "UNKNOWN"
-		str = Localize_2(display_name_3)
+		display_name_3 = not not display_name_3 or not not "UNKNOWN"
+		selected_level_name = Localize_2(display_name_3)
 	elseif mechanism == "versus" then
-		if not (not selected_mission_id and selected_mission_id == "any") then
-			local var_73_20 = LevelSettings[selected_mission_id]
+		if selected_mission_id and selected_mission_id ~= "any" then
+			local level_settings = LevelSettings[selected_mission_id]
 			local Localize_3 = Localize
-			local display_name_4 = var_73_20.display_name
+			local display_name_4 = level_settings.display_name
 
-			display_name_4 = display_name_4 or "UNKNOWN"
-			str = Localize_3(display_name_4)
-			str_2 = LevelHelper:get_small_level_image(selected_mission_id)
+			display_name_4 = not not display_name_4 or not not "UNKNOWN"
+			selected_level_name = Localize_3(display_name_4)
+			level_image = LevelHelper:get_small_level_image(selected_mission_id)
 		else
-			str_2 = "any_small_image"
-			str = Localize("random_level")
+			level_image = "any_small_image"
+			selected_level_name = Localize("random_level")
 		end
 
-		if not flag then
+		if is_versus_custom_game then
 			difficulty = Localize("lb_game_type_versus_custom_game")
 		else
 			difficulty = Localize("carousel_keep_info")
 		end
-	elseif not selected_mission_id then
-		local var_73_23 = LevelSettings[selected_mission_id]
+	elseif selected_mission_id then
+		local level_settings = LevelSettings[selected_mission_id]
 		local Localize_4 = Localize
-		local display_name_5 = var_73_23.display_name
+		local display_name_5 = level_settings.display_name
 
-		display_name_5 = display_name_5 or "UNKNOWN"
-		str = Localize_4(display_name_5)
-		str_2 = LevelHelper:get_small_level_image(selected_mission_id)
+		display_name_5 = not not display_name_5 or not not "UNKNOWN"
+		selected_level_name = Localize_4(display_name_5)
+		level_image = LevelHelper:get_small_level_image(selected_mission_id)
 	end
 
-	local str_3 = "UNKNOWN"
-	local mission_id = arg_73_1.mission_id
+	local current_level_name = "UNKNOWN"
+	local current_mission_id = lobby_data.mission_id
 
-	if not mission_id then
-		local var_73_28 = mission_id
-		local var_73_29 = WeaveSettings.templates[var_73_28]
+	if current_mission_id then
+		local current_level_name = current_mission_id
+		local weave_template = WeaveSettings.templates[current_level_name]
 
-		if not var_73_29 then
-			var_73_28 = var_73_29.objectives[1].level_id
+		if weave_template then
+			current_level_name = weave_template.objectives[1].level_id
 		end
 
-		local var_73_30 = LevelSettings[var_73_28]
+		local level_settings = LevelSettings[current_level_name]
 		local Localize_5 = Localize
-		local display_name_6 = var_73_30.display_name
+		local display_name_6 = level_settings.display_name
 
-		display_name_6 = display_name_6 or "UNKNOWN"
-
-		local var_73_33 = Localize_5(display_name_6)
+		display_name_6 = not not display_name_6 or not not "UNKNOWN"
+		current_level_name = Localize_5(display_name_6)
 	end
 
 	local lower
 
-	if not arg_73_1.country_code then
-		lower = string.lower(arg_73_1.country_code)
+	if lobby_data.country_code then
+		lower = string.lower(lobby_data.country_code)
 
 		if not lower then
 			-- Nothing
@@ -4151,45 +4177,49 @@ local function fn_9(arg_73_0, arg_73_1, arg_73_2, arg_73_3, arg_73_4)
 
 	lower = Localize("lb_unknown")
 
-	::label_73_1::
+	local country_code = lower
 
-	local tbl_2 = {
+	::label_73_3::
+
+	local flag_size = {
 		30,
 		50
 	}
-	local var_73_36
+	local flag_name
 
-	if not UIAtlasHelper.has_texture_by_name(lower) then
-		local get_atlas_settings_by_texture_name = UIAtlasHelper.get_atlas_settings_by_texture_name(lower)
+	if UIAtlasHelper.has_texture_by_name(country_code) then
+		local flag_settings = UIAtlasHelper.get_atlas_settings_by_texture_name(country_code)
 
-		tbl_2 = {
-			get_atlas_settings_by_texture_name.size[1] * 1.5,
-			get_atlas_settings_by_texture_name.size[2] * 1.5
+		flag_size = {
+			flag_settings.size[1] * 1.5,
+			flag_settings.size[2] * 1.5
 		}
-		var_73_36 = lower
+		flag_name = country_code
 	end
 
-	if not rawget(_G, "Steam") then
-		local region = Managers.account:region()
+	if rawget(_G, "Steam") then
+		local user_country_code = Managers.account:region()
 
-		if not ((region == "cn" or region == "hk") and lower ~= "tw") then
-			tbl_2 = {
+		if (user_country_code == "cn" or user_country_code == "hk") and country_code == "tw" then
+			flag_size = {
 				30,
 				50
 			}
-			var_73_36 = nil
-			lower = ""
+			flag_name = nil
+			country_code = ""
 		end
 	end
 
-	local str_4 = "map_frame_00"
+	local level_frame = "map_frame_00"
 
-	if arg_73_4 > 0 then
-		local var_73_40 = DefaultDifficulties[arg_73_4]
-		local completed_frame_texture = DifficultySettings[var_73_40].completed_frame_texture
+	if completed_difficulty_index > 0 then
+		local difficulty_key = DefaultDifficulties[completed_difficulty_index]
+		local settings = DifficultySettings[difficulty_key]
+
+		level_frame = settings.completed_frame_texture
 	end
 
-	local tbl_3 = {
+	local tbl = {
 		scenegraph_id = "lobby_entry_anchor",
 		element = {
 			passes = {
@@ -4202,25 +4232,25 @@ local function fn_9(arg_73_0, arg_73_1, arg_73_2, arg_73_3, arg_73_4)
 					pass_type = "texture",
 					style_id = "background",
 					texture_id = "background_id",
-					content_check_function = function (self, arg_74_1)
+					content_check_function = function (content, style)
 						-- function 74
-						return not not self.selected or not Managers.matchmaking:is_game_matchmaking()
+						return not content.selected and not not not Managers.matchmaking:is_game_matchmaking()
 					end
 				},
 				{
 					style_id = "lock_icon",
 					texture_id = "lock_icon_id",
 					pass_type = "texture",
-					content_check_function = function (self, arg_75_1)
+					content_check_function = function (content, style)
 						-- function 75
-						return not self.joinable
+						return not content.joinable
 					end,
-					content_change_function = function (self, arg_76_1)
+					content_change_function = function (content, style)
 						-- function 76
-						if self.selected or not self.lobby_hotspot.is_hover then
-							arg_76_1.color = arg_76_1.selected_color
+						if content.selected or content.lobby_hotspot.is_hover then
+							style.color = style.selected_color
 						else
-							arg_76_1.color = arg_76_1.base_color
+							style.color = style.base_color
 						end
 					end
 				},
@@ -4228,61 +4258,63 @@ local function fn_9(arg_73_0, arg_73_1, arg_73_2, arg_73_3, arg_73_4)
 					pass_type = "texture",
 					style_id = "lock_icon_shadow",
 					texture_id = "lock_icon_id",
-					content_check_function = function (self, arg_77_1)
+					content_check_function = function (content, style)
 						-- function 77
-						return not not self.selected or not not self.lobby_hotspot.is_hover or not self.joinable
+						return not content.selected and not content.lobby_hotspot.is_hover and not not not content.joinable
 					end
 				},
 				{
 					style_id = "custom_game_settings",
 					pass_type = "texture",
 					texture_id = "custom_game_settings",
-					content_change_function = function (self, arg_78_1)
+					content_change_function = function (content, style)
 						-- function 78
-						if self.selected or not self.lobby_hotspot.is_hover then
-							arg_78_1.color = arg_78_1.selected_color
+						if content.selected or content.lobby_hotspot.is_hover then
+							style.color = style.selected_color
 						else
-							arg_78_1.color = arg_78_1.base_color
+							style.color = style.base_color
 						end
 					end,
-					content_check_function = function (self, arg_79_1)
+					content_check_function = function (content, style)
 						-- function 79
 						if not Managers.mechanism:current_mechanism_name() == "versus" then
 							return false
 						end
 
-						local custom_game_settings = arg_73_1.custom_game_settings
+						local custom_game_settings = lobby_data.custom_game_settings
+						local has_custom_game_settings = (not custom_game_settings or custom_game_settings == "n/a") and not not false
 
-						return not (not custom_game_settings and custom_game_settings ~= "n/a" or false) and self.joinable
+						return not not has_custom_game_settings and not not content.joinable
 					end
 				},
 				{
 					pass_type = "texture",
 					style_id = "custom_game_settings_shadow",
 					texture_id = "custom_game_settings",
-					content_check_function = function (self, arg_80_1)
+					content_check_function = function (content, style)
 						-- function 80
 						if not Managers.mechanism:current_mechanism_name() == "versus" then
 							return false
 						end
 
-						local custom_game_settings = arg_73_1.custom_game_settings
+						local custom_game_settings = lobby_data.custom_game_settings
+						local has_custom_game_settings = (not custom_game_settings or custom_game_settings == "n/a") and not not false
 
-						return not (not custom_game_settings and custom_game_settings ~= "n/a" or false) and self.joinable
+						return not not has_custom_game_settings and not not content.joinable
 					end
 				},
 				{
 					pass_type = "texture",
 					style_id = "selected_background",
 					texture_id = "background_id",
-					content_check_function = function (self, arg_81_1)
+					content_check_function = function (content, style)
 						-- function 81
 						local is_hover
 
-						if not self.selected then
-							is_hover = self.lobby_hotspot.is_hover
+						if not content.selected then
+							is_hover = content.lobby_hotspot.is_hover
 
-							if not is_hover then
+							if is_hover then
 								-- Nothing
 							end
 						end
@@ -4298,7 +4330,7 @@ local function fn_9(arg_73_0, arg_73_1, arg_73_2, arg_73_3, arg_73_4)
 					pass_type = "texture",
 					style_id = "disabled_background",
 					texture_id = "background_id",
-					content_check_function = function (arg_82_0, arg_82_1)
+					content_check_function = function (content, style)
 						-- function 82
 						return Managers.matchmaking:is_game_matchmaking()
 					end
@@ -4312,14 +4344,14 @@ local function fn_9(arg_73_0, arg_73_1, arg_73_2, arg_73_3, arg_73_4)
 					style_id = "selected_level_name",
 					pass_type = "text",
 					text_id = "selected_level_name",
-					content_change_function = function (self, arg_83_1)
+					content_change_function = function (content, style)
 						-- function 83
-						if not self.joinable then
-							arg_83_1.text_color = arg_83_1.joinable_color
-						elseif self.selected or not self.lobby_hotspot.is_hover then
-							arg_83_1.text_color = arg_83_1.selected_unjoinable_color
+						if content.joinable then
+							style.text_color = style.joinable_color
+						elseif content.selected or content.lobby_hotspot.is_hover then
+							style.text_color = style.selected_unjoinable_color
 						else
-							arg_83_1.text_color = arg_83_1.base_color
+							style.text_color = style.base_color
 						end
 					end
 				},
@@ -4327,45 +4359,45 @@ local function fn_9(arg_73_0, arg_73_1, arg_73_2, arg_73_3, arg_73_4)
 					style_id = "selected_level_name_shadow",
 					pass_type = "text",
 					text_id = "selected_level_name",
-					content_check_function = function (self, arg_84_1)
+					content_check_function = function (content, style)
 						-- function 84
-						return not not self.joinable or not not self.selected or not self.lobby_hotspot.is_hover
+						return (not not content.joinable or not content.selected) and not not not content.lobby_hotspot.is_hover
 					end
 				},
 				{
 					pass_type = "texture",
 					style_id = "level_image",
 					texture_id = "level_image_id",
-					content_check_function = function (self, arg_85_1)
+					content_check_function = function (content, style)
 						-- function 85
-						return self.level_image_id
+						return content.level_image_id
 					end
 				},
 				{
 					pass_type = "texture",
 					style_id = "flag",
 					texture_id = "flag_id",
-					content_check_function = function (self)
+					content_check_function = function (content)
 						-- function 86
-						return self.flag_id
+						return content.flag_id
 					end
 				},
 				{
 					style_id = "no_flag",
 					pass_type = "text",
 					text_id = "no_flag_id",
-					content_check_function = function (self)
+					content_check_function = function (content)
 						-- function 87
-						return not self.flag_id
+						return not content.flag_id
 					end,
-					content_change_function = function (self, arg_88_1)
+					content_change_function = function (content, style)
 						-- function 88
-						if not self.joinable then
-							arg_88_1.text_color = arg_88_1.joinable_color
-						elseif self.selected or not self.lobby_hotspot.is_hover then
-							arg_88_1.text_color = arg_88_1.selected_unjoinable_color
+						if content.joinable then
+							style.text_color = style.joinable_color
+						elseif content.selected or content.lobby_hotspot.is_hover then
+							style.text_color = style.selected_unjoinable_color
 						else
-							arg_88_1.text_color = arg_88_1.base_color
+							style.text_color = style.base_color
 						end
 					end
 				},
@@ -4373,23 +4405,23 @@ local function fn_9(arg_73_0, arg_73_1, arg_73_2, arg_73_3, arg_73_4)
 					style_id = "no_flag_shadow",
 					pass_type = "text",
 					text_id = "no_flag_id",
-					content_check_function = function (self, arg_89_1)
+					content_check_function = function (content, style)
 						-- function 89
-						return (self.joinable or not not self.selected or not self.lobby_hotspot.is_hover) and not self.flag_id
+						return (content.joinable or not content.selected and not content.lobby_hotspot.is_hover) and not not not content.flag_id
 					end
 				},
 				{
 					style_id = "difficulty",
 					pass_type = "text",
 					text_id = "difficulty_id",
-					content_change_function = function (self, arg_90_1)
+					content_change_function = function (content, style)
 						-- function 90
-						if not self.joinable then
-							arg_90_1.text_color = arg_90_1.joinable_color
-						elseif self.selected or not self.lobby_hotspot.is_hover then
-							arg_90_1.text_color = arg_90_1.selected_unjoinable_color
+						if content.joinable then
+							style.text_color = style.joinable_color
+						elseif content.selected or content.lobby_hotspot.is_hover then
+							style.text_color = style.selected_unjoinable_color
 						else
-							arg_90_1.text_color = arg_90_1.base_color
+							style.text_color = style.base_color
 						end
 					end
 				},
@@ -4397,14 +4429,14 @@ local function fn_9(arg_73_0, arg_73_1, arg_73_2, arg_73_3, arg_73_4)
 					style_id = "num_players",
 					pass_type = "text",
 					text_id = "num_players_id",
-					content_change_function = function (self, arg_91_1)
+					content_change_function = function (content, style)
 						-- function 91
-						if not self.joinable then
-							arg_91_1.text_color = arg_91_1.joinable_color
-						elseif self.selected or not self.lobby_hotspot.is_hover then
-							arg_91_1.text_color = arg_91_1.selected_unjoinable_color
+						if content.joinable then
+							style.text_color = style.joinable_color
+						elseif content.selected or content.lobby_hotspot.is_hover then
+							style.text_color = style.selected_unjoinable_color
 						else
-							arg_91_1.text_color = arg_91_1.base_color
+							style.text_color = style.base_color
 						end
 					end
 				},
@@ -4412,49 +4444,49 @@ local function fn_9(arg_73_0, arg_73_1, arg_73_2, arg_73_3, arg_73_4)
 					style_id = "difficulty_shadow",
 					pass_type = "text",
 					text_id = "difficulty_id",
-					content_check_function = function (self, arg_92_1)
+					content_check_function = function (content, style)
 						-- function 92
-						return not not self.joinable or not not self.selected or not self.lobby_hotspot.is_hover
+						return (not not content.joinable or not content.selected) and not not not content.lobby_hotspot.is_hover
 					end
 				},
 				{
 					style_id = "num_players_shadow",
 					pass_type = "text",
 					text_id = "num_players_id",
-					content_check_function = function (self, arg_93_1)
+					content_check_function = function (content, style)
 						-- function 93
-						return not not self.joinable or not not self.selected or not self.lobby_hotspot.is_hover
+						return (not not content.joinable or not content.selected) and not not not content.lobby_hotspot.is_hover
 					end
 				}
 			}
 		}
 	}
-	local tbl_4 = {
+	local tbl_2 = {
 		frame_id = "rect_masked",
 		background_id = "rect_masked",
 		selected = false,
 		custom_game_settings = "versus_custom_settings",
 		lock_icon_id = "lobby_icon_lock",
 		lobby_hotspot = {},
-		host_name = var_73_1
+		host_name = lobby_name
 	}
-	local var_73_44 = num_players
-	local str_5 = "/"
-	local flag_2
+	local var_73_16 = num_players
+	local str = "/"
+	local flag
 
-	flag_2 = not flag and "8" and "4"
-	tbl_4.num_players_id = var_73_44 .. str_5 .. flag_2
-	tbl_4.difficulty_id = difficulty
-	tbl_4.selected_level_name = str
-	tbl_4.current_level_name = str_3
-	tbl_4.lobby_data = arg_73_1
-	tbl_4.level_image_id = str_2
-	tbl_4.flag_id = var_73_36
-	tbl_4.flag_index = arg_73_2
-	tbl_4.no_flag_id = lower
-	tbl_4.joinable = arg_73_3
-	tbl_3.content = tbl_4
-	tbl_3.style = {
+	flag = (not is_versus_custom_game or not "8") and not not "4"
+	tbl_2.num_players_id = var_73_16 .. str .. flag
+	tbl_2.difficulty_id = difficulty
+	tbl_2.selected_level_name = selected_level_name
+	tbl_2.current_level_name = current_level_name
+	tbl_2.lobby_data = lobby_data
+	tbl_2.level_image_id = level_image
+	tbl_2.flag_id = flag_name
+	tbl_2.flag_index = flag_index
+	tbl_2.no_flag_id = country_code
+	tbl_2.joinable = joinable
+	tbl.content = tbl_2
+	tbl.style = {
 		background = {
 			color = {
 				96,
@@ -4463,8 +4495,8 @@ local function fn_9(arg_73_0, arg_73_1, arg_73_2, arg_73_3, arg_73_4)
 				0
 			},
 			size = {
-				tbl.width,
-				tbl.height
+				element_settings.width,
+				element_settings.height
 			},
 			offset = {
 				0,
@@ -4475,8 +4507,8 @@ local function fn_9(arg_73_0, arg_73_1, arg_73_2, arg_73_3, arg_73_4)
 		selected_background = {
 			color = Colors.get_color_table_with_alpha("font_default", 96),
 			size = {
-				tbl.width,
-				tbl.height
+				element_settings.width,
+				element_settings.height
 			},
 			offset = {
 				0,
@@ -4492,8 +4524,8 @@ local function fn_9(arg_73_0, arg_73_1, arg_73_2, arg_73_3, arg_73_4)
 				0
 			},
 			size = {
-				tbl.width,
-				tbl.height
+				element_settings.width,
+				element_settings.height
 			},
 			offset = {
 				0,
@@ -4588,7 +4620,7 @@ local function fn_9(arg_73_0, arg_73_1, arg_73_2, arg_73_3, arg_73_4)
 			font_type = "arial_masked",
 			text_color = Colors.get_color_table_with_alpha("font_title", 255),
 			offset = {
-				110 + tbl.spacing,
+				110 + element_settings.spacing,
 				0,
 				2
 			}
@@ -4624,7 +4656,7 @@ local function fn_9(arg_73_0, arg_73_1, arg_73_2, arg_73_3, arg_73_4)
 				255
 			},
 			offset = {
-				110 + tbl.spacing,
+				110 + element_settings.spacing,
 				-5,
 				2
 			}
@@ -4642,7 +4674,7 @@ local function fn_9(arg_73_0, arg_73_1, arg_73_2, arg_73_3, arg_73_4)
 				0
 			},
 			offset = {
-				110 + tbl.spacing + 2,
+				110 + element_settings.spacing + 2,
 				-7,
 				1
 			}
@@ -4819,8 +4851,8 @@ local function fn_9(arg_73_0, arg_73_1, arg_73_2, arg_73_3, arg_73_4)
 				255
 			},
 			texture_size = {
-				(tbl.height - 10) * 1.6724137931034482,
-				tbl.height - 10
+				(element_settings.height - 10) * 1.6724137931034482,
+				element_settings.height - 10
 			},
 			offset = {
 				10,
@@ -4838,8 +4870,8 @@ local function fn_9(arg_73_0, arg_73_1, arg_73_2, arg_73_3, arg_73_4)
 				0
 			},
 			texture_size = {
-				(tbl.height - 10) * 1.6724137931034482 + 4,
-				tbl.height - 10 + 4
+				(element_settings.height - 10) * 1.6724137931034482 + 4,
+				element_settings.height - 10 + 4
 			},
 			offset = {
 				8,
@@ -4857,7 +4889,7 @@ local function fn_9(arg_73_0, arg_73_1, arg_73_2, arg_73_3, arg_73_4)
 				255,
 				255
 			},
-			texture_size = tbl_2,
+			texture_size = flag_size,
 			offset = {
 				105,
 				0,
@@ -4937,16 +4969,16 @@ local function fn_9(arg_73_0, arg_73_1, arg_73_2, arg_73_3, arg_73_4)
 			}
 		}
 	}
-	tbl_3.offset = {
+	tbl.offset = {
 		0,
-		arg_73_0,
+		offset_y,
 		0
 	}
 
-	return tbl_3
+	return tbl
 end
 
-local function fn_10(arg_94_0)
+local function create_empty_lobby_entry_func(offset_y)
 	-- function 94
 	return {
 		scenegraph_id = "lobby_entry_anchor",
@@ -4971,8 +5003,8 @@ local function fn_10(arg_94_0)
 					0
 				},
 				size = {
-					tbl.width,
-					tbl.height
+					element_settings.width,
+					element_settings.height
 				},
 				offset = {
 					0,
@@ -4983,13 +5015,13 @@ local function fn_10(arg_94_0)
 		},
 		offset = {
 			0,
-			arg_94_0,
+			offset_y,
 			0
 		}
 	}
 end
 
-local function fn_11(arg_95_0)
+local function create_unavailable_lobby_entry_func(offset_y)
 	-- function 95
 	return {
 		scenegraph_id = "lobby_entry_anchor",
@@ -5014,23 +5046,23 @@ local function fn_11(arg_95_0)
 					pass_type = "texture",
 					style_id = "background",
 					texture_id = "background_id",
-					content_check_function = function (self, arg_96_1)
+					content_check_function = function (content, style)
 						-- function 96
-						return (self.selected or not self.lobby_hotspot.is_hover) and Managers.matchmaking:is_game_matchmaking()
+						return (content.selected or not not content.lobby_hotspot.is_hover) and not not Managers.matchmaking:is_game_matchmaking()
 					end
 				},
 				{
 					pass_type = "texture",
 					style_id = "selected_background",
 					texture_id = "background_id",
-					content_check_function = function (self, arg_97_1)
+					content_check_function = function (content, style)
 						-- function 97
 						local is_hover
 
-						if not self.selected then
-							is_hover = self.lobby_hotspot.is_hover
+						if not content.selected then
+							is_hover = content.lobby_hotspot.is_hover
 
-							if not is_hover then
+							if is_hover then
 								-- Nothing
 							end
 						end
@@ -5059,8 +5091,8 @@ local function fn_11(arg_95_0)
 					0
 				},
 				size = {
-					tbl.width,
-					tbl.height
+					element_settings.width,
+					element_settings.height
 				},
 				offset = {
 					0,
@@ -5076,8 +5108,8 @@ local function fn_11(arg_95_0)
 					50
 				},
 				size = {
-					tbl.width,
-					tbl.height
+					element_settings.width,
+					element_settings.height
 				},
 				offset = {
 					0,
@@ -5098,7 +5130,7 @@ local function fn_11(arg_95_0)
 					90
 				},
 				offset = {
-					110 + tbl.spacing,
+					110 + element_settings.spacing,
 					-5,
 					2
 				}
@@ -5116,7 +5148,7 @@ local function fn_11(arg_95_0)
 					20
 				},
 				offset = {
-					110 + tbl.spacing + 2,
+					110 + element_settings.spacing + 2,
 					-7,
 					1
 				}
@@ -5124,13 +5156,13 @@ local function fn_11(arg_95_0)
 		},
 		offset = {
 			0,
-			arg_95_0,
+			offset_y,
 			0
 		}
 	}
 end
 
-local function fn_12(arg_98_0, arg_98_1, arg_98_2)
+local function create_details_information(scenegraph_id, game_type_scenegraph_id, status_scenegraph_id)
 	-- function 98
 	return {
 		element = {
@@ -5257,7 +5289,7 @@ local function fn_12(arg_98_0, arg_98_1, arg_98_2)
 				vertical_alignment = "bottom",
 				dynamic_font_size = true,
 				font_type = "hell_shark",
-				scenegraph_id = arg_98_1,
+				scenegraph_id = game_type_scenegraph_id,
 				text_color = Colors.get_color_table_with_alpha("font_default", 255),
 				offset = {
 					-75,
@@ -5272,7 +5304,7 @@ local function fn_12(arg_98_0, arg_98_1, arg_98_2)
 				vertical_alignment = "bottom",
 				dynamic_font_size = true,
 				font_type = "hell_shark",
-				scenegraph_id = arg_98_2,
+				scenegraph_id = status_scenegraph_id,
 				text_color = Colors.get_color_table_with_alpha("font_default", 255),
 				offset = {
 					-75,
@@ -5281,7 +5313,7 @@ local function fn_12(arg_98_0, arg_98_1, arg_98_2)
 				}
 			}
 		},
-		scenegraph_id = arg_98_0,
+		scenegraph_id = scenegraph_id,
 		offset = {
 			0,
 			0,
@@ -5290,7 +5322,7 @@ local function fn_12(arg_98_0, arg_98_1, arg_98_2)
 	}
 end
 
-local function fn_13(arg_99_0, arg_99_1)
+local function create_objective(scenegraph_id, size)
 	-- function 99
 	return {
 		element = {
@@ -5299,36 +5331,36 @@ local function fn_13(arg_99_0, arg_99_1)
 					texture_id = "background",
 					style_id = "background",
 					pass_type = "texture",
-					content_check_function = function (self)
+					content_check_function = function (content)
 						-- function 100
-						return self.text ~= "tutorial_no_text"
+						return content.text ~= "tutorial_no_text"
 					end
 				},
 				{
 					texture_id = "icon",
 					style_id = "icon",
 					pass_type = "texture",
-					content_check_function = function (self)
+					content_check_function = function (content)
 						-- function 101
-						return self.text ~= "tutorial_no_text"
+						return content.text ~= "tutorial_no_text"
 					end
 				},
 				{
 					style_id = "text",
 					pass_type = "text",
 					text_id = "text",
-					content_check_function = function (self)
+					content_check_function = function (content)
 						-- function 102
-						return self.text ~= "tutorial_no_text"
+						return content.text ~= "tutorial_no_text"
 					end
 				},
 				{
 					style_id = "text_shadow",
 					pass_type = "text",
 					text_id = "text",
-					content_check_function = function (self)
+					content_check_function = function (content)
 						-- function 103
-						return self.text ~= "tutorial_no_text"
+						return content.text ~= "tutorial_no_text"
 					end
 				}
 			}
@@ -5375,8 +5407,8 @@ local function fn_13(arg_99_0, arg_99_1)
 				dynamic_font_size = true,
 				font_type = "hell_shark",
 				size = {
-					arg_99_1[1] - 60,
-					arg_99_1[2]
+					size[1] - 60,
+					size[2]
 				},
 				text_color = Colors.get_color_table_with_alpha("font_default", 255),
 				offset = {
@@ -5394,8 +5426,8 @@ local function fn_13(arg_99_0, arg_99_1)
 				dynamic_font_size = true,
 				font_type = "hell_shark",
 				size = {
-					arg_99_1[1] - 60,
-					arg_99_1[2]
+					size[1] - 60,
+					size[2]
 				},
 				text_color = Colors.get_color_table_with_alpha("black", 255),
 				offset = {
@@ -5410,14 +5442,14 @@ local function fn_13(arg_99_0, arg_99_1)
 			0,
 			0
 		},
-		scenegraph_id = arg_99_0
+		scenegraph_id = scenegraph_id
 	}
 end
 
-local function fn_14(arg_104_0)
+local function create_versus_summary(scenegraph_id)
 	-- function 104
-	local tbl = {
-		scenegraph_id = arg_104_0,
+	local widget = {
+		scenegraph_id = scenegraph_id,
 		element = {
 			passes = {
 				{
@@ -5467,39 +5499,38 @@ local function fn_14(arg_104_0)
 			}
 		}
 	}
-	local passes = tbl.element.passes
-	local content = tbl.content
-	local style = tbl.style
+	local passes = widget.element.passes
+	local content = widget.content
+	local style = widget.style
 
-	for i = 1, 2 do
-		local num = 1
-		local str = "left"
+	for party_id = 1, 2 do
+		local x_dir, horizontal_alignment = 1, "left"
 
-		if i == 2 then
-			num, str = -1, "right"
+		if party_id == 2 then
+			x_dir, horizontal_alignment = -1, "right"
 		end
 
-		for j = 1, 4 do
-			local format = string.format("player_%d_%d", i, j)
+		for player_id = 1, 4 do
+			local id = string.format("player_%d_%d", party_id, player_id)
 
 			passes[#passes + 1] = {
 				pass_type = "text",
-				text_id = format,
-				style_id = format
+				text_id = id,
+				style_id = id
 			}
-			content[format] = "---"
-			style[format] = {
+			content[id] = "---"
+			style[id] = {
 				font_size = 22,
 				upper_case = false,
 				localize = false,
 				vertical_alignment = "top",
 				dynamic_font_size = true,
 				font_type = "arial",
-				horizontal_alignment = str,
+				horizontal_alignment = horizontal_alignment,
 				text_color = Colors.get_color_table_with_alpha("font_default", 255),
 				offset = {
-					50 * num,
-					0 - 27 * j,
+					50 * x_dir,
+					0 - 27 * player_id,
 					2
 				},
 				area_size = {
@@ -5510,10 +5541,10 @@ local function fn_14(arg_104_0)
 		end
 	end
 
-	return tbl
+	return widget
 end
 
-local function fn_15(arg_105_0, arg_105_1)
+local function create_level_decoration_widget(icon, tooltip_text)
 	-- function 105
 	return {
 		scenegraph_id = "details_level_decoration",
@@ -5530,11 +5561,11 @@ local function fn_15(arg_105_0, arg_105_1)
 					style_id = "tooltip_text",
 					pass_type = "tooltip_text",
 					text_id = "tooltip_text",
-					content_check_function = function (self)
+					content_check_function = function (content)
 						-- function 106
-						local is_hover = self.is_hover
+						local is_hover = content.is_hover
 
-						is_hover = not is_hover and self.tooltip_text
+						is_hover = not not is_hover and not not content.tooltip_text
 
 						return is_hover
 					end
@@ -5542,8 +5573,8 @@ local function fn_15(arg_105_0, arg_105_1)
 			}
 		},
 		content = {
-			icon = arg_105_0 or "icons_placeholder",
-			tooltip_text = arg_105_1
+			icon = not not icon or not not "icons_placeholder",
+			tooltip_text = tooltip_text
 		},
 		style = {
 			tooltip_text = {
@@ -5569,7 +5600,7 @@ local function fn_15(arg_105_0, arg_105_1)
 	}
 end
 
-local function fn_16()
+local function create_custom_settings_widget()
 	-- function 107
 	return {
 		scenegraph_id = "custom_settings_frame",
@@ -5663,25 +5694,33 @@ local function fn_16()
 	}
 end
 
-local custom_game_ui_settings = DLCSettings.carousel.custom_game_ui_settings
+local SETTINGS_UI_DATA = DLCSettings.carousel.custom_game_ui_settings
 
-local function fn_17(arg_108_0, arg_108_1, arg_108_2, arg_108_3)
+local function create_custom_setting_func(setting_name, setting_value, setting_template, offset_y)
 	-- function 108
-	local var_108_0 = custom_game_ui_settings[arg_108_0]
+	local setting_ui_data = SETTINGS_UI_DATA[setting_name]
 
-	if not var_108_0 then
+	if setting_ui_data then
 		-- Nothing
 	end
 
 	::label_108_0::
 
-	local localization_options = var_108_0.localization_options
+	local localization_options = setting_ui_data.localization_options
 
-	localization_options = not localization_options and var_108_0.localization_options[arg_108_1]
+	if localization_options then
+		-- Nothing
+	end
+
+	localization_options = setting_ui_data.localization_options[setting_value]
+
+	local localized_value = localization_options
 
 	::label_108_1::
 
-	arg_108_1 = not localization_options and Localize(localization_options) and arg_108_1
+	if localized_value and not Localize(localized_value) then
+		-- Nothing
+	end
 
 	return {
 		scenegraph_id = "custom_settings_window",
@@ -5700,9 +5739,9 @@ local function fn_17(arg_108_0, arg_108_1, arg_108_2, arg_108_3)
 			}
 		},
 		content = {
-			setting_name = "menu_settings_" .. arg_108_0,
-			setting_value = string.format("%s", arg_108_1),
-			setting_template = arg_108_2
+			setting_name = "menu_settings_" .. setting_name,
+			setting_value = string.format("%s", setting_value),
+			setting_template = setting_template
 		},
 		style = {
 			setting_name = {
@@ -5745,13 +5784,13 @@ local function fn_17(arg_108_0, arg_108_1, arg_108_2, arg_108_3)
 		},
 		offset = {
 			0,
-			arg_108_3,
+			offset_y,
 			0
 		}
 	}
 end
 
-local tbl_8 = {
+local lobby_browser_description_style = {
 	font_size = 50,
 	upper_case = true,
 	localize = false,
@@ -5768,48 +5807,48 @@ local tbl_8 = {
 		2
 	}
 }
-local flag_2 = true
-local tbl_9 = {
+local disable_with_gamepad = true
+local base_widget_definition = {
 	background = UIWidgets.create_simple_rect("lobby_browser_window", {
 		50,
 		0,
 		0,
 		0
 	}, -10),
-	lobby_browser_background = UIWidgets.create_rect_with_outer_frame("lobby_browser_background", tbl_2.lobby_browser_background.size, "frame_outer_fade_02", nil, UISettings.console_start_game_menu_rect_color),
-	lobby_browser_title = UIWidgets.create_simple_text(Localize("menu_title_lobby_browser"), "lobby_browser_background", nil, nil, tbl_8),
+	lobby_browser_background = UIWidgets.create_rect_with_outer_frame("lobby_browser_background", scenegraph_definition.lobby_browser_background.size, "frame_outer_fade_02", nil, UISettings.console_start_game_menu_rect_color),
+	lobby_browser_title = UIWidgets.create_simple_text(Localize("menu_title_lobby_browser"), "lobby_browser_background", nil, nil, lobby_browser_description_style),
 	custom_game_divider = UIWidgets.create_simple_texture("divider_01_top", "lobby_browser_divider"),
-	join_button = UIWidgets.create_default_button("join_button", tbl_2.join_button.size, nil, nil, Localize("lb_join"), 28, nil, nil, nil, flag_2),
-	refresh_button = UIWidgets.create_default_button("refresh_button", tbl_2.refresh_button.size, nil, nil, Localize("menu_description_refresh"), 28, nil, nil, nil, flag_2),
-	frame = fn("lobby_browser_frame"),
-	filter_frame = fn_2("filter_base")
+	join_button = UIWidgets.create_default_button("join_button", scenegraph_definition.join_button.size, nil, nil, Localize("lb_join"), 28, nil, nil, nil, disable_with_gamepad),
+	refresh_button = UIWidgets.create_default_button("refresh_button", scenegraph_definition.refresh_button.size, nil, nil, Localize("menu_description_refresh"), 28, nil, nil, nil, disable_with_gamepad),
+	frame = create_lobby_browser_frame("lobby_browser_frame"),
+	filter_frame = create_filter_frame("filter_base")
 }
-local tbl_10 = {}
+local hero_icons = {}
 
 for i = 1, #ProfilePriority do
-	local var_0_38 = ProfilePriority[i]
-	local var_0_39 = SPProfiles[var_0_38]
+	local profile_index = ProfilePriority[i]
+	local profile = SPProfiles[profile_index]
 
-	tbl_10[#tbl_10 + 1] = var_0_39.ui_portrait
+	hero_icons[#hero_icons + 1] = profile.ui_portrait
 end
 
-local num_9 = 0.75
-local num_10 = 96 * num_9
-local num_11 = 112 * num_9
-local num_12 = 5 * num_9
-local tbl_11 = {
-	86 * num_9,
-	108 * num_9
+local hero_entry_size_scale = 0.75
+local hero_entry_width = 96 * hero_entry_size_scale
+local hero_entry_height = 112 * hero_entry_size_scale
+local hero_entry_spacing = 5 * hero_entry_size_scale
+local hero_entry_frame_size = {
+	86 * hero_entry_size_scale,
+	108 * hero_entry_size_scale
 }
-local num_13 = 0.6
-local num_14 = 96 * num_13
-local num_15 = 112 * num_13
-local num_16 = 5 * num_13
-local tbl_12 = {
-	86 * num_13,
-	108 * num_13
+local weave_hero_entry_size_scale = 0.6
+local weave_hero_entry_width = 96 * weave_hero_entry_size_scale
+local weave_hero_entry_height = 112 * weave_hero_entry_size_scale
+local weave_hero_entry_spacing = 5 * weave_hero_entry_size_scale
+local weave_hero_entry_frame_size = {
+	86 * weave_hero_entry_size_scale,
+	108 * weave_hero_entry_size_scale
 }
-local tbl_13 = {
+local wind_name_style = {
 	font_size = 28,
 	upper_case = false,
 	localize = false,
@@ -5825,7 +5864,7 @@ local tbl_13 = {
 		2
 	}
 }
-local tbl_14 = {
+local level_name_style = {
 	use_shadow = true,
 	upper_case = true,
 	localize = false,
@@ -5841,7 +5880,7 @@ local tbl_14 = {
 		2
 	}
 }
-local tbl_15 = {
+local weave_level_name_style = {
 	use_shadow = true,
 	upper_case = true,
 	localize = false,
@@ -5858,10 +5897,10 @@ local tbl_15 = {
 	},
 	size = {
 		350,
-		tbl_2.weave_details_level_name[2]
+		scenegraph_definition.weave_details_level_name[2]
 	}
 }
-local tbl_16 = {
+local locked_reason_style = {
 	font_size = 24,
 	upper_case = true,
 	localize = true,
@@ -5882,7 +5921,7 @@ local tbl_16 = {
 		2
 	}
 }
-local tbl_17 = {
+local mutator_title_text_style = {
 	font_size = 28,
 	upper_case = false,
 	localize = true,
@@ -5899,7 +5938,7 @@ local tbl_17 = {
 		2
 	}
 }
-local tbl_18 = {
+local mutator_description_text_style = {
 	font_size = 20,
 	use_shadow = true,
 	localize = true,
@@ -5915,7 +5954,7 @@ local tbl_18 = {
 		2
 	}
 }
-local tbl_19 = {
+local objective_title_text_style = {
 	font_size = 24,
 	upper_case = true,
 	localize = true,
@@ -5931,7 +5970,7 @@ local tbl_19 = {
 		2
 	}
 }
-local tbl_20 = {
+local custom_settings_style = {
 	use_shadow = true,
 	upper_case = true,
 	localize = true,
@@ -5947,7 +5986,7 @@ local tbl_20 = {
 		2
 	}
 }
-local tbl_21 = {
+local custom_level_name_style = {
 	use_shadow = true,
 	upper_case = true,
 	localize = false,
@@ -5963,69 +6002,69 @@ local tbl_21 = {
 		2
 	}
 }
-local tbl_22 = {
+local adventure_details_widget_definition = {
 	level_image_frame = UIWidgets.create_simple_texture("map_frame_00", "details_level_frame"),
 	level_image = UIWidgets.create_simple_texture("level_image_any", "details_level_image"),
-	level_name = UIWidgets.create_simple_text(" ", "details_level_name", nil, nil, tbl_14),
-	locked_reason = UIWidgets.create_simple_text("tutorial_no_text", "details_locked_reason", nil, nil, tbl_16),
-	details_information = fn_12("details_level_info", "details_game_type", "details_status"),
+	level_name = UIWidgets.create_simple_text(" ", "details_level_name", nil, nil, level_name_style),
+	locked_reason = UIWidgets.create_simple_text("tutorial_no_text", "details_locked_reason", nil, nil, locked_reason_style),
+	details_information = create_details_information("details_level_info", "details_game_type", "details_status"),
 	twitch_logo = UIWidgets.create_simple_texture("twitch_logo_new", "twitch_logo"),
 	hero_tabs = UIWidgets.create_icon_selector("details_hero_tabs", {
-		num_10,
-		num_11
-	}, tbl_10, num_12, true, tbl_11, true)
+		hero_entry_width,
+		hero_entry_height
+	}, hero_icons, hero_entry_spacing, true, hero_entry_frame_size, true)
 }
-local tbl_23 = {
+local deus_details_widget_definition = {
 	expedition_icon = UIWidgets.create_expedition_widget_func("deus_level_icon", nil, DeusJourneySettings.journey_cave, "journey_cave", {
 		width = 800,
 		spacing_x = 40
 	}, 1.2),
-	level_name = UIWidgets.create_simple_text(" ", "details_level_name", nil, nil, tbl_14),
-	locked_reason = UIWidgets.create_simple_text("tutorial_no_text", "details_locked_reason", nil, nil, tbl_16),
-	details_information = fn_12("details_level_info", "details_game_type", "details_status"),
+	level_name = UIWidgets.create_simple_text(" ", "details_level_name", nil, nil, level_name_style),
+	locked_reason = UIWidgets.create_simple_text("tutorial_no_text", "details_locked_reason", nil, nil, locked_reason_style),
+	details_information = create_details_information("details_level_info", "details_game_type", "details_status"),
 	twitch_logo = UIWidgets.create_simple_texture("twitch_logo_new", "twitch_logo"),
 	hero_tabs = UIWidgets.create_icon_selector("details_hero_tabs", {
-		num_10,
-		num_11
-	}, tbl_10, num_12, true, tbl_11, true)
+		hero_entry_width,
+		hero_entry_height
+	}, hero_icons, hero_entry_spacing, true, hero_entry_frame_size, true)
 }
-local tbl_24 = {
+local weave_details_widget_definition = {
 	level_image_frame = UIWidgets.create_simple_texture("map_frame_00", "weave_details_level_frame"),
 	level_image = UIWidgets.create_simple_texture("level_image_any", "weave_details_level_image"),
 	wind_icon = UIWidgets.create_simple_texture("icon_wind_azyr", "wind_icon"),
 	wind_icon_glow = UIWidgets.create_simple_texture("winds_icon_background_glow", "wind_icon_glow"),
 	wind_icon_bg = UIWidgets.create_simple_texture("weave_item_icon_border_selected", "wind_icon_bg"),
 	wind_icon_slot = UIWidgets.create_simple_texture("weave_item_icon_border_center", "wind_icon_slot"),
-	wind_name = UIWidgets.create_simple_text("wind_name", "wind_name", nil, nil, tbl_13),
-	level_name = UIWidgets.create_simple_text(" ", "weave_details_level_name", nil, nil, tbl_15),
+	wind_name = UIWidgets.create_simple_text("wind_name", "wind_name", nil, nil, wind_name_style),
+	level_name = UIWidgets.create_simple_text(" ", "weave_details_level_name", nil, nil, weave_level_name_style),
 	hero_tabs = UIWidgets.create_icon_selector("weave_details_hero_tabs", {
-		num_14,
-		num_15
-	}, tbl_10, num_16, true, tbl_12, true),
+		weave_hero_entry_width,
+		weave_hero_entry_height
+	}, hero_icons, weave_hero_entry_spacing, true, weave_hero_entry_frame_size, true),
 	wind_mutator_icon = UIWidgets.create_simple_texture("icons_placeholder", "wind_mutator_icon"),
 	wind_mutator_icon_frame = UIWidgets.create_simple_texture("talent_frame", "wind_mutator_icon_frame"),
-	wind_mutator_title_text = UIWidgets.create_simple_text("n/a", "wind_mutator_title_text", nil, nil, tbl_17),
+	wind_mutator_title_text = UIWidgets.create_simple_text("n/a", "wind_mutator_title_text", nil, nil, mutator_title_text_style),
 	wind_mutator_title_divider = UIWidgets.create_simple_texture("infoslate_frame_02_horizontal", "wind_mutator_title_divider"),
-	wind_mutator_description_text = UIWidgets.create_simple_text("n/a", "wind_mutator_description_text", nil, nil, tbl_18),
+	wind_mutator_description_text = UIWidgets.create_simple_text("n/a", "wind_mutator_description_text", nil, nil, mutator_description_text_style),
 	objective_title_bg = UIWidgets.create_simple_texture("menu_subheader_bg", "objective_title_bg"),
-	objective_title = UIWidgets.create_simple_text("weave_objective_title", "objective_title", nil, nil, tbl_19),
-	objective_1 = fn_13("objective_1", tbl_2.objective_1.size),
-	objective_2 = fn_13("objective_2", tbl_2.objective_2.size),
-	locked_reason = UIWidgets.create_simple_text("tutorial_no_text", "weave_details_locked_reason", nil, nil, tbl_16),
-	details_information = fn_12("weave_details_level_info", "weave_game_type", "weave_status")
+	objective_title = UIWidgets.create_simple_text("weave_objective_title", "objective_title", nil, nil, objective_title_text_style),
+	objective_1 = create_objective("objective_1", scenegraph_definition.objective_1.size),
+	objective_2 = create_objective("objective_2", scenegraph_definition.objective_2.size),
+	locked_reason = UIWidgets.create_simple_text("tutorial_no_text", "weave_details_locked_reason", nil, nil, locked_reason_style),
+	details_information = create_details_information("weave_details_level_info", "weave_game_type", "weave_status")
 }
-local tbl_25 = {
+local versus_details_widget_definition = {
 	level_image_frame = UIWidgets.create_simple_texture("map_frame_00", "details_level_frame"),
 	level_image = UIWidgets.create_simple_texture("level_image_any", "details_level_image"),
-	level_name = UIWidgets.create_simple_text(" ", "details_level_name", nil, nil, tbl_14),
-	locked_reason = UIWidgets.create_simple_text("tutorial_no_text", "details_locked_reason", nil, nil, tbl_16),
-	details_information = fn_12("details_level_info", "details_game_type", "details_status"),
-	players = fn_14("details_players"),
+	level_name = UIWidgets.create_simple_text(" ", "details_level_name", nil, nil, level_name_style),
+	locked_reason = UIWidgets.create_simple_text("tutorial_no_text", "details_locked_reason", nil, nil, locked_reason_style),
+	details_information = create_details_information("details_level_info", "details_game_type", "details_status"),
+	players = create_versus_summary("details_players"),
 	custom_level_image_frame = UIWidgets.create_simple_texture("map_frame_00", "custom_details_level_frame"),
 	custom_level_image = UIWidgets.create_simple_texture("level_image_any", "custom_details_level_image"),
-	custom_level_name = UIWidgets.create_simple_text("THis is a test", "custom_details_level_name", nil, nil, tbl_21),
-	custom_settings = fn_16(),
-	custom_settings_label = UIWidgets.create_simple_text("versus_custom_game_custom_ruleset", "custom_settings_label", nil, nil, tbl_20),
+	custom_level_name = UIWidgets.create_simple_text("THis is a test", "custom_details_level_name", nil, nil, custom_level_name_style),
+	custom_settings = create_custom_settings_widget(),
+	custom_settings_label = UIWidgets.create_simple_text("versus_custom_game_custom_ruleset", "custom_settings_label", nil, nil, custom_settings_style),
 	custom_settings_icon = UIWidgets.create_simple_texture("versus_custom_settings", "custom_settings_label", nil, nil, nil, {
 		0,
 		115,
@@ -6037,22 +6076,22 @@ local tbl_25 = {
 }
 
 return {
-	animation_definitions = tbl_3,
-	scenegraph_definition = tbl_2,
-	base_widget_definition = tbl_9,
-	adventure_details_widget_definition = tbl_22,
-	weave_details_widget_definition = tbl_24,
-	deus_details_widget_definition = tbl_23,
-	versus_details_widget_definition = tbl_25,
-	create_lobby_entry_func = fn_9,
-	create_empty_lobby_entry_func = fn_10,
-	create_unavailable_lobby_entry_func = fn_11,
-	create_game_type_filter_entry_func = fn_4,
-	create_level_filter_entry_func = fn_5,
-	create_difficulty_filter_entry_func = fn_6,
-	create_lobby_filter_entry_func = fn_7,
-	create_distance_filter_entry_func = fn_8,
-	create_level_filter_scroller_func = fn_3,
-	create_custom_setting_func = fn_17,
-	element_settings = tbl
+	animation_definitions = animation_definitions,
+	scenegraph_definition = scenegraph_definition,
+	base_widget_definition = base_widget_definition,
+	adventure_details_widget_definition = adventure_details_widget_definition,
+	weave_details_widget_definition = weave_details_widget_definition,
+	deus_details_widget_definition = deus_details_widget_definition,
+	versus_details_widget_definition = versus_details_widget_definition,
+	create_lobby_entry_func = create_lobby_entry_func,
+	create_empty_lobby_entry_func = create_empty_lobby_entry_func,
+	create_unavailable_lobby_entry_func = create_unavailable_lobby_entry_func,
+	create_game_type_filter_entry_func = create_game_type_filter_entry_func,
+	create_level_filter_entry_func = create_level_filter_entry_func,
+	create_difficulty_filter_entry_func = create_difficulty_filter_entry_func,
+	create_lobby_filter_entry_func = create_lobby_filter_entry_func,
+	create_distance_filter_entry_func = create_distance_filter_entry_func,
+	create_level_filter_scroller_func = create_level_filter_scroller_func,
+	create_custom_setting_func = create_custom_setting_func,
+	element_settings = element_settings
 }

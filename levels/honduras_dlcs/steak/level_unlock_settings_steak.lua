@@ -18,14 +18,14 @@ AreaSettings.scorpion = {
 	acts = {
 		"act_scorpion"
 	},
-	unlock_requirement_function = function (self, arg_1_1)
+	unlock_requirement_function = function (statistics_db, stats_id)
 		-- function 1
-		if not script_data.unlock_all_levels then
+		if script_data.unlock_all_levels then
 			return true
 		end
 
-		for k, v in pairs(HelmgartLevels) do
-			if self:get_persistent_stat(arg_1_1, "completed_levels", v) < 1 then
+		for _, level_key in pairs(HelmgartLevels) do
+			if statistics_db:get_persistent_stat(stats_id, "completed_levels", level_key) < 1 then
 				return false
 			end
 		end
@@ -34,7 +34,7 @@ AreaSettings.scorpion = {
 	end,
 	create_mission_background_widget = function ()
 		-- function 2
-		return {
+		local widget = {
 			scenegraph_id = "dlc_background",
 			element = {
 				passes = {
@@ -87,6 +87,8 @@ AreaSettings.scorpion = {
 				0
 			}
 		}
+
+		return widget
 	end
 }
 ActSettings.act_scorpion = {

@@ -4,7 +4,7 @@ require("scripts/helpers/item_tooltip_helper")
 
 local UIUtils = UIUtils
 
-UIUtils = UIUtils or {}
+UIUtils = not not UIUtils or not not {}
 UIUtils = UIUtils
 FAKE_INPUT_SERVICE = {
 	get = NOP,
@@ -33,28 +33,29 @@ UIUtils.use_gamepad_hud_layout = function ()
 	end
 end
 
-local tbl = {}
+local VALUE_LIST = {}
 
-UIUtils.format_localized_description = function (arg_2_0, arg_2_1)
+UIUtils.format_localized_description = function (fmt_str, fmt_def)
 	-- function 2
-	local var_2_0 = Localize(arg_2_0)
+	local fmt_localized = Localize(fmt_str)
 
-	if not arg_2_1 and not table.is_empty(arg_2_1) then
-		return var_2_0
+	if not fmt_def or table.is_empty(fmt_def) then
+		return fmt_localized
 	end
 
-	local count = #arg_2_1
+	local num_defs = #fmt_def
 
-	for i = 1, count do
-		local var_2_2 = arg_2_1[i]
-		local value_type = var_2_2.value_type
-		local value_fmt = var_2_2.value_fmt
-		local value = var_2_2.value
+	for i = 1, num_defs do
+		local value_data = fmt_def[i]
+		local value_type = value_data.value_type
+		local value_fmt = value_data.value_fmt
+		local value = value_data.value
+		local localize = value_data.localize
 
-		if not var_2_2.localize then
-			local format_values = var_2_2.format_values
+		if localize then
+			local value_fmt_def = value_data.format_values
 
-			value = UIUtils.format_localized_description(value, format_values)
+			value = UIUtils.format_localized_description(value, value_fmt_def)
 		end
 
 		if value_type == "percent" then
@@ -63,107 +64,109 @@ UIUtils.format_localized_description = function (arg_2_0, arg_2_1)
 			value = math.abs(100 * (value - 1))
 		end
 
-		if not value_fmt then
+		if value_fmt then
 			value = string.format(value_fmt, value)
 		end
 
-		tbl[i] = value
+		VALUE_LIST[i] = value
 	end
 
-	local format = string.format(var_2_0, unpack(tbl, 1, count))
+	local str = string.format(fmt_localized, unpack(VALUE_LIST, 1, num_defs))
 
-	table.clear(tbl)
+	table.clear(VALUE_LIST)
 
-	return format
+	return str
 end
 
-UIUtils.get_talent_description = function (self)
+UIUtils.get_talent_description = function (talent_data)
 	-- function 3
-	return UIUtils.format_localized_description(self.description, self.description_values)
+	return UIUtils.format_localized_description(talent_data.description, talent_data.description_values)
 end
 
-UIUtils.get_ability_description = function (self)
+UIUtils.get_ability_description = function (ability_data)
 	-- function 4
-	return UIUtils.format_localized_description(self.description, self.description_values)
+	return UIUtils.format_localized_description(ability_data.description, ability_data.description_values)
 end
 
-UIUtils.get_perk_description = function (self)
+UIUtils.get_perk_description = function (perk_data)
 	-- function 5
-	return UIUtils.format_localized_description(self.description, self.description_values)
+	return UIUtils.format_localized_description(perk_data.description, perk_data.description_values)
 end
 
-UIUtils.get_weave_property_description = function (arg_6_0, arg_6_1, arg_6_2, arg_6_3)
+UIUtils.get_weave_property_description = function (property_name, property_data, mastery_costs, optional_amount)
 	-- function 6
-	local var_6_0 = Localize(arg_6_1.display_name)
-	local description_values = arg_6_1.description_values
-	local count = #arg_6_2
-	local str = ""
+	local description_text = Localize(property_data.display_name)
+	local description_values = property_data.description_values
+	local num_costs = #mastery_costs
+	local text = ""
 
-	if not description_values then
-		local var_6_4 = description_values[1]
-		local value_type = var_6_4.value_type
-		local value = var_6_4.value
-		local flag = arg_6_3 or 1
-		local num = value / count * flag
+	if description_values then
+		local data = description_values[1]
+		local value_type = data.value_type
+		local max_value = data.value
+		local amount = not not optional_amount or not not 1
+		local display_value = max_value / num_costs * amount
 
 		if value_type == "percent" then
-			num = math.abs(100 * num)
+			display_value = math.abs(100 * display_value)
 		elseif value_type == "baked_percent" then
-			num = math.abs(100 * (num - 1))
+			display_value = math.abs(100 * (display_value - 1))
 		end
 
-		str = string.format(var_6_0, num)
+		text = string.format(description_text, display_value)
 	else
-		str = var_6_0
+		text = description_text
 	end
 
-	return str
+	return text
 end
 
-UIUtils.get_weave_property_value_text = function (arg_7_0, arg_7_1, arg_7_2, arg_7_3)
+UIUtils.get_weave_property_value_text = function (property_name, property_data, mastery_costs, amount)
 	-- function 7
-	local description_values = arg_7_1.description_values
-	local count = #arg_7_2
-	local str = "n/a"
+	local description_values = property_data.description_values
+	local num_costs = #mastery_costs
+	local text = "n/a"
 
-	if not description_values then
-		local var_7_3 = description_values[1]
-		local value_type = var_7_3.value_type
-		local num = var_7_3.value / count * (arg_7_3 or 1)
+	if description_values then
+		local data = description_values[1]
+		local value_type = data.value_type
+		local max_value = data.value
+		local display_value = max_value / num_costs
+
+		display_value = display_value * (not not amount or not not 1)
 
 		if value_type == "percent" then
-			str = math.abs(100 * num) .. "%"
+			text = math.abs(100 * display_value) .. "%"
 		elseif value_type == "baked_percent" then
-			str = math.abs(100 * (num - 1)) .. "%"
+			text = math.abs(100 * (display_value - 1)) .. "%"
 		else
-			str = num
+			text = display_value
 		end
 	end
 
-	return str
+	return text
 end
 
-UIUtils.get_property_description = function (arg_8_0, arg_8_1, arg_8_2)
+UIUtils.get_property_description = function (property_name, lerp_value, optional_property_data)
 	-- function 8
-	local flag = arg_8_2 or WeaponProperties.properties[arg_8_0]
-	local var_8_1 = Localize(flag.display_name)
-	local description_values = flag.description_values
-	local var_8_3
-	local str = ""
+	local property_data = not not optional_property_data or not not WeaponProperties.properties[property_name]
+	local description_text = Localize(property_data.display_name)
+	local description_values = property_data.description_values
+	local text
+	local advanced_description = ""
 
-	if not description_values then
-		local var_8_5
-		local var_8_6
-		local var_8_7 = description_values[1]
-		local value_type = var_8_7.value_type
-		local value = var_8_7.value
-		local var_8_10
+	if description_values then
+		local min_value, max_value
+		local data = description_values[1]
+		local value_type = data.value_type
+		local value = data.value
+		local display_value
 
 		if type(value) == "table" then
 			if #value > 2 then
 				local count
 
-				if arg_8_1 == 1 then
+				if lerp_value == 1 then
 					count = #value
 
 					if not count then
@@ -171,279 +174,322 @@ UIUtils.get_property_description = function (arg_8_0, arg_8_1, arg_8_2)
 					end
 				end
 
-				count = 1 + math.floor(arg_8_1 / (1 / #value))
+				count = 1 + math.floor(lerp_value / (1 / #value))
+
+				local index = count
 
 				::label_8_0::
 
-				var_8_10 = value[count]
-				var_8_5 = value[1]
-				var_8_6 = value[#value]
+				display_value = value[index]
+				min_value = value[1]
+				max_value = value[#value]
 			else
-				var_8_5 = value[1]
-				var_8_6 = value[2]
-				var_8_10 = math.lerp(var_8_5, var_8_6, arg_8_1)
+				min_value = value[1]
+				max_value = value[2]
+				display_value = math.lerp(min_value, max_value, lerp_value)
 			end
 		else
-			var_8_10 = value
+			display_value = value
 		end
 
 		if value_type == "percent" then
-			var_8_10 = math.abs(100 * var_8_10)
-			var_8_5 = math.abs(100 * var_8_5)
-			var_8_6 = math.abs(100 * var_8_6)
-			str = string.format(" (%.1f%% - %.1f%%)", var_8_5, var_8_6)
+			display_value = math.abs(100 * display_value)
+			min_value = math.abs(100 * min_value)
+			max_value = math.abs(100 * max_value)
+			advanced_description = string.format(" (%.1f%% - %.1f%%)", min_value, max_value)
 		elseif value_type == "baked_percent" then
-			var_8_10 = math.abs(100 * (var_8_10 - 1))
-
-			local abs = math.abs(100 * (var_8_5 - 1))
-			local abs_2 = math.abs(100 * (var_8_6 - 1))
-
-			str = string.format(" (%.1f%% - %.1f%%)", abs, abs_2)
+			display_value = math.abs(100 * (display_value - 1))
+			min_value = math.abs(100 * (min_value - 1))
+			max_value = math.abs(100 * (max_value - 1))
+			advanced_description = string.format(" (%.1f%% - %.1f%%)", min_value, max_value)
 		end
 
-		var_8_3 = string.format(var_8_1, var_8_10)
+		text = string.format(description_text, display_value)
 	else
-		var_8_3 = var_8_1
+		text = description_text
 	end
 
-	return var_8_3, str
+	return text, advanced_description
 end
 
-UIUtils.get_trait_description = function (arg_9_0, arg_9_1)
+UIUtils.get_trait_description = function (trait_name, optional_trait_data)
 	-- function 9
-	local flag = arg_9_1 or WeaponTraits.traits[arg_9_0]
-	local var_9_1 = Localize(flag.advanced_description)
-	local description_values = flag.description_values
-	local var_9_3
+	local trait_data = not not optional_trait_data or not not WeaponTraits.traits[trait_name]
+	local description_text = Localize(trait_data.advanced_description)
+	local description_values = trait_data.description_values
+	local text
 
-	if not description_values then
-		local tbl = {}
+	if description_values then
+		local values = {}
 
 		for i = 1, #description_values do
-			local var_9_5 = description_values[i]
-			local value_type = var_9_5.value_type
-			local value = var_9_5.value
+			local data = description_values[i]
+			local value_type = data.value_type
+			local value = data.value
 
-			if not (value_type == "percent" or value_type ~= "proc_chance") then
-				tbl[#tbl + 1] = math.abs(100 * value)
+			if value_type == "percent" or value_type == "proc_chance" then
+				values[#values + 1] = math.abs(100 * value)
 			else
-				tbl[#tbl + 1] = value
+				values[#values + 1] = value
 			end
 		end
 
-		var_9_3 = string.format(var_9_1, unpack(tbl))
+		text = string.format(description_text, unpack(values))
 	else
-		var_9_3 = var_9_1
+		text = description_text
 	end
 
-	return var_9_3
+	return text
 end
 
-UIUtils.get_ui_information_from_item = function (self)
+UIUtils.get_ui_information_from_item = function (item)
 	-- function 10
-	local data = self.data
-	local item_type = data.item_type
-	local rarity = self.rarity
-	local var_10_3
-	local var_10_4
-	local var_10_5
-	local var_10_6
+	local item_data = item.data
+	local item_type = item_data.item_type
+	local rarity = item.rarity
+	local inventory_icon, display_name, description, store_icon
 
 	if item_type == "weapon_skin" then
-		local skin = self.skin
+		local skin_2 = item.skin
 
-		if not skin then
-			skin = self.key
-			skin = skin or data.key
+		if not skin_2 then
+			-- Nothing
 		end
 
-		local var_10_8 = WeaponSkins.skins[skin]
+		skin_2 = item.key
 
-		var_10_3 = var_10_8.inventory_icon
-		var_10_6 = var_10_8.store_icon
-		var_10_4 = var_10_8.display_name
-		var_10_5 = var_10_8.description
+		if not skin_2 then
+			-- Nothing
+		end
+
+		skin_2 = item_data.key
+
+		local skin = skin_2
+
+		::label_10_0::
+
+		local skin_template = WeaponSkins.skins[skin]
+
+		inventory_icon = skin_template.inventory_icon
+		store_icon = skin_template.store_icon
+		display_name = skin_template.display_name
+		description = skin_template.description
 	elseif item_type == "weapon_pose" then
-		var_10_3 = data.hud_icon
-		var_10_6 = "icons_placeholder"
-		var_10_4 = data.display_name
-		var_10_5 = data.description
-	elseif not self.skin then
-		local skin_2 = self.skin
-		local var_10_10 = WeaponSkins.skins[skin_2]
+		inventory_icon = item_data.hud_icon
+		store_icon = "icons_placeholder"
+		display_name = item_data.display_name
+		description = item_data.description
+	elseif item.skin then
+		local skin = item.skin
+		local skin_template = WeaponSkins.skins[skin]
 
-		var_10_3 = var_10_10.inventory_icon
-		var_10_6 = var_10_10.store_icon
-		var_10_4 = var_10_10.display_name
-		var_10_5 = var_10_10.description
+		inventory_icon = skin_template.inventory_icon
+		store_icon = skin_template.store_icon
+		display_name = skin_template.display_name
+		description = skin_template.description
 	elseif rarity == "default" then
-		local key = data.key
-		local var_10_12 = UISettings.default_items[key]
+		local item_key = item_data.key
+		local default_item_data = UISettings.default_items[item_key]
 
-		if not var_10_12 then
-			var_10_3 = var_10_12.inventory_icon or data.inventory_icon
-			var_10_6 = var_10_12.store_icon or data.store_icon
-			var_10_4 = var_10_12.display_name or data.display_name
-			var_10_5 = var_10_12.description or data.description
+		if default_item_data then
+			inventory_icon = not not default_item_data.inventory_icon or not not item_data.inventory_icon
+			store_icon = not not default_item_data.store_icon or not not item_data.store_icon
+			display_name = not not default_item_data.display_name or not not item_data.display_name
+			description = not not default_item_data.description or not not item_data.description
 		else
-			var_10_3 = data.inventory_icon
-			var_10_6 = data.store_icon
-			var_10_4 = data.display_name
-			var_10_5 = data.description
+			inventory_icon = item_data.inventory_icon
+			store_icon = item_data.store_icon
+			display_name = item_data.display_name
+			description = item_data.description
 		end
 	else
-		var_10_3 = data.inventory_icon
-		var_10_6 = data.store_icon
-		var_10_4 = data.display_name
-		var_10_5 = data.description
+		inventory_icon = item_data.inventory_icon
+		store_icon = item_data.store_icon
+		display_name = item_data.display_name
+		description = item_data.description
 	end
 
-	return var_10_3, var_10_4, var_10_5, var_10_6
+	return inventory_icon, display_name, description, store_icon
 end
 
-UIUtils.presentable_hero_power_level = function (arg_11_0)
+UIUtils.presentable_hero_power_level = function (power_level)
 	-- function 11
-	return math.max(0, math.floor(arg_11_0 - PowerLevelFromLevelSettings.starting_power_level))
+	return math.max(0, math.floor(power_level - PowerLevelFromLevelSettings.starting_power_level))
 end
 
-UIUtils.presentable_hero_power_level_weaves = function (arg_12_0)
+UIUtils.presentable_hero_power_level_weaves = function (power_level)
 	-- function 12
-	return math.max(0, math.floor(arg_12_0 - PowerLevelFromMagicLevel.starting_power_level))
+	return math.max(0, math.floor(power_level - PowerLevelFromMagicLevel.starting_power_level))
 end
 
-UIUtils.get_item_tooltip_value = function (arg_13_0, arg_13_1, arg_13_2)
+UIUtils.get_item_tooltip_value = function (unit, item, stat_descriptor)
 	-- function 13
-	local format_type = arg_13_2.format_type
-	local format_function_name = arg_13_2.format_function_name
-	local var_13_2 = ItemTooltipHelper[format_function_name]
-	local tbl = {}
+	local format_type = stat_descriptor.format_type
+	local format_function_name = stat_descriptor.format_function_name
+	local format_function = ItemTooltipHelper[format_function_name]
+	local values_table = {}
 
-	if not arg_13_2.detailed then
-		ItemTooltipHelper.parse_weapon_chain(tbl, arg_13_0, arg_13_1, arg_13_2, var_13_2)
+	if stat_descriptor.detailed then
+		ItemTooltipHelper.parse_weapon_chain(values_table, unit, item, stat_descriptor, format_function)
 	else
-		local get_action = ItemTooltipHelper.get_action(arg_13_0, arg_13_1, arg_13_2)
+		local action = ItemTooltipHelper.get_action(unit, item, stat_descriptor)
 
-		var_13_2(tbl, get_action, arg_13_0, arg_13_1, arg_13_2)
+		format_function(values_table, action, unit, item, stat_descriptor)
 	end
 
-	return ItemTooltipHelper.format_return_string(format_type, tbl)
+	return ItemTooltipHelper.format_return_string(format_type, values_table)
 end
 
-UIUtils.get_hero_statistics_by_template = function (arg_14_0)
+UIUtils.get_hero_statistics_by_template = function (template)
 	-- function 14
-	local tbl = {}
-	local tbl_2 = {}
+	local layout = {}
+	local params = {}
 
-	for i, v in ipairs(arg_14_0) do
-		local type = v.type
-		local display_name = v.display_name
-		local description_name = v.description_name
-		local var_14_5
+	for index, entry in ipairs(template) do
+		local entry_type = entry.type
+		local display_name = entry.display_name
+		local description_name = entry.description_name
+		local value
 
-		if type == "title" then
-			display_name = v.display_name
-		elseif type == "entry" then
-			display_name = v.display_name
-			var_14_5 = v.generate_value(tbl_2)
-			description_name = v.description_name or v.generate_description(tbl_2)
+		if entry_type == "title" then
+			display_name = entry.display_name
+		elseif entry_type == "entry" then
+			display_name = entry.display_name
+			value = entry.generate_value(params)
+			description_name = not not entry.description_name or not not entry.generate_description(params)
 		end
 
-		if v.value_type == "percent" then
-			var_14_5 = tostring(var_14_5) .. "%"
+		if entry.value_type == "percent" then
+			value = tostring(value) .. "%"
 		end
 
-		tbl[i] = {
+		layout[index] = {
 			display_name = display_name,
 			description_name = description_name,
-			value = var_14_5,
-			value_text = tostring(var_14_5),
-			type = type
+			value = value,
+			value_text = tostring(value),
+			type = entry_type
 		}
 	end
 
-	return tbl
+	return layout
 end
 
-UIUtils.get_text_height = function (self, arg_15_1, arg_15_2, arg_15_3)
+UIUtils.get_text_height = function (ui_renderer, size, text_style, text)
 	-- function 15
-	local var_15_0, var_15_1 = UIFontByResolution(arg_15_2)
+	local font, scaled_font_size = UIFontByResolution(text_style)
 
-	if not arg_15_2.localize then
-		arg_15_3 = Localize(arg_15_3)
+	if text_style.localize then
+		text = Localize(text)
 	end
 
-	if not arg_15_2.upper_case then
-		arg_15_3 = TextToUpper(arg_15_3)
+	if text_style.upper_case then
+		text = TextToUpper(text)
 	end
 
-	local var_15_2, var_15_3, var_15_4 = UIGetFontHeight(self.gui, arg_15_2.font_type, var_15_1)
-	local word_wrap = UIRenderer.word_wrap(self, arg_15_3, var_15_0[1], var_15_1, arg_15_1[1])
-	local num = 1
-	local count = #word_wrap
-	local min = math.min(#word_wrap - (num - 1), count)
+	local font_height, font_min, font_max = UIGetFontHeight(ui_renderer.gui, text_style.font_type, scaled_font_size)
+	local texts = UIRenderer.word_wrap(ui_renderer, text, font[1], scaled_font_size, size[1])
+	local text_start_index = 1
+	local max_texts = #texts
+	local num_texts = math.min(#texts - (text_start_index - 1), max_texts)
 	local inv_scale = RESOLUTION_LOOKUP.inv_scale
+	local full_font_height = (font_max + math.abs(font_min)) * inv_scale * num_texts
 
-	return (var_15_4 + math.abs(var_15_3)) * inv_scale * min, min
+	return full_font_height, num_texts
 end
 
-UIUtils.get_text_width = function (arg_16_0, arg_16_1, arg_16_2)
+UIUtils.get_text_width = function (ui_renderer, text_style, text)
 	-- function 16
-	if not arg_16_1.localize then
-		arg_16_2 = Localize(arg_16_2)
+	if text_style.localize then
+		text = Localize(text)
 	end
 
-	if not arg_16_1.upper_case then
-		arg_16_2 = TextToUpper(arg_16_2)
+	if text_style.upper_case then
+		text = TextToUpper(text)
 	end
 
-	local var_16_0, var_16_1 = UIFontByResolution(arg_16_1)
+	local font, scaled_font_size = UIFontByResolution(text_style)
+	local text_width = UIRenderer.text_size(ui_renderer, text, font[1], scaled_font_size)
 
-	return (UIRenderer.text_size(arg_16_0, arg_16_2, var_16_0[1], var_16_1))
+	return text_width
 end
 
-UIUtils.enable_button = function (self, arg_17_1, arg_17_2)
+UIUtils.enable_button = function (widget, enable, hotspot_name)
 	-- function 17
-	local content = self.content
-	local var_17_1 = content[arg_17_2]
+	local content = widget.content
+	local var_17_0 = content[hotspot_name]
 
-	if not var_17_1 then
-		var_17_1 = content.button_hotspot
-		var_17_1 = var_17_1 or content.hotspot
+	if not var_17_0 then
+		-- Nothing
 	end
 
-	var_17_1.disable_button = not arg_17_1
+	var_17_0 = content.button_hotspot
+
+	if not var_17_0 then
+		-- Nothing
+	end
+
+	var_17_0 = content.hotspot
+
+	local hotspot = var_17_0
+
+	::label_17_0::
+
+	hotspot.disable_button = not enable
 end
 
-UIUtils.is_button_enabled = function (self, arg_18_1, arg_18_2)
+UIUtils.is_button_enabled = function (widget, enable, hotspot_name)
 	-- function 18
-	local content = self.content
-	local var_18_1 = content[arg_18_2]
+	local content = widget.content
+	local var_18_0 = content[hotspot_name]
 
-	if not var_18_1 then
-		var_18_1 = content.button_hotspot
-		var_18_1 = var_18_1 or content.hotspot
+	if not var_18_0 then
+		-- Nothing
 	end
 
-	return not var_18_1.disable_button
+	var_18_0 = content.button_hotspot
+
+	if not var_18_0 then
+		-- Nothing
+	end
+
+	var_18_0 = content.hotspot
+
+	local hotspot = var_18_0
+
+	::label_18_0::
+
+	return not hotspot.disable_button
 end
 
-UIUtils.is_button_pressed = function (self, arg_19_1, arg_19_2)
+UIUtils.is_button_pressed = function (widget, hotspot_name, keyboard_input)
 	-- function 19
-	if not self then
-		local content = self.content
-		local var_19_1 = content[arg_19_1]
+	if widget then
+		local content = widget.content
+		local var_19_0 = content[hotspot_name]
 
-		if not var_19_1 then
-			var_19_1 = content.button_hotspot
-			var_19_1 = var_19_1 or content.hotspot
+		if not var_19_0 then
+			-- Nothing
 		end
 
-		if not var_19_1.on_release then
-			var_19_1.on_release = false
+		var_19_0 = content.button_hotspot
+
+		if not var_19_0 then
+			-- Nothing
+		end
+
+		var_19_0 = content.hotspot
+
+		local hotspot = var_19_0
+
+		::label_19_0::
+
+		if hotspot.on_release then
+			hotspot.on_release = false
 
 			return true
-		elseif not var_19_1.is_selected and not arg_19_2 then
-			var_19_1.is_selected = false
+		elseif hotspot.is_selected and keyboard_input then
+			hotspot.is_selected = false
 
 			return true
 		end
@@ -452,23 +498,34 @@ UIUtils.is_button_pressed = function (self, arg_19_1, arg_19_2)
 	return false
 end
 
-UIUtils.is_right_button_pressed = function (self, arg_20_1, arg_20_2)
+UIUtils.is_right_button_pressed = function (widget, hotspot_name, keyboard_input)
 	-- function 20
-	if not self then
-		local content = self.content
-		local var_20_1 = content[arg_20_1]
+	if widget then
+		local content = widget.content
+		local var_20_0 = content[hotspot_name]
 
-		if not var_20_1 then
-			var_20_1 = content.button_hotspot
-			var_20_1 = var_20_1 or content.hotspot
+		if not var_20_0 then
+			-- Nothing
 		end
 
-		if not var_20_1.on_right_click then
-			var_20_1.on_right_click = false
+		var_20_0 = content.button_hotspot
+
+		if not var_20_0 then
+			-- Nothing
+		end
+
+		var_20_0 = content.hotspot
+
+		local hotspot = var_20_0
+
+		::label_20_0::
+
+		if hotspot.on_right_click then
+			hotspot.on_right_click = false
 
 			return true
-		elseif not var_20_1.is_selected and not arg_20_2 then
-			var_20_1.is_selected = false
+		elseif hotspot.is_selected and keyboard_input then
+			hotspot.is_selected = false
 
 			return true
 		end
@@ -477,18 +534,29 @@ UIUtils.is_right_button_pressed = function (self, arg_20_1, arg_20_2)
 	return false
 end
 
-UIUtils.is_button_held = function (self, arg_21_1)
+UIUtils.is_button_held = function (widget, hotspot_name)
 	-- function 21
-	if not self then
-		local content = self.content
-		local var_21_1 = content[arg_21_1]
+	if widget then
+		local content = widget.content
+		local var_21_0 = content[hotspot_name]
 
-		if not var_21_1 then
-			var_21_1 = content.button_hotspot
-			var_21_1 = var_21_1 or content.hotspot
+		if not var_21_0 then
+			-- Nothing
 		end
 
-		if not var_21_1.is_held then
+		var_21_0 = content.button_hotspot
+
+		if not var_21_0 then
+			-- Nothing
+		end
+
+		var_21_0 = content.hotspot
+
+		local hotspot = var_21_0
+
+		::label_21_0::
+
+		if hotspot.is_held then
 			return true
 		end
 	end
@@ -496,305 +564,419 @@ UIUtils.is_button_held = function (self, arg_21_1)
 	return false
 end
 
-UIUtils.is_button_hover_enter = function (self, arg_22_1)
+UIUtils.is_button_hover_enter = function (widget, hotspot_name)
 	-- function 22
-	if not self then
-		local content = self.content
-		local var_22_1 = content[arg_22_1]
+	if widget then
+		local content = widget.content
+		local var_22_0 = content[hotspot_name]
 
-		if not var_22_1 then
-			var_22_1 = content.button_hotspot
-			var_22_1 = var_22_1 or content.hotspot
+		if not var_22_0 then
+			-- Nothing
 		end
 
-		return var_22_1.on_hover_enter
+		var_22_0 = content.button_hotspot
+
+		if not var_22_0 then
+			-- Nothing
+		end
+
+		var_22_0 = content.hotspot
+
+		local hotspot = var_22_0
+
+		::label_22_0::
+
+		return hotspot.on_hover_enter
 	end
 
 	return false
 end
 
-UIUtils.is_button_hover = function (self, arg_23_1)
+UIUtils.is_button_hover = function (widget, hotspot_name)
 	-- function 23
-	if not self then
-		local content = self.content
-		local var_23_1 = content[arg_23_1]
+	if widget then
+		local content = widget.content
+		local var_23_0 = content[hotspot_name]
 
-		if not var_23_1 then
-			var_23_1 = content.button_hotspot
-			var_23_1 = var_23_1 or content.hotspot
+		if not var_23_0 then
+			-- Nothing
 		end
 
-		return var_23_1.is_hover
+		var_23_0 = content.button_hotspot
+
+		if not var_23_0 then
+			-- Nothing
+		end
+
+		var_23_0 = content.hotspot
+
+		local hotspot = var_23_0
+
+		::label_23_0::
+
+		return hotspot.is_hover
 	end
 
 	return false
 end
 
-UIUtils.is_button_selected = function (self, arg_24_1)
+UIUtils.is_button_selected = function (widget, hotspot_name)
 	-- function 24
-	if not self then
-		local content = self.content
-		local var_24_1 = content[arg_24_1]
+	if widget then
+		local content = widget.content
+		local var_24_0 = content[hotspot_name]
 
-		if not var_24_1 then
-			var_24_1 = content.button_hotspot
-			var_24_1 = var_24_1 or content.hotspot
+		if not var_24_0 then
+			-- Nothing
 		end
 
-		return var_24_1.is_selected
+		var_24_0 = content.button_hotspot
+
+		if not var_24_0 then
+			-- Nothing
+		end
+
+		var_24_0 = content.hotspot
+
+		local hotspot = var_24_0
+
+		::label_24_0::
+
+		return hotspot.is_selected
 	end
 
 	return false
 end
 
-UIUtils.is_left_button_released = function (self, arg_25_1)
+UIUtils.is_left_button_released = function (widget, hotspot_name)
 	-- function 25
-	if not self then
-		local content = self.content
-		local var_25_1 = content[arg_25_1]
+	if widget then
+		local content = widget.content
+		local var_25_0 = content[hotspot_name]
 
-		if not var_25_1 then
-			var_25_1 = content.button_hotspot
-			var_25_1 = var_25_1 or content.hotspot
+		if not var_25_0 then
+			-- Nothing
 		end
 
-		return var_25_1.on_left_release
+		var_25_0 = content.button_hotspot
+
+		if not var_25_0 then
+			-- Nothing
+		end
+
+		var_25_0 = content.hotspot
+
+		local hotspot = var_25_0
+
+		::label_25_0::
+
+		return hotspot.on_left_release
 	end
 
 	return false
 end
 
-UIUtils.animate_value = function (arg_26_0, arg_26_1, arg_26_2)
+UIUtils.animate_value = function (x, dx, dir)
 	-- function 26
-	if not arg_26_2 then
-		return math.min(arg_26_0 + arg_26_1, 1)
+	if dir then
+		return math.min(x + dx, 1)
 	else
-		return math.max(arg_26_0 - arg_26_1, 0)
+		return math.max(x - dx, 0)
 	end
 end
 
-UIUtils.comma_value = function (arg_27_0, arg_27_1)
+UIUtils.comma_value = function (amount, comma)
 	-- function 27
-	local var_27_0 = arg_27_0
-	local var_27_1
-	local str = "%1" .. (arg_27_1 or " ") .. "%2"
+	local formatted, k = amount
+	local replacement = "%1" .. (not not comma or not not " ") .. "%2"
 
 	repeat
-		local var_27_3
+		formatted, k = string.gsub(formatted, "^(-?%d+)(%d%d%d)", replacement)
+	until k == 0
 
-		var_27_0, var_27_3 = string.gsub(var_27_0, "^(-?%d+)(%d%d%d)", str)
-	until var_27_3 == 0
-
-	return var_27_0
+	return formatted
 end
 
-UIUtils.get_portrait_image_by_profile_index = function (arg_28_0, arg_28_1)
+UIUtils.get_portrait_image_by_profile_index = function (profile_index, career_index)
 	-- function 28
-	return SPProfiles[arg_28_0].careers[arg_28_1].portrait_image
+	local profile_data = SPProfiles[profile_index]
+	local careers = profile_data.careers
+	local career_settings = careers[career_index]
+	local portrait_image = career_settings.portrait_image
+
+	return portrait_image
 end
 
-UIUtils.create_widgets = function (arg_29_0, arg_29_1, arg_29_2)
+UIUtils.create_widgets = function (widget_definitions, widgets, widgets_by_name)
 	-- function 29
-	if arg_29_1 == nil then
-		arg_29_1 = {}
+	if widgets == nil then
+		widgets = {}
 	end
 
-	if arg_29_2 == nil then
-		arg_29_2 = {}
+	if widgets_by_name == nil then
+		widgets_by_name = {}
 	end
 
-	for k, v in pairs(arg_29_0) do
-		local var_29_0 = UIWidget.init(v)
+	for name, widget_definition in pairs(widget_definitions) do
+		local widget = UIWidget.init(widget_definition)
 
-		if not arg_29_1 then
-			arg_29_1[#arg_29_1 + 1] = var_29_0
+		if widgets then
+			widgets[#widgets + 1] = widget
 		end
 
-		if not arg_29_2 then
-			arg_29_2[k] = var_29_0
+		if widgets_by_name then
+			widgets_by_name[name] = widget
 		end
 	end
 
-	return arg_29_1, arg_29_2
+	return widgets, widgets_by_name
 end
 
-UIUtils.destroy_widgets = function (arg_30_0, arg_30_1)
+UIUtils.destroy_widgets = function (ui_renderer, widget_list)
 	-- function 30
 	local destroy = UIWidget.destroy
 
-	for k, v in pairs(arg_30_1) do
-		destroy(arg_30_0, v)
+	for _, widget in pairs(widget_list) do
+		destroy(ui_renderer, widget)
 	end
 end
 
-UIUtils.mark_dirty = function (arg_31_0)
+UIUtils.mark_dirty = function (widget_list)
 	-- function 31
-	for k, v in pairs(arg_31_0) do
-		v.element.dirty = true
+	for _, widget in pairs(widget_list) do
+		widget.element.dirty = true
 	end
 end
 
-UIUtils.align_box_inplace = function (self, arg_32_1, arg_32_2, arg_32_3)
+UIUtils.align_box_inplace = function (ui_style, position, size, child_size)
 	-- function 32
-	local horizontal_alignment = self.horizontal_alignment
+	local ha = ui_style.horizontal_alignment
 
-	if horizontal_alignment == "right" then
-		arg_32_1[1] = arg_32_1[1] + arg_32_2[1] - arg_32_3[1]
-	elseif horizontal_alignment == "center" then
-		arg_32_1[1] = arg_32_1[1] + 0.5 * (arg_32_2[1] - arg_32_3[1])
+	if ha == "right" then
+		position[1] = position[1] + size[1] - child_size[1]
+	elseif ha == "center" then
+		position[1] = position[1] + 0.5 * (size[1] - child_size[1])
 	end
 
-	local vertical_alignment = self.vertical_alignment
+	local va = ui_style.vertical_alignment
 
-	if vertical_alignment == "top" then
-		arg_32_1[2] = arg_32_1[2] + arg_32_2[2] - arg_32_3[2]
-	elseif vertical_alignment == "center" then
-		arg_32_1[2] = arg_32_1[2] + 0.5 * (arg_32_2[2] - arg_32_3[2])
+	if va == "top" then
+		position[2] = position[2] + size[2] - child_size[2]
+	elseif va == "center" then
+		position[2] = position[2] + 0.5 * (size[2] - child_size[2])
 	end
 end
 
-UIUtils.format_time = function (arg_33_0)
+UIUtils.format_time = function (t)
 	-- function 33
-	local num = arg_33_0 % 60
-	local num_2 = (arg_33_0 - num) / 60
+	local sec = t % 60
+	local min = (t - sec) / 60
 
-	return string.format("%02d:%02d", num_2, num)
+	return string.format("%02d:%02d", min, sec)
 end
 
-UIUtils.format_time_long = function (arg_34_0)
+UIUtils.format_time_long = function (t)
 	-- function 34
 	local floor = math.floor
-	local var_34_1 = floor(arg_34_0 / 86400)
-	local var_34_2 = floor(arg_34_0 / 3600 % 24)
-	local num = floor(arg_34_0 / 60) % 60
-	local num_2 = arg_34_0 % 60
+	local days = floor(t / 86400)
+	local hours = floor(t / 3600 % 24)
+	local minutes = floor(t / 60) % 60
+	local seconds = t % 60
 
-	return string.format("%02d:%02d:%02d:%02d", var_34_1, var_34_2, num, num_2)
+	return string.format("%02d:%02d:%02d:%02d", days, hours, minutes, seconds)
 end
 
-UIUtils.format_duration = function (arg_35_0, arg_35_1)
+UIUtils.format_duration = function (t, done_string)
 	-- function 35
-	if arg_35_0 > 172800 then
-		return string.format(Localize("datetime_days") .. ", " .. Localize("datetime_hours_short"), arg_35_0 / 86400, arg_35_0 / 3600 % 24)
-	elseif arg_35_0 > 7200 then
-		return string.format(Localize("datetime_hours_short") .. ", " .. Localize("datetime_minutes_short"), arg_35_0 / 3600, arg_35_0 / 60 % 60)
-	elseif arg_35_0 > 120 then
-		return string.format(Localize("datetime_minutes_short") .. ", " .. Localize("datetime_seconds_short"), arg_35_0 / 60, arg_35_0 % 60)
-	elseif arg_35_0 > 0 then
-		return string.format(Localize("datetime_seconds_short"), arg_35_0)
+	if t > 172800 then
+		return string.format(Localize("datetime_days") .. ", " .. Localize("datetime_hours_short"), t / 86400, t / 3600 % 24)
+	elseif t > 7200 then
+		return string.format(Localize("datetime_hours_short") .. ", " .. Localize("datetime_minutes_short"), t / 3600, t / 60 % 60)
+	elseif t > 120 then
+		return string.format(Localize("datetime_minutes_short") .. ", " .. Localize("datetime_seconds_short"), t / 60, t % 60)
+	elseif t > 0 then
+		return string.format(Localize("datetime_seconds_short"), t)
 	else
-		return arg_35_1 or string.format(Localize("datetime_seconds_short"), 0)
+		return not not done_string or not not string.format(Localize("datetime_seconds_short"), 0)
 	end
 end
 
-UIUtils.get_color_for_consumable_item = function (arg_36_0)
+UIUtils.get_color_for_consumable_item = function (item_key)
 	-- function 36
-	local default = UISettings.inventory_consumable_slot_colors.default
-	local var_36_1
+	local default_color = UISettings.inventory_consumable_slot_colors.default
+	local var_36_0
 
-	if not arg_36_0 then
-		var_36_1 = UISettings.inventory_consumable_slot_colors[arg_36_0]
+	if item_key then
+		var_36_0 = UISettings.inventory_consumable_slot_colors[item_key]
 
-		if not var_36_1 then
+		if not var_36_0 then
 			-- Nothing
 		end
 	end
 
-	var_36_1 = default
+	var_36_0 = default_color
 
 	::label_36_0::
 
-	return var_36_1
+	return var_36_0
 end
 
-UIUtils.sort_items_power_level_ascending = function (self, arg_37_1)
+UIUtils.sort_items_power_level_ascending = function (item_1, item_2)
 	-- function 37
-	local power_level = self.power_level
+	local power_level = item_1.power_level
 
-	power_level = power_level or math.huge
-
-	local power_level_2 = arg_37_1.power_level
-
-	power_level_2 = power_level_2 or math.huge
-
-	if power_level == power_level_2 then
-		return UIUtils.sort_items_rarity_ascending(self, arg_37_1)
+	if not power_level then
+		-- Nothing
 	end
 
-	return power_level < power_level_2
+	power_level = math.huge
+
+	local item_1_power_level = power_level
+
+	::label_37_0::
+
+	local power_level_2 = item_2.power_level
+
+	if not power_level_2 then
+		-- Nothing
+	end
+
+	power_level_2 = math.huge
+
+	local item_2_power_level = power_level_2
+
+	::label_37_1::
+
+	if item_1_power_level == item_2_power_level then
+		return UIUtils.sort_items_rarity_ascending(item_1, item_2)
+	end
+
+	return item_1_power_level < item_2_power_level
 end
 
-UIUtils.sort_items_power_level_descending = function (self, arg_38_1)
+UIUtils.sort_items_power_level_descending = function (item_1, item_2)
 	-- function 38
-	local power_level = self.power_level
+	local power_level = item_1.power_level
 
-	power_level = power_level or math.huge
-
-	local power_level_2 = arg_38_1.power_level
-
-	power_level_2 = power_level_2 or math.huge
-
-	if power_level == power_level_2 then
-		return UIUtils.sort_items_rarity_descending(self, arg_38_1)
+	if not power_level then
+		-- Nothing
 	end
 
-	return power_level_2 < power_level
+	power_level = math.huge
+
+	local item_1_power_level = power_level
+
+	::label_38_0::
+
+	local power_level_2 = item_2.power_level
+
+	if not power_level_2 then
+		-- Nothing
+	end
+
+	power_level_2 = math.huge
+
+	local item_2_power_level = power_level_2
+
+	::label_38_1::
+
+	if item_1_power_level == item_2_power_level then
+		return UIUtils.sort_items_rarity_descending(item_1, item_2)
+	end
+
+	return item_2_power_level < item_1_power_level
 end
 
-UIUtils.sort_items_rarity_ascending = function (self, arg_39_1)
+UIUtils.sort_items_rarity_ascending = function (item_1, item_2)
 	-- function 39
-	local data = self.data
-	local data_2 = arg_39_1.data
-	local rarity = self.rarity
+	local item_data_1 = item_1.data
+	local item_data_2 = item_2.data
+	local rarity = item_1.rarity
 
-	rarity = rarity or data.rarity
+	if not rarity then
+		-- Nothing
+	end
 
-	local rarity_2 = arg_39_1.rarity
+	rarity = item_data_1.rarity
 
-	rarity_2 = rarity_2 or data_2.rarity
+	local item_1_rarity = rarity
+
+	::label_39_0::
+
+	local rarity_2 = item_2.rarity
+
+	if not rarity_2 then
+		-- Nothing
+	end
+
+	rarity_2 = item_data_2.rarity
+
+	local item_2_rarity = rarity_2
+
+	::label_39_1::
 
 	local item_rarity_order = UISettings.item_rarity_order
+	local item_1_rarity_order = item_rarity_order[item_1_rarity]
+	local item_2_rarity_order = item_rarity_order[item_2_rarity]
 
-	return item_rarity_order[rarity] > item_rarity_order[rarity_2]
+	return item_2_rarity_order < item_1_rarity_order
 end
 
-UIUtils.sort_items_rarity_descending = function (self, arg_40_1)
+UIUtils.sort_items_rarity_descending = function (item_1, item_2)
 	-- function 40
-	local data = self.data
-	local data_2 = arg_40_1.data
-	local rarity = self.rarity
+	local item_data_1 = item_1.data
+	local item_data_2 = item_2.data
+	local rarity = item_1.rarity
 
-	rarity = rarity or data.rarity
+	if not rarity then
+		-- Nothing
+	end
 
-	local rarity_2 = arg_40_1.rarity
+	rarity = item_data_1.rarity
 
-	rarity_2 = rarity_2 or data_2.rarity
+	local item_1_rarity = rarity
+
+	::label_40_0::
+
+	local rarity_2 = item_2.rarity
+
+	if not rarity_2 then
+		-- Nothing
+	end
+
+	rarity_2 = item_data_2.rarity
+
+	local item_2_rarity = rarity_2
+
+	::label_40_1::
 
 	local item_rarity_order = UISettings.item_rarity_order
+	local item_1_rarity_order = item_rarity_order[item_1_rarity]
+	local item_2_rarity_order = item_rarity_order[item_2_rarity]
 
-	return item_rarity_order[rarity] < item_rarity_order[rarity_2]
+	return item_1_rarity_order < item_2_rarity_order
 end
 
-UIUtils.set_widget_alpha = function (self, arg_41_1, arg_41_2)
+UIUtils.set_widget_alpha = function (widget, alpha, optional_style_element)
 	-- function 41
-	if not self then
+	if not widget then
 		return
 	end
 
-	local style = self.style
+	local style = widget.style
 
-	if not arg_41_2 then
-		if not style[arg_41_2].color then
-			style[arg_41_2].color[1] = arg_41_1
-		elseif not style[arg_41_2].text_color then
-			style[arg_41_2].text_color[1] = arg_41_1
+	if optional_style_element then
+		if style[optional_style_element].color then
+			style[optional_style_element].color[1] = alpha
+		elseif style[optional_style_element].text_color then
+			style[optional_style_element].text_color[1] = alpha
 		end
 	else
-		for k, v in pairs(style) do
-			if not v.color then
-				v.color[1] = arg_41_1
-			elseif not v.text_color then
-				v.text_color[1] = arg_41_1
+		for _, style_data in pairs(style) do
+			if style_data.color then
+				style_data.color[1] = alpha
+			elseif style_data.text_color then
+				style_data.text_color[1] = alpha
 			end
 		end
 	end

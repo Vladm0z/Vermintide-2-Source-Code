@@ -2,27 +2,27 @@
 
 require("scripts/ui/reward_popup/reward_popup_ui")
 
-local var_0_0 = local_require("scripts/ui/views/hero_view/windows/definitions/hero_window_gotwf_overview_definitions")
-local scenegraph_definition = var_0_0.scenegraph_definition
-local widgets = var_0_0.widgets
-local lock_widgets = var_0_0.lock_widgets
-local bottom_widgets = var_0_0.bottom_widgets
-local background_widgets = var_0_0.background_widgets
-local viewport_widgets = var_0_0.viewport_widgets
-local create_item_definition_func = var_0_0.create_item_definition_func
-local create_simple_item = var_0_0.create_simple_item
-local create_claim_button = var_0_0.create_claim_button
-local animation_definitions = var_0_0.animation_definitions
-local gotwf_item_size = var_0_0.gotwf_item_size
-local icon_scale = var_0_0.icon_scale
-local generic_input_actions = var_0_0.generic_input_actions
-local str = "gui/1080p/single_textures/generic/transparent_placeholder_texture"
-local num = 7
-local tbl = {
+local definitions = local_require("scripts/ui/views/hero_view/windows/definitions/hero_window_gotwf_overview_definitions")
+local scenegraph_definition = definitions.scenegraph_definition
+local widget_definitions = definitions.widgets
+local lock_widget_definitions = definitions.lock_widgets
+local bottom_widget_definitions = definitions.bottom_widgets
+local background_widget_definitions = definitions.background_widgets
+local viewport_widget_definitions = definitions.viewport_widgets
+local create_item_definition_func = definitions.create_item_definition_func
+local create_simple_item = definitions.create_simple_item
+local create_claim_button = definitions.create_claim_button
+local animation_definitions = definitions.animation_definitions
+local gotwf_item_size = definitions.gotwf_item_size
+local icon_scale = definitions.icon_scale
+local generic_input_actions = definitions.generic_input_actions
+local PRODUCT_PLACEHOLDER_TEXTURE_PATH = "gui/1080p/single_textures/generic/transparent_placeholder_texture"
+local NUM_VISIBLE_ITEMS = 7
+local ITEM_SIZE = {
 	260 * icon_scale,
 	220 * icon_scale
 }
-local tbl_2 = {
+local item_backgrounds_by_rarirty = {
 	common = "store_thumbnail_bg_common",
 	promo = "store_thumbnail_bg_promo",
 	plentiful = "store_thumbnail_bg_plentiful",
@@ -35,17 +35,17 @@ local tbl_2 = {
 HeroWindowGotwfOverview = class(HeroWindowGotwfOverview)
 HeroWindowGotwfOverview.NAME = "HeroWindowGotwfOverview"
 
-HeroWindowGotwfOverview.on_enter = function (self, arg_1_1, arg_1_2)
+HeroWindowGotwfOverview.on_enter = function (self, params, offset)
 	-- function 1
 	print("[HeroViewWindow] Enter Substate HeroWindowGotwfOverview")
 
-	local ingame_ui_context = arg_1_1.ingame_ui_context
+	local ingame_ui_context = params.ingame_ui_context
 
-	self._params = arg_1_1
-	self._parent = arg_1_1.parent
+	self._params = params
+	self._parent = params.parent
 	self._ui_renderer = ingame_ui_context.ui_renderer
 	self._ui_top_renderer = ingame_ui_context.ui_top_renderer
-	self._wwise_world = arg_1_1.wwise_world
+	self._wwise_world = params.wwise_world
 	self._render_settings = {
 		snap_pixel_positions = false
 	}
@@ -65,32 +65,35 @@ HeroWindowGotwfOverview.on_enter = function (self, arg_1_1, arg_1_2)
 	self:_create_background_ui_elements()
 	self:_sync_backend_gotwf()
 
-	local flag = true
+	local skip_mark_all_as_seen = true
 
-	self._parent:change_generic_actions(generic_input_actions.default, flag)
+	self._parent:change_generic_actions(generic_input_actions.default, skip_mark_all_as_seen)
 	self:_play_sound("Play_amb_gotwf_loop")
 end
 
-HeroWindowGotwfOverview._reset_current_item = function (arg_2_0)
+HeroWindowGotwfOverview._reset_current_item = function (self)
 	-- function 2
-	arg_2_0._params.selected_item = nil
-	arg_2_0._params.selected_item_index = nil
-	arg_2_0._params.selected_item_claimed = nil
-	arg_2_0._params.selected_item_already_owned = nil
+	self._params.selected_item = nil
+	self._params.selected_item_index = nil
+	self._params.selected_item_claimed = nil
+	self._params.selected_item_already_owned = nil
 end
 
 HeroWindowGotwfOverview._sync_backend_gotwf = function (self)
 	-- function 3
 	self._synced = false
 
-	Managers.backend:get_interface("peddler"):refresh_login_rewards(callback(self, "gotwf_data_cb"))
+	local backend_manger = Managers.backend
+	local backend_interface_peddler = backend_manger:get_interface("peddler")
+
+	backend_interface_peddler:refresh_login_rewards(callback(self, "gotwf_data_cb"))
 end
 
-HeroWindowGotwfOverview.gotwf_data_cb = function (self, arg_4_1)
+HeroWindowGotwfOverview.gotwf_data_cb = function (self, login_rewards)
 	-- function 4
-	self._login_rewards = arg_4_1
+	self._login_rewards = login_rewards
 
-	if arg_4_1.event_type ~= "calendar" then
+	if login_rewards.event_type ~= "calendar" then
 		self._popup_id = Managers.popup:queue_popup(Localize("event_gotfw_available_soon"), Localize("event_gotfw_name"), "go_back", Localize("menu_ok"))
 
 		return
@@ -99,36 +102,36 @@ HeroWindowGotwfOverview.gotwf_data_cb = function (self, arg_4_1)
 	self._synced = true
 end
 
-HeroWindowGotwfOverview._start_transition_animation = function (self, arg_5_1)
+HeroWindowGotwfOverview._start_transition_animation = function (self, animation_name)
 	-- function 5
-	local tbl = {
+	local params = {
 		parent = self._parent,
 		render_settings = self._render_settings,
 		num_items = self._login_rewards.total_rewards
 	}
-	local _widgets_by_name = self._widgets_by_name
-	local start_animation = self._ui_animator:start_animation(arg_5_1, _widgets_by_name, scenegraph_definition, tbl)
+	local widgets = self._widgets_by_name
+	local anim_id = self._ui_animator:start_animation(animation_name, widgets, scenegraph_definition, params)
 
-	self._animations[arg_5_1] = start_animation
+	self._animations[animation_name] = anim_id
 end
 
-HeroWindowGotwfOverview._start_item_rotation_animation = function (self, arg_6_1, arg_6_2)
+HeroWindowGotwfOverview._start_item_rotation_animation = function (self, item_widget, reward_index)
 	-- function 6
-	local tbl = {
+	local params = {
 		parent = self._parent,
 		render_settings = self._render_settings,
-		item_widget = arg_6_1,
-		reward_index = arg_6_2
+		item_widget = item_widget,
+		reward_index = reward_index
 	}
-	local str = "item_rotation"
-	local _widgets_by_name = self._widgets_by_name
-	local start_animation = self._ui_animator:start_animation(str, _widgets_by_name, scenegraph_definition, tbl)
+	local animation_name = "item_rotation"
+	local widgets = self._widgets_by_name
+	local anim_id = self._ui_animator:start_animation(animation_name, widgets, scenegraph_definition, params)
 
-	self._animations[str] = start_animation
+	self._animations[animation_name] = anim_id
 
 	self._parent:block_input()
 
-	self._ui_animations_callbacks[str] = function ()
+	self._ui_animations_callbacks[animation_name] = function ()
 		-- function 7
 		self._parent:unblock_input()
 	end
@@ -139,81 +142,82 @@ HeroWindowGotwfOverview._init_scenegraph = function (self)
 	self._ui_scenegraph = UISceneGraph.init_scenegraph(scenegraph_definition)
 end
 
-HeroWindowGotwfOverview._create_background_ui_elements = function (self, arg_9_1)
+HeroWindowGotwfOverview._create_background_ui_elements = function (self, params)
 	-- function 9
-	local tbl = {}
-	local tbl_2 = {}
+	local background_widgets = {}
+	local widgets_by_name = {}
 
-	for k, v in pairs(background_widgets) do
-		local var_9_2 = UIWidget.init(v)
+	for name, widget_definition in pairs(background_widget_definitions) do
+		local widget = UIWidget.init(widget_definition)
 
-		tbl_2[k] = var_9_2
-		tbl[#tbl + 1] = var_9_2
+		widgets_by_name[name] = widget
+		background_widgets[#background_widgets + 1] = widget
 	end
 
-	self._background_widgets = tbl
-	self._widgets_by_name = tbl_2
+	self._background_widgets = background_widgets
+	self._widgets_by_name = widgets_by_name
 end
 
-HeroWindowGotwfOverview._create_ui_elements = function (self, arg_10_1)
+HeroWindowGotwfOverview._create_ui_elements = function (self, params)
 	-- function 10
-	local tbl = {}
-	local tbl_2 = {}
-	local tbl_3 = {}
-	local tbl_4 = {}
-	local tbl_5 = {}
-	local tbl_6 = {}
-	local tbl_7 = {}
-	local tbl_8 = {}
+	local widgets = {}
+	local lock_widgets = {}
+	local entry_widgets = {}
+	local item_widgets = {}
+	local bottom_widgets = {}
+	local viewport_widgets = {}
+	local claim_button_widgets = {}
+	local widgets_by_name = {}
 
 	self._item_texture_widgets = {}
 
-	for k, v in pairs(widgets) do
-		local var_10_8 = UIWidget.init(v)
+	for name, widget_definition in pairs(widget_definitions) do
+		local widget = UIWidget.init(widget_definition)
 
-		tbl[#tbl + 1] = var_10_8
-		tbl_8[k] = var_10_8
+		widgets[#widgets + 1] = widget
+		widgets_by_name[name] = widget
 	end
 
-	for k_2, v_2 in pairs(bottom_widgets) do
-		local var_10_9 = UIWidget.init(v_2)
+	for name, widget_definition in pairs(bottom_widget_definitions) do
+		local widget = UIWidget.init(widget_definition)
 
-		tbl_5[#tbl_5 + 1] = var_10_9
-		tbl_8[k_2] = var_10_9
+		bottom_widgets[#bottom_widgets + 1] = widget
+		widgets_by_name[name] = widget
 	end
 
-	for k_3, v_3 in pairs(viewport_widgets) do
-		local var_10_10 = UIWidget.init(v_3)
+	for name, widget_definition in pairs(viewport_widget_definitions) do
+		local widget = UIWidget.init(widget_definition)
 
-		tbl_6[#tbl_6 + 1] = var_10_10
-		tbl_8[k_3] = var_10_10
+		viewport_widgets[#viewport_widgets + 1] = widget
+		widgets_by_name[name] = widget
 	end
 
-	for k_4, v_4 in pairs(lock_widgets) do
-		local var_10_11 = UIWidget.init(v_4)
+	for name, widget_definition in pairs(lock_widget_definitions) do
+		local widget = UIWidget.init(widget_definition)
 
-		tbl_2[#tbl_2 + 1] = var_10_11
-		tbl_8[k_4] = var_10_11
+		lock_widgets[#lock_widgets + 1] = widget
+		widgets_by_name[name] = widget
 	end
 
-	local total_rewards = self._login_rewards.total_rewards
+	local login_rewards = self._login_rewards
+	local num_items = login_rewards.total_rewards
 
-	for i8 = 1, total_rewards do
-		local _create_reward_widget = self:_create_reward_widget(i8)
-		local _create_claim_button_widget = self:_create_claim_button_widget(i8)
+	for i = 1, num_items do
+		local item_widget = self:_create_reward_widget(i)
+		local claim_button_widget = self:_create_claim_button_widget(i)
 
-		tbl_4[#tbl_4 + 1] = _create_reward_widget
-		tbl_7[#tbl_7 + 1] = _create_claim_button_widget
-		tbl_8["claim_button_" .. i8] = _create_claim_button_widget
+		item_widgets[#item_widgets + 1] = item_widget
+		claim_button_widgets[#claim_button_widgets + 1] = claim_button_widget
+		widgets_by_name["claim_button_" .. i] = claim_button_widget
 	end
 
-	self._widgets = tbl
-	self._lock_widgets = tbl_2
-	self._bottom_widgets = tbl_5
-	self._item_widgets = tbl_4
-	self._widgets_by_name = tbl_8
-	self._claim_button_widgets = tbl_7
-	self._viewport_widgets = tbl_6
+	self._widgets = widgets
+	self._lock_widgets = lock_widgets
+	self._bottom_widgets = bottom_widgets
+	self._item_widgets = item_widgets
+	self._widgets_by_name = widgets_by_name
+	self._claim_button_widgets = claim_button_widgets
+	self._viewport_widgets = viewport_widgets
 
 	self:_select_current_reward()
 	self:_calculate_duration()
@@ -227,14 +231,14 @@ end
 
 HeroWindowGotwfOverview._create_reward_popup = function (self)
 	-- function 11
-	local tbl = {
+	local reward_params = {
 		wwise_world = self._wwise_world,
 		ui_renderer = self._ui_renderer,
 		ui_top_renderer = self._ui_top_renderer,
 		input_manager = Managers.input
 	}
 
-	self._reward_popup = RewardPopupUI:new(tbl)
+	self._reward_popup = RewardPopupUI:new(reward_params)
 end
 
 HeroWindowGotwfOverview._create_ui_animator = function (self)
@@ -244,566 +248,701 @@ end
 
 HeroWindowGotwfOverview._create_scrollbar = function (self)
 	-- function 13
-	local num_2 = (#self._item_widgets - num) * gotwf_item_size[1]
+	local excess = (#self._item_widgets - NUM_VISIBLE_ITEMS) * gotwf_item_size[1]
 
-	self._scrollbar_ui = ScrollbarUI:new(self._ui_scenegraph, "gotwf_item_anchor", "scrollbar_area", num_2, false, nil, true)
+	self._scrollbar_ui = ScrollbarUI:new(self._ui_scenegraph, "gotwf_item_anchor", "scrollbar_area", excess, false, nil, true)
 end
 
 HeroWindowGotwfOverview._select_current_reward = function (self)
 	-- function 14
-	local count = #self._login_rewards.rewards
-	local content = self._item_widgets[count].content
-	local reward_order = content.reward_order
-	local var_14_3 = reward_order[#reward_order]
+	local login_rewards = self._login_rewards
+	local rewards = login_rewards.rewards
+	local current_item_index = #rewards
+	local item_widget = self._item_widgets[current_item_index]
+	local item_widget_content = item_widget.content
+	local reward_order = item_widget_content.reward_order
+	local reward_index = reward_order[#reward_order]
 
-	content["hotspot_" .. var_14_3].is_selected = true
+	item_widget_content["hotspot_" .. reward_index].is_selected = true
 end
 
 HeroWindowGotwfOverview._calculate_duration = function (self)
 	-- function 15
-	local _login_rewards = self._login_rewards
-	local start_time = _login_rewards.start_time
-	local total_rewards = _login_rewards.total_rewards
-	local num = _login_rewards.start_time + 86400000 * (total_rewards - 1)
-	local date = os.date("%x", start_time * 0.001)
-	local date_2 = os.date("%x", num * 0.001)
+	local login_rewards = self._login_rewards
+	local gotwf_start_time = login_rewards.start_time
+	local num_items = login_rewards.total_rewards
+	local gotwf_end_time = login_rewards.start_time + 86400000 * (num_items - 1)
+	local start_time = os.date("%x", gotwf_start_time * 0.001)
+	local end_time = os.date("%x", gotwf_end_time * 0.001)
+	local widget = self._widgets_by_name.gotwf_description
+	local widget_content = widget.content
 
-	self._widgets_by_name.gotwf_description.content.text = date .. " - " .. date_2
+	widget_content.text = start_time .. " - " .. end_time
 end
 
-HeroWindowGotwfOverview._create_claim_button_widget = function (self, arg_16_1)
+HeroWindowGotwfOverview._create_claim_button_widget = function (self, reward_index)
 	-- function 16
-	local count = #self._login_rewards.rewards
-	local var_16_1 = create_claim_button()
-	local var_16_2 = UIWidget.init(var_16_1)
+	local login_rewards = self._login_rewards
+	local rewards = login_rewards.rewards
+	local current_reward_index = #rewards
+	local widget_definition = create_claim_button()
+	local claim_button_widget = UIWidget.init(widget_definition)
 
-	var_16_2.offset[1] = (arg_16_1 - 1) * gotwf_item_size[1]
-	var_16_2.content.reward_offset = arg_16_1 - count
+	claim_button_widget.offset[1] = (reward_index - 1) * gotwf_item_size[1]
+	claim_button_widget.content.reward_offset = reward_index - current_reward_index
 
-	return var_16_2
+	return claim_button_widget
 end
 
-HeroWindowGotwfOverview._create_reward_widget = function (self, arg_17_1)
+HeroWindowGotwfOverview._create_reward_widget = function (self, reward_index)
 	-- function 17
-	local start_time = self._login_rewards.start_time
+	local gotwf_start_time = self._login_rewards.start_time
 	local rewards = self._login_rewards.rewards
-	local count = #rewards
+	local current_reward_index = #rewards
 	local num_allowed_old_segments_to_claim = self._login_rewards.num_allowed_old_segments_to_claim
-	local max = math.max(count - num_allowed_old_segments_to_claim, 1)
-	local flag = self._login_rewards.claimed_rewards[arg_17_1] > 0
-	local var_17_6 = rewards[arg_17_1]
-	local date = os.date("%x", start_time * 0.001 + 86400 * (arg_17_1 - 1))
-	local flag_2 = true
-	local var_17_9 = arg_17_1
-	local flag_3 = arg_17_1 == count
-	local flag_4 = var_17_6 == nil or not flag
-	local flag_5 = arg_17_1 < max
-	local flag_6 = not not flag or not not flag_5 or arg_17_1 <= count
-	local var_17_14 = create_item_definition_func("gotwf_item_anchor", tbl, flag_2, var_17_9, flag_3, date, flag, not flag_4 and not flag, flag_5, flag_6, var_17_6)
-	local var_17_15 = UIWidget.init(var_17_14)
+	local start_claim_index = math.max(current_reward_index - num_allowed_old_segments_to_claim, 1)
+	local claimed = self._login_rewards.claimed_rewards[reward_index] > 0
+	local reward = rewards[reward_index]
+	local date = os.date("%x", gotwf_start_time * 0.001 + 86400 * (reward_index - 1))
+	local masked = true
+	local item_index = reward_index
+	local current_reward = reward_index == current_reward_index
+	local hidden = reward == nil or not not not claimed
+	local expired = reward_index < start_claim_index
+	local claimable = not claimed and not expired and reward_index <= current_reward_index
+	local item_widget_definition = create_item_definition_func("gotwf_item_anchor", ITEM_SIZE, masked, item_index, current_reward, date, claimed, not not hidden and not not not claimed, expired, claimable, reward)
+	local item_widget = UIWidget.init(item_widget_definition)
 
-	if not var_17_6 and not flag then
-		self:_populate_item_widget(var_17_15, arg_17_1, var_17_6)
+	if reward and claimed then
+		self:_populate_item_widget(item_widget, reward_index, reward)
 	end
 
-	return var_17_15
+	return item_widget
 end
 
 HeroWindowGotwfOverview._update_claim_button_visibility = function (self)
 	-- function 18
-	local count = #self._login_rewards.rewards
+	local current_reward_index = #self._login_rewards.rewards
 	local claimed_rewards = self._login_rewards.claimed_rewards
-	local num = count - self._login_rewards.num_allowed_old_segments_to_claim
+	local num_allowed_old_segments_to_claim = self._login_rewards.num_allowed_old_segments_to_claim
+	local first_claimable_index = current_reward_index - num_allowed_old_segments_to_claim
 
 	for i = 1, #self._claim_button_widgets do
-		local var_18_3 = self._claim_button_widgets[i]
-		local num_2 = count + var_18_3.content.reward_offset
+		local widget = self._claim_button_widgets[i]
+		local reward_offset = widget.content.reward_offset
+		local reward_index = current_reward_index + reward_offset
 
-		if not (count < num_2 or num_2 < num or not (claimed_rewards[num_2] > 0)) then
-			var_18_3.content.visible = false
-			var_18_3.content.button_hotspot.disable_button = true
+		if current_reward_index < reward_index or reward_index < first_claimable_index or claimed_rewards[reward_index] > 0 then
+			widget.content.visible = false
+			widget.content.button_hotspot.disable_button = true
 		end
 	end
 end
 
-HeroWindowGotwfOverview._animate_list_entries = function (self, arg_19_1)
+HeroWindowGotwfOverview._animate_list_entries = function (self, dt)
 	-- function 19
-	local _parent = self._parent
-	local _list_widgets = self._list_widgets
-	local is_device_active = Managers.input:is_device_active("mouse")
-	local flag = true
+	local parent = self._parent
+	local list_widgets = self._list_widgets
+	local mouse_active = Managers.input:is_device_active("mouse")
+	local list_hovered = true
 
-	for i, v in ipairs(self._item_widgets) do
-		local flag_2 = not (i > self._steps) or i <= num + self._steps
-		local content = v.content
-		local style = v.style
+	for idx, widget in ipairs(self._item_widgets) do
+		list_hovered = idx > self._steps and idx <= NUM_VISIBLE_ITEMS + self._steps
+
+		local content = widget.content
+		local style = widget.style
 		local num_rewards = content.num_rewards
 
-		for k = 1, num_rewards do
-			local var_19_8 = content["button_hotspot_" .. k]
+		for i = 1, num_rewards do
+			local var_19_0 = content["button_hotspot_" .. i]
 
-			var_19_8 = var_19_8 or content["hotspot_" .. k]
+			if not var_19_0 then
+				-- Nothing
+			end
 
-			if not var_19_8.on_hover_enter then
+			var_19_0 = content["hotspot_" .. i]
+
+			local hotspot = var_19_0
+
+			::label_19_0::
+
+			if hotspot.on_hover_enter then
 				self:_play_sound("Play_hud_store_button_hover")
 
-				var_19_8.on_hover_enter = false
+				hotspot.on_hover_enter = false
 			end
 		end
 
 		local _current_item_index = self._current_item_index
 
-		_current_item_index = _current_item_index or 0
-		content.is_gamepad_selected = i ~= _current_item_index or not is_device_active
+		_current_item_index = not not _current_item_index or not not 0
+		content.is_gamepad_selected = idx == _current_item_index and not not not mouse_active
 
-		self:_animate_item_product(v, arg_19_1, flag_2)
+		self:_animate_item_product(widget, dt, list_hovered)
 	end
 end
 
-HeroWindowGotwfOverview._animate_item_product = function (self, arg_20_1, arg_20_2, arg_20_3)
+HeroWindowGotwfOverview._animate_item_product = function (self, widget, dt, optional_hover)
 	-- function 20
-	if not self._animations.item_rotation then
+	if self._animations.item_rotation then
 		return
 	end
 
-	local content = arg_20_1.content
-	local style = arg_20_1.style
+	local content = widget.content
+	local style = widget.style
 	local num_rewards = content.num_rewards
-	local flag = false
+	local item_hovered = false
 
 	for i = num_rewards, 1, -1 do
-		local var_20_4 = content.reward_order[i]
-		local var_20_5 = content["button_hotspot_" .. var_20_4]
+		local index = content.reward_order[i]
+		local var_20_0 = content["button_hotspot_" .. index]
 
-		var_20_5 = var_20_5 or content["hotspot_" .. var_20_4]
+		if not var_20_0 then
+			-- Nothing
+		end
 
-		local on_hover_enter = var_20_5.on_hover_enter
-		local is_hover = var_20_5.is_hover
+		var_20_0 = content["hotspot_" .. index]
 
-		if (arg_20_3 == nil or not arg_20_3) and not flag then
+		local hotspot = var_20_0
+
+		::label_20_0::
+
+		local on_hover_enter = hotspot.on_hover_enter
+		local is_hover = hotspot.is_hover
+
+		if (optional_hover == nil or optional_hover) and item_hovered then
 			is_hover = false
 			on_hover_enter = false
 		end
 
-		local is_selected = var_20_5.is_selected
+		local is_selected_2 = hotspot.is_selected
 
-		if not is_selected then
-			is_selected = content.is_gamepad_selected
-			is_selected = not is_selected and i == num_rewards
+		if not is_selected_2 then
+			-- Nothing
 		end
 
-		if var_20_5.was_selected or not is_selected then
-			var_20_5.was_selected = true
+		is_selected_2 = content.is_gamepad_selected
+
+		if is_selected_2 then
+			-- Nothing
 		end
 
-		flag = is_hover or flag
+		if i ~= num_rewards then
+			is_selected_2 = false
+
+			goto label_20_1
+		end
+
+		is_selected_2 = true
+
+		local is_selected = is_selected_2
+
+		::label_20_1::
+
+		local was_selected = hotspot.was_selected
+
+		if not was_selected and is_selected then
+			hotspot.was_selected = true
+		end
+
+		item_hovered = not not is_hover or not not item_hovered
 
 		local is_clicked
 
 		if not is_selected then
-			is_clicked = var_20_5.is_clicked
+			is_clicked = hotspot.is_clicked
 
-			if not is_clicked then
+			if is_clicked then
 				-- Nothing
 			end
 
-			if var_20_5.is_clicked ~= 0 then
+			if hotspot.is_clicked ~= 0 then
 				-- Nothing
 			end
 		end
 
 		is_clicked = false
 
-		goto label_20_1
+		goto label_20_3
 
-		::label_20_0::
+		::label_20_2::
 
 		is_clicked = true
 
-		::label_20_1::
+		local input_pressed = is_clicked
 
-		local input_progress = var_20_5.input_progress
+		::label_20_3::
 
-		input_progress = input_progress or 0
+		local input_progress_2 = hotspot.input_progress
 
-		local hover_progress = var_20_5.hover_progress
-
-		hover_progress = hover_progress or 0
-
-		local pulse_progress = var_20_5.pulse_progress
-
-		pulse_progress = pulse_progress or 1
-
-		local selection_progress = var_20_5.selection_progress
-
-		selection_progress = selection_progress or 0
-
-		local flag_2
-
-		flag_2 = is_hover or not is_selected or 14 or 3
-
-		local num = 3
-		local num_2 = 20
-
-		if not is_clicked then
-			input_progress = math.min(input_progress + arg_20_2 * num_2, 1)
-		else
-			input_progress = math.max(input_progress - arg_20_2 * num_2, 0)
+		if not input_progress_2 then
+			-- Nothing
 		end
 
-		local easeOutCubic = math.easeOutCubic(input_progress)
-		local easeInCubic = math.easeInCubic(input_progress)
+		input_progress_2 = 0
 
-		if not on_hover_enter then
+		local input_progress = input_progress_2
+
+		::label_20_4::
+
+		local hover_progress_2 = hotspot.hover_progress
+
+		if not hover_progress_2 then
+			-- Nothing
+		end
+
+		hover_progress_2 = 0
+
+		local hover_progress = hover_progress_2
+
+		::label_20_5::
+
+		local pulse_progress_2 = hotspot.pulse_progress
+
+		if not pulse_progress_2 then
+			-- Nothing
+		end
+
+		pulse_progress_2 = 1
+
+		local pulse_progress = pulse_progress_2
+
+		::label_20_6::
+
+		local selection_progress_2 = hotspot.selection_progress
+
+		if not selection_progress_2 then
+			-- Nothing
+		end
+
+		selection_progress_2 = 0
+
+		local selection_progress = selection_progress_2
+
+		do
+			local num
+		end
+
+		::label_20_7::
+
+		if is_hover or is_selected then
+			num = 14
+
+			goto label_20_8
+		end
+
+		num = 3
+
+		local speed = num
+
+		::label_20_8::
+
+		local pulse_speed = 3
+		local input_speed = 20
+
+		if input_pressed then
+			input_progress = math.min(input_progress + dt * input_speed, 1)
+		else
+			input_progress = math.max(input_progress - dt * input_speed, 0)
+		end
+
+		local input_easing_out_progress = math.easeOutCubic(input_progress)
+		local input_easing_in_progress = math.easeInCubic(input_progress)
+
+		if on_hover_enter then
 			pulse_progress = 0
 		end
 
-		local min = math.min(pulse_progress + arg_20_2 * num, 1)
-		local easeOutCubic_2 = math.easeOutCubic(min)
-		local easeInCubic_2 = math.easeInCubic(min)
+		pulse_progress = math.min(pulse_progress + dt * pulse_speed, 1)
 
-		if not is_hover then
-			hover_progress = math.min(hover_progress + arg_20_2 * flag_2, 1)
+		local pulse_easing_out_progress = math.easeOutCubic(pulse_progress)
+		local pulse_easing_in_progress = math.easeInCubic(pulse_progress)
+
+		if is_hover then
+			hover_progress = math.min(hover_progress + dt * speed, 1)
 		else
-			hover_progress = math.max(hover_progress - arg_20_2 * flag_2, 0)
+			hover_progress = math.max(hover_progress - dt * speed, 0)
 		end
 
-		local easeOutCubic_3 = math.easeOutCubic(hover_progress)
-		local easeInCubic_3 = math.easeInCubic(hover_progress)
+		local hover_easing_out_progress = math.easeOutCubic(hover_progress)
+		local hover_easing_in_progress = math.easeInCubic(hover_progress)
 
-		if not is_selected then
-			selection_progress = math.min(selection_progress + arg_20_2 * flag_2, 1)
+		if is_selected then
+			selection_progress = math.min(selection_progress + dt * speed, 1)
 		else
-			selection_progress = math.max(selection_progress - arg_20_2 * flag_2, 0)
+			selection_progress = math.max(selection_progress - dt * speed, 0)
 		end
 
-		local easeOutCubic_4 = math.easeOutCubic(selection_progress)
-		local easeInCubic_4 = math.easeInCubic(selection_progress)
-		local max = math.max(hover_progress, selection_progress)
-		local max_2 = math.max(easeOutCubic_4, easeOutCubic_3)
-		local max_3 = math.max(easeInCubic_3, easeInCubic_4)
-		local num_3 = 255 * max
+		local select_easing_out_progress = math.easeOutCubic(selection_progress)
+		local select_easing_in_progress = math.easeInCubic(selection_progress)
+		local combined_progress = math.max(hover_progress, selection_progress)
+		local combined_out_progress = math.max(select_easing_out_progress, hover_easing_out_progress)
+		local combined_in_progress = math.max(hover_easing_in_progress, select_easing_in_progress)
+		local hover_alpha = 255 * combined_progress
 
-		style["hover_frame_" .. var_20_4].color[1] = num_3
+		style["hover_frame_" .. index].color[1] = hover_alpha
 
-		local var_20_30 = style["overlay_" .. var_20_4]
+		local overlay_style = style["overlay_" .. index]
 
-		if not var_20_30 then
-			local num_4 = 80 - 80 * max
+		if overlay_style then
+			local overlay_alpha = 80 - 80 * combined_progress
 
-			var_20_30.color[1] = num_4
+			overlay_style.color[1] = overlay_alpha
 		end
 
-		local num_5 = 255 - 255 * min
+		local pulse_alpha = 255 - 255 * pulse_progress
 
-		style["pulse_frame_" .. var_20_4].color[1] = num_5
-		var_20_5.pulse_progress = min
-		var_20_5.hover_progress = hover_progress
-		var_20_5.input_progress = input_progress
-		var_20_5.selection_progress = selection_progress
+		style["pulse_frame_" .. index].color[1] = pulse_alpha
+		hotspot.pulse_progress = pulse_progress
+		hotspot.hover_progress = hover_progress
+		hotspot.input_progress = input_progress
+		hotspot.selection_progress = selection_progress
 	end
 end
 
-HeroWindowGotwfOverview._populate_painting_data = function (self, arg_21_1, arg_21_2, arg_21_3, arg_21_4)
+HeroWindowGotwfOverview._populate_painting_data = function (self, widget, index, item, reward_index)
 	-- function 21
-	local item_id = arg_21_3.item_id
-	local var_21_1 = Paintings[item_id]
+	local item_name = item.item_id
+	local painting_data = Paintings[item_name]
 
-	if not (not var_21_1 and item_id ~= "hidden") then
+	if not painting_data or item_name == "hidden" then
 		return
 	end
 
-	local gui = self._ui_top_renderer.gui
-	local content = arg_21_1.content
-	local style = arg_21_1.style
-	local var_21_5
-	local str = "keep_painting_" .. item_id
-	local flag = string.find(item_id, "_none") ~= nil
+	local ui_top_renderer = self._ui_top_renderer
+	local top_gui = ui_top_renderer.gui
+	local content = widget.content
+	local style = widget.style
+	local package_name
+	local subpath = "keep_painting_" .. item_name
+	local no_package_required = string.find(item_name, "_none") ~= nil
 
-	if not flag then
-		var_21_5 = "resource_packages/keep_paintings/" .. str
+	if not no_package_required then
+		package_name = "resource_packages/keep_paintings/" .. subpath
 	end
 
 	local _reference_id = self._reference_id
 
-	_reference_id = _reference_id or 0
+	_reference_id = not not _reference_id or not not 0
 	self._reference_id = _reference_id + 1
 
-	local str_2 = item_id .. "_" .. self._reference_id .. "_" .. arg_21_4
-	local str_3 = "keep_painting_" .. item_id
-	local str_4 = "template_store_diffuse_masked"
+	local reference_name = item_name .. "_" .. self._reference_id .. "_" .. reward_index
+	local texture_name = "keep_painting_" .. item_name
+	local template_material_name = "template_store_diffuse_masked"
 
-	self:_create_material_instance(gui, str_3, str_4, str_2)
+	self:_create_material_instance(top_gui, texture_name, template_material_name, reference_name)
 
-	local function fn()
+	local function callback()
 		-- function 22
-		local str_2 = "units/gameplay/keep_paintings/materials/" .. str .. "/" .. str .. "_df"
+		local texture_path = "units/gameplay/keep_paintings/materials/" .. subpath .. "/" .. subpath .. "_df"
 
-		self:_set_material_diffuse(gui, str_3, str_2)
+		self:_set_material_diffuse(top_gui, texture_name, texture_path)
 
-		local num = 150 * icon_scale
-		local num_2 = 0.125
+		local base_size = 150 * icon_scale
+		local padding = 0.125
 
-		if var_21_1.orientation == "horizontal" then
-			content["painting_" .. arg_21_4] = {
-				texture_id = str_3,
+		if painting_data.orientation == "horizontal" then
+			content["painting_" .. reward_index] = {
+				texture_id = texture_name,
 				uvs = {
 					{
 						0,
-						num_2
+						padding
 					},
 					{
 						1,
-						1 - num_2
+						1 - padding
 					}
 				}
 			}
-			style["painting_" .. arg_21_4].offset[2] = 20
-			style["painting_" .. arg_21_4].texture_size = {
-				num,
-				num * (1 - 2 * num_2)
+			style["painting_" .. reward_index].offset[2] = 20
+			style["painting_" .. reward_index].texture_size = {
+				base_size,
+				base_size * (1 - 2 * padding)
 			}
-			style["painting_frame_" .. arg_21_4].area_size = {
-				num,
-				num * (1 - 2 * num_2)
+			style["painting_frame_" .. reward_index].area_size = {
+				base_size,
+				base_size * (1 - 2 * padding)
 			}
-			style["painting_frame_" .. arg_21_4].offset[2] = 20
+			style["painting_frame_" .. reward_index].offset[2] = 20
 		else
-			content["painting_" .. arg_21_4] = {
-				texture_id = str_3,
+			content["painting_" .. reward_index] = {
+				texture_id = texture_name,
 				uvs = {
 					{
-						num_2,
+						padding,
 						0
 					},
 					{
-						1 - num_2,
+						1 - padding,
 						1
 					}
 				}
 			}
-			style["painting_" .. arg_21_4].offset[2] = 10
-			style["painting_" .. arg_21_4].texture_size = {
-				num * (1 - 2 * num_2),
-				num
+			style["painting_" .. reward_index].offset[2] = 10
+			style["painting_" .. reward_index].texture_size = {
+				base_size * (1 - 2 * padding),
+				base_size
 			}
-			style["painting_frame_" .. arg_21_4].area_size = {
-				num * (1 - 2 * num_2),
-				num
+			style["painting_frame_" .. reward_index].area_size = {
+				base_size * (1 - 2 * padding),
+				base_size
 			}
-			style["painting_frame_" .. arg_21_4].offset[2] = 10
+			style["painting_frame_" .. reward_index].offset[2] = 10
 		end
 
 		content.disable_loading_icon = true
 	end
 
-	if not flag then
-		fn()
+	if no_package_required then
+		callback()
 	else
-		self:_load_texture_package(var_21_5, str_2, fn)
+		self:_load_texture_package(package_name, reference_name, callback)
 	end
 end
 
-HeroWindowGotwfOverview._populate_item_widget = function (self, arg_23_1, arg_23_2, arg_23_3)
+HeroWindowGotwfOverview._populate_item_widget = function (self, widget, index, reward)
 	-- function 23
-	local _get_reward_item_from_bundle = self:_get_reward_item_from_bundle(arg_23_3)
+	local bundle_reward_item = self:_get_reward_item_from_bundle(reward)
 
-	if not _get_reward_item_from_bundle then
-		if _get_reward_item_from_bundle.reward_type == "keep_decoration_painting" then
-			self:_populate_painting_data(arg_23_1, arg_23_2, _get_reward_item_from_bundle, 1)
+	if bundle_reward_item then
+		local reward_type = bundle_reward_item.reward_type
+
+		if reward_type == "keep_decoration_painting" then
+			self:_populate_painting_data(widget, index, bundle_reward_item, 1)
 		else
-			self:_populate_item_data(arg_23_1, arg_23_2, _get_reward_item_from_bundle, 1)
+			self:_populate_item_data(widget, index, bundle_reward_item, 1)
 		end
 	else
-		for i = #arg_23_3, 1, -1 do
-			local var_23_1 = arg_23_3[i]
+		local num_rewards = #reward
 
-			if var_23_1.reward_type == "keep_decoration_painting" then
-				self:_populate_painting_data(arg_23_1, arg_23_2, var_23_1, i)
+		for i = num_rewards, 1, -1 do
+			local item = reward[i]
+			local reward_type = item.reward_type
+
+			if reward_type == "keep_decoration_painting" then
+				self:_populate_painting_data(widget, index, item, i)
 			else
-				self:_populate_item_data(arg_23_1, arg_23_2, var_23_1, i)
+				self:_populate_item_data(widget, index, item, i)
 			end
 		end
 	end
 end
 
-HeroWindowGotwfOverview._populate_item_data = function (self, arg_24_1, arg_24_2, arg_24_3, arg_24_4)
+HeroWindowGotwfOverview._populate_item_data = function (self, widget, index, item, reward_index)
 	-- function 24
 	local item_rarity_textures = UISettings.item_rarity_textures
 	local item_type_store_icons = UISettings.item_type_store_icons
-	local item_id = arg_24_3.item_id
-	local reward_type = arg_24_3.reward_type
-	local var_24_4
+	local item_name = item.item_id
+	local reward_type = item.reward_type
+	local masterlist_item
 
 	if reward_type == "chips" then
-		var_24_4 = Currencies[item_id]
+		masterlist_item = Currencies[item_name]
 	elseif reward_type == "currency" then
-		var_24_4, item_id = BackendUtils.get_fake_currency_item(arg_24_3.currency_code, arg_24_3.amount)
+		masterlist_item, item_name = BackendUtils.get_fake_currency_item(item.currency_code, item.amount)
 	else
-		var_24_4 = ItemMasterList[item_id]
+		masterlist_item = ItemMasterList[item_name]
 	end
 
-	if not var_24_4 then
+	if not masterlist_item then
 		return
 	end
 
-	local rarity = var_24_4.rarity
+	local rarity_2 = masterlist_item.rarity
 
-	rarity = rarity or "default"
+	if not rarity_2 then
+		-- Nothing
+	end
 
-	local item_type = var_24_4.item_type
-	local content = arg_24_1.content
-	local style = arg_24_1.style
-	local masked = style["icon_" .. arg_24_4].masked
+	rarity_2 = "default"
 
-	content["item_" .. arg_24_4] = var_24_4
+	local rarity = rarity_2
 
-	local var_24_10 = tbl_2[rarity]
+	::label_24_0::
 
-	content["background_" .. arg_24_4] = var_24_10
+	local item_type = masterlist_item.item_type
+	local content = widget.content
+	local style = widget.style
+	local masked = style["icon_" .. reward_index].masked
 
-	local var_24_11 = style["overlay_" .. arg_24_4].offset[3]
-	local var_24_12 = style["icon_" .. arg_24_4].offset[3]
+	content["item_" .. reward_index] = masterlist_item
 
-	style["icon_" .. arg_24_4].offset[3] = var_24_11
-	style["overlay_" .. arg_24_4].offset[3] = var_24_12
+	local rarity_background = item_backgrounds_by_rarirty[rarity]
 
-	local var_24_13 = item_type_store_icons[item_type]
+	content["background_" .. reward_index] = rarity_background
 
-	if not rarity and not var_24_13 then
-		local str = "type_tag_icon_" .. arg_24_4
-		local var_24_15 = var_24_13
+	local overlay_z = style["overlay_" .. reward_index].offset[3]
+	local icon_z = style["icon_" .. reward_index].offset[3]
+
+	style["icon_" .. reward_index].offset[3] = overlay_z
+	style["overlay_" .. reward_index].offset[3] = icon_z
+
+	local item_type_icon = item_type_store_icons[item_type]
+
+	if rarity and item_type_icon then
+		local str = "type_tag_icon_" .. reward_index
+		local var_24_2 = item_type_icon
 		local str_2 = "_"
 		local flag
 
-		flag = rarity ~= "plentiful" or not "common" or rarity
-		content[str] = var_24_15 .. str_2 .. flag
+		flag = (rarity ~= "plentiful" or not "common") and not not rarity
+		content[str] = var_24_2 .. str_2 .. flag
 	else
-		content["type_tag_icon_" .. arg_24_4] = var_24_13
+		content["type_tag_icon_" .. reward_index] = item_type_icon
 	end
 
-	local gui = self._ui_top_renderer.gui
+	local ui_top_renderer = self._ui_top_renderer
+	local top_gui = ui_top_renderer.gui
 	local _reference_id = self._reference_id
 
-	_reference_id = _reference_id or 0
+	_reference_id = not not _reference_id or not not 0
 	self._reference_id = _reference_id + 1
 
-	local str_3 = item_id .. "_" .. self._reference_id .. "_" .. arg_24_4
+	local reference_name = item_name .. "_" .. self._reference_id .. "_" .. reward_index
 
 	if item_type == "chips" then
-		item_id = "shillings_medium"
+		item_name = "shillings_medium"
 	elseif item_type == "versus_currency_name" then
-		item_id = "versus_currency_small"
+		item_name = "versus_currency_small"
 	elseif item_type == "loot_chest" then
-		item_id = "loot_chest_generic"
+		item_name = "loot_chest_generic"
 	end
 
-	local store_icon_override_key = var_24_4.store_icon_override_key
-	local str_4 = "store_item_icon_" .. (store_icon_override_key or item_id)
-	local str_5 = "resource_packages/store/item_icons/" .. str_4
+	local store_icon_override_key = masterlist_item.store_icon_override_key
+	local texture_name = "store_item_icon_" .. (not not store_icon_override_key or not not item_name)
+	local package_name = "resource_packages/store/item_icons/" .. texture_name
 
 	if item_type == "frame" then
 		content.disable_loading_icon = true
 
-		local str_6 = "gotwf_item_anchor"
-		local temporary_template = var_24_4.temporary_template
+		local scenegraph_id = "gotwf_item_anchor"
+		local temporary_template = masterlist_item.temporary_template
 
-		temporary_template = temporary_template or "default"
+		if not temporary_template then
+			-- Nothing
+		end
 
-		local num = 1
-		local num_2 = 20
-		local tbl_3 = {
-			10 + (arg_24_2 - 1) * (tbl[1] + num_2),
+		temporary_template = "default"
+
+		local frame_name = temporary_template
+
+		::label_24_1::
+
+		local scale = 1
+		local spacing = 20
+		local offset = {
+			10 + (index - 1) * (ITEM_SIZE[1] + spacing),
 			20,
 			0
 		}
-		local flag_2 = true
-		local flag_3 = true
-		local create_base_portrait_frame = UIWidgets.create_base_portrait_frame(str_6, temporary_template, num, tbl_3, flag_2, flag_3)
+		local masked = true
+		local skip_offset = true
+		local widget_definition = UIWidgets.create_base_portrait_frame(scenegraph_id, frame_name, scale, offset, masked, skip_offset)
 
-		self._item_texture_widgets[#self._item_texture_widgets + 1] = UIWidget.init(create_base_portrait_frame)
+		self._item_texture_widgets[#self._item_texture_widgets + 1] = UIWidget.init(widget_definition)
 
 		local material = Gui.material(self._ui_top_renderer.gui, "portrait_frame_gotwf_01_child")
 
-		if not material then
+		if material then
 			Material.set_scalar(material, "masked", 1)
 		end
-	elseif not Application.can_get("package", str_5) then
-		content["reference_name_" .. arg_24_4] = str_3
-		content["icon_" .. arg_24_4] = nil
-
-		local str_7
-
-		if not masked then
-			str_7 = str_4 .. "_masked"
-
-			if not str_7 then
-				-- Nothing
-			end
-		end
-
-		str_7 = str_4
-
-		do
-			local flag_4
-		end
-
-		::label_24_0::
-
-		flag_4 = not masked and "template_store_diffuse_masked" and "template_store_diffuse"
-
-		self:_create_material_instance(gui, str_7, flag_4, str_3)
-
-		local function fn()
-			-- function 25
-			local str = "gui/1080p/single_textures/store_item_icons/" .. str_4 .. "/" .. str_4
-
-			self:_set_material_diffuse(gui, str_7, str)
-
-			content["icon_" .. arg_24_4] = str_7
-		end
-
-		self:_load_texture_package(str_5, str_3, fn)
 	else
-		Application.warning("Icon package not accessable for product_id: (%s) and texture_name: (%s)", item_id, str_4)
+		local package_available = Application.can_get("package", package_name)
+
+		if package_available then
+			content["reference_name_" .. reward_index] = reference_name
+			content["icon_" .. reward_index] = nil
+
+			local str_3
+
+			if masked then
+				str_3 = texture_name .. "_masked"
+
+				if not str_3 then
+					-- Nothing
+				end
+			end
+
+			str_3 = texture_name
+
+			local new_material_name = str_3
+
+			do
+				local str_4
+			end
+
+			::label_24_2::
+
+			if masked then
+				str_4 = "template_store_diffuse_masked"
+
+				goto label_24_3
+			end
+
+			str_4 = "template_store_diffuse"
+
+			local template_material_name = str_4
+
+			::label_24_3::
+
+			self:_create_material_instance(top_gui, new_material_name, template_material_name, reference_name)
+
+			local function callback()
+				-- function 25
+				local texture_path = "gui/1080p/single_textures/store_item_icons/" .. texture_name .. "/" .. texture_name
+
+				self:_set_material_diffuse(top_gui, new_material_name, texture_path)
+
+				content["icon_" .. reward_index] = new_material_name
+			end
+
+			self:_load_texture_package(package_name, reference_name, callback)
+		else
+			Application.warning("Icon package not accessable for product_id: (%s) and texture_name: (%s)", item_name, texture_name)
+		end
 	end
 end
 
-HeroWindowGotwfOverview._create_material_instance = function (arg_26_0, arg_26_1, arg_26_2, arg_26_3, arg_26_4)
+HeroWindowGotwfOverview._create_material_instance = function (self, gui, new_material_name, template_material_name, reference_name)
 	-- function 26
-	arg_26_0._cloned_materials_by_reference[arg_26_4] = arg_26_2
+	local cloned_materials_by_reference = self._cloned_materials_by_reference
 
-	return Gui.clone_material_from_template(arg_26_1, arg_26_2, arg_26_3)
+	cloned_materials_by_reference[reference_name] = new_material_name
+
+	return Gui.clone_material_from_template(gui, new_material_name, template_material_name)
 end
 
-HeroWindowGotwfOverview._set_material_diffuse = function (arg_27_0, arg_27_1, arg_27_2, arg_27_3)
+HeroWindowGotwfOverview._set_material_diffuse = function (self, gui, material_name, texture_path)
 	-- function 27
-	local material = Gui.material(arg_27_1, arg_27_2)
+	local material = Gui.material(gui, material_name)
 
-	if not material then
-		Material.set_texture(material, "diffuse_map", arg_27_3)
+	if material then
+		Material.set_texture(material, "diffuse_map", texture_path)
 	end
 end
 
-HeroWindowGotwfOverview._load_texture_package = function (arg_28_0, arg_28_1, arg_28_2, arg_28_3)
+HeroWindowGotwfOverview._load_texture_package = function (self, package_name, reference_name, callback)
 	-- function 28
-	local flag = true
-	local flag_2 = false
+	local asynchronous = true
+	local prioritize = false
 
-	Managers.package:load(arg_28_1, arg_28_2, arg_28_3, flag, flag_2)
+	Managers.package:load(package_name, reference_name, callback, asynchronous, prioritize)
 
-	arg_28_0._loaded_package_names[arg_28_2] = arg_28_1
+	local loaded_package_names = self._loaded_package_names
+
+	loaded_package_names[reference_name] = package_name
 end
 
-HeroWindowGotwfOverview._is_unique_reference_to_material = function (self, arg_29_1)
+HeroWindowGotwfOverview._is_unique_reference_to_material = function (self, reference_name)
 	-- function 29
-	local _cloned_materials_by_reference = self._cloned_materials_by_reference
-	local var_29_1 = _cloned_materials_by_reference[arg_29_1]
+	local cloned_materials_by_reference = self._cloned_materials_by_reference
+	local material_name = cloned_materials_by_reference[reference_name]
 
-	fassert(var_29_1, "[HeroWindowGotwfOverview] - Could not find a used material for reference name: (%s)", arg_29_1)
+	fassert(material_name, "[HeroWindowGotwfOverview] - Could not find a used material for reference name: (%s)", reference_name)
 
-	for k, v in pairs(_cloned_materials_by_reference) do
-		if not (var_29_1 ~= v or arg_29_1 == k) then
+	for key, value in pairs(cloned_materials_by_reference) do
+		if material_name == value and reference_name ~= key then
 			return false
 		end
 	end
@@ -811,45 +950,46 @@ HeroWindowGotwfOverview._is_unique_reference_to_material = function (self, arg_2
 	return true
 end
 
-HeroWindowGotwfOverview._unload_texture_by_reference = function (self, arg_30_1)
+HeroWindowGotwfOverview._unload_texture_by_reference = function (self, reference_name)
 	-- function 30
-	local _loaded_package_names = self._loaded_package_names
-	local _cloned_materials_by_reference = self._cloned_materials_by_reference
-	local var_30_2 = _loaded_package_names[arg_30_1]
+	local loaded_package_names = self._loaded_package_names
+	local cloned_materials_by_reference = self._cloned_materials_by_reference
+	local package_name = loaded_package_names[reference_name]
 
-	fassert(var_30_2, "[HeroWindowGotwfOverview] - Could not find a package to unload for reference name: (%s)", arg_30_1)
-	Managers.package:unload(var_30_2, arg_30_1)
+	fassert(package_name, "[HeroWindowGotwfOverview] - Could not find a package to unload for reference name: (%s)", reference_name)
+	Managers.package:unload(package_name, reference_name)
 
-	_loaded_package_names[arg_30_1] = nil
+	loaded_package_names[reference_name] = nil
 
-	if not self:_is_unique_reference_to_material(arg_30_1) then
-		local var_30_3 = _cloned_materials_by_reference[arg_30_1]
-		local gui = self._ui_top_renderer.gui
+	if self:_is_unique_reference_to_material(reference_name) then
+		local material_name = cloned_materials_by_reference[reference_name]
+		local ui_top_renderer = self._ui_top_renderer
+		local top_gui = ui_top_renderer.gui
 
-		self:_set_material_diffuse(gui, var_30_3, str)
+		self:_set_material_diffuse(top_gui, material_name, PRODUCT_PLACEHOLDER_TEXTURE_PATH)
 	end
 
-	_cloned_materials_by_reference[arg_30_1] = nil
+	cloned_materials_by_reference[reference_name] = nil
 end
 
-HeroWindowGotwfOverview._play_sound = function (self, arg_31_1)
+HeroWindowGotwfOverview._play_sound = function (self, event)
 	-- function 31
-	self._parent:play_sound(arg_31_1)
+	self._parent:play_sound(event)
 end
 
-HeroWindowGotwfOverview.on_exit = function (self, arg_32_1)
+HeroWindowGotwfOverview.on_exit = function (self, params)
 	-- function 32
 	print("[HeroViewWindow] Exit Substate HeroWindowGotwfOverview")
 
 	self._ui_animator = nil
 
-	local _loaded_package_names = self._loaded_package_names
+	local loaded_package_names = self._loaded_package_names
 
-	for k, v in pairs(_loaded_package_names) do
-		self:_unload_texture_by_reference(k)
+	for reference_name, package_name in pairs(loaded_package_names) do
+		self:_unload_texture_by_reference(reference_name)
 	end
 
-	if not self._reward_popup then
+	if self._reward_popup then
 		self._reward_popup:destroy()
 
 		self._reward_popup = nil
@@ -858,28 +998,28 @@ HeroWindowGotwfOverview.on_exit = function (self, arg_32_1)
 	self:_play_sound("Stop_amb_gotwf_loop")
 end
 
-HeroWindowGotwfOverview.update = function (self, arg_33_1, arg_33_2)
+HeroWindowGotwfOverview.update = function (self, dt, t)
 	-- function 33
-	if not self._ready then
-		self:_handle_reward_popup(arg_33_1, arg_33_2)
-		self:_update_animations(arg_33_1)
-		self:_draw(arg_33_1, arg_33_2)
+	if self._ready then
+		self:_handle_reward_popup(dt, t)
+		self:_update_animations(dt)
+		self:_draw(dt, t)
 	else
 		self:_check_ready()
 	end
 
 	self:_handle_popup()
-	self:_draw_background(arg_33_1, arg_33_2)
+	self:_draw_background(dt, t)
 end
 
-HeroWindowGotwfOverview._handle_reward_popup = function (self, arg_34_1, arg_34_2)
+HeroWindowGotwfOverview._handle_reward_popup = function (self, dt, t)
 	-- function 34
-	self._reward_popup:update(arg_34_1)
+	self._reward_popup:update(dt)
 end
 
 HeroWindowGotwfOverview._check_ready = function (self)
 	-- function 35
-	if not (self._params.loading_package or self._synced) then
+	if self._params.loading_package or not self._synced then
 		return
 	end
 
@@ -891,46 +1031,51 @@ end
 
 HeroWindowGotwfOverview._handle_popup = function (self)
 	-- function 36
-	local _popup_id = self._popup_id
+	local popup_id = self._popup_id
 
-	if not _popup_id then
+	if not popup_id then
 		return
 	end
 
-	if not Managers.popup:query_result(_popup_id) then
+	local result = Managers.popup:query_result(popup_id)
+
+	if result then
 		self._parent:set_layout_by_name("featured")
 	end
 end
 
-HeroWindowGotwfOverview._claim_daily_reward = function (self, arg_37_1)
+HeroWindowGotwfOverview._claim_daily_reward = function (self, reward_offset)
 	-- function 37
-	if not (self._login_rewards.num_allowed_old_segments_to_claim < math.abs(arg_37_1) or not (arg_37_1 > 0)) then
+	local num_allowed_old_segments_to_claim = self._login_rewards.num_allowed_old_segments_to_claim
+
+	if num_allowed_old_segments_to_claim < math.abs(reward_offset) or reward_offset > 0 then
 		return
 	end
 
-	local get_interface = Managers.backend:get_interface("peddler")
-	local num = #self._login_rewards.rewards + (arg_37_1 or 0)
+	local peddler_interface = Managers.backend:get_interface("peddler")
+	local index = #self._login_rewards.rewards + (not not reward_offset or not not 0)
+	local claimed_rewards = self._login_rewards.claimed_rewards
 
-	if self._login_rewards.claimed_rewards[num] > 0 then
+	if claimed_rewards[index] > 0 then
 		return
 	end
 
-	get_interface:claim_login_rewards(callback(self, "_claim_reward_result_cb", num), arg_37_1)
+	peddler_interface:claim_login_rewards(callback(self, "_claim_reward_result_cb", index), reward_offset)
 
-	self._force_index = #self._login_rewards.rewards + (arg_37_1 or 0)
+	self._force_index = #self._login_rewards.rewards + (not not reward_offset or not not 0)
 	self._awaiting_result = true
 
 	self._parent:block_input()
 	self:_play_sound("Play_hud_gotwf_claim")
 end
 
-HeroWindowGotwfOverview._claim_reward_result_cb = function (self, arg_38_1, arg_38_2)
+HeroWindowGotwfOverview._claim_reward_result_cb = function (self, reward_index, login_rewards)
 	-- function 38
 	if not self._ui_animator then
 		return
 	end
 
-	if arg_38_2.event_type ~= "calendar" then
+	if login_rewards.event_type ~= "calendar" then
 		self._awaiting_result = false
 
 		self._parent:unblock_input()
@@ -943,13 +1088,13 @@ HeroWindowGotwfOverview._claim_reward_result_cb = function (self, arg_38_1, arg_
 		return
 	end
 
-	self._login_rewards = arg_38_2
+	self._login_rewards = login_rewards
 
-	local var_38_0 = self._login_rewards.rewards[arg_38_1]
+	local rewards = self._login_rewards.rewards[reward_index]
 	local count
 
-	if not var_38_0 then
-		count = #var_38_0
+	if rewards then
+		count = #rewards
 
 		if not count then
 			-- Nothing
@@ -958,9 +1103,11 @@ HeroWindowGotwfOverview._claim_reward_result_cb = function (self, arg_38_1, arg_
 
 	count = 0
 
+	local num_rewards = count
+
 	::label_38_0::
 
-	if count == 0 then
+	if num_rewards == 0 then
 		self._awaiting_result = false
 
 		self._parent:unblock_input()
@@ -968,8 +1115,11 @@ HeroWindowGotwfOverview._claim_reward_result_cb = function (self, arg_38_1, arg_
 		return
 	end
 
-	self._replacement_presentation_data = self:_gather_replacement_presentation_data(arg_38_1)
-	self._item_widgets[arg_38_1].content.visible = false
+	self._replacement_presentation_data = self:_gather_replacement_presentation_data(reward_index)
+
+	local item_widget = self._item_widgets[reward_index]
+
+	item_widget.content.visible = false
 
 	self:_update_claim_button_visibility()
 	self:_reset_current_item()
@@ -981,7 +1131,7 @@ HeroWindowGotwfOverview._claim_reward_result_cb = function (self, arg_38_1, arg_
 
 	self._ui_animations_callbacks.reveal = function ()
 		-- function 39
-		self:_update_daily_rewards(arg_38_1)
+		self:_update_daily_rewards(reward_index)
 		self:_start_transition_animation("show_item_list")
 		self:_trigger_replacement_rewards()
 	end
@@ -1001,66 +1151,70 @@ HeroWindowGotwfOverview._trigger_replacement_rewards = function (self)
 	self._replacement_presentation_data = nil
 end
 
-local tbl_3 = {}
+local PRESENTATION_DATA = {}
 
-HeroWindowGotwfOverview._gather_replacement_presentation_data = function (self, arg_41_1)
+HeroWindowGotwfOverview._gather_replacement_presentation_data = function (self, reward_index)
 	-- function 41
-	if self._login_rewards.claimed_rewards[arg_41_1] < 2 then
+	local login_rewards = self._login_rewards
+	local claimed_rewards = login_rewards.claimed_rewards
+
+	if claimed_rewards[reward_index] < 2 then
 		return
 	end
 
-	table.clear(tbl_3)
+	table.clear(PRESENTATION_DATA)
 
-	local var_41_0 = self._login_rewards.currency_added[1]
+	local currency_added = self._login_rewards.currency_added
+	local data = currency_added[1]
 
-	if not var_41_0 then
+	if not data then
 		return
 	end
 
 	local get_fake_currency_item = BackendUtils.get_fake_currency_item
-	local code = var_41_0.code
+	local code = data.code
 
-	code = code or "SM"
+	code = not not code or not not "SM"
 
-	local var_41_3, var_41_4, var_41_5 = get_fake_currency_item(code, var_41_0.amount)
-	local tbl = {
-		data = var_41_3
+	local fake_item_data, _, description_str = get_fake_currency_item(code, data.amount)
+	local fake_item = {
+		data = fake_item_data
 	}
-	local tbl_2 = {}
-	local get_ui_information_from_item, var_41_9, var_41_10 = UIUtils.get_ui_information_from_item(tbl)
+	local description = {}
+	local _, display_name, _ = UIUtils.get_ui_information_from_item(fake_item)
 
-	tbl_2[1] = Localize(var_41_9)
-	tbl_2[2] = string.format(Localize(var_41_5), var_41_0.amount)
+	description[1] = Localize(display_name)
+	description[2] = string.format(Localize(description_str), data.amount)
 
-	local tbl_4 = {}
+	local entry = {}
 
-	tbl_4[#tbl_4 + 1] = {
+	entry[#entry + 1] = {
 		widget_type = "description",
-		value = tbl_2
+		value = description
 	}
-	tbl_4[#tbl_4 + 1] = {
+	entry[#entry + 1] = {
 		widget_type = "icon",
-		value = tbl.data.icon
+		value = fake_item.data.icon
 	}
-	tbl_3[#tbl_3 + 1] = tbl_4
-	tbl_3.bg_alpha = 200
-	tbl_3.offset = {
+	PRESENTATION_DATA[#PRESENTATION_DATA + 1] = entry
+	PRESENTATION_DATA.bg_alpha = 200
+	PRESENTATION_DATA.offset = {
 		0,
 		190,
 		1
 	}
 
-	return tbl_3
+	return PRESENTATION_DATA
 end
 
-HeroWindowGotwfOverview._update_daily_rewards = function (self, arg_42_1)
+HeroWindowGotwfOverview._update_daily_rewards = function (self, reward_index)
 	-- function 42
-	local _create_reward_widget = self:_create_reward_widget(arg_42_1)
+	local item_widget = self:_create_reward_widget(reward_index)
 
-	self._item_widgets[arg_42_1] = _create_reward_widget
+	self._item_widgets[reward_index] = item_widget
 
 	self:_select_current_reward(self._current_item_index)
-	self:_update_selected_reward(_create_reward_widget)
+	self:_update_selected_reward(item_widget)
 	self:_update_claim_button_visibility()
 
 	self._awaiting_result = false
@@ -1068,345 +1222,399 @@ HeroWindowGotwfOverview._update_daily_rewards = function (self, arg_42_1)
 	self._parent:unblock_input()
 end
 
-HeroWindowGotwfOverview._update_selected_reward = function (self, arg_43_1)
+HeroWindowGotwfOverview._update_selected_reward = function (self, item_widget)
 	-- function 43
-	local _login_rewards = self._login_rewards
-	local rewards = _login_rewards.rewards
-	local claimed_rewards = _login_rewards.claimed_rewards
-	local content = arg_43_1.content
-	local reward_order = content.reward_order
-	local var_43_5 = reward_order[#reward_order]
+	local login_rewards = self._login_rewards
+	local rewards = login_rewards.rewards
+	local claimed_rewards = login_rewards.claimed_rewards
+	local item_widget_content = item_widget.content
+	local reward_order = item_widget_content.reward_order
+	local internal_reward_index = reward_order[#reward_order]
 
-	content["hotspot_" .. var_43_5].is_selected = true
+	item_widget_content["hotspot_" .. internal_reward_index].is_selected = true
 
-	local var_43_6 = rewards[self._current_item_index]
-	local _get_reward_item_from_bundle = self:_get_reward_item_from_bundle(var_43_6)
+	local reward_index = self._current_item_index
+	local reward = rewards[reward_index]
+	local _get_reward_item_from_bundle = self:_get_reward_item_from_bundle(reward)
 
-	_get_reward_item_from_bundle = _get_reward_item_from_bundle or var_43_6[math.min(var_43_5, #var_43_6)]
+	if not _get_reward_item_from_bundle then
+		-- Nothing
+	end
 
-	local var_43_8 = claimed_rewards[self._current_item_index]
-	local flag = var_43_8 > 0
-	local flag_2 = var_43_8 > 1
+	_get_reward_item_from_bundle = reward[math.min(internal_reward_index, #reward)]
 
-	self._params.selected_item = not flag and _get_reward_item_from_bundle
-	self._params.selected_item_index = not flag and self._current_item_index
-	self._params.selected_item_claimed = flag
-	self._params.selected_item_already_owned = flag_2
+	local selected_item = _get_reward_item_from_bundle
+
+	::label_43_0::
+
+	local claimed_status = claimed_rewards[self._current_item_index]
+	local is_claimed = claimed_status > 0
+	local already_owned = claimed_status > 1
+
+	self._params.selected_item = not not is_claimed and not not selected_item
+	self._params.selected_item_index = not not is_claimed and not not self._current_item_index
+	self._params.selected_item_claimed = is_claimed
+	self._params.selected_item_already_owned = already_owned
 	self._current_item_index = self._current_item_index
 end
 
-HeroWindowGotwfOverview.post_update = function (self, arg_44_1, arg_44_2)
+HeroWindowGotwfOverview.post_update = function (self, dt, t)
 	-- function 44
-	if not self._ready then
-		self:_animate_list_entries(arg_44_1, arg_44_2)
-		self:_animate_buttons(arg_44_1, arg_44_2)
-		self:_handle_arrow_visibility(arg_44_1, arg_44_2)
-		self:_handle_input(arg_44_1, arg_44_2)
-		self:_handle_input_descriptions(arg_44_1, arg_44_2)
+	if self._ready then
+		self:_animate_list_entries(dt, t)
+		self:_animate_buttons(dt, t)
+		self:_handle_arrow_visibility(dt, t)
+		self:_handle_input(dt, t)
+		self:_handle_input_descriptions(dt, t)
 	end
 end
 
-HeroWindowGotwfOverview._animate_buttons = function (self, arg_45_1, arg_45_2)
+HeroWindowGotwfOverview._animate_buttons = function (self, dt, t)
 	-- function 45
-	local _claim_button_widgets = self._claim_button_widgets
+	local claim_button_widgets = self._claim_button_widgets
 
-	for k, v in pairs(_claim_button_widgets) do
-		self:_animate_button(v, arg_45_1, arg_45_2)
+	for _, widget in pairs(claim_button_widgets) do
+		self:_animate_button(widget, dt, t)
 	end
 end
 
-HeroWindowGotwfOverview._animate_button = function (arg_46_0, arg_46_1, arg_46_2)
+HeroWindowGotwfOverview._animate_button = function (self, widget, dt)
 	-- function 46
-	local content = arg_46_1.content
-	local style = arg_46_1.style
-	local button_hotspot = content.button_hotspot
-	local is_hover = button_hotspot.is_hover
-	local is_selected = button_hotspot.is_selected
-	local is_clicked = button_hotspot.is_clicked
+	local content = widget.content
+	local style = widget.style
+	local hotspot = content.button_hotspot
+	local is_hover = hotspot.is_hover
+	local is_selected = hotspot.is_selected
+	local is_clicked = hotspot.is_clicked
 
-	is_clicked = not is_clicked and button_hotspot.is_clicked == 0
-
-	local input_progress = button_hotspot.input_progress
-
-	input_progress = input_progress or 0
-
-	local hover_progress = button_hotspot.hover_progress
-
-	hover_progress = hover_progress or 0
-
-	local selection_progress = button_hotspot.selection_progress
-
-	selection_progress = selection_progress or 0
-
-	local num = 8
-	local num_2 = 20
-
-	if not is_clicked then
-		input_progress = math.min(input_progress + arg_46_2 * num_2, 1)
-	else
-		input_progress = math.max(input_progress - arg_46_2 * num_2, 0)
+	if is_clicked then
+		-- Nothing
 	end
 
-	if not is_hover then
-		hover_progress = math.min(hover_progress + arg_46_2 * num, 1)
-	else
-		hover_progress = math.max(hover_progress - arg_46_2 * num, 0)
+	if hotspot.is_clicked ~= 0 then
+		is_clicked = false
+
+		goto label_46_0
 	end
 
-	if not is_selected then
-		selection_progress = math.min(selection_progress + arg_46_2 * num, 1)
-	else
-		selection_progress = math.max(selection_progress - arg_46_2 * num, 0)
+	is_clicked = true
+
+	local input_pressed = is_clicked
+
+	::label_46_0::
+
+	local input_progress_2 = hotspot.input_progress
+
+	if not input_progress_2 then
+		-- Nothing
 	end
 
-	local max = math.max(hover_progress, selection_progress)
+	input_progress_2 = 0
+
+	local input_progress = input_progress_2
+
+	::label_46_1::
+
+	local hover_progress_2 = hotspot.hover_progress
+
+	if not hover_progress_2 then
+		-- Nothing
+	end
+
+	hover_progress_2 = 0
+
+	local hover_progress = hover_progress_2
+
+	::label_46_2::
+
+	local selection_progress_2 = hotspot.selection_progress
+
+	if not selection_progress_2 then
+		-- Nothing
+	end
+
+	selection_progress_2 = 0
+
+	local selection_progress = selection_progress_2
+
+	::label_46_3::
+
+	local speed = 8
+	local input_speed = 20
+
+	if input_pressed then
+		input_progress = math.min(input_progress + dt * input_speed, 1)
+	else
+		input_progress = math.max(input_progress - dt * input_speed, 0)
+	end
+
+	if is_hover then
+		hover_progress = math.min(hover_progress + dt * speed, 1)
+	else
+		hover_progress = math.max(hover_progress - dt * speed, 0)
+	end
+
+	if is_selected then
+		selection_progress = math.min(selection_progress + dt * speed, 1)
+	else
+		selection_progress = math.max(selection_progress - dt * speed, 0)
+	end
+
+	local combined_progress = math.max(hover_progress, selection_progress)
 
 	style.clicked_rect.color[1] = 100 * input_progress
 
-	local num_3 = 255 * hover_progress
+	local hover_alpha = 255 * hover_progress
 
-	style.hover_glow.color[1] = num_3
+	style.hover_glow.color[1] = hover_alpha
 
-	local title_text_disabled = style.title_text_disabled
-	local default_text_color = title_text_disabled.default_text_color
-	local text_color = title_text_disabled.text_color
+	local text_disabled_style = style.title_text_disabled
+	local disabled_default_text_color = text_disabled_style.default_text_color
+	local disabled_text_color = text_disabled_style.text_color
 
-	text_color[2] = default_text_color[2] * 0.4
-	text_color[3] = default_text_color[3] * 0.4
-	text_color[4] = default_text_color[4] * 0.4
-	button_hotspot.hover_progress = hover_progress
-	button_hotspot.input_progress = input_progress
-	button_hotspot.selection_progress = selection_progress
+	disabled_text_color[2] = disabled_default_text_color[2] * 0.4
+	disabled_text_color[3] = disabled_default_text_color[3] * 0.4
+	disabled_text_color[4] = disabled_default_text_color[4] * 0.4
+	hotspot.hover_progress = hover_progress
+	hotspot.input_progress = input_progress
+	hotspot.selection_progress = selection_progress
 
-	local title_text = style.title_text
-	local text_color_2 = title_text.text_color
-	local default_text_color_2 = title_text.default_text_color
-	local select_text_color = title_text.select_text_color
+	local title_text_style = style.title_text
+	local title_text_color = title_text_style.text_color
+	local title_default_text_color = title_text_style.default_text_color
+	local title_select_text_color = title_text_style.select_text_color
 
-	Colors.lerp_color_tables(default_text_color_2, select_text_color, max, text_color_2)
+	Colors.lerp_color_tables(title_default_text_color, title_select_text_color, combined_progress, title_text_color)
 end
 
-HeroWindowGotwfOverview._handle_arrow_visibility = function (self, arg_47_1, arg_47_2)
+HeroWindowGotwfOverview._handle_arrow_visibility = function (self, dt, t)
 	-- function 47
-	if not self._ui_animations.move then
+	if self._ui_animations.move then
 		self._scrollbar_ui:force_update_progress()
 
 		return
 	end
 
-	local content = self._widgets_by_name.arrow_left.content
-	local content_2 = self._widgets_by_name.arrow_right.content
-	local total_rewards = self._login_rewards.total_rewards
+	local left_arrow_widget = self._widgets_by_name.arrow_left
+	local left_arrow_content = left_arrow_widget.content
+	local right_arrow_widget = self._widgets_by_name.arrow_right
+	local right_arrow_content = right_arrow_widget.content
+	local num_items = self._login_rewards.total_rewards
 
-	if total_rewards <= num then
-		content.visible = false
-		content.hotspot = {}
-		content_2.visible = false
-		content_2.hotspot = {}
+	if num_items <= NUM_VISIBLE_ITEMS then
+		left_arrow_content.visible = false
+		left_arrow_content.hotspot = {}
+		right_arrow_content.visible = false
+		right_arrow_content.hotspot = {}
 	elseif self._steps > 0 then
-		content.visible = true
+		left_arrow_content.visible = true
 
-		if self._steps < total_rewards - num then
-			content_2.visible = true
+		if self._steps < num_items - NUM_VISIBLE_ITEMS then
+			right_arrow_content.visible = true
 		else
-			content_2.visible = false
-			content_2.hotspot = {}
+			right_arrow_content.visible = false
+			right_arrow_content.hotspot = {}
 		end
 	elseif self._steps == 0 then
-		content.visible = false
-		content.hotspot = {}
-		content_2.visible = true
+		left_arrow_content.visible = false
+		left_arrow_content.hotspot = {}
+		right_arrow_content.visible = true
 	end
 end
 
-HeroWindowGotwfOverview._update_animations = function (self, arg_48_1)
+HeroWindowGotwfOverview._update_animations = function (self, dt)
 	-- function 48
-	local _ui_animations = self._ui_animations
-	local _animations = self._animations
-	local _ui_animator = self._ui_animator
+	local ui_animations = self._ui_animations
+	local animations = self._animations
+	local ui_animator = self._ui_animator
 
-	for k, v in pairs(self._ui_animations) do
-		UIAnimation.update(v, arg_48_1)
+	for name, animation in pairs(self._ui_animations) do
+		UIAnimation.update(animation, dt)
 
-		if not UIAnimation.completed(v) then
-			self._ui_animations[k] = nil
+		if UIAnimation.completed(animation) then
+			self._ui_animations[name] = nil
 		end
 	end
 
-	_ui_animator:update(arg_48_1)
+	ui_animator:update(dt)
 
-	for k_2, v_2 in pairs(_animations) do
-		if not _ui_animator:is_animation_completed(v_2) then
-			_ui_animator:stop_animation(v_2)
+	for animation_name, animation_id in pairs(animations) do
+		if ui_animator:is_animation_completed(animation_id) then
+			ui_animator:stop_animation(animation_id)
 
-			_animations[k_2] = nil
+			animations[animation_name] = nil
 
-			local var_48_3 = self._ui_animations_callbacks[k_2]
+			local anim_callback = self._ui_animations_callbacks[animation_name]
 
-			if not var_48_3 then
-				var_48_3()
+			if anim_callback then
+				anim_callback()
 			end
 		end
 	end
 
-	if not self._ui_animations.move then
+	if self._ui_animations.move then
 		self._scrollbar_ui:force_update_progress()
 	else
-		local abs = math.abs(self._ui_scenegraph.gotwf_item_anchor.local_position[1])
+		local offset = math.abs(self._ui_scenegraph.gotwf_item_anchor.local_position[1])
 
-		self._steps = math.ceil(abs / gotwf_item_size[1])
+		self._steps = math.ceil(offset / gotwf_item_size[1])
 	end
 end
 
-HeroWindowGotwfOverview._handle_input = function (self, arg_49_1, arg_49_2)
+HeroWindowGotwfOverview._handle_input = function (self, dt, t)
 	-- function 49
-	local _parent = self._parent
-	local _widgets_by_name = self._widgets_by_name
-	local is_device_active = Managers.input:is_device_active("gamepad")
-	local is_device_active_2 = Managers.input:is_device_active("mouse")
-	local window_input_service = self._parent:window_input_service()
-	local local_position = self._ui_scenegraph.gotwf_item_anchor.local_position
-	local total_rewards = self._login_rewards.total_rewards
-	local count = #self._login_rewards.rewards
-	local max = math.max(total_rewards - num, 0)
-	local _current_item_index = self._current_item_index
-	local _steps = self._steps
-	local _params = self._params
-	local flag = false
-	local claimed_rewards = self._login_rewards.claimed_rewards
+	local parent = self._parent
+	local widgets_by_name = self._widgets_by_name
+	local gamepad_active = Managers.input:is_device_active("gamepad")
+	local mouse_active = Managers.input:is_device_active("mouse")
+	local input_service = self._parent:window_input_service()
+	local gotwf_item_anchor_scenegraph_position = self._ui_scenegraph.gotwf_item_anchor.local_position
+	local num_items = self._login_rewards.total_rewards
+	local current_daily_reward_index = #self._login_rewards.rewards
+	local max_steps = math.max(num_items - NUM_VISIBLE_ITEMS, 0)
+	local old_item_index = self._current_item_index
+	local old_steps = self._steps
+	local params = self._params
+	local force_update = false
+	local login_rewards = self._login_rewards
+	local claimed_rewards = login_rewards.claimed_rewards
 
 	if not self._current_item_index then
-		self._current_item_index = count
-		self._steps = math.clamp(self._current_item_index + 3 - num, 0, max)
-		flag = true
-	elseif not self._force_index then
+		self._current_item_index = current_daily_reward_index
+		self._steps = math.clamp(self._current_item_index + 3 - NUM_VISIBLE_ITEMS, 0, max_steps)
+		force_update = true
+	elseif self._force_index then
 		self._current_item_index = self._force_index
-		self._steps = math.clamp(self._current_item_index + 3 - num, 0, max)
-		flag = true
+		self._steps = math.clamp(self._current_item_index + 3 - NUM_VISIBLE_ITEMS, 0, max_steps)
+		force_update = true
 		self._force_index = nil
 	end
 
-	local var_49_14 = claimed_rewards[self._current_item_index]
+	local claimed_status = claimed_rewards[self._current_item_index]
 
-	if not (not is_device_active and self._gamepad_was_active) then
-		self._steps = math.clamp(self._current_item_index + 3 - num, 0, max)
+	if gamepad_active and not self._gamepad_was_active then
+		self._steps = math.clamp(self._current_item_index + 3 - NUM_VISIBLE_ITEMS, 0, max_steps)
 
-		local _current_item_index_2 = self._current_item_index
+		local _current_item_index = self._current_item_index
 
-		_current_item_index_2 = _current_item_index_2 or self._steps + 1
-		self._current_item_index = _current_item_index_2
-		flag = true
+		_current_item_index = not not _current_item_index or not not (self._steps + 1)
+		self._current_item_index = _current_item_index
+		force_update = true
 
-		if not is_device_active then
+		if gamepad_active then
 			for i = 1, table.size(self._claim_button_widgets) do
-				self._claim_button_widgets[i].content.gamepad_selected = i == self._current_item_index
+				local claim_button_widget = self._claim_button_widgets[i]
+				local claim_button_widget_content = claim_button_widget.content
+
+				claim_button_widget_content.gamepad_selected = i == self._current_item_index
 			end
 
-			local content = self._item_widgets[self._current_item_index].content
-			local reward_order = content.reward_order
-			local var_49_18 = reward_order[#reward_order]
+			local item_widget = self._item_widgets[self._current_item_index]
+			local item_widget_content = item_widget.content
+			local reward_order = item_widget_content.reward_order
+			local index = reward_order[#reward_order]
 
-			content["hotspot_" .. var_49_18].is_selected = not (var_49_14 > 0) or true
+			item_widget_content["hotspot_" .. index].is_selected = claimed_status > 0 and not not true
 		else
-			for i_2, v in ipairs(self._item_widgets) do
-				local content_2 = v.content
-				local num_rewards = content_2.num_rewards
+			for _, item_widget in ipairs(self._item_widgets) do
+				local item_widget_content = item_widget.content
+				local num_rewards = item_widget_content.num_rewards
 
-				for l = 1, num_rewards do
-					content_2["hotspot_" .. l].is_selected = false
+				for i = 1, num_rewards do
+					item_widget_content["hotspot_" .. i].is_selected = false
 				end
 			end
 		end
 
 		self._scrollbar_ui:disable_input(true)
-	elseif is_device_active or not self._gamepad_was_active then
+	elseif not gamepad_active and self._gamepad_was_active then
 		self._scrollbar_ui:disable_input(false)
 	end
 
-	if not (self._awaiting_result or flag) then
-		local num_2 = 0
-		local num_3 = 0
+	if not self._awaiting_result and not force_update then
+		local hold_left_timer, hold_right_timer = 0, 0
 
-		if not window_input_service:get("move_left_hold") then
-			num_2 = self._hold_left_timer + arg_49_1
-			num_3 = 0
-		elseif not window_input_service:get("move_right_hold") then
-			num_3 = self._hold_right_timer + arg_49_1
-			num_2 = 0
+		if input_service:get("move_left_hold") then
+			hold_left_timer = self._hold_left_timer + dt
+			hold_right_timer = 0
+		elseif input_service:get("move_right_hold") then
+			hold_right_timer = self._hold_right_timer + dt
+			hold_left_timer = 0
 		else
-			num_3 = 0
-			num_2 = 0
+			hold_right_timer = 0
+			hold_left_timer = 0
 		end
 
-		if not is_device_active_2 then
-			if not (window_input_service:get("move_left") or not (num_2 > 0.5)) then
-				if num_2 > 0.5 then
-					num_2 = 0.4
+		if not mouse_active then
+			if input_service:get("move_left") or hold_left_timer > 0.5 then
+				if hold_left_timer > 0.5 then
+					hold_left_timer = 0.4
 				end
 
-				self._current_item_index = math.clamp(self._current_item_index - 1, 1, total_rewards)
-				self._steps = math.clamp(self._current_item_index + 3 - num, 0, max)
-			elseif not ((window_input_service:get("move_right") or num_3 > 0.5) and not (total_rewards > self._current_item_index)) then
-				if num_3 > 0.5 then
-					num_3 = 0.4
+				self._current_item_index = math.clamp(self._current_item_index - 1, 1, num_items)
+				self._steps = math.clamp(self._current_item_index + 3 - NUM_VISIBLE_ITEMS, 0, max_steps)
+			elseif (input_service:get("move_right") or hold_right_timer > 0.5) and num_items > self._current_item_index then
+				if hold_right_timer > 0.5 then
+					hold_right_timer = 0.4
 				end
 
-				self._current_item_index = math.clamp(self._current_item_index + 1, 1, total_rewards)
-				self._steps = math.clamp(self._current_item_index + 3 - num, 0, max)
+				self._current_item_index = math.clamp(self._current_item_index + 1, 1, num_items)
+				self._steps = math.clamp(self._current_item_index + 3 - NUM_VISIBLE_ITEMS, 0, max_steps)
 			end
 
-			if not window_input_service:get("confirm_press") then
-				local num_4 = self._current_item_index - count
+			if input_service:get("confirm_press") then
+				local reward_offset = self._current_item_index - current_daily_reward_index
 
-				self:_claim_daily_reward(num_4)
-			elseif not window_input_service:get("special_1_press") then
-				local var_49_24 = self._item_widgets[self._current_item_index]
-				local content_3 = var_49_24.content
-				local num_rewards_2 = content_3.num_rewards
+				self:_claim_daily_reward(reward_offset)
+			elseif input_service:get("special_1_press") then
+				local item_widget = self._item_widgets[self._current_item_index]
+				local item_widget_content = item_widget.content
+				local num_rewards = item_widget_content.num_rewards
 
-				if num_rewards_2 > 1 then
-					_current_item_index = nil
+				if num_rewards > 1 then
+					old_item_index = nil
 
-					local var_49_27 = content_3.reward_order[1]
+					local reward_order = item_widget_content.reward_order
+					local index = reward_order[1]
 
-					for i4 = 1, num_rewards_2 do
-						content_3["hotspot_" .. i4].is_selected = false
+					for i = 1, num_rewards do
+						item_widget_content["hotspot_" .. i].is_selected = false
 					end
 
-					self:_start_item_rotation_animation(var_49_24, var_49_27)
+					self:_start_item_rotation_animation(item_widget, index)
 					self:_play_sound("Play_hud_gotwf_click_claimed")
 				end
 			end
-		elseif not UIUtils.is_button_pressed(_widgets_by_name.arrow_right, "hotspot") then
-			self._steps = math.clamp(self._steps + 1, 0, total_rewards - num)
-		elseif not UIUtils.is_button_pressed(_widgets_by_name.arrow_left, "hotspot") then
-			self._steps = math.clamp(self._steps - 1, 0, total_rewards - num)
+		elseif UIUtils.is_button_pressed(widgets_by_name.arrow_right, "hotspot") then
+			self._steps = math.clamp(self._steps + 1, 0, num_items - NUM_VISIBLE_ITEMS)
+		elseif UIUtils.is_button_pressed(widgets_by_name.arrow_left, "hotspot") then
+			self._steps = math.clamp(self._steps - 1, 0, num_items - NUM_VISIBLE_ITEMS)
 		else
-			for i_3, v_2 in ipairs(self._item_widgets) do
-				local content_4 = v_2.content
-				local num_rewards_3 = content_4.num_rewards
+			for idx, item_widget in ipairs(self._item_widgets) do
+				local content = item_widget.content
+				local num_rewards = content.num_rewards
 
-				for i7 = num_rewards_3, 1, -1 do
-					local var_49_30 = content_4.reward_order[i7]
+				for i = num_rewards, 1, -1 do
+					local index = content.reward_order[i]
 
-					if not UIUtils.is_button_pressed(v_2, "hotspot_" .. var_49_30) then
-						self._current_item_index = i_3
+					if UIUtils.is_button_pressed(item_widget, "hotspot_" .. index) then
+						self._current_item_index = idx
 
-						local content_5 = v_2.content
-						local reward_order_2 = content_5.reward_order
+						local content = item_widget.content
+						local reward_order = content.reward_order
 
-						if not content_5.owned then
-							local find = table.find(reward_order_2, var_49_30)
+						if content.owned then
+							local reward_index = table.find(reward_order, index)
 
-							if not (not (num_rewards_3 > 1) or not (find < num_rewards_3)) then
-								self:_start_item_rotation_animation(v_2, var_49_30)
+							if num_rewards > 1 and reward_index < num_rewards then
+								self:_start_item_rotation_animation(item_widget, index)
 
-								_current_item_index = nil
+								old_item_index = nil
 
-								local num_rewards_4 = content_5.num_rewards
+								local num_rewards = content.num_rewards
 
-								for i8 = 1, num_rewards_4 do
-									content_5["hotspot_" .. i8].is_selected = false
+								for i = 1, num_rewards do
+									content["hotspot_" .. i].is_selected = false
 								end
 							end
 						end
@@ -1416,9 +1624,9 @@ HeroWindowGotwfOverview._handle_input = function (self, arg_49_1, arg_49_2)
 				end
 			end
 
-			for k, v_3 in pairs(self._claim_button_widgets) do
-				if not UIUtils.is_button_pressed(v_3) then
-					local reward_offset = v_3.content.reward_offset
+			for name, widget in pairs(self._claim_button_widgets) do
+				if UIUtils.is_button_pressed(widget) then
+					local reward_offset = widget.content.reward_offset
 
 					self:_claim_daily_reward(reward_offset)
 
@@ -1427,88 +1635,120 @@ HeroWindowGotwfOverview._handle_input = function (self, arg_49_1, arg_49_2)
 			end
 		end
 
-		self._hold_right_timer = num_3
-		self._hold_left_timer = num_2
+		self._hold_right_timer = hold_right_timer
+		self._hold_left_timer = hold_left_timer
 	end
 
-	if self._current_item_index ~= _current_item_index then
-		if not _current_item_index then
-			local content_6 = self._item_widgets[_current_item_index].content
-			local num_rewards_5 = content_6.num_rewards
+	if self._current_item_index ~= old_item_index then
+		if old_item_index then
+			local old_widget = self._item_widgets[old_item_index]
+			local old_widget_content = old_widget.content
+			local num_rewards = old_widget_content.num_rewards
 
-			for i11 = 1, num_rewards_5 do
-				content_6["hotspot_" .. i11].is_selected = false
+			for i = 1, num_rewards do
+				old_widget_content["hotspot_" .. i].is_selected = false
 			end
 
-			self._claim_button_widgets[_current_item_index].content.gamepad_selected = false
+			local claimed_widget = self._claim_button_widgets[old_item_index]
+			local claimed_widget_content = claimed_widget.content
+
+			claimed_widget_content.gamepad_selected = false
 		end
 
-		local var_49_38 = self._login_rewards.claimed_rewards[self._current_item_index]
-		local flag_2 = var_49_38 > 0
-		local flag_3 = var_49_38 > 1
+		local claimed_status = self._login_rewards.claimed_rewards[self._current_item_index]
+		local is_claimed = claimed_status > 0
+		local already_owned = claimed_status > 1
+		local claimed_widget = self._claim_button_widgets[self._current_item_index]
+		local claimed_widget_content = claimed_widget.content
 
-		self._claim_button_widgets[self._current_item_index].content.gamepad_selected = true
+		claimed_widget_content.gamepad_selected = true
 
-		local content_7 = self._item_widgets[self._current_item_index].content
-		local reward_order_3 = content_7.reward_order
-		local num_rewards_6 = content_7.num_rewards
-		local min = math.min(num_rewards_6, reward_order_3[#reward_order_3])
+		local item_widget = self._item_widgets[self._current_item_index]
+		local item_widget_content = item_widget.content
+		local reward_order = item_widget_content.reward_order
+		local num_rewards = item_widget_content.num_rewards
+		local reward_index = math.min(num_rewards, reward_order[#reward_order])
 
-		content_7["hotspot_" .. min].is_selected = flag_2
+		item_widget_content["hotspot_" .. reward_index].is_selected = is_claimed
 
-		if not content_7.owned then
+		if item_widget_content.owned then
 			self:_play_sound("Play_hud_gotwf_click_claimed")
 		else
 			self:_play_sound("Play_hud_gotwf_click_unclaimed")
 		end
 
-		local var_49_45 = self._login_rewards.rewards[self._current_item_index]
-		local flag_4 = not var_49_45 and var_49_45[min] and self:_get_reward_item_from_bundle(var_49_45)
+		local rewards = self._login_rewards.rewards
+		local current_reward = rewards[self._current_item_index]
+		local _get_reward_item_from_bundle = self:_get_reward_item_from_bundle(current_reward)
 
-		self._params.selected_item = not flag_2 and flag_4
-		self._params.selected_item_index = not flag_2 and self._current_item_index
-		self._params.selected_item_claimed = flag_2
-		self._params.selected_item_already_owned = flag_3
+		if not _get_reward_item_from_bundle and current_reward then
+			-- Nothing
+		end
 
-		if not flag_2 then
+		::label_49_0::
+
+		_get_reward_item_from_bundle = current_reward[reward_index]
+
+		local item = _get_reward_item_from_bundle
+
+		::label_49_1::
+
+		self._params.selected_item = not not is_claimed and not not item
+		self._params.selected_item_index = not not is_claimed and not not self._current_item_index
+		self._params.selected_item_claimed = is_claimed
+		self._params.selected_item_already_owned = already_owned
+
+		if is_claimed then
 			self:_start_transition_animation("reveal_instant")
 		else
 			self:_start_transition_animation("hide_instant")
 		end
 	end
 
-	if _steps ~= self._steps or not flag then
-		self._ui_animations.move = UIAnimation.init(UIAnimation.function_by_time, local_position, 1, local_position[1], -self._steps * gotwf_item_size[1], 0.5, math.easeOutCubic)
+	if old_steps ~= self._steps or force_update then
+		self._ui_animations.move = UIAnimation.init(UIAnimation.function_by_time, gotwf_item_anchor_scenegraph_position, 1, gotwf_item_anchor_scenegraph_position[1], -self._steps * gotwf_item_size[1], 0.5, math.easeOutCubic)
 	end
 
-	self._gamepad_was_active = is_device_active
+	self._gamepad_was_active = gamepad_active
 end
 
-HeroWindowGotwfOverview._get_reward_item_from_bundle = function (arg_50_0, arg_50_1)
+HeroWindowGotwfOverview._get_reward_item_from_bundle = function (self, reward)
 	-- function 50
-	if not arg_50_1 then
+	if not reward then
 		return
 	end
 
-	local var_50_0 = arg_50_1[1]
+	local reward_item = reward[1]
 
-	if var_50_0.reward_type == "bundle" then
-		local item_id = var_50_0.item_id
-		local BundledItems = ItemMasterList[item_id].bundle.BundledItems
-		local local_player = Managers.player:local_player()
-		local profile_index = local_player:profile_index()
-		local career_index = local_player:career_index()
-		local name = SPProfiles[profile_index].careers[career_index].name
-		local num = 1
+	if reward_item.reward_type == "bundle" then
+		local bundle_item_id = reward_item.item_id
+		local bundle_item = ItemMasterList[bundle_item_id]
+		local bundle = bundle_item.bundle
+		local bundled_items = bundle.BundledItems
+		local player = Managers.player:local_player()
+		local profile_index = player:profile_index()
+		local career_index = player:career_index()
+		local profile = SPProfiles[profile_index]
+		local career = profile.careers[career_index]
+		local career_name = career.name
+		local index = 1
 
-		for i = 1, #BundledItems do
-			local var_50_8 = BundledItems[i]
-			local var_50_9 = rawget(ItemMasterList, var_50_8)
+		for i = 1, #bundled_items do
+			local item_id = bundled_items[i]
+			local var_50_0 = rawget(ItemMasterList, item_id)
 
-			var_50_9 = var_50_9 or {}
+			if not var_50_0 then
+				-- Nothing
+			end
 
-			if not table.contains(var_50_9.can_wield, name) then
-				num = i
+			var_50_0 = {}
+
+			local item_data = var_50_0
+
+			::label_50_0::
+
+			if table.contains(item_data.can_wield, career_name) then
+				index = i
 
 				break
 			end
@@ -1516,184 +1756,191 @@ HeroWindowGotwfOverview._get_reward_item_from_bundle = function (arg_50_0, arg_5
 
 		return {
 			reward_type = "bundle_item",
-			item_id = BundledItems[num],
-			bundle_item_id = var_50_0.item_id
+			item_id = bundled_items[index],
+			bundle_item_id = reward_item.item_id
 		}
 	end
 end
 
-HeroWindowGotwfOverview._handle_input_descriptions = function (self, arg_51_1, arg_51_2)
+HeroWindowGotwfOverview._handle_input_descriptions = function (self, dt, t)
 	-- function 51
-	local flag = true
-	local count = #self._login_rewards.rewards
-	local num = self._current_item_index - count
-	local var_51_3 = self._login_rewards.rewards[self._current_item_index]
-	local count_2
+	local skip_mark_all_as_seen = true
+	local current_reward_index = #self._login_rewards.rewards
+	local reward_offset = self._current_item_index - current_reward_index
+	local reward = self._login_rewards.rewards[self._current_item_index]
+	local count
 
-	if not var_51_3 then
-		count_2 = #var_51_3
+	if reward then
+		count = #reward
 
-		if not count_2 then
+		if not count then
 			-- Nothing
 		end
 	end
 
-	count_2 = 1
+	count = 1
+
+	local num_rewards = count
 
 	::label_51_0::
 
-	local flag_2 = self._login_rewards.claimed_rewards[self._current_item_index] > 0
+	local claimed_rewards = self._login_rewards.claimed_rewards
+	local claimed = claimed_rewards[self._current_item_index] > 0
 	local num_allowed_old_segments_to_claim = self._login_rewards.num_allowed_old_segments_to_claim
 
-	if not flag_2 then
-		if count_2 > 1 then
-			self._parent:change_generic_actions(generic_input_actions.multiple_rewards, flag)
+	if claimed then
+		if num_rewards > 1 then
+			self._parent:change_generic_actions(generic_input_actions.multiple_rewards, skip_mark_all_as_seen)
 		else
-			self._parent:change_generic_actions(generic_input_actions.default, flag)
+			self._parent:change_generic_actions(generic_input_actions.default, skip_mark_all_as_seen)
 		end
-	elseif not (not (num >= -num_allowed_old_segments_to_claim) or not (num <= 0)) then
-		self._parent:change_generic_actions(generic_input_actions.claim_available, flag)
+	elseif reward_offset >= -num_allowed_old_segments_to_claim and reward_offset <= 0 then
+		self._parent:change_generic_actions(generic_input_actions.claim_available, skip_mark_all_as_seen)
 	else
-		self._parent:change_generic_actions(generic_input_actions.default, flag)
+		self._parent:change_generic_actions(generic_input_actions.default, skip_mark_all_as_seen)
 	end
 end
 
-HeroWindowGotwfOverview._draw = function (self, arg_52_1, arg_52_2)
+HeroWindowGotwfOverview._draw = function (self, dt, t)
 	-- function 52
-	local _parent = self._parent
-	local get_layout_renderer = self._parent:get_layout_renderer()
-	local _ui_renderer = self._ui_renderer
-	local _ui_top_renderer = self._ui_top_renderer
-	local _ui_scenegraph = self._ui_scenegraph
-	local window_input_service = self._parent:window_input_service()
-	local _render_settings = self._render_settings
-	local count = #self._item_widgets
+	local parent = self._parent
+	local viewport_renderer = self._parent:get_layout_renderer()
+	local ui_renderer = self._ui_renderer
+	local ui_top_renderer = self._ui_top_renderer
+	local ui_scenegraph = self._ui_scenegraph
+	local parent = self._parent
+	local input_service = parent:window_input_service()
+	local render_settings = self._render_settings
+	local num_items = #self._item_widgets
 	local claimed_rewards = self._login_rewards.claimed_rewards
-	local alpha_multiplier = _render_settings.alpha_multiplier
+	local alpha_multiplier = render_settings.alpha_multiplier
 
-	UIRenderer.begin_pass(_ui_top_renderer, _ui_scenegraph, window_input_service, arg_52_1, nil, _render_settings)
+	UIRenderer.begin_pass(ui_top_renderer, ui_scenegraph, input_service, dt, nil, render_settings)
 
-	for i, v in ipairs(self._widgets) do
-		_render_settings.snap_pixel_positions = false
+	for _, widget in ipairs(self._widgets) do
+		render_settings.snap_pixel_positions = false
 
-		local alpha_multiplier_2 = v.alpha_multiplier
+		local alpha_multiplier_2 = widget.alpha_multiplier
 
-		alpha_multiplier_2 = alpha_multiplier_2 or alpha_multiplier
-		_render_settings.alpha_multiplier = alpha_multiplier_2
+		alpha_multiplier_2 = not not alpha_multiplier_2 or not not alpha_multiplier
+		render_settings.alpha_multiplier = alpha_multiplier_2
 
-		UIRenderer.draw_widget(_ui_top_renderer, v)
+		UIRenderer.draw_widget(ui_top_renderer, widget)
 	end
 
-	if claimed_rewards[self._current_item_index] > 0 or not self._awaiting_result then
-		for i_2, v_2 in ipairs(self._lock_widgets) do
-			_render_settings.snap_pixel_positions = false
+	local claimed = claimed_rewards[self._current_item_index] > 0
 
-			local alpha_multiplier_3 = v_2.alpha_multiplier
+	if claimed or self._awaiting_result then
+		for _, widget in ipairs(self._lock_widgets) do
+			render_settings.snap_pixel_positions = false
 
-			alpha_multiplier_3 = alpha_multiplier_3 or alpha_multiplier
-			_render_settings.alpha_multiplier = alpha_multiplier_3
+			local alpha_multiplier_3 = widget.alpha_multiplier
 
-			UIRenderer.draw_widget(_ui_top_renderer, v_2)
+			alpha_multiplier_3 = not not alpha_multiplier_3 or not not alpha_multiplier
+			render_settings.alpha_multiplier = alpha_multiplier_3
+
+			UIRenderer.draw_widget(ui_top_renderer, widget)
 		end
 	end
 
-	for i_3, v_3 in ipairs(self._item_texture_widgets) do
-		_render_settings.snap_pixel_positions = false
+	for _, widget in ipairs(self._item_texture_widgets) do
+		render_settings.snap_pixel_positions = false
 
-		local alpha_multiplier_4 = v_3.alpha_multiplier
+		local alpha_multiplier_4 = widget.alpha_multiplier
 
-		alpha_multiplier_4 = alpha_multiplier_4 or alpha_multiplier
-		_render_settings.alpha_multiplier = alpha_multiplier_4
+		alpha_multiplier_4 = not not alpha_multiplier_4 or not not alpha_multiplier
+		render_settings.alpha_multiplier = alpha_multiplier_4
 
-		UIRenderer.draw_widget(_ui_top_renderer, v_3)
+		UIRenderer.draw_widget(ui_top_renderer, widget)
 	end
 
-	local abs = math.abs(self._ui_scenegraph.gotwf_item_anchor.local_position[1])
-	local ceil = math.ceil(abs / gotwf_item_size[1])
+	local offset = math.abs(self._ui_scenegraph.gotwf_item_anchor.local_position[1])
+	local current_step = math.ceil(offset / gotwf_item_size[1])
 
-	for i_4, v_4 in ipairs(self._item_widgets) do
-		if not (not (i_4 > ceil - 1) or not (i_4 <= num + ceil + 1)) then
-			_render_settings.snap_pixel_positions = false
+	for idx, widget in ipairs(self._item_widgets) do
+		if idx > current_step - 1 and idx <= NUM_VISIBLE_ITEMS + current_step + 1 then
+			render_settings.snap_pixel_positions = false
 
-			local alpha_multiplier_5 = v_4.alpha_multiplier
+			local alpha_multiplier_5 = widget.alpha_multiplier
 
-			alpha_multiplier_5 = alpha_multiplier_5 or alpha_multiplier
-			_render_settings.alpha_multiplier = alpha_multiplier_5
+			alpha_multiplier_5 = not not alpha_multiplier_5 or not not alpha_multiplier
+			render_settings.alpha_multiplier = alpha_multiplier_5
 
-			UIRenderer.draw_widget(_ui_top_renderer, v_4)
+			UIRenderer.draw_widget(ui_top_renderer, widget)
 		end
 	end
 
-	local abs_2 = math.abs(self._ui_scenegraph.gotwf_item_anchor.local_position[1])
-	local ceil_2 = math.ceil(abs_2 / gotwf_item_size[1])
+	local offset = math.abs(self._ui_scenegraph.gotwf_item_anchor.local_position[1])
+	local current_step = math.ceil(offset / gotwf_item_size[1])
 
-	for i_5, v_5 in ipairs(self._claim_button_widgets) do
-		if not (not (i_5 > ceil_2 - 1) or not (i_5 <= num + ceil_2 + 1)) then
-			_render_settings.snap_pixel_positions = false
+	for idx, widget in ipairs(self._claim_button_widgets) do
+		if idx > current_step - 1 and idx <= NUM_VISIBLE_ITEMS + current_step + 1 then
+			render_settings.snap_pixel_positions = false
 
-			local alpha_multiplier_6 = v_5.alpha_multiplier
+			local alpha_multiplier_6 = widget.alpha_multiplier
 
-			alpha_multiplier_6 = alpha_multiplier_6 or alpha_multiplier
-			_render_settings.alpha_multiplier = alpha_multiplier_6
+			alpha_multiplier_6 = not not alpha_multiplier_6 or not not alpha_multiplier
+			render_settings.alpha_multiplier = alpha_multiplier_6
 
-			UIRenderer.draw_widget(_ui_top_renderer, v_5)
+			UIRenderer.draw_widget(ui_top_renderer, widget)
 		end
 	end
 
-	UIRenderer.end_pass(_ui_top_renderer)
+	UIRenderer.end_pass(ui_top_renderer)
 
-	local alpha_multiplier_7 = _render_settings.alpha_multiplier
+	local alpha_multiplier = render_settings.alpha_multiplier
 
-	UIRenderer.begin_pass(_ui_renderer, _ui_scenegraph, window_input_service, arg_52_1, nil, _render_settings)
+	UIRenderer.begin_pass(ui_renderer, ui_scenegraph, input_service, dt, nil, render_settings)
 
-	for i_6, v_6 in ipairs(self._bottom_widgets) do
-		_render_settings.snap_pixel_positions = false
+	for _, widget in ipairs(self._bottom_widgets) do
+		render_settings.snap_pixel_positions = false
 
-		local alpha_multiplier_8 = v_6.alpha_multiplier
+		local alpha_multiplier_7 = widget.alpha_multiplier
 
-		alpha_multiplier_8 = alpha_multiplier_8 or alpha_multiplier_7
-		_render_settings.alpha_multiplier = alpha_multiplier_8
+		alpha_multiplier_7 = not not alpha_multiplier_7 or not not alpha_multiplier
+		render_settings.alpha_multiplier = alpha_multiplier_7
 
-		UIRenderer.draw_widget(_ui_renderer, v_6)
+		UIRenderer.draw_widget(ui_renderer, widget)
 	end
 
-	UIRenderer.end_pass(_ui_renderer)
+	UIRenderer.end_pass(ui_renderer)
 
-	if not get_layout_renderer then
-		UIRenderer.begin_pass(get_layout_renderer, _ui_scenegraph, window_input_service, arg_52_1, nil, self._render_settings)
+	if viewport_renderer then
+		UIRenderer.begin_pass(viewport_renderer, ui_scenegraph, input_service, dt, nil, self._render_settings)
 
-		for i_7, v_7 in ipairs(self._viewport_widgets) do
-			UIRenderer.draw_widget(get_layout_renderer, v_7)
+		for _, widget in ipairs(self._viewport_widgets) do
+			UIRenderer.draw_widget(viewport_renderer, widget)
 		end
 
-		UIRenderer.end_pass(get_layout_renderer)
+		UIRenderer.end_pass(viewport_renderer)
 	end
 
-	_render_settings.alpha_multiplier = alpha_multiplier_7
+	render_settings.alpha_multiplier = alpha_multiplier
 
-	self._scrollbar_ui:update(arg_52_1, arg_52_2, _ui_top_renderer, window_input_service, _render_settings)
+	self._scrollbar_ui:update(dt, t, ui_top_renderer, input_service, render_settings)
 end
 
-HeroWindowGotwfOverview._draw_background = function (self, arg_53_1, arg_53_2)
+HeroWindowGotwfOverview._draw_background = function (self, dt, t)
 	-- function 53
-	local _parent = self._parent
-	local _ui_top_renderer = self._ui_top_renderer
-	local _ui_scenegraph = self._ui_scenegraph
-	local window_input_service = self._parent:window_input_service()
-	local _render_settings = self._render_settings
-	local alpha_multiplier = _render_settings.alpha_multiplier
+	local parent = self._parent
+	local ui_top_renderer = self._ui_top_renderer
+	local ui_scenegraph = self._ui_scenegraph
+	local parent = self._parent
+	local input_service = parent:window_input_service()
+	local render_settings = self._render_settings
+	local alpha_multiplier = render_settings.alpha_multiplier
 
-	_render_settings.alpha_multiplier = 1
+	render_settings.alpha_multiplier = 1
 
-	UIRenderer.begin_pass(_ui_top_renderer, _ui_scenegraph, window_input_service, arg_53_1, nil, _render_settings)
+	UIRenderer.begin_pass(ui_top_renderer, ui_scenegraph, input_service, dt, nil, render_settings)
 
-	for i, v in ipairs(self._background_widgets) do
-		_render_settings.alpha_multiplier = 1
+	for _, widget in ipairs(self._background_widgets) do
+		render_settings.alpha_multiplier = 1
 
-		UIRenderer.draw_widget(_ui_top_renderer, v)
+		UIRenderer.draw_widget(ui_top_renderer, widget)
 	end
 
-	UIRenderer.end_pass(_ui_top_renderer)
+	UIRenderer.end_pass(ui_top_renderer)
 
-	_render_settings.alpha_multiplier = alpha_multiplier
+	render_settings.alpha_multiplier = alpha_multiplier
 end

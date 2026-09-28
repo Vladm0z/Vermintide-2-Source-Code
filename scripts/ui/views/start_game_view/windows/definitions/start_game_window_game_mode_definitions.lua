@@ -1,30 +1,30 @@
 -- chunkname: @scripts/ui/views/start_game_view/windows/definitions/start_game_window_game_mode_definitions.lua
 
-local game_start_windows = UISettings.game_start_windows
-local frame = game_start_windows.frame
-local size = game_start_windows.size
-local var_0_3 = UIFrameSettings[frame].texture_sizes.horizontal[2]
-local tbl = {
-	size[1] - 20,
+local window_default_settings = UISettings.game_start_windows
+local window_frame = window_default_settings.frame
+local window_size = window_default_settings.size
+local window_frame_height = UIFrameSettings[window_frame].texture_sizes.horizontal[2]
+local game_option_size = {
+	window_size[1] - 20,
 	108
 }
-local tbl_2 = {
+local animation_definitions = {
 	on_enter = {
 		{
 			name = "fade_in",
 			start_progress = 0,
 			end_progress = 0.3,
-			init = function (arg_1_0, arg_1_1, arg_1_2, arg_1_3)
+			init = function (ui_scenegraph, scenegraph_definition, widgets, params)
 				-- function 1
-				arg_1_3.render_settings.alpha_multiplier = 0
+				params.render_settings.alpha_multiplier = 0
 			end,
-			update = function (arg_2_0, arg_2_1, arg_2_2, arg_2_3, arg_2_4)
+			update = function (ui_scenegraph, scenegraph_definition, widgets, progress, params)
 				-- function 2
-				local easeOutCubic = math.easeOutCubic(arg_2_3)
+				local anim_progress = math.easeOutCubic(progress)
 
-				arg_2_4.render_settings.alpha_multiplier = easeOutCubic
+				params.render_settings.alpha_multiplier = anim_progress
 			end,
-			on_complete = function (arg_3_0, arg_3_1, arg_3_2, arg_3_3)
+			on_complete = function (ui_scenegraph, scenegraph_definition, widgets, params)
 				-- function 3
 				return
 			end
@@ -35,24 +35,24 @@ local tbl_2 = {
 			name = "fade_out",
 			start_progress = 0,
 			end_progress = 0.3,
-			init = function (arg_4_0, arg_4_1, arg_4_2, arg_4_3)
+			init = function (ui_scenegraph, scenegraph_definition, widgets, params)
 				-- function 4
-				arg_4_3.render_settings.alpha_multiplier = 1
+				params.render_settings.alpha_multiplier = 1
 			end,
-			update = function (arg_5_0, arg_5_1, arg_5_2, arg_5_3, arg_5_4)
+			update = function (ui_scenegraph, scenegraph_definition, widgets, progress, params)
 				-- function 5
-				local easeOutCubic = math.easeOutCubic(arg_5_3)
+				local anim_progress = math.easeOutCubic(progress)
 
-				arg_5_4.render_settings.alpha_multiplier = 1 - easeOutCubic
+				params.render_settings.alpha_multiplier = 1 - anim_progress
 			end,
-			on_complete = function (arg_6_0, arg_6_1, arg_6_2, arg_6_3)
+			on_complete = function (ui_scenegraph, scenegraph_definition, widgets, params)
 				-- function 6
 				return
 			end
 		}
 	}
 }
-local tbl_3 = {
+local scenegraph_definition = {
 	root = {
 		is_root = true,
 		size = {
@@ -95,7 +95,7 @@ local tbl_3 = {
 		vertical_alignment = "center",
 		parent = "menu_root",
 		horizontal_alignment = "center",
-		size = size,
+		size = window_size,
 		position = {
 			0,
 			0,
@@ -107,12 +107,12 @@ local tbl_3 = {
 		parent = "window",
 		horizontal_alignment = "center",
 		size = {
-			size[1],
-			var_0_3
+			window_size[1],
+			window_frame_height
 		},
 		position = {
 			0,
-			-var_0_3,
+			-window_frame_height,
 			1
 		}
 	},
@@ -120,7 +120,7 @@ local tbl_3 = {
 		vertical_alignment = "top",
 		parent = "window",
 		horizontal_alignment = "center",
-		size = tbl,
+		size = game_option_size,
 		position = {
 			0,
 			0,
@@ -132,7 +132,7 @@ local tbl_3 = {
 		parent = "window",
 		horizontal_alignment = "center",
 		size = {
-			tbl[1] - 20,
+			game_option_size[1] - 20,
 			70
 		},
 		position = {
@@ -147,7 +147,7 @@ local tbl_3 = {
 		horizontal_alignment = "center",
 		size = {
 			16,
-			size[2] - 260
+			window_size[2] - 260
 		},
 		position = {
 			195,
@@ -161,7 +161,7 @@ local tbl_3 = {
 		horizontal_alignment = "center",
 		size = {
 			16,
-			size[2] - 220
+			window_size[2] - 220
 		},
 		position = {
 			-195,
@@ -198,10 +198,10 @@ local tbl_3 = {
 		}
 	}
 }
-local tbl_4 = {
+local widgets = {
 	background_fade = UIWidgets.create_simple_texture("options_window_fade_01", "window"),
-	window = UIWidgets.create_frame("window", size, frame, 20),
-	lobby_browser_option = UIWidgets.create_default_image_button("lobby_browser_option", tbl_3.lobby_browser_option.size, nil, nil, Localize("start_game_window_lobby_browser"), 28, "lobby_browser_icon"),
+	window = UIWidgets.create_frame("window", window_size, window_frame, 20),
+	lobby_browser_option = UIWidgets.create_default_image_button("lobby_browser_option", scenegraph_definition.lobby_browser_option.size, nil, nil, Localize("start_game_window_lobby_browser"), 28, "lobby_browser_icon"),
 	game_options_left_chain = UIWidgets.create_tiled_texture("game_options_left_chain", "chain_link_01", {
 		16,
 		19
@@ -215,7 +215,7 @@ local tbl_4 = {
 }
 
 return {
-	widgets = tbl_4,
-	scenegraph_definition = tbl_3,
-	animation_definitions = tbl_2
+	widgets = widgets,
+	scenegraph_definition = scenegraph_definition,
+	animation_definitions = animation_definitions
 }

@@ -1,8 +1,10 @@
 -- chunkname: @scripts/ui/views/level_end/level_end_view_testify.lua
 
-return {
-	close_level_end_screen = function (self)
+local LevelEndViewTestify = {
+	close_level_end_screen = function (level_end_view)
 		-- function 1
-		self:exit_to_game()
+		level_end_view:exit_to_game()
 	end
 }
+
+return LevelEndViewTestify

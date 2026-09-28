@@ -1,7 +1,7 @@
 -- chunkname: @scripts/ui/hud_ui/component_list_definitions/hud_component_list_map_deus.lua
 
-local var_0_0 = local_require("scripts/ui/hud_ui/component_list_definitions/hud_component_list_adventure")
-local scripts_ui_hud_ui_component_list_definitions_hud_component_list_deus_common = require("scripts/ui/hud_ui/component_list_definitions/hud_component_list_deus_common")
+local adventure_settings = local_require("scripts/ui/hud_ui/component_list_definitions/hud_component_list_adventure")
+local common_settings = require("scripts/ui/hud_ui/component_list_definitions/hud_component_list_deus_common")
 local tbl = {
 	{
 		class_name = "IngameNewsTickerUI",
@@ -16,9 +16,11 @@ local tbl = {
 			"dead",
 			"alive"
 		},
-		validation_function = function (arg_1_0, arg_1_1)
+		validation_function = function (context, is_in_inn)
 			-- function 1
-			return not script_data.disable_news_ticker
+			local disable_news_ticker = script_data.disable_news_ticker
+
+			return not disable_news_ticker
 		end
 	},
 	{
@@ -30,9 +32,11 @@ local tbl = {
 			"alive",
 			"dead"
 		},
-		validation_function = function (arg_2_0, arg_2_1)
+		validation_function = function (context, is_in_inn)
 			-- function 2
-			return true
+			local use_twitch_ui = true
+
+			return use_twitch_ui
 		end
 	}
 }
@@ -41,7 +45,7 @@ local tbl_2 = {
 }
 local flag
 
-flag = not GameSettingsDevelopment.use_new_tab_menu and "scripts/ui/views/ingame_player_list_ui_v2" and "scripts/ui/views/ingame_player_list_ui"
+flag = (not GameSettingsDevelopment.use_new_tab_menu or not "scripts/ui/views/ingame_player_list_ui_v2") and not not "scripts/ui/views/ingame_player_list_ui"
 tbl_2.filename = flag
 tbl_2.visibility_groups = {
 	"tab_menu",
@@ -61,19 +65,30 @@ tbl[4] = {
 		"dead",
 		"alive"
 	},
-	validation_function = function (arg_3_0, arg_3_1)
+	validation_function = function (context, is_in_inn)
 		-- function 3
-		if not arg_3_1 then
+		if is_in_inn then
 			return true
 		else
 			local twitch = Managers.twitch
 
-			if not twitch then
-				twitch = Managers.twitch:is_connected()
-				twitch = twitch or Managers.twitch:is_activated()
+			if twitch then
+				-- Nothing
 			end
 
+			twitch = Managers.twitch:is_connected()
+
 			if not twitch then
+				-- Nothing
+			end
+
+			twitch = Managers.twitch:is_activated()
+
+			local use_twitch_ui = twitch
+
+			::label_3_0::
+
+			if not use_twitch_ui then
 				return true
 			end
 		end
@@ -91,15 +106,17 @@ tbl[5] = {
 	}
 }
 
-DLCUtils.append("ingame_hud_components", tbl)
-table.append(tbl, scripts_ui_hud_ui_component_list_definitions_hud_component_list_deus_common.components)
+local components = tbl
 
-local tbl_3 = {}
+DLCUtils.append("ingame_hud_components", components)
+table.append(components, common_settings.components)
 
-table.append(tbl_3, scripts_ui_hud_ui_component_list_definitions_hud_component_list_deus_common.visibility_groups)
-table.append(tbl_3, var_0_0.visibility_groups)
+local visibility_groups = {}
+
+table.append(visibility_groups, common_settings.visibility_groups)
+table.append(visibility_groups, adventure_settings.visibility_groups)
 
 return {
-	components = tbl,
-	visibility_groups = tbl_3
+	components = components,
+	visibility_groups = visibility_groups
 }

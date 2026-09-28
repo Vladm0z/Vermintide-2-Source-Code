@@ -1,7 +1,6 @@
 -- chunkname: @scripts/imgui/imgui_jit.lua
 
-local start = require("jit.opt").start
-local format = string.format
+local jopt, format = require("jit.opt").start, string.format
 
 ImguiJIT = class(ImguiJIT)
 
@@ -13,10 +12,10 @@ ImguiJIT.init = function (self)
 			d = 0
 		}
 
-		local var_1_0 = collectgarbage("count")
+		local seed = collectgarbage("count")
 
 		for i = 1, self._bytes.n do
-			self._bytes[i] = var_1_0
+			self._bytes[i] = seed
 		end
 	end
 
@@ -159,87 +158,87 @@ ImguiJIT.init = function (self)
 		}
 	}
 	self._enabled = jit.status()
-	self._traces = {}
+
+	local traces = {}
+
+	self._traces = traces
 end
 
-local flag = true
+local DO_RELOAD = true
 
 ImguiJIT.update = function (self)
 	-- function 2
-	if not flag then
-		flag = self:init()
+	if DO_RELOAD then
+		DO_RELOAD = self:init()
 	end
 end
 
-local function fn(arg_3_0, arg_3_1)
+local function tooltip(text, key)
 	-- function 3
-	if not Imgui.is_item_hovered() then
+	if Imgui.is_item_hovered() then
 		Imgui.begin_tool_tip()
 
-		if not arg_3_1 then
-			Imgui.text_colored(arg_3_1, 127, 127, 127, 255)
+		if key then
+			Imgui.text_colored(key, 127, 127, 127, 255)
 		end
 
-		Imgui.text(arg_3_0)
+		Imgui.text(text)
 		Imgui.end_tool_tip()
 	end
 end
 
-local function fn_2(self)
+local function stats(t)
 	-- function 4
-	local huge = math.huge
-	local num = -math.huge
-	local num_2 = 0
-	local num_3 = 0
-	local num_4 = 0
-	local count = #self
+	local min, max, mean, M2, C2 = math.huge, -math.huge, 0, 0, 0
+	local n = #t
 
-	for i = 1, count do
-		local var_4_6 = self[i]
+	for i = 1, n do
+		local x = t[i]
 
-		if var_4_6 < huge then
-			huge = var_4_6
+		if x < min then
+			min = x
 		end
 
-		if num < var_4_6 then
-			num = var_4_6
+		if max < x then
+			max = x
 		end
 
-		local num_5 = var_4_6 - num_2
+		local dx = x - mean
 
-		num_2 = num_2 + num_5 / i
-		num_3 = num_3 + num_5 * (var_4_6 - num_2)
-		num_4 = num_4 + num_5 * (count - i - 0.5 * (i + 1))
+		mean = mean + dx / i
+		M2 = M2 + dx * (x - mean)
+		C2 = C2 + dx * (n - i - 0.5 * (i + 1))
 	end
 
-	return num_2, num_3 / (count - 1), huge, num, num_4 / (count - 1)
+	return mean, M2 / (n - 1), min, max, C2 / (n - 1)
 end
 
-local function fn_3(arg_5_0)
+local function fmtbytes(b)
 	-- function 5
-	return UIUtils.comma_value(math.ceil(1024 * arg_5_0) .. " bytes")
+	return UIUtils.comma_value(math.ceil(1024 * b) .. " bytes")
 end
 
-local tbl = {}
+local _pad_cache = {}
 
-ImguiJIT._recursive_header = function (self, arg_6_1, arg_6_2, arg_6_3, arg_6_4, arg_6_5, arg_6_6, arg_6_7)
+ImguiJIT._recursive_header = function (self, tbl, children_by_ref, name_by_ref, size_by_ref, one_layer_size, depth_by_reference, name_length)
 	-- function 6
-	local num = (arg_6_6[arg_6_1] - 1) * 10
+	local depth = depth_by_reference[tbl]
+	local padding = (depth - 1) * 10
 
-	Imgui.dummy(num, 0)
+	Imgui.dummy(padding, 0)
 	Imgui.same_line()
 
-	if not Imgui.collapsing_header(string.format("%s%s (self: %sb)", string.pad_right(arg_6_3[arg_6_1], arg_6_7 + 4, " ", tbl), string.pad_right(string.chunk_from_right(tostring(arg_6_4[arg_6_1]), 3, "'") .. "b", 15, " ", tbl), string.chunk_from_right(tostring(arg_6_5[arg_6_1]), 3, "'")), false) then
-		local var_6_1 = arg_6_2[arg_6_1]
-		local max_func, var_6_3 = table.max_func(var_6_1, function (arg_7_0)
+	if Imgui.collapsing_header(string.format("%s%s (self: %sb)", string.pad_right(name_by_ref[tbl], name_length + 4, " ", _pad_cache), string.pad_right(string.chunk_from_right(tostring(size_by_ref[tbl]), 3, "'") .. "b", 15, " ", _pad_cache), string.chunk_from_right(tostring(one_layer_size[tbl]), 3, "'")), false) then
+		local children = children_by_ref[tbl]
+		local _, longest_name_ref = table.max_func(children, function (ref)
 			-- function 7
-			return #arg_6_3[arg_7_0]
+			return #name_by_ref[ref]
 		end)
 
-		self._memory_layout_name_max_size = math.clamp(#arg_6_3[var_6_3], self._memory_layout_name_max_size, 125)
+		self._memory_layout_name_max_size = math.clamp(#name_by_ref[longest_name_ref], self._memory_layout_name_max_size, 125)
 
-		for i = 1, #var_6_1 do
-			self:_recursive_header(var_6_1[i], arg_6_2, arg_6_3, arg_6_4, arg_6_5, arg_6_6, self._memory_layout_name_max_size)
+		for i = 1, #children do
+			self:_recursive_header(children[i], children_by_ref, name_by_ref, size_by_ref, one_layer_size, depth_by_reference, self._memory_layout_name_max_size)
 		end
 
 		Imgui.tree_pop()
@@ -248,193 +247,193 @@ end
 
 ImguiJIT.draw = function (self)
 	-- function 8
-	local begin_window = Imgui.begin_window("JIT utilities")
+	local do_close = Imgui.begin_window("JIT utilities")
 	local checkbox = Imgui.checkbox
 	local str = "JIT enabled"
 	local _enabled = self._enabled
 
-	_enabled = _enabled or false
+	_enabled = not not _enabled or not not false
 
-	local var_8_4 = checkbox(str, _enabled)
+	local enabled = checkbox(str, _enabled)
 
-	if var_8_4 ~= self._enabled then
+	if enabled ~= self._enabled then
 		local jit = jit
 		local flag
 
-		flag = not var_8_4 and "on" and "off"
+		flag = (not enabled or not "on") and not not "off"
 
 		jit[flag]()
 
-		self._enabled = var_8_4
+		self._enabled = enabled
 	end
 
 	Imgui.same_line()
 
-	if not Imgui.button("Flush") then
+	if Imgui.button("Flush") then
 		jit.flush()
 	end
 
 	Imgui.separator()
 
-	if not Imgui.collapsing_header("Parameters", false) then
-		for k, v in pairs(self._params) do
-			local input_int = Imgui.input_int(v.k, math.max(0, v.v))
+	if Imgui.collapsing_header("Parameters", false) then
+		for _, t in pairs(self._params) do
+			local v = Imgui.input_int(t.k, math.max(0, t.v))
 
-			fn(v.d, v.k)
+			tooltip(t.d, t.k)
 
-			if input_int ~= v.v then
-				start(format("%s=%d", v.k, input_int))
+			if v ~= t.v then
+				jopt(format("%s=%d", t.k, v))
 
-				v.v = input_int
+				t.v = v
 			end
 		end
 
 		Imgui.tree_pop()
 	end
 
-	if not Imgui.collapsing_header("Options", false) then
-		for k_2, v_2 in pairs(self._opts) do
-			local checkbox_2 = Imgui.checkbox(v_2.k, v_2.v)
+	if Imgui.collapsing_header("Options", false) then
+		for _, t in pairs(self._opts) do
+			local v = Imgui.checkbox(t.k, t.v)
 
-			if checkbox_2 ~= v_2.v then
-				local var_8_9 = start
-				local var_8_10 = format
+			if v ~= t.v then
+				local var_8_5 = jopt
+				local var_8_6 = format
 				local str_2 = "%s%s"
 				local flag_2
 
-				flag_2 = not checkbox_2 and "+" and "-"
+				flag_2 = (not v or not "+") and not not "-"
 
-				var_8_9(var_8_10(str_2, flag_2, v_2.k))
+				var_8_5(var_8_6(str_2, flag_2, t.k))
 
-				v_2.v = checkbox_2
+				t.v = v
 			end
 		end
 
 		Imgui.tree_pop()
 	end
 
-	if not Imgui.collapsing_header("Traces", false) then
+	if Imgui.collapsing_header("Traces", false) then
 		Imgui.text("Traces go here.")
 
-		local _traces = self._traces
+		local traces = self._traces
 
-		for k_3, v_3 in pairs(_traces) do
-			Imgui.text(tostring(v_3))
+		for _, t in pairs(traces) do
+			Imgui.text(tostring(t))
 		end
 
 		Imgui.tree_pop()
 	end
 
-	if not Imgui.collapsing_header("Garbage", false) then
-		local _bytes = self._bytes
-		local input_int_2 = Imgui.input_int("History period", math.max(0, _bytes.n))
+	if Imgui.collapsing_header("Garbage", false) then
+		local bytes = self._bytes
+		local n = Imgui.input_int("History period", math.max(0, bytes.n))
 
-		_bytes.n = input_int_2
+		bytes.n = n
 
-		local var_8_16 = collectgarbage("count")
+		local bytes_last = collectgarbage("count")
 
-		_bytes[#_bytes + 1] = var_8_16
+		bytes[#bytes + 1] = bytes_last
 
-		for i6 = 1, #_bytes - input_int_2 do
-			table.remove(_bytes, 1)
+		for i = 1, #bytes - n do
+			table.remove(bytes, 1)
 		end
 
-		Imgui.plot_lines("Garbage count", _bytes)
+		Imgui.plot_lines("Garbage count", bytes)
 
-		local var_8_17, var_8_18, var_8_19, var_8_20, var_8_21 = fn_2(_bytes)
-		local num = 12 * var_8_21 / (input_int_2 * input_int_2 - 1)
-		local num_2 = var_8_17 - num * (input_int_2 + 1) * 0.5
+		local mean, var, min, max, cov = stats(bytes)
+		local b1 = 12 * cov / (n * n - 1)
+		local b0 = mean - b1 * (n + 1) * 0.5
 
-		Imgui.text(string.format("Current: %20s   ", fn_3(var_8_16)))
-		Imgui.text(string.format("Average: %20s //", fn_3(var_8_17)))
+		Imgui.text(string.format("Current: %20s   ", fmtbytes(bytes_last)))
+		Imgui.text(string.format("Average: %20s //", fmtbytes(mean)))
 		Imgui.same_line()
-		Imgui.text(string.format("Std.dev: %20s   ", fn_3(var_8_18^0.5)))
-		Imgui.text(string.format("Minimum: %20s //", fn_3(var_8_19)))
+		Imgui.text(string.format("Std.dev: %20s   ", fmtbytes(var^0.5)))
+		Imgui.text(string.format("Minimum: %20s //", fmtbytes(min)))
 		Imgui.same_line()
-		Imgui.text(string.format("Lire.b0: %20s   ", fn_3(num_2)))
-		Imgui.text(string.format("Maximum: %20s //", fn_3(var_8_20)))
+		Imgui.text(string.format("Lire.b0: %20s   ", fmtbytes(b0)))
+		Imgui.text(string.format("Maximum: %20s //", fmtbytes(max)))
 		Imgui.same_line()
-		Imgui.text(string.format("Lire.b1: %20s   ", fn_3(num)))
+		Imgui.text(string.format("Lire.b1: %20s   ", fmtbytes(b1)))
 		Imgui.separator()
 
-		for k_4, v_4 in pairs(self._gc) do
-			local input_int_3 = Imgui.input_int(v_4.k, math.max(0, v_4.v))
+		for _, t in pairs(self._gc) do
+			local v = Imgui.input_int(t.k, math.max(0, t.v))
 
-			collectgarbage(v_4.k, input_int_3)
+			collectgarbage(t.k, v)
 
-			v_4.v = input_int_3
+			t.v = v
 
-			fn(v_4.d, v_4.k)
+			tooltip(t.d, t.k)
 		end
 
 		Imgui.separator()
 
-		if not Imgui.button("Collect") then
+		if Imgui.button("Collect") then
 			self._gc_state = "running"
 
 			collectgarbage("collect")
-			fn("performs a full garbage-collection cycle. This is the default option.", "collect")
+			tooltip("performs a full garbage-collection cycle. This is the default option.", "collect")
 		end
 
 		Imgui.same_line()
 
-		if not Imgui.button("Stop") then
+		if Imgui.button("Stop") then
 			self._gc_state = "stopped"
 
 			collectgarbage("stop")
-			fn("stops the garbage collector.", "stop")
+			tooltip("stops the garbage collector.", "stop")
 		end
 
 		Imgui.same_line()
 
-		if not Imgui.button("Restart") then
+		if Imgui.button("Restart") then
 			self._gc_state = "running"
 
 			collectgarbage("restart")
-			fn("restarts the garbage collector.", "restart")
+			tooltip("restarts the garbage collector.", "restart")
 		end
 
 		Imgui.same_line()
 
-		if not Imgui.button("Step") then
+		if Imgui.button("Step") then
 			collectgarbage("step")
-			fn("performs a garbage-collection step. The step \"size\" is controlled by arg (larger values mean more steps) in a non-specified way. If you want to control the step size you must experimentally tune the value of arg. Returns true if the step finished a collection cycle.", "step")
+			tooltip("performs a garbage-collection step. The step \"size\" is controlled by arg (larger values mean more steps) in a non-specified way. If you want to control the step size you must experimentally tune the value of arg. Returns true if the step finished a collection cycle.", "step")
 		end
 
 		Imgui.text("Last known state: " .. self._gc_state)
 		Imgui.tree_pop()
 	end
 
-	if not Imgui.collapsing_header("Memory Layout", false) then
+	if Imgui.collapsing_header("Memory Layout", false) then
 		self._root_path = Imgui.input_text("Path", self._root_path)
 
-		local var_8_25
+		local root
 
 		if self._root_path == "" then
-			var_8_25 = _G
+			root = _G
 		else
-			var_8_25 = not success and val
+			root = not not success and not not val
 		end
 
-		if not var_8_25 then
+		if root then
 			Imgui.same_line()
 
-			if not Imgui.button("Snapshot") and not var_8_25 then
+			if Imgui.button("Snapshot") and root then
 				self._snapshot_data = nil
 
 				collectgarbage("collect")
 
 				self._snapshot_data = {
-					grab_lua_memory_tree_snapshot(var_8_25)
+					grab_lua_memory_tree_snapshot(root)
 				}
 			end
 
-			if not self._snapshot_data then
-				local var_8_26, var_8_27, var_8_28, var_8_29, var_8_30 = unpack(self._snapshot_data)
+			if self._snapshot_data then
+				local children, name_by_ref, size_by_ref, one_layer_size, depth_by_reference = unpack(self._snapshot_data)
 
-				self._memory_layout_name_max_size = math.max(self._memory_layout_name_max_size, #var_8_27[var_8_25])
+				self._memory_layout_name_max_size = math.max(self._memory_layout_name_max_size, #name_by_ref[root])
 
-				self:_recursive_header(var_8_25, var_8_26, var_8_27, var_8_28, var_8_29, var_8_30, self._memory_layout_name_max_size)
+				self:_recursive_header(root, children, name_by_ref, size_by_ref, one_layer_size, depth_by_reference, self._memory_layout_name_max_size)
 			end
 		end
 
@@ -443,10 +442,10 @@ ImguiJIT.draw = function (self)
 
 	Imgui.end_window()
 
-	return begin_window
+	return do_close
 end
 
-ImguiJIT.is_persistent = function (arg_9_0)
+ImguiJIT.is_persistent = function (self)
 	-- function 9
 	return false
 end

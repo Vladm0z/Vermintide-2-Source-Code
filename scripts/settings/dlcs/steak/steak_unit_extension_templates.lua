@@ -1,6 +1,6 @@
 -- chunkname: @scripts/settings/dlcs/steak/steak_unit_extension_templates.lua
 
-return {
+local unit_extension_templates = {
 	ai_unit_beastmen_minotaur = {
 		base_template = "ai_unit_base",
 		go_type = "ai_unit_beastmen_minotaur",
@@ -28,3 +28,5 @@ return {
 		}
 	}
 }
+
+return unit_extension_templates

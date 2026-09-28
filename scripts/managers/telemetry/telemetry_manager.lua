@@ -4,16 +4,16 @@ require("scripts/managers/telemetry/telemetry_manager_dummy")
 require("scripts/managers/telemetry/telemetry_events")
 require("scripts/managers/telemetry/telemetry_settings")
 
-local enabled = TelemetrySettings.enabled
-local endpoint = TelemetrySettings.endpoint
-local post_interval = TelemetrySettings.batch.post_interval
-local full_post_interval = TelemetrySettings.batch.full_post_interval
-local max_size = TelemetrySettings.batch.max_size
-local size = TelemetrySettings.batch.size
+local ENABLED = TelemetrySettings.enabled
+local ENDPOINT = TelemetrySettings.endpoint
+local POST_INTERVAL = TelemetrySettings.batch.post_interval
+local FULL_POST_INTERVAL = TelemetrySettings.batch.full_post_interval
+local MAX_BATCH_SIZE = TelemetrySettings.batch.max_size
+local BATCH_SIZE = TelemetrySettings.batch.size
 
-local function fn(...)
+local function dprintf(...)
 	-- function 1
-	if not Development.parameter("debug_telemetry") then
+	if Development.parameter("debug_telemetry") then
 		printf(...)
 	end
 end
@@ -23,11 +23,11 @@ TelemetryManager.NAME = "TelemetryManager"
 
 TelemetryManager.create = function ()
 	-- function 2
-	if not ((IS_WINDOWS or not IS_LINUX) and rawget(_G, "lcurl") ~= nil) then
+	if (IS_WINDOWS or IS_LINUX) and rawget(_G, "lcurl") == nil then
 		print("[TelemetryManager] No lcurl interface found! Fallback to dummy...")
 
 		return TelemetryManagerDummy:new()
-	elseif not (IS_WINDOWS or IS_LINUX or rawget(_G, "REST") ~= nil) then
+	elseif not IS_WINDOWS and not IS_LINUX and rawget(_G, "REST") == nil then
 		print("[TelemetryManager] No REST interface found! Fallback to dummy...")
 
 		return TelemetryManagerDummy:new()
@@ -55,85 +55,85 @@ end
 
 TelemetryManager.reload_settings = function (self)
 	-- function 4
-	fn("[TelemetryManager] Refreshing settings")
+	dprintf("[TelemetryManager] Refreshing settings")
 
 	local set = table.set
 	local blacklist = TelemetrySettings.blacklist
 
-	blacklist = blacklist or {}
+	blacklist = not not blacklist or not not {}
 	self._blacklisted_events = set(blacklist)
 end
 
-TelemetryManager.update = function (self, arg_5_1, arg_5_2)
+TelemetryManager.update = function (self, dt, t)
 	-- function 5
-	self._t = arg_5_2
+	self._t = t
 
-	if not self:_ready_to_post_batch(arg_5_2) then
+	if self:_ready_to_post_batch(t) then
 		self:post_batch()
 	end
 end
 
-TelemetryManager.register_event = function (self, arg_6_1)
+TelemetryManager.register_event = function (self, event)
 	-- function 6
-	if not enabled then
+	if not ENABLED then
 		return
 	end
 
-	local raw = arg_6_1:raw()
+	local raw_event = event:raw()
 
-	if not self._blacklisted_events[raw.type] then
-		fn("[TelemetryManager] Skipping blacklisted event '%s'", raw.type)
+	if self._blacklisted_events[raw_event.type] then
+		dprintf("[TelemetryManager] Skipping blacklisted event '%s'", raw_event.type)
 
 		return
 	end
 
-	raw.time = self._t
-	raw.data = self:_convert_userdata(raw.data)
+	raw_event.time = self._t
+	raw_event.data = self:_convert_userdata(raw_event.data)
 
-	if #self._events < max_size then
-		fn("[TelemetryManager] Registered event '%s'", arg_6_1)
-		table.insert(self._events, table.remove_empty_values(raw))
+	if #self._events < MAX_BATCH_SIZE then
+		dprintf("[TelemetryManager] Registered event '%s'", event)
+		table.insert(self._events, table.remove_empty_values(raw_event))
 	else
-		fn("[TelemetryManager] Discarding event '%s', buffer is full!", arg_6_1)
+		dprintf("[TelemetryManager] Discarding event '%s', buffer is full!", event)
 	end
 end
 
-TelemetryManager._convert_userdata = function (self, arg_7_1)
+TelemetryManager._convert_userdata = function (self, data)
 	-- function 7
-	local tbl = {}
+	local new_data = {}
 
-	if type(arg_7_1) == "table" then
-		for k, v in pairs(arg_7_1) do
-			if Script.type_name(v) == "Vector3" then
-				tbl[k] = {
-					x = v.x,
-					y = v.y,
-					z = v.z
+	if type(data) == "table" then
+		for key, value in pairs(data) do
+			if Script.type_name(value) == "Vector3" then
+				new_data[key] = {
+					x = value.x,
+					y = value.y,
+					z = value.z
 				}
-			elseif type(v) == "function" then
-				tbl[k] = nil
-			elseif type(v) == "userdata" then
-				tbl[k] = tostring(v)
-			elseif type(v) == "table" then
-				tbl[k] = self:_convert_userdata(v)
+			elseif type(value) == "function" then
+				new_data[key] = nil
+			elseif type(value) == "userdata" then
+				new_data[key] = tostring(value)
+			elseif type(value) == "table" then
+				new_data[key] = self:_convert_userdata(value)
 			else
-				tbl[k] = v
+				new_data[key] = value
 			end
 		end
 	end
 
-	return tbl
+	return new_data
 end
 
-TelemetryManager._ready_to_post_batch = function (self, arg_8_1)
+TelemetryManager._ready_to_post_batch = function (self, t)
 	-- function 8
-	if not self._batch_in_flight then
+	if self._batch_in_flight then
 		return false
 	end
 
-	if arg_8_1 - self._batch_post_time > post_interval then
+	if t - self._batch_post_time > POST_INTERVAL then
 		return true
-	elseif not (not (arg_8_1 - self._batch_post_time > full_post_interval) or not (#self._events >= size)) then
+	elseif t - self._batch_post_time > FULL_POST_INTERVAL and #self._events >= BATCH_SIZE then
 		return true
 	end
 end
@@ -144,37 +144,37 @@ TelemetryManager.post_batch = function (self)
 		return
 	end
 
-	fn("[TelemetryManager] Posting batch of %d events", #self._events)
+	dprintf("[TelemetryManager] Posting batch of %d events", #self._events)
 
 	self._batch_in_flight = true
 	self._batch_post_time = math.floor(self._t)
 
-	local _encode = self:_encode(self._events)
+	local payload = self:_encode(self._events)
 
-	if IS_WINDOWS or not IS_LINUX then
-		local tbl = {
+	if IS_WINDOWS or IS_LINUX then
+		local headers = {
 			"Content-Type: application/json",
 			string.format("x-reference-time: %s", self._t)
 		}
 
-		Managers.curl:post(endpoint, _encode, tbl, callback(self, "cb_post_batch"))
+		Managers.curl:post(ENDPOINT, payload, headers, callback(self, "cb_post_batch"))
 	else
-		local tbl_2 = {
+		local headers = {
 			"Content-Type",
 			"application/json",
 			"x-reference-time",
 			tostring(self._t)
 		}
 
-		Managers.rest_transport:post(endpoint, _encode, tbl_2, callback(self, "cb_post_batch"))
+		Managers.rest_transport:post(ENDPOINT, payload, headers, callback(self, "cb_post_batch"))
 	end
 end
 
 TelemetryManager.has_events_to_post = function (self)
 	-- function 10
-	local var_10_0 = enabled
+	local var_10_0 = ENABLED
 
-	var_10_0 = not var_10_0 and not table.is_empty(self._events)
+	var_10_0 = not not var_10_0 and not not not table.is_empty(self._events)
 
 	return var_10_0
 end
@@ -184,22 +184,22 @@ TelemetryManager.batch_in_flight = function (self)
 	return self._batch_in_flight
 end
 
-TelemetryManager._encode = function (arg_12_0, arg_12_1)
+TelemetryManager._encode = function (self, events)
 	-- function 12
-	local map = table.map(arg_12_1, cjson.encode)
+	local payload = table.map(events, cjson.encode)
 
-	return "[" .. table.concat(map, ",") .. "]"
+	return "[" .. table.concat(payload, ",") .. "]"
 end
 
-TelemetryManager.cb_post_batch = function (self, arg_13_1, arg_13_2, arg_13_3, arg_13_4)
+TelemetryManager.cb_post_batch = function (self, success, _, _, error)
 	-- function 13
-	if not arg_13_1 then
-		fn("[TelemetryManager] Batch sent successfully")
+	if success then
+		dprintf("[TelemetryManager] Batch sent successfully")
 		table.clear(self._events)
 
 		self._batch_in_flight = nil
 	else
-		fn("[TelemetryManager] Error sending batch: %s", arg_13_4)
+		dprintf("[TelemetryManager] Error sending batch: %s", error)
 
 		self._batch_in_flight = nil
 	end

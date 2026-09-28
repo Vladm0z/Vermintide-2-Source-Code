@@ -1,21 +1,21 @@
 -- chunkname: @scripts/settings/dlcs/karak_azgaraz/karak_azgaraz_common_settings_part_3.lua
 
-local karak_azgaraz_part_3 = DLCSettings.karak_azgaraz_part_3
+local settings = DLCSettings.karak_azgaraz_part_3
 
-karak_azgaraz_part_3.statistics_definitions = {
+settings.statistics_definitions = {
 	"scripts/managers/backend/statistics_definitions_karak_azgaraz_part_3"
 }
-karak_azgaraz_part_3.unlock_settings = {
+settings.unlock_settings = {
 	karak_azgaraz_part_3 = {
 		class = "AlwaysUnlocked"
 	}
 }
-karak_azgaraz_part_3.unlock_settings_xb1 = {
+settings.unlock_settings_xb1 = {
 	karak_azgaraz_part_3 = {
 		class = "AlwaysUnlocked"
 	}
 }
-karak_azgaraz_part_3.unlock_settings_ps4 = {
+settings.unlock_settings_ps4 = {
 	CUSA13595_00 = {
 		karak_azgaraz_part_3 = {
 			class = "AlwaysUnlocked"
@@ -27,10 +27,10 @@ karak_azgaraz_part_3.unlock_settings_ps4 = {
 		}
 	}
 }
-karak_azgaraz_part_3.item_master_list_file_names = {
+settings.item_master_list_file_names = {
 	"scripts/settings/equipment/item_master_list_karak"
 }
-karak_azgaraz_part_3.statistics_lookup = {
+settings.statistics_lookup = {
 	"dwarf_pressure_pad",
 	"dwarf_big_jump",
 	"dwarf_crows",

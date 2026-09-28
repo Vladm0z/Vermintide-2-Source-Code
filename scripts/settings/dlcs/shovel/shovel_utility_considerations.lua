@@ -2,7 +2,7 @@
 
 local UtilityConsiderations = UtilityConsiderations
 
-UtilityConsiderations = UtilityConsiderations or {}
+UtilityConsiderations = not not UtilityConsiderations or not not {}
 UtilityConsiderations = UtilityConsiderations
 UtilityConsiderations.pet_skeleton_taunt = {
 	distance_to_target = {

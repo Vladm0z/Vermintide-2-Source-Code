@@ -1,47 +1,47 @@
 -- chunkname: @scripts/ui/views/friends_ui_component_definitions.lua
 
-local tbl = {
+local ui_size = {
 	400,
 	550
 }
-local tbl_2 = {
-	tbl[1],
+local top_info_box_size = {
+	ui_size[1],
 	50
 }
-local tbl_3 = {
-	tbl_2[1] - 6,
+local top_info_box_divider = {
+	top_info_box_size[1] - 6,
 	0
 }
-local tbl_4 = {
-	tbl[1],
+local tabs_size = {
+	ui_size[1],
 	50
 }
-local tbl_5 = {
-	tbl[1],
-	tbl[2] - tbl_2[2] - tbl_4[2] * 1
+local tabs_active_size = {
+	ui_size[1],
+	ui_size[2] - top_info_box_size[2] - tabs_size[2] * 1
 }
-local tbl_6 = {
-	ui_size = tbl,
-	tabs_size = tbl_4,
-	tabs_active_size = tbl_5
+local scenegraph_info = {
+	ui_size = ui_size,
+	tabs_size = tabs_size,
+	tabs_active_size = tabs_active_size
 }
-local num = 400
+local FRIEND_LIST_LIMIT = 400
 
-if not IS_XB1 then
-	num = 1000
-elseif not IS_PS4 then
-	num = 2000
+if IS_XB1 then
+	FRIEND_LIST_LIMIT = 1000
+elseif IS_PS4 then
+	FRIEND_LIST_LIMIT = 2000
 end
 
-local tbl_7 = {
-	tbl[1],
+local friends_entry_size = {
+	ui_size[1],
 	40
 }
-local tbl_8 = {
-	friend_list_limit = num,
-	friends_entry_size = tbl_7
+local list_info = {
+	friend_list_limit = FRIEND_LIST_LIMIT,
+	friends_entry_size = friends_entry_size
 }
-local tbl_9 = {
+local scenegraph_definition = {
 	screen = {
 		scale = "fit",
 		size = {
@@ -72,7 +72,7 @@ local tbl_9 = {
 		vertical_alignment = "bottom",
 		parent = "screen",
 		horizontal_alignment = "left",
-		size = tbl,
+		size = ui_size,
 		position = {
 			20,
 			100,
@@ -83,7 +83,7 @@ local tbl_9 = {
 		vertical_alignment = "top",
 		parent = "main_background",
 		horizontal_alignment = "center",
-		size = tbl_2,
+		size = top_info_box_size,
 		position = {
 			0,
 			0,
@@ -94,7 +94,7 @@ local tbl_9 = {
 		vertical_alignment = "bottom",
 		parent = "top_info_box",
 		horizontal_alignment = "center",
-		size = tbl_3,
+		size = top_info_box_divider,
 		position = {
 			0,
 			0,
@@ -134,12 +134,12 @@ local tbl_9 = {
 		parent = "top_info_box",
 		horizontal_alignment = "center",
 		size = {
-			tbl_4[1],
-			tbl_4[2]
+			tabs_size[1],
+			tabs_size[2]
 		},
 		position = {
 			0,
-			-tbl_4[2],
+			-tabs_size[2],
 			0
 		}
 	},
@@ -148,12 +148,12 @@ local tbl_9 = {
 		parent = "online_tab",
 		horizontal_alignment = "center",
 		size = {
-			tbl_4[1],
-			tbl_4[2]
+			tabs_size[1],
+			tabs_size[2]
 		},
 		position = {
 			0,
-			-tbl_4[2],
+			-tabs_size[2],
 			0
 		}
 	},
@@ -162,12 +162,12 @@ local tbl_9 = {
 		parent = "online_tab",
 		horizontal_alignment = "center",
 		size = {
-			tbl_7[1],
-			tbl_7[2] * num
+			friends_entry_size[1],
+			friends_entry_size[2] * FRIEND_LIST_LIMIT
 		},
 		position = {
 			0,
-			-tbl_4[2],
+			-tabs_size[2],
 			1
 		}
 	},
@@ -176,21 +176,21 @@ local tbl_9 = {
 		parent = "offline_tab",
 		horizontal_alignment = "center",
 		size = {
-			tbl_7[1],
-			tbl_7[2] * num
+			friends_entry_size[1],
+			friends_entry_size[2] * FRIEND_LIST_LIMIT
 		},
 		position = {
 			0,
-			-tbl_4[2],
+			-tabs_size[2],
 			1
 		}
 	}
 }
 
-local function fn(arg_1_0, arg_1_1)
+local function create_friends_button(scenegraph_id, size)
 	-- function 1
-	local menu_frame_12 = UIFrameSettings.menu_frame_12
-	local tbl = {
+	local frame_settings = UIFrameSettings.menu_frame_12
+	local element = {
 		passes = {
 			{
 				style_id = "button",
@@ -210,38 +210,38 @@ local function fn(arg_1_0, arg_1_1)
 				pass_type = "texture",
 				style_id = "icon",
 				texture_id = "icon",
-				content_check_function = function (self)
+				content_check_function = function (content)
 					-- function 2
-					return not self.button_hotspot.is_hover
+					return not content.button_hotspot.is_hover
 				end
 			},
 			{
 				pass_type = "texture",
 				style_id = "icon_hover",
 				texture_id = "icon",
-				content_check_function = function (self)
+				content_check_function = function (content)
 					-- function 3
-					return self.button_hotspot.is_hover
+					return content.button_hotspot.is_hover
 				end
 			},
 			{
 				pass_type = "texture",
 				style_id = "hover",
 				texture_id = "hover",
-				content_check_function = function (self)
+				content_check_function = function (content)
 					-- function 4
-					return self.button_hotspot.is_hover
+					return content.button_hotspot.is_hover
 				end
 			}
 		}
 	}
-	local tbl_2 = {
+	local content = {
 		icon = "friends_icon_01",
 		hover = "button_state_default_2",
 		button_hotspot = {},
-		frame = menu_frame_12.texture
+		frame = frame_settings.texture
 	}
-	local tbl_3 = {
+	local style = {
 		button = {
 			color = Colors.get_color_table_with_alpha("black", 200),
 			offset = {
@@ -267,8 +267,8 @@ local function fn(arg_1_0, arg_1_1)
 			}
 		},
 		frame = {
-			texture_size = menu_frame_12.texture_size,
-			texture_sizes = menu_frame_12.texture_sizes,
+			texture_size = frame_settings.texture_size,
+			texture_sizes = frame_settings.texture_sizes,
 			color = {
 				255,
 				255,
@@ -295,23 +295,24 @@ local function fn(arg_1_0, arg_1_1)
 			}
 		}
 	}
+	local widget = {}
 
-	return {
-		element = tbl,
-		content = tbl_2,
-		style = tbl_3,
-		offset = {
-			0,
-			0,
-			0
-		},
-		scenegraph_id = arg_1_0
+	widget.element = element
+	widget.content = content
+	widget.style = style
+	widget.offset = {
+		0,
+		0,
+		0
 	}
+	widget.scenegraph_id = scenegraph_id
+
+	return widget
 end
 
-local function fn_2(arg_5_0, arg_5_1)
+local function create_window_divider(scenegraph_id, size)
 	-- function 5
-	return {
+	local widget = {
 		element = {
 			passes = {
 				{
@@ -350,11 +351,11 @@ local function fn_2(arg_5_0, arg_5_1)
 					6
 				},
 				size = {
-					arg_5_1[1],
+					size[1],
 					5
 				},
 				texture_tiling_size = {
-					arg_5_1[1] - 10,
+					size[1] - 10,
 					5
 				}
 			},
@@ -383,7 +384,7 @@ local function fn_2(arg_5_0, arg_5_1)
 					255
 				},
 				offset = {
-					arg_5_1[1] - 9,
+					size[1] - 9,
 					-6,
 					10
 				},
@@ -393,22 +394,24 @@ local function fn_2(arg_5_0, arg_5_1)
 				}
 			}
 		},
-		scenegraph_id = arg_5_0,
+		scenegraph_id = scenegraph_id,
 		offset = {
 			0,
 			0,
 			0
 		}
 	}
+
+	return widget
 end
 
-local function fn_3(arg_6_0, arg_6_1, arg_6_2, arg_6_3, arg_6_4)
+local function create_tab(scenegraph_id, size, text, list_scenegraph_id, edge_tab)
 	-- function 6
-	local tbl_2 = {
-		arg_6_1[1] - 6,
-		arg_6_1[2]
+	local divider_size = {
+		size[1] - 6,
+		size[2]
 	}
-	local tbl_3 = {
+	local element = {
 		passes = {
 			{
 				style_id = "hotspot",
@@ -419,20 +422,20 @@ local function fn_3(arg_6_0, arg_6_1, arg_6_2, arg_6_3, arg_6_4)
 				style_id = "text",
 				pass_type = "text",
 				text_id = "real_text",
-				content_check_function = function (self)
+				content_check_function = function (content)
 					-- function 7
-					return not not self.active or not self.button_hotspot.is_hover
+					return not content.active and not not not content.button_hotspot.is_hover
 				end
 			},
 			{
 				style_id = "text_hover",
 				pass_type = "text",
 				text_id = "real_text",
-				content_check_function = function (self)
+				content_check_function = function (content)
 					-- function 8
-					local active = self.active
+					local active = content.active
 
-					active = active or self.button_hotspot.is_hover
+					active = not not active or not not content.button_hotspot.is_hover
 
 					return active
 				end
@@ -446,36 +449,36 @@ local function fn_3(arg_6_0, arg_6_1, arg_6_2, arg_6_3, arg_6_4)
 				style_id = "scrollbar",
 				pass_type = "scrollbar_hotspot",
 				content_id = "scrollbar",
-				content_check_function = function (self)
+				content_check_function = function (content)
 					-- function 9
-					return self.active
+					return content.active
 				end
 			},
 			{
 				style_id = "scrollbar",
 				pass_type = "scrollbar",
 				content_id = "scrollbar",
-				content_check_function = function (self)
+				content_check_function = function (content)
 					-- function 10
-					return self.active
+					return content.active
 				end
 			},
 			{
 				pass_type = "texture",
 				style_id = "mask",
 				texture_id = "mask_texture",
-				content_check_function = function (self)
+				content_check_function = function (content)
 					-- function 11
-					return self.active
+					return content.active
 				end
 			},
 			{
 				style_id = "list_style",
 				pass_type = "list_pass",
 				content_id = "list_content",
-				content_check_function = function (self)
+				content_check_function = function (content)
 					-- function 12
-					return self.active
+					return content.active
 				end,
 				passes = {
 					{
@@ -487,9 +490,9 @@ local function fn_3(arg_6_0, arg_6_1, arg_6_2, arg_6_3, arg_6_4)
 						style_id = "invite_button",
 						pass_type = "hotspot",
 						content_id = "invite_button",
-						content_check_function = function (self)
+						content_check_function = function (content)
 							-- function 13
-							return self.allow_invite
+							return content.allow_invite
 						end
 					},
 					{
@@ -497,11 +500,11 @@ local function fn_3(arg_6_0, arg_6_1, arg_6_2, arg_6_3, arg_6_4)
 						style_id = "invite_button",
 						pass_type = "texture",
 						content_id = "invite_button",
-						content_check_function = function (self)
+						content_check_function = function (content)
 							-- function 14
-							local allow_invite = self.allow_invite
+							local allow_invite = content.allow_invite
 
-							allow_invite = not allow_invite and not self.is_hover
+							allow_invite = not not allow_invite and not not not content.is_hover
 
 							return allow_invite
 						end
@@ -511,11 +514,11 @@ local function fn_3(arg_6_0, arg_6_1, arg_6_2, arg_6_3, arg_6_4)
 						style_id = "invite_button_hover",
 						pass_type = "texture",
 						content_id = "invite_button",
-						content_check_function = function (self)
+						content_check_function = function (content)
 							-- function 15
-							local allow_invite = self.allow_invite
+							local allow_invite = content.allow_invite
 
-							allow_invite = not allow_invite and self.is_hover
+							allow_invite = not not allow_invite and not not content.is_hover
 
 							return allow_invite
 						end
@@ -524,9 +527,9 @@ local function fn_3(arg_6_0, arg_6_1, arg_6_2, arg_6_3, arg_6_4)
 						style_id = "profile_button",
 						pass_type = "hotspot",
 						content_id = "profile_button",
-						content_check_function = function (self)
+						content_check_function = function (content)
 							-- function 16
-							return self.allow_profile
+							return content.allow_profile
 						end
 					},
 					{
@@ -534,11 +537,11 @@ local function fn_3(arg_6_0, arg_6_1, arg_6_2, arg_6_3, arg_6_4)
 						style_id = "profile_button",
 						pass_type = "texture",
 						content_id = "profile_button",
-						content_check_function = function (self)
+						content_check_function = function (content)
 							-- function 17
-							local allow_profile = self.allow_profile
+							local allow_profile = content.allow_profile
 
-							allow_profile = not allow_profile and not self.is_hover
+							allow_profile = not not allow_profile and not not not content.is_hover
 
 							return allow_profile
 						end
@@ -548,11 +551,11 @@ local function fn_3(arg_6_0, arg_6_1, arg_6_2, arg_6_3, arg_6_4)
 						style_id = "profile_button_hover",
 						pass_type = "texture",
 						content_id = "profile_button",
-						content_check_function = function (self)
+						content_check_function = function (content)
 							-- function 18
-							local allow_profile = self.allow_profile
+							local allow_profile = content.allow_profile
 
-							allow_profile = not allow_profile and self.is_hover
+							allow_profile = not not allow_profile and not not content.is_hover
 
 							return allow_profile
 						end
@@ -561,9 +564,9 @@ local function fn_3(arg_6_0, arg_6_1, arg_6_2, arg_6_3, arg_6_4)
 						style_id = "join_button",
 						pass_type = "hotspot",
 						content_id = "join_button",
-						content_check_function = function (self)
+						content_check_function = function (content)
 							-- function 19
-							return self.allow_join
+							return content.allow_join
 						end
 					},
 					{
@@ -571,11 +574,11 @@ local function fn_3(arg_6_0, arg_6_1, arg_6_2, arg_6_3, arg_6_4)
 						style_id = "join_button",
 						pass_type = "texture",
 						content_id = "join_button",
-						content_check_function = function (self)
+						content_check_function = function (content)
 							-- function 20
-							local allow_join = self.allow_join
+							local allow_join = content.allow_join
 
-							allow_join = not allow_join and not self.is_hover
+							allow_join = not not allow_join and not not not content.is_hover
 
 							return allow_join
 						end
@@ -585,11 +588,11 @@ local function fn_3(arg_6_0, arg_6_1, arg_6_2, arg_6_3, arg_6_4)
 						style_id = "join_button_hover",
 						pass_type = "texture",
 						content_id = "join_button",
-						content_check_function = function (self)
+						content_check_function = function (content)
 							-- function 21
-							local allow_join = self.allow_join
+							local allow_join = content.allow_join
 
-							allow_join = not allow_join and self.is_hover
+							allow_join = not not allow_join and not not content.is_hover
 
 							return allow_join
 						end
@@ -603,7 +606,7 @@ local function fn_3(arg_6_0, arg_6_1, arg_6_2, arg_6_3, arg_6_4)
 			}
 		}
 	}
-	local tbl_6 = {
+	local content = {
 		drop_down_arrow = "drop_down_menu_arrow",
 		mask_texture = "mask_rect",
 		edge_holder_left = "menu_frame_12_divider_left",
@@ -611,8 +614,8 @@ local function fn_3(arg_6_0, arg_6_1, arg_6_2, arg_6_3, arg_6_4)
 		bottom_edge = "menu_frame_12_divider",
 		edge_tab = true,
 		button_hotspot = {},
-		text = arg_6_2,
-		real_text = arg_6_2 .. " (0)",
+		text = text,
+		real_text = text .. " (0)",
 		scrollbar = {
 			scroll_amount = 0.1,
 			percentage = 0.1,
@@ -622,9 +625,9 @@ local function fn_3(arg_6_0, arg_6_1, arg_6_2, arg_6_3, arg_6_4)
 			allow_multi_hover = true
 		}
 	}
-	local list_content = tbl_6.list_content
+	local list_content = content.list_content
 
-	for i = 1, num do
+	for i = 1, FRIEND_LIST_LIMIT do
 		list_content[i] = {
 			name = "friends_view_unknown",
 			button_hotspot = {},
@@ -643,11 +646,11 @@ local function fn_3(arg_6_0, arg_6_1, arg_6_2, arg_6_3, arg_6_4)
 		}
 	end
 
-	local tbl_8 = {
+	local style = {
 		hotspot = {
 			size = {
-				arg_6_1[1],
-				arg_6_1[2]
+				size[1],
+				size[2]
 			},
 			offset = {
 				0,
@@ -716,21 +719,21 @@ local function fn_3(arg_6_0, arg_6_1, arg_6_2, arg_6_3, arg_6_4)
 			min_scrollbar_height = 30,
 			size = {
 				2,
-				tbl_5[2] - tbl_4[2] - 10
+				tabs_active_size[2] - tabs_size[2] - 10
 			},
 			offset = {
-				tbl_5[1] - 15,
+				tabs_active_size[1] - 15,
 				10,
 				100
 			},
 			background_color = Colors.get_color_table_with_alpha("very_dark_gray", 255),
 			scrollbar_color = Colors.get_color_table_with_alpha("font_button_normal", 255),
 			scroll_area_size = {
-				tbl[1],
-				tbl_5[2] - tbl_4[2]
+				ui_size[1],
+				tabs_active_size[2] - tabs_size[2]
 			},
 			scroll_area_offset = {
-				-tbl[1] + 19,
+				-ui_size[1] + 19,
 				-10,
 				0
 			}
@@ -738,8 +741,8 @@ local function fn_3(arg_6_0, arg_6_1, arg_6_2, arg_6_3, arg_6_4)
 		scrollbar_scroll_area = {},
 		mask = {
 			size = {
-				arg_6_1[1],
-				tbl_5[2] - tbl_4[2]
+				size[1],
+				tabs_active_size[2] - tabs_size[2]
 			},
 			color = {
 				150,
@@ -760,14 +763,14 @@ local function fn_3(arg_6_0, arg_6_1, arg_6_2, arg_6_3, arg_6_4)
 			horizontal_alignment = "center",
 			list_member_offset = {
 				0,
-				tbl_7[2],
+				friends_entry_size[2],
 				0
 			},
 			size = {
-				tbl_7[1],
-				tbl_7[2]
+				friends_entry_size[1],
+				friends_entry_size[2]
 			},
-			scenegraph_id = arg_6_3,
+			scenegraph_id = list_scenegraph_id,
 			item_styles = {}
 		},
 		bottom_edge = {
@@ -783,31 +786,31 @@ local function fn_3(arg_6_0, arg_6_1, arg_6_2, arg_6_3, arg_6_4)
 				6
 			},
 			size = {
-				tbl_2[1],
+				divider_size[1],
 				5
 			},
 			texture_tiling_size = {
-				tbl_2[1] - 10,
+				divider_size[1] - 10,
 				5
 			},
-			content_check_function = function (self)
+			content_check_function = function (content)
 				-- function 22
-				return not self.edge_tab and not self.active
+				return not content.edge_tab or not not not content.active
 			end
 		}
 	}
-	local item_styles = tbl_8.list_style.item_styles
+	local item_styles = style.list_style.item_styles
 
-	for j = 1, num do
-		item_styles[j] = {
+	for i = 1, FRIEND_LIST_LIMIT do
+		item_styles[i] = {
 			list_member_offset = {
 				0,
-				-tbl_7[2],
+				-friends_entry_size[2],
 				0
 			},
 			size = {
-				tbl_7[1],
-				tbl_7[2]
+				friends_entry_size[1],
+				friends_entry_size[2]
 			},
 			name = {
 				word_wrap = true,
@@ -833,7 +836,7 @@ local function fn_3(arg_6_0, arg_6_1, arg_6_2, arg_6_3, arg_6_4)
 				},
 				color = Colors.get_color_table_with_alpha("font_button_normal", 255),
 				offset = {
-					tbl_4[1] - 112,
+					tabs_size[1] - 112,
 					3,
 					1
 				}
@@ -846,7 +849,7 @@ local function fn_3(arg_6_0, arg_6_1, arg_6_2, arg_6_3, arg_6_4)
 				},
 				color = Colors.get_color_table_with_alpha("white", 255),
 				offset = {
-					tbl_4[1] - 112,
+					tabs_size[1] - 112,
 					3,
 					1
 				}
@@ -859,7 +862,7 @@ local function fn_3(arg_6_0, arg_6_1, arg_6_2, arg_6_3, arg_6_4)
 				},
 				color = Colors.get_color_table_with_alpha("font_button_normal", 255),
 				offset = {
-					tbl_4[1] - 80,
+					tabs_size[1] - 80,
 					3,
 					1
 				}
@@ -872,7 +875,7 @@ local function fn_3(arg_6_0, arg_6_1, arg_6_2, arg_6_3, arg_6_4)
 				},
 				color = Colors.get_color_table_with_alpha("white", 255),
 				offset = {
-					tbl_4[1] - 80,
+					tabs_size[1] - 80,
 					3,
 					1
 				}
@@ -885,7 +888,7 @@ local function fn_3(arg_6_0, arg_6_1, arg_6_2, arg_6_3, arg_6_4)
 				},
 				color = Colors.get_color_table_with_alpha("font_button_normal", 255),
 				offset = {
-					tbl_4[1] - 48,
+					tabs_size[1] - 48,
 					3,
 					1
 				}
@@ -898,15 +901,15 @@ local function fn_3(arg_6_0, arg_6_1, arg_6_2, arg_6_3, arg_6_4)
 				},
 				color = Colors.get_color_table_with_alpha("white", 255),
 				offset = {
-					tbl_4[1] - 48,
+					tabs_size[1] - 48,
 					3,
 					1
 				}
 			},
 			rect = {
 				size = {
-					tbl_7[1],
-					tbl_7[2]
+					friends_entry_size[1],
+					friends_entry_size[2]
 				},
 				color = {
 					255,
@@ -923,23 +926,25 @@ local function fn_3(arg_6_0, arg_6_1, arg_6_2, arg_6_3, arg_6_4)
 		}
 	end
 
-	return {
-		element = tbl_3,
-		content = tbl_6,
-		style = tbl_8,
-		offset = {
-			0,
-			0,
-			0
-		},
-		scenegraph_id = arg_6_0
+	local widget = {}
+
+	widget.element = element
+	widget.content = content
+	widget.style = style
+	widget.offset = {
+		0,
+		0,
+		0
 	}
+	widget.scenegraph_id = scenegraph_id
+
+	return widget
 end
 
-local function fn_4(arg_23_0, arg_23_1)
+local function create_info_box_button(scenegraph_id, texture)
 	-- function 23
-	local size = tbl_9[arg_23_0].size
-	local tbl = {
+	local size = scenegraph_definition[scenegraph_id].size
+	local element = {
 		passes = {
 			{
 				pass_type = "hotspot"
@@ -948,26 +953,26 @@ local function fn_4(arg_23_0, arg_23_1)
 				pass_type = "texture",
 				style_id = "button_texture",
 				texture_id = "button_texture",
-				content_check_function = function (self)
+				content_check_function = function (content)
 					-- function 24
-					return not self.is_hover
+					return not content.is_hover
 				end
 			},
 			{
 				pass_type = "texture",
 				style_id = "button_texture_hover",
 				texture_id = "button_texture",
-				content_check_function = function (self)
+				content_check_function = function (content)
 					-- function 25
-					return self.is_hover
+					return content.is_hover
 				end
 			}
 		}
 	}
-	local tbl_2 = {
-		button_texture = arg_23_1
+	local content = {
+		button_texture = texture
 	}
-	local tbl_3 = {
+	local style = {
 		size = {
 			size[1],
 			size[2]
@@ -998,24 +1003,25 @@ local function fn_4(arg_23_0, arg_23_1)
 			color = Colors.get_color_table_with_alpha("font_button_normal", 255)
 		}
 	}
+	local widget = {}
 
-	return {
-		element = tbl,
-		content = tbl_2,
-		style = tbl_3,
-		offset = {
-			0,
-			0,
-			0
-		},
-		scenegraph_id = arg_23_0
+	widget.element = element
+	widget.content = content
+	widget.style = style
+	widget.offset = {
+		0,
+		0,
+		0
 	}
+	widget.scenegraph_id = scenegraph_id
+
+	return widget
 end
 
-local function fn_5(arg_26_0, arg_26_1)
+local function create_info_box_button_rotated_texture(scenegraph_id, texture)
 	-- function 26
-	local size = tbl_9[arg_26_0].size
-	local tbl = {
+	local size = scenegraph_definition[scenegraph_id].size
+	local element = {
 		passes = {
 			{
 				pass_type = "hotspot"
@@ -1024,26 +1030,26 @@ local function fn_5(arg_26_0, arg_26_1)
 				pass_type = "rotated_texture",
 				style_id = "button_texture",
 				texture_id = "button_texture",
-				content_check_function = function (self)
+				content_check_function = function (content)
 					-- function 27
-					return not self.is_hover
+					return not content.is_hover
 				end
 			},
 			{
 				pass_type = "rotated_texture",
 				style_id = "button_texture_hover",
 				texture_id = "button_texture",
-				content_check_function = function (self)
+				content_check_function = function (content)
 					-- function 28
-					return self.is_hover
+					return content.is_hover
 				end
 			}
 		}
 	}
-	local tbl_2 = {
-		button_texture = arg_26_1
+	local content = {
+		button_texture = texture
 	}
-	local tbl_3 = {
+	local style = {
 		size = {
 			size[1],
 			size[2]
@@ -1094,55 +1100,56 @@ local function fn_5(arg_26_0, arg_26_1)
 			}
 		}
 	}
+	local widget = {}
 
-	return {
-		element = tbl,
-		content = tbl_2,
-		style = tbl_3,
-		offset = {
-			0,
-			0,
-			0
-		},
-		scenegraph_id = arg_26_0
-	}
-end
-
-local function fn_6(arg_29_0, arg_29_1)
-	-- function 29
-	local tbl = {}
-	local tbl_2 = {
-		allow_multi_hover = true
-	}
-	local tbl_3 = {}
-
-	tbl[#tbl + 1] = {
-		pass_type = "hotspot",
-		style_id = "hotspot"
-	}
-	tbl_3.hotspot = {
-		allow_multi_hover = true,
-		size = arg_29_1
-	}
-
-	local tbl_4 = {
-		element = {}
-	}
-
-	tbl_4.element.passes = tbl
-	tbl_4.content = tbl_2
-	tbl_4.style = tbl_3
-	tbl_4.offset = {
+	widget.element = element
+	widget.content = content
+	widget.style = style
+	widget.offset = {
 		0,
 		0,
 		0
 	}
-	tbl_4.scenegraph_id = arg_29_0
+	widget.scenegraph_id = scenegraph_id
 
-	return tbl_4
+	return widget
 end
 
-local tbl_10 = {
+local function create_hotspot_area(scenegraph_id, size)
+	-- function 29
+	local passes = {}
+	local content = {
+		allow_multi_hover = true
+	}
+	local style = {}
+
+	passes[#passes + 1] = {
+		pass_type = "hotspot",
+		style_id = "hotspot"
+	}
+	style.hotspot = {
+		allow_multi_hover = true,
+		size = size
+	}
+
+	local widget = {
+		element = {}
+	}
+
+	widget.element.passes = passes
+	widget.content = content
+	widget.style = style
+	widget.offset = {
+		0,
+		0,
+		0
+	}
+	widget.scenegraph_id = scenegraph_id
+
+	return widget
+end
+
+local info_box_text_style = {
 	vertical_alignment = "center",
 	font_size = 22,
 	localize = false,
@@ -1156,22 +1163,22 @@ local tbl_10 = {
 		5
 	}
 }
-local tbl_11 = {
-	friends_button = fn("friends_button_root", tbl_9.friends_button_root.size),
+local widget_definitions = {
+	friends_button = create_friends_button("friends_button_root", scenegraph_definition.friends_button_root.size),
 	main_background = UIWidgets.create_simple_rect("main_background", Colors.get_color_table_with_alpha("black", 220)),
-	main_background_frame = UIWidgets.create_frame("main_background", tbl_9.main_background.size, "menu_frame_12", 20),
-	top_info_box_text = UIWidgets.create_simple_text(Localize("friends_view"), "top_info_box", 22, nil, tbl_10),
-	top_info_box_divider = fn_2("top_info_box_divider", tbl_9.top_info_box_divider.size),
-	exit_button = fn_4("exit_button", "friends_icon_close"),
-	refresh_button = fn_5("refresh_button", "friends_icon_refresh"),
-	online_tab = fn_3("online_tab", tbl_9.online_tab.size, Localize("friends_view_online"), "online_tab_list"),
-	offline_tab = fn_3("offline_tab", tbl_9.offline_tab.size, Localize("friends_view_offline"), "offline_tab_list", true),
-	hotspot_area = fn_6("main_background", tbl_9.main_background.size)
+	main_background_frame = UIWidgets.create_frame("main_background", scenegraph_definition.main_background.size, "menu_frame_12", 20),
+	top_info_box_text = UIWidgets.create_simple_text(Localize("friends_view"), "top_info_box", 22, nil, info_box_text_style),
+	top_info_box_divider = create_window_divider("top_info_box_divider", scenegraph_definition.top_info_box_divider.size),
+	exit_button = create_info_box_button("exit_button", "friends_icon_close"),
+	refresh_button = create_info_box_button_rotated_texture("refresh_button", "friends_icon_refresh"),
+	online_tab = create_tab("online_tab", scenegraph_definition.online_tab.size, Localize("friends_view_online"), "online_tab_list"),
+	offline_tab = create_tab("offline_tab", scenegraph_definition.offline_tab.size, Localize("friends_view_offline"), "offline_tab_list", true),
+	hotspot_area = create_hotspot_area("main_background", scenegraph_definition.main_background.size)
 }
 
 return {
-	scenegraph_definition = tbl_9,
-	widget_definitions = tbl_11,
-	scenegraph_info = tbl_6,
-	list_info = tbl_8
+	scenegraph_definition = scenegraph_definition,
+	widget_definitions = widget_definitions,
+	scenegraph_info = scenegraph_info,
+	list_info = list_info
 }

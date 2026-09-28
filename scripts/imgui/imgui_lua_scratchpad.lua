@@ -2,7 +2,7 @@
 
 ImguiLuaScratchpad = class(ImguiLuaScratchpad)
 
-local tbl = {
+local fallback_color = {
 	199,
 	206,
 	234,
@@ -49,20 +49,20 @@ ImguiLuaScratchpad._TYPE_TO_COLOR = setmetatable({
 }, {
 	__index = function ()
 		-- function 1
-		return tbl
+		return fallback_color
 	end
 })
 
-local var_0_1, var_0_2 = pcall(require, "jit.util")
-local tbl_2 = {
+local has_util, util = pcall(require, "jit.util")
+local magic_mt = {
 	__mode = "kv",
-	__index = function (self, arg_2_1)
+	__index = function (t, fn)
 		-- function 2
-		local funcinfo = var_0_2.funcinfo(arg_2_1)
+		local i = util.funcinfo(fn)
 
-		self[arg_2_1] = funcinfo
+		t[fn] = i
 
-		return funcinfo
+		return i
 	end
 }
 local format = string.format
@@ -70,9 +70,9 @@ local format = string.format
 ImguiLuaScratchpad.init = function (self)
 	-- function 3
 	if not script_data.lua_inspector_config then
-		local setting = Development.setting("lua_inspector_config")
+		local config = Development.setting("lua_inspector_config")
 
-		if not setting then
+		if not config then
 			script_data.lua_inspector_config = {
 				expr = "",
 				sort_keys = false,
@@ -80,22 +80,22 @@ ImguiLuaScratchpad.init = function (self)
 				dirty = false
 			}
 		else
-			script_data.lua_inspector_config = setting
+			script_data.lua_inspector_config = config
 		end
 	end
 
 	self._thunk, self._error, self._val = nil
-	self._func_info_magic = setmetatable({}, tbl_2)
+	self._func_info_magic = setmetatable({}, magic_mt)
 end
 
-ImguiLuaScratchpad.update = function (arg_4_0)
+ImguiLuaScratchpad.update = function (self)
 	-- function 4
 	return
 end
 
 ImguiLuaScratchpad.draw = function (self)
 	-- function 5
-	local begin_window = Imgui.begin_window("Lua Inspector")
+	local do_close = Imgui.begin_window("Lua Inspector")
 
 	script_data.lua_inspector_config.persistent = Imgui.checkbox("Is persistent", script_data.lua_inspector_config.persistent)
 
@@ -109,28 +109,28 @@ ImguiLuaScratchpad.draw = function (self)
 	local str = "Execute every frame"
 	local _exec_every_frame = self._exec_every_frame
 
-	_exec_every_frame = _exec_every_frame or false
+	_exec_every_frame = not not _exec_every_frame or not not false
 	self._exec_every_frame = checkbox(str, _exec_every_frame)
 
 	Imgui.same_line()
 
-	if self._exec_every_frame or not Imgui.button("Execute") or not self:_load_expression() then
+	if (self._exec_every_frame or Imgui.button("Execute")) and self:_load_expression() then
 		self:_execute_thunk()
 	end
 
 	Imgui.same_line()
 
-	if not self._error then
+	if self._error then
 		Imgui.text_colored(self._error, 255, 100, 100, 255)
 	else
 		Imgui.text_colored("Thunk loaded.", 100, 255, 100, 255)
 	end
 
-	local expr = script_data.lua_inspector_config.expr
+	local last_expr = script_data.lua_inspector_config.expr
 
-	script_data.lua_inspector_config.expr = Imgui.input_text_multiline("Input", expr)
+	script_data.lua_inspector_config.expr = Imgui.input_text_multiline("Input", last_expr)
 
-	if expr ~= script_data.lua_inspector_config.expr then
+	if last_expr ~= script_data.lua_inspector_config.expr then
 		script_data.lua_inspector_config.dirty = true
 
 		self:_load_expression()
@@ -141,102 +141,114 @@ ImguiLuaScratchpad.draw = function (self)
 	Imgui.end_child_window()
 	Imgui.end_window()
 
-	return begin_window
+	return do_close
 end
 
-ImguiLuaScratchpad._inspect_pair = function (self, arg_6_1, arg_6_2)
+ImguiLuaScratchpad._inspect_pair = function (self, k, v)
 	-- function 6
-	arg_6_1 = tostring(arg_6_1)
+	k = tostring(k)
 
-	local var_6_0 = type(arg_6_2)
+	local t = type(v)
 
-	if var_6_0 == "table" then
-		return self:_inspect_table(arg_6_1, arg_6_2)
-	elseif var_6_0 == "function" then
-		return self:_inspect_function(arg_6_1, arg_6_2)
-	elseif var_6_0 == "string" then
-		arg_6_2 = ("%q"):format(arg_6_2):gsub("\\\n", "\\n")
+	if t == "table" then
+		return self:_inspect_table(k, v)
+	elseif t == "function" then
+		return self:_inspect_function(k, v)
+	elseif t == "string" then
+		v = ("%q"):format(v):gsub("\\\n", "\\n")
 	end
 
-	Imgui.text(arg_6_1 .. " =")
+	Imgui.text(k .. " =")
 	Imgui.same_line()
-	Imgui.text_colored(tostring(arg_6_2), unpack(self._TYPE_TO_COLOR[var_6_0]))
+	Imgui.text_colored(tostring(v), unpack(self._TYPE_TO_COLOR[t]))
 end
 
-local var_0_5, var_0_6, var_0_7 = pcall(require, "ffi")
+local has_ffi, ffi, shell32 = pcall(require, "ffi")
 
-if not var_0_5 then
-	var_0_5, var_0_7 = pcall(var_0_6.load, "shell32")
+if has_ffi then
+	has_ffi, shell32 = pcall(ffi.load, "shell32")
 
-	var_0_6.cdef(" void *ShellExecuteA(void*, const char*, const char*, const char*, const char*, int); ")
+	ffi.cdef(" void *ShellExecuteA(void*, const char*, const char*, const char*, const char*, int); ")
 end
 
-ImguiLuaScratchpad._inspect_function = function (self, arg_7_1, arg_7_2)
+ImguiLuaScratchpad._inspect_function = function (self, name, func)
 	-- function 7
-	local tree_node = Imgui.tree_node(arg_7_1, false)
+	local is_open = Imgui.tree_node(name, false)
 
 	Imgui.same_line()
-	Imgui.text_colored(format("[%s]", arg_7_2), unpack(self._TYPE_TO_COLOR["function"]))
+	Imgui.text_colored(format("[%s]", func), unpack(self._TYPE_TO_COLOR["function"]))
 
-	if not var_0_1 and not tree_node then
-		local var_7_1 = self._func_info_magic[arg_7_2]
-		local source = var_7_1.source
+	if has_util and is_open then
+		local info = self._func_info_magic[func]
+		local source = info.source
 
-		source = not source and not string.find(var_7_1.source, "\n")
-
-		local var_7_3
-
-		if not source then
-			var_7_3 = format("%s:%s", var_7_1.source, var_7_1.linedefined)
-
-			if not var_7_3 then
-				-- Nothing
-			end
+		if source then
+			-- Nothing
 		end
 
-		if not var_7_1.addr then
-			var_7_3 = format("0x%012x", var_7_1.addr)
+		source = not string.find(info.source, "\n")
 
-			if not var_7_3 then
-				-- Nothing
-			end
+		local is_file_func = source
+
+		do
+			local var_7_1
 		end
-
-		var_7_3 = "<unknown origin>"
 
 		::label_7_0::
 
-		Imgui.text_colored(var_7_3, unpack(tbl))
+		if is_file_func then
+			var_7_1 = format("%s:%s", info.source, info.linedefined)
 
-		if not var_0_5 and not source then
-			Imgui.same_line()
-
-			if not Imgui.small_button("Open##" .. var_7_1.source) then
-				local source_dir = script_data.source_dir
-				local str = source_dir .. var_7_1.source:gsub("^@", "\\"):gsub("/", "\\")
-
-				printf("Opening %q", str)
-				print(var_0_7.ShellExecuteA(nil, "open", str, nil, source_dir, 10))
+			if not var_7_1 then
+				-- Nothing
 			end
 		end
 
-		self:_inspect_table("[info]", var_7_1)
+		if info.addr then
+			var_7_1 = format("0x%012x", info.addr)
 
-		local upvalues = var_7_1.upvalues
+			if not var_7_1 then
+				-- Nothing
+			end
+		end
 
-		if not (upvalues > 0) or not Imgui.tree_node("[upvalues]", false) then
-			for i = 1, upvalues do
-				local getupvalue, var_7_8 = debug.getupvalue(arg_7_2, i)
+		var_7_1 = "<unknown origin>"
 
-				self:_inspect_pair(i .. " (" .. getupvalue .. ")", var_7_8)
+		local where = var_7_1
+
+		::label_7_1::
+
+		Imgui.text_colored(where, unpack(fallback_color))
+
+		if has_ffi and is_file_func then
+			Imgui.same_line()
+
+			if Imgui.small_button("Open##" .. info.source) then
+				local base_path = script_data.source_dir
+				local path = base_path .. info.source:gsub("^@", "\\"):gsub("/", "\\")
+
+				printf("Opening %q", path)
+				print(shell32.ShellExecuteA(nil, "open", path, nil, base_path, 10))
+			end
+		end
+
+		self:_inspect_table("[info]", info)
+
+		local upvals = info.upvalues
+
+		if upvals > 0 and Imgui.tree_node("[upvalues]", false) then
+			for up = 1, upvals do
+				local k, v = debug.getupvalue(func, up)
+
+				self:_inspect_pair(up .. " (" .. k .. ")", v)
 			end
 
 			Imgui.tree_pop()
 		end
 
-		if not var_0_1 and not var_7_1.nconsts and var_7_1.nconsts == 0 and var_7_1.gcconsts == 0 or not Imgui.tree_node("[consts]", false) then
-			for j = -var_7_1.gcconsts, var_7_1.nconsts - 1 do
-				self:_inspect_pair(j, var_0_2.funck(arg_7_2, j))
+		if has_util and info.nconsts and info.nconsts ~= 0 and info.gcconsts ~= 0 and Imgui.tree_node("[consts]", false) then
+			for i = -info.gcconsts, info.nconsts - 1 do
+				self:_inspect_pair(i, util.funck(func, i))
 			end
 
 			Imgui.tree_pop()
@@ -246,62 +258,66 @@ ImguiLuaScratchpad._inspect_function = function (self, arg_7_1, arg_7_2)
 	end
 end
 
-local function fn(arg_8_0, arg_8_1)
+local function compare(a, b)
 	-- function 8
-	local var_8_0 = type(arg_8_0)
-	local var_8_1 = type(arg_8_1)
+	local ta = type(a)
+	local tb = type(b)
 
-	if var_8_0 ~= var_8_1 then
-		return var_8_0 < var_8_1
-	elseif not (var_8_0 == "string" or var_8_0 ~= "number") then
-		return arg_8_0 < arg_8_1
+	if ta ~= tb then
+		return ta < tb
+	elseif ta == "string" or ta == "number" then
+		return a < b
 	else
-		return tostring(arg_8_0) < tostring(arg_8_1)
+		return tostring(a) < tostring(b)
 	end
 end
 
-ImguiLuaScratchpad._inspect_table = function (self, arg_9_1, arg_9_2)
+ImguiLuaScratchpad._inspect_table = function (self, name, tab)
 	-- function 9
-	local tree_node = Imgui.tree_node(arg_9_1, false)
-	local var_9_1 = getmetatable(arg_9_2)
+	local is_open = Imgui.tree_node(name, false)
+	local mt = getmetatable(tab)
 	local str
 
-	if not rawget(arg_9_2, "___is_class_metatable___") then
+	if rawget(tab, "___is_class_metatable___") then
 		str = "class"
-	else
-		if not var_9_1 and var_9_1 == true or not var_9_1.___is_class_metatable___ then
-			str = table.find(_G, var_9_1)
 
-			if not str then
-				-- Nothing
-			end
-		end
-
-		str = "table"
+		goto label_9_0
 	end
+
+	if mt and mt ~= true and mt.___is_class_metatable___ then
+		str = table.find(_G, mt)
+
+		if not str then
+			-- Nothing
+		end
+	end
+
+	str = "table"
+
+	local class_name = str
 
 	::label_9_0::
 
 	Imgui.same_line()
-	Imgui.text_colored(format("[%s: %p]", str, arg_9_2), unpack(self._TYPE_TO_COLOR.table))
+	Imgui.text_colored(format("[%s: %p]", class_name, tab), unpack(self._TYPE_TO_COLOR.table))
 
-	if not tree_node then
-		if not script_data.lua_inspector_config.sort_keys then
-			local keys = table.keys(arg_9_2)
+	if is_open then
+		if script_data.lua_inspector_config.sort_keys then
+			local keys = table.keys(tab)
 
-			table.sort(keys, fn)
+			table.sort(keys, compare)
 
-			for k, v in pairs(keys) do
-				self:_inspect_pair(v, arg_9_2[v])
+			for _, k in pairs(keys) do
+				self:_inspect_pair(k, tab[k])
 			end
 		else
-			for k_2, v_2 in pairs(arg_9_2) do
-				self:_inspect_pair(k_2, v_2)
+			for k, v in pairs(tab) do
+				self:_inspect_pair(k, v)
 			end
 		end
 
-		if not var_9_1 then
-			self:_inspect_table("[metatable]", var_9_1)
+		if mt then
+			self:_inspect_table("[metatable]", mt)
 		end
 
 		Imgui.tree_pop()
@@ -319,78 +335,77 @@ ImguiLuaScratchpad._load_expression = function (self)
 	return self._thunk ~= nil
 end
 
-local function fn_2(arg_11_0)
+local function traceback_table(err)
 	-- function 11
-	local tbl = {}
+	local stack = {}
 
 	for i = 2, 9999 do
-		local getinfo = debug.getinfo(i, "nSluf")
+		local info = debug.getinfo(i, "nSluf")
 
-		if not getinfo then
+		if not info then
 			break
 		end
 
-		local tbl_2 = {}
-		local tbl_3 = {}
+		local slots, ups = {}, {}
 
 		for j = 1, 9999 do
-			local getlocal, var_11_5 = debug.getlocal(i, j)
+			local k, v = debug.getlocal(i, j)
 
-			if not getlocal then
+			if not k then
 				break
 			end
 
-			tbl_2[getlocal] = var_11_5
+			slots[k] = v
 		end
 
 		local num = 1
-		local nups = getinfo.nups
+		local nups = info.nups
 
-		nups = nups or 0
+		nups = not not nups or not not 0
 
-		for k = num, nups do
-			local getupvalue, var_11_9 = debug.getupvalue(getinfo.func, k)
+		for j = num, nups do
+			local k, v = debug.getupvalue(info.func, j)
 
-			if not getupvalue then
+			if not k then
 				break
 			end
 
-			tbl_3[getupvalue] = var_11_9
+			ups[k] = v
 		end
 
-		tbl[i - 1] = {
-			name = getinfo.name,
-			info = getinfo,
-			slots = tbl_2,
-			ups = tbl_3
+		stack[i - 1] = {
+			name = info.name,
+			info = info,
+			slots = slots,
+			ups = ups
 		}
 	end
 
 	return {
-		error = arg_11_0 or "?",
-		stack = tbl
+		error = not not err or not not "?",
+		stack = stack
 	}
 end
 
 ImguiLuaScratchpad._execute_thunk = function (self)
 	-- function 12
-	local var_12_0, var_12_1 = xpcall(self._thunk, fn_2)
+	local ok, val = xpcall(self._thunk, traceback_table)
 
-	if not var_12_0 then
-		self._val, self._error = var_12_1
+	if ok then
+		self._val, self._error = val
 
-		if not script_data.lua_inspector_config.dirty then
+		if script_data.lua_inspector_config.dirty then
 			script_data.lua_inspector_config.dirty = false
 
 			Development.set_setting("lua_inspector_config", script_data.lua_inspector_config)
 			Application.save_user_settings()
 		end
 	else
-		self._val, self._error = var_12_1, "Runtime error"
+		self._val, self._error = val, "Runtime error"
 	end
 end
 
-ImguiLuaScratchpad.is_persistent = function (arg_13_0)
+ImguiLuaScratchpad.is_persistent = function (self)
 	-- function 13
 	return script_data.lua_inspector_config.persistent
 end

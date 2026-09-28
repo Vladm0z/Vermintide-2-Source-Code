@@ -2,72 +2,72 @@
 
 BackendInterfaceLootBenchmark = class(BackendInterfaceLootBenchmark)
 
-BackendInterfaceLootBenchmark.init = function (arg_1_0, arg_1_1)
+BackendInterfaceLootBenchmark.init = function (self, backend_mirror)
 	-- function 1
 	return
 end
 
-BackendInterfaceLootBenchmark.ready = function (arg_2_0)
+BackendInterfaceLootBenchmark.ready = function (self)
 	-- function 2
 	return true
 end
 
-BackendInterfaceLootBenchmark.update = function (arg_3_0, arg_3_1)
+BackendInterfaceLootBenchmark.update = function (self, dt)
 	-- function 3
 	return
 end
 
-BackendInterfaceLootBenchmark.open_loot_chest = function (arg_4_0, arg_4_1, arg_4_2)
+BackendInterfaceLootBenchmark.open_loot_chest = function (self, hero_name, backend_id)
 	-- function 4
 	return 1
 end
 
-BackendInterfaceLootBenchmark.loot_chest_rewards_request_cb = function (arg_5_0, arg_5_1, arg_5_2)
+BackendInterfaceLootBenchmark.loot_chest_rewards_request_cb = function (self, data, result)
 	-- function 5
 	return
 end
 
-BackendInterfaceLootBenchmark.generate_end_of_level_loot = function (arg_6_0, arg_6_1, arg_6_2, arg_6_3, arg_6_4, arg_6_5, arg_6_6, arg_6_7, arg_6_8, arg_6_9, arg_6_10, arg_6_11, arg_6_12, arg_6_13)
+BackendInterfaceLootBenchmark.generate_end_of_level_loot = function (self, game_won, quick_play_bonus, difficulty, level_key, hero_name, start_experience, end_experience, loot_profile_name, deed_item_name, deed_backend_id, game_mode_key, game_time, end_of_level_rewards_arguments)
 	-- function 6
 	return 1
 end
 
-BackendInterfaceLootBenchmark.end_of_level_loot_request_cb = function (arg_7_0, arg_7_1, arg_7_2)
+BackendInterfaceLootBenchmark.end_of_level_loot_request_cb = function (self, data, result)
 	-- function 7
 	return
 end
 
-BackendInterfaceLootBenchmark.achievement_rewards_claimed = function (arg_8_0, arg_8_1)
+BackendInterfaceLootBenchmark.achievement_rewards_claimed = function (self, achievement_id)
 	-- function 8
 	return nil
 end
 
-BackendInterfaceLootBenchmark.get_achievement_rewards = function (arg_9_0, arg_9_1)
+BackendInterfaceLootBenchmark.get_achievement_rewards = function (self, achievement_id)
 	-- function 9
 	return nil
 end
 
-BackendInterfaceLootBenchmark.can_claim_achievement_rewards = function (arg_10_0, arg_10_1)
+BackendInterfaceLootBenchmark.can_claim_achievement_rewards = function (self, achievement_id)
 	-- function 10
 	return false
 end
 
-BackendInterfaceLootBenchmark.claim_achievement_rewards = function (arg_11_0, arg_11_1)
+BackendInterfaceLootBenchmark.claim_achievement_rewards = function (self, achievement_id)
 	-- function 11
 	return 1
 end
 
-BackendInterfaceLootBenchmark.achievement_rewards_request_cb = function (arg_12_0, arg_12_1, arg_12_2)
+BackendInterfaceLootBenchmark.achievement_rewards_request_cb = function (self, data, result)
 	-- function 12
 	return
 end
 
-BackendInterfaceLootBenchmark.is_loot_generated = function (arg_13_0, arg_13_1)
+BackendInterfaceLootBenchmark.is_loot_generated = function (self, id)
 	-- function 13
 	return false
 end
 
-BackendInterfaceLootBenchmark.get_loot = function (arg_14_0, arg_14_1)
+BackendInterfaceLootBenchmark.get_loot = function (self, id)
 	-- function 14
 	return nil
 end

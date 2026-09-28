@@ -2,72 +2,78 @@
 
 AIShieldUserExtension = class(AIShieldUserExtension)
 
-AIShieldUserExtension.init = function (self, arg_1_1, arg_1_2, arg_1_3)
+AIShieldUserExtension.init = function (self, extension_init_context, unit, extension_init_data)
 	-- function 1
-	self._unit = arg_1_2
+	self._unit = unit
 
-	local is_blocking = arg_1_3.is_blocking
+	local is_blocking = extension_init_data.is_blocking
 
-	is_blocking = is_blocking or true
+	is_blocking = not not is_blocking or not not true
 	self.is_blocking = is_blocking
 
-	local is_dodging = arg_1_3.is_dodging
+	local is_dodging = extension_init_data.is_dodging
 
-	is_dodging = is_dodging or false
+	is_dodging = not not is_dodging or not not false
 	self.is_dodging = is_dodging
 	self.shield_broken = false
 end
 
-AIShieldUserExtension.destroy = function (arg_2_0)
+AIShieldUserExtension.destroy = function (self)
 	-- function 2
 	return
 end
 
-AIShieldUserExtension.extensions_ready = function (self, arg_3_1, arg_3_2)
+AIShieldUserExtension.extensions_ready = function (self, world, unit)
 	-- function 3
 	assert(Managers.state.network.is_server)
 
-	local blackboard = ScriptUnit.extension(arg_3_2, "ai_system"):blackboard()
+	local ai_base_extension = ScriptUnit.extension(unit, "ai_system")
+	local blackboard = ai_base_extension:blackboard()
 	local spawn_type = blackboard.spawn_type
+	local is_blocking = spawn_type == "horde" or spawn_type == "horde_hidden"
 
-	self.is_blocking = spawn_type == "horde" or spawn_type == "horde_hidden"
+	self.is_blocking = is_blocking
 	self._blackboard = blackboard
 	self.blocked_previous_attack = false
 	blackboard.shield_user = true
 end
 
-AIShieldUserExtension.set_is_blocking = function (self, arg_4_1)
+AIShieldUserExtension.set_is_blocking = function (self, is_blocking)
 	-- function 4
-	if not self.shield_broken then
+	local shield_broken = self.shield_broken
+
+	if shield_broken then
 		return
 	end
 
-	local _unit = self._unit
-	local go_id = Managers.state.unit_storage:go_id(_unit)
+	local unit = self._unit
+	local game_object_id = Managers.state.unit_storage:go_id(unit)
 	local game = Managers.state.network:game()
 
-	if not game and not go_id then
-		GameSession.set_game_object_field(game, go_id, "is_blocking", arg_4_1)
+	if game and game_object_id then
+		GameSession.set_game_object_field(game, game_object_id, "is_blocking", is_blocking)
 	end
 
-	self.is_blocking = arg_4_1
+	self.is_blocking = is_blocking
 end
 
-AIShieldUserExtension.set_is_dodging = function (self, arg_5_1)
+AIShieldUserExtension.set_is_dodging = function (self, is_dodging)
 	-- function 5
-	if not self.shield_broken then
+	local shield_broken = self.shield_broken
+
+	if shield_broken then
 		return
 	end
 
-	local _unit = self._unit
-	local go_id = Managers.state.unit_storage:go_id(_unit)
+	local unit = self._unit
+	local game_object_id = Managers.state.unit_storage:go_id(unit)
 	local game = Managers.state.network:game()
 
-	if not game and not go_id then
-		GameSession.set_game_object_field(game, go_id, "is_dodging", arg_5_1)
+	if game and game_object_id then
+		GameSession.set_game_object_field(game, game_object_id, "is_dodging", is_dodging)
 	end
 
-	self.is_dodging = arg_5_1
+	self.is_dodging = is_dodging
 end
 
 AIShieldUserExtension.break_shield = function (self)
@@ -76,60 +82,60 @@ AIShieldUserExtension.break_shield = function (self)
 
 	self.shield_broken = true
 
-	local _unit = self._unit
-	local _blackboard = self._blackboard
+	local unit = self._unit
+	local blackboard = self._blackboard
 
-	_blackboard.shield_breaking_hit = true
-	_blackboard.shield_user = false
+	blackboard.shield_breaking_hit = true
+	blackboard.shield_user = false
 
-	local extension = ScriptUnit.extension(_unit, "ai_inventory_system")
-	local inventory_item_definitions = extension.inventory_item_definitions
-	local str = "shield_break"
+	local ai_inventory_extension = ScriptUnit.extension(unit, "ai_inventory_system")
+	local inventory_item_definitions = ai_inventory_extension.inventory_item_definitions
+	local reason = "shield_break"
 	local network_transmit = Managers.state.network.network_transmit
-	local go_id = Managers.state.unit_storage:go_id(_unit)
-	local var_6_7 = NetworkLookup.item_drop_reasons[str]
-	local flag = false
+	local game_object_id = Managers.state.unit_storage:go_id(unit)
+	local reason_id = NetworkLookup.item_drop_reasons[reason]
+	local item_dropped = false
 
 	for i = 1, #inventory_item_definitions do
-		local var_6_9 = inventory_item_definitions[i]
-		local drop_single_item, var_6_11 = extension:drop_single_item(i, str)
+		local item = inventory_item_definitions[i]
+		local success, item_unit = ai_inventory_extension:drop_single_item(i, reason)
 
-		if not drop_single_item then
-			flag = true
+		if success then
+			item_dropped = true
 
-			network_transmit:send_rpc_clients("rpc_ai_drop_single_item", go_id, i, var_6_7)
+			network_transmit:send_rpc_clients("rpc_ai_drop_single_item", game_object_id, i, reason_id)
 		end
 	end
 
-	return flag
+	return item_dropped
 end
 
-AIShieldUserExtension.can_block_attack = function (self, arg_7_1, arg_7_2, arg_7_3)
+AIShieldUserExtension.can_block_attack = function (self, attacker_unit, trueflight_blocking, hit_direction)
 	-- function 7
-	assert(arg_7_1)
+	assert(attacker_unit)
 
-	local _unit = self._unit
+	local unit = self._unit
+	local can_block = self.is_blocking
 
-	if not (not self.is_blocking and HEALTH_ALIVE[_unit]) then
+	if not can_block or not HEALTH_ALIVE[unit] then
 		return false
 	end
 
-	local world_position = Unit.world_position(arg_7_1, 0)
-	local world_position_2 = Unit.world_position(_unit, 0)
-	local normalize = Vector3.normalize(world_position_2 - world_position)
-	local forward = Quaternion.forward(Unit.local_rotation(_unit, 0))
-	local var_7_5
-	local var_7_6
+	local attacker_unit_pos = Unit.world_position(attacker_unit, 0)
+	local hit_unit_pos = Unit.world_position(unit, 0)
+	local attacker_to_hit_dir = Vector3.normalize(hit_unit_pos - attacker_unit_pos)
+	local hit_unit_direction = Quaternion.forward(Unit.local_rotation(unit, 0))
+	local hit_angle, behind_target
 
-	if not arg_7_2 then
-		local dot = Vector3.dot(forward, arg_7_3)
-
-		var_7_6 = not (dot >= -0.75) or dot <= 1
+	if trueflight_blocking then
+		hit_angle = Vector3.dot(hit_unit_direction, hit_direction)
+		behind_target = hit_angle >= -0.75 and hit_angle <= 1
 	else
-		local dot_2 = Vector3.dot(forward, normalize)
-
-		var_7_6 = not (dot_2 >= 0.55) or dot_2 <= 1
+		hit_angle = Vector3.dot(hit_unit_direction, attacker_to_hit_dir)
+		behind_target = hit_angle >= 0.55 and hit_angle <= 1
 	end
 
-	return not var_7_6
+	local can_block_attack = not behind_target
+
+	return can_block_attack
 end

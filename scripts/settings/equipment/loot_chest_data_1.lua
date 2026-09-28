@@ -2,7 +2,7 @@
 
 local LootChestData = LootChestData
 
-LootChestData = LootChestData or {}
+LootChestData = not not LootChestData or not not {}
 LootChestData = LootChestData
 LootChestData.scores = {
 	default = {
@@ -60,69 +60,70 @@ LootChestData.power_level_thresholds = {
 }
 LootChestData.LEVEL_USED_FOR_POOL_LEVELS = 30
 
-local tbl = {
+local power_level_scratch = {
 	0,
 	0
 }
 
-LootChestData.calculate_power_level = function (arg_1_0, arg_1_1)
+LootChestData.calculate_power_level = function (level, pivot_data)
 	-- function 1
-	tbl[1], tbl[2] = arg_1_1.low, arg_1_1.hi
+	power_level_scratch[1], power_level_scratch[2] = pivot_data.low, pivot_data.hi
 
-	local var_1_0 = arg_1_0
+	local raw_level = level
 
-	arg_1_0 = math.min(arg_1_0, LootChestData.LEVEL_USED_FOR_POOL_LEVELS)
+	level = math.min(level, LootChestData.LEVEL_USED_FOR_POOL_LEVELS)
 
-	local get_power_level_settings = Managers.backend:get_interface("loot"):get_power_level_settings()
-	local var_1_2 = math[get_power_level_settings.easing_function]
-	local var_1_3 = math[get_power_level_settings.inverse_easing_function]
+	local loot_interface = Managers.backend:get_interface("loot")
+	local power_level_settings = loot_interface:get_power_level_settings()
+	local easing_function = math[power_level_settings.easing_function]
+	local inverse_easing_function = math[power_level_settings.inverse_easing_function]
 
 	for i = 1, 2 do
-		local var_1_4 = tbl[i]
-		local min = var_1_4.min
-		local max = var_1_4.max
-		local pivot_power = var_1_4.pivot_power
-		local pivot_level = var_1_4.pivot_level
-		local easing_power = var_1_4.easing_power
-		local max_2 = math.max(math.inv_lerp(min, max, pivot_power), 0)
-		local var_1_11 = max
+		local sub_data = power_level_scratch[i]
+		local min, max, pivot_power, pivot_level, easing_power = sub_data.min, sub_data.max, sub_data.pivot_power, sub_data.pivot_level, sub_data.easing_power
+		local power_pivot_t = math.max(math.inv_lerp(min, max, pivot_power), 0)
+		local eased_max = max
 
-		if max_2 > 1 then
-			var_1_11 = pivot_power
-			max_2 = 1 / max_2
+		if power_pivot_t > 1 then
+			eased_max = pivot_power
+			power_pivot_t = 1 / power_pivot_t
 		end
 
-		local var_1_12 = var_1_3(max_2)
-		local inv_lerp = math.inv_lerp(1, pivot_level, arg_1_0)
-		local max_3 = math.max(inv_lerp * var_1_12, 0)
-		local var_1_15 = var_1_2(max_3)
-		local num = math.lerp(0, var_1_11 - min, var_1_15) + min
+		local pivot_mult = inverse_easing_function(power_pivot_t)
+		local level_pivot_t = math.inv_lerp(1, pivot_level, level)
+		local level_and_power_pivot_t = math.max(level_pivot_t * pivot_mult, 0)
+		local eased = easing_function(level_and_power_pivot_t)
 
-		if inv_lerp > 1 then
+		eased = math.lerp(0, eased_max - min, eased) + min
+
+		if level_pivot_t > 1 then
 			if max < pivot_power then
-				num = max
+				eased = max
 			else
-				num = math.max(num, pivot_power)
+				eased = math.max(eased, pivot_power)
 			end
 		else
-			num = num + (math.lerp(0, math.min(max, pivot_power) - min, inv_lerp) + min - num) * (1 - easing_power)
+			local un_eased = math.lerp(0, math.min(max, pivot_power) - min, level_pivot_t) + min
+
+			eased = eased + (un_eased - eased) * (1 - easing_power)
 		end
 
-		local clamp = math.clamp(num, min, max)
-		local raise_by_overflow_level = var_1_4.raise_by_overflow_level
+		eased = math.clamp(eased, min, max)
 
-		if not raise_by_overflow_level then
-			clamp = clamp + math.max(0, raise_by_overflow_level * (var_1_0 - LootChestData.LEVEL_USED_FOR_POOL_LEVELS))
+		local overflow_pl = sub_data.raise_by_overflow_level
+
+		if overflow_pl then
+			eased = eased + math.max(0, overflow_pl * (raw_level - LootChestData.LEVEL_USED_FOR_POOL_LEVELS))
 		end
 
-		tbl[i] = clamp
+		power_level_scratch[i] = eased
 	end
 
-	tbl[1] = math.min(tbl[1], tbl[2])
+	power_level_scratch[1] = math.min(power_level_scratch[1], power_level_scratch[2])
 
-	local max_4 = arg_1_1.hi.max
+	local absoluteMax = pivot_data.hi.max
 
-	return tbl[1], tbl[2], max_4
+	return power_level_scratch[1], power_level_scratch[2], absoluteMax
 end
 
 LootChestData.chests_by_category = {

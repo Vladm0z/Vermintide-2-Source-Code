@@ -2,7 +2,7 @@
 
 local BloodSettingsDefault = BloodSettingsDefault
 
-BloodSettingsDefault = BloodSettingsDefault or {
+BloodSettingsDefault = not not BloodSettingsDefault or not not {
 	weapon_blood = {
 		default = 0.05,
 		enabled = true,
@@ -70,22 +70,31 @@ BloodSettingsDefault = BloodSettingsDefault
 
 local BloodSettings = BloodSettings
 
-BloodSettings = BloodSettings or table.clone(BloodSettingsDefault)
+BloodSettings = not not BloodSettings or not not table.clone(BloodSettingsDefault)
 BloodSettings = BloodSettings
 
-if not IS_WINDOWS then
+if IS_WINDOWS then
 	local user_setting = Application.user_setting("num_blood_decal")
 
-	user_setting = user_setting or BloodSettings.blood_decals.num_decals
-	BloodSettings.blood_decals.num_decals = user_setting
+	if not user_setting then
+		-- Nothing
+	end
+
+	user_setting = BloodSettings.blood_decals.num_decals
+
+	local num_decals = user_setting
+
+	::label_0_0::
+
+	BloodSettings.blood_decals.num_decals = num_decals
 end
 
-BloodSettings.get_hit_effect_for_race = function (self, arg_1_1)
+BloodSettings.get_hit_effect_for_race = function (self, race)
 	-- function 1
-	if not self.hit_effects.enabled then
-		local var_1_0 = self.hit_effects.first_person_per_race[arg_1_1]
+	if self.hit_effects.enabled then
+		local race_blood = self.hit_effects.first_person_per_race[race]
 
-		return var_1_0 or var_1_0 ~= nil or self.hit_effects.first_person_per_race.default
+		return (not not race_blood or race_blood == nil) and not not self.hit_effects.first_person_per_race.default
 	end
 
 	return nil

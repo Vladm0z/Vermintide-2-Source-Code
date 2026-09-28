@@ -4,21 +4,21 @@ require("scripts/managers/telemetry/telemetry_settings")
 require("scripts/managers/telemetry/telemetry_rpc_listener")
 require("scripts/managers/telemetry/telemetry_event")
 
-local remove_empty_values = table.remove_empty_values(TelemetrySettings.source)
+local SOURCE = table.remove_empty_values(TelemetrySettings.source)
 
 TelemetryEvents = class(TelemetryEvents)
 
-TelemetryEvents.init = function (self, arg_1_1)
+TelemetryEvents.init = function (self, manager)
 	-- function 1
-	self._manager = arg_1_1
+	self._manager = manager
 	self.rpc_listener = TelemetryRPCListener:new(self)
 	self._subject = {}
 
-	if not script_data.testify then
+	if script_data.testify then
 		local _subject = self._subject
 		local machine_id = Application.machine_id
 
-		machine_id = not machine_id and Application.machine_id()
+		machine_id = not not machine_id and not not Application.machine_id()
 		_subject.machine_id = machine_id
 		self._subject.machine_name = script_data.machine_name
 	end
@@ -28,13 +28,13 @@ TelemetryEvents.init = function (self, arg_1_1)
 	}
 	self._context = {}
 
-	if not IS_XB1 then
-		remove_empty_values.console_type = XboxOne.console_type_string()
-	elseif not IS_PS4 then
-		local var_1_2 = remove_empty_values
+	if IS_XB1 then
+		SOURCE.console_type = XboxOne.console_type_string()
+	elseif IS_PS4 then
+		local var_1_2 = SOURCE
 		local flag
 
-		flag = not PS4.is_pro() and "pro" and "not_pro"
+		flag = (not PS4.is_pro() or not "pro") and not not "not_pro"
 		var_1_2.console_type = flag
 	end
 
@@ -48,643 +48,645 @@ end
 
 TelemetryEvents.game_startup = function (self)
 	-- function 3
-	local _create_event = self:_create_event("game_startup")
+	local event = self:_create_event("game_startup")
 
-	self._manager:register_event(_create_event)
+	self._manager:register_event(event)
 end
 
 TelemetryEvents.game_shutdown = function (self)
 	-- function 4
-	local _create_event = self:_create_event("game_shutdown")
+	local event = self:_create_event("game_shutdown")
 
-	_create_event:set_data({
+	event:set_data({
 		time_in_game = Application.time_since_launch()
 	})
-	self._manager:register_event(_create_event)
+	self._manager:register_event(event)
 end
 
-TelemetryEvents.game_started = function (self, arg_5_1)
+TelemetryEvents.game_started = function (self, data)
 	-- function 5
-	local _create_event = self:_create_event("game_started")
-	local tbl = {}
+	local event = self:_create_event("game_started")
+	local mutator_names = {}
 
-	table.keys(arg_5_1.mutators, tbl)
-	table.sort(tbl)
-	_create_event:set_data({
-		peer_type = arg_5_1.peer_type,
-		country_code = arg_5_1.country_code,
-		quick_game = arg_5_1.quick_game,
-		game_mode = arg_5_1.game_mode,
-		level_key = arg_5_1.level_key,
-		difficulty = arg_5_1.difficulty,
-		mutators = table.concat(tbl, ","),
-		realm = arg_5_1.realm
+	table.keys(data.mutators, mutator_names)
+	table.sort(mutator_names)
+	event:set_data({
+		peer_type = data.peer_type,
+		country_code = data.country_code,
+		quick_game = data.quick_game,
+		game_mode = data.game_mode,
+		level_key = data.level_key,
+		difficulty = data.difficulty,
+		mutators = table.concat(mutator_names, ","),
+		realm = data.realm
 	})
-	self._manager:register_event(_create_event)
+	self._manager:register_event(event)
 end
 
-TelemetryEvents.versus_round_started = function (self, arg_6_1, arg_6_2, arg_6_3, arg_6_4, arg_6_5, arg_6_6)
+TelemetryEvents.versus_round_started = function (self, player_id, game_round, match_id, slot_melee, slot_ranged, talents)
 	-- function 6
-	local _create_event = self:_create_event("versus_round_started")
+	local event = self:_create_event("versus_round_started")
 
-	_create_event:set_data({
-		player_id = arg_6_1,
-		game_round = arg_6_2,
-		match_id = arg_6_3,
-		slot_melee = arg_6_4,
-		slot_ranged = arg_6_5,
-		talents = arg_6_6
+	event:set_data({
+		player_id = player_id,
+		game_round = game_round,
+		match_id = match_id,
+		slot_melee = slot_melee,
+		slot_ranged = slot_ranged,
+		talents = talents
 	})
-	self._manager:register_event(_create_event)
+	self._manager:register_event(event)
 end
 
-TelemetryEvents.versus_custom_game_settings = function (self, arg_7_1, arg_7_2, arg_7_3, arg_7_4, arg_7_5)
+TelemetryEvents.versus_custom_game_settings = function (self, player_id, match_id, settings, is_default_ruleset, modified_settings)
 	-- function 7
-	local _create_event = self:_create_event("versus_custom_game_settings")
+	local event = self:_create_event("versus_custom_game_settings")
 
-	_create_event:set_data({
-		player_id = arg_7_1,
-		match_id = arg_7_2,
-		settings = arg_7_3,
-		is_default_ruleset = arg_7_4,
-		modified_settings = arg_7_5
+	event:set_data({
+		player_id = player_id,
+		match_id = match_id,
+		settings = settings,
+		is_default_ruleset = is_default_ruleset,
+		modified_settings = modified_settings
 	})
-	self._manager:register_event(_create_event)
+	self._manager:register_event(event)
 end
 
-TelemetryEvents.versus_round_ended = function (self, arg_8_1, arg_8_2, arg_8_3)
+TelemetryEvents.versus_round_ended = function (self, score, game_round, match_id)
 	-- function 8
-	local _create_event = self:_create_event("versus_round_end")
+	local event = self:_create_event("versus_round_end")
 
-	_create_event:set_data({
-		score = arg_8_1,
-		game_round = arg_8_2,
-		match_id = arg_8_3
+	event:set_data({
+		score = score,
+		game_round = game_round,
+		match_id = match_id
 	})
-	self._manager:register_event(_create_event)
+	self._manager:register_event(event)
 end
 
-TelemetryEvents.versus_match_ended = function (self, arg_9_1, arg_9_2, arg_9_3)
+TelemetryEvents.versus_match_ended = function (self, match_id, is_draw, winning_team)
 	-- function 9
-	local _create_event = self:_create_event("versus_match_ended")
+	local event = self:_create_event("versus_match_ended")
 
-	_create_event:set_data({
-		match_id = arg_9_1,
-		is_draw = arg_9_2,
-		winning_team = arg_9_3
+	event:set_data({
+		match_id = match_id,
+		is_draw = is_draw,
+		winning_team = winning_team
 	})
-	self._manager:register_event(_create_event)
+	self._manager:register_event(event)
 end
 
-TelemetryEvents.versus_pactsworn_picking = function (self, arg_10_1, arg_10_2, arg_10_3, arg_10_4, arg_10_5, arg_10_6, arg_10_7)
+TelemetryEvents.versus_pactsworn_picking = function (self, match_id, player_id, career_options, selected_career, career_selection_time_elapsed, platform, build)
 	-- function 10
-	local _create_event = self:_create_event("versus_pactsworn_picking")
+	local event = self:_create_event("versus_pactsworn_picking")
 
-	_create_event:set_data({
-		match_id = arg_10_1,
-		player_id = arg_10_2,
-		career_options = arg_10_3,
-		selected_career = arg_10_4,
-		career_selection_time_elapsed = arg_10_5,
-		platform = arg_10_6,
-		build = arg_10_7
+	event:set_data({
+		match_id = match_id,
+		player_id = player_id,
+		career_options = career_options,
+		selected_career = selected_career,
+		career_selection_time_elapsed = career_selection_time_elapsed,
+		platform = platform,
+		build = build
 	})
-	self._manager:register_event(_create_event)
+	self._manager:register_event(event)
 end
 
-TelemetryEvents.versus_objective_started = function (self, arg_11_1, arg_11_2, arg_11_3, arg_11_4)
+TelemetryEvents.versus_objective_started = function (self, match_id, objective_id, round_id, objective_name)
 	-- function 11
-	local _create_event = self:_create_event("versus_objective_started")
+	local event = self:_create_event("versus_objective_started")
 
-	_create_event:set_data({
-		match_id = arg_11_1,
-		objective_id = arg_11_2,
-		round_id = arg_11_3,
-		objective_name = arg_11_4
+	event:set_data({
+		match_id = match_id,
+		objective_id = objective_id,
+		round_id = round_id,
+		objective_name = objective_name
 	})
-	self._manager:register_event(_create_event)
+	self._manager:register_event(event)
 end
 
-TelemetryEvents.versus_objective_section_completed = function (self, arg_12_1, arg_12_2, arg_12_3, arg_12_4, arg_12_5, arg_12_6)
+TelemetryEvents.versus_objective_section_completed = function (self, match_id, objective_id, round_id, objective_name, num_sections_completed, total_num_sections)
 	-- function 12
-	local _create_event = self:_create_event("versus_objective_section_completed")
+	local event = self:_create_event("versus_objective_section_completed")
 
-	_create_event:set_data({
-		match_id = arg_12_1,
-		objective_id = arg_12_2,
-		round_id = arg_12_3,
-		objective_name = arg_12_4,
-		num_sections_completed = arg_12_5,
-		total_num_sections = arg_12_6
+	event:set_data({
+		match_id = match_id,
+		objective_id = objective_id,
+		round_id = round_id,
+		objective_name = objective_name,
+		num_sections_completed = num_sections_completed,
+		total_num_sections = total_num_sections
 	})
-	self._manager:register_event(_create_event)
+	self._manager:register_event(event)
 end
 
-TelemetryEvents.versus_activated_ability = function (self, arg_13_1, arg_13_2, arg_13_3, arg_13_4)
+TelemetryEvents.versus_activated_ability = function (self, match_id, game_round, player_id, ability_name)
 	-- function 13
-	local _create_event = self:_create_event("versus_activated_ability")
+	local event = self:_create_event("versus_activated_ability")
 
-	_create_event:set_data({
-		match_id = arg_13_1,
-		game_round = arg_13_2,
-		player_id = arg_13_3,
-		ability_name = arg_13_4
+	event:set_data({
+		match_id = match_id,
+		game_round = game_round,
+		player_id = player_id,
+		ability_name = ability_name
 	})
-	self._manager:register_event(_create_event)
+	self._manager:register_event(event)
 end
 
-TelemetryEvents.weave_activated = function (self, arg_14_1, arg_14_2)
+TelemetryEvents.weave_activated = function (self, wind, tier)
 	-- function 14
-	local _create_event = self:_create_event("weave_activated")
+	local event = self:_create_event("weave_activated")
 
-	_create_event:set_data({
-		wind = arg_14_1,
-		tier = arg_14_2
+	event:set_data({
+		wind = wind,
+		tier = tier
 	})
-	self._manager:register_event(_create_event)
+	self._manager:register_event(event)
 end
 
 TelemetryEvents.round_started = function (self)
 	-- function 15
-	local _create_event = self:_create_event("round_started")
+	local event = self:_create_event("round_started")
 
-	self._manager:register_event(_create_event)
+	self._manager:register_event(event)
 end
 
-TelemetryEvents.objective_captured = function (self, arg_16_1)
+TelemetryEvents.objective_captured = function (self, remaining_time)
 	-- function 16
-	local _create_event = self:_create_event("objective_captured")
+	local event = self:_create_event("objective_captured")
 
-	_create_event:set_data({
-		remaining_time = arg_16_1
+	event:set_data({
+		remaining_time = remaining_time
 	})
-	self._manager:register_event(_create_event)
+	self._manager:register_event(event)
 end
 
-TelemetryEvents.badge_gained = function (self, arg_17_1)
+TelemetryEvents.badge_gained = function (self, badge_name)
 	-- function 17
-	local _create_event = self:_create_event("badge_gained")
+	local event = self:_create_event("badge_gained")
 
-	_create_event:set_data({
-		badge_name = arg_17_1
+	event:set_data({
+		badge_name = badge_name
 	})
-	self._manager:register_event(_create_event)
+	self._manager:register_event(event)
 end
 
-TelemetryEvents.node_climb = function (self, arg_18_1, arg_18_2)
+TelemetryEvents.node_climb = function (self, breed_name, node_position)
 	-- function 18
-	local _create_event = self:_create_event("node_climb")
+	local event = self:_create_event("node_climb")
 
-	_create_event:set_data({
-		breed_name = arg_18_1,
-		node_position = arg_18_2
+	event:set_data({
+		breed_name = breed_name,
+		node_position = node_position
 	})
-	self._manager:register_event(_create_event)
+	self._manager:register_event(event)
 end
 
-TelemetryEvents.left_ghost_mode = function (self, arg_19_1, arg_19_2)
+TelemetryEvents.left_ghost_mode = function (self, breed_name, position)
 	-- function 19
-	local _create_event = self:_create_event("left_ghost_mode")
+	local event = self:_create_event("left_ghost_mode")
 
-	_create_event:set_data({
-		breed_name = arg_19_1,
-		position = arg_19_2
+	event:set_data({
+		breed_name = breed_name,
+		position = position
 	})
-	self._manager:register_event(_create_event)
+	self._manager:register_event(event)
 end
 
-TelemetryEvents.game_ended = function (self, arg_20_1)
+TelemetryEvents.game_ended = function (self, end_reason)
 	-- function 20
-	local _create_event = self:_create_event("game_ended")
+	local event = self:_create_event("game_ended")
 
-	_create_event:set_data({
-		end_reason = arg_20_1
+	event:set_data({
+		end_reason = end_reason
 	})
-	self._manager:register_event(_create_event)
+	self._manager:register_event(event)
 
 	self._session.server = nil
 end
 
-TelemetryEvents.client_session_id = function (arg_21_0, arg_21_1)
+TelemetryEvents.client_session_id = function (self, session_id)
 	-- function 21
-	arg_21_0._session.client = arg_21_1
+	self._session.client = session_id
 end
 
-TelemetryEvents.server_session_id = function (arg_22_0, arg_22_1)
+TelemetryEvents.server_session_id = function (self, session_id)
 	-- function 22
-	arg_22_0._session.server = arg_22_1
+	self._session.server = session_id
 end
 
-TelemetryEvents.ai_died = function (self, arg_23_1, arg_23_2, arg_23_3)
+TelemetryEvents.ai_died = function (self, id, breed, position)
 	-- function 23
-	local _create_event = self:_create_event("ai_died")
+	local event = self:_create_event("ai_died")
 
-	_create_event:set_data({
-		id = arg_23_1,
-		breed = arg_23_2,
-		position = arg_23_3
+	event:set_data({
+		id = id,
+		breed = breed,
+		position = position
 	})
-	self._manager:register_event(_create_event)
+	self._manager:register_event(event)
 end
 
-TelemetryEvents.ai_spawned = function (self, arg_24_1, arg_24_2, arg_24_3, arg_24_4)
+TelemetryEvents.ai_spawned = function (self, id, breed, position, enhancements_array)
 	-- function 24
-	local _create_event = self:_create_event("ai_spawned")
-	local tbl = {}
+	local event = self:_create_event("ai_spawned")
+	local enhancements = {}
 
-	if not arg_24_4 then
-		for i = 1, #arg_24_4 do
-			tbl[arg_24_4[i].name] = true
+	if enhancements_array then
+		for i = 1, #enhancements_array do
+			local enhancement_data = enhancements_array[i]
+
+			enhancements[enhancement_data.name] = true
 		end
 	end
 
-	_create_event:set_data({
-		id = arg_24_1,
-		breed = arg_24_2,
-		position = arg_24_3,
-		enhancements = tbl
+	event:set_data({
+		id = id,
+		breed = breed,
+		position = position,
+		enhancements = enhancements
 	})
-	self._manager:register_event(_create_event)
+	self._manager:register_event(event)
 end
 
-TelemetryEvents.ai_despawned = function (self, arg_25_1, arg_25_2, arg_25_3)
+TelemetryEvents.ai_despawned = function (self, breed, position, reason)
 	-- function 25
-	local _create_event = self:_create_event("ai_despawned")
+	local event = self:_create_event("ai_despawned")
 
-	_create_event:set_data({
-		breed = arg_25_1,
-		position = arg_25_2,
-		reason = arg_25_3 or "unknown"
+	event:set_data({
+		breed = breed,
+		position = position,
+		reason = not not reason or not not "unknown"
 	})
-	self._manager:register_event(_create_event)
+	self._manager:register_event(event)
 end
 
-local function fn()
+local function matchmaking_peers()
 	-- function 26
-	local var_26_0
-	local get_local_player_party = Managers.party:get_local_player_party()
+	local party_peers
+	local party = Managers.party:get_local_player_party()
 
-	if not get_local_player_party then
-		local occupied_slots = get_local_player_party.occupied_slots
+	if party then
+		local occupied_slots = party.occupied_slots
 
-		var_26_0 = table.select_array(occupied_slots, function (arg_27_0, arg_27_1)
+		party_peers = table.select_array(occupied_slots, function (_, status)
 			-- function 27
-			local peer_id = arg_27_1.peer_id
-			local local_player_id = arg_27_1.local_player_id
+			local peer_id, local_player_id = status.peer_id, status.local_player_id
 
-			if not peer_id and not local_player_id then
+			if peer_id and local_player_id then
 				return PlayerUtils.unique_player_id(peer_id, local_player_id)
 			end
 		end)
 	end
 
-	return var_26_0 or {}
+	return not not party_peers or not not {}
 end
 
-TelemetryEvents.matchmaking_search = function (self, arg_28_1, arg_28_2)
+TelemetryEvents.matchmaking_search = function (self, player, data)
 	-- function 28
-	if not arg_28_1 and not arg_28_1.remote then
+	if player and player.remote then
 		return
 	end
 
-	local _create_event = self:_create_event("matchmaking")
+	local event = self:_create_event("matchmaking")
 
-	_create_event:set_data(table.merge({
+	event:set_data(table.merge({
 		state = "search",
-		party_peers = fn()
-	}, arg_28_2))
-	self._manager:register_event(_create_event)
+		party_peers = matchmaking_peers()
+	}, data))
+	self._manager:register_event(event)
 end
 
-TelemetryEvents.matchmaking_search_timeout = function (self, arg_29_1, arg_29_2, arg_29_3)
+TelemetryEvents.matchmaking_search_timeout = function (self, player, time_taken, data)
 	-- function 29
-	if not arg_29_1 and not arg_29_1.remote then
+	if player and player.remote then
 		return
 	end
 
-	local _create_event = self:_create_event("matchmaking")
+	local event = self:_create_event("matchmaking")
 
-	_create_event:set_data(table.merge({
+	event:set_data(table.merge({
 		state = "search_timeout",
-		time_taken = arg_29_2,
-		party_peers = fn()
-	}, arg_29_3))
-	self._manager:register_event(_create_event)
+		time_taken = time_taken,
+		party_peers = matchmaking_peers()
+	}, data))
+	self._manager:register_event(event)
 end
 
-TelemetryEvents.matchmaking_cancelled = function (self, arg_30_1, arg_30_2, arg_30_3)
+TelemetryEvents.matchmaking_cancelled = function (self, player, time_taken, data)
 	-- function 30
-	if not arg_30_1 and not arg_30_1.remote then
+	if player and player.remote then
 		return
 	end
 
-	local _create_event = self:_create_event("matchmaking")
+	local event = self:_create_event("matchmaking")
 
-	_create_event:set_data(table.merge({
+	event:set_data(table.merge({
 		state = "cancelled",
-		time_taken = arg_30_2,
-		party_peers = fn()
-	}, arg_30_3))
-	self._manager:register_event(_create_event)
+		time_taken = time_taken,
+		party_peers = matchmaking_peers()
+	}, data))
+	self._manager:register_event(event)
 end
 
-TelemetryEvents.matchmaking_hosting = function (self, arg_31_1, arg_31_2, arg_31_3)
+TelemetryEvents.matchmaking_hosting = function (self, player, time_taken, data)
 	-- function 31
-	if not arg_31_1 and not arg_31_1.remote then
+	if player and player.remote then
 		return
 	end
 
-	local _create_event = self:_create_event("matchmaking")
+	local event = self:_create_event("matchmaking")
 
-	_create_event:set_data(table.merge({
+	event:set_data(table.merge({
 		state = "hosting",
-		time_taken = arg_31_2,
-		party_peers = fn()
-	}, arg_31_3))
-	self._manager:register_event(_create_event)
+		time_taken = time_taken,
+		party_peers = matchmaking_peers()
+	}, data))
+	self._manager:register_event(event)
 end
 
-TelemetryEvents.matchmaking_starting_game = function (self, arg_32_1, arg_32_2, arg_32_3)
+TelemetryEvents.matchmaking_starting_game = function (self, player, time_taken, data)
 	-- function 32
-	if not arg_32_1 and not arg_32_1.remote then
+	if player and player.remote then
 		return
 	end
 
-	local _create_event = self:_create_event("matchmaking")
+	local event = self:_create_event("matchmaking")
 
-	_create_event:set_data(table.merge({
+	event:set_data(table.merge({
 		state = "starting_game",
-		time_taken = arg_32_2,
-		party_peers = fn()
-	}, arg_32_3))
-	self._manager:register_event(_create_event)
+		time_taken = time_taken,
+		party_peers = matchmaking_peers()
+	}, data))
+	self._manager:register_event(event)
 end
 
-TelemetryEvents.matchmaking_player_joined = function (self, arg_33_1, arg_33_2, arg_33_3)
+TelemetryEvents.matchmaking_player_joined = function (self, player, time_taken, data)
 	-- function 33
-	if not arg_33_1 and not arg_33_1.remote then
+	if player and player.remote then
 		return
 	end
 
-	local _create_event = self:_create_event("matchmaking")
+	local event = self:_create_event("matchmaking")
 
-	_create_event:set_data(table.merge({
+	event:set_data(table.merge({
 		state = "player_joined",
-		time_taken = arg_33_2,
-		party_peers = fn()
-	}, arg_33_3))
-	self._manager:register_event(_create_event)
+		time_taken = time_taken,
+		party_peers = matchmaking_peers()
+	}, data))
+	self._manager:register_event(event)
 end
 
-TelemetryEvents.pickup_spawned = function (self, arg_34_1, arg_34_2, arg_34_3)
+TelemetryEvents.pickup_spawned = function (self, pickup_name, spawn_type, position)
 	-- function 34
-	local _create_event = self:_create_event("pickup_spawned")
+	local event = self:_create_event("pickup_spawned")
 
-	_create_event:set_data({
-		pickup_name = arg_34_1,
-		spawn_type = arg_34_2,
-		position = arg_34_3
+	event:set_data({
+		pickup_name = pickup_name,
+		spawn_type = spawn_type,
+		position = position
 	})
-	self._manager:register_event(_create_event)
+	self._manager:register_event(event)
 end
 
-TelemetryEvents.pickup_destroyed = function (self, arg_35_1, arg_35_2, arg_35_3)
+TelemetryEvents.pickup_destroyed = function (self, pickup_name, spawn_type, position)
 	-- function 35
-	local _create_event = self:_create_event("pickup_destroyed")
+	local event = self:_create_event("pickup_destroyed")
 
-	_create_event:set_data({
-		pickup_name = arg_35_1,
-		spawn_type = arg_35_2,
-		position = arg_35_3
+	event:set_data({
+		pickup_name = pickup_name,
+		spawn_type = spawn_type,
+		position = position
 	})
-	self._manager:register_event(_create_event)
+	self._manager:register_event(event)
 end
 
-TelemetryEvents.player_ammo_depleted = function (self, arg_36_1, arg_36_2, arg_36_3)
+TelemetryEvents.player_ammo_depleted = function (self, player, weapon_name, position)
 	-- function 36
-	if not arg_36_1 and not arg_36_1.remote then
+	if player and player.remote then
 		return
 	end
 
-	local var_36_0 = TelemetryEvent:new(remove_empty_values, {
-		id = arg_36_1:telemetry_id()
+	local event = TelemetryEvent:new(SOURCE, {
+		id = player:telemetry_id()
 	}, "player_ammo_depleted", self._session)
 
-	var_36_0:set_data({
-		weapon_name = arg_36_2,
-		position = arg_36_3
+	event:set_data({
+		weapon_name = weapon_name,
+		position = position
 	})
-	self._manager:register_event(var_36_0)
+	self._manager:register_event(event)
 end
 
-TelemetryEvents.player_ammo_refilled = function (self, arg_37_1, arg_37_2, arg_37_3)
+TelemetryEvents.player_ammo_refilled = function (self, player, weapon_name, position)
 	-- function 37
-	if not arg_37_1 and not arg_37_1.remote then
+	if player and player.remote then
 		return
 	end
 
-	local var_37_0 = TelemetryEvent:new(remove_empty_values, {
-		id = arg_37_1:telemetry_id()
+	local event = TelemetryEvent:new(SOURCE, {
+		id = player:telemetry_id()
 	}, "player_ammo_refilled", self._session)
 
-	var_37_0:set_data({
-		weapon_name = arg_37_2,
-		position = arg_37_3
+	event:set_data({
+		weapon_name = weapon_name,
+		position = position
 	})
-	self._manager:register_event(var_37_0)
+	self._manager:register_event(event)
 end
 
-TelemetryEvents.player_damaged = function (self, arg_38_1, arg_38_2, arg_38_3, arg_38_4, arg_38_5)
+TelemetryEvents.player_damaged = function (self, player, damage_type, damage_source, damage_amount, position)
 	-- function 38
-	if not arg_38_1 and not arg_38_1.remote then
+	if player and player.remote then
 		return
 	end
 
-	local var_38_0 = TelemetryEvent:new(remove_empty_values, {
-		id = arg_38_1:telemetry_id()
+	local event = TelemetryEvent:new(SOURCE, {
+		id = player:telemetry_id()
 	}, "player_damaged", self._session)
 
-	var_38_0:set_data({
-		damage_type = arg_38_2,
-		damage_source = arg_38_3,
-		damage_amount = arg_38_4,
-		position = arg_38_5
+	event:set_data({
+		damage_type = damage_type,
+		damage_source = damage_source,
+		damage_amount = damage_amount,
+		position = position
 	})
-	self._manager:register_event(var_38_0)
+	self._manager:register_event(event)
 end
 
-TelemetryEvents.local_player_damaged_player = function (self, arg_39_1, arg_39_2, arg_39_3, arg_39_4, arg_39_5)
+TelemetryEvents.local_player_damaged_player = function (self, player, target_breed, damage_amount, attacker_position, target_position)
 	-- function 39
-	if not arg_39_1 and not arg_39_1.remote then
+	if player and player.remote then
 		return
 	end
 
-	local var_39_0 = TelemetryEvent:new(remove_empty_values, {
-		id = arg_39_1:telemetry_id()
+	local event = TelemetryEvent:new(SOURCE, {
+		id = player:telemetry_id()
 	}, "local_player_damaged_player", self._session)
 
-	var_39_0:set_data({
-		target_breed = arg_39_2,
-		damage_amount = arg_39_3,
-		attacker_position = arg_39_4,
-		target_position = arg_39_5
+	event:set_data({
+		target_breed = target_breed,
+		damage_amount = damage_amount,
+		attacker_position = attacker_position,
+		target_position = target_position
 	})
-	self._manager:register_event(var_39_0)
+	self._manager:register_event(event)
 end
 
-TelemetryEvents.player_died = function (self, arg_40_1, arg_40_2, arg_40_3, arg_40_4)
+TelemetryEvents.player_died = function (self, player, damage_type, damage_source, position)
 	-- function 40
-	if not arg_40_1 and not arg_40_1.remote then
+	if player and player.remote then
 		return
 	end
 
-	local var_40_0 = TelemetryEvent:new(remove_empty_values, {
-		id = arg_40_1:telemetry_id()
+	local event = TelemetryEvent:new(SOURCE, {
+		id = player:telemetry_id()
 	}, "player_died", self._session)
 
-	var_40_0:set_data({
-		damage_type = arg_40_2,
-		damage_source = arg_40_3,
-		position = arg_40_4
+	event:set_data({
+		damage_type = damage_type,
+		damage_source = damage_source,
+		position = position
 	})
-	self._manager:register_event(var_40_0)
+	self._manager:register_event(event)
 end
 
-TelemetryEvents.local_player_killed_player = function (self, arg_41_1, arg_41_2, arg_41_3)
+TelemetryEvents.local_player_killed_player = function (self, player, position, target_position)
 	-- function 41
-	if not arg_41_1 and not arg_41_1.remote then
+	if player and player.remote then
 		return
 	end
 
-	local var_41_0 = TelemetryEvent:new(remove_empty_values, {
-		id = arg_41_1:telemetry_id()
+	local event = TelemetryEvent:new(SOURCE, {
+		id = player:telemetry_id()
 	}, "local_player_killed_player", self._session)
 
-	var_41_0:set_data({
-		position = arg_41_2,
-		target_position = arg_41_3
+	event:set_data({
+		position = position,
+		target_position = target_position
 	})
-	self._manager:register_event(var_41_0)
+	self._manager:register_event(event)
 end
 
-TelemetryEvents.player_killed_ai = function (self, arg_42_1, arg_42_2, arg_42_3, arg_42_4, arg_42_5, arg_42_6, arg_42_7)
+TelemetryEvents.player_killed_ai = function (self, player, player_position, victim_position, breed, weapon_name, damage_type, hit_zone)
 	-- function 42
-	if not arg_42_1 and not arg_42_1.remote then
+	if player and player.remote then
 		return
 	end
 
-	local var_42_0 = TelemetryEvent:new(remove_empty_values, {
-		id = arg_42_1:telemetry_id()
+	local event = TelemetryEvent:new(SOURCE, {
+		id = player:telemetry_id()
 	}, "player_killed_ai", self._session)
 
-	var_42_0:set_data({
-		player_position = arg_42_2,
-		victim_position = arg_42_3,
-		breed = arg_42_4,
-		weapon_name = arg_42_5,
-		damage_type = arg_42_6,
-		hit_zone = arg_42_7
+	event:set_data({
+		player_position = player_position,
+		victim_position = victim_position,
+		breed = breed,
+		weapon_name = weapon_name,
+		damage_type = damage_type,
+		hit_zone = hit_zone
 	})
-	self._manager:register_event(var_42_0)
+	self._manager:register_event(event)
 end
 
-TelemetryEvents.player_knocked_down = function (self, arg_43_1, arg_43_2, arg_43_3)
+TelemetryEvents.player_knocked_down = function (self, player, damage_type, position)
 	-- function 43
-	if not arg_43_1 and not arg_43_1.remote then
+	if player and player.remote then
 		return
 	end
 
-	local var_43_0 = TelemetryEvent:new(remove_empty_values, {
-		id = arg_43_1:telemetry_id()
+	local event = TelemetryEvent:new(SOURCE, {
+		id = player:telemetry_id()
 	}, "player_knocked_down", self._session)
 
-	var_43_0:set_data({
-		damage_type = arg_43_2,
-		position = arg_43_3
+	event:set_data({
+		damage_type = damage_type,
+		position = position
 	})
-	self._manager:register_event(var_43_0)
+	self._manager:register_event(event)
 end
 
-TelemetryEvents.player_pickup = function (self, arg_44_1, arg_44_2, arg_44_3, arg_44_4)
+TelemetryEvents.player_pickup = function (self, player, pickup_name, pickup_spawn_type, position)
 	-- function 44
-	if not arg_44_1 and not arg_44_1.remote then
+	if player and player.remote then
 		return
 	end
 
-	local var_44_0 = TelemetryEvent:new(remove_empty_values, {
-		id = arg_44_1:telemetry_id()
+	local event = TelemetryEvent:new(SOURCE, {
+		id = player:telemetry_id()
 	}, "player_pickup", self._session)
 
-	var_44_0:set_data({
-		pickup_name = arg_44_2,
-		pickup_spawn_type = arg_44_3,
-		position = arg_44_4
+	event:set_data({
+		pickup_name = pickup_name,
+		pickup_spawn_type = pickup_spawn_type,
+		position = position
 	})
-	self._manager:register_event(var_44_0)
+	self._manager:register_event(event)
 end
 
-TelemetryEvents.player_revived = function (self, arg_45_1, arg_45_2, arg_45_3)
+TelemetryEvents.player_revived = function (self, reviver, revivee, position)
 	-- function 45
-	if not arg_45_1.remote then
-		local var_45_0 = TelemetryEvent:new(remove_empty_values, {
-			id = arg_45_1:telemetry_id()
+	if not reviver.remote then
+		local event = TelemetryEvent:new(SOURCE, {
+			id = reviver:telemetry_id()
 		}, "player_revived_another_player", self._session)
 
-		var_45_0:set_data({
-			position = arg_45_3
+		event:set_data({
+			position = position
 		})
-		self._manager:register_event(var_45_0)
+		self._manager:register_event(event)
 	end
 
-	if not arg_45_2.remote then
-		local var_45_1 = TelemetryEvent:new(remove_empty_values, {
-			id = arg_45_2:telemetry_id()
+	if not revivee.remote then
+		local event = TelemetryEvent:new(SOURCE, {
+			id = revivee:telemetry_id()
 		}, "player_revived", self._session)
 
-		var_45_1:set_data({
-			position = arg_45_3
+		event:set_data({
+			position = position
 		})
-		self._manager:register_event(var_45_1)
+		self._manager:register_event(event)
 	end
 end
 
-TelemetryEvents.player_spawned = function (self, arg_46_1)
+TelemetryEvents.player_spawned = function (self, player)
 	-- function 46
-	if not arg_46_1 and not arg_46_1.remote then
+	if player and player.remote then
 		return
 	end
 
-	local extension = ScriptUnit.extension(arg_46_1.player_unit, "career_system")
-	local equipment = ScriptUnit.extension(arg_46_1.player_unit, "inventory_system"):equipment()
+	local career_system = ScriptUnit.extension(player.player_unit, "career_system")
+	local inventory_system = ScriptUnit.extension(player.player_unit, "inventory_system")
+	local equipment = inventory_system:equipment()
 	local slot_melee = equipment.slots.slot_melee
 	local slot_ranged = equipment.slots.slot_ranged
-	local get_cosmetic_slot = CosmeticUtils.get_cosmetic_slot(arg_46_1, "slot_melee")
-	local get_cosmetic_slot_2 = CosmeticUtils.get_cosmetic_slot(arg_46_1, "slot_ranged")
-	local get_cosmetic_slot_3 = CosmeticUtils.get_cosmetic_slot(arg_46_1, "slot_hat")
-	local get_cosmetic_slot_4 = CosmeticUtils.get_cosmetic_slot(arg_46_1, "slot_skin")
-	local get_cosmetic_slot_5 = CosmeticUtils.get_cosmetic_slot(arg_46_1, "slot_frame")
-	local tbl = {}
+	local cosmetic_slot_melee = CosmeticUtils.get_cosmetic_slot(player, "slot_melee")
+	local cosmetic_slot_ranged = CosmeticUtils.get_cosmetic_slot(player, "slot_ranged")
+	local cosmetic_slot_hat = CosmeticUtils.get_cosmetic_slot(player, "slot_hat")
+	local cosmetic_slot_skin = CosmeticUtils.get_cosmetic_slot(player, "slot_skin")
+	local cosmetic_slot_frame = CosmeticUtils.get_cosmetic_slot(player, "slot_frame")
+	local talents = {}
 
-	if not ScriptUnit.has_extension(arg_46_1.player_unit, "talent_system") then
-		tbl = ScriptUnit.extension(arg_46_1.player_unit, "talent_system"):get_talent_names()
+	if ScriptUnit.has_extension(player.player_unit, "talent_system") then
+		talents = ScriptUnit.extension(player.player_unit, "talent_system"):get_talent_names()
 	end
 
-	local var_46_10 = TelemetryEvent:new(remove_empty_values, {
-		id = arg_46_1:telemetry_id()
+	local event = TelemetryEvent:new(SOURCE, {
+		id = player:telemetry_id()
 	}, "player_spawned", self._session)
-	local var_46_11 = var_46_10
-	local set_data = var_46_10.set_data
-	local tbl_2 = {
-		hero = arg_46_1:profile_display_name(),
-		career = arg_46_1:career_name(),
-		human = arg_46_1.local_player == true,
-		power_level = extension:get_career_power_level(),
-		slot_melee = not slot_melee and slot_melee.item_data.name
+	local var_46_0 = event
+	local set_data = event.set_data
+	local tbl = {
+		hero = player:profile_display_name(),
+		career = player:career_name(),
+		human = player.local_player == true,
+		power_level = career_system:get_career_power_level(),
+		slot_melee = not not slot_melee and not not slot_melee.item_data.name
 	}
 	local skin_name
 
-	if not get_cosmetic_slot then
-		skin_name = get_cosmetic_slot.skin_name
+	if cosmetic_slot_melee then
+		skin_name = cosmetic_slot_melee.skin_name
 
 		if not skin_name then
 			-- Nothing
@@ -695,13 +697,13 @@ TelemetryEvents.player_spawned = function (self, arg_46_1)
 
 	::label_46_0::
 
-	tbl_2.slot_melee_skin = skin_name
-	tbl_2.slot_ranged = not slot_ranged and slot_ranged.item_data.name
+	tbl.slot_melee_skin = skin_name
+	tbl.slot_ranged = not not slot_ranged and not not slot_ranged.item_data.name
 
 	local skin_name_2
 
-	if not get_cosmetic_slot_2 then
-		skin_name_2 = get_cosmetic_slot_2.skin_name
+	if cosmetic_slot_ranged then
+		skin_name_2 = cosmetic_slot_ranged.skin_name
 
 		if not skin_name_2 then
 			-- Nothing
@@ -712,285 +714,293 @@ TelemetryEvents.player_spawned = function (self, arg_46_1)
 
 	::label_46_1::
 
-	tbl_2.slot_ranged_skin = skin_name_2
-	tbl_2.slot_hat = not get_cosmetic_slot_3 and get_cosmetic_slot_3.item_name
-	tbl_2.slot_skin = not get_cosmetic_slot_4 and get_cosmetic_slot_4.item_name
-	tbl_2.slot_frame = not get_cosmetic_slot_5 and get_cosmetic_slot_5.item_name
-	tbl_2.talents = tbl
+	tbl.slot_ranged_skin = skin_name_2
+	tbl.slot_hat = not not cosmetic_slot_hat and not not cosmetic_slot_hat.item_name
+	tbl.slot_skin = not not cosmetic_slot_skin and not not cosmetic_slot_skin.item_name
+	tbl.slot_frame = not not cosmetic_slot_frame and not not cosmetic_slot_frame.item_name
+	tbl.talents = talents
 
-	set_data(var_46_11, tbl_2)
-	self._manager:register_event(var_46_10)
+	set_data(var_46_0, tbl)
+	self._manager:register_event(event)
 end
 
-TelemetryEvents.player_despawned = function (self, arg_47_1)
+TelemetryEvents.player_despawned = function (self, player)
 	-- function 47
-	if not arg_47_1 and not arg_47_1.remote then
+	if player and player.remote then
 		return
 	end
 
-	local var_47_0 = TelemetryEvent:new(remove_empty_values, {
-		id = arg_47_1:telemetry_id()
+	local event = TelemetryEvent:new(SOURCE, {
+		id = player:telemetry_id()
 	}, "player_despawned", self._session)
 
-	self._manager:register_event(var_47_0)
+	self._manager:register_event(event)
 end
 
-TelemetryEvents.player_used_item = function (self, arg_48_1, arg_48_2, arg_48_3)
+TelemetryEvents.player_used_item = function (self, player, item_name, position)
 	-- function 48
-	if not arg_48_1 and not arg_48_1.remote then
+	if player and player.remote then
 		return
 	end
 
-	local var_48_0 = TelemetryEvent:new(remove_empty_values, {
-		id = arg_48_1:telemetry_id()
+	local event = TelemetryEvent:new(SOURCE, {
+		id = player:telemetry_id()
 	}, "player_used_item", self._session)
 
-	var_48_0:set_data({
-		item_name = arg_48_2,
-		position = arg_48_3
+	event:set_data({
+		item_name = item_name,
+		position = position
 	})
-	self._manager:register_event(var_48_0)
+	self._manager:register_event(event)
 end
 
-TelemetryEvents.ping_used = function (self, arg_49_1, arg_49_2, arg_49_3, arg_49_4)
+TelemetryEvents.ping_used = function (self, player, ping_type, ping_target, player_position)
 	-- function 49
-	if not arg_49_1 and not arg_49_1.remote then
+	if player and player.remote then
 		return
 	end
 
-	local var_49_0 = TelemetryEvent:new(remove_empty_values, {
-		id = arg_49_1:telemetry_id()
+	local event = TelemetryEvent:new(SOURCE, {
+		id = player:telemetry_id()
 	}, "ping_used", self._session)
 
-	var_49_0:set_data({
-		ping_type = arg_49_2,
-		ping_target = arg_49_3,
-		player_position = arg_49_4
+	event:set_data({
+		ping_type = ping_type,
+		ping_target = ping_target,
+		player_position = player_position
 	})
-	self._manager:register_event(var_49_0)
+	self._manager:register_event(event)
 end
 
-TelemetryEvents.tech_settings = function (self, arg_50_1, arg_50_2, arg_50_3, arg_50_4)
+TelemetryEvents.tech_settings = function (self, resolution, graphics_quality, screen_mode, rendering_backend)
 	-- function 50
-	local _create_event = self:_create_event("tech_settings")
+	local event = self:_create_event("tech_settings")
 
-	_create_event:set_data({
-		resolution = arg_50_1,
-		graphics_quality = arg_50_2,
-		screen_mode = arg_50_3,
-		rendering_backend = arg_50_4
+	event:set_data({
+		resolution = resolution,
+		graphics_quality = graphics_quality,
+		screen_mode = screen_mode,
+		rendering_backend = rendering_backend
 	})
-	self._manager:register_event(_create_event)
+	self._manager:register_event(event)
 end
 
-TelemetryEvents.tech_system = function (self, arg_51_1, arg_51_2)
+TelemetryEvents.tech_system = function (self, system_info, adapter_index)
 	-- function 51
-	local _create_event = self:_create_event("tech_system")
+	local event = self:_create_event("tech_system")
 
-	_create_event:set_data({
-		system_info = arg_51_1,
-		adapter_index = arg_51_2
+	event:set_data({
+		system_info = system_info,
+		adapter_index = adapter_index
 	})
-	self._manager:register_event(_create_event)
+	self._manager:register_event(event)
 end
 
-TelemetryEvents.ui_settings = function (self, arg_52_1)
+TelemetryEvents.ui_settings = function (self, use_pc_menu_layout)
 	-- function 52
-	local _create_event = self:_create_event("ui_menu_layout")
+	local event = self:_create_event("ui_menu_layout")
 
-	_create_event:set_data({
-		use_pc_menu_layout = arg_52_1
+	event:set_data({
+		use_pc_menu_layout = use_pc_menu_layout
 	})
-	self._manager:register_event(_create_event)
+	self._manager:register_event(event)
 end
 
-TelemetryEvents.vo_event_played = function (self, arg_53_1, arg_53_2, arg_53_3, arg_53_4)
+TelemetryEvents.vo_event_played = function (self, category, dialogue, sound_event, unit_name)
 	-- function 53
-	local _create_event = self:_create_event("vo_event_played")
+	local event = self:_create_event("vo_event_played")
 
-	_create_event:set_data({
-		category = arg_53_1,
-		dialogue = arg_53_2,
-		sound_event = arg_53_3,
-		unit_name = arg_53_4
+	event:set_data({
+		category = category,
+		dialogue = dialogue,
+		sound_event = sound_event,
+		unit_name = unit_name
 	})
-	self._manager:register_event(_create_event)
+	self._manager:register_event(event)
 end
 
-TelemetryEvents.terror_event_started = function (self, arg_54_1)
+TelemetryEvents.terror_event_started = function (self, event_name)
 	-- function 54
-	local _create_event = self:_create_event("terror_event_started")
+	local event = self:_create_event("terror_event_started")
 
-	_create_event:set_data({
-		event_name = arg_54_1
+	event:set_data({
+		event_name = event_name
 	})
-	self._manager:register_event(_create_event)
+	self._manager:register_event(event)
 end
 
-TelemetryEvents.level_progression = function (self, arg_55_1)
+TelemetryEvents.level_progression = function (self, percent)
 	-- function 55
-	local _create_event = self:_create_event("level_progression")
+	local event = self:_create_event("level_progression")
 
-	_create_event:set_data({
-		percent = arg_55_1
+	event:set_data({
+		percent = percent
 	})
-	self._manager:register_event(_create_event)
+	self._manager:register_event(event)
 end
 
-TelemetryEvents.memory_statistics = function (self, arg_56_1, arg_56_2, arg_56_3)
+TelemetryEvents.memory_statistics = function (self, memory_tree, memory_resources, tag)
 	-- function 56
-	local _create_event = self:_create_event("memory_statistics")
+	local event = self:_create_event("memory_statistics")
 
-	_create_event:set_data({
-		memory_tree = arg_56_1,
-		arg_56_2,
-		tag = arg_56_3
+	event:set_data({
+		memory_tree = memory_tree,
+		memory_resources,
+		tag = tag
 	})
-	self._manager:register_event(_create_event)
+	self._manager:register_event(event)
 end
 
-TelemetryEvents.player_stuck = function (self, arg_57_1, arg_57_2)
+TelemetryEvents.player_stuck = function (self, player, level_key)
 	-- function 57
-	if not arg_57_1 and not arg_57_1.remote then
+	if player and player.remote then
 		return
 	end
 
-	local var_57_0 = TelemetryEvent:new(remove_empty_values, {
-		id = arg_57_1:telemetry_id()
+	local event = TelemetryEvent:new(SOURCE, {
+		id = player:telemetry_id()
 	}, "player_stuck", self._session)
 
-	var_57_0:set_data({
-		level_key = arg_57_2,
-		position = Unit.local_position(arg_57_1.player_unit, 0),
-		rotation = Unit.local_rotation(arg_57_1.player_unit, 0)
+	event:set_data({
+		level_key = level_key,
+		position = Unit.local_position(player.player_unit, 0),
+		rotation = Unit.local_rotation(player.player_unit, 0)
 	})
-	self._manager:register_event(var_57_0)
+	self._manager:register_event(event)
 end
 
-TelemetryEvents.fps = function (self, arg_58_1, arg_58_2)
+TelemetryEvents.fps = function (self, avg_fps, histogram)
 	-- function 58
-	local _create_event = self:_create_event("fps")
+	local event = self:_create_event("fps")
 
-	_create_event:set_data({
-		avg_fps = arg_58_1,
-		histogram = arg_58_2
+	event:set_data({
+		avg_fps = avg_fps,
+		histogram = histogram
 	})
-	self._manager:register_event(_create_event)
+	self._manager:register_event(event)
 end
 
-TelemetryEvents.fps_at_point = function (self, arg_59_1, arg_59_2, arg_59_3, arg_59_4)
+TelemetryEvents.fps_at_point = function (self, point_id, cam_pos, cam_rot, avg_fps)
 	-- function 59
-	local _create_event = self:_create_event("fps_at_point")
+	local event = self:_create_event("fps_at_point")
 
-	_create_event:set_data({
-		point_id = arg_59_1,
-		cam_pos = arg_59_2,
-		cam_rot = arg_59_3,
-		avg_fps = arg_59_4
+	event:set_data({
+		point_id = point_id,
+		cam_pos = cam_pos,
+		cam_rot = cam_rot,
+		avg_fps = avg_fps
 	})
-	self._manager:register_event(_create_event)
+	self._manager:register_event(event)
 end
 
-TelemetryEvents.end_of_game_rewards = function (self, arg_60_1)
+TelemetryEvents.end_of_game_rewards = function (self, rewards)
 	-- function 60
-	local _create_event = self:_create_event("end_of_game_rewards")
+	local event = self:_create_event("end_of_game_rewards")
 
-	_create_event:set_data({
-		rewards = arg_60_1
+	event:set_data({
+		rewards = rewards
 	})
-	self._manager:register_event(_create_event)
+	self._manager:register_event(event)
 end
 
-TelemetryEvents.magic_item_level_upgraded = function (self, arg_61_1, arg_61_2, arg_61_3)
+TelemetryEvents.magic_item_level_upgraded = function (self, item_id, essence_cost, new_magic_level)
 	-- function 61
-	local _create_event = self:_create_event("magic_item_level_upgraded")
+	local event = self:_create_event("magic_item_level_upgraded")
 
-	_create_event:set_data({
-		item_id = arg_61_1,
-		essence_cost = arg_61_2,
-		new_magic_level = arg_61_3
+	event:set_data({
+		item_id = item_id,
+		essence_cost = essence_cost,
+		new_magic_level = new_magic_level
 	})
-	self._manager:register_event(_create_event)
+	self._manager:register_event(event)
 end
 
 TelemetryEvents.store_opened = function (self)
 	-- function 62
-	local _create_event = self:_create_event("store_opened")
+	local event = self:_create_event("store_opened")
 
-	self._manager:register_event(_create_event)
+	self._manager:register_event(event)
 end
 
 TelemetryEvents.store_closed = function (self)
 	-- function 63
-	local _create_event = self:_create_event("store_closed")
+	local event = self:_create_event("store_closed")
 
-	self._manager:register_event(_create_event)
+	self._manager:register_event(event)
 end
 
-TelemetryEvents.store_breadcrumbs_changed = function (self, arg_64_1, arg_64_2)
+TelemetryEvents.store_breadcrumbs_changed = function (self, widgets, product)
 	-- function 64
-	local tbl = {}
-	local tbl_2 = {}
+	local path = {}
+	local path_localized = {}
 
-	for i, v in ipairs(arg_64_1) do
-		tbl[#tbl + 1] = v.content.page_name
-		tbl_2[#tbl_2 + 1] = v.content.text
+	for _, widget in ipairs(widgets) do
+		path[#path + 1] = widget.content.page_name
+		path_localized[#path_localized + 1] = widget.content.text
 	end
 
-	if not (not arg_64_2 and tbl[#tbl] ~= "item_details") then
-		tbl[#tbl] = arg_64_2.product_id
+	if product and path[#path] == "item_details" then
+		path[#path] = product.product_id
 	end
 
-	local _create_event = self:_create_event("store_breadcrumbs_changed")
+	local event = self:_create_event("store_breadcrumbs_changed")
 
-	_create_event:set_data({
-		path = tbl,
-		path_localized = tbl_2
+	event:set_data({
+		path = path,
+		path_localized = path_localized
 	})
-	self._manager:register_event(_create_event)
+	self._manager:register_event(event)
 end
 
-TelemetryEvents.store_product_purchased = function (self, arg_65_1)
+TelemetryEvents.store_product_purchased = function (self, product)
 	-- function 65
-	local product_item = arg_65_1.product_item
+	local product_item = product.product_item
 
-	product_item = product_item or arg_65_1.item
+	if not product_item then
+		-- Nothing
+	end
 
-	local str = "SM"
-	local flag = not product_item and product_item.regular_prices
-	local flag_2 = not product_item and product_item.current_prices
+	product_item = product.item
 
-	for k, v in pairs(DLCSettings.store.currency_ui_settings) do
-		local var_65_4 = flag[k]
-		local var_65_5 = flag_2[k]
+	local item = product_item
 
-		if not var_65_4 and not var_65_5 then
-			str = k
+	::label_65_0::
+
+	local currency_type = "SM"
+	local regular_prices = not not item and not not item.regular_prices
+	local current_prices = not not item and not not item.current_prices
+
+	for currency, settings in pairs(DLCSettings.store.currency_ui_settings) do
+		local has_regular_price = regular_prices[currency]
+		local has_current_price = current_prices[currency]
+
+		if has_regular_price and has_current_price then
+			currency_type = currency
 
 			break
 		end
 	end
 
-	local var_65_6 = flag_2[str]
-	local var_65_7 = flag[str]
-	local tbl = {
-		id = arg_65_1.product_id,
-		type = product_item.data.item_type,
-		current_price = var_65_6 or var_65_7,
-		regular_price = var_65_7,
-		currency = str
+	local current_price = current_prices[currency_type]
+	local regular_price = regular_prices[currency_type]
+	local prod = {
+		id = product.product_id,
+		type = item.data.item_type,
+		current_price = not not current_price or not not regular_price,
+		regular_price = regular_price,
+		currency = currency_type
 	}
 
-	self:_store_product_purchased(tbl)
+	self:_store_product_purchased(prod)
 end
 
-local function fn_2(self)
+local function find_steam_currency(product)
 	-- function 66
-	local var_66_0 = tonumber(self.item.steam_price)
-	local steam_data = self.item.steam_data
+	local price = tonumber(product.item.steam_price)
+	local steam_data = product.item.steam_data
 	local discount_prices
 
-	if not steam_data.discount_is_active then
+	if steam_data.discount_is_active then
 		discount_prices = steam_data.discount_prices
 
 		if not discount_prices then
@@ -999,216 +1009,225 @@ local function fn_2(self)
 	end
 
 	discount_prices = steam_data.regular_prices
-	discount_prices = discount_prices or {}
+
+	if not discount_prices then
+		-- Nothing
+	end
+
+	discount_prices = {}
+
+	local price_table = discount_prices
 
 	::label_66_0::
 
-	for k, v in pairs(discount_prices) do
-		if var_66_0 == v then
-			return k
+	for currency, currency_price in pairs(price_table) do
+		if price == currency_price then
+			return currency
 		end
 	end
 end
 
-local function fn_3(self)
+local function find_regular_price(product)
 	-- function 67
-	local var_67_0 = fn_2(self)
+	local currency = find_steam_currency(product)
 
-	return self.item.steam_data.regular_prices[var_67_0]
+	return product.item.steam_data.regular_prices[currency]
 end
 
-TelemetryEvents.steam_store_product_purchased = function (self, arg_68_1)
+TelemetryEvents.steam_store_product_purchased = function (self, steam_product)
 	-- function 68
-	local steam_data = arg_68_1.item.steam_data
+	local steam_data = steam_product.item.steam_data
 	local tbl = {
-		id = arg_68_1.item.id,
-		type = arg_68_1.item.data.item_type,
-		current_price = tonumber(arg_68_1.item.steam_price)
+		id = steam_product.item.id,
+		type = steam_product.item.data.item_type,
+		current_price = tonumber(steam_product.item.steam_price)
 	}
-	local var_68_2
+	local var_68_1
 
-	if not steam_data then
-		var_68_2 = fn_2(arg_68_1)
+	if steam_data then
+		var_68_1 = find_steam_currency(steam_product)
 
-		if not var_68_2 then
+		if not var_68_1 then
 			-- Nothing
 		end
 	end
 
-	var_68_2 = "?"
+	var_68_1 = "?"
 
 	::label_68_0::
 
-	tbl.currency = var_68_2
+	tbl.currency = var_68_1
 
-	if not steam_data and not steam_data.discount_is_active then
-		tbl.discounted = true
-		tbl.regular_price = fn_3(arg_68_1)
+	local product = tbl
+
+	if steam_data and steam_data.discount_is_active then
+		product.discounted = true
+		product.regular_price = find_regular_price(steam_product)
 	end
 
-	self:_store_product_purchased(tbl)
+	self:_store_product_purchased(product)
 end
 
-TelemetryEvents._store_product_purchased = function (self, arg_69_1)
+TelemetryEvents._store_product_purchased = function (self, product)
 	-- function 69
-	local _create_event = self:_create_event("store_product_purchased")
+	local event = self:_create_event("store_product_purchased")
 
-	_create_event:set_data(arg_69_1)
-	self._manager:register_event(_create_event)
+	event:set_data(product)
+	self._manager:register_event(event)
 end
 
-TelemetryEvents.store_rewards_claimed = function (self, arg_70_1, arg_70_2)
+TelemetryEvents.store_rewards_claimed = function (self, claim, offset)
 	-- function 70
-	local _create_event = self:_create_event("store_rewards_claimed")
-	local var_70_1 = arg_70_1
+	local event = self:_create_event("store_rewards_claimed")
+	local event_data = claim
 
-	if var_70_1.event_type == "personal_time_strike" then
-		local total_claims = var_70_1.total_claims
+	if event_data.event_type == "personal_time_strike" then
+		local total_claims = event_data.total_claims
 
-		total_claims = total_claims or 0
-		var_70_1.reward_index = total_claims
+		total_claims = not not total_claims or not not 0
+		event_data.reward_index = total_claims
 	else
-		var_70_1.reward_index = #var_70_1.rewards + (arg_70_2 or 0)
+		event_data.reward_index = #event_data.rewards + (not not offset or not not 0)
 	end
 
-	_create_event:set_data(var_70_1)
-	self._manager:register_event(_create_event)
+	event:set_data(event_data)
+	self._manager:register_event(event)
 end
 
-TelemetryEvents.player_joined = function (self, arg_71_1, arg_71_2)
+TelemetryEvents.player_joined = function (self, player, num_human_players)
 	-- function 71
-	local var_71_0 = TelemetryEvent:new(remove_empty_values, {
-		id = arg_71_1:telemetry_id()
+	local event = TelemetryEvent:new(SOURCE, {
+		id = player:telemetry_id()
 	}, "player_joined", self._session)
 
-	var_71_0:set_data({
-		num_human_players = arg_71_2
+	event:set_data({
+		num_human_players = num_human_players
 	})
-	self._manager:register_event(var_71_0)
+	self._manager:register_event(event)
 end
 
-TelemetryEvents.player_left = function (self, arg_72_1, arg_72_2)
+TelemetryEvents.player_left = function (self, player, num_human_players)
 	-- function 72
-	local var_72_0 = TelemetryEvent:new(remove_empty_values, {
-		id = arg_72_1:telemetry_id()
+	local event = TelemetryEvent:new(SOURCE, {
+		id = player:telemetry_id()
 	}, "player_left", self._session)
 
-	var_72_0:set_data({
-		num_human_players = arg_72_2
+	event:set_data({
+		num_human_players = num_human_players
 	})
-	self._manager:register_event(var_72_0)
+	self._manager:register_event(event)
 end
 
-TelemetryEvents.deus_run_started = function (self, arg_73_1, arg_73_2, arg_73_3, arg_73_4, arg_73_5, arg_73_6, arg_73_7, arg_73_8)
+TelemetryEvents.deus_run_started = function (self, run_id, journey_name, run_seed, dominant_god, difficulty, is_weekly_expedition, event_mutators, event_boons)
 	-- function 73
-	local _create_event = self:_create_event("deus_run_started")
+	local event = self:_create_event("deus_run_started")
 
-	_create_event:set_data({
-		run_id = arg_73_1,
-		journey_name = arg_73_2,
-		run_seed = arg_73_3,
-		dominant_god = arg_73_4,
-		difficulty = arg_73_5,
-		is_weekly_expedition = arg_73_6,
-		event_mutators = arg_73_7,
-		event_boons = arg_73_8
+	event:set_data({
+		run_id = run_id,
+		journey_name = journey_name,
+		run_seed = run_seed,
+		dominant_god = dominant_god,
+		difficulty = difficulty,
+		is_weekly_expedition = is_weekly_expedition,
+		event_mutators = event_mutators,
+		event_boons = event_boons
 	})
-	self._manager:register_event(_create_event)
+	self._manager:register_event(event)
 end
 
-TelemetryEvents.deus_run_ended = function (self, arg_74_1)
+TelemetryEvents.deus_run_ended = function (self, data)
 	-- function 74
-	local _create_event = self:_create_event("deus_run_ended")
+	local event = self:_create_event("deus_run_ended")
 
-	_create_event:set_data(arg_74_1)
-	self._manager:register_event(_create_event)
+	event:set_data(data)
+	self._manager:register_event(event)
 end
 
-TelemetryEvents.deus_level_started = function (self, arg_75_1)
+TelemetryEvents.deus_level_started = function (self, data)
 	-- function 75
-	local _create_event = self:_create_event("deus_level_started")
+	local event = self:_create_event("deus_level_started")
 
-	_create_event:set_data(arg_75_1)
-	self._manager:register_event(_create_event)
+	event:set_data(data)
+	self._manager:register_event(event)
 end
 
-TelemetryEvents.deus_level_ended = function (self, arg_76_1)
+TelemetryEvents.deus_level_ended = function (self, data)
 	-- function 76
-	local _create_event = self:_create_event("deus_level_ended")
+	local event = self:_create_event("deus_level_ended")
 
-	_create_event:set_data(arg_76_1)
-	self._manager:register_event(_create_event)
+	event:set_data(data)
+	self._manager:register_event(event)
 end
 
-TelemetryEvents.deus_coins_changed = function (self, arg_77_1, arg_77_2, arg_77_3, arg_77_4)
+TelemetryEvents.deus_coins_changed = function (self, telemetry_id, run_id, coin_delta, coin_description)
 	-- function 77
-	local var_77_0 = TelemetryEvent:new(remove_empty_values, {
-		id = arg_77_1
+	local event = TelemetryEvent:new(SOURCE, {
+		id = telemetry_id
 	}, "deus_coins_changed", self._session)
 
-	var_77_0:set_data({
-		run_id = arg_77_2,
-		player_id = arg_77_1,
-		coin_delta = arg_77_3,
-		coin_description = arg_77_4
+	event:set_data({
+		run_id = run_id,
+		player_id = telemetry_id,
+		coin_delta = coin_delta,
+		coin_description = coin_description
 	})
-	self._manager:register_event(var_77_0)
+	self._manager:register_event(event)
 end
 
-TelemetryEvents.deus_altar_passed = function (self, arg_78_1)
+TelemetryEvents.deus_altar_passed = function (self, data)
 	-- function 78
-	local _create_event = self:_create_event("deus_altar_passed")
+	local event = self:_create_event("deus_altar_passed")
 
-	_create_event:set_data(arg_78_1)
-	self._manager:register_event(_create_event)
+	event:set_data(data)
+	self._manager:register_event(event)
 end
 
-TelemetryEvents.cursed_chest_passed = function (self, arg_79_1)
+TelemetryEvents.cursed_chest_passed = function (self, data)
 	-- function 79
-	local _create_event = self:_create_event("cursed_chest_passed")
+	local event = self:_create_event("cursed_chest_passed")
 
-	_create_event:set_data(arg_79_1)
-	self._manager:register_event(_create_event)
+	event:set_data(data)
+	self._manager:register_event(event)
 end
 
-TelemetryEvents.store_node_traversed = function (self, arg_80_1)
+TelemetryEvents.store_node_traversed = function (self, data)
 	-- function 80
-	local _create_event = self:_create_event("store_node_traversed")
+	local event = self:_create_event("store_node_traversed")
 
-	_create_event:set_data(arg_80_1)
-	self._manager:register_event(_create_event)
+	event:set_data(data)
+	self._manager:register_event(event)
 end
 
-TelemetryEvents.network_ping = function (self, arg_81_1, arg_81_2, arg_81_3, arg_81_4, arg_81_5, arg_81_6, arg_81_7, arg_81_8, arg_81_9)
+TelemetryEvents.network_ping = function (self, avg, std_dev, p99, p95, p90, p75, p50, p25, observations)
 	-- function 81
-	local _create_event = self:_create_event("network_ping")
+	local event = self:_create_event("network_ping")
 
-	_create_event:set_data({
-		avg = arg_81_1,
-		std_dev = arg_81_2,
-		p99 = arg_81_3,
-		p95 = arg_81_4,
-		p90 = arg_81_5,
-		p75 = arg_81_6,
-		p50 = arg_81_7,
-		p25 = arg_81_8,
-		observations = arg_81_9
+	event:set_data({
+		avg = avg,
+		std_dev = std_dev,
+		p99 = p99,
+		p95 = p95,
+		p90 = p90,
+		p75 = p75,
+		p50 = p50,
+		p25 = p25,
+		observations = observations
 	})
-	self._manager:register_event(_create_event)
+	self._manager:register_event(event)
 end
 
-TelemetryEvents.memory_usage = function (self, arg_82_1, arg_82_2)
+TelemetryEvents.memory_usage = function (self, index, memory_usage)
 	-- function 82
-	local _create_event = self:_create_event("memory_usage")
+	local event = self:_create_event("memory_usage")
 
-	_create_event:set_data({
-		index = arg_82_1,
-		memory_usage = arg_82_2
+	event:set_data({
+		index = index,
+		memory_usage = memory_usage
 	})
-	self._manager:register_event(_create_event)
+	self._manager:register_event(event)
 end
 
-TelemetryEvents.chat_message = function (self, arg_83_1)
+TelemetryEvents.chat_message = function (self, message)
 	-- function 83
 	local local_player = Managers.player:local_player()
 
@@ -1216,16 +1235,16 @@ TelemetryEvents.chat_message = function (self, arg_83_1)
 		return
 	end
 
-	local var_83_1 = TelemetryEvent:new(remove_empty_values, {
+	local event = TelemetryEvent:new(SOURCE, {
 		id = local_player:telemetry_id()
 	}, "chat_message", self._session)
-	local var_83_2 = var_83_1
-	local set_data = var_83_1.set_data
+	local var_83_0 = event
+	local set_data = event.set_data
 	local tbl = {}
 	local count
 
-	if not arg_83_1 then
-		count = #arg_83_1
+	if message then
+		count = #message
 
 		if not count then
 			-- Nothing
@@ -1238,167 +1257,177 @@ TelemetryEvents.chat_message = function (self, arg_83_1)
 
 	tbl.message_length = count
 
-	set_data(var_83_2, tbl)
-	self._manager:register_event(var_83_1)
+	set_data(var_83_0, tbl)
+	self._manager:register_event(event)
 end
 
 TelemetryEvents.twitch_mode_activated = function (self)
 	-- function 84
-	local _create_event = self:_create_event("twitch_mode_activated")
+	local event = self:_create_event("twitch_mode_activated")
 
-	self._manager:register_event(_create_event)
+	self._manager:register_event(event)
 end
 
-TelemetryEvents.twitch_poll_completed = function (self, arg_85_1)
+TelemetryEvents.twitch_poll_completed = function (self, vote_info)
 	-- function 85
-	local _create_event = self:_create_event("twitch_poll_completed")
+	local event = self:_create_event("twitch_poll_completed")
 
-	_create_event:set_data({
-		type = arg_85_1.vote_type,
-		templates = arg_85_1.vote_templates,
-		winning_template = arg_85_1.winning_template_name,
-		votes_cast = arg_85_1.options
+	event:set_data({
+		type = vote_info.vote_type,
+		templates = vote_info.vote_templates,
+		winning_template = vote_info.winning_template_name,
+		votes_cast = vote_info.options
 	})
-	self._manager:register_event(_create_event)
+	self._manager:register_event(event)
 end
 
-TelemetryEvents.breed_position_desync = function (self, arg_86_1, arg_86_2, arg_86_3, arg_86_4)
+TelemetryEvents.breed_position_desync = function (self, source_position, destination_position, distance_sq, breed)
 	-- function 86
-	local _create_event = self:_create_event("breed_position_desync")
+	local event = self:_create_event("breed_position_desync")
 
-	_create_event:set_data({
-		source_position = arg_86_1,
-		destination_position = arg_86_2,
-		distance_sq = arg_86_3,
-		breed = arg_86_4
+	event:set_data({
+		source_position = source_position,
+		destination_position = destination_position,
+		distance_sq = distance_sq,
+		breed = breed
 	})
-	self._manager:register_event(_create_event)
+	self._manager:register_event(event)
 end
 
 TelemetryEvents.heartbeat = function (self)
 	-- function 87
-	local _create_event = self:_create_event("heartbeat")
+	local event = self:_create_event("heartbeat")
 
-	self._manager:register_event(_create_event)
+	self._manager:register_event(event)
 end
 
-TelemetryEvents.player_authenticated = function (self, arg_88_1)
+TelemetryEvents.player_authenticated = function (self, player_id)
 	-- function 88
-	self._subject.id = arg_88_1
+	self._subject.id = player_id
 
-	local _create_event = self:_create_event("player_authenticated")
+	local event = self:_create_event("player_authenticated")
 
-	self._manager:register_event(_create_event)
+	self._manager:register_event(event)
 end
 
-TelemetryEvents._create_event = function (self, arg_89_1)
+TelemetryEvents._create_event = function (self, type)
 	-- function 89
-	return TelemetryEvent:new(remove_empty_values, self._subject, arg_89_1, self._session)
+	return TelemetryEvent:new(SOURCE, self._subject, type, self._session)
 end
 
-TelemetryEvents.necromancer_used_command_item = function (self, arg_90_1, arg_90_2)
+TelemetryEvents.necromancer_used_command_item = function (self, player, command_name)
 	-- function 90
-	if not (not arg_90_1 and arg_90_1.local_player) then
+	if player and not player.local_player then
 		return
 	end
 
-	local var_90_0 = TelemetryEvent:new(remove_empty_values, {
-		id = arg_90_1:telemetry_id()
+	local event = TelemetryEvent:new(SOURCE, {
+		id = player:telemetry_id()
 	}, "necromancer_used_command_item", self._session)
 
-	var_90_0:set_data({
-		command_name = arg_90_2
+	event:set_data({
+		command_name = command_name
 	})
-	self._manager:register_event(var_90_0)
+	self._manager:register_event(event)
 end
 
-TelemetryEvents.geheimnisnacht_hard_mode_toggled = function (self, arg_91_1)
+TelemetryEvents.geheimnisnacht_hard_mode_toggled = function (self, activated)
 	-- function 91
-	local _create_event = self:_create_event("geheimnisnacht_hard_mode_toggled")
-	local flag
+	local event = self:_create_event("geheimnisnacht_hard_mode_toggled")
+	local str
 
-	flag = not arg_91_1 and "activated" and "deactivated"
+	if activated then
+		str = "activated"
 
-	_create_event:set_data({
-		state = flag
+		goto label_91_0
+	end
+
+	str = "deactivated"
+
+	local state = str
+
+	::label_91_0::
+
+	event:set_data({
+		state = state
 	})
-	self._manager:register_event(_create_event)
+	self._manager:register_event(event)
 end
 
-TelemetryEvents.loadout_created = function (self, arg_92_1, arg_92_2)
+TelemetryEvents.loadout_created = function (self, num_loadouts, max_num_loadouts)
 	-- function 92
-	local _create_event = self:_create_event("loadout_created")
+	local event = self:_create_event("loadout_created")
 
-	_create_event:set_data({
-		num_loadouts = arg_92_1,
-		max_num_loadouts = arg_92_2
+	event:set_data({
+		num_loadouts = num_loadouts,
+		max_num_loadouts = max_num_loadouts
 	})
-	self._manager:register_event(_create_event)
+	self._manager:register_event(event)
 end
 
-TelemetryEvents.loadout_deleted = function (self, arg_93_1, arg_93_2)
+TelemetryEvents.loadout_deleted = function (self, num_loadouts, max_num_loadouts)
 	-- function 93
-	local _create_event = self:_create_event("loadout_deleted")
+	local event = self:_create_event("loadout_deleted")
 
-	_create_event:set_data({
-		num_loadouts = arg_93_1,
-		max_num_loadouts = arg_93_2
+	event:set_data({
+		num_loadouts = num_loadouts,
+		max_num_loadouts = max_num_loadouts
 	})
-	self._manager:register_event(_create_event)
+	self._manager:register_event(event)
 end
 
 TelemetryEvents.loadout_equipped = function (self)
 	-- function 94
-	local _create_event = self:_create_event("loadout_equipped")
+	local event = self:_create_event("loadout_equipped")
 
-	self._manager:register_event(_create_event)
+	self._manager:register_event(event)
 end
 
 TelemetryEvents.default_loadout_equipped = function (self)
 	-- function 95
-	local _create_event = self:_create_event("default_loadout_equipped")
+	local event = self:_create_event("default_loadout_equipped")
 
-	self._manager:register_event(_create_event)
+	self._manager:register_event(event)
 end
 
-TelemetryEvents.start_versus_experience = function (self, arg_96_1, arg_96_2)
+TelemetryEvents.start_versus_experience = function (self, versus_level_start, versus_experience_start)
 	-- function 96
-	local _create_event = self:_create_event("start_versus_experience")
+	local event = self:_create_event("start_versus_experience")
 
-	_create_event:set_data({
-		start_experience = arg_96_2,
-		start_level = arg_96_1
+	event:set_data({
+		start_experience = versus_experience_start,
+		start_level = versus_level_start
 	})
-	self._manager:register_event(_create_event)
+	self._manager:register_event(event)
 end
 
-TelemetryEvents.versus_experience_gained = function (self, arg_97_1)
+TelemetryEvents.versus_experience_gained = function (self, versus_experience_gained)
 	-- function 97
-	local _create_event = self:_create_event("versus_experience_gained")
+	local event = self:_create_event("versus_experience_gained")
 
-	_create_event:set_data({
-		versus_experience_gained = arg_97_1
+	event:set_data({
+		versus_experience_gained = versus_experience_gained
 	})
-	self._manager:register_event(_create_event)
+	self._manager:register_event(event)
 end
 
-TelemetryEvents.versus_level_gained = function (self, arg_98_1, arg_98_2)
+TelemetryEvents.versus_level_gained = function (self, old_versus_level, new_versus_level)
 	-- function 98
-	local _create_event = self:_create_event("versus_level_gained")
+	local event = self:_create_event("versus_level_gained")
 
-	_create_event:set_data({
-		old_versus_level = arg_98_1,
-		new_versus_level = arg_98_2
+	event:set_data({
+		old_versus_level = old_versus_level,
+		new_versus_level = new_versus_level
 	})
-	self._manager:register_event(_create_event)
+	self._manager:register_event(event)
 end
 
-TelemetryEvents.versus_currency_gained = function (self, arg_99_1)
+TelemetryEvents.versus_currency_gained = function (self, currency_gained)
 	-- function 99
-	local _create_event = self:_create_event("versus_currency_gained")
+	local event = self:_create_event("versus_currency_gained")
 
-	_create_event:set_data({
-		currency_gained = arg_99_1
+	event:set_data({
+		currency_gained = currency_gained
 	})
-	self._manager:register_event(_create_event)
+	self._manager:register_event(event)
 end

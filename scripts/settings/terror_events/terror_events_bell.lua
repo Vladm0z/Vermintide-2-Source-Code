@@ -1,11 +1,11 @@
 -- chunkname: @scripts/settings/terror_events/terror_events_bell.lua
 
-local scripts_settings_terror_events_terror_event_utils = require("scripts/settings/terror_events/terror_event_utils")
-local count_event_breed = scripts_settings_terror_events_terror_event_utils.count_event_breed
-local HARDER = scripts_settings_terror_events_terror_event_utils.HARDER
-local HARDEST = scripts_settings_terror_events_terror_event_utils.HARDEST
-local CATACLYSM = scripts_settings_terror_events_terror_event_utils.CATACLYSM
-local tbl = {
+local TerrorEventUtils = require("scripts/settings/terror_events/terror_event_utils")
+local count_event_breed = TerrorEventUtils.count_event_breed
+local HARDER = TerrorEventUtils.HARDER
+local HARDEST = TerrorEventUtils.HARDEST
+local CATACLYSM = TerrorEventUtils.CATACLYSM
+local terror_event_blueprints = {
 	canyon_bell_event = {
 		{
 			"set_master_event_running",
@@ -82,9 +82,9 @@ local tbl = {
 		{
 			"continue_when",
 			duration = 100,
-			condition = function (arg_1_0)
+			condition = function (t)
 				-- function 1
-				return not (count_event_breed("skaven_slave") < 5) or count_event_breed("skaven_clan_rat") < 5
+				return count_event_breed("skaven_slave") < 5 and count_event_breed("skaven_clan_rat") < 5
 			end
 		},
 		{
@@ -138,9 +138,9 @@ local tbl = {
 		{
 			"continue_when",
 			duration = 80,
-			condition = function (arg_2_0)
+			condition = function (t)
 				-- function 2
-				return not (count_event_breed("skaven_slave") < 5) or count_event_breed("skaven_clan_rat") < 5
+				return count_event_breed("skaven_slave") < 5 and count_event_breed("skaven_clan_rat") < 5
 			end
 		},
 		{
@@ -171,5 +171,5 @@ local tbl = {
 }
 
 return {
-	tbl
+	terror_event_blueprints
 }

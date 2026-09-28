@@ -3,18 +3,18 @@
 VisualStateMachine = class(VisualStateMachine)
 VisualStateMachine.DEBUG = false
 
-local function fn(arg_1_0, ...)
+local function debug_print(format, ...)
 	-- function 1
-	if not VisualStateMachine.DEBUG then
-		printf("[VisualStateMachine] " .. arg_1_0, ...)
+	if VisualStateMachine.DEBUG then
+		printf("[VisualStateMachine] " .. format, ...)
 	end
 end
 
-VisualStateMachine.init = function (self, arg_2_1, arg_2_2, ...)
+VisualStateMachine.init = function (self, name, parent, ...)
 	-- function 2
-	assert(type(arg_2_1) == "string", "state machine name must be specified and be a string")
+	assert(type(name) == "string", "state machine name must be specified and be a string")
 
-	self._name = arg_2_1
+	self._name = name
 	self._global_args = {
 		...
 	}
@@ -22,19 +22,19 @@ VisualStateMachine.init = function (self, arg_2_1, arg_2_2, ...)
 	self._pending_event = nil
 	self._pending_args = nil
 
-	if not arg_2_2 then
-		self._root_state_machine = arg_2_2._root_state_machine
+	if parent then
+		self._root_state_machine = parent._root_state_machine
 	else
 		self._root_state_machine = self
 	end
 
-	if arg_2_2 ~= nil then
-		local _state_machine_stack = arg_2_2._root_state_machine._state_machine_stack
+	if parent ~= nil then
+		local parent_stack = parent._root_state_machine._state_machine_stack
 
-		assert(_state_machine_stack[#_state_machine_stack] == arg_2_2, "the parent must be last in the stack")
+		assert(parent_stack[#parent_stack] == parent, "the parent must be last in the stack")
 
-		self._state_machine_stack = _state_machine_stack
-		_state_machine_stack[#_state_machine_stack + 1] = self
+		self._state_machine_stack = parent_stack
+		parent_stack[#parent_stack + 1] = self
 	else
 		self._state_machine_stack = {
 			self
@@ -49,24 +49,24 @@ end
 
 VisualStateMachine.destroy = function (self)
 	-- function 3
-	local _current_state = self._current_state
+	local state = self._current_state
 
 	self._current_state = nil
 
-	if _current_state ~= nil then
-		if _current_state.leave ~= nil then
-			_current_state:leave()
+	if state ~= nil then
+		if state.leave ~= nil then
+			state:leave()
 		end
 
-		if _current_state.destroy ~= nil then
-			_current_state:destroy()
+		if state.destroy ~= nil then
+			state:destroy()
 		end
 	end
 
-	local _state_machine_stack = self._state_machine_stack
+	local stack = self._state_machine_stack
 
-	assert(_state_machine_stack[#_state_machine_stack] == self, "state machines must be destroyed in reversed creation order")
-	table.remove(_state_machine_stack, #_state_machine_stack)
+	assert(stack[#stack] == self, "state machines must be destroyed in reversed creation order")
+	table.remove(stack, #stack)
 
 	self._root_state_machine = nil
 	self._state_machine_stack = nil
@@ -74,128 +74,132 @@ VisualStateMachine.destroy = function (self)
 	Managers.state_machine:_unregister_state_machine(self)
 end
 
-VisualStateMachine.add_transition = function (self, arg_4_1, arg_4_2, arg_4_3)
+VisualStateMachine.add_transition = function (self, source_class_name, event_name, target_class)
 	-- function 4
-	local _transitions = self._transitions
+	local transitions = self._transitions
 
-	if _transitions[arg_4_1] == nil then
-		_transitions[arg_4_1] = {}
+	if transitions[source_class_name] == nil then
+		transitions[source_class_name] = {}
 	end
 
-	local var_4_1 = _transitions[arg_4_1]
+	local target_transitions = transitions[source_class_name]
 
-	assert(var_4_1[arg_4_2] == nil, "the event " .. arg_4_2 .. " already has a transition to " .. tostring(var_4_1[arg_4_2]))
+	assert(target_transitions[event_name] == nil, "the event " .. event_name .. " already has a transition to " .. tostring(target_transitions[event_name]))
 
-	var_4_1[arg_4_2] = arg_4_3
+	target_transitions[event_name] = target_class
 end
 
-VisualStateMachine.remove_transition = function (self, arg_5_1, arg_5_2)
+VisualStateMachine.remove_transition = function (self, source_class_name, event_name)
 	-- function 5
-	local var_5_0 = self._transitions[arg_5_1]
+	local transitions = self._transitions[source_class_name]
 
-	if var_5_0 == nil then
+	if transitions == nil then
 		return
 	end
 
-	var_5_0[arg_5_2] = nil
+	transitions[event_name] = nil
 end
 
-VisualStateMachine.set_transitions = function (arg_6_0, arg_6_1, arg_6_2)
+VisualStateMachine.set_transitions = function (self, source_class_name, transitions)
 	-- function 6
-	arg_6_0._transitions[arg_6_1] = arg_6_2
+	self._transitions[source_class_name] = transitions
 end
 
-VisualStateMachine.set_initial_state = function (self, arg_7_1, ...)
+VisualStateMachine.set_initial_state = function (self, state_class, ...)
 	-- function 7
 	assert(self._current_state == nil, "it is not allowed to set initial state twice")
 
-	self._current_state = self:_enter_state(arg_7_1, {
+	self._current_state = self:_enter_state(state_class, {
 		...
 	})
 end
 
-VisualStateMachine.update = function (self, arg_8_1, arg_8_2)
+VisualStateMachine.update = function (self, dt, t)
 	-- function 8
 	if self._root_state_machine ~= self then
 		return
 	end
 
-	local _state_machine_stack = self._state_machine_stack
-	local count = #self._state_machine_stack
+	local stack = self._state_machine_stack
+	local leaf_index = #self._state_machine_stack
 
-	for i, v in ipairs(self._state_machine_stack) do
-		local _current_state = v._current_state
-		local var_8_3
+	for ii, state_machine in ipairs(self._state_machine_stack) do
+		local state = state_machine._current_state
+		local update_func
 
-		if i == count then
-			if not (_current_state == nil or _current_state.update == nil) then
-				var_8_3 = _current_state.update
+		if ii == leaf_index then
+			if state ~= nil and state.update ~= nil then
+				update_func = state.update
 			end
-		elseif not (_current_state == nil or _current_state.parent_update == nil) then
-			var_8_3 = _current_state.parent_update
+		elseif state ~= nil and state.parent_update ~= nil then
+			update_func = state.parent_update
 		end
 
-		if var_8_3 ~= nil then
-			local tbl = {
-				var_8_3(_current_state, arg_8_1, arg_8_2)
+		if update_func ~= nil then
+			local args = {
+				update_func(state, dt, t)
 			}
-			local var_8_5 = tbl[1]
+			local event_name = args[1]
 
-			table.remove(tbl, 1)
+			table.remove(args, 1)
 
-			local _root_state_machine = self._root_state_machine
+			local root_state_machine = self._root_state_machine
 
-			if _root_state_machine._pending_event ~= nil then
-				var_8_5 = _root_state_machine._pending_event
-				tbl = _root_state_machine._pending_args
-				_root_state_machine._pending_event = nil
-				_root_state_machine._pending_args = nil
+			if root_state_machine._pending_event ~= nil then
+				event_name = root_state_machine._pending_event
+				args = root_state_machine._pending_args
+				root_state_machine._pending_event = nil
+				root_state_machine._pending_args = nil
 			end
 
-			if not (var_8_5 == nil or not (i >= self:_received_event(var_8_5, tbl))) then
-				break
+			if event_name ~= nil then
+				local state_machine_index = self:_received_event(event_name, args)
+
+				if state_machine_index <= ii then
+					break
+				end
 			end
 		end
 	end
 end
 
-VisualStateMachine.event = function (self, arg_9_1, ...)
+VisualStateMachine.event = function (self, event_name, ...)
 	-- function 9
-	local _root_state_machine = self._root_state_machine
+	local root = self._root_state_machine
 
-	_root_state_machine._pending_event = arg_9_1
-	_root_state_machine._pending_args = {
+	root._pending_event = event_name
+	root._pending_args = {
 		...
 	}
 end
 
 VisualStateMachine.state_report = function (self)
 	-- function 10
-	local str = ""
-	local _state_machine_stack = self._state_machine_stack
-	local find_in_table = self.find_in_table(_state_machine_stack, self)
+	local s = ""
+	local stack = self._state_machine_stack
+	local start_index = self.find_in_table(stack, self)
 
-	assert(find_in_table ~= nil, "to make a state report the state machine itself must be on the stack")
+	assert(start_index ~= nil, "to make a state report the state machine itself must be on the stack")
 
-	for i = find_in_table, #_state_machine_stack do
-		local var_10_3 = _state_machine_stack[i]
+	for ii = start_index, #stack do
+		local state_machine = stack[ii]
 
-		str = str .. string.format("State %q waits for:\n", self._current_state_name(var_10_3))
+		s = s .. string.format("State %q waits for:\n", self._current_state_name(state_machine))
 
-		local _transitions_from_state = var_10_3:_transitions_from_state()
-		local flag = false
+		local transitions = state_machine:_transitions_from_state()
+		local had_transitions = false
 
-		for k, v in pairs(_transitions_from_state) do
-			flag = true
-			str = str .. string.format("  %q => %s\n", k, v.NAME)
+		for kk, vv in pairs(transitions) do
+			had_transitions = true
+			s = s .. string.format("  %q => %s\n", kk, vv.NAME)
 		end
 
-		if not flag then
-			str = str .. "  <nothing>\n"
+		if not had_transitions then
+			s = s .. "  <nothing>\n"
 		end
 	end
 
-	return str
+	return s
 end
 
 VisualStateMachine._transitions_from_state = function (self)
@@ -204,44 +208,44 @@ VisualStateMachine._transitions_from_state = function (self)
 		return {}
 	end
 
-	local var_11_0 = self._transitions[self._current_state.NAME]
+	local transitions = self._transitions[self._current_state.NAME]
 
-	if var_11_0 == nil then
+	if transitions == nil then
 		return {}
 	end
 
-	return var_11_0
+	return transitions
 end
 
-VisualStateMachine._current_state_name = function (self)
+VisualStateMachine._current_state_name = function (state_machine)
 	-- function 12
-	local _name = self._name
-	local str = "<no state>"
+	local state_machine_name = state_machine._name
+	local state_name = "<no state>"
 
-	if self._current_state ~= nil then
-		str = self._current_state.NAME
+	if state_machine._current_state ~= nil then
+		state_name = state_machine._current_state.NAME
 
-		if self._current_state.name ~= nil then
-			str = str .. ":" .. self._current_state.name
+		if state_machine._current_state.name ~= nil then
+			state_name = state_name .. ":" .. state_machine._current_state.name
 		end
 	end
 
-	return _name .. ":" .. str
+	return state_machine_name .. ":" .. state_name
 end
 
-VisualStateMachine._handle_event = function (self, arg_13_1, arg_13_2)
+VisualStateMachine._handle_event = function (self, event_name, args)
 	-- function 13
-	local _current_state = self._current_state
+	local state = self._current_state
 
-	if _current_state ~= nil then
-		local var_13_1 = self._transitions[_current_state.NAME]
+	if state ~= nil then
+		local transitions = self._transitions[state.NAME]
 
-		if var_13_1 ~= nil then
-			local var_13_2 = var_13_1[arg_13_1]
+		if transitions ~= nil then
+			local target_class = transitions[event_name]
 
-			if var_13_2 ~= nil then
+			if target_class ~= nil then
 				self:_leave_state()
-				self:_enter_state(var_13_2, arg_13_2)
+				self:_enter_state(target_class, args)
 
 				return true
 			end
@@ -251,71 +255,75 @@ VisualStateMachine._handle_event = function (self, arg_13_1, arg_13_2)
 	return false
 end
 
-VisualStateMachine._received_event = function (self, arg_14_1, arg_14_2)
+VisualStateMachine._received_event = function (self, event_name, args)
 	-- function 14
-	local _state_machine_stack = self._state_machine_stack
+	local stack = self._state_machine_stack
 
-	for i = #_state_machine_stack, 1, -1 do
-		if not _state_machine_stack[i]:_handle_event(arg_14_1, arg_14_2) then
-			return i
+	for ii = #stack, 1, -1 do
+		local state_machine = stack[ii]
+
+		if state_machine:_handle_event(event_name, args) then
+			return ii
 		end
 	end
 
-	local tbl = {}
+	local state_names = {}
 
-	for i_2, v in ipairs(self._state_machine_stack) do
-		tbl[#tbl + 1] = self._current_state_name(v)
+	for _, state_machine in ipairs(self._state_machine_stack) do
+		state_names[#state_names + 1] = self._current_state_name(state_machine)
 	end
 
-	local str = string.format("none of the active states (%s) handled the event %q\n", table.concat(tbl, ", "), arg_14_1) .. self._root_state_machine:state_report()
+	local report = string.format("none of the active states (%s) handled the event %q\n", table.concat(state_names, ", "), event_name)
 
-	assert(false, str)
+	report = report .. self._root_state_machine:state_report()
+
+	assert(false, report)
 end
 
-VisualStateMachine.find_in_table = function (arg_15_0, arg_15_1)
+VisualStateMachine.find_in_table = function (t, value)
 	-- function 15
-	for i, v in ipairs(arg_15_0) do
-		if v == arg_15_1 then
-			return i
+	for ii, vv in ipairs(t) do
+		if vv == value then
+			return ii
 		end
 	end
 end
 
 VisualStateMachine._leave_state = function (self)
 	-- function 16
-	local _state_machine_stack = self._state_machine_stack
-	local find_in_table = self.find_in_table(_state_machine_stack, self)
+	local stack = self._state_machine_stack
+	local stack_index = self.find_in_table(stack, self)
 
-	assert(find_in_table ~= nil, "leaving a state requires the state machine to be in the state machine stack")
+	assert(stack_index ~= nil, "leaving a state requires the state machine to be in the state machine stack")
 
-	for i = #_state_machine_stack, find_in_table, -1 do
-		local var_16_2 = _state_machine_stack[i]
-		local _current_state = var_16_2._current_state
+	for ii = #stack, stack_index, -1 do
+		local state_machine = stack[ii]
+		local state = state_machine._current_state
 
-		if not _current_state.leave then
-			_current_state:leave()
+		if state.leave then
+			state:leave()
 		end
 
-		var_16_2._current_state = nil
+		state_machine._current_state = nil
 
-		if _current_state.destroy ~= nil then
-			_current_state:destroy()
+		if state.destroy ~= nil then
+			state:destroy()
 		end
 	end
 end
 
-VisualStateMachine._enter_state = function (self, arg_17_1, arg_17_2)
+VisualStateMachine._enter_state = function (self, state_class, args)
 	-- function 17
 	assert(self._current_state == nil, "entering a state twice is not allowed")
-	assert(type(arg_17_1.NAME) == "string", "States must have a class variable NAME set to a string value")
+	assert(type(state_class.NAME) == "string", "States must have a class variable NAME set to a string value")
 
-	local var_17_0 = arg_17_1:new(self, unpack(self._global_args))
+	local state = state_class:new(self, unpack(self._global_args))
 
-	self._current_state = var_17_0
+	self._current_state = state
 
-	if not var_17_0.enter then
-		var_17_0:enter(unpack(arg_17_2))
+	if state.enter then
+		state:enter(unpack(args))
 	end
 
-	return var_17_0
+	return state
 end

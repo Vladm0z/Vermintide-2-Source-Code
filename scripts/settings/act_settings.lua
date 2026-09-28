@@ -2,7 +2,7 @@
 
 local ActSettings = ActSettings
 
-ActSettings = ActSettings or {}
+ActSettings = not not ActSettings or not not {}
 ActSettings = ActSettings
 ActSettings.prologue = {
 	banner_texture = "menu_frame_bg_01",

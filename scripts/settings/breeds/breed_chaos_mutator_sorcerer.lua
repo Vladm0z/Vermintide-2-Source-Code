@@ -106,7 +106,7 @@ local tbl = {
 }
 local setting = Development.setting("disable_plague_sorcerer")
 
-setting = setting or false
+setting = not not setting or not not false
 tbl.disabled = setting
 tbl.hit_zones = {
 	head = {
@@ -216,9 +216,12 @@ tbl.allowed_layers = {
 	bot_poison_wind = 2,
 	fire_grenade = 10
 }
-Breeds.chaos_mutator_sorcerer = table.create_copy(Breeds.chaos_mutator_sorcerer, tbl)
 
-local tbl_2 = {
+local breed_data = tbl
+
+Breeds.chaos_mutator_sorcerer = table.create_copy(Breeds.chaos_mutator_sorcerer, breed_data)
+
+local action_data = {
 	idle = {
 		idle_animation = "float_into",
 		ignore_staggers = {
@@ -306,12 +309,13 @@ local tbl_2 = {
 		teleport_end_anim = "teleport_end",
 		teleport_effect_trail = "fx/chr_chaos_sorcerer_teleport_direction",
 		teleport_start_anim = "teleport_start",
-		teleport_pos_func = function (arg_1_0, arg_1_1)
+		teleport_pos_func = function (unit, blackboard)
 			-- function 1
-			local conflict = Managers.state.conflict
-			local max = math.max(conflict.main_path_info.ahead_travel_dist - 40, 0)
+			local conflict_director = Managers.state.conflict
+			local wanted_teleport_distance_in_main_path = math.max(conflict_director.main_path_info.ahead_travel_dist - 40, 0)
+			local wanted_teleport_position = MainPathUtils.point_on_mainpath(nil, wanted_teleport_distance_in_main_path)
 
-			return (MainPathUtils.point_on_mainpath(nil, max))
+			return wanted_teleport_position
 		end,
 		ignore_staggers = {
 			true,
@@ -331,24 +335,24 @@ local tbl_2 = {
 			true,
 			true
 		},
-		custom_enter_function = function (arg_2_0, arg_2_1, arg_2_2, arg_2_3)
+		custom_enter_function = function (unit, blackboard, t, action)
 			-- function 2
-			local var_2_0
+			local stagger_anims
 
-			arg_2_1.stagger_ignore_anim_cb = true
+			blackboard.stagger_ignore_anim_cb = true
 
-			if not arg_2_1.corruptor_grab_stagger then
-				var_2_0 = arg_2_3.grabbing_stagger_anims[arg_2_1.stagger_type]
-				arg_2_1.stagger_time = arg_2_2 + 1
+			if blackboard.corruptor_grab_stagger then
+				stagger_anims = action.grabbing_stagger_anims[blackboard.stagger_type]
+				blackboard.stagger_time = t + 1
 			else
-				var_2_0 = arg_2_3.stagger_anims[arg_2_1.stagger_type]
+				stagger_anims = action.stagger_anims[blackboard.stagger_type]
 			end
 
-			return var_2_0, "idle"
+			return stagger_anims, "idle"
 		end,
-		custom_exit_function = function (arg_3_0, arg_3_1, arg_3_2)
+		custom_exit_function = function (unit, blackboard, t)
 			-- function 3
-			arg_3_1.corruptor_grab_stagger = nil
+			blackboard.corruptor_grab_stagger = nil
 		end,
 		stagger_anims = {
 			{
@@ -593,4 +597,4 @@ local tbl_2 = {
 	}
 }
 
-BreedActions.chaos_mutator_sorcerer = table.create_copy(BreedActions.chaos_mutator_sorcerer, tbl_2)
+BreedActions.chaos_mutator_sorcerer = table.create_copy(BreedActions.chaos_mutator_sorcerer, action_data)

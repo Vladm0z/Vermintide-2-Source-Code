@@ -5,25 +5,25 @@ require("scripts/entity_system/systems/behaviour/nodes/bt_node")
 BTGlobadierSuicideStaggerAction = class(BTGlobadierSuicideStaggerAction, BTNode)
 BTGlobadierSuicideStaggerAction.name = "BTGlobadierSuicideStaggerAction"
 
-BTGlobadierSuicideStaggerAction.init = function (arg_1_0, ...)
+BTGlobadierSuicideStaggerAction.init = function (self, ...)
 	-- function 1
-	BTGlobadierSuicideStaggerAction.super.init(arg_1_0, ...)
+	BTGlobadierSuicideStaggerAction.super.init(self, ...)
 end
 
-BTGlobadierSuicideStaggerAction.enter = function (arg_2_0, arg_2_1, arg_2_2, arg_2_3)
+BTGlobadierSuicideStaggerAction.enter = function (self, unit, blackboard, t)
 	-- function 2
-	local str = "kinetic"
-	local var_2_1 = Vector3(0, 0, -1)
+	local damage_type = "kinetic"
+	local damage_direction = Vector3(0, 0, -1)
 
-	AiUtils.kill_unit(arg_2_1, nil, nil, str, var_2_1)
+	AiUtils.kill_unit(unit, nil, nil, damage_type, damage_direction)
 end
 
-BTGlobadierSuicideStaggerAction.leave = function (arg_3_0, arg_3_1, arg_3_2, arg_3_3, arg_3_4, arg_3_5)
+BTGlobadierSuicideStaggerAction.leave = function (self, unit, blackboard, t, reason, destroy)
 	-- function 3
 	return
 end
 
-BTGlobadierSuicideStaggerAction.run = function (arg_4_0, arg_4_1, arg_4_2, arg_4_3, arg_4_4)
+BTGlobadierSuicideStaggerAction.run = function (self, unit, blackboard, t, dt)
 	-- function 4
 	return "done"
 end

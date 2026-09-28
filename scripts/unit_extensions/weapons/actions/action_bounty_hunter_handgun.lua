@@ -2,28 +2,28 @@
 
 ActionBountyHunterHandgun = class(ActionBountyHunterHandgun, ActionBase)
 
-ActionBountyHunterHandgun.init = function (arg_1_0, arg_1_1, arg_1_2, arg_1_3, arg_1_4, arg_1_5, arg_1_6, arg_1_7, arg_1_8)
+ActionBountyHunterHandgun.init = function (self, world, item_name, is_server, owner_unit, damage_unit, first_person_unit, weapon_unit, weapon_system)
 	-- function 1
-	ActionBountyHunterHandgun.super.init(arg_1_0, arg_1_1, arg_1_2, arg_1_3, arg_1_4, arg_1_5, arg_1_6, arg_1_7, arg_1_8)
+	ActionBountyHunterHandgun.super.init(self, world, item_name, is_server, owner_unit, damage_unit, first_person_unit, weapon_unit, weapon_system)
 end
 
-ActionBountyHunterHandgun.client_owner_start_action = function (self, arg_2_1, arg_2_2, arg_2_3, arg_2_4, arg_2_5)
+ActionBountyHunterHandgun.client_owner_start_action = function (self, new_action, t, chain_action_data, power_level, action_init_data)
 	-- function 2
-	ActionBountyHunterHandgun.super.client_owner_start_action(self, arg_2_1, arg_2_2, arg_2_3, arg_2_4, arg_2_5)
+	ActionBountyHunterHandgun.super.client_owner_start_action(self, new_action, t, chain_action_data, power_level, action_init_data)
 
 	local weapon_unit = self.weapon_unit
 	local owner_unit = self.owner_unit
-	local is_critical_strike = ActionUtils.is_critical_strike(owner_unit, arg_2_1, arg_2_2)
-	local extension = ScriptUnit.extension(owner_unit, "buff_system")
+	local is_critical_strike = ActionUtils.is_critical_strike(owner_unit, new_action, t)
+	local buff_extension = ScriptUnit.extension(owner_unit, "buff_system")
 
-	self.current_action = arg_2_1
-	self.power_level = arg_2_4
-	self.owner_buff_extension = extension
+	self.current_action = new_action
+	self.power_level = power_level
+	self.owner_buff_extension = buff_extension
 
 	local _railgun_shoot
 
-	if not arg_2_5 then
-		if arg_2_5.upper_barrel == "railgun" then
+	if action_init_data then
+		if action_init_data.upper_barrel == "railgun" then
 			_railgun_shoot = self._railgun_shoot
 
 			if not _railgun_shoot then
@@ -46,8 +46,8 @@ ActionBountyHunterHandgun.client_owner_start_action = function (self, arg_2_1, a
 
 	local _railgun_shoot_2
 
-	if not arg_2_5 then
-		if arg_2_5.lower_barrel == "railgun" then
+	if action_init_data then
+		if action_init_data.lower_barrel == "railgun" then
 			_railgun_shoot_2 = self._railgun_shoot
 
 			if not _railgun_shoot_2 then
@@ -68,8 +68,8 @@ ActionBountyHunterHandgun.client_owner_start_action = function (self, arg_2_1, a
 
 	self.lower_shoot_function = _railgun_shoot_2
 
-	Unit.set_flow_variable(weapon_unit, "upper_is_railgun", arg_2_5.upper_barrel == "railgun")
-	Unit.set_flow_variable(weapon_unit, "lower_is_railgun", arg_2_5.lower_barrel == "railgun")
+	Unit.set_flow_variable(weapon_unit, "upper_is_railgun", action_init_data.upper_barrel == "railgun")
+	Unit.set_flow_variable(weapon_unit, "lower_is_railgun", action_init_data.lower_barrel == "railgun")
 
 	if not Managers.player:owner(self.owner_unit).bot_player then
 		Managers.state.controller_features:add_effect("rumble", {
@@ -77,56 +77,76 @@ ActionBountyHunterHandgun.client_owner_start_action = function (self, arg_2_1, a
 		})
 	end
 
-	if not ScriptUnit.has_extension(weapon_unit, "spread_system") then
+	if ScriptUnit.has_extension(weapon_unit, "spread_system") then
 		self.spread_extension = ScriptUnit.extension(weapon_unit, "spread_system")
 	end
 
-	local damage_profile = arg_2_1.damage_profile
+	local damage_profile = new_action.damage_profile
 
-	damage_profile = damage_profile or "default"
-	self.damage_profile_id = NetworkLookup.damage_profiles[damage_profile]
-	self.damage_profile = DamageProfileTemplates[damage_profile]
+	if not damage_profile then
+		-- Nothing
+	end
 
-	local damage_profile_aoe = arg_2_1.damage_profile_aoe
+	damage_profile = "default"
 
-	damage_profile_aoe = damage_profile_aoe or "default"
-	self.damage_profile_aoe_id = NetworkLookup.damage_profiles[damage_profile_aoe]
-	self.damage_profile_aoe = DamageProfileTemplates[damage_profile_aoe]
+	local damage_profile_name = damage_profile
+
+	::label_2_2::
+
+	self.damage_profile_id = NetworkLookup.damage_profiles[damage_profile_name]
+	self.damage_profile = DamageProfileTemplates[damage_profile_name]
+
+	local damage_profile_aoe = new_action.damage_profile_aoe
+
+	if not damage_profile_aoe then
+		-- Nothing
+	end
+
+	damage_profile_aoe = "default"
+
+	local damage_profile_name_aoe = damage_profile_aoe
+
+	::label_2_3::
+
+	self.damage_profile_aoe_id = NetworkLookup.damage_profiles[damage_profile_name_aoe]
+	self.damage_profile_aoe = DamageProfileTemplates[damage_profile_name_aoe]
 	self.upper_shot_done = nil
 	self.lower_shot_done = nil
 	self.aoe_done = nil
-	self.time_to_shoot_upper = arg_2_2 + arg_2_1.fire_time_upper
-	self.time_to_shoot_lower = arg_2_2 + arg_2_1.fire_time_lower
-	self.time_to_aoe = arg_2_2 + arg_2_1.aoe_time
+	self.time_to_shoot_upper = t + new_action.fire_time_upper
+	self.time_to_shoot_lower = t + new_action.fire_time_lower
+	self.time_to_aoe = t + new_action.aoe_time
 	self.hit_units = {}
 	self.shield_users_blocking = {}
 
-	local has_extension = ScriptUnit.has_extension(owner_unit, "hud_system")
+	local hud_extension = ScriptUnit.has_extension(owner_unit, "hud_system")
 
-	self:_handle_critical_strike(is_critical_strike, extension, has_extension, nil, "on_critical_shot", nil)
+	self:_handle_critical_strike(is_critical_strike, buff_extension, hud_extension, nil, "on_critical_shot", nil)
 
 	self.is_critical_strike = is_critical_strike
 
-	if not arg_2_1.block then
-		ScriptUnit.extension(owner_unit, "status_system"):set_blocking(true)
+	if new_action.block then
+		local status_extension = ScriptUnit.extension(owner_unit, "status_system")
+
+		status_extension:set_blocking(true)
 	end
 end
 
-ActionBountyHunterHandgun.client_owner_post_update = function (self, arg_3_1, arg_3_2, arg_3_3, arg_3_4, arg_3_5)
+ActionBountyHunterHandgun.client_owner_post_update = function (self, dt, t, world, can_damage, time_in_action)
 	-- function 3
-	if not (self.upper_shot_done or not (arg_3_2 >= self.time_to_shoot_upper)) then
+	if not self.upper_shot_done and t >= self.time_to_shoot_upper then
 		self.upper_shoot_function(self)
 
 		self.upper_shot_done = true
 	end
 
-	if not (self.lower_shot_done or not (arg_3_2 >= self.time_to_shoot_lower)) then
+	if not self.lower_shot_done and t >= self.time_to_shoot_lower then
 		self.lower_shoot_function(self)
 
 		self.lower_shot_done = true
 	end
 
-	if not (self.aoe_done or not (arg_3_2 >= self.time_to_aoe)) then
+	if not self.aoe_done and t >= self.time_to_aoe then
 		self:_do_aoe()
 
 		self.aoe_done = true
@@ -137,7 +157,7 @@ ActionBountyHunterHandgun._railgun_shoot = function (self)
 	-- function 4
 	local owner_unit = self.owner_unit
 	local current_action = self.current_action
-	local flag = true
+	local add_spread = true
 
 	if not Managers.player:owner(self.owner_unit).bot_player then
 		Managers.state.controller_features:add_effect("rumble", {
@@ -145,30 +165,30 @@ ActionBountyHunterHandgun._railgun_shoot = function (self)
 		})
 	end
 
-	local extension = ScriptUnit.extension(owner_unit, "first_person_system")
-	local get_projectile_start_position_rotation, var_4_5 = extension:get_projectile_start_position_rotation()
+	local first_person_extension = ScriptUnit.extension(owner_unit, "first_person_system")
+	local position, rotation = first_person_extension:get_projectile_start_position_rotation()
 	local spread_extension = self.spread_extension
-	local railgun_spread_template = current_action.railgun_spread_template
+	local spread_template_override = current_action.railgun_spread_template
 
-	if not spread_extension then
-		if not railgun_spread_template then
-			spread_extension:override_spread_template(railgun_spread_template)
+	if spread_extension then
+		if spread_template_override then
+			spread_extension:override_spread_template(spread_template_override)
 		end
 
-		var_4_5 = spread_extension:get_randomised_spread(var_4_5)
+		rotation = spread_extension:get_randomised_spread(rotation)
 
-		if not flag then
+		if add_spread then
 			spread_extension:set_shooting()
 		end
 	end
 
-	local pitch_from_rotation = ActionUtils.pitch_from_rotation(var_4_5)
+	local angle = ActionUtils.pitch_from_rotation(rotation)
 	local speed = current_action.speed
-	local normalize = Vector3.normalize(Vector3.flat(Quaternion.forward(var_4_5)))
+	local target_vector = Vector3.normalize(Vector3.flat(Quaternion.forward(rotation)))
 	local lookup_data = current_action.lookup_data
 
-	ActionUtils.spawn_player_projectile(owner_unit, get_projectile_start_position_rotation, var_4_5, 0, pitch_from_rotation, normalize, speed, self.item_name, lookup_data.item_template_name, lookup_data.action_name, lookup_data.sub_action_name, self.is_critical_strike, self.power_level)
-	extension:reset_aim_assist_multiplier()
+	ActionUtils.spawn_player_projectile(owner_unit, position, rotation, 0, angle, target_vector, speed, self.item_name, lookup_data.item_template_name, lookup_data.action_name, lookup_data.sub_action_name, self.is_critical_strike, self.power_level)
+	first_person_extension:reset_aim_assist_multiplier()
 end
 
 ActionBountyHunterHandgun._shotgun_shoot = function (self)
@@ -178,22 +198,32 @@ ActionBountyHunterHandgun._shotgun_shoot = function (self)
 	local current_action = self.current_action
 	local spread_extension = self.spread_extension
 	local is_server = self.is_server
-	local shotgun_spread_template = current_action.shotgun_spread_template
+	local spread_template_override = current_action.shotgun_spread_template
 
-	if not shotgun_spread_template then
-		self.spread_extension:override_spread_template(shotgun_spread_template)
+	if spread_template_override then
+		self.spread_extension:override_spread_template(spread_template_override)
 	end
 
-	local get_projectile_start_position_rotation, var_5_7 = ScriptUnit.extension(owner_unit, "first_person_system"):get_projectile_start_position_rotation()
+	local first_person_extension = ScriptUnit.extension(owner_unit, "first_person_system")
+	local current_position, current_rotation = first_person_extension:get_projectile_start_position_rotation()
 	local shot_count = current_action.shot_count
 
-	shot_count = shot_count or 1
+	if not shot_count then
+		-- Nothing
+	end
 
-	local extension = ScriptUnit.extension(owner_unit, "buff_system")
-	local num = 0
+	shot_count = 1
 
-	if not extension:has_buff_type("victor_bounty_blast_streak_buff") then
-		shot_count = shot_count + extension:num_buff_type("victor_bounty_blast_streak_buff")
+	local num_shots = shot_count
+
+	::label_5_0::
+
+	local buff_extension = ScriptUnit.extension(owner_unit, "buff_system")
+	local damage_bonus = 0
+
+	if buff_extension:has_buff_type("victor_bounty_blast_streak_buff") then
+		damage_bonus = buff_extension:num_buff_type("victor_bounty_blast_streak_buff")
+		num_shots = num_shots + damage_bonus
 	end
 
 	if not Managers.player:owner(owner_unit).bot_player then
@@ -202,59 +232,61 @@ ActionBountyHunterHandgun._shotgun_shoot = function (self)
 		})
 	end
 
-	local get_data = World.get_data(world, "physics_world")
-	local flag = true
+	local physics_world = World.get_data(world, "physics_world")
+	local check_buffs = true
 	local weapon_unit = self.weapon_unit
 
-	for i = 1, shot_count do
-		local var_5_14 = var_5_7
+	for i = 1, num_shots do
+		local rotation = current_rotation
 
-		if not spread_extension then
-			var_5_14 = spread_extension:get_target_style_spread(i, shot_count, var_5_7)
+		if spread_extension then
+			rotation = spread_extension:get_target_style_spread(i, num_shots, current_rotation)
 		end
 
-		local forward = Quaternion.forward(var_5_14)
-		local immediate_raycast_actors = PhysicsWorld.immediate_raycast_actors(get_data, get_projectile_start_position_rotation, forward, current_action.range, "static_collision_filter", "filter_player_ray_projectile_static_only", "dynamic_collision_filter", "filter_player_ray_projectile_ai_only", "dynamic_collision_filter", "filter_player_ray_projectile_hitbox_only")
+		local direction = Quaternion.forward(rotation)
+		local result = PhysicsWorld.immediate_raycast_actors(physics_world, current_position, direction, current_action.range, "static_collision_filter", "filter_player_ray_projectile_static_only", "dynamic_collision_filter", "filter_player_ray_projectile_ai_only", "dynamic_collision_filter", "filter_player_ray_projectile_hitbox_only")
 
-		if not immediate_raycast_actors then
-			local process_projectile_hit = DamageUtils.process_projectile_hit(world, self.item_name, owner_unit, is_server, immediate_raycast_actors, current_action, forward, flag, nil, self.shield_users_blocking, self.is_critical_strike, self.power_level)
+		if result then
+			local data = DamageUtils.process_projectile_hit(world, self.item_name, owner_unit, is_server, result, current_action, direction, check_buffs, nil, self.shield_users_blocking, self.is_critical_strike, self.power_level)
 
-			if not process_projectile_hit.buffs_checked then
-				flag = not flag and false
+			if data.buffs_checked then
+				check_buffs = not not check_buffs and not not false
 			end
 
-			if not process_projectile_hit.blocked_by_unit then
-				self.shield_users_blocking[process_projectile_hit.blocked_by_unit] = true
+			if data.blocked_by_unit then
+				self.shield_users_blocking[data.blocked_by_unit] = true
 			end
 		end
 
-		local var_5_18
+		local var_5_1
 
-		if not immediate_raycast_actors then
-			var_5_18 = immediate_raycast_actors[#immediate_raycast_actors][1]
+		if result then
+			var_5_1 = result[#result][1]
 
-			if not var_5_18 then
+			if not var_5_1 then
 				-- Nothing
 			end
 		end
 
-		var_5_18 = get_projectile_start_position_rotation + forward * current_action.range
+		var_5_1 = current_position + direction * current_action.range
 
-		::label_5_0::
+		local hit_position = var_5_1
 
-		Unit.set_flow_variable(weapon_unit, "hit_position", var_5_18)
-		Unit.set_flow_variable(weapon_unit, "trail_life", Vector3.length(var_5_18 - get_projectile_start_position_rotation) * 0.1)
+		::label_5_1::
+
+		Unit.set_flow_variable(weapon_unit, "hit_position", hit_position)
+		Unit.set_flow_variable(weapon_unit, "trail_life", Vector3.length(hit_position - current_position) * 0.1)
 		Unit.flow_event(weapon_unit, "lua_bullet_trail")
 		Unit.flow_event(weapon_unit, "lua_bullet_trail_set")
 	end
 
-	local flag_2 = not self.extra_buff_shot
+	local add_spread = not self.extra_buff_shot
 
-	if not spread_extension and not flag_2 then
+	if spread_extension and add_spread then
 		spread_extension:set_shooting()
 	end
 
-	if not current_action.alert_sound_range_fire then
+	if current_action.alert_sound_range_fire then
 		Managers.state.entity:system("ai_system"):alert_enemies_within_range(owner_unit, POSITION_LOOKUP[owner_unit], current_action.alert_sound_range_fire)
 	end
 end
@@ -264,65 +296,71 @@ ActionBountyHunterHandgun._do_aoe = function (self)
 	local world = self.world
 	local owner_unit = self.owner_unit
 	local current_action = self.current_action
-	local network = Managers.state.network
-	local get_data = World.get_data(world, "physics_world")
-	local unit_game_object_id = network:unit_game_object_id(owner_unit)
-	local forward = Quaternion.forward(Unit.local_rotation(owner_unit, 0))
-	local num = POSITION_LOOKUP[owner_unit] + forward * 0.5
-	local aoe_radius = current_action.aoe_radius
-	local str = "filter_melee_sweep"
-	local immediate_overlap, var_6_11 = PhysicsWorld.immediate_overlap(get_data, "shape", "sphere", "position", num, "size", aoe_radius, "types", "dynamics", "collision_filter", str)
+	local network_manager = Managers.state.network
+	local physics_world = World.get_data(world, "physics_world")
+	local attacker_unit_id = network_manager:unit_game_object_id(owner_unit)
+	local unit_forward = Quaternion.forward(Unit.local_rotation(owner_unit, 0))
+	local self_pos = POSITION_LOOKUP[owner_unit]
+	local attack_pos = self_pos + unit_forward * 0.5
+	local radius = current_action.aoe_radius
+	local collision_filter = "filter_melee_sweep"
+	local actors, actors_n = PhysicsWorld.immediate_overlap(physics_world, "shape", "sphere", "position", attack_pos, "size", radius, "types", "dynamics", "collision_filter", collision_filter)
 	local hit_units = self.hit_units
 
-	for i = 1, var_6_11 do
+	for i = 1, actors_n do
 		repeat
-			local var_6_13 = immediate_overlap[i]
-			local unit = Actor.unit(var_6_13)
-			local unit_breed = AiUtils.unit_breed(unit)
+			local hit_actor = actors[i]
+			local hit_unit = Actor.unit(hit_actor)
+			local breed = AiUtils.unit_breed(hit_unit)
 
-			if not (not unit_breed and hit_units[unit] or unit_breed.is_player) then
-				hit_units[unit] = true
+			if breed and not hit_units[hit_unit] and not breed.is_player then
+				hit_units[hit_unit] = true
 
-				local node = Actor.node(var_6_13)
-				local world_position = Unit.world_position(unit, node)
-				local normalize = Vector3.normalize(world_position - num)
-				local name = unit_breed.hit_zones_lookup[node].name
-				local var_6_20 = NetworkLookup.hit_zones[name]
-				local unit_game_object_id_2 = network:unit_game_object_id(unit)
+				local node = Actor.node(hit_actor)
+				local target_hit_position = Unit.world_position(hit_unit, node)
+				local attack_direction = Vector3.normalize(target_hit_position - attack_pos)
+				local hit_zone = breed.hit_zones_lookup[node]
+				local hit_zone_name = hit_zone.name
+				local hit_zone_id = NetworkLookup.hit_zones[hit_zone_name]
+				local hit_unit_id = network_manager:unit_game_object_id(hit_unit)
 				local power_level = self.power_level
-				local damage_profile_aoe_id = self.damage_profile_aoe_id
-				local attack_is_shield_blocked = AiUtils.attack_is_shield_blocked(unit, owner_unit)
-				local item_name = self.item_name
-				local var_6_26 = NetworkLookup.damage_sources[item_name]
+				local damage_profile_id = self.damage_profile_aoe_id
+				local shield_blocked = AiUtils.attack_is_shield_blocked(hit_unit, owner_unit)
+				local damage_source = self.item_name
+				local damage_source_id = NetworkLookup.damage_sources[damage_source]
 				local weapon_system = self.weapon_system
-				local num_2 = 1
+				local ranged_boost_curve_multiplier = 1
 				local is_critical_strike = self.is_critical_strike
-				local flag = false
-				local flag_2 = true
-				local var_6_32
+				local can_damage = false
+				local can_stagger = true
+				local target_index
 
-				weapon_system:send_rpc_attack_hit(var_6_26, unit_game_object_id, unit_game_object_id_2, var_6_20, world_position, normalize, damage_profile_aoe_id, "power_level", power_level, "hit_target_index", var_6_32, "blocking", attack_is_shield_blocked, "shield_break_procced", false, "boost_curve_multiplier", num_2, "is_critical_strike", is_critical_strike, "can_damage", flag, "can_stagger", flag_2)
+				weapon_system:send_rpc_attack_hit(damage_source_id, attacker_unit_id, hit_unit_id, hit_zone_id, target_hit_position, attack_direction, damage_profile_id, "power_level", power_level, "hit_target_index", target_index, "blocking", shield_blocked, "shield_break_procced", false, "boost_curve_multiplier", ranged_boost_curve_multiplier, "is_critical_strike", is_critical_strike, "can_damage", can_damage, "can_stagger", can_stagger)
 			end
 		until true
 	end
 end
 
-ActionBountyHunterHandgun.finish = function (self, arg_7_1)
+ActionBountyHunterHandgun.finish = function (self, reason)
 	-- function 7
 	local current_action = self.current_action
 	local owner_unit = self.owner_unit
 
-	if arg_7_1 ~= "new_interupting_action" then
-		ScriptUnit.extension(owner_unit, "status_system"):set_zooming(false)
+	if reason ~= "new_interupting_action" then
+		local status_extension = ScriptUnit.extension(owner_unit, "status_system")
+
+		status_extension:set_zooming(false)
 	end
 
-	if not current_action.block then
-		ScriptUnit.extension(owner_unit, "status_system"):set_blocking(false)
+	if current_action.block then
+		local status_extension = ScriptUnit.extension(owner_unit, "status_system")
+
+		status_extension:set_blocking(false)
 	end
 
-	local has_extension = ScriptUnit.has_extension(owner_unit, "hud_system")
+	local hud_extension = ScriptUnit.has_extension(owner_unit, "hud_system")
 
-	if not has_extension then
-		has_extension.show_critical_indication = false
+	if hud_extension then
+		hud_extension.show_critical_indication = false
 	end
 end

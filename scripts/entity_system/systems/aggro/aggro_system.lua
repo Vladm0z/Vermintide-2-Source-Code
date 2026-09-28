@@ -2,13 +2,13 @@
 
 AggroSystem = class(AggroSystem, ExtensionSystemBase)
 
-local tbl = {
+local extensions = {
 	"GenericAggroableExtension"
 }
 
-AggroSystem.init = function (self, arg_1_1, arg_1_2)
+AggroSystem.init = function (self, context, name)
 	-- function 1
-	AggroSystem.super.init(self, arg_1_1, arg_1_2, tbl)
+	AggroSystem.super.init(self, context, name, extensions)
 
 	self.aggroable_units = {
 		[0] = {}
@@ -23,36 +23,44 @@ AggroSystem.init = function (self, arg_1_1, arg_1_2)
 	self._reverse_lookup = {}
 end
 
-AggroSystem.on_add_extension = function (arg_2_0, arg_2_1, arg_2_2, arg_2_3, arg_2_4)
+AggroSystem.on_add_extension = function (self, world, unit, extension_name, extension_init_data)
 	-- function 2
-	local side = arg_2_4.side
+	local side_2 = extension_init_data.side
 
-	side = side or Managers.state.side:get_side_from_name("heroes")
+	if not side_2 then
+		-- Nothing
+	end
+
+	side_2 = Managers.state.side:get_side_from_name("heroes")
+
+	local side = side_2
+
+	::label_2_0::
 
 	local side_id = side.side_id
 
-	arg_2_0.aggroable_units[side_id][arg_2_2] = true
-	arg_2_0._reverse_lookup[arg_2_2] = side_id
+	self.aggroable_units[side_id][unit] = true
+	self._reverse_lookup[unit] = side_id
 
-	local game_object_or_level_id, var_2_3 = Managers.state.network:game_object_or_level_id(arg_2_2)
+	local _, is_level_unit = Managers.state.network:game_object_or_level_id(unit)
 
-	if not var_2_3 then
-		POSITION_LOOKUP[arg_2_2] = Unit.world_position(arg_2_2, 0)
+	if is_level_unit then
+		POSITION_LOOKUP[unit] = Unit.world_position(unit, 0)
 	end
 
-	return AggroSystem.super.on_add_extension(arg_2_0, arg_2_1, arg_2_2, arg_2_3, arg_2_4)
+	return AggroSystem.super.on_add_extension(self, world, unit, extension_name, extension_init_data)
 end
 
-AggroSystem.on_remove_extension = function (self, arg_3_1, arg_3_2)
+AggroSystem.on_remove_extension = function (self, unit, extension_name)
 	-- function 3
-	AggroSystem.super.on_remove_extension(self, arg_3_1, arg_3_2)
+	AggroSystem.super.on_remove_extension(self, unit, extension_name)
 
-	local var_3_0 = self._reverse_lookup[arg_3_1]
+	local side_id = self._reverse_lookup[unit]
 
-	self.aggroable_units[var_3_0][arg_3_1] = nil
-	self._reverse_lookup[arg_3_1] = nil
+	self.aggroable_units[side_id][unit] = nil
+	self._reverse_lookup[unit] = nil
 
-	Managers.state.side:remove_aggro_unit(var_3_0, arg_3_1)
+	Managers.state.side:remove_aggro_unit(side_id, unit)
 end
 
 AggroSystem.destroy = function (self)

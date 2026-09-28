@@ -8,7 +8,7 @@ PlayerControllerKeymaps = {}
 local PlayerControllerKeymaps = PlayerControllerKeymaps
 local keymaps_key_approved = InputUtils.keymaps_key_approved("win32")
 
-if not keymaps_key_approved then
+if keymaps_key_approved then
 	keymaps_key_approved = {
 		toggle_input_helper = {
 			"keyboard",
@@ -135,7 +135,7 @@ if not keymaps_key_approved then
 
 	local tbl
 
-	if not IS_XB1 then
+	if IS_XB1 then
 		tbl = {
 			"keyboard",
 			"5",
@@ -164,7 +164,7 @@ if not keymaps_key_approved then
 
 	local tbl_2
 
-	if not IS_XB1 then
+	if IS_XB1 then
 		tbl_2 = {
 			"keyboard",
 			"4",
@@ -540,7 +540,7 @@ PlayerControllerKeymaps.win32 = keymaps_key_approved
 local PlayerControllerKeymaps_2 = PlayerControllerKeymaps
 local keymaps_key_approved_2 = InputUtils.keymaps_key_approved("xb1")
 
-keymaps_key_approved_2 = not keymaps_key_approved_2 and {
+keymaps_key_approved_2 = not not keymaps_key_approved_2 and not not {
 	toggle_input_helper = {},
 	action_one = {
 		"gamepad",
@@ -896,7 +896,7 @@ local PlayerControllerKeymaps_3 = PlayerControllerKeymaps
 local str = "ps4"
 local keymaps_key_approved_3 = InputUtils.keymaps_key_approved("ps4")
 
-keymaps_key_approved_3 = not keymaps_key_approved_3 and {
+keymaps_key_approved_3 = not not keymaps_key_approved_3 and not not {
 	toggle_input_helper = {
 		"keyboard",
 		"f1",
@@ -1265,7 +1265,7 @@ local PlayerControllerKeymaps_4 = PlayerControllerKeymaps
 local str_2 = "ps_pad"
 local keymaps_key_approved_4 = InputUtils.keymaps_key_approved("ps_pad")
 
-keymaps_key_approved_4 = not keymaps_key_approved_4 and {
+keymaps_key_approved_4 = not not keymaps_key_approved_4 and not not {
 	toggle_input_helper = {
 		"keyboard",
 		"f1",
@@ -1635,7 +1635,7 @@ PlayerControllerFilters = {}
 local PlayerControllerFilters = PlayerControllerFilters
 local keymaps_key_approved_5 = InputUtils.keymaps_key_approved("win32")
 
-keymaps_key_approved_5 = not keymaps_key_approved_5 and {
+keymaps_key_approved_5 = not not keymaps_key_approved_5 and not not {
 	move = {
 		filter_type = "virtual_axis",
 		input_mappings = {
@@ -1743,7 +1743,7 @@ PlayerControllerFilters.win32 = keymaps_key_approved_5
 local PlayerControllerFilters_2 = PlayerControllerFilters
 local keymaps_key_approved_6 = InputUtils.keymaps_key_approved("xb1")
 
-keymaps_key_approved_6 = not keymaps_key_approved_6 and {
+keymaps_key_approved_6 = not not keymaps_key_approved_6 and not not {
 	look_controller = {
 		filter_type = "scale_vector3_xy_accelerated_x",
 		multiplier_return_y = 1.75,
@@ -1924,7 +1924,7 @@ keymaps_key_approved_6 = not keymaps_key_approved_6 and {
 }
 PlayerControllerFilters_2.xb1 = keymaps_key_approved_6
 
-local tbl_3 = {
+local PlayerControllerFilters_ps4 = {
 	look_controller = {
 		filter_type = "scale_vector3_xy_accelerated_x",
 		multiplier_min_x = 1.5,
@@ -2107,14 +2107,14 @@ local PlayerControllerFilters_3 = PlayerControllerFilters
 local str_3 = "ps4"
 local keymaps_key_approved_7 = InputUtils.keymaps_key_approved("ps4")
 
-keymaps_key_approved_7 = not keymaps_key_approved_7 and tbl_3
+keymaps_key_approved_7 = not not keymaps_key_approved_7 and not not PlayerControllerFilters_ps4
 PlayerControllerFilters_3[str_3] = keymaps_key_approved_7
 
 local PlayerControllerFilters_4 = PlayerControllerFilters
 local str_4 = "ps_pad"
 local keymaps_key_approved_8 = InputUtils.keymaps_key_approved("ps_pad")
 
-keymaps_key_approved_8 = not keymaps_key_approved_8 and tbl_3
+keymaps_key_approved_8 = not not keymaps_key_approved_8 and not not PlayerControllerFilters_ps4
 PlayerControllerFilters_4[str_4] = keymaps_key_approved_8
 TutorialPlayerControllerFilters = table.clone(PlayerControllerFilters)
 TwitchControllerSettings = {}
@@ -2122,7 +2122,7 @@ TwitchControllerSettings = {}
 local TwitchControllerSettings = TwitchControllerSettings
 local keymaps_key_approved_9 = InputUtils.keymaps_key_approved("win32")
 
-keymaps_key_approved_9 = not keymaps_key_approved_9 and {
+keymaps_key_approved_9 = not not keymaps_key_approved_9 and not not {
 	execute_login_1 = {
 		"keyboard",
 		"enter",
@@ -2165,7 +2165,7 @@ TwitchControllerFilters = {}
 local TwitchControllerFilters = TwitchControllerFilters
 local keymaps_key_approved_10 = InputUtils.keymaps_key_approved("win32")
 
-keymaps_key_approved_10 = not keymaps_key_approved_10 and {
+keymaps_key_approved_10 = not not keymaps_key_approved_10 and not not {
 	execute_login = {
 		filter_type = "or",
 		input_mappings = {
@@ -2180,7 +2180,7 @@ ChatControllerSettings = {}
 local ChatControllerSettings = ChatControllerSettings
 local keymaps_key_approved_11 = InputUtils.keymaps_key_approved("win32")
 
-keymaps_key_approved_11 = not keymaps_key_approved_11 and {
+keymaps_key_approved_11 = not not keymaps_key_approved_11 and not not {
 	activate_chat_input = {
 		"keyboard",
 		"y",
@@ -2312,7 +2312,7 @@ ChatControllerSettings.win32 = keymaps_key_approved_11
 local ChatControllerSettings_2 = ChatControllerSettings
 local keymaps_key_approved_12 = InputUtils.keymaps_key_approved("xb1")
 
-keymaps_key_approved_12 = not keymaps_key_approved_12 and {
+keymaps_key_approved_12 = not not keymaps_key_approved_12 and not not {
 	activate_chat_input = {
 		"keyboard",
 		"y",
@@ -2371,7 +2371,7 @@ local ChatControllerSettings_3 = ChatControllerSettings
 local str_5 = "ps4"
 local keymaps_key_approved_13 = InputUtils.keymaps_key_approved("ps4")
 
-keymaps_key_approved_13 = not keymaps_key_approved_13 and {
+keymaps_key_approved_13 = not not keymaps_key_approved_13 and not not {
 	activate_chat_input = {
 		"keyboard",
 		"y",
@@ -2430,7 +2430,7 @@ local ChatControllerSettings_4 = ChatControllerSettings
 local str_6 = "ps_pad"
 local keymaps_key_approved_14 = InputUtils.keymaps_key_approved("ps_pad")
 
-keymaps_key_approved_14 = not keymaps_key_approved_14 and {
+keymaps_key_approved_14 = not not keymaps_key_approved_14 and not not {
 	activate_chat_input = {
 		"keyboard",
 		"y",
@@ -2489,7 +2489,7 @@ ChatControllerFilters = {}
 local ChatControllerFilters = ChatControllerFilters
 local keymaps_key_approved_15 = InputUtils.keymaps_key_approved("win32")
 
-keymaps_key_approved_15 = not keymaps_key_approved_15 and {
+keymaps_key_approved_15 = not not keymaps_key_approved_15 and not not {
 	unallowed_activate_chat_input = {
 		filter_type = "or",
 		input_mappings = {
@@ -2539,7 +2539,7 @@ ChatControllerFilters.win32 = keymaps_key_approved_15
 local ChatControllerFilters_2 = ChatControllerFilters
 local keymaps_key_approved_16 = InputUtils.keymaps_key_approved("xb1")
 
-keymaps_key_approved_16 = not keymaps_key_approved_16 and {
+keymaps_key_approved_16 = not not keymaps_key_approved_16 and not not {
 	unallowed_activate_chat_input = {
 		filter_type = "or",
 		input_mappings = {
@@ -2558,7 +2558,7 @@ keymaps_key_approved_16 = not keymaps_key_approved_16 and {
 }
 ChatControllerFilters_2.xb1 = keymaps_key_approved_16
 
-local tbl_4 = {
+local ChatControllerFilters_ps4 = {
 	unallowed_activate_chat_input = {
 		filter_type = "or",
 		input_mappings = {
@@ -2579,21 +2579,21 @@ local ChatControllerFilters_3 = ChatControllerFilters
 local str_7 = "ps4"
 local keymaps_key_approved_17 = InputUtils.keymaps_key_approved("ps4")
 
-keymaps_key_approved_17 = not keymaps_key_approved_17 and tbl_4
+keymaps_key_approved_17 = not not keymaps_key_approved_17 and not not ChatControllerFilters_ps4
 ChatControllerFilters_3[str_7] = keymaps_key_approved_17
 
 local ChatControllerFilters_4 = ChatControllerFilters
 local str_8 = "ps_pad"
 local keymaps_key_approved_18 = InputUtils.keymaps_key_approved("ps_pad")
 
-keymaps_key_approved_18 = not keymaps_key_approved_18 and tbl_4
+keymaps_key_approved_18 = not not keymaps_key_approved_18 and not not ChatControllerFilters_ps4
 ChatControllerFilters_4[str_8] = keymaps_key_approved_18
 RconControllerSettings = {}
 
 local RconControllerSettings = RconControllerSettings
 local keymaps_key_approved_19 = InputUtils.keymaps_key_approved("win32")
 
-keymaps_key_approved_19 = not keymaps_key_approved_19 and {
+keymaps_key_approved_19 = not not keymaps_key_approved_19 and not not {
 	activate_menu = {
 		"keyboard",
 		"f2",
@@ -2650,7 +2650,7 @@ RconControllerSettings.win32 = keymaps_key_approved_19
 local RconControllerSettings_2 = RconControllerSettings
 local keymaps_key_approved_20 = InputUtils.keymaps_key_approved("xb1")
 
-keymaps_key_approved_20 = not keymaps_key_approved_20 and {
+keymaps_key_approved_20 = not not keymaps_key_approved_20 and not not {
 	activate_menu = {
 		"keyboard",
 		"f2",
@@ -2709,7 +2709,7 @@ FreeFlightKeymaps = {}
 local FreeFlightKeymaps = FreeFlightKeymaps
 local keymaps_key_approved_21 = InputUtils.keymaps_key_approved("win32")
 
-keymaps_key_approved_21 = not keymaps_key_approved_21 and {
+keymaps_key_approved_21 = not not keymaps_key_approved_21 and not not {
 	quit_game = {
 		"keyboard",
 		"esc",
@@ -3016,7 +3016,7 @@ FreeFlightKeymaps.win32 = keymaps_key_approved_21
 local FreeFlightKeymaps_2 = FreeFlightKeymaps
 local keymaps_key_approved_22 = InputUtils.keymaps_key_approved("xb1")
 
-keymaps_key_approved_22 = not keymaps_key_approved_22 and {
+keymaps_key_approved_22 = not not keymaps_key_approved_22 and not not {
 	quit_game = {
 		"keyboard",
 		"esc",
@@ -3289,7 +3289,7 @@ local FreeFlightKeymaps_3 = FreeFlightKeymaps
 local str_9 = "ps4"
 local keymaps_key_approved_23 = InputUtils.keymaps_key_approved("ps4")
 
-keymaps_key_approved_23 = not keymaps_key_approved_23 and {
+keymaps_key_approved_23 = not not keymaps_key_approved_23 and not not {
 	quit_game = {
 		"keyboard",
 		"esc",
@@ -3597,7 +3597,7 @@ local FreeFlightKeymaps_4 = FreeFlightKeymaps
 local str_10 = "ps_pad"
 local keymaps_key_approved_24 = InputUtils.keymaps_key_approved("ps_pad")
 
-keymaps_key_approved_24 = not keymaps_key_approved_24 and {
+keymaps_key_approved_24 = not not keymaps_key_approved_24 and not not {
 	quit_game = {
 		"keyboard",
 		"esc",
@@ -3905,7 +3905,7 @@ FreeFlightFilters = {}
 local FreeFlightFilters = FreeFlightFilters
 local keymaps_key_approved_25 = InputUtils.keymaps_key_approved("win32")
 
-keymaps_key_approved_25 = not keymaps_key_approved_25 and {
+keymaps_key_approved_25 = not not keymaps_key_approved_25 and not not {
 	move = {
 		filter_type = "virtual_axis",
 		input_mappings = {
@@ -3958,7 +3958,7 @@ FreeFlightFilters.win32 = keymaps_key_approved_25
 local FreeFlightFilters_2 = FreeFlightFilters
 local keymaps_key_approved_26 = InputUtils.keymaps_key_approved("xb1")
 
-keymaps_key_approved_26 = not keymaps_key_approved_26 and {
+keymaps_key_approved_26 = not not keymaps_key_approved_26 and not not {
 	look = {
 		multiplier_y = -400.5,
 		power_of = 2,
@@ -4039,7 +4039,7 @@ keymaps_key_approved_26 = not keymaps_key_approved_26 and {
 }
 FreeFlightFilters_2.xb1 = keymaps_key_approved_26
 
-local tbl_5 = {
+local FreeFlightFilters_ps4 = {
 	look = {
 		multiplier_y = -400.5,
 		power_of = 2,
@@ -4131,21 +4131,21 @@ local FreeFlightFilters_3 = FreeFlightFilters
 local str_11 = "ps4"
 local keymaps_key_approved_27 = InputUtils.keymaps_key_approved("ps4")
 
-keymaps_key_approved_27 = not keymaps_key_approved_27 and tbl_5
+keymaps_key_approved_27 = not not keymaps_key_approved_27 and not not FreeFlightFilters_ps4
 FreeFlightFilters_3[str_11] = keymaps_key_approved_27
 
 local FreeFlightFilters_4 = FreeFlightFilters
 local str_12 = "ps_pad"
 local keymaps_key_approved_28 = InputUtils.keymaps_key_approved("ps_pad")
 
-keymaps_key_approved_28 = not keymaps_key_approved_28 and tbl_5
+keymaps_key_approved_28 = not not keymaps_key_approved_28 and not not FreeFlightFilters_ps4
 FreeFlightFilters_4[str_12] = keymaps_key_approved_28
 SplashScreenKeymaps = {}
 
 local SplashScreenKeymaps = SplashScreenKeymaps
 local keymaps_key_approved_29 = InputUtils.keymaps_key_approved("win32")
 
-keymaps_key_approved_29 = not keymaps_key_approved_29 and {
+keymaps_key_approved_29 = not not keymaps_key_approved_29 and not not {
 	skip_splash_1 = {
 		"keyboard",
 		"enter",
@@ -4182,7 +4182,7 @@ SplashScreenKeymaps.win32 = keymaps_key_approved_29
 local SplashScreenKeymaps_2 = SplashScreenKeymaps
 local keymaps_key_approved_30 = InputUtils.keymaps_key_approved("xb1")
 
-keymaps_key_approved_30 = not keymaps_key_approved_30 and {
+keymaps_key_approved_30 = not not keymaps_key_approved_30 and not not {
 	skip_splash = {
 		"gamepad",
 		"a",
@@ -4195,7 +4195,7 @@ local SplashScreenKeymaps_3 = SplashScreenKeymaps
 local str_13 = "ps4"
 local keymaps_key_approved_31 = InputUtils.keymaps_key_approved("ps4")
 
-keymaps_key_approved_31 = not keymaps_key_approved_31 and {
+keymaps_key_approved_31 = not not keymaps_key_approved_31 and not not {
 	skip_splash = {
 		"gamepad",
 		"cross",
@@ -4208,7 +4208,7 @@ local SplashScreenKeymaps_4 = SplashScreenKeymaps
 local str_14 = "ps_pad"
 local keymaps_key_approved_32 = InputUtils.keymaps_key_approved("ps_pad")
 
-keymaps_key_approved_32 = not keymaps_key_approved_32 and {
+keymaps_key_approved_32 = not not keymaps_key_approved_32 and not not {
 	skip_splash = {
 		"ps_pad",
 		"cross",
@@ -4221,7 +4221,7 @@ SplashScreenFilters = {}
 local SplashScreenFilters = SplashScreenFilters
 local keymaps_key_approved_33 = InputUtils.keymaps_key_approved("win32")
 
-keymaps_key_approved_33 = not keymaps_key_approved_33 and {
+keymaps_key_approved_33 = not not keymaps_key_approved_33 and not not {
 	skip_splash = {
 		filter_type = "or",
 		input_mappings = {
@@ -4239,28 +4239,28 @@ SplashScreenFilters.win32 = keymaps_key_approved_33
 local SplashScreenFilters_2 = SplashScreenFilters
 local keymaps_key_approved_34 = InputUtils.keymaps_key_approved("xb1")
 
-keymaps_key_approved_34 = not keymaps_key_approved_34 and {}
+keymaps_key_approved_34 = not not keymaps_key_approved_34 and not not {}
 SplashScreenFilters_2.xb1 = keymaps_key_approved_34
 
 local SplashScreenFilters_3 = SplashScreenFilters
 local str_15 = "ps4"
 local keymaps_key_approved_35 = InputUtils.keymaps_key_approved("ps4")
 
-keymaps_key_approved_35 = not keymaps_key_approved_35 and {}
+keymaps_key_approved_35 = not not keymaps_key_approved_35 and not not {}
 SplashScreenFilters_3[str_15] = keymaps_key_approved_35
 
 local SplashScreenFilters_4 = SplashScreenFilters
 local str_16 = "ps_pad"
 local keymaps_key_approved_36 = InputUtils.keymaps_key_approved("ps_pad")
 
-keymaps_key_approved_36 = not keymaps_key_approved_36 and {}
+keymaps_key_approved_36 = not not keymaps_key_approved_36 and not not {}
 SplashScreenFilters_4[str_16] = keymaps_key_approved_36
 TitleLoadingKeyMaps = {}
 
 local TitleLoadingKeyMaps = TitleLoadingKeyMaps
 local keymaps_key_approved_37 = InputUtils.keymaps_key_approved("win32")
 
-keymaps_key_approved_37 = not keymaps_key_approved_37 and {
+keymaps_key_approved_37 = not not keymaps_key_approved_37 and not not {
 	cancel_video_1 = {
 		"keyboard",
 		"space",
@@ -4332,7 +4332,7 @@ TitleLoadingKeyMaps.win32 = keymaps_key_approved_37
 local TitleLoadingKeyMaps_2 = TitleLoadingKeyMaps
 local keymaps_key_approved_38 = InputUtils.keymaps_key_approved("xb1")
 
-keymaps_key_approved_38 = not keymaps_key_approved_38 and {
+keymaps_key_approved_38 = not not keymaps_key_approved_38 and not not {
 	cancel_video_1 = {
 		"gamepad",
 		"a",
@@ -4375,7 +4375,7 @@ local TitleLoadingKeyMaps_3 = TitleLoadingKeyMaps
 local str_17 = "ps4"
 local keymaps_key_approved_39 = InputUtils.keymaps_key_approved("ps4")
 
-keymaps_key_approved_39 = not keymaps_key_approved_39 and {
+keymaps_key_approved_39 = not not keymaps_key_approved_39 and not not {
 	cancel_video_1 = {
 		"gamepad",
 		"cross",
@@ -4418,7 +4418,7 @@ local TitleLoadingKeyMaps_4 = TitleLoadingKeyMaps
 local str_18 = "ps_pad"
 local keymaps_key_approved_40 = InputUtils.keymaps_key_approved("ps_pad")
 
-keymaps_key_approved_40 = not keymaps_key_approved_40 and {
+keymaps_key_approved_40 = not not keymaps_key_approved_40 and not not {
 	cancel_video_1 = {
 		"ps_pad",
 		"cross",
@@ -4461,7 +4461,7 @@ TitleLoadingFilters = {}
 local TitleLoadingFilters = TitleLoadingFilters
 local keymaps_key_approved_41 = InputUtils.keymaps_key_approved("win32")
 
-keymaps_key_approved_41 = not keymaps_key_approved_41 and {
+keymaps_key_approved_41 = not not keymaps_key_approved_41 and not not {
 	cancel_video = {
 		filter_type = "or",
 		input_mappings = {
@@ -4476,7 +4476,7 @@ TitleLoadingFilters.win32 = keymaps_key_approved_41
 local TitleLoadingFilters_2 = TitleLoadingFilters
 local keymaps_key_approved_42 = InputUtils.keymaps_key_approved("xb1")
 
-keymaps_key_approved_42 = not keymaps_key_approved_42 and {
+keymaps_key_approved_42 = not not keymaps_key_approved_42 and not not {
 	cancel_video = {
 		filter_type = "or",
 		input_mappings = {
@@ -4486,7 +4486,7 @@ keymaps_key_approved_42 = not keymaps_key_approved_42 and {
 }
 TitleLoadingFilters_2.xb1 = keymaps_key_approved_42
 
-local tbl_6 = {
+local TitleLoadingFilters_ps4 = {
 	cancel_video = {
 		filter_type = "or",
 		input_mappings = {
@@ -4498,21 +4498,21 @@ local TitleLoadingFilters_3 = TitleLoadingFilters
 local str_19 = "ps4"
 local keymaps_key_approved_43 = InputUtils.keymaps_key_approved("ps4")
 
-keymaps_key_approved_43 = not keymaps_key_approved_43 and tbl_6
+keymaps_key_approved_43 = not not keymaps_key_approved_43 and not not TitleLoadingFilters_ps4
 TitleLoadingFilters_3[str_19] = keymaps_key_approved_43
 
 local TitleLoadingFilters_4 = TitleLoadingFilters
 local str_20 = "ps_pad"
 local keymaps_key_approved_44 = InputUtils.keymaps_key_approved("ps_pad")
 
-keymaps_key_approved_44 = not keymaps_key_approved_44 and tbl_6
+keymaps_key_approved_44 = not not keymaps_key_approved_44 and not not TitleLoadingFilters_ps4
 TitleLoadingFilters_4[str_20] = keymaps_key_approved_44
 TitleScreenKeyMaps = {}
 
 local TitleScreenKeyMaps = TitleScreenKeyMaps
 local keymaps_key_approved_45 = InputUtils.keymaps_key_approved("win32")
 
-keymaps_key_approved_45 = not keymaps_key_approved_45 and {
+keymaps_key_approved_45 = not not keymaps_key_approved_45 and not not {
 	move_up_raw = {
 		"keyboard",
 		"up",
@@ -4633,7 +4633,7 @@ TitleScreenKeyMaps.win32 = keymaps_key_approved_45
 local TitleScreenKeyMaps_2 = TitleScreenKeyMaps
 local keymaps_key_approved_46 = InputUtils.keymaps_key_approved("xb1")
 
-keymaps_key_approved_46 = not keymaps_key_approved_46 and {
+keymaps_key_approved_46 = not not keymaps_key_approved_46 and not not {
 	move_left_raw = {
 		"gamepad",
 		"d_left",
@@ -4746,7 +4746,7 @@ local TitleScreenKeyMaps_3 = TitleScreenKeyMaps
 local str_21 = "ps4"
 local keymaps_key_approved_47 = InputUtils.keymaps_key_approved("ps4")
 
-keymaps_key_approved_47 = not keymaps_key_approved_47 and {
+keymaps_key_approved_47 = not not keymaps_key_approved_47 and not not {
 	move_left_raw = {
 		"gamepad",
 		"left",
@@ -4859,7 +4859,7 @@ local TitleScreenKeyMaps_4 = TitleScreenKeyMaps
 local str_22 = "ps_pad"
 local keymaps_key_approved_48 = InputUtils.keymaps_key_approved("ps_pad")
 
-keymaps_key_approved_48 = not keymaps_key_approved_48 and {
+keymaps_key_approved_48 = not not keymaps_key_approved_48 and not not {
 	move_left_raw = {
 		"ps_pad",
 		"left",
@@ -4972,7 +4972,7 @@ TitleScreenFilters = {}
 local TitleScreenFilters = TitleScreenFilters
 local keymaps_key_approved_49 = InputUtils.keymaps_key_approved("win32")
 
-keymaps_key_approved_49 = not keymaps_key_approved_49 and {
+keymaps_key_approved_49 = not not keymaps_key_approved_49 and not not {
 	start = {
 		filter_type = "or",
 		input_mappings = {
@@ -5060,7 +5060,7 @@ TitleScreenFilters.win32 = keymaps_key_approved_49
 local TitleScreenFilters_2 = TitleScreenFilters
 local keymaps_key_approved_50 = InputUtils.keymaps_key_approved("xb1")
 
-keymaps_key_approved_50 = not keymaps_key_approved_50 and {
+keymaps_key_approved_50 = not not keymaps_key_approved_50 and not not {
 	start = {
 		filter_type = "or",
 		input_mappings = {
@@ -5150,7 +5150,7 @@ keymaps_key_approved_50 = not keymaps_key_approved_50 and {
 }
 TitleScreenFilters_2.xb1 = keymaps_key_approved_50
 
-local tbl_7 = {
+local TitleScreenFilters_ps4 = {
 	start = {
 		filter_type = "or",
 		input_mappings = {
@@ -5242,21 +5242,21 @@ local TitleScreenFilters_3 = TitleScreenFilters
 local str_23 = "ps4"
 local keymaps_key_approved_51 = InputUtils.keymaps_key_approved("ps4")
 
-keymaps_key_approved_51 = not keymaps_key_approved_51 and tbl_7
+keymaps_key_approved_51 = not not keymaps_key_approved_51 and not not TitleScreenFilters_ps4
 TitleScreenFilters_3[str_23] = keymaps_key_approved_51
 
 local TitleScreenFilters_4 = TitleScreenFilters
 local str_24 = "ps_pad"
 local keymaps_key_approved_52 = InputUtils.keymaps_key_approved("ps_pad")
 
-keymaps_key_approved_52 = not keymaps_key_approved_52 and tbl_7
+keymaps_key_approved_52 = not not keymaps_key_approved_52 and not not TitleScreenFilters_ps4
 TitleScreenFilters_4[str_24] = keymaps_key_approved_52
 DemoUIKeyMaps = {}
 
 local DemoUIKeyMaps = DemoUIKeyMaps
 local keymaps_key_approved_53 = InputUtils.keymaps_key_approved("win32")
 
-keymaps_key_approved_53 = not keymaps_key_approved_53 and {
+keymaps_key_approved_53 = not not keymaps_key_approved_53 and not not {
 	left = {
 		"gamepad",
 		"d_left",
@@ -5318,7 +5318,7 @@ DemoUIKeyMaps.win32 = keymaps_key_approved_53
 local DemoUIKeyMaps_2 = DemoUIKeyMaps
 local keymaps_key_approved_54 = InputUtils.keymaps_key_approved("xb1")
 
-keymaps_key_approved_54 = not keymaps_key_approved_54 and {
+keymaps_key_approved_54 = not not keymaps_key_approved_54 and not not {
 	left = {
 		"gamepad",
 		"d_left",
@@ -5356,7 +5356,7 @@ local DemoUIKeyMaps_3 = DemoUIKeyMaps
 local str_25 = "ps4"
 local keymaps_key_approved_55 = InputUtils.keymaps_key_approved("ps4")
 
-keymaps_key_approved_55 = not keymaps_key_approved_55 and {
+keymaps_key_approved_55 = not not keymaps_key_approved_55 and not not {
 	left = {
 		"gamepad",
 		"left",
@@ -5394,7 +5394,7 @@ local DemoUIKeyMaps_4 = DemoUIKeyMaps
 local str_26 = "ps_pad"
 local keymaps_key_approved_56 = InputUtils.keymaps_key_approved("ps_pad")
 
-keymaps_key_approved_56 = not keymaps_key_approved_56 and {
+keymaps_key_approved_56 = not not keymaps_key_approved_56 and not not {
 	left = {
 		"ps_pad",
 		"left",
@@ -5432,7 +5432,7 @@ DemoUIFilters = {}
 local DemoUIFilters = DemoUIFilters
 local keymaps_key_approved_57 = InputUtils.keymaps_key_approved("win32")
 
-keymaps_key_approved_57 = not keymaps_key_approved_57 and {
+keymaps_key_approved_57 = not not keymaps_key_approved_57 and not not {
 	start = {
 		filter_type = "or",
 		input_mappings = {
@@ -5456,28 +5456,28 @@ DemoUIFilters.win32 = keymaps_key_approved_57
 local DemoUIFilters_2 = DemoUIFilters
 local keymaps_key_approved_58 = InputUtils.keymaps_key_approved("xb1")
 
-keymaps_key_approved_58 = not keymaps_key_approved_58 and {}
+keymaps_key_approved_58 = not not keymaps_key_approved_58 and not not {}
 DemoUIFilters_2.xb1 = keymaps_key_approved_58
 
 local DemoUIFilters_3 = DemoUIFilters
 local str_27 = "ps4"
 local keymaps_key_approved_59 = InputUtils.keymaps_key_approved("ps4")
 
-keymaps_key_approved_59 = not keymaps_key_approved_59 and {}
+keymaps_key_approved_59 = not not keymaps_key_approved_59 and not not {}
 DemoUIFilters_3[str_27] = keymaps_key_approved_59
 
 local DemoUIFilters_4 = DemoUIFilters
 local str_28 = "ps_pad"
 local keymaps_key_approved_60 = InputUtils.keymaps_key_approved("ps_pad")
 
-keymaps_key_approved_60 = not keymaps_key_approved_60 and {}
+keymaps_key_approved_60 = not not keymaps_key_approved_60 and not not {}
 DemoUIFilters_4[str_28] = keymaps_key_approved_60
 IngamePlayerListKeymaps = {}
 
 local IngamePlayerListKeymaps = IngamePlayerListKeymaps
 local keymaps_key_approved_61 = InputUtils.keymaps_key_approved("win32")
 
-keymaps_key_approved_61 = not keymaps_key_approved_61 and {
+keymaps_key_approved_61 = not not keymaps_key_approved_61 and not not {
 	toggle_menu = {
 		"keyboard",
 		"esc",
@@ -5626,7 +5626,7 @@ IngamePlayerListKeymaps.win32 = keymaps_key_approved_61
 local IngamePlayerListKeymaps_2 = IngamePlayerListKeymaps
 local keymaps_key_approved_62 = InputUtils.keymaps_key_approved("xb1")
 
-keymaps_key_approved_62 = not keymaps_key_approved_62 and {
+keymaps_key_approved_62 = not not keymaps_key_approved_62 and not not {
 	toggle_menu = {
 		"gamepad",
 		"start",
@@ -5738,7 +5738,7 @@ local IngamePlayerListKeymaps_3 = IngamePlayerListKeymaps
 local str_29 = "ps4"
 local keymaps_key_approved_63 = InputUtils.keymaps_key_approved("ps4")
 
-keymaps_key_approved_63 = not keymaps_key_approved_63 and {
+keymaps_key_approved_63 = not not keymaps_key_approved_63 and not not {
 	toggle_menu = {
 		"gamepad",
 		"options",
@@ -5850,7 +5850,7 @@ local IngamePlayerListKeymaps_4 = IngamePlayerListKeymaps
 local str_30 = "ps_pad"
 local keymaps_key_approved_64 = InputUtils.keymaps_key_approved("ps_pad")
 
-keymaps_key_approved_64 = not keymaps_key_approved_64 and {
+keymaps_key_approved_64 = not not keymaps_key_approved_64 and not not {
 	toggle_menu = {
 		"ps_pad",
 		"options",
@@ -5962,7 +5962,7 @@ IngamePlayerListFilters = {}
 local IngamePlayerListFilters = IngamePlayerListFilters
 local keymaps_key_approved_65 = InputUtils.keymaps_key_approved("win32")
 
-keymaps_key_approved_65 = not keymaps_key_approved_65 and {
+keymaps_key_approved_65 = not not keymaps_key_approved_65 and not not {
 	ingame_player_list_exit = {
 		filter_type = "or",
 		input_mappings = {
@@ -6019,7 +6019,7 @@ IngamePlayerListFilters.win32 = keymaps_key_approved_65
 local IngamePlayerListFilters_2 = IngamePlayerListFilters
 local keymaps_key_approved_66 = InputUtils.keymaps_key_approved("xb1")
 
-keymaps_key_approved_66 = not keymaps_key_approved_66 and {
+keymaps_key_approved_66 = not not keymaps_key_approved_66 and not not {
 	cursor = {
 		filter_type = "gamepad_cursor",
 		multiplier = 1000,
@@ -6037,7 +6037,7 @@ keymaps_key_approved_66 = not keymaps_key_approved_66 and {
 }
 IngamePlayerListFilters_2.xb1 = keymaps_key_approved_66
 
-local tbl_8 = {
+local IngamePlayerListFilters_ps4 = {
 	cursor = {
 		filter_type = "gamepad_cursor",
 		multiplier = 1000,
@@ -6057,21 +6057,21 @@ local IngamePlayerListFilters_3 = IngamePlayerListFilters
 local str_31 = "ps4"
 local keymaps_key_approved_67 = InputUtils.keymaps_key_approved("ps4")
 
-keymaps_key_approved_67 = not keymaps_key_approved_67 and tbl_8
+keymaps_key_approved_67 = not not keymaps_key_approved_67 and not not IngamePlayerListFilters_ps4
 IngamePlayerListFilters_3[str_31] = keymaps_key_approved_67
 
 local IngamePlayerListFilters_4 = IngamePlayerListFilters
 local str_32 = "ps_pad"
 local keymaps_key_approved_68 = InputUtils.keymaps_key_approved("ps_pad")
 
-keymaps_key_approved_68 = not keymaps_key_approved_68 and tbl_8
+keymaps_key_approved_68 = not not keymaps_key_approved_68 and not not IngamePlayerListFilters_ps4
 IngamePlayerListFilters_4[str_32] = keymaps_key_approved_68
 IngameMenuKeymaps = {}
 
 local IngameMenuKeymaps = IngameMenuKeymaps
 local keymaps_key_approved_69 = InputUtils.keymaps_key_approved("win32")
 
-if not keymaps_key_approved_69 then
+if keymaps_key_approved_69 then
 	keymaps_key_approved_69 = {
 		ingame_vote_yes = {
 			"keyboard",
@@ -6095,702 +6095,702 @@ if not keymaps_key_approved_69 then
 		}
 	}
 
-	local tbl_9 = {
+	local tbl_3 = {
 		"keyboard",
 		nil,
 		"pressed"
 	}
 	local flag
 
-	flag = not IS_XB1 and "b" and "f10"
-	tbl_9[2] = flag
-	keymaps_key_approved_69.cancel_matchmaking = tbl_9
+	flag = (not IS_XB1 or not "b") and not not "f10"
+	tbl_3[2] = flag
+	keymaps_key_approved_69.cancel_matchmaking = tbl_3
 
-	local tbl_10 = {
+	local tbl_4 = {
 		"keyboard",
 		"esc",
 		"pressed"
 	}
 
-	keymaps_key_approved_69.xbox_cancel_matchmaking = tbl_10
+	keymaps_key_approved_69.xbox_cancel_matchmaking = tbl_4
 
-	local tbl_11 = {
+	local tbl_5 = {
 		"keyboard",
 		"f2",
 		"pressed"
 	}
 
-	keymaps_key_approved_69.matchmaking_ready_instigate = tbl_11
+	keymaps_key_approved_69.matchmaking_ready_instigate = tbl_5
 
-	local tbl_12 = {
+	local tbl_6 = {
 		"keyboard",
 		"f2",
 		"pressed"
 	}
 
-	keymaps_key_approved_69.matchmaking_ready = tbl_12
+	keymaps_key_approved_69.matchmaking_ready = tbl_6
 
-	local tbl_13 = {
+	local tbl_7 = {
 		"keyboard",
 		"f3",
 		"pressed"
 	}
 
-	keymaps_key_approved_69.matchmaking_start = tbl_13
+	keymaps_key_approved_69.matchmaking_start = tbl_7
 
-	local tbl_14 = {
+	local tbl_8 = {
 		"keyboard",
 		"esc",
 		"pressed"
 	}
 
-	keymaps_key_approved_69.toggle_menu = tbl_14
+	keymaps_key_approved_69.toggle_menu = tbl_8
 
-	local tbl_15 = {
+	local tbl_9 = {
 		"mouse",
 		"right",
 		"pressed"
 	}
 
-	keymaps_key_approved_69.back_menu = tbl_15
+	keymaps_key_approved_69.back_menu = tbl_9
 
-	local tbl_16 = {
+	local tbl_10 = {
 		"mouse",
 		"extra_1",
 		"released"
 	}
 
-	keymaps_key_approved_69.back_menu_alt = tbl_16
+	keymaps_key_approved_69.back_menu_alt = tbl_10
+
+	local tbl_11 = {
+		"keyboard",
+		"up",
+		"pressed"
+	}
+
+	keymaps_key_approved_69.move_up_raw = tbl_11
+
+	local tbl_12 = {
+		"keyboard",
+		"down",
+		"pressed"
+	}
+
+	keymaps_key_approved_69.move_down_raw = tbl_12
+
+	local tbl_13 = {
+		"keyboard",
+		"left",
+		"pressed"
+	}
+
+	keymaps_key_approved_69.move_left_raw = tbl_13
+
+	local tbl_14 = {
+		"keyboard",
+		"right",
+		"pressed"
+	}
+
+	keymaps_key_approved_69.move_right_raw = tbl_14
+
+	local tbl_15 = {
+		"keyboard",
+		"up",
+		"held"
+	}
+
+	keymaps_key_approved_69.move_up_hold_raw = tbl_15
+
+	local tbl_16 = {
+		"keyboard",
+		"down",
+		"held"
+	}
+
+	keymaps_key_approved_69.move_down_hold_raw = tbl_16
 
 	local tbl_17 = {
 		"keyboard",
-		"up",
-		"pressed"
+		"left",
+		"held"
 	}
 
-	keymaps_key_approved_69.move_up_raw = tbl_17
+	keymaps_key_approved_69.move_left_hold_raw = tbl_17
 
 	local tbl_18 = {
 		"keyboard",
-		"down",
-		"pressed"
+		"right",
+		"held"
 	}
 
-	keymaps_key_approved_69.move_down_raw = tbl_18
+	keymaps_key_approved_69.move_right_hold_raw = tbl_18
 
 	local tbl_19 = {
 		"keyboard",
-		"left",
+		"w",
 		"pressed"
 	}
 
-	keymaps_key_approved_69.move_left_raw = tbl_19
+	keymaps_key_approved_69.move_up_alt_raw = tbl_19
 
 	local tbl_20 = {
 		"keyboard",
-		"right",
+		"s",
 		"pressed"
 	}
 
-	keymaps_key_approved_69.move_right_raw = tbl_20
+	keymaps_key_approved_69.move_down_alt_raw = tbl_20
 
 	local tbl_21 = {
 		"keyboard",
-		"up",
-		"held"
+		"a",
+		"pressed"
 	}
 
-	keymaps_key_approved_69.move_up_hold_raw = tbl_21
+	keymaps_key_approved_69.move_left_alt_raw = tbl_21
 
 	local tbl_22 = {
 		"keyboard",
-		"down",
-		"held"
+		"d",
+		"pressed"
 	}
 
-	keymaps_key_approved_69.move_down_hold_raw = tbl_22
+	keymaps_key_approved_69.move_right_alt_raw = tbl_22
 
 	local tbl_23 = {
 		"keyboard",
-		"left",
+		"w",
 		"held"
 	}
 
-	keymaps_key_approved_69.move_left_hold_raw = tbl_23
+	keymaps_key_approved_69.move_up_alt_hold_raw = tbl_23
 
 	local tbl_24 = {
 		"keyboard",
-		"right",
+		"s",
 		"held"
 	}
 
-	keymaps_key_approved_69.move_right_hold_raw = tbl_24
+	keymaps_key_approved_69.move_down_alt_hold_raw = tbl_24
 
 	local tbl_25 = {
 		"keyboard",
-		"w",
-		"pressed"
+		"a",
+		"held"
 	}
 
-	keymaps_key_approved_69.move_up_alt_raw = tbl_25
+	keymaps_key_approved_69.move_left_alt_hold_raw = tbl_25
 
 	local tbl_26 = {
 		"keyboard",
-		"s",
-		"pressed"
+		"d",
+		"held"
 	}
 
-	keymaps_key_approved_69.move_down_alt_raw = tbl_26
+	keymaps_key_approved_69.move_right_alt_hold_raw = tbl_26
 
 	local tbl_27 = {
-		"keyboard",
-		"a",
-		"pressed"
-	}
-
-	keymaps_key_approved_69.move_left_alt_raw = tbl_27
-
-	local tbl_28 = {
-		"keyboard",
-		"d",
-		"pressed"
-	}
-
-	keymaps_key_approved_69.move_right_alt_raw = tbl_28
-
-	local tbl_29 = {
-		"keyboard",
-		"w",
-		"held"
-	}
-
-	keymaps_key_approved_69.move_up_alt_hold_raw = tbl_29
-
-	local tbl_30 = {
-		"keyboard",
-		"s",
-		"held"
-	}
-
-	keymaps_key_approved_69.move_down_alt_hold_raw = tbl_30
-
-	local tbl_31 = {
-		"keyboard",
-		"a",
-		"held"
-	}
-
-	keymaps_key_approved_69.move_left_alt_hold_raw = tbl_31
-
-	local tbl_32 = {
-		"keyboard",
-		"d",
-		"held"
-	}
-
-	keymaps_key_approved_69.move_right_alt_hold_raw = tbl_32
-
-	local tbl_33 = {
 		"keyboard",
 		"left alt",
 		"pressed"
 	}
 
-	keymaps_key_approved_69.versus_menu_toggle = tbl_33
+	keymaps_key_approved_69.versus_menu_toggle = tbl_27
 
-	local tbl_34 = {}
+	local tbl_28 = {}
 
-	keymaps_key_approved_69.analog_input = tbl_34
+	keymaps_key_approved_69.analog_input = tbl_28
 
-	local tbl_35 = {
+	local tbl_29 = {
 		"keyboard",
 		"space",
 		"held"
 	}
 
-	keymaps_key_approved_69.skip = tbl_35
+	keymaps_key_approved_69.skip = tbl_29
 
-	local tbl_36 = {
+	local tbl_30 = {
 		"keyboard",
 		"space",
 		"pressed"
 	}
 
-	keymaps_key_approved_69.skip_pressed = tbl_36
+	keymaps_key_approved_69.skip_pressed = tbl_30
 	keymaps_key_approved_69.cursor = {
 		"mouse",
 		"cursor",
 		"axis"
 	}
 
-	local tbl_37 = {
+	local tbl_31 = {
 		"mouse",
 		"left",
 		"released"
 	}
 
-	keymaps_key_approved_69.left_release = tbl_37
+	keymaps_key_approved_69.left_release = tbl_31
 
-	local tbl_38 = {
+	local tbl_32 = {
 		"mouse",
 		"left",
 		"held"
 	}
 
-	keymaps_key_approved_69.left_hold = tbl_38
+	keymaps_key_approved_69.left_hold = tbl_32
 
-	local tbl_39 = {
+	local tbl_33 = {
 		"mouse",
 		"left",
 		"pressed"
 	}
 
-	keymaps_key_approved_69.left_press = tbl_39
+	keymaps_key_approved_69.left_press = tbl_33
 
-	local tbl_40 = {
+	local tbl_34 = {
 		"mouse",
 		"right",
 		"pressed"
 	}
 
-	keymaps_key_approved_69.right_press = tbl_40
+	keymaps_key_approved_69.right_press = tbl_34
 
-	local tbl_41 = {
+	local tbl_35 = {
 		"mouse",
 		"middle",
 		"pressed"
 	}
 
-	keymaps_key_approved_69.mouse_middle_press = tbl_41
+	keymaps_key_approved_69.mouse_middle_press = tbl_35
 
-	local tbl_42 = {
+	local tbl_36 = {
 		"mouse",
 		"middle",
 		"held"
 	}
 
-	keymaps_key_approved_69.mouse_middle_held = tbl_42
+	keymaps_key_approved_69.mouse_middle_held = tbl_36
 
-	local tbl_43 = {
+	local tbl_37 = {
 		"keyboard",
 		"space",
 		"released"
 	}
 
-	keymaps_key_approved_69.confirm = tbl_43
+	keymaps_key_approved_69.confirm = tbl_37
 
-	local tbl_44 = {
+	local tbl_38 = {
 		"keyboard",
 		"space",
 		"held"
 	}
 
-	keymaps_key_approved_69.confirm_hold = tbl_44
+	keymaps_key_approved_69.confirm_hold = tbl_38
 
-	local tbl_45 = {
+	local tbl_39 = {
 		"keyboard",
 		"space",
 		"pressed"
 	}
 
-	keymaps_key_approved_69.confirm_press = tbl_45
+	keymaps_key_approved_69.confirm_press = tbl_39
+
+	local tbl_40 = {}
+
+	keymaps_key_approved_69.back = tbl_40
+
+	local tbl_41 = {}
+
+	keymaps_key_approved_69.refresh = tbl_41
+
+	local tbl_42 = {}
+
+	keymaps_key_approved_69.refresh_hold = tbl_42
+
+	local tbl_43 = {}
+
+	keymaps_key_approved_69.refresh_press = tbl_43
+
+	local tbl_44 = {}
+
+	keymaps_key_approved_69.special_1 = tbl_44
+
+	local tbl_45 = {}
+
+	keymaps_key_approved_69.special_1_hold = tbl_45
 
 	local tbl_46 = {}
 
-	keymaps_key_approved_69.back = tbl_46
+	keymaps_key_approved_69.special_1_press = tbl_46
 
 	local tbl_47 = {}
 
-	keymaps_key_approved_69.refresh = tbl_47
+	keymaps_key_approved_69.left_stick_press = tbl_47
 
 	local tbl_48 = {}
 
-	keymaps_key_approved_69.refresh_hold = tbl_48
+	keymaps_key_approved_69.right_stick_press = tbl_48
 
-	local tbl_49 = {}
-
-	keymaps_key_approved_69.refresh_press = tbl_49
-
-	local tbl_50 = {}
-
-	keymaps_key_approved_69.special_1 = tbl_50
-
-	local tbl_51 = {}
-
-	keymaps_key_approved_69.special_1_hold = tbl_51
-
-	local tbl_52 = {}
-
-	keymaps_key_approved_69.special_1_press = tbl_52
-
-	local tbl_53 = {}
-
-	keymaps_key_approved_69.left_stick_press = tbl_53
-
-	local tbl_54 = {}
-
-	keymaps_key_approved_69.right_stick_press = tbl_54
-
-	local tbl_55 = {
+	local tbl_49 = {
 		"keyboard",
 		"tab",
 		"pressed"
 	}
 
-	keymaps_key_approved_69.cycle_next_raw = tbl_55
+	keymaps_key_approved_69.cycle_next_raw = tbl_49
 
-	local tbl_56 = {
+	local tbl_50 = {
 		"keyboard",
 		"tab",
 		"held"
 	}
 
-	keymaps_key_approved_69.cycle_next_raw_hold = tbl_56
+	keymaps_key_approved_69.cycle_next_raw_hold = tbl_50
 
-	local tbl_57 = {
+	local tbl_51 = {
 		"keyboard",
 		"e",
 		"pressed"
 	}
 
-	keymaps_key_approved_69.cycle_next_alt_raw = tbl_57
+	keymaps_key_approved_69.cycle_next_alt_raw = tbl_51
 
-	local tbl_58 = {
+	local tbl_52 = {
 		"keyboard",
 		"e",
 		"held"
 	}
 
-	keymaps_key_approved_69.cycle_next_alt_raw_hold = tbl_58
+	keymaps_key_approved_69.cycle_next_alt_raw_hold = tbl_52
 
-	local tbl_59 = {
+	local tbl_53 = {
 		"keyboard",
 		"q",
 		"pressed"
 	}
 
-	keymaps_key_approved_69.cycle_prev_raw = tbl_59
+	keymaps_key_approved_69.cycle_prev_raw = tbl_53
 
-	local tbl_60 = {
+	local tbl_54 = {
 		"keyboard",
 		"q",
 		"held"
 	}
 
-	keymaps_key_approved_69.cycle_prev_raw_held = tbl_60
+	keymaps_key_approved_69.cycle_prev_raw_held = tbl_54
+
+	local tbl_55 = {}
+
+	keymaps_key_approved_69.trigger_left_soft = tbl_55
+
+	local tbl_56 = {}
+
+	keymaps_key_approved_69.trigger_right_soft = tbl_56
+
+	local tbl_57 = {}
+
+	keymaps_key_approved_69.trigger_cycle_next = tbl_57
+
+	local tbl_58 = {}
+
+	keymaps_key_approved_69.trigger_cycle_next_hold = tbl_58
+
+	local tbl_59 = {}
+
+	keymaps_key_approved_69.trigger_cycle_previous = tbl_59
+
+	local tbl_60 = {}
+
+	keymaps_key_approved_69.trigger_cycle_previous_hold = tbl_60
 
 	local tbl_61 = {}
 
-	keymaps_key_approved_69.trigger_left_soft = tbl_61
+	keymaps_key_approved_69.gamepad_left_axis = tbl_61
 
 	local tbl_62 = {}
 
-	keymaps_key_approved_69.trigger_right_soft = tbl_62
-
-	local tbl_63 = {}
-
-	keymaps_key_approved_69.trigger_cycle_next = tbl_63
-
-	local tbl_64 = {}
-
-	keymaps_key_approved_69.trigger_cycle_next_hold = tbl_64
-
-	local tbl_65 = {}
-
-	keymaps_key_approved_69.trigger_cycle_previous = tbl_65
-
-	local tbl_66 = {}
-
-	keymaps_key_approved_69.trigger_cycle_previous_hold = tbl_66
-
-	local tbl_67 = {}
-
-	keymaps_key_approved_69.gamepad_left_axis = tbl_67
-
-	local tbl_68 = {}
-
-	keymaps_key_approved_69.gamepad_right_axis = tbl_68
+	keymaps_key_approved_69.gamepad_right_axis = tbl_62
 	keymaps_key_approved_69.look_raw_controller = {}
 
-	local tbl_69 = {
+	local tbl_63 = {
 		"mouse",
 		"left",
 		"pressed"
 	}
 
-	keymaps_key_approved_69.show_information = tbl_69
+	keymaps_key_approved_69.show_information = tbl_63
 
-	local tbl_70 = {
+	local tbl_64 = {
 		"keyboard",
 		"m",
 		"pressed"
 	}
 
-	keymaps_key_approved_69.hotkey_map = tbl_70
+	keymaps_key_approved_69.hotkey_map = tbl_64
 
-	local tbl_71 = {
+	local tbl_65 = {
 		"keyboard",
 		"l",
 		"pressed"
 	}
 
-	keymaps_key_approved_69.hotkey_weave_leaderboard = tbl_71
+	keymaps_key_approved_69.hotkey_weave_leaderboard = tbl_65
 
-	local tbl_72 = {
+	local tbl_66 = {
 		"keyboard",
 		"k",
 		"pressed"
 	}
 
-	keymaps_key_approved_69.hotkey_weave_forge = tbl_72
+	keymaps_key_approved_69.hotkey_weave_forge = tbl_66
 
-	local tbl_73 = {
+	local tbl_67 = {
 		"keyboard",
 		"j",
 		"pressed"
 	}
 
-	keymaps_key_approved_69.hotkey_weave_play = tbl_73
+	keymaps_key_approved_69.hotkey_weave_play = tbl_67
 
-	local tbl_74 = {
+	local tbl_68 = {
 		"keyboard",
 		"t",
 		"pressed"
 	}
 
-	keymaps_key_approved_69.hotkey_talents = tbl_74
+	keymaps_key_approved_69.hotkey_talents = tbl_68
 
-	local tbl_75 = {
+	local tbl_69 = {
 		"keyboard",
 		"h",
 		"pressed"
 	}
 
-	keymaps_key_approved_69.hotkey_hero = tbl_75
+	keymaps_key_approved_69.hotkey_hero = tbl_69
 
-	local tbl_76 = {
+	local tbl_70 = {
 		"keyboard",
 		"i",
 		"pressed"
 	}
 
-	keymaps_key_approved_69.hotkey_inventory = tbl_76
+	keymaps_key_approved_69.hotkey_inventory = tbl_70
 
-	local tbl_77 = {
+	local tbl_71 = {
 		"keyboard",
 		"h",
 		"pressed"
 	}
 
-	keymaps_key_approved_69.hotkey_altar = tbl_77
+	keymaps_key_approved_69.hotkey_altar = tbl_71
 
-	local tbl_78 = {
+	local tbl_72 = {
 		"keyboard",
 		"u",
 		"pressed"
 	}
 
-	keymaps_key_approved_69.hotkey_quests = tbl_78
+	keymaps_key_approved_69.hotkey_quests = tbl_72
 
-	local tbl_79 = {
+	local tbl_73 = {
 		"keyboard",
 		"o",
 		"pressed"
 	}
 
-	keymaps_key_approved_69.hotkey_achievements = tbl_79
+	keymaps_key_approved_69.hotkey_achievements = tbl_73
 
-	local tbl_80 = {
+	local tbl_74 = {
 		"keyboard",
 		"f",
 		"pressed"
 	}
 
-	keymaps_key_approved_69.hotkey_mark_favorite_item = tbl_80
+	keymaps_key_approved_69.hotkey_mark_favorite_item = tbl_74
 
-	local tbl_81 = {
+	local tbl_75 = {
 		"keyboard",
 		"c",
 		"pressed"
 	}
 
-	keymaps_key_approved_69.hotkey_loot = tbl_81
+	keymaps_key_approved_69.hotkey_loot = tbl_75
 
-	local tbl_82 = {
+	local tbl_76 = {
 		"keyboard",
 		"left shift",
 		"held"
 	}
 
-	keymaps_key_approved_69.item_compare_1 = tbl_82
+	keymaps_key_approved_69.item_compare_1 = tbl_76
 
-	local tbl_83 = {
+	local tbl_77 = {
 		"keyboard",
 		"right shift",
 		"held"
 	}
 
-	keymaps_key_approved_69.item_compare_2 = tbl_83
+	keymaps_key_approved_69.item_compare_2 = tbl_77
 
-	local tbl_84 = {
+	local tbl_78 = {
 		"keyboard",
 		"left ctrl",
 		"held"
 	}
 
-	keymaps_key_approved_69.item_detail_1 = tbl_84
+	keymaps_key_approved_69.item_detail_1 = tbl_78
 
-	local tbl_85 = {
+	local tbl_79 = {
 		"keyboard",
 		"right ctrl",
 		"held"
 	}
 
-	keymaps_key_approved_69.item_detail_2 = tbl_85
+	keymaps_key_approved_69.item_detail_2 = tbl_79
 
-	local tbl_86 = {
+	local tbl_80 = {
 		"keyboard",
 		"1",
 		"pressed"
 	}
 
-	keymaps_key_approved_69.keyboard_1 = tbl_86
+	keymaps_key_approved_69.keyboard_1 = tbl_80
 
-	local tbl_87 = {
+	local tbl_81 = {
 		"keyboard",
 		"2",
 		"pressed"
 	}
 
-	keymaps_key_approved_69.keyboard_2 = tbl_87
+	keymaps_key_approved_69.keyboard_2 = tbl_81
 
-	local tbl_88 = {
+	local tbl_82 = {
 		"keyboard",
 		"3",
 		"pressed"
 	}
 
-	keymaps_key_approved_69.keyboard_3 = tbl_88
+	keymaps_key_approved_69.keyboard_3 = tbl_82
 
-	local tbl_89 = {
+	local tbl_83 = {
 		"keyboard",
 		"4",
 		"pressed"
 	}
 
-	keymaps_key_approved_69.keyboard_4 = tbl_89
+	keymaps_key_approved_69.keyboard_4 = tbl_83
 
-	local tbl_90 = {
+	local tbl_84 = {
 		"keyboard",
 		"5",
 		"pressed"
 	}
 
-	keymaps_key_approved_69.keyboard_5 = tbl_90
+	keymaps_key_approved_69.keyboard_5 = tbl_84
 
-	local tbl_91 = {
+	local tbl_85 = {
 		"keyboard",
 		"6",
 		"pressed"
 	}
 
-	keymaps_key_approved_69.keyboard_6 = tbl_91
+	keymaps_key_approved_69.keyboard_6 = tbl_85
 
-	local tbl_92 = {
+	local tbl_86 = {
 		"keyboard",
 		"7",
 		"pressed"
 	}
 
-	keymaps_key_approved_69.keyboard_7 = tbl_92
+	keymaps_key_approved_69.keyboard_7 = tbl_86
 
-	local tbl_93 = {
+	local tbl_87 = {
 		"keyboard",
 		"8",
 		"pressed"
 	}
 
-	keymaps_key_approved_69.keyboard_8 = tbl_93
+	keymaps_key_approved_69.keyboard_8 = tbl_87
 
-	local tbl_94 = {
+	local tbl_88 = {
 		"keyboard",
 		"9",
 		"pressed"
 	}
 
-	keymaps_key_approved_69.keyboard_9 = tbl_94
+	keymaps_key_approved_69.keyboard_9 = tbl_88
 
-	local tbl_95 = {
+	local tbl_89 = {
 		"keyboard",
 		"0",
 		"pressed"
 	}
 
-	keymaps_key_approved_69.keyboard_0 = tbl_95
+	keymaps_key_approved_69.keyboard_0 = tbl_89
 
-	local tbl_96 = {
+	local tbl_90 = {
 		"mouse",
 		"wheel",
 		"axis"
 	}
 
-	keymaps_key_approved_69.scroll_axis = tbl_96
+	keymaps_key_approved_69.scroll_axis = tbl_90
 
-	local tbl_97 = {
+	local tbl_91 = {
 		"keyboard",
 		"left shift",
 		"held"
 	}
 
-	keymaps_key_approved_69.debug_pixeldistance_1 = tbl_97
+	keymaps_key_approved_69.debug_pixeldistance_1 = tbl_91
 
-	local tbl_98 = {
+	local tbl_92 = {
 		"mouse",
 		"right",
 		"held"
 	}
 
-	keymaps_key_approved_69.debug_pixeldistance_2 = tbl_98
+	keymaps_key_approved_69.debug_pixeldistance_2 = tbl_92
 
-	local tbl_99 = {
+	local tbl_93 = {
 		"keyboard",
 		"enter",
 		"pressed"
 	}
 
-	keymaps_key_approved_69.execute_login_1 = tbl_99
+	keymaps_key_approved_69.execute_login_1 = tbl_93
 
-	local tbl_100 = {
+	local tbl_94 = {
 		"keyboard",
 		"numpad enter",
 		"pressed"
 	}
 
-	keymaps_key_approved_69.execute_login_2 = tbl_100
+	keymaps_key_approved_69.execute_login_2 = tbl_94
 
-	local tbl_101 = {
+	local tbl_95 = {
 		"keyboard",
 		"space",
 		"held"
 	}
 
-	keymaps_key_approved_69.cancel_video_1 = tbl_101
+	keymaps_key_approved_69.cancel_video_1 = tbl_95
 
-	local tbl_102 = {
+	local tbl_96 = {
 		"keyboard",
 		"esc",
 		"held"
 	}
 
-	keymaps_key_approved_69.cancel_video_2 = tbl_102
+	keymaps_key_approved_69.cancel_video_2 = tbl_96
 
-	local tbl_103 = {
+	local tbl_97 = {
 		"mouse",
 		"left",
 		"held"
 	}
 
-	keymaps_key_approved_69.cancel_video_3 = tbl_103
+	keymaps_key_approved_69.cancel_video_3 = tbl_97
 end
 
 IngameMenuKeymaps.win32 = keymaps_key_approved_69
@@ -6798,7 +6798,7 @@ IngameMenuKeymaps.win32 = keymaps_key_approved_69
 local IngameMenuKeymaps_2 = IngameMenuKeymaps
 local keymaps_key_approved_70 = InputUtils.keymaps_key_approved("xb1")
 
-keymaps_key_approved_70 = not keymaps_key_approved_70 and {
+keymaps_key_approved_70 = not not keymaps_key_approved_70 and not not {
 	ingame_vote_yes = {
 		"gamepad",
 		"back",
@@ -7114,7 +7114,7 @@ local IngameMenuKeymaps_3 = IngameMenuKeymaps
 local str_33 = "ps4"
 local keymaps_key_approved_71 = InputUtils.keymaps_key_approved("ps4")
 
-keymaps_key_approved_71 = not keymaps_key_approved_71 and {
+keymaps_key_approved_71 = not not keymaps_key_approved_71 and not not {
 	ingame_vote_yes = {
 		"gamepad",
 		"l1",
@@ -7430,7 +7430,7 @@ local IngameMenuKeymaps_4 = IngameMenuKeymaps
 local str_34 = "ps_pad"
 local keymaps_key_approved_72 = InputUtils.keymaps_key_approved("ps_pad")
 
-keymaps_key_approved_72 = not keymaps_key_approved_72 and {
+keymaps_key_approved_72 = not not keymaps_key_approved_72 and not not {
 	ingame_vote_yes = {
 		"ps_pad",
 		"l1",
@@ -7746,7 +7746,7 @@ IngameMenuFilters = {}
 local IngameMenuFilters = IngameMenuFilters
 local keymaps_key_approved_73 = InputUtils.keymaps_key_approved("win32")
 
-keymaps_key_approved_73 = not keymaps_key_approved_73 and {
+keymaps_key_approved_73 = not not keymaps_key_approved_73 and not not {
 	debug_pixeldistance = {
 		filter_type = "and",
 		input_mappings = {
@@ -8041,7 +8041,7 @@ IngameMenuFilters.win32 = keymaps_key_approved_73
 local IngameMenuFilters_2 = IngameMenuFilters
 local keymaps_key_approved_74 = InputUtils.keymaps_key_approved("xb1")
 
-keymaps_key_approved_74 = not keymaps_key_approved_74 and {
+keymaps_key_approved_74 = not not keymaps_key_approved_74 and not not {
 	debug_pixeldistance = {
 		filter_type = "and",
 		input_mappings = {
@@ -8268,7 +8268,7 @@ keymaps_key_approved_74 = not keymaps_key_approved_74 and {
 }
 IngameMenuFilters_2.xb1 = keymaps_key_approved_74
 
-local tbl_104 = {
+local IngameMenuFilters_ps4 = {
 	debug_pixeldistance = {
 		filter_type = "and",
 		input_mappings = {
@@ -8497,21 +8497,21 @@ local IngameMenuFilters_3 = IngameMenuFilters
 local str_35 = "ps4"
 local keymaps_key_approved_75 = InputUtils.keymaps_key_approved("ps4")
 
-keymaps_key_approved_75 = not keymaps_key_approved_75 and tbl_104
+keymaps_key_approved_75 = not not keymaps_key_approved_75 and not not IngameMenuFilters_ps4
 IngameMenuFilters_3[str_35] = keymaps_key_approved_75
 
 local IngameMenuFilters_4 = IngameMenuFilters
 local str_36 = "ps_pad"
 local keymaps_key_approved_76 = InputUtils.keymaps_key_approved("ps_pad")
 
-keymaps_key_approved_76 = not keymaps_key_approved_76 and tbl_104
+keymaps_key_approved_76 = not not keymaps_key_approved_76 and not not IngameMenuFilters_ps4
 IngameMenuFilters_4[str_36] = keymaps_key_approved_76
 CutsceneKeymaps = {}
 
 local CutsceneKeymaps = CutsceneKeymaps
 local keymaps_key_approved_77 = InputUtils.keymaps_key_approved("win32")
 
-keymaps_key_approved_77 = not keymaps_key_approved_77 and {
+keymaps_key_approved_77 = not not keymaps_key_approved_77 and not not {
 	skip_cutscene_1 = {
 		"keyboard",
 		"enter",
@@ -8548,7 +8548,7 @@ CutsceneKeymaps.win32 = keymaps_key_approved_77
 local CutsceneKeymaps_2 = CutsceneKeymaps
 local keymaps_key_approved_78 = InputUtils.keymaps_key_approved("xb1")
 
-keymaps_key_approved_78 = not keymaps_key_approved_78 and {
+keymaps_key_approved_78 = not not keymaps_key_approved_78 and not not {
 	skip_cutscene = {
 		"gamepad",
 		"a",
@@ -8567,7 +8567,7 @@ local CutsceneKeymaps_3 = CutsceneKeymaps
 local str_37 = "ps4"
 local keymaps_key_approved_79 = InputUtils.keymaps_key_approved("ps4")
 
-keymaps_key_approved_79 = not keymaps_key_approved_79 and {
+keymaps_key_approved_79 = not not keymaps_key_approved_79 and not not {
 	skip_cutscene = {
 		"gamepad",
 		"cross",
@@ -8586,7 +8586,7 @@ local CutsceneKeymaps_4 = CutsceneKeymaps
 local str_38 = "ps_pad"
 local keymaps_key_approved_80 = InputUtils.keymaps_key_approved("ps_pad")
 
-keymaps_key_approved_80 = not keymaps_key_approved_80 and {
+keymaps_key_approved_80 = not not keymaps_key_approved_80 and not not {
 	skip_cutscene = {
 		"ps_pad",
 		"cross",
@@ -8605,7 +8605,7 @@ CutsceneFilters = {}
 local CutsceneFilters = CutsceneFilters
 local keymaps_key_approved_81 = InputUtils.keymaps_key_approved("win32")
 
-keymaps_key_approved_81 = not keymaps_key_approved_81 and {
+keymaps_key_approved_81 = not not keymaps_key_approved_81 and not not {
 	skip_cutscene = {
 		filter_type = "or",
 		input_mappings = {
@@ -8627,28 +8627,28 @@ CutsceneFilters.win32 = keymaps_key_approved_81
 local CutsceneFilters_2 = CutsceneFilters
 local keymaps_key_approved_82 = InputUtils.keymaps_key_approved("xb1")
 
-keymaps_key_approved_82 = not keymaps_key_approved_82 and {}
+keymaps_key_approved_82 = not not keymaps_key_approved_82 and not not {}
 CutsceneFilters_2.xb1 = keymaps_key_approved_82
 
 local CutsceneFilters_3 = CutsceneFilters
 local str_39 = "ps4"
 local keymaps_key_approved_83 = InputUtils.keymaps_key_approved("ps4")
 
-keymaps_key_approved_83 = not keymaps_key_approved_83 and {}
+keymaps_key_approved_83 = not not keymaps_key_approved_83 and not not {}
 CutsceneFilters_3[str_39] = keymaps_key_approved_83
 
 local CutsceneFilters_4 = CutsceneFilters
 local str_40 = "ps_pad"
 local keymaps_key_approved_84 = InputUtils.keymaps_key_approved("ps_pad")
 
-keymaps_key_approved_84 = not keymaps_key_approved_84 and {}
+keymaps_key_approved_84 = not not keymaps_key_approved_84 and not not {}
 CutsceneFilters_4[str_40] = keymaps_key_approved_84
 ControllerDisconnectKeymaps = {}
 
 local ControllerDisconnectKeymaps = ControllerDisconnectKeymaps
 local keymaps_key_approved_85 = InputUtils.keymaps_key_approved("xb1")
 
-keymaps_key_approved_85 = not keymaps_key_approved_85 and {
+keymaps_key_approved_85 = not not keymaps_key_approved_85 and not not {
 	accept_held_1 = {
 		"gamepad",
 		"a",
@@ -8696,7 +8696,7 @@ ControllerDisconnectFilters = {}
 local ControllerDisconnectFilters = ControllerDisconnectFilters
 local keymaps_key_approved_86 = InputUtils.keymaps_key_approved("xb1")
 
-keymaps_key_approved_86 = not keymaps_key_approved_86 and {
+keymaps_key_approved_86 = not not keymaps_key_approved_86 and not not {
 	accept_held = {
 		filter_type = "or",
 		input_mappings = {
@@ -8732,7 +8732,7 @@ BenchmarkControllerSettings = {}
 local BenchmarkControllerSettings = BenchmarkControllerSettings
 local keymaps_key_approved_87 = InputUtils.keymaps_key_approved("win32")
 
-keymaps_key_approved_87 = not keymaps_key_approved_87 and {
+keymaps_key_approved_87 = not not keymaps_key_approved_87 and not not {
 	cycle_through_views = {
 		"keyboard",
 		"tab",
@@ -8742,15 +8742,15 @@ keymaps_key_approved_87 = not keymaps_key_approved_87 and {
 BenchmarkControllerSettings.win32 = keymaps_key_approved_87
 EndLevelViewKeymapsFilters = table.clone(IngameMenuFilters)
 
-if not EndLevelViewKeymapsFilters.xb1 then
+if EndLevelViewKeymapsFilters.xb1 then
 	EndLevelViewKeymapsFilters.xb1.cursor = nil
 end
 
-if not EndLevelViewKeymapsFilters.ps4 then
+if EndLevelViewKeymapsFilters.ps4 then
 	EndLevelViewKeymapsFilters.ps4.cursor = nil
 end
 
-if not EndLevelViewKeymapsFilters.ps_pad then
+if EndLevelViewKeymapsFilters.ps_pad then
 	EndLevelViewKeymapsFilters.ps_pad.cursor = nil
 end
 
@@ -8759,7 +8759,7 @@ DarkPactSelectionUIKeymaps = {}
 local DarkPactSelectionUIKeymaps = DarkPactSelectionUIKeymaps
 local keymaps_key_approved_88 = InputUtils.keymaps_key_approved("win32")
 
-keymaps_key_approved_88 = not keymaps_key_approved_88 and {
+keymaps_key_approved_88 = not not keymaps_key_approved_88 and not not {
 	switch_dark_pact_profile = {
 		"keyboard",
 		"h",
@@ -8843,7 +8843,7 @@ DarkPactSelectionUIFilters = {}
 local DarkPactSelectionUIFilters = DarkPactSelectionUIFilters
 local keymaps_key_approved_89 = InputUtils.keymaps_key_approved("win32")
 
-keymaps_key_approved_89 = not keymaps_key_approved_89 and {
+keymaps_key_approved_89 = not not keymaps_key_approved_89 and not not {
 	move_left = {
 		filter_type = "move_filter",
 		threshold = 0.7,
@@ -8882,7 +8882,7 @@ DarkPactSelectionUIFilters.win32 = keymaps_key_approved_89
 local DarkPactSelectionUIKeymaps_2 = DarkPactSelectionUIKeymaps
 local keymaps_key_approved_90 = InputUtils.keymaps_key_approved("xb1")
 
-keymaps_key_approved_90 = not keymaps_key_approved_90 and {
+keymaps_key_approved_90 = not not keymaps_key_approved_90 and not not {
 	confirm = {
 		"gamepad",
 		"a",
@@ -8929,7 +8929,7 @@ DarkPactSelectionUIKeymaps_2.xb1 = keymaps_key_approved_90
 local DarkPactSelectionUIFilters_2 = DarkPactSelectionUIFilters
 local keymaps_key_approved_91 = InputUtils.keymaps_key_approved("xb1")
 
-keymaps_key_approved_91 = not keymaps_key_approved_91 and {
+keymaps_key_approved_91 = not not keymaps_key_approved_91 and not not {
 	move_left = {
 		filter_type = "move_filter",
 		threshold = 0.7,
@@ -8967,7 +8967,7 @@ local DarkPactSelectionUIKeymaps_3 = DarkPactSelectionUIKeymaps
 local str_41 = "ps4"
 local keymaps_key_approved_92 = InputUtils.keymaps_key_approved("ps4")
 
-keymaps_key_approved_92 = not keymaps_key_approved_92 and {
+keymaps_key_approved_92 = not not keymaps_key_approved_92 and not not {
 	confirm = {
 		"gamepad",
 		"cross",
@@ -9047,7 +9047,7 @@ local DarkPactSelectionUIKeymaps_4 = DarkPactSelectionUIKeymaps
 local str_42 = "ps_pad"
 local keymaps_key_approved_93 = InputUtils.keymaps_key_approved("ps_pad")
 
-keymaps_key_approved_93 = not keymaps_key_approved_93 and {
+keymaps_key_approved_93 = not not keymaps_key_approved_93 and not not {
 	confirm = {
 		"ps_pad",
 		"cross",
@@ -9095,14 +9095,14 @@ local DarkPactSelectionUIFilters_3 = DarkPactSelectionUIFilters
 local str_43 = "ps4"
 local keymaps_key_approved_94 = InputUtils.keymaps_key_approved("ps4")
 
-keymaps_key_approved_94 = not keymaps_key_approved_94 and table.clone(DarkPactSelectionUIFilters_ps4)
+keymaps_key_approved_94 = not not keymaps_key_approved_94 and not not table.clone(DarkPactSelectionUIFilters_ps4)
 DarkPactSelectionUIFilters_3[str_43] = keymaps_key_approved_94
 
 local DarkPactSelectionUIFilters_4 = DarkPactSelectionUIFilters
 local str_44 = "ps_pad"
 local keymaps_key_approved_95 = InputUtils.keymaps_key_approved("ps_pad")
 
-keymaps_key_approved_95 = not keymaps_key_approved_95 and table.clone(DarkPactSelectionUIFilters_ps4)
+keymaps_key_approved_95 = not not keymaps_key_approved_95 and not not table.clone(DarkPactSelectionUIFilters_ps4)
 DarkPactSelectionUIFilters_4[str_44] = keymaps_key_approved_95
 GamepadSettings = {
 	menu_cooldown = 0.25,
@@ -9113,19 +9113,19 @@ GamepadSettings = {
 	quest_menu_navigation_cooldown = 0.15
 }
 
-for k, v in pairs(DLCSettings) do
-	local controller_settings = v.controller_settings
+for name, dlc in pairs(DLCSettings) do
+	local controller_settings = dlc.controller_settings
 
-	if not controller_settings then
-		for k_2, v_2 in pairs(controller_settings) do
-			local var_0_340 = rawget(_G, k_2)
+	if controller_settings then
+		for input_table_name, input_tables in pairs(controller_settings) do
+			local input_table = rawget(_G, input_table_name)
 
-			fassert(var_0_340, "controller_settings.lua - Could not find input table for: (%s)", k_2)
+			fassert(input_table, "controller_settings.lua - Could not find input table for: (%s)", input_table_name)
 
-			for k_3, v_3 in pairs(v_2) do
-				if not InputUtils.keymaps_key_approved(k_3) then
-					for k_4, v_4 in pairs(v_3) do
-						var_0_340[k_3][k_4] = v_4
+			for table_key, inputs in pairs(input_tables) do
+				if InputUtils.keymaps_key_approved(table_key) then
+					for action_name, input_settings in pairs(inputs) do
+						input_table[table_key][action_name] = input_settings
 					end
 				end
 			end

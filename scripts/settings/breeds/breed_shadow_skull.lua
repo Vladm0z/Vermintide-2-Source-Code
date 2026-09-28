@@ -1,6 +1,6 @@
 -- chunkname: @scripts/settings/breeds/breed_shadow_skull.lua
 
-local tbl = {
+local breed_data = {
 	detection_radius = 9999999,
 	debug_despawn_immunity = false,
 	target_selection = "pick_closest_target",
@@ -92,38 +92,56 @@ local tbl = {
 			}
 		}
 	},
-	modify_extension_init_data = function (self, arg_1_1, arg_1_2)
+	modify_extension_init_data = function (breed, is_husk, extension_init_data)
 		-- function 1
-		local impact_explosion_name = self.impact_explosion_name
-		local collision_detection_sphere_radius = self.collision_detection_sphere_radius
-		local only_one_impact = self.only_one_impact
-		local impact_collision_filter = self.impact_collision_filter
-		local impact_template_name = self.impact_template_name
-		local str = "n/a"
-		local projectile_impact_system = arg_1_2.projectile_impact_system
+		local impact_explosion_name = breed.impact_explosion_name
+		local sphere_radius = breed.collision_detection_sphere_radius
+		local only_one_impact = breed.only_one_impact
+		local impact_collision_filter = breed.impact_collision_filter
+		local impact_template_name = breed.impact_template_name
+		local damage_source = "n/a"
+		local projectile_impact_system = extension_init_data.projectile_impact_system
 
-		projectile_impact_system = projectile_impact_system or {}
-		projectile_impact_system.sphere_radius = collision_detection_sphere_radius
-		projectile_impact_system.only_one_impact = only_one_impact
-		projectile_impact_system.collision_filter = impact_collision_filter
-		arg_1_2.projectile_impact_system = projectile_impact_system
+		if not projectile_impact_system then
+			-- Nothing
+		end
 
-		local projectile_system = arg_1_2.projectile_system
+		projectile_impact_system = {}
 
-		projectile_system = projectile_system or {}
-		projectile_system.damage_source = str
-		projectile_system.impact_template_name = impact_template_name
-		projectile_system.explosion_template_name = impact_explosion_name
-		arg_1_2.projectile_system = projectile_system
+		local projectile_impact_system_data = projectile_impact_system
+
+		::label_1_0::
+
+		projectile_impact_system_data.sphere_radius = sphere_radius
+		projectile_impact_system_data.only_one_impact = only_one_impact
+		projectile_impact_system_data.collision_filter = impact_collision_filter
+		extension_init_data.projectile_impact_system = projectile_impact_system_data
+
+		local projectile_system = extension_init_data.projectile_system
+
+		if not projectile_system then
+			-- Nothing
+		end
+
+		projectile_system = {}
+
+		local projectile_system_data = projectile_system
+
+		::label_1_1::
+
+		projectile_system_data.damage_source = damage_source
+		projectile_system_data.impact_template_name = impact_template_name
+		projectile_system_data.explosion_template_name = impact_explosion_name
+		extension_init_data.projectile_system = projectile_system_data
 	end,
 	debug_spawn_optional_data = {
-		prepare_func = function (self, arg_2_1)
+		prepare_func = function (breed, extension_init_data)
 			-- function 2
-			local flag = false
+			local is_husk = false
 
-			self.modify_extension_init_data(self, flag, arg_2_1)
+			breed.modify_extension_init_data(breed, is_husk, extension_init_data)
 		end
 	}
 }
 
-Breeds.shadow_skull = table.create_copy(Breeds.shadow_skull, tbl)
+Breeds.shadow_skull = table.create_copy(Breeds.shadow_skull, breed_data)

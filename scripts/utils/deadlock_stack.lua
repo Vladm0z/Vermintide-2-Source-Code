@@ -2,7 +2,7 @@
 
 local DeadlockStack = DeadlockStack
 
-DeadlockStack = DeadlockStack or {
+DeadlockStack = not not DeadlockStack or not not {
 	n = 0
 }
 DeadlockStack = DeadlockStack

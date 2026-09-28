@@ -1,9 +1,8 @@
 -- chunkname: @scripts/ui/views/contract_presentation_screen_ui_definitions.lua
 
-local num = 1920
-local num_2 = 1080
-local var_0_2
-local tbl = {
+local SIZE_X, SIZE_Y = 1920, 1080
+local RETAINED_MODE_ENABLED
+local scenegraph_definition = {
 	root = {
 		is_root = true,
 		position = {
@@ -12,8 +11,8 @@ local tbl = {
 			UILayer.end_screen + 2
 		},
 		size = {
-			num,
-			num_2
+			SIZE_X,
+			SIZE_Y
 		}
 	},
 	screen = {
@@ -26,8 +25,8 @@ local tbl = {
 			1
 		},
 		size = {
-			num,
-			num_2
+			SIZE_X,
+			SIZE_Y
 		}
 	},
 	pivot = {
@@ -116,12 +115,10 @@ local tbl = {
 	}
 }
 
-local function fn(arg_1_0)
+local function create_entry(index)
 	-- function 1
-	local num = 899
-	local num_2 = 259
-	local num_3 = 860
-	local num_4 = 127
+	local bg_width, bg_height = 899, 259
+	local task_bg_width, task_bg_height = 860, 127
 
 	return {
 		element = {
@@ -130,84 +127,84 @@ local function fn(arg_1_0)
 					pass_type = "texture",
 					style_id = "texture_bg",
 					texture_id = "texture_bg",
-					retained_mode = var_0_2
+					retained_mode = RETAINED_MODE_ENABLED
 				},
 				{
 					style_id = "title_text",
 					pass_type = "text",
 					text_id = "title_text",
-					retained_mode = var_0_2
+					retained_mode = RETAINED_MODE_ENABLED
 				},
 				{
 					style_id = "bar_text",
 					pass_type = "text",
 					text_id = "bar_text",
-					retained_mode = var_0_2
+					retained_mode = RETAINED_MODE_ENABLED
 				},
 				{
 					style_id = "progress_bar",
 					pass_type = "texture_uv",
 					content_id = "progress_bar",
-					retained_mode = var_0_2
+					retained_mode = RETAINED_MODE_ENABLED
 				},
 				{
 					pass_type = "centered_texture_amount",
 					style_id = "texture_divider",
 					texture_id = "texture_divider",
-					retained_mode = var_0_2,
-					content_check_function = function (arg_2_0, arg_2_1)
+					retained_mode = RETAINED_MODE_ENABLED,
+					content_check_function = function (content, style)
 						-- function 2
-						return arg_2_1.texture_amount > 0
+						return style.texture_amount > 0
 					end
 				},
 				{
 					pass_type = "texture",
 					style_id = "texture_completed",
 					texture_id = "texture_completed",
-					retained_mode = var_0_2
+					retained_mode = RETAINED_MODE_ENABLED
 				},
 				{
 					texture_id = "overlay_mask",
 					style_id = "overlay",
 					pass_type = "texture",
-					retained_mode = var_0_2
+					retained_mode = RETAINED_MODE_ENABLED
 				},
 				{
 					texture_id = "overlay",
 					style_id = "overlay",
 					pass_type = "texture",
-					retained_mode = var_0_2
+					retained_mode = RETAINED_MODE_ENABLED
 				},
 				{
 					style_id = "task_text_1",
 					pass_type = "text",
 					text_id = "task_text_1",
-					retained_mode = var_0_2,
-					content_check_function = function (self, arg_3_1)
+					retained_mode = RETAINED_MODE_ENABLED,
+					content_check_function = function (content, style)
 						-- function 3
-						return not (self.task_amount > 0) or not self.texture_task_icon_1
+						return content.task_amount > 0 and not not not content.texture_task_icon_1
 					end
 				},
 				{
 					style_id = "task_value_1",
 					pass_type = "text",
 					text_id = "task_value_1",
-					retained_mode = var_0_2,
-					content_check_function = function (self, arg_4_1)
+					retained_mode = RETAINED_MODE_ENABLED,
+					content_check_function = function (content, style)
 						-- function 4
-						return self.task_amount > 0
+						return content.task_amount > 0
 					end
 				},
 				{
 					pass_type = "texture",
 					style_id = "texture_task_icon_1",
 					texture_id = "texture_task_icon_1",
-					retained_mode = var_0_2,
-					content_check_function = function (self, arg_5_1)
+					retained_mode = RETAINED_MODE_ENABLED,
+					content_check_function = function (content, style)
 						-- function 5
-						local texture_task_icon_1 = self.texture_task_icon_1
+						local texture_task_icon_1 = content.texture_task_icon_1
 
-						texture_task_icon_1 = not texture_task_icon_1 and self.task_amount > 0
+						texture_task_icon_1 = not not texture_task_icon_1 and content.task_amount > 0
 
 						return texture_task_icon_1
 					end
@@ -216,12 +213,12 @@ local function fn(arg_1_0)
 					pass_type = "gradient_mask_texture",
 					style_id = "texture_task_marker_1",
 					texture_id = "texture_task_marker_1",
-					retained_mode = var_0_2,
-					content_check_function = function (self, arg_6_1)
+					retained_mode = RETAINED_MODE_ENABLED,
+					content_check_function = function (content, style)
 						-- function 6
-						local task_completed_1 = self.task_completed_1
+						local task_completed_1 = content.task_completed_1
 
-						task_completed_1 = not task_completed_1 and self.task_amount > 0
+						task_completed_1 = not not task_completed_1 and content.task_amount > 0
 
 						return task_completed_1
 					end
@@ -230,42 +227,46 @@ local function fn(arg_1_0)
 					pass_type = "texture",
 					style_id = "texture_task_glow_1",
 					texture_id = "texture_task_glow",
-					retained_mode = var_0_2,
-					content_check_function = function (self, arg_7_1)
+					retained_mode = RETAINED_MODE_ENABLED,
+					content_check_function = function (content, style)
 						-- function 7
-						return self.task_amount > 0
+						return content.task_amount > 0
 					end
 				},
 				{
 					style_id = "task_text_2",
 					pass_type = "text",
 					text_id = "task_text_2",
-					retained_mode = var_0_2,
-					content_check_function = function (self, arg_8_1)
+					retained_mode = RETAINED_MODE_ENABLED,
+					content_check_function = function (content, style)
 						-- function 8
-						return not (self.task_amount > 1) or not self.texture_task_icon_2
+						local task_amount = content.task_amount
+
+						return task_amount > 1 and not not not content.texture_task_icon_2
 					end
 				},
 				{
 					style_id = "task_value_2",
 					pass_type = "text",
 					text_id = "task_value_2",
-					retained_mode = var_0_2,
-					content_check_function = function (self, arg_9_1)
+					retained_mode = RETAINED_MODE_ENABLED,
+					content_check_function = function (content, style)
 						-- function 9
-						return self.task_amount > 1
+						local task_amount = content.task_amount
+
+						return task_amount > 1
 					end
 				},
 				{
 					pass_type = "texture",
 					style_id = "texture_task_icon_2",
 					texture_id = "texture_task_icon_2",
-					retained_mode = var_0_2,
-					content_check_function = function (self, arg_10_1)
+					retained_mode = RETAINED_MODE_ENABLED,
+					content_check_function = function (content, style)
 						-- function 10
-						local texture_task_icon_2 = self.texture_task_icon_2
+						local texture_task_icon_2 = content.texture_task_icon_2
 
-						texture_task_icon_2 = not texture_task_icon_2 and self.task_amount > 1
+						texture_task_icon_2 = not not texture_task_icon_2 and content.task_amount > 1
 
 						return texture_task_icon_2
 					end
@@ -274,13 +275,13 @@ local function fn(arg_1_0)
 					pass_type = "gradient_mask_texture",
 					style_id = "texture_task_marker_2",
 					texture_id = "texture_task_marker_2",
-					retained_mode = var_0_2,
-					content_check_function = function (self, arg_11_1)
+					retained_mode = RETAINED_MODE_ENABLED,
+					content_check_function = function (content, style)
 						-- function 11
-						local task_amount = self.task_amount
-						local task_completed_2 = self.task_completed_2
+						local task_amount = content.task_amount
+						local task_completed_2 = content.task_completed_2
 
-						task_completed_2 = not task_completed_2 and task_amount > 1
+						task_completed_2 = not not task_completed_2 and task_amount > 1
 
 						return task_completed_2
 					end
@@ -289,42 +290,46 @@ local function fn(arg_1_0)
 					pass_type = "texture",
 					style_id = "texture_task_glow_2",
 					texture_id = "texture_task_glow",
-					retained_mode = var_0_2,
-					content_check_function = function (self, arg_12_1)
+					retained_mode = RETAINED_MODE_ENABLED,
+					content_check_function = function (content, style)
 						-- function 12
-						return self.task_amount > 1
+						return content.task_amount > 1
 					end
 				},
 				{
 					style_id = "task_text_3",
 					pass_type = "text",
 					text_id = "task_text_3",
-					retained_mode = var_0_2,
-					content_check_function = function (self, arg_13_1)
+					retained_mode = RETAINED_MODE_ENABLED,
+					content_check_function = function (content, style)
 						-- function 13
-						return not (self.task_amount > 2) or not self.texture_task_icon_3
+						local task_amount = content.task_amount
+
+						return task_amount > 2 and not not not content.texture_task_icon_3
 					end
 				},
 				{
 					style_id = "task_value_3",
 					pass_type = "text",
 					text_id = "task_value_3",
-					retained_mode = var_0_2,
-					content_check_function = function (self, arg_14_1)
+					retained_mode = RETAINED_MODE_ENABLED,
+					content_check_function = function (content, style)
 						-- function 14
-						return self.task_amount > 2
+						local task_amount = content.task_amount
+
+						return task_amount > 2
 					end
 				},
 				{
 					pass_type = "texture",
 					style_id = "texture_task_icon_3",
 					texture_id = "texture_task_icon_3",
-					retained_mode = var_0_2,
-					content_check_function = function (self, arg_15_1)
+					retained_mode = RETAINED_MODE_ENABLED,
+					content_check_function = function (content, style)
 						-- function 15
-						local texture_task_icon_3 = self.texture_task_icon_3
+						local texture_task_icon_3 = content.texture_task_icon_3
 
-						texture_task_icon_3 = not texture_task_icon_3 and self.task_amount > 2
+						texture_task_icon_3 = not not texture_task_icon_3 and content.task_amount > 2
 
 						return texture_task_icon_3
 					end
@@ -333,13 +338,13 @@ local function fn(arg_1_0)
 					pass_type = "gradient_mask_texture",
 					style_id = "texture_task_marker_3",
 					texture_id = "texture_task_marker_3",
-					retained_mode = var_0_2,
-					content_check_function = function (self, arg_16_1)
+					retained_mode = RETAINED_MODE_ENABLED,
+					content_check_function = function (content, style)
 						-- function 16
-						local task_amount = self.task_amount
-						local task_completed_3 = self.task_completed_3
+						local task_amount = content.task_amount
+						local task_completed_3 = content.task_completed_3
 
-						task_completed_3 = not task_completed_3 and task_amount > 2
+						task_completed_3 = not not task_completed_3 and task_amount > 2
 
 						return task_completed_3
 					end
@@ -348,10 +353,10 @@ local function fn(arg_1_0)
 					pass_type = "texture",
 					style_id = "texture_task_glow_3",
 					texture_id = "texture_task_glow",
-					retained_mode = var_0_2,
-					content_check_function = function (self, arg_17_1)
+					retained_mode = RETAINED_MODE_ENABLED,
+					content_check_function = function (content, style)
 						-- function 17
-						return self.task_amount > 2
+						return content.task_amount > 2
 					end
 				}
 			}
@@ -373,9 +378,9 @@ local function fn(arg_1_0)
 			bar_text = "Contract Progress: 80%",
 			task_value_3 = "n/a",
 			texture_task_glow = "quest_endscreen_glow",
-			texture_task_marker_1 = "quest_contract_checkmark_" .. arg_1_0 .. "_1",
-			texture_task_marker_2 = "quest_contract_checkmark_" .. arg_1_0 .. "_2",
-			texture_task_marker_3 = "quest_contract_checkmark_" .. arg_1_0 .. "_3",
+			texture_task_marker_1 = "quest_contract_checkmark_" .. index .. "_1",
+			texture_task_marker_2 = "quest_contract_checkmark_" .. index .. "_2",
+			texture_task_marker_3 = "quest_contract_checkmark_" .. index .. "_3",
 			progress_bar = {
 				bar_value_position = 0,
 				bar_value_size = 0,
@@ -399,8 +404,8 @@ local function fn(arg_1_0)
 		style = {
 			task_start_offset = 20,
 			task_bg_size = {
-				num_3,
-				num_4
+				task_bg_width,
+				task_bg_height
 			},
 			overlay = {
 				size = {
@@ -473,7 +478,7 @@ local function fn(arg_1_0)
 				debug_draw_box = false,
 				font_type = "hell_shark",
 				size = {
-					num_3,
+					task_bg_width,
 					20
 				},
 				offset = {
@@ -518,8 +523,8 @@ local function fn(arg_1_0)
 					255
 				},
 				size = {
-					num_3,
-					num_4
+					task_bg_width,
+					task_bg_height
 				},
 				offset = {
 					20,
@@ -538,7 +543,7 @@ local function fn(arg_1_0)
 				debug_draw_box = false,
 				font_type = "hell_shark",
 				size = {
-					num_3,
+					task_bg_width,
 					75
 				},
 				offset = {
@@ -560,7 +565,7 @@ local function fn(arg_1_0)
 				debug_draw_box = false,
 				font_type = "hell_shark",
 				size = {
-					num_3,
+					task_bg_width,
 					37
 				},
 				offset = {
@@ -634,7 +639,7 @@ local function fn(arg_1_0)
 				debug_draw_box = false,
 				font_type = "hell_shark",
 				size = {
-					num_3,
+					task_bg_width,
 					75
 				},
 				offset = {
@@ -656,7 +661,7 @@ local function fn(arg_1_0)
 				debug_draw_box = false,
 				font_type = "hell_shark",
 				size = {
-					num_3,
+					task_bg_width,
 					37
 				},
 				offset = {
@@ -730,7 +735,7 @@ local function fn(arg_1_0)
 				debug_draw_box = false,
 				font_type = "hell_shark",
 				size = {
-					num_3,
+					task_bg_width,
 					75
 				},
 				offset = {
@@ -752,7 +757,7 @@ local function fn(arg_1_0)
 				debug_draw_box = false,
 				font_type = "hell_shark",
 				size = {
-					num_3,
+					task_bg_width,
 					37
 				},
 				offset = {
@@ -825,61 +830,62 @@ local function fn(arg_1_0)
 			0,
 			0
 		},
-		scenegraph_id = "entry_" .. arg_1_0
+		scenegraph_id = "entry_" .. index
 	}
 end
 
-local tbl_2 = {}
+local entry_widget_definitions = {}
 
 for i = 1, 3 do
-	tbl_2[i] = fn(i)
+	entry_widget_definitions[i] = create_entry(i)
 end
 
-local tbl_3 = {
+local widget_definitions = {
 	input_description_text = UIWidgets.create_simple_text("press_any_key_to_continue", "input_description_text", 18, Colors.get_color_table_with_alpha("white", 255)),
 	title_text = UIWidgets.create_simple_text("dlc1_3_1_contract_presentation_title", "title_text", 36, Colors.get_color_table_with_alpha("cheeseburger", 255))
 }
-local tbl_4 = {
+local animation_definitions = {
 	contract_entry = {
 		{
 			name = "reset",
 			start_progress = 0,
 			end_progress = 0,
-			init = function (arg_18_0, arg_18_1, arg_18_2, arg_18_3)
+			init = function (ui_scenegraph, scenegraph_definition, widgets, params)
 				-- function 18
-				local num = 0
-				local widget_index = arg_18_3.widget_index
-				local var_18_2 = arg_18_2[widget_index]
-				local style = var_18_2.style
-				local content = var_18_2.content
+				local alpha = 0
+				local widget_index = params.widget_index
+				local widget = widgets[widget_index]
+				local widget_style = widget.style
+				local widget_content = widget.content
 
-				style.texture_divider.color[1] = num
-				style.progress_bar.color[1] = num
-				style.texture_bg.color[1] = num
-				style.bar_text.text_color[1] = num
-				style.title_text.text_color[1] = num
-				style.texture_task_marker_1.color[1] = num
-				style.texture_task_marker_2.color[1] = num
-				style.texture_task_marker_3.color[1] = num
-				style.task_text_1.text_color[1] = num
-				style.task_text_2.text_color[1] = num
-				style.task_text_3.text_color[1] = num
-				style.task_value_1.text_color[1] = num
-				style.task_value_2.text_color[1] = num
-				style.task_value_3.text_color[1] = num
-				style.texture_task_icon_1.color[1] = num
-				style.texture_task_icon_2.color[1] = num
-				style.texture_task_icon_3.color[1] = num
+				widget_style.texture_divider.color[1] = alpha
+				widget_style.progress_bar.color[1] = alpha
+				widget_style.texture_bg.color[1] = alpha
+				widget_style.bar_text.text_color[1] = alpha
+				widget_style.title_text.text_color[1] = alpha
+				widget_style.texture_task_marker_1.color[1] = alpha
+				widget_style.texture_task_marker_2.color[1] = alpha
+				widget_style.texture_task_marker_3.color[1] = alpha
+				widget_style.task_text_1.text_color[1] = alpha
+				widget_style.task_text_2.text_color[1] = alpha
+				widget_style.task_text_3.text_color[1] = alpha
+				widget_style.task_value_1.text_color[1] = alpha
+				widget_style.task_value_2.text_color[1] = alpha
+				widget_style.task_value_3.text_color[1] = alpha
+				widget_style.texture_task_icon_1.color[1] = alpha
+				widget_style.texture_task_icon_2.color[1] = alpha
+				widget_style.texture_task_icon_3.color[1] = alpha
 
-				local str = "entry_" .. widget_index
+				local scenegraph_id = "entry_" .. widget_index
+				local position = ui_scenegraph[scenegraph_id].local_position
 
-				arg_18_0[str].local_position[2] = arg_18_1[str].position[2]
+				position[2] = scenegraph_definition[scenegraph_id].position[2]
 			end,
-			update = function (arg_19_0, arg_19_1, arg_19_2, arg_19_3, arg_19_4)
+			update = function (ui_scenegraph, scenegraph_definition, widgets, progress, params)
 				-- function 19
 				return
 			end,
-			on_complete = function (arg_20_0, arg_20_1, arg_20_2, arg_20_3)
+			on_complete = function (ui_scenegraph, scenegraph_definition, widgets, params)
 				-- function 20
 				return
 			end
@@ -888,35 +894,37 @@ local tbl_4 = {
 			name = "fade_in",
 			start_progress = 0,
 			end_progress = 0.3,
-			init = function (arg_21_0, arg_21_1, arg_21_2, arg_21_3)
+			init = function (ui_scenegraph, scenegraph_definition, widgets, params)
 				-- function 21
-				WwiseWorld.trigger_event(arg_21_3.wwise_world, "Play_hud_quest_menu_select_quest")
+				WwiseWorld.trigger_event(params.wwise_world, "Play_hud_quest_menu_select_quest")
 			end,
-			update = function (arg_22_0, arg_22_1, arg_22_2, arg_22_3, arg_22_4)
+			update = function (ui_scenegraph, scenegraph_definition, widgets, progress, params)
 				-- function 22
-				local num = math.easeCubic(arg_22_3) * 255
-				local num_2 = math.easeCubic(arg_22_3) * 150
-				local style = arg_22_2[arg_22_4.widget_index].style
+				local alpha = math.easeCubic(progress) * 255
+				local text_alpha = math.easeCubic(progress) * 150
+				local widget_index = params.widget_index
+				local widget = widgets[widget_index]
+				local widget_style = widget.style
 
-				style.texture_divider.color[1] = num
-				style.progress_bar.color[1] = num
-				style.texture_bg.color[1] = num
-				style.bar_text.text_color[1] = num_2
-				style.title_text.text_color[1] = num_2
-				style.texture_task_marker_1.color[1] = num
-				style.texture_task_marker_2.color[1] = num
-				style.texture_task_marker_3.color[1] = num
-				style.texture_task_icon_1.color[1] = num
-				style.texture_task_icon_2.color[1] = num
-				style.texture_task_icon_3.color[1] = num
-				style.task_text_1.text_color[1] = num_2
-				style.task_text_2.text_color[1] = num_2
-				style.task_text_3.text_color[1] = num_2
-				style.task_value_1.text_color[1] = num_2
-				style.task_value_2.text_color[1] = num_2
-				style.task_value_3.text_color[1] = num_2
+				widget_style.texture_divider.color[1] = alpha
+				widget_style.progress_bar.color[1] = alpha
+				widget_style.texture_bg.color[1] = alpha
+				widget_style.bar_text.text_color[1] = text_alpha
+				widget_style.title_text.text_color[1] = text_alpha
+				widget_style.texture_task_marker_1.color[1] = alpha
+				widget_style.texture_task_marker_2.color[1] = alpha
+				widget_style.texture_task_marker_3.color[1] = alpha
+				widget_style.texture_task_icon_1.color[1] = alpha
+				widget_style.texture_task_icon_2.color[1] = alpha
+				widget_style.texture_task_icon_3.color[1] = alpha
+				widget_style.task_text_1.text_color[1] = text_alpha
+				widget_style.task_text_2.text_color[1] = text_alpha
+				widget_style.task_text_3.text_color[1] = text_alpha
+				widget_style.task_value_1.text_color[1] = text_alpha
+				widget_style.task_value_2.text_color[1] = text_alpha
+				widget_style.task_value_3.text_color[1] = text_alpha
 			end,
-			on_complete = function (arg_23_0, arg_23_1, arg_23_2, arg_23_3)
+			on_complete = function (ui_scenegraph, scenegraph_definition, widgets, params)
 				-- function 23
 				return
 			end
@@ -927,34 +935,40 @@ local tbl_4 = {
 			name = "move",
 			start_progress = 0,
 			end_progress = 0.3,
-			init = function (self, arg_24_1, arg_24_2, arg_24_3)
+			init = function (ui_scenegraph, scenegraph_definition, widgets, params)
 				-- function 24
-				local tbl = {}
-				local widget_index = arg_24_3.widget_index
-				local num_widgets = arg_24_3.num_widgets
+				local start_heights = {}
+				local widget_index = params.widget_index
+				local num_widgets = params.num_widgets
 
 				for i = 1, widget_index do
-					tbl[i] = self["entry_" .. i].local_position[2]
+					local scenegraph_id = "entry_" .. i
+					local position = ui_scenegraph[scenegraph_id].local_position
+
+					start_heights[i] = position[2]
 				end
 
-				arg_24_3.start_heights = tbl
+				params.start_heights = start_heights
 
-				WwiseWorld.trigger_event(arg_24_3.wwise_world, "Play_hud_shift")
+				WwiseWorld.trigger_event(params.wwise_world, "Play_hud_shift")
 			end,
-			update = function (arg_25_0, arg_25_1, arg_25_2, arg_25_3, arg_25_4)
+			update = function (ui_scenegraph, scenegraph_definition, widgets, progress, params)
 				-- function 25
-				local widget_index = arg_25_4.widget_index
-				local num_widgets = arg_25_4.num_widgets
-				local start_heights = arg_25_4.start_heights
+				local widget_index = params.widget_index
+				local num_widgets = params.num_widgets
+				local start_heights = params.start_heights
 
 				for i = 1, widget_index do
-					local str = "entry_" .. i
-					local position = arg_25_1[str].position
+					local scenegraph_id = "entry_" .. i
+					local default_position = scenegraph_definition[scenegraph_id].position
+					local position = ui_scenegraph[scenegraph_id].local_position
+					local start_height = start_heights[i]
+					local distance_per_entry = 260
 
-					arg_25_0[str].local_position[2] = start_heights[i] - 260 * math.easeOutCubic(arg_25_3)
+					position[2] = start_height - distance_per_entry * math.easeOutCubic(progress)
 				end
 			end,
-			on_complete = function (arg_26_0, arg_26_1, arg_26_2, arg_26_3)
+			on_complete = function (ui_scenegraph, scenegraph_definition, widgets, params)
 				-- function 26
 				return
 			end
@@ -965,19 +979,22 @@ local tbl_4 = {
 			name = "fade_in_selection",
 			start_progress = 0,
 			end_progress = 0.15,
-			init = function (arg_27_0, arg_27_1, arg_27_2, arg_27_3)
+			init = function (ui_scenegraph, scenegraph_definition, widgets, params)
 				-- function 27
 				return
 			end,
-			update = function (arg_28_0, arg_28_1, arg_28_2, arg_28_3, arg_28_4)
+			update = function (ui_scenegraph, scenegraph_definition, widgets, progress, params)
 				-- function 28
-				local num = math.easeOutCubic(arg_28_3) * 255
-				local widget_index = arg_28_4.widget_index
-				local task_index = arg_28_4.task_index
+				local alpha = math.easeOutCubic(progress) * 255
+				local widget_index = params.widget_index
+				local task_index = params.task_index
+				local widget = widgets[widget_index]
+				local widget_style = widget.style
+				local texture_task_glow_style = widget_style["texture_task_glow_" .. task_index]
 
-				arg_28_2[widget_index].style["texture_task_glow_" .. task_index].color[1] = num
+				texture_task_glow_style.color[1] = alpha
 			end,
-			on_complete = function (arg_29_0, arg_29_1, arg_29_2, arg_29_3)
+			on_complete = function (ui_scenegraph, scenegraph_definition, widgets, params)
 				-- function 29
 				return
 			end
@@ -986,21 +1003,26 @@ local tbl_4 = {
 			name = "font_size",
 			start_progress = 0.1,
 			end_progress = 0.5,
-			init = function (arg_30_0, arg_30_1, arg_30_2, arg_30_3)
+			init = function (ui_scenegraph, scenegraph_definition, widgets, params)
 				-- function 30
 				return
 			end,
-			update = function (arg_31_0, arg_31_1, arg_31_2, arg_31_3, arg_31_4)
+			update = function (ui_scenegraph, scenegraph_definition, widgets, progress, params)
 				-- function 31
-				local widget_index = arg_31_4.widget_index
-				local task_index = arg_31_4.task_index
-				local var_31_2 = arg_31_4.task_data[task_index]
+				local widget_index = params.widget_index
+				local task_index = params.task_index
+				local task_data = params.task_data
+				local data = task_data[task_index]
 
-				if not var_31_2 and not var_31_2.session_value then
-					arg_31_2[widget_index].style["task_value_" .. task_index].font_size = 32 * math.catmullrom(arg_31_3, -0.5, 1, 1, -0.5)
+				if data and data.session_value then
+					local widget = widgets[widget_index]
+					local widget_style = widget.style
+					local name = "task_value_" .. task_index
+
+					widget_style[name].font_size = 32 * math.catmullrom(progress, -0.5, 1, 1, -0.5)
 				end
 			end,
-			on_complete = function (arg_32_0, arg_32_1, arg_32_2, arg_32_3)
+			on_complete = function (ui_scenegraph, scenegraph_definition, widgets, params)
 				-- function 32
 				return
 			end
@@ -1009,33 +1031,35 @@ local tbl_4 = {
 			name = "set_new_value",
 			start_progress = 0.2,
 			end_progress = 0.4,
-			init = function (arg_33_0, arg_33_1, arg_33_2, arg_33_3)
+			init = function (ui_scenegraph, scenegraph_definition, widgets, params)
 				-- function 33
 				return
 			end,
-			update = function (arg_34_0, arg_34_1, arg_34_2, arg_34_3, arg_34_4)
+			update = function (ui_scenegraph, scenegraph_definition, widgets, progress, params)
 				-- function 34
-				local widget_index = arg_34_4.widget_index
-				local task_index = arg_34_4.task_index
-				local var_34_2 = arg_34_4.task_data[task_index]
+				local widget_index = params.widget_index
+				local task_index = params.task_index
+				local task_data = params.task_data
+				local data = task_data[task_index]
 
-				if not var_34_2 and not var_34_2.session_value then
-					local var_34_3 = arg_34_2[widget_index]
-					local style = var_34_3.style
-					local content = var_34_3.content
-					local value = var_34_2.value
-					local session_value = var_34_2.session_value
-					local end_value = var_34_2.end_value
-					local floor = math.floor(session_value * arg_34_3)
+				if data and data.session_value then
+					local widget = widgets[widget_index]
+					local widget_style = widget.style
+					local widget_content = widget.content
+					local value = data.value
+					local session_value = data.session_value
+					local end_value = data.end_value
+					local new_value = math.floor(session_value * progress)
+					local name = "task_value_" .. task_index
 
-					content["task_value_" .. task_index] = tostring(value + floor) .. "/" .. tostring(end_value)
+					widget_content[name] = tostring(value + new_value) .. "/" .. tostring(end_value)
 
 					if end_value <= value + session_value then
-						arg_34_4.task_completed = true
+						params.task_completed = true
 					end
 				end
 			end,
-			on_complete = function (arg_35_0, arg_35_1, arg_35_2, arg_35_3)
+			on_complete = function (ui_scenegraph, scenegraph_definition, widgets, params)
 				-- function 35
 				return
 			end
@@ -1044,30 +1068,32 @@ local tbl_4 = {
 			name = "set_completed",
 			start_progress = 0.45,
 			end_progress = 0.6,
-			init = function (arg_36_0, arg_36_1, arg_36_2, arg_36_3)
+			init = function (ui_scenegraph, scenegraph_definition, widgets, params)
 				-- function 36
-				if not arg_36_3.task_completed then
-					WwiseWorld.trigger_event(arg_36_3.wwise_world, "Play_hud_quest_menu_finish_quest_end_screen")
+				if params.task_completed then
+					WwiseWorld.trigger_event(params.wwise_world, "Play_hud_quest_menu_finish_quest_end_screen")
 				end
 			end,
-			update = function (arg_37_0, arg_37_1, arg_37_2, arg_37_3, arg_37_4)
+			update = function (ui_scenegraph, scenegraph_definition, widgets, progress, params)
 				-- function 37
-				if not arg_37_4.task_completed then
-					local var_37_0 = arg_37_2[arg_37_4.widget_index]
-					local content = var_37_0.content
-					local style = var_37_0.style
-					local task_index = arg_37_4.task_index
-					local easeOutCubic = math.easeOutCubic(arg_37_3)
+				if params.task_completed then
+					local widget_index = params.widget_index
+					local widget = widgets[widget_index]
+					local widget_content = widget.content
+					local widget_style = widget.style
+					local task_index = params.task_index
+					local anim_progress = math.easeOutCubic(progress)
 
-					content["task_completed_" .. task_index] = true
+					widget_content["task_completed_" .. task_index] = true
 
-					local var_37_5 = style["texture_task_marker_" .. task_index]
+					local marker_style = widget_style["texture_task_marker_" .. task_index]
+					local marker_color = marker_style.color
 
-					var_37_5.color[1] = 255
-					var_37_5.gradient_threshold = easeOutCubic
+					marker_color[1] = 255
+					marker_style.gradient_threshold = anim_progress
 				end
 			end,
-			on_complete = function (arg_38_0, arg_38_1, arg_38_2, arg_38_3)
+			on_complete = function (ui_scenegraph, scenegraph_definition, widgets, params)
 				-- function 38
 				return
 			end
@@ -1076,19 +1102,22 @@ local tbl_4 = {
 			name = "fade_out_selection",
 			start_progress = 0.6,
 			end_progress = 0.75,
-			init = function (arg_39_0, arg_39_1, arg_39_2, arg_39_3)
+			init = function (ui_scenegraph, scenegraph_definition, widgets, params)
 				-- function 39
 				return
 			end,
-			update = function (arg_40_0, arg_40_1, arg_40_2, arg_40_3, arg_40_4)
+			update = function (ui_scenegraph, scenegraph_definition, widgets, progress, params)
 				-- function 40
-				local num = 255 - math.easeOutCubic(arg_40_3) * 255
-				local widget_index = arg_40_4.widget_index
-				local task_index = arg_40_4.task_index
+				local alpha = 255 - math.easeOutCubic(progress) * 255
+				local widget_index = params.widget_index
+				local task_index = params.task_index
+				local widget = widgets[widget_index]
+				local widget_style = widget.style
+				local texture_task_glow_style = widget_style["texture_task_glow_" .. task_index]
 
-				arg_40_2[widget_index].style["texture_task_glow_" .. task_index].color[1] = num
+				texture_task_glow_style.color[1] = alpha
 			end,
-			on_complete = function (arg_41_0, arg_41_1, arg_41_2, arg_41_3)
+			on_complete = function (ui_scenegraph, scenegraph_definition, widgets, params)
 				-- function 41
 				return
 			end
@@ -1099,33 +1128,36 @@ local tbl_4 = {
 			name = "bar_progress",
 			start_progress = 0,
 			end_progress = 0.5,
-			init = function (arg_42_0, arg_42_1, arg_42_2, arg_42_3)
+			init = function (ui_scenegraph, scenegraph_definition, widgets, params)
 				-- function 42
-				WwiseWorld.trigger_event(arg_42_3.wwise_world, "Play_hud_quest_menu_finish_quest_end_screen_progress")
+				WwiseWorld.trigger_event(params.wwise_world, "Play_hud_quest_menu_finish_quest_end_screen_progress")
 			end,
-			update = function (arg_43_0, arg_43_1, arg_43_2, arg_43_3, arg_43_4)
+			update = function (ui_scenegraph, scenegraph_definition, widgets, progress, params)
 				-- function 43
-				local var_43_0 = arg_43_2[arg_43_4.widget_index]
-				local content = var_43_0.content
-				local style = var_43_0.style
-				local contract_start_progress = arg_43_4.contract_start_progress
-				local contract_session_progress = arg_43_4.contract_session_progress
-				local progress_bar = style.progress_bar
-				local progress_bar_2 = content.progress_bar
-				local min = math.min(contract_start_progress + contract_session_progress * math.easeCubic(arg_43_3), 1)
+				local widget_index = params.widget_index
+				local widget = widgets[widget_index]
+				local widget_content = widget.content
+				local widget_style = widget.style
+				local contract_start_progress = params.contract_start_progress
+				local contract_session_progress = params.contract_session_progress
+				local progress_bar_style = widget_style.progress_bar
+				local progress_bar_content = widget_content.progress_bar
+				local bar_progress = math.min(contract_start_progress + contract_session_progress * math.easeCubic(progress), 1)
 
-				progress_bar.size[1] = progress_bar.uv_scale_pixels * min
-				progress_bar_2.uvs[2][progress_bar.scale_axis] = min
+				progress_bar_style.size[1] = progress_bar_style.uv_scale_pixels * bar_progress
+				progress_bar_content.uvs[2][progress_bar_style.scale_axis] = bar_progress
 
-				if not (arg_43_3 ~= 1 or min ~= 1) then
-					arg_43_4.play_completed = true
+				if progress == 1 and bar_progress == 1 then
+					params.play_completed = true
 				end
 
-				local floor = math.floor(min * 100, 0)
+				bar_progress = math.floor(bar_progress * 100, 0)
 
-				content.bar_text = Localize("dlc1_3_1_contract_presentation_progress_prefix") .. ": " .. tostring(floor) .. "%"
+				local text = Localize("dlc1_3_1_contract_presentation_progress_prefix")
+
+				widget_content.bar_text = text .. ": " .. tostring(bar_progress) .. "%"
 			end,
-			on_complete = function (arg_44_0, arg_44_1, arg_44_2, arg_44_3)
+			on_complete = function (ui_scenegraph, scenegraph_definition, widgets, params)
 				-- function 44
 				return
 			end
@@ -1134,39 +1166,41 @@ local tbl_4 = {
 			name = "completed_stamp",
 			start_progress = 0.5,
 			end_progress = 0.7,
-			init = function (arg_45_0, arg_45_1, arg_45_2, arg_45_3)
+			init = function (ui_scenegraph, scenegraph_definition, widgets, params)
 				-- function 45
-				WwiseWorld.trigger_event(arg_45_3.wwise_world, "Play_hud_quest_menu_finish_quest_end_screen_completed")
+				WwiseWorld.trigger_event(params.wwise_world, "Play_hud_quest_menu_finish_quest_end_screen_completed")
 			end,
-			update = function (arg_46_0, arg_46_1, arg_46_2, arg_46_3, arg_46_4)
+			update = function (ui_scenegraph, scenegraph_definition, widgets, progress, params)
 				-- function 46
-				if not arg_46_4.play_completed then
-					local var_46_0 = arg_46_2[arg_46_4.widget_index]
-					local content = var_46_0.content
-					local style = var_46_0.style
-					local easeInCubic = math.easeInCubic(arg_46_3)
-					local min = math.min(20 + easeInCubic * 120, 120)
-					local texture_completed = style.texture_completed
+				if params.play_completed then
+					local widget_index = params.widget_index
+					local widget = widgets[widget_index]
+					local widget_content = widget.content
+					local widget_style = widget.style
+					local anim_progress = math.easeInCubic(progress)
+					local alpha = math.min(20 + anim_progress * 120, 120)
+					local completed_style = widget_style.texture_completed
+					local color = completed_style.color
 
-					texture_completed.color[1] = min
+					color[1] = alpha
 
-					local offset = texture_completed.offset
-					local size = texture_completed.size
-					local catmullrom = math.catmullrom(easeInCubic, 1.8, 1.8, 1.2, 1.2)
-					local num = 408
-					local num_2 = 179
+					local offset = completed_style.offset
+					local size = completed_style.size
+					local catmullrom_progress = math.catmullrom(anim_progress, 1.8, 1.8, 1.2, 1.2)
+					local default_width = 408
+					local default_height = 179
 
-					size[1] = math.floor(num * catmullrom)
-					size[2] = math.floor(num_2 * catmullrom)
+					size[1] = math.floor(default_width * catmullrom_progress)
+					size[2] = math.floor(default_height * catmullrom_progress)
 
-					local num_3 = 250
-					local num_4 = 40
+					local default_offset_x = 250
+					local default_offset_y = 40
 
-					offset[1] = num_3 - (size[1] - num) * 0.5
-					offset[2] = num_4 - (size[2] - num_2) * 0.5
+					offset[1] = default_offset_x - (size[1] - default_width) * 0.5
+					offset[2] = default_offset_y - (size[2] - default_height) * 0.5
 				end
 			end,
-			on_complete = function (arg_47_0, arg_47_1, arg_47_2, arg_47_3)
+			on_complete = function (ui_scenegraph, scenegraph_definition, widgets, params)
 				-- function 47
 				return
 			end
@@ -1175,15 +1209,15 @@ local tbl_4 = {
 			name = "delay",
 			start_progress = 0.7,
 			end_progress = 0.8,
-			init = function (arg_48_0, arg_48_1, arg_48_2, arg_48_3)
+			init = function (ui_scenegraph, scenegraph_definition, widgets, params)
 				-- function 48
 				return
 			end,
-			update = function (arg_49_0, arg_49_1, arg_49_2, arg_49_3, arg_49_4)
+			update = function (ui_scenegraph, scenegraph_definition, widgets, progress, params)
 				-- function 49
 				return
 			end,
-			on_complete = function (arg_50_0, arg_50_1, arg_50_2, arg_50_3)
+			on_complete = function (ui_scenegraph, scenegraph_definition, widgets, params)
 				-- function 50
 				return
 			end
@@ -1194,19 +1228,22 @@ local tbl_4 = {
 			name = "overlay_fade_in",
 			start_progress = 0,
 			end_progress = 0.5,
-			init = function (arg_51_0, arg_51_1, arg_51_2, arg_51_3)
+			init = function (ui_scenegraph, scenegraph_definition, widgets, params)
 				-- function 51
 				return
 			end,
-			update = function (arg_52_0, arg_52_1, arg_52_2, arg_52_3, arg_52_4)
+			update = function (ui_scenegraph, scenegraph_definition, widgets, progress, params)
 				-- function 52
-				local num = math.easeOutCubic(arg_52_3) * 50
-				local widget_index = arg_52_4.widget_index
-				local task_index = arg_52_4.task_index
+				local alpha = math.easeOutCubic(progress) * 50
+				local widget_index = params.widget_index
+				local task_index = params.task_index
+				local widget = widgets[widget_index]
+				local widget_style = widget.style
+				local overlay_style = widget_style.overlay
 
-				arg_52_2[widget_index].style.overlay.color[1] = num
+				overlay_style.color[1] = alpha
 			end,
-			on_complete = function (arg_53_0, arg_53_1, arg_53_2, arg_53_3)
+			on_complete = function (ui_scenegraph, scenegraph_definition, widgets, params)
 				-- function 53
 				return
 			end
@@ -1217,49 +1254,50 @@ local tbl_4 = {
 			name = "fade_in",
 			start_progress = 0,
 			end_progress = 0.6,
-			init = function (arg_54_0, arg_54_1, arg_54_2, arg_54_3)
+			init = function (ui_scenegraph, scenegraph_definition, widgets, params)
 				-- function 54
 				return
 			end,
-			update = function (arg_55_0, arg_55_1, arg_55_2, arg_55_3, arg_55_4)
+			update = function (ui_scenegraph, scenegraph_definition, widgets, progress, params)
 				-- function 55
-				local num = 255 - math.easeCubic(arg_55_3) * 255
-				local num_2 = 150 - math.easeCubic(arg_55_3) * 150
-				local num_3 = 50 - math.easeCubic(arg_55_3) * 50
-				local num_4 = 120 - math.easeCubic(arg_55_3) * 120
-				local num_widgets = arg_55_4.num_widgets
+				local alpha = 255 - math.easeCubic(progress) * 255
+				local text_alpha = 150 - math.easeCubic(progress) * 150
+				local overlay_alpha = 50 - math.easeCubic(progress) * 50
+				local completed_alpha = 120 - math.easeCubic(progress) * 120
+				local num_widgets = params.num_widgets
 
 				for i = 1, num_widgets do
-					local style = arg_55_2[i].style
+					local widget = widgets[i]
+					local widget_style = widget.style
 
-					if num_3 < style.overlay.color[1] then
-						style.overlay.color[1] = num_3
+					if overlay_alpha < widget_style.overlay.color[1] then
+						widget_style.overlay.color[1] = overlay_alpha
 					end
 
-					if num_4 < style.texture_completed.color[1] then
-						style.texture_completed.color[1] = num_4
+					if completed_alpha < widget_style.texture_completed.color[1] then
+						widget_style.texture_completed.color[1] = completed_alpha
 					end
 
-					style.texture_divider.color[1] = num
-					style.progress_bar.color[1] = num
-					style.texture_bg.color[1] = num
-					style.bar_text.text_color[1] = num_2
-					style.title_text.text_color[1] = num_2
-					style.texture_task_marker_1.color[1] = num
-					style.texture_task_marker_2.color[1] = num
-					style.texture_task_marker_3.color[1] = num
-					style.texture_task_icon_1.color[1] = num
-					style.texture_task_icon_2.color[1] = num
-					style.texture_task_icon_3.color[1] = num
-					style.task_text_1.text_color[1] = num_2
-					style.task_text_2.text_color[1] = num_2
-					style.task_text_3.text_color[1] = num_2
-					style.task_value_1.text_color[1] = num_2
-					style.task_value_2.text_color[1] = num_2
-					style.task_value_3.text_color[1] = num_2
+					widget_style.texture_divider.color[1] = alpha
+					widget_style.progress_bar.color[1] = alpha
+					widget_style.texture_bg.color[1] = alpha
+					widget_style.bar_text.text_color[1] = text_alpha
+					widget_style.title_text.text_color[1] = text_alpha
+					widget_style.texture_task_marker_1.color[1] = alpha
+					widget_style.texture_task_marker_2.color[1] = alpha
+					widget_style.texture_task_marker_3.color[1] = alpha
+					widget_style.texture_task_icon_1.color[1] = alpha
+					widget_style.texture_task_icon_2.color[1] = alpha
+					widget_style.texture_task_icon_3.color[1] = alpha
+					widget_style.task_text_1.text_color[1] = text_alpha
+					widget_style.task_text_2.text_color[1] = text_alpha
+					widget_style.task_text_3.text_color[1] = text_alpha
+					widget_style.task_value_1.text_color[1] = text_alpha
+					widget_style.task_value_2.text_color[1] = text_alpha
+					widget_style.task_value_3.text_color[1] = text_alpha
 				end
 			end,
-			on_complete = function (arg_56_0, arg_56_1, arg_56_2, arg_56_3)
+			on_complete = function (ui_scenegraph, scenegraph_definition, widgets, params)
 				-- function 56
 				return
 			end
@@ -1268,8 +1306,8 @@ local tbl_4 = {
 }
 
 return {
-	scenegraph_definition = tbl,
-	entry_widget_definitions = tbl_2,
-	widget_definitions = tbl_3,
-	animation_definitions = tbl_4
+	scenegraph_definition = scenegraph_definition,
+	entry_widget_definitions = entry_widget_definitions,
+	widget_definitions = widget_definitions,
+	animation_definitions = animation_definitions
 }

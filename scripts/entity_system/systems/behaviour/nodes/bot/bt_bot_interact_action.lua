@@ -4,105 +4,112 @@ require("scripts/entity_system/systems/behaviour/nodes/bt_node")
 
 BTBotInteractAction = class(BTBotInteractAction, BTNode)
 
-BTBotInteractAction.init = function (arg_1_0, ...)
+BTBotInteractAction.init = function (self, ...)
 	-- function 1
-	BTBotInteractAction.super.init(arg_1_0, ...)
+	BTBotInteractAction.super.init(self, ...)
 end
 
 BTBotInteractAction.name = "BTBotInteractAction"
 
-local alive = Unit.alive
+local unit_alive = Unit.alive
 
-BTBotInteractAction.enter = function (arg_2_0, arg_2_1, arg_2_2, arg_2_3)
+BTBotInteractAction.enter = function (self, unit, blackboard, t)
 	-- function 2
-	local interaction_unit = arg_2_2.interaction_unit
+	local interaction_unit = blackboard.interaction_unit
 
-	arg_2_2.current_interaction_unit = interaction_unit
+	blackboard.current_interaction_unit = interaction_unit
 
-	local interaction_extension = arg_2_2.interaction_extension
+	local interaction_ext = blackboard.interaction_extension
 
-	interaction_extension:set_exclusive_interaction_unit(interaction_unit)
+	interaction_ext:set_exclusive_interaction_unit(interaction_unit)
 
-	arg_2_2.interact = {
+	blackboard.interact = {
 		tried = false,
-		wait_on_previous_interaction = interaction_extension:is_interacting()
+		wait_on_previous_interaction = interaction_ext:is_interacting()
 	}
 
-	local input_extension = arg_2_2.input_extension
-	local flag = true
+	local input_ext = blackboard.input_extension
+	local soft_aiming = true
 
-	input_extension:set_aiming(true, flag)
+	input_ext:set_aiming(true, soft_aiming)
 end
 
-BTBotInteractAction.leave = function (arg_3_0, arg_3_1, arg_3_2, arg_3_3, arg_3_4, arg_3_5)
+BTBotInteractAction.leave = function (self, unit, blackboard, t, reason, destroy)
 	-- function 3
-	arg_3_2.interact = false
+	blackboard.interact = false
 
-	arg_3_2.interaction_extension:set_exclusive_interaction_unit(nil)
-	arg_3_2.input_extension:set_aiming(false)
+	local interaction_ext = blackboard.interaction_extension
 
-	arg_3_2.current_interaction_unit = nil
+	interaction_ext:set_exclusive_interaction_unit(nil)
+
+	local input_ext = blackboard.input_extension
+
+	input_ext:set_aiming(false)
+
+	blackboard.current_interaction_unit = nil
 end
 
-BTBotInteractAction.run = function (self, arg_4_1, arg_4_2, arg_4_3, arg_4_4)
+BTBotInteractAction.run = function (self, unit, blackboard, t, dt)
 	-- function 4
-	local current_interaction_unit = arg_4_2.current_interaction_unit
+	local interaction_unit = blackboard.current_interaction_unit
 
-	if not alive(current_interaction_unit) and current_interaction_unit == arg_4_2.interaction_unit or not arg_4_2.interaction_unit then
+	if not unit_alive(interaction_unit) or interaction_unit ~= blackboard.interaction_unit and blackboard.interaction_unit then
 		return "failed"
 	end
 
 	local action_data = self._tree_node.action_data
-	local status_extension = arg_4_2.status_extension
-	local interaction_extension = arg_4_2.interaction_extension
-	local input_extension = arg_4_2.input_extension
-	local state = interaction_extension.state
-	local interact = arg_4_2.interact
-	local flag = true
+	local status_ext = blackboard.status_extension
+	local interaction_ext = blackboard.interaction_extension
+	local input_ext = blackboard.input_extension
+	local state = interaction_ext.state
+	local bb = blackboard.interact
+	local do_interaction = true
 
-	if not action_data and not action_data.use_block_interaction then
-		input_extension:defend()
+	if action_data and action_data.use_block_interaction then
+		input_ext:defend()
 
-		flag = status_extension:is_blocking()
+		do_interaction = status_ext:is_blocking()
 	end
 
-	if not flag then
-		local input
+	if do_interaction then
+		local input_2
 
-		if not action_data then
-			input = action_data.input
+		if action_data then
+			input_2 = action_data.input
 
-			if not input then
+			if not input_2 then
 				-- Nothing
 			end
 		end
 
-		input = InteractionHelper.interaction_action_names(arg_4_1)
+		input_2 = InteractionHelper.interaction_action_names(unit)
+
+		local input = input_2
 
 		::label_4_0::
 
-		if not interact.wait_on_previous_interaction then
-			interact.wait_on_previous_interaction = false
-		elseif not (state ~= "waiting_to_interact" or interact.tried) then
-			input_extension[input](input_extension)
+		if bb.wait_on_previous_interaction then
+			bb.wait_on_previous_interaction = false
+		elseif state == "waiting_to_interact" and not bb.tried then
+			input_ext[input](input_ext)
 
-			interact.tried = true
+			bb.tried = true
 		elseif state == "waiting_to_interact" then
-			interact.tried = false
+			bb.tried = false
 		else
-			input_extension[input](input_extension)
+			input_ext[input](input_ext)
 		end
 	end
 
-	local var_4_9
+	local aim_position
 
-	if not action_data and not Unit.has_node(current_interaction_unit, action_data.aim_node) then
-		var_4_9 = Unit.world_position(current_interaction_unit, Unit.node(current_interaction_unit, action_data.aim_node))
+	if action_data and Unit.has_node(interaction_unit, action_data.aim_node) then
+		aim_position = Unit.world_position(interaction_unit, Unit.node(interaction_unit, action_data.aim_node))
 	else
-		var_4_9 = Unit.world_position(current_interaction_unit, 0)
+		aim_position = Unit.world_position(interaction_unit, 0)
 	end
 
-	input_extension:set_aim_position(var_4_9)
+	input_ext:set_aim_position(aim_position)
 
 	return "running"
 end

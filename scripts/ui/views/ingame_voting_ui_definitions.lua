@@ -1,6 +1,6 @@
 -- chunkname: @scripts/ui/views/ingame_voting_ui_definitions.lua
 
-local tbl = {
+local scenegraph_definition = {
 	screen = {
 		scale = "fit",
 		position = {
@@ -140,33 +140,33 @@ local tbl = {
 		}
 	}
 }
-
-;({}).passes = {
-	{
-		pass_type = "rect",
-		style_id = "rect"
-	},
-	{
-		pass_type = "border",
-		style_id = "border"
-	},
-	{
-		style_id = "text",
-		pass_type = "text",
-		text_id = "text"
+local text_box_element = {
+	passes = {
+		{
+			pass_type = "rect",
+			style_id = "rect"
+		},
+		{
+			pass_type = "border",
+			style_id = "border"
+		},
+		{
+			style_id = "text",
+			pass_type = "text",
+			text_id = "text"
+		}
 	}
 }
-
-local tbl_2 = {
+local option_element = {
 	passes = {
 		{
 			style_id = "bar",
 			pass_type = "rect",
-			content_check_function = function (self)
+			content_check_function = function (content)
 				-- function 1
-				local can_vote = self.can_vote
+				local can_vote = content.can_vote
 
-				can_vote = not can_vote and not not self.has_voted or self.input_icon
+				can_vote = not not can_vote and not content.has_voted and not not content.input_icon
 
 				return can_vote
 			end
@@ -174,11 +174,11 @@ local tbl_2 = {
 		{
 			style_id = "bar_bg",
 			pass_type = "rect",
-			content_check_function = function (self)
+			content_check_function = function (content)
 				-- function 2
-				local can_vote = self.can_vote
+				local can_vote = content.can_vote
 
-				can_vote = not can_vote and not not self.has_voted or self.input_icon
+				can_vote = not not can_vote and not content.has_voted and not not content.input_icon
 
 				return can_vote
 			end
@@ -187,11 +187,11 @@ local tbl_2 = {
 			style_id = "option_text",
 			pass_type = "text",
 			text_id = "option_text",
-			content_check_function = function (self)
+			content_check_function = function (content)
 				-- function 3
-				local can_vote = self.can_vote
+				local can_vote = content.can_vote
 
-				can_vote = not can_vote and not self.has_voted
+				can_vote = not not can_vote and not not not content.has_voted
 
 				return can_vote
 			end
@@ -200,11 +200,11 @@ local tbl_2 = {
 			style_id = "option_text_shadow",
 			pass_type = "text",
 			text_id = "option_text",
-			content_check_function = function (self)
+			content_check_function = function (content)
 				-- function 4
-				local can_vote = self.can_vote
+				local can_vote = content.can_vote
 
-				can_vote = not can_vote and not self.has_voted
+				can_vote = not not can_vote and not not not content.has_voted
 
 				return can_vote
 			end
@@ -213,29 +213,29 @@ local tbl_2 = {
 			style_id = "result_text",
 			pass_type = "text",
 			text_id = "result_text",
-			content_check_function = function (self)
+			content_check_function = function (content)
 				-- function 5
-				return self.has_voted
+				return content.has_voted
 			end
 		},
 		{
 			style_id = "result_text_shadow",
 			pass_type = "text",
 			text_id = "result_text",
-			content_check_function = function (self)
+			content_check_function = function (content)
 				-- function 6
-				return self.has_voted
+				return content.has_voted
 			end
 		},
 		{
 			style_id = "input_text",
 			pass_type = "text",
 			text_id = "input_text",
-			content_check_function = function (self)
+			content_check_function = function (content)
 				-- function 7
-				local can_vote = self.can_vote
+				local can_vote = content.can_vote
 
-				can_vote = not can_vote and not self.has_voted
+				can_vote = not not can_vote and not not not content.has_voted
 
 				return can_vote
 			end
@@ -244,11 +244,11 @@ local tbl_2 = {
 			style_id = "input_text_shadow",
 			pass_type = "text",
 			text_id = "input_text",
-			content_check_function = function (self)
+			content_check_function = function (content)
 				-- function 8
-				local can_vote = self.can_vote
+				local can_vote = content.can_vote
 
-				can_vote = not can_vote and not self.has_voted
+				can_vote = not not can_vote and not not not content.has_voted
 
 				return can_vote
 			end
@@ -257,18 +257,18 @@ local tbl_2 = {
 			pass_type = "texture",
 			style_id = "input_icon",
 			texture_id = "input_icon",
-			content_check_function = function (self)
+			content_check_function = function (content)
 				-- function 9
-				local can_vote = self.can_vote
+				local can_vote = content.can_vote
 
-				can_vote = not can_vote and not not self.has_voted or self.input_icon
+				can_vote = not not can_vote and not content.has_voted and not not content.input_icon
 
 				return can_vote
 			end
 		}
 	}
 }
-local tbl_3 = {
+local widget_definitions = {
 	background = {
 		scenegraph_id = "voting_box_root",
 		element = {
@@ -292,27 +292,27 @@ local tbl_3 = {
 					pass_type = "texture",
 					style_id = "input_glow",
 					texture_id = "input_glow",
-					content_check_function = function (self)
+					content_check_function = function (content)
 						-- function 10
-						return not not self.can_vote or not self.has_voted
+						return not content.can_vote and not not not content.has_voted
 					end
 				},
 				{
 					style_id = "input_text",
 					pass_type = "text",
 					text_id = "input_text",
-					content_check_function = function (self)
+					content_check_function = function (content)
 						-- function 11
-						return not not self.has_voted or not self.can_vote
+						return not content.has_voted and not not not content.can_vote
 					end
 				},
 				{
 					style_id = "input_text_shadow",
 					pass_type = "text",
 					text_id = "input_text",
-					content_check_function = function (self)
+					content_check_function = function (content)
 						-- function 12
-						return not not self.has_voted or not self.can_vote
+						return not content.has_voted and not not not content.can_vote
 					end
 				},
 				{
@@ -344,13 +344,13 @@ local tbl_3 = {
 					pass_type = "texture",
 					style_id = "gamepad_input_icon",
 					texture_id = "gamepad_input_icon",
-					content_check_function = function (self)
+					content_check_function = function (content)
 						-- function 13
-						local gamepad_input_icon = self.gamepad_input_icon
+						local gamepad_input_icon = content.gamepad_input_icon
 
-						if not gamepad_input_icon then
-							gamepad_input_icon = self.is_gamepad_active
-							gamepad_input_icon = not gamepad_input_icon and not self.has_voted
+						if gamepad_input_icon then
+							gamepad_input_icon = content.is_gamepad_active
+							gamepad_input_icon = not not gamepad_input_icon and not not not content.has_voted
 						end
 
 						return gamepad_input_icon
@@ -569,7 +569,7 @@ local tbl_3 = {
 	},
 	option_yes = {
 		scenegraph_id = "option_yes",
-		element = tbl_2,
+		element = option_element,
 		content = {
 			input_text = "",
 			has_voted = false,
@@ -738,7 +738,7 @@ local tbl_3 = {
 	},
 	option_no = {
 		scenegraph_id = "option_no",
-		element = tbl_2,
+		element = option_element,
 		content = {
 			input_text = "",
 			has_voted = false,
@@ -901,6 +901,6 @@ local tbl_3 = {
 }
 
 return {
-	scenegraph_definition = tbl,
-	widget_definitions = tbl_3
+	scenegraph_definition = scenegraph_definition,
+	widget_definitions = widget_definitions
 }

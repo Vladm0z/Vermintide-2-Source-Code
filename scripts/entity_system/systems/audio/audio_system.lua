@@ -2,7 +2,7 @@
 
 AudioSystem = class(AudioSystem, ExtensionSystemBase)
 
-local tbl = {
+local RPCS = {
 	"rpc_play_2d_audio_event",
 	"rpc_play_2d_audio_unit_event_for_peer",
 	"rpc_server_audio_event",
@@ -19,17 +19,17 @@ local tbl = {
 	"rpc_vs_play_matchmaking_sfx"
 }
 
-AudioSystem.init = function (self, arg_1_1, arg_1_2)
+AudioSystem.init = function (self, entity_system_creation_context, system_name)
 	-- function 1
-	AudioSystem.super.init(self, arg_1_1, arg_1_2, {})
+	AudioSystem.super.init(self, entity_system_creation_context, system_name, {})
 
-	local network_event_delegate = arg_1_1.network_event_delegate
+	local network_event_delegate = entity_system_creation_context.network_event_delegate
 
 	self.network_event_delegate = network_event_delegate
 
-	network_event_delegate:register(self, unpack(tbl))
+	network_event_delegate:register(self, unpack(RPCS))
 
-	self.is_server = arg_1_1.is_server
+	self.is_server = entity_system_creation_context.is_server
 	self.global_parameter_data = {}
 end
 
@@ -39,76 +39,85 @@ AudioSystem.destroy = function (self)
 	table.for_each(self.global_parameter_data, table.clear)
 end
 
-AudioSystem.update = function (self, arg_3_1, arg_3_2)
+AudioSystem.update = function (self, context, t)
 	-- function 3
-	local dt = arg_3_1.dt
+	local dt = context.dt
 
 	self:_update_global_parameters(dt)
 end
 
-local tbl_2 = {
+local LERP_PROGRESS_PER_SECOND = {
 	default = 0.125,
 	demo_slowmo = 2
 }
 
-AudioSystem._update_global_parameters = function (self, arg_4_1)
+AudioSystem._update_global_parameters = function (self, dt)
 	-- function 4
 	local wwise_world = Managers.world:wwise_world(self.world)
 
-	for k, v in pairs(self.global_parameter_data) do
-		if not script_data.debug_music then
+	for name, data in pairs(self.global_parameter_data) do
+		if script_data.debug_music then
 			Debug.text("GLOBAL PARAMETERS")
 
 			local format = string.format
 			local str = " %s: %.2f"
-			local var_4_3 = k
-			local interpolation_current_value = v.interpolation_current_value
+			local var_4_2 = name
+			local interpolation_current_value = data.interpolation_current_value
 
-			interpolation_current_value = interpolation_current_value or 0
+			interpolation_current_value = not not interpolation_current_value or not not 0
 
-			local var_4_5 = format(str, var_4_3, interpolation_current_value)
+			local debug_string = format(str, var_4_2, interpolation_current_value)
 
-			Debug.text(var_4_5)
+			Debug.text(debug_string)
 		end
 
-		local interpolation_progress_value = v.interpolation_progress_value
+		local progress = data.interpolation_progress_value
 
-		if interpolation_progress_value < 1 then
-			local interpolation_start_value = v.interpolation_start_value
-			local interpolation_end_value = v.interpolation_end_value
-			local var_4_9 = tbl_2[k]
+		if progress < 1 then
+			local start_value = data.interpolation_start_value
+			local end_value = data.interpolation_end_value
+			local var_4_4 = LERP_PROGRESS_PER_SECOND[name]
 
-			var_4_9 = var_4_9 or tbl_2.default
-
-			local clamp = math.clamp(interpolation_progress_value + arg_4_1 * var_4_9, 0, 1)
-			local lerp = math.lerp(interpolation_start_value, interpolation_end_value, clamp)
-
-			if math.abs(interpolation_end_value - lerp) < 0.005 then
-				lerp = interpolation_end_value
-				clamp = 1
+			if not var_4_4 then
+				-- Nothing
 			end
 
-			v.interpolation_current_value = lerp
-			v.interpolation_progress_value = clamp
+			var_4_4 = LERP_PROGRESS_PER_SECOND.default
 
-			WwiseWorld.set_global_parameter(wwise_world, k, lerp)
+			local increment_value = var_4_4
+
+			::label_4_0::
+
+			progress = math.clamp(progress + dt * increment_value, 0, 1)
+
+			local current_value = math.lerp(start_value, end_value, progress)
+
+			if math.abs(end_value - current_value) < 0.005 then
+				current_value = end_value
+				progress = 1
+			end
+
+			data.interpolation_current_value = current_value
+			data.interpolation_progress_value = progress
+
+			WwiseWorld.set_global_parameter(wwise_world, name, current_value)
 		end
 	end
 end
 
-AudioSystem.play_sound_local = function (self, arg_5_1)
+AudioSystem.play_sound_local = function (self, event)
 	-- function 5
 	local wwise_world = Managers.world:wwise_world(self.world)
 
-	WwiseWorld.trigger_event(wwise_world, arg_5_1)
+	WwiseWorld.trigger_event(wwise_world, event)
 end
 
-AudioSystem.player_unit_sound_local = function (self, arg_6_1, arg_6_2, arg_6_3)
+AudioSystem.player_unit_sound_local = function (self, event, unit, object)
 	-- function 6
 	local node
 
-	if not arg_6_3 then
-		node = Unit.node(arg_6_2, arg_6_3)
+	if object then
+		node = Unit.node(unit, object)
 
 		if not node then
 			-- Nothing
@@ -116,53 +125,55 @@ AudioSystem.player_unit_sound_local = function (self, arg_6_1, arg_6_2, arg_6_3)
 	end
 
 	node = 0
+
+	local object_id = node
 
 	::label_6_0::
 
 	if not DEDICATED_SERVER then
-		self:_play_event(arg_6_1, arg_6_2, node)
+		self:_play_event(event, unit, object_id)
 	end
 end
 
-AudioSystem.play_2d_audio_event = function (self, arg_7_1)
+AudioSystem.play_2d_audio_event = function (self, event)
 	-- function 7
 	if not DEDICATED_SERVER then
 		local wwise_world = Managers.world:wwise_world(self.world)
 
-		WwiseWorld.trigger_event(wwise_world, arg_7_1)
+		WwiseWorld.trigger_event(wwise_world, event)
 	end
 
-	local var_7_1 = NetworkLookup.sound_events[arg_7_1]
+	local sound_event_id = NetworkLookup.sound_events[event]
 
-	if not self.is_server then
-		self.network_transmit:send_rpc_clients("rpc_play_2d_audio_event", var_7_1)
+	if self.is_server then
+		self.network_transmit:send_rpc_clients("rpc_play_2d_audio_event", sound_event_id)
 	else
-		self.network_transmit:send_rpc_server("rpc_play_2d_audio_event", var_7_1)
+		self.network_transmit:send_rpc_server("rpc_play_2d_audio_event", sound_event_id)
 	end
 end
 
-AudioSystem.play_2d_audio_unit_event_for_peer = function (arg_8_0, arg_8_1, arg_8_2)
+AudioSystem.play_2d_audio_unit_event_for_peer = function (self, event, peer_id)
 	-- function 8
-	if not arg_8_1 then
+	if not event then
 		return
 	end
 
-	local network = Managers.state.network
-	local var_8_1 = NetworkLookup.sound_events[arg_8_1]
+	local network_manager = Managers.state.network
+	local sound_event_id = NetworkLookup.sound_events[event]
 
-	network.network_transmit:send_rpc("rpc_play_2d_audio_unit_event_for_peer", arg_8_2, var_8_1)
+	network_manager.network_transmit:send_rpc("rpc_play_2d_audio_unit_event_for_peer", peer_id, sound_event_id)
 end
 
-AudioSystem.play_audio_unit_event = function (self, arg_9_1, arg_9_2, arg_9_3)
+AudioSystem.play_audio_unit_event = function (self, event, unit, object)
 	-- function 9
-	if not arg_9_1 then
+	if not event then
 		return
 	end
 
 	local node
 
-	if not arg_9_3 then
-		node = Unit.node(arg_9_2, arg_9_3)
+	if object then
+		node = Unit.node(unit, object)
 
 		if not node then
 			-- Nothing
@@ -170,77 +181,79 @@ AudioSystem.play_audio_unit_event = function (self, arg_9_1, arg_9_2, arg_9_3)
 	end
 
 	node = 0
+
+	local object_id = node
 
 	::label_9_0::
 
 	if not DEDICATED_SERVER then
-		self:_play_event(arg_9_1, arg_9_2, node)
+		self:_play_event(event, unit, object_id)
 	end
 
-	local network = Managers.state.network
-	local game_object_or_level_id, var_9_3 = network:game_object_or_level_id(arg_9_2)
-	local var_9_4 = NetworkLookup.sound_events[arg_9_1]
+	local network_manager = Managers.state.network
+	local unit_id, is_level_unit = network_manager:game_object_or_level_id(unit)
+	local sound_event_id = NetworkLookup.sound_events[event]
 
-	if arg_9_1 == "Stop_enemy_foley_globadier_boiling_loop" then
-		printf("[HON-43348] Globadier (%s) play audio unit event. unit_id: '%s', unit: '%s'", Unit.get_data(arg_9_2, "globadier_43348"), game_object_or_level_id, tostring(arg_9_2))
+	if event == "Stop_enemy_foley_globadier_boiling_loop" then
+		printf("[HON-43348] Globadier (%s) play audio unit event. unit_id: '%s', unit: '%s'", Unit.get_data(unit, "globadier_43348"), unit_id, tostring(unit))
 	end
 
-	if not game_object_or_level_id then
+	if not unit_id then
 		return
 	end
 
-	if not self.is_server then
-		network.network_transmit:send_rpc_clients("rpc_server_audio_unit_event", var_9_4, game_object_or_level_id, var_9_3, node)
+	if self.is_server then
+		network_manager.network_transmit:send_rpc_clients("rpc_server_audio_unit_event", sound_event_id, unit_id, is_level_unit, object_id)
 	else
-		network.network_transmit:send_rpc_server("rpc_server_audio_unit_event", var_9_4, game_object_or_level_id, var_9_3, node)
+		network_manager.network_transmit:send_rpc_server("rpc_server_audio_unit_event", sound_event_id, unit_id, is_level_unit, object_id)
 	end
 end
 
-AudioSystem.play_audio_position_event = function (self, arg_10_1, arg_10_2)
+AudioSystem.play_audio_position_event = function (self, event, position)
 	-- function 10
-	if not arg_10_1 then
+	if not event then
 		return
 	end
 
-	if not arg_10_2 then
+	if not position then
 		return
 	end
 
 	if not DEDICATED_SERVER then
-		self:_play_position_event(arg_10_1, arg_10_2)
+		self:_play_position_event(event, position)
 	end
 
-	local network = Managers.state.network
-	local var_10_1 = NetworkLookup.sound_events[arg_10_1]
+	local network_manager = Managers.state.network
+	local sound_event_id = NetworkLookup.sound_events[event]
 
-	if not self.is_server then
-		network.network_transmit:send_rpc_clients("rpc_server_audio_position_event", var_10_1, arg_10_2)
+	if self.is_server then
+		network_manager.network_transmit:send_rpc_clients("rpc_server_audio_position_event", sound_event_id, position)
 	else
-		network.network_transmit:send_rpc_server("rpc_server_audio_position_event", var_10_1, arg_10_2)
+		network_manager.network_transmit:send_rpc_server("rpc_server_audio_position_event", sound_event_id, position)
 	end
 end
 
-AudioSystem._play_event = function (self, arg_11_1, arg_11_2, arg_11_3)
+AudioSystem._play_event = function (self, event, unit, object_id)
 	-- function 11
-	WwiseUtils.trigger_unit_event(self.world, arg_11_1, arg_11_2, arg_11_3)
+	WwiseUtils.trigger_unit_event(self.world, event, unit, object_id)
 end
 
-AudioSystem._play_position_event = function (self, arg_12_1, arg_12_2)
+AudioSystem._play_position_event = function (self, event, position)
 	-- function 12
-	WwiseUtils.trigger_position_event(self.world, arg_12_1, arg_12_2)
+	WwiseUtils.trigger_position_event(self.world, event, position)
 end
 
-AudioSystem._play_event_with_source = function (arg_13_0, arg_13_1, arg_13_2, arg_13_3)
+AudioSystem._play_event_with_source = function (self, wwise_world, event, source)
 	-- function 13
-	arg_13_1:trigger_event(arg_13_2, arg_13_3)
+	wwise_world:trigger_event(event, source)
 end
 
-AudioSystem.play_audio_unit_param_string_event = function (self, arg_14_1, arg_14_2, arg_14_3, arg_14_4, arg_14_5)
+AudioSystem.play_audio_unit_param_string_event = function (self, event, param, value, unit, object)
 	-- function 14
 	local node
 
-	if not arg_14_5 then
-		node = Unit.node(arg_14_4, arg_14_5)
+	if object then
+		node = Unit.node(unit, object)
 
 		if not node then
 			-- Nothing
@@ -248,32 +261,34 @@ AudioSystem.play_audio_unit_param_string_event = function (self, arg_14_1, arg_1
 	end
 
 	node = 0
+
+	local object_id = node
 
 	::label_14_0::
 
 	if not DEDICATED_SERVER then
-		self:_play_param_event(arg_14_1, arg_14_2, arg_14_3, arg_14_4, node)
+		self:_play_param_event(event, param, value, unit, object_id)
 	end
 
-	local network = Managers.state.network
-	local unit_game_object_id = network:unit_game_object_id(arg_14_4)
-	local var_14_3 = NetworkLookup.sound_events[arg_14_1]
-	local var_14_4 = NetworkLookup.sound_event_param_names[arg_14_2]
-	local var_14_5 = NetworkLookup.sound_event_param_string_values[arg_14_3]
+	local network_manager = Managers.state.network
+	local unit_id = network_manager:unit_game_object_id(unit)
+	local sound_event_id = NetworkLookup.sound_events[event]
+	local name_id = NetworkLookup.sound_event_param_names[param]
+	local value_id = NetworkLookup.sound_event_param_string_values[value]
 
-	if not self.is_server then
-		network.network_transmit:send_rpc_clients("rpc_server_audio_unit_param_string_event", var_14_3, unit_game_object_id, node, var_14_4, var_14_5)
+	if self.is_server then
+		network_manager.network_transmit:send_rpc_clients("rpc_server_audio_unit_param_string_event", sound_event_id, unit_id, object_id, name_id, value_id)
 	else
-		network.network_transmit:send_rpc_server("rpc_server_audio_unit_param_string_event", var_14_3, unit_game_object_id, node, var_14_4, var_14_5)
+		network_manager.network_transmit:send_rpc_server("rpc_server_audio_unit_param_string_event", sound_event_id, unit_id, object_id, name_id, value_id)
 	end
 end
 
-AudioSystem.play_audio_unit_param_int_event = function (self, arg_15_1, arg_15_2, arg_15_3, arg_15_4, arg_15_5)
+AudioSystem.play_audio_unit_param_int_event = function (self, event, param, value, unit, object)
 	-- function 15
 	local node
 
-	if not arg_15_5 then
-		node = Unit.node(arg_15_4, arg_15_5)
+	if object then
+		node = Unit.node(unit, object)
 
 		if not node then
 			-- Nothing
@@ -281,49 +296,68 @@ AudioSystem.play_audio_unit_param_int_event = function (self, arg_15_1, arg_15_2
 	end
 
 	node = 0
+
+	local object_id = node
 
 	::label_15_0::
 
 	if not DEDICATED_SERVER then
-		self:_play_param_event(arg_15_1, arg_15_2, arg_15_3, arg_15_4, node)
+		self:_play_param_event(event, param, value, unit, object_id)
 	end
 
-	local network = Managers.state.network
-	local unit_game_object_id = network:unit_game_object_id(arg_15_4)
-	local var_15_3 = NetworkLookup.sound_events[arg_15_1]
-	local var_15_4 = NetworkLookup.sound_event_param_names[arg_15_2]
+	local network_manager = Managers.state.network
+	local unit_id = network_manager:unit_game_object_id(unit)
+	local sound_event_id = NetworkLookup.sound_events[event]
+	local name_id = NetworkLookup.sound_event_param_names[param]
 
-	network.network_transmit:send_rpc_clients("rpc_server_audio_unit_param_int_event", var_15_3, unit_game_object_id, node, var_15_4, arg_15_3)
+	network_manager.network_transmit:send_rpc_clients("rpc_server_audio_unit_param_int_event", sound_event_id, unit_id, object_id, name_id, value)
 end
 
-AudioSystem.set_global_parameter_with_lerp = function (self, arg_16_1, arg_16_2)
+AudioSystem.set_global_parameter_with_lerp = function (self, name, value)
 	-- function 16
-	local var_16_0 = self.global_parameter_data[arg_16_1]
+	local var_16_0 = self.global_parameter_data[name]
 
-	var_16_0 = var_16_0 or {}
+	if not var_16_0 then
+		-- Nothing
+	end
 
-	local interpolation_current_value = var_16_0.interpolation_current_value
+	var_16_0 = {}
 
-	interpolation_current_value = interpolation_current_value or 0
-	var_16_0.interpolation_start_value = interpolation_current_value
-	var_16_0.interpolation_end_value = arg_16_2
-	var_16_0.interpolation_progress_value = 0
-	self.global_parameter_data[arg_16_1] = var_16_0
+	local global_parameter_data = var_16_0
+
+	::label_16_0::
+
+	local interpolation_current_value = global_parameter_data.interpolation_current_value
+
+	if not interpolation_current_value then
+		-- Nothing
+	end
+
+	interpolation_current_value = 0
+
+	local current_value = interpolation_current_value
+
+	::label_16_1::
+
+	global_parameter_data.interpolation_start_value = current_value
+	global_parameter_data.interpolation_end_value = value
+	global_parameter_data.interpolation_progress_value = 0
+	self.global_parameter_data[name] = global_parameter_data
 end
 
-AudioSystem.set_global_parameter = function (self, arg_17_1, arg_17_2)
+AudioSystem.set_global_parameter = function (self, name, value)
 	-- function 17
 	local wwise_world = Managers.world:wwise_world(self.world)
 
-	WwiseWorld.set_global_parameter(wwise_world, arg_17_1, arg_17_2)
+	WwiseWorld.set_global_parameter(wwise_world, name, value)
 end
 
-AudioSystem.play_audio_unit_param_float_event = function (self, arg_18_1, arg_18_2, arg_18_3, arg_18_4, arg_18_5)
+AudioSystem.play_audio_unit_param_float_event = function (self, event, param, value, unit, object)
 	-- function 18
 	local node
 
-	if not arg_18_5 then
-		node = Unit.node(arg_18_4, arg_18_5)
+	if object then
+		node = Unit.node(unit, object)
 
 		if not node then
 			-- Nothing
@@ -332,307 +366,314 @@ AudioSystem.play_audio_unit_param_float_event = function (self, arg_18_1, arg_18
 
 	node = 0
 
+	local object_id = node
+
 	::label_18_0::
 
 	if not DEDICATED_SERVER then
-		self:_play_param_event(arg_18_1, arg_18_2, arg_18_3, arg_18_4, node)
+		self:_play_param_event(event, param, value, unit, object_id)
 	end
 
-	local network = Managers.state.network
-	local unit_game_object_id = network:unit_game_object_id(arg_18_4)
-	local var_18_3 = NetworkLookup.sound_events[arg_18_1]
-	local var_18_4 = NetworkLookup.sound_event_param_names[arg_18_2]
+	local network_manager = Managers.state.network
+	local unit_id = network_manager:unit_game_object_id(unit)
+	local sound_event_id = NetworkLookup.sound_events[event]
+	local name_id = NetworkLookup.sound_event_param_names[param]
 
-	if not self.is_server then
-		network.network_transmit:send_rpc_clients("rpc_server_audio_unit_param_float_event", var_18_3, unit_game_object_id, node, var_18_4, arg_18_3)
+	if self.is_server then
+		network_manager.network_transmit:send_rpc_clients("rpc_server_audio_unit_param_float_event", sound_event_id, unit_id, object_id, name_id, value)
 	else
-		network.network_transmit:send_rpc_server("rpc_server_audio_unit_param_float_event", var_18_3, unit_game_object_id, node, var_18_4, arg_18_3)
+		network_manager.network_transmit:send_rpc_server("rpc_server_audio_unit_param_float_event", sound_event_id, unit_id, object_id, name_id, value)
 	end
 end
 
-AudioSystem._play_param_event = function (self, arg_19_1, arg_19_2, arg_19_3, arg_19_4, arg_19_5)
+AudioSystem._play_param_event = function (self, event, param, value, unit, object_id)
 	-- function 19
-	local make_unit_auto_source, var_19_1 = WwiseUtils.make_unit_auto_source(self.world, arg_19_4, arg_19_5)
+	local source, wwise_world = WwiseUtils.make_unit_auto_source(self.world, unit, object_id)
 
-	WwiseWorld.set_source_parameter(var_19_1, make_unit_auto_source, arg_19_2, arg_19_3)
-	WwiseWorld.trigger_event(var_19_1, arg_19_1, make_unit_auto_source)
+	WwiseWorld.set_source_parameter(wwise_world, source, param, value)
+	WwiseWorld.trigger_event(wwise_world, event, source)
 end
 
-AudioSystem.vs_play_pactsworn_hit_enemy = function (self, arg_20_1, arg_20_2, arg_20_3, arg_20_4, arg_20_5)
+AudioSystem.vs_play_pactsworn_hit_enemy = function (self, position, is_local_player, player, damage_amount, t)
 	-- function 20
-	local settings = Managers.state.game_mode:settings()
+	local game_mode_settings = Managers.state.game_mode:settings()
 
-	if not (not self.reset_sound_param_t and not (arg_20_5 > self.reset_sound_param_t)) then
-		self.reset_sound_param_t = settings.damage_sound_param_cooldown + arg_20_5
+	if not self.reset_sound_param_t or t > self.reset_sound_param_t then
+		self.reset_sound_param_t = game_mode_settings.damage_sound_param_cooldown + t
 		self.param_damage_amount = 0
 	else
-		self.reset_sound_param_t = settings.damage_sound_param_cooldown + arg_20_5
+		self.reset_sound_param_t = game_mode_settings.damage_sound_param_cooldown + t
 	end
 
-	if not arg_20_2 then
+	if is_local_player then
 		if not self.param_damage_amount then
-			self.param_damage_amount = math.clamp(arg_20_4, 0, 100)
+			self.param_damage_amount = math.clamp(damage_amount, 0, 100)
 		else
-			self.param_damage_amount = math.clamp(self.param_damage_amount + arg_20_4, 0, 100)
+			self.param_damage_amount = math.clamp(self.param_damage_amount + damage_amount, 0, 100)
 		end
 
 		self:set_global_parameter("versus_pactsworn_damage_given", self.param_damage_amount)
-		self:_play_position_event("versus_hit_indicator_local", arg_20_1)
+		self:_play_position_event("versus_hit_indicator_local", position)
 	else
-		Managers.state.network.network_transmit:send_rpc("rpc_vs_play_pactsworn_hit_enemy", arg_20_3.peer_id, arg_20_1, arg_20_4)
+		local network_transmit = Managers.state.network.network_transmit
+
+		network_transmit:send_rpc("rpc_vs_play_pactsworn_hit_enemy", player.peer_id, position, damage_amount)
 	end
 end
 
-AudioSystem.rpc_vs_play_pactsworn_hit_enemy = function (self, arg_21_1, arg_21_2, arg_21_3)
+AudioSystem.rpc_vs_play_pactsworn_hit_enemy = function (self, channel_id, position, damage_amount)
 	-- function 21
-	if not DEDICATED_SERVER then
+	if DEDICATED_SERVER then
 		return
 	end
 
-	local settings = Managers.state.game_mode:settings()
-	local time = Managers.time:time("game")
+	local game_mode_settings = Managers.state.game_mode:settings()
+	local t = Managers.time:time("game")
 
-	if not (not self.reset_sound_param_t and not (time > self.reset_sound_param_t)) then
-		self.reset_sound_param_t = settings.damage_sound_param_cooldown + time
+	if not self.reset_sound_param_t or t > self.reset_sound_param_t then
+		self.reset_sound_param_t = game_mode_settings.damage_sound_param_cooldown + t
 		self.param_damage_amount = 0
 	else
-		self.reset_sound_param_t = settings.damage_sound_param_cooldown + time
+		self.reset_sound_param_t = game_mode_settings.damage_sound_param_cooldown + t
 	end
 
 	if not self.param_damage_amount then
-		self.param_damage_amount = math.clamp(arg_21_3, 0, 100)
+		self.param_damage_amount = math.clamp(damage_amount, 0, 100)
 	else
-		self.param_damage_amount = math.clamp(self.param_damage_amount + arg_21_3, 0, 100)
+		self.param_damage_amount = math.clamp(self.param_damage_amount + damage_amount, 0, 100)
 	end
 
 	self:set_global_parameter("versus_pactsworn_damage_given", self.param_damage_amount)
-	self:_play_position_event("versus_hit_indicator_local", arg_21_2)
+	self:_play_position_event("versus_hit_indicator_local", position)
 end
 
-AudioSystem.rpc_play_2d_audio_event = function (self, arg_22_1, arg_22_2)
+AudioSystem.rpc_play_2d_audio_event = function (self, channel_id, event_id)
 	-- function 22
-	if not self.is_server then
-		local var_22_0 = CHANNEL_TO_PEER_ID[arg_22_1]
+	if self.is_server then
+		local peer_id = CHANNEL_TO_PEER_ID[channel_id]
 
-		self.network_transmit:send_rpc_clients_except("rpc_play_2d_audio_event", var_22_0, arg_22_2)
+		self.network_transmit:send_rpc_clients_except("rpc_play_2d_audio_event", peer_id, event_id)
 	end
 
-	if not DEDICATED_SERVER then
+	if DEDICATED_SERVER then
 		return
 	end
 
-	local var_22_1 = NetworkLookup.sound_events[arg_22_2]
+	local event = NetworkLookup.sound_events[event_id]
 	local wwise_world = Managers.world:wwise_world(self.world)
 
-	WwiseWorld.trigger_event(wwise_world, var_22_1)
+	WwiseWorld.trigger_event(wwise_world, event)
 end
 
-AudioSystem.rpc_play_2d_audio_unit_event_for_peer = function (self, arg_23_1, arg_23_2)
+AudioSystem.rpc_play_2d_audio_unit_event_for_peer = function (self, channel_id, event_id)
 	-- function 23
-	if not DEDICATED_SERVER then
+	if DEDICATED_SERVER then
 		return
 	end
 
-	local var_23_0 = NetworkLookup.sound_events[arg_23_2]
+	local event = NetworkLookup.sound_events[event_id]
 	local wwise_world = Managers.world:wwise_world(self.world)
 
-	WwiseWorld.trigger_event(wwise_world, var_23_0)
+	WwiseWorld.trigger_event(wwise_world, event)
 end
 
-AudioSystem.rpc_server_audio_event = function (self, arg_24_1, arg_24_2)
+AudioSystem.rpc_server_audio_event = function (self, channel_id, sound_id)
 	-- function 24
 	local wwise_world = Managers.world:wwise_world(self.world)
-	local var_24_1 = NetworkLookup.sound_events[arg_24_2]
-	local system = Managers.state.entity:system("surrounding_aware_system")
-	local var_24_3
-	local str = "heard_sound"
-	local huge = math.huge
+	local sound_event = NetworkLookup.sound_events[sound_id]
+	local entity_manager = Managers.state.entity
+	local surrounding_aware_system = entity_manager:system("surrounding_aware_system")
+	local unit
+	local event_name = "heard_sound"
+	local distance = math.huge
 
-	system:add_system_event(var_24_3, str, huge, "heard_event", var_24_1)
+	surrounding_aware_system:add_system_event(unit, event_name, distance, "heard_event", sound_event)
 
-	if not DEDICATED_SERVER then
+	if DEDICATED_SERVER then
 		return
 	end
 
-	WwiseWorld.trigger_event(wwise_world, var_24_1)
+	WwiseWorld.trigger_event(wwise_world, sound_event)
 end
 
-AudioSystem.rpc_server_audio_event_at_pos = function (self, arg_25_1, arg_25_2, arg_25_3)
+AudioSystem.rpc_server_audio_event_at_pos = function (self, channel_id, sound_id, position)
 	-- function 25
 	local wwise_world = Managers.world:wwise_world(self.world)
-	local var_25_1 = NetworkLookup.sound_events[arg_25_2]
-	local system = Managers.state.entity:system("surrounding_aware_system")
-	local var_25_3
-	local str = "heard_sound"
-	local huge = math.huge
+	local sound_event = NetworkLookup.sound_events[sound_id]
+	local entity_manager = Managers.state.entity
+	local surrounding_aware_system = entity_manager:system("surrounding_aware_system")
+	local unit
+	local event_name = "heard_sound"
+	local distance = math.huge
 
-	system:add_system_event(var_25_3, str, huge, "heard_event", var_25_1)
+	surrounding_aware_system:add_system_event(unit, event_name, distance, "heard_event", sound_event)
 
-	if not DEDICATED_SERVER then
+	if DEDICATED_SERVER then
 		return
 	end
 
-	WwiseWorld.trigger_event(wwise_world, var_25_1, arg_25_3)
+	WwiseWorld.trigger_event(wwise_world, sound_event, position)
 end
 
-AudioSystem.rpc_server_audio_unit_event = function (self, arg_26_1, arg_26_2, arg_26_3, arg_26_4, arg_26_5)
+AudioSystem.rpc_server_audio_unit_event = function (self, channel_id, sound_id, unit_id, is_level_unit, object_id)
 	-- function 26
-	if not self.is_server then
-		local var_26_0 = CHANNEL_TO_PEER_ID[arg_26_1]
+	if self.is_server then
+		local peer_id = CHANNEL_TO_PEER_ID[channel_id]
 
-		Managers.state.network.network_transmit:send_rpc_clients_except("rpc_server_audio_unit_event", var_26_0, arg_26_2, arg_26_3, arg_26_4, arg_26_5)
+		Managers.state.network.network_transmit:send_rpc_clients_except("rpc_server_audio_unit_event", peer_id, sound_id, unit_id, is_level_unit, object_id)
 	end
 
-	if not DEDICATED_SERVER then
+	if DEDICATED_SERVER then
 		return
 	end
 
-	local var_26_1 = NetworkLookup.sound_events[arg_26_2]
-	local game_object_or_level_unit = Managers.state.network:game_object_or_level_unit(arg_26_3, arg_26_4)
+	local event = NetworkLookup.sound_events[sound_id]
+	local network_manager = Managers.state.network
+	local unit = network_manager:game_object_or_level_unit(unit_id, is_level_unit)
 
-	if not game_object_or_level_unit then
-		self:_play_event(var_26_1, game_object_or_level_unit, arg_26_5)
+	if unit then
+		self:_play_event(event, unit, object_id)
 	end
 end
 
-AudioSystem.rpc_server_audio_position_event = function (self, arg_27_1, arg_27_2, arg_27_3)
+AudioSystem.rpc_server_audio_position_event = function (self, channel_id, sound_id, position)
 	-- function 27
-	if not self.is_server then
-		local var_27_0 = CHANNEL_TO_PEER_ID[arg_27_1]
+	if self.is_server then
+		local peer_id = CHANNEL_TO_PEER_ID[channel_id]
 
-		Managers.state.network.network_transmit:send_rpc_clients_except("rpc_server_audio_position_event", var_27_0, arg_27_2, arg_27_3)
+		Managers.state.network.network_transmit:send_rpc_clients_except("rpc_server_audio_position_event", peer_id, sound_id, position)
 	end
 
-	if not DEDICATED_SERVER then
+	if DEDICATED_SERVER then
 		return
 	end
 
-	local var_27_1 = NetworkLookup.sound_events[arg_27_2]
+	local event = NetworkLookup.sound_events[sound_id]
 
-	self:_play_position_event(var_27_1, arg_27_3)
+	self:_play_position_event(event, position)
 end
 
-AudioSystem.rpc_server_audio_unit_dialogue_event = function (self, arg_28_1, arg_28_2, arg_28_3)
+AudioSystem.rpc_server_audio_unit_dialogue_event = function (self, channel_id, sound_id, unit_id)
 	-- function 28
-	if not self.is_server then
-		Managers.state.network.network_transmit:send_rpc_clients("rpc_server_audio_unit_dialogue_event", arg_28_2, arg_28_3)
+	if self.is_server then
+		Managers.state.network.network_transmit:send_rpc_clients("rpc_server_audio_unit_dialogue_event", sound_id, unit_id)
 	end
 
-	if not DEDICATED_SERVER then
+	if DEDICATED_SERVER then
 		return
 	end
 
-	local var_28_0 = NetworkLookup.sound_events[arg_28_2]
-	local unit = self.unit_storage:unit(arg_28_3)
-	local has_extension = ScriptUnit.has_extension(unit, "dialogue_system")
+	local event = NetworkLookup.sound_events[sound_id]
+	local unit = self.unit_storage:unit(unit_id)
+	local dialogue_extension = ScriptUnit.has_extension(unit, "dialogue_system")
 
-	if not has_extension then
-		local wwise_voice_switch_group = has_extension.wwise_voice_switch_group
-		local make_unit_auto_source, var_28_5 = WwiseUtils.make_unit_auto_source(self.world, unit, has_extension.voice_node)
+	if dialogue_extension then
+		local switch_group = dialogue_extension.wwise_voice_switch_group
+		local wwise_source, wwise_world = WwiseUtils.make_unit_auto_source(self.world, unit, dialogue_extension.voice_node)
 
-		if not wwise_voice_switch_group then
-			local wwise_voice_switch_value = has_extension.wwise_voice_switch_value
+		if switch_group then
+			local switch_value = dialogue_extension.wwise_voice_switch_value
 
-			WwiseWorld.set_switch(var_28_5, wwise_voice_switch_group, wwise_voice_switch_value, make_unit_auto_source)
+			WwiseWorld.set_switch(wwise_world, switch_group, switch_value, wwise_source)
 		end
 
-		self:_play_event_with_source(var_28_5, var_28_0, make_unit_auto_source)
+		self:_play_event_with_source(wwise_world, event, wwise_source)
 	end
 end
 
-AudioSystem.rpc_server_audio_unit_param_string_event = function (self, arg_29_1, arg_29_2, arg_29_3, arg_29_4, arg_29_5, arg_29_6)
+AudioSystem.rpc_server_audio_unit_param_string_event = function (self, channel_id, sound_event_id, unit_id, object_id, name_id, value_id)
 	-- function 29
-	if not self.is_server then
-		Managers.state.network.network_transmit:send_rpc_clients("rpc_server_audio_unit_param_string_event", arg_29_2, arg_29_3, arg_29_4, arg_29_5, arg_29_6)
+	if self.is_server then
+		Managers.state.network.network_transmit:send_rpc_clients("rpc_server_audio_unit_param_string_event", sound_event_id, unit_id, object_id, name_id, value_id)
 	end
 
-	if not DEDICATED_SERVER then
+	if DEDICATED_SERVER then
 		return
 	end
 
-	local var_29_0 = NetworkLookup.sound_events[arg_29_2]
-	local unit = self.unit_storage:unit(arg_29_3)
-	local var_29_2 = NetworkLookup.sound_event_param_names[arg_29_5]
-	local var_29_3 = NetworkLookup.sound_event_param_string_values[arg_29_6]
+	local event = NetworkLookup.sound_events[sound_event_id]
+	local unit = self.unit_storage:unit(unit_id)
+	local param = NetworkLookup.sound_event_param_names[name_id]
+	local value = NetworkLookup.sound_event_param_string_values[value_id]
 
-	self:_play_param_event(var_29_0, var_29_2, var_29_3, unit, arg_29_4)
+	self:_play_param_event(event, param, value, unit, object_id)
 end
 
-AudioSystem.rpc_server_audio_unit_param_int_event = function (self, arg_30_1, arg_30_2, arg_30_3, arg_30_4, arg_30_5, arg_30_6)
+AudioSystem.rpc_server_audio_unit_param_int_event = function (self, channel_id, sound_event_id, unit_id, object_id, name_id, value)
 	-- function 30
-	if not self.is_server then
-		Managers.state.network.network_transmit:send_rpc_clients("rpc_server_audio_unit_param_int_event", arg_30_2, arg_30_3, arg_30_4, arg_30_5, arg_30_6)
+	if self.is_server then
+		Managers.state.network.network_transmit:send_rpc_clients("rpc_server_audio_unit_param_int_event", sound_event_id, unit_id, object_id, name_id, value)
 	end
 
-	if not DEDICATED_SERVER then
+	if DEDICATED_SERVER then
 		return
 	end
 
-	local var_30_0 = NetworkLookup.sound_events[arg_30_2]
-	local unit = self.unit_storage:unit(arg_30_3)
-	local var_30_2 = NetworkLookup.sound_event_param_names[arg_30_5]
+	local event = NetworkLookup.sound_events[sound_event_id]
+	local unit = self.unit_storage:unit(unit_id)
+	local param = NetworkLookup.sound_event_param_names[name_id]
 
-	self:_play_param_event(var_30_0, var_30_2, arg_30_6, unit, arg_30_4)
+	self:_play_param_event(event, param, value, unit, object_id)
 end
 
-AudioSystem.rpc_server_audio_unit_param_float_event = function (self, arg_31_1, arg_31_2, arg_31_3, arg_31_4, arg_31_5, arg_31_6)
+AudioSystem.rpc_server_audio_unit_param_float_event = function (self, channel_id, sound_event_id, unit_id, object_id, name_id, value)
 	-- function 31
-	if not self.is_server then
-		Managers.state.network.network_transmit:send_rpc_clients("rpc_server_audio_unit_param_float_event", arg_31_2, arg_31_3, arg_31_4, arg_31_5, arg_31_6)
+	if self.is_server then
+		Managers.state.network.network_transmit:send_rpc_clients("rpc_server_audio_unit_param_float_event", sound_event_id, unit_id, object_id, name_id, value)
 	end
 
-	if not DEDICATED_SERVER then
+	if DEDICATED_SERVER then
 		return
 	end
 
-	local var_31_0 = NetworkLookup.sound_events[arg_31_2]
-	local unit = self.unit_storage:unit(arg_31_3)
-	local var_31_2 = NetworkLookup.sound_event_param_names[arg_31_5]
+	local event = NetworkLookup.sound_events[sound_event_id]
+	local unit = self.unit_storage:unit(unit_id)
+	local param = NetworkLookup.sound_event_param_names[name_id]
 
-	self:_play_param_event(var_31_0, var_31_2, arg_31_6, unit, arg_31_4)
+	self:_play_param_event(event, param, value, unit, object_id)
 end
 
-AudioSystem.rpc_client_audio_set_global_parameter_with_lerp = function (self, arg_32_1, arg_32_2, arg_32_3)
+AudioSystem.rpc_client_audio_set_global_parameter_with_lerp = function (self, channel_id, parameter_id, value)
 	-- function 32
-	local var_32_0 = NetworkLookup.global_parameter_names[arg_32_2]
-	local num = arg_32_3 * 100
+	local name = NetworkLookup.global_parameter_names[parameter_id]
+	local percentage = value * 100
 
-	if not DEDICATED_SERVER then
+	if DEDICATED_SERVER then
 		return
 	end
 
-	self:set_global_parameter_with_lerp(var_32_0, num)
+	self:set_global_parameter_with_lerp(name, percentage)
 end
 
-AudioSystem.rpc_client_audio_set_global_parameter = function (self, arg_33_1, arg_33_2, arg_33_3)
+AudioSystem.rpc_client_audio_set_global_parameter = function (self, channel_id, parameter_id, value)
 	-- function 33
-	local var_33_0 = NetworkLookup.global_parameter_names[arg_33_2]
+	local name = NetworkLookup.global_parameter_names[parameter_id]
 
-	if not DEDICATED_SERVER then
+	if DEDICATED_SERVER then
 		return
 	end
 
-	self:set_global_parameter(var_33_0, arg_33_3)
+	self:set_global_parameter(name, value)
 end
 
-AudioSystem.rpc_vs_play_matchmaking_sfx = function (self, arg_34_1, arg_34_2)
+AudioSystem.rpc_vs_play_matchmaking_sfx = function (self, channel_id, event_id)
 	-- function 34
-	if not DEDICATED_SERVER then
+	if DEDICATED_SERVER then
 		return
 	end
 
-	local var_34_0 = CHANNEL_TO_PEER_ID[arg_34_1]
+	local peer_id = CHANNEL_TO_PEER_ID[channel_id]
 
-	if var_34_0 == Network.peer_id() then
+	if peer_id == Network.peer_id() then
 		return
 	end
 
-	if not self.is_server then
-		self.network_transmit:send_rpc_clients_except("rpc_play_2d_audio_event", var_34_0, arg_34_2)
+	if self.is_server then
+		self.network_transmit:send_rpc_clients_except("rpc_play_2d_audio_event", peer_id, event_id)
 	end
 
-	local var_34_1 = NetworkLookup.sound_events[arg_34_2]
+	local event = NetworkLookup.sound_events[event_id]
 	local wwise_world = Managers.world:wwise_world(self.world)
 
-	WwiseWorld.trigger_event(wwise_world, var_34_1)
+	WwiseWorld.trigger_event(wwise_world, event)
 end

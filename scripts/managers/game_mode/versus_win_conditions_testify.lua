@@ -1,8 +1,10 @@
 -- chunkname: @scripts/managers/game_mode/versus_win_conditions_testify.lua
 
-return {
-	versus_party_won_early = function (self)
+local VersusWinConditionsTestify = {
+	versus_party_won_early = function (versus_win_conditions)
 		-- function 1
-		return self.party_won_early
+		return versus_win_conditions.party_won_early
 	end
 }
+
+return VersusWinConditionsTestify

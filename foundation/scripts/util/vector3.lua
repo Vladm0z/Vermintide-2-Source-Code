@@ -1,48 +1,50 @@
 -- chunkname: @foundation/scripts/util/vector3.lua
 
-Vector3.flat = function (self)
+Vector3.flat = function (v)
 	-- function 1
-	return Vector3(self[1], self[2], 0)
+	return Vector3(v[1], v[2], 0)
 end
 
-Vector3.step = function (arg_2_0, arg_2_1, arg_2_2)
+Vector3.step = function (start, target, step_size)
 	-- function 2
-	local num = arg_2_1 - arg_2_0
+	local offset = target - start
+	local distance = Vector3.length(offset)
 
-	if arg_2_2 > Vector3.length(num) then
-		return arg_2_1, true
+	if distance < step_size then
+		return target, true
 	else
-		return arg_2_0 + Vector3.normalize(num) * arg_2_2, false
+		return start + Vector3.normalize(offset) * step_size, false
 	end
 end
 
-Vector3.smoothstep = function (arg_3_0, arg_3_1, arg_3_2)
+Vector3.smoothstep = function (t, v1, v2)
 	-- function 3
-	local smoothstep = math.smoothstep(arg_3_0, 0, 1)
+	local smoothstep = math.smoothstep(t, 0, 1)
 
-	return Vector3.lerp(arg_3_1, arg_3_2, smoothstep)
+	return Vector3.lerp(v1, v2, smoothstep)
 end
 
-Vector3.flat_angle = function (self, arg_4_1)
+Vector3.flat_angle = function (v1, v2)
 	-- function 4
-	local atan2 = math.atan2(self.y, self.x)
+	local a1 = math.atan2(v1.y, v1.x)
+	local a2 = math.atan2(v2.y, v2.x)
 
-	return (math.atan2(arg_4_1.y, arg_4_1.x) - atan2 + math.pi) % (2 * math.pi) - math.pi
+	return (a2 - a1 + math.pi) % (2 * math.pi) - math.pi
 end
 
-Vector3.clamp = function (arg_5_0, arg_5_1, arg_5_2)
+Vector3.clamp = function (v, min, max)
 	-- function 5
-	local to_elements, var_5_1, var_5_2 = Vector3.to_elements(arg_5_0)
+	local x, y, z = Vector3.to_elements(v)
 	local clamp = math.clamp
 
-	return Vector3(clamp(to_elements, arg_5_1, arg_5_2), clamp(var_5_1, arg_5_1, arg_5_2), clamp(var_5_2, arg_5_1, arg_5_2))
+	return Vector3(clamp(x, min, max), clamp(y, min, max), clamp(z, min, max))
 end
 
-Vector3.clamp_3d = function (arg_6_0, arg_6_1, arg_6_2)
+Vector3.clamp_3d = function (v, min, max)
 	-- function 6
-	local to_elements, var_6_1, var_6_2 = Vector3.to_elements(arg_6_0)
+	local x, y, z = Vector3.to_elements(v)
 
-	return Vector3(math.clamp(to_elements, arg_6_1[1], arg_6_2[1]), math.clamp(var_6_1, arg_6_1[2], arg_6_2[2]), math.clamp(var_6_2, arg_6_1[3], arg_6_2[3]))
+	return Vector3(math.clamp(x, min[1], max[1]), math.clamp(y, min[2], max[2]), math.clamp(z, min[3], max[3]))
 end
 
 Vector3.invalid_vector = function ()
@@ -50,49 +52,49 @@ Vector3.invalid_vector = function ()
 	return Vector3(math.huge, math.huge, math.huge)
 end
 
-Vector3.copy = function (arg_8_0)
+Vector3.copy = function (v)
 	-- function 8
-	local to_elements, var_8_1, var_8_2 = Vector3.to_elements(arg_8_0)
+	local x, y, z = Vector3.to_elements(v)
 
-	return Vector3(to_elements, var_8_1, var_8_2)
+	return Vector3(x, y, z)
 end
 
-Vector3.deprecated_copy = function (self)
+Vector3.deprecated_copy = function (vector)
 	-- function 9
-	return Vector3(self[1], self[2], self[3])
+	return Vector3(vector[1], vector[2], vector[3])
 end
 
-Vector3.project_on_plane = function (arg_10_0, arg_10_1)
+Vector3.project_on_plane = function (vector, normal)
 	-- function 10
-	return arg_10_0 - Vector3.dot(arg_10_0, arg_10_1) * arg_10_1
+	return vector - Vector3.dot(vector, normal) * normal
 end
 
-Vector3.reflect = function (arg_11_0, arg_11_1)
+Vector3.reflect = function (vector, surface_normal)
 	-- function 11
-	return arg_11_0 - 2 * Vector3.dot(arg_11_0, arg_11_1) * arg_11_1
+	return vector - 2 * Vector3.dot(vector, surface_normal) * surface_normal
 end
 
-Vector3.rotate = function (arg_12_0, arg_12_1, arg_12_2)
+Vector3.rotate = function (vector, angle, optional_axis)
 	-- function 12
-	arg_12_2 = arg_12_2 or Vector3.up()
+	optional_axis = not not optional_axis or not not Vector3.up()
 
-	return Quaternion.rotate(Quaternion.axis_angle(arg_12_2, arg_12_1), arg_12_0)
+	return Quaternion.rotate(Quaternion.axis_angle(optional_axis, angle), vector)
 end
 
 local Vector3Aux = Vector3Aux
 
-Vector3Aux = Vector3Aux or {}
+Vector3Aux = not not Vector3Aux or not not {}
 Vector3Aux = Vector3Aux
 
-Vector3Aux.box = function (self, arg_13_1)
+Vector3Aux.box = function (destination, vector_3)
 	-- function 13
-	self = self or {}
-	self[1], self[2], self[3] = Vector3.to_elements(arg_13_1)
+	destination = not not destination or not not {}
+	destination[1], destination[2], destination[3] = Vector3.to_elements(vector_3)
 
-	return self
+	return destination
 end
 
-Vector3Aux.unbox = function (self)
+Vector3Aux.unbox = function (boxed_vector)
 	-- function 14
-	return Vector3(self[1], self[2], self[3])
+	return Vector3(boxed_vector[1], boxed_vector[2], boxed_vector[3])
 end

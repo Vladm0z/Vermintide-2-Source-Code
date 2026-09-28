@@ -2,9 +2,12 @@
 
 require("core/gwnav/lua/safe_require")
 
-local var_0_0 = safe_require_guard()
-local var_0_1 = safe_require("core/gwnav/lua/runtime/navclass")(var_0_0)
-local var_0_2 = safe_require("core/gwnav/lua/runtime/navhelpers")
+local NavBoxObstacle = safe_require_guard()
+local NavClass = safe_require("core/gwnav/lua/runtime/navclass")
+
+NavBoxObstacle = NavClass(NavBoxObstacle)
+
+local NavHelpers = safe_require("core/gwnav/lua/runtime/navhelpers")
 local Math = stingray.Math
 local Vector3 = stingray.Vector3
 local Vector3Box = stingray.Vector3Box
@@ -16,100 +19,100 @@ local Unit = stingray.Unit
 local GwNavWorld = stingray.GwNavWorld
 local GwNavTagVolume = stingray.GwNavTagVolume
 local GwNavBoxObstacle = stingray.GwNavBoxObstacle
-local tbl = {}
+local _navboxstacles = {}
 
-var_0_1.get_navboxstacle = function (arg_1_0)
+NavBoxObstacle.get_navboxstacle = function (unit)
 	-- function 1
-	return tbl[arg_1_0]
+	return _navboxstacles[unit]
 end
 
-var_0_1.init = function (self, arg_2_1, arg_2_2)
+NavBoxObstacle.init = function (self, navworld, unit)
 	-- function 2
-	self.unit = arg_2_2
-	self.navworld = arg_2_1
+	self.unit = unit
+	self.navworld = navworld
 
-	local var_2_0 = Vector3(var_0_2.unit_script_data(arg_2_2, 0.2, "GwNavBoxObstacle", "half_extent", "x"), var_0_2.unit_script_data(arg_2_2, 1, "GwNavBoxObstacle", "half_extent", "y"), var_0_2.unit_script_data(arg_2_2, 2, "GwNavBoxObstacle", "half_extent", "z"))
-	local var_2_1 = Vector3(var_0_2.unit_script_data(arg_2_2, 0, "GwNavBoxObstacle", "offset", "x"), var_0_2.unit_script_data(arg_2_2, 0, "GwNavBoxObstacle", "offset", "y"), var_0_2.unit_script_data(arg_2_2, 0, "GwNavBoxObstacle", "offset", "z"))
-	local get_layer_and_smartobject, var_2_3, var_2_4, var_2_5, var_2_6 = var_0_2.get_layer_and_smartobject(arg_2_2, "GwNavBoxObstacle")
-	local transform = Matrix4x4.transform(arg_2_1.transform:unbox(), Unit.world_position(arg_2_2, 1))
+	local half_extents = Vector3(NavHelpers.unit_script_data(unit, 0.2, "GwNavBoxObstacle", "half_extent", "x"), NavHelpers.unit_script_data(unit, 1, "GwNavBoxObstacle", "half_extent", "y"), NavHelpers.unit_script_data(unit, 2, "GwNavBoxObstacle", "half_extent", "z"))
+	local local_center = Vector3(NavHelpers.unit_script_data(unit, 0, "GwNavBoxObstacle", "offset", "x"), NavHelpers.unit_script_data(unit, 0, "GwNavBoxObstacle", "offset", "y"), NavHelpers.unit_script_data(unit, 0, "GwNavBoxObstacle", "offset", "z"))
+	local is_exclusive, color, layer_id, smartobject_id, user_data_id = NavHelpers.get_layer_and_smartobject(unit, "GwNavBoxObstacle")
+	local unitPos = Matrix4x4.transform(navworld.transform:unbox(), Unit.world_position(unit, 1))
 
-	self.lastpos = Vector3Box(transform)
+	self.lastpos = Vector3Box(unitPos)
 	self.last_rotation = QuaternionBox()
-	self.nav_boxobstacle = GwNavBoxObstacle.create(self.navworld.gwnavworld, transform, var_2_1, var_2_0, get_layer_and_smartobject, var_2_3, var_2_4, var_2_5, var_2_6)
-	self.does_trigger_tag_volume = var_0_2.unit_script_data(arg_2_2, false, "GwNavBoxObstacle", "does_trigger_tag_volume")
+	self.nav_boxobstacle = GwNavBoxObstacle.create(self.navworld.gwnavworld, unitPos, local_center, half_extents, is_exclusive, color, layer_id, smartobject_id, user_data_id)
+	self.does_trigger_tag_volume = NavHelpers.unit_script_data(unit, false, "GwNavBoxObstacle", "does_trigger_tag_volume")
 
 	self:set_does_trigger_tagvolume(trigger_tag_volume)
 
-	self.rotation_mode = var_0_2.unit_script_data(arg_2_2, "free", "GwNavBoxObstacle", "rotation_mode") == "yaw"
+	self.rotation_mode = NavHelpers.unit_script_data(unit, "free", "GwNavBoxObstacle", "rotation_mode") == "yaw"
 
 	self:set_rotation_mode_around_yaw(self.rotation_mode)
 
-	tbl[self.unit] = self
+	_navboxstacles[self.unit] = self
 end
 
-var_0_1.set_does_trigger_tagvolume = function (self, arg_3_1)
+NavBoxObstacle.set_does_trigger_tagvolume = function (self, does_trigger_tag_volume)
 	-- function 3
-	GwNavBoxObstacle.set_does_trigger_tagvolume(self.nav_boxobstacle, arg_3_1)
+	GwNavBoxObstacle.set_does_trigger_tagvolume(self.nav_boxobstacle, does_trigger_tag_volume)
 end
 
-var_0_1.set_rotation_mode_around_yaw = function (self, arg_4_1)
+NavBoxObstacle.set_rotation_mode_around_yaw = function (self, rotation_mode_around_yaw_only)
 	-- function 4
-	GwNavBoxObstacle.set_rotation_mode_around_yaw_only(self.nav_boxobstacle, arg_4_1)
+	GwNavBoxObstacle.set_rotation_mode_around_yaw_only(self.nav_boxobstacle, rotation_mode_around_yaw_only)
 end
 
-var_0_1.set_next_update_config = function (self, arg_5_1, arg_5_2, arg_5_3)
+NavBoxObstacle.set_next_update_config = function (self, transform, linear_velocity, angular_velocity)
 	-- function 5
-	GwNavBoxObstacle.set_transform(self.nav_boxobstacle, arg_5_1)
-	GwNavBoxObstacle.set_linear_velocity(self.nav_boxobstacle, arg_5_2)
-	GwNavBoxObstacle.set_angular_velocity(self.nav_boxobstacle, arg_5_3)
+	GwNavBoxObstacle.set_transform(self.nav_boxobstacle, transform)
+	GwNavBoxObstacle.set_linear_velocity(self.nav_boxobstacle, linear_velocity)
+	GwNavBoxObstacle.set_angular_velocity(self.nav_boxobstacle, angular_velocity)
 end
 
-var_0_1.update = function (self, arg_6_1)
+NavBoxObstacle.update = function (self, dt)
 	-- function 6
-	local local_pose = Unit.local_pose(self.unit, 1)
-	local translation = Matrix4x4.translation(local_pose)
-	local num = (translation - self.lastpos:unbox()) / arg_6_1
-	local local_rotation = Unit.local_rotation(self.unit, 1)
-	local var_6_4 = self
+	local transform = Unit.local_pose(self.unit, 1)
+	local pos = Matrix4x4.translation(transform)
+	local linear_velocity = (pos - self.lastpos:unbox()) / dt
+	local rotation = Unit.local_rotation(self.unit, 1)
+	local var_6_0 = self
 	local set_does_trigger_tagvolume = self.set_does_trigger_tagvolume
 	local does_trigger_tag_volume = self.does_trigger_tag_volume
 
-	does_trigger_tag_volume = not does_trigger_tag_volume and Vector3.length(num) == 0
+	does_trigger_tag_volume = not not does_trigger_tag_volume and Vector3.length(linear_velocity) == 0
 
-	set_does_trigger_tagvolume(var_6_4, does_trigger_tag_volume)
+	set_does_trigger_tagvolume(var_6_0, does_trigger_tag_volume)
 
-	local var_6_7 = Vector3(0, 0, 0)
-	local unbox = self.last_rotation:unbox()
+	local angular_velocity = Vector3(0, 0, 0)
+	local last_rot = self.last_rotation:unbox()
 
-	if not Quaternion.is_valid(local_rotation) and not Quaternion.is_valid(unbox) then
-		local multiply = Quaternion.multiply(Quaternion.inverse(local_rotation), unbox)
-		local decompose, var_6_11 = Quaternion.decompose(multiply)
+	if Quaternion.is_valid(rotation) and Quaternion.is_valid(last_rot) then
+		local rotation_delta = Quaternion.multiply(Quaternion.inverse(rotation), last_rot)
+		local angular_velocity_vector, angular_delta = Quaternion.decompose(rotation_delta)
 
-		var_6_7 = decompose * var_6_11 / arg_6_1
+		angular_velocity = angular_velocity_vector * angular_delta / dt
 	end
 
-	self:set_next_update_config(local_pose, num, var_6_7)
-	self.lastpos:store(translation)
-	self.last_rotation:store(local_rotation)
+	self:set_next_update_config(transform, linear_velocity, angular_velocity)
+	self.lastpos:store(pos)
+	self.last_rotation:store(rotation)
 end
 
-var_0_1.shutdown = function (self)
+NavBoxObstacle.shutdown = function (self)
 	-- function 7
 	self.navworld:remove_boxobstacle(self.unit)
 	GwNavBoxObstacle.destroy(self.nav_boxobstacle)
 
 	self.nav_boxobstacle = nil
-	tbl[self.unit] = nil
+	_navboxstacles[self.unit] = nil
 end
 
-var_0_1.add_to_world = function (self)
+NavBoxObstacle.add_to_world = function (self)
 	-- function 8
 	GwNavBoxObstacle.add_to_world(self.nav_boxobstacle)
 end
 
-var_0_1.remove_from_world = function (self)
+NavBoxObstacle.remove_from_world = function (self)
 	-- function 9
 	GwNavBoxObstacle.remove_from_world(self.nav_boxobstacle)
 end
 
-return var_0_1
+return NavBoxObstacle

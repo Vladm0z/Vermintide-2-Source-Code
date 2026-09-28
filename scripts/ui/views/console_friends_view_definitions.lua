@@ -1,11 +1,11 @@
 -- chunkname: @scripts/ui/views/console_friends_view_definitions.lua
 
-local tbl = {
+local friend_entry_size = {
 	350,
 	40
 }
-local num = 6
-local tbl_2 = {
+local num_visible_friends = 6
+local scenegraph_definition = {
 	screen = {
 		scale = "fit",
 		size = {
@@ -102,10 +102,10 @@ local tbl_2 = {
 		vertical_alignment = "bottom",
 		parent = "background",
 		horizontal_alignment = "center",
-		size = tbl,
+		size = friend_entry_size,
 		position = {
 			0,
-			tbl[2] * num + 40,
+			friend_entry_size[2] * num_visible_friends + 40,
 			10
 		}
 	},
@@ -114,8 +114,8 @@ local tbl_2 = {
 		parent = "background",
 		horizontal_alignment = "center",
 		size = {
-			tbl[1],
-			tbl[2] * num
+			friend_entry_size[1],
+			friend_entry_size[2] * num_visible_friends
 		},
 		position = {
 			0,
@@ -167,12 +167,12 @@ local tbl_2 = {
 	}
 }
 
-local function fn(arg_1_0, arg_1_1, arg_1_2)
+local function create_party_entry(name, career, offset_y)
 	-- function 1
-	local str = "small_unit_frame_portrait_default"
+	local career_portrait = "small_unit_frame_portrait_default"
 
-	if not arg_1_1 then
-		str = "small_" .. arg_1_1.portrait_image
+	if career then
+		career_portrait = "small_" .. career.portrait_image
 	end
 
 	local tbl = {
@@ -192,8 +192,8 @@ local function fn(arg_1_0, arg_1_1, arg_1_2)
 			}
 		},
 		content = {
-			text_id = arg_1_0 or Localize("friends_view_free_slot"),
-			texture_id = str
+			text_id = not not name or not not Localize("friends_view_free_slot"),
+			texture_id = career_portrait
 		}
 	}
 	local tbl_2 = {}
@@ -207,7 +207,7 @@ local function fn(arg_1_0, arg_1_1, arg_1_2)
 	}
 	local get_color_table_with_alpha
 
-	if not arg_1_1 then
+	if career then
 		get_color_table_with_alpha = Colors.get_color_table_with_alpha("white", 255)
 
 		if not get_color_table_with_alpha then
@@ -248,14 +248,14 @@ local function fn(arg_1_0, arg_1_1, arg_1_2)
 	tbl.style = tbl_2
 	tbl.offset = {
 		0,
-		not arg_1_2 and arg_1_2 and 0,
+		(not offset_y or not offset_y) and not not 0,
 		0
 	}
 
 	return tbl
 end
 
-local function fn_2(arg_2_0, arg_2_1, arg_2_2, arg_2_3)
+local function create_friend_entry(name, online, offset_y, friend)
 	-- function 2
 	local tbl = {
 		scenegraph_id = "friends_base",
@@ -280,20 +280,20 @@ local function fn_2(arg_2_0, arg_2_1, arg_2_2, arg_2_3)
 					pass_type = "texture",
 					style_id = "selected_texture",
 					texture_id = "texture_id",
-					content_check_function = function (self)
+					content_check_function = function (content)
 						-- function 3
-						return self.selected
+						return content.selected
 					end
 				},
 				{
 					pass_type = "texture",
 					style_id = "hover",
 					texture_id = "texture_id",
-					content_check_function = function (self)
+					content_check_function = function (content)
 						-- function 4
-						local is_hover = self.entry_hotspot.is_hover
+						local is_hover = content.entry_hotspot.is_hover
 
-						is_hover = not is_hover and not self.selected
+						is_hover = not not is_hover and not not not content.selected
 
 						return is_hover
 					end
@@ -311,8 +311,8 @@ local function fn_2(arg_2_0, arg_2_1, arg_2_2, arg_2_3)
 			selected = false,
 			invite_texture_id = "friends_icon_invite",
 			entry_hotspot = {},
-			text_id = arg_2_0,
-			friend = arg_2_3
+			text_id = name,
+			friend = friend
 		}
 	}
 	local tbl_2 = {}
@@ -326,7 +326,7 @@ local function fn_2(arg_2_0, arg_2_1, arg_2_2, arg_2_3)
 	}
 	local get_color_table_with_alpha
 
-	if not arg_2_1 then
+	if online then
 		get_color_table_with_alpha = Colors.get_color_table_with_alpha("font_title", 255)
 
 		if not get_color_table_with_alpha then
@@ -354,7 +354,7 @@ local function fn_2(arg_2_0, arg_2_1, arg_2_2, arg_2_3)
 	local tbl_4 = {}
 	local tbl_5
 
-	if not arg_2_1 then
+	if online then
 		tbl_5 = {
 			255,
 			0,
@@ -440,7 +440,7 @@ local function fn_2(arg_2_0, arg_2_1, arg_2_2, arg_2_3)
 	}
 	local tbl_7
 
-	if not arg_2_1 then
+	if online then
 		tbl_7 = {
 			255,
 			0,
@@ -472,14 +472,14 @@ local function fn_2(arg_2_0, arg_2_1, arg_2_2, arg_2_3)
 	tbl.style = tbl_2
 	tbl.offset = {
 		0,
-		not arg_2_2 and arg_2_2 and 0,
+		(not offset_y or not offset_y) and not not 0,
 		0
 	}
 
 	return tbl
 end
 
-function create_selection_handler(arg_5_0)
+function create_selection_handler(scenegraph_id)
 	-- function 5
 	return {
 		element = {
@@ -499,9 +499,9 @@ function create_selection_handler(arg_5_0)
 					style_id = "down_arrow",
 					pass_type = "texture",
 					content_id = "arrow",
-					content_check_function = function (arg_6_0, arg_6_1)
+					content_check_function = function (content, style)
 						-- function 6
-						if not Managers.input:is_device_active("gamepad") then
+						if Managers.input:is_device_active("gamepad") then
 							return false
 						end
 
@@ -513,9 +513,9 @@ function create_selection_handler(arg_5_0)
 					style_id = "up_arrow",
 					pass_type = "texture_uv",
 					content_id = "arrow",
-					content_check_function = function (arg_7_0, arg_7_1)
+					content_check_function = function (content, style)
 						-- function 7
-						if not Managers.input:is_device_active("gamepad") then
+						if Managers.input:is_device_active("gamepad") then
 							return false
 						end
 
@@ -527,9 +527,12 @@ function create_selection_handler(arg_5_0)
 					style_id = "down_arrow_hover",
 					pass_type = "texture",
 					content_id = "arrow_hover_down",
-					content_check_function = function (self)
+					content_check_function = function (content)
 						-- function 8
-						return self.parent.down_hotspot.is_hover
+						local parent_content = content.parent
+						local down_hotspot = parent_content.down_hotspot
+
+						return down_hotspot.is_hover
 					end
 				},
 				{
@@ -537,9 +540,12 @@ function create_selection_handler(arg_5_0)
 					style_id = "up_arrow_hover",
 					pass_type = "texture_uv",
 					content_id = "arrow_hover",
-					content_check_function = function (self)
+					content_check_function = function (content)
 						-- function 9
-						return self.parent.up_hotspot.is_hover
+						local parent_content = content.parent
+						local up_hotspot = parent_content.up_hotspot
+
+						return up_hotspot.is_hover
 					end
 				}
 			}
@@ -678,11 +684,11 @@ function create_selection_handler(arg_5_0)
 				}
 			}
 		},
-		scenegraph_id = arg_5_0
+		scenegraph_id = scenegraph_id
 	}
 end
 
-local function fn_3()
+local function create_loading_icon()
 	-- function 10
 	return {
 		scenegraph_id = "friends_mask",
@@ -692,9 +698,9 @@ local function fn_3()
 					style_id = "loading_icon",
 					texture_id = "loading_icon_id",
 					pass_type = "rotated_texture",
-					content_change_function = function (arg_11_0, arg_11_1)
+					content_change_function = function (content, style)
 						-- function 11
-						arg_11_1.angle = arg_11_1.angle + 0.25
+						style.angle = style.angle + 0.25
 					end
 				}
 			}
@@ -736,7 +742,7 @@ local function fn_3()
 	}
 end
 
-local tbl_3 = {
+local tbl = {
 	default = {
 		{
 			input_action = "back",
@@ -745,20 +751,20 @@ local tbl_3 = {
 		}
 	}
 }
-local tbl_4 = {}
-local tbl_5 = {}
-local tbl_6 = {
+local tbl_2 = {}
+local tbl_3 = {}
+local tbl_4 = {
 	input_action = "special_1",
 	priority = 1
 }
 local flag
 
-flag = not IS_PS4 and "matchmaking_join_game" and "menu_description_refresh"
-tbl_6.description_text = flag
-tbl_5[1] = tbl_6
-tbl_4.actions = tbl_5
-tbl_3.only_refresh = tbl_4
-tbl_3.friend = {
+flag = (not IS_PS4 or not "matchmaking_join_game") and not not "menu_description_refresh"
+tbl_4.description_text = flag
+tbl_3[1] = tbl_4
+tbl_2.actions = tbl_3
+tbl.only_refresh = tbl_2
+tbl.friend = {
 	actions = {
 		{
 			input_action = "confirm",
@@ -768,25 +774,25 @@ tbl_3.friend = {
 	}
 }
 
-local tbl_7 = {}
-local tbl_8 = {}
-local tbl_9 = {
+local tbl_5 = {}
+local tbl_6 = {}
+local tbl_7 = {
 	input_action = "special_1",
 	priority = 1
 }
 local flag_2
 
-flag_2 = not IS_PS4 and "matchmaking_join_game" and "menu_description_refresh"
-tbl_9.description_text = flag_2
-tbl_8[1] = tbl_9
-tbl_8[2] = {
+flag_2 = (not IS_PS4 or not "matchmaking_join_game") and not not "menu_description_refresh"
+tbl_7.description_text = flag_2
+tbl_6[1] = tbl_7
+tbl_6[2] = {
 	input_action = "confirm",
 	priority = 2,
 	description_text = "input_description_show_profile"
 }
-tbl_7.actions = tbl_8
-tbl_3.friend_refresh = tbl_7
-tbl_3.friend_invite = {
+tbl_5.actions = tbl_6
+tbl.friend_refresh = tbl_5
+tbl.friend_invite = {
 	actions = {
 		{
 			input_action = "confirm",
@@ -801,31 +807,32 @@ tbl_3.friend_invite = {
 	}
 }
 
-local tbl_10 = {}
-local tbl_11 = {}
-local tbl_12 = {
+local tbl_8 = {}
+local tbl_9 = {}
+local tbl_10 = {
 	input_action = "special_1",
 	priority = 1
 }
 local flag_3
 
-flag_3 = not IS_PS4 and "matchmaking_join_game" and "menu_description_refresh"
-tbl_12.description_text = flag_3
-tbl_11[1] = tbl_12
-tbl_11[2] = {
+flag_3 = (not IS_PS4 or not "matchmaking_join_game") and not not "menu_description_refresh"
+tbl_10.description_text = flag_3
+tbl_9[1] = tbl_10
+tbl_9[2] = {
 	input_action = "confirm",
 	priority = 2,
 	description_text = "input_description_show_profile"
 }
-tbl_11[3] = {
+tbl_9[3] = {
 	input_action = "refresh",
 	priority = 3,
 	description_text = "input_description_invite"
 }
-tbl_10.actions = tbl_11
-tbl_3.friend_invite_refresh = tbl_10
+tbl_8.actions = tbl_9
+tbl.friend_invite_refresh = tbl_8
 
-local tbl_13 = {
+local generic_input_actions = tbl
+local header_text_style = {
 	vertical_alignment = "top",
 	font_size = 56,
 	localize = true,
@@ -839,7 +846,7 @@ local tbl_13 = {
 		2
 	}
 }
-local tbl_14 = {
+local party_header_text_style = {
 	vertical_alignment = "center",
 	font_size = 36,
 	localize = false,
@@ -853,38 +860,38 @@ local tbl_14 = {
 		0
 	}
 }
-local flag_4 = true
-local tbl_15 = {
+local disable_with_gamepad = true
+local widget_definitions = {
 	background = UIWidgets.create_background_with_frame("background", {
 		500,
 		700
 	}, "mission_select_screen_bg", "menu_frame_12"),
-	header = UIWidgets.create_simple_text("friend_list_friends", "header", nil, nil, tbl_13),
-	party_header = UIWidgets.create_simple_text(string.upper(Localize("hero_view_player_list_party")), "party_header", nil, nil, tbl_14),
-	friends_header = UIWidgets.create_simple_text(string.upper(Localize("lb_search_type_friends")), "friends_header", nil, nil, tbl_14),
+	header = UIWidgets.create_simple_text("friend_list_friends", "header", nil, nil, header_text_style),
+	party_header = UIWidgets.create_simple_text(string.upper(Localize("hero_view_player_list_party")), "party_header", nil, nil, party_header_text_style),
+	friends_header = UIWidgets.create_simple_text(string.upper(Localize("lb_search_type_friends")), "friends_header", nil, nil, party_header_text_style),
 	header_divider = UIWidgets.create_simple_texture("divider_01_top", "header_divider"),
 	party_divider = UIWidgets.create_simple_texture("divider_01_top", "party_divider"),
 	mask = UIWidgets.create_simple_texture("mask_rect", "friends_mask"),
 	friends_bg = UIWidgets.create_background_with_frame("friends_mask", {
-		tbl[1] + 20,
-		tbl[2] * num + 20
+		friend_entry_size[1] + 20,
+		friend_entry_size[2] * num_visible_friends + 20
 	}, "mission_select_screen_bg", "menu_frame_12"),
-	loading_icon = fn_3(),
+	loading_icon = create_loading_icon(),
 	screen_fade = UIWidgets.create_simple_texture("gradient_dice_game_reward", "screen"),
-	open_profile_button = UIWidgets.create_default_button("open_profile_button", tbl_2.open_profile_button.size, nil, nil, Localize("input_description_show_profile"), 22, nil, nil, nil, flag_4),
-	invite_button = UIWidgets.create_default_button("invite_button", tbl_2.invite_button.size, nil, nil, Localize("friend_list_invite"), 22, nil, nil, nil, flag_4),
+	open_profile_button = UIWidgets.create_default_button("open_profile_button", scenegraph_definition.open_profile_button.size, nil, nil, Localize("input_description_show_profile"), 22, nil, nil, nil, disable_with_gamepad),
+	invite_button = UIWidgets.create_default_button("invite_button", scenegraph_definition.invite_button.size, nil, nil, Localize("friend_list_invite"), 22, nil, nil, nil, disable_with_gamepad),
 	selection_handler = create_selection_handler("selection_handler")
 }
-local tbl_16 = {
-	create_party_entry = fn,
-	create_friend_entry = fn_2,
-	friend_entry_size = tbl
+local entry_definitions = {
+	create_party_entry = create_party_entry,
+	create_friend_entry = create_friend_entry,
+	friend_entry_size = friend_entry_size
 }
 
 return {
-	generic_input_actions = tbl_3,
-	widget_definitions = tbl_15,
-	scenegraph_definition = tbl_2,
-	entry_definitions = tbl_16,
-	num_visible_friends = num
+	generic_input_actions = generic_input_actions,
+	widget_definitions = widget_definitions,
+	scenegraph_definition = scenegraph_definition,
+	entry_definitions = entry_definitions,
+	num_visible_friends = num_visible_friends
 }

@@ -4,22 +4,22 @@ require("scripts/unit_extensions/default_player_unit/player_sound_effect_extensi
 
 SoundEffectSystem = class(SoundEffectSystem, ExtensionSystemBase)
 
-local tbl = {
+local RPCS = {
 	"rpc_aggro_unit_changed"
 }
-local tbl_2 = {
+local extensions = {
 	"PlayerSoundEffectExtension"
 }
 
-SoundEffectSystem.init = function (self, arg_1_1, arg_1_2)
+SoundEffectSystem.init = function (self, entity_system_creation_context, system_name)
 	-- function 1
-	SoundEffectSystem.super.init(self, arg_1_1, arg_1_2, tbl_2)
+	SoundEffectSystem.super.init(self, entity_system_creation_context, system_name, extensions)
 
-	local network_event_delegate = arg_1_1.network_event_delegate
+	local network_event_delegate = entity_system_creation_context.network_event_delegate
 
 	self.network_event_delegate = network_event_delegate
 
-	network_event_delegate:register(self, unpack(tbl))
+	network_event_delegate:register(self, unpack(RPCS))
 end
 
 SoundEffectSystem.destroy = function (self)
@@ -27,32 +27,37 @@ SoundEffectSystem.destroy = function (self)
 	self.network_event_delegate:unregister(self)
 end
 
-SoundEffectSystem.aggro_unit_changed = function (self, arg_3_1, arg_3_2, arg_3_3)
+SoundEffectSystem.aggro_unit_changed = function (self, target_unit, enemy_unit, has_aggro)
 	-- function 3
-	local unit_owner = Managers.player:unit_owner(arg_3_1)
+	local player_manager = Managers.player
+	local player = player_manager:unit_owner(target_unit)
 
-	if not unit_owner then
-		if not unit_owner.local_player then
-			ScriptUnit.has_extension(arg_3_1, "sound_effect_system"):aggro_unit_changed(arg_3_2, arg_3_3)
-		elseif not self.is_server and not unit_owner:is_player_controlled() then
-			local peer_id = unit_owner.peer_id
-			local go_id = self.unit_storage:go_id(arg_3_1)
-			local go_id_2 = self.unit_storage:go_id(arg_3_2)
+	if player then
+		local is_local_player = player.local_player
 
-			self.network_transmit:send_rpc("rpc_aggro_unit_changed", peer_id, go_id, go_id_2, arg_3_3)
+		if is_local_player then
+			local sound_effect_extension = ScriptUnit.has_extension(target_unit, "sound_effect_system")
+
+			sound_effect_extension:aggro_unit_changed(enemy_unit, has_aggro)
+		elseif self.is_server and player:is_player_controlled() then
+			local peer_id = player.peer_id
+			local target_unit_id = self.unit_storage:go_id(target_unit)
+			local enemy_unit_id = self.unit_storage:go_id(enemy_unit)
+
+			self.network_transmit:send_rpc("rpc_aggro_unit_changed", peer_id, target_unit_id, enemy_unit_id, has_aggro)
 		end
 	end
 end
 
-SoundEffectSystem.rpc_aggro_unit_changed = function (self, arg_4_1, arg_4_2, arg_4_3, arg_4_4)
+SoundEffectSystem.rpc_aggro_unit_changed = function (self, channel_id, target_unit_id, enemy_unit_id, has_aggro)
 	-- function 4
-	local unit = self.unit_storage:unit(arg_4_2)
-	local unit_2 = self.unit_storage:unit(arg_4_3)
+	local target_unit = self.unit_storage:unit(target_unit_id)
+	local enemy_unit = self.unit_storage:unit(enemy_unit_id)
 
-	self:aggro_unit_changed(unit, unit_2, arg_4_4)
+	self:aggro_unit_changed(target_unit, enemy_unit, has_aggro)
 end
 
-SoundEffectSystem.hot_join_sync = function (arg_5_0)
+SoundEffectSystem.hot_join_sync = function (self)
 	-- function 5
 	return
 end

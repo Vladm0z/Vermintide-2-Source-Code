@@ -4,54 +4,54 @@ require("scripts/settings/dlcs/morris/rarity_settings")
 
 local RarityUtils = RarityUtils
 
-RarityUtils = RarityUtils or {}
+RarityUtils = not not RarityUtils or not not {}
 RarityUtils = RarityUtils
 
-RarityUtils.get_previous_rarity = function (arg_1_0)
+RarityUtils.get_previous_rarity = function (rarity)
 	-- function 1
-	local RaritySettings = RaritySettings
-	local order = RaritySettings[arg_1_0].order
-	local var_1_2 = arg_1_0
-	local num = 0
+	local rarity_settings = RaritySettings
+	local order = rarity_settings[rarity].order
+	local best_rarity = rarity
+	local best_rarity_order = 0
 
-	for k, v in pairs(RaritySettings) do
-		if not (not (order > v.order) or not (num < v.order)) then
-			var_1_2 = k
-			num = RaritySettings[var_1_2].order
+	for other_rarity, settings in pairs(rarity_settings) do
+		if order > settings.order and best_rarity_order < settings.order then
+			best_rarity = other_rarity
+			best_rarity_order = rarity_settings[best_rarity].order
 		end
 	end
 
-	local flag = var_1_2 ~= arg_1_0
+	local has_previous_rarity = best_rarity ~= rarity
 
-	return var_1_2, flag
+	return best_rarity, has_previous_rarity
 end
 
-RarityUtils.get_lower_rarities = function (arg_2_0)
+RarityUtils.get_lower_rarities = function (rarity)
 	-- function 2
-	local RaritySettings = RaritySettings
-	local order = RaritySettings[arg_2_0].order
-	local tbl = {}
+	local rarity_settings = RaritySettings
+	local order = rarity_settings[rarity].order
+	local rarities = {}
 
-	for k, v in pairs(RaritySettings) do
-		if order > v.order then
-			table.insert(tbl, k)
+	for other_rarity, settings in pairs(rarity_settings) do
+		if order > settings.order then
+			table.insert(rarities, other_rarity)
 		end
 	end
 
-	return tbl
+	return rarities
 end
 
-RarityUtils.get_higher_rarities = function (arg_3_0)
+RarityUtils.get_higher_rarities = function (rarity)
 	-- function 3
-	local RaritySettings = RaritySettings
-	local order = RaritySettings[arg_3_0].order
-	local tbl = {}
+	local rarity_settings = RaritySettings
+	local order = rarity_settings[rarity].order
+	local rarities = {}
 
-	for k, v in pairs(RaritySettings) do
-		if order < v.order then
-			table.insert(tbl, k)
+	for other_rarity, settings in pairs(rarity_settings) do
+		if order < settings.order then
+			table.insert(rarities, other_rarity)
 		end
 	end
 
-	return tbl
+	return rarities
 end

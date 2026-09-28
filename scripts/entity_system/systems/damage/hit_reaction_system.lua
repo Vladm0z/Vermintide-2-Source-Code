@@ -2,99 +2,99 @@
 
 HitReactionSystem = class(HitReactionSystem, ExtensionSystemBase)
 
-local tbl = {
+local extensions = {
 	"GenericHitReactionExtension"
 }
 
-HitReactionSystem.init = function (self, arg_1_1, arg_1_2)
+HitReactionSystem.init = function (self, entity_system_creation_context, system_name)
 	-- function 1
-	HitReactionSystem.super.init(self, arg_1_1, arg_1_2, tbl)
+	HitReactionSystem.super.init(self, entity_system_creation_context, system_name, extensions)
 
 	self.unit_extensions = {}
 	self.frozen_unit_extensions = {}
 end
 
-HitReactionSystem.destroy = function (arg_2_0)
+HitReactionSystem.destroy = function (self)
 	-- function 2
 	return
 end
 
-HitReactionSystem.on_add_extension = function (self, arg_3_1, arg_3_2, arg_3_3, arg_3_4)
+HitReactionSystem.on_add_extension = function (self, world, unit, extension_name, extension_init_data)
 	-- function 3
-	local add_extension = ScriptUnit.add_extension(self.extension_init_context, arg_3_2, arg_3_3, self.NAME, arg_3_4)
+	local extension = ScriptUnit.add_extension(self.extension_init_context, unit, extension_name, self.NAME, extension_init_data)
 
-	self.unit_extensions[arg_3_2] = add_extension
+	self.unit_extensions[unit] = extension
 
-	return add_extension
+	return extension
 end
 
-HitReactionSystem.extensions_ready = function (arg_4_0, arg_4_1, arg_4_2, arg_4_3)
+HitReactionSystem.extensions_ready = function (self, world, unit, extension_name)
 	-- function 4
 	return
 end
 
-HitReactionSystem.on_remove_extension = function (self, arg_5_1, arg_5_2)
+HitReactionSystem.on_remove_extension = function (self, unit, extension_name)
 	-- function 5
-	self.frozen_unit_extensions[arg_5_1] = nil
+	self.frozen_unit_extensions[unit] = nil
 
-	self:_cleanup_extension(arg_5_1, arg_5_2)
-	ScriptUnit.remove_extension(arg_5_1, self.NAME)
+	self:_cleanup_extension(unit, extension_name)
+	ScriptUnit.remove_extension(unit, self.NAME)
 end
 
-HitReactionSystem.on_freeze_extension = function (self, arg_6_1, arg_6_2)
+HitReactionSystem.on_freeze_extension = function (self, unit, extension_name)
 	-- function 6
-	local var_6_0 = self.unit_extensions[arg_6_1]
+	local extension = self.unit_extensions[unit]
 
-	fassert(var_6_0, "Unit was already frozen.")
+	fassert(extension, "Unit was already frozen.")
 
-	if var_6_0 == nil then
+	if extension == nil then
 		return
 	end
 
-	self.frozen_unit_extensions[arg_6_1] = var_6_0
+	self.frozen_unit_extensions[unit] = extension
 
-	self:_cleanup_extension(arg_6_1, arg_6_2)
+	self:_cleanup_extension(unit, extension_name)
 end
 
-HitReactionSystem._cleanup_extension = function (arg_7_0, arg_7_1, arg_7_2)
+HitReactionSystem._cleanup_extension = function (self, unit, extension_name)
 	-- function 7
-	arg_7_0.unit_extensions[arg_7_1] = nil
+	self.unit_extensions[unit] = nil
 end
 
-HitReactionSystem.freeze = function (self, arg_8_1, arg_8_2, arg_8_3)
+HitReactionSystem.freeze = function (self, unit, extension_name, reason)
 	-- function 8
-	fassert(self.frozen_unit_extensions[arg_8_1] == nil, "Tried to freeze an already frozen unit.")
+	fassert(self.frozen_unit_extensions[unit] == nil, "Tried to freeze an already frozen unit.")
 
-	local var_8_0 = self.unit_extensions[arg_8_1]
+	local extension = self.unit_extensions[unit]
 
-	fassert(var_8_0, "Unit to freeze didn't have unfrozen extension")
+	fassert(extension, "Unit to freeze didn't have unfrozen extension")
 
-	self.unit_extensions[arg_8_1] = nil
-	self.frozen_unit_extensions[arg_8_1] = var_8_0
+	self.unit_extensions[unit] = nil
+	self.frozen_unit_extensions[unit] = extension
 end
 
-HitReactionSystem.unfreeze = function (self, arg_9_1)
+HitReactionSystem.unfreeze = function (self, unit)
 	-- function 9
-	local var_9_0 = self.frozen_unit_extensions[arg_9_1]
+	local extension = self.frozen_unit_extensions[unit]
 
-	fassert(var_9_0, "Unit to unfreeze didn't have frozen extension")
+	fassert(extension, "Unit to unfreeze didn't have frozen extension")
 
-	self.frozen_unit_extensions[arg_9_1] = nil
-	self.unit_extensions[arg_9_1] = var_9_0
+	self.frozen_unit_extensions[unit] = nil
+	self.unit_extensions[unit] = extension
 
-	var_9_0:unfreeze()
+	extension:unfreeze()
 end
 
-HitReactionSystem.hot_join_sync = function (arg_10_0, arg_10_1)
+HitReactionSystem.hot_join_sync = function (self, sender)
 	-- function 10
 	return
 end
 
-HitReactionSystem.update = function (self, arg_11_1, arg_11_2)
+HitReactionSystem.update = function (self, context, t)
 	-- function 11
-	local dt = arg_11_1.dt
+	local dt = context.dt
 
-	for k, v in pairs(self.unit_extensions) do
-		v:update(k, nil, dt, arg_11_1, arg_11_2)
+	for unit, extension in pairs(self.unit_extensions) do
+		extension:update(unit, nil, dt, context, t)
 	end
 end

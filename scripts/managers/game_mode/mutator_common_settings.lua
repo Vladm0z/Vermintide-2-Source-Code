@@ -2,7 +2,7 @@
 
 local MutatorCommonSettings = MutatorCommonSettings
 
-MutatorCommonSettings = MutatorCommonSettings or {}
+MutatorCommonSettings = not not MutatorCommonSettings or not not {}
 MutatorCommonSettings = MutatorCommonSettings
 
 DLCUtils.merge("mutator_common_settings", MutatorCommonSettings)

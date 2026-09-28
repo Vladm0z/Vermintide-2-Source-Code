@@ -1,34 +1,34 @@
 -- chunkname: @scripts/ui/views/hero_view/windows/store/store_window_background.lua
 
-local var_0_0 = local_require("scripts/ui/views/hero_view/windows/store/definitions/store_window_background_definitions")
-local widgets = var_0_0.widgets
-local scenegraph_definition = var_0_0.scenegraph_definition
-local animation_definitions = var_0_0.animation_definitions
+local definitions = local_require("scripts/ui/views/hero_view/windows/store/definitions/store_window_background_definitions")
+local widget_definitions = definitions.widgets
+local scenegraph_definition = definitions.scenegraph_definition
+local animation_definitions = definitions.animation_definitions
 
 StoreWindowBackground = class(StoreWindowBackground)
 StoreWindowBackground.NAME = "StoreWindowBackground"
 
-StoreWindowBackground.on_enter = function (self, arg_1_1, arg_1_2)
+StoreWindowBackground.on_enter = function (self, params, offset)
 	-- function 1
 	print("[HeroViewWindow] Enter Substate StoreWindowBackground")
 
-	self._params = arg_1_1
-	self._parent = arg_1_1.parent
+	self._params = params
+	self._parent = params.parent
 
-	local get_renderers, var_1_1 = self._parent:get_renderers()
+	local ui_renderer, ui_top_renderer = self._parent:get_renderers()
 
-	self._ui_renderer = get_renderers
-	self._ui_top_renderer = var_1_1
+	self._ui_renderer = ui_renderer
+	self._ui_top_renderer = ui_top_renderer
 	self._render_settings = {
 		snap_pixel_positions = true
 	}
-	self._layout_settings = arg_1_1.layout_settings
+	self._layout_settings = params.layout_settings
 	self._animations = {}
 
-	self:_create_ui_elements(arg_1_1, arg_1_2)
+	self:_create_ui_elements(params, offset)
 end
 
-StoreWindowBackground._create_viewport_definition = function (arg_2_0)
+StoreWindowBackground._create_viewport_definition = function (self)
 	-- function 2
 	return {
 		scenegraph_id = "screen",
@@ -68,9 +68,9 @@ StoreWindowBackground._create_viewport_definition = function (arg_2_0)
 	}
 end
 
-StoreWindowBackground._create_ui_elements = function (self, arg_3_1, arg_3_2)
+StoreWindowBackground._create_ui_elements = function (self, params, offset)
 	-- function 3
-	if not self._viewport_widget then
+	if self._viewport_widget then
 		UIWidget.destroy(self.ui_renderer, self._viewport_widget)
 
 		self._viewport_widget = nil
@@ -78,55 +78,55 @@ StoreWindowBackground._create_ui_elements = function (self, arg_3_1, arg_3_2)
 
 	self._ui_scenegraph = UISceneGraph.init_scenegraph(scenegraph_definition)
 
-	local tbl = {}
-	local tbl_2 = {}
+	local widgets = {}
+	local widgets_by_name = {}
 
-	for k, v in pairs(widgets) do
-		local var_3_2 = UIWidget.init(v)
+	for name, widget_definition in pairs(widget_definitions) do
+		local widget = UIWidget.init(widget_definition)
 
-		tbl[#tbl + 1] = var_3_2
-		tbl_2[k] = var_3_2
+		widgets[#widgets + 1] = widget
+		widgets_by_name[name] = widget
 	end
 
-	self._widgets = tbl
-	self._widgets_by_name = tbl_2
+	self._widgets = widgets
+	self._widgets_by_name = widgets_by_name
 	self._viewport_widget_definition = self:_create_viewport_definition()
 
 	UIRenderer.clear_scenegraph_queue(self._ui_renderer)
 
 	self._ui_animator = UIAnimator:new(self._ui_scenegraph, animation_definitions)
 
-	if not arg_3_2 then
-		local local_position = self._ui_scenegraph.window.local_position
+	if offset then
+		local window_position = self._ui_scenegraph.window.local_position
 
-		local_position[1] = local_position[1] + arg_3_2[1]
-		local_position[2] = local_position[2] + arg_3_2[2]
-		local_position[3] = local_position[3] + arg_3_2[3]
+		window_position[1] = window_position[1] + offset[1]
+		window_position[2] = window_position[2] + offset[2]
+		window_position[3] = window_position[3] + offset[3]
 	end
 end
 
-StoreWindowBackground.on_exit = function (self, arg_4_1)
+StoreWindowBackground.on_exit = function (self, params)
 	-- function 4
 	print("[HeroViewWindow] Exit Substate StoreWindowBackground")
 
 	self._ui_animator = nil
 
-	if not self._viewport_widget then
+	if self._viewport_widget then
 		UIWidget.destroy(self.ui_renderer, self._viewport_widget)
 
 		self._viewport_widget = nil
 	end
 end
 
-StoreWindowBackground.update = function (self, arg_5_1, arg_5_2)
+StoreWindowBackground.update = function (self, dt, t)
 	-- function 5
-	self:_update_animations(arg_5_1, arg_5_2)
-	self:_draw(arg_5_1)
+	self:_update_animations(dt, t)
+	self:_draw(dt)
 end
 
-StoreWindowBackground.post_update = function (self, arg_6_1, arg_6_2)
+StoreWindowBackground.post_update = function (self, dt, t)
 	-- function 6
-	if self._viewport_widget or not self._viewport_widget_definition then
+	if not self._viewport_widget and self._viewport_widget_definition then
 		self._viewport_widget = UIWidget.init(self._viewport_widget_definition)
 
 		self:_hide_object_sets()
@@ -135,92 +135,93 @@ end
 
 StoreWindowBackground._hide_object_sets = function (self)
 	-- function 7
-	local var_7_0 = self._viewport_widget.element.pass_data[1]
+	local preview_pass_data = self._viewport_widget.element.pass_data[1]
 	local level_name = self._viewport_widget_definition.style.viewport.level_name
-	local level = var_7_0.level
+	local level = preview_pass_data.level
 	local object_set_names = LevelResource.object_set_names(level_name)
 
-	for i, v in ipairs(object_set_names) do
-		local unit_indices_in_object_set = LevelResource.unit_indices_in_object_set(level_name, v)
+	for _, object_set_name in ipairs(object_set_names) do
+		local object_set_units = LevelResource.unit_indices_in_object_set(level_name, object_set_name)
 
-		for k, v_2 in pairs(unit_indices_in_object_set) do
-			local unit_by_index = Level.unit_by_index(level, v_2)
+		for _, unit_index in pairs(object_set_units) do
+			local unit = Level.unit_by_index(level, unit_index)
 
-			if not Unit.alive(unit_by_index) then
-				Unit.set_unit_visibility(unit_by_index, false)
-				Unit.flow_event(unit_by_index, "unit_object_set_disabled")
+			if Unit.alive(unit) then
+				Unit.set_unit_visibility(unit, false)
+				Unit.flow_event(unit, "unit_object_set_disabled")
 			end
 		end
 	end
 end
 
-StoreWindowBackground._update_animations = function (self, arg_8_1, arg_8_2)
+StoreWindowBackground._update_animations = function (self, dt, t)
 	-- function 8
-	self._ui_animator:update(arg_8_1)
+	self._ui_animator:update(dt)
 
-	local _animations = self._animations
-	local _ui_animator = self._ui_animator
+	local animations = self._animations
+	local ui_animator = self._ui_animator
 
-	for k, v in pairs(_animations) do
-		if not _ui_animator:is_animation_completed(v) then
-			_ui_animator:stop_animation(v)
+	for animation_name, animation_id in pairs(animations) do
+		if ui_animator:is_animation_completed(animation_id) then
+			ui_animator:stop_animation(animation_id)
 
-			_animations[k] = nil
+			animations[animation_name] = nil
 		end
 	end
 end
 
-StoreWindowBackground._is_button_pressed = function (arg_9_0, arg_9_1)
+StoreWindowBackground._is_button_pressed = function (self, widget)
 	-- function 9
-	local button_hotspot = arg_9_1.content.button_hotspot
+	local content = widget.content
+	local hotspot = content.button_hotspot
 
-	if not button_hotspot.on_release then
-		button_hotspot.on_release = false
+	if hotspot.on_release then
+		hotspot.on_release = false
 
 		return true
 	end
 end
 
-StoreWindowBackground._is_stepper_button_pressed = function (arg_10_0, arg_10_1)
+StoreWindowBackground._is_stepper_button_pressed = function (self, widget)
 	-- function 10
-	local content = arg_10_1.content
-	local button_hotspot_left = content.button_hotspot_left
-	local button_hotspot_right = content.button_hotspot_right
+	local content = widget.content
+	local hotspot_left = content.button_hotspot_left
+	local hotspot_right = content.button_hotspot_right
 
-	if not button_hotspot_left.on_release then
-		button_hotspot_left.on_release = false
+	if hotspot_left.on_release then
+		hotspot_left.on_release = false
 
 		return true, -1
-	elseif not button_hotspot_right.on_release then
-		button_hotspot_right.on_release = false
+	elseif hotspot_right.on_release then
+		hotspot_right.on_release = false
 
 		return true, 1
 	end
 end
 
-StoreWindowBackground._draw = function (self, arg_11_1)
+StoreWindowBackground._draw = function (self, dt)
 	-- function 11
-	local _ui_renderer = self._ui_renderer
-	local _ui_top_renderer = self._ui_top_renderer
-	local _ui_scenegraph = self._ui_scenegraph
-	local window_input_service = self._parent:window_input_service()
+	local ui_renderer = self._ui_renderer
+	local ui_top_renderer = self._ui_top_renderer
+	local ui_scenegraph = self._ui_scenegraph
+	local input_service = self._parent:window_input_service()
 
-	UIRenderer.begin_pass(_ui_top_renderer, _ui_scenegraph, window_input_service, arg_11_1, nil, self._render_settings)
-	UIRenderer.end_pass(_ui_top_renderer)
-	UIRenderer.begin_pass(_ui_renderer, _ui_scenegraph, window_input_service, arg_11_1, nil, self._render_settings)
+	UIRenderer.begin_pass(ui_top_renderer, ui_scenegraph, input_service, dt, nil, self._render_settings)
+	UIRenderer.end_pass(ui_top_renderer)
+	UIRenderer.begin_pass(ui_renderer, ui_scenegraph, input_service, dt, nil, self._render_settings)
 
-	if not self._viewport_widget then
-		UIRenderer.draw_widget(_ui_renderer, self._viewport_widget)
+	if self._viewport_widget then
+		UIRenderer.draw_widget(ui_renderer, self._viewport_widget)
 	end
 
-	for i, v in ipairs(self._widgets) do
-		UIRenderer.draw_widget(_ui_renderer, v)
+	for _, widget in ipairs(self._widgets) do
+		UIRenderer.draw_widget(ui_renderer, widget)
 	end
 
-	UIRenderer.end_pass(_ui_renderer)
+	UIRenderer.end_pass(ui_renderer)
 end
 
-StoreWindowBackground._play_sound = function (self, arg_12_1)
+StoreWindowBackground._play_sound = function (self, event)
 	-- function 12
-	self._parent:play_sound(arg_12_1)
+	self._parent:play_sound(event)
 end

@@ -2,9 +2,9 @@
 
 ScriptPSRestrictionToken = class(ScriptPSRestrictionToken)
 
-ScriptPSRestrictionToken.init = function (self, arg_1_1)
+ScriptPSRestrictionToken.init = function (self, token)
 	-- function 1
-	self._token = arg_1_1
+	self._token = token
 	self._done = false
 end
 
@@ -12,24 +12,25 @@ ScriptPSRestrictionToken.update = function (self)
 	-- function 2
 	local status = NpCheck.status(self._token)
 
-	if not (status == NpCheck.COMPLETED or status ~= NpCheck.ERROR) then
+	if status == NpCheck.COMPLETED or status == NpCheck.ERROR then
 		self._done = true
 	end
 end
 
 ScriptPSRestrictionToken.info = function (self)
 	-- function 3
-	local tbl = {}
+	local info = {}
+	local status = NpCheck.status(self._token)
 
-	if NpCheck.status(self._token) == NpCheck.ERROR then
-		tbl.error = NpCheck.error_code(self._token)
+	if status == NpCheck.ERROR then
+		info.error = NpCheck.error_code(self._token)
 	else
-		tbl.result = NpCheck.result(self._token)
+		info.result = NpCheck.result(self._token)
 	end
 
-	tbl.token = self._token
+	info.token = self._token
 
-	return tbl
+	return info
 end
 
 ScriptPSRestrictionToken.done = function (self)

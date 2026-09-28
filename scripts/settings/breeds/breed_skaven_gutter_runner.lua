@@ -86,7 +86,7 @@ local tbl = {
 }
 local setting = Development.setting("disable_gutter_runner")
 
-setting = setting or false
+setting = not not setting or not not false
 tbl.disabled = setting
 tbl.hitzone_multiplier_types = {
 	head = "headshot"
@@ -201,30 +201,32 @@ tbl.hit_zones = {
 	}
 }
 
-tbl.custom_death_enter_function = function (arg_1_0, arg_1_1, arg_1_2, arg_1_3, arg_1_4, arg_1_5)
+tbl.custom_death_enter_function = function (unit, killer_unit, damage_type, death_hit_zone, t, damage_source)
 	-- function 1
-	local var_1_0 = BLACKBOARDS[arg_1_0]
+	local blackboard = BLACKBOARDS[unit]
 
-	if not Unit.alive(arg_1_1) then
+	if not Unit.alive(killer_unit) then
 		return
 	end
 
-	QuestSettings.check_gutter_killed_while_pouncing(var_1_0, arg_1_1, arg_1_5)
+	QuestSettings.check_gutter_killed_while_pouncing(blackboard, killer_unit, damage_source)
 end
 
 tbl.run_on_spawn = AiBreedSnippets.on_gutter_runner_spawn
 
-tbl.before_stagger_enter_function = function (arg_2_0, arg_2_1, arg_2_2, arg_2_3)
+tbl.before_stagger_enter_function = function (unit, blackboard, attacker_unit, is_push)
 	-- function 2
-	if not arg_2_3 then
-		QuestSettings.check_gutter_runner_push_on_pounce(arg_2_1, arg_2_2)
-		QuestSettings.check_gutter_runner_push_on_target_pounced(arg_2_1, arg_2_2)
+	if is_push then
+		QuestSettings.check_gutter_runner_push_on_pounce(blackboard, attacker_unit)
+		QuestSettings.check_gutter_runner_push_on_target_pounced(blackboard, attacker_unit)
 	end
 end
 
-Breeds.skaven_gutter_runner = table.create_copy(Breeds.skaven_gutter_runner, tbl)
+local breed_data = tbl
 
-local tbl_2 = {
+Breeds.skaven_gutter_runner = table.create_copy(Breeds.skaven_gutter_runner, breed_data)
+
+local action_data = {
 	target_pounced = {
 		final_damage_multiplier = 5,
 		damage = 1.5,
@@ -438,4 +440,4 @@ local tbl_2 = {
 	}
 }
 
-BreedActions.skaven_gutter_runner = table.create_copy(BreedActions.skaven_gutter_runner, tbl_2)
+BreedActions.skaven_gutter_runner = table.create_copy(BreedActions.skaven_gutter_runner, action_data)

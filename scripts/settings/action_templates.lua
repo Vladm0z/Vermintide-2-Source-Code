@@ -4,7 +4,7 @@ require("scripts/settings/profiles/career_settings")
 
 local ActionTemplates = ActionTemplates
 
-ActionTemplates = ActionTemplates or {}
+ActionTemplates = not not ActionTemplates or not not {}
 ActionTemplates = ActionTemplates
 ActionTemplates.wield = {
 	default = {
@@ -15,13 +15,17 @@ ActionTemplates.wield = {
 		action_priority = 2,
 		uninterruptible = true,
 		total_time = 0,
-		condition_func = function (arg_1_0, arg_1_1)
+		condition_func = function (action_user, input_extension)
 			-- function 1
-			return ScriptUnit.extension(arg_1_0, "inventory_system"):can_wield()
+			local inventory_extension = ScriptUnit.extension(action_user, "inventory_system")
+
+			return inventory_extension:can_wield()
 		end,
-		chain_condition_func = function (arg_2_0, arg_2_1)
+		chain_condition_func = function (action_user, input_extension)
 			-- function 2
-			return ScriptUnit.extension(arg_2_0, "inventory_system"):can_wield()
+			local inventory_extension = ScriptUnit.extension(action_user, "inventory_system")
+
+			return inventory_extension:can_wield()
 		end,
 		allowed_chain_actions = {}
 	}
@@ -36,13 +40,17 @@ ActionTemplates.wield_and_use = {
 		kind = "instant_wield",
 		uninterruptible = true,
 		total_time = 0,
-		condition_func = function (arg_3_0, arg_3_1)
+		condition_func = function (action_user, input_extension)
 			-- function 3
-			return ScriptUnit.extension(arg_3_0, "inventory_system"):can_wield()
+			local inventory_extension = ScriptUnit.extension(action_user, "inventory_system")
+
+			return inventory_extension:can_wield()
 		end,
-		chain_condition_func = function (arg_4_0, arg_4_1)
+		chain_condition_func = function (action_user, input_extension)
 			-- function 4
-			return ScriptUnit.extension(arg_4_0, "inventory_system"):can_wield()
+			local inventory_extension = ScriptUnit.extension(action_user, "inventory_system")
+
+			return inventory_extension:can_wield()
 		end,
 		action_on_wield = {
 			action = "action_one",
@@ -56,59 +64,61 @@ ActionTemplates.reload = {
 		weapon_action_hand = "either",
 		kind = "reload",
 		total_time = 0,
-		condition_func = function (arg_5_0, arg_5_1)
+		condition_func = function (action_user, input_extension)
 			-- function 5
-			local extension = ScriptUnit.extension(arg_5_0, "inventory_system")
-			local extension_2 = ScriptUnit.extension(arg_5_0, "status_system")
-			local var_5_2
+			local inventory_extension = ScriptUnit.extension(action_user, "inventory_system")
+			local status_extension = ScriptUnit.extension(action_user, "status_system")
+			local ammo_extension
+			local zooming = status_extension:is_zooming()
 
-			if not extension_2:is_zooming() then
+			if zooming then
 				return false
 			end
 
-			local equipment = extension:equipment()
+			local equipment = inventory_extension:equipment()
 
-			if equipment.right_hand_wielded_unit == nil or not ScriptUnit.has_extension(equipment.right_hand_wielded_unit, "ammo_system") then
-				var_5_2 = ScriptUnit.extension(equipment.right_hand_wielded_unit, "ammo_system")
-			elseif equipment.left_hand_wielded_unit == nil or not ScriptUnit.has_extension(equipment.left_hand_wielded_unit, "ammo_system") then
-				var_5_2 = ScriptUnit.extension(equipment.left_hand_wielded_unit, "ammo_system")
+			if equipment.right_hand_wielded_unit ~= nil and ScriptUnit.has_extension(equipment.right_hand_wielded_unit, "ammo_system") then
+				ammo_extension = ScriptUnit.extension(equipment.right_hand_wielded_unit, "ammo_system")
+			elseif equipment.left_hand_wielded_unit ~= nil and ScriptUnit.has_extension(equipment.left_hand_wielded_unit, "ammo_system") then
+				ammo_extension = ScriptUnit.extension(equipment.left_hand_wielded_unit, "ammo_system")
 			end
 
-			if not var_5_2 then
+			if not ammo_extension then
 				return false
 			end
 
-			local can_reload = var_5_2:can_reload()
-			local is_reloading = var_5_2:is_reloading()
+			local can_reload = ammo_extension:can_reload()
+			local is_reloading = ammo_extension:is_reloading()
 
-			return not can_reload and not is_reloading
+			return not not can_reload and not not not is_reloading
 		end,
-		chain_condition_func = function (arg_6_0, arg_6_1)
+		chain_condition_func = function (action_user, input_extension)
 			-- function 6
-			local extension = ScriptUnit.extension(arg_6_0, "inventory_system")
-			local extension_2 = ScriptUnit.extension(arg_6_0, "status_system")
-			local var_6_2
+			local inventory_extension = ScriptUnit.extension(action_user, "inventory_system")
+			local status_extension = ScriptUnit.extension(action_user, "status_system")
+			local ammo_extension
+			local zooming = status_extension:is_zooming()
 
-			if not extension_2:is_zooming() then
+			if zooming then
 				return false
 			end
 
-			local equipment = extension:equipment()
+			local equipment = inventory_extension:equipment()
 
-			if equipment.right_hand_wielded_unit == nil or not ScriptUnit.has_extension(equipment.right_hand_wielded_unit, "ammo_system") then
-				var_6_2 = ScriptUnit.extension(equipment.right_hand_wielded_unit, "ammo_system")
-			elseif equipment.left_hand_wielded_unit == nil or not ScriptUnit.has_extension(equipment.left_hand_wielded_unit, "ammo_system") then
-				var_6_2 = ScriptUnit.extension(equipment.left_hand_wielded_unit, "ammo_system")
+			if equipment.right_hand_wielded_unit ~= nil and ScriptUnit.has_extension(equipment.right_hand_wielded_unit, "ammo_system") then
+				ammo_extension = ScriptUnit.extension(equipment.right_hand_wielded_unit, "ammo_system")
+			elseif equipment.left_hand_wielded_unit ~= nil and ScriptUnit.has_extension(equipment.left_hand_wielded_unit, "ammo_system") then
+				ammo_extension = ScriptUnit.extension(equipment.left_hand_wielded_unit, "ammo_system")
 			end
 
-			if not var_6_2 then
+			if not ammo_extension then
 				return false
 			end
 
-			local can_reload = var_6_2:can_reload()
-			local is_reloading = var_6_2:is_reloading()
+			local can_reload = ammo_extension:can_reload()
+			local is_reloading = ammo_extension:is_reloading()
 
-			return not can_reload and not is_reloading
+			return not not can_reload and not not not is_reloading
 		end,
 		allowed_chain_actions = {}
 	},
@@ -116,37 +126,38 @@ ActionTemplates.reload = {
 		weapon_action_hand = "either",
 		kind = "reload",
 		total_time = 0,
-		condition_func = function (arg_7_0, arg_7_1)
+		condition_func = function (action_user, input_extension)
 			-- function 7
 			return false
 		end,
-		chain_condition_func = function (arg_8_0, arg_8_1)
+		chain_condition_func = function (action_user, input_extension)
 			-- function 8
-			local extension = ScriptUnit.extension(arg_8_0, "inventory_system")
-			local extension_2 = ScriptUnit.extension(arg_8_0, "status_system")
-			local var_8_2
+			local inventory_extension = ScriptUnit.extension(action_user, "inventory_system")
+			local status_extension = ScriptUnit.extension(action_user, "status_system")
+			local ammo_extension
+			local zooming = status_extension:is_zooming()
 
-			if not extension_2:is_zooming() then
+			if zooming then
 				return false
 			end
 
-			local equipment = extension:equipment()
+			local equipment = inventory_extension:equipment()
 
-			if equipment.right_hand_wielded_unit == nil or not ScriptUnit.has_extension(equipment.right_hand_wielded_unit, "ammo_system") then
-				var_8_2 = ScriptUnit.extension(equipment.right_hand_wielded_unit, "ammo_system")
-			elseif equipment.left_hand_wielded_unit == nil or not ScriptUnit.has_extension(equipment.left_hand_wielded_unit, "ammo_system") then
-				var_8_2 = ScriptUnit.extension(equipment.left_hand_wielded_unit, "ammo_system")
+			if equipment.right_hand_wielded_unit ~= nil and ScriptUnit.has_extension(equipment.right_hand_wielded_unit, "ammo_system") then
+				ammo_extension = ScriptUnit.extension(equipment.right_hand_wielded_unit, "ammo_system")
+			elseif equipment.left_hand_wielded_unit ~= nil and ScriptUnit.has_extension(equipment.left_hand_wielded_unit, "ammo_system") then
+				ammo_extension = ScriptUnit.extension(equipment.left_hand_wielded_unit, "ammo_system")
 			end
 
-			if not var_8_2 then
+			if not ammo_extension then
 				return false
 			end
 
-			local can_reload = var_8_2:can_reload()
-			local is_reloading = var_8_2:is_reloading()
-			local ammo_count = var_8_2:ammo_count()
+			local can_reload = ammo_extension:can_reload()
+			local is_reloading = ammo_extension:is_reloading()
+			local ammo_count = ammo_extension:ammo_count()
 
-			return not can_reload and ammo_count ~= 0 or not is_reloading
+			return not not can_reload and ammo_count == 0 and not not not is_reloading
 		end,
 		allowed_chain_actions = {}
 	}
@@ -156,16 +167,17 @@ ActionTemplates.action_inspect = {
 		weapon_action_hand = "either",
 		kind = "dummy",
 		total_time = 1,
-		condition_func = function (arg_9_0, arg_9_1, arg_9_2)
+		condition_func = function (action_user, input_extension, ammo_extension)
 			-- function 9
-			if not arg_9_2 and not arg_9_2:is_reloading() then
+			if ammo_extension and ammo_extension:is_reloading() then
 				return false
 			end
 
-			if not Managers.input:is_device_active("gamepad") then
+			if Managers.input:is_device_active("gamepad") then
 				local level_key = Managers.state.game_mode:level_key()
+				local level_settings = LevelSettings[level_key]
 
-				if not (not LevelSettings[level_key].hub_level and MotionControlSettings.use_motion_controls) then
+				if level_settings.hub_level and not MotionControlSettings.use_motion_controls then
 					return true
 				else
 					return false
@@ -197,9 +209,9 @@ ActionTemplates.action_inspect = {
 		weapon_action_hand = "either",
 		hold_input = "action_inspect_hold",
 		anim_event = "inspect_start",
-		anim_end_event_condition_func = function (arg_10_0, arg_10_1)
+		anim_end_event_condition_func = function (unit, end_reason)
 			-- function 10
-			return arg_10_1 ~= "new_interupting_action"
+			return end_reason ~= "new_interupting_action"
 		end,
 		total_time = math.huge,
 		allowed_chain_actions = {},
@@ -227,18 +239,20 @@ ActionTemplates.give_item_on_defend = {
 	hold_input = "action_two_hold",
 	anim_event = "parry_pose",
 	total_time = 0,
-	anim_end_event_condition_func = function (arg_11_0, arg_11_1)
+	anim_end_event_condition_func = function (unit, end_reason)
 		-- function 11
-		return arg_11_1 == "new_interupting_action" or arg_11_1 ~= "action_complete"
+		return end_reason ~= "new_interupting_action" and end_reason ~= "action_complete"
 	end,
 	allowed_chain_actions = {},
-	condition_func = function (arg_12_0)
+	condition_func = function (attacker_unit)
 		-- function 12
-		if not (Managers.player:owner(arg_12_0).bot_player or Application.user_setting("give_on_defend")) then
+		local is_bot_player = Managers.player:owner(attacker_unit).bot_player
+
+		if not is_bot_player and not Application.user_setting("give_on_defend") then
 			return false
 		end
 
-		return ScriptUnit.extension(arg_12_0, "interactor_system"):can_interact(nil, "give_item")
+		return ScriptUnit.extension(attacker_unit, "interactor_system"):can_interact(nil, "give_item")
 	end
 }
 ActionTemplates.instant_give_item = {
@@ -259,16 +273,16 @@ ActionTemplates.instant_give_item = {
 		hold_input = "interact",
 		anim_event = "parry_pose",
 		total_time = 0,
-		anim_end_event_condition_func = function (arg_13_0, arg_13_1)
+		anim_end_event_condition_func = function (unit, end_reason)
 			-- function 13
-			return arg_13_1 == "new_interupting_action" or arg_13_1 ~= "action_complete"
+			return end_reason ~= "new_interupting_action" and end_reason ~= "action_complete"
 		end,
 		allowed_chain_actions = {},
-		condition_func = function (arg_14_0)
+		condition_func = function (attacker_unit)
 			-- function 14
-			local extension = ScriptUnit.extension(arg_14_0, "interactor_system")
+			local interactor_extension = ScriptUnit.extension(attacker_unit, "interactor_system")
 
-			return not extension and extension:can_interact(nil, "give_item")
+			return not not interactor_extension and not not interactor_extension:can_interact(nil, "give_item")
 		end
 	}
 }
@@ -287,15 +301,19 @@ ActionTemplates.action_career_bw_1 = {
 		weapon_action_hand = "either",
 		kind = "instant_wield",
 		total_time = 0,
-		condition_func = function (arg_15_0, arg_15_1)
+		condition_func = function (action_user, input_extension)
 			-- function 15
-			if not ScriptUnit.extension(arg_15_0, "buff_system"):has_buff_perk("disable_career_ability") then
+			local buff_extension = ScriptUnit.extension(action_user, "buff_system")
+			local is_disabled = buff_extension:has_buff_perk("disable_career_ability")
+
+			if is_disabled then
 				return false
 			end
 
-			local extension = ScriptUnit.extension(arg_15_0, "career_system")
+			local career_extension = ScriptUnit.extension(action_user, "career_system")
+			local activated_ability_data = career_extension:get_activated_ability_data()
 
-			return extension:get_activated_ability_data().action_name ~= "action_career_bw_1" or extension:can_use_activated_ability()
+			return activated_ability_data.action_name == "action_career_bw_1" and not not career_extension:can_use_activated_ability()
 		end,
 		action_on_wield = {
 			action = "action_career_hold",
@@ -311,15 +329,19 @@ ActionTemplates.action_career_dr_3 = {
 		weapon_action_hand = "either",
 		kind = "instant_wield",
 		total_time = 0,
-		condition_func = function (arg_16_0, arg_16_1)
+		condition_func = function (action_user, input_extension)
 			-- function 16
-			if not ScriptUnit.extension(arg_16_0, "buff_system"):has_buff_perk("disable_career_ability") then
+			local buff_extension = ScriptUnit.extension(action_user, "buff_system")
+			local is_disabled = buff_extension:has_buff_perk("disable_career_ability")
+
+			if is_disabled then
 				return false
 			end
 
-			local extension = ScriptUnit.extension(arg_16_0, "career_system")
+			local career_extension = ScriptUnit.extension(action_user, "career_system")
+			local activated_ability_data = career_extension:get_activated_ability_data()
 
-			return extension:get_activated_ability_data().action_name ~= "action_career_dr_3" or extension:can_use_activated_ability()
+			return activated_ability_data.action_name == "action_career_dr_3" and not not career_extension:can_use_activated_ability()
 		end,
 		action_on_wield = {
 			action = "action_career_hold",
@@ -335,15 +357,19 @@ ActionTemplates.action_career_wh_2 = {
 		weapon_action_hand = "either",
 		kind = "instant_wield",
 		total_time = 0,
-		condition_func = function (arg_17_0, arg_17_1)
+		condition_func = function (action_user, input_extension)
 			-- function 17
-			if not ScriptUnit.extension(arg_17_0, "buff_system"):has_buff_perk("disable_career_ability") then
+			local buff_extension = ScriptUnit.extension(action_user, "buff_system")
+			local is_disabled = buff_extension:has_buff_perk("disable_career_ability")
+
+			if is_disabled then
 				return false
 			end
 
-			local extension = ScriptUnit.extension(arg_17_0, "career_system")
+			local career_extension = ScriptUnit.extension(action_user, "career_system")
+			local activated_ability_data = career_extension:get_activated_ability_data()
 
-			return extension:get_activated_ability_data().action_name ~= "action_career_wh_2" or extension:can_use_activated_ability()
+			return activated_ability_data.action_name == "action_career_wh_2" and not not career_extension:can_use_activated_ability()
 		end,
 		action_on_wield = {
 			action = "action_career_hold",
@@ -359,27 +385,34 @@ ActionTemplates.action_career_we_3 = {
 		weapon_action_hand = "either",
 		kind = "instant_wield",
 		total_time = 0,
-		condition_func = function (arg_18_0, arg_18_1)
+		condition_func = function (action_user, input_extension)
 			-- function 18
-			if not ScriptUnit.extension(arg_18_0, "inventory_system"):get_slot_data("slot_career_skill_weapon") then
+			local inventory_extension = ScriptUnit.extension(action_user, "inventory_system")
+			local slot_data = inventory_extension:get_slot_data("slot_career_skill_weapon")
+
+			if not slot_data then
 				return false
 			end
 
-			if not ScriptUnit.extension(arg_18_0, "buff_system"):has_buff_perk("disable_career_ability") then
+			local buff_extension = ScriptUnit.extension(action_user, "buff_system")
+			local is_disabled = buff_extension:has_buff_perk("disable_career_ability")
+
+			if is_disabled then
 				return false
 			end
 
-			local extension = ScriptUnit.extension(arg_18_0, "career_system")
-			local get_activated_ability_data = extension:get_activated_ability_data(1)
+			local career_extension = ScriptUnit.extension(action_user, "career_system")
+			local activated_ability_data = career_extension:get_activated_ability_data(1)
 
-			if not get_activated_ability_data then
+			if not activated_ability_data then
 				return false
 			end
 
-			local has_talent = ScriptUnit.has_extension(arg_18_0, "talent_system"):has_talent("kerillian_waywatcher_activated_ability_piercing_shot")
-			local can_use_activated_ability = extension:can_use_activated_ability(1)
+			local talent_extension = ScriptUnit.has_extension(action_user, "talent_system")
+			local piercing_talent = talent_extension:has_talent("kerillian_waywatcher_activated_ability_piercing_shot")
+			local can_use = career_extension:can_use_activated_ability(1)
 
-			return (get_activated_ability_data.action_name ~= "action_career_we_3" or not can_use_activated_ability) and not has_talent
+			return activated_ability_data.action_name == "action_career_we_3" and not not can_use and not not not piercing_talent
 		end,
 		action_on_wield = {
 			action = "action_career_hold",
@@ -395,27 +428,34 @@ ActionTemplates.action_career_we_3_piercing = {
 		weapon_action_hand = "either",
 		kind = "instant_wield",
 		total_time = 0,
-		condition_func = function (arg_19_0, arg_19_1)
+		condition_func = function (action_user, input_extension)
 			-- function 19
-			if not ScriptUnit.extension(arg_19_0, "inventory_system"):get_slot_data("slot_career_skill_weapon") then
+			local inventory_extension = ScriptUnit.extension(action_user, "inventory_system")
+			local slot_data = inventory_extension:get_slot_data("slot_career_skill_weapon")
+
+			if not slot_data then
 				return false
 			end
 
-			if not ScriptUnit.extension(arg_19_0, "buff_system"):has_buff_perk("disable_career_ability") then
+			local buff_extension = ScriptUnit.extension(action_user, "buff_system")
+			local is_disabled = buff_extension:has_buff_perk("disable_career_ability")
+
+			if is_disabled then
 				return false
 			end
 
-			local extension = ScriptUnit.extension(arg_19_0, "career_system")
-			local get_activated_ability_data = extension:get_activated_ability_data(2)
+			local career_extension = ScriptUnit.extension(action_user, "career_system")
+			local activated_ability_data = career_extension:get_activated_ability_data(2)
 
-			if not get_activated_ability_data then
+			if not activated_ability_data then
 				return false
 			end
 
-			local has_talent = ScriptUnit.has_extension(arg_19_0, "talent_system"):has_talent("kerillian_waywatcher_activated_ability_piercing_shot")
-			local can_use_activated_ability = extension:can_use_activated_ability(1)
+			local talent_extension = ScriptUnit.has_extension(action_user, "talent_system")
+			local piercing_talent = talent_extension:has_talent("kerillian_waywatcher_activated_ability_piercing_shot")
+			local can_use = career_extension:can_use_activated_ability(1)
 
-			return (get_activated_ability_data.action_name ~= "action_career_we_3_piercing" or not can_use_activated_ability) and has_talent
+			return activated_ability_data.action_name == "action_career_we_3_piercing" and not not can_use and not not piercing_talent
 		end,
 		action_on_wield = {
 			action = "action_career_hold",
@@ -427,11 +467,13 @@ ActionTemplates.action_career_we_3_piercing = {
 
 DLCUtils.require_list("action_template_files")
 
-for k, v in pairs(CareerActionNames) do
-	for k_2 = 1, #v do
-		local var_0_1 = v[k_2]
-		local default = ActionTemplates[var_0_1].default
+for _, action_names in pairs(CareerActionNames) do
+	for i = 1, #action_names do
+		local action_name = action_names[i]
+		local template = ActionTemplates[action_name]
+		local default_data = template.default
+		local condition_func = default_data.condition_func
 
-		default.chain_condition_func = default.condition_func
+		default_data.chain_condition_func = condition_func
 	end
 end

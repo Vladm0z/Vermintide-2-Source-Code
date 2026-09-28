@@ -1,12 +1,12 @@
 -- chunkname: @scripts/settings/dlcs/cog/cog_sound_settings.lua
 
-local cog = DLCSettings.cog
+local settings = DLCSettings.cog
 
-cog.dialogue_lookup = {
+settings.dialogue_lookup = {
 	"dialogues/generated/lookup_dlc_cog",
 	"dialogues/generated/lookup_dwarf_ranger_cog"
 }
-cog.dialogue_settings = {
+settings.dialogue_settings = {
 	inn_level = {
 		"dialogues/generated/dlc_cog"
 	},
@@ -20,10 +20,10 @@ cog.dialogue_settings = {
 		"dialogues/generated/dlc_cog"
 	}
 }
-cog.auto_load_files = {
+settings.auto_load_files = {
 	"dialogues/generated/dwarf_ranger_cog"
 }
-cog.network_sound_events = {
+settings.network_sound_events = {
 	"Play_player_engineer_engine_charge_husk",
 	"Play_player_engineer_engine_loop_husk",
 	"Stop_player_engineer_engine_loop_husk",

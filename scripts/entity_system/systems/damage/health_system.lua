@@ -16,7 +16,7 @@ require("scripts/unit_extensions/health/target_health_extension")
 HealthSystem = class(HealthSystem, ExtensionSystemBase)
 
 local script_data = script_data
-local tbl = {
+local RPCS = {
 	"rpc_add_damage",
 	"rpc_add_damage_network",
 	"rpc_damage_taken_overcharge",
@@ -32,7 +32,7 @@ local tbl = {
 	"rpc_request_insta_kill",
 	"rpc_request_convert_temp"
 }
-local tbl_2 = {
+local extensions = {
 	"ChaosTrollHealthExtension",
 	"ChaosTrollHuskHealthExtension",
 	"ExplosiveBarrelHealthExtension",
@@ -48,17 +48,17 @@ local tbl_2 = {
 }
 
 DLCUtils.require_list("health_extension_files")
-DLCUtils.append("health_extensions", tbl_2)
+DLCUtils.append("health_extensions", extensions)
 
-HealthSystem.init = function (self, arg_1_1, arg_1_2)
+HealthSystem.init = function (self, entity_system_creation_context, system_name)
 	-- function 1
-	HealthSystem.super.init(self, arg_1_1, arg_1_2, tbl_2)
+	HealthSystem.super.init(self, entity_system_creation_context, system_name, extensions)
 
-	local network_event_delegate = arg_1_1.network_event_delegate
+	local network_event_delegate = entity_system_creation_context.network_event_delegate
 
 	self.network_event_delegate = network_event_delegate
 
-	network_event_delegate:register(self, unpack(tbl))
+	network_event_delegate:register(self, unpack(RPCS))
 
 	self.unit_extensions = {}
 	self.frozen_unit_extensions = {}
@@ -78,114 +78,114 @@ HealthSystem.destroy = function (self)
 	table.clear(HEALTH_ALIVE)
 end
 
-HealthSystem.on_add_extension = function (self, arg_3_1, arg_3_2, arg_3_3, arg_3_4)
+HealthSystem.on_add_extension = function (self, world, unit, extension_name, extension_init_data)
 	-- function 3
-	local add_extension = ScriptUnit.add_extension(self.extension_init_context, arg_3_2, arg_3_3, self.NAME, arg_3_4)
+	local extension = ScriptUnit.add_extension(self.extension_init_context, unit, extension_name, self.NAME, extension_init_data)
 
-	HEALTH_ALIVE[arg_3_2] = true
-	self.unit_extensions[arg_3_2] = add_extension
+	HEALTH_ALIVE[unit] = true
+	self.unit_extensions[unit] = extension
 
-	if arg_3_3 == "PlayerUnitHealthExtension" then
-		self.player_unit_extensions[arg_3_2] = add_extension
+	if extension_name == "PlayerUnitHealthExtension" then
+		self.player_unit_extensions[unit] = extension
 	end
 
-	if not add_extension.update then
-		self.updateable_unit_extensions[arg_3_2] = add_extension
+	if extension.update then
+		self.updateable_unit_extensions[unit] = extension
 	end
 
-	return add_extension
+	return extension
 end
 
-HealthSystem.on_remove_extension = function (self, arg_4_1, arg_4_2)
+HealthSystem.on_remove_extension = function (self, unit, extension_name)
 	-- function 4
-	fassert(ScriptUnit.has_extension(arg_4_1, self.NAME), "Trying to remove non-existing extension %q from unit %s", arg_4_2, arg_4_1)
-	ScriptUnit.remove_extension(arg_4_1, self.NAME)
+	fassert(ScriptUnit.has_extension(unit, self.NAME), "Trying to remove non-existing extension %q from unit %s", extension_name, unit)
+	ScriptUnit.remove_extension(unit, self.NAME)
 
-	self.unit_extensions[arg_4_1] = nil
-	self.frozen_unit_extensions[arg_4_1] = nil
-	self.player_unit_extensions[arg_4_1] = nil
-	self.updateable_unit_extensions[arg_4_1] = nil
-	HEALTH_ALIVE[arg_4_1] = nil
+	self.unit_extensions[unit] = nil
+	self.frozen_unit_extensions[unit] = nil
+	self.player_unit_extensions[unit] = nil
+	self.updateable_unit_extensions[unit] = nil
+	HEALTH_ALIVE[unit] = nil
 end
 
-HealthSystem.freeze = function (self, arg_5_1, arg_5_2)
+HealthSystem.freeze = function (self, unit, extension_name)
 	-- function 5
-	fassert(self.frozen_unit_extensions[arg_5_1] == nil, "Tried to freeze an already frozen unit.")
+	fassert(self.frozen_unit_extensions[unit] == nil, "Tried to freeze an already frozen unit.")
 
-	local var_5_0 = self.unit_extensions[arg_5_1]
+	local extension = self.unit_extensions[unit]
 
-	fassert(var_5_0, "Unit to freeze didn't have unfrozen extension")
+	fassert(extension, "Unit to freeze didn't have unfrozen extension")
 
-	if not var_5_0.freeze then
-		var_5_0:freeze()
+	if extension.freeze then
+		extension:freeze()
 	end
 
-	self.unit_extensions[arg_5_1] = nil
-	self.frozen_unit_extensions[arg_5_1] = var_5_0
+	self.unit_extensions[unit] = nil
+	self.frozen_unit_extensions[unit] = extension
 
-	fassert(var_5_0.unit, "Should this extension have a unit member?")
+	fassert(extension.unit, "Should this extension have a unit member?")
 end
 
-HealthSystem.unfreeze = function (self, arg_6_1)
+HealthSystem.unfreeze = function (self, unit)
 	-- function 6
-	local var_6_0 = self.frozen_unit_extensions[arg_6_1]
+	local extension = self.frozen_unit_extensions[unit]
 
-	fassert(var_6_0, "Unit to unfreeze didn't have frozen extension")
+	fassert(extension, "Unit to unfreeze didn't have frozen extension")
 
-	self.frozen_unit_extensions[arg_6_1] = nil
-	self.unit_extensions[arg_6_1] = var_6_0
+	self.frozen_unit_extensions[unit] = nil
+	self.unit_extensions[unit] = extension
 
-	if not var_6_0.unfreeze then
-		var_6_0:unfreeze()
+	if extension.unfreeze then
+		extension:unfreeze()
 	end
 end
 
-HealthSystem.hot_join_sync = function (self, arg_7_1)
+HealthSystem.hot_join_sync = function (self, sender)
 	-- function 7
-	for k, v in pairs(self.unit_extensions) do
-		if not v.hot_join_sync then
-			v:hot_join_sync(arg_7_1)
+	for unit, extension in pairs(self.unit_extensions) do
+		if extension.hot_join_sync then
+			extension:hot_join_sync(sender)
 		end
 	end
 end
 
-HealthSystem.update = function (self, arg_8_1, arg_8_2)
+HealthSystem.update = function (self, context, t)
 	-- function 8
 	self.active_damage_buffer_index = 3 - self.active_damage_buffer_index
 
 	local active_damage_buffer_index = self.active_damage_buffer_index
-	local set_empty = pdArray.set_empty
+	local pdArray_set_empty = pdArray.set_empty
 	local player_unit_extensions = self.player_unit_extensions
 
-	for k, v in pairs(self.unit_extensions) do
-		local var_8_3 = v.damage_buffers[active_damage_buffer_index]
+	for unit, extension in pairs(self.unit_extensions) do
+		local damage_queue = extension.damage_buffers[active_damage_buffer_index]
 
-		set_empty(var_8_3)
+		pdArray_set_empty(damage_queue)
 
-		v._recent_damage_type = nil
-		v._recent_hit_react_type = nil
+		extension._recent_damage_type = nil
+		extension._recent_hit_react_type = nil
 	end
 
-	local dt = arg_8_1.dt
+	local dt = context.dt
 
-	for k_2, v_2 in pairs(self.updateable_unit_extensions) do
-		v_2:update(dt, arg_8_1, arg_8_2)
+	for unit, extension in pairs(self.updateable_unit_extensions) do
+		extension:update(dt, context, t)
 	end
 end
 
-HealthSystem._assist_shield = function (self, arg_9_1, arg_9_2)
+HealthSystem._assist_shield = function (self, target_unit, shield_amount)
 	-- function 9
-	local var_9_0 = self.unit_extensions[arg_9_1]
-	local extension = ScriptUnit.extension(arg_9_1, "status_system")
+	local health_extension = self.unit_extensions[target_unit]
+	local status_extension = ScriptUnit.extension(target_unit, "status_system")
 
-	var_9_0:shield(arg_9_2)
-	extension:set_shielded(true)
+	health_extension:shield(shield_amount)
+	status_extension:set_shielded(true)
 end
 
-HealthSystem.suicide = function (arg_10_0, arg_10_1)
+HealthSystem.suicide = function (self, unit)
 	-- function 10
-	if not Unit.alive(arg_10_1) then
-		if not arg_10_1 then
+	if not Unit.alive(unit) then
+		if not unit then
 			print("Got suicide from deleted player unit")
 		else
 			print("Trying suicide but already dead")
@@ -194,71 +194,83 @@ HealthSystem.suicide = function (arg_10_0, arg_10_1)
 		return
 	end
 
-	ScriptUnit.extension(arg_10_1, "health_system"):die("forced")
+	local health_extension = ScriptUnit.extension(unit, "health_system")
+
+	health_extension:die("forced")
 end
 
-HealthSystem.rent_recent_attacker = function (self, arg_11_1, arg_11_2)
+HealthSystem.rent_recent_attacker = function (self, attacker_breed, t)
 	-- function 11
-	local _recent_attackers_free_list = self._recent_attackers_free_list
-	local var_11_1
-	local var_11_2 = _recent_attackers_free_list[0]
+	local free_list = self._recent_attackers_free_list
+	local recent_attacker_data
+	local num_free = free_list[0]
 
-	if var_11_2 > 0 then
-		var_11_1 = _recent_attackers_free_list[var_11_2]
-		_recent_attackers_free_list[0] = var_11_2 - 1
+	if num_free > 0 then
+		recent_attacker_data = free_list[num_free]
+		free_list[0] = num_free - 1
 	else
-		var_11_1 = {}
+		recent_attacker_data = {}
 	end
 
-	self:refresh_recent_attacker(var_11_1, arg_11_1, arg_11_2)
+	self:refresh_recent_attacker(recent_attacker_data, attacker_breed, t)
 
-	return var_11_1
+	return recent_attacker_data
 end
 
-HealthSystem.refresh_recent_attacker = function (arg_12_0, arg_12_1, arg_12_2, arg_12_3)
+HealthSystem.refresh_recent_attacker = function (self, recent_attacker_data, attacker_breed, t)
 	-- function 12
-	arg_12_1.attacker_breed = arg_12_2
-	arg_12_1.t = arg_12_3
+	recent_attacker_data.attacker_breed = attacker_breed
+	recent_attacker_data.t = t
 end
 
-HealthSystem.return_recent_attacker = function (self, arg_13_1)
+HealthSystem.return_recent_attacker = function (self, recent_attacker_data)
 	-- function 13
-	local _recent_attackers_free_list = self._recent_attackers_free_list
-	local num = _recent_attackers_free_list[0] + 1
+	local free_list = self._recent_attackers_free_list
+	local num_free = free_list[0] + 1
 
-	_recent_attackers_free_list[num] = arg_13_1
-	_recent_attackers_free_list[0] = num
+	free_list[num_free] = recent_attacker_data
+	free_list[0] = num_free
 end
 
-local tbl_3 = {}
+local debug_units = {}
 
 HealthSystem.update_debug = function (self)
 	-- function 14
-	if not script_data.damage_debug then
-		for k, v in pairs(self.unit_extensions) do
-			if not Managers.player:owner(k) then
-				local get_damage_taken = v:get_damage_taken()
-				local get_max_health = v:get_max_health()
-				local has_extension = ScriptUnit.has_extension(k, "dialogue_system")
+	if script_data.damage_debug then
+		for unit, extension in pairs(self.unit_extensions) do
+			if Managers.player:owner(unit) then
+				local damage_taken = extension:get_damage_taken()
+				local max_health = extension:get_max_health()
+				local dialogue_extension = ScriptUnit.has_extension(unit, "dialogue_system")
 
-				if not has_extension then
-					Debug.text("Player: %s @ %.2f/%.2f", has_extension.context.player_profile, get_damage_taken, get_max_health)
+				if dialogue_extension then
+					Debug.text("Player: %s @ %.2f/%.2f", dialogue_extension.context.player_profile, damage_taken, max_health)
 				else
-					Debug.text("Player: @ %.2f/%.2f", get_damage_taken, get_max_health)
+					Debug.text("Player: @ %.2f/%.2f", damage_taken, max_health)
 				end
 			else
-				local current_health = v:current_health()
-				local get_damage_taken_2 = v:get_damage_taken()
-				local flag
+				local health = extension:current_health()
+				local damage = extension:get_damage_taken()
+				local str
 
-				flag = current_health ~= math.huge or not "inf" or string.format("%.2f", current_health)
+				if health == math.huge then
+					str = "inf"
 
-				local get_data = Unit.get_data(k, "breed")
+					goto label_14_0
+				end
 
-				if get_data ~= nil then
-					Debug.text("Breed %s @ %.2f/%s", get_data.name, get_damage_taken_2, flag)
+				str = string.format("%.2f", health)
+
+				local health_string = str
+
+				::label_14_0::
+
+				local breed = Unit.get_data(unit, "breed")
+
+				if breed ~= nil then
+					Debug.text("Breed %s @ %.2f/%s", breed.name, damage, health_string)
 				else
-					Debug.text("%s @ %.2f/%s", Unit.debug_name(k), get_damage_taken_2, flag)
+					Debug.text("%s @ %.2f/%s", Unit.debug_name(unit), damage, health_string)
 				end
 			end
 		end
@@ -267,81 +279,105 @@ HealthSystem.update_debug = function (self)
 	local show_ai_health = script_data.show_ai_health
 	local show_ai_spawn_info = script_data.show_ai_spawn_info
 
-	if show_ai_health or not show_ai_spawn_info then
-		local local_player = Managers.player:local_player()
+	if show_ai_health or show_ai_spawn_info then
+		local player = Managers.player:local_player()
 
-		if local_player == nil then
+		if player == nil then
 			return
 		end
 
-		local player_unit = local_player.player_unit
-		local free_flight = Managers.free_flight
-		local active = free_flight:active("global")
+		local player_unit = player.player_unit
+		local free_flight_manager = Managers.free_flight
+		local active = free_flight_manager:active("global")
 
-		active = not active and free_flight:camera_position_rotation()
+		if active then
+			-- Nothing
+		end
 
-		local broadphase = Managers.state.entity:system("ai_system").broadphase
-		local flag_2 = active or POSITION_LOOKUP[player_unit]
+		active = free_flight_manager:camera_position_rotation()
 
-		if not broadphase and not flag_2 then
-			local query = Broadphase.query(broadphase, flag_2, 20, tbl_3)
-			local var_14_16 = Vector3(0, 0, 0.5)
-			local var_14_17 = Vector3(0, 0, 0.65)
-			local var_14_18 = Vector3(0, 0, 0.75)
-			local var_14_19 = Vector3(255, 200, 0)
-			local var_14_20 = Vector3(255, 0, 200)
-			local var_14_21 = Vector3(255, 70, 0)
-			local var_14_22 = Vector3(55, 70, 255)
-			local var_14_23 = Vector3(0, 175, 75)
-			local var_14_24 = Vector3(175, 175, 0)
-			local var_14_25 = Vector3(175, 0, 0)
-			local var_14_26 = Vector3(100, 0, 0)
-			local str = "player_1"
-			local debug_text = Managers.state.debug_text
+		local free_flight_position = active
 
-			for k_2 = 1, query do
-				local var_14_29 = tbl_3[k_2]
-				local has_node = Unit.has_node(var_14_29, "c_head")
+		::label_14_1::
 
-				has_node = not has_node and Unit.node(var_14_29, "c_head")
+		local ai_system = Managers.state.entity:system("ai_system")
+		local broadphase = ai_system.broadphase
+		local center_pos = not not free_flight_position or not not POSITION_LOOKUP[player_unit]
 
-				if not has_node then
-					local var_14_31 = self.unit_extensions[var_14_29]
+		if broadphase and center_pos then
+			local num_units = Broadphase.query(broadphase, center_pos, 20, debug_units)
+			local offset_vector = Vector3(0, 0, 0.5)
+			local offset_vector2 = Vector3(0, 0, 0.65)
+			local offset_vector3 = Vector3(0, 0, 0.75)
+			local desc_color = Vector3(255, 200, 0)
+			local desc_color2 = Vector3(255, 0, 200)
+			local head_color = Vector3(255, 70, 0)
+			local change_color = Vector3(55, 70, 255)
+			local color1 = Vector3(0, 175, 75)
+			local color2 = Vector3(175, 175, 0)
+			local color3 = Vector3(175, 0, 0)
+			local deadcolor = Vector3(100, 0, 0)
+			local viewport_name = "player_1"
+			local debug_text_manager = Managers.state.debug_text
 
-					if not show_ai_health then
-						debug_text:clear_unit_text(var_14_29, "health")
+			for i = 1, num_units do
+				local unit = debug_units[i]
+				local has_node = Unit.has_node(unit, "c_head")
 
-						local num = var_14_31.health - var_14_31.damage
-						local num_2 = num / var_14_31.health
-						local flag_3 = (not (num_2 > 0.99) or not var_14_23 or not (num_2 > 0.25)) and (not var_14_24 or var_14_25)
-						local var_14_35 = BLACKBOARDS[var_14_29]
+				if has_node then
+					-- Nothing
+				end
+
+				has_node = Unit.node(unit, "c_head")
+
+				local head_node = has_node
+
+				::label_14_2::
+
+				if head_node then
+					local health_extension = self.unit_extensions[unit]
+
+					if show_ai_health then
+						debug_text_manager:clear_unit_text(unit, "health")
+
+						local current_health = health_extension.health - health_extension.damage
+						local max_health = health_extension.health
+						local p = current_health / max_health
+						local color = (not (p > 0.99) or not color1) and (not (p > 0.25) or not color2) and not not color3
+						local blackboard = BLACKBOARDS[unit]
 						local lean_dogpile
 
-						if not var_14_35 then
-							lean_dogpile = var_14_35.lean_dogpile
+						if blackboard then
+							lean_dogpile = blackboard.lean_dogpile
 
 							if not lean_dogpile then
 								lean_dogpile = 0
 							end
-						else
-							lean_dogpile = "-"
+
+							goto label_14_3
 						end
 
-						if num_2 <= 0 then
-							local format = string.format("dead, dogpile %s", lean_dogpile)
+						lean_dogpile = "-"
 
-							debug_text:output_unit_text(format, 0.16, var_14_29, has_node, var_14_16, nil, "health", var_14_26, str)
+						local dogpile = lean_dogpile
+
+						::label_14_3::
+
+						if p <= 0 then
+							local text = string.format("dead, dogpile %s", dogpile)
+
+							debug_text_manager:output_unit_text(text, 0.16, unit, head_node, offset_vector, nil, "health", deadcolor, viewport_name)
 						else
-							local format_2 = string.format("%.2f / %.2f dogpile %s", num, var_14_31.health, lean_dogpile)
+							local text = string.format("%.2f / %.2f dogpile %s", current_health, health_extension.health, dogpile)
 
-							debug_text:output_unit_text(format_2, 0.3, var_14_29, has_node, var_14_16, nil, "health", flag_3, str)
+							debug_text_manager:output_unit_text(text, 0.3, unit, head_node, offset_vector, nil, "health", color, viewport_name)
 						end
 
-						local has_extension_2 = ScriptUnit.has_extension(var_14_29, "ai_group_system")
+						local ai_group_extension = ScriptUnit.has_extension(unit, "ai_group_system")
 						local template
 
-						if not has_extension_2 then
-							template = has_extension_2.template
+						if ai_group_extension then
+							template = ai_group_extension.template
 
 							if not template then
 								-- Nothing
@@ -350,101 +386,110 @@ HealthSystem.update_debug = function (self)
 
 						template = ""
 
-						::label_14_0::
+						local template_name = template
 
-						if not template then
-							debug_text:output_unit_text(template, 0.15, var_14_29, has_node, var_14_17, nil, "health", var_14_21, str)
+						::label_14_4::
+
+						if template_name then
+							debug_text_manager:output_unit_text(template_name, 0.15, unit, head_node, offset_vector2, nil, "health", head_color, viewport_name)
 						end
 					end
 
-					if not show_ai_spawn_info then
-						debug_text:clear_unit_text(var_14_29, "spawn_info")
+					if show_ai_spawn_info then
+						debug_text_manager:clear_unit_text(unit, "spawn_info")
 
-						local zone_data = var_14_31.zone_data
+						local zone_data = health_extension.zone_data
 
-						if not zone_data then
+						if zone_data then
 							local hi_data = zone_data.hi_data
-							local var_14_43
-							local var_14_44
+							local text, col
+							local replaced_breed = health_extension.replaced_breed
 
-							if not var_14_31.replaced_breed then
-								var_14_44 = var_14_22
+							if replaced_breed then
+								col = change_color
 
-								local format_3 = string.format
+								local format = string.format
 								local str_2 = "%s R>%s"
-								local debug_info = var_14_31.debug_info
+								local debug_info = health_extension.debug_info
 
-								debug_info = debug_info or "Roaming"
-								var_14_43 = format_3(str_2, debug_info, var_14_31.replaced_breed)
+								debug_info = not not debug_info or not not "Roaming"
+								text = format(str_2, debug_info, health_extension.replaced_breed)
 							else
-								var_14_44 = var_14_21
+								col = head_color
 
-								local format_4 = string.format
+								local format_2 = string.format
 								local str_3 = "%s SEG=%d"
-								local debug_info_2 = var_14_31.debug_info
+								local debug_info_2 = health_extension.debug_info
 
-								debug_info_2 = debug_info_2 or "Roaming"
-								var_14_43 = format_4(str_3, debug_info_2, hi_data.id)
+								debug_info_2 = not not debug_info_2 or not not "Roaming"
+								text = format_2(str_3, debug_info_2, hi_data.id)
 							end
 
-							debug_text:output_unit_text(var_14_43, 0.15, var_14_29, has_node, var_14_18, nil, "spawn_info", var_14_44, str)
+							debug_text_manager:output_unit_text(text, 0.15, unit, head_node, offset_vector3, nil, "spawn_info", col, viewport_name)
 
-							local name = BLACKBOARDS[var_14_29].breed.name
+							local breed_name = BLACKBOARDS[unit].breed.name
 
-							if not hi_data then
+							if hi_data then
 								-- Nothing
 							end
 
-							::label_14_1::
+							::label_14_5::
 
-							local breed_count = hi_data.breed_count
+							local breed_count_2 = hi_data.breed_count
 
-							breed_count = not breed_count and hi_data.breed_count[name]
-
-							do
-								local count
+							if breed_count_2 then
+								-- Nothing
 							end
 
-							::label_14_2::
+							breed_count_2 = hi_data.breed_count[breed_name]
 
-							if not breed_count then
-								count = breed_count.count
+							local breed_count = breed_count_2
 
-								if not count then
+							do
+								local count_2
+							end
+
+							::label_14_6::
+
+							if breed_count then
+								count_2 = breed_count.count
+
+								if not count_2 then
 									-- Nothing
 								end
 							end
 
-							count = " "
+							count_2 = " "
 
-							::label_14_3::
+							local count = count_2
 
-							local format_5 = string.format
+							::label_14_7::
+
+							local format_3 = string.format
 							local str_4 = "%s %s %q(%s)"
-							local flag_4
+							local flag
 
-							flag_4 = not zone_data.island and "island_id:" and "zone_id:"
+							flag = (not zone_data.island or not "island_id:") and not not "zone_id:"
 
 							local unique_zone_id = zone_data.unique_zone_id
 							local pack_type = zone_data.pack_type
 
-							pack_type = pack_type or "?"
+							pack_type = not not pack_type or not not "?"
+							text = format_3(str_4, flag, unique_zone_id, pack_type, count)
 
-							local var_14_59 = format_5(str_4, flag_4, unique_zone_id, pack_type, count)
-
-							if not zone_data.hi then
-								var_14_44 = var_14_20
+							if zone_data.hi then
+								col = desc_color2
 							else
-								var_14_44 = var_14_19
+								col = desc_color
 							end
 
-							debug_text:output_unit_text(var_14_59, 0.15, var_14_29, has_node, var_14_17, nil, "spawn_info", var_14_44, str)
+							debug_text_manager:output_unit_text(text, 0.15, unit, head_node, offset_vector2, nil, "spawn_info", col, viewport_name)
 						else
-							local has_extension_3 = ScriptUnit.has_extension(var_14_29, "ai_group_system")
+							local ai_group_extension = ScriptUnit.has_extension(unit, "ai_group_system")
 							local template_2
 
-							if not has_extension_3 then
-								template_2 = has_extension_3.template
+							if ai_group_extension then
+								template_2 = ai_group_extension.template
 
 								if not template_2 then
 									-- Nothing
@@ -453,10 +498,12 @@ HealthSystem.update_debug = function (self)
 
 							template_2 = ""
 
-							::label_14_4::
+							local template_name = template_2
 
-							if not template_2 then
-								debug_text:output_unit_text(template_2, 0.15, var_14_29, has_node, var_14_17, nil, "spawn_info", var_14_21, str)
+							::label_14_8::
+
+							if template_name then
+								debug_text_manager:output_unit_text(template_name, 0.15, unit, head_node, offset_vector2, nil, "spawn_info", head_color, viewport_name)
 							end
 						end
 					end
@@ -466,398 +513,404 @@ HealthSystem.update_debug = function (self)
 	end
 end
 
-HealthSystem.rpc_add_damage = function (self, arg_15_1, arg_15_2, arg_15_3, arg_15_4, arg_15_5, arg_15_6, arg_15_7, arg_15_8, arg_15_9, arg_15_10, arg_15_11, arg_15_12, arg_15_13, arg_15_14, arg_15_15, arg_15_16, arg_15_17, arg_15_18, arg_15_19, arg_15_20, arg_15_21, arg_15_22)
+HealthSystem.rpc_add_damage = function (self, channel_id, victim_unit_go_id, victim_unit_is_level_unit, attacker_unit_go_id, attacker_is_level_unit, source_attacker_unit_go_id, damage_amount, hit_zone_id, damage_type_id, hit_position, damage_direction, damage_source_id, hit_ragdoll_actor_id, hit_react_type_id, is_dead, is_critical_strike, added_dot, first_hit, total_hits, attack_type_id, backstab_multiplier, target_index)
 	-- function 15
 	fassert(not self.is_server, "Tried sending rpc_add_damage to something other than client")
 
-	local var_15_0
+	local victim_unit
 	local unit_storage = self.unit_storage
 
-	if not arg_15_3 then
-		var_15_0 = LevelHelper:unit_by_index(self.world, arg_15_2)
+	if victim_unit_is_level_unit then
+		victim_unit = LevelHelper:unit_by_index(self.world, victim_unit_go_id)
 	else
-		var_15_0 = unit_storage:unit(arg_15_2)
+		victim_unit = unit_storage:unit(victim_unit_go_id)
 	end
 
-	if not Unit.alive(var_15_0) then
+	if not Unit.alive(victim_unit) then
 		return
 	end
 
-	local var_15_2
+	local attacker_unit
 
-	if not arg_15_5 then
-		var_15_2 = LevelHelper:unit_by_index(self.world, arg_15_4)
+	if attacker_is_level_unit then
+		attacker_unit = LevelHelper:unit_by_index(self.world, attacker_unit_go_id)
 	else
-		var_15_2 = unit_storage:unit(arg_15_4)
+		attacker_unit = unit_storage:unit(attacker_unit_go_id)
 	end
 
-	local unit = unit_storage:unit(arg_15_6)
-	local var_15_4 = NetworkLookup.hit_zones[arg_15_8]
-	local var_15_5 = NetworkLookup.damage_types[arg_15_9]
-	local var_15_6 = NetworkLookup.damage_sources[arg_15_12]
-	local var_15_7 = NetworkLookup.hit_ragdoll_actors[arg_15_13]
-	local var_15_8 = NetworkLookup.hit_react_types[arg_15_14]
-	local var_15_9 = NetworkLookup.buff_attack_types[arg_15_20]
-	local alive = Unit.alive(var_15_2)
-	local var_15_11 = self.unit_extensions[var_15_0]
-	local has_extension = ScriptUnit.has_extension(unit, "buff_system")
+	local source_attacker_unit = unit_storage:unit(source_attacker_unit_go_id)
+	local hit_zone_name = NetworkLookup.hit_zones[hit_zone_id]
+	local damage_type = NetworkLookup.damage_types[damage_type_id]
+	local damage_source_name = NetworkLookup.damage_sources[damage_source_id]
+	local hit_ragdoll_actor = NetworkLookup.hit_ragdoll_actors[hit_ragdoll_actor_id]
+	local hit_react_type = NetworkLookup.hit_react_types[hit_react_type_id]
+	local attack_type = NetworkLookup.buff_attack_types[attack_type_id]
+	local attacker_unit_alive = Unit.alive(attacker_unit)
+	local victim_health_extension = self.unit_extensions[victim_unit]
+	local buff_extension = ScriptUnit.has_extension(source_attacker_unit, "buff_system")
 
-	if not (not has_extension and var_15_6 ~= "dot_debuff") then
-		has_extension:trigger_procs("on_dot_damage_dealt", var_15_0, unit, var_15_5, var_15_6)
+	if buff_extension and damage_source_name == "dot_debuff" then
+		buff_extension:trigger_procs("on_dot_damage_dealt", victim_unit, source_attacker_unit, damage_type, damage_source_name)
 	end
 
-	if var_15_5 ~= "sync_health" then
-		var_15_11:add_damage(not alive and var_15_2 and var_15_0, arg_15_7, var_15_4, var_15_5, arg_15_10, arg_15_11, var_15_6, var_15_7, unit, var_15_8, arg_15_16, arg_15_17, arg_15_18, arg_15_19, var_15_9, arg_15_21, arg_15_22)
+	if damage_type ~= "sync_health" then
+		victim_health_extension:add_damage((not attacker_unit_alive or not attacker_unit) and not not victim_unit, damage_amount, hit_zone_name, damage_type, hit_position, damage_direction, damage_source_name, hit_ragdoll_actor, source_attacker_unit, hit_react_type, is_critical_strike, added_dot, first_hit, total_hits, attack_type, backstab_multiplier, target_index)
 	end
 
-	if not var_15_11:is_alive() and not arg_15_15 then
-		local alloc_table = FrameTable.alloc_table()
-		local flag = not arg_15_10 and Vector3Aux.box(nil, arg_15_10)
-		local box = Vector3Aux.box(nil, arg_15_11)
+	if victim_health_extension:is_alive() and is_dead then
+		local killing_blow = FrameTable.alloc_table()
+		local hit_position_table = not not hit_position and not not Vector3Aux.box(nil, hit_position)
+		local damage_direction_table = Vector3Aux.box(nil, damage_direction)
 
-		alloc_table[DamageDataIndex.DAMAGE_AMOUNT] = arg_15_7
-		alloc_table[DamageDataIndex.DAMAGE_TYPE] = var_15_5
-		alloc_table[DamageDataIndex.ATTACKER] = not alive and var_15_2 and var_15_0
-		alloc_table[DamageDataIndex.HIT_ZONE] = var_15_4
-		alloc_table[DamageDataIndex.POSITION] = flag
-		alloc_table[DamageDataIndex.DIRECTION] = box
-		alloc_table[DamageDataIndex.DAMAGE_SOURCE_NAME] = var_15_6
-		alloc_table[DamageDataIndex.HIT_RAGDOLL_ACTOR_NAME] = var_15_7
-		alloc_table[DamageDataIndex.SOURCE_ATTACKER_UNIT] = unit or alloc_table[DamageDataIndex.ATTACKER]
-		alloc_table[DamageDataIndex.HIT_REACT_TYPE] = var_15_8
-		alloc_table[DamageDataIndex.CRITICAL_HIT] = arg_15_16
-		alloc_table[DamageDataIndex.FIRST_HIT] = arg_15_18
-		alloc_table[DamageDataIndex.TOTAL_HITS] = arg_15_19
-		alloc_table[DamageDataIndex.ATTACK_TYPE] = var_15_9
-		alloc_table[DamageDataIndex.BACKSTAB_MULTIPLIER] = arg_15_21
-		alloc_table[DamageDataIndex.TARGET_INDEX] = arg_15_22 or 1
+		killing_blow[DamageDataIndex.DAMAGE_AMOUNT] = damage_amount
+		killing_blow[DamageDataIndex.DAMAGE_TYPE] = damage_type
+		killing_blow[DamageDataIndex.ATTACKER] = (not attacker_unit_alive or not attacker_unit) and not not victim_unit
+		killing_blow[DamageDataIndex.HIT_ZONE] = hit_zone_name
+		killing_blow[DamageDataIndex.POSITION] = hit_position_table
+		killing_blow[DamageDataIndex.DIRECTION] = damage_direction_table
+		killing_blow[DamageDataIndex.DAMAGE_SOURCE_NAME] = damage_source_name
+		killing_blow[DamageDataIndex.HIT_RAGDOLL_ACTOR_NAME] = hit_ragdoll_actor
+		killing_blow[DamageDataIndex.SOURCE_ATTACKER_UNIT] = not not source_attacker_unit or not not killing_blow[DamageDataIndex.ATTACKER]
+		killing_blow[DamageDataIndex.HIT_REACT_TYPE] = hit_react_type
+		killing_blow[DamageDataIndex.CRITICAL_HIT] = is_critical_strike
+		killing_blow[DamageDataIndex.FIRST_HIT] = first_hit
+		killing_blow[DamageDataIndex.TOTAL_HITS] = total_hits
+		killing_blow[DamageDataIndex.ATTACK_TYPE] = attack_type
+		killing_blow[DamageDataIndex.BACKSTAB_MULTIPLIER] = backstab_multiplier
+		killing_blow[DamageDataIndex.TARGET_INDEX] = not not target_index or not not 1
 
-		Managers.state.entity:system("death_system"):kill_unit(var_15_0, alloc_table)
+		local death_system = Managers.state.entity:system("death_system")
+
+		death_system:kill_unit(victim_unit, killing_blow)
 	end
 end
 
-HealthSystem.rpc_add_damage_network = function (self, arg_16_1, arg_16_2, arg_16_3, arg_16_4, arg_16_5, arg_16_6, arg_16_7, arg_16_8, arg_16_9, arg_16_10, arg_16_11, arg_16_12, arg_16_13, arg_16_14, arg_16_15, arg_16_16, arg_16_17, arg_16_18, arg_16_19)
+HealthSystem.rpc_add_damage_network = function (self, channel_id, victim_unit_go_id, victim_unit_is_level_unit, attacker_unit_go_id, attacker_is_level_unit, source_attacker_unit_go_id, damage_amount, hit_zone_id, damage_type_id, hit_position, damage_direction, damage_source_id, hit_react_type_id, is_critical_strike, added_dot, first_hit, total_hits, backstab_multiplier, target_index)
 	-- function 16
 	fassert(self.is_server, "Tried sending rpc_add_damage_network to something other than the server")
 
-	local var_16_0
+	local victim_unit
 	local unit_storage = self.unit_storage
 
-	if not arg_16_3 then
-		var_16_0 = LevelHelper:unit_by_index(self.world, arg_16_2)
+	if victim_unit_is_level_unit then
+		victim_unit = LevelHelper:unit_by_index(self.world, victim_unit_go_id)
 	else
-		var_16_0 = unit_storage:unit(arg_16_2)
+		victim_unit = unit_storage:unit(victim_unit_go_id)
 	end
 
-	if not Unit.alive(var_16_0) then
+	if not Unit.alive(victim_unit) then
 		return
 	end
 
-	local var_16_2
+	local attacker_unit
 
-	if not arg_16_5 then
-		var_16_2 = LevelHelper:unit_by_index(self.world, arg_16_4)
+	if attacker_is_level_unit then
+		attacker_unit = LevelHelper:unit_by_index(self.world, attacker_unit_go_id)
 	else
-		var_16_2 = unit_storage:unit(arg_16_4)
+		attacker_unit = unit_storage:unit(attacker_unit_go_id)
 	end
 
-	local var_16_3
+	local source_attacker_unit
 
-	if arg_16_6 ~= NetworkConstants.invalid_game_object_id then
-		local unit = unit_storage:unit(arg_16_6)
+	if source_attacker_unit_go_id ~= NetworkConstants.invalid_game_object_id then
+		source_attacker_unit = unit_storage:unit(source_attacker_unit_go_id)
 	end
 
-	local var_16_5 = NetworkLookup.hit_zones[arg_16_8]
-	local var_16_6 = NetworkLookup.damage_types[arg_16_9]
-	local var_16_7 = NetworkLookup.damage_sources[arg_16_12]
-	local var_16_8 = NetworkLookup.hit_react_types[arg_16_13]
-	local var_16_9
-	local var_16_10
-	local var_16_11
+	local hit_zone_name = NetworkLookup.hit_zones[hit_zone_id]
+	local damage_type = NetworkLookup.damage_types[damage_type_id]
+	local damage_source_name = NetworkLookup.damage_sources[damage_source_id]
+	local hit_react_type = NetworkLookup.hit_react_types[hit_react_type_id]
+	local hit_ragdoll_actor, damaging_unit, buff_attack_type
 
-	arg_16_16 = arg_16_16 or false
-	arg_16_17 = arg_16_17 or 0
+	first_hit = not not first_hit or not not false
+	total_hits = not not total_hits or not not 0
 
-	DamageUtils.add_damage_network(var_16_0, var_16_2, arg_16_7, var_16_5, var_16_6, arg_16_10, arg_16_11, var_16_7, var_16_9, var_16_10, var_16_11, var_16_8, arg_16_14, arg_16_15, arg_16_16, arg_16_17, arg_16_18, nil, arg_16_19)
+	DamageUtils.add_damage_network(victim_unit, attacker_unit, damage_amount, hit_zone_name, damage_type, hit_position, damage_direction, damage_source_name, hit_ragdoll_actor, damaging_unit, buff_attack_type, hit_react_type, is_critical_strike, added_dot, first_hit, total_hits, backstab_multiplier, nil, target_index)
 end
 
-HealthSystem.rpc_damage_taken_overcharge = function (self, arg_17_1, arg_17_2, arg_17_3)
+HealthSystem.rpc_damage_taken_overcharge = function (self, channel_id, unit_go_id, damage)
 	-- function 17
-	local unit = self.unit_storage:unit(arg_17_2)
+	local unit = self.unit_storage:unit(unit_go_id)
 
-	if not unit then
-		DamageUtils.apply_damage_to_overcharge(unit, arg_17_3)
+	if unit then
+		DamageUtils.apply_damage_to_overcharge(unit, damage)
 	end
 end
 
-HealthSystem.rpc_heal = function (self, arg_18_1, arg_18_2, arg_18_3, arg_18_4, arg_18_5, arg_18_6, arg_18_7)
+HealthSystem.rpc_heal = function (self, channel_id, target_unit_go_id, target_unit_is_level_unit, healer_unit_go_id, healer_unit_is_level_unit, heal_amount, heal_type_id)
 	-- function 18
-	local var_18_0
+	local target_unit
 	local unit_storage = self.unit_storage
 
-	if not arg_18_3 then
-		var_18_0 = LevelHelper:unit_by_index(self.world, arg_18_2)
+	if target_unit_is_level_unit then
+		target_unit = LevelHelper:unit_by_index(self.world, target_unit_go_id)
 	else
-		var_18_0 = unit_storage:unit(arg_18_2)
+		target_unit = unit_storage:unit(target_unit_go_id)
 	end
 
-	if not Unit.alive(var_18_0) then
+	if not Unit.alive(target_unit) then
 		return
 	end
 
-	local var_18_2
+	local healer_unit
 
-	if not arg_18_5 then
-		var_18_2 = LevelHelper:unit_by_index(self.world, arg_18_4)
+	if healer_unit_is_level_unit then
+		healer_unit = LevelHelper:unit_by_index(self.world, healer_unit_go_id)
 	else
-		var_18_2 = unit_storage:unit(arg_18_4)
+		healer_unit = unit_storage:unit(healer_unit_go_id)
 	end
 
-	local var_18_3 = NetworkLookup.heal_types[arg_18_7]
+	local heal_type = NetworkLookup.heal_types[heal_type_id]
 
-	if var_18_3 == "shield_by_assist" then
-		self:_assist_shield(var_18_0, arg_18_6)
+	if heal_type == "shield_by_assist" then
+		self:_assist_shield(target_unit, heal_amount)
 	else
-		self.unit_extensions[var_18_0]:add_heal(var_18_2, arg_18_6, nil, var_18_3)
+		local health_extension = self.unit_extensions[target_unit]
 
-		local has_extension = ScriptUnit.has_extension(var_18_0, "status_system")
+		health_extension:add_heal(healer_unit, heal_amount, nil, heal_type)
 
-		if not has_extension then
-			has_extension:healed(var_18_3)
+		local status_extension = ScriptUnit.has_extension(target_unit, "status_system")
+
+		if status_extension then
+			status_extension:healed(heal_type)
 		end
 
-		local has_extension_2 = ScriptUnit.has_extension(var_18_0, "buff_system")
+		local buff_extension = ScriptUnit.has_extension(target_unit, "buff_system")
 
-		if not has_extension_2 then
-			has_extension_2:trigger_procs("on_healed", var_18_2, arg_18_6, var_18_3)
+		if buff_extension then
+			buff_extension:trigger_procs("on_healed", healer_unit, heal_amount, heal_type)
 		end
 
-		local has_extension_3 = ScriptUnit.has_extension(var_18_2, "buff_system")
+		local healer_buff_extension = ScriptUnit.has_extension(healer_unit, "buff_system")
 
-		if var_18_0 == var_18_2 or not has_extension_3 then
-			has_extension_3:trigger_procs("on_healed_ally", var_18_0, arg_18_6, var_18_3)
+		if target_unit ~= healer_unit and healer_buff_extension then
+			healer_buff_extension:trigger_procs("on_healed_ally", target_unit, heal_amount, heal_type)
 		end
 	end
 end
 
-HealthSystem.rpc_remove_assist_shield = function (self, arg_19_1, arg_19_2)
+HealthSystem.rpc_remove_assist_shield = function (self, channel_id, unit_go_id)
 	-- function 19
-	local unit = self.unit_storage:unit(arg_19_2)
+	local unit = self.unit_storage:unit(unit_go_id)
+	local health_extension = self.unit_extensions[unit]
 
-	self.unit_extensions[unit]:remove_assist_shield("blocked_damage")
+	health_extension:remove_assist_shield("blocked_damage")
 end
 
-HealthSystem.rpc_request_heal = function (self, arg_20_1, arg_20_2, arg_20_3, arg_20_4)
+HealthSystem.rpc_request_heal = function (self, channel_id, unit_go_id, heal_amount, heal_type_id)
 	-- function 20
 	local fassert = fassert
 	local is_server = self.is_server
 
-	is_server = is_server or LEVEL_EDITOR_TEST
+	is_server = not not is_server or not not LEVEL_EDITOR_TEST
 
 	fassert(is_server, "Trying to request a heal from a client")
 
-	local unit = self.unit_storage:unit(arg_20_2)
+	local unit = self.unit_storage:unit(unit_go_id)
 
 	if not Unit.alive(unit) then
 		return
 	end
 
-	local has_extension = ScriptUnit.has_extension(unit, "status_system")
+	local status_extension = ScriptUnit.has_extension(unit, "status_system")
 
-	if not has_extension and not has_extension:is_disabled() then
-		local var_20_4 = NetworkLookup.heal_types[arg_20_4]
+	if status_extension and status_extension:is_disabled() then
+		local heal_type = NetworkLookup.heal_types[heal_type_id]
 
-		if not (var_20_4 == "healing_draught" or var_20_4 ~= "healing_draught_temp_health") then
-			local var_20_5 = CHANNEL_TO_PEER_ID[arg_20_1]
-			local slot_healthkit = NetworkLookup.equipment_slots.slot_healthkit
-			local potion_healing_draught_01 = NetworkLookup.item_names.potion_healing_draught_01
-			local var_20_8 = NetworkLookup.weapon_skins["n/a"]
+		if heal_type == "healing_draught" or heal_type == "healing_draught_temp_health" then
+			local peer_id = CHANNEL_TO_PEER_ID[channel_id]
+			local slot_id = NetworkLookup.equipment_slots.slot_healthkit
+			local item_name_id = NetworkLookup.item_names.potion_healing_draught_01
+			local skin_id = NetworkLookup.weapon_skins["n/a"]
 
-			Managers.state.network.network_transmit:send_rpc("rpc_add_inventory_slot_item", var_20_5, arg_20_2, slot_healthkit, potion_healing_draught_01, var_20_8)
+			Managers.state.network.network_transmit:send_rpc("rpc_add_inventory_slot_item", peer_id, unit_go_id, slot_id, item_name_id, skin_id)
 
 			return
 		end
 	end
 
-	local var_20_9 = NetworkLookup.heal_types[arg_20_4]
+	local heal_type = NetworkLookup.heal_types[heal_type_id]
 
-	if var_20_9 == "shield_by_assist" then
-		DamageUtils.assist_shield_network(unit, unit, arg_20_3)
+	if heal_type == "shield_by_assist" then
+		DamageUtils.assist_shield_network(unit, unit, heal_amount)
 	else
-		DamageUtils.heal_network(unit, unit, arg_20_3, var_20_9)
+		DamageUtils.heal_network(unit, unit, heal_amount, heal_type)
 	end
 end
 
-HealthSystem.rpc_request_convert_temp = function (self, arg_21_1, arg_21_2, arg_21_3)
+HealthSystem.rpc_request_convert_temp = function (self, channel_id, unit_go_id, amount)
 	-- function 21
 	local fassert = fassert
 	local is_server = self.is_server
 
-	is_server = is_server or LEVEL_EDITOR_TEST
+	is_server = not not is_server or not not LEVEL_EDITOR_TEST
 
 	fassert(is_server, "Trying to request a health convert from a client")
 
-	local unit = self.unit_storage:unit(arg_21_2)
+	local unit = self.unit_storage:unit(unit_go_id)
 
 	if not ALIVE[unit] then
 		return
 	end
 
-	self.unit_extensions[unit]:convert_to_temp(arg_21_3)
+	local health_extension = self.unit_extensions[unit]
+
+	health_extension:convert_to_temp(amount)
 end
 
-HealthSystem.rpc_suicide = function (self, arg_22_1, arg_22_2)
+HealthSystem.rpc_suicide = function (self, channel_id, go_id)
 	-- function 22
-	local unit = self.unit_storage:unit(arg_22_2)
+	local unit = self.unit_storage:unit(go_id)
 
 	self:suicide(unit)
 end
 
-HealthSystem.rpc_sync_damage_taken = function (self, arg_23_1, arg_23_2, arg_23_3, arg_23_4, arg_23_5, arg_23_6)
+HealthSystem.rpc_sync_damage_taken = function (self, channel_id, go_id, is_level_unit, set_max_health, amount, state_id)
 	-- function 23
 	fassert(not self.is_server, "rpc_sync_damage_taken was sent to server, only clients should receive this!")
 
-	local var_23_0
+	local unit
 	local unit_storage = self.unit_storage
 
-	if not arg_23_3 then
-		var_23_0 = LevelHelper:unit_by_index(self.world, arg_23_2)
+	if is_level_unit then
+		unit = LevelHelper:unit_by_index(self.world, go_id)
 	else
-		var_23_0 = unit_storage:unit(arg_23_2)
+		unit = unit_storage:unit(go_id)
 	end
 
-	if not Unit.alive(var_23_0) then
+	if not Unit.alive(unit) then
 		return
 	end
 
-	local var_23_2 = self.unit_extensions[var_23_0]
-	local var_23_3 = NetworkLookup.health_statuses[arg_23_6]
+	local health_extension = self.unit_extensions[unit]
+	local state = NetworkLookup.health_statuses[state_id]
 
-	if not var_23_2.sync_damage_taken then
-		var_23_2:sync_damage_taken(arg_23_5, arg_23_4, var_23_3)
-	elseif not arg_23_4 then
-		var_23_2:set_max_health(arg_23_5)
+	if health_extension.sync_damage_taken then
+		health_extension:sync_damage_taken(amount, set_max_health, state)
+	elseif set_max_health then
+		health_extension:set_max_health(amount)
 
-		var_23_2.state = var_23_3
+		health_extension.state = state
 	else
-		var_23_2.damage = arg_23_5
-		var_23_2.state = var_23_3
+		health_extension.damage = amount
+		health_extension.state = state
 	end
 end
 
-HealthSystem.rpc_take_falling_damage = function (self, arg_24_1, arg_24_2, arg_24_3)
+HealthSystem.rpc_take_falling_damage = function (self, channel_id, go_id, fall_height)
 	-- function 24
-	local unit = self.unit_storage:unit(arg_24_2)
+	local unit = self.unit_storage:unit(go_id)
 
-	if not (not unit and Unit.alive(unit)) then
+	if not unit or not Unit.alive(unit) then
 		return
 	end
 
-	local var_24_1 = self.player_unit_extensions[unit]
+	local player_health_extension = self.player_unit_extensions[unit]
 
-	if not var_24_1 then
+	if not player_health_extension then
 		return
 	end
 
-	arg_24_3 = arg_24_3 * 0.25
+	fall_height = fall_height * 0.25
 
-	local get_movement_settings_table = PlayerUnitMovementSettings.get_movement_settings_table(unit)
-	local FALL_DAMAGE_MULTIPLIER = get_movement_settings_table.fall.heights.FALL_DAMAGE_MULTIPLIER
-	local MIN_FALL_DAMAGE_HEIGHT = get_movement_settings_table.fall.heights.MIN_FALL_DAMAGE_HEIGHT
-	local MIN_FALL_DAMAGE_PERCENTAGE = get_movement_settings_table.fall.heights.MIN_FALL_DAMAGE_PERCENTAGE
-	local MAX_FALL_DAMAGE_PERCENTAGE = get_movement_settings_table.fall.heights.MAX_FALL_DAMAGE_PERCENTAGE
-	local get_max_health = var_24_1:get_max_health()
-	local num = get_max_health * MIN_FALL_DAMAGE_PERCENTAGE
-	local num_2 = get_max_health * MAX_FALL_DAMAGE_PERCENTAGE
+	local movement_settings_table = PlayerUnitMovementSettings.get_movement_settings_table(unit)
+	local damage_multiplier = movement_settings_table.fall.heights.FALL_DAMAGE_MULTIPLIER
+	local min_fall_damage_height = movement_settings_table.fall.heights.MIN_FALL_DAMAGE_HEIGHT
+	local min_fall_damage_percentage = movement_settings_table.fall.heights.MIN_FALL_DAMAGE_PERCENTAGE
+	local max_fall_damage_percentage = movement_settings_table.fall.heights.MAX_FALL_DAMAGE_PERCENTAGE
+	local max_health = player_health_extension:get_max_health()
+	local min_fall_damage = max_health * min_fall_damage_percentage
+	local max_fall_damage = max_health * max_fall_damage_percentage
 
-	if MIN_FALL_DAMAGE_HEIGHT < arg_24_3 then
-		local num_3 = arg_24_3 - MIN_FALL_DAMAGE_HEIGHT
-		local clamp = math.clamp(num_3 * FALL_DAMAGE_MULTIPLIER, num, num_2)
-		local up = Vector3.up()
-		local str = "full"
-		local str_2 = "kinetic"
+	if min_fall_damage_height < fall_height then
+		local delta = fall_height - min_fall_damage_height
+		local fall_damage = math.clamp(delta * damage_multiplier, min_fall_damage, max_fall_damage)
+		local damage_direction = Vector3.up()
+		local hit_zone_name = "full"
+		local damage_type = "kinetic"
 
-		DamageUtils.add_damage_network(unit, unit, clamp, str, str_2, nil, up, "ground_impact", nil, nil, nil, nil, nil, nil, nil, nil, nil, nil, 1)
+		DamageUtils.add_damage_network(unit, unit, fall_damage, hit_zone_name, damage_type, nil, damage_direction, "ground_impact", nil, nil, nil, nil, nil, nil, nil, nil, nil, nil, 1)
 	end
 end
 
-HealthSystem.rpc_request_knock_down = function (self, arg_25_1, arg_25_2)
+HealthSystem.rpc_request_knock_down = function (self, channel_id, unit_go_id)
 	-- function 25
 	local fassert = fassert
 	local is_server = self.is_server
 
-	is_server = is_server or LEVEL_EDITOR_TEST
+	is_server = not not is_server or not not LEVEL_EDITOR_TEST
 
 	fassert(is_server, "Trying to request a knock down from a client")
 
-	local unit = self.unit_storage:unit(arg_25_2)
+	local unit = self.unit_storage:unit(unit_go_id)
+	local health_extension = ScriptUnit.extension(unit, "health_system")
 
-	ScriptUnit.extension(unit, "health_system"):knock_down(unit)
+	health_extension:knock_down(unit)
 end
 
-HealthSystem.rpc_request_heal_wounds = function (self, arg_26_1, arg_26_2)
+HealthSystem.rpc_request_heal_wounds = function (self, channel_id, unit_go_id)
 	-- function 26
 	local fassert = fassert
 	local is_server = self.is_server
 
-	is_server = is_server or LEVEL_EDITOR_TEST
+	is_server = not not is_server or not not LEVEL_EDITOR_TEST
 
 	fassert(is_server, "Trying to request a wound heal from a client")
 
-	local unit = self.unit_storage:unit(arg_26_2)
+	local unit = self.unit_storage:unit(unit_go_id)
 
 	StatusUtils.set_wounded_network(unit, false, "healed")
 end
 
-HealthSystem.rpc_request_revive = function (self, arg_27_1, arg_27_2, arg_27_3)
+HealthSystem.rpc_request_revive = function (self, channel_id, revived_unit_go_id, reviver_unit_go_id)
 	-- function 27
 	local fassert = fassert
 	local is_server = self.is_server
 
-	is_server = is_server or LEVEL_EDITOR_TEST
+	is_server = not not is_server or not not LEVEL_EDITOR_TEST
 
 	fassert(is_server, "Trying to request a revive from a client")
 
-	local unit = self.unit_storage:unit(arg_27_2)
-	local unit_2 = self.unit_storage:unit(arg_27_3)
+	local revived_unit = self.unit_storage:unit(revived_unit_go_id)
+	local reviver_unit = self.unit_storage:unit(reviver_unit_go_id)
 
-	StatusUtils.set_revived_network(unit, true, unit_2)
+	StatusUtils.set_revived_network(revived_unit, true, reviver_unit)
 
-	local player = Managers.player
-	local unit_owner = player:unit_owner(unit_2)
-	local unit_owner_2 = player:unit_owner(unit)
+	local player_manager = Managers.player
+	local interactor_player = player_manager:unit_owner(reviver_unit)
+	local interactable_player = player_manager:unit_owner(revived_unit)
 
-	if not (not unit_owner and unit_owner_2) then
+	if not interactor_player or not interactable_player then
 		return
 	end
 
-	local var_27_7 = POSITION_LOOKUP[unit]
+	local interactable_pos = POSITION_LOOKUP[revived_unit]
 
-	Managers.telemetry_events:player_revived(unit_owner, unit_owner_2, var_27_7)
+	Managers.telemetry_events:player_revived(interactor_player, interactable_player, interactable_pos)
 end
 
-HealthSystem.rpc_request_insta_kill = function (self, arg_28_1, arg_28_2, arg_28_3)
+HealthSystem.rpc_request_insta_kill = function (self, sender, unit_id, damage_type_id)
 	-- function 28
 	local fassert = fassert
 	local is_server = self.is_server
 
-	is_server = is_server or LEVEL_EDITOR_TEST
+	is_server = not not is_server or not not LEVEL_EDITOR_TEST
 
 	fassert(is_server, "Trying to request a insta kill from a client")
 
-	local unit = self.unit_storage:unit(arg_28_2)
+	local unit = self.unit_storage:unit(unit_id)
 
-	if not (not unit and Unit.alive(unit)) then
+	if not unit or not Unit.alive(unit) then
 		return
 	end
 
-	local var_28_3 = self.unit_extensions[unit]
+	local health_extension = self.unit_extensions[unit]
 
-	if not var_28_3 then
+	if not health_extension then
 		return
 	end
 
-	local var_28_4 = NetworkLookup.damage_types[arg_28_3]
+	local damage_type = NetworkLookup.damage_types[damage_type_id]
 
-	var_28_3:die(var_28_4)
+	health_extension:die(damage_type)
 end

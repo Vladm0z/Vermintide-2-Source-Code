@@ -1,6 +1,6 @@
 -- chunkname: @levels/honduras_dlcs/morris/sig_mordrek/world_smartobjects.lua
 
-local tbl = {
+local smart_objects = {
 	["6f0e0601-5cb8-4faf-985f-594c2b82cc55"] = {
 		{
 			smart_object_index = 67,
@@ -2094,13 +2094,13 @@ local tbl = {
 		}
 	}
 }
-local num = 87
-local str = "v1"
-local str_2 = "2017.MAY.05.05"
+local smart_object_count = 87
+local version = "v1"
+local ledgelator_version = "2017.MAY.05.05"
 
 return {
-	smart_objects = tbl,
-	smart_object_count = num,
-	version = str,
-	ledgelator_version = str_2
+	smart_objects = smart_objects,
+	smart_object_count = smart_object_count,
+	version = version,
+	ledgelator_version = ledgelator_version
 }

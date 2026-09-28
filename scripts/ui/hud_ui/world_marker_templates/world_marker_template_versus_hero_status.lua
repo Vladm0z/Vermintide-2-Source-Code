@@ -2,42 +2,51 @@
 
 local WorldMarkerTemplates = WorldMarkerTemplates
 
-WorldMarkerTemplates = WorldMarkerTemplates or {}
+WorldMarkerTemplates = not not WorldMarkerTemplates or not not {}
 WorldMarkerTemplates = WorldMarkerTemplates
 
-local str = "versus_hero_status"
-local var_0_2 = WorldMarkerTemplates[str]
+local NAME = "versus_hero_status"
+local var_0_1 = WorldMarkerTemplates[NAME]
 
-var_0_2 = var_0_2 or {}
-WorldMarkerTemplates[str] = var_0_2
+if not var_0_1 then
+	-- Nothing
+end
 
-local function fn(arg_1_0)
+var_0_1 = {}
+
+local template = var_0_1
+
+::label_0_0::
+
+WorldMarkerTemplates[NAME] = template
+
+local function pulsate_glow(should_pulsate)
 	-- function 1
-	if not arg_1_0 then
+	if not should_pulsate then
 		return 255
 	end
 
 	return 165 + 90 * math.sin(5 * Managers.time:time("ui"))
 end
 
-var_0_2.max_distance = 50
-var_0_2.unit_node = "j_head"
-var_0_2.screen_clamp = false
-var_0_2.position_offset = {
+template.max_distance = 50
+template.unit_node = "j_head"
+template.screen_clamp = false
+template.position_offset = {
 	0,
 	0,
 	0.4
 }
-var_0_2.screen_margins = {
+template.screen_margins = {
 	down = 150,
 	up = 150,
 	left = 150,
 	right = 150
 }
 
-var_0_2.create_widget_definition = function (arg_2_0)
+template.create_widget_definition = function (scenegraph_id)
 	-- function 2
-	local tbl = {
+	local health_bar_size = {
 		80,
 		10
 	}
@@ -69,9 +78,9 @@ var_0_2.create_widget_definition = function (arg_2_0)
 					pass_type = "rect",
 					style_id = "streak_health_bar",
 					texture_id = "rect",
-					content_check_function = function (self)
+					content_check_function = function (content)
 						-- function 3
-						return self.streak_damage_percent > 0
+						return content.streak_damage_percent > 0
 					end
 				},
 				{
@@ -97,8 +106,8 @@ var_0_2.create_widget_definition = function (arg_2_0)
 			frame = {
 				vertical_alignment = "center",
 				horizontal_alignment = "center",
-				texture_size = tbl,
-				default_size = tbl,
+				texture_size = health_bar_size,
+				default_size = health_bar_size,
 				color = {
 					255,
 					45,
@@ -115,12 +124,12 @@ var_0_2.create_widget_definition = function (arg_2_0)
 				vertical_alignment = "center",
 				horizontal_alignment = "center",
 				texture_size = {
-					tbl[1] - 4,
-					tbl[2] - 3
+					health_bar_size[1] - 4,
+					health_bar_size[2] - 3
 				},
 				default_size = {
-					tbl[1] - 4,
-					tbl[2] - 3
+					health_bar_size[1] - 4,
+					health_bar_size[2] - 3
 				},
 				color = {
 					100,
@@ -138,12 +147,12 @@ var_0_2.create_widget_definition = function (arg_2_0)
 				vertical_alignment = "center",
 				horizontal_alignment = "center",
 				texture_size = {
-					tbl[1] - 4,
-					tbl[2] - 3
+					health_bar_size[1] - 4,
+					health_bar_size[2] - 3
 				},
 				default_size = {
-					tbl[1] - 4,
-					tbl[2] - 3
+					health_bar_size[1] - 4,
+					health_bar_size[2] - 3
 				},
 				color = {
 					255,
@@ -161,12 +170,12 @@ var_0_2.create_widget_definition = function (arg_2_0)
 				vertical_alignment = "center",
 				horizontal_alignment = "center",
 				texture_size = {
-					tbl[1] - 4,
-					tbl[2] - 3
+					health_bar_size[1] - 4,
+					health_bar_size[2] - 3
 				},
 				default_size = {
-					tbl[1] - 4,
-					tbl[2] - 3
+					health_bar_size[1] - 4,
+					health_bar_size[2] - 3
 				},
 				color = {
 					255,
@@ -184,12 +193,12 @@ var_0_2.create_widget_definition = function (arg_2_0)
 				vertical_alignment = "center",
 				horizontal_alignment = "center",
 				texture_size = {
-					tbl[1] - 4,
-					tbl[2] - 3
+					health_bar_size[1] - 4,
+					health_bar_size[2] - 3
 				},
 				default_size = {
-					tbl[1] - 4,
-					tbl[2] - 3
+					health_bar_size[1] - 4,
+					health_bar_size[2] - 3
 				},
 				color = {
 					255,
@@ -260,24 +269,26 @@ var_0_2.create_widget_definition = function (arg_2_0)
 			0,
 			0
 		},
-		scenegraph_id = arg_2_0
+		scenegraph_id = scenegraph_id
 	}
 end
 
-var_0_2.on_enter = function (arg_4_0)
+template.on_enter = function (widget)
 	-- function 4
-	arg_4_0.content.spawn_progress_timer = 0
+	local content = widget.content
+
+	content.spawn_progress_timer = 0
 end
 
-var_0_2.update_function = function (arg_5_0, arg_5_1, arg_5_2, arg_5_3, arg_5_4, arg_5_5)
+template.update_function = function (ui_renderer, widget, marker, settings, dt, t)
 	-- function 5
-	local unit = arg_5_2.unit
+	local unit = marker.unit
 
 	if not Unit.alive(unit) then
 		return false
 	end
 
-	local extensions = arg_5_2.extensions
+	local extensions = marker.extensions
 
 	if not extensions then
 		extensions = {
@@ -287,39 +298,61 @@ var_0_2.update_function = function (arg_5_0, arg_5_1, arg_5_2, arg_5_3, arg_5_4,
 			inventory = ScriptUnit.extension(unit, "inventory_system"),
 			buff = ScriptUnit.extension(unit, "buff_system")
 		}
-		arg_5_2.extensions = extensions
+		marker.extensions = extensions
 	end
 
-	local content = arg_5_1.content
-	local style = arg_5_1.style
-	local status = extensions.status
-	local health = extensions.health
-	local inventory = extensions.inventory
-	local is_knocked_down = status:is_knocked_down()
-	local is_ready_for_assisted_respawn = status:is_ready_for_assisted_respawn()
-	local is_dead = status:is_dead()
-	local flag
+	local content = widget.content
+	local style = widget.style
+	local status_extension = extensions.status
+	local health_extension = extensions.health
+	local inventory_extension = extensions.inventory
+	local is_knocked_down = status_extension:is_knocked_down()
+	local is_ready_for_assisted_respawn = status_extension:is_ready_for_assisted_respawn()
+	local is_dead = status_extension:is_dead()
+	local num
 
-	flag = not is_dead and 0 and health:current_health_percent()
+	if is_dead then
+		num = 0
 
-	local flag_2
-
-	flag_2 = not status:is_dead() and 0 and health:current_permanent_health_percent()
-
-	if not is_ready_for_assisted_respawn then
-		flag = 0
+		goto label_5_0
 	end
 
-	local total_health_bar = style.total_health_bar
-	local var_5_13 = total_health_bar.default_size[1]
-	local num = var_5_13 * flag
+	num = health_extension:current_health_percent()
 
-	total_health_bar.texture_size[1] = num
-	total_health_bar.offset[1] = -(var_5_13 - num) / 2
+	local total_health_percent = num
+
+	do
+		local num_2
+	end
+
+	::label_5_0::
+
+	if status_extension:is_dead() then
+		num_2 = 0
+
+		goto label_5_1
+	end
+
+	num_2 = health_extension:current_permanent_health_percent()
+
+	local perm_health_percent = num_2
+
+	::label_5_1::
+
+	if is_ready_for_assisted_respawn then
+		total_health_percent = 0
+	end
+
+	local total_health_bar_style = style.total_health_bar
+	local max_length = total_health_bar_style.default_size[1]
+	local current_length = max_length * total_health_percent
+
+	total_health_bar_style.texture_size[1] = current_length
+	total_health_bar_style.offset[1] = -(max_length - current_length) / 2
 
 	local color
 
-	if not is_knocked_down then
+	if is_knocked_down then
 		color = OutlineSettingsVS.colors.hero_dying.color
 
 		if not color then
@@ -327,76 +360,79 @@ var_0_2.update_function = function (arg_5_0, arg_5_1, arg_5_2, arg_5_3, arg_5_4,
 		end
 	end
 
-	color = total_health_bar.base_color
+	color = total_health_bar_style.base_color
 
-	::label_5_0::
+	::label_5_2::
 
-	total_health_bar.color = color
+	total_health_bar_style.color = color
 
-	local streak_health_bar = style.streak_health_bar
+	local streak_health_bar_style = style.streak_health_bar
+	local is_alive = not is_knocked_down and not is_dead and not not not is_ready_for_assisted_respawn
 
-	if not (not not is_knocked_down or not not is_dead or not is_ready_for_assisted_respawn) then
-		if flag_2 > content.stored_health_percent then
-			streak_health_bar.color[1] = 0
+	if is_alive then
+		if perm_health_percent > content.stored_health_percent then
+			streak_health_bar_style.color[1] = 0
 			content.streak_damage_timestamp = nil
-			content.stored_health_percent = flag_2
+			content.stored_health_percent = perm_health_percent
 			content.streak_damage_percent = 0
-		elseif flag_2 < 1 then
-			local num_2 = content.stored_health_percent - flag_2
+		elseif perm_health_percent < 1 then
+			local stored_health_percent = content.stored_health_percent
+			local streak_damage_percent = stored_health_percent - perm_health_percent
 
-			if num_2 > content.streak_damage_percent then
-				content.streak_damage_percent = num_2
-				content.streak_damage_timestamp = arg_5_5 + 2.2
+			if streak_damage_percent > content.streak_damage_percent then
+				content.streak_damage_percent = streak_damage_percent
+				content.streak_damage_timestamp = t + 2.2
 			end
 		else
-			streak_health_bar.color[1] = 0
+			streak_health_bar_style.color[1] = 0
 			content.streak_damage_timestamp = nil
-			content.stored_health_percent = flag_2
+			content.stored_health_percent = perm_health_percent
 			content.streak_damage_percent = 0
 		end
 	else
-		streak_health_bar.color[1] = 0
+		streak_health_bar_style.color[1] = 0
 		content.streak_damage_timestamp = nil
-		content.stored_health_percent = flag_2
+		content.stored_health_percent = perm_health_percent
 		content.streak_damage_percent = 0
 	end
 
-	if not content.streak_damage_timestamp then
-		local num_3 = 0.5
-		local clamp = math.clamp(content.streak_damage_timestamp + num_3 - arg_5_5, 0, 1)
-		local lerp = math.lerp(0, 1, clamp)
-		local num_4 = streak_health_bar.default_size[1] * content.streak_damage_percent * math.easeCubic(lerp)
+	if content.streak_damage_timestamp then
+		local streak_damage_decline_time = 0.5
+		local diff = math.clamp(content.streak_damage_timestamp + streak_damage_decline_time - t, 0, 1)
+		local streak_length_mutliplier = math.lerp(0, 1, diff)
+		local max_streak_length = streak_health_bar_style.default_size[1]
+		local current_streak_length = max_streak_length * content.streak_damage_percent * math.easeCubic(streak_length_mutliplier)
 
-		streak_health_bar.color[1] = 255
-		streak_health_bar.texture_size[1] = num_4
-		streak_health_bar.offset[1] = -var_5_13 / 2 + num + num_4 / 2
+		streak_health_bar_style.color[1] = 255
+		streak_health_bar_style.texture_size[1] = current_streak_length
+		streak_health_bar_style.offset[1] = -max_length / 2 + current_length + current_streak_length / 2
 
-		if arg_5_5 > content.streak_damage_timestamp + num_3 then
+		if t > content.streak_damage_timestamp + streak_damage_decline_time then
 			content.streak_damage_timestamp = nil
-			streak_health_bar.color[1] = 0
+			streak_health_bar_style.color[1] = 0
 			content.streak_damage_percent = 0
-			content.stored_health_percent = flag_2
+			content.stored_health_percent = perm_health_percent
 		end
 	end
 
-	local perm_health_bar = style.perm_health_bar
-	local var_5_23 = perm_health_bar.default_size[1]
-	local num_5 = var_5_23 * flag_2
+	local perm_health_bar_style = style.perm_health_bar
+	local max_length = perm_health_bar_style.default_size[1]
+	local current_length = max_length * perm_health_percent
 
-	perm_health_bar.texture_size[1] = num_5
-	perm_health_bar.offset[1] = -(var_5_23 - num_5) / 2
+	perm_health_bar_style.texture_size[1] = current_length
+	perm_health_bar_style.offset[1] = -(max_length - current_length) / 2
 
-	local wounded_and_on_last_wound = status:wounded_and_on_last_wound()
-	local var_5_26 = fn(wounded_and_on_last_wound)
+	local should_pulsate = status_extension:wounded_and_on_last_wound()
+	local bar_alpha = pulsate_glow(should_pulsate)
 
-	perm_health_bar.color[1] = var_5_26
-	total_health_bar.color[1] = var_5_26
+	perm_health_bar_style.color[1] = bar_alpha
+	total_health_bar_style.color[1] = bar_alpha
 
-	local owner = Managers.player:owner(unit)
+	local marker_owner = Managers.player:owner(unit)
 	local name
 
-	if not owner then
-		name = owner:name()
+	if marker_owner then
+		name = marker_owner:name()
 
 		if not name then
 			-- Nothing
@@ -405,27 +441,38 @@ var_0_2.update_function = function (arg_5_0, arg_5_1, arg_5_2, arg_5_3, arg_5_4,
 
 	name = ""
 
-	::label_5_1::
+	local marker_owner_name = name
 
-	if Utf8.length(name) > 18 then
-		name = string.sub(name, 1, 18) .. "..."
+	::label_5_3::
+
+	local marker_owner_name_length = Utf8.length(marker_owner_name)
+
+	if marker_owner_name_length > 18 then
+		marker_owner_name = string.sub(marker_owner_name, 1, 18) .. "..."
 	end
 
-	content.player_name = name
-	arg_5_1.alpha_multiplier = 1 - content.distance / arg_5_3.max_distance
+	content.player_name = marker_owner_name
+
+	local distance = content.distance
+	local max_distance = settings.max_distance
+	local alpha_modifier = distance / max_distance
+
+	widget.alpha_multiplier = 1 - alpha_modifier
 
 	return not is_dead
 end
 
-var_0_2.check_widget_visible = function (self, arg_6_1, arg_6_2)
+template.check_widget_visible = function (widget, vertical_pixel_overlap, horizontal_pixel_overlap)
 	-- function 6
-	local texture_size = self.style.frame.texture_size
+	local style = widget.style
+	local frame_style = style.frame
+	local frame_size = frame_style.texture_size
 
-	if not (not arg_6_2 and not (arg_6_2 > texture_size[1] * 0.5)) then
+	if horizontal_pixel_overlap and horizontal_pixel_overlap > frame_size[1] * 0.5 then
 		return false
 	end
 
-	if not (not arg_6_1 and not (arg_6_1 > texture_size[2] * 0.5)) then
+	if vertical_pixel_overlap and vertical_pixel_overlap > frame_size[2] * 0.5 then
 		return false
 	end
 

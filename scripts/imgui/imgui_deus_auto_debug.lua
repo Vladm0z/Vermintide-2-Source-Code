@@ -2,7 +2,7 @@
 
 ImguiDeusAutoDebug = class(ImguiDeusAutoDebug)
 
-local tbl = {
+local helpful_responses = {
 	"That ain't working.",
 	"Have you tried restarting?",
 	"Maybe furiously spamming this button will work.",
@@ -19,33 +19,35 @@ ImguiDeusAutoDebug.init = function (self)
 	self._current_response = ""
 end
 
-ImguiDeusAutoDebug.update = function (arg_2_0)
+ImguiDeusAutoDebug.update = function (self)
 	-- function 2
 	return
 end
 
-ImguiDeusAutoDebug.is_persistent = function (arg_3_0)
+ImguiDeusAutoDebug.is_persistent = function (self)
 	-- function 3
 	return false
 end
 
 ImguiDeusAutoDebug.draw = function (self)
 	-- function 4
-	local begin_window = Imgui.begin_window("DeusAutoDebug", "always_auto_resize")
+	local do_close = Imgui.begin_window("DeusAutoDebug", "always_auto_resize")
 
-	if not Imgui.button("Automatically debug my problems") then
-		local clone = table.clone(tbl)
+	if Imgui.button("Automatically debug my problems") then
+		local possible_responses = table.clone(helpful_responses)
 
-		table.array_remove_if(clone, function (arg_5_0)
+		table.array_remove_if(possible_responses, function (response)
 			-- function 5
-			return arg_5_0 == self._current_response
+			return response == self._current_response
 		end)
 
-		self._current_response = clone[math.random(1, #clone)]
+		local index = math.random(1, #possible_responses)
+
+		self._current_response = possible_responses[index]
 	end
 
 	Imgui.text(self._current_response)
 	Imgui.end_window()
 
-	return begin_window
+	return do_close
 end

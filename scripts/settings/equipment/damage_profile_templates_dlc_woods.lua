@@ -1,6 +1,6 @@
 -- chunkname: @scripts/settings/equipment/damage_profile_templates_dlc_woods.lua
 
-return {
+local damage_templates = {
 	burst_thorn = {
 		charge_value = "projectile",
 		no_stagger_damage_reduction_ranged = true,
@@ -481,3 +481,5 @@ return {
 		}
 	}
 }
+
+return damage_templates

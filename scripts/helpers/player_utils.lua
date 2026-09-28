@@ -2,153 +2,177 @@
 
 PlayerUtils = {}
 
-PlayerUtils.unique_player_id = function (arg_1_0, arg_1_1)
+PlayerUtils.unique_player_id = function (peer_id, local_player_id)
 	-- function 1
-	return arg_1_0 .. ":" .. arg_1_1
+	return peer_id .. ":" .. local_player_id
 end
 
-PlayerUtils.split_unique_player_id = function (arg_2_0)
+PlayerUtils.split_unique_player_id = function (unique_player_id)
 	-- function 2
-	local match, var_2_1 = string.match(arg_2_0, "^([^:]+):(.*)$")
+	local peer_id, local_player_id = string.match(unique_player_id, "^([^:]+):(.*)$")
 
-	return match, tonumber(var_2_1)
+	return peer_id, tonumber(local_player_id)
 end
 
 PlayerUtils.get_random_alive_hero = function ()
 	-- function 3
 	local get_side_from_name = Managers.state.side:get_side_from_name("heroes")
 
-	get_side_from_name = get_side_from_name or Managers.state.side:sides()[1]
+	if not get_side_from_name then
+		-- Nothing
+	end
 
-	local PLAYER_AND_BOT_UNITS = get_side_from_name.PLAYER_AND_BOT_UNITS
-	local tbl = {}
-	local num = 0
+	get_side_from_name = Managers.state.side:sides()[1]
 
-	for i = 1, #PLAYER_AND_BOT_UNITS do
-		local var_3_4 = PLAYER_AND_BOT_UNITS[i]
+	local side = get_side_from_name
 
-		if not HEALTH_ALIVE[var_3_4] then
-			num = num + 1
-			tbl[num] = var_3_4
+	::label_3_0::
+
+	local players = side.PLAYER_AND_BOT_UNITS
+	local unit_list = {}
+	local unit_list_n = 0
+
+	for i = 1, #players do
+		local unit = players[i]
+
+		if HEALTH_ALIVE[unit] then
+			unit_list_n = unit_list_n + 1
+			unit_list[unit_list_n] = unit
 		end
 	end
 
-	if num > 0 then
-		return tbl[math.random(1, num)]
+	if unit_list_n > 0 then
+		local unit = unit_list[math.random(1, unit_list_n)]
+
+		return unit
 	end
 
 	return nil
 end
 
-PlayerUtils.get_career_override = function (arg_4_0)
+PlayerUtils.get_career_override = function (career_name)
 	-- function 4
-	local mechanism_setting_for_title = Managers.mechanism:mechanism_setting_for_title("override_career_availability")
+	local override_career_availability = Managers.mechanism:mechanism_setting_for_title("override_career_availability")
 
-	if not mechanism_setting_for_title then
+	if not override_career_availability then
 		return true
 	end
 
-	local var_4_1 = mechanism_setting_for_title[arg_4_0]
+	local availability = override_career_availability[career_name]
 
-	if var_4_1 ~= nil then
-		return var_4_1
+	if availability ~= nil then
+		return availability
 	end
 
 	return true
 end
 
-PlayerUtils.get_enabled_career_index_by_profile = function (arg_5_0)
+PlayerUtils.get_enabled_career_index_by_profile = function (profile_index)
 	-- function 5
-	local careers = SPProfiles[arg_5_0].careers
+	local careers = SPProfiles[profile_index].careers
 
 	for i = 1, #careers do
-		if not PlayerUtils.get_career_override(careers[i].display_name) then
+		if PlayerUtils.get_career_override(careers[i].display_name) then
 			return i
 		end
 	end
 end
 
-PlayerUtils.get_random_enabled_career_index_by_profile = function (arg_6_0)
+PlayerUtils.get_random_enabled_career_index_by_profile = function (profile_index)
 	-- function 6
-	local shallow_copy = table.shallow_copy(SPProfiles[arg_6_0].careers)
-	local var_6_1
+	local careers = table.shallow_copy(SPProfiles[profile_index].careers)
+	local career
 
 	repeat
-		local random = math.random(1, #shallow_copy)
+		local idx = math.random(1, #careers)
 
-		if not PlayerUtils.get_career_override(shallow_copy[random].display_name) then
-			var_6_1 = random
+		if PlayerUtils.get_career_override(careers[idx].display_name) then
+			career = idx
 		else
-			table.remove(shallow_copy, random)
+			table.remove(careers, idx)
 		end
-	until var_6_1 or not table.is_empty(shallow_copy)
+	until career or table.is_empty(careers)
 
-	return var_6_1
+	return career
 end
 
-PlayerUtils.get_random_enabled_non_dlc_career_index_by_profile = function (arg_7_0)
+PlayerUtils.get_random_enabled_non_dlc_career_index_by_profile = function (profile_index)
 	-- function 7
-	local shallow_copy = table.shallow_copy(SPProfiles[arg_7_0].careers)
+	local careers = table.shallow_copy(SPProfiles[profile_index].careers)
 
-	table.shuffle(shallow_copy)
+	table.shuffle(careers)
 
-	for i = 1, #shallow_copy do
-		local var_7_1 = shallow_copy[i]
+	for i = 1, #careers do
+		local career_settings = careers[i]
 
-		if not var_7_1.required_dlc then
-			return (career_index_from_name(arg_7_0, var_7_1.name))
+		if not career_settings.required_dlc then
+			local career_index = career_index_from_name(profile_index, career_settings.name)
+
+			return career_index
 		end
 	end
 end
 
-PlayerUtils.get_talent_overrides_by_career = function (arg_8_0)
+PlayerUtils.get_talent_overrides_by_career = function (career_name)
 	-- function 8
-	local mechanism_setting_for_title = Managers.mechanism:mechanism_setting_for_title("override_career_talents")
+	local override_career_talents = Managers.mechanism:mechanism_setting_for_title("override_career_talents")
 
-	if not mechanism_setting_for_title then
+	if not override_career_talents then
 		return
 	end
 
-	return mechanism_setting_for_title[arg_8_0]
+	return override_career_talents[career_name]
 end
 
-PlayerUtils.broadphase_query = function (arg_9_0, arg_9_1, arg_9_2, arg_9_3)
+PlayerUtils.broadphase_query = function (position, radius, result_table, broadphase_categories)
 	-- function 9
-	fassert(arg_9_2, "No result_table given to PlayerUtils.broadphase_query")
+	fassert(result_table, "No result_table given to PlayerUtils.broadphase_query")
 
-	local player_units_broadphase = Managers.state.entity:system("proximity_system").player_units_broadphase
+	local proximity_system = Managers.state.entity:system("proximity_system")
+	local broadphase = proximity_system.player_units_broadphase
+	local num_hits = Broadphase.query(broadphase, position, radius, result_table, broadphase_categories)
 
-	return (Broadphase.query(player_units_broadphase, arg_9_0, arg_9_1, arg_9_2, arg_9_3))
+	return num_hits
 end
 
-PlayerUtils.peer_id_compare = function (arg_10_0, arg_10_1)
+PlayerUtils.peer_id_compare = function (peer_a, peer_b)
 	-- function 10
-	return arg_10_0 <= arg_10_1
+	return peer_a <= peer_b
 end
 
-PlayerUtils.player_name = function (arg_11_0, arg_11_1)
+PlayerUtils.player_name = function (peer_id, lobby)
 	-- function 11
-	if not arg_11_0 then
+	if not peer_id then
 		return "Peer #nil"
 	end
 
 	local var_11_0 = rawget(_G, "Steam")
 
-	var_11_0 = var_11_0 or stingray.Steam
+	if not var_11_0 then
+		-- Nothing
+	end
 
-	local var_11_1
+	var_11_0 = stingray.Steam
 
-	if not IS_CONSOLE then
-		if not arg_11_1:has_user_name(arg_11_0) then
-			var_11_1 = arg_11_1:user_name(arg_11_0)
+	local Steam = var_11_0
+
+	::label_11_0::
+
+	local name
+
+	if IS_CONSOLE then
+		if lobby:has_user_name(peer_id) then
+			name = lobby:user_name(peer_id)
 		end
-	elseif not var_11_0 then
-		var_11_1 = var_11_0.user_name(arg_11_0)
+	elseif Steam then
+		name = Steam.user_name(peer_id)
 	end
 
-	if not (not var_11_1 and var_11_1 ~= "") then
-		var_11_1 = string.format("Peer #%s", string.sub(arg_11_0, -3))
+	if not name or name == "" then
+		name = string.format("Peer #%s", string.sub(peer_id, -3))
 	end
 
-	return (string.gsub(var_11_1, "{#", "{​#"))
+	name = string.gsub(name, "{#", "{​#")
+
+	return name
 end

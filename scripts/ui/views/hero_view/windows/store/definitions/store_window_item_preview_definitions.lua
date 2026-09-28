@@ -1,19 +1,19 @@
 -- chunkname: @scripts/ui/views/hero_view/windows/store/definitions/store_window_item_preview_definitions.lua
 
 local console_menu_scenegraphs = UISettings.console_menu_scenegraphs
-local tbl = {
+local list_size = {
 	800,
 	600
 }
-local tbl_2 = {
+local list_entry_size = {
 	800,
 	220
 }
-local tbl_3 = {
+local list_scrollbar_size = {
 	16,
-	tbl[2] + 100
+	list_size[2] + 100
 }
-local tbl_4 = {
+local scenegraph_definition = {
 	screen = console_menu_scenegraphs.screen,
 	background = {
 		scale = "fit_height",
@@ -74,7 +74,7 @@ local tbl_4 = {
 		vertical_alignment = "top",
 		parent = "screen",
 		horizontal_alignment = "right",
-		size = tbl,
+		size = list_size,
 		position = {
 			-130,
 			-255,
@@ -85,10 +85,10 @@ local tbl_4 = {
 		vertical_alignment = "top",
 		parent = "list_window",
 		horizontal_alignment = "right",
-		size = tbl,
+		size = list_size,
 		position = {
 			0,
-			-tbl[2],
+			-list_size[2],
 			0
 		}
 	},
@@ -96,7 +96,7 @@ local tbl_4 = {
 		vertical_alignment = "top",
 		parent = "list_window",
 		horizontal_alignment = "right",
-		size = tbl_3,
+		size = list_scrollbar_size,
 		position = {
 			58,
 			40,
@@ -122,8 +122,8 @@ local tbl_4 = {
 		parent = "list_window",
 		horizontal_alignment = "left",
 		size = {
-			tbl[1] + 62,
-			tbl[2] + 130
+			list_size[1] + 62,
+			list_size[2] + 130
 		},
 		position = {
 			-10,
@@ -426,7 +426,7 @@ local tbl_4 = {
 		}
 	}
 }
-local tbl_5 = {
+local title_text_style = {
 	word_wrap = true,
 	upper_case = false,
 	localize = false,
@@ -443,7 +443,7 @@ local tbl_5 = {
 		2
 	}
 }
-local tbl_6 = {
+local sub_title_text_style = {
 	word_wrap = false,
 	upper_case = false,
 	localize = false,
@@ -460,7 +460,7 @@ local tbl_6 = {
 		2
 	}
 }
-local tbl_7 = {
+local type_title_text_style = {
 	word_wrap = false,
 	upper_case = false,
 	localize = false,
@@ -477,7 +477,7 @@ local tbl_7 = {
 		2
 	}
 }
-local tbl_8 = {
+local career_title_text_style = {
 	word_wrap = true,
 	upper_case = false,
 	localize = false,
@@ -499,7 +499,7 @@ local tbl_8 = {
 		2
 	}
 }
-local tbl_9 = {
+local disclaimer_text_style = {
 	word_wrap = false,
 	upper_case = false,
 	localize = false,
@@ -521,7 +521,7 @@ local tbl_9 = {
 		2
 	}
 }
-local tbl_10 = {
+local loading_widgets = {
 	loading_icon = {
 		scenegraph_id = "loading_icon",
 		element = {
@@ -530,16 +530,26 @@ local tbl_10 = {
 					style_id = "texture_id",
 					pass_type = "rotated_texture",
 					texture_id = "texture_id",
-					content_change_function = function (arg_1_0, arg_1_1, arg_1_2, arg_1_3)
+					content_change_function = function (content, style, _, dt)
 						-- function 1
-						local progress = arg_1_1.progress
+						local progress_2 = style.progress
 
-						progress = progress or 0
+						if not progress_2 then
+							-- Nothing
+						end
 
-						local num = (progress + arg_1_3) % 1
+						progress_2 = 0
 
-						arg_1_1.angle = math.pow(2, math.smoothstep(num, 0, 1)) * (math.pi * 2)
-						arg_1_1.progress = num
+						local progress = progress_2
+
+						::label_1_0::
+
+						progress = (progress + dt) % 1
+
+						local angle = math.pow(2, math.smoothstep(progress, 0, 1)) * (math.pi * 2)
+
+						style.angle = angle
+						style.progress = progress
 					end
 				}
 			}
@@ -575,7 +585,7 @@ local tbl_10 = {
 	}
 }
 
-local function fn(arg_2_0, arg_2_1)
+local function create_dlc_entry_definition(scenegraph_id, size)
 	-- function 2
 	return {
 		element = {
@@ -606,7 +616,7 @@ local function fn(arg_2_0, arg_2_1)
 			title_text = "n/a",
 			background = "rect_masked",
 			description_text = "n/a",
-			size = arg_2_1
+			size = size
 		},
 		style = {
 			background = {
@@ -635,11 +645,11 @@ local function fn(arg_2_0, arg_2_1)
 				text_color = Colors.get_color_table_with_alpha("font_title", 255),
 				offset = {
 					30,
-					arg_2_1[2] - 170,
+					size[2] - 170,
 					2
 				},
 				size = {
-					arg_2_1[1] - 60,
+					size[1] - 60,
 					40
 				}
 			},
@@ -655,11 +665,11 @@ local function fn(arg_2_0, arg_2_1)
 				text_color = Colors.get_color_table_with_alpha("black", 255),
 				offset = {
 					32,
-					arg_2_1[2] - 170 - 2,
+					size[2] - 170 - 2,
 					1
 				},
 				size = {
-					arg_2_1[1] - 60,
+					size[1] - 60,
 					40
 				}
 			},
@@ -682,7 +692,7 @@ local function fn(arg_2_0, arg_2_1)
 					2
 				},
 				size = {
-					arg_2_1[1] - 60,
+					size[1] - 60,
 					165
 				}
 			},
@@ -700,7 +710,7 @@ local function fn(arg_2_0, arg_2_1)
 					1
 				},
 				size = {
-					arg_2_1[1] - 60,
+					size[1] - 60,
 					165
 				}
 			}
@@ -710,14 +720,15 @@ local function fn(arg_2_0, arg_2_1)
 			0,
 			0
 		},
-		scenegraph_id = arg_2_0
+		scenegraph_id = scenegraph_id
 	}
 end
 
-local function fn_2(arg_3_0, arg_3_1, arg_3_2, arg_3_3)
+local function create_list_mask(scenegraph_id, list_scenegraph_id, size, entry_size)
 	-- function 3
-	local var_3_0 = UIFrameSettings.frame_outer_glow_04_big.texture_sizes.horizontal[2]
-	local tbl = {
+	local entry_hover_frame_settings = UIFrameSettings.frame_outer_glow_04_big
+	local entry_hover_frame_spacing = entry_hover_frame_settings.texture_sizes.horizontal[2]
+	local element = {
 		passes = {
 			{
 				style_id = "hotspot",
@@ -746,7 +757,7 @@ local function fn_2(arg_3_0, arg_3_1, arg_3_2, arg_3_3)
 			}
 		}
 	}
-	local tbl_2 = {
+	local content = {
 		mask_edge = "mask_rect_edge_fade",
 		mask_texture = "mask_rect",
 		list_hotspot = {},
@@ -757,11 +768,11 @@ local function fn_2(arg_3_0, arg_3_1, arg_3_2, arg_3_3)
 			scroll_value = 1
 		}
 	}
-	local tbl_3 = {
+	local style = {
 		hotspot = {
 			size = {
-				arg_3_2[1],
-				arg_3_2[2]
+				size[1],
+				size[2]
 			},
 			offset = {
 				0,
@@ -771,8 +782,8 @@ local function fn_2(arg_3_0, arg_3_1, arg_3_2, arg_3_3)
 		},
 		list_hotspot = {
 			size = {
-				arg_3_2[1] + var_3_0 * 2,
-				arg_3_2[2] + var_3_0 * 2
+				size[1] + entry_hover_frame_spacing * 2,
+				size[2] + entry_hover_frame_spacing * 2
 			},
 			color = {
 				255,
@@ -781,15 +792,15 @@ local function fn_2(arg_3_0, arg_3_1, arg_3_2, arg_3_3)
 				255
 			},
 			offset = {
-				-var_3_0,
-				-var_3_0,
+				-entry_hover_frame_spacing,
+				-entry_hover_frame_spacing,
 				0
 			}
 		},
 		mask = {
 			size = {
-				arg_3_2[1] + var_3_0 * 2,
-				arg_3_2[2]
+				size[1] + entry_hover_frame_spacing * 2,
+				size[2]
 			},
 			color = {
 				255,
@@ -798,15 +809,15 @@ local function fn_2(arg_3_0, arg_3_1, arg_3_2, arg_3_3)
 				255
 			},
 			offset = {
-				-var_3_0,
+				-entry_hover_frame_spacing,
 				0,
 				0
 			}
 		},
 		mask_top = {
 			size = {
-				arg_3_2[1] + var_3_0 * 2,
-				var_3_0
+				size[1] + entry_hover_frame_spacing * 2,
+				entry_hover_frame_spacing
 			},
 			color = {
 				255,
@@ -815,15 +826,15 @@ local function fn_2(arg_3_0, arg_3_1, arg_3_2, arg_3_3)
 				255
 			},
 			offset = {
-				-var_3_0,
-				arg_3_2[2],
+				-entry_hover_frame_spacing,
+				size[2],
 				0
 			}
 		},
 		mask_bottom = {
 			size = {
-				arg_3_2[1] + var_3_0 * 2,
-				var_3_0
+				size[1] + entry_hover_frame_spacing * 2,
+				entry_hover_frame_spacing
 			},
 			color = {
 				255,
@@ -832,33 +843,34 @@ local function fn_2(arg_3_0, arg_3_1, arg_3_2, arg_3_3)
 				255
 			},
 			offset = {
-				-var_3_0,
-				-var_3_0,
+				-entry_hover_frame_spacing,
+				-entry_hover_frame_spacing,
 				0
 			},
 			angle = math.pi,
 			pivot = {
-				(arg_3_2[1] + var_3_0 * 2) / 2,
-				var_3_0 / 2
+				(size[1] + entry_hover_frame_spacing * 2) / 2,
+				entry_hover_frame_spacing / 2
 			}
 		}
 	}
+	local widget = {}
 
-	return {
-		element = tbl,
-		content = tbl_2,
-		style = tbl_3,
-		offset = {
-			0,
-			0,
-			0
-		},
-		scenegraph_id = arg_3_0
+	widget.element = element
+	widget.content = content
+	widget.style = style
+	widget.offset = {
+		0,
+		0,
+		0
 	}
+	widget.scenegraph_id = scenegraph_id
+
+	return widget
 end
 
-local tbl_11 = {}
-local tbl_12 = {
+local bottom_widgets = {}
+local item_widgets = {
 	unlock_button_edge = UIWidgets.create_tiled_texture("unlock_button_edge", "divider_skull_middle_down", {
 		64,
 		97
@@ -910,36 +922,36 @@ local tbl_12 = {
 					pass_type = "texture",
 					style_id = "normal",
 					texture_id = "normal",
-					content_check_function = function (self)
+					content_check_function = function (content)
 						-- function 4
-						return not self.button_hotspot.is_selected
+						return not content.button_hotspot.is_selected
 					end
 				},
 				{
 					pass_type = "texture",
 					style_id = "normal_glow",
 					texture_id = "normal_glow",
-					content_check_function = function (self)
+					content_check_function = function (content)
 						-- function 5
-						return not self.button_hotspot.is_selected
+						return not content.button_hotspot.is_selected
 					end
 				},
 				{
 					pass_type = "texture",
 					style_id = "expanded",
 					texture_id = "expanded",
-					content_check_function = function (self)
+					content_check_function = function (content)
 						-- function 6
-						return self.button_hotspot.is_selected
+						return content.button_hotspot.is_selected
 					end
 				},
 				{
 					pass_type = "texture",
 					style_id = "expanded_glow",
 					texture_id = "expanded_glow",
-					content_check_function = function (self)
+					content_check_function = function (content)
 						-- function 7
-						return self.button_hotspot.is_selected
+						return content.button_hotspot.is_selected
 					end
 				}
 			}
@@ -992,8 +1004,8 @@ local tbl_12 = {
 		}
 	}
 }
-local flag = false
-local tbl_13 = {
+local disable_with_gamepad = false
+local tbl = {
 	smoke_effect = UIWidgets.create_simple_uv_texture("item_preview_smoke_01", {
 		{
 			0,
@@ -1005,48 +1017,51 @@ local tbl_13 = {
 		}
 	}, "smoke_effect", nil, nil, Colors.get_color_table_with_alpha("gold", 255)),
 	disclaimer_divider = UIWidgets.create_simple_texture("tooltip_marker_gold", "disclaimer_divider"),
-	disclaimer_text = UIWidgets.create_simple_text("Headgear is sold separatly", "disclaimer_text", nil, nil, tbl_9),
-	expire_timer_text = UIWidgets.create_simple_text("", "disclaimer_text", nil, nil, tbl_9),
-	title_text = UIWidgets.create_simple_text("", "title_text", nil, nil, tbl_5),
-	sub_title_text = UIWidgets.create_simple_text("", "sub_title_text", nil, nil, tbl_6),
-	type_title_text = UIWidgets.create_simple_text("", "sub_title_text", nil, nil, tbl_7),
-	career_title_text = UIWidgets.create_simple_text("", "career_title_text", nil, nil, tbl_8)
+	disclaimer_text = UIWidgets.create_simple_text("Headgear is sold separatly", "disclaimer_text", nil, nil, disclaimer_text_style),
+	expire_timer_text = UIWidgets.create_simple_text("", "disclaimer_text", nil, nil, disclaimer_text_style),
+	title_text = UIWidgets.create_simple_text("", "title_text", nil, nil, title_text_style),
+	sub_title_text = UIWidgets.create_simple_text("", "sub_title_text", nil, nil, sub_title_text_style),
+	type_title_text = UIWidgets.create_simple_text("", "sub_title_text", nil, nil, type_title_text_style),
+	career_title_text = UIWidgets.create_simple_text("", "career_title_text", nil, nil, career_title_text_style)
 }
 local create_store_purchase_button = UIWidgets.create_store_purchase_button
 local str = "unlock_button"
-local size = tbl_4.unlock_button.size
-local var_0_20
+local size = scenegraph_definition.unlock_button.size
+local var_0_4
 
 if not IS_PS4 then
-	var_0_20 = Localize("menu_store_purchase_button_unlock")
+	var_0_4 = Localize("menu_store_purchase_button_unlock")
 
-	if not var_0_20 then
+	if not var_0_4 then
 		-- Nothing
 	end
 end
 
-var_0_20 = ""
+var_0_4 = ""
 
 ::label_0_0::
 
-tbl_13.unlock_button = create_store_purchase_button(str, size, var_0_20, 32, flag)
-tbl_13.viewport_button = UIWidgets.create_simple_hotspot("viewport")
+tbl.unlock_button = create_store_purchase_button(str, size, var_0_4, 32, disable_with_gamepad)
+tbl.viewport_button = UIWidgets.create_simple_hotspot("viewport")
 
-local tbl_14 = {
+local top_widgets = tbl
+local background_color = {
 	255,
 	0,
 	0,
 	0
 }
-local str_2 = "shadow_frame_02"
-local corner = UIFrameSettings[str_2].texture_sizes.corner
-local tbl_15 = {
-	-corner[1],
-	-corner[2]
+local background_frame = "shadow_frame_02"
+local background_frame_settings = UIFrameSettings[background_frame]
+local background_frame_texture_sizes = background_frame_settings.texture_sizes
+local background_frame_corner_size = background_frame_texture_sizes.corner
+local background_frame_margins = {
+	-background_frame_corner_size[1],
+	-background_frame_corner_size[2]
 }
-local tbl_16 = {
-	list = fn_2("list_window", "list", tbl, tbl_2),
-	list_scrollbar = UIWidgets.create_chain_scrollbar("list_scrollbar", "list_window", tbl_4.list_scrollbar.size, "gold", nil, true),
+local dlc_top_widgets = {
+	list = create_list_mask("list_window", "list", list_size, list_entry_size),
+	list_scrollbar = UIWidgets.create_chain_scrollbar("list_scrollbar", "list_window", scenegraph_definition.list_scrollbar.size, "gold", nil, true),
 	list_detail_top_left = UIWidgets.create_simple_uv_texture("divider_skull_left", {
 		{
 			1,
@@ -1096,25 +1111,25 @@ local tbl_16 = {
 		}
 	}, "list_detail_bottom_right")
 }
-local tbl_17 = {
-	list_background = UIWidgets.create_simple_rect("list_background", tbl_14),
-	list_background_frame = UIWidgets.create_frame("list_background", tbl_4.list_background.size, "shadow_frame_01", 0, tbl_14, tbl_15)
+local dlc_bottom_widgets = {
+	list_background = UIWidgets.create_simple_rect("list_background", background_color),
+	list_background_frame = UIWidgets.create_frame("list_background", scenegraph_definition.list_background.size, "shadow_frame_01", 0, background_color, background_frame_margins)
 }
-local tbl_18 = {
+local animation_definitions = {
 	on_enter = {
 		{
 			name = "delay",
 			start_progress = 0,
 			end_progress = 0.3,
-			init = function (arg_8_0, arg_8_1, arg_8_2, arg_8_3)
+			init = function (ui_scenegraph, scenegraph_definition, widgets, params)
 				-- function 8
 				return
 			end,
-			update = function (arg_9_0, arg_9_1, arg_9_2, arg_9_3, arg_9_4)
+			update = function (ui_scenegraph, scenegraph_definition, widgets, progress, params)
 				-- function 9
 				return
 			end,
-			on_complete = function (arg_10_0, arg_10_1, arg_10_2, arg_10_3)
+			on_complete = function (ui_scenegraph, scenegraph_definition, widgets, params)
 				-- function 10
 				return
 			end
@@ -1123,17 +1138,17 @@ local tbl_18 = {
 			name = "fade_in",
 			start_progress = 0.3,
 			end_progress = 0.6,
-			init = function (arg_11_0, arg_11_1, arg_11_2, arg_11_3)
+			init = function (ui_scenegraph, scenegraph_definition, widgets, params)
 				-- function 11
-				arg_11_3.render_settings.alpha_multiplier = 0
+				params.render_settings.alpha_multiplier = 0
 			end,
-			update = function (arg_12_0, arg_12_1, arg_12_2, arg_12_3, arg_12_4)
+			update = function (ui_scenegraph, scenegraph_definition, widgets, progress, params)
 				-- function 12
-				local easeOutCubic = math.easeOutCubic(arg_12_3)
+				local anim_progress = math.easeOutCubic(progress)
 
-				arg_12_4.render_settings.alpha_multiplier = easeOutCubic
+				params.render_settings.alpha_multiplier = anim_progress
 			end,
-			on_complete = function (arg_13_0, arg_13_1, arg_13_2, arg_13_3)
+			on_complete = function (ui_scenegraph, scenegraph_definition, widgets, params)
 				-- function 13
 				return
 			end
@@ -1144,49 +1159,49 @@ local tbl_18 = {
 			name = "move",
 			start_progress = 0,
 			end_progress = 0.3,
-			init = function (arg_14_0, arg_14_1, arg_14_2, arg_14_3)
+			init = function (ui_scenegraph, scenegraph_definition, widgets, params)
 				-- function 14
 				return
 			end,
-			update = function (arg_15_0, arg_15_1, arg_15_2, arg_15_3, arg_15_4)
+			update = function (ui_scenegraph, scenegraph_definition, widgets, progress, params)
 				-- function 15
-				local easeOutCubic = math.easeOutCubic(arg_15_3)
-				local num = 255
-				local num_2 = 130
-				local floor = math.floor(num * easeOutCubic)
-				local floor_2 = math.floor(num_2 * easeOutCubic)
-				local size = arg_15_1.background.size
+				local anim_progress = math.easeOutCubic(progress)
+				local addition_width = 255
+				local addition_height = 130
+				local animated_width = math.floor(addition_width * anim_progress)
+				local animated_height = math.floor(addition_height * anim_progress)
+				local default_background_size = scenegraph_definition.background.size
 
-				arg_15_0.background.size[1] = size[1] + floor
+				ui_scenegraph.background.size[1] = default_background_size[1] + animated_width
 
-				local size_2 = arg_15_1.viewport.size
-				local position = arg_15_1.viewport.position
+				local default_viewport_size = scenegraph_definition.viewport.size
+				local default_viewport_position = scenegraph_definition.viewport.position
 
-				arg_15_0.viewport.size[1] = size_2[1] + floor
-				arg_15_0.viewport.size[2] = size_2[2] + floor_2
+				ui_scenegraph.viewport.size[1] = default_viewport_size[1] + animated_width
+				ui_scenegraph.viewport.size[2] = default_viewport_size[2] + animated_height
 
-				local num_3 = 255 - 255 * easeOutCubic
-				local title_text = arg_15_2.title_text
+				local text_alpha = 255 - 255 * anim_progress
+				local title_text = widgets.title_text
 
-				title_text.style.text.text_color[1] = num_3
-				title_text.style.text_shadow.text_color[1] = num_3
+				title_text.style.text.text_color[1] = text_alpha
+				title_text.style.text_shadow.text_color[1] = text_alpha
 
-				local sub_title_text = arg_15_2.sub_title_text
+				local sub_title_text = widgets.sub_title_text
 
-				sub_title_text.style.text.text_color[1] = num_3
-				sub_title_text.style.text_shadow.text_color[1] = num_3
+				sub_title_text.style.text.text_color[1] = text_alpha
+				sub_title_text.style.text_shadow.text_color[1] = text_alpha
 
-				local type_title_text = arg_15_2.type_title_text
+				local type_title_text = widgets.type_title_text
 
-				type_title_text.style.text.text_color[1] = num_3
-				type_title_text.style.text_shadow.text_color[1] = num_3
+				type_title_text.style.text.text_color[1] = text_alpha
+				type_title_text.style.text_shadow.text_color[1] = text_alpha
 
-				local career_title_text = arg_15_2.career_title_text
+				local career_title_text = widgets.career_title_text
 
-				career_title_text.style.text.text_color[1] = num_3
-				career_title_text.style.text_shadow.text_color[1] = num_3
+				career_title_text.style.text.text_color[1] = text_alpha
+				career_title_text.style.text_shadow.text_color[1] = text_alpha
 			end,
-			on_complete = function (arg_16_0, arg_16_1, arg_16_2, arg_16_3)
+			on_complete = function (ui_scenegraph, scenegraph_definition, widgets, params)
 				-- function 16
 				return
 			end
@@ -1197,56 +1212,56 @@ local tbl_18 = {
 			name = "move",
 			start_progress = 0,
 			end_progress = 0.3,
-			init = function (arg_17_0, arg_17_1, arg_17_2, arg_17_3)
+			init = function (ui_scenegraph, scenegraph_definition, widgets, params)
 				-- function 17
 				return
 			end,
-			update = function (arg_18_0, arg_18_1, arg_18_2, arg_18_3, arg_18_4)
+			update = function (ui_scenegraph, scenegraph_definition, widgets, progress, params)
 				-- function 18
-				local easeOutCubic = math.easeOutCubic(arg_18_3)
-				local num = 255
-				local num_2 = 130
-				local floor = math.floor(num * easeOutCubic)
-				local floor_2 = math.floor(num_2 * easeOutCubic)
-				local size = arg_18_1.background.size
+				local anim_progress = math.easeOutCubic(progress)
+				local addition_width = 255
+				local addition_height = 130
+				local animated_width = math.floor(addition_width * anim_progress)
+				local animated_height = math.floor(addition_height * anim_progress)
+				local default_background_size = scenegraph_definition.background.size
 
-				arg_18_0.background.size[1] = size[1] + num - floor
+				ui_scenegraph.background.size[1] = default_background_size[1] + addition_width - animated_width
 
-				local size_2 = arg_18_1.viewport.size
-				local position = arg_18_1.viewport.position
+				local default_viewport_size = scenegraph_definition.viewport.size
+				local default_viewport_position = scenegraph_definition.viewport.position
 
-				arg_18_0.viewport.size[1] = size_2[1] + num - floor
-				arg_18_0.viewport.size[2] = size_2[2] + num_2 - floor_2
+				ui_scenegraph.viewport.size[1] = default_viewport_size[1] + addition_width - animated_width
+				ui_scenegraph.viewport.size[2] = default_viewport_size[2] + addition_height - animated_height
 
-				local num_3 = 255 * easeOutCubic
-				local title_text = arg_18_2.title_text
+				local text_alpha = 255 * anim_progress
+				local title_text = widgets.title_text
 
-				title_text.style.text.text_color[1] = num_3
-				title_text.style.text_shadow.text_color[1] = num_3
+				title_text.style.text.text_color[1] = text_alpha
+				title_text.style.text_shadow.text_color[1] = text_alpha
 
-				local sub_title_text = arg_18_2.sub_title_text
+				local sub_title_text = widgets.sub_title_text
 
-				sub_title_text.style.text.text_color[1] = num_3
-				sub_title_text.style.text_shadow.text_color[1] = num_3
+				sub_title_text.style.text.text_color[1] = text_alpha
+				sub_title_text.style.text_shadow.text_color[1] = text_alpha
 
-				local type_title_text = arg_18_2.type_title_text
+				local type_title_text = widgets.type_title_text
 
-				type_title_text.style.text.text_color[1] = num_3
-				type_title_text.style.text_shadow.text_color[1] = num_3
+				type_title_text.style.text.text_color[1] = text_alpha
+				type_title_text.style.text_shadow.text_color[1] = text_alpha
 
-				local career_title_text = arg_18_2.career_title_text
+				local career_title_text = widgets.career_title_text
 
-				career_title_text.style.text.text_color[1] = num_3
-				career_title_text.style.text_shadow.text_color[1] = num_3
+				career_title_text.style.text.text_color[1] = text_alpha
+				career_title_text.style.text_shadow.text_color[1] = text_alpha
 			end,
-			on_complete = function (arg_19_0, arg_19_1, arg_19_2, arg_19_3)
+			on_complete = function (ui_scenegraph, scenegraph_definition, widgets, params)
 				-- function 19
 				return
 			end
 		}
 	}
 }
-local tbl_19 = {
+local tbl_2 = {
 	default = {
 		{
 			input_action = "confirm",
@@ -1273,7 +1288,7 @@ local tbl_19 = {
 				-- function 20
 				local IS_PS4 = IS_PS4
 
-				IS_PS4 = IS_PS4 or IS_XB1
+				IS_PS4 = not not IS_PS4 or not not IS_XB1
 
 				return IS_PS4
 			end
@@ -1340,30 +1355,30 @@ local tbl_19 = {
 		}
 	}
 }
-local tbl_20 = {}
-local tbl_21 = {
+local tbl_3 = {}
+local tbl_4 = {
 	input_action = "confirm",
 	priority = 2
 }
-local flag_2
+local flag
 
-flag_2 = not IS_WINDOWS and "interaction_action_unlock" and "dlc1_4_input_description_storepage"
-tbl_21.description_text = flag_2
-tbl_20[1] = tbl_21
-tbl_20[2] = {
+flag = (not IS_WINDOWS or not "interaction_action_unlock") and not not "dlc1_4_input_description_storepage"
+tbl_4.description_text = flag
+tbl_3[1] = tbl_4
+tbl_3[2] = {
 	input_action = "right_stick",
 	priority = 5,
 	description_text = "input_description_scroll_details",
 	ignore_keybinding = true
 }
-tbl_20[3] = {
+tbl_3[3] = {
 	input_action = "back",
 	priority = 6,
 	description_text = "input_description_close"
 }
-tbl_19.dlc_preview_purchase = tbl_20
+tbl_2.dlc_preview_purchase = tbl_3
 
-local tbl_22 = {
+local tbl_5 = {
 	{
 		input_action = "right_stick",
 		priority = 5,
@@ -1377,45 +1392,47 @@ local tbl_22 = {
 	}
 }
 
-tbl_19.dlc_preview_owned = tbl_22
+tbl_2.dlc_preview_owned = tbl_5
 
-local tbl_23 = {}
-local tbl_24 = {
+local tbl_6 = {}
+local tbl_7 = {
 	input_action = "confirm",
 	priority = 2
 }
-local flag_3
+local flag_2
 
-flag_3 = not IS_WINDOWS and "interaction_action_unlock" and "dlc1_4_input_description_storepage"
-tbl_24.description_text = flag_3
-tbl_23[1] = tbl_24
-tbl_23[2] = {
+flag_2 = (not IS_WINDOWS or not "interaction_action_unlock") and not not "dlc1_4_input_description_storepage"
+tbl_7.description_text = flag_2
+tbl_6[1] = tbl_7
+tbl_6[2] = {
 	input_action = "special_1",
 	priority = 4,
 	description_text = "input_description_view_content"
 }
-tbl_23[3] = {
+tbl_6[3] = {
 	input_action = "right_stick",
 	priority = 5,
 	description_text = "input_description_scroll_details",
 	ignore_keybinding = true
 }
-tbl_23[4] = {
+tbl_6[4] = {
 	input_action = "back",
 	priority = 6,
 	description_text = "input_description_back"
 }
-tbl_19.dlc_bundle_purchase = tbl_23
+tbl_2.dlc_bundle_purchase = tbl_6
+
+local generic_input_actions = tbl_2
 
 return {
-	generic_input_actions = tbl_19,
-	create_dlc_entry_definition = fn,
-	item_widgets = tbl_12,
-	top_widgets = tbl_13,
-	bottom_widgets = tbl_11,
-	dlc_top_widgets = tbl_16,
-	dlc_bottom_widgets = tbl_17,
-	scenegraph_definition = tbl_4,
-	animation_definitions = tbl_18,
-	loading_widgets = tbl_10
+	generic_input_actions = generic_input_actions,
+	create_dlc_entry_definition = create_dlc_entry_definition,
+	item_widgets = item_widgets,
+	top_widgets = top_widgets,
+	bottom_widgets = bottom_widgets,
+	dlc_top_widgets = dlc_top_widgets,
+	dlc_bottom_widgets = dlc_bottom_widgets,
+	scenegraph_definition = scenegraph_definition,
+	animation_definitions = animation_definitions,
+	loading_widgets = loading_widgets
 }

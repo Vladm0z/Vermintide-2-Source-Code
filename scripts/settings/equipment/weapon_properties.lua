@@ -2,10 +2,10 @@
 
 local WeaponProperties = WeaponProperties
 
-WeaponProperties = WeaponProperties or {}
+WeaponProperties = not not WeaponProperties or not not {}
 WeaponProperties = WeaponProperties
 
-local tbl = {
+local buff_tweak_data = {
 	properties_crit_chance = {
 		variable_bonus = {
 			0.03,
@@ -315,7 +315,7 @@ WeaponProperties.properties = {
 		description_values = {
 			{
 				value_type = "percent",
-				value = tbl.properties_attack_speed.variable_multiplier
+				value = buff_tweak_data.properties_attack_speed.variable_multiplier
 			}
 		}
 	},
@@ -327,7 +327,7 @@ WeaponProperties.properties = {
 		description_values = {
 			{
 				value_type = "percent",
-				value = tbl.properties_crit_boost.variable_multiplier
+				value = buff_tweak_data.properties_crit_boost.variable_multiplier
 			}
 		}
 	},
@@ -339,7 +339,7 @@ WeaponProperties.properties = {
 		description_values = {
 			{
 				value_type = "percent",
-				value = tbl.properties_power_vs_skaven.variable_multiplier
+				value = buff_tweak_data.properties_power_vs_skaven.variable_multiplier
 			}
 		}
 	},
@@ -351,7 +351,7 @@ WeaponProperties.properties = {
 		description_values = {
 			{
 				value_type = "percent",
-				value = tbl.properties_power_vs_chaos.variable_multiplier
+				value = buff_tweak_data.properties_power_vs_chaos.variable_multiplier
 			}
 		}
 	},
@@ -363,7 +363,7 @@ WeaponProperties.properties = {
 		description_values = {
 			{
 				value_type = "percent",
-				value = tbl.properties_power_vs_unarmoured.variable_multiplier
+				value = buff_tweak_data.properties_power_vs_unarmoured.variable_multiplier
 			}
 		}
 	},
@@ -375,7 +375,7 @@ WeaponProperties.properties = {
 		description_values = {
 			{
 				value_type = "percent",
-				value = tbl.properties_power_vs_armoured.variable_multiplier
+				value = buff_tweak_data.properties_power_vs_armoured.variable_multiplier
 			}
 		}
 	},
@@ -387,7 +387,7 @@ WeaponProperties.properties = {
 		description_values = {
 			{
 				value_type = "percent",
-				value = tbl.properties_power_vs_large.variable_multiplier
+				value = buff_tweak_data.properties_power_vs_large.variable_multiplier
 			}
 		}
 	},
@@ -399,7 +399,7 @@ WeaponProperties.properties = {
 		description_values = {
 			{
 				value_type = "percent",
-				value = tbl.properties_power_vs_frenzy.variable_multiplier
+				value = buff_tweak_data.properties_power_vs_frenzy.variable_multiplier
 			}
 		}
 	},
@@ -410,7 +410,7 @@ WeaponProperties.properties = {
 		description_values = {
 			{
 				value_type = "bonus",
-				value = tbl.properties_stamina.variable_bonus
+				value = buff_tweak_data.properties_stamina.variable_bonus
 			}
 		}
 	},
@@ -422,7 +422,7 @@ WeaponProperties.properties = {
 		description_values = {
 			{
 				value_type = "percent",
-				value = tbl.properties_health.variable_multiplier
+				value = buff_tweak_data.properties_health.variable_multiplier
 			}
 		}
 	},
@@ -433,7 +433,7 @@ WeaponProperties.properties = {
 		description_values = {
 			{
 				value_type = "percent",
-				value = tbl.properties_push_block_arc.variable_multiplier
+				value = buff_tweak_data.properties_push_block_arc.variable_multiplier
 			}
 		}
 	},
@@ -444,7 +444,7 @@ WeaponProperties.properties = {
 		description_values = {
 			{
 				value_type = "percent",
-				value = tbl.properties_block_cost.variable_multiplier
+				value = buff_tweak_data.properties_block_cost.variable_multiplier
 			}
 		}
 	},
@@ -456,7 +456,7 @@ WeaponProperties.properties = {
 		description_values = {
 			{
 				value_type = "percent",
-				value = tbl.properties_protection_skaven.variable_multiplier
+				value = buff_tweak_data.properties_protection_skaven.variable_multiplier
 			}
 		}
 	},
@@ -468,7 +468,7 @@ WeaponProperties.properties = {
 		description_values = {
 			{
 				value_type = "percent",
-				value = tbl.properties_protection_chaos.variable_multiplier
+				value = buff_tweak_data.properties_protection_chaos.variable_multiplier
 			}
 		}
 	},
@@ -480,7 +480,7 @@ WeaponProperties.properties = {
 		description_values = {
 			{
 				value_type = "percent",
-				value = tbl.properties_protection_aoe.variable_multiplier
+				value = buff_tweak_data.properties_protection_aoe.variable_multiplier
 			}
 		}
 	},
@@ -491,7 +491,7 @@ WeaponProperties.properties = {
 		description_values = {
 			{
 				value_type = "percent",
-				value = tbl.properties_crit_chance.variable_bonus
+				value = buff_tweak_data.properties_crit_chance.variable_bonus
 			}
 		}
 	},
@@ -502,7 +502,7 @@ WeaponProperties.properties = {
 		description_values = {
 			{
 				value_type = "percent",
-				value = tbl.properties_ability_cooldown_reduction.variable_multiplier
+				value = buff_tweak_data.properties_ability_cooldown_reduction.variable_multiplier
 			}
 		}
 	},
@@ -514,7 +514,7 @@ WeaponProperties.properties = {
 		description_values = {
 			{
 				value_type = "percent",
-				value = tbl.properties_curse_resistance.variable_multiplier
+				value = buff_tweak_data.properties_curse_resistance.variable_multiplier
 			}
 		}
 	},
@@ -525,7 +525,7 @@ WeaponProperties.properties = {
 		description_values = {
 			{
 				value_type = "percent",
-				value = tbl.properties_respawn_speed.variable_multiplier
+				value = buff_tweak_data.properties_respawn_speed.variable_multiplier
 			}
 		}
 	},
@@ -537,7 +537,7 @@ WeaponProperties.properties = {
 		description_values = {
 			{
 				value_type = "percent",
-				value = tbl.properties_revive_speed.variable_multiplier
+				value = buff_tweak_data.properties_revive_speed.variable_multiplier
 			}
 		}
 	},
@@ -548,7 +548,7 @@ WeaponProperties.properties = {
 		description_values = {
 			{
 				value_type = "percent",
-				value = tbl.properties_fatigue_regen.variable_multiplier
+				value = buff_tweak_data.properties_fatigue_regen.variable_multiplier
 			}
 		}
 	},
@@ -559,14 +559,14 @@ WeaponProperties.properties = {
 		description_values = {
 			{
 				value_type = "baked_percent",
-				value = tbl.properties_movespeed.displayed_multiplier
+				value = buff_tweak_data.properties_movespeed.displayed_multiplier
 			}
 		}
 	}
 }
 
-for k, v in pairs(WeaponProperties.properties) do
-	v.name = k
+for name, data in pairs(WeaponProperties.properties) do
+	data.name = name
 end
 
 WeaponProperties.combinations = {
@@ -2174,5 +2174,5 @@ WeaponProperties.combinations = {
 }
 
 BuffUtils.copy_talent_buff_names(WeaponProperties.buff_templates)
-BuffUtils.apply_buff_tweak_data(WeaponProperties.buff_templates, tbl)
+BuffUtils.apply_buff_tweak_data(WeaponProperties.buff_templates, buff_tweak_data)
 DLCUtils.require_list("weapon_properties_file_names")

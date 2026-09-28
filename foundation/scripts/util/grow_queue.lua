@@ -9,10 +9,10 @@ GrowQueue.init = function (self)
 	self.last = 0
 end
 
-GrowQueue.push_back = function (self, arg_2_1)
+GrowQueue.push_back = function (self, item)
 	-- function 2
 	self.last = self.last + 1
-	self.queue[self.last] = arg_2_1
+	self.queue[self.last] = item
 end
 
 GrowQueue.pop_first = function (self)
@@ -21,7 +21,7 @@ GrowQueue.pop_first = function (self)
 		return
 	end
 
-	local var_3_0 = self.queue[self.first]
+	local item = self.queue[self.first]
 
 	self.queue[self.first] = nil
 
@@ -32,17 +32,19 @@ GrowQueue.pop_first = function (self)
 
 	self.first = self.first + 1
 
-	return var_3_0
+	return item
 end
 
-GrowQueue.contains = function (self, arg_4_1)
+GrowQueue.contains = function (self, item)
 	-- function 4
 	local first = self.first
 	local last = self.last
 	local queue = self.queue
 
 	for i = first, last do
-		if arg_4_1 == queue[i] then
+		local queued_item = queue[i]
+
+		if item == queued_item then
 			return true
 		end
 	end
@@ -65,13 +67,13 @@ GrowQueue.get_last = function (self)
 	return self.queue[self._last]
 end
 
-GrowQueue.print_items = function (self, arg_8_1)
+GrowQueue.print_items = function (self, s)
 	-- function 8
-	local str = (arg_8_1 or "") .. " queue: [" .. self.first .. "->" .. self.last .. "] --> "
+	local s = (not not s or not not "") .. " queue: [" .. self.first .. "->" .. self.last .. "] --> "
 
 	for i = self.first, self.last do
-		str = str .. tostring(self.queue[i]) .. ","
+		s = s .. tostring(self.queue[i]) .. ","
 	end
 
-	print(str)
+	print(s)
 end

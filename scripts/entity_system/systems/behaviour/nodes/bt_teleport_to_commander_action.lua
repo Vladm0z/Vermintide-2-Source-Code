@@ -4,36 +4,39 @@ require("scripts/entity_system/systems/behaviour/nodes/bt_node")
 
 BTTeleportToCommanderAction = class(BTTeleportToCommanderAction, BTNode)
 
-BTTeleportToCommanderAction.init = function (arg_1_0, ...)
+BTTeleportToCommanderAction.init = function (self, ...)
 	-- function 1
-	BTTeleportToCommanderAction.super.init(arg_1_0, ...)
+	BTTeleportToCommanderAction.super.init(self, ...)
 end
 
 BTTeleportToCommanderAction.name = "BTTeleportToCommanderAction"
 
-BTTeleportToCommanderAction.enter = function (self, arg_2_1, arg_2_2, arg_2_3)
+BTTeleportToCommanderAction.enter = function (self, unit, blackboard, t)
 	-- function 2
 	self.commander_system = Managers.state.entity:system("ai_commander_system")
 end
 
-BTTeleportToCommanderAction.leave = function (arg_3_0, arg_3_1, arg_3_2, arg_3_3, arg_3_4, arg_3_5)
+BTTeleportToCommanderAction.leave = function (self, unit, blackboard, t, reason, destroy)
 	-- function 3
 	return
 end
 
-local num = 5
-local num_2 = math.pi / (2 * num)
-local num_3 = 5
+local CHECKS_PER_DIRECTION = 5
+local ANGLE_INCREMENT = math.pi / (2 * CHECKS_PER_DIRECTION)
+local CHECK_DISTANCE = 5
 
-BTTeleportToCommanderAction.run = function (self, arg_4_1, arg_4_2, arg_4_3, arg_4_4)
+BTTeleportToCommanderAction.run = function (self, unit, blackboard, t, dt)
 	-- function 4
-	local get_commander_unit = self.commander_system:get_commander_unit(arg_4_1)
+	local commander_unit = self.commander_system:get_commander_unit(unit)
 
-	if not ALIVE[get_commander_unit] then
+	if not ALIVE[commander_unit] then
 		return "done"
 	end
 
-	ScriptUnit.extension(get_commander_unit, "career_system"):get_passive_ability_by_name("bw_necromancer"):resummon_pet(arg_4_1)
+	local career_extension = ScriptUnit.extension(commander_unit, "career_system")
+	local passive = career_extension:get_passive_ability_by_name("bw_necromancer")
+
+	passive:resummon_pet(unit)
 
 	return "done"
 end

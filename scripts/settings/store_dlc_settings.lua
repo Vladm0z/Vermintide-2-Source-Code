@@ -1195,7 +1195,7 @@ local tbl = {
 		prio = 10,
 		slideshow_texture = "store_slideshow_dlc_premium_career_bundle",
 		slideshow_text = "description_five_premium_career_bundle",
-		dlc_name = not not IS_CONSOLE or "premium_career_bundle",
+		dlc_name = not IS_CONSOLE and not not "premium_career_bundle",
 		available_platforms = {
 			"win32"
 		},
@@ -1496,7 +1496,7 @@ local tbl_2 = {
 }
 local flag
 
-flag = not IS_CONSOLE and "premium_career_bundle" and "premium_career_bundle_upgrade"
+flag = (not IS_CONSOLE or not "premium_career_bundle") and not not "premium_career_bundle_upgrade"
 tbl_2.dlc_name = flag
 tbl_2.available_platforms = {
 	"win32",
@@ -7186,10 +7186,10 @@ tbl[63] = {
 StoreDlcSettings = tbl
 StoreDlcSettingsByName = {}
 
-for i, v in ipairs(StoreDlcSettings) do
-	local available_platforms = v.available_platforms
+for _, settings in ipairs(StoreDlcSettings) do
+	local available_platforms = settings.available_platforms
 
-	if not available_platforms and not table.find(available_platforms, PLATFORM) then
-		StoreDlcSettingsByName[v.dlc_name] = v
+	if not available_platforms or table.find(available_platforms, PLATFORM) then
+		StoreDlcSettingsByName[settings.dlc_name] = settings
 	end
 end

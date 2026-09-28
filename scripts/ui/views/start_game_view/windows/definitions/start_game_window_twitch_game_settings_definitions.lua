@@ -1,29 +1,29 @@
 -- chunkname: @scripts/ui/views/start_game_view/windows/definitions/start_game_window_twitch_game_settings_definitions.lua
 
-local game_start_windows = UISettings.game_start_windows
-local frame = game_start_windows.frame
-local size = game_start_windows.size
-local tbl = {
-	size[1] - 20,
+local window_default_settings = UISettings.game_start_windows
+local window_frame = window_default_settings.frame
+local window_size = window_default_settings.size
+local game_option_size = {
+	window_size[1] - 20,
 	233
 }
-local tbl_2 = {
+local animation_definitions = {
 	on_enter = {
 		{
 			name = "fade_in",
 			start_progress = 0,
 			end_progress = 0.3,
-			init = function (arg_1_0, arg_1_1, arg_1_2, arg_1_3)
+			init = function (ui_scenegraph, scenegraph_definition, widgets, params)
 				-- function 1
-				arg_1_3.render_settings.alpha_multiplier = 0
+				params.render_settings.alpha_multiplier = 0
 			end,
-			update = function (arg_2_0, arg_2_1, arg_2_2, arg_2_3, arg_2_4)
+			update = function (ui_scenegraph, scenegraph_definition, widgets, progress, params)
 				-- function 2
-				local easeOutCubic = math.easeOutCubic(arg_2_3)
+				local anim_progress = math.easeOutCubic(progress)
 
-				arg_2_4.render_settings.alpha_multiplier = easeOutCubic
+				params.render_settings.alpha_multiplier = anim_progress
 			end,
-			on_complete = function (arg_3_0, arg_3_1, arg_3_2, arg_3_3)
+			on_complete = function (ui_scenegraph, scenegraph_definition, widgets, params)
 				-- function 3
 				return
 			end
@@ -34,24 +34,24 @@ local tbl_2 = {
 			name = "fade_out",
 			start_progress = 0,
 			end_progress = 0.3,
-			init = function (arg_4_0, arg_4_1, arg_4_2, arg_4_3)
+			init = function (ui_scenegraph, scenegraph_definition, widgets, params)
 				-- function 4
-				arg_4_3.render_settings.alpha_multiplier = 1
+				params.render_settings.alpha_multiplier = 1
 			end,
-			update = function (arg_5_0, arg_5_1, arg_5_2, arg_5_3, arg_5_4)
+			update = function (ui_scenegraph, scenegraph_definition, widgets, progress, params)
 				-- function 5
-				local easeOutCubic = math.easeOutCubic(arg_5_3)
+				local anim_progress = math.easeOutCubic(progress)
 
-				arg_5_4.render_settings.alpha_multiplier = 1 - easeOutCubic
+				params.render_settings.alpha_multiplier = 1 - anim_progress
 			end,
-			on_complete = function (arg_6_0, arg_6_1, arg_6_2, arg_6_3)
+			on_complete = function (ui_scenegraph, scenegraph_definition, widgets, params)
 				-- function 6
 				return
 			end
 		}
 	}
 }
-local tbl_3 = {
+local scenegraph_definition = {
 	root = {
 		is_root = true,
 		size = {
@@ -94,7 +94,7 @@ local tbl_3 = {
 		vertical_alignment = "center",
 		parent = "menu_root",
 		horizontal_alignment = "center",
-		size = size,
+		size = window_size,
 		position = {
 			0,
 			0,
@@ -105,7 +105,7 @@ local tbl_3 = {
 		vertical_alignment = "top",
 		parent = "window",
 		horizontal_alignment = "center",
-		size = tbl,
+		size = game_option_size,
 		position = {
 			0,
 			-16,
@@ -116,7 +116,7 @@ local tbl_3 = {
 		vertical_alignment = "bottom",
 		parent = "game_option_1",
 		horizontal_alignment = "center",
-		size = tbl,
+		size = game_option_size,
 		position = {
 			0,
 			-249,
@@ -128,7 +128,7 @@ local tbl_3 = {
 		parent = "game_option_2",
 		horizontal_alignment = "center",
 		size = {
-			tbl[1],
+			game_option_size[1],
 			200
 		},
 		position = {
@@ -142,7 +142,7 @@ local tbl_3 = {
 		parent = "window",
 		horizontal_alignment = "center",
 		size = {
-			tbl[1],
+			game_option_size[1],
 			72
 		},
 		position = {
@@ -157,7 +157,7 @@ local tbl_3 = {
 		horizontal_alignment = "center",
 		size = {
 			16,
-			size[2]
+			window_size[2]
 		},
 		position = {
 			195,
@@ -171,7 +171,7 @@ local tbl_3 = {
 		horizontal_alignment = "center",
 		size = {
 			16,
-			size[2]
+			window_size[2]
 		},
 		position = {
 			-195,
@@ -184,7 +184,7 @@ local tbl_3 = {
 		parent = "additional_option",
 		horizontal_alignment = "center",
 		size = {
-			tbl[1] - 20,
+			game_option_size[1] - 20,
 			40
 		},
 		position = {
@@ -198,7 +198,7 @@ local tbl_3 = {
 		parent = "private_button",
 		horizontal_alignment = "center",
 		size = {
-			tbl[1] - 20,
+			game_option_size[1] - 20,
 			45
 		},
 		position = {
@@ -212,7 +212,7 @@ local tbl_3 = {
 		parent = "private_button",
 		horizontal_alignment = "center",
 		size = {
-			tbl[1] - 20,
+			game_option_size[1] - 20,
 			40
 		},
 		position = {
@@ -226,7 +226,7 @@ local tbl_3 = {
 		parent = "host_button",
 		horizontal_alignment = "center",
 		size = {
-			tbl[1] - 20,
+			game_option_size[1] - 20,
 			45
 		},
 		position = {
@@ -240,7 +240,7 @@ local tbl_3 = {
 		parent = "host_button",
 		horizontal_alignment = "center",
 		size = {
-			tbl[1] - 20,
+			game_option_size[1] - 20,
 			40
 		},
 		position = {
@@ -254,7 +254,7 @@ local tbl_3 = {
 		parent = "strict_matchmaking_button",
 		horizontal_alignment = "center",
 		size = {
-			tbl[1] - 20,
+			game_option_size[1] - 20,
 			45
 		},
 		position = {
@@ -265,51 +265,54 @@ local tbl_3 = {
 	}
 }
 
-local function fn(arg_7_0, arg_7_1, arg_7_2, arg_7_3, arg_7_4, arg_7_5)
+local function create_settings_option(scenegraph_id, size, title_text, button_text, icon_texture, background_texture)
 	-- function 7
-	arg_7_4 = arg_7_4 or "level_icon_01"
+	icon_texture = not not icon_texture or not not "level_icon_01"
 
-	local get_atlas_settings_by_texture_name = UIAtlasHelper.get_atlas_settings_by_texture_name(arg_7_4)
-	local size
+	local icon_texture_settings = UIAtlasHelper.get_atlas_settings_by_texture_name(icon_texture)
+	local size_2
 
-	if not get_atlas_settings_by_texture_name then
-		size = get_atlas_settings_by_texture_name.size
+	if icon_texture_settings then
+		size_2 = icon_texture_settings.size
 
-		if not size then
+		if not size_2 then
 			-- Nothing
 		end
 	end
 
-	size = {
+	size_2 = {
 		150,
 		150
 	}
 
+	local icon_texture_size = size_2
+
 	::label_7_0::
 
-	arg_7_5 = arg_7_5 or "game_options_bg_02"
+	background_texture = not not background_texture or not not "game_options_bg_02"
 
-	local get_atlas_settings_by_texture_name_2 = UIAtlasHelper.get_atlas_settings_by_texture_name(arg_7_5)
-	local str = "menu_frame_08"
-	local var_7_4 = UIFrameSettings[str]
-	local var_7_5 = var_7_4.texture_sizes.corner[1]
-	local str_2 = "frame_outer_glow_01"
-	local var_7_7 = UIFrameSettings[str_2]
-	local var_7_8 = var_7_7.texture_sizes.corner[1]
-
-	return {
+	local background_texture_settings = UIAtlasHelper.get_atlas_settings_by_texture_name(background_texture)
+	local frame_name = "menu_frame_08"
+	local frame_settings = UIFrameSettings[frame_name]
+	local frame_width = frame_settings.texture_sizes.corner[1]
+	local glow_frame_name = "frame_outer_glow_01"
+	local glow_frame_settings = UIFrameSettings[glow_frame_name]
+	local glow_frame_width = glow_frame_settings.texture_sizes.corner[1]
+	local widget = {
 		element = {
 			passes = {
 				{
 					style_id = "background",
 					pass_type = "texture_uv",
 					content_id = "background",
-					content_change_function = function (self, arg_8_1)
+					content_change_function = function (content, style)
 						-- function 8
-						if not self.parent.button_hotspot.disable_button then
-							arg_8_1.saturated = true
+						local parent = content.parent
+
+						if parent.button_hotspot.disable_button then
+							style.saturated = true
 						else
-							arg_8_1.saturated = false
+							style.saturated = false
 						end
 					end
 				},
@@ -322,9 +325,11 @@ local function fn(arg_7_0, arg_7_1, arg_7_2, arg_7_3, arg_7_4, arg_7_5)
 					texture_id = "glow_frame",
 					style_id = "glow_frame",
 					pass_type = "texture_frame",
-					content_check_function = function (self)
+					content_check_function = function (content)
 						-- function 9
-						return not not self.button_hotspot.disable_button or self.option_text == "" or self.option_text == "n/a"
+						local button_hotspot = content.button_hotspot
+
+						return not button_hotspot.disable_button and content.option_text == "" or content.option_text == "n/a"
 					end
 				},
 				{
@@ -339,11 +344,12 @@ local function fn(arg_7_0, arg_7_1, arg_7_2, arg_7_3, arg_7_4, arg_7_5)
 				{
 					style_id = "button_clicked_rect",
 					pass_type = "rect",
-					content_check_function = function (self)
+					content_check_function = function (content)
 						-- function 10
-						local is_clicked = self.button_hotspot.is_clicked
+						local button_hotspot = content.button_hotspot
+						local is_clicked = button_hotspot.is_clicked
 
-						return not is_clicked and is_clicked == 0
+						return not is_clicked or is_clicked == 0
 					end
 				},
 				{
@@ -353,25 +359,27 @@ local function fn(arg_7_0, arg_7_1, arg_7_2, arg_7_3, arg_7_4, arg_7_5)
 				{
 					style_id = "button_disabled_rect",
 					pass_type = "rect",
-					content_check_function = function (self)
+					content_check_function = function (content)
 						-- function 11
-						return self.button_hotspot.disable_button
+						local button_hotspot = content.button_hotspot
+
+						return button_hotspot.disable_button
 					end
 				},
 				{
 					style_id = "icon_frame",
 					pass_type = "texture",
 					texture_id = "icon_frame",
-					content_check_function = function (self, arg_12_1)
+					content_check_function = function (content, style)
 						-- function 12
-						return self.icon
+						return content.icon
 					end,
-					content_change_function = function (self, arg_13_1)
+					content_change_function = function (content, style)
 						-- function 13
-						if not self.button_hotspot.disable_button then
-							arg_13_1.saturated = true
+						if content.button_hotspot.disable_button then
+							style.saturated = true
 						else
-							arg_13_1.saturated = false
+							style.saturated = false
 						end
 					end
 				},
@@ -379,9 +387,9 @@ local function fn(arg_7_0, arg_7_1, arg_7_2, arg_7_3, arg_7_4, arg_7_5)
 					texture_id = "icon_glow",
 					style_id = "icon_glow",
 					pass_type = "texture",
-					content_check_function = function (self, arg_14_1)
+					content_check_function = function (content, style)
 						-- function 14
-						return self.icon
+						return content.icon
 					end
 				},
 				{
@@ -393,16 +401,16 @@ local function fn(arg_7_0, arg_7_1, arg_7_2, arg_7_3, arg_7_4, arg_7_5)
 					style_id = "icon",
 					pass_type = "texture",
 					texture_id = "icon",
-					content_check_function = function (self, arg_15_1)
+					content_check_function = function (content, style)
 						-- function 15
-						return self.icon
+						return content.icon
 					end,
-					content_change_function = function (self, arg_16_1)
+					content_change_function = function (content, style)
 						-- function 16
-						if not self.button_hotspot.disable_button then
-							arg_16_1.saturated = true
+						if content.button_hotspot.disable_button then
+							style.saturated = true
 						else
-							arg_16_1.saturated = false
+							style.saturated = false
 						end
 					end
 				},
@@ -410,20 +418,23 @@ local function fn(arg_7_0, arg_7_1, arg_7_2, arg_7_3, arg_7_4, arg_7_5)
 					style_id = "button_text",
 					pass_type = "text",
 					text_id = "button_text",
-					content_check_function = function (self)
+					content_check_function = function (content)
 						-- function 17
-						return not not self.button_hotspot.disable_button or not self.icon
+						local button_hotspot = content.button_hotspot
+
+						return not button_hotspot.disable_button and not not not content.icon
 					end
 				},
 				{
 					style_id = "button_text_disabled",
 					pass_type = "text",
 					text_id = "button_text",
-					content_check_function = function (self)
+					content_check_function = function (content)
 						-- function 18
-						local disable_button = self.button_hotspot.disable_button
+						local button_hotspot = content.button_hotspot
+						local disable_button = button_hotspot.disable_button
 
-						disable_button = not disable_button and not self.icon
+						disable_button = not not disable_button and not not not content.icon
 
 						return disable_button
 					end
@@ -432,56 +443,67 @@ local function fn(arg_7_0, arg_7_1, arg_7_2, arg_7_3, arg_7_4, arg_7_5)
 					style_id = "button_text_shadow",
 					pass_type = "text",
 					text_id = "button_text",
-					content_check_function = function (self)
+					content_check_function = function (content)
 						-- function 19
-						return not not self.button_hotspot.disable_button or not self.icon
+						local button_hotspot = content.button_hotspot
+
+						return not button_hotspot.disable_button and not not not content.icon
 					end
 				},
 				{
 					style_id = "option_text",
 					pass_type = "text",
 					text_id = "option_text",
-					content_check_function = function (self)
+					content_check_function = function (content)
 						-- function 20
-						return not not self.button_hotspot.disable_button or self.icon
+						local button_hotspot = content.button_hotspot
+
+						return not button_hotspot.disable_button and not not content.icon
 					end
 				},
 				{
 					style_id = "option_text_shadow",
 					pass_type = "text",
 					text_id = "option_text",
-					content_check_function = function (self)
+					content_check_function = function (content)
 						-- function 21
-						return not not self.button_hotspot.disable_button or self.icon
+						local button_hotspot = content.button_hotspot
+
+						return not button_hotspot.disable_button and not not content.icon
 					end
 				},
 				{
 					style_id = "title_text",
 					pass_type = "text",
 					text_id = "title_text",
-					content_check_function = function (self)
+					content_check_function = function (content)
 						-- function 22
-						return not not self.button_hotspot.disable_button or self.icon
+						local button_hotspot = content.button_hotspot
+
+						return not button_hotspot.disable_button and not not content.icon
 					end
 				},
 				{
 					style_id = "title_text_shadow",
 					pass_type = "text",
 					text_id = "title_text",
-					content_check_function = function (self)
+					content_check_function = function (content)
 						-- function 23
-						return not not self.button_hotspot.disable_button or self.icon
+						local button_hotspot = content.button_hotspot
+
+						return not button_hotspot.disable_button and not not content.icon
 					end
 				},
 				{
 					style_id = "title_text_disabled",
 					pass_type = "text",
 					text_id = "title_text",
-					content_check_function = function (self)
+					content_check_function = function (content)
 						-- function 24
-						local disable_button = self.button_hotspot.disable_button
+						local button_hotspot = content.button_hotspot
+						local disable_button = button_hotspot.disable_button
 
-						disable_button = not disable_button and self.icon
+						disable_button = not not disable_button and not not content.icon
 
 						return disable_button
 					end
@@ -490,18 +512,18 @@ local function fn(arg_7_0, arg_7_1, arg_7_2, arg_7_3, arg_7_4, arg_7_5)
 					pass_type = "texture",
 					style_id = "title_bg",
 					texture_id = "title_bg",
-					content_check_function = function (self)
+					content_check_function = function (content)
 						-- function 25
-						return self.icon
+						return content.icon
 					end
 				},
 				{
 					pass_type = "texture",
 					style_id = "title_edge",
 					texture_id = "title_edge",
-					content_check_function = function (self)
+					content_check_function = function (content)
 						-- function 26
-						return self.icon
+						return content.icon
 					end
 				}
 			}
@@ -515,22 +537,22 @@ local function fn(arg_7_0, arg_7_1, arg_7_2, arg_7_3, arg_7_4, arg_7_5)
 			title_bg = "playername_bg_02",
 			icon_glow = "map_frame_glow",
 			button_hotspot = {},
-			frame = var_7_4.texture,
-			glow_frame = var_7_7.texture,
-			button_text = arg_7_3,
-			title_text = arg_7_2 or "n/a",
+			frame = frame_settings.texture,
+			glow_frame = glow_frame_settings.texture,
+			button_text = button_text,
+			title_text = not not title_text or not not "n/a",
 			background = {
 				uvs = {
 					{
 						0,
-						1 - math.min(arg_7_1[2] / get_atlas_settings_by_texture_name_2.size[2], 1)
+						1 - math.min(size[2] / background_texture_settings.size[2], 1)
 					},
 					{
-						math.min(arg_7_1[1] / get_atlas_settings_by_texture_name_2.size[1], 1),
+						math.min(size[1] / background_texture_settings.size[1], 1),
 						1
 					}
 				},
-				texture_id = arg_7_5
+				texture_id = background_texture
 			}
 		},
 		style = {
@@ -546,9 +568,9 @@ local function fn(arg_7_0, arg_7_1, arg_7_2, arg_7_3, arg_7_4, arg_7_5)
 					0,
 					10
 				},
-				size = arg_7_1,
-				texture_size = var_7_4.texture_size,
-				texture_sizes = var_7_4.texture_sizes
+				size = size,
+				texture_size = frame_settings.texture_size,
+				texture_sizes = frame_settings.texture_sizes
 			},
 			glow_frame = {
 				color = {
@@ -562,12 +584,12 @@ local function fn(arg_7_0, arg_7_1, arg_7_2, arg_7_3, arg_7_4, arg_7_5)
 					0,
 					-2
 				},
-				size = arg_7_1,
-				texture_size = var_7_7.texture_size,
-				texture_sizes = var_7_7.texture_sizes,
+				size = size,
+				texture_size = glow_frame_settings.texture_size,
+				texture_sizes = glow_frame_settings.texture_sizes,
 				frame_margins = {
-					-(var_7_8 - 1),
-					-(var_7_8 - 1)
+					-(glow_frame_width - 1),
+					-(glow_frame_width - 1)
 				}
 			},
 			background = {
@@ -600,7 +622,7 @@ local function fn(arg_7_0, arg_7_1, arg_7_2, arg_7_3, arg_7_4, arg_7_5)
 					0,
 					8
 				},
-				size = arg_7_1
+				size = size
 			},
 			glow = {
 				color = {
@@ -625,9 +647,9 @@ local function fn(arg_7_0, arg_7_1, arg_7_2, arg_7_3, arg_7_4, arg_7_5)
 					255,
 					255
 				},
-				texture_size = size,
+				texture_size = icon_texture_size,
 				offset = {
-					arg_7_1[1] / 2 - 120,
+					size[1] / 2 - 120,
 					0,
 					5
 				}
@@ -646,7 +668,7 @@ local function fn(arg_7_0, arg_7_1, arg_7_2, arg_7_3, arg_7_4, arg_7_5)
 					255
 				},
 				offset = {
-					arg_7_1[1] / 2 - 120,
+					size[1] / 2 - 120,
 					0,
 					6
 				}
@@ -665,7 +687,7 @@ local function fn(arg_7_0, arg_7_1, arg_7_2, arg_7_3, arg_7_4, arg_7_5)
 					255
 				},
 				offset = {
-					arg_7_1[1] / 2 - 120,
+					size[1] / 2 - 120,
 					0,
 					7
 				}
@@ -684,14 +706,14 @@ local function fn(arg_7_0, arg_7_1, arg_7_2, arg_7_3, arg_7_4, arg_7_5)
 					255
 				},
 				offset = {
-					arg_7_1[1] / 2 - 120,
+					size[1] / 2 - 120,
 					0,
 					4
 				}
 			},
 			title_bg = {
 				size = {
-					arg_7_1[1],
+					size[1],
 					40
 				},
 				color = {
@@ -702,13 +724,13 @@ local function fn(arg_7_0, arg_7_1, arg_7_2, arg_7_3, arg_7_4, arg_7_5)
 				},
 				offset = {
 					0,
-					arg_7_1[2] - 38 - var_7_5,
+					size[2] - 38 - frame_width,
 					2
 				}
 			},
 			title_edge = {
 				size = {
-					arg_7_1[1],
+					size[1],
 					5
 				},
 				color = {
@@ -719,7 +741,7 @@ local function fn(arg_7_0, arg_7_1, arg_7_2, arg_7_3, arg_7_4, arg_7_5)
 				},
 				offset = {
 					0,
-					arg_7_1[2] - 38 - var_7_5,
+					size[2] - 38 - frame_width,
 					4
 				}
 			},
@@ -734,8 +756,8 @@ local function fn(arg_7_0, arg_7_1, arg_7_2, arg_7_3, arg_7_4, arg_7_5)
 				text_color = Colors.get_color_table_with_alpha("font_title", 255),
 				default_text_color = Colors.get_color_table_with_alpha("font_title", 255),
 				offset = {
-					var_7_5 + 5,
-					-var_7_5,
+					frame_width + 5,
+					-frame_width,
 					10
 				}
 			},
@@ -750,8 +772,8 @@ local function fn(arg_7_0, arg_7_1, arg_7_2, arg_7_3, arg_7_4, arg_7_5)
 				text_color = Colors.get_color_table_with_alpha("black", 255),
 				default_text_color = Colors.get_color_table_with_alpha("black", 255),
 				offset = {
-					var_7_5 + 5 + 2,
-					-(var_7_5 + 2),
+					frame_width + 5 + 2,
+					-(frame_width + 2),
 					9
 				}
 			},
@@ -766,8 +788,8 @@ local function fn(arg_7_0, arg_7_1, arg_7_2, arg_7_3, arg_7_4, arg_7_5)
 				text_color = Colors.get_color_table_with_alpha("gray", 255),
 				default_text_color = Colors.get_color_table_with_alpha("gray", 255),
 				offset = {
-					var_7_5 + 5,
-					-var_7_5,
+					frame_width + 5,
+					-frame_width,
 					10
 				}
 			},
@@ -782,13 +804,13 @@ local function fn(arg_7_0, arg_7_1, arg_7_2, arg_7_3, arg_7_4, arg_7_5)
 				text_color = Colors.get_color_table_with_alpha("font_default", 255),
 				default_text_color = Colors.get_color_table_with_alpha("font_default", 255),
 				offset = {
-					var_7_5 + 5,
+					frame_width + 5,
 					-55,
 					10
 				},
 				size = {
-					arg_7_1[1] - size[1] - 60,
-					arg_7_1[2]
+					size[1] - icon_texture_size[1] - 60,
+					size[2]
 				}
 			},
 			option_text_shadow = {
@@ -802,13 +824,13 @@ local function fn(arg_7_0, arg_7_1, arg_7_2, arg_7_3, arg_7_4, arg_7_5)
 				text_color = Colors.get_color_table_with_alpha("black", 255),
 				default_text_color = Colors.get_color_table_with_alpha("black", 255),
 				offset = {
-					var_7_5 + 5 + 2,
+					frame_width + 5 + 2,
 					-57,
 					9
 				},
 				size = {
-					arg_7_1[1] - size[1] - 60,
-					arg_7_1[2]
+					size[1] - icon_texture_size[1] - 60,
+					size[2]
 				}
 			},
 			button_text = {
@@ -823,13 +845,13 @@ local function fn(arg_7_0, arg_7_1, arg_7_2, arg_7_3, arg_7_4, arg_7_5)
 				text_color = Colors.get_color_table_with_alpha("white", 255),
 				default_text_color = Colors.get_color_table_with_alpha("white", 255),
 				offset = {
-					var_7_5,
-					var_7_5,
+					frame_width,
+					frame_width,
 					10
 				},
 				size = {
-					arg_7_1[1] - var_7_5 * 2,
-					arg_7_1[2] - var_7_5 * 2
+					size[1] - frame_width * 2,
+					size[2] - frame_width * 2
 				}
 			},
 			button_text_disabled = {
@@ -844,13 +866,13 @@ local function fn(arg_7_0, arg_7_1, arg_7_2, arg_7_3, arg_7_4, arg_7_5)
 				text_color = Colors.get_color_table_with_alpha("gray", 255),
 				default_text_color = Colors.get_color_table_with_alpha("gray", 255),
 				offset = {
-					var_7_5,
-					var_7_5,
+					frame_width,
+					frame_width,
 					10
 				},
 				size = {
-					arg_7_1[1] - var_7_5 * 2,
-					arg_7_1[2] - var_7_5 * 2
+					size[1] - frame_width * 2,
+					size[2] - frame_width * 2
 				}
 			},
 			button_text_shadow = {
@@ -865,13 +887,13 @@ local function fn(arg_7_0, arg_7_1, arg_7_2, arg_7_3, arg_7_4, arg_7_5)
 				text_color = Colors.get_color_table_with_alpha("black", 255),
 				default_text_color = Colors.get_color_table_with_alpha("black", 255),
 				offset = {
-					var_7_5 + 2,
-					var_7_5 - 2,
+					frame_width + 2,
+					frame_width - 2,
 					9
 				},
 				size = {
-					arg_7_1[1] - var_7_5 * 2,
-					arg_7_1[2] - var_7_5 * 2
+					size[1] - frame_width * 2,
+					size[2] - frame_width * 2
 				}
 			},
 			button_hover_rect = {
@@ -882,13 +904,13 @@ local function fn(arg_7_0, arg_7_1, arg_7_2, arg_7_3, arg_7_4, arg_7_5)
 					0
 				},
 				offset = {
-					var_7_5,
-					var_7_5,
+					frame_width,
+					frame_width,
 					1
 				},
 				size = {
-					arg_7_1[1] - var_7_5 * 2,
-					arg_7_1[2] - var_7_5 * 2
+					size[1] - frame_width * 2,
+					size[2] - frame_width * 2
 				}
 			},
 			button_clicked_rect = {
@@ -899,13 +921,13 @@ local function fn(arg_7_0, arg_7_1, arg_7_2, arg_7_3, arg_7_4, arg_7_5)
 					0
 				},
 				offset = {
-					var_7_5,
-					var_7_5,
+					frame_width,
+					frame_width,
 					15
 				},
 				size = {
-					arg_7_1[1] - var_7_5 * 2,
-					arg_7_1[2] - var_7_5 * 2
+					size[1] - frame_width * 2,
+					size[2] - frame_width * 2
 				}
 			},
 			button_disabled_rect = {
@@ -916,47 +938,50 @@ local function fn(arg_7_0, arg_7_1, arg_7_2, arg_7_3, arg_7_4, arg_7_5)
 					5
 				},
 				offset = {
-					var_7_5,
-					var_7_5,
+					frame_width,
+					frame_width,
 					15
 				},
 				size = {
-					arg_7_1[1] - var_7_5 * 2,
-					arg_7_1[2] - var_7_5 * 2
+					size[1] - frame_width * 2,
+					size[2] - frame_width * 2
 				}
 			}
 		},
-		scenegraph_id = arg_7_0,
+		scenegraph_id = scenegraph_id,
 		offset = {
 			0,
 			0,
 			0
 		}
 	}
+
+	return widget
 end
 
-local function fn_2(arg_27_0, arg_27_1, arg_27_2, arg_27_3)
+local function create_additional_settings_option(scenegraph_id, size, title_text, background_texture)
 	-- function 27
-	arg_27_3 = arg_27_3 or "game_options_bg_02"
+	background_texture = not not background_texture or not not "game_options_bg_02"
 
-	local get_atlas_settings_by_texture_name = UIAtlasHelper.get_atlas_settings_by_texture_name(arg_27_3)
-	local str = "menu_frame_08"
-	local var_27_2 = UIFrameSettings[str]
-	local var_27_3 = var_27_2.texture_sizes.corner[1]
-
-	return {
+	local background_texture_settings = UIAtlasHelper.get_atlas_settings_by_texture_name(background_texture)
+	local frame_name = "menu_frame_08"
+	local frame_settings = UIFrameSettings[frame_name]
+	local frame_width = frame_settings.texture_sizes.corner[1]
+	local widget = {
 		element = {
 			passes = {
 				{
 					style_id = "background",
 					pass_type = "texture_uv",
 					content_id = "background",
-					content_change_function = function (self, arg_28_1)
+					content_change_function = function (content, style)
 						-- function 28
-						if not self.parent.button_hotspot.disable_button then
-							arg_28_1.saturated = true
+						local parent = content.parent
+
+						if parent.button_hotspot.disable_button then
+							style.saturated = true
 						else
-							arg_28_1.saturated = false
+							style.saturated = false
 						end
 					end
 				},
@@ -972,18 +997,22 @@ local function fn_2(arg_27_0, arg_27_1, arg_27_2, arg_27_3)
 				{
 					style_id = "button_disabled_rect",
 					pass_type = "rect",
-					content_check_function = function (self)
+					content_check_function = function (content)
 						-- function 29
-						return self.button_hotspot.disable_button
+						local button_hotspot = content.button_hotspot
+
+						return button_hotspot.disable_button
 					end
 				},
 				{
 					style_id = "title_text",
 					pass_type = "text",
 					text_id = "title_text",
-					content_check_function = function (self)
+					content_check_function = function (content)
 						-- function 30
-						return not self.button_hotspot.disable_button
+						local button_hotspot = content.button_hotspot
+
+						return not button_hotspot.disable_button
 					end
 				},
 				{
@@ -995,9 +1024,11 @@ local function fn_2(arg_27_0, arg_27_1, arg_27_2, arg_27_3)
 					style_id = "title_text_disabled",
 					pass_type = "text",
 					text_id = "title_text",
-					content_check_function = function (self)
+					content_check_function = function (content)
 						-- function 31
-						return self.button_hotspot.disable_button
+						local button_hotspot = content.button_hotspot
+
+						return button_hotspot.disable_button
 					end
 				},
 				{
@@ -1018,20 +1049,20 @@ local function fn_2(arg_27_0, arg_27_1, arg_27_2, arg_27_3)
 			button_hotspot = {
 				allow_multi_hover = true
 			},
-			frame = var_27_2.texture,
-			title_text = arg_27_2 or "n/a",
+			frame = frame_settings.texture,
+			title_text = not not title_text or not not "n/a",
 			background = {
 				uvs = {
 					{
 						0,
-						1 - math.min(arg_27_1[2] / get_atlas_settings_by_texture_name.size[2], 1)
+						1 - math.min(size[2] / background_texture_settings.size[2], 1)
 					},
 					{
-						math.min(arg_27_1[1] / get_atlas_settings_by_texture_name.size[1], 1),
+						math.min(size[1] / background_texture_settings.size[1], 1),
 						1
 					}
 				},
-				texture_id = arg_27_3
+				texture_id = background_texture
 			}
 		},
 		style = {
@@ -1047,9 +1078,9 @@ local function fn_2(arg_27_0, arg_27_1, arg_27_2, arg_27_3)
 					0,
 					10
 				},
-				size = arg_27_1,
-				texture_size = var_27_2.texture_size,
-				texture_sizes = var_27_2.texture_sizes
+				size = size,
+				texture_size = frame_settings.texture_size,
+				texture_sizes = frame_settings.texture_sizes
 			},
 			background = {
 				saturated = true,
@@ -1071,7 +1102,7 @@ local function fn_2(arg_27_0, arg_27_1, arg_27_2, arg_27_3)
 			},
 			title_bg = {
 				size = {
-					arg_27_1[1],
+					size[1],
 					40
 				},
 				color = {
@@ -1082,13 +1113,13 @@ local function fn_2(arg_27_0, arg_27_1, arg_27_2, arg_27_3)
 				},
 				offset = {
 					0,
-					arg_27_1[2] - 38 - var_27_3,
+					size[2] - 38 - frame_width,
 					2
 				}
 			},
 			title_edge = {
 				size = {
-					arg_27_1[1],
+					size[1],
 					5
 				},
 				color = {
@@ -1099,7 +1130,7 @@ local function fn_2(arg_27_0, arg_27_1, arg_27_2, arg_27_3)
 				},
 				offset = {
 					0,
-					arg_27_1[2] - 38 - var_27_3,
+					size[2] - 38 - frame_width,
 					4
 				}
 			},
@@ -1114,8 +1145,8 @@ local function fn_2(arg_27_0, arg_27_1, arg_27_2, arg_27_3)
 				text_color = Colors.get_color_table_with_alpha("font_title", 255),
 				default_text_color = Colors.get_color_table_with_alpha("font_title", 255),
 				offset = {
-					var_27_3 + 5,
-					-var_27_3,
+					frame_width + 5,
+					-frame_width,
 					10
 				}
 			},
@@ -1130,8 +1161,8 @@ local function fn_2(arg_27_0, arg_27_1, arg_27_2, arg_27_3)
 				text_color = Colors.get_color_table_with_alpha("black", 255),
 				default_text_color = Colors.get_color_table_with_alpha("black", 255),
 				offset = {
-					var_27_3 + 5 + 2,
-					-(var_27_3 + 2),
+					frame_width + 5 + 2,
+					-(frame_width + 2),
 					9
 				}
 			},
@@ -1156,8 +1187,8 @@ local function fn_2(arg_27_0, arg_27_1, arg_27_2, arg_27_3)
 					108
 				},
 				offset = {
-					var_27_3 + 5,
-					-var_27_3,
+					frame_width + 5,
+					-frame_width,
 					10
 				}
 			},
@@ -1174,26 +1205,28 @@ local function fn_2(arg_27_0, arg_27_1, arg_27_2, arg_27_3)
 					15
 				},
 				size = {
-					arg_27_1[1] - 10,
-					arg_27_1[2]
+					size[1] - 10,
+					size[2]
 				}
 			}
 		},
-		scenegraph_id = arg_27_0,
+		scenegraph_id = scenegraph_id,
 		offset = {
 			0,
 			0,
 			0
 		}
 	}
+
+	return widget
 end
 
-local tbl_4 = {
+local widgets = {
 	background_fade = UIWidgets.create_simple_texture("options_window_fade_01", "window"),
-	window = UIWidgets.create_frame("window", size, frame, 20),
-	play_button = UIWidgets.create_play_button("play_button", tbl_3.play_button.size, Localize("start_game_window_play"), 34),
-	game_option_1 = fn("game_option_1", tbl_3.game_option_1.size, Localize("start_game_window_mission"), Localize("start_game_window_change_mission"), nil, "game_options_bg_01"),
-	game_option_2 = fn("game_option_2", tbl_3.game_option_2.size, Localize("start_game_window_difficulty"), Localize("start_game_window_change_difficulty"), "difficulty_option_1", "game_options_bg_02"),
+	window = UIWidgets.create_frame("window", window_size, window_frame, 20),
+	play_button = UIWidgets.create_play_button("play_button", scenegraph_definition.play_button.size, Localize("start_game_window_play"), 34),
+	game_option_1 = create_settings_option("game_option_1", scenegraph_definition.game_option_1.size, Localize("start_game_window_mission"), Localize("start_game_window_change_mission"), nil, "game_options_bg_01"),
+	game_option_2 = create_settings_option("game_option_2", scenegraph_definition.game_option_2.size, Localize("start_game_window_difficulty"), Localize("start_game_window_change_difficulty"), "difficulty_option_1", "game_options_bg_02"),
 	game_options_left_chain = UIWidgets.create_tiled_texture("game_options_left_chain", "chain_link_01", {
 		16,
 		19
@@ -1203,28 +1236,28 @@ local tbl_4 = {
 		19
 	})
 }
-local tbl_5 = {
-	additional_option = fn_2("additional_option", tbl_3.additional_option.size, Localize("start_game_window_other_options_title"), "game_options_bg_03"),
-	private_frame = UIWidgets.create_frame("private_button_frame", tbl_3.private_button_frame.size, frame, 1),
-	private_button = UIWidgets.create_default_checkbox_button("private_button", tbl_3.private_button.size, Localize("start_game_window_other_options_private"), 24, {
+local other_options_widgets = {
+	additional_option = create_additional_settings_option("additional_option", scenegraph_definition.additional_option.size, Localize("start_game_window_other_options_title"), "game_options_bg_03"),
+	private_frame = UIWidgets.create_frame("private_button_frame", scenegraph_definition.private_button_frame.size, window_frame, 1),
+	private_button = UIWidgets.create_default_checkbox_button("private_button", scenegraph_definition.private_button.size, Localize("start_game_window_other_options_private"), 24, {
 		title = Localize("start_game_window_other_options_private"),
 		description = Localize("start_game_window_other_options_private_description")
 	}),
-	host_frame = UIWidgets.create_frame("host_button_frame", tbl_3.host_button_frame.size, frame, 1),
-	host_button = UIWidgets.create_default_checkbox_button("host_button", tbl_3.host_button.size, Localize("start_game_window_other_options_always_host"), 24, {
+	host_frame = UIWidgets.create_frame("host_button_frame", scenegraph_definition.host_button_frame.size, window_frame, 1),
+	host_button = UIWidgets.create_default_checkbox_button("host_button", scenegraph_definition.host_button.size, Localize("start_game_window_other_options_always_host"), 24, {
 		title = Localize("start_game_window_other_options_always_host"),
 		description = Localize("start_game_window_other_options_always_host_description")
 	}),
-	strict_matchmaking_frame = UIWidgets.create_frame("strict_matchmaking_button_frame", tbl_3.strict_matchmaking_button_frame.size, frame, 1),
-	strict_matchmaking_button = UIWidgets.create_default_checkbox_button("strict_matchmaking_button", tbl_3.strict_matchmaking_button.size, Localize("start_game_window_other_options_strict_matchmaking"), 24, {
+	strict_matchmaking_frame = UIWidgets.create_frame("strict_matchmaking_button_frame", scenegraph_definition.strict_matchmaking_button_frame.size, window_frame, 1),
+	strict_matchmaking_button = UIWidgets.create_default_checkbox_button("strict_matchmaking_button", scenegraph_definition.strict_matchmaking_button.size, Localize("start_game_window_other_options_strict_matchmaking"), 24, {
 		title = Localize("start_game_window_other_options_strict_matchmaking"),
 		description = Localize("start_game_window_other_options_strict_matchmaking_description")
 	})
 }
 
 return {
-	widgets = tbl_4,
-	other_options_widgets = tbl_5,
-	scenegraph_definition = tbl_3,
-	animation_definitions = tbl_2
+	widgets = widgets,
+	other_options_widgets = other_options_widgets,
+	scenegraph_definition = scenegraph_definition,
+	animation_definitions = animation_definitions
 }

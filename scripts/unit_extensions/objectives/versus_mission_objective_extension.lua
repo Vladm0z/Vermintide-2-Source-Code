@@ -11,56 +11,58 @@ VersusMissionObjectiveExtension.init = function (self, ...)
 	self._percentage = 0
 end
 
-VersusMissionObjectiveExtension._set_objective_data = function (self, arg_2_1)
+VersusMissionObjectiveExtension._set_objective_data = function (self, objective_data)
 	-- function 2
-	local mission = GameModeSettings.versus.objectives.mission
-	local score_for_completion = arg_2_1.score_for_completion
+	local mission_default_settings = GameModeSettings.versus.objectives.mission
+	local score_for_completion = objective_data.score_for_completion
 
-	score_for_completion = score_for_completion or mission.score_for_completion
+	score_for_completion = not not score_for_completion or not not mission_default_settings.score_for_completion
 	self._score_for_completion = score_for_completion
 
-	local time_for_completion = arg_2_1.time_for_completion
+	local time_for_completion = objective_data.time_for_completion
 
-	time_for_completion = time_for_completion or mission.time_for_completion
+	time_for_completion = not not time_for_completion or not not mission_default_settings.time_for_completion
 	self._time_for_completion = time_for_completion
 
-	local on_last_leaf_complete_sound_event = arg_2_1.on_last_leaf_complete_sound_event
+	local on_last_leaf_complete_sound_event = objective_data.on_last_leaf_complete_sound_event
 
-	on_last_leaf_complete_sound_event = on_last_leaf_complete_sound_event or mission.on_last_leaf_complete_sound_event
+	on_last_leaf_complete_sound_event = not not on_last_leaf_complete_sound_event or not not mission_default_settings.on_last_leaf_complete_sound_event
 	self._on_last_leaf_complete_sound_event = on_last_leaf_complete_sound_event
 
-	local on_leaf_complete_sound_event = arg_2_1.on_leaf_complete_sound_event
+	local on_leaf_complete_sound_event = objective_data.on_leaf_complete_sound_event
 
-	on_leaf_complete_sound_event = on_leaf_complete_sound_event or mission.on_leaf_complete_sound_event
+	on_leaf_complete_sound_event = not not on_leaf_complete_sound_event or not not mission_default_settings.on_leaf_complete_sound_event
 	self._on_leaf_complete_sound_event = on_leaf_complete_sound_event
 
-	local on_section_progress_sound_event = arg_2_1.on_section_progress_sound_event
+	local on_section_progress_sound_event = objective_data.on_section_progress_sound_event
 
-	on_section_progress_sound_event = on_section_progress_sound_event or mission.on_section_progress_sound_event
+	on_section_progress_sound_event = not not on_section_progress_sound_event or not not mission_default_settings.on_section_progress_sound_event
 	self._on_section_progress_sound_event = on_section_progress_sound_event
-	self._mission_name = arg_2_1.mission_name
+	self._mission_name = objective_data.mission_name
 end
 
-VersusMissionObjectiveExtension._activate = function (arg_3_0)
+VersusMissionObjectiveExtension._activate = function (self)
 	-- function 3
 	return
 end
 
-VersusMissionObjectiveExtension._deactivate = function (arg_4_0)
+VersusMissionObjectiveExtension._deactivate = function (self)
 	-- function 4
 	return
 end
 
-VersusMissionObjectiveExtension._server_update = function (self, arg_5_1, arg_5_2)
+VersusMissionObjectiveExtension._server_update = function (self, dt, t)
 	-- function 5
-	if self._mission_system.completed_missions[self._mission_name] ~= nil then
+	local missions = self._mission_system.completed_missions
+
+	if missions[self._mission_name] ~= nil then
 		self._percentage = 1
 
 		self:server_set_value(self._percentage)
 	end
 end
 
-VersusMissionObjectiveExtension._client_update = function (self, arg_6_1, arg_6_2)
+VersusMissionObjectiveExtension._client_update = function (self, dt, t)
 	-- function 6
 	self._percentage = self:client_get_value()
 end

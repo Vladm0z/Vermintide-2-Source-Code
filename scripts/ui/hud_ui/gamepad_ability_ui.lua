@@ -1,18 +1,18 @@
 -- chunkname: @scripts/ui/hud_ui/gamepad_ability_ui.lua
 
-local var_0_0 = local_require("scripts/ui/hud_ui/gamepad_ability_ui_definitions")
-local scenegraph_definition = var_0_0.scenegraph_definition
-local create_ability_charges_widget = var_0_0.create_ability_charges_widget
+local definitions = local_require("scripts/ui/hud_ui/gamepad_ability_ui_definitions")
+local scenegraph_definition = definitions.scenegraph_definition
+local create_ability_charges_widget = definitions.create_ability_charges_widget
 
 GamePadAbilityUI = class(GamePadAbilityUI)
 
-GamePadAbilityUI.init = function (self, arg_1_1, arg_1_2)
+GamePadAbilityUI.init = function (self, parent, ingame_ui_context)
 	-- function 1
-	self._parent = arg_1_1
-	self._ui_renderer = arg_1_2.ui_renderer
-	self.ingame_ui = arg_1_2.ingame_ui
-	self._input_manager = arg_1_2.input_manager
-	self._player = arg_1_2.player
+	self._parent = parent
+	self._ui_renderer = ingame_ui_context.ui_renderer
+	self.ingame_ui = ingame_ui_context.ingame_ui
+	self._input_manager = ingame_ui_context.input_manager
+	self._player = ingame_ui_context.player
 	self._render_settings = {
 		snap_pixel_positions = true
 	}
@@ -21,13 +21,15 @@ GamePadAbilityUI.init = function (self, arg_1_1, arg_1_2)
 
 	self._ability_charge_widgets = {}
 
-	Managers.state.event:register(self, "input_changed", "event_input_changed")
+	local event_manager = Managers.state.event
+
+	event_manager:register(self, "input_changed", "event_input_changed")
 end
 
 GamePadAbilityUI._create_ui_elements = function (self)
 	-- function 2
 	self._ui_scenegraph = UISceneGraph.init_scenegraph(scenegraph_definition)
-	self._widgets, self._widgets_by_name = UIUtils.create_widgets(var_0_0.widget_definitions)
+	self._widgets, self._widgets_by_name = UIUtils.create_widgets(definitions.widget_definitions)
 
 	UIRenderer.clear_scenegraph_queue(self._ui_renderer)
 	self:event_input_changed()
@@ -35,17 +37,18 @@ end
 
 GamePadAbilityUI._setup_activated_ability = function (self)
 	-- function 3
-	local player_unit = self._player.player_unit
+	local player = self._player
+	local player_unit = player.player_unit
 
 	if not player_unit then
 		return
 	end
 
-	local extension = ScriptUnit.extension(player_unit, "career_system")
-	local get_activated_ability_data = extension:get_activated_ability_data()
-	local career_index = extension:career_index()
+	local career_extension = ScriptUnit.extension(player_unit, "career_system")
+	local ability_data = career_extension:get_activated_ability_data()
+	local career_index = career_extension:career_index()
 
-	if not (not get_activated_ability_data and career_index) then
+	if not ability_data or not career_index then
 		return
 	end
 
@@ -55,15 +58,16 @@ end
 
 GamePadAbilityUI._sync_ability_cooldown = function (self)
 	-- function 4
-	local player_unit = self._player.player_unit
+	local player = self._player
+	local player_unit = player.player_unit
 
 	if not player_unit then
 		return
 	end
 
-	local extension = ScriptUnit.extension(player_unit, "career_system")
-	local current_ability_cooldown, var_4_3 = extension:current_ability_cooldown()
-	local career_index = extension:career_index()
+	local career_extension = ScriptUnit.extension(player_unit, "career_system")
+	local ability_cooldown, max_cooldown = career_extension:current_ability_cooldown()
+	local career_index = career_extension:career_index()
 
 	if self._career_index ~= career_index then
 		self._initialized = false
@@ -71,136 +75,149 @@ GamePadAbilityUI._sync_ability_cooldown = function (self)
 		return
 	end
 
-	self._ability_usable = extension:can_use_activated_ability()
+	self._ability_usable = career_extension:can_use_activated_ability()
 
-	if not current_ability_cooldown then
-		local num = current_ability_cooldown / var_4_3
+	if ability_cooldown then
+		local cooldown_fraction = ability_cooldown / max_cooldown
+		local update = cooldown_fraction ~= self._current_cooldown_fraction
 
-		if not (num ~= self._current_cooldown_fraction) then
-			self:_set_ability_cooldown_state(num, not self._current_cooldown_fraction)
+		if update then
+			self:_set_ability_cooldown_state(cooldown_fraction, not self._current_cooldown_fraction)
 		end
 	end
 end
 
 GamePadAbilityUI._update_thornsister_passive = function (self)
 	-- function 5
-	local player_unit = self._player.player_unit
+	local player = self._player
+	local player_unit = player.player_unit
 
 	if not player_unit then
 		return
 	end
 
-	local extension = ScriptUnit.extension(player_unit, "career_system")
-	local _widgets_by_name = self._widgets_by_name
-	local thornsister_passive = _widgets_by_name.thornsister_passive
-	local content = thornsister_passive.content
-	local get_extra_ability_uses, var_5_6 = extension:get_extra_ability_uses()
-	local flag = get_extra_ability_uses > 0
+	local career_extension = ScriptUnit.extension(player_unit, "career_system")
+	local widgets_by_name = self._widgets_by_name
+	local thornsister_widget = widgets_by_name.thornsister_passive
+	local thornsister_content = thornsister_widget.content
+	local current_extra_uses, max_extra_uses = career_extension:get_extra_ability_uses()
+	local has_thornsister_passive = current_extra_uses > 0
 
-	if content.is_active ~= flag then
-		content.is_active = flag
+	if thornsister_content.is_active ~= has_thornsister_passive then
+		thornsister_content.is_active = has_thornsister_passive
 
-		self:_set_widget_dirty(thornsister_passive)
+		self:_set_widget_dirty(thornsister_widget)
 
-		local ability = _widgets_by_name.ability
+		local ability_widget = widgets_by_name.ability
+		local ability_content = ability_widget.content
 
-		ability.content.hide_effect = flag
+		ability_content.hide_effect = has_thornsister_passive
 
-		self:_set_widget_dirty(ability)
+		self:_set_widget_dirty(ability_widget)
 
 		return true
 	end
 end
 
-GamePadAbilityUI._set_ability_activated = function (self, arg_6_1)
+GamePadAbilityUI._set_ability_activated = function (self, activated)
 	-- function 6
-	local ability = self._widgets_by_name.ability
-	local content = ability.content
-	local style = ability.style
+	local widget = self._widgets_by_name.ability
+	local content = widget.content
+	local style = widget.style
 
-	ability.content.activated = arg_6_1
-	self._ability_activated = arg_6_1
+	widget.content.activated = activated
+	self._ability_activated = activated
 end
 
-GamePadAbilityUI._set_ability_cooldown_state = function (self, arg_7_1, arg_7_2)
+GamePadAbilityUI._set_ability_cooldown_state = function (self, cooldown_fraction, initialize)
 	-- function 7
-	self._current_cooldown_fraction = arg_7_1
+	self._current_cooldown_fraction = cooldown_fraction
 
-	local flag = arg_7_1 ~= 0
-	local _ability_usable = self._ability_usable
-	local ability = self._widgets_by_name.ability
+	local on_cooldown = cooldown_fraction ~= 0
+	local usable = self._ability_usable
+	local widget = self._widgets_by_name.ability
 
-	if not (not ability.content.on_cooldown and flag or _ability_usable) then
-		local style = ability.style
+	if widget.content.on_cooldown and not on_cooldown and not usable then
+		local style = widget.style
 
 		style.input_text.text_color[1] = 0
 		style.input_text_shadow.text_color[1] = 0
 	end
 
-	ability.content.on_cooldown = flag
-	ability.content.usable = _ability_usable
+	widget.content.on_cooldown = on_cooldown
+	widget.content.usable = usable
 
-	self:_set_widget_dirty(ability)
+	self:_set_widget_dirty(widget)
 	self:set_dirty()
 end
 
 GamePadAbilityUI.destroy = function (self)
 	-- function 8
-	Managers.state.event:unregister("input_changed", self)
+	local event_manager = Managers.state.event
+
+	event_manager:unregister("input_changed", self)
 	self:set_visible(false)
 	print("[GamePadAbilityUI] - Destroy")
 end
 
-GamePadAbilityUI.set_visible = function (self, arg_9_1)
+GamePadAbilityUI.set_visible = function (self, visible)
 	-- function 9
-	self._is_visible = arg_9_1
+	self._is_visible = visible
 
-	self:_set_elements_visible(arg_9_1)
+	self:_set_elements_visible(visible)
 end
 
-GamePadAbilityUI._set_elements_visible = function (self, arg_10_1)
+GamePadAbilityUI._set_elements_visible = function (self, visible)
 	-- function 10
-	local _ui_renderer = self._ui_renderer
+	local ui_renderer = self._ui_renderer
 
-	for i, v in ipairs(self._widgets) do
-		UIRenderer.set_element_visible(_ui_renderer, v.element, arg_10_1)
+	for _, widget in ipairs(self._widgets) do
+		UIRenderer.set_element_visible(ui_renderer, widget.element, visible)
 	end
 
-	self._retained_elements_visible = arg_10_1
+	self._retained_elements_visible = visible
 
 	self:set_dirty()
 end
 
 GamePadAbilityUI._handle_gamepad_activity = function (self)
 	-- function 11
-	local is_device_active = Managers.input:is_device_active("gamepad")
-	local get_most_recent_device = Managers.input:get_most_recent_device()
-	local flag = self.gamepad_active_last_frame == nil or not is_device_active or get_most_recent_device ~= self._most_recent_device
+	local gamepad_active = Managers.input:is_device_active("gamepad")
+	local most_recent_device = Managers.input:get_most_recent_device()
+	local force_update = (self.gamepad_active_last_frame == nil or not not gamepad_active) and most_recent_device ~= self._most_recent_device
 
-	if not is_device_active then
-		if not self.gamepad_active_last_frame and not flag then
+	if gamepad_active then
+		if not self.gamepad_active_last_frame or force_update then
 			self.gamepad_active_last_frame = true
 
 			self:event_input_changed()
 		end
-	elseif self.gamepad_active_last_frame or not flag then
+	elseif self.gamepad_active_last_frame or force_update then
 		self.gamepad_active_last_frame = false
 
 		self:event_input_changed()
 	end
 
-	self._most_recent_device = get_most_recent_device
+	self._most_recent_device = most_recent_device
 end
 
 GamePadAbilityUI._handle_gamepad = function (self)
 	-- function 12
-	local _handle_active_ability = self:_handle_active_ability()
+	local active_career_skill = self:_handle_active_ability()
 	local is_device_active = Managers.input:is_device_active("gamepad")
 
-	is_device_active = is_device_active or IS_XB1
+	if not is_device_active then
+		-- Nothing
+	end
 
-	if not is_device_active and UISettings.use_gamepad_hud_layout ~= "never" and UISettings.use_gamepad_hud_layout == "always" and not _handle_active_ability then
-		if not self._retained_elements_visible then
+	is_device_active = IS_XB1
+
+	local gamepad_active = is_device_active
+
+	::label_12_0::
+
+	if (not gamepad_active or UISettings.use_gamepad_hud_layout == "never") and UISettings.use_gamepad_hud_layout ~= "always" or active_career_skill then
+		if self._retained_elements_visible then
 			self:_set_elements_visible(false)
 		end
 
@@ -215,9 +232,11 @@ GamePadAbilityUI._handle_gamepad = function (self)
 	end
 end
 
-GamePadAbilityUI.update = function (self, arg_13_1, arg_13_2)
+GamePadAbilityUI.update = function (self, dt, t)
 	-- function 13
-	if not self:_handle_gamepad() then
+	local should_render = self:_handle_gamepad()
+
+	if not should_render then
 		return
 	end
 
@@ -226,53 +245,53 @@ GamePadAbilityUI.update = function (self, arg_13_1, arg_13_2)
 	if not self._initialized then
 		self:_setup_activated_ability()
 	else
-		local flag = false
+		local dirty = false
 
-		if not self:_update_thornsister_passive() then
-			flag = true
+		if self:_update_thornsister_passive() then
+			dirty = true
 		end
 
-		if self._current_cooldown_fraction == 0 or not self._ability_usable then
-			flag = self:_update_ability_animations(arg_13_1, arg_13_2)
+		if self._current_cooldown_fraction == 0 or self._ability_usable then
+			dirty = self:_update_ability_animations(dt, t)
 		end
 
-		if not self:_update_ability_charges_widgets(arg_13_1, arg_13_2) then
-			flag = true
+		if self:_update_ability_charges_widgets(dt, t) then
+			dirty = true
 		end
 
-		if not flag then
+		if dirty then
 			self:set_dirty()
 		end
 
 		self:_sync_ability_cooldown()
 		self:_handle_resolution_modified()
 		self:_update_muneric_ui_ability_cooldown()
-		self:draw(arg_13_1)
+		self:draw(dt)
 	end
 end
 
-GamePadAbilityUI._handle_active_ability = function (arg_14_0)
+GamePadAbilityUI._handle_active_ability = function (self)
 	-- function 14
-	local local_player = Managers.player:local_player()
+	local player = Managers.player:local_player()
 
-	if not local_player then
+	if not player then
 		return false
 	end
 
-	local player_unit = local_player.player_unit
+	local player_unit = player.player_unit
 
 	if not Unit.alive(player_unit) then
 		return false
 	end
 
-	local extension = ScriptUnit.extension(player_unit, "inventory_system")
+	local inventory_ext = ScriptUnit.extension(player_unit, "inventory_system")
 
-	return not extension and extension:get_wielded_slot_name() == "slot_career_skill_weapon"
+	return not not inventory_ext and inventory_ext:get_wielded_slot_name() == "slot_career_skill_weapon"
 end
 
 GamePadAbilityUI._handle_resolution_modified = function (self)
 	-- function 15
-	if not RESOLUTION_LOOKUP.modified then
+	if RESOLUTION_LOOKUP.modified then
 		UIUtils.mark_dirty(self._widgets)
 
 		if not table.is_empty(self._ability_charge_widgets) then
@@ -283,7 +302,7 @@ GamePadAbilityUI._handle_resolution_modified = function (self)
 	end
 end
 
-GamePadAbilityUI.draw = function (self, arg_16_1)
+GamePadAbilityUI.draw = function (self, dt)
 	-- function 16
 	if not self._is_visible then
 		return
@@ -293,21 +312,21 @@ GamePadAbilityUI.draw = function (self, arg_16_1)
 		return
 	end
 
-	local _ui_renderer = self._ui_renderer
-	local _ui_scenegraph = self._ui_scenegraph
-	local _render_settings = self._render_settings
+	local ui_renderer = self._ui_renderer
+	local ui_scenegraph = self._ui_scenegraph
+	local render_settings = self._render_settings
 
-	UIRenderer.begin_pass(_ui_renderer, _ui_scenegraph, FAKE_INPUT_SERVICE, arg_16_1, nil, self._render_settings)
+	UIRenderer.begin_pass(ui_renderer, ui_scenegraph, FAKE_INPUT_SERVICE, dt, nil, self._render_settings)
 
-	for i, v in ipairs(self._widgets) do
-		UIRenderer.draw_widget(_ui_renderer, v)
+	for _, widget in ipairs(self._widgets) do
+		UIRenderer.draw_widget(ui_renderer, widget)
 	end
 
-	if not (not self._ability_charge_widgets and table.is_empty(self._ability_charge_widgets) or not (self._ability_cooldowns > 1)) then
-		UIRenderer.draw_all_widgets(_ui_renderer, self._ability_charge_widgets)
+	if self._ability_charge_widgets and not table.is_empty(self._ability_charge_widgets) and self._ability_cooldowns > 1 then
+		UIRenderer.draw_all_widgets(ui_renderer, self._ability_charge_widgets)
 	end
 
-	UIRenderer.end_pass(_ui_renderer)
+	UIRenderer.end_pass(ui_renderer)
 
 	self._dirty = false
 end
@@ -317,229 +336,262 @@ GamePadAbilityUI.set_dirty = function (self)
 	self._dirty = true
 end
 
-GamePadAbilityUI._set_widget_dirty = function (arg_18_0, arg_18_1)
+GamePadAbilityUI._set_widget_dirty = function (self, widget)
 	-- function 18
-	arg_18_1.element.dirty = true
+	widget.element.dirty = true
 end
 
 GamePadAbilityUI.event_input_changed = function (self)
 	-- function 19
-	local count = #InventorySettings.slots
-	local flag
+	local inventory_slots = InventorySettings.slots
+	local num_inventory_slots = #inventory_slots
+	local input_manager = self._input_manager
+	local gamepad_active = input_manager:is_device_active("gamepad")
+	local str
 
-	flag = not self._input_manager:is_device_active("gamepad") and "ability" and "action_career"
+	if gamepad_active then
+		str = "ability"
 
-	local ability = self._widgets_by_name.ability
+		goto label_19_0
+	end
 
-	self:_set_input(ability, flag)
-	self:_set_widget_dirty(ability)
+	str = "action_career"
+
+	local input_action = str
+
+	::label_19_0::
+
+	local widget = self._widgets_by_name.ability
+
+	self:_set_input(widget, input_action)
+	self:_set_widget_dirty(widget)
 	self:set_dirty()
 end
 
-GamePadAbilityUI._set_input = function (self, arg_20_1, arg_20_2)
+GamePadAbilityUI._set_input = function (self, widget, input_action)
 	-- function 20
-	local _get_input_texture_data, var_20_1, var_20_2 = self:_get_input_texture_data(arg_20_2)
+	local texture_data, input_text, prefix_text = self:_get_input_texture_data(input_action)
+	local length
 
-	if not (not var_20_1 and Utf8.length(var_20_1)) then
-		local num = 0
+	if input_text then
+		length = Utf8.length(input_text)
+
+		if not length then
+			-- Nothing
+		end
 	end
 
-	local num_2 = 40
-	local style = arg_20_1.style
-	local content = arg_20_1.content
-	local input_text = style.input_text
-	local _ui_renderer = self._ui_renderer
+	length = 0
 
-	content.input_action = arg_20_2
+	local text_length = length
 
-	local is_device_active = Managers.input:is_device_active("gamepad")
+	::label_20_0::
 
-	if not _get_input_texture_data and not is_device_active then
-		content.activate_ability_id = _get_input_texture_data.texture
+	local max_length = 40
+	local style = widget.style
+	local content = widget.content
+	local input_style = style.input_text
+	local ui_renderer = self._ui_renderer
+
+	content.input_action = input_action
+
+	local gamepad_active = Managers.input:is_device_active("gamepad")
+
+	if texture_data and gamepad_active then
+		local texture = texture_data.texture
+
+		content.activate_ability_id = texture
 		content.input_text = ""
 
-		local texture_size = style.activate_ability.texture_size
-		local size = _get_input_texture_data.size
+		local activate_ability_style = style.activate_ability
+		local texture_size = activate_ability_style.texture_size
+		local size = texture_data.size
 
 		texture_size[1] = size[1]
 		texture_size[2] = size[2]
-	elseif not var_20_1 then
-		content.input_text = UIRenderer.crop_text_width(_ui_renderer, var_20_1, num_2, input_text)
+	elseif input_text then
+		content.input_text = UIRenderer.crop_text_width(ui_renderer, input_text, max_length, input_style)
 		content.activate_ability_id = nil
 	end
 end
 
-GamePadAbilityUI._get_input_texture_data = function (self, arg_21_1)
+GamePadAbilityUI._get_input_texture_data = function (self, input_action)
 	-- function 21
-	local _input_manager = self._input_manager
-	local get_service = _input_manager:get_service("Player")
-	local is_device_active = _input_manager:is_device_active("gamepad")
-	local PLATFORM = PLATFORM
+	local input_manager = self._input_manager
+	local input_service = input_manager:get_service("Player")
+	local gamepad_active = input_manager:is_device_active("gamepad")
+	local platform = PLATFORM
 
-	if not (not IS_XB1 and not GameSettingsDevelopment.allow_keyboard_mouse and is_device_active) then
-		PLATFORM = "win32"
-	elseif not IS_WINDOWS and not is_device_active then
-		PLATFORM = "xb1"
+	if IS_XB1 and GameSettingsDevelopment.allow_keyboard_mouse and not gamepad_active then
+		platform = "win32"
+	elseif IS_WINDOWS and gamepad_active then
+		platform = "xb1"
 	end
 
-	local get_keymapping = get_service:get_keymapping(arg_21_1, PLATFORM)
-	local var_21_5 = get_keymapping[1]
-	local var_21_6 = get_keymapping[2]
-	local var_21_7 = get_keymapping[3]
-	local var_21_8
+	local keymap_binding = input_service:get_keymapping(input_action, platform)
+	local device_type = keymap_binding[1]
+	local key_index = keymap_binding[2]
+	local key_action_type = keymap_binding[3]
+	local prefix_text
 
-	if var_21_7 == "held" then
-		var_21_8 = "matchmaking_prefix_hold"
+	if key_action_type == "held" then
+		prefix_text = "matchmaking_prefix_hold"
 	end
 
-	if var_21_6 ~= UNASSIGNED_KEY then
-		if var_21_5 == "keyboard" then
-			if type(var_21_6) == "number" then
-				local var_21_9
-				local button_locale_name = Keyboard.button_locale_name(var_21_6)
+	if key_index ~= UNASSIGNED_KEY then
+		if device_type == "keyboard" then
+			if type(key_index) == "number" then
+				local var_21_0
+				local button_locale_name = Keyboard.button_locale_name(key_index)
 
-				button_locale_name = button_locale_name or Keyboard.button_name(var_21_6)
+				button_locale_name = not not button_locale_name or not not Keyboard.button_name(key_index)
 
-				return var_21_9, button_locale_name, var_21_8
+				return var_21_0, button_locale_name, prefix_text
 			else
-				return nil, Localize(var_21_6), var_21_8
+				return nil, Localize(key_index), prefix_text
 			end
-		elseif var_21_5 == "mouse" then
-			return ButtonTextureByName(var_21_5 .. "_" .. var_21_6, PLATFORM), Mouse.button_name(var_21_6), var_21_8
-		elseif var_21_5 == "gamepad" then
-			local button_name = Pad1.button_name(var_21_6)
+		elseif device_type == "mouse" then
+			local button_texture_data = ButtonTextureByName(device_type .. "_" .. key_index, platform)
 
-			return ButtonTextureByName(button_name, PLATFORM), button_name, var_21_8
+			return button_texture_data, Mouse.button_name(key_index), prefix_text
+		elseif device_type == "gamepad" then
+			local button_name = Pad1.button_name(key_index)
+			local button_texture_data = ButtonTextureByName(button_name, platform)
+
+			return button_texture_data, button_name, prefix_text
 		end
 	end
 
 	return nil, ""
 end
 
-GamePadAbilityUI._update_ability_animations = function (self, arg_22_1, arg_22_2)
+GamePadAbilityUI._update_ability_animations = function (self, dt, t)
 	-- function 22
 	if not self._is_visible then
 		return false
 	end
 
-	local ability = self._widgets_by_name.ability
-	local style = ability.style
-	local num = 0.5 + 0.5 * math.sin(arg_22_2 * 5)
+	local widget = self._widgets_by_name.ability
+	local style = widget.style
+	local pulse_progress = 0.5 + 0.5 * math.sin(t * 5)
 
-	style.input_text.text_color[1] = 100 + num * 155
-	style.input_text_shadow.text_color[1] = 100 + num * 155
+	style.input_text.text_color[1] = 100 + pulse_progress * 155
+	style.input_text_shadow.text_color[1] = 100 + pulse_progress * 155
 
-	self:_set_widget_dirty(ability)
+	self:_set_widget_dirty(widget)
 
 	return true
 end
 
-GamePadAbilityUI.set_alpha = function (self, arg_23_1)
+GamePadAbilityUI.set_alpha = function (self, alpha)
 	-- function 23
-	for k, v in pairs(self._widgets) do
-		self:_set_widget_dirty(v)
+	for widget_index, widget in pairs(self._widgets) do
+		self:_set_widget_dirty(widget)
 	end
 
-	self._render_settings.alpha_multiplier = arg_23_1
+	self._render_settings.alpha_multiplier = alpha
 
 	self:set_dirty()
 end
 
 GamePadAbilityUI._update_muneric_ui_ability_cooldown = function (self)
 	-- function 24
-	local local_player = Managers.player:local_player()
+	local player = Managers.player:local_player()
 
-	if not local_player then
+	if not player then
 		return
 	end
 
-	local player_unit = local_player.player_unit
+	local player_unit = player.player_unit
 
 	if not ALIVE[player_unit] then
 		return
 	end
 
-	local ability = self._widgets_by_name.ability
+	local widget = self._widgets_by_name.ability
 
-	if not ability then
+	if not widget then
 		return
 	end
 
-	local extension = ScriptUnit.extension(player_unit, "career_system")
-	local can_use_activated_ability = extension:can_use_activated_ability(1)
+	local career_extension = ScriptUnit.extension(player_unit, "career_system")
+	local can_use_ability = career_extension:can_use_activated_ability(1)
 
-	ability.content.can_use_ability = can_use_activated_ability
+	widget.content.can_use_ability = can_use_ability
 
-	if not can_use_activated_ability then
+	if can_use_ability then
 		return
 	end
 
-	local current_ability_cooldown, var_24_6 = extension:current_ability_cooldown()
+	local ability_cooldown, max_cooldown = career_extension:current_ability_cooldown()
 
-	ability.content.ability_cooldown = UIUtils.format_time(current_ability_cooldown)
+	widget.content.ability_cooldown = UIUtils.format_time(ability_cooldown)
 
-	self:_set_widget_dirty(ability)
+	self:_set_widget_dirty(widget)
 end
 
-GamePadAbilityUI._update_ability_charges_widgets = function (self, arg_25_1, arg_25_2)
+GamePadAbilityUI._update_ability_charges_widgets = function (self, dt, t)
 	-- function 25
-	local flag = false
-	local player_unit = self._player.player_unit
+	local dirty = false
+	local player = self._player
+	local player_unit = player.player_unit
 
 	if not player_unit then
-		return flag
+		return dirty
 	end
 
-	local extension = ScriptUnit.extension(player_unit, "career_system")
-	local get_number_of_ability_cooldowns = extension:get_number_of_ability_cooldowns()
+	local career_extension = ScriptUnit.extension(player_unit, "career_system")
+	local ability_cooldowns = career_extension:get_number_of_ability_cooldowns()
 
-	if self._ability_cooldowns ~= get_number_of_ability_cooldowns then
+	if self._ability_cooldowns ~= ability_cooldowns then
 		if not self._ability_cooldowns then
-			for i = 1, get_number_of_ability_cooldowns do
+			for i = 1, ability_cooldowns do
 				if not self._ability_charge_widgets[i] then
-					local tbl = {
+					local offset = {
 						0,
 						(i - 1) * 22,
 						1
 					}
-					local create_ability_charges_widget = UIWidgets.create_ability_charges_widget("ability_charges", nil, tbl)
-					local var_25_6 = UIWidget.init(create_ability_charges_widget)
+					local widget_definition = UIWidgets.create_ability_charges_widget("ability_charges", nil, offset)
+					local widget = UIWidget.init(widget_definition)
 
-					self._ability_charge_widgets[#self._ability_charge_widgets + 1] = var_25_6
+					self._ability_charge_widgets[#self._ability_charge_widgets + 1] = widget
 				end
 			end
-		elseif not (not self._ability_cooldowns and not (get_number_of_ability_cooldowns < self._ability_cooldowns)) then
+		elseif self._ability_cooldowns and ability_cooldowns < self._ability_cooldowns then
 			self._ability_charge_widgets[#self._ability_charge_widgets] = nil
-		elseif not (not self._ability_cooldowns and not (get_number_of_ability_cooldowns > self._ability_cooldowns)) then
-			local num = get_number_of_ability_cooldowns - self._ability_cooldowns
+		elseif self._ability_cooldowns and ability_cooldowns > self._ability_cooldowns then
+			local difference = ability_cooldowns - self._ability_cooldowns
 
-			for j = 1, num do
-				local tbl_2 = {
+			for i = 1, difference do
+				local offset = {
 					0,
-					(self._ability_cooldowns + (j - 1)) * 22,
+					(self._ability_cooldowns + (i - 1)) * 22,
 					1
 				}
-				local create_ability_charges_widget_2 = UIWidgets.create_ability_charges_widget("ability_charges", nil, tbl_2)
-				local var_25_10 = UIWidget.init(create_ability_charges_widget_2)
+				local widget_definition = UIWidgets.create_ability_charges_widget("ability_charges", nil, offset)
+				local widget = UIWidget.init(widget_definition)
 
-				self._ability_charge_widgets[#self._ability_charge_widgets + 1] = var_25_10
+				self._ability_charge_widgets[#self._ability_charge_widgets + 1] = widget
 			end
 		end
 
-		self._ability_cooldowns = get_number_of_ability_cooldowns
-		flag = true
+		self._ability_cooldowns = ability_cooldowns
+		dirty = true
 	end
 
-	local num_charges_ready = extension:num_charges_ready()
+	local charges_ready = career_extension:num_charges_ready()
 
-	if self._charges_ready ~= num_charges_ready then
-		for k = self._ability_cooldowns, 1, -1 do
-			self._ability_charge_widgets[k].content.ready = num_charges_ready == 0 or k <= num_charges_ready
+	if self._charges_ready ~= charges_ready then
+		for i = self._ability_cooldowns, 1, -1 do
+			local w = self._ability_charge_widgets[i]
+
+			w.content.ready = charges_ready ~= 0 and i <= charges_ready
 		end
 
-		self._charges_ready = num_charges_ready
-		flag = true
+		self._charges_ready = charges_ready
+		dirty = true
 	end
 
-	return flag
+	return dirty
 end

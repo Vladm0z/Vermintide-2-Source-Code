@@ -1,6 +1,8 @@
 -- chunkname: @scripts/settings/dlcs/steak/steak_unit_variation_settings.lua
 
-DLCSettings.steak.unit_variation_settings = {
+local settings = DLCSettings.steak
+
+settings.unit_variation_settings = {
 	beastmen_minotaur = {
 		materials_enabled_from_start = {
 			"skin_tint",

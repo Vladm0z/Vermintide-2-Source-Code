@@ -2,7 +2,7 @@
 
 local ItemMasterList = ItemMasterList
 
-ItemMasterList = ItemMasterList or Script.new_map(4096)
+ItemMasterList = not not ItemMasterList or not not Script.new_map(4096)
 ItemMasterList = ItemMasterList
 ItemMasterList.lamp_oil = {
 	temporary_template = "lamp_oil",

@@ -2,222 +2,224 @@
 
 local UIWidgets = UIWidgets
 
-UIWidgets = UIWidgets or {}
+UIWidgets = not not UIWidgets or not not {}
 UIWidgets = UIWidgets
 
-local tbl = {
+local health_bar_size = {
 	92,
 	8
 }
-local tbl_2 = {
-	-(tbl[1] / 2),
+local health_bar_offset = {
+	-(health_bar_size[1] / 2),
 	-25,
 	0
 }
-local tbl_3 = {
+local items_offset = {
 	-15,
 	-70
 }
 
-local function fn(arg_1_0)
+local function pulsate_glow(should_pulsate)
 	-- function 1
-	if not arg_1_0 then
+	if not should_pulsate then
 		return 255
 	end
 
 	return 195 + 60 * math.sin(5 * Managers.time:time("ui"))
 end
 
-UIWidgets.create_deus_player_status_portrait = function (arg_2_0, arg_2_1, arg_2_2, arg_2_3)
+UIWidgets.create_deus_player_status_portrait = function (scenegraph_id, frame_settings_name, level_text, retained_mode)
 	-- function 2
-	return {
+	local widget = {
 		element = {
 			passes = {
 				{
 					pass_type = "texture",
 					style_id = "character_portrait",
 					texture_id = "character_portrait",
-					retained_mode = arg_2_3
+					retained_mode = retained_mode
 				},
 				{
 					pass_type = "texture",
 					style_id = "host_icon",
 					texture_id = "host_icon",
-					retained_mode = arg_2_3,
-					content_check_function = function (self)
+					retained_mode = retained_mode,
+					content_check_function = function (content)
 						-- function 3
-						return self.is_host
+						return content.is_host
 					end
 				},
 				{
 					pass_type = "texture",
 					style_id = "hp_bar_bg",
 					texture_id = "hp_bar_bg",
-					retained_mode = arg_2_3
+					retained_mode = retained_mode
 				},
 				{
 					pass_type = "texture",
 					style_id = "hp_bar_fg",
 					texture_id = "hp_bar_fg",
-					retained_mode = arg_2_3
+					retained_mode = retained_mode
 				},
 				{
 					style_id = "hp_bar",
 					texture_id = "texture_id",
 					pass_type = "gradient_mask_texture",
 					content_id = "hp_bar",
-					content_change_function = function (self, arg_4_1)
+					content_change_function = function (content, style)
 						-- function 4
-						local bar_value = self.bar_value
+						local bar_value = content.bar_value
+						local size = style.size
+						local bar_length = health_bar_size[1]
 
-						arg_4_1.size[1] = tbl[1] * bar_value
+						size[1] = bar_length * bar_value
 					end,
-					retained_mode = arg_2_3
+					retained_mode = retained_mode
 				},
 				{
 					pass_type = "texture",
 					style_id = "portrait_icon",
 					texture_id = "portrait_icon",
-					retained_mode = arg_2_3,
-					content_check_function = function (self)
+					retained_mode = retained_mode,
+					content_check_function = function (content)
 						-- function 5
-						return self.display_portrait_icon
+						return content.display_portrait_icon
 					end
 				},
 				{
 					pass_type = "texture",
 					style_id = "talk_indicator",
 					texture_id = "talk_indicator",
-					retained_mode = arg_2_3
+					retained_mode = retained_mode
 				},
 				{
 					pass_type = "texture",
 					style_id = "talk_indicator_glow",
 					texture_id = "talk_indicator_glow",
-					retained_mode = arg_2_3
+					retained_mode = retained_mode
 				},
 				{
 					pass_type = "texture",
 					style_id = "talk_indicator_highlight",
 					texture_id = "talk_indicator_highlight",
-					retained_mode = arg_2_3
+					retained_mode = retained_mode
 				},
 				{
 					pass_type = "texture",
 					style_id = "talk_indicator_highlight_glow",
 					texture_id = "talk_indicator_highlight_glow",
-					retained_mode = arg_2_3
+					retained_mode = retained_mode
 				},
 				{
 					pass_type = "rotated_texture",
 					style_id = "connecting_icon",
 					texture_id = "connecting_icon",
-					retained_mode = arg_2_3,
-					content_check_function = function (self)
+					retained_mode = retained_mode,
+					content_check_function = function (content)
 						-- function 6
-						return self.connecting
+						return content.connecting
 					end
 				},
 				{
 					pass_type = "texture",
 					style_id = "ammo_indicator",
 					texture_id = "ammo_indicator",
-					retained_mode = arg_2_3,
-					content_check_function = function (self)
+					retained_mode = retained_mode,
+					content_check_function = function (content)
 						-- function 7
-						local ammo_percentage = self.ammo_percentage
+						local ammo_progress = content.ammo_percentage
 
-						return not ammo_percentage and not (ammo_percentage > 0) or ammo_percentage <= 0.33
+						return not not ammo_progress and ammo_progress > 0 and ammo_progress <= 0.33
 					end
 				},
 				{
 					pass_type = "texture",
 					style_id = "ammo_indicator",
 					texture_id = "ammo_indicator_empty",
-					retained_mode = arg_2_3,
-					content_check_function = function (self)
+					retained_mode = retained_mode,
+					content_check_function = function (content)
 						-- function 8
-						local ammo_percentage = self.ammo_percentage
+						local ammo_progress = content.ammo_percentage
 
-						return not ammo_percentage and ammo_percentage <= 0
+						return not not ammo_progress and ammo_progress <= 0
 					end
 				},
 				{
 					pass_type = "texture",
 					style_id = "healthkit_slot",
 					texture_id = "healthkit_slot",
-					retained_mode = arg_2_3,
-					content_check_function = function (self)
+					retained_mode = retained_mode,
+					content_check_function = function (content)
 						-- function 9
-						return self.healthkit_slot
+						return content.healthkit_slot
 					end
 				},
 				{
 					pass_type = "texture",
 					style_id = "healthkit_slot_bg",
 					texture_id = "healthkit_slot_bg",
-					retained_mode = arg_2_3
+					retained_mode = retained_mode
 				},
 				{
 					pass_type = "texture",
 					style_id = "healthkit_slot_frame",
 					texture_id = "slot_frame",
-					retained_mode = arg_2_3
+					retained_mode = retained_mode
 				},
 				{
 					pass_type = "texture",
 					style_id = "potion_slot",
 					texture_id = "potion_slot",
-					retained_mode = arg_2_3,
-					content_check_function = function (self)
+					retained_mode = retained_mode,
+					content_check_function = function (content)
 						-- function 10
-						return self.potion_slot
+						return content.potion_slot
 					end
 				},
 				{
 					pass_type = "texture",
 					style_id = "potion_slot_bg",
 					texture_id = "potion_slot_bg",
-					retained_mode = arg_2_3
+					retained_mode = retained_mode
 				},
 				{
 					pass_type = "texture",
 					style_id = "potion_slot_frame",
 					texture_id = "slot_frame",
-					retained_mode = arg_2_3
+					retained_mode = retained_mode
 				},
 				{
 					pass_type = "texture",
 					style_id = "grenade_slot",
 					texture_id = "grenade_slot",
-					retained_mode = arg_2_3,
-					content_check_function = function (self)
+					retained_mode = retained_mode,
+					content_check_function = function (content)
 						-- function 11
-						return self.grenade_slot
+						return content.grenade_slot
 					end
 				},
 				{
 					pass_type = "texture",
 					style_id = "grenade_slot_bg",
 					texture_id = "grenade_slot_bg",
-					retained_mode = arg_2_3
+					retained_mode = retained_mode
 				},
 				{
 					pass_type = "texture",
 					style_id = "grenade_slot_frame",
 					texture_id = "slot_frame",
-					retained_mode = arg_2_3
+					retained_mode = retained_mode
 				},
 				{
 					pass_type = "texture",
 					style_id = "token_icon",
 					texture_id = "token_icon",
-					retained_mode = arg_2_3,
-					content_check_function = function (self)
+					retained_mode = retained_mode,
+					content_check_function = function (content)
 						-- function 12
-						local token_icon = self.token_icon
+						local token_icon = content.token_icon
 
-						token_icon = not token_icon and self.show_token_icon
+						token_icon = not not token_icon and not not content.show_token_icon
 
 						return token_icon
 					end
@@ -307,9 +309,9 @@ UIWidgets.create_deus_player_status_portrait = function (arg_2_0, arg_2_1, arg_2
 					17
 				},
 				offset = {
-					tbl_2[1] + tbl[1] / 2 - 50,
-					tbl_2[2] + tbl[2] / 2 - 6.5,
-					tbl_2[3] + 15
+					health_bar_offset[1] + health_bar_size[1] / 2 - 50,
+					health_bar_offset[2] + health_bar_size[2] / 2 - 6.5,
+					health_bar_offset[3] + 15
 				},
 				color = {
 					255,
@@ -324,9 +326,9 @@ UIWidgets.create_deus_player_status_portrait = function (arg_2_0, arg_2_1, arg_2
 					24
 				},
 				offset = {
-					tbl_2[1] + tbl[1] / 2 - 50,
-					tbl_2[2] + tbl[2] / 2 - 6.5 - 7,
-					tbl_2[3] + 20
+					health_bar_offset[1] + health_bar_size[1] / 2 - 50,
+					health_bar_offset[2] + health_bar_size[2] / 2 - 6.5 - 7,
+					health_bar_offset[3] + 20
 				},
 				color = {
 					255,
@@ -338,8 +340,8 @@ UIWidgets.create_deus_player_status_portrait = function (arg_2_0, arg_2_1, arg_2
 			hp_bar = {
 				gradient_threshold = 1,
 				size = {
-					tbl[1],
-					tbl[2]
+					health_bar_size[1],
+					health_bar_size[2]
 				},
 				color = {
 					255,
@@ -348,9 +350,9 @@ UIWidgets.create_deus_player_status_portrait = function (arg_2_0, arg_2_1, arg_2
 					255
 				},
 				offset = {
-					tbl_2[1],
-					tbl_2[2],
-					tbl_2[3] + 18
+					health_bar_offset[1],
+					health_bar_offset[2],
+					health_bar_offset[3] + 18
 				}
 			},
 			ammo_indicator = {
@@ -483,8 +485,8 @@ UIWidgets.create_deus_player_status_portrait = function (arg_2_0, arg_2_1, arg_2
 					29
 				},
 				offset = {
-					tbl_3[1] + -35,
-					tbl_3[2] + 0,
+					items_offset[1] + -35,
+					items_offset[2] + 0,
 					7
 				},
 				color = {
@@ -500,8 +502,8 @@ UIWidgets.create_deus_player_status_portrait = function (arg_2_0, arg_2_1, arg_2
 					29
 				},
 				offset = {
-					tbl_3[1] + -35,
-					tbl_3[2] + 0,
+					items_offset[1] + -35,
+					items_offset[2] + 0,
 					11
 				},
 				color = {
@@ -517,8 +519,8 @@ UIWidgets.create_deus_player_status_portrait = function (arg_2_0, arg_2_1, arg_2
 					25
 				},
 				offset = {
-					tbl_3[1] + -35 + 2.5,
-					tbl_3[2] + 2,
+					items_offset[1] + -35 + 2.5,
+					items_offset[2] + 2,
 					8
 				},
 				color = {
@@ -534,8 +536,8 @@ UIWidgets.create_deus_player_status_portrait = function (arg_2_0, arg_2_1, arg_2
 					29
 				},
 				offset = {
-					tbl_3[1] + 0,
-					tbl_3[2] + 0,
+					items_offset[1] + 0,
+					items_offset[2] + 0,
 					7
 				},
 				color = {
@@ -551,8 +553,8 @@ UIWidgets.create_deus_player_status_portrait = function (arg_2_0, arg_2_1, arg_2
 					29
 				},
 				offset = {
-					tbl_3[1] + 0,
-					tbl_3[2] + 0,
+					items_offset[1] + 0,
+					items_offset[2] + 0,
 					11
 				},
 				color = {
@@ -568,8 +570,8 @@ UIWidgets.create_deus_player_status_portrait = function (arg_2_0, arg_2_1, arg_2
 					25
 				},
 				offset = {
-					tbl_3[1] + 2.5,
-					tbl_3[2] + 2,
+					items_offset[1] + 2.5,
+					items_offset[2] + 2,
 					8
 				},
 				color = {
@@ -585,8 +587,8 @@ UIWidgets.create_deus_player_status_portrait = function (arg_2_0, arg_2_1, arg_2
 					29
 				},
 				offset = {
-					tbl_3[1] + 35,
-					tbl_3[2] + 0,
+					items_offset[1] + 35,
+					items_offset[2] + 0,
 					7
 				},
 				color = {
@@ -602,8 +604,8 @@ UIWidgets.create_deus_player_status_portrait = function (arg_2_0, arg_2_1, arg_2
 					29
 				},
 				offset = {
-					tbl_3[1] + 35,
-					tbl_3[2] + 0,
+					items_offset[1] + 35,
+					items_offset[2] + 0,
 					11
 				},
 				color = {
@@ -619,8 +621,8 @@ UIWidgets.create_deus_player_status_portrait = function (arg_2_0, arg_2_1, arg_2
 					25
 				},
 				offset = {
-					tbl_3[1] + 35 + 2.5,
-					tbl_3[2] + 2,
+					items_offset[1] + 35 + 2.5,
+					items_offset[2] + 2,
 					8
 				},
 				color = {
@@ -642,209 +644,219 @@ UIWidgets.create_deus_player_status_portrait = function (arg_2_0, arg_2_1, arg_2
 				}
 			}
 		},
-		scenegraph_id = arg_2_0
+		scenegraph_id = scenegraph_id
 	}
+
+	return widget
 end
 
-UIWidgets.deus_create_player_portraits_frame = function (arg_13_0, arg_13_1, arg_13_2, arg_13_3, arg_13_4)
+UIWidgets.deus_create_player_portraits_frame = function (scenegraph_id, frame_settings_name, level_text, retained_mode, offset)
 	-- function 13
-	local var_13_0 = arg_13_3
-	local var_13_1 = arg_13_0
-	local tbl = {
+	local retained_mode = retained_mode
+	local scenegraph_id = scenegraph_id
+	local widget = {
 		element = {
 			passes = {}
 		},
 		content = {},
 		style = {}
 	}
-	local var_13_3 = UIPlayerPortraitFrameSettings[arg_13_1]
-	local tbl_2 = {
+	local frame_settings = UIPlayerPortraitFrameSettings[frame_settings_name]
+	local default_color = {
 		255,
 		255,
 		255,
 		255
 	}
-	local flag = arg_13_4 or {
+	local default_offset = not not offset or not not {
 		0,
 		0,
 		0
 	}
 
-	tbl.content.frame_settings_name = arg_13_1
+	widget.content.frame_settings_name = frame_settings_name
 
-	for i, v in ipairs(var_13_3) do
-		local str = "texture_" .. i
-		local texture = v.texture
+	for index, data in ipairs(frame_settings) do
+		local name = "texture_" .. index
+		local texture = data.texture
 
-		texture = texture or "icons_placeholder"
-
-		local var_13_8
-
-		if not UIAtlasHelper.has_atlas_settings_by_texture_name(texture) then
-			var_13_8 = UIAtlasHelper.get_atlas_settings_by_texture_name(texture).size
-		else
-			var_13_8 = v.size
+		if not texture then
+			-- Nothing
 		end
 
-		local flag_2
+		texture = "icons_placeholder"
 
-		flag_2 = not var_13_8 and table.clone(var_13_8) and {
+		local texture_name = texture
+
+		::label_13_0::
+
+		local size
+
+		if UIAtlasHelper.has_atlas_settings_by_texture_name(texture_name) then
+			local texture_settings = UIAtlasHelper.get_atlas_settings_by_texture_name(texture_name)
+
+			size = texture_settings.size
+		else
+			size = data.size
+		end
+
+		size = (not size or not table.clone(size)) and not not {
 			0,
 			0
 		}
 
-		local tbl_3 = {}
+		local offset = {}
 
-		if not v.offset then
-			tbl_3 = table.clone(v.offset)
-			tbl_3[1] = flag[1] + (-(flag_2[1] / 2) + tbl_3[1])
-			tbl_3[2] = flag[2] + 60 + tbl_3[2]
+		if data.offset then
+			offset = table.clone(data.offset)
+			offset[1] = default_offset[1] + (-(size[1] / 2) + offset[1])
+			offset[2] = default_offset[2] + 60 + offset[2]
 
-			local layer = v.layer
+			local layer = data.layer
 
-			layer = layer or 0
-			tbl_3[3] = layer
+			layer = not not layer or not not 0
+			offset[3] = layer
 		else
-			tbl_3 = table.clone(flag)
-			tbl_3[1] = -(flag_2[1] / 2) + tbl_3[1]
-			tbl_3[2] = tbl_3[2]
+			offset = table.clone(default_offset)
+			offset[1] = -(size[1] / 2) + offset[1]
+			offset[2] = offset[2]
 
-			local layer_2 = v.layer
+			local layer_2 = data.layer
 
-			layer_2 = layer_2 or 0
-			tbl_3[3] = layer_2
+			layer_2 = not not layer_2 or not not 0
+			offset[3] = layer_2
 		end
 
-		tbl.element.passes[#tbl.element.passes + 1] = {
+		widget.element.passes[#widget.element.passes + 1] = {
 			pass_type = "texture",
-			texture_id = str,
-			style_id = str,
-			retained_mode = var_13_0
+			texture_id = name,
+			style_id = name,
+			retained_mode = retained_mode
 		}
-		tbl.content[str] = texture
+		widget.content[name] = texture_name
 
-		local style = tbl.style
-		local tbl_4 = {}
-		local color = v.color
+		local style = widget.style
+		local tbl = {}
+		local color = data.color
 
-		color = color or tbl_2
-		tbl_4.color = color
-		tbl_4.offset = tbl_3
-		tbl_4.size = flag_2
-		style[str] = tbl_4
+		color = not not color or not not default_color
+		tbl.color = color
+		tbl.offset = offset
+		tbl.size = size
+		style[name] = tbl
 	end
 
-	local tbl_5 = {
+	local portrait_size = {
 		86,
 		108
 	}
 
-	tbl_5[1] = tbl_5[1]
-	tbl_5[2] = tbl_5[2]
+	portrait_size[1] = portrait_size[1]
+	portrait_size[2] = portrait_size[2]
 
-	local tbl_6 = {
+	local level_offset = {
 		0,
 		8,
 		0
 	}
 
-	tbl_6[1] = tbl_6[1]
-	tbl_6[2] = tbl_6[2]
-	tbl_6[3] = 15
+	level_offset[1] = level_offset[1]
+	level_offset[2] = level_offset[2]
+	level_offset[3] = 15
 
-	local str_2 = "level"
+	local level_name = "level"
 
-	tbl.element.passes[#tbl.element.passes + 1] = {
+	widget.element.passes[#widget.element.passes + 1] = {
 		pass_type = "text",
-		text_id = str_2,
-		style_id = str_2,
-		retained_mode = var_13_0
+		text_id = level_name,
+		style_id = level_name,
+		retained_mode = retained_mode
 	}
-	tbl.content[str_2] = arg_13_2
-	tbl.style[str_2] = {
+	widget.content[level_name] = level_text
+	widget.style[level_name] = {
 		vertical_alignment = "center",
 		font_type = "hell_shark",
 		font_size = 12,
 		horizontal_alignment = "center",
 		text_color = Colors.get_color_table_with_alpha("white", 255),
-		offset = tbl_6
+		offset = level_offset
 	}
-	tbl.scenegraph_id = var_13_1
+	widget.scenegraph_id = scenegraph_id
 
-	return tbl
+	return widget
 end
 
-UIWidgets.create_info_box = function (arg_14_0, arg_14_1, arg_14_2, arg_14_3, arg_14_4, arg_14_5, arg_14_6)
+UIWidgets.create_info_box = function (scenegraph_id, icon, icon_size, icon_frame_name, title, sub_title, info)
 	-- function 14
-	local tbl = {
+	local icon_offset = {
 		0,
-		130 - arg_14_2[2] / 2,
+		130 - icon_size[2] / 2,
 		0
 	}
-	local var_14_1 = UIFrameSettings[arg_14_3]
-	local var_14_2 = var_14_1.texture_sizes.horizontal[2]
-	local tbl_2 = {
-		arg_14_2[1] + var_14_2 * 2,
-		arg_14_2[2] + var_14_2 * 2
+	local frame_settings = UIFrameSettings[icon_frame_name]
+	local edge_height = frame_settings.texture_sizes.horizontal[2]
+	local frame_size = {
+		icon_size[1] + edge_height * 2,
+		icon_size[2] + edge_height * 2
 	}
-	local tbl_3 = {
-		tbl[1] - var_14_2,
-		tbl[2] - var_14_2,
+	local frame_offset = {
+		icon_offset[1] - edge_height,
+		icon_offset[2] - edge_height,
 		1
 	}
-	local tbl_4 = {
-		arg_14_2[1] + var_14_2 + 5,
-		tbl[2] - var_14_2 - 5
+	local icon_text_offset = {
+		icon_size[1] + edge_height + 5,
+		icon_offset[2] - edge_height - 5
 	}
-	local tbl_5 = {
+	local title_text = {
 		font_size = 36,
 		dynamic_font_size = true,
 		font_type = "hell_shark",
 		text_color = Colors.get_color_table_with_alpha("font_title", 255),
 		offset = {
-			tbl_4[1],
+			icon_text_offset[1],
 			125,
 			0
 		},
 		size = {
-			400 - tbl_4[1],
+			400 - icon_text_offset[1],
 			36
 		}
 	}
-	local clone = table.clone(tbl_5)
+	local title_text_shadow = table.clone(title_text)
 
-	clone.text_color = Colors.get_color_table_with_alpha("black", 255)
-	clone.offset = {
-		tbl_5.offset[1] + 2,
-		tbl_5.offset[2] - 2,
-		tbl_5.offset[3] - 1
+	title_text_shadow.text_color = Colors.get_color_table_with_alpha("black", 255)
+	title_text_shadow.offset = {
+		title_text.offset[1] + 2,
+		title_text.offset[2] - 2,
+		title_text.offset[3] - 1
 	}
 
-	local tbl_6 = {
+	local sub_title_text = {
 		font_size = 20,
 		dynamic_font_size = true,
 		font_type = "hell_shark",
 		text_color = Colors.get_color_table_with_alpha("font_default", 255),
 		offset = {
-			tbl_4[1],
-			tbl[2],
+			icon_text_offset[1],
+			icon_offset[2],
 			0
 		},
 		size = {
-			400 - tbl_4[1],
+			400 - icon_text_offset[1],
 			20
 		}
 	}
-	local clone_2 = table.clone(tbl_6)
+	local sub_title_text_shadow = table.clone(sub_title_text)
 
-	clone_2.text_color = Colors.get_color_table_with_alpha("black", 255)
-	clone_2.offset = {
-		tbl_6.offset[1] + 2,
-		tbl_6.offset[2] - 2,
-		tbl_6.offset[3] - 1
+	sub_title_text_shadow.text_color = Colors.get_color_table_with_alpha("black", 255)
+	sub_title_text_shadow.offset = {
+		sub_title_text.offset[1] + 2,
+		sub_title_text.offset[2] - 2,
+		sub_title_text.offset[3] - 1
 	}
 
-	local tbl_7 = {
+	local info_text = {
 		vertical_alignment = "top",
 		word_wrap = true,
 		dynamic_font_size_word_wrap = true,
@@ -858,282 +870,286 @@ UIWidgets.create_info_box = function (arg_14_0, arg_14_1, arg_14_2, arg_14_3, ar
 		},
 		size = {
 			400,
-			tbl_4[2]
+			icon_text_offset[2]
 		}
 	}
-	local clone_3 = table.clone(tbl_7)
+	local info_text_shadow = table.clone(info_text)
 
-	clone_3.text_color = Colors.get_color_table_with_alpha("black", 255)
-	clone_3.offset = {
-		tbl_7.offset[1] + 2,
-		tbl_7.offset[2] - 2,
-		tbl_7.offset[3] - 1
+	info_text_shadow.text_color = Colors.get_color_table_with_alpha("black", 255)
+	info_text_shadow.offset = {
+		info_text.offset[1] + 2,
+		info_text.offset[2] - 2,
+		info_text.offset[3] - 1
 	}
 
-	return {
+	local widget = {
 		element = {
 			passes = {
 				{
 					pass_type = "texture",
 					style_id = "icon",
 					texture_id = "icon",
-					content_check_function = function (self)
+					content_check_function = function (content)
 						-- function 15
-						return self.icon
+						return content.icon
 					end
 				},
 				{
 					pass_type = "texture_frame",
 					style_id = "frame",
 					texture_id = "frame",
-					content_check_function = function (self)
+					content_check_function = function (content)
 						-- function 16
-						return self.icon
+						return content.icon
 					end
 				},
 				{
 					style_id = "title_text",
 					pass_type = "text",
 					text_id = "title_text",
-					content_check_function = function (self)
+					content_check_function = function (content)
 						-- function 17
-						return self.title_text
+						return content.title_text
 					end
 				},
 				{
 					style_id = "title_text_shadow",
 					pass_type = "text",
 					text_id = "title_text",
-					content_check_function = function (self)
+					content_check_function = function (content)
 						-- function 18
-						return self.title_text
+						return content.title_text
 					end
 				},
 				{
 					style_id = "sub_title_text",
 					pass_type = "text",
 					text_id = "sub_title_text",
-					content_check_function = function (self)
+					content_check_function = function (content)
 						-- function 19
-						return self.sub_title_text
+						return content.sub_title_text
 					end
 				},
 				{
 					style_id = "sub_title_text_shadow",
 					pass_type = "text",
 					text_id = "sub_title_text",
-					content_check_function = function (self)
+					content_check_function = function (content)
 						-- function 20
-						return self.sub_title_text
+						return content.sub_title_text
 					end
 				},
 				{
 					style_id = "info_text",
 					pass_type = "text",
 					text_id = "info_text",
-					content_check_function = function (self)
+					content_check_function = function (content)
 						-- function 21
-						return self.info_text
+						return content.info_text
 					end
 				},
 				{
 					style_id = "info_text_shadow",
 					pass_type = "text",
 					text_id = "info_text",
-					content_check_function = function (self)
+					content_check_function = function (content)
 						-- function 22
-						return self.info_text
+						return content.info_text
 					end
 				}
 			}
 		},
 		content = {
-			icon = arg_14_1,
-			frame = var_14_1.texture,
-			title_text = arg_14_4,
-			sub_title_text = arg_14_5,
-			info_text = arg_14_6
+			icon = icon,
+			frame = frame_settings.texture,
+			title_text = title,
+			sub_title_text = sub_title,
+			info_text = info
 		},
 		style = {
 			icon = {
-				offset = tbl,
-				texture_size = arg_14_2 or {
+				offset = icon_offset,
+				texture_size = not not icon_size or not not {
 					20,
 					20
 				}
 			},
 			frame = {
-				size = tbl_2,
-				texture_size = var_14_1.texture_size,
-				texture_sizes = var_14_1.texture_sizes,
-				offset = tbl_3
+				size = frame_size,
+				texture_size = frame_settings.texture_size,
+				texture_sizes = frame_settings.texture_sizes,
+				offset = frame_offset
 			},
-			title_text = tbl_5,
-			title_text_shadow = clone,
-			sub_title_text = tbl_6,
-			sub_title_text_shadow = clone_2,
-			info_text = tbl_7,
-			info_text_shadow = clone_3
+			title_text = title_text,
+			title_text_shadow = title_text_shadow,
+			sub_title_text = sub_title_text,
+			sub_title_text_shadow = sub_title_text_shadow,
+			info_text = info_text,
+			info_text_shadow = info_text_shadow
 		},
-		scenegraph_id = arg_14_0
+		scenegraph_id = scenegraph_id
 	}
+
+	return widget
 end
 
-UIWidgets.create_framed_info_box = function (arg_23_0, arg_23_1, arg_23_2, arg_23_3, arg_23_4, arg_23_5, arg_23_6, arg_23_7, arg_23_8, arg_23_9, arg_23_10)
+UIWidgets.create_framed_info_box = function (scenegraph_id, title_frame_name, info_frame_name, top_frame_name, top, icon, icon_size, icon_frame_name, title, info, bottom_panel_size)
 	-- function 23
-	arg_23_10 = arg_23_10 or {
+	bottom_panel_size = not not bottom_panel_size or not not {
 		340,
 		100
 	}
 
-	local var_23_0 = UIFrameSettings[arg_23_2]
-	local var_23_1 = var_23_0.texture_sizes.horizontal[2]
-	local tbl = {
-		arg_23_10[1] + var_23_1 * 2,
-		arg_23_10[2] + var_23_1 * 2
+	local bottom_frame_settings = UIFrameSettings[info_frame_name]
+	local bottom_edge_height = bottom_frame_settings.texture_sizes.horizontal[2]
+	local bottom_frame_size = {
+		bottom_panel_size[1] + bottom_edge_height * 2,
+		bottom_panel_size[2] + bottom_edge_height * 2
 	}
-	local tbl_2 = {
-		-var_23_1,
-		-var_23_1,
+	local bottom_frame_offset = {
+		-bottom_edge_height,
+		-bottom_edge_height,
 		1
 	}
-	local num = 12
-	local tbl_3 = {
-		arg_23_10[1],
-		arg_23_6[1] + num * 2
+	local icon_spacing = 12
+	local title_panel_size = {
+		bottom_panel_size[1],
+		icon_size[1] + icon_spacing * 2
 	}
-	local tbl_4 = {
+	local title_panel_offset = {
 		0,
-		arg_23_10[2] + 2.5 - tbl_2[2],
+		bottom_panel_size[2] + 2.5 - bottom_frame_offset[2],
 		-2
 	}
-	local var_23_7 = UIFrameSettings[arg_23_1]
-	local var_23_8 = var_23_7.texture_sizes.horizontal[2]
-	local tbl_5 = {
-		tbl_3[1] + var_23_8 * 2,
-		tbl_3[2] + var_23_8 * 2
+	local title_frame_settings = UIFrameSettings[title_frame_name]
+	local title_edge_height = title_frame_settings.texture_sizes.horizontal[2]
+	local title_frame_size = {
+		title_panel_size[1] + title_edge_height * 2,
+		title_panel_size[2] + title_edge_height * 2
 	}
-	local tbl_6 = {
-		-var_23_8,
-		tbl_4[2] - var_23_8,
+	local title_frame_offset = {
+		-title_edge_height,
+		title_panel_offset[2] - title_edge_height,
 		1
 	}
-	local num_2 = 20
-	local tbl_7 = {
-		arg_23_10[1] - arg_23_6[1],
-		num_2
+	local top_height = 20
+	local top_panel_size = {
+		bottom_panel_size[1] - icon_size[1],
+		top_height
 	}
-	local tbl_8 = {
-		arg_23_10[1] / 2 - tbl_7[1] / 2,
-		tbl_4[2] + tbl_3[2] + var_23_8 * 2,
+	local top_panel_offset = {
+		bottom_panel_size[1] / 2 - top_panel_size[1] / 2,
+		title_panel_offset[2] + title_panel_size[2] + title_edge_height * 2,
 		-2
 	}
-	local var_23_14 = UIFrameSettings[arg_23_3]
-	local var_23_15
+	local top_frame_settings = UIFrameSettings[top_frame_name]
+	local var_23_0
 
-	if not var_23_14 then
-		var_23_15 = var_23_14.texture_sizes.horizontal[2]
+	if top_frame_settings then
+		var_23_0 = top_frame_settings.texture_sizes.horizontal[2]
 
-		if not var_23_15 then
+		if not var_23_0 then
 			-- Nothing
 		end
 	end
 
-	var_23_15 = 0
+	var_23_0 = 0
+
+	local top_edge_height = var_23_0
 
 	::label_23_0::
 
-	local tbl_9 = {
-		tbl_7[1] + var_23_15 * 2,
-		tbl_7[2] + var_23_15 * 2
+	local top_frame_size = {
+		top_panel_size[1] + top_edge_height * 2,
+		top_panel_size[2] + top_edge_height * 2
 	}
-	local tbl_10 = {
-		tbl_8[1] - var_23_15,
-		tbl_8[2] - var_23_15,
+	local top_frame_offset = {
+		top_panel_offset[1] - top_edge_height,
+		top_panel_offset[2] - top_edge_height,
 		1
 	}
-	local tbl_11 = {
-		num,
-		tbl_4[2] + num,
+	local icon_offset = {
+		icon_spacing,
+		title_panel_offset[2] + icon_spacing,
 		0
 	}
-	local var_23_19 = UIFrameSettings[arg_23_7]
-	local var_23_20 = var_23_19.texture_sizes.horizontal[2]
-	local tbl_12 = {
-		arg_23_6[1] + var_23_20 * 2,
-		arg_23_6[2] + var_23_20 * 2
+	local icon_frame_settings = UIFrameSettings[icon_frame_name]
+	local icon_edge_height = icon_frame_settings.texture_sizes.horizontal[2]
+	local icon_frame_size = {
+		icon_size[1] + icon_edge_height * 2,
+		icon_size[2] + icon_edge_height * 2
 	}
-	local tbl_13 = {
-		tbl_11[1] - var_23_20,
-		tbl_11[2] - var_23_20,
+	local icon_frame_offset = {
+		icon_offset[1] - icon_edge_height,
+		icon_offset[2] - icon_edge_height,
 		1
 	}
-	local tbl_14 = {
-		tbl[1],
-		tbl[2] + tbl_5[2]
+	local total_widget_size = {
+		bottom_frame_size[1],
+		bottom_frame_size[2] + title_frame_size[2]
 	}
 
-	if not arg_23_3 then
-		tbl_14[2] = tbl_14[2] + tbl_9[2]
+	if top_frame_name then
+		total_widget_size[2] = total_widget_size[2] + top_frame_size[2]
 	end
 
-	local tbl_15 = {
+	local top_text = {
 		upper_case = true,
 		horizontal_alignment = "center",
 		vertical_alignment = "center",
 		dynamic_font_size = true,
 		font_type = "hell_shark",
-		font_size = num_2,
+		font_size = top_height,
 		text_color = Colors.get_color_table_with_alpha("font_default", 255),
 		offset = {
-			tbl_8[1],
-			tbl_8[2] + tbl_7[2] / 2 - num_2 / 2,
+			top_panel_offset[1],
+			top_panel_offset[2] + top_panel_size[2] / 2 - top_height / 2,
 			0
 		},
-		size = tbl_7
+		size = top_panel_size
 	}
-	local clone = table.clone(tbl_15)
+	local top_text_shadow = table.clone(top_text)
 
-	clone.text_color = Colors.get_color_table_with_alpha("black", 255)
-	clone.offset = {
-		tbl_15.offset[1] + 2,
-		tbl_15.offset[2] - 2,
-		tbl_15.offset[3] - 1
+	top_text_shadow.text_color = Colors.get_color_table_with_alpha("black", 255)
+	top_text_shadow.offset = {
+		top_text.offset[1] + 2,
+		top_text.offset[2] - 2,
+		top_text.offset[3] - 1
 	}
 
-	local num_3 = 5
-	local num_4 = 36
-	local tbl_16 = {
+	local title_spacing = 5
+	local title_height = 36
+	local title_text = {
 		vertical_alignment = "center",
 		horizontal_alignment = "center",
 		dynamic_font_size = true,
 		font_type = "hell_shark",
-		font_size = num_4,
+		font_size = title_height,
 		text_color = Colors.get_color_table_with_alpha("font_title", 255),
 		offset = {
-			arg_23_6[1] + num + var_23_20 + num_3,
-			tbl_4[2] + tbl_3[2] / 2 - num_4 / 2,
+			icon_size[1] + icon_spacing + icon_edge_height + title_spacing,
+			title_panel_offset[2] + title_panel_size[2] / 2 - title_height / 2,
 			0
 		},
 		size = {
-			tbl_3[1] - arg_23_6[1] - num * 2 - num_3 * 2,
-			num_4
+			title_panel_size[1] - icon_size[1] - icon_spacing * 2 - title_spacing * 2,
+			title_height
 		}
 	}
-	local clone_2 = table.clone(tbl_16)
+	local title_text_shadow = table.clone(title_text)
 
-	clone_2.text_color = Colors.get_color_table_with_alpha("black", 255)
-	clone_2.offset = {
-		tbl_16.offset[1] + 2,
-		tbl_16.offset[2] - 2,
-		tbl_16.offset[3] - 1
+	title_text_shadow.text_color = Colors.get_color_table_with_alpha("black", 255)
+	title_text_shadow.offset = {
+		title_text.offset[1] + 2,
+		title_text.offset[2] - 2,
+		title_text.offset[3] - 1
 	}
 
-	local tbl_17 = {
+	local info_spacing = {
 		15,
 		5
 	}
-	local tbl_18 = {
+	local info_text = {
 		vertical_alignment = "top",
 		word_wrap = true,
 		dynamic_font_size_word_wrap = true,
@@ -1141,69 +1157,69 @@ UIWidgets.create_framed_info_box = function (arg_23_0, arg_23_1, arg_23_2, arg_2
 		font_type = "hell_shark",
 		text_color = Colors.get_color_table_with_alpha("font_default", 255),
 		offset = {
-			tbl_17[1],
-			tbl_17[2],
+			info_spacing[1],
+			info_spacing[2],
 			0
 		},
 		size = {
-			arg_23_10[1] - tbl_17[1] * 2,
-			arg_23_10[2] - tbl_17[2] * 2
+			bottom_panel_size[1] - info_spacing[1] * 2,
+			bottom_panel_size[2] - info_spacing[2] * 2
 		}
 	}
-	local clone_3 = table.clone(tbl_18)
+	local info_text_shadow = table.clone(info_text)
 
-	clone_3.text_color = Colors.get_color_table_with_alpha("black", 255)
-	clone_3.offset = {
-		tbl_18.offset[1] + 2,
-		tbl_18.offset[2] - 2,
-		tbl_18.offset[3] - 1
+	info_text_shadow.text_color = Colors.get_color_table_with_alpha("black", 255)
+	info_text_shadow.offset = {
+		info_text.offset[1] + 2,
+		info_text.offset[2] - 2,
+		info_text.offset[3] - 1
 	}
 
-	return {
+	local widget = {
 		element = {
 			passes = {
 				{
 					pass_type = "texture_frame",
 					style_id = "top_frame",
 					texture_id = "top_frame",
-					content_check_function = function (self)
+					content_check_function = function (content)
 						-- function 24
-						return self.top_text
+						return content.top_text
 					end
 				},
 				{
 					style_id = "top_frame_rect",
 					pass_type = "rect",
-					content_check_function = function (self)
+					content_check_function = function (content)
 						-- function 25
-						return self.top_text
+						return content.top_text
 					end
 				},
 				{
 					style_id = "top_text",
 					pass_type = "text",
 					text_id = "top_text",
-					content_check_function = function (self)
+					content_check_function = function (content)
 						-- function 26
-						return self.top_text
+						return content.top_text
 					end
 				},
 				{
 					style_id = "top_text_shadow",
 					pass_type = "text",
 					text_id = "top_text",
-					content_check_function = function (self)
+					content_check_function = function (content)
 						-- function 27
-						return self.top_text
+						return content.top_text
 					end
 				},
 				{
 					pass_type = "texture_frame",
 					style_id = "title_frame",
 					texture_id = "title_frame",
-					content_check_function = function (self)
+					content_check_function = function (content)
 						-- function 28
-						return self.icon
+						return content.icon
 					end
 				},
 				{
@@ -1214,81 +1230,81 @@ UIWidgets.create_framed_info_box = function (arg_23_0, arg_23_1, arg_23_2, arg_2
 					pass_type = "texture",
 					style_id = "icon",
 					texture_id = "icon",
-					content_check_function = function (self)
+					content_check_function = function (content)
 						-- function 29
-						return self.icon
+						return content.icon
 					end
 				},
 				{
 					pass_type = "texture_frame",
 					style_id = "icon_frame",
 					texture_id = "icon_frame",
-					content_check_function = function (self)
+					content_check_function = function (content)
 						-- function 30
-						return self.icon
+						return content.icon
 					end
 				},
 				{
 					style_id = "title_text",
 					pass_type = "text",
 					text_id = "title_text",
-					content_check_function = function (self)
+					content_check_function = function (content)
 						-- function 31
-						return self.title_text
+						return content.title_text
 					end
 				},
 				{
 					style_id = "title_text_shadow",
 					pass_type = "text",
 					text_id = "title_text",
-					content_check_function = function (self)
+					content_check_function = function (content)
 						-- function 32
-						return self.title_text
+						return content.title_text
 					end
 				},
 				{
 					pass_type = "texture",
 					style_id = "title_glow",
 					texture_id = "title_glow",
-					content_check_function = function (self)
+					content_check_function = function (content)
 						-- function 33
-						return self.title_text
+						return content.title_text
 					end
 				},
 				{
 					pass_type = "texture_frame",
 					style_id = "bottom_frame",
 					texture_id = "bottom_frame",
-					content_check_function = function (self)
+					content_check_function = function (content)
 						-- function 34
-						return self.info_text
+						return content.info_text
 					end
 				},
 				{
 					style_id = "info_text",
 					pass_type = "text",
 					text_id = "info_text",
-					content_check_function = function (self)
+					content_check_function = function (content)
 						-- function 35
-						return self.info_text
+						return content.info_text
 					end
 				},
 				{
 					style_id = "info_text_shadow",
 					pass_type = "text",
 					text_id = "info_text",
-					content_check_function = function (self)
+					content_check_function = function (content)
 						-- function 36
-						return self.info_text
+						return content.info_text
 					end
 				},
 				{
 					pass_type = "tiled_texture",
 					style_id = "bottom_background",
 					texture_id = "bottom_background",
-					content_check_function = function (self)
+					content_check_function = function (content)
 						-- function 37
-						return self.info_text
+						return content.info_text
 					end
 				}
 			}
@@ -1296,22 +1312,22 @@ UIWidgets.create_framed_info_box = function (arg_23_0, arg_23_1, arg_23_2, arg_2
 		content = {
 			bottom_background = "item_tooltip_background",
 			title_glow = "tooltip_power_level_header_glow",
-			top_frame = not var_23_14 and var_23_14.texture,
-			title_frame = var_23_7.texture,
-			bottom_frame = var_23_0.texture,
-			icon = arg_23_5,
-			icon_frame = var_23_19.texture,
-			title_text = arg_23_8,
-			info_text = arg_23_9,
-			top_text = arg_23_4,
-			total_widget_size = tbl_14
+			top_frame = not not top_frame_settings and not not top_frame_settings.texture,
+			title_frame = title_frame_settings.texture,
+			bottom_frame = bottom_frame_settings.texture,
+			icon = icon,
+			icon_frame = icon_frame_settings.texture,
+			title_text = title,
+			info_text = info,
+			top_text = top,
+			total_widget_size = total_widget_size
 		},
 		style = {
 			top_frame = {
-				size = tbl_9,
-				texture_size = not var_23_14 and var_23_14.texture_size,
-				texture_sizes = not var_23_14 and var_23_14.texture_sizes,
-				offset = tbl_10
+				size = top_frame_size,
+				texture_size = not not top_frame_settings and not not top_frame_settings.texture_size,
+				texture_sizes = not not top_frame_settings and not not top_frame_settings.texture_sizes,
+				offset = top_frame_offset
 			},
 			top_frame_rect = {
 				color = {
@@ -1320,168 +1336,172 @@ UIWidgets.create_framed_info_box = function (arg_23_0, arg_23_1, arg_23_2, arg_2
 					20,
 					20
 				},
-				offset = tbl_8,
-				size = tbl_7
+				offset = top_panel_offset,
+				size = top_panel_size
 			},
-			top_text = tbl_15,
-			top_text_shadow = clone,
+			top_text = top_text,
+			top_text_shadow = top_text_shadow,
 			title_frame = {
-				size = tbl_5,
-				texture_size = var_23_7.texture_size,
-				texture_sizes = var_23_7.texture_sizes,
-				offset = tbl_6
+				size = title_frame_size,
+				texture_size = title_frame_settings.texture_size,
+				texture_sizes = title_frame_settings.texture_sizes,
+				offset = title_frame_offset
 			},
 			title_frame_rect = {
 				color = Colors.get_table("black"),
-				offset = tbl_4,
-				size = tbl_3
+				offset = title_panel_offset,
+				size = title_panel_size
 			},
 			icon = {
-				offset = tbl_11,
-				texture_size = arg_23_6 or {
+				offset = icon_offset,
+				texture_size = not not icon_size or not not {
 					20,
 					20
 				}
 			},
 			icon_frame = {
-				size = tbl_12,
-				texture_size = var_23_19.texture_size,
-				texture_sizes = var_23_19.texture_sizes,
-				offset = tbl_13
+				size = icon_frame_size,
+				texture_size = icon_frame_settings.texture_size,
+				texture_sizes = icon_frame_settings.texture_sizes,
+				offset = icon_frame_offset
 			},
 			bottom_frame = {
-				size = tbl,
-				texture_size = var_23_0.texture_size,
-				texture_sizes = var_23_0.texture_sizes,
-				offset = tbl_2
+				size = bottom_frame_size,
+				texture_size = bottom_frame_settings.texture_size,
+				texture_sizes = bottom_frame_settings.texture_sizes,
+				offset = bottom_frame_offset
 			},
-			title_text = tbl_16,
-			title_text_shadow = clone_2,
+			title_text = title_text,
+			title_text_shadow = title_text_shadow,
 			title_glow = {
 				offset = {
-					tbl_4[1],
-					tbl_4[2],
+					title_panel_offset[1],
+					title_panel_offset[2],
 					-1
 				},
-				size = arg_23_10,
+				size = bottom_panel_size,
 				texture_size = {
-					tbl_3[1],
-					tbl_3[2] / 2
+					title_panel_size[1],
+					title_panel_size[2] / 2
 				}
 			},
-			info_text = tbl_18,
-			info_text_shadow = clone_3,
+			info_text = info_text,
+			info_text_shadow = info_text_shadow,
 			bottom_background = {
 				offset = {
 					0,
 					0,
 					-1
 				},
-				size = arg_23_10,
-				texture_tiling_size = arg_23_10
+				size = bottom_panel_size,
+				texture_tiling_size = bottom_panel_size
 			}
 		},
-		scenegraph_id = arg_23_0
+		scenegraph_id = scenegraph_id
 	}
+
+	return widget
 end
 
-UIWidgets.create_icon_info_box = function (arg_38_0, arg_38_1, arg_38_2, arg_38_3, arg_38_4, arg_38_5, arg_38_6, arg_38_7, arg_38_8, arg_38_9, arg_38_10, arg_38_11, arg_38_12, arg_38_13, arg_38_14)
+UIWidgets.create_icon_info_box = function (scenegraph_id, icon, icon_size, icon_offset, background_icon, background_icon_size, background_icon_offset, sub_text, title_text, title_text_color, width, is_rectangular_icon, hide_text, masked, icon_hotspot)
 	-- function 38
-	local tbl = {
-		arg_38_10,
-		arg_38_5[2]
+	local size = {
+		width,
+		background_icon_size[2]
 	}
-	local tbl_2 = {
+	local icon_style = {
 		color = {
 			255,
 			138,
 			172,
 			235
 		},
-		offset = arg_38_3,
-		texture_size = arg_38_2,
-		masked = arg_38_13
+		offset = icon_offset,
+		texture_size = icon_size,
+		masked = masked
 	}
-	local tbl_3 = {
+	local icon_background_style = {
 		color = {
 			255,
 			255,
 			255,
 			255
 		},
-		offset = arg_38_6,
-		texture_size = arg_38_5,
-		masked = arg_38_13
+		offset = background_icon_offset,
+		texture_size = background_icon_size,
+		masked = masked
 	}
-	local var_38_3 = tbl_3.texture_size[2]
-	local num = 10
-	local num_2 = 20
-	local num_3 = 2
-	local num_4 = num_2 * 2 + num_3
-	local tbl_4 = {
-		tbl_3.texture_size[1] + num,
-		var_38_3 / 2 - num_4 / 2,
+	local max_widget_height = icon_background_style.texture_size[2]
+	local icon_spacing = 10
+	local font_size = 20
+	local font_spacing = 2
+	local text_height = font_size * 2 + font_spacing
+	local text_offset = {
+		icon_background_style.texture_size[1] + icon_spacing,
+		max_widget_height / 2 - text_height / 2,
 		0
 	}
-	local tbl_5 = {
+	local tbl = {
 		vertical_alignment = "center",
 		dynamic_font_size = true,
-		font_size = num_2
+		font_size = font_size
 	}
 	local flag
 
-	flag = not arg_38_13 and "hell_shark_masked" and "hell_shark"
-	tbl_5.font_type = flag
-	tbl_5.text_color = Colors.get_color_table_with_alpha("font_default", 255)
-	tbl_5.offset = {
-		tbl_4[1],
-		tbl_4[2],
+	flag = (not masked or not "hell_shark_masked") and not not "hell_shark"
+	tbl.font_type = flag
+	tbl.text_color = Colors.get_color_table_with_alpha("font_default", 255)
+	tbl.offset = {
+		text_offset[1],
+		text_offset[2],
 		0
 	}
-	tbl_5.size = {
-		tbl[1] - tbl_4[1],
-		num_2
+	tbl.size = {
+		size[1] - text_offset[1],
+		font_size
 	}
 
-	local clone = table.clone(tbl_5)
+	local sub_text_style = tbl
+	local sub_text_shadow = table.clone(sub_text_style)
 
-	clone.text_color = Colors.get_color_table_with_alpha("black", 255)
-	clone.offset = {
-		tbl_5.offset[1] + 2,
-		tbl_5.offset[2] - 2,
-		tbl_5.offset[3] - 1
+	sub_text_shadow.text_color = Colors.get_color_table_with_alpha("black", 255)
+	sub_text_shadow.offset = {
+		sub_text_style.offset[1] + 2,
+		sub_text_style.offset[2] - 2,
+		sub_text_style.offset[3] - 1
 	}
 
-	local tbl_6 = {
+	local tbl_2 = {
 		vertical_alignment = "center",
 		dynamic_font_size = true,
-		font_size = num_2
+		font_size = font_size
 	}
 	local flag_2
 
-	flag_2 = not arg_38_13 and "hell_shark_masked" and "hell_shark"
-	tbl_6.font_type = flag_2
-	tbl_6.text_color = arg_38_9 or Colors.get_color_table_with_alpha("font_default", 255)
-	tbl_6.offset = {
-		tbl_4[1],
-		tbl_4[2] + tbl_5.size[2] + num_3,
+	flag_2 = (not masked or not "hell_shark_masked") and not not "hell_shark"
+	tbl_2.font_type = flag_2
+	tbl_2.text_color = not not title_text_color or not not Colors.get_color_table_with_alpha("font_default", 255)
+	tbl_2.offset = {
+		text_offset[1],
+		text_offset[2] + sub_text_style.size[2] + font_spacing,
 		0
 	}
-	tbl_6.size = {
-		tbl[1] - tbl_4[1],
-		num_2
+	tbl_2.size = {
+		size[1] - text_offset[1],
+		font_size
 	}
 
-	local clone_2 = table.clone(tbl_6)
+	local title_text_style = tbl_2
+	local title_text_shadow = table.clone(title_text_style)
 
-	clone_2.text_color = Colors.get_color_table_with_alpha("black", 255)
-	clone_2.offset = {
-		tbl_6.offset[1] + 2,
-		tbl_6.offset[2] - 2,
-		tbl_6.offset[3] - 1
+	title_text_shadow.text_color = Colors.get_color_table_with_alpha("black", 255)
+	title_text_shadow.offset = {
+		title_text_style.offset[1] + 2,
+		title_text_style.offset[2] - 2,
+		title_text_style.offset[3] - 1
 	}
 
-	local tbl_7 = {
+	local passes = {
 		{
 			style_id = "icon_hotspot",
 			pass_type = "hotspot",
@@ -1491,26 +1511,26 @@ UIWidgets.create_icon_info_box = function (arg_38_0, arg_38_1, arg_38_2, arg_38_
 			pass_type = "texture",
 			style_id = "icon",
 			texture_id = "icon",
-			content_check_function = function (self, arg_39_1)
+			content_check_function = function (content, style)
 				-- function 39
-				return not self.hotspot.is_hover
+				return not content.hotspot.is_hover
 			end
 		},
 		{
 			style_id = "icon_bg",
 			pass_type = "rect",
-			content_check_function = function (self)
+			content_check_function = function (content)
 				-- function 40
-				return not not self.is_rectangular_icon or not arg_38_13
+				return not content.is_rectangular_icon and not not not masked
 			end
 		},
 		{
 			pass_type = "texture",
 			style_id = "icon_bg",
 			texture_id = "rect_masked",
-			content_check_function = function (self)
+			content_check_function = function (content)
 				-- function 41
-				return not not self.is_rectangular_icon or arg_38_13
+				return not content.is_rectangular_icon and not not masked
 			end
 		},
 		{
@@ -1522,53 +1542,53 @@ UIWidgets.create_icon_info_box = function (arg_38_0, arg_38_1, arg_38_2, arg_38_
 			style_id = "title_text",
 			pass_type = "text",
 			text_id = "title_text",
-			content_check_function = function (self)
+			content_check_function = function (content)
 				-- function 42
-				return not self.hide_text
+				return not content.hide_text
 			end
 		},
 		{
 			style_id = "title_text_shadow",
 			pass_type = "text",
 			text_id = "title_text",
-			content_check_function = function (self)
+			content_check_function = function (content)
 				-- function 43
-				return not self.hide_text
+				return not content.hide_text
 			end
 		},
 		{
 			style_id = "sub_text",
 			pass_type = "text",
 			text_id = "sub_text",
-			content_check_function = function (self)
+			content_check_function = function (content)
 				-- function 44
-				return not self.hide_text
+				return not content.hide_text
 			end
 		},
 		{
 			style_id = "sub_text_shadow",
 			pass_type = "text",
 			text_id = "sub_text",
-			content_check_function = function (self)
+			content_check_function = function (content)
 				-- function 45
-				return not self.hide_text
+				return not content.hide_text
 			end
 		}
 	}
-	local tbl_8 = {
+	local content = {
 		rect_masked = "rect_masked",
 		hotspot = {},
-		icon = arg_38_1,
-		icon_background = arg_38_4,
-		title_text = arg_38_8,
-		sub_text = arg_38_7,
-		total_widget_size = tbl,
-		is_rectangular_icon = arg_38_11,
-		hide_text = arg_38_12
+		icon = icon,
+		icon_background = background_icon,
+		title_text = title_text,
+		sub_text = sub_text,
+		total_widget_size = size,
+		is_rectangular_icon = is_rectangular_icon,
+		hide_text = hide_text
 	}
-	local tbl_9 = {
-		icon = tbl_2,
-		icon_hotspot = arg_38_14 or tbl_2,
+	local style = {
+		icon = icon_style,
+		icon_hotspot = not not icon_hotspot or not not icon_style,
 		icon_bg = {
 			vertical_alignment = "center",
 			horizontal_alignment = "left",
@@ -1583,36 +1603,37 @@ UIWidgets.create_icon_info_box = function (arg_38_0, arg_38_1, arg_38_2, arg_38_
 				0
 			}
 		},
-		icon_background = tbl_3,
-		title_text = tbl_6,
-		title_text_shadow = clone_2,
-		sub_text = tbl_5,
-		sub_text_shadow = clone
+		icon_background = icon_background_style,
+		title_text = title_text_style,
+		title_text_shadow = title_text_shadow,
+		sub_text = sub_text_style,
+		sub_text_shadow = sub_text_shadow
 	}
+	local widget = {}
+	local element = {}
 
-	return {
-		element = {
-			passes = tbl_7
-		},
-		content = tbl_8,
-		style = tbl_9,
-		offset = {
-			0,
-			0,
-			0
-		},
-		scenegraph_id = arg_38_0
+	element.passes = passes
+	widget.element = element
+	widget.content = content
+	widget.style = style
+	widget.offset = {
+		0,
+		0,
+		0
 	}
+	widget.scenegraph_id = scenegraph_id
+
+	return widget
 end
 
-UIWidgets.create_start_game_difficulty_stepper = function (arg_46_0, arg_46_1, arg_46_2)
+UIWidgets.create_start_game_difficulty_stepper = function (scenegraph_id, difficulty_text, difficulty_icon)
 	-- function 46
-	local tbl = {
+	local offset = {
 		-12.5,
 		0,
 		0
 	}
-	local str = "morris_arrow_highlight"
+	local arrow_highlight_texture = "morris_arrow_highlight"
 
 	return {
 		element = {
@@ -1641,27 +1662,27 @@ UIWidgets.create_start_game_difficulty_stepper = function (arg_46_0, arg_46_1, a
 					style_id = "left_arrow_hover",
 					pass_type = "texture_uv",
 					content_id = "left_arrow_hover",
-					content_check_function = function (self)
+					content_check_function = function (content)
 						-- function 47
-						return self.parent.left_arrow_hotspot.is_hover
+						return content.parent.left_arrow_hotspot.is_hover
 					end
 				},
 				{
 					style_id = "left_arrow_gamepad_highlight",
 					pass_type = "texture_uv",
 					content_id = "left_arrow_gamepad_highlight",
-					content_check_function = function (self)
+					content_check_function = function (content)
 						-- function 48
-						return self.parent.left_arrow_pressed
+						return content.parent.left_arrow_pressed
 					end
 				},
 				{
 					style_id = "left_arrow_clicked",
 					pass_type = "texture_uv",
 					content_id = "left_arrow_clicked",
-					content_check_function = function (self)
+					content_check_function = function (content)
 						-- function 49
-						return self.parent.left_arrow_hotspot.is_clicked == 0
+						return content.parent.left_arrow_hotspot.is_clicked == 0
 					end
 				},
 				{
@@ -1678,27 +1699,27 @@ UIWidgets.create_start_game_difficulty_stepper = function (arg_46_0, arg_46_1, a
 					pass_type = "texture",
 					style_id = "right_arrow_hover",
 					texture_id = "right_arrow_hover",
-					content_check_function = function (self)
+					content_check_function = function (content)
 						-- function 50
-						return self.right_arrow_hotspot.is_hover
+						return content.right_arrow_hotspot.is_hover
 					end
 				},
 				{
 					pass_type = "texture",
 					style_id = "right_arrow_gamepad_highlight",
 					texture_id = "right_arrow_gamepad_highlight",
-					content_check_function = function (self)
+					content_check_function = function (content)
 						-- function 51
-						return self.right_arrow_pressed
+						return content.right_arrow_pressed
 					end
 				},
 				{
 					pass_type = "texture",
 					style_id = "right_arrow_clicked",
 					texture_id = "right_arrow_clicked",
-					content_check_function = function (self)
+					content_check_function = function (content)
 						-- function 52
-						return self.right_arrow_hotspot.is_clicked == 0
+						return content.right_arrow_hotspot.is_clicked == 0
 					end
 				},
 				{
@@ -1725,20 +1746,20 @@ UIWidgets.create_start_game_difficulty_stepper = function (arg_46_0, arg_46_1, a
 					style_id = "selected_difficulty_text_selected",
 					texture_id = "selected_difficulty_text_selected",
 					pass_type = "texture",
-					content_check_function = function (self)
+					content_check_function = function (content)
 						-- function 53
-						local is_hover = self.right_arrow_hotspot.is_hover
+						local is_hover = content.right_arrow_hotspot.is_hover
 
 						if not is_hover then
-							is_hover = self.left_arrow_hotspot.is_hover
-							is_hover = is_hover or not not Managers.input:is_device_active("mouse") or self.is_selected
+							is_hover = content.left_arrow_hotspot.is_hover
+							is_hover = (not not is_hover or not Managers.input:is_device_active("mouse")) and not not content.is_selected
 						end
 
 						return is_hover
 					end,
-					content_change_function = function (arg_54_0, arg_54_1)
+					content_change_function = function (content, style)
 						-- function 54
-						arg_54_1.color[1] = fn(not Managers.input:is_device_active("mouse"))
+						style.color[1] = pulsate_glow(not Managers.input:is_device_active("mouse"))
 					end
 				},
 				{
@@ -1782,7 +1803,7 @@ UIWidgets.create_start_game_difficulty_stepper = function (arg_46_0, arg_46_1, a
 						1
 					}
 				},
-				texture_id = str
+				texture_id = arrow_highlight_texture
 			},
 			left_arrow_gamepad_highlight = {
 				uvs = {
@@ -1795,7 +1816,7 @@ UIWidgets.create_start_game_difficulty_stepper = function (arg_46_0, arg_46_1, a
 						1
 					}
 				},
-				texture_id = str
+				texture_id = arrow_highlight_texture
 			},
 			left_arrow_clicked = {
 				uvs = {
@@ -1808,14 +1829,14 @@ UIWidgets.create_start_game_difficulty_stepper = function (arg_46_0, arg_46_1, a
 						1
 					}
 				},
-				texture_id = str
+				texture_id = arrow_highlight_texture
 			},
-			right_arrow_hover = str,
+			right_arrow_hover = arrow_highlight_texture,
 			right_arrow_hotspot = {},
-			right_arrow_gamepad_highlight = str,
-			right_arrow_clicked = str,
-			difficulty_icon = arg_46_2 or "difficulty_option_1",
-			difficulty_text = arg_46_1 or Localize("not_assigned"),
+			right_arrow_gamepad_highlight = arrow_highlight_texture,
+			right_arrow_clicked = arrow_highlight_texture,
+			difficulty_icon = not not difficulty_icon or not not "difficulty_option_1",
+			difficulty_text = not not difficulty_text or not not Localize("not_assigned"),
 			selected_difficulty_text = Localize("not_assigned")
 		},
 		style = {
@@ -1827,9 +1848,9 @@ UIWidgets.create_start_game_difficulty_stepper = function (arg_46_0, arg_46_1, a
 					255
 				},
 				offset = {
-					tbl[1],
-					tbl[2],
-					tbl[3] + 5
+					offset[1],
+					offset[2],
+					offset[3] + 5
 				},
 				size = {
 					550,
@@ -1844,9 +1865,9 @@ UIWidgets.create_start_game_difficulty_stepper = function (arg_46_0, arg_46_1, a
 					255
 				},
 				offset = {
-					tbl[1],
-					tbl[2],
-					tbl[3] + 6
+					offset[1],
+					offset[2],
+					offset[3] + 6
 				},
 				size = {
 					600,
@@ -1861,9 +1882,9 @@ UIWidgets.create_start_game_difficulty_stepper = function (arg_46_0, arg_46_1, a
 					255
 				},
 				offset = {
-					tbl[1] + 125,
-					tbl[2] + 35,
-					tbl[3] + 6
+					offset[1] + 125,
+					offset[2] + 35,
+					offset[3] + 6
 				},
 				size = {
 					52,
@@ -1878,9 +1899,9 @@ UIWidgets.create_start_game_difficulty_stepper = function (arg_46_0, arg_46_1, a
 					255
 				},
 				offset = {
-					tbl[1] + 125,
-					tbl[2] + 35,
-					tbl[3] + 6
+					offset[1] + 125,
+					offset[2] + 35,
+					offset[3] + 6
 				},
 				size = {
 					52,
@@ -1895,9 +1916,9 @@ UIWidgets.create_start_game_difficulty_stepper = function (arg_46_0, arg_46_1, a
 					255
 				},
 				offset = {
-					tbl[1] + 125,
-					tbl[2] + 35,
-					tbl[3] + 6
+					offset[1] + 125,
+					offset[2] + 35,
+					offset[3] + 6
 				},
 				size = {
 					52,
@@ -1912,9 +1933,9 @@ UIWidgets.create_start_game_difficulty_stepper = function (arg_46_0, arg_46_1, a
 					255
 				},
 				offset = {
-					tbl[1] + 125,
-					tbl[2] + 35,
-					tbl[3] + 7
+					offset[1] + 125,
+					offset[2] + 35,
+					offset[3] + 7
 				},
 				size = {
 					52,
@@ -1929,9 +1950,9 @@ UIWidgets.create_start_game_difficulty_stepper = function (arg_46_0, arg_46_1, a
 					150
 				},
 				offset = {
-					tbl[1] + 125,
-					tbl[2] + 35,
-					tbl[3] + 7
+					offset[1] + 125,
+					offset[2] + 35,
+					offset[3] + 7
 				},
 				size = {
 					52,
@@ -1946,9 +1967,9 @@ UIWidgets.create_start_game_difficulty_stepper = function (arg_46_0, arg_46_1, a
 					255
 				},
 				offset = {
-					tbl[1] + 475,
-					tbl[2] + 35,
-					tbl[3] + 6
+					offset[1] + 475,
+					offset[2] + 35,
+					offset[3] + 6
 				},
 				size = {
 					52,
@@ -1963,9 +1984,9 @@ UIWidgets.create_start_game_difficulty_stepper = function (arg_46_0, arg_46_1, a
 					255
 				},
 				offset = {
-					tbl[1] + 475,
-					tbl[2] + 35,
-					tbl[3] + 6
+					offset[1] + 475,
+					offset[2] + 35,
+					offset[3] + 6
 				},
 				size = {
 					52,
@@ -1980,9 +2001,9 @@ UIWidgets.create_start_game_difficulty_stepper = function (arg_46_0, arg_46_1, a
 					255
 				},
 				offset = {
-					tbl[1] + 475,
-					tbl[2] + 35,
-					tbl[3] + 6
+					offset[1] + 475,
+					offset[2] + 35,
+					offset[3] + 6
 				},
 				size = {
 					52,
@@ -1997,9 +2018,9 @@ UIWidgets.create_start_game_difficulty_stepper = function (arg_46_0, arg_46_1, a
 					255
 				},
 				offset = {
-					tbl[1] + 475,
-					tbl[2] + 35,
-					tbl[3] + 7
+					offset[1] + 475,
+					offset[2] + 35,
+					offset[3] + 7
 				},
 				size = {
 					52,
@@ -2014,9 +2035,9 @@ UIWidgets.create_start_game_difficulty_stepper = function (arg_46_0, arg_46_1, a
 					150
 				},
 				offset = {
-					tbl[1] + 475,
-					tbl[2] + 35,
-					tbl[3] + 7
+					offset[1] + 475,
+					offset[2] + 35,
+					offset[3] + 7
 				},
 				size = {
 					52,
@@ -2031,9 +2052,9 @@ UIWidgets.create_start_game_difficulty_stepper = function (arg_46_0, arg_46_1, a
 					255
 				},
 				offset = {
-					tbl[1] + 12.5,
-					tbl[2] + 17.5,
-					tbl[3] + 6
+					offset[1] + 12.5,
+					offset[2] + 17.5,
+					offset[3] + 6
 				},
 				size = {
 					112.5,
@@ -2061,8 +2082,8 @@ UIWidgets.create_start_game_difficulty_stepper = function (arg_46_0, arg_46_1, a
 					36
 				},
 				offset = {
-					tbl[1] + 180,
-					tbl[2] + 137.5,
+					offset[1] + 180,
+					offset[2] + 137.5,
 					12
 				},
 				size = {
@@ -2078,8 +2099,8 @@ UIWidgets.create_start_game_difficulty_stepper = function (arg_46_0, arg_46_1, a
 					255
 				},
 				offset = {
-					tbl[1] + 175,
-					tbl[2] + 45,
+					offset[1] + 175,
+					offset[2] + 45,
 					5
 				},
 				size = {
@@ -2095,8 +2116,8 @@ UIWidgets.create_start_game_difficulty_stepper = function (arg_46_0, arg_46_1, a
 					255
 				},
 				offset = {
-					tbl[1] + 175,
-					tbl[2] + 45,
+					offset[1] + 175,
+					offset[2] + 45,
 					7
 				},
 				size = {
@@ -2112,8 +2133,8 @@ UIWidgets.create_start_game_difficulty_stepper = function (arg_46_0, arg_46_1, a
 					255
 				},
 				offset = {
-					tbl[1] + 175,
-					tbl[2] + 45,
+					offset[1] + 175,
+					offset[2] + 45,
 					6
 				},
 				size = {
@@ -2132,8 +2153,8 @@ UIWidgets.create_start_game_difficulty_stepper = function (arg_46_0, arg_46_1, a
 				text_color = Colors.get_color_table_with_alpha("white", 255),
 				default_text_color = Colors.get_color_table_with_alpha("white", 255),
 				offset = {
-					tbl[1] + 175,
-					tbl[2] + 45,
+					offset[1] + 175,
+					offset[2] + 45,
 					7
 				},
 				size = {
@@ -2142,22 +2163,23 @@ UIWidgets.create_start_game_difficulty_stepper = function (arg_46_0, arg_46_1, a
 				}
 			}
 		},
-		scenegraph_id = arg_46_0,
-		offset = tbl
+		scenegraph_id = scenegraph_id,
+		offset = offset
 	}
 end
 
-UIWidgets.create_deus_panel_with_outer_frame = function (arg_55_0, arg_55_1)
+UIWidgets.create_deus_panel_with_outer_frame = function (scenegraph_id, size)
 	-- function 55
-	local border_tiled = UIFrameSettings.border_tiled
-	local corner = border_tiled.texture_sizes.corner
-	local tbl = {
-		corner[1] + 1,
-		corner[2] + 1
+	local frame_border = UIFrameSettings.border_tiled
+	local corner_size = frame_border.texture_sizes.corner
+
+	corner_size = {
+		corner_size[1] + 1,
+		corner_size[2] + 1
 	}
 
 	return {
-		scenegraph_id = arg_55_0,
+		scenegraph_id = scenegraph_id,
 		offset = {
 			0,
 			0,
@@ -2179,7 +2201,7 @@ UIWidgets.create_deus_panel_with_outer_frame = function (arg_55_0, arg_55_1)
 		},
 		content = {
 			background = "bg_tile",
-			border = border_tiled.texture
+			border = frame_border.texture
 		},
 		style = {
 			background = {
@@ -2187,7 +2209,7 @@ UIWidgets.create_deus_panel_with_outer_frame = function (arg_55_0, arg_55_1)
 					256,
 					256
 				},
-				texture_size = arg_55_1,
+				texture_size = size,
 				offset = {
 					0,
 					0,
@@ -2202,15 +2224,15 @@ UIWidgets.create_deus_panel_with_outer_frame = function (arg_55_0, arg_55_1)
 			},
 			border = {
 				use_tiling = true,
-				texture_size = border_tiled.texture_size,
-				texture_sizes = border_tiled.texture_sizes,
+				texture_size = frame_border.texture_size,
+				texture_sizes = frame_border.texture_sizes,
 				size = {
-					arg_55_1[1] + 2 * tbl[1],
-					arg_55_1[2] + 2 * tbl[2]
+					size[1] + 2 * corner_size[1],
+					size[2] + 2 * corner_size[2]
 				},
 				offset = {
-					-tbl[1],
-					-tbl[2],
+					-corner_size[1],
+					-corner_size[2],
 					2
 				},
 				color = {
@@ -2224,23 +2246,26 @@ UIWidgets.create_deus_panel_with_outer_frame = function (arg_55_0, arg_55_1)
 	}
 end
 
-UIWidgets.create_start_game_deus_play_button = function (arg_56_0, arg_56_1, arg_56_2, arg_56_3, arg_56_4)
+UIWidgets.create_start_game_deus_play_button = function (scenegraph_id, size, text, font_size, disable_with_gamepad)
 	-- function 56
-	local str = "background_tiled_morris"
-	local get_atlas_settings_by_texture_name = UIAtlasHelper.get_atlas_settings_by_texture_name(str)
-	local size = get_atlas_settings_by_texture_name.size
-	local menu_frame_05_morris = UIFrameSettings.menu_frame_05_morris
-	local str_2 = "button_glass_02"
-	local size_2 = UIAtlasHelper.get_atlas_settings_by_texture_name(str_2).size
-	local var_56_6 = menu_frame_05_morris.texture_sizes.horizontal[2]
-	local str_3 = "button_detail_01_morris"
-	local size_3 = UIAtlasHelper.get_atlas_settings_by_texture_name(str_3).size
-	local tbl = {
+	local background_texture = "background_tiled_morris"
+	local background_texture_settings = UIAtlasHelper.get_atlas_settings_by_texture_name(background_texture)
+	local background_texture_size = background_texture_settings.size
+	local frame_settings = UIFrameSettings.menu_frame_05_morris
+	local glass = "button_glass_02"
+	local glass_settings = UIAtlasHelper.get_atlas_settings_by_texture_name(glass)
+	local glass_size = glass_settings.size
+	local glass_offset_y = frame_settings.texture_sizes.horizontal[2]
+	local side_detail = "button_detail_01_morris"
+	local side_detail_settings = UIAtlasHelper.get_atlas_settings_by_texture_name(side_detail)
+	local side_detail_size = side_detail_settings.size
+	local side_detail_offset = {
 		45,
 		4
 	}
-	local str_4 = "button_detail_01_hover_morris"
-	local size_4 = UIAtlasHelper.get_atlas_settings_by_texture_name(str_4).size
+	local side_detail_glow = "button_detail_01_hover_morris"
+	local side_detail_glow_settings = UIAtlasHelper.get_atlas_settings_by_texture_name(side_detail_glow)
+	local side_detail_glow_size = side_detail_glow_settings.size
 
 	return {
 		element = {
@@ -2263,99 +2288,118 @@ UIWidgets.create_start_game_deus_play_button = function (arg_56_0, arg_56_1, arg
 				{
 					style_id = "clicked_rect",
 					pass_type = "rect",
-					content_check_function = function (self)
+					content_check_function = function (content)
 						-- function 57
-						local is_clicked = self.button_hotspot.is_clicked
+						local button_hotspot = content.button_hotspot
+						local is_clicked = button_hotspot.is_clicked
 
-						return not is_clicked and is_clicked == 0
+						return not is_clicked or is_clicked == 0
 					end
 				},
 				{
 					style_id = "disabled_rect",
 					pass_type = "rect",
-					content_check_function = function (self)
+					content_check_function = function (content)
 						-- function 58
-						return self.button_hotspot.disable_button
+						local button_hotspot = content.button_hotspot
+
+						return button_hotspot.disable_button
 					end
 				},
 				{
 					style_id = "side_detail_left",
 					pass_type = "texture",
 					content_id = "side_detail",
-					content_check_function = function (self)
+					content_check_function = function (content)
 						-- function 59
-						return not self.parent.button_hotspot.disable_button
+						local button_hotspot = content.parent.button_hotspot
+
+						return not button_hotspot.disable_button
 					end
 				},
 				{
 					style_id = "side_detail_right",
 					pass_type = "texture_uv",
 					content_id = "side_detail",
-					content_check_function = function (self)
+					content_check_function = function (content)
 						-- function 60
-						return not self.parent.button_hotspot.disable_button
+						local button_hotspot = content.parent.button_hotspot
+
+						return not button_hotspot.disable_button
 					end
 				},
 				{
 					style_id = "side_detail_left_disabled",
 					pass_type = "texture",
 					content_id = "side_detail",
-					content_check_function = function (self)
+					content_check_function = function (content)
 						-- function 61
-						return self.parent.button_hotspot.disable_button
+						local button_hotspot = content.parent.button_hotspot
+
+						return button_hotspot.disable_button
 					end
 				},
 				{
 					style_id = "side_detail_right_disabled",
 					pass_type = "texture_uv",
 					content_id = "side_detail",
-					content_check_function = function (self)
+					content_check_function = function (content)
 						-- function 62
-						return self.parent.button_hotspot.disable_button
+						local button_hotspot = content.parent.button_hotspot
+
+						return button_hotspot.disable_button
 					end
 				},
 				{
 					style_id = "side_detail_glow_left",
 					pass_type = "texture",
 					content_id = "side_detail_glow",
-					content_check_function = function (self)
+					content_check_function = function (content)
 						-- function 63
-						return not self.parent.button_hotspot.disable_button
+						local button_hotspot = content.parent.button_hotspot
+
+						return not button_hotspot.disable_button
 					end,
-					content_change_function = function (self, arg_64_1)
+					content_change_function = function (content, style)
 						-- function 64
-						arg_64_1.color[1] = fn(self.parent.is_selected)
+						style.color[1] = pulsate_glow(content.parent.is_selected)
 					end
 				},
 				{
 					style_id = "side_detail_glow_right",
 					pass_type = "texture_uv",
 					content_id = "side_detail_glow",
-					content_check_function = function (self)
+					content_check_function = function (content)
 						-- function 65
-						return not self.parent.button_hotspot.disable_button
+						local button_hotspot = content.parent.button_hotspot
+
+						return not button_hotspot.disable_button
 					end,
-					content_change_function = function (self, arg_66_1)
+					content_change_function = function (content, style)
 						-- function 66
-						arg_66_1.color[1] = fn(self.parent.is_selected)
+						style.color[1] = pulsate_glow(content.parent.is_selected)
 					end
 				},
 				{
 					style_id = "title_text",
 					pass_type = "text",
 					text_id = "title_text",
-					content_check_function = function (self)
+					content_check_function = function (content)
 						-- function 67
-						return not self.button_hotspot.disable_button
+						local button_hotspot = content.button_hotspot
+
+						return not button_hotspot.disable_button
 					end
 				},
 				{
 					style_id = "title_text_disabled",
 					pass_type = "text",
 					text_id = "title_text",
-					content_check_function = function (self)
+					content_check_function = function (content)
 						-- function 68
-						return self.button_hotspot.disable_button
+						local button_hotspot = content.button_hotspot
+
+						return button_hotspot.disable_button
 					end
 				},
 				{
@@ -2382,16 +2426,16 @@ UIWidgets.create_start_game_deus_play_button = function (arg_56_0, arg_56_1, arg
 					texture_id = "effect",
 					style_id = "effect",
 					pass_type = "texture",
-					content_check_function = function (self)
+					content_check_function = function (content)
 						-- function 69
-						local button_hotspot = self.button_hotspot
+						local button_hotspot = content.button_hotspot
 						local is_hover
 
 						if not button_hotspot.disable_button then
 							is_hover = button_hotspot.is_hover
 
 							if not is_hover then
-								is_hover = self.is_selected
+								is_hover = content.is_selected
 							end
 						else
 							is_hover = false
@@ -2408,27 +2452,27 @@ UIWidgets.create_start_game_deus_play_button = function (arg_56_0, arg_56_1, arg
 					texture_id = "effect",
 					style_id = "effect_active",
 					pass_type = "texture",
-					content_check_function = function (self)
+					content_check_function = function (content)
 						-- function 70
-						local button_hotspot = self.button_hotspot
+						local button_hotspot = content.button_hotspot
 
-						return not not button_hotspot.disable_button or not button_hotspot.is_hover
+						return not button_hotspot.disable_button and not not not button_hotspot.is_hover
 					end
 				},
 				{
 					texture_id = "hover_glow",
 					style_id = "hover_glow",
 					pass_type = "texture",
-					content_check_function = function (self)
+					content_check_function = function (content)
 						-- function 71
-						local button_hotspot = self.button_hotspot
+						local button_hotspot = content.button_hotspot
 						local is_hover
 
 						if not button_hotspot.disable_button then
 							is_hover = button_hotspot.is_hover
 
 							if not is_hover then
-								is_hover = self.is_selected
+								is_hover = content.is_selected
 							end
 						else
 							is_hover = false
@@ -2445,22 +2489,22 @@ UIWidgets.create_start_game_deus_play_button = function (arg_56_0, arg_56_1, arg
 					texture_id = "hover_glow",
 					style_id = "hover_glow_active",
 					pass_type = "texture",
-					content_check_function = function (self)
+					content_check_function = function (content)
 						-- function 72
-						local button_hotspot = self.button_hotspot
+						local button_hotspot = content.button_hotspot
 
-						return not not button_hotspot.disable_button or not button_hotspot.is_hover
+						return not button_hotspot.disable_button and not not not button_hotspot.is_hover
 					end
 				},
 				{
 					texture_id = "glow",
 					style_id = "glow",
 					pass_type = "texture",
-					content_check_function = function (self)
+					content_check_function = function (content)
 						-- function 73
-						local button_hotspot = self.button_hotspot
+						local button_hotspot = content.button_hotspot
 
-						return not not button_hotspot.disable_button or button_hotspot.is_hover
+						return not button_hotspot.disable_button and not not button_hotspot.is_hover
 					end
 				},
 				{
@@ -2491,7 +2535,7 @@ UIWidgets.create_start_game_deus_play_button = function (arg_56_0, arg_56_1, arg
 						1
 					}
 				},
-				texture_id = str_4
+				texture_id = side_detail_glow
 			},
 			side_detail = {
 				uvs = {
@@ -2504,7 +2548,7 @@ UIWidgets.create_start_game_deus_play_button = function (arg_56_0, arg_56_1, arg
 						1
 					}
 				},
-				texture_id = str_3
+				texture_id = side_detail
 			},
 			fade = {
 				texture_id = "horizontal_gradient",
@@ -2519,25 +2563,25 @@ UIWidgets.create_start_game_deus_play_button = function (arg_56_0, arg_56_1, arg
 					}
 				}
 			},
-			glass = str_2,
+			glass = glass,
 			button_hotspot = {},
-			title_text = arg_56_2 or "n/a",
-			frame = menu_frame_05_morris.texture,
-			disable_with_gamepad = arg_56_4,
+			title_text = not not text or not not "n/a",
+			frame = frame_settings.texture,
+			disable_with_gamepad = disable_with_gamepad,
 			background = {
 				uvs = {
 					{
 						0,
-						1 - arg_56_1[2] / get_atlas_settings_by_texture_name.size[2]
+						1 - size[2] / background_texture_settings.size[2]
 					},
 					{
-						arg_56_1[1] / get_atlas_settings_by_texture_name.size[1],
+						size[1] / background_texture_settings.size[1],
 						1
 					}
 				},
-				texture_id = str
+				texture_id = background_texture
 			},
-			background = str
+			background = background_texture
 		},
 		style = {
 			background = {
@@ -2553,12 +2597,12 @@ UIWidgets.create_start_game_deus_play_button = function (arg_56_0, arg_56_1, arg
 					0
 				},
 				texture_tiling_size = {
-					size[1],
-					size[2]
+					background_texture_size[1],
+					background_texture_size[2]
 				},
 				texture_size = {
-					arg_56_1[1],
-					arg_56_1[2]
+					size[1],
+					size[2]
 				}
 			},
 			clicked_rect = {
@@ -2574,8 +2618,8 @@ UIWidgets.create_start_game_deus_play_button = function (arg_56_0, arg_56_1, arg
 					7
 				},
 				size = {
-					arg_56_1[1],
-					arg_56_1[2]
+					size[1],
+					size[2]
 				}
 			},
 			disabled_rect = {
@@ -2591,8 +2635,8 @@ UIWidgets.create_start_game_deus_play_button = function (arg_56_0, arg_56_1, arg
 					7
 				},
 				size = {
-					arg_56_1[1],
-					arg_56_1[2]
+					size[1],
+					size[2]
 				}
 			},
 			title_text = {
@@ -2601,7 +2645,7 @@ UIWidgets.create_start_game_deus_play_button = function (arg_56_0, arg_56_1, arg
 				horizontal_alignment = "center",
 				vertical_alignment = "center",
 				font_type = "hell_shark",
-				font_size = arg_56_3 or 24,
+				font_size = not not font_size or not not 24,
 				text_color = Colors.get_color_table_with_alpha("font_button_normal", 255),
 				default_text_color = Colors.get_color_table_with_alpha("font_button_normal", 255),
 				select_text_color = Colors.get_color_table_with_alpha("white", 255),
@@ -2611,8 +2655,8 @@ UIWidgets.create_start_game_deus_play_button = function (arg_56_0, arg_56_1, arg
 					9
 				},
 				size = {
-					arg_56_1[1],
-					arg_56_1[2]
+					size[1],
+					size[2]
 				}
 			},
 			title_text_disabled = {
@@ -2621,7 +2665,7 @@ UIWidgets.create_start_game_deus_play_button = function (arg_56_0, arg_56_1, arg
 				horizontal_alignment = "center",
 				vertical_alignment = "center",
 				font_type = "hell_shark",
-				font_size = arg_56_3 or 24,
+				font_size = not not font_size or not not 24,
 				text_color = Colors.get_color_table_with_alpha("gray", 255),
 				default_text_color = Colors.get_color_table_with_alpha("gray", 255),
 				offset = {
@@ -2630,8 +2674,8 @@ UIWidgets.create_start_game_deus_play_button = function (arg_56_0, arg_56_1, arg
 					9
 				},
 				size = {
-					arg_56_1[1],
-					arg_56_1[2]
+					size[1],
+					size[2]
 				}
 			},
 			title_text_shadow = {
@@ -2640,7 +2684,7 @@ UIWidgets.create_start_game_deus_play_button = function (arg_56_0, arg_56_1, arg
 				horizontal_alignment = "center",
 				vertical_alignment = "center",
 				font_type = "hell_shark",
-				font_size = arg_56_3 or 24,
+				font_size = not not font_size or not not 24,
 				text_color = Colors.get_color_table_with_alpha("black", 255),
 				offset = {
 					2,
@@ -2648,14 +2692,14 @@ UIWidgets.create_start_game_deus_play_button = function (arg_56_0, arg_56_1, arg
 					8
 				},
 				size = {
-					arg_56_1[1],
-					arg_56_1[2]
+					size[1],
+					size[2]
 				}
 			},
 			frame = {
 				use_tiling = true,
-				texture_size = menu_frame_05_morris.texture_size,
-				texture_sizes = menu_frame_05_morris.texture_sizes,
+				texture_size = frame_settings.texture_size,
+				texture_sizes = frame_settings.texture_sizes,
 				color = {
 					255,
 					255,
@@ -2668,8 +2712,8 @@ UIWidgets.create_start_game_deus_play_button = function (arg_56_0, arg_56_1, arg
 					8
 				},
 				size = {
-					arg_56_1[1],
-					arg_56_1[2]
+					size[1],
+					size[2]
 				}
 			},
 			hover_glow = {
@@ -2681,12 +2725,12 @@ UIWidgets.create_start_game_deus_play_button = function (arg_56_0, arg_56_1, arg
 				},
 				offset = {
 					0,
-					menu_frame_05_morris.texture_sizes.horizontal[2],
+					frame_settings.texture_sizes.horizontal[2],
 					1
 				},
 				size = {
-					arg_56_1[1],
-					math.min(60, arg_56_1[2] - menu_frame_05_morris.texture_sizes.horizontal[2] * 2)
+					size[1],
+					math.min(60, size[2] - frame_settings.texture_sizes.horizontal[2] * 2)
 				}
 			},
 			hover_glow_active = {
@@ -2698,12 +2742,12 @@ UIWidgets.create_start_game_deus_play_button = function (arg_56_0, arg_56_1, arg
 				},
 				offset = {
 					0,
-					menu_frame_05_morris.texture_sizes.horizontal[2],
+					frame_settings.texture_sizes.horizontal[2],
 					1
 				},
 				size = {
-					arg_56_1[1],
-					math.min(60, arg_56_1[2] - menu_frame_05_morris.texture_sizes.horizontal[2] * 2)
+					size[1],
+					math.min(60, size[2] - frame_settings.texture_sizes.horizontal[2] * 2)
 				}
 			},
 			glass_top = {
@@ -2715,12 +2759,12 @@ UIWidgets.create_start_game_deus_play_button = function (arg_56_0, arg_56_1, arg
 				},
 				offset = {
 					0,
-					arg_56_1[2] - size_2[2] - var_56_6,
+					size[2] - glass_size[2] - glass_offset_y,
 					6
 				},
 				size = {
-					arg_56_1[1],
-					size_2[2]
+					size[1],
+					glass_size[2]
 				}
 			},
 			glass_bottom = {
@@ -2732,12 +2776,12 @@ UIWidgets.create_start_game_deus_play_button = function (arg_56_0, arg_56_1, arg
 				},
 				offset = {
 					0,
-					var_56_6 - 8,
+					glass_offset_y - 8,
 					6
 				},
 				size = {
-					arg_56_1[1],
-					size_2[2]
+					size[1],
+					glass_size[2]
 				}
 			},
 			glow = {
@@ -2749,12 +2793,12 @@ UIWidgets.create_start_game_deus_play_button = function (arg_56_0, arg_56_1, arg
 				},
 				offset = {
 					0,
-					var_56_6 - 1,
+					glass_offset_y - 1,
 					3
 				},
 				size = {
-					arg_56_1[1],
-					math.min(60, arg_56_1[2] - var_56_6 * 2)
+					size[1],
+					math.min(60, size[2] - glass_offset_y * 2)
 				}
 			},
 			effect = {
@@ -2770,8 +2814,8 @@ UIWidgets.create_start_game_deus_play_button = function (arg_56_0, arg_56_1, arg
 					5
 				},
 				size = {
-					arg_56_1[1],
-					arg_56_1[2]
+					size[1],
+					size[2]
 				}
 			},
 			effect_active = {
@@ -2787,8 +2831,8 @@ UIWidgets.create_start_game_deus_play_button = function (arg_56_0, arg_56_1, arg
 					5
 				},
 				size = {
-					arg_56_1[1],
-					arg_56_1[2]
+					size[1],
+					size[2]
 				}
 			},
 			side_detail_left = {
@@ -2799,13 +2843,13 @@ UIWidgets.create_start_game_deus_play_button = function (arg_56_0, arg_56_1, arg
 					255
 				},
 				offset = {
-					-tbl[1],
-					(arg_56_1[2] - size_3[2]) / 2 + tbl[2],
+					-side_detail_offset[1],
+					(size[2] - side_detail_size[2]) / 2 + side_detail_offset[2],
 					9
 				},
 				size = {
-					size_3[1],
-					size_3[2]
+					side_detail_size[1],
+					side_detail_size[2]
 				}
 			},
 			side_detail_right = {
@@ -2816,13 +2860,13 @@ UIWidgets.create_start_game_deus_play_button = function (arg_56_0, arg_56_1, arg
 					255
 				},
 				offset = {
-					arg_56_1[1] - size_3[1] + tbl[1],
-					(arg_56_1[2] - size_3[2]) / 2 + tbl[2],
+					size[1] - side_detail_size[1] + side_detail_offset[1],
+					(size[2] - side_detail_size[2]) / 2 + side_detail_offset[2],
 					9
 				},
 				size = {
-					size_3[1],
-					size_3[2]
+					side_detail_size[1],
+					side_detail_size[2]
 				}
 			},
 			side_detail_left_disabled = {
@@ -2833,13 +2877,13 @@ UIWidgets.create_start_game_deus_play_button = function (arg_56_0, arg_56_1, arg
 					200
 				},
 				offset = {
-					-tbl[1],
-					(arg_56_1[2] - size_3[2]) / 2 + tbl[2],
+					-side_detail_offset[1],
+					(size[2] - side_detail_size[2]) / 2 + side_detail_offset[2],
 					9
 				},
 				size = {
-					size_3[1],
-					size_3[2]
+					side_detail_size[1],
+					side_detail_size[2]
 				}
 			},
 			side_detail_right_disabled = {
@@ -2850,13 +2894,13 @@ UIWidgets.create_start_game_deus_play_button = function (arg_56_0, arg_56_1, arg
 					200
 				},
 				offset = {
-					arg_56_1[1] - size_3[1] + tbl[1],
-					(arg_56_1[2] - size_3[2]) / 2 + tbl[2],
+					size[1] - side_detail_size[1] + side_detail_offset[1],
+					(size[2] - side_detail_size[2]) / 2 + side_detail_offset[2],
 					9
 				},
 				size = {
-					size_3[1],
-					size_3[2]
+					side_detail_size[1],
+					side_detail_size[2]
 				}
 			},
 			side_detail_glow_left = {
@@ -2867,13 +2911,13 @@ UIWidgets.create_start_game_deus_play_button = function (arg_56_0, arg_56_1, arg
 					255
 				},
 				offset = {
-					-tbl[1],
-					(arg_56_1[2] - size_4[2]) / 2 + tbl[2],
+					-side_detail_offset[1],
+					(size[2] - side_detail_glow_size[2]) / 2 + side_detail_offset[2],
 					10
 				},
 				size = {
-					size_4[1],
-					size_4[2]
+					side_detail_glow_size[1],
+					side_detail_glow_size[2]
 				}
 			},
 			side_detail_glow_right = {
@@ -2884,13 +2928,13 @@ UIWidgets.create_start_game_deus_play_button = function (arg_56_0, arg_56_1, arg
 					255
 				},
 				offset = {
-					arg_56_1[1] - size_4[1] + tbl[1],
-					(arg_56_1[2] - size_4[2]) / 2 + tbl[2],
+					size[1] - side_detail_glow_size[1] + side_detail_offset[1],
+					(size[2] - side_detail_glow_size[2]) / 2 + side_detail_offset[2],
 					10
 				},
 				size = {
-					size_4[1],
-					size_4[2]
+					side_detail_glow_size[1],
+					side_detail_glow_size[2]
 				}
 			},
 			fade_left = {
@@ -2899,7 +2943,7 @@ UIWidgets.create_start_game_deus_play_button = function (arg_56_0, arg_56_1, arg
 				color = Colors.get_color_table_with_alpha("black", 255),
 				texture_size = {
 					100,
-					arg_56_1[2]
+					size[2]
 				},
 				offset = {
 					0,
@@ -2913,7 +2957,7 @@ UIWidgets.create_start_game_deus_play_button = function (arg_56_0, arg_56_1, arg
 				color = Colors.get_color_table_with_alpha("black", 255),
 				texture_size = {
 					100,
-					arg_56_1[2]
+					size[2]
 				},
 				offset = {
 					0,
@@ -2922,7 +2966,7 @@ UIWidgets.create_start_game_deus_play_button = function (arg_56_0, arg_56_1, arg
 				}
 			}
 		},
-		scenegraph_id = arg_56_0,
+		scenegraph_id = scenegraph_id,
 		offset = {
 			0,
 			0,
@@ -2931,19 +2975,20 @@ UIWidgets.create_start_game_deus_play_button = function (arg_56_0, arg_56_1, arg
 	}
 end
 
-UIWidgets.create_deus_default_button = function (arg_74_0, arg_74_1, arg_74_2, arg_74_3, arg_74_4)
+UIWidgets.create_deus_default_button = function (scenegraph_id, size, text, font_size, disable_with_gamepad)
 	-- function 74
-	local str = "button_bg_01"
-	local get_atlas_settings_by_texture_name = UIAtlasHelper.get_atlas_settings_by_texture_name(str)
-	local str_2 = "menu_frame_01_morris"
-	local var_74_3 = UIFrameSettings[str_2]
-	local var_74_4 = var_74_3.texture_sizes.corner[1]
-	local var_74_5 = var_74_3.texture_sizes.horizontal[2]
-	local str_3 = "button_detail_02_morris"
-	local size = UIAtlasHelper.get_atlas_settings_by_texture_name(str_3).size
-	local str_4 = "button_detail_02_hover_morris"
-	local num = 30
-	local num_2 = 5
+	local background_texture = "button_bg_01"
+	local background_texture_settings = UIAtlasHelper.get_atlas_settings_by_texture_name(background_texture)
+	local frame_name = "menu_frame_01_morris"
+	local frame_settings = UIFrameSettings[frame_name]
+	local frame_width = frame_settings.texture_sizes.corner[1]
+	local frame_height = frame_settings.texture_sizes.horizontal[2]
+	local side_detail_texture = "button_detail_02_morris"
+	local side_detail_texture_settings = UIAtlasHelper.get_atlas_settings_by_texture_name(side_detail_texture)
+	local side_detail_texture_size = side_detail_texture_settings.size
+	local side_detail_glow_texture = "button_detail_02_hover_morris"
+	local extra_detail_offset_x = 30
+	local extra_detail_offset_y = 5
 
 	return {
 		element = {
@@ -2957,9 +3002,9 @@ UIWidgets.create_deus_default_button = function (arg_74_0, arg_74_1, arg_74_2, a
 					texture_id = "frame",
 					style_id = "frame",
 					pass_type = "texture_frame",
-					content_check_function = function (self)
+					content_check_function = function (content)
 						-- function 75
-						return self.draw_frame
+						return content.draw_frame
 					end
 				},
 				{
@@ -2984,9 +3029,11 @@ UIWidgets.create_deus_default_button = function (arg_74_0, arg_74_1, arg_74_2, a
 				{
 					style_id = "disabled_rect",
 					pass_type = "rect",
-					content_check_function = function (self)
+					content_check_function = function (content)
 						-- function 76
-						return self.button_hotspot.disable_button
+						local button_hotspot = content.button_hotspot
+
+						return button_hotspot.disable_button
 					end
 				},
 				{
@@ -3003,40 +3050,44 @@ UIWidgets.create_deus_default_button = function (arg_74_0, arg_74_1, arg_74_2, a
 					style_id = "side_detail_right",
 					pass_type = "texture_uv",
 					content_id = "side_detail_glow",
-					content_check_function = function (self)
+					content_check_function = function (content)
 						-- function 77
-						local button_hotspot = self.parent.button_hotspot
+						local button_hotspot = content.parent.button_hotspot
 
-						return not not button_hotspot.disable_button or button_hotspot.is_hover
+						return not button_hotspot.disable_button and not not button_hotspot.is_hover
 					end
 				},
 				{
 					style_id = "side_detail_left",
 					pass_type = "texture",
 					content_id = "side_detail_glow",
-					content_check_function = function (self)
+					content_check_function = function (content)
 						-- function 78
-						local button_hotspot = self.parent.button_hotspot
+						local button_hotspot = content.parent.button_hotspot
 
-						return not not button_hotspot.disable_button or button_hotspot.is_hover
+						return not button_hotspot.disable_button and not not button_hotspot.is_hover
 					end
 				},
 				{
 					style_id = "title_text",
 					pass_type = "text",
 					text_id = "title_text",
-					content_check_function = function (self)
+					content_check_function = function (content)
 						-- function 79
-						return not self.button_hotspot.disable_button
+						local button_hotspot = content.button_hotspot
+
+						return not button_hotspot.disable_button
 					end
 				},
 				{
 					style_id = "title_text_disabled",
 					pass_type = "text",
 					text_id = "title_text",
-					content_check_function = function (self)
+					content_check_function = function (content)
 						-- function 80
-						return self.button_hotspot.disable_button
+						local button_hotspot = content.button_hotspot
+
+						return button_hotspot.disable_button
 					end
 				},
 				{
@@ -3072,7 +3123,7 @@ UIWidgets.create_deus_default_button = function (arg_74_0, arg_74_1, arg_74_2, a
 						1
 					}
 				},
-				texture_id = str_3
+				texture_id = side_detail_texture
 			},
 			side_detail_glow = {
 				uvs = {
@@ -3085,25 +3136,25 @@ UIWidgets.create_deus_default_button = function (arg_74_0, arg_74_1, arg_74_2, a
 						1
 					}
 				},
-				texture_id = str_4
+				texture_id = side_detail_glow_texture
 			},
 			button_hotspot = {},
-			title_text = arg_74_2 or "n/a",
-			frame = var_74_3.texture,
+			title_text = not not text or not not "n/a",
+			frame = frame_settings.texture,
 			background = {
 				uvs = {
 					{
 						0,
-						1 - arg_74_1[2] / get_atlas_settings_by_texture_name.size[2]
+						1 - size[2] / background_texture_settings.size[2]
 					},
 					{
-						arg_74_1[1] / get_atlas_settings_by_texture_name.size[1],
+						size[1] / background_texture_settings.size[1],
 						1
 					}
 				},
-				texture_id = str
+				texture_id = background_texture
 			},
-			disable_with_gamepad = arg_74_4
+			disable_with_gamepad = disable_with_gamepad
 		},
 		style = {
 			background = {
@@ -3127,13 +3178,13 @@ UIWidgets.create_deus_default_button = function (arg_74_0, arg_74_1, arg_74_2, a
 					255
 				},
 				offset = {
-					var_74_4,
-					var_74_4 - 2,
+					frame_width,
+					frame_width - 2,
 					2
 				},
 				size = {
-					arg_74_1[1] - var_74_4 * 2,
-					arg_74_1[2] - var_74_4 * 2
+					size[1] - frame_width * 2,
+					size[2] - frame_width * 2
 				}
 			},
 			hover_glow = {
@@ -3145,12 +3196,12 @@ UIWidgets.create_deus_default_button = function (arg_74_0, arg_74_1, arg_74_2, a
 				},
 				offset = {
 					0,
-					var_74_4 - 2,
+					frame_width - 2,
 					3
 				},
 				size = {
-					arg_74_1[1],
-					math.min(arg_74_1[2] - 5, 80)
+					size[1],
+					math.min(size[2] - 5, 80)
 				}
 			},
 			clicked_rect = {
@@ -3186,13 +3237,13 @@ UIWidgets.create_deus_default_button = function (arg_74_0, arg_74_1, arg_74_2, a
 				vertical_alignment = "center",
 				dynamic_font_size = true,
 				font_type = "hell_shark",
-				font_size = arg_74_3 or 24,
+				font_size = not not font_size or not not 24,
 				text_color = Colors.get_color_table_with_alpha("font_button_normal", 255),
 				default_text_color = Colors.get_color_table_with_alpha("font_button_normal", 255),
 				select_text_color = Colors.get_color_table_with_alpha("white", 255),
 				size = {
-					arg_74_1[1] - 40,
-					arg_74_1[2]
+					size[1] - 40,
+					size[2]
 				},
 				offset = {
 					20,
@@ -3207,12 +3258,12 @@ UIWidgets.create_deus_default_button = function (arg_74_0, arg_74_1, arg_74_2, a
 				vertical_alignment = "center",
 				dynamic_font_size = true,
 				font_type = "hell_shark",
-				font_size = arg_74_3 or 24,
+				font_size = not not font_size or not not 24,
 				text_color = Colors.get_color_table_with_alpha("gray", 255),
 				default_text_color = Colors.get_color_table_with_alpha("gray", 255),
 				size = {
-					arg_74_1[1] - 40,
-					arg_74_1[2]
+					size[1] - 40,
+					size[2]
 				},
 				offset = {
 					20,
@@ -3227,12 +3278,12 @@ UIWidgets.create_deus_default_button = function (arg_74_0, arg_74_1, arg_74_2, a
 				vertical_alignment = "center",
 				dynamic_font_size = true,
 				font_type = "hell_shark",
-				font_size = arg_74_3 or 24,
+				font_size = not not font_size or not not 24,
 				text_color = Colors.get_color_table_with_alpha("black", 255),
 				default_text_color = Colors.get_color_table_with_alpha("black", 255),
 				size = {
-					arg_74_1[1] - 40,
-					arg_74_1[2]
+					size[1] - 40,
+					size[2]
 				},
 				offset = {
 					22,
@@ -3241,8 +3292,8 @@ UIWidgets.create_deus_default_button = function (arg_74_0, arg_74_1, arg_74_2, a
 				}
 			},
 			frame = {
-				texture_size = var_74_3.texture_size,
-				texture_sizes = var_74_3.texture_sizes,
+				texture_size = frame_settings.texture_size,
+				texture_sizes = frame_settings.texture_sizes,
 				color = {
 					255,
 					255,
@@ -3264,11 +3315,11 @@ UIWidgets.create_deus_default_button = function (arg_74_0, arg_74_1, arg_74_2, a
 				},
 				offset = {
 					0,
-					arg_74_1[2] - (var_74_5 + 11),
+					size[2] - (frame_height + 11),
 					4
 				},
 				size = {
-					arg_74_1[1],
+					size[1],
 					11
 				}
 			},
@@ -3281,11 +3332,11 @@ UIWidgets.create_deus_default_button = function (arg_74_0, arg_74_1, arg_74_2, a
 				},
 				offset = {
 					0,
-					var_74_5 - 9,
+					frame_height - 9,
 					4
 				},
 				size = {
-					arg_74_1[1],
+					size[1],
 					11
 				}
 			},
@@ -3297,13 +3348,13 @@ UIWidgets.create_deus_default_button = function (arg_74_0, arg_74_1, arg_74_2, a
 					255
 				},
 				offset = {
-					-num,
-					arg_74_1[2] / 2 - size[2] / 2 + num_2,
+					-extra_detail_offset_x,
+					size[2] / 2 - side_detail_texture_size[2] / 2 + extra_detail_offset_y,
 					9
 				},
 				size = {
-					size[1],
-					size[2]
+					side_detail_texture_size[1],
+					side_detail_texture_size[2]
 				}
 			},
 			side_detail_right = {
@@ -3314,17 +3365,17 @@ UIWidgets.create_deus_default_button = function (arg_74_0, arg_74_1, arg_74_2, a
 					255
 				},
 				offset = {
-					arg_74_1[1] - size[1] + num,
-					arg_74_1[2] / 2 - size[2] / 2 + num_2,
+					size[1] - side_detail_texture_size[1] + extra_detail_offset_x,
+					size[2] / 2 - side_detail_texture_size[2] / 2 + extra_detail_offset_y,
 					9
 				},
 				size = {
-					size[1],
-					size[2]
+					side_detail_texture_size[1],
+					side_detail_texture_size[2]
 				}
 			}
 		},
-		scenegraph_id = arg_74_0,
+		scenegraph_id = scenegraph_id,
 		offset = {
 			0,
 			0,
@@ -3333,10 +3384,10 @@ UIWidgets.create_deus_default_button = function (arg_74_0, arg_74_1, arg_74_2, a
 	}
 end
 
-UIWidgets.create_start_game_deus_journey_stepper = function (arg_81_0)
+UIWidgets.create_start_game_deus_journey_stepper = function (scenegraph_id)
 	-- function 81
 	return {
-		scenegraph_id = arg_81_0,
+		scenegraph_id = scenegraph_id,
 		offset = {
 			0,
 			0,
@@ -3364,23 +3415,19 @@ UIWidgets.create_start_game_deus_journey_stepper = function (arg_81_0)
 	}
 end
 
-UIWidgets.create_start_game_deus_gamemode_info_box = function (arg_82_0, arg_82_1, arg_82_2, arg_82_3, arg_82_4, arg_82_5)
+UIWidgets.create_start_game_deus_gamemode_info_box = function (scenegraph_id, background_size, gamemode_header_text, game_mode_text, is_twitch, disable_note)
 	-- function 82
-	local flag
-
-	flag = not arg_82_4 and 0 and 255
-
 	local num
 
-	if not arg_82_4 then
-		num = arg_82_1[2] / 2
+	if is_twitch then
+		num = 0
 
-		if not num then
-			-- Nothing
-		end
+		goto label_82_0
 	end
 
-	num = arg_82_1[2]
+	num = 255
+
+	local header_text_color_alpha = num
 
 	do
 		local num_2
@@ -3388,17 +3435,37 @@ UIWidgets.create_start_game_deus_gamemode_info_box = function (arg_82_0, arg_82_
 
 	::label_82_0::
 
-	if not arg_82_4 then
-		num_2 = arg_82_1[2] / 2
+	if is_twitch then
+		num_2 = background_size[2] / 2
 
 		if not num_2 then
 			-- Nothing
 		end
 	end
 
-	num_2 = 0
+	num_2 = background_size[2]
+
+	local info_hotspot_height = num_2
+
+	do
+		local num_3
+	end
 
 	::label_82_1::
+
+	if is_twitch then
+		num_3 = background_size[2] / 2
+
+		if not num_3 then
+			-- Nothing
+		end
+	end
+
+	num_3 = 0
+
+	local info_hotspot_offset_y = num_3
+
+	::label_82_2::
 
 	local tbl = {
 		element = {
@@ -3442,11 +3509,11 @@ UIWidgets.create_start_game_deus_gamemode_info_box = function (arg_82_0, arg_82_
 					style_id = "note_text",
 					pass_type = "text",
 					text_id = "note_text",
-					content_check_function = function (self)
+					content_check_function = function (content)
 						-- function 83
-						local show_note = self.show_note
+						local show_note = content.show_note
 
-						show_note = not show_note and not arg_82_5
+						show_note = not not show_note and not not not disable_note
 
 						return show_note
 					end
@@ -3455,9 +3522,9 @@ UIWidgets.create_start_game_deus_gamemode_info_box = function (arg_82_0, arg_82_
 					style_id = "press_key_text",
 					pass_type = "text",
 					text_id = "press_key_text",
-					content_check_function = function (self)
+					content_check_function = function (content)
 						-- function 84
-						return not not self.show_note or not arg_82_5
+						return not content.show_note and not not not disable_note
 					end
 				}
 			}
@@ -3472,19 +3539,19 @@ UIWidgets.create_start_game_deus_gamemode_info_box = function (arg_82_0, arg_82_
 		show_note = false,
 		box_right_detail = "morris_header_end",
 		info_hotspot = {},
-		header_text = arg_82_2 or Localize("not_assigned"),
-		game_mode_text = arg_82_3 or Localize("not_assigned")
+		header_text = not not gamemode_header_text or not not Localize("not_assigned"),
+		game_mode_text = not not game_mode_text or not not Localize("not_assigned")
 	}
 	local var_82_5 = Localize("expedition_info_note")
 
-	var_82_5 = var_82_5 or Localize("not_assigned")
+	var_82_5 = not not var_82_5 or not not Localize("not_assigned")
 	tbl_2.note_text = var_82_5
 
 	local format = string.format(Localize("for_more_info"), "$KEY;start_game_view__show_information:")
 
-	format = format or Localize("not_assigned")
+	format = not not format or not not Localize("not_assigned")
 	tbl_2.press_key_text = format
-	tbl_2.disable_note = arg_82_5
+	tbl_2.disable_note = disable_note
 	tbl.content = tbl_2
 
 	local tbl_3 = {
@@ -3500,7 +3567,7 @@ UIWidgets.create_start_game_deus_gamemode_info_box = function (arg_82_0, arg_82_
 				0,
 				0
 			},
-			size = arg_82_1
+			size = background_size
 		},
 		info_hotspot = {
 			color = {
@@ -3511,12 +3578,12 @@ UIWidgets.create_start_game_deus_gamemode_info_box = function (arg_82_0, arg_82_
 			},
 			offset = {
 				0,
-				num_2,
+				info_hotspot_offset_y,
 				0
 			},
 			size = {
-				arg_82_1[1],
-				num
+				background_size[1],
+				info_hotspot_height
 			}
 		},
 		header_box_title_frame = {
@@ -3532,7 +3599,7 @@ UIWidgets.create_start_game_deus_gamemode_info_box = function (arg_82_0, arg_82_
 			},
 			offset = {
 				-125,
-				arg_82_1[2] - 30,
+				background_size[2] - 30,
 				1
 			}
 		},
@@ -3546,22 +3613,22 @@ UIWidgets.create_start_game_deus_gamemode_info_box = function (arg_82_0, arg_82_
 			dynamic_font_size = true,
 			font_type = "hell_shark_header",
 			text_color = {
-				flag,
+				header_text_color_alpha,
 				193,
 				91,
 				36
 			},
 			size = {
-				arg_82_1[1],
+				background_size[1],
 				40
 			},
 			area_size = {
-				arg_82_1[1] - 200,
+				background_size[1] - 200,
 				40
 			},
 			offset = {
 				0,
-				arg_82_1[2],
+				background_size[2],
 				2
 			}
 		},
@@ -3574,12 +3641,12 @@ UIWidgets.create_start_game_deus_gamemode_info_box = function (arg_82_0, arg_82_
 			},
 			offset = {
 				-19,
-				arg_82_1[2] - 182,
+				background_size[2] - 182,
 				0
 			},
 			size = {
 				43,
-				arg_82_1[2] - arg_82_1[2] / 5
+				background_size[2] - background_size[2] / 5
 			}
 		},
 		box_right_detail = {
@@ -3590,13 +3657,13 @@ UIWidgets.create_start_game_deus_gamemode_info_box = function (arg_82_0, arg_82_
 				200
 			},
 			offset = {
-				arg_82_1[1] - 19,
-				arg_82_1[2] - 182,
+				background_size[1] - 19,
+				background_size[2] - 182,
 				0
 			},
 			size = {
 				43,
-				arg_82_1[2] - arg_82_1[2] / 5
+				background_size[2] - background_size[2] / 5
 			}
 		}
 	}
@@ -3616,41 +3683,41 @@ UIWidgets.create_start_game_deus_gamemode_info_box = function (arg_82_0, arg_82_
 		nil,
 		2
 	}
-	local num_3
-
-	if not arg_82_4 then
-		num_3 = arg_82_1[2] / 2 - 20
-
-		if not num_3 then
-			-- Nothing
-		end
-	end
-
-	num_3 = arg_82_1[2] / 2 - 40
-
-	::label_82_2::
-
-	tbl_5[2] = num_3
-	tbl_4.offset = tbl_5
-
-	local tbl_6 = {
-		arg_82_1[1] - 50
-	}
 	local num_4
 
-	if not arg_82_4 then
-		num_4 = arg_82_1[2] / 2
+	if is_twitch then
+		num_4 = background_size[2] / 2 - 20
 
 		if not num_4 then
 			-- Nothing
 		end
 	end
 
-	num_4 = arg_82_1[2] / 2 + 10
+	num_4 = background_size[2] / 2 - 40
 
 	::label_82_3::
 
-	tbl_6[2] = num_4
+	tbl_5[2] = num_4
+	tbl_4.offset = tbl_5
+
+	local tbl_6 = {
+		background_size[1] - 50
+	}
+	local num_5
+
+	if is_twitch then
+		num_5 = background_size[2] / 2
+
+		if not num_5 then
+			-- Nothing
+		end
+	end
+
+	num_5 = background_size[2] / 2 + 10
+
+	::label_82_4::
+
+	tbl_6[2] = num_5
 	tbl_4.size = tbl_6
 	tbl_3.game_mode_text = tbl_4
 	tbl_3.note_text = {
@@ -3674,7 +3741,7 @@ UIWidgets.create_start_game_deus_gamemode_info_box = function (arg_82_0, arg_82_
 			2
 		},
 		size = {
-			arg_82_1[1] - 50,
+			background_size[1] - 50,
 			40
 		}
 	}
@@ -3694,8 +3761,8 @@ UIWidgets.create_start_game_deus_gamemode_info_box = function (arg_82_0, arg_82_
 			2
 		},
 		size = {
-			arg_82_1[1] - 50,
-			arg_82_1[2] - 50
+			background_size[1] - 50,
+			background_size[2] - 50
 		}
 	}
 	tbl.style = tbl_3
@@ -3704,44 +3771,44 @@ UIWidgets.create_start_game_deus_gamemode_info_box = function (arg_82_0, arg_82_
 		0,
 		0
 	}
-	tbl.scenegraph_id = arg_82_0
+	tbl.scenegraph_id = scenegraph_id
 
 	return tbl
 end
 
-UIWidgets.create_expedition_widget_func = function (arg_85_0, arg_85_1, arg_85_2, arg_85_3, arg_85_4, arg_85_5)
+UIWidgets.create_expedition_widget_func = function (scenegraph_id, i, journey_data, journey_name, journey_widget_settings, multiplier)
 	-- function 85
-	local flag = arg_85_4 or {
+	local journey_widget_settings = not not journey_widget_settings or not not {
 		width = 72,
 		spacing_x = 40
 	}
-	local tbl = {
+	local size = {
 		180,
 		180
 	}
-	local flag_2 = arg_85_5 or 1
-	local tbl_2 = {
+	local multiplier = not not multiplier or not not 1
+	local widget = {
 		element = {}
 	}
-	local tbl_3 = {
+	local passes = {
 		{
 			style_id = "hotspot",
 			pass_type = "hotspot",
 			content_id = "button_hotspot",
-			content_check_function = function (self)
+			content_check_function = function (content)
 				-- function 86
-				return not self.parent.locked
+				return not content.parent.locked
 			end
 		},
 		{
 			style_id = "level_icon",
 			pass_type = "level_tooltip",
 			level_id = "level_data",
-			content_check_function = function (self)
+			content_check_function = function (content)
 				-- function 87
-				local is_hover = self.button_hotspot.is_hover
+				local is_hover = content.button_hotspot.is_hover
 
-				is_hover = is_hover or self.gamepad_selected
+				is_hover = not not is_hover or not not content.gamepad_selected
 
 				return is_hover
 			end
@@ -3750,24 +3817,24 @@ UIWidgets.create_expedition_widget_func = function (arg_85_0, arg_85_1, arg_85_2
 			style_id = "icon_glow",
 			texture_id = "icon_glow",
 			pass_type = "texture",
-			content_check_function = function (self)
+			content_check_function = function (content)
 				-- function 88
-				local is_device_active = Managers.input:is_device_active("mouse")
+				local mouse_active = Managers.input:is_device_active("mouse")
 				local gamepad_selected
 
-				if not self.button_hotspot.is_hover then
-					gamepad_selected = self.gamepad_selected
+				if not content.button_hotspot.is_hover then
+					gamepad_selected = content.gamepad_selected
 
-					if not gamepad_selected then
+					if gamepad_selected then
 						-- Nothing
 					end
 
-					if not is_device_active then
+					if not mouse_active then
 						-- Nothing
 					end
 				end
 
-				gamepad_selected = not self.button_hotspot.is_selected
+				gamepad_selected = not content.button_hotspot.is_selected
 
 				if false then
 					::label_88_0::
@@ -3783,56 +3850,56 @@ UIWidgets.create_expedition_widget_func = function (arg_85_0, arg_85_1, arg_85_2
 
 				return gamepad_selected
 			end,
-			content_change_function = function (self, arg_89_1)
+			content_change_function = function (content, style)
 				-- function 89
-				arg_89_1.color[1] = fn(self.gamepad_selected)
+				style.color[1] = pulsate_glow(content.gamepad_selected)
 			end
 		},
 		{
 			pass_type = "texture",
 			style_id = "level_icon",
 			texture_id = "level_icon",
-			content_check_function = function (self, arg_90_1)
+			content_check_function = function (content, style)
 				-- function 90
-				return not self.locked
+				return not content.locked
 			end
 		},
 		{
 			pass_type = "texture",
 			style_id = "level_icon_locked",
 			texture_id = "level_icon",
-			content_check_function = function (self)
+			content_check_function = function (content)
 				-- function 91
-				return self.locked
+				return content.locked
 			end
 		},
 		{
 			pass_type = "texture",
 			style_id = "lock",
 			texture_id = "lock",
-			content_check_function = function (self)
+			content_check_function = function (content)
 				-- function 92
-				return self.locked
+				return content.locked
 			end
 		},
 		{
 			pass_type = "texture",
 			style_id = "lock_fade",
 			texture_id = "lock_fade",
-			content_check_function = function (self)
+			content_check_function = function (content)
 				-- function 93
-				return self.locked
+				return content.locked
 			end
 		},
 		{
 			pass_type = "rotated_texture",
 			style_id = "path",
 			texture_id = "path",
-			content_check_function = function (self)
+			content_check_function = function (content)
 				-- function 94
-				local draw_path = self.draw_path
+				local draw_path = content.draw_path
 
-				draw_path = not draw_path and not self.draw_path_fill
+				draw_path = not not draw_path and not not not content.draw_path_fill
 
 				return draw_path
 			end
@@ -3841,13 +3908,13 @@ UIWidgets.create_expedition_widget_func = function (arg_85_0, arg_85_1, arg_85_2
 			pass_type = "rotated_texture",
 			style_id = "path_glow",
 			texture_id = "path_glow",
-			content_check_function = function (self)
+			content_check_function = function (content)
 				-- function 95
-				local draw_path = self.draw_path
+				local draw_path = content.draw_path
 
-				if not draw_path then
-					draw_path = self.draw_path_fill
-					draw_path = not draw_path and not self.locked
+				if draw_path then
+					draw_path = content.draw_path_fill
+					draw_path = not not draw_path and not not not content.locked
 				end
 
 				return draw_path
@@ -3857,16 +3924,16 @@ UIWidgets.create_expedition_widget_func = function (arg_85_0, arg_85_1, arg_85_2
 			pass_type = "texture",
 			style_id = "theme_icon",
 			texture_id = "theme_icon",
-			content_check_function = function (self)
+			content_check_function = function (content)
 				-- function 96
-				return self.theme_icon ~= nil
+				return content.theme_icon ~= nil
 			end
 		},
 		{
 			pass_type = "rotated_texture",
 			style_id = "level_icon_mask",
 			texture_id = "level_icon_mask",
-			content_check_function = function (arg_97_0)
+			content_check_function = function (content)
 				-- function 97
 				return true
 			end
@@ -3875,9 +3942,9 @@ UIWidgets.create_expedition_widget_func = function (arg_85_0, arg_85_1, arg_85_2
 			pass_type = "texture",
 			style_id = "level_icon_frame",
 			texture_id = "level_icon_frame",
-			content_check_function = function (self, arg_98_1)
+			content_check_function = function (content, style)
 				-- function 98
-				return not self.locked
+				return not content.locked
 			end
 		},
 		{
@@ -3889,12 +3956,14 @@ UIWidgets.create_expedition_widget_func = function (arg_85_0, arg_85_1, arg_85_2
 			pass_type = "texture",
 			style_id = "name_frame",
 			texture_id = "name_frame",
-			content_check_function = function (self, arg_99_1)
+			content_check_function = function (content, style)
 				-- function 99
-				if not Managers.input:is_device_active("gamepad") then
-					return self.gamepad_selected
+				local gamepad_active = Managers.input:is_device_active("gamepad")
+
+				if gamepad_active then
+					return content.gamepad_selected
 				else
-					return self.button_hotspot.is_selected
+					return content.button_hotspot.is_selected
 				end
 			end
 		},
@@ -3902,17 +3971,19 @@ UIWidgets.create_expedition_widget_func = function (arg_85_0, arg_85_1, arg_85_2
 			style_id = "journey_name",
 			pass_type = "text",
 			text_id = "journey_name_text",
-			content_check_function = function (self, arg_100_1)
+			content_check_function = function (content, style)
 				-- function 100
-				if not Managers.input:is_device_active("gamepad") then
-					return self.gamepad_selected
+				local gamepad_active = Managers.input:is_device_active("gamepad")
+
+				if gamepad_active then
+					return content.gamepad_selected
 				else
-					return self.button_hotspot.is_selected
+					return content.button_hotspot.is_selected
 				end
 			end
 		}
 	}
-	local tbl_4 = {
+	local content = {
 		level_icon = "level_icon_01",
 		draw_path = false,
 		level_icon_frame = "morris_expedition_select_border",
@@ -3930,17 +4001,17 @@ UIWidgets.create_expedition_widget_func = function (arg_85_0, arg_85_1, arg_85_2
 		gamepad_selected = false,
 		draw_chaos_symbol = true,
 		button_hotspot = {},
-		journey_data = arg_85_2,
-		journey_name = arg_85_3,
-		journey_name_text = arg_85_2.display_name
+		journey_data = journey_data,
+		journey_name = journey_name,
+		journey_name_text = journey_data.display_name
 	}
-	local tbl_5 = {
+	local style = {
 		hotspot = {
 			vertical_alignment = "center",
 			horizontal_alignment = "center",
 			area_size = {
-				150 * flag_2,
-				150 * flag_2
+				150 * multiplier,
+				150 * multiplier
 			},
 			color = {
 				255,
@@ -3963,11 +4034,11 @@ UIWidgets.create_expedition_widget_func = function (arg_85_0, arg_85_1, arg_85_2
 				6.5
 			},
 			texture_size = {
-				flag.spacing_x,
+				journey_widget_settings.spacing_x,
 				10
 			},
 			offset = {
-				(flag.width + flag.spacing_x) * 0.5,
+				(journey_widget_settings.width + journey_widget_settings.spacing_x) * 0.5,
 				-2,
 				2
 			},
@@ -3987,11 +4058,11 @@ UIWidgets.create_expedition_widget_func = function (arg_85_0, arg_85_1, arg_85_2
 				21.5
 			},
 			texture_size = {
-				flag.spacing_x,
+				journey_widget_settings.spacing_x,
 				30
 			},
 			offset = {
-				(flag.width + flag.spacing_x) * 0.5,
+				(journey_widget_settings.width + journey_widget_settings.spacing_x) * 0.5,
 				-2,
 				2
 			},
@@ -4006,8 +4077,8 @@ UIWidgets.create_expedition_widget_func = function (arg_85_0, arg_85_1, arg_85_2
 			vertical_alignment = "center",
 			horizontal_alignment = "center",
 			texture_size = {
-				160 * flag_2,
-				160 * flag_2
+				160 * multiplier,
+				160 * multiplier
 			},
 			offset = {
 				0,
@@ -4026,8 +4097,8 @@ UIWidgets.create_expedition_widget_func = function (arg_85_0, arg_85_1, arg_85_2
 			masked = true,
 			horizontal_alignment = "center",
 			texture_size = {
-				180 * flag_2,
-				180 * flag_2
+				180 * multiplier,
+				180 * multiplier
 			},
 			offset = {
 				0,
@@ -4051,13 +4122,13 @@ UIWidgets.create_expedition_widget_func = function (arg_85_0, arg_85_1, arg_85_2
 				255
 			},
 			texture_size = {
-				90 * flag_2,
-				90 * flag_2
+				90 * multiplier,
+				90 * multiplier
 			},
 			angle = math.degrees_to_radians(45),
 			pivot = {
-				90 * flag_2 * 0.5,
-				90 * flag_2 * 0.5
+				90 * multiplier * 0.5,
+				90 * multiplier * 0.5
 			}
 		},
 		level_icon_frame = {
@@ -4070,8 +4141,8 @@ UIWidgets.create_expedition_widget_func = function (arg_85_0, arg_85_1, arg_85_2
 				255
 			},
 			texture_size = {
-				160 * flag_2,
-				160 * flag_2
+				160 * multiplier,
+				160 * multiplier
 			},
 			offset = {
 				0,
@@ -4084,8 +4155,8 @@ UIWidgets.create_expedition_widget_func = function (arg_85_0, arg_85_1, arg_85_2
 			masked = true,
 			horizontal_alignment = "center",
 			texture_size = {
-				160 * flag_2,
-				160 * flag_2
+				160 * multiplier,
+				160 * multiplier
 			},
 			color = {
 				255,
@@ -4105,8 +4176,8 @@ UIWidgets.create_expedition_widget_func = function (arg_85_0, arg_85_1, arg_85_2
 			masked = true,
 			horizontal_alignment = "center",
 			texture_size = {
-				168 * flag_2,
-				168 * flag_2
+				168 * multiplier,
+				168 * multiplier
 			},
 			color = {
 				255,
@@ -4124,12 +4195,12 @@ UIWidgets.create_expedition_widget_func = function (arg_85_0, arg_85_1, arg_85_2
 			vertical_alignment = "center",
 			horizontal_alignment = "center",
 			texture_size = {
-				240 * flag_2 * 0.9,
-				330 * flag_2 * 0.9
+				240 * multiplier * 0.9,
+				330 * multiplier * 0.9
 			},
 			offset = {
 				0,
-				45 * flag_2,
+				45 * multiplier,
 				4
 			},
 			color = {
@@ -4143,8 +4214,8 @@ UIWidgets.create_expedition_widget_func = function (arg_85_0, arg_85_1, arg_85_2
 			vertical_alignment = "center",
 			horizontal_alignment = "center",
 			texture_size = {
-				187 * flag_2 + 6,
-				170 * flag_2 + 6
+				187 * multiplier + 6,
+				170 * multiplier + 6
 			},
 			offset = {
 				-1,
@@ -4162,12 +4233,12 @@ UIWidgets.create_expedition_widget_func = function (arg_85_0, arg_85_1, arg_85_2
 			vertical_alignment = "center",
 			horizontal_alignment = "center",
 			texture_size = {
-				80 * flag_2,
-				80 * flag_2
+				80 * multiplier,
+				80 * multiplier
 			},
 			offset = {
 				0,
-				80 * flag_2,
+				80 * multiplier,
 				8
 			},
 			color = {
@@ -4181,12 +4252,12 @@ UIWidgets.create_expedition_widget_func = function (arg_85_0, arg_85_1, arg_85_2
 			vertical_alignment = "center",
 			horizontal_alignment = "center",
 			texture_size = {
-				40 * flag_2,
-				40 * flag_2
+				40 * multiplier,
+				40 * multiplier
 			},
 			offset = {
 				0,
-				65 * flag_2,
+				65 * multiplier,
 				8
 			},
 			color = {
@@ -4200,8 +4271,8 @@ UIWidgets.create_expedition_widget_func = function (arg_85_0, arg_85_1, arg_85_2
 			vertical_alignment = "bottom",
 			horizontal_alignment = "center",
 			texture_size = {
-				294 * flag_2,
-				100 * flag_2
+				294 * multiplier,
+				100 * multiplier
 			},
 			offset = {
 				5,
@@ -4236,26 +4307,27 @@ UIWidgets.create_expedition_widget_func = function (arg_85_0, arg_85_1, arg_85_2
 		}
 	}
 
-	tbl_2.element.passes = tbl_3
-	tbl_2.content = tbl_4
-	tbl_2.style = tbl_5
-	tbl_2.offset = {
+	widget.element.passes = passes
+	widget.content = content
+	widget.style = style
+	widget.offset = {
 		0,
 		0,
 		0
 	}
-	tbl_2.scenegraph_id = arg_85_0
+	widget.scenegraph_id = scenegraph_id
 
-	return tbl_2
+	return widget
 end
 
-UIWidgets.create_start_game_deus_difficulty_info_box = function (arg_101_0, arg_101_1)
+UIWidgets.create_start_game_deus_difficulty_info_box = function (scenegraph_id, size)
 	-- function 101
-	local border_tiled = UIFrameSettings.border_tiled
-	local corner = border_tiled.texture_sizes.corner
-	local tbl = {
-		corner[1] + 1,
-		corner[2] + 1
+	local frame_border = UIFrameSettings.border_tiled
+	local corner_size = frame_border.texture_sizes.corner
+
+	corner_size = {
+		corner_size[1] + 1,
+		corner_size[2] + 1
 	}
 
 	return {
@@ -4265,17 +4337,17 @@ UIWidgets.create_start_game_deus_difficulty_info_box = function (arg_101_0, arg_
 					style_id = "background",
 					texture_id = "background",
 					pass_type = "tiled_texture",
-					content_change_function = function (self, arg_102_1)
+					content_change_function = function (content, style)
 						-- function 102
-						local tbl = {
-							0 + self.resize_offset[1],
-							0 + self.resize_offset[2],
+						local new_offset = {
+							0 + content.resize_offset[1],
+							0 + content.resize_offset[2],
 							1
 						}
 
-						if not self.should_resize then
-							arg_102_1.texture_size = self.resize_size
-							arg_102_1.offset = tbl
+						if content.should_resize then
+							style.texture_size = content.resize_size
+							style.offset = new_offset
 						end
 					end
 				},
@@ -4283,21 +4355,21 @@ UIWidgets.create_start_game_deus_difficulty_info_box = function (arg_101_0, arg_
 					style_id = "border",
 					texture_id = "border",
 					pass_type = "texture_frame",
-					content_change_function = function (self, arg_103_1)
+					content_change_function = function (content, style)
 						-- function 103
-						local tbl_2 = {
-							-tbl[1] + self.resize_offset[1],
-							-tbl[2] + self.resize_offset[2],
+						local new_offset = {
+							-corner_size[1] + content.resize_offset[1],
+							-corner_size[2] + content.resize_offset[2],
 							2
 						}
-						local resize_size = self.resize_size
+						local new_size = content.resize_size
 
-						if not self.should_resize then
-							arg_103_1.size = {
-								resize_size[1] + 2 * tbl[1],
-								resize_size[2] + 2 * tbl[2]
+						if content.should_resize then
+							style.size = {
+								new_size[1] + 2 * corner_size[1],
+								new_size[2] + 2 * corner_size[2]
 							}
-							arg_103_1.offset = tbl_2
+							style.offset = new_offset
 						end
 					end
 				},
@@ -4305,17 +4377,17 @@ UIWidgets.create_start_game_deus_difficulty_info_box = function (arg_101_0, arg_
 					style_id = "difficulty_description",
 					pass_type = "text",
 					text_id = "difficulty_description",
-					content_change_function = function (self, arg_104_1)
+					content_change_function = function (content, style)
 						-- function 104
-						local tbl = {
-							25 + self.resize_offset[1],
-							160 - self.resize_offset[2],
+						local new_offset = {
+							25 + content.resize_offset[1],
+							160 - content.resize_offset[2],
 							2
 						}
 
-						if not self.should_resize then
-							arg_104_1.offset = tbl
-							arg_104_1.offset = tbl
+						if content.should_resize then
+							style.offset = new_offset
+							style.offset = new_offset
 						end
 					end
 				},
@@ -4323,16 +4395,16 @@ UIWidgets.create_start_game_deus_difficulty_info_box = function (arg_101_0, arg_
 					style_id = "highest_obtainable_level",
 					pass_type = "text",
 					text_id = "highest_obtainable_level",
-					content_change_function = function (self, arg_105_1)
+					content_change_function = function (content, style)
 						-- function 105
-						local tbl = {
-							25 + self.resize_offset[1],
-							140 - self.difficulty_description_text_size - self.resize_offset[2],
+						local new_offset = {
+							25 + content.resize_offset[1],
+							140 - content.difficulty_description_text_size - content.resize_offset[2],
 							2
 						}
 
-						if not self.should_resize then
-							arg_105_1.offset = tbl
+						if content.should_resize then
+							style.offset = new_offset
 						end
 					end
 				},
@@ -4340,16 +4412,16 @@ UIWidgets.create_start_game_deus_difficulty_info_box = function (arg_101_0, arg_
 					style_id = "difficulty_separator",
 					texture_id = "difficulty_separator",
 					pass_type = "texture",
-					content_change_function = function (self, arg_106_1)
+					content_change_function = function (content, style)
 						-- function 106
-						local tbl = {
-							arg_101_1[1] / 4 + self.resize_offset[1],
-							120 - self.difficulty_description_text_size - self.resize_offset[2],
+						local new_offset = {
+							size[1] / 4 + content.resize_offset[1],
+							120 - content.difficulty_description_text_size - content.resize_offset[2],
 							2
 						}
 
-						if not self.should_resize then
-							arg_106_1.offset = tbl
+						if content.should_resize then
+							style.offset = new_offset
 						end
 					end
 				},
@@ -4362,20 +4434,20 @@ UIWidgets.create_start_game_deus_difficulty_info_box = function (arg_101_0, arg_
 					style_id = "difficulty_lock_text",
 					pass_type = "text",
 					text_id = "difficulty_lock_text",
-					content_check_function = function (self)
+					content_check_function = function (content)
 						-- function 107
-						return self.should_show_diff_lock_text
+						return content.should_show_diff_lock_text
 					end,
-					content_change_function = function (self, arg_108_1)
+					content_change_function = function (content, style)
 						-- function 108
-						local tbl = {
-							7.5 + self.resize_offset[1],
-							-self.difficulty_description_text_size - self.resize_offset[2] + 90,
+						local new_offset = {
+							7.5 + content.resize_offset[1],
+							-content.difficulty_description_text_size - content.resize_offset[2] + 90,
 							2
 						}
 
-						if not self.should_resize then
-							arg_108_1.offset = tbl
+						if content.should_resize then
+							style.offset = new_offset
 						end
 					end
 				},
@@ -4383,20 +4455,20 @@ UIWidgets.create_start_game_deus_difficulty_info_box = function (arg_101_0, arg_
 					style_id = "dlc_lock_text",
 					pass_type = "text",
 					text_id = "dlc_lock_text",
-					content_check_function = function (self)
+					content_check_function = function (content)
 						-- function 109
-						return self.should_show_dlc_lock
+						return content.should_show_dlc_lock
 					end,
-					content_change_function = function (self, arg_110_1)
+					content_change_function = function (content, style)
 						-- function 110
-						local tbl = {
-							2.5 + self.resize_offset[1],
-							-self.difficulty_description_text_size - self.resize_offset[2] + 70 - self.difficulty_lock_text_height,
+						local new_offset = {
+							2.5 + content.resize_offset[1],
+							-content.difficulty_description_text_size - content.resize_offset[2] + 70 - content.difficulty_lock_text_height,
 							2
 						}
 
-						if not self.should_resize then
-							arg_110_1.offset = tbl
+						if content.should_resize then
+							style.offset = new_offset
 						end
 					end
 				}
@@ -4412,7 +4484,7 @@ UIWidgets.create_start_game_deus_difficulty_info_box = function (arg_101_0, arg_
 			difficulty_separator = "divider_01_bottom",
 			difficulty_description_text_size = 0,
 			difficulty_lock_text_height = 0,
-			border = border_tiled.texture,
+			border = frame_border.texture,
 			widget_hotspot = {},
 			difficulty_lock_text = Localize("required_power_level"),
 			dlc_lock_text = Localize("cataclysm_no_wom"),
@@ -4432,7 +4504,7 @@ UIWidgets.create_start_game_deus_difficulty_info_box = function (arg_101_0, arg_
 					256,
 					256
 				},
-				texture_size = arg_101_1,
+				texture_size = size,
 				offset = {
 					0,
 					0,
@@ -4447,15 +4519,15 @@ UIWidgets.create_start_game_deus_difficulty_info_box = function (arg_101_0, arg_
 			},
 			border = {
 				use_tiling = true,
-				texture_size = border_tiled.texture_size,
-				texture_sizes = border_tiled.texture_sizes,
+				texture_size = frame_border.texture_size,
+				texture_sizes = frame_border.texture_sizes,
 				size = {
-					arg_101_1[1] + 2 * tbl[1],
-					arg_101_1[2] + 2 * tbl[2]
+					size[1] + 2 * corner_size[1],
+					size[2] + 2 * corner_size[2]
 				},
 				offset = {
-					-tbl[1],
-					-tbl[2],
+					-corner_size[1],
+					-corner_size[2],
 					2
 				},
 				color = {
@@ -4516,7 +4588,7 @@ UIWidgets.create_start_game_deus_difficulty_info_box = function (arg_101_0, arg_
 					255
 				},
 				offset = {
-					arg_101_1[1] / 4,
+					size[1] / 4,
 					0,
 					2
 				},
@@ -4537,7 +4609,7 @@ UIWidgets.create_start_game_deus_difficulty_info_box = function (arg_101_0, arg_
 					0,
 					0
 				},
-				size = arg_101_1
+				size = size
 			},
 			difficulty_lock_text = {
 				font_size = 20,
@@ -4593,13 +4665,13 @@ UIWidgets.create_start_game_deus_difficulty_info_box = function (arg_101_0, arg_
 			0,
 			0
 		},
-		scenegraph_id = arg_101_0
+		scenegraph_id = scenegraph_id
 	}
 end
 
-UIWidgets.create_ability_charges_widget = function (arg_111_0, arg_111_1, arg_111_2)
+UIWidgets.create_ability_charges_widget = function (scenegraph_id, size, offset)
 	-- function 111
-	local flag = arg_111_1 or {
+	local size = not not size or not not {
 		20,
 		20
 	}
@@ -4616,9 +4688,9 @@ UIWidgets.create_ability_charges_widget = function (arg_111_0, arg_111_1, arg_11
 					pass_type = "texture",
 					style_id = "ability_charge_active",
 					texture_id = "ability_charge_active",
-					content_check_function = function (self, arg_112_1)
+					content_check_function = function (content, style)
 						-- function 112
-						return self.ready
+						return content.ready
 					end
 				}
 			}
@@ -4630,7 +4702,7 @@ UIWidgets.create_ability_charges_widget = function (arg_111_0, arg_111_1, arg_11
 		},
 		style = {
 			ability_charge_bg = {
-				texture_size = flag,
+				texture_size = size,
 				color = Colors.get_color_table_with_alpha("white", 255),
 				offset = {
 					0,
@@ -4640,8 +4712,8 @@ UIWidgets.create_ability_charges_widget = function (arg_111_0, arg_111_1, arg_11
 			},
 			ability_charge_active = {
 				texture_size = {
-					flag[1] - 4,
-					flag[2] - 4
+					size[1] - 4,
+					size[2] - 4
 				},
 				color = Colors.get_color_table_with_alpha("white", 255),
 				offset = {
@@ -4651,8 +4723,8 @@ UIWidgets.create_ability_charges_widget = function (arg_111_0, arg_111_1, arg_11
 				}
 			}
 		},
-		scenegraph_id = arg_111_0,
-		offset = arg_111_2 or {
+		scenegraph_id = scenegraph_id,
+		offset = not not offset or not not {
 			0,
 			0,
 			1
@@ -4660,12 +4732,12 @@ UIWidgets.create_ability_charges_widget = function (arg_111_0, arg_111_1, arg_11
 	}
 end
 
-UIWidgets.create_power_up = function (arg_113_0, arg_113_1, arg_113_2, arg_113_3)
+UIWidgets.create_power_up = function (scenegraph_id, size, disable_masked_icons, allow_boon_removal)
 	-- function 113
-	local flag = true
+	local masked = true
 
-	if not arg_113_2 then
-		flag = false
+	if disable_masked_icons then
+		masked = false
 	end
 
 	return {
@@ -4675,47 +4747,47 @@ UIWidgets.create_power_up = function (arg_113_0, arg_113_1, arg_113_2, arg_113_3
 					texture_id = "shrine_bg",
 					style_id = "shrine_bg",
 					pass_type = "texture",
-					content_check_function = function (self)
+					content_check_function = function (content)
 						-- function 114
-						return not self.extend_left
+						return not content.extend_left
 					end
 				},
 				{
 					texture_id = "shrine_bg",
 					style_id = "shrine_bg_left",
 					pass_type = "texture",
-					content_check_function = function (self)
+					content_check_function = function (content)
 						-- function 115
-						return self.extend_left
+						return content.extend_left
 					end
 				},
 				{
 					style_id = "shrine_bg_frame_left",
 					pass_type = "texture_uv",
 					content_id = "shrine_bg_frame_left",
-					content_check_function = function (self)
+					content_check_function = function (content)
 						-- function 116
-						return not self.parent.extend_left
+						return not content.parent.extend_left
 					end
 				},
 				{
 					style_id = "shrine_bg_frame_right",
 					pass_type = "texture_uv",
 					content_id = "shrine_bg_frame_right",
-					content_check_function = function (self)
+					content_check_function = function (content)
 						-- function 117
-						return self.parent.extend_left
+						return content.parent.extend_left
 					end
 				},
 				{
 					texture_id = "icon",
 					style_id = "round_icon",
 					pass_type = "texture",
-					content_check_function = function (self)
+					content_check_function = function (content)
 						-- function 118
-						local icon = self.icon
+						local icon = content.icon
 
-						icon = not icon and not self.is_rectangular_icon
+						icon = not not icon and not not not content.is_rectangular_icon
 
 						return icon
 					end
@@ -4724,11 +4796,11 @@ UIWidgets.create_power_up = function (arg_113_0, arg_113_1, arg_113_2, arg_113_3
 					texture_id = "round_icon_bg",
 					style_id = "round_icon_bg",
 					pass_type = "texture",
-					content_check_function = function (self)
+					content_check_function = function (content)
 						-- function 119
-						local icon = self.icon
+						local icon = content.icon
 
-						icon = not icon and not not self.is_rectangular_icon or false
+						icon = not not icon and not content.is_rectangular_icon and not not false
 
 						return icon
 					end
@@ -4737,11 +4809,11 @@ UIWidgets.create_power_up = function (arg_113_0, arg_113_1, arg_113_2, arg_113_3
 					texture_id = "icon",
 					style_id = "rectangular_icon",
 					pass_type = "texture",
-					content_check_function = function (self)
+					content_check_function = function (content)
 						-- function 120
-						local icon = self.icon
+						local icon = content.icon
 
-						icon = not icon and self.is_rectangular_icon
+						icon = not not icon and not not content.is_rectangular_icon
 
 						return icon
 					end
@@ -4749,11 +4821,11 @@ UIWidgets.create_power_up = function (arg_113_0, arg_113_1, arg_113_2, arg_113_3
 				{
 					style_id = "rectangular_bg",
 					pass_type = "rect",
-					content_check_function = function (self)
+					content_check_function = function (content)
 						-- function 121
-						local icon = self.icon
+						local icon = content.icon
 
-						icon = not icon and not self.is_rectangular_icon
+						icon = not not icon and not not not content.is_rectangular_icon
 
 						return icon
 					end
@@ -4762,7 +4834,7 @@ UIWidgets.create_power_up = function (arg_113_0, arg_113_1, arg_113_2, arg_113_3
 					texture_id = "rectangular_icon_bg",
 					style_id = "rectangular_icon_bg",
 					pass_type = "texture",
-					content_check_function = function (arg_122_0)
+					content_check_function = function (content)
 						-- function 122
 						return true
 					end
@@ -4771,119 +4843,119 @@ UIWidgets.create_power_up = function (arg_113_0, arg_113_1, arg_113_2, arg_113_3
 					style_id = "title_text",
 					pass_type = "text",
 					text_id = "title_text",
-					content_check_function = function (self)
+					content_check_function = function (content)
 						-- function 123
-						return not self.extend_left
+						return not content.extend_left
 					end
 				},
 				{
 					style_id = "title_text_shadow",
 					pass_type = "text",
 					text_id = "title_text",
-					content_check_function = function (self)
+					content_check_function = function (content)
 						-- function 124
-						return not self.extend_left
+						return not content.extend_left
 					end
 				},
 				{
 					style_id = "rarity_text",
 					pass_type = "text",
 					text_id = "rarity_text",
-					content_check_function = function (self)
+					content_check_function = function (content)
 						-- function 125
-						return not self.extend_left
+						return not content.extend_left
 					end
 				},
 				{
 					style_id = "rarity_text_shadow",
 					pass_type = "text",
 					text_id = "rarity_text",
-					content_check_function = function (self)
+					content_check_function = function (content)
 						-- function 126
-						return not self.extend_left
+						return not content.extend_left
 					end
 				},
 				{
 					style_id = "description_text",
 					pass_type = "text",
 					text_id = "description_text",
-					content_check_function = function (self)
+					content_check_function = function (content)
 						-- function 127
-						return not self.extend_left
+						return not content.extend_left
 					end
 				},
 				{
 					style_id = "description_text_shadow",
 					pass_type = "text",
 					text_id = "description_text",
-					content_check_function = function (self)
+					content_check_function = function (content)
 						-- function 128
-						return not self.extend_left
+						return not content.extend_left
 					end
 				},
 				{
 					style_id = "title_text_left",
 					pass_type = "text",
 					text_id = "title_text",
-					content_check_function = function (self)
+					content_check_function = function (content)
 						-- function 129
-						return self.extend_left
+						return content.extend_left
 					end
 				},
 				{
 					style_id = "title_text_shadow_left",
 					pass_type = "text",
 					text_id = "title_text",
-					content_check_function = function (self)
+					content_check_function = function (content)
 						-- function 130
-						return self.extend_left
+						return content.extend_left
 					end
 				},
 				{
 					style_id = "rarity_text_left",
 					pass_type = "text",
 					text_id = "rarity_text",
-					content_check_function = function (self)
+					content_check_function = function (content)
 						-- function 131
-						return self.extend_left
+						return content.extend_left
 					end
 				},
 				{
 					style_id = "rarity_text_shadow_left",
 					pass_type = "text",
 					text_id = "rarity_text",
-					content_check_function = function (self)
+					content_check_function = function (content)
 						-- function 132
-						return self.extend_left
+						return content.extend_left
 					end
 				},
 				{
 					style_id = "description_text_left",
 					pass_type = "text",
 					text_id = "description_text",
-					content_check_function = function (self)
+					content_check_function = function (content)
 						-- function 133
-						return self.extend_left
+						return content.extend_left
 					end
 				},
 				{
 					style_id = "description_text_shadow_left",
 					pass_type = "text",
 					text_id = "description_text",
-					content_check_function = function (self)
+					content_check_function = function (content)
 						-- function 134
-						return self.extend_left
+						return content.extend_left
 					end
 				},
 				{
 					style_id = "set_progression",
 					pass_type = "text",
 					text_id = "set_progression",
-					content_check_function = function (self)
+					content_check_function = function (content)
 						-- function 135
-						local is_part_of_set = self.is_part_of_set
+						local is_part_of_set = content.is_part_of_set
 
-						is_part_of_set = not is_part_of_set and not self.extend_left
+						is_part_of_set = not not is_part_of_set and not not not content.extend_left
 
 						return is_part_of_set
 					end
@@ -4892,11 +4964,11 @@ UIWidgets.create_power_up = function (arg_113_0, arg_113_1, arg_113_2, arg_113_3
 					style_id = "set_progression_left",
 					pass_type = "text",
 					text_id = "set_progression",
-					content_check_function = function (self)
+					content_check_function = function (content)
 						-- function 136
-						local is_part_of_set = self.is_part_of_set
+						local is_part_of_set = content.is_part_of_set
 
-						is_part_of_set = not is_part_of_set and self.extend_left
+						is_part_of_set = not not is_part_of_set and not not content.extend_left
 
 						return is_part_of_set
 					end
@@ -4905,15 +4977,15 @@ UIWidgets.create_power_up = function (arg_113_0, arg_113_1, arg_113_2, arg_113_3
 					style_id = "remove_tooltip_left",
 					pass_type = "text",
 					text_id = "remove_tooltip",
-					content_check_function = function (self)
+					content_check_function = function (content)
 						-- function 137
 						local extend_left
 
-						if not self.locked then
-							extend_left = self.extend_left
+						if not content.locked then
+							extend_left = content.extend_left
 
-							if not extend_left then
-								extend_left = arg_113_3
+							if extend_left then
+								extend_left = allow_boon_removal
 							end
 						else
 							extend_left = false
@@ -4925,51 +4997,51 @@ UIWidgets.create_power_up = function (arg_113_0, arg_113_1, arg_113_2, arg_113_3
 
 						return extend_left
 					end,
-					content_change_function = function (self, arg_138_1, arg_138_2, arg_138_3)
+					content_change_function = function (content, style, _, dt)
 						-- function 138
-						local var_138_0 = Localize(self.remove_tooltip_key)
-						local input_service_name = self.input_service_name
-						local str = "$KEY;%s__%s:"
-						local mouse_action = self.mouse_action
-						local gamepad_action = self.gamepad_action
-						local flag = not Managers.input:is_device_active("gamepad") and gamepad_action and mouse_action
-						local format = string.format(str, input_service_name, flag)
+						local loc_string = Localize(content.remove_tooltip_key)
+						local input_service_name = content.input_service_name
+						local macro = "$KEY;%s__%s:"
+						local mouse_action = content.mouse_action
+						local gamepad_action = content.gamepad_action
+						local input = (not Managers.input:is_device_active("gamepad") or not gamepad_action) and not not mouse_action
+						local input_macro = string.format(macro, input_service_name, input)
 
-						self.remove_tooltip = string.format(var_138_0, format)
+						content.remove_tooltip = string.format(loc_string, input_macro)
 					end
 				},
 				{
 					style_id = "remove_tooltip",
 					pass_type = "text",
 					text_id = "remove_tooltip",
-					content_check_function = function (self)
+					content_check_function = function (content)
 						-- function 139
-						return not not self.locked or not not self.extend_left or arg_113_3
+						return not content.locked and not content.extend_left and not not allow_boon_removal
 					end,
-					content_change_function = function (self, arg_140_1, arg_140_2, arg_140_3)
+					content_change_function = function (content, style, _, dt)
 						-- function 140
-						local var_140_0 = Localize(self.remove_tooltip_key)
-						local input_service_name = self.input_service_name
-						local str = "$KEY;%s__%s:"
-						local mouse_action = self.mouse_action
-						local gamepad_action = self.gamepad_action
-						local flag = not Managers.input:is_device_active("gamepad") and gamepad_action and mouse_action
-						local format = string.format(str, input_service_name, flag)
+						local loc_string = Localize(content.remove_tooltip_key)
+						local input_service_name = content.input_service_name
+						local macro = "$KEY;%s__%s:"
+						local mouse_action = content.mouse_action
+						local gamepad_action = content.gamepad_action
+						local input = (not Managers.input:is_device_active("gamepad") or not gamepad_action) and not not mouse_action
+						local input_macro = string.format(macro, input_service_name, input)
 
-						self.remove_tooltip = string.format(var_140_0, format)
+						content.remove_tooltip = string.format(loc_string, input_macro)
 					end
 				},
 				{
 					style_id = "locked_left",
 					pass_type = "text",
 					text_id = "locked_text_id",
-					content_check_function = function (self)
+					content_check_function = function (content)
 						-- function 141
-						local locked = self.locked
+						local locked = content.locked
 
-						if not locked then
-							locked = self.extend_left
-							locked = not locked and arg_113_3
+						if locked then
+							locked = content.extend_left
+							locked = not not locked and not not allow_boon_removal
 						end
 
 						return locked
@@ -4979,13 +5051,13 @@ UIWidgets.create_power_up = function (arg_113_0, arg_113_1, arg_113_2, arg_113_3
 					style_id = "locked_left_shadow",
 					pass_type = "text",
 					text_id = "locked_text_id",
-					content_check_function = function (self)
+					content_check_function = function (content)
 						-- function 142
-						local locked = self.locked
+						local locked = content.locked
 
-						if not locked then
-							locked = self.extend_left
-							locked = not locked and arg_113_3
+						if locked then
+							locked = content.extend_left
+							locked = not not locked and not not allow_boon_removal
 						end
 
 						return locked
@@ -4995,11 +5067,11 @@ UIWidgets.create_power_up = function (arg_113_0, arg_113_1, arg_113_2, arg_113_3
 					style_id = "locked",
 					pass_type = "text",
 					text_id = "locked_text_id",
-					content_check_function = function (self)
+					content_check_function = function (content)
 						-- function 143
-						local locked = self.locked
+						local locked = content.locked
 
-						locked = not locked and not not self.extend_left or arg_113_3
+						locked = not not locked and not content.extend_left and not not allow_boon_removal
 
 						return locked
 					end
@@ -5008,11 +5080,11 @@ UIWidgets.create_power_up = function (arg_113_0, arg_113_1, arg_113_2, arg_113_3
 					style_id = "locked_shadow",
 					pass_type = "text",
 					text_id = "locked_text_id",
-					content_check_function = function (self)
+					content_check_function = function (content)
 						-- function 144
-						local locked = self.locked
+						local locked = content.locked
 
-						locked = not locked and not not self.extend_left or arg_113_3
+						locked = not not locked and not content.extend_left and not not allow_boon_removal
 
 						return locked
 					end
@@ -5021,11 +5093,11 @@ UIWidgets.create_power_up = function (arg_113_0, arg_113_1, arg_113_2, arg_113_3
 					pass_type = "texture",
 					style_id = "remove_frame",
 					texture_id = "remove_frame",
-					content_check_function = function (self, arg_145_1)
+					content_check_function = function (content, style)
 						-- function 145
-						local input_made = self.input_made
+						local input_made = content.input_made
 
-						input_made = not input_made and not not self.locked or arg_113_3
+						input_made = not not input_made and not content.locked and not not allow_boon_removal
 
 						return input_made
 					end
@@ -5128,8 +5200,8 @@ UIWidgets.create_power_up = function (arg_113_0, arg_113_1, arg_113_2, arg_113_3
 					255
 				},
 				texture_size = {
-					arg_113_1[1],
-					arg_113_1[2]
+					size[1],
+					size[2]
 				},
 				offset = {
 					0,
@@ -5147,8 +5219,8 @@ UIWidgets.create_power_up = function (arg_113_0, arg_113_1, arg_113_2, arg_113_3
 					255
 				},
 				texture_size = {
-					arg_113_1[1],
-					arg_113_1[2]
+					size[1],
+					size[2]
 				},
 				offset = {
 					-384,
@@ -5174,7 +5246,7 @@ UIWidgets.create_power_up = function (arg_113_0, arg_113_1, arg_113_2, arg_113_3
 					40,
 					40
 				},
-				masked = flag
+				masked = masked
 			},
 			rectangular_icon = {
 				vertical_alignment = "center",
@@ -5194,7 +5266,7 @@ UIWidgets.create_power_up = function (arg_113_0, arg_113_1, arg_113_2, arg_113_3
 					63,
 					63
 				},
-				masked = flag
+				masked = masked
 			},
 			rectangular_bg = {
 				vertical_alignment = "center",
@@ -5264,7 +5336,7 @@ UIWidgets.create_power_up = function (arg_113_0, arg_113_1, arg_113_2, arg_113_3
 				dynamic_font_size = true,
 				area_size = {
 					250,
-					arg_113_1[2]
+					size[2]
 				},
 				text_color = Colors.get_color_table_with_alpha("font_title", 255),
 				offset = {
@@ -5322,7 +5394,7 @@ UIWidgets.create_power_up = function (arg_113_0, arg_113_1, arg_113_2, arg_113_3
 				dynamic_font_size = true,
 				area_size = {
 					250,
-					arg_113_1[2]
+					size[2]
 				},
 				text_color = Colors.get_color_table_with_alpha("black", 255),
 				offset = {
@@ -5375,7 +5447,7 @@ UIWidgets.create_power_up = function (arg_113_0, arg_113_1, arg_113_2, arg_113_3
 				dynamic_font_size = true,
 				area_size = {
 					250,
-					arg_113_1[2]
+					size[2]
 				},
 				text_color = Colors.get_color_table_with_alpha("font_title", 255),
 				offset = {
@@ -5433,7 +5505,7 @@ UIWidgets.create_power_up = function (arg_113_0, arg_113_1, arg_113_2, arg_113_3
 				dynamic_font_size = true,
 				area_size = {
 					250,
-					arg_113_1[2]
+					size[2]
 				},
 				text_color = Colors.get_color_table_with_alpha("black", 255),
 				offset = {
@@ -5681,6 +5753,6 @@ UIWidgets.create_power_up = function (arg_113_0, arg_113_1, arg_113_2, arg_113_3
 			-65,
 			50
 		},
-		scenegraph_id = arg_113_0
+		scenegraph_id = scenegraph_id
 	}
 end

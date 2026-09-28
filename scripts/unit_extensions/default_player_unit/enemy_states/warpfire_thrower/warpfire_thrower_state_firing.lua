@@ -1,12 +1,12 @@
 -- chunkname: @scripts/unit_extensions/default_player_unit/enemy_states/warpfire_thrower/warpfire_thrower_state_firing.lua
 
-local scripts_unit_extensions_default_player_unit_buffs_settings_buff_perk_names = require("scripts/unit_extensions/default_player_unit/buffs/settings/buff_perk_names")
+local buff_perk_names = require("scripts/unit_extensions/default_player_unit/buffs/settings/buff_perk_names")
 
 WarpfireThrowerStateFiring = class(WarpfireThrowerStateFiring, EnemyCharacterState)
 
-WarpfireThrowerStateFiring.init = function (self, arg_1_1)
+WarpfireThrowerStateFiring.init = function (self, character_state_init_context)
 	-- function 1
-	EnemyCharacterState.init(self, arg_1_1, "warpfire_firing")
+	EnemyCharacterState.init(self, character_state_init_context, "warpfire_firing")
 
 	self.current_movement_speed_scale = 0
 	self.last_input_direction = Vector3Box(0, 0, 0)
@@ -14,31 +14,34 @@ end
 
 local POSITION_LOOKUP = POSITION_LOOKUP
 
-WarpfireThrowerStateFiring.on_enter = function (self, arg_2_1, arg_2_2, arg_2_3, arg_2_4, arg_2_5, arg_2_6, arg_2_7)
+WarpfireThrowerStateFiring.on_enter = function (self, unit, input, dt, context, t, previous_state, params)
 	-- function 2
 	table.clear(self._temp_params)
 
-	self._unit_id = Managers.state.network.unit_storage:go_id(arg_2_1)
+	self._unit_id = Managers.state.network.unit_storage:go_id(unit)
 
-	local get_data = Unit.get_data(arg_2_1, "breed")
+	local breed = Unit.get_data(unit, "breed")
 
-	self._breed = get_data
-	self._blackboard = BLACKBOARDS[arg_2_1]
+	self._breed = breed
 
-	local var_2_1 = Vector3(0, 0, 0)
+	local blackboard = BLACKBOARDS[unit]
 
-	CharacterStateHelper.play_animation_event(arg_2_1, "attack_shoot_start")
+	self._blackboard = blackboard
+
+	local velocity = Vector3(0, 0, 0)
+
+	CharacterStateHelper.play_animation_event(unit, "attack_shoot_start")
 	CharacterStateHelper.play_animation_event_first_person(self._first_person_extension, "attack_shoot_start")
 
 	self._done_priming = false
-	self._prime_time = arg_2_5 + get_data.shoot_warpfire_prime_time
-	self._max_prime_time = get_data.shoot_warpfire_prime_time
-	self._max_flame_time = get_data.shoot_warpfire_max_flame_time
+	self._prime_time = t + breed.shoot_warpfire_prime_time
+	self._max_prime_time = breed.shoot_warpfire_prime_time
+	self._max_flame_time = breed.shoot_warpfire_max_flame_time
 	self._current_flame_time = 0
-	self._wind_up_movement_speed = get_data.shoot_warpfire_wind_up_movement_speed
-	self.shoot_warpfire_movement_speed_mod = get_data.shoot_warpfire_movement_speed_mod
+	self._wind_up_movement_speed = breed.shoot_warpfire_wind_up_movement_speed
+	self.shoot_warpfire_movement_speed_mod = breed.shoot_warpfire_movement_speed_mod
 
-	if not self._first_person_extension then
+	if self._first_person_extension then
 		self.first_person_unit = self._first_person_extension:get_first_person_unit()
 	end
 
@@ -46,7 +49,11 @@ WarpfireThrowerStateFiring.on_enter = function (self, arg_2_1, arg_2_2, arg_2_3,
 
 	local warpfire_data = self.blackboard.warpfire_data
 
-	warpfire_data = warpfire_data or {
+	if not warpfire_data then
+		-- Nothing
+	end
+
+	warpfire_data = {
 		aim_rotation_override_speed_multiplier = 1.5,
 		aim_rotation_override_distance = 3,
 		warpfire_follow_target_speed = 0.75,
@@ -54,377 +61,404 @@ WarpfireThrowerStateFiring.on_enter = function (self, arg_2_1, arg_2_2, arg_2_3,
 		buff_name_close = "vs_warpfire_thrower_short_distance_damage",
 		buff_name_far = "vs_warpfire_thrower_long_distance_damage",
 		aim_rotation_dodge_multipler = 0.15,
-		attack_range = get_data.shoot_warpfire_attack_range,
-		close_attack_range = get_data.shoot_warpfire_close_attack_range,
-		close_attack_cooldown = get_data.shoot_warpfire_close_attack_cooldown,
-		hit_radius = get_data.shoot_warpfire_close_attack_hit_radius,
+		attack_range = breed.shoot_warpfire_attack_range,
+		close_attack_range = breed.shoot_warpfire_close_attack_range,
+		close_attack_cooldown = breed.shoot_warpfire_close_attack_cooldown,
+		hit_radius = breed.shoot_warpfire_close_attack_hit_radius,
 		target_position = Vector3Box(0, 0, 0)
 	}
-	warpfire_data.is_firing = false
+
+	local data = warpfire_data
+
+	::label_2_0::
+
+	data.is_firing = false
 	self._is_firing = false
 
-	local peer_id = warpfire_data.peer_id
+	local peer_id = data.peer_id
 
-	peer_id = peer_id or Network.peer_id()
-	warpfire_data.peer_id = peer_id
-	self.blackboard.warpfire_data = warpfire_data
+	peer_id = not not peer_id or not not Network.peer_id()
+	data.peer_id = peer_id
+	self.blackboard.warpfire_data = data
 	self._create_fire_time = 0
 	self._gravity = -9.82
 	self._speed = 17
 	self._angle = math.degrees_to_radians(math.pi / 4)
 
 	self:set_breed_action("shoot_warpfire_thrower")
-	Managers.state.entity:system("weapon_system"):change_single_weapon_state(arg_2_1, "windup_start", warpfire_data.peer_id)
+	Managers.state.entity:system("weapon_system"):change_single_weapon_state(unit, "windup_start", data.peer_id)
 end
 
-WarpfireThrowerStateFiring.update = function (self, arg_3_1, arg_3_2, arg_3_3, arg_3_4, arg_3_5)
+WarpfireThrowerStateFiring.update = function (self, unit, input, dt, context, t)
 	-- function 3
-	local _csm = self._csm
-	local get_movement_settings_table = PlayerUnitMovementSettings.get_movement_settings_table(arg_3_1)
-	local _input_extension = self._input_extension
-	local _status_extension = self._status_extension
-	local _first_person_extension = self._first_person_extension
-	local _locomotion_extension = self._locomotion_extension
-	local _inventory_extension = self._inventory_extension
+	local csm = self._csm
+	local movement_settings_table = PlayerUnitMovementSettings.get_movement_settings_table(unit)
+	local input_extension = self._input_extension
+	local status_extension = self._status_extension
+	local first_person_extension = self._first_person_extension
+	local locomotion_extension = self._locomotion_extension
+	local inventory_extension = self._inventory_extension
 
 	if not self._done_priming then
-		self:_update_priming(arg_3_1, arg_3_5, arg_3_3)
+		self:_update_priming(unit, t, dt)
 	end
 
-	if not self._is_firing then
-		self:_update_warpfire_attack(arg_3_1, arg_3_5, arg_3_3)
+	if self._is_firing then
+		self:_update_warpfire_attack(unit, t, dt)
 	end
 
-	if not (self._current_flame_time >= self._max_flame_time) then
-		_csm:change_state("standing")
+	local max_time_reached = self._current_flame_time >= self._max_flame_time
+
+	if max_time_reached then
+		csm:change_state("standing")
 
 		return
 	end
 
-	if not CharacterStateHelper.do_common_state_transitions(_status_extension, _csm) then
+	if CharacterStateHelper.do_common_state_transitions(status_extension, csm) then
 		return
 	end
 
-	if not CharacterStateHelper.is_using_transport(_status_extension) then
-		_csm:change_state("using_transport")
-
-		return
-	end
-
-	if not CharacterStateHelper.is_pushed(_status_extension) then
-		_status_extension:set_pushed(false)
-
-		local pushed = get_movement_settings_table.stun_settings.pushed
-
-		pushed.hit_react_type = _status_extension:hit_react_type() .. "_push"
-
-		_csm:change_state("stunned", pushed)
+	if CharacterStateHelper.is_using_transport(status_extension) then
+		csm:change_state("using_transport")
 
 		return
 	end
 
-	if not _input_extension then
+	if CharacterStateHelper.is_pushed(status_extension) then
+		status_extension:set_pushed(false)
+
+		local params = movement_settings_table.stun_settings.pushed
+		local hit_react_type = status_extension:hit_react_type()
+
+		params.hit_react_type = hit_react_type .. "_push"
+
+		csm:change_state("stunned", params)
+
 		return
 	end
 
-	local get = _input_extension:get("action_one_release")
+	if not input_extension then
+		return
+	end
+
+	local get = input_extension:get("action_one_release")
 
 	if not get then
-		get = _input_extension:get("action_two")
-		get = get or _input_extension:get("action_two_release")
+		-- Nothing
 	end
 
+	get = input_extension:get("action_two")
+
 	if not get then
-		_csm:change_state("standing")
+		-- Nothing
+	end
+
+	get = input_extension:get("action_two_release")
+
+	local input_cancel = get
+
+	::label_3_0::
+
+	if input_cancel then
+		csm:change_state("standing")
 
 		return
 	end
 
-	if not (not self._done_priming and self._is_firing) then
-		self:_start_firing(arg_3_5)
+	if self._done_priming and not self._is_firing then
+		self:_start_firing(t)
 	end
 
-	self:_update_movement(arg_3_1, arg_3_5, arg_3_3)
+	self:_update_movement(unit, t, dt)
 	CharacterStateHelper.look(self._input_extension, self._player.viewport_name, self._first_person_extension, self._status_extension, self._inventory_extension)
 end
 
-WarpfireThrowerStateFiring._set_priming_progress = function (self, arg_4_1)
+WarpfireThrowerStateFiring._set_priming_progress = function (self, progress)
 	-- function 4
-	local _career_extension = self._career_extension
-	local str = "fire"
-	local ability_id = _career_extension:ability_id(str)
+	local career_extension = self._career_extension
+	local ability_name = "fire"
+	local ability_id = career_extension:ability_id(ability_name)
+	local ability_data = career_extension:get_activated_ability_data(ability_id)
 
-	_career_extension:get_activated_ability_data(ability_id).priming_progress = arg_4_1
+	ability_data.priming_progress = progress
 end
 
-WarpfireThrowerStateFiring._update_priming = function (self, arg_5_1, arg_5_2, arg_5_3)
+WarpfireThrowerStateFiring._update_priming = function (self, unit, t, dt)
 	-- function 5
-	local flag = not self._done_priming
+	local update_priming = not self._done_priming
 
-	if arg_5_2 > self._prime_time then
+	if t > self._prime_time then
 		self._done_priming = true
 	end
 
-	if not flag then
-		local _prime_time = self._prime_time
-		local _max_prime_time = self._max_prime_time
-		local num = _max_prime_time - (_prime_time - arg_5_2)
-		local clamp = math.clamp(num / _max_prime_time, 0, 1)
+	if update_priming then
+		local prime_time = self._prime_time
+		local max_prime_time = self._max_prime_time
+		local time = max_prime_time - (prime_time - t)
+		local progress = math.clamp(time / max_prime_time, 0, 1)
 
-		self:_set_priming_progress(clamp)
-		self:_update_movement(arg_5_1, arg_5_2, arg_5_3, clamp)
+		self:_set_priming_progress(progress)
+		self:_update_movement(unit, t, dt, progress)
 	end
 end
 
-WarpfireThrowerStateFiring._start_firing = function (self, arg_6_1)
+WarpfireThrowerStateFiring._start_firing = function (self, t)
 	-- function 6
 	self:_set_priming_progress(0)
 
-	local _unit = self._unit
+	local unit = self._unit
 	local blackboard = self.blackboard
 	local warpfire_data = blackboard.warpfire_data
 
-	if not self:_create_warpfire_blob(_unit, warpfire_data, blackboard, arg_6_1) then
+	if self:_create_warpfire_blob(unit, warpfire_data, blackboard, t) then
 		blackboard.close_attack_cooldown = 0
 	end
 
-	local warpfire_data_2 = blackboard.warpfire_data
+	local data = blackboard.warpfire_data
 
-	warpfire_data_2.is_firing = true
+	data.is_firing = true
 	self._is_firing = true
-	warpfire_data_2.state = "shoot_start"
+	data.state = "shoot_start"
 
-	Managers.state.entity:system("weapon_system"):change_single_weapon_state(_unit, "shoot_start", warpfire_data_2.peer_id)
+	Managers.state.entity:system("weapon_system"):change_single_weapon_state(unit, "shoot_start", data.peer_id)
 end
 
 WarpfireThrowerStateFiring._stop_priming = function (self)
 	-- function 7
-	local _unit = self._unit
-	local _first_person_extension = self._first_person_extension
+	local unit = self._unit
+	local first_person_extension = self._first_person_extension
 
-	CharacterStateHelper.play_animation_event(_unit, "idle")
-	CharacterStateHelper.play_animation_event(_unit, "no_anim_upperbody")
+	CharacterStateHelper.play_animation_event(unit, "idle")
+	CharacterStateHelper.play_animation_event(unit, "no_anim_upperbody")
 end
 
-WarpfireThrowerStateFiring._close_range_attack = function (self, arg_8_1, arg_8_2, arg_8_3, arg_8_4)
+WarpfireThrowerStateFiring._close_range_attack = function (self, unit, blackboard, warpfire_data, t)
 	-- function 8
-	local get_enemies_in_line_of_sight = EnemyCharacterStateHelper.get_enemies_in_line_of_sight(arg_8_1, self.first_person_unit, self._physics_world)
+	local enemies_in_range = EnemyCharacterStateHelper.get_enemies_in_line_of_sight(unit, self.first_person_unit, self._physics_world)
 
-	if not get_enemies_in_line_of_sight then
+	if not enemies_in_range then
 		return
 	end
 
-	for i = 1, #get_enemies_in_line_of_sight do
-		local var_8_1 = get_enemies_in_line_of_sight[i]
-		local unit = var_8_1.unit
-		local is_enemy = DamageUtils.is_enemy(arg_8_1, unit)
+	for i = 1, #enemies_in_range do
+		local enemy_data = enemies_in_range[i]
+		local hit_unit = enemy_data.unit
+		local is_valid_target = DamageUtils.is_enemy(unit, hit_unit)
 
-		if not is_enemy then
-			local has_extension = ScriptUnit.has_extension(unit, "buff_system")
-			local flag = not has_extension and has_extension:has_buff_perk(scripts_unit_extensions_default_player_unit_buffs_settings_buff_perk_names.power_block)
-			local has_extension_2 = ScriptUnit.has_extension(unit, "status_system")
-			local var_8_7
-			local var_8_8
+		if is_valid_target then
+			local target_buff_extension = ScriptUnit.has_extension(hit_unit, "buff_system")
+			local target_power_block_perk = not not target_buff_extension and not not target_buff_extension:has_buff_perk(buff_perk_names.power_block)
+			local target_status_extension = ScriptUnit.has_extension(hit_unit, "status_system")
+			local target_blocking, shield_block
 
-			if not has_extension_2 then
-				var_8_7, var_8_8 = has_extension_2:is_blocking()
+			if target_status_extension then
+				target_blocking, shield_block = target_status_extension:is_blocking()
 			end
 
-			if not flag and not var_8_7 and not var_8_8 then
-				is_enemy = not DamageUtils.check_ranged_block(arg_8_1, unit, "blocked_berzerker")
+			if target_power_block_perk and target_blocking and shield_block then
+				is_valid_target = not DamageUtils.check_ranged_block(unit, hit_unit, "blocked_berzerker")
 			end
 
-			if not is_enemy then
+			if is_valid_target then
 				local buff_name_close
 
-				if var_8_1.distance <= arg_8_3.close_attack_range then
-					buff_name_close = arg_8_3.buff_name_close
+				if enemy_data.distance <= warpfire_data.close_attack_range then
+					buff_name_close = warpfire_data.buff_name_close
 
 					if not buff_name_close then
 						-- Nothing
 					end
 				end
 
-				buff_name_close = arg_8_3.buff_name_far
+				buff_name_close = warpfire_data.buff_name_far
+
+				local buff_name = buff_name_close
 
 				::label_8_0::
 
-				local tbl = {
-					attacker_unit = arg_8_1
-				}
-				local system = Managers.state.entity:system("buff_system")
+				local params = {}
 
-				system:add_buff_synced(unit, buff_name_close, BuffSyncType.All, tbl)
-				system:add_buff_synced(unit, "warpfire_thrower_fire_slowdown", BuffSyncType.All, tbl)
+				params.attacker_unit = unit
+
+				local buff_system = Managers.state.entity:system("buff_system")
+
+				buff_system:add_buff_synced(hit_unit, buff_name, BuffSyncType.All, params)
+				buff_system:add_buff_synced(hit_unit, "warpfire_thrower_fire_slowdown", BuffSyncType.All, params)
 			end
 		end
 	end
 end
 
-local function fn(arg_9_0, arg_9_1, arg_9_2, arg_9_3, arg_9_4, arg_9_5, arg_9_6, arg_9_7)
+local function ballistic_raycast(physics_world, max_steps, max_time, position, velocity, gravity, collision_filter, visualize)
 	-- function 9
-	local num = arg_9_2 / arg_9_1
+	local time_step = max_time / max_steps
 
-	for i = 1, arg_9_1 do
-		local num_2 = arg_9_3 + arg_9_4 * num
-		local num_3 = num_2 - arg_9_3
-		local normalize = Vector3.normalize(num_3)
-		local length = Vector3.length(num_3)
-		local immediate_raycast, var_9_6, var_9_7, var_9_8, var_9_9 = PhysicsWorld.immediate_raycast(arg_9_0, arg_9_3, normalize, length, "closest", "collision_filter", arg_9_6)
+	for i = 1, max_steps do
+		local new_position = position + velocity * time_step
+		local delta = new_position - position
+		local direction = Vector3.normalize(delta)
+		local distance = Vector3.length(delta)
+		local result, hit_position, hit_distance, normal, actor = PhysicsWorld.immediate_raycast(physics_world, position, direction, distance, "closest", "collision_filter", collision_filter)
 
-		if not var_9_6 then
-			return immediate_raycast, var_9_6, var_9_7, var_9_8, var_9_9
+		if hit_position then
+			return result, hit_position, hit_distance, normal, actor
 		end
 
-		arg_9_4 = arg_9_4 + arg_9_5 * num
-		arg_9_3 = num_2
+		velocity = velocity + gravity * time_step
+		position = new_position
 	end
 
-	return false, arg_9_3
+	return false, position
 end
 
-WarpfireThrowerStateFiring._update_warpfire_attack = function (self, arg_10_1, arg_10_2, arg_10_3)
+WarpfireThrowerStateFiring._update_warpfire_attack = function (self, unit, t, dt)
 	-- function 10
-	self._current_flame_time = self._current_flame_time + arg_10_3
+	self._current_flame_time = self._current_flame_time + dt
 
 	local blackboard = self.blackboard
 	local warpfire_data = blackboard.warpfire_data
 
-	if arg_10_2 > blackboard.close_attack_cooldown then
-		self:_close_range_attack(arg_10_1, blackboard, warpfire_data, arg_10_2)
+	if t > blackboard.close_attack_cooldown then
+		self:_close_range_attack(unit, blackboard, warpfire_data, t)
 
-		blackboard.close_attack_cooldown = arg_10_2 + warpfire_data.close_attack_cooldown
+		blackboard.close_attack_cooldown = t + warpfire_data.close_attack_cooldown
 	end
 end
 
-local flag = false
+local debug_draw = false
 
 WarpfireThrowerStateFiring.hit_ground_at = function (self)
 	-- function 11
-	local var_11_0 = POSITION_LOOKUP[self._unit]
-	local var_11_1 = POSITION_LOOKUP[self.first_person_unit]
-	local world_rotation = Unit.world_rotation(self.first_person_unit, 0)
-	local var_11_3
-	local num = 10
-	local num_2 = 1.5
-	local _speed = self._speed
-	local _angle = self._angle
-	local num_3 = Quaternion.forward(Quaternion.multiply(world_rotation, Quaternion(Vector3.right(), _angle))) * _speed
-	local var_11_9 = Vector3(0, 0, self._gravity)
-	local str = "filter_geiser_check"
-	local var_11_11, var_11_12, var_11_13, var_11_14 = fn(self._physics_world, num, num_2, var_11_1, num_3, var_11_9, str, flag)
-	local var_11_15 = var_11_12
+	local player_position = POSITION_LOOKUP[self._unit]
+	local first_person_position = POSITION_LOOKUP[self.first_person_unit]
+	local first_person_rotation = Unit.world_rotation(self.first_person_unit, 0)
+	local position
+	local max_steps = 10
+	local max_time = 1.5
+	local speed = self._speed
+	local angle = self._angle
+	local velocity = Quaternion.forward(Quaternion.multiply(first_person_rotation, Quaternion(Vector3.right(), angle))) * speed
+	local gravity = Vector3(0, 0, self._gravity)
+	local collision_filter = "filter_geiser_check"
+	local result, hit_position, _, normal = ballistic_raycast(self._physics_world, max_steps, max_time, first_person_position, velocity, gravity, collision_filter, debug_draw)
 
-	if not var_11_11 then
-		local var_11_16 = Vector3(0, 0, 1)
+	position = hit_position
 
-		if Vector3.dot(var_11_14, var_11_16) < 0.75 then
-			local num_4 = var_11_15 - 1 * Vector3.normalize(var_11_15 - var_11_0)
-			local immediate_raycast, var_11_19, var_11_20, var_11_21 = PhysicsWorld.immediate_raycast(self._physics_world, num_4, Vector3(0, 0, -1), 5, "closest", "collision_filter", str)
+	if result then
+		local up = Vector3(0, 0, 1)
 
-			if not var_11_19 then
-				var_11_15 = var_11_19
+		if Vector3.dot(normal, up) < 0.75 then
+			local half_step_back = 1 * Vector3.normalize(position - player_position)
+			local new_position = position - half_step_back
+			local _, new_hit_position, _, _ = PhysicsWorld.immediate_raycast(self._physics_world, new_position, Vector3(0, 0, -1), 5, "closest", "collision_filter", collision_filter)
+
+			if new_hit_position then
+				position = new_hit_position
 			end
 		end
 	end
 
-	return var_11_15, var_11_0
+	return position, player_position
 end
 
-WarpfireThrowerStateFiring._move_warpfire_blob = function (arg_12_0, arg_12_1, arg_12_2, arg_12_3, arg_12_4)
+WarpfireThrowerStateFiring._move_warpfire_blob = function (self, unit, warpfire_data, blackboard, dt)
 	-- function 12
-	local blob_unit = arg_12_2.blob_unit
-	local var_12_1 = POSITION_LOOKUP[blob_unit]
+	local blob_unit = warpfire_data.blob_unit
+	local blob_position = POSITION_LOOKUP[blob_unit]
 
-	if not blob_unit and not var_12_1 then
-		local var_12_2 = POSITION_LOOKUP[arg_12_1]
-		local unbox = arg_12_2.target_position:unbox()
-		local flat = Vector3.flat(unbox - var_12_2)
-		local length = Vector3.length(flat)
-		local var_12_6
-		local var_12_7
-		local close_attack_range = arg_12_2.close_attack_range
-		local warpfire_follow_target_speed = arg_12_2.warpfire_follow_target_speed
+	if blob_unit and blob_position then
+		local unit_position = POSITION_LOOKUP[unit]
+		local target_position = warpfire_data.target_position:unbox()
+		local to_target = Vector3.flat(target_position - unit_position)
+		local target_dist = Vector3.length(to_target)
+		local lerp_value, wanted_position
+		local close_attack_range = warpfire_data.close_attack_range
+		local warpfire_follow_target_speed = warpfire_data.warpfire_follow_target_speed
 
-		if close_attack_range < length then
-			var_12_6 = math.min(arg_12_4 * warpfire_follow_target_speed, 1)
-			var_12_7 = unbox
+		if close_attack_range < target_dist then
+			lerp_value = math.min(dt * warpfire_follow_target_speed, 1)
+			wanted_position = target_position
 		else
-			var_12_6 = math.min(arg_12_4 * warpfire_follow_target_speed * 6, 1)
-			var_12_7 = var_12_2 + Vector3.normalize(unbox - var_12_2) * close_attack_range
+			lerp_value = math.min(dt * warpfire_follow_target_speed * 6, 1)
+
+			local unit_to_target = Vector3.normalize(target_position - unit_position)
+
+			wanted_position = unit_position + unit_to_target * close_attack_range
 		end
 
-		local lerp = Vector3.lerp(var_12_1, var_12_7, var_12_6)
+		local new_blob_position = Vector3.lerp(blob_position, wanted_position, lerp_value)
 
-		Unit.set_local_position(blob_unit, 0, lerp)
+		Unit.set_local_position(blob_unit, 0, new_blob_position)
 	end
 end
 
-WarpfireThrowerStateFiring._create_warpfire_blob = function (self, arg_13_1, arg_13_2, arg_13_3, arg_13_4)
+WarpfireThrowerStateFiring._create_warpfire_blob = function (self, unit, warpfire_data, blackboard, t)
 	-- function 13
-	local warpfire_data = arg_13_3.warpfire_data
-	local weapon_unit = arg_13_3.weapon_unit
-	local hit_ground_at, var_13_3 = self:hit_ground_at()
+	local warpfire_data = blackboard.warpfire_data
+	local warpfire_unit = blackboard.weapon_unit
+	local target_position, my_position = self:hit_ground_at()
 
-	if not hit_ground_at then
+	if not target_position then
 		return false
 	end
 
-	warpfire_data.target_position:store(hit_ground_at)
+	warpfire_data.target_position:store(target_position)
 
-	local tbl = {
+	local extension_init_data = {
 		area_damage_system = {
 			damage_blob_template_name = "warpfire_vs",
-			source_unit = arg_13_1
+			source_unit = unit
 		}
 	}
-	local str = "units/hub_elements/empty"
-	local spawn_network_unit = Managers.state.unit_spawner:spawn_network_unit(str, "damage_blob_unit", tbl, hit_ground_at)
-	local extension = ScriptUnit.extension(spawn_network_unit, "area_damage_system")
+	local aoe_unit_name = "units/hub_elements/empty"
+	local damage_blob_unit = Managers.state.unit_spawner:spawn_network_unit(aoe_unit_name, "damage_blob_unit", extension_init_data, target_position)
+	local damage_blob_extension = ScriptUnit.extension(damage_blob_unit, "area_damage_system")
 
-	warpfire_data.blob_unit = spawn_network_unit
-	warpfire_data.blob_extension = extension
+	warpfire_data.blob_unit = damage_blob_unit
+	warpfire_data.blob_extension = damage_blob_extension
 
-	local num = Vector3.length(hit_ground_at - var_13_3) / 10
+	local length = Vector3.length(target_position - my_position)
+	local wait_time = length / 10
 
-	extension:start_placing_blobs(num, arg_13_4)
+	damage_blob_extension:start_placing_blobs(wait_time, t)
 
-	self._create_fire_time = arg_13_4 + 9999999
+	self._create_fire_time = t + 9999999
 
 	return true
 end
 
-WarpfireThrowerStateFiring.on_exit = function (self, arg_14_1, arg_14_2, arg_14_3, arg_14_4, arg_14_5, arg_14_6)
+WarpfireThrowerStateFiring.on_exit = function (self, unit, input, dt, context, t, next_state)
 	-- function 14
 	if not Managers.state.network:in_game_session() then
 		return
 	end
 
-	local _csm = self._csm
-	local _status_extension = self._status_extension
-	local _locomotion_extension = self._locomotion_extension
-	local _first_person_extension = self._first_person_extension
+	local csm = self._csm
+	local status_extension = self._status_extension
+	local locomotion_extension = self._locomotion_extension
+	local first_person_extension = self._first_person_extension
 
-	CharacterStateHelper.play_animation_event_first_person(_first_person_extension, "attack_finished")
-	CharacterStateHelper.play_animation_event(arg_14_1, "no_anim_upperbody")
+	CharacterStateHelper.play_animation_event_first_person(first_person_extension, "attack_finished")
+	CharacterStateHelper.play_animation_event(unit, "no_anim_upperbody")
 
 	local warpfire_data = self.blackboard.warpfire_data
 
-	if not warpfire_data.is_firing then
-		local clamp = math.clamp((self._max_flame_time - self._current_flame_time) / self._max_flame_time - self._breed.shoot_warpfire_minimum_forced_cooldown, 0, 1)
+	if warpfire_data.is_firing then
+		local refund_fraction = math.clamp((self._max_flame_time - self._current_flame_time) / self._max_flame_time - self._breed.shoot_warpfire_minimum_forced_cooldown, 0, 1)
 
-		self._career_extension:start_activated_ability_cooldown(1, clamp)
-		Managers.state.entity:system("weapon_system"):change_single_weapon_state(arg_14_1, "shoot_end", warpfire_data.peer_id)
+		self._career_extension:start_activated_ability_cooldown(1, refund_fraction)
+		Managers.state.entity:system("weapon_system"):change_single_weapon_state(unit, "shoot_end", warpfire_data.peer_id)
 
 		warpfire_data.is_firing = false
 
-		CharacterStateHelper.play_animation_event_first_person(_first_person_extension, "wind_up_start")
-		CharacterStateHelper.play_animation_event(arg_14_1, "wind_up_start")
-		_first_person_extension:play_hud_sound_event("player_enemy_warpfire_steam_after_flame_start")
+		CharacterStateHelper.play_animation_event_first_person(first_person_extension, "wind_up_start")
+		CharacterStateHelper.play_animation_event(unit, "wind_up_start")
+		first_person_extension:play_hud_sound_event("player_enemy_warpfire_steam_after_flame_start")
 	end
 
-	if not warpfire_data.blob_extension then
-		warpfire_data.blob_extension:stop_placing_blobs(arg_14_5)
+	if warpfire_data.blob_extension then
+		warpfire_data.blob_extension:stop_placing_blobs(t)
 	end
 
 	self._max_flame_time = nil
@@ -436,83 +470,117 @@ WarpfireThrowerStateFiring.on_exit = function (self, arg_14_1, arg_14_2, arg_14_
 	self:_set_priming_progress(0)
 end
 
-WarpfireThrowerStateFiring._update_movement = function (self, arg_15_1, arg_15_2, arg_15_3, arg_15_4)
+WarpfireThrowerStateFiring._update_movement = function (self, unit, t, dt, progress)
 	-- function 15
-	local _input_extension = self._input_extension
-	local _buff_extension = self._buff_extension
-	local _first_person_extension = self._first_person_extension
-	local get_movement_settings_table = PlayerUnitMovementSettings.get_movement_settings_table(arg_15_1)
-	local get_movement_input = CharacterStateHelper.get_movement_input(_input_extension)
-	local has_move_input = CharacterStateHelper.has_move_input(_input_extension)
+	local input_extension = self._input_extension
+	local buff_extension = self._buff_extension
+	local first_person_extension = self._first_person_extension
+	local movement_settings_table = PlayerUnitMovementSettings.get_movement_settings_table(unit)
+	local move_input = CharacterStateHelper.get_movement_input(input_extension)
+	local is_moving = CharacterStateHelper.has_move_input(input_extension)
 	local current_movement_speed_scale = self.current_movement_speed_scale
 
 	if not self.is_bot then
 		local _breed = self._breed
 
-		_breed = not _breed and self._breed.breed_move_acceleration_up
+		if _breed then
+			-- Nothing
+		end
+
+		_breed = self._breed.breed_move_acceleration_up
+
+		local breed_move_acceleration_up = _breed
+
+		::label_15_0::
 
 		local _breed_2 = self._breed
 
-		_breed_2 = not _breed_2 and self._breed.breed_move_acceleration_down
+		if _breed_2 then
+			-- Nothing
+		end
 
-		local num = _breed * arg_15_3
+		_breed_2 = self._breed.breed_move_acceleration_down
 
-		num = num or get_movement_settings_table.move_acceleration_up * arg_15_3
+		local breed_move_acceleration_down = _breed_2
 
-		local num_2 = _breed_2 * arg_15_3
+		::label_15_1::
 
-		num_2 = num_2 or get_movement_settings_table.move_acceleration_down * arg_15_3
+		local num = breed_move_acceleration_up * dt
 
-		if not has_move_input then
-			current_movement_speed_scale = math.min(1, current_movement_speed_scale + num)
+		if not num then
+			-- Nothing
+		end
+
+		num = movement_settings_table.move_acceleration_up * dt
+
+		local move_acceleration_up_dt = num
+
+		::label_15_2::
+
+		local num_2 = breed_move_acceleration_down * dt
+
+		if not num_2 then
+			-- Nothing
+		end
+
+		num_2 = movement_settings_table.move_acceleration_down * dt
+
+		local move_acceleration_down_dt = num_2
+
+		::label_15_3::
+
+		if is_moving then
+			current_movement_speed_scale = math.min(1, current_movement_speed_scale + move_acceleration_up_dt)
 		else
-			current_movement_speed_scale = math.max(0, current_movement_speed_scale - num_2)
+			current_movement_speed_scale = math.max(0, current_movement_speed_scale - move_acceleration_down_dt)
 		end
 	else
-		current_movement_speed_scale = not has_move_input and 1 and 0
+		current_movement_speed_scale = (not is_moving or not 1) and not not 0
 	end
 
-	local num_3 = 1
-	local flag
+	local wind_up_progress = 1
 
-	flag = not self._is_firing and 1 and self._career_extension:get_activated_ability_data(1).priming_progress
+	wind_up_progress = (not self._is_firing or not 1) and not not self._career_extension:get_activated_ability_data(1).priming_progress
 
-	local lerp = math.lerp(self._wind_up_movement_speed.start, self._wind_up_movement_speed.finish, flag^self._wind_up_movement_speed.rate)
-	local num_4 = _buff_extension:apply_buffs_to_value(lerp, "movement_speed") * current_movement_speed_scale * get_movement_settings_table.player_speed_scale * self.shoot_warpfire_movement_speed_mod
-	local var_15_15 = Vector3(0, 0, 0)
+	local movement_speed = math.lerp(self._wind_up_movement_speed.start, self._wind_up_movement_speed.finish, wind_up_progress^self._wind_up_movement_speed.rate)
+	local current_max_move_speed = movement_speed
+	local buffed_move_speed = buff_extension:apply_buffs_to_value(current_max_move_speed, "movement_speed")
+	local final_move_speed = buffed_move_speed * current_movement_speed_scale * movement_settings_table.player_speed_scale * self.shoot_warpfire_movement_speed_mod
+	local movement = Vector3(0, 0, 0)
 
-	if not get_movement_input then
-		var_15_15 = var_15_15 + get_movement_input
+	if move_input then
+		movement = movement + move_input
 	end
 
-	local var_15_16
-	local normalize = Vector3.normalize(var_15_15)
+	local move_input_direction
 
-	if Vector3.length(normalize) == 0 then
-		normalize = self.last_input_direction:unbox()
+	move_input_direction = Vector3.normalize(movement)
+
+	if Vector3.length(move_input_direction) == 0 then
+		move_input_direction = self.last_input_direction:unbox()
 	else
-		self.last_input_direction:store(normalize)
+		self.last_input_direction:store(move_input_direction)
 	end
 
-	local get_move_animation = CharacterStateHelper.get_move_animation(self._locomotion_extension, _input_extension, self._status_extension, self.move_anim_3p)
+	local move_anim_3p = CharacterStateHelper.get_move_animation(self._locomotion_extension, input_extension, self._status_extension, self.move_anim_3p)
 
-	if get_move_animation ~= self.move_anim_3p then
-		CharacterStateHelper.play_animation_event(arg_15_1, get_move_animation)
+	if move_anim_3p ~= self.move_anim_3p then
+		CharacterStateHelper.play_animation_event(unit, move_anim_3p)
 
-		self.move_anim_3p = get_move_animation
+		self.move_anim_3p = move_anim_3p
 	end
 
-	if not (self._previous_state == "jumping" or self._previous_state ~= "falling") then
-		CharacterStateHelper.move_in_air_pactsworn(self._first_person_extension, _input_extension, self._locomotion_extension, num_4, arg_15_1)
+	if self._previous_state == "jumping" or self._previous_state == "falling" then
+		CharacterStateHelper.move_in_air_pactsworn(self._first_person_extension, input_extension, self._locomotion_extension, final_move_speed, unit)
 	else
-		CharacterStateHelper.move_on_ground(_first_person_extension, _input_extension, self._locomotion_extension, normalize, num_4, arg_15_1)
+		CharacterStateHelper.move_on_ground(first_person_extension, input_extension, self._locomotion_extension, move_input_direction, final_move_speed, unit)
 	end
 
-	CharacterStateHelper.look(_input_extension, self._player.viewport_name, _first_person_extension, self._status_extension, self._inventory_extension)
+	CharacterStateHelper.look(input_extension, self._player.viewport_name, first_person_extension, self._status_extension, self._inventory_extension)
 
 	self.current_movement_speed_scale = current_movement_speed_scale
 
-	if arg_15_2 > self._prime_time then
+	if t > self._prime_time then
 		self._done_priming = true
 		self._is_priming = false
 	end

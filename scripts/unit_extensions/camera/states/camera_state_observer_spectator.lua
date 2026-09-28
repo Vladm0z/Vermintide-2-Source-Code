@@ -2,174 +2,180 @@
 
 CameraStateObserverSpectator = class(CameraStateObserverSpectator, CameraStateObserver)
 
-local tbl = {
+local spectator_views = {
 	"third_person",
 	"first_person"
 }
-local tbl_2 = {
+local rotation_states = {
 	"free",
 	"follow",
 	"locked"
 }
 
-CameraStateObserverSpectator.on_enter = function (self, arg_1_1, arg_1_2, arg_1_3, arg_1_4, arg_1_5, arg_1_6, arg_1_7)
+CameraStateObserverSpectator.on_enter = function (self, unit, input, dt, context, t, previous_state, params)
 	-- function 1
 	self._current_view_id = 1
-	self._num_views = #tbl
+	self._num_views = #spectator_views
 	self._locked_rotation = false
 	self._follow_rotation = false
 	self._offset_scale = 0.5
 	self._camera_offset = 0
-	self._rotation_state = tbl_2[1]
+	self._rotation_state = rotation_states[1]
 	self._rotation_state_index = 1
-	self._current_view = tbl[1]
+	self._current_view = spectator_views[1]
 	self._pinged_units = {}
 
-	local PLAYER_AND_BOT_UNITS = Managers.state.side:get_side_from_name("dark_pact").PLAYER_AND_BOT_UNITS
+	local dark_pact_side = Managers.state.side:get_side_from_name("dark_pact")
+	local dark_pact_units = dark_pact_side.PLAYER_AND_BOT_UNITS
 
-	for i, v in ipairs(PLAYER_AND_BOT_UNITS) do
-		if not ALIVE[v] then
-			local extension = ScriptUnit.extension(v, "ghost_mode_system")
+	for _, participating_player_unit in ipairs(dark_pact_units) do
+		if ALIVE[participating_player_unit] then
+			local ghost_mode_extension = ScriptUnit.extension(participating_player_unit, "ghost_mode_system")
 
-			if not extension:is_in_ghost_mode() then
-				extension:husk_leave_ghost_mode(true)
-				extension:husk_enter_ghost_mode()
+			if ghost_mode_extension:is_in_ghost_mode() then
+				ghost_mode_extension:husk_leave_ghost_mode(true)
+				ghost_mode_extension:husk_enter_ghost_mode()
 			end
 		end
 	end
 
-	CameraStateObserver.on_enter(self, arg_1_1, arg_1_2, arg_1_3, arg_1_4, arg_1_5, arg_1_6, arg_1_7)
+	CameraStateObserver.on_enter(self, unit, input, dt, context, t, previous_state, params)
 
-	if not self._observed_unit then
+	if self._observed_unit then
 		Managers.state.event:trigger("on_spectator_target_changed", self._observed_unit)
 	end
 end
 
-local num = math.pi / 2 - math.pi / 15
+local MAX_MIN_PITCH = math.pi / 2 - math.pi / 15
 
-CameraStateObserverSpectator.update = function (self, arg_2_1, arg_2_2, arg_2_3, arg_2_4, arg_2_5)
+CameraStateObserverSpectator.update = function (self, unit, input, dt, context, t)
 	-- function 2
 	local csm = self.csm
 	local camera_extension = self.camera_extension
 	local external_state_change = camera_extension.external_state_change
 	local external_state_change_params = camera_extension.external_state_change_params
 
-	if not (not external_state_change and external_state_change == self.name) then
+	if external_state_change and external_state_change ~= self.name then
 		csm:change_state(external_state_change, external_state_change_params)
 		camera_extension:set_external_state_change(nil)
 
 		return
 	end
 
-	local input = Managers.input
-	local get_service = input:get_service("Player")
-	local get = get_service:get("next_observer_target")
-	local get_2 = get_service:get("previous_observer_target")
-	local alive = Unit.alive(self._observed_unit)
-	local _observed_unit = self._observed_unit
-	local flag = false
+	local input_manager = Managers.input
+	local input_source = input_manager:get_service("Player")
+	local find_next_observer_target = input_source:get("next_observer_target")
+	local find_previous_observer_target = input_source:get("previous_observer_target")
+	local observed_unit_alive = Unit.alive(self._observed_unit)
+	local observed_unit, new_spectator_target_found = self._observed_unit, false
 
-	if not alive and not get then
-		_observed_unit, flag = self:follow_next_unit(false)
-	elseif not get_2 then
-		_observed_unit, flag = self:follow_next_unit(true)
+	if not observed_unit_alive or find_next_observer_target then
+		observed_unit, new_spectator_target_found = self:follow_next_unit(false)
+	elseif find_previous_observer_target then
+		observed_unit, new_spectator_target_found = self:follow_next_unit(true)
 	end
 
-	if not flag then
+	if new_spectator_target_found then
 		Managers.state.event:trigger("on_spectator_target_changed", self._observed_unit)
-	elseif not Unit.alive(_observed_unit) then
+	elseif not Unit.alive(observed_unit) then
 		csm:change_state("idle")
 
 		return
 	end
 
-	local y = get_service:get("observer_change_offset").y
+	local offset_change = input_source:get("observer_change_offset")
+	local offset_y = offset_change.y
 
-	if y ~= 0 then
-		self._camera_offset = math.clamp(self._camera_offset + y * self._offset_scale, 0, 5)
+	if offset_y ~= 0 then
+		self._camera_offset = math.clamp(self._camera_offset + offset_y * self._offset_scale, 0, 5)
 	end
 
-	local camera = Managers.state.camera
+	local camera_manager = Managers.state.camera
 	local viewport_name = camera_extension.viewport_name
-	local get_3
+	local gamepad_active = input_manager:is_device_active("gamepad")
+	local get
 
-	if not input:is_device_active("gamepad") then
-		get_3 = get_service:get("look_controller_3p")
+	if gamepad_active then
+		get = input_source:get("look_controller_3p")
 
-		if not get_3 then
+		if not get then
 			-- Nothing
 		end
 	end
 
-	get_3 = get_service:get("look")
+	get = input_source:get("look")
+
+	local look_input = get
 
 	::label_2_0::
 
-	local var_2_15 = Vector3(0, 0, 0)
+	local look_delta = Vector3(0, 0, 0)
 
-	if not get_3 then
-		local num_2
+	if look_input then
+		local num
 
-		if not camera:has_viewport(viewport_name) then
-			num_2 = camera:fov(viewport_name) / 0.785
+		if camera_manager:has_viewport(viewport_name) then
+			num = camera_manager:fov(viewport_name) / 0.785
 
-			if not num_2 then
+			if not num then
 				-- Nothing
 			end
 		end
 
-		num_2 = 1
+		num = 1
+
+		local look_sensitivity = num
 
 		::label_2_1::
 
-		var_2_15 = var_2_15 + get_3 * num_2
+		look_delta = look_delta + look_input * look_sensitivity
 	end
 
-	local get_4 = get_service:get("next_observer_rotation_state")
-	local get_5 = get_service:get("previous_observer_rotation_state")
+	local next_observer_rotation_state = input_source:get("next_observer_rotation_state")
+	local previous_observer_rotation_state = input_source:get("previous_observer_rotation_state")
 
-	if not get_4 then
-		self._rotation_state_index = self._rotation_state_index % #tbl_2 + 1
-		self._rotation_state = tbl_2[self._rotation_state_index]
-	elseif not get_5 then
-		self._rotation_state_index = (self._rotation_state_index - 2) % #tbl_2 + 1
-		self._rotation_state = tbl_2[self._rotation_state_index]
+	if next_observer_rotation_state then
+		self._rotation_state_index = self._rotation_state_index % #rotation_states + 1
+		self._rotation_state = rotation_states[self._rotation_state_index]
+	elseif previous_observer_rotation_state then
+		self._rotation_state_index = (self._rotation_state_index - 2) % #rotation_states + 1
+		self._rotation_state = rotation_states[self._rotation_state_index]
 	end
 
-	local local_rotation = Unit.local_rotation(arg_2_1, 0)
-	local clamp = math.clamp(Quaternion.pitch(local_rotation) + var_2_15.y, -num, num)
-	local var_2_21 = Quaternion(Vector3.right(), clamp)
-	local var_2_22
+	local rotation = Unit.local_rotation(unit, 0)
+	local pitch = math.clamp(Quaternion.pitch(rotation) + look_delta.y, -MAX_MIN_PITCH, MAX_MIN_PITCH)
+	local pitch_rotation = Quaternion(Vector3.right(), pitch)
+	local look_rotation
 
 	if self._rotation_state == "follow" then
-		var_2_22 = Unit.local_rotation(_observed_unit, 0)
-		var_2_22 = Quaternion.multiply(var_2_22, var_2_21)
+		look_rotation = Unit.local_rotation(observed_unit, 0)
+		look_rotation = Quaternion.multiply(look_rotation, pitch_rotation)
 	elseif self._rotation_state == "locked" then
 		-- Nothing
 	else
-		local num_3 = Quaternion.yaw(local_rotation) - var_2_15.x
-		local var_2_24 = Quaternion(Vector3.up(), num_3)
+		local yaw = Quaternion.yaw(rotation) - look_delta.x
+		local yaw_rotation = Quaternion(Vector3.up(), yaw)
 
-		var_2_22 = Quaternion.multiply(var_2_24, var_2_21)
+		look_rotation = Quaternion.multiply(yaw_rotation, pitch_rotation)
 	end
 
-	if not var_2_22 then
-		Unit.set_local_rotation(arg_2_1, 0, var_2_22)
+	if look_rotation then
+		Unit.set_local_rotation(unit, 0, look_rotation)
 	end
 
-	local node = Unit.node(_observed_unit, self._observed_node_name)
-	local num_4 = Unit.world_position(_observed_unit, node) + Vector3(0, 0, self._camera_offset)
-	local world_position = Unit.world_position(arg_2_1, 0)
-	local min = math.min(arg_2_3 * 10, 1)
-	local lerp = Vector3.lerp(world_position, num_4, min)
+	local observed_node = Unit.node(observed_unit, self._observed_node_name)
+	local position = Unit.world_position(observed_unit, observed_node) + Vector3(0, 0, self._camera_offset)
+	local previous_position = Unit.world_position(unit, 0)
+	local lerp_t = math.min(dt * 10, 1)
+	local new_position = Vector3.lerp(previous_position, position, lerp_t)
 
-	if not self._snap_camera then
-		lerp = num_4
+	if self._snap_camera then
+		new_position = position
 		self._snap_camera = false
 
 		Managers.state.event:trigger("camera_teleported")
 	end
 
-	fassert(Vector3.is_valid(lerp), "Camera position invalid.")
-	Unit.set_local_position(arg_2_1, 0, lerp)
+	fassert(Vector3.is_valid(new_position), "Camera position invalid.")
+	Unit.set_local_position(unit, 0, new_position)
 end

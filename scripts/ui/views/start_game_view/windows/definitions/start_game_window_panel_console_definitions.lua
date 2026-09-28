@@ -1,28 +1,29 @@
 -- chunkname: @scripts/ui/views/start_game_view/windows/definitions/start_game_window_panel_console_definitions.lua
 
-local size = UISettings.game_start_windows.size
+local window_default_settings = UISettings.game_start_windows
+local window_size = window_default_settings.size
 local console_menu_scenegraphs = UISettings.console_menu_scenegraphs
-local tbl = {
+local game_option_size = {
 	220,
 	68
 }
-local tbl_2 = {
+local animation_definitions = {
 	on_enter = {
 		{
 			name = "fade_in",
 			start_progress = 0,
 			end_progress = 0.3,
-			init = function (arg_1_0, arg_1_1, arg_1_2, arg_1_3)
+			init = function (ui_scenegraph, scenegraph_definition, widgets, params)
 				-- function 1
-				arg_1_3.render_settings.alpha_multiplier = 0
+				params.render_settings.alpha_multiplier = 0
 			end,
-			update = function (arg_2_0, arg_2_1, arg_2_2, arg_2_3, arg_2_4)
+			update = function (ui_scenegraph, scenegraph_definition, widgets, progress, params)
 				-- function 2
-				local easeOutCubic = math.easeOutCubic(arg_2_3)
+				local anim_progress = math.easeOutCubic(progress)
 
-				arg_2_4.render_settings.alpha_multiplier = easeOutCubic
+				params.render_settings.alpha_multiplier = anim_progress
 			end,
-			on_complete = function (arg_3_0, arg_3_1, arg_3_2, arg_3_3)
+			on_complete = function (ui_scenegraph, scenegraph_definition, widgets, params)
 				-- function 3
 				return
 			end
@@ -33,24 +34,24 @@ local tbl_2 = {
 			name = "fade_out",
 			start_progress = 0,
 			end_progress = 0.3,
-			init = function (arg_4_0, arg_4_1, arg_4_2, arg_4_3)
+			init = function (ui_scenegraph, scenegraph_definition, widgets, params)
 				-- function 4
-				arg_4_3.render_settings.alpha_multiplier = 1
+				params.render_settings.alpha_multiplier = 1
 			end,
-			update = function (arg_5_0, arg_5_1, arg_5_2, arg_5_3, arg_5_4)
+			update = function (ui_scenegraph, scenegraph_definition, widgets, progress, params)
 				-- function 5
-				local easeOutCubic = math.easeOutCubic(arg_5_3)
+				local anim_progress = math.easeOutCubic(progress)
 
-				arg_5_4.render_settings.alpha_multiplier = 1 - easeOutCubic
+				params.render_settings.alpha_multiplier = 1 - anim_progress
 			end,
-			on_complete = function (arg_6_0, arg_6_1, arg_6_2, arg_6_3)
+			on_complete = function (ui_scenegraph, scenegraph_definition, widgets, params)
 				-- function 6
 				return
 			end
 		}
 	}
 }
-local tbl_3 = {
+local scenegraph_definition = {
 	screen = console_menu_scenegraphs.screen,
 	area = console_menu_scenegraphs.area,
 	area_left = console_menu_scenegraphs.area_left,
@@ -141,7 +142,7 @@ local tbl_3 = {
 		vertical_alignment = "top",
 		parent = "panel_entry_area",
 		horizontal_alignment = "left",
-		size = tbl,
+		size = game_option_size,
 		position = {
 			20,
 			0,
@@ -194,7 +195,7 @@ local tbl_3 = {
 		vertical_alignment = "center",
 		parent = "menu_root",
 		horizontal_alignment = "center",
-		size = size,
+		size = window_size,
 		position = {
 			0,
 			0,
@@ -220,7 +221,7 @@ local tbl_3 = {
 		parent = "title_text_glow",
 		horizontal_alignment = "center",
 		size = {
-			size[1],
+			window_size[1],
 			50
 		},
 		position = {
@@ -230,12 +231,12 @@ local tbl_3 = {
 		}
 	}
 }
-local console_menu_rect_color = UISettings.console_menu_rect_color
-local tbl_4 = {
+local panel_color = UISettings.console_menu_rect_color
+local widget_definitions = {
 	panel_edge = UIWidgets.create_simple_texture("menu_frame_04_divider", "panel_edge"),
 	panel_input_area_1 = UIWidgets.create_simple_texture("xbone_button_icon_lt", "panel_input_area_1"),
 	panel_input_area_2 = UIWidgets.create_simple_texture("xbone_button_icon_rt", "panel_input_area_2"),
-	panel = UIWidgets.create_simple_texture("menu_panel_bg", "panel", nil, nil, console_menu_rect_color),
+	panel = UIWidgets.create_simple_texture("menu_panel_bg", "panel", nil, nil, panel_color),
 	bottom_panel = UIWidgets.create_simple_uv_texture("menu_panel_bg", {
 		{
 			0,
@@ -245,14 +246,14 @@ local tbl_4 = {
 			1,
 			0
 		}
-	}, "bottom_panel", nil, nil, console_menu_rect_color),
+	}, "bottom_panel", nil, nil, panel_color),
 	back_button = UIWidgets.create_layout_button("back_button", "layout_button_back", "layout_button_back_glow"),
 	close_button = UIWidgets.create_layout_button("close_button", "layout_button_close", "layout_button_close_glow")
 }
 
 return {
-	widget_definitions = tbl_4,
-	scenegraph_definition = tbl_3,
-	animation_definitions = tbl_2,
+	widget_definitions = widget_definitions,
+	scenegraph_definition = scenegraph_definition,
+	animation_definitions = animation_definitions,
 	create_panel_button = UIWidgets.create_console_panel_button
 }

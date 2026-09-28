@@ -3,12 +3,12 @@
 local script_data = script_data
 local debug_interactions = script_data.debug_interactions
 
-debug_interactions = debug_interactions or Development.parameter("debug_interactions")
+debug_interactions = not not debug_interactions or not not Development.parameter("debug_interactions")
 script_data.debug_interactions = debug_interactions
 
 local InteractionHelper = InteractionHelper
 
-InteractionHelper = InteractionHelper or {}
+InteractionHelper = not not InteractionHelper or not not {}
 InteractionHelper = InteractionHelper
 InteractionHelper.interactions = {
 	player_generic = {},
@@ -53,90 +53,92 @@ InteractionHelper.interactions = {
 	active_event = {}
 }
 
-DLCUtils.map_list("interactions", function (arg_1_0)
+DLCUtils.map_list("interactions", function (interaction)
 	-- function 1
-	InteractionHelper.interactions[arg_1_0] = {}
+	InteractionHelper.interactions[interaction] = {}
 end)
 
-for k, v in pairs(InteractionHelper.interactions) do
-	local request_rpc = v.request_rpc
+for _, config_table in pairs(InteractionHelper.interactions) do
+	local request_rpc = config_table.request_rpc
 
-	request_rpc = request_rpc or "rpc_generic_interaction_request"
-	v.request_rpc = request_rpc
+	request_rpc = not not request_rpc or not not "rpc_generic_interaction_request"
+	config_table.request_rpc = request_rpc
 end
 
 InteractionHelper.printf = function (...)
 	-- function 2
-	if not script_data.debug_interactions then
+	if script_data.debug_interactions then
 		printf(...)
 	end
 end
 
-local str = "IS_LOCAL_HOST"
+local IS_LOCAL_HOST = "IS_LOCAL_HOST"
 
-InteractionHelper.request = function (arg_3_0, arg_3_1, arg_3_2, arg_3_3, arg_3_4, arg_3_5)
+InteractionHelper.request = function (self, interaction_type, interactor_unit, interactable_unit, is_server, local_only)
 	-- function 3
-	if not LEVEL_EDITOR_TEST then
+	if LEVEL_EDITOR_TEST then
 		return
 	end
 
-	if not arg_3_5 then
-		InteractionHelper:request_approved(arg_3_1, arg_3_2, arg_3_3)
-
-		return
-	end
-
-	local go_id = Managers.state.unit_storage:go_id(arg_3_2)
-	local game_object_or_level_id, var_3_2 = Managers.state.network:game_object_or_level_id(arg_3_3)
-
-	InteractionHelper.printf("InteractionHelper:request(%s, %s, %s, %s)", arg_3_1, go_id, game_object_or_level_id, var_3_2)
-
-	if not (go_id == nil or game_object_or_level_id ~= nil) then
-		InteractionHelper:request_denied(arg_3_2)
+	if local_only then
+		InteractionHelper:request_approved(interaction_type, interactor_unit, interactable_unit)
 
 		return
 	end
 
-	local request_rpc = InteractionHelper.interactions[arg_3_1].request_rpc
-	local var_3_4 = NetworkLookup.interactions[arg_3_1]
-	local network = Managers.state.network
+	local interactor_go_id = Managers.state.unit_storage:go_id(interactor_unit)
+	local interactable_go_id, is_level_unit = Managers.state.network:game_object_or_level_id(interactable_unit)
 
-	if request_rpc == "rpc_generic_interaction_request" then
-		if not arg_3_4 then
-			network._event_delegate.event_table[request_rpc](Managers.state.network, str, go_id, game_object_or_level_id, var_3_2, var_3_4)
+	InteractionHelper.printf("InteractionHelper:request(%s, %s, %s, %s)", interaction_type, interactor_go_id, interactable_go_id, is_level_unit)
+
+	if interactor_go_id == nil or interactable_go_id == nil then
+		InteractionHelper:request_denied(interactor_unit)
+
+		return
+	end
+
+	local rpc_name = InteractionHelper.interactions[interaction_type].request_rpc
+	local interaction_type_id = NetworkLookup.interactions[interaction_type]
+	local network_manager = Managers.state.network
+
+	if rpc_name == "rpc_generic_interaction_request" then
+		if is_server then
+			network_manager._event_delegate.event_table[rpc_name](Managers.state.network, IS_LOCAL_HOST, interactor_go_id, interactable_go_id, is_level_unit, interaction_type_id)
 		else
-			network.network_transmit:send_rpc_server(request_rpc, go_id, game_object_or_level_id, var_3_2, var_3_4)
+			network_manager.network_transmit:send_rpc_server(rpc_name, interactor_go_id, interactable_go_id, is_level_unit, interaction_type_id)
 		end
-	elseif not arg_3_4 then
-		network._event_delegate.event_table[request_rpc](Managers.state.network, str, go_id, game_object_or_level_id, var_3_2)
+	elseif is_server then
+		network_manager._event_delegate.event_table[rpc_name](Managers.state.network, IS_LOCAL_HOST, interactor_go_id, interactable_go_id, is_level_unit)
 	else
-		network.network_transmit:send_rpc_server(request_rpc, go_id, game_object_or_level_id, var_3_2)
+		network_manager.network_transmit:send_rpc_server(rpc_name, interactor_go_id, interactable_go_id, is_level_unit)
 	end
 end
 
-InteractionHelper.abort_authoritative = function (arg_4_0, arg_4_1)
+InteractionHelper.abort_authoritative = function (self, interactor_unit)
 	-- function 4
-	local has_extension = ScriptUnit.has_extension(arg_4_1, "interactor_system")
+	local interactor_extension = ScriptUnit.has_extension(interactor_unit, "interactor_system")
 
-	if not has_extension and not has_extension:is_interacting() and not has_extension:is_stopping() then
+	if interactor_extension and (not interactor_extension:is_interacting() or interactor_extension:is_stopping()) then
 		InteractionHelper.printf("Got abort when interaction had already finished, ignore request")
 
 		return
 	end
 
-	local interactable_unit = has_extension:interactable_unit()
+	local interactable_unit = interactor_extension:interactable_unit()
 
-	if not Unit.alive(interactable_unit) then
-		InteractionHelper:complete_interaction(arg_4_1, interactable_unit, InteractionResult.USER_ENDED)
+	if Unit.alive(interactable_unit) then
+		InteractionHelper:complete_interaction(interactor_unit, interactable_unit, InteractionResult.USER_ENDED)
 	end
 end
 
-InteractionHelper.abort = function (arg_5_0, arg_5_1, arg_5_2)
+InteractionHelper.abort = function (self, interactor_unit, is_server)
 	-- function 5
-	InteractionHelper.printf("InteractionHelper:abort(%s)", arg_5_1)
+	InteractionHelper.printf("InteractionHelper:abort(%s)", interactor_unit)
 
-	if not ScriptUnit.extension(arg_5_1, "interactor_system"):is_interacting_with_local_only_interact() then
-		InteractionHelper:abort_authoritative(arg_5_1)
+	local interactor_extension = ScriptUnit.extension(interactor_unit, "interactor_system")
+
+	if interactor_extension:is_interacting_with_local_only_interact() then
+		InteractionHelper:abort_authoritative(interactor_unit)
 
 		return
 	end
@@ -145,143 +147,158 @@ InteractionHelper.abort = function (arg_5_0, arg_5_1, arg_5_2)
 		return
 	end
 
-	local go_id = Managers.state.unit_storage:go_id(arg_5_1)
+	local interactor_go_id = Managers.state.unit_storage:go_id(interactor_unit)
 
-	if not go_id then
+	if not interactor_go_id then
 		return
 	end
 
-	if arg_5_2 or not LEVEL_EDITOR_TEST then
-		Managers.state.network._event_delegate.event_table:rpc_interaction_abort(Network.peer_id(), go_id)
+	if is_server or LEVEL_EDITOR_TEST then
+		Managers.state.network._event_delegate.event_table:rpc_interaction_abort(Network.peer_id(), interactor_go_id)
 	else
-		Managers.state.network.network_transmit:send_rpc_server("rpc_interaction_abort", go_id)
+		Managers.state.network.network_transmit:send_rpc_server("rpc_interaction_abort", interactor_go_id)
 	end
 end
 
-InteractionHelper.approve_request = function (arg_6_0, arg_6_1, arg_6_2, arg_6_3)
+InteractionHelper.approve_request = function (self, interaction_type, interactor_unit, interactable_unit)
 	-- function 6
-	InteractionHelper.printf("InteractionHelper:approve_request(%s, %s, %s)", arg_6_1, tostring(arg_6_2), tostring(arg_6_3))
+	InteractionHelper.printf("InteractionHelper:approve_request(%s, %s, %s)", interaction_type, tostring(interactor_unit), tostring(interactable_unit))
 
-	if not LEVEL_EDITOR_TEST then
+	if LEVEL_EDITOR_TEST then
 		return
 	end
 
-	ScriptUnit.extension(arg_6_3, "interactable_system"):set_is_being_interacted_with(arg_6_2)
+	local interactable_extension = ScriptUnit.extension(interactable_unit, "interactable_system")
 
-	local var_6_0 = NetworkLookup.interactions[arg_6_1]
-	local go_id = Managers.state.unit_storage:go_id(arg_6_2)
-	local game_object_or_level_id, var_6_3 = Managers.state.network:game_object_or_level_id(arg_6_3)
+	interactable_extension:set_is_being_interacted_with(interactor_unit)
 
-	Managers.state.network.network_transmit:send_rpc_clients("rpc_interaction_approved", var_6_0, go_id, game_object_or_level_id, var_6_3)
+	local interaction_id = NetworkLookup.interactions[interaction_type]
+	local interactor_go_id = Managers.state.unit_storage:go_id(interactor_unit)
+	local interactable_go_id, is_level_unit = Managers.state.network:game_object_or_level_id(interactable_unit)
+
+	Managers.state.network.network_transmit:send_rpc_clients("rpc_interaction_approved", interaction_id, interactor_go_id, interactable_go_id, is_level_unit)
 end
 
-InteractionHelper.deny_request = function (arg_7_0, arg_7_1, arg_7_2)
+InteractionHelper.deny_request = function (self, peer_id, interactor_go_id)
 	-- function 7
-	InteractionHelper.printf("InteractionHelper:deny_request(%s, %s)", tostring(arg_7_1), tostring(arg_7_2))
+	InteractionHelper.printf("InteractionHelper:deny_request(%s, %s)", tostring(peer_id), tostring(interactor_go_id))
 
-	if Network.peer_id() == arg_7_1 then
-		local unit = Managers.state.unit_storage:unit(arg_7_2)
+	if Network.peer_id() == peer_id then
+		local interactor_unit = Managers.state.unit_storage:unit(interactor_go_id)
 
-		InteractionHelper:request_denied(unit)
+		InteractionHelper:request_denied(interactor_unit)
 	else
-		local var_7_1 = PEER_ID_TO_CHANNEL[arg_7_1]
+		local channel_id = PEER_ID_TO_CHANNEL[peer_id]
 
-		RPC.rpc_interaction_denied(var_7_1, arg_7_2)
+		RPC.rpc_interaction_denied(channel_id, interactor_go_id)
 	end
 end
 
-InteractionHelper.request_approved = function (arg_8_0, arg_8_1, arg_8_2, arg_8_3)
+InteractionHelper.request_approved = function (self, interaction_type, interactor_unit, interactable_unit)
 	-- function 8
-	InteractionHelper.printf("InteractionHelper:request_approved(%s, %s, %s)", arg_8_1, tostring(arg_8_2), tostring(arg_8_3))
-	ScriptUnit.extension(arg_8_2, "interactor_system"):interaction_approved(arg_8_1, arg_8_3)
-	ScriptUnit.extension(arg_8_3, "interactable_system"):set_is_being_interacted_with(arg_8_2)
+	InteractionHelper.printf("InteractionHelper:request_approved(%s, %s, %s)", interaction_type, tostring(interactor_unit), tostring(interactable_unit))
+
+	local interactor_extension = ScriptUnit.extension(interactor_unit, "interactor_system")
+
+	interactor_extension:interaction_approved(interaction_type, interactable_unit)
+
+	local interactable_extension = ScriptUnit.extension(interactable_unit, "interactable_system")
+
+	interactable_extension:set_is_being_interacted_with(interactor_unit)
 end
 
-InteractionHelper.request_denied = function (arg_9_0, arg_9_1)
+InteractionHelper.request_denied = function (self, interactor_unit)
 	-- function 9
-	InteractionHelper.printf("InteractionHelper:request_denied(%s)", tostring(arg_9_1))
-	ScriptUnit.extension(arg_9_1, "interactor_system"):interaction_denied()
+	InteractionHelper.printf("InteractionHelper:request_denied(%s)", tostring(interactor_unit))
+
+	local interactor_extension = ScriptUnit.extension(interactor_unit, "interactor_system")
+
+	interactor_extension:interaction_denied()
 end
 
-InteractionHelper.complete_interaction = function (arg_10_0, arg_10_1, arg_10_2, arg_10_3)
+InteractionHelper.complete_interaction = function (self, interactor_unit, interactable_unit, result)
 	-- function 10
-	InteractionHelper.printf("InteractionHelper:complete_interaction(%s, %s, %s)", tostring(arg_10_1), tostring(arg_10_2), InteractionResult[arg_10_3])
-	InteractionHelper:interaction_completed(arg_10_1, arg_10_2, arg_10_3)
+	InteractionHelper.printf("InteractionHelper:complete_interaction(%s, %s, %s)", tostring(interactor_unit), tostring(interactable_unit), InteractionResult[result])
+	InteractionHelper:interaction_completed(interactor_unit, interactable_unit, result)
 
-	if not ScriptUnit.extension(arg_10_2, "interactable_system"):local_only() then
-		local go_id = Managers.state.unit_storage:go_id(arg_10_1)
+	local interactable_extension = ScriptUnit.extension(interactable_unit, "interactable_system")
 
-		if not go_id then
-			Managers.state.network.network_transmit:send_rpc_clients("rpc_interaction_completed", go_id, arg_10_3)
+	if not interactable_extension:local_only() then
+		local interactor_go_id = Managers.state.unit_storage:go_id(interactor_unit)
+
+		if interactor_go_id then
+			Managers.state.network.network_transmit:send_rpc_clients("rpc_interaction_completed", interactor_go_id, result)
 		end
 	end
 end
 
-InteractionHelper.interaction_completed = function (arg_11_0, arg_11_1, arg_11_2, arg_11_3)
+InteractionHelper.interaction_completed = function (self, interactor_unit, interactable_unit, result)
 	-- function 11
-	InteractionHelper.printf("InteractionHelper:interaction_completed(%s, %s, %s)", tostring(arg_11_1), tostring(arg_11_2), InteractionResult[arg_11_3])
+	InteractionHelper.printf("InteractionHelper:interaction_completed(%s, %s, %s)", tostring(interactor_unit), tostring(interactable_unit), InteractionResult[result])
 
-	local has_extension = ScriptUnit.has_extension(arg_11_1, "interactor_system")
+	local interactor_extension = ScriptUnit.has_extension(interactor_unit, "interactor_system")
 
-	if not has_extension then
-		has_extension:interaction_completed(arg_11_3)
+	if interactor_extension then
+		interactor_extension:interaction_completed(result)
 	end
 
-	if not Unit.alive(arg_11_2) then
-		ScriptUnit.extension(arg_11_2, "interactable_system"):set_is_being_interacted_with(nil, arg_11_3)
+	if Unit.alive(interactable_unit) then
+		local interactable_extension = ScriptUnit.extension(interactable_unit, "interactable_system")
+
+		interactable_extension:set_is_being_interacted_with(nil, result)
 	end
 end
 
-InteractionHelper.choose_player_interaction = function (arg_12_0, arg_12_1)
+InteractionHelper.choose_player_interaction = function (interactor_unit, interactable_unit)
 	-- function 12
-	if not InteractionDefinitions.release_from_hook.client.can_interact(arg_12_0, arg_12_1) then
+	if InteractionDefinitions.release_from_hook.client.can_interact(interactor_unit, interactable_unit) then
 		return "release_from_hook"
-	elseif not InteractionDefinitions.revive.client.can_interact(arg_12_0, arg_12_1) then
+	elseif InteractionDefinitions.revive.client.can_interact(interactor_unit, interactable_unit) then
 		return "revive"
-	elseif not InteractionDefinitions.pull_up.client.can_interact(arg_12_0, arg_12_1) then
+	elseif InteractionDefinitions.pull_up.client.can_interact(interactor_unit, interactable_unit) then
 		return "pull_up"
-	elseif not InteractionDefinitions.assisted_respawn.client.can_interact(arg_12_0, arg_12_1) then
+	elseif InteractionDefinitions.assisted_respawn.client.can_interact(interactor_unit, interactable_unit) then
 		return "assisted_respawn"
-	elseif not InteractionDefinitions.heal.client.can_interact(arg_12_0, arg_12_1) then
+	elseif InteractionDefinitions.heal.client.can_interact(interactor_unit, interactable_unit) then
 		return "heal"
-	elseif not InteractionDefinitions.give_item.client.can_interact(arg_12_0, arg_12_1) then
+	elseif InteractionDefinitions.give_item.client.can_interact(interactor_unit, interactable_unit) then
 		return "give_item"
 	else
 		return nil
 	end
 end
 
-InteractionHelper.player_modify_interaction_type = function (arg_13_0, arg_13_1, arg_13_2)
+InteractionHelper.player_modify_interaction_type = function (interactor_unit, interactable_unit, interaction_type)
 	-- function 13
-	if arg_13_2 == "player_generic" then
-		local choose_player_interaction = InteractionHelper.choose_player_interaction(arg_13_0, arg_13_1)
+	if interaction_type == "player_generic" then
+		local result = InteractionHelper.choose_player_interaction(interactor_unit, interactable_unit)
 
-		if not choose_player_interaction then
-			return choose_player_interaction
+		if result then
+			return result
 		end
 	end
 
-	return arg_13_2
+	return interaction_type
 end
 
-InteractionHelper.interaction_action_names = function (arg_14_0, arg_14_1)
+InteractionHelper.interaction_action_names = function (interactor_unit, optional_interactable_unit)
 	-- function 14
-	local has_extension = ScriptUnit.has_extension(arg_14_1, "interactable_system")
+	local interactable_extension = ScriptUnit.has_extension(optional_interactable_unit, "interactable_system")
 
-	if not has_extension then
-		local override_interactable_action = has_extension:override_interactable_action()
+	if interactable_extension then
+		local interact_action = interactable_extension:override_interactable_action()
 
-		if not override_interactable_action then
-			return override_interactable_action
+		if interact_action then
+			return interact_action
 		end
 	end
 
-	local has_extension_2 = ScriptUnit.has_extension(arg_14_0, "career_system")
+	local career_extension = ScriptUnit.has_extension(interactor_unit, "career_system")
 
-	if not has_extension_2 then
-		local var_14_3 = SPProfiles[has_extension_2:profile_index()]
+	if career_extension then
+		local profile = SPProfiles[career_extension:profile_index()]
 
-		if not (not var_14_3 and var_14_3.affiliation ~= "dark_pact") then
+		if profile and profile.affiliation == "dark_pact" then
 			return "dark_pact_interact", "dark_pact_interacting"
 		end
 	end

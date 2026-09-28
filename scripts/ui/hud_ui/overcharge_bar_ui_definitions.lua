@@ -1,14 +1,14 @@
 -- chunkname: @scripts/ui/hud_ui/overcharge_bar_ui_definitions.lua
 
-local tbl = {
+local DEFAULT_BAR_SIZE = {
 	250,
 	16
 }
-local tbl_2 = {
+local DEFAULT_DARK_PACT_BAR_SIZE = {
 	250,
 	70
 }
-local tbl_3 = {
+local scenegraph_definition = {
 	screen = {
 		scale = "fit",
 		position = {
@@ -49,7 +49,7 @@ local tbl_3 = {
 		vertical_alignment = "center",
 		parent = "screen_bottom_pivot",
 		horizontal_alignment = "center",
-		size = tbl,
+		size = DEFAULT_BAR_SIZE,
 		position = {
 			0,
 			-220,
@@ -60,7 +60,7 @@ local tbl_3 = {
 		vertical_alignment = "center",
 		parent = "screen_bottom_pivot",
 		horizontal_alignment = "center",
-		size = tbl_2,
+		size = DEFAULT_DARK_PACT_BAR_SIZE,
 		position = {
 			0,
 			-120,
@@ -68,12 +68,14 @@ local tbl_3 = {
 		}
 	}
 }
-local var_0_3 = UIFrameSettings.frame_outer_glow_01.texture_sizes.corner[1]
-local tbl_4 = {}
+local frame_settings = UIFrameSettings.frame_outer_glow_01
+local frame_corner = frame_settings.texture_sizes.corner
+local frame_width = frame_corner[1]
+local widget_definitions = {}
 
 return {
-	scenegraph_definition = tbl_3,
-	widget_definitions = tbl_4,
-	DEFAULT_BAR_SIZE = tbl,
-	DEFAULT_DARK_PACT_BAR_SIZE = tbl_2
+	scenegraph_definition = scenegraph_definition,
+	widget_definitions = widget_definitions,
+	DEFAULT_BAR_SIZE = DEFAULT_BAR_SIZE,
+	DEFAULT_DARK_PACT_BAR_SIZE = DEFAULT_DARK_PACT_BAR_SIZE
 }

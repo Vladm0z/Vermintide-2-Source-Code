@@ -1,13 +1,16 @@
 -- chunkname: @scripts/unit_extensions/objectives/testify/versus_interact_objective_extension_testify.lua
 
-return {
-	versus_objective_simulate_interaction = function (self)
+local VersusInteractObjectiveExtensionTestify = {
+	versus_objective_simulate_interaction = function (versus_interact_objective_extension)
 		-- function 1
-		local player_unit = Managers.player:local_player().player_unit
-		local _unit = self._unit
-		local _wanted_interaction_result = self._wanted_interaction_result
+		local interactor_unit = Managers.player:local_player().player_unit
+		local interactable_unit = versus_interact_objective_extension._unit
+		local wanted_interaction_result = versus_interact_objective_extension._wanted_interaction_result
+		local interactable_extension = ScriptUnit.extension(interactable_unit, "interactable_system")
 
-		ScriptUnit.extension(_unit, "interactable_system"):set_is_being_interacted_with(player_unit, _wanted_interaction_result)
-		InteractionHelper:complete_interaction(player_unit, _unit, _wanted_interaction_result)
+		interactable_extension:set_is_being_interacted_with(interactor_unit, wanted_interaction_result)
+		InteractionHelper:complete_interaction(interactor_unit, interactable_unit, wanted_interaction_result)
 	end
 }
+
+return VersusInteractObjectiveExtensionTestify

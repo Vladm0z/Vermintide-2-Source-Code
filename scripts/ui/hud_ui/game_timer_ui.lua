@@ -2,48 +2,47 @@
 
 GameTimerUI = class(GameTimerUI)
 
-GameTimerUI.init = function (self, arg_1_1, arg_1_2)
+GameTimerUI.init = function (self, parent, ingame_ui_context)
 	-- function 1
-	self._gui = arg_1_2.ui_renderer.gui
+	self._gui = ingame_ui_context.ui_renderer.gui
 	self._visible = true
-	self._enabled = Application.make_hash(Application.user_setting("enable_ingame_timer")) ~= "473df4ed7fa71691" or not Development.parameter("disable_ingame_timer")
+	self._enabled = Application.make_hash(Application.user_setting("enable_ingame_timer")) == "473df4ed7fa71691" and not not not Development.parameter("disable_ingame_timer")
 
 	Managers.state.event:register(self, "start_game_time", "event_start_game_time")
 end
 
-GameTimerUI.destroy = function (arg_2_0)
+GameTimerUI.destroy = function (self)
 	-- function 2
-	Managers.state.event:unregister("start_game_time", arg_2_0)
+	Managers.state.event:unregister("start_game_time", self)
 end
 
-GameTimerUI.event_start_game_time = function (self, arg_3_1)
+GameTimerUI.event_start_game_time = function (self, start_time)
 	-- function 3
-	self._start_time = arg_3_1
+	self._start_time = start_time
 end
 
-GameTimerUI.set_visible = function (self, arg_4_1)
+GameTimerUI.set_visible = function (self, visible)
 	-- function 4
-	self._visible = arg_4_1
+	self._visible = visible
 end
 
 GameTimerUI.update = function (self)
 	-- function 5
-	if not (not self._enabled and self._visible) then
+	if not self._enabled or not self._visible then
 		return
 	end
 
-	local _start_time = self._start_time
+	local start_time = self._start_time
 
-	if not _start_time then
-		local _gui = self._gui
-		local num = Managers.state.network:network_time() - _start_time
-		local format = string.format("%.2d:%.2d:%06.3f", num / 3600, num / 60 % 60, num % 60)
-		local resolution, var_5_5 = Gui.resolution()
-		local min = math.min(resolution / 1920, var_5_5 / 1080, 1)
-		local str = "materials/fonts/arial"
-		local num_2 = 28 * min
-		local slug_text_extents, var_5_10, var_5_11 = Gui.slug_text_extents(_gui, format, str, num_2)
+	if start_time then
+		local gui = self._gui
+		local time = Managers.state.network:network_time() - start_time
+		local text = string.format("%.2d:%.2d:%06.3f", time / 3600, time / 60 % 60, time % 60)
+		local screen_width, screen_height = Gui.resolution()
+		local scale = math.min(screen_width / 1920, screen_height / 1080, 1)
+		local font, font_size = "materials/fonts/arial", 28 * scale
+		local _, _, car = Gui.slug_text_extents(gui, text, font, font_size)
 
-		Gui.slug_text(_gui, format, str, num_2, Vector3(resolution - min * 14 * 13, var_5_5 - min * 14, 1000), Color(255, 255, 255), "shadow", Color(0, 0, 0))
+		Gui.slug_text(gui, text, font, font_size, Vector3(screen_width - scale * 14 * 13, screen_height - scale * 14, 1000), Color(255, 255, 255), "shadow", Color(0, 0, 0))
 	end
 end

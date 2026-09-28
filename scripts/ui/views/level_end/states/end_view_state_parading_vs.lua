@@ -5,11 +5,11 @@ require("scripts/ui/views/world_hero_previewer")
 EndViewStateParadingVS = class(EndViewStateParadingVS)
 EndViewStateParadingVS.NAME = "EndViewStateParadingVS"
 
-EndViewStateParadingVS.on_enter = function (self, arg_1_1)
+EndViewStateParadingVS.on_enter = function (self, params)
 	-- function 1
-	self._parent = arg_1_1.parent
+	self._parent = params.parent
 
-	local context = arg_1_1.context
+	local context = params.context
 
 	self._statistics_db = context.statistics_db
 	self._profile_synchronizer = context.profile_synchronizer
@@ -18,14 +18,14 @@ EndViewStateParadingVS.on_enter = function (self, arg_1_1)
 	self._parent:show_team()
 end
 
-EndViewStateParadingVS.on_exit = function (arg_2_0)
+EndViewStateParadingVS.on_exit = function (self)
 	-- function 2
 	ShowCursorStack.hide("EndViewStateParadingVS")
 end
 
-EndViewStateParadingVS.update = function (self, arg_3_1, arg_3_2)
+EndViewStateParadingVS.update = function (self, dt, t)
 	-- function 3
-	self._done = self._parent:parading_done(arg_3_1, arg_3_2)
+	self._done = self._parent:parading_done(dt, t)
 end
 
 EndViewStateParadingVS.done = function (self)
@@ -33,12 +33,12 @@ EndViewStateParadingVS.done = function (self)
 	return self._done
 end
 
-EndViewStateParadingVS.exit = function (arg_5_0)
+EndViewStateParadingVS.exit = function (self)
 	-- function 5
 	return
 end
 
-EndViewStateParadingVS.exit_done = function (arg_6_0)
+EndViewStateParadingVS.exit_done = function (self)
 	-- function 6
 	return true
 end

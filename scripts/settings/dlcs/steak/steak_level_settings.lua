@@ -1,11 +1,11 @@
 -- chunkname: @scripts/settings/dlcs/steak/steak_level_settings.lua
 
-local steak = DLCSettings.steak
+local settings = DLCSettings.steak
 
-steak.level_settings = "levels/honduras_dlcs/steak/level_settings_steak"
-steak.level_unlock_settings = "levels/honduras_dlcs/steak/level_unlock_settings_steak"
-steak.terror_event_blueprints_filename = "levels/honduras_dlcs/steak/terror_events_steak"
-steak.missions = {
+settings.level_settings = "levels/honduras_dlcs/steak/level_settings_steak"
+settings.level_unlock_settings = "levels/honduras_dlcs/steak/level_unlock_settings_steak"
+settings.terror_event_blueprints_filename = "levels/honduras_dlcs/steak/terror_events_steak"
+settings.missions = {
 	crater_find_crater = {
 		mission_template_name = "goal",
 		text = "mission_crater_find_crater"

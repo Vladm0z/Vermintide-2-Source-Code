@@ -1,6 +1,6 @@
 -- chunkname: @scripts/ui/views/level_end/states/definitions/end_view_state_parading_definitions.lua
 
-local tbl = {
+local scenegraph_definitions = {
 	screen = {
 		scale = "fit",
 		size = {
@@ -28,35 +28,38 @@ local tbl = {
 		}
 	}
 }
-local flag = true
-local tbl_2 = {
-	continue_button = UIWidgets.create_default_button("continue_button", tbl.continue_button.size, nil, nil, Localize("continue_menu_button_name"), 25, nil, nil, nil, flag)
+local DISABLE_WITH_GAMEPAD = true
+local widget_definitions = {
+	continue_button = UIWidgets.create_default_button("continue_button", scenegraph_definitions.continue_button.size, nil, nil, Localize("continue_menu_button_name"), 25, nil, nil, nil, DISABLE_WITH_GAMEPAD)
 }
-local tbl_3 = {
+local animation_definitions = {
 	animate_continue_button = {
 		{
 			name = "translate",
 			start_progress = 0,
 			end_progress = 0.3,
-			init = function (arg_1_0, arg_1_1, arg_1_2, arg_1_3)
+			init = function (ui_scenegraph, scenegraph_definition, widgets, params)
 				-- function 1
-				arg_1_3.render_settings.alpha_multiplier = 0
+				params.render_settings.alpha_multiplier = 0
 			end,
-			update = function (arg_2_0, arg_2_1, arg_2_2, arg_2_3, arg_2_4)
+			update = function (ui_scenegraph, scenegraph_definition, widgets, progress, params)
 				-- function 2
-				local easeOutCubic = math.easeOutCubic(arg_2_3)
+				local eased_progress = math.easeOutCubic(progress)
 
-				arg_2_4.render_settings.alpha_multiplier = easeOutCubic
-				arg_2_2.continue_button.offset[2] = math.lerp(-200, 280, easeOutCubic)
+				params.render_settings.alpha_multiplier = eased_progress
+
+				local widget = widgets.continue_button
+
+				widget.offset[2] = math.lerp(-200, 280, eased_progress)
 			end,
-			on_complete = function (arg_3_0, arg_3_1, arg_3_2, arg_3_3)
+			on_complete = function (ui_scenegraph, scenegraph_definition, widgets, params)
 				-- function 3
 				return
 			end
 		}
 	}
 }
-local tbl_4 = {
+local generic_input_actions = {
 	default = {
 		{
 			input_action = "confirm",
@@ -67,8 +70,8 @@ local tbl_4 = {
 }
 
 return {
-	scenegraph_definitions = tbl,
-	widget_definitions = tbl_2,
-	animation_definitions = tbl_3,
-	generic_input_actions = tbl_4
+	scenegraph_definitions = scenegraph_definitions,
+	widget_definitions = widget_definitions,
+	animation_definitions = animation_definitions,
+	generic_input_actions = generic_input_actions
 }

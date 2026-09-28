@@ -1,6 +1,6 @@
 -- chunkname: @scripts/ui/help_screen/help_screen_definitions.lua
 
-local tbl = {
+local scenegraph_definition = {
 	root = {
 		is_root = true,
 		position = {
@@ -85,19 +85,19 @@ local tbl = {
 	}
 }
 
-local function fn(arg_1_0, arg_1_1)
+local function help_screen_widget_func(num_pages, current_page)
 	-- function 1
-	local flag = false
+	local debug = false
 
-	arg_1_0 = arg_1_0 or 3
+	num_pages = not not num_pages or not not 3
 
-	local tbl = {}
+	local textures = {}
 
-	for i = 1, arg_1_0 do
-		if i == arg_1_1 then
-			tbl[#tbl + 1] = "trait_slot_cover"
+	for i = 1, num_pages do
+		if i == current_page then
+			textures[#textures + 1] = "trait_slot_cover"
 		else
-			tbl[#tbl + 1] = "reroll_trait_slot_01"
+			textures[#textures + 1] = "reroll_trait_slot_01"
 		end
 	end
 
@@ -117,9 +117,9 @@ local function fn(arg_1_0, arg_1_1)
 				{
 					style_id = "text_area",
 					pass_type = "rect",
-					content_check_function = function (self)
+					content_check_function = function (content)
 						-- function 2
-						return self.debug
+						return content.debug
 					end
 				},
 				{
@@ -145,9 +145,9 @@ local function fn(arg_1_0, arg_1_1)
 				{
 					style_id = "image_area",
 					pass_type = "rect",
-					content_check_function = function (self)
+					content_check_function = function (content)
 						-- function 3
-						return self.debug
+						return content.debug
 					end
 				},
 				{
@@ -163,9 +163,9 @@ local function fn(arg_1_0, arg_1_1)
 				{
 					style_id = "page_indicator_area",
 					pass_type = "rect",
-					content_check_function = function (self)
+					content_check_function = function (content)
 						-- function 4
-						return self.debug
+						return content.debug
 					end
 				},
 				{
@@ -181,9 +181,9 @@ local function fn(arg_1_0, arg_1_1)
 			header = "Help Screen Header",
 			image = "craft_bg",
 			text_field = "Text Field",
-			indicators = tbl,
-			num_pages = arg_1_0,
-			debug = flag
+			indicators = textures,
+			num_pages = num_pages,
+			debug = debug
 		},
 		style = {
 			background = {
@@ -331,13 +331,13 @@ local function fn(arg_1_0, arg_1_1)
 					29,
 					29
 				},
-				texture_amount = arg_1_0
+				texture_amount = num_pages
 			}
 		}
 	}
 end
 
 return {
-	scenegraph_definition = tbl,
-	help_screen_widget_func = fn
+	scenegraph_definition = scenegraph_definition,
+	help_screen_widget_func = help_screen_widget_func
 }

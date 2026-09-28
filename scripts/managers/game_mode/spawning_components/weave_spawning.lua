@@ -6,29 +6,33 @@ WeaveSpawning = class(WeaveSpawning, AdventureSpawning)
 
 WeaveSpawning._get_spawn_position_close_to_server = function (self)
 	-- function 1
-	local occupied_slots = self._side.party.occupied_slots
-	local player = Managers.player
+	local party = self._side.party
+	local occupied_slots = party.occupied_slots
+	local player_manager = Managers.player
 
 	for i = 1, #occupied_slots do
-		local var_1_2 = occupied_slots[i]
-		local peer_id = var_1_2.peer_id
-		local local_player_id = var_1_2.local_player_id
-		local flag = not peer_id and not local_player_id and player:player(peer_id, local_player_id)
+		local status = occupied_slots[i]
+		local peer_id = status.peer_id
+		local local_player_id = status.local_player_id
+		local player = not not peer_id and not not local_player_id and not not player_manager:player(peer_id, local_player_id)
 
-		if not flag and not flag.is_server and not flag.player_unit then
-			return (ScriptUnit.extension(flag.player_unit, "whereabouts_system"):last_position_onground_on_navmesh())
+		if player and player.is_server and player.player_unit then
+			local whereabouts_extension = ScriptUnit.extension(player.player_unit, "whereabouts_system")
+			local last_on_ground_pos = whereabouts_extension:last_position_onground_on_navmesh()
+
+			return last_on_ground_pos
 		end
 	end
 end
 
-WeaveSpawning._find_spawn_point = function (self, arg_2_1)
+WeaveSpawning._find_spawn_point = function (self, status)
 	-- function 2
-	local game_mode_data = arg_2_1.game_mode_data
-	local _get_spawn_position_close_to_server = self:_get_spawn_position_close_to_server()
+	local data = status.game_mode_data
+	local position = self:_get_spawn_position_close_to_server()
 
-	_get_spawn_position_close_to_server = _get_spawn_position_close_to_server or game_mode_data.position:unbox()
+	position = not not position or not not data.position:unbox()
 
-	local unbox = game_mode_data.rotation:unbox()
+	local rotation = data.rotation:unbox()
 
-	return _get_spawn_position_close_to_server, unbox
+	return position, rotation
 end

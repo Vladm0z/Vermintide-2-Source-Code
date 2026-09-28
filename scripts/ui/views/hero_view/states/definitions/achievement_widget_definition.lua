@@ -1,59 +1,60 @@
 -- chunkname: @scripts/ui/views/hero_view/states/definitions/achievement_widget_definition.lua
 
-return function (arg_1_0, arg_1_1)
+local function create_achievement_entry(scenegraph_id, size)
 	-- function 1
-	local menu_frame_12 = UIFrameSettings.menu_frame_12
-	local button_frame_01 = UIFrameSettings.button_frame_01
-	local frame_outer_glow_01 = UIFrameSettings.frame_outer_glow_01
-	local var_1_3 = frame_outer_glow_01.texture_sizes.corner[1]
-	local str = "menu_frame_bg_01"
-	local get_atlas_settings_by_texture_name = UIAtlasHelper.get_atlas_settings_by_texture_name(str)
-	local str_2 = "button_bg_01"
-	local get_atlas_settings_by_texture_name_2 = UIAtlasHelper.get_atlas_settings_by_texture_name(str_2)
-	local str_3 = "button_detail_03"
-	local size = UIAtlasHelper.get_atlas_settings_by_texture_name(str_3).size
-	local flag = true
-	local tbl = {
+	local frame_settings = UIFrameSettings.menu_frame_12
+	local progress_frame_settings = UIFrameSettings.button_frame_01
+	local hover_frame_settings = UIFrameSettings.frame_outer_glow_01
+	local hover_frame_width = hover_frame_settings.texture_sizes.corner[1]
+	local background_texture = "menu_frame_bg_01"
+	local background_texture_settings = UIAtlasHelper.get_atlas_settings_by_texture_name(background_texture)
+	local button_background_texture = "button_bg_01"
+	local button_background_texture_settings = UIAtlasHelper.get_atlas_settings_by_texture_name(button_background_texture)
+	local side_detail_texture = "button_detail_03"
+	local side_detail_texture_settings = UIAtlasHelper.get_atlas_settings_by_texture_name(side_detail_texture)
+	local side_detail_texture_size = side_detail_texture_settings.size
+	local masked = true
+	local texture_size = {
 		80,
 		80
 	}
-	local tbl_2 = {
+	local progress_bar_size = {
 		500,
 		42
 	}
-	local num = 13
-	local tbl_3 = {
+	local progress_bar_height_offset = 13
+	local expand_size = {
 		800,
 		100
 	}
-	local tbl_4 = {
-		tbl_3[1] / 2,
+	local checklist_entry_size = {
+		expand_size[1] / 2,
 		30
 	}
-	local num_2 = -(arg_1_1[2] - 10)
-	local tbl_5 = {
+	local expand_height_offset = -(size[2] - 10)
+	local checklist_content = {
 		allow_multi_hover = true
 	}
-	local tbl_6 = {}
-	local num_3 = 15
+	local checklist_item_styles = {}
+	local checklist_max_items = 15
 
-	for i = 1, num_3 do
-		tbl_5[i] = {
+	for i = 1, checklist_max_items do
+		checklist_content[i] = {
 			text = "n/a",
 			checkbox_marker = "matchmaking_checkbox",
 			checkbox = "achievement_checkbox",
 			button_hotspot = {}
 		}
 
-		local tbl_7 = {
+		local tbl = {
 			list_member_offset = {
 				0,
-				-tbl_4[2],
+				-checklist_entry_size[2],
 				0
 			},
-			size = tbl_4
+			size = checklist_entry_size
 		}
-		local tbl_8 = {
+		local tbl_2 = {
 			word_wrap = true,
 			upper_case = false,
 			font_size = 22,
@@ -61,44 +62,44 @@ return function (arg_1_0, arg_1_1)
 			vertical_alignment = "center",
 			dynamic_font_size = true
 		}
-		local flag_2
+		local flag
 
-		flag_2 = not flag and "hell_shark_masked" and "hell_shark"
-		tbl_8.font_type = flag_2
-		tbl_8.text_color = Colors.get_color_table_with_alpha("black", 255)
-		tbl_8.offset = {
+		flag = (not masked or not "hell_shark_masked") and not not "hell_shark"
+		tbl_2.font_type = flag
+		tbl_2.text_color = Colors.get_color_table_with_alpha("black", 255)
+		tbl_2.offset = {
 			31,
 			0,
 			2
 		}
-		tbl_8.size = {
+		tbl_2.size = {
 			300,
 			100
 		}
-		tbl_7.text = tbl_8
+		tbl.text = tbl_2
 
-		local tbl_9 = {
+		local tbl_3 = {
 			vertical_alignment = "center",
 			upper_case = false,
 			font_size = 22,
 			horizontal_alignment = "left",
 			word_wrap = true
 		}
-		local flag_3
+		local flag_2
 
-		flag_3 = not flag and "hell_shark_masked" and "hell_shark"
-		tbl_9.font_type = flag_3
-		tbl_9.text_color = Colors.get_color_table_with_alpha("black", 0)
-		tbl_9.offset = {
+		flag_2 = (not masked or not "hell_shark_masked") and not not "hell_shark"
+		tbl_3.font_type = flag_2
+		tbl_3.text_color = Colors.get_color_table_with_alpha("black", 0)
+		tbl_3.offset = {
 			33,
 			-2,
 			1
 		}
-		tbl_7.text_shadow = tbl_9
-		tbl_7.checkbox = {
+		tbl.text_shadow = tbl_3
+		tbl.checkbox = {
 			vertical_alignment = "center",
 			horizontal_alignment = "left",
-			masked = flag,
+			masked = masked,
 			texture_size = {
 				25,
 				25
@@ -115,10 +116,10 @@ return function (arg_1_0, arg_1_1)
 				1
 			}
 		}
-		tbl_7.checkbox_marker = {
+		tbl.checkbox_marker = {
 			vertical_alignment = "center",
 			horizontal_alignment = "left",
-			masked = flag,
+			masked = masked,
 			texture_size = {
 				37,
 				31
@@ -135,13 +136,13 @@ return function (arg_1_0, arg_1_1)
 				2
 			}
 		}
-		tbl_6[i] = tbl_7
+		checklist_item_styles[i] = tbl
 	end
 
-	local tbl_10 = {
+	local widget = {
 		element = {}
 	}
-	local tbl_11 = {
+	local passes = {
 		{
 			style_id = "button_hotspot",
 			pass_type = "hotspot",
@@ -151,9 +152,9 @@ return function (arg_1_0, arg_1_1)
 			texture_id = "hover_glow",
 			style_id = "hover_glow",
 			pass_type = "texture",
-			content_check_function = function (self)
+			content_check_function = function (content)
 				-- function 2
-				return self.button_hotspot.is_hover
+				return content.button_hotspot.is_hover
 			end
 		},
 		{
@@ -165,38 +166,38 @@ return function (arg_1_0, arg_1_1)
 			pass_type = "tiled_texture",
 			style_id = "expand_background",
 			texture_id = "expand_background",
-			content_check_function = function (self)
+			content_check_function = function (content)
 				-- function 3
-				return self.expanded
+				return content.expanded
 			end
 		},
 		{
 			pass_type = "texture",
 			style_id = "expand_background_edge",
 			texture_id = "expand_background_edge",
-			content_check_function = function (self)
+			content_check_function = function (content)
 				-- function 4
-				return self.expanded
+				return content.expanded
 			end
 		},
 		{
 			pass_type = "rotated_texture",
 			style_id = "expand_background_shadow",
 			texture_id = "expand_background_shadow",
-			content_check_function = function (self)
+			content_check_function = function (content)
 				-- function 5
-				return self.expanded
+				return content.expanded
 			end
 		},
 		{
 			pass_type = "rotated_texture",
 			style_id = "arrow",
 			texture_id = "arrow",
-			content_check_function = function (self)
+			content_check_function = function (content)
 				-- function 6
-				local expandable = self.expandable
+				local expandable = content.expandable
 
-				expandable = not expandable and not not self.button_hotspot.is_hover or not self.expanded
+				expandable = not not expandable and not content.button_hotspot.is_hover and not not not content.expanded
 
 				return expandable
 			end
@@ -205,13 +206,13 @@ return function (arg_1_0, arg_1_1)
 			pass_type = "rotated_texture",
 			style_id = "arrow",
 			texture_id = "arrow_hover",
-			content_check_function = function (self)
+			content_check_function = function (content)
 				-- function 7
-				local expandable = self.expandable
+				local expandable = content.expandable
 
-				if not expandable then
-					expandable = self.expanded
-					expandable = expandable or self.button_hotspot.is_hover
+				if expandable then
+					expandable = content.expanded
+					expandable = not not expandable or not not content.button_hotspot.is_hover
 				end
 
 				return expandable
@@ -221,13 +222,13 @@ return function (arg_1_0, arg_1_1)
 			pass_type = "texture_frame",
 			style_id = "progress_frame",
 			texture_id = "progress_frame",
-			content_check_function = function (self)
+			content_check_function = function (content)
 				-- function 8
-				local draw_bar = self.draw_bar
+				local draw_bar = content.draw_bar
 
 				if not draw_bar then
-					draw_bar = self.completed
-					draw_bar = not draw_bar and not self.claimed
+					draw_bar = content.completed
+					draw_bar = not not draw_bar and not not not content.claimed
 				end
 
 				return draw_bar
@@ -237,52 +238,52 @@ return function (arg_1_0, arg_1_1)
 			pass_type = "texture",
 			style_id = "progress_bar",
 			texture_id = "progress_bar",
-			content_check_function = function (self)
+			content_check_function = function (content)
 				-- function 9
-				return self.draw_bar
+				return content.draw_bar
 			end
 		},
 		{
 			pass_type = "texture",
 			style_id = "progress_bar_bg",
 			texture_id = "rect_masked",
-			content_check_function = function (self)
+			content_check_function = function (content)
 				-- function 10
-				return self.draw_bar
+				return content.draw_bar
 			end
 		},
 		{
 			style_id = "progress_text",
 			pass_type = "text",
 			text_id = "progress_text",
-			content_check_function = function (self)
+			content_check_function = function (content)
 				-- function 11
-				return self.draw_bar
+				return content.draw_bar
 			end
 		},
 		{
 			style_id = "progress_text_shadow",
 			pass_type = "text",
 			text_id = "progress_text",
-			content_check_function = function (self)
+			content_check_function = function (content)
 				-- function 12
-				return self.draw_bar
+				return content.draw_bar
 			end
 		},
 		{
 			style_id = "progress_button_text_hover",
 			pass_type = "text",
 			text_id = "progress_button_text",
-			content_check_function = function (self)
+			content_check_function = function (content)
 				-- function 13
-				local completed = self.completed
+				local completed = content.completed
 
-				if not completed then
-					if not (self.claimed or self.draw_bar) then
-						completed = self.progress_button_hotspot.is_hover
+				if completed then
+					if not content.claimed and not content.draw_bar then
+						completed = content.progress_button_hotspot.is_hover
 
-						if not completed then
-							completed = not self.locked
+						if completed then
+							completed = not content.locked
 						end
 					else
 						completed = false
@@ -300,11 +301,11 @@ return function (arg_1_0, arg_1_1)
 			style_id = "progress_button_text",
 			pass_type = "text",
 			text_id = "progress_button_text",
-			content_check_function = function (self)
+			content_check_function = function (content)
 				-- function 14
-				local completed = self.completed
+				local completed = content.completed
 
-				completed = not completed and not not self.claimed and not not self.draw_bar and not not self.progress_button_hotspot.is_hover or not self.locked
+				completed = not not completed and not content.claimed and not content.draw_bar and not content.progress_button_hotspot.is_hover and not not not content.locked
 
 				return completed
 			end
@@ -313,11 +314,11 @@ return function (arg_1_0, arg_1_1)
 			style_id = "progress_button_text_shadow",
 			pass_type = "text",
 			text_id = "progress_button_text",
-			content_check_function = function (self)
+			content_check_function = function (content)
 				-- function 15
-				local completed = self.completed
+				local completed = content.completed
 
-				completed = not completed and not not self.claimed or not self.draw_bar
+				completed = not not completed and not content.claimed and not not not content.draw_bar
 
 				return completed
 			end
@@ -326,11 +327,11 @@ return function (arg_1_0, arg_1_1)
 			style_id = "progress_button_text_disabled",
 			pass_type = "text",
 			text_id = "progress_button_text",
-			content_check_function = function (self)
+			content_check_function = function (content)
 				-- function 16
-				local completed = self.completed
+				local completed = content.completed
 
-				completed = not completed and not not self.claimed and not not self.draw_bar or self.locked
+				completed = not not completed and not content.claimed and not content.draw_bar and not not content.locked
 
 				return completed
 			end
@@ -339,12 +340,12 @@ return function (arg_1_0, arg_1_1)
 			style_id = "progress_button_background",
 			pass_type = "texture_uv",
 			content_id = "progress_button_background",
-			content_check_function = function (self)
+			content_check_function = function (content)
 				-- function 17
-				local parent = self.parent
+				local parent = content.parent
 				local completed = parent.completed
 
-				completed = not completed and not parent.claimed
+				completed = not not completed and not not not parent.claimed
 
 				return completed
 			end
@@ -353,11 +354,11 @@ return function (arg_1_0, arg_1_1)
 			pass_type = "texture",
 			style_id = "progress_button_background_fade",
 			texture_id = "background_fade",
-			content_check_function = function (self)
+			content_check_function = function (content)
 				-- function 18
-				local completed = self.completed
+				local completed = content.completed
 
-				completed = not completed and not self.claimed
+				completed = not not completed and not not not content.claimed
 
 				return completed
 			end
@@ -366,12 +367,12 @@ return function (arg_1_0, arg_1_1)
 			style_id = "progress_button_hotspot",
 			pass_type = "hotspot",
 			content_id = "progress_button_hotspot",
-			content_check_function = function (self)
+			content_check_function = function (content)
 				-- function 19
-				local parent = self.parent
+				local parent = content.parent
 				local completed = parent.completed
 
-				completed = not completed and not parent.claimed
+				completed = not not completed and not not not parent.claimed
 
 				return completed
 			end
@@ -380,13 +381,13 @@ return function (arg_1_0, arg_1_1)
 			texture_id = "glass",
 			style_id = "progress_button_glass_top",
 			pass_type = "texture",
-			content_check_function = function (self)
+			content_check_function = function (content)
 				-- function 20
-				local draw_bar = self.draw_bar
+				local draw_bar = content.draw_bar
 
 				if not draw_bar then
-					draw_bar = self.completed
-					draw_bar = not draw_bar and not self.claimed
+					draw_bar = content.completed
+					draw_bar = not not draw_bar and not not not content.claimed
 				end
 
 				return draw_bar
@@ -396,13 +397,13 @@ return function (arg_1_0, arg_1_1)
 			texture_id = "glass",
 			style_id = "progress_button_glass_bottom",
 			pass_type = "texture",
-			content_check_function = function (self)
+			content_check_function = function (content)
 				-- function 21
-				local draw_bar = self.draw_bar
+				local draw_bar = content.draw_bar
 
 				if not draw_bar then
-					draw_bar = self.completed
-					draw_bar = not draw_bar and not self.claimed
+					draw_bar = content.completed
+					draw_bar = not not draw_bar and not not not content.claimed
 				end
 
 				return draw_bar
@@ -412,16 +413,16 @@ return function (arg_1_0, arg_1_1)
 			texture_id = "hover_glow",
 			style_id = "progress_button_hover_glow",
 			pass_type = "texture",
-			content_check_function = function (self)
+			content_check_function = function (content)
 				-- function 22
-				local completed = self.completed
+				local completed = content.completed
 
-				if not completed then
-					if not self.claimed then
-						completed = self.progress_button_hotspot.is_hover
+				if completed then
+					if not content.claimed then
+						completed = content.progress_button_hotspot.is_hover
 
-						if not completed then
-							completed = not self.locked
+						if completed then
+							completed = not content.locked
 						end
 					else
 						completed = false
@@ -439,33 +440,33 @@ return function (arg_1_0, arg_1_1)
 			style_id = "progress_button_claim_glow",
 			texture_id = "progress_button_claim_glow",
 			pass_type = "texture_frame",
-			content_check_function = function (self)
+			content_check_function = function (content)
 				-- function 23
-				local completed = self.completed
+				local completed = content.completed
 
-				completed = not completed and not not self.claimed or not self.claiming
+				completed = not not completed and not content.claimed and not not not content.claiming
 
 				return completed
 			end,
-			content_change_function = function (arg_24_0, arg_24_1)
+			content_change_function = function (content, style)
 				-- function 24
-				local num = 0.5 + math.sin(Managers.time:time("ui") * 5) * 0.5
+				local progress = 0.5 + math.sin(Managers.time:time("ui") * 5) * 0.5
 
-				arg_24_1.color[1] = 55 + num * 200
+				style.color[1] = 55 + progress * 200
 			end
 		},
 		{
 			style_id = "side_detail_right",
 			pass_type = "texture_uv",
 			content_id = "side_detail",
-			content_check_function = function (self)
+			content_check_function = function (content)
 				-- function 25
-				local parent = self.parent
-				local draw_bar = parent.draw_bar
+				local parent_content = content.parent
+				local draw_bar = parent_content.draw_bar
 
 				if not draw_bar then
-					draw_bar = parent.completed
-					draw_bar = not draw_bar and not parent.claimed
+					draw_bar = parent_content.completed
+					draw_bar = not not draw_bar and not not not parent_content.claimed
 				end
 
 				return draw_bar
@@ -476,14 +477,14 @@ return function (arg_1_0, arg_1_1)
 			style_id = "side_detail_left",
 			pass_type = "texture",
 			content_id = "side_detail",
-			content_check_function = function (self)
+			content_check_function = function (content)
 				-- function 26
-				local parent = self.parent
-				local draw_bar = parent.draw_bar
+				local parent_content = content.parent
+				local draw_bar = parent_content.draw_bar
 
 				if not draw_bar then
-					draw_bar = parent.completed
-					draw_bar = not draw_bar and not parent.claimed
+					draw_bar = parent_content.completed
+					draw_bar = not not draw_bar and not not not parent_content.claimed
 				end
 
 				return draw_bar
@@ -493,18 +494,18 @@ return function (arg_1_0, arg_1_1)
 			pass_type = "tiled_texture",
 			style_id = "background",
 			texture_id = "background",
-			content_check_function = function (self)
+			content_check_function = function (content)
 				-- function 27
-				return not self.claimed
+				return not content.claimed
 			end
 		},
 		{
 			pass_type = "tiled_texture",
 			style_id = "background_completed",
 			texture_id = "background_completed",
-			content_check_function = function (self)
+			content_check_function = function (content)
 				-- function 28
-				return self.claimed
+				return content.claimed
 			end
 		},
 		{
@@ -537,39 +538,39 @@ return function (arg_1_0, arg_1_1)
 			style_id = "dlc_lock_hotspot",
 			pass_type = "hotspot",
 			content_id = "dlc_lock_hotspot",
-			content_check_function = function (self)
+			content_check_function = function (content)
 				-- function 29
-				local draw = self.draw
+				local should_draw = content.draw
 
-				self.draw = false
-				self.is_hover = false
+				content.draw = false
+				content.is_hover = false
 
-				return draw
+				return should_draw
 			end
 		},
 		{
 			style_id = "dlc_lock",
 			texture_id = "dlc_lock",
 			pass_type = "rotated_texture",
-			content_check_function = function (self)
+			content_check_function = function (content)
 				-- function 30
-				return self.locked
+				return content.locked
 			end,
-			content_change_function = function (self, arg_31_1, arg_31_2, arg_31_3)
+			content_change_function = function (content, style, _, dt)
 				-- function 31
-				if self.dlc_on_claim == true then
-					self.dlc_lock_t = 1
-					self.dlc_lock_dir = -self.dlc_lock_dir
-					self.dlc_on_claim = false
+				if content.dlc_on_claim == true then
+					content.dlc_lock_t = 1
+					content.dlc_lock_dir = -content.dlc_lock_dir
+					content.dlc_on_claim = false
 				else
-					local dlc_lock_t = self.dlc_lock_t
+					local t = content.dlc_lock_t
 
-					if not dlc_lock_t then
+					if t then
 						local math = math
-						local num = dlc_lock_t - arg_31_3
 
-						arg_31_1.angle = 0.1 * math.pi * math.min(1, num * num) * math.sin(3 * math.pi * num * self.dlc_lock_dir)
-						self.dlc_lock_t = not (num > 0) or num
+						t = t - dt
+						style.angle = 0.1 * math.pi * math.min(1, t * t) * math.sin(3 * math.pi * t * content.dlc_lock_dir)
+						content.dlc_lock_t = t > 0 and not not t
 					end
 				end
 			end
@@ -578,38 +579,37 @@ return function (arg_1_0, arg_1_1)
 			style_id = "dlc_lock_glow",
 			texture_id = "dlc_lock_glow",
 			pass_type = "texture",
-			content_check_function = function (self)
+			content_check_function = function (content)
 				-- function 32
-				return self.locked
+				return content.locked
 			end,
-			content_change_function = function (self, arg_33_1, arg_33_2, arg_33_3)
+			content_change_function = function (content, style, _, dt)
 				-- function 33
-				local dlc_lock_t = self.dlc_lock_t
-				local dlc_lock_glow_alpha_multiplier = self.dlc_lock_glow_alpha_multiplier
+				local t = content.dlc_lock_t
+				local alpha_mult = content.dlc_lock_glow_alpha_multiplier
 
-				if not self.dlc_lock_hotspot.is_hover then
-					dlc_lock_glow_alpha_multiplier = dlc_lock_glow_alpha_multiplier + 3 * arg_33_3
-				elseif not (not dlc_lock_t and not (dlc_lock_t > 0)) then
-					dlc_lock_glow_alpha_multiplier = math.sin(0.5 * math.pi * dlc_lock_t)
+				if content.dlc_lock_hotspot.is_hover then
+					alpha_mult = alpha_mult + 3 * dt
+				elseif t and t > 0 then
+					alpha_mult = math.sin(0.5 * math.pi * t)
 				else
-					dlc_lock_glow_alpha_multiplier = dlc_lock_glow_alpha_multiplier - 2 * arg_33_3
+					alpha_mult = alpha_mult - 2 * dt
 				end
 
-				local clamp = math.clamp(dlc_lock_glow_alpha_multiplier, 0, 1)
-
-				arg_33_1.color[1] = 255 * clamp
-				self.dlc_lock_glow_alpha_multiplier = clamp
+				alpha_mult = math.clamp(alpha_mult, 0, 1)
+				style.color[1] = 255 * alpha_mult
+				content.dlc_lock_glow_alpha_multiplier = alpha_mult
 			end
 		},
 		{
 			style_id = "locked_text",
 			pass_type = "tooltip_text",
 			text_id = "locked_text",
-			content_check_function = function (self)
+			content_check_function = function (content)
 				-- function 34
-				local locked = self.locked
+				local locked = content.locked
 
-				locked = not locked and self.dlc_lock_hotspot.is_hover
+				locked = not not locked and not not content.dlc_lock_hotspot.is_hover
 
 				return locked
 			end
@@ -633,21 +633,21 @@ return function (arg_1_0, arg_1_1)
 			pass_type = "texture",
 			style_id = "reward_icon_background",
 			texture_id = "reward_icon_background",
-			content_check_function = function (self)
+			content_check_function = function (content)
 				-- function 35
-				return self.reward_icon_background ~= nil
+				return content.reward_icon_background ~= nil
 			end
 		},
 		{
 			pass_type = "texture",
 			style_id = "reward_hover",
 			texture_id = "reward_hover",
-			content_check_function = function (self)
+			content_check_function = function (content)
 				-- function 36
-				local reward_button_hotspot = self.reward_button_hotspot
+				local reward_button_hotspot = content.reward_button_hotspot
 				local is_hover = reward_button_hotspot.is_hover
 
-				is_hover = not is_hover and reward_button_hotspot.draw
+				is_hover = not not is_hover and not not reward_button_hotspot.draw
 
 				return is_hover
 			end
@@ -656,27 +656,27 @@ return function (arg_1_0, arg_1_1)
 			item_id = "reward_item",
 			pass_type = "item_tooltip",
 			style_id = "reward_icon",
-			content_check_function = function (self)
+			content_check_function = function (content)
 				-- function 37
-				local reward_button_hotspot = self.reward_button_hotspot
+				local reward_button_hotspot = content.reward_button_hotspot
 				local is_hover = reward_button_hotspot.is_hover
 
-				is_hover = not is_hover and reward_button_hotspot.draw
+				is_hover = not not is_hover and not not reward_button_hotspot.draw
 
 				return is_hover
 			end,
-			content_change_function = function (arg_38_0)
+			content_change_function = function (content)
 				-- function 38
-				arg_38_0.reward_button_hotspot.draw = false
+				content.reward_button_hotspot.draw = false
 			end
 		},
 		{
 			pass_type = "texture",
 			style_id = "reward_illusion_frame",
 			texture_id = "reward_illusion_frame",
-			content_check_function = function (self)
+			content_check_function = function (content)
 				-- function 39
-				return self.is_illusion
+				return content.is_illusion
 			end
 		},
 		{
@@ -688,27 +688,27 @@ return function (arg_1_0, arg_1_1)
 			pass_type = "texture",
 			style_id = "reward_icon_claimed",
 			texture_id = "reward_icon_claimed",
-			content_check_function = function (self)
+			content_check_function = function (content)
 				-- function 40
-				return self.claimed
+				return content.claimed
 			end
 		},
 		{
 			style_id = "claimed_text",
 			pass_type = "text",
 			text_id = "claimed_text",
-			content_check_function = function (self)
+			content_check_function = function (content)
 				-- function 41
-				return self.claimed
+				return content.claimed
 			end
 		},
 		{
 			style_id = "claimed_text_shadow",
 			pass_type = "text",
 			text_id = "claimed_text",
-			content_check_function = function (self)
+			content_check_function = function (content)
 				-- function 42
-				return self.claimed
+				return content.claimed
 			end
 		},
 		{
@@ -735,18 +735,18 @@ return function (arg_1_0, arg_1_1)
 			style_id = "checklist_1",
 			pass_type = "list_pass",
 			content_id = "checklist_1",
-			content_check_function = function (self)
+			content_check_function = function (content)
 				-- function 43
-				return self.parent.expanded
+				return content.parent.expanded
 			end,
 			passes = {
 				{
 					style_id = "text",
 					pass_type = "text",
 					text_id = "text",
-					content_check_function = function (self)
+					content_check_function = function (content)
 						-- function 44
-						return not self.button_hotspot.is_hover
+						return not content.button_hotspot.is_hover
 					end
 				},
 				{
@@ -770,18 +770,18 @@ return function (arg_1_0, arg_1_1)
 			style_id = "checklist_2",
 			pass_type = "list_pass",
 			content_id = "checklist_2",
-			content_check_function = function (self)
+			content_check_function = function (content)
 				-- function 45
-				return self.parent.expanded
+				return content.parent.expanded
 			end,
 			passes = {
 				{
 					style_id = "text",
 					pass_type = "text",
 					text_id = "text",
-					content_check_function = function (self)
+					content_check_function = function (content)
 						-- function 46
-						return not self.button_hotspot.is_hover
+						return not content.button_hotspot.is_hover
 					end
 				},
 				{
@@ -802,7 +802,7 @@ return function (arg_1_0, arg_1_1)
 			}
 		}
 	}
-	local tbl_12 = {
+	local tbl_4 = {
 		reward_illusion_frame = "item_frame_illusion",
 		expand_background_edge = "achievement_paper_bottom",
 		progress_text = "n/a",
@@ -839,19 +839,19 @@ return function (arg_1_0, arg_1_1)
 		dlc_on_claim = false,
 		reward_hover = "item_icon_hover"
 	}
-	local flag_4
+	local flag_3
 
-	flag_4 = not (math.random() < 0.5) or not 1 or -1
-	tbl_12.dlc_lock_dir = flag_4
-	tbl_12.dlc_lock_hotspot = {}
-	tbl_12.button_hotspot = {
+	flag_3 = (not (math.random() < 0.5) or not 1) and not not -1
+	tbl_4.dlc_lock_dir = flag_3
+	tbl_4.dlc_lock_hotspot = {}
+	tbl_4.button_hotspot = {
 		allow_multi_hover = true
 	}
-	tbl_12.progress_button_hotspot = {}
-	tbl_12.reward_button_hotspot = {}
-	tbl_12.claimed_text = Localize("achv_menu_reward_claimed")
-	tbl_12.progress_button_text = Localize("loot_screen_claim_reward")
-	tbl_12.swirl_texture = {
+	tbl_4.progress_button_hotspot = {}
+	tbl_4.reward_button_hotspot = {}
+	tbl_4.claimed_text = Localize("achv_menu_reward_claimed")
+	tbl_4.progress_button_text = Localize("loot_screen_claim_reward")
+	tbl_4.swirl_texture = {
 		texture_id = "achievement_swirl",
 		uvs = {
 			{
@@ -864,7 +864,7 @@ return function (arg_1_0, arg_1_1)
 			}
 		}
 	}
-	tbl_12.side_detail = {
+	tbl_4.side_detail = {
 		uvs = {
 			{
 				1,
@@ -875,32 +875,33 @@ return function (arg_1_0, arg_1_1)
 				1
 			}
 		},
-		texture_id = str_3
+		texture_id = side_detail_texture
 	}
-	tbl_12.frame = menu_frame_12.texture
-	tbl_12.progress_frame = button_frame_01.texture
-	tbl_12.progress_button_claim_glow = frame_outer_glow_01.texture
-	tbl_12.progress_button_background = {
+	tbl_4.frame = frame_settings.texture
+	tbl_4.progress_frame = progress_frame_settings.texture
+	tbl_4.progress_button_claim_glow = hover_frame_settings.texture
+	tbl_4.progress_button_background = {
 		uvs = {
 			{
 				0,
 				0
 			},
 			{
-				math.min(tbl_2[1] / get_atlas_settings_by_texture_name_2.size[1], 1),
-				math.min(tbl_2[2] / get_atlas_settings_by_texture_name_2.size[2], 1)
+				math.min(progress_bar_size[1] / button_background_texture_settings.size[1], 1),
+				math.min(progress_bar_size[2] / button_background_texture_settings.size[2], 1)
 			}
 		},
-		texture_id = str_2
+		texture_id = button_background_texture
 	}
-	tbl_12.checklist_1 = table.clone(tbl_5)
-	tbl_12.checklist_2 = table.clone(tbl_5)
+	tbl_4.checklist_1 = table.clone(checklist_content)
+	tbl_4.checklist_2 = table.clone(checklist_content)
 
-	local tbl_13 = {
+	local content = tbl_4
+	local tbl_5 = {
 		button_hotspot = {
 			size = {
-				arg_1_1[1] + 100,
-				arg_1_1[2]
+				size[1] + 100,
+				size[2]
 			},
 			offset = {
 				-50,
@@ -918,13 +919,13 @@ return function (arg_1_0, arg_1_1)
 				0,
 				0
 			},
-			size = tbl_3,
+			size = expand_size,
 			offset = {
 				100,
-				-arg_1_1[2] / 2,
+				-size[2] / 2,
 				1
 			},
-			item_styles = table.clone(tbl_6)
+			item_styles = table.clone(checklist_item_styles)
 		},
 		checklist_2 = {
 			vertical_alignment = "center",
@@ -936,18 +937,18 @@ return function (arg_1_0, arg_1_1)
 				0,
 				0
 			},
-			size = tbl_3,
+			size = expand_size,
 			offset = {
 				500,
-				-arg_1_1[2] / 2,
+				-size[2] / 2,
 				1
 			},
-			item_styles = table.clone(tbl_6)
+			item_styles = table.clone(checklist_item_styles)
 		},
 		expand_background = {
 			vertical_alignment = "top",
 			horizontal_alignment = "center",
-			masked = flag,
+			masked = masked,
 			color = {
 				255,
 				255,
@@ -956,10 +957,10 @@ return function (arg_1_0, arg_1_1)
 			},
 			offset = {
 				0,
-				num_2,
+				expand_height_offset,
 				-1
 			},
-			texture_size = tbl_3,
+			texture_size = expand_size,
 			texture_tiling_size = {
 				800,
 				100
@@ -968,7 +969,7 @@ return function (arg_1_0, arg_1_1)
 		expand_background_edge = {
 			vertical_alignment = "bottom",
 			horizontal_alignment = "center",
-			masked = flag,
+			masked = masked,
 			color = {
 				255,
 				255,
@@ -989,7 +990,7 @@ return function (arg_1_0, arg_1_1)
 			vertical_alignment = "bottom",
 			horizontal_alignment = "center",
 			angle = math.pi,
-			masked = flag,
+			masked = masked,
 			color = {
 				255,
 				255,
@@ -1014,7 +1015,7 @@ return function (arg_1_0, arg_1_1)
 			vertical_alignment = "bottom",
 			angle = 0,
 			horizontal_alignment = "center",
-			masked = flag,
+			masked = masked,
 			color = {
 				255,
 				255,
@@ -1038,10 +1039,10 @@ return function (arg_1_0, arg_1_1)
 		progress_frame = {
 			vertical_alignment = "bottom",
 			horizontal_alignment = "center",
-			masked = flag,
-			area_size = tbl_2,
-			texture_size = button_frame_01.texture_size,
-			texture_sizes = button_frame_01.texture_sizes,
+			masked = masked,
+			area_size = progress_bar_size,
+			texture_size = progress_frame_settings.texture_size,
+			texture_sizes = progress_frame_settings.texture_sizes,
 			color = {
 				255,
 				255,
@@ -1050,16 +1051,16 @@ return function (arg_1_0, arg_1_1)
 			},
 			offset = {
 				0,
-				num,
+				progress_bar_height_offset,
 				10
 			}
 		},
 		progress_bar = {
 			vertical_alignment = "bottom",
 			horizontal_alignment = "left",
-			masked = flag,
-			default_size = tbl_2,
-			texture_size = tbl_2,
+			masked = masked,
+			default_size = progress_bar_size,
+			texture_size = progress_bar_size,
 			color = {
 				255,
 				255,
@@ -1067,16 +1068,16 @@ return function (arg_1_0, arg_1_1)
 				255
 			},
 			offset = {
-				arg_1_1[1] / 2 - tbl_2[1] / 2,
-				num,
+				size[1] / 2 - progress_bar_size[1] / 2,
+				progress_bar_height_offset,
 				6
 			}
 		},
 		progress_bar_bg = {
 			vertical_alignment = "bottom",
 			horizontal_alignment = "left",
-			default_size = tbl_2,
-			texture_size = tbl_2,
+			default_size = progress_bar_size,
+			texture_size = progress_bar_size,
 			color = {
 				255,
 				0,
@@ -1084,18 +1085,18 @@ return function (arg_1_0, arg_1_1)
 				0
 			},
 			offset = {
-				arg_1_1[1] / 2 - tbl_2[1] / 2,
-				num,
+				size[1] / 2 - progress_bar_size[1] / 2,
+				progress_bar_height_offset,
 				5
 			}
 		},
 		progress_button_background = {
 			vertical_alignment = "bottom",
 			horizontal_alignment = "center",
-			masked = flag,
+			masked = masked,
 			texture_size = {
-				tbl_2[1],
-				tbl_2[2]
+				progress_bar_size[1],
+				progress_bar_size[2]
 			},
 			color = {
 				255,
@@ -1105,17 +1106,17 @@ return function (arg_1_0, arg_1_1)
 			},
 			offset = {
 				0,
-				num,
+				progress_bar_height_offset,
 				6
 			}
 		},
 		progress_button_background_fade = {
 			vertical_alignment = "bottom",
 			horizontal_alignment = "center",
-			masked = flag,
+			masked = masked,
 			texture_size = {
-				tbl_2[1] - 10,
-				tbl_2[2] - 10
+				progress_bar_size[1] - 10,
+				progress_bar_size[2] - 10
 			},
 			color = {
 				255,
@@ -1125,16 +1126,16 @@ return function (arg_1_0, arg_1_1)
 			},
 			offset = {
 				0,
-				num + 5,
+				progress_bar_height_offset + 5,
 				7
 			}
 		},
 		progress_button_glass_top = {
 			vertical_alignment = "bottom",
 			horizontal_alignment = "center",
-			masked = flag,
+			masked = masked,
 			texture_size = {
-				tbl_2[1] - 10,
+				progress_bar_size[1] - 10,
 				11
 			},
 			color = {
@@ -1145,16 +1146,16 @@ return function (arg_1_0, arg_1_1)
 			},
 			offset = {
 				0,
-				num + tbl_2[2] - 17,
+				progress_bar_height_offset + progress_bar_size[2] - 17,
 				8
 			}
 		},
 		progress_button_glass_bottom = {
 			vertical_alignment = "bottom",
 			horizontal_alignment = "center",
-			masked = flag,
+			masked = masked,
 			texture_size = {
-				tbl_2[1] - 10,
+				progress_bar_size[1] - 10,
 				11
 			},
 			color = {
@@ -1165,17 +1166,17 @@ return function (arg_1_0, arg_1_1)
 			},
 			offset = {
 				0,
-				num - 3,
+				progress_bar_height_offset - 3,
 				8
 			}
 		},
 		progress_button_hover_glow = {
 			vertical_alignment = "bottom",
 			horizontal_alignment = "center",
-			masked = flag,
+			masked = masked,
 			texture_size = {
-				tbl_2[1] - 10,
-				tbl_2[2] - 10
+				progress_bar_size[1] - 10,
+				progress_bar_size[2] - 10
 			},
 			color = {
 				255,
@@ -1185,25 +1186,25 @@ return function (arg_1_0, arg_1_1)
 			},
 			offset = {
 				0,
-				num + 5,
+				progress_bar_height_offset + 5,
 				9
 			}
 		},
 		progress_button_hotspot = {
-			size = tbl_2,
+			size = progress_bar_size,
 			offset = {
-				arg_1_1[1] / 2 - tbl_2[1] / 2,
-				num,
+				size[1] / 2 - progress_bar_size[1] / 2,
+				progress_bar_height_offset,
 				1
 			}
 		},
 		progress_button_claim_glow = {
 			horizontal_alignment = "center",
 			vertical_alignment = "bottom",
-			area_size = tbl_2,
-			masked = flag,
-			texture_size = frame_outer_glow_01.texture_size,
-			texture_sizes = frame_outer_glow_01.texture_sizes,
+			area_size = progress_bar_size,
+			masked = masked,
+			texture_size = hover_frame_settings.texture_size,
+			texture_sizes = hover_frame_settings.texture_sizes,
 			color = {
 				255,
 				255,
@@ -1211,19 +1212,19 @@ return function (arg_1_0, arg_1_1)
 				255
 			},
 			frame_margins = {
-				-(var_1_3 - 1),
-				-(var_1_3 - 1)
+				-(hover_frame_width - 1),
+				-(hover_frame_width - 1)
 			},
 			offset = {
 				0,
-				num,
+				progress_bar_height_offset,
 				14
 			}
 		},
 		side_detail_left = {
 			vertical_alignment = "bottom",
 			horizontal_alignment = "center",
-			masked = flag,
+			masked = masked,
 			color = {
 				255,
 				255,
@@ -1231,16 +1232,16 @@ return function (arg_1_0, arg_1_1)
 				255
 			},
 			offset = {
-				-(tbl_2[1] / 2 - size[1] / 2) - 9,
-				num + tbl_2[2] / 2 - size[2] / 2,
+				-(progress_bar_size[1] / 2 - side_detail_texture_size[1] / 2) - 9,
+				progress_bar_height_offset + progress_bar_size[2] / 2 - side_detail_texture_size[2] / 2,
 				15
 			},
-			texture_size = size
+			texture_size = side_detail_texture_size
 		},
 		side_detail_right = {
 			vertical_alignment = "bottom",
 			horizontal_alignment = "center",
-			masked = flag,
+			masked = masked,
 			color = {
 				255,
 				255,
@@ -1248,14 +1249,14 @@ return function (arg_1_0, arg_1_1)
 				255
 			},
 			offset = {
-				tbl_2[1] / 2 - size[1] / 2 + 9,
-				num + tbl_2[2] / 2 - size[2] / 2,
+				progress_bar_size[1] / 2 - side_detail_texture_size[1] / 2 + 9,
+				progress_bar_height_offset + progress_bar_size[2] / 2 - side_detail_texture_size[2] / 2,
 				15
 			},
-			texture_size = size
+			texture_size = side_detail_texture_size
 		},
 		hover_glow = {
-			masked = flag,
+			masked = masked,
 			color = {
 				255,
 				255,
@@ -1269,9 +1270,9 @@ return function (arg_1_0, arg_1_1)
 			}
 		},
 		frame = {
-			masked = flag,
-			texture_size = menu_frame_12.texture_size,
-			texture_sizes = menu_frame_12.texture_sizes,
+			masked = masked,
+			texture_size = frame_settings.texture_size,
+			texture_sizes = frame_settings.texture_sizes,
 			color = {
 				255,
 				255,
@@ -1287,7 +1288,7 @@ return function (arg_1_0, arg_1_1)
 		background = {
 			vertical_alignment = "center",
 			horizontal_alignment = "center",
-			masked = flag,
+			masked = masked,
 			color = {
 				255,
 				255,
@@ -1299,7 +1300,7 @@ return function (arg_1_0, arg_1_1)
 				0,
 				3
 			},
-			texture_size = arg_1_1,
+			texture_size = size,
 			texture_tiling_size = {
 				128,
 				153
@@ -1308,7 +1309,7 @@ return function (arg_1_0, arg_1_1)
 		background_completed = {
 			vertical_alignment = "center",
 			horizontal_alignment = "center",
-			masked = flag,
+			masked = masked,
 			color = {
 				255,
 				255,
@@ -1320,7 +1321,7 @@ return function (arg_1_0, arg_1_1)
 				0,
 				3
 			},
-			texture_size = arg_1_1,
+			texture_size = size,
 			texture_tiling_size = {
 				50,
 				156
@@ -1329,7 +1330,7 @@ return function (arg_1_0, arg_1_1)
 		background_fade = {
 			vertical_alignment = "center",
 			horizontal_alignment = "center",
-			masked = flag,
+			masked = masked,
 			color = {
 				255,
 				255,
@@ -1341,12 +1342,12 @@ return function (arg_1_0, arg_1_1)
 				0,
 				4
 			},
-			texture_size = arg_1_1
+			texture_size = size
 		},
 		title_divider = {
 			vertical_alignment = "top",
 			horizontal_alignment = "center",
-			masked = flag,
+			masked = masked,
 			color = {
 				255,
 				255,
@@ -1366,7 +1367,7 @@ return function (arg_1_0, arg_1_1)
 		icon_background = {
 			vertical_alignment = "center",
 			horizontal_alignment = "left",
-			masked = flag,
+			masked = masked,
 			texture_size = {
 				172,
 				181
@@ -1386,7 +1387,7 @@ return function (arg_1_0, arg_1_1)
 		icon_swirl = {
 			vertical_alignment = "top",
 			horizontal_alignment = "left",
-			masked = flag,
+			masked = masked,
 			texture_size = {
 				111,
 				45
@@ -1406,7 +1407,7 @@ return function (arg_1_0, arg_1_1)
 		icon = {
 			vertical_alignment = "center",
 			horizontal_alignment = "left",
-			masked = flag,
+			masked = masked,
 			texture_size = {
 				130,
 				131
@@ -1431,7 +1432,7 @@ return function (arg_1_0, arg_1_1)
 				50
 			},
 			offset = {
-				arg_1_1[1] - 130 + 25,
+				size[1] - 130 + 25,
 				-10,
 				11
 			}
@@ -1440,7 +1441,7 @@ return function (arg_1_0, arg_1_1)
 			vertical_alignment = "center",
 			angle = 0,
 			horizontal_alignment = "right",
-			masked = flag,
+			masked = masked,
 			texture_size = {
 				45.6,
 				52.199999999999996
@@ -1504,7 +1505,7 @@ return function (arg_1_0, arg_1_1)
 		reward_background = {
 			vertical_alignment = "center",
 			horizontal_alignment = "right",
-			masked = flag,
+			masked = masked,
 			texture_size = {
 				172,
 				181
@@ -1524,7 +1525,7 @@ return function (arg_1_0, arg_1_1)
 		reward_swirl = {
 			vertical_alignment = "top",
 			horizontal_alignment = "right",
-			masked = flag,
+			masked = masked,
 			texture_size = {
 				111,
 				45
@@ -1543,8 +1544,8 @@ return function (arg_1_0, arg_1_1)
 		},
 		reward_icon = {
 			saturated = false,
-			masked = flag,
-			size = tbl,
+			masked = masked,
+			size = texture_size,
 			color = {
 				255,
 				255,
@@ -1552,15 +1553,15 @@ return function (arg_1_0, arg_1_1)
 				255
 			},
 			offset = {
-				arg_1_1[1] - 80 - 2,
-				arg_1_1[2] / 2 - 40,
+				size[1] - 80 - 2,
+				size[2] / 2 - 40,
 				12
 			}
 		},
 		reward_icon_background = {
 			saturated = false,
-			masked = flag,
-			size = tbl,
+			masked = masked,
+			size = texture_size,
 			color = {
 				255,
 				255,
@@ -1568,16 +1569,16 @@ return function (arg_1_0, arg_1_1)
 				255
 			},
 			offset = {
-				arg_1_1[1] - 80 - 2,
-				arg_1_1[2] / 2 - 40,
+				size[1] - 80 - 2,
+				size[2] / 2 - 40,
 				11
 			}
 		},
 		reward_illusion_frame = {
 			vertical_alignment = "center",
 			horizontal_alignment = "right",
-			masked = flag,
-			texture_size = tbl,
+			masked = masked,
+			texture_size = texture_size,
 			color = {
 				255,
 				255,
@@ -1593,7 +1594,7 @@ return function (arg_1_0, arg_1_1)
 		reward_hover = {
 			vertical_alignment = "center",
 			horizontal_alignment = "right",
-			masked = flag,
+			masked = masked,
 			texture_size = {
 				128,
 				128
@@ -1613,7 +1614,7 @@ return function (arg_1_0, arg_1_1)
 		reward_icon_claimed = {
 			vertical_alignment = "bottom",
 			horizontal_alignment = "center",
-			masked = flag,
+			masked = masked,
 			texture_size = {
 				438,
 				54
@@ -1626,7 +1627,29 @@ return function (arg_1_0, arg_1_1)
 			}
 		}
 	}
-	local tbl_14 = {
+	local tbl_6 = {
+		vertical_alignment = "center",
+		upper_case = false,
+		font_size = 18,
+		horizontal_alignment = "center"
+	}
+	local flag_4
+
+	flag_4 = (not masked or not "hell_shark_masked") and not not "hell_shark"
+	tbl_6.font_type = flag_4
+	tbl_6.text_color = Colors.get_color_table_with_alpha("font_default", 255)
+	tbl_6.size = {
+		progress_bar_size[1],
+		progress_bar_size[2]
+	}
+	tbl_6.offset = {
+		size[1] / 2 - progress_bar_size[1] / 2,
+		progress_bar_height_offset,
+		10
+	}
+	tbl_5.progress_text = tbl_6
+
+	local tbl_7 = {
 		vertical_alignment = "center",
 		upper_case = false,
 		font_size = 18,
@@ -1634,43 +1657,43 @@ return function (arg_1_0, arg_1_1)
 	}
 	local flag_5
 
-	flag_5 = not flag and "hell_shark_masked" and "hell_shark"
-	tbl_14.font_type = flag_5
-	tbl_14.text_color = Colors.get_color_table_with_alpha("font_default", 255)
-	tbl_14.size = {
-		tbl_2[1],
-		tbl_2[2]
+	flag_5 = (not masked or not "hell_shark_masked") and not not "hell_shark"
+	tbl_7.font_type = flag_5
+	tbl_7.text_color = Colors.get_color_table_with_alpha("black", 255)
+	tbl_7.size = {
+		progress_bar_size[1],
+		progress_bar_size[2]
 	}
-	tbl_14.offset = {
-		arg_1_1[1] / 2 - tbl_2[1] / 2,
-		num,
-		10
+	tbl_7.offset = {
+		size[1] / 2 - progress_bar_size[1] / 2 + 2,
+		progress_bar_height_offset - 2,
+		9
 	}
-	tbl_13.progress_text = tbl_14
+	tbl_5.progress_text_shadow = tbl_7
 
-	local tbl_15 = {
-		vertical_alignment = "center",
-		upper_case = false,
+	local tbl_8 = {
+		vertical_alignment = "bottom",
+		upper_case = true,
 		font_size = 18,
 		horizontal_alignment = "center"
 	}
 	local flag_6
 
-	flag_6 = not flag and "hell_shark_masked" and "hell_shark"
-	tbl_15.font_type = flag_6
-	tbl_15.text_color = Colors.get_color_table_with_alpha("black", 255)
-	tbl_15.size = {
-		tbl_2[1],
-		tbl_2[2]
+	flag_6 = (not masked or not "hell_shark_masked") and not not "hell_shark"
+	tbl_8.font_type = flag_6
+	tbl_8.text_color = Colors.get_color_table_with_alpha("font_default", 255)
+	tbl_8.size = {
+		progress_bar_size[1],
+		progress_bar_size[2]
 	}
-	tbl_15.offset = {
-		arg_1_1[1] / 2 - tbl_2[1] / 2 + 2,
-		num - 2,
-		9
+	tbl_8.offset = {
+		size[1] / 2 - progress_bar_size[1] / 2,
+		4,
+		12
 	}
-	tbl_13.progress_text_shadow = tbl_15
+	tbl_5.claimed_text = tbl_8
 
-	local tbl_16 = {
+	local tbl_9 = {
 		vertical_alignment = "bottom",
 		upper_case = true,
 		font_size = 18,
@@ -1678,43 +1701,43 @@ return function (arg_1_0, arg_1_1)
 	}
 	local flag_7
 
-	flag_7 = not flag and "hell_shark_masked" and "hell_shark"
-	tbl_16.font_type = flag_7
-	tbl_16.text_color = Colors.get_color_table_with_alpha("font_default", 255)
-	tbl_16.size = {
-		tbl_2[1],
-		tbl_2[2]
+	flag_7 = (not masked or not "hell_shark_masked") and not not "hell_shark"
+	tbl_9.font_type = flag_7
+	tbl_9.text_color = Colors.get_color_table_with_alpha("black", 255)
+	tbl_9.size = {
+		progress_bar_size[1],
+		progress_bar_size[2]
 	}
-	tbl_16.offset = {
-		arg_1_1[1] / 2 - tbl_2[1] / 2,
-		4,
-		12
+	tbl_9.offset = {
+		size[1] / 2 - progress_bar_size[1] / 2 + 2,
+		2,
+		11
 	}
-	tbl_13.claimed_text = tbl_16
+	tbl_5.claimed_text_shadow = tbl_9
 
-	local tbl_17 = {
-		vertical_alignment = "bottom",
-		upper_case = true,
+	local tbl_10 = {
+		vertical_alignment = "center",
+		upper_case = false,
 		font_size = 18,
 		horizontal_alignment = "center"
 	}
 	local flag_8
 
-	flag_8 = not flag and "hell_shark_masked" and "hell_shark"
-	tbl_17.font_type = flag_8
-	tbl_17.text_color = Colors.get_color_table_with_alpha("black", 255)
-	tbl_17.size = {
-		tbl_2[1],
-		tbl_2[2]
+	flag_8 = (not masked or not "hell_shark_masked") and not not "hell_shark"
+	tbl_10.font_type = flag_8
+	tbl_10.text_color = Colors.get_color_table_with_alpha("font_button_normal", 255)
+	tbl_10.size = {
+		progress_bar_size[1],
+		progress_bar_size[2]
 	}
-	tbl_17.offset = {
-		arg_1_1[1] / 2 - tbl_2[1] / 2 + 2,
-		2,
-		11
+	tbl_10.offset = {
+		size[1] / 2 - progress_bar_size[1] / 2,
+		progress_bar_height_offset,
+		10
 	}
-	tbl_13.claimed_text_shadow = tbl_17
+	tbl_5.progress_button_text = tbl_10
 
-	local tbl_18 = {
+	local tbl_11 = {
 		vertical_alignment = "center",
 		upper_case = false,
 		font_size = 18,
@@ -1722,21 +1745,21 @@ return function (arg_1_0, arg_1_1)
 	}
 	local flag_9
 
-	flag_9 = not flag and "hell_shark_masked" and "hell_shark"
-	tbl_18.font_type = flag_9
-	tbl_18.text_color = Colors.get_color_table_with_alpha("font_button_normal", 255)
-	tbl_18.size = {
-		tbl_2[1],
-		tbl_2[2]
+	flag_9 = (not masked or not "hell_shark_masked") and not not "hell_shark"
+	tbl_11.font_type = flag_9
+	tbl_11.text_color = Colors.get_color_table_with_alpha("white", 255)
+	tbl_11.size = {
+		progress_bar_size[1],
+		progress_bar_size[2]
 	}
-	tbl_18.offset = {
-		arg_1_1[1] / 2 - tbl_2[1] / 2,
-		num,
+	tbl_11.offset = {
+		size[1] / 2 - progress_bar_size[1] / 2,
+		progress_bar_height_offset,
 		10
 	}
-	tbl_13.progress_button_text = tbl_18
+	tbl_5.progress_button_text_hover = tbl_11
 
-	local tbl_19 = {
+	local tbl_12 = {
 		vertical_alignment = "center",
 		upper_case = false,
 		font_size = 18,
@@ -1744,21 +1767,21 @@ return function (arg_1_0, arg_1_1)
 	}
 	local flag_10
 
-	flag_10 = not flag and "hell_shark_masked" and "hell_shark"
-	tbl_19.font_type = flag_10
-	tbl_19.text_color = Colors.get_color_table_with_alpha("white", 255)
-	tbl_19.size = {
-		tbl_2[1],
-		tbl_2[2]
+	flag_10 = (not masked or not "hell_shark_masked") and not not "hell_shark"
+	tbl_12.font_type = flag_10
+	tbl_12.text_color = Colors.get_color_table_with_alpha("black", 255)
+	tbl_12.size = {
+		progress_bar_size[1],
+		progress_bar_size[2]
 	}
-	tbl_19.offset = {
-		arg_1_1[1] / 2 - tbl_2[1] / 2,
-		num,
-		10
+	tbl_12.offset = {
+		size[1] / 2 - progress_bar_size[1] / 2 + 2,
+		progress_bar_height_offset - 2,
+		9
 	}
-	tbl_13.progress_button_text_hover = tbl_19
+	tbl_5.progress_button_text_shadow = tbl_12
 
-	local tbl_20 = {
+	local tbl_13 = {
 		vertical_alignment = "center",
 		upper_case = false,
 		font_size = 18,
@@ -1766,48 +1789,50 @@ return function (arg_1_0, arg_1_1)
 	}
 	local flag_11
 
-	flag_11 = not flag and "hell_shark_masked" and "hell_shark"
-	tbl_20.font_type = flag_11
-	tbl_20.text_color = Colors.get_color_table_with_alpha("black", 255)
-	tbl_20.size = {
-		tbl_2[1],
-		tbl_2[2]
-	}
-	tbl_20.offset = {
-		arg_1_1[1] / 2 - tbl_2[1] / 2 + 2,
-		num - 2,
-		9
-	}
-	tbl_13.progress_button_text_shadow = tbl_20
-
-	local tbl_21 = {
-		vertical_alignment = "center",
-		upper_case = false,
-		font_size = 18,
-		horizontal_alignment = "center"
-	}
-	local flag_12
-
-	flag_12 = not flag and "hell_shark_masked" and "hell_shark"
-	tbl_21.font_type = flag_12
-	tbl_21.text_color = {
+	flag_11 = (not masked or not "hell_shark_masked") and not not "hell_shark"
+	tbl_13.font_type = flag_11
+	tbl_13.text_color = {
 		255,
 		155,
 		155,
 		155
 	}
-	tbl_21.size = {
-		tbl_2[1],
-		tbl_2[2]
+	tbl_13.size = {
+		progress_bar_size[1],
+		progress_bar_size[2]
 	}
-	tbl_21.offset = {
-		arg_1_1[1] / 2 - tbl_2[1] / 2,
-		num,
+	tbl_13.offset = {
+		size[1] / 2 - progress_bar_size[1] / 2,
+		progress_bar_height_offset,
 		10
 	}
-	tbl_13.progress_button_text_disabled = tbl_21
+	tbl_5.progress_button_text_disabled = tbl_13
 
-	local tbl_22 = {
+	local tbl_14 = {
+		word_wrap = true,
+		upper_case = false,
+		font_size = 18,
+		font_height_multiplier = 0.9,
+		horizontal_alignment = "center",
+		vertical_alignment = "center"
+	}
+	local flag_12
+
+	flag_12 = (not masked or not "hell_shark_masked") and not not "hell_shark"
+	tbl_14.font_type = flag_12
+	tbl_14.text_color = Colors.get_color_table_with_alpha("font_default", 255)
+	tbl_14.size = {
+		size[1] - 300,
+		size[2]
+	}
+	tbl_14.offset = {
+		150,
+		5,
+		12
+	}
+	tbl_5.description = tbl_14
+
+	local tbl_15 = {
 		word_wrap = true,
 		upper_case = false,
 		font_size = 18,
@@ -1817,45 +1842,44 @@ return function (arg_1_0, arg_1_1)
 	}
 	local flag_13
 
-	flag_13 = not flag and "hell_shark_masked" and "hell_shark"
-	tbl_22.font_type = flag_13
-	tbl_22.text_color = Colors.get_color_table_with_alpha("font_default", 255)
-	tbl_22.size = {
-		arg_1_1[1] - 300,
-		arg_1_1[2]
+	flag_13 = (not masked or not "hell_shark_masked") and not not "hell_shark"
+	tbl_15.font_type = flag_13
+	tbl_15.text_color = Colors.get_color_table_with_alpha("black", 255)
+	tbl_15.size = {
+		size[1] - 300,
+		size[2]
 	}
-	tbl_22.offset = {
-		150,
-		5,
-		12
-	}
-	tbl_13.description = tbl_22
-
-	local tbl_23 = {
-		word_wrap = true,
-		upper_case = false,
-		font_size = 18,
-		font_height_multiplier = 0.9,
-		horizontal_alignment = "center",
-		vertical_alignment = "center"
-	}
-	local flag_14
-
-	flag_14 = not flag and "hell_shark_masked" and "hell_shark"
-	tbl_23.font_type = flag_14
-	tbl_23.text_color = Colors.get_color_table_with_alpha("black", 255)
-	tbl_23.size = {
-		arg_1_1[1] - 300,
-		arg_1_1[2]
-	}
-	tbl_23.offset = {
+	tbl_15.offset = {
 		152,
 		3,
 		11
 	}
-	tbl_13.description_shadow = tbl_23
+	tbl_5.description_shadow = tbl_15
 
-	local tbl_24 = {
+	local tbl_16 = {
+		font_size = 28,
+		upper_case = true,
+		horizontal_alignment = "center",
+		vertical_alignment = "top",
+		dynamic_font_size = true
+	}
+	local flag_14
+
+	flag_14 = (not masked or not "hell_shark_header_masked") and not not "hell_shark_header"
+	tbl_16.font_type = flag_14
+	tbl_16.text_color = Colors.get_color_table_with_alpha("font_title", 255)
+	tbl_16.offset = {
+		size[1] / 2 - 200,
+		-7,
+		9
+	}
+	tbl_16.size = {
+		400,
+		size[2]
+	}
+	tbl_5.title = tbl_16
+
+	local tbl_17 = {
 		font_size = 28,
 		upper_case = true,
 		horizontal_alignment = "center",
@@ -1864,61 +1888,42 @@ return function (arg_1_0, arg_1_1)
 	}
 	local flag_15
 
-	flag_15 = not flag and "hell_shark_header_masked" and "hell_shark_header"
-	tbl_24.font_type = flag_15
-	tbl_24.text_color = Colors.get_color_table_with_alpha("font_title", 255)
-	tbl_24.offset = {
-		arg_1_1[1] / 2 - 200,
-		-7,
-		9
-	}
-	tbl_24.size = {
-		400,
-		arg_1_1[2]
-	}
-	tbl_13.title = tbl_24
-
-	local tbl_25 = {
-		font_size = 28,
-		upper_case = true,
-		horizontal_alignment = "center",
-		vertical_alignment = "top",
-		dynamic_font_size = true
-	}
-	local flag_16
-
-	flag_16 = not flag and "hell_shark_header_masked" and "hell_shark_header"
-	tbl_25.font_type = flag_16
-	tbl_25.text_color = Colors.get_color_table_with_alpha("black", 255)
-	tbl_25.offset = {
-		arg_1_1[1] / 2 - 200 + 2,
+	flag_15 = (not masked or not "hell_shark_header_masked") and not not "hell_shark_header"
+	tbl_17.font_type = flag_15
+	tbl_17.text_color = Colors.get_color_table_with_alpha("black", 255)
+	tbl_17.offset = {
+		size[1] / 2 - 200 + 2,
 		-9,
 		8
 	}
-	tbl_25.size = {
+	tbl_17.size = {
 		400,
-		arg_1_1[2]
+		size[2]
 	}
-	tbl_13.title_shadow = tbl_25
+	tbl_5.title_shadow = tbl_17
 
-	UIWidgets.append_item_frame_pass("reward_frame", tbl_11, tbl_12, tbl_13, tbl, {
+	local style = tbl_5
+
+	UIWidgets.append_item_frame_pass("reward_frame", passes, content, style, texture_size, {
 		-2,
 		0,
 		15
-	}, flag, nil, {
+	}, masked, nil, {
 		horizontal_alignment = "right",
 		vertical_alignment = "center"
 	}, nil, nil)
 
-	tbl_10.element.passes = tbl_11
-	tbl_10.content = tbl_12
-	tbl_10.style = tbl_13
-	tbl_10.offset = {
+	widget.element.passes = passes
+	widget.content = content
+	widget.style = style
+	widget.offset = {
 		0,
 		0,
 		0
 	}
-	tbl_10.scenegraph_id = arg_1_0
+	widget.scenegraph_id = scenegraph_id
 
-	return tbl_10
+	return widget
 end
+
+return create_achievement_entry

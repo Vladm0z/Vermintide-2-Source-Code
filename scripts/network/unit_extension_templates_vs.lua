@@ -1,6 +1,6 @@
 -- chunkname: @scripts/network/unit_extension_templates_vs.lua
 
-return {
+local unit_templates_vs = {
 	player_unit_dark_pact = {
 		base_template = "player_unit_base",
 		go_type = "player_unit",
@@ -64,3 +64,5 @@ return {
 		}
 	}
 }
+
+return unit_templates_vs

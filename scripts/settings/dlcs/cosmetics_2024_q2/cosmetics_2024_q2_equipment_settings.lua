@@ -1,14 +1,14 @@
 -- chunkname: @scripts/settings/dlcs/cosmetics_2024_q2/cosmetics_2024_q2_equipment_settings.lua
 
-local cosmetics_2024_q2 = DLCSettings.cosmetics_2024_q2
+local settings = DLCSettings.cosmetics_2024_q2
 
-cosmetics_2024_q2.cosmetics_files = {
+settings.cosmetics_files = {
 	"scripts/settings/dlcs/cosmetics_2024_q2/cosmetics_cosmetics_2024_q2"
 }
-cosmetics_2024_q2.item_master_list_file_names = {
+settings.item_master_list_file_names = {
 	"scripts/settings/equipment/item_master_list_cosmetics_2024_q2"
 }
-cosmetics_2024_q2.inventory_package_list = {
+settings.inventory_package_list = {
 	"units/beings/player/dark_pact_skins/skaven_gutter_runner/skin_1001/first_person/chr_first_person_mesh",
 	"units/beings/player/dark_pact_skins/skaven_gutter_runner/skin_1001/third_person/chr_third_person_mesh",
 	"units/beings/player/dark_pact_skins/skaven_pack_master/skin_1001/first_person/chr_first_person_mesh",

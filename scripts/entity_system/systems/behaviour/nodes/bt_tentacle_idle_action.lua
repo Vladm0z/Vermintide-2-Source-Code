@@ -4,57 +4,67 @@ require("scripts/entity_system/systems/behaviour/nodes/bt_node")
 
 BTTentacleIdleAction = class(BTTentacleIdleAction, BTNode)
 
-BTTentacleIdleAction.init = function (arg_1_0, ...)
+BTTentacleIdleAction.init = function (self, ...)
 	-- function 1
-	BTTentacleIdleAction.super.init(arg_1_0, ...)
+	BTTentacleIdleAction.super.init(self, ...)
 end
 
 BTTentacleIdleAction.name = "BTTentacleIdleAction"
 
-BTTentacleIdleAction.enter = function (arg_2_0, arg_2_1, arg_2_2, arg_2_3)
+BTTentacleIdleAction.enter = function (self, unit, blackboard, t)
 	-- function 2
-	local next_attack_time = arg_2_2.next_attack_time
+	local next_attack_time = blackboard.next_attack_time
 
-	next_attack_time = next_attack_time or arg_2_3 + 0.5
-	arg_2_2.next_attack_time = next_attack_time
+	next_attack_time = not not next_attack_time or not not (t + 0.5)
+	blackboard.next_attack_time = next_attack_time
 end
 
-BTTentacleIdleAction.leave = function (arg_3_0, arg_3_1, arg_3_2, arg_3_3, arg_3_4, arg_3_5)
+BTTentacleIdleAction.leave = function (self, unit, blackboard, t, reason, destroy)
 	-- function 3
 	return
 end
 
-BTTentacleIdleAction.run = function (arg_4_0, arg_4_1, arg_4_2, arg_4_3, arg_4_4, arg_4_5)
+BTTentacleIdleAction.run = function (self, unit, blackboard, t, dt, bt_name)
 	-- function 4
-	local tentacle_data = arg_4_2.tentacle_data
-	local current_length = tentacle_data.current_length
+	local data = blackboard.tentacle_data
+	local current_length = data.current_length
 
 	if current_length > 0 then
-		local breed = arg_4_2.breed
+		local breed = blackboard.breed
 
-		tentacle_data.current_length = tentacle_data.current_length - arg_4_4 * breed.fail_retract_speed
+		data.current_length = data.current_length - dt * breed.fail_retract_speed
 
-		arg_4_2.tentacle_spline_extension:set_reach_dist(current_length)
+		local tentacle_extension = blackboard.tentacle_spline_extension
+
+		tentacle_extension:set_reach_dist(current_length)
 	end
 
-	local current_unit = arg_4_2.current_unit
+	local current_unit = blackboard.current_unit
 
-	current_unit = current_unit or arg_4_2.target_unit
+	if not current_unit then
+		-- Nothing
+	end
 
-	if not Unit.alive(current_unit) then
+	current_unit = blackboard.target_unit
+
+	local target_unit = current_unit
+
+	::label_4_0::
+
+	if not Unit.alive(target_unit) then
 		return "running"
 	end
 
-	if arg_4_3 < arg_4_2.next_attack_time then
+	if t < blackboard.next_attack_time then
 		return "running"
 	end
 
-	if arg_4_2.target_dist < 20 then
-		arg_4_2.tentacle_satisfied = false
+	if blackboard.target_dist < 20 then
+		blackboard.tentacle_satisfied = false
 
 		return "done"
 	else
-		arg_4_2.next_attack_time = arg_4_3 + 1 + math.random()
+		blackboard.next_attack_time = t + 1 + math.random()
 	end
 
 	return "running"

@@ -2,80 +2,80 @@
 
 ActionSoulDrain = class(ActionSoulDrain, ActionCareerTrueFlightAim)
 
-ActionSoulDrain.init = function (self, arg_1_1, arg_1_2, arg_1_3, arg_1_4, arg_1_5, arg_1_6, arg_1_7, arg_1_8)
+ActionSoulDrain.init = function (self, world, item_name, is_server, owner_unit, damage_unit, first_person_unit, weapon_unit, weapon_system)
 	-- function 1
-	ActionSoulDrain.super.init(self, arg_1_1, arg_1_2, arg_1_3, arg_1_4, arg_1_5, arg_1_6, arg_1_7, arg_1_8)
+	ActionSoulDrain.super.init(self, world, item_name, is_server, owner_unit, damage_unit, first_person_unit, weapon_unit, weapon_system)
 
-	self.ammo_extension = ScriptUnit.has_extension(arg_1_7, "ammo_system")
-	self.inventory_extension = ScriptUnit.extension(arg_1_4, "inventory_system")
-	self.overcharge_extension = ScriptUnit.extension(arg_1_4, "overcharge_system")
-	self.first_person_extension = ScriptUnit.has_extension(arg_1_4, "first_person_system")
-	self.owner_buff_extension = ScriptUnit.extension(arg_1_4, "buff_system")
-	self.weapon_extension = ScriptUnit.extension(arg_1_7, "weapon_system")
-	self.status_extension = ScriptUnit.extension(arg_1_4, "status_system")
-	self.hud_extension = ScriptUnit.has_extension(arg_1_4, "hud_system")
+	self.ammo_extension = ScriptUnit.has_extension(weapon_unit, "ammo_system")
+	self.inventory_extension = ScriptUnit.extension(owner_unit, "inventory_system")
+	self.overcharge_extension = ScriptUnit.extension(owner_unit, "overcharge_system")
+	self.first_person_extension = ScriptUnit.has_extension(owner_unit, "first_person_system")
+	self.owner_buff_extension = ScriptUnit.extension(owner_unit, "buff_system")
+	self.weapon_extension = ScriptUnit.extension(weapon_unit, "weapon_system")
+	self.status_extension = ScriptUnit.extension(owner_unit, "status_system")
+	self.hud_extension = ScriptUnit.has_extension(owner_unit, "hud_system")
 
-	if not self.first_person_extension then
+	if self.first_person_extension then
 		self.first_person_unit = self.first_person_extension:get_first_person_unit()
 	end
 
 	self._rumble_effect_id = false
-	self.unit_id = Managers.state.network.unit_storage:go_id(arg_1_4)
+	self.unit_id = Managers.state.network.unit_storage:go_id(owner_unit)
 end
 
-ActionSoulDrain.client_owner_start_action = function (self, arg_2_1, arg_2_2, arg_2_3, arg_2_4)
+ActionSoulDrain.client_owner_start_action = function (self, new_action, t, chain_action_data, power_level)
 	-- function 2
-	ActionSoulDrain.super.client_owner_start_action(self, arg_2_1, arg_2_2, arg_2_3, arg_2_4)
+	ActionSoulDrain.super.client_owner_start_action(self, new_action, t, chain_action_data, power_level)
 
-	self.current_action = arg_2_1
+	self.current_action = new_action
 
 	local owner_unit = self.owner_unit
 
 	self.state = "waiting_to_shoot"
-	self.time_to_shoot = arg_2_2 + arg_2_1.fire_time
+	self.time_to_shoot = t + new_action.fire_time
 	self.current_target = nil
 	self.damage_timer = 0
 	self.overcharge_timer = 0
 	self.ramping_interval = 1
 	self.consecutive_hits = 0
-	self.power_level = arg_2_4
+	self.power_level = power_level
 	self.charge_level = 0
 	self.last_alive_target_hit = nil
 	self._is_critical_strike = false
 	self._num_hits = 0
 
-	local particle_effect_trail = arg_2_1.particle_effect_trail
-	local particle_effect_trail_3p = arg_2_1.particle_effect_trail_3p
-	local particle_effect_target = arg_2_1.particle_effect_target
-	local var_2_4 = NetworkLookup.effects[particle_effect_trail_3p]
-	local var_2_5 = NetworkLookup.effects[particle_effect_target]
+	local beam_effect = new_action.particle_effect_trail
+	local beam_effect_3p = new_action.particle_effect_trail_3p
+	local beam_end_effect = new_action.particle_effect_target
+	local beam_effect_lookup_id = NetworkLookup.effects[beam_effect_3p]
+	local beam_end_effect_lookup_id = NetworkLookup.effects[beam_end_effect]
 	local world = self.world
 
 	if not self.owner_player.bot_player then
-		self.beam_effect_id = World.create_particles(world, particle_effect_trail, Vector3.zero())
-		self.beam_effect_length_id = World.find_particles_variable(world, particle_effect_trail, "trail_length")
+		self.beam_effect_id = World.create_particles(world, beam_effect, Vector3.zero())
+		self.beam_effect_length_id = World.find_particles_variable(world, beam_effect, "trail_length")
 	end
 
-	self.beam_end_effect_id = World.create_particles(world, particle_effect_target, Vector3.zero())
+	self.beam_end_effect_id = World.create_particles(world, beam_end_effect, Vector3.zero())
 
-	local unit_id = self.unit_id
+	local go_id = self.unit_id
 
-	if self.is_server or not LEVEL_EDITOR_TEST then
-		if not self.owner_player.bot_player then
-			self.network_transmit:queue_local_rpc("rpc_start_beam", unit_id, var_2_4, var_2_5, arg_2_1.range)
+	if self.is_server or LEVEL_EDITOR_TEST then
+		if self.owner_player.bot_player then
+			self.network_transmit:queue_local_rpc("rpc_start_beam", go_id, beam_effect_lookup_id, beam_end_effect_lookup_id, new_action.range)
 		else
-			self.network_transmit:send_rpc_clients("rpc_start_beam", unit_id, var_2_4, var_2_5, arg_2_1.range)
+			self.network_transmit:send_rpc_clients("rpc_start_beam", go_id, beam_effect_lookup_id, beam_end_effect_lookup_id, new_action.range)
 		end
 	else
-		self.network_transmit:send_rpc_server("rpc_start_beam", unit_id, var_2_4, var_2_5, arg_2_1.range)
+		self.network_transmit:send_rpc_server("rpc_start_beam", go_id, beam_effect_lookup_id, beam_end_effect_lookup_id, new_action.range)
 	end
 
-	local overcharge_type = arg_2_1.overcharge_type
+	local overcharge_type = new_action.overcharge_type
 
-	if not overcharge_type then
-		local var_2_9 = PlayerUnitStatusSettings.overcharge_values[overcharge_type]
+	if overcharge_type then
+		local overcharge_amount = PlayerUnitStatusSettings.overcharge_values[overcharge_type]
 
-		self.overcharge_extension:add_charge(var_2_9)
+		self.overcharge_extension:add_charge(overcharge_amount)
 	end
 
 	self.overcharge_target_hit = false
@@ -88,18 +88,18 @@ ActionSoulDrain._start_charge_sound = function (self)
 	local current_action = self.current_action
 	local owner_unit = self.owner_unit
 	local owner_player = self.owner_player
-	local flag = not owner_player and owner_player.bot_player
-	local flag_2 = not owner_player and not owner_player.remote
+	local is_bot = not not owner_player and not not owner_player.bot_player
+	local is_local = not not owner_player and not not not owner_player.remote
 	local wwise_world = self.wwise_world
 
-	if not (not flag_2 and flag) then
-		local start_charge_sound, var_3_7 = ActionUtils.start_charge_sound(wwise_world, self.weapon_unit, owner_unit, current_action)
+	if is_local and not is_bot then
+		local wwise_playing_id, wwise_source_id = ActionUtils.start_charge_sound(wwise_world, self.weapon_unit, owner_unit, current_action)
 
-		self.charging_sound_id = start_charge_sound
-		self.wwise_source_id = var_3_7
+		self.charging_sound_id = wwise_playing_id
+		self.wwise_source_id = wwise_source_id
 	end
 
-	ActionUtils.play_husk_sound_event(wwise_world, current_action.charge_sound_husk_name, owner_unit, flag)
+	ActionUtils.play_husk_sound_event(wwise_world, current_action.charge_sound_husk_name, owner_unit, is_bot)
 end
 
 ActionSoulDrain._stop_charge_sound = function (self)
@@ -107,120 +107,130 @@ ActionSoulDrain._stop_charge_sound = function (self)
 	local current_action = self.current_action
 	local owner_unit = self.owner_unit
 	local owner_player = self.owner_player
-	local flag = not owner_player and owner_player.bot_player
-	local flag_2 = not owner_player and not owner_player.remote
+	local is_bot = not not owner_player and not not owner_player.bot_player
+	local is_local = not not owner_player and not not not owner_player.remote
 	local wwise_world = self.wwise_world
 
-	if not (not flag_2 and flag) then
+	if is_local and not is_bot then
 		ActionUtils.stop_charge_sound(wwise_world, self.charging_sound_id, self.wwise_source_id, current_action)
 
 		self.charging_sound_id = nil
 		self.wwise_source_id = nil
 	end
 
-	ActionUtils.play_husk_sound_event(wwise_world, current_action.charge_sound_husk_stop_event, owner_unit, flag)
+	ActionUtils.play_husk_sound_event(wwise_world, current_action.charge_sound_husk_stop_event, owner_unit, is_bot)
 end
 
-local num = 1
-local num_2 = 4
+local INDEX_POSITION = 1
+local INDEX_ACTOR = 4
 
-ActionSoulDrain.client_owner_post_update = function (self, arg_5_1, arg_5_2, arg_5_3, arg_5_4)
+ActionSoulDrain.client_owner_post_update = function (self, dt, t, world, can_damage)
 	-- function 5
-	ActionSoulDrain.super.client_owner_post_update(self, arg_5_1, arg_5_2, arg_5_3, arg_5_4)
+	ActionSoulDrain.super.client_owner_post_update(self, dt, t, world, can_damage)
 
 	local owner_unit = self.owner_unit
 	local current_action = self.current_action
 	local is_server = self.is_server
-	local extension = ScriptUnit.extension(self.owner_unit, "input_system")
-	local owner_buff_extension = self.owner_buff_extension
+	local input_extension = ScriptUnit.extension(self.owner_unit, "input_system")
+	local buff_extension = self.owner_buff_extension
 	local status_extension = self.status_extension
 
-	if not (self.state ~= "waiting_to_shoot" or not (arg_5_2 >= self.time_to_shoot)) then
+	if self.state == "waiting_to_shoot" and t >= self.time_to_shoot then
 		self.state = "shooting"
 	end
 
-	self.overcharge_timer = self.overcharge_timer + arg_5_1
+	self.overcharge_timer = self.overcharge_timer + dt
 
 	if self.overcharge_timer >= current_action.overcharge_interval then
-		local charging = PlayerUnitStatusSettings.overcharge_values.charging
+		local overcharge_amount = PlayerUnitStatusSettings.overcharge_values.charging
 
-		self.overcharge_extension:add_charge(charging)
+		self.overcharge_extension:add_charge(overcharge_amount)
 
-		self._is_critical_strike = ActionUtils.is_critical_strike(owner_unit, current_action, arg_5_2)
+		self._is_critical_strike = ActionUtils.is_critical_strike(owner_unit, current_action, t)
 		self.overcharge_timer = 0
 		self.overcharge_target_hit = false
 	end
 
 	if self.state == "shooting" then
-		if not (Managers.player:owner(self.owner_unit).bot_player or self._rumble_effect_id) then
+		if not Managers.player:owner(self.owner_unit).bot_player and not self._rumble_effect_id then
 			self._rumble_effect_id = Managers.state.controller_features:add_effect("persistent_rumble", {
 				rumble_effect = "reload_start"
 			})
 		end
 
-		local var_5_7
-		local var_5_8
-		local extension_2 = ScriptUnit.extension(owner_unit, "first_person_system")
-		local get_projectile_start_position_rotation, var_5_11 = extension_2:get_projectile_start_position_rotation()
-		local forward = Quaternion.forward(var_5_11)
+		local beam_end_position, hit_unit
+		local first_person_extension = ScriptUnit.extension(owner_unit, "first_person_system")
+		local current_position, current_rotation = first_person_extension:get_projectile_start_position_rotation()
+		local direction = Quaternion.forward(current_rotation)
 
-		if not self.target then
-			forward = Vector3.normalize(Unit.world_position(self.target, Unit.node(self.target, "j_head")) - get_projectile_start_position_rotation)
+		if self.target then
+			direction = Vector3.normalize(Unit.world_position(self.target, Unit.node(self.target, "j_head")) - current_position)
 		end
 
-		local get_data = World.get_data(self.world, "physics_world")
-		local range = current_action.range
+		local physics_world = World.get_data(self.world, "physics_world")
+		local range_2 = current_action.range
 
-		range = range or 30
+		if not range_2 then
+			-- Nothing
+		end
 
-		local immediate_raycast_actors = PhysicsWorld.immediate_raycast_actors(get_data, get_projectile_start_position_rotation, forward, range, "static_collision_filter", "filter_player_ray_projectile_static_only", "dynamic_collision_filter", "filter_player_ray_projectile_ai_only", "dynamic_collision_filter", "filter_player_ray_projectile_hitbox_only")
-		local num_3 = get_projectile_start_position_rotation + forward * range
-		local var_5_17
+		range_2 = 30
 
-		if not immediate_raycast_actors then
-			local get_difficulty_settings = Managers.state.difficulty:get_difficulty_settings()
+		local range = range_2
+
+		::label_5_0::
+
+		local result = PhysicsWorld.immediate_raycast_actors(physics_world, current_position, direction, range, "static_collision_filter", "filter_player_ray_projectile_static_only", "dynamic_collision_filter", "filter_player_ray_projectile_ai_only", "dynamic_collision_filter", "filter_player_ray_projectile_hitbox_only")
+
+		beam_end_position = current_position + direction * range
+
+		local hit_position
+
+		if result then
+			local difficulty_settings = Managers.state.difficulty:get_difficulty_settings()
 			local owner_player = self.owner_player
-			local allow_friendly_fire_ranged = DamageUtils.allow_friendly_fire_ranged(get_difficulty_settings, owner_player)
+			local allow_friendly_fire = DamageUtils.allow_friendly_fire_ranged(difficulty_settings, owner_player)
 
-			for k, v in pairs(immediate_raycast_actors) do
-				local var_5_21 = v[num]
-				local var_5_22 = v[num_2]
-				local unit = Actor.unit(var_5_22)
-				local redirect_shield_hit, var_5_25 = ActionUtils.redirect_shield_hit(unit, var_5_22)
+			for _, hit_data in pairs(result) do
+				local potential_hit_position = hit_data[INDEX_POSITION]
+				local hit_actor = hit_data[INDEX_ACTOR]
+				local potential_hit_unit = Actor.unit(hit_actor)
 
-				if redirect_shield_hit ~= owner_unit then
-					local get_data_2 = Unit.get_data(redirect_shield_hit, "breed")
-					local var_5_27
+				potential_hit_unit, hit_actor = ActionUtils.redirect_shield_hit(potential_hit_unit, hit_actor)
 
-					if not get_data_2 then
-						local is_enemy = DamageUtils.is_enemy(owner_unit, redirect_shield_hit)
-						local node = Actor.node(var_5_25)
-						local name = get_data_2.hit_zones_lookup[node].name
+				if potential_hit_unit ~= owner_unit then
+					local breed = Unit.get_data(potential_hit_unit, "breed")
+					local hit_enemy
 
-						var_5_27 = allow_friendly_fire_ranged or not is_enemy or name ~= "afro"
+					if breed then
+						local is_enemy = DamageUtils.is_enemy(owner_unit, potential_hit_unit)
+						local node = Actor.node(hit_actor)
+						local hit_zone = breed.hit_zones_lookup[node]
+						local hit_zone_name = hit_zone.name
+
+						hit_enemy = (allow_friendly_fire or not not is_enemy) and hit_zone_name ~= "afro"
 					else
-						var_5_27 = true
+						hit_enemy = true
 					end
 
-					if not var_5_27 then
-						local num_4 = var_5_21 - forward * 0.15
-
-						var_5_8 = redirect_shield_hit
+					if hit_enemy then
+						hit_position = potential_hit_position - direction * 0.15
+						hit_unit = potential_hit_unit
 
 						break
 					end
 				end
 			end
 
-			if not self.target then
-				var_5_8 = self.target
+			if self.target then
+				hit_unit = self.target
 			end
 
-			if not var_5_8 then
-				local has_extension = ScriptUnit.has_extension(var_5_8, "health_system")
+			if hit_unit then
+				local health_extension = ScriptUnit.has_extension(hit_unit, "health_system")
 
-				if not has_extension then
-					if var_5_8 ~= self.current_target then
+				if health_extension then
+					if hit_unit ~= self.current_target then
 						self.ramping_interval = 0.4
 						self.damage_timer = 0
 						self._num_hits = 0
@@ -231,37 +241,39 @@ ActionSoulDrain.client_owner_post_update = function (self, arg_5_1, arg_5_2, arg
 
 						self.damage_timer = 0
 
-						if not has_extension then
+						if health_extension then
 							self.ramping_interval = math.clamp(self.ramping_interval * 1.4, 0.45, 1.5)
 						end
 					end
 
 					if self.damage_timer == 0 then
-						local _is_critical_strike = self._is_critical_strike
+						local is_critical_strike = self._is_critical_strike
 						local hud_extension = self.hud_extension
 
-						self:_handle_critical_strike(_is_critical_strike, owner_buff_extension, hud_extension, extension_2, "on_critical_shot", nil)
+						self:_handle_critical_strike(is_critical_strike, buff_extension, hud_extension, first_person_extension, "on_critical_shot", nil)
 
-						local var_5_35
-						local num_5 = self.power_level * self.ramping_interval
+						local override_damage_profile
+						local power_level = self.power_level
 
-						if var_5_8 ~= self.current_target then
+						power_level = power_level * self.ramping_interval
+
+						if hit_unit ~= self.current_target then
 							self.consecutive_hits = 0
-							num_5 = num_5 * 0.5
-							var_5_35 = current_action.damage_profile or "default"
+							power_level = power_level * 0.5
+							override_damage_profile = not not current_action.damage_profile or not not "default"
 						else
 							self.consecutive_hits = self.consecutive_hits + 1
 
 							if self.consecutive_hits < 3 then
-								var_5_35 = current_action.damage_profile or "default"
+								override_damage_profile = not not current_action.damage_profile or not not "default"
 							end
 						end
 
-						extension_2:play_hud_sound_event("staff_beam_hit_enemy", nil, false)
+						first_person_extension:play_hud_sound_event("staff_beam_hit_enemy", nil, false)
 
-						local flag = self._num_hits > 1
+						local check_buffs = self._num_hits > 1
 
-						DamageUtils.process_projectile_hit(arg_5_3, self.item_name, owner_unit, is_server, immediate_raycast_actors, current_action, forward, flag, nil, nil, self._is_critical_strike, num_5, var_5_35)
+						DamageUtils.process_projectile_hit(world, self.item_name, owner_unit, is_server, result, current_action, direction, check_buffs, nil, nil, self._is_critical_strike, power_level, override_damage_profile)
 
 						self._num_hits = self._num_hits + 1
 
@@ -271,23 +283,23 @@ ActionSoulDrain.client_owner_post_update = function (self, arg_5_1, arg_5_2, arg
 							})
 						end
 
-						if not has_extension:is_alive() then
-							local var_5_38 = PlayerUnitStatusSettings.overcharge_values[current_action.overcharge_type]
+						if health_extension:is_alive() then
+							local overcharge_amount = PlayerUnitStatusSettings.overcharge_values[current_action.overcharge_type]
 
-							if not _is_critical_strike and not owner_buff_extension:has_buff_perk("no_overcharge_crit") then
-								var_5_38 = 0
+							if is_critical_strike and buff_extension:has_buff_perk("no_overcharge_crit") then
+								overcharge_amount = 0
 							end
 
-							self.overcharge_extension:add_charge(var_5_38 * self.ramping_interval)
+							self.overcharge_extension:add_charge(overcharge_amount * self.ramping_interval)
 						end
 					end
 
-					self.damage_timer = self.damage_timer + arg_5_1
-					self.current_target = var_5_8
+					self.damage_timer = self.damage_timer + dt
+					self.current_target = hit_unit
 
-					if not has_extension:is_alive() then
-						self.last_alive_target_hit = var_5_8
-					elseif not ((self.last_alive_target_hit ~= var_5_8 or has_extension:is_alive() or not self.ammo_extension) and not (self.ammo_extension:current_ammo() < self.ammo_extension:clip_size())) then
+					if health_extension:is_alive() then
+						self.last_alive_target_hit = hit_unit
+					elseif self.last_alive_target_hit == hit_unit and not health_extension:is_alive() and self.ammo_extension and self.ammo_extension:current_ammo() < self.ammo_extension:clip_size() then
 						self.last_alive_target_hit = nil
 
 						self.ammo_extension:add_ammo(1)
@@ -296,24 +308,28 @@ ActionSoulDrain.client_owner_post_update = function (self, arg_5_1, arg_5_2, arg
 			end
 		end
 
-		if not self.beam_effect_id then
+		if self.beam_effect_id then
 			local weapon_unit = self.weapon_unit
-			local first_person_unit = self.first_person_unit
-			local world_position = Unit.world_position(first_person_unit, Unit.node(first_person_unit, "j_lefthand"))
-			local distance = Vector3.distance(world_position, num_3)
-			local normalize = Vector3.normalize(world_position - num_3)
-			local look = Quaternion.look(normalize)
+			local owner_unit = self.first_person_unit
+			local end_of_staff_position = Unit.world_position(owner_unit, Unit.node(owner_unit, "j_lefthand"))
+			local distance = Vector3.distance(end_of_staff_position, beam_end_position)
+			local beam_direction = Vector3.normalize(end_of_staff_position - beam_end_position)
+			local rotation = Quaternion.look(beam_direction)
 
-			World.move_particles(arg_5_3, self.beam_effect_id, num_3, look)
-			World.set_particles_variable(arg_5_3, self.beam_effect_id, self.beam_effect_length_id, Vector3(0.3, distance, 0))
-			World.move_particles(arg_5_3, self.beam_end_effect_id, num_3, look)
+			World.move_particles(world, self.beam_effect_id, beam_end_position, rotation)
+			World.set_particles_variable(world, self.beam_effect_id, self.beam_effect_length_id, Vector3(0.3, distance, 0))
+			World.move_particles(world, self.beam_end_effect_id, beam_end_position, rotation)
 
-			local var_5_45 = POSITION_LOOKUP[self.target]
-			local var_5_46 = world_position
+			local target_location = POSITION_LOOKUP[self.target]
+			local staff_location = end_of_staff_position
 
-			if not (not var_5_45 and not var_5_46 and not (range < Vector3.distance(var_5_46, var_5_45))) then
-				self.target = nil
-				self.current_target = nil
+			if target_location and staff_location then
+				local drain_length = Vector3.distance(staff_location, target_location)
+
+				if range < drain_length then
+					self.target = nil
+					self.current_target = nil
+				end
 			end
 		end
 	end
@@ -323,19 +339,19 @@ ActionSoulDrain._stop_fx = function (self)
 	-- function 6
 	local world = self.world
 
-	if not self.beam_end_effect_id then
+	if self.beam_end_effect_id then
 		World.destroy_particles(world, self.beam_end_effect_id)
 
 		self.beam_end_effect_id = nil
 	end
 
-	if not self.beam_effect_id then
+	if self.beam_effect_id then
 		World.destroy_particles(world, self.beam_effect_id)
 
 		self.beam_effect_id = nil
 	end
 
-	if not self._rumble_effect_id then
+	if self._rumble_effect_id then
 		Managers.state.controller_features:stop_effect(self._rumble_effect_id)
 
 		self._rumble_effect_id = nil
@@ -346,24 +362,27 @@ end
 
 ActionSoulDrain._stop_client_vfx = function (self)
 	-- function 7
-	if not Managers.state.network:game() then
-		local unit_id = self.unit_id
+	local network_manager = Managers.state.network
+	local game = network_manager:game()
 
-		if self.is_server or not LEVEL_EDITOR_TEST then
-			if not self.owner_player.bot_player then
-				self.network_transmit:queue_local_rpc("rpc_end_beam", unit_id)
+	if game then
+		local go_id = self.unit_id
+
+		if self.is_server or LEVEL_EDITOR_TEST then
+			if self.owner_player.bot_player then
+				self.network_transmit:queue_local_rpc("rpc_end_beam", go_id)
 			else
-				self.network_transmit:send_rpc_clients("rpc_end_beam", unit_id)
+				self.network_transmit:send_rpc_clients("rpc_end_beam", go_id)
 			end
 		else
-			self.network_transmit:send_rpc_server("rpc_end_beam", unit_id)
+			self.network_transmit:send_rpc_server("rpc_end_beam", go_id)
 		end
 	end
 end
 
-ActionSoulDrain.finish = function (self, arg_8_1)
+ActionSoulDrain.finish = function (self, reason)
 	-- function 8
-	ActionSoulDrain.super.finish(self, arg_8_1)
+	ActionSoulDrain.super.finish(self, reason)
 	self:_stop_client_vfx()
 	self:_stop_fx()
 	self:_proc_spell_used(self.owner_buff_extension)

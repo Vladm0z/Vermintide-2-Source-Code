@@ -1,63 +1,63 @@
 -- chunkname: @foundation/scripts/util/frame_table.lua
 
-if not rawget(_G, "FrameTable") then
+if rawget(_G, "FrameTable") then
 	return
 end
 
 FrameTable = {}
 
-local num = 256
-local new_array = Script.new_array(num)
-local new_array_2 = Script.new_array(num)
-local num_2 = 0
-local num_3 = 0
+local frame_table_max_size = 256
+local frame_table_buffer = Script.new_array(frame_table_max_size)
+local frame_table_back_buffer = Script.new_array(frame_table_max_size)
+local frame_table_count = 0
+local frame_table_back_count = 0
 
-for i = 1, num do
-	new_array[i] = {}
-	new_array_2[i] = {}
+for i = 1, frame_table_max_size do
+	frame_table_buffer[i] = {}
+	frame_table_back_buffer[i] = {}
 end
 
 FrameTable.alloc_table = function ()
 	-- function 1
-	num_2 = num_2 + 1
+	frame_table_count = frame_table_count + 1
 
-	if num_2 > num then
-		local var_1_0 = num
+	if frame_table_count > frame_table_max_size then
+		local n = frame_table_max_size
 
-		num = 2 * var_1_0
+		frame_table_max_size = 2 * n
 
-		Application.warning("[FrameTable] WARNING: Expanding frame table size from %d to %d", var_1_0, num)
+		Application.warning("[FrameTable] WARNING: Expanding frame table size from %d to %d", n, frame_table_max_size)
 
-		for i = var_1_0 + 1, num do
-			new_array[i] = {}
-			new_array_2[i] = {}
+		for i = n + 1, frame_table_max_size do
+			frame_table_buffer[i] = {}
+			frame_table_back_buffer[i] = {}
 		end
 	end
 
-	return new_array[num_2]
+	return frame_table_buffer[frame_table_count]
 end
 
 FrameTable.swap_and_clear = function ()
 	-- function 2
-	local clear = table.clear
+	local table_clear = table.clear
 
-	for i = 1, num_3 do
-		clear(new_array_2[i])
+	for i = 1, frame_table_back_count do
+		table_clear(frame_table_back_buffer[i])
 	end
 
-	new_array, new_array_2 = new_array_2, new_array
-	num_3 = num_2
-	num_2 = 0
+	frame_table_buffer, frame_table_back_buffer = frame_table_back_buffer, frame_table_buffer
+	frame_table_back_count = frame_table_count
+	frame_table_count = 0
 end
 
-FrameTable.init = function (arg_3_0)
+FrameTable.init = function (use_ordinary_tables)
 	-- function 3
-	if not arg_3_0 then
+	if use_ordinary_tables then
 		FrameTable.alloc_table = TABLE_NEW
 		FrameTable.swap_and_clear = NOP
-		new_array = nil
-		new_array_2 = nil
+		frame_table_buffer = nil
+		frame_table_back_buffer = nil
 	end
 
-	printf("[FrameTable] Initialized (use_ordinary_tables=%s)", arg_3_0)
+	printf("[FrameTable] Initialized (use_ordinary_tables=%s)", use_ordinary_tables)
 end

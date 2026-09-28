@@ -1,14 +1,14 @@
 -- chunkname: @scripts/ui/views/hero_view/windows/definitions/hero_window_crafting_definitions.lua
 
-local game_start_windows = UISettings.game_start_windows
-local background = game_start_windows.background
-local frame = game_start_windows.frame
-local size = game_start_windows.size
-local spacing = game_start_windows.spacing
-local var_0_5 = UIFrameSettings[frame].texture_sizes.vertical[1]
-local var_0_6 = UIFrameSettings[frame].texture_sizes.horizontal[2]
-local num = size[1] - (var_0_5 * 2 + 60)
-local tbl = {
+local window_default_settings = UISettings.game_start_windows
+local window_background = window_default_settings.background
+local window_frame = window_default_settings.frame
+local window_size = window_default_settings.size
+local window_spacing = window_default_settings.spacing
+local window_frame_width = UIFrameSettings[window_frame].texture_sizes.vertical[1]
+local window_frame_height = UIFrameSettings[window_frame].texture_sizes.horizontal[2]
+local window_text_width = window_size[1] - (window_frame_width * 2 + 60)
+local scenegraph_definition = {
 	root = {
 		is_root = true,
 		size = {
@@ -51,7 +51,7 @@ local tbl = {
 		vertical_alignment = "center",
 		parent = "menu_root",
 		horizontal_alignment = "center",
-		size = size,
+		size = window_size,
 		position = {
 			0,
 			0,
@@ -63,7 +63,7 @@ local tbl = {
 		parent = "window",
 		horizontal_alignment = "center",
 		size = {
-			size[1],
+			window_size[1],
 			221
 		},
 		position = {
@@ -77,7 +77,7 @@ local tbl = {
 		parent = "window_top",
 		horizontal_alignment = "center",
 		size = {
-			size[1],
+			window_size[1],
 			78
 		},
 		position = {
@@ -91,7 +91,7 @@ local tbl = {
 		parent = "window_top",
 		horizontal_alignment = "center",
 		size = {
-			size[1],
+			window_size[1],
 			400
 		},
 		position = {
@@ -105,7 +105,7 @@ local tbl = {
 		parent = "window",
 		horizontal_alignment = "center",
 		size = {
-			size[1],
+			window_size[1],
 			167
 		},
 		position = {
@@ -119,7 +119,7 @@ local tbl = {
 		parent = "window_top",
 		horizontal_alignment = "center",
 		size = {
-			size[1] - 40,
+			window_size[1] - 40,
 			50
 		},
 		position = {
@@ -147,7 +147,7 @@ local tbl = {
 		parent = "title_text_divider",
 		horizontal_alignment = "center",
 		size = {
-			size[1] - 40,
+			window_size[1] - 40,
 			50
 		},
 		position = {
@@ -161,7 +161,7 @@ local tbl = {
 		parent = "window_top",
 		horizontal_alignment = "right",
 		size = {
-			size[1] * 0.4,
+			window_size[1] * 0.4,
 			42
 		},
 		position = {
@@ -175,7 +175,7 @@ local tbl = {
 		parent = "window_top",
 		horizontal_alignment = "left",
 		size = {
-			size[1] * 0.4,
+			window_size[1] * 0.4,
 			42
 		},
 		position = {
@@ -189,7 +189,7 @@ local tbl = {
 		parent = "window_top",
 		horizontal_alignment = "center",
 		size = {
-			size[1],
+			window_size[1],
 			0
 		},
 		position = {
@@ -203,7 +203,7 @@ local tbl = {
 		parent = "window_top",
 		horizontal_alignment = "center",
 		size = {
-			size[1] * 0.2,
+			window_size[1] * 0.2,
 			42
 		},
 		position = {
@@ -245,8 +245,8 @@ local tbl = {
 		parent = "page_button_divider",
 		horizontal_alignment = "center",
 		size = {
-			size[1],
-			size[2] / 2 - 40
+			window_size[1],
+			window_size[2] / 2 - 40
 		},
 		position = {
 			0,
@@ -259,7 +259,7 @@ local tbl = {
 		parent = "recipes",
 		horizontal_alignment = "center",
 		size = {
-			size[1],
+			window_size[1],
 			0
 		},
 		position = {
@@ -273,7 +273,7 @@ local tbl = {
 		parent = "window_center",
 		horizontal_alignment = "center",
 		size = {
-			size[1],
+			window_size[1],
 			440
 		},
 		position = {
@@ -283,7 +283,7 @@ local tbl = {
 		}
 	}
 }
-local tbl_2 = {
+local title_text_style = {
 	font_size = 36,
 	upper_case = true,
 	localize = false,
@@ -300,7 +300,7 @@ local tbl_2 = {
 		2
 	}
 }
-local tbl_3 = {
+local description_text_style = {
 	word_wrap = true,
 	font_size = 20,
 	localize = false,
@@ -315,7 +315,7 @@ local tbl_3 = {
 		2
 	}
 }
-local tbl_4 = {
+local page_number_left_text_style = {
 	word_wrap = true,
 	font_size = 20,
 	localize = false,
@@ -325,12 +325,12 @@ local tbl_4 = {
 	font_type = "hell_shark",
 	text_color = Colors.get_color_table_with_alpha("font_default", 255),
 	offset = {
-		-(size[1] * 0.1 + 5),
+		-(window_size[1] * 0.1 + 5),
 		4,
 		2
 	}
 }
-local tbl_5 = {
+local page_number_right_text_style = {
 	word_wrap = true,
 	font_size = 20,
 	localize = false,
@@ -340,12 +340,12 @@ local tbl_5 = {
 	font_type = "hell_shark",
 	text_color = Colors.get_color_table_with_alpha("font_default", 255),
 	offset = {
-		size[1] * 0.1 + 4,
+		window_size[1] * 0.1 + 4,
 		4,
 		2
 	}
 }
-local tbl_6 = {
+local page_number_center_text_style = {
 	word_wrap = true,
 	font_size = 20,
 	localize = false,
@@ -361,9 +361,9 @@ local tbl_6 = {
 	}
 }
 
-local function fn(arg_1_0, arg_1_1)
+local function create_window_divider(scenegraph_id, size)
 	-- function 1
-	return {
+	local widget = {
 		element = {
 			passes = {
 				{
@@ -402,11 +402,11 @@ local function fn(arg_1_0, arg_1_1)
 					0
 				},
 				size = {
-					arg_1_1[1] - 10,
+					size[1] - 10,
 					5
 				},
 				texture_tiling_size = {
-					arg_1_1[1] - 10,
+					size[1] - 10,
 					5
 				}
 			},
@@ -435,7 +435,7 @@ local function fn(arg_1_0, arg_1_1)
 					255
 				},
 				offset = {
-					arg_1_1[1] - 12,
+					size[1] - 12,
 					-6,
 					10
 				},
@@ -445,18 +445,20 @@ local function fn(arg_1_0, arg_1_1)
 				}
 			}
 		},
-		scenegraph_id = arg_1_0,
+		scenegraph_id = scenegraph_id,
 		offset = {
 			0,
 			0,
 			0
 		}
 	}
+
+	return widget
 end
 
-local function fn_2(arg_2_0, arg_2_1)
+local function create_vertical_window_divider(scenegraph_id, size)
 	-- function 2
-	return {
+	local widget = {
 		element = {
 			passes = {
 				{
@@ -496,11 +498,11 @@ local function fn_2(arg_2_0, arg_2_1)
 				},
 				size = {
 					5,
-					arg_2_1[2] - 9
+					size[2] - 9
 				},
 				texture_tiling_size = {
 					5,
-					arg_2_1[2] - 9
+					size[2] - 9
 				}
 			},
 			edge_holder_top = {
@@ -512,7 +514,7 @@ local function fn_2(arg_2_0, arg_2_1)
 				},
 				offset = {
 					-6,
-					arg_2_1[2] - 7,
+					size[2] - 7,
 					10
 				},
 				size = {
@@ -538,37 +540,39 @@ local function fn_2(arg_2_0, arg_2_1)
 				}
 			}
 		},
-		scenegraph_id = arg_2_0,
+		scenegraph_id = scenegraph_id,
 		offset = {
 			0,
 			0,
 			0
 		}
 	}
+
+	return widget
 end
 
-local tbl_7 = {
-	window_frame = UIWidgets.create_frame("window", tbl.window.size, frame, 38),
+local widgets = {
+	window_frame = UIWidgets.create_frame("window", scenegraph_definition.window.size, window_frame, 38),
 	window_background_top = UIWidgets.create_simple_texture("crafting_bg_top", "window_top"),
 	window_background_top_edge = UIWidgets.create_simple_texture("crafting_bg_top_edge", "window_top_edge"),
 	window_background_bottom = UIWidgets.create_simple_texture("crafting_bg_bottom", "window_bottom"),
 	window_background_center = UIWidgets.create_simple_texture("crafting_bg", "window_center"),
-	page_button_next = UIWidgets.create_simple_window_button("page_button_next", tbl.page_button_next.size, Localize("menu_next"), 16),
-	page_button_previous = UIWidgets.create_simple_window_button("page_button_previous", tbl.page_button_previous.size, Localize("menu_previous"), 16),
-	page_button_divider = fn("page_button_divider", tbl.page_button_divider.size),
-	page_button_edge_left = fn_2("page_button_edge_left", tbl.page_button_edge_left.size),
-	page_button_edge_right = fn_2("page_button_edge_right", tbl.page_button_edge_right.size),
-	page_text_center = UIWidgets.create_simple_text("/", "page_text_area", nil, nil, tbl_6),
-	page_text_left = UIWidgets.create_simple_text("0", "page_text_area", nil, nil, tbl_4),
-	page_text_right = UIWidgets.create_simple_text("0", "page_text_area", nil, nil, tbl_5),
+	page_button_next = UIWidgets.create_simple_window_button("page_button_next", scenegraph_definition.page_button_next.size, Localize("menu_next"), 16),
+	page_button_previous = UIWidgets.create_simple_window_button("page_button_previous", scenegraph_definition.page_button_previous.size, Localize("menu_previous"), 16),
+	page_button_divider = create_window_divider("page_button_divider", scenegraph_definition.page_button_divider.size),
+	page_button_edge_left = create_vertical_window_divider("page_button_edge_left", scenegraph_definition.page_button_edge_left.size),
+	page_button_edge_right = create_vertical_window_divider("page_button_edge_right", scenegraph_definition.page_button_edge_right.size),
+	page_text_center = UIWidgets.create_simple_text("/", "page_text_area", nil, nil, page_number_center_text_style),
+	page_text_left = UIWidgets.create_simple_text("0", "page_text_area", nil, nil, page_number_left_text_style),
+	page_text_right = UIWidgets.create_simple_text("0", "page_text_area", nil, nil, page_number_right_text_style),
 	page_text_area = UIWidgets.create_simple_rect("page_text_area", {
 		255,
 		0,
 		0,
 		0
 	}),
-	title_text = UIWidgets.create_simple_text("n/a", "title_text", nil, nil, tbl_2),
-	description_text = UIWidgets.create_simple_text("n/a", "description_text", nil, nil, tbl_3),
+	title_text = UIWidgets.create_simple_text("n/a", "title_text", nil, nil, title_text_style),
+	description_text = UIWidgets.create_simple_text("n/a", "description_text", nil, nil, description_text_style),
 	title_text_divider = UIWidgets.create_simple_texture("divider_01_top", "title_text_divider"),
 	crafting_fg = UIWidgets.create_simple_uv_texture("crafting_fg", {
 		{
@@ -582,7 +586,7 @@ local tbl_7 = {
 	}, "item_grid_fg"),
 	crafting_fg_glow = UIWidgets.create_simple_texture("crafting_fg_glow", "item_grid_fg", nil, nil, nil, 1)
 }
-local tbl_8 = {
+local generic_input_actions = {
 	default = {
 		{
 			input_action = "d_vertical",
@@ -608,7 +612,7 @@ local tbl_8 = {
 		}
 	}
 }
-local tbl_9 = {
+local input_actions = {
 	salvage = {
 		actions = {
 			{
@@ -670,23 +674,23 @@ local tbl_9 = {
 		}
 	}
 }
-local tbl_10 = {
+local animation_definitions = {
 	on_enter = {
 		{
 			name = "fade_in",
 			start_progress = 0,
 			end_progress = 0.3,
-			init = function (arg_3_0, arg_3_1, arg_3_2, arg_3_3)
+			init = function (ui_scenegraph, scenegraph_definition, widgets, params)
 				-- function 3
-				arg_3_3.render_settings.alpha_multiplier = 0
+				params.render_settings.alpha_multiplier = 0
 			end,
-			update = function (arg_4_0, arg_4_1, arg_4_2, arg_4_3, arg_4_4)
+			update = function (ui_scenegraph, scenegraph_definition, widgets, progress, params)
 				-- function 4
-				local easeOutCubic = math.easeOutCubic(arg_4_3)
+				local anim_progress = math.easeOutCubic(progress)
 
-				arg_4_4.render_settings.alpha_multiplier = easeOutCubic
+				params.render_settings.alpha_multiplier = anim_progress
 			end,
-			on_complete = function (arg_5_0, arg_5_1, arg_5_2, arg_5_3)
+			on_complete = function (ui_scenegraph, scenegraph_definition, widgets, params)
 				-- function 5
 				return
 			end
@@ -697,17 +701,17 @@ local tbl_10 = {
 			name = "fade_out",
 			start_progress = 0,
 			end_progress = 0.3,
-			init = function (arg_6_0, arg_6_1, arg_6_2, arg_6_3)
+			init = function (ui_scenegraph, scenegraph_definition, widgets, params)
 				-- function 6
-				arg_6_3.render_settings.alpha_multiplier = 1
+				params.render_settings.alpha_multiplier = 1
 			end,
-			update = function (arg_7_0, arg_7_1, arg_7_2, arg_7_3, arg_7_4)
+			update = function (ui_scenegraph, scenegraph_definition, widgets, progress, params)
 				-- function 7
-				local easeOutCubic = math.easeOutCubic(arg_7_3)
+				local anim_progress = math.easeOutCubic(progress)
 
-				arg_7_4.render_settings.alpha_multiplier = 1 - easeOutCubic
+				params.render_settings.alpha_multiplier = 1 - anim_progress
 			end,
-			on_complete = function (arg_8_0, arg_8_1, arg_8_2, arg_8_3)
+			on_complete = function (ui_scenegraph, scenegraph_definition, widgets, params)
 				-- function 8
 				return
 			end
@@ -716,10 +720,10 @@ local tbl_10 = {
 }
 
 return {
-	widgets = tbl_7,
+	widgets = widgets,
 	node_widgets = node_widgets,
-	scenegraph_definition = tbl,
-	animation_definitions = tbl_10,
-	generic_input_actions = tbl_8,
-	input_actions = tbl_9
+	scenegraph_definition = scenegraph_definition,
+	animation_definitions = animation_definitions,
+	generic_input_actions = generic_input_actions,
+	input_actions = input_actions
 }

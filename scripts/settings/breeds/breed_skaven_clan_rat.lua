@@ -1,7 +1,7 @@
 -- chunkname: @scripts/settings/breeds/breed_skaven_clan_rat.lua
 
-local scripts_utils_stagger_types = require("scripts/utils/stagger_types")
-local tbl = {
+local stagger_types = require("scripts/utils/stagger_types")
+local breed_data = {
 	walk_speed = 2.75,
 	bone_lod_level = 1,
 	patrol_active_target_selection = "storm_patrol_death_squad_target_selection",
@@ -298,21 +298,21 @@ local tbl = {
 		40
 	},
 	stagger_duration_difficulty_mod = BreedTweaks.stagger_duration_difficulty_mod.default,
-	stagger_modifier_function = function (arg_1_0, arg_1_1, arg_1_2, arg_1_3, arg_1_4, arg_1_5)
+	stagger_modifier_function = function (stagger_type, duration, length, hit_zone_name, blackboard, breed)
 		-- function 1
-		if arg_1_4.stagger_type == scripts_utils_stagger_types.heavy then
-			if arg_1_0 ~= scripts_utils_stagger_types.heavy or not arg_1_4.heavy_stagger_immune_time then
-				arg_1_0 = scripts_utils_stagger_types.none
-				arg_1_1 = 0
-				arg_1_2 = 0
-			elseif arg_1_0 == scripts_utils_stagger_types.heavy or not arg_1_4.stagger_immune_time then
-				arg_1_0 = scripts_utils_stagger_types.none
-				arg_1_1 = 0
-				arg_1_2 = 0
+		if blackboard.stagger_type == stagger_types.heavy then
+			if stagger_type == stagger_types.heavy and blackboard.heavy_stagger_immune_time then
+				stagger_type = stagger_types.none
+				duration = 0
+				length = 0
+			elseif stagger_type ~= stagger_types.heavy and blackboard.stagger_immune_time then
+				stagger_type = stagger_types.none
+				duration = 0
+				length = 0
 			end
 		end
 
-		return arg_1_0, arg_1_1, arg_1_2
+		return stagger_type, duration, length
 	end,
 	BTHesitationVariations = {
 		hesitate = {
@@ -329,12 +329,12 @@ local tbl = {
 	}
 }
 
-Breeds.skaven_clan_rat = table.create_copy(Breeds.skaven_clan_rat, tbl)
-Breeds.skaven_clan_rat_tutorial = table.create_copy(Breeds.skaven_clan_rat_tutorial, tbl)
+Breeds.skaven_clan_rat = table.create_copy(Breeds.skaven_clan_rat, breed_data)
+Breeds.skaven_clan_rat_tutorial = table.create_copy(Breeds.skaven_clan_rat_tutorial, breed_data)
 Breeds.skaven_clan_rat_tutorial.detection_radius = 2
 Breeds.skaven_clan_rat_tutorial.debug_spawn_category = "Misc"
 
-local tbl_2 = {
+local AttackIntensityPerDifficulty = {
 	normal = {
 		easy = {
 			normal = 2
@@ -394,7 +394,7 @@ local tbl_2 = {
 		}
 	}
 }
-local tbl_3 = {
+local action_data = {
 	idle = {
 		alerted_anims = {
 			"alerted"
@@ -461,7 +461,7 @@ local tbl_3 = {
 		action_weight = 10,
 		moving_attack = true,
 		damage_type = "cutting",
-		difficulty_attack_intensity = tbl_2,
+		difficulty_attack_intensity = AttackIntensityPerDifficulty,
 		default_attack = {
 			anims = {
 				"attack_move",
@@ -485,7 +485,7 @@ local tbl_3 = {
 		attack_intensity_type = "normal",
 		action_weight = 1,
 		move_anim = "move_fwd",
-		difficulty_attack_intensity = tbl_2,
+		difficulty_attack_intensity = AttackIntensityPerDifficulty,
 		default_attack = {
 			anims = {
 				"attack_pounce",
@@ -627,17 +627,19 @@ local tbl_3 = {
 	stagger = {
 		scale_animation_speeds = true,
 		imation_speeds = true,
-		custom_enter_function = function (arg_2_0, arg_2_1, arg_2_2, arg_2_3)
+		custom_enter_function = function (unit, blackboard, t, action)
 			-- function 2
-			if arg_2_1.stagger_type == scripts_utils_stagger_types.heavy then
-				arg_2_1.stagger_immune_time = arg_2_2 + 1.25
-				arg_2_1.heavy_stagger_immune_time = arg_2_2 + 0.5
-			elseif arg_2_1.stagger_type == scripts_utils_stagger_types.explosion then
-				arg_2_1.stagger_immune_time = arg_2_2 + 2.5
-				arg_2_1.heavy_stagger_immune_time = arg_2_2 + 2
+			if blackboard.stagger_type == stagger_types.heavy then
+				blackboard.stagger_immune_time = t + 1.25
+				blackboard.heavy_stagger_immune_time = t + 0.5
+			elseif blackboard.stagger_type == stagger_types.explosion then
+				blackboard.stagger_immune_time = t + 2.5
+				blackboard.heavy_stagger_immune_time = t + 2
 			end
 
-			return arg_2_3.stagger_anims[arg_2_1.stagger_type], "idle"
+			local stagger_anims = action.stagger_anims[blackboard.stagger_type]
+
+			return stagger_anims, "idle"
 		end,
 		stagger_anims = {
 			{
@@ -855,4 +857,4 @@ local tbl_3 = {
 	}
 }
 
-BreedActions.skaven_clan_rat = table.create_copy(BreedActions.skaven_clan_rat, tbl_3)
+BreedActions.skaven_clan_rat = table.create_copy(BreedActions.skaven_clan_rat, action_data)

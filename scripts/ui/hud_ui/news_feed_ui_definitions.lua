@@ -1,14 +1,13 @@
 -- chunkname: @scripts/ui/hud_ui/news_feed_ui_definitions.lua
 
-local num = 1920
-local num_2 = 1080
-local tbl = {
+local SIZE_X, SIZE_Y = 1920, 1080
+local WIDGET_SIZE = {
 	420,
 	120
 }
-local num_3 = 5
-local num_4 = 10
-local tbl_2 = {
+local MAX_NUMBER_OF_NEWS = 5
+local NEWS_SPACING = 10
+local scenegraph_definition = {
 	root = {
 		scale = "hud_scale_fit",
 		position = {
@@ -17,8 +16,8 @@ local tbl_2 = {
 			UILayer.hud
 		},
 		size = {
-			num,
-			num_2
+			SIZE_X,
+			SIZE_Y
 		}
 	},
 	pivot = {
@@ -38,23 +37,23 @@ local tbl_2 = {
 }
 
 if not IS_WINDOWS then
-	tbl_2.root.scale = "hud_fit"
-	tbl_2.root.is_root = false
+	scenegraph_definition.root.scale = "hud_fit"
+	scenegraph_definition.root.is_root = false
 end
 
-local function fn(arg_1_0, arg_1_1)
+local function create_news_widget(index, specific_scenegraph_id)
 	-- function 1
-	local var_1_0 = arg_1_1
+	local scenegraph_id = specific_scenegraph_id
 
-	if not var_1_0 then
-		var_1_0 = "news_pivot_" .. arg_1_0
-		tbl_2[var_1_0] = {
+	if not scenegraph_id then
+		scenegraph_id = "news_pivot_" .. index
+		scenegraph_definition[scenegraph_id] = {
 			vertical_alignment = "top",
 			parent = "pivot",
 			horizontal_alignment = "right",
 			size = {
-				tbl[1],
-				tbl[2]
+				WIDGET_SIZE[1],
+				WIDGET_SIZE[2]
 			},
 			position = {
 				0,
@@ -91,9 +90,9 @@ local function fn(arg_1_0, arg_1_1)
 					pass_type = "texture",
 					style_id = "icon",
 					texture_id = "icon",
-					content_check_function = function (self, arg_2_1)
+					content_check_function = function (content, style)
 						-- function 2
-						return self.icon ~= nil
+						return content.icon ~= nil
 					end
 				},
 				{
@@ -215,20 +214,20 @@ local function fn(arg_1_0, arg_1_1)
 			0,
 			0
 		},
-		scenegraph_id = var_1_0
+		scenegraph_id = scenegraph_id
 	}
 end
 
-local tbl_3 = {}
+local buff_widget_definitions = {}
 
-for i = 1, num_3 do
-	tbl_3[i] = fn(i)
+for i = 1, MAX_NUMBER_OF_NEWS do
+	buff_widget_definitions[i] = create_news_widget(i)
 end
 
 return {
-	WIDGET_SIZE = tbl,
-	NEWS_SPACING = num_4,
-	MAX_NUMBER_OF_NEWS = num_3,
-	scenegraph_definition = tbl_2,
-	buff_widget_definitions = tbl_3
+	WIDGET_SIZE = WIDGET_SIZE,
+	NEWS_SPACING = NEWS_SPACING,
+	MAX_NUMBER_OF_NEWS = MAX_NUMBER_OF_NEWS,
+	scenegraph_definition = scenegraph_definition,
+	buff_widget_definitions = buff_widget_definitions
 }

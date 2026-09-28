@@ -1,6 +1,6 @@
 -- chunkname: @scripts/ui/hud_ui/dark_pact_selection_ui_definitions.lua
 
-local tbl = {
+local scenegraph_definition = {
 	screen = {
 		scale = "fit",
 		position = {
@@ -56,33 +56,34 @@ local tbl = {
 		}
 	}
 }
-local dark_pact_profile_order = GameModeSettings.versus.dark_pact_profile_order
-local tbl_2 = {}
+local ordered_ps_names = GameModeSettings.versus.dark_pact_profile_order
+local ordered_pactsworn_slots = {}
 
-for i = 1, #dark_pact_profile_order do
-	local var_0_3 = dark_pact_profile_order[i]
-	local var_0_4 = FindProfileIndex(var_0_3)
-	local enemy_role = SPProfiles[var_0_4].enemy_role
+for i = 1, #ordered_ps_names do
+	local name = ordered_ps_names[i]
+	local profile_index = FindProfileIndex(name)
+	local profile = SPProfiles[profile_index]
+	local enemy_role = profile.enemy_role
 
-	if not tbl_2[enemy_role] then
-		local var_0_6 = tbl_2[enemy_role]
+	if ordered_pactsworn_slots[enemy_role] then
+		local slot = ordered_pactsworn_slots[enemy_role]
 
-		var_0_6[#var_0_6 + 1] = var_0_3
+		slot[#slot + 1] = name
 	else
-		tbl_2[enemy_role] = {}
+		ordered_pactsworn_slots[enemy_role] = {}
 
-		local var_0_7 = tbl_2[enemy_role]
+		local slot = ordered_pactsworn_slots[enemy_role]
 
-		var_0_7[#var_0_7 + 1] = var_0_3
+		slot[#slot + 1] = name
 	end
 end
 
-local function fn(arg_1_0, arg_1_1)
+local function create_selection_widget(scenegraph_id, size)
 	-- function 1
-	local str = "pactsworn_frame_01"
-	local var_1_1 = UIFrameSettings[str]
-	local var_1_2 = var_1_1.texture_sizes.horizontal[2]
-	local flag = not arg_1_1 and arg_1_1 and {
+	local frame_style = "pactsworn_frame_01"
+	local frame_settings = UIFrameSettings[frame_style]
+	local frame_width = frame_settings.texture_sizes.horizontal[2]
+	local size = (not size or not size) and not not {
 		148,
 		148
 	}
@@ -109,11 +110,11 @@ local function fn(arg_1_0, arg_1_1)
 					pass_type = "texture",
 					style_id = "hovered_frame",
 					texture_id = "hovered_frame",
-					content_check_function = function (self)
+					content_check_function = function (content)
 						-- function 2
-						local is_hover = self.hotspot.is_hover
+						local is_hover = content.hotspot.is_hover
 
-						is_hover = is_hover or self.selected
+						is_hover = not not is_hover or not not content.selected
 
 						return is_hover
 					end
@@ -124,13 +125,13 @@ local function fn(arg_1_0, arg_1_1)
 			hovered_frame = "pactsworn_frame_highlight",
 			selected = false,
 			profile_texture = "icons_placeholder",
-			frame = var_1_1.texture,
+			frame = frame_settings.texture,
 			hotspot = {}
 		},
 		style = {
 			profile_texture = {
-				size = flag,
-				default_size = flag,
+				size = size,
+				default_size = size,
 				color = {
 					255,
 					255,
@@ -150,18 +151,18 @@ local function fn(arg_1_0, arg_1_1)
 			},
 			frame = {
 				size = {
-					flag[1] - 2,
-					flag[2] - 4
+					size[1] - 2,
+					size[2] - 4
 				},
 				default_size = {
-					flag[1] - 2,
-					flag[2] - 4
+					size[1] - 2,
+					size[2] - 4
 				},
-				texture_size = var_1_1.texture_size,
-				texture_sizes = var_1_1.texture_sizes,
+				texture_size = frame_settings.texture_size,
+				texture_sizes = frame_settings.texture_sizes,
 				frame_margins = {
-					-var_1_2,
-					-var_1_2
+					-frame_width,
+					-frame_width
 				},
 				color = {
 					255,
@@ -181,7 +182,7 @@ local function fn(arg_1_0, arg_1_1)
 				}
 			},
 			hotspot = {
-				size = flag,
+				size = size,
 				offset = {
 					0,
 					0,
@@ -192,12 +193,12 @@ local function fn(arg_1_0, arg_1_1)
 				vertical_alignment = "bottom",
 				horizontal_alignment = "left",
 				texture_size = {
-					flag[1] + 26,
-					flag[2] + 30
+					size[1] + 26,
+					size[2] + 30
 				},
 				default_size = {
-					flag[1] + 26,
-					flag[2] + 30
+					size[1] + 26,
+					size[2] + 30
 				},
 				color = {
 					255,
@@ -217,7 +218,7 @@ local function fn(arg_1_0, arg_1_1)
 				}
 			}
 		},
-		scenegraph_id = arg_1_0,
+		scenegraph_id = scenegraph_id,
 		offset = {
 			0,
 			0,
@@ -226,7 +227,7 @@ local function fn(arg_1_0, arg_1_1)
 	}
 end
 
-local tbl_3 = {
+local selection_frame_definition = {
 	scenegraph_id = "pivot",
 	element = {
 		passes = {
@@ -289,15 +290,15 @@ local tbl_3 = {
 		}
 	}
 }
-local tbl_4 = {
+local color_disabled = {
 	255,
 	Colors.from_hex("545454")
 }
-local tbl_5 = {
+local color_available = {
 	255,
 	Colors.from_hex("b65b00")
 }
-local tbl_6 = {
+local info_text_style = {
 	font_size = 20,
 	localize = false,
 	use_shadow = true,
@@ -313,7 +314,7 @@ local tbl_6 = {
 		50
 	}
 }
-local tbl_7 = {
+local info_text_style_shadow = {
 	font_size = 20,
 	localize = false,
 	horizontal_alignment = "center",
@@ -328,7 +329,7 @@ local tbl_7 = {
 		49
 	}
 }
-local tbl_8 = {
+local widget_definitions = {
 	overlay = UIWidgets.create_simple_rect("screen", {
 		255,
 		0,
@@ -383,8 +384,8 @@ local tbl_8 = {
 			bottom_detail = "gritty_frame_wide",
 			textured_backdrop = "textured_backdrop",
 			top_detail = "gritty_frame_wide",
-			color_disabled = tbl_4,
-			color_available = tbl_5
+			color_disabled = color_disabled,
+			color_available = color_available
 		},
 		style = {
 			bottom_glow = {
@@ -480,22 +481,22 @@ local tbl_8 = {
 			}
 		}
 	},
-	info_text = UIWidgets.create_simple_rect_text("info_text", "", nil, nil, nil, tbl_6),
-	info_text_shadow = UIWidgets.create_simple_rect_text("info_text", "", nil, nil, nil, tbl_7)
+	info_text = UIWidgets.create_simple_rect_text("info_text", "", nil, nil, nil, info_text_style),
+	info_text_shadow = UIWidgets.create_simple_rect_text("info_text", "", nil, nil, nil, info_text_style_shadow)
 }
-local tbl_9 = {
+local animation_definitions = {
 	on_enter = {
 		{
 			name = "fade_in_glow",
 			duration = 0.6,
 			init = NOP,
-			update = function (arg_3_0, arg_3_1, arg_3_2, arg_3_3, arg_3_4)
+			update = function (ui_scenegraph, scenegraph_def, widgets_by_name, progress, params)
 				-- function 3
-				local var_3_0 = arg_3_3
+				local t = progress
 
-				arg_3_2.chrome.style.bottom_glow.color[1] = 150 * var_3_0
-				arg_3_2.chrome.style.textured_backdrop.color[1] = 255 * var_3_0
-				arg_3_2.overlay.style.rect.color[1] = 30 * var_3_0
+				widgets_by_name.chrome.style.bottom_glow.color[1] = 150 * t
+				widgets_by_name.chrome.style.textured_backdrop.color[1] = 255 * t
+				widgets_by_name.overlay.style.rect.color[1] = 30 * t
 			end,
 			on_complete = NOP
 		},
@@ -503,18 +504,16 @@ local tbl_9 = {
 			name = "fade_slide_in_bg",
 			duration = 0.5,
 			init = NOP,
-			update = function (arg_4_0, arg_4_1, arg_4_2, arg_4_3, arg_4_4)
+			update = function (ui_scenegraph, scenegraph_def, widgets_by_name, progress, params)
 				-- function 4
-				local easeOutCubic = math.easeOutCubic(arg_4_3)
-				local chrome = arg_4_2.chrome
-				local num = 0 * easeOutCubic
-				local num_2 = 480 * easeOutCubic
-				local num_3 = 285 * easeOutCubic
+				local t = math.easeOutCubic(progress)
+				local widget = widgets_by_name.chrome
+				local alpha, dy, by = 0 * t, 480 * t, 285 * t
 
-				chrome.style.top_detail.color[1] = 0
-				chrome.style.top_detail.offset[2] = 0
-				chrome.style.bottom_detail.color[1] = 0
-				chrome.style.bottom_detail.offset[2] = 0
+				widget.style.top_detail.color[1] = 0
+				widget.style.top_detail.offset[2] = 0
+				widget.style.bottom_detail.color[1] = 0
+				widget.style.bottom_detail.offset[2] = 0
 			end,
 			on_complete = NOP
 		},
@@ -522,17 +521,19 @@ local tbl_9 = {
 			name = "fade_in_text",
 			delay = 0.3,
 			duration = 0.4,
-			init = function (arg_5_0, arg_5_1, arg_5_2, arg_5_3)
+			init = function (ui_scenegraph, scenegraph_def, widgets_by_name, params)
 				-- function 5
-				arg_5_2.chrome.style.category_text.text_color[1] = 0
-			end,
-			update = function (arg_6_0, arg_6_1, arg_6_2, arg_6_3, arg_6_4)
-				-- function 6
-				local easeOutCubic = math.easeOutCubic(arg_6_3)
-				local chrome = arg_6_2.chrome
-				local num = 255 * easeOutCubic
+				local widget = widgets_by_name.chrome
 
-				chrome.style.category_text.text_color[1] = num
+				widget.style.category_text.text_color[1] = 0
+			end,
+			update = function (ui_scenegraph, scenegraph_def, widgets_by_name, progress, params)
+				-- function 6
+				local t = math.easeOutCubic(progress)
+				local widget = widgets_by_name.chrome
+				local alpha = 255 * t
+
+				widget.style.category_text.text_color[1] = alpha
 			end,
 			on_complete = NOP
 		},
@@ -540,17 +541,19 @@ local tbl_9 = {
 			name = "fade_in_pick_text",
 			delay = 0.4,
 			duration = 0.5,
-			init = function (arg_7_0, arg_7_1, arg_7_2, arg_7_3)
+			init = function (ui_scenegraph, scenegraph_def, widgets_by_name, params)
 				-- function 7
-				arg_7_2.chrome.style.pick_text.text_color[1] = 0
-			end,
-			update = function (arg_8_0, arg_8_1, arg_8_2, arg_8_3, arg_8_4)
-				-- function 8
-				local easeOutCubic = math.easeOutCubic(arg_8_3)
-				local chrome = arg_8_2.chrome
-				local num = 255 * easeOutCubic
+				local widget = widgets_by_name.chrome
 
-				chrome.style.pick_text.text_color[1] = num
+				widget.style.pick_text.text_color[1] = 0
+			end,
+			update = function (ui_scenegraph, scenegraph_def, widgets_by_name, progress, params)
+				-- function 8
+				local t = math.easeOutCubic(progress)
+				local widget = widgets_by_name.chrome
+				local alpha = 255 * t
+
+				widget.style.pick_text.text_color[1] = alpha
 			end,
 			on_complete = NOP
 		},
@@ -558,41 +561,49 @@ local tbl_9 = {
 			name = "slide_in_frames",
 			delay = 0,
 			duration = 0.5,
-			init = function (arg_9_0, arg_9_1, arg_9_2, arg_9_3)
+			init = function (ui_scenegraph, scenegraph_def, widgets_by_name, params)
 				-- function 9
-				local _selector_widgets = arg_9_3._selector_widgets
+				local selector_widgets = params._selector_widgets
 
-				for i = 1, #_selector_widgets do
-					_selector_widgets[i].offset[2] = -1000
+				for i = 1, #selector_widgets do
+					local widget = selector_widgets[i]
+
+					widget.offset[2] = -1000
 				end
 			end,
-			update = function (arg_10_0, arg_10_1, arg_10_2, arg_10_3, arg_10_4)
+			update = function (ui_scenegraph, scenegraph_def, widgets_by_name, progress, params)
 				-- function 10
-				local num = 1 - math.easeOutCubic(arg_10_3)
-				local _selector_widgets = arg_10_4._selector_widgets
+				local t = 1 - math.easeOutCubic(progress)
+				local selector_widgets = params._selector_widgets
 
-				for i = 1, #_selector_widgets do
-					_selector_widgets[i].offset[2] = (400 + 100 * i) * num
+				for i = 1, #selector_widgets do
+					local widget = selector_widgets[i]
+
+					widget.offset[2] = (400 + 100 * i) * t
 				end
 			end,
-			on_complete = function (arg_11_0, arg_11_1, arg_11_2, arg_11_3)
+			on_complete = function (ui_scenegraph, scenegraph_def, widgets_by_name, params)
 				-- function 11
-				arg_11_3:_capture_input()
+				params:_capture_input()
 			end
 		},
 		{
 			name = "fade_in_info_text",
 			delay = 0.5,
 			duration = 0.2,
-			init = function (arg_12_0, arg_12_1, arg_12_2, arg_12_3)
+			init = function (ui_scenegraph, scenegraph_def, widgets_by_name, params)
 				-- function 12
-				arg_12_2.info_text.style.text.text_color[1] = 0
+				local widget = widgets_by_name.info_text
+
+				widget.style.text.text_color[1] = 0
 			end,
-			update = function (arg_13_0, arg_13_1, arg_13_2, arg_13_3, arg_13_4)
+			update = function (ui_scenegraph, scenegraph_def, widgets_by_name, progress, params)
 				-- function 13
-				arg_13_2.info_text.style.text.text_color[1] = 255 * math.easeOutCubic(arg_13_3)
+				local widget = widgets_by_name.info_text
+
+				widget.style.text.text_color[1] = 255 * math.easeOutCubic(progress)
 			end,
-			on_complete = function (arg_14_0, arg_14_1, arg_14_2, arg_14_3)
+			on_complete = function (ui_scenegraph, scenegraph_def, widgets_by_name, params)
 				-- function 14
 				return
 			end
@@ -601,15 +612,19 @@ local tbl_9 = {
 			name = "fade_in_info_text_shadow",
 			delay = 0.5,
 			duration = 0.2,
-			init = function (arg_15_0, arg_15_1, arg_15_2, arg_15_3)
+			init = function (ui_scenegraph, scenegraph_def, widgets_by_name, params)
 				-- function 15
-				arg_15_2.info_text_shadow.style.text.text_color[1] = 0
+				local widget = widgets_by_name.info_text_shadow
+
+				widget.style.text.text_color[1] = 0
 			end,
-			update = function (arg_16_0, arg_16_1, arg_16_2, arg_16_3, arg_16_4)
+			update = function (ui_scenegraph, scenegraph_def, widgets_by_name, progress, params)
 				-- function 16
-				arg_16_2.info_text_shadow.style.text.text_color[1] = 255 * math.easeOutCubic(arg_16_3)
+				local widget = widgets_by_name.info_text_shadow
+
+				widget.style.text.text_color[1] = 255 * math.easeOutCubic(progress)
 			end,
-			on_complete = function (arg_17_0, arg_17_1, arg_17_2, arg_17_3)
+			on_complete = function (ui_scenegraph, scenegraph_def, widgets_by_name, params)
 				-- function 17
 				return
 			end
@@ -619,17 +634,17 @@ local tbl_9 = {
 		{
 			name = "fade_out_glow",
 			duration = 0.2,
-			init = function (arg_18_0, arg_18_1, arg_18_2, arg_18_3)
+			init = function (ui_scenegraph, scenegraph_def, widgets_by_name, params)
 				-- function 18
-				arg_18_3:_release_input()
+				params:_release_input()
 			end,
-			update = function (arg_19_0, arg_19_1, arg_19_2, arg_19_3, arg_19_4)
+			update = function (ui_scenegraph, scenegraph_def, widgets_by_name, progress, params)
 				-- function 19
-				local num = 1 - arg_19_3
+				local t = 1 - progress
 
-				arg_19_2.chrome.style.bottom_glow.color[1] = 150 * num
-				arg_19_2.chrome.style.textured_backdrop.color[1] = 255 * num
-				arg_19_2.overlay.style.rect.color[1] = 30 * num
+				widgets_by_name.chrome.style.bottom_glow.color[1] = 150 * t
+				widgets_by_name.chrome.style.textured_backdrop.color[1] = 255 * t
+				widgets_by_name.overlay.style.rect.color[1] = 30 * t
 			end,
 			on_complete = NOP
 		},
@@ -637,37 +652,41 @@ local tbl_9 = {
 			name = "fade_slide_out",
 			duration = 0.5,
 			init = NOP,
-			update = function (arg_20_0, arg_20_1, arg_20_2, arg_20_3, arg_20_4)
+			update = function (ui_scenegraph, scenegraph_def, widgets_by_name, progress, params)
 				-- function 20
-				local num = 1 - math.easeOutCubic(arg_20_3)
-				local chrome = arg_20_2.chrome
-				local num_2 = 0 * num
+				local t = 1 - math.easeOutCubic(progress)
+				local widget = widgets_by_name.chrome
+				local alpha = 0 * t
 
-				chrome.style.top_detail.color[1] = 0
-				chrome.style.bottom_detail.color[1] = 0
-				chrome.style.category_text.text_color[1] = num_2
-				chrome.style.pick_text.text_color[1] = num_2
+				widget.style.top_detail.color[1] = 0
+				widget.style.bottom_detail.color[1] = 0
+				widget.style.category_text.text_color[1] = alpha
+				widget.style.pick_text.text_color[1] = alpha
 			end,
 			on_complete = NOP
 		},
 		{
 			name = "slide_out_frames",
 			duration = 0.5,
-			init = function (arg_21_0, arg_21_1, arg_21_2, arg_21_3)
+			init = function (ui_scenegraph, scenegraph_def, widgets_by_name, params)
 				-- function 21
-				local _selector_widgets = arg_21_3._selector_widgets
+				local selector_widgets = params._selector_widgets
 
-				for i = 1, #_selector_widgets do
-					_selector_widgets[i].offset[2] = 0
+				for i = 1, #selector_widgets do
+					local widget = selector_widgets[i]
+
+					widget.offset[2] = 0
 				end
 			end,
-			update = function (arg_22_0, arg_22_1, arg_22_2, arg_22_3, arg_22_4)
+			update = function (ui_scenegraph, scenegraph_def, widgets_by_name, progress, params)
 				-- function 22
-				local easeOutCubic = math.easeOutCubic(arg_22_3)
-				local _selector_widgets = arg_22_4._selector_widgets
+				local t = math.easeOutCubic(progress)
+				local selector_widgets = params._selector_widgets
 
-				for i = 1, #_selector_widgets do
-					_selector_widgets[i].offset[2] = -(400 + 100 * i) * easeOutCubic
+				for i = 1, #selector_widgets do
+					local widget = selector_widgets[i]
+
+					widget.offset[2] = -(400 + 100 * i) * t
 				end
 			end,
 			on_complete = NOP
@@ -676,9 +695,11 @@ local tbl_9 = {
 			name = "fade_out_info_text",
 			duration = 0.5,
 			init = NOP,
-			update = function (arg_23_0, arg_23_1, arg_23_2, arg_23_3, arg_23_4)
+			update = function (ui_scenegraph, scenegraph_def, widgets_by_name, progress, params)
 				-- function 23
-				arg_23_2.info_text.style.text.text_color[1] = 255 * (1 - math.easeOutCubic(arg_23_3))
+				local widget = widgets_by_name.info_text
+
+				widget.style.text.text_color[1] = 255 * (1 - math.easeOutCubic(progress))
 			end,
 			on_complete = NOP
 		},
@@ -686,9 +707,11 @@ local tbl_9 = {
 			name = "fade_out_info_text_shadow",
 			duration = 0.5,
 			init = NOP,
-			update = function (arg_24_0, arg_24_1, arg_24_2, arg_24_3, arg_24_4)
+			update = function (ui_scenegraph, scenegraph_def, widgets_by_name, progress, params)
 				-- function 24
-				arg_24_2.info_text_shadow.style.text.text_color[1] = 255 * (1 - math.easeOutCubic(arg_24_3))
+				local widget = widgets_by_name.info_text_shadow
+
+				widget.style.text.text_color[1] = 255 * (1 - math.easeOutCubic(progress))
 			end,
 			on_complete = NOP
 		}
@@ -696,10 +719,10 @@ local tbl_9 = {
 }
 
 return {
-	scenegraph_definition = tbl,
-	widget_definitions = tbl_8,
-	animation_definitions = tbl_9,
-	selection_frame_definition = tbl_3,
-	ordered_pactsworn_slots = tbl_2,
-	create_selection_widget = fn
+	scenegraph_definition = scenegraph_definition,
+	widget_definitions = widget_definitions,
+	animation_definitions = animation_definitions,
+	selection_frame_definition = selection_frame_definition,
+	ordered_pactsworn_slots = ordered_pactsworn_slots,
+	create_selection_widget = create_selection_widget
 }

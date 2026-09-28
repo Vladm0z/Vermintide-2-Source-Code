@@ -2,211 +2,248 @@
 
 local format = string.format
 
-local function fn(...)
+local function sprintf(...)
 	-- function 1
 	return format(...)
 end
 
-local getinfo = debug.getinfo
-local flag = true
-local var_0_4
+local debug_getinfo = debug.getinfo
+local USE_ERROR = true
+local error_func
 
-if not flag then
-	function var_0_4(...)
+if USE_ERROR then
+	function error_func(...)
 		-- function 2
-		local var_2_0, var_2_1 = pcall(fn, ...)
+		local success, s = pcall(sprintf, ...)
 
-		if not var_2_0 then
-			assert(false, var_2_1)
+		if success then
+			assert(false, s)
 		else
 			assert(false, "Failed to format text.")
 		end
 	end
 else
-	local function fn_2(arg_3_0, arg_3_1)
+	local function console_print(level, message)
 		-- function 3
-		if not Application.console_send then
+		if Application.console_send then
 			Application.console_send({
 				system = "Lua",
 				type = "message",
-				level = arg_3_0,
-				message = arg_3_1
+				level = level,
+				message = message
 			})
 		else
-			print(arg_3_1)
+			print(message)
 		end
 	end
 
-	function var_0_4(...)
+	function error_func(...)
 		-- function 4
-		fn_2("error", fn(...))
+		console_print("error", sprintf(...))
 	end
 end
 
-local rawget = rawget
-local rawset = rawset
+local rawget, rawset = rawget, rawset
 
-local function fn_3(self)
+local function debug_info_string(info)
 	-- function 5
-	local short_src = self.short_src
+	local short_src_2 = info.short_src
 
-	short_src = short_src or ""
+	if not short_src_2 then
+		-- Nothing
+	end
 
-	local currentline = self.currentline
+	short_src_2 = ""
 
-	currentline = currentline or -1
+	local short_src = short_src_2
 
-	return (fn("short_src(%s), line(%d)", short_src, currentline))
+	::label_5_0::
+
+	local currentline = info.currentline
+
+	if not currentline then
+		-- Nothing
+	end
+
+	currentline = -1
+
+	local line = currentline
+
+	::label_5_1::
+
+	local s = sprintf("short_src(%s), line(%d)", short_src, line)
+
+	return s
 end
 
 local StrictNil = StrictNil
 
-StrictNil = StrictNil or {}
+StrictNil = not not StrictNil or not not {}
 StrictNil = StrictNil
 
-function MakeTableStrict(self)
+function MakeTableStrict(t)
 	-- function 6
-	local tbl = {}
+	local declared_args = {}
 
-	for k, v in pairs(self) do
-		tbl[k] = true
+	for k, v in pairs(t) do
+		declared_args[k] = true
 
 		if v == StrictNil then
-			self[k] = nil
+			t[k] = nil
 		end
 	end
 
-	local tbl_2 = {
-		__declared = tbl
+	local meta = {
+		__declared = declared_args
 	}
 
-	tbl_2.__newindex = function (arg_7_0, arg_7_1, arg_7_2)
+	meta.__newindex = function (t, k, v)
 		-- function 7
-		if not tbl_2.__declared[arg_7_1] then
-			if not rawget(arg_7_0, arg_7_1) then
-				local var_7_0 = getinfo(2, "Sl")
+		if not meta.__declared[k] then
+			if not rawget(t, k) then
+				local info = debug_getinfo(2, "Sl")
 
-				if not (arg_7_1 == "to_console_line" or not var_7_0 and var_7_0.what == "main" or var_7_0.what == "C") then
-					var_0_4("[ERROR] cannot assign undeclared member variable %q, %s", arg_7_1, fn_3(var_7_0))
+				if k ~= "to_console_line" and info and info.what ~= "main" and info.what ~= "C" then
+					error_func("[ERROR] cannot assign undeclared member variable %q, %s", k, debug_info_string(info))
 				end
 			end
 
-			tbl_2.__declared[arg_7_1] = true
+			meta.__declared[k] = true
 		end
 
-		rawset(arg_7_0, arg_7_1, arg_7_2)
+		rawset(t, k, v)
 	end
 
-	tbl_2.__index = function (arg_8_0, arg_8_1)
+	meta.__index = function (t, k)
 		-- function 8
-		if not (tbl_2.__declared[arg_8_1] or rawget(arg_8_0, arg_8_1)) then
-			local var_8_0 = getinfo(2, "Sl")
+		if not meta.__declared[k] and not rawget(t, k) then
+			local info = debug_getinfo(2, "Sl")
 
-			if not (arg_8_1 == "to_console_line" or not var_8_0 and var_8_0.what == "main" or var_8_0.what == "C") then
-				var_0_4("[ERROR] cannot index undeclared member variable %q, %s", tostring(arg_8_1), fn_3(var_8_0))
+			if k ~= "to_console_line" and info and info.what ~= "main" and info.what ~= "C" then
+				error_func("[ERROR] cannot index undeclared member variable %q, %s", tostring(k), debug_info_string(info))
 			end
 		end
 	end
 
-	setmetatable(self, tbl_2)
+	setmetatable(t, meta)
 
-	return self
+	return t
 end
 
-function MakeTableFrozen(self)
+function MakeTableFrozen(t)
 	-- function 9
-	local tbl = {}
+	local declared_args = {}
 
-	for k, v in pairs(self) do
-		tbl[k] = true
+	for k, v in pairs(t) do
+		declared_args[k] = true
 
 		if v == StrictNil then
-			self[k] = nil
+			t[k] = nil
 		end
 	end
 
-	local tbl_2 = {
-		__declared = tbl
+	local meta = {
+		__declared = declared_args
 	}
 
-	tbl_2.__newindex = function (arg_10_0, arg_10_1, arg_10_2)
+	meta.__newindex = function (t, k, v)
 		-- function 10
-		if not tbl_2.__declared[arg_10_1] then
-			if not rawget(arg_10_0, arg_10_1) then
-				local var_10_0 = getinfo(2, "Sl")
+		if not meta.__declared[k] then
+			if not rawget(t, k) then
+				local info = debug_getinfo(2, "Sl")
 
-				if not (arg_10_1 == "to_console_line" or not var_10_0 and var_10_0.what == "main" or var_10_0.what == "C") then
-					var_0_4("[ERROR] cannot assign undeclared member variable %q, %s", arg_10_1, fn_3(var_10_0))
+				if k ~= "to_console_line" and info and info.what ~= "main" and info.what ~= "C" then
+					error_func("[ERROR] cannot assign undeclared member variable %q, %s", k, debug_info_string(info))
 				end
 			end
 
-			tbl_2.__declared[arg_10_1] = true
+			meta.__declared[k] = true
 		end
 
-		rawset(arg_10_0, arg_10_1, arg_10_2)
+		rawset(t, k, v)
 	end
 
-	setmetatable(self, tbl_2)
+	setmetatable(t, meta)
 
-	return self
+	return t
 end
 
-function ProtectMetaTable(arg_11_0)
+function ProtectMetaTable(t)
 	-- function 11
-	getmetatable(arg_11_0).__metatable = true
+	local meta = getmetatable(t)
 
-	return arg_11_0
+	meta.__metatable = true
+
+	return t
 end
 
-function MakeTableWeakValues(arg_12_0)
+function MakeTableWeakValues(t)
 	-- function 12
-	local var_12_0 = getmetatable(arg_12_0)
+	local var_12_0 = getmetatable(t)
 
-	var_12_0 = var_12_0 or {}
-	var_12_0.__mode = "v"
+	if not var_12_0 then
+		-- Nothing
+	end
 
-	setmetatable(arg_12_0, var_12_0)
+	var_12_0 = {}
 
-	return arg_12_0
+	local meta = var_12_0
+
+	::label_12_0::
+
+	meta.__mode = "v"
+
+	setmetatable(t, meta)
+
+	return t
 end
 
-function MakeTableWeakKeys(arg_13_0)
+function MakeTableWeakKeys(t)
 	-- function 13
-	local var_13_0 = getmetatable(arg_13_0)
+	local var_13_0 = getmetatable(t)
 
-	var_13_0 = var_13_0 or {}
-	var_13_0.__mode = "k"
+	if not var_13_0 then
+		-- Nothing
+	end
 
-	setmetatable(arg_13_0, var_13_0)
+	var_13_0 = {}
 
-	return arg_13_0
+	local meta = var_13_0
+
+	::label_13_0::
+
+	meta.__mode = "k"
+
+	setmetatable(t, meta)
+
+	return t
 end
 
 if not rawget(_G, "STRICT_ENUM_INITIATED") then
 	rawset(_G, "STRICT_ENUM_INITIATED", true)
 
-	local tbl = {
-		__eq = function (self, arg_14_1)
+	local strict_cmp_metatable = {
+		__eq = function (lhs, rhs)
 			-- function 14
-			assert(self._enum_table == arg_14_1._enum_table, "Trying to compare incompatible enum types.")
+			assert(lhs._enum_table == rhs._enum_table, "Trying to compare incompatible enum types.")
 
-			return self.my_index == arg_14_1.my_index
+			return lhs.my_index == rhs.my_index
 		end,
-		__tostring = function (self)
+		__tostring = function (val)
 			-- function 15
-			return self._enum_table[self]
+			return val._enum_table[val]
 		end
 	}
 
 	function CreateStrictEnumTable(...)
 		-- function 16
-		local tbl_2 = {}
-		local var_16_1 = select("#", ...)
+		local my_enum_table = {}
+		local num_args = select("#", ...)
 
-		for i = 1, var_16_1 do
-			local var_16_2 = select(i, ...)
-			local var_16_3 = setmetatable({
-				_enum_table = tbl_2,
+		for i = 1, num_args do
+			local current_value = select(i, ...)
+			local my_object = setmetatable({
+				_enum_table = my_enum_table,
 				my_index = i,
 				as_number = function ()
 					-- function 17
@@ -214,15 +251,15 @@ if not rawget(_G, "STRICT_ENUM_INITIATED") then
 				end,
 				__tostring = function ()
 					-- function 18
-					return var_16_2
+					return current_value
 				end
-			}, tbl)
+			}, strict_cmp_metatable)
 
-			tbl_2[var_16_2] = var_16_3
-			tbl_2[var_16_3] = var_16_2
-			tbl_2[i] = var_16_3
+			my_enum_table[current_value] = my_object
+			my_enum_table[my_object] = current_value
+			my_enum_table[i] = my_object
 		end
 
-		return tbl_2
+		return my_enum_table
 	end
 end

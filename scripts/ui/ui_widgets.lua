@@ -4,81 +4,81 @@ local_require("scripts/ui/ui_widgets_honduras")
 
 local UIWidgets = UIWidgets
 
-UIWidgets = UIWidgets or {}
+UIWidgets = not not UIWidgets or not not {}
 UIWidgets = UIWidgets
 
-UIWidgets.create_hover_button = function (arg_1_0, arg_1_1, arg_1_2)
+UIWidgets.create_hover_button = function (scenegraph_id, normal_texture, hover_texture)
 	-- function 1
 	return {
 		element = UIElements.SimpleButton,
 		content = {
-			texture_id = arg_1_1,
-			texture_hover_id = arg_1_2,
+			texture_id = normal_texture,
+			texture_hover_id = hover_texture,
 			button_hotspot = {}
 		},
 		style = {},
-		scenegraph_id = arg_1_0
+		scenegraph_id = scenegraph_id
 	}
 end
 
-local function fn(arg_2_0)
+local function get_gamepad_text_pass(button_name)
 	-- function 2
 	return {
 		pass_type = "text",
-		text_id = arg_2_0,
-		style_id = arg_2_0,
-		content_check_function = function (self)
+		text_id = button_name,
+		style_id = button_name,
+		content_check_function = function (content)
 			-- function 3
-			return self[arg_2_0]
+			return content[button_name]
 		end
 	}
 end
 
-local function fn_2(arg_4_0, arg_4_1, arg_4_2)
+local function get_gamepad_text_pass_win32(button_name, optional_style_sufix, condition_flag_name)
 	-- function 4
-	local function fn(self)
+	local function content_check_function_texture_1_text(content)
 		-- function 5
-		local var_5_0 = self[arg_4_0]
+		local var_5_0 = content[button_name]
 
-		var_5_0 = not var_5_0 and not self[arg_4_2]
+		var_5_0 = not not var_5_0 and not not not content[condition_flag_name]
 
 		return var_5_0
 	end
 
-	local function fn_2(self)
+	local function content_check_function_texture_2_text(content)
 		-- function 6
-		local var_6_0 = self[arg_4_0]
+		local var_6_0 = content[button_name]
 
-		var_6_0 = not var_6_0 and self[arg_4_2]
+		var_6_0 = not not var_6_0 and not not content[condition_flag_name]
 
 		return var_6_0
 	end
 
 	local tbl = {
 		pass_type = "text",
-		text_id = arg_4_0
+		text_id = button_name
 	}
 	local str
 
-	if not arg_4_1 then
-		str = arg_4_0 .. arg_4_1
+	if optional_style_sufix then
+		str = button_name .. optional_style_sufix
 
 		if not str then
 			-- Nothing
 		end
 	end
 
-	str = arg_4_0
+	str = button_name
 
 	::label_4_0::
 
 	tbl.style_id = str
-	tbl.content_check_function = not arg_4_1 and fn_2 and fn
+	tbl.content_check_function = (not optional_style_sufix or not content_check_function_texture_2_text) and not not content_check_function_texture_1_text
 
 	return tbl
 end
 
-local function fn_3(arg_7_0, arg_7_1)
+local function get_gamepad_layout_text_style(horizontal_alignment, offset)
 	-- function 7
 	return {
 		vertical_alignment = "center",
@@ -86,13 +86,13 @@ local function fn_3(arg_7_0, arg_7_1)
 		localize = false,
 		word_wrap = false,
 		font_type = "hell_shark_masked",
-		horizontal_alignment = arg_7_0,
+		horizontal_alignment = horizontal_alignment,
 		text_color = Colors.get_table("font_default"),
-		offset = arg_7_1
+		offset = offset
 	}
 end
 
-UIWidgets.create_gamepad_layout_win32 = function (arg_8_0, arg_8_1, arg_8_2, arg_8_3, arg_8_4, arg_8_5)
+UIWidgets.create_gamepad_layout_win32 = function (bg_texture1, texture_size1, bg_texture2, texture_size2, offset, scenegraph_id)
 	-- function 8
 	return {
 		element = {
@@ -101,66 +101,66 @@ UIWidgets.create_gamepad_layout_win32 = function (arg_8_0, arg_8_1, arg_8_2, arg
 					pass_type = "texture",
 					style_id = "background1",
 					texture_id = "background1",
-					content_check_function = function (self)
+					content_check_function = function (content)
 						-- function 9
-						return not self.use_texture2_layout
+						return not content.use_texture2_layout
 					end
 				},
 				{
 					pass_type = "texture",
 					style_id = "background2",
 					texture_id = "background2",
-					content_check_function = function (self)
+					content_check_function = function (content)
 						-- function 10
-						return self.use_texture2_layout
+						return content.use_texture2_layout
 					end
 				},
-				fn_2("left_trigger", nil, "use_texture2_layout"),
-				fn_2("left_shoulder", nil, "use_texture2_layout"),
-				fn_2("right_trigger", nil, "use_texture2_layout"),
-				fn_2("right_shoulder", nil, "use_texture2_layout"),
-				fn_2("ls", nil, "use_texture2_layout"),
-				fn_2("rs", nil, "use_texture2_layout"),
-				fn_2("left_thumb", nil, "use_texture2_layout"),
-				fn_2("right_thumb", nil, "use_texture2_layout"),
-				fn_2("d_up", nil, "use_texture2_layout"),
-				fn_2("d_down", nil, "use_texture2_layout"),
-				fn_2("d_left", nil, "use_texture2_layout"),
-				fn_2("d_right", nil, "use_texture2_layout"),
-				fn_2("back", nil, "use_texture2_layout"),
-				fn_2("start", nil, "use_texture2_layout"),
-				fn_2("x", nil, "use_texture2_layout"),
-				fn_2("y", nil, "use_texture2_layout"),
-				fn_2("a", nil, "use_texture2_layout"),
-				fn_2("b", nil, "use_texture2_layout"),
-				fn_2("left_trigger", "_texture2", "use_texture2_layout"),
-				fn_2("left_shoulder", "_texture2", "use_texture2_layout"),
-				fn_2("right_trigger", "_texture2", "use_texture2_layout"),
-				fn_2("right_shoulder", "_texture2", "use_texture2_layout"),
-				fn_2("ls", "_texture2", "use_texture2_layout"),
-				fn_2("rs", "_texture2", "use_texture2_layout"),
-				fn_2("left_thumb", "_texture2", "use_texture2_layout"),
-				fn_2("right_thumb", "_texture2", "use_texture2_layout"),
-				fn_2("d_up", "_texture2", "use_texture2_layout"),
-				fn_2("d_down", "_texture2", "use_texture2_layout"),
-				fn_2("d_left", "_texture2", "use_texture2_layout"),
-				fn_2("d_right", "_texture2", "use_texture2_layout"),
-				fn_2("back", "_texture2", "use_texture2_layout"),
-				fn_2("start", "_texture2", "use_texture2_layout"),
-				fn_2("x", "_texture2", "use_texture2_layout"),
-				fn_2("y", "_texture2", "use_texture2_layout"),
-				fn_2("a", "_texture2", "use_texture2_layout"),
-				fn_2("b", "_texture2", "use_texture2_layout")
+				get_gamepad_text_pass_win32("left_trigger", nil, "use_texture2_layout"),
+				get_gamepad_text_pass_win32("left_shoulder", nil, "use_texture2_layout"),
+				get_gamepad_text_pass_win32("right_trigger", nil, "use_texture2_layout"),
+				get_gamepad_text_pass_win32("right_shoulder", nil, "use_texture2_layout"),
+				get_gamepad_text_pass_win32("ls", nil, "use_texture2_layout"),
+				get_gamepad_text_pass_win32("rs", nil, "use_texture2_layout"),
+				get_gamepad_text_pass_win32("left_thumb", nil, "use_texture2_layout"),
+				get_gamepad_text_pass_win32("right_thumb", nil, "use_texture2_layout"),
+				get_gamepad_text_pass_win32("d_up", nil, "use_texture2_layout"),
+				get_gamepad_text_pass_win32("d_down", nil, "use_texture2_layout"),
+				get_gamepad_text_pass_win32("d_left", nil, "use_texture2_layout"),
+				get_gamepad_text_pass_win32("d_right", nil, "use_texture2_layout"),
+				get_gamepad_text_pass_win32("back", nil, "use_texture2_layout"),
+				get_gamepad_text_pass_win32("start", nil, "use_texture2_layout"),
+				get_gamepad_text_pass_win32("x", nil, "use_texture2_layout"),
+				get_gamepad_text_pass_win32("y", nil, "use_texture2_layout"),
+				get_gamepad_text_pass_win32("a", nil, "use_texture2_layout"),
+				get_gamepad_text_pass_win32("b", nil, "use_texture2_layout"),
+				get_gamepad_text_pass_win32("left_trigger", "_texture2", "use_texture2_layout"),
+				get_gamepad_text_pass_win32("left_shoulder", "_texture2", "use_texture2_layout"),
+				get_gamepad_text_pass_win32("right_trigger", "_texture2", "use_texture2_layout"),
+				get_gamepad_text_pass_win32("right_shoulder", "_texture2", "use_texture2_layout"),
+				get_gamepad_text_pass_win32("ls", "_texture2", "use_texture2_layout"),
+				get_gamepad_text_pass_win32("rs", "_texture2", "use_texture2_layout"),
+				get_gamepad_text_pass_win32("left_thumb", "_texture2", "use_texture2_layout"),
+				get_gamepad_text_pass_win32("right_thumb", "_texture2", "use_texture2_layout"),
+				get_gamepad_text_pass_win32("d_up", "_texture2", "use_texture2_layout"),
+				get_gamepad_text_pass_win32("d_down", "_texture2", "use_texture2_layout"),
+				get_gamepad_text_pass_win32("d_left", "_texture2", "use_texture2_layout"),
+				get_gamepad_text_pass_win32("d_right", "_texture2", "use_texture2_layout"),
+				get_gamepad_text_pass_win32("back", "_texture2", "use_texture2_layout"),
+				get_gamepad_text_pass_win32("start", "_texture2", "use_texture2_layout"),
+				get_gamepad_text_pass_win32("x", "_texture2", "use_texture2_layout"),
+				get_gamepad_text_pass_win32("y", "_texture2", "use_texture2_layout"),
+				get_gamepad_text_pass_win32("a", "_texture2", "use_texture2_layout"),
+				get_gamepad_text_pass_win32("b", "_texture2", "use_texture2_layout")
 			}
 		},
 		content = {
-			background1 = arg_8_0,
-			background2 = arg_8_2
+			background1 = bg_texture1,
+			background2 = bg_texture2
 		},
 		style = {
 			use_texture2_layout = false,
-			size = arg_8_1,
-			offset = arg_8_4,
+			size = texture_size1,
+			offset = offset,
 			background1 = {
 				color = {
 					255,
@@ -168,11 +168,11 @@ UIWidgets.create_gamepad_layout_win32 = function (arg_8_0, arg_8_1, arg_8_2, arg
 					255,
 					255
 				},
-				size = arg_8_1,
+				size = texture_size1,
 				offset = {
-					arg_8_4[1],
-					arg_8_4[2],
-					arg_8_4[3] + 15
+					offset[1],
+					offset[2],
+					offset[3] + 15
 				}
 			},
 			background2 = {
@@ -182,199 +182,199 @@ UIWidgets.create_gamepad_layout_win32 = function (arg_8_0, arg_8_1, arg_8_2, arg
 					255,
 					255
 				},
-				size = arg_8_3,
+				size = texture_size2,
 				offset = {
-					arg_8_4[1],
-					arg_8_4[2],
-					arg_8_4[3] + 15
+					offset[1],
+					offset[2],
+					offset[3] + 15
 				}
 			},
-			left_trigger = fn_3("left", {
-				arg_8_4[1] + 5,
-				arg_8_4[2] + 400 - 40,
-				arg_8_4[3] + 16
+			left_trigger = get_gamepad_layout_text_style("left", {
+				offset[1] + 5,
+				offset[2] + 400 - 40,
+				offset[3] + 16
 			}),
-			left_shoulder = fn_3("left", {
-				arg_8_4[1] + 5,
-				arg_8_4[2] + 400 - 78,
-				arg_8_4[3] + 16
+			left_shoulder = get_gamepad_layout_text_style("left", {
+				offset[1] + 5,
+				offset[2] + 400 - 78,
+				offset[3] + 16
 			}),
-			right_trigger = fn_3("right", {
-				arg_8_4[1] + arg_8_1[1] - 5,
-				arg_8_4[2] + 400 - 40,
-				arg_8_4[3] + 16
+			right_trigger = get_gamepad_layout_text_style("right", {
+				offset[1] + texture_size1[1] - 5,
+				offset[2] + 400 - 40,
+				offset[3] + 16
 			}),
-			right_shoulder = fn_3("right", {
-				arg_8_4[1] + arg_8_1[1] - 5,
-				arg_8_4[2] + 400 - 78,
-				arg_8_4[3] + 16
+			right_shoulder = get_gamepad_layout_text_style("right", {
+				offset[1] + texture_size1[1] - 5,
+				offset[2] + 400 - 78,
+				offset[3] + 16
 			}),
-			ls = fn_3("left", {
-				arg_8_4[1] + 5,
-				arg_8_4[2] + 400 - 176,
-				arg_8_4[3] + 16
+			ls = get_gamepad_layout_text_style("left", {
+				offset[1] + 5,
+				offset[2] + 400 - 176,
+				offset[3] + 16
 			}),
-			rs = fn_3("right", {
-				arg_8_4[1] + arg_8_1[1] - 5,
-				arg_8_4[2] + 400 - 334,
-				arg_8_4[3] + 16
+			rs = get_gamepad_layout_text_style("right", {
+				offset[1] + texture_size1[1] - 5,
+				offset[2] + 400 - 334,
+				offset[3] + 16
 			}),
-			left_thumb = fn_3("left", {
-				arg_8_4[1] + 5,
-				arg_8_4[2] + 400 - 196,
-				arg_8_4[3] + 16
+			left_thumb = get_gamepad_layout_text_style("left", {
+				offset[1] + 5,
+				offset[2] + 400 - 196,
+				offset[3] + 16
 			}),
-			right_thumb = fn_3("right", {
-				arg_8_4[1] + arg_8_1[1] - 5,
-				arg_8_4[2] + 400 - 354,
-				arg_8_4[3] + 16
+			right_thumb = get_gamepad_layout_text_style("right", {
+				offset[1] + texture_size1[1] - 5,
+				offset[2] + 400 - 354,
+				offset[3] + 16
 			}),
-			d_up = fn_3("left", {
-				arg_8_4[1] + 5,
-				arg_8_4[2] + 400 - 240,
-				arg_8_4[3] + 16
+			d_up = get_gamepad_layout_text_style("left", {
+				offset[1] + 5,
+				offset[2] + 400 - 240,
+				offset[3] + 16
 			}),
-			d_down = fn_3("left", {
-				arg_8_4[1] + 5,
-				arg_8_4[2] + 400 - 318,
-				arg_8_4[3] + 16
+			d_down = get_gamepad_layout_text_style("left", {
+				offset[1] + 5,
+				offset[2] + 400 - 318,
+				offset[3] + 16
 			}),
-			d_left = fn_3("left", {
-				arg_8_4[1] + 5,
-				arg_8_4[2] + 400 - 280,
-				arg_8_4[3] + 16
+			d_left = get_gamepad_layout_text_style("left", {
+				offset[1] + 5,
+				offset[2] + 400 - 280,
+				offset[3] + 16
 			}),
-			d_right = fn_3("left", {
-				arg_8_4[1] + 5,
-				arg_8_4[2] + 400 - 354,
-				arg_8_4[3] + 16
+			d_right = get_gamepad_layout_text_style("left", {
+				offset[1] + 5,
+				offset[2] + 400 - 354,
+				offset[3] + 16
 			}),
-			back = fn_3("left", {
-				arg_8_4[1] + 5,
-				arg_8_4[2] + 400 + 2,
-				arg_8_4[3] + 16
+			back = get_gamepad_layout_text_style("left", {
+				offset[1] + 5,
+				offset[2] + 400 + 2,
+				offset[3] + 16
 			}),
-			start = fn_3("right", {
-				arg_8_4[1] + arg_8_1[1] - 5,
-				arg_8_4[2] + 400 + 2,
-				arg_8_4[3] + 16
+			start = get_gamepad_layout_text_style("right", {
+				offset[1] + texture_size1[1] - 5,
+				offset[2] + 400 + 2,
+				offset[3] + 16
 			}),
-			x = fn_3("right", {
-				arg_8_4[1] + arg_8_1[1] - 5,
-				arg_8_4[2] + 400 - 290,
-				arg_8_4[3] + 16
+			x = get_gamepad_layout_text_style("right", {
+				offset[1] + texture_size1[1] - 5,
+				offset[2] + 400 - 290,
+				offset[3] + 16
 			}),
-			y = fn_3("right", {
-				arg_8_4[1] + arg_8_1[1] - 5,
-				arg_8_4[2] + 400 - 126,
-				arg_8_4[3] + 16
+			y = get_gamepad_layout_text_style("right", {
+				offset[1] + texture_size1[1] - 5,
+				offset[2] + 400 - 126,
+				offset[3] + 16
 			}),
-			a = fn_3("right", {
-				arg_8_4[1] + arg_8_1[1] - 5,
-				arg_8_4[2] + 400 - 244,
-				arg_8_4[3] + 16
+			a = get_gamepad_layout_text_style("right", {
+				offset[1] + texture_size1[1] - 5,
+				offset[2] + 400 - 244,
+				offset[3] + 16
 			}),
-			b = fn_3("right", {
-				arg_8_4[1] + arg_8_1[1] - 5,
-				arg_8_4[2] + 400 - 182,
-				arg_8_4[3] + 16
+			b = get_gamepad_layout_text_style("right", {
+				offset[1] + texture_size1[1] - 5,
+				offset[2] + 400 - 182,
+				offset[3] + 16
 			}),
-			left_trigger_texture2 = fn_3("left", {
-				arg_8_4[1] + 5,
-				arg_8_4[2] + 400 - 40,
-				arg_8_4[3] + 16
+			left_trigger_texture2 = get_gamepad_layout_text_style("left", {
+				offset[1] + 5,
+				offset[2] + 400 - 40,
+				offset[3] + 16
 			}),
-			left_shoulder_texture2 = fn_3("left", {
-				arg_8_4[1] + 5,
-				arg_8_4[2] + 400 - 78,
-				arg_8_4[3] + 16
+			left_shoulder_texture2 = get_gamepad_layout_text_style("left", {
+				offset[1] + 5,
+				offset[2] + 400 - 78,
+				offset[3] + 16
 			}),
-			right_trigger_texture2 = fn_3("right", {
-				arg_8_4[1] + arg_8_3[1] - 5,
-				arg_8_4[2] + 400 - 40,
-				arg_8_4[3] + 16
+			right_trigger_texture2 = get_gamepad_layout_text_style("right", {
+				offset[1] + texture_size2[1] - 5,
+				offset[2] + 400 - 40,
+				offset[3] + 16
 			}),
-			right_shoulder_texture2 = fn_3("right", {
-				arg_8_4[1] + arg_8_3[1] - 5,
-				arg_8_4[2] + 400 - 78,
-				arg_8_4[3] + 16
+			right_shoulder_texture2 = get_gamepad_layout_text_style("right", {
+				offset[1] + texture_size2[1] - 5,
+				offset[2] + 400 - 78,
+				offset[3] + 16
 			}),
-			ls_texture2 = fn_3("left", {
-				arg_8_4[1] + 5,
-				arg_8_4[2] + 440 - 346,
-				arg_8_4[3] + 16
+			ls_texture2 = get_gamepad_layout_text_style("left", {
+				offset[1] + 5,
+				offset[2] + 440 - 346,
+				offset[3] + 16
 			}),
-			rs_texture2 = fn_3("right", {
-				arg_8_4[1] + arg_8_3[1] - 5,
-				arg_8_4[2] + 440 - 348,
-				arg_8_4[3] + 16
+			rs_texture2 = get_gamepad_layout_text_style("right", {
+				offset[1] + texture_size2[1] - 5,
+				offset[2] + 440 - 348,
+				offset[3] + 16
 			}),
-			left_thumb_texture2 = fn_3("left", {
-				arg_8_4[1] + 5,
-				arg_8_4[2] + 440 - 366,
-				arg_8_4[3] + 16
+			left_thumb_texture2 = get_gamepad_layout_text_style("left", {
+				offset[1] + 5,
+				offset[2] + 440 - 366,
+				offset[3] + 16
 			}),
-			right_thumb_texture2 = fn_3("right", {
-				arg_8_4[1] + arg_8_3[1] - 5,
-				arg_8_4[2] + 440 - 368,
-				arg_8_4[3] + 16
+			right_thumb_texture2 = get_gamepad_layout_text_style("right", {
+				offset[1] + texture_size2[1] - 5,
+				offset[2] + 440 - 368,
+				offset[3] + 16
 			}),
-			d_up_texture2 = fn_3("left", {
-				arg_8_4[1] + 5,
-				arg_8_4[2] + 440 - 156,
-				arg_8_4[3] + 16
+			d_up_texture2 = get_gamepad_layout_text_style("left", {
+				offset[1] + 5,
+				offset[2] + 440 - 156,
+				offset[3] + 16
 			}),
-			d_down_texture2 = fn_3("left", {
-				arg_8_4[1] + 5,
-				arg_8_4[2] + 440 - 248,
-				arg_8_4[3] + 16
+			d_down_texture2 = get_gamepad_layout_text_style("left", {
+				offset[1] + 5,
+				offset[2] + 440 - 248,
+				offset[3] + 16
 			}),
-			d_left_texture2 = fn_3("left", {
-				arg_8_4[1] + 5,
-				arg_8_4[2] + 440 - 202,
-				arg_8_4[3] + 16
+			d_left_texture2 = get_gamepad_layout_text_style("left", {
+				offset[1] + 5,
+				offset[2] + 440 - 202,
+				offset[3] + 16
 			}),
-			d_right_texture2 = fn_3("left", {
-				arg_8_4[1] + 5,
-				arg_8_4[2] + 440 - 298,
-				arg_8_4[3] + 16
+			d_right_texture2 = get_gamepad_layout_text_style("left", {
+				offset[1] + 5,
+				offset[2] + 440 - 298,
+				offset[3] + 16
 			}),
-			back_texture2 = fn_3("left", {
-				arg_8_4[1] + 5,
-				arg_8_4[2] + 440 - 38,
-				arg_8_4[3] + 16
+			back_texture2 = get_gamepad_layout_text_style("left", {
+				offset[1] + 5,
+				offset[2] + 440 - 38,
+				offset[3] + 16
 			}),
-			start_texture2 = fn_3("right", {
-				arg_8_4[1] + arg_8_3[1] - 5,
-				arg_8_4[2] + 440 - 38,
-				arg_8_4[3] + 16
+			start_texture2 = get_gamepad_layout_text_style("right", {
+				offset[1] + texture_size2[1] - 5,
+				offset[2] + 440 - 38,
+				offset[3] + 16
 			}),
-			x_texture2 = fn_3("right", {
-				arg_8_4[1] + arg_8_3[1] - 5,
-				arg_8_4[2] + 440 - 300,
-				arg_8_4[3] + 16
+			x_texture2 = get_gamepad_layout_text_style("right", {
+				offset[1] + texture_size2[1] - 5,
+				offset[2] + 440 - 300,
+				offset[3] + 16
 			}),
-			y_texture2 = fn_3("right", {
-				arg_8_4[1] + arg_8_3[1] - 5,
-				arg_8_4[2] + 440 - 156,
-				arg_8_4[3] + 16
+			y_texture2 = get_gamepad_layout_text_style("right", {
+				offset[1] + texture_size2[1] - 5,
+				offset[2] + 440 - 156,
+				offset[3] + 16
 			}),
-			a_texture2 = fn_3("right", {
-				arg_8_4[1] + arg_8_3[1] - 5,
-				arg_8_4[2] + 440 - 250,
-				arg_8_4[3] + 16
+			a_texture2 = get_gamepad_layout_text_style("right", {
+				offset[1] + texture_size2[1] - 5,
+				offset[2] + 440 - 250,
+				offset[3] + 16
 			}),
-			b_texture2 = fn_3("right", {
-				arg_8_4[1] + arg_8_3[1] - 5,
-				arg_8_4[2] + 440 - 204,
-				arg_8_4[3] + 16
+			b_texture2 = get_gamepad_layout_text_style("right", {
+				offset[1] + texture_size2[1] - 5,
+				offset[2] + 440 - 204,
+				offset[3] + 16
 			})
 		},
-		scenegraph_id = arg_8_5
+		scenegraph_id = scenegraph_id
 	}
 end
 
-UIWidgets.create_gamepad_layout_xb1 = function (arg_11_0, arg_11_1, arg_11_2, arg_11_3)
+UIWidgets.create_gamepad_layout_xb1 = function (bg_texture, texture_size, offset, scenegraph_id)
 	-- function 11
 	return {
 		element = {
@@ -384,32 +384,32 @@ UIWidgets.create_gamepad_layout_xb1 = function (arg_11_0, arg_11_1, arg_11_2, ar
 					style_id = "background",
 					texture_id = "background"
 				},
-				fn("left_trigger"),
-				fn("left_shoulder"),
-				fn("right_trigger"),
-				fn("right_shoulder"),
-				fn("ls"),
-				fn("rs"),
-				fn("left_thumb"),
-				fn("right_thumb"),
-				fn("d_up"),
-				fn("d_down"),
-				fn("d_left"),
-				fn("d_right"),
-				fn("back"),
-				fn("start"),
-				fn("x"),
-				fn("y"),
-				fn("a"),
-				fn("b")
+				get_gamepad_text_pass("left_trigger"),
+				get_gamepad_text_pass("left_shoulder"),
+				get_gamepad_text_pass("right_trigger"),
+				get_gamepad_text_pass("right_shoulder"),
+				get_gamepad_text_pass("ls"),
+				get_gamepad_text_pass("rs"),
+				get_gamepad_text_pass("left_thumb"),
+				get_gamepad_text_pass("right_thumb"),
+				get_gamepad_text_pass("d_up"),
+				get_gamepad_text_pass("d_down"),
+				get_gamepad_text_pass("d_left"),
+				get_gamepad_text_pass("d_right"),
+				get_gamepad_text_pass("back"),
+				get_gamepad_text_pass("start"),
+				get_gamepad_text_pass("x"),
+				get_gamepad_text_pass("y"),
+				get_gamepad_text_pass("a"),
+				get_gamepad_text_pass("b")
 			}
 		},
 		content = {
-			background = arg_11_0
+			background = bg_texture
 		},
 		style = {
-			size = arg_11_1,
-			offset = arg_11_2,
+			size = texture_size,
+			offset = offset,
 			background = {
 				color = {
 					255,
@@ -417,109 +417,109 @@ UIWidgets.create_gamepad_layout_xb1 = function (arg_11_0, arg_11_1, arg_11_2, ar
 					255,
 					255
 				},
-				size = arg_11_1,
+				size = texture_size,
 				offset = {
-					arg_11_2[1],
-					arg_11_2[2],
-					arg_11_2[3] + 15
+					offset[1],
+					offset[2],
+					offset[3] + 15
 				}
 			},
-			left_trigger = fn_3("left", {
-				arg_11_2[1] + 5,
-				arg_11_2[2] + 400 - 40,
-				arg_11_2[3] + 16
+			left_trigger = get_gamepad_layout_text_style("left", {
+				offset[1] + 5,
+				offset[2] + 400 - 40,
+				offset[3] + 16
 			}),
-			left_shoulder = fn_3("left", {
-				arg_11_2[1] + 5,
-				arg_11_2[2] + 400 - 78,
-				arg_11_2[3] + 16
+			left_shoulder = get_gamepad_layout_text_style("left", {
+				offset[1] + 5,
+				offset[2] + 400 - 78,
+				offset[3] + 16
 			}),
-			right_trigger = fn_3("right", {
-				arg_11_2[1] + arg_11_1[1] - 5,
-				arg_11_2[2] + 400 - 40,
-				arg_11_2[3] + 16
+			right_trigger = get_gamepad_layout_text_style("right", {
+				offset[1] + texture_size[1] - 5,
+				offset[2] + 400 - 40,
+				offset[3] + 16
 			}),
-			right_shoulder = fn_3("right", {
-				arg_11_2[1] + arg_11_1[1] - 5,
-				arg_11_2[2] + 400 - 78,
-				arg_11_2[3] + 16
+			right_shoulder = get_gamepad_layout_text_style("right", {
+				offset[1] + texture_size[1] - 5,
+				offset[2] + 400 - 78,
+				offset[3] + 16
 			}),
-			ls = fn_3("left", {
-				arg_11_2[1] + 5,
-				arg_11_2[2] + 400 - 176,
-				arg_11_2[3] + 16
+			ls = get_gamepad_layout_text_style("left", {
+				offset[1] + 5,
+				offset[2] + 400 - 176,
+				offset[3] + 16
 			}),
-			rs = fn_3("right", {
-				arg_11_2[1] + arg_11_1[1] - 5,
-				arg_11_2[2] + 400 - 334,
-				arg_11_2[3] + 16
+			rs = get_gamepad_layout_text_style("right", {
+				offset[1] + texture_size[1] - 5,
+				offset[2] + 400 - 334,
+				offset[3] + 16
 			}),
-			left_thumb = fn_3("left", {
-				arg_11_2[1] + 5,
-				arg_11_2[2] + 400 - 196,
-				arg_11_2[3] + 16
+			left_thumb = get_gamepad_layout_text_style("left", {
+				offset[1] + 5,
+				offset[2] + 400 - 196,
+				offset[3] + 16
 			}),
-			right_thumb = fn_3("right", {
-				arg_11_2[1] + arg_11_1[1] - 5,
-				arg_11_2[2] + 400 - 354,
-				arg_11_2[3] + 16
+			right_thumb = get_gamepad_layout_text_style("right", {
+				offset[1] + texture_size[1] - 5,
+				offset[2] + 400 - 354,
+				offset[3] + 16
 			}),
-			d_up = fn_3("left", {
-				arg_11_2[1] + 5,
-				arg_11_2[2] + 400 - 240,
-				arg_11_2[3] + 16
+			d_up = get_gamepad_layout_text_style("left", {
+				offset[1] + 5,
+				offset[2] + 400 - 240,
+				offset[3] + 16
 			}),
-			d_down = fn_3("left", {
-				arg_11_2[1] + 5,
-				arg_11_2[2] + 400 - 318,
-				arg_11_2[3] + 16
+			d_down = get_gamepad_layout_text_style("left", {
+				offset[1] + 5,
+				offset[2] + 400 - 318,
+				offset[3] + 16
 			}),
-			d_left = fn_3("left", {
-				arg_11_2[1] + 5,
-				arg_11_2[2] + 400 - 280,
-				arg_11_2[3] + 16
+			d_left = get_gamepad_layout_text_style("left", {
+				offset[1] + 5,
+				offset[2] + 400 - 280,
+				offset[3] + 16
 			}),
-			d_right = fn_3("left", {
-				arg_11_2[1] + 5,
-				arg_11_2[2] + 400 - 354,
-				arg_11_2[3] + 16
+			d_right = get_gamepad_layout_text_style("left", {
+				offset[1] + 5,
+				offset[2] + 400 - 354,
+				offset[3] + 16
 			}),
-			back = fn_3("left", {
-				arg_11_2[1] + 5,
-				arg_11_2[2] + 400 + 2,
-				arg_11_2[3] + 16
+			back = get_gamepad_layout_text_style("left", {
+				offset[1] + 5,
+				offset[2] + 400 + 2,
+				offset[3] + 16
 			}),
-			start = fn_3("right", {
-				arg_11_2[1] + arg_11_1[1] - 5,
-				arg_11_2[2] + 400 + 2,
-				arg_11_2[3] + 16
+			start = get_gamepad_layout_text_style("right", {
+				offset[1] + texture_size[1] - 5,
+				offset[2] + 400 + 2,
+				offset[3] + 16
 			}),
-			x = fn_3("right", {
-				arg_11_2[1] + arg_11_1[1] - 5,
-				arg_11_2[2] + 400 - 290,
-				arg_11_2[3] + 16
+			x = get_gamepad_layout_text_style("right", {
+				offset[1] + texture_size[1] - 5,
+				offset[2] + 400 - 290,
+				offset[3] + 16
 			}),
-			y = fn_3("right", {
-				arg_11_2[1] + arg_11_1[1] - 5,
-				arg_11_2[2] + 400 - 126,
-				arg_11_2[3] + 16
+			y = get_gamepad_layout_text_style("right", {
+				offset[1] + texture_size[1] - 5,
+				offset[2] + 400 - 126,
+				offset[3] + 16
 			}),
-			a = fn_3("right", {
-				arg_11_2[1] + arg_11_1[1] - 5,
-				arg_11_2[2] + 400 - 244,
-				arg_11_2[3] + 16
+			a = get_gamepad_layout_text_style("right", {
+				offset[1] + texture_size[1] - 5,
+				offset[2] + 400 - 244,
+				offset[3] + 16
 			}),
-			b = fn_3("right", {
-				arg_11_2[1] + arg_11_1[1] - 5,
-				arg_11_2[2] + 400 - 182,
-				arg_11_2[3] + 16
+			b = get_gamepad_layout_text_style("right", {
+				offset[1] + texture_size[1] - 5,
+				offset[2] + 400 - 182,
+				offset[3] + 16
 			})
 		},
-		scenegraph_id = arg_11_3
+		scenegraph_id = scenegraph_id
 	}
 end
 
-UIWidgets.create_gamepad_layout_ps4 = function (arg_12_0, arg_12_1, arg_12_2, arg_12_3)
+UIWidgets.create_gamepad_layout_ps4 = function (bg_texture, texture_size, offset, scenegraph_id)
 	-- function 12
 	return {
 		element = {
@@ -529,24 +529,24 @@ UIWidgets.create_gamepad_layout_ps4 = function (arg_12_0, arg_12_1, arg_12_2, ar
 					style_id = "background",
 					texture_id = "background"
 				},
-				fn("l2"),
-				fn("l1"),
-				fn("r2"),
-				fn("r1"),
-				fn("ls"),
-				fn("rs"),
-				fn("l3"),
-				fn("r3"),
-				fn("up"),
-				fn("down"),
-				fn("left"),
-				fn("right"),
-				fn("touch"),
-				fn("options"),
-				fn("square"),
-				fn("triangle"),
-				fn("cross"),
-				fn("circle")
+				get_gamepad_text_pass("l2"),
+				get_gamepad_text_pass("l1"),
+				get_gamepad_text_pass("r2"),
+				get_gamepad_text_pass("r1"),
+				get_gamepad_text_pass("ls"),
+				get_gamepad_text_pass("rs"),
+				get_gamepad_text_pass("l3"),
+				get_gamepad_text_pass("r3"),
+				get_gamepad_text_pass("up"),
+				get_gamepad_text_pass("down"),
+				get_gamepad_text_pass("left"),
+				get_gamepad_text_pass("right"),
+				get_gamepad_text_pass("touch"),
+				get_gamepad_text_pass("options"),
+				get_gamepad_text_pass("square"),
+				get_gamepad_text_pass("triangle"),
+				get_gamepad_text_pass("cross"),
+				get_gamepad_text_pass("circle")
 			}
 		},
 		content = {
@@ -568,11 +568,11 @@ UIWidgets.create_gamepad_layout_ps4 = function (arg_12_0, arg_12_1, arg_12_2, ar
 			l2 = "l2",
 			r1 = "r1",
 			right = "right",
-			background = arg_12_0
+			background = bg_texture
 		},
 		style = {
-			size = arg_12_1,
-			offset = arg_12_2,
+			size = texture_size,
+			offset = offset,
 			background = {
 				color = {
 					255,
@@ -580,109 +580,109 @@ UIWidgets.create_gamepad_layout_ps4 = function (arg_12_0, arg_12_1, arg_12_2, ar
 					255,
 					255
 				},
-				size = arg_12_1,
+				size = texture_size,
 				offset = {
-					arg_12_2[1],
-					arg_12_2[2],
-					arg_12_2[3] + 15
+					offset[1],
+					offset[2],
+					offset[3] + 15
 				}
 			},
-			l2 = fn_3("left", {
-				arg_12_2[1] + 5,
-				arg_12_2[2] + 400 - 40,
-				arg_12_2[3] + 16
+			l2 = get_gamepad_layout_text_style("left", {
+				offset[1] + 5,
+				offset[2] + 400 - 40,
+				offset[3] + 16
 			}),
-			l1 = fn_3("left", {
-				arg_12_2[1] + 5,
-				arg_12_2[2] + 400 - 78,
-				arg_12_2[3] + 16
+			l1 = get_gamepad_layout_text_style("left", {
+				offset[1] + 5,
+				offset[2] + 400 - 78,
+				offset[3] + 16
 			}),
-			r2 = fn_3("right", {
-				arg_12_2[1] + arg_12_1[1] - 5,
-				arg_12_2[2] + 400 - 40,
-				arg_12_2[3] + 16
+			r2 = get_gamepad_layout_text_style("right", {
+				offset[1] + texture_size[1] - 5,
+				offset[2] + 400 - 40,
+				offset[3] + 16
 			}),
-			r1 = fn_3("right", {
-				arg_12_2[1] + arg_12_1[1] - 5,
-				arg_12_2[2] + 400 - 78,
-				arg_12_2[3] + 16
+			r1 = get_gamepad_layout_text_style("right", {
+				offset[1] + texture_size[1] - 5,
+				offset[2] + 400 - 78,
+				offset[3] + 16
 			}),
-			ls = fn_3("left", {
-				arg_12_2[1] + 5,
-				arg_12_2[2] + 440 - 346,
-				arg_12_2[3] + 16
+			ls = get_gamepad_layout_text_style("left", {
+				offset[1] + 5,
+				offset[2] + 440 - 346,
+				offset[3] + 16
 			}),
-			rs = fn_3("right", {
-				arg_12_2[1] + arg_12_1[1] - 5,
-				arg_12_2[2] + 440 - 348,
-				arg_12_2[3] + 16
+			rs = get_gamepad_layout_text_style("right", {
+				offset[1] + texture_size[1] - 5,
+				offset[2] + 440 - 348,
+				offset[3] + 16
 			}),
-			l3 = fn_3("left", {
-				arg_12_2[1] + 5,
-				arg_12_2[2] + 440 - 366,
-				arg_12_2[3] + 16
+			l3 = get_gamepad_layout_text_style("left", {
+				offset[1] + 5,
+				offset[2] + 440 - 366,
+				offset[3] + 16
 			}),
-			r3 = fn_3("right", {
-				arg_12_2[1] + arg_12_1[1] - 5,
-				arg_12_2[2] + 440 - 368,
-				arg_12_2[3] + 16
+			r3 = get_gamepad_layout_text_style("right", {
+				offset[1] + texture_size[1] - 5,
+				offset[2] + 440 - 368,
+				offset[3] + 16
 			}),
-			up = fn_3("left", {
-				arg_12_2[1] + 5,
-				arg_12_2[2] + 440 - 156,
-				arg_12_2[3] + 16
+			up = get_gamepad_layout_text_style("left", {
+				offset[1] + 5,
+				offset[2] + 440 - 156,
+				offset[3] + 16
 			}),
-			down = fn_3("left", {
-				arg_12_2[1] + 5,
-				arg_12_2[2] + 440 - 248,
-				arg_12_2[3] + 16
+			down = get_gamepad_layout_text_style("left", {
+				offset[1] + 5,
+				offset[2] + 440 - 248,
+				offset[3] + 16
 			}),
-			left = fn_3("left", {
-				arg_12_2[1] + 5,
-				arg_12_2[2] + 440 - 202,
-				arg_12_2[3] + 16
+			left = get_gamepad_layout_text_style("left", {
+				offset[1] + 5,
+				offset[2] + 440 - 202,
+				offset[3] + 16
 			}),
-			right = fn_3("left", {
-				arg_12_2[1] + 5,
-				arg_12_2[2] + 440 - 298,
-				arg_12_2[3] + 16
+			right = get_gamepad_layout_text_style("left", {
+				offset[1] + 5,
+				offset[2] + 440 - 298,
+				offset[3] + 16
 			}),
-			touch = fn_3("left", {
-				arg_12_2[1] + 5,
-				arg_12_2[2] + 440 - 38,
-				arg_12_2[3] + 16
+			touch = get_gamepad_layout_text_style("left", {
+				offset[1] + 5,
+				offset[2] + 440 - 38,
+				offset[3] + 16
 			}),
-			options = fn_3("right", {
-				arg_12_2[1] + arg_12_1[1] - 5,
-				arg_12_2[2] + 440 - 38,
-				arg_12_2[3] + 16
+			options = get_gamepad_layout_text_style("right", {
+				offset[1] + texture_size[1] - 5,
+				offset[2] + 440 - 38,
+				offset[3] + 16
 			}),
-			square = fn_3("right", {
-				arg_12_2[1] + arg_12_1[1] - 5,
-				arg_12_2[2] + 440 - 300,
-				arg_12_2[3] + 16
+			square = get_gamepad_layout_text_style("right", {
+				offset[1] + texture_size[1] - 5,
+				offset[2] + 440 - 300,
+				offset[3] + 16
 			}),
-			triangle = fn_3("right", {
-				arg_12_2[1] + arg_12_1[1] - 5,
-				arg_12_2[2] + 440 - 156,
-				arg_12_2[3] + 16
+			triangle = get_gamepad_layout_text_style("right", {
+				offset[1] + texture_size[1] - 5,
+				offset[2] + 440 - 156,
+				offset[3] + 16
 			}),
-			cross = fn_3("right", {
-				arg_12_2[1] + arg_12_1[1] - 5,
-				arg_12_2[2] + 440 - 250,
-				arg_12_2[3] + 16
+			cross = get_gamepad_layout_text_style("right", {
+				offset[1] + texture_size[1] - 5,
+				offset[2] + 440 - 250,
+				offset[3] + 16
 			}),
-			circle = fn_3("right", {
-				arg_12_2[1] + arg_12_1[1] - 5,
-				arg_12_2[2] + 440 - 204,
-				arg_12_2[3] + 16
+			circle = get_gamepad_layout_text_style("right", {
+				offset[1] + texture_size[1] - 5,
+				offset[2] + 440 - 204,
+				offset[3] + 16
 			})
 		},
-		scenegraph_id = arg_12_3
+		scenegraph_id = scenegraph_id
 	}
 end
 
-UIWidgets.create_menu_button = function (arg_13_0, arg_13_1, arg_13_2, arg_13_3, arg_13_4, arg_13_5)
+UIWidgets.create_menu_button = function (text_field_id, scenegraph_id, optional_text_size, optional_word_wrap, optional_text_area_size, optional_x_offset)
 	-- function 13
 	return {
 		element = {
@@ -690,33 +690,33 @@ UIWidgets.create_menu_button = function (arg_13_0, arg_13_1, arg_13_2, arg_13_3,
 				{
 					pass_type = "hotspot",
 					content_id = "button_hotspot",
-					content_check_function = function (self)
+					content_check_function = function (content)
 						-- function 14
-						return not self.disabled
+						return not content.disabled
 					end
 				},
 				{
 					pass_type = "texture",
 					texture_id = "texture_id",
-					content_check_function = function (self)
+					content_check_function = function (content)
 						-- function 15
-						local button_hotspot = self.button_hotspot
+						local button_hotspot = content.button_hotspot
 
-						return not not button_hotspot.disabled or not not button_hotspot.is_hover or not (button_hotspot.is_clicked > 0) or not button_hotspot.is_selected
+						return not button_hotspot.disabled and not button_hotspot.is_hover and button_hotspot.is_clicked > 0 and not not not button_hotspot.is_selected
 					end
 				},
 				{
 					pass_type = "texture",
 					texture_id = "texture_hover_id",
-					content_check_function = function (self)
+					content_check_function = function (content)
 						-- function 16
-						local button_hotspot = self.button_hotspot
+						local button_hotspot = content.button_hotspot
 						local is_hover
 
-						if not (button_hotspot.disabled or button_hotspot.is_selected) then
+						if not button_hotspot.disabled and not button_hotspot.is_selected then
 							is_hover = button_hotspot.is_hover
 
-							if not is_hover then
+							if is_hover then
 								-- Nothing
 							end
 
@@ -741,25 +741,25 @@ UIWidgets.create_menu_button = function (arg_13_0, arg_13_1, arg_13_2, arg_13_3,
 				{
 					pass_type = "texture",
 					texture_id = "texture_click_id",
-					content_check_function = function (self)
+					content_check_function = function (content)
 						-- function 17
-						local button_hotspot = self.button_hotspot
+						local button_hotspot = content.button_hotspot
 
-						return not not button_hotspot.disabled or button_hotspot.is_clicked == 0
+						return not button_hotspot.disabled and button_hotspot.is_clicked == 0
 					end
 				},
 				{
 					pass_type = "texture",
 					texture_id = "texture_selected_id",
-					content_check_function = function (self)
+					content_check_function = function (content)
 						-- function 18
-						local button_hotspot = self.button_hotspot
+						local button_hotspot = content.button_hotspot
 						local is_selected
 
 						if not button_hotspot.disabled then
 							is_selected = button_hotspot.is_selected
 
-							if not is_selected then
+							if is_selected then
 								-- Nothing
 							end
 
@@ -784,53 +784,55 @@ UIWidgets.create_menu_button = function (arg_13_0, arg_13_1, arg_13_2, arg_13_3,
 				{
 					pass_type = "texture",
 					texture_id = "texture_disabled_id",
-					content_check_function = function (self)
+					content_check_function = function (content)
 						-- function 19
-						return self.button_hotspot.disabled
+						local button_hotspot = content.button_hotspot
+
+						return button_hotspot.disabled
 					end
 				},
 				{
 					pass_type = "texture_uv",
 					style_id = "left_detail",
 					texture_id = "left_texture_id",
-					content_check_function = function (self)
+					content_check_function = function (content)
 						-- function 20
-						return not self.disable_side_textures
+						return not content.disable_side_textures
 					end
 				},
 				{
 					pass_type = "texture",
 					style_id = "right_detail",
 					texture_id = "right_texture_id",
-					content_check_function = function (self)
+					content_check_function = function (content)
 						-- function 21
-						return not self.disable_side_textures
+						return not content.disable_side_textures
 					end
 				},
 				{
 					style_id = "text",
 					pass_type = "text",
 					text_id = "text_field",
-					content_check_function = function (self)
+					content_check_function = function (content)
 						-- function 22
-						local button_hotspot = self.button_hotspot
+						local button_hotspot = content.button_hotspot
 
-						return not not button_hotspot.disabled or not not button_hotspot.is_hover or not not button_hotspot.is_selected or button_hotspot.is_clicked > 0
+						return not button_hotspot.disabled and not button_hotspot.is_hover and not button_hotspot.is_selected and button_hotspot.is_clicked > 0
 					end
 				},
 				{
 					style_id = "text_hover",
 					pass_type = "text",
 					text_id = "text_field",
-					content_check_function = function (self)
+					content_check_function = function (content)
 						-- function 23
-						local button_hotspot = self.button_hotspot
+						local button_hotspot = content.button_hotspot
 						local is_hover
 
-						if not (button_hotspot.disabled or button_hotspot.is_selected) then
+						if not button_hotspot.disabled and not button_hotspot.is_selected then
 							is_hover = button_hotspot.is_hover
 
-							if not is_hover then
+							if is_hover then
 								-- Nothing
 							end
 
@@ -856,26 +858,26 @@ UIWidgets.create_menu_button = function (arg_13_0, arg_13_1, arg_13_2, arg_13_3,
 					style_id = "text_click",
 					pass_type = "text",
 					text_id = "text_field",
-					content_check_function = function (self)
+					content_check_function = function (content)
 						-- function 24
-						local button_hotspot = self.button_hotspot
+						local button_hotspot = content.button_hotspot
 
-						return not not button_hotspot.disabled or button_hotspot.is_clicked == 0
+						return not button_hotspot.disabled and button_hotspot.is_clicked == 0
 					end
 				},
 				{
 					style_id = "text_selected",
 					pass_type = "text",
 					text_id = "text_field",
-					content_check_function = function (self)
+					content_check_function = function (content)
 						-- function 25
-						local button_hotspot = self.button_hotspot
+						local button_hotspot = content.button_hotspot
 						local is_selected
 
 						if not button_hotspot.disabled then
 							is_selected = button_hotspot.is_selected
 
-							if not is_selected then
+							if is_selected then
 								-- Nothing
 							end
 
@@ -901,9 +903,11 @@ UIWidgets.create_menu_button = function (arg_13_0, arg_13_1, arg_13_2, arg_13_3,
 					style_id = "text_disabled",
 					pass_type = "text",
 					text_id = "text_field",
-					content_check_function = function (self)
+					content_check_function = function (content)
 						-- function 26
-						return self.button_hotspot.disabled
+						local button_hotspot = content.button_hotspot
+
+						return button_hotspot.disabled
 					end
 				}
 			}
@@ -921,7 +925,7 @@ UIWidgets.create_menu_button = function (arg_13_0, arg_13_1, arg_13_2, arg_13_3,
 				is_hover = false,
 				is_clicked = 10
 			},
-			text_field = arg_13_0,
+			text_field = text_field_id,
 			hover_color = {
 				0,
 				255,
@@ -945,11 +949,11 @@ UIWidgets.create_menu_button = function (arg_13_0, arg_13_1, arg_13_2, arg_13_3,
 				localize = true,
 				vertical_alignment = "center",
 				font_type = "hell_shark",
-				word_wrap = arg_13_3,
-				font_size = arg_13_2 or 24,
-				size = arg_13_4,
+				word_wrap = optional_word_wrap,
+				font_size = not not optional_text_size or not not 24,
+				size = optional_text_area_size,
 				offset = {
-					arg_13_5 or 0,
+					not not optional_x_offset or not not 0,
 					0,
 					2
 				},
@@ -962,11 +966,11 @@ UIWidgets.create_menu_button = function (arg_13_0, arg_13_1, arg_13_2, arg_13_3,
 				localize = true,
 				vertical_alignment = "center",
 				font_type = "hell_shark",
-				word_wrap = arg_13_3,
-				font_size = arg_13_2 or 24,
-				size = arg_13_4,
+				word_wrap = optional_word_wrap,
+				font_size = not not optional_text_size or not not 24,
+				size = optional_text_area_size,
 				offset = {
-					arg_13_5 or 0,
+					not not optional_x_offset or not not 0,
 					0,
 					2
 				},
@@ -977,11 +981,11 @@ UIWidgets.create_menu_button = function (arg_13_0, arg_13_1, arg_13_2, arg_13_3,
 				localize = true,
 				vertical_alignment = "center",
 				font_type = "hell_shark",
-				word_wrap = arg_13_3,
-				font_size = arg_13_2 or 24,
-				size = arg_13_4,
+				word_wrap = optional_word_wrap,
+				font_size = not not optional_text_size or not not 24,
+				size = optional_text_area_size,
 				offset = {
-					arg_13_5 or 0,
+					not not optional_x_offset or not not 0,
 					-2,
 					2
 				},
@@ -992,11 +996,11 @@ UIWidgets.create_menu_button = function (arg_13_0, arg_13_1, arg_13_2, arg_13_3,
 				localize = true,
 				vertical_alignment = "center",
 				font_type = "hell_shark",
-				word_wrap = arg_13_3,
-				font_size = arg_13_2 or 24,
-				size = arg_13_4,
+				word_wrap = optional_word_wrap,
+				font_size = not not optional_text_size or not not 24,
+				size = optional_text_area_size,
 				offset = {
-					arg_13_5 or 0,
+					not not optional_x_offset or not not 0,
 					0,
 					2
 				},
@@ -1007,11 +1011,11 @@ UIWidgets.create_menu_button = function (arg_13_0, arg_13_1, arg_13_2, arg_13_3,
 				localize = true,
 				vertical_alignment = "center",
 				font_type = "hell_shark",
-				word_wrap = arg_13_3,
-				font_size = arg_13_2 or 24,
-				size = arg_13_4,
+				word_wrap = optional_word_wrap,
+				font_size = not not optional_text_size or not not 24,
+				size = optional_text_area_size,
 				offset = {
-					arg_13_5 or 0,
+					not not optional_x_offset or not not 0,
 					0,
 					2
 				},
@@ -1040,11 +1044,11 @@ UIWidgets.create_menu_button = function (arg_13_0, arg_13_1, arg_13_2, arg_13_3,
 				}
 			}
 		},
-		scenegraph_id = arg_13_1
+		scenegraph_id = scenegraph_id
 	}
 end
 
-UIWidgets.create_menu_button_medium = function (arg_27_0, arg_27_1, arg_27_2, arg_27_3)
+UIWidgets.create_menu_button_medium = function (text_field_id, scenegraph_id, disable_localization, optional_font_size)
 	-- function 27
 	return {
 		element = UIElements.ButtonMenuSteps,
@@ -1054,7 +1058,7 @@ UIWidgets.create_menu_button_medium = function (arg_27_0, arg_27_1, arg_27_2, ar
 			texture_hover_id = "medium_button_hover",
 			texture_selected_id = "medium_button_hover",
 			texture_disabled_id = "medium_button_disabled",
-			text_field = arg_27_0,
+			text_field = text_field_id,
 			button_hotspot = {}
 		},
 		style = {
@@ -1070,8 +1074,8 @@ UIWidgets.create_menu_button_medium = function (arg_27_0, arg_27_1, arg_27_2, ar
 				horizontal_alignment = "center",
 				vertical_alignment = "center",
 				font_type = "hell_shark",
-				localize = not not arg_27_2 or true,
-				font_size = arg_27_3 or 24,
+				localize = not disable_localization and not not true,
+				font_size = not not optional_font_size or not not 24,
 				offset = {
 					0,
 					0,
@@ -1085,8 +1089,8 @@ UIWidgets.create_menu_button_medium = function (arg_27_0, arg_27_1, arg_27_2, ar
 				vertical_alignment = "center",
 				font_type = "hell_shark",
 				horizontal_alignment = "center",
-				localize = not not arg_27_2 or true,
-				font_size = arg_27_3 or 24,
+				localize = not disable_localization and not not true,
+				font_size = not not optional_font_size or not not 24,
 				offset = {
 					0,
 					0,
@@ -1098,8 +1102,8 @@ UIWidgets.create_menu_button_medium = function (arg_27_0, arg_27_1, arg_27_2, ar
 				vertical_alignment = "center",
 				font_type = "hell_shark",
 				horizontal_alignment = "center",
-				localize = not not arg_27_2 or true,
-				font_size = arg_27_3 or 24,
+				localize = not disable_localization and not not true,
+				font_size = not not optional_font_size or not not 24,
 				offset = {
 					0,
 					-2,
@@ -1111,8 +1115,8 @@ UIWidgets.create_menu_button_medium = function (arg_27_0, arg_27_1, arg_27_2, ar
 				vertical_alignment = "center",
 				font_type = "hell_shark",
 				horizontal_alignment = "center",
-				localize = not not arg_27_2 or true,
-				font_size = arg_27_3 or 24,
+				localize = not disable_localization and not not true,
+				font_size = not not optional_font_size or not not 24,
 				offset = {
 					0,
 					0,
@@ -1121,11 +1125,11 @@ UIWidgets.create_menu_button_medium = function (arg_27_0, arg_27_1, arg_27_2, ar
 				text_color = Colors.get_color_table_with_alpha("gray", 255)
 			}
 		},
-		scenegraph_id = arg_27_1
+		scenegraph_id = scenegraph_id
 	}
 end
 
-UIWidgets.create_popup_button_long = function (arg_28_0, arg_28_1, arg_28_2)
+UIWidgets.create_popup_button_long = function (text_field_id, scenegraph_id, disable_localization)
 	-- function 28
 	return {
 		element = UIElements.ButtonMenuSteps,
@@ -1135,7 +1139,7 @@ UIWidgets.create_popup_button_long = function (arg_28_0, arg_28_1, arg_28_2)
 			texture_hover_id = "popup_button_hover",
 			texture_selected_id = "popup_button_hover",
 			texture_disabled_id = "popup_button_disabled",
-			text_field = arg_28_0,
+			text_field = text_field_id,
 			button_hotspot = {}
 		},
 		style = {
@@ -1152,7 +1156,7 @@ UIWidgets.create_popup_button_long = function (arg_28_0, arg_28_1, arg_28_2)
 				horizontal_alignment = "center",
 				vertical_alignment = "center",
 				font_type = "hell_shark",
-				localize = not not arg_28_2 or true,
+				localize = not disable_localization and not not true,
 				offset = {
 					0,
 					0,
@@ -1167,7 +1171,7 @@ UIWidgets.create_popup_button_long = function (arg_28_0, arg_28_1, arg_28_2)
 				font_type = "hell_shark",
 				font_size = 32,
 				horizontal_alignment = "center",
-				localize = not not arg_28_2 or true,
+				localize = not disable_localization and not not true,
 				offset = {
 					0,
 					0,
@@ -1180,7 +1184,7 @@ UIWidgets.create_popup_button_long = function (arg_28_0, arg_28_1, arg_28_2)
 				font_type = "hell_shark",
 				font_size = 32,
 				horizontal_alignment = "center",
-				localize = not not arg_28_2 or true,
+				localize = not disable_localization and not not true,
 				offset = {
 					0,
 					-2,
@@ -1193,7 +1197,7 @@ UIWidgets.create_popup_button_long = function (arg_28_0, arg_28_1, arg_28_2)
 				font_type = "hell_shark",
 				font_size = 32,
 				horizontal_alignment = "center",
-				localize = not not arg_28_2 or true,
+				localize = not disable_localization and not not true,
 				offset = {
 					0,
 					0,
@@ -1202,11 +1206,11 @@ UIWidgets.create_popup_button_long = function (arg_28_0, arg_28_1, arg_28_2)
 				text_color = Colors.get_color_table_with_alpha("gray", 255)
 			}
 		},
-		scenegraph_id = arg_28_1
+		scenegraph_id = scenegraph_id
 	}
 end
 
-UIWidgets.create_quest_screen_button = function (arg_29_0, arg_29_1, arg_29_2)
+UIWidgets.create_quest_screen_button = function (text_field_id, scenegraph_id, disable_localization)
 	-- function 29
 	return {
 		element = UIElements.ButtonMenuSteps,
@@ -1216,7 +1220,7 @@ UIWidgets.create_quest_screen_button = function (arg_29_0, arg_29_1, arg_29_2)
 			texture_hover_id = "quest_screen_button_hover",
 			texture_selected_id = "quest_screen_button_hover",
 			texture_disabled_id = "quest_screen_button_disabled",
-			text_field = arg_29_0,
+			text_field = text_field_id,
 			button_hotspot = {}
 		},
 		style = {
@@ -1233,7 +1237,7 @@ UIWidgets.create_quest_screen_button = function (arg_29_0, arg_29_1, arg_29_2)
 				horizontal_alignment = "center",
 				vertical_alignment = "center",
 				font_type = "hell_shark",
-				localize = not not arg_29_2 or true,
+				localize = not disable_localization and not not true,
 				offset = {
 					0,
 					0,
@@ -1248,7 +1252,7 @@ UIWidgets.create_quest_screen_button = function (arg_29_0, arg_29_1, arg_29_2)
 				font_type = "hell_shark",
 				font_size = 24,
 				horizontal_alignment = "center",
-				localize = not not arg_29_2 or true,
+				localize = not disable_localization and not not true,
 				offset = {
 					0,
 					0,
@@ -1261,7 +1265,7 @@ UIWidgets.create_quest_screen_button = function (arg_29_0, arg_29_1, arg_29_2)
 				font_type = "hell_shark",
 				font_size = 24,
 				horizontal_alignment = "center",
-				localize = not not arg_29_2 or true,
+				localize = not disable_localization and not not true,
 				offset = {
 					0,
 					-2,
@@ -1274,7 +1278,7 @@ UIWidgets.create_quest_screen_button = function (arg_29_0, arg_29_1, arg_29_2)
 				font_type = "hell_shark",
 				font_size = 24,
 				horizontal_alignment = "center",
-				localize = not not arg_29_2 or true,
+				localize = not disable_localization and not not true,
 				offset = {
 					0,
 					0,
@@ -1283,11 +1287,11 @@ UIWidgets.create_quest_screen_button = function (arg_29_0, arg_29_1, arg_29_2)
 				text_color = Colors.get_color_table_with_alpha("gray", 255)
 			}
 		},
-		scenegraph_id = arg_29_1
+		scenegraph_id = scenegraph_id
 	}
 end
 
-UIWidgets.create_menu_button_small = function (arg_30_0, arg_30_1)
+UIWidgets.create_menu_button_small = function (text_field_id, scenegraph_id)
 	-- function 30
 	return {
 		element = UIElements.ButtonMenuSteps,
@@ -1297,7 +1301,7 @@ UIWidgets.create_menu_button_small = function (arg_30_0, arg_30_1)
 			texture_hover_id = "small_button_02_hover",
 			texture_selected_id = "small_button_02_hover",
 			texture_disabled_id = "small_button_02_disabled",
-			text_field = arg_30_0,
+			text_field = text_field_id,
 			button_hotspot = {}
 		},
 		style = {
@@ -1364,11 +1368,11 @@ UIWidgets.create_menu_button_small = function (arg_30_0, arg_30_1)
 				text_color = Colors.get_color_table_with_alpha("gray", 255)
 			}
 		},
-		scenegraph_id = arg_30_1
+		scenegraph_id = scenegraph_id
 	}
 end
 
-UIWidgets.create_octagon_button = function (self, arg_31_1, arg_31_2)
+UIWidgets.create_octagon_button = function (icons, tooltips, scenegraph_id)
 	-- function 31
 	local tbl = {
 		element = UIElements.ToggleIconButton
@@ -1380,24 +1384,24 @@ UIWidgets.create_octagon_button = function (self, arg_31_1, arg_31_2)
 		hover_texture = "octagon_button_hover",
 		normal_texture = "octagon_button_normal"
 	}
-	local var_31_2 = self[1]
+	local var_31_2 = icons[1]
 
-	var_31_2 = var_31_2 or "map_icon_friends_01"
+	var_31_2 = not not var_31_2 or not not "map_icon_friends_01"
 	tbl_2.icon_texture = var_31_2
 
-	local var_31_3 = self[2]
+	local var_31_3 = icons[2]
 
-	var_31_3 = var_31_3 or "map_icon_friends_02"
+	var_31_3 = not not var_31_3 or not not "map_icon_friends_02"
 	tbl_2.icon_hover_texture = var_31_3
 
-	local var_31_4 = arg_31_1[1]
+	local var_31_4 = tooltips[1]
 
-	var_31_4 = var_31_4 or ""
+	var_31_4 = not not var_31_4 or not not ""
 	tbl_2.tooltip_text = var_31_4
 
-	local var_31_5 = arg_31_1[2]
+	local var_31_5 = tooltips[2]
 
-	var_31_5 = var_31_5 or ""
+	var_31_5 = not not var_31_5 or not not ""
 	tbl_2.toggled_tooltip_text = var_31_5
 	tbl_2.button_hotspot = {}
 	tbl.content = tbl_2
@@ -1497,12 +1501,12 @@ UIWidgets.create_octagon_button = function (self, arg_31_1, arg_31_2)
 			}
 		}
 	}
-	tbl.scenegraph_id = arg_31_2
+	tbl.scenegraph_id = scenegraph_id
 
 	return tbl
 end
 
-UIWidgets.create_menu_button_medium_with_timer = function (arg_32_0, arg_32_1, arg_32_2, arg_32_3)
+UIWidgets.create_menu_button_medium_with_timer = function (text_field_id, timer_text_field_id, timer_scenegraph_id, scenegraph_id)
 	-- function 32
 	return {
 		element = UIElements.ButtonMenuStepsWithTimer,
@@ -1512,9 +1516,9 @@ UIWidgets.create_menu_button_medium_with_timer = function (arg_32_0, arg_32_1, a
 			texture_hover_id = "medium_button_hover",
 			texture_selected_id = "medium_button_hover",
 			texture_disabled_id = "medium_button_disabled",
-			text_field = arg_32_0,
+			text_field = text_field_id,
 			button_hotspot = {},
-			timer_text_field = arg_32_1
+			timer_text_field = timer_text_field_id
 		},
 		style = {
 			text = {
@@ -1582,7 +1586,7 @@ UIWidgets.create_menu_button_medium_with_timer = function (arg_32_0, arg_32_1, a
 					0,
 					4
 				},
-				scenegraph_id = arg_32_2
+				scenegraph_id = timer_scenegraph_id
 			},
 			timer_text_field_hover = {
 				horizontal_alignment = "right",
@@ -1597,7 +1601,7 @@ UIWidgets.create_menu_button_medium_with_timer = function (arg_32_0, arg_32_1, a
 					0,
 					4
 				},
-				scenegraph_id = arg_32_2
+				scenegraph_id = timer_scenegraph_id
 			},
 			timer_text_field_selected = {
 				horizontal_alignment = "right",
@@ -1612,7 +1616,7 @@ UIWidgets.create_menu_button_medium_with_timer = function (arg_32_0, arg_32_1, a
 					-2,
 					4
 				},
-				scenegraph_id = arg_32_2
+				scenegraph_id = timer_scenegraph_id
 			},
 			timer_text_field_disabled = {
 				horizontal_alignment = "right",
@@ -1627,92 +1631,100 @@ UIWidgets.create_menu_button_medium_with_timer = function (arg_32_0, arg_32_1, a
 					0,
 					4
 				},
-				scenegraph_id = arg_32_2
+				scenegraph_id = timer_scenegraph_id
 			}
 		},
-		scenegraph_id = arg_32_3
+		scenegraph_id = scenegraph_id
 	}
 end
 
-UIWidgets.create_chain_scrollbar = function (arg_33_0, arg_33_1, arg_33_2, arg_33_3, arg_33_4, arg_33_5)
+UIWidgets.create_chain_scrollbar = function (scenegraph_id, scroll_area_scenegraph_id, size, optional_style, disable_background, gamepad_always_hover)
 	-- function 33
-	local var_33_0
-	local var_33_1
-	local str
+	local optional_thumb_suffix, optional_chain_suffix
 
-	if arg_33_3 == "gold" then
-		var_33_0 = "_gold"
-		str = "_blue"
+	if optional_style == "gold" then
+		optional_thumb_suffix = "_gold"
+		optional_chain_suffix = "_blue"
 	else
-		var_33_0 = ""
-		str = ""
+		optional_thumb_suffix = ""
+		optional_chain_suffix = ""
 	end
 
-	local tbl = {
+	local passes = {
 		{
 			pass_type = "local_offset",
-			content_check_function = function (self)
+			content_check_function = function (content)
 				-- function 34
-				return self.scroll_bar_info.bar_height_percentage < 1
+				return content.scroll_bar_info.bar_height_percentage < 1
 			end,
-			offset_function = function (arg_35_0, arg_35_1, arg_35_2, arg_35_3)
+			offset_function = function (ui_scenegraph, ui_style, ui_content, input_service)
 				-- function 35
-				local scroll_bar_info = arg_35_2.scroll_bar_info
+				local scroll_bar_info = ui_content.scroll_bar_info
 				local axis = scroll_bar_info.axis
-				local thumb_middle = arg_35_1.thumb_middle
-				local thumb_bottom = arg_35_1.thumb_bottom
-				local var_35_4 = arg_35_1.thumb_top.size[axis]
-				local var_35_5 = thumb_middle.size[axis]
-				local var_35_6 = thumb_bottom.size[axis]
-				local hotspot = arg_35_1.hotspot
+				local thumb_middle = ui_style.thumb_middle
+				local thumb_bottom = ui_style.thumb_bottom
+				local thumb_top = ui_style.thumb_top
+				local thumb_top_length = thumb_top.size[axis]
+				local thumb_middle_length = thumb_middle.size[axis]
+				local thumb_bottom_length = thumb_bottom.size[axis]
+				local hotspot = ui_style.hotspot
 				local scroll_length = scroll_bar_info.scroll_length
-				local num = var_35_4 + var_35_6
-				local num_2 = num / scroll_length
+				local min_height = thumb_top_length + thumb_bottom_length
+				local min_percentage = min_height / scroll_length
 				local bar_height_percentage = scroll_bar_info.bar_height_percentage
-				local max = math.max(bar_height_percentage, num_2)
+				local percentage = math.max(bar_height_percentage, min_percentage)
 
-				hotspot.size[axis] = scroll_length * max
-				thumb_middle.size[axis] = math.max(math.floor(scroll_length * max) - num, 0)
+				hotspot.size[axis] = scroll_length * percentage
+				thumb_middle.size[axis] = math.max(math.floor(scroll_length * percentage) - min_height, 0)
 			end
 		},
 		{
 			style_id = "hotspot",
 			pass_type = "held",
 			content_id = "scroll_bar_info",
-			content_check_function = function (self)
+			content_check_function = function (content)
 				-- function 36
-				return self.bar_height_percentage < 1
+				return content.bar_height_percentage < 1
 			end,
-			held_function = function (arg_37_0, arg_37_1, arg_37_2, arg_37_3)
+			held_function = function (ui_scenegraph, ui_style, ui_content, input_service)
 				-- function 37
-				local axis = arg_37_2.axis
-				local is_device_active = Managers.input:is_device_active("gamepad")
-				local get = arg_37_3:get("cursor")
-				local var_37_3 = UIInverseScaleVectorToResolution(get)[axis]
+				local axis = ui_content.axis
+				local gamepad_active = Managers.input:is_device_active("gamepad")
+				local base_cursor = input_service:get("cursor")
+				local cursor = UIInverseScaleVectorToResolution(base_cursor)
+				local cursor_y = cursor[axis]
 
-				if not (not IS_XB1 and is_device_active) then
-					var_37_3 = 1080 - get.y
+				if IS_XB1 and not gamepad_active then
+					cursor_y = 1080 - base_cursor.y
 				end
 
-				local var_37_4 = UISceneGraph.get_world_position(arg_37_0, arg_37_2.scenegraph_id)[axis]
-				local scroll_length = arg_37_2.scroll_length
-				local clamp = math.clamp(var_37_3 - var_37_4, 0, scroll_length)
-				local var_37_7 = arg_37_1.size[axis]
+				local world_pos = UISceneGraph.get_world_position(ui_scenegraph, ui_content.scenegraph_id)
+				local world_pos_y = world_pos[axis]
+				local scroll_length = ui_content.scroll_length
+				local input_coordinate = math.clamp(cursor_y - world_pos_y, 0, scroll_length)
+				local size = ui_style.size
+				local thumb_length = size[axis]
 
-				if not arg_37_2.input_offset then
-					arg_37_2.input_offset = clamp - arg_37_1.offset[axis]
+				if not ui_content.input_offset then
+					local input_offset = input_coordinate - ui_style.offset[axis]
+
+					ui_content.input_offset = input_offset
 				end
 
-				local input_offset = arg_37_2.input_offset
-				local num = 0
-				local num_2 = scroll_length - var_37_7
-				local num_3 = clamp - input_offset
+				local input_offset = ui_content.input_offset
+				local start_position = 0
+				local end_position = scroll_length - thumb_length
+				local current_position = input_coordinate - input_offset
 
-				arg_37_2.value = 1 - math.clamp(num_3, num, num_2) / num_2
+				current_position = math.clamp(current_position, start_position, end_position)
+
+				local percentage = current_position / end_position
+
+				ui_content.value = 1 - percentage
 			end,
-			release_function = function (arg_38_0, arg_38_1, arg_38_2, arg_38_3)
+			release_function = function (ui_scenegraph, ui_style, ui_content, input_service)
 				-- function 38
-				arg_38_2.input_offset = nil
+				ui_content.input_offset = nil
 			end
 		},
 		{
@@ -1723,112 +1735,145 @@ UIWidgets.create_chain_scrollbar = function (arg_33_0, arg_33_1, arg_33_2, arg_3
 		{
 			pass_type = "local_offset",
 			content_id = "scroll_bar_info",
-			content_check_function = function (self)
+			content_check_function = function (content)
 				-- function 39
-				return self.bar_height_percentage < 1
+				return content.bar_height_percentage < 1
 			end,
-			offset_function = function (arg_40_0, arg_40_1, arg_40_2, arg_40_3)
+			offset_function = function (ui_scenegraph, ui_style, ui_content, input_service)
 				-- function 40
-				local axis = arg_40_2.axis
-				local hotspot = arg_40_1.hotspot
-				local num = 1 - arg_40_2.value
-				local scroll_length = arg_40_2.scroll_length
-				local var_40_4 = hotspot.size[axis]
-				local num_2 = 0
-				local num_3 = scroll_length - var_40_4
-				local num_4 = num_3 * num
-				local clamp = math.clamp(num_4, num_2, num_3)
+				local axis = ui_content.axis
+				local hotspot = ui_style.hotspot
+				local value = 1 - ui_content.value
+				local scroll_length = ui_content.scroll_length
+				local thumb_length = hotspot.size[axis]
+				local start_position = 0
+				local end_position = scroll_length - thumb_length
+				local current_position = end_position * value
 
-				hotspot.offset[axis] = clamp
+				current_position = math.clamp(current_position, start_position, end_position)
+				hotspot.offset[axis] = current_position
 
-				local thumb_middle = arg_40_1.thumb_middle
-				local thumb_bottom = arg_40_1.thumb_bottom
-				local thumb_top = arg_40_1.thumb_top
-				local var_40_12 = thumb_top.size[axis]
-				local var_40_13 = thumb_middle.size[axis]
-				local var_40_14 = thumb_bottom.size[axis]
+				local thumb_middle = ui_style.thumb_middle
+				local thumb_bottom = ui_style.thumb_bottom
+				local thumb_top = ui_style.thumb_top
+				local thumb_top_length = thumb_top.size[axis]
+				local thumb_middle_length = thumb_middle.size[axis]
+				local thumb_bottom_length = thumb_bottom.size[axis]
 
-				thumb_bottom.offset[axis] = clamp
-				thumb_middle.offset[axis] = clamp + var_40_14
-				thumb_top.offset[axis] = clamp + var_40_14 + var_40_13
+				thumb_bottom.offset[axis] = current_position
+				thumb_middle.offset[axis] = current_position + thumb_bottom_length
+				thumb_top.offset[axis] = current_position + thumb_bottom_length + thumb_middle_length
 			end
 		},
 		{
 			style_id = "thumb_middle",
 			pass_type = "texture",
 			texture_id = "thumb_middle",
-			content_change_function = function (self, arg_41_1)
+			content_change_function = function (content, style)
 				-- function 41
-				local is_hover = self.scroll_bar_info.is_hover
-				local color = arg_41_1.color
-				local flag
+				local is_hover = content.scroll_bar_info.is_hover
+				local color = style.color
+				local num
 
-				flag = not is_hover and 255 and 200
-				color[2] = flag
-				color[3] = flag
-				color[4] = flag
+				if is_hover then
+					num = 255
+
+					goto label_41_0
+				end
+
+				num = 200
+
+				local color_value = num
+
+				::label_41_0::
+
+				color[2] = color_value
+				color[3] = color_value
+				color[4] = color_value
 			end,
-			content_check_function = function (self)
+			content_check_function = function (content)
 				-- function 42
-				return self.scroll_bar_info.bar_height_percentage < 1
+				return content.scroll_bar_info.bar_height_percentage < 1
 			end
 		},
 		{
 			style_id = "thumb_top",
 			pass_type = "texture",
 			texture_id = "thumb_top",
-			content_change_function = function (self, arg_43_1)
+			content_change_function = function (content, style)
 				-- function 43
-				local is_hover = self.scroll_bar_info.is_hover
-				local color = arg_43_1.color
-				local flag
+				local is_hover = content.scroll_bar_info.is_hover
+				local color = style.color
+				local num
 
-				flag = not is_hover and 255 and 200
-				color[2] = flag
-				color[3] = flag
-				color[4] = flag
+				if is_hover then
+					num = 255
+
+					goto label_43_0
+				end
+
+				num = 200
+
+				local color_value = num
+
+				::label_43_0::
+
+				color[2] = color_value
+				color[3] = color_value
+				color[4] = color_value
 			end,
-			content_check_function = function (self)
+			content_check_function = function (content)
 				-- function 44
-				return self.scroll_bar_info.bar_height_percentage < 1
+				return content.scroll_bar_info.bar_height_percentage < 1
 			end
 		},
 		{
 			style_id = "thumb_bottom",
 			pass_type = "texture",
 			texture_id = "thumb_bottom",
-			content_change_function = function (self, arg_45_1)
+			content_change_function = function (content, style)
 				-- function 45
-				local is_hover = self.scroll_bar_info.is_hover
-				local color = arg_45_1.color
-				local flag
+				local is_hover = content.scroll_bar_info.is_hover
+				local color = style.color
+				local num
 
-				flag = not is_hover and 255 and 200
-				color[2] = flag
-				color[3] = flag
-				color[4] = flag
+				if is_hover then
+					num = 255
+
+					goto label_45_0
+				end
+
+				num = 200
+
+				local color_value = num
+
+				::label_45_0::
+
+				color[2] = color_value
+				color[3] = color_value
+				color[4] = color_value
 			end,
-			content_check_function = function (self)
+			content_check_function = function (content)
 				-- function 46
-				return self.scroll_bar_info.bar_height_percentage < 1
+				return content.scroll_bar_info.bar_height_percentage < 1
 			end
 		},
 		{
 			pass_type = "tiled_texture",
 			style_id = "background",
 			texture_id = "background",
-			content_check_function = function (self)
+			content_check_function = function (content)
 				-- function 47
-				return not self.disable_background
+				return not content.disable_background
 			end
 		}
 	}
-	local tbl_2 = {
+	local content = {
 		disable_frame = false,
 		scroll = {
 			allow_multi_hover = true
 		},
-		disable_background = arg_33_4,
+		disable_background = disable_background,
 		scroll_bar_info = {
 			axis = 2,
 			value = 0,
@@ -1836,16 +1881,16 @@ UIWidgets.create_chain_scrollbar = function (arg_33_0, arg_33_1, arg_33_2, arg_3
 			scroll_amount = 0,
 			button_scroll_step = 0.1,
 			bar_height_percentage = 1,
-			scenegraph_id = arg_33_0,
-			scroll_length = arg_33_2[2],
-			gamepad_always_hover = arg_33_5
+			scenegraph_id = scenegraph_id,
+			scroll_length = size[2],
+			gamepad_always_hover = gamepad_always_hover
 		},
-		background = "chain_link_01" .. (str or ""),
-		thumb_top = "chain_scrollbutton_top" .. (var_33_0 or ""),
-		thumb_bottom = "chain_scrollbutton_bottom" .. (var_33_0 or ""),
-		thumb_middle = "chain_scrollbutton_middle" .. (var_33_0 or "")
+		background = "chain_link_01" .. (not not optional_chain_suffix or not not ""),
+		thumb_top = "chain_scrollbutton_top" .. (not not optional_thumb_suffix or not not ""),
+		thumb_bottom = "chain_scrollbutton_bottom" .. (not not optional_thumb_suffix or not not ""),
+		thumb_middle = "chain_scrollbutton_middle" .. (not not optional_thumb_suffix or not not "")
 	}
-	local tbl_3 = {
+	local style = {
 		background = {
 			offset = {
 				0,
@@ -1865,18 +1910,18 @@ UIWidgets.create_chain_scrollbar = function (arg_33_0, arg_33_1, arg_33_2, arg_3
 		},
 		hotspot = {
 			offset = {
-				arg_33_2[1] / 2 - 16,
+				size[1] / 2 - 16,
 				0,
 				2
 			},
 			size = {
 				32,
-				arg_33_2[2]
+				size[2]
 			}
 		},
 		thumb_top = {
 			offset = {
-				arg_33_2[1] / 2 - 16,
+				size[1] / 2 - 16,
 				0,
 				2
 			},
@@ -1893,7 +1938,7 @@ UIWidgets.create_chain_scrollbar = function (arg_33_0, arg_33_1, arg_33_2, arg_3
 		},
 		thumb_bottom = {
 			offset = {
-				arg_33_2[1] / 2 - 16,
+				size[1] / 2 - 16,
 				0,
 				2
 			},
@@ -1910,18 +1955,18 @@ UIWidgets.create_chain_scrollbar = function (arg_33_0, arg_33_1, arg_33_2, arg_3
 		},
 		thumb_middle = {
 			offset = {
-				arg_33_2[1] / 2 - 16,
+				size[1] / 2 - 16,
 				0,
 				2
 			},
 			start_offset = {
-				arg_33_2[1] / 2 - 16,
+				size[1] / 2 - 16,
 				0,
 				2
 			},
 			size = {
 				32,
-				arg_33_2[2]
+				size[2]
 			},
 			color = {
 				255,
@@ -1932,162 +1977,190 @@ UIWidgets.create_chain_scrollbar = function (arg_33_0, arg_33_1, arg_33_2, arg_3
 		}
 	}
 
-	if not arg_33_1 then
-		tbl[#tbl + 1] = {
+	if scroll_area_scenegraph_id then
+		passes[#passes + 1] = {
 			style_id = "scroll_area_hotspot",
 			pass_type = "scroll",
 			content_id = "scroll_area_hotspot",
-			scroll_function = function (arg_48_0, arg_48_1, arg_48_2, arg_48_3, arg_48_4, arg_48_5)
+			scroll_function = function (ui_scenegraph, ui_style, ui_content, input_service, scroll_axis, dt)
 				-- function 48
-				local num = arg_48_4.y * -1
-				local scroll_bar_info = arg_48_2.parent.scroll_bar_info
+				local axis_input = scroll_axis.y * -1
+				local parent_content = ui_content.parent
+				local scroll_bar_info = parent_content.scroll_bar_info
 				local gamepad_active = scroll_bar_info.gamepad_active
-				local num_2 = arg_48_4.y * -1
+				local num = scroll_axis.y * -1
 				local flag
 
-				flag = not gamepad_active and 0.2 and 1
+				flag = (not gamepad_active or not 0.2) and not not 1
 
-				local num_3 = num_2 * flag
+				local axis_input = num * flag
 				local total_scroll_height = scroll_bar_info.total_scroll_height
 				local scroll_amount = scroll_bar_info.scroll_amount
-				local flag_2 = not gamepad_active and scroll_bar_info.gamepad_always_hover
+				local gamepad_always_hover = not not gamepad_active and not not scroll_bar_info.gamepad_always_hover
 
-				if num_3 == 0 or arg_48_2.is_hover or not flag_2 then
-					scroll_bar_info.axis_input = num_3
+				if axis_input ~= 0 and (ui_content.is_hover or gamepad_always_hover) then
+					scroll_bar_info.axis_input = axis_input
 
-					local scroll_add = scroll_bar_info.scroll_add
+					local scroll_add_2 = scroll_bar_info.scroll_add
 
-					scroll_add = scroll_add or 0
-					scroll_bar_info.scroll_add = scroll_add + num_3 * scroll_amount
+					if not scroll_add_2 then
+						-- Nothing
+					end
+
+					scroll_add_2 = 0
+
+					local previous_scroll_add = scroll_add_2
+
+					::label_48_0::
+
+					scroll_bar_info.scroll_add = previous_scroll_add + axis_input * scroll_amount
 				else
-					local axis_input = scroll_bar_info.axis_input
+					axis_input = scroll_bar_info.axis_input
 				end
 
-				local scroll_add_2 = scroll_bar_info.scroll_add
+				local scroll_add = scroll_bar_info.scroll_add
 
-				if not scroll_add_2 then
+				if scroll_add then
 					local scroll_speed = scroll_bar_info.scroll_speed
 
-					scroll_speed = scroll_speed or 5
+					if not scroll_speed then
+						-- Nothing
+					end
 
-					local num_4 = scroll_add_2 * (arg_48_5 * scroll_speed)
-					local num_5 = scroll_add_2 - num_4
+					scroll_speed = 5
 
-					if math.abs(num_5) > scroll_amount / 20 then
-						scroll_bar_info.scroll_add = num_5
+					local speed = scroll_speed
+
+					::label_48_1::
+
+					local step = scroll_add * (dt * speed)
+
+					scroll_add = scroll_add - step
+
+					if math.abs(scroll_add) > scroll_amount / 20 then
+						scroll_bar_info.scroll_add = scroll_add
 					else
 						scroll_bar_info.scroll_add = nil
 					end
 
-					local scroll_value = scroll_bar_info.scroll_value
+					local current_scroll_value = scroll_bar_info.scroll_value
 
-					if not scroll_value then
-						scroll_bar_info.scroll_value = math.clamp(scroll_value + num_4, 0, 1)
+					if current_scroll_value then
+						scroll_bar_info.scroll_value = math.clamp(current_scroll_value + step, 0, 1)
 					end
 				end
 			end
 		}
-		tbl_3.scroll_area_hotspot = {
+		style.scroll_area_hotspot = {
 			offset = {
 				0,
 				0,
 				0
 			},
-			scenegraph_id = arg_33_1
+			scenegraph_id = scroll_area_scenegraph_id
 		}
-		tbl_2.scroll_area_hotspot = {}
+		content.scroll_area_hotspot = {}
 	end
 
-	return {
+	local definition = {
 		element = {
-			passes = tbl
+			passes = passes
 		},
-		content = tbl_2,
-		style = tbl_3,
-		scenegraph_id = arg_33_0
+		content = content,
+		style = style,
+		scenegraph_id = scenegraph_id
 	}
+
+	return definition
 end
 
-UIWidgets.create_horizontal_chain_scrollbar = function (arg_49_0, arg_49_1, arg_49_2, arg_49_3, arg_49_4)
+UIWidgets.create_horizontal_chain_scrollbar = function (scenegraph_id, scroll_area_scenegraph_id, size, optional_style, disable_background)
 	-- function 49
-	local var_49_0
-	local var_49_1
-	local str
+	local optional_thumb_suffix, optional_chain_suffix
 
-	if arg_49_3 == "gold" then
-		var_49_0 = "_gold"
-		str = "_blue"
+	if optional_style == "gold" then
+		optional_thumb_suffix = "_gold"
+		optional_chain_suffix = "_blue"
 	else
-		var_49_0 = ""
-		str = ""
+		optional_thumb_suffix = ""
+		optional_chain_suffix = ""
 	end
 
-	local tbl = {
+	local passes = {
 		{
 			pass_type = "local_offset",
-			content_check_function = function (self)
+			content_check_function = function (content)
 				-- function 50
-				return self.scroll_bar_info.bar_length_percentage < 1
+				return content.scroll_bar_info.bar_length_percentage < 1
 			end,
-			offset_function = function (arg_51_0, arg_51_1, arg_51_2, arg_51_3)
+			offset_function = function (ui_scenegraph, ui_style, ui_content, input_service)
 				-- function 51
-				local scroll_bar_info = arg_51_2.scroll_bar_info
+				local scroll_bar_info = ui_content.scroll_bar_info
 				local axis = scroll_bar_info.axis
-				local thumb_left = arg_51_1.thumb_left
-				local thumb_right = arg_51_1.thumb_right
-				local thumb_middle = arg_51_1.thumb_middle
-				local var_51_5 = thumb_left.size[axis]
-				local var_51_6 = thumb_right.size[axis]
-				local var_51_7 = thumb_middle.size[axis]
-				local hotspot = arg_51_1.hotspot
+				local thumb_left = ui_style.thumb_left
+				local thumb_right = ui_style.thumb_right
+				local thumb_middle = ui_style.thumb_middle
+				local thumb_left_length = thumb_left.size[axis]
+				local thumb_right_length = thumb_right.size[axis]
+				local thumb_middle_length = thumb_middle.size[axis]
+				local hotspot = ui_style.hotspot
 				local scroll_length = scroll_bar_info.scroll_length
-				local num = var_51_6 + var_51_5
-				local num_2 = num / scroll_length
+				local min_height = thumb_right_length + thumb_left_length
+				local min_percentage = min_height / scroll_length
 				local bar_length_percentage = scroll_bar_info.bar_length_percentage
-				local max = math.max(bar_length_percentage, num_2)
+				local percentage = math.max(bar_length_percentage, min_percentage)
 
-				hotspot.size[axis] = scroll_length * max
-				thumb_middle.size[axis] = math.max(math.floor(scroll_length * max) - num, 0)
+				hotspot.size[axis] = scroll_length * percentage
+				thumb_middle.size[axis] = math.max(math.floor(scroll_length * percentage) - min_height, 0)
 			end
 		},
 		{
 			style_id = "hotspot",
 			pass_type = "held",
 			content_id = "scroll_bar_info",
-			content_check_function = function (self)
+			content_check_function = function (content)
 				-- function 52
-				return self.bar_length_percentage < 1
+				return content.bar_length_percentage < 1
 			end,
-			held_function = function (arg_53_0, arg_53_1, arg_53_2, arg_53_3)
+			held_function = function (ui_scenegraph, ui_style, ui_content, input_service)
 				-- function 53
-				local axis = arg_53_2.axis
-				local is_device_active = Managers.input:is_device_active("gamepad")
-				local get = arg_53_3:get("cursor")
-				local var_53_3 = UIInverseScaleVectorToResolution(get)[axis]
+				local axis = ui_content.axis
+				local gamepad_active = Managers.input:is_device_active("gamepad")
+				local base_cursor = input_service:get("cursor")
+				local cursor = UIInverseScaleVectorToResolution(base_cursor)
+				local cursor_y = cursor[axis]
 
-				if not (not IS_XB1 and is_device_active) then
-					var_53_3 = 1080 - get.y
+				if IS_XB1 and not gamepad_active then
+					cursor_y = 1080 - base_cursor.y
 				end
 
-				local var_53_4 = UISceneGraph.get_world_position(arg_53_0, arg_53_2.scenegraph_id)[axis]
-				local scroll_length = arg_53_2.scroll_length
-				local clamp = math.clamp(var_53_3 - var_53_4, 0, scroll_length)
-				local var_53_7 = arg_53_1.size[axis]
+				local world_pos = UISceneGraph.get_world_position(ui_scenegraph, ui_content.scenegraph_id)
+				local world_pos_y = world_pos[axis]
+				local scroll_length = ui_content.scroll_length
+				local input_coordinate = math.clamp(cursor_y - world_pos_y, 0, scroll_length)
+				local size = ui_style.size
+				local thumb_length = size[axis]
 
-				if not arg_53_2.input_offset then
-					arg_53_2.input_offset = clamp - arg_53_1.offset[axis]
+				if not ui_content.input_offset then
+					local input_offset = input_coordinate - ui_style.offset[axis]
+
+					ui_content.input_offset = input_offset
 				end
 
-				local input_offset = arg_53_2.input_offset
-				local num = 0
-				local num_2 = scroll_length - var_53_7
-				local num_3 = clamp - input_offset
+				local input_offset = ui_content.input_offset
+				local start_position = 0
+				local end_position = scroll_length - thumb_length
+				local current_position = input_coordinate - input_offset
 
-				arg_53_2.value = math.clamp(num_3, num, num_2) / num_2
+				current_position = math.clamp(current_position, start_position, end_position)
+
+				local percentage = current_position / end_position
+
+				ui_content.value = percentage
 			end,
-			release_function = function (arg_54_0, arg_54_1, arg_54_2, arg_54_3)
+			release_function = function (ui_scenegraph, ui_style, ui_content, input_service)
 				-- function 54
-				arg_54_2.input_offset = nil
+				ui_content.input_offset = nil
 			end
 		},
 		{
@@ -2098,124 +2171,157 @@ UIWidgets.create_horizontal_chain_scrollbar = function (arg_49_0, arg_49_1, arg_
 		{
 			pass_type = "local_offset",
 			content_id = "scroll_bar_info",
-			content_check_function = function (self)
+			content_check_function = function (content)
 				-- function 55
-				return self.bar_length_percentage < 1
+				return content.bar_length_percentage < 1
 			end,
-			offset_function = function (arg_56_0, arg_56_1, arg_56_2, arg_56_3)
+			offset_function = function (ui_scenegraph, ui_style, ui_content, input_service)
 				-- function 56
-				local axis = arg_56_2.axis
-				local hotspot = arg_56_1.hotspot
-				local value = arg_56_2.value
-				local scroll_length = arg_56_2.scroll_length
-				local var_56_4 = hotspot.size[axis]
-				local num = 0
-				local num_2 = scroll_length - var_56_4
-				local num_3 = num_2 * value
-				local clamp = math.clamp(num_3, num, num_2)
+				local axis = ui_content.axis
+				local hotspot = ui_style.hotspot
+				local value = ui_content.value
+				local scroll_length = ui_content.scroll_length
+				local thumb_length = hotspot.size[axis]
+				local start_position = 0
+				local end_position = scroll_length - thumb_length
+				local current_position = end_position * value
 
-				hotspot.offset[axis] = clamp
+				current_position = math.clamp(current_position, start_position, end_position)
+				hotspot.offset[axis] = current_position
 
-				local thumb_left = arg_56_1.thumb_left
-				local thumb_right = arg_56_1.thumb_right
-				local thumb_middle = arg_56_1.thumb_middle
-				local var_56_12 = thumb_left.size[axis]
-				local var_56_13 = thumb_right.size[axis]
-				local var_56_14 = thumb_middle.size[axis]
+				local thumb_left = ui_style.thumb_left
+				local thumb_right = ui_style.thumb_right
+				local thumb_middle = ui_style.thumb_middle
+				local thumb_left_length = thumb_left.size[axis]
+				local thumb_right_length = thumb_right.size[axis]
+				local thumb_middle_length = thumb_middle.size[axis]
 
-				thumb_left.offset[axis] = clamp
-				thumb_middle.offset[axis] = clamp + var_56_12
-				thumb_right.offset[axis] = clamp + var_56_12 + var_56_14
+				thumb_left.offset[axis] = current_position
+				thumb_middle.offset[axis] = current_position + thumb_left_length
+				thumb_right.offset[axis] = current_position + thumb_left_length + thumb_middle_length
 			end
 		},
 		{
 			style_id = "thumb_middle",
 			pass_type = "texture",
 			texture_id = "thumb_middle",
-			content_change_function = function (self, arg_57_1)
+			content_change_function = function (content, style)
 				-- function 57
-				local is_hover = self.scroll_bar_info.is_hover
-				local color = arg_57_1.color
-				local flag
+				local is_hover = content.scroll_bar_info.is_hover
+				local color = style.color
+				local num
 
-				flag = not is_hover and 255 and 200
-				color[2] = flag
-				color[3] = flag
-				color[4] = flag
+				if is_hover then
+					num = 255
+
+					goto label_57_0
+				end
+
+				num = 200
+
+				local color_value = num
+
+				::label_57_0::
+
+				color[2] = color_value
+				color[3] = color_value
+				color[4] = color_value
 			end,
-			content_check_function = function (self)
+			content_check_function = function (content)
 				-- function 58
-				return self.scroll_bar_info.bar_length_percentage < 1
+				return content.scroll_bar_info.bar_length_percentage < 1
 			end
 		},
 		{
 			style_id = "thumb_left",
 			pass_type = "texture",
 			texture_id = "thumb_left",
-			content_change_function = function (self, arg_59_1)
+			content_change_function = function (content, style)
 				-- function 59
-				local is_hover = self.scroll_bar_info.is_hover
-				local color = arg_59_1.color
-				local flag
+				local is_hover = content.scroll_bar_info.is_hover
+				local color = style.color
+				local num
 
-				flag = not is_hover and 255 and 200
-				color[2] = flag
-				color[3] = flag
-				color[4] = flag
+				if is_hover then
+					num = 255
+
+					goto label_59_0
+				end
+
+				num = 200
+
+				local color_value = num
+
+				::label_59_0::
+
+				color[2] = color_value
+				color[3] = color_value
+				color[4] = color_value
 			end,
-			content_check_function = function (self)
+			content_check_function = function (content)
 				-- function 60
-				return self.scroll_bar_info.bar_length_percentage < 1
+				return content.scroll_bar_info.bar_length_percentage < 1
 			end
 		},
 		{
 			style_id = "thumb_right",
 			pass_type = "texture",
 			texture_id = "thumb_right",
-			content_change_function = function (self, arg_61_1)
+			content_change_function = function (content, style)
 				-- function 61
-				local is_hover = self.scroll_bar_info.is_hover
-				local color = arg_61_1.color
-				local flag
+				local is_hover = content.scroll_bar_info.is_hover
+				local color = style.color
+				local num
 
-				flag = not is_hover and 255 and 200
-				color[2] = flag
-				color[3] = flag
-				color[4] = flag
+				if is_hover then
+					num = 255
+
+					goto label_61_0
+				end
+
+				num = 200
+
+				local color_value = num
+
+				::label_61_0::
+
+				color[2] = color_value
+				color[3] = color_value
+				color[4] = color_value
 			end,
-			content_check_function = function (self)
+			content_check_function = function (content)
 				-- function 62
-				return self.scroll_bar_info.bar_length_percentage < 1
+				return content.scroll_bar_info.bar_length_percentage < 1
 			end
 		},
 		{
 			pass_type = "tiled_texture",
 			style_id = "background",
 			texture_id = "background",
-			content_check_function = function (self)
+			content_check_function = function (content)
 				-- function 63
-				return not self.disable_background
+				return not content.disable_background
 			end
 		}
 	}
-	local tbl_2 = {
+	local content = {
 		disable_frame = false,
 		scroll = {},
-		disable_background = arg_49_4,
+		disable_background = disable_background,
 		scroll_bar_info = {
 			button_scroll_step = 0.1,
 			axis = 1,
 			value = 0,
 			bar_length_percentage = 1,
-			scenegraph_id = arg_49_0,
-			scroll_length = arg_49_2[1]
+			scenegraph_id = scenegraph_id,
+			scroll_length = size[1]
 		},
-		background = "chain_link_horizontal_01" .. (str or ""),
-		thumb_left = "chain_scrollbutton_left" .. (var_49_0 or ""),
-		thumb_right = "chain_scrollbutton_right" .. (var_49_0 or ""),
-		thumb_middle = "chain_scrollbutton_horizontal_middle" .. (var_49_0 or "")
+		background = "chain_link_horizontal_01" .. (not not optional_chain_suffix or not not ""),
+		thumb_left = "chain_scrollbutton_left" .. (not not optional_thumb_suffix or not not ""),
+		thumb_right = "chain_scrollbutton_right" .. (not not optional_thumb_suffix or not not ""),
+		thumb_middle = "chain_scrollbutton_horizontal_middle" .. (not not optional_thumb_suffix or not not "")
 	}
-	local tbl_3 = {
+	local style = {
 		background = {
 			offset = {
 				0,
@@ -2236,18 +2342,18 @@ UIWidgets.create_horizontal_chain_scrollbar = function (arg_49_0, arg_49_1, arg_
 		hotspot = {
 			offset = {
 				0,
-				arg_49_2[2] / 2 - 16,
+				size[2] / 2 - 16,
 				2
 			},
 			size = {
-				arg_49_2[1],
+				size[1],
 				32
 			}
 		},
 		thumb_left = {
 			offset = {
 				0,
-				arg_49_2[2] / 2 - 16,
+				size[2] / 2 - 16,
 				2
 			},
 			size = {
@@ -2264,7 +2370,7 @@ UIWidgets.create_horizontal_chain_scrollbar = function (arg_49_0, arg_49_1, arg_
 		thumb_right = {
 			offset = {
 				0,
-				arg_49_2[2] / 2 - 16,
+				size[2] / 2 - 16,
 				20
 			},
 			size = {
@@ -2281,11 +2387,11 @@ UIWidgets.create_horizontal_chain_scrollbar = function (arg_49_0, arg_49_1, arg_
 		thumb_middle = {
 			offset = {
 				0,
-				arg_49_2[2] / 2 - 16,
+				size[2] / 2 - 16,
 				2
 			},
 			size = {
-				arg_49_2[1],
+				size[1],
 				32
 			},
 			color = {
@@ -2297,78 +2403,82 @@ UIWidgets.create_horizontal_chain_scrollbar = function (arg_49_0, arg_49_1, arg_
 		}
 	}
 
-	if not arg_49_1 then
-		tbl[#tbl + 1] = {
+	if scroll_area_scenegraph_id then
+		passes[#passes + 1] = {
 			style_id = "scroll_area_hotspot",
 			pass_type = "scroll",
 			content_id = "scroll_area_hotspot",
-			scroll_function = function (arg_64_0, arg_64_1, arg_64_2, arg_64_3, arg_64_4, arg_64_5)
+			scroll_function = function (ui_scenegraph, ui_style, ui_content, input_service, scroll_axis, dt)
 				-- function 64
-				local num = arg_64_4.x * -1
-				local scroll_bar_info = arg_64_2.parent.scroll_bar_info
+				local axis_input = scroll_axis.x * -1
+				local parent_content = ui_content.parent
+				local scroll_bar_info = parent_content.scroll_bar_info
 				local total_scroll_height = scroll_bar_info.total_scroll_height
 
-				if num == 0 or not arg_64_2.is_hover then
-					scroll_bar_info.axis_input = num
-					scroll_bar_info.scroll_add = num * scroll_bar_info.scroll_amount
+				if axis_input ~= 0 and ui_content.is_hover then
+					scroll_bar_info.axis_input = axis_input
+					scroll_bar_info.scroll_add = axis_input * scroll_bar_info.scroll_amount
 				else
-					local axis_input = scroll_bar_info.axis_input
+					axis_input = scroll_bar_info.axis_input
 				end
 
 				local scroll_add = scroll_bar_info.scroll_add
 
-				if not scroll_add then
-					local num_2 = scroll_add * (arg_64_5 * 5)
-					local num_3 = scroll_add - num_2
+				if scroll_add then
+					local step = scroll_add * (dt * 5)
 
-					if math.abs(num_3) > 0 then
-						scroll_bar_info.scroll_add = num_3
+					scroll_add = scroll_add - step
+
+					if math.abs(scroll_add) > 0 then
+						scroll_bar_info.scroll_add = scroll_add
 					else
 						scroll_bar_info.scroll_add = nil
 					end
 
-					local scroll_value = scroll_bar_info.scroll_value
+					local current_scroll_value = scroll_bar_info.scroll_value
 
-					scroll_bar_info.scroll_value = math.clamp(scroll_value + num_2, 0, 1)
+					scroll_bar_info.scroll_value = math.clamp(current_scroll_value + step, 0, 1)
 				end
 			end
 		}
-		tbl_3.scroll_area_hotspot = {
+		style.scroll_area_hotspot = {
 			offset = {
 				0,
 				0,
 				0
 			},
-			scenegraph_id = arg_49_1
+			scenegraph_id = scroll_area_scenegraph_id
 		}
-		tbl_2.scroll_area_hotspot = {}
+		content.scroll_area_hotspot = {}
 	end
 
-	return {
+	local definition = {
 		element = {
-			passes = tbl
+			passes = passes
 		},
-		content = tbl_2,
-		style = tbl_3,
-		scenegraph_id = arg_49_0
+		content = content,
+		style = style,
+		scenegraph_id = scenegraph_id
 	}
+
+	return definition
 end
 
-UIWidgets.create_scrollbar = function (arg_65_0, arg_65_1, arg_65_2, arg_65_3, arg_65_4, arg_65_5, arg_65_6)
+UIWidgets.create_scrollbar = function (scenegraph_id, size, scroll_area_scenegraph_id, thumb_color, track_color, thumb_width, corner_radius)
 	-- function 65
-	local tbl = {
+	local passes = {
 		{
 			pass_type = "local_offset",
-			content_check_function = function (self)
+			content_check_function = function (content)
 				-- function 66
-				return self.scroll_bar_info.bar_height_percentage < 1
+				return content.scroll_bar_info.bar_height_percentage < 1
 			end,
-			offset_function = function (arg_67_0, arg_67_1, arg_67_2, arg_67_3)
+			offset_function = function (ui_scenegraph, ui_style, ui_content, input_service)
 				-- function 67
-				local scroll_bar_info = arg_67_2.scroll_bar_info
+				local scroll_bar_info = ui_content.scroll_bar_info
 				local axis = scroll_bar_info.axis
-				local hotspot = arg_67_1.hotspot
-				local scroll_bar_box = arg_67_1.scroll_bar_box
+				local hotspot = ui_style.hotspot
+				local scroll_bar_box = ui_style.scroll_bar_box
 				local scroll_length = scroll_bar_info.scroll_length
 				local bar_height_percentage = scroll_bar_info.bar_height_percentage
 
@@ -2380,40 +2490,49 @@ UIWidgets.create_scrollbar = function (arg_65_0, arg_65_1, arg_65_2, arg_65_3, a
 			style_id = "hotspot",
 			pass_type = "held",
 			content_id = "scroll_bar_info",
-			content_check_function = function (self)
+			content_check_function = function (content)
 				-- function 68
-				return self.bar_height_percentage < 1
+				return content.bar_height_percentage < 1
 			end,
-			held_function = function (arg_69_0, arg_69_1, arg_69_2, arg_69_3)
+			held_function = function (ui_scenegraph, ui_style, ui_content, input_service)
 				-- function 69
-				local axis = arg_69_2.axis
-				local is_device_active = Managers.input:is_device_active("gamepad")
-				local get = arg_69_3:get("cursor")
-				local var_69_3 = UIInverseScaleVectorToResolution(get)[axis]
+				local axis = ui_content.axis
+				local gamepad_active = Managers.input:is_device_active("gamepad")
+				local base_cursor = input_service:get("cursor")
+				local cursor = UIInverseScaleVectorToResolution(base_cursor)
+				local cursor_y = cursor[axis]
 
-				if not (not IS_XB1 and is_device_active) then
-					var_69_3 = 1080 - get.y
+				if IS_XB1 and not gamepad_active then
+					cursor_y = 1080 - base_cursor.y
 				end
 
-				local var_69_4 = UISceneGraph.get_world_position(arg_69_0, arg_69_2.scenegraph_id)[axis]
-				local scroll_length = arg_69_2.scroll_length
-				local clamp = math.clamp(var_69_3 - var_69_4, 0, scroll_length)
-				local var_69_7 = arg_69_1.size[axis]
+				local world_pos = UISceneGraph.get_world_position(ui_scenegraph, ui_content.scenegraph_id)
+				local world_pos_y = world_pos[axis]
+				local scroll_length = ui_content.scroll_length
+				local input_coordinate = math.clamp(cursor_y - world_pos_y, 0, scroll_length)
+				local size = ui_style.size
+				local thumb_length = size[axis]
 
-				if not arg_69_2.input_offset then
-					arg_69_2.input_offset = clamp - arg_69_1.offset[axis]
+				if not ui_content.input_offset then
+					local input_offset = input_coordinate - ui_style.offset[axis]
+
+					ui_content.input_offset = input_offset
 				end
 
-				local input_offset = arg_69_2.input_offset
-				local num = 0
-				local num_2 = scroll_length - var_69_7
-				local num_3 = clamp - input_offset
+				local input_offset = ui_content.input_offset
+				local start_position = 0
+				local end_position = scroll_length - thumb_length
+				local current_position = input_coordinate - input_offset
 
-				arg_69_2.value = 1 - math.clamp(num_3, num, num_2) / num_2
+				current_position = math.clamp(current_position, start_position, end_position)
+
+				local percentage = current_position / end_position
+
+				ui_content.value = 1 - percentage
 			end,
-			release_function = function (arg_70_0, arg_70_1, arg_70_2, arg_70_3)
+			release_function = function (ui_scenegraph, ui_style, ui_content, input_service)
 				-- function 70
-				arg_70_2.input_offset = nil
+				ui_content.input_offset = nil
 			end
 		},
 		{
@@ -2424,24 +2543,27 @@ UIWidgets.create_scrollbar = function (arg_65_0, arg_65_1, arg_65_2, arg_65_3, a
 		{
 			pass_type = "local_offset",
 			content_id = "scroll_bar_info",
-			content_check_function = function (self)
+			content_check_function = function (content)
 				-- function 71
-				return self.bar_height_percentage < 1
+				return content.bar_height_percentage < 1
 			end,
-			offset_function = function (arg_72_0, arg_72_1, arg_72_2, arg_72_3)
+			offset_function = function (ui_scenegraph, ui_style, ui_content, input_service)
 				-- function 72
-				local axis = arg_72_2.axis
-				local hotspot = arg_72_1.hotspot
-				local num = 1 - arg_72_2.value
-				local scroll_length = arg_72_2.scroll_length
-				local var_72_4 = hotspot.size[axis]
-				local num_2 = 0
-				local num_3 = scroll_length - var_72_4
-				local num_4 = num_3 * num
-				local clamp = math.clamp(num_4, num_2, num_3)
+				local axis = ui_content.axis
+				local hotspot = ui_style.hotspot
+				local value = 1 - ui_content.value
+				local scroll_length = ui_content.scroll_length
+				local thumb_length = hotspot.size[axis]
+				local start_position = 0
+				local end_position = scroll_length - thumb_length
+				local current_position = end_position * value
 
-				hotspot.offset[axis] = clamp
-				arg_72_1.scroll_bar_box.offset[axis] = clamp
+				current_position = math.clamp(current_position, start_position, end_position)
+				hotspot.offset[axis] = current_position
+
+				local scroll_bar_box = ui_style.scroll_bar_box
+
+				scroll_bar_box.offset[axis] = current_position
 			end
 		},
 		{
@@ -2453,7 +2575,7 @@ UIWidgets.create_scrollbar = function (arg_65_0, arg_65_1, arg_65_2, arg_65_3, a
 			style_id = "scroll_bar_box"
 		}
 	}
-	local tbl_2 = {
+	local content = {
 		disable_frame = false,
 		scroll = {},
 		scroll_bar_info = {
@@ -2461,16 +2583,16 @@ UIWidgets.create_scrollbar = function (arg_65_0, arg_65_1, arg_65_2, arg_65_3, a
 			axis = 2,
 			value = 0,
 			bar_height_percentage = 1,
-			scenegraph_id = arg_65_0,
-			scroll_length = arg_65_1[2]
+			scenegraph_id = scenegraph_id,
+			scroll_length = size[2]
 		},
 		button_up_hotspot = {},
 		button_down_hotspot = {}
 	}
-	local tbl_3 = {
+	local tbl = {
 		background = {
-			corner_radius = arg_65_6 or 2,
-			color = arg_65_4 or {
+			corner_radius = not not corner_radius or not not 2,
+			color = not not track_color or not not {
 				255,
 				5,
 				5,
@@ -2478,18 +2600,18 @@ UIWidgets.create_scrollbar = function (arg_65_0, arg_65_1, arg_65_2, arg_65_3, a
 			}
 		}
 	}
-	local tbl_4 = {
-		corner_radius = arg_65_6 or 2
+	local tbl_2 = {
+		corner_radius = not not corner_radius or not not 2
 	}
-	local tbl_5 = {
+	local tbl_3 = {
 		nil,
 		0,
 		1
 	}
 	local num
 
-	if not arg_65_5 then
-		num = arg_65_1[1] / 2 - arg_65_5 * 0.5
+	if thumb_width then
+		num = size[1] / 2 - thumb_width * 0.5
 
 		if not num then
 			-- Nothing
@@ -2500,98 +2622,118 @@ UIWidgets.create_scrollbar = function (arg_65_0, arg_65_1, arg_65_2, arg_65_3, a
 
 	::label_65_0::
 
-	tbl_5[1] = num
-	tbl_4.offset = tbl_5
-	tbl_4.size = {
-		arg_65_5,
-		arg_65_1[2]
+	tbl_3[1] = num
+	tbl_2.offset = tbl_3
+	tbl_2.size = {
+		thumb_width,
+		size[2]
 	}
-	tbl_4.color = arg_65_3 or Colors.get_color_table_with_alpha("font_button_normal", 255)
-	tbl_3.scroll_bar_box = tbl_4
-	tbl_3.hotspot = {
+	tbl_2.color = not not thumb_color or not not Colors.get_color_table_with_alpha("font_button_normal", 255)
+	tbl.scroll_bar_box = tbl_2
+	tbl.hotspot = {
 		offset = {
 			0,
 			0,
 			2
 		},
 		size = {
-			arg_65_1[1],
-			arg_65_1[2]
+			size[1],
+			size[2]
 		}
 	}
 
-	local tbl_6 = {
+	local style = tbl
+	local definition = {
 		element = {
-			passes = tbl
+			passes = passes
 		},
-		content = tbl_2,
-		style = tbl_3,
-		scenegraph_id = arg_65_0
+		content = content,
+		style = style,
+		scenegraph_id = scenegraph_id
 	}
 
-	if not arg_65_2 then
-		tbl[#tbl + 1] = {
+	if scroll_area_scenegraph_id then
+		passes[#passes + 1] = {
 			style_id = "scroll_area_hotspot",
 			pass_type = "scroll",
 			content_id = "scroll_area_hotspot",
-			scroll_function = function (arg_73_0, arg_73_1, arg_73_2, arg_73_3, arg_73_4, arg_73_5)
+			scroll_function = function (ui_scenegraph, ui_style, ui_content, input_service, scroll_axis, dt)
 				-- function 73
-				local is_device_active = Managers.input:is_device_active("gamepad")
-				local num = arg_73_4.y * -1
-				local scroll_bar_info = arg_73_2.parent.scroll_bar_info
+				local gamepad_active = Managers.input:is_device_active("gamepad")
+				local axis_input = scroll_axis.y * -1
+				local parent_content = ui_content.parent
+				local scroll_bar_info = parent_content.scroll_bar_info
 				local total_scroll_height = scroll_bar_info.total_scroll_height
 				local scroll_amount = scroll_bar_info.scroll_amount
 
-				if num == 0 or arg_73_2.is_hover or not is_device_active then
-					scroll_bar_info.axis_input = num
+				if axis_input ~= 0 and (ui_content.is_hover or gamepad_active) then
+					scroll_bar_info.axis_input = axis_input
 
-					local scroll_add = scroll_bar_info.scroll_add
+					local scroll_add_2 = scroll_bar_info.scroll_add
 
-					scroll_add = scroll_add or 0
-					scroll_bar_info.scroll_add = scroll_add + num * scroll_amount
+					if not scroll_add_2 then
+						-- Nothing
+					end
+
+					scroll_add_2 = 0
+
+					local previous_scroll_add = scroll_add_2
+
+					::label_73_0::
+
+					scroll_bar_info.scroll_add = previous_scroll_add + axis_input * scroll_amount
 				else
-					local axis_input = scroll_bar_info.axis_input
+					axis_input = scroll_bar_info.axis_input
 				end
 
-				local scroll_add_2 = scroll_bar_info.scroll_add
+				local scroll_add = scroll_bar_info.scroll_add
 
-				if not scroll_add_2 then
+				if scroll_add then
 					local scroll_speed = scroll_bar_info.scroll_speed
 
-					scroll_speed = scroll_speed or 5
+					if not scroll_speed then
+						-- Nothing
+					end
 
-					local num_2 = scroll_add_2 * (arg_73_5 * scroll_speed)
-					local num_3 = scroll_add_2 - num_2
+					scroll_speed = 5
 
-					if math.abs(num_3) > scroll_amount / 20 then
-						scroll_bar_info.scroll_add = num_3
+					local speed = scroll_speed
+
+					::label_73_1::
+
+					local step = scroll_add * (dt * speed)
+
+					scroll_add = scroll_add - step
+
+					if math.abs(scroll_add) > scroll_amount / 20 then
+						scroll_bar_info.scroll_add = scroll_add
 					else
 						scroll_bar_info.scroll_add = nil
 					end
 
-					local scroll_value = scroll_bar_info.scroll_value
+					local current_scroll_value = scroll_bar_info.scroll_value
 
-					if not scroll_value then
-						scroll_bar_info.scroll_value = math.clamp(scroll_value + num_2, 0, 1)
+					if current_scroll_value then
+						scroll_bar_info.scroll_value = math.clamp(current_scroll_value + step, 0, 1)
 					end
 				end
 			end
 		}
-		tbl_3.scroll_area_hotspot = {
+		style.scroll_area_hotspot = {
 			offset = {
 				0,
 				0,
 				0
 			},
-			scenegraph_id = arg_65_2
+			scenegraph_id = scroll_area_scenegraph_id
 		}
-		tbl_2.scroll_area_hotspot = {}
+		content.scroll_area_hotspot = {}
 	end
 
-	return tbl_6
+	return definition
 end
 
-UIWidgets.create_lock_icon = function (arg_74_0, arg_74_1)
+UIWidgets.create_lock_icon = function (scenegraph_id, level)
 	-- function 74
 	return {
 		element = {
@@ -2610,7 +2752,7 @@ UIWidgets.create_lock_icon = function (arg_74_0, arg_74_1)
 		},
 		content = {
 			unlock_texture = "locked_icon_01",
-			level_text = tostring(arg_74_1)
+			level_text = tostring(level)
 		},
 		style = {
 			unlock_texture = {
@@ -2644,11 +2786,11 @@ UIWidgets.create_lock_icon = function (arg_74_0, arg_74_1)
 				}
 			}
 		},
-		scenegraph_id = arg_74_0
+		scenegraph_id = scenegraph_id
 	}
 end
 
-UIWidgets.create_quest_navigation_button = function (arg_75_0, arg_75_1, arg_75_2)
+UIWidgets.create_quest_navigation_button = function (scenegraph_id, uvs, tooltip_text)
 	-- function 75
 	return {
 		element = {
@@ -2656,17 +2798,17 @@ UIWidgets.create_quest_navigation_button = function (arg_75_0, arg_75_1, arg_75_
 				{
 					pass_type = "hotspot",
 					content_id = "button_hotspot",
-					content_check_function = function (self)
+					content_check_function = function (content)
 						-- function 76
-						return not self.disabled
+						return not content.disabled
 					end
 				},
 				{
 					pass_type = "hotspot",
 					content_id = "tooltip_hotspot",
-					content_check_function = function (self)
+					content_check_function = function (content)
 						-- function 77
-						return not self.disabled
+						return not content.disabled
 					end
 				},
 				{
@@ -2674,11 +2816,11 @@ UIWidgets.create_quest_navigation_button = function (arg_75_0, arg_75_1, arg_75_
 					style_id = "texture_id",
 					texture_id = "texture_id",
 					content_id = "texture_id",
-					content_check_function = function (self)
+					content_check_function = function (content)
 						-- function 78
-						local button_hotspot = self.parent.button_hotspot
+						local button_hotspot = content.parent.button_hotspot
 
-						return not not button_hotspot.is_hover or button_hotspot.is_clicked == 0 or not button_hotspot.disabled
+						return not button_hotspot.is_hover and button_hotspot.is_clicked ~= 0 and not not not button_hotspot.disabled
 					end
 				},
 				{
@@ -2686,17 +2828,11 @@ UIWidgets.create_quest_navigation_button = function (arg_75_0, arg_75_1, arg_75_
 					style_id = "texture_hover_id",
 					texture_id = "texture_hover_id",
 					content_id = "texture_hover_id",
-					content_check_function = function (self)
+					content_check_function = function (content)
 						-- function 79
-						local button_hotspot = self.parent.button_hotspot
-						local is_selected = button_hotspot.is_selected
+						local button_hotspot = content.parent.button_hotspot
 
-						if not is_selected then
-							is_selected = button_hotspot.is_hover
-							is_selected = not is_selected and button_hotspot.is_clicked == 0 or not button_hotspot.disabled
-						end
-
-						return is_selected
+						return button_hotspot.is_clicked ~= 0 and not not not button_hotspot.disabled and not not button_hotspot.is_hover and not not button_hotspot.is_selected
 					end
 				},
 				{
@@ -2704,9 +2840,9 @@ UIWidgets.create_quest_navigation_button = function (arg_75_0, arg_75_1, arg_75_
 					style_id = "texture_click_id",
 					texture_id = "texture_click_id",
 					content_id = "texture_click_id",
-					content_check_function = function (self)
+					content_check_function = function (content)
 						-- function 80
-						return self.parent.button_hotspot.is_clicked ~= 0 or not self.parent.button_hotspot.disabled
+						return content.parent.button_hotspot.is_clicked == 0 and not not not content.parent.button_hotspot.disabled
 					end
 				},
 				{
@@ -2714,25 +2850,25 @@ UIWidgets.create_quest_navigation_button = function (arg_75_0, arg_75_1, arg_75_
 					style_id = "texture_disabled_id",
 					texture_id = "texture_disabled_id",
 					content_id = "texture_disabled_id",
-					content_check_function = function (self)
+					content_check_function = function (content)
 						-- function 81
-						return self.parent.button_hotspot.disabled
+						return content.parent.button_hotspot.disabled
 					end
 				},
 				{
 					style_id = "tooltip_text",
 					pass_type = "tooltip_text",
 					text_id = "tooltip_text",
-					content_check_function = function (self)
+					content_check_function = function (content)
 						-- function 82
-						local tooltip_text = self.tooltip_text
+						local tooltip_text = content.tooltip_text
 
-						if not tooltip_text then
-							tooltip_text = self.button_hotspot.is_hover
+						if tooltip_text then
+							tooltip_text = content.button_hotspot.is_hover
 
-							if not tooltip_text then
-								tooltip_text = self.tooltip_hotspot.is_hover
-								tooltip_text = not tooltip_text and not self.button_hotspot.disabled
+							if tooltip_text then
+								tooltip_text = content.tooltip_hotspot.is_hover
+								tooltip_text = not not tooltip_text and not not not content.button_hotspot.disabled
 							end
 						end
 
@@ -2744,21 +2880,21 @@ UIWidgets.create_quest_navigation_button = function (arg_75_0, arg_75_1, arg_75_
 		content = {
 			texture_id = {
 				texture_id = "quest_board_arrow_normal",
-				uvs = arg_75_1
+				uvs = uvs
 			},
 			texture_hover_id = {
 				texture_hover_id = "quest_board_arrow_hover",
-				uvs = arg_75_1
+				uvs = uvs
 			},
 			texture_click_id = {
 				texture_click_id = "quest_board_arrow_hover",
-				uvs = arg_75_1
+				uvs = uvs
 			},
 			texture_disabled_id = {
 				texture_disabled_id = "quest_board_arrow_hover",
-				uvs = arg_75_1
+				uvs = uvs
 			},
-			tooltip_text = arg_75_2,
+			tooltip_text = tooltip_text,
 			button_hotspot = {},
 			tooltip_hotspot = {}
 		},
@@ -2847,11 +2983,11 @@ UIWidgets.create_quest_navigation_button = function (arg_75_0, arg_75_1, arg_75_
 				}
 			}
 		},
-		scenegraph_id = arg_75_0
+		scenegraph_id = scenegraph_id
 	}
 end
 
-UIWidgets.create_gold_button_3_state = function (arg_83_0, arg_83_1, arg_83_2, arg_83_3, arg_83_4)
+UIWidgets.create_gold_button_3_state = function (text, scenegraph_id, normal_texture, hover_texture, click_texture)
 	-- function 83
 	return {
 		element = {
@@ -2863,21 +2999,21 @@ UIWidgets.create_gold_button_3_state = function (arg_83_0, arg_83_1, arg_83_2, a
 				{
 					pass_type = "texture",
 					texture_id = "texture_id",
-					content_check_function = function (self)
+					content_check_function = function (content)
 						-- function 84
-						return not not self.button_hotspot.is_hover or self.button_hotspot.is_clicked > 0
+						return not content.button_hotspot.is_hover and content.button_hotspot.is_clicked > 0
 					end
 				},
 				{
 					pass_type = "texture",
 					texture_id = "texture_hover_id",
-					content_check_function = function (self)
+					content_check_function = function (content)
 						-- function 85
-						local is_selected = self.button_hotspot.is_selected
+						local is_selected = content.button_hotspot.is_selected
 
 						if not is_selected then
-							is_selected = self.button_hotspot.is_hover
-							is_selected = not is_selected and self.button_hotspot.is_clicked > 0
+							is_selected = content.button_hotspot.is_hover
+							is_selected = not not is_selected and content.button_hotspot.is_clicked > 0
 						end
 
 						return is_selected
@@ -2886,9 +3022,9 @@ UIWidgets.create_gold_button_3_state = function (arg_83_0, arg_83_1, arg_83_2, a
 				{
 					pass_type = "texture",
 					texture_id = "texture_click_id",
-					content_check_function = function (self)
+					content_check_function = function (content)
 						-- function 86
-						return self.button_hotspot.is_clicked == 0
+						return content.button_hotspot.is_clicked == 0
 					end
 				},
 				{
@@ -2900,10 +3036,10 @@ UIWidgets.create_gold_button_3_state = function (arg_83_0, arg_83_1, arg_83_2, a
 			}
 		},
 		content = {
-			texture_id = arg_83_2 or "small_button_gold_normal",
-			texture_hover_id = arg_83_3 or "small_button_gold_hover",
-			texture_click_id = arg_83_4 or "small_button_gold_selected",
-			text_field = Localize(arg_83_0),
+			texture_id = not not normal_texture or not not "small_button_gold_normal",
+			texture_hover_id = not not hover_texture or not not "small_button_gold_hover",
+			texture_click_id = not not click_texture or not not "small_button_gold_selected",
+			text_field = Localize(text),
 			button_hotspot = {}
 		},
 		style = {
@@ -2918,14 +3054,14 @@ UIWidgets.create_gold_button_3_state = function (arg_83_0, arg_83_1, arg_83_2, a
 					0,
 					2
 				},
-				scenegraph_id = arg_83_1
+				scenegraph_id = scenegraph_id
 			}
 		},
-		scenegraph_id = arg_83_1
+		scenegraph_id = scenegraph_id
 	}
 end
 
-UIWidgets.create_gamepad_bar_input_extension = function (arg_87_0)
+UIWidgets.create_gamepad_bar_input_extension = function (parent_scenegraph_id)
 	-- function 87
 	return {
 		element = {
@@ -2934,20 +3070,20 @@ UIWidgets.create_gamepad_bar_input_extension = function (arg_87_0)
 					pass_type = "texture",
 					style_id = "input_bg",
 					texture_id = "input_bg",
-					content_check_function = function (self)
+					content_check_function = function (content)
 						-- function 88
-						return self.is_gamepad_active
+						return content.is_gamepad_active
 					end
 				},
 				{
 					texture_id = "input_icon",
 					style_id = "input_icon",
 					pass_type = "texture",
-					content_check_function = function (self)
+					content_check_function = function (content)
 						-- function 89
-						local is_gamepad_active = self.is_gamepad_active
+						local is_gamepad_active = content.is_gamepad_active
 
-						is_gamepad_active = not is_gamepad_active and self.show_input
+						is_gamepad_active = not not is_gamepad_active and not not content.show_input
 
 						return is_gamepad_active
 					end
@@ -2956,11 +3092,11 @@ UIWidgets.create_gamepad_bar_input_extension = function (arg_87_0)
 					texture_id = "input_icon_overlay",
 					style_id = "input_icon_overlay",
 					pass_type = "texture",
-					content_check_function = function (self)
+					content_check_function = function (content)
 						-- function 90
-						local is_gamepad_active = self.is_gamepad_active
+						local is_gamepad_active = content.is_gamepad_active
 
-						is_gamepad_active = not is_gamepad_active and self.charging
+						is_gamepad_active = not not is_gamepad_active and not not content.charging
 
 						return is_gamepad_active
 					end
@@ -3027,11 +3163,11 @@ UIWidgets.create_gamepad_bar_input_extension = function (arg_87_0)
 				}
 			}
 		},
-		scenegraph_id = arg_87_0
+		scenegraph_id = parent_scenegraph_id
 	}
 end
 
-UIWidgets.create_forge_merge_button = function (arg_91_0, arg_91_1, arg_91_2, arg_91_3, arg_91_4)
+UIWidgets.create_forge_merge_button = function (scenegraph_id, text_scenegraph_id, token_scenegraph_id, eye_glow_scenegraph_id, progress_scenegraph_id)
 	-- function 91
 	local tbl = {
 		element = {
@@ -3039,19 +3175,19 @@ UIWidgets.create_forge_merge_button = function (arg_91_0, arg_91_1, arg_91_2, ar
 				{
 					pass_type = "hotspot",
 					content_id = "button_hotspot",
-					content_check_function = function (self)
+					content_check_function = function (content)
 						-- function 92
 						local show_cancel_text
 
-						if not self.charging then
-							show_cancel_text = self.show_cancel_text
+						if content.charging then
+							show_cancel_text = content.show_cancel_text
 
-							if not show_cancel_text then
+							if show_cancel_text then
 								-- Nothing
 							end
 						end
 
-						show_cancel_text = not self.disabled
+						show_cancel_text = not content.disabled
 
 						::label_92_0::
 
@@ -3061,19 +3197,19 @@ UIWidgets.create_forge_merge_button = function (arg_91_0, arg_91_1, arg_91_2, ar
 				{
 					pass_type = "texture",
 					texture_id = "texture_id",
-					content_check_function = function (self)
+					content_check_function = function (content)
 						-- function 93
-						local button_hotspot = self.button_hotspot
+						local button_hotspot = content.button_hotspot
 						local is_clicked
 
-						if not (self.is_gamepad_active or button_hotspot.disabled or button_hotspot.is_hover) then
-							if not button_hotspot.is_clicked then
+						if not content.is_gamepad_active and not button_hotspot.disabled and not button_hotspot.is_hover then
+							if button_hotspot.is_clicked then
 								-- Nothing
 							end
 
 							is_clicked = button_hotspot.is_clicked
 
-							if not is_clicked then
+							if is_clicked then
 								-- Nothing
 							end
 
@@ -3098,25 +3234,25 @@ UIWidgets.create_forge_merge_button = function (arg_91_0, arg_91_1, arg_91_2, ar
 				{
 					pass_type = "texture",
 					texture_id = "texture_hover_id",
-					content_check_function = function (self)
+					content_check_function = function (content)
 						-- function 94
-						local button_hotspot = self.button_hotspot
+						local button_hotspot = content.button_hotspot
 						local is_hover
 
-						if not (self.is_gamepad_active or button_hotspot.disabled) then
+						if not content.is_gamepad_active and not button_hotspot.disabled then
 							is_hover = button_hotspot.is_hover
 
-							if not is_hover then
+							if is_hover then
 								-- Nothing
 							end
 
-							if not button_hotspot.is_clicked then
+							if button_hotspot.is_clicked then
 								-- Nothing
 							end
 
 							is_hover = button_hotspot.is_clicked
 
-							if not is_hover then
+							if is_hover then
 								-- Nothing
 							end
 
@@ -3141,43 +3277,43 @@ UIWidgets.create_forge_merge_button = function (arg_91_0, arg_91_1, arg_91_2, ar
 				{
 					pass_type = "texture",
 					texture_id = "texture_click_id",
-					content_check_function = function (self)
+					content_check_function = function (content)
 						-- function 95
-						local button_hotspot = self.button_hotspot
+						local button_hotspot = content.button_hotspot
 
-						return (self.is_gamepad_active or button_hotspot.disabled or button_hotspot.is_clicked or button_hotspot.is_clicked ~= 0) and button_hotspot.is_selected
+						return (content.is_gamepad_active or button_hotspot.disabled or not button_hotspot.is_clicked or button_hotspot.is_clicked ~= 0) and not not button_hotspot.is_selected
 					end
 				},
 				{
 					pass_type = "texture",
 					texture_id = "texture_disabled_id",
-					content_check_function = function (self)
+					content_check_function = function (content)
 						-- function 96
-						local button_hotspot = self.button_hotspot
+						local button_hotspot = content.button_hotspot
 
-						return not not self.is_gamepad_active or button_hotspot.disabled
+						return not content.is_gamepad_active and not not button_hotspot.disabled
 					end
 				},
 				{
 					texture_id = "texture_token_type",
 					style_id = "texture_token_type",
 					pass_type = "texture",
-					content_check_function = function (self)
+					content_check_function = function (content)
 						-- function 97
-						local button_hotspot = self.button_hotspot
+						local button_hotspot = content.button_hotspot
 						local show_tokens
 
-						if not (self.charging or self.show_cancel_text) then
-							show_tokens = self.show_tokens
+						if not content.charging and not content.show_cancel_text then
+							show_tokens = content.show_tokens
 
-							if not show_tokens then
-								show_tokens = self.texture_token_type
+							if show_tokens then
+								show_tokens = content.texture_token_type
 
-								if not show_tokens then
-									if not button_hotspot.is_clicked then
+								if show_tokens then
+									if button_hotspot.is_clicked then
 										show_tokens = button_hotspot.is_clicked
 
-										if not show_tokens then
+										if show_tokens then
 											-- Nothing
 										end
 
@@ -3210,30 +3346,30 @@ UIWidgets.create_forge_merge_button = function (arg_91_0, arg_91_1, arg_91_2, ar
 					texture_id = "texture_token_type",
 					style_id = "texture_token_type_selected",
 					pass_type = "texture",
-					content_check_function = function (self)
+					content_check_function = function (content)
 						-- function 98
-						local button_hotspot = self.button_hotspot
+						local button_hotspot = content.button_hotspot
 
-						return (self.charging or self.show_cancel_text or self.show_tokens or self.texture_token_type or button_hotspot.is_clicked ~= 0) and button_hotspot.is_selected
+						return (content.charging or content.show_cancel_text or not content.show_tokens or not content.texture_token_type or button_hotspot.is_clicked ~= 0) and not not button_hotspot.is_selected
 					end
 				},
 				{
 					style_id = "text",
 					pass_type = "text",
 					text_id = "text_field",
-					content_check_function = function (self)
+					content_check_function = function (content)
 						-- function 99
-						local button_hotspot = self.button_hotspot
+						local button_hotspot = content.button_hotspot
 						local show_tokens
 
-						if not (self.charging or self.show_cancel_text or button_hotspot.is_hover) then
-							show_tokens = self.show_tokens
+						if not content.charging and not content.show_cancel_text and not button_hotspot.is_hover then
+							show_tokens = content.show_tokens
 
-							if not show_tokens then
-								if not button_hotspot.is_clicked then
+							if show_tokens then
+								if button_hotspot.is_clicked then
 									show_tokens = button_hotspot.is_clicked
 
-									if not show_tokens then
+									if show_tokens then
 										-- Nothing
 									end
 
@@ -3265,19 +3401,19 @@ UIWidgets.create_forge_merge_button = function (arg_91_0, arg_91_1, arg_91_2, ar
 					style_id = "text_hover",
 					pass_type = "text",
 					text_id = "text_field",
-					content_check_function = function (self)
+					content_check_function = function (content)
 						-- function 100
-						local button_hotspot = self.button_hotspot
+						local button_hotspot = content.button_hotspot
 						local is_hover = button_hotspot.is_hover
 
-						if not is_hover then
-							is_hover = self.show_tokens
+						if is_hover then
+							is_hover = content.show_tokens
 
-							if not is_hover then
-								if not button_hotspot.is_clicked then
+							if is_hover then
+								if button_hotspot.is_clicked then
 									is_hover = button_hotspot.is_clicked
 
-									if not is_hover then
+									if is_hover then
 										-- Nothing
 									end
 
@@ -3309,22 +3445,23 @@ UIWidgets.create_forge_merge_button = function (arg_91_0, arg_91_1, arg_91_2, ar
 					style_id = "text_selected",
 					pass_type = "text",
 					text_id = "text_field",
-					content_check_function = function (self)
+					content_check_function = function (content)
 						-- function 101
-						local button_hotspot = self.button_hotspot
+						local button_hotspot = content.button_hotspot
 
-						return (self.charging or self.show_cancel_text or self.show_tokens or button_hotspot.is_clicked ~= 0) and button_hotspot.is_selected
+						return (content.charging or content.show_cancel_text or not content.show_tokens or button_hotspot.is_clicked ~= 0) and not not button_hotspot.is_selected
 					end
 				},
 				{
 					style_id = "text_disabled",
 					pass_type = "text",
 					text_id = "text_field",
-					content_check_function = function (self)
+					content_check_function = function (content)
 						-- function 102
-						local disabled = self.button_hotspot.disabled
+						local button_hotspot = content.button_hotspot
+						local disabled = button_hotspot.disabled
 
-						disabled = not disabled and self.is_disabled
+						disabled = not not disabled and not not content.is_disabled
 
 						return disabled
 					end
@@ -3333,31 +3470,31 @@ UIWidgets.create_forge_merge_button = function (arg_91_0, arg_91_1, arg_91_2, ar
 					style_id = "text_center",
 					pass_type = "text",
 					text_id = "text_field_center",
-					content_check_function = function (self)
+					content_check_function = function (content)
 						-- function 103
-						local button_hotspot = self.button_hotspot
+						local button_hotspot = content.button_hotspot
 
-						return not not self.charging or not not self.show_cancel_text or not not button_hotspot.disabled or not not button_hotspot.is_hover or not not button_hotspot.is_selected or not self.show_tokens
+						return not content.charging and not content.show_cancel_text and not button_hotspot.disabled and not button_hotspot.is_hover and not button_hotspot.is_selected and not not not content.show_tokens
 					end
 				},
 				{
 					style_id = "text_hover_center",
 					pass_type = "text",
 					text_id = "text_field_center",
-					content_check_function = function (self)
+					content_check_function = function (content)
 						-- function 104
-						local button_hotspot = self.button_hotspot
+						local button_hotspot = content.button_hotspot
 						local is_hover
 
-						if not (self.charging or self.show_cancel_text or button_hotspot.disabled) then
+						if not content.charging and not content.show_cancel_text and not button_hotspot.disabled then
 							is_hover = button_hotspot.is_hover
 
-							if not is_hover then
+							if is_hover then
 								-- Nothing
 							end
 
 							if button_hotspot.is_clicked > 0 then
-								is_hover = not self.show_tokens
+								is_hover = not content.show_tokens
 
 								goto label_104_0
 							end
@@ -3378,21 +3515,21 @@ UIWidgets.create_forge_merge_button = function (arg_91_0, arg_91_1, arg_91_2, ar
 					style_id = "text_selected_center",
 					pass_type = "text",
 					text_id = "text_field_center",
-					content_check_function = function (self)
+					content_check_function = function (content)
 						-- function 105
-						local button_hotspot = self.button_hotspot
+						local button_hotspot = content.button_hotspot
 						local is_selected
 
-						if not (self.charging or self.show_cancel_text or self.is_disabled) then
+						if not content.charging and not content.show_cancel_text and not content.is_disabled then
 							if button_hotspot.is_clicked ~= 0 then
 								is_selected = button_hotspot.is_selected
 
-								if not is_selected then
+								if is_selected then
 									-- Nothing
 								end
 							end
 
-							is_selected = not self.show_tokens
+							is_selected = not content.show_tokens
 						else
 							is_selected = false
 						end
@@ -3410,19 +3547,19 @@ UIWidgets.create_forge_merge_button = function (arg_91_0, arg_91_1, arg_91_2, ar
 					style_id = "token_text",
 					pass_type = "text",
 					text_id = "token_text",
-					content_check_function = function (self)
+					content_check_function = function (content)
 						-- function 106
-						local button_hotspot = self.button_hotspot
+						local button_hotspot = content.button_hotspot
 						local show_tokens
 
-						if not (self.charging or self.show_cancel_text or button_hotspot.is_hover) then
-							show_tokens = self.show_tokens
+						if not content.charging and not content.show_cancel_text and not button_hotspot.is_hover then
+							show_tokens = content.show_tokens
 
-							if not show_tokens then
-								if not button_hotspot.is_clicked then
+							if show_tokens then
+								if button_hotspot.is_clicked then
 									show_tokens = button_hotspot.is_clicked
 
-									if not show_tokens then
+									if show_tokens then
 										-- Nothing
 									end
 
@@ -3454,22 +3591,22 @@ UIWidgets.create_forge_merge_button = function (arg_91_0, arg_91_1, arg_91_2, ar
 					style_id = "token_text_hover",
 					pass_type = "text",
 					text_id = "token_text",
-					content_check_function = function (self)
+					content_check_function = function (content)
 						-- function 107
-						local button_hotspot = self.button_hotspot
+						local button_hotspot = content.button_hotspot
 						local is_hover
 
-						if not (self.charging or self.show_cancel_text) then
+						if not content.charging and not content.show_cancel_text then
 							is_hover = button_hotspot.is_hover
 
-							if not is_hover then
-								is_hover = self.show_tokens
+							if is_hover then
+								is_hover = content.show_tokens
 
-								if not is_hover then
-									if not button_hotspot.is_clicked then
+								if is_hover then
+									if button_hotspot.is_clicked then
 										is_hover = button_hotspot.is_clicked
 
-										if not is_hover then
+										if is_hover then
 											-- Nothing
 										end
 
@@ -3502,23 +3639,23 @@ UIWidgets.create_forge_merge_button = function (arg_91_0, arg_91_1, arg_91_2, ar
 					style_id = "token_text_selected",
 					pass_type = "text",
 					text_id = "token_text",
-					content_check_function = function (self)
+					content_check_function = function (content)
 						-- function 108
-						local button_hotspot = self.button_hotspot
+						local button_hotspot = content.button_hotspot
 
-						return (self.charging or self.show_cancel_text or self.show_tokens or button_hotspot.is_clicked ~= 0) and button_hotspot.is_selected
+						return (content.charging or content.show_cancel_text or not content.show_tokens or button_hotspot.is_clicked ~= 0) and not not button_hotspot.is_selected
 					end
 				},
 				{
 					style_id = "text_charge_cancelled",
 					pass_type = "text",
 					text_id = "text_charge_cancelled",
-					content_check_function = function (self)
+					content_check_function = function (content)
 						-- function 109
-						local button_hotspot = self.button_hotspot
-						local is_gamepad_active = self.is_gamepad_active
+						local button_hotspot = content.button_hotspot
+						local is_gamepad_active = content.is_gamepad_active
 
-						is_gamepad_active = not is_gamepad_active and self.show_cancel_text
+						is_gamepad_active = not not is_gamepad_active and not not content.show_cancel_text
 
 						return is_gamepad_active
 					end
@@ -3526,12 +3663,12 @@ UIWidgets.create_forge_merge_button = function (arg_91_0, arg_91_1, arg_91_2, ar
 				{
 					pass_type = "texture",
 					texture_id = "progress_frame",
-					content_check_function = function (self)
+					content_check_function = function (content)
 						-- function 110
-						local button_hotspot = self.button_hotspot
-						local is_gamepad_active = self.is_gamepad_active
+						local button_hotspot = content.button_hotspot
+						local is_gamepad_active = content.is_gamepad_active
 
-						is_gamepad_active = not is_gamepad_active and not button_hotspot.disabled
+						is_gamepad_active = not not is_gamepad_active and not not not button_hotspot.disabled
 
 						return is_gamepad_active
 					end
@@ -3539,12 +3676,12 @@ UIWidgets.create_forge_merge_button = function (arg_91_0, arg_91_1, arg_91_2, ar
 				{
 					pass_type = "texture",
 					texture_id = "progress_frame_disabled",
-					content_check_function = function (self)
+					content_check_function = function (content)
 						-- function 111
-						local button_hotspot = self.button_hotspot
-						local is_gamepad_active = self.is_gamepad_active
+						local button_hotspot = content.button_hotspot
+						local is_gamepad_active = content.is_gamepad_active
 
-						is_gamepad_active = not is_gamepad_active and button_hotspot.disabled
+						is_gamepad_active = not not is_gamepad_active and not not button_hotspot.disabled
 
 						return is_gamepad_active
 					end
@@ -3553,12 +3690,12 @@ UIWidgets.create_forge_merge_button = function (arg_91_0, arg_91_1, arg_91_2, ar
 					pass_type = "texture",
 					style_id = "progress_frame_bg",
 					texture_id = "progress_frame_bg",
-					content_check_function = function (self)
+					content_check_function = function (content)
 						-- function 112
-						local button_hotspot = self.button_hotspot
-						local is_gamepad_active = self.is_gamepad_active
+						local button_hotspot = content.button_hotspot
+						local is_gamepad_active = content.is_gamepad_active
 
-						is_gamepad_active = not is_gamepad_active and not button_hotspot.disabled
+						is_gamepad_active = not not is_gamepad_active and not not not button_hotspot.disabled
 
 						return is_gamepad_active
 					end
@@ -3567,12 +3704,12 @@ UIWidgets.create_forge_merge_button = function (arg_91_0, arg_91_1, arg_91_2, ar
 					pass_type = "texture",
 					style_id = "progress_frame_bg",
 					texture_id = "progress_frame_bg_disabled",
-					content_check_function = function (self)
+					content_check_function = function (content)
 						-- function 113
-						local button_hotspot = self.button_hotspot
-						local is_gamepad_active = self.is_gamepad_active
+						local button_hotspot = content.button_hotspot
+						local is_gamepad_active = content.is_gamepad_active
 
-						is_gamepad_active = not is_gamepad_active and button_hotspot.disabled
+						is_gamepad_active = not not is_gamepad_active and not not button_hotspot.disabled
 
 						return is_gamepad_active
 					end
@@ -3581,30 +3718,32 @@ UIWidgets.create_forge_merge_button = function (arg_91_0, arg_91_1, arg_91_2, ar
 					style_id = "progress_fill",
 					pass_type = "texture_uv",
 					content_id = "progress_fill",
-					content_check_function = function (self)
+					content_check_function = function (content)
 						-- function 114
-						return self.parent.is_gamepad_active
+						local parent_content = content.parent
+
+						return parent_content.is_gamepad_active
 					end
 				},
 				{
 					texture_id = "progress_fill_glow",
 					style_id = "progress_fill_glow",
 					pass_type = "texture",
-					content_check_function = function (self)
+					content_check_function = function (content)
 						-- function 115
-						return self.is_gamepad_active
+						return content.is_gamepad_active
 					end
 				},
 				{
 					texture_id = "progress_input_icon",
 					style_id = "progress_input_icon",
 					pass_type = "texture",
-					content_check_function = function (self)
+					content_check_function = function (content)
 						-- function 116
-						local button_hotspot = self.button_hotspot
-						local is_gamepad_active = self.is_gamepad_active
+						local button_hotspot = content.button_hotspot
+						local is_gamepad_active = content.is_gamepad_active
 
-						is_gamepad_active = not is_gamepad_active and not button_hotspot.disabled
+						is_gamepad_active = not not is_gamepad_active and not not not button_hotspot.disabled
 
 						return is_gamepad_active
 					end
@@ -3613,12 +3752,12 @@ UIWidgets.create_forge_merge_button = function (arg_91_0, arg_91_1, arg_91_2, ar
 					texture_id = "progress_input_icon_overlay",
 					style_id = "progress_input_icon_overlay",
 					pass_type = "texture",
-					content_check_function = function (self)
+					content_check_function = function (content)
 						-- function 117
-						local button_hotspot = self.button_hotspot
-						local is_gamepad_active = self.is_gamepad_active
+						local button_hotspot = content.button_hotspot
+						local is_gamepad_active = content.is_gamepad_active
 
-						is_gamepad_active = not is_gamepad_active and not not button_hotspot.disabled or self.charging
+						is_gamepad_active = not not is_gamepad_active and not button_hotspot.disabled and not not content.charging
 
 						return is_gamepad_active
 					end
@@ -3627,15 +3766,15 @@ UIWidgets.create_forge_merge_button = function (arg_91_0, arg_91_1, arg_91_2, ar
 					texture_id = "eye_glow_texture",
 					style_id = "eye_glow_texture",
 					pass_type = "texture",
-					content_check_function = function (self)
+					content_check_function = function (content)
 						-- function 118
-						local button_hotspot = self.button_hotspot
+						local button_hotspot = content.button_hotspot
 						local use_eye_glow
 
-						if not self.is_gamepad_active then
-							use_eye_glow = self.use_eye_glow
+						if not content.is_gamepad_active then
+							use_eye_glow = content.use_eye_glow
 
-							if not use_eye_glow then
+							if use_eye_glow then
 								use_eye_glow = not button_hotspot.disabled
 							end
 						else
@@ -3653,12 +3792,12 @@ UIWidgets.create_forge_merge_button = function (arg_91_0, arg_91_1, arg_91_2, ar
 					texture_id = "gamepad_glow_texture",
 					style_id = "gamepad_glow_texture",
 					pass_type = "texture",
-					content_check_function = function (self)
+					content_check_function = function (content)
 						-- function 119
-						local button_hotspot = self.button_hotspot
-						local is_gamepad_active = self.is_gamepad_active
+						local button_hotspot = content.button_hotspot
+						local is_gamepad_active = content.is_gamepad_active
 
-						is_gamepad_active = not is_gamepad_active and not button_hotspot.disabled
+						is_gamepad_active = not not is_gamepad_active and not not not button_hotspot.disabled
 
 						return is_gamepad_active
 					end
@@ -3688,7 +3827,7 @@ UIWidgets.create_forge_merge_button = function (arg_91_0, arg_91_1, arg_91_2, ar
 	}
 	local flag
 
-	flag = not arg_91_3 and true and false
+	flag = (not eye_glow_scenegraph_id or not true) and not not false
 	tbl_2.use_eye_glow = flag
 	tbl_2.text_field = Localize("merge")
 	tbl_2.text_field_center = Localize("merge")
@@ -3716,7 +3855,7 @@ UIWidgets.create_forge_merge_button = function (arg_91_0, arg_91_1, arg_91_2, ar
 				255,
 				255
 			},
-			scenegraph_id = arg_91_3
+			scenegraph_id = eye_glow_scenegraph_id
 		},
 		gamepad_glow_texture = {
 			size = {
@@ -3747,7 +3886,7 @@ UIWidgets.create_forge_merge_button = function (arg_91_0, arg_91_1, arg_91_2, ar
 				255,
 				255
 			},
-			scenegraph_id = arg_91_4
+			scenegraph_id = progress_scenegraph_id
 		},
 		progress_input_icon = {
 			size = {
@@ -3793,7 +3932,7 @@ UIWidgets.create_forge_merge_button = function (arg_91_0, arg_91_1, arg_91_2, ar
 				0,
 				-1
 			},
-			scenegraph_id = arg_91_4
+			scenegraph_id = progress_scenegraph_id
 		},
 		progress_fill_glow = {
 			size = {
@@ -3811,7 +3950,7 @@ UIWidgets.create_forge_merge_button = function (arg_91_0, arg_91_1, arg_91_2, ar
 				255,
 				255
 			},
-			scenegraph_id = arg_91_4
+			scenegraph_id = progress_scenegraph_id
 		},
 		text_charge_cancelled = {
 			vertical_alignment = "center",
@@ -3832,7 +3971,7 @@ UIWidgets.create_forge_merge_button = function (arg_91_0, arg_91_1, arg_91_2, ar
 				255,
 				255
 			},
-			scenegraph_id = arg_91_2
+			scenegraph_id = token_scenegraph_id
 		},
 		texture_token_type_selected = {
 			offset = {
@@ -3840,7 +3979,7 @@ UIWidgets.create_forge_merge_button = function (arg_91_0, arg_91_1, arg_91_2, ar
 				-2,
 				0
 			},
-			scenegraph_id = arg_91_2
+			scenegraph_id = token_scenegraph_id
 		},
 		text = {
 			font_size = 24,
@@ -3855,7 +3994,7 @@ UIWidgets.create_forge_merge_button = function (arg_91_0, arg_91_1, arg_91_2, ar
 				0,
 				2
 			},
-			scenegraph_id = arg_91_1
+			scenegraph_id = text_scenegraph_id
 		},
 		text_hover = {
 			vertical_alignment = "center",
@@ -3868,7 +4007,7 @@ UIWidgets.create_forge_merge_button = function (arg_91_0, arg_91_1, arg_91_2, ar
 				0,
 				2
 			},
-			scenegraph_id = arg_91_1
+			scenegraph_id = text_scenegraph_id
 		},
 		text_selected = {
 			vertical_alignment = "center",
@@ -3881,7 +4020,7 @@ UIWidgets.create_forge_merge_button = function (arg_91_0, arg_91_1, arg_91_2, ar
 				-2,
 				2
 			},
-			scenegraph_id = arg_91_1
+			scenegraph_id = text_scenegraph_id
 		},
 		text_center = {
 			vertical_alignment = "center",
@@ -3932,7 +4071,7 @@ UIWidgets.create_forge_merge_button = function (arg_91_0, arg_91_1, arg_91_2, ar
 				0,
 				2
 			},
-			scenegraph_id = arg_91_1
+			scenegraph_id = text_scenegraph_id
 		},
 		token_text_hover = {
 			vertical_alignment = "center",
@@ -3945,7 +4084,7 @@ UIWidgets.create_forge_merge_button = function (arg_91_0, arg_91_1, arg_91_2, ar
 				0,
 				2
 			},
-			scenegraph_id = arg_91_1
+			scenegraph_id = text_scenegraph_id
 		},
 		token_text_selected = {
 			vertical_alignment = "center",
@@ -3958,7 +4097,7 @@ UIWidgets.create_forge_merge_button = function (arg_91_0, arg_91_1, arg_91_2, ar
 				-2,
 				2
 			},
-			scenegraph_id = arg_91_1
+			scenegraph_id = text_scenegraph_id
 		},
 		text_disabled = {
 			vertical_alignment = "center",
@@ -3973,12 +4112,12 @@ UIWidgets.create_forge_merge_button = function (arg_91_0, arg_91_1, arg_91_2, ar
 			}
 		}
 	}
-	tbl.scenegraph_id = arg_91_0
+	tbl.scenegraph_id = scenegraph_id
 
 	return tbl
 end
 
-UIWidgets.create_altar_button = function (arg_120_0, arg_120_1, arg_120_2, arg_120_3, arg_120_4)
+UIWidgets.create_altar_button = function (button_text, scenegraph_id, text_scenegraph_id, token_scenegraph_id, progress_scenegraph_id)
 	-- function 120
 	local tbl = {
 		element = {
@@ -3986,32 +4125,32 @@ UIWidgets.create_altar_button = function (arg_120_0, arg_120_1, arg_120_2, arg_1
 				{
 					pass_type = "hotspot",
 					content_id = "button_hotspot",
-					content_check_function = function (self)
+					content_check_function = function (content)
 						-- function 121
-						return not self.disabled
+						return not content.disabled
 					end
 				},
 				{
 					pass_type = "texture",
 					texture_id = "texture_id",
-					content_check_function = function (self)
+					content_check_function = function (content)
 						-- function 122
-						local button_hotspot = self.button_hotspot
+						local button_hotspot = content.button_hotspot
 
-						if not self.enable_charge and not self.is_gamepad_active then
+						if content.enable_charge and content.is_gamepad_active then
 							return false
 						end
 
 						local is_clicked
 
-						if not (button_hotspot.disabled or button_hotspot.is_hover) then
-							if not button_hotspot.is_clicked then
+						if not button_hotspot.disabled and not button_hotspot.is_hover then
+							if button_hotspot.is_clicked then
 								-- Nothing
 							end
 
 							is_clicked = button_hotspot.is_clicked
 
-							if not is_clicked then
+							if is_clicked then
 								-- Nothing
 							end
 
@@ -4036,11 +4175,11 @@ UIWidgets.create_altar_button = function (arg_120_0, arg_120_1, arg_120_2, arg_1
 				{
 					pass_type = "texture",
 					texture_id = "texture_hover_id",
-					content_check_function = function (self)
+					content_check_function = function (content)
 						-- function 123
-						local button_hotspot = self.button_hotspot
+						local button_hotspot = content.button_hotspot
 
-						if not self.enable_charge and not self.is_gamepad_active then
+						if content.enable_charge and content.is_gamepad_active then
 							return false
 						end
 
@@ -4049,17 +4188,17 @@ UIWidgets.create_altar_button = function (arg_120_0, arg_120_1, arg_120_2, arg_1
 						if not button_hotspot.disabled then
 							is_hover = button_hotspot.is_hover
 
-							if not is_hover then
+							if is_hover then
 								-- Nothing
 							end
 
-							if not button_hotspot.is_clicked then
+							if button_hotspot.is_clicked then
 								-- Nothing
 							end
 
 							is_hover = button_hotspot.is_clicked
 
-							if not is_hover then
+							if is_hover then
 								-- Nothing
 							end
 
@@ -4084,25 +4223,25 @@ UIWidgets.create_altar_button = function (arg_120_0, arg_120_1, arg_120_2, arg_1
 				{
 					pass_type = "texture",
 					texture_id = "texture_click_id",
-					content_check_function = function (self)
+					content_check_function = function (content)
 						-- function 124
-						local button_hotspot = self.button_hotspot
+						local button_hotspot = content.button_hotspot
 
-						if not self.enable_charge and not self.is_gamepad_active then
+						if content.enable_charge and content.is_gamepad_active then
 							return false
 						end
 
-						return (button_hotspot.disabled or button_hotspot.is_clicked or button_hotspot.is_clicked ~= 0) and button_hotspot.is_selected
+						return (button_hotspot.disabled or not button_hotspot.is_clicked or button_hotspot.is_clicked ~= 0) and not not button_hotspot.is_selected
 					end
 				},
 				{
 					pass_type = "texture",
 					texture_id = "texture_disabled_id",
-					content_check_function = function (self)
+					content_check_function = function (content)
 						-- function 125
-						local button_hotspot = self.button_hotspot
+						local button_hotspot = content.button_hotspot
 
-						if not self.enable_charge and not self.is_gamepad_active then
+						if content.enable_charge and content.is_gamepad_active then
 							return false
 						end
 
@@ -4113,37 +4252,37 @@ UIWidgets.create_altar_button = function (arg_120_0, arg_120_1, arg_120_2, arg_1
 					texture_id = "texture_token_type",
 					style_id = "texture_token_type",
 					pass_type = "texture",
-					content_check_function = function (self)
+					content_check_function = function (content)
 						-- function 126
-						local button_hotspot = self.button_hotspot
+						local button_hotspot = content.button_hotspot
 
-						if not self.enable_charge and self.charging and not self.show_cancel_text then
+						if content.enable_charge and (content.charging or content.show_cancel_text) then
 							return false
 						end
 
 						local disabled
 
-						if not button_hotspot.disabled then
+						if button_hotspot.disabled then
 							disabled = button_hotspot.disabled
 
-							if not disabled then
+							if disabled then
 								-- Nothing
 							end
 
-							disabled = self.default_text_on_disable
+							disabled = content.default_text_on_disable
 
-							if not disabled then
+							if disabled then
 								-- Nothing
 							end
 						end
 
-						disabled = self.texture_token_type
+						disabled = content.texture_token_type
 
-						if not disabled then
-							if not button_hotspot.is_clicked then
+						if disabled then
+							if button_hotspot.is_clicked then
 								disabled = button_hotspot.is_clicked
 
-								if not disabled then
+								if disabled then
 									-- Nothing
 								end
 
@@ -4174,20 +4313,20 @@ UIWidgets.create_altar_button = function (arg_120_0, arg_120_1, arg_120_2, arg_1
 					texture_id = "texture_token_type",
 					style_id = "texture_token_type_selected",
 					pass_type = "texture",
-					content_check_function = function (self)
+					content_check_function = function (content)
 						-- function 127
-						local button_hotspot = self.button_hotspot
+						local button_hotspot = content.button_hotspot
 
-						if not self.enable_charge and self.charging and not self.show_cancel_text then
+						if content.enable_charge and (content.charging or content.show_cancel_text) then
 							return false
 						end
 
 						local texture_token_type
 
 						if not button_hotspot.disabled then
-							texture_token_type = self.texture_token_type
+							texture_token_type = content.texture_token_type
 
-							if not texture_token_type then
+							if texture_token_type then
 								-- Nothing
 							end
 
@@ -4199,7 +4338,7 @@ UIWidgets.create_altar_button = function (arg_120_0, arg_120_1, arg_120_2, arg_1
 
 							texture_token_type = button_hotspot.is_clicked
 
-							if not texture_token_type then
+							if texture_token_type then
 								-- Nothing
 							end
 
@@ -4225,35 +4364,35 @@ UIWidgets.create_altar_button = function (arg_120_0, arg_120_1, arg_120_2, arg_1
 					style_id = "text",
 					pass_type = "text",
 					text_id = "text_field",
-					content_check_function = function (self)
+					content_check_function = function (content)
 						-- function 128
-						local button_hotspot = self.button_hotspot
+						local button_hotspot = content.button_hotspot
 
-						if not self.enable_charge and self.charging and not self.show_cancel_text then
+						if content.enable_charge and (content.charging or content.show_cancel_text) then
 							return false
 						end
 
 						local disabled
 
-						if not button_hotspot.disabled then
+						if button_hotspot.disabled then
 							disabled = button_hotspot.disabled
 
-							if not disabled then
+							if disabled then
 								-- Nothing
 							end
 
-							disabled = self.default_text_on_disable
+							disabled = content.default_text_on_disable
 
-							if not disabled then
+							if disabled then
 								-- Nothing
 							end
 						end
 
 						if not button_hotspot.is_hover then
-							if not button_hotspot.is_clicked then
+							if button_hotspot.is_clicked then
 								disabled = button_hotspot.is_clicked
 
-								if not disabled then
+								if disabled then
 									-- Nothing
 								end
 
@@ -4284,11 +4423,11 @@ UIWidgets.create_altar_button = function (arg_120_0, arg_120_1, arg_120_2, arg_1
 					style_id = "text_hover",
 					pass_type = "text",
 					text_id = "text_field",
-					content_check_function = function (self)
+					content_check_function = function (content)
 						-- function 129
-						local button_hotspot = self.button_hotspot
+						local button_hotspot = content.button_hotspot
 
-						if not self.enable_charge and self.charging and not self.show_cancel_text then
+						if content.enable_charge and (content.charging or content.show_cancel_text) then
 							return false
 						end
 
@@ -4297,11 +4436,11 @@ UIWidgets.create_altar_button = function (arg_120_0, arg_120_1, arg_120_2, arg_1
 						if not button_hotspot.disabled then
 							is_hover = button_hotspot.is_hover
 
-							if not is_hover then
-								if not button_hotspot.is_clicked then
+							if is_hover then
+								if button_hotspot.is_clicked then
 									is_hover = button_hotspot.is_clicked
 
-									if not is_hover then
+									if is_hover then
 										-- Nothing
 									end
 
@@ -4333,26 +4472,27 @@ UIWidgets.create_altar_button = function (arg_120_0, arg_120_1, arg_120_2, arg_1
 					style_id = "text_selected",
 					pass_type = "text",
 					text_id = "text_field",
-					content_check_function = function (self)
+					content_check_function = function (content)
 						-- function 130
-						local button_hotspot = self.button_hotspot
+						local button_hotspot = content.button_hotspot
 
-						if not self.enable_charge and self.charging and not self.show_cancel_text then
+						if content.enable_charge and (content.charging or content.show_cancel_text) then
 							return false
 						end
 
-						return (button_hotspot.disabled or button_hotspot.is_clicked ~= 0) and button_hotspot.is_selected
+						return (button_hotspot.disabled or button_hotspot.is_clicked ~= 0) and not not button_hotspot.is_selected
 					end
 				},
 				{
 					style_id = "text_disabled",
 					pass_type = "text",
 					text_id = "text_field",
-					content_check_function = function (self)
+					content_check_function = function (content)
 						-- function 131
-						local disabled = self.button_hotspot.disabled
+						local button_hotspot = content.button_hotspot
+						local disabled = button_hotspot.disabled
 
-						disabled = not disabled and not self.default_text_on_disable
+						disabled = not not disabled and not not not content.default_text_on_disable
 
 						return disabled
 					end
@@ -4361,35 +4501,35 @@ UIWidgets.create_altar_button = function (arg_120_0, arg_120_1, arg_120_2, arg_1
 					style_id = "token_text",
 					pass_type = "text",
 					text_id = "token_text",
-					content_check_function = function (self)
+					content_check_function = function (content)
 						-- function 132
-						local button_hotspot = self.button_hotspot
+						local button_hotspot = content.button_hotspot
 
-						if not self.enable_charge and self.charging and not self.show_cancel_text then
+						if content.enable_charge and (content.charging or content.show_cancel_text) then
 							return false
 						end
 
 						local disabled
 
-						if not button_hotspot.disabled then
+						if button_hotspot.disabled then
 							disabled = button_hotspot.disabled
 
-							if not disabled then
+							if disabled then
 								-- Nothing
 							end
 
-							disabled = self.default_text_on_disable
+							disabled = content.default_text_on_disable
 
-							if not disabled then
+							if disabled then
 								-- Nothing
 							end
 						end
 
 						if not button_hotspot.is_hover then
-							if not button_hotspot.is_clicked then
+							if button_hotspot.is_clicked then
 								disabled = button_hotspot.is_clicked
 
-								if not disabled then
+								if disabled then
 									-- Nothing
 								end
 
@@ -4420,11 +4560,11 @@ UIWidgets.create_altar_button = function (arg_120_0, arg_120_1, arg_120_2, arg_1
 					style_id = "token_text_hover",
 					pass_type = "text",
 					text_id = "token_text",
-					content_check_function = function (self)
+					content_check_function = function (content)
 						-- function 133
-						local button_hotspot = self.button_hotspot
+						local button_hotspot = content.button_hotspot
 
-						if not self.enable_charge and self.charging and not self.show_cancel_text then
+						if content.enable_charge and (content.charging or content.show_cancel_text) then
 							return false
 						end
 
@@ -4433,11 +4573,11 @@ UIWidgets.create_altar_button = function (arg_120_0, arg_120_1, arg_120_2, arg_1
 						if not button_hotspot.disabled then
 							is_hover = button_hotspot.is_hover
 
-							if not is_hover then
-								if not button_hotspot.is_clicked then
+							if is_hover then
+								if button_hotspot.is_clicked then
 									is_hover = button_hotspot.is_clicked
 
-									if not is_hover then
+									if is_hover then
 										-- Nothing
 									end
 
@@ -4469,40 +4609,40 @@ UIWidgets.create_altar_button = function (arg_120_0, arg_120_1, arg_120_2, arg_1
 					style_id = "token_text_selected",
 					pass_type = "text",
 					text_id = "token_text",
-					content_check_function = function (self)
+					content_check_function = function (content)
 						-- function 134
-						local button_hotspot = self.button_hotspot
+						local button_hotspot = content.button_hotspot
 
-						return (self.charging or self.show_cancel_text or button_hotspot.disabled or button_hotspot.is_clicked ~= 0) and button_hotspot.is_selected
+						return (content.charging or content.show_cancel_text or button_hotspot.disabled or button_hotspot.is_clicked ~= 0) and not not button_hotspot.is_selected
 					end
 				},
 				{
 					pass_type = "texture",
 					style_id = "button_frame_texture",
 					texture_id = "button_frame_texture",
-					content_check_function = function (self)
+					content_check_function = function (content)
 						-- function 135
-						return not not self.is_gamepad_active or self.show_frame
+						return not content.is_gamepad_active and not not content.show_frame
 					end
 				},
 				{
 					pass_type = "texture",
 					style_id = "button_frame_glow_texture",
 					texture_id = "button_frame_glow_texture",
-					content_check_function = function (self)
+					content_check_function = function (content)
 						-- function 136
-						return self.show_glow
+						return content.show_glow
 					end
 				},
 				{
 					pass_type = "texture",
 					texture_id = "progress_frame",
-					content_check_function = function (self)
+					content_check_function = function (content)
 						-- function 137
-						local button_hotspot = self.button_hotspot
-						local enable_charge = self.enable_charge
+						local button_hotspot = content.button_hotspot
+						local enable_charge = content.enable_charge
 
-						enable_charge = not enable_charge and self.is_gamepad_active
+						enable_charge = not not enable_charge and not not content.is_gamepad_active
 
 						return enable_charge
 					end
@@ -4511,14 +4651,14 @@ UIWidgets.create_altar_button = function (arg_120_0, arg_120_1, arg_120_2, arg_1
 					pass_type = "texture",
 					style_id = "progress_frame_bg",
 					texture_id = "progress_frame_bg",
-					content_check_function = function (self)
+					content_check_function = function (content)
 						-- function 138
-						local button_hotspot = self.button_hotspot
-						local enable_charge = self.enable_charge
+						local button_hotspot = content.button_hotspot
+						local enable_charge = content.enable_charge
 
-						if not enable_charge then
-							enable_charge = self.is_gamepad_active
-							enable_charge = not enable_charge and not button_hotspot.disabled
+						if enable_charge then
+							enable_charge = content.is_gamepad_active
+							enable_charge = not not enable_charge and not not not button_hotspot.disabled
 						end
 
 						return enable_charge
@@ -4528,14 +4668,14 @@ UIWidgets.create_altar_button = function (arg_120_0, arg_120_1, arg_120_2, arg_1
 					pass_type = "texture",
 					style_id = "progress_frame_bg",
 					texture_id = "progress_frame_bg_disabled",
-					content_check_function = function (self)
+					content_check_function = function (content)
 						-- function 139
-						local button_hotspot = self.button_hotspot
-						local enable_charge = self.enable_charge
+						local button_hotspot = content.button_hotspot
+						local enable_charge = content.enable_charge
 
-						if not enable_charge then
-							enable_charge = self.is_gamepad_active
-							enable_charge = not enable_charge and button_hotspot.disabled
+						if enable_charge then
+							enable_charge = content.is_gamepad_active
+							enable_charge = not not enable_charge and not not button_hotspot.disabled
 						end
 
 						return enable_charge
@@ -4545,12 +4685,12 @@ UIWidgets.create_altar_button = function (arg_120_0, arg_120_1, arg_120_2, arg_1
 					style_id = "progress_fill",
 					pass_type = "texture_uv",
 					content_id = "progress_fill",
-					content_check_function = function (self)
+					content_check_function = function (content)
 						-- function 140
-						local parent = self.parent
-						local enable_charge = parent.enable_charge
+						local parent_content = content.parent
+						local enable_charge = parent_content.enable_charge
 
-						enable_charge = not enable_charge and parent.is_gamepad_active
+						enable_charge = not not enable_charge and not not parent_content.is_gamepad_active
 
 						return enable_charge
 					end
@@ -4559,11 +4699,11 @@ UIWidgets.create_altar_button = function (arg_120_0, arg_120_1, arg_120_2, arg_1
 					texture_id = "progress_fill_glow",
 					style_id = "progress_fill_glow",
 					pass_type = "texture",
-					content_check_function = function (self)
+					content_check_function = function (content)
 						-- function 141
-						local enable_charge = self.enable_charge
+						local enable_charge = content.enable_charge
 
-						enable_charge = not enable_charge and self.is_gamepad_active
+						enable_charge = not not enable_charge and not not content.is_gamepad_active
 
 						return enable_charge
 					end
@@ -4572,23 +4712,23 @@ UIWidgets.create_altar_button = function (arg_120_0, arg_120_1, arg_120_2, arg_1
 					texture_id = "progress_input_icon",
 					style_id = "progress_input_icon",
 					pass_type = "texture",
-					content_check_function = function (self)
+					content_check_function = function (content)
 						-- function 142
-						local button_hotspot = self.button_hotspot
+						local button_hotspot = content.button_hotspot
 						local enable_charge
 
-						if not self.disable_input_icon then
-							if not self.enable_input_icon then
-								enable_charge = self.enable_charge
+						if not content.disable_input_icon then
+							if not content.enable_input_icon then
+								enable_charge = content.enable_charge
 
-								if not enable_charge then
+								if enable_charge then
 									-- Nothing
 								end
 							end
 
-							enable_charge = self.is_gamepad_active
+							enable_charge = content.is_gamepad_active
 
-							if not enable_charge then
+							if enable_charge then
 								enable_charge = not button_hotspot.disabled
 							end
 						else
@@ -4608,20 +4748,20 @@ UIWidgets.create_altar_button = function (arg_120_0, arg_120_1, arg_120_2, arg_1
 					texture_id = "progress_input_bg",
 					style_id = "progress_input_bg",
 					pass_type = "texture",
-					content_check_function = function (self)
+					content_check_function = function (content)
 						-- function 143
-						local button_hotspot = self.button_hotspot
+						local button_hotspot = content.button_hotspot
 						local enable_charge
 
-						if not self.enable_input_icon then
-							enable_charge = self.enable_charge
+						if not content.enable_input_icon then
+							enable_charge = content.enable_charge
 
-							if not enable_charge then
+							if enable_charge then
 								-- Nothing
 							end
 						end
 
-						enable_charge = self.is_gamepad_active
+						enable_charge = content.is_gamepad_active
 
 						::label_143_0::
 
@@ -4632,21 +4772,21 @@ UIWidgets.create_altar_button = function (arg_120_0, arg_120_1, arg_120_2, arg_1
 					texture_id = "progress_input_icon_overlay",
 					style_id = "progress_input_icon_overlay",
 					pass_type = "texture",
-					content_check_function = function (self)
+					content_check_function = function (content)
 						-- function 144
-						local button_hotspot = self.button_hotspot
+						local button_hotspot = content.button_hotspot
 						local enable_charge
 
-						if not self.enable_input_icon then
-							enable_charge = self.enable_charge
+						if not content.enable_input_icon then
+							enable_charge = content.enable_charge
 
-							if not enable_charge then
+							if enable_charge then
 								-- Nothing
 							end
 						end
 
-						enable_charge = self.is_gamepad_active
-						enable_charge = not enable_charge and not not button_hotspot.disabled or self.charging
+						enable_charge = content.is_gamepad_active
+						enable_charge = not not enable_charge and not button_hotspot.disabled and not not content.charging
 
 						::label_144_0::
 
@@ -4657,14 +4797,14 @@ UIWidgets.create_altar_button = function (arg_120_0, arg_120_1, arg_120_2, arg_1
 					style_id = "text_charge_cancelled",
 					pass_type = "text",
 					text_id = "text_charge_cancelled",
-					content_check_function = function (self)
+					content_check_function = function (content)
 						-- function 145
-						local button_hotspot = self.button_hotspot
-						local enable_charge = self.enable_charge
+						local button_hotspot = content.button_hotspot
+						local enable_charge = content.enable_charge
 
-						if not enable_charge then
-							enable_charge = self.is_gamepad_active
-							enable_charge = not enable_charge and self.show_cancel_text
+						if enable_charge then
+							enable_charge = content.is_gamepad_active
+							enable_charge = not not enable_charge and not not content.show_cancel_text
 						end
 
 						return enable_charge
@@ -4710,7 +4850,7 @@ UIWidgets.create_altar_button = function (arg_120_0, arg_120_1, arg_120_2, arg_1
 					}
 				}
 			},
-			text_field = Localize(arg_120_0),
+			text_field = Localize(button_text),
 			button_hotspot = {}
 		}
 	}
@@ -4727,7 +4867,7 @@ UIWidgets.create_altar_button = function (arg_120_0, arg_120_1, arg_120_2, arg_1
 				255,
 				255
 			},
-			scenegraph_id = arg_120_4
+			scenegraph_id = progress_scenegraph_id
 		},
 		progress_input_icon = {
 			size = {
@@ -4790,7 +4930,7 @@ UIWidgets.create_altar_button = function (arg_120_0, arg_120_1, arg_120_2, arg_1
 				10,
 				-1
 			},
-			scenegraph_id = arg_120_4
+			scenegraph_id = progress_scenegraph_id
 		},
 		progress_fill_glow = {
 			size = {
@@ -4808,7 +4948,7 @@ UIWidgets.create_altar_button = function (arg_120_0, arg_120_1, arg_120_2, arg_1
 				255,
 				255
 			},
-			scenegraph_id = arg_120_4
+			scenegraph_id = progress_scenegraph_id
 		},
 		text_charge_cancelled = {
 			vertical_alignment = "center",
@@ -4863,7 +5003,7 @@ UIWidgets.create_altar_button = function (arg_120_0, arg_120_1, arg_120_2, arg_1
 				255,
 				255
 			},
-			scenegraph_id = arg_120_3
+			scenegraph_id = token_scenegraph_id
 		},
 		texture_token_type_selected = {
 			offset = {
@@ -4871,7 +5011,7 @@ UIWidgets.create_altar_button = function (arg_120_0, arg_120_1, arg_120_2, arg_1
 				-2,
 				0
 			},
-			scenegraph_id = arg_120_3
+			scenegraph_id = token_scenegraph_id
 		}
 	}
 	local tbl_3 = {
@@ -4882,7 +5022,7 @@ UIWidgets.create_altar_button = function (arg_120_0, arg_120_1, arg_120_2, arg_1
 	}
 	local flag
 
-	flag = not arg_120_2 and "left" and "center"
+	flag = (not text_scenegraph_id or not "left") and not not "center"
 	tbl_3.horizontal_alignment = flag
 
 	local tbl_4 = {
@@ -4892,10 +5032,10 @@ UIWidgets.create_altar_button = function (arg_120_0, arg_120_1, arg_120_2, arg_1
 	}
 	local flag_2
 
-	flag_2 = not arg_120_2 and 10 and 0
+	flag_2 = (not text_scenegraph_id or not 10) and not not 0
 	tbl_4[1] = flag_2
 	tbl_3.offset = tbl_4
-	tbl_3.scenegraph_id = arg_120_2
+	tbl_3.scenegraph_id = text_scenegraph_id
 	tbl_2.text = tbl_3
 
 	local tbl_5 = {
@@ -4906,7 +5046,7 @@ UIWidgets.create_altar_button = function (arg_120_0, arg_120_1, arg_120_2, arg_1
 	}
 	local flag_3
 
-	flag_3 = not arg_120_2 and "left" and "center"
+	flag_3 = (not text_scenegraph_id or not "left") and not not "center"
 	tbl_5.horizontal_alignment = flag_3
 
 	local tbl_6 = {
@@ -4916,10 +5056,10 @@ UIWidgets.create_altar_button = function (arg_120_0, arg_120_1, arg_120_2, arg_1
 	}
 	local flag_4
 
-	flag_4 = not arg_120_2 and 10 and 0
+	flag_4 = (not text_scenegraph_id or not 10) and not not 0
 	tbl_6[1] = flag_4
 	tbl_5.offset = tbl_6
-	tbl_5.scenegraph_id = arg_120_2
+	tbl_5.scenegraph_id = text_scenegraph_id
 	tbl_2.text_hover = tbl_5
 
 	local tbl_7 = {
@@ -4930,7 +5070,7 @@ UIWidgets.create_altar_button = function (arg_120_0, arg_120_1, arg_120_2, arg_1
 	}
 	local flag_5
 
-	flag_5 = not arg_120_2 and "left" and "center"
+	flag_5 = (not text_scenegraph_id or not "left") and not not "center"
 	tbl_7.horizontal_alignment = flag_5
 
 	local tbl_8 = {
@@ -4940,10 +5080,10 @@ UIWidgets.create_altar_button = function (arg_120_0, arg_120_1, arg_120_2, arg_1
 	}
 	local flag_6
 
-	flag_6 = not arg_120_2 and 10 and 0
+	flag_6 = (not text_scenegraph_id or not 10) and not not 0
 	tbl_8[1] = flag_6
 	tbl_7.offset = tbl_8
-	tbl_7.scenegraph_id = arg_120_2
+	tbl_7.scenegraph_id = text_scenegraph_id
 	tbl_2.text_selected = tbl_7
 	tbl_2.token_text = {
 		vertical_alignment = "center",
@@ -4956,7 +5096,7 @@ UIWidgets.create_altar_button = function (arg_120_0, arg_120_1, arg_120_2, arg_1
 			0,
 			2
 		},
-		scenegraph_id = arg_120_2
+		scenegraph_id = text_scenegraph_id
 	}
 	tbl_2.token_text_hover = {
 		vertical_alignment = "center",
@@ -4969,7 +5109,7 @@ UIWidgets.create_altar_button = function (arg_120_0, arg_120_1, arg_120_2, arg_1
 			0,
 			2
 		},
-		scenegraph_id = arg_120_2
+		scenegraph_id = text_scenegraph_id
 	}
 	tbl_2.token_text_selected = {
 		vertical_alignment = "center",
@@ -4982,7 +5122,7 @@ UIWidgets.create_altar_button = function (arg_120_0, arg_120_1, arg_120_2, arg_1
 			-2,
 			2
 		},
-		scenegraph_id = arg_120_2
+		scenegraph_id = text_scenegraph_id
 	}
 	tbl_2.text_disabled = {
 		vertical_alignment = "center",
@@ -4997,12 +5137,12 @@ UIWidgets.create_altar_button = function (arg_120_0, arg_120_1, arg_120_2, arg_1
 		}
 	}
 	tbl.style = tbl_2
-	tbl.scenegraph_id = arg_120_1
+	tbl.scenegraph_id = scenegraph_id
 
 	return tbl
 end
 
-UIWidgets.create_dice_game_button = function (arg_146_0)
+UIWidgets.create_dice_game_button = function (scenegraph_id)
 	-- function 146
 	return {
 		element = {
@@ -5010,23 +5150,23 @@ UIWidgets.create_dice_game_button = function (arg_146_0)
 				{
 					pass_type = "hotspot",
 					content_id = "button_hotspot",
-					content_check_function = function (self)
+					content_check_function = function (content)
 						-- function 147
-						return not self.disabled
+						return not content.disabled
 					end
 				},
 				{
 					pass_type = "texture",
 					texture_id = "texture_id",
-					content_check_function = function (self)
+					content_check_function = function (content)
 						-- function 148
-						local button_hotspot = self.button_hotspot
+						local button_hotspot = content.button_hotspot
 						local is_clicked
 
-						if not (button_hotspot.disabled or button_hotspot.is_hover) then
+						if not button_hotspot.disabled and not button_hotspot.is_hover then
 							is_clicked = button_hotspot.is_clicked
 
-							if not is_clicked then
+							if is_clicked then
 								-- Nothing
 							end
 
@@ -5051,21 +5191,21 @@ UIWidgets.create_dice_game_button = function (arg_146_0)
 				{
 					pass_type = "texture",
 					texture_id = "texture_hover_id",
-					content_check_function = function (self)
+					content_check_function = function (content)
 						-- function 149
-						local button_hotspot = self.button_hotspot
+						local button_hotspot = content.button_hotspot
 						local is_hover
 
 						if not button_hotspot.disabled then
 							is_hover = button_hotspot.is_hover
 
-							if not is_hover then
+							if is_hover then
 								-- Nothing
 							end
 
 							is_hover = button_hotspot.is_clicked
 
-							if not is_hover then
+							if is_hover then
 								-- Nothing
 							end
 
@@ -5090,45 +5230,47 @@ UIWidgets.create_dice_game_button = function (arg_146_0)
 				{
 					pass_type = "texture",
 					texture_id = "texture_click_id",
-					content_check_function = function (self)
+					content_check_function = function (content)
 						-- function 150
-						local button_hotspot = self.button_hotspot
+						local button_hotspot = content.button_hotspot
 
-						return (button_hotspot.disabled or button_hotspot.is_clicked or button_hotspot.is_clicked ~= 0) and button_hotspot.is_selected
+						return (button_hotspot.disabled or not button_hotspot.is_clicked or button_hotspot.is_clicked ~= 0) and not not button_hotspot.is_selected
 					end
 				},
 				{
 					pass_type = "texture",
 					texture_id = "texture_disabled_id",
-					content_check_function = function (self)
+					content_check_function = function (content)
 						-- function 151
-						return self.button_hotspot.disabled
+						local button_hotspot = content.button_hotspot
+
+						return button_hotspot.disabled
 					end
 				},
 				{
 					style_id = "text",
 					pass_type = "text",
 					text_id = "text_field",
-					content_check_function = function (self)
+					content_check_function = function (content)
 						-- function 152
-						local button_hotspot = self.button_hotspot
+						local button_hotspot = content.button_hotspot
 
-						return not not button_hotspot.disabled or not not button_hotspot.is_hover or not button_hotspot.is_selected
+						return not button_hotspot.disabled and not button_hotspot.is_hover and not not not button_hotspot.is_selected
 					end
 				},
 				{
 					style_id = "text_hover",
 					pass_type = "text",
 					text_id = "text_field",
-					content_check_function = function (self)
+					content_check_function = function (content)
 						-- function 153
-						local button_hotspot = self.button_hotspot
+						local button_hotspot = content.button_hotspot
 						local is_hover
 
 						if not button_hotspot.disabled then
 							is_hover = button_hotspot.is_hover
 
-							if not is_hover then
+							if is_hover then
 								-- Nothing
 							end
 
@@ -5154,15 +5296,15 @@ UIWidgets.create_dice_game_button = function (arg_146_0)
 					style_id = "text_selected",
 					pass_type = "text",
 					text_id = "text_field",
-					content_check_function = function (self)
+					content_check_function = function (content)
 						-- function 154
-						local button_hotspot = self.button_hotspot
+						local button_hotspot = content.button_hotspot
 						local is_hover
 
 						if not button_hotspot.disabled then
 							is_hover = button_hotspot.is_hover
 
-							if not is_hover then
+							if is_hover then
 								-- Nothing
 							end
 
@@ -5188,9 +5330,11 @@ UIWidgets.create_dice_game_button = function (arg_146_0)
 					style_id = "text_disabled",
 					pass_type = "text",
 					text_id = "text_field",
-					content_check_function = function (self)
+					content_check_function = function (content)
 						-- function 155
-						return self.button_hotspot.disabled
+						local button_hotspot = content.button_hotspot
+
+						return button_hotspot.disabled
 					end
 				}
 			}
@@ -5255,11 +5399,11 @@ UIWidgets.create_dice_game_button = function (arg_146_0)
 				}
 			}
 		},
-		scenegraph_id = arg_146_0
+		scenegraph_id = scenegraph_id
 	}
 end
 
-UIWidgets.create_altar_craft_reagent_button = function (arg_156_0, arg_156_1, arg_156_2, arg_156_3, arg_156_4)
+UIWidgets.create_altar_craft_reagent_button = function (scenegraph_id, texture, required_hover_scenegraph_id, tooltip_text, masked)
 	-- function 156
 	return {
 		element = {
@@ -5267,18 +5411,18 @@ UIWidgets.create_altar_craft_reagent_button = function (arg_156_0, arg_156_1, ar
 				{
 					pass_type = "hotspot",
 					content_id = "button_hotspot",
-					content_check_function = function (self)
+					content_check_function = function (content)
 						-- function 157
-						return not self.disabled
+						return not content.disabled
 					end
 				},
 				{
 					style_id = "required_hover_hotspot",
 					pass_type = "hotspot",
 					content_id = "required_hover_hotspot",
-					content_check_function = function (self)
+					content_check_function = function (content)
 						-- function 158
-						return not self.disabled
+						return not content.disabled
 					end
 				},
 				{
@@ -5290,13 +5434,13 @@ UIWidgets.create_altar_craft_reagent_button = function (arg_156_0, arg_156_1, ar
 					style_id = "tooltip_text",
 					pass_type = "tooltip_text",
 					text_id = "tooltip_text",
-					content_check_function = function (self)
+					content_check_function = function (ui_content)
 						-- function 159
-						local tooltip_text = self.tooltip_text
+						local tooltip_text = ui_content.tooltip_text
 
-						if not tooltip_text then
-							tooltip_text = self.button_hotspot.is_hover
-							tooltip_text = not tooltip_text and self.required_hover_hotspot.is_hover
+						if tooltip_text then
+							tooltip_text = ui_content.button_hotspot.is_hover
+							tooltip_text = not not tooltip_text and not not ui_content.required_hover_hotspot.is_hover
 						end
 
 						return tooltip_text
@@ -5305,17 +5449,17 @@ UIWidgets.create_altar_craft_reagent_button = function (arg_156_0, arg_156_1, ar
 			}
 		},
 		content = {
-			texture_id = arg_156_1,
+			texture_id = texture,
 			button_hotspot = {},
 			required_hover_hotspot = {},
-			tooltip_text = arg_156_3
+			tooltip_text = tooltip_text
 		},
 		style = {
 			required_hover_hotspot = {
-				scenegraph_id = arg_156_2
+				scenegraph_id = required_hover_scenegraph_id
 			},
 			texture_id = {
-				masked = arg_156_4,
+				masked = masked,
 				color = {
 					255,
 					255,
@@ -5338,11 +5482,11 @@ UIWidgets.create_altar_craft_reagent_button = function (arg_156_0, arg_156_1, ar
 				}
 			}
 		},
-		scenegraph_id = arg_156_0
+		scenegraph_id = scenegraph_id
 	}
 end
 
-UIWidgets.create_forge_upgrade_button = function (arg_160_0, arg_160_1, arg_160_2, arg_160_3, arg_160_4)
+UIWidgets.create_forge_upgrade_button = function (scenegraph_id, text_scenegraph_id, token_scenegraph_id, eye_glow_scenegraph_id, progress_scenegraph_id)
 	-- function 160
 	local tbl = {
 		element = {
@@ -5350,19 +5494,19 @@ UIWidgets.create_forge_upgrade_button = function (arg_160_0, arg_160_1, arg_160_
 				{
 					pass_type = "hotspot",
 					content_id = "button_hotspot",
-					content_check_function = function (self)
+					content_check_function = function (content)
 						-- function 161
 						local show_cancel_text
 
-						if not self.charging then
-							show_cancel_text = self.show_cancel_text
+						if content.charging then
+							show_cancel_text = content.show_cancel_text
 
-							if not show_cancel_text then
+							if show_cancel_text then
 								-- Nothing
 							end
 						end
 
-						show_cancel_text = not self.disabled
+						show_cancel_text = not content.disabled
 
 						::label_161_0::
 
@@ -5372,19 +5516,19 @@ UIWidgets.create_forge_upgrade_button = function (arg_160_0, arg_160_1, arg_160_
 				{
 					pass_type = "texture",
 					texture_id = "texture_id",
-					content_check_function = function (self)
+					content_check_function = function (content)
 						-- function 162
-						local button_hotspot = self.button_hotspot
+						local button_hotspot = content.button_hotspot
 						local is_clicked
 
-						if not (self.is_gamepad_active or button_hotspot.disabled or button_hotspot.is_hover) then
-							if not button_hotspot.is_clicked then
+						if not content.is_gamepad_active and not button_hotspot.disabled and not button_hotspot.is_hover then
+							if button_hotspot.is_clicked then
 								-- Nothing
 							end
 
 							is_clicked = button_hotspot.is_clicked
 
-							if not is_clicked then
+							if is_clicked then
 								-- Nothing
 							end
 
@@ -5409,25 +5553,25 @@ UIWidgets.create_forge_upgrade_button = function (arg_160_0, arg_160_1, arg_160_
 				{
 					pass_type = "texture",
 					texture_id = "texture_hover_id",
-					content_check_function = function (self)
+					content_check_function = function (content)
 						-- function 163
-						local button_hotspot = self.button_hotspot
+						local button_hotspot = content.button_hotspot
 						local is_hover
 
-						if not (self.is_gamepad_active or button_hotspot.disabled) then
+						if not content.is_gamepad_active and not button_hotspot.disabled then
 							is_hover = button_hotspot.is_hover
 
-							if not is_hover then
+							if is_hover then
 								-- Nothing
 							end
 
-							if not button_hotspot.is_clicked then
+							if button_hotspot.is_clicked then
 								-- Nothing
 							end
 
 							is_hover = button_hotspot.is_clicked
 
-							if not is_hover then
+							if is_hover then
 								-- Nothing
 							end
 
@@ -5452,41 +5596,41 @@ UIWidgets.create_forge_upgrade_button = function (arg_160_0, arg_160_1, arg_160_
 				{
 					pass_type = "texture",
 					texture_id = "texture_click_id",
-					content_check_function = function (self)
+					content_check_function = function (content)
 						-- function 164
-						local button_hotspot = self.button_hotspot
+						local button_hotspot = content.button_hotspot
 
-						return (self.is_gamepad_active or button_hotspot.disabled or button_hotspot.is_clicked or button_hotspot.is_clicked ~= 0) and button_hotspot.is_selected
+						return (content.is_gamepad_active or button_hotspot.disabled or not button_hotspot.is_clicked or button_hotspot.is_clicked ~= 0) and not not button_hotspot.is_selected
 					end
 				},
 				{
 					pass_type = "texture",
 					texture_id = "texture_disabled_id",
-					content_check_function = function (self)
+					content_check_function = function (content)
 						-- function 165
-						local button_hotspot = self.button_hotspot
+						local button_hotspot = content.button_hotspot
 
-						return not not self.is_gamepad_active or button_hotspot.disabled
+						return not content.is_gamepad_active and not not button_hotspot.disabled
 					end
 				},
 				{
 					texture_id = "texture_token_type",
 					style_id = "texture_token_type",
 					pass_type = "texture",
-					content_check_function = function (self)
+					content_check_function = function (content)
 						-- function 166
-						if not self.texture_token_type then
-							local button_hotspot = self.button_hotspot
+						if content.texture_token_type then
+							local button_hotspot = content.button_hotspot
 							local texture_token_type
 
-							if not (self.charging or self.show_cancel_text or self.show_title) then
-								texture_token_type = self.texture_token_type
+							if not content.charging and not content.show_cancel_text and not content.show_title then
+								texture_token_type = content.texture_token_type
 
-								if not texture_token_type then
-									if not button_hotspot.is_clicked then
+								if texture_token_type then
+									if button_hotspot.is_clicked then
 										texture_token_type = button_hotspot.is_clicked
 
-										if not texture_token_type then
+										if texture_token_type then
 											-- Nothing
 										end
 
@@ -5519,13 +5663,13 @@ UIWidgets.create_forge_upgrade_button = function (arg_160_0, arg_160_1, arg_160_
 					texture_id = "texture_token_type",
 					style_id = "texture_token_type_selected",
 					pass_type = "texture",
-					content_check_function = function (self)
+					content_check_function = function (content)
 						-- function 167
-						if not self.texture_token_type then
-							local button_hotspot = self.button_hotspot
+						if content.texture_token_type then
+							local button_hotspot = content.button_hotspot
 							local is_selected
 
-							if self.charging or self.show_cancel_text or self.show_title or not self.texture_token_type then
+							if not content.charging and not content.show_cancel_text and not content.show_title and content.texture_token_type then
 								is_selected = button_hotspot.is_selected
 
 								if not is_selected then
@@ -5534,7 +5678,7 @@ UIWidgets.create_forge_upgrade_button = function (arg_160_0, arg_160_1, arg_160_
 							end
 
 							is_selected = button_hotspot.is_clicked
-							is_selected = not is_selected and button_hotspot.is_clicked == 0
+							is_selected = not not is_selected and button_hotspot.is_clicked == 0
 
 							::label_167_0::
 
@@ -5546,16 +5690,16 @@ UIWidgets.create_forge_upgrade_button = function (arg_160_0, arg_160_1, arg_160_
 					style_id = "text",
 					pass_type = "text",
 					text_id = "text_field",
-					content_check_function = function (self)
+					content_check_function = function (content)
 						-- function 168
-						local button_hotspot = self.button_hotspot
+						local button_hotspot = content.button_hotspot
 						local is_clicked
 
-						if not (self.charging or self.show_cancel_text or button_hotspot.is_hover or self.show_title) then
-							if not button_hotspot.is_clicked then
+						if not content.charging and not content.show_cancel_text and not button_hotspot.is_hover and not content.show_title then
+							if button_hotspot.is_clicked then
 								is_clicked = button_hotspot.is_clicked
 
-								if not is_clicked then
+								if is_clicked then
 									-- Nothing
 								end
 
@@ -5586,23 +5730,23 @@ UIWidgets.create_forge_upgrade_button = function (arg_160_0, arg_160_1, arg_160_
 					style_id = "text_hover",
 					pass_type = "text",
 					text_id = "text_field",
-					content_check_function = function (self)
+					content_check_function = function (content)
 						-- function 169
-						local button_hotspot = self.button_hotspot
+						local button_hotspot = content.button_hotspot
 						local is_hover
 
-						if not (self.charging or self.show_cancel_text) then
+						if not content.charging and not content.show_cancel_text then
 							is_hover = button_hotspot.is_hover
 
-							if not is_hover then
+							if is_hover then
 								-- Nothing
 							end
 
-							if not self.show_title then
-								if not button_hotspot.is_clicked then
+							if not content.show_title then
+								if button_hotspot.is_clicked then
 									is_hover = button_hotspot.is_clicked
 
-									if not is_hover then
+									if is_hover then
 										-- Nothing
 									end
 
@@ -5634,16 +5778,16 @@ UIWidgets.create_forge_upgrade_button = function (arg_160_0, arg_160_1, arg_160_
 					style_id = "token_text",
 					pass_type = "text",
 					text_id = "token_text",
-					content_check_function = function (self)
+					content_check_function = function (content)
 						-- function 170
-						local button_hotspot = self.button_hotspot
+						local button_hotspot = content.button_hotspot
 						local is_clicked
 
-						if not (self.charging or self.show_cancel_text or button_hotspot.is_hover or self.show_title) then
-							if not button_hotspot.is_clicked then
+						if not content.charging and not content.show_cancel_text and not button_hotspot.is_hover and not content.show_title then
+							if button_hotspot.is_clicked then
 								is_clicked = button_hotspot.is_clicked
 
-								if not is_clicked then
+								if is_clicked then
 									-- Nothing
 								end
 
@@ -5674,23 +5818,23 @@ UIWidgets.create_forge_upgrade_button = function (arg_160_0, arg_160_1, arg_160_
 					style_id = "token_text_hover",
 					pass_type = "text",
 					text_id = "token_text",
-					content_check_function = function (self)
+					content_check_function = function (content)
 						-- function 171
-						local button_hotspot = self.button_hotspot
+						local button_hotspot = content.button_hotspot
 						local is_hover
 
-						if not (self.charging or self.show_cancel_text) then
+						if not content.charging and not content.show_cancel_text then
 							is_hover = button_hotspot.is_hover
 
-							if not is_hover then
+							if is_hover then
 								-- Nothing
 							end
 
-							if not self.show_title then
-								if not button_hotspot.is_clicked then
+							if not content.show_title then
+								if button_hotspot.is_clicked then
 									is_hover = button_hotspot.is_clicked
 
-									if not is_hover then
+									if is_hover then
 										-- Nothing
 									end
 
@@ -5722,33 +5866,34 @@ UIWidgets.create_forge_upgrade_button = function (arg_160_0, arg_160_1, arg_160_
 					style_id = "text_selected",
 					pass_type = "text",
 					text_id = "text_field",
-					content_check_function = function (self)
+					content_check_function = function (content)
 						-- function 172
-						local button_hotspot = self.button_hotspot
+						local button_hotspot = content.button_hotspot
 
-						return (self.charging or self.show_cancel_text or self.show_title or button_hotspot.is_clicked ~= 0) and button_hotspot.is_selected
+						return (content.charging or content.show_cancel_text or content.show_title or button_hotspot.is_clicked ~= 0) and not not button_hotspot.is_selected
 					end
 				},
 				{
 					style_id = "token_text_selected",
 					pass_type = "text",
 					text_id = "token_text",
-					content_check_function = function (self)
+					content_check_function = function (content)
 						-- function 173
-						local button_hotspot = self.button_hotspot
+						local button_hotspot = content.button_hotspot
 
-						return (self.charging or self.show_cancel_text or self.show_title or button_hotspot.is_clicked ~= 0) and button_hotspot.is_selected
+						return (content.charging or content.show_cancel_text or content.show_title or button_hotspot.is_clicked ~= 0) and not not button_hotspot.is_selected
 					end
 				},
 				{
 					style_id = "text_disabled",
 					pass_type = "text",
 					text_id = "text_field",
-					content_check_function = function (self)
+					content_check_function = function (content)
 						-- function 174
-						local disabled = self.button_hotspot.disabled
+						local button_hotspot = content.button_hotspot
+						local disabled = button_hotspot.disabled
 
-						disabled = not disabled and self.show_title
+						disabled = not not disabled and not not content.show_title
 
 						return disabled
 					end
@@ -5757,12 +5902,12 @@ UIWidgets.create_forge_upgrade_button = function (arg_160_0, arg_160_1, arg_160_
 					style_id = "text_charge_cancelled",
 					pass_type = "text",
 					text_id = "text_charge_cancelled",
-					content_check_function = function (self)
+					content_check_function = function (content)
 						-- function 175
-						local button_hotspot = self.button_hotspot
-						local is_gamepad_active = self.is_gamepad_active
+						local button_hotspot = content.button_hotspot
+						local is_gamepad_active = content.is_gamepad_active
 
-						is_gamepad_active = not is_gamepad_active and self.show_cancel_text
+						is_gamepad_active = not not is_gamepad_active and not not content.show_cancel_text
 
 						return is_gamepad_active
 					end
@@ -5770,12 +5915,12 @@ UIWidgets.create_forge_upgrade_button = function (arg_160_0, arg_160_1, arg_160_
 				{
 					pass_type = "texture",
 					texture_id = "progress_frame",
-					content_check_function = function (self)
+					content_check_function = function (content)
 						-- function 176
-						local button_hotspot = self.button_hotspot
-						local is_gamepad_active = self.is_gamepad_active
+						local button_hotspot = content.button_hotspot
+						local is_gamepad_active = content.is_gamepad_active
 
-						is_gamepad_active = not is_gamepad_active and not button_hotspot.disabled
+						is_gamepad_active = not not is_gamepad_active and not not not button_hotspot.disabled
 
 						return is_gamepad_active
 					end
@@ -5783,12 +5928,12 @@ UIWidgets.create_forge_upgrade_button = function (arg_160_0, arg_160_1, arg_160_
 				{
 					pass_type = "texture",
 					texture_id = "progress_frame_disabled",
-					content_check_function = function (self)
+					content_check_function = function (content)
 						-- function 177
-						local button_hotspot = self.button_hotspot
-						local is_gamepad_active = self.is_gamepad_active
+						local button_hotspot = content.button_hotspot
+						local is_gamepad_active = content.is_gamepad_active
 
-						is_gamepad_active = not is_gamepad_active and button_hotspot.disabled
+						is_gamepad_active = not not is_gamepad_active and not not button_hotspot.disabled
 
 						return is_gamepad_active
 					end
@@ -5797,12 +5942,12 @@ UIWidgets.create_forge_upgrade_button = function (arg_160_0, arg_160_1, arg_160_
 					pass_type = "texture",
 					style_id = "progress_frame_bg",
 					texture_id = "progress_frame_bg",
-					content_check_function = function (self)
+					content_check_function = function (content)
 						-- function 178
-						local button_hotspot = self.button_hotspot
-						local is_gamepad_active = self.is_gamepad_active
+						local button_hotspot = content.button_hotspot
+						local is_gamepad_active = content.is_gamepad_active
 
-						is_gamepad_active = not is_gamepad_active and not button_hotspot.disabled
+						is_gamepad_active = not not is_gamepad_active and not not not button_hotspot.disabled
 
 						return is_gamepad_active
 					end
@@ -5811,12 +5956,12 @@ UIWidgets.create_forge_upgrade_button = function (arg_160_0, arg_160_1, arg_160_
 					pass_type = "texture",
 					style_id = "progress_frame_bg",
 					texture_id = "progress_frame_bg_disabled",
-					content_check_function = function (self)
+					content_check_function = function (content)
 						-- function 179
-						local button_hotspot = self.button_hotspot
-						local is_gamepad_active = self.is_gamepad_active
+						local button_hotspot = content.button_hotspot
+						local is_gamepad_active = content.is_gamepad_active
 
-						is_gamepad_active = not is_gamepad_active and button_hotspot.disabled
+						is_gamepad_active = not not is_gamepad_active and not not button_hotspot.disabled
 
 						return is_gamepad_active
 					end
@@ -5825,30 +5970,32 @@ UIWidgets.create_forge_upgrade_button = function (arg_160_0, arg_160_1, arg_160_
 					style_id = "progress_fill",
 					pass_type = "texture_uv",
 					content_id = "progress_fill",
-					content_check_function = function (self)
+					content_check_function = function (content)
 						-- function 180
-						return self.parent.is_gamepad_active
+						local parent_content = content.parent
+
+						return parent_content.is_gamepad_active
 					end
 				},
 				{
 					texture_id = "progress_fill_glow",
 					style_id = "progress_fill_glow",
 					pass_type = "texture",
-					content_check_function = function (self)
+					content_check_function = function (content)
 						-- function 181
-						return self.is_gamepad_active
+						return content.is_gamepad_active
 					end
 				},
 				{
 					texture_id = "progress_input_icon",
 					style_id = "progress_input_icon",
 					pass_type = "texture",
-					content_check_function = function (self)
+					content_check_function = function (content)
 						-- function 182
-						local button_hotspot = self.button_hotspot
-						local is_gamepad_active = self.is_gamepad_active
+						local button_hotspot = content.button_hotspot
+						local is_gamepad_active = content.is_gamepad_active
 
-						is_gamepad_active = not is_gamepad_active and not button_hotspot.disabled
+						is_gamepad_active = not not is_gamepad_active and not not not button_hotspot.disabled
 
 						return is_gamepad_active
 					end
@@ -5857,12 +6004,12 @@ UIWidgets.create_forge_upgrade_button = function (arg_160_0, arg_160_1, arg_160_
 					texture_id = "progress_input_icon_overlay",
 					style_id = "progress_input_icon_overlay",
 					pass_type = "texture",
-					content_check_function = function (self)
+					content_check_function = function (content)
 						-- function 183
-						local button_hotspot = self.button_hotspot
-						local is_gamepad_active = self.is_gamepad_active
+						local button_hotspot = content.button_hotspot
+						local is_gamepad_active = content.is_gamepad_active
 
-						is_gamepad_active = not is_gamepad_active and not not button_hotspot.disabled or self.charging
+						is_gamepad_active = not not is_gamepad_active and not button_hotspot.disabled and not not content.charging
 
 						return is_gamepad_active
 					end
@@ -5871,15 +6018,15 @@ UIWidgets.create_forge_upgrade_button = function (arg_160_0, arg_160_1, arg_160_
 					texture_id = "eye_glow_texture",
 					style_id = "eye_glow_texture",
 					pass_type = "texture",
-					content_check_function = function (self)
+					content_check_function = function (content)
 						-- function 184
-						local button_hotspot = self.button_hotspot
+						local button_hotspot = content.button_hotspot
 						local use_eye_glow
 
-						if not self.is_gamepad_active then
-							use_eye_glow = self.use_eye_glow
+						if not content.is_gamepad_active then
+							use_eye_glow = content.use_eye_glow
 
-							if not use_eye_glow then
+							if use_eye_glow then
 								use_eye_glow = not button_hotspot.disabled
 							end
 						else
@@ -5897,12 +6044,12 @@ UIWidgets.create_forge_upgrade_button = function (arg_160_0, arg_160_1, arg_160_
 					texture_id = "gamepad_glow_texture",
 					style_id = "gamepad_glow_texture",
 					pass_type = "texture",
-					content_check_function = function (self)
+					content_check_function = function (content)
 						-- function 185
-						local button_hotspot = self.button_hotspot
-						local is_gamepad_active = self.is_gamepad_active
+						local button_hotspot = content.button_hotspot
+						local is_gamepad_active = content.is_gamepad_active
 
-						is_gamepad_active = not is_gamepad_active and not button_hotspot.disabled
+						is_gamepad_active = not not is_gamepad_active and not not not button_hotspot.disabled
 
 						return is_gamepad_active
 					end
@@ -5944,7 +6091,7 @@ UIWidgets.create_forge_upgrade_button = function (arg_160_0, arg_160_1, arg_160_
 	}
 	local flag
 
-	flag = not arg_160_3 and true and false
+	flag = (not eye_glow_scenegraph_id or not true) and not not false
 	tbl_2.use_eye_glow = flag
 	tbl_2.text_field = Localize("upgrade")
 	tbl_2.button_hotspot = {}
@@ -5958,7 +6105,7 @@ UIWidgets.create_forge_upgrade_button = function (arg_160_0, arg_160_1, arg_160_
 				255,
 				255
 			},
-			scenegraph_id = arg_160_3
+			scenegraph_id = eye_glow_scenegraph_id
 		},
 		gamepad_glow_texture = {
 			size = {
@@ -6021,7 +6168,7 @@ UIWidgets.create_forge_upgrade_button = function (arg_160_0, arg_160_1, arg_160_
 				0,
 				-1
 			},
-			scenegraph_id = arg_160_4
+			scenegraph_id = progress_scenegraph_id
 		},
 		progress_fill = {
 			offset = {
@@ -6035,7 +6182,7 @@ UIWidgets.create_forge_upgrade_button = function (arg_160_0, arg_160_1, arg_160_
 				255,
 				255
 			},
-			scenegraph_id = arg_160_4
+			scenegraph_id = progress_scenegraph_id
 		},
 		progress_fill_glow = {
 			size = {
@@ -6053,7 +6200,7 @@ UIWidgets.create_forge_upgrade_button = function (arg_160_0, arg_160_1, arg_160_
 				255,
 				255
 			},
-			scenegraph_id = arg_160_4
+			scenegraph_id = progress_scenegraph_id
 		},
 		text_charge_cancelled = {
 			vertical_alignment = "center",
@@ -6074,7 +6221,7 @@ UIWidgets.create_forge_upgrade_button = function (arg_160_0, arg_160_1, arg_160_
 				255,
 				255
 			},
-			scenegraph_id = arg_160_2
+			scenegraph_id = token_scenegraph_id
 		},
 		texture_token_type_selected = {
 			offset = {
@@ -6088,7 +6235,7 @@ UIWidgets.create_forge_upgrade_button = function (arg_160_0, arg_160_1, arg_160_
 				255,
 				255
 			},
-			scenegraph_id = arg_160_2
+			scenegraph_id = token_scenegraph_id
 		},
 		text = {
 			vertical_alignment = "center",
@@ -6101,7 +6248,7 @@ UIWidgets.create_forge_upgrade_button = function (arg_160_0, arg_160_1, arg_160_
 				0,
 				2
 			},
-			scenegraph_id = arg_160_1
+			scenegraph_id = text_scenegraph_id
 		},
 		text_hover = {
 			vertical_alignment = "center",
@@ -6114,7 +6261,7 @@ UIWidgets.create_forge_upgrade_button = function (arg_160_0, arg_160_1, arg_160_
 				0,
 				2
 			},
-			scenegraph_id = arg_160_1
+			scenegraph_id = text_scenegraph_id
 		},
 		text_selected = {
 			vertical_alignment = "center",
@@ -6127,7 +6274,7 @@ UIWidgets.create_forge_upgrade_button = function (arg_160_0, arg_160_1, arg_160_
 				-2,
 				2
 			},
-			scenegraph_id = arg_160_1
+			scenegraph_id = text_scenegraph_id
 		},
 		token_text = {
 			vertical_alignment = "center",
@@ -6140,7 +6287,7 @@ UIWidgets.create_forge_upgrade_button = function (arg_160_0, arg_160_1, arg_160_
 				0,
 				2
 			},
-			scenegraph_id = arg_160_1
+			scenegraph_id = text_scenegraph_id
 		},
 		token_text_hover = {
 			vertical_alignment = "center",
@@ -6153,7 +6300,7 @@ UIWidgets.create_forge_upgrade_button = function (arg_160_0, arg_160_1, arg_160_
 				0,
 				2
 			},
-			scenegraph_id = arg_160_1
+			scenegraph_id = text_scenegraph_id
 		},
 		token_text_selected = {
 			vertical_alignment = "center",
@@ -6166,7 +6313,7 @@ UIWidgets.create_forge_upgrade_button = function (arg_160_0, arg_160_1, arg_160_
 				-2,
 				2
 			},
-			scenegraph_id = arg_160_1
+			scenegraph_id = text_scenegraph_id
 		},
 		text_disabled = {
 			vertical_alignment = "center",
@@ -6181,105 +6328,105 @@ UIWidgets.create_forge_upgrade_button = function (arg_160_0, arg_160_1, arg_160_
 			}
 		}
 	}
-	tbl.scenegraph_id = arg_160_0
+	tbl.scenegraph_id = scenegraph_id
 
 	return tbl
 end
 
-UIWidgets.create_menu_selection_bar = function (self, arg_186_1, arg_186_2, arg_186_3, arg_186_4, arg_186_5, arg_186_6, arg_186_7)
+UIWidgets.create_menu_selection_bar = function (scenegraph_definition, textures, icons, tooltips, offset, scenegraph_base, size, icon_size)
 	-- function 186
-	local tbl = {}
-	local tbl_2 = {
-		passes = tbl
+	local passes = {}
+	local element = {
+		passes = passes
 	}
-	local tbl_3 = {}
-	local tbl_4 = {}
+	local style = {}
+	local content_data = {}
 
-	assert(arg_186_1.texture_hover_id, "missing texture")
-	assert(arg_186_1.texture_click_id, "missing texture")
+	assert(textures.texture_hover_id, "missing texture")
+	assert(textures.texture_click_id, "missing texture")
 
-	local tbl_5 = {
-		style = tbl_3,
-		content = tbl_4,
-		element = tbl_2,
-		scenegraph_id = arg_186_5
+	local widget = {
+		style = style,
+		content = content_data,
+		element = element,
+		scenegraph_id = scenegraph_base
 	}
-	local count = #arg_186_2
+	local num_buttons = #icons
 
-	for i = 1, count do
-		local var_186_6 = i
-		local str = "tooltip_text_" .. i
-		local format = string.format("button_style_%d", i)
-		local format_2 = string.format("button_click_style_%d", i)
-		local format_3 = string.format("icon_%d", i)
-		local format_4 = string.format("icon_click_%d", i)
-		local format_5 = string.format("disabled_overlay_%d", i)
+	for i = 1, num_buttons do
+		local button_hotspot_name = i
+		local tooltip_text = "tooltip_text_" .. i
+		local button_style_name = string.format("button_style_%d", i)
+		local button_click_style_name = string.format("button_click_style_%d", i)
+		local icon_texture_id = string.format("icon_%d", i)
+		local icon_click_texture_id = string.format("icon_click_%d", i)
+		local disabled_overlay_name = string.format("disabled_overlay_%d", i)
 
-		table.append_varargs(tbl, {
+		table.append_varargs(passes, {
 			pass_type = "hotspot",
-			content_id = var_186_6,
-			style_id = var_186_6
+			content_id = button_hotspot_name,
+			style_id = button_hotspot_name
 		}, {
 			pass_type = "texture",
-			texture_id = format_2,
-			style_id = format_2
+			texture_id = button_click_style_name,
+			style_id = button_click_style_name
 		}, {
 			pass_type = "texture",
-			texture_id = format,
-			style_id = format
+			texture_id = button_style_name,
+			style_id = button_style_name
 		}, {
 			pass_type = "texture",
-			texture_id = format_3,
-			style_id = format_3
+			texture_id = icon_texture_id,
+			style_id = icon_texture_id
 		}, {
 			pass_type = "texture",
-			texture_id = format_4,
-			style_id = format_4
+			texture_id = icon_click_texture_id,
+			style_id = icon_click_texture_id
 		}, {
 			pass_type = "tooltip_text",
-			text_id = str,
-			style_id = str,
-			content_check_function = function (self)
+			text_id = tooltip_text,
+			style_id = tooltip_text,
+			content_check_function = function (content)
 				-- function 187
-				return self[var_186_6].is_hover
+				return content[button_hotspot_name].is_hover
 			end
 		}, {
 			pass_type = "rect",
-			style_id = format_5,
-			content_check_function = function (self)
+			style_id = disabled_overlay_name,
+			content_check_function = function (content)
 				-- function 188
-				return self[var_186_6].disable_button
+				return content[button_hotspot_name].disable_button
 			end
 		})
 
-		local format_6 = string.format("%s_%d", arg_186_5, i)
+		local scenegraph_id = string.format("%s_%d", scenegraph_base, i)
 
-		self[format_6] = {
-			parent = i ~= 1 or not arg_186_5 or string.format("%s_%d", arg_186_5, i - 1),
-			size = arg_186_6,
-			offset = i == 1 or not arg_186_4 or nil
+		scenegraph_definition[scenegraph_id] = {
+			parent = (i ~= 1 or not scenegraph_base) and not not string.format("%s_%d", scenegraph_base, i - 1),
+			size = size,
+			offset = (i == 1 or not offset) and not not nil
 		}
 
-		local format_7 = string.format("%s_icon_%d", arg_186_5, i)
+		local style_scenegraph_id = string.format("%s_icon_%d", scenegraph_base, i)
 
-		self[format_7] = {
+		scenegraph_definition[style_scenegraph_id] = {
 			vertical_alignment = "center",
 			horizontal_alignment = "center",
-			parent = format_6,
-			size = arg_186_7,
+			parent = scenegraph_id,
+			size = icon_size,
 			offset = {
 				0,
 				0,
 				5
 			}
 		}
-		tbl_4[var_186_6] = {}
-		tbl_4[str] = arg_186_3[i]
-		tbl_4[format] = arg_186_1.texture_hover_id
-		tbl_4[format_3] = arg_186_2[i].texture_hover_id
-		tbl_4[format_2] = arg_186_1.texture_click_id
-		tbl_4[format_4] = arg_186_2[i].texture_click_id
-		tbl_3[str] = {
+		content_data[button_hotspot_name] = {}
+		content_data[tooltip_text] = tooltips[i]
+		content_data[button_style_name] = textures.texture_hover_id
+		content_data[icon_texture_id] = icons[i].texture_hover_id
+		content_data[button_click_style_name] = textures.texture_click_id
+		content_data[icon_click_texture_id] = icons[i].texture_click_id
+		style[tooltip_text] = {
 			font_size = 24,
 			max_width = 500,
 			localize = true,
@@ -6294,11 +6441,11 @@ UIWidgets.create_menu_selection_bar = function (self, arg_186_1, arg_186_2, arg_
 				250
 			}
 		}
-		tbl_3[format_5] = {
-			scenegraph_id = format_6,
+		style[disabled_overlay_name] = {
+			scenegraph_id = scenegraph_id,
 			size = {
-				arg_186_6[1] - 12,
-				arg_186_6[2] - 12
+				size[1] - 12,
+				size[2] - 12
 			},
 			offset = {
 				6,
@@ -6312,11 +6459,11 @@ UIWidgets.create_menu_selection_bar = function (self, arg_186_1, arg_186_2, arg_
 				0
 			}
 		}
-		tbl_3[var_186_6] = {
-			scenegraph_id = format_6,
+		style[button_hotspot_name] = {
+			scenegraph_id = scenegraph_id,
 			size = {
-				arg_186_6[1] - 12,
-				arg_186_6[2] - 12
+				size[1] - 12,
+				size[2] - 12
 			},
 			offset = {
 				6,
@@ -6324,28 +6471,28 @@ UIWidgets.create_menu_selection_bar = function (self, arg_186_1, arg_186_2, arg_
 				0
 			}
 		}
-		tbl_3[format] = {
-			scenegraph_id = format_6,
+		style[button_style_name] = {
+			scenegraph_id = scenegraph_id,
 			color = {
 				178.5,
 				255,
 				255,
 				255
 			},
-			size = arg_186_6
+			size = size
 		}
-		tbl_3[format_3] = {
-			scenegraph_id = format_7,
+		style[icon_texture_id] = {
+			scenegraph_id = style_scenegraph_id,
 			color = {
 				178.5,
 				255,
 				255,
 				255
 			},
-			size = arg_186_7
+			size = icon_size
 		}
-		tbl_3[format_2] = {
-			scenegraph_id = format_6,
+		style[button_click_style_name] = {
+			scenegraph_id = scenegraph_id,
 			color = {
 				0,
 				255,
@@ -6357,10 +6504,10 @@ UIWidgets.create_menu_selection_bar = function (self, arg_186_1, arg_186_2, arg_
 				0,
 				1
 			},
-			size = arg_186_6
+			size = size
 		}
-		tbl_3[format_4] = {
-			scenegraph_id = format_7,
+		style[icon_click_texture_id] = {
+			scenegraph_id = style_scenegraph_id,
 			color = {
 				0,
 				255,
@@ -6372,14 +6519,14 @@ UIWidgets.create_menu_selection_bar = function (self, arg_186_1, arg_186_2, arg_
 				0,
 				2
 			},
-			size = arg_186_7
+			size = icon_size
 		}
 	end
 
-	return tbl_5
+	return widget
 end
 
-UIWidgets.create_tiled_texture = function (arg_189_0, arg_189_1, arg_189_2, arg_189_3, arg_189_4, arg_189_5)
+UIWidgets.create_tiled_texture = function (scenegraph_id, texture, texture_size, offset, masked, color)
 	-- function 189
 	return {
 		element = {
@@ -6392,18 +6539,18 @@ UIWidgets.create_tiled_texture = function (arg_189_0, arg_189_1, arg_189_2, arg_
 			}
 		},
 		content = {
-			tiling_texture = arg_189_1
+			tiling_texture = texture
 		},
 		style = {
 			tiling_texture = {
-				masked = arg_189_4,
-				offset = arg_189_3 or {
+				masked = masked,
+				offset = not not offset or not not {
 					0,
 					0,
 					0
 				},
-				texture_tiling_size = arg_189_2,
-				color = arg_189_5 or {
+				texture_tiling_size = texture_size,
+				color = not not color or not not {
 					255,
 					255,
 					255,
@@ -6411,11 +6558,11 @@ UIWidgets.create_tiled_texture = function (arg_189_0, arg_189_1, arg_189_2, arg_
 				}
 			}
 		},
-		scenegraph_id = arg_189_0
+		scenegraph_id = scenegraph_id
 	}
 end
 
-UIWidgets.create_shader_tiled_texture = function (arg_190_0, arg_190_1, arg_190_2, arg_190_3, arg_190_4, arg_190_5)
+UIWidgets.create_shader_tiled_texture = function (scenegraph_id, texture, texture_size, offset, masked, color)
 	-- function 190
 	return {
 		element = {
@@ -6428,18 +6575,18 @@ UIWidgets.create_shader_tiled_texture = function (arg_190_0, arg_190_1, arg_190_
 			}
 		},
 		content = {
-			tiling_texture = arg_190_1
+			tiling_texture = texture
 		},
 		style = {
 			tiling_texture = {
-				masked = arg_190_4,
-				offset = arg_190_3 or {
+				masked = masked,
+				offset = not not offset or not not {
 					0,
 					0,
 					0
 				},
-				tile_size = arg_190_2,
-				color = arg_190_5 or {
+				tile_size = texture_size,
+				color = not not color or not not {
 					255,
 					255,
 					255,
@@ -6447,11 +6594,11 @@ UIWidgets.create_shader_tiled_texture = function (arg_190_0, arg_190_1, arg_190_
 				}
 			}
 		},
-		scenegraph_id = arg_190_0
+		scenegraph_id = scenegraph_id
 	}
 end
 
-UIWidgets.create_texture_with_text = function (arg_191_0, arg_191_1, arg_191_2, arg_191_3, arg_191_4)
+UIWidgets.create_texture_with_text = function (texture, text, scenegraph_id, text_scenegraph_id, text_style)
 	-- function 191
 	return {
 		element = {
@@ -6469,18 +6616,18 @@ UIWidgets.create_texture_with_text = function (arg_191_0, arg_191_1, arg_191_2, 
 			}
 		},
 		content = {
-			texture_id = arg_191_0,
-			text = arg_191_1
+			texture_id = texture,
+			text = text
 		},
 		style = {
-			text = arg_191_4 or {
+			text = not not text_style or not not {
 				vertical_alignment = "center",
 				horizontal_alignment = "left",
 				word_wrap = true,
 				font_size = 20,
 				font_type = "hell_shark",
 				text_color = Colors.get_color_table_with_alpha("white", 255),
-				scenegraph_id = arg_191_3
+				scenegraph_id = text_scenegraph_id
 			},
 			texture_id = {
 				color = {
@@ -6491,11 +6638,11 @@ UIWidgets.create_texture_with_text = function (arg_191_0, arg_191_1, arg_191_2, 
 				}
 			}
 		},
-		scenegraph_id = arg_191_2
+		scenegraph_id = scenegraph_id
 	}
 end
 
-UIWidgets.create_texture_with_text_and_tooltip = function (arg_192_0, arg_192_1, arg_192_2, arg_192_3, arg_192_4, arg_192_5, arg_192_6)
+UIWidgets.create_texture_with_text_and_tooltip = function (texture, text, tooltip_text, scenegraph_id, text_scenegraph_id, text_style, tooltip_style)
 	-- function 192
 	return {
 		element = {
@@ -6513,39 +6660,39 @@ UIWidgets.create_texture_with_text_and_tooltip = function (arg_192_0, arg_192_1,
 				{
 					pass_type = "hotspot",
 					content_id = "tooltip_hotspot",
-					content_check_function = function (self)
+					content_check_function = function (ui_content)
 						-- function 193
-						return not self.disabled
+						return not ui_content.disabled
 					end
 				},
 				{
 					style_id = "tooltip_text",
 					pass_type = "tooltip_text",
 					text_id = "tooltip_text",
-					content_check_function = function (self)
+					content_check_function = function (ui_content)
 						-- function 194
-						return self.tooltip_hotspot.is_hover
+						return ui_content.tooltip_hotspot.is_hover
 					end
 				}
 			}
 		},
 		content = {
 			tooltip_hotspot = {},
-			texture_id = arg_192_0,
-			tooltip_text = arg_192_2,
-			text = arg_192_1
+			texture_id = texture,
+			tooltip_text = tooltip_text,
+			text = text
 		},
 		style = {
-			text = arg_192_5 or {
+			text = not not text_style or not not {
 				vertical_alignment = "center",
 				horizontal_alignment = "left",
 				word_wrap = true,
 				font_size = 20,
 				font_type = "hell_shark",
 				text_color = Colors.get_color_table_with_alpha("white", 255),
-				scenegraph_id = arg_192_4
+				scenegraph_id = text_scenegraph_id
 			},
-			tooltip_text = arg_192_6 or {
+			tooltip_text = not not tooltip_style or not not {
 				font_size = 24,
 				max_width = 500,
 				localize = true,
@@ -6569,11 +6716,11 @@ UIWidgets.create_texture_with_text_and_tooltip = function (arg_192_0, arg_192_1,
 				}
 			}
 		},
-		scenegraph_id = arg_192_3
+		scenegraph_id = scenegraph_id
 	}
 end
 
-UIWidgets.create_simple_tooltip = function (arg_195_0, arg_195_1, arg_195_2, arg_195_3)
+UIWidgets.create_simple_tooltip = function (text, scenegraph_id, max_width, optional_style)
 	-- function 195
 	return {
 		element = {
@@ -6586,25 +6733,25 @@ UIWidgets.create_simple_tooltip = function (arg_195_0, arg_195_1, arg_195_2, arg
 					style_id = "tooltip_text",
 					pass_type = "tooltip_text",
 					text_id = "tooltip_text",
-					content_check_function = function (self)
+					content_check_function = function (ui_content)
 						-- function 196
-						return self.tooltip_hotspot.is_hover
+						return ui_content.tooltip_hotspot.is_hover
 					end
 				}
 			}
 		},
 		content = {
-			tooltip_text = arg_195_0,
+			tooltip_text = text,
 			tooltip_hotspot = {}
 		},
 		style = {
-			tooltip_text = arg_195_3 or {
+			tooltip_text = not not optional_style or not not {
 				font_size = 24,
 				localize = true,
 				horizontal_alignment = "left",
 				vertical_alignment = "top",
 				font_type = "hell_shark",
-				max_width = arg_195_2,
+				max_width = max_width,
 				text_color = Colors.get_color_table_with_alpha("white", 255),
 				line_colors = {},
 				offset = {
@@ -6614,11 +6761,11 @@ UIWidgets.create_simple_tooltip = function (arg_195_0, arg_195_1, arg_195_2, arg
 				}
 			}
 		},
-		scenegraph_id = arg_195_1
+		scenegraph_id = scenegraph_id
 	}
 end
 
-UIWidgets.create_additional_option_tooltip = function (arg_197_0, arg_197_1, arg_197_2, arg_197_3, arg_197_4, arg_197_5, arg_197_6, arg_197_7, arg_197_8)
+UIWidgets.create_additional_option_tooltip = function (scenegraph_id, size, content_passes, tooltip_data, max_width, horizontal_alignment, vertical_alignment, grow_downwards, offset)
 	-- function 197
 	return {
 		element = {
@@ -6631,14 +6778,14 @@ UIWidgets.create_additional_option_tooltip = function (arg_197_0, arg_197_1, arg
 					style_id = "tooltip",
 					additional_option_id = "tooltip",
 					pass_type = "additional_option_tooltip",
-					content_passes = arg_197_2 or {
+					content_passes = not not content_passes or not not {
 						"additional_option_info"
 					},
-					content_check_function = function (self)
+					content_check_function = function (content)
 						-- function 198
-						local tooltip = self.tooltip
+						local tooltip = content.tooltip
 
-						tooltip = not tooltip and self.button_hotspot.is_hover
+						tooltip = not not tooltip and not not content.button_hotspot.is_hover
 
 						return tooltip
 					end
@@ -6646,18 +6793,18 @@ UIWidgets.create_additional_option_tooltip = function (arg_197_0, arg_197_1, arg
 			}
 		},
 		content = {
-			tooltip = arg_197_3 or nil,
+			tooltip = not not tooltip_data or not not nil,
 			button_hotspot = {
 				allow_multi_hover = true
 			}
 		},
 		style = {
 			tooltip = {
-				grow_downwards = arg_197_7,
-				max_width = arg_197_4 or 300,
-				horizontal_alignment = arg_197_5 or "center",
-				vertical_alignment = arg_197_6 or "bottom",
-				offset = arg_197_8 or {
+				grow_downwards = grow_downwards,
+				max_width = not not max_width or not not 300,
+				horizontal_alignment = not not horizontal_alignment or not not "center",
+				vertical_alignment = not not vertical_alignment or not not "bottom",
+				offset = not not offset or not not {
 					0,
 					0,
 					0
@@ -6669,11 +6816,11 @@ UIWidgets.create_additional_option_tooltip = function (arg_197_0, arg_197_1, arg
 			0,
 			0
 		},
-		scenegraph_id = arg_197_0
+		scenegraph_id = scenegraph_id
 	}
 end
 
-UIWidgets.create_simple_hotspot = function (arg_199_0, arg_199_1)
+UIWidgets.create_simple_hotspot = function (scenegraph_id, allow_multi_hover)
 	-- function 199
 	return {
 		element = {
@@ -6686,7 +6833,7 @@ UIWidgets.create_simple_hotspot = function (arg_199_0, arg_199_1)
 		},
 		content = {
 			hotspot = {
-				allow_multi_hover = arg_199_1
+				allow_multi_hover = allow_multi_hover
 			}
 		},
 		style = {},
@@ -6695,17 +6842,17 @@ UIWidgets.create_simple_hotspot = function (arg_199_0, arg_199_1)
 			0,
 			0
 		},
-		scenegraph_id = arg_199_0
+		scenegraph_id = scenegraph_id
 	}
 end
 
-UIWidgets.create_simple_two_state_button = function (arg_200_0, arg_200_1, arg_200_2)
+UIWidgets.create_simple_two_state_button = function (scenegraph_id, normal_texture, hover_texture)
 	-- function 200
 	return {
 		element = UIElements.SimpleButton,
 		content = {
-			texture_id = arg_200_1,
-			texture_hover_id = arg_200_2,
+			texture_id = normal_texture,
+			texture_hover_id = hover_texture,
 			button_hotspot = {}
 		},
 		style = {},
@@ -6714,11 +6861,11 @@ UIWidgets.create_simple_two_state_button = function (arg_200_0, arg_200_1, arg_2
 			0,
 			0
 		},
-		scenegraph_id = arg_200_0
+		scenegraph_id = scenegraph_id
 	}
 end
 
-UIWidgets.create_simple_rect = function (arg_201_0, arg_201_1, arg_201_2, arg_201_3, arg_201_4)
+UIWidgets.create_simple_rect = function (scenegraph_id, color, layer, offset, rect_size)
 	-- function 201
 	return {
 		element = {
@@ -6733,18 +6880,18 @@ UIWidgets.create_simple_rect = function (arg_201_0, arg_201_1, arg_201_2, arg_20
 		style = {
 			rect = {
 				vertical_alignment = "top",
-				color = arg_201_1 or {
+				color = not not color or not not {
 					255,
 					255,
 					255,
 					255
 				},
-				offset = arg_201_3 or {
+				offset = not not offset or not not {
 					0,
 					0,
-					arg_201_2 or 0
+					not not layer or not not 0
 				},
-				texture_size = arg_201_4
+				texture_size = rect_size
 			}
 		},
 		offset = {
@@ -6752,11 +6899,11 @@ UIWidgets.create_simple_rect = function (arg_201_0, arg_201_1, arg_201_2, arg_20
 			0,
 			0
 		},
-		scenegraph_id = arg_201_0
+		scenegraph_id = scenegraph_id
 	}
 end
 
-UIWidgets.create_simple_rounded_rect = function (arg_202_0, arg_202_1, arg_202_2)
+UIWidgets.create_simple_rounded_rect = function (scenegraph_id, corner_radius, color)
 	-- function 202
 	return {
 		element = {
@@ -6770,13 +6917,13 @@ UIWidgets.create_simple_rounded_rect = function (arg_202_0, arg_202_1, arg_202_2
 		content = {},
 		style = {
 			rect = {
-				color = arg_202_2 or {
+				color = not not color or not not {
 					255,
 					255,
 					255,
 					255
 				},
-				corner_radius = arg_202_1 or 0,
+				corner_radius = not not corner_radius or not not 0,
 				offset = {
 					0,
 					0,
@@ -6784,26 +6931,27 @@ UIWidgets.create_simple_rounded_rect = function (arg_202_0, arg_202_1, arg_202_2
 				}
 			}
 		},
-		scenegraph_id = arg_202_0
+		scenegraph_id = scenegraph_id
 	}
 end
 
-UIWidgets.create_simple_texture = function (arg_203_0, arg_203_1, arg_203_2, arg_203_3, arg_203_4, arg_203_5, arg_203_6, arg_203_7, arg_203_8)
+UIWidgets.create_simple_texture = function (texture, scenegraph_id, masked, retained, color, offset, texture_size, disable_with_gamepad, viewport_mask)
 	-- function 203
-	if type(arg_203_5) ~= "table" then
-		arg_203_5 = {
+	if type(offset) ~= "table" then
+		offset = {
 			0,
 			0,
-			arg_203_5 or 0
+			not not offset or not not 0
 		}
 	end
 
-	if arg_203_6 == "native" then
-		local size = UIAtlasHelper.get_atlas_settings_by_texture_name(arg_203_0).size
+	if texture_size == "native" then
+		local texture_settings = UIAtlasHelper.get_atlas_settings_by_texture_name(texture)
+		local settings_size = texture_settings.size
 
-		arg_203_6 = {
-			size[1],
-			size[2]
+		texture_size = {
+			settings_size[1],
+			settings_size[2]
 		}
 	end
 
@@ -6814,17 +6962,17 @@ UIWidgets.create_simple_texture = function (arg_203_0, arg_203_1, arg_203_2, arg
 					texture_id = "texture_id",
 					style_id = "texture_id",
 					pass_type = "texture",
-					retained_mode = arg_203_3
+					retained_mode = retained
 				}
 			}
 		},
 		content = {
-			texture_id = arg_203_0,
-			disable_with_gamepad = arg_203_7
+			texture_id = texture,
+			disable_with_gamepad = disable_with_gamepad
 		},
 		style = {
 			texture_id = {
-				color = arg_203_4 or {
+				color = not not color or not not {
 					255,
 					255,
 					255,
@@ -6835,17 +6983,17 @@ UIWidgets.create_simple_texture = function (arg_203_0, arg_203_1, arg_203_2, arg
 					0,
 					0
 				},
-				masked = arg_203_2,
-				texture_size = arg_203_6,
-				viewport_mask = arg_203_8
+				masked = masked,
+				texture_size = texture_size,
+				viewport_mask = viewport_mask
 			}
 		},
-		offset = arg_203_5,
-		scenegraph_id = arg_203_1
+		offset = offset,
+		scenegraph_id = scenegraph_id
 	}
 end
 
-UIWidgets.create_aligned_texture = function (arg_204_0, arg_204_1, arg_204_2, arg_204_3, arg_204_4, arg_204_5, arg_204_6, arg_204_7, arg_204_8, arg_204_9)
+UIWidgets.create_aligned_texture = function (texture, texture_size, horizontal_alignment, vertical_alignment, scenegraph_id, masked, retained, color, layer, offset)
 	-- function 204
 	return {
 		element = {
@@ -6854,19 +7002,19 @@ UIWidgets.create_aligned_texture = function (arg_204_0, arg_204_1, arg_204_2, ar
 					texture_id = "texture_id",
 					style_id = "texture_id",
 					pass_type = "texture",
-					retained_mode = arg_204_6
+					retained_mode = retained
 				}
 			}
 		},
 		content = {
-			texture_id = arg_204_0
+			texture_id = texture
 		},
 		style = {
 			texture_id = {
-				vertical_alignment = arg_204_3,
-				horizontal_alignment = arg_204_2,
-				texture_size = arg_204_1,
-				color = arg_204_7 or {
+				vertical_alignment = vertical_alignment,
+				horizontal_alignment = horizontal_alignment,
+				texture_size = texture_size,
+				color = not not color or not not {
 					255,
 					255,
 					255,
@@ -6877,26 +7025,26 @@ UIWidgets.create_aligned_texture = function (arg_204_0, arg_204_1, arg_204_2, ar
 					0,
 					0
 				},
-				masked = arg_204_5
+				masked = masked
 			}
 		},
-		offset = not arg_204_9 and arg_204_9 and {
+		offset = (not offset or not offset) and not not {
 			0,
 			0,
-			arg_204_8 or 0
+			not not layer or not not 0
 		},
-		scenegraph_id = arg_204_4
+		scenegraph_id = scenegraph_id
 	}
 end
 
-UIWidgets.create_simple_centered_texture_amount = function (arg_205_0, arg_205_1, arg_205_2, arg_205_3, arg_205_4, arg_205_5)
+UIWidgets.create_simple_centered_texture_amount = function (texture, texture_size, scenegraph_id, amount, masked, color)
 	-- function 205
-	local tbl = {}
-	local tbl_2 = {}
+	local textures = {}
+	local texture_colors = {}
 
-	for i = 1, arg_205_3 do
-		tbl[i] = arg_205_0
-		tbl_2[i] = arg_205_5 or {
+	for i = 1, amount do
+		textures[i] = texture
+		texture_colors[i] = not not color or not not {
 			255,
 			255,
 			255,
@@ -6915,27 +7063,27 @@ UIWidgets.create_simple_centered_texture_amount = function (arg_205_0, arg_205_1
 			}
 		},
 		content = {
-			texture_id = tbl
+			texture_id = textures
 		},
 		style = {
 			texture_id = {
 				texture_axis = 1,
 				spacing = 8,
-				texture_size = arg_205_1,
-				texture_amount = arg_205_3,
-				color = arg_205_5 or {
+				texture_size = texture_size,
+				texture_amount = amount,
+				color = not not color or not not {
 					255,
 					255,
 					255,
 					255
 				},
-				texture_colors = tbl_2,
+				texture_colors = texture_colors,
 				offset = {
 					0,
 					0,
 					0
 				},
-				masked = arg_205_4
+				masked = masked
 			}
 		},
 		offset = {
@@ -6943,11 +7091,11 @@ UIWidgets.create_simple_centered_texture_amount = function (arg_205_0, arg_205_1
 			0,
 			0
 		},
-		scenegraph_id = arg_205_2
+		scenegraph_id = scenegraph_id
 	}
 end
 
-UIWidgets.create_simple_multi_texture = function (arg_206_0, arg_206_1, arg_206_2, arg_206_3, arg_206_4, arg_206_5, arg_206_6, arg_206_7)
+UIWidgets.create_simple_multi_texture = function (textures, texture_sizes, axis, direction, spacing, scenegraph_id, masked, retained_mode)
 	-- function 206
 	local tbl = {
 		element = {
@@ -6956,20 +7104,20 @@ UIWidgets.create_simple_multi_texture = function (arg_206_0, arg_206_1, arg_206_
 					texture_id = "texture_id",
 					style_id = "texture_id",
 					pass_type = "multi_texture",
-					retained_mode = arg_206_7
+					retained_mode = retained_mode
 				}
 			}
 		},
 		content = {
-			texture_id = arg_206_0 or {}
+			texture_id = not not textures or not not {}
 		}
 	}
 	local tbl_2 = {}
 	local tbl_3 = {}
 	local count
 
-	if not arg_206_0 then
-		count = #arg_206_0
+	if textures then
+		count = #textures
 
 		if not count then
 			-- Nothing
@@ -6981,13 +7129,13 @@ UIWidgets.create_simple_multi_texture = function (arg_206_0, arg_206_1, arg_206_
 	::label_206_0::
 
 	tbl_3.draw_count = count
-	tbl_3.axis = arg_206_2 or 1
-	tbl_3.spacing = arg_206_4 or {
+	tbl_3.axis = not not axis or not not 1
+	tbl_3.spacing = not not spacing or not not {
 		0,
 		0
 	}
-	tbl_3.direction = arg_206_3 or 1
-	tbl_3.texture_sizes = arg_206_1 or {}
+	tbl_3.direction = not not direction or not not 1
+	tbl_3.texture_sizes = not not texture_sizes or not not {}
 	tbl_3.color = {
 		255,
 		255,
@@ -6999,15 +7147,15 @@ UIWidgets.create_simple_multi_texture = function (arg_206_0, arg_206_1, arg_206_
 		0,
 		0
 	}
-	tbl_3.masked = arg_206_6
+	tbl_3.masked = masked
 	tbl_2.texture_id = tbl_3
 	tbl.style = tbl_2
-	tbl.scenegraph_id = arg_206_5
+	tbl.scenegraph_id = scenegraph_id
 
 	return tbl
 end
 
-UIWidgets.create_texture_with_style = function (arg_207_0, arg_207_1, arg_207_2)
+UIWidgets.create_texture_with_style = function (texture, scenegraph_id, style)
 	-- function 207
 	return {
 		element = {
@@ -7020,16 +7168,16 @@ UIWidgets.create_texture_with_style = function (arg_207_0, arg_207_1, arg_207_2)
 			}
 		},
 		content = {
-			texture_id = arg_207_0
+			texture_id = texture
 		},
 		style = {
-			texture_id = arg_207_2
+			texture_id = style
 		},
-		scenegraph_id = arg_207_1
+		scenegraph_id = scenegraph_id
 	}
 end
 
-UIWidgets.create_simple_gradient_mask_texture = function (arg_208_0, arg_208_1, arg_208_2)
+UIWidgets.create_simple_gradient_mask_texture = function (texture, scenegraph_id, color)
 	-- function 208
 	return {
 		element = {
@@ -7042,7 +7190,7 @@ UIWidgets.create_simple_gradient_mask_texture = function (arg_208_0, arg_208_1, 
 			}
 		},
 		content = {
-			texture_id = arg_208_0
+			texture_id = texture
 		},
 		style = {
 			texture_id = {
@@ -7052,7 +7200,7 @@ UIWidgets.create_simple_gradient_mask_texture = function (arg_208_0, arg_208_1, 
 					0,
 					0
 				},
-				color = arg_208_2 or {
+				color = not not color or not not {
 					255,
 					255,
 					255,
@@ -7060,11 +7208,11 @@ UIWidgets.create_simple_gradient_mask_texture = function (arg_208_0, arg_208_1, 
 				}
 			}
 		},
-		scenegraph_id = arg_208_1
+		scenegraph_id = scenegraph_id
 	}
 end
 
-UIWidgets.create_simple_rotated_texture = function (arg_209_0, arg_209_1, arg_209_2, arg_209_3, arg_209_4, arg_209_5, arg_209_6, arg_209_7, arg_209_8)
+UIWidgets.create_simple_rotated_texture = function (texture, angle, pivot, scenegraph_id, masked, retained, color, layer, offset)
 	-- function 209
 	return {
 		element = {
@@ -7073,19 +7221,19 @@ UIWidgets.create_simple_rotated_texture = function (arg_209_0, arg_209_1, arg_20
 					texture_id = "texture_id",
 					style_id = "texture_id",
 					pass_type = "rotated_texture",
-					retained_mode = arg_209_5
+					retained_mode = retained
 				}
 			}
 		},
 		content = {
-			texture_id = arg_209_0
+			texture_id = texture
 		},
 		style = {
 			texture_id = {
-				masked = arg_209_4,
-				angle = arg_209_1,
-				pivot = arg_209_2,
-				color = arg_209_6 or {
+				masked = masked,
+				angle = angle,
+				pivot = pivot,
+				color = not not color or not not {
 					255,
 					255,
 					255,
@@ -7094,20 +7242,20 @@ UIWidgets.create_simple_rotated_texture = function (arg_209_0, arg_209_1, arg_20
 				offset = {
 					0,
 					0,
-					arg_209_7 or 0
+					not not layer or not not 0
 				}
 			}
 		},
-		offset = arg_209_8 or {
+		offset = not not offset or not not {
 			0,
 			0,
 			0
 		},
-		scenegraph_id = arg_209_3
+		scenegraph_id = scenegraph_id
 	}
 end
 
-UIWidgets.create_simple_uv_rotated_texture = function (arg_210_0, arg_210_1, arg_210_2, arg_210_3, arg_210_4, arg_210_5, arg_210_6, arg_210_7, arg_210_8, arg_210_9)
+UIWidgets.create_simple_uv_rotated_texture = function (texture, uvs, angle, pivot, scenegraph_id, masked, retained, color, layer, offset)
 	-- function 210
 	return {
 		element = {
@@ -7116,20 +7264,20 @@ UIWidgets.create_simple_uv_rotated_texture = function (arg_210_0, arg_210_1, arg
 					texture_id = "texture_id",
 					style_id = "texture_id",
 					pass_type = "rotated_texture",
-					retained_mode = arg_210_6
+					retained_mode = retained
 				}
 			}
 		},
 		content = {
-			texture_id = arg_210_0
+			texture_id = texture
 		},
 		style = {
 			texture_id = {
-				masked = arg_210_5,
-				angle = arg_210_2,
-				pivot = arg_210_3,
-				uvs = arg_210_1,
-				color = arg_210_7 or {
+				masked = masked,
+				angle = angle,
+				pivot = pivot,
+				uvs = uvs,
+				color = not not color or not not {
 					255,
 					255,
 					255,
@@ -7138,35 +7286,36 @@ UIWidgets.create_simple_uv_rotated_texture = function (arg_210_0, arg_210_1, arg
 				offset = {
 					0,
 					0,
-					arg_210_8 or 0
+					not not layer or not not 0
 				}
 			}
 		},
-		offset = arg_210_9 or {
+		offset = not not offset or not not {
 			0,
 			0,
 			0
 		},
-		scenegraph_id = arg_210_4
+		scenegraph_id = scenegraph_id
 	}
 end
 
-UIWidgets.create_simple_uv_texture = function (arg_211_0, arg_211_1, arg_211_2, arg_211_3, arg_211_4, arg_211_5, arg_211_6, arg_211_7, arg_211_8)
+UIWidgets.create_simple_uv_texture = function (texture, uvs, scenegraph_id, masked, retained, color, offset, disable_with_gamepad, texture_size)
 	-- function 211
-	if type(arg_211_6) ~= "table" then
-		arg_211_6 = {
+	if type(offset) ~= "table" then
+		offset = {
 			0,
 			0,
-			arg_211_6 or 0
+			not not offset or not not 0
 		}
 	end
 
-	if arg_211_8 == "native" then
-		local size = UIAtlasHelper.get_atlas_settings_by_texture_name(arg_211_0).size
+	if texture_size == "native" then
+		local texture_settings = UIAtlasHelper.get_atlas_settings_by_texture_name(texture)
+		local settings_size = texture_settings.size
 
-		arg_211_8 = {
-			size[1],
-			size[2]
+		texture_size = {
+			settings_size[1],
+			settings_size[2]
 		}
 	end
 
@@ -7177,27 +7326,27 @@ UIWidgets.create_simple_uv_texture = function (arg_211_0, arg_211_1, arg_211_2, 
 					style_id = "texture_id",
 					pass_type = "texture_uv",
 					content_id = "texture_id",
-					retained_mode = arg_211_4
+					retained_mode = retained
 				}
 			}
 		},
 		content = {
 			texture_id = {
-				uvs = arg_211_1,
-				texture_id = arg_211_0
+				uvs = uvs,
+				texture_id = texture
 			},
-			disable_with_gamepad = arg_211_7
+			disable_with_gamepad = disable_with_gamepad
 		},
 		style = {
 			texture_id = {
-				texture_size = arg_211_8,
-				masked = arg_211_3,
+				texture_size = texture_size,
+				masked = masked,
 				offset = {
 					0,
 					0,
 					0
 				},
-				color = arg_211_5 or {
+				color = not not color or not not {
 					255,
 					255,
 					255,
@@ -7205,14 +7354,14 @@ UIWidgets.create_simple_uv_texture = function (arg_211_0, arg_211_1, arg_211_2, 
 				}
 			}
 		},
-		offset = arg_211_6,
-		scenegraph_id = arg_211_2
+		offset = offset,
+		scenegraph_id = scenegraph_id
 	}
 end
 
-UIWidgets.create_simple_frame = function (arg_212_0, arg_212_1, arg_212_2, arg_212_3, arg_212_4, arg_212_5, arg_212_6)
+UIWidgets.create_simple_frame = function (texture, texture_size, corner_size, vertical_size, horizontal_size, scenegraph_id, optional_style)
 	-- function 212
-	local flag = arg_212_6 or {
+	local style = not not optional_style or not not {
 		color = {
 			255,
 			255,
@@ -7226,11 +7375,11 @@ UIWidgets.create_simple_frame = function (arg_212_0, arg_212_1, arg_212_2, arg_2
 		}
 	}
 
-	flag.texture_size = arg_212_1
-	flag.texture_sizes = {
-		corner = arg_212_2,
-		vertical = arg_212_3,
-		horizontal = arg_212_4
+	style.texture_size = texture_size
+	style.texture_sizes = {
+		corner = corner_size,
+		vertical = vertical_size,
+		horizontal = horizontal_size
 	}
 
 	return {
@@ -7244,16 +7393,16 @@ UIWidgets.create_simple_frame = function (arg_212_0, arg_212_1, arg_212_2, arg_2
 			}
 		},
 		content = {
-			texture_id = arg_212_0
+			texture_id = texture
 		},
 		style = {
-			texture_id = flag
+			texture_id = style
 		},
-		scenegraph_id = arg_212_5
+		scenegraph_id = scenegraph_id
 	}
 end
 
-UIWidgets.create_uv_texture_with_style = function (arg_213_0, arg_213_1, arg_213_2, arg_213_3)
+UIWidgets.create_uv_texture_with_style = function (texture, uvs, scenegraph_id, style)
 	-- function 213
 	return {
 		element = {
@@ -7267,23 +7416,23 @@ UIWidgets.create_uv_texture_with_style = function (arg_213_0, arg_213_1, arg_213
 		},
 		content = {
 			texture_id = {
-				uvs = arg_213_1,
-				texture_id = arg_213_0
+				uvs = uvs,
+				texture_id = texture
 			}
 		},
 		style = {
-			texture_id = arg_213_3
+			texture_id = style
 		},
-		scenegraph_id = arg_213_2
+		scenegraph_id = scenegraph_id
 	}
 end
 
-UIWidgets.create_simple_text = function (arg_214_0, arg_214_1, arg_214_2, arg_214_3, arg_214_4, arg_214_5, arg_214_6, arg_214_7)
+UIWidgets.create_simple_text = function (text, scenegraph_id, size, color, text_style, optional_font_style, retained, disable_with_gamepad)
 	-- function 214
 	local offset
 
-	if not arg_214_4 then
-		offset = arg_214_4.offset
+	if text_style then
+		offset = text_style.offset
 
 		if not offset then
 			-- Nothing
@@ -7296,65 +7445,92 @@ UIWidgets.create_simple_text = function (arg_214_0, arg_214_1, arg_214_2, arg_21
 		2
 	}
 
+	local text_offset = offset
+
 	do
-		local text_color
+		local text_color_2
 	end
 
 	::label_214_0::
 
-	if not arg_214_4 then
-		text_color = arg_214_4.text_color
+	if text_style then
+		text_color_2 = text_style.text_color
 
-		if not text_color then
+		if not text_color_2 then
 			-- Nothing
 		end
 	end
 
-	text_color = arg_214_3 or {
+	if not color then
+		-- Nothing
+	end
+
+	::label_214_1::
+
+	text_color_2 = {
 		255,
 		255,
 		255,
 		255
 	}
 
-	::label_214_1::
+	local text_color = text_color_2
 
-	arg_214_4 = arg_214_4 or {
+	::label_214_2::
+
+	text_style = not not text_style or not not {
 		vertical_alignment = "center",
 		localize = true,
 		horizontal_alignment = "center",
 		word_wrap = true,
-		font_size = arg_214_2,
-		font_type = arg_214_5 or "hell_shark",
+		font_size = size,
+		font_type = not not optional_font_style or not not "hell_shark",
 		text_color = text_color,
-		offset = offset
+		offset = text_offset
 	}
 
-	local clone = table.clone(arg_214_4)
-	local shadow_color = arg_214_4.shadow_color
+	local text_shadow_style = table.clone(text_style)
+	local shadow_color = text_style.shadow_color
 
-	shadow_color = shadow_color or {
+	if not shadow_color then
+		-- Nothing
+	end
+
+	shadow_color = {
 		255,
 		0,
 		0,
 		0
 	}
 
-	local shadow_offset = arg_214_4.shadow_offset
+	local text_shadow_style_color = shadow_color
 
-	shadow_offset = shadow_offset or {
+	::label_214_3::
+
+	local shadow_offset = text_style.shadow_offset
+
+	if not shadow_offset then
+		-- Nothing
+	end
+
+	shadow_offset = {
 		2,
 		2,
 		0
 	}
-	shadow_color[1] = text_color[1]
-	clone.text_color = shadow_color
-	clone.offset = {
-		offset[1] + shadow_offset[1],
-		offset[2] - shadow_offset[2],
-		offset[3] - 1
+
+	local text_shadow_offset = shadow_offset
+
+	::label_214_4::
+
+	text_shadow_style_color[1] = text_color[1]
+	text_shadow_style.text_color = text_shadow_style_color
+	text_shadow_style.offset = {
+		text_offset[1] + text_shadow_offset[1],
+		text_offset[2] - text_shadow_offset[2],
+		text_offset[3] - 1
 	}
-	clone.skip_button_rendering = true
+	text_shadow_style.skip_button_rendering = true
 
 	local tbl = {
 		element = {
@@ -7363,30 +7539,30 @@ UIWidgets.create_simple_text = function (arg_214_0, arg_214_1, arg_214_2, arg_21
 					style_id = "text",
 					pass_type = "text",
 					text_id = "text",
-					retained_mode = arg_214_6
+					retained_mode = retained
 				},
 				{
 					style_id = "text_shadow",
 					pass_type = "text",
 					text_id = "text",
-					content_check_function = function (self)
+					content_check_function = function (content)
 						-- function 215
-						return self.use_shadow
+						return content.use_shadow
 					end,
-					retained_mode = arg_214_6
+					retained_mode = retained
 				}
 			}
 		}
 	}
 	local tbl_2 = {
-		text = arg_214_0,
-		original_text = arg_214_0,
+		text = text,
+		original_text = text,
 		color = text_color
 	}
 	local use_shadow
 
-	if not arg_214_4 then
-		use_shadow = arg_214_4.use_shadow
+	if text_style then
+		use_shadow = text_style.use_shadow
 
 		if not use_shadow then
 			-- Nothing
@@ -7395,26 +7571,26 @@ UIWidgets.create_simple_text = function (arg_214_0, arg_214_1, arg_214_2, arg_21
 
 	use_shadow = false
 
-	::label_214_2::
+	::label_214_5::
 
 	tbl_2.use_shadow = use_shadow
-	tbl_2.disable_with_gamepad = arg_214_7
+	tbl_2.disable_with_gamepad = disable_with_gamepad
 	tbl.content = tbl_2
 	tbl.style = {
-		text = arg_214_4,
-		text_shadow = clone
+		text = text_style,
+		text_shadow = text_shadow_style
 	}
 	tbl.offset = {
 		0,
 		0,
 		0
 	}
-	tbl.scenegraph_id = arg_214_1
+	tbl.scenegraph_id = scenegraph_id
 
 	return tbl
 end
 
-UIWidgets.create_simple_text_tooltip = function (arg_216_0, arg_216_1, arg_216_2, arg_216_3, arg_216_4, arg_216_5, arg_216_6)
+UIWidgets.create_simple_text_tooltip = function (text, tooltip_text, scenegraph_id, size, color, text_style, tooltip_style)
 	-- function 216
 	local tbl = {
 		element = {
@@ -7432,51 +7608,51 @@ UIWidgets.create_simple_text_tooltip = function (arg_216_0, arg_216_1, arg_216_2
 					style_id = "tooltip_text",
 					pass_type = "tooltip_text",
 					text_id = "tooltip_text",
-					content_check_function = function (self)
+					content_check_function = function (ui_content)
 						-- function 217
-						return self.tooltip_hotspot.is_hover
+						return ui_content.tooltip_hotspot.is_hover
 					end
 				}
 			}
 		}
 	}
 	local tbl_2 = {
-		text = arg_216_0,
-		tooltip_text = arg_216_1,
+		text = text,
+		tooltip_text = tooltip_text,
 		tooltip_hotspot = {}
 	}
 	local text_color
 
-	if not arg_216_5 then
-		text_color = arg_216_5.text_color
+	if text_style then
+		text_color = text_style.text_color
 
 		if not text_color then
 			-- Nothing
 		end
 	end
 
-	text_color = arg_216_4
+	text_color = color
 
 	::label_216_0::
 
 	tbl_2.color = text_color
 	tbl.content = tbl_2
 	tbl.style = {
-		text = arg_216_5 or {
+		text = not not text_style or not not {
 			vertical_alignment = "center",
 			localize = true,
 			horizontal_alignment = "center",
 			word_wrap = true,
 			font_type = "hell_shark",
-			font_size = arg_216_3,
-			text_color = arg_216_4,
+			font_size = size,
+			text_color = color,
 			offset = {
 				0,
 				0,
 				2
 			}
 		},
-		tooltip_text = arg_216_6 or {
+		tooltip_text = not not tooltip_style or not not {
 			font_size = 24,
 			max_width = 500,
 			localize = true,
@@ -7492,12 +7668,12 @@ UIWidgets.create_simple_text_tooltip = function (arg_216_0, arg_216_1, arg_216_2
 			}
 		}
 	}
-	tbl.scenegraph_id = arg_216_2
+	tbl.scenegraph_id = scenegraph_id
 
 	return tbl
 end
 
-UIWidgets.create_simple_rect_text = function (arg_218_0, arg_218_1, arg_218_2, arg_218_3, arg_218_4, arg_218_5)
+UIWidgets.create_simple_rect_text = function (scenegraph_id, text, font_size, color, rect_color, text_style)
 	-- function 218
 	return {
 		element = {
@@ -7510,17 +7686,17 @@ UIWidgets.create_simple_rect_text = function (arg_218_0, arg_218_1, arg_218_2, a
 			}
 		},
 		content = {
-			text = arg_218_1
+			text = text
 		},
 		style = {
-			text = arg_218_5 or {
+			text = not not text_style or not not {
 				localize = false,
 				horizontal_alignment = "left",
 				vertical_alignment = "top",
 				font_type = "hell_shark",
-				font_size = arg_218_2 or 24,
-				text_color = arg_218_3 or Colors.get_color_table_with_alpha("white", 255),
-				rect_color = arg_218_4 or Colors.get_color_table_with_alpha("black", 150),
+				font_size = not not font_size or not not 24,
+				text_color = not not color or not not Colors.get_color_table_with_alpha("white", 255),
+				rect_color = not not rect_color or not not Colors.get_color_table_with_alpha("black", 150),
 				line_colors = {},
 				offset = {
 					0,
@@ -7529,11 +7705,11 @@ UIWidgets.create_simple_rect_text = function (arg_218_0, arg_218_1, arg_218_2, a
 				}
 			}
 		},
-		scenegraph_id = arg_218_0
+		scenegraph_id = scenegraph_id
 	}
 end
 
-UIWidgets.create_forge_toggle_button = function (arg_219_0, arg_219_1, arg_219_2, arg_219_3, arg_219_4, arg_219_5)
+UIWidgets.create_forge_toggle_button = function (normal_texture, normal_hover_texture, selected_texture, selected_hover_texture, scenegraph_id, hotspot_scenegraph_id)
 	-- function 219
 	return {
 		element = {
@@ -7546,27 +7722,27 @@ UIWidgets.create_forge_toggle_button = function (arg_219_0, arg_219_1, arg_219_2
 				{
 					pass_type = "texture",
 					texture_id = "texture_id",
-					content_check_function = function (self)
+					content_check_function = function (content)
 						-- function 220
-						return not not self.is_selected or not self.button_hotspot.is_hover
+						return not content.is_selected and not not not content.button_hotspot.is_hover
 					end
 				},
 				{
 					pass_type = "texture",
 					texture_id = "texture_hover_id",
-					content_check_function = function (self)
+					content_check_function = function (content)
 						-- function 221
-						return not not self.is_selected or self.button_hotspot.is_hover
+						return not content.is_selected and not not content.button_hotspot.is_hover
 					end
 				},
 				{
 					pass_type = "texture",
 					texture_id = "texture_selected_id",
-					content_check_function = function (self)
+					content_check_function = function (content)
 						-- function 222
-						local is_selected = self.is_selected
+						local is_selected = content.is_selected
 
-						is_selected = not is_selected and not self.button_hotspot.is_hover
+						is_selected = not not is_selected and not not not content.button_hotspot.is_hover
 
 						return is_selected
 					end
@@ -7574,11 +7750,11 @@ UIWidgets.create_forge_toggle_button = function (arg_219_0, arg_219_1, arg_219_2
 				{
 					pass_type = "texture",
 					texture_id = "texture_selected_hover_id",
-					content_check_function = function (self)
+					content_check_function = function (content)
 						-- function 223
-						local is_selected = self.is_selected
+						local is_selected = content.is_selected
 
-						is_selected = not is_selected and self.button_hotspot.is_hover
+						is_selected = not not is_selected and not not content.button_hotspot.is_hover
 
 						return is_selected
 					end
@@ -7587,21 +7763,21 @@ UIWidgets.create_forge_toggle_button = function (arg_219_0, arg_219_1, arg_219_2
 		},
 		content = {
 			button_hotspot = {},
-			texture_id = arg_219_0,
-			texture_hover_id = arg_219_1,
-			texture_selected_id = arg_219_2,
-			texture_selected_hover_id = arg_219_3
+			texture_id = normal_texture,
+			texture_hover_id = normal_hover_texture,
+			texture_selected_id = selected_texture,
+			texture_selected_hover_id = selected_hover_texture
 		},
 		style = {
 			button_hotspot = {
-				scenegraph_id = arg_219_5
+				scenegraph_id = hotspot_scenegraph_id
 			}
 		},
-		scenegraph_id = arg_219_4
+		scenegraph_id = scenegraph_id
 	}
 end
 
-UIWidgets.create_button_2_state = function (arg_224_0, arg_224_1, arg_224_2, arg_224_3)
+UIWidgets.create_button_2_state = function (normal_texture, selected_texture, scenegraph_id, hotspot_scenegraph_id)
 	-- function 224
 	return {
 		element = {
@@ -7614,36 +7790,36 @@ UIWidgets.create_button_2_state = function (arg_224_0, arg_224_1, arg_224_2, arg
 				{
 					pass_type = "texture",
 					texture_id = "texture_id",
-					content_check_function = function (self)
+					content_check_function = function (content)
 						-- function 225
-						return not self.is_selected
+						return not content.is_selected
 					end
 				},
 				{
 					pass_type = "texture",
 					texture_id = "texture_selected_id",
-					content_check_function = function (self)
+					content_check_function = function (content)
 						-- function 226
-						return self.is_selected
+						return content.is_selected
 					end
 				}
 			}
 		},
 		content = {
 			button_hotspot = {},
-			texture_id = arg_224_0,
-			texture_selected_id = arg_224_1
+			texture_id = normal_texture,
+			texture_selected_id = selected_texture
 		},
 		style = {
 			button_hotspot = {
-				scenegraph_id = arg_224_3
+				scenegraph_id = hotspot_scenegraph_id
 			}
 		},
-		scenegraph_id = arg_224_2
+		scenegraph_id = scenegraph_id
 	}
 end
 
-UIWidgets.create_title_text = function (arg_227_0, arg_227_1)
+UIWidgets.create_title_text = function (text, scenegraph_id)
 	-- function 227
 	return {
 		element = {
@@ -7656,7 +7832,7 @@ UIWidgets.create_title_text = function (arg_227_0, arg_227_1)
 			}
 		},
 		content = {
-			text = arg_227_0
+			text = text
 		},
 		style = {
 			text = {
@@ -7676,11 +7852,11 @@ UIWidgets.create_title_text = function (arg_227_0, arg_227_1)
 				}
 			}
 		},
-		scenegraph_id = arg_227_1
+		scenegraph_id = scenegraph_id
 	}
 end
 
-UIWidgets.create_matchmaking_portrait = function (self, arg_228_1)
+UIWidgets.create_matchmaking_portrait = function (size, scenegraph_id)
 	-- function 228
 	return {
 		element = {
@@ -7694,24 +7870,24 @@ UIWidgets.create_matchmaking_portrait = function (self, arg_228_1)
 					texture_id = "portrait",
 					style_id = "portrait",
 					pass_type = "texture",
-					content_check_function = function (self)
+					content_check_function = function (content)
 						-- function 229
-						return not not self.is_connecting or self.is_connected
+						return not content.is_connecting and not not content.is_connected
 					end
 				},
 				{
 					texture_id = "ready_icon",
 					style_id = "ready_icon",
 					pass_type = "texture",
-					content_check_function = function (self)
+					content_check_function = function (content)
 						-- function 230
 						local is_connected
 
-						if not self.is_connecting then
-							is_connected = self.is_connected
+						if not content.is_connecting then
+							is_connected = content.is_connected
 
-							if not is_connected then
-								is_connected = self.is_ready
+							if is_connected then
+								is_connected = content.is_ready
 							end
 						else
 							is_connected = false
@@ -7728,18 +7904,18 @@ UIWidgets.create_matchmaking_portrait = function (self, arg_228_1)
 					texture_id = "voted_yes_icon",
 					style_id = "voted_yes_icon",
 					pass_type = "texture",
-					content_check_function = function (self)
+					content_check_function = function (content)
 						-- function 231
 						local is_connected
 
-						if not self.is_connecting then
-							is_connected = self.is_connected
+						if not content.is_connecting then
+							is_connected = content.is_connected
 
-							if not is_connected then
-								is_connected = self.is_voting
+							if is_connected then
+								is_connected = content.is_voting
 
-								if not is_connected then
-									is_connected = self.voted_yes
+								if is_connected then
+									is_connected = content.voted_yes
 								end
 							end
 						else
@@ -7757,18 +7933,18 @@ UIWidgets.create_matchmaking_portrait = function (self, arg_228_1)
 					texture_id = "waiting_for_vote",
 					style_id = "waiting_for_vote",
 					pass_type = "texture",
-					content_check_function = function (self)
+					content_check_function = function (content)
 						-- function 232
 						local is_connected
 
-						if not self.is_connecting then
-							is_connected = self.is_connected
+						if not content.is_connecting then
+							is_connected = content.is_connected
 
-							if not is_connected then
-								is_connected = self.is_voting
+							if is_connected then
+								is_connected = content.is_voting
 
-								if not is_connected then
-									is_connected = not self.voted_yes
+								if is_connected then
+									is_connected = not content.voted_yes
 								end
 							end
 						else
@@ -7786,9 +7962,9 @@ UIWidgets.create_matchmaking_portrait = function (self, arg_228_1)
 					texture_id = "connecting_icon",
 					style_id = "connecting_icon",
 					pass_type = "rotated_texture",
-					content_check_function = function (self)
+					content_check_function = function (content)
 						-- function 233
-						return self.is_connecting
+						return content.is_connecting
 					end
 				}
 			}
@@ -7837,8 +8013,8 @@ UIWidgets.create_matchmaking_portrait = function (self, arg_228_1)
 					31
 				},
 				offset = {
-					self[1] / 2 - 18.5,
-					self[2] / 2 - 15.5,
+					size[1] / 2 - 18.5,
+					size[2] / 2 - 15.5,
 					3
 				},
 				color = {
@@ -7854,8 +8030,8 @@ UIWidgets.create_matchmaking_portrait = function (self, arg_228_1)
 					31
 				},
 				offset = {
-					self[1] / 2 - 18.5,
-					self[2] / 2 - 15.5,
+					size[1] / 2 - 18.5,
+					size[2] / 2 - 15.5,
 					3
 				},
 				color = {
@@ -7871,8 +8047,8 @@ UIWidgets.create_matchmaking_portrait = function (self, arg_228_1)
 					31
 				},
 				offset = {
-					self[1] / 2 - 18.5,
-					self[2] / 2 - 15.5,
+					size[1] / 2 - 18.5,
+					size[2] / 2 - 15.5,
 					3
 				},
 				color = {
@@ -7893,8 +8069,8 @@ UIWidgets.create_matchmaking_portrait = function (self, arg_228_1)
 					15
 				},
 				offset = {
-					self[1] / 2 - 15,
-					self[2] / 2 - 15,
+					size[1] / 2 - 15,
+					size[2] / 2 - 15,
 					2
 				},
 				color = {
@@ -7905,11 +8081,11 @@ UIWidgets.create_matchmaking_portrait = function (self, arg_228_1)
 				}
 			}
 		},
-		scenegraph_id = arg_228_1
+		scenegraph_id = scenegraph_id
 	}
 end
 
-UIWidgets.create_small_trait_button = function (arg_234_0, arg_234_1, arg_234_2)
+UIWidgets.create_small_trait_button = function (scenegraph_id, hotspot_scenegraph_id, masked)
 	-- function 234
 	return {
 		element = {
@@ -7918,39 +8094,39 @@ UIWidgets.create_small_trait_button = function (arg_234_0, arg_234_1, arg_234_2)
 					style_id = "button_hotspot",
 					pass_type = "hotspot",
 					content_id = "button_hotspot",
-					content_check_function = function (self)
+					content_check_function = function (content)
 						-- function 235
-						return not not self.disabled or not self.is_selected
+						return not content.disabled and not not not content.is_selected
 					end
 				},
 				{
 					pass_type = "texture",
 					style_id = "texture_bg_id",
 					texture_id = "texture_bg_id",
-					content_check_function = function (self)
+					content_check_function = function (content)
 						-- function 236
-						return self.use_background
+						return content.use_background
 					end
 				},
 				{
 					pass_type = "texture",
 					style_id = "texture_id",
 					texture_id = "texture_id",
-					content_check_function = function (self)
+					content_check_function = function (content)
 						-- function 237
-						return self.texture_id
+						return content.texture_id
 					end
 				},
 				{
 					pass_type = "texture",
 					style_id = "texture_hover_id",
 					texture_id = "texture_hover_id",
-					content_check_function = function (self)
+					content_check_function = function (content)
 						-- function 238
-						local button_hotspot = self.button_hotspot
+						local button_hotspot = content.button_hotspot
 						local is_hover = button_hotspot.is_hover
 
-						is_hover = not is_hover and not not button_hotspot.is_selected or not button_hotspot.disabled
+						is_hover = not not is_hover and not button_hotspot.is_selected and not not not button_hotspot.disabled
 
 						return is_hover
 					end
@@ -7959,12 +8135,12 @@ UIWidgets.create_small_trait_button = function (arg_234_0, arg_234_1, arg_234_2)
 					pass_type = "texture",
 					style_id = "texture_selected_id",
 					texture_id = "texture_selected_id",
-					content_check_function = function (self)
+					content_check_function = function (content)
 						-- function 239
-						local button_hotspot = self.button_hotspot
+						local button_hotspot = content.button_hotspot
 						local is_selected = button_hotspot.is_selected
 
-						is_selected = not is_selected and not button_hotspot.disabled
+						is_selected = not not is_selected and not not not button_hotspot.disabled
 
 						return is_selected
 					end
@@ -7973,12 +8149,12 @@ UIWidgets.create_small_trait_button = function (arg_234_0, arg_234_1, arg_234_2)
 					pass_type = "texture",
 					style_id = "texture_lock_id",
 					texture_id = "texture_lock_id",
-					content_check_function = function (self)
+					content_check_function = function (content)
 						-- function 240
-						local button_hotspot = self.button_hotspot
+						local button_hotspot = content.button_hotspot
 						local locked = button_hotspot.locked
 
-						locked = not locked and not button_hotspot.disabled
+						locked = not not locked and not not not button_hotspot.disabled
 
 						return locked
 					end
@@ -7987,22 +8163,22 @@ UIWidgets.create_small_trait_button = function (arg_234_0, arg_234_1, arg_234_2)
 					pass_type = "texture",
 					style_id = "texture_glow_id",
 					texture_id = "texture_glow_id",
-					content_check_function = function (self)
+					content_check_function = function (content)
 						-- function 241
-						return self.use_glow
+						return content.use_glow
 					end
 				},
 				{
 					pass_type = "texture",
 					style_id = "texture_trait_cover_id",
 					texture_id = "texture_trait_cover_id",
-					content_check_function = function (self)
+					content_check_function = function (content)
 						-- function 242
-						local disabled = self.button_hotspot.disabled
+						local disabled = content.button_hotspot.disabled
 
-						if not disabled then
-							disabled = self.use_trait_cover
-							disabled = not disabled and self.texture_id
+						if disabled then
+							disabled = content.use_trait_cover
+							disabled = not not disabled and not not content.texture_id
 						end
 
 						return disabled
@@ -8028,10 +8204,10 @@ UIWidgets.create_small_trait_button = function (arg_234_0, arg_234_1, arg_234_2)
 		},
 		style = {
 			button_hotspot = {
-				scenegraph_id = arg_234_1
+				scenegraph_id = hotspot_scenegraph_id
 			},
 			texture_bg_id = {
-				masked = arg_234_2,
+				masked = masked,
 				size = {
 					54,
 					58
@@ -8049,7 +8225,7 @@ UIWidgets.create_small_trait_button = function (arg_234_0, arg_234_1, arg_234_2)
 				}
 			},
 			texture_id = {
-				masked = arg_234_2,
+				masked = masked,
 				color = {
 					255,
 					255,
@@ -8058,7 +8234,7 @@ UIWidgets.create_small_trait_button = function (arg_234_0, arg_234_1, arg_234_2)
 				}
 			},
 			texture_hover_id = {
-				masked = arg_234_2,
+				masked = masked,
 				offset = {
 					0,
 					0,
@@ -8072,7 +8248,7 @@ UIWidgets.create_small_trait_button = function (arg_234_0, arg_234_1, arg_234_2)
 				}
 			},
 			texture_selected_id = {
-				masked = arg_234_2,
+				masked = masked,
 				offset = {
 					0,
 					0,
@@ -8086,7 +8262,7 @@ UIWidgets.create_small_trait_button = function (arg_234_0, arg_234_1, arg_234_2)
 				}
 			},
 			texture_lock_id = {
-				masked = arg_234_2,
+				masked = masked,
 				offset = {
 					0,
 					0,
@@ -8100,7 +8276,7 @@ UIWidgets.create_small_trait_button = function (arg_234_0, arg_234_1, arg_234_2)
 				}
 			},
 			texture_glow_id = {
-				masked = arg_234_2,
+				masked = masked,
 				size = {
 					104,
 					104
@@ -8118,7 +8294,7 @@ UIWidgets.create_small_trait_button = function (arg_234_0, arg_234_1, arg_234_2)
 				}
 			},
 			texture_trait_cover_id = {
-				masked = arg_234_2,
+				masked = masked,
 				size = {
 					40,
 					41
@@ -8136,11 +8312,11 @@ UIWidgets.create_small_trait_button = function (arg_234_0, arg_234_1, arg_234_2)
 				}
 			}
 		},
-		scenegraph_id = arg_234_0
+		scenegraph_id = scenegraph_id
 	}
 end
 
-UIWidgets.create_small_reroll_trait_button = function (arg_243_0, arg_243_1)
+UIWidgets.create_small_reroll_trait_button = function (scenegraph_id, hotspot_scenegraph_id)
 	-- function 243
 	return {
 		element = {
@@ -8149,48 +8325,48 @@ UIWidgets.create_small_reroll_trait_button = function (arg_243_0, arg_243_1)
 					style_id = "button_hotspot",
 					pass_type = "hotspot",
 					content_id = "button_hotspot",
-					content_check_function = function (self)
+					content_check_function = function (content)
 						-- function 244
-						return not not self.disabled or not self.is_selected
+						return not content.disabled and not not not content.is_selected
 					end
 				},
 				{
 					pass_type = "texture",
 					style_id = "texture_bg_id",
 					texture_id = "texture_bg_id",
-					content_check_function = function (self)
+					content_check_function = function (content)
 						-- function 245
-						return self.use_background
+						return content.use_background
 					end
 				},
 				{
 					pass_type = "texture",
 					style_id = "texture_slot_id",
 					texture_id = "texture_slot_id",
-					content_check_function = function (self)
+					content_check_function = function (content)
 						-- function 246
-						return self.use_background
+						return content.use_background
 					end
 				},
 				{
 					pass_type = "texture",
 					style_id = "texture_id",
 					texture_id = "texture_id",
-					content_check_function = function (self)
+					content_check_function = function (content)
 						-- function 247
-						return self.texture_id
+						return content.texture_id
 					end
 				},
 				{
 					pass_type = "texture",
 					style_id = "texture_hover_id",
 					texture_id = "texture_hover_id",
-					content_check_function = function (self)
+					content_check_function = function (content)
 						-- function 248
-						local button_hotspot = self.button_hotspot
+						local button_hotspot = content.button_hotspot
 						local is_hover = button_hotspot.is_hover
 
-						is_hover = not is_hover and not not button_hotspot.is_selected or not button_hotspot.disabled
+						is_hover = not not is_hover and not button_hotspot.is_selected and not not not button_hotspot.disabled
 
 						return is_hover
 					end
@@ -8199,12 +8375,12 @@ UIWidgets.create_small_reroll_trait_button = function (arg_243_0, arg_243_1)
 					pass_type = "texture",
 					style_id = "texture_selected_id",
 					texture_id = "texture_selected_id",
-					content_check_function = function (self)
+					content_check_function = function (content)
 						-- function 249
-						local button_hotspot = self.button_hotspot
+						local button_hotspot = content.button_hotspot
 						local is_selected = button_hotspot.is_selected
 
-						is_selected = not is_selected and not button_hotspot.disabled
+						is_selected = not not is_selected and not not not button_hotspot.disabled
 
 						return is_selected
 					end
@@ -8213,11 +8389,12 @@ UIWidgets.create_small_reroll_trait_button = function (arg_243_0, arg_243_1)
 					pass_type = "texture",
 					style_id = "texture_lock_id",
 					texture_id = "texture_lock_id",
-					content_check_function = function (self)
+					content_check_function = function (content)
 						-- function 250
-						local locked = self.button_hotspot.locked
+						local button_hotspot = content.button_hotspot
+						local locked = button_hotspot.locked
 
-						locked = not locked and self.texture_id
+						locked = not not locked and not not content.texture_id
 
 						return locked
 					end
@@ -8226,9 +8403,9 @@ UIWidgets.create_small_reroll_trait_button = function (arg_243_0, arg_243_1)
 					pass_type = "texture",
 					style_id = "texture_glow_id",
 					texture_id = "texture_glow_id",
-					content_check_function = function (self)
+					content_check_function = function (content)
 						-- function 251
-						return self.use_glow
+						return content.use_glow
 					end
 				}
 			}
@@ -8250,7 +8427,7 @@ UIWidgets.create_small_reroll_trait_button = function (arg_243_0, arg_243_1)
 		},
 		style = {
 			button_hotspot = {
-				scenegraph_id = arg_243_1
+				scenegraph_id = hotspot_scenegraph_id
 			},
 			texture_bg_id = {
 				size = {
@@ -8351,11 +8528,11 @@ UIWidgets.create_small_reroll_trait_button = function (arg_243_0, arg_243_1)
 				}
 			}
 		},
-		scenegraph_id = arg_243_0
+		scenegraph_id = scenegraph_id
 	}
 end
 
-UIWidgets.create_attach_icon_button = function (arg_252_0, arg_252_1, arg_252_2, arg_252_3, arg_252_4, arg_252_5, arg_252_6)
+UIWidgets.create_attach_icon_button = function (background_texture, scenegraph_id, icon_scenegraph_id, drag_texture_size, animation_scenegraph_id, animation_glow_texture, disable_interaction)
 	-- function 252
 	return {
 		element = {
@@ -8364,25 +8541,25 @@ UIWidgets.create_attach_icon_button = function (arg_252_0, arg_252_1, arg_252_2,
 					style_id = "button_hotspot",
 					pass_type = "hotspot",
 					content_id = "button_hotspot",
-					content_check_function = function (self)
+					content_check_function = function (content)
 						-- function 253
-						return not self.disable_interaction
+						return not content.disable_interaction
 					end
 				},
 				{
 					style_id = "tooltip_text",
 					pass_type = "tooltip_text",
 					text_id = "tooltip_text",
-					content_check_function = function (self)
+					content_check_function = function (content)
 						-- function 254
-						local icon_texture_id = self.icon_texture_id
+						local icon_texture_id = content.icon_texture_id
 
-						if not icon_texture_id then
-							icon_texture_id = self.tooltip_enabled
+						if icon_texture_id then
+							icon_texture_id = content.tooltip_enabled
 
-							if not icon_texture_id then
-								icon_texture_id = self.button_hotspot.is_hover
-								icon_texture_id = not icon_texture_id and not self.button_hotspot.disable_interaction
+							if icon_texture_id then
+								icon_texture_id = content.button_hotspot.is_hover
+								icon_texture_id = not not icon_texture_id and not not not content.button_hotspot.disable_interaction
 							end
 						end
 
@@ -8393,18 +8570,18 @@ UIWidgets.create_attach_icon_button = function (arg_252_0, arg_252_1, arg_252_2,
 					style_id = "tooltip_text",
 					pass_type = "tooltip_text",
 					text_id = "tooltip_text_no_item",
-					content_check_function = function (self)
+					content_check_function = function (content)
 						-- function 255
 						local tooltip_enabled
 
-						if not self.icon_texture_id then
-							tooltip_enabled = self.tooltip_enabled
+						if not content.icon_texture_id then
+							tooltip_enabled = content.tooltip_enabled
 
-							if not tooltip_enabled then
-								tooltip_enabled = self.button_hotspot.is_hover
+							if tooltip_enabled then
+								tooltip_enabled = content.button_hotspot.is_hover
 
-								if not tooltip_enabled then
-									tooltip_enabled = not self.button_hotspot.disable_interaction
+								if tooltip_enabled then
+									tooltip_enabled = not content.button_hotspot.disable_interaction
 								end
 							end
 						else
@@ -8422,38 +8599,38 @@ UIWidgets.create_attach_icon_button = function (arg_252_0, arg_252_1, arg_252_2,
 					texture_id = "background_texture_id",
 					style_id = "background_texture_id",
 					pass_type = "texture",
-					content_check_function = function (self)
+					content_check_function = function (content)
 						-- function 256
-						return self.background_texture_id
+						return content.background_texture_id
 					end
 				},
 				{
 					texture_id = "bg_overlay_texture_id",
 					style_id = "bg_overlay_texture_id",
 					pass_type = "texture",
-					content_check_function = function (self)
+					content_check_function = function (content)
 						-- function 257
-						return self.bg_overlay_texture_id
+						return content.bg_overlay_texture_id
 					end
 				},
 				{
 					texture_id = "icon_texture_id",
 					style_id = "icon_texture_id",
 					pass_type = "texture",
-					content_check_function = function (self)
+					content_check_function = function (content)
 						-- function 258
-						return self.icon_texture_id
+						return content.icon_texture_id
 					end
 				},
 				{
 					pass_type = "texture",
 					style_id = "icon_frame_texture_id",
 					texture_id = "icon_frame_texture_id",
-					content_check_function = function (self)
+					content_check_function = function (ui_content)
 						-- function 259
-						local icon_texture_id = self.icon_texture_id
+						local icon_texture_id = ui_content.icon_texture_id
 
-						icon_texture_id = icon_texture_id or self.bg_overlay_texture_id
+						icon_texture_id = not not icon_texture_id or not not ui_content.bg_overlay_texture_id
 
 						return icon_texture_id
 					end
@@ -8467,22 +8644,22 @@ UIWidgets.create_attach_icon_button = function (arg_252_0, arg_252_1, arg_252_2,
 					texture_id = "icon_texture_id",
 					style_id = "background_texture_id",
 					pass_type = "drag",
-					content_check_function = function (self)
+					content_check_function = function (content)
 						-- function 260
-						return not self.button_hotspot.disable_interaction
+						return not content.button_hotspot.disable_interaction
 					end
 				},
 				{
 					pass_type = "texture",
 					style_id = "hover_texture",
 					texture_id = "hover_texture",
-					content_check_function = function (self)
+					content_check_function = function (content)
 						-- function 261
-						local is_hover = self.button_hotspot.is_hover
+						local is_hover = content.button_hotspot.is_hover
 
-						if not is_hover then
-							is_hover = self.icon_texture_id
-							is_hover = not is_hover and not self.is_dragging
+						if is_hover then
+							is_hover = content.icon_texture_id
+							is_hover = not not is_hover and not not not content.is_dragging
 						end
 
 						return is_hover
@@ -8502,12 +8679,12 @@ UIWidgets.create_attach_icon_button = function (arg_252_0, arg_252_1, arg_252_2,
 			hover_texture = "item_slot_hover",
 			icon_frame_texture_id = "frame_01",
 			tooltip_text = "forge_screen_merge_full_slot_tooltip",
-			drag_texture_size = arg_252_3,
+			drag_texture_size = drag_texture_size,
 			button_hotspot = {
-				disable_interaction = arg_252_6
+				disable_interaction = disable_interaction
 			},
-			background_texture_id = arg_252_0,
-			glow_animation = arg_252_5 or "icons_placeholder"
+			background_texture_id = background_texture,
+			glow_animation = not not animation_glow_texture or not not "icons_placeholder"
 		},
 		style = {
 			background_texture_id = {
@@ -8533,7 +8710,7 @@ UIWidgets.create_attach_icon_button = function (arg_252_0, arg_252_1, arg_252_2,
 					255,
 					255
 				},
-				scenegraph_id = arg_252_2
+				scenegraph_id = icon_scenegraph_id
 			},
 			icon_frame_texture_id = {
 				offset = {
@@ -8547,7 +8724,7 @@ UIWidgets.create_attach_icon_button = function (arg_252_0, arg_252_1, arg_252_2,
 					255,
 					255
 				},
-				scenegraph_id = arg_252_2
+				scenegraph_id = icon_scenegraph_id
 			},
 			glow_animation = {
 				color = {
@@ -8556,7 +8733,7 @@ UIWidgets.create_attach_icon_button = function (arg_252_0, arg_252_1, arg_252_2,
 					255,
 					255
 				},
-				scenegraph_id = arg_252_4
+				scenegraph_id = animation_scenegraph_id
 			},
 			hover_texture = {
 				color = {
@@ -8604,24 +8781,24 @@ UIWidgets.create_attach_icon_button = function (arg_252_0, arg_252_1, arg_252_2,
 				}
 			}
 		},
-		scenegraph_id = arg_252_1
+		scenegraph_id = scenegraph_id
 	}
 end
 
-UIWidgets.create_input_description_widgets = function (self, arg_262_1, arg_262_2)
+UIWidgets.create_input_description_widgets = function (scenegraph_definition, parent_scenegraph_id, amount)
 	-- function 262
-	local tbl = {}
+	local input_description_widgets = {}
 
-	for i = 1, arg_262_2 do
-		local str = "input_description_root_" .. i
-		local str_2 = "input_description_" .. i
-		local str_3 = "input_description_icon_" .. i
-		local str_4 = "input_description_text_" .. i
+	for i = 1, amount do
+		local scenegraph_root_id = "input_description_root_" .. i
+		local scenegraph_id = "input_description_" .. i
+		local scenegraph_icon_id = "input_description_icon_" .. i
+		local scenegraph_text_id = "input_description_text_" .. i
 
-		self[str] = {
+		scenegraph_definition[scenegraph_root_id] = {
 			vertical_alignment = "center",
 			horizontal_alignment = "left",
-			parent = arg_262_1,
+			parent = parent_scenegraph_id,
 			size = {
 				1,
 				1
@@ -8632,10 +8809,10 @@ UIWidgets.create_input_description_widgets = function (self, arg_262_1, arg_262_
 				1
 			}
 		}
-		self[str_2] = {
+		scenegraph_definition[scenegraph_id] = {
 			vertical_alignment = "center",
 			horizontal_alignment = "left",
-			parent = str,
+			parent = scenegraph_root_id,
 			size = {
 				200,
 				40
@@ -8646,10 +8823,10 @@ UIWidgets.create_input_description_widgets = function (self, arg_262_1, arg_262_
 				1
 			}
 		}
-		self[str_3] = {
+		scenegraph_definition[scenegraph_icon_id] = {
 			vertical_alignment = "center",
 			horizontal_alignment = "left",
-			parent = str_2,
+			parent = scenegraph_id,
 			size = {
 				40,
 				40
@@ -8660,10 +8837,10 @@ UIWidgets.create_input_description_widgets = function (self, arg_262_1, arg_262_
 				1
 			}
 		}
-		self[str_4] = {
+		scenegraph_definition[scenegraph_text_id] = {
 			vertical_alignment = "center",
 			horizontal_alignment = "left",
-			parent = str_3,
+			parent = scenegraph_icon_id,
 			size = {
 				160,
 				40
@@ -8675,7 +8852,7 @@ UIWidgets.create_input_description_widgets = function (self, arg_262_1, arg_262_
 			}
 		}
 
-		local tbl_2 = {
+		local widget_definition = {
 			element = {
 				passes = {
 					{
@@ -8709,33 +8886,33 @@ UIWidgets.create_input_description_widgets = function (self, arg_262_1, arg_262_
 						0,
 						1
 					},
-					scenegraph_id = str_4
+					scenegraph_id = scenegraph_text_id
 				},
 				icon = {
-					scenegraph_id = str_3
+					scenegraph_id = scenegraph_icon_id
 				}
 			},
-			scenegraph_id = str_2
+			scenegraph_id = scenegraph_id
 		}
 
-		tbl[#tbl + 1] = UIWidget.init(tbl_2)
+		input_description_widgets[#input_description_widgets + 1] = UIWidget.init(widget_definition)
 	end
 
-	return tbl
+	return input_description_widgets
 end
 
-UIWidgets.create_hero_button = function (arg_263_0, arg_263_1, arg_263_2)
+UIWidgets.create_hero_button = function (hero, scenegraph_id, hero_scenegraph_id)
 	-- function 263
-	local str = "tabs_class_icon_" .. arg_263_0 .. "_normal"
-	local str_2 = "tabs_class_icon_" .. arg_263_0 .. "_hover"
-	local str_3 = "tabs_class_icon_" .. arg_263_0 .. "_selected"
-	local var_263_3
+	local hero_texture_normal_id = "tabs_class_icon_" .. hero .. "_normal"
+	local hero_texture_hover_id = "tabs_class_icon_" .. hero .. "_hover"
+	local hero_texture_selected_id = "tabs_class_icon_" .. hero .. "_selected"
+	local hero_text
 
-	if arg_263_0 == "all_heroes" then
-		str = nil
-		str_2 = nil
-		str_3 = nil
-		var_263_3 = "ALL"
+	if hero == "all_heroes" then
+		hero_texture_normal_id = nil
+		hero_texture_hover_id = nil
+		hero_texture_selected_id = nil
+		hero_text = "ALL"
 	end
 
 	return {
@@ -8750,20 +8927,20 @@ UIWidgets.create_hero_button = function (arg_263_0, arg_263_1, arg_263_2)
 					texture_id = "texture_id",
 					style_id = "texture_id",
 					pass_type = "texture",
-					content_check_function = function (self)
+					content_check_function = function (content)
 						-- function 264
-						return not not self.button_hotspot.is_hover or not self.button_hotspot.is_selected
+						return not content.button_hotspot.is_hover and not not not content.button_hotspot.is_selected
 					end
 				},
 				{
 					texture_id = "texture_hover_id",
 					style_id = "texture_hover_id",
 					pass_type = "texture",
-					content_check_function = function (self)
+					content_check_function = function (content)
 						-- function 265
-						local is_hover = self.button_hotspot.is_hover
+						local is_hover = content.button_hotspot.is_hover
 
-						is_hover = not is_hover and not self.button_hotspot.is_selected
+						is_hover = not not is_hover and not not not content.button_hotspot.is_selected
 
 						return is_hover
 					end
@@ -8772,21 +8949,21 @@ UIWidgets.create_hero_button = function (arg_263_0, arg_263_1, arg_263_2)
 					texture_id = "texture_selected_id",
 					style_id = "texture_selected_id",
 					pass_type = "texture",
-					content_check_function = function (self)
+					content_check_function = function (content)
 						-- function 266
-						return self.button_hotspot.is_selected
+						return content.button_hotspot.is_selected
 					end
 				},
 				{
 					texture_id = "hero_texture_normal_id",
 					style_id = "hero_texture_normal_id",
 					pass_type = "texture",
-					content_check_function = function (self)
+					content_check_function = function (content)
 						-- function 267
-						local button_hotspot = self.button_hotspot
-						local hero_texture_normal_id = self.hero_texture_normal_id
+						local button_hotspot = content.button_hotspot
+						local hero_texture_normal_id = content.hero_texture_normal_id
 
-						hero_texture_normal_id = not hero_texture_normal_id and not not button_hotspot.is_hover or not button_hotspot.is_selected
+						hero_texture_normal_id = not not hero_texture_normal_id and not button_hotspot.is_hover and not not not button_hotspot.is_selected
 
 						return hero_texture_normal_id
 					end
@@ -8795,11 +8972,11 @@ UIWidgets.create_hero_button = function (arg_263_0, arg_263_1, arg_263_2)
 					texture_id = "hero_texture_hover_id",
 					style_id = "hero_texture_hover_id",
 					pass_type = "texture",
-					content_check_function = function (self)
+					content_check_function = function (content)
 						-- function 268
-						local hero_texture_hover_id = self.hero_texture_hover_id
+						local hero_texture_hover_id = content.hero_texture_hover_id
 
-						hero_texture_hover_id = not hero_texture_hover_id and self.button_hotspot.is_hover
+						hero_texture_hover_id = not not hero_texture_hover_id and not not content.button_hotspot.is_hover
 
 						return hero_texture_hover_id
 					end
@@ -8808,11 +8985,11 @@ UIWidgets.create_hero_button = function (arg_263_0, arg_263_1, arg_263_2)
 					texture_id = "hero_texture_selected_id",
 					style_id = "hero_texture_selected_id",
 					pass_type = "texture",
-					content_check_function = function (self)
+					content_check_function = function (content)
 						-- function 269
-						local hero_texture_selected_id = self.hero_texture_selected_id
+						local hero_texture_selected_id = content.hero_texture_selected_id
 
-						hero_texture_selected_id = not hero_texture_selected_id and self.button_hotspot.is_selected
+						hero_texture_selected_id = not not hero_texture_selected_id and not not content.button_hotspot.is_selected
 
 						return hero_texture_selected_id
 					end
@@ -8821,9 +8998,9 @@ UIWidgets.create_hero_button = function (arg_263_0, arg_263_1, arg_263_2)
 					style_id = "text",
 					pass_type = "text",
 					text_id = "text",
-					content_check_function = function (self)
+					content_check_function = function (content)
 						-- function 270
-						return self.text
+						return content.text
 					end
 				}
 			}
@@ -8833,23 +9010,23 @@ UIWidgets.create_hero_button = function (arg_263_0, arg_263_1, arg_263_2)
 			texture_hover_id = "tab_hover",
 			texture_selected_id = "tab_selected",
 			button_hotspot = {},
-			hero_texture_normal_id = str,
-			hero_texture_hover_id = str_2,
-			hero_texture_selected_id = str_3,
-			text = var_263_3
+			hero_texture_normal_id = hero_texture_normal_id,
+			hero_texture_hover_id = hero_texture_hover_id,
+			hero_texture_selected_id = hero_texture_selected_id,
+			text = hero_text
 		},
 		style = {
 			texture_id = {},
 			texture_hover_id = {},
 			texture_selected_id = {},
 			hero_texture_normal_id = {
-				scenegraph_id = arg_263_2
+				scenegraph_id = hero_scenegraph_id
 			},
 			hero_texture_hover_id = {
-				scenegraph_id = arg_263_2
+				scenegraph_id = hero_scenegraph_id
 			},
 			hero_texture_selected_id = {
-				scenegraph_id = arg_263_2
+				scenegraph_id = hero_scenegraph_id
 			},
 			text = {
 				font_size = 24,
@@ -8868,11 +9045,11 @@ UIWidgets.create_hero_button = function (arg_263_0, arg_263_1, arg_263_2)
 				}
 			}
 		},
-		scenegraph_id = arg_263_1
+		scenegraph_id = scenegraph_id
 	}
 end
 
-UIWidgets.create_trait_button = function (arg_271_0, arg_271_1, arg_271_2, arg_271_3, arg_271_4)
+UIWidgets.create_trait_button = function (text, scenegraph_id, text_scenegraph_id, icon_scenegraph_id, animation_scenegraph_id)
 	-- function 271
 	return {
 		element = {
@@ -8886,11 +9063,11 @@ UIWidgets.create_trait_button = function (arg_271_0, arg_271_1, arg_271_2, arg_2
 					texture_id = "trait_owned_normal",
 					style_id = "trait_owned_normal",
 					pass_type = "texture",
-					content_check_function = function (self)
+					content_check_function = function (content)
 						-- function 272
-						local owned = self.owned
+						local owned = content.owned
 
-						owned = not owned and not not self.button_hotspot.is_hover or not self.button_hotspot.is_selected
+						owned = not not owned and not content.button_hotspot.is_hover and not not not content.button_hotspot.is_selected
 
 						return owned
 					end
@@ -8899,13 +9076,13 @@ UIWidgets.create_trait_button = function (arg_271_0, arg_271_1, arg_271_2, arg_2
 					texture_id = "trait_owned_hover",
 					style_id = "trait_owned_hover",
 					pass_type = "texture",
-					content_check_function = function (self)
+					content_check_function = function (content)
 						-- function 273
-						local owned = self.owned
+						local owned = content.owned
 
-						if not owned then
-							owned = self.button_hotspot.is_hover
-							owned = not owned and not self.button_hotspot.is_selected
+						if owned then
+							owned = content.button_hotspot.is_hover
+							owned = not not owned and not not not content.button_hotspot.is_selected
 						end
 
 						return owned
@@ -8915,11 +9092,11 @@ UIWidgets.create_trait_button = function (arg_271_0, arg_271_1, arg_271_2, arg_2
 					texture_id = "trait_owned_selected",
 					style_id = "trait_owned_selected",
 					pass_type = "texture",
-					content_check_function = function (self)
+					content_check_function = function (content)
 						-- function 274
-						local owned = self.owned
+						local owned = content.owned
 
-						owned = not owned and self.button_hotspot.is_selected
+						owned = not not owned and not not content.button_hotspot.is_selected
 
 						return owned
 					end
@@ -8928,20 +9105,20 @@ UIWidgets.create_trait_button = function (arg_271_0, arg_271_1, arg_271_2, arg_2
 					texture_id = "trait_purchase_normal",
 					style_id = "trait_purchase_normal",
 					pass_type = "texture",
-					content_check_function = function (self)
+					content_check_function = function (content)
 						-- function 275
-						return not not self.button_hotspot.is_hover or not not self.button_hotspot.is_selected or not not self.owned or not self.locked
+						return not content.button_hotspot.is_hover and not content.button_hotspot.is_selected and not content.owned and not not not content.locked
 					end
 				},
 				{
 					texture_id = "trait_purchase_hover",
 					style_id = "trait_purchase_hover",
 					pass_type = "texture",
-					content_check_function = function (self)
+					content_check_function = function (content)
 						-- function 276
-						local is_hover = self.button_hotspot.is_hover
+						local is_hover = content.button_hotspot.is_hover
 
-						is_hover = not is_hover and not not self.button_hotspot.is_selected and not not self.owned or not self.locked
+						is_hover = not not is_hover and not content.button_hotspot.is_selected and not content.owned and not not not content.locked
 
 						return is_hover
 					end
@@ -8950,11 +9127,11 @@ UIWidgets.create_trait_button = function (arg_271_0, arg_271_1, arg_271_2, arg_2
 					texture_id = "trait_purchase_selected",
 					style_id = "trait_purchase_selected",
 					pass_type = "texture",
-					content_check_function = function (self)
+					content_check_function = function (content)
 						-- function 277
-						local is_selected = self.button_hotspot.is_selected
+						local is_selected = content.button_hotspot.is_selected
 
-						is_selected = not is_selected and not not self.owned or not self.locked
+						is_selected = not not is_selected and not content.owned and not not not content.locked
 
 						return is_selected
 					end
@@ -8963,11 +9140,11 @@ UIWidgets.create_trait_button = function (arg_271_0, arg_271_1, arg_271_2, arg_2
 					texture_id = "trait_locked_normal",
 					style_id = "trait_locked_normal",
 					pass_type = "texture",
-					content_check_function = function (self)
+					content_check_function = function (content)
 						-- function 278
-						local locked = self.locked
+						local locked = content.locked
 
-						locked = not locked and not not self.button_hotspot.is_hover or not self.button_hotspot.is_selected
+						locked = not not locked and not content.button_hotspot.is_hover and not not not content.button_hotspot.is_selected
 
 						return locked
 					end
@@ -8976,13 +9153,13 @@ UIWidgets.create_trait_button = function (arg_271_0, arg_271_1, arg_271_2, arg_2
 					texture_id = "trait_locked_hover",
 					style_id = "trait_locked_hover",
 					pass_type = "texture",
-					content_check_function = function (self)
+					content_check_function = function (content)
 						-- function 279
-						local locked = self.locked
+						local locked = content.locked
 
-						if not locked then
-							locked = self.button_hotspot.is_hover
-							locked = not locked and not self.button_hotspot.is_selected
+						if locked then
+							locked = content.button_hotspot.is_hover
+							locked = not not locked and not not not content.button_hotspot.is_selected
 						end
 
 						return locked
@@ -8992,11 +9169,11 @@ UIWidgets.create_trait_button = function (arg_271_0, arg_271_1, arg_271_2, arg_2
 					texture_id = "trait_locked_selected",
 					style_id = "trait_locked_selected",
 					pass_type = "texture",
-					content_check_function = function (self)
+					content_check_function = function (content)
 						-- function 280
-						local locked = self.locked
+						local locked = content.locked
 
-						locked = not locked and self.button_hotspot.is_selected
+						locked = not not locked and not not content.button_hotspot.is_selected
 
 						return locked
 					end
@@ -9039,7 +9216,7 @@ UIWidgets.create_trait_button = function (arg_271_0, arg_271_1, arg_271_2, arg_2
 			trait_owned_selected = "forge_item_box_gold_selected",
 			trait_purchase_selected = "forge_item_box_rock_selected",
 			button_hotspot = {},
-			title_text = arg_271_0
+			title_text = text
 		},
 		style = {
 			trait_owned_selected = {},
@@ -9052,7 +9229,7 @@ UIWidgets.create_trait_button = function (arg_271_0, arg_271_1, arg_271_2, arg_2
 			trait_locked_hover = {},
 			trait_locked_normal = {},
 			trait_icon = {
-				scenegraph_id = arg_271_3
+				scenegraph_id = icon_scenegraph_id
 			},
 			title_text = {
 				vertical_alignment = "center",
@@ -9062,7 +9239,7 @@ UIWidgets.create_trait_button = function (arg_271_0, arg_271_1, arg_271_2, arg_2
 				pixel_perfect = true,
 				font_type = "hell_shark",
 				text_color = Colors.get_table("white"),
-				scenegraph_id = arg_271_2
+				scenegraph_id = text_scenegraph_id
 			},
 			description_text = {
 				font_size = 16,
@@ -9072,7 +9249,7 @@ UIWidgets.create_trait_button = function (arg_271_0, arg_271_1, arg_271_2, arg_2
 				dynamic_font = true,
 				font_type = "hell_shark",
 				text_color = Colors.get_table("white"),
-				scenegraph_id = arg_271_2,
+				scenegraph_id = text_scenegraph_id,
 				offset = {
 					0,
 					-20,
@@ -9086,14 +9263,14 @@ UIWidgets.create_trait_button = function (arg_271_0, arg_271_1, arg_271_2, arg_2
 					255,
 					255
 				},
-				scenegraph_id = arg_271_4
+				scenegraph_id = animation_scenegraph_id
 			}
 		},
-		scenegraph_id = arg_271_1
+		scenegraph_id = scenegraph_id
 	}
 end
 
-UIWidgets.create_scoreboard_topic_widget = function (arg_281_0)
+UIWidgets.create_scoreboard_topic_widget = function (scenegraph_id)
 	-- function 281
 	return {
 		element = {
@@ -9105,57 +9282,57 @@ UIWidgets.create_scoreboard_topic_widget = function (arg_281_0)
 				{
 					pass_type = "on_click",
 					click_check_content_id = "button_hotspot",
-					click_function = function (arg_282_0, arg_282_1, arg_282_2, arg_282_3)
+					click_function = function (ui_scenegraph, ui_style, ui_content, input_service)
 						-- function 282
-						arg_282_2.button_hotspot.is_selected = true
+						ui_content.button_hotspot.is_selected = true
 					end
 				},
 				{
 					texture_id = "texture_hover_id",
 					style_id = "background_hover",
 					pass_type = "texture",
-					content_check_function = function (self)
+					content_check_function = function (content)
 						-- function 283
-						return not self.disabled
+						return not content.disabled
 					end
 				},
 				{
 					texture_id = "texture_select_id",
 					style_id = "background_select",
 					pass_type = "texture",
-					content_check_function = function (self)
+					content_check_function = function (content)
 						-- function 284
-						return not self.disabled
+						return not content.disabled
 					end
 				},
 				{
 					style_id = "background",
 					pass_type = "texture_uv_dynamic_color_uvs_size_offset",
 					content_id = "background",
-					dynamic_function = function (self, arg_285_1, arg_285_2, arg_285_3)
+					dynamic_function = function (content, style, size, dt)
 						-- function 285
-						local fraction = self.fraction
-						local direction = self.direction
-						local color = arg_285_1.color
-						local uv_start_pixels = arg_285_1.uv_start_pixels
-						local uv_scale_pixels = arg_285_1.uv_scale_pixels
-						local num = uv_start_pixels + uv_scale_pixels * fraction
-						local uvs = arg_285_1.uvs
-						local scale_axis = arg_285_1.scale_axis
+						local fraction = content.fraction
+						local direction = content.direction
+						local color = style.color
+						local uv_start_pixels = style.uv_start_pixels
+						local uv_scale_pixels = style.uv_scale_pixels
+						local uv_pixels = uv_start_pixels + uv_scale_pixels * fraction
+						local uvs = style.uvs
+						local uv_scale_axis = style.scale_axis
 
 						if direction == 1 then
-							uvs[1][scale_axis] = 0
-							uvs[2][scale_axis] = num / (uv_start_pixels + uv_scale_pixels)
-							arg_285_2[scale_axis] = num
-							compact_topic_offset[scale_axis] = 0
+							uvs[1][uv_scale_axis] = 0
+							uvs[2][uv_scale_axis] = uv_pixels / (uv_start_pixels + uv_scale_pixels)
+							size[uv_scale_axis] = uv_pixels
+							compact_topic_offset[uv_scale_axis] = 0
 						else
-							uvs[2][scale_axis] = 1
-							uvs[1][scale_axis] = 1 - num / (uv_start_pixels + uv_scale_pixels)
-							arg_285_2[scale_axis] = num
-							compact_topic_offset[scale_axis] = -(num - (uv_start_pixels + uv_scale_pixels))
+							uvs[2][uv_scale_axis] = 1
+							uvs[1][uv_scale_axis] = 1 - uv_pixels / (uv_start_pixels + uv_scale_pixels)
+							size[uv_scale_axis] = uv_pixels
+							compact_topic_offset[uv_scale_axis] = -(uv_pixels - (uv_start_pixels + uv_scale_pixels))
 						end
 
-						return arg_285_1.color, uvs, arg_285_2, compact_topic_offset
+						return style.color, uvs, size, compact_topic_offset
 					end
 				},
 				{
@@ -9290,11 +9467,11 @@ UIWidgets.create_scoreboard_topic_widget = function (arg_281_0)
 				}
 			}
 		},
-		scenegraph_id = arg_281_0
+		scenegraph_id = scenegraph_id
 	}
 end
 
-UIWidgets.create_splash_video = function (self, arg_286_1)
+UIWidgets.create_splash_video = function (input, video_player_reference)
 	-- function 286
 	return {
 		element = {
@@ -9303,15 +9480,15 @@ UIWidgets.create_splash_video = function (self, arg_286_1)
 					style_id = "background",
 					scenegraph_id = "background",
 					pass_type = "rect",
-					content_check_function = function (arg_287_0)
+					content_check_function = function (content)
 						-- function 287
-						local resolution, var_287_1 = Gui.resolution()
-						local num = resolution / var_287_1
-						local num_2 = 1.7777777777777777
-						local var_287_4 = var_287_1
-						local var_287_5 = resolution
+						local w, h = Gui.resolution()
+						local aspect_ratio = w / h
+						local default_aspect_ratio = 1.7777777777777777
+						local height = h
+						local width = w
 
-						if math.abs(num - num_2) > 0.005 then
+						if math.abs(aspect_ratio - default_aspect_ratio) > 0.005 then
 							return true
 						end
 					end
@@ -9326,8 +9503,8 @@ UIWidgets.create_splash_video = function (self, arg_286_1)
 		content = {
 			video_content = {
 				video_completed = false,
-				video_player_reference = arg_286_1,
-				material_name = self.material_name
+				video_player_reference = video_player_reference,
+				material_name = input.material_name
 			}
 		},
 		style = {
@@ -9338,11 +9515,11 @@ UIWidgets.create_splash_video = function (self, arg_286_1)
 				color = Colors.color_definitions.white
 			}
 		},
-		scenegraph_id = self.scenegraph_id
+		scenegraph_id = input.scenegraph_id
 	}
 end
 
-UIWidgets.create_video = function (arg_288_0, arg_288_1, arg_288_2)
+UIWidgets.create_video = function (scenegraph_id, material_name, video_player_reference)
 	-- function 288
 	return {
 		element = {
@@ -9357,8 +9534,8 @@ UIWidgets.create_video = function (arg_288_0, arg_288_1, arg_288_2)
 		content = {
 			video_content = {
 				video_completed = false,
-				video_player_reference = arg_288_2,
-				material_name = arg_288_1
+				video_player_reference = video_player_reference,
+				material_name = material_name
 			}
 		},
 		style = {
@@ -9371,11 +9548,11 @@ UIWidgets.create_video = function (arg_288_0, arg_288_1, arg_288_2)
 				}
 			}
 		},
-		scenegraph_id = arg_288_0
+		scenegraph_id = scenegraph_id
 	}
 end
 
-UIWidgets.create_fixed_aspect_video = function (arg_289_0, arg_289_1, arg_289_2)
+UIWidgets.create_fixed_aspect_video = function (scenegraph_id, material_name, video_player_reference)
 	-- function 289
 	return {
 		element = {
@@ -9384,15 +9561,15 @@ UIWidgets.create_fixed_aspect_video = function (arg_289_0, arg_289_1, arg_289_2)
 					style_id = "background",
 					scenegraph_id = "background",
 					pass_type = "rect",
-					content_check_function = function (arg_290_0)
+					content_check_function = function (content)
 						-- function 290
-						local resolution, var_290_1 = Gui.resolution()
-						local num = resolution / var_290_1
-						local num_2 = 1.7777777777777777
-						local var_290_4 = var_290_1
-						local var_290_5 = resolution
+						local w, h = Gui.resolution()
+						local current_aspect_ratio = w / h
+						local default_aspect_ration = 1.7777777777777777
+						local height = h
+						local width = w
 
-						if math.abs(num - num_2) > 0.005 then
+						if math.abs(current_aspect_ratio - default_aspect_ration) > 0.005 then
 							return true
 						end
 					end
@@ -9407,8 +9584,8 @@ UIWidgets.create_fixed_aspect_video = function (arg_289_0, arg_289_1, arg_289_2)
 		content = {
 			video_content = {
 				video_completed = false,
-				video_player_reference = arg_289_2,
-				material_name = arg_289_1
+				video_player_reference = video_player_reference,
+				material_name = material_name
 			}
 		},
 		style = {
@@ -9429,11 +9606,11 @@ UIWidgets.create_fixed_aspect_video = function (arg_289_0, arg_289_1, arg_289_2)
 				}
 			}
 		},
-		scenegraph_id = arg_289_0
+		scenegraph_id = scenegraph_id
 	}
 end
 
-UIWidgets.create_splash_texture = function (self)
+UIWidgets.create_splash_texture = function (input)
 	-- function 291
 	local tbl = {
 		element = {
@@ -9442,18 +9619,18 @@ UIWidgets.create_splash_texture = function (self)
 					style_id = "foreground",
 					scenegraph_id = "foreground",
 					pass_type = "rect",
-					content_check_function = function (self)
+					content_check_function = function (content)
 						-- function 292
-						return self.foreground.disable_foreground ~= true
+						return content.foreground.disable_foreground ~= true
 					end
 				},
 				{
 					style_id = "background",
 					scenegraph_id = "background",
 					pass_type = "rect",
-					content_check_function = function (self)
+					content_check_function = function (content)
 						-- function 293
-						return self.foreground.disable_background ~= true
+						return content.foreground.disable_background ~= true
 					end
 				},
 				{
@@ -9461,33 +9638,33 @@ UIWidgets.create_splash_texture = function (self)
 					style_id = "texture_style",
 					pass_type = "texture",
 					content_id = "texture_content",
-					scenegraph_id = self.scenegraph_id,
-					content_check_function = function (self)
+					scenegraph_id = input.scenegraph_id,
+					content_check_function = function (content)
 						-- function 294
-						return self.material_name
+						return content.material_name
 					end
 				},
 				{
 					style_id = "texts_style",
 					pass_type = "multiple_texts",
 					texts_id = "texts",
-					scenegraph_id = self.texts_scenegraph_id,
-					content_check_function = function (self)
+					scenegraph_id = input.texts_scenegraph_id,
+					content_check_function = function (content)
 						-- function 295
-						return self.texts.texts ~= nil
+						return content.texts.texts ~= nil
 					end
 				}
 			}
 		},
 		content = {
 			texture_content = {
-				material_name = self.material_name
+				material_name = input.material_name
 			},
 			texts = {
-				texts = self.texts
+				texts = input.texts
 			},
 			foreground = {
-				disable_foreground = self.disable_foreground
+				disable_foreground = input.disable_foreground
 			}
 		}
 	}
@@ -9500,11 +9677,11 @@ UIWidgets.create_splash_texture = function (self)
 		}
 	}
 	local tbl_3 = {
-		size = self.texture_size
+		size = input.texture_size
 	}
-	local texture_offset = self.texture_offset
+	local texture_offset = input.texture_offset
 
-	texture_offset = texture_offset or {
+	texture_offset = not not texture_offset or not not {
 		0,
 		0,
 		0
@@ -9514,26 +9691,26 @@ UIWidgets.create_splash_texture = function (self)
 	tbl_2.texts_style = {
 		scenegraph_id = "texts",
 		text_color = Colors.color_definitions.white,
-		font_size = self.font_size,
-		dynamic_font = self.dynamic_font,
-		pixel_perfect = self.pixel_perfect,
-		font_type = self.font_type,
-		localize = self.localize,
-		horizontal_alignment = self.text_horizontal_alignment,
-		vertical_alignment = self.text_vertical_alignment,
-		spacing = self.spacing,
-		size = self.size,
-		axis = self.axis,
-		direction = self.direction,
-		offset = self.offset
+		font_size = input.font_size,
+		dynamic_font = input.dynamic_font,
+		pixel_perfect = input.pixel_perfect,
+		font_type = input.font_type,
+		localize = input.localize,
+		horizontal_alignment = input.text_horizontal_alignment,
+		vertical_alignment = input.text_vertical_alignment,
+		spacing = input.spacing,
+		size = input.size,
+		axis = input.axis,
+		direction = input.direction,
+		offset = input.offset
 	}
 	tbl.style = tbl_2
-	tbl.scenegraph_id = self.scenegraph_id
+	tbl.scenegraph_id = input.scenegraph_id
 
 	return tbl
 end
 
-UIWidgets.create_loader_icon = function (arg_296_0)
+UIWidgets.create_loader_icon = function (scenegraph_id)
 	-- function 296
 	return {
 		element = {
@@ -9605,11 +9782,11 @@ UIWidgets.create_loader_icon = function (arg_296_0)
 				}
 			}
 		},
-		scenegraph_id = arg_296_0
+		scenegraph_id = scenegraph_id
 	}
 end
 
-UIWidgets.create_partner_splash_widget = function (self)
+UIWidgets.create_partner_splash_widget = function (input)
 	-- function 297
 	return {
 		element = {
@@ -9618,9 +9795,9 @@ UIWidgets.create_partner_splash_widget = function (self)
 					style_id = "foreground",
 					scenegraph_id = "foreground",
 					pass_type = "rect",
-					content_check_function = function (self)
+					content_check_function = function (content)
 						-- function 298
-						return self.foreground.disable_foreground ~= true
+						return content.foreground.disable_foreground ~= true
 					end
 				},
 				{
@@ -9632,10 +9809,10 @@ UIWidgets.create_partner_splash_widget = function (self)
 					style_id = "texts_style",
 					pass_type = "multiple_texts",
 					texts_id = "texts",
-					scenegraph_id = self.texts_scenegraph_id,
-					content_check_function = function (self)
+					scenegraph_id = input.texts_scenegraph_id,
+					content_check_function = function (content)
 						-- function 299
-						return self.texts.texts ~= nil
+						return content.texts.texts ~= nil
 					end
 				},
 				{
@@ -9643,10 +9820,10 @@ UIWidgets.create_partner_splash_widget = function (self)
 					style_id = "texture_style_1",
 					pass_type = "texture",
 					content_id = "texture_content",
-					scenegraph_id = self.scenegraph_id,
-					content_check_function = function (self)
+					scenegraph_id = input.scenegraph_id,
+					content_check_function = function (content)
 						-- function 300
-						return self.material_name_1
+						return content.material_name_1
 					end
 				},
 				{
@@ -9654,10 +9831,10 @@ UIWidgets.create_partner_splash_widget = function (self)
 					style_id = "texture_style_2",
 					pass_type = "texture",
 					content_id = "texture_content",
-					scenegraph_id = self.scenegraph_id,
-					content_check_function = function (self)
+					scenegraph_id = input.scenegraph_id,
+					content_check_function = function (content)
 						-- function 301
-						return self.material_name_2
+						return content.material_name_2
 					end
 				},
 				{
@@ -9665,10 +9842,10 @@ UIWidgets.create_partner_splash_widget = function (self)
 					style_id = "texture_style_3",
 					pass_type = "texture",
 					content_id = "texture_content",
-					scenegraph_id = self.scenegraph_id,
-					content_check_function = function (self)
+					scenegraph_id = input.scenegraph_id,
+					content_check_function = function (content)
 						-- function 302
-						return self.material_name_3
+						return content.material_name_3
 					end
 				},
 				{
@@ -9676,10 +9853,10 @@ UIWidgets.create_partner_splash_widget = function (self)
 					style_id = "texture_style_4",
 					pass_type = "texture",
 					content_id = "texture_content",
-					scenegraph_id = self.scenegraph_id,
-					content_check_function = function (self)
+					scenegraph_id = input.scenegraph_id,
+					content_check_function = function (content)
 						-- function 303
-						return self.material_name_4
+						return content.material_name_4
 					end
 				},
 				{
@@ -9687,10 +9864,10 @@ UIWidgets.create_partner_splash_widget = function (self)
 					style_id = "texture_style_5",
 					pass_type = "texture",
 					content_id = "texture_content",
-					scenegraph_id = self.scenegraph_id,
-					content_check_function = function (self)
+					scenegraph_id = input.scenegraph_id,
+					content_check_function = function (content)
 						-- function 304
-						return self.material_name_5
+						return content.material_name_5
 					end
 				},
 				{
@@ -9698,10 +9875,10 @@ UIWidgets.create_partner_splash_widget = function (self)
 					style_id = "texture_style_6",
 					pass_type = "texture",
 					content_id = "texture_content",
-					scenegraph_id = self.scenegraph_id,
-					content_check_function = function (self)
+					scenegraph_id = input.scenegraph_id,
+					content_check_function = function (content)
 						-- function 305
-						return self.material_name_6
+						return content.material_name_6
 					end
 				},
 				{
@@ -9709,10 +9886,10 @@ UIWidgets.create_partner_splash_widget = function (self)
 					style_id = "texture_style_7",
 					pass_type = "texture",
 					content_id = "texture_content",
-					scenegraph_id = self.scenegraph_id,
-					content_check_function = function (self)
+					scenegraph_id = input.scenegraph_id,
+					content_check_function = function (content)
 						-- function 306
-						return self.material_name_7
+						return content.material_name_7
 					end
 				},
 				{
@@ -9720,30 +9897,30 @@ UIWidgets.create_partner_splash_widget = function (self)
 					style_id = "texture_style_8",
 					pass_type = "texture",
 					content_id = "texture_content",
-					scenegraph_id = self.scenegraph_id,
-					content_check_function = function (self)
+					scenegraph_id = input.scenegraph_id,
+					content_check_function = function (content)
 						-- function 307
-						return self.material_name_8
+						return content.material_name_8
 					end
 				}
 			}
 		},
 		content = {
 			texture_content = {
-				material_name_1 = self.texture_materials[1],
-				material_name_2 = self.texture_materials[2],
-				material_name_3 = self.texture_materials[3],
-				material_name_4 = self.texture_materials[4],
-				material_name_5 = self.texture_materials[5],
-				material_name_6 = self.texture_materials[6],
-				material_name_7 = self.texture_materials[7],
-				material_name_8 = self.texture_materials[8]
+				material_name_1 = input.texture_materials[1],
+				material_name_2 = input.texture_materials[2],
+				material_name_3 = input.texture_materials[3],
+				material_name_4 = input.texture_materials[4],
+				material_name_5 = input.texture_materials[5],
+				material_name_6 = input.texture_materials[6],
+				material_name_7 = input.texture_materials[7],
+				material_name_8 = input.texture_materials[8]
 			},
 			texts = {
-				texts = self.texts
+				texts = input.texts
 			},
 			foreground = {
-				disable_foreground = self.disable_foreground
+				disable_foreground = input.disable_foreground
 			}
 		},
 		style = {
@@ -9754,51 +9931,51 @@ UIWidgets.create_partner_splash_widget = function (self)
 				color = Colors.color_definitions.black
 			},
 			texture_style_1 = {
-				scenegraph_id = self.texture_scenegraph_ids[1]
+				scenegraph_id = input.texture_scenegraph_ids[1]
 			},
 			texture_style_2 = {
-				scenegraph_id = self.texture_scenegraph_ids[2]
+				scenegraph_id = input.texture_scenegraph_ids[2]
 			},
 			texture_style_3 = {
-				scenegraph_id = self.texture_scenegraph_ids[3]
+				scenegraph_id = input.texture_scenegraph_ids[3]
 			},
 			texture_style_4 = {
-				scenegraph_id = self.texture_scenegraph_ids[4]
+				scenegraph_id = input.texture_scenegraph_ids[4]
 			},
 			texture_style_5 = {
-				scenegraph_id = self.texture_scenegraph_ids[5]
+				scenegraph_id = input.texture_scenegraph_ids[5]
 			},
 			texture_style_6 = {
-				scenegraph_id = self.texture_scenegraph_ids[6]
+				scenegraph_id = input.texture_scenegraph_ids[6]
 			},
 			texture_style_7 = {
-				scenegraph_id = self.texture_scenegraph_ids[7]
+				scenegraph_id = input.texture_scenegraph_ids[7]
 			},
 			texture_style_8 = {
-				scenegraph_id = self.texture_scenegraph_ids[8]
+				scenegraph_id = input.texture_scenegraph_ids[8]
 			},
 			texts_style = {
 				scenegraph_id = "texts",
 				text_color = Colors.color_definitions.white,
-				font_size = self.font_size,
-				dynamic_font = self.dynamic_font,
-				pixel_perfect = self.pixel_perfect,
-				font_type = self.font_type,
-				localize = self.localize,
-				horizontal_alignment = self.text_horizontal_alignment,
-				vertical_alignment = self.text_vertical_alignment,
-				spacing = self.spacing,
-				size = self.size,
-				axis = self.axis,
-				direction = self.direction,
-				offset = self.offset
+				font_size = input.font_size,
+				dynamic_font = input.dynamic_font,
+				pixel_perfect = input.pixel_perfect,
+				font_type = input.font_type,
+				localize = input.localize,
+				horizontal_alignment = input.text_horizontal_alignment,
+				vertical_alignment = input.text_vertical_alignment,
+				spacing = input.spacing,
+				size = input.size,
+				axis = input.axis,
+				direction = input.direction,
+				offset = input.offset
 			}
 		},
-		scenegraph_id = self.scenegraph_id
+		scenegraph_id = input.scenegraph_id
 	}
 end
 
-UIWidgets.create_map_player_entry = function (arg_308_0, arg_308_1)
+UIWidgets.create_map_player_entry = function (scenegraph_id, gamepad_selection_scenegraph_id)
 	-- function 308
 	local tbl = {
 		element = {
@@ -9821,9 +9998,9 @@ UIWidgets.create_map_player_entry = function (arg_308_0, arg_308_1)
 					pass_type = "texture",
 					style_id = "host_icon",
 					texture_id = "host_icon_texture",
-					content_check_function = function (self)
+					content_check_function = function (content)
 						-- function 309
-						return self.is_host
+						return content.is_host
 					end
 				},
 				{
@@ -9835,9 +10012,9 @@ UIWidgets.create_map_player_entry = function (arg_308_0, arg_308_1)
 					style_id = "hero_icon_tooltip_text",
 					pass_type = "tooltip_text",
 					text_id = "hero_icon_tooltip_text",
-					content_check_function = function (self)
+					content_check_function = function (content)
 						-- function 310
-						return self.hero_icon_hotspot.is_hover
+						return content.hero_icon_hotspot.is_hover
 					end
 				},
 				{
@@ -9849,21 +10026,21 @@ UIWidgets.create_map_player_entry = function (arg_308_0, arg_308_1)
 					pass_type = "texture",
 					style_id = "kick_button_texture",
 					texture_id = "kick_button_texture",
-					content_check_function = function (self)
+					content_check_function = function (content)
 						-- function 311
 						local always_show_icons
 
-						if not self.is_host then
-							always_show_icons = self.always_show_icons
+						if not content.is_host then
+							always_show_icons = content.always_show_icons
 
 							if not always_show_icons then
-								always_show_icons = self.kick_enabled
+								always_show_icons = content.kick_enabled
 
-								if not always_show_icons then
-									always_show_icons = self.button_hotspot.is_hover
+								if always_show_icons then
+									always_show_icons = content.button_hotspot.is_hover
 
-									if not always_show_icons then
-										always_show_icons = not self.kick_button_hotspot.is_hover
+									if always_show_icons then
+										always_show_icons = not content.kick_button_hotspot.is_hover
 									end
 								end
 							end
@@ -9882,13 +10059,13 @@ UIWidgets.create_map_player_entry = function (arg_308_0, arg_308_1)
 					pass_type = "texture",
 					style_id = "kick_button_texture_hover",
 					texture_id = "kick_button_texture",
-					content_check_function = function (self)
+					content_check_function = function (content)
 						-- function 312
-						local kick_enabled = self.kick_enabled
+						local kick_enabled = content.kick_enabled
 
-						if not kick_enabled then
-							kick_enabled = self.button_hotspot.is_hover
-							kick_enabled = not kick_enabled and self.kick_button_hotspot.is_hover
+						if kick_enabled then
+							kick_enabled = content.button_hotspot.is_hover
+							kick_enabled = not not kick_enabled and not not content.kick_button_hotspot.is_hover
 						end
 
 						return kick_enabled
@@ -9898,11 +10075,11 @@ UIWidgets.create_map_player_entry = function (arg_308_0, arg_308_1)
 					style_id = "kick_button_tooltip_text",
 					pass_type = "tooltip_text",
 					text_id = "kick_button_tooltip_text",
-					content_check_function = function (self)
+					content_check_function = function (content)
 						-- function 313
-						local kick_enabled = self.kick_enabled
+						local kick_enabled = content.kick_enabled
 
-						kick_enabled = not kick_enabled and self.kick_button_hotspot.is_hover
+						kick_enabled = not not kick_enabled and not not content.kick_button_hotspot.is_hover
 
 						return kick_enabled
 					end
@@ -9911,12 +10088,12 @@ UIWidgets.create_map_player_entry = function (arg_308_0, arg_308_1)
 					pass_type = "texture",
 					style_id = "hover_texture",
 					texture_id = "hover_texture",
-					content_check_function = function (self)
+					content_check_function = function (content)
 						-- function 314
-						if not self.on_console then
-							local is_selected = self.button_hotspot.is_selected
+						if not content.on_console then
+							local is_selected = content.button_hotspot.is_selected
 
-							is_selected = is_selected or self.button_hotspot.is_hover
+							is_selected = not not is_selected or not not content.button_hotspot.is_hover
 
 							return is_selected
 						end
@@ -9926,12 +10103,12 @@ UIWidgets.create_map_player_entry = function (arg_308_0, arg_308_1)
 					pass_type = "texture",
 					style_id = "console_hover_texture",
 					texture_id = "console_hover_texture",
-					content_check_function = function (self)
+					content_check_function = function (content)
 						-- function 315
-						if not self.on_console then
-							local is_selected = self.button_hotspot.is_selected
+						if content.on_console then
+							local is_selected = content.button_hotspot.is_selected
 
-							is_selected = is_selected or self.button_hotspot.is_hover
+							is_selected = not not is_selected or not not content.button_hotspot.is_hover
 
 							return is_selected
 						end
@@ -9960,13 +10137,13 @@ UIWidgets.create_map_player_entry = function (arg_308_0, arg_308_1)
 	local tbl_2 = {}
 	local tbl_3
 
-	if not arg_308_1 then
+	if gamepad_selection_scenegraph_id then
 		tbl_3 = {
 			texture_size = {
 				30,
 				30
 			},
-			scenegraph_id = arg_308_1
+			scenegraph_id = gamepad_selection_scenegraph_id
 		}
 
 		if not tbl_3 then
@@ -10134,12 +10311,12 @@ UIWidgets.create_map_player_entry = function (arg_308_0, arg_308_1)
 		}
 	}
 	tbl.style = tbl_2
-	tbl.scenegraph_id = arg_308_0
+	tbl.scenegraph_id = scenegraph_id
 
 	return tbl
 end
 
-UIWidgets.create_map_settings_stepper = function (arg_316_0, arg_316_1)
+UIWidgets.create_map_settings_stepper = function (scenegraph_id, gamepad_selection_scenegraph_id)
 	-- function 316
 	local tbl = {
 		element = {
@@ -10152,9 +10329,9 @@ UIWidgets.create_map_settings_stepper = function (arg_316_0, arg_316_1)
 					pass_type = "texture",
 					style_id = "hover_texture",
 					texture_id = "hover_texture",
-					content_check_function = function (self)
+					content_check_function = function (content)
 						-- function 317
-						local button_hotspot = self.button_hotspot
+						local button_hotspot = content.button_hotspot
 						local is_selected
 
 						if not button_hotspot.gamepad_active then
@@ -10191,11 +10368,11 @@ UIWidgets.create_map_settings_stepper = function (arg_316_0, arg_316_1)
 					pass_type = "texture",
 					style_id = "left_button_texture",
 					texture_id = "left_button_texture",
-					content_check_function = function (self)
+					content_check_function = function (content)
 						-- function 318
-						local button_hotspot = self.button_hotspot
+						local button_hotspot = content.button_hotspot
 
-						if not button_hotspot.gamepad_active then
+						if button_hotspot.gamepad_active then
 							return button_hotspot.is_selected
 						else
 							return true
@@ -10206,11 +10383,11 @@ UIWidgets.create_map_settings_stepper = function (arg_316_0, arg_316_1)
 					pass_type = "rotated_texture",
 					style_id = "right_button_texture",
 					texture_id = "right_button_texture",
-					content_check_function = function (self)
+					content_check_function = function (content)
 						-- function 319
-						local button_hotspot = self.button_hotspot
+						local button_hotspot = content.button_hotspot
 
-						if not button_hotspot.gamepad_active then
+						if button_hotspot.gamepad_active then
 							return button_hotspot.is_selected
 						else
 							return true
@@ -10221,11 +10398,11 @@ UIWidgets.create_map_settings_stepper = function (arg_316_0, arg_316_1)
 					pass_type = "texture",
 					style_id = "left_button_texture_clicked",
 					texture_id = "left_button_texture_clicked",
-					content_check_function = function (self)
+					content_check_function = function (content)
 						-- function 320
-						local button_hotspot = self.button_hotspot
+						local button_hotspot = content.button_hotspot
 
-						if not button_hotspot.gamepad_active then
+						if button_hotspot.gamepad_active then
 							return button_hotspot.is_selected
 						else
 							return true
@@ -10236,11 +10413,11 @@ UIWidgets.create_map_settings_stepper = function (arg_316_0, arg_316_1)
 					pass_type = "rotated_texture",
 					style_id = "right_button_texture_clicked",
 					texture_id = "right_button_texture_clicked",
-					content_check_function = function (self)
+					content_check_function = function (content)
 						-- function 321
-						local button_hotspot = self.button_hotspot
+						local button_hotspot = content.button_hotspot
 
-						if not button_hotspot.gamepad_active then
+						if button_hotspot.gamepad_active then
 							return button_hotspot.is_selected
 						else
 							return true
@@ -10264,13 +10441,13 @@ UIWidgets.create_map_settings_stepper = function (arg_316_0, arg_316_1)
 	local tbl_2 = {}
 	local tbl_3
 
-	if not arg_316_1 then
+	if gamepad_selection_scenegraph_id then
 		tbl_3 = {
 			texture_size = {
 				40,
 				40
 			},
-			scenegraph_id = arg_316_1
+			scenegraph_id = gamepad_selection_scenegraph_id
 		}
 
 		if not tbl_3 then
@@ -10388,12 +10565,12 @@ UIWidgets.create_map_settings_stepper = function (arg_316_0, arg_316_1)
 		}
 	}
 	tbl.style = tbl_2
-	tbl.scenegraph_id = arg_316_0
+	tbl.scenegraph_id = scenegraph_id
 
 	return tbl
 end
 
-UIWidgets.create_default_stepper = function (arg_322_0, arg_322_1)
+UIWidgets.create_default_stepper = function (scenegraph_id, size)
 	-- function 322
 	return {
 		element = {
@@ -10479,8 +10656,8 @@ UIWidgets.create_default_stepper = function (arg_322_0, arg_322_1)
 		style = {
 			field = {
 				size = {
-					arg_322_1[1] - 70,
-					arg_322_1[2]
+					size[1] - 70,
+					size[2]
 				},
 				offset = {
 					35,
@@ -10496,8 +10673,8 @@ UIWidgets.create_default_stepper = function (arg_322_0, arg_322_1)
 			},
 			field_top = {
 				size = {
-					arg_322_1[1] - 70 - 2,
-					arg_322_1[2] - 2
+					size[1] - 70 - 2,
+					size[2] - 2
 				},
 				offset = {
 					37,
@@ -10522,7 +10699,7 @@ UIWidgets.create_default_stepper = function (arg_322_0, arg_322_1)
 				},
 				offset = {
 					0,
-					arg_322_1[2] / 2 - 13.5,
+					size[2] / 2 - 13.5,
 					2
 				},
 				color = {
@@ -10539,7 +10716,7 @@ UIWidgets.create_default_stepper = function (arg_322_0, arg_322_1)
 				},
 				offset = {
 					6,
-					arg_322_1[2] / 2 - 17.5,
+					size[2] / 2 - 17.5,
 					1
 				},
 				color = {
@@ -10559,8 +10736,8 @@ UIWidgets.create_default_stepper = function (arg_322_0, arg_322_1)
 					27
 				},
 				offset = {
-					arg_322_1[1] - 19,
-					arg_322_1[2] / 2 - 13.5,
+					size[1] - 19,
+					size[2] / 2 - 13.5,
 					2
 				},
 				color = {
@@ -10576,8 +10753,8 @@ UIWidgets.create_default_stepper = function (arg_322_0, arg_322_1)
 					35
 				},
 				offset = {
-					arg_322_1[1] - 36,
-					arg_322_1[2] / 2 - 17.5,
+					size[1] - 36,
+					size[2] / 2 - 17.5,
 					1
 				},
 				color = {
@@ -10602,13 +10779,13 @@ UIWidgets.create_default_stepper = function (arg_322_0, arg_322_1)
 				}
 			}
 		},
-		scenegraph_id = arg_322_0
+		scenegraph_id = scenegraph_id
 	}
 end
 
-UIWidgets.create_checkbox_widget = function (arg_323_0, arg_323_1, arg_323_2, arg_323_3, arg_323_4, arg_323_5)
+UIWidgets.create_checkbox_widget = function (text, tooltip_text, scenegraph_id, checkbox_offset, optional_text_offset, optional_tooltip_text_disabled)
 	-- function 323
-	local menu_frame_06 = UIFrameSettings.menu_frame_06
+	local frame_settings = UIFrameSettings.menu_frame_06
 
 	return {
 		element = {
@@ -10621,11 +10798,11 @@ UIWidgets.create_checkbox_widget = function (arg_323_0, arg_323_1, arg_323_2, ar
 					style_id = "tooltip_text",
 					pass_type = "tooltip_text",
 					text_id = "tooltip_text",
-					content_check_function = function (self)
+					content_check_function = function (ui_content)
 						-- function 324
-						local is_hover = self.button_hotspot.is_hover
+						local is_hover = ui_content.button_hotspot.is_hover
 
-						is_hover = not is_hover and self.tooltip_text == "" or not self.is_disabled
+						is_hover = not not is_hover and ui_content.tooltip_text ~= "" and not not not ui_content.is_disabled
 
 						return is_hover
 					end
@@ -10634,11 +10811,11 @@ UIWidgets.create_checkbox_widget = function (arg_323_0, arg_323_1, arg_323_2, ar
 					style_id = "tooltip_text",
 					pass_type = "tooltip_text",
 					text_id = "tooltip_text_disabled",
-					content_check_function = function (self)
+					content_check_function = function (ui_content)
 						-- function 325
-						local is_hover = self.button_hotspot.is_hover
+						local is_hover = ui_content.button_hotspot.is_hover
 
-						is_hover = not is_hover and self.tooltip_text_disabled == "" or self.is_disabled
+						is_hover = not not is_hover and ui_content.tooltip_text_disabled ~= "" and not not ui_content.is_disabled
 
 						return is_hover
 					end
@@ -10647,29 +10824,29 @@ UIWidgets.create_checkbox_widget = function (arg_323_0, arg_323_1, arg_323_2, ar
 					style_id = "setting_text",
 					pass_type = "text",
 					text_id = "setting_text",
-					content_check_function = function (self)
+					content_check_function = function (content)
 						-- function 326
-						return not not self.button_hotspot.is_hover or not self.is_disabled
+						return not content.button_hotspot.is_hover and not not not content.is_disabled
 					end
 				},
 				{
 					style_id = "setting_text_disabled",
 					pass_type = "text",
 					text_id = "setting_text",
-					content_check_function = function (self)
+					content_check_function = function (content)
 						-- function 327
-						return self.is_disabled
+						return content.is_disabled
 					end
 				},
 				{
 					style_id = "setting_text_hover",
 					pass_type = "text",
 					text_id = "setting_text",
-					content_check_function = function (self)
+					content_check_function = function (content)
 						-- function 328
-						local is_hover = self.button_hotspot.is_hover
+						local is_hover = content.button_hotspot.is_hover
 
-						is_hover = not is_hover and not self.is_disabled
+						is_hover = not not is_hover and not not not content.is_disabled
 
 						return is_hover
 					end
@@ -10678,11 +10855,11 @@ UIWidgets.create_checkbox_widget = function (arg_323_0, arg_323_1, arg_323_2, ar
 					pass_type = "texture",
 					style_id = "checkbox_marker",
 					texture_id = "checkbox_marker",
-					content_check_function = function (self)
+					content_check_function = function (content)
 						-- function 329
-						local checked = self.checked
+						local checked = content.checked
 
-						checked = not checked and not self.is_disabled
+						checked = not not checked and not not not content.is_disabled
 
 						return checked
 					end
@@ -10691,11 +10868,11 @@ UIWidgets.create_checkbox_widget = function (arg_323_0, arg_323_1, arg_323_2, ar
 					pass_type = "texture",
 					style_id = "checkbox_marker_disabled",
 					texture_id = "checkbox_marker",
-					content_check_function = function (self)
+					content_check_function = function (content)
 						-- function 330
-						local checked = self.checked
+						local checked = content.checked
 
-						checked = not checked and self.is_disabled
+						checked = not not checked and not not content.is_disabled
 
 						return checked
 					end
@@ -10708,18 +10885,18 @@ UIWidgets.create_checkbox_widget = function (arg_323_0, arg_323_1, arg_323_2, ar
 					pass_type = "texture_frame",
 					style_id = "checkbox_frame",
 					texture_id = "checkbox_frame",
-					content_check_function = function (self)
+					content_check_function = function (content)
 						-- function 331
-						return not self.is_disabled
+						return not content.is_disabled
 					end
 				},
 				{
 					pass_type = "texture_frame",
 					style_id = "checkbox_frame_disabled",
 					texture_id = "checkbox_frame",
-					content_check_function = function (self)
+					content_check_function = function (content)
 						-- function 332
-						return self.is_disabled
+						return content.is_disabled
 					end
 				}
 			}
@@ -10728,10 +10905,10 @@ UIWidgets.create_checkbox_widget = function (arg_323_0, arg_323_1, arg_323_2, ar
 			checked = false,
 			checkbox_marker = "matchmaking_checkbox",
 			button_hotspot = {},
-			tooltip_text = arg_323_1,
-			setting_text = arg_323_0,
-			tooltip_text_disabled = arg_323_5 or "",
-			checkbox_frame = menu_frame_06.texture
+			tooltip_text = tooltip_text,
+			setting_text = text,
+			tooltip_text_disabled = not not optional_tooltip_text_disabled or not not "",
+			checkbox_frame = frame_settings.texture
 		},
 		style = {
 			checkbox_style = {
@@ -10742,7 +10919,7 @@ UIWidgets.create_checkbox_widget = function (arg_323_0, arg_323_1, arg_323_2, ar
 					40
 				},
 				offset = {
-					arg_323_3,
+					checkbox_offset,
 					0,
 					1
 				},
@@ -10761,7 +10938,7 @@ UIWidgets.create_checkbox_widget = function (arg_323_0, arg_323_1, arg_323_2, ar
 					40
 				},
 				offset = {
-					arg_323_3,
+					checkbox_offset,
 					0,
 					1
 				},
@@ -10780,7 +10957,7 @@ UIWidgets.create_checkbox_widget = function (arg_323_0, arg_323_1, arg_323_2, ar
 					40
 				},
 				offset = {
-					arg_323_3,
+					checkbox_offset,
 					0,
 					0
 				},
@@ -10798,10 +10975,10 @@ UIWidgets.create_checkbox_widget = function (arg_323_0, arg_323_1, arg_323_2, ar
 					40,
 					40
 				},
-				texture_size = menu_frame_06.texture_size,
-				texture_sizes = menu_frame_06.texture_sizes,
+				texture_size = frame_settings.texture_size,
+				texture_sizes = frame_settings.texture_sizes,
 				offset = {
-					arg_323_3,
+					checkbox_offset,
 					0,
 					1
 				},
@@ -10819,10 +10996,10 @@ UIWidgets.create_checkbox_widget = function (arg_323_0, arg_323_1, arg_323_2, ar
 					40,
 					40
 				},
-				texture_size = menu_frame_06.texture_size,
-				texture_sizes = menu_frame_06.texture_sizes,
+				texture_size = frame_settings.texture_size,
+				texture_sizes = frame_settings.texture_sizes,
 				offset = {
-					arg_323_3,
+					checkbox_offset,
 					0,
 					1
 				},
@@ -10841,7 +11018,7 @@ UIWidgets.create_checkbox_widget = function (arg_323_0, arg_323_1, arg_323_2, ar
 					31
 				},
 				offset = {
-					arg_323_3 + 4,
+					checkbox_offset + 4,
 					6,
 					1
 				},
@@ -10855,7 +11032,7 @@ UIWidgets.create_checkbox_widget = function (arg_323_0, arg_323_1, arg_323_2, ar
 					31
 				},
 				offset = {
-					arg_323_3 + 4,
+					checkbox_offset + 4,
 					6,
 					1
 				},
@@ -10869,7 +11046,7 @@ UIWidgets.create_checkbox_widget = function (arg_323_0, arg_323_1, arg_323_2, ar
 				font_size = 24,
 				font_type = "hell_shark",
 				text_color = Colors.get_color_table_with_alpha("font_title", 255),
-				offset = arg_323_4 or {
+				offset = not not optional_text_offset or not not {
 					-50,
 					0,
 					4
@@ -10883,7 +11060,7 @@ UIWidgets.create_checkbox_widget = function (arg_323_0, arg_323_1, arg_323_2, ar
 				font_size = 24,
 				font_type = "hell_shark",
 				text_color = Colors.get_color_table_with_alpha("white", 96),
-				offset = arg_323_4 or {
+				offset = not not optional_text_offset or not not {
 					-50,
 					0,
 					4
@@ -10897,7 +11074,7 @@ UIWidgets.create_checkbox_widget = function (arg_323_0, arg_323_1, arg_323_2, ar
 				font_size = 24,
 				font_type = "hell_shark",
 				text_color = Colors.get_color_table_with_alpha("font_default", 255),
-				offset = arg_323_4 or {
+				offset = not not optional_text_offset or not not {
 					-50,
 					0,
 					4
@@ -10924,16 +11101,16 @@ UIWidgets.create_checkbox_widget = function (arg_323_0, arg_323_1, arg_323_2, ar
 				}
 			}
 		},
-		scenegraph_id = arg_323_2
+		scenegraph_id = scenegraph_id
 	}
 end
 
-UIWidgets.create_story_level_map_widget = function (arg_333_0, arg_333_1, arg_333_2)
+UIWidgets.create_story_level_map_widget = function (scenegraph_id, level_key, debug_level)
 	-- function 333
 	local show_debug_levels = UISettings.map.show_debug_levels
-	local tbl = {}
-	local num = 0
-	local tbl_2 = {
+	local level_data_list = {}
+	local debug_level_counter = 0
+	local widget_template = {
 		element = {
 			passes = {
 				{
@@ -10943,9 +11120,9 @@ UIWidgets.create_story_level_map_widget = function (arg_333_0, arg_333_1, arg_33
 				{
 					pass_type = "on_click",
 					click_check_content_id = "button_hotspot",
-					click_function = function (arg_334_0, arg_334_1, arg_334_2, arg_334_3)
+					click_function = function (ui_scenegraph, ui_style, ui_content, input_service)
 						-- function 334
-						arg_334_2.button_hotspot.is_selected = true
+						ui_content.button_hotspot.is_selected = true
 					end
 				},
 				{
@@ -11030,7 +11207,7 @@ UIWidgets.create_story_level_map_widget = function (arg_333_0, arg_333_1, arg_33
 			new_flag = "list_item_tag_new",
 			text_background_left = "level_title_banner_left",
 			button_hotspot = {},
-			title_text = arg_333_1
+			title_text = level_key
 		},
 		style = {
 			new_flag = {
@@ -11179,17 +11356,17 @@ UIWidgets.create_story_level_map_widget = function (arg_333_0, arg_333_1, arg_33
 				}
 			}
 		},
-		scenegraph_id = arg_333_0
+		scenegraph_id = scenegraph_id
 	}
 
 	return {
 		game_type = "long",
-		level_key = arg_333_1,
-		widget = UIWidget.init(tbl_2)
+		level_key = level_key,
+		widget = UIWidget.init(widget_template)
 	}
 end
 
-UIWidgets.create_text_button = function (arg_335_0, arg_335_1, arg_335_2, arg_335_3, arg_335_4, arg_335_5)
+UIWidgets.create_text_button = function (scenegraph_id, text, font_size, optional_offset, optional_horizontal_alignment, optional_default_color_name)
 	-- function 335
 	return {
 		element = {
@@ -11202,15 +11379,15 @@ UIWidgets.create_text_button = function (arg_335_0, arg_335_1, arg_335_2, arg_33
 					style_id = "text_hover",
 					pass_type = "text",
 					text_id = "text_field",
-					content_check_function = function (self)
+					content_check_function = function (content)
 						-- function 336
 						local is_hover
 
-						if not self.button_text.disable_button then
-							is_hover = self.button_text.is_hover
+						if not content.button_text.disable_button then
+							is_hover = content.button_text.is_hover
 
 							if not is_hover then
-								is_hover = self.button_text.is_selected
+								is_hover = content.button_text.is_selected
 							end
 						else
 							is_hover = false
@@ -11227,26 +11404,26 @@ UIWidgets.create_text_button = function (arg_335_0, arg_335_1, arg_335_2, arg_33
 					style_id = "text",
 					pass_type = "text",
 					text_id = "text_field",
-					content_check_function = function (self)
+					content_check_function = function (content)
 						-- function 337
-						return not not self.button_text.disable_button or not not self.button_text.is_hover or not self.button_text.is_selected
+						return not content.button_text.disable_button and not content.button_text.is_hover and not not not content.button_text.is_selected
 					end
 				},
 				{
 					style_id = "text_disabled",
 					pass_type = "text",
 					text_id = "text_field",
-					content_check_function = function (self)
+					content_check_function = function (content)
 						-- function 338
-						return self.button_text.disable_button
+						return content.button_text.disable_button
 					end
 				}
 			}
 		},
 		content = {
 			button_text = {},
-			text_field = arg_335_1,
-			default_font_size = arg_335_2
+			text_field = text,
+			default_font_size = font_size
 		},
 		style = {
 			text = {
@@ -11255,10 +11432,10 @@ UIWidgets.create_text_button = function (arg_335_0, arg_335_1, arg_335_2, arg_33
 				localize = true,
 				vertical_alignment = "center",
 				font_type = "hell_shark",
-				font_size = arg_335_2,
-				horizontal_alignment = arg_335_4 or "left",
-				text_color = Colors.get_color_table_with_alpha(arg_335_5 or "font_button_normal", 255),
-				offset = arg_335_3 or {
+				font_size = font_size,
+				horizontal_alignment = not not optional_horizontal_alignment or not not "left",
+				text_color = Colors.get_color_table_with_alpha(not not optional_default_color_name or not not "font_button_normal", 255),
+				offset = not not optional_offset or not not {
 					0,
 					0,
 					4
@@ -11270,10 +11447,10 @@ UIWidgets.create_text_button = function (arg_335_0, arg_335_1, arg_335_2, arg_33
 				localize = true,
 				vertical_alignment = "center",
 				font_type = "hell_shark",
-				font_size = arg_335_2,
-				horizontal_alignment = arg_335_4 or "left",
+				font_size = font_size,
+				horizontal_alignment = not not optional_horizontal_alignment or not not "left",
 				text_color = Colors.get_color_table_with_alpha("white", 255),
-				offset = arg_335_3 or {
+				offset = not not optional_offset or not not {
 					0,
 					0,
 					4
@@ -11285,56 +11462,56 @@ UIWidgets.create_text_button = function (arg_335_0, arg_335_1, arg_335_2, arg_33
 				localize = true,
 				vertical_alignment = "center",
 				font_type = "hell_shark",
-				font_size = arg_335_2,
-				horizontal_alignment = arg_335_4 or "left",
+				font_size = font_size,
+				horizontal_alignment = not not optional_horizontal_alignment or not not "left",
 				text_color = Colors.get_color_table_with_alpha("gray", 50),
-				offset = arg_335_3 or {
+				offset = not not optional_offset or not not {
 					0,
 					0,
 					4
 				}
 			}
 		},
-		scenegraph_id = arg_335_0
+		scenegraph_id = scenegraph_id
 	}
 end
 
-UIWidgets.create_console_panel_button = function (arg_339_0, arg_339_1, arg_339_2, arg_339_3, arg_339_4, arg_339_5, arg_339_6)
+UIWidgets.create_console_panel_button = function (scenegraph_id, size, text, optional_font_size, optional_offset, optional_horizontal_alignment, optional_highlight_color)
 	-- function 339
-	local tbl = {
+	local new_marker_offset = {
 		-19,
 		-25,
 		10
 	}
-	local tbl_2 = {
+	local marker_offset = {
 		0,
 		0,
 		1
 	}
-	local tbl_3 = {
+	local selection_offset = {
 		0,
 		-4,
 		0
 	}
-	local tbl_4 = {
+	local shadow_offset = {
 		2,
 		3,
 		3
 	}
 
-	if not arg_339_4 then
-		tbl_4[1] = tbl_4[1] + arg_339_4[1]
-		tbl_4[2] = tbl_4[2] + arg_339_4[2]
-		tbl_4[3] = arg_339_4[3] - 1
-		tbl_3[1] = tbl_3[1] + arg_339_4[1]
-		tbl_3[2] = tbl_3[2] + arg_339_4[2]
-		tbl_3[3] = arg_339_4[3] - 3
-		tbl_2[1] = tbl_2[1] + arg_339_4[1]
-		tbl_2[2] = tbl_2[2] + arg_339_4[2]
-		tbl_2[3] = arg_339_4[3] - 2
-		tbl[1] = tbl[1] + arg_339_4[1]
-		tbl[2] = tbl[2] + arg_339_4[2]
-		tbl[3] = arg_339_4[3] - 2
+	if optional_offset then
+		shadow_offset[1] = shadow_offset[1] + optional_offset[1]
+		shadow_offset[2] = shadow_offset[2] + optional_offset[2]
+		shadow_offset[3] = optional_offset[3] - 1
+		selection_offset[1] = selection_offset[1] + optional_offset[1]
+		selection_offset[2] = selection_offset[2] + optional_offset[2]
+		selection_offset[3] = optional_offset[3] - 3
+		marker_offset[1] = marker_offset[1] + optional_offset[1]
+		marker_offset[2] = marker_offset[2] + optional_offset[2]
+		marker_offset[3] = optional_offset[3] - 2
+		new_marker_offset[1] = new_marker_offset[1] + optional_offset[1]
+		new_marker_offset[2] = new_marker_offset[2] + optional_offset[2]
+		new_marker_offset[3] = optional_offset[3] - 2
 	end
 
 	return {
@@ -11353,15 +11530,15 @@ UIWidgets.create_console_panel_button = function (arg_339_0, arg_339_1, arg_339_
 					style_id = "text_hover",
 					pass_type = "text",
 					text_id = "text_field",
-					content_check_function = function (self)
+					content_check_function = function (content)
 						-- function 340
 						local is_hover
 
-						if not self.button_hotspot.disable_button then
-							is_hover = self.button_hotspot.is_hover
+						if not content.button_hotspot.disable_button then
+							is_hover = content.button_hotspot.is_hover
 
 							if not is_hover then
-								is_hover = self.button_hotspot.is_selected
+								is_hover = content.button_hotspot.is_selected
 							end
 						else
 							is_hover = false
@@ -11378,27 +11555,27 @@ UIWidgets.create_console_panel_button = function (arg_339_0, arg_339_1, arg_339_
 					style_id = "text",
 					pass_type = "text",
 					text_id = "text_field",
-					content_check_function = function (self)
+					content_check_function = function (content)
 						-- function 341
-						return not not self.button_hotspot.disable_button or not not self.button_hotspot.is_hover or not self.button_hotspot.is_selected
+						return not content.button_hotspot.disable_button and not content.button_hotspot.is_hover and not not not content.button_hotspot.is_selected
 					end
 				},
 				{
 					style_id = "text_disabled",
 					pass_type = "text",
 					text_id = "text_field",
-					content_check_function = function (self)
+					content_check_function = function (content)
 						-- function 342
-						return self.button_hotspot.disable_button
+						return content.button_hotspot.disable_button
 					end
 				},
 				{
 					texture_id = "selected_texture",
 					style_id = "selected_texture",
 					pass_type = "texture",
-					content_check_function = function (self)
+					content_check_function = function (content)
 						-- function 343
-						return not self.button_hotspot.disable_button
+						return not content.button_hotspot.disable_button
 					end
 				},
 				{
@@ -11415,9 +11592,9 @@ UIWidgets.create_console_panel_button = function (arg_339_0, arg_339_1, arg_339_
 					texture_id = "new_marker",
 					style_id = "new_marker",
 					pass_type = "texture",
-					content_check_function = function (self)
+					content_check_function = function (content)
 						-- function 344
-						return self.new
+						return content.new
 					end
 				}
 			}
@@ -11427,8 +11604,8 @@ UIWidgets.create_console_panel_button = function (arg_339_0, arg_339_1, arg_339_
 			new_marker = "list_item_tag_new",
 			selected_texture = "hero_panel_selection_glow",
 			button_hotspot = {},
-			text_field = arg_339_2,
-			default_font_size = arg_339_3 or 32
+			text_field = text,
+			default_font_size = not not optional_font_size or not not 32
 		},
 		style = {
 			text = {
@@ -11438,20 +11615,20 @@ UIWidgets.create_console_panel_button = function (arg_339_0, arg_339_1, arg_339_
 				vertical_alignment = "center",
 				dynamic_font_size = true,
 				font_type = "hell_shark_header",
-				font_size = arg_339_3 or 32,
-				horizontal_alignment = arg_339_5 or "center",
+				font_size = not not optional_font_size or not not 32,
+				horizontal_alignment = not not optional_horizontal_alignment or not not "center",
 				text_color = Colors.get_color_table_with_alpha("font_button_normal", 255),
-				default_offset = arg_339_4 or {
+				default_offset = not not optional_offset or not not {
 					0,
 					10,
 					4
 				},
-				offset = arg_339_4 or {
+				offset = not not optional_offset or not not {
 					0,
 					5,
 					4
 				},
-				size = arg_339_1
+				size = size
 			},
 			text_shadow = {
 				word_wrap = false,
@@ -11460,12 +11637,12 @@ UIWidgets.create_console_panel_button = function (arg_339_0, arg_339_1, arg_339_
 				vertical_alignment = "center",
 				dynamic_font_size = true,
 				font_type = "hell_shark_header",
-				font_size = arg_339_3 or 32,
-				horizontal_alignment = arg_339_5 or "center",
+				font_size = not not optional_font_size or not not 32,
+				horizontal_alignment = not not optional_horizontal_alignment or not not "center",
 				text_color = Colors.get_color_table_with_alpha("black", 255),
-				default_offset = tbl_4,
-				offset = tbl_4,
-				size = arg_339_1
+				default_offset = shadow_offset,
+				offset = shadow_offset,
+				size = size
 			},
 			text_hover = {
 				word_wrap = false,
@@ -11474,20 +11651,20 @@ UIWidgets.create_console_panel_button = function (arg_339_0, arg_339_1, arg_339_
 				vertical_alignment = "center",
 				dynamic_font_size = true,
 				font_type = "hell_shark_header",
-				font_size = arg_339_3 or 32,
-				horizontal_alignment = arg_339_5 or "center",
+				font_size = not not optional_font_size or not not 32,
+				horizontal_alignment = not not optional_horizontal_alignment or not not "center",
 				text_color = Colors.get_color_table_with_alpha("white", 255),
-				default_offset = arg_339_4 or {
+				default_offset = not not optional_offset or not not {
 					0,
 					10,
 					4
 				},
-				offset = arg_339_4 or {
+				offset = not not optional_offset or not not {
 					0,
 					5,
 					4
 				},
-				size = arg_339_1
+				size = size
 			},
 			text_disabled = {
 				word_wrap = false,
@@ -11496,20 +11673,20 @@ UIWidgets.create_console_panel_button = function (arg_339_0, arg_339_1, arg_339_
 				vertical_alignment = "center",
 				dynamic_font_size = true,
 				font_type = "hell_shark_header",
-				font_size = arg_339_3 or 32,
-				horizontal_alignment = arg_339_5 or "center",
+				font_size = not not optional_font_size or not not 32,
+				horizontal_alignment = not not optional_horizontal_alignment or not not "center",
 				text_color = Colors.get_color_table_with_alpha("gray", 50),
-				default_offset = arg_339_4 or {
+				default_offset = not not optional_offset or not not {
 					0,
 					10,
 					4
 				},
-				offset = arg_339_4 or {
+				offset = not not optional_offset or not not {
 					0,
 					5,
 					4
 				},
-				size = arg_339_1
+				size = size
 			},
 			selected_texture = {
 				vertical_alignment = "top",
@@ -11518,8 +11695,8 @@ UIWidgets.create_console_panel_button = function (arg_339_0, arg_339_1, arg_339_
 					169,
 					35
 				},
-				color = arg_339_6 or Colors.get_color_table_with_alpha("font_title", 255),
-				offset = tbl_3
+				color = not not optional_highlight_color or not not Colors.get_color_table_with_alpha("font_title", 255),
+				offset = selection_offset
 			},
 			marker_left = {
 				vertical_alignment = "top",
@@ -11530,9 +11707,9 @@ UIWidgets.create_console_panel_button = function (arg_339_0, arg_339_1, arg_339_
 				},
 				color = Colors.get_color_table_with_alpha("white", 255),
 				offset = {
-					tbl_2[1] - 27.5,
-					tbl_2[2],
-					tbl_2[3]
+					marker_offset[1] - 27.5,
+					marker_offset[2],
+					marker_offset[3]
 				}
 			},
 			marker_right = {
@@ -11544,9 +11721,9 @@ UIWidgets.create_console_panel_button = function (arg_339_0, arg_339_1, arg_339_
 				},
 				color = Colors.get_color_table_with_alpha("white", 255),
 				offset = {
-					tbl_2[1] + 27.5,
-					tbl_2[2],
-					tbl_2[3]
+					marker_offset[1] + 27.5,
+					marker_offset[2],
+					marker_offset[3]
 				}
 			},
 			new_marker = {
@@ -11558,9 +11735,9 @@ UIWidgets.create_console_panel_button = function (arg_339_0, arg_339_1, arg_339_
 				},
 				color = Colors.get_color_table_with_alpha("white", 255),
 				offset = {
-					tbl[1],
-					tbl[2],
-					tbl[3]
+					new_marker_offset[1],
+					new_marker_offset[2],
+					new_marker_offset[3]
 				}
 			}
 		},
@@ -11569,11 +11746,11 @@ UIWidgets.create_console_panel_button = function (arg_339_0, arg_339_1, arg_339_
 			0,
 			0
 		},
-		scenegraph_id = arg_339_0
+		scenegraph_id = scenegraph_id
 	}
 end
 
-UIWidgets.create_compare_menu_trait_widget = function (arg_345_0, arg_345_1, arg_345_2, arg_345_3)
+UIWidgets.create_compare_menu_trait_widget = function (scenegraph_id, description_scenegraph_id, masked, use_divider)
 	-- function 345
 	local tbl = {
 		element = {
@@ -11582,29 +11759,29 @@ UIWidgets.create_compare_menu_trait_widget = function (arg_345_0, arg_345_1, arg
 					pass_type = "texture",
 					style_id = "texture_bg_id",
 					texture_id = "texture_bg_id",
-					content_check_function = function (self)
+					content_check_function = function (content)
 						-- function 346
-						return self.use_background
+						return content.use_background
 					end
 				},
 				{
 					pass_type = "texture",
 					style_id = "texture_id",
 					texture_id = "texture_id",
-					content_check_function = function (self)
+					content_check_function = function (content)
 						-- function 347
-						return self.texture_id
+						return content.texture_id
 					end
 				},
 				{
 					pass_type = "texture",
 					style_id = "texture_lock_id",
 					texture_id = "texture_lock_id",
-					content_check_function = function (self)
+					content_check_function = function (content)
 						-- function 348
-						local locked = self.locked
+						local locked = content.locked
 
-						locked = not locked and not self.disabled
+						locked = not not locked and not not not content.disabled
 
 						return locked
 					end
@@ -11613,9 +11790,9 @@ UIWidgets.create_compare_menu_trait_widget = function (arg_345_0, arg_345_1, arg
 					pass_type = "texture",
 					style_id = "texture_glow_id",
 					texture_id = "texture_glow_id",
-					content_check_function = function (self)
+					content_check_function = function (content)
 						-- function 349
-						return self.use_glow
+						return content.use_glow
 					end
 				},
 				{
@@ -11632,9 +11809,9 @@ UIWidgets.create_compare_menu_trait_widget = function (arg_345_0, arg_345_1, arg
 					pass_type = "texture",
 					style_id = "text_divider_texture",
 					texture_id = "text_divider_texture",
-					content_check_function = function (self)
+					content_check_function = function (content)
 						-- function 350
-						return self.use_divider
+						return content.use_divider
 					end
 				}
 			}
@@ -11651,12 +11828,12 @@ UIWidgets.create_compare_menu_trait_widget = function (arg_345_0, arg_345_1, arg
 			disabled = false,
 			description_text = "test_description_text",
 			text_divider_texture = "summary_screen_line_breaker",
-			use_divider = arg_345_3
+			use_divider = use_divider
 		}
 	}
 	local tbl_2 = {
 		text_divider_texture = {
-			masked = arg_345_2,
+			masked = masked,
 			size = {
 				386,
 				22
@@ -11682,7 +11859,7 @@ UIWidgets.create_compare_menu_trait_widget = function (arg_345_0, arg_345_1, arg
 	}
 	local flag
 
-	flag = not arg_345_2 and "hell_shark_masked" and "hell_shark"
+	flag = (not masked or not "hell_shark_masked") and not not "hell_shark"
 	tbl_3.font_type = flag
 	tbl_3.text_color = Colors.get_color_table_with_alpha("cheeseburger", 255)
 	tbl_3.offset = {
@@ -11701,7 +11878,7 @@ UIWidgets.create_compare_menu_trait_widget = function (arg_345_0, arg_345_1, arg
 	}
 	local flag_2
 
-	flag_2 = not arg_345_2 and "hell_shark_masked" and "hell_shark"
+	flag_2 = (not masked or not "hell_shark_masked") and not not "hell_shark"
 	tbl_4.font_type = flag_2
 	tbl_4.text_color = Colors.get_color_table_with_alpha("white", 255)
 	tbl_4.offset = {
@@ -11709,10 +11886,10 @@ UIWidgets.create_compare_menu_trait_widget = function (arg_345_0, arg_345_1, arg
 		0,
 		0
 	}
-	tbl_4.scenegraph_id = arg_345_1
+	tbl_4.scenegraph_id = description_scenegraph_id
 	tbl_2.description_text = tbl_4
 	tbl_2.texture_bg_id = {
-		masked = arg_345_2,
+		masked = masked,
 		size = {
 			54,
 			58
@@ -11730,7 +11907,7 @@ UIWidgets.create_compare_menu_trait_widget = function (arg_345_0, arg_345_1, arg
 		}
 	}
 	tbl_2.texture_id = {
-		masked = arg_345_2,
+		masked = masked,
 		color = {
 			255,
 			255,
@@ -11739,7 +11916,7 @@ UIWidgets.create_compare_menu_trait_widget = function (arg_345_0, arg_345_1, arg
 		}
 	}
 	tbl_2.texture_lock_id = {
-		masked = arg_345_2,
+		masked = masked,
 		offset = {
 			0,
 			0,
@@ -11753,7 +11930,7 @@ UIWidgets.create_compare_menu_trait_widget = function (arg_345_0, arg_345_1, arg
 		}
 	}
 	tbl_2.texture_glow_id = {
-		masked = arg_345_2,
+		masked = masked,
 		size = {
 			104,
 			104
@@ -11771,12 +11948,12 @@ UIWidgets.create_compare_menu_trait_widget = function (arg_345_0, arg_345_1, arg
 		}
 	}
 	tbl.style = tbl_2
-	tbl.scenegraph_id = arg_345_0
+	tbl.scenegraph_id = scenegraph_id
 
 	return tbl
 end
 
-UIWidgets.create_journal_tab = function (arg_351_0, arg_351_1, arg_351_2)
+UIWidgets.create_journal_tab = function (scenegraph_id, texture, masked)
 	-- function 351
 	return {
 		element = {
@@ -11794,31 +11971,31 @@ UIWidgets.create_journal_tab = function (arg_351_0, arg_351_1, arg_351_2)
 					texture_id = "texture_hover_id",
 					style_id = "texture_id",
 					pass_type = "texture",
-					content_check_function = function (self)
+					content_check_function = function (content)
 						-- function 352
-						local button_hotspot = self.button_hotspot
+						local button_hotspot = content.button_hotspot
 
-						return not not button_hotspot.disabled or button_hotspot.is_hover
+						return not button_hotspot.disabled and not not button_hotspot.is_hover
 					end
 				},
 				{
 					texture_id = "texture_selected_id",
 					style_id = "texture_id",
 					pass_type = "texture",
-					content_check_function = function (self)
+					content_check_function = function (content)
 						-- function 353
-						local button_hotspot = self.button_hotspot
+						local button_hotspot = content.button_hotspot
 
-						return not not button_hotspot.disabled or button_hotspot.is_clicked == 0 or button_hotspot.is_selected
+						return not button_hotspot.disabled and button_hotspot.is_clicked == 0 or not not button_hotspot.is_selected
 					end
 				},
 				{
 					texture_id = "new_texture_id",
 					style_id = "new_texture_id",
 					pass_type = "texture",
-					content_check_function = function (self)
+					content_check_function = function (content)
 						-- function 354
-						return self.new
+						return content.new
 					end
 				}
 			}
@@ -11827,9 +12004,9 @@ UIWidgets.create_journal_tab = function (arg_351_0, arg_351_1, arg_351_2)
 			new = false,
 			new_texture_id = "journal_icon_02",
 			button_hotspot = {},
-			texture_id = arg_351_1,
-			texture_hover_id = arg_351_1 .. "_selected",
-			texture_selected_id = arg_351_1 .. "_hover"
+			texture_id = texture,
+			texture_hover_id = texture .. "_selected",
+			texture_selected_id = texture .. "_hover"
 		},
 		style = {
 			texture_id = {
@@ -11844,7 +12021,7 @@ UIWidgets.create_journal_tab = function (arg_351_0, arg_351_1, arg_351_2)
 					0,
 					0
 				},
-				masked = arg_351_2
+				masked = masked
 			},
 			new_texture_id = {
 				size = {
@@ -11862,25 +12039,25 @@ UIWidgets.create_journal_tab = function (arg_351_0, arg_351_1, arg_351_2)
 					105,
 					1
 				},
-				masked = arg_351_2
+				masked = masked
 			}
 		},
-		scenegraph_id = arg_351_0
+		scenegraph_id = scenegraph_id
 	}
 end
 
-UIWidgets.create_journal_page_arrow_button = function (arg_355_0, arg_355_1, arg_355_2)
+UIWidgets.create_journal_page_arrow_button = function (scenegraph_id, uvs, masked)
 	-- function 355
-	local var_355_0
-	local tbl = {
+	local passes
+	local content = {
 		texture_hover_id = "journal_arrow_01",
 		texture_selected_id = "journal_arrow_01_clicked",
 		texture_id = "journal_arrow_01",
 		button_hotspot = {}
 	}
 
-	if not arg_355_1 then
-		var_355_0 = {
+	if uvs then
+		passes = {
 			{
 				pass_type = "hotspot",
 				content_id = "button_hotspot"
@@ -11889,30 +12066,30 @@ UIWidgets.create_journal_page_arrow_button = function (arg_355_0, arg_355_1, arg
 				texture_id = "texture_id",
 				style_id = "texture_id",
 				pass_type = "texture_uv",
-				content_check_function = function (self)
+				content_check_function = function (content)
 					-- function 356
-					local button_hotspot = self.button_hotspot
+					local button_hotspot = content.button_hotspot
 
-					return (not not button_hotspot.disabled or not not button_hotspot.is_hover or not button_hotspot.is_clicked) and button_hotspot.is_clicked ~= 0
+					return not button_hotspot.disabled and not button_hotspot.is_hover and not button_hotspot.is_clicked or button_hotspot.is_clicked ~= 0
 				end
 			},
 			{
 				texture_id = "texture_hover_id",
 				style_id = "texture_hover_id",
 				pass_type = "texture_uv",
-				content_check_function = function (self)
+				content_check_function = function (content)
 					-- function 357
-					local button_hotspot = self.button_hotspot
+					local button_hotspot = content.button_hotspot
 					local is_hover
 
 					if not button_hotspot.disabled then
 						is_hover = button_hotspot.is_hover
 
-						if not is_hover then
+						if is_hover then
 							-- Nothing
 						end
 
-						if not (not button_hotspot.is_clicked and button_hotspot.is_clicked ~= 0) then
+						if button_hotspot.is_clicked and button_hotspot.is_clicked == 0 then
 							-- Nothing
 						end
 					end
@@ -11934,17 +12111,17 @@ UIWidgets.create_journal_page_arrow_button = function (arg_355_0, arg_355_1, arg
 				texture_id = "texture_selected_id",
 				style_id = "texture_selected_id",
 				pass_type = "texture_uv",
-				content_check_function = function (self)
+				content_check_function = function (content)
 					-- function 358
-					local button_hotspot = self.button_hotspot
+					local button_hotspot = content.button_hotspot
 
-					return not not button_hotspot.disabled or button_hotspot.is_clicked == 0 or button_hotspot.is_selected
+					return not button_hotspot.disabled and button_hotspot.is_clicked == 0 or not not button_hotspot.is_selected
 				end
 			}
 		}
-		tbl.uvs = arg_355_1
+		content.uvs = uvs
 	else
-		var_355_0 = {
+		passes = {
 			{
 				pass_type = "hotspot",
 				content_id = "button_hotspot"
@@ -11953,30 +12130,30 @@ UIWidgets.create_journal_page_arrow_button = function (arg_355_0, arg_355_1, arg
 				texture_id = "texture_id",
 				style_id = "texture_id",
 				pass_type = "texture",
-				content_check_function = function (self)
+				content_check_function = function (content)
 					-- function 359
-					local button_hotspot = self.button_hotspot
+					local button_hotspot = content.button_hotspot
 
-					return (not not button_hotspot.disabled or not not button_hotspot.is_hover or not button_hotspot.is_clicked) and button_hotspot.is_clicked ~= 0
+					return not button_hotspot.disabled and not button_hotspot.is_hover and not button_hotspot.is_clicked or button_hotspot.is_clicked ~= 0
 				end
 			},
 			{
 				texture_id = "texture_hover_id",
 				style_id = "texture_hover_id",
 				pass_type = "texture",
-				content_check_function = function (self)
+				content_check_function = function (content)
 					-- function 360
-					local button_hotspot = self.button_hotspot
+					local button_hotspot = content.button_hotspot
 					local is_hover
 
 					if not button_hotspot.disabled then
 						is_hover = button_hotspot.is_hover
 
-						if not is_hover then
+						if is_hover then
 							-- Nothing
 						end
 
-						if not (not button_hotspot.is_clicked and button_hotspot.is_clicked ~= 0) then
+						if button_hotspot.is_clicked and button_hotspot.is_clicked == 0 then
 							-- Nothing
 						end
 					end
@@ -11998,11 +12175,11 @@ UIWidgets.create_journal_page_arrow_button = function (arg_355_0, arg_355_1, arg
 				texture_id = "texture_selected_id",
 				style_id = "texture_selected_id",
 				pass_type = "texture",
-				content_check_function = function (self)
+				content_check_function = function (content)
 					-- function 361
-					local button_hotspot = self.button_hotspot
+					local button_hotspot = content.button_hotspot
 
-					return not not button_hotspot.disabled or button_hotspot.is_clicked == 0 or button_hotspot.is_selected
+					return not button_hotspot.disabled and button_hotspot.is_clicked == 0 or not not button_hotspot.is_selected
 				end
 			}
 		}
@@ -12010,9 +12187,9 @@ UIWidgets.create_journal_page_arrow_button = function (arg_355_0, arg_355_1, arg
 
 	return {
 		element = {
-			passes = var_355_0
+			passes = passes
 		},
-		content = tbl,
+		content = content,
 		style = {
 			texture_id = {
 				color = {
@@ -12026,7 +12203,7 @@ UIWidgets.create_journal_page_arrow_button = function (arg_355_0, arg_355_1, arg
 					0,
 					0
 				},
-				masked = arg_355_2
+				masked = masked
 			},
 			texture_hover_id = {
 				color = {
@@ -12040,7 +12217,7 @@ UIWidgets.create_journal_page_arrow_button = function (arg_355_0, arg_355_1, arg
 					0,
 					0
 				},
-				masked = arg_355_2
+				masked = masked
 			},
 			texture_selected_id = {
 				size = {
@@ -12058,14 +12235,14 @@ UIWidgets.create_journal_page_arrow_button = function (arg_355_0, arg_355_1, arg
 					-5,
 					0
 				},
-				masked = arg_355_2
+				masked = masked
 			}
 		},
-		scenegraph_id = arg_355_0
+		scenegraph_id = scenegraph_id
 	}
 end
 
-UIWidgets.create_journal_back_arrow_button = function (arg_362_0, arg_362_1)
+UIWidgets.create_journal_back_arrow_button = function (scenegraph_id, masked)
 	-- function 362
 	return {
 		element = {
@@ -12078,30 +12255,30 @@ UIWidgets.create_journal_back_arrow_button = function (arg_362_0, arg_362_1)
 					texture_id = "texture_id",
 					style_id = "texture_id",
 					pass_type = "texture",
-					content_check_function = function (self)
+					content_check_function = function (content)
 						-- function 363
-						local button_hotspot = self.button_hotspot
+						local button_hotspot = content.button_hotspot
 
-						return (not not button_hotspot.disabled or not not button_hotspot.is_hover or not button_hotspot.is_clicked) and button_hotspot.is_clicked ~= 0
+						return not button_hotspot.disabled and not button_hotspot.is_hover and not button_hotspot.is_clicked or button_hotspot.is_clicked ~= 0
 					end
 				},
 				{
 					texture_id = "texture_hover_id",
 					style_id = "texture_hover_id",
 					pass_type = "texture",
-					content_check_function = function (self)
+					content_check_function = function (content)
 						-- function 364
-						local button_hotspot = self.button_hotspot
+						local button_hotspot = content.button_hotspot
 						local is_hover
 
 						if not button_hotspot.disabled then
 							is_hover = button_hotspot.is_hover
 
-							if not is_hover then
+							if is_hover then
 								-- Nothing
 							end
 
-							if not (not button_hotspot.is_clicked and button_hotspot.is_clicked ~= 0) then
+							if button_hotspot.is_clicked and button_hotspot.is_clicked == 0 then
 								-- Nothing
 							end
 						end
@@ -12123,11 +12300,11 @@ UIWidgets.create_journal_back_arrow_button = function (arg_362_0, arg_362_1)
 					texture_id = "texture_selected_id",
 					style_id = "texture_selected_id",
 					pass_type = "texture",
-					content_check_function = function (self)
+					content_check_function = function (content)
 						-- function 365
-						local button_hotspot = self.button_hotspot
+						local button_hotspot = content.button_hotspot
 
-						return not not button_hotspot.disabled or button_hotspot.is_clicked == 0 or button_hotspot.is_selected
+						return not button_hotspot.disabled and button_hotspot.is_clicked == 0 or not not button_hotspot.is_selected
 					end
 				}
 			}
@@ -12151,7 +12328,7 @@ UIWidgets.create_journal_back_arrow_button = function (arg_362_0, arg_362_1)
 					0,
 					0
 				},
-				masked = arg_362_1
+				masked = masked
 			},
 			texture_hover_id = {
 				color = {
@@ -12165,7 +12342,7 @@ UIWidgets.create_journal_back_arrow_button = function (arg_362_0, arg_362_1)
 					0,
 					0
 				},
-				masked = arg_362_1
+				masked = masked
 			},
 			texture_selected_id = {
 				size = {
@@ -12183,31 +12360,33 @@ UIWidgets.create_journal_back_arrow_button = function (arg_362_0, arg_362_1)
 					-25,
 					0
 				},
-				masked = arg_362_1
+				masked = masked
 			}
 		},
-		scenegraph_id = arg_362_0
+		scenegraph_id = scenegraph_id
 	}
 end
 
-UIWidgets.create_journal_reveal_mask = function (self, arg_366_1, arg_366_2)
+UIWidgets.create_journal_reveal_mask = function (textures, scenegraph_ids, scenegraph_id)
 	-- function 366
-	local tbl = {}
-	local tbl_2 = {}
-	local tbl_3 = {}
-	local count = #self
+	local passes = {}
+	local content = {}
+	local style = {}
+	local num_textures = #textures
 
-	for i = 1, count + 1 do
-		if not (i == count + 1) then
-			local str = "cover_rect"
+	for i = 1, num_textures + 1 do
+		local is_last_pass = i == num_textures + 1
 
-			tbl[i] = {
+		if is_last_pass then
+			local texture_id = "cover_rect"
+
+			passes[i] = {
 				pass_type = "texture",
-				texture_id = str,
-				style_id = str
+				texture_id = texture_id,
+				style_id = texture_id
 			}
-			tbl_2[str] = "mask_rect"
-			tbl_3[str] = {
+			content[texture_id] = "mask_rect"
+			style[texture_id] = {
 				color = {
 					0,
 					0,
@@ -12221,15 +12400,15 @@ UIWidgets.create_journal_reveal_mask = function (self, arg_366_1, arg_366_2)
 				}
 			}
 		else
-			local str_2 = "texture_" .. i
-			local var_366_6 = arg_366_1[i]
+			local texture_id = "texture_" .. i
+			local texture_scenegraph_id = scenegraph_ids[i]
 
-			tbl[i] = {
+			passes[i] = {
 				pass_type = "texture",
-				style_id = str_2,
-				texture_id = str_2
+				style_id = texture_id,
+				texture_id = texture_id
 			}
-			tbl_3[str_2] = {
+			style[texture_id] = {
 				color = {
 					0,
 					255,
@@ -12241,25 +12420,25 @@ UIWidgets.create_journal_reveal_mask = function (self, arg_366_1, arg_366_2)
 					0,
 					0
 				},
-				scenegraph_id = var_366_6
+				scenegraph_id = texture_scenegraph_id
 			}
-			tbl_2[str_2] = self[i]
+			content[texture_id] = textures[i]
 		end
 	end
 
-	tbl_2.num_textures = count
+	content.num_textures = num_textures
 
 	return {
 		element = {
-			passes = tbl
+			passes = passes
 		},
-		content = tbl_2,
-		style = tbl_3,
-		scenegraph_id = arg_366_2
+		content = content,
+		style = style,
+		scenegraph_id = scenegraph_id
 	}
 end
 
-UIWidgets.create_gamepad_selection = function (arg_367_0, arg_367_1, arg_367_2, arg_367_3)
+UIWidgets.create_gamepad_selection = function (scenegraph_id, retained, masked, optional_texture_size)
 	-- function 367
 	return {
 		element = {
@@ -12268,25 +12447,25 @@ UIWidgets.create_gamepad_selection = function (arg_367_0, arg_367_1, arg_367_2, 
 					texture_id = "texture_top_left",
 					style_id = "texture_top_left",
 					pass_type = "texture",
-					retained_mode = arg_367_1
+					retained_mode = retained
 				},
 				{
 					texture_id = "texture_top_right",
 					style_id = "texture_top_right",
 					pass_type = "texture",
-					retained_mode = arg_367_1
+					retained_mode = retained
 				},
 				{
 					texture_id = "texture_bottom_left",
 					style_id = "texture_bottom_left",
 					pass_type = "texture",
-					retained_mode = arg_367_1
+					retained_mode = retained
 				},
 				{
 					texture_id = "texture_bottom_right",
 					style_id = "texture_bottom_right",
 					pass_type = "texture",
-					retained_mode = arg_367_1
+					retained_mode = retained
 				}
 			}
 		},
@@ -12300,7 +12479,7 @@ UIWidgets.create_gamepad_selection = function (arg_367_0, arg_367_1, arg_367_2, 
 			texture_top_left = {
 				vertical_alignment = "top",
 				horizontal_alignment = "left",
-				texture_size = arg_367_3 or {
+				texture_size = not not optional_texture_size or not not {
 					40,
 					40
 				},
@@ -12315,12 +12494,12 @@ UIWidgets.create_gamepad_selection = function (arg_367_0, arg_367_1, arg_367_2, 
 					0,
 					0
 				},
-				masked = arg_367_2
+				masked = masked
 			},
 			texture_top_right = {
 				vertical_alignment = "top",
 				horizontal_alignment = "right",
-				texture_size = arg_367_3 or {
+				texture_size = not not optional_texture_size or not not {
 					40,
 					40
 				},
@@ -12335,12 +12514,12 @@ UIWidgets.create_gamepad_selection = function (arg_367_0, arg_367_1, arg_367_2, 
 					0,
 					0
 				},
-				masked = arg_367_2
+				masked = masked
 			},
 			texture_bottom_left = {
 				vertical_alignment = "bottom",
 				horizontal_alignment = "left",
-				texture_size = arg_367_3 or {
+				texture_size = not not optional_texture_size or not not {
 					40,
 					40
 				},
@@ -12355,12 +12534,12 @@ UIWidgets.create_gamepad_selection = function (arg_367_0, arg_367_1, arg_367_2, 
 					0,
 					0
 				},
-				masked = arg_367_2
+				masked = masked
 			},
 			texture_bottom_right = {
 				vertical_alignment = "bottom",
 				horizontal_alignment = "right",
-				texture_size = arg_367_3 or {
+				texture_size = not not optional_texture_size or not not {
 					40,
 					40
 				},
@@ -12375,7 +12554,7 @@ UIWidgets.create_gamepad_selection = function (arg_367_0, arg_367_1, arg_367_2, 
 					0,
 					0
 				},
-				masked = arg_367_2
+				masked = masked
 			}
 		},
 		offset = {
@@ -12383,32 +12562,31 @@ UIWidgets.create_gamepad_selection = function (arg_367_0, arg_367_1, arg_367_2, 
 			0,
 			0
 		},
-		scenegraph_id = arg_367_0
+		scenegraph_id = scenegraph_id
 	}
 end
 
-UIWidgets.create_simple_atlas_texture = function (arg_368_0, arg_368_1, arg_368_2, arg_368_3, arg_368_4, arg_368_5, arg_368_6, arg_368_7)
+UIWidgets.create_simple_atlas_texture = function (texture, scenegraph_id, masked, retained, color, layer, horizontal_alignment, vertical_alignment)
 	-- function 368
-	local get_atlas_settings_by_texture_name = UIAtlasHelper.get_atlas_settings_by_texture_name(arg_368_0)
-
-	return {
+	local texture_settings = UIAtlasHelper.get_atlas_settings_by_texture_name(texture)
+	local definition = {
 		element = {
 			passes = {
 				{
 					texture_id = "texture_id",
 					style_id = "texture_id",
 					pass_type = "texture",
-					retained_mode = arg_368_3
+					retained_mode = retained
 				}
 			}
 		},
 		content = {
-			texture_id = arg_368_0
+			texture_id = texture
 		},
 		style = {
 			texture_id = {
-				texture_size = get_atlas_settings_by_texture_name.size,
-				color = arg_368_4 or {
+				texture_size = texture_settings.size,
+				color = not not color or not not {
 					255,
 					255,
 					255,
@@ -12419,16 +12597,18 @@ UIWidgets.create_simple_atlas_texture = function (arg_368_0, arg_368_1, arg_368_
 					0,
 					0
 				},
-				masked = arg_368_2,
-				horizontal_alignment = arg_368_6,
-				vertical_alignment = arg_368_7
+				masked = masked,
+				horizontal_alignment = horizontal_alignment,
+				vertical_alignment = vertical_alignment
 			}
 		},
 		offset = {
 			0,
 			0,
-			arg_368_5 or 0
+			not not layer or not not 0
 		},
-		scenegraph_id = arg_368_1
+		scenegraph_id = scenegraph_id
 	}
+
+	return definition
 end

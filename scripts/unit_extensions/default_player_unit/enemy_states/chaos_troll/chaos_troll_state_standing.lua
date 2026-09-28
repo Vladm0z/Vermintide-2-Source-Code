@@ -2,42 +2,47 @@
 
 ChaosTrollStateStanding = class(ChaosTrollStateStanding, EnemyCharacterStateStanding)
 
-ChaosTrollStateStanding.init = function (self, arg_1_1)
+ChaosTrollStateStanding.init = function (self, character_state_init_context)
 	-- function 1
-	ChaosTrollStateStanding.super.init(self, arg_1_1)
+	ChaosTrollStateStanding.super.init(self, character_state_init_context)
 
 	self._vomit_ability_id = self._career_extension:ability_id("vomit")
 end
 
-ChaosTrollStateStanding.on_enter = function (arg_2_0, arg_2_1, arg_2_2, arg_2_3, arg_2_4, arg_2_5, arg_2_6, arg_2_7)
+ChaosTrollStateStanding.on_enter = function (self, unit, input, dt, context, t, previous_state, params)
 	-- function 2
-	ChaosTrollStateStanding.super.on_enter(arg_2_0, arg_2_1, arg_2_2, arg_2_3, arg_2_4, arg_2_5, arg_2_6, arg_2_7)
+	ChaosTrollStateStanding.super.on_enter(self, unit, input, dt, context, t, previous_state, params)
 end
 
-ChaosTrollStateStanding.update = function (self, arg_3_1, arg_3_2, arg_3_3, arg_3_4, arg_3_5)
+ChaosTrollStateStanding.update = function (self, unit, input, dt, context, t)
 	-- function 3
-	if not self:common_state_changes() then
+	local handled = self:common_state_changes()
+
+	if handled then
 		return
 	end
 
-	local _csm = self._csm
+	local csm = self._csm
+	local career_extension = self._career_extension
 
-	if not self._career_extension:ability_was_triggered(self._vomit_ability_id) then
-		_csm:change_state("troll_vomiting")
+	if career_extension:ability_was_triggered(self._vomit_ability_id) then
+		csm:change_state("troll_vomiting")
 
 		return
 	end
 
-	local _input_extension = self._input_extension
-	local _status_extension = self._status_extension
-	local _first_person_extension = self._first_person_extension
-	local is_crouching = _status_extension:is_crouching()
-	local toggle_crouch = _input_extension.toggle_crouch
+	local input_extension = self._input_extension
+	local status_extension = self._status_extension
+	local first_person_extension = self._first_person_extension
+	local is_crouching = status_extension:is_crouching()
+	local toggle_crouch = input_extension.toggle_crouch
 
-	CharacterStateHelper.check_crouch(arg_3_1, _input_extension, _status_extension, toggle_crouch, _first_person_extension, arg_3_5)
-	self:_update_taunt_dialogue(arg_3_5)
+	CharacterStateHelper.check_crouch(unit, input_extension, status_extension, toggle_crouch, first_person_extension, t)
+	self:_update_taunt_dialogue(t)
 
-	if not self:common_movement(arg_3_5) then
-		CharacterStateHelper.update_weapon_actions(arg_3_5, arg_3_1, self._input_extension, self._inventory_extension, self._health_extension)
+	handled = self:common_movement(t)
+
+	if not handled then
+		CharacterStateHelper.update_weapon_actions(t, unit, self._input_extension, self._inventory_extension, self._health_extension)
 	end
 end

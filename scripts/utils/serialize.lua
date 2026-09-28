@@ -1,46 +1,49 @@
 -- chunkname: @scripts/utils/serialize.lua
 
-local tbl = {}
-local var_0_1
-local var_0_2
+local serialize = {}
+local save_item, save_item_simple
 
-tbl.save = function (arg_1_0, arg_1_1, arg_1_2)
+local function save(what, v, saved)
 	-- function 1
-	arg_1_2 = arg_1_2 or {}
+	saved = not not saved or not not {}
 
-	assert(arg_1_1)
-	assert(type(arg_1_0) == "string", "1st argument to serialize.save should be the *name* of a variable")
-	assert(type(arg_1_1) ~= "nil", "Variable %q does not exist", arg_1_0)
-	assert(type(arg_1_2) == "table" or arg_1_2 == nil, "3rd argument to serialize.save should be a table or nil")
+	assert(v)
+	assert(type(what) == "string", "1st argument to serialize.save should be the *name* of a variable")
+	assert(type(v) ~= "nil", "Variable %q does not exist", what)
+	assert(type(saved) == "table" or saved == nil, "3rd argument to serialize.save should be a table or nil")
 
-	local tbl = {}
+	local out = {}
 
-	var_0_1(arg_1_0, arg_1_1, tbl, 0, arg_1_2)
+	save_item(what, v, out, 0, saved)
 
-	return table.concat(tbl, "\n"), arg_1_2
+	return table.concat(out, "\n"), saved
 end
 
-tbl.save_simple = function (arg_2_0, arg_2_1)
+serialize.save = save
+
+local function save_simple(v, indent)
 	-- function 2
-	local tbl = {}
+	local out = {}
 
-	var_0_2(arg_2_0, tbl, arg_2_1 or 1)
+	save_item_simple(v, out, not not indent or not not 1)
 
-	return table.concat(tbl)
+	return table.concat(out)
 end
 
-local function fn(arg_3_0)
+serialize.save_simple = save_simple
+
+local function basicSerialize(o)
 	-- function 3
-	if not (type(arg_3_0) == "number" or type(arg_3_0) ~= "boolean") then
-		return tostring(arg_3_0)
+	if type(o) == "number" or type(o) == "boolean" then
+		return tostring(o)
 	else
-		return string.format("%q", arg_3_0)
+		return string.format("%q", o)
 	end
 end
 
-local tbl_2 = {}
+local lua_reserved_words = {}
 
-for i, v in ipairs({
+for _, v in ipairs({
 	"and",
 	"break",
 	"do",
@@ -61,75 +64,75 @@ for i, v in ipairs({
 	"until",
 	"while"
 }) do
-	tbl_2[v] = true
+	lua_reserved_words[v] = true
 end
 
-function var_0_1(arg_4_0, arg_4_1, arg_4_2, arg_4_3, arg_4_4)
+function save_item(name, value, out, indent, saved)
 	-- function 4
-	local str = string.rep("\t", arg_4_3) .. arg_4_0
-	local var_4_1 = type(arg_4_1)
+	local iname = string.rep("\t", indent) .. name
+	local vtype = type(value)
 
-	if not (var_4_1 == "number" or var_4_1 == "string" or var_4_1 ~= "boolean") then
-		table.insert(arg_4_2, str .. " = " .. fn(arg_4_1))
-	elseif var_4_1 == "table" then
-		if not arg_4_4[arg_4_1] then
-			table.insert(arg_4_2, str .. " = " .. arg_4_4[arg_4_1])
+	if vtype == "number" or vtype == "string" or vtype == "boolean" then
+		table.insert(out, iname .. " = " .. basicSerialize(value))
+	elseif vtype == "table" then
+		if saved[value] then
+			table.insert(out, iname .. " = " .. saved[value])
 		else
-			arg_4_4[arg_4_1] = arg_4_0
+			saved[value] = name
 
-			table.insert(arg_4_2, str .. " = {}")
+			table.insert(out, iname .. " = {}")
 
-			for k, v in pairs(arg_4_1) do
-				local var_4_2
+			for k, v in pairs(value) do
+				local fieldname
 
-				if not ((type(k) ~= "string" or not string.find(k, "^[_%a][_%a%d]*$")) and tbl_2[k]) then
-					var_4_2 = string.format("%s.%s", arg_4_0, k)
-				elseif type(k) ~= "table" or not arg_4_4[k] then
-					var_4_2 = string.format("%s[%s]", arg_4_0, arg_4_4[k])
+				if type(k) == "string" and string.find(k, "^[_%a][_%a%d]*$") and not lua_reserved_words[k] then
+					fieldname = string.format("%s.%s", name, k)
+				elseif type(k) == "table" and saved[k] then
+					fieldname = string.format("%s[%s]", name, saved[k])
 				elseif type(k) == "table" then
-					error("Key table entry " .. tostring(k) .. " in table " .. arg_4_0 .. " is not known")
-				elseif not (type(k) == "number" or type(k) ~= "boolean") then
-					var_4_2 = string.format("%s[%s]", arg_4_0, tostring(k))
+					error("Key table entry " .. tostring(k) .. " in table " .. name .. " is not known")
+				elseif type(k) == "number" or type(k) == "boolean" then
+					fieldname = string.format("%s[%s]", name, tostring(k))
 				elseif type(k) ~= "string" then
-					error("Cannot serialize table keys of type '" .. type(k) .. "' in table " .. arg_4_0)
+					error("Cannot serialize table keys of type '" .. type(k) .. "' in table " .. name)
 				else
-					var_4_2 = string.format("%s[%s]", arg_4_0, fn(k))
+					fieldname = string.format("%s[%s]", name, basicSerialize(k))
 				end
 
-				var_0_1(var_4_2, v, arg_4_2, arg_4_3 + 2, arg_4_4)
+				save_item(fieldname, v, out, indent + 2, saved)
 			end
 		end
 	else
-		error("Cannot serialize '" .. arg_4_0 .. "' (" .. var_4_1 .. ")")
+		error("Cannot serialize '" .. name .. "' (" .. vtype .. ")")
 	end
 end
 
-function var_0_2(arg_5_0, arg_5_1, arg_5_2)
+function save_item_simple(value, out, indent)
 	-- function 5
-	local var_5_0 = type(arg_5_0)
+	local vtype = type(value)
 
-	if not (var_5_0 == "number" or var_5_0 == "string" or var_5_0 ~= "boolean") then
-		table.insert(arg_5_1, fn(arg_5_0))
-	elseif var_5_0 == "table" then
-		table.insert(arg_5_1, "{\n")
+	if vtype == "number" or vtype == "string" or vtype == "boolean" then
+		table.insert(out, basicSerialize(value))
+	elseif vtype == "table" then
+		table.insert(out, "{\n")
 
-		for k, v in pairs(arg_5_0) do
-			table.insert(arg_5_1, string.rep("\t", arg_5_2))
+		for k, v in pairs(value) do
+			table.insert(out, string.rep("\t", indent))
 
-			if not string.find(k, "^[_%a][_%a%d]*$") and not tbl_2[k] then
-				table.insert(arg_5_1, "[" .. fn(k) .. "] = ")
+			if not string.find(k, "^[_%a][_%a%d]*$") or lua_reserved_words[k] then
+				table.insert(out, "[" .. basicSerialize(k) .. "] = ")
 			else
-				table.insert(arg_5_1, k .. " = ")
+				table.insert(out, k .. " = ")
 			end
 
-			var_0_2(v, arg_5_1, arg_5_2 + 1)
-			table.insert(arg_5_1, ",\n")
+			save_item_simple(v, out, indent + 1)
+			table.insert(out, ",\n")
 		end
 
-		table.insert(arg_5_1, string.rep("\t", arg_5_2 - 1) .. "}")
+		table.insert(out, string.rep("\t", indent - 1) .. "}")
 	else
-		error("Cannot serialize " .. type(arg_5_0))
+		error("Cannot serialize " .. type(value))
 	end
 end
 
-return tbl
+return serialize

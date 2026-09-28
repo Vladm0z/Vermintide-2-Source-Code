@@ -2,12 +2,12 @@
 
 local_require("scripts/ui/ui_widgets")
 
-local num = 1400
-local tbl = {
+local MAXIMUM_TIP_WIDTH = 1400
+local ICON_SIZE = {
 	26,
 	26
 }
-local tbl_2 = {
+local scenegraph_definition = {
 	root = {
 		is_root = true,
 		position = {
@@ -103,7 +103,7 @@ local tbl_2 = {
 		parent = "background_image",
 		horizontal_alignment = "center",
 		size = {
-			num,
+			MAXIMUM_TIP_WIDTH,
 			85
 		},
 		position = {
@@ -116,7 +116,7 @@ local tbl_2 = {
 		vertical_alignment = "bottom",
 		parent = "background_image",
 		horizontal_alignment = "center",
-		size = tbl,
+		size = ICON_SIZE,
 		position = {
 			0,
 			65,
@@ -127,7 +127,7 @@ local tbl_2 = {
 		vertical_alignment = "bottom",
 		parent = "background_image",
 		horizontal_alignment = "center",
-		size = tbl,
+		size = ICON_SIZE,
 		position = {
 			0,
 			65,
@@ -139,7 +139,7 @@ local tbl_2 = {
 		parent = "background_image",
 		horizontal_alignment = "center",
 		size = {
-			num,
+			MAXIMUM_TIP_WIDTH,
 			85
 		},
 		position = {
@@ -153,7 +153,7 @@ local tbl_2 = {
 		parent = "background_image",
 		horizontal_alignment = "center",
 		size = {
-			num,
+			MAXIMUM_TIP_WIDTH,
 			85
 		},
 		position = {
@@ -166,7 +166,7 @@ local tbl_2 = {
 		vertical_alignment = "bottom",
 		parent = "background_image",
 		horizontal_alignment = "center",
-		size = tbl,
+		size = ICON_SIZE,
 		position = {
 			0,
 			36,
@@ -177,7 +177,7 @@ local tbl_2 = {
 		vertical_alignment = "bottom",
 		parent = "background_image",
 		horizontal_alignment = "center",
-		size = tbl,
+		size = ICON_SIZE,
 		position = {
 			0,
 			36,
@@ -189,7 +189,7 @@ local tbl_2 = {
 		parent = "background_image",
 		horizontal_alignment = "center",
 		size = {
-			num,
+			MAXIMUM_TIP_WIDTH,
 			85
 		},
 		position = {
@@ -311,7 +311,7 @@ local tbl_2 = {
 		}
 	}
 }
-local tbl_3 = {
+local dead_space_filler = {
 	scenegraph_id = "dead_space_filler",
 	element = {
 		passes = {
@@ -333,7 +333,7 @@ local tbl_3 = {
 		}
 	}
 }
-local tbl_4 = {
+local tbl = {
 	scenegraph_id = "press_to_continue",
 	element = {
 		passes = {
@@ -341,9 +341,9 @@ local tbl_4 = {
 				style_id = "text",
 				pass_type = "text",
 				text_id = "text",
-				content_check_function = function (arg_1_0, arg_1_1)
+				content_check_function = function (content, style)
 					-- function 1
-					arg_1_1.text_color[1] = 192 + math.sin(Managers.time:time("ui") * 4) * 64
+					style.text_color[1] = 192 + math.sin(Managers.time:time("ui") * 4) * 64
 
 					return true
 				end
@@ -351,15 +351,15 @@ local tbl_4 = {
 		}
 	}
 }
-local tbl_5 = {}
+local tbl_2 = {}
 local flag
 
-flag = not IS_WINDOWS and "press_any_key_to_continue" and "press_any_button_to_continue"
-tbl_5.text = flag
-tbl_5.color = Colors.get_color_table_with_alpha("white", 255)
-tbl_4.content = tbl_5
+flag = (not IS_WINDOWS or not "press_any_key_to_continue") and not not "press_any_button_to_continue"
+tbl_2.text = flag
+tbl_2.color = Colors.get_color_table_with_alpha("white", 255)
+tbl.content = tbl_2
 
-local tbl_6 = {}
+local tbl_3 = {}
 local text_style = text_style
 
 if not text_style then
@@ -373,7 +373,7 @@ if not text_style then
 
 	local optional_font_style = optional_font_style
 
-	optional_font_style = optional_font_style or "hell_shark"
+	optional_font_style = not not optional_font_style or not not "hell_shark"
 	text_style.font_type = optional_font_style
 	text_style.text_color = Colors.get_color_table_with_alpha("white", 255)
 	text_style.offset = {
@@ -383,15 +383,16 @@ if not text_style then
 	}
 end
 
-tbl_6.text = text_style
-tbl_4.style = tbl_6
-tbl_4.offset = {
+tbl_3.text = text_style
+tbl.style = tbl_3
+tbl.offset = {
 	0,
 	0,
 	0
 }
 
-local tbl_7 = {
+local press_to_continue_widget = tbl
+local background_image = {
 	scenegraph_id = "background_image",
 	element = {
 		passes = {
@@ -407,65 +408,65 @@ local tbl_7 = {
 				pass_type = "texture",
 				style_id = "fade_texture",
 				texture_id = "fade_texture",
-				content_check_function = function (self)
+				content_check_function = function (content)
 					-- function 2
-					return self.is_weave
+					return content.is_weave
 				end
 			},
 			{
 				style_id = "location_header",
 				pass_type = "text",
 				text_id = "location_header",
-				content_check_function = function (self)
+				content_check_function = function (content)
 					-- function 3
-					return self.is_weave
+					return content.is_weave
 				end
 			},
 			{
 				style_id = "location_name",
 				pass_type = "text",
 				text_id = "location_name",
-				content_check_function = function (self)
+				content_check_function = function (content)
 					-- function 4
-					return self.is_weave
+					return content.is_weave
 				end
 			},
 			{
 				style_id = "location_name_shadow",
 				pass_type = "text",
 				text_id = "location_name",
-				content_check_function = function (self)
+				content_check_function = function (content)
 					-- function 5
-					return self.is_weave
+					return content.is_weave
 				end
 			},
 			{
 				style_id = "mutator_name",
 				pass_type = "text",
 				text_id = "mutator_name",
-				content_check_function = function (self)
+				content_check_function = function (content)
 					-- function 6
-					return self.is_weave
+					return content.is_weave
 				end
 			},
 			{
 				style_id = "mutator_description",
 				pass_type = "text",
 				text_id = "mutator_description",
-				content_check_function = function (self)
+				content_check_function = function (content)
 					-- function 7
-					return self.is_weave
+					return content.is_weave
 				end
 			},
 			{
 				texture_id = "objective_icon",
 				style_id = "objective_icon",
 				pass_type = "texture",
-				content_check_function = function (self)
+				content_check_function = function (content)
 					-- function 8
-					local is_weave = self.is_weave
+					local is_weave = content.is_weave
 
-					is_weave = not is_weave and not self.is_arena
+					is_weave = not not is_weave and not not not content.is_arena
 
 					return is_weave
 				end
@@ -474,11 +475,11 @@ local tbl_7 = {
 				style_id = "objective_text",
 				pass_type = "text",
 				text_id = "objective_text",
-				content_check_function = function (self)
+				content_check_function = function (content)
 					-- function 9
-					local is_weave = self.is_weave
+					local is_weave = content.is_weave
 
-					is_weave = not is_weave and not self.is_arena
+					is_weave = not not is_weave and not not not content.is_arena
 
 					return is_weave
 				end
@@ -670,7 +671,7 @@ local tbl_7 = {
 		}
 	}
 }
-local tbl_8 = {
+local news_ticker_text_style = {
 	word_wrap = true,
 	font_size = 24,
 	localize = false,
@@ -685,13 +686,12 @@ local tbl_8 = {
 		2
 	}
 }
-
-return {
-	scenegraph_definition = tbl_2,
-	dead_space_filler = tbl_3,
-	background_image = tbl_7,
+local definitions = {
+	scenegraph_definition = scenegraph_definition,
+	dead_space_filler = dead_space_filler,
+	background_image = background_image,
 	logo_image = logo_image,
-	press_to_continue_widget = tbl_4,
+	press_to_continue_widget = press_to_continue_widget,
 	act_name_widget = UIWidgets.create_simple_text("", "act_name", nil, nil, {
 		vertical_alignment = "center",
 		font_type = "hell_shark_header",
@@ -786,9 +786,9 @@ return {
 					pass_type = "texture",
 					style_id = "texture_id",
 					texture_id = "texture_id",
-					content_check_function = function (self)
+					content_check_function = function (content)
 						-- function 10
-						return self.texture_id
+						return content.texture_id
 					end
 				}
 			}
@@ -812,9 +812,9 @@ return {
 					pass_type = "texture",
 					style_id = "texture_id",
 					texture_id = "texture_id",
-					content_check_function = function (self)
+					content_check_function = function (content)
 						-- function 11
-						return self.texture_id
+						return content.texture_id
 					end
 				}
 			}
@@ -864,9 +864,9 @@ return {
 					pass_type = "texture",
 					style_id = "texture_id",
 					texture_id = "texture_id",
-					content_check_function = function (self)
+					content_check_function = function (content)
 						-- function 12
-						return self.texture_id
+						return content.texture_id
 					end
 				}
 			}
@@ -890,9 +890,9 @@ return {
 					pass_type = "texture",
 					style_id = "texture_id",
 					texture_id = "texture_id",
-					content_check_function = function (self)
+					content_check_function = function (content)
 						-- function 13
-						return self.texture_id
+						return content.texture_id
 					end
 				}
 			}
@@ -921,9 +921,11 @@ return {
 			2
 		}
 	}),
-	news_ticker_text_widget = UIWidgets.create_simple_text("", "news_ticker_text", nil, nil, tbl_8),
+	news_ticker_text_widget = UIWidgets.create_simple_text("", "news_ticker_text", nil, nil, news_ticker_text_style),
 	news_ticker_mask_widget = UIWidgets.create_simple_texture("mask_rect", "news_ticker_mask"),
 	weave_loading_icon = UIWidgets.create_simple_texture("wom_loading", "weave_loading_icon"),
-	MAXIMUM_TIP_WIDTH = num,
-	ICON_SIZE = tbl
+	MAXIMUM_TIP_WIDTH = MAXIMUM_TIP_WIDTH,
+	ICON_SIZE = ICON_SIZE
 }
+
+return definitions

@@ -1,6 +1,6 @@
 -- chunkname: @scripts/ui/views/ingame_ui_settings.lua
 
-local tbl = {
+local default_disable_for_mechanism = {
 	adventure = {
 		matchmaking = false,
 		matchmaking_ready = true,
@@ -17,7 +17,7 @@ local tbl = {
 		not_matchmaking = false
 	}
 }
-local tbl_2 = {
+local disable_for_mechanism_versus_disabled = {
 	adventure = {
 		matchmaking = false,
 		matchmaking_ready = true,
@@ -34,23 +34,23 @@ local tbl_2 = {
 		not_matchmaking = false
 	}
 }
-local tbl_3 = {
+local transitions = {
 	leave_group = function (self)
 		-- function 1
 		self:_cancel_popup()
 
 		local network_server = Managers.state.network.network_server
 
-		if not (not network_server and network_server:are_all_peers_ingame(nil, true)) then
-			local var_1_1 = Localize("player_join_block_exit_game")
+		if network_server and not network_server:are_all_peers_ingame(nil, true) then
+			local text = Localize("player_join_block_exit_game")
 
-			self.popup_id = Managers.popup:queue_popup(var_1_1, Localize("popup_error_topic"), "cancel_popup", Localize("menu_ok"))
+			self.popup_id = Managers.popup:queue_popup(text, Localize("popup_error_topic"), "cancel_popup", Localize("menu_ok"))
 		else
-			local mechanism_setting = Managers.mechanism:mechanism_setting("progress_loss_warning_message_data")
+			local warning_message_data = Managers.mechanism:mechanism_setting("progress_loss_warning_message_data")
 			local str
 
-			if mechanism_setting == nil or not mechanism_setting.is_allowed() then
-				str = Localize("leave_game_popup_text") .. "\n\n" .. Localize(mechanism_setting.message)
+			if warning_message_data ~= nil and warning_message_data.is_allowed() then
+				str = Localize("leave_game_popup_text") .. "\n\n" .. Localize(warning_message_data.message)
 
 				if not str then
 					-- Nothing
@@ -59,9 +59,11 @@ local tbl_3 = {
 
 			str = Localize("leave_game_popup_text")
 
+			local text = str
+
 			::label_1_0::
 
-			self.popup_id = Managers.popup:queue_popup(str, Localize("popup_leave_game_topic"), "leave_game", Localize("popup_choice_yes"), "cancel_popup", Localize("popup_choice_no"))
+			self.popup_id = Managers.popup:queue_popup(text, Localize("popup_leave_game_topic"), "leave_game", Localize("popup_choice_yes"), "cancel_popup", Localize("popup_choice_no"))
 		end
 	end,
 	leave_group_hero_view = function (self)
@@ -70,16 +72,16 @@ local tbl_3 = {
 
 		local network_server = Managers.state.network.network_server
 
-		if not (not network_server and network_server:are_all_peers_ingame(nil, true)) then
-			local var_2_1 = Localize("player_join_block_exit_game")
+		if network_server and not network_server:are_all_peers_ingame(nil, true) then
+			local text = Localize("player_join_block_exit_game")
 
-			self.popup_id = Managers.popup:queue_popup(var_2_1, Localize("popup_error_topic"), "cancel_popup_hero_view", Localize("menu_ok"))
+			self.popup_id = Managers.popup:queue_popup(text, Localize("popup_error_topic"), "cancel_popup_hero_view", Localize("menu_ok"))
 		else
-			local mechanism_setting = Managers.mechanism:mechanism_setting("progress_loss_warning_message_data")
+			local warning_message_data = Managers.mechanism:mechanism_setting("progress_loss_warning_message_data")
 			local str
 
-			if mechanism_setting == nil or not mechanism_setting.is_allowed() then
-				str = Localize("leave_game_popup_text") .. "\n\n" .. Localize(mechanism_setting.message)
+			if warning_message_data ~= nil and warning_message_data.is_allowed() then
+				str = Localize("leave_game_popup_text") .. "\n\n" .. Localize(warning_message_data.message)
 
 				if not str then
 					-- Nothing
@@ -88,9 +90,11 @@ local tbl_3 = {
 
 			str = Localize("leave_game_popup_text")
 
+			local text = str
+
 			::label_2_0::
 
-			self.popup_id = Managers.popup:queue_popup(str, Localize("popup_leave_game_topic"), "leave_game_hero_view", Localize("popup_choice_yes"), "cancel_popup_hero_view", Localize("popup_choice_no"))
+			self.popup_id = Managers.popup:queue_popup(text, Localize("popup_leave_game_topic"), "leave_game_hero_view", Localize("popup_choice_yes"), "cancel_popup_hero_view", Localize("popup_choice_no"))
 		end
 	end,
 	quit_game = function (self)
@@ -98,13 +102,13 @@ local tbl_3 = {
 		self:_cancel_popup()
 
 		local network_server = Managers.state.network.network_server
-		local mechanism_setting = Managers.mechanism:mechanism_setting("progress_loss_warning_message_data")
+		local warning_message_data = Managers.mechanism:mechanism_setting("progress_loss_warning_message_data")
 
-		if not network_server and not (network_server:num_active_peers() > 1) or not network_server:are_all_peers_ingame(nil, true) then
+		if network_server and network_server:num_active_peers() > 1 and network_server:are_all_peers_ingame(nil, true) then
 			local str
 
-			if mechanism_setting == nil or not mechanism_setting.is_allowed() then
-				str = Localize("exit_game_popup_text") .. "\n\n" .. Localize("exit_game_popup_text_is_hosting_players") .. "\n\n\n" .. Localize(mechanism_setting.message)
+			if warning_message_data ~= nil and warning_message_data.is_allowed() then
+				str = Localize("exit_game_popup_text") .. "\n\n" .. Localize("exit_game_popup_text_is_hosting_players") .. "\n\n\n" .. Localize(warning_message_data.message)
 
 				if not str then
 					-- Nothing
@@ -113,17 +117,19 @@ local tbl_3 = {
 
 			str = Localize("exit_game_popup_text") .. "\n\n" .. Localize("exit_game_popup_text_is_hosting_players")
 
+			local text = str
+
 			::label_3_0::
 
-			self.popup_id = Managers.popup:queue_popup(str, Localize("popup_exit_game_topic"), "end_game", Localize("popup_choice_yes"), "cancel_popup", Localize("popup_choice_no"))
+			self.popup_id = Managers.popup:queue_popup(text, Localize("popup_exit_game_topic"), "end_game", Localize("popup_choice_yes"), "cancel_popup", Localize("popup_choice_no"))
 
 			return
 		end
 
 		local str_2
 
-		if mechanism_setting == nil or not mechanism_setting.is_allowed() then
-			str_2 = Localize("exit_game_popup_text") .. "\n\n" .. Localize(mechanism_setting.message)
+		if warning_message_data ~= nil and warning_message_data.is_allowed() then
+			str_2 = Localize("exit_game_popup_text") .. "\n\n" .. Localize(warning_message_data.message)
 
 			if not str_2 then
 				-- Nothing
@@ -132,19 +138,21 @@ local tbl_3 = {
 
 		str_2 = Localize("quit_game_popup_text")
 
+		local text = str_2
+
 		::label_3_1::
 
-		self.popup_id = Managers.popup:queue_popup(str_2, Localize("popup_exit_game_topic"), "end_game", Localize("popup_choice_yes"), "cancel_popup", Localize("popup_choice_no"))
+		self.popup_id = Managers.popup:queue_popup(text, Localize("popup_exit_game_topic"), "end_game", Localize("popup_choice_yes"), "cancel_popup", Localize("popup_choice_no"))
 	end,
 	quit_game_hero_view = function (self)
 		-- function 4
 		self:_cancel_popup()
 
-		local mechanism_setting = Managers.mechanism:mechanism_setting("progress_loss_warning_message_data")
+		local warning_message_data = Managers.mechanism:mechanism_setting("progress_loss_warning_message_data")
 		local str
 
-		if mechanism_setting == nil or not mechanism_setting.is_allowed() then
-			str = Localize("exit_game_popup_text") .. "\n\n" .. Localize(mechanism_setting.message)
+		if warning_message_data ~= nil and warning_message_data.is_allowed() then
+			str = Localize("exit_game_popup_text") .. "\n\n" .. Localize(warning_message_data.message)
 
 			if not str then
 				-- Nothing
@@ -153,19 +161,21 @@ local tbl_3 = {
 
 		str = Localize("quit_game_popup_text")
 
+		local text = str
+
 		::label_4_0::
 
-		self.popup_id = Managers.popup:queue_popup(str, Localize("popup_exit_game_topic"), "end_game", Localize("popup_choice_yes"), "cancel_popup_hero_view", Localize("popup_choice_no"))
+		self.popup_id = Managers.popup:queue_popup(text, Localize("popup_exit_game_topic"), "end_game", Localize("popup_choice_yes"), "cancel_popup_hero_view", Localize("popup_choice_no"))
 	end,
 	quit_game_hero_view_legacy = function (self)
 		-- function 5
 		self:_cancel_popup()
 
-		local mechanism_setting = Managers.mechanism:mechanism_setting("progress_loss_warning_message_data")
+		local warning_message_data = Managers.mechanism:mechanism_setting("progress_loss_warning_message_data")
 		local str
 
-		if mechanism_setting == nil or not mechanism_setting.is_allowed() then
-			str = Localize("exit_game_popup_text") .. "\n\n" .. Localize(mechanism_setting.message)
+		if warning_message_data ~= nil and warning_message_data.is_allowed() then
+			str = Localize("exit_game_popup_text") .. "\n\n" .. Localize(warning_message_data.message)
 
 			if not str then
 				-- Nothing
@@ -174,9 +184,11 @@ local tbl_3 = {
 
 		str = Localize("quit_game_popup_text")
 
+		local text = str
+
 		::label_5_0::
 
-		self.popup_id = Managers.popup:queue_popup(str, Localize("popup_exit_game_topic"), "end_game", Localize("popup_choice_yes"), "cancel_popup", Localize("popup_choice_no"))
+		self.popup_id = Managers.popup:queue_popup(text, Localize("popup_exit_game_topic"), "end_game", Localize("popup_choice_yes"), "cancel_popup", Localize("popup_choice_no"))
 	end,
 	return_to_title_screen = function (self)
 		-- function 6
@@ -184,25 +196,25 @@ local tbl_3 = {
 
 		local network_server = Managers.state.network.network_server
 
-		if not network_server then
+		if network_server then
 			if not network_server:are_all_peers_ingame(nil, true) then
-				local var_6_1 = Localize("player_join_block_exit_game")
+				local text = Localize("player_join_block_exit_game")
 
-				self.popup_id = Managers.popup:queue_popup(var_6_1, Localize("popup_error_topic"), "cancel_popup", Localize("menu_ok"))
+				self.popup_id = Managers.popup:queue_popup(text, Localize("popup_error_topic"), "cancel_popup", Localize("menu_ok"))
 
 				return
 			elseif network_server:num_active_peers() > 1 then
-				local str = Localize("exit_game_popup_text") .. "\n\n" .. Localize("exit_game_popup_text_is_hosting_players")
+				local text = Localize("exit_game_popup_text") .. "\n\n" .. Localize("exit_game_popup_text_is_hosting_players")
 
-				self.popup_id = Managers.popup:queue_popup(str, Localize("popup_exit_game_topic"), "end_game", Localize("popup_choice_yes"), "cancel_popup", Localize("popup_choice_no"))
+				self.popup_id = Managers.popup:queue_popup(text, Localize("popup_exit_game_topic"), "end_game", Localize("popup_choice_yes"), "cancel_popup", Localize("popup_choice_no"))
 
 				return
 			end
 		end
 
-		local var_6_3 = Localize("exit_to_title_popup_text")
+		local text = Localize("exit_to_title_popup_text")
 
-		self.popup_id = Managers.popup:queue_popup(var_6_3, Localize("popup_exit_to_title_topic"), "do_return_to_title_screen", Localize("popup_choice_yes"), "cancel_popup", Localize("popup_choice_no"))
+		self.popup_id = Managers.popup:queue_popup(text, Localize("popup_exit_to_title_topic"), "do_return_to_title_screen", Localize("popup_choice_yes"), "cancel_popup", Localize("popup_choice_no"))
 	end,
 	return_to_title_screen_hero_view = function (self)
 		-- function 7
@@ -210,14 +222,14 @@ local tbl_3 = {
 
 		local network_server = Managers.state.network.network_server
 
-		if not (not network_server and network_server:are_all_peers_ingame(nil, true)) then
-			local var_7_1 = Localize("player_join_block_exit_game")
+		if network_server and not network_server:are_all_peers_ingame(nil, true) then
+			local text = Localize("player_join_block_exit_game")
 
-			self.popup_id = Managers.popup:queue_popup(var_7_1, Localize("popup_error_topic"), "cancel_popup_hero_view", Localize("menu_ok"))
+			self.popup_id = Managers.popup:queue_popup(text, Localize("popup_error_topic"), "cancel_popup_hero_view", Localize("menu_ok"))
 		else
-			local var_7_2 = Localize("exit_to_title_popup_text")
+			local text = Localize("exit_to_title_popup_text")
 
-			self.popup_id = Managers.popup:queue_popup(var_7_2, Localize("popup_exit_to_title_topic"), "do_return_to_title_screen_hero_view", Localize("popup_choice_yes"), "cancel_popup_hero_view", Localize("popup_choice_no"))
+			self.popup_id = Managers.popup:queue_popup(text, Localize("popup_exit_to_title_topic"), "do_return_to_title_screen_hero_view", Localize("popup_choice_yes"), "cancel_popup_hero_view", Localize("popup_choice_no"))
 		end
 	end,
 	return_to_demo_title_screen = function (self)
@@ -226,14 +238,14 @@ local tbl_3 = {
 
 		local network_server = Managers.state.network.network_server
 
-		if not (not network_server and network_server:are_all_peers_ingame(nil, true)) then
-			local var_8_1 = Localize("player_join_block_exit_game")
+		if network_server and not network_server:are_all_peers_ingame(nil, true) then
+			local text = Localize("player_join_block_exit_game")
 
-			self.popup_id = Managers.popup:queue_popup(var_8_1, Localize("popup_error_topic"), "cancel_popup", Localize("menu_ok"))
+			self.popup_id = Managers.popup:queue_popup(text, Localize("popup_error_topic"), "cancel_popup", Localize("menu_ok"))
 		else
-			local var_8_2 = Localize("exit_to_title_popup_text")
+			local text = Localize("exit_to_title_popup_text")
 
-			self.popup_id = Managers.popup:queue_popup(var_8_2, Localize("popup_exit_to_title_topic"), "do_return_to_demo_title_screen", Localize("popup_choice_yes"), "cancel_popup", Localize("popup_choice_no"))
+			self.popup_id = Managers.popup:queue_popup(text, Localize("popup_exit_to_title_topic"), "do_return_to_demo_title_screen", Localize("popup_choice_yes"), "cancel_popup", Localize("popup_choice_no"))
 		end
 	end,
 	return_to_demo_title_screen_hero_view = function (self)
@@ -242,14 +254,14 @@ local tbl_3 = {
 
 		local network_server = Managers.state.network.network_server
 
-		if not (not network_server and network_server:are_all_peers_ingame(nil, true)) then
-			local var_9_1 = Localize("player_join_block_exit_game")
+		if network_server and not network_server:are_all_peers_ingame(nil, true) then
+			local text = Localize("player_join_block_exit_game")
 
-			self.popup_id = Managers.popup:queue_popup(var_9_1, Localize("popup_error_topic"), "cancel_popup_hero_view", Localize("menu_ok"))
+			self.popup_id = Managers.popup:queue_popup(text, Localize("popup_error_topic"), "cancel_popup_hero_view", Localize("menu_ok"))
 		else
-			local var_9_2 = Localize("exit_to_title_popup_text")
+			local text = Localize("exit_to_title_popup_text")
 
-			self.popup_id = Managers.popup:queue_popup(var_9_2, Localize("popup_exit_to_title_topic"), "do_return_to_demo_title_screen", Localize("popup_choice_yes"), "cancel_popup_hero_view", Localize("popup_choice_no"))
+			self.popup_id = Managers.popup:queue_popup(text, Localize("popup_exit_to_title_topic"), "do_return_to_demo_title_screen", Localize("popup_choice_yes"), "cancel_popup_hero_view", Localize("popup_choice_no"))
 		end
 	end,
 	restart_demo = function (self)
@@ -258,14 +270,14 @@ local tbl_3 = {
 
 		local network_server = Managers.state.network.network_server
 
-		if not (not network_server and network_server:are_all_peers_ingame(nil, true)) then
-			local var_10_1 = Localize("player_join_block_restart_demo")
+		if network_server and not network_server:are_all_peers_ingame(nil, true) then
+			local text = Localize("player_join_block_restart_demo")
 
-			self.popup_id = Managers.popup:queue_popup(var_10_1, Localize("popup_error_topic"), "cancel_popup", Localize("menu_ok"))
+			self.popup_id = Managers.popup:queue_popup(text, Localize("popup_error_topic"), "cancel_popup", Localize("menu_ok"))
 		else
-			local var_10_2 = Localize("restart_demo_popup_text")
+			local text = Localize("restart_demo_popup_text")
 
-			self.popup_id = Managers.popup:queue_popup(var_10_2, Localize("popup_restart_demo_topic"), "do_restart_demo", Localize("popup_choice_yes"), "cancel_popup", Localize("popup_choice_no"))
+			self.popup_id = Managers.popup:queue_popup(text, Localize("popup_restart_demo_topic"), "do_restart_demo", Localize("popup_choice_yes"), "cancel_popup", Localize("popup_choice_no"))
 		end
 	end,
 	restart_demo_hero_view = function (self)
@@ -274,75 +286,96 @@ local tbl_3 = {
 
 		local network_server = Managers.state.network.network_server
 
-		if not (not network_server and network_server:are_all_peers_ingame(nil, true)) then
-			local var_11_1 = Localize("player_join_block_restart_demo")
+		if network_server and not network_server:are_all_peers_ingame(nil, true) then
+			local text = Localize("player_join_block_restart_demo")
 
-			self.popup_id = Managers.popup:queue_popup(var_11_1, Localize("popup_error_topic"), "cancel_popup_hero_view", Localize("menu_ok"))
+			self.popup_id = Managers.popup:queue_popup(text, Localize("popup_error_topic"), "cancel_popup_hero_view", Localize("menu_ok"))
 		else
-			local var_11_2 = Localize("restart_demo_popup_text")
+			local text = Localize("restart_demo_popup_text")
 
-			self.popup_id = Managers.popup:queue_popup(var_11_2, Localize("popup_restart_demo_topic"), "do_restart_demo", Localize("popup_choice_yes"), "cancel_popup_hero_view", Localize("popup_choice_no"))
+			self.popup_id = Managers.popup:queue_popup(text, Localize("popup_restart_demo_topic"), "do_restart_demo", Localize("popup_choice_yes"), "cancel_popup_hero_view", Localize("popup_choice_no"))
 		end
 	end,
 	demo_invert_controls = function (self)
 		-- function 12
-		local active_button_data = self.views.hero_view:current_state()._active_windows[4].layout_logic.active_button_data
-		local var_12_1
-		local var_12_2
+		local views = self.views
+		local hero_view = views.hero_view
+		local state = hero_view:current_state()
+		local active_windows = state._active_windows
+		local ingame_menu_window = active_windows[4]
+		local layout_logic = ingame_menu_window.layout_logic
+		local active_button_data = layout_logic.active_button_data
+		local invert_button_data, button_name
 
-		for k, v in pairs(active_button_data) do
-			if v.transition == "demo_invert_controls" then
-				var_12_1 = v
-				var_12_2 = v.display_name
+		for _, button_data in pairs(active_button_data) do
+			if button_data.transition == "demo_invert_controls" then
+				invert_button_data = button_data
+				button_name = button_data.display_name
 
 				break
 			end
 		end
 
-		local get_service = Managers.input:get_service("Player")
+		local input_service = Managers.input:get_service("Player")
 
-		if not IS_WINDOWS then
-			local str = "win32"
-			local function_data = get_service:get_active_filters(str).look.function_data
+		if IS_WINDOWS then
+			local platform_key = "win32"
+			local input_filters = input_service:get_active_filters(platform_key)
+			local look_filter = input_filters.look
+			local function_data = look_filter.function_data
 			local flag
 
-			flag = function_data.filter_type ~= "scale_vector3" or not "scale_vector3_invert_y" or "scale_vector3"
+			flag = (function_data.filter_type ~= "scale_vector3" or not "scale_vector3_invert_y") and not not "scale_vector3"
 			function_data.filter_type = flag
 		end
 
+		local str
+
+		if IS_PS4 then
+			str = "ps4"
+
+			goto label_12_0
+		end
+
+		str = "xb1"
+
+		local platform_key = str
+
+		::label_12_0::
+
+		local input_filters = input_service:get_active_filters(platform_key)
+		local look_filter = input_filters.look_controller
+		local function_data = look_filter.function_data
 		local flag_2
 
-		flag_2 = not IS_PS4 and "ps4" and "xb1"
+		flag_2 = (function_data.filter_type ~= "scale_vector3_xy_accelerated_x" or not "scale_vector3_xy_accelerated_x_inverted") and not not "scale_vector3_xy_accelerated_x"
+		function_data.filter_type = flag_2
 
-		local get_active_filters = get_service:get_active_filters(flag_2)
-		local function_data_2 = get_active_filters.look_controller.function_data
+		local look_filter = input_filters.look_controller_ranged
+		local function_data = look_filter.function_data
 		local flag_3
 
-		flag_3 = function_data_2.filter_type ~= "scale_vector3_xy_accelerated_x" or not "scale_vector3_xy_accelerated_x_inverted" or "scale_vector3_xy_accelerated_x"
-		function_data_2.filter_type = flag_3
+		flag_3 = (function_data.filter_type ~= "scale_vector3_xy_accelerated_x" or not "scale_vector3_xy_accelerated_x_inverted") and not not "scale_vector3_xy_accelerated_x"
+		function_data.filter_type = flag_3
 
-		local function_data_3 = get_active_filters.look_controller_ranged.function_data
+		local look_filter = input_filters.look_controller_melee
+		local function_data = look_filter.function_data
 		local flag_4
 
-		flag_4 = function_data_3.filter_type ~= "scale_vector3_xy_accelerated_x" or not "scale_vector3_xy_accelerated_x_inverted" or "scale_vector3_xy_accelerated_x"
-		function_data_3.filter_type = flag_4
+		flag_4 = (function_data.filter_type ~= "scale_vector3_xy_accelerated_x" or not "scale_vector3_xy_accelerated_x_inverted") and not not "scale_vector3_xy_accelerated_x"
+		function_data.filter_type = flag_4
 
-		local function_data_4 = get_active_filters.look_controller_melee.function_data
+		local look_filter = input_filters.look_controller_zoom
+		local function_data = look_filter.function_data
 		local flag_5
 
-		flag_5 = function_data_4.filter_type ~= "scale_vector3_xy_accelerated_x" or not "scale_vector3_xy_accelerated_x_inverted" or "scale_vector3_xy_accelerated_x"
-		function_data_4.filter_type = flag_5
+		flag_5 = (function_data.filter_type ~= "scale_vector3_xy_accelerated_x" or not "scale_vector3_xy_accelerated_x_inverted") and not not "scale_vector3_xy_accelerated_x"
+		function_data.filter_type = flag_5
 
-		local function_data_5 = get_active_filters.look_controller_zoom.function_data
 		local flag_6
 
-		flag_6 = function_data_5.filter_type ~= "scale_vector3_xy_accelerated_x" or not "scale_vector3_xy_accelerated_x_inverted" or "scale_vector3_xy_accelerated_x"
-		function_data_5.filter_type = flag_6
-
-		local flag_7
-
-		flag_7 = var_12_2 ~= "menu_invert_controls" or not "menu_non_invert_controls" or "menu_invert_controls"
-		var_12_1.display_name = flag_7
+		flag_6 = (button_name ~= "menu_invert_controls" or not "menu_non_invert_controls") and not not "menu_invert_controls"
+		invert_button_data.display_name = flag_6
 	end,
 	end_game = function (self)
 		-- function 13
@@ -351,34 +384,44 @@ local tbl_3 = {
 		self.input_manager:block_device_except_service(nil, "mouse", 1)
 		self.input_manager:block_device_except_service(nil, "gamepad", 1)
 
-		local telemetry_survey = self.views.telemetry_survey
+		local telemetry_survey_view = self.views.telemetry_survey
 		local level_key = Managers.state.game_mode:level_key()
-		local var_13_2 = LevelSettings[level_key]
+		local level_setting = LevelSettings[level_key]
 		local send = TelemetrySettings.send
 
-		send = not send and TelemetrySettings.use_session_survey
+		if send then
+			-- Nothing
+		end
 
-		local is_survey_answered = telemetry_survey:is_survey_answered()
-		local is_survey_timed_out = telemetry_survey:is_survey_timed_out()
-		local backend = Managers.backend
+		send = TelemetrySettings.use_session_survey
 
-		local function fn()
+		local use_survey = send
+
+		::label_13_0::
+
+		local is_answered = telemetry_survey_view:is_survey_answered()
+		local is_timed_out = telemetry_survey_view:is_survey_timed_out()
+		local backend_manager = Managers.backend
+
+		local function commit_complete_callback()
 			-- function 14
-			if not send and is_survey_answered and is_survey_timed_out and not send or not var_13_2.hub_level then
+			if not use_survey or is_answered or not is_timed_out and not use_survey or level_setting.hub_level then
 				self.quit_game = true
 				self.current_view = nil
 			else
 				self.current_view = "telemetry_survey"
 
-				telemetry_survey:set_transition("end_game")
+				telemetry_survey_view:set_transition("end_game")
 			end
 		end
 
-		if not backend:on_shutdown(fn) then
-			local time = Managers.time:time("ui")
+		local id = backend_manager:on_shutdown(commit_complete_callback)
+
+		if not id then
+			local t = Managers.time:time("ui")
 
 			self.quit_game_retry = true
-			self.delay_quit_game_retry = time + 1
+			self.delay_quit_game_retry = t + 1
 		end
 	end,
 	do_return_to_title_screen = function (self)
@@ -387,14 +430,14 @@ local tbl_3 = {
 
 		local network_server = Managers.state.network.network_server
 
-		if not (not network_server and network_server:are_all_peers_ingame(nil, true)) then
-			local var_15_1 = Localize("player_join_block_exit_game")
+		if network_server and not network_server:are_all_peers_ingame(nil, true) then
+			local text = Localize("player_join_block_exit_game")
 
-			self.popup_id = Managers.popup:queue_popup(var_15_1, Localize("popup_error_topic"), "cancel_popup", Localize("menu_ok"))
-		elseif not Managers.matchmaking:is_joining_friend() then
-			local var_15_2 = Localize("player_join_block_exit_game")
+			self.popup_id = Managers.popup:queue_popup(text, Localize("popup_error_topic"), "cancel_popup", Localize("menu_ok"))
+		elseif Managers.matchmaking:is_joining_friend() then
+			local text = Localize("player_join_block_exit_game")
 
-			self.popup_id = Managers.popup:queue_popup(var_15_2, Localize("popup_error_topic"), "cancel_popup", Localize("menu_ok"))
+			self.popup_id = Managers.popup:queue_popup(text, Localize("popup_error_topic"), "cancel_popup", Localize("menu_ok"))
 		else
 			self.input_manager:block_device_except_service(nil, "keyboard", 1)
 			self.input_manager:block_device_except_service(nil, "mouse", 1)
@@ -409,14 +452,14 @@ local tbl_3 = {
 
 		local network_server = Managers.state.network.network_server
 
-		if not (not network_server and network_server:are_all_peers_ingame(nil, true)) then
-			local var_16_1 = Localize("player_join_block_exit_game")
+		if network_server and not network_server:are_all_peers_ingame(nil, true) then
+			local text = Localize("player_join_block_exit_game")
 
-			self.popup_id = Managers.popup:queue_popup(var_16_1, Localize("popup_error_topic"), "cancel_popup_hero_view", Localize("menu_ok"))
-		elseif not Managers.matchmaking:is_joining_friend() then
-			local var_16_2 = Localize("player_join_block_exit_game")
+			self.popup_id = Managers.popup:queue_popup(text, Localize("popup_error_topic"), "cancel_popup_hero_view", Localize("menu_ok"))
+		elseif Managers.matchmaking:is_joining_friend() then
+			local text = Localize("player_join_block_exit_game")
 
-			self.popup_id = Managers.popup:queue_popup(var_16_2, Localize("popup_error_topic"), "cancel_popup_hero_view", Localize("menu_ok"))
+			self.popup_id = Managers.popup:queue_popup(text, Localize("popup_error_topic"), "cancel_popup_hero_view", Localize("menu_ok"))
 		else
 			self.input_manager:block_device_except_service(nil, "keyboard", 1)
 			self.input_manager:block_device_except_service(nil, "mouse", 1)
@@ -437,7 +480,7 @@ local tbl_3 = {
 		-- function 19
 		local network_server = Managers.state.network.network_server
 
-		if not network_server and not network_server:are_all_peers_ingame(nil, true) then
+		if network_server and network_server:are_all_peers_ingame(nil, true) then
 			self.return_to_pc_menu = true
 		elseif not network_server then
 			self.return_to_pc_menu = true
@@ -449,14 +492,14 @@ local tbl_3 = {
 
 		local network_server = Managers.state.network.network_server
 
-		if not (not network_server and network_server:are_all_peers_ingame(nil, true)) then
-			local var_20_1 = Localize("player_join_block_exit_game")
+		if network_server and not network_server:are_all_peers_ingame(nil, true) then
+			local text = Localize("player_join_block_exit_game")
 
-			self.popup_id = Managers.popup:queue_popup(var_20_1, Localize("popup_error_topic"), "cancel_popup", Localize("menu_ok"))
-		elseif not Managers.matchmaking:is_joining_friend() then
-			local var_20_2 = Localize("player_join_block_exit_game")
+			self.popup_id = Managers.popup:queue_popup(text, Localize("popup_error_topic"), "cancel_popup", Localize("menu_ok"))
+		elseif Managers.matchmaking:is_joining_friend() then
+			local text = Localize("player_join_block_exit_game")
 
-			self.popup_id = Managers.popup:queue_popup(var_20_2, Localize("popup_error_topic"), "cancel_popup", Localize("menu_ok"))
+			self.popup_id = Managers.popup:queue_popup(text, Localize("popup_error_topic"), "cancel_popup", Localize("menu_ok"))
 		else
 			self.input_manager:block_device_except_service(nil, "keyboard", 1)
 			self.input_manager:block_device_except_service(nil, "mouse", 1)
@@ -471,14 +514,14 @@ local tbl_3 = {
 
 		local network_server = Managers.state.network.network_server
 
-		if not (not network_server and network_server:are_all_peers_ingame(nil, true)) then
-			local var_21_1 = Localize("player_join_block_exit_game")
+		if network_server and not network_server:are_all_peers_ingame(nil, true) then
+			local text = Localize("player_join_block_exit_game")
 
-			self.popup_id = Managers.popup:queue_popup(var_21_1, Localize("popup_error_topic"), "cancel_popup_hero_view", Localize("menu_ok"))
-		elseif not Managers.matchmaking:is_joining_friend() then
-			local var_21_2 = Localize("player_join_block_exit_game")
+			self.popup_id = Managers.popup:queue_popup(text, Localize("popup_error_topic"), "cancel_popup_hero_view", Localize("menu_ok"))
+		elseif Managers.matchmaking:is_joining_friend() then
+			local text = Localize("player_join_block_exit_game")
 
-			self.popup_id = Managers.popup:queue_popup(var_21_2, Localize("popup_error_topic"), "cancel_popup_hero_view", Localize("menu_ok"))
+			self.popup_id = Managers.popup:queue_popup(text, Localize("popup_error_topic"), "cancel_popup_hero_view", Localize("menu_ok"))
 		else
 			self.input_manager:block_device_except_service(nil, "keyboard", 1)
 			self.input_manager:block_device_except_service(nil, "mouse", 1)
@@ -493,25 +536,25 @@ local tbl_3 = {
 
 		local network_server = Managers.state.network.network_server
 
-		if not network_server then
+		if network_server then
 			if not network_server:are_all_peers_ingame(nil, true) then
-				local var_22_1 = Localize("player_join_block_exit_game")
+				local text = Localize("player_join_block_exit_game")
 
-				self.popup_id = Managers.popup:queue_popup(var_22_1, Localize("popup_error_topic"), "cancel_popup", Localize("menu_ok"))
+				self.popup_id = Managers.popup:queue_popup(text, Localize("popup_error_topic"), "cancel_popup", Localize("menu_ok"))
 
 				return
 			elseif network_server:num_active_peers() > 1 then
-				local str = Localize("exit_to_title_popup_text") .. "\n\n" .. Localize("exit_game_popup_text_is_hosting_players")
+				local text = Localize("exit_to_title_popup_text") .. "\n\n" .. Localize("exit_game_popup_text_is_hosting_players")
 
-				self.popup_id = Managers.popup:queue_popup(str, Localize("popup_exit_game_topic"), "do_return_to_pc_menu", Localize("popup_choice_yes"), "cancel_popup", Localize("popup_choice_no"))
+				self.popup_id = Managers.popup:queue_popup(text, Localize("popup_exit_game_topic"), "do_return_to_pc_menu", Localize("popup_choice_yes"), "cancel_popup", Localize("popup_choice_no"))
 
 				return
 			end
 		end
 
-		local var_22_3 = Localize("exit_to_title_popup_text")
+		local text = Localize("exit_to_title_popup_text")
 
-		self.popup_id = Managers.popup:queue_popup(var_22_3, Localize("popup_exit_to_title_topic"), "do_return_to_pc_menu", Localize("popup_choice_yes"), "cancel_popup", Localize("popup_choice_no"))
+		self.popup_id = Managers.popup:queue_popup(text, Localize("popup_exit_to_title_topic"), "do_return_to_pc_menu", Localize("popup_choice_yes"), "cancel_popup", Localize("popup_choice_no"))
 	end,
 	return_to_pc_menu_hero_view = function (self)
 		-- function 23
@@ -519,14 +562,14 @@ local tbl_3 = {
 
 		local network_server = Managers.state.network.network_server
 
-		if not (not network_server and network_server:are_all_peers_ingame(nil, true)) then
-			local var_23_1 = Localize("player_join_block_exit_game")
+		if network_server and not network_server:are_all_peers_ingame(nil, true) then
+			local text = Localize("player_join_block_exit_game")
 
-			self.popup_id = Managers.popup:queue_popup(var_23_1, Localize("popup_error_topic"), "cancel_popup_hero_view", Localize("menu_ok"))
+			self.popup_id = Managers.popup:queue_popup(text, Localize("popup_error_topic"), "cancel_popup_hero_view", Localize("menu_ok"))
 		else
-			local var_23_2 = Localize("exit_to_title_popup_text")
+			local text = Localize("exit_to_title_popup_text")
 
-			self.popup_id = Managers.popup:queue_popup(var_23_2, Localize("popup_exit_to_title_topic"), "do_return_to_pc_menu", Localize("popup_choice_yes"), "cancel_popup_hero_view", Localize("popup_choice_no"))
+			self.popup_id = Managers.popup:queue_popup(text, Localize("popup_exit_to_title_topic"), "do_return_to_pc_menu", Localize("popup_choice_yes"), "cancel_popup_hero_view", Localize("popup_choice_no"))
 		end
 	end,
 	ingame_menu = function (self)
@@ -596,14 +639,14 @@ local tbl_3 = {
 		-- function 37
 		self.current_view = "character_selection"
 	end,
-	initial_character_selection_force = function (self, arg_38_1)
+	initial_character_selection_force = function (self, params)
 		-- function 38
 		self.current_view = "character_selection"
 		self.initial_profile_view = true
 		self.views[self.current_view].exit_to_game = true
 
-		if not arg_38_1.back_to_vs_preview then
-			self.views[self.current_view].back_to_vs_preview = arg_38_1.back_to_vs_preview
+		if params.back_to_vs_preview then
+			self.views[self.current_view].back_to_vs_preview = params.back_to_vs_preview
 		end
 	end,
 	exit_initial_character_selection = function (self)
@@ -612,21 +655,23 @@ local tbl_3 = {
 		self.current_view = nil
 		self.initial_profile_view = nil
 	end,
-	join_lobby = function (self, arg_40_1)
+	join_lobby = function (self, lobby_client)
 		-- function 40
 		self.input_manager:block_device_except_service(nil, "keyboard", 1)
 		self.input_manager:block_device_except_service(nil, "mouse", 1)
 		self.input_manager:block_device_except_service(nil, "gamepad", 1)
 
-		self.join_lobby = arg_40_1
+		self.join_lobby = lobby_client
 		self.menu_active = false
 		self.current_view = nil
 	end,
 	exit_menu = function (self)
 		-- function 41
-		local component = self.ingame_hud:component("LevelCountdownUI")
+		local ingame_hud = self.ingame_hud
+		local countdown_ui = ingame_hud:component("LevelCountdownUI")
+		local is_enter_game = not not countdown_ui and not not countdown_ui:is_enter_game()
 
-		if not (not component and component:is_enter_game() or Managers.chat:chat_is_focused() or self:get_active_popup("profile_picker")) then
+		if not is_enter_game and not Managers.chat:chat_is_focused() and not self:get_active_popup("profile_picker") then
 			self.input_manager:device_unblock_all_services("keyboard", 1)
 			self.input_manager:device_unblock_all_services("mouse", 1)
 			self.input_manager:device_unblock_all_services("gamepad", 1)
@@ -673,7 +718,7 @@ local tbl_3 = {
 	end,
 	close_active = function (self)
 		-- function 48
-		if not self.popup_id then
+		if self.popup_id then
 			Managers.popup:cancel_popup(self.popup_id)
 
 			self.popup_id = nil
@@ -683,10 +728,10 @@ local tbl_3 = {
 		self.current_view = nil
 	end
 }
-local tbl_4 = {
-	ui_renderer_function = function (arg_49_0, arg_49_1, arg_49_2, arg_49_3)
+local view_settings = {
+	ui_renderer_function = function (world, is_tutorial, is_in_inn, mechanism_key)
 		-- function 49
-		local tbl = {
+		local materials = {
 			"material",
 			"materials/ui/ui_1080p_hud_atlas_textures",
 			"material",
@@ -705,80 +750,80 @@ local tbl_4 = {
 			"materials/fonts/gw_fonts"
 		}
 
-		if not arg_49_2 then
-			tbl[#tbl + 1] = "material"
-			tbl[#tbl + 1] = "materials/ui/ui_1080p_achievement_atlas_textures"
-			tbl[#tbl + 1] = "material"
-			tbl[#tbl + 1] = "materials/ui/ui_1080p_inn_single_textures"
-			tbl[#tbl + 1] = "material"
-			tbl[#tbl + 1] = "materials/ui/ui_1080p_lock_test"
-			tbl[#tbl + 1] = "material"
-			tbl[#tbl + 1] = "materials/ui/ui_1080p_pose_cosmetics"
-			tbl[#tbl + 1] = "material"
-			tbl[#tbl + 1] = "video/tutorial_videos/tutorial_videos"
+		if is_in_inn then
+			materials[#materials + 1] = "material"
+			materials[#materials + 1] = "materials/ui/ui_1080p_achievement_atlas_textures"
+			materials[#materials + 1] = "material"
+			materials[#materials + 1] = "materials/ui/ui_1080p_inn_single_textures"
+			materials[#materials + 1] = "material"
+			materials[#materials + 1] = "materials/ui/ui_1080p_lock_test"
+			materials[#materials + 1] = "material"
+			materials[#materials + 1] = "materials/ui/ui_1080p_pose_cosmetics"
+			materials[#materials + 1] = "material"
+			materials[#materials + 1] = "video/tutorial_videos/tutorial_videos"
 
-			for k, v in pairs(AreaSettings) do
-				local video_settings = v.video_settings
+			for _, settings in pairs(AreaSettings) do
+				local video_settings = settings.video_settings
 
-				if not video_settings then
-					tbl[#tbl + 1] = "material"
-					tbl[#tbl + 1] = video_settings.resource
+				if video_settings then
+					materials[#materials + 1] = "material"
+					materials[#materials + 1] = video_settings.resource
 				end
 			end
 
-			for k_2, v_2 in pairs(DLCSettings) do
-				local ui_materials_in_inn = v_2.ui_materials_in_inn
-				local ui_materials_in_inn_condition = v_2.ui_materials_in_inn_condition
+			for _, dlc in pairs(DLCSettings) do
+				local ui_materials_in_inn = dlc.ui_materials_in_inn
+				local ui_materials_in_inn_condition = dlc.ui_materials_in_inn_condition
 
-				if not ui_materials_in_inn and not ui_materials_in_inn_condition and not ui_materials_in_inn_condition(arg_49_1, arg_49_2, arg_49_3) then
-					for i, v_3 in ipairs(ui_materials_in_inn) do
-						tbl[#tbl + 1] = "material"
-						tbl[#tbl + 1] = v_3
+				if ui_materials_in_inn and (not ui_materials_in_inn_condition or ui_materials_in_inn_condition(is_tutorial, is_in_inn, mechanism_key)) then
+					for _, path in ipairs(ui_materials_in_inn) do
+						materials[#materials + 1] = "material"
+						materials[#materials + 1] = path
 					end
 				end
 			end
 		end
 
-		for k_3, v_4 in pairs(DLCSettings) do
-			local ui_materials = v_4.ui_materials
-			local ui_materials_condition = v_4.ui_materials_condition
+		for _, dlc in pairs(DLCSettings) do
+			local ui_materials = dlc.ui_materials
+			local ui_materials_condition = dlc.ui_materials_condition
 
-			if not ui_materials and not ui_materials_condition and not ui_materials_condition(arg_49_1, arg_49_2, arg_49_3) then
-				for i_2, v_5 in ipairs(ui_materials) do
-					tbl[#tbl + 1] = "material"
-					tbl[#tbl + 1] = v_5
+			if ui_materials and (not ui_materials_condition or ui_materials_condition(is_tutorial, is_in_inn, mechanism_key)) then
+				for _, path in ipairs(ui_materials) do
+					materials[#materials + 1] = "material"
+					materials[#materials + 1] = path
 				end
 			end
 		end
 
-		if not arg_49_1 then
-			tbl[#tbl + 1] = "material"
-			tbl[#tbl + 1] = "materials/ui/ui_1080p_tutorial_textures"
+		if is_tutorial then
+			materials[#materials + 1] = "material"
+			materials[#materials + 1] = "materials/ui/ui_1080p_tutorial_textures"
 		end
 
-		for k_4, v_6 in pairs(CareerSettings) do
-			local video = v_6.video
+		for _, settings in pairs(CareerSettings) do
+			local video = settings.video
 
-			if not video then
-				tbl[#tbl + 1] = "material"
-				tbl[#tbl + 1] = video.resource
+			if video then
+				materials[#materials + 1] = "material"
+				materials[#materials + 1] = video.resource
 			end
 		end
 
-		if not IS_WINDOWS then
-			tbl[#tbl + 1] = "material"
-			tbl[#tbl + 1] = "video/ui_option"
+		if IS_WINDOWS then
+			materials[#materials + 1] = "material"
+			materials[#materials + 1] = "video/ui_option"
 		end
 
-		if not IS_WINDOWS then
-			return UIRenderer.create(arg_49_0, unpack(tbl))
+		if IS_WINDOWS then
+			return UIRenderer.create(world, unpack(materials))
 		else
-			return UIRenderer.create(arg_49_0, unpack(tbl))
+			return UIRenderer.create(world, unpack(materials))
 		end
 	end,
-	ui_top_renderer_function = function (arg_50_0, arg_50_1, arg_50_2)
+	ui_top_renderer_function = function (top_world, is_tutorial, is_in_inn)
 		-- function 50
-		local tbl = {
+		local materials = {
 			"material",
 			"materials/ui/ui_1080p_hud_atlas_textures",
 			"material",
@@ -797,80 +842,80 @@ local tbl_4 = {
 			"materials/fonts/gw_fonts"
 		}
 
-		if not arg_50_2 then
-			tbl[#tbl + 1] = "material"
-			tbl[#tbl + 1] = "materials/ui/ui_1080p_achievement_atlas_textures"
-			tbl[#tbl + 1] = "material"
-			tbl[#tbl + 1] = "materials/ui/ui_1080p_inn_single_textures"
-			tbl[#tbl + 1] = "material"
-			tbl[#tbl + 1] = "materials/ui/ui_1080p_pose_cosmetics"
+		if is_in_inn then
+			materials[#materials + 1] = "material"
+			materials[#materials + 1] = "materials/ui/ui_1080p_achievement_atlas_textures"
+			materials[#materials + 1] = "material"
+			materials[#materials + 1] = "materials/ui/ui_1080p_inn_single_textures"
+			materials[#materials + 1] = "material"
+			materials[#materials + 1] = "materials/ui/ui_1080p_pose_cosmetics"
 
-			for k, v in pairs(AreaSettings) do
-				local video_settings = v.video_settings
+			for _, settings in pairs(AreaSettings) do
+				local video_settings = settings.video_settings
 
-				if not video_settings then
-					tbl[#tbl + 1] = "material"
-					tbl[#tbl + 1] = video_settings.resource
+				if video_settings then
+					materials[#materials + 1] = "material"
+					materials[#materials + 1] = video_settings.resource
 				end
 			end
 
-			for k_2, v_2 in pairs(DLCSettings) do
-				local ui_materials_in_inn = v_2.ui_materials_in_inn
+			for _, dlc in pairs(DLCSettings) do
+				local ui_materials_in_inn = dlc.ui_materials_in_inn
 
-				if not ui_materials_in_inn then
-					for i, v_3 in ipairs(ui_materials_in_inn) do
-						tbl[#tbl + 1] = "material"
-						tbl[#tbl + 1] = v_3
+				if ui_materials_in_inn then
+					for _, path in ipairs(ui_materials_in_inn) do
+						materials[#materials + 1] = "material"
+						materials[#materials + 1] = path
 					end
 				end
 			end
 		end
 
-		for k_3, v_4 in pairs(DLCSettings) do
-			local ui_materials = v_4.ui_materials
+		for _, dlc in pairs(DLCSettings) do
+			local ui_materials = dlc.ui_materials
 
-			if not ui_materials then
-				for i_2, v_5 in ipairs(ui_materials) do
-					tbl[#tbl + 1] = "material"
-					tbl[#tbl + 1] = v_5
+			if ui_materials then
+				for _, path in ipairs(ui_materials) do
+					materials[#materials + 1] = "material"
+					materials[#materials + 1] = path
 				end
 			end
 		end
 
-		if not arg_50_1 then
-			tbl[#tbl + 1] = "material"
-			tbl[#tbl + 1] = "materials/ui/ui_1080p_tutorial_textures"
+		if is_tutorial then
+			materials[#materials + 1] = "material"
+			materials[#materials + 1] = "materials/ui/ui_1080p_tutorial_textures"
 		end
 
-		for k_4, v_6 in pairs(CareerSettings) do
-			local video = v_6.video
+		for _, settings in pairs(CareerSettings) do
+			local video = settings.video
 
-			tbl[#tbl + 1] = "material"
-			tbl[#tbl + 1] = video.resource
+			materials[#materials + 1] = "material"
+			materials[#materials + 1] = video.resource
 		end
 
-		if not IS_WINDOWS then
-			return UIRenderer.create(world, unpack(tbl))
+		if IS_WINDOWS then
+			return UIRenderer.create(world, unpack(materials))
 		else
-			return UIRenderer.create(world, unpack(tbl))
+			return UIRenderer.create(world, unpack(materials))
 		end
 	end,
-	views_function = function (self)
+	views_function = function (ingame_ui_context)
 		-- function 51
 		local tbl = {
-			credits_view = CreditsView:new(self),
-			telemetry_survey = TelemetrySurveyView:new(self),
-			options_view = OptionsView:new(self),
-			hero_view = HeroView:new(self),
-			character_selection = CharacterSelectionView:new(self),
-			start_menu_view = StartMenuView:new(self),
-			start_game_view = StartGameView:new(self),
-			ingame_menu = IngameView:new(self)
+			credits_view = CreditsView:new(ingame_ui_context),
+			telemetry_survey = TelemetrySurveyView:new(ingame_ui_context),
+			options_view = OptionsView:new(ingame_ui_context),
+			hero_view = HeroView:new(ingame_ui_context),
+			character_selection = CharacterSelectionView:new(ingame_ui_context),
+			start_menu_view = StartMenuView:new(ingame_ui_context),
+			start_game_view = StartGameView:new(ingame_ui_context),
+			ingame_menu = IngameView:new(ingame_ui_context)
 		}
 		local var_51_1
 
-		if not IS_WINDOWS then
-			var_51_1 = ChatView:new(self)
+		if IS_WINDOWS then
+			var_51_1 = ChatView:new(ingame_ui_context)
 
 			if not var_51_1 then
 				-- Nothing
@@ -882,30 +927,32 @@ local tbl_4 = {
 		::label_51_0::
 
 		tbl.chat_view = var_51_1
-		tbl.console_friends_view = ConsoleFriendsView:new(self)
+		tbl.console_friends_view = ConsoleFriendsView:new(ingame_ui_context)
 
-		for k, v in pairs(DLCSettings) do
-			if not v.ui_views then
-				local current_mechanism_name = Managers.mechanism:current_mechanism_name()
+		local views = tbl
 
-				for i, v_2 in ipairs(v.ui_views) do
-					local name = v_2.name
-					local class_name = v_2.class_name
+		for _, dlc in pairs(DLCSettings) do
+			if dlc.ui_views then
+				local game_mechanism_name = Managers.mechanism:current_mechanism_name()
 
-					if not name and not class_name then
-						fassert(tbl[name] == nil, "view name (%s) already exists", name)
+				for _, view in ipairs(dlc.ui_views) do
+					local view_name = view.name
+					local view_class_name = view.class_name
 
-						local mechanism_filter = v_2.mechanism_filter
+					if view_name and view_class_name then
+						fassert(views[view_name] == nil, "view name (%s) already exists", view_name)
 
-						if not (not mechanism_filter and mechanism_filter[current_mechanism_name] ~= true and not v_2.only_in_inn or self.is_in_inn and not v_2.only_in_game and self.is_in_inn) then
-							tbl[name] = _G[class_name]:new(self)
+						local filter = view.mechanism_filter
+
+						if (not filter or filter[game_mechanism_name] == true) and (not view.only_in_inn or ingame_ui_context.is_in_inn) and (not view.only_in_game or not ingame_ui_context.is_in_inn) then
+							views[view_name] = _G[view_class_name]:new(ingame_ui_context)
 						end
 					end
 				end
 			end
 		end
 
-		return tbl
+		return views
 	end,
 	hotkey_mapping = {
 		hotkey_hero = {
@@ -914,7 +961,7 @@ local tbl_4 = {
 			view = "character_selection",
 			transition_state = "character",
 			in_transition_menu = "character_selection_view",
-			disable_for_mechanism = tbl
+			disable_for_mechanism = default_disable_for_mechanism
 		},
 		hotkey_map = {
 			can_interact_func = "_handle_versus_matchmaking",
@@ -940,12 +987,12 @@ local tbl_4 = {
 					not_matchmaking = false
 				}
 			},
-			inject_transition_params_func = function (self)
+			inject_transition_params_func = function (params)
 				-- function 52
-				if not Managers.matchmaking:is_in_versus_custom_game_lobby() then
-					self.menu_sub_state_name = "versus_player_hosted_lobby"
-					self.panel_title_buttons_hidden = true
-					self.ignore_sub_state_on_exit = true
+				if Managers.matchmaking:is_in_versus_custom_game_lobby() then
+					params.menu_sub_state_name = "versus_player_hosted_lobby"
+					params.panel_title_buttons_hidden = true
+					params.ignore_sub_state_on_exit = true
 				end
 			end
 		},
@@ -955,7 +1002,7 @@ local tbl_4 = {
 			view = "hero_view",
 			transition_state = "overview",
 			in_transition_menu = "hero_view",
-			disable_for_mechanism = tbl
+			disable_for_mechanism = default_disable_for_mechanism
 		},
 		hotkey_loot = {
 			can_interact_func = "can_open_loot",
@@ -964,7 +1011,7 @@ local tbl_4 = {
 			view = "hero_view",
 			transition_state = "loot",
 			in_transition_menu = "hero_view",
-			disable_for_mechanism = tbl_2
+			disable_for_mechanism = disable_for_mechanism_versus_disabled
 		},
 		hotkey_achievements = {
 			in_transition = "hero_view_force",
@@ -972,7 +1019,7 @@ local tbl_4 = {
 			view = "hero_view",
 			transition_state = "achievements",
 			in_transition_menu = "hero_view",
-			disable_for_mechanism = tbl
+			disable_for_mechanism = default_disable_for_mechanism
 		},
 		hotkey_weave_forge = {
 			can_interact_func = "weaves_requirements_fulfilled",
@@ -982,7 +1029,7 @@ local tbl_4 = {
 			transition_state = "weave_forge",
 			required_dlc = "scorpion",
 			in_transition_menu = "hero_view",
-			disable_for_mechanism = tbl_2
+			disable_for_mechanism = disable_for_mechanism_versus_disabled
 		},
 		hotkey_weave_play = {
 			transition_sub_state = "weave_quickplay",
@@ -993,7 +1040,7 @@ local tbl_4 = {
 			error_message = "matchmaking_ready_interaction_message_weave_play",
 			transition_state = "play",
 			required_dlc = "scorpion",
-			disable_for_mechanism = tbl_2
+			disable_for_mechanism = disable_for_mechanism_versus_disabled
 		},
 		hotkey_weave_leaderboard = {
 			can_interact_func = "weaves_requirements_fulfilled",
@@ -1025,20 +1072,20 @@ local tbl_4 = {
 	blocked_transitions = {}
 }
 
-DLCUtils.map_list("ui_views", function (self)
+DLCUtils.map_list("ui_views", function (view)
 	-- function 53
-	if not self.transitions then
-		for k, v in pairs(self.transitions) do
-			fassert(not tbl_3[k], "Transition %q already exists", k)
+	if view.transitions then
+		for name, func in pairs(view.transitions) do
+			fassert(not transitions[name], "Transition %q already exists", name)
 
-			tbl_3[k] = v
+			transitions[name] = func
 		end
 	end
 end)
-DLCUtils.merge("hotkey_mapping", tbl_4.hotkey_mapping)
-DLCUtils.merge("ui_transitions", tbl_3)
+DLCUtils.merge("hotkey_mapping", view_settings.hotkey_mapping)
+DLCUtils.merge("ui_transitions", transitions)
 
 return {
-	transitions = tbl_3,
-	view_settings = tbl_4
+	transitions = transitions,
+	view_settings = view_settings
 }

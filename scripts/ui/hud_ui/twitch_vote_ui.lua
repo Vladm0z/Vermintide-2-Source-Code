@@ -1,22 +1,22 @@
 -- chunkname: @scripts/ui/hud_ui/twitch_vote_ui.lua
 
-local var_0_0 = local_require("scripts/ui/hud_ui/twitch_vote_ui_definitions")
-local scenegraph_definition = var_0_0.scenegraph_definition
-local settings = var_0_0.settings
-local vote_texts = var_0_0.vote_texts
-local flag = false
-local num = 3
-local num_2 = 5
+local definitions = local_require("scripts/ui/hud_ui/twitch_vote_ui_definitions")
+local scenegraph_definition = definitions.scenegraph_definition
+local definition_settings = definitions.settings
+local vote_texts_definition = definitions.vote_texts
+local DEBUG_VOTE_UI = false
+local RESULT_TIMER = 3
+local INIT_AUDIO_COUNTDOWN_AT = 5
 
 TwitchVoteUI = class(TwitchVoteUI)
 
-TwitchVoteUI.init = function (self, arg_1_1, arg_1_2)
+TwitchVoteUI.init = function (self, parent, ingame_ui_context)
 	-- function 1
-	self._parent = arg_1_1
-	self._ui_renderer = arg_1_2.ui_renderer
-	self._ingame_ui = arg_1_2.ingame_ui
-	self._input_manager = arg_1_2.input_manager
-	self._world_manager = arg_1_2.world_manager
+	self._parent = parent
+	self._ui_renderer = ingame_ui_context.ui_renderer
+	self._ingame_ui = ingame_ui_context.ingame_ui
+	self._input_manager = ingame_ui_context.input_manager
+	self._world_manager = ingame_ui_context.world_manager
 	self.active = false
 	self._active_vote = nil
 	self._vote_activated = false
@@ -26,7 +26,7 @@ TwitchVoteUI.init = function (self, arg_1_1, arg_1_2)
 	self._render_settings = {
 		alpha_multiplier = 1
 	}
-	self._last_played_countdown_sfx = num_2 + 1
+	self._last_played_countdown_sfx = INIT_AUDIO_COUNTDOWN_AT + 1
 
 	local world = self._world_manager:world("level_world")
 
@@ -38,39 +38,39 @@ TwitchVoteUI.init = function (self, arg_1_1, arg_1_2)
 	Managers.state.event:register(self, "reset_vote_ui", "event_reset_vote_ui")
 end
 
-TwitchVoteUI.event_add_vote_ui = function (self, arg_2_1)
+TwitchVoteUI.event_add_vote_ui = function (self, vote_key)
 	-- function 2
-	local get_vote_data = Managers.twitch:get_vote_data(arg_2_1)
+	local vote_data = Managers.twitch:get_vote_data(vote_key)
 
-	if not get_vote_data then
+	if not vote_data then
 		return
 	end
 
-	if get_vote_data.vote_type == "standard_vote" then
-		self:start_standard_vote(get_vote_data.vote_templates[1], get_vote_data.vote_templates[2], get_vote_data.option_strings, arg_2_1)
-	elseif get_vote_data.vote_type == "multiple_choice" then
-		self:start_multiple_choice_vote(get_vote_data.vote_templates[1], get_vote_data.option_strings, arg_2_1)
+	if vote_data.vote_type == "standard_vote" then
+		self:start_standard_vote(vote_data.vote_templates[1], vote_data.vote_templates[2], vote_data.option_strings, vote_key)
+	elseif vote_data.vote_type == "multiple_choice" then
+		self:start_multiple_choice_vote(vote_data.vote_templates[1], vote_data.option_strings, vote_key)
 	end
 end
 
-TwitchVoteUI.event_finish_vote_ui = function (self, arg_3_1, arg_3_2)
+TwitchVoteUI.event_finish_vote_ui = function (self, vote_key, winning_index)
 	-- function 3
-	local get_vote_data = Managers.twitch:get_vote_data(arg_3_1)
+	local vote_data = Managers.twitch:get_vote_data(vote_key)
 
-	if not get_vote_data then
+	if not vote_data then
 		return
 	end
 
-	local var_3_1 = get_vote_data.vote_templates[arg_3_2]
-	local vote_type = get_vote_data.vote_type
-	local _active_vote = self._active_vote
-	local var_3_4 = TwitchVoteTemplates[var_3_1]
+	local winning_template_name = vote_data.vote_templates[winning_index]
+	local vote_type = vote_data.vote_type
+	local active_vote = self._active_vote
+	local vote_template = TwitchVoteTemplates[winning_template_name]
 
 	self._vote_result = {
-		vote_key = arg_3_1,
-		winning_index = arg_3_2,
-		winning_template_name = var_3_1,
-		vote_template = var_3_4
+		vote_key = vote_key,
+		winning_index = winning_index,
+		winning_template_name = winning_template_name,
+		vote_template = vote_template
 	}
 
 	if vote_type == "standard_vote" then
@@ -82,17 +82,17 @@ TwitchVoteUI.event_finish_vote_ui = function (self, arg_3_1, arg_3_2)
 	Application.error("[TwitchVoteUI] event_finish_vote_ui")
 end
 
-TwitchVoteUI.event_reset_vote_ui = function (self, arg_4_1)
+TwitchVoteUI.event_reset_vote_ui = function (self, vote_key)
 	-- function 4
-	if not arg_4_1 then
-		if not (not self._active_vote and self._active_vote.vote_key ~= arg_4_1) then
+	if vote_key then
+		if self._active_vote and self._active_vote.vote_key == vote_key then
 			self._active_vote = nil
 			self._vote_widget = nil
 		end
 
-		for i, v in ipairs(self._votes) do
-			if v.vote_key == arg_4_1 then
-				table.remove(self._votes, i)
+		for idx, vote_data in ipairs(self._votes) do
+			if vote_data.vote_key == vote_key then
+				table.remove(self._votes, idx)
 
 				break
 			end
@@ -109,67 +109,71 @@ TwitchVoteUI.event_reset_vote_ui = function (self, arg_4_1)
 	end
 end
 
-TwitchVoteUI.start_standard_vote = function (self, arg_5_1, arg_5_2, arg_5_3, arg_5_4)
+TwitchVoteUI.start_standard_vote = function (self, vote_template_a_name, vote_template_b_name, vote_inputs, vote_key)
 	-- function 5
-	local var_5_0 = TwitchVoteTemplates[arg_5_1]
+	local vote_template_a = TwitchVoteTemplates[vote_template_a_name]
 
-	fassert(var_5_0, "[TwitchVoteUI] Could not find any vote template for %s", arg_5_1)
+	fassert(vote_template_a, "[TwitchVoteUI] Could not find any vote template for %s", vote_template_a_name)
 
-	local var_5_1 = TwitchVoteTemplates[arg_5_2]
+	local vote_template_b = TwitchVoteTemplates[vote_template_b_name]
 
-	fassert(var_5_1, "[TwitchVoteUI] Could not find any vote template for %s", arg_5_2)
+	fassert(vote_template_b, "[TwitchVoteUI] Could not find any vote template for %s", vote_template_b_name)
 
-	local get_vote_data = Managers.twitch:get_vote_data(arg_5_4)
-
-	self._active_vote, self.active = {
+	local vote_data = Managers.twitch:get_vote_data(vote_key)
+	local vote = {
 		vote_type = "standard_vote",
-		vote_template_a = table.clone(var_5_0),
-		vote_template_b = table.clone(var_5_1),
-		inputs = arg_5_3 or {
+		vote_template_a = table.clone(vote_template_a),
+		vote_template_b = table.clone(vote_template_b),
+		inputs = not not vote_inputs or not not {
 			"#a",
 			"#b"
 		},
-		vote_key = arg_5_4,
-		timer = get_vote_data.timer
-	}, true
+		vote_key = vote_key,
+		timer = vote_data.timer
+	}
+
+	self.active = true
+	self._active_vote = vote
 
 	self:show_ui("standard_vote")
 end
 
-TwitchVoteUI.start_multiple_choice_vote = function (self, arg_6_1, arg_6_2, arg_6_3)
+TwitchVoteUI.start_multiple_choice_vote = function (self, vote_template_name, vote_inputs, vote_key)
 	-- function 6
-	local var_6_0 = TwitchVoteTemplates[arg_6_1]
+	local vote_template = TwitchVoteTemplates[vote_template_name]
 
-	fassert(var_6_0, "[TwitchVoteUI] Could not find any vote template for %s", arg_6_1)
+	fassert(vote_template, "[TwitchVoteUI] Could not find any vote template for %s", vote_template_name)
 	print("added multiple choice vote")
 
-	local get_vote_data = Managers.twitch:get_vote_data(arg_6_3)
-
-	self._active_vote, self.active = {
+	local vote_data = Managers.twitch:get_vote_data(vote_key)
+	local vote = {
 		vote_type = "multiple_choice",
-		vote_template = table.clone(var_6_0),
-		inputs = arg_6_2 or {
+		vote_template = table.clone(vote_template),
+		inputs = not not vote_inputs or not not {
 			"#a",
 			"#b",
 			"#c",
 			"#d",
 			"#e"
 		},
-		vote_key = arg_6_3,
-		timer = get_vote_data.timer
-	}, true
+		vote_key = vote_key,
+		timer = vote_data.timer
+	}
+
+	self.active = true
+	self._active_vote = vote
 
 	self:show_ui("multiple_choice_vote")
 end
 
-TwitchVoteUI.set_visible = function (self, arg_7_1)
+TwitchVoteUI.set_visible = function (self, visible)
 	-- function 7
-	self._visible = arg_7_1
+	self._visible = visible
 end
 
 TwitchVoteUI._create_elements = function (self)
 	-- function 8
-	local scenegraph_definition = var_0_0.scenegraph_definition
+	local scenegraph_definition = definitions.scenegraph_definition
 
 	self._ui_scenegraph = UISceneGraph.init_scenegraph(scenegraph_definition)
 	self._widgets = {}
@@ -186,56 +190,58 @@ TwitchVoteUI._create_elements = function (self)
 	UIRenderer.clear_scenegraph_queue(self._ui_renderer)
 end
 
-local tbl = {
+local customizer_data = {
 	root_scenegraph_id = "pivot",
 	label = "Twitch",
 	registry_key = "twitch",
 	drag_scenegraph_id = "pivot_dragger"
 }
 
-TwitchVoteUI.update = function (self, arg_9_1, arg_9_2)
+TwitchVoteUI.update = function (self, dt, t)
 	-- function 9
-	HudCustomizer.run(self._ui_renderer, self._ui_scenegraph, tbl)
+	HudCustomizer.run(self._ui_renderer, self._ui_scenegraph, customizer_data)
 
 	if not self.active then
 		return
 	end
 
-	if not flag and not self._active_vote then
+	if DEBUG_VOTE_UI and self._active_vote then
 		for i = 1, 5 do
 			Debug.text("                               Vote Percentages: " .. self._active_vote.vote_percentages[i])
 		end
 	end
 
-	self:_update_transition(arg_9_1)
-	self:_draw(arg_9_1, arg_9_2)
-	self:_update_active_vote(arg_9_1, arg_9_2)
+	self:_update_transition(dt)
+	self:_draw(dt, t)
+	self:_update_active_vote(dt, t)
 
-	local _ui = self._ui
+	local ui = self._ui
 
-	if _ui == "multiple_choice_vote" then
-		self:_update_multiple_votes_ui(arg_9_1)
-	elseif _ui == "standard_vote" then
-		self:_update_standard_vote(arg_9_1)
-	elseif not (_ui == "multiple_choice_result" or _ui ~= "standard_vote_result") then
-		self:_update_result(arg_9_1)
+	if ui == "multiple_choice_vote" then
+		self:_update_multiple_votes_ui(dt)
+	elseif ui == "standard_vote" then
+		self:_update_standard_vote(dt)
+	elseif ui == "multiple_choice_result" or ui == "standard_vote_result" then
+		self:_update_result(dt)
 	end
 end
 
-TwitchVoteUI._update_transition = function (self, arg_10_1)
+TwitchVoteUI._update_transition = function (self, dt)
 	-- function 10
-	if not self._fade_out then
-		local num = 1
-		local _render_settings = self._render_settings
-		local clamp = math.clamp(_render_settings.alpha_multiplier - arg_10_1 * num, 0, 1)
+	local fade_out = self._fade_out
 
-		_render_settings.alpha_multiplier = clamp
+	if fade_out then
+		local fade_out_speed = 1
+		local render_settings = self._render_settings
+		local alpha_multiplier = math.clamp(render_settings.alpha_multiplier - dt * fade_out_speed, 0, 1)
 
-		if clamp == 0 then
+		render_settings.alpha_multiplier = alpha_multiplier
+
+		if alpha_multiplier == 0 then
 			self._ui = nil
 			self._fade_out = nil
 
-			if not self._next_ui then
+			if self._next_ui then
 				self:_show_next_ui()
 			else
 				self.active = false
@@ -245,14 +251,16 @@ TwitchVoteUI._update_transition = function (self, arg_10_1)
 		return
 	end
 
-	if not self._fade_in then
-		local num_2 = 5
-		local _render_settings_2 = self._render_settings
-		local clamp_2 = math.clamp(_render_settings_2.alpha_multiplier + arg_10_1 * num_2, 0, 1)
+	local fade_in = self._fade_in
 
-		_render_settings_2.alpha_multiplier = clamp_2
+	if fade_in then
+		local fade_in_speed = 5
+		local render_settings = self._render_settings
+		local alpha_multiplier = math.clamp(render_settings.alpha_multiplier + dt * fade_in_speed, 0, 1)
 
-		if clamp_2 == 1 then
+		render_settings.alpha_multiplier = alpha_multiplier
+
+		if alpha_multiplier == 1 then
 			self._fade_in = nil
 		end
 
@@ -260,11 +268,11 @@ TwitchVoteUI._update_transition = function (self, arg_10_1)
 	end
 end
 
-TwitchVoteUI.show_ui = function (self, arg_11_1)
+TwitchVoteUI.show_ui = function (self, ui)
 	-- function 11
-	self._next_ui = arg_11_1
+	self._next_ui = ui
 
-	if not self._ui then
+	if self._ui then
 		self._fade_out = true
 	else
 		self:_show_next_ui()
@@ -278,71 +286,71 @@ end
 
 TwitchVoteUI._show_next_ui = function (self)
 	-- function 13
-	local _next_ui = self._next_ui
+	local ui = self._next_ui
 
-	if _next_ui == "multiple_choice_vote" then
+	if ui == "multiple_choice_vote" then
 		self:_show_multiple_choice_vote()
-	elseif _next_ui == "multiple_choice_result" then
+	elseif ui == "multiple_choice_result" then
 		self:_show_multiple_choice_result()
-	elseif _next_ui == "standard_vote" then
+	elseif ui == "standard_vote" then
 		self:_show_standard_vote()
-	elseif _next_ui == "standard_vote_result" then
+	elseif ui == "standard_vote_result" then
 		self:_show_standard_vote_result()
 	end
 
-	self._ui = _next_ui
+	self._ui = ui
 	self._fade_in = true
 	self._next_ui = nil
 end
 
-TwitchVoteUI._create_vote_icon = function (self, arg_14_1)
+TwitchVoteUI._create_vote_icon = function (self, vote_index)
 	-- function 14
-	if not (self._ui_animations.animate_in or table.size(self._widgets) >= 50 or self._vote_widget) then
+	if self._ui_animations.animate_in or table.size(self._widgets) >= 50 or not self._vote_widget then
 		return
 	end
 
-	local scenegraph_definition = var_0_0.scenegraph_definition
-	local str = "vote_icon_" .. self._vote_icon_count
+	local scenegraph_definition = definitions.scenegraph_definition
+	local base_name = "vote_icon_" .. self._vote_icon_count
 	local content = self._vote_widget.content
 	local style = self._vote_widget.style
-	local icon_texture_func = content.icon_texture_func(content, style, arg_14_1)
-	local icon_offset_func = content.icon_offset_func(content, style, arg_14_1)
+	local icon = content.icon_texture_func(content, style, vote_index)
+	local offset = content.icon_offset_func(content, style, vote_index)
 
-	scenegraph_definition[str] = {
+	scenegraph_definition[base_name] = {
 		parent = "vote_icon",
 		position = {
-			icon_offset_func,
+			offset,
 			0,
 			0
 		}
 	}
-	self._widgets[str] = UIWidget.init(UIWidgets.create_simple_texture(icon_texture_func, str))
+	self._widgets[base_name] = UIWidget.init(UIWidgets.create_simple_texture(icon, base_name))
 
-	local var_14_6 = self._widgets[str]
+	local widget = self._widgets[base_name]
 
-	self._ui_animations[str .. "_offset_y"] = UIAnimation.init(UIAnimation.function_by_time_with_offset, var_14_6.style.texture_id.offset, 2, 0, Math.random(100, 200), 3, math.random(0, 10), math.easeOutCubic)
-	self._ui_animations[str .. "_offset_x"] = UIAnimation.init(UIAnimation.function_by_time_with_offset, var_14_6.style.texture_id.offset, 1, 0, 1, 3, math.random(0, 10), altered_sin)
-	self._ui_animations[str .. "_color"] = UIAnimation.init(UIAnimation.function_by_time_with_offset, var_14_6.style.texture_id.color, 1, 255, 0, 3.2, math.random(0, 10), math.ease_exp)
-	self._animation_callbacks[str .. "_color"] = callback(self, "cb_destroy_vote_icon", str)
+	self._ui_animations[base_name .. "_offset_y"] = UIAnimation.init(UIAnimation.function_by_time_with_offset, widget.style.texture_id.offset, 2, 0, Math.random(100, 200), 3, math.random(0, 10), math.easeOutCubic)
+	self._ui_animations[base_name .. "_offset_x"] = UIAnimation.init(UIAnimation.function_by_time_with_offset, widget.style.texture_id.offset, 1, 0, 1, 3, math.random(0, 10), altered_sin)
+	self._ui_animations[base_name .. "_color"] = UIAnimation.init(UIAnimation.function_by_time_with_offset, widget.style.texture_id.color, 1, 255, 0, 3.2, math.random(0, 10), math.ease_exp)
+	self._animation_callbacks[base_name .. "_color"] = callback(self, "cb_destroy_vote_icon", base_name)
 	self._vote_icon_count = self._vote_icon_count + 1
 	self._ui_scenegraph = UISceneGraph.init_scenegraph(scenegraph_definition)
 end
 
-TwitchVoteUI.cb_destroy_vote_icon = function (arg_15_0, arg_15_1)
+TwitchVoteUI.cb_destroy_vote_icon = function (self, vote_icon_name)
 	-- function 15
-	arg_15_0._widgets[arg_15_1] = nil
+	self._widgets[vote_icon_name] = nil
 end
 
-TwitchVoteUI._update_active_vote = function (self, arg_16_1, arg_16_2)
+TwitchVoteUI._update_active_vote = function (self, dt, t)
 	-- function 16
-	if not self._active_vote and not self._active_vote.completed then
+	if not self._active_vote or self._active_vote.completed then
 		return
 	end
 
 	local vote_key = self._active_vote.vote_key
-	local get_vote_data = Managers.twitch:get_vote_data(vote_key)
+	local vote_data = Managers.twitch:get_vote_data(vote_key)
 
-	if not get_vote_data then
+	if not vote_data then
 		Application.error("[TwitchVoteUI] There is no vote data for key (" .. vote_key .. ")")
 
 		self._active_vote = nil
@@ -353,10 +361,10 @@ TwitchVoteUI._update_active_vote = function (self, arg_16_1, arg_16_2)
 		return
 	end
 
-	local options = get_vote_data.options
+	local options = vote_data.options
 	local _vote_count = self._vote_count
 
-	_vote_count = _vote_count or {
+	_vote_count = not not _vote_count or not not {
 		0,
 		0,
 		0,
@@ -365,73 +373,73 @@ TwitchVoteUI._update_active_vote = function (self, arg_16_1, arg_16_2)
 	}
 	self._vote_count = _vote_count
 
-	local num = options[1] - self._vote_count[1]
-	local num_2 = options[2] - self._vote_count[2]
-	local num_3 = options[3] - self._vote_count[3]
-	local num_4 = options[4] - self._vote_count[4]
-	local num_5 = options[5] - self._vote_count[5]
+	local a_diff = options[1] - self._vote_count[1]
+	local b_diff = options[2] - self._vote_count[2]
+	local c_diff = options[3] - self._vote_count[3]
+	local d_diff = options[4] - self._vote_count[4]
+	local e_diff = options[5] - self._vote_count[5]
 
-	if num > 0 then
-		for i = 1, num do
+	if a_diff > 0 then
+		for i = 1, a_diff do
 			self:_create_vote_icon(1)
 		end
 	end
 
-	if num_2 > 0 then
-		for j = 1, num_2 do
+	if b_diff > 0 then
+		for i = 1, b_diff do
 			self:_create_vote_icon(2)
 		end
 	end
 
-	if num_3 > 0 then
-		for k = 1, num_3 do
+	if c_diff > 0 then
+		for i = 1, c_diff do
 			self:_create_vote_icon(3)
 		end
 	end
 
-	if num_4 > 0 then
-		for l = 1, num_4 do
+	if d_diff > 0 then
+		for i = 1, d_diff do
 			self:_create_vote_icon(4)
 		end
 	end
 
-	if num_5 > 0 then
-		for i4 = 1, num_5 do
+	if e_diff > 0 then
+		for i = 1, e_diff do
 			self:_create_vote_icon(5)
 		end
 	end
 
-	local num_6 = 0
+	local total_amount = 0
 
-	for i5 = 1, 5 do
-		self._vote_count[i5] = options[i5]
-		num_6 = num_6 + options[i5]
+	for i = 1, 5 do
+		self._vote_count[i] = options[i]
+		total_amount = total_amount + options[i]
 	end
 
-	local tbl = {}
+	local percentages = {}
 
-	for i6 = 1, 5 do
-		local num_7
+	for i = 1, 5 do
+		local num
 
-		if num_6 > 0 then
-			num_7 = options[i6] / num_6
+		if total_amount > 0 then
+			num = options[i] / total_amount
 
-			if not num_7 then
+			if not num then
 				-- Nothing
 			end
 		end
 
-		num_7 = 0
+		num = 0
 
 		::label_16_0::
 
-		tbl[i6] = num_7
+		percentages[i] = num
 	end
 
 	local _active_vote = self._active_vote
 	local vote_percentages = self._active_vote.vote_percentages
 
-	vote_percentages = vote_percentages or {
+	vote_percentages = not not vote_percentages or not not {
 		0,
 		0,
 		0,
@@ -440,16 +448,16 @@ TwitchVoteUI._update_active_vote = function (self, arg_16_1, arg_16_2)
 	}
 	_active_vote.vote_percentages = vote_percentages
 
-	for i7 = 1, 5 do
+	for i = 1, 5 do
 		local vote_percentages_2 = self._active_vote.vote_percentages
 		local lerp = math.lerp
-		local var_16_16 = self._active_vote.vote_percentages[i7]
+		local var_16_6 = self._active_vote.vote_percentages[i]
 
-		var_16_16 = var_16_16 or 0
-		vote_percentages_2[i7] = lerp(var_16_16, tbl[i7], arg_16_1 * 2)
+		var_16_6 = not not var_16_6 or not not 0
+		vote_percentages_2[i] = lerp(var_16_6, percentages[i], dt * 2)
 	end
 
-	if not flag then
+	if DEBUG_VOTE_UI then
 		Debug.text("                                " .. self._vote_count[1])
 		Debug.text("                                " .. self._vote_count[2])
 		Debug.text("                                " .. self._vote_count[3])
@@ -457,206 +465,221 @@ TwitchVoteUI._update_active_vote = function (self, arg_16_1, arg_16_2)
 		Debug.text("                                " .. self._vote_count[5])
 	end
 
-	self._active_vote.timer = get_vote_data.timer
+	self._active_vote.timer = vote_data.timer
 	self._active_vote.options = options
-	self._vote_activated = get_vote_data.activated
+	self._vote_activated = vote_data.activated
 end
 
-TwitchVoteUI._draw = function (self, arg_17_1, arg_17_2)
+TwitchVoteUI._draw = function (self, dt, t)
 	-- function 17
-	local _ui_renderer = self._ui_renderer
-	local _ui_scenegraph = self._ui_scenegraph
-	local get_service = self._input_manager:get_service("ingame_menu")
-	local _render_settings = self._render_settings
+	local ui_renderer = self._ui_renderer
+	local ui_scenegraph = self._ui_scenegraph
+	local input_service = self._input_manager:get_service("ingame_menu")
+	local render_settings = self._render_settings
 
-	UIRenderer.begin_pass(_ui_renderer, _ui_scenegraph, get_service, arg_17_1, nil, _render_settings)
+	UIRenderer.begin_pass(ui_renderer, ui_scenegraph, input_service, dt, nil, render_settings)
 
-	if not self._ui then
-		for k, v in pairs(self._widgets) do
-			UIRenderer.draw_widget(_ui_renderer, v)
+	local ui = self._ui
+
+	if ui then
+		for _, widget in pairs(self._widgets) do
+			UIRenderer.draw_widget(ui_renderer, widget)
 		end
 	end
 
-	UIRenderer.end_pass(_ui_renderer)
+	UIRenderer.end_pass(ui_renderer)
 end
 
-TwitchVoteUI.destroy = function (arg_18_0)
+TwitchVoteUI.destroy = function (self)
 	-- function 18
-	Managers.state.event:unregister("add_vote_ui", arg_18_0)
-	Managers.state.event:unregister("finish_vote_ui", arg_18_0)
-	Managers.state.event:unregister("reset_vote_ui", arg_18_0)
+	Managers.state.event:unregister("add_vote_ui", self)
+	Managers.state.event:unregister("finish_vote_ui", self)
+	Managers.state.event:unregister("reset_vote_ui", self)
 end
 
 TwitchVoteUI._show_multiple_choice_vote = function (self)
 	-- function 19
-	local _active_vote = self._active_vote
+	local active_vote = self._active_vote
 
-	if not _active_vote then
+	if not active_vote then
 		return
 	end
 
 	self._widgets = {}
 
-	local multiple_choice = var_0_0.widgets.multiple_choice
+	local widgets = definitions.widgets.multiple_choice
 
-	for k, v in pairs(multiple_choice) do
-		self._widgets[k] = UIWidget.init(v)
+	for widget_name, widget_data in pairs(widgets) do
+		self._widgets[widget_name] = UIWidget.init(widget_data)
 	end
 
-	local _sorted_player_list = self:_sorted_player_list()
-	local inputs = _active_vote.inputs
+	local players = self:_sorted_player_list()
+	local option_strings = active_vote.inputs
 
-	for k_2, v_2 in pairs(_sorted_player_list) do
+	for index, player in pairs(players) do
 		repeat
-			local profile_index = v_2:profile_index()
-			local var_19_5 = SPProfiles[profile_index]
+			local profile_index = player:profile_index()
+			local player_profile = SPProfiles[profile_index]
 
-			if not (not var_19_5 and not (k_2 <= PlayerManager.MAX_PLAYERS)) then
-				local str = "hero_" .. k_2
-				local var_19_7 = self._widgets[str]
+			if player_profile and index <= PlayerManager.MAX_PLAYERS then
+				local widget_index = "hero_" .. index
+				local widget = self._widgets[widget_index]
 
-				if not var_19_7 then
-					local career_index = v_2:career_index()
-					local var_19_9 = var_19_5.careers[career_index]
-					local str_2 = var_19_9.portrait_image .. "_twitch"
-					local str_3 = var_19_9.portrait_image .. "_masked"
-					local content = var_19_7.content
+				if widget then
+					local career_index = player:career_index()
+					local career_settings = player_profile.careers[career_index]
+					local base_portrait = career_settings.portrait_image .. "_twitch"
+					local masked_portrait = career_settings.portrait_image .. "_masked"
+					local content = widget.content
 
-					content.portrait = str_2
-					content.masked_portrait = str_3
+					content.portrait = base_portrait
+					content.masked_portrait = masked_portrait
 					content.profile_index = profile_index
 
-					local str_4 = "hero_vote_" .. k_2
+					local vote_widget_index = "hero_vote_" .. index
+					local vote_widget = self._widgets[vote_widget_index]
 
-					self._widgets[str_4].content.text = inputs[profile_index]
+					vote_widget.content.text = option_strings[profile_index]
 				end
 			end
 		until true
 	end
 
-	local vote_icon = self._widgets.vote_icon
-	local vote_template = _active_vote.vote_template
+	local vote_icon_widget = self._widgets.vote_icon
+	local vote_template = active_vote.vote_template
 	local texture_id = vote_template.texture_id
 
-	vote_icon.content.texture_id = texture_id
+	vote_icon_widget.content.texture_id = texture_id
 
-	local vote_text = self._widgets.vote_text
+	local vote_text_widget = self._widgets.vote_text
 	local text = vote_template.text
 
-	vote_text.content.text = text
+	vote_text_widget.content.text = text
 
 	self:_play_multiple_vote_start()
 end
 
-TwitchVoteUI._update_multiple_votes_ui = function (self, arg_20_1)
+TwitchVoteUI._update_multiple_votes_ui = function (self, dt)
 	-- function 20
-	local _active_vote = self._active_vote
+	local active_vote = self._active_vote
 
-	if not _active_vote then
+	if not active_vote then
 		return
 	end
 
-	local num = 0
-	local num_2 = 0
+	local highest_percentage = 0
+	local glow_index = 0
 
-	for i = 1, 4 do
-		local str = "hero_" .. i
-		local var_20_4 = self._widgets[str]
-		local profile_index = var_20_4.content.profile_index
-		local var_20_6 = _active_vote.vote_percentages[profile_index]
+	for index = 1, 4 do
+		local widget_name = "hero_" .. index
+		local widget = self._widgets[widget_name]
+		local content = widget.content
+		local profile_index = content.profile_index
+		local var_20_0 = active_vote.vote_percentages[profile_index]
 
-		var_20_6 = var_20_6 or 0
+		if not var_20_0 then
+			-- Nothing
+		end
 
-		local style = var_20_4.style
-		local num_3 = style.mask.base_size[2] * var_20_6
+		var_20_0 = 0
 
-		style.mask.texture_size[2] = num_3
+		local percentage = var_20_0
 
-		if num < var_20_6 then
-			num_2 = i
-			num = var_20_6
+		::label_20_0::
+
+		local style = widget.style
+		local height = style.mask.base_size[2] * percentage
+
+		style.mask.texture_size[2] = height
+
+		if highest_percentage < percentage then
+			glow_index = index
+			highest_percentage = percentage
 		end
 	end
 
-	for j = 1, 4 do
-		local str_2 = "hero_glow_" .. j
-		local var_20_10 = self._widgets[str_2]
-		local flag = j == num_2
+	for index = 1, 4 do
+		local widget_name = "hero_glow_" .. index
+		local widget = self._widgets[widget_name]
+		local glow = index == glow_index
+		local content = widget.content
 
-		var_20_10.content.visible = flag
+		content.visible = glow
 	end
 
-	local timer = _active_vote.timer
-	local abs = math.abs(math.ceil(timer))
+	local timer = active_vote.timer
+	local time_left = math.abs(math.ceil(timer))
+	local timer_widget = self._widgets.timer
 
-	self._widgets.timer.content.text = abs
+	timer_widget.content.text = time_left
 
-	self:_play_timer_sfx(abs)
+	self:_play_timer_sfx(time_left)
 end
 
 TwitchVoteUI._show_multiple_choice_result = function (self)
 	-- function 21
 	self._fade_out = false
 
-	local _vote_result = self._vote_result
+	local vote_result = self._vote_result
 
-	assert(_vote_result)
+	assert(vote_result)
 	WwiseWorld.trigger_event(self.wwise_world, "Play_twitch_vote_end")
 
 	self._widgets = {}
 
-	local multiple_choice_result = var_0_0.widgets.multiple_choice_result
+	local widgets = definitions.widgets.multiple_choice_result
 
-	for k, v in pairs(multiple_choice_result) do
-		self._widgets[k] = UIWidget.init(v)
+	for widget_name, widget_data in pairs(widgets) do
+		self._widgets[widget_name] = UIWidget.init(widget_data)
 	end
 
-	local winner_text = self._widgets.winner_text
-	local winner_portrait = self._widgets.winner_portrait
-	local winning_index = _vote_result.winning_index
+	local winner_text_widget = self._widgets.winner_text
+	local winner_portrait_widget = self._widgets.winner_portrait
+	local winning_index = vote_result.winning_index
 
 	print("winning_index", winning_index)
-	assert(not (winning_index > 0) or winning_index <= 5)
+	assert(winning_index > 0 and winning_index <= 5)
 
 	local human_and_bot_players = Managers.player:human_and_bot_players()
 
-	for k_2, v_2 in pairs(human_and_bot_players) do
-		local profile_index = v_2:profile_index()
+	for peer_id, player in pairs(human_and_bot_players) do
+		local profile_index = player:profile_index()
 
 		if profile_index == winning_index then
-			local name = v_2:name()
+			local name = player:name()
 
-			winner_text.content.text = name
+			winner_text_widget.content.text = name
 
-			local var_21_8 = SPProfiles[profile_index]
-			local career_index = v_2:career_index()
-			local portrait_image = var_21_8.careers[career_index].portrait_image
+			local player_profile = SPProfiles[profile_index]
+			local career_index = player:career_index()
+			local career_settings = player_profile.careers[career_index]
+			local base_portrait = career_settings.portrait_image
 
-			winner_portrait.content.portrait = portrait_image
-			winner_portrait.content.visible = true
+			winner_portrait_widget.content.portrait = base_portrait
+			winner_portrait_widget.content.visible = true
 		end
 	end
 
-	local vote_template = _vote_result.vote_template
+	local vote_template = vote_result.vote_template
 
-	if not vote_template then
-		local result_icon = self._widgets.result_icon
+	if vote_template then
+		local result_icon_widget = self._widgets.result_icon
 		local texture_id = vote_template.texture_id
 
-		result_icon.content.texture_id = texture_id
+		result_icon_widget.content.texture_id = texture_id
 
-		local result_text = self._widgets.result_text
+		local result_text_widget = self._widgets.result_text
 		local text = vote_template.text
 
-		result_text.content.text = text
+		result_text_widget.content.text = text
 	end
 
-	self._result_timer = num
+	self._result_timer = RESULT_TIMER
 end
 
-TwitchVoteUI._update_result = function (self, arg_22_1)
+TwitchVoteUI._update_result = function (self, dt)
 	-- function 22
-	self._result_timer = self._result_timer - arg_22_1
+	self._result_timer = self._result_timer - dt
 
 	if self._result_timer > 0 then
 		return
@@ -667,173 +690,185 @@ end
 
 TwitchVoteUI._show_standard_vote = function (self)
 	-- function 23
-	local _active_vote = self._active_vote
+	local active_vote = self._active_vote
 
-	if not _active_vote then
+	if not active_vote then
 		return
 	end
 
 	self._widgets = {}
 
-	local standard_vote = var_0_0.widgets.standard_vote
+	local widgets = definitions.widgets.standard_vote
 
-	for k, v in pairs(standard_vote) do
-		self._widgets[k] = UIWidget.init(v)
+	for widget_name, widget_data in pairs(widgets) do
+		self._widgets[widget_name] = UIWidget.init(widget_data)
 	end
 
-	local vote_template_a = _active_vote.vote_template_a
-	local vote_template_b = _active_vote.vote_template_b
-	local vote_icon_a = self._widgets.vote_icon_a
-	local texture_id = vote_template_a.texture_id
-	local flag = true
+	local vote_template_a = active_vote.vote_template_a
+	local vote_template_b = active_vote.vote_template_b
+	local vote_icon_a_widget = self._widgets.vote_icon_a
+	local texture_a = vote_template_a.texture_id
+	local use_frame_texture_a = true
 
-	vote_icon_a.content.texture_id = texture_id
+	vote_icon_a_widget.content.texture_id = texture_a
 
-	local vote_icon_b = self._widgets.vote_icon_b
-	local texture_id_2 = vote_template_b.texture_id
-	local flag_2 = true
+	local vote_icon_b_widget = self._widgets.vote_icon_b
+	local texture_b = vote_template_b.texture_id
+	local use_frame_texture_b = true
 
-	vote_icon_b.content.texture_id = texture_id_2
-	self._widgets.vote_icon_rect_a.content.visible = flag
-	self._widgets.vote_icon_rect_b.content.visible = flag_2
-	self._widgets.vote_text_a.content.text = vote_template_a.text
-	self._widgets.vote_text_b.content.text = vote_template_b.text
+	vote_icon_b_widget.content.texture_id = texture_b
+	self._widgets.vote_icon_rect_a.content.visible = use_frame_texture_a
+	self._widgets.vote_icon_rect_b.content.visible = use_frame_texture_b
+
+	local vote_text_a_widget = self._widgets.vote_text_a
+
+	vote_text_a_widget.content.text = vote_template_a.text
+
+	local vote_text_b_widget = self._widgets.vote_text_b
+
+	vote_text_b_widget.content.text = vote_template_b.text
 
 	self:_play_standard_vote_start()
 end
 
 TwitchVoteUI._update_standard_vote = function (self)
 	-- function 24
-	local _active_vote = self._active_vote
+	local active_vote = self._active_vote
 
-	if not _active_vote then
+	if not active_vote then
 		return
 	end
 
-	local timer = _active_vote.timer
-	local abs = math.abs(math.ceil(timer))
-	local timer_2 = self._widgets.timer
+	local timer = active_vote.timer
+	local time_left = math.abs(math.ceil(timer))
+	local timer_widget = self._widgets.timer
 
-	if not timer_2 then
+	if not timer_widget then
 		table.dump(self._widgets, "### TWITCH VOTE UI CRASH INFO ###", 3)
 
 		return
 	end
 
-	timer_2.content.text = abs
+	timer_widget.content.text = time_left
 
-	self:_play_timer_sfx(abs)
+	self:_play_timer_sfx(time_left)
 
-	local vote_percentages = _active_vote.vote_percentages
-	local var_24_5 = vote_percentages[1]
-	local var_24_6 = vote_percentages[2]
-	local size = scenegraph_definition.result_a_bar.size
+	local vote_percentages = active_vote.vote_percentages
+	local vote_percentage_a = vote_percentages[1]
+	local vote_percentage_b = vote_percentages[2]
+	local result_a_bar_default_size = scenegraph_definition.result_a_bar.size
+	local result_a_bar_size = self._ui_scenegraph.result_a_bar.size
 
-	self._ui_scenegraph.result_a_bar.size[1] = math.ceil(size[1] * var_24_5)
+	result_a_bar_size[1] = math.ceil(result_a_bar_default_size[1] * vote_percentage_a)
 
-	local size_2 = scenegraph_definition.result_b_bar.size
+	local result_b_bar_default_size = scenegraph_definition.result_b_bar.size
+	local result_b_bar_size = self._ui_scenegraph.result_b_bar.size
 
-	self._ui_scenegraph.result_b_bar.size[1] = math.ceil(size_2[1] * var_24_6)
-	self._widgets.result_bar_a_eyes.content.visible = var_24_6 <= var_24_5
-	self._widgets.result_bar_b_eyes.content.visible = var_24_5 <= var_24_6
+	result_b_bar_size[1] = math.ceil(result_b_bar_default_size[1] * vote_percentage_b)
+	self._widgets.result_bar_a_eyes.content.visible = vote_percentage_b <= vote_percentage_a
+	self._widgets.result_bar_b_eyes.content.visible = vote_percentage_a <= vote_percentage_b
 end
 
 TwitchVoteUI._show_standard_vote_result = function (self)
 	-- function 25
 	self._fade_out = false
 
-	local _vote_result = self._vote_result
+	local vote_result = self._vote_result
 
-	assert(_vote_result)
+	assert(vote_result)
 
 	self._widgets = {}
 
-	local standard_vote_result = var_0_0.widgets.standard_vote_result
+	local widgets = definitions.widgets.standard_vote_result
 
-	for k, v in pairs(standard_vote_result) do
-		self._widgets[k] = UIWidget.init(v)
+	for widget_name, widget_data in pairs(widgets) do
+		self._widgets[widget_name] = UIWidget.init(widget_data)
 	end
 
-	self._result_timer = num
+	self._result_timer = RESULT_TIMER
 
-	local winning_template_name = _vote_result.winning_template_name
+	local winning_template_name = vote_result.winning_template_name
 
 	assert(winning_template_name)
 
-	local var_25_3 = TwitchVoteTemplates[winning_template_name]
-	local texture_id = var_25_3.texture_id
+	local winning_template = TwitchVoteTemplates[winning_template_name]
+	local texture_id = winning_template.texture_id
+	local result_icon_widget = self._widgets.result_icon
 
-	self._widgets.result_icon.content.texture_id = texture_id
+	result_icon_widget.content.texture_id = texture_id
 
-	local cost = var_25_3.cost
+	local cost = winning_template.cost
 
 	self:_play_winning_sfx(cost)
 
-	local result_icon = self._widgets.result_icon
-	local texture_id_2 = var_25_3.texture_id
+	local result_icon_widget = self._widgets.result_icon
+	local texture = winning_template.texture_id
 
-	result_icon.content.texture_id = texture_id_2
+	result_icon_widget.content.texture_id = texture
 
-	local flag = true
+	local use_frame_texture = true
 
-	self._widgets.result_icon_rect.content.visible = flag
+	self._widgets.result_icon_rect.content.visible = use_frame_texture
 
-	local result_text = self._widgets.result_text
-	local text = var_25_3.text
+	local result_text_widget = self._widgets.result_text
+	local text = winning_template.text
 
-	result_text.content.text = text
+	result_text_widget.content.text = text
 
-	local result_description_text = self._widgets.result_description_text
+	local result_description_text_widget = self._widgets.result_description_text
 
-	if not var_25_3.description then
-		local description = var_25_3.description
+	if winning_template.description then
+		local description_text = winning_template.description
 
-		result_description_text.content.text = description
+		result_description_text_widget.content.text = description_text
 	else
-		result_description_text.content.visible = false
+		result_description_text_widget.content.visible = false
 	end
 end
 
-TwitchVoteUI._sorted_player_list = function (arg_26_0)
+TwitchVoteUI._sorted_player_list = function (self)
 	-- function 26
 	local human_and_bot_players = Managers.player:human_and_bot_players()
-	local tbl = {}
+	local players = {}
 
-	for k, v in pairs(human_and_bot_players) do
-		if not v:profile_index() then
-			table.insert(tbl, v)
+	for peer_id, player in pairs(human_and_bot_players) do
+		if player:profile_index() then
+			table.insert(players, player)
 		end
 	end
 
-	local function fn(self, arg_27_1)
+	local function sort_by_profile_index(player_a, player_b)
 		-- function 27
-		return self:profile_index() < arg_27_1:profile_index()
+		local profile_index_a = player_a:profile_index()
+		local profile_index_b = player_b:profile_index()
+
+		return profile_index_a < profile_index_b
 	end
 
-	table.sort(tbl, fn)
+	table.sort(players, sort_by_profile_index)
 
-	return tbl
+	return players
 end
 
-TwitchVoteUI._play_winning_sfx = function (self, arg_28_1)
+TwitchVoteUI._play_winning_sfx = function (self, cost)
 	-- function 28
-	if arg_28_1 == nil then
+	if cost == nil then
 		return
 	end
 
-	if arg_28_1 <= 0 then
+	if cost <= 0 then
 		WwiseWorld.trigger_event(self.wwise_world, "Play_twitch_vote_end")
 	else
 		WwiseWorld.trigger_event(self.wwise_world, "Play_twitch_vote_evil_won")
 	end
 end
 
-TwitchVoteUI._play_timer_sfx = function (self, arg_29_1)
+TwitchVoteUI._play_timer_sfx = function (self, time_left)
 	-- function 29
-	if not (not (arg_29_1 <= num_2) or arg_29_1 == self._last_played_countdown_sfx) then
+	if time_left <= INIT_AUDIO_COUNTDOWN_AT and time_left ~= self._last_played_countdown_sfx then
 		WwiseWorld.trigger_event(self.wwise_world, "Play_twitch_count")
 
-		self._last_played_countdown_sfx = arg_29_1
+		self._last_played_countdown_sfx = time_left
 	end
 end
 

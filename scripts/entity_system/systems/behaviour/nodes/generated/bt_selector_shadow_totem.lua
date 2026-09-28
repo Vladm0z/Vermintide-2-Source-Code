@@ -2,10 +2,10 @@
 
 require("scripts/entity_system/systems/behaviour/nodes/bt_node")
 
-local alive = Unit.alive
+local unit_alive = Unit.alive
 local Profiler = Profiler
 
-local function fn()
+local function nop()
 	-- function 1
 	return
 end
@@ -20,32 +20,32 @@ BTSelector_shadow_totem.init = function (self, ...)
 	self._children = {}
 end
 
-BTSelector_shadow_totem.leave = function (self, arg_3_1, arg_3_2, arg_3_3, arg_3_4)
+BTSelector_shadow_totem.leave = function (self, unit, blackboard, t, reason)
 	-- function 3
-	self:set_running_child(arg_3_1, arg_3_2, arg_3_3, nil, arg_3_4)
+	self:set_running_child(unit, blackboard, t, nil, reason)
 end
 
-BTSelector_shadow_totem.run = function (self, arg_4_1, arg_4_2, arg_4_3, arg_4_4)
+BTSelector_shadow_totem.run = function (self, unit, blackboard, t, dt)
 	-- function 4
-	local start = Profiler.start
-	local stop = Profiler.stop
-	local current_running_child = self:current_running_child(arg_4_2)
-	local var_4_3 = self._children[1]
+	local Profiler_start, Profiler_stop = Profiler.start, Profiler.stop
+	local child_running = self:current_running_child(blackboard)
+	local children = self._children
+	local node_idle = children[1]
 
-	self:set_running_child(arg_4_1, arg_4_2, arg_4_3, var_4_3, "aborted")
+	self:set_running_child(unit, blackboard, t, node_idle, "aborted")
 
-	local run, var_4_5 = var_4_3:run(arg_4_1, arg_4_2, arg_4_3, arg_4_4)
+	local result, evaluate = node_idle:run(unit, blackboard, t, dt)
 
-	if run ~= "running" then
-		self:set_running_child(arg_4_1, arg_4_2, arg_4_3, nil, run)
+	if result ~= "running" then
+		self:set_running_child(unit, blackboard, t, nil, result)
 	end
 
-	if run ~= "failed" then
-		return run, var_4_5
+	if result ~= "failed" then
+		return result, evaluate
 	end
 end
 
-BTSelector_shadow_totem.add_child = function (arg_5_0, arg_5_1)
+BTSelector_shadow_totem.add_child = function (self, node)
 	-- function 5
-	arg_5_0._children[#arg_5_0._children + 1] = arg_5_1
+	self._children[#self._children + 1] = node
 end

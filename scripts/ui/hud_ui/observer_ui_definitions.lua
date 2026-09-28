@@ -1,7 +1,7 @@
 -- chunkname: @scripts/ui/hud_ui/observer_ui_definitions.lua
 
-local flag = true
-local tbl = {
+local RETAINED_MODE_ENABLED = true
+local scenegraph_definition = {
 	root = {
 		is_root = true,
 		position = {
@@ -184,15 +184,15 @@ local tbl = {
 		}
 	}
 }
-local tbl_2 = {
+local temp_offext = {
 	0,
 	0,
 	0
 }
-local tbl_3 = {
-	divider = UIWidgets.create_simple_texture("summary_screen_line_breaker", "divider", false, flag),
-	player_name = UIWidgets.create_simple_text("n/a", "player_name", 28, Colors.get_table("white"), nil, nil, flag),
-	hero_name = UIWidgets.create_simple_text("n/a", "hero_name", 24, Colors.get_table("cheeseburger"), nil, nil, flag),
+local widget_definitions = {
+	divider = UIWidgets.create_simple_texture("summary_screen_line_breaker", "divider", false, RETAINED_MODE_ENABLED),
+	player_name = UIWidgets.create_simple_text("n/a", "player_name", 28, Colors.get_table("white"), nil, nil, RETAINED_MODE_ENABLED),
+	hero_name = UIWidgets.create_simple_text("n/a", "hero_name", 24, Colors.get_table("cheeseburger"), nil, nil, RETAINED_MODE_ENABLED),
 	hp_bar = {
 		scenegraph_id = "hp_bar",
 		element = {
@@ -201,139 +201,139 @@ local tbl_3 = {
 					pass_type = "texture",
 					style_id = "hp_bar_bg",
 					texture_id = "hp_bar_bg",
-					retained_mode = flag
+					retained_mode = RETAINED_MODE_ENABLED
 				},
 				{
 					pass_type = "texture",
 					style_id = "hp_bar_fg",
 					texture_id = "hp_bar_fg",
-					retained_mode = flag
+					retained_mode = RETAINED_MODE_ENABLED
 				},
 				{
 					pass_type = "texture",
 					style_id = "hp_bar_highlight",
 					texture_id = "hp_bar_highlight",
-					retained_mode = flag
+					retained_mode = RETAINED_MODE_ENABLED
 				},
 				{
 					style_id = "hp_bar",
 					pass_type = "texture_uv_dynamic_color_uvs_size_offset",
 					content_id = "hp_bar",
-					content_check_function = function (self)
+					content_check_function = function (content)
 						-- function 1
-						return self.draw_health_bar
+						return content.draw_health_bar
 					end,
-					dynamic_function = function (self, arg_2_1, arg_2_2, arg_2_3, arg_2_4)
+					dynamic_function = function (content, style, size, dt, ui_renderer)
 						-- function 2
-						local bar_value = self.bar_value
-						local is_wounded = self.is_wounded
-						local num = 1 - bar_value
+						local bar_value = content.bar_value
+						local is_wounded = content.is_wounded
+						local inverted_bar_value = 1 - bar_value
 
-						if not is_wounded then
-							self.texture_id = self.wounded_texture_id
+						if is_wounded then
+							content.texture_id = content.wounded_texture_id
 						else
-							self.texture_id = self.normal_texture_id
+							content.texture_id = content.normal_texture_id
 
-							local gui = arg_2_4.gui
-							local material = Gui.material(gui, self.texture_id)
+							local gui = ui_renderer.gui
+							local gui_material = Gui.material(gui, content.texture_id)
 
-							if not self.is_knocked_down then
-								Material.set_vector2(material, "color_tint_uv", Vector2(1, 0.5))
+							if content.is_knocked_down then
+								Material.set_vector2(gui_material, "color_tint_uv", Vector2(1, 0.5))
 							else
-								Material.set_vector2(material, "color_tint_uv", Vector2(num, 0.5))
+								Material.set_vector2(gui_material, "color_tint_uv", Vector2(inverted_bar_value, 0.5))
 							end
 						end
 
-						local uv_start_pixels = arg_2_1.uv_start_pixels
-						local uv_scale_pixels = arg_2_1.uv_scale_pixels
-						local num_2 = uv_start_pixels + uv_scale_pixels * bar_value
-						local uvs = arg_2_1.uvs
-						local scale_axis = arg_2_1.scale_axis
-						local offset_scale = arg_2_1.offset_scale
+						local uv_start_pixels = style.uv_start_pixels
+						local uv_scale_pixels = style.uv_scale_pixels
+						local uv_pixels = uv_start_pixels + uv_scale_pixels * bar_value
+						local uvs = style.uvs
+						local uv_scale_axis = style.scale_axis
+						local offset_scale = style.offset_scale
 
-						uvs[2][scale_axis] = num_2 / (uv_start_pixels + uv_scale_pixels)
-						arg_2_2[scale_axis] = num_2
+						uvs[2][uv_scale_axis] = uv_pixels / (uv_start_pixels + uv_scale_pixels)
+						size[uv_scale_axis] = uv_pixels
 
-						return arg_2_1.color, uvs, arg_2_2
+						return style.color, uvs, size
 					end
 				},
 				{
 					style_id = "hp_bar_grimoire_debuff",
 					pass_type = "texture_uv_dynamic_color_uvs_size_offset",
 					content_id = "hp_bar_grimoire_debuff",
-					dynamic_function = function (self, arg_3_1, arg_3_2, arg_3_3)
+					dynamic_function = function (content, style, size, dt)
 						-- function 3
-						local bar_value = self.bar_value
-						local num = 0
-						local color = arg_3_1.color
+						local bar_value = content.bar_value
+						local alpha_value = 0
+						local color = style.color
 
 						color[2] = 255
 						color[3] = 255
 						color[4] = 255
 
-						local uv_start_pixels = arg_3_1.uv_start_pixels
-						local uv_scale_pixels = arg_3_1.uv_scale_pixels
-						local num_2 = uv_start_pixels + uv_scale_pixels * bar_value
-						local uvs = arg_3_1.uvs
-						local scale_axis = arg_3_1.scale_axis
-						local offset_scale = arg_3_1.offset_scale
-						local var_3_9 = tbl_2
+						local uv_start_pixels = style.uv_start_pixels
+						local uv_scale_pixels = style.uv_scale_pixels
+						local uv_pixels = uv_start_pixels + uv_scale_pixels * bar_value
+						local uvs = style.uvs
+						local uv_scale_axis = style.scale_axis
+						local offset_scale = style.offset_scale
+						local offset = temp_offext
 
-						var_3_9[1] = 0
-						var_3_9[2] = 0
-						var_3_9[3] = 0
-						uvs[2][scale_axis] = num_2 / (uv_start_pixels + uv_scale_pixels)
-						arg_3_2[scale_axis] = num_2
-						var_3_9[scale_axis] = (uv_start_pixels + uv_scale_pixels - num_2) * offset_scale
+						offset[1] = 0
+						offset[2] = 0
+						offset[3] = 0
+						uvs[2][uv_scale_axis] = uv_pixels / (uv_start_pixels + uv_scale_pixels)
+						size[uv_scale_axis] = uv_pixels
+						offset[uv_scale_axis] = (uv_start_pixels + uv_scale_pixels - uv_pixels) * offset_scale
 
-						return color, uvs, arg_3_2, var_3_9
+						return color, uvs, size, offset
 					end
 				},
 				{
 					style_id = "hp_bar_shield",
 					pass_type = "texture_uv_dynamic_color_uvs_size_offset",
 					content_id = "hp_bar_shield",
-					dynamic_function = function (self, arg_4_1, arg_4_2, arg_4_3, arg_4_4)
+					dynamic_function = function (content, style, size, dt, ui_renderer)
 						-- function 4
-						local bar_value_position = self.bar_value_position
-						local bar_value_offset = self.bar_value_offset
-						local bar_value_size = self.bar_value_size
-						local uv_start_pixels = arg_4_1.uv_start_pixels
-						local uv_scale_pixels = arg_4_1.uv_scale_pixels
-						local num = uv_start_pixels + uv_scale_pixels * bar_value_position
-						local uvs = arg_4_1.uvs
-						local scale_axis = arg_4_1.scale_axis
-						local offset_scale = arg_4_1.offset_scale
-						local var_4_9 = tbl_2
+						local bar_value_position = content.bar_value_position
+						local bar_value_offset = content.bar_value_offset
+						local bar_value_size = content.bar_value_size
+						local uv_start_pixels = style.uv_start_pixels
+						local uv_scale_pixels = style.uv_scale_pixels
+						local uv_pixels = uv_start_pixels + uv_scale_pixels * bar_value_position
+						local uvs = style.uvs
+						local uv_scale_axis = style.scale_axis
+						local offset_scale = style.offset_scale
+						local offset = temp_offext
 
-						var_4_9[1] = 0
-						var_4_9[2] = 0
-						var_4_9[3] = 0
-						uvs[2][scale_axis] = num / (uv_start_pixels + uv_scale_pixels)
+						offset[1] = 0
+						offset[2] = 0
+						offset[3] = 0
+						uvs[2][uv_scale_axis] = uv_pixels / (uv_start_pixels + uv_scale_pixels)
 
-						local num_2 = uv_start_pixels + uv_scale_pixels * bar_value_size
+						local shield_size = uv_start_pixels + uv_scale_pixels * bar_value_size
 
-						arg_4_2[scale_axis] = num_2
+						size[uv_scale_axis] = shield_size
 
-						local num_3 = bar_value_offset * uv_scale_pixels
-						local num_4 = uv_scale_pixels - num_2 - num_3
+						local bar_offset = bar_value_offset * uv_scale_pixels
+						local pos = uv_scale_pixels - shield_size - bar_offset
 
-						if num_2 + num < uv_scale_pixels - num_3 then
-							num_4 = num
+						if shield_size + uv_pixels < uv_scale_pixels - bar_offset then
+							pos = uv_pixels
 						end
 
-						var_4_9[scale_axis] = num_4
+						offset[uv_scale_axis] = pos
 
-						return arg_4_1.color, uvs, arg_4_2, var_4_9
+						return style.color, uvs, size, offset
 					end
 				},
 				{
 					pass_type = "centered_texture_amount",
 					style_id = "hp_bar_divider",
 					texture_id = "hp_bar_divider",
-					content_check_function = function (arg_5_0, arg_5_1)
+					content_check_function = function (content, style)
 						-- function 5
-						return arg_5_1.texture_amount > 0
+						return style.texture_amount > 0
 					end
 				},
 				{
@@ -341,10 +341,10 @@ local tbl_3 = {
 					style_id = "hp_bar_grimoire_icon",
 					texture_id = "hp_bar_grimoire_icon",
 					content_id = "hp_bar_grimoire_icon",
-					retained_mode = flag,
-					content_check_function = function (self, arg_6_1)
+					retained_mode = RETAINED_MODE_ENABLED,
+					content_check_function = function (content, style)
 						-- function 6
-						return self.active
+						return content.active
 					end
 				},
 				{
@@ -352,10 +352,10 @@ local tbl_3 = {
 					style_id = "hp_bar_max_health_divider",
 					texture_id = "hp_bar_max_health_divider",
 					content_id = "hp_bar_max_health_divider",
-					retained_mode = flag,
-					content_check_function = function (self, arg_7_1)
+					retained_mode = RETAINED_MODE_ENABLED,
+					content_check_function = function (content, style)
 						-- function 7
-						return self.active
+						return content.active
 					end
 				}
 			}
@@ -524,6 +524,6 @@ local tbl_3 = {
 }
 
 return {
-	scenegraph_definition = tbl,
-	widget_definitions = tbl_3
+	scenegraph_definition = scenegraph_definition,
+	widget_definitions = widget_definitions
 }

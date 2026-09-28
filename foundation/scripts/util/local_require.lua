@@ -1,18 +1,18 @@
 -- chunkname: @foundation/scripts/util/local_require.lua
 
-local tbl = {}
+local file_required_since_last_hot_reload = {}
 
-function local_require(arg_1_0)
+function local_require(filename)
 	-- function 1
-	if not (tbl[arg_1_0] == nil or package.loaded[arg_1_0] ~= nil) then
-		tbl[arg_1_0] = true
-		package.loaded[arg_1_0] = nil
+	if file_required_since_last_hot_reload[filename] == nil or package.loaded[filename] == nil then
+		file_required_since_last_hot_reload[filename] = true
+		package.loaded[filename] = nil
 
-		local num = #package.load_order + 1
+		local load_order_index = #package.load_order + 1
 
-		require(arg_1_0)
-		table.remove(package.load_order, num)
+		require(filename)
+		table.remove(package.load_order, load_order_index)
 	end
 
-	return package.loaded[arg_1_0]
+	return package.loaded[filename]
 end

@@ -1,12 +1,12 @@
 -- chunkname: @scripts/settings/equipment/weapon_templates/vs_rat_ogre_hands.lua
 
-local str = "dark_pact_action_one"
-local str_2 = "dark_pact_action_one_release"
-local str_3 = "dark_pact_action_one_hold"
-local num = 2
-local num_2 = 0.9
-local tbl = {}
-local tbl_2 = {
+local action_one = "dark_pact_action_one"
+local action_one_release = "dark_pact_action_one_release"
+local action_one_hold = "dark_pact_action_one_hold"
+local push_radius = 2
+local time_mod = 0.9
+local weapon_template = {}
+local planted_decrease_movement_settings = {
 	charge = {
 		{
 			start_time = 0,
@@ -69,7 +69,7 @@ local tbl_2 = {
 		}
 	}
 }
-local tbl_3 = {
+local knockback_tables = {
 	frenzy = {
 		catapult_players = false,
 		catapult = false,
@@ -84,59 +84,61 @@ local tbl_3 = {
 	}
 }
 
-tbl.actions = {
-	[str] = {
+weapon_template.actions = {
+	[action_one] = {
 		default = {
 			disallow_ghost_mode = true,
 			anim_end_event = "attack_finished",
 			kind = "melee_start",
 			uninterruptible = true,
 			anim_event = "attack_ogre_slam_charge",
-			anim_end_event_condition_func = function (arg_1_0, arg_1_1)
+			anim_end_event_condition_func = function (unit, end_reason)
 				-- function 1
-				return arg_1_1 == "new_interupting_action" or arg_1_1 ~= "action_complete"
+				return end_reason ~= "new_interupting_action" and end_reason ~= "action_complete"
 			end,
-			condition_func = function (arg_2_0, arg_2_1, arg_2_2, arg_2_3)
+			condition_func = function (action_user, input_extension, ammo_extension, current_action_extension)
 				-- function 2
-				local is_in_ghost_mode = ScriptUnit.has_extension(arg_2_0, "ghost_mode_system"):is_in_ghost_mode()
-				local get_activated_ability_data = ScriptUnit.has_extension(arg_2_0, "career_system"):get_activated_ability_data(1)
+				local ghost_mode_extenstion = ScriptUnit.has_extension(action_user, "ghost_mode_system")
+				local is_in_ghost_mode = ghost_mode_extenstion:is_in_ghost_mode()
+				local career_extension = ScriptUnit.has_extension(action_user, "career_system")
+				local ability_data = career_extension:get_activated_ability_data(1)
 
-				if not get_activated_ability_data.is_priming then
-					arg_2_1:clear_input_buffer()
-					arg_2_1:reset_release_input()
+				if ability_data.is_priming then
+					input_extension:clear_input_buffer()
+					input_extension:reset_release_input()
 				end
 
-				return not not is_in_ghost_mode or not get_activated_ability_data.is_priming
+				return not is_in_ghost_mode and not not not ability_data.is_priming
 			end,
 			total_time = math.huge,
-			anim_time_scale = num_2 * 1.15,
-			attack_hold_input = str_3,
-			buff_data = tbl_2.charge,
+			anim_time_scale = time_mod * 1.15,
+			attack_hold_input = action_one_hold,
+			buff_data = planted_decrease_movement_settings.charge,
 			allowed_chain_actions = {
 				{
 					sub_action = "attack_swing_right",
 					start_time = 0,
 					end_time = 0.4,
-					input = str_2,
-					action = str
+					input = action_one_release,
+					action = action_one
 				},
 				{
 					sub_action = "attack_slam",
 					start_time = 0.8,
-					input = str_2,
-					action = str
+					input = action_one_release,
+					action = action_one
 				},
 				{
 					start_time = 0.4,
 					blocker = true,
 					end_time = 1.5,
-					input = str_3
+					input = action_one_hold
 				},
 				{
 					sub_action = "attack_slam",
 					start_time = 1.5,
 					auto_chain = true,
-					action = str
+					action = action_one
 				},
 				{
 					sub_action = "default",
@@ -152,39 +154,39 @@ tbl.actions = {
 			kind = "melee_start",
 			uninterruptible = true,
 			anim_event = "attack_ogre_slam_charge",
-			anim_end_event_condition_func = function (arg_3_0, arg_3_1)
+			anim_end_event_condition_func = function (unit, end_reason)
 				-- function 3
-				return arg_3_1 == "new_interupting_action" or arg_3_1 ~= "action_complete"
+				return end_reason ~= "new_interupting_action" and end_reason ~= "action_complete"
 			end,
 			total_time = math.huge,
-			anim_time_scale = num_2 * 1.15,
-			attack_hold_input = str_3,
-			buff_data = tbl_2.charge,
+			anim_time_scale = time_mod * 1.15,
+			attack_hold_input = action_one_hold,
+			buff_data = planted_decrease_movement_settings.charge,
 			allowed_chain_actions = {
 				{
 					sub_action = "attack_swing_left",
 					start_time = 0,
 					end_time = 0.4,
-					input = str_2,
-					action = str
+					input = action_one_release,
+					action = action_one
 				},
 				{
 					sub_action = "attack_slam",
 					start_time = 0.8,
-					input = str_2,
-					action = str
+					input = action_one_release,
+					action = action_one
 				},
 				{
 					start_time = 0.4,
 					blocker = true,
 					end_time = 1.5,
-					input = str_3
+					input = action_one_hold
 				},
 				{
 					sub_action = "attack_slam",
 					start_time = 1.5,
 					auto_chain = true,
-					action = str
+					action = action_one
 				},
 				{
 					sub_action = "default",
@@ -216,29 +218,29 @@ tbl.actions = {
 			uninterruptible = true,
 			anim_event = "attack_swing_right",
 			total_time = 2.17,
-			anim_end_event_condition_func = function (arg_4_0, arg_4_1)
+			anim_end_event_condition_func = function (unit, end_reason)
 				-- function 4
-				return arg_4_1 == "new_interupting_action" or arg_4_1 ~= "action_complete"
+				return end_reason ~= "new_interupting_action" and end_reason ~= "action_complete"
 			end,
-			buff_data = tbl_2.light_attack,
-			anim_time_scale = num_2 * 1.15,
+			buff_data = planted_decrease_movement_settings.light_attack,
+			anim_time_scale = time_mod * 1.15,
 			sweep_rotation_offset = {
 				roll = math.pi * 0.5
 			},
-			knockback_data = tbl_3.frenzy,
+			knockback_data = knockback_tables.frenzy,
 			allowed_chain_actions = {
 				{
 					sub_action = "default_2",
 					start_time = 0.8,
 					end_time = 1.8,
-					input = str,
-					action = str
+					input = action_one,
+					action = action_one
 				},
 				{
 					sub_action = "default",
 					start_time = 1.8,
-					input = str_3,
-					action = str
+					input = action_one_hold,
+					action = action_one
 				}
 			}
 		},
@@ -263,29 +265,29 @@ tbl.actions = {
 			uninterruptible = true,
 			anim_event = "attack_swing_left",
 			total_time = 2.17,
-			anim_end_event_condition_func = function (arg_5_0, arg_5_1)
+			anim_end_event_condition_func = function (unit, end_reason)
 				-- function 5
-				return arg_5_1 == "new_interupting_action" or arg_5_1 ~= "action_complete"
+				return end_reason ~= "new_interupting_action" and end_reason ~= "action_complete"
 			end,
-			buff_data = tbl_2.light_attack,
-			anim_time_scale = num_2 * 1.15,
+			buff_data = planted_decrease_movement_settings.light_attack,
+			anim_time_scale = time_mod * 1.15,
 			sweep_rotation_offset = {
 				roll = math.pi * 0.5
 			},
-			knockback_data = tbl_3.frenzy,
+			knockback_data = knockback_tables.frenzy,
 			allowed_chain_actions = {
 				{
 					sub_action = "default",
 					start_time = 1.4,
-					input = str,
-					action = str
+					input = action_one,
+					action = action_one
 				},
 				{
 					sub_action = "default",
 					start_time = 1.4,
-					input = str_3,
-					action = str,
-					release_required = str_3
+					input = action_one_hold,
+					action = action_one,
+					release_required = action_one_hold
 				}
 			}
 		},
@@ -312,11 +314,11 @@ tbl.actions = {
 			anim_event = "attack_slam",
 			height_mod = 5,
 			total_time = 1.33,
-			anim_end_event_condition_func = function (arg_6_0, arg_6_1)
+			anim_end_event_condition_func = function (unit, end_reason)
 				-- function 6
-				return arg_6_1 == "new_interupting_action" or arg_6_1 ~= "action_complete"
+				return end_reason ~= "new_interupting_action" and end_reason ~= "action_complete"
 			end,
-			anim_time_scale = num_2 * 1.15,
+			anim_time_scale = time_mod * 1.15,
 			lunge_settings = {
 				initial_speed = 20,
 				duration = 0.32,
@@ -325,19 +327,19 @@ tbl.actions = {
 			sweep_rotation_offset = {
 				roll = math.pi * 0.5
 			},
-			knockback_data = tbl_3.slam,
-			buff_data = tbl_2.heavy_attack,
+			knockback_data = knockback_tables.slam,
+			buff_data = planted_decrease_movement_settings.heavy_attack,
 			allowed_chain_actions = {},
-			enter_function = function (arg_7_0, arg_7_1)
+			enter_function = function (attacker_unit, input_extension)
 				-- function 7
-				return arg_7_1:reset_release_input()
+				return input_extension:reset_release_input()
 			end
 		}
 	},
 	action_inspect = ActionTemplates.action_inspect,
 	action_wield = ActionTemplates.wield
 }
-tbl.weapon_sway_settings = {
+weapon_template.weapon_sway_settings = {
 	camera_look_sensitivity = 1,
 	sway_range = 1,
 	recetner_dampening = 1,
@@ -346,17 +348,17 @@ tbl.weapon_sway_settings = {
 	recenter_acc = 5,
 	lerp_speed = math.huge
 }
-tbl.left_hand_unit = "units/weapons/player/wpn_invisible_weapon"
-tbl.right_hand_unit = "units/weapons/player/wpn_invisible_weapon"
-tbl.right_hand_attachment_node_linking = AttachmentNodeLinking.vs_rat_ogre_hands.right
-tbl.left_hand_attachment_node_linking = AttachmentNodeLinking.vs_rat_ogre_hands.left
-tbl.display_unit = "units/weapons/weapon_display/display_1h_axes"
-tbl.wield_anim = "to_1h_axe"
-tbl.buff_type = "MELEE_1H"
-tbl.weapon_type = "AXE_1H"
-tbl.max_fatigue_points = 6
-tbl.buffs = {}
-tbl.attack_meta_data = {
+weapon_template.left_hand_unit = "units/weapons/player/wpn_invisible_weapon"
+weapon_template.right_hand_unit = "units/weapons/player/wpn_invisible_weapon"
+weapon_template.right_hand_attachment_node_linking = AttachmentNodeLinking.vs_rat_ogre_hands.right
+weapon_template.left_hand_attachment_node_linking = AttachmentNodeLinking.vs_rat_ogre_hands.left
+weapon_template.display_unit = "units/weapons/weapon_display/display_1h_axes"
+weapon_template.wield_anim = "to_1h_axe"
+weapon_template.buff_type = "MELEE_1H"
+weapon_template.weapon_type = "AXE_1H"
+weapon_template.max_fatigue_points = 6
+weapon_template.buffs = {}
+weapon_template.attack_meta_data = {
 	tap_attack = {
 		arc = 0
 	},
@@ -364,7 +366,7 @@ tbl.attack_meta_data = {
 		arc = 0
 	}
 }
-tbl.aim_assist_settings = {
+weapon_template.aim_assist_settings = {
 	max_range = 5,
 	no_aim_input_multiplier = 0,
 	vertical_only = true,
@@ -376,7 +378,7 @@ tbl.aim_assist_settings = {
 		skaven_slave = 0.5
 	}
 }
-tbl.weapon_diagram = {
+weapon_template.weapon_diagram = {
 	light_attack = {
 		[DamageTypes.ARMOR_PIERCING] = 4,
 		[DamageTypes.CLEAVE] = 1,
@@ -392,31 +394,31 @@ tbl.weapon_diagram = {
 		[DamageTypes.DAMAGE] = 4
 	}
 }
-tbl.tooltip_keywords = {}
-tbl.tooltip_compare = {
+weapon_template.tooltip_keywords = {}
+weapon_template.tooltip_compare = {
 	light = {
 		sub_action_name = "light_attack_left",
-		action_name = str
+		action_name = action_one
 	},
 	heavy = {
 		sub_action_name = "heavy_attack_left",
-		action_name = str
+		action_name = action_one
 	}
 }
-tbl.tooltip_detail = {
+weapon_template.tooltip_detail = {
 	light = {
 		sub_action_name = "default",
-		action_name = str
+		action_name = action_one
 	},
 	heavy = {
 		sub_action_name = "default",
-		action_name = str
+		action_name = action_one
 	}
 }
-tbl.wwise_dep_right_hand = {
+weapon_template.wwise_dep_right_hand = {
 	"wwise/one_handed_axes"
 }
 
 return {
-	vs_rat_ogre_hands = tbl
+	vs_rat_ogre_hands = weapon_template
 }

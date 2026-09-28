@@ -1,7 +1,7 @@
 -- chunkname: @scripts/settings/breeds/breed_chaos_exalted_sorcerer.lua
 
-local scripts_utils_stagger_types = require("scripts/utils/stagger_types")
-local tbl = {
+local stagger_types = require("scripts/utils/stagger_types")
+local breed_data = {
 	detection_radius = 9999999,
 	show_health_bar = true,
 	walk_speed = 0.65,
@@ -63,20 +63,20 @@ local tbl = {
 	},
 	max_health = BreedTweaks.max_health.exalted_sorcerer,
 	bloodlust_health = BreedTweaks.bloodlust_health.monster,
-	stagger_modifier_function = function (arg_1_0, arg_1_1, arg_1_2, arg_1_3, arg_1_4, arg_1_5)
+	stagger_modifier_function = function (stagger_type, duration, length, hit_zone_name, blackboard, breed)
 		-- function 1
-		if not arg_1_4.unit then
-			return arg_1_0, arg_1_1, arg_1_2
+		if not blackboard.unit then
+			return stagger_type, duration, length
 		end
 
-		if arg_1_4.stagger_count >= scripts_utils_stagger_types.heavy then
-			arg_1_0 = scripts_utils_stagger_types.none
-			arg_1_4.stagger_ignore_anim_cb = true
+		if blackboard.stagger_count >= stagger_types.heavy then
+			stagger_type = stagger_types.none
+			blackboard.stagger_ignore_anim_cb = true
 		else
-			arg_1_4.stagger_ignore_anim_cb = false
+			blackboard.stagger_ignore_anim_cb = false
 		end
 
-		return arg_1_0, arg_1_1, arg_1_2
+		return stagger_type, duration, length
 	end,
 	status_effect_settings = {
 		category = "medium",
@@ -210,22 +210,22 @@ local tbl = {
 		"kill_chaos_exalted_sorcerer_difficulty_rank",
 		"kill_chaos_exalted_sorcerer_scorpion_hardest"
 	},
-	custom_death_enter_function = function (arg_2_0, arg_2_1, arg_2_2, arg_2_3, arg_2_4, arg_2_5)
+	custom_death_enter_function = function (unit, killer_unit, damage_type, death_hit_zone, t, damage_source)
 		-- function 2
-		if not Unit.alive(arg_2_1) then
+		if not Unit.alive(killer_unit) then
 			return
 		end
 
-		QuestSettings.check_killed_lord_as_last_player_standing(arg_2_1)
+		QuestSettings.check_killed_lord_as_last_player_standing(killer_unit)
 	end
 }
 
-Breeds.chaos_exalted_sorcerer = table.create_copy(Breeds.chaos_exalted_sorcerer, tbl)
+Breeds.chaos_exalted_sorcerer = table.create_copy(Breeds.chaos_exalted_sorcerer, breed_data)
 
-local num = 4
-local num_2 = 12
-local num_3 = 2 * math.pi / ((num_2 + 1) * 0.5)
-local tbl_2 = {
+local MISSILE_RADIUS = 4
+local num_flower_waves = 12
+local angle_between_flower_waves = 2 * math.pi / ((num_flower_waves + 1) * 0.5)
+local action_data = {
 	skulking = {
 		third_wave_max_distance = 7,
 		third_wave_min_distance = 1,
@@ -311,41 +311,45 @@ local tbl_2 = {
 			true,
 			true
 		},
-		num_waves = num_2,
-		spawn_rot_func = function (arg_3_0, arg_3_1, arg_3_2, arg_3_3)
+		num_waves = num_flower_waves,
+		spawn_rot_func = function (unit, blackboard, spawner_unit, index)
 			-- function 3
-			local local_rotation = Unit.local_rotation(arg_3_2, 0)
-			local var_3_1
+			local spawn_rot = Unit.local_rotation(spawner_unit, 0)
+			local var_3_0
 
-			if not arg_3_1.random_flower_angles then
-				var_3_1 = arg_3_1.random_flower_angles[arg_3_1.wave_counter]
+			if blackboard.random_flower_angles then
+				var_3_0 = blackboard.random_flower_angles[blackboard.wave_counter]
 
-				if not var_3_1 then
+				if not var_3_0 then
 					-- Nothing
 				end
 			end
 
-			var_3_1 = num_3 * arg_3_1.wave_counter
+			var_3_0 = angle_between_flower_waves * blackboard.wave_counter
+
+			local radians = var_3_0
 
 			::label_3_0::
 
-			local var_3_2 = Quaternion(Vector3.up(), var_3_1)
+			local turn_rot = Quaternion(Vector3.up(), radians)
 
-			return (Quaternion.multiply(local_rotation, var_3_2))
+			spawn_rot = Quaternion.multiply(spawn_rot, turn_rot)
+
+			return spawn_rot
 		end,
-		sequence_init_func = function (arg_4_0, arg_4_1)
+		sequence_init_func = function (unit, blackboard)
 			-- function 4
-			local tbl = {}
-			local random = math.random()
+			local angles = {}
+			local angle = math.random()
 
-			for i = 1, num_2 do
-				random = random + num_3
-				tbl[i] = random
+			for i = 1, num_flower_waves do
+				angle = angle + angle_between_flower_waves
+				angles[i] = angle
 			end
 
-			table.shuffle(tbl)
+			table.shuffle(angles)
 
-			arg_4_1.random_flower_angles = tbl
+			blackboard.random_flower_angles = angles
 		end
 	},
 	spawn_multiple_wave = {
@@ -363,20 +367,22 @@ local tbl_2 = {
 			true,
 			true
 		},
-		spawn_rot_func = function (arg_5_0, arg_5_1, arg_5_2, arg_5_3)
+		spawn_rot_func = function (unit, blackboard, _, index)
 			-- function 5
-			local local_rotation = Unit.local_rotation(arg_5_0, 0)
-			local num = (arg_5_3 - 2) * 0.3
-			local var_5_2 = Quaternion(Vector3.up(), num)
+			local spawn_rot = Unit.local_rotation(unit, 0)
+			local radians = (index - 2) * 0.3
+			local turn_rot = Quaternion(Vector3.up(), radians)
 
-			return (Quaternion.multiply(local_rotation, var_5_2))
+			spawn_rot = Quaternion.multiply(spawn_rot, turn_rot)
+
+			return spawn_rot
 		end,
-		goal_pos_func = function (arg_6_0, arg_6_1, arg_6_2, arg_6_3, arg_6_4, arg_6_5, arg_6_6)
+		goal_pos_func = function (unit, blackboard, spawner_unit, index, spawn_pos, goal_pos, spawn_dir)
 			-- function 6
-			local raycast, var_6_1 = GwNavQueries.raycast(arg_6_1.nav_world, arg_6_4, arg_6_5)
+			local _, hit_pos = GwNavQueries.raycast(blackboard.nav_world, spawn_pos, goal_pos)
 
-			if not var_6_1 then
-				return var_6_1
+			if hit_pos then
+				return hit_pos
 			end
 		end
 	},
@@ -403,17 +409,18 @@ local tbl_2 = {
 			1.1719,
 			1.3749
 		},
-		init_spell_func = function (self)
+		init_spell_func = function (blackboard)
 			-- function 7
-			self.current_spell = self.sorcerer_strike_missile_data
+			blackboard.current_spell = blackboard.sorcerer_strike_missile_data
 		end,
-		get_throw_position_func = function (arg_8_0, arg_8_1, arg_8_2)
+		get_throw_position_func = function (unit, blackboard, target_position)
 			-- function 8
-			local var_8_0 = ScriptUnit.has_extension(arg_8_0, "ai_inventory_system").inventory_item_units[1]
-			local world_position = Unit.world_position(var_8_0, Unit.node(var_8_0, "j_skull_2_parent"))
-			local normalize = Vector3.normalize(arg_8_2 - world_position)
+			local ai_inventory_ext = ScriptUnit.has_extension(unit, "ai_inventory_system")
+			local weapon_unit = ai_inventory_ext.inventory_item_units[1]
+			local throw_pos = Unit.world_position(weapon_unit, Unit.node(weapon_unit, "j_skull_2_parent"))
+			local target_dir = Vector3.normalize(target_position - throw_pos)
 
-			return world_position, normalize
+			return throw_pos, target_dir
 		end
 	},
 	cast_seeking_bomb_missile = {
@@ -433,8 +440,8 @@ local tbl_2 = {
 			true,
 			true
 		},
-		radius = num,
-		initial_radius = num * 0.6,
+		radius = MISSILE_RADIUS,
+		initial_radius = MISSILE_RADIUS * 0.6,
 		missile_spawn_offset = {
 			0.1281,
 			1.1719,
@@ -472,24 +479,25 @@ local tbl_2 = {
 		volley_delay = 0.3,
 		action_weight = 1,
 		considerations = UtilityConsiderations.defensive_magic_missile,
-		radius = num,
-		initial_radius = num * 0.6,
+		radius = MISSILE_RADIUS,
+		initial_radius = MISSILE_RADIUS * 0.6,
 		missile_spawn_offset = {
 			0.1281,
 			1.1719,
 			1.3749
 		},
-		init_spell_func = function (self)
+		init_spell_func = function (blackboard)
 			-- function 9
-			self.current_spell = self.sorcerer_strike_missile_data
+			blackboard.current_spell = blackboard.sorcerer_strike_missile_data
 		end,
-		get_throw_position_func = function (arg_10_0, arg_10_1, arg_10_2)
+		get_throw_position_func = function (unit, blackboard, target_position)
 			-- function 10
-			local var_10_0 = ScriptUnit.has_extension(arg_10_0, "ai_inventory_system").inventory_item_units[1]
-			local world_position = Unit.world_position(var_10_0, Unit.node(var_10_0, "j_skull_2_parent"))
-			local normalize = Vector3.normalize(arg_10_2 - world_position)
+			local ai_inventory_ext = ScriptUnit.has_extension(unit, "ai_inventory_system")
+			local weapon_unit = ai_inventory_ext.inventory_item_units[1]
+			local throw_pos = Unit.world_position(weapon_unit, Unit.node(weapon_unit, "j_skull_2_parent"))
+			local target_dir = Vector3.normalize(target_position - throw_pos)
 
-			return world_position, normalize
+			return throw_pos, target_dir
 		end,
 		ignore_staggers = {
 			true,
@@ -516,9 +524,9 @@ local tbl_2 = {
 			1.1719,
 			1.3749
 		},
-		init_spell_func = function (self)
+		init_spell_func = function (blackboard)
 			-- function 11
-			self.current_spell = self.seeking_bomb_missile_data
+			blackboard.current_spell = blackboard.seeking_bomb_missile_data
 		end,
 		ignore_staggers = {
 			true,
@@ -574,13 +582,13 @@ local tbl_2 = {
 			true,
 			true
 		},
-		teleport_pos_func = function (arg_12_0, arg_12_1)
+		teleport_pos_func = function (unit, blackboard)
 			-- function 12
-			local get_random_spawner_with_id = ConflictUtils.get_random_spawner_with_id("sorcerer_boss", arg_12_1.defensive_spawner)
+			local spawner = ConflictUtils.get_random_spawner_with_id("sorcerer_boss", blackboard.defensive_spawner)
 
-			arg_12_1.defensive_spawner = get_random_spawner_with_id
+			blackboard.defensive_spawner = spawner
 
-			return Unit.local_position(get_random_spawner_with_id, 0)
+			return Unit.local_position(spawner, 0)
 		end
 	},
 	defensive_teleport = {
@@ -660,11 +668,13 @@ local tbl_2 = {
 		}
 	},
 	stagger = {
-		custom_enter_function = function (arg_13_0, arg_13_1, arg_13_2, arg_13_3)
+		custom_enter_function = function (unit, blackboard, t, action)
 			-- function 13
-			arg_13_1.stagger_ignore_anim_cb = true
+			blackboard.stagger_ignore_anim_cb = true
 
-			return arg_13_3.stagger_anims[arg_13_1.stagger_type], "idle"
+			local stagger_anims = action.stagger_anims[blackboard.stagger_type]
+
+			return stagger_anims, "idle"
 		end,
 		stagger_anims = {
 			{
@@ -789,23 +799,23 @@ local tbl_2 = {
 	}
 }
 
-local function fn(arg_14_0, arg_14_1, arg_14_2)
+local function copy_action_data(action_name, source_action, spell_name)
 	-- function 14
-	local clone = table.clone(arg_14_1)
+	local action = table.clone(source_action)
 
-	clone.considerations = UtilityConsiderations[arg_14_0]
-	clone.action_weight = 1
-	clone.available_spells = {
-		arg_14_2
+	action.considerations = UtilityConsiderations[action_name]
+	action.action_weight = 1
+	action.available_spells = {
+		spell_name
 	}
 
-	return clone
+	return action
 end
 
-tbl_2.vortex_skulking = fn("vortex_skulking", tbl_2.skulking, "vortex")
-tbl_2.vortex_skulking.search_func_name = "_update_vortex_search"
-tbl_2.tentacle_skulking = fn("tentacle_skulking", tbl_2.skulking, "tentacle")
-tbl_2.plague_wave_skulking = fn("exalted_plague_wave_skulking", tbl_2.skulking, "plague_wave")
-tbl_2.magic_missile_skulking = fn("magic_missile_skulking", tbl_2.skulking, "magic_missile")
-tbl_2.seeking_bomb_missile_skulking = fn("seeking_bomb_missile_skulking", tbl_2.skulking, "seeking_bomb_missile")
-BreedActions.chaos_exalted_sorcerer = table.create_copy(BreedActions.chaos_exalted_sorcerer, tbl_2)
+action_data.vortex_skulking = copy_action_data("vortex_skulking", action_data.skulking, "vortex")
+action_data.vortex_skulking.search_func_name = "_update_vortex_search"
+action_data.tentacle_skulking = copy_action_data("tentacle_skulking", action_data.skulking, "tentacle")
+action_data.plague_wave_skulking = copy_action_data("exalted_plague_wave_skulking", action_data.skulking, "plague_wave")
+action_data.magic_missile_skulking = copy_action_data("magic_missile_skulking", action_data.skulking, "magic_missile")
+action_data.seeking_bomb_missile_skulking = copy_action_data("seeking_bomb_missile_skulking", action_data.skulking, "seeking_bomb_missile")
+BreedActions.chaos_exalted_sorcerer = table.create_copy(BreedActions.chaos_exalted_sorcerer, action_data)

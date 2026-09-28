@@ -2,27 +2,27 @@
 
 BackendInterfaceProfileAttribute = class(BackendInterfaceProfileAttribute)
 
-BackendInterfaceProfileAttribute.init = function (arg_1_0)
+BackendInterfaceProfileAttribute.init = function (self)
 	-- function 1
 	return
 end
 
-BackendInterfaceProfileAttribute.set = function (arg_2_0, arg_2_1, arg_2_2)
+BackendInterfaceProfileAttribute.set = function (self, name, value)
 	-- function 2
-	Backend.write_profile_attribute_as_number(arg_2_1, arg_2_2)
+	Backend.write_profile_attribute_as_number(name, value)
 end
 
-BackendInterfaceProfileAttribute.get = function (arg_3_0, arg_3_1)
+BackendInterfaceProfileAttribute.get = function (self, name)
 	-- function 3
-	return Backend.read_profile_attribute_as_number(arg_3_1)
+	return Backend.read_profile_attribute_as_number(name)
 end
 
-BackendInterfaceProfileAttribute.set_string = function (arg_4_0, arg_4_1, arg_4_2)
+BackendInterfaceProfileAttribute.set_string = function (self, name, value)
 	-- function 4
-	Backend.write_profile_attribute_as_string(arg_4_1, arg_4_2)
+	Backend.write_profile_attribute_as_string(name, value)
 end
 
-BackendInterfaceProfileAttribute.get_string = function (arg_5_0, arg_5_1)
+BackendInterfaceProfileAttribute.get_string = function (self, name)
 	-- function 5
-	return Backend.read_profile_attribute_as_string(arg_5_1)
+	return Backend.read_profile_attribute_as_string(name)
 end

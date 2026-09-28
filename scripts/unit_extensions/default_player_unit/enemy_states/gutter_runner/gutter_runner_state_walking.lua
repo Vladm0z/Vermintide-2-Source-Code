@@ -2,39 +2,43 @@
 
 GutterRunnerStateWalking = class(GutterRunnerStateWalking, EnemyCharacterStateWalking)
 
-GutterRunnerStateWalking.init = function (self, arg_1_1, arg_1_2)
+GutterRunnerStateWalking.init = function (self, character_state_init_context, name)
 	-- function 1
-	GutterRunnerStateWalking.super.init(self, arg_1_1, arg_1_2)
+	GutterRunnerStateWalking.super.init(self, character_state_init_context, name)
 
 	self._pounce_ability_id = self._career_extension:ability_id("pounce")
 	self._foff_ability_id = self._career_extension:ability_id("foff")
 end
 
-GutterRunnerStateWalking.update = function (self, arg_2_1, arg_2_2, arg_2_3, arg_2_4, arg_2_5)
+GutterRunnerStateWalking.update = function (self, unit, input, dt, context, t)
 	-- function 2
-	if not self:common_state_changes() then
+	local handled = self:common_state_changes()
+
+	if handled then
 		return
 	end
 
-	local _csm = self._csm
-	local _career_extension = self._career_extension
+	local csm = self._csm
+	local career_extension = self._career_extension
 
-	if not _career_extension:ability_was_triggered(self._pounce_ability_id) then
-		_csm:change_state("gutter_runner_prowling")
+	if career_extension:ability_was_triggered(self._pounce_ability_id) then
+		csm:change_state("gutter_runner_prowling")
 
 		return
 	end
 
-	if not _career_extension:ability_was_triggered(self._foff_ability_id) then
-		_csm:change_state("gutter_runner_foff")
+	if career_extension:ability_was_triggered(self._foff_ability_id) then
+		csm:change_state("gutter_runner_foff")
 
 		return
 	end
 
 	if not self._status_extension:is_invisible() then
-		self:_update_taunt_dialogue(arg_2_5)
+		self:_update_taunt_dialogue(t)
 	end
 
-	local is_in_ghost_mode = self._ghost_mode_extension:is_in_ghost_mode()
-	local common_movement = self:common_movement(is_in_ghost_mode, arg_2_3)
+	local ghost_mode_extension = self._ghost_mode_extension
+	local in_ghost_mode = ghost_mode_extension:is_in_ghost_mode()
+
+	handled = self:common_movement(in_ghost_mode, dt)
 end

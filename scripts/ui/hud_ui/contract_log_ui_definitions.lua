@@ -1,10 +1,9 @@
 -- chunkname: @scripts/ui/hud_ui/contract_log_ui_definitions.lua
 
-local num = 1920
-local num_2 = 1080
-local num_3 = 300
-local flag = true
-local tbl = {
+local SIZE_X, SIZE_Y = 1920, 1080
+local ENTRY_LENGTH = 300
+local RETAINED_MODE_ENABLED = true
+local scenegraph_definition = {
 	root = {
 		is_root = true,
 		position = {
@@ -13,8 +12,8 @@ local tbl = {
 			UILayer.hud
 		},
 		size = {
-			num,
-			num_2
+			SIZE_X,
+			SIZE_Y
 		}
 	},
 	pivot = {
@@ -22,7 +21,7 @@ local tbl = {
 		parent = "root",
 		horizontal_alignment = "right",
 		position = {
-			-num_3 - 10,
+			-ENTRY_LENGTH - 10,
 			-80,
 			1
 		},
@@ -33,10 +32,9 @@ local tbl = {
 	}
 }
 
-local function fn(arg_1_0)
+local function create_log_entry(index)
 	-- function 1
-	local num = 20
-	local num_2 = 20
+	local icon_width, icon_height = 20, 20
 
 	return {
 		scenegraph_id = "pivot",
@@ -46,31 +44,31 @@ local function fn(arg_1_0)
 					pass_type = "texture",
 					style_id = "texture_icon",
 					texture_id = "texture_icon",
-					retained_mode = flag
+					retained_mode = RETAINED_MODE_ENABLED
 				},
 				{
 					pass_type = "texture",
 					style_id = "texture_icon_bg",
 					texture_id = "texture_icon_bg",
-					retained_mode = flag
+					retained_mode = RETAINED_MODE_ENABLED
 				},
 				{
 					pass_type = "texture",
 					style_id = "texture_fade_bg",
 					texture_id = "texture_fade_bg",
-					retained_mode = flag
+					retained_mode = RETAINED_MODE_ENABLED
 				},
 				{
 					style_id = "title_text",
 					pass_type = "text",
 					text_id = "title_text",
-					retained_mode = flag
+					retained_mode = RETAINED_MODE_ENABLED
 				},
 				{
 					style_id = "task_text",
 					pass_type = "text",
 					text_id = "task_text",
-					retained_mode = flag
+					retained_mode = RETAINED_MODE_ENABLED
 				}
 			}
 		},
@@ -84,8 +82,8 @@ local function fn(arg_1_0)
 		style = {
 			texture_icon = {
 				size = {
-					num,
-					num_2
+					icon_width,
+					icon_height
 				},
 				color = {
 					200,
@@ -94,15 +92,15 @@ local function fn(arg_1_0)
 					255
 				},
 				offset = {
-					num_3 - 20,
+					ENTRY_LENGTH - 20,
 					10,
 					4
 				}
 			},
 			texture_icon_bg = {
 				size = {
-					num,
-					num_2
+					icon_width,
+					icon_height
 				},
 				color = {
 					200,
@@ -111,14 +109,14 @@ local function fn(arg_1_0)
 					255
 				},
 				offset = {
-					num_3 - 20,
+					ENTRY_LENGTH - 20,
 					10,
 					3
 				}
 			},
 			texture_fade_bg = {
 				size = {
-					num_3 + 60,
+					ENTRY_LENGTH + 60,
 					5
 				},
 				color = {
@@ -139,11 +137,11 @@ local function fn(arg_1_0)
 				horizontal_alignment = "right",
 				font_type = "hell_shark",
 				size = {
-					num_3,
+					ENTRY_LENGTH,
 					10
 				},
 				offset = {
-					-5 - (num + 3),
+					-5 - (icon_width + 3),
 					10,
 					4
 				},
@@ -162,11 +160,11 @@ local function fn(arg_1_0)
 				vertical_alignment = "top",
 				font_type = "hell_shark",
 				size = {
-					num_3 * 2,
+					ENTRY_LENGTH * 2,
 					20
 				},
 				offset = {
-					-5 - num_3,
+					-5 - ENTRY_LENGTH,
 					10,
 					4
 				},
@@ -186,7 +184,7 @@ local function fn(arg_1_0)
 	}
 end
 
-local tbl_2 = {
+local widget_definitions = {
 	title_text = {
 		scenegraph_id = "pivot",
 		element = {
@@ -195,13 +193,13 @@ local tbl_2 = {
 					style_id = "title_text",
 					pass_type = "text",
 					text_id = "title_text",
-					retained_mode = flag
+					retained_mode = RETAINED_MODE_ENABLED
 				},
 				{
 					pass_type = "texture",
 					style_id = "texture_fade_bg",
 					texture_id = "texture_fade_bg",
-					retained_mode = flag
+					retained_mode = RETAINED_MODE_ENABLED
 				}
 			}
 		},
@@ -216,7 +214,7 @@ local tbl_2 = {
 				horizontal_alignment = "right",
 				font_type = "hell_shark",
 				size = {
-					num_3,
+					ENTRY_LENGTH,
 					50
 				},
 				offset = {
@@ -228,7 +226,7 @@ local tbl_2 = {
 			},
 			texture_fade_bg = {
 				size = {
-					num_3 + 60,
+					ENTRY_LENGTH + 60,
 					30
 				},
 				color = {
@@ -251,15 +249,15 @@ local tbl_2 = {
 		}
 	}
 }
-local tbl_3 = {}
+local entry_widget_definitions = {}
 
 for i = 1, 3 do
-	tbl_3[i] = fn(i)
+	entry_widget_definitions[i] = create_log_entry(i)
 end
 
 return {
-	scenegraph_definition = tbl,
-	entry_widget_definitions = tbl_3,
-	widget_definitions = tbl_2,
-	ENTRY_LENGTH = num_3
+	scenegraph_definition = scenegraph_definition,
+	entry_widget_definitions = entry_widget_definitions,
+	widget_definitions = widget_definitions,
+	ENTRY_LENGTH = ENTRY_LENGTH
 }

@@ -1,25 +1,26 @@
 -- chunkname: @scripts/ui/dlc_upsell/handbook_popup_definitions.lua
 
-local spacing = UISettings.game_start_windows.spacing
-local tbl = {
+local window_default_settings = UISettings.game_start_windows
+local small_window_spacing = window_default_settings.spacing
+local window_size = {
 	1128,
 	900
 }
-local var_0_2 = tbl[2]
-local tbl_2 = {
-	tbl[1],
-	var_0_2
+local side_window_height = window_size[2]
+local right_window_size = {
+	window_size[1],
+	side_window_height
 }
-local tbl_3 = {
-	tbl_2[1] - 22,
-	tbl_2[2] - 104
+local achievement_window_size = {
+	right_window_size[1] - 22,
+	right_window_size[2] - 104
 }
-local tbl_4 = {
+local achievement_scrollbar_size = {
 	16,
-	tbl_2[2] - 44
+	right_window_size[2] - 44
 }
-local num = tbl_3[1] - 150
-local tbl_5 = {
+local achievement_entry_width = achievement_window_size[1] - 150
+local scenegraph_definition = {
 	screen = {
 		is_root = true,
 		size = {
@@ -36,7 +37,7 @@ local tbl_5 = {
 		vertical_alignment = "center",
 		parent = "screen",
 		horizontal_alignment = "center",
-		size = tbl,
+		size = window_size,
 		position = {
 			0,
 			50,
@@ -48,8 +49,8 @@ local tbl_5 = {
 		parent = "window",
 		horizontal_alignment = "center",
 		size = {
-			tbl[1] - 5,
-			tbl[2] - 5
+			window_size[1] - 5,
+			window_size[2] - 5
 		},
 		position = {
 			0,
@@ -61,7 +62,7 @@ local tbl_5 = {
 		vertical_alignment = "bottom",
 		parent = "window",
 		horizontal_alignment = "right",
-		size = tbl_2,
+		size = right_window_size,
 		position = {
 			0,
 			0,
@@ -73,8 +74,8 @@ local tbl_5 = {
 		parent = "right_window",
 		horizontal_alignment = "center",
 		size = {
-			tbl_2[1] - 44,
-			tbl_2[2] - 44
+			right_window_size[1] - 44,
+			right_window_size[2] - 44
 		},
 		position = {
 			0,
@@ -86,7 +87,7 @@ local tbl_5 = {
 		vertical_alignment = "center",
 		parent = "right_window",
 		horizontal_alignment = "center",
-		size = tbl_3,
+		size = achievement_window_size,
 		position = {
 			0,
 			0,
@@ -98,8 +99,8 @@ local tbl_5 = {
 		parent = "achievement_window",
 		horizontal_alignment = "center",
 		size = {
-			tbl_3[1],
-			tbl_2[2] - 44
+			achievement_window_size[1],
+			right_window_size[2] - 44
 		},
 		position = {
 			0,
@@ -112,7 +113,7 @@ local tbl_5 = {
 		parent = "achievement_window_mask",
 		horizontal_alignment = "center",
 		size = {
-			tbl_3[1],
+			achievement_window_size[1],
 			30
 		},
 		position = {
@@ -126,7 +127,7 @@ local tbl_5 = {
 		parent = "achievement_window_mask",
 		horizontal_alignment = "center",
 		size = {
-			tbl_3[1],
+			achievement_window_size[1],
 			30
 		},
 		position = {
@@ -140,7 +141,7 @@ local tbl_5 = {
 		parent = "achievement_window",
 		horizontal_alignment = "center",
 		size = {
-			num,
+			achievement_entry_width,
 			1
 		},
 		position = {
@@ -153,9 +154,9 @@ local tbl_5 = {
 		vertical_alignment = "center",
 		parent = "achievement_window",
 		horizontal_alignment = "right",
-		size = tbl_4,
+		size = achievement_scrollbar_size,
 		position = {
-			-spacing,
+			-small_window_spacing,
 			0,
 			3
 		}
@@ -273,8 +274,8 @@ local tbl_5 = {
 		}
 	}
 }
-local large_window_size = UISettings.game_start_windows.large_window_size
-local tbl_6 = {
+local page_window_size = UISettings.game_start_windows.large_window_size
+local page_number_left_text_style = {
 	word_wrap = true,
 	font_size = 20,
 	localize = false,
@@ -284,12 +285,12 @@ local tbl_6 = {
 	font_type = "hell_shark",
 	text_color = Colors.get_color_table_with_alpha("font_default", 255),
 	offset = {
-		-(large_window_size[1] * 0.1 + 5),
+		-(page_window_size[1] * 0.1 + 5),
 		4,
 		2
 	}
 }
-local tbl_7 = {
+local page_number_right_text_style = {
 	word_wrap = true,
 	font_size = 20,
 	localize = false,
@@ -299,12 +300,12 @@ local tbl_7 = {
 	font_type = "hell_shark",
 	text_color = Colors.get_color_table_with_alpha("font_default", 255),
 	offset = {
-		large_window_size[1] * 0.1 + 4,
+		page_window_size[1] * 0.1 + 4,
 		4,
 		2
 	}
 }
-local tbl_8 = {
+local page_number_center_text_style = {
 	word_wrap = true,
 	font_size = 20,
 	localize = false,
@@ -319,9 +320,9 @@ local tbl_8 = {
 		2
 	}
 }
-local flag = true
-local tbl_9 = {
-	window = UIWidgets.create_frame("window", tbl_5.window.size, "menu_frame_11", 40),
+local disable_with_gamepad = true
+local widget_definitions = {
+	window = UIWidgets.create_frame("window", scenegraph_definition.window.size, "menu_frame_11", 40),
 	window_background = UIWidgets.create_tiled_texture("window_background", "menu_frame_bg_01", {
 		960,
 		1080
@@ -343,12 +344,12 @@ local tbl_9 = {
 	}),
 	right_window_mask = UIWidgets.create_simple_texture("mask_rect", "achievement_window"),
 	achievement_window_mask_bottom = UIWidgets.create_simple_rotated_texture("mask_rect_edge_fade", math.pi, {
-		tbl_3[1] / 2,
+		achievement_window_size[1] / 2,
 		15
 	}, "achievement_window_mask_bottom"),
 	achievement_window_mask_top = UIWidgets.create_simple_texture("mask_rect_edge_fade", "achievement_window_mask_top"),
-	exit_button = UIWidgets.create_default_button("exit_button", tbl_5.exit_button.size, nil, nil, Localize("menu_close"), 24, nil, "button_detail_04", 34, flag),
-	achievement_scrollbar = UIWidgets.create_chain_scrollbar("achievement_scrollbar", nil, tbl_5.achievement_scrollbar.size),
+	exit_button = UIWidgets.create_default_button("exit_button", scenegraph_definition.exit_button.size, nil, nil, Localize("menu_close"), 24, nil, "button_detail_04", 34, disable_with_gamepad),
+	achievement_scrollbar = UIWidgets.create_chain_scrollbar("achievement_scrollbar", nil, scenegraph_definition.achievement_scrollbar.size),
 	page_button_next = UIWidgets.create_arrow_button("page_button_next", math.pi),
 	page_button_previous = UIWidgets.create_arrow_button("page_button_previous"),
 	input_icon_next = UIWidgets.create_simple_texture("xbone_button_icon_a", "input_icon_next"),
@@ -364,9 +365,9 @@ local tbl_9 = {
 		}
 	}, "input_arrow_next"),
 	input_arrow_previous = UIWidgets.create_simple_texture("settings_arrow_normal", "input_arrow_previous"),
-	page_text_center = UIWidgets.create_simple_text("/", "page_text_area", nil, nil, tbl_8),
-	page_text_left = UIWidgets.create_simple_text("0", "page_text_area", nil, nil, tbl_6),
-	page_text_right = UIWidgets.create_simple_text("0", "page_text_area", nil, nil, tbl_7),
+	page_text_center = UIWidgets.create_simple_text("/", "page_text_area", nil, nil, page_number_center_text_style),
+	page_text_left = UIWidgets.create_simple_text("0", "page_text_area", nil, nil, page_number_left_text_style),
+	page_text_right = UIWidgets.create_simple_text("0", "page_text_area", nil, nil, page_number_right_text_style),
 	page_text_area = UIWidgets.create_simple_texture("tab_menu_bg_03", "page_text_area"),
 	achievement_window = {
 		scenegraph_id = "achievement_window_mask",
@@ -378,36 +379,37 @@ local tbl_9 = {
 				},
 				{
 					pass_type = "scroll",
-					scroll_function = function (arg_1_0, arg_1_1, arg_1_2, arg_1_3, arg_1_4, arg_1_5)
+					scroll_function = function (ui_scenegraph, ui_style, ui_content, input_service, scroll_axis, dt)
 						-- function 1
-						local num = arg_1_4.y * -1
+						local axis_input = scroll_axis.y * -1
 
-						if not (not IS_XB1 and not GameSettingsDevelopment.allow_keyboard_mouse and arg_1_2.is_gamepad_active) then
-							num = math.sign(arg_1_4.x) * -1
+						if IS_XB1 and GameSettingsDevelopment.allow_keyboard_mouse and not ui_content.is_gamepad_active then
+							axis_input = math.sign(scroll_axis.x) * -1
 						end
 
-						local hotspot = arg_1_2.hotspot
+						local hotspot = ui_content.hotspot
 
-						if num == 0 or hotspot.is_hover or not arg_1_2.is_gamepad_active then
-							arg_1_2.axis_input = num
-							arg_1_2.scroll_add = num * arg_1_2.scroll_amount
+						if axis_input ~= 0 and (hotspot.is_hover or ui_content.is_gamepad_active) then
+							ui_content.axis_input = axis_input
+							ui_content.scroll_add = axis_input * ui_content.scroll_amount
 						end
 
-						local scroll_add = arg_1_2.scroll_add
+						local scroll_add = ui_content.scroll_add
 
-						if not scroll_add then
-							local num_2 = scroll_add * (arg_1_5 * 5)
-							local num_3 = scroll_add - num_2
+						if scroll_add then
+							local step = scroll_add * (dt * 5)
 
-							if math.abs(num_3) > 0 then
-								arg_1_2.scroll_add = num_3
+							scroll_add = scroll_add - step
+
+							if math.abs(scroll_add) > 0 then
+								ui_content.scroll_add = scroll_add
 							else
-								arg_1_2.scroll_add = nil
+								ui_content.scroll_add = nil
 							end
 
-							local scroll_value = arg_1_2.scroll_value
+							local current_scroll_value = ui_content.scroll_value
 
-							arg_1_2.scroll_value = math.clamp(scroll_value + num_2, 0, 1)
+							ui_content.scroll_value = math.clamp(current_scroll_value + step, 0, 1)
 						end
 					end
 				}
@@ -423,20 +425,20 @@ local tbl_9 = {
 		style = {}
 	}
 }
-local tbl_10 = {
+local animation_definitions = {
 	on_enter = {
 		{
 			name = "fade_in",
 			duration = 0.6,
-			init = function (arg_2_0, arg_2_1, arg_2_2, arg_2_3)
+			init = function (ui_scenegraph, _scenegraph_definition, widgets, params)
 				-- function 2
-				arg_2_3.render_settings.alpha_multiplier = 0
+				params.render_settings.alpha_multiplier = 0
 			end,
-			update = function (arg_3_0, arg_3_1, arg_3_2, arg_3_3, arg_3_4)
+			update = function (ui_scenegraph, _scenegraph_definition, widgets, progress, params)
 				-- function 3
-				arg_3_4.render_settings.alpha_multiplier = math.easeOutCubic(arg_3_3)
+				params.render_settings.alpha_multiplier = math.easeOutCubic(progress)
 			end,
-			on_complete = function (arg_4_0, arg_4_1, arg_4_2, arg_4_3)
+			on_complete = function (ui_scenegraph, _scenegraph_definition, widgets, params)
 				-- function 4
 				return
 			end
@@ -446,22 +448,22 @@ local tbl_10 = {
 		{
 			name = "fade_out",
 			duration = 0.1,
-			init = function (arg_5_0, arg_5_1, arg_5_2, arg_5_3)
+			init = function (ui_scenegraph, _scenegraph_definition, widgets, params)
 				-- function 5
-				arg_5_3.render_settings.alpha_multiplier = 1
+				params.render_settings.alpha_multiplier = 1
 			end,
-			update = function (arg_6_0, arg_6_1, arg_6_2, arg_6_3, arg_6_4)
+			update = function (ui_scenegraph, _scenegraph_definition, widgets, progress, params)
 				-- function 6
-				arg_6_4.render_settings.alpha_multiplier = 1 - math.easeOutCubic(arg_6_3)
+				params.render_settings.alpha_multiplier = 1 - math.easeOutCubic(progress)
 			end,
-			on_complete = function (arg_7_0, arg_7_1, arg_7_2, arg_7_3)
+			on_complete = function (ui_scenegraph, _scenegraph_definition, widgets, params)
 				-- function 7
 				return
 			end
 		}
 	}
 }
-local tbl_11 = {
+local generic_input_actions = {
 	default = {
 		{
 			input_action = "back",
@@ -482,10 +484,10 @@ local tbl_11 = {
 }
 
 return {
-	scenegraph_definition = tbl_5,
-	widget_definitions = tbl_9,
-	animation_definitions = tbl_10,
-	generic_input_actions = tbl_11,
-	achievement_window_size = tbl_3,
-	achievement_scrollbar_size = tbl_4
+	scenegraph_definition = scenegraph_definition,
+	widget_definitions = widget_definitions,
+	animation_definitions = animation_definitions,
+	generic_input_actions = generic_input_actions,
+	achievement_window_size = achievement_window_size,
+	achievement_scrollbar_size = achievement_scrollbar_size
 }

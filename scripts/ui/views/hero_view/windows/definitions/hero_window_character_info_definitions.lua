@@ -1,8 +1,9 @@
 -- chunkname: @scripts/ui/views/hero_view/windows/definitions/hero_window_character_info_definitions.lua
 
-local size = UISettings.game_start_windows.size
+local window_default_settings = UISettings.game_start_windows
+local window_size = window_default_settings.size
 local console_menu_scenegraphs = UISettings.console_menu_scenegraphs
-local tbl = {
+local scenegraph_definition = {
 	screen = console_menu_scenegraphs.screen,
 	area = console_menu_scenegraphs.area,
 	area_left = console_menu_scenegraphs.area_left,
@@ -149,7 +150,7 @@ local tbl = {
 		}
 	}
 }
-local tbl_2 = {
+local career_name_style = {
 	use_shadow = true,
 	upper_case = true,
 	localize = true,
@@ -165,7 +166,7 @@ local tbl_2 = {
 		2
 	}
 }
-local tbl_3 = {
+local hero_name_style = {
 	font_size = 24,
 	use_shadow = true,
 	localize = true,
@@ -180,7 +181,7 @@ local tbl_3 = {
 		2
 	}
 }
-local tbl_4 = {
+local power_title_style = {
 	use_shadow = true,
 	vertical_alignment = "bottom",
 	localize = true,
@@ -194,7 +195,7 @@ local tbl_4 = {
 		2
 	}
 }
-local tbl_5 = {
+local level_text_style = {
 	font_size = 24,
 	use_shadow = true,
 	localize = false,
@@ -210,9 +211,9 @@ local tbl_5 = {
 	}
 }
 
-local function fn(arg_1_0, arg_1_1)
+local function create_window_divider(scenegraph_id, size)
 	-- function 1
-	return {
+	local widget = {
 		element = {
 			passes = {
 				{
@@ -251,7 +252,7 @@ local function fn(arg_1_0, arg_1_1)
 					6
 				},
 				size = {
-					arg_1_1[1] - 10,
+					size[1] - 10,
 					5
 				},
 				texture_tiling_size = {
@@ -284,7 +285,7 @@ local function fn(arg_1_0, arg_1_1)
 					255
 				},
 				offset = {
-					arg_1_1[1] - 12,
+					size[1] - 12,
 					-6,
 					10
 				},
@@ -294,16 +295,18 @@ local function fn(arg_1_0, arg_1_1)
 				}
 			}
 		},
-		scenegraph_id = arg_1_0,
+		scenegraph_id = scenegraph_id,
 		offset = {
 			0,
 			0,
 			0
 		}
 	}
+
+	return widget
 end
 
-local tbl_6 = {
+local widgets = {
 	divider_1 = UIWidgets.create_simple_uv_texture("menu_divider", {
 		{
 			0,
@@ -337,27 +340,27 @@ local tbl_6 = {
 			1
 		}
 	}, "experience_bar"),
-	career_name = UIWidgets.create_simple_text("n/a", "career_name", 22, nil, tbl_2),
-	hero_name = UIWidgets.create_simple_text("n/a", "hero_name", 22, nil, tbl_3),
-	level_text = UIWidgets.create_simple_text("n/a", "level_text", 22, nil, tbl_5)
+	career_name = UIWidgets.create_simple_text("n/a", "career_name", 22, nil, career_name_style),
+	hero_name = UIWidgets.create_simple_text("n/a", "hero_name", 22, nil, hero_name_style),
+	level_text = UIWidgets.create_simple_text("n/a", "level_text", 22, nil, level_text_style)
 }
-local tbl_7 = {
+local animation_definitions = {
 	on_enter = {
 		{
 			name = "fade_in",
 			start_progress = 0,
 			end_progress = 0.3,
-			init = function (arg_2_0, arg_2_1, arg_2_2, arg_2_3)
+			init = function (ui_scenegraph, scenegraph_definition, widgets, params)
 				-- function 2
-				arg_2_3.render_settings.alpha_multiplier = 0
+				params.render_settings.alpha_multiplier = 0
 			end,
-			update = function (arg_3_0, arg_3_1, arg_3_2, arg_3_3, arg_3_4)
+			update = function (ui_scenegraph, scenegraph_definition, widgets, progress, params)
 				-- function 3
-				local easeOutCubic = math.easeOutCubic(arg_3_3)
+				local anim_progress = math.easeOutCubic(progress)
 
-				arg_3_4.render_settings.alpha_multiplier = easeOutCubic
+				params.render_settings.alpha_multiplier = anim_progress
 			end,
-			on_complete = function (arg_4_0, arg_4_1, arg_4_2, arg_4_3)
+			on_complete = function (ui_scenegraph, scenegraph_definition, widgets, params)
 				-- function 4
 				return
 			end
@@ -368,17 +371,17 @@ local tbl_7 = {
 			name = "fade_out",
 			start_progress = 0,
 			end_progress = 0.3,
-			init = function (arg_5_0, arg_5_1, arg_5_2, arg_5_3)
+			init = function (ui_scenegraph, scenegraph_definition, widgets, params)
 				-- function 5
-				arg_5_3.render_settings.alpha_multiplier = 1
+				params.render_settings.alpha_multiplier = 1
 			end,
-			update = function (arg_6_0, arg_6_1, arg_6_2, arg_6_3, arg_6_4)
+			update = function (ui_scenegraph, scenegraph_definition, widgets, progress, params)
 				-- function 6
-				local easeOutCubic = math.easeOutCubic(arg_6_3)
+				local anim_progress = math.easeOutCubic(progress)
 
-				arg_6_4.render_settings.alpha_multiplier = 1 - easeOutCubic
+				params.render_settings.alpha_multiplier = 1 - anim_progress
 			end,
-			on_complete = function (arg_7_0, arg_7_1, arg_7_2, arg_7_3)
+			on_complete = function (ui_scenegraph, scenegraph_definition, widgets, params)
 				-- function 7
 				return
 			end
@@ -387,9 +390,9 @@ local tbl_7 = {
 }
 
 return {
-	widgets = tbl_6,
+	widgets = widgets,
 	node_widgets = node_widgets,
 	category_settings = category_settings,
-	scenegraph_definition = tbl,
-	animation_definitions = tbl_7
+	scenegraph_definition = scenegraph_definition,
+	animation_definitions = animation_definitions
 }

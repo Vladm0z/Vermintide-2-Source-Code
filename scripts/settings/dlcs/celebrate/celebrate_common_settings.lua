@@ -1,18 +1,18 @@
 -- chunkname: @scripts/settings/dlcs/celebrate/celebrate_common_settings.lua
 
-local celebrate = DLCSettings.celebrate
+local settings = DLCSettings.celebrate
 
-celebrate.unlock_settings = {
+settings.unlock_settings = {
 	celebrate = {
 		class = "AlwaysUnlocked"
 	}
 }
-celebrate.unlock_settings_xb1 = {
+settings.unlock_settings_xb1 = {
 	celebrate = {
 		class = "AlwaysUnlocked"
 	}
 }
-celebrate.unlock_settings_ps4 = {
+settings.unlock_settings_ps4 = {
 	CUSA13595_00 = {
 		celebrate = {
 			class = "AlwaysUnlocked"
@@ -24,9 +24,9 @@ celebrate.unlock_settings_ps4 = {
 		}
 	}
 }
-celebrate.husk_lookup = {
+settings.husk_lookup = {
 	"units/weapons/player/pup_ale/pup_ale"
 }
-celebrate.statistics_definitions = {
+settings.statistics_definitions = {
 	"scripts/managers/backend/statistics_definitions_celebrate"
 }

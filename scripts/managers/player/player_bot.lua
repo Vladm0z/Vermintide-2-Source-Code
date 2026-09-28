@@ -6,10 +6,10 @@ PlayerBot = class(PlayerBot, BulldozerPlayer)
 
 local EnergyData = EnergyData
 
-EnergyData = EnergyData or {}
+EnergyData = not not EnergyData or not not {}
 EnergyData = EnergyData
 
-local tbl = {
+local BOT_COLORS = {
 	bright_wizard = QuaternionBox(255, 255, 127, 0),
 	witch_hunter = QuaternionBox(255, 255, 215, 0),
 	dwarf_ranger = QuaternionBox(255, 125, 125, 200),
@@ -17,29 +17,29 @@ local tbl = {
 	empire_soldier = QuaternionBox(255, 220, 20, 60)
 }
 
-PlayerBot.init = function (self, arg_1_1, arg_1_2, arg_1_3, arg_1_4, arg_1_5, arg_1_6, arg_1_7, arg_1_8, arg_1_9, arg_1_10)
+PlayerBot.init = function (self, network_manager, player_name, bot_profile_name, is_server, profile_index, career_index, local_player_id, unique_id, ui_id, account_id)
 	-- function 1
-	self.player_name = arg_1_2
-	self.bot_profile = PlayerBots[arg_1_3]
-	self._profile_index = arg_1_5
-	self._career_index = arg_1_6
+	self.player_name = player_name
+	self.bot_profile = PlayerBots[bot_profile_name]
+	self._profile_index = profile_index
+	self._career_index = career_index
 	self.game_object_id = nil
 	self.owned_units = {}
 	self.bot_player = true
-	self.is_server = arg_1_4
+	self.is_server = is_server
 	self.peer_id = Network.peer_id()
-	self.color = tbl[arg_1_2]
-	self.viewport_name = arg_1_2
-	self.network_manager = arg_1_1
+	self.color = BOT_COLORS[player_name]
+	self.viewport_name = player_name
+	self.network_manager = network_manager
 
-	local var_1_0 = SPProfiles[self._profile_index]
+	local profile = SPProfiles[self._profile_index]
 
-	self.character_name = Localize(var_1_0.character_name)
-	self._local_player_id = arg_1_7
-	self._telemetry_id = "Bot_" .. arg_1_7
-	self._unique_id = arg_1_8
-	self._ui_id = arg_1_9
-	self._account_id = arg_1_10
+	self.character_name = Localize(profile.character_name)
+	self._local_player_id = local_player_id
+	self._telemetry_id = "Bot_" .. local_player_id
+	self._unique_id = unique_id
+	self._ui_id = ui_id
+	self._account_id = account_id
 	self._spawn_state = "despawned"
 end
 
@@ -73,31 +73,32 @@ PlayerBot.unique_id = function (self)
 	return self._unique_id
 end
 
-PlayerBot.platform_id = function (arg_8_0)
+PlayerBot.platform_id = function (self)
 	-- function 8
 	ferror("Not implemented")
 end
 
-PlayerBot.type = function (arg_9_0)
+PlayerBot.type = function (self)
 	-- function 9
 	return "PlayerBot"
 end
 
-PlayerBot.is_player_controlled = function (arg_10_0)
+PlayerBot.is_player_controlled = function (self)
 	-- function 10
 	return false
 end
 
-PlayerBot.set_player_unit = function (self, arg_11_1)
+PlayerBot.set_player_unit = function (self, unit)
 	-- function 11
-	self.player_unit = arg_11_1
+	self.player_unit = unit
 end
 
 PlayerBot.profile_display_name = function (self)
 	-- function 12
-	local var_12_0 = SPProfiles[self._profile_index]
+	local profile = SPProfiles[self._profile_index]
+	local display_name = not not profile and not not profile.display_name
 
-	return not var_12_0 and var_12_0.display_name
+	return display_name
 end
 
 PlayerBot.despawn = function (self)
@@ -106,7 +107,7 @@ PlayerBot.despawn = function (self)
 
 	local player_unit = self.player_unit
 
-	if not Unit.alive(player_unit) then
+	if Unit.alive(player_unit) then
 		Managers.state.unit_spawner:mark_for_deletion(player_unit)
 		Managers.telemetry_events:player_despawned(self)
 	else
@@ -124,117 +125,151 @@ PlayerBot.telemetry_id = function (self)
 	return self._telemetry_id
 end
 
-PlayerBot.spawn = function (self, arg_16_1, arg_16_2, arg_16_3, arg_16_4, arg_16_5, arg_16_6, arg_16_7, arg_16_8, arg_16_9, arg_16_10, arg_16_11, arg_16_12)
+PlayerBot.spawn = function (self, position, rotation, is_initial_spawn, ammo_melee, ammo_ranged, healthkit, potion, grenade, ability_cooldown_percent_int, additional_items, _, optional_respawn_unit)
 	-- function 16
-	local _profile_index = self._profile_index
-	local var_16_1 = SPProfiles[_profile_index]
+	local profile_index = self._profile_index
+	local profile = SPProfiles[profile_index]
 	local career_index = self:career_index()
-	local var_16_3 = var_16_1.careers[career_index]
-	local flag = true
+	local career = profile.careers[career_index]
+	local is_bot = true
 
-	fassert(var_16_1, "[SpawnManager] Trying to spawn with profile %q that doesn't exist in %q.", _profile_index, "SPProfiles")
+	fassert(profile, "[SpawnManager] Trying to spawn with profile %q that doesn't exist in %q.", profile_index, "SPProfiles")
 
 	local nav_world = Managers.state.entity:system("ai_system"):nav_world()
-	local max_hp = Managers.state.difficulty:get_difficulty_settings().max_hp
-	local game_mode = Managers.state.game_mode
-	local get_player_wounds = game_mode:get_player_wounds(var_16_1)
-	local tbl = {}
+	local difficulty_manager = Managers.state.difficulty
+	local difficulty_settings = difficulty_manager:get_difficulty_settings()
+	local player_health = difficulty_settings.max_hp
+	local game_mode_manager = Managers.state.game_mode
+	local player_wounds = game_mode_manager:get_player_wounds(profile)
+	local character_state_class_list = {}
 
-	for i, v in ipairs(var_16_3.character_state_list) do
-		tbl[#tbl + 1] = rawget(_G, v)
+	for _, character_state_name in ipairs(career.character_state_list) do
+		character_state_class_list[#character_state_class_list + 1] = rawget(_G, character_state_name)
 	end
 
-	local get_initial_inventory = game_mode:get_initial_inventory(arg_16_6, arg_16_7, arg_16_8, arg_16_10, var_16_1)
-	local base_skin = var_16_3.base_skin
-	local str = "default"
-	local name = var_16_3.name
-	local get_loadout_item = BackendUtils.get_loadout_item(name, "slot_skin", flag)
+	local initial_inventory = game_mode_manager:get_initial_inventory(healthkit, potion, grenade, additional_items, profile)
+	local base_skin = career.base_skin
+	local base_frame = "default"
+	local career_name = career.name
+	local skin_item = BackendUtils.get_loadout_item(career_name, "slot_skin", is_bot)
+	local name
+
+	if skin_item then
+		name = skin_item.data.name
+
+		if not name then
+			-- Nothing
+		end
+	end
+
+	name = base_skin
+
+	local skin_name = name
+
+	::label_16_0::
+
+	local skin_data = Cosmetics[skin_name]
+	local frame_item = BackendUtils.get_loadout_item(career_name, "slot_frame", is_bot)
 	local name_2
 
-	if not get_loadout_item then
-		name_2 = get_loadout_item.data.name
+	if frame_item then
+		name_2 = frame_item.data.name
 
 		if not name_2 then
 			-- Nothing
 		end
 	end
 
-	name_2 = base_skin
+	name_2 = base_frame
 
-	::label_16_0::
-
-	local var_16_16 = Cosmetics[name_2]
-	local get_loadout_item_2 = BackendUtils.get_loadout_item(name, "slot_frame", flag)
-	local name_3
-
-	if not get_loadout_item_2 then
-		name_3 = get_loadout_item_2.data.name
-
-		if not name_3 then
-			-- Nothing
-		end
-	end
-
-	name_3 = str
+	local frame_name = name_2
 
 	::label_16_1::
 
-	local var_16_19 = OverchargeData[name]
+	local var_16_2 = OverchargeData[career_name]
 
-	var_16_19 = var_16_19 or {}
+	if not var_16_2 then
+		-- Nothing
+	end
 
-	local var_16_20 = EnergyData[name]
+	var_16_2 = {}
 
-	var_16_20 = var_16_20 or {}
+	local overcharge_data = var_16_2
 
-	local str_2 = "default_weapon_pose_01"
-	local get_loadout_item_3 = BackendUtils.get_loadout_item(name, "slot_pose")
+	::label_16_2::
+
+	local var_16_3 = EnergyData[career_name]
+
+	if not var_16_3 then
+		-- Nothing
+	end
+
+	var_16_3 = {}
+
+	local energy_data = var_16_3
+
+	::label_16_3::
+
+	local base_pose = "default_weapon_pose_01"
+	local pose_item = BackendUtils.get_loadout_item(career_name, "slot_pose")
 	local data
 
-	if not get_loadout_item_3 then
-		data = get_loadout_item_3.data
+	if pose_item then
+		data = pose_item.data
 
 		if not data then
 			-- Nothing
 		end
 	end
 
-	data = get_loadout_item_3
+	data = pose_item
+
+	local pose_item_data = data
 
 	do
-		local name_4
+		local name_3
 	end
 
-	::label_16_2::
+	::label_16_4::
 
-	if not data then
-		name_4 = data.name
+	if pose_item_data then
+		name_3 = pose_item_data.name
 
-		if not name_4 then
+		if not name_3 then
 			-- Nothing
 		end
 	end
 
-	name_4 = str_2
+	name_3 = base_pose
 
-	::label_16_3::
+	local pose_name = name_3
 
-	local get_status_from_unique_id = Managers.party:get_status_from_unique_id(self._unique_id)
-	local get_party = Managers.party:get_party(get_status_from_unique_id.party_id)
-	local var_16_27 = Managers.state.side.side_by_party[get_party]
-	local breed = var_16_3.breed
+	::label_16_5::
 
-	breed = breed or var_16_1.breed
+	local status = Managers.party:get_status_from_unique_id(self._unique_id)
+	local party = Managers.party:get_party(status.party_id)
+	local side = Managers.state.side.side_by_party[party]
+	local breed_2 = career.breed
 
-	local tbl_2 = {
+	if not breed_2 then
+		-- Nothing
+	end
+
+	breed_2 = profile.breed
+
+	local breed = breed_2
+
+	::label_16_6::
+
+	local extension_init_data = {
 		ai_system = {
 			player = self,
 			bot_profile = self.bot_profile,
 			nav_world = nav_world
 		},
 		ai_bot_group_system = {
-			initial_inventory = get_initial_inventory,
-			side = var_16_27
+			initial_inventory = initial_inventory,
+			side = side
 		},
 		input_system = {
 			player = self
@@ -242,19 +277,19 @@ PlayerBot.spawn = function (self, arg_16_1, arg_16_2, arg_16_3, arg_16_4, arg_16
 		character_state_machine_system = {
 			start_state = "standing",
 			nav_world = nav_world,
-			character_state_class_list = tbl,
+			character_state_class_list = character_state_class_list,
 			player = self
 		},
 		health_system = {
 			player = self,
-			profile_index = _profile_index,
+			profile_index = profile_index,
 			career_index = career_index
 		},
 		status_system = {
-			wounds = get_player_wounds,
-			profile_id = _profile_index,
+			wounds = player_wounds,
+			profile_id = profile_index,
 			player = self,
-			respawn_unit = arg_16_12
+			respawn_unit = optional_respawn_unit
 		},
 		hit_reaction_system = {
 			is_husk = false,
@@ -265,12 +300,12 @@ PlayerBot.spawn = function (self, arg_16_1, arg_16_2, arg_16_3, arg_16_4, arg_16
 			is_husk = false
 		},
 		inventory_system = {
-			profile = var_16_1,
-			initial_inventory = get_initial_inventory,
+			profile = profile,
+			initial_inventory = initial_inventory,
 			player = self,
 			ammo_percent = {
-				slot_melee = arg_16_4,
-				slot_ranged = arg_16_5
+				slot_melee = ammo_melee,
+				slot_ranged = ammo_ranged
 			}
 		},
 		locomotion_system = {
@@ -280,19 +315,19 @@ PlayerBot.spawn = function (self, arg_16_1, arg_16_2, arg_16_3, arg_16_4, arg_16
 			player = self
 		},
 		dialogue_context_system = {
-			profile = var_16_1
+			profile = profile
 		},
 		dialogue_system = {
 			wwise_career_switch_group = "player_career",
 			faction = "player",
 			wwise_voice_switch_group = "character",
-			profile = var_16_1,
-			wwise_voice_switch_value = var_16_1.character_vo,
-			wwise_career_switch_value = name
+			profile = profile,
+			wwise_voice_switch_value = profile.character_vo,
+			wwise_career_switch_value = career_name
 		},
 		first_person_system = {
-			profile = var_16_1,
-			skin_name = name_2
+			profile = profile,
+			skin_name = skin_name
 		},
 		ai_navigation_system = {
 			nav_world = nav_world
@@ -305,14 +340,14 @@ PlayerBot.spawn = function (self, arg_16_1, arg_16_2, arg_16_3, arg_16_4, arg_16
 			template = "player"
 		},
 		attachment_system = {
-			profile = var_16_1,
+			profile = profile,
 			player = self
 		},
 		cosmetic_system = {
-			profile = var_16_1,
-			skin_name = name_2,
-			frame_name = name_3,
-			pose_name = name_4,
+			profile = profile,
+			skin_name = skin_name,
+			frame_name = frame_name,
+			pose_name = pose_name,
 			player = self
 		},
 		buff_system = {
@@ -324,67 +359,78 @@ PlayerBot.spawn = function (self, arg_16_1, arg_16_2, arg_16_3, arg_16_4, arg_16
 			statistics_id = self.peer_id
 		},
 		ai_slot_system = {
-			profile_index = _profile_index
+			profile_index = profile_index
 		},
 		talent_system = {
 			player = self,
-			profile_index = _profile_index
+			profile_index = profile_index
 		},
 		career_system = {
 			player = self,
-			profile_index = _profile_index,
+			profile_index = profile_index,
 			career_index = career_index,
-			ability_cooldown_percent_int = arg_16_9
+			ability_cooldown_percent_int = ability_cooldown_percent_int
 		},
 		overcharge_system = {
-			overcharge_data = var_16_19
+			overcharge_data = overcharge_data
 		},
 		energy_system = {
-			energy_data = var_16_20
+			energy_data = energy_data
 		},
 		aggro_system = {
-			side = var_16_27
+			side = side
 		},
 		proximity_system = {
-			side = var_16_27,
+			side = side,
 			breed = breed
 		},
 		target_override_system = {
-			side = var_16_27
+			side = side
 		},
 		ai_commander_system = {
 			player = self
 		}
 	}
-	local str_3 = "player_bot_unit"
-	local third_person = var_16_16.third_person
-	local spawn_unit = self:spawn_unit(third_person, tbl_2, str_3, arg_16_1, arg_16_2)
+	local unit_template_name = "player_bot_unit"
+	local unit_name = skin_data.third_person
+	local unit = self:spawn_unit(unit_name, extension_init_data, unit_template_name, position, rotation)
 
-	Managers.state.event:trigger("new_player_unit", self, spawn_unit, self:unique_id())
-	ScriptUnit.extension(spawn_unit, "attachment_system"):show_attachments(true)
-	Unit.set_data(spawn_unit, "sound_character", var_16_3.sound_character)
-	Unit.create_actor(spawn_unit, "bot_collision", false)
+	Managers.state.event:trigger("new_player_unit", self, unit, self:unique_id())
+	ScriptUnit.extension(unit, "attachment_system"):show_attachments(true)
+	Unit.set_data(unit, "sound_character", career.sound_character)
+	Unit.create_actor(unit, "bot_collision", false)
 
-	local climate_type = LevelHelper:current_level_settings().climate_type
+	local level_settings = LevelHelper:current_level_settings()
+	local climate_type_2 = level_settings.climate_type
 
-	climate_type = climate_type or "default"
+	if not climate_type_2 then
+		-- Nothing
+	end
 
-	Unit.set_flow_variable(spawn_unit, "climate_type", climate_type)
-	Unit.flow_event(spawn_unit, "climate_type_set")
+	climate_type_2 = "default"
 
-	if not self.is_server then
-		ScriptUnit.extension(spawn_unit, "health_system"):create_health_game_object()
+	local climate_type = climate_type_2
+
+	::label_16_7::
+
+	Unit.set_flow_variable(unit, "climate_type", climate_type)
+	Unit.flow_event(unit, "climate_type_set")
+
+	if self.is_server then
+		local health_extension = ScriptUnit.extension(unit, "health_system")
+
+		health_extension:create_health_game_object()
 	end
 
 	self:_set_spawn_state("spawned")
 	Managers.telemetry_events:player_spawned(self)
 
-	return spawn_unit
+	return unit
 end
 
 PlayerBot.create_game_object = function (self)
 	-- function 17
-	local tbl = {
+	local game_object_data_table = {
 		ping = 0,
 		player_controlled = false,
 		go_type = NetworkLookup.go_types.player,
@@ -392,20 +438,21 @@ PlayerBot.create_game_object = function (self)
 		local_player_id = self:local_player_id(),
 		account_id = self.peer_id
 	}
-	local var_17_1 = callback(self, "cb_game_session_disconnect")
+	local callback = callback(self, "cb_game_session_disconnect")
+	local game_object_id = Managers.state.network:create_player_game_object("bot_player", game_object_data_table, callback)
 
-	self.game_object_id = Managers.state.network:create_player_game_object("bot_player", tbl, var_17_1)
+	self.game_object_id = game_object_id
 
 	self:create_sync_data()
 end
 
 PlayerBot.destroy = function (self)
 	-- function 18
-	if not self.is_server and not self.game_object_id then
+	if self.is_server and self.game_object_id then
 		Managers.state.network:destroy_game_object(self.game_object_id)
 	end
 
-	if not self._player_sync_data then
+	if self._player_sync_data then
 		self._player_sync_data:destroy()
 	end
 end

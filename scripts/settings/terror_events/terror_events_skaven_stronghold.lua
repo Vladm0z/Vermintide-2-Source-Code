@@ -1,7 +1,8 @@
 -- chunkname: @scripts/settings/terror_events/terror_events_skaven_stronghold.lua
 
-local count_event_breed = require("scripts/settings/terror_events/terror_event_utils").count_event_breed
-local tbl = {
+local TerrorEventUtils = require("scripts/settings/terror_events/terror_event_utils")
+local count_event_breed = TerrorEventUtils.count_event_breed
+local terror_event_blueprints = {
 	stronghold_pacing_off = {
 		{
 			"control_pacing",
@@ -46,7 +47,7 @@ local tbl = {
 		},
 		{
 			"continue_when",
-			condition = function (arg_1_0)
+			condition = function (t)
 				-- function 1
 				return count_event_breed("skaven_slave") < 6
 			end
@@ -79,14 +80,14 @@ local tbl = {
 		},
 		{
 			"continue_when",
-			condition = function (arg_2_0)
+			condition = function (t)
 				-- function 2
 				return count_event_breed("skaven_storm_vermin_warlord") == 1
 			end
 		},
 		{
 			"continue_when",
-			condition = function (arg_3_0)
+			condition = function (t)
 				-- function 3
 				return count_event_breed("skaven_storm_vermin_warlord") < 1
 			end
@@ -99,5 +100,5 @@ local tbl = {
 }
 
 return {
-	tbl
+	terror_event_blueprints
 }

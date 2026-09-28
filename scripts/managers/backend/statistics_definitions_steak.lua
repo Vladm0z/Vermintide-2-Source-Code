@@ -9,12 +9,12 @@ player.scorpion_crater_pendant = {
 }
 
 for i = 1, 3 do
-	local str = "scorpion_crater_dark_tongue_" .. i
+	local dark_tongue_definition = "scorpion_crater_dark_tongue_" .. i
 
-	player[str] = {
+	player[dark_tongue_definition] = {
 		value = 0,
 		source = "player_data",
-		database_name = str
+		database_name = dark_tongue_definition
 	}
 end
 

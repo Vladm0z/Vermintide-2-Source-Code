@@ -1,32 +1,40 @@
 -- chunkname: @scripts/ui/views/ingame_ui_testify.lua
 
-return {
-	transition_with_fade = function (self, arg_1_1)
+local IngameUITestify = {
+	transition_with_fade = function (ingame_ui, params)
 		-- function 1
-		self:transition_with_fade(arg_1_1.transition, arg_1_1.transition_params)
+		ingame_ui:transition_with_fade(params.transition, params.transition_params)
 	end,
-	wait_for_active_view = function (self, arg_2_1)
+	wait_for_active_view = function (ingame_ui, view)
 		-- function 2
-		if self.current_view ~= arg_2_1 then
+		if ingame_ui.current_view ~= view then
 			return Testify.RETRY
 		end
 	end,
-	versus_select_random_available_hero = function (self)
+	versus_select_random_available_hero = function (ingame_ui)
 		-- function 3
-		fassert(self.current_view == "versus_party_char_selection_view", "TODO")
+		fassert(ingame_ui.current_view == "versus_party_char_selection_view", "TODO")
 
-		local var_3_0 = self.views[self.current_view]
+		local current_view = ingame_ui.views[ingame_ui.current_view]
 		local peer_id = Network.peer_id()
-		local num = 1
-		local get_party_from_player_id, var_3_4 = Managers.party:get_party_from_player_id(peer_id, num)
+		local local_player_id = 1
+		local party, party_id = Managers.party:get_party_from_player_id(peer_id, local_player_id)
 
-		if not (not get_party_from_player_id and not (var_3_4 < 1)) then
+		if not party or party_id < 1 then
 			return Testify.RETRY
 		end
 
-		local game_mode = Managers.state.game_mode
+		local game_mode_2 = Managers.state.game_mode
 
-		game_mode = not game_mode and Managers.state.game_mode:game_mode()
+		if game_mode_2 then
+			-- Nothing
+		end
+
+		game_mode_2 = Managers.state.game_mode:game_mode()
+
+		local game_mode = game_mode_2
+
+		::label_3_0::
 
 		if not game_mode then
 			return Testify.RETRY
@@ -38,14 +46,16 @@ return {
 			return Testify.RETRY
 		end
 
-		local get_party_data = party_selection_logic:get_party_data(var_3_4)
+		local party_data = party_selection_logic:get_party_data(party_id)
 
-		if not get_party_data then
+		if not party_data then
 			return Testify.RETRY
 		end
 
-		local get_random_available_character, var_3_9 = party_selection_logic:get_random_available_character(get_party_data)
+		local profile_index, career_index = party_selection_logic:get_random_available_character(party_data)
 
-		party_selection_logic:select_character(get_random_available_character, var_3_9)
+		party_selection_logic:select_character(profile_index, career_index)
 	end
 }
+
+return IngameUITestify

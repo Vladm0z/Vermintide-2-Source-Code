@@ -2,37 +2,40 @@
 
 HuskTalentExtension = class(HuskTalentExtension)
 
-HuskTalentExtension.init = function (self, arg_1_1, arg_1_2, arg_1_3)
+HuskTalentExtension.init = function (self, extension_init_context, unit, extension_init_data)
 	-- function 1
-	self._unit = arg_1_2
-	self.world = arg_1_1.world
+	self._unit = unit
+	self.world = extension_init_context.world
 	self.is_server = Managers.player.is_server
-	self.is_husk = arg_1_3.is_husk
-	self.player = arg_1_3.player
-	self._profile_index = arg_1_3.profile_index
+	self.is_husk = extension_init_data.is_husk
+	self.player = extension_init_data.player
+	self._profile_index = extension_init_data.profile_index
 	self._talent_buff_ids = {}
 	self._talent_ids = {}
 	self._initial_talent_sync_completed = false
 end
 
-HuskTalentExtension.extensions_ready = function (self, arg_2_1, arg_2_2)
+HuskTalentExtension.extensions_ready = function (self, world, unit)
 	-- function 2
-	local extension = ScriptUnit.extension(arg_2_2, "career_system")
+	local career_extension = ScriptUnit.extension(unit, "career_system")
 
-	self.buff_extension = ScriptUnit.extension(arg_2_2, "buff_system")
-	self.career_extension = extension
+	self.buff_extension = ScriptUnit.extension(unit, "buff_system")
+	self.career_extension = career_extension
 
-	local _profile_index = self._profile_index
-	local display_name = SPProfiles[_profile_index].display_name
+	local current_hero_index = self._profile_index
+	local current_hero = SPProfiles[current_hero_index]
+	local hero_name = current_hero.display_name
+	local career_name = career_extension:career_name()
 
-	self._career_name, self._hero_name = extension:career_name(), display_name
+	self._hero_name = hero_name
+	self._career_name = career_name
 end
 
-HuskTalentExtension.set_talent_ids = function (self, arg_3_1)
+HuskTalentExtension.set_talent_ids = function (self, talent_ids)
 	-- function 3
-	self._talent_ids = arg_3_1
+	self._talent_ids = talent_ids
 
-	if not (self.is_server or self.is_husk) then
+	if self.is_server or not self.is_husk then
 		if not self._initial_talent_sync_completed then
 			self._initial_talent_sync_completed = true
 
@@ -43,45 +46,45 @@ HuskTalentExtension.set_talent_ids = function (self, arg_3_1)
 	end
 end
 
-local tbl = {}
+local params = {}
 
 HuskTalentExtension.apply_buffs_from_talents = function (self)
 	-- function 4
-	local _talent_ids = self._talent_ids
-	local _hero_name = self._hero_name
+	local talent_ids = self._talent_ids
+	local hero_name = self._hero_name
 	local buff_extension = self.buff_extension
 	local player = self.player
-	local _talent_buff_ids = self._talent_buff_ids
-	local tbl = {}
+	local talent_buff_ids = self._talent_buff_ids
+	local sub_buffs_per_talent = {}
 
-	for i = 1, #_talent_buff_ids do
-		local var_4_6 = _talent_buff_ids[i]
-		local num_sub_buffs = buff_extension:num_sub_buffs(var_4_6)
+	for i = 1, #talent_buff_ids do
+		local id = talent_buff_ids[i]
+		local num_sub_buffs = buff_extension:num_sub_buffs(id)
 
 		if num_sub_buffs > 0 then
-			local get_buff_by_id = buff_extension:get_buff_by_id(var_4_6)
+			local buff = buff_extension:get_buff_by_id(id)
 
-			tbl[get_buff_by_id.buff_type] = {
+			sub_buffs_per_talent[buff.buff_type] = {
 				num_buffs = num_sub_buffs,
-				buff_name = get_buff_by_id.template.buff_to_add
+				buff_name = buff.template.buff_to_add
 			}
 		end
 	end
 
 	self:_clear_buffs_from_talents()
 
-	for j = 1, #_talent_ids do
-		local var_4_9 = _talent_ids[j]
-		local get_talent_by_id = TalentUtils.get_talent_by_id(_hero_name, var_4_9)
+	for i = 1, #talent_ids do
+		local talent_id = talent_ids[i]
+		local talent_data = TalentUtils.get_talent_by_id(hero_name, talent_id)
 
-		if not get_talent_by_id then
-			local buffs = get_talent_by_id.buffs
-			local buffer = get_talent_by_id.buffer
+		if talent_data then
+			local buffs = talent_data.buffs
+			local buffer = talent_data.buffer
 
-			if not (not player.local_player and not buffer and buffer == "client" and (not self.is_server and buffer == "server" and self.is_server or not player.local_player and buffer == "both") or buffer ~= "all") then
+			if not player.local_player or not buffer or (buffer ~= "client" and (not self.is_server or buffer ~= "server") and self.is_server or player.local_player) and buffer == "both" or buffer == "all" then
 				local count
 
-				if not buffs then
+				if buffs then
 					count = #buffs
 
 					if not count then
@@ -91,49 +94,51 @@ HuskTalentExtension.apply_buffs_from_talents = function (self)
 
 				count = 0
 
+				local num_buffs = count
+
 				::label_4_0::
 
-				if count > 0 then
-					for k = 1, count do
-						local var_4_14 = buffs[k]
-						local add_buff = buff_extension:add_buff(var_4_14)
-						local var_4_16 = tbl[var_4_14]
+				if num_buffs > 0 then
+					for j = 1, num_buffs do
+						local buff_template = buffs[j]
+						local id = buff_extension:add_buff(buff_template)
+						local sub_buffs = sub_buffs_per_talent[buff_template]
 
-						if not var_4_16 then
-							for l = 1, var_4_16.num_buffs do
-								buff_extension:add_buff(var_4_16.buff_name, {
+						if sub_buffs then
+							for k = 1, sub_buffs.num_buffs do
+								buff_extension:add_buff(sub_buffs.buff_name, {
 									attacker_unit = player.player_unit
 								})
 							end
 						end
 
-						_talent_buff_ids[#_talent_buff_ids + 1] = add_buff
+						talent_buff_ids[#talent_buff_ids + 1] = id
 					end
 				end
 			end
 
-			if not player.local_player then
-				local client_buffs = get_talent_by_id.client_buffs
+			if player.local_player then
+				local client_buffs = talent_data.client_buffs
 
-				if not client_buffs then
-					for i4 = 1, #client_buffs do
-						local var_4_18 = client_buffs[i4]
-						local add_buff_2 = buff_extension:add_buff(var_4_18)
+				if client_buffs then
+					for j = 1, #client_buffs do
+						local buff_template = client_buffs[j]
+						local id = buff_extension:add_buff(buff_template)
 
-						_talent_buff_ids[#_talent_buff_ids + 1] = add_buff_2
+						talent_buff_ids[#talent_buff_ids + 1] = id
 					end
 				end
 			end
 
-			if not self.is_server then
-				local server_buffs = get_talent_by_id.server_buffs
+			if self.is_server then
+				local server_buffs = talent_data.server_buffs
 
-				if not server_buffs then
-					for i5 = 1, #server_buffs do
-						local var_4_21 = server_buffs[i5]
-						local add_buff_3 = buff_extension:add_buff(var_4_21)
+				if server_buffs then
+					for j = 1, #server_buffs do
+						local buff_template = server_buffs[j]
+						local id = buff_extension:add_buff(buff_template)
 
-						_talent_buff_ids[#_talent_buff_ids + 1] = add_buff_3
+						talent_buff_ids[#talent_buff_ids + 1] = id
 					end
 				end
 			end
@@ -144,35 +149,37 @@ end
 HuskTalentExtension._clear_buffs_from_talents = function (self)
 	-- function 5
 	local buff_extension = self.buff_extension
-	local _talent_buff_ids = self._talent_buff_ids
-	local count = #_talent_buff_ids
+	local talent_buff_ids = self._talent_buff_ids
+	local num_talent_buff_ids = #talent_buff_ids
 
-	for i = 1, count do
-		local var_5_3 = _talent_buff_ids[i]
+	for i = 1, num_talent_buff_ids do
+		local id = talent_buff_ids[i]
 
-		buff_extension:remove_buff(var_5_3)
+		buff_extension:remove_buff(id)
 	end
 
 	table.clear(self._talent_buff_ids)
 end
 
-HuskTalentExtension.has_talent = function (self, arg_6_1)
+HuskTalentExtension.has_talent = function (self, talent_name)
 	-- function 6
-	local _talent_ids = self._talent_ids
-	local var_6_1 = TalentIDLookup[arg_6_1]
+	local talent_ids = self._talent_ids
+	local wanted_talent_lookup = TalentIDLookup[talent_name]
 
-	if not var_6_1 then
+	if not wanted_talent_lookup then
 		return false
 	end
 
-	if var_6_1.hero_name ~= self._hero_name then
+	if wanted_talent_lookup.hero_name ~= self._hero_name then
 		return false
 	end
 
-	local talent_id = var_6_1.talent_id
+	local wanted_talent_id = wanted_talent_lookup.talent_id
 
-	for i = 1, #_talent_ids do
-		if talent_id == _talent_ids[i] then
+	for i = 1, #talent_ids do
+		local talent_id = talent_ids[i]
+
+		if wanted_talent_id == talent_id then
 			return true
 		end
 	end
@@ -185,24 +192,24 @@ HuskTalentExtension.get_talent_ids = function (self)
 	return self._talent_ids
 end
 
-HuskTalentExtension.get_talent_names = function (self, arg_8_1)
+HuskTalentExtension.get_talent_names = function (self, talent_names)
 	-- function 8
-	local _talent_ids = self._talent_ids
-	local _hero_name = self._hero_name
+	local talent_ids = self._talent_ids
+	local hero_name = self._hero_name
 
-	arg_8_1 = arg_8_1 or {}
+	talent_names = not not talent_names or not not {}
 
-	for i = 1, #_talent_ids do
-		local var_8_2 = _talent_ids[i]
-		local get_talent_by_id = TalentUtils.get_talent_by_id(_hero_name, var_8_2)
+	for i = 1, #talent_ids do
+		local talent_id = talent_ids[i]
+		local talent_data = TalentUtils.get_talent_by_id(hero_name, talent_id)
 
-		arg_8_1[#arg_8_1 + 1] = get_talent_by_id.name
+		talent_names[#talent_names + 1] = talent_data.name
 	end
 
-	return arg_8_1
+	return talent_names
 end
 
-HuskTalentExtension.destroy = function (arg_9_0)
+HuskTalentExtension.destroy = function (self)
 	-- function 9
 	return
 end

@@ -1,100 +1,100 @@
 -- chunkname: @scripts/settings/dlcs/morris/morris_potion_settings.lua
 
-local deus_potions = DLCSettings.morris.pickups.deus_potions
+local deus_potions_settings = DLCSettings.morris.pickups.deus_potions
 
-local function fn(arg_1_0)
+local function generate_non_refreshable_potion_template(potion_name)
 	-- function 1
-	local tbl = {
-		actions = {
-			action_one = {
-				default = {
-					damage_window_start = 0.05,
-					anim_end_event = "attack_finished",
-					ammo_usage = 1,
-					kind = "buff",
-					damage_window_end = 0.2,
-					weapon_action_hand = "left",
-					block_pickup = true,
-					uninterruptible = true,
-					anim_event = "attack_heal",
-					total_time = 1.3,
-					anim_end_event_condition_func = function (arg_2_0, arg_2_1)
-						-- function 2
-						return arg_2_1 == "new_interupting_action" or arg_2_1 ~= "action_complete"
-					end,
-					condition_func = function (arg_3_0)
-						-- function 3
-						local extension = ScriptUnit.extension(arg_3_0, "buff_system")
-						local has_buff_type = extension:has_buff_type(arg_1_0 .. "_potion")
-						local has_buff_type_2 = extension:has_buff_type(arg_1_0 .. "_potion_increased")
+	local weapon_template = {}
 
-						return not (has_buff_type or has_buff_type_2)
-					end,
-					allowed_chain_actions = {},
-					buff_template = arg_1_0 .. "_potion"
-				}
-			},
-			action_two = {
-				default = ActionTemplates.give_item_on_defend
-			},
-			action_instant_drink_potion = {
-				default = {
-					kind = "dummy",
-					weapon_action_hand = "left",
-					total_time = 0,
-					allowed_chain_actions = {}
-				},
-				instant_drink = {
-					damage_window_end = 0.2,
-					ammo_usage = 1,
-					anim_end_event = "attack_finished",
-					kind = "buff",
-					damage_window_start = 0.05,
-					weapon_action_hand = "left",
-					interaction_priority = 2,
-					block_pickup = true,
-					uninterruptible = true,
-					anim_event = "attack_heal",
-					auto_validate_on_gamepad = true,
-					total_time = 1.3,
-					anim_end_event_condition_func = function (arg_4_0, arg_4_1)
-						-- function 4
-						return arg_4_1 == "new_interupting_action" or arg_4_1 ~= "action_complete"
-					end,
-					allowed_chain_actions = {},
-					buff_template = arg_1_0 .. "_potion",
-					condition_func = function (arg_5_0)
-						-- function 5
-						return true
-					end
-				}
-			},
-			action_instant_give_item = ActionTemplates.instant_give_item,
-			action_inspect = ActionTemplates.action_inspect_left,
-			action_career_skill = ActionTemplates.career_skill_dummy,
-			action_wield = ActionTemplates.wield_left,
-			action_instant_grenade_throw = ActionTemplates.instant_grenade_throw,
-			action_instant_heal_self = ActionTemplates.instant_equip_and_heal_self
+	weapon_template.actions = {
+		action_one = {
+			default = {
+				damage_window_start = 0.05,
+				anim_end_event = "attack_finished",
+				ammo_usage = 1,
+				kind = "buff",
+				damage_window_end = 0.2,
+				weapon_action_hand = "left",
+				block_pickup = true,
+				uninterruptible = true,
+				anim_event = "attack_heal",
+				total_time = 1.3,
+				anim_end_event_condition_func = function (unit, end_reason)
+					-- function 2
+					return end_reason ~= "new_interupting_action" and end_reason ~= "action_complete"
+				end,
+				condition_func = function (action_user)
+					-- function 3
+					local buff_extension = ScriptUnit.extension(action_user, "buff_system")
+					local has_normal_buff = buff_extension:has_buff_type(potion_name .. "_potion")
+					local has_increased_buff = buff_extension:has_buff_type(potion_name .. "_potion_increased")
+					local has_buff = not not has_normal_buff or not not has_increased_buff
+
+					return not has_buff
+				end,
+				allowed_chain_actions = {},
+				buff_template = potion_name .. "_potion"
+			}
 		},
-		ammo_data = {
-			ammo_hand = "left",
-			destroy_when_out_of_ammo = true,
-			max_ammo = 1,
-			ammo_per_clip = 1,
-			reload_time = 0,
-			ignore_ammo_pickup = true
-		}
+		action_two = {
+			default = ActionTemplates.give_item_on_defend
+		},
+		action_instant_drink_potion = {
+			default = {
+				kind = "dummy",
+				weapon_action_hand = "left",
+				total_time = 0,
+				allowed_chain_actions = {}
+			},
+			instant_drink = {
+				damage_window_end = 0.2,
+				ammo_usage = 1,
+				anim_end_event = "attack_finished",
+				kind = "buff",
+				damage_window_start = 0.05,
+				weapon_action_hand = "left",
+				interaction_priority = 2,
+				block_pickup = true,
+				uninterruptible = true,
+				anim_event = "attack_heal",
+				auto_validate_on_gamepad = true,
+				total_time = 1.3,
+				anim_end_event_condition_func = function (unit, end_reason)
+					-- function 4
+					return end_reason ~= "new_interupting_action" and end_reason ~= "action_complete"
+				end,
+				allowed_chain_actions = {},
+				buff_template = potion_name .. "_potion",
+				condition_func = function (attacker_unit)
+					-- function 5
+					return true
+				end
+			}
+		},
+		action_instant_give_item = ActionTemplates.instant_give_item,
+		action_inspect = ActionTemplates.action_inspect_left,
+		action_career_skill = ActionTemplates.career_skill_dummy,
+		action_wield = ActionTemplates.wield_left,
+		action_instant_grenade_throw = ActionTemplates.instant_grenade_throw,
+		action_instant_heal_self = ActionTemplates.instant_equip_and_heal_self
 	}
-
-	tbl.left_hand_unit = "units/weapons/player/wpn_potion_buff/wpn_potion_buff"
-	tbl.left_hand_attachment_node_linking = AttachmentNodeLinking.potion
-	tbl.wield_anim = "to_potion"
-	tbl.state_machine = "units/beings/player/first_person_base/state_machines/common"
-	tbl.load_state_machine = false
-	tbl.gui_texture = "hud_consumable_icon_potion"
-	tbl.max_fatigue_points = 4
-	tbl.can_give_other = true
-	tbl.buffs = {
+	weapon_template.ammo_data = {
+		ammo_hand = "left",
+		destroy_when_out_of_ammo = true,
+		max_ammo = 1,
+		ammo_per_clip = 1,
+		reload_time = 0,
+		ignore_ammo_pickup = true
+	}
+	weapon_template.left_hand_unit = "units/weapons/player/wpn_potion_buff/wpn_potion_buff"
+	weapon_template.left_hand_attachment_node_linking = AttachmentNodeLinking.potion
+	weapon_template.wield_anim = "to_potion"
+	weapon_template.state_machine = "units/beings/player/first_person_base/state_machines/common"
+	weapon_template.load_state_machine = false
+	weapon_template.gui_texture = "hud_consumable_icon_potion"
+	weapon_template.max_fatigue_points = 4
+	weapon_template.can_give_other = true
+	weapon_template.buffs = {
 		change_dodge_distance = {
 			external_optional_multiplier = 1
 		},
@@ -102,21 +102,21 @@ local function fn(arg_1_0)
 			external_optional_multiplier = 1
 		}
 	}
-	tbl.pickup_data = {
-		pickup_name = arg_1_0 .. "_potion"
+	weapon_template.pickup_data = {
+		pickup_name = potion_name .. "_potion"
 	}
-	tbl.material_settings_name = deus_potions[arg_1_0 .. "_potion"].material_settings_name
+	weapon_template.material_settings_name = deus_potions_settings[potion_name .. "_potion"].material_settings_name
 
-	return tbl
+	return weapon_template
 end
 
 return {
-	liquid_bravado_potion = fn("liquid_bravado"),
-	vampiric_draught_potion = fn("vampiric_draught"),
-	moot_milk_potion = fn("moot_milk"),
-	friendly_murderer_potion = fn("friendly_murderer"),
-	killer_in_the_shadows_potion = fn("killer_in_the_shadows"),
-	pockets_full_of_bombs_potion = fn("pockets_full_of_bombs"),
-	hold_my_beer_potion = fn("hold_my_beer"),
-	poison_proof_potion = fn("poison_proof")
+	liquid_bravado_potion = generate_non_refreshable_potion_template("liquid_bravado"),
+	vampiric_draught_potion = generate_non_refreshable_potion_template("vampiric_draught"),
+	moot_milk_potion = generate_non_refreshable_potion_template("moot_milk"),
+	friendly_murderer_potion = generate_non_refreshable_potion_template("friendly_murderer"),
+	killer_in_the_shadows_potion = generate_non_refreshable_potion_template("killer_in_the_shadows"),
+	pockets_full_of_bombs_potion = generate_non_refreshable_potion_template("pockets_full_of_bombs"),
+	hold_my_beer_potion = generate_non_refreshable_potion_template("hold_my_beer"),
+	poison_proof_potion = generate_non_refreshable_potion_template("poison_proof")
 }

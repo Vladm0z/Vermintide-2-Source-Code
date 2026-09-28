@@ -1,24 +1,23 @@
 -- chunkname: @scripts/ui/views/versus_mission_objective_ui_definitions.lua
 
-local num = 1920
-local num_2 = 1080
-local tbl = {
+local SIZE_X, SIZE_Y = 1920, 1080
+local BACKGROUND_SIZE = {
 	819,
 	60
 }
-local tbl_2 = {
+local ICON_SIZE = {
 	64,
 	64
 }
-local tbl_3 = {
-	tbl[1],
-	tbl[2]
+local mission_background_size = {
+	BACKGROUND_SIZE[1],
+	BACKGROUND_SIZE[2]
 }
-local tbl_4 = {}
-local tbl_5 = {
+local tbl = {}
+local tbl_2 = {
 	size = {
-		num,
-		num_2
+		SIZE_X,
+		SIZE_Y
 	},
 	position = {
 		0,
@@ -28,10 +27,10 @@ local tbl_5 = {
 }
 local flag
 
-flag = IS_WINDOWS or not "hud_fit" or "fit"
-tbl_5.scale = flag
-tbl_4.screen = tbl_5
-tbl_4.pivot = {
+flag = (IS_WINDOWS or not "hud_fit") and not not "fit"
+tbl_2.scale = flag
+tbl.screen = tbl_2
+tbl.pivot = {
 	vertical_alignment = "top",
 	parent = "screen",
 	horizontal_alignment = "center",
@@ -45,7 +44,7 @@ tbl_4.pivot = {
 		100
 	}
 }
-tbl_4.objective_detail = {
+tbl.objective_detail = {
 	vertical_alignment = "top",
 	parent = "pivot",
 	horizontal_alignment = "center",
@@ -59,7 +58,7 @@ tbl_4.objective_detail = {
 		0
 	}
 }
-tbl_4.objective_text = {
+tbl.objective_text = {
 	vertical_alignment = "top",
 	parent = "pivot",
 	horizontal_alignment = "center",
@@ -73,7 +72,7 @@ tbl_4.objective_text = {
 		0
 	}
 }
-tbl_4.objective = {
+tbl.objective = {
 	vertical_alignment = "top",
 	parent = "pivot",
 	horizontal_alignment = "center",
@@ -87,7 +86,7 @@ tbl_4.objective = {
 		10
 	}
 }
-tbl_4.mission_pivot = {
+tbl.mission_pivot = {
 	vertical_alignment = "top",
 	parent = "pivot",
 	horizontal_alignment = "center",
@@ -101,18 +100,18 @@ tbl_4.mission_pivot = {
 		1
 	}
 }
-tbl_4.mission_widget = {
+tbl.mission_widget = {
 	vertical_alignment = "top",
 	parent = "pivot",
 	horizontal_alignment = "center",
-	size = tbl_3,
+	size = mission_background_size,
 	position = {
 		0,
 		0,
 		0
 	}
 }
-tbl_4.background = {
+tbl.background = {
 	vertical_alignment = "center",
 	parent = "mission_pivot",
 	horizontal_alignment = "center",
@@ -126,7 +125,7 @@ tbl_4.background = {
 		0
 	}
 }
-tbl_4.area_text_background = {
+tbl.area_text_background = {
 	vertical_alignment = "center",
 	parent = "background",
 	horizontal_alignment = "center",
@@ -140,7 +139,7 @@ tbl_4.area_text_background = {
 		0
 	}
 }
-tbl_4.duration_text_background = {
+tbl.duration_text_background = {
 	vertical_alignment = "center",
 	parent = "background",
 	horizontal_alignment = "center",
@@ -154,7 +153,7 @@ tbl_4.duration_text_background = {
 		0
 	}
 }
-tbl_4.top_center = {
+tbl.top_center = {
 	vertical_alignment = "center",
 	parent = "mission_pivot",
 	horizontal_alignment = "center",
@@ -168,7 +167,7 @@ tbl_4.top_center = {
 		5
 	}
 }
-tbl_4.top_left = {
+tbl.top_left = {
 	vertical_alignment = "center",
 	parent = "top_center",
 	horizontal_alignment = "right",
@@ -182,7 +181,7 @@ tbl_4.top_left = {
 		-1
 	}
 }
-tbl_4.top_right = {
+tbl.top_right = {
 	vertical_alignment = "center",
 	parent = "top_center",
 	horizontal_alignment = "left",
@@ -196,7 +195,7 @@ tbl_4.top_right = {
 		-1
 	}
 }
-tbl_4.top_detail = {
+tbl.top_detail = {
 	vertical_alignment = "center",
 	parent = "top_center",
 	horizontal_alignment = "center",
@@ -210,7 +209,7 @@ tbl_4.top_detail = {
 		8
 	}
 }
-tbl_4.bottom_center = {
+tbl.bottom_center = {
 	vertical_alignment = "center",
 	parent = "mission_pivot",
 	horizontal_alignment = "center",
@@ -224,7 +223,7 @@ tbl_4.bottom_center = {
 		6
 	}
 }
-tbl_4.bottom_left = {
+tbl.bottom_left = {
 	vertical_alignment = "center",
 	parent = "bottom_center",
 	horizontal_alignment = "right",
@@ -238,7 +237,7 @@ tbl_4.bottom_left = {
 		-1
 	}
 }
-tbl_4.bottom_right = {
+tbl.bottom_right = {
 	vertical_alignment = "center",
 	parent = "bottom_center",
 	horizontal_alignment = "left",
@@ -252,13 +251,13 @@ tbl_4.bottom_right = {
 		-1
 	}
 }
-tbl_4.mission_icon_left = {
+tbl.mission_icon_left = {
 	vertical_alignment = "center",
 	parent = "mission_widget",
 	horizontal_alignment = "center",
 	size = {
-		tbl_2[1],
-		tbl_2[2]
+		ICON_SIZE[1],
+		ICON_SIZE[2]
 	},
 	position = {
 		0,
@@ -266,13 +265,13 @@ tbl_4.mission_icon_left = {
 		1
 	}
 }
-tbl_4.mission_icon_right = {
+tbl.mission_icon_right = {
 	vertical_alignment = "center",
 	parent = "mission_widget",
 	horizontal_alignment = "center",
 	size = {
-		tbl_2[1],
-		tbl_2[2]
+		ICON_SIZE[1],
+		ICON_SIZE[2]
 	},
 	position = {
 		0,
@@ -280,7 +279,7 @@ tbl_4.mission_icon_right = {
 		1
 	}
 }
-tbl_4.frame_top_right = {
+tbl.frame_top_right = {
 	vertical_alignment = "top",
 	parent = "mission_widget",
 	horizontal_alignment = "left",
@@ -289,12 +288,12 @@ tbl_4.frame_top_right = {
 		4
 	},
 	position = {
-		tbl[1] / 2,
+		BACKGROUND_SIZE[1] / 2,
 		2,
 		3
 	}
 }
-tbl_4.frame_top_left = {
+tbl.frame_top_left = {
 	vertical_alignment = "top",
 	parent = "mission_widget",
 	horizontal_alignment = "right",
@@ -303,12 +302,12 @@ tbl_4.frame_top_left = {
 		4
 	},
 	position = {
-		-tbl[1] / 2,
+		-BACKGROUND_SIZE[1] / 2,
 		2,
 		3
 	}
 }
-tbl_4.frame_bottom_right = {
+tbl.frame_bottom_right = {
 	vertical_alignment = "bottom",
 	parent = "mission_widget",
 	horizontal_alignment = "left",
@@ -317,12 +316,12 @@ tbl_4.frame_bottom_right = {
 		4
 	},
 	position = {
-		tbl[1] / 2,
+		BACKGROUND_SIZE[1] / 2,
 		-2,
 		3
 	}
 }
-tbl_4.frame_bottom_left = {
+tbl.frame_bottom_left = {
 	vertical_alignment = "bottom",
 	parent = "mission_widget",
 	horizontal_alignment = "right",
@@ -331,13 +330,14 @@ tbl_4.frame_bottom_left = {
 		4
 	},
 	position = {
-		-tbl[1] / 2,
+		-BACKGROUND_SIZE[1] / 2,
 		-2,
 		3
 	}
 }
 
-local tbl_6 = {
+local scenegraph_definition = tbl
+local objective_text_style = {
 	word_wrap = true,
 	localize = false,
 	upper_case = false,
@@ -366,45 +366,45 @@ local tbl_6 = {
 		2
 	}
 }
-local clone = table.clone(tbl_6)
+local timer_counter_text_style = table.clone(objective_text_style)
 
-clone.font_size = 38
-clone.offset = {
+timer_counter_text_style.font_size = 38
+timer_counter_text_style.offset = {
 	0,
 	-20,
 	2
 }
-clone.text_color = Colors.get_color_table_with_alpha("white_smoke", 255)
-clone.size = {
+timer_counter_text_style.text_color = Colors.get_color_table_with_alpha("white_smoke", 255)
+timer_counter_text_style.size = {
 	50,
 	50
 }
-clone.dynamic_font_size = true
+timer_counter_text_style.dynamic_font_size = true
 
-local clone_2 = table.clone(tbl_6)
+local round_starting_text_style = table.clone(objective_text_style)
 
-clone_2.font_size = 24
-clone_2.dynamic_font_size = true
-clone_2.word_wrap = false
-clone_2.offset = {
+round_starting_text_style.font_size = 24
+round_starting_text_style.dynamic_font_size = true
+round_starting_text_style.word_wrap = false
+round_starting_text_style.offset = {
 	0,
 	-75,
 	2
 }
-clone_2.text_color = Colors.get_color_table_with_alpha("white_smoke", 255)
-clone_2.size = {
+round_starting_text_style.text_color = Colors.get_color_table_with_alpha("white_smoke", 255)
+round_starting_text_style.size = {
 	50,
 	50
 }
 
-local tbl_7 = {
+local saturated_color = {
 	255,
 	144,
 	144,
 	144
 }
 
-local function fn(arg_1_0)
+local function create_mission_objective_widget(scenegraph_id)
 	-- function 1
 	return {
 		alpha_multiplier = 1,
@@ -424,18 +424,18 @@ local function fn(arg_1_0)
 					style_id = "duration_text_style",
 					pass_type = "text",
 					text_id = "duration_text_content",
-					content_check_function = function (self, arg_2_1)
+					content_check_function = function (content, style)
 						-- function 2
-						return self.duration_text_content
+						return content.duration_text_content
 					end
 				},
 				{
 					style_id = "duration_text_shadow_style",
 					pass_type = "text",
 					text_id = "duration_text_content",
-					content_check_function = function (self, arg_3_1)
+					content_check_function = function (content, style)
 						-- function 3
-						return self.duration_text_content
+						return content.duration_text_content
 					end
 				},
 				{
@@ -507,21 +507,22 @@ local function fn(arg_1_0)
 					pass_type = "texture_uv_dynamic_color_uvs_size_offset",
 					style_id = "background_texture",
 					texture_id = "background_texture",
-					dynamic_function = function (self, arg_4_1, arg_4_2, arg_4_3)
+					dynamic_function = function (content, style, size, dt)
 						-- function 4
-						local fraction = self.fraction
-						local color = arg_4_1.color
-						local uv_start_pixels = arg_4_1.uv_start_pixels
-						local uv_scale_pixels = arg_4_1.uv_scale_pixels
-						local num = uv_start_pixels + uv_scale_pixels * fraction
-						local uvs = arg_4_1.uvs
-						local scale_axis = arg_4_1.scale_axis
-						local num_2 = (1 - num / (uv_start_pixels + uv_scale_pixels)) * 0.5
+						local fraction = content.fraction
+						local color = style.color
+						local uv_start_pixels = style.uv_start_pixels
+						local uv_scale_pixels = style.uv_scale_pixels
+						local uv_pixels = uv_start_pixels + uv_scale_pixels * fraction
+						local uvs = style.uvs
+						local uv_scale_axis = style.scale_axis
+						local uv_diff = uv_pixels / (uv_start_pixels + uv_scale_pixels)
+						local side_scale = (1 - uv_diff) * 0.5
 
-						uvs[1][scale_axis] = num_2
-						uvs[2][scale_axis] = 1 - num_2
+						uvs[1][uv_scale_axis] = side_scale
+						uvs[2][uv_scale_axis] = 1 - side_scale
 
-						return color, uvs, arg_4_2, arg_4_1.offset
+						return color, uvs, size, style.offset
 					end
 				}
 			}
@@ -952,7 +953,7 @@ local function fn(arg_1_0)
 				offset_scale = 1,
 				background_component = true,
 				scale_axis = 2,
-				uv_scale_pixels = tbl[2],
+				uv_scale_pixels = BACKGROUND_SIZE[2],
 				uvs = {
 					{
 						0,
@@ -976,101 +977,103 @@ local function fn(arg_1_0)
 				}
 			}
 		},
-		scenegraph_id = arg_1_0
+		scenegraph_id = scenegraph_id
 	}
 end
 
-local tbl_8 = {
-	round_start_timer = UIWidgets.create_simple_text("", "objective", nil, nil, clone),
-	round_starting_text = UIWidgets.create_simple_text("", "objective", nil, nil, clone_2),
-	objective = UIWidgets.create_objective_score_widget("objective", tbl_4.objective.size)
+local widget_definitions = {
+	round_start_timer = UIWidgets.create_simple_text("", "objective", nil, nil, timer_counter_text_style),
+	round_starting_text = UIWidgets.create_simple_text("", "objective", nil, nil, round_starting_text_style),
+	objective = UIWidgets.create_objective_score_widget("objective", scenegraph_definition.objective.size)
 }
-local num_3 = 1.5
-local tbl_9 = {
+local time_scale = 1.5
+local animation_definitions = {
 	announcement = {
 		{
 			name = "fade_in_header",
-			start_progress = 0 * num_3,
-			end_progress = 0.5 * num_3,
-			init = function (arg_5_0, arg_5_1, arg_5_2, arg_5_3)
+			start_progress = 0 * time_scale,
+			end_progress = 0.5 * time_scale,
+			init = function (ui_scenegraph, scenegraph_definition, widgets, params)
 				-- function 5
 				return
 			end,
-			update = function (arg_6_0, arg_6_1, arg_6_2, arg_6_3, arg_6_4)
+			update = function (ui_scenegraph, scenegraph_definition, widgets, progress, params)
 				-- function 6
-				local easeOutCubic = math.easeOutCubic(arg_6_3)
-				local ease_pulse = math.ease_pulse(easeOutCubic)
+				local alpha_progress = math.easeOutCubic(progress)
+				local pulse_progress = math.ease_pulse(alpha_progress)
 				local style = widget.style
-				local text = style.text
-				local text_shadow = style.text_shadow
-				local default_font_size = text.default_font_size
+				local text_style = style.text
+				local text_shadow_style = style.text_shadow
+				local default_font_size = text_style.default_font_size
+				local extra_font_size = math.floor(default_font_size * 1) * (1 - alpha_progress)
 
-				text.font_size = default_font_size + math.floor(default_font_size * 1) * (1 - easeOutCubic)
-				text_shadow.font_size = text.font_size
+				text_style.font_size = default_font_size + extra_font_size
+				text_shadow_style.font_size = text_style.font_size
 			end,
-			on_complete = function (arg_7_0, arg_7_1, arg_7_2, arg_7_3)
+			on_complete = function (ui_scenegraph, scenegraph_definition, widgets, params)
 				-- function 7
 				return
 			end
 		},
 		{
 			name = "fade_in_value",
-			start_progress = 0.5 * num_3,
-			end_progress = 1 * num_3,
-			init = function (arg_8_0, arg_8_1, arg_8_2, arg_8_3)
+			start_progress = 0.5 * time_scale,
+			end_progress = 1 * time_scale,
+			init = function (ui_scenegraph, scenegraph_definition, widgets, params)
 				-- function 8
 				return
 			end,
-			update = function (arg_9_0, arg_9_1, arg_9_2, arg_9_3, arg_9_4)
+			update = function (ui_scenegraph, scenegraph_definition, widgets, progress, params)
 				-- function 9
-				local easeOutCubic = math.easeOutCubic(arg_9_3)
-				local ease_pulse = math.ease_pulse(easeOutCubic)
-				local announcement_value_text = arg_9_2.announcement_value_text
+				local alpha_progress = math.easeOutCubic(progress)
+				local pulse_progress = math.ease_pulse(alpha_progress)
+				local widget = widgets.announcement_value_text
 
-				announcement_value_text.alpha_multiplier = math.easeCubic(arg_9_3)
+				widget.alpha_multiplier = math.easeCubic(progress)
 
-				local style = announcement_value_text.style
-				local num = -70 * (1 - math.ease_out_exp(arg_9_3))
+				local style = widget.style
+				local extra_height = -70 * (1 - math.ease_out_exp(progress))
 
-				announcement_value_text.offset[2] = num
+				widget.offset[2] = extra_height
 			end,
-			on_complete = function (arg_10_0, arg_10_1, arg_10_2, arg_10_3)
+			on_complete = function (ui_scenegraph, scenegraph_definition, widgets, params)
 				-- function 10
 				return
 			end
 		},
 		{
 			name = "fade_out_header",
-			start_progress = 2 * num_3,
-			end_progress = 2.5 * num_3,
-			init = function (arg_11_0, arg_11_1, arg_11_2, arg_11_3)
+			start_progress = 2 * time_scale,
+			end_progress = 2.5 * time_scale,
+			init = function (ui_scenegraph, scenegraph_definition, widgets, params)
 				-- function 11
 				return
 			end,
-			update = function (arg_12_0, arg_12_1, arg_12_2, arg_12_3, arg_12_4)
+			update = function (ui_scenegraph, scenegraph_definition, widgets, progress, params)
 				-- function 12
-				local easeOutCubic = math.easeOutCubic(arg_12_3)
+				local alpha_progress = math.easeOutCubic(progress)
 			end,
-			on_complete = function (arg_13_0, arg_13_1, arg_13_2, arg_13_3)
+			on_complete = function (ui_scenegraph, scenegraph_definition, widgets, params)
 				-- function 13
 				return
 			end
 		},
 		{
 			name = "fade_out_value",
-			start_progress = 1.7 * num_3,
-			end_progress = 2.5 * num_3,
-			init = function (arg_14_0, arg_14_1, arg_14_2, arg_14_3)
+			start_progress = 1.7 * time_scale,
+			end_progress = 2.5 * time_scale,
+			init = function (ui_scenegraph, scenegraph_definition, widgets, params)
 				-- function 14
 				return
 			end,
-			update = function (arg_15_0, arg_15_1, arg_15_2, arg_15_3, arg_15_4)
+			update = function (ui_scenegraph, scenegraph_definition, widgets, progress, params)
 				-- function 15
-				local easeOutCubic = math.easeOutCubic(arg_15_3)
+				local anim_progress = math.easeOutCubic(progress)
+				local widget = widgets.announcement_value_text
 
-				arg_15_2.announcement_value_text.alpha_multiplier = 1 - easeOutCubic
+				widget.alpha_multiplier = 1 - anim_progress
 			end,
-			on_complete = function (arg_16_0, arg_16_1, arg_16_2, arg_16_3)
+			on_complete = function (ui_scenegraph, scenegraph_definition, widgets, params)
 				-- function 16
 				return
 			end
@@ -1081,16 +1084,16 @@ local tbl_9 = {
 			name = "entry",
 			start_progress = 0,
 			end_progress = 0.5,
-			init = function (arg_17_0, arg_17_1, arg_17_2, arg_17_3)
+			init = function (ui_scenegraph, scenegraph_definition, widget, params)
 				-- function 17
-				arg_17_2.alpha_multiplier = 0
-				arg_17_3.render_settings.snap_pixel_positions = false
-				arg_17_2.style.top_edge_glow.color[1] = 0
-				arg_17_2.style.bottom_edge_glow.color[1] = 0
-				arg_17_0.mission_pivot.local_position[2] = arg_17_1.mission_pivot.position[2]
+				widget.alpha_multiplier = 0
+				params.render_settings.snap_pixel_positions = false
+				widget.style.top_edge_glow.color[1] = 0
+				widget.style.bottom_edge_glow.color[1] = 0
+				ui_scenegraph.mission_pivot.local_position[2] = scenegraph_definition.mission_pivot.position[2]
 
-				local style = arg_17_2.style
-				local content = arg_17_2.content
+				local style = widget.style
+				local content = widget.content
 				local area_text_style = style.area_text_style
 				local area_text_shadow_style = style.area_text_shadow_style
 
@@ -1107,11 +1110,13 @@ local tbl_9 = {
 				duration_text_style.text_color[1] = 0
 				duration_text_shadow_style.text_color[1] = 0
 			end,
-			update = function (arg_18_0, arg_18_1, arg_18_2, arg_18_3, arg_18_4)
+			update = function (ui_scenegraph, scenegraph_definition, widget, progress, params)
 				-- function 18
-				arg_18_2.alpha_multiplier = math.easeOutCubic(arg_18_3)
+				local anim_progress = math.easeOutCubic(progress)
+
+				widget.alpha_multiplier = anim_progress
 			end,
-			on_complete = function (arg_19_0, arg_19_1, arg_19_2, arg_19_3)
+			on_complete = function (ui_scenegraph, scenegraph_definition, widget, params)
 				-- function 19
 				return
 			end
@@ -1120,89 +1125,105 @@ local tbl_9 = {
 			name = "unfold",
 			start_progress = 0.3,
 			end_progress = 0.8,
-			init = function (self, arg_20_1, arg_20_2, arg_20_3)
+			init = function (ui_scenegraph, scenegraph_definition, widget, params)
 				-- function 20
-				local num = 0.1
-				local style = arg_20_2.style
-				local content = arg_20_2.content
-				local top_left = content.top_left
-				local top_left_2 = style.top_left
-				local uvs = top_left.uvs
-				local top_left_3 = self.top_left
-				local top_left_4 = arg_20_1.top_left
+				local start_progress = 0.1
+				local style = widget.style
+				local content = widget.content
+				local top_left_content = content.top_left
+				local top_left_style = style.top_left
+				local top_left_uvs = top_left_content.uvs
+				local top_left_scenegraph = ui_scenegraph.top_left
+				local top_left_definition = scenegraph_definition.top_left
+				local top_left_current_size = top_left_scenegraph.size
+				local top_left_default_size = top_left_definition.size
 
-				top_left_3.size[1] = top_left_4.size[1] * num
-				uvs[2][1] = num
+				top_left_current_size[1] = top_left_default_size[1] * start_progress
+				top_left_uvs[2][1] = start_progress
 
-				local bottom_left = content.bottom_left
-				local bottom_left_2 = style.bottom_left
-				local uvs_2 = bottom_left.uvs
-				local bottom_left_3 = self.bottom_left
-				local bottom_left_4 = arg_20_1.bottom_left
+				local bottom_left_content = content.bottom_left
+				local bottom_left_style = style.bottom_left
+				local bottom_left_uvs = bottom_left_content.uvs
+				local bottom_left_scenegraph = ui_scenegraph.bottom_left
+				local bottom_left_definition = scenegraph_definition.bottom_left
+				local bottom_left_current_size = bottom_left_scenegraph.size
+				local bottom_left_default_size = bottom_left_definition.size
 
-				bottom_left_3.size[1] = bottom_left_4.size[1] * num
-				uvs_2[2][1] = num
+				bottom_left_current_size[1] = bottom_left_default_size[1] * start_progress
+				bottom_left_uvs[2][1] = start_progress
 
-				local top_right = content.top_right
-				local top_right_2 = style.top_right
-				local uvs_3 = top_right.uvs
-				local top_right_3 = self.top_right
-				local top_right_4 = arg_20_1.top_right
+				local top_right_content = content.top_right
+				local top_right_style = style.top_right
+				local top_right_uvs = top_right_content.uvs
+				local top_right_scenegraph = ui_scenegraph.top_right
+				local top_right_definition = scenegraph_definition.top_right
+				local top_right_current_size = top_right_scenegraph.size
+				local top_right_default_size = top_right_definition.size
 
-				top_right_3.size[1] = top_right_4.size[1] * num
-				uvs_3[1][1] = 1 - num
+				top_right_current_size[1] = top_right_default_size[1] * start_progress
+				top_right_uvs[1][1] = 1 - start_progress
 
-				local bottom_right = content.bottom_right
-				local bottom_right_2 = style.bottom_right
-				local uvs_4 = bottom_right.uvs
-				local bottom_right_3 = self.bottom_right
-				local bottom_right_4 = arg_20_1.bottom_right
+				local bottom_right_content = content.bottom_right
+				local bottom_right_style = style.bottom_right
+				local bottom_right_uvs = bottom_right_content.uvs
+				local bottom_right_scenegraph = ui_scenegraph.bottom_right
+				local bottom_right_definition = scenegraph_definition.bottom_right
+				local bottom_right_current_size = bottom_right_scenegraph.size
+				local bottom_right_default_size = bottom_right_definition.size
 
-				bottom_right_3.size[1] = bottom_right_4.size[1] * num
-				uvs_4[1][1] = 1 - num
+				bottom_right_current_size[1] = bottom_right_default_size[1] * start_progress
+				bottom_right_uvs[1][1] = 1 - start_progress
 			end,
-			update = function (self, arg_21_1, arg_21_2, arg_21_3, arg_21_4)
+			update = function (ui_scenegraph, scenegraph_definition, widget, progress, params)
 				-- function 21
-				local min = math.min(0.1 + math.easeInCubic(arg_21_3), 1)
-				local style = arg_21_2.style
-				local content = arg_21_2.content
-				local top_left = content.top_left
-				local top_left_2 = style.top_left
-				local uvs = top_left.uvs
-				local top_left_3 = self.top_left
-				local top_left_4 = arg_21_1.top_left
+				local anim_progress = math.min(0.1 + math.easeInCubic(progress), 1)
+				local style = widget.style
+				local content = widget.content
+				local top_left_content = content.top_left
+				local top_left_style = style.top_left
+				local top_left_uvs = top_left_content.uvs
+				local top_left_scenegraph = ui_scenegraph.top_left
+				local top_left_definition = scenegraph_definition.top_left
+				local top_left_current_size = top_left_scenegraph.size
+				local top_left_default_size = top_left_definition.size
 
-				top_left_3.size[1] = top_left_4.size[1] * min
-				uvs[2][1] = min
+				top_left_current_size[1] = top_left_default_size[1] * anim_progress
+				top_left_uvs[2][1] = anim_progress
 
-				local bottom_left = content.bottom_left
-				local bottom_left_2 = style.bottom_left
-				local uvs_2 = bottom_left.uvs
-				local bottom_left_3 = self.bottom_left
-				local bottom_left_4 = arg_21_1.bottom_left
+				local bottom_left_content = content.bottom_left
+				local bottom_left_style = style.bottom_left
+				local bottom_left_uvs = bottom_left_content.uvs
+				local bottom_left_scenegraph = ui_scenegraph.bottom_left
+				local bottom_left_definition = scenegraph_definition.bottom_left
+				local bottom_left_current_size = bottom_left_scenegraph.size
+				local bottom_left_default_size = bottom_left_definition.size
 
-				bottom_left_3.size[1] = bottom_left_4.size[1] * min
-				uvs_2[2][1] = min
+				bottom_left_current_size[1] = bottom_left_default_size[1] * anim_progress
+				bottom_left_uvs[2][1] = anim_progress
 
-				local top_right = content.top_right
-				local top_right_2 = style.top_right
-				local uvs_3 = top_right.uvs
-				local top_right_3 = self.top_right
-				local top_right_4 = arg_21_1.top_right
+				local top_right_content = content.top_right
+				local top_right_style = style.top_right
+				local top_right_uvs = top_right_content.uvs
+				local top_right_scenegraph = ui_scenegraph.top_right
+				local top_right_definition = scenegraph_definition.top_right
+				local top_right_current_size = top_right_scenegraph.size
+				local top_right_default_size = top_right_definition.size
 
-				top_right_3.size[1] = top_right_4.size[1] * min
-				uvs_3[1][1] = 1 - min
+				top_right_current_size[1] = top_right_default_size[1] * anim_progress
+				top_right_uvs[1][1] = 1 - anim_progress
 
-				local bottom_right = content.bottom_right
-				local bottom_right_2 = style.bottom_right
-				local uvs_4 = bottom_right.uvs
-				local bottom_right_3 = self.bottom_right
-				local bottom_right_4 = arg_21_1.bottom_right
+				local bottom_right_content = content.bottom_right
+				local bottom_right_style = style.bottom_right
+				local bottom_right_uvs = bottom_right_content.uvs
+				local bottom_right_scenegraph = ui_scenegraph.bottom_right
+				local bottom_right_definition = scenegraph_definition.bottom_right
+				local bottom_right_current_size = bottom_right_scenegraph.size
+				local bottom_right_default_size = bottom_right_definition.size
 
-				bottom_right_3.size[1] = bottom_right_4.size[1] * min
-				uvs_4[1][1] = 1 - min
+				bottom_right_current_size[1] = bottom_right_default_size[1] * anim_progress
+				bottom_right_uvs[1][1] = 1 - anim_progress
 			end,
-			on_complete = function (arg_22_0, arg_22_1, arg_22_2, arg_22_3)
+			on_complete = function (ui_scenegraph, scenegraph_definition, widget, params)
 				-- function 22
 				return
 			end
@@ -1211,70 +1232,72 @@ local tbl_9 = {
 			name = "open",
 			start_progress = 0.8,
 			end_progress = 1.5,
-			init = function (arg_23_0, arg_23_1, arg_23_2, arg_23_3)
+			init = function (ui_scenegraph, scenegraph_definition, widget, params)
 				-- function 23
-				local style = arg_23_2.style
-				local content = arg_23_2.content
-				local top_glow = style.top_glow
-				local bottom_glow = style.bottom_glow
-				local background = style.background
+				local style = widget.style
+				local content = widget.content
+				local top_glow_style = style.top_glow
+				local bottom_glow_style = style.bottom_glow
+				local background_style = style.background
 
 				content.top_glow.uvs[1][2] = 0
 				content.bottom_glow.uvs[2][2] = 1
-				top_glow.size[2] = 0
-				bottom_glow.size[2] = 0
-				background.color[1] = 0
-				arg_23_0.top_center.local_position[2] = arg_23_1.top_center.position[2]
-				arg_23_0.bottom_center.local_position[2] = arg_23_1.bottom_center.position[2]
+				top_glow_style.size[2] = 0
+				bottom_glow_style.size[2] = 0
+				background_style.color[1] = 0
+				ui_scenegraph.top_center.local_position[2] = scenegraph_definition.top_center.position[2]
+				ui_scenegraph.bottom_center.local_position[2] = scenegraph_definition.bottom_center.position[2]
 			end,
-			update = function (self, arg_24_1, arg_24_2, arg_24_3, arg_24_4)
+			update = function (ui_scenegraph, scenegraph_definition, widget, progress, params)
 				-- function 24
-				local easeOutCubic = math.easeOutCubic(arg_24_3)
+				local anim_progress = math.easeOutCubic(progress)
 
-				self.top_center.local_position[2] = arg_24_1.top_center.position[2] + 45 * easeOutCubic
-				self.bottom_center.local_position[2] = arg_24_1.bottom_center.position[2] + -45 * easeOutCubic
+				ui_scenegraph.top_center.local_position[2] = scenegraph_definition.top_center.position[2] + 45 * anim_progress
+				ui_scenegraph.bottom_center.local_position[2] = scenegraph_definition.bottom_center.position[2] + -45 * anim_progress
 
-				local style = arg_24_2.style
-				local content = arg_24_2.content
-				local top_glow = content.top_glow
-				local bottom_glow = content.bottom_glow
-				local uvs = top_glow.uvs
-				local uvs_2 = bottom_glow.uvs
+				local style = widget.style
+				local content = widget.content
+				local top_glow_content = content.top_glow
+				local bottom_glow_content = content.bottom_glow
+				local top_glow_uvs = top_glow_content.uvs
+				local bottom_glow_uvs = bottom_glow_content.uvs
 
-				uvs[2][2] = easeOutCubic
-				uvs_2[1][2] = 1 - easeOutCubic
+				top_glow_uvs[2][2] = anim_progress
+				bottom_glow_uvs[1][2] = 1 - anim_progress
 
-				local top_glow_2 = style.top_glow
-				local bottom_glow_2 = style.bottom_glow
-				local size = bottom_glow_2.size
-				local default_size = bottom_glow_2.default_size
-				local offset = bottom_glow_2.offset
-				local default_offset = bottom_glow_2.default_offset
+				local top_glow_style = style.top_glow
+				local bottom_glow_style = style.bottom_glow
+				local bottom_glow_size = bottom_glow_style.size
+				local bottom_glow_default_size = bottom_glow_style.default_size
+				local bottom_glow_offset = bottom_glow_style.offset
+				local bottom_glow_default_offset = bottom_glow_style.default_offset
 
-				size[2] = default_size[2] * easeOutCubic
+				bottom_glow_size[2] = bottom_glow_default_size[2] * anim_progress
 
-				local size_2 = top_glow_2.size
-				local default_size_2 = top_glow_2.default_size
-				local offset_2 = top_glow_2.offset
-				local default_offset_2 = top_glow_2.default_offset
+				local top_glow_size = top_glow_style.size
+				local top_glow_default_size = top_glow_style.default_size
+				local top_glow_offset = top_glow_style.offset
+				local top_glow_default_offset = top_glow_style.default_offset
 
-				size_2[2] = default_size_2[2] * easeOutCubic
-				offset_2[2] = 10 - size_2[2]
+				top_glow_size[2] = top_glow_default_size[2] * anim_progress
+				top_glow_offset[2] = 10 - top_glow_size[2]
 
-				local background = content.background
-				local background_2 = style.background
-				local uvs_3 = background.uvs
-				local background_3 = self.background
-				local background_4 = arg_24_1.background
+				local background_content = content.background
+				local background_style = style.background
+				local background_uvs = background_content.uvs
+				local background_scenegraph = ui_scenegraph.background
+				local background_definition = scenegraph_definition.background
+				local background_current_size = background_scenegraph.size
+				local background_default_size = background_definition.size
 
-				background_3.size[2] = background_4.size[2] * easeOutCubic
-				uvs_3[1][2] = 0.5 - 0.5 * easeOutCubic
-				uvs_3[2][2] = 0.5 + 0.5 * easeOutCubic
-				background_2.color[1] = 255
-				arg_24_2.style.top_edge_glow.color[1] = 255 * easeOutCubic
-				arg_24_2.style.bottom_edge_glow.color[1] = 255 * easeOutCubic
+				background_current_size[2] = background_default_size[2] * anim_progress
+				background_uvs[1][2] = 0.5 - 0.5 * anim_progress
+				background_uvs[2][2] = 0.5 + 0.5 * anim_progress
+				background_style.color[1] = 255
+				widget.style.top_edge_glow.color[1] = 255 * anim_progress
+				widget.style.bottom_edge_glow.color[1] = 255 * anim_progress
 			end,
-			on_complete = function (arg_25_0, arg_25_1, arg_25_2, arg_25_3)
+			on_complete = function (ui_scenegraph, scenegraph_definition, widget, params)
 				-- function 25
 				return
 			end
@@ -1283,84 +1306,84 @@ local tbl_9 = {
 			name = "text_entry",
 			start_progress = 0.9,
 			end_progress = 1.5,
-			init = function (arg_26_0, arg_26_1, arg_26_2, arg_26_3)
+			init = function (ui_scenegraph, scenegraph_definition, widget, params)
 				-- function 26
-				local style = arg_26_2.style
-				local content = arg_26_2.content
+				local style = widget.style
+				local content = widget.content
 			end,
-			update = function (arg_27_0, arg_27_1, arg_27_2, arg_27_3, arg_27_4)
+			update = function (ui_scenegraph, scenegraph_definition, widget, progress, params)
 				-- function 27
-				local easeCubic = math.easeCubic(arg_27_3)
-				local style = arg_27_2.style
-				local content = arg_27_2.content
+				local anim_progress = math.easeCubic(progress)
+				local style = widget.style
+				local content = widget.content
 				local area_text_style = style.area_text_style
 				local area_text_shadow_style = style.area_text_shadow_style
-				local num = 255 * easeCubic
+				local alpha = 255 * anim_progress
 
-				area_text_style.text_color[1] = num
-				area_text_shadow_style.text_color[1] = num
+				area_text_style.text_color[1] = alpha
+				area_text_shadow_style.text_color[1] = alpha
 
 				local duration_text_style = style.duration_text_style
 				local duration_text_shadow_style = style.duration_text_shadow_style
 
-				duration_text_style.text_color[1] = num
-				duration_text_shadow_style.text_color[1] = num
+				duration_text_style.text_color[1] = alpha
+				duration_text_shadow_style.text_color[1] = alpha
 
-				local ease_pulse = math.ease_pulse(math.easeInCubic(arg_27_3))
+				local size_progress = math.ease_pulse(math.easeInCubic(progress))
 			end,
-			on_complete = function (arg_28_0, arg_28_1, arg_28_2, arg_28_3)
+			on_complete = function (ui_scenegraph, scenegraph_definition, widget, params)
 				-- function 28
-				arg_28_3.render_settings.snap_pixel_positions = false
+				params.render_settings.snap_pixel_positions = false
 			end
 		},
 		{
 			name = "text_minimize",
 			start_progress = 5,
 			end_progress = 5.3,
-			init = function (arg_29_0, arg_29_1, arg_29_2, arg_29_3)
+			init = function (ui_scenegraph, scenegraph_definition, widget, params)
 				-- function 29
-				local style = arg_29_2.style
-				local content = arg_29_2.content
+				local style = widget.style
+				local content = widget.content
 			end,
-			update = function (arg_30_0, arg_30_1, arg_30_2, arg_30_3, arg_30_4)
+			update = function (ui_scenegraph, scenegraph_definition, widget, progress, params)
 				-- function 30
-				local easeOutCubic = math.easeOutCubic(arg_30_3)
-				local style = arg_30_2.style
-				local content = arg_30_2.content
+				local anim_progress = math.easeOutCubic(progress)
+				local style = widget.style
+				local content = widget.content
 				local area_text_style = style.area_text_style
 				local area_text_shadow_style = style.area_text_shadow_style
 				local duration_text_style = style.duration_text_style
 				local duration_text_shadow_style = style.duration_text_shadow_style
 				local min_font_size = area_text_style.min_font_size
 				local default_font_size = area_text_style.default_font_size
-				local num = default_font_size - (default_font_size - min_font_size) * easeOutCubic
+				local font_size_diff = default_font_size - min_font_size
+				local new_font_size = default_font_size - font_size_diff * anim_progress
 
-				area_text_style.font_size = num
-				area_text_shadow_style.font_size = num
-				duration_text_style.font_size = num
-				duration_text_shadow_style.font_size = num
+				area_text_style.font_size = new_font_size
+				area_text_shadow_style.font_size = new_font_size
+				duration_text_style.font_size = new_font_size
+				duration_text_shadow_style.font_size = new_font_size
 			end,
-			on_complete = function (self, arg_31_1, arg_31_2, arg_31_3)
+			on_complete = function (ui_scenegraph, scenegraph_definition, widget, params)
 				-- function 31
-				local style = arg_31_2.style
-				local content = arg_31_2.content
-				local area_text_content = content.area_text_content
-				local duration_text_content = content.duration_text_content
+				local style = widget.style
+				local content = widget.content
+				local text = content.area_text_content
+				local duration_text = content.duration_text_content
 
-				if not duration_text_content then
-					local ui_renderer = arg_31_3.ui_renderer
-					local var_31_5, var_31_6 = UIFontByResolution(style.area_text_style)
-					local var_31_7 = var_31_5[1]
-					local var_31_8 = var_31_6
-					local upper = string.upper(content.area_text_content)
-					local text_size = UIRenderer.text_size(ui_renderer, upper, var_31_7, var_31_8)
-					local var_31_11 = duration_text_content
-					local text_size_2 = UIRenderer.text_size(ui_renderer, var_31_11, var_31_7, var_31_8)
-					local var_31_13 = self.area_text_background.size[1]
-					local var_31_14 = self.duration_text_background.size[1]
+				if duration_text then
+					local ui_renderer = params.ui_renderer
+					local font, size_of_font = UIFontByResolution(style.area_text_style)
+					local font_material, font_size = font[1], size_of_font
+					local text_string = string.upper(content.area_text_content)
+					local text_width = UIRenderer.text_size(ui_renderer, text_string, font_material, font_size)
+					local duration_string = duration_text
+					local duration_width = UIRenderer.text_size(ui_renderer, duration_string, font_material, font_size)
+					local area_text_background_size_x = ui_scenegraph.area_text_background.size[1]
+					local duration_text_background_size_x = ui_scenegraph.duration_text_background.size[1]
 
-					self.area_text_background.position[1] = text_size_2 * 0.5
-					self.duration_text_background.position[1] = -text_size * 0.5
+					ui_scenegraph.area_text_background.position[1] = duration_width * 0.5
+					ui_scenegraph.duration_text_background.position[1] = -text_width * 0.5
 				end
 			end
 		},
@@ -1368,73 +1391,82 @@ local tbl_9 = {
 			name = "collapse",
 			start_progress = 5,
 			end_progress = 5.3,
-			init = function (arg_32_0, arg_32_1, arg_32_2, arg_32_3)
+			init = function (ui_scenegraph, scenegraph_definition, widget, params)
 				-- function 32
-				local style = arg_32_2.style
-				local content = arg_32_2.content
-				local top_glow = style.top_glow
-				local bottom_glow = style.bottom_glow
-				local background = style.background
+				local style = widget.style
+				local content = widget.content
+				local top_glow_style = style.top_glow
+				local bottom_glow_style = style.bottom_glow
+				local background_style = style.background
 
-				top_glow.size[2] = 0
-				bottom_glow.size[2] = 0
-				background.color[1] = 0
+				top_glow_style.size[2] = 0
+				bottom_glow_style.size[2] = 0
+				background_style.color[1] = 0
 			end,
-			update = function (self, arg_33_1, arg_33_2, arg_33_3, arg_33_4)
+			update = function (ui_scenegraph, scenegraph_definition, widget, progress, params)
 				-- function 33
-				local easeOutCubic = math.easeOutCubic(arg_33_3)
-				local num = 1 - math.easeOutCubic(arg_33_3)
-				local style = arg_33_2.style
-				local content = arg_33_2.content
-				local text_height = content.text_height
+				local anim_progress = math.easeOutCubic(progress)
+				local anim_progress_inverted = 1 - math.easeOutCubic(progress)
+				local style = widget.style
+				local content = widget.content
+				local text_height_2 = content.text_height
 
-				text_height = text_height or 45
+				if not text_height_2 then
+					-- Nothing
+				end
 
-				local num_2 = (90 - text_height) / 2
+				text_height_2 = 45
 
-				self.top_center.local_position[2] = arg_33_1.top_center.position[2] + 45 - num_2 * easeOutCubic
-				self.bottom_center.local_position[2] = arg_33_1.bottom_center.position[2] - 45 + num_2 * easeOutCubic
+				local text_height = text_height_2
 
-				local top_glow = content.top_glow
-				local bottom_glow = content.bottom_glow
-				local uvs = top_glow.uvs
+				::label_33_0::
 
-				bottom_glow.uvs[2][2] = num
-				uvs[1][2] = 1 - num
+				local anim_distance = (90 - text_height) / 2
 
-				local top_glow_2 = style.top_glow
-				local bottom_glow_2 = style.bottom_glow
-				local size = bottom_glow_2.size
-				local default_size = bottom_glow_2.default_size
-				local offset = bottom_glow_2.offset
-				local default_offset = bottom_glow_2.default_offset
+				ui_scenegraph.top_center.local_position[2] = scenegraph_definition.top_center.position[2] + 45 - anim_distance * anim_progress
+				ui_scenegraph.bottom_center.local_position[2] = scenegraph_definition.bottom_center.position[2] - 45 + anim_distance * anim_progress
 
-				size[2] = default_size[2] * num
+				local top_glow_content = content.top_glow
+				local bottom_glow_content = content.bottom_glow
+				local top_glow_uvs = top_glow_content.uvs
+				local bottom_glow_uvs = bottom_glow_content.uvs
 
-				local size_2 = top_glow_2.size
-				local default_size_2 = top_glow_2.default_size
-				local offset_2 = top_glow_2.offset
-				local default_offset_2 = top_glow_2.default_offset
+				bottom_glow_uvs[2][2] = anim_progress_inverted
+				top_glow_uvs[1][2] = 1 - anim_progress_inverted
 
-				size_2[2] = default_size_2[2] * num
-				offset_2[2] = 10 - size_2[2]
+				local top_glow_style = style.top_glow
+				local bottom_glow_style = style.bottom_glow
+				local bottom_glow_size = bottom_glow_style.size
+				local bottom_glow_default_size = bottom_glow_style.default_size
+				local bottom_glow_offset = bottom_glow_style.offset
+				local bottom_glow_default_offset = bottom_glow_style.default_offset
 
-				local background = content.background
-				local background_2 = style.background
-				local uvs_2 = background.uvs
-				local background_3 = self.background
-				local background_4 = arg_33_1.background
-				local size_3 = background_3.size
-				local size_4 = background_4.size
+				bottom_glow_size[2] = bottom_glow_default_size[2] * anim_progress_inverted
 
-				size_3[2] = size_4[2] - (size_4[2] - text_height) * easeOutCubic
+				local top_glow_size = top_glow_style.size
+				local top_glow_default_size = top_glow_style.default_size
+				local top_glow_offset = top_glow_style.offset
+				local top_glow_default_offset = top_glow_style.default_offset
 
-				local num_3 = text_height / size_4[2] * easeOutCubic
+				top_glow_size[2] = top_glow_default_size[2] * anim_progress_inverted
+				top_glow_offset[2] = 10 - top_glow_size[2]
 
-				uvs_2[1][2] = 0.5 * num_3
-				uvs_2[2][2] = 1 - num_3 / 2
+				local background_content = content.background
+				local background_style = style.background
+				local background_uvs = background_content.uvs
+				local background_scenegraph = ui_scenegraph.background
+				local background_definition = scenegraph_definition.background
+				local background_current_size = background_scenegraph.size
+				local background_default_size = background_definition.size
+
+				background_current_size[2] = background_default_size[2] - (background_default_size[2] - text_height) * anim_progress
+
+				local background_size_fraction = text_height / background_default_size[2] * anim_progress
+
+				background_uvs[1][2] = 0.5 * background_size_fraction
+				background_uvs[2][2] = 1 - background_size_fraction / 2
 			end,
-			on_complete = function (arg_34_0, arg_34_1, arg_34_2, arg_34_3)
+			on_complete = function (ui_scenegraph, scenegraph_definition, widget, params)
 				-- function 34
 				return
 			end
@@ -1443,44 +1475,50 @@ local tbl_9 = {
 			name = "fade_out",
 			start_progress = 5,
 			end_progress = 5.3,
-			init = function (arg_35_0, arg_35_1, arg_35_2, arg_35_3)
+			init = function (ui_scenegraph, scenegraph_definition, widget, params)
 				-- function 35
 				return
 			end,
-			update = function (arg_36_0, arg_36_1, arg_36_2, arg_36_3, arg_36_4)
+			update = function (ui_scenegraph, scenegraph_definition, widget, progress, params)
 				-- function 36
-				arg_36_2.alpha_multiplier = 1 - math.easeOutCubic(arg_36_3)
+				local anim_progress = math.easeOutCubic(progress)
+
+				widget.alpha_multiplier = 1 - anim_progress
 			end,
-			on_complete = function (arg_37_0, arg_37_1, arg_37_2, arg_37_3)
+			on_complete = function (ui_scenegraph, scenegraph_definition, widget, params)
 				-- function 37
-				arg_37_0.mission_pivot.local_position[2] = -30
+				ui_scenegraph.mission_pivot.local_position[2] = -30
 			end
 		},
 		{
 			name = "fade_in",
 			start_progress = 5.3,
 			end_progress = 5.6,
-			init = function (arg_38_0, arg_38_1, arg_38_2, arg_38_3)
+			init = function (ui_scenegraph, scenegraph_definition, widget, params)
 				-- function 38
 				return
 			end,
-			update = function (arg_39_0, arg_39_1, arg_39_2, arg_39_3, arg_39_4)
+			update = function (ui_scenegraph, scenegraph_definition, widget, progress, params)
 				-- function 39
-				if Managers.state.game_mode:game_mode_key() ~= "weave" then
-					arg_39_2.alpha_multiplier = math.easeOutCubic(arg_39_3)
+				local game_mode_key = Managers.state.game_mode:game_mode_key()
+
+				if game_mode_key ~= "weave" then
+					local anim_progress = math.easeOutCubic(progress)
+
+					widget.alpha_multiplier = anim_progress
 				end
 			end,
-			on_complete = function (arg_40_0, arg_40_1, arg_40_2, arg_40_3)
+			on_complete = function (ui_scenegraph, scenegraph_definition, widget, params)
 				-- function 40
-				arg_40_3.render_settings.snap_pixel_positions = true
+				params.render_settings.snap_pixel_positions = true
 			end
 		}
 	}
 }
 
 return {
-	animation_definitions = tbl_9,
-	scenegraph_definition = tbl_4,
-	widget_definitions = tbl_8,
-	objective_text = fn("mission_pivot")
+	animation_definitions = animation_definitions,
+	scenegraph_definition = scenegraph_definition,
+	widget_definitions = widget_definitions,
+	objective_text = create_mission_objective_widget("mission_pivot")
 }

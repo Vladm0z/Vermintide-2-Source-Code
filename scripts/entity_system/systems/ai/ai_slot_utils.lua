@@ -1,58 +1,58 @@
 -- chunkname: @scripts/entity_system/systems/ai/ai_slot_utils.lua
 
-local tbl = {}
-local copy = Vector3.copy
-local triangle_from_position = GwNavQueries.triangle_from_position
-local inside_position_from_outside_position = GwNavQueries.inside_position_from_outside_position
-local num = 1.5
-local num_2 = 1.5
-local num_3 = 7.5
+local AISlotUtils = {}
+local Vector3_copy = Vector3.copy
+local GwNavQueries_triangle_from_position = GwNavQueries.triangle_from_position
+local GwNavQueries_inside_position_from_outside_position = GwNavQueries.inside_position_from_outside_position
+local Z_MAX_DIFFERENCE_ABOVE = 1.5
+local Z_MAX_DIFFERENCE_BELOW = 1.5
+local SLOT_Z_MAX_DOWN = 7.5
 
-tbl.clamp_position_on_navmesh = function (arg_1_0, arg_1_1, arg_1_2, arg_1_3)
+AISlotUtils.clamp_position_on_navmesh = function (position, nav_world, above, below)
 	-- function 1
-	arg_1_3 = arg_1_3 or num_2
-	arg_1_2 = arg_1_2 or num
+	below = not not below or not not Z_MAX_DIFFERENCE_BELOW
+	above = not not above or not not Z_MAX_DIFFERENCE_ABOVE
 
-	local var_1_0, var_1_1 = triangle_from_position(arg_1_1, arg_1_0, arg_1_2, arg_1_3)
+	local is_on_navmesh, altitude = GwNavQueries_triangle_from_position(nav_world, position, above, below)
 
-	if not var_1_0 then
-		local var_1_2 = copy(arg_1_0)
+	if is_on_navmesh then
+		local position_on_navmesh = Vector3_copy(position)
 
-		var_1_2.z = var_1_1
+		position_on_navmesh.z = altitude
 
-		return var_1_2
+		return position_on_navmesh
 	end
 
 	return nil
 end
 
-tbl.get_target_pos_on_navmesh = function (arg_2_0, arg_2_1)
+AISlotUtils.get_target_pos_on_navmesh = function (target_position, nav_world)
 	-- function 2
-	local clamp_position_on_navmesh = tbl.clamp_position_on_navmesh(arg_2_0, arg_2_1)
+	local position_on_navmesh = AISlotUtils.clamp_position_on_navmesh(target_position, nav_world)
 
-	if not clamp_position_on_navmesh then
-		return clamp_position_on_navmesh
+	if position_on_navmesh then
+		return position_on_navmesh
 	end
 
-	local var_2_1 = num
-	local var_2_2 = num_2
-	local num_4 = 1
-	local num_5 = 0.05
-	local var_2_5 = inside_position_from_outside_position(arg_2_1, arg_2_0, var_2_1, var_2_2, num_4, num_5)
+	local above_limit = Z_MAX_DIFFERENCE_ABOVE
+	local below_limit = Z_MAX_DIFFERENCE_BELOW
+	local horizontal_limit = 1
+	local distance_from_nav_border = 0.05
+	local border_position = GwNavQueries_inside_position_from_outside_position(nav_world, target_position, above_limit, below_limit, horizontal_limit, distance_from_nav_border)
 
-	if not var_2_5 then
-		return var_2_5
+	if border_position then
+		return border_position
 	end
 
-	local var_2_6 = num
-	local var_2_7 = num_3
-	local clamp_position_on_navmesh_2 = tbl.clamp_position_on_navmesh(arg_2_0, arg_2_1, var_2_6, var_2_7)
+	above_limit = Z_MAX_DIFFERENCE_ABOVE
+	below_limit = SLOT_Z_MAX_DOWN
+	position_on_navmesh = AISlotUtils.clamp_position_on_navmesh(target_position, nav_world, above_limit, below_limit)
 
-	if not clamp_position_on_navmesh_2 then
-		return clamp_position_on_navmesh_2
+	if position_on_navmesh then
+		return position_on_navmesh
 	end
 
 	return nil
 end
 
-return tbl
+return AISlotUtils

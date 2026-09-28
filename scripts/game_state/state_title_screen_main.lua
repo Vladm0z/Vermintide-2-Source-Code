@@ -3,7 +3,7 @@
 require("scripts/ui/views/title_main_ui")
 require("scripts/ui/views/weave_splash_ui")
 
-if not script_data.honduras_demo then
+if script_data.honduras_demo then
 	require("scripts/ui/views/demo_title_ui")
 end
 
@@ -12,7 +12,7 @@ StateTitleScreenMain.NAME = "StateTitleScreenMain"
 
 local attract_timer
 
-if not script_data.honduras_demo then
+if script_data.honduras_demo then
 	attract_timer = DemoSettings.attract_timer
 
 	if not attract_timer then
@@ -22,25 +22,27 @@ end
 
 attract_timer = nil
 
+local ATTRACT_MODE_TIMER = attract_timer
+
 ::label_0_0::
 
-StateTitleScreenMain.on_enter = function (self, arg_1_1)
+StateTitleScreenMain.on_enter = function (self, params)
 	-- function 1
 	print("[Gamestate] Enter Substate StateTitleScreenMain")
 
-	self._params = arg_1_1
+	self._params = params
 	self._world = self._params.world
 	self._viewport = self._params.viewport
-	self._attract_mode_timer = attract_timer
+	self._attract_mode_timer = ATTRACT_MODE_TIMER
 	self._attract_mode_active = false
-	self._auto_start = arg_1_1.auto_start
-	self._auto_sign_in = arg_1_1.auto_sign_in
+	self._auto_start = params.auto_start
+	self._auto_sign_in = params.auto_sign_in
 	self.input_manager = Managers.input
 	self._windows_auto_sign_in = self.parent.parent.loading_context.windows_auto_sign_in
 	self.parent.parent.loading_context.windows_auto_sign_in = nil
-	self._title_start_ui = arg_1_1.ui
+	self._title_start_ui = params.ui
 
-	if not self._title_start_ui and not IS_CONSOLE then
+	if self._title_start_ui and IS_CONSOLE then
 		self._title_start_ui:clear_user_name()
 	end
 
@@ -48,27 +50,27 @@ StateTitleScreenMain.on_enter = function (self, arg_1_1)
 
 	self._error_popups = {}
 
-	if not IS_XB1 then
+	if IS_XB1 then
 		if not Managers.account:should_teardown_xboxlive() then
 			Managers.account:reset()
 		end
 
-		if not Managers.xbox_stats then
+		if Managers.xbox_stats then
 			Managers.xbox_stats:destroy()
 
 			Managers.xbox_stats = nil
 		end
-	elseif not IS_PS4 then
+	elseif IS_PS4 then
 		Managers.account:reset()
 	else
 		Managers.account:reset()
 	end
 
-	if not Managers.twitch then
+	if Managers.twitch then
 		Managers.twitch:reset()
 	end
 
-	if not Managers.matchmaking then
+	if Managers.matchmaking then
 		Managers.matchmaking:destroy()
 
 		Managers.matchmaking = nil
@@ -76,67 +78,67 @@ StateTitleScreenMain.on_enter = function (self, arg_1_1)
 
 	Managers.input:set_all_gamepads_available()
 
-	if not Managers.voice_chat and not Managers.voice_chat:initiated() then
+	if Managers.voice_chat and Managers.voice_chat:initiated() then
 		Managers.voice_chat:reset()
 	end
 
 	self._network_event_meta_table = {}
 
-	self._network_event_meta_table.__index = function (arg_2_0, arg_2_1)
+	self._network_event_meta_table.__index = function (event_table, event_key)
 		-- function 2
 		return function ()
 			-- function 3
-			Application.warning("Got RPC %s during forced network update when exiting StateTitleScreenMain", arg_2_1)
+			Application.warning("Got RPC %s during forced network update when exiting StateTitleScreenMain", event_key)
 		end
 	end
 
-	if not IS_PS4 and not self.parent.invite_handled then
+	if IS_PS4 and self.parent.invite_handled then
 		Managers.invite:clear_invites()
 
 		self.parent.invite_handled = nil
 	end
 
-	if not script_data.honduras_demo then
+	if script_data.honduras_demo then
 		Wwise.set_state("menu_mute_ingame_sounds", "true")
 	end
 
-	if not (self._params.menu_screen_music_playing or GameSettingsDevelopment.skip_start_screen or Development.parameter("skip_start_screen") or self._auto_start) then
+	if not self._params.menu_screen_music_playing and not GameSettingsDevelopment.skip_start_screen and not Development.parameter("skip_start_screen") and not self._auto_start then
 		Managers.music:trigger_event("Play_console_menu_music")
 
 		self._params.menu_screen_music_playing = true
-	elseif not self._params.menu_screen_music_playing then
+	elseif self._params.menu_screen_music_playing then
 		Managers.music:trigger_event("Play_console_menu_music_reset_switch")
 	end
 end
 
-StateTitleScreenMain._queue_popup = function (arg_4_0, ...)
+StateTitleScreenMain._queue_popup = function (self, ...)
 	-- function 4
-	arg_4_0._error_popups[#arg_4_0._error_popups + 1] = Managers.popup:queue_popup(...)
+	self._error_popups[#self._error_popups + 1] = Managers.popup:queue_popup(...)
 end
 
-StateTitleScreenMain._setup_account_manager = function (arg_5_0)
+StateTitleScreenMain._setup_account_manager = function (self)
 	-- function 5
 	local Managers = Managers
 	local account = Managers.account
 
-	account = account or AccountManager:new()
+	account = not not account or not not AccountManager:new()
 	Managers.account = account
 
 	Crashify.print_property("region", Managers.account:region())
 end
 
-StateTitleScreenMain.update = function (self, arg_6_1, arg_6_2)
+StateTitleScreenMain.update = function (self, dt, t)
 	-- function 6
-	self:_update_network(arg_6_1, arg_6_2)
+	self:_update_network(dt, t)
 
-	if not Managers.voice_chat then
-		Managers.voice_chat:update(arg_6_1, arg_6_2)
+	if Managers.voice_chat then
+		Managers.voice_chat:update(dt, t)
 	end
 
-	if not (GameSettingsDevelopment.skip_start_screen or Development.parameter("skip_start_screen")) then
+	if not GameSettingsDevelopment.skip_start_screen and not Development.parameter("skip_start_screen") then
 		local loading_context = self.parent.parent.loading_context
 
-		if not loading_context.previous_session_error then
+		if loading_context.previous_session_error then
 			local previous_session_error = loading_context.previous_session_error
 
 			loading_context.previous_session_error = nil
@@ -144,28 +146,28 @@ StateTitleScreenMain.update = function (self, arg_6_1, arg_6_2)
 			self:_queue_popup(Localize(previous_session_error), Localize("popup_error_topic"), "ok", Localize("menu_ok"))
 		end
 
-		self._title_start_ui:update(arg_6_1, arg_6_2)
+		self._title_start_ui:update(dt, t)
 
-		local count = #self._error_popups
-		local var_6_3 = self._error_popups[count]
+		local n_popups = #self._error_popups
+		local popup = self._error_popups[n_popups]
 
-		if not var_6_3 then
-			local query_result = Managers.popup:query_result(var_6_3)
+		if popup then
+			local result = Managers.popup:query_result(popup)
 
-			if query_result == "ok" then
-				Managers.popup:cancel_popup(var_6_3)
+			if result == "ok" then
+				Managers.popup:cancel_popup(popup)
 				table.remove(self._error_popups, 1)
-			elseif query_result == "not_installed" then
+			elseif result == "not_installed" then
 				Managers.invite:clear_invites()
-				Managers.popup:cancel_popup(var_6_3)
+				Managers.popup:cancel_popup(popup)
 				table.remove(self._error_popups, 1)
-			elseif not query_result then
-				fassert(false, "Unhandled popup result %s", query_result)
+			elseif result then
+				fassert(false, "Unhandled popup result %s", result)
 			end
 		else
-			self:_handle_continue_input(arg_6_1, arg_6_2)
-			self:_update_input(arg_6_1, arg_6_2)
-			self:_update_attract_mode(arg_6_1, arg_6_2)
+			self:_handle_continue_input(dt, t)
+			self:_update_input(dt, t)
+			self:_update_attract_mode(dt, t)
 		end
 	else
 		self._state = StateTitleScreenInitNetwork
@@ -174,25 +176,25 @@ StateTitleScreenMain.update = function (self, arg_6_1, arg_6_2)
 	return self:_next_state()
 end
 
-StateTitleScreenMain._update_network = function (self, arg_7_1, arg_7_2)
+StateTitleScreenMain._update_network = function (self, dt, t)
 	-- function 7
-	if not rawget(_G, "LobbyInternal") and not LobbyInternal.network_initialized() then
-		Network.update(arg_7_1, setmetatable({}, self._network_event_meta_table))
+	if rawget(_G, "LobbyInternal") and LobbyInternal.network_initialized() then
+		Network.update(dt, setmetatable({}, self._network_event_meta_table))
 	end
 end
 
-StateTitleScreenMain._update_attract_mode = function (self, arg_8_1, arg_8_2)
+StateTitleScreenMain._update_attract_mode = function (self, dt, t)
 	-- function 8
-	if not IS_WINDOWS then
+	if IS_WINDOWS then
 		return
 	end
 
-	if not self._title_start_ui:attract_mode() then
-		if not self._title_start_ui:video_completed() then
+	if self._title_start_ui:attract_mode() then
+		if self._title_start_ui:video_completed() then
 			self:_exit_attract_mode()
 		end
-	elseif not self._attract_mode_timer then
-		self._attract_mode_timer = self._attract_mode_timer - arg_8_1
+	elseif self._attract_mode_timer then
+		self._attract_mode_timer = self._attract_mode_timer - dt
 
 		if self._attract_mode_timer <= 0 then
 			self:_enter_attract_mode()
@@ -215,7 +217,7 @@ StateTitleScreenMain._exit_attract_mode = function (self)
 	Managers.music:trigger_event("Play_menu_screen_music")
 
 	self._params.menu_screen_music_playing = true
-	self._attract_mode_timer = attract_timer
+	self._attract_mode_timer = ATTRACT_MODE_TIMER
 	self._attract_mode_active = false
 
 	Managers.transition:force_fade_in()
@@ -224,29 +226,29 @@ StateTitleScreenMain._exit_attract_mode = function (self)
 	self.parent:enter_attract_mode(false)
 end
 
-StateTitleScreenMain._handle_continue_input = function (self, arg_11_1, arg_11_2)
+StateTitleScreenMain._handle_continue_input = function (self, dt, t)
 	-- function 11
-	local get_service = self.input_manager:get_service("main_menu")
-	local flag = true
+	local input_service = self.input_manager:get_service("main_menu")
+	local start_allowed = true
 
-	if not script_data.honduras_demo then
-		flag = not self._title_start_ui:in_transition()
+	if script_data.honduras_demo then
+		start_allowed = not self._title_start_ui:in_transition()
 	end
 
-	if not flag then
-		if get_service:get("start", true) or not self._windows_auto_sign_in then
-			local get_most_recent_device = Managers.input:get_most_recent_device()
+	if start_allowed then
+		if input_service:get("start", true) or self._windows_auto_sign_in then
+			local current_device = Managers.input:get_most_recent_device()
 
-			if not (not IS_XB1 and get_most_recent_device._name == "Keyboard" or get_most_recent_device._name ~= "Mouse") then
+			if IS_XB1 and (current_device._name == "Keyboard" or current_device._name == "Mouse") then
 				self:_queue_popup(Localize("popup_signin_only_with_gamepad"), Localize("popup_notice_topic"), "ok", Localize("popup_choice_ok"))
 			else
 				self._start_pressed = true
 			end
-		elseif not script_data.honduras_demo then
-			local get_most_recent_device_2 = Managers.input:get_most_recent_device()
+		elseif script_data.honduras_demo then
+			local current_device = Managers.input:get_most_recent_device()
 
-			if not get_most_recent_device_2:any_pressed() then
-				if not (not IS_XB1 and get_most_recent_device_2._name == "Keyboard" or get_most_recent_device_2._name ~= "Mouse") then
+			if current_device:any_pressed() then
+				if IS_XB1 and (current_device._name == "Keyboard" or current_device._name == "Mouse") then
 					self:_queue_popup(Localize("popup_signin_only_with_gamepad"), Localize("popup_notice_topic"), "ok", Localize("popup_choice_ok"))
 				else
 					self._start_pressed = true
@@ -255,23 +257,27 @@ StateTitleScreenMain._handle_continue_input = function (self, arg_11_1, arg_11_2
 		end
 	end
 
-	if not IS_CONSOLE and not self._title_start_ui:attract_mode() and not Managers.input:get_most_recent_device():any_pressed() then
-		self._start_pressed = true
+	if IS_CONSOLE and self._title_start_ui:attract_mode() then
+		local current_device = Managers.input:get_most_recent_device()
+
+		if current_device:any_pressed() then
+			self._start_pressed = true
+		end
 	end
 
-	if not (not get_service:has("delete_save") and not get_service:get("delete_save") and BUILD == "release") then
+	if input_service:has("delete_save") and input_service:get("delete_save") and BUILD ~= "release" then
 		StateTitleScreenLoadSave.DELETE_SAVE = true
 	end
 end
 
-StateTitleScreenMain._user_exists = function (arg_12_0, arg_12_1)
+StateTitleScreenMain._user_exists = function (self, user_id)
 	-- function 12
-	local tbl = {
+	local users = {
 		XboxLive.users()
 	}
 
-	for k, v in pairs(tbl) do
-		if v.id == arg_12_1 then
+	for _, user in pairs(users) do
+		if user.id == user_id then
 			return true
 		end
 	end
@@ -279,31 +285,31 @@ StateTitleScreenMain._user_exists = function (arg_12_0, arg_12_1)
 	return false
 end
 
-StateTitleScreenMain._update_input = function (self, arg_13_1, arg_13_2)
+StateTitleScreenMain._update_input = function (self, dt, t)
 	-- function 13
-	local PLATFORM = PLATFORM
-	local get_most_recent_device = Managers.input:get_most_recent_device()
+	local platform = PLATFORM
+	local controller = Managers.input:get_most_recent_device()
 
-	if not IS_PS4 then
+	if IS_PS4 then
 		local play_together_list = SessionInvitation.play_together_list()
 
-		if not play_together_list then
+		if play_together_list then
 			Managers.invite:set_play_together_list(play_together_list)
 		end
 	end
 
-	if not (not IS_PS4 and Managers.invite:has_invitation() and not Managers.invite:play_together_list() and self._state) then
-		if not Managers.play_go:installed() then
+	if IS_PS4 and (Managers.invite:has_invitation() or Managers.invite:play_together_list()) and not self._state then
+		if Managers.play_go:installed() then
 			Managers.music:trigger_event("Play_console_menu_select")
 
-			if not PS4.signed_in() then
-				Managers.account:set_controller(get_most_recent_device)
-				Managers.input:set_exclusive_gamepad(get_most_recent_device)
+			if PS4.signed_in() then
+				Managers.account:set_controller(controller)
+				Managers.input:set_exclusive_gamepad(controller)
 				self._title_start_ui:set_start_pressed(true)
 
 				self._state = StateTitleScreenLoadSave
 
-				if not Managers.invite:has_invitation() then
+				if Managers.invite:has_invitation() then
 					self.parent.invite_handled = true
 				end
 			else
@@ -314,18 +320,18 @@ StateTitleScreenMain._update_input = function (self, arg_13_1, arg_13_2)
 		else
 			self:_queue_popup(Localize("popup_invite_not_installed"), Localize("popup_invite_not_installed_header"), "not_installed", Localize("menu_ok"))
 		end
-	elseif not ((self._start_pressed or LEVEL_EDITOR_TEST or self._auto_start or GameSettingsDevelopment.skip_start_screen or Development.parameter("skip_start_screen") or self._params.switch_user_auto_sign_in or not self._has_engaged) and self._state) then
-		if not IS_CONSOLE and not self._title_start_ui:attract_mode() then
+	elseif (self._start_pressed or LEVEL_EDITOR_TEST or self._auto_start or GameSettingsDevelopment.skip_start_screen or Development.parameter("skip_start_screen") or self._params.switch_user_auto_sign_in or self._has_engaged) and not self._state then
+		if IS_CONSOLE and self._title_start_ui:attract_mode() then
 			self:_exit_attract_mode()
 
 			self._start_pressed = false
-		elseif not IS_WINDOWS then
+		elseif IS_WINDOWS then
 			self._state = StateTitleScreenInitNetwork
 
 			self._title_start_ui:set_start_pressed(true)
 			self._title_start_ui:set_information_text(Localize("loading_signing_in"))
-		elseif not IS_XB1 then
-			if not (not get_most_recent_device and get_most_recent_device.type() == "xbox_controller") then
+		elseif IS_XB1 then
+			if not controller or controller.type() ~= "xbox_controller" then
 				self._start_pressed = false
 
 				return
@@ -337,20 +343,20 @@ StateTitleScreenMain._update_input = function (self, arg_13_1, arg_13_2)
 				return
 			end
 
-			local flag = not get_most_recent_device and get_most_recent_device.user_id()
+			local user_id = not not controller and not not controller.user_id()
 
-			if not Application.is_constrained() then
+			if Application.is_constrained() then
 				self._has_engaged = false
 			end
 
-			local flag_2 = true
+			local can_proceed = true
 
-			if not self._has_engaged then
-				flag_2 = not flag and self:_user_exists(flag)
+			if self._has_engaged then
+				can_proceed = not not user_id and not not self:_user_exists(user_id)
 			end
 
-			if not flag_2 and not flag and not Managers.account:user_exists(flag) then
-				if not Managers.account:sign_in(flag, get_most_recent_device, self._auto_sign_in) then
+			if can_proceed and user_id and Managers.account:user_exists(user_id) then
+				if Managers.account:sign_in(user_id, controller, self._auto_sign_in) then
 					Managers.music:trigger_event("Play_console_menu_select")
 					self._title_start_ui:set_start_pressed(true)
 
@@ -360,15 +366,15 @@ StateTitleScreenMain._update_input = function (self, arg_13_1, arg_13_2)
 					self._has_engaged = false
 					self._start_pressed = false
 				end
-			elseif not (not get_most_recent_device and not string.match(get_most_recent_device._name, "Pad") and self._has_engaged or Application.is_constrained()) then
-				local var_13_5 = tonumber(string.gsub(get_most_recent_device._name, "Pad", ""), 10)
+			elseif controller and string.match(controller._name, "Pad") and not self._has_engaged and not Application.is_constrained() then
+				local index = tonumber(string.gsub(controller._name, "Pad", ""), 10)
 
-				XboxLive.show_account_picker(var_13_5)
+				XboxLive.show_account_picker(index)
 
-				local show_account_picker_result, var_13_7, var_13_8, var_13_9 = XboxLive.show_account_picker_result()
-				local num = 4294967295
+				local error, device_id, user_id_old, user_id_new = XboxLive.show_account_picker_result()
+				local invalid_profile_id = 4294967295
 
-				if not (show_account_picker_result or var_13_9 ~= num) then
+				if error or user_id_new == invalid_profile_id then
 					print("[StateTitleScreenMain] Invalid profile selected from account picker --> Resetting")
 
 					self._has_engaged = false
@@ -376,14 +382,14 @@ StateTitleScreenMain._update_input = function (self, arg_13_1, arg_13_2)
 				else
 					self._has_engaged = true
 				end
-			elseif not flag_2 then
+			elseif can_proceed then
 				self._has_engaged = false
 				self._start_pressed = false
 			end
-		elseif not IS_PS4 then
+		elseif IS_PS4 then
 			Managers.music:trigger_event("Play_console_menu_select")
-			Managers.input:set_exclusive_gamepad(get_most_recent_device)
-			Managers.account:set_controller(get_most_recent_device)
+			Managers.input:set_exclusive_gamepad(controller)
+			Managers.account:set_controller(controller)
 			self._title_start_ui:set_start_pressed(true)
 
 			self._state = StateTitleScreenLoadSave
@@ -395,12 +401,12 @@ end
 
 StateTitleScreenMain._next_state = function (self)
 	-- function 14
-	if not self._state then
+	if self._state then
 		return self._state
 	end
 end
 
-StateTitleScreenMain.on_exit = function (arg_15_0)
+StateTitleScreenMain.on_exit = function (self)
 	-- function 15
 	return
 end

@@ -1,24 +1,24 @@
 -- chunkname: @scripts/settings/dlcs/shovel/shovel_equipment_settings.lua
 
-local shovel = DLCSettings.shovel
+local settings = DLCSettings.shovel
 
-shovel.item_master_list_file_names = {
+settings.item_master_list_file_names = {
 	"scripts/settings/dlcs/shovel/item_master_list_shovel"
 }
-shovel.weapon_skins_file_names = {
+settings.weapon_skins_file_names = {
 	"scripts/settings/dlcs/shovel/weapon_skins_shovel"
 }
-shovel.cosmetics_files = {
+settings.cosmetics_files = {
 	"scripts/settings/dlcs/shovel/cosmetics_shovel"
 }
-shovel.weapon_template_file_names = {
+settings.weapon_template_file_names = {
 	"scripts/settings/equipment/weapon_templates/bw_necromancer_career_skill",
 	"scripts/settings/equipment/weapon_templates/bw_necromancer_career_utility",
 	"scripts/settings/equipment/weapon_templates/staff_scythe",
 	"scripts/settings/equipment/weapon_templates/staff_necromancy",
 	"scripts/settings/equipment/weapon_templates/staff_death"
 }
-shovel.default_items = {
+settings.default_items = {
 	bw_ghost_scythe = {
 		inventory_icon = "icon_wpn_bw_ghost_scythe_01",
 		description = "description_default_bw_ghost_scythe",
@@ -30,10 +30,10 @@ shovel.default_items = {
 		display_name = "bw_necromancy_staff_blacksmith_name"
 	}
 }
-shovel.damage_profile_template_files_names = {
+settings.damage_profile_template_files_names = {
 	"scripts/settings/equipment/damage_profile_templates_dlc_shovel"
 }
-shovel.action_template_file_names = {
+settings.action_template_file_names = {
 	"scripts/settings/dlcs/shovel/action_soul_drain",
 	"scripts/settings/dlcs/shovel/action_detonate",
 	"scripts/settings/dlcs/shovel/action_damage_target",
@@ -49,7 +49,7 @@ shovel.action_template_file_names = {
 	"scripts/settings/dlcs/shovel/action_career_bw_necromancer_command_stand",
 	"scripts/settings/dlcs/shovel/action_career_bw_necromancer_command_stand_targeting"
 }
-shovel.action_classes_lookup = {
+settings.action_classes_lookup = {
 	detonate = "ActionDetonate",
 	damage_target = "ActionDamageTarget",
 	soul_drain = "ActionSoulDrain",
@@ -65,7 +65,7 @@ shovel.action_classes_lookup = {
 	career_bw_necromancer_area = "ActionCareerBWNecromancerArea",
 	career_bw_necromancer_wave = "ActionCareerBWNecromancerWave"
 }
-shovel.inventory_package_list = {
+settings.inventory_package_list = {
 	"resource_packages/careers/bw_necromancer",
 	"units/beings/player/bright_wizard_necromancer/first_person_base/chr_first_person_mesh",
 	"units/beings/player/bright_wizard_necromancer/third_person_base/chr_third_person_mesh",
@@ -120,7 +120,7 @@ shovel.inventory_package_list = {
 	"units/weapons/player/wpn_necromancy_skull/wpn_necromancy_skull_3ps",
 	"units/beings/player/bright_wizard_necromancer/talents/trapped_soul_skull"
 }
-shovel.projectile_units = {
+settings.projectile_units = {
 	necrostaff_skull = {
 		projectile_unit_name = "units/weapons/player/wpn_necromancy_skull/wpn_necromancy_skull_3ps"
 	},
@@ -128,7 +128,7 @@ shovel.projectile_units = {
 		projectile_unit_name = "units/weapons/player/wpn_bw_necromancy_staff_01/wpn_bw_necromancy_staff_projectile_03"
 	}
 }
-shovel.projectiles = {
+settings.projectiles = {
 	skull = {
 		impact_type = "sphere_sweep",
 		static_impact_type = "sphere_sweep",
@@ -147,29 +147,29 @@ shovel.projectiles = {
 			forward_offset = 0,
 			blend_time = 0.35,
 			use_anim_rotation = false,
-			blend_func = function (arg_1_0)
+			blend_func = function (t)
 				-- function 1
 				local flag
 
-				flag = not (arg_1_0 < 0.5) or not 0 or math.easeOutCubic((arg_1_0 - 0.5) * 2)
+				flag = (not (t < 0.5) or not 0) and not not math.easeOutCubic((t - 0.5) * 2)
 
 				return flag
 			end
 		},
 		external_events = {
-			detonate = function (self)
+			detonate = function (projectile_ext)
 				-- function 2
-				if self._life_time <= 0 then
+				if projectile_ext._life_time <= 0 then
 					return
 				end
 
-				self._life_time = 0
+				projectile_ext._life_time = 0
 
-				if not self.is_husk then
-					local charge_data = self.charge_data
+				if not projectile_ext.is_husk then
+					local charge_data = projectile_ext.charge_data
 					local charged_aoe
 
-					if not self.is_charged then
+					if projectile_ext.is_charged then
 						charged_aoe = charge_data.charged_aoe
 
 						if not charged_aoe then
@@ -179,19 +179,21 @@ shovel.projectiles = {
 
 					charged_aoe = charge_data.aoe
 
+					local aoe_data = charged_aoe
+
 					::label_2_0::
 
-					if not charged_aoe then
-						local var_2_2 = POSITION_LOOKUP[self._projectile_unit]
+					if aoe_data then
+						local position = POSITION_LOOKUP[projectile_ext._projectile_unit]
 
-						self:do_aoe(charged_aoe, var_2_2, true)
+						projectile_ext:do_aoe(aoe_data, position, true)
 					end
 				end
 			end
 		}
 	}
 }
-shovel.explosion_templates = {
+settings.explosion_templates = {
 	sienna_necromancer_passive_explosion = {
 		explosion = {
 			use_attacker_power_level = true,
@@ -204,9 +206,9 @@ shovel.explosion_templates = {
 			alert_enemies = true,
 			damage_profile = "sienna_necromancer_blood_explosion",
 			effect_name = "fx/wpnfx_skull_explosion_big_3p",
-			server_hit_func = function (arg_3_0, arg_3_1, arg_3_2, arg_3_3, arg_3_4)
+			server_hit_func = function (hit_unit, damage_source, attacking_unit, impact_position, explosion_data)
 				-- function 3
-				if not ALIVE[arg_3_0] then
+				if not ALIVE[hit_unit] then
 					return
 				end
 			end
@@ -289,6 +291,6 @@ shovel.explosion_templates = {
 		}
 	}
 }
-shovel.attack_template_files_names = {
+settings.attack_template_files_names = {
 	"scripts/settings/equipment/attack_templates_dlc_shovel"
 }

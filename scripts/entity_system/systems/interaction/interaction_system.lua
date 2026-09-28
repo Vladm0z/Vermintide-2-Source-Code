@@ -5,7 +5,7 @@ require("scripts/unit_extensions/generic/generic_husk_interactor_extension")
 
 InteractionSystem = class(InteractionSystem, ExtensionSystemBase)
 
-local tbl = {
+local RPCS = {
 	"rpc_interaction_approved",
 	"rpc_interaction_denied",
 	"rpc_interaction_completed",
@@ -13,22 +13,22 @@ local tbl = {
 	"rpc_sync_interactable_used_state",
 	"rpc_sync_interaction_state"
 }
-local tbl_2 = {
+local extensions = {
 	"GenericHuskInteractorExtension",
 	"GenericUnitInteractorExtension"
 }
 
-InteractionSystem.init = function (self, arg_1_1, arg_1_2)
+InteractionSystem.init = function (self, entity_system_creation_context, system_name)
 	-- function 1
-	InteractionSystem.super.init(self, arg_1_1, arg_1_2, tbl_2)
+	InteractionSystem.super.init(self, entity_system_creation_context, system_name, extensions)
 
-	local network_event_delegate = arg_1_1.network_event_delegate
+	local network_event_delegate = entity_system_creation_context.network_event_delegate
 
 	self.network_event_delegate = network_event_delegate
 
-	network_event_delegate:register(self, unpack(tbl))
+	network_event_delegate:register(self, unpack(RPCS))
 
-	self.extension_init_context.dice_keeper = arg_1_1.dice_keeper
+	self.extension_init_context.dice_keeper = entity_system_creation_context.dice_keeper
 end
 
 InteractionSystem.destroy = function (self)
@@ -36,96 +36,98 @@ InteractionSystem.destroy = function (self)
 	self.network_event_delegate:unregister(self)
 end
 
-InteractionSystem.rpc_interaction_approved = function (self, arg_3_1, arg_3_2, arg_3_3, arg_3_4, arg_3_5)
+InteractionSystem.rpc_interaction_approved = function (self, channel_id, interaction_id, interactor_go_id, interactable_go_id, is_level_unit)
 	-- function 3
-	local var_3_0 = NetworkLookup.interactions[arg_3_2]
-	local unit = self.unit_storage:unit(arg_3_3)
-	local unit_2 = self.unit_storage:unit(arg_3_4)
+	local interaction_type = NetworkLookup.interactions[interaction_id]
+	local interactor_unit = self.unit_storage:unit(interactor_go_id)
+	local interactable_unit = self.unit_storage:unit(interactable_go_id)
 
-	if not arg_3_5 then
-		local current_level = LevelHelper:current_level(self.world)
+	if is_level_unit then
+		local level = LevelHelper:current_level(self.world)
 
-		unit_2 = Level.unit_by_index(current_level, arg_3_4)
+		interactable_unit = Level.unit_by_index(level, interactable_go_id)
 
-		fassert(unit_2, "Couldn't find level unit to interact with.")
+		fassert(interactable_unit, "Couldn't find level unit to interact with.")
 	end
 
-	if not (not Unit.alive(unit_2) and Unit.alive(unit)) then
+	if not Unit.alive(interactable_unit) or not Unit.alive(interactor_unit) then
 		return
 	end
 
-	InteractionHelper.printf("rpc_interaction_approved(%s, %s, %s, %s, %s)", arg_3_1, var_3_0, tostring(arg_3_3), tostring(arg_3_4), tostring(arg_3_5))
-	InteractionHelper:request_approved(var_3_0, unit, unit_2)
+	InteractionHelper.printf("rpc_interaction_approved(%s, %s, %s, %s, %s)", channel_id, interaction_type, tostring(interactor_go_id), tostring(interactable_go_id), tostring(is_level_unit))
+	InteractionHelper:request_approved(interaction_type, interactor_unit, interactable_unit)
 end
 
-InteractionSystem.rpc_interaction_denied = function (self, arg_4_1, arg_4_2)
+InteractionSystem.rpc_interaction_denied = function (self, channel_id, interactor_go_id)
 	-- function 4
-	InteractionHelper.printf("rpc_interaction_denied(%s, %s)", arg_4_1, tostring(arg_4_2))
+	InteractionHelper.printf("rpc_interaction_denied(%s, %s)", channel_id, tostring(interactor_go_id))
 
-	local unit = self.unit_storage:unit(arg_4_2)
+	local interactor_unit = self.unit_storage:unit(interactor_go_id)
 
-	if not ALIVE[unit] then
-		InteractionHelper:request_denied(unit)
+	if ALIVE[interactor_unit] then
+		InteractionHelper:request_denied(interactor_unit)
 	end
 end
 
-InteractionSystem.rpc_interaction_completed = function (self, arg_5_1, arg_5_2, arg_5_3)
+InteractionSystem.rpc_interaction_completed = function (self, channel_id, interactor_go_id, interaction_result)
 	-- function 5
-	InteractionHelper.printf("rpc_interaction_completed(%s, %s, %s)", arg_5_1, tostring(arg_5_2), InteractionResult[arg_5_3])
+	InteractionHelper.printf("rpc_interaction_completed(%s, %s, %s)", channel_id, tostring(interactor_go_id), InteractionResult[interaction_result])
 
-	local unit = self.unit_storage:unit(arg_5_2)
+	local interactor_unit = self.unit_storage:unit(interactor_go_id)
 
-	if not Unit.alive(unit) then
+	if not Unit.alive(interactor_unit) then
 		return
 	end
 
-	local extension = ScriptUnit.extension(unit, "interactor_system")
+	local interactor_extension = ScriptUnit.extension(interactor_unit, "interactor_system")
+	local is_interacting = interactor_extension:is_interacting()
 
-	if not extension:is_interacting() then
-		InteractionHelper.printf("got rpc_interaction_completed but wasnt interacting (%s, %s, %s)", arg_5_1, tostring(arg_5_2), InteractionResult[arg_5_3])
+	if not is_interacting then
+		InteractionHelper.printf("got rpc_interaction_completed but wasnt interacting (%s, %s, %s)", channel_id, tostring(interactor_go_id), InteractionResult[interaction_result])
 
 		return
 	end
 
-	local interactable_unit = extension:interactable_unit()
+	local interactable_unit = interactor_extension:interactable_unit()
 
-	InteractionHelper:interaction_completed(unit, interactable_unit, arg_5_3)
+	InteractionHelper:interaction_completed(interactor_unit, interactable_unit, interaction_result)
 end
 
-InteractionSystem.rpc_interaction_abort = function (self, arg_6_1, arg_6_2)
+InteractionSystem.rpc_interaction_abort = function (self, channel_id, interactor_go_id)
 	-- function 6
-	InteractionHelper.printf("rpc_interaction_abort(%s, %s)", arg_6_1, tostring(arg_6_2))
+	InteractionHelper.printf("rpc_interaction_abort(%s, %s)", channel_id, tostring(interactor_go_id))
 
 	local fassert = fassert
 	local is_server = self.is_server
 
-	is_server = is_server or LEVEL_EDITOR_TEST
+	is_server = not not is_server or not not LEVEL_EDITOR_TEST
 
 	fassert(is_server, "Error, this should only be run on server!")
 
-	local unit = self.unit_storage:unit(arg_6_2)
+	local interactor_unit = self.unit_storage:unit(interactor_go_id)
 
-	InteractionHelper:abort_authoritative(unit)
+	InteractionHelper:abort_authoritative(interactor_unit)
 end
 
-InteractionSystem.rpc_sync_interaction_state = function (self, arg_7_1, arg_7_2, arg_7_3, arg_7_4, arg_7_5, arg_7_6, arg_7_7, arg_7_8)
+InteractionSystem.rpc_sync_interaction_state = function (self, channel_id, unit_id, state_id, interaction_type_id, interactable_unit_id, start_time, duration, is_level_unit)
 	-- function 7
-	local unit = self.unit_storage:unit(arg_7_2)
+	local unit = self.unit_storage:unit(unit_id)
 
 	if not unit then
 		return
 	end
 
-	local var_7_1 = NetworkLookup.interaction_states[arg_7_3]
-	local var_7_2 = NetworkLookup.interactions[arg_7_4]
-	local game_object_or_level_unit = Managers.state.network:game_object_or_level_unit(arg_7_5, arg_7_8)
+	local state = NetworkLookup.interaction_states[state_id]
+	local interaction_type = NetworkLookup.interactions[interaction_type_id]
+	local interactable_unit = Managers.state.network:game_object_or_level_unit(interactable_unit_id, is_level_unit)
+	local interactor_extension = ScriptUnit.extension(unit, "interactor_system")
 
-	ScriptUnit.extension(unit, "interactor_system"):set_interaction_context(var_7_1, var_7_2, game_object_or_level_unit, arg_7_6, arg_7_7)
+	interactor_extension:set_interaction_context(state, interaction_type, interactable_unit, start_time, duration)
 end
 
-InteractionSystem.rpc_sync_interactable_used_state = function (arg_8_0, arg_8_1, arg_8_2, arg_8_3, arg_8_4)
+InteractionSystem.rpc_sync_interactable_used_state = function (self, channel_id, interactable_unit_id, is_level_object, is_used)
 	-- function 8
-	local game_object_or_level_unit = Managers.state.network:game_object_or_level_unit(arg_8_2, arg_8_3)
+	local interactable_unit = Managers.state.network:game_object_or_level_unit(interactable_unit_id, is_level_object)
 
-	Unit.set_data(game_object_or_level_unit, "interaction_data", "used", arg_8_4)
+	Unit.set_data(interactable_unit, "interaction_data", "used", is_used)
 end

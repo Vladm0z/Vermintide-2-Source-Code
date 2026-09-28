@@ -1,10 +1,10 @@
 -- chunkname: @scripts/ui/hud_ui/energy_bar_ui_definitions.lua
 
-local tbl = {
+local charge_bar_size = {
 	250,
 	16
 }
-local tbl_2 = {
+local scenegraph_definition = {
 	screen = {
 		scale = "fit",
 		position = {
@@ -33,7 +33,7 @@ local tbl_2 = {
 		vertical_alignment = "center",
 		parent = "screen_bottom_pivot",
 		horizontal_alignment = "center",
-		size = tbl,
+		size = charge_bar_size,
 		position = {
 			0,
 			-220,
@@ -41,9 +41,10 @@ local tbl_2 = {
 		}
 	}
 }
-local frame_outer_glow_01 = UIFrameSettings.frame_outer_glow_01
-local var_0_3 = frame_outer_glow_01.texture_sizes.corner[1]
-local tbl_3 = {
+local frame_settings = UIFrameSettings.frame_outer_glow_01
+local frame_corner = frame_settings.texture_sizes.corner
+local frame_width = frame_corner[1]
+local widget_definitions = {
 	charge_bar = {
 		scenegraph_id = "charge_bar",
 		element = {
@@ -92,19 +93,19 @@ local tbl_3 = {
 			bar_1 = "energy_bar",
 			bar_fg = "overcharge_frame",
 			size = {
-				tbl[1] - 6,
-				tbl[2]
+				charge_bar_size[1] - 6,
+				charge_bar_size[2]
 			},
-			frame = frame_outer_glow_01.texture
+			frame = frame_settings.texture
 		},
 		style = {
 			frame = {
 				frame_margins = {
-					-(var_0_3 - 1),
-					-(var_0_3 - 1)
+					-(frame_width - 1),
+					-(frame_width - 1)
 				},
-				texture_size = frame_outer_glow_01.texture_size,
-				texture_sizes = frame_outer_glow_01.texture_sizes,
+				texture_size = frame_settings.texture_size,
+				texture_sizes = frame_settings.texture_sizes,
 				color = {
 					255,
 					255,
@@ -116,7 +117,7 @@ local tbl_3 = {
 					0,
 					0
 				},
-				size = tbl
+				size = charge_bar_size
 			},
 			bar_1 = {
 				gradient_threshold = 0,
@@ -132,8 +133,8 @@ local tbl_3 = {
 					3
 				},
 				size = {
-					tbl[1] - 6,
-					tbl[2] - 6
+					charge_bar_size[1] - 6,
+					charge_bar_size[2] - 6
 				}
 			},
 			icon = {
@@ -142,8 +143,8 @@ local tbl_3 = {
 					34
 				},
 				offset = {
-					tbl[1],
-					tbl[2] / 2 - 17,
+					charge_bar_size[1],
+					charge_bar_size[2] / 2 - 17,
 					5
 				},
 				color = {
@@ -159,8 +160,8 @@ local tbl_3 = {
 					34
 				},
 				offset = {
-					tbl[1] + 2,
-					tbl[2] / 2 - 17 - 2,
+					charge_bar_size[1] + 2,
+					charge_bar_size[2] / 2 - 17 - 2,
 					5
 				},
 				color = {
@@ -185,8 +186,8 @@ local tbl_3 = {
 			},
 			bar_bg = {
 				size = {
-					tbl[1] - 6,
-					tbl[2] - 6
+					charge_bar_size[1] - 6,
+					charge_bar_size[2] - 6
 				},
 				offset = {
 					3,
@@ -218,7 +219,7 @@ local tbl_3 = {
 				},
 				size = {
 					2,
-					tbl[2] - 6
+					charge_bar_size[2] - 6
 				}
 			},
 			max_threshold = {
@@ -239,7 +240,7 @@ local tbl_3 = {
 				},
 				size = {
 					2,
-					tbl[2] - 6
+					charge_bar_size[2] - 6
 				}
 			}
 		},
@@ -252,6 +253,6 @@ local tbl_3 = {
 }
 
 return {
-	scenegraph_definition = tbl_2,
-	widget_definitions = tbl_3
+	scenegraph_definition = scenegraph_definition,
+	widget_definitions = widget_definitions
 }

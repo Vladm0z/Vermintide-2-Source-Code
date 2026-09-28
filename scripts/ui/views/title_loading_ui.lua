@@ -4,14 +4,14 @@ require("scripts/settings/controller_settings")
 require("scripts/ui/ui_widgets")
 require("scripts/ui/views/cutscene_overlay_ui")
 
-local var_0_0 = local_require("scripts/ui/cutscene_overlay_templates/cutscene_template_trailer")
-local var_0_1 = local_require("scripts/ui/cutscene_overlay_templates/cutscene_template_penny_intro")
-local var_0_2 = local_require("scripts/ui/cutscene_overlay_templates/cutscene_template_cog_intro")
-local var_0_3 = local_require("scripts/ui/cutscene_overlay_templates/cutscene_template_morris_intro")
-local var_0_4 = local_require("scripts/ui/cutscene_overlay_templates/cutscene_template_woods_intro")
-local var_0_5 = local_require("scripts/ui/cutscene_overlay_templates/cutscene_template_bless_intro")
-local var_0_6 = local_require("scripts/ui/cutscene_overlay_templates/cutscene_template_shovel_intro")
-local tbl = {
+local prologue_video_subtitle_settings = local_require("scripts/ui/cutscene_overlay_templates/cutscene_template_trailer")
+local penny_intro_video_subtitle_settings = local_require("scripts/ui/cutscene_overlay_templates/cutscene_template_penny_intro")
+local cog_intro_video_subtitle_settings = local_require("scripts/ui/cutscene_overlay_templates/cutscene_template_cog_intro")
+local morris_intro_video_subtitle_settings = local_require("scripts/ui/cutscene_overlay_templates/cutscene_template_morris_intro")
+local woods_intro_video_subtitle_settings = local_require("scripts/ui/cutscene_overlay_templates/cutscene_template_woods_intro")
+local bless_intro_video_subtitle_settings = local_require("scripts/ui/cutscene_overlay_templates/cutscene_template_bless_intro")
+local shovel_intro_video_subtitle_settings = local_require("scripts/ui/cutscene_overlay_templates/cutscene_template_shovel_intro")
+local scenegraph_definition = {
 	screen = {
 		vertical_alignment = "center",
 		horizontal_alignment = "center",
@@ -481,9 +481,9 @@ skip_widget = {
 				style_id = "input_text_2",
 				pass_type = "text",
 				text_id = "input_text_2",
-				content_check_function = function (self)
+				content_check_function = function (content)
 					-- function 1
-					return not self.input_icon
+					return not content.input_icon
 				end
 			},
 			{
@@ -495,34 +495,34 @@ skip_widget = {
 				pass_type = "texture",
 				style_id = "input_icon",
 				texture_id = "input_icon",
-				content_check_function = function (self)
+				content_check_function = function (content)
 					-- function 2
-					return self.input_icon
+					return content.input_icon
 				end
 			},
 			{
 				pass_type = "gradient_mask_texture",
 				style_id = "input_icon_bar",
 				texture_id = "input_icon_bar",
-				content_check_function = function (self)
+				content_check_function = function (content)
 					-- function 3
-					return not self.using_keyboard
+					return not content.using_keyboard
 				end
 			},
 			{
 				style_id = "hold_bar",
 				pass_type = "rect",
-				content_check_function = function (self)
+				content_check_function = function (content)
 					-- function 4
-					return self.using_keyboard
+					return content.using_keyboard
 				end
 			},
 			{
 				style_id = "hold_bar_bg",
 				pass_type = "rect",
-				content_check_function = function (self)
+				content_check_function = function (content)
 					-- function 5
-					return self.using_keyboard
+					return content.using_keyboard
 				end
 			}
 		}
@@ -627,7 +627,7 @@ skip_widget = {
 	}
 }
 
-local tbl_2 = {
+local dead_space_filler_widget = {
 	scenegraph_id = "dead_space_filler",
 	element = {
 		passes = {
@@ -647,7 +647,7 @@ local tbl_2 = {
 	}
 }
 
-local function fn()
+local function create_gamma_widget()
 	-- function 6
 	return {
 		scenegraph_id = "gamma_image",
@@ -672,36 +672,36 @@ local function fn()
 					pass_type = "texture",
 					style_id = "gamepad_navigation_icon",
 					texture_id = "gamepad_navigation_icon",
-					content_check_function = function (self)
+					content_check_function = function (content)
 						-- function 7
-						return self.gamepad_active
+						return content.gamepad_active
 					end
 				},
 				{
 					pass_type = "texture",
 					style_id = "gamepad_accept_icon",
 					texture_id = "gamepad_accept_icon",
-					content_check_function = function (self)
+					content_check_function = function (content)
 						-- function 8
-						return self.gamepad_active
+						return content.gamepad_active
 					end
 				},
 				{
 					style_id = "gamepad_navigation_text",
 					pass_type = "text",
 					text_id = "gamepad_navigation_text",
-					content_check_function = function (self)
+					content_check_function = function (content)
 						-- function 9
-						return self.gamepad_active
+						return content.gamepad_active
 					end
 				},
 				{
 					style_id = "gamepad_accept_text",
 					pass_type = "text",
 					text_id = "gamepad_accept_text",
-					content_check_function = function (self)
+					content_check_function = function (content)
 						-- function 10
-						return self.gamepad_active
+						return content.gamepad_active
 					end
 				}
 			}
@@ -780,7 +780,7 @@ local function fn()
 	}
 end
 
-local tbl_3 = {
+local header_text_style = {
 	vertical_alignment = "center",
 	upper_case = true,
 	localize = true,
@@ -790,7 +790,7 @@ local tbl_3 = {
 	scenegraph_id = "gamma_header_text",
 	text_color = Colors.get_color_table_with_alpha("font_title", 255)
 }
-local tbl_4 = {
+local description_text_style = {
 	vertical_alignment = "center",
 	scenegraph_id = "gamma_info_text",
 	localize = true,
@@ -800,65 +800,66 @@ local tbl_4 = {
 	font_type = "hell_shark",
 	text_color = Colors.get_color_table_with_alpha("white", 255)
 }
-local get_color_table_with_alpha = Colors.get_color_table_with_alpha("font_button_normal", 255)
-local tbl_5 = {
-	gamma_adjuster = fn(),
-	gamma_image = UIWidgets.create_background_with_frame("gamma_image", tbl.gamma_image.size, "gamma_settings_image_01", "button_frame_01"),
-	gamma_correction_image = UIWidgets.create_background_with_frame("gamma_correction_image", tbl.gamma_correction_image.size, "gamma_settings_image_02", "button_frame_01"),
-	gamma_stepper = UIWidgets.create_default_stepper("gamma_stepper", tbl.gamma_stepper.size),
-	gamma_image_corners = UIWidgets.create_frame("gamma_image", tbl.gamma_image.size, "frame_corner_detail_01", 10)
+local sound_presentation_image_color = Colors.get_color_table_with_alpha("font_button_normal", 255)
+local gamma_widget_definitions = {
+	gamma_adjuster = create_gamma_widget(),
+	gamma_image = UIWidgets.create_background_with_frame("gamma_image", scenegraph_definition.gamma_image.size, "gamma_settings_image_01", "button_frame_01"),
+	gamma_correction_image = UIWidgets.create_background_with_frame("gamma_correction_image", scenegraph_definition.gamma_correction_image.size, "gamma_settings_image_02", "button_frame_01"),
+	gamma_stepper = UIWidgets.create_default_stepper("gamma_stepper", scenegraph_definition.gamma_stepper.size),
+	gamma_image_corners = UIWidgets.create_frame("gamma_image", scenegraph_definition.gamma_image.size, "frame_corner_detail_01", 10)
 }
-local tbl_6 = {
-	stepper = UIWidgets.create_default_stepper("gamma_stepper", tbl.gamma_stepper.size),
-	sound_presentation_image = UIWidgets.create_simple_texture("sound_setting_icon_01", "sound_presentation_image", nil, nil, get_color_table_with_alpha),
+local panning_widget_definitions = {
+	stepper = UIWidgets.create_default_stepper("gamma_stepper", scenegraph_definition.gamma_stepper.size),
+	sound_presentation_image = UIWidgets.create_simple_texture("sound_setting_icon_01", "sound_presentation_image", nil, nil, sound_presentation_image_color),
 	sound_option_1 = UIWidgets.create_simple_texture("sound_setting_icon_03", "sound_panning_option_1"),
 	sound_option_1_glow = UIWidgets.create_simple_texture("sound_setting_icon_03_glow", "sound_panning_option_1_glow"),
 	sound_option_button_1 = UIWidgets.create_simple_hotspot("sound_panning_option_1"),
 	sound_option_2 = UIWidgets.create_simple_texture("sound_setting_icon_04", "sound_panning_option_2"),
 	sound_option_2_glow = UIWidgets.create_simple_texture("sound_setting_icon_04_glow", "sound_panning_option_2_glow"),
 	sound_option_button_2 = UIWidgets.create_simple_hotspot("sound_panning_option_2"),
-	header = UIWidgets.create_simple_text("startup_settings_panning_rule_header", "gamma_header_text", nil, nil, tbl_3),
-	description = UIWidgets.create_simple_text("startup_settings_panning_rule_desc", "gamma_info_text", nil, nil, tbl_4)
+	header = UIWidgets.create_simple_text("startup_settings_panning_rule_header", "gamma_header_text", nil, nil, header_text_style),
+	description = UIWidgets.create_simple_text("startup_settings_panning_rule_desc", "gamma_info_text", nil, nil, description_text_style)
 }
-local tbl_7 = {
-	stepper = UIWidgets.create_default_stepper("gamma_stepper", tbl.gamma_stepper.size),
-	sound_presentation_image = UIWidgets.create_simple_texture("sound_setting_icon_05", "sound_range_presentation_image", nil, nil, get_color_table_with_alpha),
-	header = UIWidgets.create_simple_text("startup_settings_dynamic_range_header", "gamma_header_text", nil, nil, tbl_3),
-	description = UIWidgets.create_simple_text("startup_settings_dynamic_range_desc", "gamma_info_text", nil, nil, tbl_4)
+local dynamic_range_widget_definitions = {
+	stepper = UIWidgets.create_default_stepper("gamma_stepper", scenegraph_definition.gamma_stepper.size),
+	sound_presentation_image = UIWidgets.create_simple_texture("sound_setting_icon_05", "sound_range_presentation_image", nil, nil, sound_presentation_image_color),
+	header = UIWidgets.create_simple_text("startup_settings_dynamic_range_header", "gamma_header_text", nil, nil, header_text_style),
+	description = UIWidgets.create_simple_text("startup_settings_dynamic_range_desc", "gamma_info_text", nil, nil, description_text_style)
 }
-local create_default_button = UIWidgets.create_default_button("apply_button", tbl.apply_button.size, nil, nil, Localize("input_description_confirm"))
-local tbl_8 = {
+local done_button = UIWidgets.create_default_button("apply_button", scenegraph_definition.apply_button.size, nil, nil, Localize("input_description_confirm"))
+local prologue_video = {
 	video_name = "video/vermintide_2_prologue_intro",
 	sound_start = "vermintide_2_prologue_intro",
 	scenegraph_id = "splash_video",
 	material_name = "vermintide_2_prologue_intro",
 	sound_stop = "Stop_vermintide_2_prologue_intro",
-	subtitle_template_settings = var_0_0
+	subtitle_template_settings = prologue_video_subtitle_settings
 }
-local tbl_9 = {
+local dlc_intro_video = {
 	video_name = "video/vermintide_2_shovel_intro",
 	sound_start = "Play_vermintide_2_shovel_intro",
 	scenegraph_id = "splash_video",
 	material_name = "vermintide_2_shovel_intro",
 	sound_stop = "Stop_vermintide_2_shovel_intro",
-	subtitle_template_settings = var_0_6
+	subtitle_template_settings = shovel_intro_video_subtitle_settings
 }
-local var_0_19 = tbl_9
+local first_time_video = dlc_intro_video
 
-local function fn_2(arg_11_0, arg_11_1, arg_11_2)
+local function get_slider_progress(min, max, value)
 	-- function 11
-	local num = arg_11_1 - arg_11_0
+	local range = max - min
+	local norm_value = math.clamp(value, min, max) - min
 
-	return (math.clamp(arg_11_2, arg_11_0, arg_11_1) - arg_11_0) / num
+	return norm_value / range
 end
 
-local tbl_10 = {
+local gamma_value_settings = {
 	start_value = 2.2,
 	min = 1.5,
 	num_decimals = 1,
 	max = 5
 }
-local tbl_11 = {
+local panning_value_settings = {
 	min = 1,
 	num_decimals = 0,
 	start_value = 1,
@@ -878,7 +879,7 @@ local tbl_11 = {
 		speakers = 1
 	}
 }
-local tbl_12 = {
+local dynamic_range_value_settings = {
 	min = 1,
 	num_decimals = 0,
 	start_value = 3,
@@ -903,7 +904,7 @@ local tbl_12 = {
 		low = 1
 	}
 }
-local tbl_13 = {
+local generic_input_actions = {
 	default = {
 		{
 			input_action = "analog_input",
@@ -917,44 +918,44 @@ local tbl_13 = {
 		}
 	}
 }
-local str = "TitleLoadingUI"
+local VIDEO_REFERENCE_NAME = "TitleLoadingUI"
 
 TitleLoadingUI = class(TitleLoadingUI)
 
-TitleLoadingUI.init = function (self, arg_12_1, arg_12_2, arg_12_3)
+TitleLoadingUI.init = function (self, world, params, force_done)
 	-- function 12
 	Framerate.set_low_power()
 
-	var_0_19 = tbl_9
+	first_time_video = dlc_intro_video
 
-	local get_title_settings = Managers.backend:get_title_settings()
+	local title_settings = Managers.backend:get_title_settings()
 
-	if not get_title_settings and not get_title_settings.video_override then
-		var_0_19 = get_title_settings.video_override
+	if title_settings and title_settings.video_override then
+		first_time_video = title_settings.video_override
 
-		if not var_0_19.subtitle_template_settings_path and not Application.can_get("lua", var_0_19.subtitle_template_settings_path) then
-			var_0_19.subtitle_template_settings = local_require(var_0_19.subtitle_template_settings_path)
+		if first_time_video.subtitle_template_settings_path and Application.can_get("lua", first_time_video.subtitle_template_settings_path) then
+			first_time_video.subtitle_template_settings = local_require(first_time_video.subtitle_template_settings_path)
 		end
 	end
 
-	if not arg_12_2.is_prologue then
-		var_0_19 = tbl_8
+	if params.is_prologue then
+		first_time_video = prologue_video
 	end
 
 	self.render_settings = {
 		snap_pixel_positions = true
 	}
-	self._world = arg_12_1
+	self._world = world
 	self._done = false
-	self._force_done = arg_12_3
+	self._force_done = force_done
 	self._startup_settings_done = false
 	self._settings_index = 1
 	self._needs_cursor_pop = false
 	self._current_inputs = {}
-	self._display_startup_settings = arg_12_2.gamma
-	self._trailer = arg_12_2.trailer
+	self._display_startup_settings = params.gamma
+	self._trailer = params.trailer
 
-	if not (self._trailer or self._display_startup_settings) then
+	if not self._trailer and not self._display_startup_settings then
 		self._done = true
 	end
 
@@ -963,8 +964,8 @@ TitleLoadingUI.init = function (self, arg_12_1, arg_12_2, arg_12_3)
 	Managers.input:map_device_to_service("title_loading_ui", "mouse")
 	Managers.input:map_device_to_service("title_loading_ui", "gamepad")
 
-	if not var_0_19 then
-		Managers.package:load("resource_packages/videos/" .. var_0_19.material_name, "intro_cinematic", callback(self, "cb_cinematic_package_loaded"), true)
+	if first_time_video then
+		Managers.package:load("resource_packages/videos/" .. first_time_video.material_name, "intro_cinematic", callback(self, "cb_cinematic_package_loaded"), true)
 
 		self._loading_packages = true
 	else
@@ -986,96 +987,96 @@ end
 
 TitleLoadingUI._setup_gui = function (self)
 	-- function 15
-	self._ui_renderer = UIRenderer.create(self._world, "material", "materials/ui/ui_1080p_title_screen", "material", "materials/ui/ui_1080p_common", "material", "materials/ui/ui_1080p_versus_available_common", "material", "materials/ui/ui_1080p_menu_atlas_textures", "material", var_0_19.video_name, "material", "materials/fonts/gw_fonts")
+	self._ui_renderer = UIRenderer.create(self._world, "material", "materials/ui/ui_1080p_title_screen", "material", "materials/ui/ui_1080p_common", "material", "materials/ui/ui_1080p_versus_available_common", "material", "materials/ui/ui_1080p_menu_atlas_textures", "material", first_time_video.video_name, "material", "materials/fonts/gw_fonts")
 
 	self:_create_elements()
 
 	self._loading_packages = nil
 
-	if not Managers.transition:loading_icon_active() then
+	if Managers.transition:loading_icon_active() then
 		Managers.transition:hide_loading_icon()
 	end
 end
 
 TitleLoadingUI._create_elements = function (self)
 	-- function 16
-	self._ui_scenegraph = UISceneGraph.init_scenegraph(tbl)
-	self._video_widget = UIWidget.init(UIWidgets.create_splash_video(var_0_19, str))
+	self._ui_scenegraph = UISceneGraph.init_scenegraph(scenegraph_definition)
+	self._video_widget = UIWidget.init(UIWidgets.create_splash_video(first_time_video, VIDEO_REFERENCE_NAME))
 	self._skip_widget = UIWidget.init(skip_widget)
-	self._dead_space_filler_widget = UIWidget.init(tbl_2)
-	self._done_button = UIWidget.init(create_default_button)
+	self._dead_space_filler_widget = UIWidget.init(dead_space_filler_widget)
+	self._done_button = UIWidget.init(done_button)
 
-	if not self._display_startup_settings then
+	if self._display_startup_settings then
 		ShowCursorStack.show("TitleLoadingUI")
 
 		self._needs_cursor_pop = true
 
-		local tbl_3 = {}
-		local tbl_4 = {}
+		local gamma_widgets = {}
+		local gamma_widgets_by_name = {}
 
-		for k, v in pairs(tbl_5) do
-			local var_16_2 = UIWidget.init(v)
+		for name, widget_definition in pairs(gamma_widget_definitions) do
+			local widget = UIWidget.init(widget_definition)
 
-			tbl_3[#tbl_3 + 1] = var_16_2
-			tbl_4[k] = var_16_2
+			gamma_widgets[#gamma_widgets + 1] = widget
+			gamma_widgets_by_name[name] = widget
 		end
 
-		self._gamma_widgets = tbl_3
-		self._gamma_widgets_by_name = tbl_4
+		self._gamma_widgets = gamma_widgets
+		self._gamma_widgets_by_name = gamma_widgets_by_name
 
-		local tbl_8 = {}
-		local tbl_9 = {}
+		local panning_widgets = {}
+		local panning_widgets_by_name = {}
 
-		for k_2, v_2 in pairs(tbl_6) do
-			local var_16_5 = UIWidget.init(v_2)
+		for name, widget_definition in pairs(panning_widget_definitions) do
+			local widget = UIWidget.init(widget_definition)
 
-			tbl_8[#tbl_8 + 1] = var_16_5
-			tbl_9[k_2] = var_16_5
+			panning_widgets[#panning_widgets + 1] = widget
+			panning_widgets_by_name[name] = widget
 		end
 
-		self._panning_widgets = tbl_8
-		self._panning_widgets_by_name = tbl_9
+		self._panning_widgets = panning_widgets
+		self._panning_widgets_by_name = panning_widgets_by_name
 
-		local tbl_10 = {}
-		local tbl_11 = {}
+		local dynamic_range_widgets = {}
+		local dynamic_range_widgets_by_name = {}
 
-		for k_3, v_3 in pairs(tbl_7) do
-			local var_16_8 = UIWidget.init(v_3)
+		for name, widget_definition in pairs(dynamic_range_widget_definitions) do
+			local widget = UIWidget.init(widget_definition)
 
-			tbl_10[#tbl_10 + 1] = var_16_8
-			tbl_11[k_3] = var_16_8
+			dynamic_range_widgets[#dynamic_range_widgets + 1] = widget
+			dynamic_range_widgets_by_name[name] = widget
 		end
 
-		self._dynamic_range_widgets = tbl_10
-		self._dynamic_range_widgets_by_name = tbl_11
+		self._dynamic_range_widgets = dynamic_range_widgets
+		self._dynamic_range_widgets_by_name = dynamic_range_widgets_by_name
 
 		self:setup_gamma_menu()
 		self:setup_sound_panning_menu()
 		self:setup_sound_dynamic_range_menu()
 
 		local gamma_adjuster = self._gamma_widgets_by_name.gamma_adjuster
-		local _get_input_gamepad_texture_data, var_16_11 = self:_get_input_gamepad_texture_data("confirm")
+		local texture_data, input_text = self:_get_input_gamepad_texture_data("confirm")
 
-		gamma_adjuster.content.gamepad_accept_icon = _get_input_gamepad_texture_data.texture
-		self._ui_scenegraph.console_input_icon_2.size[1] = _get_input_gamepad_texture_data.size[1]
-		self._ui_scenegraph.console_input_icon_2.size[2] = _get_input_gamepad_texture_data.size[2]
+		gamma_adjuster.content.gamepad_accept_icon = texture_data.texture
+		self._ui_scenegraph.console_input_icon_2.size[1] = texture_data.size[1]
+		self._ui_scenegraph.console_input_icon_2.size[2] = texture_data.size[2]
 
-		local PLATFORM = PLATFORM
+		local platform = PLATFORM
 		local ButtonTextureByName = ButtonTextureByName
-		local str_2 = "d_horizontal"
+		local str = "d_horizontal"
 		local flag
 
-		flag = not IS_WINDOWS and "xb1" and PLATFORM
+		flag = (not IS_WINDOWS or not "xb1") and not not platform
 
-		local var_16_16, var_16_17 = ButtonTextureByName(str_2, flag)
+		local texture_data, input_text = ButtonTextureByName(str, flag)
 
-		gamma_adjuster.content.gamepad_navigation_icon = var_16_16.texture
-		self._ui_scenegraph.console_input_icon_1.size[1] = var_16_16.size[1]
-		self._ui_scenegraph.console_input_icon_1.size[2] = var_16_16.size[2]
+		gamma_adjuster.content.gamepad_navigation_icon = texture_data.texture
+		self._ui_scenegraph.console_input_icon_1.size[1] = texture_data.size[1]
+		self._ui_scenegraph.console_input_icon_1.size[2] = texture_data.size[2]
 
-		local get_service = Managers.input:get_service("title_loading_ui")
+		local input_service = Managers.input:get_service("title_loading_ui")
 
-		self._menu_input_description = MenuInputDescriptionUI:new(nil, self._ui_renderer, get_service, 5, 10, tbl_13.default)
+		self._menu_input_description = MenuInputDescriptionUI:new(nil, self._ui_renderer, input_service, 5, 10, generic_input_actions.default)
 
 		self._menu_input_description:set_input_description(nil)
 	else
@@ -1091,35 +1092,52 @@ TitleLoadingUI.setup_gamma_menu = function (self)
 	-- function 17
 	local gamma_stepper = self._gamma_widgets_by_name.gamma_stepper
 	local gamma_adjuster = self._gamma_widgets_by_name.gamma_adjuster
-	local min = tbl_10.min
-	local max = tbl_10.max
-	local start_value = tbl_10.start_value
+	local min, max, start_value = gamma_value_settings.min, gamma_value_settings.max, gamma_value_settings.start_value
 	local user_setting = Application.user_setting("render_settings", "gamma")
 
-	user_setting = user_setting or start_value
+	if not user_setting then
+		-- Nothing
+	end
+
+	user_setting = start_value
+
+	local value = user_setting
+
+	::label_17_0::
+
 	gamma_stepper.content.setting_text = ""
-	gamma_stepper.content.value = user_setting
+	gamma_stepper.content.value = value
 
-	local var_17_6 = fn_2(min, max, user_setting)
+	local internal_value = get_slider_progress(min, max, value)
 
-	gamma_stepper.content.internal_value = var_17_6
-	gamma_adjuster.content.value_text = string.format("%.1f", user_setting)
+	gamma_stepper.content.internal_value = internal_value
+
+	local gamma_adjuster_content = gamma_adjuster.content
+
+	gamma_adjuster_content.value_text = string.format("%.1f", value)
 end
 
 TitleLoadingUI.setup_sound_panning_menu = function (self)
 	-- function 18
 	local stepper = self._panning_widgets_by_name.stepper
-	local min = tbl_11.min
-	local max = tbl_11.max
-	local start_value = tbl_11.start_value
-	local options = tbl_11.options
-	local option_index_by_key = tbl_11.option_index_by_key
-	local get = DefaultUserSettings.get("user_settings", "sound_panning_rule")
+	local min, max, start_value = panning_value_settings.min, panning_value_settings.max, panning_value_settings.start_value
+	local options = panning_value_settings.options
+	local option_index_by_key = panning_value_settings.option_index_by_key
+	local default_value = DefaultUserSettings.get("user_settings", "sound_panning_rule")
 	local user_setting = Application.user_setting("sound_panning_rule")
 
-	user_setting = user_setting or get
+	if not user_setting then
+		-- Nothing
+	end
+
+	user_setting = default_value
+
+	local sound_panning_rule = user_setting
+
+	::label_18_0::
+
 	stepper.content.setting_text = ""
-	stepper.content.value = user_setting
+	stepper.content.value = sound_panning_rule
 	stepper.content.internal_value = start_value
 
 	self:_change_sound_panning_display_by_value(start_value)
@@ -1128,25 +1146,32 @@ end
 TitleLoadingUI.setup_sound_dynamic_range_menu = function (self)
 	-- function 19
 	local stepper = self._dynamic_range_widgets_by_name.stepper
-	local min = tbl_12.min
-	local max = tbl_12.max
-	local start_value = tbl_12.start_value
-	local options = tbl_12.options
-	local option_index_by_key = tbl_12.option_index_by_key
-	local get = DefaultUserSettings.get("user_settings", "dynamic_range_sound")
+	local min, max, start_value = dynamic_range_value_settings.min, dynamic_range_value_settings.max, dynamic_range_value_settings.start_value
+	local options = dynamic_range_value_settings.options
+	local option_index_by_key = dynamic_range_value_settings.option_index_by_key
+	local default_value = DefaultUserSettings.get("user_settings", "dynamic_range_sound")
 	local user_setting = Application.user_setting("dynamic_range_sound")
 
-	user_setting = user_setting or get
+	if not user_setting then
+		-- Nothing
+	end
+
+	user_setting = default_value
+
+	local dynamic_range_sound = user_setting
+
+	::label_19_0::
+
 	stepper.content.setting_text = ""
-	stepper.content.value = user_setting
+	stepper.content.value = dynamic_range_sound
 	stepper.content.internal_value = start_value
 
 	self:_change_sound_dynamic_range_display_by_value(start_value)
 end
 
-TitleLoadingUI.update = function (self, arg_20_1, arg_20_2)
+TitleLoadingUI.update = function (self, dt, t)
 	-- function 20
-	if not DO_RELOAD then
+	if DO_RELOAD then
 		self:_create_elements()
 	end
 
@@ -1155,44 +1180,53 @@ TitleLoadingUI.update = function (self, arg_20_1, arg_20_2)
 	end
 
 	if not self._startup_settings_done then
-		local is_device_active = Managers.input:is_device_active("gamepad")
-		local _settings_index = self._settings_index
+		local gamepad_active = Managers.input:is_device_active("gamepad")
+		local settings_index = self._settings_index
 
-		if _settings_index == 1 then
-			local gamma_stepper = self._gamma_widgets_by_name.gamma_stepper
+		if settings_index == 1 then
+			local stepper = self._gamma_widgets_by_name.gamma_stepper
+			local change_made = self:_handle_stepper_input(stepper, gamma_value_settings, gamepad_active, dt)
 
-			if not self:_handle_stepper_input(gamma_stepper, tbl_10, is_device_active, arg_20_1) then
-				local min = tbl_10.min
-				local max = tbl_10.max
-				local num_decimals = tbl_10.num_decimals
-				local internal_value = gamma_stepper.content.internal_value
-				local round_with_precision = math.round_with_precision(min + (max - min) * internal_value, num_decimals or 0)
+			if change_made then
+				local min = gamma_value_settings.min
+				local max = gamma_value_settings.max
+				local num_decimals = gamma_value_settings.num_decimals
+				local internal_value = stepper.content.internal_value
+				local value = math.round_with_precision(min + (max - min) * internal_value, not not num_decimals or not not 0)
 
-				gamma_stepper.content.value = round_with_precision
-				self._gamma_widgets_by_name.gamma_adjuster.content.value_text = string.format("%.1f", round_with_precision)
+				stepper.content.value = value
 
-				Application.set_render_setting("gamma", round_with_precision)
+				local gamma_adjuster = self._gamma_widgets_by_name.gamma_adjuster
+				local gamma_adjuster_content = gamma_adjuster.content
+
+				gamma_adjuster_content.value_text = string.format("%.1f", value)
+
+				Application.set_render_setting("gamma", value)
 			end
-		elseif _settings_index == 2 then
-			local _panning_widgets_by_name = self._panning_widgets_by_name
-			local stepper = _panning_widgets_by_name.stepper
+		elseif settings_index == 2 then
+			local panning_widgets_by_name = self._panning_widgets_by_name
+			local stepper = panning_widgets_by_name.stepper
+			local change_made = self:_handle_stepper_input(stepper, panning_value_settings, gamepad_active, dt)
 
-			if not self:_handle_stepper_input(stepper, tbl_11, is_device_active, arg_20_1) then
-				local min_2 = tbl_11.min
-				local max_2 = tbl_11.max
-				local num_decimals_2 = tbl_11.num_decimals
-				local internal_value_2 = stepper.content.internal_value
-				local round_with_precision_2 = math.round_with_precision(min_2 + (max_2 - min_2) * internal_value_2, num_decimals_2 or 0)
-				local var_20_15 = tbl_11.options[round_with_precision_2]
+			if change_made then
+				local min = panning_value_settings.min
+				local max = panning_value_settings.max
+				local num_decimals = panning_value_settings.num_decimals
+				local internal_value = stepper.content.internal_value
+				local index = math.round_with_precision(min + (max - min) * internal_value, not not num_decimals or not not 0)
+				local options = panning_value_settings.options
+				local option = options[index]
 
-				stepper.content.value = var_20_15.value
+				stepper.content.value = option.value
 
-				self:_change_sound_panning_display_by_value(round_with_precision_2)
+				self:_change_sound_panning_display_by_value(index)
 			else
 				for i = 1, 2 do
-					local hotspot = _panning_widgets_by_name["sound_option_button_" .. i].content.hotspot
+					local widget_name = "sound_option_button_" .. i
+					local widget = panning_widgets_by_name[widget_name]
+					local hotspot = widget.content.hotspot
 
-					if not (not hotspot.on_release and hotspot.is_selected) then
+					if hotspot.on_release and not hotspot.is_selected then
 						hotspot.on_release = false
 
 						self:_change_sound_panning_display_by_value(i)
@@ -1201,104 +1235,126 @@ TitleLoadingUI.update = function (self, arg_20_1, arg_20_2)
 					end
 				end
 			end
-		elseif _settings_index == 3 then
-			local stepper_2 = self._dynamic_range_widgets_by_name.stepper
+		elseif settings_index == 3 then
+			local stepper = self._dynamic_range_widgets_by_name.stepper
+			local change_made = self:_handle_stepper_input(stepper, dynamic_range_value_settings, gamepad_active, dt)
 
-			if not self:_handle_stepper_input(stepper_2, tbl_12, is_device_active, arg_20_1) then
-				local min_3 = tbl_12.min
-				local max_3 = tbl_12.max
-				local num_decimals_3 = tbl_12.num_decimals
-				local internal_value_3 = stepper_2.content.internal_value
-				local round_with_precision_3 = math.round_with_precision(min_3 + (max_3 - min_3) * internal_value_3, num_decimals_3 or 0)
-				local var_20_23 = tbl_12.options[round_with_precision_3]
+			if change_made then
+				local min = dynamic_range_value_settings.min
+				local max = dynamic_range_value_settings.max
+				local num_decimals = dynamic_range_value_settings.num_decimals
+				local internal_value = stepper.content.internal_value
+				local index = math.round_with_precision(min + (max - min) * internal_value, not not num_decimals or not not 0)
+				local options = dynamic_range_value_settings.options
+				local option = options[index]
 
-				stepper_2.content.value = var_20_23.value
+				stepper.content.value = option.value
 
-				self:_change_sound_dynamic_range_display_by_value(round_with_precision_3)
+				self:_change_sound_dynamic_range_display_by_value(index)
 			end
 		end
 
-		self:_update_continue_button(is_device_active, arg_20_1)
+		self:_update_continue_button(gamepad_active, dt)
 	else
-		self:_update_input_text(arg_20_1)
-		self:_update_input(arg_20_1)
+		self:_update_input_text(dt)
+		self:_update_input(dt)
 	end
 
-	self:_render(arg_20_1)
+	self:_render(dt)
 
-	if not self.cutscene_overlay_ui then
-		self.cutscene_overlay_ui:update(arg_20_1)
+	if self.cutscene_overlay_ui then
+		self.cutscene_overlay_ui:update(dt)
 	end
 end
 
-TitleLoadingUI._change_sound_panning_display_by_value = function (self, arg_21_1)
+TitleLoadingUI._change_sound_panning_display_by_value = function (self, value)
 	-- function 21
-	local min = tbl_11.min
-	local max = tbl_11.max
-	local var_21_2 = fn_2(min, max, arg_21_1)
-	local value = tbl_11.options[arg_21_1].value
-	local _panning_widgets_by_name = self._panning_widgets_by_name
-	local stepper = _panning_widgets_by_name.stepper
+	local min = panning_value_settings.min
+	local max = panning_value_settings.max
+	local internal_value = get_slider_progress(min, max, value)
+	local options = panning_value_settings.options
+	local option = options[value]
+	local option_value = option.value
+	local panning_widgets_by_name = self._panning_widgets_by_name
+	local stepper = panning_widgets_by_name.stepper
 
-	stepper.content.value = value
-	stepper.content.internal_value = var_21_2
+	stepper.content.value = option_value
+	stepper.content.internal_value = internal_value
 
 	for i = 1, 2 do
-		_panning_widgets_by_name[("sound_option_" .. i) .. "_glow"].content.visible = arg_21_1 == i
-		_panning_widgets_by_name["sound_option_button_" .. i].content.hotspot.is_selected = i == arg_21_1
+		local widget_name = "sound_option_" .. i
+		local glow_widget_name = widget_name .. "_glow"
+		local widget = panning_widgets_by_name[glow_widget_name]
+
+		widget.content.visible = value == i
+
+		local button_widget_name = "sound_option_button_" .. i
+		local button_widget = panning_widgets_by_name[button_widget_name]
+		local hotspot = button_widget.content.hotspot
+
+		hotspot.is_selected = i == value
 	end
 
-	_panning_widgets_by_name.sound_presentation_image.content.texture_id = "sound_setting_icon_0" .. arg_21_1
+	panning_widgets_by_name.sound_presentation_image.content.texture_id = "sound_setting_icon_0" .. value
 end
 
-TitleLoadingUI._change_sound_dynamic_range_display_by_value = function (self, arg_22_1)
+TitleLoadingUI._change_sound_dynamic_range_display_by_value = function (self, value)
 	-- function 22
-	local min = tbl_12.min
-	local max = tbl_12.max
-	local var_22_2 = fn_2(min, max, arg_22_1)
-	local var_22_3 = tbl_12.options[arg_22_1]
-	local value = var_22_3.value
-	local text = var_22_3.text
-	local _dynamic_range_widgets_by_name = self._dynamic_range_widgets_by_name
-	local stepper = _dynamic_range_widgets_by_name.stepper
+	local min = dynamic_range_value_settings.min
+	local max = dynamic_range_value_settings.max
+	local internal_value = get_slider_progress(min, max, value)
+	local options = dynamic_range_value_settings.options
+	local option = options[value]
+	local option_value = option.value
+	local option_text = option.text
+	local dynamic_range_widgets_by_name = self._dynamic_range_widgets_by_name
+	local stepper = dynamic_range_widgets_by_name.stepper
 
-	stepper.content.setting_text = text
-	stepper.content.value = value
-	stepper.content.internal_value = var_22_2
-	_dynamic_range_widgets_by_name.sound_presentation_image.content.texture_id = "sound_setting_icon_0" .. arg_22_1 + 4
+	stepper.content.setting_text = option_text
+	stepper.content.value = option_value
+	stepper.content.internal_value = internal_value
+	dynamic_range_widgets_by_name.sound_presentation_image.content.texture_id = "sound_setting_icon_0" .. value + 4
 end
 
-TitleLoadingUI._update_continue_button = function (self, arg_23_1, arg_23_2)
+TitleLoadingUI._update_continue_button = function (self, gamepad_active, dt)
 	-- function 23
-	self:_animate_button(self._done_button, arg_23_2)
+	self:_animate_button(self._done_button, dt)
 
-	local get_service = Managers.input:get_service("title_loading_ui")
+	local input_service = Managers.input:get_service("title_loading_ui")
 
-	if not arg_23_1 and get_service:get("confirm") and not self._done_button.content.button_hotspot.on_release then
+	if (not gamepad_active or not input_service:get("confirm")) and self._done_button.content.button_hotspot.on_release then
 		self._done_button.content.button_hotspot.on_release = nil
 
-		local _settings_index = self._settings_index
+		local settings_index = self._settings_index
 
-		if _settings_index == 1 then
-			local value = self._gamma_widgets_by_name.gamma_stepper.content.value
+		if settings_index == 1 then
+			local gamma_stepper = self._gamma_widgets_by_name.gamma_stepper
+			local content = gamma_stepper.content
+			local gamma = content.value
 
-			Application.set_user_setting("render_settings", "gamma", value)
-		elseif _settings_index == 2 then
-			local value_2 = self._panning_widgets_by_name.stepper.content.value
+			Application.set_user_setting("render_settings", "gamma", gamma)
+		elseif settings_index == 2 then
+			local stepper = self._panning_widgets_by_name.stepper
+			local content = stepper.content
+			local value = content.value
 
-			Application.set_user_setting("sound_panning_rule", value_2)
-		elseif _settings_index == 3 then
-			local value_3 = self._dynamic_range_widgets_by_name.stepper.content.value
+			Application.set_user_setting("sound_panning_rule", value)
+		elseif settings_index == 3 then
+			local stepper = self._dynamic_range_widgets_by_name.stepper
+			local content = stepper.content
+			local value = content.value
 
-			Application.set_user_setting("dynamic_range_sound", value_3)
+			Application.set_user_setting("dynamic_range_sound", value)
 		end
 
-		if _settings_index == 3 then
+		local end_index = 3
+
+		if settings_index == end_index then
 			SaveData.gamma_corrected = true
 
 			Managers.save:auto_save(SaveFileName, SaveData)
 
-			if not IS_WINDOWS then
+			if IS_WINDOWS then
 				Application.save_user_settings()
 			end
 
@@ -1307,323 +1363,384 @@ TitleLoadingUI._update_continue_button = function (self, arg_23_1, arg_23_2)
 
 			ShowCursorStack.hide("TitleLoadingUI")
 		else
-			self._settings_index = _settings_index + 1
+			self._settings_index = settings_index + 1
 		end
 	end
 end
 
-TitleLoadingUI._animate_button = function (self, arg_24_1, arg_24_2)
+TitleLoadingUI._animate_button = function (self, widget, dt)
 	-- function 24
 	local ui_renderer = self.ui_renderer
-	local scenegraph_id = arg_24_1.scenegraph_id
-	local content = arg_24_1.content
-	local style = arg_24_1.style
-	local button_hotspot = content.button_hotspot
-	local is_hover = button_hotspot.is_hover
-	local is_selected = button_hotspot.is_selected
-	local is_clicked = button_hotspot.is_clicked
+	local scenegraph_id = widget.scenegraph_id
+	local content = widget.content
+	local style = widget.style
+	local hotspot = content.button_hotspot
+	local is_hover = hotspot.is_hover
+	local is_selected = hotspot.is_selected
+	local is_clicked = hotspot.is_clicked
 
-	is_clicked = not is_clicked and button_hotspot.is_clicked == 0
-
-	local input_progress = button_hotspot.input_progress
-
-	input_progress = input_progress or 0
-
-	local hover_progress = button_hotspot.hover_progress
-
-	hover_progress = hover_progress or 0
-
-	local selection_progress = button_hotspot.selection_progress
-
-	selection_progress = selection_progress or 0
-
-	local num = 8
-	local num_2 = 20
-
-	if not is_clicked then
-		input_progress = math.min(input_progress + arg_24_2 * num_2, 1)
-	else
-		input_progress = math.max(input_progress - arg_24_2 * num_2, 0)
+	if is_clicked then
+		-- Nothing
 	end
 
-	local easeOutCubic = math.easeOutCubic(input_progress)
-	local easeInCubic = math.easeInCubic(input_progress)
+	if hotspot.is_clicked ~= 0 then
+		is_clicked = false
 
-	if not is_hover then
-		hover_progress = math.min(hover_progress + arg_24_2 * num, 1)
-	else
-		hover_progress = math.max(hover_progress - arg_24_2 * num, 0)
+		goto label_24_0
 	end
 
-	local easeOutCubic_2 = math.easeOutCubic(hover_progress)
-	local easeInCubic_2 = math.easeInCubic(hover_progress)
+	is_clicked = true
 
-	if not is_selected then
-		selection_progress = math.min(selection_progress + arg_24_2 * num, 1)
-	else
-		selection_progress = math.max(selection_progress - arg_24_2 * num, 0)
+	local input_pressed = is_clicked
+
+	::label_24_0::
+
+	local input_progress_2 = hotspot.input_progress
+
+	if not input_progress_2 then
+		-- Nothing
 	end
 
-	local easeOutCubic_3 = math.easeOutCubic(selection_progress)
-	local easeInCubic_3 = math.easeInCubic(selection_progress)
-	local max = math.max(hover_progress, selection_progress)
-	local max_2 = math.max(easeOutCubic_3, easeOutCubic_2)
-	local max_3 = math.max(easeInCubic_2, easeInCubic_3)
-	local num_3 = 255 * input_progress
+	input_progress_2 = 0
+
+	local input_progress = input_progress_2
+
+	::label_24_1::
+
+	local hover_progress_2 = hotspot.hover_progress
+
+	if not hover_progress_2 then
+		-- Nothing
+	end
+
+	hover_progress_2 = 0
+
+	local hover_progress = hover_progress_2
+
+	::label_24_2::
+
+	local selection_progress_2 = hotspot.selection_progress
+
+	if not selection_progress_2 then
+		-- Nothing
+	end
+
+	selection_progress_2 = 0
+
+	local selection_progress = selection_progress_2
+
+	::label_24_3::
+
+	local speed = 8
+	local input_speed = 20
+
+	if input_pressed then
+		input_progress = math.min(input_progress + dt * input_speed, 1)
+	else
+		input_progress = math.max(input_progress - dt * input_speed, 0)
+	end
+
+	local input_easing_out_progress = math.easeOutCubic(input_progress)
+	local input_easing_in_progress = math.easeInCubic(input_progress)
+
+	if is_hover then
+		hover_progress = math.min(hover_progress + dt * speed, 1)
+	else
+		hover_progress = math.max(hover_progress - dt * speed, 0)
+	end
+
+	local hover_easing_out_progress = math.easeOutCubic(hover_progress)
+	local hover_easing_in_progress = math.easeInCubic(hover_progress)
+
+	if is_selected then
+		selection_progress = math.min(selection_progress + dt * speed, 1)
+	else
+		selection_progress = math.max(selection_progress - dt * speed, 0)
+	end
+
+	local select_easing_out_progress = math.easeOutCubic(selection_progress)
+	local select_easing_in_progress = math.easeInCubic(selection_progress)
+	local combined_progress = math.max(hover_progress, selection_progress)
+	local combined_out_progress = math.max(select_easing_out_progress, hover_easing_out_progress)
+	local combined_in_progress = math.max(hover_easing_in_progress, select_easing_in_progress)
+	local input_alpha = 255 * input_progress
 
 	style.clicked_rect.color[1] = 100 * input_progress
 
-	local num_4 = 255 * hover_progress
+	local hover_alpha = 255 * hover_progress
 
-	style.hover_glow.color[1] = num_4
+	style.hover_glow.color[1] = hover_alpha
 
-	local num_5 = 255 * selection_progress
-	local title_text_disabled = style.title_text_disabled
-	local default_text_color = title_text_disabled.default_text_color
-	local text_color = title_text_disabled.text_color
+	local select_alpha = 255 * selection_progress
+	local text_disabled_style = style.title_text_disabled
+	local disabled_default_text_color = text_disabled_style.default_text_color
+	local disabled_text_color = text_disabled_style.text_color
 
-	text_color[2] = default_text_color[2] * 0.4
-	text_color[3] = default_text_color[3] * 0.4
-	text_color[4] = default_text_color[4] * 0.4
-	button_hotspot.hover_progress = hover_progress
-	button_hotspot.input_progress = input_progress
-	button_hotspot.selection_progress = selection_progress
+	disabled_text_color[2] = disabled_default_text_color[2] * 0.4
+	disabled_text_color[3] = disabled_default_text_color[3] * 0.4
+	disabled_text_color[4] = disabled_default_text_color[4] * 0.4
+	hotspot.hover_progress = hover_progress
+	hotspot.input_progress = input_progress
+	hotspot.selection_progress = selection_progress
 
-	local title_text = style.title_text
-	local text_color_2 = title_text.text_color
-	local default_text_color_2 = title_text.default_text_color
-	local select_text_color = title_text.select_text_color
+	local title_text_style = style.title_text
+	local title_text_color = title_text_style.text_color
+	local title_default_text_color = title_text_style.default_text_color
+	local title_select_text_color = title_text_style.select_text_color
 
-	Colors.lerp_color_tables(default_text_color_2, select_text_color, max, text_color_2)
+	Colors.lerp_color_tables(title_default_text_color, title_select_text_color, combined_progress, title_text_color)
 end
 
-TitleLoadingUI._handle_stepper_input = function (self, arg_25_1, arg_25_2, arg_25_3, arg_25_4)
+TitleLoadingUI._handle_stepper_input = function (self, widget, stepper_settings, gamepad_active, dt)
 	-- function 25
-	local get_service = Managers.input:get_service("title_loading_ui")
-	local content = arg_25_1.content
+	local input_service = Managers.input:get_service("title_loading_ui")
+	local content = widget.content
 	local left_hotspot = content.left_hotspot
 	local right_hotspot = content.right_hotspot
 
-	if not left_hotspot.on_hover_enter then
-		self:_on_stepper_arrow_hover(arg_25_1, "left_arrow_hover")
-	elseif not left_hotspot.on_hover_exit then
-		self:_on_stepper_arrow_dehover(arg_25_1, "left_arrow_hover")
+	if left_hotspot.on_hover_enter then
+		self:_on_stepper_arrow_hover(widget, "left_arrow_hover")
+	elseif left_hotspot.on_hover_exit then
+		self:_on_stepper_arrow_dehover(widget, "left_arrow_hover")
 	end
 
-	if not right_hotspot.on_hover_enter then
-		self:_on_stepper_arrow_hover(arg_25_1, "right_arrow_hover")
-	elseif not right_hotspot.on_hover_exit then
-		self:_on_stepper_arrow_dehover(arg_25_1, "right_arrow_hover")
+	if right_hotspot.on_hover_enter then
+		self:_on_stepper_arrow_hover(widget, "right_arrow_hover")
+	elseif right_hotspot.on_hover_exit then
+		self:_on_stepper_arrow_dehover(widget, "right_arrow_hover")
 	end
 
 	local input_cooldown = content.input_cooldown
 	local input_cooldown_multiplier = content.input_cooldown_multiplier
-	local flag = false
+	local on_cooldown_last_frame = false
 
-	if not input_cooldown then
-		flag = true
+	if input_cooldown then
+		on_cooldown_last_frame = true
 
-		local max = math.max(input_cooldown - arg_25_4, 0)
+		local new_cooldown = math.max(input_cooldown - dt, 0)
 
-		input_cooldown = not (max > 0) or not max or nil
+		input_cooldown = (not (new_cooldown > 0) or not new_cooldown) and not not nil
 		content.input_cooldown = input_cooldown
 	end
 
 	local internal_value = content.internal_value
-	local num_decimals = arg_25_2.num_decimals
-	local min = arg_25_2.min
-	local num = (arg_25_2.max - min) * 10^num_decimals
-	local num_2 = 1 / num
-	local flag_2 = not arg_25_3 and get_service:get("analog_input")
-	local num_3 = 0.01
-	local time = Managers.time:time("main")
-	local flag_3 = false
+	local num_decimals = stepper_settings.num_decimals
+	local min = stepper_settings.min
+	local max = stepper_settings.max
+	local diff = max - min
+	local total_step = diff * 10^num_decimals
+	local step = 1 / total_step
+	local move = not not gamepad_active and not not input_service:get("analog_input")
+	local analog_speed = 0.01
+	local current_time = Managers.time:time("main")
+	local input_been_made = false
 
-	if left_hotspot.is_clicked == 0 or not arg_25_3 or not get_service:get("move_left_hold") then
+	if left_hotspot.is_clicked == 0 or gamepad_active and input_service:get("move_left_hold") then
 		if not input_cooldown then
-			internal_value = math.clamp(internal_value - num_2, 0, 1)
-			flag_3 = true
+			internal_value = math.clamp(internal_value - step, 0, 1)
+			input_been_made = true
 		end
-	elseif right_hotspot.is_clicked == 0 or not arg_25_3 or not get_service:get("move_right_hold") then
+	elseif right_hotspot.is_clicked == 0 or gamepad_active and input_service:get("move_right_hold") then
 		if not input_cooldown then
-			internal_value = math.clamp(internal_value + num_2, 0, 1)
-			flag_3 = true
+			internal_value = math.clamp(internal_value + step, 0, 1)
+			input_been_made = true
 		end
-	elseif not (not flag_2 and not (math.abs(flag_2.x) > 0) or input_cooldown) then
-		local max_2 = math.max(math.abs(math.pow(flag_2.x, 2) * num * arg_25_4 * num_3), num_2)
+	elseif move and math.abs(move.x) > 0 and not input_cooldown then
+		local step_change = math.max(math.abs(math.pow(move.x, 2) * total_step * dt * analog_speed), step)
 
-		internal_value = math.clamp(internal_value + max_2 * math.sign(flag_2.x), 0, 1)
-		flag_3 = true
+		internal_value = math.clamp(internal_value + step_change * math.sign(move.x), 0, 1)
+		input_been_made = true
 	end
 
-	local flag_4 = false
+	local change_made = false
 
 	if content.internal_value ~= internal_value then
-		flag_4 = true
+		change_made = true
 		content.internal_value = internal_value
 	end
 
-	if not flag_3 then
-		if not flag then
-			local max_3 = math.max(input_cooldown_multiplier - 0.1, 0.1)
-
-			content.input_cooldown = 0.2 * math.ease_in_exp(max_3)
-			content.input_cooldown_multiplier = max_3
+	if input_been_made then
+		if on_cooldown_last_frame then
+			input_cooldown_multiplier = math.max(input_cooldown_multiplier - 0.1, 0.1)
+			content.input_cooldown = 0.2 * math.ease_in_exp(input_cooldown_multiplier)
+			content.input_cooldown_multiplier = input_cooldown_multiplier
 		else
-			local num_4 = 1
-
-			content.input_cooldown = 0.2 * math.ease_in_exp(num_4)
-			content.input_cooldown_multiplier = num_4
+			input_cooldown_multiplier = 1
+			content.input_cooldown = 0.2 * math.ease_in_exp(input_cooldown_multiplier)
+			content.input_cooldown_multiplier = input_cooldown_multiplier
 		end
 	end
 
-	return flag_4
+	return change_made
 end
 
-TitleLoadingUI._on_stepper_arrow_hover = function (arg_26_0, arg_26_1, arg_26_2)
+TitleLoadingUI._on_stepper_arrow_hover = function (self, widget, style_id)
 	-- function 26
-	local animations = arg_26_1.animations
-	local var_26_1 = arg_26_1.style[arg_26_2]
-	local var_26_2 = var_26_1.color[1]
-	local num = 255
-	local num_2 = 0.2
-	local num_3 = (1 - var_26_2 / num) * num_2
+	local widget_animations = widget.animations
+	local widget_style = widget.style
+	local pass_style = widget_style[style_id]
+	local current_alpha = pass_style.color[1]
+	local target_alpha = 255
+	local total_time = 0.2
+	local animation_duration = (1 - current_alpha / target_alpha) * total_time
 
-	if num_3 > 0 then
-		local str = "stepper_widget_arrow_hover_" .. arg_26_2
+	if animation_duration > 0 then
+		local animation_name_hover = "stepper_widget_arrow_hover_" .. style_id
+		local anim = self:_animate_element_by_time(pass_style.color, 1, current_alpha, target_alpha, animation_duration)
 
-		animations[arg_26_0:_animate_element_by_time(var_26_1.color, 1, var_26_2, num, num_3)] = str
+		widget_animations[anim] = animation_name_hover
 	else
-		var_26_1.color[1] = num
+		pass_style.color[1] = target_alpha
 	end
 end
 
-TitleLoadingUI._on_stepper_arrow_dehover = function (arg_27_0, arg_27_1, arg_27_2)
+TitleLoadingUI._on_stepper_arrow_dehover = function (self, widget, style_id)
 	-- function 27
-	local animations = arg_27_1.animations
-	local var_27_1 = arg_27_1.style[arg_27_2]
-	local var_27_2 = var_27_1.color[1]
-	local num = 0
-	local num_2 = 0.2
-	local num_3 = var_27_2 / 255 * num_2
+	local widget_animations = widget.animations
+	local widget_style = widget.style
+	local pass_style = widget_style[style_id]
+	local current_alpha = pass_style.color[1]
+	local target_alpha = 0
+	local total_time = 0.2
+	local animation_duration = current_alpha / 255 * total_time
 
-	if num_3 > 0 then
-		local str = "stepper_widget_arrow_hover_" .. arg_27_2
+	if animation_duration > 0 then
+		local animation_name_hover = "stepper_widget_arrow_hover_" .. style_id
+		local anim = self:_animate_element_by_time(pass_style.color, 1, current_alpha, target_alpha, animation_duration)
 
-		animations[arg_27_0:_animate_element_by_time(var_27_1.color, 1, var_27_2, num, num_3)] = str
+		widget_animations[anim] = animation_name_hover
 	else
-		var_27_1.color[1] = num
+		pass_style.color[1] = target_alpha
 	end
 end
 
-TitleLoadingUI._on_stepper_arrow_pressed = function (arg_28_0, arg_28_1, arg_28_2)
+TitleLoadingUI._on_stepper_arrow_pressed = function (self, widget, style_id)
 	-- function 28
-	local animations = arg_28_1.animations
-	local var_28_1 = arg_28_1.style[arg_28_2]
-	local default_size = var_28_1.default_size
-	local var_28_3 = var_28_1.color[1]
-	local num = 255
-	local num_2 = 0.2
+	local widget_animations = widget.animations
+	local widget_style = widget.style
+	local pass_style = widget_style[style_id]
+	local default_size = pass_style.default_size
+	local current_alpha = pass_style.color[1]
+	local target_alpha = 255
+	local total_time = 0.2
+	local animation_duration = total_time
 
-	if num_2 > 0 then
-		local str = "stepper_widget_arrow_hover_" .. arg_28_2
-		local str_2 = "stepper_widget_arrow_width_" .. arg_28_2
-		local str_3 = "stepper_widget_arrow_height_" .. arg_28_2
+	if animation_duration > 0 then
+		local animation_name_hover = "stepper_widget_arrow_hover_" .. style_id
+		local animation_name_width = "stepper_widget_arrow_width_" .. style_id
+		local animation_name_height = "stepper_widget_arrow_height_" .. style_id
+		local anim = self:_animate_element_by_time(pass_style.color, 1, current_alpha, target_alpha, animation_duration)
 
-		animations[arg_28_0:_animate_element_by_time(var_28_1.color, 1, var_28_3, num, num_2)] = str
-		animations[arg_28_0:_animate_element_by_catmullrom(var_28_1.size, 1, default_size[1], 0.7, 1, 1, 0.7, num_2)] = str_2
-		animations[arg_28_0:_animate_element_by_catmullrom(var_28_1.size, 2, default_size[2], 0.7, 1, 1, 0.7, num_2)] = str_3
+		widget_animations[anim] = animation_name_hover
+		anim = self:_animate_element_by_catmullrom(pass_style.size, 1, default_size[1], 0.7, 1, 1, 0.7, animation_duration)
+		widget_animations[anim] = animation_name_width
+		anim = self:_animate_element_by_catmullrom(pass_style.size, 2, default_size[2], 0.7, 1, 1, 0.7, animation_duration)
+		widget_animations[anim] = animation_name_height
 	else
-		var_28_1.color[1] = num
+		pass_style.color[1] = target_alpha
 	end
 end
 
-TitleLoadingUI._animate_element_by_catmullrom = function (arg_29_0, arg_29_1, arg_29_2, arg_29_3, arg_29_4, arg_29_5, arg_29_6, arg_29_7, arg_29_8)
+TitleLoadingUI._animate_element_by_catmullrom = function (self, target, target_index, target_value, p0, p1, p2, p3, time)
 	-- function 29
-	return (UIAnimation.init(UIAnimation.catmullrom, arg_29_1, arg_29_2, arg_29_3, arg_29_4, arg_29_5, arg_29_6, arg_29_7, arg_29_8))
+	local new_animation = UIAnimation.init(UIAnimation.catmullrom, target, target_index, target_value, p0, p1, p2, p3, time)
+
+	return new_animation
 end
 
-TitleLoadingUI._animate_element_by_time = function (arg_30_0, arg_30_1, arg_30_2, arg_30_3, arg_30_4, arg_30_5)
+TitleLoadingUI._animate_element_by_time = function (self, target, target_index, from, to, time)
 	-- function 30
-	return (UIAnimation.init(UIAnimation.function_by_time, arg_30_1, arg_30_2, arg_30_3, arg_30_4, arg_30_5, math.ease_out_quad))
+	local new_animation = UIAnimation.init(UIAnimation.function_by_time, target, target_index, from, to, time, math.ease_out_quad)
+
+	return new_animation
 end
 
-TitleLoadingUI._get_input_texture_data = function (arg_31_0, arg_31_1)
+TitleLoadingUI._get_input_texture_data = function (self, input_action)
 	-- function 31
-	local get_service = Managers.input:get_service("title_loading_ui")
+	local input_service = Managers.input:get_service("title_loading_ui")
 
-	if Managers.input:is_device_active("keyboard") or not Managers.input:is_device_active("mouse") or not IS_WINDOWS then
-		local PLATFORM = PLATFORM
-		local get_keymapping = get_service:get_keymapping(arg_31_1, PLATFORM)
-		local var_31_3 = get_keymapping[1]
-		local var_31_4 = get_keymapping[2]
-		local var_31_5 = get_keymapping[3]
-		local flag = var_31_4 == UNASSIGNED_KEY
-		local var_31_7
-		local flag_2
+	if (Managers.input:is_device_active("keyboard") or Managers.input:is_device_active("mouse")) and IS_WINDOWS then
+		local platform = PLATFORM
+		local keymap_binding = input_service:get_keymapping(input_action, platform)
+		local device_type = keymap_binding[1]
+		local key_index = keymap_binding[2]
+		local key_action_type = keymap_binding[3]
+		local is_button_unassigned = key_index == UNASSIGNED_KEY
+		local var_31_0
+		local flag
 
-		flag_2 = not flag and "" and Keyboard.button_locale_name(var_31_4)
+		flag = (not is_button_unassigned or not "") and not not Keyboard.button_locale_name(key_index)
 
-		return var_31_7, flag_2
-	elseif not (Managers.input:is_device_active("gamepad") or IS_WINDOWS) then
-		return UISettings.get_gamepad_input_texture_data(get_service, arg_31_1, true)
+		return var_31_0, flag
+	elseif Managers.input:is_device_active("gamepad") or not IS_WINDOWS then
+		return UISettings.get_gamepad_input_texture_data(input_service, input_action, true)
 	end
 end
 
-TitleLoadingUI._get_input_gamepad_texture_data = function (arg_32_0, arg_32_1)
+TitleLoadingUI._get_input_gamepad_texture_data = function (self, input_action)
 	-- function 32
-	local get_service = Managers.input:get_service("title_loading_ui")
+	local input_service = Managers.input:get_service("title_loading_ui")
 
-	return UISettings.get_gamepad_input_texture_data(get_service, arg_32_1, true)
+	return UISettings.get_gamepad_input_texture_data(input_service, input_action, true)
 end
 
-TitleLoadingUI._update_input_text = function (self, arg_33_1)
+TitleLoadingUI._update_input_text = function (self, dt)
 	-- function 33
-	local content = self._skip_widget.content
-	local style = self._skip_widget.style
-	local _ui_scenegraph = self._ui_scenegraph
-	local _get_input_texture_data, var_33_4 = self:_get_input_texture_data("cancel_video_1")
+	local widget_content = self._skip_widget.content
+	local widget_style = self._skip_widget.style
+	local ui_scenegraph = self._ui_scenegraph
+	local texture_data, input_text = self:_get_input_texture_data("cancel_video_1")
 
-	if not _get_input_texture_data then
-		if content.input_text ~= var_33_4 then
-			content.input_text_1 = Localize("input_hold")
-			content.input_text_2 = " [" .. Localize("any_key") .. "] "
-			content.input_icon = nil
+	if not texture_data then
+		if widget_content.input_text ~= input_text then
+			widget_content.input_text_1 = Localize("input_hold")
+			widget_content.input_text_2 = " [" .. Localize("any_key") .. "] "
+			widget_content.input_icon = nil
 		end
-	elseif _get_input_texture_data.texture ~= content.input_icon then
-		content.input_text_1 = Localize("input_hold")
-		_ui_scenegraph.skip_input_icon.size = _get_input_texture_data.size
-		content.input_icon = _get_input_texture_data.texture
-		content.input_text_2 = ""
+	elseif texture_data.texture ~= widget_content.input_icon then
+		widget_content.input_text_1 = Localize("input_hold")
+		ui_scenegraph.skip_input_icon.size = texture_data.size
+		widget_content.input_icon = texture_data.texture
+		widget_content.input_text_2 = ""
 	end
 
-	local num = 10
+	local icon_spacing = 10
 	local flag
 
-	flag = _get_input_texture_data or not true or false
+	if not texture_data then
+		flag = true
+
+		goto label_33_0
+	end
+
+	flag = false
+
+	local using_keyboard = flag
+
+	::label_33_0::
 
 	local IS_WINDOWS = IS_WINDOWS
 
-	IS_WINDOWS = not IS_WINDOWS and flag
-	content.using_keyboard = IS_WINDOWS
+	IS_WINDOWS = not not IS_WINDOWS and not not using_keyboard
+	widget_content.using_keyboard = IS_WINDOWS
 
-	local var_33_8, var_33_9 = UIFontByResolution(style.input_text_1)
-	local text_size, var_33_11, var_33_12 = UIRenderer.text_size(self._ui_renderer, content.input_text_1, var_33_8[1], var_33_9)
+	local font, scaled_font_size = UIFontByResolution(widget_style.input_text_1)
+	local text_width, text_height, min = UIRenderer.text_size(self._ui_renderer, widget_content.input_text_1, font[1], scaled_font_size)
 
-	_ui_scenegraph.skip_input_text_1.size[1] = text_size
-	_ui_scenegraph.skip_input_icon.position[1] = _ui_scenegraph.skip_input_text_1.position[1] + text_size + num
-	_ui_scenegraph.skip_input_text_2.position[1] = text_size
+	ui_scenegraph.skip_input_text_1.size[1] = text_width
+	ui_scenegraph.skip_input_icon.position[1] = ui_scenegraph.skip_input_text_1.position[1] + text_width + icon_spacing
+	ui_scenegraph.skip_input_text_2.position[1] = text_width
 
-	if not _get_input_texture_data then
-		_ui_scenegraph.skip_input_text_3.position[1] = _ui_scenegraph.skip_input_icon.position[1] + _ui_scenegraph.skip_input_icon.size[1] + num
+	if texture_data then
+		ui_scenegraph.skip_input_text_3.position[1] = ui_scenegraph.skip_input_icon.position[1] + ui_scenegraph.skip_input_icon.size[1] + icon_spacing
 	else
-		local var_33_13, var_33_14 = UIFontByResolution(style.input_text_2)
-		local var_33_15 = TextToUpper(content.input_text_2)
-		local text_size_2, var_33_17, var_33_18 = UIRenderer.text_size(self._ui_renderer, var_33_15, var_33_13[1], var_33_14)
+		local font, scaled_font_size = UIFontByResolution(widget_style.input_text_2)
+		local input_text_2 = TextToUpper(widget_content.input_text_2)
+		local text_width, text_height, min = UIRenderer.text_size(self._ui_renderer, input_text_2, font[1], scaled_font_size)
 
-		_ui_scenegraph.skip_input_text_2.size[1] = text_size_2
-		_ui_scenegraph.skip_input_text_3.position[1] = _ui_scenegraph.skip_input_text_2.position[1] + text_size_2
-		self.hold_bar_max_length = text_size_2
+		ui_scenegraph.skip_input_text_2.size[1] = text_width
+		ui_scenegraph.skip_input_text_3.position[1] = ui_scenegraph.skip_input_text_2.position[1] + text_width
+		self.hold_bar_max_length = text_width
 		self._skip_widget.style.hold_bar_bg.size[1] = self.hold_bar_max_length
 	end
 
@@ -1634,89 +1751,90 @@ INPUTS_TO_REMOVE = {}
 
 TitleLoadingUI._update_any_held = function (self)
 	-- function 34
-	local flag = false
+	local held = false
 
-	for k, v in pairs(self._current_inputs) do
-		if v.button(k) < 1 then
-			INPUTS_TO_REMOVE[#INPUTS_TO_REMOVE + 1] = k
+	for input, device in pairs(self._current_inputs) do
+		if device.button(input) < 1 then
+			INPUTS_TO_REMOVE[#INPUTS_TO_REMOVE + 1] = input
 		else
-			flag = true
+			held = true
 		end
 	end
 
-	for i, v_2 in ipairs(INPUTS_TO_REMOVE) do
-		self._current_inputs[v_2] = nil
+	for _, input in ipairs(INPUTS_TO_REMOVE) do
+		self._current_inputs[input] = nil
 	end
 
 	table.clear(INPUTS_TO_REMOVE)
 
-	if IS_WINDOWS or not GameSettingsDevelopment.allow_keyboard_mouse then
-		local any_pressed = Keyboard.any_pressed()
+	if IS_WINDOWS or GameSettingsDevelopment.allow_keyboard_mouse then
+		local input = Keyboard.any_pressed()
 
-		if not any_pressed then
-			self._current_inputs[any_pressed] = Keyboard
+		if input then
+			self._current_inputs[input] = Keyboard
 		end
 
-		local any_pressed_2 = Mouse.any_pressed()
+		local input = Mouse.any_pressed()
 
-		if not any_pressed_2 then
-			self._current_inputs[any_pressed_2] = Mouse
-		end
-	end
-
-	local gamepad = InputAux.input_device_mapping.gamepad
-
-	for i4 = 1, #gamepad do
-		local var_34_4 = gamepad[i4]
-		local any_pressed_3 = var_34_4.any_pressed()
-
-		if not any_pressed_3 then
-			self._current_inputs[any_pressed_3] = var_34_4
+		if input then
+			self._current_inputs[input] = Mouse
 		end
 	end
 
-	return flag
+	local gamepads = InputAux.input_device_mapping.gamepad
+
+	for i = 1, #gamepads do
+		local gamepad = gamepads[i]
+		local input = gamepad.any_pressed()
+
+		if input then
+			self._current_inputs[input] = gamepad
+		end
+	end
+
+	return held
 end
 
-TitleLoadingUI._update_input = function (self, arg_35_1)
+TitleLoadingUI._update_input = function (self, dt)
 	-- function 35
-	if not self._force_done then
+	if self._force_done then
 		self:_handle_skip_fade(0)
 
 		return
 	end
 
-	local num = 1
-	local num_2 = 1
+	local total_hold_time = 1
+	local total_fade_time = 1
 	local clamp = math.clamp
 	local _fade_timer = self._fade_timer
 
-	_fade_timer = _fade_timer or 0
-	self._fade_timer = clamp(_fade_timer - arg_35_1, 0, num_2)
+	_fade_timer = not not _fade_timer or not not 0
+	self._fade_timer = clamp(_fade_timer - dt, 0, total_fade_time)
 
-	local get = Managers.input:get_service("title_loading_ui"):get("cancel_video")
+	local input_service = Managers.input:get_service("title_loading_ui")
+	local cancel_video = input_service:get("cancel_video")
 
-	if not self:_update_any_held() then
-		self._fade_timer = num_2
+	if self:_update_any_held() then
+		self._fade_timer = total_fade_time
 
 		local _cancel_timer = self._cancel_timer
 
-		_cancel_timer = _cancel_timer or 0
-		self._cancel_timer = _cancel_timer + arg_35_1
+		_cancel_timer = not not _cancel_timer or not not 0
+		self._cancel_timer = _cancel_timer + dt
 	else
 		local _cancel_timer_2 = self._cancel_timer
 
-		_cancel_timer_2 = _cancel_timer_2 or 0
-		self._cancel_timer = _cancel_timer_2 - arg_35_1 * 3
+		_cancel_timer_2 = not not _cancel_timer_2 or not not 0
+		self._cancel_timer = _cancel_timer_2 - dt * 3
 	end
 
-	self:_handle_skip_fade(self._fade_timer / num_2 * 255)
+	self:_handle_skip_fade(self._fade_timer / total_fade_time * 255)
 
-	self._cancel_timer = math.clamp(self._cancel_timer, 0, num)
+	self._cancel_timer = math.clamp(self._cancel_timer, 0, total_hold_time)
 
-	local num_3 = self._cancel_timer / num
+	local progress = self._cancel_timer / total_hold_time
 
-	if num_3 >= 1 or not get or not self._cancel_video then
+	if progress >= 1 or cancel_video and self._cancel_video then
 		self._cancel_timer = nil
 		self._force_done = true
 		self._done = true
@@ -1728,83 +1846,83 @@ TitleLoadingUI._update_input = function (self, arg_35_1)
 		self._skip_widget.style.input_icon_bar.gradient_threshold = 0
 		self._skip_widget.style.hold_bar.size[1] = 0
 
-		if not self._sound_started then
-			if not var_0_19.sound_stop then
-				Managers.music:trigger_event(var_0_19.sound_stop)
+		if self._sound_started then
+			if first_time_video.sound_stop then
+				Managers.music:trigger_event(first_time_video.sound_stop)
 			end
 
 			self._sound_started = false
 		end
 
-		if not self._cinematic_package_loaded then
-			Managers.package:unload("resource_packages/videos/" .. var_0_19.material_name, "intro_cinematic")
+		if self._cinematic_package_loaded then
+			Managers.package:unload("resource_packages/videos/" .. first_time_video.material_name, "intro_cinematic")
 
 			self._cinematic_package_loaded = false
 		end
 	else
-		local clamp_2 = math.clamp(num_3, 0, 1)
+		local fraction = math.clamp(progress, 0, 1)
 
-		self._skip_widget.style.input_icon_bar.gradient_threshold = clamp_2
+		self._skip_widget.style.input_icon_bar.gradient_threshold = fraction
 
 		local hold_bar_max_length = self.hold_bar_max_length
 
-		if not hold_bar_max_length then
-			local num_4 = hold_bar_max_length * clamp_2
+		if hold_bar_max_length then
+			local new_length = hold_bar_max_length * fraction
 
-			self._skip_widget.style.hold_bar.size[1] = num_4
+			self._skip_widget.style.hold_bar.size[1] = new_length
 		end
 	end
 
 	local _cancel_video = self._cancel_video
 
-	_cancel_video = _cancel_video or get
+	_cancel_video = not not _cancel_video or not not cancel_video
 	self._cancel_video = _cancel_video
 end
 
-TitleLoadingUI._handle_skip_fade = function (self, arg_36_1)
+TitleLoadingUI._handle_skip_fade = function (self, alpha)
 	-- function 36
-	local style = self._skip_widget.style
+	local skip_input_style = self._skip_widget.style
 
-	style.input_text_1.text_color[1] = arg_36_1
-	style.input_text_2.text_color[1] = arg_36_1
-	style.input_text_3.text_color[1] = arg_36_1
-	style.input_icon.color[1] = arg_36_1
-	style.input_icon_bar.color[1] = arg_36_1
-	style.hold_bar_bg.color[1] = arg_36_1
+	skip_input_style.input_text_1.text_color[1] = alpha
+	skip_input_style.input_text_2.text_color[1] = alpha
+	skip_input_style.input_text_3.text_color[1] = alpha
+	skip_input_style.input_icon.color[1] = alpha
+	skip_input_style.input_icon_bar.color[1] = alpha
+	skip_input_style.hold_bar_bg.color[1] = alpha
 end
 
-TitleLoadingUI._render = function (self, arg_37_1)
+TitleLoadingUI._render = function (self, dt)
 	-- function 37
-	local input = Managers.input
-	local get_service = input:get_service("title_loading_ui")
-	local is_device_active = input:is_device_active("gamepad")
+	local input_manager = Managers.input
+	local input_service = input_manager:get_service("title_loading_ui")
+	local gamepad_active = input_manager:is_device_active("gamepad")
 
-	UIRenderer.begin_pass(self._ui_renderer, self._ui_scenegraph, get_service, arg_37_1, nil, self.render_settings)
+	UIRenderer.begin_pass(self._ui_renderer, self._ui_scenegraph, input_service, dt, nil, self.render_settings)
 
 	if not self._startup_settings_done then
-		local _settings_index = self._settings_index
+		local settings_index = self._settings_index
 
-		if _settings_index == 1 then
-			for i, v in ipairs(self._gamma_widgets) do
-				UIRenderer.draw_widget(self._ui_renderer, v)
+		if settings_index == 1 then
+			for _, widget in ipairs(self._gamma_widgets) do
+				UIRenderer.draw_widget(self._ui_renderer, widget)
 			end
-		elseif _settings_index == 2 then
-			for i_2, v_2 in ipairs(self._panning_widgets) do
-				UIRenderer.draw_widget(self._ui_renderer, v_2)
+		elseif settings_index == 2 then
+			for _, widget in ipairs(self._panning_widgets) do
+				UIRenderer.draw_widget(self._ui_renderer, widget)
 			end
-		elseif _settings_index == 3 then
-			for i_3, v_3 in ipairs(self._dynamic_range_widgets) do
-				UIRenderer.draw_widget(self._ui_renderer, v_3)
+		elseif settings_index == 3 then
+			for _, widget in ipairs(self._dynamic_range_widgets) do
+				UIRenderer.draw_widget(self._ui_renderer, widget)
 			end
 		end
 
-		if not is_device_active then
+		if not gamepad_active then
 			UIRenderer.draw_widget(self._ui_renderer, self._done_button)
 		end
 	else
-		self:_render_video(arg_37_1)
+		self:_render_video(dt)
 
-		if not self._can_draw_input_widget then
+		if self._can_draw_input_widget then
 			UIRenderer.draw_widget(self._ui_renderer, self._skip_widget)
 		end
 	end
@@ -1812,68 +1930,72 @@ TitleLoadingUI._render = function (self, arg_37_1)
 	UIRenderer.draw_widget(self._ui_renderer, self._dead_space_filler_widget)
 	UIRenderer.end_pass(self._ui_renderer)
 
-	if not self._start_subtitles then
-		local subtitle_template_settings = var_0_19.subtitle_template_settings
+	if self._start_subtitles then
+		local subtitle_template_settings = first_time_video.subtitle_template_settings
 
-		if not subtitle_template_settings then
+		if subtitle_template_settings then
 			self:_start_subtitles_by_template(subtitle_template_settings)
 		end
 
 		self._start_subtitles = false
 	end
 
-	if not (not is_device_active and self._startup_settings_done) then
-		self._menu_input_description:draw(self._ui_renderer, arg_37_1)
+	if gamepad_active and not self._startup_settings_done then
+		self._menu_input_description:draw(self._ui_renderer, dt)
 	end
 
-	if not self._done and not self:_has_active_subtitles() then
+	if self._done and self:_has_active_subtitles() then
 		self:_stop_subtitles()
 	end
 end
 
-TitleLoadingUI._render_video = function (self, arg_38_1)
+TitleLoadingUI._render_video = function (self, dt)
 	-- function 38
 	if not self._trailer then
 		return
 	end
 
-	if not self._done then
+	if self._done then
 		return
 	end
 
-	if not self._ui_renderer.video_players[str] then
-		UIRenderer.create_video_player(self._ui_renderer, str, self._world, var_0_19.video_name, false)
-	elseif not self._video_widget.content.video_content.video_completed then
-		UIRenderer.destroy_video_player(self._ui_renderer, str)
-
-		self._sound_started = false
-
-		if not var_0_19.sound_stop then
-			Managers.music:trigger_event(var_0_19.sound_stop)
-		end
-
-		self._done = true
-
-		if not Managers.transition:loading_icon_active() then
-			Managers.transition:show_loading_icon()
-		end
-
-		if not self._cinematic_package_loaded then
-			Managers.package:unload("resource_packages/videos/" .. var_0_19.material_name, "intro_cinematic")
-
-			self._cinematic_package_loaded = false
-		end
+	if not self._ui_renderer.video_players[VIDEO_REFERENCE_NAME] then
+		UIRenderer.create_video_player(self._ui_renderer, VIDEO_REFERENCE_NAME, self._world, first_time_video.video_name, false)
 	else
-		if not self._sound_started then
-			if not var_0_19.sound_start then
-				Managers.music:trigger_event(var_0_19.sound_start)
+		local video_complete = self._video_widget.content.video_content.video_completed
+
+		if video_complete then
+			UIRenderer.destroy_video_player(self._ui_renderer, VIDEO_REFERENCE_NAME)
+
+			self._sound_started = false
+
+			if first_time_video.sound_stop then
+				Managers.music:trigger_event(first_time_video.sound_stop)
 			end
 
-			self._sound_started = true
-			self._start_subtitles = true
-		end
+			self._done = true
 
-		UIRenderer.draw_widget(self._ui_renderer, self._video_widget)
+			if not Managers.transition:loading_icon_active() then
+				Managers.transition:show_loading_icon()
+			end
+
+			if self._cinematic_package_loaded then
+				Managers.package:unload("resource_packages/videos/" .. first_time_video.material_name, "intro_cinematic")
+
+				self._cinematic_package_loaded = false
+			end
+		else
+			if not self._sound_started then
+				if first_time_video.sound_start then
+					Managers.music:trigger_event(first_time_video.sound_start)
+				end
+
+				self._sound_started = true
+				self._start_subtitles = true
+			end
+
+			UIRenderer.draw_widget(self._ui_renderer, self._video_widget)
+		end
 	end
 end
 
@@ -1881,19 +2003,19 @@ TitleLoadingUI.destroy = function (self)
 	-- function 39
 	self:_stop_subtitles()
 
-	if not self._ui_renderer then
+	if self._ui_renderer then
 		UIRenderer.destroy(self._ui_renderer, self._world)
 
 		self._ui_renderer = nil
 	end
 
-	if not self._sound_started and not var_0_19.sound_stop then
-		Managers.music:trigger_event(var_0_19.sound_stop)
+	if self._sound_started and first_time_video.sound_stop then
+		Managers.music:trigger_event(first_time_video.sound_stop)
 	end
 
 	Framerate.set_playing()
 
-	if not self._needs_cursor_pop then
+	if self._needs_cursor_pop then
 		ShowCursorStack.hide("TitleLoadingUI")
 
 		self._needs_cursor_pop = false
@@ -1904,9 +2026,9 @@ TitleLoadingUI.is_done = function (self)
 	-- function 40
 	local _startup_settings_done = self._startup_settings_done
 
-	if not _startup_settings_done then
+	if _startup_settings_done then
 		_startup_settings_done = self._force_done
-		_startup_settings_done = _startup_settings_done or self._done
+		_startup_settings_done = not not _startup_settings_done or not not self._done
 	end
 
 	return _startup_settings_done
@@ -1924,29 +2046,29 @@ TitleLoadingUI.force_done = function (self)
 	self._skip_widget.style.input_icon_bar.gradient_threshold = 0
 end
 
-TitleLoadingUI._start_subtitles_by_template = function (self, arg_42_1)
+TitleLoadingUI._start_subtitles_by_template = function (self, subtitle_template_settings)
 	-- function 42
 	if not Application.user_setting("use_subtitles") then
 		return
 	end
 
-	if not self.cutscene_overlay_ui then
+	if self.cutscene_overlay_ui then
 		self.cutscene_overlay_ui:destroy()
 	end
 
-	local tbl = {
+	local context = {
 		ui_renderer = self._ui_renderer
 	}
 
-	self.cutscene_overlay_ui = CutsceneOverlayUI:new(self, tbl)
+	self.cutscene_overlay_ui = CutsceneOverlayUI:new(self, context)
 
 	self.cutscene_overlay_ui:force_unregister_event_listener()
-	self.cutscene_overlay_ui:start(arg_42_1)
+	self.cutscene_overlay_ui:start(subtitle_template_settings)
 end
 
 TitleLoadingUI._stop_subtitles = function (self)
 	-- function 43
-	if not self.cutscene_overlay_ui then
+	if self.cutscene_overlay_ui then
 		self.cutscene_overlay_ui:destroy()
 	end
 end

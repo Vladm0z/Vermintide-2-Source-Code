@@ -2,7 +2,7 @@
 
 local BreedEnhancements = BreedEnhancements
 
-BreedEnhancements = BreedEnhancements or {
+BreedEnhancements = not not BreedEnhancements or not not {
 	base = {
 		"grudge_mark_health",
 		"grudge_mark_damage",
@@ -122,8 +122,8 @@ BreedEnhancements = BreedEnhancements or {
 }
 BreedEnhancements = BreedEnhancements
 
-for k, v in pairs(BreedEnhancements) do
-	v.name = k
+for enhancement_name, buff_list in pairs(BreedEnhancements) do
+	buff_list.name = enhancement_name
 end
 
 BossGrudgeMarks = {

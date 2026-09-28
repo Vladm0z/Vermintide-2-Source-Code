@@ -1,16 +1,27 @@
 -- chunkname: @scripts/managers/backend_playfab/playfab_request_queue.lua
 
 local PlayFabClientApi = require("PlayFab.PlayFabClientApi")
+local uuid
 
-if not (not IS_PS4 and math.uuid) then
-	local guid = Application.guid
+if IS_PS4 then
+	uuid = math.uuid
+
+	if not uuid then
+		-- Nothing
+	end
 end
+
+uuid = Application.guid
+
+local guid = uuid
+
+::label_0_0::
 
 PlayFabRequestQueue = class(PlayFabRequestQueue)
 
-local num = 2
-local num_2 = 20
-local num_3 = 10
+local MAX_RETRIES = 2
+local TIMEOUT_TIME = 20
+local MAX_THROTTLE_REQUESTS = 10
 
 PlayFabRequestQueue.init = function (self)
 	-- function 1
@@ -26,289 +37,317 @@ PlayFabRequestQueue.is_pending_request = function (self)
 	-- function 2
 	local _active_entry = self._active_entry
 
-	_active_entry = _active_entry or #self._queue > 0
+	_active_entry = not not _active_entry or #self._queue > 0
 
 	return _active_entry
 end
 
-PlayFabRequestQueue.enqueue = function (self, arg_3_1, arg_3_2, arg_3_3, arg_3_4)
+PlayFabRequestQueue.enqueue = function (self, request, success_callback, send_eac_challenge, error_callback)
 	-- function 3
-	local num = self._id + 1
-	local FunctionParameter = arg_3_1.FunctionParameter
+	local id = self._id + 1
+	local parameters = request.FunctionParameter
 
-	if not FunctionParameter then
-		arg_3_1.FunctionParameter = {
+	if not parameters then
+		request.FunctionParameter = {
 			metadata = self._metadata
 		}
 	else
-		FunctionParameter.metadata = self._metadata
+		parameters.metadata = self._metadata
 	end
 
 	local tbl = {
 		resends = 0,
 		eac_challenge_success = false,
 		api_function_name = "ExecuteCloudScript",
-		request = table.clone(arg_3_1),
-		success_callback = arg_3_2,
-		error_callback = arg_3_4
+		request = table.clone(request),
+		success_callback = success_callback,
+		error_callback = error_callback
 	}
 	local IS_WINDOWS = IS_WINDOWS
 
-	IS_WINDOWS = not IS_WINDOWS and arg_3_3
+	IS_WINDOWS = not not IS_WINDOWS and not not send_eac_challenge
 	tbl.send_eac_challenge = IS_WINDOWS
-	tbl.timeout = num_2
-	tbl.id = num
+	tbl.timeout = TIMEOUT_TIME
+	tbl.id = id
 
-	print("[PlayFabRequestQueue] Enqueuing ExecuteCloudScript request", arg_3_1.FunctionName, num)
-	table.insert(self._queue, tbl)
+	local entry = tbl
 
-	self._id = num
+	print("[PlayFabRequestQueue] Enqueuing ExecuteCloudScript request", request.FunctionName, id)
+	table.insert(self._queue, entry)
 
-	return num
+	self._id = id
+
+	return id
 end
 
-PlayFabRequestQueue.enqueue_api_request = function (self, arg_4_1, arg_4_2, arg_4_3, arg_4_4)
+PlayFabRequestQueue.enqueue_api_request = function (self, api_function_name, request, success_callback, optional_error_callback)
 	-- function 4
-	local num = self._id + 1
-	local tbl = {
+	local id = self._id + 1
+	local entry = {
 		resends = 0,
 		send_eac_challenge = false,
-		api_function_name = arg_4_1,
-		request = table.clone(arg_4_2),
-		success_callback = arg_4_3,
-		error_callback = arg_4_4,
-		timeout = num_2,
-		id = num
+		api_function_name = api_function_name,
+		request = table.clone(request),
+		success_callback = success_callback,
+		error_callback = optional_error_callback,
+		timeout = TIMEOUT_TIME,
+		id = id
 	}
 
-	print("[PlayFabRequestQueue] Enqueuing Client API request", arg_4_1, num)
-	table.insert(self._queue, tbl)
+	print("[PlayFabRequestQueue] Enqueuing Client API request", api_function_name, id)
+	table.insert(self._queue, entry)
 
-	self._id = num
+	self._id = id
 
-	return num
+	return id
 end
 
-PlayFabRequestQueue._need_throttle = function (self, arg_5_1, arg_5_2)
+PlayFabRequestQueue._need_throttle = function (self, func_name, t)
 	-- function 5
-	local var_5_0 = self._throttle_per_func[arg_5_1]
+	local var_5_0 = self._throttle_per_func[func_name]
 
-	var_5_0 = var_5_0 or {}
+	if not var_5_0 then
+		-- Nothing
+	end
 
-	local num = #var_5_0 + 1
+	var_5_0 = {}
 
-	if num >= num_3 then
+	local data = var_5_0
+
+	::label_5_0::
+
+	local new_num_requests = #data + 1
+
+	if new_num_requests >= MAX_THROTTLE_REQUESTS then
 		return true
 	end
 
-	var_5_0[num] = arg_5_2 + 15
-	self._throttle_per_func[arg_5_1] = var_5_0
+	data[new_num_requests] = t + 15
+	self._throttle_per_func[func_name] = data
 
 	return false
 end
 
-PlayFabRequestQueue._update_throttling = function (self, arg_6_1, arg_6_2)
+PlayFabRequestQueue._update_throttling = function (self, t, entry)
 	-- function 6
-	for k, v in pairs(self._throttle_per_func) do
-		local var_6_0 = v[1]
+	for key, data in pairs(self._throttle_per_func) do
+		local var_6_0 = data[1]
 
-		var_6_0 = var_6_0 or arg_6_1 + 1
+		if not var_6_0 then
+			-- Nothing
+		end
 
-		while var_6_0 < arg_6_1 do
-			table.remove(v, 1)
+		var_6_0 = t + 1
 
-			var_6_0 = v[1] or arg_6_1 + 1
+		local expire_date = var_6_0
+
+		::label_6_0::
+
+		while expire_date < t do
+			table.remove(data, 1)
+
+			expire_date = not not data[1] or not not (t + 1)
 		end
 	end
 
-	if not arg_6_2.send_eac_challenge and not self:_need_throttle("generateChallenge", arg_6_1) then
+	if entry.send_eac_challenge and self:_need_throttle("generateChallenge", t) then
 		return false
 	end
 
 	local FunctionName
 
-	if not arg_6_2.request then
-		FunctionName = arg_6_2.request.FunctionName
+	if entry.request then
+		FunctionName = entry.request.FunctionName
 
 		if not FunctionName then
 			-- Nothing
 		end
 	end
 
-	FunctionName = arg_6_2.api_function_name
+	FunctionName = entry.api_function_name
 
-	::label_6_0::
+	local name = FunctionName
 
-	if not self:_need_throttle(FunctionName, arg_6_1) then
+	::label_6_1::
+
+	if self:_need_throttle(name, t) then
 		return false
 	end
 
 	return true
 end
 
-PlayFabRequestQueue.update = function (self, arg_7_1, arg_7_2)
+PlayFabRequestQueue.update = function (self, dt, t)
 	-- function 7
-	local _active_entry = self._active_entry
+	local active_entry = self._active_entry
 
-	if not _active_entry then
-		local num_3 = _active_entry.timeout - arg_7_1
-		local request = _active_entry.request
+	if active_entry then
+		local timeout = active_entry.timeout - dt
+		local active_request = active_entry.request
 
-		if num_3 > 0 then
-			self._active_entry.timeout = num_3
+		if timeout > 0 then
+			self._active_entry.timeout = timeout
 
 			return
-		elseif not ((not (_active_entry.resends < num) or not _active_entry.send_eac_challenge) and _active_entry.eac_challenge_success) then
-			_active_entry.resends = _active_entry.resends + 1
-			_active_entry.timeout = num_2
+		elseif active_entry.resends < MAX_RETRIES and active_entry.send_eac_challenge and not active_entry.eac_challenge_success then
+			active_entry.resends = active_entry.resends + 1
+			active_entry.timeout = TIMEOUT_TIME
 
-			print("[PlayFabRequestQueue] EAC Challenge Request Timed Out Resending", request.FunctionName, _active_entry.id)
-			table.dump(_active_entry, nil, 5)
+			print("[PlayFabRequestQueue] EAC Challenge Request Timed Out Resending", active_request.FunctionName, active_entry.id)
+			table.dump(active_entry, nil, 5)
 			Crashify.print_exception("PlayFabRequestQueue", "EAC Challenge Request Timed Out - Resending")
-			table.insert(self._queue, 1, _active_entry)
+			table.insert(self._queue, 1, active_entry)
 		else
-			print("[PlayFabRequestQueue] Request Timed Out", request.api_function_name, request.FunctionName, _active_entry.id)
-			table.dump(_active_entry, nil, 5)
+			print("[PlayFabRequestQueue] Request Timed Out", active_request.api_function_name, active_request.FunctionName, active_entry.id)
+			table.dump(active_entry, nil, 5)
 			Crashify.print_exception("PlayFabRequestQueue", "Request Timed Out")
 
-			return "request_timed_out", _active_entry.id
+			return "request_timed_out", active_entry.id
 		end
 	end
 
-	if not table.is_empty(self._queue) then
+	if table.is_empty(self._queue) then
 		return
 	end
 
-	if not self:_update_throttling(arg_7_2, self._queue[1]) then
+	if not self:_update_throttling(t, self._queue[1]) then
 		return
 	end
 
-	local remove = table.remove(self._queue, 1)
-	local request_2 = remove.request
+	local entry = table.remove(self._queue, 1)
+	local request = entry.request
 
-	self._active_entry = remove
+	self._active_entry = entry
 
-	if not remove.send_eac_challenge then
-		local num_4 = self._eac_id + 1
-		local var_7_6 = callback(self, "eac_challenge_success_cb")
-		local tbl = {
+	if entry.send_eac_challenge then
+		local eac_id = self._eac_id + 1
+		local success_cb = callback(self, "eac_challenge_success_cb")
+		local generate_challenge_request = {
 			FunctionName = "generateChallenge",
 			FunctionParameter = {
-				eac_id = num_4,
+				eac_id = eac_id,
 				metadata = self._metadata
 			}
 		}
 
-		remove.expected_eac_id = num_4
-		self._eac_id = num_4
+		entry.expected_eac_id = eac_id
+		self._eac_id = eac_id
 
-		print("[PlayFabRequestQueue] Sending EAC Challenge Request", request_2.FunctionName, remove.id, num_4)
-		PlayFabClientApi.ExecuteCloudScript(tbl, var_7_6)
+		print("[PlayFabRequestQueue] Sending EAC Challenge Request", request.FunctionName, entry.id, eac_id)
+		PlayFabClientApi.ExecuteCloudScript(generate_challenge_request, success_cb)
 	else
-		print("[PlayFabRequestQueue] Sending Request Without EAC Challenge", remove.api_function_name, request_2.FunctionName, remove.id)
-		self:_send_request(remove)
+		print("[PlayFabRequestQueue] Sending Request Without EAC Challenge", entry.api_function_name, request.FunctionName, entry.id)
+		self:_send_request(entry)
 	end
 end
 
-PlayFabRequestQueue.eac_challenge_success_cb = function (self, arg_8_1)
+PlayFabRequestQueue.eac_challenge_success_cb = function (self, result)
 	-- function 8
-	local _active_entry = self._active_entry
-	local FunctionResult = arg_8_1.FunctionResult
-	local challenge = FunctionResult.challenge
-	local eac_id = FunctionResult.eac_id
+	local entry = self._active_entry
+	local function_result = result.FunctionResult
+	local challenge = function_result.challenge
+	local eac_id = function_result.eac_id
 
-	if not (not _active_entry and not eac_id and eac_id == _active_entry.expected_eac_id) then
+	if not entry or eac_id and eac_id ~= entry.expected_eac_id then
 		print("[PlayFabRequestQueue] Received Timed Out EAC Response - Ignoring", eac_id)
 
 		return
 	end
 
-	local var_8_4
-	local var_8_5
+	local eac_response, response
 
-	if not challenge then
-		var_8_4, var_8_5 = self:_get_eac_response(challenge)
+	if challenge then
+		eac_response, response = self:_get_eac_response(challenge)
 	end
 
 	if not challenge then
-		print("[PlayFabRequestQueue] EAC disabled on backend", _active_entry.id)
+		print("[PlayFabRequestQueue] EAC disabled on backend", entry.id)
 		self:_challenge_response_received()
-	elseif not var_8_4 then
-		print("[PlayFabRequestQueue] EAC disabled on client", _active_entry.id)
+	elseif not eac_response then
+		print("[PlayFabRequestQueue] EAC disabled on client", entry.id)
 
-		_active_entry.timeout = math.huge
+		entry.timeout = math.huge
 
 		Managers.backend:playfab_eac_error()
 	else
-		print("[PlayFabRequestQueue] EAC Enabled!", _active_entry.id)
-		self:_challenge_response_received(var_8_5)
+		print("[PlayFabRequestQueue] EAC Enabled!", entry.id)
+		self:_challenge_response_received(response)
 	end
 end
 
-PlayFabRequestQueue._challenge_response_received = function (self, arg_9_1)
+PlayFabRequestQueue._challenge_response_received = function (self, response)
 	-- function 9
-	local _active_entry = self._active_entry
+	local entry = self._active_entry
 
-	_active_entry.eac_challenge_success = true
-	_active_entry.timeout = num_2
+	entry.eac_challenge_success = true
+	entry.timeout = TIMEOUT_TIME
 
-	local request = _active_entry.request
+	local request = entry.request
 	local FunctionParameter = request.FunctionParameter
 
-	FunctionParameter = FunctionParameter or {}
-	FunctionParameter.response = arg_9_1
-	request.FunctionParameter = FunctionParameter
+	if not FunctionParameter then
+		-- Nothing
+	end
 
-	print("[PlayFabRequestQueue] Sending Request", request.FunctionName, _active_entry.id)
-	self:_send_request(_active_entry)
+	FunctionParameter = {}
+
+	local function_params = FunctionParameter
+
+	::label_9_0::
+
+	function_params.response = response
+	request.FunctionParameter = function_params
+
+	print("[PlayFabRequestQueue] Sending Request", request.FunctionName, entry.id)
+	self:_send_request(entry)
 end
 
-PlayFabRequestQueue._send_request = function (self, arg_10_1)
+PlayFabRequestQueue._send_request = function (self, entry)
 	-- function 10
-	local api_function_name = arg_10_1.api_function_name
-	local request = arg_10_1.request
-	local success_callback = arg_10_1.success_callback
-	local var_10_3 = callback(self, "playfab_request_success_cb", success_callback, arg_10_1.id)
-	local error_callback = arg_10_1.error_callback
-	local flag = not error_callback and callback(self, "playfab_request_error_cb", error_callback, arg_10_1.id)
+	local api_function_name = entry.api_function_name
+	local request = entry.request
+	local success_callback = entry.success_callback
+	local success_cb = callback(self, "playfab_request_success_cb", success_callback, entry.id)
+	local error_callback = entry.error_callback
+	local error_cb = not not error_callback and not not callback(self, "playfab_request_error_cb", error_callback, entry.id)
 
-	PlayFabClientApi[api_function_name](request, var_10_3, flag)
+	PlayFabClientApi[api_function_name](request, success_cb, error_cb)
 
 	self._current_api_call = request.FunctionName
 end
 
-PlayFabRequestQueue.playfab_request_success_cb = function (self, arg_11_1, arg_11_2, arg_11_3)
+PlayFabRequestQueue.playfab_request_success_cb = function (self, success_callback, id, result)
 	-- function 11
 	self._current_api_call = nil
 
-	local _active_entry = self._active_entry
-	local FunctionResult = arg_11_3.FunctionResult
+	local entry = self._active_entry
+	local function_result = result.FunctionResult
 
-	if not (not _active_entry and not arg_11_2 and arg_11_2 == _active_entry.id) then
-		print("[PlayFabRequestQueue] Received Timed Out Success Response - Ignoring", arg_11_2)
+	if not entry or id and id ~= entry.id then
+		print("[PlayFabRequestQueue] Received Timed Out Success Response - Ignoring", id)
 
 		return
 	end
 
-	local request = _active_entry.request
+	local request = entry.request
 
-	if not FunctionResult and not FunctionResult.eac_failed_verification then
-		print("[PlayFabRequestQueue] EAC Failed Verification", request.FunctionName, _active_entry.id)
+	if function_result and function_result.eac_failed_verification then
+		print("[PlayFabRequestQueue] EAC Failed Verification", request.FunctionName, entry.id)
 		Managers.backend:playfab_eac_error()
 
 		return
 	end
 
-	print("[PlayFabRequestQueue] Request Success", _active_entry.api_function_name, request.FunctionName, _active_entry.id)
+	print("[PlayFabRequestQueue] Request Success", entry.api_function_name, request.FunctionName, entry.id)
 
 	self._active_entry = nil
 
-	arg_11_1(arg_11_3)
+	success_callback(result)
 
-	if not script_data.testify then
-		local poll_request = Testify:poll_request("wait_for_playfab_response")
+	if script_data.testify then
+		local function_to_wait_for = Testify:poll_request("wait_for_playfab_response")
 
-		if not (not poll_request and poll_request ~= request.FunctionName) then
+		if function_to_wait_for and function_to_wait_for == request.FunctionName then
 			Testify:respond_to_request("wait_for_playfab_response", {
 				request.FunctionName
 			}, 1)
@@ -316,56 +355,56 @@ PlayFabRequestQueue.playfab_request_success_cb = function (self, arg_11_1, arg_1
 	end
 end
 
-PlayFabRequestQueue.playfab_request_error_cb = function (self, arg_12_1, arg_12_2, arg_12_3)
+PlayFabRequestQueue.playfab_request_error_cb = function (self, error_callback, id, result)
 	-- function 12
 	self._current_api_call = nil
 
-	local _active_entry = self._active_entry
-	local request = _active_entry.request
+	local entry = self._active_entry
+	local request = entry.request
 
-	if not (not _active_entry and not arg_12_2 and arg_12_2 == _active_entry.id) then
-		print("[PlayFabRequestQueue] Received Timed Out Error Response - Ignoring", arg_12_2)
+	if not entry or id and id ~= entry.id then
+		print("[PlayFabRequestQueue] Received Timed Out Error Response - Ignoring", id)
 
 		return
 	end
 
-	print("[PlayFabRequestQueue] Request Error", _active_entry.api_function_name, request.FunctionName, _active_entry.id, arg_12_3.errorCode, arg_12_3.errorMessage)
+	print("[PlayFabRequestQueue] Request Error", entry.api_function_name, request.FunctionName, entry.id, result.errorCode, result.errorMessage)
 
-	local function fn()
+	local function reenable_queue_function()
 		-- function 13
 		self._active_entry = nil
 	end
 
-	arg_12_1(arg_12_3, fn)
+	error_callback(result, reenable_queue_function)
 end
 
-PlayFabRequestQueue._get_eac_response = function (arg_14_0, arg_14_1)
+PlayFabRequestQueue._get_eac_response = function (self, challenge)
 	-- function 14
-	local num = 0
+	local i = 0
 	local str = ""
 
-	while not arg_14_1[tostring(num)] do
-		str = str .. string.char(arg_14_1[tostring(num)])
-		num = num + 1
+	while challenge[tostring(i)] do
+		str = str .. string.char(challenge[tostring(i)])
+		i = i + 1
 	end
 
-	local challenge_response = Managers.eac:challenge_response(str)
-	local var_14_3
+	local eac_response = Managers.eac:challenge_response(str)
+	local response
 
-	if not challenge_response then
-		local num_2 = 1
+	if eac_response then
+		local index = 1
 
-		var_14_3 = {}
+		response = {}
 
-		while not string.byte(challenge_response, num_2, num_2) do
-			local byte = string.byte(challenge_response, num_2, num_2)
+		while string.byte(eac_response, index, index) do
+			local byte_value = string.byte(eac_response, index, index)
 
-			var_14_3[tostring(num_2 - 1)] = byte
-			num_2 = num_2 + 1
+			response[tostring(index - 1)] = byte_value
+			index = index + 1
 		end
 	end
 
-	return challenge_response, var_14_3
+	return eac_response, response
 end
 
 PlayFabRequestQueue.current_api_call = function (self)

@@ -264,11 +264,11 @@ PackageChunkPackages = {
 	"units/beings/player/first_person_base/state_machines/career/skill_ranger"
 }
 
-function find_playgo_package(arg_1_0)
+function find_playgo_package(element)
 	-- function 1
-	for k, v in pairs(PackageChunkPackages) do
-		if v == arg_1_0 then
-			return k
+	for key, value in pairs(PackageChunkPackages) do
+		if value == element then
+			return key
 		end
 	end
 

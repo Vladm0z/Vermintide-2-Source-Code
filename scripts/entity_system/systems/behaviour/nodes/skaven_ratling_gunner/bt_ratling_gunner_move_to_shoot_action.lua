@@ -4,121 +4,131 @@ require("scripts/entity_system/systems/behaviour/nodes/bt_node")
 
 BTRatlingGunnerMoveToShootAction = class(BTRatlingGunnerMoveToShootAction, BTNode)
 
-BTRatlingGunnerMoveToShootAction.init = function (arg_1_0, ...)
+BTRatlingGunnerMoveToShootAction.init = function (self, ...)
 	-- function 1
-	BTRatlingGunnerMoveToShootAction.super.init(arg_1_0, ...)
+	BTRatlingGunnerMoveToShootAction.super.init(self, ...)
 end
 
 BTRatlingGunnerMoveToShootAction.name = "BTRatlingGunnerMoveToShootAction"
 
-BTRatlingGunnerMoveToShootAction.enter = function (self, arg_2_1, arg_2_2, arg_2_3)
+BTRatlingGunnerMoveToShootAction.enter = function (self, unit, blackboard, t)
 	-- function 2
-	local action_data = self._tree_node.action_data
-	local tbl = {}
+	local action = self._tree_node.action_data
+	local attack_pattern_data = {}
 
-	arg_2_2.attack_pattern_data = tbl
-	arg_2_2.action = action_data
+	blackboard.attack_pattern_data = attack_pattern_data
+	blackboard.action = action
 
-	local pick_ratling_gun_target, var_2_3 = PerceptionUtils.pick_ratling_gun_target(arg_2_1, arg_2_2)
+	local target_unit, node_name = PerceptionUtils.pick_ratling_gun_target(unit, blackboard)
 
-	if not pick_ratling_gun_target then
-		tbl.target_unit = pick_ratling_gun_target
-		tbl.target_node_name = var_2_3
-		tbl.exit_node = true
+	if target_unit then
+		attack_pattern_data.target_unit = target_unit
+		attack_pattern_data.target_node_name = node_name
+		attack_pattern_data.exit_node = true
 
 		return
 	end
 
-	local move_speed = action_data.move_speed
-	local navigation_extension = arg_2_2.navigation_extension
+	local move_speed = action.move_speed
+	local navigation_extension = blackboard.navigation_extension
 
 	navigation_extension:set_max_speed(move_speed)
 	navigation_extension:stop()
 
-	arg_2_2.move_pos = nil
+	blackboard.move_pos = nil
 
-	Managers.state.network:anim_event(arg_2_1, "idle")
+	Managers.state.network:anim_event(unit, "idle")
 
-	arg_2_2.move_state = "idle"
-	arg_2_2.move_attempts = 0
+	blackboard.move_state = "idle"
+	blackboard.move_attempts = 0
 end
 
-BTRatlingGunnerMoveToShootAction.leave = function (arg_3_0, arg_3_1, arg_3_2, arg_3_3, arg_3_4, arg_3_5)
+BTRatlingGunnerMoveToShootAction.leave = function (self, unit, blackboard, t, reason, destroy)
 	-- function 3
-	if arg_3_4 ~= "done" then
-		arg_3_2.move_pos = nil
+	if reason ~= "done" then
+		blackboard.move_pos = nil
 	end
 
-	arg_3_2.move_attempts = nil
+	blackboard.move_attempts = nil
 
-	local get_default_breed_move_speed = AiUtils.get_default_breed_move_speed(arg_3_1, arg_3_2)
+	local default_move_speed = AiUtils.get_default_breed_move_speed(unit, blackboard)
+	local navigation_extension = blackboard.navigation_extension
 
-	arg_3_2.navigation_extension:set_max_speed(get_default_breed_move_speed)
+	navigation_extension:set_max_speed(default_move_speed)
 end
 
-BTRatlingGunnerMoveToShootAction.run = function (self, arg_4_1, arg_4_2, arg_4_3, arg_4_4)
+BTRatlingGunnerMoveToShootAction.run = function (self, unit, blackboard, t, dt)
 	-- function 4
-	if not arg_4_2.attack_pattern_data.exit_node then
-		arg_4_2.attack_pattern_data.exit_node = nil
+	if blackboard.attack_pattern_data.exit_node then
+		blackboard.attack_pattern_data.exit_node = nil
 
 		return "done"
 	end
 
-	local move_pos = arg_4_2.move_pos
+	local move_pos = blackboard.move_pos
 
 	if not move_pos then
-		local calculate_move_position = self:calculate_move_position(arg_4_1, arg_4_2)
-		local move_attempts = arg_4_2.move_attempts
+		local position = self:calculate_move_position(unit, blackboard)
+		local move_attempts = blackboard.move_attempts
 
-		move_attempts = move_attempts or 0
-		arg_4_2.move_attempts = move_attempts
-		arg_4_2.move_attempts = arg_4_2.move_attempts + 1
+		move_attempts = not not move_attempts or not not 0
+		blackboard.move_attempts = move_attempts
+		blackboard.move_attempts = blackboard.move_attempts + 1
 
-		if not calculate_move_position then
-			self:move_to(calculate_move_position, arg_4_1, arg_4_2)
-		elseif arg_4_2.move_attempts > 5 then
+		if position then
+			self:move_to(position, unit, blackboard)
+		elseif blackboard.move_attempts > 5 then
 			return "failed"
 		end
 
 		return "running"
 	end
 
-	if not (not move_pos and arg_4_2.destination_dist < 0.5) then
+	local at_goal = not not move_pos and blackboard.destination_dist < 0.5
+
+	if at_goal then
 		return "done"
 	end
 
-	if not arg_4_2.no_path_found then
+	local no_path_found = blackboard.no_path_found
+
+	if no_path_found then
 		return "failed"
 	end
 
-	local is_computing_path = arg_4_2.is_computing_path
+	local is_computing_path = blackboard.is_computing_path
 
-	if not (arg_4_2.move_state == "moving" or is_computing_path) then
-		local move_anim = arg_4_2.action.move_anim
+	if blackboard.move_state ~= "moving" and not is_computing_path then
+		local action = blackboard.action
+		local move_animation = action.move_anim
+		local network_manager = Managers.state.network
 
-		Managers.state.network:anim_event(arg_4_1, move_anim)
+		network_manager:anim_event(unit, move_animation)
 
-		arg_4_2.move_state = "moving"
+		blackboard.move_state = "moving"
 	end
 
 	return "running"
 end
 
-BTRatlingGunnerMoveToShootAction.move_to = function (arg_5_0, arg_5_1, arg_5_2, arg_5_3)
+BTRatlingGunnerMoveToShootAction.move_to = function (self, position, unit, blackboard)
 	-- function 5
-	arg_5_3.navigation_extension:move_to(arg_5_1)
+	local navigation_extension = blackboard.navigation_extension
 
-	arg_5_3.move_pos = Vector3Box(arg_5_1)
+	navigation_extension:move_to(position)
+
+	blackboard.move_pos = Vector3Box(position)
 end
 
-BTRatlingGunnerMoveToShootAction.calculate_move_position = function (arg_6_0, arg_6_1, arg_6_2)
+BTRatlingGunnerMoveToShootAction.calculate_move_position = function (self, unit, blackboard)
 	-- function 6
-	local action = arg_6_2.action
-	local var_6_1 = action.keep_target_distance[1]
-	local var_6_2 = action.keep_target_distance[2]
-	local num = 1
-	local num_2 = 3
-	local num_3 = 6
+	local action = blackboard.action
+	local min_distance = action.keep_target_distance[1]
+	local max_distance = action.keep_target_distance[2]
+	local min_angle_step = 1
+	local max_angle_step = 3
+	local min_angle = 6
+	local position = AiUtils.advance_towards_target(unit, blackboard, min_distance, max_distance, min_angle_step, max_angle_step, min_angle)
 
-	return (AiUtils.advance_towards_target(arg_6_1, arg_6_2, var_6_1, var_6_2, num, num_2, num_3))
+	return position
 end

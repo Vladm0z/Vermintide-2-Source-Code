@@ -1,21 +1,22 @@
 -- chunkname: @scripts/settings/breeds/breed_pet_skeleton_armored.lua
 
-local scripts_utils_stagger_types = require("scripts/utils/stagger_types")
+local stagger_types = require("scripts/utils/stagger_types")
 
-local function fn(arg_1_0, arg_1_1, arg_1_2, arg_1_3, arg_1_4)
+local function hit_ai_func(unit, blackboard, hit_unit, action, attack)
 	-- function 1
-	if arg_1_2 ~= arg_1_1.attacking_target then
-		local num = 0
+	if hit_unit ~= blackboard.attacking_target then
+		local damage = 0
+		local buff_extension = ScriptUnit.extension(unit, "buff_system")
 
-		ScriptUnit.extension(arg_1_0, "buff_system"):trigger_procs("on_damage_dealt", arg_1_2, arg_1_0, num, nil, nil, nil, nil, nil, nil, nil, nil, nil)
+		buff_extension:trigger_procs("on_damage_dealt", hit_unit, unit, damage, nil, nil, nil, nil, nil, nil, nil, nil, nil)
 
 		if not Managers.state.network:in_game_session() then
-			Managers.state.achievement:trigger_event("on_damage_dealt", arg_1_2, arg_1_0, num, nil, nil, nil, nil, nil, nil, nil, nil, nil)
+			Managers.state.achievement:trigger_event("on_damage_dealt", hit_unit, unit, damage, nil, nil, nil, nil, nil, nil, nil, nil, nil)
 		end
 	end
 end
 
-local tbl = {
+local breed_data = {
 	detection_radius = 18,
 	pet_skeleton_type = "armored",
 	walk_speed = 4,
@@ -168,21 +169,21 @@ local tbl = {
 		40,
 		40
 	},
-	stagger_modifier_function = function (arg_2_0, arg_2_1, arg_2_2, arg_2_3, arg_2_4, arg_2_5)
+	stagger_modifier_function = function (stagger_type, duration, length, hit_zone_name, blackboard, breed)
 		-- function 2
-		if arg_2_4.stagger_type == scripts_utils_stagger_types.heavy then
-			if arg_2_0 ~= scripts_utils_stagger_types.heavy or not arg_2_4.heavy_stagger_immune_time then
-				arg_2_0 = scripts_utils_stagger_types.none
-				arg_2_1 = 0
-				arg_2_2 = 0
-			elseif arg_2_0 == scripts_utils_stagger_types.heavy or not arg_2_4.stagger_immune_time then
-				arg_2_0 = scripts_utils_stagger_types.none
-				arg_2_1 = 0
-				arg_2_2 = 0
+		if blackboard.stagger_type == stagger_types.heavy then
+			if stagger_type == stagger_types.heavy and blackboard.heavy_stagger_immune_time then
+				stagger_type = stagger_types.none
+				duration = 0
+				length = 0
+			elseif stagger_type ~= stagger_types.heavy and blackboard.stagger_immune_time then
+				stagger_type = stagger_types.none
+				duration = 0
+				length = 0
 			end
 		end
 
-		return arg_2_0, arg_2_1, arg_2_2
+		return stagger_type, duration, length
 	end,
 	hitzone_multiplier_types = {
 		head = "headshot"
@@ -409,10 +410,10 @@ local tbl = {
 	}
 }
 
-Breeds.pet_skeleton_armored = table.create_copy(Breeds.pet_skeleton_armored, tbl)
+Breeds.pet_skeleton_armored = table.create_copy(Breeds.pet_skeleton_armored, breed_data)
 
-local num = 1.5
-local tbl_2 = {
+local increased_armor_damage = 1.5
+local AttackIntensityPerDifficulty = {
 	sweep = {
 		easy = {
 			normal = 1.5,
@@ -548,7 +549,7 @@ local tbl_2 = {
 		}
 	}
 }
-local tbl_3 = {
+local action_data = {
 	idle = {
 		anim_cycle_index = 0,
 		animations = {
@@ -623,7 +624,7 @@ local tbl_3 = {
 		action_weight = 10,
 		ignore_ai_damage = true,
 		self_running_speed_threshold = 1,
-		difficulty_attack_intensity = tbl_2,
+		difficulty_attack_intensity = AttackIntensityPerDifficulty,
 		considerations = UtilityConsiderations.chaos_raider_running_attack,
 		target_running_distance_threshold = math.huge,
 		running_attacks = {
@@ -644,10 +645,10 @@ local tbl_3 = {
 				push_ai = {
 					stagger_distance = 1,
 					stagger_impact = {
-						scripts_utils_stagger_types.weak,
-						scripts_utils_stagger_types.weak,
-						scripts_utils_stagger_types.none,
-						scripts_utils_stagger_types.none
+						stagger_types.weak,
+						stagger_types.weak,
+						stagger_types.none,
+						stagger_types.none
 					},
 					stagger_duration = {
 						1,
@@ -676,10 +677,10 @@ local tbl_3 = {
 				push_ai = {
 					stagger_distance = 1,
 					stagger_impact = {
-						scripts_utils_stagger_types.weak,
-						scripts_utils_stagger_types.weak,
-						scripts_utils_stagger_types.none,
-						scripts_utils_stagger_types.none
+						stagger_types.weak,
+						stagger_types.weak,
+						stagger_types.none,
+						stagger_types.none
 					},
 					stagger_duration = {
 						1,
@@ -711,10 +712,10 @@ local tbl_3 = {
 				push_ai = {
 					stagger_distance = 1,
 					stagger_impact = {
-						scripts_utils_stagger_types.weak,
-						scripts_utils_stagger_types.weak,
-						scripts_utils_stagger_types.none,
-						scripts_utils_stagger_types.none
+						stagger_types.weak,
+						stagger_types.weak,
+						stagger_types.none,
+						stagger_types.none
 					},
 					stagger_duration = {
 						1,
@@ -743,10 +744,10 @@ local tbl_3 = {
 				push_ai = {
 					stagger_distance = 1,
 					stagger_impact = {
-						scripts_utils_stagger_types.weak,
-						scripts_utils_stagger_types.weak,
-						scripts_utils_stagger_types.none,
-						scripts_utils_stagger_types.none
+						stagger_types.weak,
+						stagger_types.weak,
+						stagger_types.none,
+						stagger_types.none
 					},
 					stagger_duration = {
 						1,
@@ -843,7 +844,7 @@ local tbl_3 = {
 			}
 		},
 		fatigue_type = BreedTweaks.fatigue_types.elite_sweep.running_attack,
-		hit_ai_func = fn
+		hit_ai_func = hit_ai_func
 	},
 	special_attack_cleave = {
 		height = 2,
@@ -859,7 +860,7 @@ local tbl_3 = {
 		attack_intensity_type = "cleave",
 		ignore_ai_damage = true,
 		width = 0.4,
-		difficulty_attack_intensity = tbl_2,
+		difficulty_attack_intensity = AttackIntensityPerDifficulty,
 		attacks = {
 			{
 				range = 2.8,
@@ -879,10 +880,10 @@ local tbl_3 = {
 				push_ai = {
 					stagger_distance = 1,
 					stagger_impact = {
-						scripts_utils_stagger_types.weak,
-						scripts_utils_stagger_types.weak,
-						scripts_utils_stagger_types.none,
-						scripts_utils_stagger_types.none
+						stagger_types.weak,
+						stagger_types.weak,
+						stagger_types.none,
+						stagger_types.none
 					},
 					stagger_duration = {
 						1,
@@ -979,7 +980,7 @@ local tbl_3 = {
 			false,
 			false
 		},
-		hit_ai_func = fn
+		hit_ai_func = hit_ai_func
 	},
 	special_attack_sweep = {
 		damage_type = "cutting",
@@ -994,7 +995,7 @@ local tbl_3 = {
 		attack_intensity_type = "sweep",
 		ignore_ai_damage = true,
 		width = 0.4,
-		difficulty_attack_intensity = tbl_2,
+		difficulty_attack_intensity = AttackIntensityPerDifficulty,
 		attacks = {
 			{
 				range = 3,
@@ -1015,10 +1016,10 @@ local tbl_3 = {
 				push_ai = {
 					stagger_distance = 1,
 					stagger_impact = {
-						scripts_utils_stagger_types.weak,
-						scripts_utils_stagger_types.weak,
-						scripts_utils_stagger_types.none,
-						scripts_utils_stagger_types.none
+						stagger_types.weak,
+						stagger_types.weak,
+						stagger_types.none,
+						stagger_types.none
 					},
 					stagger_duration = {
 						1,
@@ -1048,10 +1049,10 @@ local tbl_3 = {
 				push_ai = {
 					stagger_distance = 1,
 					stagger_impact = {
-						scripts_utils_stagger_types.weak,
-						scripts_utils_stagger_types.weak,
-						scripts_utils_stagger_types.none,
-						scripts_utils_stagger_types.none
+						stagger_types.weak,
+						stagger_types.weak,
+						stagger_types.none,
+						stagger_types.none
 					},
 					stagger_duration = {
 						1,
@@ -1148,7 +1149,7 @@ local tbl_3 = {
 			false,
 			false
 		},
-		hit_ai_func = fn
+		hit_ai_func = hit_ai_func
 	},
 	push_attack = {
 		damage = 0,
@@ -1162,7 +1163,7 @@ local tbl_3 = {
 		step_attack_anim = "attack_push_moving",
 		fatigue_type = "sv_push",
 		attack_anim = "attack_push",
-		difficulty_attack_intensity = tbl_2,
+		difficulty_attack_intensity = AttackIntensityPerDifficulty,
 		considerations = UtilityConsiderations.chaos_raider_push_attack,
 		ignore_staggers = {
 			true,
@@ -1278,11 +1279,11 @@ local tbl_3 = {
 		push_ai = {
 			stagger_distance = 1.5,
 			stagger_impact = {
-				scripts_utils_stagger_types.heavy,
-				scripts_utils_stagger_types.heavy,
-				scripts_utils_stagger_types.none,
-				scripts_utils_stagger_types.none,
-				scripts_utils_stagger_types.medium
+				stagger_types.heavy,
+				stagger_types.heavy,
+				stagger_types.none,
+				stagger_types.none,
+				stagger_types.medium
 			},
 			stagger_duration = {
 				1,
@@ -1313,7 +1314,7 @@ local tbl_3 = {
 		bot_threat_start_time_step = 1.6,
 		move_anim = "move_fwd",
 		width = 0.4,
-		difficulty_attack_intensity = tbl_2,
+		difficulty_attack_intensity = AttackIntensityPerDifficulty,
 		considerations = UtilityConsiderations.chaos_raider_special_attack,
 		attack_anim = {
 			"attack_cleave_02"
@@ -1404,16 +1405,18 @@ local tbl_3 = {
 	},
 	stagger = {
 		scale_animation_speeds = true,
-		custom_enter_function = function (arg_3_0, arg_3_1, arg_3_2, arg_3_3)
+		custom_enter_function = function (unit, blackboard, t, action)
 			-- function 3
-			if arg_3_1.stagger_type == scripts_utils_stagger_types.heavy then
-				arg_3_1.stagger_immune_time = arg_3_2 + 2.25
-				arg_3_1.heavy_stagger_immune_time = arg_3_2 + 1.5
-			elseif arg_3_1.stagger_type == scripts_utils_stagger_types.explosion then
-				arg_3_1.stagger_immune_time = arg_3_2 + 3.5
+			if blackboard.stagger_type == stagger_types.heavy then
+				blackboard.stagger_immune_time = t + 2.25
+				blackboard.heavy_stagger_immune_time = t + 1.5
+			elseif blackboard.stagger_type == stagger_types.explosion then
+				blackboard.stagger_immune_time = t + 3.5
 			end
 
-			return arg_3_3.stagger_anims[arg_3_1.stagger_type], "idle"
+			local stagger_anims = action.stagger_anims[blackboard.stagger_type]
+
+			return stagger_anims, "idle"
 		end,
 		stagger_anims = {
 			{
@@ -1667,9 +1670,9 @@ local tbl_3 = {
 	follow_owner = {}
 }
 
-tbl_3.moving_special_attack_sweep = table.clone(tbl_3.special_attack_sweep)
-tbl_3.moving_special_attack_sweep.target_running_velocity_threshold = 2
-tbl_3.moving_special_attack_sweep.running_attacks = {
+action_data.moving_special_attack_sweep = table.clone(action_data.special_attack_sweep)
+action_data.moving_special_attack_sweep.target_running_velocity_threshold = 2
+action_data.moving_special_attack_sweep.running_attacks = {
 	{
 		range = 5,
 		height = 2,
@@ -1685,7 +1688,7 @@ tbl_3.moving_special_attack_sweep.running_attacks = {
 			"attack_move",
 			"attack_move_2"
 		},
-		difficulty_attack_intensity = tbl_2
+		difficulty_attack_intensity = AttackIntensityPerDifficulty
 	},
 	{
 		range = 5,
@@ -1701,12 +1704,12 @@ tbl_3.moving_special_attack_sweep.running_attacks = {
 		attack_anim = {
 			"attack_move_2"
 		},
-		difficulty_attack_intensity = tbl_2
+		difficulty_attack_intensity = AttackIntensityPerDifficulty
 	}
 }
-tbl_3.moving_special_attack_cleave = table.clone(tbl_3.special_attack_cleave)
-tbl_3.moving_special_attack_cleave.target_running_velocity_threshold = 2
-tbl_3.moving_special_attack_cleave.running_attacks = {
+action_data.moving_special_attack_cleave = table.clone(action_data.special_attack_cleave)
+action_data.moving_special_attack_cleave.target_running_velocity_threshold = 2
+action_data.moving_special_attack_cleave.running_attacks = {
 	{
 		height = 2,
 		offset_forward = 0,
@@ -1720,13 +1723,13 @@ tbl_3.moving_special_attack_cleave.running_attacks = {
 		attack_anim = {
 			"attack_cleave_moving_01"
 		},
-		difficulty_attack_intensity = tbl_2
+		difficulty_attack_intensity = AttackIntensityPerDifficulty
 	}
 }
-tbl_3.command_attack = table.clone(tbl_3.special_attack_sweep)
-tbl_3.command_attack.considerations = UtilityConsiderations.command_attack
-tbl_3.command_attack.action_weight = 1
-tbl_3.running_command_attack = table.clone(tbl_3.running_sweep_attack)
-tbl_3.running_command_attack.considerations = UtilityConsiderations.running_command_attack
-tbl_3.fallback_idle = tbl_3.idle
-BreedActions.pet_skeleton_armored = table.create_copy(BreedActions.pet_skeleton_armored, tbl_3)
+action_data.command_attack = table.clone(action_data.special_attack_sweep)
+action_data.command_attack.considerations = UtilityConsiderations.command_attack
+action_data.command_attack.action_weight = 1
+action_data.running_command_attack = table.clone(action_data.running_sweep_attack)
+action_data.running_command_attack.considerations = UtilityConsiderations.running_command_attack
+action_data.fallback_idle = action_data.idle
+BreedActions.pet_skeleton_armored = table.create_copy(BreedActions.pet_skeleton_armored, action_data)

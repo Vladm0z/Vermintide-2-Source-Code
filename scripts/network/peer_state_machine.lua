@@ -4,95 +4,95 @@ require("scripts/network/peer_states")
 
 PeerStateMachine = {}
 
-local function fn(arg_1_0, ...)
+local function network_printf(format, ...)
 	-- function 1
-	printf("[PeerSM] " .. arg_1_0, ...)
+	printf("[PeerSM] " .. format, ...)
 end
 
-PeerStateMachine.create = function (arg_2_0, arg_2_1, arg_2_2)
+PeerStateMachine.create = function (server, peer_id, xb1_preconnect)
 	-- function 2
-	local tbl = {
-		server = arg_2_0,
-		peer_id = arg_2_1,
-		is_remote = arg_2_1 ~= Network.peer_id()
+	local state_data = {
+		server = server,
+		peer_id = peer_id,
+		is_remote = peer_id ~= Network.peer_id()
 	}
-	local tbl_2 = {}
-	local tbl_3 = {
-		state_data = tbl,
+	local function_memoize = {}
+	local state_machine = {
+		state_data = state_data,
 		current_state = PeerStates.Connecting,
-		function_memoize = tbl_2
+		function_memoize = function_memoize
 	}
 
-	tbl.change_state = function (arg_3_0, arg_3_1)
+	state_data.change_state = function (_, new_state)
 		-- function 3
-		fn("%s :: on_exit %s", arg_2_1, tostring(tbl_3.current_state))
-		tbl_3.current_state.on_exit(tbl, arg_3_1)
+		network_printf("%s :: on_exit %s", peer_id, tostring(state_machine.current_state))
+		state_machine.current_state.on_exit(state_data, new_state)
 
-		local current_state = tbl_3.current_state
+		local old_state = state_machine.current_state
 
-		tbl_3.current_state = arg_3_1
+		state_machine.current_state = new_state
 
-		fn("%s :: on_enter %s", arg_2_1, tostring(arg_3_1))
-		arg_3_1.on_enter(tbl, current_state)
+		network_printf("%s :: on_enter %s", peer_id, tostring(new_state))
+		new_state.on_enter(state_data, old_state)
 	end
 
-	fn("%s :: on_enter %s", arg_2_1, tostring(tbl_3.current_state))
-	tbl_3.current_state.on_enter(tbl)
+	network_printf("%s :: on_enter %s", peer_id, tostring(state_machine.current_state))
+	state_machine.current_state.on_enter(state_data)
 
-	local tbl_4 = {
-		__newindex = function (arg_4_0, arg_4_1, arg_4_2)
+	local state_machine_meta_table = {
+		__newindex = function (t, k, v)
 			-- function 4
 			assert(false)
 		end,
-		__index = function (arg_5_0, arg_5_1)
+		__index = function (self, k)
 			-- function 5
-			local var_5_0 = PeerStateMachine[arg_5_1]
+			local state_machine_member = PeerStateMachine[k]
 
-			if not var_5_0 then
-				local var_5_1 = tbl_2[arg_5_1]
+			if not state_machine_member then
+				local fetched_function = function_memoize[k]
 
-				if not var_5_1 then
-					local function fn(...)
+				if not fetched_function then
+					local function new_function(...)
 						-- function 6
-						local var_6_0 = arg_5_0.current_state[arg_5_1]
+						local current_function = self.current_state[k]
 
-						assert(not var_6_0 and type(var_6_0) == "function", "Could not find function %q in state %q", arg_5_1, tostring(arg_5_0.current_state))
-						var_6_0(tbl, ...)
+						assert(not not current_function and type(current_function) == "function", "Could not find function %q in state %q", k, tostring(self.current_state))
+						current_function(state_data, ...)
 					end
 
-					tbl_2[arg_5_1] = fn
+					function_memoize[k] = new_function
 
-					return fn
+					return new_function
 				else
-					return var_5_1
+					return fetched_function
 				end
 			else
-				return var_5_0
+				return state_machine_member
 			end
 		end
 	}
 
-	setmetatable(tbl_3, tbl_4)
+	setmetatable(state_machine, state_machine_meta_table)
 
-	return tbl_3
+	return state_machine
 end
 
-PeerStateMachine.has_function = function (self, arg_7_1)
+PeerStateMachine.has_function = function (self, function_name)
 	-- function 7
-	return not not self.current_state[arg_7_1]
+	return not not self.current_state[function_name]
 end
 
-PeerStateMachine.update = function (self, arg_8_1)
+PeerStateMachine.update = function (self, dt)
 	-- function 8
 	local state_data = self.state_data
 
-	if not script_data.debug_peers then
+	if script_data.debug_peers then
 		Debug.text("Peer %s State %s", self.state_data.peer_id, tostring(self.current_state))
 	end
 
-	local update = self.current_state.update(state_data, arg_8_1)
+	local new_state = self.current_state.update(state_data, dt)
 
-	if not update then
-		state_data:change_state(update)
+	if new_state then
+		state_data:change_state(new_state)
 	end
 end

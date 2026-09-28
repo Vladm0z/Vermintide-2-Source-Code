@@ -1,6 +1,6 @@
 -- chunkname: @scripts/entity_system/systems/behaviour/trees/skaven/skaven_shield_rat_behavior.lua
 
-local skaven_clan_rat_with_shield = BreedActions.skaven_clan_rat_with_shield
+local ACTIONS = BreedActions.skaven_clan_rat_with_shield
 
 BreedBehaviors.shield_rat = {
 	"BTSelector",
@@ -23,13 +23,13 @@ BreedBehaviors.shield_rat = {
 		"BTStaggerAction",
 		name = "stagger",
 		condition = "stagger",
-		action_data = skaven_clan_rat_with_shield.stagger
+		action_data = ACTIONS.stagger
 	},
 	{
 		"BTBlockedAction",
 		name = "blocked",
 		condition = "blocked",
-		action_data = skaven_clan_rat_with_shield.blocked
+		action_data = ACTIONS.blocked
 	},
 	{
 		"BTSelector",
@@ -42,7 +42,7 @@ BreedBehaviors.shield_rat = {
 			"BTClimbAction",
 			name = "climb",
 			condition = "at_climb_smartobject",
-			action_data = skaven_clan_rat_with_shield.climb
+			action_data = ACTIONS.climb
 		},
 		{
 			"BTJumpAcrossAction",
@@ -53,7 +53,7 @@ BreedBehaviors.shield_rat = {
 			"BTSmashDoorAction",
 			name = "smash_door",
 			condition = "at_door_smartobject",
-			action_data = skaven_clan_rat_with_shield.smash_door
+			action_data = ACTIONS.smash_door
 		},
 		condition = "at_smartobject",
 		name = "smartobject"
@@ -62,32 +62,32 @@ BreedBehaviors.shield_rat = {
 		"BTHesitateAction",
 		name = "hesitate",
 		condition = "is_alerted",
-		action_data = skaven_clan_rat_with_shield.alerted
+		action_data = ACTIONS.alerted
 	},
 	{
 		"BTUtilityNode",
-		action_data = skaven_clan_rat_with_shield.utility_action,
+		action_data = ACTIONS.utility_action,
 		{
 			"BTClanRatFollowAction",
 			name = "follow",
-			action_data = skaven_clan_rat_with_shield.follow
+			action_data = ACTIONS.follow
 		},
 		{
 			"BTAttackAction",
 			name = "running_attack",
 			condition = "ask_target_before_attacking",
-			action_data = skaven_clan_rat_with_shield.running_attack
+			action_data = ACTIONS.running_attack
 		},
 		{
 			"BTAttackAction",
 			name = "normal_attack",
 			condition = "ask_target_before_attacking",
-			action_data = skaven_clan_rat_with_shield.normal_attack
+			action_data = ACTIONS.normal_attack
 		},
 		{
 			"BTCombatShoutAction",
 			name = "combat_shout",
-			action_data = skaven_clan_rat_with_shield.combat_shout
+			action_data = ACTIONS.combat_shout
 		},
 		name = "in_combat",
 		condition = "confirmed_player_sighting"
@@ -96,20 +96,20 @@ BreedBehaviors.shield_rat = {
 		"BTAlertedAction",
 		name = "alerted",
 		condition = "player_spotted",
-		action_data = skaven_clan_rat_with_shield.alerted
+		action_data = ACTIONS.alerted
 	},
 	{
 		"BTMoveToGoalAction",
 		name = "move_to_goal",
 		condition = "has_goal_destination",
-		action_data = skaven_clan_rat_with_shield.follow
+		action_data = ACTIONS.follow
 	},
 	{
 		"BTSequence",
 		{
 			"BTInterestPointChooseAction",
 			name = "interest_point_choose",
-			action_data = skaven_clan_rat_with_shield.interest_point_choose
+			action_data = ACTIONS.interest_point_choose
 		},
 		{
 			"BTInterestPointApproachAction",
@@ -118,7 +118,7 @@ BreedBehaviors.shield_rat = {
 		{
 			"BTInterestPointUseAction",
 			name = "interest_point_use",
-			action_data = skaven_clan_rat_with_shield.interest_point_choose
+			action_data = ACTIONS.interest_point_choose
 		},
 		condition = "should_use_interest_point",
 		name = "interest_point"

@@ -1,6 +1,6 @@
 -- chunkname: @levels/honduras_dlcs/scorpion/river/world_nav_tag_volumes.lua
 
-local tbl = {
+local nav_tag_volumes = {
 	volume_gate_layer_20 = {
 		delay_nav_tag_volume_creation = false,
 		alt_max = 3.0226759910583496,
@@ -1007,9 +1007,9 @@ local tbl = {
 		}
 	}
 }
-local str = "1"
+local version = "1"
 
 return {
-	version = str,
-	nav_tag_volumes = tbl
+	version = version,
+	nav_tag_volumes = nav_tag_volumes
 }

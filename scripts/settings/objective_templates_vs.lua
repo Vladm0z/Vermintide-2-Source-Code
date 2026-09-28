@@ -57,7 +57,7 @@ VersusObjectiveSettings = {
 	}
 }
 
-local tbl = {
+local allowed_objective_terms = {
 	always_show_objective_marker = true,
 	mission_name = true,
 	play_safehouse_vo = true,
@@ -93,101 +93,101 @@ local tbl = {
 	}
 }
 
-local function fn(arg_1_0, arg_1_1)
+local function nearest_word(bad_string, allowed_terms)
 	-- function 1
-	local num = 999
-	local var_1_1
+	local lowest_dist = 999
+	local best_string
 
-	for k, v in pairs(arg_1_1) do
-		local damerau_levenshtein_distance = string.damerau_levenshtein_distance(k, arg_1_0, 5)
+	for k, v in pairs(allowed_terms) do
+		local dist = string.damerau_levenshtein_distance(k, bad_string, 5)
 
-		if damerau_levenshtein_distance < num then
-			num = damerau_levenshtein_distance
-			var_1_1 = k
+		if dist < lowest_dist then
+			lowest_dist = dist
+			best_string = k
 		end
 	end
 
-	if not var_1_1 then
-		return var_1_1
+	if best_string then
+		return best_string
 	end
 end
 
-local function fn_2(arg_2_0)
+local function recursive_add_name(data)
 	-- function 2
-	local num = 0
+	local score = 0
 
-	for k, v in pairs(arg_2_0) do
-		for k_2, v_2 in pairs(v) do
-			local var_2_1 = tbl[k_2]
+	for objective_name, objective_data in pairs(data) do
+		for k, v in pairs(objective_data) do
+			local term = allowed_objective_terms[k]
 
-			if not var_2_1 then
-				local var_2_2 = fn(k_2, tbl)
+			if not term then
+				local close_string = nearest_word(k, allowed_objective_terms)
 
-				if not var_2_2 then
-					fassert(false, "Bad objective keyword found in objective_templates_vs.lua: '%s', did you mean '%s' ?", k_2, var_2_2)
+				if close_string then
+					fassert(false, "Bad objective keyword found in objective_templates_vs.lua: '%s', did you mean '%s' ?", k, close_string)
 				else
-					fassert(false, "Bad objective keyword found objective_templates_vs.lua: '%s', was it misspelled?", k_2)
+					fassert(false, "Bad objective keyword found objective_templates_vs.lua: '%s', was it misspelled?", k)
 				end
 			end
 
-			if type(var_2_1) == "table" then
-				local var_2_3 = fn(v_2, var_2_1)
+			if type(term) == "table" then
+				local close_string = nearest_word(v, term)
 
-				fassert(var_2_1[v_2], "Bad objective: Objective keyword '%s' is set to '%s' which does not exist or is misspelled. Did you mean '%s' ?", k_2, v_2, var_2_3)
+				fassert(term[v], "Bad objective: Objective keyword '%s' is set to '%s' which does not exist or is misspelled. Did you mean '%s' ?", k, v, close_string)
 			end
 		end
 
-		GameModeSettings.versus.objective_names[k] = true
+		GameModeSettings.versus.objective_names[objective_name] = true
 
-		if not v.sub_objectives then
-			num = num + fn_2(v.sub_objectives)
+		if objective_data.sub_objectives then
+			score = score + recursive_add_name(objective_data.sub_objectives)
 		end
 
-		local score_for_completion = v.score_for_completion
+		local score_for_completion = objective_data.score_for_completion
 
-		score_for_completion = score_for_completion or 0
-		num = num + score_for_completion
+		score_for_completion = not not score_for_completion or not not 0
+		score = score + score_for_completion
 
-		local score_per_section = v.score_per_section
+		local score_per_section = objective_data.score_per_section
 
-		if not score_per_section then
-			num = num + score_per_section * v.num_sections
+		if score_per_section then
+			score = score + score_per_section * objective_data.num_sections
 		end
 
-		local score_per_socket = v.score_per_socket
+		local score_per_socket = objective_data.score_per_socket
 
-		if not score_per_socket then
-			num = num + score_per_socket * v.num_sockets
+		if score_per_socket then
+			score = score + score_per_socket * objective_data.num_sockets
 		end
 
-		local score_for_each_player_inside = v.score_for_each_player_inside
+		local score_for_each_player_inside = objective_data.score_for_each_player_inside
 
-		if not score_for_each_player_inside then
-			num = num + score_for_each_player_inside * 4
+		if score_for_each_player_inside then
+			score = score + score_for_each_player_inside * 4
 		end
 	end
 
-	return num
+	return score
 end
 
 GameModeSettings.versus.objective_names = {}
 
-for k, v in pairs(VersusObjectiveSettings) do
-	local objective_lists = v.objective_lists
+for level_key, level_data in pairs(VersusObjectiveSettings) do
+	local objective_lists = level_data.objective_lists
 
-	v.max_score = 0
+	level_data.max_score = 0
 
-	for k_2 = 1, #objective_lists do
-		local var_0_4 = ObjectiveLists[objective_lists[k_2]]
-		local num = 0
+	for i = 1, #objective_lists do
+		local set = ObjectiveLists[objective_lists[i]]
+		local set_score = 0
 
-		for l = 1, #var_0_4 do
-			local var_0_6 = var_0_4[l]
+		for j = 1, #set do
+			local set_data = set[j]
 
-			num = num + fn_2(var_0_6)
+			set_score = set_score + recursive_add_name(set_data)
 		end
 
-		var_0_4.max_score = num
-		v.max_score = v.max_score + num
+		set.max_score = set_score
+		level_data.max_score = level_data.max_score + set_score
 	end
 end

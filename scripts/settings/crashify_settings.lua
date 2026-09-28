@@ -1,6 +1,8 @@
 -- chunkname: @scripts/settings/crashify_settings.lua
 
-return {
+local settings = {
 	branch = "default",
 	project = "vermintide 2"
 }
+
+return settings

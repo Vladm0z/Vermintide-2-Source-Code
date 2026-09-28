@@ -2,12 +2,12 @@
 
 local Currencies = Currencies
 
-Currencies = Currencies or {}
+Currencies = not not Currencies or not not {}
 Currencies = Currencies
 
 local CanWieldAllItemTemplates = CanWieldAllItemTemplates
 
-CanWieldAllItemTemplates = CanWieldAllItemTemplates or {}
+CanWieldAllItemTemplates = not not CanWieldAllItemTemplates or not not {}
 CanWieldAllItemTemplates = CanWieldAllItemTemplates
 Currencies.shillings_01 = {
 	description = "shilling_bag_1_description",

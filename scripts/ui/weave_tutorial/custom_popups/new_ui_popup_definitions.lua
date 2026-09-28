@@ -1,11 +1,10 @@
 -- chunkname: @scripts/ui/weave_tutorial/custom_popups/new_ui_popup_definitions.lua
 
-local num = 1920
-local num_2 = 1080
-local num_3 = 50
-local num_4 = 1200
-local num_5 = num_4 - num_3 * 2
-local tbl = {
+local SIZE_X, SIZE_Y = 1920, 1080
+local content_margin = 50
+local window_w = 1200
+local content_w = window_w - content_margin * 2
+local scenegraph_definition = {
 	screen = {
 		scale = "fit",
 		position = {
@@ -14,8 +13,8 @@ local tbl = {
 			UILayer.item_display_popup
 		},
 		size = {
-			num,
-			num_2
+			SIZE_X,
+			SIZE_Y
 		}
 	},
 	background = {
@@ -42,7 +41,7 @@ local tbl = {
 			2
 		},
 		size = {
-			num_4,
+			window_w,
 			650
 		}
 	},
@@ -98,7 +97,7 @@ local tbl = {
 			1
 		},
 		size = {
-			num_5,
+			content_w,
 			60
 		}
 	},
@@ -112,7 +111,7 @@ local tbl = {
 			0
 		},
 		size = {
-			num_5,
+			content_w,
 			50
 		}
 	},
@@ -126,7 +125,7 @@ local tbl = {
 			0
 		},
 		size = {
-			num_5,
+			content_w,
 			380
 		}
 	},
@@ -140,7 +139,7 @@ local tbl = {
 			0
 		},
 		size = {
-			num_5,
+			content_w,
 			380
 		}
 	},
@@ -168,7 +167,7 @@ local tbl = {
 			0
 		},
 		size = {
-			num_5,
+			content_w,
 			380
 		}
 	},
@@ -182,7 +181,7 @@ local tbl = {
 			0
 		},
 		size = {
-			num_5,
+			content_w,
 			380
 		}
 	},
@@ -243,7 +242,7 @@ local tbl = {
 		}
 	}
 }
-local tbl_2 = {
+local title_text_style = {
 	use_shadow = true,
 	upper_case = true,
 	localize = false,
@@ -259,7 +258,7 @@ local tbl_2 = {
 		2
 	}
 }
-local tbl_3 = {
+local body_text_style = {
 	word_wrap = true,
 	upper_case = false,
 	localize = false,
@@ -275,7 +274,7 @@ local tbl_3 = {
 		2
 	}
 }
-local tbl_4 = {
+local perks_text_style = {
 	word_wrap = true,
 	upper_case = false,
 	localize = false,
@@ -291,7 +290,7 @@ local tbl_4 = {
 		2
 	}
 }
-local tbl_5 = {
+local perk_list_text_style = {
 	word_wrap = true,
 	upper_case = false,
 	localize = false,
@@ -307,7 +306,7 @@ local tbl_5 = {
 		2
 	}
 }
-local tbl_6 = {
+local use_legacy_title_text_style = {
 	use_shadow = true,
 	upper_case = true,
 	localize = false,
@@ -323,7 +322,7 @@ local tbl_6 = {
 		2
 	}
 }
-local tbl_7 = {
+local use_legacy_text_style = {
 	word_wrap = true,
 	upper_case = false,
 	localize = false,
@@ -339,7 +338,7 @@ local tbl_7 = {
 		2
 	}
 }
-local tbl_8 = {
+local use_legacy_option_text_style = {
 	word_wrap = false,
 	upper_case = true,
 	localize = false,
@@ -355,19 +354,19 @@ local tbl_8 = {
 		2
 	}
 }
-local flag = true
+local disable_with_gamepad = true
 
-local function fn(arg_1_0, arg_1_1, arg_1_2)
+local function create_button(scenegraph_id, size, text)
 	-- function 1
-	local create_default_button = UIWidgets.create_default_button(arg_1_0, arg_1_1, "button_detail_03_gold", "button_bg_01", arg_1_2, nil, nil, "button_detail_03_gold", nil, flag)
+	local widget = UIWidgets.create_default_button(scenegraph_id, size, "button_detail_03_gold", "button_bg_01", text, nil, nil, "button_detail_03_gold", nil, disable_with_gamepad)
 
-	create_default_button.content.draw_frame = false
+	widget.content.draw_frame = false
 
-	local style = create_default_button.style
+	local style = widget.style
 
 	style.background.size = {
-		arg_1_1[1],
-		arg_1_1[2] - 8
+		size[1],
+		size[2] - 8
 	}
 	style.background.offset = {
 		0,
@@ -380,8 +379,8 @@ local function fn(arg_1_0, arg_1_1, arg_1_2)
 		2
 	}
 	style.background_fade.size = {
-		arg_1_1[1],
-		arg_1_1[2] - 8
+		size[1],
+		size[2] - 8
 	}
 	style.hover_glow.offset = {
 		0,
@@ -394,12 +393,12 @@ local function fn(arg_1_0, arg_1_1, arg_1_2)
 		7
 	}
 	style.clicked_rect.size = {
-		arg_1_1[1],
-		arg_1_1[2] - 8
+		size[1],
+		size[2] - 8
 	}
 	style.glass_top.offset = {
 		0,
-		arg_1_1[2] - 16,
+		size[2] - 16,
 		4
 	}
 	style.glass_bottom.offset = {
@@ -408,12 +407,12 @@ local function fn(arg_1_0, arg_1_1, arg_1_2)
 		4
 	}
 
-	return create_default_button
+	return widget
 end
 
-local function fn_2()
+local function create_video_hover()
 	-- function 2
-	local str = "video"
+	local scenegraph_id = "video"
 
 	return {
 		element = {
@@ -427,23 +426,34 @@ local function fn_2()
 					style_id = "icon",
 					texture_id = "icon",
 					pass_type = "texture",
-					content_change_function = function (self, arg_3_1)
+					content_change_function = function (content, style)
 						-- function 3
-						local flag
+						local num
 
-						flag = not self.button_hotspot.is_hover and 1 and -1
+						if content.button_hotspot.is_hover then
+							num = 1
 
-						local mean_dt = Managers.time:mean_dt()
-						local progress = arg_3_1.progress
-						local clamp = math.clamp(progress + mean_dt * flag * 2, 0, 1)
-
-						if not flag then
-							arg_3_1.color[1] = math.easeOutCubic(clamp) * 255
-						else
-							arg_3_1.color[1] = math.easeInCubic(clamp) * 255
+							goto label_3_0
 						end
 
-						arg_3_1.progress = clamp
+						num = -1
+
+						local increase = num
+
+						::label_3_0::
+
+						local dt = Managers.time:mean_dt()
+						local progress = style.progress
+
+						progress = math.clamp(progress + dt * increase * 2, 0, 1)
+
+						if increase then
+							style.color[1] = math.easeOutCubic(progress) * 255
+						else
+							style.color[1] = math.easeInCubic(progress) * 255
+						end
+
+						style.progress = progress
 					end
 				}
 			}
@@ -475,17 +485,17 @@ local function fn_2()
 				}
 			}
 		},
-		scenegraph_id = str
+		scenegraph_id = scenegraph_id
 	}
 end
 
-local tbl_9 = {
+local base_widget_definitions = {
 	window_background = UIWidgets.create_tiled_texture("window", "menu_frame_bg_02", {
 		1065,
 		770
 	}),
 	window_top_detail = UIWidgets.create_simple_texture("tab_selection_01_bottom", "window_top_detail"),
-	window_frame = UIWidgets.create_frame("window", tbl.window.size, "menu_frame_12_gold", 5),
+	window_frame = UIWidgets.create_frame("window", scenegraph_definition.window.size, "menu_frame_12_gold", 5),
 	screen_background = UIWidgets.create_simple_rect("screen", {
 		150,
 		0,
@@ -493,27 +503,27 @@ local tbl_9 = {
 		0
 	})
 }
-local tbl_10 = {
-	title_text = UIWidgets.create_simple_text(Localize("new_ui_popup_title"), "title", nil, nil, tbl_2),
+local page_widget_definitions = {
+	title_text = UIWidgets.create_simple_text(Localize("new_ui_popup_title"), "title", nil, nil, title_text_style),
 	paragraph_divider = UIWidgets.create_simple_texture("popup_divider", "paragraph_divider"),
-	info_text = UIWidgets.create_simple_text(Localize("new_ui_popup_info"), "body", nil, nil, tbl_3),
-	perk_text = UIWidgets.create_simple_text(Localize("new_ui_popup_perks"), "perks", nil, nil, tbl_4),
-	perk_list = UIWidgets.create_simple_text(Localize("new_ui_popup_perk_list"), "perk_list", nil, nil, tbl_5),
-	use_legacy_title_text = UIWidgets.create_simple_text(Localize("new_ui_popup_legacy_title"), "title", nil, nil, tbl_6),
-	use_legacy_text = UIWidgets.create_simple_text(Localize("new_ui_popup_legacy_text"), "use_legacy", nil, nil, tbl_7),
-	use_legacy_option = UIWidgets.create_simple_text(Localize("new_ui_popup_legacy_option"), "use_legacy_option", nil, nil, tbl_8),
-	video_frame = UIWidgets.create_frame("video", tbl.video.size, "menu_frame_12_gold", 10, {
+	info_text = UIWidgets.create_simple_text(Localize("new_ui_popup_info"), "body", nil, nil, body_text_style),
+	perk_text = UIWidgets.create_simple_text(Localize("new_ui_popup_perks"), "perks", nil, nil, perks_text_style),
+	perk_list = UIWidgets.create_simple_text(Localize("new_ui_popup_perk_list"), "perk_list", nil, nil, perk_list_text_style),
+	use_legacy_title_text = UIWidgets.create_simple_text(Localize("new_ui_popup_legacy_title"), "title", nil, nil, use_legacy_title_text_style),
+	use_legacy_text = UIWidgets.create_simple_text(Localize("new_ui_popup_legacy_text"), "use_legacy", nil, nil, use_legacy_text_style),
+	use_legacy_option = UIWidgets.create_simple_text(Localize("new_ui_popup_legacy_option"), "use_legacy_option", nil, nil, use_legacy_option_text_style),
+	video_frame = UIWidgets.create_frame("video", scenegraph_definition.video.size, "menu_frame_12_gold", 10, {
 		255,
 		0,
 		0,
 		0
 	}),
-	video_hover = fn_2(),
-	prev_button = fn("prev_button", tbl.prev_button.size, Localize("input_description_prev_page")),
-	next_button = fn("next_button", tbl.next_button.size, Localize("input_description_next_page")),
-	ok_button = fn("ok_button", tbl.ok_button.size, Localize("menu_weave_tutorial_popup_confirm_button"))
+	video_hover = create_video_hover(),
+	prev_button = create_button("prev_button", scenegraph_definition.prev_button.size, Localize("input_description_prev_page")),
+	next_button = create_button("next_button", scenegraph_definition.next_button.size, Localize("input_description_next_page")),
+	ok_button = create_button("ok_button", scenegraph_definition.ok_button.size, Localize("menu_weave_tutorial_popup_confirm_button"))
 }
-local tbl_11 = {
+local page_data = {
 	{
 		widgets = {
 			"title_text",
@@ -538,29 +548,32 @@ local tbl_11 = {
 		}
 	}
 }
-local tbl_12 = {
+local animation_definitions = {
 	transition_enter = {
 		{
 			name = "fade_in",
 			start_progress = 0,
 			end_progress = 0.2,
-			init = function (arg_4_0, arg_4_1, arg_4_2, arg_4_3)
+			init = function (ui_scenegraph, scenegraph_definition, widgets, params)
 				-- function 4
-				arg_4_3.render_settings.alpha_multiplier = 0
+				params.render_settings.alpha_multiplier = 0
 
-				local page_data = arg_4_3.page_data
+				local page_data = params.page_data
 
-				for i, v in ipairs(page_data.widgets) do
-					arg_4_2[v].content.visible = false
+				for _, widget_name in ipairs(page_data.widgets) do
+					local widget = widgets[widget_name]
+					local widget_content = widget.content
+
+					widget_content.visible = false
 				end
 			end,
-			update = function (arg_5_0, arg_5_1, arg_5_2, arg_5_3, arg_5_4)
+			update = function (ui_scenegraph, scenegraph_definition, widgets, progress, params)
 				-- function 5
-				local easeOutCubic = math.easeOutCubic(arg_5_3)
+				local anim_progress = math.easeOutCubic(progress)
 
-				arg_5_4.render_settings.alpha_multiplier = easeOutCubic
+				params.render_settings.alpha_multiplier = anim_progress
 			end,
-			on_complete = function (arg_6_0, arg_6_1, arg_6_2, arg_6_3)
+			on_complete = function (ui_scenegraph, scenegraph_definition, widgets, params)
 				-- function 6
 				return
 			end
@@ -571,71 +584,84 @@ local tbl_12 = {
 			name = "fade_in",
 			start_progress = 0,
 			end_progress = 0.5,
-			init = function (arg_7_0, arg_7_1, arg_7_2, arg_7_3)
+			init = function (ui_scenegraph, scenegraph_definition, widgets, params)
 				-- function 7
-				arg_7_3.render_settings.alpha_multiplier = 0
+				params.render_settings.alpha_multiplier = 0
 
-				local page_data = arg_7_3.page_data
+				local page_data = params.page_data
 
-				for i, v in ipairs(page_data.widgets) do
-					arg_7_2[v].content.visible = false
+				for _, widget_name in ipairs(page_data.widgets) do
+					local widget = widgets[widget_name]
+					local widget_content = widget.content
+
+					widget_content.visible = false
 				end
 
-				arg_7_2.next_button.content.visible = false
-				arg_7_2.prev_button.content.visible = false
-				arg_7_2.ok_button.content.visible = false
+				widgets.next_button.content.visible = false
+				widgets.prev_button.content.visible = false
+				widgets.ok_button.content.visible = false
 			end,
-			update = function (arg_8_0, arg_8_1, arg_8_2, arg_8_3, arg_8_4)
+			update = function (ui_scenegraph, scenegraph_definition, widgets, progress, params)
 				-- function 8
-				local easeOutCubic = math.easeOutCubic(arg_8_3)
+				local anim_progress = math.easeOutCubic(progress)
 
-				arg_8_4.render_settings.alpha_multiplier = easeOutCubic
+				params.render_settings.alpha_multiplier = anim_progress
 			end,
-			on_complete = function (arg_9_0, arg_9_1, arg_9_2, arg_9_3)
+			on_complete = function (ui_scenegraph, scenegraph_definition, widgets, params)
 				-- function 9
-				arg_9_2.title_text.content.visible = true
+				local widget = widgets.title_text
+
+				widget.content.visible = true
 			end
 		},
 		{
 			name = "header",
 			start_progress = 0.5,
 			end_progress = 0.8,
-			init = function (arg_10_0, arg_10_1, arg_10_2, arg_10_3)
+			init = function (ui_scenegraph, scenegraph_definition, widgets, params)
 				-- function 10
 				return
 			end,
-			update = function (arg_11_0, arg_11_1, arg_11_2, arg_11_3, arg_11_4)
+			update = function (ui_scenegraph, scenegraph_definition, widgets, progress, params)
 				-- function 11
-				local easeOutCubic = math.easeOutCubic(arg_11_3)
-				local title_text = arg_11_2.title_text
+				local anim_progress = math.easeOutCubic(progress)
+				local widget = widgets.title_text
 
-				title_text.style.text.text_color[1] = easeOutCubic * 255
-				title_text.style.text_shadow.text_color[1] = easeOutCubic * 255
+				widget.style.text.text_color[1] = anim_progress * 255
+				widget.style.text_shadow.text_color[1] = anim_progress * 255
 			end,
-			on_complete = function (arg_12_0, arg_12_1, arg_12_2, arg_12_3)
+			on_complete = function (ui_scenegraph, scenegraph_definition, widgets, params)
 				-- function 12
-				arg_12_2.info_text.content.visible = true
-				arg_12_2.paragraph_divider.content.visible = true
+				local widget = widgets.info_text
+
+				widget.content.visible = true
+
+				local widget = widgets.paragraph_divider
+
+				widget.content.visible = true
 			end
 		},
 		{
 			name = "info",
 			start_progress = 0.8,
 			end_progress = 2.8,
-			init = function (arg_13_0, arg_13_1, arg_13_2, arg_13_3)
+			init = function (ui_scenegraph, scenegraph_definition, widgets, params)
 				-- function 13
 				return
 			end,
-			update = function (arg_14_0, arg_14_1, arg_14_2, arg_14_3, arg_14_4)
+			update = function (ui_scenegraph, scenegraph_definition, widgets, progress, params)
 				-- function 14
-				local easeOutCubic = math.easeOutCubic(arg_14_3)
-				local info_text = arg_14_2.info_text
+				local anim_progress = math.easeOutCubic(progress)
+				local widget = widgets.info_text
 
-				info_text.style.text.text_color[1] = easeOutCubic * 255
-				info_text.style.text_shadow.text_color[1] = easeOutCubic * 255
-				arg_14_2.paragraph_divider.style.texture_id.color[1] = easeOutCubic * 255
+				widget.style.text.text_color[1] = anim_progress * 255
+				widget.style.text_shadow.text_color[1] = anim_progress * 255
+
+				local widget = widgets.paragraph_divider
+
+				widget.style.texture_id.color[1] = anim_progress * 255
 			end,
-			on_complete = function (arg_15_0, arg_15_1, arg_15_2, arg_15_3)
+			on_complete = function (ui_scenegraph, scenegraph_definition, widgets, params)
 				-- function 15
 				return
 			end
@@ -644,43 +670,45 @@ local tbl_12 = {
 			name = "perks",
 			start_progress = 3.5,
 			end_progress = 4,
-			init = function (arg_16_0, arg_16_1, arg_16_2, arg_16_3)
+			init = function (ui_scenegraph, scenegraph_definition, widgets, params)
 				-- function 16
 				return
 			end,
-			update = function (arg_17_0, arg_17_1, arg_17_2, arg_17_3, arg_17_4)
+			update = function (ui_scenegraph, scenegraph_definition, widgets, progress, params)
 				-- function 17
-				local easeOutCubic = math.easeOutCubic(arg_17_3)
-				local perk_text = arg_17_2.perk_text
+				local anim_progress = math.easeOutCubic(progress)
+				local widget = widgets.perk_text
 
-				perk_text.content.visible = true
-				perk_text.style.text.text_color[1] = easeOutCubic * 255
-				perk_text.style.text_shadow.text_color[1] = easeOutCubic * 255
+				widget.content.visible = true
+				widget.style.text.text_color[1] = anim_progress * 255
+				widget.style.text_shadow.text_color[1] = anim_progress * 255
 			end,
-			on_complete = function (arg_18_0, arg_18_1, arg_18_2, arg_18_3)
+			on_complete = function (ui_scenegraph, scenegraph_definition, widgets, params)
 				-- function 18
-				arg_18_2.perk_list.content.visible = true
+				local widget = widgets.perk_list
+
+				widget.content.visible = true
 			end
 		},
 		{
 			name = "perk_list",
 			start_progress = 4,
 			end_progress = 5,
-			init = function (arg_19_0, arg_19_1, arg_19_2, arg_19_3)
+			init = function (ui_scenegraph, scenegraph_definition, widgets, params)
 				-- function 19
 				return
 			end,
-			update = function (arg_20_0, arg_20_1, arg_20_2, arg_20_3, arg_20_4)
+			update = function (ui_scenegraph, scenegraph_definition, widgets, progress, params)
 				-- function 20
-				local easeOutCubic = math.easeOutCubic(arg_20_3)
-				local perk_list = arg_20_2.perk_list
+				local anim_progress = math.easeOutCubic(progress)
+				local widget = widgets.perk_list
 
-				perk_list.style.text.text_color[1] = easeOutCubic * 255
-				perk_list.style.text_shadow.text_color[1] = easeOutCubic * 255
+				widget.style.text.text_color[1] = anim_progress * 255
+				widget.style.text_shadow.text_color[1] = anim_progress * 255
 			end,
-			on_complete = function (arg_21_0, arg_21_1, arg_21_2, arg_21_3)
+			on_complete = function (ui_scenegraph, scenegraph_definition, widgets, params)
 				-- function 21
-				arg_21_2.next_button.content.visible = true
+				widgets.next_button.content.visible = true
 			end
 		}
 	},
@@ -689,85 +717,111 @@ local tbl_12 = {
 			name = "header",
 			start_progress = 0,
 			end_progress = 0.5,
-			init = function (arg_22_0, arg_22_1, arg_22_2, arg_22_3)
+			init = function (ui_scenegraph, scenegraph_definition, widgets, params)
 				-- function 22
-				local page_data = arg_22_3.page_data
+				local page_data = params.page_data
 
-				for i, v in ipairs(page_data.widgets) do
-					arg_22_2[v].content.visible = false
+				for _, widget_name in ipairs(page_data.widgets) do
+					local widget = widgets[widget_name]
+					local widget_content = widget.content
+
+					widget_content.visible = false
 				end
 
-				arg_22_2.prev_button.content.visible = false
-				arg_22_2.ok_button.content.visible = false
-				arg_22_3.video_widget.content.visible = false
-				arg_22_2.use_legacy_title_text.content.visible = true
-			end,
-			update = function (arg_23_0, arg_23_1, arg_23_2, arg_23_3, arg_23_4)
-				-- function 23
-				local easeOutCubic = math.easeOutCubic(arg_23_3)
-				local use_legacy_title_text = arg_23_2.use_legacy_title_text
+				widgets.prev_button.content.visible = false
+				widgets.ok_button.content.visible = false
 
-				use_legacy_title_text.style.text.text_color[1] = easeOutCubic * 255
-				use_legacy_title_text.style.text_shadow.text_color[1] = easeOutCubic * 255
+				local video_widget = params.video_widget
+
+				video_widget.content.visible = false
+
+				local widget = widgets.use_legacy_title_text
+
+				widget.content.visible = true
 			end,
-			on_complete = function (arg_24_0, arg_24_1, arg_24_2, arg_24_3)
+			update = function (ui_scenegraph, scenegraph_definition, widgets, progress, params)
+				-- function 23
+				local anim_progress = math.easeOutCubic(progress)
+				local widget = widgets.use_legacy_title_text
+
+				widget.style.text.text_color[1] = anim_progress * 255
+				widget.style.text_shadow.text_color[1] = anim_progress * 255
+			end,
+			on_complete = function (ui_scenegraph, scenegraph_definition, widgets, params)
 				-- function 24
-				arg_24_2.use_legacy_text.content.visible = true
+				local widget = widgets.use_legacy_text
+
+				widget.content.visible = true
 			end
 		},
 		{
 			name = "info",
 			start_progress = 0.5,
 			end_progress = 1.8,
-			init = function (arg_25_0, arg_25_1, arg_25_2, arg_25_3)
+			init = function (ui_scenegraph, scenegraph_definition, widgets, params)
 				-- function 25
 				return
 			end,
-			update = function (arg_26_0, arg_26_1, arg_26_2, arg_26_3, arg_26_4)
+			update = function (ui_scenegraph, scenegraph_definition, widgets, progress, params)
 				-- function 26
-				local easeOutCubic = math.easeOutCubic(arg_26_3)
-				local use_legacy_text = arg_26_2.use_legacy_text
+				local anim_progress = math.easeOutCubic(progress)
+				local widget = widgets.use_legacy_text
 
-				use_legacy_text.style.text.text_color[1] = easeOutCubic * 255
-				use_legacy_text.style.text_shadow.text_color[1] = easeOutCubic * 255
+				widget.style.text.text_color[1] = anim_progress * 255
+				widget.style.text_shadow.text_color[1] = anim_progress * 255
 			end,
-			on_complete = function (arg_27_0, arg_27_1, arg_27_2, arg_27_3)
+			on_complete = function (ui_scenegraph, scenegraph_definition, widgets, params)
 				-- function 27
-				arg_27_2.use_legacy_option.content.visible = true
-				arg_27_2.video_frame.content.visible = true
-				arg_27_2.video_hover.content.visible = true
-				arg_27_3.video_widget.content.visible = true
+				local widget = widgets.use_legacy_option
+
+				widget.content.visible = true
+
+				local widget = widgets.video_frame
+
+				widget.content.visible = true
+
+				local widget = widgets.video_hover
+
+				widget.content.visible = true
+
+				local video_widget = params.video_widget
+
+				video_widget.content.visible = true
 			end
 		},
 		{
 			name = "video",
 			start_progress = 1.8,
 			end_progress = 3.5,
-			init = function (arg_28_0, arg_28_1, arg_28_2, arg_28_3)
+			init = function (ui_scenegraph, scenegraph_definition, widgets, params)
 				-- function 28
 				return
 			end,
-			update = function (arg_29_0, arg_29_1, arg_29_2, arg_29_3, arg_29_4)
+			update = function (ui_scenegraph, scenegraph_definition, widgets, progress, params)
 				-- function 29
-				local easeOutCubic = math.easeOutCubic(arg_29_3)
+				local anim_progress = math.easeOutCubic(progress)
+				local widget = widgets.video_frame
 
-				arg_29_2.video_frame.style.frame.color[1] = easeOutCubic * 255
+				widget.style.frame.color[1] = anim_progress * 255
 
-				local use_legacy_option = arg_29_2.use_legacy_option
+				local widget = widgets.use_legacy_option
 
-				use_legacy_option.style.text.text_color[1] = easeOutCubic * 255
-				use_legacy_option.style.text_shadow.text_color[1] = easeOutCubic * 255
-				arg_29_4.video_widget.style.video_style.color[1] = easeOutCubic * 255
+				widget.style.text.text_color[1] = anim_progress * 255
+				widget.style.text_shadow.text_color[1] = anim_progress * 255
+
+				local video_widget = params.video_widget
+
+				video_widget.style.video_style.color[1] = anim_progress * 255
 			end,
-			on_complete = function (arg_30_0, arg_30_1, arg_30_2, arg_30_3)
+			on_complete = function (ui_scenegraph, scenegraph_definition, widgets, params)
 				-- function 30
-				arg_30_2.prev_button.content.visible = true
-				arg_30_2.ok_button.content.visible = true
+				widgets.prev_button.content.visible = true
+				widgets.ok_button.content.visible = true
 			end
 		}
 	}
 }
-local tbl_13 = {
+local generic_input_actions = {
 	default = {
 		{
 			input_action = "confirm",
@@ -779,10 +833,10 @@ local tbl_13 = {
 
 return {
 	create_video = create_video,
-	page_data = tbl_11,
-	generic_input_actions = tbl_13,
-	scenegraph_definition = tbl,
-	base_widget_definitions = tbl_9,
-	page_widget_definitions = tbl_10,
-	animation_definitions = tbl_12
+	page_data = page_data,
+	generic_input_actions = generic_input_actions,
+	scenegraph_definition = scenegraph_definition,
+	base_widget_definitions = base_widget_definitions,
+	page_widget_definitions = page_widget_definitions,
+	animation_definitions = animation_definitions
 }

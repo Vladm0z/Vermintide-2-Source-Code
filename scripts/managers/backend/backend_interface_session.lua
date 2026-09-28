@@ -1,6 +1,6 @@
 -- chunkname: @scripts/managers/backend/backend_interface_session.lua
 
-local tbl = {
+local States = {
 	END_OF_ROUND = 3,
 	ERROR = 4,
 	IN_GAME = 2,
@@ -8,13 +8,13 @@ local tbl = {
 	UNINITIALIZED = 0
 }
 
-for k, v in pairs(tbl) do
-	tbl[v] = k
+for key, value in pairs(States) do
+	States[value] = key
 end
 
-local var_0_1 = class(Session)
+local Session = class(Session)
 
-var_0_1.init = function (self)
+Session.init = function (self)
 	-- function 1
 	self._peers = {}
 	self._peer_queue = {}
@@ -22,62 +22,62 @@ var_0_1.init = function (self)
 	self._debug_backend_session_stop_timeout = false
 end
 
-var_0_1.disable = function (self)
+Session.disable = function (self)
 	-- function 2
 	self._disabled = true
 end
 
-var_0_1.enabled = function (self)
+Session.enabled = function (self)
 	-- function 3
 	return not self._disabled
 end
 
-var_0_1.register_rpcs = function (self, arg_4_1)
+Session.register_rpcs = function (self, network_event_delegate)
 	-- function 4
-	self._network_event_delegate = arg_4_1
+	self._network_event_delegate = network_event_delegate
 
-	if not Managers.state.network.is_server then
-		arg_4_1:register(self, "rpc_backend_session_done")
+	if Managers.state.network.is_server then
+		network_event_delegate:register(self, "rpc_backend_session_done")
 	else
-		arg_4_1:register(self, "rpc_backend_session_join")
+		network_event_delegate:register(self, "rpc_backend_session_join")
 	end
 end
 
-var_0_1.rpc_backend_session_join = function (arg_5_0, arg_5_1, arg_5_2)
+Session.rpc_backend_session_join = function (self, channel_id, session_id)
 	-- function 5
-	BackendSession.join(arg_5_2)
+	BackendSession.join(session_id)
 end
 
-var_0_1.rpc_backend_session_done = function (self, arg_6_1)
+Session.rpc_backend_session_done = function (self, channel_id)
 	-- function 6
 	if not self._debug_backend_session_done_timeout then
-		local var_6_0 = CHANNEL_TO_PEER_ID[arg_6_1]
+		local peer_id = CHANNEL_TO_PEER_ID[channel_id]
 
-		self:_dice_player_done(var_6_0)
+		self:_dice_player_done(peer_id)
 	end
 end
 
-var_0_1._dice_player_done = function (self, arg_7_1)
+Session._dice_player_done = function (self, peer_id)
 	-- function 7
 	local players = self._dice_data.players
 
-	players[arg_7_1] = nil
+	players[peer_id] = nil
 
-	if not (not table.is_empty(players) and self._debug_backend_session_stop_timeout) then
+	if table.is_empty(players) and not self._debug_backend_session_stop_timeout then
 		BackendSession.stop()
 
 		self._dice_data = nil
 	end
 end
 
-var_0_1.reset = function (self)
+Session.reset = function (self)
 	-- function 8
-	if not self._disabled then
+	if self._disabled then
 		self._disabled = nil
 	else
-		local get_state = BackendSession.get_state()
+		local state = BackendSession.get_state()
 
-		if not (not Managers.state.network.is_server and get_state == tbl.UNINITIALIZED) then
+		if Managers.state.network.is_server and state ~= States.UNINITIALIZED then
 			BackendSession.stop()
 		end
 
@@ -92,52 +92,52 @@ var_0_1.reset = function (self)
 	end
 end
 
-var_0_1._unregister_rpcs = function (self)
+Session._unregister_rpcs = function (self)
 	-- function 9
 	self._network_event_delegate:unregister(self)
 
 	self._network_event_delegate = nil
 end
 
-var_0_1.update = function (self, arg_10_1)
+Session.update = function (self, dt)
 	-- function 10
-	local get_state = BackendSession.get_state()
+	local state = BackendSession.get_state()
 
-	if not self._log_state then
-		if get_state == tbl.UNINITIALIZED then
+	if self._log_state then
+		if state == States.UNINITIALIZED then
 			print("Session state: done!")
 
 			self._log_state = nil
 		else
-			print("Session state: ", tbl[get_state])
+			print("Session state: ", States[state])
 		end
 	end
 
-	if not (#self._peer_queue > 0) or not BackendSession.get_session_id() then
-		local get_session_id = BackendSession.get_session_id()
-		local network = Managers.state.network
+	if #self._peer_queue > 0 and BackendSession.get_session_id() then
+		local session_id = BackendSession.get_session_id()
+		local network_manager = Managers.state.network
 
-		for i, v in ipairs(self._peer_queue) do
-			self._peer_queue[i] = nil
+		for key, peer_id in ipairs(self._peer_queue) do
+			self._peer_queue[key] = nil
 
-			network.network_transmit:send_rpc("rpc_backend_session_join", v, get_session_id)
+			network_manager.network_transmit:send_rpc("rpc_backend_session_join", peer_id, session_id)
 
-			self._peers[v] = true
+			self._peers[peer_id] = true
 		end
 	end
 
-	local _dice_data = self._dice_data
+	local dice_data = self._dice_data
 
-	if not (not _dice_data and not (Managers.time:time("main") > _dice_data.timeout)) then
-		for k, v_2 in pairs(_dice_data.players) do
-			self:_dice_player_done(k)
+	if dice_data and Managers.time:time("main") > dice_data.timeout then
+		for peer_id, _ in pairs(dice_data.players) do
+			self:_dice_player_done(peer_id)
 		end
 
 		self._error_data = {
 			reason = BACKEND_LUA_ERRORS.ERR_DICE_TIMEOUT2
 		}
-	elseif not self._post_dice_timeout then
-		if get_state == tbl.UNINITIALIZED then
+	elseif self._post_dice_timeout then
+		if state == States.UNINITIALIZED then
 			self._post_dice_timeout = nil
 		elseif Managers.time:time("main") > self._post_dice_timeout then
 			self._post_dice_timeout = nil
@@ -145,73 +145,77 @@ var_0_1.update = function (self, arg_10_1)
 	end
 end
 
-var_0_1.add_peer = function (arg_11_0, arg_11_1)
+Session.add_peer = function (self, peer_id)
 	-- function 11
-	local get_session_id = BackendSession.get_session_id()
+	local session_id = BackendSession.get_session_id()
 
-	if not get_session_id then
-		Managers.state.network.network_transmit:send_rpc("rpc_backend_session_join", arg_11_1, get_session_id)
+	if session_id then
+		local network_manager = Managers.state.network
 
-		arg_11_0._peers[arg_11_1] = true
+		network_manager.network_transmit:send_rpc("rpc_backend_session_join", peer_id, session_id)
+
+		self._peers[peer_id] = true
 	else
-		arg_11_0._peer_queue[#arg_11_0._peer_queue + 1] = arg_11_1
+		self._peer_queue[#self._peer_queue + 1] = peer_id
 	end
 end
 
-var_0_1.end_of_round = function (self)
+Session.end_of_round = function (self)
 	-- function 12
-	local clone = table.clone(self._peers)
+	local dice_players = table.clone(self._peers)
 
-	clone[Network.peer_id()] = true
+	dice_players[Network.peer_id()] = true
 
-	local num = Managers.time:time("main") + 20
+	local timeout = Managers.time:time("main") + 20
 
 	self._dice_data = {
-		players = clone,
-		timeout = num
+		players = dice_players,
+		timeout = timeout
 	}
 
 	BackendSession.end_of_round()
 end
 
-var_0_1.received_dice_game_loot = function (self)
+Session.received_dice_game_loot = function (self)
 	-- function 13
 	self._post_dice_timeout = Managers.time:time("main") + 20
 
-	Managers.state.network.network_transmit:send_rpc_server("rpc_backend_session_done")
+	local network_manager = Managers.state.network
+
+	network_manager.network_transmit:send_rpc_server("rpc_backend_session_done")
 end
 
-var_0_1.check_for_errors = function (self)
+Session.check_for_errors = function (self)
 	-- function 14
-	local _error_data = self._error_data
+	local error_data = self._error_data
 
 	self._error_data = nil
 
-	return _error_data
+	return error_data
 end
 
 BackendInterfaceSession = class(BackendInterfaceSession)
 
 BackendInterfaceSession.init = function (self)
 	-- function 15
-	self._backend_session = var_0_1:new()
+	self._backend_session = Session:new()
 end
 
-BackendInterfaceSession.setup = function (self, arg_16_1, arg_16_2)
+BackendInterfaceSession.setup = function (self, network_event_delegate, disable_for_level)
 	-- function 16
-	if not arg_16_2 then
+	if disable_for_level then
 		self._backend_session:disable()
 	else
-		self._backend_session:register_rpcs(arg_16_1)
+		self._backend_session:register_rpcs(network_event_delegate)
 	end
 end
 
 BackendInterfaceSession.update = function (self)
 	-- function 17
-	local _backend_session = self._backend_session
+	local backend_session = self._backend_session
 
-	if not _backend_session:enabled() then
-		_backend_session:update()
+	if backend_session:enabled() then
+		backend_session:update()
 	end
 end
 
@@ -220,45 +224,45 @@ BackendInterfaceSession.check_for_errors = function (self)
 	return self._backend_session:check_for_errors()
 end
 
-BackendInterfaceSession.add_peer = function (self, arg_19_1)
+BackendInterfaceSession.add_peer = function (self, peer_id)
 	-- function 19
-	local _backend_session = self._backend_session
+	local backend_session = self._backend_session
 
-	if not _backend_session:enabled() then
-		_backend_session:add_peer(arg_19_1)
+	if backend_session:enabled() then
+		backend_session:add_peer(peer_id)
 	end
 end
 
 BackendInterfaceSession.start = function (self)
 	-- function 20
-	if not self._backend_session:enabled() then
+	if self._backend_session:enabled() then
 		BackendSession.start()
 	end
 end
 
 BackendInterfaceSession.end_of_round = function (self)
 	-- function 21
-	local _backend_session = self._backend_session
+	local backend_session = self._backend_session
 
-	if not _backend_session:enabled() then
-		_backend_session:end_of_round()
+	if backend_session:enabled() then
+		backend_session:end_of_round()
 	end
 end
 
 BackendInterfaceSession.received_dice_game_loot = function (self)
 	-- function 22
-	local _backend_session = self._backend_session
+	local backend_session = self._backend_session
 
-	if not _backend_session:enabled() then
-		_backend_session:received_dice_game_loot()
+	if backend_session:enabled() then
+		backend_session:received_dice_game_loot()
 	end
 end
 
-BackendInterfaceSession.get_state = function (arg_23_0)
+BackendInterfaceSession.get_state = function (self)
 	-- function 23
-	local get_state = BackendSession.get_state()
+	local state = BackendSession.get_state()
 
-	return tbl[get_state]
+	return States[state]
 end
 
 BackendInterfaceSession.leave = function (self)
@@ -270,19 +274,19 @@ BackendInterfaceSessionLocal = class(BackendInterfaceSessionLocal)
 
 BackendInterfaceSessionLocal.init = function (self)
 	-- function 25
-	local tbl = {}
+	local mt = {}
 
-	tbl.__index = function ()
+	mt.__index = function ()
 		-- function 26
-		return tbl.__index
+		return mt.__index
 	end
 
-	setmetatable(self, tbl)
+	setmetatable(self, mt)
 
 	self.is_local = true
 end
 
-BackendInterfaceSessionLocal.ready = function (arg_27_0)
+BackendInterfaceSessionLocal.ready = function (self)
 	-- function 27
 	return true
 end

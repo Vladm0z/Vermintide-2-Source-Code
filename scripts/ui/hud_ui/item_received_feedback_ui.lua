@@ -2,16 +2,16 @@
 
 require("scripts/settings/ui_player_portrait_frame_settings")
 
-local var_0_0 = local_require("scripts/ui/hud_ui/item_received_feedback_ui_definitions")
-local MAX_NUMBER_OF_MESSAGES = var_0_0.MAX_NUMBER_OF_MESSAGES
-local tbl = {
+local definitions = local_require("scripts/ui/hud_ui/item_received_feedback_ui_definitions")
+local MAX_NUMBER_OF_MESSAGES = definitions.MAX_NUMBER_OF_MESSAGES
+local event_settings = {
 	give_item = {
-		text_function = function (arg_1_0, arg_1_1, arg_1_2)
+		text_function = function (amount, player_1_name, player_2_name)
 			-- function 1
-			if arg_1_0 > 1 then
-				return string.format(Localize("positive_reinforcement_player_gave_item_player_multiple"), arg_1_1, arg_1_2, arg_1_0)
+			if amount > 1 then
+				return string.format(Localize("positive_reinforcement_player_gave_item_player_multiple"), player_1_name, player_2_name, amount)
 			else
-				return string.format(Localize("positive_reinforcement_player_gave_item_player"), arg_1_1, arg_1_2)
+				return string.format(Localize("positive_reinforcement_player_gave_item_player"), player_1_name, player_2_name)
 			end
 		end,
 		sound_function = function ()
@@ -24,24 +24,24 @@ local tbl = {
 
 			if false then
 				reinforcement_ui_local_sound = script_data.enable_reinforcement_ui_remote_sound
-				reinforcement_ui_local_sound = not reinforcement_ui_local_sound and "hud_info"
+				reinforcement_ui_local_sound = not not reinforcement_ui_local_sound and not not "hud_info"
 			end
 
 			return reinforcement_ui_local_sound
 		end,
-		icon_function = function (arg_3_0, arg_3_1)
+		icon_function = function (hero_portrait_texture, item_icon)
 			-- function 3
-			return arg_3_0, arg_3_1
+			return hero_portrait_texture, item_icon
 		end
 	}
 }
-local tbl_2 = {
+local event_colors = {
 	fade_to = Colors.get_table("white"),
 	default = Colors.get_table("cheeseburger"),
 	kill = Colors.get_table("red"),
 	personal = Colors.get_table("dodger_blue")
 }
-local tbl_3 = {
+local item_icons = {
 	healthkit_first_aid_kit_01 = "reinforcement_heal",
 	grenade_fire_02 = "killfeed_icon_09",
 	potion_healing_draught_01 = "killfeed_icon_06",
@@ -56,14 +56,14 @@ local tbl_3 = {
 
 ItemReceivedFeedbackUI = class(ItemReceivedFeedbackUI)
 
-ItemReceivedFeedbackUI.init = function (self, arg_4_1, arg_4_2)
+ItemReceivedFeedbackUI.init = function (self, parent, ingame_ui_context)
 	-- function 4
-	self._parent = arg_4_1
-	self.ui_renderer = arg_4_2.ui_renderer
-	self.input_manager = arg_4_2.input_manager
-	self.player_manager = arg_4_2.player_manager
-	self.peer_id = arg_4_2.peer_id
-	self.world = arg_4_2.world_manager:world("level_world")
+	self._parent = parent
+	self.ui_renderer = ingame_ui_context.ui_renderer
+	self.input_manager = ingame_ui_context.input_manager
+	self.player_manager = ingame_ui_context.player_manager
+	self.peer_id = ingame_ui_context.peer_id
+	self.world = ingame_ui_context.world_manager:world("level_world")
 	self.render_settings = {
 		snap_pixel_positions = true
 	}
@@ -75,159 +75,195 @@ ItemReceivedFeedbackUI.init = function (self, arg_4_1, arg_4_2)
 	self._hash_widget_lookup = {}
 	self._animations = {}
 
-	Managers.state.event:register(self, "give_item_feedback", "event_give_item_feedback")
+	local event_manager = Managers.state.event
+
+	event_manager:register(self, "give_item_feedback", "event_give_item_feedback")
 end
 
-ItemReceivedFeedbackUI.destroy = function (arg_5_0)
+ItemReceivedFeedbackUI.destroy = function (self)
 	-- function 5
-	GarbageLeakDetector.register_object(arg_5_0, "item_received_feedback_ui")
-	Managers.state.event:unregister("give_item_feedback", arg_5_0)
+	GarbageLeakDetector.register_object(self, "item_received_feedback_ui")
+
+	local event_manager = Managers.state.event
+
+	event_manager:unregister("give_item_feedback", self)
 end
 
 ItemReceivedFeedbackUI.create_ui_elements = function (self)
 	-- function 6
 	UIRenderer.clear_scenegraph_queue(self.ui_renderer)
 
-	self.ui_scenegraph = UISceneGraph.init_scenegraph(var_0_0.scenegraph_definition)
+	self.ui_scenegraph = UISceneGraph.init_scenegraph(definitions.scenegraph_definition)
 	self.message_widgets = {}
 	self._unused_widgets = {}
 
-	local num = 0
+	local i = 0
 
-	for k, v in pairs(var_0_0.message_widgets) do
-		num = num + 1
-		self.message_widgets[num] = UIWidget.init(v)
-		self._unused_widgets[num] = UIWidget.init(v)
+	for _, widget in pairs(definitions.message_widgets) do
+		i = i + 1
+		self.message_widgets[i] = UIWidget.init(widget)
+		self._unused_widgets[i] = UIWidget.init(widget)
 	end
 end
 
-ItemReceivedFeedbackUI.remove_event = function (self, arg_7_1)
+ItemReceivedFeedbackUI.remove_event = function (self, index)
 	-- function 7
-	local _received_events = self._received_events
-	local widget = table.remove(_received_events, arg_7_1).widget
-	local _unused_widgets = self._unused_widgets
+	local events = self._received_events
+	local event = table.remove(events, index)
+	local widget = event.widget
+	local unused_widgets = self._unused_widgets
 
-	_unused_widgets[#_unused_widgets + 1] = widget
+	unused_widgets[#unused_widgets + 1] = widget
 end
 
-ItemReceivedFeedbackUI.add_event = function (self, arg_8_1, arg_8_2, arg_8_3, ...)
+ItemReceivedFeedbackUI.add_event = function (self, hash, color_from, event_type, ...)
 	-- function 8
 	if not script_data.disable_reinforcement_ui then
-		local _received_events = self._received_events
-		local str = arg_8_1 .. arg_8_3
-		local _hash_order = self._hash_order
-		local time = Managers.time:time("game")
+		local events = self._received_events
+		local full_hash = hash .. event_type
+		local hash_order = self._hash_order
+		local t = Managers.time:time("game")
 		local increment_duration = UISettings.positive_reinforcement.increment_duration
 		local message_widgets = self.message_widgets
-		local _unused_widgets = self._unused_widgets
+		local unused_widgets = self._unused_widgets
 
-		if #_unused_widgets == 0 then
-			self:remove_event(#_received_events)
+		if #unused_widgets == 0 then
+			self:remove_event(#events)
 		end
 
-		local var_8_7 = tbl[arg_8_3]
-		local remove = table.remove(_unused_widgets, 1)
-		local offset = remove.offset
-		local tbl_2 = {
+		local settings = event_settings[event_type]
+		local widget = table.remove(unused_widgets, 1)
+		local offset = widget.offset
+		local event = {
 			text = "",
 			shown_amount = 0,
 			amount = 0,
-			widget = remove,
-			event_type = arg_8_3,
-			next_increment = time - increment_duration,
+			widget = widget,
+			event_type = event_type,
+			next_increment = t - increment_duration,
 			data = {
 				...
 			}
 		}
-		local num = #_received_events + 1
+		local event_index = #events + 1
 
-		table.insert(_received_events, 1, tbl_2)
+		table.insert(events, 1, event)
 
-		local content = remove.content
-		local style = remove.style
-		local icon_function, var_8_15 = var_8_7.icon_function(...)
+		local content = widget.content
+		local style = widget.style
+		local hero_portrait_texture, item_icon = settings.icon_function(...)
 
-		self:_assign_portrait_texture(remove, "portrait_1", icon_function)
+		self:_assign_portrait_texture(widget, "portrait_1", hero_portrait_texture)
 
-		content.icon = var_8_15
+		content.icon = item_icon
 		offset[2] = 0
 		offset[1] = 0
 
 		local text_style_ids = content.text_style_ids
 
-		for i, v in ipairs(text_style_ids) do
-			style[v].color[1] = 255
+		for _, style_id in ipairs(text_style_ids) do
+			style[style_id].color[1] = 255
 		end
 
-		local sound_function = var_8_7.sound_function()
+		local sound_event = settings.sound_function()
 
-		if not sound_function then
+		if sound_event then
 			local world = self.world
 			local wwise_world = Managers.world:wwise_world(world)
 
-			WwiseWorld.trigger_event(wwise_world, sound_function)
+			WwiseWorld.trigger_event(wwise_world, sound_event)
 		end
 	end
 end
 
-local tbl_4 = {
+local temp_portrait_size = {
 	96,
 	112
 }
 
-ItemReceivedFeedbackUI._assign_portrait_texture = function (arg_9_0, arg_9_1, arg_9_2, arg_9_3)
+ItemReceivedFeedbackUI._assign_portrait_texture = function (self, widget, pass_name, texture)
 	-- function 9
-	arg_9_1.content[arg_9_2].texture_id = arg_9_3
+	widget.content[pass_name].texture_id = texture
 
-	local clone = table.clone(tbl_4)
+	local portrait_size = table.clone(temp_portrait_size)
 
-	if not UIAtlasHelper.has_atlas_settings_by_texture_name(arg_9_3) then
-		local get_atlas_settings_by_texture_name = UIAtlasHelper.get_atlas_settings_by_texture_name(arg_9_3)
+	if UIAtlasHelper.has_atlas_settings_by_texture_name(texture) then
+		local texture_settings = UIAtlasHelper.get_atlas_settings_by_texture_name(texture)
 
-		clone[1] = get_atlas_settings_by_texture_name.size[1]
-		clone[2] = get_atlas_settings_by_texture_name.size[2]
+		portrait_size[1] = texture_settings.size[1]
+		portrait_size[2] = texture_settings.size[2]
 	end
 
-	local var_9_2 = arg_9_1.style[arg_9_2]
-	local portrait_offset = var_9_2.portrait_offset
-	local offset = var_9_2.offset
+	local style = widget.style[pass_name]
+	local portrait_offset = style.portrait_offset
+	local offset = style.offset
 
-	offset[1] = portrait_offset[1] - clone[1] / 2
-	offset[2] = portrait_offset[2] - clone[2] / 2
-	var_9_2.size = clone
+	offset[1] = portrait_offset[1] - portrait_size[1] / 2
+	offset[2] = portrait_offset[2] - portrait_size[2] / 2
+	style.size = portrait_size
 end
 
-ItemReceivedFeedbackUI.event_give_item_feedback = function (self, arg_10_1, arg_10_2, arg_10_3)
+ItemReceivedFeedbackUI.event_give_item_feedback = function (self, hash, giver_player, item_name)
 	-- function 10
-	if not (not arg_10_2 and arg_10_2:name()) then
-		local var_10_0
+	local name
+
+	if giver_player then
+		name = giver_player:name()
+
+		if not name then
+			-- Nothing
+		end
 	end
 
-	local flag = not arg_10_2 and arg_10_2.player_unit
-	local alive = Unit.alive(flag)
+	name = nil
 
-	alive = not alive and ScriptUnit.extension(flag, "career_system")
+	local player_1_name = name
 
-	local career_index
+	::label_10_0::
 
-	if not alive then
-		career_index = alive:career_index()
+	local player_unit = not not giver_player and not not giver_player.player_unit
+	local alive = Unit.alive(player_unit)
+
+	if alive then
+		-- Nothing
+	end
+
+	alive = ScriptUnit.extension(player_unit, "career_system")
+
+	local career_extension = alive
+
+	do
+		local career_index
+	end
+
+	::label_10_1::
+
+	if career_extension then
+		career_index = career_extension:career_index()
 
 		if not career_index then
 			-- Nothing
 		end
 	end
 
-	career_index = not arg_10_2 and arg_10_2:profile_index()
+	if giver_player then
+		-- Nothing
+	end
+
+	::label_10_2::
+
+	career_index = giver_player:profile_index()
+
+	local player_1_career_index = career_index
 
 	do
 		local profile_index
 	end
 
-	::label_10_0::
+	::label_10_3::
 
-	if not arg_10_2 then
-		profile_index = arg_10_2:profile_index()
+	if giver_player then
+		profile_index = giver_player:profile_index()
 
 		if not profile_index then
 			-- Nothing
@@ -236,110 +272,124 @@ ItemReceivedFeedbackUI.event_give_item_feedback = function (self, arg_10_1, arg_
 
 	profile_index = nil
 
-	::label_10_1::
+	local player_1_profile_index = profile_index
 
-	local flag_2 = not profile_index and not career_index and self:_get_hero_portrait(profile_index, career_index)
-	local var_10_6 = ItemMasterList[arg_10_3]
-	local flag_3 = not var_10_6 and var_10_6.item_received_icon
-	local var_10_8 = tbl_3[arg_10_3]
+	::label_10_4::
 
-	var_10_8 = var_10_8 or flag_3 or "icons_placeholder"
+	local player_1_profile_image = not not player_1_profile_index and not not player_1_career_index and not not self:_get_hero_portrait(player_1_profile_index, player_1_career_index)
+	local item_data = ItemMasterList[item_name]
+	local hud_icon = not not item_data and not not item_data.item_received_icon
+	local var_10_4 = item_icons[item_name]
 
-	self:add_event(arg_10_1, tbl_2.default, "give_item", flag_2, var_10_8)
+	if not var_10_4 and not hud_icon then
+		-- Nothing
+	end
+
+	::label_10_5::
+
+	var_10_4 = "icons_placeholder"
+
+	local item_icon = var_10_4
+
+	::label_10_6::
+
+	self:add_event(hash, event_colors.default, "give_item", player_1_profile_image, item_icon)
 end
 
-ItemReceivedFeedbackUI._get_hero_portrait = function (arg_11_0, arg_11_1, arg_11_2)
+ItemReceivedFeedbackUI._get_hero_portrait = function (self, profile_index, career_index)
 	-- function 11
 	local scale = RESOLUTION_LOOKUP.scale
-	local var_11_1 = SPProfiles[arg_11_1]
-	local var_11_2 = var_11_1.careers[arg_11_2]
-	local display_name = var_11_1.display_name
-	local portrait_image = var_11_2.portrait_image
+	local profile_data = SPProfiles[profile_index]
+	local careers = profile_data.careers
+	local career_data = careers[career_index]
+	local display_name = profile_data.display_name
+	local character_portrait = career_data.portrait_image
 
-	return "small_" .. portrait_image
+	return "small_" .. character_portrait
 end
 
-local tbl_5 = {
+local customizer_data = {
 	root_scenegraph_id = "message_animated",
 	label = "Item received",
 	registry_key = "item_received",
 	drag_scenegraph_id = "message_animated_dragger"
 }
 
-ItemReceivedFeedbackUI.update = function (self, arg_12_1, arg_12_2)
+ItemReceivedFeedbackUI.update = function (self, dt, t)
 	-- function 12
 	local ui_renderer = self.ui_renderer
 	local ui_scenegraph = self.ui_scenegraph
-	local get_service = self.input_manager:get_service("Player")
+	local input_service = self.input_manager:get_service("Player")
 	local render_settings = self.render_settings
 
-	if not HudCustomizer.run(ui_renderer, ui_scenegraph, tbl_5) then
+	if HudCustomizer.run(ui_renderer, ui_scenegraph, customizer_data) then
 		UISceneGraph.update_scenegraph(ui_scenegraph)
 	end
 
-	for k, v in pairs(self._animations) do
-		if not self._animations[k] then
-			if not UIAnimation.completed(v) then
-				UIAnimation.update(v, arg_12_1)
+	for name, animation in pairs(self._animations) do
+		if self._animations[name] then
+			if not UIAnimation.completed(animation) then
+				UIAnimation.update(animation, dt)
 			else
-				self._animations[k] = nil
+				self._animations[name] = nil
 			end
 		end
 	end
 
-	UIRenderer.begin_pass(ui_renderer, ui_scenegraph, get_service, arg_12_1, nil, render_settings)
+	UIRenderer.begin_pass(ui_renderer, ui_scenegraph, input_service, dt, nil, render_settings)
 
-	local _received_events = self._received_events
-	local num = 2
-	local num_2 = 2.5
+	local events = self._received_events
+	local move_duration = 2
+	local show_duration = 2.5
 
-	for i, v_2 in ipairs(_received_events) do
+	for index, event in ipairs(events) do
 		local snap_pixel_positions = render_settings.snap_pixel_positions
-		local widget = v_2.widget
+		local widget = event.widget
 		local content = widget.content
 		local style = widget.style
 		local offset = widget.offset
-		local event_type = v_2.event_type
-		local var_12_13 = tbl[event_type]
-		local flag = false
+		local event_type = event.event_type
+		local settings = event_settings[event_type]
+		local removed = false
 
-		if not v_2.remove_time then
-			v_2.remove_time = arg_12_2 + num_2
-		elseif arg_12_2 > v_2.remove_time then
-			self:remove_event(i)
+		if not event.remove_time then
+			event.remove_time = t + show_duration
+		elseif t > event.remove_time then
+			self:remove_event(index)
 
-			flag = true
+			removed = true
 		end
 
-		if not flag then
-			local num_3 = 70
-			local num_4 = (i - 1) * num_3
-			local abs = math.abs(math.abs(offset[2]) - math.abs(num_4))
-			local num_5 = v_2.remove_time - arg_12_2
-			local num_6 = 0.3
-			local num_7 = 0
+		if not removed then
+			local step_size = 70
+			local new_height_offset = (index - 1) * step_size
+			local diff = math.abs(math.abs(offset[2]) - math.abs(new_height_offset))
+			local time_left = event.remove_time - t
+			local fade_duration = 0.3
+			local fade_out_progress = 0
 
-			if num_6 < num_5 then
-				num_7 = math.clamp((num_2 - num_5) / num_6, 0, 1)
+			if fade_duration < time_left then
+				fade_out_progress = math.clamp((show_duration - time_left) / fade_duration, 0, 1)
 			else
-				num_7 = math.clamp(num_5 / num_6, 0, 1)
+				fade_out_progress = math.clamp(time_left / fade_duration, 0, 1)
 			end
 
-			local max = math.max(num_5 - (num_2 - num), 0)
-			local num_8 = 1 - math.clamp(max / num, 0, 1)
+			local move_time_left = math.max(time_left - (show_duration - move_duration), 0)
+			local offset_progress = 1 - math.clamp(move_time_left / move_duration, 0, 1)
 
-			offset[1] = 50 * math.easeOutCubic(num_8)
-			style.arrow.offset[1] = 35 * math.easeOutCubic(num_8)
-			style.icon.offset[1] = 80 * math.easeOutCubic(num_8)
+			offset[1] = 50 * math.easeOutCubic(offset_progress)
+			style.arrow.offset[1] = 35 * math.easeOutCubic(offset_progress)
+			style.icon.offset[1] = 80 * math.easeOutCubic(offset_progress)
 
-			local num_9 = 255 * math.easeOutCubic(num_7)
+			local anim_progress = math.easeOutCubic(fade_out_progress)
+			local alpha = 255 * anim_progress
 			local text_style_ids = content.text_style_ids
 
-			for i_2, v_3 in ipairs(text_style_ids) do
-				style[v_3].color[1] = num_9
+			for _, style_id in ipairs(text_style_ids) do
+				style[style_id].color[1] = alpha
 			end
 
-			render_settings.snap_pixel_positions = max == 0
+			render_settings.snap_pixel_positions = move_time_left == 0
 
 			UIRenderer.draw_widget(ui_renderer, widget)
 		end

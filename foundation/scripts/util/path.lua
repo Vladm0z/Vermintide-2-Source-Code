@@ -2,172 +2,179 @@
 
 Path = {}
 
-Path.normalize_path = function (self)
+Path.normalize_path = function (string_path)
 	-- function 1
-	self = self:gsub("\\", "/")
-	self = self:gsub("//", "/")
+	string_path = string_path:gsub("\\", "/")
+	string_path = string_path:gsub("//", "/")
 
-	return self
+	return string_path
 end
 
-Path.path_from_string = function (self)
+Path.path_from_string = function (string_path)
 	-- function 2
-	self = Path.normalize_path(self)
+	string_path = Path.normalize_path(string_path)
 
-	local tbl = {
+	local path = {
 		size = 0
 	}
-	local num = 0
-	local count = #self
-	local num_2 = 0
+	local path_n = 0
+	local string_path_len = #string_path
+	local index = 0
 
-	while num_2 ~= nil do
-		local find = self:find("/", num_2)
-		local var_2_5 = self
-		local sub = self.sub
-		local var_2_7 = num_2
-		local num_3
+	while index ~= nil do
+		local next_slash_index = string_path:find("/", index)
+		local var_2_0 = string_path
+		local sub = string_path.sub
+		local var_2_2 = index
+		local num
 
-		if not find then
-			num_3 = find - 1
+		if next_slash_index then
+			num = next_slash_index - 1
 
-			if not num_3 then
+			if not num then
 				-- Nothing
 			end
 		end
 
-		num_3 = nil
+		num = nil
 
 		::label_2_0::
 
-		tbl[num], num = sub(var_2_5, var_2_7, num_3), num + 1
+		local path_part = sub(var_2_0, var_2_2, num)
 
-		if not (find == nil or find ~= count) then
+		path_n = path_n + 1
+		path[path_n] = path_part
+
+		if next_slash_index == nil or next_slash_index == string_path_len then
 			break
 		end
 
-		num_2 = find + 1
+		index = next_slash_index + 1
 	end
 
-	tbl.size = num
+	path.size = path_n
 
-	return tbl
+	return path
 end
 
 Path.path_from_parts = function (...)
 	-- function 3
-	local var_3_0 = select("#", ...)
-	local tbl = {
-		size = var_3_0
+	local path_n = select("#", ...)
+	local path = {
+		size = path_n
 	}
 
-	for i = 1, var_3_0 do
-		tbl[i] = select(i, ...)
+	for i = 1, path_n do
+		local part = select(i, ...)
+
+		path[i] = part
 	end
 
-	return tbl
+	return path
 end
 
-Path.copy = function (self)
+Path.copy = function (path)
 	-- function 4
-	local tbl = {
-		size = self.size
+	local path_new = {
+		size = path.size
 	}
 
-	for i = 1, self.size do
-		tbl[i] = self[i]
+	for i = 1, path.size do
+		path_new[i] = path[i]
 	end
 
-	return tbl
+	return path_new
 end
 
-Path.change_dir_up = function (self)
+Path.change_dir_up = function (path)
 	-- function 5
-	assert(self.size > 0)
+	assert(path.size > 0)
 
-	self.size = self.size - 1
+	path.size = path.size - 1
 end
 
-Path.add_path_part = function (self, arg_6_1)
+Path.add_path_part = function (path, path_part)
 	-- function 6
-	self.size = self.size + 1
-	self[self.size] = arg_6_1
+	path.size = path.size + 1
+	path[path.size] = path_part
 end
 
-Path.join = function (self, arg_7_1, arg_7_2)
+Path.join = function (path1, path2, result)
 	-- function 7
-	arg_7_2 = arg_7_2 or {}
-	arg_7_2.size = 0
+	result = not not result or not not {}
+	result.size = 0
 
-	for i = 1, self.size do
-		arg_7_2.size = arg_7_2.size + 1
-		arg_7_2[arg_7_2.size] = self[i]
+	for i = 1, path1.size do
+		result.size = result.size + 1
+		result[result.size] = path1[i]
 	end
 
-	for j = 1, arg_7_1.size do
-		arg_7_2.size = arg_7_2.size + 1
-		arg_7_2[arg_7_2.size] = arg_7_1[j]
+	for i = 1, path2.size do
+		result.size = result.size + 1
+		result[result.size] = path2[i]
 	end
 
-	return arg_7_2
+	return result
 end
 
-Path.tostring = function (self, arg_8_1)
+Path.tostring = function (path, separator)
 	-- function 8
-	arg_8_1 = arg_8_1 or "/"
+	separator = not not separator or not not "/"
 
-	local str = ""
+	local string_path = ""
 
-	for i = 1, self.size - 1 do
-		str = str .. self[i] .. arg_8_1
+	for i = 1, path.size - 1 do
+		string_path = string_path .. path[i] .. separator
 	end
 
-	return str .. self[self.size]
+	string_path = string_path .. path[path.size]
+
+	return string_path
 end
 
-local flag = true
+local UNIT_TEST = true
 
-if not flag then
-	local random = math.random()
-	local path_from_string = Path.path_from_string("hej")
+if UNIT_TEST then
+	local lols = math.random()
+	local p1 = Path.path_from_string("hej")
 
-	assert(path_from_string.size == 1)
+	assert(p1.size == 1)
 
-	local path_from_string_2 = Path.path_from_string("hej/apa")
+	local p2 = Path.path_from_string("hej/apa")
 
-	assert(path_from_string_2.size == 2)
-	assert(path_from_string_2[path_from_string_2.size] == "apa")
+	assert(p2.size == 2)
+	assert(p2[p2.size] == "apa")
 
-	local path_from_string_3 = Path.path_from_string("hej\\apa\\")
+	local p3 = Path.path_from_string("hej\\apa\\")
 
-	assert(path_from_string_3.size == 2)
-	assert(path_from_string_3[path_from_string_3.size] == "apa")
+	assert(p3.size == 2)
+	assert(p3[p3.size] == "apa")
 
-	local path_from_parts = Path.path_from_parts("hej", "apa")
+	local p4 = Path.path_from_parts("hej", "apa")
 
-	assert(path_from_parts.size == 2)
-	Path.change_dir_up(path_from_parts)
-	assert(path_from_parts.size == 1)
-	Path.add_path_part(path_from_parts, "lols")
-	assert(path_from_parts.size == 2)
-	assert(path_from_parts[path_from_parts.size] == "lols")
+	assert(p4.size == 2)
+	Path.change_dir_up(p4)
+	assert(p4.size == 1)
+	Path.add_path_part(p4, "lols")
+	assert(p4.size == 2)
+	assert(p4[p4.size] == "lols")
 
-	local path_from_parts_2 = Path.path_from_parts("anders", "isn't", "best")
-	local tbl = {}
+	local p5 = Path.path_from_parts("anders", "isn't", "best")
+	local result = {}
 
-	Path.join(path_from_parts, path_from_parts_2, tbl)
-	assert(tbl.size == path_from_parts.size + path_from_parts_2.size)
-	assert(tbl[tbl.size] == "best")
+	Path.join(p4, p5, result)
+	assert(result.size == p4.size + p5.size)
+	assert(result[result.size] == "best")
 
-	local tostring = Path.tostring(tbl)
+	local string_path = Path.tostring(result)
 
-	assert(tostring == "hej/lols/anders/isn't/best")
+	assert(string_path == "hej/lols/anders/isn't/best")
 
-	local path_from_string_4 = Path.path_from_string("C:\\trunk/lols/")
+	local p6 = Path.path_from_string("C:\\trunk/lols/")
 
-	assert(path_from_string_4.size == 3)
+	assert(p6.size == 3)
 
-	local tostring_2 = Path.tostring(path_from_string_4)
+	local p6_string_path = Path.tostring(p6)
 
-	assert(tostring_2 == "C:/trunk/lols")
+	assert(p6_string_path == "C:/trunk/lols")
 end

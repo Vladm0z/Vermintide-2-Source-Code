@@ -1,7 +1,7 @@
 -- chunkname: @scripts/managers/talents/talent_settings_victor.lua
 
-local scripts_unit_extensions_default_player_unit_buffs_settings_buff_perk_names = require("scripts/unit_extensions/default_player_unit/buffs/settings/buff_perk_names")
-local tbl = {
+local buff_perks = require("scripts/unit_extensions/default_player_unit/buffs/settings/buff_perk_names")
+local buff_tweak_data = {
 	victor_zealot_ability_cooldown_on_hit = {
 		bonus = 0.5
 	},
@@ -221,7 +221,7 @@ local tbl = {
 }
 local TalentBuffTemplates = TalentBuffTemplates
 
-TalentBuffTemplates = TalentBuffTemplates or {}
+TalentBuffTemplates = not not TalentBuffTemplates or not not {}
 TalentBuffTemplates = TalentBuffTemplates
 TalentBuffTemplates.witch_hunter = {
 	victor_zealot_ability_cooldown_on_hit = {
@@ -262,7 +262,7 @@ TalentBuffTemplates.witch_hunter = {
 		buffs = {
 			{
 				perks = {
-					scripts_unit_extensions_default_player_unit_buffs_settings_buff_perk_names.uninterruptible_heavy
+					buff_perks.uninterruptible_heavy
 				}
 			}
 		}
@@ -304,7 +304,7 @@ TalentBuffTemplates.witch_hunter = {
 				icon = "victor_zealot_passive_invulnerability",
 				priority_buff = true,
 				perks = {
-					scripts_unit_extensions_default_player_unit_buffs_settings_buff_perk_names.ignore_death
+					buff_perks.ignore_death
 				}
 			}
 		}
@@ -318,7 +318,7 @@ TalentBuffTemplates.witch_hunter = {
 				icon = "victor_zealot_activated_ability",
 				priority_buff = true,
 				perks = {
-					scripts_unit_extensions_default_player_unit_buffs_settings_buff_perk_names.victor_zealot_activated_ability
+					buff_perks.victor_zealot_activated_ability
 				}
 			}
 		}
@@ -333,7 +333,7 @@ TalentBuffTemplates.witch_hunter = {
 				max_targets = 5,
 				bonus = 0.25,
 				perks = {
-					scripts_unit_extensions_default_player_unit_buffs_settings_buff_perk_names.linesman_healing
+					buff_perks.linesman_healing
 				}
 			}
 		}
@@ -347,7 +347,7 @@ TalentBuffTemplates.witch_hunter = {
 				buff_func = "heal_percentage_of_enemy_hp_on_melee_kill",
 				event = "on_kill",
 				perks = {
-					scripts_unit_extensions_default_player_unit_buffs_settings_buff_perk_names.smiter_healing
+					buff_perks.smiter_healing
 				}
 			}
 		}
@@ -398,7 +398,7 @@ TalentBuffTemplates.witch_hunter = {
 				icon = "victor_zealot_crit_count",
 				priority_buff = true,
 				perks = {
-					scripts_unit_extensions_default_player_unit_buffs_settings_buff_perk_names.guaranteed_crit
+					buff_perks.guaranteed_crit
 				}
 			}
 		}
@@ -497,7 +497,7 @@ TalentBuffTemplates.witch_hunter = {
 				buff_to_add = "victor_zealot_move_speed_on_damage_taken_buff",
 				buff_func = "add_buff_on_enemy_damage_taken",
 				perks = {
-					scripts_unit_extensions_default_player_unit_buffs_settings_buff_perk_names.no_moveslow_on_hit
+					buff_perks.no_moveslow_on_hit
 				}
 			}
 		}
@@ -562,7 +562,7 @@ TalentBuffTemplates.witch_hunter = {
 				icon = "victor_zealot_activated_ability_ignore_death",
 				duration = 5,
 				perks = {
-					scripts_unit_extensions_default_player_unit_buffs_settings_buff_perk_names.ignore_death
+					buff_perks.ignore_death
 				}
 			}
 		}
@@ -654,7 +654,7 @@ TalentBuffTemplates.witch_hunter = {
 				event = "on_hit",
 				bonus = 2,
 				perks = {
-					scripts_unit_extensions_default_player_unit_buffs_settings_buff_perk_names.ninja_healing
+					buff_perks.ninja_healing
 				}
 			}
 		}
@@ -679,7 +679,7 @@ TalentBuffTemplates.witch_hunter = {
 				buff_func = "heal_percentage_of_enemy_hp_on_melee_kill",
 				event = "on_kill",
 				perks = {
-					scripts_unit_extensions_default_player_unit_buffs_settings_buff_perk_names.smiter_healing
+					buff_perks.smiter_healing
 				}
 			}
 		}
@@ -694,7 +694,7 @@ TalentBuffTemplates.witch_hunter = {
 				max_targets = 5,
 				bonus = 0.25,
 				perks = {
-					scripts_unit_extensions_default_player_unit_buffs_settings_buff_perk_names.linesman_healing
+					buff_perks.linesman_healing
 				}
 			}
 		}
@@ -841,7 +841,7 @@ TalentBuffTemplates.witch_hunter = {
 				max_stacks = 1,
 				icon = "victor_bountyhunter_passive_infinite_ammo",
 				perks = {
-					scripts_unit_extensions_default_player_unit_buffs_settings_buff_perk_names.infinite_ammo
+					buff_perks.infinite_ammo
 				}
 			}
 		}
@@ -1030,7 +1030,7 @@ TalentBuffTemplates.witch_hunter = {
 		buffs = {
 			{
 				perks = {
-					scripts_unit_extensions_default_player_unit_buffs_settings_buff_perk_names.in_arc_block_cost_reduction
+					buff_perks.in_arc_block_cost_reduction
 				}
 			}
 		}
@@ -1046,7 +1046,7 @@ TalentBuffTemplates.witch_hunter = {
 		buffs = {
 			{
 				perks = {
-					scripts_unit_extensions_default_player_unit_buffs_settings_buff_perk_names.crit_headshot_killing_blow
+					buff_perks.crit_headshot_killing_blow
 				}
 			}
 		}
@@ -1069,7 +1069,7 @@ TalentBuffTemplates.witch_hunter = {
 				event = "on_hit",
 				bonus = 2,
 				perks = {
-					scripts_unit_extensions_default_player_unit_buffs_settings_buff_perk_names.ninja_healing
+					buff_perks.ninja_healing
 				}
 			}
 		}
@@ -1084,7 +1084,7 @@ TalentBuffTemplates.witch_hunter = {
 				max_targets = 5,
 				bonus = 0.25,
 				perks = {
-					scripts_unit_extensions_default_player_unit_buffs_settings_buff_perk_names.linesman_healing
+					buff_perks.linesman_healing
 				}
 			}
 		}
@@ -1133,7 +1133,7 @@ TalentBuffTemplates.witch_hunter = {
 		buffs = {
 			{
 				perks = {
-					scripts_unit_extensions_default_player_unit_buffs_settings_buff_perk_names.victor_witchhunter_bleed_on_critical_hit
+					buff_perks.victor_witchhunter_bleed_on_critical_hit
 				}
 			}
 		}
@@ -1258,7 +1258,7 @@ TalentBuffTemplates.witch_hunter = {
 
 local TalentTrees = TalentTrees
 
-TalentTrees = TalentTrees or {}
+TalentTrees = not not TalentTrees or not not {}
 TalentTrees = TalentTrees
 TalentTrees.witch_hunter = {
 	{
@@ -1449,7 +1449,7 @@ Talents.witch_hunter = {
 		icon = "victor_zealot_crit_count",
 		description_values = {
 			{
-				value = tbl.victor_zealot_crit_count.buff_on_stacks
+				value = buff_tweak_data.victor_zealot_crit_count.buff_on_stacks
 			}
 		},
 		buffs = {
@@ -1468,7 +1468,7 @@ Talents.witch_hunter = {
 		description_values = {
 			{
 				value_type = "percent",
-				value = tbl.victor_zealot_power.multiplier
+				value = buff_tweak_data.victor_zealot_power.multiplier
 			}
 		},
 		buffs = {
@@ -1484,15 +1484,15 @@ Talents.witch_hunter = {
 		description_values = {
 			{
 				value_type = "percent",
-				value = tbl.victor_zealot_attack_speed_on_health_percent_buff.multiplier
+				value = buff_tweak_data.victor_zealot_attack_speed_on_health_percent_buff.multiplier
 			},
 			{
 				value_type = "percent",
-				value = tbl.victor_zealot_attack_speed_on_health_percent.threshold_1
+				value = buff_tweak_data.victor_zealot_attack_speed_on_health_percent.threshold_1
 			},
 			{
 				value_type = "percent",
-				value = tbl.victor_zealot_attack_speed_on_health_percent.threshold_2
+				value = buff_tweak_data.victor_zealot_attack_speed_on_health_percent.threshold_2
 			}
 		},
 		buffs = {
@@ -1508,7 +1508,7 @@ Talents.witch_hunter = {
 		description_values = {
 			{
 				value_type = "baked_percent",
-				value = tbl.victor_zealot_passive_move_speed_buff.multiplier
+				value = buff_tweak_data.victor_zealot_passive_move_speed_buff.multiplier
 			}
 		},
 		buffs = {
@@ -1524,7 +1524,7 @@ Talents.witch_hunter = {
 		description_values = {
 			{
 				value_type = "percent",
-				value = tbl.victor_zealot_passive_healing_received_buff.multiplier
+				value = buff_tweak_data.victor_zealot_passive_healing_received_buff.multiplier
 			}
 		},
 		buffs = {
@@ -1540,7 +1540,7 @@ Talents.witch_hunter = {
 		description_values = {
 			{
 				value_type = "percent",
-				value = tbl.victor_zealot_passive_damage_taken_buff.multiplier
+				value = buff_tweak_data.victor_zealot_passive_damage_taken_buff.multiplier
 			}
 		},
 		buffs = {
@@ -1555,10 +1555,10 @@ Talents.witch_hunter = {
 		description_values = {
 			{
 				value_type = "baked_percent",
-				value = tbl.victor_zealot_move_speed_on_damage_taken_buff.multiplier
+				value = buff_tweak_data.victor_zealot_move_speed_on_damage_taken_buff.multiplier
 			},
 			{
-				value = tbl.victor_zealot_move_speed_on_damage_taken_buff.duration
+				value = buff_tweak_data.victor_zealot_move_speed_on_damage_taken_buff.duration
 			}
 		},
 		buffs = {
@@ -1583,7 +1583,7 @@ Talents.witch_hunter = {
 		description_values = {
 			{
 				value_type = "percent",
-				value = tbl.victor_zealot_reduced_damage_taken_buff.multiplier
+				value = buff_tweak_data.victor_zealot_reduced_damage_taken_buff.multiplier
 			}
 		},
 		buffs = {
@@ -1599,13 +1599,13 @@ Talents.witch_hunter = {
 		description_values = {
 			{
 				value_type = "percent",
-				value = tbl.victor_zealot_activated_ability_power_on_hit_buff.multiplier
+				value = buff_tweak_data.victor_zealot_activated_ability_power_on_hit_buff.multiplier
 			},
 			{
-				value = tbl.victor_zealot_activated_ability_power_on_hit_buff.duration
+				value = buff_tweak_data.victor_zealot_activated_ability_power_on_hit_buff.duration
 			},
 			{
-				value = tbl.victor_zealot_activated_ability_power_on_hit_buff.max_stacks
+				value = buff_tweak_data.victor_zealot_activated_ability_power_on_hit_buff.max_stacks
 			}
 		},
 		buffs = {}
@@ -1625,11 +1625,11 @@ Talents.witch_hunter = {
 		icon = "victor_zealot_activated_ability_cooldown_stack_on_hit",
 		description_values = {
 			{
-				value = tbl.victor_zealot_activated_ability_cooldown_stack_on_hit_buff.max_stacks
+				value = buff_tweak_data.victor_zealot_activated_ability_cooldown_stack_on_hit_buff.max_stacks
 			},
 			{
 				value_type = "percent",
-				value = tbl.victor_zealot_activated_ability_cooldown_stack_on_hit_buff.cooldown_amount
+				value = buff_tweak_data.victor_zealot_activated_ability_cooldown_stack_on_hit_buff.cooldown_amount
 			}
 		},
 		buffs = {}
@@ -1787,14 +1787,14 @@ Talents.witch_hunter = {
 		description_values = {
 			{
 				value_type = "percent",
-				value = tbl.victor_bountyhunter_attack_speed_on_no_ammo_buff.multiplier
+				value = buff_tweak_data.victor_bountyhunter_attack_speed_on_no_ammo_buff.multiplier
 			},
 			{
 				value_type = "percent",
-				value = tbl.victor_bountyhunter_power_on_no_ammo_buff.multiplier
+				value = buff_tweak_data.victor_bountyhunter_power_on_no_ammo_buff.multiplier
 			},
 			{
-				value = tbl.victor_bountyhunter_attack_speed_on_no_ammo_buff.duration
+				value = buff_tweak_data.victor_bountyhunter_attack_speed_on_no_ammo_buff.duration
 			}
 		},
 		buffs = {
@@ -1829,7 +1829,7 @@ Talents.witch_hunter = {
 		description_values = {
 			{
 				value_type = "percent",
-				value = tbl.victor_bountyhunter_power_level_on_clip_size_buff.multiplier
+				value = buff_tweak_data.victor_bountyhunter_power_level_on_clip_size_buff.multiplier
 			}
 		},
 		buffs = {
@@ -1844,18 +1844,18 @@ Talents.witch_hunter = {
 		icon = "victor_bountyhunter_heal_on_critical_hit",
 		description_values = {
 			{
-				value = tbl.victor_bountyhunter_blessed_melee_damage_buff.presentation_stacks
+				value = buff_tweak_data.victor_bountyhunter_blessed_melee_damage_buff.presentation_stacks
 			},
 			{
 				value_type = "percent",
-				value = tbl.victor_bountyhunter_blessed_melee_damage_buff.multiplier
+				value = buff_tweak_data.victor_bountyhunter_blessed_melee_damage_buff.multiplier
 			},
 			{
-				value = tbl.victor_bountyhunter_blessed_ranged_damage_buff.presentation_stacks
+				value = buff_tweak_data.victor_bountyhunter_blessed_ranged_damage_buff.presentation_stacks
 			},
 			{
 				value_type = "percent",
-				value = tbl.victor_bountyhunter_blessed_ranged_damage_buff.multiplier
+				value = buff_tweak_data.victor_bountyhunter_blessed_ranged_damage_buff.multiplier
 			}
 		},
 		buffs = {
@@ -1870,7 +1870,7 @@ Talents.witch_hunter = {
 		icon = "victor_bountyhunter_passive_reduced_cooldown",
 		description_values = {
 			{
-				value = tbl.victor_bountyhunter_passive_reduced_cooldown.duration
+				value = buff_tweak_data.victor_bountyhunter_passive_reduced_cooldown.duration
 			}
 		},
 		buffs = {}
@@ -1892,10 +1892,10 @@ Talents.witch_hunter = {
 		description_values = {
 			{
 				value_type = "baked_percent",
-				value = tbl.victor_bountyhunter_party_movespeed_on_ranged_crit_buff.multiplier
+				value = buff_tweak_data.victor_bountyhunter_party_movespeed_on_ranged_crit_buff.multiplier
 			},
 			{
-				value = tbl.victor_bountyhunter_party_movespeed_on_ranged_crit_buff.duration
+				value = buff_tweak_data.victor_bountyhunter_party_movespeed_on_ranged_crit_buff.duration
 			}
 		},
 		buffs = {
@@ -1910,7 +1910,7 @@ Talents.witch_hunter = {
 		description_values = {
 			{
 				value_type = "percent",
-				value = tbl.victor_bountyhunter_restore_ammo_on_elite_kill.ammo_bonus_fraction
+				value = buff_tweak_data.victor_bountyhunter_restore_ammo_on_elite_kill.ammo_bonus_fraction
 			}
 		},
 		buffs = {
@@ -1927,10 +1927,10 @@ Talents.witch_hunter = {
 		description_values = {
 			{
 				value_type = "percent",
-				value = tbl.victor_bountyhunter_stacking_damage_reduction_on_elite_or_special_kill_buff.multiplier
+				value = buff_tweak_data.victor_bountyhunter_stacking_damage_reduction_on_elite_or_special_kill_buff.multiplier
 			},
 			{
-				value = tbl.victor_bountyhunter_stacking_damage_reduction_on_elite_or_special_kill_buff.max_stacks
+				value = buff_tweak_data.victor_bountyhunter_stacking_damage_reduction_on_elite_or_special_kill_buff.max_stacks
 			}
 		},
 		buffs = {
@@ -1945,7 +1945,7 @@ Talents.witch_hunter = {
 		description_values = {
 			{
 				value_type = "percent",
-				value = tbl.victor_bountyhunter_activated_ability_railgun.multiplier
+				value = buff_tweak_data.victor_bountyhunter_activated_ability_railgun.multiplier
 			}
 		},
 		buffs = {
@@ -1960,10 +1960,10 @@ Talents.witch_hunter = {
 		description_values = {
 			{
 				value_type = "percent",
-				value = tbl.victor_bountyhunter_activated_ability_blast_shotgun.multiplier
+				value = buff_tweak_data.victor_bountyhunter_activated_ability_blast_shotgun.multiplier
 			},
 			{
-				value = tbl.victor_bountyhunter_activated_ability_blast_shotgun.required_target_number
+				value = buff_tweak_data.victor_bountyhunter_activated_ability_blast_shotgun.required_target_number
 			}
 		},
 		buffs = {
@@ -1978,10 +1978,10 @@ Talents.witch_hunter = {
 		description_values = {
 			{
 				value_type = "percent",
-				value = tbl.victor_bountyhunter_activated_ability_passive_cooldown_reduction.multiplier
+				value = buff_tweak_data.victor_bountyhunter_activated_ability_passive_cooldown_reduction.multiplier
 			},
 			{
-				value = tbl.victor_bountyhunter_activated_ability_passive_cooldown_reduction.cooldown
+				value = buff_tweak_data.victor_bountyhunter_activated_ability_passive_cooldown_reduction.cooldown
 			}
 		},
 		buffs = {
@@ -2141,7 +2141,7 @@ Talents.witch_hunter = {
 		description_values = {
 			{
 				value_type = "percent",
-				value = tbl.victor_witchhunter_headshot_damage_increase.multiplier
+				value = buff_tweak_data.victor_witchhunter_headshot_damage_increase.multiplier
 			}
 		},
 		buffs = {
@@ -2166,7 +2166,7 @@ Talents.witch_hunter = {
 		icon = "victor_witchhunter_guaranteed_crit_on_timed_block",
 		description_values = {
 			{
-				value = tbl.victor_witchhunter_guaranteed_crit_on_timed_block_buff.duration
+				value = buff_tweak_data.victor_witchhunter_guaranteed_crit_on_timed_block_buff.duration
 			}
 		},
 		buffs = {
@@ -2182,10 +2182,10 @@ Talents.witch_hunter = {
 		description_values = {
 			{
 				value_type = "percent",
-				value = tbl.victor_witchhunter_ping_target_crit_chance.bonus
+				value = buff_tweak_data.victor_witchhunter_ping_target_crit_chance.bonus
 			},
 			{
-				value = tbl.victor_witchhunter_ping_target_crit_chance.duration
+				value = buff_tweak_data.victor_witchhunter_ping_target_crit_chance.duration
 			}
 		},
 		buffs = {
@@ -2201,10 +2201,10 @@ Talents.witch_hunter = {
 		description_values = {
 			{
 				value_type = "percent",
-				value = tbl.victor_witchhunter_attack_speed_on_enemy_pinged_buff.multiplier
+				value = buff_tweak_data.victor_witchhunter_attack_speed_on_enemy_pinged_buff.multiplier
 			},
 			{
-				value = tbl.victor_witchhunter_attack_speed_on_enemy_pinged_buff.duration
+				value = buff_tweak_data.victor_witchhunter_attack_speed_on_enemy_pinged_buff.duration
 			}
 		},
 		buffs = {
@@ -2220,7 +2220,7 @@ Talents.witch_hunter = {
 		description_values = {
 			{
 				value_type = "percent",
-				value = tbl.victor_witchhunter_improved_damage_taken_ping.multiplier
+				value = buff_tweak_data.victor_witchhunter_improved_damage_taken_ping.multiplier
 			}
 		},
 		buffs = {}
@@ -2233,7 +2233,7 @@ Talents.witch_hunter = {
 		description_values = {
 			{
 				value_type = "percent",
-				value = tbl.victor_witchhunter_max_ammo.multiplier
+				value = buff_tweak_data.victor_witchhunter_max_ammo.multiplier
 			}
 		},
 		buffs = {
@@ -2248,10 +2248,10 @@ Talents.witch_hunter = {
 		description_values = {
 			{
 				value_type = "percent",
-				value = tbl.victor_witchhunter_stamina_regen_on_push_buff.multiplier
+				value = buff_tweak_data.victor_witchhunter_stamina_regen_on_push_buff.multiplier
 			},
 			{
-				value = tbl.victor_witchhunter_stamina_regen_on_push_buff.duration
+				value = buff_tweak_data.victor_witchhunter_stamina_regen_on_push_buff.duration
 			}
 		},
 		buffs = {
@@ -2266,7 +2266,7 @@ Talents.witch_hunter = {
 		description_values = {
 			{
 				value_type = "baked_percent",
-				value = tbl.victor_witchhunter_dodge_range.multiplier
+				value = buff_tweak_data.victor_witchhunter_dodge_range.multiplier
 			}
 		},
 		buffs = {
@@ -2290,10 +2290,10 @@ Talents.witch_hunter = {
 		description_values = {
 			{
 				value_type = "baked_percent",
-				value = tbl.victor_witchhunter_activated_ability_guaranteed_crit_self_buff.bonus
+				value = buff_tweak_data.victor_witchhunter_activated_ability_guaranteed_crit_self_buff.bonus
 			},
 			{
-				value = tbl.victor_witchhunter_activated_ability_guaranteed_crit_self_buff.duration
+				value = buff_tweak_data.victor_witchhunter_activated_ability_guaranteed_crit_self_buff.duration
 			}
 		},
 		buffs = {}
@@ -2305,11 +2305,11 @@ Talents.witch_hunter = {
 		icon = "victor_witchhunter_activated_ability_refund_cooldown_on_enemies_hit",
 		description_values = {
 			{
-				value = tbl.victor_witchhunter_activated_ability_refund_cooldown_on_enemies_hit.required_targets
+				value = buff_tweak_data.victor_witchhunter_activated_ability_refund_cooldown_on_enemies_hit.required_targets
 			},
 			{
 				value_type = "percent",
-				value = tbl.victor_witchhunter_activated_ability_refund_cooldown_on_enemies_hit.cooldown_reduction
+				value = buff_tweak_data.victor_witchhunter_activated_ability_refund_cooldown_on_enemies_hit.cooldown_reduction
 			}
 		},
 		buffs = {
@@ -2379,4 +2379,4 @@ Talents.witch_hunter = {
 }
 
 BuffUtils.copy_talent_buff_names(TalentBuffTemplates.witch_hunter)
-BuffUtils.apply_buff_tweak_data(TalentBuffTemplates.witch_hunter, tbl)
+BuffUtils.apply_buff_tweak_data(TalentBuffTemplates.witch_hunter, buff_tweak_data)

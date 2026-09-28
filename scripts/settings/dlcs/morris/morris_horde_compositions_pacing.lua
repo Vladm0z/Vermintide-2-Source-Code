@@ -1,6 +1,6 @@
 -- chunkname: @scripts/settings/dlcs/morris/morris_horde_compositions_pacing.lua
 
-return {
+local morris_compositions = {
 	curse_blood_for_the_blood_god_horde = {
 		sound_settings = HordeCompositionsSoundSettings.chaos,
 		{
@@ -41,3 +41,5 @@ return {
 		}
 	}
 }
+
+return morris_compositions

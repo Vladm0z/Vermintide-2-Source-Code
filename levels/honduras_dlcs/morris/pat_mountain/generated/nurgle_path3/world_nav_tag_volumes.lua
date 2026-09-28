@@ -1,6 +1,6 @@
 -- chunkname: @levels/honduras_dlcs/morris/pat_mountain/generated/nurgle_path3/world_nav_tag_volumes.lua
 
-local tbl = {
+local nav_tag_volumes = {
 	death_zone_003 = {
 		delay_nav_tag_volume_creation = true,
 		alt_max = 327.0647277832031,
@@ -1224,9 +1224,9 @@ local tbl = {
 		}
 	}
 }
-local str = "1"
+local version = "1"
 
 return {
-	version = str,
-	nav_tag_volumes = tbl
+	version = version,
+	nav_tag_volumes = nav_tag_volumes
 }

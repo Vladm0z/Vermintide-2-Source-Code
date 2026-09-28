@@ -2,23 +2,26 @@
 
 require("core/gwnav/lua/safe_require")
 
-local var_0_0 = safe_require_guard()
-local var_0_1 = safe_require("core/gwnav/lua/runtime/navclass")(var_0_0)
+local NavRoute = safe_require_guard()
+local NavClass = safe_require("core/gwnav/lua/runtime/navclass")
+
+NavRoute = NavClass(NavRoute)
+
 local Vector3Box = stingray.Vector3Box
 
-var_0_1.init = function (self)
+NavRoute.init = function (self)
 	-- function 1
 	self._positions = {}
 end
 
-var_0_1.add_position = function (arg_2_0, arg_2_1)
+NavRoute.add_position = function (self, position)
 	-- function 2
-	arg_2_0._positions[#arg_2_0._positions + 1] = Vector3Box(arg_2_1)
+	self._positions[#self._positions + 1] = Vector3Box(position)
 end
 
-var_0_1.positions = function (self)
+NavRoute.positions = function (self)
 	-- function 3
 	return self._positions
 end
 
-return var_0_1
+return NavRoute

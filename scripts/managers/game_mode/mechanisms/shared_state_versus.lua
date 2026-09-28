@@ -2,16 +2,16 @@
 
 require("scripts/network/shared_state")
 
-local scripts_managers_game_mode_mechanisms_shared_state_versus_spec = require("scripts/managers/game_mode/mechanisms/shared_state_versus_spec")
+local shared_state_spec = require("scripts/managers/game_mode/mechanisms/shared_state_versus_spec")
 
 SharedStateVersus = class(SharedStateVersus)
 
-SharedStateVersus.init = function (self, arg_1_1, arg_1_2, arg_1_3, arg_1_4)
+SharedStateVersus.init = function (self, is_server, network_handler, server_peer_id, own_peer_id)
 	-- function 1
-	self._shared_state = SharedState:new("shared_state_versus_" .. arg_1_3, scripts_managers_game_mode_mechanisms_shared_state_versus_spec, arg_1_1, arg_1_2, arg_1_3, arg_1_4)
-	self._is_server = arg_1_1
-	self._server_peer_id = arg_1_3
-	self._own_peer_id = arg_1_4
+	self._shared_state = SharedState:new("shared_state_versus_" .. server_peer_id, shared_state_spec, is_server, network_handler, server_peer_id, own_peer_id)
+	self._is_server = is_server
+	self._server_peer_id = server_peer_id
+	self._own_peer_id = own_peer_id
 end
 
 SharedStateVersus.full_sync = function (self)
@@ -19,9 +19,9 @@ SharedStateVersus.full_sync = function (self)
 	self._shared_state:full_sync()
 end
 
-SharedStateVersus.register_rpcs = function (self, arg_3_1)
+SharedStateVersus.register_rpcs = function (self, network_event_delegate)
 	-- function 3
-	self._shared_state:register_rpcs(arg_3_1)
+	self._shared_state:register_rpcs(network_event_delegate)
 end
 
 SharedStateVersus.unregister_rpcs = function (self)
@@ -29,9 +29,9 @@ SharedStateVersus.unregister_rpcs = function (self)
 	self._shared_state:unregister_rpcs()
 end
 
-SharedStateVersus.network_context_created = function (self, arg_5_1, arg_5_2, arg_5_3, arg_5_4, arg_5_5)
+SharedStateVersus.network_context_created = function (self, lobby, server_peer_id, own_peer_id, is_server, network_server)
 	-- function 5
-	self._shared_state:network_context_created(arg_5_1, arg_5_2, arg_5_3, arg_5_4, arg_5_5)
+	self._shared_state:network_context_created(lobby, server_peer_id, own_peer_id, is_server, network_server)
 end
 
 SharedStateVersus.destroy = function (self)
@@ -46,73 +46,73 @@ SharedStateVersus.get_revision = function (self)
 	return self._shared_state:get_revision()
 end
 
-SharedStateVersus.is_peer_fully_synced = function (self, arg_8_1)
+SharedStateVersus.is_peer_fully_synced = function (self, peer_id)
 	-- function 8
-	return self._shared_state:is_peer_fully_synced(arg_8_1)
+	return self._shared_state:is_peer_fully_synced(peer_id)
 end
 
-SharedStateVersus.get_hero_cosmetics = function (self, arg_9_1, arg_9_2)
+SharedStateVersus.get_hero_cosmetics = function (self, peer_id, local_player_id)
 	-- function 9
-	local get_key = self._shared_state:get_key("hero_cosmetics", nil, arg_9_2)
+	local key = self._shared_state:get_key("hero_cosmetics", nil, local_player_id)
 
-	return self._shared_state:get_peer(arg_9_1, get_key)
+	return self._shared_state:get_peer(peer_id, key)
 end
 
-SharedStateVersus.set_hero_cosmetics = function (self, arg_10_1, arg_10_2, arg_10_3, arg_10_4, arg_10_5, arg_10_6, arg_10_7, arg_10_8, arg_10_9, arg_10_10)
+SharedStateVersus.set_hero_cosmetics = function (self, peer_id, local_player_id, weapon_slot, weapon, weapon_pose, weapon_pose_skin, hero_skin, hat, frame, pactsworn_cosmetics)
 	-- function 10
-	local get_key = self._shared_state:get_key("hero_cosmetics", nil, arg_10_2)
+	local key = self._shared_state:get_key("hero_cosmetics", nil, local_player_id)
 
-	self._shared_state:set_peer(arg_10_1, get_key, {
-		weapon_slot = arg_10_3,
-		weapon = arg_10_4,
-		weapon_pose = arg_10_5,
-		weapon_pose_skin = arg_10_6,
-		hero_skin = arg_10_7,
-		hat = arg_10_8,
-		frame = arg_10_9,
-		pactsworn_cosmetics = arg_10_10
+	self._shared_state:set_peer(peer_id, key, {
+		weapon_slot = weapon_slot,
+		weapon = weapon,
+		weapon_pose = weapon_pose,
+		weapon_pose_skin = weapon_pose_skin,
+		hero_skin = hero_skin,
+		hat = hat,
+		frame = frame,
+		pactsworn_cosmetics = pactsworn_cosmetics
 	})
 end
 
 SharedStateVersus.on_match_ended = function (self)
 	-- function 11
-	local get_key = self._shared_state:get_key("match_ended")
+	local key = self._shared_state:get_key("match_ended")
 
-	self._shared_state:set_server(get_key, true)
+	self._shared_state:set_server(key, true)
 end
 
 SharedStateVersus.get_match_ended = function (self)
 	-- function 12
-	local get_key = self._shared_state:get_key("match_ended")
+	local key = self._shared_state:get_key("match_ended")
 
-	self._shared_state:get_server(get_key)
+	self._shared_state:get_server(key)
 end
 
 SharedStateVersus.on_party_won_early = function (self)
 	-- function 13
-	local get_key = self._shared_state:get_key("party_won_early")
+	local key = self._shared_state:get_key("party_won_early")
 
-	self._shared_state:set_server(get_key, true)
+	self._shared_state:set_server(key, true)
 end
 
 SharedStateVersus.get_party_won_early = function (self)
 	-- function 14
-	local get_key = self._shared_state:get_key("party_won_early")
+	local key = self._shared_state:get_key("party_won_early")
 
-	return self._shared_state:get_server(get_key)
+	return self._shared_state:get_server(key)
 end
 
 SharedStateVersus.generate_match_id = function (self)
 	-- function 15
-	local guid = Application.guid()
-	local get_key = self._shared_state:get_key("match_id")
+	local match_id = Application.guid()
+	local key = self._shared_state:get_key("match_id")
 
-	self._shared_state:set_server(get_key, guid)
+	self._shared_state:set_server(key, match_id)
 end
 
 SharedStateVersus.get_match_id = function (self)
 	-- function 16
-	local get_key = self._shared_state:get_key("match_id")
+	local match_id = self._shared_state:get_key("match_id")
 
-	return self._shared_state:get_server(get_key)
+	return self._shared_state:get_server(match_id)
 end

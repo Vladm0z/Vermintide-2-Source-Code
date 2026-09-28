@@ -2,12 +2,12 @@
 
 require("levels/honduras_dlcs/morris/deus_level_settings")
 
-local morris = DLCSettings.morris
+local settings = DLCSettings.morris
 
-morris.blocked_auto_load_files = {
+settings.blocked_auto_load_files = {
 	morris_hub = true
 }
-morris.dialogue_lookup = {
+settings.dialogue_lookup = {
 	"dialogues/generated/lookup_hero_conversations_dlc_morris_introspect",
 	"dialogues/generated/lookup_hero_conversations_dlc_morris_level_banter",
 	"dialogues/generated/lookup_hero_conversations_dlc_morris_level_banter_branched",
@@ -17,7 +17,7 @@ morris.dialogue_lookup = {
 	"dialogues/generated/lookup_hero_conversations_dlc_morris_extras",
 	"dialogues/generated/lookup_hub_conversations_morris"
 }
-morris.network_sound_events = {
+settings.network_sound_events = {
 	"Play_curse_egg_of_tzeentch_alert_low",
 	"Play_curse_egg_of_tzeentch_alert_medium",
 	"Play_curse_egg_of_tzeentch_alert_high",
@@ -49,14 +49,14 @@ morris.network_sound_events = {
 	"hud_gameplay_stance_ninjafencer_buff",
 	"hud_gameplay_stance_linesman_buff"
 }
-morris.dialogue_events = {
+settings.dialogue_events = {
 	"blessing_rally_flag_placed",
 	"on_holy_grenade",
 	"curse_positive_effect_happened",
 	"curse_damage_taken"
 }
-morris.dialogue_event_data_lookup = {}
-morris.dialogue_settings = {
+settings.dialogue_event_data_lookup = {}
+settings.dialogue_settings = {
 	dlc_morris_map = {
 		"dialogues/generated/hero_conversations_dlc_morris_map"
 	},
@@ -68,23 +68,23 @@ morris.dialogue_settings = {
 	}
 }
 
-local str = "dialogues/generated/lookup_hero_conversations_dlc_morris_"
-local str_2 = "dialogues/generated/hero_conversations_dlc_morris_"
+local dialogue_lookup_file_name_prefix = "dialogues/generated/lookup_hero_conversations_dlc_morris_"
+local dialogue_settings_file_name_prefix = "dialogues/generated/hero_conversations_dlc_morris_"
 
-for k, v in pairs(DEUS_LEVEL_SETTINGS) do
-	local base_level_name = v.base_level_name
-	local format = string.format("%s%s", str, base_level_name)
+for level_key, level_settings in pairs(DEUS_LEVEL_SETTINGS) do
+	local base_level_name = level_settings.base_level_name
+	local dialogue_lookup_file_name = string.format("%s%s", dialogue_lookup_file_name_prefix, base_level_name)
 
-	if not table.contains(morris.dialogue_lookup, format) then
-		morris.dialogue_lookup[#morris.dialogue_lookup + 1] = format
+	if not table.contains(settings.dialogue_lookup, dialogue_lookup_file_name) then
+		settings.dialogue_lookup[#settings.dialogue_lookup + 1] = dialogue_lookup_file_name
 	end
 
-	for i, v_2 in ipairs(v.themes) do
-		for i_2, v_3 in ipairs(v.paths) do
-			local format_2 = string.format("%s_%s_path%s", k, v_2, v_3)
-			local format_3 = string.format("%s%s", str_2, base_level_name)
+	for _, theme_name in ipairs(level_settings.themes) do
+		for _, path in ipairs(level_settings.paths) do
+			local permutation_key = string.format("%s_%s_path%s", level_key, theme_name, path)
+			local dialogue_settings_file_name = string.format("%s%s", dialogue_settings_file_name_prefix, base_level_name)
 
-			morris.dialogue_settings[format_2] = {
+			settings.dialogue_settings[permutation_key] = {
 				"dialogues/generated/hero_conversations_dlc_morris_introspect",
 				"dialogues/generated/hero_conversations_dlc_morris_level_banter",
 				"dialogues/generated/hero_conversations_dlc_morris_level_banter_branched",
@@ -93,7 +93,7 @@ for k, v in pairs(DEUS_LEVEL_SETTINGS) do
 				"dialogues/generated/hero_conversations_dlc_morris_extras",
 				"dialogues/generated/hero_conversations_dlc_cowbell_ingame",
 				"dialogues/generated/hero_conversations_dlc_cowbell_banter",
-				format_3
+				dialogue_settings_file_name
 			}
 		end
 	end

@@ -2,78 +2,80 @@
 
 require("scripts/unit_extensions/human/ai_player_unit/ai_brain")
 
-local alive = Unit.alive
+local unit_alive = Unit.alive
 local BLACKBOARDS = BLACKBOARDS
-local num = 5
-local num_2 = 4.5
-local num_3 = 1.5
-local num_4 = 15
-local num_5 = -0.2
-local num_6 = 1
-local num_7 = 1.5
-local num_8 = 9
-local num_9 = 0.8
-local num_10 = 0.25
+local PROXIMITY_CHECK_RANGE = 5
+local PROXIMITY_CHECK_RANGE_ALLY_NEEDS_AID = 4.5
+local PROXIMITY_CHECK_RANGE_ALLY_NEEDS_AID_REVIVING = 1.5
+local PROXIMITY_CHECK_RANGE_ALLY_NEEDS_AID_SUPPORT = 15
+local STICKYNESS_DISTANCE_MODIFIER = -0.2
+local FOLLOW_TIMER_LOWER_BOUND = 1
+local FOLLOW_TIMER_UPPER_BOUND = 1.5
+local ENEMY_PATH_FAILED_REPATH_THRESHOLD = 9
+local ENEMY_PATH_FAILED_REPATH_VERTICAL_THRESHOLD = 0.8
+local ALLY_PATH_FAILED_REPATH_THRESHOLD = 0.25
 local FLAT_MOVE_TO_EPSILON = BotConstants.default.FLAT_MOVE_TO_EPSILON
-local num_11 = FLAT_MOVE_TO_EPSILON^2
-local num_12 = BotConstants.default.FLAT_MOVE_TO_PREVIOUS_POS_EPSILON^2
+local FLAT_MOVE_TO_EPSILON_SQ = FLAT_MOVE_TO_EPSILON^2
+local FLAT_MOVE_TO_PREVIOUS_POS_EPSILON = BotConstants.default.FLAT_MOVE_TO_PREVIOUS_POS_EPSILON
+local FLAT_MOVE_TO_PREVIOUS_POS_EPSILON_SQ = FLAT_MOVE_TO_PREVIOUS_POS_EPSILON^2
 local Z_MOVE_TO_EPSILON = BotConstants.default.Z_MOVE_TO_EPSILON
-local num_13 = 0.5
-local num_14 = 0.1
-local num_15 = 0.11
-local num_16 = 0.25
-local num_17 = 0.6
-local num_18 = 0.8
-local num_19 = 10
-local num_20 = 0.75
-local num_21 = 1
-local num_22 = 0.01
-local var_0_26
+local HOLD_POSITION_MAX_ALLOWED_Z = 0.5
+local SELF_HEAL_STICKINESS = 0.1
+local PLAYER_HEAL_STICKYBESS = 0.11
+local WANTS_TO_HEAL_THRESHOLD = 0.25
+local WANTS_TO_GIVE_HEAL_TO_OTHER = 0.6
+local INTERESTED_IN_BEING_HEALED_THRESHOLD = 0.8
+local VORTEX_ESCAPE_DISTANCE = 10
+local VORTEX_ESCAPE_STICKINESS_WEIGHT = 0.75
+local VORTEX_ESCAPE_RE_EVALUATE_DISTANCE_SQ = 1
+local VORTEX_ESCAPE_RE_EVALUATE_REACHED_DISTANCE_SQ = 0.01
+local SELF_UNIT
 
-local function fn(...)
+local function dprint(...)
 	-- function 1
-	if var_0_26 ~= script_data.debug_unit or not script_data.ai_bots_debug then
+	if SELF_UNIT == script_data.debug_unit and script_data.ai_bots_debug then
 		print(...)
 	end
 end
 
-local function fn_2(...)
+local function dtext(...)
 	-- function 2
-	if var_0_26 ~= script_data.debug_unit or not script_data.ai_bots_debug then
+	if SELF_UNIT == script_data.debug_unit and script_data.ai_bots_debug then
 		Debug.text(...)
 	end
 end
 
 PlayerBotBase = class(PlayerBotBase)
 
-local function fn_3(self)
+local function find_max_weight(data)
 	-- function 3
-	local count = #self
-	local num = -math.huge
+	local num_entries = #data
+	local max_weight = -math.huge
 
-	for i = 1, count do
-		local weight = self[i].weight
+	for i = 1, num_entries do
+		local entry = data[i]
+		local weight = entry.weight
 
-		if num < weight then
-			num = weight
+		if max_weight < weight then
+			max_weight = weight
 		end
 	end
 
-	return num
+	return max_weight
 end
 
-PlayerBotBase.init = function (self, arg_4_1, arg_4_2, arg_4_3)
+PlayerBotBase.init = function (self, extension_init_context, unit, extension_init_data)
 	-- function 4
-	local world = arg_4_1.world
+	local world = extension_init_context.world
 
 	self._world = world
-	self._unit = arg_4_2
-	self._nav_world = arg_4_3.nav_world
+	self._unit = unit
+	self._nav_world = extension_init_data.nav_world
 	self._enemy_broadphase = Managers.state.entity:system("ai_system").broadphase
 
-	local var_4_1 = Vector3Box(Vector3(0, 0, 0))
+	local override_box = Vector3Box(Vector3(0, 0, 0))
 
-	var_4_1.value_stored = false
+	override_box.value_stored = false
 	self.is_bot = true
 	self._t = 0
 	self._blackboard = {
@@ -82,19 +84,19 @@ PlayerBotBase.init = function (self, arg_4_1, arg_4_2, arg_4_3)
 		using_navigation_destination_override = false,
 		re_evaluate_detection = Math.random() * 0.5,
 		world = world,
-		unit = arg_4_2,
-		level = LevelHelper:current_level(arg_4_1.world),
+		unit = unit,
+		level = LevelHelper:current_level(extension_init_context.world),
 		nav_world = self._nav_world,
 		node_data = {},
 		running_nodes = {},
 		proximite_enemies = {},
 		follow = {
 			needs_target_position_refresh = true,
-			follow_timer = math.lerp(num_6, num_7, Math.random()),
-			target_position = Vector3Box(POSITION_LOOKUP[arg_4_2])
+			follow_timer = math.lerp(FOLLOW_TIMER_LOWER_BOUND, FOLLOW_TIMER_UPPER_BOUND, Math.random()),
+			target_position = Vector3Box(POSITION_LOOKUP[unit])
 		},
 		target_ally_aid_destination = Vector3Box(),
-		navigation_destination_override = var_4_1,
+		navigation_destination_override = override_box,
 		navigation_liquid_escape_destination_override = Vector3Box(),
 		navigation_vortex_escape_destination_override = Vector3Box(),
 		navigation_vortex_escape_previous_evaluation_position = Vector3Box(),
@@ -116,7 +118,7 @@ PlayerBotBase.init = function (self, arg_4_1, arg_4_2, arg_4_3)
 	}
 
 	local up = Vector3.up()
-	local tbl = {
+	local vortex_escape_directions = {
 		{
 			weight = 0.5,
 			direction = Vector3Box(Quaternion.forward(Quaternion(up, -math.pi * 4 / 8)))
@@ -155,15 +157,18 @@ PlayerBotBase.init = function (self, arg_4_1, arg_4_2, arg_4_3)
 		}
 	}
 
-	self._vortex_escape_directions = tbl
-	self._vortex_largest_weighted_distance_sq = fn_3(tbl) * num_19^2
-	self._bot_profile = arg_4_3.bot_profile
-	self._player = arg_4_3.player
+	self._vortex_escape_directions = vortex_escape_directions
 
-	Unit.set_data(arg_4_2, "bot", self._bot_profile)
-	Managers.player:assign_unit_ownership(arg_4_2, self._player, true)
-	Unit.set_flow_variable(arg_4_2, "is_bot", true)
-	Unit.flow_event(arg_4_2, "character_vo_set")
+	local largest_vortex_weight = find_max_weight(vortex_escape_directions)
+
+	self._vortex_largest_weighted_distance_sq = largest_vortex_weight * VORTEX_ESCAPE_DISTANCE^2
+	self._bot_profile = extension_init_data.bot_profile
+	self._player = extension_init_data.player
+
+	Unit.set_data(unit, "bot", self._bot_profile)
+	Managers.player:assign_unit_ownership(unit, self._player, true)
+	Unit.set_flow_variable(unit, "is_bot", true)
+	Unit.flow_event(unit, "character_vo_set")
 	self:_init_brain()
 
 	self._proximity_target_update_timer = -math.huge
@@ -193,40 +198,46 @@ PlayerBotBase.init = function (self, arg_4_1, arg_4_2, arg_4_3)
 	}
 end
 
-PlayerBotBase.ranged_attack_started = function (self, arg_5_1, arg_5_2, arg_5_3)
+PlayerBotBase.ranged_attack_started = function (self, attacking_unit, victim_unit, attack_type)
 	-- function 5
-	local _blackboard = self._blackboard
+	local blackboard = self._blackboard
 
-	if arg_5_3 == "ratling_gun_fire" then
-		_blackboard.taking_cover.threats[arg_5_1] = arg_5_2
+	if attack_type == "ratling_gun_fire" then
+		local targets = blackboard.taking_cover.threats
+
+		targets[attacking_unit] = victim_unit
 	end
 end
 
-PlayerBotBase.ranged_attack_ended = function (self, arg_6_1, arg_6_2, arg_6_3)
+PlayerBotBase.ranged_attack_ended = function (self, attacking_unit, victim_unit, attack_type)
 	-- function 6
-	local _blackboard = self._blackboard
+	local blackboard = self._blackboard
 
-	if arg_6_3 == "ratling_gun_fire" then
-		_blackboard.taking_cover.threats[arg_6_1] = nil
+	if attack_type == "ratling_gun_fire" then
+		local targets = blackboard.taking_cover.threats
+
+		targets[attacking_unit] = nil
 	end
 end
 
-PlayerBotBase.hit_by_projectile = function (self, arg_7_1)
+PlayerBotBase.hit_by_projectile = function (self, attacking_unit)
 	-- function 7
-	self._blackboard.hit_by_projectile[arg_7_1] = self._t
+	local blackboard = self._blackboard
+
+	blackboard.hit_by_projectile[attacking_unit] = self._t
 end
 
-local num_23 = 5
+local DEFAULT_STAY_NEAR_PLAYER_RANGE = 5
 
-PlayerBotBase.set_stay_near_player = function (self, arg_8_1, arg_8_2)
+PlayerBotBase.set_stay_near_player = function (self, stay_near_player, max_range)
 	-- function 8
-	if not arg_8_1 then
-		self._stay_near_player_range = arg_8_2 or num_23
+	if stay_near_player then
+		self._stay_near_player_range = not not max_range or not not DEFAULT_STAY_NEAR_PLAYER_RANGE
 	else
 		self._stay_near_player_range = math.huge
 	end
 
-	self._stay_near_player = arg_8_1
+	self._stay_near_player = stay_near_player
 end
 
 PlayerBotBase.should_stay_near_player = function (self)
@@ -234,54 +245,54 @@ PlayerBotBase.should_stay_near_player = function (self)
 	return self._stay_near_player, self._stay_near_player_range
 end
 
-PlayerBotBase.set_seen_by_player = function (self, arg_10_1, arg_10_2, arg_10_3)
+PlayerBotBase.set_seen_by_player = function (self, seen, player_unit, t)
 	-- function 10
-	local _seen_by_players = self._seen_by_players
+	local seen_by_players = self._seen_by_players
 
-	if not arg_10_1 then
-		_seen_by_players[arg_10_2] = arg_10_3
+	if seen then
+		seen_by_players[player_unit] = t
 	else
-		_seen_by_players[arg_10_2] = nil
+		seen_by_players[player_unit] = nil
 	end
 end
 
-PlayerBotBase.extensions_ready = function (self, arg_11_1, arg_11_2)
+PlayerBotBase.extensions_ready = function (self, world, unit)
 	-- function 11
-	local _blackboard = self._blackboard
-	local extension = ScriptUnit.extension(arg_11_2, "input_system")
-	local extension_2 = ScriptUnit.extension(arg_11_2, "inventory_system")
-	local extension_3 = ScriptUnit.extension(arg_11_2, "overcharge_system")
-	local extension_4 = ScriptUnit.extension(arg_11_2, "ai_navigation_system")
-	local extension_5 = ScriptUnit.extension(arg_11_2, "first_person_system")
-	local extension_6 = ScriptUnit.extension(arg_11_2, "status_system")
-	local extension_7 = ScriptUnit.extension(arg_11_2, "interactor_system")
-	local extension_8 = ScriptUnit.extension(arg_11_2, "health_system")
-	local extension_9 = ScriptUnit.extension(arg_11_2, "ai_bot_group_system")
-	local extension_10 = ScriptUnit.extension(arg_11_2, "ai_system")
-	local extension_11 = ScriptUnit.extension(arg_11_2, "locomotion_system")
-	local extension_12 = ScriptUnit.extension(arg_11_2, "career_system")
-	local extension_13 = ScriptUnit.extension(arg_11_2, "ai_slot_system")
-	local extension_14 = ScriptUnit.extension(arg_11_2, "ai_commander_system")
+	local blackboard = self._blackboard
+	local input_ext = ScriptUnit.extension(unit, "input_system")
+	local inventory_ext = ScriptUnit.extension(unit, "inventory_system")
+	local overcharge_ext = ScriptUnit.extension(unit, "overcharge_system")
+	local nav_ext = ScriptUnit.extension(unit, "ai_navigation_system")
+	local first_person_ext = ScriptUnit.extension(unit, "first_person_system")
+	local status_ext = ScriptUnit.extension(unit, "status_system")
+	local interaction_ext = ScriptUnit.extension(unit, "interactor_system")
+	local health_ext = ScriptUnit.extension(unit, "health_system")
+	local ai_bot_group_ext = ScriptUnit.extension(unit, "ai_bot_group_system")
+	local ai_ext = ScriptUnit.extension(unit, "ai_system")
+	local locomotion_ext = ScriptUnit.extension(unit, "locomotion_system")
+	local career_extension = ScriptUnit.extension(unit, "career_system")
+	local ai_slot_extension = ScriptUnit.extension(unit, "ai_slot_system")
+	local ai_commander_extension = ScriptUnit.extension(unit, "ai_commander_system")
 
-	self._health_extension = extension_8
-	self._status_extension = extension_6
-	self._locomotion_extension = extension_11
-	self._navigation_extension = extension_4
-	_blackboard.input_extension = extension
-	_blackboard.inventory_extension = extension_2
-	_blackboard.overcharge_extension = extension_3
-	_blackboard.navigation_extension = extension_4
-	_blackboard.locomotion_extension = extension_11
-	_blackboard.first_person_extension = extension_5
-	_blackboard.status_extension = extension_6
-	_blackboard.interaction_extension = extension_7
-	_blackboard.health_extension = extension_8
-	_blackboard.ai_bot_group_extension = extension_9
-	_blackboard.ai_extension = extension_10
-	_blackboard.career_extension = extension_12
-	_blackboard.ai_slot_extension = extension_13
-	_blackboard.ai_commander_extension = extension_14
-	_blackboard.side = Managers.state.side.side_by_unit[arg_11_2]
+	self._health_extension = health_ext
+	self._status_extension = status_ext
+	self._locomotion_extension = locomotion_ext
+	self._navigation_extension = nav_ext
+	blackboard.input_extension = input_ext
+	blackboard.inventory_extension = inventory_ext
+	blackboard.overcharge_extension = overcharge_ext
+	blackboard.navigation_extension = nav_ext
+	blackboard.locomotion_extension = locomotion_ext
+	blackboard.first_person_extension = first_person_ext
+	blackboard.status_extension = status_ext
+	blackboard.interaction_extension = interaction_ext
+	blackboard.health_extension = health_ext
+	blackboard.ai_bot_group_extension = ai_bot_group_ext
+	blackboard.ai_extension = ai_ext
+	blackboard.career_extension = career_extension
+	blackboard.ai_slot_extension = ai_slot_extension
+	blackboard.ai_commander_extension = ai_commander_extension
+	blackboard.side = Managers.state.side.side_by_unit[unit]
 end
 
 PlayerBotBase._init_brain = function (self)
@@ -304,642 +315,666 @@ PlayerBotBase.blackboard = function (self)
 	return self._blackboard
 end
 
-PlayerBotBase.update = function (self, arg_16_1, arg_16_2, arg_16_3, arg_16_4, arg_16_5)
+PlayerBotBase.update = function (self, unit, input, dt, context, t)
 	-- function 16
-	self._t = arg_16_5
+	self._t = t
 
-	local _status_extension = self._status_extension
-	local _locomotion_extension = self._locomotion_extension
-	local var_16_2 = HEALTH_ALIVE[self._unit]
-	local is_ready_for_assisted_respawn = _status_extension:is_ready_for_assisted_respawn()
-	local is_linked_movement = _locomotion_extension:is_linked_movement()
+	local status_extension = self._status_extension
+	local locomotion_extension = self._locomotion_extension
+	local is_alive = HEALTH_ALIVE[self._unit]
+	local is_ready_for_assisted_respawn = status_extension:is_ready_for_assisted_respawn()
+	local is_linked_movement = locomotion_extension:is_linked_movement()
 
-	if not (not var_16_2 and is_ready_for_assisted_respawn or is_linked_movement) then
-		var_0_26 = arg_16_1
+	if is_alive and not is_ready_for_assisted_respawn and not is_linked_movement then
+		SELF_UNIT = unit
 
-		self:_update_blackboard(arg_16_3, arg_16_5)
-		self:_update_target_enemy(arg_16_3, arg_16_5)
-		self:_update_target_ally(arg_16_3, arg_16_5)
+		self:_update_blackboard(dt, t)
+		self:_update_target_enemy(dt, t)
+		self:_update_target_ally(dt, t)
 		self:_update_liquid_escape()
 		self:_update_vortex_escape()
-		self:_update_pickups(arg_16_3, arg_16_5)
-		self:_update_interactables(arg_16_3, arg_16_5)
+		self:_update_pickups(dt, t)
+		self:_update_interactables(dt, t)
 		self:_update_weapon_loadout_data(false)
 		self:_update_best_weapon()
 		self:_update_reload()
-		self._brain:update(arg_16_1, arg_16_5, arg_16_3)
+		self._brain:update(unit, t, dt)
 
-		local get_moving_platform, var_16_6, var_16_7 = _locomotion_extension:get_moving_platform()
+		local moving_platform, _, soft_platform = locomotion_extension:get_moving_platform()
+		local is_disabled = status_extension:is_disabled()
 
-		if not ((_status_extension:is_disabled() or not get_moving_platform) and var_16_7) then
-			self._navigation_extension:teleport(POSITION_LOOKUP[arg_16_1])
-		elseif not _locomotion_extension:is_on_ground() then
-			self:_update_movement_target(arg_16_3, arg_16_5)
+		if is_disabled or moving_platform and not soft_platform then
+			self._navigation_extension:teleport(POSITION_LOOKUP[unit])
+		elseif locomotion_extension:is_on_ground() then
+			self:_update_movement_target(dt, t)
 		end
 
-		self:_update_attack_request(arg_16_5)
+		self:_update_attack_request(t)
 	end
 end
 
-PlayerBotBase._update_blackboard = function (self, arg_17_1, arg_17_2)
+PlayerBotBase._update_blackboard = function (self, dt, t)
 	-- function 17
-	local _blackboard = self._blackboard
-	local _status_extension = self._status_extension
-	local _locomotion_extension = self._locomotion_extension
+	local bb = self._blackboard
+	local status_extension = self._status_extension
+	local locomotion_extension = self._locomotion_extension
 
-	_blackboard.is_knocked_down = _status_extension:is_knocked_down()
-	_blackboard.is_grabbed_by_pack_master = _status_extension:is_grabbed_by_pack_master()
-	_blackboard.is_pounced_down = _status_extension:is_pounced_down()
-	_blackboard.is_hanging_from_hook = _status_extension:is_hanging_from_hook()
-	_blackboard.is_ledge_hanging = _status_extension:get_is_ledge_hanging()
+	bb.is_knocked_down = status_extension:is_knocked_down()
+	bb.is_grabbed_by_pack_master = status_extension:is_grabbed_by_pack_master()
+	bb.is_pounced_down = status_extension:is_pounced_down()
+	bb.is_hanging_from_hook = status_extension:is_hanging_from_hook()
+	bb.is_ledge_hanging = status_extension:get_is_ledge_hanging()
 
-	local get_moving_platform, var_17_4, var_17_5 = _locomotion_extension:get_moving_platform()
+	local on_platform, _, on_soft_platform = locomotion_extension:get_moving_platform()
+	local is_using_transport = status_extension:is_using_transport()
 
-	_blackboard.is_transported = not get_moving_platform and not var_17_5 and _status_extension:is_using_transport()
-	_blackboard.is_grabbed_by_chaos_spawn = _status_extension:is_grabbed_by_chaos_spawn()
+	is_using_transport = (not not is_using_transport or not not on_platform) and not not not on_soft_platform
+	bb.is_transported = is_using_transport
+	bb.is_grabbed_by_chaos_spawn = status_extension:is_grabbed_by_chaos_spawn()
 
-	local _unit = self._unit
-	local target_unit = _blackboard.target_unit
+	local unit = self._unit
+	local target_unit = bb.target_unit
 
-	if not ALIVE[target_unit] then
-		_blackboard.target_dist = Vector3.distance(POSITION_LOOKUP[target_unit], POSITION_LOOKUP[_unit])
+	if ALIVE[target_unit] then
+		bb.target_dist = Vector3.distance(POSITION_LOOKUP[target_unit], POSITION_LOOKUP[unit])
 	else
-		_blackboard.target_dist = math.huge
-		_blackboard.target_unit = nil
+		bb.target_dist = math.huge
+		bb.target_unit = nil
 	end
 
-	for k, v in pairs(_blackboard.utility_actions) do
-		v.time_since_last = arg_17_2 - v.last_time
+	for _, action_data in pairs(bb.utility_actions) do
+		action_data.time_since_last = t - action_data.last_time
 	end
 end
 
-PlayerBotBase._update_target_enemy = function (self, arg_18_1, arg_18_2)
+PlayerBotBase._update_target_enemy = function (self, dt, t)
 	-- function 18
-	local var_18_0 = POSITION_LOOKUP[self._unit]
+	local pos = POSITION_LOOKUP[self._unit]
 
-	self:_update_slot_target(arg_18_1, arg_18_2, var_18_0)
-	self:_update_proximity_target(arg_18_1, arg_18_2, var_18_0)
+	self:_update_slot_target(dt, t, pos)
+	self:_update_proximity_target(dt, t, pos)
 
-	local _blackboard = self._blackboard
-	local target_unit = _blackboard.target_unit
-	local slot_target_enemy = _blackboard.slot_target_enemy
-	local proximity_target_enemy = _blackboard.proximity_target_enemy
-	local priority_target_enemy = _blackboard.priority_target_enemy
-	local urgent_target_enemy = _blackboard.urgent_target_enemy
-	local opportunity_target_enemy = _blackboard.opportunity_target_enemy
-	local proximity_target_distance = _blackboard.proximity_target_distance
-	local var_18_9
+	local bb = self._blackboard
+	local old_target = bb.target_unit
+	local slot_enemy = bb.slot_target_enemy
+	local prox_enemy = bb.proximity_target_enemy
+	local priority_enemy = bb.priority_target_enemy
+	local urgent_enemy = bb.urgent_target_enemy
+	local opportunity_enemy = bb.opportunity_target_enemy
+	local proximity_target_distance = bb.proximity_target_distance
+	local var_18_1
 
-	if proximity_target_enemy == target_unit then
-		var_18_9 = num_5
+	if prox_enemy == old_target then
+		var_18_1 = STICKYNESS_DISTANCE_MODIFIER
 
-		if not var_18_9 then
+		if not var_18_1 then
 			-- Nothing
 		end
 	end
 
-	var_18_9 = 0
+	var_18_1 = 0
 
 	::label_18_0::
 
-	local num = proximity_target_distance + var_18_9
-	local priority_target_distance = _blackboard.priority_target_distance
-	local var_18_12
+	local prox_enemy_dist = proximity_target_distance + var_18_1
+	local priority_target_distance = bb.priority_target_distance
+	local var_18_3
 
-	if priority_target_enemy == target_unit then
-		var_18_12 = num_5
+	if priority_enemy == old_target then
+		var_18_3 = STICKYNESS_DISTANCE_MODIFIER
 
-		if not var_18_12 then
+		if not var_18_3 then
 			-- Nothing
 		end
 	end
 
-	var_18_12 = 0
+	var_18_3 = 0
 
 	::label_18_1::
 
-	local num_2 = priority_target_distance + var_18_12
-	local urgent_target_distance = _blackboard.urgent_target_distance
-	local var_18_15
+	local prio_enemy_dist = priority_target_distance + var_18_3
+	local urgent_target_distance = bb.urgent_target_distance
+	local var_18_5
 
-	if urgent_target_enemy == target_unit then
-		var_18_15 = num_5
+	if urgent_enemy == old_target then
+		var_18_5 = STICKYNESS_DISTANCE_MODIFIER
 
-		if not var_18_15 then
+		if not var_18_5 then
 			-- Nothing
 		end
 	end
 
-	var_18_15 = 0
+	var_18_5 = 0
 
 	::label_18_2::
 
-	local num_3 = urgent_target_distance + var_18_15
-	local opportunity_target_distance = _blackboard.opportunity_target_distance
-	local var_18_18
+	local urgent_enemy_dist = urgent_target_distance + var_18_5
+	local opportunity_target_distance = bb.opportunity_target_distance
+	local var_18_7
 
-	if opportunity_target_enemy == target_unit then
-		var_18_18 = num_5
+	if opportunity_enemy == old_target then
+		var_18_7 = STICKYNESS_DISTANCE_MODIFIER
 
-		if not var_18_18 then
+		if not var_18_7 then
 			-- Nothing
 		end
 	end
 
-	var_18_18 = 0
+	var_18_7 = 0
 
 	::label_18_3::
 
-	local num_4 = opportunity_target_distance + var_18_18
+	local opp_enemy_dist = opportunity_target_distance + var_18_7
 
-	if not slot_target_enemy then
+	if slot_enemy then
 		-- Nothing
 	end
 
 	::label_18_4::
 
 	do
-		local length = Vector3.length(POSITION_LOOKUP[slot_target_enemy] - var_18_0)
-		local var_18_21
+		local length = Vector3.length(POSITION_LOOKUP[slot_enemy] - pos)
+		local var_18_9
 
-		if slot_target_enemy == target_unit then
-			var_18_21 = num_5
+		if slot_enemy == old_target then
+			var_18_9 = STICKYNESS_DISTANCE_MODIFIER
 
-			if not var_18_21 then
+			if not var_18_9 then
 				-- Nothing
 			end
 		end
 
-		var_18_21 = 0
+		var_18_9 = 0
 
 		::label_18_5::
 
-		local num_6 = length + var_18_21
+		local num = length + var_18_9
+		local slot_enemy_dist = num
 	end
 
 	::label_18_6::
 
-	if not (not priority_target_enemy and not (num_2 < 3)) then
-		_blackboard.target_unit = priority_target_enemy
-	elseif not (not urgent_target_enemy and not (num_3 < 3)) then
-		_blackboard.target_unit = urgent_target_enemy
-	elseif not (not opportunity_target_enemy and not (num_4 < 3)) then
-		_blackboard.target_unit = opportunity_target_enemy
-	elseif not (not slot_target_enemy and not (num_6 < 3)) then
-		_blackboard.target_unit = slot_target_enemy
-	elseif not (not proximity_target_enemy and not (num < 2)) then
-		_blackboard.target_unit = proximity_target_enemy
-	elseif not (not proximity_target_enemy and not _blackboard.proximity_target_is_player and not (num < 10)) then
-		_blackboard.target_unit = proximity_target_enemy
-	elseif not priority_target_enemy then
-		_blackboard.target_unit = priority_target_enemy
-	elseif not urgent_target_enemy then
-		_blackboard.target_unit = urgent_target_enemy
-	elseif not opportunity_target_enemy then
-		_blackboard.target_unit = opportunity_target_enemy
-	elseif not slot_target_enemy then
-		_blackboard.target_unit = slot_target_enemy
-	elseif not _blackboard.target_unit then
-		_blackboard.target_unit = nil
+	if priority_enemy and prio_enemy_dist < 3 then
+		bb.target_unit = priority_enemy
+	elseif urgent_enemy and urgent_enemy_dist < 3 then
+		bb.target_unit = urgent_enemy
+	elseif opportunity_enemy and opp_enemy_dist < 3 then
+		bb.target_unit = opportunity_enemy
+	elseif slot_enemy and slot_enemy_dist < 3 then
+		bb.target_unit = slot_enemy
+	elseif prox_enemy and prox_enemy_dist < 2 then
+		bb.target_unit = prox_enemy
+	elseif prox_enemy and bb.proximity_target_is_player and prox_enemy_dist < 10 then
+		bb.target_unit = prox_enemy
+	elseif priority_enemy then
+		bb.target_unit = priority_enemy
+	elseif urgent_enemy then
+		bb.target_unit = urgent_enemy
+	elseif opportunity_enemy then
+		bb.target_unit = opportunity_enemy
+	elseif slot_enemy then
+		bb.target_unit = slot_enemy
+	elseif bb.target_unit then
+		bb.target_unit = nil
 	end
 end
 
-local tbl = {}
+local BROADPHASE_QUERY_TEMP = {}
 
-PlayerBotBase._update_proximity_target = function (self, arg_19_1, arg_19_2, arg_19_3)
+PlayerBotBase._update_proximity_target = function (self, dt, t, self_position)
 	-- function 19
-	local _blackboard = self._blackboard
+	local blackboard = self._blackboard
 
-	if arg_19_2 > self._proximity_target_update_timer then
-		local _unit = self._unit
+	if t > self._proximity_target_update_timer then
+		local self_unit = self._unit
 
-		self._proximity_target_update_timer = arg_19_2 + 0.25 + Math.random() * 0.15
+		self._proximity_target_update_timer = t + 0.25 + Math.random() * 0.15
 
-		local proximite_enemies = _blackboard.proximite_enemies
+		local prox_enemies = blackboard.proximite_enemies
 
-		table.clear(proximite_enemies)
+		table.clear(prox_enemies)
 
-		local var_19_3 = num
+		local check_range = PROXIMITY_CHECK_RANGE
 
-		_blackboard.aggressive_mode = false
-		_blackboard.force_aid = false
+		blackboard.aggressive_mode = false
+		blackboard.force_aid = false
 
-		local var_19_4
+		local search_position
 
-		if not ALIVE[_blackboard.target_ally_unit] and not _blackboard.target_ally_needs_aid and not self:within_aid_range(_blackboard) then
-			var_19_4 = POSITION_LOOKUP[_blackboard.target_ally_unit]
+		if ALIVE[blackboard.target_ally_unit] and blackboard.target_ally_needs_aid and self:within_aid_range(blackboard) then
+			search_position = POSITION_LOOKUP[blackboard.target_ally_unit]
 
-			local is_prioritized_ally = Managers.state.entity:system("ai_bot_group_system"):is_prioritized_ally(_unit, _blackboard.target_ally_unit)
-			local flag = _blackboard.current_interaction_unit == _blackboard.target_ally_unit
+			local ai_bot_group_system = Managers.state.entity:system("ai_bot_group_system")
+			local is_prioritized = ai_bot_group_system:is_prioritized_ally(self_unit, blackboard.target_ally_unit)
+			local is_reviving = blackboard.current_interaction_unit == blackboard.target_ally_unit
 
-			if not is_prioritized_ally and not flag then
-				var_19_3 = num_3
-				_blackboard.force_aid = true
-			elseif not is_prioritized_ally then
-				var_19_3 = num_2
-				_blackboard.force_aid = true
+			if is_prioritized and is_reviving then
+				check_range = PROXIMITY_CHECK_RANGE_ALLY_NEEDS_AID_REVIVING
+				blackboard.force_aid = true
+			elseif is_prioritized then
+				check_range = PROXIMITY_CHECK_RANGE_ALLY_NEEDS_AID
+				blackboard.force_aid = true
 			else
-				_blackboard.aggressive_mode = true
-				var_19_3 = num_4
+				blackboard.aggressive_mode = true
+				check_range = PROXIMITY_CHECK_RANGE_ALLY_NEEDS_AID_SUPPORT
 			end
 		else
-			var_19_4 = arg_19_3
+			search_position = self_position
 		end
 
-		local side = _blackboard.side
-		local query = Broadphase.query(self._enemy_broadphase, var_19_4, var_19_3, tbl, side.enemy_broadphase_categories)
-		local huge = math.huge
-		local var_19_10
-		local huge_2 = math.huge
+		local side = blackboard.side
+		local num_hits = Broadphase.query(self._enemy_broadphase, search_position, check_range, BROADPHASE_QUERY_TEMP, side.enemy_broadphase_categories)
+		local closest_dist = math.huge
+		local closest_enemy
+		local closest_real_dist = math.huge
 
-		for k, v in pairs(side.VALID_ENEMY_TARGETS_PLAYERS_AND_BOTS) do
-			query = query + 1
-			tbl[query] = k
+		for PLAYER_UNIT, _ in pairs(side.VALID_ENEMY_TARGETS_PLAYERS_AND_BOTS) do
+			num_hits = num_hits + 1
+			BROADPHASE_QUERY_TEMP[num_hits] = PLAYER_UNIT
 		end
 
-		local num_6 = 1
+		local index = 1
 
-		for k_2 = 1, query do
-			local var_19_13 = tbl[k_2]
+		for i = 1, num_hits do
+			local unit = BROADPHASE_QUERY_TEMP[i]
 
-			if not HEALTH_ALIVE[var_19_13] then
-				local num_7 = POSITION_LOOKUP[var_19_13] - var_19_4
+			if HEALTH_ALIVE[unit] then
+				local enemy_pos = POSITION_LOOKUP[unit]
+				local enemy_offset = enemy_pos - search_position
 
-				if not self:_target_valid(var_19_13, num_7) then
-					proximite_enemies[num_6] = var_19_13
-					num_6 = num_6 + 1
+				if self:_target_valid(unit, enemy_offset) then
+					prox_enemies[index] = unit
+					index = index + 1
 
-					local length = Vector3.length(num_7)
-					local var_19_16
+					local enemy_real_dist = Vector3.length(enemy_offset)
+					local var_19_0
 
-					if var_19_13 == _blackboard.target_unit then
-						var_19_16 = num_5
+					if unit == blackboard.target_unit then
+						var_19_0 = STICKYNESS_DISTANCE_MODIFIER
 
-						if not var_19_16 then
+						if not var_19_0 then
 							-- Nothing
 						end
 					end
 
-					var_19_16 = 0
+					var_19_0 = 0
 
 					::label_19_0::
 
-					local num_8 = length + var_19_16
+					local enemy_dist = enemy_real_dist + var_19_0
 
-					if num_8 < huge then
-						var_19_10 = var_19_13
-						huge = num_8
-						huge_2 = length
+					if enemy_dist < closest_dist then
+						closest_enemy = unit
+						closest_dist = enemy_dist
+						closest_real_dist = enemy_real_dist
 					end
 				end
 			end
 		end
 
-		if _blackboard.proximity_target_enemy or not var_19_10 then
-			_blackboard.proximity_target_enemy = var_19_10
-			_blackboard.proximity_target_is_player = side.VALID_ENEMY_TARGETS_PLAYERS_AND_BOTS[var_19_10] ~= nil
+		if blackboard.proximity_target_enemy or closest_enemy then
+			blackboard.proximity_target_enemy = closest_enemy
+			blackboard.proximity_target_is_player = side.VALID_ENEMY_TARGETS_PLAYERS_AND_BOTS[closest_enemy] ~= nil
 		end
 
-		_blackboard.proximity_target_distance = huge_2
-	elseif not (not _blackboard.proximity_target_enemy and ALIVE[_blackboard.proximity_target_enemy]) then
-		_blackboard.proximity_target_enemy = nil
-		_blackboard.proximity_target_distance = math.huge
-		_blackboard.proximity_target_is_player = nil
+		blackboard.proximity_target_distance = closest_real_dist
+	elseif blackboard.proximity_target_enemy and not ALIVE[blackboard.proximity_target_enemy] then
+		blackboard.proximity_target_enemy = nil
+		blackboard.proximity_target_distance = math.huge
+		blackboard.proximity_target_is_player = nil
 	end
 end
 
-local sin = math.sin(math.pi * 0.25)
+local PROXIMITY_UP_DOWN_THRESHOLD = math.sin(math.pi * 0.25)
 
-PlayerBotBase._target_valid = function (arg_20_0, arg_20_1, arg_20_2)
+PlayerBotBase._target_valid = function (self, unit, enemy_offset)
 	-- function 20
-	local var_20_0 = BLACKBOARDS[arg_20_1]
+	local blackboard = BLACKBOARDS[unit]
 
-	if not var_20_0 and not var_20_0.breed.not_bot_target then
+	if not blackboard or blackboard.breed.not_bot_target then
 		return false
 	end
 
-	if not (not ScriptUnit.has_extension(arg_20_1, "ai_group_system") and var_20_0.target_unit) then
+	if ScriptUnit.has_extension(unit, "ai_group_system") and not blackboard.target_unit then
 		return false
 	end
 
-	local dot = Vector3.dot(Vector3.up(), Vector3.normalize(arg_20_2))
+	local up_dot_product = Vector3.dot(Vector3.up(), Vector3.normalize(enemy_offset))
 
-	if not (dot > sin or not (dot < -sin)) then
+	if up_dot_product > PROXIMITY_UP_DOWN_THRESHOLD or up_dot_product < -PROXIMITY_UP_DOWN_THRESHOLD then
 		return false
 	end
 
 	return true
 end
 
-PlayerBotBase._update_slot_target = function (self, arg_21_1, arg_21_2, arg_21_3)
+PlayerBotBase._update_slot_target = function (self, dt, t, self_position)
 	-- function 21
-	local _blackboard = self._blackboard
-	local _unit = self._unit
-	local target_unit = _blackboard.target_unit
-	local var_21_3 = arg_21_3
-	local _get_closest_target_in_slot = self:_get_closest_target_in_slot(var_21_3, _unit, target_unit, true)
+	local bb = self._blackboard
+	local unit = self._unit
+	local current_target = bb.target_unit
+	local pos = self_position
+	local enemy_targetting_self = self:_get_closest_target_in_slot(pos, unit, current_target, true)
 
-	if not _get_closest_target_in_slot then
-		_blackboard.slot_target_enemy = _get_closest_target_in_slot
+	if enemy_targetting_self then
+		bb.slot_target_enemy = enemy_targetting_self
 
 		return
 	end
 
-	local target_ally_unit = _blackboard.target_ally_unit
+	local ally_unit = bb.target_ally_unit
 
-	if not ALIVE[target_ally_unit] then
-		local _get_closest_target_in_slot_2 = self:_get_closest_target_in_slot(var_21_3, target_ally_unit, target_unit)
+	if ALIVE[ally_unit] then
+		local enemy_targetting_ally = self:_get_closest_target_in_slot(pos, ally_unit, current_target)
 
-		if not _get_closest_target_in_slot_2 then
-			_blackboard.slot_target_enemy = _get_closest_target_in_slot_2
+		if enemy_targetting_ally then
+			bb.slot_target_enemy = enemy_targetting_ally
 
 			return
 		end
 	end
 
-	local PLAYER_AND_BOT_UNITS = Managers.state.side.side_by_unit[_unit].PLAYER_AND_BOT_UNITS
-	local var_21_8
-	local huge = math.huge
+	local side = Managers.state.side.side_by_unit[unit]
+	local player_and_bot_units = side.PLAYER_AND_BOT_UNITS
+	local best_target
+	local best_dist = math.huge
 
-	for i = 1, #PLAYER_AND_BOT_UNITS do
-		local var_21_10 = PLAYER_AND_BOT_UNITS[i]
+	for k = 1, #player_and_bot_units do
+		local player_unit = player_and_bot_units[k]
 
-		if not (var_21_10 == target_ally_unit or var_21_10 == _unit) then
-			local _get_closest_target_in_slot_3, var_21_12 = self:_get_closest_target_in_slot(var_21_3, var_21_10, target_unit)
+		if player_unit ~= ally_unit and player_unit ~= unit then
+			local target, dist = self:_get_closest_target_in_slot(pos, player_unit, current_target)
 
-			if var_21_12 < huge then
-				var_21_8 = _get_closest_target_in_slot_3
-				huge = var_21_12
+			if dist < best_dist then
+				best_target = target
+				best_dist = dist
 			end
 		end
 	end
 
-	if not var_21_8 then
-		_blackboard.slot_target_enemy = var_21_8
+	if best_target then
+		bb.slot_target_enemy = best_target
 
 		return
 	end
 
-	if not _blackboard.slot_target_enemy then
-		_blackboard.slot_target_enemy = nil
+	if bb.slot_target_enemy then
+		bb.slot_target_enemy = nil
 	end
 end
 
-local num_24 = -1
-local keys = table.keys(SlotTypeSettings)
+local BOT_THREAT_MODIFIER = -1
+local SLOT_TYPES = table.keys(SlotTypeSettings)
 
-PlayerBotBase._get_closest_target_in_slot = function (arg_22_0, arg_22_1, arg_22_2, arg_22_3, arg_22_4)
+PlayerBotBase._get_closest_target_in_slot = function (self, position, unit, current_enemy_unit, is_self)
 	-- function 22
-	local system = Managers.state.entity:system("ai_slot_system")
-	local var_22_1
-	local huge = math.huge
+	local ai_slot_system = Managers.state.entity:system("ai_slot_system")
+	local best_target
+	local target_dist = math.huge
 
-	for i = 1, #keys do
-		local var_22_3 = keys[i]
-		local get_target_unit_slot_data = system:get_target_unit_slot_data(arg_22_2, var_22_3)
+	for i = 1, #SLOT_TYPES do
+		local slot_type = SLOT_TYPES[i]
+		local slot_data = ai_slot_system:get_target_unit_slot_data(unit, slot_type)
 
-		if not get_target_unit_slot_data then
-			for k, v in pairs(get_target_unit_slot_data) do
-				local ai_unit = v.ai_unit
+		if slot_data then
+			for slot_index, slot in pairs(slot_data) do
+				local enemy_unit = slot.ai_unit
 
-				if not HEALTH_ALIVE[ai_unit] then
-					local length = Vector3.length(POSITION_LOOKUP[ai_unit] - arg_22_1)
+				if HEALTH_ALIVE[enemy_unit] then
+					local dist = Vector3.length(POSITION_LOOKUP[enemy_unit] - position)
 
-					if ai_unit == arg_22_3 then
-						length = length + num_5
+					if enemy_unit == current_enemy_unit then
+						dist = dist + STICKYNESS_DISTANCE_MODIFIER
 					end
 
-					if not arg_22_4 and not Unit.get_data(ai_unit, "breed").is_bot_threat then
-						length = length + num_24
+					if is_self then
+						local breed = Unit.get_data(enemy_unit, "breed")
+
+						if breed.is_bot_threat then
+							dist = dist + BOT_THREAT_MODIFIER
+						end
 					end
 
-					if length < huge then
-						var_22_1 = ai_unit
-						huge = length
+					if dist < target_dist then
+						best_target = enemy_unit
+						target_dist = dist
 					end
 				end
 			end
 		end
 	end
 
-	return var_22_1, huge
+	return best_target, target_dist
 end
 
-PlayerBotBase._alter_target_position = function (self, arg_23_1, arg_23_2, arg_23_3, arg_23_4, arg_23_5)
+PlayerBotBase._alter_target_position = function (self, nav_world, self_position, target_unit, target_position, reason)
 	-- function 23
-	local var_23_0
-	local var_23_1
+	local wanted_position, should_stop
 
-	if arg_23_5 == "ledge" then
-		local local_rotation = Unit.local_rotation(arg_23_3, 0)
+	if reason == "ledge" then
+		local rotation = Unit.local_rotation(target_unit, 0)
+		local forward_vector_flat = Vector3.normalize(Vector3.flat(Quaternion.forward(rotation)))
 
-		var_23_0 = arg_23_4 - Vector3.normalize(Vector3.flat(Quaternion.forward(local_rotation))) * 0.5
-	elseif not (arg_23_5 == "in_need_of_heal" or arg_23_5 == "can_accept_grenade" or arg_23_5 == "can_accept_potion" or arg_23_5 ~= "can_accept_heal_item") then
-		local average_velocity = ScriptUnit.extension(arg_23_3, "locomotion_system"):average_velocity()
+		wanted_position = target_position - forward_vector_flat * 0.5
+	elseif reason == "in_need_of_heal" or reason == "can_accept_grenade" or reason == "can_accept_potion" or reason == "can_accept_heal_item" then
+		local target_locomotion_extension = ScriptUnit.extension(target_unit, "locomotion_system")
+		local target_average_velocity = target_locomotion_extension:average_velocity()
 
-		if Vector3.length_squared(average_velocity) > 2.25 then
-			var_23_0 = arg_23_4 + average_velocity
+		if Vector3.length_squared(target_average_velocity) > 2.25 then
+			wanted_position = target_position + target_average_velocity
 		else
-			var_23_0 = arg_23_4 + Vector3.normalize(arg_23_2 - arg_23_4)
+			wanted_position = target_position + Vector3.normalize(self_position - target_position)
 		end
-	elseif arg_23_5 ~= "knocked_down" or not self._blackboard.aggressive_mode then
-		var_23_0 = arg_23_4 + Vector3.normalize(arg_23_2 - arg_23_4) * INTERACT_RAY_DISTANCE
-	elseif arg_23_5 == "in_need_of_attention_stop" then
-		var_23_0 = Vector3(arg_23_2.x, arg_23_2.y, arg_23_2.z)
-		var_23_1 = true
+	elseif reason == "knocked_down" and self._blackboard.aggressive_mode then
+		wanted_position = target_position + Vector3.normalize(self_position - target_position) * INTERACT_RAY_DISTANCE
+	elseif reason == "in_need_of_attention_stop" then
+		wanted_position = Vector3(self_position.x, self_position.y, self_position.z)
+		should_stop = true
 	else
-		var_23_0 = Vector3(arg_23_4.x, arg_23_4.y, arg_23_4.z) + Vector3.normalize(arg_23_2 - arg_23_4) * INTERACT_RAY_DISTANCE
+		wanted_position = Vector3(target_position.x, target_position.y, target_position.z) + Vector3.normalize(self_position - target_position) * INTERACT_RAY_DISTANCE
 	end
 
-	if not var_23_1 then
-		return var_23_0, var_23_1
+	if should_stop then
+		return wanted_position, should_stop
 	end
 
-	local num = 0.5
-	local num_2 = 3
-	local triangle_from_position, var_23_7 = GwNavQueries.triangle_from_position(arg_23_1, var_23_0, num, num_2)
+	local above, below = 0.5, 3
+	local success, z = GwNavQueries.triangle_from_position(nav_world, wanted_position, above, below)
 
-	if not triangle_from_position then
-		var_23_0.z = var_23_7
+	if success then
+		wanted_position.z = z
 
-		return var_23_0
+		return wanted_position
 	else
-		local num_3 = 2
-		local inside_position_from_outside_position = GwNavQueries.inside_position_from_outside_position(arg_23_1, arg_23_4, num, num_2, num_3, 0.1)
+		local horizontal = 2
+		local pos = GwNavQueries.inside_position_from_outside_position(nav_world, target_position, above, below, horizontal, 0.1)
 
-		if not inside_position_from_outside_position then
-			return inside_position_from_outside_position
+		if pos then
+			return pos
 		else
-			return arg_23_4
+			return target_position
 		end
 	end
 end
 
-PlayerBotBase._find_target_position_on_nav_mesh = function (arg_24_0, arg_24_1, arg_24_2)
+PlayerBotBase._find_target_position_on_nav_mesh = function (self, nav_world, wanted_position)
 	-- function 24
-	local num = 0.5
-	local num_2 = 0.5
-	local triangle_from_position, var_24_3 = GwNavQueries.triangle_from_position(arg_24_1, arg_24_2, num, num_2)
+	local above, below = 0.5, 0.5
+	local success, z = GwNavQueries.triangle_from_position(nav_world, wanted_position, above, below)
 
-	if not triangle_from_position then
-		return Vector3(arg_24_2.x, arg_24_2.y, var_24_3)
+	if success then
+		return Vector3(wanted_position.x, wanted_position.y, z)
 	else
-		local num_3 = 2.5
-		local inside_position_from_outside_position = GwNavQueries.inside_position_from_outside_position(arg_24_1, arg_24_2, num, num_2, num_3, 0.1)
+		local horizontal = 2.5
+		local pos = GwNavQueries.inside_position_from_outside_position(nav_world, wanted_position, above, below, horizontal, 0.1)
 
-		if not inside_position_from_outside_position then
-			return inside_position_from_outside_position
+		if pos then
+			return pos
 		else
-			return arg_24_2
+			return wanted_position
 		end
 	end
 end
 
-PlayerBotBase._update_target_ally = function (self, arg_25_1, arg_25_2)
+PlayerBotBase._update_target_ally = function (self, dt, t)
 	-- function 25
-	local _unit = self._unit
-	local _blackboard = self._blackboard
-	local _bot_profile = self._bot_profile
-	local var_25_3
-	local var_25_4
-	local var_25_5
-	local var_25_6
+	local unit = self._unit
+	local blackboard = self._blackboard
+	local breed = self._bot_profile
+	local best_ally, ally_dist, in_need_type, look_at_ally
 
-	if not (not _blackboard.target_unit and _blackboard.target_unit ~= _blackboard.priority_target_enemy) then
-		var_25_3 = _blackboard.priority_target_disabled_ally
-		var_25_4 = Vector3.distance(POSITION_LOOKUP[_unit], POSITION_LOOKUP[var_25_3])
+	if blackboard.target_unit and blackboard.target_unit == blackboard.priority_target_enemy then
+		best_ally = blackboard.priority_target_disabled_ally
+		ally_dist = Vector3.distance(POSITION_LOOKUP[unit], POSITION_LOOKUP[best_ally])
 	else
-		var_25_3, var_25_4, var_25_5, var_25_6 = self:_select_ally_by_utility(_unit, _blackboard, _bot_profile, arg_25_2)
+		best_ally, ally_dist, in_need_type, look_at_ally = self:_select_ally_by_utility(unit, blackboard, breed, t)
 	end
 
-	local flag = not var_25_3 and _blackboard.target_ally_unit ~= var_25_3
+	local new_target = not not best_ally and blackboard.target_ally_unit ~= best_ally
 
-	_blackboard.target_ally_unit = var_25_3 or nil
-	_blackboard.ally_distance = var_25_4
+	blackboard.target_ally_unit = not not best_ally or not not nil
+	blackboard.ally_distance = ally_dist
 
-	if flag or not _blackboard.target_ally_unit or not var_25_5 then
-		if not (not _blackboard.target_ally_needs_aid and flag and var_25_5 == "in_need_of_attention_look") then
-			local follow = _blackboard.follow
+	if (new_target or blackboard.target_ally_unit) and in_need_type then
+		if (not blackboard.target_ally_needs_aid or new_target) and in_need_type ~= "in_need_of_attention_look" then
+			local follow_bb = blackboard.follow
 
-			if not follow then
-				follow.needs_target_position_refresh = true
+			if follow_bb then
+				follow_bb.needs_target_position_refresh = true
 			end
 		end
 
-		_blackboard.target_ally_needs_aid = true
-		_blackboard.target_ally_need_type = var_25_5
-	elseif not _blackboard.target_ally_needs_aid then
-		_blackboard.target_ally_needs_aid = false
-		_blackboard.target_ally_need_type = nil
+		blackboard.target_ally_needs_aid = true
+		blackboard.target_ally_need_type = in_need_type
+	elseif blackboard.target_ally_needs_aid then
+		blackboard.target_ally_needs_aid = false
+		blackboard.target_ally_need_type = nil
 	end
 
-	local input_extension = _blackboard.input_extension
+	local input_extension = blackboard.input_extension
 
-	if not var_25_6 then
-		input_extension:set_look_at_player(var_25_3, false)
+	if look_at_ally then
+		input_extension:set_look_at_player(best_ally, false)
 	else
 		input_extension:set_look_at_player(nil)
 	end
 
-	local flag_2 = _blackboard.target_ally_need_type == "knocked_down" or _blackboard.target_ally_need_type == "ledge" or _blackboard.target_ally_need_type == "hook"
+	local is_priority_aid_type = blackboard.target_ally_need_type == "knocked_down" or blackboard.target_ally_need_type == "ledge" or blackboard.target_ally_need_type == "hook"
 
-	if not _blackboard.target_ally_needs_aid and not flag_2 then
-		Managers.state.entity:system("ai_bot_group_system"):register_ally_needs_aid_priority(_unit, _blackboard.target_ally_unit)
+	if blackboard.target_ally_needs_aid and is_priority_aid_type then
+		local ai_bot_group_system = Managers.state.entity:system("ai_bot_group_system")
+
+		ai_bot_group_system:register_ally_needs_aid_priority(unit, blackboard.target_ally_unit)
 	end
 end
 
-local degrees_to_radians = math.degrees_to_radians(30)
-local num_25 = 3.5
+local MIN_HEADING_TOWARDS_US_DOT = math.degrees_to_radians(30)
+local ATTENTION_SAFE_TO_STOP_DISTANCE = 3.5
 
-PlayerBotBase._player_needs_attention = function (self, arg_26_1, arg_26_2, arg_26_3, arg_26_4, arg_26_5, arg_26_6)
+PlayerBotBase._player_needs_attention = function (self, self_unit, player_unit, blackboard, player_inventory_extension, player_locomotion_extension, t)
 	-- function 26
-	local var_26_0 = self._seen_by_players[arg_26_2]
-	local wielded_slot = arg_26_4:equipment().wielded_slot
-	local get_slot_data = arg_26_4:get_slot_data(wielded_slot)
+	local start_time = self._seen_by_players[player_unit]
+	local player_wielded_slot = player_inventory_extension:equipment().wielded_slot
+	local player_slot_data = player_inventory_extension:get_slot_data(player_wielded_slot)
 
-	if not (not var_26_0 and arg_26_3.target_unit or get_slot_data ~= nil) then
+	if not start_time or blackboard.target_unit or player_slot_data == nil then
 		return false, 0
 	end
 
-	local is_wounded = arg_26_3.status_extension:is_wounded()
-	local current_permanent_health_percent = arg_26_3.health_extension:current_permanent_health_percent()
-	local get_item_template = arg_26_4:get_item_template(get_slot_data)
-	local can_heal_other = get_item_template.can_heal_other
-	local can_give_other = get_item_template.can_give_other
-	local flag = not arg_26_3.inventory_extension:get_slot_data(wielded_slot)
-	local flag_2 = not can_give_other and flag
-	local flag_3 = not can_heal_other and is_wounded or current_permanent_health_percent < num_18
-	local num = POSITION_LOOKUP[arg_26_1] - POSITION_LOOKUP[arg_26_2]
-	local normalize = Vector3.normalize(num)
-	local current_velocity = arg_26_5:current_velocity()
-	local normalize_2 = Vector3.normalize(current_velocity)
-	local length_squared = Vector3.length_squared(current_velocity)
-	local current_velocity_2 = arg_26_3.locomotion_extension:current_velocity()
-	local normalize_3 = Vector3.normalize(current_velocity_2)
-	local length_squared_2 = Vector3.length_squared(current_velocity_2)
-	local flag_4 = Vector3.dot(normalize, normalize_2) > degrees_to_radians
-	local var_26_20
+	local status_extension = blackboard.status_extension
+	local is_wounded = status_extension:is_wounded()
+	local health_extension = blackboard.health_extension
+	local health_percent = health_extension:current_permanent_health_percent()
+	local item_template = player_inventory_extension:get_item_template(player_slot_data)
+	local can_heal_other = item_template.can_heal_other
+	local can_give_other = item_template.can_give_other
+	local inventory_extension = blackboard.inventory_extension
+	local slot_is_empty = not inventory_extension:get_slot_data(player_wielded_slot)
+	local can_receive_item = not not can_give_other and not not slot_is_empty
+	local interested_in_heal = not not can_heal_other and not not is_wounded or health_percent < INTERESTED_IN_BEING_HEALED_THRESHOLD
+	local self_position = POSITION_LOOKUP[self_unit]
+	local player_position = POSITION_LOOKUP[player_unit]
+	local player_to_self = self_position - player_position
+	local player_to_self_direction = Vector3.normalize(player_to_self)
+	local player_velocity = player_locomotion_extension:current_velocity()
+	local player_velocity_normalized = Vector3.normalize(player_velocity)
+	local player_speed_sq = Vector3.length_squared(player_velocity)
+	local locomotion_extension = blackboard.locomotion_extension
+	local velocity = locomotion_extension:current_velocity()
+	local velocity_normalized = Vector3.normalize(velocity)
+	local speed_sq = Vector3.length_squared(velocity)
+	local player_direction_dot = Vector3.dot(player_to_self_direction, player_velocity_normalized)
+	local is_heading_towards_us = player_direction_dot > MIN_HEADING_TOWARDS_US_DOT
+	local is_heading_towards_player
 
-	if length_squared_2 > 0.01 then
-		var_26_20 = Vector3.dot(normalize, normalize_3) <= degrees_to_radians
+	if speed_sq > 0.01 then
+		local bot_direction_dot = Vector3.dot(player_to_self_direction, velocity_normalized)
+
+		is_heading_towards_player = bot_direction_dot <= MIN_HEADING_TOWARDS_US_DOT
 	else
-		var_26_20 = false
+		is_heading_towards_player = false
 	end
 
-	local var_26_21
-	local var_26_22
-	local var_26_23 = num_25
+	local look_threshold, stop_threshold
+	local safe_stop_distance = ATTENTION_SAFE_TO_STOP_DISTANCE
 
-	if not flag_4 and wielded_slot ~= "slot_healthkit" or flag_3 or not flag_2 then
-		var_26_22 = 0.5 - (1 - current_permanent_health_percent) * 0.2
-		var_26_21 = 0.25
-		var_26_23 = var_26_23 + math.sqrt(length_squared)
-	elseif math.min(length_squared_2, length_squared) > 0.01 or not var_26_20 then
-		var_26_22 = math.huge
-		var_26_21 = 0.5
-	elseif not (not (length_squared_2 <= 0.01) or not (length_squared <= 0.01)) then
-		var_26_22 = 0.3
-		var_26_21 = 0.25
+	if is_heading_towards_us and player_wielded_slot == "slot_healthkit" and (interested_in_heal or can_receive_item) then
+		local health_term = (1 - health_percent) * 0.2
+
+		stop_threshold = 0.5 - health_term
+		look_threshold = 0.25
+		safe_stop_distance = safe_stop_distance + math.sqrt(player_speed_sq)
 	else
-		var_26_22 = 1.25
-		var_26_21 = 0.5
+		local smallest_speed_sq = math.min(speed_sq, player_speed_sq)
+
+		if smallest_speed_sq > 0.01 or is_heading_towards_player then
+			stop_threshold = math.huge
+			look_threshold = 0.5
+		elseif speed_sq <= 0.01 and player_speed_sq <= 0.01 then
+			stop_threshold = 0.3
+			look_threshold = 0.25
+		else
+			stop_threshold = 1.25
+			look_threshold = 0.5
+		end
 	end
 
-	local length_squared_3 = Vector3.length_squared(num)
+	local player_to_self_length_squared = Vector3.length_squared(player_to_self)
 
-	if not (length_squared_3 > var_26_23^2 or not (length_squared_3 <= 0.25)) then
-		var_26_22 = math.huge
+	if player_to_self_length_squared > safe_stop_distance^2 or player_to_self_length_squared <= 0.25 then
+		stop_threshold = math.huge
 	end
 
-	local system = Managers.state.entity:system("ai_bot_group_system")
-	local flag_5 = system:get_ammo_pickup_order_unit(arg_26_1) ~= nil or system:has_pending_pickup_order(arg_26_1)
-	local num_2 = arg_26_6 - var_26_0
+	local ai_bot_group_system = Managers.state.entity:system("ai_bot_group_system")
+	local has_ammo_pickup_order = ai_bot_group_system:get_ammo_pickup_order_unit(self_unit) ~= nil
+	local has_pickup_order = not not has_ammo_pickup_order or not not ai_bot_group_system:has_pending_pickup_order(self_unit)
+	local current_seen_time = t - start_time
 
-	if not (not (var_26_22 < num_2) or flag_5) then
-		local clamp = math.clamp(num_2, 0, 2)
+	if stop_threshold < current_seen_time and not has_pickup_order then
+		local extra_utility = math.clamp(current_seen_time, 0, 2)
 
-		return "stop", clamp
-	elseif var_26_21 < num_2 then
-		local clamp_2 = math.clamp(num_2, 0, 0.5)
+		return "stop", extra_utility
+	elseif look_threshold < current_seen_time then
+		local extra_utility = math.clamp(current_seen_time, 0, 0.5)
 
-		return "look_at", clamp_2
+		return "look_at", extra_utility
 	end
 end
 
-PlayerBotBase._calculate_healing_item_utility = function (arg_27_0, arg_27_1, arg_27_2, arg_27_3)
+PlayerBotBase._calculate_healing_item_utility = function (self, permanent_health_percent, is_wounded, is_quick_use)
 	-- function 27
-	if not arg_27_3 then
+	if is_quick_use then
 		local num
 
-		if not arg_27_2 then
-			num = arg_27_1 - 0.5
+		if is_wounded then
+			num = permanent_health_percent - 0.5
 
 			if not num then
 				-- Nothing
 			end
 		end
 
-		num = arg_27_1
+		num = permanent_health_percent
 
 		::label_27_0::
 
@@ -947,15 +982,15 @@ PlayerBotBase._calculate_healing_item_utility = function (arg_27_0, arg_27_1, ar
 	else
 		local num_2
 
-		if not arg_27_2 then
-			num_2 = arg_27_1 * 0.33
+		if is_wounded then
+			num_2 = permanent_health_percent * 0.33
 
 			if not num_2 then
 				-- Nothing
 			end
 		end
 
-		num_2 = arg_27_1
+		num_2 = permanent_health_percent
 
 		::label_27_1::
 
@@ -963,170 +998,202 @@ PlayerBotBase._calculate_healing_item_utility = function (arg_27_0, arg_27_1, ar
 	end
 end
 
-PlayerBotBase._select_ally_by_utility = function (self, arg_28_1, arg_28_2, arg_28_3, arg_28_4)
+PlayerBotBase._select_ally_by_utility = function (self, unit, blackboard, breed, t)
 	-- function 28
-	local var_28_0 = POSITION_LOOKUP[arg_28_1]
-	local var_28_1
-	local huge = math.huge
-	local huge_2 = math.huge
-	local var_28_4
-	local flag = false
-	local extension = ScriptUnit.extension(arg_28_1, "buff_system")
-	local inventory_extension = arg_28_2.inventory_extension
-	local get_slot_data = inventory_extension:get_slot_data("slot_healthkit")
-	local flag_2 = false
-	local flag_3 = false
-	local num = 0
+	local self_pos = POSITION_LOOKUP[unit]
+	local closest_ally
+	local closest_dist = math.huge
+	local closest_real_dist = math.huge
+	local closest_in_need_type
+	local closest_ally_look_at = false
+	local buff_extension = ScriptUnit.extension(unit, "buff_system")
+	local inventory_extension = blackboard.inventory_extension
+	local health_slot_data = inventory_extension:get_slot_data("slot_healthkit")
+	local can_heal_other = false
+	local can_give_healing_to_other = false
+	local self_health_utiliy = 0
 
-	if not get_slot_data then
-		local is_wounded = self._status_extension:is_wounded()
-		local get_item_template = inventory_extension:get_item_template(get_slot_data)
-		local has_buff_type = extension:has_buff_type("trait_necklace_no_healing_health_regen")
+	if health_slot_data then
+		local self_wounded = self._status_extension:is_wounded()
+		local template = inventory_extension:get_item_template(health_slot_data)
+		local has_no_permanent_health_from_item_buff = buff_extension:has_buff_type("trait_necklace_no_healing_health_regen")
 
-		flag_2 = get_item_template.can_heal_other
-		flag_3 = get_item_template.can_give_other
+		can_heal_other = template.can_heal_other
+		can_give_healing_to_other = template.can_give_other
 
-		if not has_buff_type and not is_wounded then
-			local current_permanent_health_percent = self._health_extension:current_permanent_health_percent()
+		if not has_no_permanent_health_from_item_buff or self_wounded then
+			local self_permanent_health_percent = self._health_extension:current_permanent_health_percent()
 
-			num = self:_calculate_healing_item_utility(current_permanent_health_percent, is_wounded, flag_3) + num_14
+			self_health_utiliy = self:_calculate_healing_item_utility(self_permanent_health_percent, self_wounded, can_give_healing_to_other) + SELF_HEAL_STICKINESS
 		end
 	end
 
-	local flag_4 = false
-	local get_slot_data_2 = inventory_extension:get_slot_data("slot_grenade")
+	local can_give_grenade_to_other = false
+	local grenade_slot_data = inventory_extension:get_slot_data("slot_grenade")
 
-	if not get_slot_data_2 then
-		flag_4 = inventory_extension:get_item_template(get_slot_data_2).can_give_other
+	if grenade_slot_data then
+		local template = inventory_extension:get_item_template(grenade_slot_data)
+
+		can_give_grenade_to_other = template.can_give_other
 	end
 
-	local flag_5 = false
-	local get_slot_data_3 = inventory_extension:get_slot_data("slot_potion")
+	local can_give_potion_to_other = false
+	local potion_slot_data = inventory_extension:get_slot_data("slot_potion")
 
-	if not get_slot_data_3 then
-		flag_5 = inventory_extension:get_item_template(get_slot_data_3).can_give_other
+	if potion_slot_data then
+		local template = inventory_extension:get_item_template(potion_slot_data)
+
+		can_give_potion_to_other = template.can_give_other
 	end
 
-	local conflict = Managers.state.conflict
-	local get_player_unit_segment = conflict:get_player_unit_segment(arg_28_1)
+	local conflict_director = Managers.state.conflict
+	local get_player_unit_segment = conflict_director:get_player_unit_segment(unit)
 
-	get_player_unit_segment = get_player_unit_segment or 1
+	if not get_player_unit_segment then
+		-- Nothing
+	end
 
-	local PLAYER_AND_BOT_UNITS = Managers.state.side.side_by_unit[arg_28_1].PLAYER_AND_BOT_UNITS
+	get_player_unit_segment = 1
 
-	for i = 1, #PLAYER_AND_BOT_UNITS do
-		local var_28_23 = PLAYER_AND_BOT_UNITS[i]
+	local self_segment = get_player_unit_segment
 
-		if var_28_23 == arg_28_1 or not HEALTH_ALIVE[var_28_23] then
-			local extension_2 = ScriptUnit.extension(var_28_23, "status_system")
-			local num_2 = 0
-			local flag_6 = false
+	::label_28_0::
 
-			if not (extension_2:is_ready_for_assisted_respawn() or extension_2.near_vortex) then
-				local get_player_unit_segment_2 = conflict:get_player_unit_segment(var_28_23)
+	local side = Managers.state.side.side_by_unit[unit]
+	local player_and_bot_units = side.PLAYER_AND_BOT_UNITS
 
-				get_player_unit_segment_2 = get_player_unit_segment_2 or 1
+	for k = 1, #player_and_bot_units do
+		local player_unit = player_and_bot_units[k]
 
-				if get_player_unit_segment <= get_player_unit_segment_2 then
-					local flag_7 = not Managers.player:owner(var_28_23):is_player_controlled()
-					local flag_8
+		if player_unit ~= unit and HEALTH_ALIVE[player_unit] then
+			local status_ext = ScriptUnit.extension(player_unit, "status_system")
+			local utility = 0
+			local look_at_ally = false
 
-					flag_8 = not flag_7 and 0 and num_15
+			if not status_ext:is_ready_for_assisted_respawn() and not status_ext.near_vortex then
+				local get_player_unit_segment_2 = conflict_director:get_player_unit_segment(player_unit)
 
-					local var_28_30
+				get_player_unit_segment_2 = not not get_player_unit_segment_2 or not not 1
 
-					if not extension_2:is_knocked_down() then
-						var_28_30 = "knocked_down"
-						num_2 = 200
-					elseif not (not extension_2:get_is_ledge_hanging() and extension_2:is_pulled_up()) then
-						var_28_30 = "ledge"
-						num_2 = 200
-					elseif not extension_2:is_hanging_from_hook() then
-						var_28_30 = "hook"
-						num_2 = 200
+				if self_segment <= get_player_unit_segment_2 then
+					local player = Managers.player:owner(player_unit)
+					local is_bot = not player:is_player_controlled()
+					local num
+
+					if is_bot then
+						num = 0
+
+						goto label_28_1
+					end
+
+					num = PLAYER_HEAL_STICKYBESS
+
+					local heal_player_preference = num
+
+					::label_28_1::
+
+					local in_need_type
+
+					if status_ext:is_knocked_down() then
+						in_need_type = "knocked_down"
+						utility = 200
+					elseif status_ext:get_is_ledge_hanging() and not status_ext:is_pulled_up() then
+						in_need_type = "ledge"
+						utility = 200
+					elseif status_ext:is_hanging_from_hook() then
+						in_need_type = "hook"
+						utility = 200
 					else
-						local flag_9 = not var_28_23 and ScriptUnit.extension(var_28_23, "career_system")
-						local flag_10 = true
+						local target_career_ext = not not player_unit and not not ScriptUnit.extension(player_unit, "career_system")
+						local career_allowed_healing = true
 
-						if not (not flag_9 and flag_9:career_name() ~= "wh_zealot" or not (extension_2:num_wounds_remaining() > 1)) then
-							flag_10 = false
+						if target_career_ext and target_career_ext:career_name() == "wh_zealot" and status_ext:num_wounds_remaining() > 1 then
+							career_allowed_healing = false
 						end
 
-						local current_permanent_health_percent_2 = ScriptUnit.extension(var_28_23, "health_system"):current_permanent_health_percent()
-						local has_buff_type_2 = ScriptUnit.extension(var_28_23, "buff_system"):has_buff_type("trait_necklace_no_healing_health_regen")
-						local extension_3 = ScriptUnit.extension(var_28_23, "inventory_system")
-						local extension_4 = ScriptUnit.extension(var_28_23, "locomotion_system")
-						local is_wounded_2 = extension_2:is_wounded()
-						local num_3 = self:_calculate_healing_item_utility(current_permanent_health_percent_2, is_wounded_2, flag_3) + flag_8
-						local flag_11 = num < num_3
-						local _player_needs_attention, var_28_41 = self:_player_needs_attention(arg_28_1, var_28_23, arg_28_2, extension_3, extension_4, arg_28_4)
+						local health_percent = ScriptUnit.extension(player_unit, "health_system"):current_permanent_health_percent()
+						local has_no_permanent_health_from_item_buff = ScriptUnit.extension(player_unit, "buff_system"):has_buff_type("trait_necklace_no_healing_health_regen")
+						local player_inventory_extension = ScriptUnit.extension(player_unit, "inventory_system")
+						local player_locomotion_extension = ScriptUnit.extension(player_unit, "locomotion_system")
+						local is_wounded = status_ext:is_wounded()
+						local health_utility = self:_calculate_healing_item_utility(health_percent, is_wounded, can_give_healing_to_other) + heal_player_preference
+						local heal_other_allowed = self_health_utiliy < health_utility
+						local need_attention_type, extra_utility = self:_player_needs_attention(unit, player_unit, blackboard, player_inventory_extension, player_locomotion_extension, t)
 
-						if not flag_2 and (current_permanent_health_percent_2 < num_16 or not is_wounded_2 or not flag_11) and not flag_10 then
-							var_28_30 = "in_need_of_heal"
-							num_2 = 70 + num_3 * 15
-						elseif not flag_3 and (not has_buff_type_2 and is_wounded_2 and current_permanent_health_percent_2 < num_17 or not is_wounded_2 and extension_3:get_slot_data("slot_healthkit")) or not flag_11 then
-							var_28_30 = "can_accept_heal_item"
-							num_2 = 70 + num_3 * 10
-						elseif not (not flag_4 and not extension_3:get_slot_data("slot_grenade") and extension_3:can_store_additional_item("slot_grenade") and flag_7) then
-							var_28_30 = "can_accept_grenade"
-							num_2 = 70
-						elseif not (not flag_5 and not extension_3:get_slot_data("slot_potion") and extension_3:can_store_additional_item("slot_potion") and flag_7) then
-							var_28_30 = "can_accept_potion"
-							num_2 = 70
-						elseif _player_needs_attention == "stop" then
-							var_28_30 = "in_need_of_attention_stop"
-							flag_6 = true
-							num_2 = 5 + var_28_41
-						elseif _player_needs_attention == "look_at" then
-							var_28_30 = "in_need_of_attention_look"
-							flag_6 = true
-							num_2 = 2 + var_28_41
+						if can_heal_other and (health_percent < WANTS_TO_HEAL_THRESHOLD or is_wounded) and heal_other_allowed and career_allowed_healing then
+							in_need_type = "in_need_of_heal"
+							utility = 70 + health_utility * 15
+						elseif can_give_healing_to_other and (not has_no_permanent_health_from_item_buff or is_wounded) and (health_percent < WANTS_TO_GIVE_HEAL_TO_OTHER or is_wounded) and not player_inventory_extension:get_slot_data("slot_healthkit") and heal_other_allowed then
+							in_need_type = "can_accept_heal_item"
+							utility = 70 + health_utility * 10
+						elseif can_give_grenade_to_other and (not player_inventory_extension:get_slot_data("slot_grenade") or player_inventory_extension:can_store_additional_item("slot_grenade")) and not is_bot then
+							in_need_type = "can_accept_grenade"
+							utility = 70
+						elseif can_give_potion_to_other and (not player_inventory_extension:get_slot_data("slot_potion") or player_inventory_extension:can_store_additional_item("slot_potion")) and not is_bot then
+							in_need_type = "can_accept_potion"
+							utility = 70
+						elseif need_attention_type == "stop" then
+							in_need_type = "in_need_of_attention_stop"
+							look_at_ally = true
+							utility = 5 + extra_utility
+						elseif need_attention_type == "look_at" then
+							in_need_type = "in_need_of_attention_look"
+							look_at_ally = true
+							utility = 2 + extra_utility
 						end
 					end
 
-					if not (var_28_30 or flag_7) then
-						local var_28_42 = POSITION_LOOKUP[var_28_23]
-						local _ally_path_allowed, var_28_44 = self:_ally_path_allowed(arg_28_1, var_28_23, arg_28_4)
+					if in_need_type or not is_bot then
+						local target_pos = POSITION_LOOKUP[player_unit]
+						local allowed_follow_path, allowed_aid_path = self:_ally_path_allowed(unit, player_unit, t)
 
-						if not _ally_path_allowed then
-							if not var_28_44 then
-								var_28_30 = nil
-							elseif not var_28_30 then
-								local alive_bosses = conflict:alive_bosses()
-								local count = #alive_bosses
+						if allowed_follow_path then
+							if not allowed_aid_path then
+								in_need_type = nil
+							elseif in_need_type then
+								local alive_bosses = conflict_director:alive_bosses()
+								local num_alive_bosses = #alive_bosses
 
-								for j = 1, count do
-									local var_28_47 = alive_bosses[j]
-									local var_28_48 = POSITION_LOOKUP[var_28_47]
-									local distance_squared = Vector3.distance_squared(var_28_0, var_28_48)
-									local var_28_50 = BLACKBOARDS[var_28_47]
-									local override_target_unit = var_28_50.override_target_unit
+								for i = 1, num_alive_bosses do
+									local boss_unit = alive_bosses[i]
+									local boss_position = POSITION_LOOKUP[boss_unit]
+									local self_to_boss_distance_sq = Vector3.distance_squared(self_pos, boss_position)
+									local boss_bb = BLACKBOARDS[boss_unit]
+									local override_target_unit = boss_bb.override_target_unit
 
-									override_target_unit = override_target_unit or var_28_50.target_unit
+									if not override_target_unit then
+										-- Nothing
+									end
 
-									if not (override_target_unit ~= arg_28_1 or not (distance_squared < 10)) then
-										var_28_30 = nil
-										num_2 = 0
+									override_target_unit = boss_bb.target_unit
+
+									local boss_target = override_target_unit
+
+									::label_28_2::
+
+									if boss_target == unit and self_to_boss_distance_sq < 10 then
+										in_need_type = nil
+										utility = 0
 
 										break
 									end
 								end
 							end
 
-							if not flag_7 then
-								num_2 = num_2 * 1.5
+							if not is_bot then
+								utility = utility * 1.5
 							end
 
-							if not (var_28_30 or flag_7) then
-								local distance = Vector3.distance(var_28_0, var_28_42)
-								local num_4 = distance - num_2
+							if in_need_type or not is_bot then
+								local real_dist = Vector3.distance(self_pos, target_pos)
+								local dist = real_dist - utility
 
-								if num_4 < huge then
-									huge = num_4
-									huge_2 = distance
-									var_28_1 = var_28_23
-									var_28_4 = var_28_30
-									flag = flag_6
+								if dist < closest_dist then
+									closest_dist = dist
+									closest_real_dist = real_dist
+									closest_ally = player_unit
+									closest_in_need_type = in_need_type
+									closest_ally_look_at = look_at_ally
 								end
 							end
 						end
@@ -1136,16 +1203,17 @@ PlayerBotBase._select_ally_by_utility = function (self, arg_28_1, arg_28_2, arg_
 		end
 	end
 
-	return var_28_1, huge_2, var_28_4, flag
+	return closest_ally, closest_real_dist, closest_in_need_type, closest_ally_look_at
 end
 
-PlayerBotBase.within_aid_range = function (self, arg_29_1)
+PlayerBotBase.within_aid_range = function (self, blackboard)
 	-- function 29
-	if not arg_29_1.target_ally_needs_aid then
-		local var_29_0 = POSITION_LOOKUP[self._unit]
-		local var_29_1 = POSITION_LOOKUP[arg_29_1.target_ally_unit]
+	if blackboard.target_ally_needs_aid then
+		local self_pos = POSITION_LOOKUP[self._unit]
+		local target_pos = POSITION_LOOKUP[blackboard.target_ally_unit]
+		local distance_squared = Vector3.distance_squared(self_pos, target_pos)
 
-		if Vector3.distance_squared(var_29_0, var_29_1) <= num^2 then
+		if distance_squared <= PROXIMITY_CHECK_RANGE^2 then
 			return true
 		end
 	end
@@ -1155,649 +1223,758 @@ end
 
 PlayerBotBase._update_liquid_escape = function (self)
 	-- function 30
-	local _unit = self._unit
-	local _blackboard = self._blackboard
-	local _status_extension = self._status_extension
-	local is_in_liquid = _status_extension:is_in_liquid()
-	local use_liquid_escape_destination = _blackboard.use_liquid_escape_destination
-	local navigation_extension = _blackboard.navigation_extension
-	local is_disabled = _status_extension:is_disabled()
+	local unit = self._unit
+	local blackboard = self._blackboard
+	local status_extension = self._status_extension
+	local in_liquid = status_extension:is_in_liquid()
+	local use_liquid_escape_destination = blackboard.use_liquid_escape_destination
+	local navigation_extension = blackboard.navigation_extension
+	local is_disabled = status_extension:is_disabled()
 
-	if (not is_in_liquid and is_disabled or not use_liquid_escape_destination) and not navigation_extension:destination_reached() then
-		local in_liquid_unit = _status_extension.in_liquid_unit
-		local get_rim_nodes, var_30_9 = ScriptUnit.extension(in_liquid_unit, "area_damage_system"):get_rim_nodes()
-		local var_30_10 = POSITION_LOOKUP[_unit]
-		local huge = math.huge
-		local var_30_12
+	if in_liquid and not is_disabled and (not use_liquid_escape_destination or navigation_extension:destination_reached()) then
+		local liquid_unit = status_extension.in_liquid_unit
+		local liquid_extension = ScriptUnit.extension(liquid_unit, "area_damage_system")
+		local rim_nodes, is_array = liquid_extension:get_rim_nodes()
+		local bot_position = POSITION_LOOKUP[unit]
+		local best_distance_sq = math.huge
+		local best_position
 
-		if not var_30_9 then
-			local count = #get_rim_nodes
+		if is_array then
+			local num_nodes = #rim_nodes
 
-			for i = 1, count do
-				local unbox = get_rim_nodes[i]:unbox()
-				local distance_squared = Vector3.distance_squared(var_30_10, unbox)
+			for i = 1, num_nodes do
+				local position = rim_nodes[i]:unbox()
+				local distance_sq = Vector3.distance_squared(bot_position, position)
 
-				if distance_squared < huge then
-					var_30_12 = unbox
-					huge = distance_squared
+				if distance_sq < best_distance_sq then
+					best_position = position
+					best_distance_sq = distance_sq
 				end
 			end
 		else
-			for k, v in pairs(get_rim_nodes) do
-				local unbox_2 = v.position:unbox()
-				local distance_squared_2 = Vector3.distance_squared(var_30_10, unbox_2)
+			for _, node in pairs(rim_nodes) do
+				local position = node.position:unbox()
+				local distance_sq = Vector3.distance_squared(bot_position, position)
 
-				if distance_squared_2 < huge then
-					var_30_12 = unbox_2
-					huge = distance_squared_2
+				if distance_sq < best_distance_sq then
+					best_position = position
+					best_distance_sq = distance_sq
 				end
 			end
 		end
 
-		if not var_30_12 then
-			_blackboard.navigation_liquid_escape_destination_override:store(var_30_12)
+		if best_position then
+			blackboard.navigation_liquid_escape_destination_override:store(best_position)
 
-			_blackboard.use_liquid_escape_destination = true
+			blackboard.use_liquid_escape_destination = true
 		end
-	elseif not (not use_liquid_escape_destination and is_disabled or is_in_liquid) then
-		_blackboard.use_liquid_escape_destination = false
+	elseif use_liquid_escape_destination and (is_disabled or not in_liquid) then
+		blackboard.use_liquid_escape_destination = false
 	end
 end
 
-PlayerBotBase._should_re_evaluate_vortex_escape = function (arg_31_0, arg_31_1, arg_31_2, arg_31_3, arg_31_4)
+PlayerBotBase._should_re_evaluate_vortex_escape = function (self, current_position, previous_check_position, navigation_extension, vortex_unit)
 	-- function 31
-	local flag = false
-	local var_31_1
+	local re_evaluate_destination, escape_completed = false
 
-	if not ALIVE[arg_31_4] then
-		var_31_1 = not ScriptUnit.extension(arg_31_4, "ai_supplementary_system"):is_position_inside(arg_31_1, num_19)
+	if ALIVE[vortex_unit] then
+		local vortex_extension = ScriptUnit.extension(vortex_unit, "ai_supplementary_system")
+
+		escape_completed = not vortex_extension:is_position_inside(current_position, VORTEX_ESCAPE_DISTANCE)
 	else
-		var_31_1 = true
+		escape_completed = true
 	end
 
-	if not var_31_1 then
-		local distance_squared = Vector3.distance_squared(arg_31_2, arg_31_1)
-		local destination_reached = arg_31_3:destination_reached()
+	if not escape_completed then
+		local traversed_distance_sq = Vector3.distance_squared(previous_check_position, current_position)
+		local destination_reached = navigation_extension:destination_reached()
 
-		flag = distance_squared >= num_21 or not destination_reached or distance_squared >= num_22
+		re_evaluate_destination = (traversed_distance_sq >= VORTEX_ESCAPE_RE_EVALUATE_DISTANCE_SQ or not not destination_reached) and traversed_distance_sq >= VORTEX_ESCAPE_RE_EVALUATE_REACHED_DISTANCE_SQ
 	end
 
-	return flag, var_31_1
+	return re_evaluate_destination, escape_completed
 end
 
-PlayerBotBase._find_vortex_escape_destination = function (self, arg_32_1, arg_32_2, arg_32_3, arg_32_4, arg_32_5, arg_32_6)
+PlayerBotBase._find_vortex_escape_destination = function (self, start_position, rotation, nav_world, traverse_logic, best_weighted_distance_sq, largest_weighted_distance_sq)
 	-- function 32
-	local var_32_0
-	local var_32_1
-	local _vortex_escape_directions = self._vortex_escape_directions
-	local count = #_vortex_escape_directions
+	local best_weight, best_destination
+	local vortex_escape_directions = self._vortex_escape_directions
+	local num_directions = #vortex_escape_directions
 
-	for i = 1, count do
-		local var_32_4 = _vortex_escape_directions[i]
-		local weight = var_32_4.weight
-		local num = weight^2
-		local rotate = Quaternion.rotate(arg_32_2, var_32_4.direction:unbox())
-		local raycast, var_32_9 = GwNavQueries.raycast(arg_32_3, arg_32_1, arg_32_1 + rotate * num_19, arg_32_4)
-		local num_2 = Vector3.distance_squared(arg_32_1, var_32_9) * num
+	for i = 1, num_directions do
+		local escape_data = vortex_escape_directions[i]
+		local base_weight = escape_data.weight
+		local base_weight_sq = base_weight^2
+		local direction = Quaternion.rotate(rotation, escape_data.direction:unbox())
+		local _, last_valid_position = GwNavQueries.raycast(nav_world, start_position, start_position + direction * VORTEX_ESCAPE_DISTANCE, traverse_logic)
+		local distance_sq = Vector3.distance_squared(start_position, last_valid_position)
+		local weighted_distance_sq = distance_sq * base_weight_sq
 
-		if arg_32_5 < num_2 then
-			var_32_0 = weight
-			arg_32_5 = num_2
-			var_32_1 = var_32_9
+		if best_weighted_distance_sq < weighted_distance_sq then
+			best_weight = base_weight
+			best_weighted_distance_sq = weighted_distance_sq
+			best_destination = last_valid_position
 
-			if arg_32_6 <= num_2 + 0.0001 then
+			if largest_weighted_distance_sq <= weighted_distance_sq + 0.0001 then
 				break
 			end
 		end
 	end
 
-	return var_32_1, var_32_0, arg_32_5
+	return best_destination, best_weight, best_weighted_distance_sq
 end
 
 PlayerBotBase._update_vortex_escape = function (self)
 	-- function 33
-	local _unit = self._unit
-	local _blackboard = self._blackboard
-	local var_33_2 = POSITION_LOOKUP[_unit]
-	local _status_extension = self._status_extension
-	local near_vortex = _status_extension.near_vortex
-	local use_vortex_escape_destination = _blackboard.use_vortex_escape_destination
-	local navigation_extension = _blackboard.navigation_extension
-	local is_disabled = _status_extension:is_disabled()
-	local flag = false
-	local flag_2 = false
+	local unit = self._unit
+	local blackboard = self._blackboard
+	local self_position = POSITION_LOOKUP[unit]
+	local status_extension = self._status_extension
+	local near_vortex = status_extension.near_vortex
+	local use_vortex_escape_destination = blackboard.use_vortex_escape_destination
+	local navigation_extension = blackboard.navigation_extension
+	local is_disabled = status_extension:is_disabled()
+	local re_evaluate_destination, escape_completed = false, false
 
-	if not use_vortex_escape_destination then
-		local vortex_escape_unit = _blackboard.vortex_escape_unit
-		local unbox = _blackboard.navigation_vortex_escape_previous_evaluation_position:unbox()
+	if use_vortex_escape_destination then
+		local current_vortex_escape_unit = blackboard.vortex_escape_unit
+		local previous_check_position = blackboard.navigation_vortex_escape_previous_evaluation_position:unbox()
 
-		flag, flag_2 = self:_should_re_evaluate_vortex_escape(var_33_2, unbox, navigation_extension, vortex_escape_unit)
+		re_evaluate_destination, escape_completed = self:_should_re_evaluate_vortex_escape(self_position, previous_check_position, navigation_extension, current_vortex_escape_unit)
 	end
 
-	if not ((is_disabled or flag or not near_vortex) and use_vortex_escape_destination) then
-		_blackboard.navigation_vortex_escape_previous_evaluation_position:store(var_33_2)
+	if not is_disabled and (re_evaluate_destination or near_vortex and not use_vortex_escape_destination) then
+		blackboard.navigation_vortex_escape_previous_evaluation_position:store(self_position)
 
-		local _locomotion_extension = self._locomotion_extension
-		local nav_world = _blackboard.nav_world
+		local locomotion_extension = self._locomotion_extension
+		local nav_world = blackboard.nav_world
 
-		if not _locomotion_extension:is_on_ground() and not GwNavQueries.triangle_from_position(nav_world, var_33_2, 0.25, 0.25) then
-			local num = -math.huge
-			local _vortex_largest_weighted_distance_sq = self._vortex_largest_weighted_distance_sq
+		if locomotion_extension:is_on_ground() and GwNavQueries.triangle_from_position(nav_world, self_position, 0.25, 0.25) then
+			local best_weighted_distance_sq = -math.huge
+			local largest_weighted_distance_sq = self._vortex_largest_weighted_distance_sq
 
-			if not flag then
-				local unbox_2 = _blackboard.navigation_vortex_escape_destination_override:unbox()
-				local num_2 = (_blackboard.navigation_vortex_escape_weight + num_20)^2
+			if re_evaluate_destination then
+				local current_escape_destination = blackboard.navigation_vortex_escape_destination_override:unbox()
+				local current_escape_weight = blackboard.navigation_vortex_escape_weight + VORTEX_ESCAPE_STICKINESS_WEIGHT
+				local current_escape_weight_sq = current_escape_weight^2
 
-				num = Vector3.distance_squared(var_33_2, unbox_2) * num_2
+				best_weighted_distance_sq = Vector3.distance_squared(self_position, current_escape_destination) * current_escape_weight_sq
 
-				if _vortex_largest_weighted_distance_sq <= num then
+				if largest_weighted_distance_sq <= best_weighted_distance_sq then
 					return
 				end
 			end
 
-			local near_vortex_unit = _status_extension.near_vortex_unit
+			local near_vortex_unit = status_extension.near_vortex_unit
 
-			near_vortex_unit = near_vortex_unit or _blackboard.vortex_escape_unit
+			if not near_vortex_unit then
+				-- Nothing
+			end
 
-			local num_3 = var_33_2 - POSITION_LOOKUP[near_vortex_unit]
-			local look = Quaternion.look(num_3, Vector3.up())
+			near_vortex_unit = blackboard.vortex_escape_unit
+
+			local vortex_unit = near_vortex_unit
+
+			::label_33_0::
+
+			local vortex_position = POSITION_LOOKUP[vortex_unit]
+			local to_bot = self_position - vortex_position
+			local to_bot_rotation = Quaternion.look(to_bot, Vector3.up())
 			local traverse_logic = navigation_extension:traverse_logic()
-			local _find_vortex_escape_destination, var_33_23, var_33_24 = self:_find_vortex_escape_destination(var_33_2, look, nav_world, traverse_logic, num, _vortex_largest_weighted_distance_sq)
+			local best_destination, best_weight, _ = self:_find_vortex_escape_destination(self_position, to_bot_rotation, nav_world, traverse_logic, best_weighted_distance_sq, largest_weighted_distance_sq)
 
-			if not _find_vortex_escape_destination then
-				_blackboard.use_vortex_escape_destination = true
+			if best_destination then
+				blackboard.use_vortex_escape_destination = true
 
-				_blackboard.navigation_vortex_escape_destination_override:store(_find_vortex_escape_destination)
+				blackboard.navigation_vortex_escape_destination_override:store(best_destination)
 
-				_blackboard.navigation_vortex_escape_weight = var_33_23
-				_blackboard.vortex_escape_unit = near_vortex_unit
+				blackboard.navigation_vortex_escape_weight = best_weight
+				blackboard.vortex_escape_unit = vortex_unit
 			end
 		end
-	elseif not use_vortex_escape_destination and is_disabled and flag_2 and near_vortex and not navigation_extension:destination_reached() then
-		_blackboard.use_vortex_escape_destination = false
-		_blackboard.vortex_escape_unit = nil
+	elseif use_vortex_escape_destination and (is_disabled or escape_completed or not near_vortex and navigation_extension:destination_reached()) then
+		blackboard.use_vortex_escape_destination = false
+		blackboard.vortex_escape_unit = nil
 	end
 end
 
-PlayerBotBase._update_attack_request = function (self, arg_34_1)
+PlayerBotBase._update_attack_request = function (self, t)
 	-- function 34
-	local _blackboard = self._blackboard
-	local get_bot_weapon_extension = AiUtils.get_bot_weapon_extension(_blackboard)
+	local blackboard = self._blackboard
+	local weapon_extension = AiUtils.get_bot_weapon_extension(blackboard)
 
-	if not get_bot_weapon_extension then
-		get_bot_weapon_extension:update_bot_attack_request(arg_34_1)
+	if weapon_extension then
+		weapon_extension:update_bot_attack_request(t)
 	end
 end
 
-PlayerBotBase._update_pickups = function (self, arg_35_1, arg_35_2)
+PlayerBotBase._update_pickups = function (self, dt, t)
 	-- function 35
-	local _unit = self._unit
-	local _blackboard = self._blackboard
+	local unit = self._unit
+	local blackboard = self._blackboard
 
-	_blackboard.needs_ammo = false
-	_blackboard.has_ammo_missing = false
+	blackboard.needs_ammo = false
+	blackboard.has_ammo_missing = false
 
-	local priority_target_enemy = _blackboard.priority_target_enemy
+	local priority_target_enemy = blackboard.priority_target_enemy
 
-	priority_target_enemy = priority_target_enemy or _blackboard.target_unit
+	if not priority_target_enemy then
+		-- Nothing
+	end
 
-	local flag
+	priority_target_enemy = blackboard.target_unit
 
-	flag = not ALIVE[priority_target_enemy] and 0.1 and 0.9
+	local target_unit = priority_target_enemy
 
-	local current_ammo_status, var_35_5 = _blackboard.inventory_extension:current_ammo_status("slot_ranged")
+	::label_35_0::
 
-	if not (not current_ammo_status and not (current_ammo_status < var_35_5)) then
-		_blackboard.needs_ammo = Managers.state.entity:system("ai_bot_group_system"):get_ammo_pickup_order_unit(_unit) ~= nil or flag > current_ammo_status / var_35_5
-		_blackboard.has_ammo_missing = current_ammo_status ~= var_35_5
+	local has_target = ALIVE[target_unit]
+	local num
+
+	if has_target then
+		num = 0.1
+
+		goto label_35_1
+	end
+
+	num = 0.9
+
+	local ammo_percentage = num
+
+	::label_35_1::
+
+	local inventory_extension = blackboard.inventory_extension
+	local current, num_max = inventory_extension:current_ammo_status("slot_ranged")
+
+	if current and current < num_max then
+		local ai_bot_group_system = Managers.state.entity:system("ai_bot_group_system")
+		local has_ammo_pickup_order = ai_bot_group_system:get_ammo_pickup_order_unit(unit) ~= nil
+
+		blackboard.needs_ammo = not not has_ammo_pickup_order or ammo_percentage > current / num_max
+		blackboard.has_ammo_missing = current ~= num_max
 	end
 end
 
-local tbl_2 = {}
+local INTERACTABLES_BROADPHASE_QUERY_RESULTS = {}
 
-PlayerBotBase._update_interactables = function (self, arg_36_1, arg_36_2)
+PlayerBotBase._update_interactables = function (self, dt, t)
 	-- function 36
-	local _blackboard = self._blackboard
+	local blackboard = self._blackboard
 
-	if arg_36_2 > self._interactable_timer then
-		self._interactable_timer = arg_36_2 + 0.2 + Math.random() * 0.15
+	if t > self._interactable_timer then
+		self._interactable_timer = t + 0.2 + Math.random() * 0.15
 
-		local interaction_unit = _blackboard.interaction_unit
+		local interaction_unit = blackboard.interaction_unit
 
-		interaction_unit = not interaction_unit and ScriptUnit.has_extension(_blackboard.interaction_unit, "door_system")
-
-		if not (not interaction_unit and _blackboard.interaction_unit == _blackboard.target_ally_unit) then
-			_blackboard.interaction_unit = nil
-			_blackboard.interaction_type = nil
+		if interaction_unit then
+			-- Nothing
 		end
 
-		if not _blackboard.navigation_extension:destination_reached() then
+		interaction_unit = ScriptUnit.has_extension(blackboard.interaction_unit, "door_system")
+
+		local door_ext = interaction_unit
+
+		::label_36_0::
+
+		if door_ext and blackboard.interaction_unit ~= blackboard.target_ally_unit then
+			blackboard.interaction_unit = nil
+			blackboard.interaction_type = nil
+		end
+
+		local navigation_extension = blackboard.navigation_extension
+
+		if navigation_extension:destination_reached() then
 			return
 		end
 
-		local var_36_2 = POSITION_LOOKUP[self._unit]
-		local get_doors = Managers.state.entity:system("door_system"):get_doors(var_36_2, 1.5, tbl_2)
-		local var_36_4
-		local huge = math.huge
-		local var_36_6
+		local self_pos = POSITION_LOOKUP[self._unit]
+		local num_doors = Managers.state.entity:system("door_system"):get_doors(self_pos, 1.5, INTERACTABLES_BROADPHASE_QUERY_RESULTS)
+		local best_unit
+		local best_dist = math.huge
+		local best_interaction_type
 
-		for i = 1, get_doors do
-			local var_36_7 = tbl_2[i]
+		for i = 1, num_doors do
+			local hit_unit = INTERACTABLES_BROADPHASE_QUERY_RESULTS[i]
 
-			if not (not ScriptUnit.has_extension(var_36_7, "interactable_system") and ScriptUnit.extension(var_36_7, "door_system"):is_open()) then
-				local var_36_8 = POSITION_LOOKUP[var_36_7]
+			if ScriptUnit.has_extension(hit_unit, "interactable_system") and not ScriptUnit.extension(hit_unit, "door_system"):is_open() then
+				local var_36_1 = POSITION_LOOKUP[hit_unit]
 
-				var_36_8 = var_36_8 or Unit.world_position(var_36_7, 0)
+				if not var_36_1 then
+					-- Nothing
+				end
 
-				local distance_squared = Vector3.distance_squared(var_36_2, var_36_8)
+				var_36_1 = Unit.world_position(hit_unit, 0)
 
-				if distance_squared < huge then
-					huge = distance_squared
-					var_36_4 = var_36_7
-					var_36_6 = "door"
+				local pos = var_36_1
+
+				::label_36_1::
+
+				local dist = Vector3.distance_squared(self_pos, pos)
+
+				if dist < best_dist then
+					best_dist = dist
+					best_unit = hit_unit
+					best_interaction_type = "door"
 				end
 			end
 		end
 
-		if not var_36_4 then
-			_blackboard.interaction_unit = var_36_4
-			_blackboard.interaction_type = var_36_6
+		if best_unit then
+			blackboard.interaction_unit = best_unit
+			blackboard.interaction_type = best_interaction_type
 		end
-	elseif not alive(_blackboard.interaction_unit) then
-		local has_extension = ScriptUnit.has_extension(_blackboard.interaction_unit, "door_system")
+	elseif unit_alive(blackboard.interaction_unit) then
+		local door_ext = ScriptUnit.has_extension(blackboard.interaction_unit, "door_system")
 
-		if not has_extension and not has_extension:is_open() then
-			_blackboard.interaction_unit = nil
-			_blackboard.interaction_type = nil
+		if door_ext and door_ext:is_open() then
+			blackboard.interaction_unit = nil
+			blackboard.interaction_type = nil
 		end
-	elseif not _blackboard.interaction_unit then
-		_blackboard.interaction_unit = nil
-		_blackboard.interaction_type = nil
+	elseif blackboard.interaction_unit then
+		blackboard.interaction_unit = nil
+		blackboard.interaction_type = nil
 	end
 end
 
-local tbl_3 = {}
+local AVOID_POINTS_TEMP_TABLE = {}
 
-PlayerBotBase._find_cover = function (arg_37_0, arg_37_1, arg_37_2, arg_37_3, arg_37_4)
+PlayerBotBase._find_cover = function (self, take_cover_targets, self_pos, max_radius, allow_forward_distance)
 	-- function 37
-	local zero = Vector3.zero()
+	local offset_vector = Vector3.zero()
 
-	for k, v in pairs(arg_37_1) do
-		local var_37_1 = POSITION_LOOKUP[k]
+	for unit, _ in pairs(take_cover_targets) do
+		local unit_pos = POSITION_LOOKUP[unit]
 
-		tbl_3[#tbl_3 + 1] = var_37_1
+		AVOID_POINTS_TEMP_TABLE[#AVOID_POINTS_TEMP_TABLE + 1] = unit_pos
 
-		local flat = Vector3.flat(arg_37_2 - var_37_1)
+		local offset = Vector3.flat(self_pos - unit_pos)
+		local normalized_offset = Vector3.normalize(offset)
 
-		zero = zero + Vector3.normalize(flat)
-		arg_37_4 = math.min(arg_37_4, 0.5 * Vector3.length(flat))
+		offset_vector = offset_vector + normalized_offset
+		allow_forward_distance = math.min(allow_forward_distance, 0.5 * Vector3.length(offset))
 	end
 
-	local num = arg_37_2 + (arg_37_3 - arg_37_4) * zero
-	local hidden_cover_points, var_37_5 = ConflictUtils.hidden_cover_points(num, tbl_3, 0, arg_37_3, -0.9)
+	local search_pos = self_pos + (max_radius - allow_forward_distance) * offset_vector
+	local num_found, hidden_cover_units = ConflictUtils.hidden_cover_points(search_pos, AVOID_POINTS_TEMP_TABLE, 0, max_radius, -0.9)
 
-	table.clear(tbl_3)
+	table.clear(AVOID_POINTS_TEMP_TABLE)
 
-	return hidden_cover_points, var_37_5
+	return num_found, hidden_cover_units
 end
 
-local tbl_4 = {}
+local TAKE_COVER_TEMP_TABLE = {}
 
-local function fn_4(arg_38_0, arg_38_1, arg_38_2, arg_38_3, arg_38_4)
+local function line_of_fire_check(from, to, p, width, length)
 	-- function 38
-	local num = arg_38_2 - arg_38_0
-	local normalize = Vector3.normalize(arg_38_1 - arg_38_0)
-	local dot = Vector3.dot(num, normalize)
+	local diff = p - from
+	local dir = Vector3.normalize(to - from)
+	local lateral_dist = Vector3.dot(diff, dir)
 
-	if not (dot <= 0 or not (arg_38_4 < dot)) then
+	if lateral_dist <= 0 or length < lateral_dist then
 		return false
 	end
 
-	if Vector3.length(num - dot * normalize) > math.min(dot, arg_38_3) then
+	local direct_dist = Vector3.length(diff - lateral_dist * dir)
+
+	if direct_dist > math.min(lateral_dist, width) then
 		return false
 	else
 		return true
 	end
 end
 
-PlayerBotBase._in_line_of_fire = function (arg_39_0, arg_39_1, arg_39_2, arg_39_3, arg_39_4)
+PlayerBotBase._in_line_of_fire = function (self, self_unit, self_pos, take_cover_targets, taking_cover_from)
 	-- function 39
-	local flag = false
-	local flag_2 = false
-	local num = 2.5
-	local num_2 = 6
-	local num_3 = 40
+	local changed = false
+	local in_line_of_fire = false
+	local width = 2.5
+	local sticky_width = 6
+	local length = 40
 
-	for k, v in pairs(arg_39_3) do
-		local var_39_5 = arg_39_4[k]
+	for attacker, victim in pairs(take_cover_targets) do
+		local already_in_cover_from = taking_cover_from[attacker]
 
-		if not ALIVE[v] and v == arg_39_1 and not fn_4(POSITION_LOOKUP[k], POSITION_LOOKUP[v], arg_39_2, not var_39_5 and num_2 and num, num_3) then
-			tbl_4[k] = v
-			flag = flag or not var_39_5
-			flag_2 = true
+		if ALIVE[victim] and (victim == self_unit or line_of_fire_check(POSITION_LOOKUP[attacker], POSITION_LOOKUP[victim], self_pos, (not already_in_cover_from or not sticky_width) and not not width, length)) then
+			TAKE_COVER_TEMP_TABLE[attacker] = victim
+			changed = not not changed or not not not already_in_cover_from
+			in_line_of_fire = true
 		end
 	end
 
-	for k_2, v_2 in pairs(arg_39_4) do
-		if not tbl_4[k_2] then
-			flag = true
+	for attacker, victim in pairs(taking_cover_from) do
+		if not TAKE_COVER_TEMP_TABLE[attacker] then
+			changed = true
 
 			break
 		end
 	end
 
-	table.clear(arg_39_4)
+	table.clear(taking_cover_from)
 
-	for k_3, v_3 in pairs(tbl_4) do
-		arg_39_4[k_3] = v_3
+	for attacker, victim in pairs(TAKE_COVER_TEMP_TABLE) do
+		taking_cover_from[attacker] = victim
 	end
 
-	table.clear(tbl_4)
+	table.clear(TAKE_COVER_TEMP_TABLE)
 
-	return flag_2, flag
+	return in_line_of_fire, changed
 end
 
-function to_hash(self)
+function to_hash(vector3)
 	-- function 40
-	return self.x + self.y * 10000 + self.z * 0.0001
+	return vector3.x + vector3.y * 10000 + vector3.z * 0.0001
 end
 
-PlayerBotBase.cb_cover_point_path_result = function (self, arg_41_1, arg_41_2, arg_41_3)
+PlayerBotBase.cb_cover_point_path_result = function (self, hash, success, destination)
 	-- function 41
-	if not arg_41_2 then
-		local taking_cover = self._blackboard.taking_cover
+	if not success then
+		local cover_bb = self._blackboard.taking_cover
 
-		taking_cover.failed_cover_points[arg_41_1] = true
+		cover_bb.failed_cover_points[hash] = true
 
-		table.clear(taking_cover.active_threats)
+		table.clear(cover_bb.active_threats)
 	end
 end
 
-PlayerBotBase._update_cover = function (self, arg_42_1, arg_42_2, arg_42_3, arg_42_4, arg_42_5)
+PlayerBotBase._update_cover = function (self, unit, self_pos, blackboard, cover_bb, follow_bb)
 	-- function 42
-	local var_42_0
-	local _in_line_of_fire, var_42_2 = self:_in_line_of_fire(arg_42_1, arg_42_2, arg_42_4.threats, arg_42_4.active_threats)
-	local system = Managers.state.entity:system("ai_bot_group_system")
+	local cover_position
+	local in_line_of_fire, changed = self:_in_line_of_fire(unit, self_pos, cover_bb.threats, cover_bb.active_threats)
+	local bot_group_system = Managers.state.entity:system("ai_bot_group_system")
 
-	if not _in_line_of_fire and not var_42_2 then
-		local fails = arg_42_4.fails
-		local min = math.min(5 + fails * 5, 40)
-		local num = min * 0.4
-		local _find_cover, var_42_8 = self:_find_cover(arg_42_4.active_threats, arg_42_2, min, num)
-		local var_42_9
-		local var_42_10
-		local var_42_11
-		local var_42_12
+	if in_line_of_fire and changed then
+		local fails = cover_bb.fails
+		local radius = math.min(5 + fails * 5, 40)
+		local allowed_forward_dist = radius * 0.4
+		local num_found, hidden_cover_units = self:_find_cover(cover_bb.active_threats, self_pos, radius, allowed_forward_dist)
+		local found_point, found_unit, occupied_cover_unit, occupied_cover_point
 
-		for i = 1, _find_cover do
-			local var_42_13 = var_42_8[i]
-			local local_position = Unit.local_position(var_42_13, 0)
+		for i = 1, num_found do
+			local cover_unit = hidden_cover_units[i]
+			local pos = Unit.local_position(cover_unit, 0)
 
-			if not arg_42_4.failed_cover_points[to_hash(local_position)] then
-				if not system:in_cover(var_42_13) then
-					var_42_12 = var_42_12 or local_position
-					var_42_11 = var_42_11 or var_42_13
+			if not cover_bb.failed_cover_points[to_hash(pos)] then
+				if bot_group_system:in_cover(cover_unit) then
+					occupied_cover_point = not not occupied_cover_point or not not pos
+					occupied_cover_unit = not not occupied_cover_unit or not not cover_unit
 				else
-					var_42_9 = local_position
-					var_42_10 = var_42_13
+					found_point = pos
+					found_unit = cover_unit
 
 					break
 				end
 			end
 		end
 
-		var_42_9 = var_42_9 or var_42_12
-		var_42_10 = var_42_10 or var_42_11
+		found_point = not not found_point or not not occupied_cover_point
+		found_unit = not not found_unit or not not occupied_cover_unit
 
-		if not var_42_9 then
-			var_42_0 = var_42_9
+		if found_point then
+			cover_position = found_point
 
-			arg_42_4.cover_position:store(var_42_0)
+			cover_bb.cover_position:store(cover_position)
 
-			arg_42_4.cover_unit = var_42_10
-			arg_42_4.fails = 0
+			cover_bb.cover_unit = found_unit
+			cover_bb.fails = 0
 
-			system:set_in_cover(arg_42_1, var_42_10)
+			bot_group_system:set_in_cover(unit, found_unit)
 		else
-			arg_42_4.fails = arg_42_4.fails + 1
+			cover_bb.fails = cover_bb.fails + 1
 
-			table.clear(arg_42_4.active_threats)
+			table.clear(cover_bb.active_threats)
 		end
-	elseif _in_line_of_fire or not var_42_2 then
-		arg_42_4.cover_position:store(Vector3.invalid_vector())
+	elseif not in_line_of_fire and changed then
+		cover_bb.cover_position:store(Vector3.invalid_vector())
 
-		arg_42_4.cover_unit = nil
-		arg_42_4.fails = 0
-		arg_42_5.needs_target_position_refresh = true
+		cover_bb.cover_unit = nil
+		cover_bb.fails = 0
+		follow_bb.needs_target_position_refresh = true
 
-		system:set_in_cover(arg_42_1, nil)
-	elseif not _in_line_of_fire then
-		var_42_0 = arg_42_4.cover_position:unbox()
+		bot_group_system:set_in_cover(unit, nil)
+	elseif in_line_of_fire then
+		cover_position = cover_bb.cover_position:unbox()
 	end
 
-	local ranged_obstruction_by_static = arg_42_3.ranged_obstruction_by_static
-	local flag = not ranged_obstruction_by_static and ranged_obstruction_by_static.unit
+	local obstruction_bb = blackboard.ranged_obstruction_by_static
+	local obstruction_unit = not not obstruction_bb and not not obstruction_bb.unit
 
-	if not arg_42_4.active_threats[flag] then
-		arg_42_3.ranged_obstruction_by_static = nil
+	if cover_bb.active_threats[obstruction_unit] then
+		blackboard.ranged_obstruction_by_static = nil
 	end
 
-	return var_42_0
+	return cover_position
 end
 
-PlayerBotBase.new_destination_distance_check = function (arg_43_0, arg_43_1, arg_43_2, arg_43_3, arg_43_4)
+PlayerBotBase.new_destination_distance_check = function (self, self_position, previous_destination, new_destination, navigation_extension)
 	-- function 43
-	local num = arg_43_3 - arg_43_2
-	local flag = math.abs(num.z) > Z_MOVE_TO_EPSILON or Vector3.length_squared(Vector3.flat(num)) > num_11
+	local destination_offset = new_destination - previous_destination
+	local destination_offset_ok = math.abs(destination_offset.z) > Z_MOVE_TO_EPSILON or Vector3.length_squared(Vector3.flat(destination_offset)) > FLAT_MOVE_TO_EPSILON_SQ
 
-	if not arg_43_4:destination_reached() then
-		local num_2 = arg_43_1 - arg_43_4:position_when_destination_reached()
-		local flag_2 = math.abs(num_2.z) > Z_MOVE_TO_EPSILON or Vector3.length_squared(Vector3.flat(num_2)) > num_12
-		local num_3 = arg_43_3 - arg_43_1
-		local flag_3 = math.abs(num_3.z) > Z_MOVE_TO_EPSILON or Vector3.length_squared(Vector3.flat(num_3)) > num_11
+	if navigation_extension:destination_reached() then
+		local position_when_destination_reached = navigation_extension:position_when_destination_reached()
+		local previous_pos_offset = self_position - position_when_destination_reached
+		local previous_pos_offset_ok = math.abs(previous_pos_offset.z) > Z_MOVE_TO_EPSILON or Vector3.length_squared(Vector3.flat(previous_pos_offset)) > FLAT_MOVE_TO_PREVIOUS_POS_EPSILON_SQ
+		local new_destination_offset = new_destination - self_position
+		local new_destination_offset_ok = math.abs(new_destination_offset.z) > Z_MOVE_TO_EPSILON or Vector3.length_squared(Vector3.flat(new_destination_offset)) > FLAT_MOVE_TO_EPSILON_SQ
 
-		return flag_2 or not flag or flag_3
+		return (previous_pos_offset_ok or not not destination_offset_ok) and not not new_destination_offset_ok
 	else
-		return flag
+		return destination_offset_ok
 	end
 end
 
-local num_26 = 15
-local num_27 = 2
+local VORTEX_SAFE_PATH_CHECK_DISTANCE = 15
+local MIN_ALLOWED_VORTEX_DISTANCE = 2
 
-PlayerBotBase._update_movement_target = function (self, arg_44_1, arg_44_2)
+PlayerBotBase._update_movement_target = function (self, dt, t)
 	-- function 44
-	local _unit = self._unit
-	local var_44_1 = POSITION_LOOKUP[_unit]
-	local _blackboard = self._blackboard
-	local avoiding_aoe_threat = _blackboard.input_extension:avoiding_aoe_threat()
-	local navigation_destination_override = _blackboard.navigation_destination_override
-	local melee = _blackboard.melee
+	local unit = self._unit
+	local self_pos = POSITION_LOOKUP[unit]
+	local blackboard = self._blackboard
+	local avoiding_aoe_threat = blackboard.input_extension:avoiding_aoe_threat()
+	local override_box = blackboard.navigation_destination_override
+	local melee = blackboard.melee
 
-	if not melee then
-		melee = _blackboard.melee.engage_position_set
-		melee = not melee and navigation_destination_override:unbox()
+	if melee then
+		-- Nothing
 	end
 
-	local shoot = _blackboard.shoot
+	melee = blackboard.melee.engage_position_set
 
-	if not shoot then
-		shoot = _blackboard.shoot.disengage_position_set
-		shoot = not shoot and navigation_destination_override:unbox()
+	if melee then
+		-- Nothing
 	end
 
-	local activate_ability_data = _blackboard.activate_ability_data
+	melee = override_box:unbox()
 
-	if not activate_ability_data then
-		activate_ability_data = _blackboard.activate_ability_data.move_to_position_set
-		activate_ability_data = not activate_ability_data and navigation_destination_override:unbox()
+	local override_melee = melee
+
+	::label_44_0::
+
+	local shoot = blackboard.shoot
+
+	if shoot then
+		-- Nothing
 	end
 
-	local use_liquid_escape_destination = _blackboard.use_liquid_escape_destination
+	shoot = blackboard.shoot.disengage_position_set
 
-	use_liquid_escape_destination = not use_liquid_escape_destination and _blackboard.navigation_liquid_escape_destination_override:unbox()
+	if shoot then
+		-- Nothing
+	end
 
-	local use_vortex_escape_destination = _blackboard.use_vortex_escape_destination
+	shoot = override_box:unbox()
 
-	use_vortex_escape_destination = not use_vortex_escape_destination and _blackboard.navigation_vortex_escape_destination_override:unbox()
+	local override_ranged = shoot
 
-	local flag = false
-	local follow = _blackboard.follow
-	local taking_cover = _blackboard.taking_cover
-	local _update_cover = self:_update_cover(_unit, var_44_1, _blackboard, taking_cover, follow)
-	local var_44_14
-	local _nav_world = self._nav_world
-	local target_ally_unit = _blackboard.target_ally_unit
-	local target_ally_need_type = _blackboard.target_ally_need_type
-	local flag_2 = true
+	::label_44_1::
 
-	if not ALIVE[target_ally_unit] then
-		local get_inside_transport_unit = ScriptUnit.extension(target_ally_unit, "status_system"):get_inside_transport_unit()
+	local activate_ability_data = blackboard.activate_ability_data
 
-		if not (not alive(get_inside_transport_unit) and _blackboard.target_ally_needs_aid) then
-			_blackboard.ally_inside_transport_unit = get_inside_transport_unit
+	if activate_ability_data then
+		-- Nothing
+	end
 
-			if not (ScriptUnit.extension(_blackboard.ally_inside_transport_unit, "transportation_system").story_state == "stopped_beginning") then
-				var_44_14 = LocomotionUtils.new_goal_in_transport(_nav_world, _unit, target_ally_unit)
+	activate_ability_data = blackboard.activate_ability_data.move_to_position_set
+
+	if activate_ability_data then
+		-- Nothing
+	end
+
+	activate_ability_data = override_box:unbox()
+
+	local override_ability = activate_ability_data
+
+	::label_44_2::
+
+	local use_liquid_escape_destination = blackboard.use_liquid_escape_destination
+
+	if use_liquid_escape_destination then
+		-- Nothing
+	end
+
+	use_liquid_escape_destination = blackboard.navigation_liquid_escape_destination_override:unbox()
+
+	local override_liquid_escape = use_liquid_escape_destination
+
+	::label_44_3::
+
+	local use_vortex_escape_destination = blackboard.use_vortex_escape_destination
+
+	if use_vortex_escape_destination then
+		-- Nothing
+	end
+
+	use_vortex_escape_destination = blackboard.navigation_vortex_escape_destination_override:unbox()
+
+	local override_vortex_escape = use_vortex_escape_destination
+
+	::label_44_4::
+
+	local moving_towards_follow_position = false
+	local follow_bb = blackboard.follow
+	local cover_bb = blackboard.taking_cover
+	local cover_position = self:_update_cover(unit, self_pos, blackboard, cover_bb, follow_bb)
+	local transport_unit_override
+	local nav_world = self._nav_world
+	local target_ally_unit = blackboard.target_ally_unit
+	local target_ally_need_type = blackboard.target_ally_need_type
+	local target_ally_has_moved_from_start_position = true
+
+	if ALIVE[target_ally_unit] then
+		local ally_status_extension = ScriptUnit.extension(target_ally_unit, "status_system")
+		local transport_unit = ally_status_extension:get_inside_transport_unit()
+
+		if unit_alive(transport_unit) and not blackboard.target_ally_needs_aid then
+			blackboard.ally_inside_transport_unit = transport_unit
+
+			local transportation_ext = ScriptUnit.extension(blackboard.ally_inside_transport_unit, "transportation_system")
+			local has_valid_transportation_unit = transportation_ext.story_state == "stopped_beginning"
+
+			if has_valid_transportation_unit then
+				transport_unit_override = LocomotionUtils.new_goal_in_transport(nav_world, unit, target_ally_unit)
 			end
-		elseif not _blackboard.ally_inside_transport_unit then
-			_blackboard.ally_inside_transport_unit = nil
-		elseif not (not target_ally_need_type and target_ally_need_type == "in_need_of_attention_stop" or target_ally_need_type ~= "in_need_of_attention_look") then
-			flag_2 = ScriptUnit.extension(target_ally_unit, "locomotion_system").has_moved_from_start_position
+		elseif blackboard.ally_inside_transport_unit then
+			blackboard.ally_inside_transport_unit = nil
+		elseif not target_ally_need_type or target_ally_need_type == "in_need_of_attention_stop" or target_ally_need_type == "in_need_of_attention_look" then
+			local ally_locomotion_extension = ScriptUnit.extension(target_ally_unit, "locomotion_system")
+
+			target_ally_has_moved_from_start_position = ally_locomotion_extension.has_moved_from_start_position
 		end
 	else
-		_blackboard.ally_inside_transport_unit = nil
+		blackboard.ally_inside_transport_unit = nil
 	end
 
-	local navigation_extension = _blackboard.navigation_extension
-	local destination = navigation_extension:destination()
-	local ai_bot_group_extension = _blackboard.ai_bot_group_extension
-	local get_hold_position, var_44_24 = ai_bot_group_extension:get_hold_position()
-	local flag_3 = not get_hold_position and get_hold_position - destination
-	local flag_4 = not flag_3 and math.abs(flag_3.z)
-	local flag_5 = not flag_3 and Vector3.length_squared(Vector3.flat(flag_3))
-	local flag_6 = not flag_3 and flag_4 > num_13 and var_44_24 < flag_5
+	local navigation_extension = blackboard.navigation_extension
+	local previous_destination = navigation_extension:destination()
+	local ai_bot_group_extension = blackboard.ai_bot_group_extension
+	local hold_position, hold_position_max_distance_sq = ai_bot_group_extension:get_hold_position()
+	local hold_position_offset = not not hold_position and not not (hold_position - previous_destination)
+	local hold_position_offset_z = not not hold_position_offset and not not math.abs(hold_position_offset.z)
+	local flat_hold_position_offset_length_sq = not not hold_position_offset and not not Vector3.length_squared(Vector3.flat(hold_position_offset))
+	local should_go_back = not not hold_position_offset and hold_position_offset_z > HOLD_POSITION_MAX_ALLOWED_Z or hold_position_max_distance_sq < flat_hold_position_offset_length_sq
 	local vortex_exist
 
-	if not use_vortex_escape_destination then
-		vortex_exist = _blackboard.vortex_exist
+	if not override_vortex_escape then
+		vortex_exist = blackboard.vortex_exist
 
-		if not vortex_exist then
-			vortex_exist = not navigation_extension:is_path_safe_from_vortex(num_26, num_27)
+		if vortex_exist then
+			vortex_exist = not navigation_extension:is_path_safe_from_vortex(VORTEX_SAFE_PATH_CHECK_DISTANCE, MIN_ALLOWED_VORTEX_DISTANCE)
 		end
 	else
 		vortex_exist = false
 	end
 
-	if false then
-		vortex_exist = true
-	end
+	goto label_44_5
 
-	if not flag_6 then
-		navigation_extension:move_to(get_hold_position)
+	vortex_exist = true
 
-		_blackboard.using_navigation_destination_override = true
-	elseif not vortex_exist then
+	local stop_for_vortex = vortex_exist
+
+	::label_44_5::
+
+	if should_go_back then
+		navigation_extension:move_to(hold_position)
+
+		blackboard.using_navigation_destination_override = true
+	elseif stop_for_vortex then
 		local path_callback = navigation_extension:path_callback()
 
-		if not path_callback then
-			path_callback(false, destination, true)
+		if path_callback then
+			path_callback(false, previous_destination, true)
 		end
 
 		navigation_extension:stop()
 
-		if not melee then
-			_blackboard.melee.engage_position_set = false
+		if override_melee then
+			blackboard.melee.engage_position_set = false
 		end
 
-		if not shoot then
-			_blackboard.shoot.disengage_position_set = false
+		if override_ranged then
+			blackboard.shoot.disengage_position_set = false
 		end
 
-		if not activate_ability_data then
-			_blackboard.activate_ability_data.move_to_position_set = false
+		if override_ability then
+			blackboard.activate_ability_data.move_to_position_set = false
 		end
-	elseif avoiding_aoe_threat or use_vortex_escape_destination or use_liquid_escape_destination or _update_cover or melee or shoot or not activate_ability_data then
-		local flag_7 = var_44_14 or use_vortex_escape_destination or use_liquid_escape_destination or _update_cover or melee or shoot or activate_ability_data
-		local num = flag_7 - destination
+	elseif not avoiding_aoe_threat and (override_vortex_escape or override_liquid_escape or cover_position or override_melee or override_ranged or override_ability) then
+		local override = not not transport_unit_override or not not override_vortex_escape or not not override_liquid_escape or not not cover_position or not not override_melee or not not override_ranged or not not override_ability
+		local offset = override - previous_destination
+		local override_allowed = hold_position == nil or hold_position_max_distance_sq >= Vector3.distance_squared(hold_position, override)
 
-		if not (not (get_hold_position == nil or var_44_24 >= Vector3.distance_squared(get_hold_position, flag_7)) and math.abs(num.z) > Z_MOVE_TO_EPSILON or not (Vector3.length(Vector3.flat(num)) > FLAT_MOVE_TO_EPSILON)) then
+		if override_allowed and (math.abs(offset.z) > Z_MOVE_TO_EPSILON or Vector3.length(Vector3.flat(offset)) > FLAT_MOVE_TO_EPSILON) then
 			local stop_at_current_position
 
-			if not melee then
-				stop_at_current_position = _blackboard.melee.stop_at_current_position
+			if override_melee then
+				stop_at_current_position = blackboard.melee.stop_at_current_position
 
 				if not stop_at_current_position then
 					-- Nothing
 				end
 			end
 
-			stop_at_current_position = not shoot and _blackboard.shoot.stop_at_current_position
+			if override_ranged then
+				-- Nothing
+			end
 
-			::label_44_0::
+			::label_44_6::
 
-			if not stop_at_current_position then
+			stop_at_current_position = blackboard.shoot.stop_at_current_position
+
+			local should_stop = stop_at_current_position
+
+			::label_44_7::
+
+			if should_stop then
 				navigation_extension:stop()
 			else
-				local var_44_34
+				local var_44_7
 
-				if var_44_14 or not _update_cover then
-					var_44_34 = callback(self, "cb_cover_point_path_result", to_hash(flag_7))
+				if not transport_unit_override and cover_position then
+					var_44_7 = callback(self, "cb_cover_point_path_result", to_hash(override))
 
-					if not var_44_34 then
+					if not var_44_7 then
 						-- Nothing
 					end
 				end
 
-				var_44_34 = nil
+				var_44_7 = nil
 
-				::label_44_1::
+				local path_callback = var_44_7
 
-				navigation_extension:move_to(flag_7, var_44_34)
+				::label_44_8::
+
+				navigation_extension:move_to(override, path_callback)
 			end
 
-			_blackboard.using_navigation_destination_override = true
+			blackboard.using_navigation_destination_override = true
 		end
 	else
-		follow.follow_timer = follow.follow_timer - arg_44_1
+		follow_bb.follow_timer = follow_bb.follow_timer - dt
 
-		local is_interacting = _blackboard.interaction_extension:is_interacting()
-		local flag_8 = target_ally_need_type == "in_need_of_attention_stop"
+		local interaction_extension = blackboard.interaction_extension
+		local is_interacting = interaction_extension:is_interacting()
+		local need_to_stop = target_ally_need_type == "in_need_of_attention_stop"
 
-		if follow.needs_target_position_refresh or follow.follow_timer < 0 or flag_8 or not _blackboard.target_ally_needs_aid or is_interacting or not navigation_extension:destination_reached() then
-			follow.needs_target_position_refresh = true
+		if not follow_bb.needs_target_position_refresh and (follow_bb.follow_timer < 0 or need_to_stop or blackboard.target_ally_needs_aid and not is_interacting and navigation_extension:destination_reached()) then
+			follow_bb.needs_target_position_refresh = true
 		end
 
-		local system = Managers.state.entity:system("ai_bot_group_system")
-		local flag_9 = system:get_ammo_pickup_order_unit(_unit) ~= nil or system:has_pending_pickup_order(_unit)
+		local ai_bot_group_system = Managers.state.entity:system("ai_bot_group_system")
+		local has_ammo_pickup_order = ai_bot_group_system:get_ammo_pickup_order_unit(unit) ~= nil
+		local has_pickup_order = not not has_ammo_pickup_order or not not ai_bot_group_system:has_pending_pickup_order(unit)
 
-		if not follow.needs_target_position_refresh and flag_2 and not flag_9 then
-			local var_44_39
-			local var_44_40
-			local goal_selection_func = _blackboard.follow.goal_selection_func
-			local var_44_42
-			local target_unit = _blackboard.target_unit
-			local priority_target_enemy = _blackboard.priority_target_enemy
-			local get_pickup_order = system:get_pickup_order(_unit, "slot_healthkit")
-			local unit
-
-			if not get_pickup_order then
-				unit = get_pickup_order.unit
-
-				if not unit then
-					-- Nothing
-				end
-			end
-
-			unit = nil
-
-			::label_44_2::
-
-			local get_pickup_order_2 = system:get_pickup_order(_unit, "slot_potion")
+		if follow_bb.needs_target_position_refresh and (target_ally_has_moved_from_start_position or has_pickup_order) then
+			local target_position, should_stop
+			local goal_selection_func_name = blackboard.follow.goal_selection_func
+			local path_callback
+			local enemy_unit = blackboard.target_unit
+			local priority_target_enemy = blackboard.priority_target_enemy
+			local health_slot_pickup_order = ai_bot_group_system:get_pickup_order(unit, "slot_healthkit")
 			local unit_2
 
-			if not get_pickup_order_2 then
-				unit_2 = get_pickup_order_2.unit
+			if health_slot_pickup_order then
+				unit_2 = health_slot_pickup_order.unit
 
 				if not unit_2 then
 					-- Nothing
@@ -1806,117 +1983,137 @@ PlayerBotBase._update_movement_target = function (self, arg_44_1, arg_44_2)
 
 			unit_2 = nil
 
-			::label_44_3::
+			local health_slot_pickup_order_unit = unit_2
 
-			if not (not _blackboard.revive_with_urgent_target and not _blackboard.target_ally_needs_aid and target_ally_need_type == "in_need_of_attention_look") then
-				var_44_39, var_44_40 = self:_alter_target_position(_nav_world, var_44_1, target_ally_unit, POSITION_LOOKUP[target_ally_unit], target_ally_need_type)
-				_blackboard.interaction_unit = target_ally_unit
+			::label_44_9::
 
-				_blackboard.target_ally_aid_destination:store(var_44_39)
+			local potion_slot_pickup_order = ai_bot_group_system:get_pickup_order(unit, "slot_potion")
+			local unit_3
 
-				var_44_42 = callback(self, "cb_ally_path_result", target_ally_unit)
-			elseif not priority_target_enemy and target_unit == priority_target_enemy or not self:_enemy_path_allowed(priority_target_enemy) then
-				var_44_39 = self:_find_target_position_on_nav_mesh(_nav_world, POSITION_LOOKUP[priority_target_enemy])
-				var_44_42 = callback(self, "cb_enemy_path_result", priority_target_enemy)
-			elseif not (not target_unit and target_unit == priority_target_enemy and target_unit == _blackboard.urgent_target_enemy and not self:_enemy_path_allowed(target_unit) and _blackboard.input_extension:avoiding_aoe_threat()) then
-				var_44_39 = self:_find_target_position_on_nav_mesh(_nav_world, POSITION_LOOKUP[target_unit])
-				var_44_42 = callback(self, "cb_enemy_path_result", target_unit)
-			elseif not (not _blackboard.target_ally_needs_aid and target_ally_need_type == "in_need_of_attention_look") then
-				var_44_39, var_44_40 = self:_alter_target_position(_nav_world, var_44_1, target_ally_unit, POSITION_LOOKUP[target_ally_unit], target_ally_need_type)
-				_blackboard.interaction_unit = target_ally_unit
+			if potion_slot_pickup_order then
+				unit_3 = potion_slot_pickup_order.unit
 
-				_blackboard.target_ally_aid_destination:store(var_44_39)
-
-				var_44_42 = callback(self, "cb_ally_path_result", target_ally_unit)
-			elseif not goal_selection_func and not ALIVE[target_ally_unit] then
-				var_44_39 = LocomotionUtils[goal_selection_func](_nav_world, _unit, target_ally_unit)
-			elseif not ((not alive(_blackboard.health_pickup) and not _blackboard.allowed_to_take_health_pickup and not (arg_44_2 < _blackboard.health_pickup_valid_until) or self._last_health_pickup_attempt.unit ~= _blackboard.health_pickup or not self._last_health_pickup_attempt.blacklist) and unit ~= _blackboard.health_pickup) then
-				local health_pickup = _blackboard.health_pickup
-
-				var_44_39 = self:_find_pickup_position_on_navmesh(_nav_world, var_44_1, health_pickup, self._last_health_pickup_attempt)
-
-				local flag_10 = health_pickup == unit
-
-				if not var_44_39 then
-					var_44_42 = callback(self, "cb_health_pickup_path_result", health_pickup)
-					_blackboard.interaction_unit = health_pickup
-				elseif not flag_10 then
-					_blackboard.interaction_unit = health_pickup
-					_blackboard.forced_pickup_unit = health_pickup
-				end
-			elseif not ((not alive(_blackboard.mule_pickup) and self._last_mule_pickup_attempt.unit ~= _blackboard.mule_pickup or not self._last_mule_pickup_attempt.blacklist) and unit_2 ~= _blackboard.mule_pickup) then
-				local mule_pickup = _blackboard.mule_pickup
-
-				var_44_39 = self:_find_pickup_position_on_navmesh(_nav_world, var_44_1, mule_pickup, self._last_mule_pickup_attempt)
-
-				local flag_11 = mule_pickup == unit_2
-
-				if not var_44_39 then
-					var_44_42 = callback(self, "cb_mule_pickup_path_result", mule_pickup)
-					_blackboard.interaction_unit = mule_pickup
-				elseif not flag_11 then
-					_blackboard.interaction_unit = mule_pickup
-					_blackboard.forced_pickup_unit = mule_pickup
+				if not unit_3 then
+					-- Nothing
 				end
 			end
 
-			if not ((var_44_39 or not alive(_blackboard.ammo_pickup) or not _blackboard.has_ammo_missing) and not (arg_44_2 < _blackboard.ammo_pickup_valid_until)) then
-				local var_44_53 = POSITION_LOOKUP[_blackboard.ammo_pickup]
-				local normalize = Vector3.normalize(var_44_1 - var_44_53)
-				local num_2 = 0.5
-				local num_3 = 1.5
-				local num_4 = INTERACT_RAY_DISTANCE - 0.3
-				local num_5 = 0
+			unit_3 = nil
 
-				var_44_39 = self:_find_position_on_navmesh(_nav_world, var_44_53, var_44_53 + normalize, num_2, num_3, num_4, num_5)
+			local potion_slot_pickup_order_unit = unit_3
 
-				if not var_44_39 then
-					_blackboard.interaction_unit = _blackboard.ammo_pickup
+			::label_44_10::
+
+			if blackboard.revive_with_urgent_target and blackboard.target_ally_needs_aid and target_ally_need_type ~= "in_need_of_attention_look" then
+				target_position, should_stop = self:_alter_target_position(nav_world, self_pos, target_ally_unit, POSITION_LOOKUP[target_ally_unit], target_ally_need_type)
+				blackboard.interaction_unit = target_ally_unit
+
+				blackboard.target_ally_aid_destination:store(target_position)
+
+				path_callback = callback(self, "cb_ally_path_result", target_ally_unit)
+			elseif priority_target_enemy and enemy_unit ~= priority_target_enemy and self:_enemy_path_allowed(priority_target_enemy) then
+				target_position = self:_find_target_position_on_nav_mesh(nav_world, POSITION_LOOKUP[priority_target_enemy])
+				path_callback = callback(self, "cb_enemy_path_result", priority_target_enemy)
+			elseif enemy_unit and (enemy_unit == priority_target_enemy or enemy_unit == blackboard.urgent_target_enemy) and self:_enemy_path_allowed(enemy_unit) and not blackboard.input_extension:avoiding_aoe_threat() then
+				target_position = self:_find_target_position_on_nav_mesh(nav_world, POSITION_LOOKUP[enemy_unit])
+				path_callback = callback(self, "cb_enemy_path_result", enemy_unit)
+			elseif blackboard.target_ally_needs_aid and target_ally_need_type ~= "in_need_of_attention_look" then
+				target_position, should_stop = self:_alter_target_position(nav_world, self_pos, target_ally_unit, POSITION_LOOKUP[target_ally_unit], target_ally_need_type)
+				blackboard.interaction_unit = target_ally_unit
+
+				blackboard.target_ally_aid_destination:store(target_position)
+
+				path_callback = callback(self, "cb_ally_path_result", target_ally_unit)
+			elseif goal_selection_func_name and ALIVE[target_ally_unit] then
+				local func = LocomotionUtils[goal_selection_func_name]
+
+				target_position = func(nav_world, unit, target_ally_unit)
+			elseif unit_alive(blackboard.health_pickup) and blackboard.allowed_to_take_health_pickup and t < blackboard.health_pickup_valid_until and (self._last_health_pickup_attempt.unit ~= blackboard.health_pickup or not self._last_health_pickup_attempt.blacklist or health_slot_pickup_order_unit == blackboard.health_pickup) then
+				local pickup_unit = blackboard.health_pickup
+
+				target_position = self:_find_pickup_position_on_navmesh(nav_world, self_pos, pickup_unit, self._last_health_pickup_attempt)
+
+				local allowed_to_take_without_path = pickup_unit == health_slot_pickup_order_unit
+
+				if target_position then
+					path_callback = callback(self, "cb_health_pickup_path_result", pickup_unit)
+					blackboard.interaction_unit = pickup_unit
+				elseif allowed_to_take_without_path then
+					blackboard.interaction_unit = pickup_unit
+					blackboard.forced_pickup_unit = pickup_unit
+				end
+			elseif unit_alive(blackboard.mule_pickup) and (self._last_mule_pickup_attempt.unit ~= blackboard.mule_pickup or not self._last_mule_pickup_attempt.blacklist or potion_slot_pickup_order_unit == blackboard.mule_pickup) then
+				local pickup_unit = blackboard.mule_pickup
+
+				target_position = self:_find_pickup_position_on_navmesh(nav_world, self_pos, pickup_unit, self._last_mule_pickup_attempt)
+
+				local allowed_to_take_without_path = pickup_unit == potion_slot_pickup_order_unit
+
+				if target_position then
+					path_callback = callback(self, "cb_mule_pickup_path_result", pickup_unit)
+					blackboard.interaction_unit = pickup_unit
+				elseif allowed_to_take_without_path then
+					blackboard.interaction_unit = pickup_unit
+					blackboard.forced_pickup_unit = pickup_unit
 				end
 			end
 
-			if not (not get_hold_position and not var_44_39 and var_44_24 < Vector3.distance_squared(get_hold_position, var_44_39)) then
-				var_44_39 = nil
+			if not target_position and unit_alive(blackboard.ammo_pickup) and blackboard.has_ammo_missing and t < blackboard.ammo_pickup_valid_until then
+				local ammo_position = POSITION_LOOKUP[blackboard.ammo_pickup]
+				local dir = Vector3.normalize(self_pos - ammo_position)
+				local above, below, lateral, distance = 0.5, 1.5, INTERACT_RAY_DISTANCE - 0.3, 0
+
+				target_position = self:_find_position_on_navmesh(nav_world, ammo_position, ammo_position + dir, above, below, lateral, distance)
+
+				if target_position then
+					blackboard.interaction_unit = blackboard.ammo_pickup
+				end
 			end
 
-			if not (var_44_39 or avoiding_aoe_threat) then
-				var_44_39 = ai_bot_group_extension.data.follow_position
-				flag = true
+			local new_position_is_outside_hold_radius = not not hold_position and not not target_position and hold_position_max_distance_sq < Vector3.distance_squared(hold_position, target_position)
+
+			if new_position_is_outside_hold_radius then
+				target_position = nil
 			end
 
-			if not var_44_40 then
+			if not target_position and not avoiding_aoe_threat then
+				target_position = ai_bot_group_extension.data.follow_position
+				moving_towards_follow_position = true
+			end
+
+			if should_stop then
 				navigation_extension:stop()
-			elseif not var_44_39 then
-				_blackboard.moving_toward_follow_position = flag
-				follow.needs_target_position_refresh = false
-				follow.follow_timer = math.lerp(num_6, num_7, Math.random())
+			elseif target_position then
+				blackboard.moving_toward_follow_position = moving_towards_follow_position
+				follow_bb.needs_target_position_refresh = false
+				follow_bb.follow_timer = math.lerp(FOLLOW_TIMER_LOWER_BOUND, FOLLOW_TIMER_UPPER_BOUND, Math.random())
 
-				follow.target_position:store(var_44_39)
+				follow_bb.target_position:store(target_position)
 
-				if not self:new_destination_distance_check(var_44_1, destination, var_44_39, navigation_extension) then
-					navigation_extension:move_to(var_44_39, var_44_42)
+				if self:new_destination_distance_check(self_pos, previous_destination, target_position, navigation_extension) then
+					navigation_extension:move_to(target_position, path_callback)
 				end
 
-				_blackboard.using_navigation_destination_override = false
+				blackboard.using_navigation_destination_override = false
 			end
 		end
 
-		if not _blackboard.using_navigation_destination_override then
-			navigation_extension:move_to(follow.target_position:unbox())
+		if blackboard.using_navigation_destination_override then
+			navigation_extension:move_to(follow_bb.target_position:unbox())
 
-			_blackboard.using_navigation_destination_override = false
+			blackboard.using_navigation_destination_override = false
 		end
 
 		local current_goal = navigation_extension:current_goal()
-		local system_2 = Managers.state.entity:system("area_damage_system")
+		local area_damage_system = Managers.state.entity:system("area_damage_system")
 
-		if not current_goal and not system_2:is_position_in_liquid(current_goal, BotNavTransitionManager.NAV_COST_MAP_LAYERS) then
+		if current_goal and area_damage_system:is_position_in_liquid(current_goal, BotNavTransitionManager.NAV_COST_MAP_LAYERS) then
 			navigation_extension:stop()
 		end
 	end
 end
 
-local tbl_5 = {
+local PICKUP_ROTATIONS = {
 	QuaternionBox(Quaternion(Vector3.up(), 0)),
 	QuaternionBox(Quaternion(Vector3.up(), math.pi * 0.25)),
 	QuaternionBox(Quaternion(Vector3.up(), -math.pi * 0.25)),
@@ -1927,104 +2124,102 @@ local tbl_5 = {
 	QuaternionBox(Quaternion(Vector3.up(), math.pi))
 }
 
-PlayerBotBase._find_pickup_position_on_navmesh = function (arg_45_0, arg_45_1, arg_45_2, arg_45_3, arg_45_4)
+PlayerBotBase._find_pickup_position_on_navmesh = function (self, nav_world, self_pos, pickup_unit, pickup_attempt)
 	-- function 45
-	local num = 1.5
-	local num_2 = 2.2
-	local num_3 = 0.1
-	local num_4 = INTERACT_RAY_DISTANCE - 0.3
-	local count = #tbl_5
-	local var_45_5 = POSITION_LOOKUP[arg_45_3]
+	local above, below = 1.5, 2.2
+	local STEP = 0.1
+	local range = INTERACT_RAY_DISTANCE - 0.3
+	local max_index = #PICKUP_ROTATIONS
+	local pickup_pos = POSITION_LOOKUP[pickup_unit]
 
-	if arg_45_4.unit ~= arg_45_3 then
-		arg_45_4.unit = arg_45_3
-		arg_45_4.index = 1
-		arg_45_4.distance = 0
-		arg_45_4.path_failed = true
+	if pickup_attempt.unit ~= pickup_unit then
+		pickup_attempt.unit = pickup_unit
+		pickup_attempt.index = 1
+		pickup_attempt.distance = 0
+		pickup_attempt.path_failed = true
 
-		arg_45_4.rotation:store(Quaternion.look(Vector3.flat(arg_45_2 - var_45_5), Vector3.up()))
+		pickup_attempt.rotation:store(Quaternion.look(Vector3.flat(self_pos - pickup_pos), Vector3.up()))
 
-		arg_45_4.blacklist = false
+		pickup_attempt.blacklist = false
 	end
 
-	if not arg_45_4.path_failed then
-		local index = arg_45_4.index
-		local unbox = arg_45_4.rotation:unbox()
-		local distance = arg_45_4.distance
-		local var_45_9
+	if pickup_attempt.path_failed then
+		local index = pickup_attempt.index
+		local attempt_rotation = pickup_attempt.rotation:unbox()
+		local dist = pickup_attempt.distance
+		local found_position
 
-		while not (not (index <= count) or var_45_9) do
-			local multiply = Quaternion.multiply(tbl_5[index]:unbox(), unbox)
-			local forward = Quaternion.forward(multiply)
+		while index <= max_index and not found_position do
+			local rot = Quaternion.multiply(PICKUP_ROTATIONS[index]:unbox(), attempt_rotation)
+			local dir = Quaternion.forward(rot)
 
-			distance = math.min(distance + num_3, 1)
+			dist = math.min(dist + STEP, 1)
 
-			local num_5 = var_45_5 + forward * (distance * num_4)
-			local triangle_from_position, var_45_14 = GwNavQueries.triangle_from_position(arg_45_1, num_5, num, num_2)
+			local pos = pickup_pos + dir * (dist * range)
+			local success, z = GwNavQueries.triangle_from_position(nav_world, pos, above, below)
 
-			if not triangle_from_position then
-				num_5.z = var_45_14
+			if success then
+				pos.z = z
 
-				if distance >= 0.8 then
-					var_45_9 = num_5
+				if dist >= 0.8 then
+					found_position = pos
 				else
-					local num_6 = num_5 + (1 - distance) * forward * num_4
-					local raycast, var_45_17 = GwNavQueries.raycast(arg_45_1, num_5, num_6)
+					local ray_end_pos = pos + (1 - dist) * dir * range
+					local success, ray_hit_pos = GwNavQueries.raycast(nav_world, pos, ray_end_pos)
 
-					if not raycast then
-						var_45_9 = num_6
-						distance = 1
+					if success then
+						found_position = ray_end_pos
+						dist = 1
 					else
-						var_45_9 = 0.1 * num_5 + var_45_17 * 0.9
-						distance = Vector3.dot(Vector3.flat(var_45_9 - var_45_5), forward)
+						found_position = 0.1 * pos + ray_hit_pos * 0.9
+						dist = Vector3.dot(Vector3.flat(found_position - pickup_pos), dir)
 					end
 				end
 			end
 
-			if distance >= 1 - FLAT_MOVE_TO_EPSILON then
+			if dist >= 1 - FLAT_MOVE_TO_EPSILON then
 				index = index + 1
-				distance = 0
+				dist = 0
 			end
 		end
 
-		arg_45_4.distance = distance
-		arg_45_4.index = index
+		pickup_attempt.distance = dist
+		pickup_attempt.index = index
 
-		if not var_45_9 then
-			arg_45_4.path_failed = false
+		if found_position then
+			pickup_attempt.path_failed = false
 
-			arg_45_4.path_position:store(var_45_9)
+			pickup_attempt.path_position:store(found_position)
 
-			return var_45_9
+			return found_position
 		else
-			arg_45_4.blacklist = true
+			pickup_attempt.blacklist = true
 
 			return
 		end
 	else
-		return arg_45_4.path_position:unbox()
+		return pickup_attempt.path_position:unbox()
 	end
 end
 
-PlayerBotBase._find_position_on_navmesh = function (arg_46_0, arg_46_1, arg_46_2, arg_46_3, arg_46_4, arg_46_5, arg_46_6, arg_46_7)
+PlayerBotBase._find_position_on_navmesh = function (self, nav_world, original_position, offset_position, above, below, lateral, distance)
 	-- function 46
-	local triangle_from_position, var_46_1 = GwNavQueries.triangle_from_position(arg_46_1, arg_46_3, arg_46_4, arg_46_5)
+	local success, z = GwNavQueries.triangle_from_position(nav_world, offset_position, above, below)
 
-	if not triangle_from_position then
-		return Vector3(arg_46_3.x, arg_46_3.y, var_46_1)
+	if success then
+		return Vector3(offset_position.x, offset_position.y, z)
 	else
-		local triangle_from_position_2, var_46_3 = GwNavQueries.triangle_from_position(arg_46_1, arg_46_2, arg_46_4, arg_46_5)
-		local var_46_4 = var_46_3
+		success, z = GwNavQueries.triangle_from_position(nav_world, original_position, above, below)
 
-		if not triangle_from_position_2 then
-			return Vector3(arg_46_3.x, arg_46_3.y, var_46_4)
+		if success then
+			return Vector3(offset_position.x, offset_position.y, z)
 		else
-			return GwNavQueries.inside_position_from_outside_position(arg_46_1, arg_46_2, arg_46_4, arg_46_5, arg_46_6, arg_46_7)
+			return GwNavQueries.inside_position_from_outside_position(nav_world, original_position, above, below, lateral, distance)
 		end
 	end
 end
 
-PlayerBotBase.unit_removed_from_game = function (arg_47_0)
+PlayerBotBase.unit_removed_from_game = function (self)
 	-- function 47
 	return
 end
@@ -2033,43 +2228,43 @@ PlayerBotBase.destroy = function (self)
 	-- function 48
 	self._brain:destroy()
 
-	if not self._blackboard.taking_cover.cover_unit then
+	if self._blackboard.taking_cover.cover_unit then
 		Managers.state.entity:system("ai_bot_group_system"):set_in_cover(self._unit, nil)
 	end
 end
 
-PlayerBotBase._debug_draw_update = function (self, arg_49_1)
+PlayerBotBase._debug_draw_update = function (self, dt)
 	-- function 49
-	if not script_data.debug_behaviour_trees then
+	if script_data.debug_behaviour_trees then
 		self._brain:debug_draw_behaviours()
 	end
 
-	local str = "bot_debug" .. self._player.player_name
+	local drawer_name = "bot_debug" .. self._player.player_name
 	local drawer = Managers.state.debug:drawer({
 		mode = "immediate",
-		name = str
+		name = drawer_name
 	})
-	local num = Unit.local_position(self._unit, 0) + Vector3.up() * 2
-	local unbox = self._player.color:unbox()
+	local debug_sphere_position = Unit.local_position(self._unit, 0) + Vector3.up() * 2
+	local color = self._player.color:unbox()
 
-	drawer:sphere(num, 0.25, unbox)
+	drawer:sphere(debug_sphere_position, 0.25, color)
 
-	local _blackboard = self._blackboard
-	local target_unit = _blackboard.target_unit
-	local target_ally_unit = _blackboard.target_ally_unit
-	local num_2 = self._player:local_player_id() * 0.05
+	local blackboard = self._blackboard
+	local enemy = blackboard.target_unit
+	local ally = blackboard.target_ally_unit
+	local radius_offset = self._player:local_player_id() * 0.05
 
-	if not ALIVE[target_unit] then
-		local world_pose = Unit.world_pose(target_unit, 0)
-		local num_3 = 1.5 + num_2
+	if ALIVE[enemy] then
+		local enemy_pose = Unit.world_pose(enemy, 0)
+		local z_offset = 1.5 + radius_offset
 
-		Matrix4x4.set_translation(world_pose, POSITION_LOOKUP[target_unit] + Vector3.up() * num_3)
-		drawer:line(num, Unit.world_position(target_unit, 0) + Vector3(0, 0, 1.5), Color(125, 255, 0, 0))
-		drawer:box(world_pose, Vector3(0.5 + num_2, 0.5 + num_2, num_3), unbox)
+		Matrix4x4.set_translation(enemy_pose, POSITION_LOOKUP[enemy] + Vector3.up() * z_offset)
+		drawer:line(debug_sphere_position, Unit.world_position(enemy, 0) + Vector3(0, 0, 1.5), Color(125, 255, 0, 0))
+		drawer:box(enemy_pose, Vector3(0.5 + radius_offset, 0.5 + radius_offset, z_offset), color)
 	end
 
-	if not ALIVE[target_ally_unit] then
-		drawer:circle(POSITION_LOOKUP[target_ally_unit] + Vector3(0, 0, 0.2), 0.6 + num_2, Vector3.up(), unbox, 16)
+	if ALIVE[ally] then
+		drawer:circle(POSITION_LOOKUP[ally] + Vector3(0, 0, 0.2), 0.6 + radius_offset, Vector3.up(), color, 16)
 	end
 
 	self._brain:debug_draw_current_behavior()
@@ -2081,146 +2276,163 @@ PlayerBotBase.clear_failed_paths = function (self)
 	table.clear(self._attempted_enemy_paths)
 end
 
-PlayerBotBase.cb_enemy_path_result = function (self, arg_51_1, arg_51_2, arg_51_3, arg_51_4)
+PlayerBotBase.cb_enemy_path_result = function (self, enemy_unit, success, destination, forced_callback)
 	-- function 51
-	if not arg_51_4 then
+	if forced_callback then
 		return
 	end
 
-	local _attempted_enemy_paths = self._attempted_enemy_paths
-	local var_51_1 = _attempted_enemy_paths[arg_51_1]
+	local paths = self._attempted_enemy_paths
+	local path_status = paths[enemy_unit]
 
-	if not var_51_1 then
-		var_51_1 = {
+	if not path_status then
+		path_status = {
 			last_path_destination = Vector3Box()
 		}
-		_attempted_enemy_paths[arg_51_1] = var_51_1
+		paths[enemy_unit] = path_status
 	end
 
-	local flag = not arg_51_2
+	local fail = not success
 
-	if not flag then
+	if fail then
 		self._blackboard.follow.needs_target_position_refresh = true
 	end
 
-	var_51_1.failed = flag
+	path_status.failed = fail
 
-	var_51_1.last_path_destination:store(arg_51_3)
+	path_status.last_path_destination:store(destination)
 
-	for k, v in pairs(_attempted_enemy_paths) do
-		if not alive(k) then
-			_attempted_enemy_paths[k] = nil
+	for unit, path in pairs(paths) do
+		if not unit_alive(unit) then
+			paths[unit] = nil
 		end
 	end
 end
 
-PlayerBotBase._enemy_path_allowed = function (self, arg_52_1)
+PlayerBotBase._enemy_path_allowed = function (self, enemy_unit)
 	-- function 52
-	local var_52_0 = self._attempted_enemy_paths[arg_52_1]
-	local var_52_1 = POSITION_LOOKUP[arg_52_1]
+	local path_status = self._attempted_enemy_paths[enemy_unit]
+	local enemy_pos = POSITION_LOOKUP[enemy_unit]
 
-	if not (not var_52_0 and not var_52_0.failed and not (Vector3.distance_squared(var_52_1, var_52_0.last_path_destination:unbox()) < num_8) or not (math.abs(var_52_1.z - var_52_0.last_path_destination:unbox().z) < num_9)) then
+	if path_status and path_status.failed and Vector3.distance_squared(enemy_pos, path_status.last_path_destination:unbox()) < ENEMY_PATH_FAILED_REPATH_THRESHOLD and math.abs(enemy_pos.z - path_status.last_path_destination:unbox().z) < ENEMY_PATH_FAILED_REPATH_VERTICAL_THRESHOLD then
 		return false
 	end
 
 	return true
 end
 
-PlayerBotBase.cb_health_pickup_path_result = function (self, arg_53_1, arg_53_2, arg_53_3, arg_53_4)
+PlayerBotBase.cb_health_pickup_path_result = function (self, pickup_unit, success, destination, forced_callback)
 	-- function 53
-	if not arg_53_4 then
+	if forced_callback then
 		return
 	end
 
-	if arg_53_1 == self._last_health_pickup_attempt.unit then
-		self._last_health_pickup_attempt.path_failed = not arg_53_2
+	if pickup_unit == self._last_health_pickup_attempt.unit then
+		self._last_health_pickup_attempt.path_failed = not success
 	end
 end
 
-PlayerBotBase.cb_mule_pickup_path_result = function (self, arg_54_1, arg_54_2, arg_54_3, arg_54_4)
+PlayerBotBase.cb_mule_pickup_path_result = function (self, pickup_unit, success, destination, forced_callback)
 	-- function 54
-	if not arg_54_4 then
+	if forced_callback then
 		return
 	end
 
-	if arg_54_1 == self._last_mule_pickup_attempt.unit then
-		self._last_mule_pickup_attempt.path_failed = not arg_54_2
+	if pickup_unit == self._last_mule_pickup_attempt.unit then
+		self._last_mule_pickup_attempt.path_failed = not success
 	end
 end
 
-PlayerBotBase.cb_ally_path_result = function (self, arg_55_1, arg_55_2, arg_55_3, arg_55_4)
+PlayerBotBase.cb_ally_path_result = function (self, ally_unit, success, destination, forced_callback)
 	-- function 55
-	local _attempted_ally_paths = self._attempted_ally_paths
-	local var_55_1 = _attempted_ally_paths[arg_55_1]
+	local paths = self._attempted_ally_paths
+	local path_status = paths[ally_unit]
 
-	if not var_55_1 then
-		var_55_1 = {
+	if not path_status then
+		path_status = {
 			last_path_destination = Vector3Box()
 		}
-		_attempted_ally_paths[arg_55_1] = var_55_1
+		paths[ally_unit] = path_status
 	end
 
-	local flag = not arg_55_2
+	local fail = not success
 
-	var_55_1.failed = flag
+	path_status.failed = fail
 
-	var_55_1.last_path_destination:store(arg_55_3)
+	path_status.last_path_destination:store(destination)
 
-	var_55_1.forced_callback = arg_55_4
+	path_status.forced_callback = forced_callback
 
-	if not flag then
-		var_55_1.ignore_ally_from = Managers.time:time("game")
+	if fail then
+		path_status.ignore_ally_from = Managers.time:time("game")
 	else
-		var_55_1.ignore_ally_from = -math.huge
+		path_status.ignore_ally_from = -math.huge
 	end
 
-	for k, v in pairs(_attempted_ally_paths) do
-		if not alive(k) then
-			_attempted_ally_paths[k] = nil
+	for unit, path in pairs(paths) do
+		if not unit_alive(unit) then
+			paths[unit] = nil
 		end
 	end
 end
 
-local num_28 = 25
-local num_29 = 225
-local num_30 = 3
-local num_31 = 12
+local ALLY_PATH_TIME_MIN_DISTANCE_SQ = 25
+local ALLY_PATH_TIME_MAX_DISTANCE_SQ = 225
+local ALLY_PATH_MIN_DISTANCE_TIME = 3
+local ALLY_PATH_MAX_DISTANCE_TIME = 12
 
-PlayerBotBase._ally_path_allowed = function (self, arg_56_1, arg_56_2, arg_56_3)
+PlayerBotBase._ally_path_allowed = function (self, self_unit, ally_unit, t)
 	-- function 56
-	local var_56_0 = self._attempted_ally_paths[arg_56_2]
+	local path_status = self._attempted_ally_paths[ally_unit]
 
-	if not var_56_0 and not var_56_0.failed then
-		local var_56_1 = POSITION_LOOKUP[arg_56_1]
-		local var_56_2 = POSITION_LOOKUP[arg_56_2]
-		local distance_squared = Vector3.distance_squared(var_56_1, var_56_2)
-		local inv_lerp_clamped = math.inv_lerp_clamped(num_28, num_29, distance_squared)
-		local lerp = math.lerp(num_30, num_31, inv_lerp_clamped)
+	if path_status and path_status.failed then
+		local self_position = POSITION_LOOKUP[self_unit]
+		local ally_position = POSITION_LOOKUP[ally_unit]
+		local ally_distance_sq = Vector3.distance_squared(self_position, ally_position)
+		local p = math.inv_lerp_clamped(ALLY_PATH_TIME_MIN_DISTANCE_SQ, ALLY_PATH_TIME_MAX_DISTANCE_SQ, ally_distance_sq)
+		local wait_time = math.lerp(ALLY_PATH_MIN_DISTANCE_TIME, ALLY_PATH_MAX_DISTANCE_TIME, p)
 
-		if arg_56_3 > var_56_0.ignore_ally_from + lerp then
+		if t > path_status.ignore_ally_from + wait_time then
 			return true, true
 		end
 
-		local conflict = Managers.state.conflict
-		local get_player_unit_segment = conflict:get_player_unit_segment(self._unit)
+		local conflict_director = Managers.state.conflict
+		local get_player_unit_segment = conflict_director:get_player_unit_segment(self._unit)
 
-		get_player_unit_segment = get_player_unit_segment or -1
+		if not get_player_unit_segment then
+			-- Nothing
+		end
 
-		local get_player_unit_segment_2 = conflict:get_player_unit_segment(arg_56_2)
+		get_player_unit_segment = -1
 
-		get_player_unit_segment_2 = get_player_unit_segment_2 or -1
+		local self_segment = get_player_unit_segment
 
-		local var_56_9
-		local flag
+		::label_56_0::
 
-		flag = (not (get_player_unit_segment < get_player_unit_segment_2) or not 1 or not (get_player_unit_segment_2 < get_player_unit_segment)) and (not 10 or 5)
+		local get_player_unit_segment_2 = conflict_director:get_player_unit_segment(ally_unit)
 
-		if not (arg_56_3 > var_56_0.ignore_ally_from + flag) then
-			local unbox = var_56_0.last_path_destination:unbox()
-			local flag_2 = Vector3.distance_squared(var_56_2, unbox) > num_10
-			local forced_callback = var_56_0.forced_callback
+		if not get_player_unit_segment_2 then
+			-- Nothing
+		end
 
-			return true, flag_2 or forced_callback
+		get_player_unit_segment_2 = -1
+
+		local target_segment = get_player_unit_segment_2
+
+		::label_56_1::
+
+		local ignore_for
+
+		ignore_for = (not (self_segment < target_segment) or not 1) and (not (target_segment < self_segment) or not 10) and not not 5
+
+		local no_longer_ignored = t > path_status.ignore_ally_from + ignore_for
+
+		if no_longer_ignored then
+			local last_path_destination = path_status.last_path_destination:unbox()
+			local has_moved = Vector3.distance_squared(ally_position, last_path_destination) > ALLY_PATH_FAILED_REPATH_THRESHOLD
+			local forced_callback = path_status.forced_callback
+
+			return true, not not has_moved or not not forced_callback
 		else
 			return false, false
 		end
@@ -2229,52 +2441,50 @@ PlayerBotBase._ally_path_allowed = function (self, arg_56_1, arg_56_2, arg_56_3)
 	end
 end
 
-local function fn_5(self)
+local function find_chain_times(allowed_chain_actions)
 	-- function 57
-	if not self then
+	if not allowed_chain_actions then
 		return 1, 0, 1, 0
 	end
 
-	local huge = math.huge
-	local num = -math.huge
-	local num_2 = 1
-	local num_3 = 1
+	local min, max = math.huge, -math.huge
+	local min_idx, max_idx = 1, 1
 
-	for i = 1, #self do
-		local var_57_4 = self[i]
+	for i = 1, #allowed_chain_actions do
+		local chain = allowed_chain_actions[i]
 
-		if not var_57_4.input and var_57_4.action == nil and var_57_4.sub_action == nil or not string.find(var_57_4.input, "action_one") then
-			local start_time = var_57_4.start_time
+		if chain.input and chain.action ~= nil and chain.sub_action ~= nil and string.find(chain.input, "action_one") then
+			local chain_start = chain.start_time
 
-			if start_time < huge then
-				huge = start_time
-				num_2 = i
+			if chain_start < min then
+				min = chain_start
+				min_idx = i
 			end
 
-			if num < start_time then
-				num = start_time
-				num_3 = i
+			if max < chain_start then
+				max = chain_start
+				max_idx = i
 			end
 		end
 	end
 
-	return num_2, huge, num_3, num
+	return min_idx, min, max_idx, max
 end
 
-PlayerBotBase._update_weapon_metadata = function (arg_58_0, arg_58_1)
+PlayerBotBase._update_weapon_metadata = function (self, template)
 	-- function 58
-	local flag = not arg_58_1 and arg_58_1.attack_meta_data
+	local metadata = not not template and not not template.attack_meta_data
 
-	if not (not flag and arg_58_1._precalculated_metadata) then
-		print("updating bot weapon metadata for weapon:", not arg_58_1 and arg_58_1.name)
+	if metadata and not template._precalculated_metadata then
+		print("updating bot weapon metadata for weapon:", not not template and not not template.name)
 
-		local get_used_actions = WeaponUtils.get_used_actions(arg_58_1)
+		local used_actions = WeaponUtils.get_used_actions(template)
 
-		if not get_used_actions.action_one then
-			local action_one = arg_58_1.actions.action_one
-			local num = 0
-			local num_2 = 6
-			local tbl = {
+		if used_actions.action_one then
+			local weapon_attacks = template.actions.action_one
+			local data_count = 0
+			local armor_types = 6
+			local light_attack_data = {
 				total_chain_time = 0,
 				armor_mods = {
 					0,
@@ -2285,7 +2495,7 @@ PlayerBotBase._update_weapon_metadata = function (arg_58_0, arg_58_1)
 					0
 				}
 			}
-			local tbl_2 = {
+			local heavy_attack_data = {
 				total_chain_time = 0,
 				armor_mods = {
 					0,
@@ -2297,174 +2507,213 @@ PlayerBotBase._update_weapon_metadata = function (arg_58_0, arg_58_1)
 				}
 			}
 
-			for k, v in pairs(get_used_actions.action_one) do
-				local var_58_7 = action_one[k]
+			for name, _ in pairs(used_actions.action_one) do
+				local current_attack = weapon_attacks[name]
 
-				if not ActionUtils.is_melee_start_sub_action(var_58_7) then
-					local allowed_chain_actions = var_58_7.allowed_chain_actions
-					local anim_time_scale = var_58_7.anim_time_scale
+				if ActionUtils.is_melee_start_sub_action(current_attack) then
+					local chain_attacks = current_attack.allowed_chain_actions
+					local anim_time_scale = current_attack.anim_time_scale
 
-					anim_time_scale = anim_time_scale or 1
+					if not anim_time_scale then
+						-- Nothing
+					end
 
-					local var_58_10, var_58_11, var_58_12, var_58_13 = fn_5(allowed_chain_actions)
+					anim_time_scale = 1
 
-					tbl.total_chain_time = tbl.total_chain_time + var_58_11 * anim_time_scale
-					tbl_2.total_chain_time = tbl_2.total_chain_time + var_58_13 * anim_time_scale
+					local anim_speed_scale = anim_time_scale
 
-					local action = allowed_chain_actions[var_58_10].action
-					local sub_action = allowed_chain_actions[var_58_10].sub_action
-					local var_58_16 = arg_58_1.actions[action][sub_action]
-					local flag_2 = var_58_16.anim_time_scale or 1
-					local var_58_18, var_58_19 = fn_5(var_58_16.allowed_chain_actions)
+					::label_58_0::
 
-					tbl.total_chain_time = tbl.total_chain_time + var_58_19 * flag_2
+					local min_idx, min, max_idx, max = find_chain_times(chain_attacks)
 
-					local get_performance_scores_for_sub_action = ActionUtils.get_performance_scores_for_sub_action(var_58_16)
-					local action_2 = allowed_chain_actions[var_58_12].action
-					local sub_action_2 = allowed_chain_actions[var_58_12].sub_action
-					local var_58_23 = arg_58_1.actions[action_2][sub_action_2]
-					local flag_3 = var_58_23.anim_time_scale or 1
-					local var_58_25, var_58_26 = fn_5(var_58_23.allowed_chain_actions)
+					light_attack_data.total_chain_time = light_attack_data.total_chain_time + min * anim_speed_scale
+					heavy_attack_data.total_chain_time = heavy_attack_data.total_chain_time + max * anim_speed_scale
 
-					tbl_2.total_chain_time = tbl_2.total_chain_time + var_58_26 * flag_3
+					local chain_action_name = chain_attacks[min_idx].action
+					local chain_sub_action_name = chain_attacks[min_idx].sub_action
+					local chain_action = template.actions[chain_action_name][chain_sub_action_name]
 
-					local get_performance_scores_for_sub_action_2 = ActionUtils.get_performance_scores_for_sub_action(var_58_23)
+					anim_speed_scale = not not chain_action.anim_time_scale or not not 1
+					min_idx, min = find_chain_times(chain_action.allowed_chain_actions)
+					light_attack_data.total_chain_time = light_attack_data.total_chain_time + min * anim_speed_scale
 
-					if not get_performance_scores_for_sub_action and not get_performance_scores_for_sub_action_2 then
-						for k_2 = 1, num_2 do
-							tbl.armor_mods[k_2] = tbl.armor_mods[k_2] + get_performance_scores_for_sub_action[k_2]
-							tbl_2.armor_mods[k_2] = tbl_2.armor_mods[k_2] + get_performance_scores_for_sub_action_2[k_2]
+					local light_armor_mods = ActionUtils.get_performance_scores_for_sub_action(chain_action)
+
+					chain_action_name = chain_attacks[max_idx].action
+					chain_sub_action_name = chain_attacks[max_idx].sub_action
+					chain_action = template.actions[chain_action_name][chain_sub_action_name]
+					anim_speed_scale = not not chain_action.anim_time_scale or not not 1
+					min_idx, min = find_chain_times(chain_action.allowed_chain_actions)
+					heavy_attack_data.total_chain_time = heavy_attack_data.total_chain_time + min * anim_speed_scale
+
+					local heavy_armor_mods = ActionUtils.get_performance_scores_for_sub_action(chain_action)
+
+					if light_armor_mods and heavy_armor_mods then
+						for i = 1, armor_types do
+							light_attack_data.armor_mods[i] = light_attack_data.armor_mods[i] + light_armor_mods[i]
+							heavy_attack_data.armor_mods[i] = heavy_attack_data.armor_mods[i] + heavy_armor_mods[i]
 						end
 
-						num = num + 1
+						data_count = data_count + 1
 					end
 				end
 			end
 
-			local tap_attack = flag.tap_attack
+			local light_meta = metadata.tap_attack
 
-			if not tap_attack then
-				for l = 1, #tbl.armor_mods do
-					tbl.armor_mods[l] = tbl.armor_mods[l] / num
+			if light_meta then
+				for i = 1, #light_attack_data.armor_mods do
+					light_attack_data.armor_mods[i] = light_attack_data.armor_mods[i] / data_count
 				end
 
-				tap_attack.armor_modifiers = tbl.armor_mods
-				tap_attack.speed_mod = 1 / math.clamp(tbl.total_chain_time / num, 0.1, 10)
+				light_meta.armor_modifiers = light_attack_data.armor_mods
+				light_meta.speed_mod = 1 / math.clamp(light_attack_data.total_chain_time / data_count, 0.1, 10)
 			end
 
-			local hold_attack = flag.hold_attack
+			local hold_attack = metadata.hold_attack
 
-			if not hold_attack then
-				for i4 = 1, #tbl_2.armor_mods do
-					tbl_2.armor_mods[i4] = tbl_2.armor_mods[i4] / num
+			if hold_attack then
+				for i = 1, #heavy_attack_data.armor_mods do
+					heavy_attack_data.armor_mods[i] = heavy_attack_data.armor_mods[i] / data_count
 				end
 
-				hold_attack.armor_modifiers = tbl_2.armor_mods
-				hold_attack.speed_mod = 1 / math.clamp(tbl_2.total_chain_time / num, 0.1, 10)
+				hold_attack.armor_modifiers = heavy_attack_data.armor_mods
+				hold_attack.speed_mod = 1 / math.clamp(heavy_attack_data.total_chain_time / data_count, 0.1, 10)
 			end
 		end
 
-		arg_58_1._precalculated_metadata = true
+		template._precalculated_metadata = true
 	end
 end
 
-PlayerBotBase._update_weapon_loadout_data = function (self, arg_59_1)
+PlayerBotBase._update_weapon_loadout_data = function (self, force)
 	-- function 59
-	local _blackboard = self._blackboard
-	local inventory_extension = _blackboard.inventory_extension
-	local recently_acquired = inventory_extension:recently_acquired("slot_melee")
-	local recently_acquired_2 = inventory_extension:recently_acquired("slot_ranged")
+	local blackboard = self._blackboard
+	local inventory_ext = blackboard.inventory_extension
+	local recently_acquired_melee = inventory_ext:recently_acquired("slot_melee")
+	local recently_acquired_ranged = inventory_ext:recently_acquired("slot_ranged")
 
-	if recently_acquired or recently_acquired_2 or not arg_59_1 then
-		local get_slot_data = inventory_extension:get_slot_data("slot_melee")
-		local flag = not get_slot_data and inventory_extension:get_item_template(get_slot_data)
-		local flag_2 = not flag and flag.buff_type
-		local get_slot_data_2 = inventory_extension:get_slot_data("slot_ranged")
-		local flag_3 = not get_slot_data_2 and inventory_extension:get_item_template(get_slot_data_2)
-		local flag_4 = not flag_3 and flag_3.buff_type
+	if recently_acquired_melee or recently_acquired_ranged or force then
+		local slot_data = inventory_ext:get_slot_data("slot_melee")
+		local slot_template = not not slot_data and not not inventory_ext:get_item_template(slot_data)
+		local slot_buff_type = not not slot_template and not not slot_template.buff_type
+		local alt_slot_data = inventory_ext:get_slot_data("slot_ranged")
+		local alt_slot_template = not not alt_slot_data and not not inventory_ext:get_item_template(alt_slot_data)
+		local alt_slot_buff_type = not not alt_slot_template and not not alt_slot_template.buff_type
 
-		if not MeleeBuffTypes[flag_2] and not MeleeBuffTypes[flag_4] then
-			_blackboard.double_weapons = "slot_melee"
-		elseif not RangedBuffTypes[flag_2] and not RangedBuffTypes[flag_4] then
-			_blackboard.double_weapons = "slot_ranged"
+		if MeleeBuffTypes[slot_buff_type] and MeleeBuffTypes[alt_slot_buff_type] then
+			blackboard.double_weapons = "slot_melee"
+		elseif RangedBuffTypes[slot_buff_type] and RangedBuffTypes[alt_slot_buff_type] then
+			blackboard.double_weapons = "slot_ranged"
 		else
-			_blackboard.double_weapons = nil
+			blackboard.double_weapons = nil
 		end
 
-		self:_update_weapon_metadata(flag)
-		self:_update_weapon_metadata(flag_3)
+		self:_update_weapon_metadata(slot_template)
+		self:_update_weapon_metadata(alt_slot_template)
 	end
 end
 
 PlayerBotBase._update_best_weapon = function (self)
 	-- function 60
-	local _blackboard = self._blackboard
+	local blackboard = self._blackboard
 
-	if not _blackboard.double_weapons then
+	if not blackboard.double_weapons then
 		return
 	end
 
-	local get_combat_conditions = AiUtils.get_combat_conditions(_blackboard)
-	local weapon_scores = _blackboard.weapon_scores
+	local combat_conditions = AiUtils.get_combat_conditions(blackboard)
+	local weapon_scores = blackboard.weapon_scores
 
-	weapon_scores = weapon_scores or {}
+	if not weapon_scores then
+		-- Nothing
+	end
 
-	local slot_melee = weapon_scores.slot_melee
+	weapon_scores = {}
 
-	slot_melee = slot_melee or {}
+	local weapons_scores = weapon_scores
 
-	local slot_ranged = weapon_scores.slot_ranged
+	::label_60_0::
 
-	slot_ranged = slot_ranged or {}
+	local slot_melee_2 = weapons_scores.slot_melee
 
-	local inventory_extension = _blackboard.inventory_extension
-	local get_slot_data = inventory_extension:get_slot_data("slot_melee")
-	local get_item_template = inventory_extension:get_item_template(get_slot_data)
+	if not slot_melee_2 then
+		-- Nothing
+	end
 
-	slot_melee.input, slot_melee.meta, slot_melee.score = AiUtils.get_melee_weapon_score(get_combat_conditions, get_item_template)
+	slot_melee_2 = {}
+
+	local slot_melee = slot_melee_2
+
+	::label_60_1::
+
+	local slot_ranged_2 = weapons_scores.slot_ranged
+
+	if not slot_ranged_2 then
+		-- Nothing
+	end
+
+	slot_ranged_2 = {}
+
+	local slot_ranged = slot_ranged_2
+
+	::label_60_2::
+
+	local inventory = blackboard.inventory_extension
+	local melee_slot_data = inventory:get_slot_data("slot_melee")
+	local melee_item_template = inventory:get_item_template(melee_slot_data)
+
+	slot_melee.input, slot_melee.meta, slot_melee.score = AiUtils.get_melee_weapon_score(combat_conditions, melee_item_template)
 	slot_melee.score = slot_melee.score
 
-	local get_slot_data_2 = inventory_extension:get_slot_data("slot_ranged")
-	local get_item_template_2 = inventory_extension:get_item_template(get_slot_data_2)
+	local ranged_slot_data = inventory:get_slot_data("slot_ranged")
+	local ranged_item_template = inventory:get_item_template(ranged_slot_data)
 
-	slot_ranged.input, slot_ranged.meta, slot_ranged.score = AiUtils.get_melee_weapon_score(get_combat_conditions, get_item_template_2)
+	slot_ranged.input, slot_ranged.meta, slot_ranged.score = AiUtils.get_melee_weapon_score(combat_conditions, ranged_item_template)
 	slot_ranged.score = slot_ranged.score
-	weapon_scores.slot_melee = slot_melee
-	weapon_scores.slot_ranged = slot_ranged
-	_blackboard.weapon_scores = weapon_scores
+	weapons_scores.slot_melee = slot_melee
+	weapons_scores.slot_ranged = slot_ranged
+	blackboard.weapon_scores = weapons_scores
 end
 
 PlayerBotBase._update_reload = function (self)
 	-- function 61
-	local _blackboard = self._blackboard
-	local inventory_extension = _blackboard.inventory_extension
-	local get_slot_data = inventory_extension:get_slot_data("slot_ranged")
-	local flag = not get_slot_data and get_slot_data.right_unit_1p
-	local flag_2 = not get_slot_data and get_slot_data.left_unit_1p
-	local get_ammo_extension = GearUtils.get_ammo_extension(flag, flag_2)
-	local var_61_6
+	local blackboard = self._blackboard
+	local inventory = blackboard.inventory_extension
+	local ranged_slot_data = inventory:get_slot_data("slot_ranged")
+	local right_unit_1p = not not ranged_slot_data and not not ranged_slot_data.right_unit_1p
+	local left_unit_1p = not not ranged_slot_data and not not ranged_slot_data.left_unit_1p
+	local ammo_extension = GearUtils.get_ammo_extension(right_unit_1p, left_unit_1p)
+	local wanted_slot_to_reload
 
-	if not get_ammo_extension then
-		local var_61_7
+	if ammo_extension then
+		local should_reload
 
-		if not inventory_extension:has_unique_ammo_type_weapon_equipped() then
-			var_61_7 = get_ammo_extension:total_remaining_ammo() < get_ammo_extension:max_ammo()
+		if inventory:has_unique_ammo_type_weapon_equipped() then
+			local remaining_ammo = ammo_extension:total_remaining_ammo()
+			local max_ammo = ammo_extension:max_ammo()
+
+			should_reload = remaining_ammo < max_ammo
 		else
-			var_61_7 = not not get_ammo_extension:clip_full() or get_ammo_extension:remaining_ammo() > 0 or get_ammo_extension:infinite_ammo()
+			should_reload = not ammo_extension:clip_full() and ammo_extension:remaining_ammo() > 0 or not not ammo_extension:infinite_ammo()
 		end
 
-		if not var_61_7 then
-			var_61_6 = "slot_ranged"
-		end
-	end
-
-	if var_61_6 == nil then
-		local career_extension = _blackboard.career_extension
-
-		if not (not career_extension and career_extension:career_name() ~= "dr_engineer" or not (career_extension:current_ability_cooldown() > 0) or #_blackboard.proximite_enemies ~= 0) then
-			var_61_6 = "slot_career_skill_weapon"
+		if should_reload then
+			wanted_slot_to_reload = "slot_ranged"
 		end
 	end
 
-	_blackboard.wanted_slot_to_reload = var_61_6
+	if wanted_slot_to_reload == nil then
+		local career_extension = blackboard.career_extension
+
+		if career_extension then
+			local career_name = career_extension:career_name()
+
+			if career_name == "dr_engineer" and career_extension:current_ability_cooldown() > 0 and #blackboard.proximite_enemies == 0 then
+				wanted_slot_to_reload = "slot_career_skill_weapon"
+			end
+		end
+	end
+
+	blackboard.wanted_slot_to_reload = wanted_slot_to_reload
 end

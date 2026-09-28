@@ -1,11 +1,11 @@
 -- chunkname: @scripts/settings/dlcs/bogenhafen/bogenhafen_level_settings.lua
 
-local bogenhafen = DLCSettings.bogenhafen
+local settings = DLCSettings.bogenhafen
 
-bogenhafen.level_settings = "levels/honduras_dlcs/bogenhafen/level_settings_bogenhafen"
-bogenhafen.level_unlock_settings = "levels/honduras_dlcs/bogenhafen/level_unlock_settings_bogenhafen"
-bogenhafen.terror_event_blueprints_filename = "levels/honduras_dlcs/bogenhafen/terror_events_bogenhafen"
-bogenhafen.weighted_random_terror_events = {
+settings.level_settings = "levels/honduras_dlcs/bogenhafen/level_settings_bogenhafen"
+settings.level_unlock_settings = "levels/honduras_dlcs/bogenhafen/level_unlock_settings_bogenhafen"
+settings.terror_event_blueprints_filename = "levels/honduras_dlcs/bogenhafen/terror_events_bogenhafen"
+settings.weighted_random_terror_events = {
 	dlc_bogenhafen_slum_event_spice_random = {
 		"dlc_bogenhafen_slum_event_spice_left",
 		1,
@@ -13,7 +13,7 @@ bogenhafen.weighted_random_terror_events = {
 		1
 	}
 }
-bogenhafen.missions = {
+settings.missions = {
 	bogenhafen_city_findsewer = {
 		mission_template_name = "goal",
 		text = "mission_bogenhafen_city_findsewer"

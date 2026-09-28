@@ -1,8 +1,7 @@
 -- chunkname: @scripts/ui/hud_ui/buff_presentation_ui_definitions.lua
 
-local num = 1920
-local num_2 = 1080
-local tbl = {
+local SIZE_X, SIZE_Y = 1920, 1080
+local scenegraph_definition = {
 	screen = {
 		scale = "fit",
 		position = {
@@ -11,8 +10,8 @@ local tbl = {
 			UILayer.hud
 		},
 		size = {
-			num,
-			num_2
+			SIZE_X,
+			SIZE_Y
 		}
 	},
 	presentation_widget_parent = {
@@ -58,7 +57,7 @@ local tbl = {
 		}
 	}
 }
-local tbl_2 = {
+local text_style = {
 	word_wrap = false,
 	font_size = 52,
 	localize = true,
@@ -74,7 +73,7 @@ local tbl_2 = {
 		1
 	}
 }
-local tbl_3 = {
+local widget_definitions = {
 	presentation_widget = {
 		scenegraph_id = "presentation_widget",
 		element = {
@@ -130,38 +129,38 @@ local tbl_3 = {
 		}
 	}
 }
-local tbl_4 = {
+local animation_definitions = {
 	presentation = {
 		{
 			name = "fade_in",
 			start_progress = 0,
 			end_progress = 0.3,
-			init = function (self, arg_1_1, arg_1_2, arg_1_3)
+			init = function (ui_scenegraph, scenegraph_definition, widget, params)
 				-- function 1
-				arg_1_2.style.texture_icon.color[1] = 0
-				arg_1_2.style.texture_frame.color[1] = 0
+				widget.style.texture_icon.color[1] = 0
+				widget.style.texture_frame.color[1] = 0
 
-				local size = self.presentation_widget.size
-				local size_2 = arg_1_1.presentation_widget.size
+				local current_size = ui_scenegraph.presentation_widget.size
+				local default_size = scenegraph_definition.presentation_widget.size
 
-				size[1] = size_2[1]
-				size[2] = size_2[2]
+				current_size[1] = default_size[1]
+				current_size[2] = default_size[2]
 			end,
-			update = function (self, arg_2_1, arg_2_2, arg_2_3, arg_2_4)
+			update = function (ui_scenegraph, scenegraph_definition, widget, progress, params)
 				-- function 2
-				local easeOutCubic = math.easeOutCubic(arg_2_3)
-				local catmullrom = math.catmullrom(easeOutCubic, -2, 0, 1, -5)
+				local anim_progress = math.easeOutCubic(progress)
+				local size_progress = math.catmullrom(anim_progress, -2, 0, 1, -5)
 
-				arg_2_2.style.texture_icon.color[1] = easeOutCubic * 255
-				arg_2_2.style.texture_frame.color[1] = easeOutCubic * 255
+				widget.style.texture_icon.color[1] = anim_progress * 255
+				widget.style.texture_frame.color[1] = anim_progress * 255
 
-				local size = self.presentation_widget.size
-				local size_2 = arg_2_1.presentation_widget.size
+				local current_size = ui_scenegraph.presentation_widget.size
+				local default_size = scenegraph_definition.presentation_widget.size
 
-				size[1] = math.floor(size_2[1] * catmullrom)
-				size[2] = math.floor(size_2[2] * catmullrom)
+				current_size[1] = math.floor(default_size[1] * size_progress)
+				current_size[2] = math.floor(default_size[2] * size_progress)
 			end,
-			on_complete = function (arg_3_0, arg_3_1, arg_3_2, arg_3_3)
+			on_complete = function (ui_scenegraph, scenegraph_definition, widget, params)
 				-- function 3
 				return
 			end
@@ -170,25 +169,25 @@ local tbl_4 = {
 			name = "fade_out",
 			start_progress = 0.5,
 			end_progress = 0.8,
-			init = function (arg_4_0, arg_4_1, arg_4_2, arg_4_3)
+			init = function (ui_scenegraph, scenegraph_definition, widget, params)
 				-- function 4
 				return
 			end,
-			update = function (self, arg_5_1, arg_5_2, arg_5_3, arg_5_4)
+			update = function (ui_scenegraph, scenegraph_definition, widget, progress, params)
 				-- function 5
-				local easeOutCubic = math.easeOutCubic(arg_5_3)
-				local catmullrom = math.catmullrom(easeOutCubic, 5, 0, 1, 1)
+				local anim_progress = math.easeOutCubic(progress)
+				local size_progress = math.catmullrom(anim_progress, 5, 0, 1, 1)
 
-				arg_5_2.style.texture_icon.color[1] = (1 - easeOutCubic) * 255
-				arg_5_2.style.texture_frame.color[1] = (1 - easeOutCubic) * 255
+				widget.style.texture_icon.color[1] = (1 - anim_progress) * 255
+				widget.style.texture_frame.color[1] = (1 - anim_progress) * 255
 
-				local size = self.presentation_widget.size
-				local size_2 = arg_5_1.presentation_widget.size
+				local current_size = ui_scenegraph.presentation_widget.size
+				local default_size = scenegraph_definition.presentation_widget.size
 
-				size[1] = size_2[1] - math.floor(20 * catmullrom)
-				size[2] = size_2[2] - math.floor(20 * catmullrom)
+				current_size[1] = default_size[1] - math.floor(20 * size_progress)
+				current_size[2] = default_size[2] - math.floor(20 * size_progress)
 			end,
-			on_complete = function (arg_6_0, arg_6_1, arg_6_2, arg_6_3)
+			on_complete = function (ui_scenegraph, scenegraph_definition, widget, params)
 				-- function 6
 				return
 			end
@@ -197,7 +196,7 @@ local tbl_4 = {
 }
 
 return {
-	scenegraph_definition = tbl,
-	animation_definitions = tbl_4,
-	widget_definitions = tbl_3
+	scenegraph_definition = scenegraph_definition,
+	animation_definitions = animation_definitions,
+	widget_definitions = widget_definitions
 }

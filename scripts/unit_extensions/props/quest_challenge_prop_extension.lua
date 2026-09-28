@@ -2,12 +2,12 @@
 
 QuestChallengePropExtension = class(QuestChallengePropExtension)
 
-local num = 0.5
-local num_2 = 2
+local ACHIEVEMENT_UPDATE_INTERVAL = 0.5
+local QUEST_UPDATE_INTERVAL = 2
 
-QuestChallengePropExtension.init = function (self, arg_1_1, arg_1_2)
+QuestChallengePropExtension.init = function (self, extension_init_context, unit)
 	-- function 1
-	self._unit = arg_1_2
+	self._unit = unit
 
 	self:_highlight_off()
 
@@ -17,38 +17,39 @@ QuestChallengePropExtension.init = function (self, arg_1_1, arg_1_2)
 	self._next_unclaimed_quest_check = 0
 end
 
-QuestChallengePropExtension.update = function (self, arg_2_1, arg_2_2, arg_2_3, arg_2_4, arg_2_5)
+QuestChallengePropExtension.update = function (self, unit, input, dt, context, t)
 	-- function 2
-	self:_update_unclaimed_achievement_status(arg_2_3, arg_2_5)
-	self:_update_unclaimed_quests_status(arg_2_3, arg_2_5)
+	self:_update_unclaimed_achievement_status(dt, t)
+	self:_update_unclaimed_quests_status(dt, t)
 	self:_evaluate_highlight_status()
 end
 
-QuestChallengePropExtension._update_unclaimed_achievement_status = function (self, arg_3_1, arg_3_2)
+QuestChallengePropExtension._update_unclaimed_achievement_status = function (self, dt, t)
 	-- function 3
-	if arg_3_2 > self._next_unclaimed_achievement_check then
+	if t > self._next_unclaimed_achievement_check then
 		self._has_unclaimed_achievements = Managers.state.achievement:has_any_unclaimed_achievement()
-		self._next_unclaimed_achievement_check = arg_3_2 + num
+		self._next_unclaimed_achievement_check = t + ACHIEVEMENT_UPDATE_INTERVAL
 	end
 end
 
-QuestChallengePropExtension._update_unclaimed_quests_status = function (self, arg_4_1, arg_4_2)
+QuestChallengePropExtension._update_unclaimed_quests_status = function (self, dt, t)
 	-- function 4
-	if arg_4_2 > self._next_unclaimed_quest_check then
+	if t > self._next_unclaimed_quest_check then
 		self._has_unclaimed_quests = Managers.state.quest:has_any_unclaimed_quests()
-		self._next_unclaimed_quest_check = arg_4_2 + num_2
+		self._next_unclaimed_quest_check = t + QUEST_UPDATE_INTERVAL
 	end
 end
 
 QuestChallengePropExtension._evaluate_highlight_status = function (self)
 	-- function 5
-	local var_5_0
-	local flag
+	local should_be_highlighted
 
-	flag = self._has_unclaimed_achievements or not self._has_unclaimed_quests or true or false
+	should_be_highlighted = (self._has_unclaimed_achievements or self._has_unclaimed_quests) and not not true or not not false
 
-	if not (flag ~= self._highlighted) then
-		if not flag then
+	local state_differs = should_be_highlighted ~= self._highlighted
+
+	if state_differs then
+		if should_be_highlighted then
 			self:_highlight_on()
 		else
 			self:_highlight_off()

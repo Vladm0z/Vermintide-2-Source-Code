@@ -1,12 +1,12 @@
 -- chunkname: @scripts/settings/equipment/weapon_traits.lua
 
-local scripts_unit_extensions_default_player_unit_buffs_settings_buff_perk_names = require("scripts/unit_extensions/default_player_unit/buffs/settings/buff_perk_names")
+local buff_perks = require("scripts/unit_extensions/default_player_unit/buffs/settings/buff_perk_names")
 local WeaponTraits = WeaponTraits
 
-WeaponTraits = WeaponTraits or {}
+WeaponTraits = not not WeaponTraits or not not {}
 WeaponTraits = WeaponTraits
 
-local tbl = {
+local buff_tweak_data = {
 	traits_melee_attack_speed_on_crit_proc = {
 		duration = 5,
 		multiplier = 0.2
@@ -227,7 +227,7 @@ WeaponTraits.buff_templates = {
 				event = "on_critical_hit",
 				buff_func = "remove_overcharge",
 				perks = {
-					scripts_unit_extensions_default_player_unit_buffs_settings_buff_perk_names.no_overcharge_crit
+					buff_perks.no_overcharge_crit
 				}
 			}
 		}
@@ -325,7 +325,7 @@ WeaponTraits.buff_templates = {
 		buffs = {
 			{
 				perks = {
-					scripts_unit_extensions_default_player_unit_buffs_settings_buff_perk_names.cooldown_delay
+					buff_perks.cooldown_delay
 				}
 			}
 		}
@@ -369,7 +369,7 @@ WeaponTraits.buff_templates = {
 		buffs = {
 			{
 				perks = {
-					scripts_unit_extensions_default_player_unit_buffs_settings_buff_perk_names.potion_duration
+					buff_perks.potion_duration
 				}
 			}
 		}
@@ -413,7 +413,7 @@ WeaponTraits.buff_templates = {
 				max_stacks = 1,
 				update_func = "update_heal_ticks",
 				perks = {
-					scripts_unit_extensions_default_player_unit_buffs_settings_buff_perk_names.no_permanent_health
+					buff_perks.no_permanent_health
 				}
 			}
 		}
@@ -475,10 +475,10 @@ WeaponTraits.traits = {
 		description_values = {
 			{
 				value_type = "percent",
-				value = tbl.traits_melee_attack_speed_on_crit_proc.multiplier
+				value = buff_tweak_data.traits_melee_attack_speed_on_crit_proc.multiplier
 			},
 			{
-				value = tbl.traits_melee_attack_speed_on_crit_proc.duration
+				value = buff_tweak_data.traits_melee_attack_speed_on_crit_proc.duration
 			}
 		}
 	},
@@ -490,7 +490,7 @@ WeaponTraits.traits = {
 		description_values = {
 			{
 				value_type = "percent",
-				value = tbl.traits_melee_timed_block_cost.multiplier
+				value = buff_tweak_data.traits_melee_timed_block_cost.multiplier
 			}
 		}
 	},
@@ -503,7 +503,7 @@ WeaponTraits.traits = {
 		description_values = {
 			{
 				value_type = "percent",
-				value = tbl.traits_melee_counter_push_power.multiplier
+				value = buff_tweak_data.traits_melee_counter_push_power.multiplier
 			}
 		}
 	},
@@ -515,11 +515,11 @@ WeaponTraits.traits = {
 		description_values = {
 			{
 				value_type = "percent",
-				value = tbl.traits_reduce_cooldown_on_crit.bonus
+				value = buff_tweak_data.traits_reduce_cooldown_on_crit.bonus
 			},
 			{
 				value_type = "duration",
-				value = tbl.traits_reduce_cooldown_on_crit_internal_cooldown.duration
+				value = buff_tweak_data.traits_reduce_cooldown_on_crit_internal_cooldown.duration
 			}
 		}
 	},
@@ -532,11 +532,11 @@ WeaponTraits.traits = {
 		description_values = {
 			{
 				value_type = "percent",
-				value = tbl.traits_melee_increase_damage_on_block_proc.multiplier
+				value = buff_tweak_data.traits_melee_increase_damage_on_block_proc.multiplier
 			},
 			{
 				value_type = "duration",
-				value = tbl.traits_melee_increase_damage_on_block_proc.duration
+				value = buff_tweak_data.traits_melee_increase_damage_on_block_proc.duration
 			}
 		}
 	},
@@ -549,7 +549,7 @@ WeaponTraits.traits = {
 		description_values = {
 			{
 				value_type = "bonus",
-				value = tbl.traits_heal_on_crit.bonus
+				value = buff_tweak_data.traits_heal_on_crit.bonus
 			}
 		}
 	},
@@ -562,7 +562,7 @@ WeaponTraits.traits = {
 		description_values = {
 			{
 				value_type = "bonus",
-				value = tbl.traits_melee_shield_on_assist.bonus
+				value = buff_tweak_data.traits_melee_shield_on_assist.bonus
 			}
 		}
 	},
@@ -574,7 +574,7 @@ WeaponTraits.traits = {
 		description_values = {
 			{
 				value_type = "bonus",
-				value = tbl.traits_ranged_replenish_ammo_headshot.bonus
+				value = buff_tweak_data.traits_ranged_replenish_ammo_headshot.bonus
 			}
 		}
 	},
@@ -593,7 +593,7 @@ WeaponTraits.traits = {
 		description_values = {
 			{
 				value_type = "percent",
-				value = tbl.traits_ranged_reduced_overcharge.multiplier
+				value = buff_tweak_data.traits_ranged_reduced_overcharge.multiplier
 			}
 		}
 	},
@@ -605,11 +605,11 @@ WeaponTraits.traits = {
 		description_values = {
 			{
 				value_type = "percent",
-				value = tbl.traits_reduce_cooldown_on_crit.bonus
+				value = buff_tweak_data.traits_reduce_cooldown_on_crit.bonus
 			},
 			{
 				value_type = "bonus",
-				value = tbl.traits_reduce_cooldown_on_crit_internal_cooldown.duration
+				value = buff_tweak_data.traits_reduce_cooldown_on_crit_internal_cooldown.duration
 			}
 		}
 	},
@@ -621,7 +621,7 @@ WeaponTraits.traits = {
 		description_values = {
 			{
 				value_type = "percent",
-				value = tbl.traits_ranged_replenish_ammo_on_crit.ammo_bonus_fraction
+				value = buff_tweak_data.traits_ranged_replenish_ammo_on_crit.ammo_bonus_fraction
 			}
 		}
 	},
@@ -641,7 +641,7 @@ WeaponTraits.traits = {
 		description_values = {
 			{
 				value_type = "percent",
-				value = tbl.ranged_power_vs_unarmored.multiplier
+				value = buff_tweak_data.ranged_power_vs_unarmored.multiplier
 			}
 		}
 	},
@@ -654,11 +654,11 @@ WeaponTraits.traits = {
 		description_values = {
 			{
 				value_type = "percent",
-				value = tbl.consecutive_shot_buff.multiplier
+				value = buff_tweak_data.consecutive_shot_buff.multiplier
 			},
 			{
 				value_type = "duration",
-				value = tbl.consecutive_shot_buff.duration
+				value = buff_tweak_data.consecutive_shot_buff.duration
 			}
 		}
 	},
@@ -670,11 +670,11 @@ WeaponTraits.traits = {
 		description_values = {
 			{
 				value_type = "percent",
-				value = tbl.traits_ranged_movespeed_on_damage_taken.inherited_multiplier
+				value = buff_tweak_data.traits_ranged_movespeed_on_damage_taken.inherited_multiplier
 			},
 			{
 				value_type = "duration",
-				value = tbl.traits_ranged_movespeed_on_damage_taken.inherited_duration
+				value = buff_tweak_data.traits_ranged_movespeed_on_damage_taken.inherited_duration
 			}
 		}
 	},
@@ -686,7 +686,7 @@ WeaponTraits.traits = {
 		description_values = {
 			{
 				value_type = "percent",
-				value = tbl.trait_ring_not_consume_potion.proc_chance
+				value = buff_tweak_data.trait_ring_not_consume_potion.proc_chance
 			}
 		}
 	},
@@ -711,7 +711,7 @@ WeaponTraits.traits = {
 		description_values = {
 			{
 				value_type = "percent",
-				value = tbl.trait_ring_all_potions.multiplier
+				value = buff_tweak_data.trait_ring_all_potions.multiplier
 			}
 		}
 	},
@@ -723,7 +723,7 @@ WeaponTraits.traits = {
 		description_values = {
 			{
 				value_type = "percent",
-				value = tbl.trait_ring_potion_duration.multiplier
+				value = buff_tweak_data.trait_ring_potion_duration.multiplier
 			}
 		}
 	},
@@ -735,7 +735,7 @@ WeaponTraits.traits = {
 		description_values = {
 			{
 				value_type = "percent",
-				value = tbl.trait_necklace_not_consume_healing.proc_chance
+				value = buff_tweak_data.trait_necklace_not_consume_healing.proc_chance
 			}
 		}
 	},
@@ -748,7 +748,7 @@ WeaponTraits.traits = {
 		description_values = {
 			{
 				value_type = "percent",
-				value = tbl.trait_necklace_heal_share.multiplier
+				value = buff_tweak_data.trait_necklace_heal_share.multiplier
 			}
 		}
 	},
@@ -761,7 +761,7 @@ WeaponTraits.traits = {
 		description_values = {
 			{
 				value_type = "percent",
-				value = tbl.trait_necklace_increased_healing_received.multiplier
+				value = buff_tweak_data.trait_necklace_increased_healing_received.multiplier
 			}
 		}
 	},
@@ -773,10 +773,10 @@ WeaponTraits.traits = {
 		buff_name = "trait_necklace_no_healing_health_regen",
 		description_values = {
 			{
-				value = tbl.trait_necklace_no_healing_health_regen.heal_amount
+				value = buff_tweak_data.trait_necklace_no_healing_health_regen.heal_amount
 			},
 			{
-				value = tbl.trait_necklace_no_healing_health_regen.time_between_heals
+				value = buff_tweak_data.trait_necklace_no_healing_health_regen.time_between_heals
 			}
 		}
 	},
@@ -789,15 +789,15 @@ WeaponTraits.traits = {
 		description_values = {
 			{
 				value_type = "percent",
-				value = tbl.trait_necklace_damage_taken_reduction_buff.multiplier
+				value = buff_tweak_data.trait_necklace_damage_taken_reduction_buff.multiplier
 			},
 			{
 				value_type = "duration",
-				value = tbl.trait_necklace_damage_taken_reduction_buff.duration
+				value = buff_tweak_data.trait_necklace_damage_taken_reduction_buff.duration
 			},
 			{
 				value_type = "duration",
-				value = tbl.trait_necklace_damage_taken_reduction_buff.duration
+				value = buff_tweak_data.trait_necklace_damage_taken_reduction_buff.duration
 			}
 		}
 	},
@@ -809,7 +809,7 @@ WeaponTraits.traits = {
 		description_values = {
 			{
 				value_type = "percent",
-				value = tbl.trait_trinket_not_consume_grenade.proc_chance
+				value = buff_tweak_data.trait_trinket_not_consume_grenade.proc_chance
 			}
 		}
 	},
@@ -822,7 +822,7 @@ WeaponTraits.traits = {
 		description_values = {
 			{
 				value_type = "percent",
-				value = tbl.trait_trinket_increase_grenade_radius.multiplier
+				value = buff_tweak_data.trait_trinket_increase_grenade_radius.multiplier
 			}
 		}
 	},
@@ -835,18 +835,18 @@ WeaponTraits.traits = {
 		description_values = {
 			{
 				value_type = "percent",
-				value = tbl.trait_trinket_grenade_damage_taken_buff.multiplier
+				value = buff_tweak_data.trait_trinket_grenade_damage_taken_buff.multiplier
 			},
 			{
 				value_type = "duration",
-				value = tbl.trait_trinket_grenade_damage_taken_buff.duration
+				value = buff_tweak_data.trait_trinket_grenade_damage_taken_buff.duration
 			}
 		}
 	}
 }
 
-for k, v in pairs(WeaponTraits.traits) do
-	v.name = k
+for name, data in pairs(WeaponTraits.traits) do
+	data.name = name
 end
 
 WeaponTraits.combinations = {
@@ -975,5 +975,5 @@ WeaponTraits.combinations = {
 }
 
 BuffUtils.copy_talent_buff_names(WeaponTraits.buff_templates)
-BuffUtils.apply_buff_tweak_data(WeaponTraits.buff_templates, tbl)
+BuffUtils.apply_buff_tweak_data(WeaponTraits.buff_templates, buff_tweak_data)
 DLCUtils.require_list("weapon_traits_file_names")

@@ -2,45 +2,45 @@
 
 PositionLookupSystem = class(PositionLookupSystem, ExtensionSystemBase)
 
-local tbl = {
+local extensions = {
 	"PositionLookupExtension"
 }
 
-PositionLookupSystem.init = function (arg_1_0, arg_1_1, arg_1_2)
+PositionLookupSystem.init = function (self, entity_system_creation_context, system_name)
 	-- function 1
-	PositionLookupSystem.super.init(arg_1_0, arg_1_1, arg_1_2, tbl)
+	PositionLookupSystem.super.init(self, entity_system_creation_context, system_name, extensions)
 end
 
-PositionLookupSystem.update = function (arg_2_0)
+PositionLookupSystem.update = function (self)
 	-- function 2
 	return
 end
 
-PositionLookupSystem.on_add_extension = function (self, arg_3_1, arg_3_2, arg_3_3, arg_3_4)
+PositionLookupSystem.on_add_extension = function (self, world, unit, extension_name, extension_init_data)
 	-- function 3
-	fassert(self.extensions[arg_3_3], "[PositionLookupSystem] There is no known extension called %s", arg_3_3)
+	fassert(self.extensions[extension_name], "[PositionLookupSystem] There is no known extension called %s", extension_name)
 
-	POSITION_LOOKUP[arg_3_2] = Unit.world_position(arg_3_2, 0)
+	POSITION_LOOKUP[unit] = Unit.world_position(unit, 0)
 
-	local tbl = {
-		position = POSITION_LOOKUP[arg_3_2]
+	local extension = {
+		position = POSITION_LOOKUP[unit]
 	}
 
-	ScriptUnit.set_extension(arg_3_2, self.NAME, tbl)
+	ScriptUnit.set_extension(unit, self.NAME, extension)
 
-	return tbl
+	return extension
 end
 
-PositionLookupSystem.on_remove_extension = function (self, arg_4_1, arg_4_2)
+PositionLookupSystem.on_remove_extension = function (self, unit, extension_name)
 	-- function 4
-	fassert(self.extensions[arg_4_2], "[PositionLookupSystem] There is no known extension called %s", arg_4_2)
+	fassert(self.extensions[extension_name], "[PositionLookupSystem] There is no known extension called %s", extension_name)
 
-	POSITION_LOOKUP[arg_4_1] = nil
+	POSITION_LOOKUP[unit] = nil
 
-	ScriptUnit.remove_extension(arg_4_1, self.NAME)
+	ScriptUnit.remove_extension(unit, self.NAME)
 end
 
-PositionLookupSystem.destroy = function (arg_5_0)
+PositionLookupSystem.destroy = function (self)
 	-- function 5
 	return
 end

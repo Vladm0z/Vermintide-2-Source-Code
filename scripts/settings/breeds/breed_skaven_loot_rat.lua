@@ -1,6 +1,6 @@
 -- chunkname: @scripts/settings/breeds/breed_skaven_loot_rat.lua
 
-local tbl = {
+local breed_data = {
 	detection_radius = 12,
 	death_reaction = "loot_rat",
 	walk_speed = 3,
@@ -272,9 +272,9 @@ local tbl = {
 	}
 }
 
-Breeds.skaven_loot_rat = table.create_copy(Breeds.skaven_loot_rat, tbl)
+Breeds.skaven_loot_rat = table.create_copy(Breeds.skaven_loot_rat, breed_data)
 
-local tbl_2 = {
+local action_data = {
 	smash_door = {
 		unblockable = true,
 		damage = 5,
@@ -434,4 +434,4 @@ local tbl_2 = {
 	}
 }
 
-BreedActions.skaven_loot_rat = table.create_copy(BreedActions.skaven_loot_rat, tbl_2)
+BreedActions.skaven_loot_rat = table.create_copy(BreedActions.skaven_loot_rat, action_data)

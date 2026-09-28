@@ -1,11 +1,13 @@
 -- chunkname: @scripts/ui/views/level_end/states/definitions/end_view_state_summary_deus_definitions.lua
 
-local var_0_0 = local_require("scripts/ui/views/level_end/states/definitions/end_view_state_summary_definitions")
-local clone = table.clone(var_0_0)
-local summary_entry_total_title = clone.scenegraph_definition.summary_entry_total_title
+local definitions = local_require("scripts/ui/views/level_end/states/definitions/end_view_state_summary_definitions")
 
-summary_entry_total_title.position[2] = summary_entry_total_title.position[2] + 60
-clone.scenegraph_definition.coins_retained = {
+definitions = table.clone(definitions)
+
+local summary_total = definitions.scenegraph_definition.summary_entry_total_title
+
+summary_total.position[2] = summary_total.position[2] + 60
+definitions.scenegraph_definition.coins_retained = {
 	vertical_alignment = "center",
 	parent = "background",
 	horizontal_alignment = "center",
@@ -19,7 +21,7 @@ clone.scenegraph_definition.coins_retained = {
 		1
 	}
 }
-clone.scenegraph_definition.deus_progress_reset_text = {
+definitions.scenegraph_definition.deus_progress_reset_text = {
 	vertical_alignment = "bottom",
 	parent = "background",
 	horizontal_alignment = "center",
@@ -34,7 +36,7 @@ clone.scenegraph_definition.deus_progress_reset_text = {
 	}
 }
 
-local tbl = {
+local coins_retained_title_text_style = {
 	font_size = 28,
 	upper_case = true,
 	word_wrap = true,
@@ -49,7 +51,7 @@ local tbl = {
 		2
 	}
 }
-local tbl_2 = {
+local coins_retained_title_description_style = {
 	font_size = 16,
 	upper_case = true,
 	word_wrap = true,
@@ -70,7 +72,7 @@ local tbl_2 = {
 	}
 }
 
-local function fn(arg_1_0)
+local function create_coin_total_widget(scenegraph_id)
 	-- function 1
 	return {
 		element = {
@@ -193,11 +195,11 @@ local function fn(arg_1_0)
 				}
 			}
 		},
-		scenegraph_id = arg_1_0
+		scenegraph_id = scenegraph_id
 	}
 end
 
-local tbl_3 = {
+local deus_progress_reset_text_style = {
 	word_wrap = true,
 	upper_case = true,
 	localize = false,
@@ -214,9 +216,9 @@ local tbl_3 = {
 	}
 }
 
-clone.widgets.coins_retained_title_text = UIWidgets.create_simple_text(Localize("end_screen_deus_coins_retained"), "coins_retained", nil, nil, tbl)
-clone.widgets.coins_retained_description_text = UIWidgets.create_simple_text(Localize("end_screen_deus_coins_retained_description"), "coins_retained", nil, nil, tbl_2)
-clone.widgets.coins_retained_total_text = fn("coins_retained")
-clone.widgets.deus_progress_reset_text = UIWidgets.create_simple_text(Localize("deus_progress_reset"), "deus_progress_reset_text", nil, nil, tbl_3)
+definitions.widgets.coins_retained_title_text = UIWidgets.create_simple_text(Localize("end_screen_deus_coins_retained"), "coins_retained", nil, nil, coins_retained_title_text_style)
+definitions.widgets.coins_retained_description_text = UIWidgets.create_simple_text(Localize("end_screen_deus_coins_retained_description"), "coins_retained", nil, nil, coins_retained_title_description_style)
+definitions.widgets.coins_retained_total_text = create_coin_total_widget("coins_retained")
+definitions.widgets.deus_progress_reset_text = UIWidgets.create_simple_text(Localize("deus_progress_reset"), "deus_progress_reset_text", nil, nil, deus_progress_reset_text_style)
 
-return clone
+return definitions

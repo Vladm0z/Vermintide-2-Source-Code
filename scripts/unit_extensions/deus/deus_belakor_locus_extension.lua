@@ -1,298 +1,335 @@
 -- chunkname: @scripts/unit_extensions/deus/deus_belakor_locus_extension.lua
 
-local num = 60
-local num_2 = 20
-local num_3 = 10
-local tbl = {
+local TRAVEL_DISTANCE_TO_SPAWN_CULTISTS = 60
+local DISTANCE_TO_TRIGGER_DIALOGUE = 20
+local UNLOCK_MESSAGE_DURATION = 10
+local STATE = {
 	INITIAL = 0,
 	DONE = 4,
 	ACTIVATED = 3,
 	WAITING_TO_SPAWN_CULTISTS = 1,
 	WAITING_FOR_ACTIVATION = 2
 }
-local num_4 = 3
-local num_5 = 5
-local str = "deus_belakor_locus_pre_crystal"
-local str_2 = "deus_belakor_locus_with_crystal"
-local str_3 = "fx/trail_locus"
-local num_6 = 8
-local num_7 = 2
-local tbl_2 = {
+local NUM_LOCUS_TYPES = 3
+local AGGRO_ON_INTERACTION_RANGE = 5
+local INTERACTABLE_TYPE_PRE_CRYSTAL = "deus_belakor_locus_pre_crystal"
+local INTERACTABLE_TYPE_WITH_CRYSTAL = "deus_belakor_locus_with_crystal"
+local STATUE_BEAM_FX = "fx/trail_locus"
+local BEAM_STATUE_Z_OFFSET = 8
+local BEAM_LOCUS_Z_OFFSET = 2
+local SHOW_RUNE_FLOW_EVENTS = {
 	"SHOW_RUNE_01",
 	"SHOW_RUNE_02",
 	"SHOW_RUNE_03"
 }
-local tbl_3 = {
+local LIEUTENANT_TERROR_EVENTS = {
 	"belakor_altar_shadow_lieutenant_spawn_01",
 	"belakor_altar_shadow_lieutenant_spawn_02",
 	"belakor_altar_shadow_lieutenant_spawn_03"
 }
-local tbl_4 = {
+local DECAL_PER_LOCUS_TYPE = {
 	"units/decals/decal_belakor_arena_01",
 	"units/decals/decal_belakor_arena_02",
 	"units/decals/decal_belakor_arena_03"
 }
 
-local function fn(self, arg_1_1)
+local function check_if_should_spawn_cultists(conflict_director, altar_main_path_distance)
 	-- function 1
-	local main_path_info = self.main_path_info
-	local main_path_player_info = self.main_path_player_info
-	local var_1_2
-	local var_1_3 = main_path_player_info[main_path_info.ahead_unit]
+	local main_path_info = conflict_director.main_path_info
+	local main_path_player_info = conflict_director.main_path_player_info
+	local ahead_player_travel_dist
+	local ahead_player_info = main_path_player_info[main_path_info.ahead_unit]
 
-	if not var_1_3 then
+	if not ahead_player_info then
 		return false
 	end
 
-	return var_1_3.travel_dist > arg_1_1 - num
+	ahead_player_travel_dist = ahead_player_info.travel_dist
+
+	return ahead_player_travel_dist > altar_main_path_distance - TRAVEL_DISTANCE_TO_SPAWN_CULTISTS
 end
 
-local function fn_2(arg_2_0, arg_2_1, arg_2_2, arg_2_3)
+local function check_if_should_play_vo(world, locus_unit, locus_position, players_and_bots)
 	-- function 2
-	local var_2_0
-	local var_2_1
-	local huge = math.huge
+	local closest_position, closest_player
+	local closest_distance = math.huge
 
-	for i = 1, #arg_2_3 do
-		local var_2_3 = arg_2_3[i]
-		local var_2_4 = POSITION_LOOKUP[var_2_3]
-		local distance = Vector3.distance(arg_2_2, var_2_4)
+	for i = 1, #players_and_bots do
+		local new_player = players_and_bots[i]
+		local new_player_position = POSITION_LOOKUP[new_player]
+		local new_distance = Vector3.distance(locus_position, new_player_position)
 
-		if not (not var_2_0 and not (distance < huge)) then
-			huge = distance
-			var_2_0 = var_2_4
-			var_2_1 = var_2_3
+		if not closest_position or new_distance < closest_distance then
+			closest_distance = new_distance
+			closest_position = new_player_position
+			closest_player = new_player
 		end
 	end
 
-	if not var_2_0 then
+	if not closest_position then
 		return false
 	end
 
-	if huge > num_2 then
+	if closest_distance > DISTANCE_TO_TRIGGER_DIALOGUE then
 		return false
 	end
 
-	local num = arg_2_2 + Vector3(0, 0, 1.5)
-	local num_3 = var_2_0 + Vector3(0, 0, 1.5)
-	local flag = not World.umbra_available(arg_2_0) and World.umbra_has_line_of_sight(arg_2_0, num, num_3)
+	local raised_locus_position = locus_position + Vector3(0, 0, 1.5)
+	local raised_player_position = closest_position + Vector3(0, 0, 1.5)
+	local should_play = not World.umbra_available(world) or not not World.umbra_has_line_of_sight(world, raised_locus_position, raised_player_position)
 
-	if not flag then
-		return flag
+	if not should_play then
+		return should_play
 	else
-		return flag, var_2_1
+		return should_play, closest_player
 	end
 end
 
 DeusBelakorLocusExtension = class(DeusBelakorLocusExtension)
 
-DeusBelakorLocusExtension.init = function (self, arg_3_1, arg_3_2, arg_3_3)
+DeusBelakorLocusExtension.init = function (self, extension_init_context, unit, extension_init_data)
 	-- function 3
-	self._unit = arg_3_2
+	self._unit = unit
 	self._is_server = Managers.player.is_server
-	self._world = arg_3_1.world
-	self._hero_side = Managers.state.side:get_side_from_name("heroes")
-	self._arena_mode = Managers.mechanism:game_mechanism():get_deus_run_controller():get_current_node().base_level == "arena_belakor"
+	self._world = extension_init_context.world
+
+	local side = Managers.state.side:get_side_from_name("heroes")
+
+	self._hero_side = side
+
+	local mechanism = Managers.mechanism:game_mechanism()
+	local deus_run_controller = mechanism:get_deus_run_controller()
+	local current_node = deus_run_controller:get_current_node()
+
+	self._arena_mode = current_node.base_level == "arena_belakor"
 
 	if not self._is_server then
 		return
 	end
 
-	self._prev_state = tbl.INITIAL
+	self._prev_state = STATE.INITIAL
 end
 
-DeusBelakorLocusExtension.game_object_initialized = function (self, arg_4_1, arg_4_2)
+DeusBelakorLocusExtension.game_object_initialized = function (self, unit, go_id)
 	-- function 4
-	self:_set_state(tbl.WAITING_TO_SPAWN_CULTISTS)
+	self:_set_state(STATE.WAITING_TO_SPAWN_CULTISTS)
 end
 
-DeusBelakorLocusExtension.extensions_ready = function (self, arg_5_1, arg_5_2)
+DeusBelakorLocusExtension.extensions_ready = function (self, world, unit)
 	-- function 5
-	self._interactable_extension = ScriptUnit.extension(arg_5_2, "interactable_system")
+	self._interactable_extension = ScriptUnit.extension(unit, "interactable_system")
 end
 
 DeusBelakorLocusExtension.destroy = function (self)
 	-- function 6
-	if not self._statue_beam then
+	if self._statue_beam then
 		World.destroy_particles(self._world, self._statue_beam)
 
 		self._statue_beam = nil
 	end
 end
 
-DeusBelakorLocusExtension.connect_to_statue = function (self, arg_7_1, arg_7_2)
+DeusBelakorLocusExtension.connect_to_statue = function (self, statue_unit, decal_pose)
 	-- function 7
-	if self:_get_state() ~= tbl.DONE then
-		self._statue_unit = arg_7_1
+	local current_state = self:_get_state()
 
-		local _world = self._world
-		local num = Unit.local_position(self._unit, 0) + Vector3(0, 0, num_7)
-		local translation = Matrix4x4.translation(arg_7_2)
-		local num_2 = num + Vector3(0, 0, 2)
-		local num_3 = translation - num
+	if current_state ~= STATE.DONE then
+		self._statue_unit = statue_unit
 
-		num_3.z = 0
+		local world = self._world
+		local beam_start_position = Unit.local_position(self._unit, 0) + Vector3(0, 0, BEAM_LOCUS_Z_OFFSET)
+		local beam_end_position = Matrix4x4.translation(decal_pose)
+		local beam_start_control_position = beam_start_position + Vector3(0, 0, 2)
+		local direction = beam_end_position - beam_start_position
 
-		local num_4 = translation + Vector3.normalize(num_3) * 2
-		local create_particles = World.create_particles(_world, str_3, Vector3.zero(), Quaternion.identity())
+		direction.z = 0
+		direction = Vector3.normalize(direction)
 
-		self._statue_beam = create_particles
+		local beam_end_control_position = beam_end_position + direction * 2
+		local statue_beam = World.create_particles(world, STATUE_BEAM_FX, Vector3.zero(), Quaternion.identity())
 
-		local find_particles_variable = World.find_particles_variable(_world, str_3, 1)
+		self._statue_beam = statue_beam
 
-		World.set_particles_variable(_world, create_particles, find_particles_variable, num)
+		local beam_variable_id = World.find_particles_variable(world, STATUE_BEAM_FX, 1)
 
-		local find_particles_variable_2 = World.find_particles_variable(_world, str_3, 2)
+		World.set_particles_variable(world, statue_beam, beam_variable_id, beam_start_position)
 
-		World.set_particles_variable(_world, create_particles, find_particles_variable_2, num_2)
+		local beam_variable_id = World.find_particles_variable(world, STATUE_BEAM_FX, 2)
 
-		local find_particles_variable_3 = World.find_particles_variable(_world, str_3, 3)
+		World.set_particles_variable(world, statue_beam, beam_variable_id, beam_start_control_position)
 
-		World.set_particles_variable(_world, create_particles, find_particles_variable_3, num_4)
+		local beam_variable_id = World.find_particles_variable(world, STATUE_BEAM_FX, 3)
 
-		local find_particles_variable_4 = World.find_particles_variable(_world, str_3, 4)
+		World.set_particles_variable(world, statue_beam, beam_variable_id, beam_end_control_position)
 
-		World.set_particles_variable(_world, create_particles, find_particles_variable_4, translation)
+		local beam_variable_id = World.find_particles_variable(world, STATUE_BEAM_FX, 4)
 
-		local var_7_11 = translation
-		local rotation = Matrix4x4.rotation(arg_7_2)
+		World.set_particles_variable(world, statue_beam, beam_variable_id, beam_end_position)
 
-		self._statue_decal = Managers.state.unit_spawner:spawn_local_unit(tbl_4[self._locus_type], var_7_11, rotation, "units/materials/d/decal/decal_belakor_arena_01")
+		local decal_pos = beam_end_position
+		local decal_rotation = Matrix4x4.rotation(decal_pose)
+
+		self._statue_decal = Managers.state.unit_spawner:spawn_local_unit(DECAL_PER_LOCUS_TYPE[self._locus_type], decal_pos, decal_rotation, "units/materials/d/decal/decal_belakor_arena_01")
 	end
 end
 
-DeusBelakorLocusExtension.update = function (self, arg_8_1, arg_8_2, arg_8_3, arg_8_4, arg_8_5)
+DeusBelakorLocusExtension.update = function (self, unit, input, dt, context, t)
 	-- function 8
 	if not self._go_id then
 		self._go_id = Managers.state.unit_storage:go_id(self._unit)
 
-		if not self._go_id then
-			local fnv32_hash = HashUtils.fnv32_hash(self._go_id)
-			local create_random_generator = DeusGenUtils.create_random_generator(fnv32_hash)
+		if self._go_id then
+			local seed = HashUtils.fnv32_hash(self._go_id)
+			local random_generator = DeusGenUtils.create_random_generator(seed)
 
-			self._locus_type = create_random_generator(1, num_4)
-			self._random_generator = create_random_generator
+			self._locus_type = random_generator(1, NUM_LOCUS_TYPES)
+			self._random_generator = random_generator
 
-			local var_8_2 = tbl_2[self._locus_type]
+			local flow_event = SHOW_RUNE_FLOW_EVENTS[self._locus_type]
 
-			if not var_8_2 then
-				Unit.flow_event(self._unit, var_8_2)
+			if flow_event then
+				Unit.flow_event(self._unit, flow_event)
 			end
 		end
 	end
 
-	if not self._paused then
+	if self._paused then
 		return
 	end
 
-	if not self._is_server then
-		local local_position = Unit.local_position(arg_8_1, 0)
+	if self._is_server then
+		local altar_position = Unit.local_position(unit, 0)
 
-		if self._already_played_vo or not self._random_generator then
-			local PLAYER_AND_BOT_UNITS = self._hero_side.PLAYER_AND_BOT_UNITS
-			local _world = self._world
-			local var_8_6, var_8_7 = fn_2(_world, arg_8_1, local_position, PLAYER_AND_BOT_UNITS)
+		if not self._already_played_vo and self._random_generator then
+			local players = self._hero_side.PLAYER_AND_BOT_UNITS
+			local world = self._world
+			local should_play, closest_player = check_if_should_play_vo(world, unit, altar_position, players)
 
-			if not var_8_6 then
-				local find_dialogue_unit = LevelHelper:find_dialogue_unit(_world, "ferry_lady")
-				local flag = not (not find_dialogue_unit and ScriptUnit.has_extension(find_dialogue_unit, "dialogue_system")) and ScriptUnit.extension_input(find_dialogue_unit, "dialogue_system")
-				local flag_2 = not ScriptUnit.has_extension(var_8_7, "dialogue_system") and ScriptUnit.extension_input(var_8_7, "dialogue_system")
-				local tbl_4 = {}
+			if should_play then
+				local intro_vo_unit = LevelHelper:find_dialogue_unit(world, "ferry_lady")
+				local ferry_lady_dialogue_extension = not not intro_vo_unit and not not ScriptUnit.has_extension(intro_vo_unit, "dialogue_system")
+				local ferry_lady_dialogue_input = not not ferry_lady_dialogue_extension and not not ScriptUnit.extension_input(intro_vo_unit, "dialogue_system")
+				local closest_player_dialogue_extension = ScriptUnit.has_extension(closest_player, "dialogue_system")
+				local closest_player_dialogue_input = not not closest_player_dialogue_extension and not not ScriptUnit.extension_input(closest_player, "dialogue_system")
+				local possible_sources = {}
 
-				if not flag then
-					tbl_4[#tbl_4 + 1] = flag
+				if ferry_lady_dialogue_input then
+					possible_sources[#possible_sources + 1] = ferry_lady_dialogue_input
 				end
 
-				tbl_4[#tbl_4 + 1] = flag_2
+				possible_sources[#possible_sources + 1] = closest_player_dialogue_input
 
-				local var_8_12 = tbl_4[self._random_generator(1, #tbl_4)]
-				local alloc_table = FrameTable.alloc_table()
+				local random_index = self._random_generator(1, #possible_sources)
+				local dialogue_input = possible_sources[random_index]
+				local event_data = FrameTable.alloc_table()
 
-				var_8_12:trigger_dialogue_event("shadow_curse_worship_site_nearby", alloc_table)
+				dialogue_input:trigger_dialogue_event("shadow_curse_worship_site_nearby", event_data)
 
 				self._already_played_vo = true
 			end
 		end
 
-		if self:_get_state() == tbl.WAITING_TO_SPAWN_CULTISTS then
-			local conflict = Managers.state.conflict
+		local current_state = self:_get_state()
+
+		if current_state == STATE.WAITING_TO_SPAWN_CULTISTS then
+			local conflict_director = Managers.state.conflict
 
 			if not self._altar_main_path_distance then
-				local get_main_paths = conflict.level_analysis:get_main_paths()
-				local closest_pos_at_main_path, var_8_17 = MainPathUtils.closest_pos_at_main_path(get_main_paths, local_position)
+				local level_analysis = conflict_director.level_analysis
+				local main_paths = level_analysis:get_main_paths()
+				local _, travel_dist = MainPathUtils.closest_pos_at_main_path(main_paths, altar_position)
 
-				self._altar_main_path_distance = var_8_17
+				self._altar_main_path_distance = travel_dist
 			end
 
-			if not fn(conflict, self._altar_main_path_distance) then
-				local get_level_seed = Managers.mechanism:get_level_seed()
+			if check_if_should_spawn_cultists(conflict_director, self._altar_main_path_distance) then
+				local seed = Managers.mechanism:get_level_seed()
 
-				self._cultist_terror_event_id = Managers.state.conflict:start_terror_event("belakor_altar_cultists_spawn", get_level_seed, arg_8_1)
+				self._cultist_terror_event_id = Managers.state.conflict:start_terror_event("belakor_altar_cultists_spawn", seed, unit)
 
-				self:_set_state(tbl.WAITING_FOR_ACTIVATION)
+				self:_set_state(STATE.WAITING_FOR_ACTIVATION)
 			end
 		end
 	end
 
-	local _get_state = self:_get_state()
+	local current_state = self:_get_state()
+	local prev_state = self._prev_state
 
-	if not (_get_state == self._prev_state or _get_state ~= tbl.WAITING_TO_SPAWN_CULTISTS) then
+	if current_state == prev_state or current_state == STATE.WAITING_TO_SPAWN_CULTISTS then
 		-- Nothing
-	elseif _get_state == tbl.WAITING_FOR_ACTIVATION then
-		self._interactable_extension:set_interactable_type(str)
-	elseif _get_state == tbl.ACTIVATED then
-		Unit.flow_event(arg_8_1, "lieutenant_spawned")
+	elseif current_state == STATE.WAITING_FOR_ACTIVATION then
+		self._interactable_extension:set_interactable_type(INTERACTABLE_TYPE_PRE_CRYSTAL)
+	elseif current_state == STATE.ACTIVATED then
+		Unit.flow_event(unit, "lieutenant_spawned")
 		Managers.state.achievement:trigger_event("register_lieutenant_spawned")
-		self._interactable_extension:set_interactable_type(str_2)
+		self._interactable_extension:set_interactable_type(INTERACTABLE_TYPE_WITH_CRYSTAL)
 
-		if not self._statue_beam then
+		if self._statue_beam then
 			World.destroy_particles(self._world, self._statue_beam)
 
 			self._statue_beam = nil
 		end
 
-		if not self._statue_decal then
+		if self._statue_decal then
 			Managers.state.unit_spawner:mark_for_deletion(self._statue_decal)
 
 			self._statue_decal = nil
 		end
 
-		if not self._is_server then
-			local get_level_seed_2 = Managers.mechanism:get_level_seed()
-			local var_8_21 = tbl_3[self._locus_type]
+		if self._is_server then
+			local seed = Managers.mechanism:get_level_seed()
+			local var_8_0 = LIEUTENANT_TERROR_EVENTS[self._locus_type]
 
-			var_8_21 = var_8_21 or "belakor_shadow_lieutenant_spawn"
+			if not var_8_0 then
+				-- Nothing
+			end
 
-			Managers.state.conflict:start_terror_event(var_8_21, get_level_seed_2, arg_8_1)
+			var_8_0 = "belakor_shadow_lieutenant_spawn"
+
+			local terror_event = var_8_0
+
+			::label_8_0::
+
+			Managers.state.conflict:start_terror_event(terror_event, seed, unit)
 		end
-	elseif _get_state == tbl.DONE then
-		Unit.flow_event(arg_8_1, "deactivated")
+	elseif current_state == STATE.DONE then
+		Unit.flow_event(unit, "deactivated")
 
-		if not self._arena_mode then
+		if self._arena_mode then
 			Managers.state.achievement:trigger_event("register_locus_destroyed")
 		end
 
 		if not self._arena_mode then
-			Managers.ui:get_hud_component("DeusCurseUI"):show_special_message("belakor", "deus_belakor_locus_arena_unlock_title", "deus_belakor_locus_arena_unlock_description", num_3)
+			local deus_curse_ui = Managers.ui:get_hud_component("DeusCurseUI")
+
+			deus_curse_ui:show_special_message("belakor", "deus_belakor_locus_arena_unlock_title", "deus_belakor_locus_arena_unlock_description", UNLOCK_MESSAGE_DURATION)
 
 			local wwise_world = Managers.world:wwise_world(self._world)
 
 			WwiseWorld.trigger_event(wwise_world, "belakor_shadow_locus_arena_unlocked")
 
-			if not self._is_server then
-				local game_mechanism = Managers.mechanism:game_mechanism()
-				local get_deus_run_controller = game_mechanism.get_deus_run_controller
+			if self._is_server then
+				local mechanism = Managers.mechanism:game_mechanism()
+				local get_deus_run_controller = mechanism.get_deus_run_controller
 
-				get_deus_run_controller = not get_deus_run_controller and game_mechanism:get_deus_run_controller()
+				if get_deus_run_controller then
+					-- Nothing
+				end
 
-				if not get_deus_run_controller then
-					get_deus_run_controller:unlock_arena_belakor()
+				get_deus_run_controller = mechanism:get_deus_run_controller()
+
+				local deus_run_controller = get_deus_run_controller
+
+				::label_8_1::
+
+				if deus_run_controller then
+					deus_run_controller:unlock_arena_belakor()
 				end
 			end
 		end
 	end
 
-	self._prev_state = _get_state
+	self._prev_state = current_state
 end
 
 DeusBelakorLocusExtension.activate = function (self)
@@ -307,35 +344,37 @@ end
 
 DeusBelakorLocusExtension.is_complete = function (self)
 	-- function 11
-	return self:_get_state() == tbl.DONE
+	local state = self:_get_state()
+
+	return state == STATE.DONE
 end
 
 DeusBelakorLocusExtension._get_state = function (self)
 	-- function 12
-	local game = Managers.state.network:game()
+	local game_session = Managers.state.network:game()
 	local go_id = Managers.state.unit_storage:go_id(self._unit)
 
-	if not (not game and go_id) then
-		return tbl.INITIAL
+	if not game_session or not go_id then
+		return STATE.INITIAL
 	end
 
-	return GameSession.game_object_field(game, go_id, "deus_belakor_locus_state")
+	return GameSession.game_object_field(game_session, go_id, "deus_belakor_locus_state")
 end
 
-DeusBelakorLocusExtension._set_state = function (self, arg_13_1)
+DeusBelakorLocusExtension._set_state = function (self, state)
 	-- function 13
 	local game = Managers.state.network:game()
 	local go_id = Managers.state.unit_storage:go_id(self._unit)
 
-	fassert(not game and go_id, "setting state without network setup done")
-	GameSession.set_game_object_field(game, go_id, "deus_belakor_locus_state", arg_13_1)
+	fassert(not not game and not not go_id, "setting state without network setup done")
+	GameSession.set_game_object_field(game, go_id, "deus_belakor_locus_state", state)
 end
 
-DeusBelakorLocusExtension.can_interact_validate = function (arg_14_0, arg_14_1)
+DeusBelakorLocusExtension.can_interact_validate = function (self, player_unit)
 	-- function 14
-	local has_extension = ScriptUnit.has_extension(arg_14_1, "inventory_system")
+	local inventory_extension = ScriptUnit.has_extension(player_unit, "inventory_system")
 
-	if not has_extension and not has_extension:has_inventory_item("slot_level_event", "belakor_crystal") then
+	if inventory_extension and inventory_extension:has_inventory_item("slot_level_event", "belakor_crystal") then
 		return true
 	end
 
@@ -344,33 +383,35 @@ end
 
 DeusBelakorLocusExtension.can_interact = function (self)
 	-- function 15
-	local _get_state = self:_get_state()
+	local state = self:_get_state()
 
-	if _get_state == tbl.WAITING_FOR_ACTIVATION then
+	if state == STATE.WAITING_FOR_ACTIVATION then
 		return true
 	end
 
-	if _get_state == tbl.ACTIVATED then
-		local player = Managers.player
-		local player_unit = player:local_player().player_unit
+	if state == STATE.ACTIVATED then
+		local player_manager = Managers.player
+		local local_player = player_manager:local_player()
+		local player_unit = local_player.player_unit
+		local inventory_extension = ScriptUnit.extension(player_unit, "inventory_system")
 
-		if not ScriptUnit.extension(player_unit, "inventory_system"):has_inventory_item("slot_level_event", "belakor_crystal") then
+		if inventory_extension:has_inventory_item("slot_level_event", "belakor_crystal") then
 			return true
 		end
 
-		local get_entities = Managers.state.entity:get_entities("DeusBelakorCrystalExtension")
+		local crystal_entities = Managers.state.entity:get_entities("DeusBelakorCrystalExtension")
 
-		if not table.is_empty(get_entities) then
+		if not table.is_empty(crystal_entities) then
 			return false, "deus_belakor_locus_throw_crystal_impeded_hud_desc"
 		end
 
-		local human_players = player:human_players()
+		local human_players = player_manager:human_players()
 
-		for k, v in pairs(human_players) do
-			local player_unit_2 = v.player_unit
-			local flag = not player_unit_2 and ScriptUnit.extension(player_unit_2, "inventory_system")
+		for _, player in pairs(human_players) do
+			player_unit = player.player_unit
+			inventory_extension = not not player_unit and not not ScriptUnit.extension(player_unit, "inventory_system")
 
-			if not flag and not flag:has_inventory_item("slot_level_event", "belakor_crystal") then
+			if inventory_extension and inventory_extension:has_inventory_item("slot_level_event", "belakor_crystal") then
 				return false, "deus_belakor_locus_throw_crystal_impeded_hud_desc"
 			end
 		end
@@ -383,15 +424,15 @@ end
 
 DeusBelakorLocusExtension.get_interaction_length = function (self)
 	-- function 16
-	local _get_state = self:_get_state()
+	local state = self:_get_state()
 
-	if not (_get_state == tbl.WAITING_FOR_ACTIVATION or _get_state ~= tbl.ACTIVATED) then
-		local _unit = self._unit
-		local get_data = Unit.get_data(_unit, "interaction_data", "interaction_length")
+	if state == STATE.WAITING_FOR_ACTIVATION or state == STATE.ACTIVATED then
+		local unit = self._unit
+		local duration = Unit.get_data(unit, "interaction_data", "interaction_length")
 
-		fassert(get_data, "Interacting with %q that has no interaction length", _unit)
+		fassert(duration, "Interacting with %q that has no interaction length", unit)
 
-		return get_data
+		return duration
 	else
 		return 0
 	end
@@ -399,27 +440,31 @@ end
 
 DeusBelakorLocusExtension.get_interaction_action = function (self)
 	-- function 17
-	if self:_get_state() == tbl.ACTIVATED then
-		local player = Managers.player
-		local player_unit = player:local_player().player_unit
+	local state = self:_get_state()
 
-		if not ScriptUnit.extension(player_unit, "inventory_system"):has_inventory_item("slot_level_event", "belakor_crystal") then
+	if state == STATE.ACTIVATED then
+		local player_manager = Managers.player
+		local local_player = player_manager:local_player()
+		local player_unit = local_player.player_unit
+		local inventory_extension = ScriptUnit.extension(player_unit, "inventory_system")
+
+		if inventory_extension:has_inventory_item("slot_level_event", "belakor_crystal") then
 			return "deus_belakor_locus_throw_crystal_hud_desc"
 		end
 
-		local get_entities = Managers.state.entity:get_entities("DeusBelakorCrystalExtension")
+		local crystal_entities = Managers.state.entity:get_entities("DeusBelakorCrystalExtension")
 
-		if not table.is_empty(get_entities) then
+		if not table.is_empty(crystal_entities) then
 			return "deus_belakor_locus_throw_crystal_impeded_hud_desc"
 		end
 
-		local human_players = player:human_players()
+		local human_players = player_manager:human_players()
 
-		for k, v in pairs(human_players) do
-			local player_unit_2 = v.player_unit
-			local flag = not player_unit_2 and ScriptUnit.extension(player_unit_2, "inventory_system")
+		for _, player in pairs(human_players) do
+			player_unit = player.player_unit
+			inventory_extension = not not player_unit and not not ScriptUnit.extension(player_unit, "inventory_system")
 
-			if not flag and not flag:has_inventory_item("slot_level_event", "belakor_crystal") then
+			if inventory_extension and inventory_extension:has_inventory_item("slot_level_event", "belakor_crystal") then
 				return "deus_belakor_locus_throw_crystal_impeded_hud_desc"
 			end
 		end
@@ -428,44 +473,46 @@ DeusBelakorLocusExtension.get_interaction_action = function (self)
 	return "deus_belakor_locus_deactivate_hud_desc"
 end
 
-DeusBelakorLocusExtension.on_server_interact = function (self, arg_18_1, arg_18_2, arg_18_3, arg_18_4, arg_18_5, arg_18_6, arg_18_7)
+DeusBelakorLocusExtension.on_server_interact = function (self, world, interactor_unit, interactable_unit, data, config, t, result)
 	-- function 18
-	local _get_state = self:_get_state()
+	local state = self:_get_state()
 
-	if _get_state == tbl.WAITING_FOR_ACTIVATION then
-		self:_set_state(tbl.ACTIVATED)
+	if state == STATE.WAITING_FOR_ACTIVATION then
+		self:_set_state(STATE.ACTIVATED)
 	end
 
-	if _get_state == tbl.ACTIVATED then
-		self:_set_state(tbl.DONE)
+	if state == STATE.ACTIVATED then
+		self:_set_state(STATE.DONE)
 	end
 end
 
-DeusBelakorLocusExtension.on_client_interact = function (self, arg_19_1, arg_19_2, arg_19_3, arg_19_4, arg_19_5, arg_19_6, arg_19_7)
+DeusBelakorLocusExtension.on_client_interact = function (self, world, interactor_unit, interactable_unit, data, config, t, result)
 	-- function 19
-	if self:_get_state() == tbl.ACTIVATED then
-		local extension = ScriptUnit.extension(arg_19_2, "inventory_system")
+	local state = self:_get_state()
 
-		extension:destroy_slot("slot_level_event")
-		extension:wield_previous_weapon()
+	if state == STATE.ACTIVATED then
+		local inventory_extension = ScriptUnit.extension(interactor_unit, "inventory_system")
+
+		inventory_extension:destroy_slot("slot_level_event")
+		inventory_extension:wield_previous_weapon()
 	end
 end
 
-DeusBelakorLocusExtension.on_server_start_interact = function (arg_20_0, arg_20_1, arg_20_2, arg_20_3, arg_20_4, arg_20_5, arg_20_6)
+DeusBelakorLocusExtension.on_server_start_interact = function (self, world, interactor_unit, interactable_unit, data, config, t)
 	-- function 20
-	local var_20_0 = POSITION_LOOKUP[arg_20_3]
-	local var_20_1 = num_5
-	local alloc_table = FrameTable.alloc_table()
-	local broadphase_query = AiUtils.broadphase_query(var_20_0, var_20_1, alloc_table)
+	local position = POSITION_LOOKUP[interactable_unit]
+	local radius = AGGRO_ON_INTERACTION_RANGE
+	local ai_units = FrameTable.alloc_table()
+	local num_ai_units = AiUtils.broadphase_query(position, radius, ai_units)
 
-	for i = 1, broadphase_query do
-		local var_20_4 = alloc_table[i]
+	for i = 1, num_ai_units do
+		local ai_unit = ai_units[i]
 
-		if not ALIVE[var_20_4] then
-			local has_extension = ScriptUnit.has_extension(var_20_4, "ai_group_system")
+		if ALIVE[ai_unit] then
+			local group_extension = ScriptUnit.has_extension(ai_unit, "ai_group_system")
 
-			if not (not has_extension and has_extension.template ~= "deus_belakor_locus_cultists") then
-				AIGroupTemplates[has_extension.template].wake_up_group(has_extension.group, arg_20_2)
+			if group_extension and group_extension.template == "deus_belakor_locus_cultists" then
+				AIGroupTemplates[group_extension.template].wake_up_group(group_extension.group, interactor_unit)
 			end
 		end
 	end

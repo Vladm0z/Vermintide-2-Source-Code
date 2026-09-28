@@ -4,29 +4,30 @@ require("scripts/settings/level_settings")
 
 DarknessSystem = class(DarknessSystem, ExtensionSystemBase)
 
-local tbl = {
+local extensions = {
 	"LightSourceExtension",
 	"PlayerUnitDarknessExtension",
 	"ShadowFlareExtension"
 }
-local tbl_2 = {
+local RPCS = {
 	"rpc_shadow_flare_done"
 }
 
 DarknessSystem.DARKNESS_THRESHOLD = 0.025
 DarknessSystem.TOTAL_DARKNESS_TRESHOLD = 0.0125
 
-DarknessSystem.init = function (self, arg_1_1, arg_1_2)
+DarknessSystem.init = function (self, entity_system_creation_context, system_name)
 	-- function 1
-	DarknessSystem.super.init(self, arg_1_1, arg_1_2, tbl)
+	DarknessSystem.super.init(self, entity_system_creation_context, system_name, extensions)
 
 	self._light_source_data = {}
 	self._player_unit_darkness_data = {}
 	self._screen_fx_name = "fx/screenspace_darkness_flash"
 
-	local darkness_settings = LevelHelper:current_level_settings().darkness_settings
+	local level_settings = LevelHelper:current_level_settings()
+	local darkness_settings = level_settings.darkness_settings
 
-	if not darkness_settings then
+	if darkness_settings then
 		local volumes = darkness_settings.volumes
 
 		fassert(volumes, "Missing volumes table in darkness settings.")
@@ -36,11 +37,11 @@ DarknessSystem.init = function (self, arg_1_1, arg_1_2)
 
 		local player_light_intensity = darkness_settings.player_light_intensity
 
-		if not player_light_intensity then
+		if player_light_intensity then
 			self:set_player_light_intensity(player_light_intensity)
 		end
 
-		if not darkness_settings.disable_screen_fx then
+		if darkness_settings.disable_screen_fx then
 			self._screen_fx_name = nil
 		end
 	else
@@ -49,24 +50,24 @@ DarknessSystem.init = function (self, arg_1_1, arg_1_2)
 
 	self._in_darkness = false
 	self._global_darkness = false
-	self._network_event_delegate = arg_1_1.network_event_delegate
+	self._network_event_delegate = entity_system_creation_context.network_event_delegate
 
-	self._network_event_delegate:register(self, unpack(tbl_2))
+	self._network_event_delegate:register(self, unpack(RPCS))
 end
 
-DarknessSystem.set_global_darkness = function (self, arg_2_1)
+DarknessSystem.set_global_darkness = function (self, set)
 	-- function 2
-	self._global_darkness = arg_2_1
+	self._global_darkness = set
 end
 
-DarknessSystem.set_player_light_intensity = function (self, arg_3_1)
+DarknessSystem.set_player_light_intensity = function (self, intensity)
 	-- function 3
-	self._player_light_intensity = arg_3_1
+	self._player_light_intensity = intensity
 end
 
-DarknessSystem.set_level = function (self, arg_4_1)
+DarknessSystem.set_level = function (self, level)
 	-- function 4
-	self._level = arg_4_1
+	self._level = level
 end
 
 DarknessSystem.destroy = function (self)
@@ -76,212 +77,227 @@ DarknessSystem.destroy = function (self)
 	self._network_event_delegate:unregister(self)
 end
 
-DarknessSystem.on_add_extension = function (self, arg_6_1, arg_6_2, arg_6_3, arg_6_4)
+DarknessSystem.on_add_extension = function (self, world, unit, extension_name, extension_init_data)
 	-- function 6
-	if arg_6_3 == "ShadowFlareExtension" then
-		return DarknessSystem.super.on_add_extension(self, arg_6_1, arg_6_2, arg_6_3, arg_6_4)
+	if extension_name == "ShadowFlareExtension" then
+		return DarknessSystem.super.on_add_extension(self, world, unit, extension_name, extension_init_data)
 	end
 
-	local get_data = Unit.get_data(arg_6_2, "light_intensity")
+	local script_data_intensity = Unit.get_data(unit, "light_intensity")
 	local tbl = {}
 	local intensity
 
-	if not arg_6_4 then
-		intensity = arg_6_4.intensity
+	if extension_init_data then
+		intensity = extension_init_data.intensity
 
 		if not intensity then
 			-- Nothing
 		end
 	end
 
-	intensity = get_data or 1
+	intensity = not not script_data_intensity or not not 1
 
 	::label_6_0::
 
 	tbl.intensity = intensity
 
-	ScriptUnit.set_extension(arg_6_2, self.name, tbl)
+	local extension = tbl
 
-	if arg_6_3 == "LightSourceExtension" then
-		self._light_source_data[arg_6_2] = tbl
-		POSITION_LOOKUP[arg_6_2] = Unit.world_position(arg_6_2, 0)
-	elseif arg_6_3 == "PlayerUnitDarknessExtension" then
-		self._player_unit_darkness_data[arg_6_2] = tbl
+	ScriptUnit.set_extension(unit, self.name, extension)
+
+	if extension_name == "LightSourceExtension" then
+		self._light_source_data[unit] = extension
+		POSITION_LOOKUP[unit] = Unit.world_position(unit, 0)
+	elseif extension_name == "PlayerUnitDarknessExtension" then
+		self._player_unit_darkness_data[unit] = extension
 	end
 
-	return tbl
+	return extension
 end
 
-DarknessSystem.on_remove_extension = function (arg_7_0, arg_7_1, arg_7_2)
+DarknessSystem.on_remove_extension = function (self, unit, extension_name)
 	-- function 7
-	DarknessSystem.super.on_remove_extension(arg_7_0, arg_7_1, arg_7_2)
+	DarknessSystem.super.on_remove_extension(self, unit, extension_name)
 
-	if arg_7_2 == "LightSourceExtension" then
-		arg_7_0._light_source_data[arg_7_1] = nil
-		POSITION_LOOKUP[arg_7_1] = nil
-	elseif arg_7_2 == "PlayerUnitDarknessExtension" then
-		arg_7_0._player_unit_darkness_data[arg_7_1] = nil
+	if extension_name == "LightSourceExtension" then
+		self._light_source_data[unit] = nil
+		POSITION_LOOKUP[unit] = nil
+	elseif extension_name == "PlayerUnitDarknessExtension" then
+		self._player_unit_darkness_data[unit] = nil
 	end
 end
 
-DarknessSystem.update = function (self, arg_8_1, arg_8_2)
+DarknessSystem.update = function (self, context, t)
 	-- function 8
-	local dt = arg_8_1.dt
+	local dt = context.dt
 
-	if self._darkness_volumes or not self._global_darkness then
-		self:_update_light_sources(dt, arg_8_2)
-		self:_update_player_unit_darkness(dt, arg_8_2)
-		self:_update_darkness_fx(dt, arg_8_2)
+	if self._darkness_volumes or self._global_darkness then
+		self:_update_light_sources(dt, t)
+		self:_update_player_unit_darkness(dt, t)
+		self:_update_darkness_fx(dt, t)
 	end
 
-	self:_update_shadow_flare_extensions(dt, arg_8_2)
+	self:_update_shadow_flare_extensions(dt, t)
 end
 
-DarknessSystem._update_light_sources = function (arg_9_0, arg_9_1, arg_9_2)
+DarknessSystem._update_light_sources = function (self, dt, t)
 	-- function 9
 	return
 end
 
-local var_0_2
+local IN
 
 LIGHT_LIGHT_VALUE = 0.05
 
-local num = 0.015
-local num_2 = 0.15
+local IN_TWILIGHT_LIGHT_VALUE = 0.015
+local TWILIGHT_MAX_INTENSITY = 0.15
 
-local function fn(arg_10_0)
+local function LIGHT_TO_DARKNESS_INTENSITY_CONVERSION_FUNCTION(light_value)
 	-- function 10
-	return (1 - arg_10_0 / num)^2 / 15
+	local darkness = (1 - light_value / IN_TWILIGHT_LIGHT_VALUE)^2
+
+	return darkness / 15
 end
 
-DarknessSystem._update_player_unit_darkness = function (self, arg_11_1, arg_11_2)
+DarknessSystem._update_player_unit_darkness = function (self, dt, t)
 	-- function 11
-	for k, v in pairs(self._player_unit_darkness_data) do
-		local var_11_0 = POSITION_LOOKUP[k]
+	for unit, data in pairs(self._player_unit_darkness_data) do
+		local var_11_0 = POSITION_LOOKUP[unit]
 
-		var_11_0 = var_11_0 or Unit.world_position(k, 0)
+		if not var_11_0 then
+			-- Nothing
+		end
 
-		local num_3 = var_11_0 + Vector3(0, 0, 1)
-		local is_in_darkness_volume = self:is_in_darkness_volume(num_3)
-		local var_11_3
+		var_11_0 = Unit.world_position(unit, 0)
 
-		if not is_in_darkness_volume then
-			local var_11_4 = Managers.state.side.side_by_unit[k]
+		local unit_position = var_11_0
 
-			if not var_11_4 then
-				local calculate_light_value = self:calculate_light_value(num_3, var_11_4.PLAYER_UNITS)
+		::label_11_0::
 
-				if calculate_light_value > LIGHT_LIGHT_VALUE then
-					v.intensity = 0
-					v.in_darkness = false
-				elseif calculate_light_value > num then
-					v.intensity = math.auto_lerp(LIGHT_LIGHT_VALUE, num, 0, num_2, calculate_light_value)
-					v.in_darkness = true
+		local pos = unit_position + Vector3(0, 0, 1)
+		local in_darkness = self:is_in_darkness_volume(pos)
+		local light_value
+
+		if in_darkness then
+			local side = Managers.state.side.side_by_unit[unit]
+
+			if side then
+				light_value = self:calculate_light_value(pos, side.PLAYER_UNITS)
+
+				if light_value > LIGHT_LIGHT_VALUE then
+					data.intensity = 0
+					data.in_darkness = false
+				elseif light_value > IN_TWILIGHT_LIGHT_VALUE then
+					data.intensity = math.auto_lerp(LIGHT_LIGHT_VALUE, IN_TWILIGHT_LIGHT_VALUE, 0, TWILIGHT_MAX_INTENSITY, light_value)
+					data.in_darkness = true
 				else
-					v.intensity = math.min(math.max(v.intensity, num_2) + arg_11_1 * fn(calculate_light_value), 1)
-					v.in_darkness = true
+					data.intensity = math.min(math.max(data.intensity, TWILIGHT_MAX_INTENSITY) + dt * LIGHT_TO_DARKNESS_INTENSITY_CONVERSION_FUNCTION(light_value), 1)
+					data.in_darkness = true
 				end
 			end
 		else
-			v.in_darkness = false
-			v.intensity = 0
+			data.in_darkness = false
+			data.intensity = 0
 		end
 	end
 end
 
-local num_3 = 0
+local SOURCE_ID = 0
 
-DarknessSystem._update_darkness_fx = function (self, arg_12_1, arg_12_2)
+DarknessSystem._update_darkness_fx = function (self, dt, t)
 	-- function 12
-	local local_player = Managers.player:local_player(1)
+	local player_manager = Managers.player
+	local player = player_manager:local_player(1)
 
-	if not local_player then
+	if player then
 		local world = self.world
-		local observed_unit = local_player:observed_unit()
+		local unit = player:observed_unit()
 
-		if not ALIVE[observed_unit] then
-			observed_unit = local_player.player_unit
+		if not ALIVE[unit] then
+			unit = player.player_unit
 		end
 
-		local var_12_3 = self._player_unit_darkness_data[observed_unit]
-		local flag = not var_12_3 and var_12_3.in_darkness
-		local intensity
+		local data = self._player_unit_darkness_data[unit]
+		local in_darkness = not not data and not not data.in_darkness
+		local intensity_2
 
-		if not var_12_3 then
-			intensity = var_12_3.intensity
+		if data then
+			intensity_2 = data.intensity
 
-			if not intensity then
+			if not intensity_2 then
 				-- Nothing
 			end
 		end
 
-		intensity = 0
+		intensity_2 = 0
+
+		local intensity = intensity_2
 
 		::label_12_0::
 
 		local wwise_world = Managers.world:wwise_world(world)
 
-		if flag or not self._in_darkness then
-			WwiseWorld.trigger_event(wwise_world, "Stop_music_darkness_will_take_you", num_3)
+		if not in_darkness and self._in_darkness then
+			WwiseWorld.trigger_event(wwise_world, "Stop_music_darkness_will_take_you", SOURCE_ID)
 
 			self._in_darkness = false
 
-			WwiseWorld.set_source_parameter(wwise_world, num_3, "darkness_intensity", 0)
+			WwiseWorld.set_source_parameter(wwise_world, SOURCE_ID, "darkness_intensity", 0)
 
-			local _screen_fx_id = self._screen_fx_id
+			local id = self._screen_fx_id
 
-			if not _screen_fx_id then
-				World.destroy_particles(world, _screen_fx_id)
+			if id then
+				World.destroy_particles(world, id)
 			end
-		elseif not (not flag and self._in_darkness) then
-			WwiseWorld.trigger_event(wwise_world, "Play_music_darkness_will_take_you", num_3)
+		elseif in_darkness and not self._in_darkness then
+			WwiseWorld.trigger_event(wwise_world, "Play_music_darkness_will_take_you", SOURCE_ID)
 
 			self._in_darkness = true
 
-			WwiseWorld.set_source_parameter(wwise_world, num_3, "darkness_intensity", intensity * 100)
+			WwiseWorld.set_source_parameter(wwise_world, SOURCE_ID, "darkness_intensity", intensity * 100)
 
-			local _screen_fx_name = self._screen_fx_name
+			local fx = self._screen_fx_name
 
-			if not _screen_fx_name then
-				local create_particles = World.create_particles(world, _screen_fx_name, Vector3.zero())
-				local str = "overlay"
-				local str_2 = "intensity"
+			if fx then
+				local id = World.create_particles(world, fx, Vector3.zero())
+				local material_name = "overlay"
+				local variable_name = "intensity"
 
-				World.set_particles_material_scalar(world, create_particles, str, str_2, intensity)
+				World.set_particles_material_scalar(world, id, material_name, variable_name, intensity)
 
-				self._screen_fx_id = create_particles
+				self._screen_fx_id = id
 			end
-		elseif not flag then
-			WwiseWorld.set_source_parameter(wwise_world, num_3, "darkness_intensity", intensity * 100)
+		elseif in_darkness then
+			WwiseWorld.set_source_parameter(wwise_world, SOURCE_ID, "darkness_intensity", intensity * 100)
 
-			local _screen_fx_id_2 = self._screen_fx_id
+			local id = self._screen_fx_id
 
-			if not _screen_fx_id_2 then
-				local str_3 = "overlay"
-				local str_4 = "intensity"
+			if id then
+				local material_name = "overlay"
+				local variable_name = "intensity"
 
-				World.set_particles_material_scalar(world, _screen_fx_id_2, str_3, str_4, intensity)
+				World.set_particles_material_scalar(world, id, material_name, variable_name, intensity)
 			end
 		end
 	end
 end
 
-DarknessSystem.is_in_darkness_volume = function (self, arg_13_1)
+DarknessSystem.is_in_darkness_volume = function (self, position)
 	-- function 13
-	if not self._global_darkness then
+	if self._global_darkness then
 		return true
 	end
 
-	local _darkness_volumes = self._darkness_volumes
+	local volumes = self._darkness_volumes
 
-	if not _darkness_volumes then
-		local is_point_inside_volume = Level.is_point_inside_volume
-		local _level = self._level
+	if volumes then
+		local is_inside_func = Level.is_point_inside_volume
+		local level = self._level
 
 		for i = 1, self._num_volumes do
-			local var_13_3 = _darkness_volumes[i]
+			local vol_name = volumes[i]
 
-			if not is_point_inside_volume(_level, var_13_3, arg_13_1) then
+			if is_inside_func(level, vol_name, position) then
 				return true
 			end
 		end
@@ -290,113 +306,118 @@ DarknessSystem.is_in_darkness_volume = function (self, arg_13_1)
 	return false
 end
 
-DarknessSystem.calculate_light_value = function (self, arg_14_1, arg_14_2)
+DarknessSystem.calculate_light_value = function (self, position, player_units)
 	-- function 14
-	local num = 0
+	local light_value = 0
 
-	for k, v in pairs(self._light_source_data) do
-		local var_14_1 = POSITION_LOOKUP[k]
-		local max = math.max(Vector3.distance_squared(arg_14_1, var_14_1), 1)
+	for unit, data in pairs(self._light_source_data) do
+		local pos = POSITION_LOOKUP[unit]
+		local dist_sq = math.max(Vector3.distance_squared(position, pos), 1)
+		local intensity = data.intensity
 
-		num = num + v.intensity * (1 / max)
+		light_value = light_value + intensity * (1 / dist_sq)
 	end
 
-	local _player_light_intensity = self._player_light_intensity
+	local player_light_intensity = self._player_light_intensity
 
-	if not self._player_light_intensity then
-		local huge = math.huge
+	if self._player_light_intensity then
+		local closest_distance_sq = math.huge
 
-		for k_2 = 1, #arg_14_2 do
-			local var_14_5 = arg_14_2[k_2]
-			local var_14_6 = POSITION_LOOKUP[var_14_5]
-			local max_2 = math.max(Vector3.distance_squared(var_14_6, arg_14_1), 1)
+		for i = 1, #player_units do
+			local player_unit = player_units[i]
+			local player_position = POSITION_LOOKUP[player_unit]
+			local distance_sq = math.max(Vector3.distance_squared(player_position, position), 1)
 
-			if max_2 < huge then
-				huge = max_2
+			if distance_sq < closest_distance_sq then
+				closest_distance_sq = distance_sq
 			end
 		end
 
-		num = num + _player_light_intensity * (1 / huge)
+		light_value = light_value + player_light_intensity * (1 / closest_distance_sq)
 	end
 
-	return num
+	return light_value
 end
 
-DarknessSystem.is_in_darkness = function (self, arg_15_1, arg_15_2)
+DarknessSystem.is_in_darkness = function (self, position, darkness_treshold)
 	-- function 15
-	if not self:is_in_darkness_volume(arg_15_1) then
+	if not self:is_in_darkness_volume(position) then
 		return false
 	end
 
-	local get_side_from_name = Managers.state.side:get_side_from_name("heroes")
+	local side = Managers.state.side:get_side_from_name("heroes")
+	local light_value = self:calculate_light_value(position, side.PLAYER_UNITS)
 
-	return self:calculate_light_value(arg_15_1, get_side_from_name.PLAYER_UNITS) < (arg_15_2 or DarknessSystem.DARKNESS_THRESHOLD)
+	return light_value < (not not darkness_treshold or not not DarknessSystem.DARKNESS_THRESHOLD)
 end
 
-DarknessSystem._update_shadow_flare_extensions = function (arg_16_0, arg_16_1, arg_16_2)
+DarknessSystem._update_shadow_flare_extensions = function (self, dt, t)
 	-- function 16
-	local get_entities = Managers.state.entity:get_entities("ShadowFlareExtension")
+	local units = Managers.state.entity:get_entities("ShadowFlareExtension")
 
-	for k, v in pairs(get_entities) do
-		v:update(k, arg_16_1)
+	for unit, extension in pairs(units) do
+		extension:update(unit, dt)
 	end
 end
 
 DarknessSystem.remove_mutator_torches = function (self)
 	-- function 17
-	local player_unit = Managers.player:local_player().player_unit
-	local _light_source_data = self._light_source_data
+	local local_player_unit = Managers.player:local_player().player_unit
+	local source_units = self._light_source_data
 
-	if not Managers.player.is_server then
-		Managers.state.entity:system("pickup_system"):disable_teleporting_pickups()
+	if Managers.player.is_server then
+		local pickup_system = Managers.state.entity:system("pickup_system")
 
-		for k, v in pairs(_light_source_data) do
-			local has_extension = ScriptUnit.has_extension(k, "pickup_system")
+		pickup_system:disable_teleporting_pickups()
 
-			if not (not has_extension and has_extension.pickup_name ~= "mutator_torch") then
-				Managers.state.unit_spawner:mark_for_deletion(k)
+		for unit, _ in pairs(source_units) do
+			local pickup_extension = ScriptUnit.has_extension(unit, "pickup_system")
+
+			if pickup_extension and pickup_extension.pickup_name == "mutator_torch" then
+				Managers.state.unit_spawner:mark_for_deletion(unit)
 			end
 		end
 	end
 
-	if not Unit.alive(player_unit) then
-		local has_extension_2 = ScriptUnit.has_extension(player_unit, "inventory_system")
+	if Unit.alive(local_player_unit) then
+		local inventory_extension = ScriptUnit.has_extension(local_player_unit, "inventory_system")
 
-		if not has_extension_2 then
-			local get_wielded_slot_name = has_extension_2:get_wielded_slot_name()
-			local get_slot_data = has_extension_2:get_slot_data(get_wielded_slot_name)
+		if inventory_extension then
+			local weapon_slot = inventory_extension:get_wielded_slot_name()
+			local weapon_data = inventory_extension:get_slot_data(weapon_slot)
 
-			if not get_slot_data then
-				local item_data = get_slot_data.item_data
+			if weapon_data then
+				local item_data = weapon_data.item_data
+				local item_name = not not item_data and not not item_data.name
 
-				if (not item_data and item_data.name) == "mutator_torch" then
-					CharacterStateHelper.stop_weapon_actions(has_extension_2, "wield")
-					has_extension_2:destroy_slot("slot_level_event", true)
-					has_extension_2:wield("slot_melee")
+				if item_name == "mutator_torch" then
+					CharacterStateHelper.stop_weapon_actions(inventory_extension, "wield")
+					inventory_extension:destroy_slot("slot_level_event", true)
+					inventory_extension:wield("slot_melee")
 				end
 			end
 		end
 	end
 end
 
-DarknessSystem.shadow_flares_on_ground = function (arg_18_0)
+DarknessSystem.shadow_flares_on_ground = function (self)
 	-- function 18
 	return Managers.state.entity:get_entities("ShadowFlareExtension")
 end
 
-DarknessSystem.rpc_shadow_flare_done = function (self, arg_19_1, arg_19_2)
+DarknessSystem.rpc_shadow_flare_done = function (self, channel_id, unit_id)
 	-- function 19
-	if not self.is_server then
-		local network = Managers.state.network
-		local var_19_1 = CHANNEL_TO_PEER_ID[arg_19_1]
+	if self.is_server then
+		local network_manager = Managers.state.network
+		local peer_id = CHANNEL_TO_PEER_ID[channel_id]
 
-		network.network_transmit:send_rpc_clients_except("rpc_shadow_flare_done", var_19_1, arg_19_2)
+		network_manager.network_transmit:send_rpc_clients_except("rpc_shadow_flare_done", peer_id, unit_id)
 	end
 
-	local unit = Managers.state.unit_storage:unit(arg_19_2)
-	local extension = ScriptUnit.extension(unit, "darkness_system")
+	local rpc_unit = Managers.state.unit_storage:unit(unit_id)
+	local script = ScriptUnit.extension(rpc_unit, "darkness_system")
 
-	if not extension then
-		extension:set_flare_done()
+	if script then
+		script:set_flare_done()
 	end
 end

@@ -1,6 +1,6 @@
 -- chunkname: @scripts/ui/views/demo_end_ui_definitions.lua
 
-local tbl = {
+local scenegraph_definition = {
 	root = {
 		is_root = true,
 		size = {
@@ -52,7 +52,7 @@ local tbl = {
 		}
 	}
 }
-local tbl_2 = {
+local demo_video = {
 	video_name = "video/demo_end_video_list",
 	sound_start = "Play_ending_demo",
 	scenegraph_id = "splash_video",
@@ -60,7 +60,7 @@ local tbl_2 = {
 	material_name = "demo_end_video_list",
 	sound_stop = "Stop_ending_demo"
 }
-local tbl_3 = {
+local background_widget_definitions = {
 	dead_space_filler_widget = UIWidgets.create_simple_rect("dead_space_filler", {
 		255,
 		0,
@@ -68,11 +68,11 @@ local tbl_3 = {
 		0
 	})
 }
-local tbl_4 = {}
+local widget_definitions = {}
 
 return {
-	scenegraph_definition = tbl,
-	background_widget_definitions = tbl_3,
-	demo_video = tbl_2,
-	widget_definitions = tbl_4
+	scenegraph_definition = scenegraph_definition,
+	background_widget_definitions = background_widget_definitions,
+	demo_video = demo_video,
+	widget_definitions = widget_definitions
 }

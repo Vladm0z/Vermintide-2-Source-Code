@@ -9,7 +9,7 @@ AvailableJourneyOrder = {
 
 local DeusJourneyCycleGods = DeusJourneyCycleGods
 
-DeusJourneyCycleGods = DeusJourneyCycleGods or {
+DeusJourneyCycleGods = not not DeusJourneyCycleGods or not not {
 	"nurgle",
 	"tzeentch",
 	"khorne",
@@ -19,7 +19,7 @@ DeusJourneyCycleGods = DeusJourneyCycleGods
 
 local DeusJourneySettings = DeusJourneySettings
 
-DeusJourneySettings = DeusJourneySettings or {
+DeusJourneySettings = not not DeusJourneySettings or not not {
 	journey_ruin = {
 		description = "journey_ruin_desc",
 		level_image = "morris_level_icon_01",

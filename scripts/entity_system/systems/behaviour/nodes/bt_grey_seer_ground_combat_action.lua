@@ -4,84 +4,107 @@ require("scripts/entity_system/systems/behaviour/nodes/bt_node")
 
 BTGreySeerGroundCombatAction = class(BTGreySeerGroundCombatAction, BTNode)
 
-BTGreySeerGroundCombatAction.init = function (arg_1_0, ...)
+BTGreySeerGroundCombatAction.init = function (self, ...)
 	-- function 1
-	BTGreySeerGroundCombatAction.super.init(arg_1_0, ...)
+	BTGreySeerGroundCombatAction.super.init(self, ...)
 end
 
 BTGreySeerGroundCombatAction.name = "BTGreySeerGroundCombatAction"
 
-BTGreySeerGroundCombatAction.enter = function (self, arg_2_1, arg_2_2, arg_2_3)
+BTGreySeerGroundCombatAction.enter = function (self, unit, blackboard, t)
 	-- function 2
-	local action_data = self._tree_node.action_data
+	local action = self._tree_node.action_data
 
-	arg_2_2.action = action_data
+	blackboard.action = action
 
-	Managers.state.network:anim_event(arg_2_1, "idle_eat_warpstone")
+	Managers.state.network:anim_event(unit, "idle_eat_warpstone")
 
-	local current_phase = arg_2_2.current_phase
-	local breed = arg_2_2.breed
-	local spell_data = arg_2_2.spell_data
+	local current_phase = blackboard.current_phase
+	local breed = blackboard.breed
+	local spell_data_2 = blackboard.spell_data
 
-	spell_data = spell_data or {}
-	spell_data.warp_lightning_spell_cooldown = action_data.warp_lightning_spell_cooldown[current_phase]
-	spell_data.vermintide_spell_cooldown = action_data.vermintide_spell_cooldown[current_phase]
-	spell_data.teleport_spell_cooldown = action_data.teleport_spell_cooldown[current_phase]
+	if not spell_data_2 then
+		-- Nothing
+	end
+
+	spell_data_2 = {}
+
+	local spell_data = spell_data_2
+
+	::label_2_0::
+
+	spell_data.warp_lightning_spell_cooldown = action.warp_lightning_spell_cooldown[current_phase]
+	spell_data.vermintide_spell_cooldown = action.vermintide_spell_cooldown[current_phase]
+	spell_data.teleport_spell_cooldown = action.teleport_spell_cooldown[current_phase]
 
 	local warp_lightning_spell_timer = spell_data.warp_lightning_spell_timer
 
-	warp_lightning_spell_timer = warp_lightning_spell_timer or arg_2_3 + 2
+	warp_lightning_spell_timer = not not warp_lightning_spell_timer or not not (t + 2)
 	spell_data.warp_lightning_spell_timer = warp_lightning_spell_timer
 
 	local vermintide_spell_timer = spell_data.vermintide_spell_timer
 
-	vermintide_spell_timer = vermintide_spell_timer or arg_2_3 + 5
+	vermintide_spell_timer = not not vermintide_spell_timer or not not (t + 5)
 	spell_data.vermintide_spell_timer = vermintide_spell_timer
 
 	local teleport_spell_timer = spell_data.teleport_spell_timer
 
-	teleport_spell_timer = teleport_spell_timer or arg_2_3 + 6
+	teleport_spell_timer = not not teleport_spell_timer or not not (t + 6)
 	spell_data.teleport_spell_timer = teleport_spell_timer
-	arg_2_2.spell_data = spell_data
+	blackboard.spell_data = spell_data
 
-	arg_2_2.navigation_extension:set_enabled(false)
-	arg_2_2.locomotion_extension:set_wanted_velocity(Vector3.zero())
+	blackboard.navigation_extension:set_enabled(false)
+	blackboard.locomotion_extension:set_wanted_velocity(Vector3.zero())
 
-	local final_phase_data = arg_2_2.final_phase_data
+	local final_phase_data_2 = blackboard.final_phase_data
 
-	final_phase_data = final_phase_data or {}
-	arg_2_2.final_phase_data = final_phase_data
+	if not final_phase_data_2 then
+		-- Nothing
+	end
+
+	final_phase_data_2 = {}
+
+	local final_phase_data = final_phase_data_2
+
+	::label_2_1::
+
+	blackboard.final_phase_data = final_phase_data
 
 	local num_teleports = final_phase_data.num_teleports
 
-	num_teleports = num_teleports or 1
+	num_teleports = not not num_teleports or not not 1
 	final_phase_data.num_teleports = num_teleports
 
 	local spawn_allies_timer = final_phase_data.spawn_allies_timer
 
-	spawn_allies_timer = spawn_allies_timer or arg_2_3 + 3
+	spawn_allies_timer = not not spawn_allies_timer or not not (t + 3)
 	final_phase_data.spawn_allies_timer = spawn_allies_timer
 
 	local teleport_timer = final_phase_data.teleport_timer
 
-	teleport_timer = teleport_timer or arg_2_3
+	teleport_timer = not not teleport_timer or not not t
 	final_phase_data.teleport_timer = teleport_timer
-	ScriptUnit.extension(arg_2_1, "health_system").is_invincible = false
+
+	local health_extension = ScriptUnit.extension(unit, "health_system")
+
+	health_extension.is_invincible = false
 end
 
-BTGreySeerGroundCombatAction.leave = function (arg_3_0, arg_3_1, arg_3_2, arg_3_3, arg_3_4, arg_3_5)
+BTGreySeerGroundCombatAction.leave = function (self, unit, blackboard, t, reason, destroy)
 	-- function 3
-	arg_3_2.action = nil
+	blackboard.action = nil
 
-	arg_3_2.navigation_extension:set_enabled(true)
+	blackboard.navigation_extension:set_enabled(true)
 end
 
-local alive = Unit.alive
+local Unit_alive = Unit.alive
 
-BTGreySeerGroundCombatAction.run = function (self, arg_4_1, arg_4_2, arg_4_3, arg_4_4)
+BTGreySeerGroundCombatAction.run = function (self, unit, blackboard, t, dt)
 	-- function 4
-	if not self:update_spells(arg_4_1, arg_4_2, arg_4_3) then
-		arg_4_2.ready_to_summon = true
+	local ready_to_cast = self:update_spells(unit, blackboard, t)
+
+	if ready_to_cast then
+		blackboard.ready_to_summon = true
 
 		return "done"
 	else
@@ -89,54 +112,70 @@ BTGreySeerGroundCombatAction.run = function (self, arg_4_1, arg_4_2, arg_4_3, ar
 	end
 end
 
-BTGreySeerGroundCombatAction.update_spells = function (self, arg_5_1, arg_5_2, arg_5_3)
+BTGreySeerGroundCombatAction.update_spells = function (self, unit, blackboard, t)
 	-- function 5
-	local current_phase = arg_5_2.current_phase
-	local flag = false
-	local var_5_2 = POSITION_LOOKUP[arg_5_1]
-	local target_unit = arg_5_2.target_unit
+	local current_phase = blackboard.current_phase
+	local ready_to_summon = false
+	local position = POSITION_LOOKUP[unit]
+	local target_unit = blackboard.target_unit
 
-	target_unit = not target_unit and var_5_2 - POSITION_LOOKUP[arg_5_2.target_unit]
-
-	self:update_warp_lightning_spell(arg_5_1, arg_5_2, arg_5_3, var_5_2, target_unit)
-	self:update_vermintide_spell(arg_5_1, arg_5_2, arg_5_3, var_5_2, target_unit)
-
-	if current_phase < 4 then
-		flag = self:update_regular_spells(arg_5_1, arg_5_2, arg_5_3)
-	elseif current_phase == 4 then
-		flag = self:update_final_phase(arg_5_1, arg_5_2, arg_5_3)
+	if target_unit then
+		-- Nothing
 	end
 
-	return flag
+	target_unit = position - POSITION_LOOKUP[blackboard.target_unit]
+
+	local target_unit_direction = target_unit
+
+	::label_5_0::
+
+	self:update_warp_lightning_spell(unit, blackboard, t, position, target_unit_direction)
+	self:update_vermintide_spell(unit, blackboard, t, position, target_unit_direction)
+
+	if current_phase < 4 then
+		ready_to_summon = self:update_regular_spells(unit, blackboard, t)
+	elseif current_phase == 4 then
+		ready_to_summon = self:update_final_phase(unit, blackboard, t)
+	end
+
+	return ready_to_summon
 end
 
-BTGreySeerGroundCombatAction.update_final_phase = function (self, arg_6_1, arg_6_2, arg_6_3)
+BTGreySeerGroundCombatAction.update_final_phase = function (self, unit, blackboard, t)
 	-- function 6
-	local action = arg_6_2.action
-	local var_6_1
-	local final_phase_data = arg_6_2.final_phase_data
-	local extension_input = ScriptUnit.extension_input(arg_6_1, "dialogue_system")
-	local current_phase = arg_6_2.current_phase
+	local action = blackboard.action
+	local ready_to_summon
+	local final_phase_data = blackboard.final_phase_data
+	local dialogue_input = ScriptUnit.extension_input(unit, "dialogue_system")
+	local current_phase = blackboard.current_phase
 	local num_teleports = final_phase_data.num_teleports
 
-	num_teleports = num_teleports or 1
+	if not num_teleports then
+		-- Nothing
+	end
 
-	local unbox = arg_6_2.defensive_teleport_positions[num_teleports]:unbox()
+	num_teleports = 1
+
+	local teleport_position_index = num_teleports
+
+	::label_6_0::
+
+	local call_position = blackboard.defensive_teleport_positions[teleport_position_index]:unbox()
 	local teleport_timer = final_phase_data.teleport_timer
 	local special_spawn_timer = final_phase_data.special_spawn_timer
 
-	if not (current_phase ~= 4 or not teleport_timer or teleport_timer < arg_6_3 or not (arg_6_2.stagger_count >= action.staggers_until_teleport)) then
-		local pos_on_mesh = LocomotionUtils.pos_on_mesh(arg_6_2.nav_world, unbox, 1, 1)
+	if current_phase == 4 and (not teleport_timer or not (teleport_timer < t)) and blackboard.stagger_count >= action.staggers_until_teleport then
+		local projected_wanted_pos = LocomotionUtils.pos_on_mesh(blackboard.nav_world, call_position, 1, 1)
 
-		arg_6_2.quick_teleport_exit_pos = Vector3Box(pos_on_mesh)
-		arg_6_2.quick_teleport = true
-		final_phase_data.teleport_timer = arg_6_3 + action.final_phase_teleport_cooldown
-		arg_6_2.current_spell_name = "teleport"
-		arg_6_2.stagger_count = 0
+		blackboard.quick_teleport_exit_pos = Vector3Box(projected_wanted_pos)
+		blackboard.quick_teleport = true
+		final_phase_data.teleport_timer = t + action.final_phase_teleport_cooldown
+		blackboard.current_spell_name = "teleport"
+		blackboard.stagger_count = 0
 
 		local num
 
-		if not final_phase_data.num_teleports then
+		if final_phase_data.num_teleports then
 			num = final_phase_data.num_teleports + 1
 
 			if not num then
@@ -146,7 +185,7 @@ BTGreySeerGroundCombatAction.update_final_phase = function (self, arg_6_1, arg_6
 
 		num = 1
 
-		::label_6_0::
+		::label_6_1::
 
 		final_phase_data.num_teleports = num
 
@@ -154,139 +193,164 @@ BTGreySeerGroundCombatAction.update_final_phase = function (self, arg_6_1, arg_6
 			final_phase_data.num_teleports = 1
 		end
 
-		local alloc_table = FrameTable.alloc_table()
+		local event_data = FrameTable.alloc_table()
 
-		extension_input:trigger_networked_dialogue_event("egs_teleport_away", alloc_table)
+		dialogue_input:trigger_networked_dialogue_event("egs_teleport_away", event_data)
 
 		return true
 	end
 
-	if arg_6_3 > final_phase_data.spawn_allies_timer then
-		self:spawn_allies(arg_6_1, arg_6_2, arg_6_3)
+	local spawn_allies_timer = final_phase_data.spawn_allies_timer
 
-		final_phase_data.spawn_allies_timer = arg_6_3 + action.spawn_allies_cooldown
+	if spawn_allies_timer < t then
+		self:spawn_allies(unit, blackboard, t)
 
-		Managers.state.entity:system("surrounding_aware_system"):add_system_event(arg_6_1, "egs_summon", DialogueSettings.default_hear_distance)
+		final_phase_data.spawn_allies_timer = t + action.spawn_allies_cooldown
 
-		local alloc_table_2 = FrameTable.alloc_table()
+		Managers.state.entity:system("surrounding_aware_system"):add_system_event(unit, "egs_summon", DialogueSettings.default_hear_distance)
 
-		extension_input:trigger_networked_dialogue_event("egs_cast_vermintide", alloc_table_2)
+		local event_data = FrameTable.alloc_table()
+
+		dialogue_input:trigger_networked_dialogue_event("egs_cast_vermintide", event_data)
 	end
 
-	return (self:update_regular_spells(arg_6_1, arg_6_2, arg_6_3))
+	ready_to_summon = self:update_regular_spells(unit, blackboard, t)
+
+	return ready_to_summon
 end
 
-BTGreySeerGroundCombatAction.update_regular_spells = function (arg_7_0, arg_7_1, arg_7_2, arg_7_3)
+BTGreySeerGroundCombatAction.update_regular_spells = function (self, unit, blackboard, t)
 	-- function 7
-	local spell_data = arg_7_2.spell_data
-	local var_7_1
-	local extension_input = ScriptUnit.extension_input(arg_7_1, "dialogue_system")
-	local warp_lightning_spell_timer = spell_data.warp_lightning_spell_timer
-	local vermintide_spell_timer = spell_data.vermintide_spell_timer
-	local teleport_spell_timer = spell_data.teleport_spell_timer
-	local current_phase = arg_7_2.current_phase
+	local spell_data = blackboard.spell_data
+	local ready_to_summon
+	local dialogue_input = ScriptUnit.extension_input(unit, "dialogue_system")
+	local warp_lightning_timer = spell_data.warp_lightning_spell_timer
+	local vemintide_timer = spell_data.vermintide_spell_timer
+	local teleport_timer = spell_data.teleport_spell_timer
+	local current_phase = blackboard.current_phase
 
-	if warp_lightning_spell_timer < arg_7_3 then
-		arg_7_2.current_spell_name = "warp_lightning"
-		var_7_1 = true
-		spell_data.warp_lightning_spell_timer = arg_7_3 + spell_data.warp_lightning_spell_cooldown
+	if warp_lightning_timer < t then
+		blackboard.current_spell_name = "warp_lightning"
+		ready_to_summon = true
+		spell_data.warp_lightning_spell_timer = t + spell_data.warp_lightning_spell_cooldown
 
-		local alloc_table = FrameTable.alloc_table()
+		local event_data = FrameTable.alloc_table()
 
-		extension_input:trigger_networked_dialogue_event("egs_cast_lightning", alloc_table)
-	elseif vermintide_spell_timer < arg_7_3 then
-		arg_7_2.current_spell_name = "vermintide"
-		var_7_1 = true
-		spell_data.vermintide_spell_timer = arg_7_3 + spell_data.vermintide_spell_cooldown
+		dialogue_input:trigger_networked_dialogue_event("egs_cast_lightning", event_data)
+	elseif vemintide_timer < t then
+		blackboard.current_spell_name = "vermintide"
+		ready_to_summon = true
+		spell_data.vermintide_spell_timer = t + spell_data.vermintide_spell_cooldown
 
-		local alloc_table_2 = FrameTable.alloc_table()
+		local event_data = FrameTable.alloc_table()
 
-		extension_input:trigger_networked_dialogue_event("egs_cast_vermintide", alloc_table_2)
+		dialogue_input:trigger_networked_dialogue_event("egs_cast_vermintide", event_data)
 	end
 
-	return var_7_1
+	return ready_to_summon
 end
 
-BTGreySeerGroundCombatAction.update_warp_lightning_spell = function (arg_8_0, arg_8_1, arg_8_2, arg_8_3, arg_8_4, arg_8_5)
+BTGreySeerGroundCombatAction.update_warp_lightning_spell = function (self, unit, blackboard, t, position, target_unit_direction)
 	-- function 8
-	local magic_missile_data = arg_8_2.magic_missile_data
+	local magic_missile_spell = blackboard.magic_missile_data
 
-	magic_missile_data.throw_pos:store(arg_8_4 + Vector3.up() * 2)
+	magic_missile_spell.throw_pos:store(position + Vector3.up() * 2)
 
-	if not arg_8_5 then
-		magic_missile_data.target_direction:store(arg_8_5)
+	if target_unit_direction then
+		magic_missile_spell.target_direction:store(target_unit_direction)
 	end
 end
 
-BTGreySeerGroundCombatAction.update_vermintide_spell = function (arg_9_0, arg_9_1, arg_9_2, arg_9_3, arg_9_4, arg_9_5)
+BTGreySeerGroundCombatAction.update_vermintide_spell = function (self, unit, blackboard, t, position, target_unit_direction)
 	-- function 9
-	local plague_wave_data = arg_9_2.plague_wave_data
+	local plague_wave_spell = blackboard.plague_wave_data
 
-	plague_wave_data.target_starting_pos:store(arg_9_4)
+	plague_wave_spell.target_starting_pos:store(position)
 
-	if not arg_9_5 then
-		plague_wave_data.plague_wave_rot:store(Quaternion.look(arg_9_5))
+	if target_unit_direction then
+		plague_wave_spell.plague_wave_rot:store(Quaternion.look(target_unit_direction))
 	end
 end
 
-BTGreySeerGroundCombatAction.update_teleport_spell = function (arg_10_0, arg_10_1, arg_10_2, arg_10_3, arg_10_4)
+BTGreySeerGroundCombatAction.update_teleport_spell = function (self, unit, blackboard, t, position)
 	-- function 10
-	local quick_teleport_timer = arg_10_2.quick_teleport_timer
+	local quick_teleport_timer_2 = blackboard.quick_teleport_timer
 
-	quick_teleport_timer = quick_teleport_timer or arg_10_3
-	arg_10_2.quick_teleport_timer = quick_teleport_timer
+	if not quick_teleport_timer_2 then
+		-- Nothing
+	end
 
-	if not (not quick_teleport_timer and not (quick_teleport_timer < arg_10_3)) then
-		local skulk_data = arg_10_2.skulk_data
+	quick_teleport_timer_2 = t
 
-		skulk_data = skulk_data or {}
-		arg_10_2.skulk_data = skulk_data
+	local quick_teleport_timer = quick_teleport_timer_2
+
+	::label_10_0::
+
+	blackboard.quick_teleport_timer = quick_teleport_timer
+
+	if quick_teleport_timer and quick_teleport_timer < t then
+		local skulk_data_2 = blackboard.skulk_data
+
+		if not skulk_data_2 then
+			-- Nothing
+		end
+
+		skulk_data_2 = {}
+
+		local skulk_data = skulk_data_2
+
+		::label_10_1::
+
+		blackboard.skulk_data = skulk_data
 
 		local direction = skulk_data.direction
 
-		direction = direction or 1 - math.random(0, 1) * 2
+		direction = not not direction or not not (1 - math.random(0, 1) * 2)
 		skulk_data.direction = direction
 
 		local radius = skulk_data.radius
 
-		radius = radius or arg_10_2.target_dist
+		radius = not not radius or not not blackboard.target_dist
 		skulk_data.radius = radius
 
-		local get_skulk_target = BTChaosSorcererPlagueSkulkAction:get_skulk_target(arg_10_1, arg_10_2, true)
+		local teleport_pos = BTChaosSorcererPlagueSkulkAction:get_skulk_target(unit, blackboard, true)
 
-		if not get_skulk_target then
-			arg_10_2.quick_teleport_exit_pos = Vector3Box(get_skulk_target)
-			arg_10_2.quick_teleport = true
-			arg_10_2.move_pos = nil
-			arg_10_2.quick_teleport_timer = arg_10_3 + 2.5
+		if teleport_pos then
+			blackboard.quick_teleport_exit_pos = Vector3Box(teleport_pos)
+			blackboard.quick_teleport = true
+			blackboard.move_pos = nil
+			blackboard.quick_teleport_timer = t + 2.5
 		end
 	end
 end
 
-BTGreySeerGroundCombatAction.spawn_allies = function (arg_11_0, arg_11_1, arg_11_2, arg_11_3)
+BTGreySeerGroundCombatAction.spawn_allies = function (self, unit, blackboard, t)
 	-- function 11
-	local get_difficulty = Managers.state.difficulty:get_difficulty()
-	local action = arg_11_2.action
-	local flag = true
-	local flag_2 = true
-	local var_11_4
+	local difficulty = Managers.state.difficulty:get_difficulty()
+	local action = blackboard.action
+	local strictly_not_close_to_players = true
+	local silent = true
+	local var_11_0
 
-	if not action.difficulty_spawn then
-		var_11_4 = action.difficulty_spawn[get_difficulty]
+	if action.difficulty_spawn then
+		var_11_0 = action.difficulty_spawn[difficulty]
 
-		if not var_11_4 then
+		if not var_11_0 then
 			-- Nothing
 		end
 	end
 
-	var_11_4 = action.spawn
+	var_11_0 = action.spawn
+
+	local composition_type = var_11_0
 
 	::label_11_0::
 
-	local var_11_5
+	local limit_spawners
 	local terror_event_id = action.terror_event_id
-	local conflict = Managers.state.conflict
-	local side_id = arg_11_2.side.side_id
+	local conflict_director = Managers.state.conflict
+	local side = blackboard.side
+	local side_id = side.side_id
 
-	conflict.horde_spawner:execute_event_horde(arg_11_3, terror_event_id, side_id, var_11_4, var_11_5, flag_2, nil, flag)
+	conflict_director.horde_spawner:execute_event_horde(t, terror_event_id, side_id, composition_type, limit_spawners, silent, nil, strictly_not_close_to_players)
 end

@@ -1,28 +1,37 @@
 -- chunkname: @scripts/ui/hud_ui/world_marker_templates/world_marker_template_pet_cancel.lua
 
-local str = "pet_cancel"
+local NAME = "pet_cancel"
 local WorldMarkerTemplates = WorldMarkerTemplates
 
-WorldMarkerTemplates = WorldMarkerTemplates or {}
+WorldMarkerTemplates = not not WorldMarkerTemplates or not not {}
 WorldMarkerTemplates = WorldMarkerTemplates
 
-local var_0_2 = WorldMarkerTemplates[str]
+local var_0_1 = WorldMarkerTemplates[NAME]
 
-var_0_2 = var_0_2 or {}
-WorldMarkerTemplates[str] = var_0_2
-var_0_2.position_offset = {
+if not var_0_1 then
+	-- Nothing
+end
+
+var_0_1 = {}
+
+local template = var_0_1
+
+::label_0_0::
+
+WorldMarkerTemplates[NAME] = template
+template.position_offset = {
 	0,
 	0,
 	0.2
 }
-var_0_2.unit_node = "j_spine"
-var_0_2.check_line_of_sight = true
-var_0_2.screen_clamp = false
+template.unit_node = "j_spine"
+template.check_line_of_sight = true
+template.screen_clamp = false
 
-var_0_2.create_widget_definition = function (arg_1_0)
+template.create_widget_definition = function (scenegraph_id)
 	-- function 1
 	return {
-		scenegraph_id = arg_1_0,
+		scenegraph_id = scenegraph_id,
 		offset = {
 			0,
 			0,
@@ -34,18 +43,18 @@ var_0_2.create_widget_definition = function (arg_1_0)
 					pass_type = "texture",
 					style_id = "text_bg",
 					texture_id = "text_bg",
-					content_check_function = function (self)
+					content_check_function = function (content)
 						-- function 2
-						return self.text
+						return content.text
 					end
 				},
 				{
 					style_id = "text",
 					pass_type = "text",
 					text_id = "text",
-					content_check_function = function (self)
+					content_check_function = function (content)
 						-- function 3
-						return self.text
+						return content.text
 					end
 				}
 			}
@@ -94,7 +103,9 @@ var_0_2.create_widget_definition = function (arg_1_0)
 	}
 end
 
-var_0_2.on_enter = function (arg_4_0)
+template.on_enter = function (widget)
 	-- function 4
-	arg_4_0.content.progress = 1
+	local content = widget.content
+
+	content.progress = 1
 end

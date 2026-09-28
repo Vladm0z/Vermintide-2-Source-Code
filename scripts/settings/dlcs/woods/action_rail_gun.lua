@@ -2,24 +2,24 @@
 
 ActionRailGun = class(ActionRailGun, ActionRangedBase)
 
-ActionRailGun.init = function (arg_1_0, arg_1_1, arg_1_2, arg_1_3, arg_1_4, arg_1_5, arg_1_6, arg_1_7, arg_1_8)
+ActionRailGun.init = function (self, world, item_name, is_server, owner_unit, damage_unit, first_person_unit, weapon_unit, weapon_system)
 	-- function 1
-	ActionRailGun.super.init(arg_1_0, arg_1_1, arg_1_2, arg_1_3, arg_1_4, arg_1_5, arg_1_6, arg_1_7, arg_1_8)
+	ActionRailGun.super.init(self, world, item_name, is_server, owner_unit, damage_unit, first_person_unit, weapon_unit, weapon_system)
 end
 
-ActionRailGun.client_owner_start_action = function (self, arg_2_1, arg_2_2, arg_2_3, arg_2_4)
+ActionRailGun.client_owner_start_action = function (self, new_action, t, chain_action_data, power_level)
 	-- function 2
-	ActionRailGun.super.client_owner_start_action(self, arg_2_1, arg_2_2, arg_2_3, arg_2_4)
+	ActionRailGun.super.client_owner_start_action(self, new_action, t, chain_action_data, power_level)
 
-	local on_shoot_particle_fx = arg_2_1.on_shoot_particle_fx
+	local on_shoot_particle_fx = new_action.on_shoot_particle_fx
 
-	if not (not on_shoot_particle_fx and self.is_bot) then
-		local first_person_unit = self.first_person_unit
+	if on_shoot_particle_fx and not self.is_bot then
+		local unit = self.first_person_unit
 		local node_name = on_shoot_particle_fx.node_name
 		local node
 
-		if not Unit.has_node(first_person_unit, node_name) then
-			node = Unit.node(first_person_unit, node_name)
+		if Unit.has_node(unit, node_name) then
+			node = Unit.node(unit, node_name)
 
 			if not node then
 				-- Nothing
@@ -35,22 +35,26 @@ ActionRailGun.client_owner_start_action = function (self, arg_2_1, arg_2_2, arg_
 	end
 end
 
-ActionRailGun.shoot = function (self, arg_3_1, arg_3_2, arg_3_3)
+ActionRailGun.shoot = function (self, num_shots_this_frame, shots_fired, num_shots_total)
 	-- function 3
-	local _on_shoot_particle_fx = self._on_shoot_particle_fx
+	local on_shoot_particle_fx = self._on_shoot_particle_fx
 
-	if not _on_shoot_particle_fx and not not self.is_bot then
-		local first_person_unit = self.first_person_unit
-		local world_position = Unit.world_position(first_person_unit, self._on_shoot_particle_fx_node)
+	if on_shoot_particle_fx then
+		local is_first_person = not self.is_bot
 
-		World.create_particles(self.world, _on_shoot_particle_fx.effect, world_position)
+		if is_first_person then
+			local unit = self.first_person_unit
+			local node_position = Unit.world_position(unit, self._on_shoot_particle_fx_node)
+
+			World.create_particles(self.world, on_shoot_particle_fx.effect, node_position)
+		end
 	end
 
-	return ActionRailGun.super.shoot(self, arg_3_1, arg_3_2, arg_3_3)
+	return ActionRailGun.super.shoot(self, num_shots_this_frame, shots_fired, num_shots_total)
 end
 
-ActionRailGun.finish = function (self, arg_4_1)
+ActionRailGun.finish = function (self, reason)
 	-- function 4
-	ActionRailGun.super.finish(self, arg_4_1)
+	ActionRailGun.super.finish(self, reason)
 	self:_proc_spell_used(self.owner_buff_extension)
 end

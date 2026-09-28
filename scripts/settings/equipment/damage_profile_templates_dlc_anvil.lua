@@ -1,6 +1,6 @@
 -- chunkname: @scripts/settings/equipment/damage_profile_templates_dlc_anvil.lua
 
-local tbl = {
+local damage_templates = {
 	light_slashing_smiter_pull = {
 		stagger_duration_modifier = 1.5,
 		critical_strike = "critical_strike_pull_smiter_L",
@@ -65,7 +65,7 @@ local tbl = {
 	}
 }
 
-tbl.flaming_flail_explosion_glance = table.clone(tbl.flaming_flail_explosion)
-tbl.flaming_flail_explosion_glance.default_target.dot_template_name = nil
+damage_templates.flaming_flail_explosion_glance = table.clone(damage_templates.flaming_flail_explosion)
+damage_templates.flaming_flail_explosion_glance.default_target.dot_template_name = nil
 
-return tbl
+return damage_templates

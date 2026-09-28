@@ -3,7 +3,7 @@
 EndViewStateScoreVSTabDetails = class(EndViewStateScoreVSTabDetails)
 EndViewStateScoreVSTabDetails.NAME = "EndViewStateScoreVSTabDetails"
 
-local tbl = {
+local scoreboard_setup = {
 	headers = {
 		{
 			side = "heroes",
@@ -58,14 +58,14 @@ local tbl = {
 	}
 }
 
-EndViewStateScoreVSTabDetails.on_enter = function (self, arg_1_1)
+EndViewStateScoreVSTabDetails.on_enter = function (self, params)
 	-- function 1
 	print("[EndViewStateVS] Enter Substate EndViewStateScoreVSTabDetails")
 
-	self._params = arg_1_1
-	self._parent = arg_1_1.parent
+	self._params = params
+	self._parent = params.parent
 
-	local context = arg_1_1.context
+	local context = params.context
 
 	self._context = context
 	self._ui_renderer = context.ui_renderer
@@ -78,13 +78,13 @@ EndViewStateScoreVSTabDetails.on_enter = function (self, arg_1_1)
 	self._animations = {}
 	self._ui_animations = {}
 
-	self:create_ui_elements(arg_1_1)
+	self:create_ui_elements(params)
 	self:_start_transition_animation("on_enter", "on_enter")
 	self._parent:hide_team()
 	self._parent:activate_back_to_keep_button()
 end
 
-EndViewStateScoreVSTabDetails.on_exit = function (self, arg_2_1)
+EndViewStateScoreVSTabDetails.on_exit = function (self, params)
 	-- function 2
 	print("[EndViewStateVS] Exit Substate EndViewStateScoreVSTabDetails")
 
@@ -94,312 +94,347 @@ EndViewStateScoreVSTabDetails.on_exit = function (self, arg_2_1)
 	self._ui_animator = nil
 end
 
-EndViewStateScoreVSTabDetails.create_ui_elements = function (self, arg_3_1)
+EndViewStateScoreVSTabDetails.create_ui_elements = function (self, params)
 	-- function 3
-	local _get_definitions = self:_get_definitions()
-	local widget_definitions = _get_definitions.widget_definitions
-	local scenegraph_definition = _get_definitions.scenegraph_definition
-	local animation_definitions = _get_definitions.animation_definitions
+	local definitions = self:_get_definitions()
+	local widget_definitions = definitions.widget_definitions
+	local scenegraph_definition = definitions.scenegraph_definition
+	local animation_definitions = definitions.animation_definitions
 
 	self._scenegraph_definition = scenegraph_definition
 	self._ui_scenegraph = UISceneGraph.init_scenegraph(scenegraph_definition)
 	self._widgets, self._widgets_by_name = UIUtils.create_widgets(widget_definitions, {}, {})
 
-	self:_populate_stats(_get_definitions)
-	self:_create_winner_icon(_get_definitions)
+	self:_populate_stats(definitions)
+	self:_create_winner_icon(definitions)
 	UIRenderer.clear_scenegraph_queue(self._ui_renderer)
 
 	self._ui_animator = UIAnimator:new(self._ui_scenegraph, animation_definitions)
 end
 
-EndViewStateScoreVSTabDetails._create_winner_icon = function (self, arg_4_1)
+EndViewStateScoreVSTabDetails._create_winner_icon = function (self, definitions)
 	-- function 4
-	local create_winner_icon_func = arg_4_1.create_winner_icon_func
-	local peer_id = Network.peer_id()
-	local num = 1
-	local var_4_3 = self._context.party_composition[PlayerUtils.unique_player_id(peer_id, num)]
-	local flag
+	local create_winner_icon_func = definitions.create_winner_icon_func
+	local my_peer_id = Network.peer_id()
+	local local_player_id = 1
+	local local_player_party_id = self._context.party_composition[PlayerUtils.unique_player_id(my_peer_id, local_player_id)]
+	local num
 
-	flag = var_4_3 ~= 1 or not 2 or 1
+	if local_player_party_id == 1 then
+		num = 2
 
-	local team_scores = self._context.rewards.team_scores
-	local var_4_6 = team_scores[var_4_3]
-	local var_4_7 = team_scores[flag]
+		goto label_4_0
+	end
 
-	if var_4_7 < var_4_6 then
-		local var_4_8 = create_winner_icon_func("local_team")
-		local var_4_9 = UIWidget.init(var_4_8)
+	num = 1
 
-		self._widgets[#self._widgets + 1] = var_4_9
-		self._widgets_by_name.local_winner_icon = var_4_9
-	elseif var_4_6 < var_4_7 then
-		local var_4_10 = create_winner_icon_func("opponent_team")
-		local var_4_11 = UIWidget.init(var_4_10)
+	local opponent_party_id = num
 
-		self._widgets[#self._widgets + 1] = var_4_11
-		self._widgets_by_name.opponent_winner_icon = var_4_11
+	::label_4_0::
+
+	local scores = self._context.rewards.team_scores
+	local local_player_team_score = scores[local_player_party_id]
+	local opponent_team_score = scores[opponent_party_id]
+
+	if opponent_team_score < local_player_team_score then
+		local widget_definition = create_winner_icon_func("local_team")
+		local widget = UIWidget.init(widget_definition)
+
+		self._widgets[#self._widgets + 1] = widget
+		self._widgets_by_name.local_winner_icon = widget
+	elseif local_player_team_score < opponent_team_score then
+		local widget_definition = create_winner_icon_func("opponent_team")
+		local widget = UIWidget.init(widget_definition)
+
+		self._widgets[#self._widgets + 1] = widget
+		self._widgets_by_name.opponent_winner_icon = widget
 	end
 end
 
-local tbl_2 = {}
-local tbl_3 = {}
-local tbl_4 = {}
+local PARTY_COMPOSITION = {}
+local TEAM_SIZES = {}
+local MAX_TEAM_SIZES = {}
 
-EndViewStateScoreVSTabDetails._trim_bots = function (arg_5_0, arg_5_1)
+EndViewStateScoreVSTabDetails._trim_bots = function (self, party_composition)
 	-- function 5
-	table.clear(tbl_2)
-	table.clear(tbl_3)
-	table.clear(tbl_4)
+	table.clear(PARTY_COMPOSITION)
+	table.clear(TEAM_SIZES)
+	table.clear(MAX_TEAM_SIZES)
 
-	local party_settings = GameModeSettings.versus.party_settings
+	local versus_party_settings = GameModeSettings.versus.party_settings
 
-	for k, v in pairs(party_settings) do
-		tbl_4[v.party_id] = v.num_slots
+	for team, settings in pairs(versus_party_settings) do
+		MAX_TEAM_SIZES[settings.party_id] = settings.num_slots
 	end
 
-	for k_2, v_2 in pairs(arg_5_1) do
-		if string.split_deprecated(k_2, ":")[2] == "1" then
-			tbl_2[k_2] = v_2
+	for name, party_id in pairs(party_composition) do
+		local values = string.split_deprecated(name, ":")
 
-			local var_5_1 = tbl_3
-			local var_5_2 = tbl_3[v_2]
+		if values[2] == "1" then
+			PARTY_COMPOSITION[name] = party_id
 
-			var_5_2 = var_5_2 or 0
-			var_5_1[v_2] = var_5_2 + 1
+			local var_5_0 = TEAM_SIZES
+			local var_5_1 = TEAM_SIZES[party_id]
+
+			var_5_1 = not not var_5_1 or not not 0
+			var_5_0[party_id] = var_5_1 + 1
 		end
 	end
 
-	return tbl_2, tbl_3, tbl_4
+	return PARTY_COMPOSITION, TEAM_SIZES, MAX_TEAM_SIZES
 end
 
-EndViewStateScoreVSTabDetails._populate_stats = function (self, arg_6_1)
+EndViewStateScoreVSTabDetails._populate_stats = function (self, definitions)
 	-- function 6
-	local peer_id = Network.peer_id()
-	local _context = self._context
-	local _trim_bots, var_6_3, var_6_4 = self:_trim_bots(_context.party_composition)
-	local var_6_5 = _trim_bots[peer_id .. ":1"]
-	local var_6_6 = GameModeSettings.versus.party_names_lookup_by_id[var_6_5]
-	local flag
+	local my_peer_id = Network.peer_id()
+	local context = self._context
+	local party_composition, team_sizes, max_team_sizes = self:_trim_bots(context.party_composition)
+	local my_unique_id = my_peer_id .. ":1"
+	local my_party_id = party_composition[my_unique_id]
+	local my_team = GameModeSettings.versus.party_names_lookup_by_id[my_party_id]
+	local num
 
-	flag = var_6_5 ~= 1 or not 2 or 1
+	if my_party_id == 1 then
+		num = 2
 
-	local var_6_8 = GameModeSettings.versus.party_names_lookup_by_id[flag]
-	local players_session_score = _context.players_session_score
-	local create_stats_func = arg_6_1.create_stats_func
-	local create_title_func = arg_6_1.create_title_func
-	local create_team_grid_fields_func = arg_6_1.create_team_grid_fields_func
-	local create_team_title_func = arg_6_1.create_team_title_func
-	local create_flag_func = arg_6_1.create_flag_func
-	local values = table.values(players_session_score)
-	local tbl_2 = {}
+		goto label_6_0
+	end
 
-	for k, v in pairs(values) do
-		local scores = v.scores
-		local var_6_18 = _trim_bots[v.peer_id .. ":" .. v.local_player_id]
+	num = 1
 
-		for k_2, v_2 in pairs(scores) do
-			local var_6_19 = tbl_2[k_2]
+	local opponent_party_id = num
 
-			var_6_19 = var_6_19 or v_2
-			tbl_2[k_2] = var_6_19
-			tbl_2[k_2] = not (v_2 > tbl_2[k_2]) or not v_2 or tbl_2[k_2]
+	::label_6_0::
+
+	local opponent_team = GameModeSettings.versus.party_names_lookup_by_id[opponent_party_id]
+	local players_session_score = context.players_session_score
+	local create_stats_func = definitions.create_stats_func
+	local create_title_func = definitions.create_title_func
+	local create_team_grid_fields_func = definitions.create_team_grid_fields_func
+	local create_team_title_func = definitions.create_team_title_func
+	local create_flag_func = definitions.create_flag_func
+	local player_session_data = table.values(players_session_score)
+	local player_highscores = {}
+
+	for _, data in pairs(player_session_data) do
+		local scores = data.scores
+		local unique_id = data.peer_id .. ":" .. data.local_player_id
+		local party_id = party_composition[unique_id]
+
+		for key, value in pairs(scores) do
+			local var_6_1 = player_highscores[key]
+
+			var_6_1 = not not var_6_1 or not not value
+			player_highscores[key] = var_6_1
+			player_highscores[key] = (not (value > player_highscores[key]) or not value) and not not player_highscores[key]
 		end
 	end
 
-	local function fn(self, arg_7_1)
+	local function sort_by_names(a, b)
 		-- function 7
-		return self.name < arg_7_1.name
+		return a.name < b.name
 	end
 
-	table.sort(values, fn)
+	table.sort(player_session_data, sort_by_names)
 
-	local tbl_3 = {
+	local offset = {
 		0,
 		0,
 		0
 	}
-	local tbl_4 = {}
-	local tbl_5 = {}
-	local tbl_6 = {}
+	local fields = {}
+	local highscores = {}
+	local total_fields = {}
 
-	for k_3, v_3 in pairs(tbl) do
-		for i, v_4 in ipairs(v_3) do
-			local scenegraph_id = v_4.scenegraph_id
-			local side = v_4.side
-			local num = 0
+	for team, team_scoreboard_setup in pairs(scoreboard_setup) do
+		for _, setup in ipairs(team_scoreboard_setup) do
+			local scenegraph_id = setup.scenegraph_id
+			local side = setup.side
+			local row_index = 0
 
-			table.clear(tbl_6)
+			table.clear(total_fields)
 
-			local texts = v_4.texts
+			local texts = setup.texts
 
-			if not texts then
-				table.clear(tbl_4)
+			if texts then
+				table.clear(fields)
 
-				for i_2, v_5 in ipairs(texts) do
-					tbl_4[#tbl_4 + 1] = Localize(v_5)
+				for _, text in ipairs(texts) do
+					fields[#fields + 1] = Localize(text)
 				end
 
-				tbl_3[2] = -40 * num
+				offset[2] = -40 * row_index
 
-				local flag_2 = false
-				local flag_3 = true
-				local var_6_31 = create_stats_func(scenegraph_id, tbl_4, 18, tbl_3, flag_2, flag_3)
-				local var_6_32 = UIWidget.init(var_6_31)
+				local is_me = false
+				local skip_highscore = true
+				local widget_definition = create_stats_func(scenegraph_id, fields, 18, offset, is_me, skip_highscore)
+				local widget = UIWidget.init(widget_definition)
 
-				self._widgets[#self._widgets + 1] = var_6_32
-				self._widgets_by_name[k_3 .. "_" .. side] = var_6_32
+				self._widgets[#self._widgets + 1] = widget
+				self._widgets_by_name[team .. "_" .. side] = widget
 			else
-				for k_4, v_6 in pairs(values) do
-					local str = v_6.peer_id .. ":" .. v_6.local_player_id
-					local var_6_34 = _trim_bots[str]
-					local var_6_35 = GameModeSettings.versus.party_names_lookup_by_id[var_6_34]
+				for _, data in pairs(player_session_data) do
+					local unique_id = data.peer_id .. ":" .. data.local_player_id
+					local party_id = party_composition[unique_id]
+					local player_team_name = GameModeSettings.versus.party_names_lookup_by_id[party_id]
 
-					if not (not var_6_35 and var_6_35 == "undecided") then
-						local flag_4
+					if player_team_name and player_team_name ~= "undecided" then
+						local str
 
-						flag_4 = var_6_34 ~= var_6_5 or not "local_team" or "opponent_team"
+						if party_id == my_party_id then
+							str = "local_team"
 
-						if flag_4 == k_3 then
-							local scores_2 = v_6.scores
+							goto label_6_1
+						end
 
-							table.clear(tbl_4)
-							table.clear(tbl_5)
+						str = "opponent_team"
 
-							for i12 = 1, #v_4 do
-								local var_6_38 = v_4[i12]
-								local num_2 = #tbl_4 + 1
-								local var_6_40 = scores_2[var_6_38]
+						local player_team = str
 
-								var_6_40 = var_6_40 or Localize("menu_settings_none")
-								tbl_4[num_2] = var_6_40
+						::label_6_1::
 
-								local var_6_41 = tbl_6[i12]
+						if player_team == team then
+							local scores = data.scores
 
-								var_6_41 = var_6_41 or 0
+							table.clear(fields)
+							table.clear(highscores)
 
-								local var_6_42 = scores_2[var_6_38]
+							for i = 1, #setup do
+								local stat_name = setup[i]
+								local num_2 = #fields + 1
+								local var_6_4 = scores[stat_name]
 
-								var_6_42 = var_6_42 or 0
-								tbl_6[i12] = var_6_41 + var_6_42
-								tbl_5[#tbl_5 + 1] = tbl_2[var_6_38]
+								var_6_4 = not not var_6_4 or not not Localize("menu_settings_none")
+								fields[num_2] = var_6_4
+
+								local var_6_5 = total_fields[i]
+
+								var_6_5 = not not var_6_5 or not not 0
+
+								local var_6_6 = scores[stat_name]
+
+								var_6_6 = not not var_6_6 or not not 0
+								total_fields[i] = var_6_5 + var_6_6
+								highscores[#highscores + 1] = player_highscores[stat_name]
 							end
 
-							tbl_3[2] = -40 * (num - 1)
+							offset[2] = -40 * (row_index - 1)
 
-							local flag_5 = false
-							local var_6_44 = create_stats_func(scenegraph_id, tbl_4, 20, tbl_3, v_6.peer_id == peer_id, flag_5, tbl_5)
-							local var_6_45 = UIWidget.init(var_6_44)
+							local skip_highscore = false
+							local widget_definition = create_stats_func(scenegraph_id, fields, 20, offset, data.peer_id == my_peer_id, skip_highscore, highscores)
+							local widget = UIWidget.init(widget_definition)
 
-							self._widgets[#self._widgets + 1] = var_6_45
-							self._widgets_by_name[str .. "_" .. k_3 .. "_" .. side] = var_6_45
+							self._widgets[#self._widgets + 1] = widget
+							self._widgets_by_name[unique_id .. "_" .. team .. "_" .. side] = widget
 
 							if side == "heroes" then
-								tbl_3[1] = -200
+								offset[1] = -200
 
-								local var_6_46 = create_title_func(scenegraph_id, v_6.name, nil, tbl_3, v_6.peer_id == peer_id, var_6_35)
-								local var_6_47 = UIWidget.init(var_6_46)
+								local widget_definition = create_title_func(scenegraph_id, data.name, nil, offset, data.peer_id == my_peer_id, player_team_name)
+								local widget = UIWidget.init(widget_definition)
 
-								self._widgets[#self._widgets + 1] = var_6_47
-								self._widgets_by_name["title_" .. str .. "_" .. k_3 .. "_" .. side] = var_6_47
-								tbl_3[1] = 0
+								self._widgets[#self._widgets + 1] = widget
+								self._widgets_by_name["title_" .. unique_id .. "_" .. team .. "_" .. side] = widget
+								offset[1] = 0
 							end
 
-							num = num + 1
+							row_index = row_index + 1
 						end
 					end
 				end
 
-				local var_6_48 = create_team_grid_fields_func(k_3, num, self._ui_scenegraph)
+				local widget_definitions = create_team_grid_fields_func(team, row_index, self._ui_scenegraph)
 
-				UIUtils.create_widgets(var_6_48, self._widgets, self._widgets_by_name)
+				UIUtils.create_widgets(widget_definitions, self._widgets, self._widgets_by_name)
 
-				tbl_3[2] = 95
+				offset[2] = 95
 
-				local var_6_49 = create_stats_func(scenegraph_id, tbl_6, 45, tbl_3, nil, nil, nil, k_3)
-				local var_6_50 = UIWidget.init(var_6_49)
+				local widget_definition = create_stats_func(scenegraph_id, total_fields, 45, offset, nil, nil, nil, team)
+				local widget = UIWidget.init(widget_definition)
 
-				self._widgets[#self._widgets + 1] = var_6_50
-				self._widgets_by_name["total_fields_" .. "_" .. k_3 .. "_" .. side] = var_6_50
+				self._widgets[#self._widgets + 1] = widget
+				self._widgets_by_name["total_fields_" .. "_" .. team .. "_" .. side] = widget
 
-				local var_6_51 = create_team_title_func(k_3, var_6_6, var_6_8)
-				local var_6_52 = UIWidget.init(var_6_51)
+				local widget_definition = create_team_title_func(team, my_team, opponent_team)
+				local widget = UIWidget.init(widget_definition)
 
-				self._widgets[#self._widgets + 1] = var_6_52
-				self._widgets_by_name["team_title_" .. k_3] = var_6_52
+				self._widgets[#self._widgets + 1] = widget
+				self._widgets_by_name["team_title_" .. team] = widget
 
-				local var_6_53 = create_flag_func(k_3, var_6_6, var_6_8)
-				local var_6_54 = UIWidget.init(var_6_53)
+				local widget_definition = create_flag_func(team, my_team, opponent_team)
+				local widget = UIWidget.init(widget_definition)
 
-				self._widgets[#self._widgets + 1] = var_6_54
-				self._widgets_by_name[k_3 .. "_flag"] = var_6_54
+				self._widgets[#self._widgets + 1] = widget
+				self._widgets_by_name[team .. "_flag"] = widget
 			end
 		end
 	end
 end
 
-EndViewStateScoreVSTabDetails._get_definitions = function (arg_8_0)
+EndViewStateScoreVSTabDetails._get_definitions = function (self)
 	-- function 8
 	return local_require("scripts/ui/views/level_end/states/end_view_state_score_vs_tabs/end_view_state_score_vs_tab_details_definitions")
 end
 
-EndViewStateScoreVSTabDetails.update = function (self, arg_9_1, arg_9_2)
+EndViewStateScoreVSTabDetails.update = function (self, dt, t)
 	-- function 9
-	self:_draw(arg_9_1, arg_9_2)
-	self:_update_animations(arg_9_1)
+	self:_draw(dt, t)
+	self:_update_animations(dt)
 end
 
-EndViewStateScoreVSTabDetails.post_update = function (arg_10_0, arg_10_1, arg_10_2)
+EndViewStateScoreVSTabDetails.post_update = function (self, dt, t)
 	-- function 10
 	return
 end
 
-EndViewStateScoreVSTabDetails._update_animations = function (self, arg_11_1)
+EndViewStateScoreVSTabDetails._update_animations = function (self, dt)
 	-- function 11
-	for k, v in pairs(self._ui_animations) do
-		UIAnimation.update(v, arg_11_1)
+	for name, animation in pairs(self._ui_animations) do
+		UIAnimation.update(animation, dt)
 
-		if not UIAnimation.completed(v) then
-			self._ui_animations[k] = nil
+		if UIAnimation.completed(animation) then
+			self._ui_animations[name] = nil
 		end
 	end
 
-	local _animations = self._animations
-	local _ui_animator = self._ui_animator
+	local animations = self._animations
+	local ui_animator = self._ui_animator
 
-	_ui_animator:update(arg_11_1)
+	ui_animator:update(dt)
 
-	for k_2, v_2 in pairs(_animations) do
-		if not _ui_animator:is_animation_completed(v_2) then
-			_ui_animator:stop_animation(v_2)
+	for animation_name, animation_id in pairs(animations) do
+		if ui_animator:is_animation_completed(animation_id) then
+			ui_animator:stop_animation(animation_id)
 
-			_animations[k_2] = nil
+			animations[animation_name] = nil
 		end
 	end
 end
 
-EndViewStateScoreVSTabDetails._draw = function (self, arg_12_1, arg_12_2)
+EndViewStateScoreVSTabDetails._draw = function (self, dt, t)
 	-- function 12
-	local _ui_renderer = self._ui_renderer
-	local _ui_scenegraph = self._ui_scenegraph
-	local _render_settings = self._render_settings
-	local get_service = self._input_manager:get_service("end_of_level")
+	local ui_renderer = self._ui_renderer
+	local ui_scenegraph = self._ui_scenegraph
+	local render_settings = self._render_settings
+	local input_manager = self._input_manager
+	local input_service = input_manager:get_service("end_of_level")
 
-	UIRenderer.begin_pass(_ui_renderer, _ui_scenegraph, get_service, arg_12_1, nil, _render_settings)
+	UIRenderer.begin_pass(ui_renderer, ui_scenegraph, input_service, dt, nil, render_settings)
 
-	for i, v in ipairs(self._widgets) do
-		UIRenderer.draw_widget(_ui_renderer, v)
+	for _, widget in ipairs(self._widgets) do
+		UIRenderer.draw_widget(ui_renderer, widget)
 	end
 
-	UIRenderer.end_pass(_ui_renderer)
+	UIRenderer.end_pass(ui_renderer)
 end
 
-EndViewStateScoreVSTabDetails._start_transition_animation = function (self, arg_13_1, arg_13_2)
+EndViewStateScoreVSTabDetails._start_transition_animation = function (self, key, animation_name)
 	-- function 13
-	local tbl = {
+	local params = {
 		render_settings = self._render_settings
 	}
-	local tbl_2 = {}
-	local start_animation = self._ui_animator:start_animation(arg_13_2, tbl_2, self._scenegraph_definition, tbl)
+	local widgets = {}
+	local anim_id = self._ui_animator:start_animation(animation_name, widgets, self._scenegraph_definition, params)
 
-	self._animations[arg_13_1] = start_animation
+	self._animations[key] = anim_id
 end

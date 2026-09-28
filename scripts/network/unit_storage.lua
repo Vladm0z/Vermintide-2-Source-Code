@@ -1,22 +1,22 @@
 -- chunkname: @scripts/network/unit_storage.lua
 
-local function fn(self, arg_1_1, arg_1_2)
+local function bimap_add(bm, a, b)
 	-- function 1
-	fassert(not arg_1_1 and arg_1_2, "bimap_add, nil arguments")
-	fassert(not not self[arg_1_1] or not self[arg_1_2], "bimap_add, already contained a and/or b")
+	fassert(not not a and not not b, "bimap_add, nil arguments")
+	fassert(not bm[a] and not not not bm[b], "bimap_add, already contained a and/or b")
 
-	self[arg_1_1], self[arg_1_2] = arg_1_2, arg_1_1
+	bm[a], bm[b] = b, a
 end
 
-local function fn_2(self, arg_2_1)
+local function bimap_remove(bm, a)
 	-- function 2
-	fassert(arg_2_1, "bimap_add, nil argument")
+	fassert(a, "bimap_add, nil argument")
 
-	local var_2_0 = self[arg_2_1]
+	local b = bm[a]
 
-	fassert(var_2_0, "bimap_remove, didn't contain item")
+	fassert(b, "bimap_remove, didn't contain item")
 
-	self[arg_2_1], self[var_2_0] = nil
+	bm[a], bm[b] = nil
 end
 
 local type = type
@@ -33,20 +33,20 @@ NetworkUnitStorage.init = function (self)
 	self.owner_goid_array = {}
 end
 
-NetworkUnitStorage.freeze = function (self, arg_4_1)
+NetworkUnitStorage.freeze = function (self, unit)
 	-- function 4
-	local var_4_0 = self.bimap_goid_unit[arg_4_1]
+	local go_id = self.bimap_goid_unit[unit]
 
-	fn(self.frozen_bimap_goid_unit, arg_4_1, var_4_0)
-	fn_2(self.bimap_goid_unit, arg_4_1)
+	bimap_add(self.frozen_bimap_goid_unit, unit, go_id)
+	bimap_remove(self.bimap_goid_unit, unit)
 end
 
-NetworkUnitStorage.unfreeze = function (self, arg_5_1)
+NetworkUnitStorage.unfreeze = function (self, unit)
 	-- function 5
-	local var_5_0 = self.frozen_bimap_goid_unit[arg_5_1]
+	local go_id = self.frozen_bimap_goid_unit[unit]
 
-	fn_2(self.frozen_bimap_goid_unit, arg_5_1)
-	fn(self.bimap_goid_unit, arg_5_1, var_5_0)
+	bimap_remove(self.frozen_bimap_goid_unit, unit)
+	bimap_add(self.bimap_goid_unit, unit, go_id)
 end
 
 NetworkUnitStorage.units = function (self)
@@ -54,106 +54,106 @@ NetworkUnitStorage.units = function (self)
 	return self.map_goid_to_unit
 end
 
-NetworkUnitStorage.go_id = function (self, arg_7_1)
+NetworkUnitStorage.go_id = function (self, unit)
 	-- function 7
-	fassert(type(arg_7_1) ~= "number", "Not allowed to pass in a go_id here anymore.")
+	fassert(type(unit) ~= "number", "Not allowed to pass in a go_id here anymore.")
 
-	return self.bimap_goid_unit[arg_7_1]
+	return self.bimap_goid_unit[unit]
 end
 
-NetworkUnitStorage.unit = function (self, arg_8_1)
+NetworkUnitStorage.unit = function (self, go_id)
 	-- function 8
-	fassert(type(arg_8_1) ~= "userdata", "Not allowed to pass in a unit here anymore.")
+	fassert(type(go_id) ~= "userdata", "Not allowed to pass in a unit here anymore.")
 
-	return self.bimap_goid_unit[arg_8_1]
+	return self.bimap_goid_unit[go_id]
 end
 
-NetworkUnitStorage.remove = function (self, arg_9_1, arg_9_2)
+NetworkUnitStorage.remove = function (self, unit, go_id)
 	-- function 9
-	self:remove_owner(arg_9_1, arg_9_2)
+	self:remove_owner(unit, go_id)
 
-	self.map_goid_to_gotype[arg_9_2] = nil
-	self.map_goid_to_unit[arg_9_2] = nil
+	self.map_goid_to_gotype[go_id] = nil
+	self.map_goid_to_unit[go_id] = nil
 
-	if not self.frozen_bimap_goid_unit[arg_9_1] then
-		fn_2(self.frozen_bimap_goid_unit, arg_9_1)
+	if self.frozen_bimap_goid_unit[unit] then
+		bimap_remove(self.frozen_bimap_goid_unit, unit)
 	else
-		fn_2(self.bimap_goid_unit, arg_9_1)
+		bimap_remove(self.bimap_goid_unit, unit)
 	end
 
-	NetworkUnit.reset_unit(arg_9_1)
+	NetworkUnit.reset_unit(unit)
 end
 
-NetworkUnitStorage.remove_owner = function (self, arg_10_1, arg_10_2)
+NetworkUnitStorage.remove_owner = function (self, unit, go_id)
 	-- function 10
-	local var_10_0 = self.map_goid_to_owner[arg_10_2]
+	local current_owner = self.map_goid_to_owner[go_id]
 
-	if not var_10_0 then
-		self.owner_goid_array[var_10_0][arg_10_2] = nil
-		self.map_goid_to_owner[arg_10_2] = nil
+	if current_owner then
+		self.owner_goid_array[current_owner][go_id] = nil
+		self.map_goid_to_owner[go_id] = nil
 	end
 
-	NetworkUnit.set_owner_peer_id(arg_10_1, nil)
+	NetworkUnit.set_owner_peer_id(unit, nil)
 end
 
-NetworkUnitStorage.set_owner = function (self, arg_11_1, arg_11_2, arg_11_3)
+NetworkUnitStorage.set_owner = function (self, unit, go_id, owner)
 	-- function 11
-	self:remove_owner(arg_11_1, arg_11_2)
+	self:remove_owner(unit, go_id)
 
-	local var_11_0 = self.owner_goid_array[arg_11_3]
+	local owner_goid_list = self.owner_goid_array[owner]
 
-	if not var_11_0 then
-		var_11_0 = {}
-		self.owner_goid_array[arg_11_3] = var_11_0
+	if not owner_goid_list then
+		owner_goid_list = {}
+		self.owner_goid_array[owner] = owner_goid_list
 	end
 
-	var_11_0[arg_11_2] = arg_11_1
-	self.map_goid_to_owner[arg_11_2] = arg_11_3
+	owner_goid_list[go_id] = unit
+	self.map_goid_to_owner[go_id] = owner
 
-	NetworkUnit.set_owner_peer_id(arg_11_1, arg_11_3)
+	NetworkUnit.set_owner_peer_id(unit, owner)
 end
 
-NetworkUnitStorage.owner = function (self, arg_12_1)
+NetworkUnitStorage.owner = function (self, go_id)
 	-- function 12
-	return self.map_goid_to_owner[arg_12_1]
+	return self.map_goid_to_owner[go_id]
 end
 
-NetworkUnitStorage.add_unit = function (self, arg_13_1, arg_13_2, arg_13_3)
+NetworkUnitStorage.add_unit = function (self, unit, go_id, owner)
 	-- function 13
-	fassert(arg_13_2 ~= NetworkConstants.invalid_game_object_id, "invalid go_id")
+	fassert(go_id ~= NetworkConstants.invalid_game_object_id, "invalid go_id")
 
-	self.map_goid_to_unit[arg_13_2] = arg_13_1
+	self.map_goid_to_unit[go_id] = unit
 
-	fn(self.bimap_goid_unit, arg_13_1, arg_13_2)
-	NetworkUnit.set_game_object_id(arg_13_1, arg_13_2)
+	bimap_add(self.bimap_goid_unit, unit, go_id)
+	NetworkUnit.set_game_object_id(unit, go_id)
 
-	if not arg_13_3 then
-		self:set_owner(arg_13_1, arg_13_2, arg_13_3)
+	if owner then
+		self:set_owner(unit, go_id, owner)
 	end
 end
 
-NetworkUnitStorage.add_unit_info = function (self, arg_14_1, arg_14_2, arg_14_3, arg_14_4)
+NetworkUnitStorage.add_unit_info = function (self, unit, go_id, go_type, owner)
 	-- function 14
-	self.map_goid_to_gotype[arg_14_2] = arg_14_3
+	self.map_goid_to_gotype[go_id] = go_type
 
-	NetworkUnit.set_game_object_type(arg_14_1, arg_14_3)
-	self:add_unit(arg_14_1, arg_14_2, arg_14_4)
+	NetworkUnit.set_game_object_type(unit, go_type)
+	self:add_unit(unit, go_id, owner)
 end
 
-NetworkUnitStorage.go_type = function (self, arg_15_1)
+NetworkUnitStorage.go_type = function (self, go_id)
 	-- function 15
-	return self.map_goid_to_gotype[arg_15_1]
+	return self.map_goid_to_gotype[go_id]
 end
 
-NetworkUnitStorage.transfer_go_id = function (self, arg_16_1, arg_16_2)
+NetworkUnitStorage.transfer_go_id = function (self, unit, unit_new)
 	-- function 16
 	local bimap_goid_unit = self.bimap_goid_unit
-	local var_16_1 = bimap_goid_unit[arg_16_1]
+	local go_id = bimap_goid_unit[unit]
 
-	bimap_goid_unit[arg_16_2] = var_16_1
-	bimap_goid_unit[var_16_1] = arg_16_2
-	bimap_goid_unit[arg_16_1] = nil
-	self.map_goid_to_unit[var_16_1] = arg_16_2
+	bimap_goid_unit[unit_new] = go_id
+	bimap_goid_unit[go_id] = unit_new
+	bimap_goid_unit[unit] = nil
+	self.map_goid_to_unit[go_id] = unit_new
 
-	NetworkUnit.transfer_unit(arg_16_1, arg_16_2)
+	NetworkUnit.transfer_unit(unit, unit_new)
 end

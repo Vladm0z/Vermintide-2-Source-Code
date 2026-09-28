@@ -7,7 +7,7 @@ DeusStartingMetaProgressionAmount = 0
 
 local DeusRollOverSettings = DeusRollOverSettings
 
-DeusRollOverSettings = DeusRollOverSettings or {
+DeusRollOverSettings = not not DeusRollOverSettings or not not {
 	roll_over = 0.25,
 	max = 200
 }

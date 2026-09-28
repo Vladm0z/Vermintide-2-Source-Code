@@ -3,33 +3,33 @@
 WeaveInteractionExtension = class(WeaveInteractionExtension, BaseObjectiveExtension)
 WeaveInteractionExtension.NAME = "WeaveInteractionExtension"
 
-WeaveInteractionExtension.init = function (self, arg_1_1, arg_1_2, arg_1_3)
+WeaveInteractionExtension.init = function (self, extension_init_context, unit, extension_init_data)
 	-- function 1
-	WeaveInteractionExtension.super.init(self, arg_1_1, arg_1_2, arg_1_3)
+	WeaveInteractionExtension.super.init(self, extension_init_context, unit, extension_init_data)
 
-	self._on_start_func = arg_1_3.on_start_func
-	self._on_interact_start_func = arg_1_3.on_interact_start_func
-	self._on_interact_interupt_func = arg_1_3.on_interact_interupt_func
-	self._on_interact_complete_func = arg_1_3.on_interact_complete_func
-	self._on_progress_func = arg_1_3.on_progress_func
-	self._on_complete_func = arg_1_3.on_complete_func
+	self._on_start_func = extension_init_data.on_start_func
+	self._on_interact_start_func = extension_init_data.on_interact_start_func
+	self._on_interact_interupt_func = extension_init_data.on_interact_interupt_func
+	self._on_interact_complete_func = extension_init_data.on_interact_complete_func
+	self._on_progress_func = extension_init_data.on_progress_func
+	self._on_complete_func = extension_init_data.on_complete_func
 
-	local num_times_to_complete = arg_1_3.num_times_to_complete
+	local num_times_to_complete = extension_init_data.num_times_to_complete
 
-	num_times_to_complete = num_times_to_complete or 1
+	num_times_to_complete = not not num_times_to_complete or not not 1
 	self._num_times_to_complete = num_times_to_complete
 
-	local duration = arg_1_3.duration
+	local duration = extension_init_data.duration
 
-	duration = duration or 5
+	duration = not not duration or not not 5
 	self._duration = duration
 	self._audio_system = Managers.state.entity:system("audio_system")
 	self._value = 0
 
-	local terror_event_spawner_id = arg_1_3.terror_event_spawner_id
+	local terror_event_spawner_id = extension_init_data.terror_event_spawner_id
 
-	Unit.set_data(arg_1_2, "terror_event_spawner_id", terror_event_spawner_id)
-	Unit.set_data(arg_1_2, "interaction_data", "interaction_length", self._duration)
+	Unit.set_data(unit, "terror_event_spawner_id", terror_event_spawner_id)
+	Unit.set_data(unit, "interaction_data", "interaction_length", self._duration)
 
 	self._max_value = self._duration * self._num_times_to_complete
 end
@@ -39,82 +39,84 @@ WeaveInteractionExtension.extensions_ready = function (self)
 	self._interactable_extension = ScriptUnit.has_extension(self._unit, "interactable_system")
 end
 
-WeaveInteractionExtension.display_name = function (arg_3_0)
+WeaveInteractionExtension.display_name = function (self)
 	-- function 3
 	return "Interact with object"
 end
 
-WeaveInteractionExtension.initial_sync_data = function (self, arg_4_1)
+WeaveInteractionExtension.initial_sync_data = function (self, game_object_data_table)
 	-- function 4
-	arg_4_1.value = self:get_percentage_done()
+	game_object_data_table.value = self:get_percentage_done()
 end
 
-WeaveInteractionExtension._set_objective_data = function (arg_5_0, arg_5_1)
+WeaveInteractionExtension._set_objective_data = function (self, objective_data)
 	-- function 5
 	return
 end
 
 WeaveInteractionExtension._activate = function (self)
 	-- function 6
-	local has_extension = ScriptUnit.has_extension(self._unit, "tutorial_system")
+	local extension = ScriptUnit.has_extension(self._unit, "tutorial_system")
 
-	if not has_extension then
-		has_extension:set_active(true)
+	if extension then
+		extension:set_active(true)
 	end
 end
 
 WeaveInteractionExtension._deactivate = function (self)
 	-- function 7
-	local local_position = Unit.local_position(self._unit, 0)
+	local position = Unit.local_position(self._unit, 0)
 
 	for i = 1, 3 do
-		local num = math.random(-10, 10) / 10
-		local num_2 = math.random(-10, 10) / 10
-		local num_3 = math.random(-10, 10) / 10
+		local x_offset = math.random(-10, 10) / 10
+		local y_offset = math.random(-10, 10) / 10
+		local z_offset = math.random(-10, 10) / 10
+		local objective_system = Managers.state.entity:system("objective_system")
+		local weave_essence_handler = objective_system:weave_essence_handler()
 
-		Managers.state.entity:system("objective_system"):weave_essence_handler():spawn_essence_unit(local_position + Vector3(0, 0, 0.5) + Vector3(num, num_2, num_3))
+		weave_essence_handler:spawn_essence_unit(position + Vector3(0, 0, 0.5) + Vector3(x_offset, y_offset, z_offset))
 	end
 end
 
-WeaveInteractionExtension._server_update = function (self, arg_8_1, arg_8_2)
+WeaveInteractionExtension._server_update = function (self, dt, t)
 	-- function 8
 	local interaction_result = self._interactable_extension.interaction_result
-	local flag = false
+	local value_changed = false
 
-	if not self._interactable_extension:is_being_interacted_with() then
+	if self._interactable_extension:is_being_interacted_with() then
 		if interaction_result ~= self._interactable_state then
-			if not self._on_start_func then
+			if self._on_start_func then
 				self._on_start_func(self._unit)
 
 				self._on_start_func = nil
 			end
 
-			if not self._on_interact_start_func then
+			if self._on_interact_start_func then
 				self._on_interact_start_func(self._unit)
 			end
 		else
-			self._value = self._value + arg_8_1
+			self._value = self._value + dt
+			value_changed = true
 
-			local flag_2 = true
-
-			if not self._on_progress_func then
+			if self._on_progress_func then
 				self._on_progress_func(self._unit, self._value, self._max_value)
 			end
 		end
 
 		self._interactable_state = interaction_result
-	elseif not (interaction_result == self._interactable_state or self._interactable_state == 0) then
-		self._value = self._interactable_extension.num_times_successfully_completed * self._duration
+	elseif interaction_result ~= self._interactable_state and self._interactable_state ~= 0 then
+		local num_times_completed = self._interactable_extension.num_times_successfully_completed
 
-		local flag_3 = true
+		self._value = num_times_completed * self._duration
+		value_changed = true
 
 		if interaction_result == InteractionResult.SUCCESS then
 			self._audio_system:play_audio_unit_event("emitter_rune_activate", self._unit)
 
-			if not self._on_interact_complete_func then
+			if self._on_interact_complete_func then
 				self._on_interact_complete_func(self._unit)
 			end
-		elseif interaction_result == InteractionResult.FAILURE or interaction_result == InteractionResult.USER_ENDED or not self._on_interact_interupt_func then
+		elseif (interaction_result == InteractionResult.FAILURE or interaction_result == InteractionResult.USER_ENDED) and self._on_interact_interupt_func then
 			self._on_interact_interupt_func(self._unit)
 		end
 
@@ -126,7 +128,7 @@ WeaveInteractionExtension._server_update = function (self, arg_8_1, arg_8_2)
 	self:server_set_value(self:get_percentage_done())
 end
 
-WeaveInteractionExtension._client_update = function (arg_9_0, arg_9_1, arg_9_2)
+WeaveInteractionExtension._client_update = function (self, dt, t)
 	-- function 9
 	return
 end

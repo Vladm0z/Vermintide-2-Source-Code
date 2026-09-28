@@ -4,36 +4,36 @@ require("scripts/managers/camera/cameras/base_camera")
 
 AimCamera = class(AimCamera, BaseCamera)
 
-AimCamera.init = function (self, arg_1_1)
+AimCamera.init = function (self, root_node)
 	-- function 1
-	BaseCamera.init(self, arg_1_1)
+	BaseCamera.init(self, root_node)
 
-	self._root_node = arg_1_1
+	self._root_node = root_node
 end
 
-AimCamera.parse_parameters = function (arg_2_0, arg_2_1, arg_2_2)
+AimCamera.parse_parameters = function (self, camera_settings, parent_node)
 	-- function 2
-	BaseCamera.parse_parameters(arg_2_0, arg_2_1, arg_2_2)
+	BaseCamera.parse_parameters(self, camera_settings, parent_node)
 end
 
-AimCamera.set_root_unit = function (arg_3_0, arg_3_1, arg_3_2)
+AimCamera.set_root_unit = function (self, unit, object)
 	-- function 3
-	BaseCamera.set_root_unit(arg_3_0, arg_3_1, arg_3_2)
+	BaseCamera.set_root_unit(self, unit, object)
 end
 
-AimCamera.set_root_rotation = function (arg_4_0, arg_4_1)
+AimCamera.set_root_rotation = function (self, rotation)
 	-- function 4
-	BaseCamera.set_root_rotation(arg_4_0, arg_4_1)
+	BaseCamera.set_root_rotation(self, rotation)
 end
 
-AimCamera.update = function (self, arg_5_1, arg_5_2, arg_5_3, arg_5_4)
+AimCamera.update = function (self, dt, position, rotation, data)
 	-- function 5
-	local _root_node = self._root_node
-	local aim_pitch = _root_node:aim_pitch()
-	local aim_yaw = _root_node:aim_yaw()
-	local var_5_3 = Quaternion(Vector3(1, 0, 0), aim_pitch)
-	local var_5_4 = Quaternion(Vector3(0, 0, 1), aim_yaw - math.pi * 0.5)
-	local multiply = Quaternion.multiply(var_5_4, var_5_3)
+	local root_node = self._root_node
+	local aim_pitch = root_node:aim_pitch()
+	local aim_yaw = root_node:aim_yaw()
+	local rotation_pitch = Quaternion(Vector3(1, 0, 0), aim_pitch)
+	local rotation_yaw = Quaternion(Vector3(0, 0, 1), aim_yaw - math.pi * 0.5)
+	local new_rotation = Quaternion.multiply(rotation_yaw, rotation_pitch)
 
-	BaseCamera.update(self, arg_5_1, arg_5_2, multiply, arg_5_4)
+	BaseCamera.update(self, dt, position, new_rotation, data)
 end

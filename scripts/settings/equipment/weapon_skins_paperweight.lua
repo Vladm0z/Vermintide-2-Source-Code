@@ -1,6 +1,6 @@
 -- chunkname: @scripts/settings/equipment/weapon_skins_paperweight.lua
 
-local tbl = {
+local skins = {
 	{
 		name = "bw_1h_crowbill_skin_01",
 		data = {
@@ -211,7 +211,7 @@ local tbl = {
 		}
 	}
 }
-local tbl_2 = {
+local skin_combinations = {
 	we_1h_axe_skins = {
 		common = {},
 		rare = {
@@ -273,7 +273,7 @@ local tbl_2 = {
 		}
 	}
 }
-local tbl_3 = {
+local default_skins = {
 	dr_dual_wield_hammers = "dr_dual_wield_hammers_skin_01",
 	we_1h_axe = "we_1h_axe_skin_01",
 	bw_1h_crowbill = "bw_1h_crowbill_skin_01",
@@ -281,26 +281,26 @@ local tbl_3 = {
 	wh_dual_wield_axe_falchion = "wh_dual_wield_axe_falchion_skin_01"
 }
 
-for i, v in ipairs(tbl) do
-	WeaponSkins.skins[v.name] = v.data
+for _, skin in ipairs(skins) do
+	WeaponSkins.skins[skin.name] = skin.data
 end
 
-for k, v_2 in pairs(tbl_2) do
-	if not WeaponSkins.skin_combinations[k] then
-		WeaponSkins.skin_combinations[k] = {}
+for weapon_name, skin_data in pairs(skin_combinations) do
+	if not WeaponSkins.skin_combinations[weapon_name] then
+		WeaponSkins.skin_combinations[weapon_name] = {}
 	end
 
-	for k_2, v_3 in pairs(v_2) do
-		if not WeaponSkins.skin_combinations[k][k_2] then
-			WeaponSkins.skin_combinations[k][k_2] = {}
+	for weapon_rarity, skin_names in pairs(skin_data) do
+		if not WeaponSkins.skin_combinations[weapon_name][weapon_rarity] then
+			WeaponSkins.skin_combinations[weapon_name][weapon_rarity] = {}
 		end
 
-		for i_2, v_4 in ipairs(v_3) do
-			WeaponSkins.skin_combinations[k][k_2][#WeaponSkins.skin_combinations[k][k_2] + 1] = v_4
+		for _, skin_name in ipairs(skin_names) do
+			WeaponSkins.skin_combinations[weapon_name][weapon_rarity][#WeaponSkins.skin_combinations[weapon_name][weapon_rarity] + 1] = skin_name
 		end
 	end
 end
 
-for k_3, v_5 in pairs(tbl_3) do
-	WeaponSkins.default_skins[k_3] = v_5
+for name, data in pairs(default_skins) do
+	WeaponSkins.default_skins[name] = data
 end

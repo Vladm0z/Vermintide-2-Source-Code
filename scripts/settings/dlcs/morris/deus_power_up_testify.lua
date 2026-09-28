@@ -2,37 +2,37 @@
 
 require("scripts/settings/dlcs/morris/deus_power_up_settings")
 
-local function fn(arg_1_0, arg_1_1, arg_1_2, arg_1_3)
+local function deus_power_up_terror_event_test(nav_world, terror_event_name, main_path_point, bot_teleportation_data)
 	-- function 1
-	Testify:make_request("start_terror_event", arg_1_1)
+	Testify:make_request("start_terror_event", terror_event_name)
 
-	while not Testify:make_request("terror_event_finished", arg_1_1) do
+	while not Testify:make_request("terror_event_finished", terror_event_name) do
 		Testify:make_request("make_players_invicible")
 		Testify:make_request("set_player_unit_not_visible")
 		Testify:make_request("set_camera_to_observe_first_bot")
 
-		local point_on_mainpath = MainPathUtils.point_on_mainpath(nil, arg_1_2)
-		local get_spawn_pos_on_circle = ConflictUtils.get_spawn_pos_on_circle(arg_1_0, point_on_mainpath, 7, 7, 15)
+		local position = MainPathUtils.point_on_mainpath(nil, main_path_point)
+		local teleport_pos = ConflictUtils.get_spawn_pos_on_circle(nav_world, position, 7, 7, 15)
 
-		if not get_spawn_pos_on_circle then
-			local var_1_2 = Vector3Box(get_spawn_pos_on_circle)
+		if teleport_pos then
+			local boxed_position = Vector3Box(teleport_pos)
 
-			Testify:make_request("teleport_player_to_position", var_1_2)
+			Testify:make_request("teleport_player_to_position", boxed_position)
 		end
 
-		Testify:make_request("teleport_bots_forward_on_main_path_if_blocked", arg_1_3)
+		Testify:make_request("teleport_bots_forward_on_main_path_if_blocked", bot_teleportation_data)
 
-		if not Testify:make_request("level_end_screen_displayed") then
-			if not Testify:make_request("has_lost") then
+		if Testify:make_request("level_end_screen_displayed") then
+			if Testify:make_request("has_lost") then
 				Testify:make_request("fail_test", "Test failed due to players/bot dying to the AI")
 			else
 				Testify:make_request("fail_test", "Test failed due to level ending before terror event finished")
 			end
 		end
 
-		local clock = os.clock()
+		local start_time = os.clock()
 
-		while os.clock() < clock + 2 do
+		while os.clock() < start_time + 2 do
 			Testify:make_request("update_camera_to_follow_first_bot_rotation")
 		end
 	end
@@ -41,5 +41,5 @@ local function fn(arg_1_0, arg_1_1, arg_1_2, arg_1_3)
 end
 
 DeusPowerUpTests = {
-	default = fn
+	default = deus_power_up_terror_event_test
 }

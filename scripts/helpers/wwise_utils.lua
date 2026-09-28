@@ -2,81 +2,82 @@
 
 local WwiseUtils = WwiseUtils
 
-WwiseUtils = WwiseUtils or {}
+WwiseUtils = not not WwiseUtils or not not {}
 WwiseUtils = WwiseUtils
 WwiseUtils.EVENT_ID_NONE = 0
 
-WwiseUtils.trigger_position_event = function (arg_1_0, arg_1_1, arg_1_2)
+WwiseUtils.trigger_position_event = function (world, event, position)
 	-- function 1
-	local make_position_auto_source, var_1_1 = WwiseUtils.make_position_auto_source(arg_1_0, arg_1_2)
+	local source, wwise_world = WwiseUtils.make_position_auto_source(world, position)
+	local id = WwiseWorld.trigger_event(wwise_world, event, source)
 
-	return WwiseWorld.trigger_event(var_1_1, arg_1_1, make_position_auto_source), make_position_auto_source, var_1_1
+	return id, source, wwise_world
 end
 
-WwiseUtils.trigger_unit_event = function (arg_2_0, arg_2_1, arg_2_2, arg_2_3)
+WwiseUtils.trigger_unit_event = function (world, event, unit, node_id)
 	-- function 2
-	if not DEDICATED_SERVER then
+	if DEDICATED_SERVER then
 		return nil, nil, nil
 	end
 
-	local make_unit_auto_source, var_2_1 = WwiseUtils.make_unit_auto_source(arg_2_0, arg_2_2, arg_2_3)
+	local source, wwise_world = WwiseUtils.make_unit_auto_source(world, unit, node_id)
+	local id = WwiseWorld.trigger_event(wwise_world, event, source)
 
-	return WwiseWorld.trigger_event(var_2_1, arg_2_1, make_unit_auto_source), make_unit_auto_source, var_2_1
+	return id, source, wwise_world
 end
 
-WwiseUtils.make_position_auto_source = function (arg_3_0, arg_3_1)
+WwiseUtils.make_position_auto_source = function (world, position)
 	-- function 3
-	local wwise_world = Managers.world:wwise_world(arg_3_0)
-	local make_auto_source = WwiseWorld.make_auto_source(wwise_world, arg_3_1)
+	local wwise_world = Managers.world:wwise_world(world)
+	local source = WwiseWorld.make_auto_source(wwise_world, position)
 	local system = Managers.state.entity:system("sound_environment_system")
 
 	if system ~= nil then
-		system:set_source_environment(make_auto_source, arg_3_1)
+		system:set_source_environment(source, position)
 	end
 
-	return make_auto_source, wwise_world
+	return source, wwise_world
 end
 
-WwiseUtils.make_unit_auto_source = function (arg_4_0, arg_4_1, arg_4_2)
+WwiseUtils.make_unit_auto_source = function (world, unit, node_id)
 	-- function 4
-	local wwise_world = Managers.world:wwise_world(arg_4_0)
-	local var_4_1
-	local var_4_2
+	local wwise_world = Managers.world:wwise_world(world)
+	local source, position
 
-	if not arg_4_2 then
-		var_4_1 = WwiseWorld.make_auto_source(wwise_world, arg_4_1, arg_4_2)
-		var_4_2 = Unit.world_position(arg_4_1, arg_4_2)
+	if node_id then
+		source = WwiseWorld.make_auto_source(wwise_world, unit, node_id)
+		position = Unit.world_position(unit, node_id)
 	else
-		var_4_1 = WwiseWorld.make_auto_source(wwise_world, arg_4_1)
-		var_4_2 = Unit.world_position(arg_4_1, 0)
+		source = WwiseWorld.make_auto_source(wwise_world, unit)
+		position = Unit.world_position(unit, 0)
 	end
 
 	local system = Managers.state.entity:system("sound_environment_system")
 
 	if system ~= nil then
-		system:set_source_environment(var_4_1, var_4_2)
+		system:set_source_environment(source, position)
 	end
 
-	return var_4_1, wwise_world
+	return source, wwise_world
 end
 
-WwiseUtils.make_unit_manual_source = function (arg_5_0, arg_5_1, arg_5_2)
+WwiseUtils.make_unit_manual_source = function (wwise_world, unit, node_id)
 	-- function 5
-	local var_5_0
+	local source
 
-	if not arg_5_2 then
-		var_5_0 = WwiseWorld.make_manual_source(arg_5_0, arg_5_1, arg_5_2)
+	if node_id then
+		source = WwiseWorld.make_manual_source(wwise_world, unit, node_id)
 	else
-		var_5_0 = WwiseWorld.make_manual_source(arg_5_0, arg_5_1)
+		source = WwiseWorld.make_manual_source(wwise_world, unit)
 	end
 
 	local system = Managers.state.entity:system("sound_environment_system")
 
 	if system ~= nil then
-		local world_position = Unit.world_position(arg_5_1, arg_5_2 or 0)
+		local position = Unit.world_position(unit, not not node_id or not not 0)
 
-		system:set_source_environment(var_5_0, world_position)
+		system:set_source_environment(source, position)
 	end
 
-	return var_5_0
+	return source
 end

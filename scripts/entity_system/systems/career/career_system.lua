@@ -2,10 +2,10 @@
 
 CareerSystem = class(CareerSystem, ExtensionSystemBase)
 
-local tbl = {
+local extension_list = {
 	"CareerExtension"
 }
-local tbl_2 = {
+local RPCS = {
 	"rpc_server_reduce_activated_ability_cooldown",
 	"rpc_server_reduce_activated_ability_cooldown_percent",
 	"rpc_reduce_activated_ability_cooldown",
@@ -13,17 +13,17 @@ local tbl_2 = {
 	"rpc_ability_activated"
 }
 
-CareerSystem.init = function (self, arg_1_1, arg_1_2)
+CareerSystem.init = function (self, entity_system_creation_context, system_name)
 	-- function 1
-	CareerSystem.super.init(self, arg_1_1, arg_1_2, tbl)
+	CareerSystem.super.init(self, entity_system_creation_context, system_name, extension_list)
 
 	self.unit_extensions = {}
 
-	local network_event_delegate = arg_1_1.network_event_delegate
+	local network_event_delegate = entity_system_creation_context.network_event_delegate
 
 	self.network_event_delegate = network_event_delegate
 
-	network_event_delegate:register(self, unpack(tbl_2))
+	network_event_delegate:register(self, unpack(RPCS))
 
 	self.unit_storage = Managers.state.unit_storage
 	self.network_transmit = Managers.state.network.network_transmit
@@ -37,142 +37,147 @@ CareerSystem.destroy = function (self)
 	self.network_event_delegate = nil
 end
 
-CareerSystem.on_add_extension = function (arg_3_0, arg_3_1, arg_3_2, arg_3_3, arg_3_4)
+CareerSystem.on_add_extension = function (self, world, unit, extension_name, extension_init_data)
 	-- function 3
-	local on_add_extension = CareerSystem.super.on_add_extension(arg_3_0, arg_3_1, arg_3_2, arg_3_3, arg_3_4)
+	local career_extension = CareerSystem.super.on_add_extension(self, world, unit, extension_name, extension_init_data)
 
-	arg_3_0.unit_extensions[arg_3_2] = on_add_extension
+	self.unit_extensions[unit] = career_extension
 
-	return on_add_extension
+	return career_extension
 end
 
-CareerSystem.on_remove_extension = function (arg_4_0, arg_4_1, arg_4_2)
+CareerSystem.on_remove_extension = function (self, unit, extension_name)
 	-- function 4
-	arg_4_0.unit_extensions[arg_4_1] = nil
+	self.unit_extensions[unit] = nil
 
-	CareerSystem.super.on_remove_extension(arg_4_0, arg_4_1, arg_4_2)
+	CareerSystem.super.on_remove_extension(self, unit, extension_name)
 end
 
-CareerSystem.server_reduce_activated_ability_cooldown = function (self, arg_5_1, arg_5_2, arg_5_3, arg_5_4)
+CareerSystem.server_reduce_activated_ability_cooldown = function (self, units, amount, ability_id, ignore_paused)
 	-- function 5
-	if not arg_5_1 then
+	if not units then
 		return
 	end
 
 	local unit_storage = self.unit_storage
-	local tbl = {}
-	local num = 0
+	local unit_ids = {}
+	local unit_count = 0
 
-	for i = 1, #arg_5_1 do
-		local var_5_3 = arg_5_1[i]
+	for i = 1, #units do
+		local unit = units[i]
 
-		if not ALIVE[var_5_3] then
-			tbl[num], num = unit_storage:go_id(var_5_3), num + 1
+		if ALIVE[unit] then
+			local unit_id = unit_storage:go_id(unit)
+
+			unit_count = unit_count + 1
+			unit_ids[unit_count] = unit_id
 		end
 	end
 
-	if num > 0 then
-		self.network_transmit:send_rpc_server("rpc_server_reduce_activated_ability_cooldown", tbl, arg_5_2, arg_5_3, arg_5_4)
+	if unit_count > 0 then
+		self.network_transmit:send_rpc_server("rpc_server_reduce_activated_ability_cooldown", unit_ids, amount, ability_id, ignore_paused)
 	end
 end
 
-CareerSystem.rpc_server_reduce_activated_ability_cooldown = function (self, arg_6_1, arg_6_2, arg_6_3, arg_6_4, arg_6_5)
+CareerSystem.rpc_server_reduce_activated_ability_cooldown = function (self, sender, unit_game_object_ids, amount, ability_id, ignore_paused)
 	-- function 6
 	local network_transmit = self.network_transmit
 
-	if not self.is_server then
+	if self.is_server then
 		local unit_storage = self.unit_storage
 		local player_manager = self.player_manager
 
-		for i = 1, #arg_6_2 do
-			local var_6_3 = arg_6_2[i]
-			local unit = unit_storage:unit(var_6_3)
+		for i = 1, #unit_game_object_ids do
+			local unit_game_object_id = unit_game_object_ids[i]
+			local unit = unit_storage:unit(unit_game_object_id)
 
-			if not unit then
-				local network_id = player_manager:owner(unit):network_id()
+			if unit then
+				local owner_player = player_manager:owner(unit)
+				local peer_id = owner_player:network_id()
 
-				network_transmit:send_rpc("rpc_reduce_activated_ability_cooldown", network_id, var_6_3, arg_6_3, arg_6_4, arg_6_5)
+				network_transmit:send_rpc("rpc_reduce_activated_ability_cooldown", peer_id, unit_game_object_id, amount, ability_id, ignore_paused)
 			end
 		end
 	else
-		network_transmit:send_rpc_server("rpc_server_reduce_activated_ability_cooldown", arg_6_2, arg_6_3, arg_6_4, arg_6_5)
+		network_transmit:send_rpc_server("rpc_server_reduce_activated_ability_cooldown", unit_game_object_ids, amount, ability_id, ignore_paused)
 	end
 end
 
-CareerSystem.rpc_reduce_activated_ability_cooldown = function (self, arg_7_1, arg_7_2, arg_7_3, arg_7_4, arg_7_5)
+CareerSystem.rpc_reduce_activated_ability_cooldown = function (self, sender, unit_game_object_id, amount, ability_id, ignore_paused)
 	-- function 7
-	local unit = self.unit_storage:unit(arg_7_2)
-	local var_7_1 = self.unit_extensions[unit]
+	local unit = self.unit_storage:unit(unit_game_object_id)
+	local career_extension = self.unit_extensions[unit]
 
-	if not var_7_1 then
-		var_7_1:reduce_activated_ability_cooldown(arg_7_3, arg_7_4, arg_7_5)
+	if career_extension then
+		career_extension:reduce_activated_ability_cooldown(amount, ability_id, ignore_paused)
 	end
 end
 
-CareerSystem.rpc_server_reduce_activated_ability_cooldown_percent = function (self, arg_8_1, arg_8_2, arg_8_3, arg_8_4, arg_8_5)
+CareerSystem.rpc_server_reduce_activated_ability_cooldown_percent = function (self, sender, unit_game_object_id, amount, ability_id, ignore_paused)
 	-- function 8
 	local network_transmit = self.network_transmit
 
-	if not self.is_server then
+	if self.is_server then
 		local unit_storage = self.unit_storage
 		local player_manager = self.player_manager
-		local unit = unit_storage:unit(arg_8_2)
+		local unit = unit_storage:unit(unit_game_object_id)
 
-		if not unit then
-			local network_id = player_manager:owner(unit):network_id()
+		if unit then
+			local owner_player = player_manager:owner(unit)
+			local peer_id = owner_player:network_id()
 
-			network_transmit:send_rpc("rpc_reduce_activated_ability_cooldown_percent", network_id, arg_8_2, arg_8_3, arg_8_4, arg_8_5)
+			network_transmit:send_rpc("rpc_reduce_activated_ability_cooldown_percent", peer_id, unit_game_object_id, amount, ability_id, ignore_paused)
 		end
 	else
-		network_transmit:send_rpc_server("rpc_server_rpc_reduce_activated_ability_cooldown_percent", arg_8_2, arg_8_3, arg_8_4, arg_8_5)
+		network_transmit:send_rpc_server("rpc_server_rpc_reduce_activated_ability_cooldown_percent", unit_game_object_id, amount, ability_id, ignore_paused)
 	end
 end
 
-CareerSystem.rpc_reduce_activated_ability_cooldown_percent = function (self, arg_9_1, arg_9_2, arg_9_3, arg_9_4, arg_9_5)
+CareerSystem.rpc_reduce_activated_ability_cooldown_percent = function (self, sender, unit_game_object_id, amount, ability_id, ignore_paused)
 	-- function 9
-	local unit = self.unit_storage:unit(arg_9_2)
-	local var_9_1 = self.unit_extensions[unit]
+	local unit = self.unit_storage:unit(unit_game_object_id)
+	local career_extension = self.unit_extensions[unit]
 
-	if not var_9_1 then
-		var_9_1:reduce_activated_ability_cooldown_percent(arg_9_3, arg_9_4, arg_9_5)
+	if career_extension then
+		career_extension:reduce_activated_ability_cooldown_percent(amount, ability_id, ignore_paused)
 	end
 end
 
-CareerSystem.rpc_ability_activated = function (self, arg_10_1, arg_10_2, arg_10_3)
+CareerSystem.rpc_ability_activated = function (self, channel_id, unit_game_object_id, ability_id)
 	-- function 10
-	local unit = self.unit_storage:unit(arg_10_2)
-	local players_at_peer = Managers.player:players_at_peer(Network.peer_id())
+	local unit = self.unit_storage:unit(unit_game_object_id)
+	local local_players = Managers.player:players_at_peer(Network.peer_id())
 
-	if not players_at_peer and not unit then
-		for k, v in pairs(players_at_peer) do
-			local player_unit = v.player_unit
+	if local_players and unit then
+		for _, player in pairs(local_players) do
+			local player_unit = player.player_unit
 
-			if not ALIVE[player_unit] then
-				local has_extension = ScriptUnit.has_extension(player_unit, "buff_system")
+			if ALIVE[player_unit] then
+				local buff_extension = ScriptUnit.has_extension(player_unit, "buff_system")
 
-				if not has_extension then
-					has_extension:trigger_procs("on_ability_activated", unit, arg_10_3)
-					Managers.state.achievement:trigger_event("any_ability_used", unit, arg_10_3)
+				if buff_extension then
+					buff_extension:trigger_procs("on_ability_activated", unit, ability_id)
+					Managers.state.achievement:trigger_event("any_ability_used", unit, ability_id)
 				end
 			end
 		end
 	end
 
-	local has_extension_2 = ScriptUnit.has_extension(unit, "buff_system")
+	local units_buff_extension = ScriptUnit.has_extension(unit, "buff_system")
 
-	if not has_extension_2 then
-		has_extension_2:trigger_procs("on_ability_activated", unit, arg_10_3)
+	if units_buff_extension then
+		units_buff_extension:trigger_procs("on_ability_activated", unit, ability_id)
 	end
 
-	local has_extension_3 = ScriptUnit.has_extension(unit, "cosmetic_system")
+	local units_cosmetic_extension = ScriptUnit.has_extension(unit, "cosmetic_system")
 
-	if not has_extension_3 then
-		has_extension_3:trigger_ability_activated_events()
+	if units_cosmetic_extension then
+		units_cosmetic_extension:trigger_ability_activated_events()
 	end
 
-	if not self.is_server then
-		local var_10_6 = CHANNEL_TO_PEER_ID[arg_10_1]
+	if self.is_server then
+		local peer_id = CHANNEL_TO_PEER_ID[channel_id]
 
-		self.network_transmit:send_rpc_clients_except("rpc_ability_activated", var_10_6, arg_10_2, arg_10_3)
+		self.network_transmit:send_rpc_clients_except("rpc_ability_activated", peer_id, unit_game_object_id, ability_id)
 	end
 end

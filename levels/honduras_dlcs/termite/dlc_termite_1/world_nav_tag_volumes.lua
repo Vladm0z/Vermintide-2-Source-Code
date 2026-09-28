@@ -1,6 +1,6 @@
 -- chunkname: @levels/honduras_dlcs/termite/dlc_termite_1/world_nav_tag_volumes.lua
 
-local tbl = {
+local nav_tag_volumes = {
 	volume_navtag_29 = {
 		delay_nav_tag_volume_creation = false,
 		alt_max = -23.963947296142578,
@@ -1135,9 +1135,9 @@ local tbl = {
 		}
 	}
 }
-local str = "1"
+local version = "1"
 
 return {
-	version = str,
-	nav_tag_volumes = tbl
+	version = version,
+	nav_tag_volumes = nav_tag_volumes
 }

@@ -1,48 +1,48 @@
 -- chunkname: @scripts/ui/views/cinematics_view/cinematics_view.lua
 
-local var_0_0 = local_require("scripts/ui/views/cinematics_view/cinematics_view_definitions")
+local definitions = local_require("scripts/ui/views/cinematics_view/cinematics_view_definitions")
 
 require("scripts/ui/views/cinematics_view/cinematics_view_settings")
 require("scripts/ui/views/cutscene_overlay_ui")
 require("scripts/ui/views/skip_input_ui")
 
-local tbl = {}
+local EMPTY_TABLE = {}
 
 CinematicsView = class(CinematicsView)
 
-local tbl_2 = {
+local VIDEO_PACKAGES = {
 	"resource_packages/menu_cinematics_videos",
 	"resource_packages/videos/vermintide_2_versus_trailer"
 }
 
-CinematicsView.init = function (self, arg_1_1)
+CinematicsView.init = function (self, ingame_ui_context)
 	-- function 1
-	self._ui_renderer = arg_1_1.ui_renderer
-	self._ui_top_renderer = arg_1_1.ui_top_renderer
-	self._ingame_ui = arg_1_1.ingame_ui
-	self._input_manager = arg_1_1.input_manager
-	self._ingame_ui_context = arg_1_1
+	self._ui_renderer = ingame_ui_context.ui_renderer
+	self._ui_top_renderer = ingame_ui_context.ui_top_renderer
+	self._ingame_ui = ingame_ui_context.ingame_ui
+	self._input_manager = ingame_ui_context.input_manager
+	self._ingame_ui_context = ingame_ui_context
 	self._render_settings = {
 		alpha_multiplier = 0,
 		snap_pixel_positions = false
 	}
-	self._in_title_screen = arg_1_1.in_title_screen
+	self._in_title_screen = ingame_ui_context.in_title_screen
 
-	local _input_manager = self._input_manager
+	local input_manager = self._input_manager
 
-	_input_manager:create_input_service("cinematics_view", "IngameMenuKeymaps", "IngameMenuFilters")
-	_input_manager:map_device_to_service("cinematics_view", "keyboard")
-	_input_manager:map_device_to_service("cinematics_view", "mouse")
-	_input_manager:map_device_to_service("cinematics_view", "gamepad")
+	input_manager:create_input_service("cinematics_view", "IngameMenuKeymaps", "IngameMenuFilters")
+	input_manager:map_device_to_service("cinematics_view", "keyboard")
+	input_manager:map_device_to_service("cinematics_view", "mouse")
+	input_manager:map_device_to_service("cinematics_view", "gamepad")
 	self:_reset()
 end
 
-CinematicsView._packages_loaded = function (arg_2_0)
+CinematicsView._packages_loaded = function (self)
 	-- function 2
-	local package = Managers.package
+	local package_manager = Managers.package
 
-	for i, v in ipairs(tbl_2) do
-		if not package:has_loaded(v, "cinematics_view") then
+	for _, name in ipairs(VIDEO_PACKAGES) do
+		if not package_manager:has_loaded(name, "cinematics_view") then
 			return false
 		end
 	end
@@ -50,24 +50,24 @@ CinematicsView._packages_loaded = function (arg_2_0)
 	return true
 end
 
-CinematicsView._load_packages = function (arg_3_0)
+CinematicsView._load_packages = function (self)
 	-- function 3
-	local package = Managers.package
+	local package_manager = Managers.package
 
-	for i, v in ipairs(tbl_2) do
-		if not package:has_loaded(v, "cinematics_view") then
-			package:load(v, "cinematics_view", nil, true, true)
+	for _, name in ipairs(VIDEO_PACKAGES) do
+		if not package_manager:has_loaded(name, "cinematics_view") then
+			package_manager:load(name, "cinematics_view", nil, true, true)
 		end
 	end
 end
 
-CinematicsView._unload_packages = function (arg_4_0)
+CinematicsView._unload_packages = function (self)
 	-- function 4
-	local package = Managers.package
+	local package_manager = Managers.package
 
-	for i, v in ipairs(tbl_2) do
-		if package:has_loaded(v, "cinematics_view") or not package:is_loading(v, "cinematics_view") then
-			package:unload(v, "cinematics_view", nil, true)
+	for _, name in ipairs(VIDEO_PACKAGES) do
+		if package_manager:has_loaded(name, "cinematics_view") or package_manager:is_loading(name, "cinematics_view") then
+			package_manager:unload(name, "cinematics_view", nil, true)
 		end
 	end
 end
@@ -82,98 +82,103 @@ end
 
 CinematicsView._create_ui_elements = function (self)
 	-- function 6
-	self._ui_scenegraph = UISceneGraph.init_scenegraph(var_0_0.scenegraph_definition)
+	self._ui_scenegraph = UISceneGraph.init_scenegraph(definitions.scenegraph_definition)
 
-	local tbl = {}
-	local tbl_2 = {}
+	local widgets = {}
+	local widgets_by_name = {}
 
-	for k, v in pairs(var_0_0.widget_definitions) do
-		local var_6_2 = UIWidget.init(v)
+	for name, widget_definition in pairs(definitions.widget_definitions) do
+		local widget = UIWidget.init(widget_definition)
 
-		tbl[#tbl + 1] = var_6_2
-		tbl_2[k] = var_6_2
+		widgets[#widgets + 1] = widget
+		widgets_by_name[name] = widget
 	end
 
-	self._widgets = tbl
-	self._widgets_by_name = tbl_2
+	self._widgets = widgets
+	self._widgets_by_name = widgets_by_name
 
 	self:_destroy_video_players()
 
-	local CinematicsViewSettings = CinematicsViewSettings
-	local _ui_top_renderer = self._ui_top_renderer
-	local create_cinematic_entry = var_0_0.create_cinematic_entry
-	local tbl_3 = {}
-	local tbl_4 = {}
+	local cinematics_settings = CinematicsViewSettings
+	local ui_top_renderer = self._ui_top_renderer
+	local create_cinematic_entry_func = definitions.create_cinematic_entry
+	local cinematics_widgets = {}
+	local cinematics_categories_lut = {}
 
-	for k_2 = 1, #CinematicsViewSettings do
-		local var_6_8 = CinematicsViewSettings[k_2]
+	for i = 1, #cinematics_settings do
+		local cinematics = cinematics_settings[i]
 
-		if #var_6_8 > 0 then
-			local tbl_5 = {}
+		if #cinematics > 0 then
+			local category_cinematics_widgets = {}
 
-			for l = 1, #var_6_8 do
-				local var_6_10 = var_6_8[l]
-				local var_6_11 = create_cinematic_entry(_ui_top_renderer, var_6_10, l, false, self)
-				local var_6_12 = UIWidget.init(var_6_11)
+			for j = 1, #cinematics do
+				local cinematic_data = cinematics[j]
+				local widget_definition = create_cinematic_entry_func(ui_top_renderer, cinematic_data, j, false, self)
+				local widget = UIWidget.init(widget_definition)
 
-				tbl_5[#tbl_5 + 1] = var_6_12
+				category_cinematics_widgets[#category_cinematics_widgets + 1] = widget
 			end
 
-			tbl_3[#tbl_3 + 1] = tbl_5
+			cinematics_widgets[#cinematics_widgets + 1] = category_cinematics_widgets
 
-			local count = #tbl_3
-			local category_name = var_6_8.category_name
+			local category_index = #cinematics_widgets
+			local category_name = cinematics.category_name
 
-			tbl_4[category_name] = count
-			tbl_4[count] = category_name
+			cinematics_categories_lut[category_name] = category_index
+			cinematics_categories_lut[category_index] = category_name
 		end
 	end
 
-	self._cinematics_widgets = tbl_3
-	self._cinematics_categories_lut = tbl_4
+	self._cinematics_widgets = cinematics_widgets
+	self._cinematics_categories_lut = cinematics_categories_lut
 
-	local create_video_entry = var_0_0.create_video_entry(self)
+	local create_video_entry = definitions.create_video_entry
+	local widget_definition = create_video_entry(self)
+	local widget = UIWidget.init(widget_definition)
 
-	self._video_widget = UIWidget.init(create_video_entry)
+	self._video_widget = widget
 
-	local tbl_6 = {}
-	local tbl_7 = {}
+	local button_widgets = {}
+	local button_widgets_by_name = {}
 
-	for k_3, v_2 in pairs(var_0_0.button_widget_definitions) do
-		local var_6_18 = UIWidget.init(v_2)
+	for name, widget_definition in pairs(definitions.button_widget_definitions) do
+		local widget = UIWidget.init(widget_definition)
 
-		tbl_6[#tbl_6 + 1] = var_6_18
-		tbl_7[k_3] = var_6_18
+		button_widgets[#button_widgets + 1] = widget
+		button_widgets_by_name[name] = widget
 	end
 
-	self._button_widgets = tbl_6
-	self._button_widgets_by_name = tbl_7
+	self._button_widgets = button_widgets
+	self._button_widgets_by_name = button_widgets_by_name
 	self._ui_animations = {}
 	self._animations = {}
 	self._animation_callbacks = {}
-	self._ui_animator = UIAnimator:new(self._ui_scenegraph, var_0_0.animation_definitions)
+	self._ui_animator = UIAnimator:new(self._ui_scenegraph, definitions.animation_definitions)
 
-	local _ui_top_renderer_2 = self._ui_top_renderer
+	local ui_top_renderer = self._ui_top_renderer
 	local input_service = self:input_service()
-	local generic_input_actions = var_0_0.generic_input_actions
+	local generic_input_actions = definitions.generic_input_actions
 
-	self._menu_input_description = MenuInputDescriptionUI:new(nil, _ui_top_renderer_2, input_service, 5, 900, generic_input_actions.default)
+	self._menu_input_description = MenuInputDescriptionUI:new(nil, ui_top_renderer, input_service, 5, 900, generic_input_actions.default)
 
 	self._menu_input_description:set_input_description(nil)
 end
 
 CinematicsView._create_scrollbar = function (self)
 	-- function 7
-	local count = #self._cinematics_widgets[self._current_category_index]
-	local create_scrollbar = var_0_0.create_scrollbar(count)
+	local current_cinematics_widgets = self._cinematics_widgets[self._current_category_index]
+	local num_elements = #current_cinematics_widgets
+	local widget_definition = definitions.create_scrollbar(num_elements)
 
-	self._scrollbar_widget = UIWidget.init(create_scrollbar)
+	self._scrollbar_widget = UIWidget.init(widget_definition)
 
-	local _ui_scenegraph = self._ui_scenegraph
-	local num = count * var_0_0.entry_size[2]
-	local var_7_4 = _ui_scenegraph.video_area.size[2]
+	local ui_scenegraph = self._ui_scenegraph
+	local list_length = num_elements * definitions.entry_size[2]
+	local video_area = ui_scenegraph.video_area
+	local video_area_length = video_area.size[2]
+	local scroll_area_size = math.max(list_length - video_area_length, 0)
 
-	self._scroll_area_size = math.max(num - var_7_4, 0)
+	self._scroll_area_size = scroll_area_size
 end
 
 CinematicsView._destroy_video_players = function (self)
@@ -182,18 +187,20 @@ CinematicsView._destroy_video_players = function (self)
 		return
 	end
 
-	local _ui_video_renderer = self._ui_video_renderer
+	local ui_video_renderer = self._ui_video_renderer
 
 	for i = 1, #self._cinematics_widgets do
-		local var_8_1 = self._cinematics_widgets[i]
+		local category_cinematics_widgets = self._cinematics_widgets[i]
 
-		for j = 1, #var_8_1 do
-			local reference_name = var_8_1[j].content.reference_name
+		for j = 1, #category_cinematics_widgets do
+			local cinematic_widget = category_cinematics_widgets[j]
+			local cinematic_widget_content = cinematic_widget.content
+			local reference_name = cinematic_widget_content.reference_name
 
-			if not _ui_video_renderer.video_players[reference_name] then
-				local world = _ui_video_renderer.world
+			if ui_video_renderer.video_players[reference_name] then
+				local world = ui_video_renderer.world
 
-				UIRenderer.destroy_video_player(_ui_video_renderer, reference_name, world)
+				UIRenderer.destroy_video_player(ui_video_renderer, reference_name, world)
 			end
 		end
 	end
@@ -213,24 +220,24 @@ end
 
 CinematicsView._reset_button_states = function (self)
 	-- function 11
-	for i, v in ipairs(self._button_widgets) do
-		UIWidgetUtils.reset_layout_button(v)
+	for _, widget in ipairs(self._button_widgets) do
+		UIWidgetUtils.reset_layout_button(widget)
 	end
 end
 
-CinematicsView._show_loading_icon = function (arg_12_0)
+CinematicsView._show_loading_icon = function (self)
 	-- function 12
 	Managers.transition:show_loading_icon(false)
 end
 
-CinematicsView._hide_loading_icon = function (arg_13_0)
+CinematicsView._hide_loading_icon = function (self)
 	-- function 13
 	Managers.transition:hide_loading_icon()
 end
 
 CinematicsView._create_video_renderer = function (self)
 	-- function 14
-	local tbl = {
+	local materials = {
 		"material",
 		"materials/ui/ui_1080p_menu_atlas_textures",
 		"material",
@@ -246,19 +253,20 @@ CinematicsView._create_video_renderer = function (self)
 	}
 
 	for i = 1, #CinematicsViewSettings do
-		local var_14_1 = CinematicsViewSettings[i]
+		local category_cinematics_view_settings = CinematicsViewSettings[i]
 
-		for j = 1, #var_14_1 do
-			local video_data = var_14_1[j].video_data
+		for j = 1, #category_cinematics_view_settings do
+			local cinematics_settings = category_cinematics_view_settings[j]
+			local video_data = cinematics_settings.video_data
 
-			tbl[#tbl + 1] = "material"
-			tbl[#tbl + 1] = video_data.resource
+			materials[#materials + 1] = "material"
+			materials[#materials + 1] = video_data.resource
 		end
 	end
 
 	local world = self._ui_top_renderer.world
 
-	self._ui_video_renderer = UIRenderer.create(world, unpack(tbl))
+	self._ui_video_renderer = UIRenderer.create(world, unpack(materials))
 end
 
 CinematicsView._destroy_video_renderer = function (self)
@@ -286,40 +294,40 @@ CinematicsView._init_view = function (self)
 	self._initialized = true
 end
 
-CinematicsView._start_animation = function (self, arg_18_1, arg_18_2)
+CinematicsView._start_animation = function (self, animation_name, callback)
 	-- function 18
 	local _render_settings = self._render_settings
 
-	_render_settings = _render_settings or {
+	_render_settings = not not _render_settings or not not {
 		alpha_multiplier = 0,
 		snap_pixel_positions = false
 	}
 	self._render_settings = _render_settings
 
-	local tbl = {
+	local params = {
 		render_settings = self._render_settings
 	}
 
-	self._animations[arg_18_1] = self._ui_animator:start_animation(arg_18_1, nil, self._ui_scenegraph, tbl, 1, 0)
-	self._animation_callbacks[arg_18_1] = arg_18_2
+	self._animations[animation_name] = self._ui_animator:start_animation(animation_name, nil, self._ui_scenegraph, params, 1, 0)
+	self._animation_callbacks[animation_name] = callback
 end
 
-CinematicsView._enable_viewport = function (arg_19_0, arg_19_1)
+CinematicsView._enable_viewport = function (self, enable)
 	-- function 19
-	if not IS_WINDOWS and GameSettingsDevelopment.skip_start_screen and not Development.parameter("skip_start_screen") then
-		local str = "inventory_preview"
-		local str_2 = "inventory_preview_viewport"
-		local world = Managers.world:world(str)
-		local viewport = ScriptWorld.viewport(world, str_2)
+	if IS_WINDOWS and (GameSettingsDevelopment.skip_start_screen or Development.parameter("skip_start_screen")) then
+		local world_name = "inventory_preview"
+		local viewport_name = "inventory_preview_viewport"
+		local world = Managers.world:world(world_name)
+		local viewport = ScriptWorld.viewport(world, viewport_name)
 
-		if not arg_19_1 then
+		if enable then
 			ScriptWorld.activate_viewport(world, viewport)
 			ShowCursorStack.show("CinematicsView")
 		else
 			ScriptWorld.deactivate_viewport(world, viewport)
 			ShowCursorStack.hide("CinematicsView")
 		end
-	elseif not arg_19_1 then
+	elseif enable then
 		ShowCursorStack.show("CinematicsView")
 	else
 		ShowCursorStack.hide("CinematicsView")
@@ -328,11 +336,11 @@ end
 
 CinematicsView._create_skip_widget = function (self)
 	-- function 20
-	local tbl = {
+	local context = {
 		ui_renderer = self._ui_top_renderer
 	}
 
-	self._skip_input_ui = SkipInputUI:new(self, tbl)
+	self._skip_input_ui = SkipInputUI:new(self, context)
 end
 
 CinematicsView.on_exit = function (self)
@@ -347,9 +355,9 @@ CinematicsView.on_exit = function (self)
 	self._initialized = false
 end
 
-CinematicsView.do_exit = function (self, arg_22_1)
+CinematicsView.do_exit = function (self, return_to_game)
 	-- function 22
-	self:_start_animation("on_exit", callback(self, "exit", arg_22_1))
+	self:_start_animation("on_exit", callback(self, "exit", return_to_game))
 
 	self._exiting = true
 
@@ -358,19 +366,19 @@ CinematicsView.do_exit = function (self, arg_22_1)
 	local trigger_event = music.trigger_event
 	local flag
 
-	flag = not IS_WINDOWS and "Play_console_menu_back" and "Play_console_menu_select"
+	flag = (not IS_WINDOWS or not "Play_console_menu_back") and not not "Play_console_menu_select"
 
 	trigger_event(var_22_1, flag)
 end
 
-CinematicsView.update = function (self, arg_23_1, arg_23_2)
+CinematicsView.update = function (self, dt, t)
 	-- function 23
-	if not self._packages_loaded() then
-		if not self:initialized() then
-			self:_update_input(arg_23_1, arg_23_2)
-			self:_update_animations(arg_23_1, arg_23_2)
-			self:_update_video(arg_23_1, arg_23_2)
-			self:_draw(arg_23_1, arg_23_2)
+	if self._packages_loaded() then
+		if self:initialized() then
+			self:_update_input(dt, t)
+			self:_update_animations(dt, t)
+			self:_update_video(dt, t)
+			self:_draw(dt, t)
 		else
 			self:_init_view()
 		end
@@ -382,197 +390,225 @@ CinematicsView.current_gamepad_selection = function (self)
 	return self._current_gamepad_selection_index
 end
 
-local tbl_3 = {}
+local EMPTY_TABLE = {}
 
-CinematicsView._update_input = function (self, arg_25_1, arg_25_2)
+CinematicsView._update_input = function (self, dt, t)
 	-- function 25
-	if not self._exiting then
+	if self._exiting then
 		return
 	end
 
-	local on_enter = self._animations.on_enter
+	local on_enter_animation_id = self._animations.on_enter
 	local input_service = self:input_service()
-	local is_device_active = Managers.input:is_device_active("gamepad")
-	local _current_video_content = self._current_video_content
-	local get = input_service:get("toggle_menu", true)
-	local get_2 = input_service:get("back_menu", true)
+	local gamepad_active = Managers.input:is_device_active("gamepad")
+	local current_video_content = self._current_video_content
+	local toggle_menu_input = input_service:get("toggle_menu", true)
+	local back_input = input_service:get("back_menu", true)
 	local IS_WINDOWS = IS_WINDOWS
 
-	if not IS_WINDOWS then
-		IS_WINDOWS = self._ui_animator:is_animation_completed(on_enter)
-		IS_WINDOWS = not IS_WINDOWS and input_service:get("left_press")
+	if IS_WINDOWS then
+		-- Nothing
 	end
 
-	local any_pressed = Managers.input:get_most_recent_device().any_pressed()
-	local hotspot = self._widgets_by_name.canvas_hotspot.content.hotspot
+	IS_WINDOWS = self._ui_animator:is_animation_completed(on_enter_animation_id)
 
-	if _current_video_content or get or get_2 or hotspot.is_hover or not IS_WINDOWS then
+	if IS_WINDOWS then
+		-- Nothing
+	end
+
+	IS_WINDOWS = input_service:get("left_press")
+
+	local left_press_input = IS_WINDOWS
+
+	::label_25_0::
+
+	local input_device = Managers.input:get_most_recent_device()
+	local any_input_pressed = input_device.any_pressed()
+	local canvas_hotspot_widget = self._widgets_by_name.canvas_hotspot
+	local canvas_hotspot_widget_content = canvas_hotspot_widget.content
+	local canvas_hotspot = canvas_hotspot_widget_content.hotspot
+
+	if not current_video_content and (toggle_menu_input or back_input or not canvas_hotspot.is_hover and left_press_input) then
 		self:do_exit()
 
 		return
-	elseif not _current_video_content and not self._skip_input_ui and not self._skip_input_ui:skipped() then
+	elseif current_video_content and self._skip_input_ui and self._skip_input_ui:skipped() then
 		self:deactivate_video()
-	elseif not input_service:get("confirm_press") then
-		local _current_gamepad_selection_index = self._current_gamepad_selection_index
-		local video_content = self._cinematics_widgets[self._current_category_index][_current_gamepad_selection_index].content.video_content
+	elseif input_service:get("confirm_press") then
+		local current_gamepad_selection_index = self._current_gamepad_selection_index
+		local category_cinematics_widgets = self._cinematics_widgets[self._current_category_index]
+		local widget = category_cinematics_widgets[current_gamepad_selection_index]
+		local widget_content = widget.content
+		local widget_video_content = widget_content.video_content
+		local widget_reference_name = widget_video_content.video_player_reference
+		local current_reference_name = not not current_video_content and not not current_video_content.video_player_reference
 
-		if video_content.video_player_reference ~= (not _current_video_content and _current_video_content.video_player_reference) then
-			self:activate_video(video_content, _current_gamepad_selection_index)
+		if widget_reference_name ~= current_reference_name then
+			self:activate_video(widget_video_content, current_gamepad_selection_index)
 		end
 	end
 
-	if not _current_video_content then
-		self:_update_scrollbar(arg_25_1, arg_25_2, input_service, is_device_active)
+	if not current_video_content then
+		self:_update_scrollbar(dt, t, input_service, gamepad_active)
 	end
 end
 
-CinematicsView._update_animations = function (self, arg_26_1, arg_26_2)
+CinematicsView._update_animations = function (self, dt, t)
 	-- function 26
-	local _ui_animations = self._ui_animations
+	local ui_animations = self._ui_animations
 
-	for k, v in pairs(_ui_animations) do
-		UIAnimation.update(v, arg_26_1)
+	for anmation_name, anmation in pairs(ui_animations) do
+		UIAnimation.update(anmation, dt)
 
-		if not UIAnimation.completed(v) then
-			_ui_animations[k] = nil
+		if UIAnimation.completed(anmation) then
+			ui_animations[anmation_name] = nil
 		end
 	end
 
-	local _ui_animator = self._ui_animator
+	local ui_animator = self._ui_animator
 
-	_ui_animator:update(arg_26_1)
+	ui_animator:update(dt)
 
-	local _animations = self._animations
-	local _animation_callbacks = self._animation_callbacks
+	local animations = self._animations
+	local animation_callbacks = self._animation_callbacks
 
-	for k_2, v_2 in pairs(_animations) do
-		if not _ui_animator:is_animation_completed(v_2) then
-			_animations[k_2] = nil
+	for animation_name, animation_id in pairs(animations) do
+		if ui_animator:is_animation_completed(animation_id) then
+			animations[animation_name] = nil
 
-			if not _animation_callbacks[k_2] then
-				_animation_callbacks[k_2]()
+			if animation_callbacks[animation_name] then
+				animation_callbacks[animation_name]()
 
-				_animation_callbacks[k_2] = nil
+				animation_callbacks[animation_name] = nil
 			end
 		end
 	end
 
-	if not Managers.input:is_device_active("mouse") then
-		for i, v_3 in ipairs(self._button_widgets) do
-			UIWidgetUtils.animate_layout_button(v_3, arg_26_1)
+	if Managers.input:is_device_active("mouse") then
+		for _, widget in ipairs(self._button_widgets) do
+			UIWidgetUtils.animate_layout_button(widget, dt)
 		end
 	end
 end
 
-CinematicsView._update_scrollbar = function (self, arg_27_1, arg_27_2, arg_27_3, arg_27_4)
+CinematicsView._update_scrollbar = function (self, dt, t, input_service, gamepad_active)
 	-- function 27
-	local hotspot = self._widgets_by_name.video_area.content.hotspot
-	local _scrollbar_widget = self._scrollbar_widget
-	local content = _scrollbar_widget.content
-	local style = _scrollbar_widget.style
-	local hotspot_2 = content.hotspot
-	local scroller_hotspot = content.scroller_hotspot
-	local scroller = style.scroller
-	local get = arg_27_3:get("scroll_axis")
-	local get_2 = arg_27_3:get("cursor")
-	local var_27_9
+	local video_area_widget = self._widgets_by_name.video_area
+	local video_area_content = video_area_widget.content
+	local video_area_hotspot = video_area_content.hotspot
+	local scrollbar_widget = self._scrollbar_widget
+	local scrollbar_widget_content = scrollbar_widget.content
+	local scrollbar_widget_style = scrollbar_widget.style
+	local scrollbar_widget_scrollbar_hotspot = scrollbar_widget_content.hotspot
+	local scrollbar_widget_scroller_hotspot = scrollbar_widget_content.scroller_hotspot
+	local scroller_style = scrollbar_widget_style.scroller
+	local scroll = input_service:get("scroll_axis")
+	local cursor = input_service:get("cursor")
+	local var_27_0
 
-	if not get_2 then
-		var_27_9 = get_2[2]
+	if cursor then
+		var_27_0 = cursor[2]
 
-		if not var_27_9 then
+		if not var_27_0 then
 			-- Nothing
 		end
 	end
 
-	var_27_9 = 0
+	var_27_0 = 0
+
+	local cursor_y = var_27_0
 
 	::label_27_0::
 
-	if not (not IS_WINDOWS and arg_27_4) then
-		var_27_9 = var_27_9 * RESOLUTION_LOOKUP.inv_scale
+	if IS_WINDOWS and not gamepad_active then
+		cursor_y = cursor_y * RESOLUTION_LOOKUP.inv_scale
 	end
 
-	local _ui_scenegraph = self._ui_scenegraph
-	local local_position = _ui_scenegraph.anchor_point.local_position
+	local ui_scenegraph = self._ui_scenegraph
+	local anchor_point = ui_scenegraph.anchor_point
+	local anchor_point_local_position = anchor_point.local_position
 
-	if not scroller_hotspot.on_pressed then
-		self._cursor_start_pos = var_27_9
-		self._scrollbar_start_pos = local_position[2]
+	if scrollbar_widget_scroller_hotspot.on_pressed then
+		self._cursor_start_pos = cursor_y
+		self._scrollbar_start_pos = anchor_point_local_position[2]
 		self._ui_animations.scroll = nil
-		scroller_hotspot.selected = true
-	elseif not self._cursor_start_pos then
-		if not arg_27_3:get("left_hold") then
-			local var_27_12 = _ui_scenegraph.scrollbar.size[2]
-			local var_27_13 = _ui_scenegraph.video_area.size[2]
-			local var_27_14 = scroller.area_size[2]
-			local var_27_15 = var_27_9
-			local num = (self._cursor_start_pos - var_27_15) / (var_27_13 - var_27_14)
+		scrollbar_widget_scroller_hotspot.selected = true
+	elseif self._cursor_start_pos then
+		if input_service:get("left_hold") then
+			local scrollbar_size = ui_scenegraph.scrollbar.size[2]
+			local area_size = ui_scenegraph.video_area.size[2]
+			local scroller_size = scroller_style.area_size[2]
+			local cursor_pos = cursor_y
+			local diff = self._cursor_start_pos - cursor_pos
+			local diff_percentage = diff / (area_size - scroller_size)
 
-			local_position[2] = math.clamp(self._scrollbar_start_pos + num * self._scroll_area_size, 0, self._scroll_area_size)
+			anchor_point_local_position[2] = math.clamp(self._scrollbar_start_pos + diff_percentage * self._scroll_area_size, 0, self._scroll_area_size)
 		else
 			self._cursor_start_pos = nil
 			self._scrollbar_start_pos = nil
-			scroller_hotspot.selected = false
+			scrollbar_widget_scroller_hotspot.selected = false
 		end
-	elseif not hotspot_2.on_pressed then
-		local var_27_17 = _ui_scenegraph.video_area.world_position[2]
-		local var_27_18 = _ui_scenegraph.video_area.size[2]
-		local var_27_19 = scroller.area_size[2]
-		local num_2 = var_27_9 - var_27_19 * 0.5
-		local num_3 = num_2 - var_27_17
-		local num_4 = 1 - num_3 / (var_27_18 - var_27_19)
+	elseif scrollbar_widget_scrollbar_hotspot.on_pressed then
+		local area_start = ui_scenegraph.video_area.world_position[2]
+		local area_size = ui_scenegraph.video_area.size[2]
+		local scroller_size = scroller_style.area_size[2]
+		local cursor_pos = cursor_y - scroller_size * 0.5
+		local cursor_offset = cursor_pos - area_start
+		local cursor_percentage = 1 - cursor_offset / (area_size - scroller_size)
 
-		print(num_2, var_27_17, var_27_18, num_3, num_4)
+		print(cursor_pos, area_start, area_size, cursor_offset, cursor_percentage)
 
-		local_position[2] = math.clamp(self._scroll_area_size * num_4, 0, self._scroll_area_size)
-	elseif not (not hotspot.is_hover and not (math.abs(get[2]) > 0)) then
-		local num_5 = 200
-		local var_27_24 = local_position
-		local num_6 = 2
-		local var_27_26 = local_position[2]
-		local clamp = math.clamp(local_position[2] - get[2] * num_5, 0, self._scroll_area_size)
+		anchor_point_local_position[2] = math.clamp(self._scroll_area_size * cursor_percentage, 0, self._scroll_area_size)
+	elseif video_area_hotspot.is_hover and math.abs(scroll[2]) > 0 then
+		local speed = 200
+		local data = anchor_point_local_position
+		local index = 2
+		local start_value = anchor_point_local_position[2]
+		local end_value = math.clamp(anchor_point_local_position[2] - scroll[2] * speed, 0, self._scroll_area_size)
 
-		self._ui_animations.scroll = UIAnimation.init(UIAnimation.function_by_time, var_27_24, num_6, var_27_26, clamp, 0.5, math.easeOutCubic)
+		self._ui_animations.scroll = UIAnimation.init(UIAnimation.function_by_time, data, index, start_value, end_value, 0.5, math.easeOutCubic)
 	else
-		local count = #self._cinematics_widgets[self._current_category_index]
-		local _current_gamepad_selection_index = self._current_gamepad_selection_index
+		local current_cinematics_widgets = self._cinematics_widgets[self._current_category_index]
+		local num_elements = #current_cinematics_widgets
+		local gamepad_selection_index = self._current_gamepad_selection_index
 
-		if not arg_27_3:get("move_up_hold_continuous") then
-			_current_gamepad_selection_index = math.clamp(_current_gamepad_selection_index - 1, 1, count)
-		elseif not arg_27_3:get("move_down_hold_continuous") then
-			_current_gamepad_selection_index = math.clamp(_current_gamepad_selection_index + 1, 1, count)
+		if input_service:get("move_up_hold_continuous") then
+			gamepad_selection_index = math.clamp(gamepad_selection_index - 1, 1, num_elements)
+		elseif input_service:get("move_down_hold_continuous") then
+			gamepad_selection_index = math.clamp(gamepad_selection_index + 1, 1, num_elements)
 		end
 
-		if _current_gamepad_selection_index ~= self._current_gamepad_selection_index then
-			local var_27_30 = var_0_0.entry_size[2]
-			local var_27_31 = local_position
-			local num_7 = 2
-			local var_27_33 = local_position[2]
-			local clamp_2 = math.clamp(var_27_30 * (_current_gamepad_selection_index - 1), 0, self._scroll_area_size)
+		if gamepad_selection_index ~= self._current_gamepad_selection_index then
+			local step_size = definitions.entry_size[2]
+			local data = anchor_point_local_position
+			local index = 2
+			local start_value = anchor_point_local_position[2]
+			local end_value = math.clamp(step_size * (gamepad_selection_index - 1), 0, self._scroll_area_size)
 
-			self._ui_animations.scroll = UIAnimation.init(UIAnimation.function_by_time, var_27_31, num_7, var_27_33, clamp_2, 0.5, math.easeOutCubic)
-			self._current_gamepad_selection_index = _current_gamepad_selection_index
+			self._ui_animations.scroll = UIAnimation.init(UIAnimation.function_by_time, data, index, start_value, end_value, 0.5, math.easeOutCubic)
+			self._current_gamepad_selection_index = gamepad_selection_index
 
 			self:_play_sound("play_gui_start_menu_button_hover")
 		end
 	end
 
-	local var_27_35 = _ui_scenegraph.scrollbar.size[2]
-	local num_8 = local_position[2] / self._scroll_area_size
+	local scrollbar_size = ui_scenegraph.scrollbar.size[2]
+	local scroll_progress = anchor_point_local_position[2] / self._scroll_area_size
 
-	scroller.offset[2] = num_8 * (var_27_35 - scroller.area_size[2]) * -1
+	scroller_style.offset[2] = scroll_progress * (scrollbar_size - scroller_style.area_size[2]) * -1
 end
 
 CinematicsView._update_video = function (self)
 	-- function 28
-	local _current_video_content = self._current_video_content
+	local current_video_content = self._current_video_content
 
-	if not _current_video_content then
-		local video_player_reference = _current_video_content.video_player_reference
-		local var_28_2 = self._ui_video_renderer.video_players[video_player_reference]
+	if current_video_content then
+		local reference_name = current_video_content.video_player_reference
+		local video_player = self._ui_video_renderer.video_players[reference_name]
+		local num_frames = VideoPlayer.number_of_frames(video_player)
+		local current_frame = VideoPlayer.current_frame(video_player)
 
-		if VideoPlayer.number_of_frames(var_28_2) <= VideoPlayer.current_frame(var_28_2) then
+		if num_frames <= current_frame then
 			self:deactivate_video()
 		end
 	end
@@ -580,27 +616,27 @@ end
 
 CinematicsView.deactivate_video = function (self)
 	-- function 29
-	if not self._current_video_content then
+	if self._current_video_content then
 		self:_reset_sound()
 		self:_enable_viewport(true)
 
-		local video_player_reference = self._current_video_content.video_player_reference
-		local _ui_video_renderer = self._ui_video_renderer
+		local reference_name = self._current_video_content.video_player_reference
+		local ui_video_renderer = self._ui_video_renderer
 
-		if not _ui_video_renderer.video_players[video_player_reference] then
-			local world = _ui_video_renderer.world
+		if ui_video_renderer.video_players[reference_name] then
+			local world = ui_video_renderer.world
 
-			UIRenderer.destroy_video_player(_ui_video_renderer, video_player_reference, world)
+			UIRenderer.destroy_video_player(ui_video_renderer, reference_name, world)
 		end
 	end
 
-	if not self._cutscene_overlay_ui then
+	if self._cutscene_overlay_ui then
 		self._cutscene_overlay_ui:destroy()
 
 		self._cutscene_overlay_ui = nil
 	end
 
-	if not self._skip_input_ui then
+	if self._skip_input_ui then
 		self._skip_input_ui:destroy()
 
 		self._skip_input_ui = nil
@@ -611,196 +647,239 @@ CinematicsView.deactivate_video = function (self)
 	Managers.chat:set_chat_enabled(true)
 end
 
-CinematicsView._play_sound = function (arg_30_0, arg_30_1)
+CinematicsView._play_sound = function (self, sound_event)
 	-- function 30
-	if not IS_WINDOWS and GameSettingsDevelopment.skip_start_screen and not Development.parameter("skip_start_screen") then
-		local flag
+	if IS_WINDOWS and (GameSettingsDevelopment.skip_start_screen or Development.parameter("skip_start_screen")) then
+		local str
 
-		flag = not IS_CONSOLE and "title_screen_world" and "level_world"
+		if IS_CONSOLE then
+			str = "title_screen_world"
 
-		local world = Managers.world:world(flag)
+			goto label_30_0
+		end
+
+		str = "level_world"
+
+		local world_name = str
+
+		::label_30_0::
+
+		local world = Managers.world:world(world_name)
 		local wwise_world = Managers.world:wwise_world(world)
 
-		WwiseWorld.trigger_event(wwise_world, arg_30_1)
+		WwiseWorld.trigger_event(wwise_world, sound_event)
 	else
-		Managers.music:trigger_event(arg_30_1)
+		Managers.music:trigger_event(sound_event)
 	end
 end
 
-CinematicsView._start_video_sound = function (self, arg_31_1, arg_31_2)
+CinematicsView._start_video_sound = function (self, sound_start, sound_stop)
 	-- function 31
-	if not IS_WINDOWS and GameSettingsDevelopment.skip_start_screen and not Development.parameter("skip_start_screen") then
+	if IS_WINDOWS and (GameSettingsDevelopment.skip_start_screen or Development.parameter("skip_start_screen")) then
 		self:_play_sound("play_gui_amb_hero_screen_loop_end")
 		self:_play_sound("Play_hud_start_cinematic")
 
-		if not arg_31_2 then
-			self:_play_sound(arg_31_2)
+		if sound_stop then
+			self:_play_sound(sound_stop)
 		end
 	else
 		Managers.music:stop_all_sounds()
 	end
 
-	if not arg_31_1 then
-		self:_play_sound(arg_31_1)
+	if sound_start then
+		self:_play_sound(sound_start)
 	end
 end
 
 CinematicsView._reset_sound = function (self)
 	-- function 32
-	local sound_stop = self._current_video_content.video_data.sound_stop
+	local current_video_content = self._current_video_content
+	local current_video_data = current_video_content.video_data
+	local sound_stop = current_video_data.sound_stop
 
-	if not sound_stop then
+	if sound_stop then
 		self:_play_sound(sound_stop)
 	end
 
-	local var_32_1 = self
+	local var_32_0 = self
 	local _play_sound = self._play_sound
 	local flag
 
-	flag = not IS_CONSOLE and "Play_console_menu_music" and "Play_menu_screen_music"
+	flag = (not IS_CONSOLE or not "Play_console_menu_music") and not not "Play_menu_screen_music"
 
-	_play_sound(var_32_1, flag)
+	_play_sound(var_32_0, flag)
 
-	if not IS_WINDOWS and GameSettingsDevelopment.skip_start_screen and not Development.parameter("skip_start_screen") then
+	if IS_WINDOWS and (GameSettingsDevelopment.skip_start_screen or Development.parameter("skip_start_screen")) then
 		self:_play_sound("play_gui_amb_hero_screen_loop_begin")
 	end
 end
 
-CinematicsView.activate_video = function (self, arg_33_1, arg_33_2)
+CinematicsView.activate_video = function (self, video_content, index)
 	-- function 33
-	if not self._exiting then
+	if self._exiting then
 		return
 	end
 
 	local _current_video_content = self._current_video_content
 
-	_current_video_content = _current_video_content or tbl_3
+	if not _current_video_content then
+		-- Nothing
+	end
 
-	local _ui_video_renderer = self._ui_video_renderer
-	local video_player_reference = arg_33_1.video_player_reference
+	_current_video_content = EMPTY_TABLE
 
-	if video_player_reference == _current_video_content.video_player_reference then
+	local current_video_content = _current_video_content
+
+	::label_33_0::
+
+	local ui_video_renderer = self._ui_video_renderer
+	local reference_name = video_content.video_player_reference
+	local current_reference_name = current_video_content.video_player_reference
+
+	if reference_name == current_reference_name then
 		return
 	end
 
-	local video_data = arg_33_1.video_data
+	local video_data = video_content.video_data
 
-	if not _ui_video_renderer.video_players[video_player_reference] then
+	if not ui_video_renderer.video_players[reference_name] then
 		local create_video_player = UIRenderer.create_video_player
-		local var_33_5 = _ui_video_renderer
-		local var_33_6 = video_player_reference
-		local world = _ui_video_renderer.world
+		local var_33_2 = ui_video_renderer
+		local var_33_3 = reference_name
+		local world = ui_video_renderer.world
 		local resource = video_data.resource
 		local set_loop = video_data.set_loop
 
-		set_loop = set_loop or false
+		set_loop = not not set_loop or not not false
 
-		create_video_player(var_33_5, var_33_6, world, resource, set_loop)
+		create_video_player(var_33_2, var_33_3, world, resource, set_loop)
 	end
 
-	local var_33_10 = _ui_video_renderer.video_players[video_player_reference]
-	local video_data_2 = _current_video_content.video_data
+	local video_player = ui_video_renderer.video_players[reference_name]
+	local video_data_2 = current_video_content.video_data
 
-	video_data_2 = video_data_2 or tbl_3
+	if not video_data_2 then
+		-- Nothing
+	end
+
+	video_data_2 = EMPTY_TABLE
+
+	local current_video_data = video_data_2
+
+	::label_33_1::
 
 	local sound_start = video_data.sound_start
-	local sound_stop = video_data_2.sound_stop
+	local sound_stop = current_video_data.sound_stop
 
 	self:_start_video_sound(sound_start, sound_stop)
 	self:_setup_subtitles(video_data.subtitle_template_settings)
 	self:_enable_viewport(false)
 	self:_create_skip_widget()
 
-	self._video_widget.content.video_content = arg_33_1
-	self._current_video_content = arg_33_1
-	self._current_gamepad_selection_index = arg_33_2
+	local video_widget = self._video_widget
+	local video_widget_content = video_widget.content
+
+	video_widget_content.video_content = video_content
+	self._current_video_content = video_content
+	self._current_gamepad_selection_index = index
 
 	Managers.chat:set_chat_enabled(false)
 end
 
-CinematicsView._setup_subtitles = function (self, arg_34_1)
+CinematicsView._setup_subtitles = function (self, subtitle_template_settings)
 	-- function 34
 	self._cutscene_overlay_ui = nil
 
-	if not arg_34_1 then
-		local tbl = {
+	if subtitle_template_settings then
+		local context = {
 			ui_renderer = self._ui_top_renderer
 		}
 
-		self._cutscene_overlay_ui = CutsceneOverlayUI:new(self, tbl)
+		self._cutscene_overlay_ui = CutsceneOverlayUI:new(self, context)
 
-		self._cutscene_overlay_ui:start(arg_34_1)
+		self._cutscene_overlay_ui:start(subtitle_template_settings)
 	end
 end
 
-CinematicsView.is_video_active = function (self, arg_35_1)
+CinematicsView.is_video_active = function (self, reference_name)
 	-- function 35
 	local _current_video_content = self._current_video_content
 
-	_current_video_content = _current_video_content or tbl_3
+	if not _current_video_content then
+		-- Nothing
+	end
 
-	return arg_35_1 == _current_video_content.video_player_reference
+	_current_video_content = EMPTY_TABLE
+
+	local current_video_content = _current_video_content
+
+	::label_35_0::
+
+	local current_reference_name = current_video_content.video_player_reference
+
+	return reference_name == current_reference_name
 end
 
-CinematicsView._draw = function (self, arg_36_1, arg_36_2)
+CinematicsView._draw = function (self, dt, t)
 	-- function 36
 	local input_service = self:input_service()
-	local _ui_top_renderer = self._ui_top_renderer
-	local _ui_renderer = self._ui_renderer
-	local _ui_video_renderer = self._ui_video_renderer
-	local _ui_scenegraph = self._ui_scenegraph
-	local _render_settings = self._render_settings
-	local is_device_active = Managers.input:is_device_active("gamepad")
-	local _current_video_content = self._current_video_content
+	local ui_top_renderer = self._ui_top_renderer
+	local ui_renderer = self._ui_renderer
+	local ui_video_renderer = self._ui_video_renderer
+	local ui_scenegraph = self._ui_scenegraph
+	local render_settings = self._render_settings
+	local gamepad_active = Managers.input:is_device_active("gamepad")
+	local current_video_content = self._current_video_content
 
-	UIRenderer.begin_pass(_ui_top_renderer, _ui_scenegraph, input_service, arg_36_1, nil, _render_settings)
+	UIRenderer.begin_pass(ui_top_renderer, ui_scenegraph, input_service, dt, nil, render_settings)
 
 	for i = 1, #self._widgets do
-		local var_36_8 = self._widgets[i]
+		local widget = self._widgets[i]
 
-		UIRenderer.draw_widget(_ui_top_renderer, var_36_8)
+		UIRenderer.draw_widget(ui_top_renderer, widget)
 	end
 
 	if not self._exiting then
-		local video_area = _ui_scenegraph.video_area
-		local var_36_10 = video_area.world_position[2]
-		local var_36_11 = video_area.size[2]
-		local var_36_12 = _ui_scenegraph.anchor_point.world_position[2]
-		local var_36_13 = self._cinematics_widgets[self._current_category_index]
+		local video_area = ui_scenegraph.video_area
+		local video_area_y = video_area.world_position[2]
+		local video_area_size_y = video_area.size[2]
+		local anchor_point = ui_scenegraph.anchor_point
+		local anchor_y = anchor_point.world_position[2]
+		local cinematics_widgets = self._cinematics_widgets[self._current_category_index]
 
-		for j = 1, #var_36_13 do
-			local var_36_14 = var_36_13[j]
-			local num = var_36_12 - var_0_0.entry_size[2] * (j - 1)
+		for i = 1, #cinematics_widgets do
+			local widget = cinematics_widgets[i]
+			local y_pos = anchor_y - definitions.entry_size[2] * (i - 1)
 
-			if not (not (num < var_36_10 + var_36_11) or not (var_36_10 < num + var_0_0.entry_size[2])) then
-				UIRenderer.draw_widget(_ui_top_renderer, var_36_14)
+			if y_pos < video_area_y + video_area_size_y and video_area_y < y_pos + definitions.entry_size[2] then
+				UIRenderer.draw_widget(ui_top_renderer, widget)
 			end
 		end
 	end
 
-	UIRenderer.draw_widget(_ui_top_renderer, self._scrollbar_widget)
+	UIRenderer.draw_widget(ui_top_renderer, self._scrollbar_widget)
 
-	if not self._in_title_screen and _current_video_content or not Managers.input:is_device_active("mouse") then
-		for i_2, v in ipairs(self._button_widgets) do
-			UIRenderer.draw_widget(_ui_top_renderer, v)
+	if self._in_title_screen and not current_video_content and Managers.input:is_device_active("mouse") then
+		for _, widget in ipairs(self._button_widgets) do
+			UIRenderer.draw_widget(ui_top_renderer, widget)
 		end
 	end
 
-	UIRenderer.end_pass(_ui_top_renderer)
+	UIRenderer.end_pass(ui_top_renderer)
 
-	if not _current_video_content then
-		if not self._cutscene_overlay_ui then
-			self._cutscene_overlay_ui:update(arg_36_1)
+	if current_video_content then
+		if self._cutscene_overlay_ui then
+			self._cutscene_overlay_ui:update(dt)
 		end
 
-		if not self._skip_input_ui then
-			self._skip_input_ui:update(arg_36_1, arg_36_2, input_service, _render_settings)
+		if self._skip_input_ui then
+			self._skip_input_ui:update(dt, t, input_service, render_settings)
 		end
 
-		UIRenderer.begin_pass(_ui_video_renderer, _ui_scenegraph, input_service, arg_36_1, nil, _render_settings)
-		UIRenderer.draw_widget(_ui_video_renderer, self._video_widget)
-		UIRenderer.end_pass(_ui_video_renderer)
-	elseif not is_device_active then
-		self._menu_input_description:draw(_ui_top_renderer, arg_36_1)
+		UIRenderer.begin_pass(ui_video_renderer, ui_scenegraph, input_service, dt, nil, render_settings)
+		UIRenderer.draw_widget(ui_video_renderer, self._video_widget)
+		UIRenderer.end_pass(ui_video_renderer)
+	elseif gamepad_active then
+		self._menu_input_description:draw(ui_top_renderer, dt)
 	end
 end

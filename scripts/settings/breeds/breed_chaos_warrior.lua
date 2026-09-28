@@ -1,17 +1,17 @@
 -- chunkname: @scripts/settings/breeds/breed_chaos_warrior.lua
 
-local scripts_utils_stagger_types = require("scripts/utils/stagger_types")
-local tbl = {
+local stagger_types = require("scripts/utils/stagger_types")
+local pushed_data = {
 	ahead_dist = 1.5,
 	push_width = 1.25,
 	push_forward_offset = 1.5,
 	push_stagger_distance = 1,
 	player_pushed_speed = 4,
 	push_stagger_impact = {
-		scripts_utils_stagger_types.medium,
-		scripts_utils_stagger_types.medium,
-		scripts_utils_stagger_types.none,
-		scripts_utils_stagger_types.none
+		stagger_types.medium,
+		stagger_types.medium,
+		stagger_types.none,
+		stagger_types.none
 	},
 	push_stagger_duration = {
 		1.5,
@@ -20,7 +20,7 @@ local tbl = {
 		0
 	}
 }
-local tbl_2 = {
+local breed_data = {
 	detection_radius = 12,
 	aoe_height = 1.7,
 	walk_speed = 2.4,
@@ -105,7 +105,7 @@ local tbl_2 = {
 	base_unit = "units/beings/enemies/chaos_warrior/chr_chaos_warrior",
 	enter_walk_distance = 3,
 	elite = true,
-	displace_players_data = tbl,
+	displace_players_data = pushed_data,
 	infighting = InfightingSettings.large,
 	perception_exceptions = {
 		poison_well = true,
@@ -154,21 +154,21 @@ local tbl_2 = {
 	},
 	run_on_spawn = AiBreedSnippets.on_chaos_warrior_spawn,
 	run_on_update = AiBreedSnippets.on_chaos_warrior_update,
-	stagger_modifier_function = function (arg_1_0, arg_1_1, arg_1_2, arg_1_3, arg_1_4, arg_1_5)
+	stagger_modifier_function = function (stagger_type, duration, length, hit_zone_name, blackboard, breed)
 		-- function 1
-		if not (arg_1_4.stagger_type == scripts_utils_stagger_types.heavy or arg_1_4.stagger_type ~= scripts_utils_stagger_types.explosion) then
-			if arg_1_0 ~= scripts_utils_stagger_types.heavy or not arg_1_4.heavy_stagger_immune_time then
-				arg_1_0 = scripts_utils_stagger_types.none
-				arg_1_1 = 0
-				arg_1_2 = 0
-			elseif arg_1_0 == scripts_utils_stagger_types.heavy or not arg_1_4.stagger_immune_time then
-				arg_1_0 = scripts_utils_stagger_types.none
-				arg_1_1 = 0
-				arg_1_2 = 0
+		if blackboard.stagger_type == stagger_types.heavy or blackboard.stagger_type == stagger_types.explosion then
+			if stagger_type == stagger_types.heavy and blackboard.heavy_stagger_immune_time then
+				stagger_type = stagger_types.none
+				duration = 0
+				length = 0
+			elseif stagger_type ~= stagger_types.heavy and blackboard.stagger_immune_time then
+				stagger_type = stagger_types.none
+				duration = 0
+				length = 0
 			end
 		end
 
-		return arg_1_0, arg_1_1, arg_1_2
+		return stagger_type, duration, length
 	end,
 	hitzone_multiplier_types = {
 		head = "headshot",
@@ -324,9 +324,9 @@ local tbl_2 = {
 	}
 }
 
-Breeds.chaos_warrior = table.create_copy(Breeds.chaos_warrior, tbl_2)
+Breeds.chaos_warrior = table.create_copy(Breeds.chaos_warrior, breed_data)
 
-local tbl_3 = {
+local AttackIntensityPerDifficulty = {
 	normal = {
 		easy = {
 			normal = 3
@@ -491,7 +491,7 @@ local tbl_3 = {
 		}
 	}
 }
-local tbl_4 = {
+local action_data = {
 	alerted = {
 		no_hesitation = true,
 		override_time_alerted = 0.2,
@@ -588,7 +588,7 @@ local tbl_4 = {
 		reset_attack_animation_speed = 1.3,
 		bot_threat_start_time_step = 1.45,
 		step_attack_distance_override = 3.2,
-		difficulty_attack_intensity = tbl_3,
+		difficulty_attack_intensity = AttackIntensityPerDifficulty,
 		considerations = UtilityConsiderations.chaos_warrior_special_attack,
 		attack_anim = {
 			"attack_cleave_01",
@@ -639,7 +639,7 @@ local tbl_4 = {
 		step_attack_distance = 1.9,
 		bot_threat_start_time_step = 0.5,
 		step_attack_distance_override = 3.2,
-		difficulty_attack_intensity = tbl_3,
+		difficulty_attack_intensity = AttackIntensityPerDifficulty,
 		considerations = UtilityConsiderations.chaos_warrior_sweep_attack,
 		attack_anim = {
 			"attack_sweep_01",
@@ -686,7 +686,7 @@ local tbl_4 = {
 		action_weight = 1,
 		player_push_speed_blocked = 9,
 		width = 0.4,
-		difficulty_attack_intensity = tbl_3,
+		difficulty_attack_intensity = AttackIntensityPerDifficulty,
 		considerations = UtilityConsiderations.chaos_warrior_push_attack,
 		attack_anim = {
 			"attack_quick_01",
@@ -726,7 +726,7 @@ local tbl_4 = {
 		action_weight = 5,
 		player_push_speed_blocked = 9,
 		width = 1,
-		difficulty_attack_intensity = tbl_3,
+		difficulty_attack_intensity = AttackIntensityPerDifficulty,
 		considerations = UtilityConsiderations.chaos_warrior_running_attack,
 		attack_anim = {
 			"attack_run",
@@ -767,7 +767,7 @@ local tbl_4 = {
 		action_weight = 1,
 		shove_speed = 5,
 		width = 1.5,
-		difficulty_attack_intensity = tbl_3,
+		difficulty_attack_intensity = AttackIntensityPerDifficulty,
 		considerations = UtilityConsiderations.chaos_warrior_launch_attack,
 		knocked_down_attack_anim = {
 			"attack_downed"
@@ -793,7 +793,7 @@ local tbl_4 = {
 		damage_type = "blunt",
 		unblockable = true,
 		max_impact_push_speed = 9,
-		difficulty_attack_intensity = tbl_3,
+		difficulty_attack_intensity = AttackIntensityPerDifficulty,
 		considerations = UtilityConsiderations.chaos_warrior_push_attack,
 		attack_anim = {
 			"attack_push_2",
@@ -823,17 +823,19 @@ local tbl_4 = {
 		difficulty_duration = BreedTweaks.blocked_duration.chaos_elite
 	},
 	stagger = {
-		custom_enter_function = function (arg_2_0, arg_2_1, arg_2_2, arg_2_3)
+		custom_enter_function = function (unit, blackboard, t, action)
 			-- function 2
-			if arg_2_1.stagger_type == scripts_utils_stagger_types.heavy then
-				arg_2_1.stagger_immune_time = arg_2_2 + 2.25
-				arg_2_1.heavy_stagger_immune_time = arg_2_2 + 1.5
-			elseif arg_2_1.stagger_type == scripts_utils_stagger_types.explosion then
-				arg_2_1.stagger_immune_time = arg_2_2 + 4.5
-				arg_2_1.heavy_stagger_immune_time = arg_2_2 + 4
+			if blackboard.stagger_type == stagger_types.heavy then
+				blackboard.stagger_immune_time = t + 2.25
+				blackboard.heavy_stagger_immune_time = t + 1.5
+			elseif blackboard.stagger_type == stagger_types.explosion then
+				blackboard.stagger_immune_time = t + 4.5
+				blackboard.heavy_stagger_immune_time = t + 4
 			end
 
-			return arg_2_3.stagger_anims[arg_2_1.stagger_type], "idle"
+			local stagger_anims = action.stagger_anims[blackboard.stagger_type]
+
+			return stagger_anims, "idle"
 		end,
 		stagger_anims = {
 			{
@@ -964,4 +966,4 @@ local tbl_4 = {
 	}
 }
 
-BreedActions.chaos_warrior = table.create_copy(BreedActions.chaos_warrior, tbl_4)
+BreedActions.chaos_warrior = table.create_copy(BreedActions.chaos_warrior, action_data)

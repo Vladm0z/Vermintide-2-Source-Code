@@ -2,7 +2,7 @@
 
 InteractionUI = class(InteractionUI)
 
-local tbl = {
+local scenegraph_definition = {
 	root = {
 		is_root = true,
 		size = {
@@ -126,10 +126,10 @@ local tbl = {
 }
 
 if not IS_WINDOWS then
-	tbl.screen.scale = "hud_fit"
+	scenegraph_definition.screen.scale = "hud_fit"
 end
 
-local tbl_2 = {
+local widget_definitions = {
 	tooltip = {
 		scenegraph_id = "interaction",
 		element = {
@@ -153,29 +153,29 @@ local tbl_2 = {
 					style_id = "button_text",
 					pass_type = "text",
 					text_id = "button_text",
-					content_check_function = function (self)
+					content_check_function = function (content)
 						-- function 1
-						return self.text ~= ""
+						return content.text ~= ""
 					end
 				},
 				{
 					style_id = "button_text_shadow",
 					pass_type = "text",
 					text_id = "button_text",
-					content_check_function = function (self)
+					content_check_function = function (content)
 						-- function 2
-						return self.text ~= ""
+						return content.text ~= ""
 					end
 				},
 				{
 					style_id = "text",
 					pass_type = "text",
 					text_id = "text",
-					content_check_function = function (self)
+					content_check_function = function (content)
 						-- function 3
-						local text = self.text
+						local text = content.text
 
-						text = not text and self.text ~= ""
+						text = not not text and content.text ~= ""
 
 						return text
 					end
@@ -184,11 +184,11 @@ local tbl_2 = {
 					style_id = "text_shadow",
 					pass_type = "text",
 					text_id = "text",
-					content_check_function = function (self)
+					content_check_function = function (content)
 						-- function 4
-						local text = self.text
+						local text = content.text
 
-						text = not text and self.text ~= ""
+						text = not not text and content.text ~= ""
 
 						return text
 					end
@@ -197,29 +197,29 @@ local tbl_2 = {
 					style_id = "title_text",
 					pass_type = "text",
 					text_id = "title_text",
-					content_check_function = function (self)
+					content_check_function = function (content)
 						-- function 5
-						return self.title_text
+						return content.title_text
 					end
 				},
 				{
 					style_id = "title_text_shadow",
 					pass_type = "text",
 					text_id = "title_text",
-					content_check_function = function (self)
+					content_check_function = function (content)
 						-- function 6
-						return self.title_text
+						return content.title_text
 					end
 				},
 				{
 					style_id = "hotkey_text",
 					pass_type = "text",
 					text_id = "hotkey_text",
-					content_check_function = function (self)
+					content_check_function = function (content)
 						-- function 7
-						local has_hotkey = self.has_hotkey
+						local has_hotkey = content.has_hotkey
 
-						has_hotkey = not has_hotkey and not self.gamepad_active
+						has_hotkey = not not has_hotkey and not not not content.gamepad_active
 
 						return has_hotkey
 					end
@@ -228,11 +228,11 @@ local tbl_2 = {
 					style_id = "hotkey_text_shadow",
 					pass_type = "text",
 					text_id = "hotkey_text",
-					content_check_function = function (self)
+					content_check_function = function (content)
 						-- function 8
-						local has_hotkey = self.has_hotkey
+						local has_hotkey = content.has_hotkey
 
-						has_hotkey = not has_hotkey and not self.gamepad_active
+						has_hotkey = not not has_hotkey and not not not content.gamepad_active
 
 						return has_hotkey
 					end
@@ -452,21 +452,21 @@ local tbl_2 = {
 					style_id = "bar",
 					pass_type = "texture_uv_dynamic_color_uvs_size_offset",
 					content_id = "bar",
-					dynamic_function = function (self, arg_9_1, arg_9_2, arg_9_3)
+					dynamic_function = function (content, style, size, dt)
 						-- function 9
-						local bar_value = self.bar_value
-						local uv_start_pixels = arg_9_1.uv_start_pixels
-						local uv_scale_pixels = arg_9_1.uv_scale_pixels
-						local num = uv_start_pixels + uv_scale_pixels * bar_value
-						local uvs = arg_9_1.uvs
-						local scale_axis = arg_9_1.scale_axis
-						local offset_scale = arg_9_1.offset_scale
-						local offset = arg_9_1.offset
+						local bar_value = content.bar_value
+						local uv_start_pixels = style.uv_start_pixels
+						local uv_scale_pixels = style.uv_scale_pixels
+						local uv_pixels = uv_start_pixels + uv_scale_pixels * bar_value
+						local uvs = style.uvs
+						local uv_scale_axis = style.scale_axis
+						local offset_scale = style.offset_scale
+						local offset = style.offset
 
-						uvs[2][scale_axis] = num / (uv_start_pixels + uv_scale_pixels)
-						arg_9_2[scale_axis] = num
+						uvs[2][uv_scale_axis] = uv_pixels / (uv_start_pixels + uv_scale_pixels)
+						size[uv_scale_axis] = uv_pixels
 
-						return self.color, uvs, arg_9_2, offset
+						return content.color, uvs, size, offset
 					end
 				}
 			}
@@ -528,25 +528,25 @@ local tbl_2 = {
 		}
 	}
 }
-local tbl_3 = {}
+local extended_components = {}
 
-for k, v in pairs(DLCSettings) do
-	local interaction_ui_components = v.interaction_ui_components
+for _, dlc in pairs(DLCSettings) do
+	local interaction_ui_components = dlc.interaction_ui_components
 
-	if not interaction_ui_components then
-		for k_2, v_2 in pairs(interaction_ui_components) do
-			fassert(not tbl_3[k_2], "[InternactionUi] There is already a component with the name %q", k_2)
-			local_require(v_2.filename)
+	if interaction_ui_components then
+		for name, component in pairs(interaction_ui_components) do
+			fassert(not extended_components[name], "[InternactionUi] There is already a component with the name %q", name)
+			local_require(component.filename)
 
-			tbl_3[k_2] = v_2.class_name
+			extended_components[name] = component.class_name
 		end
 	end
 end
 
-local function fn(arg_10_0, arg_10_1)
+local function contains_key(table, element)
 	-- function 10
-	for k, v in pairs(arg_10_0) do
-		if k == arg_10_1 then
+	for key, value in pairs(table) do
+		if key == element then
 			return true
 		end
 	end
@@ -554,16 +554,16 @@ local function fn(arg_10_0, arg_10_1)
 	return false
 end
 
-InteractionUI.init = function (self, arg_11_1, arg_11_2)
+InteractionUI.init = function (self, parent, ingame_ui_context)
 	-- function 11
-	self._parent = arg_11_1
-	self.ui_renderer = arg_11_2.ui_renderer
-	self.input_manager = arg_11_2.input_manager
-	self.player_manager = arg_11_2.player_manager
-	self.peer_id = arg_11_2.peer_id
-	self.profile_synchronizer = arg_11_2.profile_synchronizer
-	self.world = arg_11_2.world
-	self._ingame_ui_context = arg_11_2
+	self._parent = parent
+	self.ui_renderer = ingame_ui_context.ui_renderer
+	self.input_manager = ingame_ui_context.input_manager
+	self.player_manager = ingame_ui_context.player_manager
+	self.peer_id = ingame_ui_context.peer_id
+	self.profile_synchronizer = ingame_ui_context.profile_synchronizer
+	self.world = ingame_ui_context.world
+	self._ingame_ui_context = ingame_ui_context
 	self.platform = PLATFORM
 	self.interaction_animations = {}
 
@@ -580,15 +580,15 @@ InteractionUI.create_ui_elements = function (self)
 	-- function 12
 	UIRenderer.clear_scenegraph_queue(self.ui_renderer)
 
-	self.ui_scenegraph = UISceneGraph.init_scenegraph(tbl)
-	self.interaction_widget = UIWidget.init(tbl_2.tooltip)
-	self.interaction_bar_widget = UIWidget.init(tbl_2.interaction_bar)
+	self.ui_scenegraph = UISceneGraph.init_scenegraph(scenegraph_definition)
+	self.interaction_widget = UIWidget.init(widget_definitions.tooltip)
+	self.interaction_bar_widget = UIWidget.init(widget_definitions.interaction_bar)
 	self._components = {}
 
-	for k, v in pairs(tbl_3) do
-		local var_12_0 = rawget(_G, v)
+	for component_name, component_class_name in pairs(extended_components) do
+		local component_class = rawget(_G, component_class_name)
 
-		self._components[k] = var_12_0:new(self, self._ingame_ui_context)
+		self._components[component_name] = component_class:new(self, self._ingame_ui_context)
 	end
 end
 
@@ -596,44 +596,44 @@ InteractionUI.destroy = function (self)
 	-- function 13
 	GarbageLeakDetector.register_object(self, "interaction_gui")
 
-	for k, v in pairs(self._components) do
-		v:destroy()
+	for name, component in pairs(self._components) do
+		component:destroy()
 	end
 end
 
-InteractionUI.button_texture_data_by_input_action = function (self, arg_14_1)
+InteractionUI.button_texture_data_by_input_action = function (self, input_action)
 	-- function 14
 	local input_manager = self.input_manager
-	local get_service = input_manager:get_service("Player")
-	local is_device_active = input_manager:is_device_active("gamepad")
+	local input_service = input_manager:get_service("Player")
+	local gamepad_active = input_manager:is_device_active("gamepad")
 
-	return UISettings.get_gamepad_input_texture_data(get_service, arg_14_1, is_device_active)
+	return UISettings.get_gamepad_input_texture_data(input_service, input_action, gamepad_active)
 end
 
 InteractionUI._animate_in_progress_bar = function (self)
 	-- function 15
-	local content = self.interaction_bar_widget.content
-	local style = self.interaction_bar_widget.style
-	local fade_in = UISettings.interaction.bar.fade_in
+	local widget_content = self.interaction_bar_widget.content
+	local widget_style = self.interaction_bar_widget.style
+	local fade_in_time = UISettings.interaction.bar.fade_in
 
-	self.interaction_animations.interaction_bar_glow_fade = UIAnimation.init(UIAnimation.function_by_time, style.glow.color, 1, 0, 255, 0.3, math.easeInCubic)
-	self.interaction_animations.interaction_bar_fill_fade = UIAnimation.init(UIAnimation.function_by_time, style.bar.color, 1, 0, 255, fade_in, math.easeInCubic)
+	self.interaction_animations.interaction_bar_glow_fade = UIAnimation.init(UIAnimation.function_by_time, widget_style.glow.color, 1, 0, 255, 0.3, math.easeInCubic)
+	self.interaction_animations.interaction_bar_fill_fade = UIAnimation.init(UIAnimation.function_by_time, widget_style.bar.color, 1, 0, 255, fade_in_time, math.easeInCubic)
 end
 
 InteractionUI._animate_out_progress_bar = function (self)
 	-- function 16
-	local fade_out = UISettings.interaction.bar.fade_out
-	local style = self.interaction_bar_widget.style
+	local fade_out_time = UISettings.interaction.bar.fade_out
+	local widget_style = self.interaction_bar_widget.style
 
-	self.interaction_animations.interaction_bar_glow_fade = UIAnimation.init(UIAnimation.function_by_time, style.glow.color, 1, style.glow.color[1], 0, fade_out, math.easeInCubic)
-	self.interaction_animations.interaction_bar_fill_fade = UIAnimation.init(UIAnimation.function_by_time, style.bar.color, 1, style.bar.color[1], 0, fade_out, math.easeInCubic)
+	self.interaction_animations.interaction_bar_glow_fade = UIAnimation.init(UIAnimation.function_by_time, widget_style.glow.color, 1, widget_style.glow.color[1], 0, fade_out_time, math.easeInCubic)
+	self.interaction_animations.interaction_bar_fill_fade = UIAnimation.init(UIAnimation.function_by_time, widget_style.bar.color, 1, widget_style.bar.color[1], 0, fade_out_time, math.easeInCubic)
 end
 
-InteractionUI._handle_interaction_progress = function (self, arg_17_1)
+InteractionUI._handle_interaction_progress = function (self, progress)
 	-- function 17
-	if not (not arg_17_1 and arg_17_1 == 0) then
-		local content = self.interaction_bar_widget.content
-		local style = self.interaction_bar_widget.style
+	if progress and progress ~= 0 then
+		local widget_content = self.interaction_bar_widget.content
+		local widget_style = self.interaction_bar_widget.style
 
 		if not self.draw_interaction_bar then
 			self.draw_interaction_bar = true
@@ -641,185 +641,189 @@ InteractionUI._handle_interaction_progress = function (self, arg_17_1)
 			self:_animate_in_progress_bar()
 		end
 
-		content.bar.bar_value = arg_17_1
+		widget_content.bar.bar_value = progress
 
-		local glow = style.glow
-		local size = glow.size
+		local glow_style = widget_style.glow
+		local glow_size = glow_style.size
+		local glow_offset = glow_style.offset
 
-		glow.offset[1] = -(size[1] / 2) + 217 * arg_17_1
+		glow_offset[1] = -(glow_size[1] / 2) + 217 * progress
 
 		return true
 	end
 end
 
-local tbl_4 = {
+local customizer_data = {
 	root_scenegraph_id = "pivot",
 	label = "Interact",
 	registry_key = "interact",
 	drag_scenegraph_id = "interaction"
 }
-local flag = false
-local tbl_5 = {
+local DO_RELOAD = false
+local BASE_OFFSET = {
 	0,
 	0,
 	0
 }
 
-InteractionUI.update = function (self, arg_18_1, arg_18_2, arg_18_3)
+InteractionUI.update = function (self, dt, t, my_player)
 	-- function 18
-	if not flag then
+	if DO_RELOAD then
 		self:create_ui_elements()
 	end
 
 	local ui_renderer = self.ui_renderer
 	local ui_scenegraph = self.ui_scenegraph
-	local get_service = self.input_manager:get_service("Player")
-	local is_device_active = self.input_manager:is_device_active("gamepad")
-	local player_unit = arg_18_3.player_unit
+	local input_service = self.input_manager:get_service("Player")
+	local gamepad_active = self.input_manager:is_device_active("gamepad")
+	local player_unit = my_player.player_unit
 
 	if not player_unit then
 		return
 	end
 
-	tbl_4.registry_key = InteractionHelper.interaction_action_names(arg_18_3.player_unit)
+	customizer_data.registry_key = InteractionHelper.interaction_action_names(my_player.player_unit)
 
-	HudCustomizer.run(self.ui_renderer, self.ui_scenegraph, tbl_4)
+	HudCustomizer.run(self.ui_renderer, self.ui_scenegraph, customizer_data)
 
-	for k, v in pairs(self.interaction_animations) do
-		UIAnimation.update(v, arg_18_1)
+	for name, ui_animation in pairs(self.interaction_animations) do
+		UIAnimation.update(ui_animation, dt)
 
-		if not UIAnimation.completed(v) then
-			self.interaction_animations[k] = nil
+		if UIAnimation.completed(ui_animation) then
+			self.interaction_animations[name] = nil
 		end
 	end
 
-	local extension = ScriptUnit.extension(player_unit, "interactor_system")
-	local flag_2 = false
-	local var_18_7
-	local var_18_8
-	local var_18_9
-	local var_18_10
-	local var_18_11
-	local var_18_12
-	local var_18_13
-	local var_18_14
-	local is_interacting = extension:is_interacting()
-	local is_waiting_for_interaction_approval = extension:is_waiting_for_interaction_approval()
+	local interactor_extension = ScriptUnit.extension(player_unit, "interactor_system")
+	local interaction_bar_active = false
+	local title_text, action_text, interact_action, failed_reason, is_channeling, override_text_color, interaction_component, hotkey_text
+	local is_interacting = interactor_extension:is_interacting()
+	local is_waiting_for_interaction_approval = interactor_extension:is_waiting_for_interaction_approval()
+	local interaction_in_progress = not not is_interacting and not is_waiting_for_interaction_approval and not not not interactor_extension:is_aborting_interaction()
 
-	if not (not is_interacting and not not is_waiting_for_interaction_approval or not extension:is_aborting_interaction()) then
-		local time = Managers.time:time("game")
-		local get_progress = extension:get_progress(time)
+	if interaction_in_progress then
+		local t = Managers.time:time("game")
+		local progress = interactor_extension:get_progress(t)
 
-		flag_2 = self:_handle_interaction_progress(get_progress)
+		interaction_bar_active = self:_handle_interaction_progress(progress)
 
-		if not flag_2 then
-			var_18_11 = true
+		if interaction_bar_active then
+			is_channeling = true
 		end
 	end
 
-	local _get_interaction_text, var_18_20, var_18_21, var_18_22, var_18_23, var_18_24, var_18_25 = self:_get_interaction_text(player_unit, var_18_11)
+	title_text, action_text, interact_action, failed_reason, override_text_color, interaction_component, hotkey_text = self:_get_interaction_text(player_unit, is_channeling)
 
-	if not var_18_20 then
-		local flag_3
+	if action_text then
+		title_text = (not title_text or not Localize(title_text)) and not not ""
 
-		flag_3 = not _get_interaction_text and Localize(_get_interaction_text) and ""
+		if failed_reason == "ammo_blocked" or failed_reason == "throwing_axe" then
+			local str
 
-		if not (var_18_22 == "ammo_blocked" or var_18_22 ~= "throwing_axe") then
-			local flag_4
+			if Managers.input:is_device_active("gamepad") then
+				str = "$KEY;Player__weapon_reload_hold_input:"
 
-			flag_4 = not Managers.input:is_device_active("gamepad") and "$KEY;Player__weapon_reload_hold_input:" and "$KEY;Player__weapon_reload_hold:"
-			var_18_20 = not var_18_20 and TextToUpper(Localize(var_18_20)) .. flag_4 and ""
+				goto label_18_0
+			end
+
+			str = "$KEY;Player__weapon_reload_hold:"
+
+			local hold_to_reload_key = str
+
+			::label_18_0::
+
+			action_text = (not action_text or not (TextToUpper(Localize(action_text)) .. hold_to_reload_key)) and not not ""
 		else
-			var_18_20 = not var_18_20 and Localize(var_18_20) and ""
+			action_text = (not action_text or not Localize(action_text)) and not not ""
 		end
 
-		self:_assign_button_info(var_18_21, var_18_22, var_18_11, var_18_23)
+		self:_assign_button_info(interact_action, failed_reason, is_channeling, override_text_color)
 
-		local style = self.interaction_widget.style
-		local content = self.interaction_widget.content
+		local widget_style = self.interaction_widget.style
+		local widget_content = self.interaction_widget.content
 
-		content.gamepad_active = is_device_active
-		content.text = var_18_20
-		content.title_text = flag_3
+		widget_content.gamepad_active = gamepad_active
+		widget_content.text = action_text
+		widget_content.title_text = title_text
 
-		local can_interact, var_18_31, var_18_32 = extension:can_interact()
-		local flag_5 = not not UISettings.interaction_hotkey_lookup[var_18_32]
+		local can_interact, failed_reason, interaction_type = interactor_extension:can_interact()
+		local has_hotkey = not not UISettings.interaction_hotkey_lookup[interaction_type]
 
-		self:_update_interaction_widget_size(flag_5, is_device_active)
+		self:_update_interaction_widget_size(has_hotkey, gamepad_active)
 
-		content.hotkey_text = var_18_25
+		widget_content.hotkey_text = hotkey_text
 
 		if not self.draw_interaction_tooltip then
-			local icon_styles = style.icon_styles
-			local button_text = style.button_text
-			local button_text_shadow = style.button_text_shadow
-			local text = style.text
-			local text_shadow = style.text_shadow
-			local title_text = style.title_text
-			local title_text_shadow = style.title_text_shadow
-			local background = style.background
-			local hotkey_text = style.hotkey_text
-			local hotkey_text_shadow = style.hotkey_text_shadow
-			local background_interaction_bar = style.background_interaction_bar
-			local num = 0.1
-			local num_2 = 255
+			local icon_style = widget_style.icon_styles
+			local button_text_style = widget_style.button_text
+			local button_text_shadow_style = widget_style.button_text_shadow
+			local text_style = widget_style.text
+			local text_shadow_style = widget_style.text_shadow
+			local title_text_style = widget_style.title_text
+			local title_text_shadow_style = widget_style.title_text_shadow
+			local background_style = widget_style.background
+			local hotkey_text_style = widget_style.hotkey_text
+			local hotkey_text_shadow_style = widget_style.hotkey_text_shadow
+			local background_interaction_bar_style = widget_style.background_interaction_bar
+			local fade_in_time = 0.1
+			local target_alpha = 255
 
-			self.interaction_animations.tooltip_icon_fade = UIAnimation.init(UIAnimation.function_by_time, icon_styles.color, 1, 0, num_2, num, math.easeInCubic)
-			self.interaction_animations.tooltip_button_text_fade = UIAnimation.init(UIAnimation.function_by_time, button_text.text_color, 1, 0, num_2, num, math.easeInCubic)
-			self.interaction_animations.tooltip_button_text_shadow_fade = UIAnimation.init(UIAnimation.function_by_time, button_text_shadow.text_color, 1, 0, num_2, num, math.easeInCubic)
-			self.interaction_animations.tooltip_text_fade = UIAnimation.init(UIAnimation.function_by_time, text.text_color, 1, 0, num_2, num, math.easeInCubic)
-			self.interaction_animations.tooltip_text_shadow_fade = UIAnimation.init(UIAnimation.function_by_time, text_shadow.text_color, 1, 0, num_2, num, math.easeInCubic)
-			self.interaction_animations.tooltip_title_text_fade = UIAnimation.init(UIAnimation.function_by_time, title_text.text_color, 1, 0, num_2, num, math.easeInCubic)
-			self.interaction_animations.tooltip_title_text_shadow_fade = UIAnimation.init(UIAnimation.function_by_time, title_text_shadow.text_color, 1, 0, num_2, num, math.easeInCubic)
-			self.interaction_animations.tooltip_background_fade = UIAnimation.init(UIAnimation.function_by_time, background.color, 1, 0, num_2, num, math.easeInCubic)
-			self.interaction_animations.hotkey_text_fade = UIAnimation.init(UIAnimation.function_by_time, hotkey_text.text_color, 1, 0, num_2, num, math.easeInCubic)
-			self.interaction_animations.hotkey_text_shadow_fade = UIAnimation.init(UIAnimation.function_by_time, hotkey_text_shadow.text_color, 1, 0, num_2, num, math.easeInCubic)
-			self.interaction_animations.background_interaction_bar_fade = UIAnimation.init(UIAnimation.function_by_time, background_interaction_bar.color, 1, 0, num_2, num, math.easeInCubic)
+			self.interaction_animations.tooltip_icon_fade = UIAnimation.init(UIAnimation.function_by_time, icon_style.color, 1, 0, target_alpha, fade_in_time, math.easeInCubic)
+			self.interaction_animations.tooltip_button_text_fade = UIAnimation.init(UIAnimation.function_by_time, button_text_style.text_color, 1, 0, target_alpha, fade_in_time, math.easeInCubic)
+			self.interaction_animations.tooltip_button_text_shadow_fade = UIAnimation.init(UIAnimation.function_by_time, button_text_shadow_style.text_color, 1, 0, target_alpha, fade_in_time, math.easeInCubic)
+			self.interaction_animations.tooltip_text_fade = UIAnimation.init(UIAnimation.function_by_time, text_style.text_color, 1, 0, target_alpha, fade_in_time, math.easeInCubic)
+			self.interaction_animations.tooltip_text_shadow_fade = UIAnimation.init(UIAnimation.function_by_time, text_shadow_style.text_color, 1, 0, target_alpha, fade_in_time, math.easeInCubic)
+			self.interaction_animations.tooltip_title_text_fade = UIAnimation.init(UIAnimation.function_by_time, title_text_style.text_color, 1, 0, target_alpha, fade_in_time, math.easeInCubic)
+			self.interaction_animations.tooltip_title_text_shadow_fade = UIAnimation.init(UIAnimation.function_by_time, title_text_shadow_style.text_color, 1, 0, target_alpha, fade_in_time, math.easeInCubic)
+			self.interaction_animations.tooltip_background_fade = UIAnimation.init(UIAnimation.function_by_time, background_style.color, 1, 0, target_alpha, fade_in_time, math.easeInCubic)
+			self.interaction_animations.hotkey_text_fade = UIAnimation.init(UIAnimation.function_by_time, hotkey_text_style.text_color, 1, 0, target_alpha, fade_in_time, math.easeInCubic)
+			self.interaction_animations.hotkey_text_shadow_fade = UIAnimation.init(UIAnimation.function_by_time, hotkey_text_shadow_style.text_color, 1, 0, target_alpha, fade_in_time, math.easeInCubic)
+			self.interaction_animations.background_interaction_bar_fade = UIAnimation.init(UIAnimation.function_by_time, background_interaction_bar_style.color, 1, 0, target_alpha, fade_in_time, math.easeInCubic)
 		end
 
 		self.draw_interaction_tooltip = true
-	elseif not self.draw_interaction_tooltip then
+	elseif self.draw_interaction_tooltip then
 		self.draw_interaction_tooltip = nil
 	end
 
-	if flag_2 or not self.draw_interaction_bar then
+	if not interaction_bar_active and self.draw_interaction_bar then
 		self.draw_interaction_bar = nil
 
 		self:_animate_out_progress_bar()
 	end
 
-	local var_18_47 = self._components[var_18_24]
+	local interaction_component = self._components[interaction_component]
 
-	if not var_18_47 then
-		local update = var_18_47:update(player_unit, arg_18_1, arg_18_2)
+	if interaction_component then
+		local optional_offset = interaction_component:update(player_unit, dt, t)
 
-		ui_scenegraph.pivot.local_position = update or tbl_5
+		ui_scenegraph.pivot.local_position = not not optional_offset or not not BASE_OFFSET
 	end
 
-	UIRenderer.begin_pass(ui_renderer, ui_scenegraph, get_service, arg_18_1)
+	UIRenderer.begin_pass(ui_renderer, ui_scenegraph, input_service, dt)
 
-	if self.draw_interaction_bar or not self.interaction_animations.interaction_bar_bg_fade then
+	if self.draw_interaction_bar or self.interaction_animations.interaction_bar_bg_fade then
 		UIRenderer.draw_widget(ui_renderer, self.interaction_bar_widget)
 	end
 
-	if not self.draw_interaction_tooltip then
+	if self.draw_interaction_tooltip then
 		UIRenderer.draw_widget(ui_renderer, self.interaction_widget)
 	end
 
 	UIRenderer.end_pass(ui_renderer)
 
-	ui_scenegraph.pivot.local_position = tbl_5
+	ui_scenegraph.pivot.local_position = BASE_OFFSET
 end
 
-InteractionUI._update_interaction_widget_size = function (self, arg_19_1, arg_19_2)
+InteractionUI._update_interaction_widget_size = function (self, has_hotkey, gamepad_active)
 	-- function 19
 	local interaction_widget = self.interaction_widget
 
-	interaction_widget.content.has_hotkey = arg_19_1
+	interaction_widget.content.has_hotkey = has_hotkey
 
 	local style = interaction_widget.style
 
-	if not (not arg_19_1 and arg_19_2) then
+	if has_hotkey and not gamepad_active then
 		style.background.size[2] = 112
 		style.background.offset[2] = -32.5
 	else
@@ -828,199 +832,220 @@ InteractionUI._update_interaction_widget_size = function (self, arg_19_1, arg_19
 	end
 end
 
-InteractionUI._get_interaction_text = function (self, arg_20_1, arg_20_2)
+InteractionUI._get_interaction_text = function (self, player_unit, is_channeling)
 	-- function 20
-	local extension = ScriptUnit.extension(arg_20_1, "interactor_system")
-	local interactable_unit = extension:interactable_unit()
-	local var_20_2
-	local var_20_3
-	local var_20_4
-	local var_20_5
-	local var_20_6
-	local var_20_7
-	local can_interact, var_20_9, var_20_10 = extension:can_interact()
-	local is_interacting, var_20_12 = extension:is_interacting()
+	local interactor_extension = ScriptUnit.extension(player_unit, "interactor_system")
+	local interactable_unit = interactor_extension:interactable_unit()
+	local title_text, action_text, interact_action, interaction_component, override_text_color, hotkey_text
+	local can_interact, failed_reason, interaction_type = interactor_extension:can_interact()
+	local is_interacting, current_interaction_type = interactor_extension:is_interacting()
 
-	var_20_10 = var_20_10 or var_20_12
+	interaction_type = not not interaction_type or not not current_interaction_type
 
-	if not (not (can_interact or arg_20_2 or var_20_9) and var_20_10 == "heal" or var_20_10 == "give_item") then
-		if not (not var_20_2 and not var_20_3 and var_20_4) then
-			if not can_interact then
-				var_20_4 = InteractionHelper.interaction_action_names(arg_20_1, interactable_unit)
+	local active_interaction = not not can_interact or not not is_channeling or not not failed_reason
+
+	if active_interaction and interaction_type ~= "heal" and interaction_type ~= "give_item" then
+		if not title_text or not action_text or not interact_action then
+			if can_interact then
+				interact_action = InteractionHelper.interaction_action_names(player_unit, interactable_unit)
 			end
 
-			if can_interact or not is_interacting then
-				var_20_2, var_20_3, var_20_5 = extension:interaction_description()
-			elseif not var_20_9 then
-				var_20_2, var_20_3, var_20_5 = extension:interaction_description(var_20_9)
+			if can_interact or is_interacting then
+				title_text, action_text, interaction_component = interactor_extension:interaction_description()
+			elseif failed_reason then
+				title_text, action_text, interaction_component = interactor_extension:interaction_description(failed_reason)
 			end
 		end
 	else
-		var_20_2, var_20_3, var_20_4, var_20_6, var_20_5 = self:_get_wielded_interaction_text(arg_20_1)
+		title_text, action_text, interact_action, override_text_color, interaction_component = self:_get_wielded_interaction_text(player_unit)
 	end
 
-	if not not not UISettings.interaction_hotkey_lookup[var_20_10] then
-		local var_20_13 = UISettings.interaction_hotkey_lookup[var_20_10]
-		local format = string.format("$KEY;ingame_menu__%s:", var_20_13)
+	local has_hotkey = not not UISettings.interaction_hotkey_lookup[interaction_type]
 
-		var_20_7 = TextToUpper(Localize("hotkey_reminder")) .. format
+	if has_hotkey then
+		local hotkey = UISettings.interaction_hotkey_lookup[interaction_type]
+		local key_text = string.format("$KEY;ingame_menu__%s:", hotkey)
+
+		hotkey_text = TextToUpper(Localize("hotkey_reminder")) .. key_text
 	end
 
-	if not GameSettingsDevelopment.disabled_interactions[var_20_10] then
-		var_20_2 = "Currently Disabled"
+	if GameSettingsDevelopment.disabled_interactions[interaction_type] then
+		title_text = "Currently Disabled"
 	end
 
-	return var_20_2, var_20_3, var_20_4, var_20_9, var_20_6, var_20_5, var_20_7
+	return title_text, action_text, interact_action, failed_reason, override_text_color, interaction_component, hotkey_text
 end
 
-InteractionUI._get_wielded_interaction_text = function (self, arg_21_1)
+InteractionUI._get_wielded_interaction_text = function (self, player_unit)
 	-- function 21
-	local _get_wielded_item_data = self:_get_wielded_item_data(arg_21_1)
+	local item_data = self:_get_wielded_item_data(player_unit)
 
-	if not _get_wielded_item_data then
+	if not item_data then
 		return
 	end
 
-	local var_21_1
-	local var_21_2
-	local var_21_3
-	local var_21_4
-	local var_21_5
-	local num = 0
-	local var_21_7
-	local var_21_8
-	local extension = ScriptUnit.extension(arg_21_1, "interactor_system")
-	local is_interacting, var_21_11 = extension:is_interacting()
-	local get_item_template = BackendUtils.get_item_template(_get_wielded_item_data)
+	local title_text, action_text, interact_action, override_text_color, interaction_component
+	local highest_prio = 0
+	local best_action_name, best_sub_action_name
+	local interactor_extension = ScriptUnit.extension(player_unit, "interactor_system")
+	local is_interacting, interaction_type = interactor_extension:is_interacting()
+	local item_template = BackendUtils.get_item_template(item_data)
 
-	for k, v in pairs(get_item_template.actions) do
-		for k_2, v_2 in pairs(v) do
-			local interaction_priority = v_2.interaction_priority
+	for action_name, sub_actions in pairs(item_template.actions) do
+		for sub_action_name, action_settings in pairs(sub_actions) do
+			local interaction_priority_2 = action_settings.interaction_priority
 
-			interaction_priority = interaction_priority or -1000
+			if not interaction_priority_2 then
+				-- Nothing
+			end
 
-			if not (v_2.interaction_type == nil or not (num < interaction_priority)) then
-				local show_interaction_ui = v_2.show_interaction_ui
+			interaction_priority_2 = -1000
 
-				show_interaction_ui = not show_interaction_ui and v_2.show_interaction_ui(arg_21_1)
+			local interaction_priority = interaction_priority_2
 
-				if not ((show_interaction_ui or v_2.condition_func(arg_21_1) or not is_interacting) and v_2.interaction_type ~= var_21_11) then
-					local var_21_15 = self
+			::label_21_0::
+
+			if action_settings.interaction_type ~= nil and highest_prio < interaction_priority then
+				local show_interaction_ui_2 = action_settings.show_interaction_ui
+
+				if show_interaction_ui_2 then
+					-- Nothing
+				end
+
+				show_interaction_ui_2 = action_settings.show_interaction_ui(player_unit)
+
+				local show_interaction_ui = show_interaction_ui_2
+
+				::label_21_1::
+
+				if show_interaction_ui or action_settings.condition_func(player_unit) or is_interacting and action_settings.interaction_type == interaction_type then
+					local var_21_2 = self
 					local button_texture_data_by_input_action = self.button_texture_data_by_input_action
-					local hold_input = v_2.hold_input
+					local hold_input = action_settings.hold_input
 
-					hold_input = hold_input or k
+					hold_input = not not hold_input or not not action_name
 
-					if not button_texture_data_by_input_action(var_21_15, hold_input) then
-						num = v_2.interaction_priority
-						var_21_7 = k
-						var_21_8 = k_2
+					local input_device_supports_action = button_texture_data_by_input_action(var_21_2, hold_input)
+
+					if input_device_supports_action then
+						highest_prio = action_settings.interaction_priority
+						best_action_name = action_name
+						best_sub_action_name = sub_action_name
 					end
 				end
 			end
 		end
 	end
 
-	if not var_21_7 then
-		local var_21_18 = get_item_template.actions[var_21_7][var_21_8]
-		local interaction_type = var_21_18.interaction_type
-		local var_21_20 = InteractionDefinitions[interaction_type]
-		local interactable_unit = extension:interactable_unit()
-		local data = extension.interaction_context.data
+	if best_action_name then
+		local action_settings = item_template.actions[best_action_name][best_sub_action_name]
+		local interaction_type = action_settings.interaction_type
+		local interaction_template = InteractionDefinitions[interaction_type]
+		local interactable_unit = interactor_extension:interactable_unit()
+		local interaction_context = interactor_extension.interaction_context
+		local interaction_data = interaction_context.data
 
-		if not Unit.alive(interactable_unit) then
-			if not var_21_20.client.can_interact(arg_21_1, interactable_unit, data, var_21_20.config, self.world) then
-				var_21_1, var_21_2, var_21_4, var_21_5 = var_21_20.client.hud_description(interactable_unit, data, var_21_20.config, nil, arg_21_1)
+		if Unit.alive(interactable_unit) then
+			local can_interact_func = interaction_template.client.can_interact
+			local can_interact = can_interact_func(player_unit, interactable_unit, interaction_data, interaction_template.config, self.world)
+
+			if can_interact then
+				title_text, action_text, override_text_color, interaction_component = interaction_template.client.hud_description(interactable_unit, interaction_data, interaction_template.config, nil, player_unit)
 			else
-				var_21_1, var_21_2, var_21_4, var_21_5 = var_21_20.client.hud_description(nil, data, var_21_20.config, nil, arg_21_1)
+				title_text, action_text, override_text_color, interaction_component = interaction_template.client.hud_description(nil, interaction_data, interaction_template.config, nil, player_unit)
 			end
 		else
-			var_21_1, var_21_2, var_21_4, var_21_5 = var_21_20.client.hud_description(nil, data, var_21_20.config, nil, arg_21_1)
+			title_text, action_text, override_text_color, interaction_component = interaction_template.client.hud_description(nil, interaction_data, interaction_template.config, nil, player_unit)
 		end
 
-		var_21_3 = var_21_18.hold_input or var_21_7
+		interact_action = not not action_settings.hold_input or not not best_action_name
 	end
 
-	return var_21_1, var_21_2, var_21_3, var_21_4, var_21_5
+	return title_text, action_text, interact_action, override_text_color, interaction_component
 end
 
-InteractionUI._get_wielded_item_data = function (arg_22_0, arg_22_1)
+InteractionUI._get_wielded_item_data = function (self, player_unit)
 	-- function 22
-	return ScriptUnit.extension(arg_22_1, "inventory_system"):equipment().wielded
+	local inventory_extension = ScriptUnit.extension(player_unit, "inventory_system")
+	local equipment = inventory_extension:equipment()
+	local item_data = equipment.wielded
+
+	return item_data
 end
 
-InteractionUI._assign_button_info = function (self, arg_23_1, arg_23_2, arg_23_3, arg_23_4)
+InteractionUI._assign_button_info = function (self, interact_action, failed_reason, channeling, override_text_color)
 	-- function 23
 	local ui_renderer = self.ui_renderer
 	local ui_scenegraph = self.ui_scenegraph
-	local style = self.interaction_widget.style
-	local content = self.interaction_widget.content
-	local num = 0
-	local num_2 = 0
-	local text_color = style.text.text_color
-	local var_23_7
+	local widget_style = self.interaction_widget.style
+	local widget_content = self.interaction_widget.content
+	local texture_size_x = 0
+	local texture_size_y = 0
+	local text_color = widget_style.text.text_color
+	local new_text_color
 
-	if not (not arg_23_1 and arg_23_2 or arg_23_3) then
-		local button_texture_data_by_input_action, var_23_9 = self:button_texture_data_by_input_action(arg_23_1)
+	if interact_action and not failed_reason and not channeling then
+		local button_texture_data, button_text = self:button_texture_data_by_input_action(interact_action)
 
-		if not button_texture_data_by_input_action and not button_texture_data_by_input_action.texture then
-			content.button_text = ""
-			content.icon_textures[1] = button_texture_data_by_input_action.texture
+		if button_texture_data and button_texture_data.texture then
+			widget_content.button_text = ""
+			widget_content.icon_textures[1] = button_texture_data.texture
 
-			local tbl_2 = {
-				button_texture_data_by_input_action.size[1] / button_texture_data_by_input_action.size[2] * button_texture_data_by_input_action.size[1],
-				button_texture_data_by_input_action.size[1]
+			local size = {
+				button_texture_data.size[1] / button_texture_data.size[2] * button_texture_data.size[1],
+				button_texture_data.size[1]
 			}
 
-			style.icon_styles.texture_sizes[1] = tbl_2
-			style.icon_styles.draw_count = 1
-			num = button_texture_data_by_input_action.size[1]
-			num_2 = button_texture_data_by_input_action.size[2]
+			widget_style.icon_styles.texture_sizes[1] = size
+			widget_style.icon_styles.draw_count = 1
+			texture_size_x = button_texture_data.size[1]
+			texture_size_y = button_texture_data.size[2]
 		else
-			local str = "[" .. TextToUpper(var_23_9) .. "]"
-			local button_text = style.button_text
-			local var_23_13, var_23_14 = UIFontByResolution(button_text)
-			local text_size, var_23_16, var_23_17 = UIRenderer.text_size(ui_renderer, str, var_23_13[1], var_23_14)
+			button_text = "[" .. TextToUpper(button_text) .. "]"
 
-			num = text_size
-			num_2 = -8
-			content.button_text = str
-			style.icon_styles.draw_count = 0
+			local button_text_style = widget_style.button_text
+			local font, scaled_font_size = UIFontByResolution(button_text_style)
+			local text_width, text_height, min = UIRenderer.text_size(ui_renderer, button_text, font[1], scaled_font_size)
+
+			texture_size_x = text_width
+			texture_size_y = -8
+			widget_content.button_text = button_text
+			widget_style.icon_styles.draw_count = 0
 		end
 
-		ui_scenegraph.text_pivot.local_position[1] = tbl.text_pivot.position[1] + num
-		ui_scenegraph.tooltip_icon.size[1] = num
-		ui_scenegraph.tooltip_icon.size[2] = num_2
-		var_23_7 = style.text.default_text_color
+		ui_scenegraph.text_pivot.local_position[1] = scenegraph_definition.text_pivot.position[1] + texture_size_x
+		ui_scenegraph.tooltip_icon.size[1] = texture_size_x
+		ui_scenegraph.tooltip_icon.size[2] = texture_size_y
+		new_text_color = widget_style.text.default_text_color
 	else
-		style.icon_styles.draw_count = 0
-		content.button_text = ""
+		widget_style.icon_styles.draw_count = 0
+		widget_content.button_text = ""
 		ui_scenegraph.tooltip_icon.size[1] = 0
-		ui_scenegraph.text_pivot.local_position[1] = tbl.text_pivot.position[1]
+		ui_scenegraph.text_pivot.local_position[1] = scenegraph_definition.text_pivot.position[1]
 
-		if not arg_23_2 then
-			var_23_7 = style.text.disabled_text_color
-		elseif not arg_23_3 then
-			var_23_7 = style.text.disabled_text_color
+		if failed_reason then
+			new_text_color = widget_style.text.disabled_text_color
+		elseif channeling then
+			new_text_color = widget_style.text.disabled_text_color
 		else
-			var_23_7 = style.text.default_text_color
+			new_text_color = widget_style.text.default_text_color
 		end
 	end
 
-	if not arg_23_4 then
-		var_23_7 = arg_23_4
+	if override_text_color then
+		new_text_color = override_text_color
 	end
 
-	text_color[2] = var_23_7[2]
-	text_color[3] = var_23_7[3]
-	text_color[4] = var_23_7[4]
+	text_color[2] = new_text_color[2]
+	text_color[3] = new_text_color[3]
+	text_color[4] = new_text_color[4]
 end
 
-InteractionUI.external_interact_ui_description = function (arg_24_0, arg_24_1)
+InteractionUI.external_interact_ui_description = function (self, player_unit)
 	-- function 24
-	local extension = ScriptUnit.extension(arg_24_1, "overcharge_system")
+	local overcharge_extension = ScriptUnit.extension(player_unit, "overcharge_system")
 
-	if not (not extension:is_above_critical_limit() and extension:are_you_exploding()) then
+	if overcharge_extension:is_above_critical_limit() and not overcharge_extension:are_you_exploding() then
 		return "interaction_overheat", "interaction_action_vent", "weapon_reload"
 	end
 end

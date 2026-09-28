@@ -12,130 +12,148 @@ local alive = Unit.alive
 
 AISimpleExtension = class(AISimpleExtension)
 
-AISimpleExtension.init = function (self, arg_1_1, arg_1_2, arg_1_3)
+AISimpleExtension.init = function (self, extension_init_context, unit, extension_init_data)
 	-- function 1
-	self._world = arg_1_1.world
-	self._unit = arg_1_2
-	self._nav_world = arg_1_3.nav_world
+	self._world = extension_init_context.world
+	self._unit = unit
+	self._nav_world = extension_init_data.nav_world
 
-	local system = Managers.state.entity:system("ai_system")
-	local spawn_type = arg_1_3.spawn_type
-	local flag = spawn_type == "horde_hidden" or spawn_type == "horde"
-	local breed = arg_1_3.breed
+	local ai_system = Managers.state.entity:system("ai_system")
+	local spawn_type = extension_init_data.spawn_type
+	local is_horde = spawn_type == "horde_hidden" or spawn_type == "horde"
+	local breed = extension_init_data.breed
 
-	Unit.set_data(arg_1_2, "breed", breed)
+	Unit.set_data(unit, "breed", breed)
 
 	self._breed = breed
 
-	fassert(arg_1_3.side_id, "no side_id")
+	fassert(extension_init_data.side_id, "no side_id")
 
-	self._side_id = arg_1_3.side_id
+	self._side_id = extension_init_data.side_id
 
-	local flag_2
+	local flag
 
-	flag_2 = breed.initial_is_passive ~= nil or not true or breed.initial_is_passive
+	if breed.initial_is_passive == nil then
+		flag = true
+
+		goto label_1_0
+	end
+
+	flag = breed.initial_is_passive
+
+	local is_passive = flag
+
+	::label_1_0::
 
 	local new_map = Script.new_map
 	local blackboard_allocation_size = breed.blackboard_allocation_size
 
-	blackboard_allocation_size = blackboard_allocation_size or 75
+	blackboard_allocation_size = not not blackboard_allocation_size or not not 75
 
-	local var_1_7 = new_map(blackboard_allocation_size)
-	local optional_spawn_data = arg_1_3.optional_spawn_data
+	local blackboard = new_map(blackboard_allocation_size)
+	local optional_spawn_data = extension_init_data.optional_spawn_data
 
-	var_1_7.world = arg_1_1.world
-	var_1_7.unit = arg_1_2
-	var_1_7.level = LevelHelper:current_level(arg_1_1.world)
-	var_1_7.nav_world = self._nav_world
-	var_1_7.node_data = {}
-	var_1_7.running_nodes = {}
-	var_1_7.is_passive = flag_2
-	var_1_7.system_api = arg_1_1.system_api
-	var_1_7.group_blackboard = system.group_blackboard
-	var_1_7.target_dist = math.huge
-	var_1_7.spawn_type = spawn_type
-	var_1_7.stuck_check_time = Managers.time:time("game") + RecycleSettings.ai_stuck_check_start_time
-	var_1_7.is_in_attack_cooldown = false
-	var_1_7.attack_cooldown_at = 0
-	var_1_7.stagger_count = 0
-	var_1_7.stagger_count_reset_at = 0
-	var_1_7.override_targets = {}
-	var_1_7.optional_spawn_data = optional_spawn_data
-	var_1_7.spawn_category = arg_1_3.spawn_category
-	var_1_7.is_ai = true
-	var_1_7.lean_unit_list = {}
-	var_1_7.next_lean_index = 0
+	blackboard.world = extension_init_context.world
+	blackboard.unit = unit
+	blackboard.level = LevelHelper:current_level(extension_init_context.world)
+	blackboard.nav_world = self._nav_world
+	blackboard.node_data = {}
+	blackboard.running_nodes = {}
+	blackboard.is_passive = is_passive
+	blackboard.system_api = extension_init_context.system_api
+	blackboard.group_blackboard = ai_system.group_blackboard
+	blackboard.target_dist = math.huge
+	blackboard.spawn_type = spawn_type
+	blackboard.stuck_check_time = Managers.time:time("game") + RecycleSettings.ai_stuck_check_start_time
+	blackboard.is_in_attack_cooldown = false
+	blackboard.attack_cooldown_at = 0
+	blackboard.stagger_count = 0
+	blackboard.stagger_count_reset_at = 0
+	blackboard.override_targets = {}
+	blackboard.optional_spawn_data = optional_spawn_data
+	blackboard.spawn_category = extension_init_data.spawn_category
+	blackboard.is_ai = true
+	blackboard.lean_unit_list = {}
+	blackboard.next_lean_index = 0
 
 	local blackboard_init_data = breed.blackboard_init_data
 
-	if not (not blackboard_init_data and blackboard_init_data.player_locomotion_constrain_radius == nil) then
+	if blackboard_init_data and blackboard_init_data.player_locomotion_constrain_radius ~= nil then
 		local player_locomotion_constrain_radius = blackboard_init_data.player_locomotion_constrain_radius
 
-		player_locomotion_constrain_radius = player_locomotion_constrain_radius or nil
+		player_locomotion_constrain_radius = not not player_locomotion_constrain_radius or not not nil
 		self.player_locomotion_constrain_radius = player_locomotion_constrain_radius
 	else
 		local player_locomotion_constrain_radius_2 = breed.player_locomotion_constrain_radius
 
-		player_locomotion_constrain_radius_2 = player_locomotion_constrain_radius_2 or nil
+		player_locomotion_constrain_radius_2 = not not player_locomotion_constrain_radius_2 or not not nil
 		self.player_locomotion_constrain_radius = player_locomotion_constrain_radius_2
 	end
 
-	var_1_7.lean_dogpile = 0
-	var_1_7.crowded_slots = breed.infighting.crowded_slots
-	self._health_extension = ScriptUnit.has_extension(arg_1_2, "health_system")
+	blackboard.lean_dogpile = 0
+	blackboard.crowded_slots = breed.infighting.crowded_slots
 
-	local has_extension = ScriptUnit.has_extension(arg_1_2, "locomotion_system")
+	local health_extension = ScriptUnit.has_extension(unit, "health_system")
 
-	self._locomotion = has_extension
-	var_1_7.locomotion_extension = has_extension
+	self._health_extension = health_extension
 
-	local has_extension_2 = ScriptUnit.has_extension(arg_1_2, "ai_navigation_system")
+	local locomotion_extension = ScriptUnit.has_extension(unit, "locomotion_system")
 
-	self._navigation = has_extension_2
-	var_1_7.navigation_extension = has_extension_2
-	var_1_7.buff_extension = ScriptUnit.has_extension(arg_1_2, "buff_system")
-	var_1_7.health_extension = ScriptUnit.has_extension(arg_1_2, "health_system")
+	self._locomotion = locomotion_extension
+	blackboard.locomotion_extension = locomotion_extension
 
-	local blackboard_init_data_2 = breed.blackboard_init_data
+	local ai_navigation_extension = ScriptUnit.has_extension(unit, "ai_navigation_system")
 
-	if not blackboard_init_data_2 then
-		table.merge(var_1_7, blackboard_init_data_2)
+	self._navigation = ai_navigation_extension
+	blackboard.navigation_extension = ai_navigation_extension
+
+	local buff_extension = ScriptUnit.has_extension(unit, "buff_system")
+
+	blackboard.buff_extension = buff_extension
+	blackboard.health_extension = ScriptUnit.has_extension(unit, "health_system")
+
+	local blackboard_init_data = breed.blackboard_init_data
+
+	if blackboard_init_data then
+		table.merge(blackboard, blackboard_init_data)
 	end
 
-	self._blackboard = var_1_7
+	self._blackboard = blackboard
 
 	if not breed.hit_zones_lookup then
-		DamageUtils.create_hit_zone_lookup(arg_1_2, breed)
+		DamageUtils.create_hit_zone_lookup(unit, breed)
 	end
 
-	if not breed.special_on_spawn_stinger then
-		WwiseUtils.trigger_unit_event(self._world, breed.special_on_spawn_stinger, arg_1_2, 0)
+	if breed.special_on_spawn_stinger then
+		WwiseUtils.trigger_unit_event(self._world, breed.special_on_spawn_stinger, unit, 0)
 	end
 
-	local behavior
+	local behavior_2
 
-	if not optional_spawn_data then
-		behavior = optional_spawn_data.behavior
+	if optional_spawn_data then
+		behavior_2 = optional_spawn_data.behavior
 
-		if not behavior then
+		if not behavior_2 then
 			-- Nothing
 		end
 	end
 
-	if not flag then
-		behavior = breed.horde_behavior
+	if is_horde then
+		behavior_2 = breed.horde_behavior
 
-		if not behavior then
+		if not behavior_2 then
 			-- Nothing
 		end
 	end
 
-	behavior = breed.behavior
+	behavior_2 = breed.behavior
 
-	::label_1_0::
+	local behavior = behavior_2
 
-	self:_init_brain(behavior, flag)
-	self:_set_size_variation(arg_1_3.size_variation, arg_1_3.size_variation_normalized)
+	::label_1_1::
+
+	self:_init_brain(behavior, is_horde)
+	self:_set_size_variation(extension_init_data.size_variation, extension_init_data.size_variation_normalized)
 
 	self.attributes = nil
 end
@@ -149,7 +167,7 @@ end
 
 AISimpleExtension.destroy = function (self)
 	-- function 3
-	local _blackboard = self._blackboard
+	local blackboard = self._blackboard
 
 	AiUtils.special_dead_cleanup(self._unit, self._blackboard)
 	self._brain:destroy()
@@ -157,7 +175,7 @@ end
 
 local STATIC_BLACKBOARD_KEYS = STATIC_BLACKBOARD_KEYS
 
-STATIC_BLACKBOARD_KEYS = STATIC_BLACKBOARD_KEYS or {
+STATIC_BLACKBOARD_KEYS = not not STATIC_BLACKBOARD_KEYS or not not {
 	target_dist = true,
 	stagger_count = true,
 	node_data = true,
@@ -196,135 +214,149 @@ AISimpleExtension.freeze = function (self)
 	self._side_id = nil
 end
 
-AISimpleExtension.unfreeze = function (self, arg_5_1, arg_5_2)
+AISimpleExtension.unfreeze = function (self, unit, data)
 	-- function 5
-	local _blackboard = self._blackboard
+	local blackboard = self._blackboard
 
-	for k, v in pairs(_blackboard) do
+	for k, v in pairs(blackboard) do
 		if not STATIC_BLACKBOARD_KEYS[k] then
-			_blackboard[k] = nil
+			blackboard[k] = nil
 		end
 	end
 
-	local var_5_1 = arg_5_2[4]
-	local var_5_2 = arg_5_2[6]
-	local var_5_3 = arg_5_2[7]
-	local side_id = var_5_3.side_id
+	local spawn_category = data[4]
+	local spawn_type = data[6]
+	local optional_spawn_data = data[7]
+	local side_id = optional_spawn_data.side_id
 
 	self._side_id = side_id
 
 	fassert(side_id ~= nil, "no side_id")
 
-	local add_unit_to_side = Managers.state.side:add_unit_to_side(self._unit, side_id)
+	local side = Managers.state.side:add_unit_to_side(self._unit, side_id)
 
-	table.clear(_blackboard.node_data)
-	table.clear(_blackboard.running_nodes)
-	table.clear(_blackboard.override_targets)
+	table.clear(blackboard.node_data)
+	table.clear(blackboard.running_nodes)
+	table.clear(blackboard.override_targets)
 
-	if not self.attributes then
+	if self.attributes then
 		table.clear(self.attributes)
 	end
 
-	_blackboard.target_dist = math.huge
-	_blackboard.spawn_type = var_5_2
-	_blackboard.spawn_category = var_5_1
-	_blackboard.buff_extension = ScriptUnit.has_extension(arg_5_1, "buff_system")
-	_blackboard.stuck_check_time = Managers.time:time("game") + RecycleSettings.ai_stuck_check_start_time
-	_blackboard.is_in_attack_cooldown = false
-	_blackboard.attack_cooldown_at = 0
-	_blackboard.stagger_count = 0
-	_blackboard.stagger_count_reset_at = 0
-	_blackboard.optional_spawn_data = var_5_3
-	_blackboard.side = add_unit_to_side
+	blackboard.target_dist = math.huge
+	blackboard.spawn_type = spawn_type
+	blackboard.spawn_category = spawn_category
 
-	local breed = _blackboard.breed
+	local buff_extension = ScriptUnit.has_extension(unit, "buff_system")
 
-	_blackboard.lean_dogpile = 0
-	_blackboard.crowded_slots = breed.infighting.crowded_slots
+	blackboard.buff_extension = buff_extension
+	blackboard.stuck_check_time = Managers.time:time("game") + RecycleSettings.ai_stuck_check_start_time
+	blackboard.is_in_attack_cooldown = false
+	blackboard.attack_cooldown_at = 0
+	blackboard.stagger_count = 0
+	blackboard.stagger_count_reset_at = 0
+	blackboard.optional_spawn_data = optional_spawn_data
+	blackboard.side = side
 
-	table.clear(_blackboard.lean_unit_list)
+	local breed = blackboard.breed
 
-	_blackboard.next_lean_index = 0
+	blackboard.lean_dogpile = 0
+	blackboard.crowded_slots = breed.infighting.crowded_slots
 
-	local flag = var_5_2 == "horde_hidden" or var_5_2 == "horde"
-	local behavior
+	table.clear(blackboard.lean_unit_list)
 
-	if not var_5_3 then
-		behavior = var_5_3.behavior
+	blackboard.next_lean_index = 0
 
-		if not behavior then
+	local is_horde = spawn_type == "horde_hidden" or spawn_type == "horde"
+	local behavior_2
+
+	if optional_spawn_data then
+		behavior_2 = optional_spawn_data.behavior
+
+		if not behavior_2 then
 			-- Nothing
 		end
 	end
 
-	if not flag then
-		behavior = breed.horde_behavior
+	if is_horde then
+		behavior_2 = breed.horde_behavior
 
-		if not behavior then
+		if not behavior_2 then
 			-- Nothing
 		end
 	end
 
-	behavior = breed.behavior
+	behavior_2 = breed.behavior
+
+	local behavior = behavior_2
 
 	::label_5_0::
 
-	self._brain:unfreeze(_blackboard, behavior)
-	self:init_perception(breed, flag)
+	self._brain:unfreeze(blackboard, behavior)
+	self:init_perception(breed, is_horde)
 
-	if breed.far_off_despawn_immunity or not var_5_3 or not var_5_3.far_off_despawn_immunity then
-		_blackboard.far_off_despawn_immunity = true
+	if breed.far_off_despawn_immunity or optional_spawn_data and optional_spawn_data.far_off_despawn_immunity then
+		blackboard.far_off_despawn_immunity = true
 	end
 
-	if not breed.run_on_spawn then
-		breed.run_on_spawn(arg_5_1, _blackboard)
+	if breed.run_on_spawn then
+		breed.run_on_spawn(unit, blackboard)
 	end
 
-	Managers.state.game_mode:ai_spawned(arg_5_1)
+	Managers.state.game_mode:ai_spawned(unit)
 end
 
-AISimpleExtension.extensions_ready = function (self, arg_6_1, arg_6_2)
+AISimpleExtension.extensions_ready = function (self, world, unit)
 	-- function 6
-	local _blackboard = self._blackboard
-	local _side_id = self._side_id
-	local add_unit_to_side = Managers.state.side:add_unit_to_side(arg_6_2, _side_id)
+	local blackboard = self._blackboard
+	local side_id = self._side_id
+	local side = Managers.state.side:add_unit_to_side(unit, side_id)
 
-	_blackboard.side = add_unit_to_side
+	blackboard.side = side
 
-	local _breed = self._breed
-	local spawn_type = _blackboard.spawn_type
-	local flag = spawn_type == "horde_hidden" or spawn_type == "horde"
+	local breed = self._breed
+	local spawn_type = blackboard.spawn_type
+	local is_horde = spawn_type == "horde_hidden" or spawn_type == "horde"
 
-	self:init_perception(_breed, flag)
+	self:init_perception(breed, is_horde)
 
-	if not self._health_extension then
-		self.broadphase_id = Broadphase.add(_blackboard.group_blackboard.broadphase, arg_6_2, Unit.local_position(arg_6_2, 0), 1, add_unit_to_side.broadphase_category)
+	if self._health_extension then
+		self.broadphase_id = Broadphase.add(blackboard.group_blackboard.broadphase, unit, Unit.local_position(unit, 0), 1, side.broadphase_category)
 	end
 
-	local optional_spawn_data = _blackboard.optional_spawn_data
+	local optional_spawn_data = blackboard.optional_spawn_data
 
-	if _breed.far_off_despawn_immunity or not optional_spawn_data or not optional_spawn_data.far_off_despawn_immunity then
-		_blackboard.far_off_despawn_immunity = true
+	if breed.far_off_despawn_immunity or optional_spawn_data and optional_spawn_data.far_off_despawn_immunity then
+		blackboard.far_off_despawn_immunity = true
 	end
 
-	if not _breed.run_on_spawn then
-		_breed.run_on_spawn(arg_6_2, _blackboard)
+	if breed.run_on_spawn then
+		breed.run_on_spawn(unit, blackboard)
 	end
 
-	Managers.state.game_mode:ai_spawned(arg_6_2)
-	Unit.flow_event(arg_6_2, "lua_trigger_variation")
+	Managers.state.game_mode:ai_spawned(unit)
+	Unit.flow_event(unit, "lua_trigger_variation")
 
-	local climate_type = LevelSettings[Managers.state.game_mode:level_key()].climate_type
+	local level_settings = LevelSettings[Managers.state.game_mode:level_key()]
+	local climate_type_2 = level_settings.climate_type
 
-	climate_type = climate_type or "default"
+	if not climate_type_2 then
+		-- Nothing
+	end
 
-	Unit.set_flow_variable(arg_6_2, "climate_type", climate_type)
-	Unit.flow_event(arg_6_2, "climate_type_set")
+	climate_type_2 = "default"
+
+	local climate_type = climate_type_2
+
+	::label_6_0::
+
+	Unit.set_flow_variable(unit, "climate_type", climate_type)
+	Unit.flow_event(unit, "climate_type_set")
 end
 
 AISimpleExtension.get_overlap_context = function (self)
 	-- function 7
-	if not self._overlap_context then
+	if self._overlap_context then
 		self._overlap_context.num_hits = 0
 	else
 		self._overlap_context = {
@@ -340,65 +372,65 @@ AISimpleExtension.get_overlap_context = function (self)
 	return self._overlap_context
 end
 
-AISimpleExtension.set_properties = function (self, arg_8_1)
+AISimpleExtension.set_properties = function (self, params)
 	-- function 8
-	for k, v in pairs(arg_8_1) do
-		local match, var_8_1 = v:match("(%S+) (%S+)")
-		local var_8_2 = type(self._breed.properties[match])
+	for _, property in pairs(params) do
+		local prop_name, prop_value = property:match("(%S+) (%S+)")
+		local prop_type = type(self._breed.properties[prop_name])
 
-		if var_8_2 == "table" then
-			var_8_1 = AIProperties
+		if prop_type == "table" then
+			prop_value = AIProperties
 
-			local gmatch = v:gmatch("(%S+)")
+			local prop_iterator = property:gmatch("(%S+)")
 
-			gmatch()
+			prop_iterator()
 
-			for k_2 = 1, 10 do
-				local var_8_4 = gmatch()
+			for i = 1, 10 do
+				local index = prop_iterator()
 
-				if var_8_4 == nil then
+				if index == nil then
 					break
 				end
 
-				fassert(var_8_1[var_8_4], "Table index %q not found in AIProperties", var_8_4)
+				fassert(prop_value[index], "Table index %q not found in AIProperties", index)
 
-				var_8_1 = var_8_1[var_8_4]
+				prop_value = prop_value[index]
 			end
-		elseif var_8_2 == "number" then
-			var_8_1 = tonumber(var_8_1)
-		elseif var_8_2 == "boolean" then
-			var_8_1 = to_boolean(var_8_1)
+		elseif prop_type == "number" then
+			prop_value = tonumber(prop_value)
+		elseif prop_type == "boolean" then
+			prop_value = to_boolean(prop_value)
 		end
 
-		self._breed.properties[match] = var_8_1
+		self._breed.properties[prop_name] = prop_value
 	end
 end
 
 AISimpleExtension._parse_properties = function (self)
 	-- function 9
-	for k, v in pairs(self._breed.properties) do
-		if type(v) == "table" then
-			for k_2, v_2 in pairs(v) do
-				self._breed.properties[k_2] = v_2
+	for prop_name, prop_value in pairs(self._breed.properties) do
+		if type(prop_value) == "table" then
+			for key, value in pairs(prop_value) do
+				self._breed.properties[key] = value
 			end
 		end
 	end
 end
 
-AISimpleExtension.init_perception = function (self, arg_10_1, arg_10_2)
+AISimpleExtension.init_perception = function (self, breed, is_horde)
 	-- function 10
-	if not arg_10_1.perception then
+	if breed.perception then
 		local horde_perception
 
-		if not arg_10_2 then
-			horde_perception = arg_10_1.horde_perception
+		if is_horde then
+			horde_perception = breed.horde_perception
 
 			if not horde_perception then
 				-- Nothing
 			end
 		end
 
-		horde_perception = arg_10_1.perception
+		horde_perception = breed.perception
 
 		::label_10_0::
 
@@ -407,18 +439,18 @@ AISimpleExtension.init_perception = function (self, arg_10_1, arg_10_2)
 		self._perception_func_name = "perception_regular"
 	end
 
-	if not arg_10_1.target_selection then
+	if breed.target_selection then
 		local horde_target_selection
 
-		if not arg_10_2 then
-			horde_target_selection = arg_10_1.horde_target_selection
+		if is_horde then
+			horde_target_selection = breed.horde_target_selection
 
 			if not horde_target_selection then
 				-- Nothing
 			end
 		end
 
-		horde_target_selection = arg_10_1.target_selection
+		horde_target_selection = breed.target_selection
 
 		::label_10_1::
 
@@ -428,30 +460,30 @@ AISimpleExtension.init_perception = function (self, arg_10_1, arg_10_2)
 	end
 end
 
-AISimpleExtension.set_perception = function (self, arg_11_1, arg_11_2)
+AISimpleExtension.set_perception = function (self, perception_func_name, target_selection_func_name)
 	-- function 11
-	if not arg_11_1 then
-		self._perception_func_name = arg_11_1
+	if perception_func_name then
+		self._perception_func_name = perception_func_name
 	else
 		self._perception_func_name = "perception_regular"
 	end
 
-	if not arg_11_2 then
-		self._target_selection_func_name = arg_11_2
+	if target_selection_func_name then
+		self._target_selection_func_name = target_selection_func_name
 	else
 		self._target_selection_func_name = "pick_closest_target_with_spillover"
 	end
 end
 
-AISimpleExtension._init_brain = function (self, arg_12_1, arg_12_2)
+AISimpleExtension._init_brain = function (self, behavior, is_horde)
 	-- function 12
-	self._brain = AIBrain:new(self._world, self._unit, self._blackboard, self._breed, arg_12_1)
+	self._brain = AIBrain:new(self._world, self._unit, self._blackboard, self._breed, behavior)
 end
 
-AISimpleExtension._set_size_variation = function (self, arg_13_1, arg_13_2)
+AISimpleExtension._set_size_variation = function (self, size_variation, size_variation_normalized)
 	-- function 13
-	self._size_variation = arg_13_1 or 1
-	self._size_variation_normalized = arg_13_2 or 1
+	self._size_variation = not not size_variation or not not 1
+	self._size_variation_normalized = not not size_variation_normalized or not not 1
 end
 
 AISimpleExtension.locomotion = function (self)
@@ -484,29 +516,31 @@ AISimpleExtension.size_variation = function (self)
 	return self._size_variation, self._size_variation_normalized
 end
 
-AISimpleExtension.force_enemy_detection = function (self, arg_20_1)
+AISimpleExtension.force_enemy_detection = function (self, t)
 	-- function 20
-	local ENEMY_PLAYER_AND_BOT_UNITS = Managers.state.side.side_by_unit[self._unit].ENEMY_PLAYER_AND_BOT_UNITS
-	local count = #ENEMY_PLAYER_AND_BOT_UNITS
+	local side = Managers.state.side.side_by_unit[self._unit]
+	local enemy_player_and_bot_units = side.ENEMY_PLAYER_AND_BOT_UNITS
+	local num_targets = #enemy_player_and_bot_units
 
-	if count == 0 then
+	if num_targets == 0 then
 		return
 	end
 
-	local var_20_2 = ENEMY_PLAYER_AND_BOT_UNITS[Math.random(1, count)]
+	local target = Math.random(1, num_targets)
+	local random_enemy = enemy_player_and_bot_units[target]
 
-	if not var_20_2 then
-		self:enemy_aggro(self._unit, var_20_2)
+	if random_enemy then
+		self:enemy_aggro(self._unit, random_enemy)
 	end
 end
 
 AISimpleExtension.current_action_name = function (self)
 	-- function 21
-	local _blackboard = self._blackboard
+	local blackboard = self._blackboard
 	local name
 
-	if not _blackboard.action then
-		name = _blackboard.action.name
+	if blackboard.action then
+		name = blackboard.action.name
 
 		if not name then
 			-- Nothing
@@ -520,132 +554,149 @@ AISimpleExtension.current_action_name = function (self)
 	return name
 end
 
-AISimpleExtension.die = function (self, arg_22_1, arg_22_2)
+AISimpleExtension.die = function (self, killer_unit, killing_blow)
 	-- function 22
-	local _blackboard = self._blackboard
-	local _unit = self._unit
+	local blackboard = self._blackboard
+	local unit = self._unit
 
 	self._brain:exit_last_action()
 
-	if not self._blackboard.group_blackboard then
-		AiUtils.special_dead_cleanup(_unit, _blackboard)
+	if self._blackboard.group_blackboard then
+		AiUtils.special_dead_cleanup(unit, blackboard)
 	end
 
-	Managers.state.conflict:register_unit_killed(_unit, _blackboard, arg_22_1, arg_22_2)
+	local conflict_director = Managers.state.conflict
+
+	conflict_director:register_unit_killed(unit, blackboard, killer_unit, killing_blow)
 end
 
-AISimpleExtension.attacked = function (self, arg_23_1, arg_23_2, arg_23_3)
+AISimpleExtension.attacked = function (self, attacker_unit, t, damage_hit)
 	-- function 23
-	local _unit = self._unit
-	local _blackboard = self._blackboard
-	local side = _blackboard.side
+	local unit = self._unit
+	local blackboard = self._blackboard
+	local side = blackboard.side
 
-	arg_23_1 = AiUtils.get_actual_attacker_unit(arg_23_1)
+	attacker_unit = AiUtils.get_actual_attacker_unit(attacker_unit)
 
-	if not side.enemy_units_lookup[arg_23_1] then
-		if not (not arg_23_3 and not _blackboard.confirmed_player_sighting and _blackboard.target_unit ~= nil) then
-			_blackboard.target_unit = arg_23_1
-			_blackboard.target_unit_found_time = arg_23_2
+	local is_enemy = side.enemy_units_lookup[attacker_unit]
 
-			AiUtils.alert_nearby_friends_of_enemy(_unit, _blackboard.group_blackboard.broadphase, arg_23_1)
+	if is_enemy then
+		if damage_hit and blackboard.confirmed_player_sighting and blackboard.target_unit == nil then
+			blackboard.target_unit = attacker_unit
+			blackboard.target_unit_found_time = t
+
+			AiUtils.alert_nearby_friends_of_enemy(unit, blackboard.group_blackboard.broadphase, attacker_unit)
 		end
 
-		_blackboard.previous_attacker = arg_23_1
+		blackboard.previous_attacker = attacker_unit
 
-		if arg_23_3 or _blackboard.stagger ~= 1 or not HEALTH_ALIVE[_unit] then
-			StatisticsUtil.check_save(arg_23_1, _unit)
+		if not damage_hit and blackboard.stagger == 1 and HEALTH_ALIVE[unit] then
+			StatisticsUtil.check_save(attacker_unit, unit)
 		end
 	end
 end
 
-AISimpleExtension.enemy_aggro = function (self, arg_24_1, arg_24_2)
+AISimpleExtension.enemy_aggro = function (self, alerting_unit, enemy_unit)
 	-- function 24
-	local _blackboard = self._blackboard
+	local blackboard = self._blackboard
 
-	if _blackboard.confirmed_player_sighting or not _blackboard.only_trust_your_own_eyes then
+	if blackboard.confirmed_player_sighting or blackboard.only_trust_your_own_eyes then
 		return
 	end
 
-	local _unit = self._unit
+	local self_unit = self._unit
+	local attacked_by_ally = not Managers.state.side:is_enemy(self_unit, enemy_unit)
 
-	if not not Managers.state.side:is_enemy(_unit, arg_24_2) then
+	if attacked_by_ally then
 		return
 	end
 
-	_blackboard.delayed_target_unit = arg_24_2
+	blackboard.delayed_target_unit = enemy_unit
 
-	AiUtils.activate_unit(_blackboard)
+	AiUtils.activate_unit(blackboard)
 
-	_blackboard.no_hesitation = true
+	blackboard.no_hesitation = true
 
-	local has_extension = ScriptUnit.has_extension(_unit, "ai_slot_system")
+	local slot_extension = ScriptUnit.has_extension(self_unit, "ai_slot_system")
 
-	if not has_extension then
-		has_extension.do_search = true
+	if slot_extension then
+		slot_extension.do_search = true
 	end
 
-	if not ScriptUnit.has_extension(_unit, "ai_inventory_system") then
-		local network = Managers.state.network
-		local unit_game_object_id = network:unit_game_object_id(_unit)
+	if ScriptUnit.has_extension(self_unit, "ai_inventory_system") then
+		local network_manager = Managers.state.network
+		local self_unit_id = network_manager:unit_game_object_id(self_unit)
 
-		network.network_transmit:send_rpc_all("rpc_ai_inventory_wield", unit_game_object_id, 1)
+		network_manager.network_transmit:send_rpc_all("rpc_ai_inventory_wield", self_unit_id, 1)
 	end
 end
 
-AISimpleExtension.enemy_alert = function (self, arg_25_1, arg_25_2)
+AISimpleExtension.enemy_alert = function (self, alerting_unit, enemy_unit)
 	-- function 25
-	local _blackboard = self._blackboard
+	local blackboard = self._blackboard
 	local run_on_alerted = self._breed.run_on_alerted
 
-	if not run_on_alerted then
-		run_on_alerted(self._unit, self._blackboard, arg_25_1, arg_25_2)
+	if run_on_alerted then
+		run_on_alerted(self._unit, self._blackboard, alerting_unit, enemy_unit)
 	end
 
-	if _blackboard.confirmed_player_sighting or not _blackboard.only_trust_your_own_eyes then
+	if blackboard.confirmed_player_sighting or blackboard.only_trust_your_own_eyes then
 		return
 	end
 
-	if _blackboard.hesitating or not _blackboard.in_alerted_state or not _blackboard.alerted_deadline_reached then
-		self:enemy_aggro(arg_25_1, arg_25_2)
+	if blackboard.hesitating or blackboard.in_alerted_state and blackboard.alerted_deadline_reached then
+		self:enemy_aggro(alerting_unit, enemy_unit)
 	end
 
-	if not not Managers.state.side:is_enemy(self._unit, arg_25_2) then
+	local attacked_by_ally = not Managers.state.side:is_enemy(self._unit, enemy_unit)
+
+	if attacked_by_ally then
 		return
 	end
 
-	self._blackboard.delayed_target_unit = arg_25_2
+	self._blackboard.delayed_target_unit = enemy_unit
 end
 
-local num = 10
+local DEFAULT_STAGGER_RESET_TIME = 10
 
 AISimpleExtension.increase_stagger_count = function (self)
 	-- function 26
-	local _blackboard = self._blackboard
-	local _breed = self._breed
-	local stagger_count = _blackboard.stagger_count
-	local stagger_count_reset_time = _breed.stagger_count_reset_time
+	local blackboard = self._blackboard
+	local breed = self._breed
+	local stagger_count = blackboard.stagger_count
+	local stagger_count_reset_time = breed.stagger_count_reset_time
 
-	stagger_count_reset_time = stagger_count_reset_time or num
+	if not stagger_count_reset_time then
+		-- Nothing
+	end
 
-	local time = Managers.time:time("main")
+	stagger_count_reset_time = DEFAULT_STAGGER_RESET_TIME
 
-	_blackboard.stagger_count = stagger_count + 1
-	_blackboard.stagger_count_reset_at = time + stagger_count_reset_time
+	local reset_time = stagger_count_reset_time
+
+	::label_26_0::
+
+	local t = Managers.time:time("main")
+
+	blackboard.stagger_count = stagger_count + 1
+	blackboard.stagger_count_reset_at = t + reset_time
 end
 
 AISimpleExtension.reset_stagger_count = function (self)
 	-- function 27
-	local _blackboard = self._blackboard
+	local blackboard = self._blackboard
 
-	_blackboard.stagger_count_reset_at = 0
-	_blackboard.stagger_count = 0
+	blackboard.stagger_count_reset_at = 0
+	blackboard.stagger_count = 0
 end
 
 AISimpleExtension.update_stagger_count = function (self)
 	-- function 28
-	local _blackboard = self._blackboard
+	local blackboard = self._blackboard
+	local reset_at = blackboard.stagger_count_reset_at
+	local t = Managers.time:time("main")
 
-	if not (not (_blackboard.stagger_count_reset_at < Managers.time:time("main")) or not (_blackboard.stagger_count > 0)) then
-		_blackboard.stagger_count = 0
+	if reset_at < t and blackboard.stagger_count > 0 then
+		blackboard.stagger_count = 0
 	end
 end

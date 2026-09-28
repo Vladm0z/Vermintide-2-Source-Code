@@ -4,19 +4,19 @@ require("scripts/settings/badge_templates")
 
 BadgeManager = class(BadgeManager)
 
-local tbl = {
+local RPCS = {
 	"rpc_show_badge",
 	"rpc_complete_badge"
 }
 
-BadgeManager.init = function (self, arg_1_1, arg_1_2, arg_1_3)
+BadgeManager.init = function (self, statistics_db, network_event_delegate, is_server)
 	-- function 1
-	self._statistics_db = arg_1_1
-	self._is_server = arg_1_3
+	self._statistics_db = statistics_db
+	self._is_server = is_server
 	self._registered_events = {}
-	self.network_event_delegate = arg_1_2
+	self.network_event_delegate = network_event_delegate
 
-	arg_1_2:register(self, unpack(tbl))
+	network_event_delegate:register(self, unpack(RPCS))
 
 	local current_mechanism_name = Managers.mechanism:current_mechanism_name()
 
@@ -26,7 +26,7 @@ BadgeManager.init = function (self, arg_1_1, arg_1_2, arg_1_3)
 		-- Nothing
 	end
 
-	if not arg_1_3 then
+	if is_server then
 		self:_initialize_server()
 	else
 		self:_initialize_client()
@@ -35,168 +35,189 @@ end
 
 BadgeManager._initialize_server = function (self)
 	-- function 2
-	local server = BadgeTemplates.server
-	local tbl = {}
-	local _statistics_db = self._statistics_db
-	local event = Managers.state.event
+	local templates = BadgeTemplates.server
+	local update_cache = {}
+	local statistics_db = self._statistics_db
+	local event_manager = Managers.state.event
 	local network_transmit = Managers.state.network.network_transmit
 
-	for k, v in pairs(server) do
-		local events = v.events
+	for _, template in pairs(templates) do
+		local events_2 = template.events
 
-		events = events or {}
+		if not events_2 then
+			-- Nothing
+		end
 
-		for k_2, v_2 in pairs(events) do
-			local tbl_2 = {
-				callback_function = function (arg_3_0, ...)
+		events_2 = {}
+
+		local events = events_2
+
+		::label_2_0::
+
+		for event_name, event_function in pairs(events) do
+			local callback_table = {
+				callback_function = function (_, ...)
 					-- function 3
-					local time = Managers.time:time("main")
-					local settings = v.settings
-					local data = v.data
+					local t = Managers.time:time("main")
+					local settings = template.settings
+					local data = template.data
+					local complete = event_function(settings, data, t, ...)
 
-					if not v_2(settings, data, time, ...) then
-						local complete, var_3_4 = v.complete(_statistics_db, settings, data, ...)
+					if complete then
+						local player_peer_id, badge_id = template.complete(statistics_db, settings, data, ...)
 
-						if not complete and not var_3_4 then
-							network_transmit:send_rpc("rpc_show_badge", complete, var_3_4)
+						if player_peer_id and badge_id then
+							network_transmit:send_rpc("rpc_show_badge", player_peer_id, badge_id)
 						end
 					end
 				end
 			}
 
-			self._registered_events[#self._registered_events + 1] = tbl_2
+			self._registered_events[#self._registered_events + 1] = callback_table
 
-			event:register(tbl_2, k_2, "callback_function")
+			event_manager:register(callback_table, event_name, "callback_function")
 		end
 
-		if not v.update then
-			tbl[#tbl + 1] = v
+		if template.update then
+			update_cache[#update_cache + 1] = template
 		end
 	end
 
-	self._templates = server
-	self._update_cache = tbl
+	self._templates = templates
+	self._update_cache = update_cache
 end
 
 BadgeManager._initialize_client = function (self)
 	-- function 4
-	local client = BadgeTemplates.client
-	local tbl = {}
-	local _statistics_db = self._statistics_db
-	local event = Managers.state.event
+	local templates = BadgeTemplates.client
+	local update_cache = {}
+	local statistics_db = self._statistics_db
+	local event_manager = Managers.state.event
 	local network_transmit = Managers.state.network.network_transmit
 
-	for k, v in pairs(client) do
-		local events = v.events
+	for _, template in pairs(templates) do
+		local events_2 = template.events
 
-		events = events or {}
+		if not events_2 then
+			-- Nothing
+		end
 
-		for k_2, v_2 in pairs(events) do
-			local tbl_2 = {
-				callback_function = function (arg_5_0, ...)
+		events_2 = {}
+
+		local events = events_2
+
+		::label_4_0::
+
+		for event_name, event_function in pairs(events) do
+			local callback_table = {
+				callback_function = function (_, ...)
 					-- function 5
-					local time = Managers.time:time("main")
-					local settings = v.settings
-					local data = v.data
+					local t = Managers.time:time("main")
+					local settings = template.settings
+					local data = template.data
+					local complete = event_function(settings, data, t, ...)
 
-					if not v_2(settings, data, time, ...) then
-						local complete, var_5_4 = v.complete(_statistics_db, settings, data, ...)
+					if complete then
+						local player_peer_id, badge_id = template.complete(statistics_db, settings, data, ...)
 
-						if not complete and not var_5_4 then
-							network_transmit:send_rpc_server("rpc_complete_badge", var_5_4, complete)
+						if player_peer_id and badge_id then
+							network_transmit:send_rpc_server("rpc_complete_badge", badge_id, player_peer_id)
 						end
 					end
 				end
 			}
 
-			self._registered_events[#self._registered_events + 1] = tbl_2
+			self._registered_events[#self._registered_events + 1] = callback_table
 
-			event:register(tbl_2, k_2, "callback_function")
+			event_manager:register(callback_table, event_name, "callback_function")
 		end
 
-		if not v.update then
-			tbl[#tbl + 1] = v
+		if template.update then
+			update_cache[#update_cache + 1] = template
 		end
 	end
 
-	self._templates = client
-	self._update_cache = tbl
+	self._templates = templates
+	self._update_cache = update_cache
 end
 
 BadgeManager.destroy = function (self)
 	-- function 6
 	self.network_event_delegate:unregister(self)
 
-	for k, v in pairs(self._templates) do
-		table.clear(v.data)
+	for _, body in pairs(self._templates) do
+		table.clear(body.data)
 	end
 
-	for i, v_2 in ipairs(self._registered_events) do
-		self.network_event_delegate:unregister(v_2)
+	for _, callback_table in ipairs(self._registered_events) do
+		self.network_event_delegate:unregister(callback_table)
 	end
 end
 
-BadgeManager.update = function (self, arg_7_1, arg_7_2)
+BadgeManager.update = function (self, dt, t)
 	-- function 7
-	if not self._is_server then
-		self:_update_server(arg_7_1, arg_7_2)
+	if self._is_server then
+		self:_update_server(dt, t)
 	else
-		self:_update_client(arg_7_1, arg_7_2)
+		self:_update_client(dt, t)
 	end
 end
 
-BadgeManager._update_server = function (self, arg_8_1, arg_8_2)
+BadgeManager._update_server = function (self, dt, t)
 	-- function 8
-	local _update_cache = self._update_cache
+	local update_cache = self._update_cache
 	local network_transmit = Managers.state.network.network_transmit
 
-	for i, v in ipairs(_update_cache) do
-		local settings = v.settings
-		local data = v.data
-		local update = v.update(settings, data, arg_8_1, arg_8_2)
+	for _, template in ipairs(update_cache) do
+		local settings = template.settings
+		local data = template.data
+		local players_succeded = template.update(settings, data, dt, t)
 
-		if not (not update and not (#update > 0)) then
-			for i_2, v_2 in ipairs(update) do
-				local complete, var_8_6 = v.complete(self._statistics_db, v.settings, v.data, v_2)
+		if players_succeded and #players_succeded > 0 then
+			for _, stats_id in ipairs(players_succeded) do
+				local player_peer, badge_id = template.complete(self._statistics_db, template.settings, template.data, stats_id)
 
-				if not complete and not var_8_6 then
-					network_transmit:send_rpc("rpc_show_badge", complete, var_8_6)
+				if player_peer and badge_id then
+					network_transmit:send_rpc("rpc_show_badge", player_peer, badge_id)
 				end
 			end
 		end
 	end
 end
 
-BadgeManager._update_client = function (self, arg_9_1, arg_9_2)
+BadgeManager._update_client = function (self, dt, t)
 	-- function 9
-	local _update_cache = self._update_cache
+	local update_cache = self._update_cache
 	local network_transmit = Managers.state.network.network_transmit
 
-	for i, v in ipairs(_update_cache) do
-		local settings = v.settings
-		local data = v.data
-		local update = v.update(settings, data, arg_9_1, arg_9_2)
+	for _, template in ipairs(update_cache) do
+		local settings = template.settings
+		local data = template.data
+		local players_succeded = template.update(settings, data, dt, t)
 
-		if not (not update and not (#update > 0)) then
-			for i_2, v_2 in ipairs(update) do
-				local complete, var_9_6 = v.complete(self._statistics_db, v.settings, v.data, v_2)
+		if players_succeded and #players_succeded > 0 then
+			for _, stats_id in ipairs(players_succeded) do
+				local player_peer_id, badge_id = template.complete(self._statistics_db, template.settings, template.data, stats_id)
 
-				if not complete and not var_9_6 then
-					network_transmit:send_rpc_server("rpc_complete_badge", var_9_6, complete)
+				if player_peer_id and badge_id then
+					network_transmit:send_rpc_server("rpc_complete_badge", badge_id, player_peer_id)
 				end
 			end
 		end
 	end
 end
 
-BadgeManager.rpc_show_badge = function (arg_10_0, arg_10_1, arg_10_2)
+BadgeManager.rpc_show_badge = function (self, channel_id, badge_id)
 	-- function 10
-	Managers.telemetry_events:badge_gained(NetworkLookup.badges[arg_10_2])
-	Managers.state.event:trigger("add_local_badge", arg_10_2)
+	Managers.telemetry_events:badge_gained(NetworkLookup.badges[badge_id])
+	Managers.state.event:trigger("add_local_badge", badge_id)
 end
 
-BadgeManager.rpc_complete_badge = function (self, arg_11_1, arg_11_2, arg_11_3)
+BadgeManager.rpc_complete_badge = function (self, channel_id, badge_id, player_peer_id)
 	-- function 11
 	fassert(self._is_server, "Only server should get this")
-	Managers.state.network.network_transmit:send_rpc("rpc_show_badge", arg_11_3, arg_11_2)
+
+	local network_transmit = Managers.state.network.network_transmit
+
+	network_transmit:send_rpc("rpc_show_badge", player_peer_id, badge_id)
 end

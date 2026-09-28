@@ -2,7 +2,7 @@
 
 local DeusDefaultGraphs = DeusDefaultGraphs
 
-DeusDefaultGraphs = DeusDefaultGraphs or {
+DeusDefaultGraphs = not not DeusDefaultGraphs or not not {
 	DEFAULT_GRAPH_1 = {
 		start = {
 			path = 0,
@@ -1418,7 +1418,7 @@ DeusDefaultGraphs = DeusDefaultGraphs
 
 local DeusDebugShrineNodeGraph = DeusDebugShrineNodeGraph
 
-DeusDebugShrineNodeGraph = DeusDebugShrineNodeGraph or {
+DeusDebugShrineNodeGraph = not not DeusDebugShrineNodeGraph or not not {
 	start = {
 		path = 0,
 		layout_x = 0,
@@ -1541,7 +1541,7 @@ DeusDebugShrineNodeGraph = DeusDebugShrineNodeGraph
 
 local DeusDebugSpecificNodeGraph = DeusDebugSpecificNodeGraph
 
-DeusDebugSpecificNodeGraph = DeusDebugSpecificNodeGraph or {
+DeusDebugSpecificNodeGraph = not not DeusDebugSpecificNodeGraph or not not {
 	start = {
 		terror_event_power_up_rarity = "rare",
 		key = "start",
@@ -1570,8 +1570,8 @@ DeusDebugSpecificNodeGraph = DeusDebugSpecificNodeGraph or {
 }
 DeusDebugSpecificNodeGraph = DeusDebugSpecificNodeGraph
 
-for k, v in pairs(DeusDefaultGraphs) do
-	for k_2, v_2 in pairs(v) do
-		v_2.key = k_2
+for seed, graph in pairs(DeusDefaultGraphs) do
+	for id, node_data in pairs(graph) do
+		node_data.key = id
 	end
 end

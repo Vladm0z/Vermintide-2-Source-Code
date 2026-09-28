@@ -4,96 +4,96 @@ require("scripts/entity_system/systems/behaviour/nodes/bt_node")
 
 BTCritterNurglingRoamAction = class(BTCritterNurglingRoamAction, BTNode)
 
-BTCritterNurglingRoamAction.init = function (arg_1_0, ...)
+BTCritterNurglingRoamAction.init = function (self, ...)
 	-- function 1
-	BTCritterNurglingRoamAction.super.init(arg_1_0, ...)
+	BTCritterNurglingRoamAction.super.init(self, ...)
 end
 
 BTCritterNurglingRoamAction.name = "BTCritterNurglingRoamAction"
 
-BTCritterNurglingRoamAction.enter = function (self, arg_2_1, arg_2_2, arg_2_3)
+BTCritterNurglingRoamAction.enter = function (self, unit, blackboard, t)
 	-- function 2
-	arg_2_2.navigation_extension:set_max_speed(arg_2_2.breed.walk_speed)
+	blackboard.navigation_extension:set_max_speed(blackboard.breed.walk_speed)
 
-	arg_2_2.action = self._tree_node.action_data
+	blackboard.action = self._tree_node.action_data
 
-	self:start_idle_animation(arg_2_1, arg_2_2)
+	self:start_idle_animation(unit, blackboard)
 end
 
-BTCritterNurglingRoamAction.leave = function (self, arg_3_1, arg_3_2, arg_3_3, arg_3_4, arg_3_5)
+BTCritterNurglingRoamAction.leave = function (self, unit, blackboard, t, reason, destroy)
 	-- function 3
-	arg_3_2.navigation_extension:set_max_speed(arg_3_2.breed.run_speed)
-	self:start_idle_animation(arg_3_1, arg_3_2)
+	blackboard.navigation_extension:set_max_speed(blackboard.breed.run_speed)
+	self:start_idle_animation(unit, blackboard)
 
-	arg_3_2.move_pos = nil
-	arg_3_2.idle = nil
-	arg_3_2.wait_time = nil
-	arg_3_2.action = nil
+	blackboard.move_pos = nil
+	blackboard.idle = nil
+	blackboard.wait_time = nil
+	blackboard.action = nil
 end
 
-BTCritterNurglingRoamAction.run = function (self, arg_4_1, arg_4_2, arg_4_3)
+BTCritterNurglingRoamAction.run = function (self, unit, blackboard, t)
 	-- function 4
-	local action = arg_4_2.action
-	local navigation_extension = arg_4_2.navigation_extension
+	local action = blackboard.action
+	local navigation_extension = blackboard.navigation_extension
 
-	if not arg_4_2.move_pos then
-		local find_move_pos = self:find_move_pos(arg_4_2, action)
+	if not blackboard.move_pos then
+		local move_pos = self:find_move_pos(blackboard, action)
 
-		if not find_move_pos then
-			arg_4_2.move_pos = Vector3Box(find_move_pos)
+		if move_pos then
+			blackboard.move_pos = Vector3Box(move_pos)
 
-			navigation_extension:move_to(find_move_pos)
+			navigation_extension:move_to(move_pos)
 		end
 	end
 
 	if navigation_extension:number_failed_move_attempts() > 0 then
-		arg_4_2.move_pos = nil
+		blackboard.move_pos = nil
 
-		if arg_4_2.move_state ~= "idle" then
-			self:start_idle_animation(arg_4_1, arg_4_2)
+		if blackboard.move_state ~= "idle" then
+			self:start_idle_animation(unit, blackboard)
 		end
 
 		return "running"
 	end
 
-	if not (not navigation_extension:is_following_path() and arg_4_2.move_state == "moving") then
-		self:start_move_animation(arg_4_1, arg_4_2)
+	if navigation_extension:is_following_path() and blackboard.move_state ~= "moving" then
+		self:start_move_animation(unit, blackboard)
 	end
 
-	if not navigation_extension:has_reached_destination() then
-		return self:try_exit_state(arg_4_1, arg_4_2, action, arg_4_3)
+	if navigation_extension:has_reached_destination() then
+		return self:try_exit_state(unit, blackboard, action, t)
 	end
 
 	return "running"
 end
 
-BTCritterNurglingRoamAction.find_move_pos = function (arg_5_0, arg_5_1, arg_5_2)
+BTCritterNurglingRoamAction.find_move_pos = function (self, blackboard, action)
 	-- function 5
 	local nav_world = Managers.state.entity:system("ai_system"):nav_world()
-	local find_move_pos = arg_5_2.find_move_pos
-	local unbox = arg_5_1.altar_pos:unbox()
+	local data = action.find_move_pos
+	local center_pos = blackboard.altar_pos:unbox()
 
-	return ConflictUtils.get_spawn_pos_on_circle(nav_world, unbox, find_move_pos.radius, find_move_pos.spread, find_move_pos.tries)
+	return ConflictUtils.get_spawn_pos_on_circle(nav_world, center_pos, data.radius, data.spread, data.tries)
 end
 
-BTCritterNurglingRoamAction.start_move_animation = function (arg_6_0, arg_6_1, arg_6_2)
+BTCritterNurglingRoamAction.start_move_animation = function (self, unit, blackboard)
 	-- function 6
-	Managers.state.network:anim_event(arg_6_1, "walk")
+	Managers.state.network:anim_event(unit, "walk")
 
-	arg_6_2.move_state = "moving"
+	blackboard.move_state = "moving"
 end
 
-BTCritterNurglingRoamAction.start_idle_animation = function (arg_7_0, arg_7_1, arg_7_2)
+BTCritterNurglingRoamAction.start_idle_animation = function (self, unit, blackboard)
 	-- function 7
-	Managers.state.network:anim_event(arg_7_1, "idle")
+	Managers.state.network:anim_event(unit, "idle")
 
-	arg_7_2.move_state = "idle"
+	blackboard.move_state = "idle"
 end
 
-BTCritterNurglingRoamAction.try_exit_state = function (self, arg_8_1, arg_8_2, arg_8_3, arg_8_4)
+BTCritterNurglingRoamAction.try_exit_state = function (self, unit, blackboard, action, t)
 	-- function 8
-	if not self:has_overlap(arg_8_1, arg_8_2, arg_8_3) then
-		arg_8_2.move_pos = nil
+	if self:has_overlap(unit, blackboard, action) then
+		blackboard.move_pos = nil
 
 		return "running"
 	end
@@ -101,13 +101,15 @@ BTCritterNurglingRoamAction.try_exit_state = function (self, arg_8_1, arg_8_2, a
 	return "done"
 end
 
-local tbl = {}
+local broadphase_query_result = {}
 
-BTCritterNurglingRoamAction.has_overlap = function (arg_9_0, arg_9_1, arg_9_2, arg_9_3)
+BTCritterNurglingRoamAction.has_overlap = function (self, unit, blackboard, action)
 	-- function 9
-	if not arg_9_2.move_pos then
+	if not blackboard.move_pos then
 		return true
 	end
 
-	return Broadphase.query(arg_9_2.group_blackboard.broadphase, arg_9_2.move_pos:unbox(), arg_9_3.check_overlap_radius, tbl) > 1
+	local num_results = Broadphase.query(blackboard.group_blackboard.broadphase, blackboard.move_pos:unbox(), action.check_overlap_radius, broadphase_query_result)
+
+	return num_results > 1
 end

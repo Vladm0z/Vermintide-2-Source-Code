@@ -1,38 +1,38 @@
 -- chunkname: @scripts/ui/hud_ui/badge_ui_definitions.lua
 
-local tbl = {
+local ROOT_SIZE = {
 	1920,
 	1080
 }
-local tbl_2 = {
+local BADGE_SIZE = {
 	128,
 	128
 }
-local tbl_3 = {
+local BADGE_OFFSET = {
 	0,
 	-150,
 	0
 }
-local num = 28
-local tbl_4 = {
-	tbl[1] / 2,
-	num + 20
+local FONT_SIZE = 28
+local TEXT_SIZE = {
+	ROOT_SIZE[1] / 2,
+	FONT_SIZE + 20
 }
-local tbl_5 = {
+local TEXT_OFFSET = {
 	0,
 	100,
 	0
 }
-local tbl_6 = {
-	0.703125 * tbl_2[1],
-	0.703125 * tbl_2[2]
+local ICON_SIZE = {
+	0.703125 * BADGE_SIZE[1],
+	0.703125 * BADGE_SIZE[2]
 }
-local tbl_7 = {
+local ICON_OFFSET = {
 	0,
-	0.1015625 * tbl_2[1],
+	0.1015625 * BADGE_SIZE[1],
 	0
 }
-local tbl_8 = {
+local tbl = {
 	root = {
 		is_root = true,
 		position = {
@@ -40,28 +40,28 @@ local tbl_8 = {
 			0,
 			UILayer.hud
 		},
-		size = tbl
+		size = ROOT_SIZE
 	}
 }
-local tbl_9 = {}
+local tbl_2 = {}
 local flag
 
-flag = not IS_WINDOWS and "fit" and "hud_fit"
-tbl_9.scale = flag
-tbl_9.position = {
+flag = (not IS_WINDOWS or not "fit") and not not "hud_fit"
+tbl_2.scale = flag
+tbl_2.position = {
 	0,
 	0,
 	UILayer.hud
 }
-tbl_9.size = tbl
-tbl_8.screen = tbl_9
-tbl_8.pivot = {
+tbl_2.size = ROOT_SIZE
+tbl.screen = tbl_2
+tbl.pivot = {
 	vertical_alignment = "top",
 	parent = "screen",
 	horizontal_alignment = "left",
 	size = {
-		tbl[1],
-		tbl_2[1]
+		ROOT_SIZE[1],
+		BADGE_SIZE[1]
 	},
 	position = {
 		0,
@@ -69,29 +69,29 @@ tbl_8.pivot = {
 		UILayer.hud
 	}
 }
-tbl_8.badge_placement = {
+tbl.badge_placement = {
 	vertical_alignment = "center",
 	parent = "pivot",
 	horizontal_alignment = "center",
-	size = tbl_2,
-	position = tbl_3
+	size = BADGE_SIZE,
+	position = BADGE_OFFSET
 }
-tbl_8.text_background_placement = {
+tbl.text_background_placement = {
 	vertical_alignment = "center",
 	parent = "pivot",
 	horizontal_alignment = "center",
-	size = tbl_4,
+	size = TEXT_SIZE,
 	position = {
-		tbl_5[1] + tbl_3[1],
-		tbl_3[2] + tbl_5[2],
+		TEXT_OFFSET[1] + BADGE_OFFSET[1],
+		BADGE_OFFSET[2] + TEXT_OFFSET[2],
 		0
 	}
 }
-tbl_8.text_placement = {
+tbl.text_placement = {
 	vertical_alignment = "center",
 	parent = "text_background_placement",
 	horizontal_alignment = "center",
-	size = tbl_4,
+	size = TEXT_SIZE,
 	position = {
 		0,
 		0,
@@ -99,7 +99,8 @@ tbl_8.text_placement = {
 	}
 }
 
-local tbl_10 = {
+local scenegraph_definition = tbl
+local badge_widget_definition = {
 	scenegraph_id = "badge_placement",
 	element = {
 		passes = {
@@ -189,8 +190,8 @@ local tbl_10 = {
 		icon = {
 			vertical_alignment = "center",
 			horizontal_alignment = "center",
-			texture_size = tbl_6,
-			offset = tbl_7,
+			texture_size = ICON_SIZE,
+			offset = ICON_OFFSET,
 			color = {
 				255,
 				255,
@@ -201,8 +202,8 @@ local tbl_10 = {
 		icon_glow = {
 			vertical_alignment = "center",
 			horizontal_alignment = "center",
-			texture_size = tbl_6,
-			offset = tbl_7,
+			texture_size = ICON_SIZE,
+			offset = ICON_OFFSET,
 			color = {
 				255,
 				255,
@@ -216,7 +217,7 @@ local tbl_10 = {
 			horizontal_alignment = "center",
 			word_wrap = true,
 			font_type = "hell_shark",
-			font_size = num,
+			font_size = FONT_SIZE,
 			text_color = Colors.get_color_table_with_alpha("white", 255)
 		},
 		text_name = {
@@ -225,7 +226,7 @@ local tbl_10 = {
 			horizontal_alignment = "center",
 			word_wrap = true,
 			font_type = "hell_shark",
-			font_size = num,
+			font_size = FONT_SIZE,
 			text_color = Colors.get_color_table_with_alpha("white", 255)
 		},
 		text_desc = {
@@ -234,7 +235,7 @@ local tbl_10 = {
 			horizontal_alignment = "center",
 			word_wrap = true,
 			font_type = "hell_shark",
-			font_size = num,
+			font_size = FONT_SIZE,
 			text_color = Colors.get_color_table_with_alpha("white", 255)
 		},
 		text_bg_texture_id = {
@@ -243,54 +244,54 @@ local tbl_10 = {
 		}
 	}
 }
-local tbl_11 = {
+local animation_definitions = {
 	on_enter = {
 		{
 			name = "fade_in_scale_down",
 			start_progress = 0,
 			end_progress = 0.5,
-			init = function (arg_1_0, arg_1_1, arg_1_2, arg_1_3)
+			init = function (ui_scenegraph, scenegraph_def, widgets, params)
 				-- function 1
-				arg_1_3.render_settings.alpha_multiplier = 0
+				params.render_settings.alpha_multiplier = 0
 
-				WwiseWorld.trigger_event(arg_1_3.wwise_world, "play_gui_mission_summary_chest_upgrade")
+				WwiseWorld.trigger_event(params.wwise_world, "play_gui_mission_summary_chest_upgrade")
 
-				arg_1_3.ui_scenegraph.badge_placement.size = {
+				params.ui_scenegraph.badge_placement.size = {
 					0,
 					0
 				}
-				arg_1_2.style.text_name.text_color = {
+				widgets.style.text_name.text_color = {
 					0,
 					0,
 					0,
 					0
 				}
-				arg_1_2.style.text_desc.text_color = {
+				widgets.style.text_desc.text_color = {
 					0,
 					0,
 					0,
 					0
 				}
 			end,
-			update = function (arg_2_0, arg_2_1, arg_2_2, arg_2_3, arg_2_4)
+			update = function (ui_scenegraph, scenegraph_def, widgets, progress, params)
 				-- function 2
-				local easeOutCubic = math.easeOutCubic(arg_2_3)
+				local anim_progress = math.easeOutCubic(progress)
 
-				arg_2_4.render_settings.alpha_multiplier = easeOutCubic
+				params.render_settings.alpha_multiplier = anim_progress
 
-				local num = arg_2_1.badge_placement.size[1] * 1.5
-				local num_2 = arg_2_1.badge_placement.size[2] * 1.5
+				local size_x = scenegraph_def.badge_placement.size[1] * 1.5
+				local size_y = scenegraph_def.badge_placement.size[2] * 1.5
 
-				arg_2_4.ui_scenegraph.badge_placement.size = {
-					num * easeOutCubic,
-					num_2 * easeOutCubic
+				params.ui_scenegraph.badge_placement.size = {
+					size_x * anim_progress,
+					size_y * anim_progress
 				}
 			end,
-			on_complete = function (arg_3_0, arg_3_1, arg_3_2, arg_3_3)
+			on_complete = function (ui_scenegraph, scenegraph_def, widgets, params)
 				-- function 3
-				arg_3_3.start_size = {
-					arg_3_3.ui_scenegraph.badge_placement.size[1],
-					arg_3_3.ui_scenegraph.badge_placement.size[2]
+				params.start_size = {
+					params.ui_scenegraph.badge_placement.size[1],
+					params.ui_scenegraph.badge_placement.size[2]
 				}
 			end
 		},
@@ -298,38 +299,38 @@ local tbl_11 = {
 			name = "scale_down",
 			start_progress = 0.5,
 			end_progress = 0.6,
-			init = function (arg_4_0, arg_4_1, arg_4_2, arg_4_3)
+			init = function (ui_scenegraph, scenegraph_def, widgets, params)
 				-- function 4
-				arg_4_3.ui_scenegraph.text_background_placement.size = {
+				params.ui_scenegraph.text_background_placement.size = {
 					0,
 					0
 				}
 			end,
-			update = function (arg_5_0, arg_5_1, arg_5_2, arg_5_3, arg_5_4)
+			update = function (ui_scenegraph, scenegraph_def, widgets, progress, params)
 				-- function 5
-				local var_5_0 = arg_5_4.start_size[1]
-				local var_5_1 = arg_5_4.start_size[2]
-				local var_5_2 = arg_5_1.badge_placement.size[1]
-				local var_5_3 = arg_5_1.badge_placement.size[2]
-				local num = var_5_0 - var_5_2
-				local num_2 = var_5_1 - var_5_3
+				local start_size_x = params.start_size[1]
+				local start_size_y = params.start_size[2]
+				local wanted_size_x = scenegraph_def.badge_placement.size[1]
+				local wanted_size_y = scenegraph_def.badge_placement.size[2]
+				local dt_x = start_size_x - wanted_size_x
+				local dt_y = start_size_y - wanted_size_y
 
-				arg_5_4.ui_scenegraph.badge_placement.size = {
-					var_5_0 - num * arg_5_3,
-					var_5_1 - num_2 * arg_5_3
+				params.ui_scenegraph.badge_placement.size = {
+					start_size_x - dt_x * progress,
+					start_size_y - dt_y * progress
 				}
-				arg_5_4.ui_scenegraph.text_background_placement.size = {
-					arg_5_1.text_background_placement.size[1] * arg_5_3,
-					arg_5_1.text_background_placement.size[2]
+				params.ui_scenegraph.text_background_placement.size = {
+					scenegraph_def.text_background_placement.size[1] * progress,
+					scenegraph_def.text_background_placement.size[2]
 				}
 
-				local num_3 = 255 * arg_5_3
+				local text_color = 255 * progress
 
-				arg_5_2.style.text_name.text_color = {
-					num_3,
-					num_3,
-					num_3,
-					num_3
+				widgets.style.text_name.text_color = {
+					text_color,
+					text_color,
+					text_color,
+					text_color
 				}
 			end,
 			on_complete = NOP
@@ -338,19 +339,19 @@ local tbl_11 = {
 			name = "fade_out_name",
 			start_progress = 3.6,
 			end_progress = 3.7,
-			init = function (arg_6_0, arg_6_1, arg_6_2, arg_6_3)
+			init = function (ui_scenegraph, scenegraph_def, widgets, params)
 				-- function 6
 				return
 			end,
-			update = function (arg_7_0, arg_7_1, arg_7_2, arg_7_3, arg_7_4)
+			update = function (ui_scenegraph, scenegraph_def, widgets, progress, params)
 				-- function 7
-				local num = 255 * (1 - arg_7_3)
+				local text_color = 255 * (1 - progress)
 
-				arg_7_2.style.text_name.text_color = {
-					num,
-					num,
-					num,
-					num
+				widgets.style.text_name.text_color = {
+					text_color,
+					text_color,
+					text_color,
+					text_color
 				}
 			end,
 			on_complete = NOP
@@ -359,19 +360,19 @@ local tbl_11 = {
 			name = "fade_in_description",
 			start_progress = 3.7,
 			end_progress = 3.8,
-			init = function (arg_8_0, arg_8_1, arg_8_2, arg_8_3)
+			init = function (ui_scenegraph, scenegraph_def, widgets, params)
 				-- function 8
 				return
 			end,
-			update = function (arg_9_0, arg_9_1, arg_9_2, arg_9_3, arg_9_4)
+			update = function (ui_scenegraph, scenegraph_def, widgets, progress, params)
 				-- function 9
-				local num = 255 * arg_9_3
+				local text_color = 255 * progress
 
-				arg_9_2.style.text_desc.text_color = {
-					num,
-					num,
-					num,
-					num
+				widgets.style.text_desc.text_color = {
+					text_color,
+					text_color,
+					text_color,
+					text_color
 				}
 			end,
 			on_complete = NOP
@@ -380,13 +381,13 @@ local tbl_11 = {
 			name = "fade_out_everything",
 			start_progress = 4.8,
 			end_progress = 5.3,
-			init = function (arg_10_0, arg_10_1, arg_10_2, arg_10_3)
+			init = function (ui_scenegraph, scenegraph_def, widgets, params)
 				-- function 10
-				arg_10_3.render_settings.alpha_multiplier = 1
+				params.render_settings.alpha_multiplier = 1
 			end,
-			update = function (arg_11_0, arg_11_1, arg_11_2, arg_11_3, arg_11_4)
+			update = function (ui_scenegraph, scenegraph_def, widgets, progress, params)
 				-- function 11
-				arg_11_4.render_settings.alpha_multiplier = 1 - arg_11_3
+				params.render_settings.alpha_multiplier = 1 - progress
 			end,
 			on_complete = NOP
 		}
@@ -394,7 +395,7 @@ local tbl_11 = {
 }
 
 return {
-	scenegraph_definition = tbl_8,
-	badge_widget_definition = tbl_10,
-	animation_definitions = tbl_11
+	scenegraph_definition = scenegraph_definition,
+	badge_widget_definition = badge_widget_definition,
+	animation_definitions = animation_definitions
 }

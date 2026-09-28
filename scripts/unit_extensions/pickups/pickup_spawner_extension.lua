@@ -2,21 +2,21 @@
 
 PickupSpawnerExtension = class(PickupSpawnerExtension)
 
-PickupSpawnerExtension.init = function (self, arg_1_1, arg_1_2, arg_1_3)
+PickupSpawnerExtension.init = function (self, extension_init_context, unit, extension_init_data)
 	-- function 1
-	self.world = arg_1_1.world
-	self.unit = arg_1_2
+	self.world = extension_init_context.world
+	self.unit = unit
 end
 
-PickupSpawnerExtension.extensions_ready = function (arg_2_0)
+PickupSpawnerExtension.extensions_ready = function (self)
 	-- function 2
 	return
 end
 
 PickupSpawnerExtension.get_spawn_location_data = function (self)
 	-- function 3
-	local world_position = Unit.world_position(self.unit, 0)
-	local world_rotation = Unit.world_rotation(self.unit, 0)
+	local position = Unit.world_position(self.unit, 0)
+	local rotation = Unit.world_rotation(self.unit, 0)
 
-	return world_position, world_rotation, true
+	return position, rotation, true
 end

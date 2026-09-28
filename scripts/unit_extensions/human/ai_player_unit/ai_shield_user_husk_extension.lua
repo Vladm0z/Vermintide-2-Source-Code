@@ -2,55 +2,56 @@
 
 AIShieldUserHuskExtension = class(AIShieldUserHuskExtension)
 
-AIShieldUserHuskExtension.init = function (self, arg_1_1, arg_1_2, arg_1_3)
+AIShieldUserHuskExtension.init = function (self, extension_init_context, unit, extension_init_data)
 	-- function 1
-	self._unit = arg_1_2
-	self.is_blocking = arg_1_3.is_blocking
-	self.is_dodging = arg_1_3.is_dodging
+	self._unit = unit
+	self.is_blocking = extension_init_data.is_blocking
+	self.is_dodging = extension_init_data.is_dodging
 end
 
-AIShieldUserHuskExtension.destroy = function (arg_2_0)
+AIShieldUserHuskExtension.destroy = function (self)
 	-- function 2
 	return
 end
 
-AIShieldUserHuskExtension.can_block_attack = function (self, arg_3_1, arg_3_2, arg_3_3)
+AIShieldUserHuskExtension.can_block_attack = function (self, attacker_unit, trueflight_blocking, hit_direction)
 	-- function 3
-	assert(arg_3_1)
+	assert(attacker_unit)
 
-	local _unit = self._unit
-	local go_id = Managers.state.unit_storage:go_id(_unit)
+	local unit = self._unit
+	local game_object_id = Managers.state.unit_storage:go_id(unit)
 	local game = Managers.state.network:game()
+	local can_block = GameSession.game_object_field(game, game_object_id, "is_blocking")
 
-	if not GameSession.game_object_field(game, go_id, "is_blocking") then
+	if not can_block then
 		return false
 	end
 
-	local world_position = Unit.world_position(arg_3_1, 0)
-	local world_position_2 = Unit.world_position(_unit, 0)
-	local normalize = Vector3.normalize(world_position_2 - world_position)
-	local forward = Quaternion.forward(Unit.local_rotation(_unit, 0))
-	local var_3_7
-	local var_3_8
+	local attacker_unit_pos = Unit.world_position(attacker_unit, 0)
+	local hit_unit_pos = Unit.world_position(unit, 0)
+	local attacker_to_hit_dir = Vector3.normalize(hit_unit_pos - attacker_unit_pos)
+	local hit_unit_direction = Quaternion.forward(Unit.local_rotation(unit, 0))
+	local hit_angle, behind_target
 
-	if not arg_3_2 then
-		local dot = Vector3.dot(forward, arg_3_3)
-
-		var_3_8 = not (dot >= -0.75) or dot <= 1
+	if trueflight_blocking then
+		hit_angle = Vector3.dot(hit_unit_direction, hit_direction)
+		behind_target = hit_angle >= -0.75 and hit_angle <= 1
 	else
-		local dot_2 = Vector3.dot(forward, normalize)
-
-		var_3_8 = not (dot_2 >= 0.55) or dot_2 <= 1
+		hit_angle = Vector3.dot(hit_unit_direction, attacker_to_hit_dir)
+		behind_target = hit_angle >= 0.55 and hit_angle <= 1
 	end
 
-	return not var_3_8
+	local can_block_attack = not behind_target
+
+	return can_block_attack
 end
 
 AIShieldUserHuskExtension.get_is_blocking = function (self)
 	-- function 4
-	local _unit = self._unit
-	local go_id = Managers.state.unit_storage:go_id(_unit)
+	local unit = self._unit
+	local game_object_id = Managers.state.unit_storage:go_id(unit)
 	local game = Managers.state.network:game()
+	local is_blocking = GameSession.game_object_field(game, game_object_id, "is_blocking")
 
-	return (GameSession.game_object_field(game, go_id, "is_blocking"))
+	return is_blocking
 end

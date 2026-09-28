@@ -8,67 +8,69 @@ LobbyManager.init = function (self)
 	self._tags = {}
 end
 
-LobbyManager.make_lobby = function (self, arg_2_1, arg_2_2, arg_2_3, ...)
+LobbyManager.make_lobby = function (self, class, handle, tag, ...)
 	-- function 2
-	fassert(not self._lobbies[arg_2_2], "[LobbyManager] Overwriting existing lobby with handle %s. Tag: %s", arg_2_2, self._tags[arg_2_2])
+	fassert(not self._lobbies[handle], "[LobbyManager] Overwriting existing lobby with handle %s. Tag: %s", handle, self._tags[handle])
 
-	local var_2_0 = arg_2_1:new(...)
+	local lobby = class:new(...)
 
-	self._lobbies[arg_2_2] = var_2_0
-	self._tags[arg_2_2] = arg_2_3
+	self._lobbies[handle] = lobby
+	self._tags[handle] = tag
 
-	return var_2_0
+	return lobby
 end
 
-LobbyManager.register_existing_lobby = function (self, arg_3_1, arg_3_2, arg_3_3)
+LobbyManager.register_existing_lobby = function (self, lobby, handle, tag)
 	-- function 3
-	fassert(not self._lobbies[arg_3_2], "[LobbyManager] Overwriting existing lobby with handle %s. Tag: %s", arg_3_2, self._tags[arg_3_2])
+	fassert(not self._lobbies[handle], "[LobbyManager] Overwriting existing lobby with handle %s. Tag: %s", handle, self._tags[handle])
 
-	self._lobbies[arg_3_2] = arg_3_1
-	self._tags[arg_3_2] = arg_3_3
+	self._lobbies[handle] = lobby
+	self._tags[handle] = tag
 end
 
-LobbyManager.move_lobby = function (self, arg_4_1, arg_4_2, arg_4_3)
+LobbyManager.move_lobby = function (self, old_handle, new_handle, tag)
 	-- function 4
-	fassert(not self._lobbies[arg_4_2], "[LobbyManager] Overwriting existing lobby with handle %s. Existing tag: %s", arg_4_2, self._tags[arg_4_1])
+	fassert(not self._lobbies[new_handle], "[LobbyManager] Overwriting existing lobby with handle %s. Existing tag: %s", new_handle, self._tags[old_handle])
 
-	self._lobbies[arg_4_2] = self._lobbies[arg_4_1]
-	self._tags[arg_4_2] = self._tags[arg_4_1] .. " -> " .. arg_4_3
-	self._lobbies[arg_4_1] = nil
-	self._tags[arg_4_1] = nil
+	self._lobbies[new_handle] = self._lobbies[old_handle]
+	self._tags[new_handle] = self._tags[old_handle] .. " -> " .. tag
+	self._lobbies[old_handle] = nil
+	self._tags[old_handle] = nil
 
-	print("[LobbyManager] Renaming lobby %s to %s", arg_4_1, arg_4_2)
+	print("[LobbyManager] Renaming lobby %s to %s", old_handle, new_handle)
 end
 
-LobbyManager.query_lobby = function (self, arg_5_1)
+LobbyManager.query_lobby = function (self, handle)
 	-- function 5
-	return self._lobbies[arg_5_1]
+	return self._lobbies[handle]
 end
 
-LobbyManager.get_lobby = function (self, arg_6_1)
+LobbyManager.get_lobby = function (self, handle)
 	-- function 6
-	local var_6_0 = self._lobbies[arg_6_1]
+	local lobby = self._lobbies[handle]
 
-	if not var_6_0 then
-		ferror("[LobbyManager] Expected lobby with handle %s but found none. Existing lobbies:", arg_6_1, table.tostring(table.map_to_array(self._lobbies, function (arg_7_0)
+	if not lobby then
+		ferror("[LobbyManager] Expected lobby with handle %s but found none. Existing lobbies:", handle, table.tostring(table.map_to_array(self._lobbies, function (h)
 			-- function 7
-			return arg_7_0 .. ": " .. self._tags[arg_7_0]
+			return h .. ": " .. self._tags[h]
 		end)))
 	end
 
-	return var_6_0
+	return lobby
 end
 
-LobbyManager.destroy_lobby = function (self, arg_8_1)
+LobbyManager.destroy_lobby = function (self, handle)
 	-- function 8
-	self:free_lobby(arg_8_1):destroy()
+	local lobby = self:free_lobby(handle)
+
+	lobby:destroy()
 end
 
-LobbyManager.free_lobby = function (self, arg_9_1)
+LobbyManager.free_lobby = function (self, handle)
 	-- function 9
-	local var_9_0 = self._lobbies[arg_9_1]
+	local lobby = self._lobbies[handle]
 
-	self._lobbies[arg_9_1] = nil
+	self._lobbies[handle] = nil
 
-	return var_9_0
+	return lobby
 end

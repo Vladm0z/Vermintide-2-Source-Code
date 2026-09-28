@@ -1,6 +1,6 @@
 -- chunkname: @levels/honduras_dlcs/morris/sig_snare_d/generated/nurgle_path1/world_smartobjects.lua
 
-local tbl = {
+local smart_objects = {
 	["ecc6773a-95c5-4405-87c8-2d9e42d05c2b"] = {
 		{
 			smart_object_index = 205,
@@ -11272,13 +11272,13 @@ local tbl = {
 		}
 	}
 }
-local num = 481
-local str = "v1"
-local str_2 = "2017.MAY.05.05"
+local smart_object_count = 481
+local version = "v1"
+local ledgelator_version = "2017.MAY.05.05"
 
 return {
-	smart_objects = tbl,
-	smart_object_count = num,
-	version = str,
-	ledgelator_version = str_2
+	smart_objects = smart_objects,
+	smart_object_count = smart_object_count,
+	version = version,
+	ledgelator_version = ledgelator_version
 }

@@ -1,11 +1,10 @@
 -- chunkname: @scripts/ui/weave_tutorial/weave_tutorial_popup_ui_definitions.lua
 
-local num = 1920
-local num_2 = 1080
-local num_3 = 50
-local num_4 = 460
-local num_5 = num_4 - num_3 * 2
-local tbl = {
+local SIZE_X, SIZE_Y = 1920, 1080
+local content_margin = 50
+local window_w = 460
+local content_w = window_w - content_margin * 2
+local scenegraph_definition = {
 	screen = {
 		scale = "fit",
 		position = {
@@ -14,8 +13,8 @@ local tbl = {
 			UILayer.item_display_popup
 		},
 		size = {
-			num,
-			num_2
+			SIZE_X,
+			SIZE_Y
 		}
 	},
 	background = {
@@ -42,7 +41,7 @@ local tbl = {
 			2
 		},
 		size = {
-			num_4,
+			window_w,
 			500
 		}
 	},
@@ -70,7 +69,7 @@ local tbl = {
 			1
 		},
 		size = {
-			num_5,
+			content_w,
 			60
 		}
 	},
@@ -84,7 +83,7 @@ local tbl = {
 			0
 		},
 		size = {
-			num_5,
+			content_w,
 			50
 		}
 	},
@@ -98,7 +97,7 @@ local tbl = {
 			0
 		},
 		size = {
-			num_5,
+			content_w,
 			380
 		}
 	},
@@ -145,7 +144,7 @@ local tbl = {
 		}
 	}
 }
-local tbl_2 = {
+local title_text_style = {
 	use_shadow = true,
 	upper_case = true,
 	localize = true,
@@ -161,7 +160,7 @@ local tbl_2 = {
 		2
 	}
 }
-local tbl_3 = {
+local sub_title_text_style = {
 	use_shadow = true,
 	upper_case = true,
 	localize = true,
@@ -177,7 +176,7 @@ local tbl_3 = {
 		2
 	}
 }
-local tbl_4 = {
+local body_text_style = {
 	word_wrap = true,
 	upper_case = false,
 	localize = false,
@@ -193,19 +192,19 @@ local tbl_4 = {
 		2
 	}
 }
-local flag = true
+local disable_with_gamepad = true
 
-local function fn(arg_1_0, arg_1_1, arg_1_2)
+local function create_button(scenegraph_id, size, text)
 	-- function 1
-	local create_default_button = UIWidgets.create_default_button(arg_1_0, arg_1_1, "button_detail_03_gold", "button_bg_01", arg_1_2, nil, nil, "button_detail_03_gold", nil, flag)
+	local widget = UIWidgets.create_default_button(scenegraph_id, size, "button_detail_03_gold", "button_bg_01", text, nil, nil, "button_detail_03_gold", nil, disable_with_gamepad)
 
-	create_default_button.content.draw_frame = false
+	widget.content.draw_frame = false
 
-	local style = create_default_button.style
+	local style = widget.style
 
 	style.background.size = {
-		arg_1_1[1],
-		arg_1_1[2] - 8
+		size[1],
+		size[2] - 8
 	}
 	style.background.offset = {
 		0,
@@ -218,8 +217,8 @@ local function fn(arg_1_0, arg_1_1, arg_1_2)
 		2
 	}
 	style.background_fade.size = {
-		arg_1_1[1],
-		arg_1_1[2] - 8
+		size[1],
+		size[2] - 8
 	}
 	style.hover_glow.offset = {
 		0,
@@ -232,12 +231,12 @@ local function fn(arg_1_0, arg_1_1, arg_1_2)
 		7
 	}
 	style.clicked_rect.size = {
-		arg_1_1[1],
-		arg_1_1[2] - 8
+		size[1],
+		size[2] - 8
 	}
 	style.glass_top.offset = {
 		0,
-		arg_1_1[2] - 16,
+		size[2] - 16,
 		4
 	}
 	style.glass_bottom.offset = {
@@ -246,55 +245,55 @@ local function fn(arg_1_0, arg_1_1, arg_1_2)
 		4
 	}
 
-	return create_default_button
+	return widget
 end
 
-local tbl_5 = {
+local widget_definitions = {
 	window_background = UIWidgets.create_tiled_texture("window", "mission_select_screen_bg", {
 		1065,
 		770
 	}),
 	window_top_detail = UIWidgets.create_simple_texture("tab_selection_01_bottom", "window_top_detail"),
-	window_frame = UIWidgets.create_frame("window", tbl.window.size, "menu_frame_12_gold", 5),
+	window_frame = UIWidgets.create_frame("window", scenegraph_definition.window.size, "menu_frame_12_gold", 5),
 	screen_background = UIWidgets.create_simple_rect("screen", {
 		150,
 		0,
 		0,
 		0
 	}),
-	title_text = UIWidgets.create_simple_text("", "title", nil, nil, tbl_2),
-	sub_title_text = UIWidgets.create_simple_text("", "sub_title", nil, nil, tbl_3),
-	button_1 = fn("button_1", tbl.button_1.size, Localize("menu_weave_tutorial_popup_confirm_button")),
-	button_2 = fn("button_2", tbl.button_2.size, "")
+	title_text = UIWidgets.create_simple_text("", "title", nil, nil, title_text_style),
+	sub_title_text = UIWidgets.create_simple_text("", "sub_title", nil, nil, sub_title_text_style),
+	button_1 = create_button("button_1", scenegraph_definition.button_1.size, Localize("menu_weave_tutorial_popup_confirm_button")),
+	button_2 = create_button("button_2", scenegraph_definition.button_2.size, "")
 }
-local tbl_6 = {
-	body_text = UIWidgets.create_simple_text("", "body", nil, nil, tbl_4),
+local body_definitions = {
+	body_text = UIWidgets.create_simple_text("", "body", nil, nil, body_text_style),
 	paragraph_divider = UIWidgets.create_simple_texture("popup_divider", "paragraph_divider")
 }
-local tbl_7 = {
+local animation_definitions = {
 	transition_enter = {
 		{
 			name = "fade_in",
 			start_progress = 0,
 			end_progress = 0.2,
-			init = function (arg_2_0, arg_2_1, arg_2_2, arg_2_3)
+			init = function (ui_scenegraph, scenegraph_definition, widgets, params)
 				-- function 2
-				arg_2_3.render_settings.alpha_multiplier = 0
+				params.render_settings.alpha_multiplier = 0
 			end,
-			update = function (arg_3_0, arg_3_1, arg_3_2, arg_3_3, arg_3_4)
+			update = function (ui_scenegraph, scenegraph_definition, widgets, progress, params)
 				-- function 3
-				local easeOutCubic = math.easeOutCubic(arg_3_3)
+				local anim_progress = math.easeOutCubic(progress)
 
-				arg_3_4.render_settings.alpha_multiplier = easeOutCubic
+				params.render_settings.alpha_multiplier = anim_progress
 			end,
-			on_complete = function (arg_4_0, arg_4_1, arg_4_2, arg_4_3)
+			on_complete = function (ui_scenegraph, scenegraph_definition, widgets, params)
 				-- function 4
 				return
 			end
 		}
 	}
 }
-local tbl_8 = {
+local generic_input_actions = {
 	default = {
 		{
 			input_action = "confirm",
@@ -305,9 +304,9 @@ local tbl_8 = {
 }
 
 return {
-	generic_input_actions = tbl_8,
-	scenegraph_definition = tbl,
-	widget_definitions = tbl_5,
-	body_definitions = tbl_6,
-	animation_definitions = tbl_7
+	generic_input_actions = generic_input_actions,
+	scenegraph_definition = scenegraph_definition,
+	widget_definitions = widget_definitions,
+	body_definitions = body_definitions,
+	animation_definitions = animation_definitions
 }

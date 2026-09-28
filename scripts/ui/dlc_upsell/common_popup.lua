@@ -2,19 +2,19 @@
 
 CommonPopup = class(CommonPopup)
 
-CommonPopup.init = function (self, arg_1_1, arg_1_2, arg_1_3)
+CommonPopup.init = function (self, ui_context, name, common_settings)
 	-- function 1
-	self._ui_context = arg_1_1
-	self._ui_renderer = arg_1_1.ui_renderer
-	self._ui_top_renderer = arg_1_1.ui_top_renderer
-	self._input_manager = arg_1_1.input_manager
-	self._wwise_world = arg_1_1.wwise_world
+	self._ui_context = ui_context
+	self._ui_renderer = ui_context.ui_renderer
+	self._ui_top_renderer = ui_context.ui_top_renderer
+	self._input_manager = ui_context.input_manager
+	self._wwise_world = ui_context.wwise_world
 	self._render_settings = {
 		alpha_multiplier = 1,
 		snap_pixel_positions = true
 	}
-	self._name = arg_1_2
-	self._common_settings = arg_1_3
+	self._name = name
+	self._common_settings = common_settings
 	self._animations = {}
 	self._input_service_name = "common_popup"
 
@@ -27,32 +27,32 @@ end
 
 CommonPopup.destroy = function (self)
 	-- function 2
-	if not self._is_visible then
+	if self._is_visible then
 		self:hide()
 	end
 
-	if not self._fullscreen_effect_enabled then
+	if self._fullscreen_effect_enabled then
 		self:set_fullscreen_effect_enable_state(false)
 	end
 end
 
 CommonPopup.create_ui_elements = function (self)
 	-- function 3
-	local _common_settings = self._common_settings
-	local definitions = _common_settings.definitions
+	local settings = self._common_settings
+	local definitions = settings.definitions
 
 	if not definitions then
-		definitions = local_require(_common_settings.definitions_path)
+		definitions = local_require(settings.definitions_path)
 		self._common_settings.definitions = definitions
 	end
 
 	self._definitions = definitions
 	self._ui_scenegraph = UISceneGraph.init_scenegraph(definitions.scenegraph_definition)
 
-	local var_3_2
-	local create_widgets, var_3_4 = UIUtils.create_widgets(definitions.widget_definitions)
+	local widgets_by_name
 
-	self._widgets_by_name, self._widgets = var_3_4, create_widgets
+	self._widgets, widgets_by_name = UIUtils.create_widgets(definitions.widget_definitions)
+	self._widgets_by_name = widgets_by_name
 
 	UIRenderer.clear_scenegraph_queue(self._ui_top_renderer)
 
@@ -60,53 +60,53 @@ CommonPopup.create_ui_elements = function (self)
 
 	local generic_input_actions = definitions.generic_input_actions
 
-	if not generic_input_actions then
-		local var_3_6 = MenuInputDescriptionUI:new(nil, self._ui_top_renderer, self:_get_input_service(), 3, 900, generic_input_actions.default)
-		local input_desc = _common_settings.input_desc
+	if generic_input_actions then
+		local menu_desc = MenuInputDescriptionUI:new(nil, self._ui_top_renderer, self:_get_input_service(), 3, 900, generic_input_actions.default)
+		local input_desc = settings.input_desc
 
-		if not input_desc then
-			var_3_6:set_input_description(input_desc)
+		if input_desc then
+			menu_desc:set_input_description(input_desc)
 		end
 
-		self._menu_input_description = var_3_6
+		self._menu_input_description = menu_desc
 	end
 end
 
-CommonPopup.update = function (self, arg_4_1)
+CommonPopup.update = function (self, dt)
 	-- function 4
 	if not self._is_visible then
 		return
 	end
 
-	self:_handle_input(arg_4_1)
-	self:_update_animations(arg_4_1)
-	self:draw(arg_4_1)
+	self:_handle_input(dt)
+	self:_update_animations(dt)
+	self:draw(dt)
 end
 
-CommonPopup._handle_input = function (arg_5_0, arg_5_1)
+CommonPopup._handle_input = function (self, dt)
 	-- function 5
 	return
 end
 
-CommonPopup.draw = function (self, arg_6_1)
+CommonPopup.draw = function (self, dt)
 	-- function 6
-	local _ui_top_renderer = self._ui_top_renderer
-	local _ui_scenegraph = self._ui_scenegraph
-	local _get_input_service = self:_get_input_service()
-	local _render_settings = self._render_settings
-	local is_device_active = Managers.input:is_device_active("gamepad")
+	local ui_top_renderer = self._ui_top_renderer
+	local ui_scenegraph = self._ui_scenegraph
+	local input_service = self:_get_input_service()
+	local render_settings = self._render_settings
+	local gamepad_active = Managers.input:is_device_active("gamepad")
 
-	UIRenderer.begin_pass(_ui_top_renderer, _ui_scenegraph, _get_input_service, arg_6_1, nil, _render_settings)
-	UIRenderer.draw_all_widgets(_ui_top_renderer, self._widgets)
+	UIRenderer.begin_pass(ui_top_renderer, ui_scenegraph, input_service, dt, nil, render_settings)
+	UIRenderer.draw_all_widgets(ui_top_renderer, self._widgets)
 
-	if not self._content_widgets then
-		UIRenderer.draw_all_widgets(_ui_top_renderer, self._content_widgets)
+	if self._content_widgets then
+		UIRenderer.draw_all_widgets(ui_top_renderer, self._content_widgets)
 	end
 
-	UIRenderer.end_pass(_ui_top_renderer)
+	UIRenderer.end_pass(ui_top_renderer)
 
-	if not is_device_active and not self._menu_input_description then
-		self._menu_input_description:draw(_ui_top_renderer, arg_6_1)
+	if gamepad_active and self._menu_input_description then
+		self._menu_input_description:draw(ui_top_renderer, dt)
 	end
 end
 
@@ -130,49 +130,49 @@ end
 
 CommonPopup.exit_done = function (self)
 	-- function 9
-	return not not self._is_visible or self._has_widget_been_closed
+	return not self._is_visible and not not self._has_widget_been_closed
 end
 
-CommonPopup._start_transition_animation = function (arg_10_0, arg_10_1)
+CommonPopup._start_transition_animation = function (self, animation_name)
 	-- function 10
 	return
 end
 
-CommonPopup._update_animations = function (self, arg_11_1)
+CommonPopup._update_animations = function (self, dt)
 	-- function 11
-	self._ui_animator:update(arg_11_1)
+	self._ui_animator:update(dt)
 end
 
 CommonPopup.acquire_input = function (self)
 	-- function 12
-	local _input_manager = self._input_manager
+	local input_manager = self._input_manager
 
-	if not _input_manager then
+	if input_manager then
 		ShowCursorStack.show("CommonPopup")
-		_input_manager:capture_input(ALL_INPUT_METHODS, 1, self._input_service_name, "CommonPopup")
+		input_manager:capture_input(ALL_INPUT_METHODS, 1, self._input_service_name, "CommonPopup")
 	end
 end
 
 CommonPopup.release_input = function (self)
 	-- function 13
-	local _input_manager = self._input_manager
+	local input_manager = self._input_manager
 
-	if not _input_manager then
+	if input_manager then
 		ShowCursorStack.hide("CommonPopup")
-		_input_manager:release_input(ALL_INPUT_METHODS, 1, self._input_service_name, "CommonPopup")
+		input_manager:release_input(ALL_INPUT_METHODS, 1, self._input_service_name, "CommonPopup")
 	end
 end
 
 CommonPopup.setup_input = function (self)
 	-- function 14
-	local _input_manager = self._input_manager
-	local _input_service_name = self._input_service_name
+	local input_manager = self._input_manager
+	local service_name = self._input_service_name
 
-	if not _input_manager then
-		_input_manager:create_input_service(_input_service_name, "IngameMenuKeymaps", "IngameMenuFilters")
-		_input_manager:map_device_to_service(_input_service_name, "keyboard")
-		_input_manager:map_device_to_service(_input_service_name, "gamepad")
-		_input_manager:map_device_to_service(_input_service_name, "mouse")
+	if input_manager then
+		input_manager:create_input_service(service_name, "IngameMenuKeymaps", "IngameMenuFilters")
+		input_manager:map_device_to_service(service_name, "keyboard")
+		input_manager:map_device_to_service(service_name, "gamepad")
+		input_manager:map_device_to_service(service_name, "mouse")
 	end
 end
 
@@ -191,36 +191,36 @@ CommonPopup.is_popup_showing = function (self)
 	return self._is_visible
 end
 
-CommonPopup.play_sound = function (self, arg_18_1)
+CommonPopup.play_sound = function (self, event)
 	-- function 18
-	WwiseWorld.trigger_event(self._wwise_world, arg_18_1)
+	WwiseWorld.trigger_event(self._wwise_world, event)
 end
 
-CommonPopup.set_fullscreen_effect_enable_state = function (self, arg_19_1)
+CommonPopup.set_fullscreen_effect_enable_state = function (self, enabled)
 	-- function 19
 	local world = self._ui_renderer.world
-	local get_data = World.get_data(world, "shading_environment")
+	local shading_env = World.get_data(world, "shading_environment")
 
-	if not get_data then
+	if shading_env then
 		local set_scalar = ShadingEnvironment.set_scalar
-		local var_19_3 = get_data
+		local var_19_1 = shading_env
 		local str = "fullscreen_blur_enabled"
 		local flag
 
-		flag = not arg_19_1 and 1 and 0
+		flag = (not enabled or not 1) and not not 0
 
-		set_scalar(var_19_3, str, flag)
+		set_scalar(var_19_1, str, flag)
 
 		local set_scalar_2 = ShadingEnvironment.set_scalar
-		local var_19_7 = get_data
+		local var_19_5 = shading_env
 		local str_2 = "fullscreen_blur_amount"
 		local flag_2
 
-		flag_2 = not arg_19_1 and 0.75 and 0
+		flag_2 = (not enabled or not 0.75) and not not 0
 
-		set_scalar_2(var_19_7, str_2, flag_2)
-		ShadingEnvironment.apply(get_data)
+		set_scalar_2(var_19_5, str_2, flag_2)
+		ShadingEnvironment.apply(shading_env)
 	end
 
-	self._fullscreen_effect_enabled = arg_19_1
+	self._fullscreen_effect_enabled = enabled
 end

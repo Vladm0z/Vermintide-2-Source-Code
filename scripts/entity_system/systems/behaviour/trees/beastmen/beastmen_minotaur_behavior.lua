@@ -1,6 +1,6 @@
 -- chunkname: @scripts/entity_system/systems/behaviour/trees/beastmen/beastmen_minotaur_behavior.lua
 
-local beastmen_minotaur = BreedActions.beastmen_minotaur
+local ACTIONS = BreedActions.beastmen_minotaur
 
 BreedBehaviors.minotaur = {
 	"BTSelector",
@@ -20,7 +20,7 @@ BreedBehaviors.minotaur = {
 			"BTClimbAction",
 			name = "climb",
 			condition = "at_climb_smartobject",
-			action_data = beastmen_minotaur.climb
+			action_data = ACTIONS.climb
 		},
 		{
 			"BTJumpAcrossAction",
@@ -31,7 +31,7 @@ BreedBehaviors.minotaur = {
 			"BTSmashDoorAction",
 			name = "smash_door",
 			condition = "at_door_smartobject",
-			action_data = beastmen_minotaur.smash_door
+			action_data = ACTIONS.smash_door
 		},
 		condition = "ratogre_at_smartobject",
 		name = "smartobject"
@@ -40,7 +40,7 @@ BreedBehaviors.minotaur = {
 		"BTStaggerAction",
 		name = "stagger",
 		condition = "stagger",
-		action_data = beastmen_minotaur.stagger
+		action_data = ACTIONS.stagger
 	},
 	{
 		"BTSelector",
@@ -49,27 +49,27 @@ BreedBehaviors.minotaur = {
 			{
 				"BTBossFollowAction",
 				name = "follow",
-				action_data = beastmen_minotaur.follow
+				action_data = ACTIONS.follow
 			},
 			{
 				"BTMeleeOverlapAttackAction",
 				name = "headbutt_attack",
-				action_data = beastmen_minotaur.headbutt_attack
+				action_data = ACTIONS.headbutt_attack
 			},
 			{
 				"BTMeleeOverlapAttackAction",
 				name = "melee_shove",
-				action_data = beastmen_minotaur.melee_shove
+				action_data = ACTIONS.melee_shove
 			},
 			{
 				"BTMeleeOverlapAttackAction",
 				name = "combo_attack",
-				action_data = beastmen_minotaur.combo_attack
+				action_data = ACTIONS.combo_attack
 			},
 			{
 				"BTChargeAttackAction",
 				name = "charge_attack",
-				action_data = beastmen_minotaur.charge_attack
+				action_data = ACTIONS.charge_attack
 			},
 			condition = "ratogre_target_reachable",
 			name = "in_combat"
@@ -77,7 +77,7 @@ BreedBehaviors.minotaur = {
 		{
 			"BTTargetUnreachableAction",
 			name = "target_unreachable",
-			action_data = beastmen_minotaur.target_unreachable
+			action_data = ACTIONS.target_unreachable
 		},
 		condition = "can_see_player",
 		name = "has_target"

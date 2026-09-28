@@ -2,7 +2,7 @@
 
 local AreaSettings = AreaSettings
 
-AreaSettings = AreaSettings or {}
+AreaSettings = not not AreaSettings or not not {}
 AreaSettings = AreaSettings
 AreaSettings.helmgart = {
 	menu_sound_event = "Play_hud_menu_area_helmgart",

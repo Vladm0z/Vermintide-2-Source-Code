@@ -12,28 +12,28 @@ require("scripts/network/network_transmit")
 StateLoadingRestartNetwork = class(StateLoadingRestartNetwork)
 StateLoadingRestartNetwork.NAME = "StateLoadingRestartNetwork"
 
-StateLoadingRestartNetwork.on_enter = function (self, arg_1_1)
+StateLoadingRestartNetwork.on_enter = function (self, params)
 	-- function 1
 	print("[Gamestate] Enter Substate StateLoadingRestartNetwork")
-	self:_init_params(arg_1_1)
+	self:_init_params(params)
 	self:_init_network()
 end
 
-StateLoadingRestartNetwork._init_params = function (self, arg_2_1)
+StateLoadingRestartNetwork._init_params = function (self, params)
 	-- function 2
-	self._world = arg_2_1.world
-	self._viewport = arg_2_1.viewport
-	self._loading_view = arg_2_1.loading_view
+	self._world = params.world
+	self._viewport = params.viewport
+	self._loading_view = params.loading_view
 end
 
 StateLoadingRestartNetwork._init_network = function (self)
 	-- function 3
 	local loading_context = self.parent.parent.loading_context
-	local flag = true
+	local increment_lobby_port = true
 
-	LobbySetup.setup_network_options(flag)
+	LobbySetup.setup_network_options(increment_lobby_port)
 
-	if not (not rawget(_G, "LobbyInternal") and LobbyInternal.network_initialized()) then
+	if not rawget(_G, "LobbyInternal") or not LobbyInternal.network_initialized() then
 		require("scripts/network/lobby_xbox_live")
 
 		local network_options = LobbySetup.network_options()
@@ -43,15 +43,15 @@ StateLoadingRestartNetwork._init_network = function (self)
 
 	self.parent:setup_level_transition()
 
-	if not loading_context.join_lobby_data then
+	if loading_context.join_lobby_data then
 		self.parent:setup_join_lobby()
-	elseif not auto_join_setting then
+	elseif auto_join_setting then
 		self.parent:setup_lobby_finder(Development.parameter("unique_server_name"))
 	else
 		self.parent:setup_lobby_host()
 	end
 
-	if not loading_context.previous_session_error then
+	if loading_context.previous_session_error then
 		local previous_session_error = loading_context.previous_session_error
 
 		loading_context.previous_session_error = nil

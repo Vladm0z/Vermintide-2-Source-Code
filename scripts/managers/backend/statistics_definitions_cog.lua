@@ -18,7 +18,7 @@ player.cog_kills_dr_2h_cog_hammer = {
 	source = "player_data"
 }
 
-local tbl = {
+local database_names = {
 	"complete_all_helmgart_levels_recruit_dr_engineer",
 	"complete_all_helmgart_levels_veteran_dr_engineer",
 	"complete_all_helmgart_levels_champion_dr_engineer",
@@ -55,55 +55,55 @@ local tbl = {
 	"complete_all_engineer_challenges"
 }
 
-for i = 1, #tbl do
-	local var_0_2 = tbl[i]
+for i = 1, #database_names do
+	local name = database_names[i]
 
-	player[var_0_2] = {
+	player[name] = {
 		value = 0,
 		source = "player_data",
-		database_name = var_0_2
+		database_name = name
 	}
 end
 
-local tbl_2 = {
+local tracked_weapons = {
 	"dr_2h_cog_hammer",
 	"dr_steam_pistol",
 	"bardin_engineer_career_skill_weapon",
 	"bardin_engineer_career_skill_weapon_heavy"
 }
 
-for k, v in pairs(tbl_2) do
+for _, v in pairs(tracked_weapons) do
 	player.weapon_kills_per_breed[v] = {}
 end
 
-for k_2, v_2 in pairs(Breeds) do
-	for k_3, v_3 in pairs(tbl_2) do
-		local str = v_3 .. "_" .. k_2
+for breed_name, breed in pairs(Breeds) do
+	for _, v in pairs(tracked_weapons) do
+		local database_name = v .. "_" .. breed_name
 
-		player.weapon_kills_per_breed[v_3][k_2] = {
+		player.weapon_kills_per_breed[v][breed_name] = {
 			value = 0,
 			source = "player_data",
-			database_name = str
+			database_name = database_name
 		}
 	end
 end
 
-local tbl_3 = {
+local relevant_careers = {
 	dr_engineer = true
 }
 
-for k_4, v_4 in pairs(CareerSettings) do
-	if not tbl_3[k_4] then
-		player.mission_streak[k_4] = {}
+for career, _ in pairs(CareerSettings) do
+	if relevant_careers[career] then
+		player.mission_streak[career] = {}
 
-		for k_5, v_5 in pairs(LevelSettings) do
-			if not table.contains(UnlockableLevels, k_5) then
-				local str_2 = "mission_streak_" .. k_4 .. "_" .. k_5
+		for level_key, _ in pairs(LevelSettings) do
+			if table.contains(UnlockableLevels, level_key) then
+				local database_name = "mission_streak_" .. career .. "_" .. level_key
 
-				player.mission_streak[k_4][k_5] = {
+				player.mission_streak[career][level_key] = {
 					value = 0,
 					source = "player_data",
-					database_name = str_2
+					database_name = database_name
 				}
 			end
 		end

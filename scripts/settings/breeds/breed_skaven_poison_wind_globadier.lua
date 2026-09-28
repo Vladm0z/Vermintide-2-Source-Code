@@ -73,7 +73,7 @@ local tbl = {
 }
 local setting = Development.setting("disable_globadier")
 
-setting = setting or false
+setting = not not setting or not not false
 tbl.disabled = setting
 tbl.hitzone_multiplier_types = {
 	head = "headshot"
@@ -214,22 +214,24 @@ tbl.allowed_layers = {
 	fire_grenade = 10
 }
 
-tbl.custom_death_enter_function = function (arg_1_0, arg_1_1, arg_1_2, arg_1_3)
+tbl.custom_death_enter_function = function (unit, killer_unit, damage_type, death_hit_zone)
 	-- function 1
-	local var_1_0 = BLACKBOARDS[arg_1_0]
+	local blackboard = BLACKBOARDS[unit]
 
-	if not Unit.alive(arg_1_1) then
+	if not Unit.alive(killer_unit) then
 		return
 	end
 
-	QuestSettings.check_globadier_kill_before_throwing(var_1_0, arg_1_1)
-	QuestSettings.check_globadier_kill_during_suicide(var_1_0, arg_1_0, arg_1_1)
+	QuestSettings.check_globadier_kill_before_throwing(blackboard, killer_unit)
+	QuestSettings.check_globadier_kill_during_suicide(blackboard, unit, killer_unit)
 end
 
-Breeds.skaven_poison_wind_globadier = table.create_copy(Breeds.skaven_poison_wind_globadier, tbl)
+local breed_data = tbl
 
-local num = 4
-local tbl_2 = {
+Breeds.skaven_poison_wind_globadier = table.create_copy(Breeds.skaven_poison_wind_globadier, breed_data)
+
+local GLOBE_RADIUS = 4
+local action_data = {
 	skulk_approach = {
 		decrease_radius_speed = 0.5,
 		commit_distance = 40,
@@ -272,7 +274,7 @@ local tbl_2 = {
 			1.1719,
 			1.3749
 		},
-		radius = num
+		radius = GLOBE_RADIUS
 	},
 	throw_poison_globe = {
 		aoe_dot_damage_interval = 1,
@@ -307,7 +309,7 @@ local tbl_2 = {
 			15,
 			3
 		},
-		radius = num,
+		radius = GLOBE_RADIUS,
 		time_between_throws = {
 			12,
 			2
@@ -486,4 +488,4 @@ local tbl_2 = {
 	}
 }
 
-BreedActions.skaven_poison_wind_globadier = table.create_copy(BreedActions.skaven_poison_wind_globadier, tbl_2)
+BreedActions.skaven_poison_wind_globadier = table.create_copy(BreedActions.skaven_poison_wind_globadier, action_data)

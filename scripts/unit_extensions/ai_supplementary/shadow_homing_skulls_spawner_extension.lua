@@ -2,77 +2,81 @@
 
 ShadowHomingSkullsSpawnerExtension = class(ShadowHomingSkullsSpawnerExtension)
 
-local num = 10
-local num_2 = 1
-local num_3 = 2
-local num_4 = 0
-local num_5 = 1.5
-local num_6 = 0.3
-local num_7 = 1
-local str = "filter_ai_line_of_sight_check"
+local DESTROY_AFTER_IDLE_SECONDS = 10
+local TARGET_ATTEMPT_COOLDOWN = 1
+local LAUNCH_DELAY = 2
+local MIN_LAUNCH_DELAY = 0
+local MAX_LAUNCH_DELAY = 1.5
+local LAUNCH_DELAY_DELTA = 0.3
+local Z_OFFSET_RAYCAST = 1
+local LINE_OF_SIGHT_COLLISION_FILTER = "filter_ai_line_of_sight_check"
 
-local function fn(arg_1_0, arg_1_1, arg_1_2, arg_1_3)
+local function spawn_skull(spawner_unit, from_position, direction, target_unit)
 	-- function 1
-	local str = "fx/blk_grey_wings_teleport_01"
+	local teleport_effect = "fx/blk_grey_wings_teleport_01"
 
-	if not str then
-		local var_1_1 = NetworkLookup.effects[str]
-		local num = 0
-		local identity = Quaternion.identity()
+	if teleport_effect then
+		local effect_name_id = NetworkLookup.effects[teleport_effect]
+		local node_id = 0
+		local rotation_offset = Quaternion.identity()
+		local network_manager = Managers.state.network
 
-		Managers.state.network:rpc_play_particle_effect(nil, var_1_1, NetworkConstants.invalid_game_object_id, num, arg_1_1, identity, false)
+		network_manager:rpc_play_particle_effect(nil, effect_name_id, NetworkConstants.invalid_game_object_id, node_id, from_position, rotation_offset, false)
 	end
 
-	local var_1_4 = POSITION_LOOKUP[arg_1_0]
-	local tbl = {
-		prepare_func = function (self, arg_2_1)
-			-- function 2
-			local flag = false
+	local spawn_pos = POSITION_LOOKUP[spawner_unit]
+	local optional_data = {}
 
-			self.modify_extension_init_data(self, flag, arg_2_1)
-		end
-	}
-	local look = Quaternion.look(arg_1_2, Vector3.up())
+	optional_data.prepare_func = function (breed, extension_init_data)
+		-- function 2
+		local is_husk = false
 
-	return Managers.state.conflict:spawn_queued_unit(Breeds.shadow_skull, Vector3Box(arg_1_1), QuaternionBox(look), "mutator", "spawn_idle", "terror_event", tbl)
+		breed.modify_extension_init_data(breed, is_husk, extension_init_data)
+	end
+
+	local rotation = Quaternion.look(direction, Vector3.up())
+
+	return Managers.state.conflict:spawn_queued_unit(Breeds.shadow_skull, Vector3Box(from_position), QuaternionBox(rotation), "mutator", "spawn_idle", "terror_event", optional_data)
 end
 
-local function fn_2(arg_3_0, arg_3_1, arg_3_2, arg_3_3)
+local function check_if_in_line_of_sight(physics_world, unit, from, to)
 	-- function 3
-	local num = arg_3_3 - arg_3_2
-	local length = Vector3.length(num)
-	local normalize = Vector3.normalize(num)
-	local var_3_3 = str
-	local raycast, var_3_5, var_3_6, var_3_7, var_3_8 = PhysicsWorld.raycast(arg_3_0, arg_3_2, normalize, length, "closest", "collision_filter", var_3_3)
-	local flag = not raycast and Actor.unit(var_3_8)
+	local dir = to - from
+	local dist = Vector3.length(dir)
 
-	return not raycast and flag == arg_3_1
+	dir = Vector3.normalize(dir)
+
+	local collision_filter = LINE_OF_SIGHT_COLLISION_FILTER
+	local hit, hit_position, _, _, hit_actor = PhysicsWorld.raycast(physics_world, from, dir, dist, "closest", "collision_filter", collision_filter)
+	local hit_unit = not not hit and not not Actor.unit(hit_actor)
+
+	return not hit or hit_unit == unit
 end
 
-local function fn_3(arg_4_0, arg_4_1)
+local function get_launch_position(target_position, own_position)
 	-- function 4
-	return arg_4_1
+	return own_position
 end
 
-local function fn_4(self)
+local function shuffled_players(side)
 	-- function 5
-	local PLAYER_AND_BOT_UNITS = self.PLAYER_AND_BOT_UNITS
-	local tbl = {}
+	local players = side.PLAYER_AND_BOT_UNITS
+	local unit_list = {}
 
-	for i = 1, #PLAYER_AND_BOT_UNITS do
-		local var_5_2 = PLAYER_AND_BOT_UNITS[i]
+	for i = 1, #players do
+		local unit = players[i]
 
-		if not HEALTH_ALIVE[var_5_2] then
-			tbl[#tbl + 1] = var_5_2
+		if HEALTH_ALIVE[unit] then
+			unit_list[#unit_list + 1] = unit
 		end
 	end
 
-	table.shuffle(tbl)
+	table.shuffle(unit_list)
 
-	return tbl
+	return unit_list
 end
 
-local tbl = {
+local STATES = {
 	INITIAL = "INITIAL",
 	COOLDOWN_FROM_TARGETTING = "COOLDOWN_FROM_TARGETTING",
 	FINDING_TARGET = "FINDING_TARGET",
@@ -81,32 +85,32 @@ local tbl = {
 	SPAWNING_SKULL = "SPAWNING_SKULL"
 }
 
-ShadowHomingSkullsSpawnerExtension.init = function (self, arg_6_1, arg_6_2, arg_6_3)
+ShadowHomingSkullsSpawnerExtension.init = function (self, extension_init_context, unit, extension_init_data)
 	-- function 6
-	local world = arg_6_1.world
+	local world = extension_init_context.world
 
 	self.world = world
 	self.physics_world = World.get_data(world, "physics_world")
-	self.unit = arg_6_2
+	self.unit = unit
 	self.is_server = Managers.player.is_server
-	self._limitted_spawner = arg_6_3.limitted_spawner
+	self._limitted_spawner = extension_init_data.limitted_spawner
 	self._hero_side = Managers.state.side:get_side_from_name("heroes")
-	self._state = tbl.INITIAL
+	self._state = STATES.INITIAL
 end
 
-ShadowHomingSkullsSpawnerExtension.destroy = function (arg_7_0)
+ShadowHomingSkullsSpawnerExtension.destroy = function (self)
 	-- function 7
 	return
 end
 
-ShadowHomingSkullsSpawnerExtension.on_remove_extension = function (arg_8_0, arg_8_1, arg_8_2)
+ShadowHomingSkullsSpawnerExtension.on_remove_extension = function (self, unit, extension_name)
 	-- function 8
 	return
 end
 
-ShadowHomingSkullsSpawnerExtension.update = function (self, arg_9_1, arg_9_2, arg_9_3, arg_9_4, arg_9_5)
+ShadowHomingSkullsSpawnerExtension.update = function (self, unit, input, dt, context, t)
 	-- function 9
-	if not self._done then
+	if self._done then
 		return
 	end
 
@@ -115,83 +119,87 @@ ShadowHomingSkullsSpawnerExtension.update = function (self, arg_9_1, arg_9_2, ar
 	end
 
 	if not self._own_position then
-		self._own_position = Vector3Box(Unit.local_position(arg_9_1, 0))
+		self._own_position = Vector3Box(Unit.local_position(unit, 0))
 	end
 
-	if not (not self._tracked_player and ALIVE[self._tracked_player]) then
-		self._state = tbl.FINDING_TARGET
-		self._finding_target_since = arg_9_5
+	if self._tracked_player and not ALIVE[self._tracked_player] then
+		self._state = STATES.FINDING_TARGET
+		self._finding_target_since = t
 	end
 
-	if self._state == tbl.INITIAL then
-		self._state = tbl.FINDING_TARGET
-		self._finding_target_since = arg_9_5
-	elseif self._state == tbl.COOLDOWN_FROM_TARGETTING then
-		if arg_9_5 > self._next_t then
-			self._state = tbl.FINDING_TARGET
+	if self._state == STATES.INITIAL then
+		self._state = STATES.FINDING_TARGET
+		self._finding_target_since = t
+	elseif self._state == STATES.COOLDOWN_FROM_TARGETTING then
+		if t > self._next_t then
+			self._state = STATES.FINDING_TARGET
 		end
-	elseif self._state == tbl.FINDING_TARGET then
+	elseif self._state == STATES.FINDING_TARGET then
 		self._tracked_player = nil
 
-		local var_9_0 = fn_4(self._hero_side)
+		local players = shuffled_players(self._hero_side)
 
-		for i = 1, #var_9_0 do
-			local var_9_1 = var_9_0[i]
-			local num_8 = POSITION_LOOKUP[var_9_1] + Vector3(0, 0, num_7)
-			local _own_position = self._own_position
-			local var_9_4 = fn_3(num_8, _own_position:unbox())
+		for i = 1, #players do
+			local random_player = players[i]
+			local target_position = POSITION_LOOKUP[random_player] + Vector3(0, 0, Z_OFFSET_RAYCAST)
+			local own_position = self._own_position
+			local launch_position = get_launch_position(target_position, own_position:unbox())
 			local physics_world = self.physics_world
 
-			if not fn_2(physics_world, var_9_1, var_9_4, num_8) then
-				self._tracked_player = var_9_1
+			if check_if_in_line_of_sight(physics_world, random_player, launch_position, target_position) then
+				self._tracked_player = random_player
 
 				break
 			end
 		end
 
-		if not self._tracked_player then
-			self._state = tbl.WAITING_TO_SPAWN_SKULLS
-			self._next_t = arg_9_5 + num_3
-		elseif arg_9_5 > self._finding_target_since + num then
-			self._state = tbl.DONE
+		if self._tracked_player then
+			self._state = STATES.WAITING_TO_SPAWN_SKULLS
+			self._next_t = t + LAUNCH_DELAY
+		elseif t > self._finding_target_since + DESTROY_AFTER_IDLE_SECONDS then
+			self._state = STATES.DONE
 		else
-			self._state = tbl.COOLDOWN_FROM_TARGETTING
-			self._next_t = arg_9_5 + num_2
+			self._state = STATES.COOLDOWN_FROM_TARGETTING
+			self._next_t = t + TARGET_ATTEMPT_COOLDOWN
 		end
-	elseif self._state == tbl.WAITING_TO_SPAWN_SKULLS then
-		local num_9 = POSITION_LOOKUP[self._tracked_player] + Vector3(0, 0, num_7)
-		local _own_position_2 = self._own_position
-		local var_9_8 = fn_3(num_9, _own_position_2:unbox())
+	elseif self._state == STATES.WAITING_TO_SPAWN_SKULLS then
+		local target_position = POSITION_LOOKUP[self._tracked_player] + Vector3(0, 0, Z_OFFSET_RAYCAST)
+		local own_position = self._own_position
+		local launch_position = get_launch_position(target_position, own_position:unbox())
 
-		self._launch_position = var_9_8
+		self._launch_position = launch_position
 
-		local physics_world_2 = self.physics_world
+		local physics_world = self.physics_world
 
-		if not fn_2(physics_world_2, self._tracker_player, var_9_8, num_9) then
-			self._state = tbl.COOLDOWN_FROM_TARGETTING
-			self._next_t = arg_9_5 + num_2
+		if not check_if_in_line_of_sight(physics_world, self._tracker_player, launch_position, target_position) then
+			self._state = STATES.COOLDOWN_FROM_TARGETTING
+			self._next_t = t + TARGET_ATTEMPT_COOLDOWN
 			self._target_decal = nil
 		end
 
-		if arg_9_5 > self._next_t then
-			local num_10 = (num_5 - num_4) / num_6
-			local num_11 = math.floor(math.random() * num_10) * num_6
+		if t > self._next_t then
+			local delay_range = MAX_LAUNCH_DELAY - MIN_LAUNCH_DELAY
+			local delay_range_deltas = delay_range / LAUNCH_DELAY_DELTA
+			local random_delay = math.floor(math.random() * delay_range_deltas) * LAUNCH_DELAY_DELTA
 
-			self._next_t = arg_9_5 + num_4 + num_11
-			self._state = tbl.SPAWNING_SKULL
+			self._next_t = t + MIN_LAUNCH_DELAY + random_delay
+			self._state = STATES.SPAWNING_SKULL
 		end
-	elseif self._state == tbl.SPAWNING_SKULL then
-		if arg_9_5 > self._next_t then
-			local unbox = self._own_position:unbox()
-			local num_12 = POSITION_LOOKUP[self._tracked_player] + Vector3(0, 0, num_7) - unbox
-			local normalize = Vector3.normalize(num_12)
+	elseif self._state == STATES.SPAWNING_SKULL then
+		if t > self._next_t then
+			local own_position = self._own_position
+			local launch_position = own_position:unbox()
+			local target_position = POSITION_LOOKUP[self._tracked_player] + Vector3(0, 0, Z_OFFSET_RAYCAST)
+			local direction = target_position - launch_position
 
-			fn(self.unit, unbox, normalize)
+			direction = Vector3.normalize(direction)
 
-			self._state = tbl.DONE
+			spawn_skull(self.unit, launch_position, direction)
+
+			self._state = STATES.DONE
 		end
-	elseif self._state ~= tbl.DONE or self._destroyed or not Unit.alive(arg_9_1) then
-		Managers.state.unit_spawner:mark_for_deletion(arg_9_1)
+	elseif self._state == STATES.DONE and not self._destroyed and Unit.alive(unit) then
+		Managers.state.unit_spawner:mark_for_deletion(unit)
 
 		self._destroyed = true
 	end

@@ -1,15 +1,15 @@
 -- chunkname: @scripts/ui/views/start_game_view/windows/definitions/start_game_window_twitch_login_definitions.lua
 
-local game_start_windows = UISettings.game_start_windows
-local frame = game_start_windows.frame
-local size = game_start_windows.size
-local var_0_3 = UIFrameSettings[frame].texture_sizes.vertical[1]
-local num = size[1] - var_0_3 * 2
-local tbl = {
-	num - 20 - 160,
+local window_default_settings = UISettings.game_start_windows
+local window_frame = window_default_settings.frame
+local window_size = window_default_settings.size
+local window_frame_width = UIFrameSettings[window_frame].texture_sizes.vertical[1]
+local window_text_width = window_size[1] - window_frame_width * 2
+local login_text_area_size = {
+	window_text_width - 20 - 160,
 	50
 }
-local tbl_2 = {
+local scenegraph_definition = {
 	root = {
 		is_root = true,
 		size = {
@@ -52,7 +52,7 @@ local tbl_2 = {
 		vertical_alignment = "center",
 		parent = "menu_root",
 		horizontal_alignment = "center",
-		size = size,
+		size = window_size,
 		position = {
 			0,
 			0,
@@ -64,8 +64,8 @@ local tbl_2 = {
 		parent = "window",
 		horizontal_alignment = "center",
 		size = {
-			num,
-			size[2] / 2
+			window_text_width,
+			window_size[2] / 2
 		},
 		position = {
 			0,
@@ -120,7 +120,7 @@ local tbl_2 = {
 		parent = "twitch_title_divider",
 		horizontal_alignment = "center",
 		size = {
-			num,
+			window_text_width,
 			50
 		},
 		position = {
@@ -133,7 +133,7 @@ local tbl_2 = {
 		vertical_alignment = "center",
 		parent = "login_text_area",
 		horizontal_alignment = "left",
-		size = tbl,
+		size = login_text_area_size,
 		position = {
 			10,
 			0,
@@ -187,7 +187,7 @@ local tbl_2 = {
 		parent = "login_text_area",
 		horizontal_alignment = "center",
 		size = {
-			size[1] - 20,
+			window_size[1] - 20,
 			45
 		},
 		position = {
@@ -201,7 +201,7 @@ local tbl_2 = {
 		parent = "disconnect_button",
 		horizontal_alignment = "center",
 		size = {
-			size[1] - 20,
+			window_size[1] - 20,
 			50
 		},
 		position = {
@@ -214,7 +214,7 @@ local tbl_2 = {
 		vertical_alignment = "center",
 		parent = "login_text_area",
 		horizontal_alignment = "center",
-		size = tbl,
+		size = login_text_area_size,
 		position = {
 			0,
 			0,
@@ -226,8 +226,8 @@ local tbl_2 = {
 		parent = "window",
 		horizontal_alignment = "center",
 		size = {
-			size[1] - 20,
-			size[2] / 2
+			window_size[1] - 20,
+			window_size[2] / 2
 		},
 		position = {
 			0,
@@ -240,8 +240,8 @@ local tbl_2 = {
 		parent = "chat_feed_frame",
 		horizontal_alignment = "center",
 		size = {
-			size[1] - 40,
-			size[2] / 2
+			window_size[1] - 40,
+			window_size[2] / 2
 		}
 	},
 	chat_feed_area = {
@@ -249,8 +249,8 @@ local tbl_2 = {
 		parent = "chat_feed_area_mask",
 		horizontal_alignment = "center",
 		size = {
-			size[1] - 20,
-			size[2] / 2
+			window_size[1] - 20,
+			window_size[2] / 2
 		}
 	},
 	chat_text_box = {
@@ -258,8 +258,8 @@ local tbl_2 = {
 		parent = "chat_feed_area",
 		horizontal_alignment = "center",
 		size = {
-			size[1] - 40,
-			size[2] / 2
+			window_size[1] - 40,
+			window_size[2] / 2
 		},
 		position = {
 			0,
@@ -269,15 +269,15 @@ local tbl_2 = {
 	}
 }
 
-local function fn(arg_1_0, arg_1_1)
+local function create_window(scenegraph_id, size)
 	-- function 1
-	local str = "menu_frame_bg_01"
-	local get_atlas_settings_by_texture_name = UIAtlasHelper.get_atlas_settings_by_texture_name(str)
-	local menu_frame_02 = UIFrameSettings.menu_frame_02
-	local tbl_2 = {
+	local background_texture = "menu_frame_bg_01"
+	local background_texture_settings = UIAtlasHelper.get_atlas_settings_by_texture_name(background_texture)
+	local frame_settings = UIFrameSettings.menu_frame_02
+	local widget = {
 		element = {}
 	}
-	local tbl_3 = {
+	local passes = {
 		{
 			scenegraph_id = "login_text_box",
 			pass_type = "hotspot",
@@ -301,26 +301,28 @@ local function fn(arg_1_0, arg_1_1)
 		{
 			style_id = "login_rect_bg",
 			pass_type = "rect",
-			content_check_function = function (arg_2_0, arg_2_1)
+			content_check_function = function (content, style)
 				-- function 2
-				return not not Managers.twitch:is_connected() or not Managers.twitch:is_connecting()
+				return not Managers.twitch:is_connected() and not not not Managers.twitch:is_connecting()
 			end
 		},
 		{
 			style_id = "login_hint",
 			pass_type = "text",
 			text_id = "login_hint",
-			content_check_function = function (self, arg_3_1)
+			content_check_function = function (content, style)
 				-- function 3
-				if not self.text_input_hotspot.is_hover then
-					arg_3_1.text_color = {
+				local hotspot = content.text_input_hotspot
+
+				if hotspot.is_hover then
+					style.text_color = {
 						128,
 						255,
 						255,
 						255
 					}
 				else
-					arg_3_1.text_color = {
+					style.text_color = {
 						60,
 						255,
 						255,
@@ -328,44 +330,44 @@ local function fn(arg_1_0, arg_1_1)
 					}
 				end
 
-				return self.twitch_name ~= "" or not not Managers.twitch:is_connected() or not not self.text_field_active or not Managers.twitch:is_connecting()
+				return content.twitch_name == "" and not Managers.twitch:is_connected() and not content.text_field_active and not not not Managers.twitch:is_connecting()
 			end
 		},
 		{
 			style_id = "twitch_name",
 			pass_type = "text",
 			text_id = "twitch_name",
-			content_check_function = function (self, arg_4_1)
+			content_check_function = function (content, style)
 				-- function 4
-				if not self.text_field_active then
-					arg_4_1.caret_color[1] = 0
+				if not content.text_field_active then
+					style.caret_color[1] = 0
 				else
-					arg_4_1.caret_color[1] = 128 + math.sin(Managers.time:time("ui") * 5) * 128
+					style.caret_color[1] = 128 + math.sin(Managers.time:time("ui") * 5) * 128
 				end
 
-				return not not Managers.twitch:is_connected() or not Managers.twitch:is_connecting()
+				return not Managers.twitch:is_connected() and not not not Managers.twitch:is_connecting()
 			end
 		},
 		{
 			style_id = "connecting",
 			pass_type = "text",
 			text_id = "connecting_id",
-			content_check_function = function (self, arg_5_1)
+			content_check_function = function (content, style)
 				-- function 5
 				if not Managers.twitch:is_connecting() then
 					return
 				end
 
-				local num = 10 * Managers.time:time("ui")
-				local rep = string.rep(".", num % 5)
+				local timer = 10 * Managers.time:time("ui")
+				local dot_str = string.rep(".", timer % 5)
 
-				self.connecting_id = Localize("start_game_window_twitch_connecting") .. rep
+				content.connecting_id = Localize("start_game_window_twitch_connecting") .. dot_str
 
 				return true
 			end
 		}
 	}
-	local tbl_4 = {
+	local content = {
 		text_start_offset = 0,
 		connecting_id = "Connecting",
 		text_field_active = false,
@@ -374,7 +376,7 @@ local function fn(arg_1_0, arg_1_1)
 		caret_index = 1,
 		twitch_texture = "twitch_logo",
 		text_index = 1,
-		frame = menu_frame_02.texture,
+		frame = frame_settings.texture,
 		background = {
 			uvs = {
 				{
@@ -382,11 +384,11 @@ local function fn(arg_1_0, arg_1_1)
 					0
 				},
 				{
-					math.min(arg_1_1[1] / get_atlas_settings_by_texture_name.size[1], 1),
-					math.min(arg_1_1[2] / get_atlas_settings_by_texture_name.size[2], 1)
+					math.min(size[1] / background_texture_settings.size[1], 1),
+					math.min(size[2] / background_texture_settings.size[2], 1)
 				}
 			},
-			texture_id = str
+			texture_id = background_texture
 		},
 		login_hint = Localize("start_game_window_twitch_login_hint"),
 		text_input_hotspot = {},
@@ -397,7 +399,7 @@ local function fn(arg_1_0, arg_1_1)
 			allow_multi_hover = true
 		}
 	}
-	local tbl_5 = {
+	local style = {
 		background = {
 			color = {
 				255,
@@ -412,8 +414,8 @@ local function fn(arg_1_0, arg_1_1)
 			}
 		},
 		frame = {
-			texture_size = menu_frame_02.texture_size,
-			texture_sizes = menu_frame_02.texture_sizes,
+			texture_size = frame_settings.texture_size,
+			texture_sizes = frame_settings.texture_sizes,
 			color = {
 				255,
 				255,
@@ -439,7 +441,7 @@ local function fn(arg_1_0, arg_1_1)
 				0,
 				-1
 			},
-			size = tbl
+			size = login_text_area_size
 		},
 		twitch_texture = {
 			vertical_alignment = "center",
@@ -532,20 +534,20 @@ local function fn(arg_1_0, arg_1_1)
 		}
 	}
 
-	tbl_2.element.passes = tbl_3
-	tbl_2.content = tbl_4
-	tbl_2.style = tbl_5
-	tbl_2.offset = {
+	widget.element.passes = passes
+	widget.content = content
+	widget.style = style
+	widget.offset = {
 		0,
 		0,
 		0
 	}
-	tbl_2.scenegraph_id = arg_1_0
+	widget.scenegraph_id = scenegraph_id
 
-	return tbl_2
+	return widget
 end
 
-local tbl_3 = {
+local chat_output_widget = {
 	scenegraph_id = "chat_feed_area",
 	element = {
 		passes = {
@@ -553,7 +555,7 @@ local tbl_3 = {
 				pass_type = "texture",
 				style_id = "mask",
 				texture_id = "mask_id",
-				content_check_function = function (arg_6_0)
+				content_check_function = function (content)
 					-- function 6
 					return Managers.twitch:is_connected()
 				end
@@ -561,7 +563,7 @@ local tbl_3 = {
 			{
 				style_id = "background",
 				pass_type = "rect",
-				content_check_function = function (arg_7_0)
+				content_check_function = function (content)
 					-- function 7
 					return Managers.twitch:is_connected()
 				end
@@ -570,7 +572,7 @@ local tbl_3 = {
 				style_id = "chat_text_box",
 				pass_type = "text_area_chat",
 				text_id = "text_field",
-				content_check_function = function (arg_8_0)
+				content_check_function = function (content)
 					-- function 8
 					return Managers.twitch:is_connected()
 				end
@@ -634,46 +636,46 @@ local tbl_3 = {
 	}
 }
 
-function create_button(arg_9_0, arg_9_1, arg_9_2, arg_9_3, arg_9_4)
+function create_button(scenegraph_id, size, text, font_size, content_check_function)
 	-- function 9
-	local str = "button_bg_01"
-	local get_atlas_settings_by_texture_name = UIAtlasHelper.get_atlas_settings_by_texture_name(str)
-	local tbl = {
+	local background_texture = "button_bg_01"
+	local background_texture_settings = UIAtlasHelper.get_atlas_settings_by_texture_name(background_texture)
+	local widget = {
 		element = {}
 	}
-	local tbl_2 = {}
-	local tbl_3 = {}
-	local tbl_4 = {}
-	local tbl_5 = {
+	local passes = {}
+	local content = {}
+	local style = {}
+	local offset = {
 		0,
 		0,
 		0
 	}
-	local str_2 = "button_hotspot"
+	local hotspot_name = "button_hotspot"
 
-	tbl_2[#tbl_2 + 1] = {
+	passes[#passes + 1] = {
 		pass_type = "hotspot",
-		content_id = str_2,
-		style_id = str_2,
-		content_check_function = arg_9_4
+		content_id = hotspot_name,
+		style_id = hotspot_name,
+		content_check_function = content_check_function
 	}
-	tbl_4[str_2] = {
-		size = arg_9_1,
-		offset = tbl_5
+	style[hotspot_name] = {
+		size = size,
+		offset = offset
 	}
-	tbl_3[str_2] = {}
+	content[hotspot_name] = {}
 
-	local var_9_8 = tbl_3[str_2]
-	local str_3 = "background"
+	local hotspot_content = content[hotspot_name]
+	local background_name = "background"
 
-	tbl_2[#tbl_2 + 1] = {
+	passes[#passes + 1] = {
 		pass_type = "texture_uv",
-		content_id = str_3,
-		style_id = str_3,
-		content_check_function = arg_9_4
+		content_id = background_name,
+		style_id = background_name,
+		content_check_function = content_check_function
 	}
-	tbl_4[str_3] = {
-		size = arg_9_1,
+	style[background_name] = {
+		size = size,
 		color = {
 			255,
 			255,
@@ -681,38 +683,38 @@ function create_button(arg_9_0, arg_9_1, arg_9_2, arg_9_3, arg_9_4)
 			255
 		},
 		offset = {
-			tbl_5[1],
-			tbl_5[2],
+			offset[1],
+			offset[2],
 			0
 		}
 	}
-	tbl_3[str_3] = {
+	content[background_name] = {
 		uvs = {
 			{
 				0,
-				1 - math.min(arg_9_1[2] / get_atlas_settings_by_texture_name.size[2], 1)
+				1 - math.min(size[2] / background_texture_settings.size[2], 1)
 			},
 			{
-				math.min(arg_9_1[1] / get_atlas_settings_by_texture_name.size[1], 1),
+				math.min(size[1] / background_texture_settings.size[1], 1),
 				1
 			}
 		},
-		texture_id = str
+		texture_id = background_texture
 	}
 
-	local str_4 = "background_fade"
+	local background_fade_name = "background_fade"
 
-	tbl_2[#tbl_2 + 1] = {
+	passes[#passes + 1] = {
 		pass_type = "texture",
-		content_id = str_2,
-		texture_id = str_4,
-		style_id = str_4,
-		content_check_function = arg_9_4
+		content_id = hotspot_name,
+		texture_id = background_fade_name,
+		style_id = background_fade_name,
+		content_check_function = content_check_function
 	}
-	tbl_4[str_4] = {
+	style[background_fade_name] = {
 		size = {
-			arg_9_1[1],
-			arg_9_1[2]
+			size[1],
+			size[2]
 		},
 		color = {
 			255,
@@ -721,26 +723,26 @@ function create_button(arg_9_0, arg_9_1, arg_9_2, arg_9_3, arg_9_4)
 			255
 		},
 		offset = {
-			tbl_5[1],
-			tbl_5[2],
+			offset[1],
+			offset[2],
 			1
 		}
 	}
-	var_9_8[str_4] = "button_bg_fade"
+	hotspot_content[background_fade_name] = "button_bg_fade"
 
-	local str_5 = "hover_glow"
+	local hover_glow_name = "hover_glow"
 
-	tbl_2[#tbl_2 + 1] = {
+	passes[#passes + 1] = {
 		pass_type = "texture",
-		content_id = str_2,
-		texture_id = str_5,
-		style_id = str_5,
-		content_check_function = arg_9_4
+		content_id = hotspot_name,
+		texture_id = hover_glow_name,
+		style_id = hover_glow_name,
+		content_check_function = content_check_function
 	}
-	tbl_4[str_5] = {
+	style[hover_glow_name] = {
 		size = {
-			arg_9_1[1],
-			math.min(arg_9_1[2] - 5, 80)
+			size[1],
+			math.min(size[2] - 5, 80)
 		},
 		color = {
 			255,
@@ -749,23 +751,23 @@ function create_button(arg_9_0, arg_9_1, arg_9_2, arg_9_3, arg_9_4)
 			255
 		},
 		offset = {
-			tbl_5[1],
-			tbl_5[2] + 5,
+			offset[1],
+			offset[2] + 5,
 			2
 		}
 	}
-	var_9_8[str_5] = "button_state_default"
+	hotspot_content[hover_glow_name] = "button_state_default"
 
-	local str_6 = "clicked_rect"
+	local clicked_rect_name = "clicked_rect"
 
-	tbl_2[#tbl_2 + 1] = {
+	passes[#passes + 1] = {
 		pass_type = "rect",
-		content_id = str_2,
-		style_id = str_6,
-		content_check_function = arg_9_4
+		content_id = hotspot_name,
+		style_id = clicked_rect_name,
+		content_check_function = content_check_function
 	}
-	tbl_4[str_6] = {
-		size = arg_9_1,
+	style[clicked_rect_name] = {
+		size = size,
 		color = {
 			100,
 			0,
@@ -773,24 +775,24 @@ function create_button(arg_9_0, arg_9_1, arg_9_2, arg_9_3, arg_9_4)
 			0
 		},
 		offset = {
-			tbl_5[1],
-			tbl_5[2],
+			offset[1],
+			offset[2],
 			6
 		}
 	}
 
-	local str_7 = "glass_top"
+	local glass_top_name = "glass_top"
 
-	tbl_2[#tbl_2 + 1] = {
+	passes[#passes + 1] = {
 		pass_type = "texture",
-		content_id = str_2,
-		texture_id = str_7,
-		style_id = str_7,
-		content_check_function = arg_9_4
+		content_id = hotspot_name,
+		texture_id = glass_top_name,
+		style_id = glass_top_name,
+		content_check_function = content_check_function
 	}
-	tbl_4[str_7] = {
+	style[glass_top_name] = {
 		size = {
-			arg_9_1[1],
+			size[1],
 			11
 		},
 		color = {
@@ -800,25 +802,25 @@ function create_button(arg_9_0, arg_9_1, arg_9_2, arg_9_3, arg_9_4)
 			255
 		},
 		offset = {
-			tbl_5[1],
-			tbl_5[2] + arg_9_1[2] - 11,
+			offset[1],
+			offset[2] + size[2] - 11,
 			5
 		}
 	}
-	var_9_8[str_7] = "button_glass_02"
+	hotspot_content[glass_top_name] = "button_glass_02"
 
-	local str_8 = "glass_bottom"
+	local glass_bottom_name = "glass_bottom"
 
-	tbl_2[#tbl_2 + 1] = {
+	passes[#passes + 1] = {
 		pass_type = "texture",
-		content_id = str_2,
-		texture_id = str_8,
-		style_id = str_8,
-		content_check_function = arg_9_4
+		content_id = hotspot_name,
+		texture_id = glass_bottom_name,
+		style_id = glass_bottom_name,
+		content_check_function = content_check_function
 	}
-	tbl_4[str_8] = {
+	style[glass_bottom_name] = {
 		size = {
-			arg_9_1[1],
+			size[1],
 			11
 		},
 		color = {
@@ -828,23 +830,23 @@ function create_button(arg_9_0, arg_9_1, arg_9_2, arg_9_3, arg_9_4)
 			255
 		},
 		offset = {
-			tbl_5[1],
-			tbl_5[2] - 3,
+			offset[1],
+			offset[2] - 3,
 			5
 		}
 	}
-	var_9_8[str_8] = "button_glass_02"
+	hotspot_content[glass_bottom_name] = "button_glass_02"
 
-	local str_9 = "text"
+	local text_name = "text"
 
-	tbl_2[#tbl_2 + 1] = {
+	passes[#passes + 1] = {
 		pass_type = "text",
-		content_id = str_2,
-		text_id = str_9,
-		style_id = str_9,
-		content_check_function = arg_9_4
+		content_id = hotspot_name,
+		text_id = text_name,
+		style_id = text_name,
+		content_check_function = content_check_function
 	}
-	tbl_4[str_9] = {
+	style[text_name] = {
 		word_wrap = true,
 		upper_case = true,
 		localize = false,
@@ -852,32 +854,32 @@ function create_button(arg_9_0, arg_9_1, arg_9_2, arg_9_3, arg_9_4)
 		vertical_alignment = "center",
 		dynamic_font_size = true,
 		font_type = "hell_shark",
-		font_size = arg_9_3,
+		font_size = font_size,
 		text_color = Colors.get_color_table_with_alpha("font_button_normal", 255),
 		default_text_color = Colors.get_color_table_with_alpha("font_button_normal", 255),
 		select_text_color = Colors.get_color_table_with_alpha("white", 255),
 		offset = {
-			10 + tbl_5[1],
-			tbl_5[2] + 3,
+			10 + offset[1],
+			offset[2] + 3,
 			4
 		},
 		size = {
-			arg_9_1[1] - 20,
-			arg_9_1[2]
+			size[1] - 20,
+			size[2]
 		}
 	}
-	var_9_8[str_9] = arg_9_2
+	hotspot_content[text_name] = text
 
-	local str_10 = "text_shadow"
+	local text_shadow_name = "text_shadow"
 
-	tbl_2[#tbl_2 + 1] = {
+	passes[#passes + 1] = {
 		pass_type = "text",
-		content_id = str_2,
-		text_id = str_9,
-		style_id = str_10,
-		content_check_function = arg_9_4
+		content_id = hotspot_name,
+		text_id = text_name,
+		style_id = text_shadow_name,
+		content_check_function = content_check_function
 	}
-	tbl_4[str_10] = {
+	style[text_shadow_name] = {
 		word_wrap = true,
 		upper_case = true,
 		localize = false,
@@ -885,32 +887,32 @@ function create_button(arg_9_0, arg_9_1, arg_9_2, arg_9_3, arg_9_4)
 		vertical_alignment = "center",
 		dynamic_font_size = true,
 		font_type = "hell_shark",
-		font_size = arg_9_3,
+		font_size = font_size,
 		text_color = Colors.get_color_table_with_alpha("black", 255),
 		offset = {
-			10 + tbl_5[1] + 2,
-			tbl_5[2] + 2,
+			10 + offset[1] + 2,
+			offset[2] + 2,
 			3
 		},
 		size = {
-			arg_9_1[1] - 20,
-			arg_9_1[2]
+			size[1] - 20,
+			size[2]
 		}
 	}
-	tbl.element.passes = tbl_2
-	tbl.content = tbl_3
-	tbl.style = tbl_4
-	tbl.offset = {
+	widget.element.passes = passes
+	widget.content = content
+	widget.style = style
+	widget.offset = {
 		0,
 		0,
 		0
 	}
-	tbl.scenegraph_id = arg_9_0
+	widget.scenegraph_id = scenegraph_id
 
-	return tbl
+	return widget
 end
 
-local tbl_4 = {
+local description_text_style = {
 	word_wrap = true,
 	font_size = 22,
 	localize = false,
@@ -926,57 +928,57 @@ local tbl_4 = {
 	}
 }
 
-local function fn_2(arg_10_0)
+local function connected_content_check_function(content)
 	-- function 10
-	return not not Managers.twitch:is_connecting() or not Managers.twitch:is_connected()
+	return not Managers.twitch:is_connecting() and not not not Managers.twitch:is_connected()
 end
 
-local function fn_3(arg_11_0)
+local function disconnected_content_check_function(content)
 	-- function 11
-	return not not Managers.twitch:is_connecting() or Managers.twitch:is_connected()
+	return not Managers.twitch:is_connecting() and not not Managers.twitch:is_connected()
 end
 
-local function fn_4(arg_12_0)
+local function connecting_content_check_function(content)
 	-- function 12
 	local is_connecting = Managers.twitch:is_connecting()
 
-	is_connecting = is_connecting or not Managers.twitch:is_connected()
+	is_connecting = not not is_connecting or not not not Managers.twitch:is_connected()
 
 	return is_connecting
 end
 
-local str = "start_game_window_twitch_connect_description"
-local tbl_5 = {
+local streaming_desc_str = "start_game_window_twitch_connect_description"
+local widgets = {
 	background_fade = UIWidgets.create_simple_texture("options_window_fade_01", "window"),
 	background_mask = UIWidgets.create_simple_texture("mask_rect", "window"),
-	window = UIWidgets.create_frame("window", size, frame, 20),
-	frame_widget = fn("window", tbl_2.window.size),
+	window = UIWidgets.create_frame("window", window_size, window_frame, 20),
+	frame_widget = create_window("window", scenegraph_definition.window.size),
 	login_text_frame = UIWidgets.create_frame("login_text_frame", {
-		num,
+		window_text_width,
 		50
 	}, "menu_frame_09", 1),
 	chat_feed_frame = UIWidgets.create_frame("chat_feed_frame", {
-		num - 20,
+		window_text_width - 20,
 		250
 	}, "menu_frame_09", 1),
-	description_text = UIWidgets.create_simple_text(Localize(str), "description_text", nil, nil, tbl_4),
+	description_text = UIWidgets.create_simple_text(Localize(streaming_desc_str), "description_text", nil, nil, description_text_style),
 	twitch_texture = UIWidgets.create_simple_texture("twitch_logo", "twitch_texture"),
 	twitch_title_divider = UIWidgets.create_simple_texture("divider_01_top", "twitch_title_divider"),
-	chat_output_widget = tbl_3,
-	button_1 = create_button("connect_button", tbl_2.connect_button.size, Localize("start_game_window_twitch_connect"), 24, fn_2),
-	button_2 = create_button("disconnect_button", tbl_2.disconnect_button.size, string.format(Localize("start_game_window_twitch_disconnect"), "N/A"), 24, fn_3),
-	connect_button_frame = UIWidgets.create_frame("connect_button_frame", tbl_2.connect_button_frame.size, frame, 1),
-	disconnect_button_frame = UIWidgets.create_frame("disconnect_button_frame", tbl_2.disconnect_button_frame.size, frame, 1)
+	chat_output_widget = chat_output_widget,
+	button_1 = create_button("connect_button", scenegraph_definition.connect_button.size, Localize("start_game_window_twitch_connect"), 24, connected_content_check_function),
+	button_2 = create_button("disconnect_button", scenegraph_definition.disconnect_button.size, string.format(Localize("start_game_window_twitch_disconnect"), "N/A"), 24, disconnected_content_check_function),
+	connect_button_frame = UIWidgets.create_frame("connect_button_frame", scenegraph_definition.connect_button_frame.size, window_frame, 1),
+	disconnect_button_frame = UIWidgets.create_frame("disconnect_button_frame", scenegraph_definition.disconnect_button_frame.size, window_frame, 1)
 }
 
-tbl_5.login_text_frame.element.passes[1].content_check_function = fn_2
-tbl_5.connect_button_frame.element.passes[1].content_check_function = fn_2
-tbl_5.disconnect_button_frame.element.passes[1].content_check_function = fn_3
-tbl_5.chat_feed_frame.element.passes[1].content_check_function = fn_3
-tbl_5.description_text.element.passes[1].content_check_function = fn_4
-tbl_5.description_text.element.passes[2].content_check_function = fn_4
+widgets.login_text_frame.element.passes[1].content_check_function = connected_content_check_function
+widgets.connect_button_frame.element.passes[1].content_check_function = connected_content_check_function
+widgets.disconnect_button_frame.element.passes[1].content_check_function = disconnected_content_check_function
+widgets.chat_feed_frame.element.passes[1].content_check_function = disconnected_content_check_function
+widgets.description_text.element.passes[1].content_check_function = connecting_content_check_function
+widgets.description_text.element.passes[2].content_check_function = connecting_content_check_function
 
 return {
-	widgets = tbl_5,
-	scenegraph_definition = tbl_2
+	widgets = widgets,
+	scenegraph_definition = scenegraph_definition
 }

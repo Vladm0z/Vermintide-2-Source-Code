@@ -2,12 +2,16 @@
 
 local LoadoutUtils = LoadoutUtils
 
-LoadoutUtils = LoadoutUtils or {}
+LoadoutUtils = not not LoadoutUtils or not not {}
 LoadoutUtils = LoadoutUtils
 
-local LOADOUT_SLOTS = LOADOUT_SLOTS
+local LOADOUT_SLOTS_2 = LOADOUT_SLOTS
 
-LOADOUT_SLOTS = LOADOUT_SLOTS or {
+if not LOADOUT_SLOTS_2 then
+	-- Nothing
+end
+
+LOADOUT_SLOTS_2 = {
 	slot_necklace = true,
 	slot_trinket_1 = true,
 	slot_ring = true,
@@ -15,45 +19,57 @@ LOADOUT_SLOTS = LOADOUT_SLOTS or {
 	slot_ranged = true
 }
 
-LoadoutUtils.sync_loadout_slot = function (self, arg_1_1, arg_1_2, arg_1_3)
+local LOADOUT_SLOTS = LOADOUT_SLOTS_2
+
+::label_0_0::
+
+LoadoutUtils.sync_loadout_slot = function (player, slot_name, item, sync_to_specific_peer_id)
 	-- function 1
-	if not LOADOUT_SLOTS[arg_1_1] then
+	if not LOADOUT_SLOTS[slot_name] then
 		return
 	end
 
-	local network = Managers.state.network
-	local is_server = network.is_server
-	local network_transmit = network.network_transmit
-	local key = arg_1_2.key
-	local power_level = arg_1_2.power_level
-	local rarity = arg_1_2.rarity
+	local network_manager = Managers.state.network
+	local is_server = network_manager.is_server
+	local network_transmit = network_manager.network_transmit
+	local item_key = item.key
+	local power_level = item.power_level
+	local rarity_2 = item.rarity
 
-	rarity = rarity or "plentiful"
-
-	local var_1_6 = NetworkLookup.equipment_slots[arg_1_1]
-	local var_1_7 = NetworkLookup.item_names[key]
-	local var_1_8 = NetworkLookup.rarities[rarity]
-	local properties_to_rpc_params, var_1_10, var_1_11 = LoadoutUtils.properties_to_rpc_params(arg_1_2)
-
-	if #properties_to_rpc_params ~= #var_1_10 then
-		fassert(false, "[LoadoutUtils.sync_loadout_slot] Length of arrays properties_array(%d) and properties_values_array(%d) not equal!", #properties_to_rpc_params, #var_1_10)
+	if not rarity_2 then
+		-- Nothing
 	end
 
-	local network_id = self:network_id()
-	local local_player_id = self:local_player_id()
+	rarity_2 = "plentiful"
 
-	if not arg_1_3 then
-		network_transmit:send_rpc("rpc_sync_loadout_slot", arg_1_3, network_id, local_player_id, var_1_6, var_1_7, var_1_8, power_level, properties_to_rpc_params, var_1_10, var_1_11)
-	elseif not is_server then
-		network_transmit:send_rpc_all("rpc_sync_loadout_slot", network_id, local_player_id, var_1_6, var_1_7, var_1_8, power_level, properties_to_rpc_params, var_1_10, var_1_11)
+	local rarity = rarity_2
+
+	::label_1_0::
+
+	local slot_id = NetworkLookup.equipment_slots[slot_name]
+	local item_id = NetworkLookup.item_names[item_key]
+	local rarity_id = NetworkLookup.rarities[rarity]
+	local properties_array, properties_values_array, traits_array = LoadoutUtils.properties_to_rpc_params(item)
+
+	if #properties_array ~= #properties_values_array then
+		fassert(false, "[LoadoutUtils.sync_loadout_slot] Length of arrays properties_array(%d) and properties_values_array(%d) not equal!", #properties_array, #properties_values_array)
+	end
+
+	local peer_id = player:network_id()
+	local local_player_id = player:local_player_id()
+
+	if sync_to_specific_peer_id then
+		network_transmit:send_rpc("rpc_sync_loadout_slot", sync_to_specific_peer_id, peer_id, local_player_id, slot_id, item_id, rarity_id, power_level, properties_array, properties_values_array, traits_array)
+	elseif is_server then
+		network_transmit:send_rpc_all("rpc_sync_loadout_slot", peer_id, local_player_id, slot_id, item_id, rarity_id, power_level, properties_array, properties_values_array, traits_array)
 	else
-		network_transmit:send_rpc_server("rpc_sync_loadout_slot", network_id, local_player_id, var_1_6, var_1_7, var_1_8, power_level, properties_to_rpc_params, var_1_10, var_1_11)
+		network_transmit:send_rpc_server("rpc_sync_loadout_slot", peer_id, local_player_id, slot_id, item_id, rarity_id, power_level, properties_array, properties_values_array, traits_array)
 	end
 end
 
-local tbl = {}
+local EMPTY_TABLE = {}
 
-LoadoutUtils.hot_join_sync = function (arg_2_0)
+LoadoutUtils.hot_join_sync = function (peer_id)
 	-- function 2
 	if not Managers.state.network.is_server then
 		return
@@ -62,14 +78,24 @@ LoadoutUtils.hot_join_sync = function (arg_2_0)
 	local player_loadouts = Managers.player:player_loadouts()
 	local players = Managers.player:players()
 
-	for k, v in pairs(players) do
-		if v:network_id() ~= arg_2_0 then
-			local var_2_2 = player_loadouts[k]
+	for unique_id, player in pairs(players) do
+		local player_peer_id = player:network_id()
 
-			var_2_2 = var_2_2 or tbl
+		if player_peer_id ~= peer_id then
+			local var_2_0 = player_loadouts[unique_id]
 
-			for k_2, v_2 in pairs(var_2_2) do
-				LoadoutUtils.sync_loadout_slot(v, k_2, v_2, arg_2_0)
+			if not var_2_0 then
+				-- Nothing
+			end
+
+			var_2_0 = EMPTY_TABLE
+
+			local loadout = var_2_0
+
+			::label_2_0::
+
+			for slot_name, item in pairs(loadout) do
+				LoadoutUtils.sync_loadout_slot(player, slot_name, item, peer_id)
 			end
 		else
 			print("############### DONT SYNC YOURSELF")
@@ -77,90 +103,95 @@ LoadoutUtils.hot_join_sync = function (arg_2_0)
 	end
 end
 
-LoadoutUtils.create_loadout_item_from_rpc_data = function (arg_3_0, arg_3_1, arg_3_2, arg_3_3, arg_3_4, arg_3_5, arg_3_6)
+LoadoutUtils.create_loadout_item_from_rpc_data = function (slot_id, item_id, rarity_id, power_level, properties_array, properties_values_array, traits_array)
 	-- function 3
-	local var_3_0 = NetworkLookup.equipment_slots[arg_3_0]
-	local var_3_1 = NetworkLookup.item_names[arg_3_1]
-	local var_3_2 = NetworkLookup.rarities[arg_3_2]
-	local var_3_3 = arg_3_3
-	local properties_from_rpc_params, var_3_5, var_3_6 = LoadoutUtils.properties_from_rpc_params(arg_3_4, arg_3_5, arg_3_6)
-	local var_3_7 = ItemMasterList[var_3_1]
-	local tbl = {
-		data = var_3_7,
-		power_level = var_3_3,
-		rarity = var_3_2,
-		key = var_3_1,
-		ItemId = var_3_1,
-		properties = not (properties_from_rpc_params > 0) or not var_3_5 or nil,
-		traits = not (#var_3_6 > 0) or not var_3_6 or nil
-	}
+	local slot_name = NetworkLookup.equipment_slots[slot_id]
+	local item_key = NetworkLookup.item_names[item_id]
+	local rarity = NetworkLookup.rarities[rarity_id]
+	local power_level = power_level
+	local num_properties, properties, traits = LoadoutUtils.properties_from_rpc_params(properties_array, properties_values_array, traits_array)
+	local item_template = ItemMasterList[item_key]
+	local item = {}
 
-	return var_3_0, tbl
+	item.data = item_template
+	item.power_level = power_level
+	item.rarity = rarity
+	item.key = item_key
+	item.ItemId = item_key
+	item.properties = (not (num_properties > 0) or not properties) and not not nil
+	item.traits = (not (#traits > 0) or not traits) and not not nil
+
+	return slot_name, item
 end
 
-LoadoutUtils.properties_to_rpc_params = function (self)
+LoadoutUtils.properties_to_rpc_params = function (item)
 	-- function 4
-	local properties = NetworkLookup.properties
-	local traits = NetworkLookup.traits
-	local tbl = {}
-	local tbl_2 = {}
-	local tbl_3 = {}
-	local properties_2 = self.properties
+	local properties_lookup = NetworkLookup.properties
+	local traits_lookup = NetworkLookup.traits
+	local properties_ids = {}
+	local properties_values = {}
+	local traits_ids = {}
+	local item_properties = item.properties
 
-	if not properties_2 then
-		for k, v in pairs(properties_2) do
-			tbl[#tbl + 1] = properties[k]
-			tbl_2[#tbl_2 + 1] = v
+	if item_properties then
+		for property_name, property_value in pairs(item_properties) do
+			properties_ids[#properties_ids + 1] = properties_lookup[property_name]
+			properties_values[#properties_values + 1] = property_value
 		end
 	end
 
-	local traits_2 = self.traits
+	local item_traits = item.traits
 
-	if not traits_2 then
-		for k_2 = 1, #traits_2 do
-			local var_4_7 = traits_2[k_2]
+	if item_traits then
+		for i = 1, #item_traits do
+			local trait_name = item_traits[i]
 
-			tbl_3[#tbl_3 + 1] = traits[var_4_7]
+			traits_ids[#traits_ids + 1] = traits_lookup[trait_name]
 		end
 	end
 
-	return tbl, tbl_2, tbl_3
+	return properties_ids, properties_values, traits_ids
 end
 
-LoadoutUtils.properties_from_rpc_params = function (arg_5_0, arg_5_1, arg_5_2)
+LoadoutUtils.properties_from_rpc_params = function (properties_array, properties_values_array, traits_array)
 	-- function 5
-	local properties = NetworkLookup.properties
-	local traits = NetworkLookup.traits
-	local num = 0
-	local tbl = {}
-	local tbl_2 = {}
+	local properties_lookup = NetworkLookup.properties
+	local traits_lookup = NetworkLookup.traits
+	local num_properties = 0
+	local properties = {}
+	local traits = {}
 
-	for i = 1, #arg_5_0 do
-		tbl[properties[arg_5_0[i]]], num = arg_5_1[i], num + 1
+	for i = 1, #properties_array do
+		local property_id = properties_array[i]
+		local property_name = properties_lookup[property_id]
+		local property_value = properties_values_array[i]
+
+		num_properties = num_properties + 1
+		properties[property_name] = property_value
 	end
 
-	for j = 1, #arg_5_2 do
-		local var_5_5 = arg_5_2[j]
+	for i = 1, #traits_array do
+		local trait_id = traits_array[i]
 
-		tbl_2[#tbl_2 + 1] = traits[var_5_5]
+		traits[#traits + 1] = traits_lookup[trait_id]
 	end
 
-	return num, tbl, tbl_2
+	return num_properties, properties, traits
 end
 
-LoadoutUtils.is_item_disabled = function (arg_6_0)
+LoadoutUtils.is_item_disabled = function (item_id)
 	-- function 6
-	local mechanism = Managers.mechanism
+	local mechanism_manager = Managers.mechanism
 
-	if not mechanism then
+	if not mechanism_manager then
 		return false
 	end
 
-	local mechanism_setting_for_title = mechanism:mechanism_setting_for_title("override_item_availability")
+	local override_item_availability = mechanism_manager:mechanism_setting_for_title("override_item_availability")
 
-	if not mechanism_setting_for_title then
+	if not override_item_availability then
 		return false
 	end
 
-	return mechanism_setting_for_title[arg_6_0] == false
+	return override_item_availability[item_id] == false
 end

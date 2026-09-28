@@ -1,7 +1,7 @@
 -- chunkname: @scripts/settings/dlcs/woods/talent_settings_woods.lua
 
-local scripts_unit_extensions_default_player_unit_buffs_settings_buff_perk_names = require("scripts/unit_extensions/default_player_unit/buffs/settings/buff_perk_names")
-local tbl = {
+local buff_perks = require("scripts/unit_extensions/default_player_unit/buffs/settings/buff_perk_names")
+local buff_tweak_data = {
 	thorn_sister_ability_cooldown_on_hit = {
 		bonus = 0.3
 	},
@@ -84,7 +84,7 @@ local tbl = {
 		radius = 3
 	}
 }
-local tbl_2 = {
+local talent_buff_templates = {
 	thorn_sister_ability_cooldown_on_hit = {
 		buffs = {
 			{
@@ -109,7 +109,7 @@ local tbl_2 = {
 				update_func = "activate_buff_on_distance",
 				remove_buff_func = "remove_aura_buff",
 				perks = {
-					scripts_unit_extensions_default_player_unit_buffs_settings_buff_perk_names.overcharge_no_slow
+					buff_perks.overcharge_no_slow
 				}
 			}
 		}
@@ -147,7 +147,7 @@ local tbl_2 = {
 		buffs = {
 			{
 				perks = {
-					scripts_unit_extensions_default_player_unit_buffs_settings_buff_perk_names.missing_health_damage
+					buff_perks.missing_health_damage
 				}
 			}
 		}
@@ -248,7 +248,7 @@ local tbl_2 = {
 			{
 				icon = "kerillian_thornsister_crit_on_any_ability",
 				perks = {
-					scripts_unit_extensions_default_player_unit_buffs_settings_buff_perk_names.guaranteed_crit
+					buff_perks.guaranteed_crit
 				},
 				max_stacks = math.huge
 			}
@@ -342,13 +342,13 @@ local tbl_2 = {
 				update_start_delay = 1,
 				time_between_dot_damages = 1,
 				max_stacks = 1,
-				multiplier = tbl.kerillian_thorn_sister_debuff_wall_buff.multiplier,
-				duration = tbl.kerillian_thorn_sister_debuff_wall_buff.duration
+				multiplier = buff_tweak_data.kerillian_thorn_sister_debuff_wall_buff.multiplier,
+				duration = buff_tweak_data.kerillian_thorn_sister_debuff_wall_buff.duration
 			}
 		}
 	}
 }
-local tbl_3 = {
+local talent_trees = {
 	{
 		{
 			"kerillian_thorn_sister_thp_ninjafencer",
@@ -382,7 +382,7 @@ local tbl_3 = {
 		}
 	}
 }
-local tbl_4 = {
+local talents = {
 	{
 		description = "regrowth_desc_4",
 		name = "kerillian_thorn_sister_regrowth",
@@ -481,11 +481,11 @@ local tbl_4 = {
 		description_values = {
 			{
 				value_type = "percent",
-				value = tbl.kerillian_thorn_sister_attack_speed_on_full.health_threshold
+				value = buff_tweak_data.kerillian_thorn_sister_attack_speed_on_full.health_threshold
 			},
 			{
 				value_type = "percent",
-				value = tbl.kerillian_thorn_sister_attack_speed_on_full_buff.multiplier
+				value = buff_tweak_data.kerillian_thorn_sister_attack_speed_on_full_buff.multiplier
 			}
 		},
 		buffs = {
@@ -509,7 +509,7 @@ local tbl_4 = {
 		icon = "kerillian_thornsister_crit_on_any_ability",
 		description_values = {
 			{
-				value = tbl.kerillian_thorn_sister_crit_on_any_ability.amount_to_add
+				value = buff_tweak_data.kerillian_thorn_sister_crit_on_any_ability.amount_to_add
 			}
 		},
 		buffs = {
@@ -581,7 +581,7 @@ local tbl_4 = {
 		icon = "kerillian_thornsister_double_passive",
 		description_values = {
 			{
-				value = tbl.kerillian_double_passive.visualizer_max_stacks
+				value = buff_tweak_data.kerillian_double_passive.visualizer_max_stacks
 			}
 		},
 		buffs = {}
@@ -595,10 +595,10 @@ local tbl_4 = {
 		description_values = {
 			{
 				value_type = "percent",
-				value = tbl.kerillian_thorn_sister_passive_set_back.reduction_amount_vizualiser
+				value = buff_tweak_data.kerillian_thorn_sister_passive_set_back.reduction_amount_vizualiser
 			},
 			{
-				value = tbl.kerillian_thorn_sister_passive_set_back.set_back
+				value = buff_tweak_data.kerillian_thorn_sister_passive_set_back.set_back
 			}
 		},
 		buffs = {
@@ -613,14 +613,14 @@ local tbl_4 = {
 		description_values = {
 			{
 				value_type = "percent",
-				value = tbl.kerillian_thorn_sister_passive_team_buff.power_multiplier_visualizer
+				value = buff_tweak_data.kerillian_thorn_sister_passive_team_buff.power_multiplier_visualizer
 			},
 			{
 				value_type = "percent",
-				value = tbl.kerillian_thorn_sister_passive_team_buff.crit_multiplier_visualizer
+				value = buff_tweak_data.kerillian_thorn_sister_passive_team_buff.crit_multiplier_visualizer
 			},
 			{
-				value = tbl.kerillian_thorn_sister_passive_team_buff.duration_visualizer
+				value = buff_tweak_data.kerillian_thorn_sister_passive_team_buff.duration_visualizer
 			}
 		},
 		buffs = {
@@ -646,7 +646,7 @@ local tbl_4 = {
 		description_values = {
 			{
 				value_type = "percent",
-				value = tbl.kerillian_thorn_sister_big_push_buff_2.multiplier
+				value = buff_tweak_data.kerillian_thorn_sister_big_push_buff_2.multiplier
 			}
 		},
 		buffs = {
@@ -660,7 +660,7 @@ local tbl_4 = {
 		icon = "kerillian_thornsister_blackvenom",
 		description_values = {
 			{
-				value = tbl.kerillian_thorn_sister_double_poison.max_stacks
+				value = buff_tweak_data.kerillian_thorn_sister_double_poison.max_stacks
 			}
 		},
 		buffs = {}
@@ -672,7 +672,7 @@ local tbl_4 = {
 		icon = "kerillian_thornsister_healing_wall",
 		description_values = {
 			{
-				value = tbl.kerillian_thorn_sister_tanky_wall.visualizer_extra_duration
+				value = buff_tweak_data.kerillian_thorn_sister_tanky_wall.visualizer_extra_duration
 			}
 		},
 		buffs = {}
@@ -699,10 +699,10 @@ local tbl_4 = {
 		description_values = {
 			{
 				value_type = "percent",
-				value = tbl.kerillian_thorn_sister_debuff_wall_buff.multiplier
+				value = buff_tweak_data.kerillian_thorn_sister_debuff_wall_buff.multiplier
 			},
 			{
-				value = tbl.kerillian_thorn_sister_debuff_wall_buff.duration
+				value = buff_tweak_data.kerillian_thorn_sister_debuff_wall_buff.duration
 			}
 		},
 		buffs = {},
@@ -713,28 +713,30 @@ local tbl_4 = {
 		}
 	}
 }
-local str = "wood_elf"
+local hero_name = "wood_elf"
 
-table.merge(TalentBuffTemplates[str], tbl_2)
-table.append(TalentTrees[str], tbl_3)
-table.append(Talents[str], tbl_4)
+table.merge(TalentBuffTemplates[hero_name], talent_buff_templates)
+table.append(TalentTrees[hero_name], talent_trees)
+table.append(Talents[hero_name], talents)
 
 local WeaveLoadoutSettings = WeaveLoadoutSettings
 
-WeaveLoadoutSettings = WeaveLoadoutSettings or {}
+WeaveLoadoutSettings = not not WeaveLoadoutSettings or not not {}
 WeaveLoadoutSettings = WeaveLoadoutSettings
 WeaveLoadoutSettings.we_thornsister = {
-	talent_tree = tbl_3[1],
+	talent_tree = talent_trees[1],
 	properties = {},
 	traits = {}
 }
 
-for k, v in pairs(tbl_2) do
-	local buffs = v.buffs
+for name, data in pairs(talent_buff_templates) do
+	local buffs = data.buffs
 
 	fassert(#buffs == 1, "talent buff has more than one sub buff, add multiple buffs from the talent instead")
 
-	buffs[1].name = k
+	local buff = buffs[1]
+
+	buff.name = name
 end
 
-BuffUtils.apply_buff_tweak_data(tbl_2, tbl)
+BuffUtils.apply_buff_tweak_data(talent_buff_templates, buff_tweak_data)

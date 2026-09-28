@@ -1,11 +1,11 @@
 -- chunkname: @scripts/settings/dlcs/holly/holly_level_settings.lua
 
-local holly = DLCSettings.holly
+local settings = DLCSettings.holly
 
-holly.level_settings = "levels/honduras_dlcs/holly/level_settings_holly"
-holly.level_unlock_settings = "levels/honduras_dlcs/holly/level_unlock_settings_holly"
-holly.terror_event_blueprints_filename = "levels/honduras_dlcs/holly/terror_events_holly"
-holly.weighted_random_terror_events = {
+settings.level_settings = "levels/honduras_dlcs/holly/level_settings_holly"
+settings.level_unlock_settings = "levels/honduras_dlcs/holly/level_unlock_settings_holly"
+settings.terror_event_blueprints_filename = "levels/honduras_dlcs/holly/terror_events_holly"
+settings.weighted_random_terror_events = {
 	magnus_door = {
 		"magnus_door_a",
 		1,
@@ -53,7 +53,7 @@ holly.weighted_random_terror_events = {
 		1
 	}
 }
-holly.missions = {
+settings.missions = {
 	plaza_investigate = {
 		mission_template_name = "goal",
 		text = "mission_plaza_investigate"

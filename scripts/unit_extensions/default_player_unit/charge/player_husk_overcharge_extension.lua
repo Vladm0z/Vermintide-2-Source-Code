@@ -4,47 +4,47 @@ require("scripts/unit_extensions/default_player_unit/charge/overcharge_data")
 
 PlayerHuskOverchargeExtension = class(PlayerHuskOverchargeExtension)
 
-PlayerHuskOverchargeExtension.init = function (self, arg_1_1, arg_1_2, arg_1_3)
+PlayerHuskOverchargeExtension.init = function (self, extension_init_context, unit, extension_init_data)
 	-- function 1
 	self.network_manager = Managers.state.network
-	self.unit = arg_1_2
+	self.unit = unit
 
-	local overcharge_data = arg_1_3.overcharge_data
+	local overcharge_data = extension_init_data.overcharge_data
 
 	self.overcharge_value = 0
 	self.overcharge_threshold = 0
-	self.max_value = arg_1_3.overcharge_max_value
+	self.max_value = extension_init_data.overcharge_max_value
 
 	local max_value = overcharge_data.max_value
 
-	max_value = max_value or 40
+	max_value = not not max_value or not not 40
 	self.original_max_value = max_value
 	self.overcharge_limit = self.max_value * 0.65
 	self.overcharge_critical_limit = self.max_value * 0.8
 	self._lerped_overcharge_fraction = 0
 end
 
-PlayerHuskOverchargeExtension.extensions_ready = function (self, arg_2_1, arg_2_2)
+PlayerHuskOverchargeExtension.extensions_ready = function (self, world, unit)
 	-- function 2
-	self.status_extension = ScriptUnit.extension(arg_2_2, "status_system")
+	self.status_extension = ScriptUnit.extension(unit, "status_system")
 end
 
-PlayerHuskOverchargeExtension.set_screen_particle_opacity_modifier = function (arg_3_0)
+PlayerHuskOverchargeExtension.set_screen_particle_opacity_modifier = function (self)
 	-- function 3
 	return
 end
 
-PlayerHuskOverchargeExtension.reset = function (arg_4_0)
+PlayerHuskOverchargeExtension.reset = function (self)
 	-- function 4
 	return
 end
 
-PlayerHuskOverchargeExtension.destroy = function (arg_5_0)
+PlayerHuskOverchargeExtension.destroy = function (self)
 	-- function 5
 	return
 end
 
-PlayerHuskOverchargeExtension.set_animation_variable = function (arg_6_0)
+PlayerHuskOverchargeExtension.set_animation_variable = function (self)
 	-- function 6
 	return
 end
@@ -56,36 +56,38 @@ PlayerHuskOverchargeExtension._update_game_object = function (self)
 	local game = network_manager:game()
 	local go_id = Managers.state.unit_storage:go_id(unit)
 
-	if not game and not go_id then
-		local game_object_field = GameSession.game_object_field(game, go_id, "overcharge_percentage")
-		local game_object_field_2 = GameSession.game_object_field(game, go_id, "overcharge_threshold_percentage")
-		local game_object_field_3 = GameSession.game_object_field(game, go_id, "overcharge_max_value")
-		local num = game_object_field * game_object_field_3
+	if game and go_id then
+		local current_value_percentage = GameSession.game_object_field(game, go_id, "overcharge_percentage")
+		local threshold_percentage = GameSession.game_object_field(game, go_id, "overcharge_threshold_percentage")
+		local max_value = GameSession.game_object_field(game, go_id, "overcharge_max_value")
+		local value = current_value_percentage * max_value
+		local threshold = threshold_percentage * max_value
 
-		self.overcharge_threshold, self.overcharge_value = game_object_field_2 * game_object_field_3, num
-		self.max_value = game_object_field_3
-		self.overcharge_limit = game_object_field_3 * 0.65
-		self.overcharge_critical_limit = game_object_field_3 * 0.8
+		self.overcharge_value = value
+		self.overcharge_threshold = threshold
+		self.max_value = max_value
+		self.overcharge_limit = max_value * 0.65
+		self.overcharge_critical_limit = max_value * 0.8
 	end
 end
 
-PlayerHuskOverchargeExtension.update = function (self, arg_8_1, arg_8_2, arg_8_3, arg_8_4, arg_8_5)
+PlayerHuskOverchargeExtension.update = function (self, unit, input, dt, context, t)
 	-- function 8
-	self:_update_lerped_overcharge(arg_8_3)
+	self:_update_lerped_overcharge(dt)
 	self:_update_game_object()
 end
 
-PlayerHuskOverchargeExtension.add_charge = function (arg_9_0)
+PlayerHuskOverchargeExtension.add_charge = function (self)
 	-- function 9
 	return
 end
 
-PlayerHuskOverchargeExtension.remove_charge = function (arg_10_0)
+PlayerHuskOverchargeExtension.remove_charge = function (self)
 	-- function 10
 	return
 end
 
-PlayerHuskOverchargeExtension.hud_sound = function (arg_11_0)
+PlayerHuskOverchargeExtension.hud_sound = function (self)
 	-- function 11
 	return
 end
@@ -137,56 +139,57 @@ end
 
 PlayerHuskOverchargeExtension.current_overcharge_status = function (self)
 	-- function 21
-	local get_overcharge_value = self:get_overcharge_value()
-	local get_overcharge_threshold = self:get_overcharge_threshold()
-	local get_max_value = self:get_max_value()
+	local value = self:get_overcharge_value()
+	local threshold = self:get_overcharge_threshold()
+	local max_value = self:get_max_value()
 
-	return get_overcharge_value, get_overcharge_threshold, get_max_value
+	return value, threshold, max_value
 end
 
-PlayerHuskOverchargeExtension.vent_overcharge = function (arg_22_0)
+PlayerHuskOverchargeExtension.vent_overcharge = function (self)
 	-- function 22
 	return
 end
 
-PlayerHuskOverchargeExtension.vent_overcharge_done = function (arg_23_0)
+PlayerHuskOverchargeExtension.vent_overcharge_done = function (self)
 	-- function 23
 	return
 end
 
 PlayerHuskOverchargeExtension.get_anim_blend_overcharge = function (self)
 	-- function 24
-	local num = self._lerped_overcharge_fraction * self:get_max_value()
+	local overcharge_value = self._lerped_overcharge_fraction * self:get_max_value()
 	local overcharge_threshold = self.overcharge_threshold
 	local max_value = self.max_value
+	local anim_blend_value = math.clamp((overcharge_value - overcharge_threshold) / (max_value - overcharge_threshold), 0, 1)
 
-	return (math.clamp((num - overcharge_threshold) / (max_value - overcharge_threshold), 0, 1))
+	return anim_blend_value
 end
 
-PlayerHuskOverchargeExtension._update_lerped_overcharge = function (self, arg_25_1)
+PlayerHuskOverchargeExtension._update_lerped_overcharge = function (self, dt)
 	-- function 25
-	local overcharge_fraction = self:overcharge_fraction()
-	local _lerped_overcharge_fraction = self._lerped_overcharge_fraction
+	local target_fraction = self:overcharge_fraction()
+	local lerped_fraction = self._lerped_overcharge_fraction
 
-	if overcharge_fraction == _lerped_overcharge_fraction then
+	if target_fraction == lerped_fraction then
 		return
 	end
 
-	local num = 0.1
-	local num_2 = 0.2
-	local num_3 = 10
-	local num_4 = 0.3
-	local abs = math.abs(_lerped_overcharge_fraction - overcharge_fraction)
+	local slow_breakpoint, fast_breakpoint = 0.1, 0.2
+	local fast_multiplier = 10
+	local lerp_speed = 0.3
+	local diff = math.abs(lerped_fraction - target_fraction)
 
-	if num_2 < abs then
-		num_4 = num_4 * num_3
-	elseif num < abs then
-		num_4 = num_4 * math.remap(num, num_2, 1, num_3, abs)
+	if fast_breakpoint < diff then
+		lerp_speed = lerp_speed * fast_multiplier
+	elseif slow_breakpoint < diff then
+		lerp_speed = lerp_speed * math.remap(slow_breakpoint, fast_breakpoint, 1, fast_multiplier, diff)
 	end
 
-	local min = math.min(_lerped_overcharge_fraction, overcharge_fraction)
-	local max = math.max(_lerped_overcharge_fraction, overcharge_fraction)
-	local num_5 = _lerped_overcharge_fraction + math.sign(overcharge_fraction - _lerped_overcharge_fraction) * num_4 * arg_25_1
+	local min_fraction = math.min(lerped_fraction, target_fraction)
+	local max_fraction = math.max(lerped_fraction, target_fraction)
 
-	self._lerped_overcharge_fraction = math.clamp(num_5, min, max)
+	lerped_fraction = lerped_fraction + math.sign(target_fraction - lerped_fraction) * lerp_speed * dt
+	lerped_fraction = math.clamp(lerped_fraction, min_fraction, max_fraction)
+	self._lerped_overcharge_fraction = lerped_fraction
 end

@@ -1,24 +1,24 @@
 -- chunkname: @scripts/ui/views/start_game_view/windows/start_game_window_weave_quickplay.lua
 
-local var_0_0 = local_require("scripts/ui/views/start_game_view/windows/definitions/start_game_window_weave_quickplay_definitions")
-local widgets = var_0_0.widgets
-local create_difficulty_button = var_0_0.create_difficulty_button
-local scenegraph_definition = var_0_0.scenegraph_definition
-local animation_definitions = var_0_0.animation_definitions
-local flag = false
-local num = 1
+local definitions = local_require("scripts/ui/views/start_game_view/windows/definitions/start_game_window_weave_quickplay_definitions")
+local widgets_definitions = definitions.widgets
+local create_difficulty_button = definitions.create_difficulty_button
+local scenegraph_definition = definitions.scenegraph_definition
+local animation_definitions = definitions.animation_definitions
+local DO_RELOAD = false
+local STARTING_DIFFICULTY_INDEX = 1
 
 StartGameWindowWeaveQuickplay = class(StartGameWindowWeaveQuickplay)
 StartGameWindowWeaveQuickplay.NAME = "StartGameWindowWeaveQuickplay"
 
-StartGameWindowWeaveQuickplay.on_enter = function (self, arg_1_1, arg_1_2)
+StartGameWindowWeaveQuickplay.on_enter = function (self, params, offset)
 	-- function 1
 	print("[StartGameWindow] Enter Substate StartGameWindowWeaveQuickplay")
 
-	self._params = arg_1_1
-	self._parent = arg_1_1.parent
+	self._params = params
+	self._parent = params.parent
 
-	local ingame_ui_context = arg_1_1.ingame_ui_context
+	local ingame_ui_context = params.ingame_ui_context
 
 	self._ingame_ui = ingame_ui_context.ingame_ui
 	self._ui_renderer = ingame_ui_context.ui_renderer
@@ -37,13 +37,14 @@ StartGameWindowWeaveQuickplay.on_enter = function (self, arg_1_1, arg_1_2)
 	self._animations = {}
 	self._ui_animations = {}
 
-	self:_create_ui_elements(arg_1_1, arg_1_2)
+	self:_create_ui_elements(params, offset)
 	self:_setup_difficulties()
 	self:_start_transition_animation("on_enter")
 
-	local flag = true
+	local ignore_approval = true
+	local selected_difficulty_key = self._parent:get_difficulty_option(ignore_approval)
 
-	if not self._parent:get_difficulty_option(flag) then
+	if not selected_difficulty_key then
 		self._parent:set_difficulty_option(DefaultQuickPlayStartingDifficulty)
 	end
 
@@ -51,33 +52,33 @@ StartGameWindowWeaveQuickplay.on_enter = function (self, arg_1_1, arg_1_2)
 	self._parent:change_generic_actions("default_weave_quick_play")
 end
 
-StartGameWindowWeaveQuickplay._start_transition_animation = function (self, arg_2_1)
+StartGameWindowWeaveQuickplay._start_transition_animation = function (self, animation_name)
 	-- function 2
-	local tbl = {
+	local params = {
 		render_settings = self._render_settings
 	}
-	local _widgets_by_name = self._widgets_by_name
-	local start_animation = self._ui_animator:start_animation(arg_2_1, _widgets_by_name, scenegraph_definition, tbl)
+	local widgets = self._widgets_by_name
+	local anim_id = self._ui_animator:start_animation(animation_name, widgets, scenegraph_definition, params)
 
-	self._animations[arg_2_1] = start_animation
+	self._animations[animation_name] = anim_id
 end
 
-StartGameWindowWeaveQuickplay._create_ui_elements = function (self, arg_3_1, arg_3_2)
+StartGameWindowWeaveQuickplay._create_ui_elements = function (self, params, offset)
 	-- function 3
 	self._ui_scenegraph = UISceneGraph.init_scenegraph(scenegraph_definition)
 
-	local tbl = {}
-	local tbl_2 = {}
+	local widgets_by_name = {}
+	local widgets = {}
 
-	for k, v in pairs(widgets) do
-		local var_3_2 = UIWidget.init(v)
+	for name, widget_definition in pairs(widgets_definitions) do
+		local widget = UIWidget.init(widget_definition)
 
-		tbl_2[#tbl_2 + 1] = var_3_2
-		tbl[k] = var_3_2
+		widgets[#widgets + 1] = widget
+		widgets_by_name[name] = widget
 	end
 
-	self._widgets = tbl_2
-	self._widgets_by_name = tbl
+	self._widgets = widgets
+	self._widgets_by_name = widgets_by_name
 
 	UIRenderer.clear_scenegraph_queue(self._ui_renderer)
 
@@ -88,31 +89,32 @@ end
 
 StartGameWindowWeaveQuickplay._setup_input_buttons = function (self)
 	-- function 4
-	local window_input_service = self._parent:window_input_service()
-	local get_gamepad_input_texture_data = UISettings.get_gamepad_input_texture_data(window_input_service, "refresh_press", true)
-	local play_button_console = self._widgets_by_name.play_button_console
-	local input_texture = play_button_console.style.input_texture
+	local input_service = self._parent:window_input_service()
+	local start_game_input_data = UISettings.get_gamepad_input_texture_data(input_service, "refresh_press", true)
+	local widgets_by_name = self._widgets_by_name
+	local play_button_console = widgets_by_name.play_button_console
+	local input_texture_style = play_button_console.style.input_texture
 
-	input_texture.horizontal_alignment = "center"
-	input_texture.vertical_alignment = "center"
-	input_texture.texture_size = {
-		get_gamepad_input_texture_data.size[1],
-		get_gamepad_input_texture_data.size[2]
+	input_texture_style.horizontal_alignment = "center"
+	input_texture_style.vertical_alignment = "center"
+	input_texture_style.texture_size = {
+		start_game_input_data.size[1],
+		start_game_input_data.size[2]
 	}
-	play_button_console.content.input_texture = get_gamepad_input_texture_data.texture
+	play_button_console.content.input_texture = start_game_input_data.texture
 end
 
-StartGameWindowWeaveQuickplay.on_exit = function (self, arg_5_1)
+StartGameWindowWeaveQuickplay.on_exit = function (self, params)
 	-- function 5
 	print("[StartGameWindow] Exit Substate StartGameWindowWeaveQuickplay")
 
 	self._ui_animator = nil
 end
 
-StartGameWindowWeaveQuickplay.update = function (self, arg_6_1, arg_6_2)
+StartGameWindowWeaveQuickplay.update = function (self, dt, t)
 	-- function 6
-	if not flag then
-		flag = false
+	if DO_RELOAD then
+		DO_RELOAD = false
 
 		self:_create_ui_elements()
 	end
@@ -120,45 +122,46 @@ StartGameWindowWeaveQuickplay.update = function (self, arg_6_1, arg_6_2)
 	self:_update_can_play()
 	self:_handle_gamepad_activity()
 	self:_sync_selected_difficulty()
-	self:_handle_input(arg_6_1, arg_6_2)
-	self:_update_animations(arg_6_1)
-	self:draw(arg_6_1)
+	self:_handle_input(dt, t)
+	self:_update_animations(dt)
+	self:draw(dt)
 end
 
 StartGameWindowWeaveQuickplay._handle_gamepad_activity = function (self)
 	-- function 7
-	local flag = self.gamepad_active_last_frame == nil
+	local force_update = self.gamepad_active_last_frame == nil
+	local gamepad_active = Managers.input:is_device_active("gamepad")
 
-	if not Managers.input:is_device_active("gamepad") then
-		if not self.gamepad_active_last_frame and not flag then
+	if gamepad_active then
+		if not self.gamepad_active_last_frame or force_update then
 			self.gamepad_active_last_frame = true
 
-			local _widgets_by_name = self._widgets_by_name
+			local widgets_by_name = self._widgets_by_name
 
-			_widgets_by_name.play_button.content.visible = false
-			_widgets_by_name.play_button_console.content.visible = true
+			widgets_by_name.play_button.content.visible = false
+			widgets_by_name.play_button_console.content.visible = true
 		end
-	elseif self.gamepad_active_last_frame or not flag then
+	elseif self.gamepad_active_last_frame or force_update then
 		self.gamepad_active_last_frame = false
 
-		local _widgets_by_name_2 = self._widgets_by_name
+		local widgets_by_name = self._widgets_by_name
 
-		_widgets_by_name_2.play_button.content.visible = true
-		_widgets_by_name_2.play_button_console.content.visible = false
+		widgets_by_name.play_button.content.visible = true
+		widgets_by_name.play_button_console.content.visible = false
 	end
 end
 
 StartGameWindowWeaveQuickplay._update_can_play = function (self)
 	-- function 8
-	local _widgets_by_name = self._widgets_by_name
-	local is_game_matchmaking = Managers.matchmaking:is_game_matchmaking()
-	local _is_matchmaking = self._is_matchmaking
+	local widgets_by_name = self._widgets_by_name
+	local is_matchmaking = Managers.matchmaking:is_game_matchmaking()
+	local was_matchmaking = self._is_matchmaking
 
-	self._is_matchmaking = is_game_matchmaking
+	self._is_matchmaking = is_matchmaking
 
-	if is_game_matchmaking ~= _is_matchmaking then
-		if not is_game_matchmaking then
-			_widgets_by_name.play_button.content.button_hotspot.disable_button = true
+	if is_matchmaking ~= was_matchmaking then
+		if is_matchmaking then
+			widgets_by_name.play_button.content.button_hotspot.disable_button = true
 
 			self._parent:set_input_description("cancel_matchmaking")
 		else
@@ -168,10 +171,10 @@ StartGameWindowWeaveQuickplay._update_can_play = function (self)
 
 	local play_button_console = self._widgets_by_name.play_button_console
 
-	if not is_game_matchmaking then
+	if is_matchmaking then
 		play_button_console.content.text = Localize("cancel_matchmaking")
 
-		if not self._is_server then
+		if self._is_server then
 			play_button_console.content.locked = false
 		else
 			play_button_console.content.locked = true
@@ -184,317 +187,386 @@ end
 
 StartGameWindowWeaveQuickplay._sync_selected_difficulty = function (self)
 	-- function 9
-	local _parent = self._parent
-	local flag = true
-	local get_difficulty_option = _parent:get_difficulty_option(flag)
+	local parent = self._parent
+	local ignore_approval = true
+	local selected_difficulty_key = parent:get_difficulty_option(ignore_approval)
 
-	if not (not get_difficulty_option and get_difficulty_option == self._selected_difficulty_key) then
-		print(get_difficulty_option)
+	if selected_difficulty_key and selected_difficulty_key ~= self._selected_difficulty_key then
+		print(selected_difficulty_key)
 
-		self._selected_difficulty_key = get_difficulty_option
+		self._selected_difficulty_key = selected_difficulty_key
 
-		self:_set_difficulty_selected(get_difficulty_option)
+		self:_set_difficulty_selected(selected_difficulty_key)
 
-		local _difficulty_widgets = self._difficulty_widgets
+		local difficulty_widgets = self._difficulty_widgets
 
-		for i = 1, #_difficulty_widgets do
-			local content = _difficulty_widgets[i].content
-			local flag_2 = content.difficulty_key == get_difficulty_option
+		for i = 1, #difficulty_widgets do
+			local widget = difficulty_widgets[i]
+			local content = widget.content
+			local difficulty_key = content.difficulty_key
+			local is_selected = difficulty_key == selected_difficulty_key
 
-			content.button_hotspot.is_selected = flag_2
+			content.button_hotspot.is_selected = is_selected
 
-			if not flag_2 then
+			if is_selected then
 				self._selected_difficulty_index = i
 			end
 		end
 	end
 end
 
-StartGameWindowWeaveQuickplay._handle_input = function (self, arg_10_1, arg_10_2)
+StartGameWindowWeaveQuickplay._handle_input = function (self, dt, t)
 	-- function 10
-	local _parent = self._parent
-	local _widgets_by_name = self._widgets_by_name
-	local is_device_active = Managers.input:is_device_active("mouse")
-	local window_input_service = self._parent:window_input_service()
-	local play_button = _widgets_by_name.play_button
+	local parent = self._parent
+	local widgets_by_name = self._widgets_by_name
+	local mouse_active = Managers.input:is_device_active("mouse")
+	local input_service = self._parent:window_input_service()
+	local play_button = widgets_by_name.play_button
 
-	if not self:_is_button_hover_enter(play_button) then
+	if self:_is_button_hover_enter(play_button) then
 		self:_play_sound("Play_hud_hover")
 	end
 
 	local get
 
-	if not is_device_active then
-		get = window_input_service:get("refresh_press")
+	if not mouse_active then
+		get = input_service:get("refresh_press")
 
 		if not get then
 			-- Nothing
 		end
 	end
 
-	get = window_input_service:get("skip_press")
+	get = input_service:get("skip_press")
+
+	local play_pressed = get
 
 	::label_10_0::
 
-	if not self._is_matchmaking then
-		if not get then
+	if self._is_matchmaking then
+		if play_pressed then
 			Managers.matchmaking:cancel_matchmaking()
 			self:_play_sound("play_gui_lobby_button_01_difficulty_select_hover")
 		end
-	elseif self:_is_button_released(play_button) or not get then
-		_parent:play(arg_10_2, "weave_quick_play")
+	elseif self:_is_button_released(play_button) or play_pressed then
+		parent:play(t, "weave_quick_play")
 		self:_play_sound("menu_wind_level_choose_wind")
 	end
 
-	local _difficulty_widgets = self._difficulty_widgets
+	local difficulty_widgets = self._difficulty_widgets
 
-	if not is_device_active then
-		for i = 1, #_difficulty_widgets do
-			local var_10_7 = _difficulty_widgets[i]
+	if mouse_active then
+		for i = 1, #difficulty_widgets do
+			local widget = difficulty_widgets[i]
 
-			if not self:_is_button_hover_enter(var_10_7) then
+			if self:_is_button_hover_enter(widget) then
 				self:_play_sound("play_gui_lobby_button_01_difficulty_select_hover")
 			end
 
-			if not self:_is_button_released(var_10_7) then
-				local difficulty_key = var_10_7.content.difficulty_key
+			if self:_is_button_released(widget) then
+				local content = widget.content
+				local difficulty_key = content.difficulty_key
 
-				_parent:set_difficulty_option(difficulty_key)
+				parent:set_difficulty_option(difficulty_key)
 
 				local difficulties_select_sounds = UISettings.difficulties_select_sounds
-				local var_10_10 = difficulties_select_sounds[i]
+				local var_10_1 = difficulties_select_sounds[i]
 
-				var_10_10 = var_10_10 or difficulties_select_sounds[#difficulties_select_sounds]
+				if not var_10_1 then
+					-- Nothing
+				end
 
-				self:_play_sound(var_10_10)
+				var_10_1 = difficulties_select_sounds[#difficulties_select_sounds]
+
+				local sound_event = var_10_1
+
+				::label_10_1::
+
+				self:_play_sound(sound_event)
 			end
 		end
 	else
+		local old_current_difficulty_index = self._current_difficulty_index
 		local _current_difficulty_index = self._current_difficulty_index
-		local _current_difficulty_index_2 = self._current_difficulty_index
 
-		_current_difficulty_index_2 = _current_difficulty_index_2 or 1
-		self._current_difficulty_index = _current_difficulty_index_2
+		_current_difficulty_index = not not _current_difficulty_index or not not 1
+		self._current_difficulty_index = _current_difficulty_index
 
-		if not window_input_service:get("move_left") then
-			self._current_difficulty_index = math.clamp(self._current_difficulty_index - 1, 1, #_difficulty_widgets)
-		elseif not window_input_service:get("move_right") then
-			self._current_difficulty_index = math.clamp(self._current_difficulty_index + 1, 1, #_difficulty_widgets)
-		elseif not window_input_service:get("confirm_press") then
+		if input_service:get("move_left") then
+			self._current_difficulty_index = math.clamp(self._current_difficulty_index - 1, 1, #difficulty_widgets)
+		elseif input_service:get("move_right") then
+			self._current_difficulty_index = math.clamp(self._current_difficulty_index + 1, 1, #difficulty_widgets)
+		elseif input_service:get("confirm_press") then
 			if self._current_difficulty_index ~= self._selected_difficulty_index then
-				local difficulty_key_2 = self._difficulty_widgets[self._current_difficulty_index].content.difficulty_key
+				local widget = self._difficulty_widgets[self._current_difficulty_index]
+				local content = widget.content
+				local difficulty_key = content.difficulty_key
 
-				_parent:set_difficulty_option(difficulty_key_2)
+				parent:set_difficulty_option(difficulty_key)
 
-				local difficulties_select_sounds_2 = UISettings.difficulties_select_sounds
-				local var_10_15 = difficulties_select_sounds_2[self._current_difficulty_index]
+				local difficulties_select_sounds = UISettings.difficulties_select_sounds
+				local var_10_3 = difficulties_select_sounds[self._current_difficulty_index]
 
-				var_10_15 = var_10_15 or difficulties_select_sounds_2[#difficulties_select_sounds_2]
+				if not var_10_3 then
+					-- Nothing
+				end
 
-				self:_play_sound(var_10_15)
+				var_10_3 = difficulties_select_sounds[#difficulties_select_sounds]
+
+				local sound_event = var_10_3
+
+				::label_10_2::
+
+				self:_play_sound(sound_event)
 
 				self._selected_difficulty_index = self._current_difficulty_index
 			end
-		elseif not window_input_service:get("trigger_cycle_next") then
+		elseif input_service:get("trigger_cycle_next") then
 			Managers.state.event:trigger("weave_tutorial_message", WeaveUITutorials.weave_quickplay_desc)
 		end
 
-		if _current_difficulty_index ~= self._current_difficulty_index then
+		if old_current_difficulty_index ~= self._current_difficulty_index then
 			self:_play_sound("play_gui_lobby_button_01_difficulty_select_hover")
 
-			if not _current_difficulty_index then
-				self._difficulty_widgets[_current_difficulty_index].content.has_focus = false
+			if old_current_difficulty_index then
+				local widget = self._difficulty_widgets[old_current_difficulty_index]
+
+				widget.content.has_focus = false
 			end
 
-			self._difficulty_widgets[self._current_difficulty_index].content.has_focus = true
+			local widget = self._difficulty_widgets[self._current_difficulty_index]
+
+			widget.content.has_focus = true
 		end
 	end
 end
 
-StartGameWindowWeaveQuickplay._is_button_released = function (arg_11_0, arg_11_1)
+StartGameWindowWeaveQuickplay._is_button_released = function (self, widget)
 	-- function 11
-	local content = arg_11_1.content
+	local content = widget.content
 	local button_hotspot = content.button_hotspot
 
-	button_hotspot = button_hotspot or content.hotspot
+	if not button_hotspot then
+		-- Nothing
+	end
 
-	if not button_hotspot.on_release then
-		button_hotspot.on_release = false
+	button_hotspot = content.hotspot
+
+	local hotspot = button_hotspot
+
+	::label_11_0::
+
+	if hotspot.on_release then
+		hotspot.on_release = false
 
 		return true
 	end
 end
 
-StartGameWindowWeaveQuickplay._is_button_hover_enter = function (arg_12_0, arg_12_1)
+StartGameWindowWeaveQuickplay._is_button_hover_enter = function (self, widget)
 	-- function 12
-	local content = arg_12_1.content
+	local content = widget.content
 	local button_hotspot = content.button_hotspot
 
-	button_hotspot = button_hotspot or content.hotspot
+	if not button_hotspot then
+		-- Nothing
+	end
 
-	return button_hotspot.on_hover_enter
+	button_hotspot = content.hotspot
+
+	local hotspot = button_hotspot
+
+	::label_12_0::
+
+	return hotspot.on_hover_enter
 end
 
-StartGameWindowWeaveQuickplay.post_update = function (arg_13_0, arg_13_1, arg_13_2)
+StartGameWindowWeaveQuickplay.post_update = function (self, dt, t)
 	-- function 13
 	return
 end
 
-StartGameWindowWeaveQuickplay._update_animations = function (self, arg_14_1)
+StartGameWindowWeaveQuickplay._update_animations = function (self, dt)
 	-- function 14
-	local _difficulty_widgets = self._difficulty_widgets
+	local difficulty_widgets = self._difficulty_widgets
 
-	if not _difficulty_widgets then
-		for i = 1, #_difficulty_widgets do
-			local var_14_1 = _difficulty_widgets[i]
+	if difficulty_widgets then
+		for i = 1, #difficulty_widgets do
+			local widget = difficulty_widgets[i]
 
-			self:_animate_difficulty_button(var_14_1, arg_14_1)
+			self:_animate_difficulty_button(widget, dt)
 		end
 	end
 
-	local _ui_animations = self._ui_animations
-	local _animations = self._animations
-	local _ui_animator = self._ui_animator
+	local ui_animations = self._ui_animations
+	local animations = self._animations
+	local ui_animator = self._ui_animator
 
-	for k, v in pairs(_ui_animations) do
-		UIAnimation.update(v, arg_14_1)
+	for name, animation in pairs(ui_animations) do
+		UIAnimation.update(animation, dt)
 
-		if not UIAnimation.completed(v) then
-			_ui_animations[k] = nil
+		if UIAnimation.completed(animation) then
+			ui_animations[name] = nil
 		end
 	end
 
-	_ui_animator:update(arg_14_1)
+	ui_animator:update(dt)
 
-	for k_2, v_2 in pairs(_animations) do
-		if not _ui_animator:is_animation_completed(v_2) then
-			_ui_animator:stop_animation(v_2)
+	for animation_name, animation_id in pairs(animations) do
+		if ui_animator:is_animation_completed(animation_id) then
+			ui_animator:stop_animation(animation_id)
 
-			_animations[k_2] = nil
+			animations[animation_name] = nil
 		end
 	end
 end
 
-StartGameWindowWeaveQuickplay._play_sound = function (self, arg_15_1)
+StartGameWindowWeaveQuickplay._play_sound = function (self, event)
 	-- function 15
-	self._parent:play_sound(arg_15_1)
+	self._parent:play_sound(event)
 end
 
-StartGameWindowWeaveQuickplay._exit = function (self, arg_16_1)
+StartGameWindowWeaveQuickplay._exit = function (self, selected_level)
 	-- function 16
 	self.exit = true
-	self.exit_level_id = arg_16_1
+	self.exit_level_id = selected_level
 end
 
-StartGameWindowWeaveQuickplay.draw = function (self, arg_17_1)
+StartGameWindowWeaveQuickplay.draw = function (self, dt)
 	-- function 17
-	local _ui_renderer = self._ui_renderer
-	local _ui_top_renderer = self._ui_top_renderer
-	local _ui_hdr_renderer = self._ui_hdr_renderer
-	local _ui_scenegraph = self._ui_scenegraph
-	local _render_settings = self._render_settings
-	local window_input_service = self._parent:window_input_service()
+	local ui_renderer = self._ui_renderer
+	local ui_top_renderer = self._ui_top_renderer
+	local ui_hdr_renderer = self._ui_hdr_renderer
+	local ui_scenegraph = self._ui_scenegraph
+	local render_settings = self._render_settings
+	local input_service = self._parent:window_input_service()
 
-	UIRenderer.begin_pass(_ui_top_renderer, _ui_scenegraph, window_input_service, arg_17_1, nil, _render_settings)
+	UIRenderer.begin_pass(ui_top_renderer, ui_scenegraph, input_service, dt, nil, render_settings)
 
-	for i, v in ipairs(self._widgets) do
-		UIRenderer.draw_widget(_ui_top_renderer, v)
+	for _, widget in ipairs(self._widgets) do
+		UIRenderer.draw_widget(ui_top_renderer, widget)
 	end
 
-	UIRenderer.end_pass(_ui_top_renderer)
+	UIRenderer.end_pass(ui_top_renderer)
 end
 
-StartGameWindowWeaveQuickplay._play_sound = function (self, arg_18_1)
+StartGameWindowWeaveQuickplay._play_sound = function (self, event)
 	-- function 18
-	self._parent:play_sound(arg_18_1)
+	self._parent:play_sound(event)
 end
 
-StartGameWindowWeaveQuickplay._animate_pulse = function (arg_19_0, arg_19_1, arg_19_2, arg_19_3, arg_19_4, arg_19_5)
+StartGameWindowWeaveQuickplay._animate_pulse = function (self, target, target_index, from, to, speed)
 	-- function 19
-	return (UIAnimation.init(UIAnimation.pulse_animation, arg_19_1, arg_19_2, arg_19_3, arg_19_4, arg_19_5))
+	local new_animation = UIAnimation.init(UIAnimation.pulse_animation, target, target_index, from, to, speed)
+
+	return new_animation
 end
 
-StartGameWindowWeaveQuickplay._animate_element_by_time = function (arg_20_0, arg_20_1, arg_20_2, arg_20_3, arg_20_4, arg_20_5)
+StartGameWindowWeaveQuickplay._animate_element_by_time = function (self, target, target_index, from, to, time)
 	-- function 20
-	return (UIAnimation.init(UIAnimation.function_by_time, arg_20_1, arg_20_2, arg_20_3, arg_20_4, arg_20_5, math.ease_out_quad))
+	local new_animation = UIAnimation.init(UIAnimation.function_by_time, target, target_index, from, to, time, math.ease_out_quad)
+
+	return new_animation
 end
 
-StartGameWindowWeaveQuickplay._animate_element_by_catmullrom = function (arg_21_0, arg_21_1, arg_21_2, arg_21_3, arg_21_4, arg_21_5, arg_21_6, arg_21_7, arg_21_8)
+StartGameWindowWeaveQuickplay._animate_element_by_catmullrom = function (self, target, target_index, target_value, p0, p1, p2, p3, time)
 	-- function 21
-	return (UIAnimation.init(UIAnimation.catmullrom, arg_21_1, arg_21_2, arg_21_3, arg_21_4, arg_21_5, arg_21_6, arg_21_7, arg_21_8))
+	local new_animation = UIAnimation.init(UIAnimation.catmullrom, target, target_index, target_value, p0, p1, p2, p3, time)
+
+	return new_animation
 end
 
-StartGameWindowWeaveQuickplay._set_difficulty_selected = function (self, arg_22_1)
+StartGameWindowWeaveQuickplay._set_difficulty_selected = function (self, difficulty_key)
 	-- function 22
-	local _widgets_by_name = self._widgets_by_name
-	local var_22_1 = DifficultySettings[arg_22_1]
-	local display_name = var_22_1.display_name
-	local description = var_22_1.description
-	local display_image = var_22_1.display_image
+	local widgets_by_name = self._widgets_by_name
+	local difficulty_settings = DifficultySettings[difficulty_key]
+	local display_name = difficulty_settings.display_name
+	local description = difficulty_settings.description
+	local display_image = difficulty_settings.display_image
 
-	_widgets_by_name.difficulty_title.content.text = display_name
-	_widgets_by_name.difficulty_description.content.text = description
-	_widgets_by_name.difficulty_selected.content.texture_id = display_image
+	widgets_by_name.difficulty_title.content.text = display_name
+	widgets_by_name.difficulty_description.content.text = description
+	widgets_by_name.difficulty_selected.content.texture_id = display_image
 end
 
 StartGameWindowWeaveQuickplay._setup_difficulties = function (self)
 	-- function 23
-	local tbl = {}
-	local get_default_difficulties = Managers.state.difficulty:get_default_difficulties()
-	local _widgets = self._widgets
-	local _widgets_by_name = self._widgets_by_name
-	local num_2 = 1
-	local str = "difficulty_option_"
-	local num_3 = 70
-	local str_2 = "difficulty_option"
-	local size = scenegraph_definition[str_2].size
-	local var_23_9 = create_difficulty_button(str_2, size)
-	local num_4 = 0
-	local tbl_2 = {}
+	local difficulty_widgets = {}
+	local difficulties = Managers.state.difficulty:get_default_difficulties()
+	local widgets = self._widgets
+	local widgets_by_name = self._widgets_by_name
+	local widget_index_counter = 1
+	local widget_prefix = "difficulty_option_"
+	local spacing = 70
+	local scenegraph_id = "difficulty_option"
+	local size = scenegraph_definition[scenegraph_id].size
+	local widget_definition = create_difficulty_button(scenegraph_id, size)
+	local current_offset = 0
+	local dlc_difficulties = {}
 
-	for i = num, #get_default_difficulties do
-		local var_23_12 = get_default_difficulties[i]
-		local var_23_13 = DifficultySettings[var_23_12]
-		local display_name = var_23_13.display_name
-		local display_image = var_23_13.display_image
-		local var_23_16 = UIWidget.init(var_23_9)
+	for i = STARTING_DIFFICULTY_INDEX, #difficulties do
+		local difficulty_key = difficulties[i]
+		local difficulty_settings = DifficultySettings[difficulty_key]
+		local display_name = difficulty_settings.display_name
+		local display_image = difficulty_settings.display_image
+		local widget = UIWidget.init(widget_definition)
+		local widget_name = widget_prefix .. widget_index_counter
 
-		_widgets_by_name[str .. num_2] = var_23_16
-		_widgets[#_widgets + 1] = var_23_16
-		tbl[#tbl + 1] = var_23_16
+		widgets_by_name[widget_name] = widget
+		widgets[#widgets + 1] = widget
+		difficulty_widgets[#difficulty_widgets + 1] = widget
 
-		local offset = var_23_16.offset
-		local content = var_23_16.content
+		local offset = widget.offset
+		local content = widget.content
 
-		content.difficulty_key = var_23_12
+		content.difficulty_key = difficulty_key
 		content.title_text = Localize(display_name)
 		content.icon = display_image
-		offset[1] = num_4
-		num_4 = num_4 + (size[1] + num_3)
-		num_2 = num_2 + 1
+		offset[1] = current_offset
+		current_offset = current_offset + (size[1] + spacing)
+		widget_index_counter = widget_index_counter + 1
 	end
 
-	self._ui_scenegraph[str_2].position[1] = -(num_2 * (size[1] + num_3) * 0.5) + (size[1] + num_3)
-	self._difficulty_widgets = tbl
+	self._ui_scenegraph[scenegraph_id].position[1] = -(widget_index_counter * (size[1] + spacing) * 0.5) + (size[1] + spacing)
+	self._difficulty_widgets = difficulty_widgets
 end
 
-StartGameWindowWeaveQuickplay._animate_difficulty_button = function (arg_24_0, arg_24_1, arg_24_2)
+StartGameWindowWeaveQuickplay._animate_difficulty_button = function (self, widget, dt)
 	-- function 24
-	local content = arg_24_1.content
-	local style = arg_24_1.style
-	local hotspot = content.hotspot
+	local content = widget.content
+	local style = widget.style
+	local hotspot_2 = content.hotspot
 
-	hotspot = hotspot or content.button_hotspot
+	if not hotspot_2 then
+		-- Nothing
+	end
+
+	hotspot_2 = content.button_hotspot
+
+	local hotspot = hotspot_2
+
+	::label_24_0::
 
 	local has_focus = content.has_focus
-	local is_hover = hotspot.is_hover
+	local is_hover_2 = hotspot.is_hover
 
-	is_hover = is_hover or has_focus
+	if not is_hover_2 then
+		-- Nothing
+	end
+
+	is_hover_2 = has_focus
+
+	local is_hover = is_hover_2
+
+	::label_24_1::
 
 	local is_selected = hotspot.is_selected
+	local is_clicked
 
 	if not is_selected then
-		if not hotspot.is_clicked then
+		is_clicked = hotspot.is_clicked
+
+		if is_clicked then
 			-- Nothing
 		end
 
@@ -503,53 +575,67 @@ StartGameWindowWeaveQuickplay._animate_difficulty_button = function (arg_24_0, a
 		end
 	end
 
-	do
-		local flag = false
+	is_clicked = false
 
-		goto label_24_1
+	goto label_24_3
+
+	::label_24_2::
+
+	is_clicked = true
+
+	local input_pressed = is_clicked
+
+	::label_24_3::
+
+	local hover_progress_2 = hotspot.hover_progress
+
+	if not hover_progress_2 then
+		-- Nothing
 	end
 
-	::label_24_0::
+	hover_progress_2 = 0
 
-	do
-		local flag_2 = true
+	local hover_progress = hover_progress_2
+
+	::label_24_4::
+
+	local selection_progress_2 = hotspot.selection_progress
+
+	if not selection_progress_2 then
+		-- Nothing
 	end
 
-	::label_24_1::
+	selection_progress_2 = 0
 
-	local hover_progress = hotspot.hover_progress
+	local selection_progress = selection_progress_2
 
-	hover_progress = hover_progress or 0
+	::label_24_5::
 
-	local selection_progress = hotspot.selection_progress
+	local speed = 3
 
-	selection_progress = selection_progress or 0
-
-	local num = 3
-
-	if not is_hover then
-		hover_progress = math.min(hover_progress + arg_24_2 * num, 1)
+	if is_hover then
+		hover_progress = math.min(hover_progress + dt * speed, 1)
 	else
-		hover_progress = math.max(hover_progress - arg_24_2 * num, 0)
+		hover_progress = math.max(hover_progress - dt * speed, 0)
 	end
 
-	if not is_selected then
-		selection_progress = math.min(selection_progress + arg_24_2 * num, 1)
+	if is_selected then
+		selection_progress = math.min(selection_progress + dt * speed, 1)
 	else
-		selection_progress = math.max(selection_progress - arg_24_2 * num, 0)
+		selection_progress = math.max(selection_progress - dt * speed, 0)
 	end
 
-	local max = math.max(hover_progress, selection_progress)
-	local num_2 = 255 * hover_progress
-	local num_3 = 255 * max
-	local num_4 = 255 * selection_progress
+	local combined_progress = math.max(hover_progress, selection_progress)
+	local hover_alpha = 255 * hover_progress
+	local combined_alpha = 255 * combined_progress
+	local select_alpha = 255 * selection_progress
 
-	style.background_glow.color[1] = num_2
-	style.title_text.text_color[1] = num_2
-	style.title_text_shadow.text_color[1] = num_2
-	style.title_text_disabled.text_color[1] = num_2
-	style.select_texture.color[1] = num_4
-	style.select_edge.color[1] = num_4
+	style.background_glow.color[1] = hover_alpha
+	style.title_text.text_color[1] = hover_alpha
+	style.title_text_shadow.text_color[1] = hover_alpha
+	style.title_text_disabled.text_color[1] = hover_alpha
+	style.select_texture.color[1] = select_alpha
+	style.select_edge.color[1] = select_alpha
 	hotspot.hover_progress = hover_progress
 	hotspot.selection_progress = selection_progress
 end

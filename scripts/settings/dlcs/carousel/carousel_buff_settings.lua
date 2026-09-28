@@ -1,23 +1,23 @@
 -- chunkname: @scripts/settings/dlcs/carousel/carousel_buff_settings.lua
 
-local carousel = DLCSettings.carousel
-local scripts_unit_extensions_default_player_unit_buffs_settings_buff_perk_names = require("scripts/unit_extensions/default_player_unit/buffs/settings/buff_perk_names")
+local settings = DLCSettings.carousel
+local buff_perks = require("scripts/unit_extensions/default_player_unit/buffs/settings/buff_perk_names")
 
-local function fn(arg_1_0)
+local function is_local(unit)
 	-- function 1
-	local owner = Managers.player:owner(arg_1_0)
+	local player = Managers.player:owner(unit)
 
-	return not owner and not owner.remote
+	return not not player and not not not player.remote
 end
 
-local function fn_2(arg_2_0)
+local function is_bot(unit)
 	-- function 2
-	local owner = Managers.player:owner(arg_2_0)
+	local player = Managers.player:owner(unit)
 
-	return not owner and owner.bot_player
+	return not not player and not not player.bot_player
 end
 
-carousel.buff_templates = {
+settings.buff_templates = {
 	vs_core_attack_speed_melee = {
 		buffs = {
 			{
@@ -66,7 +66,7 @@ carousel.buff_templates = {
 				max_stacks = 1,
 				icon = "bardin_ranger_activated_ability",
 				perks = {
-					scripts_unit_extensions_default_player_unit_buffs_settings_buff_perk_names.invulnerable
+					buff_perks.invulnerable
 				}
 			}
 		}
@@ -175,7 +175,7 @@ carousel.buff_templates = {
 				timed_status_effect_time = 2,
 				update_func = "update_vs_warpfirethrower_long_distance_damage",
 				perks = {
-					scripts_unit_extensions_default_player_unit_buffs_settings_buff_perk_names.burning_warpfire
+					buff_perks.burning_warpfire
 				}
 			}
 		}
@@ -198,7 +198,7 @@ carousel.buff_templates = {
 				icon = "troll_vomit_debuff",
 				push_speed = 9,
 				perks = {
-					scripts_unit_extensions_default_player_unit_buffs_settings_buff_perk_names.burning_warpfire
+					buff_perks.burning_warpfire
 				}
 			}
 		}
@@ -332,7 +332,7 @@ carousel.buff_templates = {
 				name = "vs_warpfire_thrower_no_charge_explotion",
 				icon = "sienna_scholar_overcharge_no_slow",
 				perks = {
-					scripts_unit_extensions_default_player_unit_buffs_settings_buff_perk_names.no_overcharge_explosion
+					buff_perks.no_overcharge_explosion
 				}
 			}
 		}
@@ -346,7 +346,7 @@ carousel.buff_templates = {
 				duration = 40,
 				priority_buff = true,
 				perks = {
-					scripts_unit_extensions_default_player_unit_buffs_settings_buff_perk_names.sister_no_player_lift
+					buff_perks.sister_no_player_lift
 				}
 			}
 		}
@@ -520,178 +520,207 @@ carousel.buff_templates = {
 	}
 }
 
-local function fn_3(arg_3_0, arg_3_1, arg_3_2, arg_3_3, arg_3_4)
+local function is_grail_knight_blocking(unit, attacker_unit, buff, params, world)
 	-- function 3
-	local go_id = Managers.state.unit_storage:go_id(arg_3_0)
+	local unit_id = Managers.state.unit_storage:go_id(unit)
 	local game = Managers.state.network:game()
-	local game_object_field = GameSession.game_object_field(game, go_id, "aim_direction")
-	local var_3_3 = POSITION_LOOKUP[arg_3_0]
-	local var_3_4 = POSITION_LOOKUP[arg_3_1]
-	local flat = Vector3.flat(var_3_4 - var_3_3)
-	local direction_length, var_3_7 = Vector3.direction_length(flat)
+	local unit_forward = GameSession.game_object_field(game, unit_id, "aim_direction")
+	local unit_pos = POSITION_LOOKUP[unit]
+	local attacker_pos = POSITION_LOOKUP[attacker_unit]
+	local to_attacker = Vector3.flat(attacker_pos - unit_pos)
+	local to_attacker_normalized, distance = Vector3.direction_length(to_attacker)
 
-	if var_3_7 < math.epsilon then
+	if distance < math.epsilon then
 		return true, 1
 	end
 
-	return Vector3.dot(game_object_field, direction_length) > math.cos(math.pi * 0.6666666666666666)
+	local unit_facing_attacker_dot = Vector3.dot(unit_forward, to_attacker_normalized)
+	local max_block_angle = math.cos(math.pi * 0.6666666666666666)
+	local is_power_blocking = max_block_angle < unit_facing_attacker_dot
+
+	return is_power_blocking
 end
 
-carousel.buff_function_templates = {
-	apply_vs_chaos_troll_regen = function (arg_4_0, arg_4_1, arg_4_2, arg_4_3)
+settings.buff_function_templates = {
+	apply_vs_chaos_troll_regen = function (unit, buff, params, world)
 		-- function 4
-		local template = arg_4_1.template
-		local extension = ScriptUnit.extension(arg_4_0, "health_system")
-		local num = extension:get_max_health() - extension:current_permanent_health()
-		local num_2 = num * template.heal_percentage
-		local num_3 = num_2 / arg_4_1.duration
+		local buff_template = buff.template
+		local health_extension = ScriptUnit.extension(unit, "health_system")
+		local max_health = health_extension:get_max_health()
+		local current_health = health_extension:current_permanent_health()
+		local missing_health = max_health - current_health
+		local health_to_heal = missing_health * buff_template.heal_percentage
+		local health_to_heal_per_sec = health_to_heal / buff.duration
 
-		arg_4_2.health_to_heal = num_2
-		arg_4_2.tick_rate = template.tick_rate
+		params.health_to_heal = health_to_heal
+		params.tick_rate = buff_template.tick_rate
 
-		local tick_rate = template.tick_rate
+		local tick_rate = buff_template.tick_rate
 
-		tick_rate = not tick_rate and num_3 * template.tick_rate
-		arg_4_2.health_to_heal_per_tick = tick_rate
-		arg_4_2.missing_health = num
-		arg_4_2.next_tick = arg_4_2.t + template.tick_rate
+		tick_rate = not not tick_rate and not not (health_to_heal_per_sec * buff_template.tick_rate)
+		params.health_to_heal_per_tick = tick_rate
+		params.missing_health = missing_health
+		params.next_tick = params.t + buff_template.tick_rate
 
-		local particle_vfx = template.particle_vfx
+		local particle_vfx = buff_template.particle_vfx
 
 		if not DEDICATED_SERVER then
-			local unit_owner = Managers.player:unit_owner(arg_4_0)
+			local player = Managers.player:unit_owner(unit)
 
-			if not unit_owner and not unit_owner.remote then
-				local get_third_person_mesh_unit = CosmeticsUtils.get_third_person_mesh_unit(arg_4_0)
-				local num_4 = 0
+			if player and player.remote then
+				local skin_unit = CosmeticsUtils.get_third_person_mesh_unit(unit)
+				local node = 0
 
-				arg_4_2.particle_id = ScriptWorld.create_particles_linked(arg_4_3, particle_vfx, get_third_person_mesh_unit, num_4, "destroy")
+				params.particle_id = ScriptWorld.create_particles_linked(world, particle_vfx, skin_unit, node, "destroy")
 
-				World.set_particles_life_time(arg_4_3, arg_4_2.particle_id, arg_4_1.duration)
-			elseif not (not unit_owner and not unit_owner.local_player and unit_owner.bot_player) then
-				local screen_space_effect = template.screen_space_effect
+				World.set_particles_life_time(world, params.particle_id, buff.duration)
+			elseif player and player.local_player and not player.bot_player then
+				local screen_space_effect = buff_template.screen_space_effect
+				local first_person_extension = ScriptUnit.has_extension(unit, "first_person_system")
 
-				arg_4_2.screen_space_id = ScriptUnit.has_extension(arg_4_0, "first_person_system"):create_screen_particles(screen_space_effect)
+				params.screen_space_id = first_person_extension:create_screen_particles(screen_space_effect)
 
-				World.set_particles_life_time(arg_4_3, arg_4_2.screen_space_id, arg_4_1.duration)
+				World.set_particles_life_time(world, params.screen_space_id, buff.duration)
 			end
 		end
 	end,
-	update_vs_chaos_troll_regen = function (arg_5_0, arg_5_1, arg_5_2, arg_5_3)
+	update_vs_chaos_troll_regen = function (unit, buff, params, world)
 		-- function 5
-		if arg_5_2.t > arg_5_2.next_tick then
-			arg_5_2.next_tick = arg_5_2.t + arg_5_2.tick_rate
+		if params.t > params.next_tick then
+			params.next_tick = params.t + params.tick_rate
 
-			if not Managers.state.network.is_server then
-				DamageUtils.heal_network(arg_5_0, arg_5_0, arg_5_2.health_to_heal_per_tick, "health_regen")
+			local is_server = Managers.state.network.is_server
+
+			if is_server then
+				DamageUtils.heal_network(unit, unit, params.health_to_heal_per_tick, "health_regen")
 			end
 		end
 	end,
-	remove_vs_chaos_troll_regen = function (arg_6_0, arg_6_1, arg_6_2, arg_6_3)
+	remove_vs_chaos_troll_regen = function (unit, buff, params, world)
 		-- function 6
 		return
 	end,
-	update_vs_boss_mood = function (arg_7_0, arg_7_1, arg_7_2, arg_7_3)
+	update_vs_boss_mood = function (unit, buff, params, world)
 		-- function 7
-		if not fn(arg_7_0) then
-			local template = arg_7_1.template
-			local unit_owner = Managers.player:unit_owner(arg_7_0)
-			local system = Managers.state.entity:system("camera_system")
+		if is_local(unit) then
+			local buff_template = buff.template
+			local player = Managers.player:unit_owner(unit)
+			local camera_system = Managers.state.entity:system("camera_system")
 
-			if not system and not unit_owner then
+			if camera_system and player then
 				-- Nothing
 			end
 
 			::label_7_1::
 
-			local camera_units = system.camera_units
+			local camera_units = camera_system.camera_units
 
-			camera_units = not camera_units and system.camera_units[unit_owner]
+			if camera_units then
+				-- Nothing
+			end
+
+			camera_units = camera_system.camera_units[player]
+
+			local camera_unit = camera_units
 
 			::label_7_2::
 
-			local var_7_4
+			local camera_state
 
-			if not camera_units then
-				local extension = ScriptUnit.extension(camera_units, "camera_state_machine_system")
+			if camera_unit then
+				local camera_state_ext = ScriptUnit.extension(camera_unit, "camera_state_machine_system")
 
-				var_7_4 = not extension.state_machine.state_current and extension.state_machine.state_current.name
+				camera_state = not not camera_state_ext.state_machine.state_current and not not camera_state_ext.state_machine.state_current.name
 			end
 
-			if not (not var_7_4 and var_7_4 == arg_7_2.previous_camera_state) then
-				Managers.state.camera:set_mood(template.mood, arg_7_1, var_7_4 == "follow")
+			if camera_state and camera_state ~= params.previous_camera_state then
+				Managers.state.camera:set_mood(buff_template.mood, buff, camera_state == "follow")
 			end
 
-			arg_7_2.previous_camera_state = var_7_4
+			params.previous_camera_state = camera_state
 		end
 	end,
-	start_vs_gutter_runner_smoke_bomb_invisibility = function (arg_8_0, arg_8_1, arg_8_2, arg_8_3)
+	start_vs_gutter_runner_smoke_bomb_invisibility = function (unit, buff, params, world)
 		-- function 8
-		if not fn(arg_8_0) then
-			ScriptUnit.extension(arg_8_0, "status_system"):set_invisible(true, nil, arg_8_1)
-			Managers.state.camera:set_mood("gutter_runner_f", arg_8_1, true)
+		if is_local(unit) then
+			local status_extension = ScriptUnit.extension(unit, "status_system")
+
+			status_extension:set_invisible(true, nil, buff)
+			Managers.state.camera:set_mood("gutter_runner_f", buff, true)
 		end
 	end,
-	end_vs_gutter_runner_smoke_bomb_invisibility = function (arg_9_0, arg_9_1, arg_9_2, arg_9_3)
+	end_vs_gutter_runner_smoke_bomb_invisibility = function (unit, buff, params, world)
 		-- function 9
-		if not fn(arg_9_0) then
-			ScriptUnit.extension(arg_9_0, "first_person_system"):play_unit_sound_event("Play_versus_gutterrunner_vanish_fps_end", arg_9_0, 0)
+		if is_local(unit) then
+			local first_person_extension = ScriptUnit.extension(unit, "first_person_system")
 
-			local extension = ScriptUnit.extension(arg_9_0, "career_system")
+			first_person_extension:play_unit_sound_event("Play_versus_gutterrunner_vanish_fps_end", unit, 0)
 
-			extension:set_state("default")
-			extension:start_activated_ability_cooldown(1)
-			ScriptUnit.extension(arg_9_0, "status_system"):set_invisible(false, nil, arg_9_1)
+			local career_extension = ScriptUnit.extension(unit, "career_system")
 
-			if not Managers.state.network:game() then
-				ScriptUnit.extension(arg_9_0, "status_system"):set_is_dodging(false)
+			career_extension:set_state("default")
+			career_extension:start_activated_ability_cooldown(1)
 
-				local network = Managers.state.network
-				local network_transmit = network.network_transmit
-				local unit_game_object_id = network:unit_game_object_id(arg_9_0)
+			local status_extension = ScriptUnit.extension(unit, "status_system")
 
-				network_transmit:send_rpc_server("rpc_status_change_bool", NetworkLookup.statuses.dodging, false, unit_game_object_id, 0)
+			status_extension:set_invisible(false, nil, buff)
+
+			if Managers.state.network:game() then
+				local status_extension = ScriptUnit.extension(unit, "status_system")
+
+				status_extension:set_is_dodging(false)
+
+				local network_manager = Managers.state.network
+				local network_transmit = network_manager.network_transmit
+				local unit_id = network_manager:unit_game_object_id(unit)
+
+				network_transmit:send_rpc_server("rpc_status_change_bool", NetworkLookup.statuses.dodging, false, unit_id, 0)
 			end
 
-			Managers.state.camera:set_mood("gutter_runner_f", arg_9_1, false)
+			Managers.state.camera:set_mood("gutter_runner_f", buff, false)
 		end
 	end,
-	apply_vs_warpfirethrower_long_distance_damage = function (arg_10_0, arg_10_1, arg_10_2, arg_10_3)
+	apply_vs_warpfirethrower_long_distance_damage = function (unit, buff, params, world)
 		-- function 10
-		local armor_category = Unit.get_data(arg_10_0, "breed").armor_category
+		local breed = Unit.get_data(unit, "breed")
+		local armor_category = breed.armor_category
 
-		armor_category = armor_category or 1
-		arg_10_1.armor_type = armor_category
+		armor_category = not not armor_category or not not 1
+		buff.armor_type = armor_category
 
-		local has_extension = ScriptUnit.has_extension(arg_10_0, "first_person_system")
+		local first_person_extension = ScriptUnit.has_extension(unit, "first_person_system")
 
-		if not has_extension then
-			arg_10_1.warpfire_particle_id = has_extension:create_screen_particles("fx/screenspace_warpfire_hit_onfeet")
+		if first_person_extension then
+			buff.warpfire_particle_id = first_person_extension:create_screen_particles("fx/screenspace_warpfire_hit_onfeet")
 		end
 
-		local attacker_unit
+		local attacker_unit_is_alive = ALIVE[params.attacker_unit]
+		local attacker_unit_2
 
-		if not ALIVE[arg_10_2.attacker_unit] then
-			attacker_unit = arg_10_2.attacker_unit
+		if attacker_unit_is_alive then
+			attacker_unit_2 = params.attacker_unit
 
-			if not attacker_unit then
+			if not attacker_unit_2 then
 				-- Nothing
 			end
 		end
 
-		attacker_unit = arg_10_0
+		attacker_unit_2 = unit
+
+		local attacker_unit = attacker_unit_2
 
 		::label_10_0::
 
-		if not Unit.alive(attacker_unit) then
-			local get_data = Unit.get_data(attacker_unit, "breed")
+		if Unit.alive(attacker_unit) then
+			local warpfire_unit_breed = Unit.get_data(attacker_unit, "breed")
+			local damage = warpfire_unit_breed.shoot_warpfire_long_attack_damage
 
-			arg_10_1.damage = get_data.shoot_warpfire_long_attack_damage
+			buff.damage = damage
 
 			local name
 
-			if not get_data then
-				name = get_data.name
+			if warpfire_unit_breed then
+				name = warpfire_unit_breed.name
 
 				if not name then
 					-- Nothing
@@ -702,72 +731,76 @@ carousel.buff_function_templates = {
 
 			::label_10_1::
 
-			arg_10_1.damage_source = name
+			buff.damage_source = name
 		end
 	end,
-	update_vs_warpfirethrower_long_distance_damage = function (arg_11_0, arg_11_1, arg_11_2, arg_11_3)
+	update_vs_warpfirethrower_long_distance_damage = function (unit, buff, params, world)
 		-- function 11
-		local t = arg_11_2.t
-		local template = arg_11_1.template
+		local t = params.t
+		local buff_template = buff.template
 
-		if not Managers.state.network.is_server then
-			local attacker_unit = arg_11_2.attacker_unit
-			local has_buff_perk = ScriptUnit.has_extension(arg_11_0, "buff_system"):has_buff_perk("power_block")
-			local flag = false
+		if Managers.state.network.is_server then
+			local attacker_unit = params.attacker_unit
+			local target_buff_extension = ScriptUnit.has_extension(unit, "buff_system")
+			local target_power_block_perk = target_buff_extension:has_buff_perk("power_block")
+			local is_power_blocking = false
 
-			if not has_buff_perk then
-				flag = fn_3(arg_11_0, attacker_unit, arg_11_1, arg_11_2, arg_11_3)
+			if target_power_block_perk then
+				is_power_blocking = is_grail_knight_blocking(unit, attacker_unit, buff, params, world)
 			end
 
-			if not flag and DamageUtils.check_ranged_block(attacker_unit, arg_11_0, "blocked_berzerker") or not HEALTH_ALIVE[arg_11_0] then
-				local armor_type = arg_11_1.armor_type
-				local damage_type = template.damage_type
-				local var_11_7 = arg_11_1.damage[armor_type]
-				local damage_source = arg_11_1.damage_source
+			if (not is_power_blocking or not DamageUtils.check_ranged_block(attacker_unit, unit, "blocked_berzerker")) and HEALTH_ALIVE[unit] then
+				local armor_type = buff.armor_type
+				local damage_type = buff_template.damage_type
+				local damage = buff.damage[armor_type]
+				local damage_source = buff.damage_source
 
-				DamageUtils.add_damage_network(arg_11_0, attacker_unit, var_11_7, "torso", damage_type, nil, Vector3(1, 0, 0), damage_source, nil, nil, nil, nil, nil, nil, nil, nil, nil, nil, 1)
+				DamageUtils.add_damage_network(unit, attacker_unit, damage, "torso", damage_type, nil, Vector3(1, 0, 0), damage_source, nil, nil, nil, nil, nil, nil, nil, nil, nil, nil, 1)
 			end
 		end
 
-		local has_extension = ScriptUnit.has_extension(arg_11_0, "first_person_system")
+		local first_person_extension = ScriptUnit.has_extension(unit, "first_person_system")
 
-		if not has_extension then
-			has_extension:play_hud_sound_event("Play_player_damage_puke")
+		if first_person_extension then
+			first_person_extension:play_hud_sound_event("Play_player_damage_puke")
 		end
 
-		return t + template.time_between_dot_damages
+		local warpfire_next_t = t + buff_template.time_between_dot_damages
+
+		return warpfire_next_t
 	end,
-	remove_vs_warpfirethrower_long_distance_damage = function (arg_12_0, arg_12_1, arg_12_2, arg_12_3)
+	remove_vs_warpfirethrower_long_distance_damage = function (unit, buff, params, world)
 		-- function 12
-		local has_extension = ScriptUnit.has_extension(arg_12_0, "first_person_system")
+		local first_person_extension = ScriptUnit.has_extension(unit, "first_person_system")
 
-		if not has_extension then
-			has_extension:stop_spawning_screen_particles(arg_12_1.warpfire_particle_id)
+		if first_person_extension then
+			first_person_extension:stop_spawning_screen_particles(buff.warpfire_particle_id)
 		end
 	end,
-	apply_warpfirethrower_in_face_versus = function (arg_13_0, arg_13_1, arg_13_2, arg_13_3)
+	apply_warpfirethrower_in_face_versus = function (unit, buff, params, world)
 		-- function 13
-		local template = arg_13_1.template
-		local has_extension = ScriptUnit.has_extension(arg_13_0, "first_person_system")
+		local buff_template = buff.template
+		local first_person_extension = ScriptUnit.has_extension(unit, "first_person_system")
 
-		if not has_extension then
-			arg_13_1.warpfire_particle_id = has_extension:create_screen_particles("fx/screenspace_warpfire_flamethrower_01")
-			arg_13_1.warpfire_particle_id_2 = has_extension:create_screen_particles("fx/screenspace_warpfire_hit_inface")
+		if first_person_extension then
+			buff.warpfire_particle_id = first_person_extension:create_screen_particles("fx/screenspace_warpfire_flamethrower_01")
+			buff.warpfire_particle_id_2 = first_person_extension:create_screen_particles("fx/screenspace_warpfire_hit_inface")
 
-			has_extension:play_hud_sound_event("Play_player_hit_warpfire_thrower")
+			first_person_extension:play_hud_sound_event("Play_player_hit_warpfire_thrower")
 		end
 
-		local attacker_unit = arg_13_2.attacker_unit
+		local attacker_unit = params.attacker_unit
 
-		if not Unit.alive(attacker_unit) then
-			local get_data = Unit.get_data(attacker_unit, "breed")
+		if Unit.alive(attacker_unit) then
+			local warpfire_unit_breed = Unit.get_data(attacker_unit, "breed")
+			local damage = warpfire_unit_breed.shoot_warpfire_long_attack_damage
 
-			arg_13_1.damage = get_data.shoot_warpfire_long_attack_damage
+			buff.damage = damage
 
 			local name
 
-			if not get_data then
-				name = get_data.name
+			if warpfire_unit_breed then
+				name = warpfire_unit_breed.name
 
 				if not name then
 					-- Nothing
@@ -778,35 +811,39 @@ carousel.buff_function_templates = {
 
 			::label_13_0::
 
-			arg_13_1.damage_source = name
+			buff.damage_source = name
 		end
 
-		local get_data_2 = Unit.get_data(arg_13_0, "breed")
-		local armor_category = get_data_2.armor_category
+		local breed = Unit.get_data(unit, "breed")
+		local armor_category = breed.armor_category
 
-		armor_category = armor_category or 1
-		arg_13_1.armor_type = armor_category
+		armor_category = not not armor_category or not not 1
+		buff.armor_type = armor_category
 
-		if not get_data_2.is_hero and not has_extension then
-			local has_extension_2 = ScriptUnit.has_extension(arg_13_0, "buff_system")
-			local has_extension_3 = ScriptUnit.has_extension(arg_13_0, "status_system")
+		if breed.is_hero and first_person_extension then
+			local buff_extension = ScriptUnit.has_extension(unit, "buff_system")
+			local status_extension = ScriptUnit.has_extension(unit, "status_system")
+			local no_ranged_knockback = not not buff_extension and not not buff_extension:has_buff_perk("no_ranged_knockback")
+			local is_valid_push_target = not no_ranged_knockback and not status_extension:is_disabled() and not not not status_extension:has_noclip()
 
-			if not (not not (not has_extension_2 and has_extension_2:has_buff_perk("no_ranged_knockback")) or not not has_extension_3:is_disabled() or not has_extension_3:has_noclip()) then
-				local extension = ScriptUnit.extension(arg_13_0, "locomotion_system")
-				local push_speed = template.push_speed
-				local var_13_11
+			if is_valid_push_target then
+				local locomotion_extension = ScriptUnit.extension(unit, "locomotion_system")
+				local push_speed = buff_template.push_speed
+				local pushed_direction
 
-				if not ALIVE[attacker_unit] then
-					local num = POSITION_LOOKUP[arg_13_0] - POSITION_LOOKUP[attacker_unit]
+				if ALIVE[attacker_unit] then
+					local victim_position = POSITION_LOOKUP[unit]
+					local attacker_position = POSITION_LOOKUP[attacker_unit]
+					local to_victim = victim_position - attacker_position
 
-					var_13_11 = Vector3.normalize(num)
+					pushed_direction = Vector3.normalize(to_victim)
 				else
-					var_13_11 = Vector3.backward()
+					pushed_direction = Vector3.backward()
 				end
 
-				local num_2 = var_13_11 * push_speed
+				local pushed_velocity = pushed_direction * push_speed
 
-				extension:add_external_velocity(num_2)
+				locomotion_extension:add_external_velocity(pushed_velocity)
 			end
 		end
 	end

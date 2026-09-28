@@ -2,63 +2,63 @@
 
 ActionCareerWEThornsisterStagger = class(ActionCareerWEThornsisterStagger, ActionBase)
 
-ActionCareerWEThornsisterStagger.init = function (self, arg_1_1, arg_1_2, arg_1_3, arg_1_4, arg_1_5, arg_1_6, arg_1_7, arg_1_8)
+ActionCareerWEThornsisterStagger.init = function (self, world, item_name, is_server, owner_unit, damage_unit, first_person_unit, weapon_unit, weapon_system)
 	-- function 1
-	ActionCareerWEThornsisterStagger.super.init(self, arg_1_1, arg_1_2, arg_1_3, arg_1_4, arg_1_5, arg_1_6, arg_1_7, arg_1_8)
+	ActionCareerWEThornsisterStagger.super.init(self, world, item_name, is_server, owner_unit, damage_unit, first_person_unit, weapon_unit, weapon_system)
 
-	self.career_extension = ScriptUnit.extension(arg_1_4, "career_system")
-	self.inventory_extension = ScriptUnit.extension(arg_1_4, "inventory_system")
-	self.talent_extension = ScriptUnit.extension(arg_1_4, "talent_system")
+	self.career_extension = ScriptUnit.extension(owner_unit, "career_system")
+	self.inventory_extension = ScriptUnit.extension(owner_unit, "inventory_system")
+	self.talent_extension = ScriptUnit.extension(owner_unit, "talent_system")
 	self._network_transmit = Managers.state.network.network_transmit
 end
 
-ActionCareerWEThornsisterStagger.client_owner_start_action = function (self, arg_2_1, arg_2_2, arg_2_3, arg_2_4, arg_2_5)
+ActionCareerWEThornsisterStagger.client_owner_start_action = function (self, new_action, t, chain_action_data, power_level, action_init_data)
 	-- function 2
-	arg_2_5 = arg_2_5 or {}
+	action_init_data = not not action_init_data or not not {}
 
-	ActionCareerWEThornsisterStagger.super.client_owner_start_action(self, arg_2_1, arg_2_2, arg_2_3, arg_2_4, arg_2_5)
+	ActionCareerWEThornsisterStagger.super.client_owner_start_action(self, new_action, t, chain_action_data, power_level, action_init_data)
 	self:_play_vo()
 
 	local career_extension = self.career_extension
 
 	career_extension:start_activated_ability_cooldown()
 
-	local var_2_1 = arg_2_3
+	local target_data = chain_action_data
 
-	if not var_2_1 then
+	if target_data then
 		local is_server = self.is_server
-		local flag = false
-		local str = "we_thornsister_career_skill_stagger_spell"
-		local get_template = ExplosionUtils.get_template(str)
-		local num = 1
-		local str_2 = "career_ability"
-		local get_career_power_level = career_extension:get_career_power_level()
+		local is_husk = false
+		local explosion_template_name = "we_thornsister_career_skill_stagger_spell"
+		local explosion_template = ExplosionUtils.get_template(explosion_template_name)
+		local scale = 1
+		local damage_source = "career_ability"
+		local career_power_level = career_extension:get_career_power_level()
 		local owner_unit = self.owner_unit
-		local var_2_10 = POSITION_LOOKUP[owner_unit]
-		local look = Quaternion.look(var_2_1.direction:unbox(), Vector3.up())
+		local position = POSITION_LOOKUP[owner_unit]
+		local rotation = Quaternion.look(target_data.direction:unbox(), Vector3.up())
 
-		DamageUtils.create_explosion(self.world, owner_unit, var_2_10, look, get_template, num, str_2, is_server, flag, owner_unit, get_career_power_level, false, owner_unit)
+		DamageUtils.create_explosion(self.world, owner_unit, position, rotation, explosion_template, scale, damage_source, is_server, is_husk, owner_unit, career_power_level, false, owner_unit)
 
-		local network = Managers.state.network
-		local network_transmit = network.network_transmit
-		local unit_game_object_id = network:unit_game_object_id(owner_unit)
-		local var_2_15 = NetworkLookup.explosion_templates[str]
-		local var_2_16 = NetworkLookup.damage_sources[str_2]
+		local network_manager = Managers.state.network
+		local network_transmit = network_manager.network_transmit
+		local owner_unit_go_id = network_manager:unit_game_object_id(owner_unit)
+		local explosion_template_id = NetworkLookup.explosion_templates[explosion_template_name]
+		local damage_source_id = NetworkLookup.damage_sources[damage_source]
 
-		if not is_server then
-			network_transmit:send_rpc_clients("rpc_create_explosion", unit_game_object_id, false, var_2_10, look, var_2_15, num, var_2_16, get_career_power_level, false, unit_game_object_id)
+		if is_server then
+			network_transmit:send_rpc_clients("rpc_create_explosion", owner_unit_go_id, false, position, rotation, explosion_template_id, scale, damage_source_id, career_power_level, false, owner_unit_go_id)
 		else
-			network_transmit:send_rpc_server("rpc_create_explosion", unit_game_object_id, false, var_2_10, look, var_2_15, num, var_2_16, get_career_power_level, false, unit_game_object_id)
+			network_transmit:send_rpc_server("rpc_create_explosion", owner_unit_go_id, false, position, rotation, explosion_template_id, scale, damage_source_id, career_power_level, false, owner_unit_go_id)
 		end
 	end
 end
 
-ActionCareerWEThornsisterStagger.client_owner_post_update = function (arg_3_0, arg_3_1, arg_3_2, arg_3_3, arg_3_4, arg_3_5)
+ActionCareerWEThornsisterStagger.client_owner_post_update = function (self, dt, t, world, can_damage, current_time_in_action)
 	-- function 3
 	return
 end
 
-ActionCareerWEThornsisterStagger.finish = function (self, arg_4_1)
+ActionCareerWEThornsisterStagger.finish = function (self, reason)
 	-- function 4
 	self.inventory_extension:wield_previous_non_level_slot()
 end
@@ -66,8 +66,8 @@ end
 ActionCareerWEThornsisterStagger._play_vo = function (self)
 	-- function 5
 	local owner_unit = self.owner_unit
-	local extension_input = ScriptUnit.extension_input(owner_unit, "dialogue_system")
-	local alloc_table = FrameTable.alloc_table()
+	local dialogue_input = ScriptUnit.extension_input(owner_unit, "dialogue_system")
+	local event_data = FrameTable.alloc_table()
 
-	extension_input:trigger_networked_dialogue_event("activate_ability", alloc_table)
+	dialogue_input:trigger_networked_dialogue_event("activate_ability", event_data)
 end

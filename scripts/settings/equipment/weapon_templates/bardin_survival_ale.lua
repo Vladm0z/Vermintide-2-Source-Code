@@ -1,86 +1,85 @@
 -- chunkname: @scripts/settings/equipment/weapon_templates/bardin_survival_ale.lua
 
-local tbl = {
-	actions = {
-		action_one = {
-			default = {
-				anim_event = "drink",
-				anim_end_event = "attack_finished",
-				ammo_usage = 1,
-				kind = "one_time_consumable",
-				weapon_action_hand = "right",
-				block_pickup = true,
-				uninterruptible = true,
-				buff_template = "bardin_survival_ale_buff",
-				total_time = 1.9,
-				anim_end_event_condition_func = function (arg_1_0, arg_1_1)
-					-- function 1
-					return arg_1_1 == "new_interupting_action" or arg_1_1 ~= "action_complete"
-				end,
-				allowed_chain_actions = {}
-			}
-		},
-		action_dropped = {
-			default = {
-				alert_sound_range_hit = 10,
-				anim_end_event = "attack_finished",
-				kind = "throw",
-				velocity_multiplier = 1,
-				throw_time = 0.35,
-				ammo_usage = 1,
-				weapon_action_hand = "left",
-				block_pickup = true,
-				speed = 5,
-				uninterruptible = true,
-				anim_event = "attack_throw",
-				total_time = 0.7,
-				anim_end_event_condition_func = function (arg_2_0, arg_2_1)
-					-- function 2
-					return arg_2_1 == "new_interupting_action" or arg_2_1 ~= "action_complete"
-				end,
-				allowed_chain_actions = {},
-				angular_velocity = {
-					0,
-					-5,
-					0
-				},
-				throw_offset = {
-					0.25,
-					1.2,
-					0
-				},
-				projectile_info = {
-					projectile_unit_template_name = "pickup_unit",
-					pickup_name = "bardin_survival_ale",
-					drop_on_player_destroyed = true,
-					projectile_unit_name = "units/weapons/player/pup_ale/pup_ale"
-				}
-			}
-		},
-		action_wield = ActionTemplates.wield_and_use
-	},
-	ammo_data = {
-		ammo_hand = "right",
-		destroy_when_out_of_ammo = true,
-		max_ammo = 1,
-		ammo_per_clip = 1,
-		reload_time = 0,
-		ignore_ammo_pickup = true
-	}
-}
+local weapon_template = {}
 
-tbl.right_hand_unit = "units/weapons/player/wpn_ale/wpn_ale"
-tbl.right_hand_attachment_node_linking = AttachmentNodeLinking.potion_right
-tbl.wield_anim = "to_potion"
-tbl.state_machine = "units/beings/player/first_person_base/state_machines/common"
-tbl.load_state_machine = false
-tbl.gui_texture = "hud_consumable_icon_potion"
-tbl.gui_texture = "hud_consumable_icon_potion"
-tbl.pickup_data = {
+weapon_template.actions = {
+	action_one = {
+		default = {
+			anim_event = "drink",
+			anim_end_event = "attack_finished",
+			ammo_usage = 1,
+			kind = "one_time_consumable",
+			weapon_action_hand = "right",
+			block_pickup = true,
+			uninterruptible = true,
+			buff_template = "bardin_survival_ale_buff",
+			total_time = 1.9,
+			anim_end_event_condition_func = function (unit, end_reason)
+				-- function 1
+				return end_reason ~= "new_interupting_action" and end_reason ~= "action_complete"
+			end,
+			allowed_chain_actions = {}
+		}
+	},
+	action_dropped = {
+		default = {
+			alert_sound_range_hit = 10,
+			anim_end_event = "attack_finished",
+			kind = "throw",
+			velocity_multiplier = 1,
+			throw_time = 0.35,
+			ammo_usage = 1,
+			weapon_action_hand = "left",
+			block_pickup = true,
+			speed = 5,
+			uninterruptible = true,
+			anim_event = "attack_throw",
+			total_time = 0.7,
+			anim_end_event_condition_func = function (unit, end_reason)
+				-- function 2
+				return end_reason ~= "new_interupting_action" and end_reason ~= "action_complete"
+			end,
+			allowed_chain_actions = {},
+			angular_velocity = {
+				0,
+				-5,
+				0
+			},
+			throw_offset = {
+				0.25,
+				1.2,
+				0
+			},
+			projectile_info = {
+				projectile_unit_template_name = "pickup_unit",
+				pickup_name = "bardin_survival_ale",
+				drop_on_player_destroyed = true,
+				projectile_unit_name = "units/weapons/player/pup_ale/pup_ale"
+			}
+		}
+	},
+	action_wield = ActionTemplates.wield_and_use
+}
+weapon_template.ammo_data = {
+	ammo_hand = "right",
+	destroy_when_out_of_ammo = true,
+	max_ammo = 1,
+	ammo_per_clip = 1,
+	reload_time = 0,
+	ignore_ammo_pickup = true
+}
+weapon_template.right_hand_unit = "units/weapons/player/wpn_ale/wpn_ale"
+weapon_template.right_hand_attachment_node_linking = AttachmentNodeLinking.potion_right
+weapon_template.wield_anim = "to_potion"
+weapon_template.state_machine = "units/beings/player/first_person_base/state_machines/common"
+weapon_template.load_state_machine = false
+weapon_template.gui_texture = "hud_consumable_icon_potion"
+weapon_template.gui_texture = "hud_consumable_icon_potion"
+weapon_template.pickup_data = {
 	pickup_name = "bardin_survival_ale"
 }
-tbl.max_fatigue_points = 4
-tbl.buffs = {
+weapon_template.max_fatigue_points = 4
+weapon_template.buffs = {
 	change_dodge_distance = {
 		external_optional_multiplier = 1
 	},
@@ -90,5 +89,5 @@ tbl.buffs = {
 }
 
 return {
-	bardin_survival_ale = table.clone(tbl)
+	bardin_survival_ale = table.clone(weapon_template)
 }

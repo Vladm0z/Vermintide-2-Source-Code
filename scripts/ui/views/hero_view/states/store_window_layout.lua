@@ -1,6 +1,6 @@
 -- chunkname: @scripts/ui/views/hero_view/states/store_window_layout.lua
 
-local tbl = {
+local windows = {
 	panel = {
 		ignore_alignment = true,
 		name = "panel",
@@ -59,9 +59,9 @@ local tbl = {
 	}
 }
 
-DLCUtils.merge("store_windows", tbl)
+DLCUtils.merge("store_windows", windows)
 
-local tbl_2 = {
+local window_layouts = {
 	{
 		name = "featured",
 		display_name = "featured",
@@ -170,12 +170,12 @@ local tbl_2 = {
 	}
 }
 
-DLCUtils.append("store_window_layouts", tbl_2)
+DLCUtils.append("store_window_layouts", window_layouts)
 
-local num = 5
+local MAX_ACTIVE_WINDOWS = 5
 
 return {
-	max_active_windows = num,
-	windows = tbl,
-	window_layouts = tbl_2
+	max_active_windows = MAX_ACTIVE_WINDOWS,
+	windows = windows,
+	window_layouts = window_layouts
 }

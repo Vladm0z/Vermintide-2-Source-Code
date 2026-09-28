@@ -2,21 +2,29 @@
 
 require("foundation/scripts/util/misc_util")
 
-local function fn(arg_1_0)
+local function auto_patch_missing_methods(library_name)
 	-- function 1
-	local var_1_0 = rawget(_G, arg_1_0)
+	local var_1_0 = rawget(_G, library_name)
 
-	var_1_0 = var_1_0 or {}
+	if not var_1_0 then
+		-- Nothing
+	end
 
-	assert(getmetatable(var_1_0) == nil, "It's not safe auto-patching methods on a table that already has a metatable. Set them to NOP manually.")
+	var_1_0 = {}
 
-	return rawset(_G, arg_1_0, setmetatable(var_1_0, {
-		__index = function (self, arg_2_1)
+	local library = var_1_0
+
+	::label_1_0::
+
+	assert(getmetatable(library) == nil, "It's not safe auto-patching methods on a table that already has a metatable. Set them to NOP manually.")
+
+	return rawset(_G, library_name, setmetatable(library, {
+		__index = function (self, key)
 			-- function 2
 			if not script_data.disable_auto_patch_missing_methods then
-				Application.error("Missing method key autovivified with NOP: %s.%s\n%s", arg_1_0, arg_2_1, Script.callstack())
+				Application.error("Missing method key autovivified with NOP: %s.%s\n%s", library_name, key, Script.callstack())
 
-				self[arg_2_1] = NOP
+				self[key] = NOP
 
 				return NOP
 			end
@@ -26,7 +34,7 @@ end
 
 local MockClass = MockClass
 
-MockClass = MockClass or {}
+MockClass = not not MockClass or not not {}
 MockClass = MockClass
 
 MockClass.new = function ()
@@ -34,36 +42,36 @@ MockClass.new = function ()
 	return MockClass
 end
 
-local tbl = {
-	__index = function (arg_4_0, arg_4_1)
+local mt = {
+	__index = function (self, name)
 		-- function 4
 		return NOP
 	end,
 	update = NOP
 }
 
-setmetatable(MockClass, tbl)
+setmetatable(MockClass, mt)
 
-if _G.FOUNDATION_patches_applied or IS_CONSOLE or not DEDICATED_SERVER then
+if not _G.FOUNDATION_patches_applied and (IS_CONSOLE or DEDICATED_SERVER) then
 	_G.FOUNDATION_patches_applied = true
 
 	if not Wwise then
-		fn("Wwise")
+		auto_patch_missing_methods("Wwise")
 	end
 
 	if not WwiseWorld then
-		fn("WwiseWorld")
+		auto_patch_missing_methods("WwiseWorld")
 	end
 
 	if not TerrainDecoration then
-		fn("TerrainDecoration")
+		auto_patch_missing_methods("TerrainDecoration")
 	end
 
 	if not LandscapeDecoration then
-		fn("LandscapeDecoration")
+		auto_patch_missing_methods("LandscapeDecoration")
 	end
 
-	fn("Application")
+	auto_patch_missing_methods("Application")
 
 	Application.apply_user_settings = NOP
 	Application.enum_display_modes = TNEW
@@ -74,7 +82,7 @@ if _G.FOUNDATION_patches_applied or IS_CONSOLE or not DEDICATED_SERVER then
 	Application.set_max_frame_stacking = NOP
 	Application.user_settings_load_error = NOP
 
-	fn("Window")
+	auto_patch_missing_methods("Window")
 
 	Window.KEYSTROKE_ALT_ENTER = 0
 	Window.KEYSTROKE_ALT_F4 = 0
@@ -100,7 +108,7 @@ if _G.FOUNDATION_patches_applied or IS_CONSOLE or not DEDICATED_SERVER then
 	Window.set_title = NOP
 	Window.show_cursor = NOP
 
-	fn("DisplayAdapter")
+	auto_patch_missing_methods("DisplayAdapter")
 
 	DisplayAdapter.num_adapters = CONST(0)
 	DisplayAdapter.name = CONST("function patched out")
@@ -113,7 +121,7 @@ if _G.FOUNDATION_patches_applied or IS_CONSOLE or not DEDICATED_SERVER then
 	end
 
 	if not DEDICATED_SERVER then
-		fn("CommandWindow")
+		auto_patch_missing_methods("CommandWindow")
 
 		CommandWindow.close = NOP
 		CommandWindow.open = NOP
@@ -125,14 +133,14 @@ if _G.FOUNDATION_patches_applied or IS_CONSOLE or not DEDICATED_SERVER then
 end
 
 if not Clipboard then
-	fn("Clipboard")
+	auto_patch_missing_methods("Clipboard")
 
 	Clipboard.get = CONST("")
 	Clipboard.put = NOP
 end
 
 if not Presence then
-	fn("Presence")
+	auto_patch_missing_methods("Presence")
 
 	Presence.set_presence = NOP
 end
@@ -141,40 +149,40 @@ ColorBox = QuaternionBox
 
 local __STRING_FORMAT = __STRING_FORMAT
 
-__STRING_FORMAT = __STRING_FORMAT or nil
+__STRING_FORMAT = not not __STRING_FORMAT or not not nil
 __STRING_FORMAT = __STRING_FORMAT
 
 if not __STRING_FORMAT then
-	local tbl_2 = {}
-	local tbl_3 = {}
+	local VALIDATED_STRINGS = {}
+	local INVALID_STRINGS = {}
 	local __STRING_FORMAT_2 = __STRING_FORMAT
 
-	__STRING_FORMAT_2 = __STRING_FORMAT_2 or string.format
+	__STRING_FORMAT_2 = not not __STRING_FORMAT_2 or not not string.format
 	__STRING_FORMAT = __STRING_FORMAT_2
 	string._format = string.format
 
-	string.format = function (arg_6_0, ...)
+	string.format = function (str, ...)
 		-- function 6
-		if not tbl_2[arg_6_0] then
-			return __STRING_FORMAT(arg_6_0, ...)
+		if VALIDATED_STRINGS[str] then
+			return __STRING_FORMAT(str, ...)
 		end
 
-		if not tbl_3[arg_6_0] then
+		if INVALID_STRINGS[str] then
 			return "<Invalid string format>"
 		end
 
-		local var_6_0, var_6_1 = pcall(__STRING_FORMAT, arg_6_0, ...)
+		local success, result = pcall(__STRING_FORMAT, str, ...)
 
-		if not var_6_0 then
-			tbl_3[arg_6_0] = true
+		if not success then
+			INVALID_STRINGS[str] = true
 
-			Crashify.print_exception("string.format", "Invalid string format for string %q", arg_6_0)
+			Crashify.print_exception("string.format", "Invalid string format for string %q", str)
 
 			return "<Invalid string format>"
 		else
-			tbl_2[arg_6_0] = true
+			VALIDATED_STRINGS[str] = true
 
-			return var_6_1
+			return result
 		end
 	end
 end

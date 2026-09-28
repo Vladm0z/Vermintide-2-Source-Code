@@ -1,30 +1,30 @@
 -- chunkname: @scripts/ui/views/start_game_view/windows/definitions/start_game_window_area_selection_definitions.lua
 
-local game_start_windows = UISettings.game_start_windows
-local frame = game_start_windows.frame
-local size = game_start_windows.size
-local spacing = game_start_windows.spacing
-local tbl = {
-	size[1] * 3 + spacing * 2,
-	size[2]
+local window_default_settings = UISettings.game_start_windows
+local window_frame = window_default_settings.frame
+local window_size = window_default_settings.size
+local window_spacing = window_default_settings.spacing
+local large_window_size = {
+	window_size[1] * 3 + window_spacing * 2,
+	window_size[2]
 }
-local tbl_2 = {
+local animation_definitions = {
 	on_enter = {
 		{
 			name = "fade_in",
 			start_progress = 0,
 			end_progress = 0.3,
-			init = function (arg_1_0, arg_1_1, arg_1_2, arg_1_3)
+			init = function (ui_scenegraph, scenegraph_definition, widgets, params)
 				-- function 1
-				arg_1_3.render_settings.alpha_multiplier = 0
+				params.render_settings.alpha_multiplier = 0
 			end,
-			update = function (arg_2_0, arg_2_1, arg_2_2, arg_2_3, arg_2_4)
+			update = function (ui_scenegraph, scenegraph_definition, widgets, progress, params)
 				-- function 2
-				local easeOutCubic = math.easeOutCubic(arg_2_3)
+				local anim_progress = math.easeOutCubic(progress)
 
-				arg_2_4.render_settings.alpha_multiplier = easeOutCubic
+				params.render_settings.alpha_multiplier = anim_progress
 			end,
-			on_complete = function (arg_3_0, arg_3_1, arg_3_2, arg_3_3)
+			on_complete = function (ui_scenegraph, scenegraph_definition, widgets, params)
 				-- function 3
 				return
 			end
@@ -35,24 +35,24 @@ local tbl_2 = {
 			name = "fade_out",
 			start_progress = 0,
 			end_progress = 0.3,
-			init = function (arg_4_0, arg_4_1, arg_4_2, arg_4_3)
+			init = function (ui_scenegraph, scenegraph_definition, widgets, params)
 				-- function 4
-				arg_4_3.render_settings.alpha_multiplier = 1
+				params.render_settings.alpha_multiplier = 1
 			end,
-			update = function (arg_5_0, arg_5_1, arg_5_2, arg_5_3, arg_5_4)
+			update = function (ui_scenegraph, scenegraph_definition, widgets, progress, params)
 				-- function 5
-				local easeOutCubic = math.easeOutCubic(arg_5_3)
+				local anim_progress = math.easeOutCubic(progress)
 
-				arg_5_4.render_settings.alpha_multiplier = 1 - easeOutCubic
+				params.render_settings.alpha_multiplier = 1 - anim_progress
 			end,
-			on_complete = function (arg_6_0, arg_6_1, arg_6_2, arg_6_3)
+			on_complete = function (ui_scenegraph, scenegraph_definition, widgets, params)
 				-- function 6
 				return
 			end
 		}
 	}
 }
-local tbl_3 = {
+local scenegraph_definition = {
 	root = {
 		is_root = true,
 		size = {
@@ -95,9 +95,9 @@ local tbl_3 = {
 		vertical_alignment = "center",
 		parent = "menu_root",
 		horizontal_alignment = "center",
-		size = tbl,
+		size = large_window_size,
 		position = {
-			size[1] + spacing,
+			window_size[1] + window_spacing,
 			0,
 			1
 		}
@@ -106,7 +106,7 @@ local tbl_3 = {
 		vertical_alignment = "center",
 		parent = "window",
 		horizontal_alignment = "center",
-		size = tbl,
+		size = large_window_size,
 		position = {
 			0,
 			0,
@@ -118,7 +118,7 @@ local tbl_3 = {
 		parent = "window",
 		horizontal_alignment = "center",
 		size = {
-			tbl[1],
+			large_window_size[1],
 			770
 		},
 		position = {
@@ -226,7 +226,7 @@ local tbl_3 = {
 		}
 	}
 }
-local tbl_4 = {
+local requirements_not_met_text_style = {
 	word_wrap = true,
 	upper_case = true,
 	localize = true,
@@ -242,7 +242,7 @@ local tbl_4 = {
 		3
 	}
 }
-local tbl_5 = {
+local not_owned_text_style = {
 	word_wrap = true,
 	upper_case = true,
 	localize = true,
@@ -258,7 +258,7 @@ local tbl_5 = {
 		3
 	}
 }
-local tbl_6 = {
+local description_text_style = {
 	word_wrap = true,
 	localize = false,
 	font_size = 32,
@@ -274,7 +274,7 @@ local tbl_6 = {
 		3
 	}
 }
-local tbl_7 = {
+local level_text_style = {
 	font_size = 72,
 	upper_case = true,
 	localize = false,
@@ -291,21 +291,21 @@ local tbl_7 = {
 	}
 }
 
-local function fn(arg_7_0, arg_7_1)
+local function create_area_widget(i, specific_scenegraph_id)
 	-- function 7
-	local var_7_0 = arg_7_1
-	local tbl = {
+	local scenegraph_id = specific_scenegraph_id
+	local size = {
 		180,
 		180
 	}
 
-	if not var_7_0 then
-		var_7_0 = "area_root_" .. arg_7_0
-		tbl_3[var_7_0] = {
+	if not scenegraph_id then
+		scenegraph_id = "area_root_" .. i
+		scenegraph_definition[scenegraph_id] = {
 			vertical_alignment = "center",
 			parent = "area_root",
 			horizontal_alignment = "center",
-			size = tbl,
+			size = size,
 			position = {
 				0,
 				0,
@@ -314,10 +314,10 @@ local function fn(arg_7_0, arg_7_1)
 		}
 	end
 
-	local tbl_2 = {
+	local widget = {
 		element = {}
 	}
-	local tbl_4 = {
+	local passes = {
 		{
 			style_id = "icon",
 			pass_type = "hotspot",
@@ -337,9 +337,9 @@ local function fn(arg_7_0, arg_7_1)
 			pass_type = "texture",
 			style_id = "lock",
 			texture_id = "lock",
-			content_check_function = function (self)
+			content_check_function = function (content)
 				-- function 8
-				return self.locked
+				return content.locked
 			end
 		},
 		{
@@ -348,7 +348,7 @@ local function fn(arg_7_0, arg_7_1)
 			texture_id = "frame"
 		}
 	}
-	local tbl_5 = {
+	local content = {
 		locked = true,
 		frame = "map_frame_04",
 		icon = "level_icon_01",
@@ -356,7 +356,7 @@ local function fn(arg_7_0, arg_7_1)
 		icon_glow = "map_frame_glow_02",
 		button_hotspot = {}
 	}
-	local tbl_6 = {
+	local style = {
 		frame = {
 			vertical_alignment = "center",
 			horizontal_alignment = "center",
@@ -435,22 +435,22 @@ local function fn(arg_7_0, arg_7_1)
 		}
 	}
 
-	tbl_2.element.passes = tbl_4
-	tbl_2.content = tbl_5
-	tbl_2.style = tbl_6
-	tbl_2.offset = {
+	widget.element.passes = passes
+	widget.content = content
+	widget.style = style
+	widget.offset = {
 		0,
 		0,
 		0
 	}
-	tbl_2.scenegraph_id = var_7_0
+	widget.scenegraph_id = scenegraph_id
 
-	return tbl_2
+	return widget
 end
 
-local flag = true
-local tbl_8 = {
-	window = UIWidgets.create_frame("window", tbl, frame, 10),
+local disable_with_gamepad = true
+local widgets = {
+	window = UIWidgets.create_frame("window", large_window_size, window_frame, 10),
 	window_fade = UIWidgets.create_simple_texture("options_window_fade_01", "window", nil, nil, nil, 2),
 	background = UIWidgets.create_simple_rect("window", {
 		255,
@@ -458,23 +458,23 @@ local tbl_8 = {
 		0,
 		0
 	}),
-	area_title = UIWidgets.create_simple_text("area_title", "area_title", nil, nil, tbl_7),
+	area_title = UIWidgets.create_simple_text("area_title", "area_title", nil, nil, level_text_style),
 	title_divider = UIWidgets.create_simple_texture("divider_01_top", "title_divider"),
-	description_text = UIWidgets.create_simple_text("description_text", "description_text", nil, nil, tbl_6),
-	not_owned_text = UIWidgets.create_simple_text("dlc1_2_dlc_level_locked_tooltip", "not_owned_text", nil, nil, tbl_5),
-	requirements_not_met_text = UIWidgets.create_simple_text("lb_unknown", "requirements_not_met_text", nil, nil, tbl_4),
-	select_button = UIWidgets.create_default_button("select_button", tbl_3.select_button.size, nil, nil, Localize("menu_select"), 32, nil, nil, nil, flag)
+	description_text = UIWidgets.create_simple_text("description_text", "description_text", nil, nil, description_text_style),
+	not_owned_text = UIWidgets.create_simple_text("dlc1_2_dlc_level_locked_tooltip", "not_owned_text", nil, nil, not_owned_text_style),
+	requirements_not_met_text = UIWidgets.create_simple_text("lb_unknown", "requirements_not_met_text", nil, nil, requirements_not_met_text_style),
+	select_button = UIWidgets.create_default_button("select_button", scenegraph_definition.select_button.size, nil, nil, Localize("menu_select"), 32, nil, nil, nil, disable_with_gamepad)
 }
-local tbl_9 = {}
+local area_widgets = {}
 
 for i = 1, 10 do
-	tbl_9[i] = fn(i)
+	area_widgets[i] = create_area_widget(i)
 end
 
 return {
-	widgets = tbl_8,
-	area_widgets = tbl_9,
-	map_size = tbl,
-	scenegraph_definition = tbl_3,
-	animation_definitions = tbl_2
+	widgets = widgets,
+	area_widgets = area_widgets,
+	map_size = large_window_size,
+	scenegraph_definition = scenegraph_definition,
+	animation_definitions = animation_definitions
 }

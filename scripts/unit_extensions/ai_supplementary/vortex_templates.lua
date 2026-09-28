@@ -98,30 +98,43 @@ VortexTemplates = {
 			7,
 			8
 		},
-		suck_in_ai_func = function (self)
+		suck_in_ai_func = function (blackboard)
 			-- function 1
-			local tbl = {
+			local stat_names = {
 				"halescourge_tornado_enemies",
 				"halescourge_tornado_enemies_cata"
 			}
 
-			for i = 1, #tbl do
-				local get_difficulty = Managers.state.difficulty:get_difficulty()
+			for i = 1, #stat_names do
+				local current_difficulty = Managers.state.difficulty:get_difficulty()
+				local allowed_difficulties = QuestSettings.allowed_difficulties[stat_names[i]]
+				local allowed_difficulty = allowed_difficulties[current_difficulty]
 
-				if not (not QuestSettings.allowed_difficulties[tbl[i]][get_difficulty] and self.completed_vortex_suck_in_challenge) then
-					if not self.num_ai_units_sucked_in then
-						self.num_ai_units_sucked_in = 0
+				if allowed_difficulty and not blackboard.completed_vortex_suck_in_challenge then
+					if not blackboard.num_ai_units_sucked_in then
+						blackboard.num_ai_units_sucked_in = 0
 					end
 
-					local num_ai_units_sucked_in = self.num_ai_units_sucked_in
+					local num_ai_units_sucked_in_2 = blackboard.num_ai_units_sucked_in
 
-					num_ai_units_sucked_in = num_ai_units_sucked_in or 0
-					self.num_ai_units_sucked_in = num_ai_units_sucked_in + 1
+					if not num_ai_units_sucked_in_2 then
+						-- Nothing
+					end
 
-					if self.num_ai_units_sucked_in >= QuestSettings.halescourge_tornado_enemies then
-						Managers.player:statistics_db():increment_stat_and_sync_to_clients(tbl[i])
+					num_ai_units_sucked_in_2 = 0
 
-						self.completed_vortex_suck_in_challenge = true
+					local num_ai_units_sucked_in = num_ai_units_sucked_in_2
+
+					::label_1_0::
+
+					blackboard.num_ai_units_sucked_in = num_ai_units_sucked_in + 1
+
+					if blackboard.num_ai_units_sucked_in >= QuestSettings.halescourge_tornado_enemies then
+						local statistics_db = Managers.player:statistics_db()
+
+						statistics_db:increment_stat_and_sync_to_clients(stat_names[i])
+
+						blackboard.completed_vortex_suck_in_challenge = true
 					end
 				end
 			end

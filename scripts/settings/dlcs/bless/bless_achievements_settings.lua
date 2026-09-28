@@ -1,8 +1,8 @@
 -- chunkname: @scripts/settings/dlcs/bless/bless_achievements_settings.lua
 
-local bless = DLCSettings.bless
+local settings = DLCSettings.bless
 
-bless.achievement_outline = {
+settings.achievement_outline = {
 	heroes = {
 		categories = {
 			{
@@ -35,7 +35,7 @@ bless.achievement_outline = {
 		}
 	}
 }
-bless.achievement_template_file_names = {
+settings.achievement_template_file_names = {
 	"scripts/managers/achievements/achievement_templates_bless"
 }
-bless.achievement_events = {}
+settings.achievement_events = {}

@@ -3,13 +3,13 @@
 CareerActionNames.dwarf_ranger[#CareerActionNames.dwarf_ranger + 1] = "action_career_dr_4"
 
 setmetatable(PlayerBreeds.hero_dr_engineer, {
-	__newindex = function (arg_1_0, arg_1_1, arg_1_2)
+	__newindex = function (table, key, value)
 		-- function 1
-		if type(arg_1_1) == "number" then
+		if type(key) == "number" then
 			error("HON-32308. Trying to modify read only table.")
 		end
 
-		rawset(arg_1_0, arg_1_1, arg_1_2)
+		rawset(table, key, value)
 	end
 })
 
@@ -55,39 +55,38 @@ CareerSettings.dr_engineer = {
 			item_name = "engineer_hat_0000"
 		}
 	},
-	is_unlocked_function = function (self, arg_2_1, arg_2_2)
+	is_unlocked_function = function (career, hero_name, hero_level)
 		-- function 2
-		local override_available_for_mechanism, var_2_1 = self:override_available_for_mechanism()
+		local unlocked, reason = career:override_available_for_mechanism()
 
-		if not override_available_for_mechanism then
-			return override_available_for_mechanism, var_2_1
+		if not unlocked then
+			return unlocked, reason
 		end
 
-		local var_2_2
-		local is_dlc_unlocked, var_2_4, var_2_5 = self:is_dlc_unlocked()
-		local var_2_6 = var_2_5
-		local var_2_7 = var_2_4
+		local dlc_name
 
-		if not is_dlc_unlocked then
-			return false, var_2_7, var_2_6
+		unlocked, reason, dlc_name = career:is_dlc_unlocked()
+
+		if not unlocked then
+			return false, reason, dlc_name
 		end
 
-		return true, var_2_7, var_2_6
+		return true, reason, dlc_name
 	end,
-	is_dlc_unlocked = function (arg_3_0)
+	is_dlc_unlocked = function (career)
 		-- function 3
-		if not Managers.unlock:is_dlc_unlocked("cog") then
+		if Managers.unlock:is_dlc_unlocked("cog") then
 			return true, nil, "cog"
 		else
 			return false, "dlc_not_owned", "cog"
 		end
 	end,
-	override_available_for_mechanism = function (self)
+	override_available_for_mechanism = function (career)
 		-- function 4
-		local mechanism_setting_for_title = Managers.mechanism:mechanism_setting_for_title("override_career_availability")
-		local display_name = self.display_name
+		local settings = Managers.mechanism:mechanism_setting_for_title("override_career_availability")
+		local career_name = career.display_name
 
-		if not (not mechanism_setting_for_title and mechanism_setting_for_title[display_name] ~= false) then
+		if settings and settings[career_name] == false then
 			return false, "disabled_for_mechanism"
 		end
 
@@ -96,26 +95,29 @@ CareerSettings.dr_engineer = {
 	animation_variables = {
 		is_engineer = 1
 	},
-	talent_packages = function (arg_5_0, arg_5_1, arg_5_2, arg_5_3)
+	talent_packages = function (talent_ids, packages_list, is_first_person, is_bot)
 		-- function 5
-		local num = 1
+		local career_weapon_index = 1
 
-		for i, v in ipairs(arg_5_0) do
-			local get_talent_by_id = TalentUtils.get_talent_by_id("dwarf_ranger", v)
+		for _, talent_id in ipairs(talent_ids) do
+			local talent = TalentUtils.get_talent_by_id("dwarf_ranger", talent_id)
 
-			if not get_talent_by_id and not get_talent_by_id.talent_career_weapon_index then
-				num = get_talent_by_id.talent_career_weapon_index
+			if talent and talent.talent_career_weapon_index then
+				career_weapon_index = talent.talent_career_weapon_index
 			end
 		end
 
-		local var_5_2 = ActivatedAbilitySettings.dr_4[1].weapon_names_by_index[num]
-		local var_5_3 = ItemMasterList[var_5_2]
-		local get_weapon_template = WeaponUtils.get_weapon_template(var_5_3.template)
-		local str = "dr_engineer"
-		local get_weapon_packages = WeaponUtils.get_weapon_packages(get_weapon_template, var_5_3, arg_5_2, str)
+		local weapon_names = ActivatedAbilitySettings.dr_4[1].weapon_names_by_index
+		local weapon_name = weapon_names[career_weapon_index]
+		local weapon = ItemMasterList[weapon_name]
+		local weapon_template = WeaponUtils.get_weapon_template(weapon.template)
+		local career_name = "dr_engineer"
+		local weapon_packages = WeaponUtils.get_weapon_packages(weapon_template, weapon, is_first_person, career_name)
 
-		for k = 1, #get_weapon_packages do
-			arg_5_1[get_weapon_packages[k]] = false
+		for j = 1, #weapon_packages do
+			local package_name = weapon_packages[j]
+
+			packages_list[package_name] = false
 		end
 	end,
 	item_slot_types_by_slot_name = {
@@ -162,7 +164,7 @@ CareerSettings.dr_engineer = {
 
 local OverchargeData = OverchargeData
 
-OverchargeData = OverchargeData or {}
+OverchargeData = not not OverchargeData or not not {}
 OverchargeData = OverchargeData
 OverchargeData.dr_engineer = {
 	overcharge_threshold = 10,
@@ -178,14 +180,14 @@ OverchargeData.dr_engineer = {
 
 local PlayerUnitStatusSettings = PlayerUnitStatusSettings
 
-PlayerUnitStatusSettings = PlayerUnitStatusSettings or {}
+PlayerUnitStatusSettings = not not PlayerUnitStatusSettings or not not {}
 PlayerUnitStatusSettings = PlayerUnitStatusSettings
 
 local PlayerUnitStatusSettings_2 = PlayerUnitStatusSettings
 local merge = table.merge
 local overcharge_values = PlayerUnitStatusSettings.overcharge_values
 
-overcharge_values = overcharge_values or {}
+overcharge_values = not not overcharge_values or not not {}
 PlayerUnitStatusSettings_2.overcharge_values = merge(overcharge_values, {
 	cog_hammer_charge_light = 3,
 	cog_hammer_heavy_1_burn = 10,

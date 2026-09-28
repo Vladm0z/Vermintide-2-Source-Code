@@ -1,6 +1,6 @@
 -- chunkname: @scripts/settings/breeds/breed_skaven_storm_vermin.lua
 
-local tbl = {
+local breed_data = {
 	detection_radius = 12,
 	aoe_height = 1.7,
 	walk_speed = 2.75,
@@ -283,12 +283,12 @@ local tbl = {
 	}
 }
 
-Breeds.skaven_storm_vermin = table.create_copy(Breeds.skaven_storm_vermin, tbl)
-Breeds.skaven_storm_vermin_commander = table.create_copy(Breeds.skaven_storm_vermin_commander, tbl)
+Breeds.skaven_storm_vermin = table.create_copy(Breeds.skaven_storm_vermin, breed_data)
+Breeds.skaven_storm_vermin_commander = table.create_copy(Breeds.skaven_storm_vermin_commander, breed_data)
 Breeds.skaven_storm_vermin_commander.behavior = "storm_vermin_commander"
 Breeds.skaven_storm_vermin_commander.killfeed_fold_with = "skaven_storm_vermin"
 
-local tbl_2 = {
+local AttackIntensityPerDifficulty = {
 	sweep = {
 		easy = {
 			normal = 1,
@@ -424,7 +424,7 @@ local tbl_2 = {
 		}
 	}
 }
-local tbl_3 = {
+local action_data = {
 	alerted = {
 		no_hesitation = true,
 		cooldown = -1,
@@ -502,7 +502,7 @@ local tbl_3 = {
 		attack_intensity_type = "cleave",
 		move_anim = "move_fwd",
 		width = 0.4,
-		difficulty_attack_intensity = tbl_2,
+		difficulty_attack_intensity = AttackIntensityPerDifficulty,
 		knocked_down_attack_anim = {
 			"attack_downed",
 			"attack_downed_2"
@@ -535,7 +535,7 @@ local tbl_3 = {
 		attack_intensity_type = "sweep",
 		move_anim = "move_fwd",
 		width = 2,
-		difficulty_attack_intensity = tbl_2,
+		difficulty_attack_intensity = AttackIntensityPerDifficulty,
 		attack_anim = {
 			"attack_pounce",
 			"attack_pounce_2"
@@ -571,7 +571,7 @@ local tbl_3 = {
 		damage_type = "blunt",
 		unblockable = true,
 		attack_anim = "attack_push",
-		difficulty_attack_intensity = tbl_2,
+		difficulty_attack_intensity = AttackIntensityPerDifficulty,
 		considerations = UtilityConsiderations.storm_vermin_push_attack,
 		ignore_staggers = {
 			true,
@@ -748,6 +748,6 @@ local tbl_3 = {
 	}
 }
 
-BreedActions.skaven_storm_vermin = table.create_copy(BreedActions.skaven_storm_vermin, tbl_3)
-BreedActions.skaven_storm_vermin_commander = table.create_copy(BreedActions.skaven_storm_vermin_commander, tbl_3)
+BreedActions.skaven_storm_vermin = table.create_copy(BreedActions.skaven_storm_vermin, action_data)
+BreedActions.skaven_storm_vermin_commander = table.create_copy(BreedActions.skaven_storm_vermin_commander, action_data)
 BreedActions.skaven_storm_vermin_commander.give_command = {}

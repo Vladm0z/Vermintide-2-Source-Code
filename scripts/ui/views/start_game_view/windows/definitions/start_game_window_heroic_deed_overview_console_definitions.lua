@@ -1,31 +1,31 @@
 -- chunkname: @scripts/ui/views/start_game_view/windows/definitions/start_game_window_heroic_deed_overview_console_definitions.lua
 
-local game_start_windows = UISettings.game_start_windows
-local frame = game_start_windows.frame
-local size = game_start_windows.size
-local var_0_3 = UIFrameSettings[frame].texture_sizes.horizontal[2]
-local tbl = {
-	size[1],
+local window_default_settings = UISettings.game_start_windows
+local window_frame = window_default_settings.frame
+local window_size = window_default_settings.size
+local window_frame_height = UIFrameSettings[window_frame].texture_sizes.horizontal[2]
+local game_option_size = {
+	window_size[1],
 	194
 }
-local var_0_5 = size[1]
-local tbl_2 = {
+local window_text_width = window_size[1]
+local animation_definitions = {
 	on_enter = {
 		{
 			name = "fade_in",
 			start_progress = 0,
 			end_progress = 0.3,
-			init = function (arg_1_0, arg_1_1, arg_1_2, arg_1_3)
+			init = function (ui_scenegraph, scenegraph_definition, widgets, params)
 				-- function 1
-				arg_1_3.render_settings.alpha_multiplier = 0
+				params.render_settings.alpha_multiplier = 0
 			end,
-			update = function (arg_2_0, arg_2_1, arg_2_2, arg_2_3, arg_2_4)
+			update = function (ui_scenegraph, scenegraph_definition, widgets, progress, params)
 				-- function 2
-				local easeOutCubic = math.easeOutCubic(arg_2_3)
+				local anim_progress = math.easeOutCubic(progress)
 
-				arg_2_4.render_settings.alpha_multiplier = easeOutCubic
+				params.render_settings.alpha_multiplier = anim_progress
 			end,
-			on_complete = function (arg_3_0, arg_3_1, arg_3_2, arg_3_3)
+			on_complete = function (ui_scenegraph, scenegraph_definition, widgets, params)
 				-- function 3
 				return
 			end
@@ -36,22 +36,22 @@ local tbl_2 = {
 			name = "fade_out",
 			start_progress = 0,
 			end_progress = 0.3,
-			init = function (arg_4_0, arg_4_1, arg_4_2, arg_4_3)
+			init = function (ui_scenegraph, scenegraph_definition, widgets, params)
 				-- function 4
-				arg_4_3.render_settings.alpha_multiplier = 1
+				params.render_settings.alpha_multiplier = 1
 			end,
-			update = function (arg_5_0, arg_5_1, arg_5_2, arg_5_3, arg_5_4)
+			update = function (ui_scenegraph, scenegraph_definition, widgets, progress, params)
 				-- function 5
-				arg_5_4.render_settings.alpha_multiplier = 1
+				params.render_settings.alpha_multiplier = 1
 			end,
-			on_complete = function (arg_6_0, arg_6_1, arg_6_2, arg_6_3)
+			on_complete = function (ui_scenegraph, scenegraph_definition, widgets, params)
 				-- function 6
 				return
 			end
 		}
 	}
 }
-local tbl_3 = {
+local scenegraph_definition = {
 	root = {
 		is_root = true,
 		size = {
@@ -94,7 +94,7 @@ local tbl_3 = {
 		vertical_alignment = "center",
 		parent = "menu_root",
 		horizontal_alignment = "left",
-		size = size,
+		size = window_size,
 		position = {
 			220,
 			0,
@@ -106,12 +106,12 @@ local tbl_3 = {
 		parent = "window",
 		horizontal_alignment = "center",
 		size = {
-			size[1],
-			var_0_3
+			window_size[1],
+			window_frame_height
 		},
 		position = {
 			0,
-			-var_0_3,
+			-window_frame_height,
 			1
 		}
 	},
@@ -120,7 +120,7 @@ local tbl_3 = {
 		parent = "window",
 		horizontal_alignment = "center",
 		size = {
-			size[1] + 70,
+			window_size[1] + 70,
 			500
 		},
 		position = {
@@ -134,7 +134,7 @@ local tbl_3 = {
 		parent = "heroic_deed_background",
 		horizontal_alignment = "center",
 		size = {
-			var_0_5,
+			window_text_width,
 			50
 		},
 		position = {
@@ -162,7 +162,7 @@ local tbl_3 = {
 		parent = "heroic_deed_divider",
 		horizontal_alignment = "center",
 		size = {
-			var_0_5,
+			window_text_width,
 			200
 		},
 		position = {
@@ -176,8 +176,8 @@ local tbl_3 = {
 		parent = "window",
 		horizontal_alignment = "center",
 		size = {
-			tbl[1],
-			tbl[2]
+			game_option_size[1],
+			game_option_size[2]
 		},
 		position = {
 			-15,
@@ -190,12 +190,12 @@ local tbl_3 = {
 		parent = "window",
 		horizontal_alignment = "center",
 		size = {
-			tbl[1],
-			tbl[2]
+			game_option_size[1],
+			game_option_size[2]
 		},
 		position = {
 			-15,
-			-90 + tbl[2],
+			-90 + game_option_size[2],
 			1
 		}
 	},
@@ -204,12 +204,12 @@ local tbl_3 = {
 		parent = "window",
 		horizontal_alignment = "center",
 		size = {
-			tbl[1],
-			tbl[2]
+			game_option_size[1],
+			game_option_size[2]
 		},
 		position = {
 			-15,
-			-90 + tbl[2] * 2,
+			-90 + game_option_size[2] * 2,
 			1
 		}
 	},
@@ -218,8 +218,8 @@ local tbl_3 = {
 		parent = "window",
 		horizontal_alignment = "center",
 		size = {
-			tbl[1],
-			tbl[2]
+			game_option_size[1],
+			game_option_size[2]
 		},
 		position = {
 			0,
@@ -243,15 +243,15 @@ local tbl_3 = {
 	}
 }
 
-local function fn(arg_7_0, arg_7_1, arg_7_2, arg_7_3, arg_7_4)
+local function create_setting_button(scenegraph_id, title_text, input_text, icon_texture, icon_frame_texture)
 	-- function 7
-	arg_7_3 = arg_7_3 or "level_icon_01"
+	icon_texture = not not icon_texture or not not "level_icon_01"
 
-	local get_atlas_settings_by_texture_name = UIAtlasHelper.get_atlas_settings_by_texture_name(arg_7_3)
+	local icon_texture_settings = UIAtlasHelper.get_atlas_settings_by_texture_name(icon_texture)
 	local size
 
-	if not get_atlas_settings_by_texture_name then
-		size = get_atlas_settings_by_texture_name.size
+	if icon_texture_settings then
+		size = icon_texture_settings.size
 
 		if not size then
 			-- Nothing
@@ -263,28 +263,30 @@ local function fn(arg_7_0, arg_7_1, arg_7_2, arg_7_3, arg_7_4)
 		150
 	}
 
+	local icon_texture_size = size
+
 	::label_7_0::
 
-	local size_2 = tbl_3[arg_7_0].size
-	local tbl = {}
-	local tbl_2 = {}
-	local tbl_4 = {}
-	local str = "button_hotspot"
+	local button_size = scenegraph_definition[scenegraph_id].size
+	local passes = {}
+	local content = {}
+	local style = {}
+	local hotspot_name = "button_hotspot"
 
-	tbl[#tbl + 1] = {
+	passes[#passes + 1] = {
 		pass_type = "hotspot",
-		content_id = str
+		content_id = hotspot_name
 	}
-	tbl_2[str] = {}
+	content[hotspot_name] = {}
 
-	local str_2 = "selection_background"
+	local background_name = "selection_background"
 
-	tbl[#tbl + 1] = {
+	passes[#passes + 1] = {
 		pass_type = "texture_uv",
-		content_id = str_2,
-		style_id = str_2
+		content_id = background_name,
+		style_id = background_name
 	}
-	tbl_2[str_2] = {
+	content[background_name] = {
 		texture_id = "item_slot_side_fade",
 		uvs = {
 			{
@@ -298,13 +300,13 @@ local function fn(arg_7_0, arg_7_1, arg_7_2, arg_7_3, arg_7_4)
 		}
 	}
 
-	local tbl_5 = {
+	local bg_offset = {
 		168,
 		0,
 		-2
 	}
 
-	tbl_4[str_2] = {
+	style[background_name] = {
 		vertical_alignment = "center",
 		horizontal_alignment = "left",
 		texture_size = {
@@ -312,21 +314,21 @@ local function fn(arg_7_0, arg_7_1, arg_7_2, arg_7_3, arg_7_4)
 			118
 		},
 		color = UISettings.console_start_game_menu_rect_color,
-		offset = tbl_5
+		offset = bg_offset
 	}
 
-	local str_3 = "bg_effect"
+	local bg_effect_name = "bg_effect"
 
-	tbl[#tbl + 1] = {
+	passes[#passes + 1] = {
 		pass_type = "texture",
-		texture_id = str_3,
-		style_id = str_3,
-		content_check_function = function (self)
+		texture_id = bg_effect_name,
+		style_id = bg_effect_name,
+		content_check_function = function (content)
 			-- function 8
-			return self.is_selected
+			return content.is_selected
 		end
 	}
-	tbl_4[str_3] = {
+	style[bg_effect_name] = {
 		vertical_alignment = "center",
 		horizontal_alignment = "left",
 		texture_size = {
@@ -335,42 +337,42 @@ local function fn(arg_7_0, arg_7_1, arg_7_2, arg_7_3, arg_7_4)
 		},
 		color = Colors.get_color_table_with_alpha("font_title", 255),
 		offset = {
-			tbl_5[1],
-			tbl_5[2],
-			tbl_5[3] + 1
+			bg_offset[1],
+			bg_offset[2],
+			bg_offset[3] + 1
 		}
 	}
-	tbl_2[str_3] = "item_slot_side_effect"
+	content[bg_effect_name] = "item_slot_side_effect"
 
-	local str_4 = "text_title"
-	local str_5 = str_4 .. "_shadow"
+	local text_title_name = "text_title"
+	local text_title_shadow_name = text_title_name .. "_shadow"
 
-	tbl[#tbl + 1] = {
+	passes[#passes + 1] = {
 		pass_type = "text",
-		text_id = str_4,
-		style_id = str_4,
-		content_change_function = function (self, arg_9_1)
+		text_id = text_title_name,
+		style_id = text_title_name,
+		content_change_function = function (content, style)
 			-- function 9
-			if not self.is_selected then
-				arg_9_1.text_color = arg_9_1.selected_color
+			if content.is_selected then
+				style.text_color = style.selected_color
 			else
-				arg_9_1.text_color = arg_9_1.default_color
+				style.text_color = style.default_color
 			end
 		end
 	}
-	tbl[#tbl + 1] = {
+	passes[#passes + 1] = {
 		pass_type = "text",
-		text_id = str_4,
-		style_id = str_5
+		text_id = text_title_name,
+		style_id = text_title_shadow_name
 	}
-	tbl_2[str_4] = arg_7_1
+	content[text_title_name] = title_text
 
-	local tbl_6 = {
+	local title_text_offset = {
 		225,
 		16,
 		5
 	}
-	local tbl_7 = {
+	local title_text_style = {
 		word_wrap = false,
 		upper_case = true,
 		localize = false,
@@ -382,43 +384,43 @@ local function fn(arg_7_0, arg_7_1, arg_7_2, arg_7_3, arg_7_4)
 		selected_color = Colors.get_color_table_with_alpha("white", 255),
 		default_color = Colors.get_color_table_with_alpha("font_title", 255),
 		offset = {
-			tbl_6[1],
-			tbl_6[2],
-			tbl_6[3]
+			title_text_offset[1],
+			title_text_offset[2],
+			title_text_offset[3]
 		}
 	}
-	local clone = table.clone(tbl_7)
+	local title_text_shadow_style = table.clone(title_text_style)
 
-	clone.text_color = {
+	title_text_shadow_style.text_color = {
 		255,
 		0,
 		0,
 		0
 	}
-	clone.offset = {
-		tbl_6[1] + 2,
-		tbl_6[2] - 2,
-		tbl_6[3] - 1
+	title_text_shadow_style.offset = {
+		title_text_offset[1] + 2,
+		title_text_offset[2] - 2,
+		title_text_offset[3] - 1
 	}
-	tbl_4[str_4] = tbl_7
-	tbl_4[str_5] = clone
+	style[text_title_name] = title_text_style
+	style[text_title_shadow_name] = title_text_shadow_style
 
-	local str_6 = "input_text"
-	local str_7 = str_6 .. "shadow"
+	local input_text_name = "input_text"
+	local input_text_shadow_name = input_text_name .. "shadow"
 
-	tbl[#tbl + 1] = {
+	passes[#passes + 1] = {
 		pass_type = "text",
-		text_id = str_6,
-		style_id = str_6
+		text_id = input_text_name,
+		style_id = input_text_name
 	}
-	tbl[#tbl + 1] = {
+	passes[#passes + 1] = {
 		pass_type = "text",
-		text_id = str_6,
-		style_id = str_7
+		text_id = input_text_name,
+		style_id = input_text_shadow_name
 	}
-	tbl_2[str_6] = Localize("not_assigned")
+	content[input_text_name] = Localize("not_assigned")
 
-	local tbl_8 = {
+	local input_text_style = {
 		vertical_alignment = "center",
 		font_size = 22,
 		localize = false,
@@ -427,92 +429,92 @@ local function fn(arg_7_0, arg_7_1, arg_7_2, arg_7_3, arg_7_4)
 		font_type = "hell_shark",
 		text_color = Colors.get_color_table_with_alpha("font_default", 255),
 		offset = {
-			tbl_6[1],
+			title_text_offset[1],
 			-18,
-			tbl_6[3]
+			title_text_offset[3]
 		}
 	}
-	local offset = tbl_8.offset
-	local clone_2 = table.clone(tbl_8)
+	local input_text_offset = input_text_style.offset
+	local input_text_shadow_style = table.clone(input_text_style)
 
-	clone_2.text_color = {
+	input_text_shadow_style.text_color = {
 		255,
 		0,
 		0,
 		0
 	}
-	clone_2.offset = {
-		offset[1] + 2,
-		offset[2] - 2,
-		offset[3] - 1
+	input_text_shadow_style.offset = {
+		input_text_offset[1] + 2,
+		input_text_offset[2] - 2,
+		input_text_offset[3] - 1
 	}
-	tbl_4[str_6] = tbl_8
-	tbl_4[str_7] = clone_2
+	style[input_text_name] = input_text_style
+	style[input_text_shadow_name] = input_text_shadow_style
 
-	local tbl_9 = {
-		-(size_2[1] / 2) + 108,
+	local icon_offset = {
+		-(button_size[1] / 2) + 108,
 		0,
 		5
 	}
-	local tbl_10 = {
-		tbl_9[1],
-		tbl_9[2],
-		tbl_9[3] - 2
+	local icon_background_offset = {
+		icon_offset[1],
+		icon_offset[2],
+		icon_offset[3] - 2
 	}
-	local tbl_11 = {
-		tbl_9[1],
-		tbl_9[2],
-		tbl_9[3] + 2
+	local icon_frame_offset = {
+		icon_offset[1],
+		icon_offset[2],
+		icon_offset[3] + 2
 	}
-	local tbl_12 = {
-		tbl_9[1],
-		tbl_9[2],
-		tbl_9[3] - 1
+	local icon_glow_offset = {
+		icon_offset[1],
+		icon_offset[2],
+		icon_offset[3] - 1
 	}
-	local str_8 = "icon_texture"
-	local str_9 = "icon_texture_frame"
+	local icon_texture_name = "icon_texture"
+	local icon_texture_frame_name = "icon_texture_frame"
 
-	tbl[#tbl + 1] = {
+	passes[#passes + 1] = {
 		pass_type = "texture",
-		style_id = str_8,
-		texture_id = str_8,
-		content_check_function = function (self, arg_10_1)
+		style_id = icon_texture_name,
+		texture_id = icon_texture_name,
+		content_check_function = function (content, style)
 			-- function 10
-			return self[str_8]
+			return content[icon_texture_name]
 		end,
-		content_change_function = function (self, arg_11_1)
+		content_change_function = function (content, style)
 			-- function 11
-			if not self.button_hotspot.disable_button then
-				arg_11_1.saturated = true
+			if content.button_hotspot.disable_button then
+				style.saturated = true
 			else
-				arg_11_1.saturated = false
+				style.saturated = false
 			end
 		end
 	}
-	tbl[#tbl + 1] = {
+	passes[#passes + 1] = {
 		pass_type = "texture",
-		texture_id = str_9,
-		style_id = str_9,
-		content_check_function = function (self, arg_12_1)
+		texture_id = icon_texture_frame_name,
+		style_id = icon_texture_frame_name,
+		content_check_function = function (content, style)
 			-- function 12
-			return self[str_8]
+			return content[icon_texture_name]
 		end
 	}
-	tbl_2[str_8] = nil
-	tbl_2[str_9] = "item_frame"
-	tbl_4[str_8] = {
+	content[icon_texture_name] = nil
+	content[icon_texture_frame_name] = "item_frame"
+	style[icon_texture_name] = {
 		vertical_alignment = "center",
 		horizontal_alignment = "center",
-		texture_size = size,
+		texture_size = icon_texture_size,
 		color = {
 			255,
 			255,
 			255,
 			255
 		},
-		offset = tbl_9
+		offset = icon_offset
 	}
-	tbl_4[str_9] = {
+	style[icon_texture_frame_name] = {
 		vertical_alignment = "center",
 		horizontal_alignment = "center",
 		texture_size = {
@@ -525,18 +527,18 @@ local function fn(arg_7_0, arg_7_1, arg_7_2, arg_7_3, arg_7_4)
 			255,
 			255
 		},
-		offset = tbl_9
+		offset = icon_offset
 	}
 
-	local str_10 = "icon_background"
+	local icon_background_name = "icon_background"
 
-	tbl[#tbl + 1] = {
+	passes[#passes + 1] = {
 		pass_type = "texture",
-		texture_id = str_10,
-		style_id = str_10
+		texture_id = icon_background_name,
+		style_id = icon_background_name
 	}
-	tbl_2[str_10] = "level_icon_09"
-	tbl_4[str_10] = {
+	content[icon_background_name] = "level_icon_09"
+	style[icon_background_name] = {
 		vertical_alignment = "center",
 		horizontal_alignment = "center",
 		texture_size = {
@@ -544,30 +546,30 @@ local function fn(arg_7_0, arg_7_1, arg_7_2, arg_7_3, arg_7_4)
 			150
 		},
 		color = UISettings.console_start_game_menu_rect_color,
-		offset = tbl_10
+		offset = icon_background_offset
 	}
 
-	local str_11 = "icon_frame_texture"
+	local icon_frame_texture_name = "icon_frame_texture"
 
-	tbl[#tbl + 1] = {
+	passes[#passes + 1] = {
 		pass_type = "texture",
-		style_id = str_11,
-		texture_id = str_11,
-		content_check_function = function (self, arg_13_1)
+		style_id = icon_frame_texture_name,
+		texture_id = icon_frame_texture_name,
+		content_check_function = function (content, style)
 			-- function 13
-			return self[str_11]
+			return content[icon_frame_texture_name]
 		end,
-		content_change_function = function (self, arg_14_1)
+		content_change_function = function (content, style)
 			-- function 14
-			if not self.button_hotspot.disable_button then
-				arg_14_1.saturated = true
+			if content.button_hotspot.disable_button then
+				style.saturated = true
 			else
-				arg_14_1.saturated = false
+				style.saturated = false
 			end
 		end
 	}
-	tbl_2[str_11] = arg_7_4 or "map_frame_00"
-	tbl_4[str_11] = {
+	content[icon_frame_texture_name] = not not icon_frame_texture or not not "map_frame_00"
+	style[icon_frame_texture_name] = {
 		vertical_alignment = "center",
 		horizontal_alignment = "center",
 		texture_size = {
@@ -580,22 +582,22 @@ local function fn(arg_7_0, arg_7_1, arg_7_2, arg_7_3, arg_7_4)
 			255,
 			255
 		},
-		offset = tbl_11
+		offset = icon_frame_offset
 	}
 
-	local str_12 = "icon_texture_glow"
+	local icon_texture_glow_name = "icon_texture_glow"
 
-	tbl[#tbl + 1] = {
+	passes[#passes + 1] = {
 		pass_type = "texture",
-		style_id = str_12,
-		texture_id = str_12,
-		content_check_function = function (self)
+		style_id = icon_texture_glow_name,
+		texture_id = icon_texture_glow_name,
+		content_check_function = function (content)
 			-- function 15
-			return self.is_selected
+			return content.is_selected
 		end
 	}
-	tbl_2[str_12] = "map_frame_glow_02"
-	tbl_4[str_12] = {
+	content[icon_texture_glow_name] = "map_frame_glow_02"
+	style[icon_texture_glow_name] = {
 		vertical_alignment = "center",
 		horizontal_alignment = "center",
 		texture_size = {
@@ -608,25 +610,27 @@ local function fn(arg_7_0, arg_7_1, arg_7_2, arg_7_3, arg_7_4)
 			255,
 			255
 		},
-		offset = tbl_12
+		offset = icon_glow_offset
 	}
 
-	return {
-		element = {
-			passes = tbl
-		},
-		content = tbl_2,
-		style = tbl_4,
-		offset = {
-			0,
-			0,
-			0
-		},
-		scenegraph_id = arg_7_0
+	local widget = {}
+
+	widget.element = {
+		passes = passes
 	}
+	widget.content = content
+	widget.style = style
+	widget.offset = {
+		0,
+		0,
+		0
+	}
+	widget.scenegraph_id = scenegraph_id
+
+	return widget
 end
 
-local tbl_4 = {
+local heroic_deed_title_style = {
 	font_size = 50,
 	upper_case = true,
 	localize = false,
@@ -643,7 +647,7 @@ local tbl_4 = {
 		2
 	}
 }
-local tbl_5 = {
+local heroic_deed_description_style = {
 	font_size = 28,
 	upper_case = false,
 	localize = false,
@@ -659,22 +663,22 @@ local tbl_5 = {
 		2
 	}
 }
-local tbl_6 = {
-	heroic_deed_description_background = UIWidgets.create_rect_with_outer_frame("heroic_deed_background", tbl_3.heroic_deed_background.size, "frame_outer_fade_02", nil, UISettings.console_start_game_menu_rect_color),
-	heroic_deed_title = UIWidgets.create_simple_text(Localize("start_game_window_mutator_title"), "heroic_deed_title", nil, nil, tbl_4),
+local widgets = {
+	heroic_deed_description_background = UIWidgets.create_rect_with_outer_frame("heroic_deed_background", scenegraph_definition.heroic_deed_background.size, "frame_outer_fade_02", nil, UISettings.console_start_game_menu_rect_color),
+	heroic_deed_title = UIWidgets.create_simple_text(Localize("start_game_window_mutator_title"), "heroic_deed_title", nil, nil, heroic_deed_title_style),
 	heroic_deed_divider = UIWidgets.create_simple_texture("divider_01_top", "heroic_deed_divider"),
-	heroic_deed_description = UIWidgets.create_simple_text(Localize("start_game_window_mutator_desc"), "heroic_deed_description", nil, nil, tbl_5),
-	heroic_deed_setting = fn("game_option_2", Localize("start_game_window_mutator_title"), nil, "icon_deed_normal_01"),
+	heroic_deed_description = UIWidgets.create_simple_text(Localize("start_game_window_mutator_desc"), "heroic_deed_description", nil, nil, heroic_deed_description_style),
+	heroic_deed_setting = create_setting_button("game_option_2", Localize("start_game_window_mutator_title"), nil, "icon_deed_normal_01"),
 	play_button = UIWidgets.create_icon_and_name_button("play_button", "options_button_icon_quickplay", Localize("start_game_window_play"))
 }
-local tbl_7 = {
+local selector_input_definition = {
 	"heroic_deed_setting",
 	"play_button"
 }
 
 return {
-	scenegraph_definition = tbl_3,
-	widgets = tbl_6,
-	animation_definitions = tbl_2,
-	selector_input_definition = tbl_7
+	scenegraph_definition = scenegraph_definition,
+	widgets = widgets,
+	animation_definitions = animation_definitions,
+	selector_input_definition = selector_input_definition
 }

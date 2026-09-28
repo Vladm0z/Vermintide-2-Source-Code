@@ -2,29 +2,29 @@
 
 BackendInterfaceHeroAttributes = class(BackendInterfaceHeroAttributes)
 
-local str = "hero_attributes_"
-local str_2 = "hero_attributes"
-local str_3 = "hero_attribute_"
+local DB_ENTITY_NAME_PREFIX = "hero_attributes_"
+local DB_ENTITY_TYPE = "hero_attributes"
+local DB_ATTRIBUTE_NAME_PREFIX = "hero_attribute_"
 
-BackendInterfaceHeroAttributes.init = function (arg_1_0)
+BackendInterfaceHeroAttributes.init = function (self)
 	-- function 1
 	return
 end
 
 BackendInterfaceHeroAttributes._refresh_attributes = function (self)
 	-- function 2
-	local get_entities_with_attributes = Backend.get_entities_with_attributes(str_2)
-	local tbl = {}
+	local entities = Backend.get_entities_with_attributes(DB_ENTITY_TYPE)
+	local attributes_by_entity_name = {}
 
-	for k, v in pairs(get_entities_with_attributes) do
-		local entity_name = v.entity_name
-		local attributes = v.attributes
+	for entity_id, entity in pairs(entities) do
+		local entity_name = entity.entity_name
+		local attributes = entity.attributes
 
-		attributes.entity_id = k
-		tbl[entity_name] = attributes
+		attributes.entity_id = entity_id
+		attributes_by_entity_name[entity_name] = attributes
 	end
 
-	self._attributes = tbl
+	self._attributes = attributes_by_entity_name
 end
 
 BackendInterfaceHeroAttributes.on_authenticated = function (self)
@@ -32,38 +32,40 @@ BackendInterfaceHeroAttributes.on_authenticated = function (self)
 	self:_refresh_attributes()
 end
 
-BackendInterfaceHeroAttributes.get = function (self, arg_4_1, arg_4_2)
+BackendInterfaceHeroAttributes.get = function (self, hero_name, attribute_name)
 	-- function 4
-	local str_2 = str .. arg_4_1
-	local str_4 = str_3 .. arg_4_2
-	local var_4_2 = self._attributes[str_2]
-	local flag = not var_4_2 and var_4_2[str_4]
+	local db_entity_name = DB_ENTITY_NAME_PREFIX .. hero_name
+	local db_attribute_name = DB_ATTRIBUTE_NAME_PREFIX .. attribute_name
+	local attributes = self._attributes[db_entity_name]
+	local value_json = not not attributes and not not attributes[db_attribute_name]
 
-	if not flag then
+	if not value_json then
 		return
 	end
 
-	return (cjson.decode(flag))
+	local value = cjson.decode(value_json)
+
+	return value
 end
 
-BackendInterfaceHeroAttributes.set = function (self, arg_5_1, arg_5_2, arg_5_3)
+BackendInterfaceHeroAttributes.set = function (self, hero_name, attribute_name, value)
 	-- function 5
-	local str_2 = str .. arg_5_1
-	local str_4 = str_3 .. arg_5_2
-	local var_5_2 = self._attributes[str_2]
+	local db_entity_name = DB_ENTITY_NAME_PREFIX .. hero_name
+	local db_attribute_name = DB_ATTRIBUTE_NAME_PREFIX .. attribute_name
+	local attributes = self._attributes[db_entity_name]
 
-	if not (not var_5_2 and var_5_2[str_4]) then
+	if not attributes or not attributes[db_attribute_name] then
 		return
 	end
 
-	if arg_5_3 == nil then
+	if value == nil then
 		return
 	end
 
-	local entity_id = var_5_2.entity_id
-	local encode = cjson.encode(arg_5_3)
-	local set_entity_attribute = Backend.set_entity_attribute(entity_id, str_4, encode)
+	local entity_id = attributes.entity_id
+	local value_json = cjson.encode(value)
+	local error_code = Backend.set_entity_attribute(entity_id, db_attribute_name, value_json)
 
-	fassert(not set_entity_attribute and set_entity_attribute == Backend.RES_NO_CHANGE, "[BackendInterfaceHeroAttributes:set] BackendItem.set_entity_attribute() returned an unexpected result: %d", set_entity_attribute)
+	fassert(not error_code or error_code == Backend.RES_NO_CHANGE, "[BackendInterfaceHeroAttributes:set] BackendItem.set_entity_attribute() returned an unexpected result: %d", error_code)
 	self:_refresh_attributes()
 end

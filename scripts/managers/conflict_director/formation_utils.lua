@@ -2,59 +2,58 @@
 
 FormationUtils = {}
 
-FormationUtils.make_formation = function (self, arg_1_1)
+FormationUtils.make_formation = function (formation_template, spacing)
 	-- function 1
-	local tbl = {
+	local formation = {
 		arrangement = {},
-		formation_template = self,
-		x = self.x,
-		y = self.y
+		formation_template = formation_template,
+		x = formation_template.x,
+		y = formation_template.y
 	}
-	local var_1_1 = self.size[1]
-	local var_1_2 = self.size[2]
-	local num = arg_1_1 / 2
-	local num_2 = var_1_1 / 2 - num
-	local num_3 = var_1_2 / 2 - num
-	local arrangement = tbl.arrangement
-	local num_4 = 0
+	local num_units_x = formation_template.size[1]
+	local num_units_y = formation_template.size[2]
+	local half_spacing = spacing / 2
+	local half_width = num_units_x / 2 - half_spacing
+	local half_height = num_units_y / 2 - half_spacing
+	local arrangement = formation.arrangement
+	local k = 0
 
-	for i = 0, var_1_2 - 1 do
-		for j = 0, var_1_1 - 1 do
-			num_4 = num_4 + 1
-			arrangement[num_4] = {
-				j * arg_1_1 - num_2,
-				i * arg_1_1 - num_3
+	for j = 0, num_units_y - 1 do
+		for i = 0, num_units_x - 1 do
+			k = k + 1
+			arrangement[k] = {
+				i * spacing - half_width,
+				j * spacing - half_height
 			}
 		end
 	end
 
-	return tbl, num_4
+	return formation, k
 end
 
-FormationUtils.make_encampment = function (self)
+FormationUtils.make_encampment = function (encampment_template)
 	-- function 2
-	local tbl = {
+	local encampment = {
 		army_size = 0,
-		encampment_template = self
+		encampment_template = encampment_template
 	}
-	local num = 0
-	local var_2_2
+	local army_size = 0
+	local size
 
-	for i = 1, #self do
-		local var_2_3 = self[i]
-		local num_2 = 1
-		local var_2_5
+	for i = 1, #encampment_template do
+		local formation_template = encampment_template[i]
+		local spacing = 1
 
-		tbl[i], var_2_5 = FormationUtils.make_formation(var_2_3, num_2)
-		num = num + var_2_5
+		encampment[i], size = FormationUtils.make_formation(formation_template, spacing)
+		army_size = army_size + size
 	end
 
-	tbl.army_size = num
+	encampment.army_size = army_size
 
-	return tbl
+	return encampment
 end
 
-local tbl = {
+local FORMATION_COLORS = {
 	light = {
 		222,
 		88,
@@ -77,31 +76,31 @@ local tbl = {
 	}
 }
 
-FormationUtils.draw_encampment = function (self, arg_3_1, arg_3_2, arg_3_3)
+FormationUtils.draw_encampment = function (encampment, pos, rot, drawer)
 	-- function 3
-	arg_3_3 = arg_3_3 or QuickDrawer
+	drawer = not not drawer or not not QuickDrawer
 
-	arg_3_3:sphere(arg_3_1, 0.25, Color(0, 180, 0))
+	drawer:sphere(pos, 0.25, Color(0, 180, 0))
 
-	for i = 1, #self do
-		local var_3_0 = self[i]
-		local var_3_1 = tbl[var_3_0.formation_template.category]
-		local var_3_2 = Color(var_3_1[1], var_3_1[2], var_3_1[3])
-		local var_3_3 = arg_3_2
-		local num = arg_3_1 + Quaternion.rotate(arg_3_2, Vector2(var_3_0.x, var_3_0.y))
+	for i = 1, #encampment do
+		local formation = encampment[i]
+		local fc = FORMATION_COLORS[formation.formation_template.category]
+		local color = Color(fc[1], fc[2], fc[3])
+		local frot = rot
+		local fpos = pos + Quaternion.rotate(rot, Vector2(formation.x, formation.y))
 
-		FormationUtils.draw_formation(var_3_0, num, var_3_3, var_3_2, arg_3_3)
+		FormationUtils.draw_formation(formation, fpos, frot, color, drawer)
 	end
 end
 
-FormationUtils.draw_formation = function (self, arg_4_1, arg_4_2, arg_4_3, arg_4_4)
+FormationUtils.draw_formation = function (formation, pos, rot, color, drawer)
 	-- function 4
-	arg_4_4:line(arg_4_1, arg_4_1 + Vector3(0, 0, 3), arg_4_3)
+	drawer:line(pos, pos + Vector3(0, 0, 3), color)
 
-	local dir = self.formation_template.dir
+	local dir = formation.formation_template.dir
 	local look
 
-	if not dir then
+	if dir then
 		look = Quaternion.look(Vector3(dir[1], dir[2], 0))
 
 		if not look then
@@ -110,29 +109,32 @@ FormationUtils.draw_formation = function (self, arg_4_1, arg_4_2, arg_4_3, arg_4
 	end
 
 	look = Quaternion.look(Vector3(0, 1, 0))
+
+	local formation_rot = look
 
 	::label_4_0::
 
-	local multiply = Quaternion.multiply(arg_4_2, look)
-	local arrangement = self.arrangement
+	formation_rot = Quaternion.multiply(rot, formation_rot)
+
+	local arrangement = formation.arrangement
 
 	for i = 1, #arrangement do
-		local var_4_4 = arrangement[i]
-		local num = arg_4_1 + Quaternion.rotate(multiply, Vector3(var_4_4[1], var_4_4[2], 0))
+		local arr = arrangement[i]
+		local spawn_pos = pos + Quaternion.rotate(formation_rot, Vector3(arr[1], arr[2], 0))
 
-		arg_4_4:sphere(num, 0.5, arg_4_3)
+		drawer:sphere(spawn_pos, 0.5, color)
 	end
 end
 
-FormationUtils.spawn_formation = function (self, arg_5_1, arg_5_2, arg_5_3, arg_5_4, arg_5_5)
+FormationUtils.spawn_formation = function (formation, pos, rot, breed_name, group_template, side_id)
 	-- function 5
-	local conflict = Managers.state.conflict
-	local nav_world = conflict.nav_world
-	local arrangement = self.arrangement
-	local dir = self.formation_template.dir
+	local conflict_director = Managers.state.conflict
+	local nav_world = conflict_director.nav_world
+	local arrangement = formation.arrangement
+	local dir = formation.formation_template.dir
 	local look
 
-	if not dir then
+	if dir then
 		look = Quaternion.look(Vector3(dir[1], dir[2], 0))
 
 		if not look then
@@ -142,54 +144,57 @@ FormationUtils.spawn_formation = function (self, arg_5_1, arg_5_2, arg_5_3, arg_
 
 	look = Quaternion.look(Vector3(0, 1, 0))
 
+	local formation_rot = look
+
 	::label_5_0::
 
-	local multiply = Quaternion.multiply(arg_5_2, look)
+	formation_rot = Quaternion.multiply(rot, formation_rot)
 
 	for i = 1, #arrangement do
-		local var_5_6 = arrangement[i]
-		local num = arg_5_1 + Quaternion.rotate(multiply, Vector3(var_5_6[1], var_5_6[2], 0))
-		local triangle_from_position, var_5_9 = GwNavQueries.triangle_from_position(nav_world, num, 2, 2)
+		local arr = arrangement[i]
+		local spawn_pos = pos + Quaternion.rotate(formation_rot, Vector3(arr[1], arr[2], 0))
+		local on_mesh, z = GwNavQueries.triangle_from_position(nav_world, spawn_pos, 2, 2)
 
-		if not triangle_from_position then
-			Vector3.set_z(num, var_5_9)
+		if on_mesh then
+			Vector3.set_z(spawn_pos, z)
 
-			local str = "roam"
-			local str_2 = "encampment"
-			local var_5_12 = Breeds[arg_5_3]
-			local var_5_13
-			local tbl = {
-				side_id = arg_5_5
+			local spawn_type = "roam"
+			local spawn_category = "encampment"
+			local breed = Breeds[breed_name]
+			local optional_data
+
+			optional_data = {
+				side_id = side_id
 			}
 
-			conflict:spawn_queued_unit(var_5_12, Vector3Box(num), QuaternionBox(multiply), str_2, nil, str, tbl, arg_5_4)
+			conflict_director:spawn_queued_unit(breed, Vector3Box(spawn_pos), QuaternionBox(formation_rot), spawn_category, nil, spawn_type, optional_data, group_template)
 		end
 	end
 end
 
-FormationUtils.spawn_encampment = function (self, arg_6_1, arg_6_2, arg_6_3, arg_6_4)
+FormationUtils.spawn_encampment = function (encampment, pos, rot, unit_composition, side_id)
 	-- function 6
-	local tbl = {
+	local group_template = {
 		template = "encampment",
 		id = Managers.state.entity:system("ai_group_system"):generate_group_id(),
-		size = self.army_size,
+		size = encampment.army_size,
 		group_data = {
 			sneaky = true,
 			idle = true,
-			encampment = self,
+			encampment = encampment,
 			spawn_time = Managers.time:time("game"),
-			side_id = arg_6_4
+			side_id = side_id
 		},
-		side_id = arg_6_4
+		side_id = side_id
 	}
 
-	self.pos = Vector3Box(arg_6_1)
+	encampment.pos = Vector3Box(pos)
 
-	for i = 1, #self do
-		local var_6_1 = self[i]
-		local var_6_2 = arg_6_3[var_6_1.formation_template.category]
-		local num = arg_6_1 + Quaternion.rotate(arg_6_2, Vector2(var_6_1.x, var_6_1.y))
+	for i = 1, #encampment do
+		local formation = encampment[i]
+		local breed_name = unit_composition[formation.formation_template.category]
+		local fpos = pos + Quaternion.rotate(rot, Vector2(formation.x, formation.y))
 
-		FormationUtils.spawn_formation(var_6_1, num, arg_6_2, var_6_2, tbl, arg_6_4)
+		FormationUtils.spawn_formation(formation, fpos, rot, breed_name, group_template, side_id)
 	end
 end

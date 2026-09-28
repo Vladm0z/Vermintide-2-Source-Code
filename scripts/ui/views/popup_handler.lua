@@ -8,7 +8,7 @@ require("scripts/helpers/ui_utils")
 require("scripts/ui/ui_elements")
 require("scripts/ui/ui_widgets")
 
-local tbl = {
+local scenegraph_definition = {
 	root = {
 		is_root = true,
 		position = {
@@ -250,16 +250,16 @@ local tbl = {
 	}
 }
 
-local function fn(arg_1_0, arg_1_1)
+local function create_default_window(scenegraph_id, size)
 	-- function 1
-	local str = "menu_frame_bg_01"
-	local get_atlas_settings_by_texture_name = UIAtlasHelper.get_atlas_settings_by_texture_name(str)
-	local menu_frame_11 = UIFrameSettings.menu_frame_11
-	local menu_frame_06 = UIFrameSettings.menu_frame_06
-	local tbl = {
+	local background_texture = "menu_frame_bg_01"
+	local background_texture_settings = UIAtlasHelper.get_atlas_settings_by_texture_name(background_texture)
+	local frame_settings = UIFrameSettings.menu_frame_11
+	local inner_frame_settings = UIFrameSettings.menu_frame_06
+	local widget = {
 		element = {}
 	}
-	local tbl_2 = {
+	local passes = {
 		{
 			style_id = "background",
 			pass_type = "texture_uv",
@@ -330,7 +330,7 @@ local function fn(arg_1_0, arg_1_1)
 			text_id = "center_timer_field"
 		}
 	}
-	local tbl_3 = {
+	local content = {
 		timer_field = "",
 		title_text = "",
 		text_start_offset = 0,
@@ -338,8 +338,8 @@ local function fn(arg_1_0, arg_1_1)
 		background_fade = "options_window_fade_01",
 		background_tint = "gradient_dice_game_reward",
 		center_timer_field = "",
-		frame = menu_frame_11.texture,
-		inner_frame = menu_frame_06.texture,
+		frame = frame_settings.texture,
+		inner_frame = inner_frame_settings.texture,
 		background = {
 			uvs = {
 				{
@@ -347,14 +347,14 @@ local function fn(arg_1_0, arg_1_1)
 					0
 				},
 				{
-					math.min(arg_1_1[1] / get_atlas_settings_by_texture_name.size[1], 1),
-					math.min(arg_1_1[2] / get_atlas_settings_by_texture_name.size[2], 1)
+					math.min(size[1] / background_texture_settings.size[1], 1),
+					math.min(size[2] / background_texture_settings.size[2], 1)
 				}
 			},
-			texture_id = str
+			texture_id = background_texture
 		}
 	}
-	local tbl_4 = {
+	local style = {
 		background = {
 			color = {
 				255,
@@ -382,8 +382,8 @@ local function fn(arg_1_0, arg_1_1)
 			}
 		},
 		frame = {
-			texture_size = menu_frame_11.texture_size,
-			texture_sizes = menu_frame_11.texture_sizes,
+			texture_size = frame_settings.texture_size,
+			texture_sizes = frame_settings.texture_sizes,
 			color = {
 				255,
 				255,
@@ -412,8 +412,8 @@ local function fn(arg_1_0, arg_1_1)
 		},
 		inner_frame = {
 			scenegraph_id = "popup_text_box",
-			texture_size = menu_frame_06.texture_size,
-			texture_sizes = menu_frame_06.texture_sizes,
+			texture_size = inner_frame_settings.texture_size,
+			texture_sizes = inner_frame_settings.texture_sizes,
 			color = {
 				255,
 				255,
@@ -568,30 +568,30 @@ local function fn(arg_1_0, arg_1_1)
 		}
 	}
 
-	tbl.element.passes = tbl_2
-	tbl.content = tbl_3
-	tbl.style = tbl_4
-	tbl.offset = {
+	widget.element.passes = passes
+	widget.content = content
+	widget.style = style
+	widget.offset = {
 		0,
 		0,
 		0
 	}
-	tbl.scenegraph_id = arg_1_0
+	widget.scenegraph_id = scenegraph_id
 
-	return tbl
+	return widget
 end
 
-local function fn_2(arg_2_0, arg_2_1)
+local function create_password_window(scenegraph_id, size)
 	-- function 2
-	local str = "menu_frame_bg_01"
-	local get_atlas_settings_by_texture_name = UIAtlasHelper.get_atlas_settings_by_texture_name(str)
-	local menu_frame_11 = UIFrameSettings.menu_frame_11
-	local menu_frame_06 = UIFrameSettings.menu_frame_06
-	local menu_frame_06_2 = UIFrameSettings.menu_frame_06
-	local tbl = {
+	local background_texture = "menu_frame_bg_01"
+	local background_texture_settings = UIAtlasHelper.get_atlas_settings_by_texture_name(background_texture)
+	local frame_settings = UIFrameSettings.menu_frame_11
+	local inner_frame_settings = UIFrameSettings.menu_frame_06
+	local checkbox_frame_settings = UIFrameSettings.menu_frame_06
+	local widget = {
 		element = {}
 	}
-	local tbl_2 = {
+	local passes = {
 		{
 			style_id = "background",
 			pass_type = "texture_uv",
@@ -679,47 +679,47 @@ local function fn_2(arg_2_0, arg_2_1)
 			texture_id = "status_texture_glow",
 			style_id = "status_texture_glow",
 			pass_type = "texture",
-			content_check_function = function (self)
+			content_check_function = function (content)
 				-- function 3
-				return not self.active
+				return not content.active
 			end
 		},
 		{
 			texture_id = "status_texture_frame",
 			style_id = "status_texture_frame",
 			pass_type = "texture",
-			content_check_function = function (self)
+			content_check_function = function (content)
 				-- function 4
-				return not self.active
+				return not content.active
 			end
 		},
 		{
 			style_id = "placeholder_input",
 			pass_type = "text",
 			text_id = "placeholder_input",
-			content_check_function = function (self)
+			content_check_function = function (content)
 				-- function 5
-				return self.input == ""
+				return content.input == ""
 			end
 		},
 		{
 			style_id = "placeholder_input_shadow",
 			pass_type = "text",
 			text_id = "placeholder_input",
-			content_check_function = function (self)
+			content_check_function = function (content)
 				-- function 6
-				return self.input == ""
+				return content.input == ""
 			end
 		},
 		{
 			style_id = "status_message",
 			pass_type = "text",
 			text_id = "status_message",
-			content_check_function = function (self)
+			content_check_function = function (content)
 				-- function 7
-				local status_message = self.status_message
+				local status_message = content.status_message
 
-				status_message = not status_message and not self.error_message
+				status_message = not not status_message and not not not content.error_message
 
 				return status_message
 			end
@@ -728,11 +728,11 @@ local function fn_2(arg_2_0, arg_2_1)
 			style_id = "error_message",
 			pass_type = "text",
 			text_id = "status_message",
-			content_check_function = function (self)
+			content_check_function = function (content)
 				-- function 8
-				local status_message = self.status_message
+				local status_message = content.status_message
 
-				status_message = not status_message and self.error_message
+				status_message = not not status_message and not not content.error_message
 
 				return status_message
 			end
@@ -741,28 +741,28 @@ local function fn_2(arg_2_0, arg_2_1)
 			style_id = "status_message_shadow",
 			pass_type = "text",
 			text_id = "status_message",
-			content_check_function = function (self)
+			content_check_function = function (content)
 				-- function 9
-				return self.status_message
+				return content.status_message
 			end
 		},
 		{
 			style_id = "checkbox_background",
 			pass_type = "hotspot",
 			content_id = "checkbox_hotspot",
-			content_change_function = function (self, arg_10_1)
+			content_change_function = function (content, style)
 				-- function 10
-				local parent = arg_10_1.parent
+				local parent_style = style.parent
 
-				if not self.on_pressed then
-					self.is_selected = not self.is_selected
+				if content.on_pressed then
+					content.is_selected = not content.is_selected
 
-					if not self.is_selected then
-						parent.input.replacing_character = nil
-						parent.input_shadow.replacing_character = nil
+					if content.is_selected then
+						parent_style.input.replacing_character = nil
+						parent_style.input_shadow.replacing_character = nil
 					else
-						parent.input.replacing_character = "*"
-						parent.input_shadow.replacing_character = "*"
+						parent_style.input.replacing_character = "*"
+						parent_style.input_shadow.replacing_character = "*"
 					end
 				end
 			end
@@ -780,9 +780,11 @@ local function fn_2(arg_2_0, arg_2_1)
 			pass_type = "texture",
 			style_id = "checkbox",
 			texture_id = "checkbox",
-			content_check_function = function (self)
+			content_check_function = function (content)
 				-- function 11
-				return self.checkbox_hotspot.is_selected
+				local checkbox_hotspot = content.checkbox_hotspot
+
+				return checkbox_hotspot.is_selected
 			end
 		},
 		{
@@ -796,7 +798,7 @@ local function fn_2(arg_2_0, arg_2_1)
 			text_id = "checkbox_text"
 		}
 	}
-	local tbl_3 = {
+	local content = {
 		checkbox_text = "popup_info_show_password",
 		input = "",
 		background_tint = "gradient_dice_game_reward",
@@ -817,9 +819,9 @@ local function fn_2(arg_2_0, arg_2_1)
 		checkbox_hotspot = {
 			is_selected = false
 		},
-		checkbox_frame = menu_frame_06_2.texture,
-		frame = menu_frame_11.texture,
-		inner_frame = menu_frame_06.texture,
+		checkbox_frame = checkbox_frame_settings.texture,
+		frame = frame_settings.texture,
+		inner_frame = inner_frame_settings.texture,
 		background = {
 			uvs = {
 				{
@@ -827,14 +829,14 @@ local function fn_2(arg_2_0, arg_2_1)
 					0
 				},
 				{
-					math.min(arg_2_1[1] / get_atlas_settings_by_texture_name.size[1], 1),
-					math.min(arg_2_1[2] / get_atlas_settings_by_texture_name.size[2], 1)
+					math.min(size[1] / background_texture_settings.size[1], 1),
+					math.min(size[2] / background_texture_settings.size[2], 1)
 				}
 			},
-			texture_id = str
+			texture_id = background_texture
 		}
 	}
-	local tbl_4 = {
+	local style = {
 		checkbox = {
 			vertical_alignment = "top",
 			scenegraph_id = "popup_password_box",
@@ -863,8 +865,8 @@ local function fn_2(arg_2_0, arg_2_1)
 				25,
 				25
 			},
-			texture_size = menu_frame_06_2.texture_size,
-			texture_sizes = menu_frame_06_2.texture_sizes,
+			texture_size = checkbox_frame_settings.texture_size,
+			texture_sizes = checkbox_frame_settings.texture_sizes,
 			offset = {
 				0,
 				30,
@@ -1074,8 +1076,8 @@ local function fn_2(arg_2_0, arg_2_1)
 			}
 		},
 		frame = {
-			texture_size = menu_frame_11.texture_size,
-			texture_sizes = menu_frame_11.texture_sizes,
+			texture_size = frame_settings.texture_size,
+			texture_sizes = frame_settings.texture_sizes,
 			color = {
 				255,
 				255,
@@ -1104,8 +1106,8 @@ local function fn_2(arg_2_0, arg_2_1)
 		},
 		inner_frame = {
 			scenegraph_id = "popup_password_box",
-			texture_size = menu_frame_06.texture_size,
-			texture_sizes = menu_frame_06.texture_sizes,
+			texture_size = inner_frame_settings.texture_size,
+			texture_sizes = inner_frame_settings.texture_sizes,
 			color = {
 				255,
 				255,
@@ -1321,23 +1323,23 @@ local function fn_2(arg_2_0, arg_2_1)
 		}
 	}
 
-	tbl.element.passes = tbl_2
-	tbl.content = tbl_3
-	tbl.style = tbl_4
-	tbl.offset = {
+	widget.element.passes = passes
+	widget.content = content
+	widget.style = style
+	widget.offset = {
 		0,
 		0,
 		0
 	}
-	tbl.scenegraph_id = arg_2_0
+	widget.scenegraph_id = scenegraph_id
 
-	return tbl
+	return widget
 end
 
-local var_0_3 = fn("popup_root", tbl.popup_root.size)
-local var_0_4 = fn_2("popup_root", tbl.popup_root.size)
+local default_window_widget = create_default_window("popup_root", scenegraph_definition.popup_root.size)
+local password_window_widget = create_password_window("popup_root", scenegraph_definition.popup_root.size)
 
-local function fn_3(arg_12_0, arg_12_1)
+local function create_gamepad_button(input_action, scenegraph_id)
 	-- function 12
 	return {
 		element = {
@@ -1356,7 +1358,7 @@ local function fn_3(arg_12_0, arg_12_1)
 		},
 		content = {
 			text = "",
-			input_action = arg_12_0
+			input_action = input_action
 		},
 		style = {
 			text = {
@@ -1370,7 +1372,7 @@ local function fn_3(arg_12_0, arg_12_1)
 					0,
 					1
 				},
-				scenegraph_id = arg_12_1
+				scenegraph_id = scenegraph_id
 			},
 			icon = {
 				size = {
@@ -1382,24 +1384,24 @@ local function fn_3(arg_12_0, arg_12_1)
 					15,
 					1
 				},
-				scenegraph_id = arg_12_1
+				scenegraph_id = scenegraph_id
 			}
 		},
-		scenegraph_id = arg_12_1
+		scenegraph_id = scenegraph_id
 	}
 end
 
 PopupHandler = class(PopupHandler)
 
-PopupHandler.init = function (self, arg_13_1, arg_13_2)
+PopupHandler.init = function (self, context, from_manager)
 	-- function 13
-	fassert(arg_13_2, "Not created by the popoup manager")
+	fassert(from_manager, "Not created by the popoup manager")
 
-	self.ui_renderer = arg_13_1.ui_renderer
+	self.ui_renderer = context.ui_renderer
 	self.render_settings = {
 		snap_pixel_positions = true
 	}
-	self.wwise_world = Managers.world:wwise_world(arg_13_1.world)
+	self.wwise_world = Managers.world:wwise_world(context.world)
 	self.debug_num_updates = 0
 	self.popup_results = {}
 	self.popups = {}
@@ -1415,20 +1417,20 @@ PopupHandler.init = function (self, arg_13_1, arg_13_2)
 	self.mock_input_manager = MockInputManager:new()
 end
 
-PopupHandler.set_input_manager = function (self, arg_14_1)
+PopupHandler.set_input_manager = function (self, input_manager)
 	-- function 14
-	self.input_manager = arg_14_1
+	self.input_manager = input_manager
 
-	local tbl = {
+	local block_reasons = {
 		popup = true
 	}
 
-	arg_14_1:create_input_service("popup", "IngameMenuKeymaps", "IngameMenuFilters", tbl)
-	arg_14_1:map_device_to_service("popup", "keyboard")
-	arg_14_1:map_device_to_service("popup", "mouse")
-	arg_14_1:map_device_to_service("popup", "gamepad")
+	input_manager:create_input_service("popup", "IngameMenuKeymaps", "IngameMenuFilters", block_reasons)
+	input_manager:map_device_to_service("popup", "keyboard")
+	input_manager:map_device_to_service("popup", "mouse")
+	input_manager:map_device_to_service("popup", "gamepad")
 
-	if not self:has_popup() then
+	if self:has_popup() then
 		self:acquire_input()
 	end
 end
@@ -1438,24 +1440,24 @@ PopupHandler.get_input_manager = function (self)
 	return self.input_manager
 end
 
-PopupHandler.remove_input_manager = function (self, arg_16_1)
+PopupHandler.remove_input_manager = function (self, application_shutdown)
 	-- function 16
-	if not self:has_popup() then
+	if self:has_popup() then
 		self:release_input()
 	end
 
-	if arg_16_1 or not self:has_popup() then
-		local active_popup, var_16_1 = self:active_popup()
+	if not application_shutdown and self:has_popup() then
+		local popup_id, popup = self:active_popup()
 		local error = error
 		local format = string.format
 		local str = "Trying to proceed to next gamestate without handling popup %q: %q"
-		local topic = var_16_1.topic
+		local topic = popup.topic
 
-		topic = topic or "nil"
+		topic = not not topic or not not "nil"
 
-		local text = var_16_1.text
+		local text = popup.text
 
-		text = text or "nil"
+		text = not not text or not not "nil"
 
 		error(format(str, topic, text))
 	end
@@ -1465,42 +1467,42 @@ end
 
 PopupHandler.create_ui_elements = function (self)
 	-- function 17
-	self.ui_scenegraph = UISceneGraph.init_scenegraph(tbl)
+	self.ui_scenegraph = UISceneGraph.init_scenegraph(scenegraph_definition)
 	self._popup_widgets_by_name = {
-		default = UIWidget.init(var_0_3),
-		password = UIWidget.init(var_0_4)
+		default = UIWidget.init(default_window_widget),
+		password = UIWidget.init(password_window_widget)
 	}
 
-	local tbl_2 = {
+	local button_widgets = {
 		{},
 		{},
 		{}
 	}
-	local tbl_3 = {
+	local gamepad_button_widgets = {
 		{},
 		{},
 		{}
 	}
-	local flag = true
-	local var_17_3
+	local disable_localization = true
+	local font_size
 
-	tbl_2[1][1] = UIWidget.init(UIWidgets.create_default_button("button_1_1", tbl.button_1_1.size, "n/a", var_17_3))
-	tbl_2[2][1] = UIWidget.init(UIWidgets.create_default_button("button_2_1", tbl.button_2_1.size, "n/a", var_17_3))
-	tbl_2[2][2] = UIWidget.init(UIWidgets.create_default_button("button_2_2", tbl.button_2_2.size, "n/a", var_17_3))
-	tbl_2[3][1] = UIWidget.init(UIWidgets.create_default_button("button_3_1", tbl.button_3_1.size, "n/a", var_17_3))
-	tbl_2[3][2] = UIWidget.init(UIWidgets.create_default_button("button_3_2", tbl.button_3_2.size, "n/a", var_17_3))
-	tbl_2[3][3] = UIWidget.init(UIWidgets.create_default_button("button_3_3", tbl.button_3_3.size, "n/a", var_17_3))
-	tbl_3[1][1] = UIWidget.init(fn_3("confirm_press", "button_1_1"))
-	tbl_3[2][1] = UIWidget.init(fn_3("confirm_press", "button_2_1"))
-	tbl_3[2][2] = UIWidget.init(fn_3("back", "button_2_2"))
-	tbl_3[3][1] = UIWidget.init(fn_3("confirm_press", "button_3_1"))
-	tbl_3[3][2] = UIWidget.init(fn_3("back", "button_3_2"))
-	tbl_3[3][3] = UIWidget.init(fn_3("refresh", "button_3_3"))
-	self.button_widgets = tbl_2
-	self.gamepad_button_widgets = tbl_3
+	button_widgets[1][1] = UIWidget.init(UIWidgets.create_default_button("button_1_1", scenegraph_definition.button_1_1.size, "n/a", font_size))
+	button_widgets[2][1] = UIWidget.init(UIWidgets.create_default_button("button_2_1", scenegraph_definition.button_2_1.size, "n/a", font_size))
+	button_widgets[2][2] = UIWidget.init(UIWidgets.create_default_button("button_2_2", scenegraph_definition.button_2_2.size, "n/a", font_size))
+	button_widgets[3][1] = UIWidget.init(UIWidgets.create_default_button("button_3_1", scenegraph_definition.button_3_1.size, "n/a", font_size))
+	button_widgets[3][2] = UIWidget.init(UIWidgets.create_default_button("button_3_2", scenegraph_definition.button_3_2.size, "n/a", font_size))
+	button_widgets[3][3] = UIWidget.init(UIWidgets.create_default_button("button_3_3", scenegraph_definition.button_3_3.size, "n/a", font_size))
+	gamepad_button_widgets[1][1] = UIWidget.init(create_gamepad_button("confirm_press", "button_1_1"))
+	gamepad_button_widgets[2][1] = UIWidget.init(create_gamepad_button("confirm_press", "button_2_1"))
+	gamepad_button_widgets[2][2] = UIWidget.init(create_gamepad_button("back", "button_2_2"))
+	gamepad_button_widgets[3][1] = UIWidget.init(create_gamepad_button("confirm_press", "button_3_1"))
+	gamepad_button_widgets[3][2] = UIWidget.init(create_gamepad_button("back", "button_3_2"))
+	gamepad_button_widgets[3][3] = UIWidget.init(create_gamepad_button("refresh", "button_3_3"))
+	self.button_widgets = button_widgets
+	self.gamepad_button_widgets = gamepad_button_widgets
 end
 
-PopupHandler.acquire_input = function (self, arg_18_1)
+PopupHandler.acquire_input = function (self, ignore_cursor_stack)
 	-- function 18
 	local input_manager = self.input_manager
 
@@ -1511,96 +1513,99 @@ PopupHandler.acquire_input = function (self, arg_18_1)
 		"mouse"
 	}, 1, "popup", "PopupHandler")
 
-	if not arg_18_1 then
+	if not ignore_cursor_stack then
 		ShowCursorStack.show("PopupHandler")
 	end
 end
 
-PopupHandler.release_input = function (self, arg_19_1)
+PopupHandler.release_input = function (self, ignore_cursor_stack)
 	-- function 19
 	local input_manager = self.input_manager
-	local str = "popup"
+	local block_reason = "popup"
 
 	input_manager:release_input({
 		"keyboard",
 		"gamepad",
 		"mouse"
-	}, 1, "popup", "PopupHandler", str)
+	}, 1, "popup", "PopupHandler", block_reason)
 
-	if not arg_19_1 then
+	if not ignore_cursor_stack then
 		ShowCursorStack.hide("PopupHandler")
 	end
 end
 
-PopupHandler.update = function (self, arg_20_1, arg_20_2)
+PopupHandler.update = function (self, dt, from_manager)
 	-- function 20
-	fassert(arg_20_2, "Update does not come from the popup manager")
+	fassert(from_manager, "Update does not come from the popup manager")
 
 	self.debug_num_updates = self.debug_num_updates + 1
 
 	local n_popups = self.n_popups
-	local var_20_1 = self.popups[n_popups]
+	local current_popup = self.popups[n_popups]
 
-	if not var_20_1 then
-		if not var_20_1.initialized then
-			self:_initialize_popup(var_20_1)
+	if current_popup then
+		if not current_popup.initialized then
+			self:_initialize_popup(current_popup)
 		end
 
-		local ui_renderer = self.ui_renderer
-		local input_manager = self.input_manager
+		local ui_renderer_2 = self.ui_renderer
+		local input_manager_2 = self.input_manager
 
-		input_manager = input_manager or self.mock_input_manager
+		if not input_manager_2 then
+			-- Nothing
+		end
 
-		local get_service = input_manager:get_service("popup")
-		local is_device_active = input_manager:is_device_active("gamepad")
-		local widget = var_20_1.widget
+		input_manager_2 = self.mock_input_manager
 
-		widget.style.text.font_size = var_20_1.text_font_size
-		widget.style.text_shadow.font_size = var_20_1.text_font_size
-		widget.content.text_field = var_20_1.text
-		widget.content.title_text = var_20_1.topic
+		local ui_renderer, input_manager = ui_renderer_2, input_manager_2
 
-		local var_20_7
+		::label_20_0::
 
-		if not var_20_1.timer then
-			local format = string.format("%d", math.floor(var_20_1.timer))
+		local input_service = input_manager:get_service("popup")
+		local gamepad_active = input_manager:is_device_active("gamepad")
+		local widget = current_popup.widget
 
-			if not var_20_1.timer_format_func then
-				format = var_20_1.timer_format_func(format)
+		widget.style.text.font_size = current_popup.text_font_size
+		widget.style.text_shadow.font_size = current_popup.text_font_size
+		widget.content.text_field = current_popup.text
+		widget.content.title_text = current_popup.topic
+
+		local result
+
+		if current_popup.timer then
+			local timer = string.format("%d", math.floor(current_popup.timer))
+
+			if current_popup.timer_format_func then
+				timer = current_popup.timer_format_func(timer)
 			end
 
-			local var_20_9
-			local var_20_10
-			local var_20_11
+			local timer_field, timer_style, timer_shadow_style
 
-			if var_20_1.timer_alignment == "center" then
-				widget.content.center_timer_field = format
-				var_20_10 = widget.style.center_timer
-
-				local center_timer_shadow = widget.style.center_timer_shadow
-
+			if current_popup.timer_alignment == "center" then
+				widget.content.center_timer_field = timer
+				timer_style = widget.style.center_timer
+				timer_shadow_style = widget.style.center_timer_shadow
 				widget.content.timer_field = ""
 			else
 				widget.content.center_timer_field = ""
-				widget.content.timer_field = format
-				var_20_10 = widget.style.timer
-
-				local timer_shadow = widget.style.timer_shadow
+				widget.content.timer_field = timer
+				timer_style = widget.style.timer
+				timer_shadow_style = widget.style.timer_shadow
 			end
 
-			if not var_20_1.timer_font_size then
-				widget.style.timer.font_size = var_20_1.timer_font_size
-				widget.style.center_timer.font_size = var_20_1.timer_font_size
+			if current_popup.timer_font_size then
+				widget.style.timer.font_size = current_popup.timer_font_size
+				widget.style.center_timer.font_size = current_popup.timer_font_size
 			end
 
-			if not var_20_1.timer_blink then
-				var_20_10.text_color = Colors.lerp_color_tables(Colors.get_color_table_with_alpha("white", 255), Colors.get_color_table_with_alpha("cheeseburger", 255), var_20_1.timer % 15 % 1)
+			if current_popup.timer_blink then
+				timer_style.text_color = Colors.lerp_color_tables(Colors.get_color_table_with_alpha("white", 255), Colors.get_color_table_with_alpha("cheeseburger", 255), current_popup.timer % 15 % 1)
 			end
 
-			var_20_1.timer = var_20_1.timer - arg_20_1
+			current_popup.timer = current_popup.timer - dt
 
-			if var_20_1.timer <= 0 then
-				var_20_7 = var_20_1.default_result
+			if current_popup.timer <= 0 then
+				result = current_popup.default_result
 			end
 		else
 			widget.content.timer_field = ""
@@ -1609,36 +1614,38 @@ PopupHandler.update = function (self, arg_20_1, arg_20_2)
 			widget.style.center_timer.font_size = 44
 		end
 
-		UIRenderer.begin_pass(ui_renderer, self.ui_scenegraph, get_service, arg_20_1, nil, self.render_settings)
+		UIRenderer.begin_pass(ui_renderer, self.ui_scenegraph, input_service, dt, nil, self.render_settings)
 		UIRenderer.draw_widget(ui_renderer, widget)
 
-		local n_args = var_20_1.n_args
+		local n_args = current_popup.n_args
 
-		if not n_args then
-			local args = var_20_1.args
-			local var_20_16 = self.button_widgets[n_args]
-			local var_20_17 = self.gamepad_button_widgets[n_args]
+		if n_args then
+			local args = current_popup.args
+			local buttons = self.button_widgets[n_args]
+			local gamepad_buttons = self.gamepad_button_widgets[n_args]
 
 			for i = 1, n_args do
-				local str = " " .. args[i * 2]
-				local flag = var_20_1.button_enabled_state[i] == true
+				local button_text = " " .. args[i * 2]
+				local button_enabled = current_popup.button_enabled_state[i] == true
 
-				if not is_device_active then
-					local var_20_20 = var_20_17[i]
-					local content = var_20_20.content
-					local input_action = content.input_action
+				if gamepad_active then
+					local gamepad_button = gamepad_buttons[i]
+					local button_content = gamepad_button.content
+					local input_action = button_content.input_action
 
-					if not content.icon then
-						content.icon = self:get_gamepad_input_texture_data(get_service, input_action).texture
+					if not button_content.icon then
+						local action_texture_data = self:get_gamepad_input_texture_data(input_service, input_action)
+
+						button_content.icon = action_texture_data.texture
 					end
 
-					content.text = str
+					button_content.text = button_text
 
-					local style = var_20_20.style
-					local text = style.text
+					local button_style = gamepad_button.style
+					local text_style = button_style.text
 					local enabled
 
-					if not flag then
+					if button_enabled then
 						enabled = self.gamepad_button_colors.enabled
 
 						if not enabled then
@@ -1648,76 +1655,74 @@ PopupHandler.update = function (self, arg_20_1, arg_20_2)
 
 					enabled = self.gamepad_button_colors.disabled
 
-					::label_20_0::
+					::label_20_1::
 
-					text.text_color = enabled
+					text_style.text_color = enabled
 
-					local var_20_26, var_20_27 = UIFontByResolution(text)
-					local text_size, var_20_29, var_20_30 = UIRenderer.text_size(ui_renderer, str, var_20_26[1], var_20_27)
+					local font, scaled_font_size = UIFontByResolution(text_style)
+					local text_width, text_height, min = UIRenderer.text_size(ui_renderer, button_text, font[1], scaled_font_size)
 
-					style.icon.offset[1] = 80 - text_size * 0.5
+					button_style.icon.offset[1] = 80 - text_width * 0.5
 
-					UIRenderer.draw_widget(ui_renderer, var_20_20)
+					UIRenderer.draw_widget(ui_renderer, gamepad_button)
 
-					if not get_service:get(input_action, true) then
-						var_20_7 = args[i * 2 - 1]
+					if input_service:get(input_action, true) then
+						result = args[i * 2 - 1]
 
 						self:play_sound("Play_hud_select")
 					end
 				else
-					local var_20_31 = var_20_16[i]
+					local button = buttons[i]
 
-					UIWidgetUtils.animate_default_button(var_20_31, arg_20_1)
+					UIWidgetUtils.animate_default_button(button, dt)
 
-					var_20_31.content.title_text = str
+					button.content.title_text = button_text
 
-					local button_hotspot = var_20_31.content.button_hotspot
+					local button_hotspot = button.content.button_hotspot
 
-					button_hotspot.disable_button = not flag
+					button_hotspot.disable_button = not button_enabled
 
-					UIRenderer.draw_widget(ui_renderer, var_20_31)
+					UIRenderer.draw_widget(ui_renderer, button)
 
-					if not button_hotspot.on_hover_enter then
+					if button_hotspot.on_hover_enter then
 						self:play_sound("Play_hud_hover")
 					end
 
-					if not button_hotspot.on_release then
-						table.clear(var_20_31.content.button_hotspot)
+					if button_hotspot.on_release then
+						table.clear(button.content.button_hotspot)
 
-						var_20_7 = args[i * 2 - 1]
+						result = args[i * 2 - 1]
 
 						self:play_sound("Play_hud_select")
 					end
 
-					var_20_7 = var_20_7 or self:_handle_keyboard_input(var_20_1)
+					result = not not result or not not self:_handle_keyboard_input(current_popup)
 				end
 			end
 		end
 
-		if not var_20_7 then
-			local var_20_33
-			local result_param_ids = var_20_1.result_param_ids
+		if result then
+			local result_params
+			local result_param_ids = current_popup.result_param_ids
 
-			if not result_param_ids then
-				var_20_33 = {}
+			if result_param_ids then
+				result_params = {}
 
-				local content_2 = widget.content
+				local widget_content = widget.content
 
-				for i_2, v in ipairs(result_param_ids) do
-					var_20_33[v] = content_2[v]
+				for _, param_id in ipairs(result_param_ids) do
+					result_params[param_id] = widget_content[param_id]
 				end
 			end
 
-			self.popup_results[var_20_1.popup_id] = {
-				var_20_7,
-				var_20_33
+			self.popup_results[current_popup.popup_id] = {
+				result,
+				result_params
 			}
+			n_popups = n_popups - 1
+			self.n_popups = n_popups
 
-			local num = n_popups - 1
-
-			self.n_popups = num
-
-			if num == 0 then
+			if n_popups == 0 then
 				self:release_input()
 			end
 		end
@@ -1726,165 +1731,189 @@ PopupHandler.update = function (self, arg_20_1, arg_20_2)
 	end
 end
 
-PopupHandler._handle_keyboard_input = function (self, arg_21_1)
+PopupHandler._handle_keyboard_input = function (self, current_popup)
 	-- function 21
-	local n_args = arg_21_1.n_args
-	local var_21_1 = self.button_widgets[n_args]
+	local n_args = current_popup.n_args
+	local button_widgets = self.button_widgets[n_args]
+	local mouse_active = Managers.input:is_device_active("mouse")
 
-	if not Managers.input:is_device_active("mouse") then
-		for k, v in pairs(var_21_1) do
-			v.content.button_hotspot.is_selected = false
+	if mouse_active then
+		for _, button_data in pairs(button_widgets) do
+			local button_widget = button_data
+
+			button_widget.content.button_hotspot.is_selected = false
 		end
 
-		arg_21_1.button_index = nil
+		current_popup.button_index = nil
 
 		return
 	end
 
-	local button_index = arg_21_1.button_index
+	local button_index = current_popup.button_index
 
-	button_index = button_index or 1
-
-	local get_service = Managers.input:get_service("popup")
-
-	if not get_service:get("move_right_hold_continuous") then
-		button_index = math.clamp(button_index + 1, 1, n_args)
-	elseif not get_service:get("move_left_hold_continuous") then
-		button_index = math.clamp(button_index - 1, 1, n_args)
-	elseif not get_service:get("confirm_press") and not arg_21_1.button_enabled_state[button_index] then
-		local args = arg_21_1.args
-
-		self:play_sound("Play_hud_select")
-		print("Popup Choice:", args[button_index * 2 - 1])
-
-		arg_21_1.button_index = nil
-
-		return args[button_index * 2 - 1]
+	if not button_index then
+		-- Nothing
 	end
 
-	if button_index ~= arg_21_1.button_index then
-		for i, v_2 in ipairs(var_21_1) do
-			v_2.content.button_hotspot.is_selected = button_index == i
+	button_index = 1
+
+	local index = button_index
+
+	::label_21_0::
+
+	local input_service = Managers.input:get_service("popup")
+
+	if input_service:get("move_right_hold_continuous") then
+		index = math.clamp(index + 1, 1, n_args)
+	elseif input_service:get("move_left_hold_continuous") then
+		index = math.clamp(index - 1, 1, n_args)
+	elseif input_service:get("confirm_press") and current_popup.button_enabled_state[index] then
+		local args = current_popup.args
+
+		self:play_sound("Play_hud_select")
+		print("Popup Choice:", args[index * 2 - 1])
+
+		current_popup.button_index = nil
+
+		return args[index * 2 - 1]
+	end
+
+	if index ~= current_popup.button_index then
+		for idx, button_data in ipairs(button_widgets) do
+			local button_widget = button_data
+
+			button_widget.content.button_hotspot.is_selected = index == idx
 		end
 
-		arg_21_1.button_index = button_index
+		current_popup.button_index = index
 
 		self:play_sound("Play_hud_hover")
 	end
 end
 
-PopupHandler.get_gamepad_input_texture_data = function (arg_22_0, arg_22_1, arg_22_2, arg_22_3)
+PopupHandler.get_gamepad_input_texture_data = function (self, input_service, input_action, ignore_keybinding)
 	-- function 22
-	local PLATFORM = PLATFORM
+	local platform = PLATFORM
 
-	if not IS_WINDOWS then
-		PLATFORM = "xb1"
+	if IS_WINDOWS then
+		platform = "xb1"
 	end
 
-	if not arg_22_3 then
-		return ButtonTextureByName(arg_22_2, PLATFORM)
+	if ignore_keybinding then
+		return ButtonTextureByName(input_action, platform)
 	else
-		return UISettings.get_gamepad_input_texture_data(arg_22_1, arg_22_2, true)
+		return UISettings.get_gamepad_input_texture_data(input_service, input_action, true)
 	end
 end
 
-PopupHandler.set_button_enabled = function (self, arg_23_1, arg_23_2, arg_23_3)
+PopupHandler.set_button_enabled = function (self, popup_id, button_index, enabled)
 	-- function 23
-	local var_23_0
+	local popup
 
 	for i = 1, self.n_popups do
-		local var_23_1 = self.popups[i]
+		local temp_popup = self.popups[i]
 
-		if var_23_1.popup_id == arg_23_1 then
-			var_23_0 = var_23_1
+		if temp_popup.popup_id == popup_id then
+			popup = temp_popup
 		end
 	end
 
-	var_23_0.button_enabled_state[arg_23_2] = arg_23_3
+	popup.button_enabled_state[button_index] = enabled
 end
 
 PopupHandler.active_popup = function (self)
 	-- function 24
-	local var_24_0 = self.popups[self.n_popups]
+	local popup = self.popups[self.n_popups]
 
-	if not var_24_0 then
-		return var_24_0.popup_id, var_24_0
+	if popup then
+		return popup.popup_id, popup
 	end
 end
 
-PopupHandler.queue_popup = function (self, arg_25_1, arg_25_2, arg_25_3, ...)
+PopupHandler.queue_popup = function (self, popup_type, text, topic, ...)
 	-- function 25
-	local n_popups = self.n_popups
-	local popups = self.popups
-	local num = n_popups + 1
+	local n_popups, popups = self.n_popups, self.popups
 
-	self.n_popups = num
+	n_popups = n_popups + 1
+	self.n_popups = n_popups
 
-	local var_25_3 = popups[num]
+	local var_25_0 = popups[n_popups]
 
-	var_25_3 = var_25_3 or {
+	if not var_25_0 then
+		-- Nothing
+	end
+
+	var_25_0 = {
 		args = {}
 	}
+
+	local new_popup = var_25_0
+
+	::label_25_0::
+
 	self.popup_ids = self.popup_ids + 1
 
-	local var_25_4 = tostring(self.popup_ids)
+	local popup_id = tostring(self.popup_ids)
 
-	var_25_3.popup_id = var_25_4
+	new_popup.popup_id = popup_id
 
-	local var_25_5 = self._popup_widgets_by_name[arg_25_1]
-	local text = var_25_5.style.text
-	local var_25_7 = UIScaleVectorToResolution(tbl.popup_text.size)
+	local widget = self._popup_widgets_by_name[popup_type]
+	local text_style = widget.style.text
+	local scaled_text_field_size = UIScaleVectorToResolution(scenegraph_definition.popup_text.size)
+	local number_of_text_rows = self:get_number_of_rows(text, text_style, scaled_text_field_size[1])
 	local flag
 
-	flag = not (self:get_number_of_rows(arg_25_2, text, var_25_7[1]) >= 7) or not 20 or 28
-	var_25_3.text_font_size = flag
-	var_25_3.text = arg_25_2
-	var_25_3.topic = arg_25_3
-	var_25_3.widget = var_25_5
-	var_25_3.type = arg_25_1
+	flag = (not (number_of_text_rows >= 7) or not 20) and not not 28
+	new_popup.text_font_size = flag
+	new_popup.text = text
+	new_popup.topic = topic
+	new_popup.widget = widget
+	new_popup.type = popup_type
 
-	local var_25_9 = select("#", ...)
+	local n_args = select("#", ...)
 
-	assert(math.floor(var_25_9 / 2) * 2 == var_25_9, "Need one action for each button text")
-	assert(var_25_9 > 0, "Need at least one button...")
+	assert(math.floor(n_args / 2) * 2 == n_args, "Need one action for each button text")
+	assert(n_args > 0, "Need at least one button...")
 
-	var_25_3.n_args = var_25_9 / 2
-	var_25_3.button_enabled_state = {}
+	new_popup.n_args = n_args / 2
+	new_popup.button_enabled_state = {}
 
-	for i = 1, var_25_3.n_args do
-		var_25_3.button_enabled_state[i] = true
+	for i = 1, new_popup.n_args do
+		new_popup.button_enabled_state[i] = true
 	end
 
-	var_25_3.timer = nil
-	var_25_3.default_result = nil
+	new_popup.timer = nil
+	new_popup.default_result = nil
 
-	pack_index[var_25_9](var_25_3.args, 1, ...)
+	pack_index[n_args](new_popup.args, 1, ...)
 
-	local flag_2 = num > 1
+	local ignore_cursor_stack = n_popups > 1
 
-	if not self.input_manager then
-		self:acquire_input(flag_2)
+	if self.input_manager then
+		self:acquire_input(ignore_cursor_stack)
 	end
 
-	popups[num] = var_25_3
+	popups[n_popups] = new_popup
 
 	self:_reset_popup_initialized()
 
-	return var_25_4
+	return popup_id
 end
 
-PopupHandler._initialize_popup = function (self, arg_26_1)
+PopupHandler._initialize_popup = function (self, popup)
 	-- function 26
-	if arg_26_1.type == "password" then
-		self:_initialize_password_popup(arg_26_1)
+	local popup_type = popup.type
+
+	if popup_type == "password" then
+		self:_initialize_password_popup(popup)
 	end
 
-	arg_26_1.initialized = true
+	popup.initialized = true
 end
 
-PopupHandler._initialize_password_popup = function (self, arg_27_1)
+PopupHandler._initialize_password_popup = function (self, popup)
 	-- function 27
-	local widget = arg_27_1.widget
+	local widget = popup.widget
 	local content = widget.content
 	local style = widget.style
 
@@ -1903,117 +1932,122 @@ PopupHandler._initialize_password_popup = function (self, arg_27_1)
 	style.input.input_color = Colors.get_color_table_with_alpha("font_default", 255)
 
 	local animations = widget.animations
-	local _animate_element_pulse = self:_animate_element_pulse(style.input.caret_color, 1, 60, 255, 2)
-	local _animate_element_pulse_2 = self:_animate_element_pulse(style.input_shadow.caret_color, 1, 60, 255, 2)
+	local caret_anim = self:_animate_element_pulse(style.input.caret_color, 1, 60, 255, 2)
+	local caret_shadow_anim = self:_animate_element_pulse(style.input_shadow.caret_color, 1, 60, 255, 2)
 
-	animations[_animate_element_pulse] = true
-	animations[_animate_element_pulse_2] = true
-	arg_27_1.result_param_ids = {
+	animations[caret_anim] = true
+	animations[caret_shadow_anim] = true
+
+	local result_param_ids = {
 		"input"
 	}
-	arg_27_1.initialized = true
+
+	popup.result_param_ids = result_param_ids
+	popup.initialized = true
 end
 
-PopupHandler.set_popup_verifying_password = function (self, arg_28_1, arg_28_2, arg_28_3, arg_28_4)
+PopupHandler.set_popup_verifying_password = function (self, popup_id, is_verifying, status_message, error_message)
 	-- function 28
-	local active_popup, var_28_1 = self:active_popup()
+	local active_popup_id, popup = self:active_popup()
 
-	if active_popup ~= arg_28_1 then
+	if active_popup_id ~= popup_id then
 		return
 	end
 
-	local widget = var_28_1.widget
+	local widget = popup.widget
 	local content = widget.content
 
-	content.status_message = arg_28_4 or arg_28_3
-	content.error_message = arg_28_4
-	content.active = not arg_28_2
+	content.status_message = not not error_message or not not status_message
+	content.error_message = error_message
+	content.active = not is_verifying
 
 	local animations = widget.animations
 
 	table.clear(animations)
 
 	local caret_color = widget.style.input.caret_color
-	local caret_color_2 = widget.style.input_shadow.caret_color
-	local text_color = widget.style.input.text_color
+	local caret_shadow_color = widget.style.input_shadow.caret_color
+	local input_color = widget.style.input.text_color
 
-	if not arg_28_2 then
+	if is_verifying then
 		caret_color[1] = 0
-		caret_color_2[1] = 0
-		text_color[1] = 200
-		text_color[2] = 40
-		text_color[3] = 40
-		text_color[4] = 40
+		caret_shadow_color[1] = 0
+		input_color[1] = 200
+		input_color[2] = 40
+		input_color[3] = 40
+		input_color[4] = 40
 	else
-		local _animate_element_pulse = self:_animate_element_pulse(caret_color, 1, 60, 255, 2)
-		local _animate_element_pulse_2 = self:_animate_element_pulse(caret_color_2, 1, 60, 255, 2)
+		local caret_anim = self:_animate_element_pulse(caret_color, 1, 60, 255, 2)
+		local caret_shadow_anim = self:_animate_element_pulse(caret_shadow_color, 1, 60, 255, 2)
 
-		animations[_animate_element_pulse] = true
-		animations[_animate_element_pulse_2] = true
+		animations[caret_anim] = true
+		animations[caret_shadow_anim] = true
 
-		local get_color_table_with_alpha = Colors.get_color_table_with_alpha("font_default", 255)
+		local default_color = Colors.get_color_table_with_alpha("font_default", 255)
 
-		text_color[1] = get_color_table_with_alpha[1]
-		text_color[2] = get_color_table_with_alpha[2]
-		text_color[3] = get_color_table_with_alpha[3]
-		text_color[4] = get_color_table_with_alpha[4]
+		input_color[1] = default_color[1]
+		input_color[2] = default_color[2]
+		input_color[3] = default_color[3]
+		input_color[4] = default_color[4]
 	end
 
-	local n_args = var_28_1.n_args
+	local n_args = popup.n_args
 
 	for i = 1, n_args do
-		self:set_button_enabled(arg_28_1, i, not arg_28_2)
+		self:set_button_enabled(popup_id, i, not is_verifying)
 	end
 end
 
-PopupHandler._animate_element_pulse = function (arg_29_0, arg_29_1, arg_29_2, arg_29_3, arg_29_4, arg_29_5)
+PopupHandler._animate_element_pulse = function (self, target, target_index, from, to, time)
 	-- function 29
-	return (UIAnimation.init(UIAnimation.pulse_animation, arg_29_1, arg_29_2, arg_29_3, arg_29_4, arg_29_5))
+	local new_animation = UIAnimation.init(UIAnimation.pulse_animation, target, target_index, from, to, time)
+
+	return new_animation
 end
 
-PopupHandler.activate_timer = function (self, arg_30_1, arg_30_2, arg_30_3, arg_30_4, arg_30_5, arg_30_6, arg_30_7)
+PopupHandler.activate_timer = function (self, popup_id, time, default_result, alignment, blink, optional_timer_format_func, optional_font_size)
 	-- function 30
 	local n_popups = self.n_popups
 	local popups = self.popups
-	local var_30_2
+	local popup
 
 	for i = 1, n_popups do
-		local var_30_3 = popups[i]
+		local temp_popup = popups[i]
 
-		if var_30_3.popup_id == arg_30_1 then
-			var_30_2 = var_30_3
+		if temp_popup.popup_id == popup_id then
+			popup = temp_popup
 		end
 	end
 
-	assert(var_30_2, string.format("[PopupHandler:activate_timer] There is no popup with id %s", arg_30_1))
+	assert(popup, string.format("[PopupHandler:activate_timer] There is no popup with id %s", popup_id))
 
-	local var_30_4
+	local index
 
-	for i_2, v in ipairs(var_30_2.args) do
-		if v == arg_30_3 then
-			var_30_4 = i_2
+	for idx, value in ipairs(popup.args) do
+		if value == default_result then
+			index = idx
 
 			break
 		end
 	end
 
-	if arg_30_3 == "timeout" then
-		var_30_4 = 1
+	if default_result == "timeout" then
+		index = 1
 	end
 
-	assert(var_30_4, string.format("[PopupHandler:activate_timer] There is no result named %s in popup declaration %s", arg_30_3, var_30_2.topic))
-	assert(var_30_4 % 2 == 1, string.format("[PopupHandler:activate_timer] You need to pass the result - not the text %s in popup declaration %s", arg_30_3, var_30_2.topic))
+	assert(index, string.format("[PopupHandler:activate_timer] There is no result named %s in popup declaration %s", default_result, popup.topic))
+	assert(index % 2 == 1, string.format("[PopupHandler:activate_timer] You need to pass the result - not the text %s in popup declaration %s", default_result, popup.topic))
 
-	var_30_2.timer = arg_30_2
-	var_30_2.default_result = arg_30_3
-	var_30_2.timer_alignment = arg_30_4 or "right"
+	popup.timer = time
+	popup.default_result = default_result
+	popup.timer_alignment = not not alignment or not not "right"
 
 	local flag
 
-	flag = arg_30_5 ~= nil or not true or arg_30_5
-	var_30_2.timer_blink = flag
-	var_30_2.timer_format_func = arg_30_6
-	var_30_2.timer_font_size = arg_30_7
+	flag = (blink ~= nil or not true) and not not blink
+	popup.timer_blink = flag
+	popup.timer_format_func = optional_timer_format_func
+	popup.timer_font_size = optional_font_size
 end
 
 PopupHandler.has_popup = function (self)
@@ -2021,10 +2055,10 @@ PopupHandler.has_popup = function (self)
 	return self.n_popups > 0
 end
 
-PopupHandler.has_popup_with_id = function (self, arg_32_1)
+PopupHandler.has_popup_with_id = function (self, popup_id)
 	-- function 32
-	for k, v in pairs(self.popups) do
-		if v.popup_id == arg_32_1 then
+	for _, popup in pairs(self.popups) do
+		if popup.popup_id == popup_id then
 			return true
 		end
 	end
@@ -2034,21 +2068,24 @@ end
 
 PopupHandler._reset_popup_initialized = function (self)
 	-- function 33
-	for k, v in pairs(self.popups) do
-		v.initialized = false
+	for _, popup in pairs(self.popups) do
+		popup.initialized = false
 	end
 end
 
-PopupHandler.cancel_popup = function (self, arg_34_1)
+PopupHandler.cancel_popup = function (self, popup_id)
 	-- function 34
 	local n_popups = self.n_popups
 	local popups = self.popups
 
 	for i = 1, n_popups do
-		local var_34_2 = popups[i]
+		local popup = popups[i]
 
-		if var_34_2.popup_id == arg_34_1 then
-			popups[i], popups[n_popups] = popups[n_popups], var_34_2
+		if popup.popup_id == popup_id then
+			local temp = popups[n_popups]
+
+			popups[n_popups] = popup
+			popups[i] = temp
 			self.n_popups = n_popups - 1
 
 			if self.n_popups == 0 then
@@ -2076,32 +2113,33 @@ PopupHandler.cancel_all_popups = function (self)
 	self.n_popups = 0
 end
 
-PopupHandler.query_result = function (self, arg_36_1)
+PopupHandler.query_result = function (self, popup_id)
 	-- function 36
-	local var_36_0 = self.popup_results[arg_36_1]
+	local result = self.popup_results[popup_id]
 
-	self.popup_results[arg_36_1] = nil
+	self.popup_results[popup_id] = nil
 
-	if not var_36_0 then
-		return unpack(var_36_0)
+	if result then
+		return unpack(result)
 	end
 end
 
-PopupHandler.play_sound = function (self, arg_37_1)
+PopupHandler.play_sound = function (self, event)
 	-- function 37
-	WwiseWorld.trigger_event(self.wwise_world, arg_37_1)
+	WwiseWorld.trigger_event(self.wwise_world, event)
 end
 
-PopupHandler.fit_text_width_to_popup = function (self, arg_38_1)
+PopupHandler.fit_text_width_to_popup = function (self, text)
 	-- function 38
-	local default = self._popup_widgets_by_name.default
+	local widget = self._popup_widgets_by_name.default
 
-	return UIRenderer.crop_text_width(self.ui_renderer, arg_38_1, 500, default.style.text)
+	return UIRenderer.crop_text_width(self.ui_renderer, text, 500, widget.style.text)
 end
 
-PopupHandler.get_number_of_rows = function (self, arg_39_1, arg_39_2, arg_39_3)
+PopupHandler.get_number_of_rows = function (self, localized_text, text_style, text_area_width)
 	-- function 39
-	local var_39_0, var_39_1 = UIFontByResolution(arg_39_2)
+	local font, scaled_font_size = UIFontByResolution(text_style)
+	local lines = UIRenderer.word_wrap(self.ui_renderer, localized_text, font[1], scaled_font_size, text_area_width)
 
-	return #UIRenderer.word_wrap(self.ui_renderer, arg_39_1, var_39_0[1], var_39_1, arg_39_3)
+	return #lines
 end

@@ -2,7 +2,7 @@
 
 local DeusShopSettings = DeusShopSettings
 
-DeusShopSettings = DeusShopSettings or {
+DeusShopSettings = not not DeusShopSettings or not not {
 	heal_amount = 0.1,
 	heal_cost = 10,
 	shop_types = {

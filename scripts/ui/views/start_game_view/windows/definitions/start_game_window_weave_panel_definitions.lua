@@ -1,14 +1,16 @@
 -- chunkname: @scripts/ui/views/start_game_view/windows/definitions/start_game_window_weave_panel_definitions.lua
 
-local large_window_size = UISettings.game_start_windows.large_window_size
-local str = "menu_frame_11"
-local var_0_2 = UIFrameSettings[str].texture_sizes.vertical[1]
-local tbl = {
-	large_window_size[1] - var_0_2 * 2,
-	large_window_size[2] - var_0_2 * 2
+local window_default_settings = UISettings.game_start_windows
+local large_window_size = window_default_settings.large_window_size
+local window_frame_name = "menu_frame_11"
+local window_frame = UIFrameSettings[window_frame_name]
+local window_frame_width = window_frame.texture_sizes.vertical[1]
+local window_size = {
+	large_window_size[1] - window_frame_width * 2,
+	large_window_size[2] - window_frame_width * 2
 }
-local num = 70
-local tbl_2 = {
+local panel_height = 70
+local scenegraph_definition = {
 	root = {
 		is_root = true,
 		size = {
@@ -50,9 +52,9 @@ local tbl_2 = {
 		vertical_alignment = "center",
 		parent = "parent_window",
 		horizontal_alignment = "right",
-		size = tbl,
+		size = window_size,
 		position = {
-			-var_0_2,
+			-window_frame_width,
 			0,
 			1
 		}
@@ -62,8 +64,8 @@ local tbl_2 = {
 		parent = "window",
 		horizontal_alignment = "center",
 		size = {
-			tbl[1],
-			num
+			window_size[1],
+			panel_height
 		},
 		position = {
 			0,
@@ -76,7 +78,7 @@ local tbl_2 = {
 		parent = "panel",
 		horizontal_alignment = "center",
 		size = {
-			tbl[1],
+			window_size[1],
 			5
 		},
 		position = {
@@ -90,7 +92,7 @@ local tbl_2 = {
 		parent = "panel",
 		horizontal_alignment = "left",
 		size = {
-			tbl[1] - 100,
+			window_size[1] - 100,
 			64
 		},
 		position = {
@@ -133,7 +135,7 @@ local tbl_2 = {
 		horizontal_alignment = "left",
 		size = {
 			0,
-			num
+			panel_height
 		},
 		position = {
 			0,
@@ -170,9 +172,9 @@ local tbl_2 = {
 		}
 	}
 }
-local flag = true
+local disable_with_gamepad = true
 
-local function fn(arg_1_0, arg_1_1)
+local function create_panel_button_selection(scenegraph_id, size)
 	-- function 1
 	return {
 		element = {
@@ -228,7 +230,7 @@ local function fn(arg_1_0, arg_1_1)
 					}
 				}
 			},
-			size = arg_1_1
+			size = size
 		},
 		style = {
 			edge = {
@@ -307,14 +309,14 @@ local function fn(arg_1_0, arg_1_1)
 			0,
 			0
 		},
-		scenegraph_id = arg_1_0
+		scenegraph_id = scenegraph_id
 	}
 end
 
-local tbl_3 = {
+local widgets = {
 	panel_input_area_1 = UIWidgets.create_simple_texture("xbone_button_icon_lt", "panel_input_area_1"),
 	panel_input_area_2 = UIWidgets.create_simple_texture("xbone_button_icon_rt", "panel_input_area_2"),
-	panel = UIWidgets.create_rect_with_outer_frame("panel", tbl_2.panel.size, "shadow_frame_02", nil, {
+	panel = UIWidgets.create_rect_with_outer_frame("panel", scenegraph_definition.panel.size, "shadow_frame_02", nil, {
 		150,
 		0,
 		0,
@@ -326,25 +328,25 @@ local tbl_3 = {
 		0
 	}),
 	panel_edge_top = UIWidgets.create_simple_texture("menu_frame_09_divider", "panel_edge_top"),
-	entry_panel_selection = fn("entry_panel_selection", tbl_2.entry_panel_selection.size)
+	entry_panel_selection = create_panel_button_selection("entry_panel_selection", scenegraph_definition.entry_panel_selection.size)
 }
-local tbl_4 = {
+local animation_definitions = {
 	on_enter = {
 		{
 			name = "fade_in",
 			start_progress = 0,
 			end_progress = 0.3,
-			init = function (arg_2_0, arg_2_1, arg_2_2, arg_2_3)
+			init = function (ui_scenegraph, scenegraph_definition, widgets, params)
 				-- function 2
-				arg_2_3.render_settings.alpha_multiplier = 0
+				params.render_settings.alpha_multiplier = 0
 			end,
-			update = function (arg_3_0, arg_3_1, arg_3_2, arg_3_3, arg_3_4)
+			update = function (ui_scenegraph, scenegraph_definition, widgets, progress, params)
 				-- function 3
-				local easeOutCubic = math.easeOutCubic(arg_3_3)
+				local anim_progress = math.easeOutCubic(progress)
 
-				arg_3_4.render_settings.alpha_multiplier = easeOutCubic
+				params.render_settings.alpha_multiplier = anim_progress
 			end,
-			on_complete = function (arg_4_0, arg_4_1, arg_4_2, arg_4_3)
+			on_complete = function (ui_scenegraph, scenegraph_definition, widgets, params)
 				-- function 4
 				return
 			end
@@ -355,17 +357,17 @@ local tbl_4 = {
 			name = "fade_out",
 			start_progress = 0,
 			end_progress = 0.3,
-			init = function (arg_5_0, arg_5_1, arg_5_2, arg_5_3)
+			init = function (ui_scenegraph, scenegraph_definition, widgets, params)
 				-- function 5
-				arg_5_3.render_settings.alpha_multiplier = 1
+				params.render_settings.alpha_multiplier = 1
 			end,
-			update = function (arg_6_0, arg_6_1, arg_6_2, arg_6_3, arg_6_4)
+			update = function (ui_scenegraph, scenegraph_definition, widgets, progress, params)
 				-- function 6
-				local easeOutCubic = math.easeOutCubic(arg_6_3)
+				local anim_progress = math.easeOutCubic(progress)
 
-				arg_6_4.render_settings.alpha_multiplier = 1 - easeOutCubic
+				params.render_settings.alpha_multiplier = 1 - anim_progress
 			end,
-			on_complete = function (arg_7_0, arg_7_1, arg_7_2, arg_7_3)
+			on_complete = function (ui_scenegraph, scenegraph_definition, widgets, params)
 				-- function 7
 				return
 			end
@@ -374,7 +376,7 @@ local tbl_4 = {
 }
 
 return {
-	widgets = tbl_3,
-	scenegraph_definition = tbl_2,
-	animation_definitions = tbl_4
+	widgets = widgets,
+	scenegraph_definition = scenegraph_definition,
+	animation_definitions = animation_definitions
 }

@@ -2,25 +2,27 @@
 
 require("scripts/settings/dlcs/morris/deus_blessing_settings")
 
-local str = "blessing_of_grimnir_boss_buff"
-local str_2 = "blessing_of_grimnir_player_buff"
-local tbl = {
+local BOSS_BUFF = "blessing_of_grimnir_boss_buff"
+local PLAYER_BUFF = "blessing_of_grimnir_player_buff"
+local SOUND_EVENTS = {
 	monster_killed = "Play_blessing_challenge_of_grimnir_activate"
 }
 
-local function fn(arg_1_0)
+local function buff_all_players(buff_name)
 	-- function 1
-	local PLAYER_UNITS = Managers.state.side:get_side_from_name("heroes").PLAYER_UNITS
-	local count = #PLAYER_UNITS
-	local HEALTH_ALIVE = HEALTH_ALIVE
-	local system = Managers.state.entity:system("buff_system")
-	local flag = false
+	local side = Managers.state.side:get_side_from_name("heroes")
+	local current_player_units = side.PLAYER_UNITS
+	local num_current_player_units = #current_player_units
+	local health_alive = HEALTH_ALIVE
+	local buff_system = Managers.state.entity:system("buff_system")
+	local server_controlled = false
 
-	for i = 1, count do
-		local var_1_5 = PLAYER_UNITS[i]
+	for i = 1, num_current_player_units do
+		local unit = current_player_units[i]
+		local is_alive = health_alive[unit]
 
-		if not HEALTH_ALIVE[var_1_5] then
-			system:add_buff(var_1_5, arg_1_0, var_1_5, flag)
+		if is_alive then
+			buff_system:add_buff(unit, buff_name, unit, server_controlled)
 		end
 	end
 end
@@ -29,106 +31,112 @@ return {
 	display_name = DeusBlessingSettings.blessing_of_grimnir.display_name,
 	description = DeusBlessingSettings.blessing_of_grimnir.description,
 	icon = DeusBlessingSettings.blessing_of_grimnir.icon,
-	server_start_function = function (arg_2_0, arg_2_1, arg_2_2)
+	server_start_function = function (context, data, unit)
 		-- function 2
-		local conflict = Managers.state.conflict
+		local conflict_director = Managers.state.conflict
 
-		if not conflict.enemy_recycler then
+		if not conflict_director.enemy_recycler then
 			return
 		end
 
-		local main_path_events = conflict.enemy_recycler.main_path_events
+		local existing_events = conflict_director.enemy_recycler.main_path_events
 
-		for i, v in ipairs(main_path_events) do
-			if v[4].event_kind == "event_boss" then
+		for _, event in ipairs(existing_events) do
+			if event[4].event_kind == "event_boss" then
 				return
 			end
 		end
 
-		local spawners = conflict.level_analysis.terror_spawners.event_boss.spawners
+		local boss_spawners = conflict_director.level_analysis.terror_spawners.event_boss.spawners
 
-		if #spawners <= 0 then
+		if #boss_spawners <= 0 then
 			return
 		end
 
-		local var_2_3 = spawners[1]
-		local local_position = Unit.local_position(var_2_3[1], 0)
-		local var_2_5 = Vector3Box(local_position)
-		local tbl = {
+		local spawner = boss_spawners[1]
+		local spawner_pos = Unit.local_position(spawner[1], 0)
+		local boxed_pos = Vector3Box(spawner_pos)
+		local event_data = {
 			event_kind = "event_boss"
 		}
-		local event_boss = CurrentBossSettings.boss_events.event_lookup.event_boss
-		local get_level_seed = Managers.mechanism:get_level_seed("mutator")
-		local next_random, var_2_10 = Math.next_random(get_level_seed, 1, #event_boss)
-		local var_2_11 = event_boss[var_2_10]
+		local terror_events = CurrentBossSettings.boss_events.event_lookup.event_boss
+		local seed = Managers.mechanism:get_level_seed("mutator")
+		local _, index = Math.next_random(seed, 1, #terror_events)
+		local terror_event_name = terror_events[index]
 
-		conflict.enemy_recycler:add_main_path_terror_event(var_2_5, var_2_11, 45, tbl)
+		conflict_director.enemy_recycler:add_main_path_terror_event(boxed_pos, terror_event_name, 45, event_data)
 	end,
-	server_update_function = function (arg_3_0, arg_3_1, arg_3_2, arg_3_3)
+	server_update_function = function (context, data, dt, t)
 		-- function 3
-		if not arg_3_1.unit_to_mark and not Managers.state.network:game_object_or_level_id(arg_3_1.unit_to_mark) then
-			local unit_to_mark = arg_3_1.unit_to_mark
+		if data.unit_to_mark and Managers.state.network:game_object_or_level_id(data.unit_to_mark) then
+			local unit = data.unit_to_mark
 
-			arg_3_1.marked_unit = unit_to_mark
-			arg_3_1.unit_to_mark = nil
+			data.marked_unit = unit
+			data.unit_to_mark = nil
 
-			local system = Managers.state.entity:system("buff_system")
+			local buff_system = Managers.state.entity:system("buff_system")
 
-			system:add_buff(unit_to_mark, "objective_unit", unit_to_mark)
-			system:add_buff(unit_to_mark, str, unit_to_mark)
+			buff_system:add_buff(unit, "objective_unit", unit)
+			buff_system:add_buff(unit, BOSS_BUFF, unit)
 
-			local var_3_2 = BLACKBOARDS[unit_to_mark]
-			local optional_spawn_data = var_3_2.optional_spawn_data
+			local blackboard = BLACKBOARDS[unit]
+			local optional_spawn_data = blackboard.optional_spawn_data
 
-			optional_spawn_data = optional_spawn_data or {}
-			var_3_2.optional_spawn_data = optional_spawn_data
-			var_3_2.optional_spawn_data.prevent_killed_enemy_dialogue = true
+			optional_spawn_data = not not optional_spawn_data or not not {}
+			blackboard.optional_spawn_data = optional_spawn_data
+			blackboard.optional_spawn_data.prevent_killed_enemy_dialogue = true
 
-			local get_random_player = Managers.state.entity:system("dialogue_system"):get_random_player()
+			local dialogue_system = Managers.state.entity:system("dialogue_system")
+			local player_unit = dialogue_system:get_random_player()
 
-			if not get_random_player then
-				local extension_input = ScriptUnit.extension_input(get_random_player, "dialogue_system")
-				local alloc_table = FrameTable.alloc_table()
+			if player_unit then
+				local dialogue_input = ScriptUnit.extension_input(player_unit, "dialogue_system")
+				local event_data = FrameTable.alloc_table()
 
-				extension_input:trigger_dialogue_event("blessing_grimnir_monster_spotted", alloc_table)
+				dialogue_input:trigger_dialogue_event("blessing_grimnir_monster_spotted", event_data)
 			end
 		end
 	end,
-	server_ai_spawned_function = function (arg_4_0, arg_4_1, arg_4_2)
+	server_ai_spawned_function = function (context, data, unit)
 		-- function 4
-		if not arg_4_1.boss_spawned then
+		if data.boss_spawned then
 			return
 		end
 
-		if not Unit.get_data(arg_4_2, "breed").boss then
-			arg_4_1.boss_spawned = true
-			arg_4_1.unit_to_mark = arg_4_2
+		local breed = Unit.get_data(unit, "breed")
+
+		if breed.boss then
+			data.boss_spawned = true
+			data.unit_to_mark = unit
 		end
 	end,
-	server_ai_killed_function = function (arg_5_0, arg_5_1, arg_5_2, arg_5_3)
+	server_ai_killed_function = function (context, data, killed_unit, killer_unit)
 		-- function 5
-		if arg_5_2 == arg_5_1.marked_unit then
-			fn(str_2)
+		if killed_unit == data.marked_unit then
+			buff_all_players(PLAYER_BUFF)
 
-			arg_5_1.marked_unit = nil
+			data.marked_unit = nil
 
-			local get_random_player = Managers.state.entity:system("dialogue_system"):get_random_player()
+			local dialogue_system = Managers.state.entity:system("dialogue_system")
+			local unit = dialogue_system:get_random_player()
 
-			if not get_random_player then
-				local extension_input = ScriptUnit.extension_input(get_random_player, "dialogue_system")
-				local alloc_table = FrameTable.alloc_table()
+			if unit then
+				local dialogue_input = ScriptUnit.extension_input(unit, "dialogue_system")
+				local event_data = FrameTable.alloc_table()
 
-				extension_input:trigger_dialogue_event("blessing_grimnir_monster_killed", alloc_table)
+				dialogue_input:trigger_dialogue_event("blessing_grimnir_monster_killed", event_data)
 			end
 
-			Managers.state.entity:system("audio_system"):play_2d_audio_event(tbl.monster_killed)
+			local audio_system = Managers.state.entity:system("audio_system")
+
+			audio_system:play_2d_audio_event(SOUND_EVENTS.monster_killed)
 
 			local peer_id = Network.peer_id()
-			local player_from_peer_id = Managers.player:player_from_peer_id(peer_id)
-			local flag = not player_from_peer_id and player_from_peer_id.local_player
+			local player = Managers.player:player_from_peer_id(peer_id)
+			local local_human = not not player and not not player.local_player
 
-			if not flag then
-				Managers.state.event:trigger("add_coop_feedback", player_from_peer_id:stats_id(), flag, "collected_grimnir_reward", player_from_peer_id, player_from_peer_id)
+			if local_human then
+				Managers.state.event:trigger("add_coop_feedback", player:stats_id(), local_human, "collected_grimnir_reward", player, player)
 			end
 		end
 	end

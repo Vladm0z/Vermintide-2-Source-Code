@@ -4,117 +4,143 @@ require("scripts/entity_system/systems/behaviour/nodes/bt_node")
 
 BTCirclePreyAction = class(BTCirclePreyAction, BTNode)
 
-BTCirclePreyAction.init = function (arg_1_0, ...)
+BTCirclePreyAction.init = function (self, ...)
 	-- function 1
-	BTCirclePreyAction.super.init(arg_1_0, ...)
+	BTCirclePreyAction.super.init(self, ...)
 end
 
 BTCirclePreyAction.name = "BTCirclePreyAction"
 
-BTCirclePreyAction.enter = function (self, arg_2_1, arg_2_2, arg_2_3)
+BTCirclePreyAction.enter = function (self, unit, blackboard, t)
 	-- function 2
-	LocomotionUtils.set_animation_driven_movement(arg_2_1, false)
+	LocomotionUtils.set_animation_driven_movement(unit, false)
 
-	if not GwNavQueries.triangle_from_position(arg_2_2.nav_world, POSITION_LOOKUP[arg_2_1], 0.5, 0.5) then
-		arg_2_2.navigation_extension:set_max_speed(arg_2_2.breed.run_speed)
+	local is_on_navmesh = GwNavQueries.triangle_from_position(blackboard.nav_world, POSITION_LOOKUP[unit], 0.5, 0.5)
 
-		if not arg_2_2.skulk_pos then
-			local unbox = arg_2_2.skulk_pos:unbox()
+	if is_on_navmesh then
+		local navigation_extension = blackboard.navigation_extension
 
-			self:move_to_goal(arg_2_1, arg_2_2, unbox)
+		navigation_extension:set_max_speed(blackboard.breed.run_speed)
+
+		if blackboard.skulk_pos then
+			local goal_position = blackboard.skulk_pos:unbox()
+
+			self:move_to_goal(unit, blackboard, goal_position)
 		else
-			local get_new_goal = self:get_new_goal(arg_2_1, arg_2_2)
+			local goal_position = self:get_new_goal(unit, blackboard)
 
-			if not get_new_goal then
-				arg_2_2.skulk_pos = Vector3Box(get_new_goal)
+			if goal_position then
+				blackboard.skulk_pos = Vector3Box(goal_position)
 
-				self:move_to_goal(arg_2_1, arg_2_2, get_new_goal)
+				self:move_to_goal(unit, blackboard, goal_position)
 			else
-				self:stop(arg_2_1, arg_2_2)
+				self:stop(unit, blackboard)
 			end
 		end
 	else
-		arg_2_2.ninja_vanish = true
+		blackboard.ninja_vanish = true
 
-		self:stop(arg_2_1, arg_2_2)
+		self:stop(unit, blackboard)
 	end
 end
 
-BTCirclePreyAction.leave = function (arg_3_0, arg_3_1, arg_3_2, arg_3_3, arg_3_4, arg_3_5)
+BTCirclePreyAction.leave = function (self, unit, blackboard, t, reason, destroy)
 	-- function 3
-	if arg_3_4 == "aborted" then
-		arg_3_2.need_to_recalculate_skulk_pos = true
+	if reason == "aborted" then
+		blackboard.need_to_recalculate_skulk_pos = true
 	end
 
-	local get_default_breed_move_speed = AiUtils.get_default_breed_move_speed(arg_3_1, arg_3_2)
+	local default_move_speed = AiUtils.get_default_breed_move_speed(unit, blackboard)
+	local navigation_extension = blackboard.navigation_extension
 
-	arg_3_2.navigation_extension:set_max_speed(get_default_breed_move_speed)
+	navigation_extension:set_max_speed(default_move_speed)
 end
 
-BTCirclePreyAction.run = function (self, arg_4_1, arg_4_2, arg_4_3, arg_4_4)
+BTCirclePreyAction.run = function (self, unit, blackboard, t, dt)
 	-- function 4
-	local navigation_extension = arg_4_2.navigation_extension
+	local navigation_extension = blackboard.navigation_extension
 
-	if arg_4_2.ninja_vanish or not navigation_extension:has_reached_destination() then
-		local get_new_goal = self:get_new_goal(arg_4_1, arg_4_2)
+	if not blackboard.ninja_vanish and navigation_extension:has_reached_destination() then
+		local goal_position = self:get_new_goal(unit, blackboard)
 
-		if not get_new_goal then
-			local skulk_pos = arg_4_2.skulk_pos
+		if goal_position then
+			local skulk_pos = blackboard.skulk_pos
 
-			skulk_pos = skulk_pos or Vector3Box()
+			if not skulk_pos then
+				-- Nothing
+			end
 
-			skulk_pos:store(get_new_goal)
+			skulk_pos = Vector3Box()
 
-			arg_4_2.skulk_pos = skulk_pos
+			local skulk_pos_box = skulk_pos
 
-			self:move_to_goal(arg_4_1, arg_4_2, get_new_goal)
+			::label_4_0::
+
+			skulk_pos_box:store(goal_position)
+
+			blackboard.skulk_pos = skulk_pos_box
+
+			self:move_to_goal(unit, blackboard, goal_position)
 		else
-			self:stop(arg_4_1, arg_4_2)
+			self:stop(unit, blackboard)
 		end
 	end
 
 	return "running"
 end
 
-BTCirclePreyAction.get_new_goal = function (arg_5_0, arg_5_1, arg_5_2)
+BTCirclePreyAction.get_new_goal = function (self, unit, blackboard)
 	-- function 5
-	local secondary_target = arg_5_2.secondary_target
+	local secondary_target = blackboard.secondary_target
 
-	secondary_target = secondary_target or arg_5_2.target_unit
+	if not secondary_target then
+		-- Nothing
+	end
 
-	if not Unit.alive(secondary_target) then
-		local var_5_1 = POSITION_LOOKUP[secondary_target]
-		local new_random_goal = LocomotionUtils.new_random_goal(arg_5_2.nav_world, arg_5_2, var_5_1, 5, 10, 10)
+	secondary_target = blackboard.target_unit
 
-		if not new_random_goal then
-			return new_random_goal
+	local target_unit = secondary_target
+
+	::label_5_0::
+
+	if Unit.alive(target_unit) then
+		local target_position = POSITION_LOOKUP[target_unit]
+		local goal_position = LocomotionUtils.new_random_goal(blackboard.nav_world, blackboard, target_position, 5, 10, 10)
+
+		if goal_position then
+			return goal_position
 		end
 	end
 end
 
-BTCirclePreyAction.move_to_goal = function (arg_6_0, arg_6_1, arg_6_2, arg_6_3)
+BTCirclePreyAction.move_to_goal = function (self, unit, blackboard, goal_position)
 	-- function 6
-	if arg_6_2.move_state ~= "moving" then
-		Managers.state.network:anim_event(arg_6_1, "move_fwd")
+	if blackboard.move_state ~= "moving" then
+		Managers.state.network:anim_event(unit, "move_fwd")
 
-		arg_6_2.move_state = "moving"
+		blackboard.move_state = "moving"
 	end
 
-	arg_6_2.locomotion_extension:set_wanted_rotation(nil)
-	arg_6_2.navigation_extension:move_to(arg_6_3)
+	local locomotion_extension = blackboard.locomotion_extension
+
+	locomotion_extension:set_wanted_rotation(nil)
+
+	local navigation_extension = blackboard.navigation_extension
+
+	navigation_extension:move_to(goal_position)
 end
 
-BTCirclePreyAction.stop = function (arg_7_0, arg_7_1, arg_7_2)
+BTCirclePreyAction.stop = function (self, unit, blackboard)
 	-- function 7
-	if arg_7_2.move_state ~= "idle" then
-		Managers.state.network:anim_event(arg_7_1, "idle")
+	if blackboard.move_state ~= "idle" then
+		Managers.state.network:anim_event(unit, "idle")
 
-		arg_7_2.move_state = "idle"
+		blackboard.move_state = "idle"
 	end
 
-	local navigation_extension = arg_7_2.navigation_extension
+	local navigation_extension = blackboard.navigation_extension
 
-	if not navigation_extension:is_following_path() then
+	if navigation_extension:is_following_path() then
 		navigation_extension:stop()
 	end
 end

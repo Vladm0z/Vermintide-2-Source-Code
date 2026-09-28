@@ -1,13 +1,13 @@
 -- chunkname: @scripts/ui/views/hero_view/windows/definitions/hero_window_dark_pact_character_selection_console_definitions.lua
 
-local tbl = {
+local SCREEN_SIZE = {
 	1920,
 	1080
 }
-local tbl_2 = {
+local scenegraph_definition = {
 	screen = {
 		scale = "fit",
-		size = tbl,
+		size = SCREEN_SIZE,
 		position = {
 			0,
 			0,
@@ -178,7 +178,7 @@ local tbl_2 = {
 		}
 	}
 }
-local tbl_3 = {
+local pacstworn_name_text_style = {
 	font_size = 52,
 	upper_case = true,
 	localize = false,
@@ -195,152 +195,154 @@ local tbl_3 = {
 		10
 	}
 }
-local tbl_4 = {
+local equipment_icon_size = {
 	55.5,
 	54.6
 }
-local tbl_5 = {
+local equipment_frame_size = {
 	148,
 	145.6
 }
-local tbl_6 = {
+local slot_size = {
 	331.20000000000005,
 	94.4
 }
 
-local function fn(arg_1_0, arg_1_1, arg_1_2)
+local function create_loadout_equipment(scenegraph_id, offset, slot_name)
 	-- function 1
-	local tbl = {
+	local widget_def = {
 		element = {}
 	}
-	local tbl_2 = {}
-	local tbl_3 = {}
-	local tbl_7 = {}
-	local flag = arg_1_1 or {
+	local passes = {}
+	local content = {}
+	local style = {}
+	local offset = not not offset or not not {
 		0,
 		0,
 		0
 	}
 
-	tbl_2[#tbl_2 + 1] = {
+	passes[#passes + 1] = {
 		pass_type = "hotspot",
-		style_id = arg_1_2 .. "_hotspot",
-		content_id = arg_1_2,
-		content_check_function = function (arg_2_0)
+		style_id = slot_name .. "_hotspot",
+		content_id = slot_name,
+		content_check_function = function (content)
 			-- function 2
 			return true
 		end
 	}
-	tbl_2[#tbl_2 + 1] = {
+	passes[#passes + 1] = {
 		texture_id = "weapon_frame",
 		pass_type = "texture",
-		style_id = arg_1_2 .. "_frame"
+		style_id = slot_name .. "_frame"
 	}
-	tbl_2[#tbl_2 + 1] = {
+	passes[#passes + 1] = {
 		texture_id = "equipment_hover_frame",
 		pass_type = "texture",
-		style_id = arg_1_2 .. "_frame",
-		content_check_function = function (self, arg_3_1)
+		style_id = slot_name .. "_frame",
+		content_check_function = function (content, style)
 			-- function 3
-			local var_3_0 = self[arg_1_2]
-			local highlight = var_3_0.highlight
+			local hotspot = content[slot_name]
+			local highlight = hotspot.highlight
 
-			highlight = highlight or var_3_0.is_hover
+			highlight = not not highlight or not not hotspot.is_hover
 
 			return highlight
 		end
 	}
-	tbl_2[#tbl_2 + 1] = {
+	passes[#passes + 1] = {
 		texture_id = "icon",
 		pass_type = "texture",
-		style_id = arg_1_2 .. "_icon",
-		content_id = arg_1_2,
-		content_check_function = function (self)
+		style_id = slot_name .. "_icon",
+		content_id = slot_name,
+		content_check_function = function (content)
 			-- function 4
-			local item = self.item
+			local item = content.item
 
-			item = not item and self.icon
+			item = not not item and not not content.icon
 
 			return item
 		end
 	}
-	tbl_2[#tbl_2 + 1] = {
+	passes[#passes + 1] = {
 		texture_id = "mask",
 		pass_type = "texture",
-		style_id = arg_1_2 .. "_mask"
+		style_id = slot_name .. "_mask"
 	}
-	tbl_2[#tbl_2 + 1] = {
+	passes[#passes + 1] = {
 		texture_id = "rarity",
 		pass_type = "texture",
-		style_id = arg_1_2 .. "_mask",
-		content_id = arg_1_2
+		style_id = slot_name .. "_mask",
+		content_id = slot_name
 	}
-	tbl_2[#tbl_2 + 1] = {
+	passes[#passes + 1] = {
 		style_id = "weapon_tooltip",
 		scenegraph_id = "weapon_tooltip",
 		pass_type = "item_tooltip",
 		item_id = "item",
-		content_id = arg_1_2,
-		content_check_function = function (self)
+		content_id = slot_name,
+		content_check_function = function (content)
 			-- function 5
-			local item = self.item
+			local item = content.item
 
-			if not item then
-				item = self.is_hover
-				item = item or self.is_selected
+			if item then
+				item = content.is_hover
+				item = not not item or not not content.is_selected
 			end
 
 			return item
 		end
 	}
 
-	local str = "title_bg" .. arg_1_2
+	local title_bg_name = "title_bg" .. slot_name
 
-	tbl_2[#tbl_2 + 1] = {
+	passes[#passes + 1] = {
 		pass_type = "texture_uv",
-		content_id = str,
-		style_id = str
+		content_id = title_bg_name,
+		style_id = title_bg_name
 	}
 
-	local str_2 = "title_bg_effect" .. arg_1_2
+	local title_bg_effect_name = "title_bg_effect" .. slot_name
 
-	tbl_2[#tbl_2 + 1] = {
+	passes[#passes + 1] = {
 		pass_type = "texture",
-		texture_id = str_2,
-		style_id = str_2,
-		content_check_function = function (self)
+		texture_id = title_bg_effect_name,
+		style_id = title_bg_effect_name,
+		content_check_function = function (content)
 			-- function 6
-			local var_6_0 = self[arg_1_2]
-			local highlight = var_6_0.highlight
+			local hotspot = content[slot_name]
+			local highlight = hotspot.highlight
 
-			highlight = highlight or var_6_0.is_hover
+			highlight = not not highlight or not not hotspot.is_hover
 
 			return highlight
 		end
 	}
 
-	local str_3 = "title_text" .. arg_1_2
+	local title_text_name = "title_text" .. slot_name
 
-	tbl_2[#tbl_2 + 1] = {
+	passes[#passes + 1] = {
 		pass_type = "text",
-		text_id = str_3,
-		style_id = str_3,
-		content_check_function = function (self)
+		text_id = title_text_name,
+		style_id = title_text_name,
+		content_check_function = function (content)
 			-- function 7
-			local var_7_0 = self[arg_1_2]
-			local item = var_7_0.item
+			local hotspot = content[slot_name]
+			local item = hotspot.item
 
-			item = not item and not not var_7_0.highlight or not var_7_0.is_hover
+			item = not not item and not hotspot.highlight and not not not hotspot.is_hover
 
 			return item
 		end,
-		content_change_function = function (self, arg_8_1)
+		content_change_function = function (content, style)
 			-- function 8
-			local item_type = self[arg_1_2].item.data.item_type
-			local var_8_1 = str_3
+			local item = content[slot_name].item
+			local item_data = item.data
+			local item_type = item_data.item_type
+			local var_8_0 = title_text_name
 			local str
 
-			if not self.is_dark_pact then
+			if content.is_dark_pact then
 				str = "dark_pact_" .. item_type
 
 				if not str then
@@ -352,35 +354,37 @@ local function fn(arg_1_0, arg_1_1, arg_1_2)
 
 			::label_8_0::
 
-			self[var_8_1] = str
+			content[var_8_0] = str
 		end
 	}
 
-	local str_4 = "title_text_selected" .. arg_1_2
+	local title_text_selected_name = "title_text_selected" .. slot_name
 
-	tbl_2[#tbl_2 + 1] = {
+	passes[#passes + 1] = {
 		pass_type = "text",
-		text_id = str_3,
-		style_id = str_4,
-		content_check_function = function (self)
+		text_id = title_text_name,
+		style_id = title_text_selected_name,
+		content_check_function = function (content)
 			-- function 9
-			local var_9_0 = self[arg_1_2]
-			local item = var_9_0.item
+			local hotspot = content[slot_name]
+			local item = hotspot.item
 
-			if not item then
-				item = var_9_0.highlight
-				item = item or var_9_0.is_hover
+			if item then
+				item = hotspot.highlight
+				item = not not item or not not hotspot.is_hover
 			end
 
 			return item
 		end,
-		content_change_function = function (self, arg_10_1)
+		content_change_function = function (content, style)
 			-- function 10
-			local item_type = self[arg_1_2].item.data.item_type
-			local var_10_1 = str_3
+			local item = content[slot_name].item
+			local item_data = item.data
+			local item_type = item_data.item_type
+			local var_10_0 = title_text_name
 			local str
 
-			if not self.is_dark_pact then
+			if content.is_dark_pact then
 				str = "dark_pact_" .. item_type
 
 				if not str then
@@ -392,58 +396,58 @@ local function fn(arg_1_0, arg_1_1, arg_1_2)
 
 			::label_10_0::
 
-			self[var_10_1] = str
+			content[var_10_0] = str
 		end
 	}
 
-	local str_5 = "title_shadow_text" .. arg_1_2
+	local title_shadow_text_name = "title_shadow_text" .. slot_name
 
-	tbl_2[#tbl_2 + 1] = {
+	passes[#passes + 1] = {
 		pass_type = "text",
-		text_id = str_3,
-		style_id = str_5,
-		content_check_function = function (self)
+		text_id = title_text_name,
+		style_id = title_shadow_text_name,
+		content_check_function = function (content)
 			-- function 11
-			return self[arg_1_2].item
+			return content[slot_name].item
 		end
 	}
 
-	local str_6 = "sub_title_text" .. arg_1_2
+	local sub_title_text_name = "sub_title_text" .. slot_name
 
-	tbl_2[#tbl_2 + 1] = {
+	passes[#passes + 1] = {
 		pass_type = "text",
-		text_id = str_6,
-		style_id = str_6,
-		content_check_function = function (self)
+		text_id = sub_title_text_name,
+		style_id = sub_title_text_name,
+		content_check_function = function (content)
 			-- function 12
-			return self[arg_1_2].item
+			return content[slot_name].item
 		end,
-		content_change_function = function (self, arg_13_1)
+		content_change_function = function (content, style)
 			-- function 13
-			local item = self[arg_1_2].item
-			local get_ui_information_from_item, var_13_2 = UIUtils.get_ui_information_from_item(item)
+			local item = content[slot_name].item
+			local _, display_name = UIUtils.get_ui_information_from_item(item)
 
-			self[str_6] = var_13_2
+			content[sub_title_text_name] = display_name
 		end
 	}
 
-	local str_7 = "sub_title_shadow_text" .. arg_1_2
+	local sub_title_shadow_text_name = "sub_title_shadow_text" .. slot_name
 
-	tbl_2[#tbl_2 + 1] = {
+	passes[#passes + 1] = {
 		pass_type = "text",
-		text_id = str_6,
-		style_id = str_7,
-		content_check_function = function (self)
+		text_id = sub_title_text_name,
+		style_id = sub_title_shadow_text_name,
+		content_check_function = function (content)
 			-- function 14
-			return self[arg_1_2].item
+			return content[slot_name].item
 		end
 	}
-	tbl_3[arg_1_2] = {
+	content[slot_name] = {
 		rarity = "icon_bg_default",
 		no_equipped_item = true,
 		is_selected = false
 	}
-	tbl_3[str] = {
+	content[title_bg_name] = {
 		texture_id = "item_slot_side_fade",
 		uvs = {
 			{
@@ -456,27 +460,27 @@ local function fn(arg_1_0, arg_1_1, arg_1_2)
 			}
 		}
 	}
-	tbl_3[str_2] = "item_slot_side_effect"
-	tbl_3[str_3] = Localize("not_assigned")
-	tbl_3[str_6] = Localize("not_assigned")
-	tbl_3.slot_name = arg_1_2
-	tbl_7[arg_1_2] = {
+	content[title_bg_effect_name] = "item_slot_side_effect"
+	content[title_text_name] = Localize("not_assigned")
+	content[sub_title_text_name] = Localize("not_assigned")
+	content.slot_name = slot_name
+	style[slot_name] = {
 		vertical_alignment = "center",
 		horizontal_alignment = "center",
-		area_size = tbl_4,
-		texture_size = tbl_4,
+		area_size = equipment_icon_size,
+		texture_size = equipment_icon_size,
 		offset = {
 			0,
 			0,
 			0
 		}
 	}
-	tbl_7[arg_1_2 .. "_hotspot"] = {
+	style[slot_name .. "_hotspot"] = {
 		vertical_alignment = "center",
 		horizontal_alignment = "center",
 		area_size = {
-			tbl_5[1] * 0.7,
-			tbl_5[2] * 0.7
+			equipment_frame_size[1] * 0.7,
+			equipment_frame_size[2] * 0.7
 		},
 		offset = {
 			0,
@@ -484,7 +488,7 @@ local function fn(arg_1_0, arg_1_1, arg_1_2)
 			10
 		}
 	}
-	tbl_7[arg_1_2 .. "_icon"] = {
+	style[slot_name .. "_icon"] = {
 		vertical_alignment = "center",
 		horizontal_alignment = "center",
 		masked = true,
@@ -502,42 +506,42 @@ local function fn(arg_1_0, arg_1_1, arg_1_2)
 			2
 		}
 	}
-	tbl_7[arg_1_2 .. "_mask"] = {
+	style[slot_name .. "_mask"] = {
 		vertical_alignment = "center",
 		horizontal_alignment = "center",
-		area_size = tbl_4,
-		texture_size = tbl_4,
+		area_size = equipment_icon_size,
+		texture_size = equipment_icon_size,
 		offset = {
 			0,
 			0,
 			1
 		}
 	}
-	tbl_7[arg_1_2 .. "_frame"] = {
+	style[slot_name .. "_frame"] = {
 		vertical_alignment = "center",
 		horizontal_alignment = "center",
-		texture_size = tbl_5,
+		texture_size = equipment_frame_size,
 		offset = {
 			0,
 			0,
 			1
 		}
 	}
-	tbl_7[arg_1_2 .. "_hover_frame"] = {
+	style[slot_name .. "_hover_frame"] = {
 		vertical_alignment = "center",
 		horizontal_alignment = "center",
-		texture_size = tbl_5,
+		texture_size = equipment_frame_size,
 		offset = {
 			0,
 			0,
 			10
 		}
 	}
-	tbl_7[str] = {
+	style[title_bg_name] = {
 		vertical_alignment = "center",
 		horizontal_alignment = "left",
-		size = tbl_6,
-		texture_size = tbl_6,
+		size = slot_size,
+		texture_size = slot_size,
 		color = {
 			255,
 			0,
@@ -546,112 +550,112 @@ local function fn(arg_1_0, arg_1_1, arg_1_2)
 		},
 		offset = {
 			0,
-			-tbl_6[2] / 2,
+			-slot_size[2] / 2,
 			-5
 		}
 	}
-	tbl_7[str_2] = {
+	style[title_bg_effect_name] = {
 		vertical_alignment = "center",
 		horizontal_alignment = "left",
-		size = tbl_6,
-		texture_size = tbl_6,
+		size = slot_size,
+		texture_size = slot_size,
 		color = Colors.get_color_table_with_alpha("font_title", 255),
 		offset = {
 			0,
-			-tbl_6[2] / 2,
+			-slot_size[2] / 2,
 			-4
 		}
 	}
-	tbl_7[str_3] = {
+	style[title_text_name] = {
 		font_size = 30,
 		upper_case = true,
 		localize = true,
 		horizontal_alignment = "left",
 		vertical_alignment = "top",
 		font_type = "hell_shark_header",
-		size = tbl_6,
+		size = slot_size,
 		text_color = Colors.get_color_table_with_alpha("font_title", 255),
 		offset = {
-			tbl_5[1] * 0.5 - 14,
-			-tbl_6[2] * 0.5 - 16,
+			equipment_frame_size[1] * 0.5 - 14,
+			-slot_size[2] * 0.5 - 16,
 			5
 		}
 	}
-	tbl_7[str_4] = {
+	style[title_text_selected_name] = {
 		font_size = 30,
 		upper_case = true,
 		localize = true,
 		horizontal_alignment = "left",
 		vertical_alignment = "top",
 		font_type = "hell_shark_header",
-		size = tbl_6,
+		size = slot_size,
 		text_color = Colors.get_color_table_with_alpha("white", 255),
 		offset = {
-			tbl_5[1] * 0.5 - 14,
-			-tbl_6[2] * 0.5 - 16,
+			equipment_frame_size[1] * 0.5 - 14,
+			-slot_size[2] * 0.5 - 16,
 			5
 		}
 	}
-	tbl_7[str_5] = {
+	style[title_shadow_text_name] = {
 		font_size = 30,
 		upper_case = true,
 		localize = true,
 		horizontal_alignment = "left",
 		vertical_alignment = "top",
 		font_type = "hell_shark_header",
-		size = tbl_6,
+		size = slot_size,
 		text_color = Colors.get_color_table_with_alpha("black", 255),
 		offset = {
-			tbl_5[1] * 0.5 - 14 + 2,
-			-tbl_6[2] * 0.5 - 16 - 2,
+			equipment_frame_size[1] * 0.5 - 14 + 2,
+			-slot_size[2] * 0.5 - 16 - 2,
 			4
 		}
 	}
-	tbl_7[str_6] = {
+	style[sub_title_text_name] = {
 		vertical_alignment = "top",
 		horizontal_alignment = "left",
 		localize = true,
 		font_size = 20,
 		font_type = "hell_shark",
-		size = tbl_6,
+		size = slot_size,
 		text_color = Colors.get_color_table_with_alpha("font_default", 255),
 		offset = {
-			tbl_5[1] * 0.5 - 14,
-			-tbl_6[2] * 0.5 - 50,
+			equipment_frame_size[1] * 0.5 - 14,
+			-slot_size[2] * 0.5 - 50,
 			5
 		}
 	}
-	tbl_7[str_7] = {
+	style[sub_title_shadow_text_name] = {
 		vertical_alignment = "top",
 		horizontal_alignment = "left",
 		localize = true,
 		font_size = 20,
 		font_type = "hell_shark",
-		size = tbl_6,
+		size = slot_size,
 		text_color = Colors.get_color_table_with_alpha("black", 255),
 		offset = {
-			tbl_5[1] * 0.5 - 14 + 2,
-			-tbl_6[2] * 0.5 - 52,
+			equipment_frame_size[1] * 0.5 - 14 + 2,
+			-slot_size[2] * 0.5 - 52,
 			4
 		}
 	}
-	tbl_3.equipment_hover_frame = "loadout_item_slot_glow_console"
-	tbl_3.background = "icon_bg_default"
-	tbl_3.mask = "mask_rect"
-	tbl_3.weapon_frame = "loadout_item_slot_console"
-	tbl_7.weapon_tooltip = {
+	content.equipment_hover_frame = "loadout_item_slot_glow_console"
+	content.background = "icon_bg_default"
+	content.mask = "mask_rect"
+	content.weapon_frame = "loadout_item_slot_console"
+	style.weapon_tooltip = {
 		draw_downwards = false
 	}
-	tbl.element.passes = tbl_2
-	tbl.content = tbl_3
-	tbl.style = tbl_7
-	tbl.scenegraph_id = arg_1_0
-	tbl.offset = flag
+	widget_def.element.passes = passes
+	widget_def.content = content
+	widget_def.style = style
+	widget_def.scenegraph_id = scenegraph_id
+	widget_def.offset = offset
 
-	return tbl
+	return widget_def
 end
 
-local tbl_7 = {
+local stat_text_style = {
 	font_size = 24,
 	upper_case = false,
 	localize = false,
@@ -668,24 +672,24 @@ local tbl_7 = {
 		10
 	}
 }
-local clone = table.clone(tbl_7)
+local stat_text_style_shadow = table.clone(stat_text_style)
 
-clone.offset = {
+stat_text_style_shadow.offset = {
 	2,
 	-2,
 	9
 }
-clone.text_color = Colors.get_color_table_with_alpha("black", 255)
+stat_text_style_shadow.text_color = Colors.get_color_table_with_alpha("black", 255)
 
-local clone_2 = table.clone(tbl_7)
+local description_text_style = table.clone(stat_text_style)
 
-clone_2.dynamic_font_size_word_wrap = true
-clone_2.word_wrap = true
-clone_2.use_shadow = true
+description_text_style.dynamic_font_size_word_wrap = true
+description_text_style.word_wrap = true
+description_text_style.use_shadow = true
 
-local flag = true
-local tbl_8 = {
-	pactsworn_name = UIWidgets.create_simple_text("PACTSWORN NAME", "pactsworn_name", nil, nil, tbl_3),
+local disable_with_gamepad = true
+local widget_definitions = {
+	pactsworn_name = UIWidgets.create_simple_text("PACTSWORN NAME", "pactsworn_name", nil, nil, pacstworn_name_text_style),
 	name_separator = UIWidgets.create_simple_uv_texture("radial_chat_bg_line_horz", {
 		{
 			1,
@@ -700,19 +704,19 @@ local tbl_8 = {
 		-14,
 		2
 	}, nil, {
-		tbl_2.pactsworn_name.size[1],
+		scenegraph_definition.pactsworn_name.size[1],
 		4
 	}),
-	equipment_skin = fn("equipment_skin", nil, "slot_skin"),
-	pactsworn_stat_1 = UIWidgets.create_simple_text("stat_1", "pactsworn_stat_1", nil, nil, tbl_7),
-	pactsworn_stat_shadow_1 = UIWidgets.create_simple_text("stat_1", "pactsworn_stat_1", nil, nil, clone),
+	equipment_skin = create_loadout_equipment("equipment_skin", nil, "slot_skin"),
+	pactsworn_stat_1 = UIWidgets.create_simple_text("stat_1", "pactsworn_stat_1", nil, nil, stat_text_style),
+	pactsworn_stat_shadow_1 = UIWidgets.create_simple_text("stat_1", "pactsworn_stat_1", nil, nil, stat_text_style_shadow),
 	pactsworn_stat_1_icon = UIWidgets.create_simple_texture("icons_placeholder", "pactsworn_stat_1_icon"),
-	pactsworn_stat_2 = UIWidgets.create_simple_text("stat_2", "pactsworn_stat_2", nil, nil, tbl_7),
-	pactsworn_stat_shadow_2 = UIWidgets.create_simple_text("stat_2", "pactsworn_stat_2", nil, nil, clone),
+	pactsworn_stat_2 = UIWidgets.create_simple_text("stat_2", "pactsworn_stat_2", nil, nil, stat_text_style),
+	pactsworn_stat_shadow_2 = UIWidgets.create_simple_text("stat_2", "pactsworn_stat_2", nil, nil, stat_text_style_shadow),
 	pactsworn_stat_2_icon = UIWidgets.create_simple_texture("icons_placeholder", "pactsworn_stat_2_icon"),
-	pactsworn_description = UIWidgets.create_simple_text("pactsworn_description", "pactsworn_description", nil, nil, clone_2)
+	pactsworn_description = UIWidgets.create_simple_text("pactsworn_description", "pactsworn_description", nil, nil, description_text_style)
 }
-local tbl_9 = {
+local generic_input_actions = {
 	default = {
 		{
 			input_action = "d_pad",
@@ -775,24 +779,24 @@ local tbl_9 = {
 		}
 	}
 }
-local tbl_10 = {
+local animation_definitions = {
 	on_enter = {
 		{
 			name = "fade_in",
 			start_progress = 0,
 			end_progress = 0.3,
-			init = function (arg_15_0, arg_15_1, arg_15_2, arg_15_3)
+			init = function (ui_scenegraph, scenegraph_definition, widgets, params)
 				-- function 15
-				arg_15_3.render_settings.alpha_multiplier = 0
+				params.render_settings.alpha_multiplier = 0
 			end,
-			update = function (arg_16_0, arg_16_1, arg_16_2, arg_16_3, arg_16_4)
+			update = function (ui_scenegraph, scenegraph_definition, widgets, progress, params)
 				-- function 16
-				local easeOutCubic = math.easeOutCubic(arg_16_3)
+				local anim_progress = math.easeOutCubic(progress)
 
-				arg_16_4.render_settings.alpha_multiplier = easeOutCubic
-				arg_16_0.left_side_root.local_position[1] = arg_16_1.left_side_root.position[1] + -100 * (1 - easeOutCubic)
+				params.render_settings.alpha_multiplier = anim_progress
+				ui_scenegraph.left_side_root.local_position[1] = scenegraph_definition.left_side_root.position[1] + -100 * (1 - anim_progress)
 			end,
-			on_complete = function (arg_17_0, arg_17_1, arg_17_2, arg_17_3)
+			on_complete = function (ui_scenegraph, scenegraph_definition, widgets, params)
 				-- function 17
 				return
 			end
@@ -803,18 +807,18 @@ local tbl_10 = {
 			name = "fade_out",
 			start_progress = 0,
 			end_progress = 1,
-			init = function (arg_18_0, arg_18_1, arg_18_2, arg_18_3)
+			init = function (ui_scenegraph, scenegraph_definition, widgets, params)
 				-- function 18
-				arg_18_3.render_settings.alpha_multiplier = 1
+				params.render_settings.alpha_multiplier = 1
 			end,
-			update = function (arg_19_0, arg_19_1, arg_19_2, arg_19_3, arg_19_4)
+			update = function (ui_scenegraph, scenegraph_definition, widgets, progress, params)
 				-- function 19
-				local easeOutCubic = math.easeOutCubic(arg_19_3)
+				local anim_progress = math.easeOutCubic(progress)
 
-				arg_19_4.render_settings.alpha_multiplier = 1 - easeOutCubic
-				arg_19_0.left_side_root.local_position[1] = arg_19_1.left_side_root.position[1] + -100 * easeOutCubic
+				params.render_settings.alpha_multiplier = 1 - anim_progress
+				ui_scenegraph.left_side_root.local_position[1] = scenegraph_definition.left_side_root.position[1] + -100 * anim_progress
 			end,
-			on_complete = function (arg_20_0, arg_20_1, arg_20_2, arg_20_3)
+			on_complete = function (ui_scenegraph, scenegraph_definition, widgets, params)
 				-- function 20
 				return
 			end
@@ -823,8 +827,8 @@ local tbl_10 = {
 }
 
 return {
-	scenegraph_definition = tbl_2,
-	widget_definitions = tbl_8,
-	generic_input_actions = tbl_9,
-	animation_definitions = tbl_10
+	scenegraph_definition = scenegraph_definition,
+	widget_definitions = widget_definitions,
+	generic_input_actions = generic_input_actions,
+	animation_definitions = animation_definitions
 }

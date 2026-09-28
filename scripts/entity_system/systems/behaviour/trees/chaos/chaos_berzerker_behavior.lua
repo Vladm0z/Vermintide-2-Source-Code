@@ -1,6 +1,6 @@
 -- chunkname: @scripts/entity_system/systems/behaviour/trees/chaos/chaos_berzerker_behavior.lua
 
-local chaos_berzerker = BreedActions.chaos_berzerker
+local ACTIONS = BreedActions.chaos_berzerker
 
 BreedBehaviors.berzerker = {
 	"BTSelector",
@@ -23,13 +23,13 @@ BreedBehaviors.berzerker = {
 		"BTStaggerAction",
 		name = "stagger",
 		condition = "stagger",
-		action_data = chaos_berzerker.stagger
+		action_data = ACTIONS.stagger
 	},
 	{
 		"BTBlockedAction",
 		name = "blocked",
 		condition = "blocked",
-		action_data = chaos_berzerker.blocked
+		action_data = ACTIONS.blocked
 	},
 	{
 		"BTSelector",
@@ -52,7 +52,7 @@ BreedBehaviors.berzerker = {
 			"BTSmashDoorAction",
 			name = "smash_door",
 			condition = "at_door_smartobject",
-			action_data = chaos_berzerker.smash_door
+			action_data = ACTIONS.smash_door
 		},
 		condition = "at_smartobject",
 		name = "smartobject"
@@ -61,33 +61,33 @@ BreedBehaviors.berzerker = {
 		"BTHesitateAction",
 		name = "hesitate",
 		condition = "is_alerted",
-		action_data = chaos_berzerker.alerted
+		action_data = ACTIONS.alerted
 	},
 	{
 		"BTUtilityNode",
-		action_data = chaos_berzerker.utility_action,
+		action_data = ACTIONS.utility_action,
 		{
 			"BTClanRatFollowAction",
 			name = "follow",
-			action_data = chaos_berzerker.follow
+			action_data = ACTIONS.follow
 		},
 		{
 			"BTAttackAction",
 			name = "running_attack",
 			condition = "ask_target_before_attacking",
-			action_data = chaos_berzerker.running_attack
+			action_data = ACTIONS.running_attack
 		},
 		{
 			"BTComboAttackAction",
 			name = "frenzy_attack",
 			condition = "ask_target_before_attacking",
-			action_data = chaos_berzerker.frenzy_attack
+			action_data = ACTIONS.frenzy_attack
 		},
 		{
 			"BTAttackAction",
 			name = "normal_attack",
 			condition = "ask_target_before_attacking",
-			action_data = chaos_berzerker.normal_attack
+			action_data = ACTIONS.normal_attack
 		},
 		name = "in_combat",
 		condition = "confirmed_player_sighting"
@@ -96,13 +96,13 @@ BreedBehaviors.berzerker = {
 		"BTAlertedAction",
 		name = "alerted",
 		condition = "player_spotted",
-		action_data = chaos_berzerker.alerted
+		action_data = ACTIONS.alerted
 	},
 	{
 		"BTMoveToGoalAction",
 		name = "move_to_goal",
 		condition = "has_goal_destination",
-		action_data = chaos_berzerker.follow
+		action_data = ACTIONS.follow
 	},
 	{
 		"BTIdleAction",

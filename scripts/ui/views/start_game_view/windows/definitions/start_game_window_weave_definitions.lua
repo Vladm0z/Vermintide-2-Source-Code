@@ -1,11 +1,11 @@
 -- chunkname: @scripts/ui/views/start_game_view/windows/definitions/start_game_window_weave_definitions.lua
 
-local game_start_windows = UISettings.game_start_windows
-local frame = game_start_windows.frame
-local size = game_start_windows.size
-local var_0_3 = UIFrameSettings[frame].texture_sizes.vertical[1]
-local num = size[1] - (var_0_3 * 2 + 60)
-local tbl = {
+local window_default_settings = UISettings.game_start_windows
+local window_frame = window_default_settings.frame
+local window_size = window_default_settings.size
+local window_frame_width = UIFrameSettings[window_frame].texture_sizes.vertical[1]
+local window_text_width = window_size[1] - (window_frame_width * 2 + 60)
+local scenegraph_definition = {
 	root = {
 		is_root = true,
 		size = {
@@ -48,7 +48,7 @@ local tbl = {
 		vertical_alignment = "center",
 		parent = "menu_root",
 		horizontal_alignment = "center",
-		size = size,
+		size = window_size,
 		position = {
 			0,
 			0,
@@ -60,8 +60,8 @@ local tbl = {
 		parent = "window",
 		horizontal_alignment = "center",
 		size = {
-			num,
-			size[2] / 2
+			window_text_width,
+			window_size[2] / 2
 		},
 		position = {
 			0,
@@ -102,7 +102,7 @@ local tbl = {
 		parent = "weave_title_divider",
 		horizontal_alignment = "center",
 		size = {
-			num,
+			window_text_width,
 			50
 		},
 		position = {
@@ -112,7 +112,7 @@ local tbl = {
 		}
 	}
 }
-local tbl_2 = {
+local weave_title_text_style = {
 	font_size = 36,
 	upper_case = true,
 	localize = false,
@@ -128,7 +128,7 @@ local tbl_2 = {
 		2
 	}
 }
-local tbl_3 = {
+local description_text_style = {
 	word_wrap = true,
 	font_size = 22,
 	localize = false,
@@ -143,17 +143,17 @@ local tbl_3 = {
 		2
 	}
 }
-local tbl_4 = {
+local widgets = {
 	background_fade = UIWidgets.create_simple_texture("options_window_fade_01", "window"),
 	background_mask = UIWidgets.create_simple_texture("mask_rect", "window"),
-	window = UIWidgets.create_frame("window", size, frame, 20),
-	description_text = UIWidgets.create_simple_text(Localize("start_game_window_weave_desc"), "description_text", nil, nil, tbl_3),
-	weave_title = UIWidgets.create_simple_text(Localize("start_game_window_weave_title"), "weave_title", nil, nil, tbl_2),
+	window = UIWidgets.create_frame("window", window_size, window_frame, 20),
+	description_text = UIWidgets.create_simple_text(Localize("start_game_window_weave_desc"), "description_text", nil, nil, description_text_style),
+	weave_title = UIWidgets.create_simple_text(Localize("start_game_window_weave_title"), "weave_title", nil, nil, weave_title_text_style),
 	weave_texture = UIWidgets.create_simple_texture("weaves_icon", "weave_texture"),
 	weave_title_divider = UIWidgets.create_simple_texture("divider_01_top", "weave_title_divider")
 }
 
 return {
-	widgets = tbl_4,
-	scenegraph_definition = tbl
+	widgets = widgets,
+	scenegraph_definition = scenegraph_definition
 }

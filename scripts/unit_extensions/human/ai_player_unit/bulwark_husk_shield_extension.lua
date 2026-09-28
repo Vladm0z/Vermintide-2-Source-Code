@@ -4,19 +4,19 @@ require("scripts/unit_extensions/human/ai_player_unit/ai_shield_user_husk_extens
 
 BulwarkHuskShieldExtension = class(BulwarkHuskShieldExtension, AIShieldUserHuskExtension)
 
-BulwarkHuskShieldExtension.init = function (self, arg_1_1, arg_1_2, arg_1_3)
+BulwarkHuskShieldExtension.init = function (self, extension_init_context, unit, extension_init_data)
 	-- function 1
-	self.super.init(self, arg_1_1, arg_1_2, arg_1_3)
+	self.super.init(self, extension_init_context, unit, extension_init_data)
 end
 
-BulwarkHuskShieldExtension.destroy = function (arg_2_0)
+BulwarkHuskShieldExtension.destroy = function (self)
 	-- function 2
 	return
 end
 
-BulwarkHuskShieldExtension.can_block_attack = function (self, arg_3_1, arg_3_2, arg_3_3)
+BulwarkHuskShieldExtension.can_block_attack = function (self, attacker_unit, trueflight_blocking, hit_direction)
 	-- function 3
-	return self.super.can_block_attack(self, arg_3_1, arg_3_2, arg_3_3)
+	return self.super.can_block_attack(self, attacker_unit, trueflight_blocking, hit_direction)
 end
 
 BulwarkHuskShieldExtension.get_is_blocking = function (self)

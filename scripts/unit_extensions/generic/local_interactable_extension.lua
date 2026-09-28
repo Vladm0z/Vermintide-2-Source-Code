@@ -2,27 +2,27 @@
 
 LocalInteractableExtension = class(LocalInteractableExtension)
 
-LocalInteractableExtension.init = function (self, arg_1_1, arg_1_2, arg_1_3)
+LocalInteractableExtension.init = function (self, extension_init_context, unit, extension_init_data)
 	-- function 1
-	self.unit = arg_1_2
-	self._is_level_object = Unit.level(arg_1_2) ~= nil
+	self.unit = unit
+	self._is_level_object = Unit.level(unit) ~= nil
 
-	local get_data = Unit.get_data(arg_1_2, "interaction_data", "interaction_type")
+	local get_data = Unit.get_data(unit, "interaction_data", "interaction_type")
 
-	get_data = get_data or "player_generic"
+	get_data = not not get_data or not not "player_generic"
 	self.interactable_type = get_data
-	self._override_interactable_action = Unit.get_data(arg_1_2, "override_interactable_action")
+	self._override_interactable_action = Unit.get_data(unit, "override_interactable_action")
 	self.interactor_unit = nil
 	self._enabled = true
 	self.num_times_successfully_completed = 0
 	self.interaction_result = nil
 
-	fassert(self.interactable_type, "Unit: %s missing interaction_type in its unit data, should it have an interaction extension?", arg_1_2)
+	fassert(self.interactable_type, "Unit: %s missing interaction_type in its unit data, should it have an interaction extension?", unit)
 	fassert(InteractionDefinitions[self.interactable_type], "Missing definition for interaction of type '%s'", self.interactable_type)
 	fassert(not InteractionDefinitions[self.interactable_type].server, "Interactable of type '%s' contains server logic but is used in a local only interactable.", self.interactable_type)
 end
 
-LocalInteractableExtension.destroy = function (arg_2_0)
+LocalInteractableExtension.destroy = function (self)
 	-- function 2
 	return
 end
@@ -32,45 +32,48 @@ LocalInteractableExtension.interaction_type = function (self)
 	return self.interactable_type
 end
 
-LocalInteractableExtension.local_only = function (arg_4_0)
+LocalInteractableExtension.local_only = function (self)
 	-- function 4
 	return true
 end
 
-LocalInteractableExtension.set_interactable_type = function (self, arg_5_1)
+LocalInteractableExtension.set_interactable_type = function (self, new_interactable_type)
 	-- function 5
-	self.interactable_type = arg_5_1
+	self.interactable_type = new_interactable_type
 end
 
-LocalInteractableExtension.set_is_being_interacted_with = function (self, arg_6_1, arg_6_2)
+LocalInteractableExtension.set_is_being_interacted_with = function (self, interactor_unit, interaction_result)
 	-- function 6
 	local unit = self.unit
-	local interactable_type = self.interactable_type
+	local interaction_type = self.interactable_type
 
-	if not self.interactor_unit then
-		fassert(arg_6_1 == nil, "Interactor unit was already set.")
+	if self.interactor_unit then
+		fassert(interactor_unit == nil, "Interactor unit was already set.")
 
-		local interactor_unit = self.interactor_unit
-		local str = "lua_interaction_stopped_" .. interactable_type .. "_" .. InteractionResult[arg_6_2]
+		local current_interactor_unit = self.interactor_unit
+		local flow_event = "lua_interaction_stopped_" .. interaction_type .. "_" .. InteractionResult[interaction_result]
 
-		Unit.flow_event(unit, str)
+		Unit.flow_event(unit, flow_event)
 
-		if not (not NetworkUnit.is_network_unit(interactor_unit) and NetworkUnit.is_husk_unit(interactor_unit)) then
-			local str_2 = "lua_interaction_stopped_local_interactor_" .. interactable_type .. "_" .. InteractionResult[arg_6_2]
+		local is_interactor_network_unit = NetworkUnit.is_network_unit(current_interactor_unit)
+		local is_interactor_husk = not not is_interactor_network_unit and not not NetworkUnit.is_husk_unit(current_interactor_unit)
 
-			Unit.flow_event(unit, str_2)
+		if not is_interactor_husk then
+			local local_flow_event = "lua_interaction_stopped_local_interactor_" .. interaction_type .. "_" .. InteractionResult[interaction_result]
+
+			Unit.flow_event(unit, local_flow_event)
 		end
 	else
-		fassert(arg_6_1 ~= nil, "Interactor unit was already nil.")
-		Unit.set_flow_variable(unit, "lua_interaction_started_unit", arg_6_1)
+		fassert(interactor_unit ~= nil, "Interactor unit was already nil.")
+		Unit.set_flow_variable(unit, "lua_interaction_started_unit", interactor_unit)
 
-		local str_3 = "lua_interaction_started_" .. interactable_type
+		local flow_event = "lua_interaction_started_" .. interaction_type
 
-		Unit.flow_event(unit, str_3)
+		Unit.flow_event(unit, flow_event)
 	end
 
-	self.interactor_unit = arg_6_1
-	self.interaction_result = arg_6_2
+	self.interactor_unit = interactor_unit
+	self.interaction_result = interaction_result
 end
 
 LocalInteractableExtension.is_being_interacted_with = function (self)
@@ -83,9 +86,9 @@ LocalInteractableExtension.is_enabled = function (self)
 	return self._enabled
 end
 
-LocalInteractableExtension.set_enabled = function (self, arg_9_1)
+LocalInteractableExtension.set_enabled = function (self, enabled)
 	-- function 9
-	self._enabled = arg_9_1
+	self._enabled = enabled
 end
 
 LocalInteractableExtension.override_interactable_action = function (self)

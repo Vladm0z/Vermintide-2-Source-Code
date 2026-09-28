@@ -1,6 +1,7 @@
 -- chunkname: @scripts/settings/mutators/mutator_curse_corrupted_flesh.lua
 
-local var_0_0 = require("scripts/settings/mutators/mutator_base_curse_marked_enemies")("curse_corrupted_flesh_name", "curse_corrupted_flesh_desc", "deus_curse_nurgle_01", "mark_of_nurgle", {
+local mutator_base_curse_marked_enemies = require("scripts/settings/mutators/mutator_base_curse_marked_enemies")
+local mutator = mutator_base_curse_marked_enemies("curse_corrupted_flesh_name", "curse_corrupted_flesh_desc", "deus_curse_nurgle_01", "mark_of_nurgle", {
 	normal = {
 		mark_chance = 0.3,
 		max_marked_enemies = 2
@@ -41,8 +42,8 @@ local var_0_0 = require("scripts/settings/mutators/mutator_base_curse_marked_ene
 	skaven_storm_vermin_champion = true
 })
 
-var_0_0.packages = {
+mutator.packages = {
 	"resource_packages/mutators/mutator_curse_corrupted_flesh"
 }
 
-return var_0_0
+return mutator

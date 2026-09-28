@@ -2,34 +2,34 @@
 
 Timer = class(Timer)
 
-Timer.init = function (self, arg_1_1, arg_1_2, arg_1_3)
+Timer.init = function (self, name, parent, start_time)
 	-- function 1
-	self._t = arg_1_3 or 0
+	self._t = not not start_time or not not 0
 	self._dt = 0
-	self._name = arg_1_1
+	self._name = name
 	self._active = true
 	self._local_scale = 1
 	self._global_scale = 1
-	self._parent = arg_1_2
+	self._parent = parent
 	self._children = {}
 end
 
-Timer.update = function (self, arg_2_1, arg_2_2)
+Timer.update = function (self, dt, global_scale)
 	-- function 2
-	local _local_scale = self._local_scale
+	local local_scale = self._local_scale
 
-	arg_2_1 = math.max(arg_2_1 * _local_scale, 1e-06)
-	arg_2_2 = arg_2_2 * _local_scale
+	dt = math.max(dt * local_scale, 1e-06)
+	global_scale = global_scale * local_scale
 
-	for k, v in pairs(self._children) do
-		if not v:active() then
-			v:update(arg_2_1, arg_2_2)
+	for name, child in pairs(self._children) do
+		if child:active() then
+			child:update(dt, global_scale)
 		end
 	end
 
-	self._dt = arg_2_1
-	self._t = self._t + arg_2_1
-	self._global_scale = arg_2_2
+	self._dt = dt
+	self._t = self._t + dt
+	self._global_scale = global_scale
 end
 
 Timer.name = function (self)
@@ -37,9 +37,9 @@ Timer.name = function (self)
 	return self._name
 end
 
-Timer.set_time = function (self, arg_4_1)
+Timer.set_time = function (self, time)
 	-- function 4
-	self._t = arg_4_1
+	self._t = time
 end
 
 Timer.time = function (self)
@@ -57,14 +57,14 @@ Timer.active = function (self)
 	return self._active
 end
 
-Timer.set_active = function (self, arg_8_1)
+Timer.set_active = function (self, active)
 	-- function 8
-	self._active = arg_8_1
+	self._active = active
 end
 
-Timer.set_local_scale = function (self, arg_9_1)
+Timer.set_local_scale = function (self, scale)
 	-- function 9
-	self._local_scale = arg_9_1
+	self._local_scale = scale
 end
 
 Timer.local_scale = function (self)
@@ -77,14 +77,14 @@ Timer.global_scale = function (self)
 	return self._global_scale
 end
 
-Timer.add_child = function (arg_12_0, arg_12_1)
+Timer.add_child = function (self, timer)
 	-- function 12
-	arg_12_0._children[arg_12_1:name()] = arg_12_1
+	self._children[timer:name()] = timer
 end
 
-Timer.remove_child = function (arg_13_0, arg_13_1)
+Timer.remove_child = function (self, timer)
 	-- function 13
-	arg_13_0._children[arg_13_1:name()] = nil
+	self._children[timer:name()] = nil
 end
 
 Timer.children = function (self)

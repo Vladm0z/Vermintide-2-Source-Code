@@ -1,17 +1,17 @@
 -- chunkname: @scripts/ui/views/hero_view/windows/definitions/hero_window_ingame_view_definitions.lua
 
-local game_start_windows = UISettings.game_start_windows
-local background = game_start_windows.background
-local frame = game_start_windows.frame
-local size = game_start_windows.size
-local var_0_4 = UIFrameSettings[frame].texture_sizes.vertical[1]
-local var_0_5 = UIFrameSettings[frame].texture_sizes.horizontal[2]
-local tbl = {
-	size[1] - var_0_4 * 2,
-	(size[2] - var_0_5 * 2) / 3.5
+local window_default_settings = UISettings.game_start_windows
+local window_background = window_default_settings.background
+local window_frame = window_default_settings.frame
+local window_size = window_default_settings.size
+local window_frame_width = UIFrameSettings[window_frame].texture_sizes.vertical[1]
+local window_frame_height = UIFrameSettings[window_frame].texture_sizes.horizontal[2]
+local game_option_size = {
+	window_size[1] - window_frame_width * 2,
+	(window_size[2] - window_frame_height * 2) / 3.5
 }
 local console_menu_scenegraphs = UISettings.console_menu_scenegraphs
-local tbl_2 = {
+local scenegraph_definition = {
 	screen = console_menu_scenegraphs.screen,
 	area = console_menu_scenegraphs.area,
 	area_left = console_menu_scenegraphs.area_left,
@@ -116,7 +116,7 @@ local tbl_2 = {
 		}
 	}
 }
-local tbl_3 = {
+local generic_input_actions = {
 	default = {
 		{
 			input_action = "d_vertical",
@@ -137,18 +137,18 @@ local tbl_3 = {
 	}
 }
 
-local function fn(arg_1_0, arg_1_1, arg_1_2, arg_1_3, arg_1_4)
+local function create_title_button(scenegraph_id, text, font_size, optional_offset, optional_horizontal_alignment)
 	-- function 1
-	local tbl = {
+	local shadow_offset = {
 		2,
 		-2,
 		3
 	}
 
-	if not arg_1_3 then
-		tbl[1] = tbl[1] + arg_1_3[1]
-		tbl[2] = tbl[2] + arg_1_3[2]
-		tbl[3] = arg_1_3[3] - 1
+	if optional_offset then
+		shadow_offset[1] = shadow_offset[1] + optional_offset[1]
+		shadow_offset[2] = shadow_offset[2] + optional_offset[2]
+		shadow_offset[3] = optional_offset[3] - 1
 	end
 
 	return {
@@ -167,15 +167,15 @@ local function fn(arg_1_0, arg_1_1, arg_1_2, arg_1_3, arg_1_4)
 					style_id = "text_hover",
 					pass_type = "text",
 					text_id = "text_field",
-					content_check_function = function (self)
+					content_check_function = function (content)
 						-- function 2
 						local is_hover
 
-						if not self.button_hotspot.disable_button then
-							is_hover = self.button_hotspot.is_hover
+						if not content.button_hotspot.disable_button then
+							is_hover = content.button_hotspot.is_hover
 
 							if not is_hover then
-								is_hover = self.button_hotspot.is_selected
+								is_hover = content.button_hotspot.is_selected
 							end
 						else
 							is_hover = false
@@ -192,26 +192,26 @@ local function fn(arg_1_0, arg_1_1, arg_1_2, arg_1_3, arg_1_4)
 					style_id = "text",
 					pass_type = "text",
 					text_id = "text_field",
-					content_check_function = function (self)
+					content_check_function = function (content)
 						-- function 3
-						return not not self.button_hotspot.disable_button or not not self.button_hotspot.is_hover or not self.button_hotspot.is_selected
+						return not content.button_hotspot.disable_button and not content.button_hotspot.is_hover and not not not content.button_hotspot.is_selected
 					end
 				},
 				{
 					style_id = "text_disabled",
 					pass_type = "text",
 					text_id = "text_field",
-					content_check_function = function (self)
+					content_check_function = function (content)
 						-- function 4
-						return self.button_hotspot.disable_button
+						return content.button_hotspot.disable_button
 					end
 				}
 			}
 		},
 		content = {
 			button_hotspot = {},
-			text_field = arg_1_1,
-			default_font_size = arg_1_2
+			text_field = text,
+			default_font_size = font_size
 		},
 		style = {
 			text = {
@@ -221,10 +221,10 @@ local function fn(arg_1_0, arg_1_1, arg_1_2, arg_1_3, arg_1_4)
 				vertical_alignment = "center",
 				dynamic_font_size = true,
 				font_type = "hell_shark_header",
-				font_size = arg_1_2,
-				horizontal_alignment = arg_1_4 or "left",
+				font_size = font_size,
+				horizontal_alignment = not not optional_horizontal_alignment or not not "left",
 				text_color = Colors.get_color_table_with_alpha("font_title", 255),
-				offset = arg_1_3 or {
+				offset = not not optional_offset or not not {
 					0,
 					0,
 					4
@@ -237,10 +237,10 @@ local function fn(arg_1_0, arg_1_1, arg_1_2, arg_1_3, arg_1_4)
 				vertical_alignment = "center",
 				dynamic_font_size = true,
 				font_type = "hell_shark_header",
-				font_size = arg_1_2,
-				horizontal_alignment = arg_1_4 or "left",
+				font_size = font_size,
+				horizontal_alignment = not not optional_horizontal_alignment or not not "left",
 				text_color = Colors.get_color_table_with_alpha("black", 255),
-				offset = tbl
+				offset = shadow_offset
 			},
 			text_hover = {
 				word_wrap = false,
@@ -249,10 +249,10 @@ local function fn(arg_1_0, arg_1_1, arg_1_2, arg_1_3, arg_1_4)
 				vertical_alignment = "center",
 				dynamic_font_size = true,
 				font_type = "hell_shark_header",
-				font_size = arg_1_2,
-				horizontal_alignment = arg_1_4 or "left",
+				font_size = font_size,
+				horizontal_alignment = not not optional_horizontal_alignment or not not "left",
 				text_color = Colors.get_color_table_with_alpha("white", 255),
-				offset = arg_1_3 or {
+				offset = not not optional_offset or not not {
 					0,
 					0,
 					4
@@ -265,10 +265,10 @@ local function fn(arg_1_0, arg_1_1, arg_1_2, arg_1_3, arg_1_4)
 				vertical_alignment = "center",
 				dynamic_font_size = true,
 				font_type = "hell_shark_header",
-				font_size = arg_1_2,
-				horizontal_alignment = arg_1_4 or "left",
+				font_size = font_size,
+				horizontal_alignment = not not optional_horizontal_alignment or not not "left",
 				text_color = Colors.get_color_table_with_alpha("gray", 50),
-				offset = arg_1_3 or {
+				offset = not not optional_offset or not not {
 					0,
 					0,
 					4
@@ -280,22 +280,22 @@ local function fn(arg_1_0, arg_1_1, arg_1_2, arg_1_3, arg_1_4)
 			0,
 			0
 		},
-		scenegraph_id = arg_1_0
+		scenegraph_id = scenegraph_id
 	}
 end
 
-local tbl_4 = {}
-local num = 11
+local title_button_definitions = {}
+local num_buttons = 11
 
-for i = 1, num do
-	tbl_4[i] = fn("title_entry", "n/a", 52, {
+for i = 1, num_buttons do
+	title_button_definitions[i] = create_title_button("title_entry", "n/a", 52, {
 		0,
 		-6,
 		4
 	}, "center")
 end
 
-local tbl_5 = {
+local widgets = {
 	divider = UIWidgets.create_simple_texture("divider_01_top", "divider"),
 	divider_bottom = UIWidgets.create_simple_texture("divider_01_top", "divider_bottom"),
 	background = UIWidgets.create_simple_texture("ingame_view_background_console", "background", nil, nil, {
@@ -306,24 +306,24 @@ local tbl_5 = {
 	}),
 	logo = UIWidgets.create_simple_texture("hero_view_home_logo", "logo")
 }
-local tbl_6 = {
+local animation_definitions = {
 	on_enter = {
 		{
 			name = "fade_in",
 			start_progress = 0,
 			end_progress = 0.3,
-			init = function (arg_5_0, arg_5_1, arg_5_2, arg_5_3)
+			init = function (ui_scenegraph, scenegraph_definition, widgets, params)
 				-- function 5
-				arg_5_3.render_settings.alpha_multiplier = 0
+				params.render_settings.alpha_multiplier = 0
 			end,
-			update = function (arg_6_0, arg_6_1, arg_6_2, arg_6_3, arg_6_4)
+			update = function (ui_scenegraph, scenegraph_definition, widgets, progress, params)
 				-- function 6
-				local easeOutCubic = math.easeOutCubic(arg_6_3)
+				local anim_progress = math.easeOutCubic(progress)
 
-				arg_6_4.render_settings.alpha_multiplier = easeOutCubic
-				arg_6_0.area_left.local_position[1] = arg_6_1.area_left.position[1] + -100 * (1 - easeOutCubic)
+				params.render_settings.alpha_multiplier = anim_progress
+				ui_scenegraph.area_left.local_position[1] = scenegraph_definition.area_left.position[1] + -100 * (1 - anim_progress)
 			end,
-			on_complete = function (arg_7_0, arg_7_1, arg_7_2, arg_7_3)
+			on_complete = function (ui_scenegraph, scenegraph_definition, widgets, params)
 				-- function 7
 				return
 			end
@@ -334,17 +334,17 @@ local tbl_6 = {
 			name = "fade_out",
 			start_progress = 0,
 			end_progress = 0.3,
-			init = function (arg_8_0, arg_8_1, arg_8_2, arg_8_3)
+			init = function (ui_scenegraph, scenegraph_definition, widgets, params)
 				-- function 8
-				arg_8_3.render_settings.alpha_multiplier = 1
+				params.render_settings.alpha_multiplier = 1
 			end,
-			update = function (arg_9_0, arg_9_1, arg_9_2, arg_9_3, arg_9_4)
+			update = function (ui_scenegraph, scenegraph_definition, widgets, progress, params)
 				-- function 9
-				local easeOutCubic = math.easeOutCubic(arg_9_3)
+				local anim_progress = math.easeOutCubic(progress)
 
-				arg_9_4.render_settings.alpha_multiplier = 1 - easeOutCubic
+				params.render_settings.alpha_multiplier = 1 - anim_progress
 			end,
-			on_complete = function (arg_10_0, arg_10_1, arg_10_2, arg_10_3)
+			on_complete = function (ui_scenegraph, scenegraph_definition, widgets, params)
 				-- function 10
 				return
 			end
@@ -353,9 +353,9 @@ local tbl_6 = {
 }
 
 return {
-	widgets = tbl_5,
-	generic_input_actions = tbl_3,
-	title_button_definitions = tbl_4,
-	scenegraph_definition = tbl_2,
-	animation_definitions = tbl_6
+	widgets = widgets,
+	generic_input_actions = generic_input_actions,
+	title_button_definitions = title_button_definitions,
+	scenegraph_definition = scenegraph_definition,
+	animation_definitions = animation_definitions
 }

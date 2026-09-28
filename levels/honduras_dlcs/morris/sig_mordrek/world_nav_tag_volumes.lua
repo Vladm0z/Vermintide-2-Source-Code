@@ -1,6 +1,6 @@
 -- chunkname: @levels/honduras_dlcs/morris/sig_mordrek/world_nav_tag_volumes.lua
 
-local tbl = {
+local nav_tag_volumes = {
 	Damage_Volume_005 = {
 		delay_nav_tag_volume_creation = true,
 		alt_max = 1.859997034072876,
@@ -316,9 +316,9 @@ local tbl = {
 		}
 	}
 }
-local str = "1"
+local version = "1"
 
 return {
-	version = str,
-	nav_tag_volumes = tbl
+	version = version,
+	nav_tag_volumes = nav_tag_volumes
 }

@@ -2,26 +2,28 @@
 
 RatOgreStateFalling = class(RatOgreStateFalling, EnemyCharacterStateFalling)
 
-RatOgreStateFalling.init = function (arg_1_0, arg_1_1)
+RatOgreStateFalling.init = function (self, character_state_init_context)
 	-- function 1
-	RatOgreStateFalling.super.init(arg_1_0, arg_1_1)
+	RatOgreStateFalling.super.init(self, character_state_init_context)
 end
 
-RatOgreStateFalling.on_exit = function (arg_2_0, arg_2_1, arg_2_2, arg_2_3, arg_2_4, arg_2_5, arg_2_6, arg_2_7)
+RatOgreStateFalling.on_exit = function (self, unit, input, dt, context, t, previous_state, params)
 	-- function 2
-	RatOgreStateFalling.super.on_exit(arg_2_0, arg_2_1, arg_2_2, arg_2_3, arg_2_4, arg_2_5, arg_2_6, arg_2_7)
+	RatOgreStateFalling.super.on_exit(self, unit, input, dt, context, t, previous_state, params)
 end
 
-RatOgreStateFalling.on_enter = function (arg_3_0, arg_3_1, arg_3_2, arg_3_3, arg_3_4, arg_3_5, arg_3_6, arg_3_7)
+RatOgreStateFalling.on_enter = function (self, unit, input, dt, context, t, previous_state, params)
 	-- function 3
-	RatOgreStateFalling.super.on_enter(arg_3_0, arg_3_1, arg_3_2, arg_3_3, arg_3_4, arg_3_5, arg_3_6, arg_3_7)
+	RatOgreStateFalling.super.on_enter(self, unit, input, dt, context, t, previous_state, params)
 end
 
-RatOgreStateFalling.update = function (self, arg_4_1, arg_4_2, arg_4_3, arg_4_4, arg_4_5)
+RatOgreStateFalling.update = function (self, unit, input, dt, context, t)
 	-- function 4
-	local is_in_ghost_mode = self._ghost_mode_extension:is_in_ghost_mode()
+	local ghost_mode_extension = self._ghost_mode_extension
+	local in_ghost_mode = ghost_mode_extension:is_in_ghost_mode()
+	local handled = self:common_movement(in_ghost_mode, dt, unit)
 
-	if not self:common_movement(is_in_ghost_mode, arg_4_3, arg_4_1) then
-		CharacterStateHelper.update_weapon_actions(arg_4_5, arg_4_1, self._input_extension, self._inventory_extension, self._health_extension)
+	if not handled then
+		CharacterStateHelper.update_weapon_actions(t, unit, self._input_extension, self._inventory_extension, self._health_extension)
 	end
 end

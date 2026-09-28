@@ -2,62 +2,67 @@
 
 local Development = Development
 
-Development = Development or {}
+Development = not not Development or not not {}
 Development = Development
 
 local PATCHED_USER_SETTINGS = PATCHED_USER_SETTINGS
 
-PATCHED_USER_SETTINGS = PATCHED_USER_SETTINGS or false
+PATCHED_USER_SETTINGS = not not PATCHED_USER_SETTINGS or not not false
 PATCHED_USER_SETTINGS = PATCHED_USER_SETTINGS
 
-if not (not IS_CONSOLE and PATCHED_USER_SETTINGS) then
+if IS_CONSOLE and not PATCHED_USER_SETTINGS then
 	local UserSettings = UserSettings
 
-	UserSettings = UserSettings or {}
+	UserSettings = not not UserSettings or not not {}
 	UserSettings = UserSettings
 
 	Application.set_user_setting = function (...)
 		-- function 1
-		local UserSettings = UserSettings
-		local var_1_1 = select("#", ...)
+		local t = UserSettings
+		local num_args = select("#", ...)
 
-		for i = 1, var_1_1 - 2 do
-			local var_1_2 = select(i, ...)
-			local var_1_3
+		for i = 1, num_args - 2 do
+			local key = select(i, ...)
+			local var_1_0
 
-			if type(UserSettings[var_1_2]) == "table" then
-				var_1_3 = UserSettings[var_1_2]
+			if type(t[key]) == "table" then
+				var_1_0 = t[key]
 
-				if not var_1_3 then
+				if not var_1_0 then
 					-- Nothing
 				end
 			end
 
-			var_1_3 = {}
+			var_1_0 = {}
 
 			::label_1_0::
 
-			UserSettings[var_1_2] = var_1_3
-			UserSettings = UserSettings[var_1_2]
+			t[key] = var_1_0
+			t = t[key]
 		end
 
-		UserSettings[select(var_1_1 - 1, ...)] = select(var_1_1, ...)
+		local set_key = select(num_args - 1, ...)
+		local set_value = select(num_args, ...)
+
+		t[set_key] = set_value
 	end
 
 	Application.user_setting = function (...)
 		-- function 2
-		local UserSettings = UserSettings
-		local var_2_1 = select("#", ...)
+		local t = UserSettings
+		local num_args = select("#", ...)
 
-		for i = 1, var_2_1 - 1 do
-			UserSettings = UserSettings[select(i, ...)]
+		for i = 1, num_args - 1 do
+			local key = select(i, ...)
 
-			if type(UserSettings) ~= "table" then
+			t = t[key]
+
+			if type(t) ~= "table" then
 				return
 			end
 		end
 
-		return UserSettings[select(var_2_1, ...)]
+		return t[select(num_args, ...)]
 	end
 
 	Application.save_user_settings = function ()
@@ -70,22 +75,25 @@ end
 
 Development.user_setting_disable = function ()
 	-- function 4
-	local function fn()
+	local function nop()
 		-- function 5
 		return
 	end
 
-	Development.set_setting, Development.setting = fn, fn
+	Development.set_setting, Development.setting = nop, nop
 end
 
 Development.init_user_settings = function ()
 	-- function 6
-	if not ({
+	local enabled_platforms = {
 		ps4 = true,
 		win32 = true,
 		macosx = true,
 		xb1 = true
-	})[PLATFORM] then
+	}
+	local current_platform = PLATFORM
+
+	if not enabled_platforms[current_platform] then
 		Development.user_setting_disable()
 
 		return
@@ -109,21 +117,21 @@ Development.init_user_settings = function ()
 
 	Development._patch_deprecated_development_settings()
 
-	local user_setting = Application.user_setting("development_settings")
+	local development_settings = Application.user_setting("development_settings")
 
-	if not user_setting then
-		user_setting = {}
+	if not development_settings then
+		development_settings = {}
 
 		Development.set_setting("dummy_field_to_spawn_development_settings_table", true)
 	end
 
 	print("VALUES:")
 
-	for k, v in pairs(user_setting) do
-		if v ~= false then
-			script_data[k] = v
+	for param, value in pairs(development_settings) do
+		if value ~= false then
+			script_data[param] = value
 
-			print(k, script_data[k])
+			print(param, script_data[param])
 		end
 	end
 
@@ -132,18 +140,20 @@ end
 
 Application.test_user_setting = function (...)
 	-- function 9
-	local UserSettings = UserSettings
-	local var_9_1 = select("#", ...)
+	local t = UserSettings
+	local num_args = select("#", ...)
 
-	for i = 1, var_9_1 - 1 do
-		UserSettings = UserSettings[select(i, ...)]
+	for i = 1, num_args - 1 do
+		local key = select(i, ...)
 
-		if type(UserSettings) ~= "table" then
+		t = t[key]
+
+		if type(t) ~= "table" then
 			return
 		end
 	end
 
-	return UserSettings[select(var_9_1, ...)]
+	return t[select(num_args, ...)]
 end
 
 Development._patch_deprecated_development_settings = function ()

@@ -2,34 +2,34 @@
 
 ScriptXboxUserPrivilegeToken = class(ScriptXboxUserPrivilegeToken)
 
-ScriptXboxUserPrivilegeToken.init = function (self, arg_1_1)
+ScriptXboxUserPrivilegeToken.init = function (self, token)
 	-- function 1
-	self._token = arg_1_1
+	self._token = token
 	self._result = {}
 end
 
 ScriptXboxUserPrivilegeToken.update = function (self)
 	-- function 2
-	local status, var_2_1, var_2_2, var_2_3 = UserPrivilege.status(self._token)
+	local in_progress, done, error, status_code = UserPrivilege.status(self._token)
 
-	self._result.in_progress = status
-	self._result.done = var_2_1
-	self._result.error = var_2_2
-	self._result.status_code = var_2_3
+	self._result.in_progress = in_progress
+	self._result.done = done
+	self._result.error = error
+	self._result.status_code = status_code
 end
 
 ScriptXboxUserPrivilegeToken.info = function (self)
 	-- function 3
-	local tbl = {}
+	local info = {}
 
-	if not self._result.error then
-		tbl.error = self._result.error
-		tbl.status_code = self._result.status_code
+	if self._result.error then
+		info.error = self._result.error
+		info.status_code = self._result.status_code
 	else
-		tbl.status_code = self._result.status_code
+		info.status_code = self._result.status_code
 	end
 
-	return tbl
+	return info
 end
 
 ScriptXboxUserPrivilegeToken.done = function (self)

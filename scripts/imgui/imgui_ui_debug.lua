@@ -2,22 +2,22 @@
 
 ImguiUIDebug = class(ImguiUIDebug)
 
-ImguiUIDebug.init = function (arg_1_0)
+ImguiUIDebug.init = function (self)
 	-- function 1
 	return
 end
 
-ImguiUIDebug.update = function (arg_2_0, arg_2_1)
+ImguiUIDebug.update = function (self, dt)
 	-- function 2
 	return
 end
 
-ImguiUIDebug.draw = function (arg_3_0)
+ImguiUIDebug.draw = function (self)
 	-- function 3
 	return
 end
 
-ImguiUIDebug.is_persistent = function (arg_4_0)
+ImguiUIDebug.is_persistent = function (self)
 	-- function 4
 	return false
 end

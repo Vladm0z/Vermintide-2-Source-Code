@@ -2,7 +2,7 @@
 
 local UtilityConsiderations = UtilityConsiderations
 
-UtilityConsiderations = UtilityConsiderations or {}
+UtilityConsiderations = not not UtilityConsiderations or not not {}
 UtilityConsiderations = UtilityConsiderations
 UtilityConsiderations.chaos_exalted_sorcerer_drachenfels_tp_trickle = {
 	time_since_last = {

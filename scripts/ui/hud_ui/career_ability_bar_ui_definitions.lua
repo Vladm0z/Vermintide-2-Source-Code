@@ -1,10 +1,10 @@
 -- chunkname: @scripts/ui/hud_ui/career_ability_bar_ui_definitions.lua
 
-local tbl = {
+local ability_bar_size = {
 	250,
 	16
 }
-local tbl_2 = {
+local scenegraph_definition = {
 	screen = {
 		scale = "fit",
 		position = {
@@ -45,7 +45,7 @@ local tbl_2 = {
 		vertical_alignment = "center",
 		parent = "screen_bottom_pivot",
 		horizontal_alignment = "center",
-		size = tbl,
+		size = ability_bar_size,
 		position = {
 			0,
 			-200,
@@ -53,9 +53,10 @@ local tbl_2 = {
 		}
 	}
 }
-local frame_outer_glow_01 = UIFrameSettings.frame_outer_glow_01
-local var_0_3 = frame_outer_glow_01.texture_sizes.corner[1]
-local tbl_3 = {
+local frame_settings = UIFrameSettings.frame_outer_glow_01
+local frame_corner = frame_settings.texture_sizes.corner
+local frame_width = frame_corner[1]
+local widget_definitions = {
 	ability_bar = {
 		scenegraph_id = "ability_bar",
 		element = {
@@ -69,11 +70,11 @@ local tbl_3 = {
 					pass_type = "texture",
 					style_id = "icon",
 					texture_id = "icon",
-					content_check_function = function (self, arg_1_1)
+					content_check_function = function (content, style)
 						-- function 1
-						self.gamepad_active = Managers.input:is_device_active("gamepad")
+						content.gamepad_active = Managers.input:is_device_active("gamepad")
 
-						return self.gamepad_active
+						return content.gamepad_active
 					end
 				},
 				{
@@ -104,28 +105,29 @@ local tbl_3 = {
 					style_id = "input_text",
 					pass_type = "text",
 					text_id = "input_text",
-					content_check_function = function (self)
+					content_check_function = function (content)
 						-- function 2
-						return not self.gamepad_active
+						return not content.gamepad_active
 					end,
-					content_change_function = function (self, arg_3_1)
+					content_change_function = function (content, style)
 						-- function 3
-						local get_keymapping = Managers.input:get_service("Player"):get_keymapping("weapon_reload", "win32")
+						local input_service = Managers.input:get_service("Player")
+						local keymap_binding = input_service:get_keymapping("weapon_reload", "win32")
 
-						if not get_keymapping then
-							self.input_text = ""
+						if not keymap_binding then
+							content.input_text = ""
 
 							return
 						end
 
-						local var_3_1 = get_keymapping[1]
-						local var_3_2 = get_keymapping[2]
-						local str = ""
+						local device_type = keymap_binding[1]
+						local key_index = keymap_binding[2]
+						local input_text = ""
 
-						if var_3_2 ~= UNASSIGNED_KEY then
+						if key_index ~= UNASSIGNED_KEY then
 							local Mouse
 
-							if var_3_1 == "mouse" then
+							if device_type == "mouse" then
 								Mouse = Mouse
 
 								if not Mouse then
@@ -135,13 +137,15 @@ local tbl_3 = {
 
 							Mouse = Keyboard
 
+							local device = Mouse
+
 							::label_3_0::
 
-							str = Mouse.button_locale_name(var_3_2) or Mouse.button_name(var_3_2) or Localize("lb_unknown")
-							str = Utf8.upper(str)
+							input_text = not not device.button_locale_name(key_index) or not not device.button_name(key_index) or not not Localize("lb_unknown")
+							input_text = Utf8.upper(input_text)
 						end
 
-						self.input_text = str
+						content.input_text = input_text
 					end
 				},
 				{
@@ -149,9 +153,9 @@ local tbl_3 = {
 					pass_type = "text",
 					text_id = "input_text",
 					retained_mode = RETAINED_MODE_ENABLED,
-					content_check_function = function (self)
+					content_check_function = function (content)
 						-- function 4
-						return not self.gamepad_active
+						return not content.gamepad_active
 					end
 				}
 			}
@@ -175,10 +179,10 @@ local tbl_3 = {
 				}
 			},
 			size = {
-				tbl[1] - 6,
-				tbl[2]
+				ability_bar_size[1] - 6,
+				ability_bar_size[2]
 			},
-			frame = frame_outer_glow_01.texture
+			frame = frame_settings.texture
 		},
 		style = {
 			input_text = {
@@ -219,11 +223,11 @@ local tbl_3 = {
 			},
 			frame = {
 				frame_margins = {
-					-(var_0_3 - 1),
-					-(var_0_3 - 1)
+					-(frame_width - 1),
+					-(frame_width - 1)
 				},
-				texture_size = frame_outer_glow_01.texture_size,
-				texture_sizes = frame_outer_glow_01.texture_sizes,
+				texture_size = frame_settings.texture_size,
+				texture_sizes = frame_settings.texture_sizes,
 				color = {
 					255,
 					255,
@@ -235,7 +239,7 @@ local tbl_3 = {
 					0,
 					0
 				},
-				size = tbl
+				size = ability_bar_size
 			},
 			bar_1 = {
 				gradient_threshold = 0,
@@ -251,8 +255,8 @@ local tbl_3 = {
 					3
 				},
 				size = {
-					tbl[1] - 6,
-					tbl[2] - 6
+					ability_bar_size[1] - 6,
+					ability_bar_size[2] - 6
 				}
 			},
 			icon = {
@@ -261,8 +265,8 @@ local tbl_3 = {
 					34
 				},
 				offset = {
-					tbl[1] + 5,
-					tbl[2] / 2 - 17,
+					ability_bar_size[1] + 5,
+					ability_bar_size[2] / 2 - 17,
 					5
 				},
 				color = {
@@ -278,8 +282,8 @@ local tbl_3 = {
 					34
 				},
 				offset = {
-					tbl[1] + 2,
-					tbl[2] / 2 - 17 - 2,
+					ability_bar_size[1] + 2,
+					ability_bar_size[2] / 2 - 17 - 2,
 					5
 				},
 				color = {
@@ -304,8 +308,8 @@ local tbl_3 = {
 			},
 			bar_bg = {
 				size = {
-					tbl[1] - 6,
-					tbl[2] - 6
+					ability_bar_size[1] - 6,
+					ability_bar_size[2] - 6
 				},
 				offset = {
 					3,
@@ -348,6 +352,6 @@ local tbl_3 = {
 }
 
 return {
-	scenegraph_definition = tbl_2,
-	widget_definitions = tbl_3
+	scenegraph_definition = scenegraph_definition,
+	widget_definitions = widget_definitions
 }

@@ -1,45 +1,45 @@
 -- chunkname: @scripts/ui/views/console_friends_view.lua
 
-local var_0_0 = local_require("scripts/ui/views/console_friends_view_definitions")
-local scenegraph_definition = var_0_0.scenegraph_definition
-local widget_definitions = var_0_0.widget_definitions
-local generic_input_actions = var_0_0.generic_input_actions
-local entry_definitions = var_0_0.entry_definitions
-local flag = true
-local num = 5
-local num_2 = 12
+local definitions = local_require("scripts/ui/views/console_friends_view_definitions")
+local scenegraph_definition = definitions.scenegraph_definition
+local widget_definitions = definitions.widget_definitions
+local generic_input_actions = definitions.generic_input_actions
+local entry_definitions = definitions.entry_definitions
+local DO_RELOAD = true
+local INVITE_COOLDOWN = 5
+local REFRESH_COOLDOWN = 12
 
 ConsoleFriendsView = class(ConsoleFriendsView)
 
-ConsoleFriendsView.init = function (self, arg_1_1)
+ConsoleFriendsView.init = function (self, ingame_ui_context)
 	-- function 1
-	self._ingame_ui_context = arg_1_1
-	self._ingame_ui = arg_1_1.ingame_ui
-	self._ui_top_renderer = arg_1_1.ui_top_renderer
-	self._ui_renderer = arg_1_1.ui_renderer
+	self._ingame_ui_context = ingame_ui_context
+	self._ingame_ui = ingame_ui_context.ingame_ui
+	self._ui_top_renderer = ingame_ui_context.ui_top_renderer
+	self._ui_renderer = ingame_ui_context.ui_renderer
 	self._render_settings = {
 		snap_pixel_positions = true
 	}
-	self._network_lobby = arg_1_1.network_lobby
+	self._network_lobby = ingame_ui_context.network_lobby
 	self._invite_cooldown = {}
 	self._cursor_position = 1
 	self._hold_down_timer = 0
 	self._hold_up_timer = 0
-	self._is_in_inn = arg_1_1.is_in_inn
-	self._is_server = arg_1_1.is_server
+	self._is_in_inn = ingame_ui_context.is_in_inn
+	self._is_server = ingame_ui_context.is_server
 
-	if not GLOBAL_MUSIC_WORLD then
+	if GLOBAL_MUSIC_WORLD then
 		self._wwise_world = MUSIC_WWISE_WORLD
 	else
-		local world = arg_1_1.world_manager:world("music_world")
+		local world = ingame_ui_context.world_manager:world("music_world")
 
 		self._wwise_world = Managers.world:wwise_world(world)
 	end
 
-	self:_setup_input(arg_1_1)
+	self:_setup_input(ingame_ui_context)
 	self:_create_ui_elements()
 
-	self._menu_input_description = MenuInputDescriptionUI:new(arg_1_1, self._ui_top_renderer, self:input_service(), 7, 900, generic_input_actions.default, true)
+	self._menu_input_description = MenuInputDescriptionUI:new(ingame_ui_context, self._ui_top_renderer, self:input_service(), 7, 900, generic_input_actions.default, true)
 
 	self._menu_input_description:set_input_description(nil)
 
@@ -55,15 +55,23 @@ ConsoleFriendsView.on_enter = function (self)
 
 	local has_world = Managers.world:has_world("character_preview")
 
-	has_world = not has_world and Managers.world:world("character_preview")
+	if has_world then
+		-- Nothing
+	end
 
-	local flag = not has_world and World.get_data(has_world, "shading_environment")
+	has_world = Managers.world:world("character_preview")
 
-	if not flag then
-		World.set_data(has_world, "avoid_blend", true)
-		ShadingEnvironment.set_scalar(flag, "fullscreen_blur_enabled", 1)
-		ShadingEnvironment.set_scalar(flag, "fullscreen_blur_amount", 0.7)
-		ShadingEnvironment.apply(flag)
+	local world = has_world
+
+	::label_2_0::
+
+	local shading_env = not not world and not not World.get_data(world, "shading_environment")
+
+	if shading_env then
+		World.set_data(world, "avoid_blend", true)
+		ShadingEnvironment.set_scalar(shading_env, "fullscreen_blur_enabled", 1)
+		ShadingEnvironment.set_scalar(shading_env, "fullscreen_blur_amount", 0.7)
+		ShadingEnvironment.apply(shading_env)
 	end
 
 	local world = Managers.world:world("top_ingame_view")
@@ -72,7 +80,7 @@ ConsoleFriendsView.on_enter = function (self)
 
 	self._active = true
 
-	if not (not IS_XB1 and Managers.account:friends_list_initiated()) then
+	if IS_XB1 and not Managers.account:friends_list_initiated() then
 		Managers.account:setup_friendslist()
 	end
 
@@ -85,31 +93,34 @@ end
 
 ConsoleFriendsView._join_game = function (self)
 	-- function 3
-	if not (not self.network_server and self.network_server:are_all_peers_ingame(nil, true)) then
+	if self.network_server and not self.network_server:are_all_peers_ingame(nil, true) then
 		self._popup_id = Managers.popup:queue_popup(Localize("popup_join_blocked_by_joining_player"), Localize("popup_invite_not_installed_header"), "ok", Localize("menu_ok"))
 	else
-		local _current_friend_index = self._current_friend_index
-		local var_3_1 = self._friend_list_widgets[self._current_friend_index]
+		local current_friend_index = self._current_friend_index
+		local friend_widget = self._friend_list_widgets[self._current_friend_index]
 
-		if not var_3_1 then
-			local friend = var_3_1.content.friend
-			local flag = not friend and friend.room_id
+		if friend_widget then
+			local friend_widget_content = friend_widget.content
+			local friend_data = friend_widget_content.friend
+			local room_id = not not friend_data and not not friend_data.room_id
 
-			if not flag then
-				local tbl = {
-					id = flag
+			if room_id then
+				local lobby_data = {
+					id = room_id
 				}
+				local current_lobby = self._ingame_ui_context.network_lobby
+				local current_room_id = current_lobby:id()
 
-				if self._ingame_ui_context.network_lobby:id() == flag then
+				if current_room_id == room_id then
 					self._popup_id = Managers.popup:queue_popup(Localize("popup_already_in_same_lobby"), Localize("popup_invite_not_installed_header"), "ok", Localize("menu_ok"))
 
 					return
 				end
 
-				if not (not self._is_server and self._is_in_inn) then
-					self._ingame_ui:handle_transition("join_lobby", tbl)
+				if not self._is_server or not self._is_in_inn then
+					self._ingame_ui:handle_transition("join_lobby", lobby_data)
 				else
-					Managers.matchmaking:request_join_lobby(tbl, {
+					Managers.matchmaking:request_join_lobby(lobby_data, {
 						friend_join = true
 					})
 				end
@@ -122,73 +133,75 @@ ConsoleFriendsView._refresh_friends = function (self)
 	-- function 4
 	self._is_refreshing = true
 
-	if not IS_XB1 then
+	if IS_XB1 then
 		Managers.account:get_friends(1000, callback(self, "cb_friends_collected"))
-	elseif not IS_PS4 then
+	elseif IS_PS4 then
 		Managers.account:get_friends(2000, callback(self, "cb_friends_collected"))
 	end
 
-	self._widgets_by_name.loading_icon.style.loading_icon.color[1] = 255
+	local loading_icon = self._widgets_by_name.loading_icon
+
+	loading_icon.style.loading_icon.color[1] = 255
 end
 
-local tbl = {}
+local empty_friend_list = {}
 
-ConsoleFriendsView.cb_friends_collected = function (self, arg_5_1)
+ConsoleFriendsView.cb_friends_collected = function (self, friend_data)
 	-- function 5
-	arg_5_1 = arg_5_1 or tbl
+	friend_data = not not friend_data or not not empty_friend_list
 
-	local _friend_list_widgets = self._friend_list_widgets
+	local friend_list_widgets = self._friend_list_widgets
 
-	table.clear(_friend_list_widgets)
+	table.clear(friend_list_widgets)
 
-	local tbl_2 = {}
-	local tbl_3 = {}
-	local tbl_4 = {}
+	local playing_friends = {}
+	local online_friends = {}
+	local offline_friends = {}
 
-	for k, v in pairs(arg_5_1) do
-		v.id = k
+	for id, friend in pairs(friend_data) do
+		friend.id = id
 
-		if v.status == "offline" then
-			tbl_4[#tbl_4 + 1] = v
-		elseif not v.playing_this_game then
-			tbl_2[#tbl_2 + 1] = v
+		if friend.status == "offline" then
+			offline_friends[#offline_friends + 1] = friend
+		elseif friend.playing_this_game then
+			playing_friends[#playing_friends + 1] = friend
 		else
-			tbl_3[#tbl_3 + 1] = v
+			online_friends[#online_friends + 1] = friend
 		end
 	end
 
-	local function fn(self, arg_6_1)
+	local function sort(a, b)
 		-- function 6
-		return self.name < arg_6_1.name
+		return a.name < b.name
 	end
 
-	table.sort(tbl_2, fn)
-	table.sort(tbl_3, fn)
-	table.sort(tbl_4, fn)
+	table.sort(playing_friends, sort)
+	table.sort(online_friends, sort)
+	table.sort(offline_friends, sort)
 
-	local var_5_5 = entry_definitions.friend_entry_size[2]
-	local num = -var_5_5
+	local base_offset = entry_definitions.friend_entry_size[2]
+	local offset = -base_offset
 
-	for k_2, v_2 in pairs(tbl_2) do
-		_friend_list_widgets[#_friend_list_widgets + 1] = UIWidget.init(entry_definitions.create_friend_entry(v_2.name, true, num, v_2))
-		num = num - var_5_5
+	for idx, friend in pairs(playing_friends) do
+		friend_list_widgets[#friend_list_widgets + 1] = UIWidget.init(entry_definitions.create_friend_entry(friend.name, true, offset, friend))
+		offset = offset - base_offset
 	end
 
-	for k_3, v_3 in pairs(tbl_3) do
-		_friend_list_widgets[#_friend_list_widgets + 1] = UIWidget.init(entry_definitions.create_friend_entry(v_3.name, true, num, v_3))
-		num = num - var_5_5
+	for idx, friend in pairs(online_friends) do
+		friend_list_widgets[#friend_list_widgets + 1] = UIWidget.init(entry_definitions.create_friend_entry(friend.name, true, offset, friend))
+		offset = offset - base_offset
 	end
 
-	for k_4, v_4 in pairs(tbl_4) do
-		_friend_list_widgets[#_friend_list_widgets + 1] = UIWidget.init(entry_definitions.create_friend_entry(v_4.name, false, num, v_4))
-		num = num - var_5_5
+	for idx, friend in pairs(offline_friends) do
+		friend_list_widgets[#friend_list_widgets + 1] = UIWidget.init(entry_definitions.create_friend_entry(friend.name, false, offset, friend))
+		offset = offset - base_offset
 	end
 
-	print(string.format("Added %s friends", #_friend_list_widgets))
+	print(string.format("Added %s friends", #friend_list_widgets))
 
-	local loading_icon = self._widgets_by_name.loading_icon
+	local widget = self._widgets_by_name.loading_icon
 
-	self._ui_animations.loading_icon_fade = UIAnimation.init(UIAnimation.function_by_time, loading_icon.style.loading_icon.color, 1, 255, 0, 0.5, math.easeOutCubic)
+	self._ui_animations.loading_icon_fade = UIAnimation.init(UIAnimation.function_by_time, widget.style.loading_icon.color, 1, 255, 0, 0.5, math.easeOutCubic)
 	self._is_refreshing = false
 end
 
@@ -200,13 +213,21 @@ ConsoleFriendsView.on_exit = function (self)
 
 	local has_world = Managers.world:has_world("character_preview")
 
-	has_world = not has_world and Managers.world:world("character_preview")
-
-	if not has_world then
-		World.set_data(has_world, "avoid_blend", false)
+	if has_world then
+		-- Nothing
 	end
 
-	if not self._popup_id then
+	has_world = Managers.world:world("character_preview")
+
+	local world = has_world
+
+	::label_7_0::
+
+	if world then
+		World.set_data(world, "avoid_blend", false)
+	end
+
+	if self._popup_id then
 		Managers.popup:cancel_popup(self._popup_id)
 
 		self._popup_id = nil
@@ -218,9 +239,9 @@ end
 
 ConsoleFriendsView.exit = function (self)
 	-- function 8
-	local str = "ingame_menu"
+	local exit_transition = "ingame_menu"
 
-	self._ingame_ui:transition_with_fade(str)
+	self._ingame_ui:transition_with_fade(exit_transition)
 	WwiseWorld.trigger_event(self._wwise_world, "Play_hud_button_close")
 
 	self._exiting = true
@@ -228,16 +249,16 @@ end
 
 ConsoleFriendsView.transitioning = function (self)
 	-- function 9
-	if not self._exiting then
+	if self._exiting then
 		return true
 	else
 		return not self._active
 	end
 end
 
-ConsoleFriendsView._setup_input = function (self, arg_10_1)
+ConsoleFriendsView._setup_input = function (self, ingame_ui_context)
 	-- function 10
-	local input_manager = arg_10_1.input_manager
+	local input_manager = ingame_ui_context.input_manager
 
 	input_manager:create_input_service("console_friends_view", "IngameMenuKeymaps", "IngameMenuFilters")
 	input_manager:map_device_to_service("console_friends_view", "keyboard")
@@ -257,19 +278,22 @@ ConsoleFriendsView._create_ui_elements = function (self)
 	self._ui_animations = {}
 	self._cursor_position = 1
 
-	local tbl = {}
-	local tbl_2 = {}
+	local widgets = {}
+	local widgets_by_name = {}
 
-	for k, v in pairs(widget_definitions) do
-		local var_11_2 = UIWidget.init(v)
+	for name, widget_definition in pairs(widget_definitions) do
+		local widget = UIWidget.init(widget_definition)
 
-		tbl[#tbl + 1] = var_11_2
-		tbl_2[k] = var_11_2
+		widgets[#widgets + 1] = widget
+		widgets_by_name[name] = widget
 	end
 
-	self._widgets = tbl
-	self._widgets_by_name = tbl_2
-	self._widgets_by_name.friends_bg.style.background.color = {
+	self._widgets = widgets
+	self._widgets_by_name = widgets_by_name
+
+	local friends_bg = self._widgets_by_name.friends_bg
+
+	friends_bg.style.background.color = {
 		255,
 		128,
 		128,
@@ -278,149 +302,177 @@ ConsoleFriendsView._create_ui_elements = function (self)
 
 	self:_setup_party_entries()
 
-	self._ui_scenegraph = UISceneGraph.init_scenegraph(var_0_0.scenegraph_definition)
-	flag = false
+	self._ui_scenegraph = UISceneGraph.init_scenegraph(definitions.scenegraph_definition)
+	DO_RELOAD = false
 end
 
-ConsoleFriendsView._sorted_players = function (arg_12_0)
+ConsoleFriendsView._sorted_players = function (self)
 	-- function 12
-	local human_players = Managers.player:human_players()
-	local tbl = {}
+	local human_and_bot_players = Managers.player:human_players()
+	local players = {}
 
-	for k, v in pairs(human_players) do
-		tbl[#tbl + 1] = v
+	for peer_id, player in pairs(human_and_bot_players) do
+		players[#players + 1] = player
 	end
 
-	local function fn(self, arg_13_1)
+	local function sort_by_profile_index(player_a, player_b)
 		-- function 13
-		local profile_index = self:profile_index()
+		local profile_index = player_a:profile_index()
 
-		profile_index = profile_index or -1
+		if not profile_index then
+			-- Nothing
+		end
 
-		local profile_index_2 = arg_13_1:profile_index()
+		profile_index = -1
 
-		profile_index_2 = profile_index_2 or -1
+		local profile_index_a = profile_index
 
-		return profile_index < profile_index_2
+		::label_13_0::
+
+		local profile_index_2 = player_b:profile_index()
+
+		if not profile_index_2 then
+			-- Nothing
+		end
+
+		profile_index_2 = -1
+
+		local profile_index_b = profile_index_2
+
+		::label_13_1::
+
+		return profile_index_a < profile_index_b
 	end
 
-	local var_12_3 = FindProfileIndex("spectator")
+	local spectator_profile_index = FindProfileIndex("spectator")
 
-	if not var_12_3 then
-		table.array_remove_if(tbl, function (self)
+	if spectator_profile_index then
+		table.array_remove_if(players, function (player)
 			-- function 14
-			return self:profile_index() == var_12_3
+			return player:profile_index() == spectator_profile_index
 		end)
 	end
 
-	table.sort(tbl, fn)
+	table.sort(players, sort_by_profile_index)
 
-	return tbl
+	return players
 end
 
 ConsoleFriendsView._setup_party_entries = function (self)
 	-- function 15
 	self._party_entries = {}
 
-	local _sorted_players = self:_sorted_players()
-	local num = -40
+	local sorted_players = self:_sorted_players()
+	local offset = -40
 
-	for i, v in ipairs(_sorted_players) do
-		local name = v:name()
-		local var_15_3
+	for idx, player in ipairs(sorted_players) do
+		local name = player:name()
+		local career_name
 
-		if not v.local_player then
-			var_15_3 = v:career_name()
+		if player.local_player then
+			career_name = player:career_name()
 		else
-			local player_unit = v.player_unit
+			local player_unit = player.player_unit
 
-			if not Unit.alive(player_unit) then
-				var_15_3 = ScriptUnit.extension(player_unit, "career_system"):career_name()
+			if Unit.alive(player_unit) then
+				local career_ext = ScriptUnit.extension(player_unit, "career_system")
+
+				career_name = career_ext:career_name()
 			end
 		end
 
-		local var_15_5 = CareerSettings[var_15_3]
+		local career = CareerSettings[career_name]
 
-		self._party_entries[#self._party_entries + 1] = UIWidget.init(entry_definitions.create_party_entry(name, var_15_5, num * i))
+		self._party_entries[#self._party_entries + 1] = UIWidget.init(entry_definitions.create_party_entry(name, career, offset * idx))
 	end
 
-	local num_2 = 4 - #self._party_entries
+	local empty_entries = 4 - #self._party_entries
 
-	for k = 1, num_2 do
-		self._party_entries[#self._party_entries + 1] = UIWidget.init(entry_definitions.create_party_entry(nil, nil, num * (#self._party_entries + 1)))
+	for i = 1, empty_entries do
+		self._party_entries[#self._party_entries + 1] = UIWidget.init(entry_definitions.create_party_entry(nil, nil, offset * (#self._party_entries + 1)))
 	end
 end
 
-ConsoleFriendsView.update = function (self, arg_16_1, arg_16_2)
+ConsoleFriendsView.update = function (self, dt, t)
 	-- function 16
-	if not flag then
+	if DO_RELOAD then
 		self:_create_ui_elements()
 	end
 
-	if not self._popup_id then
+	if self._popup_id then
 		self:_handle_popup()
 	else
-		self:_update_input_descriptions(arg_16_1, arg_16_2)
-		self:_handle_input(arg_16_1, arg_16_2)
-		self:_update_animations(arg_16_1, arg_16_2)
-		self:_handle_refresh(arg_16_1, arg_16_2)
-		self:_animate_default_buttons(arg_16_1, arg_16_2)
-		self:_draw(arg_16_1, arg_16_2)
+		self:_update_input_descriptions(dt, t)
+		self:_handle_input(dt, t)
+		self:_update_animations(dt, t)
+		self:_handle_refresh(dt, t)
+		self:_animate_default_buttons(dt, t)
+		self:_draw(dt, t)
 	end
 end
 
-ConsoleFriendsView._update_input_descriptions = function (self, arg_17_1, arg_17_2)
+ConsoleFriendsView._update_input_descriptions = function (self, dt, t)
 	-- function 17
-	local var_17_0 = self._friend_list_widgets[self._current_friend_index]
-	local flag = false
-	local flag_2 = false
+	local friends_widget = self._friend_list_widgets[self._current_friend_index]
+	local enable_profile_button, enable_invite_button = false, false
 
-	if not var_17_0 then
-		local friend = var_17_0.content.friend
-		local xbox_user_id = friend.xbox_user_id
-		local flag_3 = friend.status == "online"
-		local flag_4
+	if friends_widget then
+		local friend_widget_content = friends_widget.content
+		local friend = friend_widget_content.friend
+		local friend_id = friend.xbox_user_id
+		local friend_online = friend.status == "online"
+		local str
 
-		flag_4 = (not self._invite_cooldown[xbox_user_id] and not (arg_17_2 > self._invite_cooldown[xbox_user_id]) and flag_3 or Managers.account:has_session() and not "invite") and nil
+		if (not self._invite_cooldown[friend_id] or t > self._invite_cooldown[friend_id]) and friend_online and Managers.account:has_session() then
+			str = "invite"
 
-		local flag_5 = not not self._is_refreshing or "refresh"
-
-		if not (not IS_PS4 and not flag_5 and flag_3) then
-			flag_5 = nil
+			goto label_17_0
 		end
 
-		local str = "friend"
+		str = nil
 
-		if not flag_4 then
-			str = str .. "_" .. flag_4
+		local invite = str
 
-			if not flag_5 then
-				str = str .. "_" .. flag_5
+		::label_17_0::
+
+		local refresh = not self._is_refreshing and not not "refresh"
+
+		if IS_PS4 and refresh and not friend_online then
+			refresh = nil
+		end
+
+		local input = "friend"
+
+		if invite then
+			input = input .. "_" .. invite
+
+			if refresh then
+				input = input .. "_" .. refresh
 			end
-		elseif not flag_5 then
-			str = str .. "_" .. flag_5
+		elseif refresh then
+			input = input .. "_" .. refresh
 		end
 
-		if not str then
-			self._menu_input_description:set_input_description(generic_input_actions[str])
+		if input then
+			self._menu_input_description:set_input_description(generic_input_actions[input])
 		else
 			self._menu_input_description:set_input_description(nil)
 		end
 
-		flag = true
-		flag_2 = flag_4 ~= nil
-		self._current_input_desc = str
-	elseif not IS_XB1 then
-		local flag_6 = not not self._is_refreshing or "only_refresh"
+		enable_profile_button = true
+		enable_invite_button = invite ~= nil
+		self._current_input_desc = input
+	elseif IS_XB1 then
+		local input = not self._is_refreshing and not not "only_refresh"
 
-		if self._current_input_desc ~= flag_6 then
-			local flag_7 = not flag_6 and generic_input_actions[flag_6]
+		if self._current_input_desc ~= input then
+			local input_actions = not not input and not not generic_input_actions[input]
 
-			self._menu_input_description:set_input_description(flag_7)
+			self._menu_input_description:set_input_description(input_actions)
 
-			self._current_input_desc = flag_6
+			self._current_input_desc = input
 		end
-	elseif not self._current_input_desc then
+	elseif self._current_input_desc then
 		self._menu_input_description:set_input_description(nil)
 
 		self._current_input_desc = nil
@@ -428,245 +480,260 @@ ConsoleFriendsView._update_input_descriptions = function (self, arg_17_1, arg_17
 
 	local open_profile_button = self._widgets_by_name.open_profile_button
 
-	if not open_profile_button then
-		open_profile_button.content.button_hotspot.disable_button = not flag
+	if open_profile_button then
+		local open_profile_button_content = open_profile_button.content
+		local button_hotspot = open_profile_button_content.button_hotspot
+
+		button_hotspot.disable_button = not enable_profile_button
 	end
 
 	local invite_button = self._widgets_by_name.invite_button
 
-	if not invite_button then
-		invite_button.content.button_hotspot.disable_button = not flag_2
+	if invite_button then
+		local invite_button_content = invite_button.content
+		local button_hotspot = invite_button_content.button_hotspot
+
+		button_hotspot.disable_button = not enable_invite_button
 	end
 end
 
-ConsoleFriendsView._handle_refresh = function (self, arg_18_1, arg_18_2)
+ConsoleFriendsView._handle_refresh = function (self, dt, t)
 	-- function 18
-	if not IS_PS4 then
+	if IS_PS4 then
 		local _refresh_friends_timer = self._refresh_friends_timer
 
-		_refresh_friends_timer = _refresh_friends_timer or arg_18_2 + num_2
+		_refresh_friends_timer = not not _refresh_friends_timer or not not (t + REFRESH_COOLDOWN)
 		self._refresh_friends_timer = _refresh_friends_timer
 
-		if arg_18_2 > self._refresh_friends_timer then
+		if t > self._refresh_friends_timer then
 			self:_refresh_friends()
 
-			self._refresh_friends_timer = arg_18_2 + num_2
+			self._refresh_friends_timer = t + REFRESH_COOLDOWN
 		end
 	end
 end
 
-ConsoleFriendsView._animate_default_buttons = function (self, arg_19_1, arg_19_2)
+ConsoleFriendsView._animate_default_buttons = function (self, dt, t)
 	-- function 19
 	if not Managers.input:is_device_active("gamepad") then
 		local open_profile_button = self._widgets_by_name.open_profile_button
 		local invite_button = self._widgets_by_name.invite_button
 
-		UIWidgetUtils.animate_default_button(open_profile_button, arg_19_1)
-		UIWidgetUtils.animate_default_button(invite_button, arg_19_1)
+		UIWidgetUtils.animate_default_button(open_profile_button, dt)
+		UIWidgetUtils.animate_default_button(invite_button, dt)
 	end
 end
 
-ConsoleFriendsView._handle_input = function (self, arg_20_1, arg_20_2)
+ConsoleFriendsView._handle_input = function (self, dt, t)
 	-- function 20
-	if not self._exiting then
+	if self._exiting then
 		return
 	end
 
 	local input_service = self:input_service()
 	local _ui_animations = self._ui_animations
 
-	_ui_animations = _ui_animations or {}
+	_ui_animations = not not _ui_animations or not not {}
 	self._ui_animations = _ui_animations
 
-	local var_20_2 = entry_definitions.friend_entry_size[2]
-	local var_20_3 = scenegraph_definition.friends_base.position[2]
+	local entry_size_y = entry_definitions.friend_entry_size[2]
+	local base_pos_y = scenegraph_definition.friends_base.position[2]
 	local _wanted_pos = self._wanted_pos
 
-	_wanted_pos = _wanted_pos or var_20_3
+	_wanted_pos = not not _wanted_pos or not not base_pos_y
 	self._wanted_pos = _wanted_pos
 
 	local _current_friend_index = self._current_friend_index
 
-	_current_friend_index = _current_friend_index or 1
+	_current_friend_index = not not _current_friend_index or not not 1
 	self._current_friend_index = _current_friend_index
 
-	local _current_friend_index_2 = self._current_friend_index
-	local num = 0
-	local num_2 = 0
-	local is_device_active = Managers.input:is_device_active("gamepad")
-	local on_pressed = self._widgets_by_name.open_profile_button.content.button_hotspot.on_pressed
-	local on_pressed_2 = self._widgets_by_name.invite_button.content.button_hotspot.on_pressed
-	local content = self._widgets_by_name.selection_handler.content
-	local up_hotspot = content.up_hotspot
-	local down_hotspot = content.down_hotspot
+	local old_index = self._current_friend_index
+	local hold_down_timer = 0
+	local hold_up_timer = 0
+	local gamepad_active = Managers.input:is_device_active("gamepad")
+	local open_profile_button = self._widgets_by_name.open_profile_button
+	local open_profile_button_content = open_profile_button.content
+	local open_profile_pressed = open_profile_button_content.button_hotspot.on_pressed
+	local invite_button = self._widgets_by_name.invite_button
+	local invite_button_content = invite_button.content
+	local invite_pressed = invite_button_content.button_hotspot.on_pressed
+	local selection_handler = self._widgets_by_name.selection_handler
+	local selection_handler_content = selection_handler.content
+	local up_hotspot = selection_handler_content.up_hotspot
+	local down_hotspot = selection_handler_content.down_hotspot
 
-	if input_service:get("move_up_hold") or not up_hotspot.is_held then
-		num_2 = self._hold_up_timer + arg_20_1
-	elseif input_service:get("move_down_hold") or not down_hotspot.is_held then
-		num = self._hold_down_timer + arg_20_1
+	if input_service:get("move_up_hold") or up_hotspot.is_held then
+		hold_up_timer = self._hold_up_timer + dt
+	elseif input_service:get("move_down_hold") or down_hotspot.is_held then
+		hold_down_timer = self._hold_down_timer + dt
 	end
 
-	self._hold_down_timer = num
-	self._hold_up_timer = num_2
+	self._hold_down_timer = hold_down_timer
+	self._hold_up_timer = hold_up_timer
 
-	local count = #self._friend_list_widgets
-	local num_visible_friends = var_0_0.num_visible_friends
-	local get = input_service:get("scroll_axis")
+	local num_friends = #self._friend_list_widgets
+	local num_visible_friends = definitions.num_visible_friends
+	local scroll_value = input_service:get("scroll_axis")
 
-	if not IS_XB1 then
-		get = not get and math.sign(get.x)
+	if IS_XB1 then
+		scroll_value = not not scroll_value and not not math.sign(scroll_value.x)
 	else
-		get = not get and math.sign(get.y)
+		scroll_value = not not scroll_value and not not math.sign(scroll_value.y)
 	end
 
-	if input_service:get("back", true) or not input_service:get("toggle_menu", true) then
+	if input_service:get("back", true) or input_service:get("toggle_menu", true) then
 		self:exit()
-	elseif input_service:get("refresh") or not on_pressed_2 then
-		local var_20_18 = self._friend_list_widgets[self._current_friend_index]
+	elseif input_service:get("refresh") or invite_pressed then
+		local friend_widget = self._friend_list_widgets[self._current_friend_index]
 
-		if not var_20_18 then
-			self:_send_invite(var_20_18, arg_20_2)
+		if friend_widget then
+			self:_send_invite(friend_widget, t)
 		end
-	elseif not (not input_service:get("special_1") and self._is_refreshing) then
-		if not IS_XB1 then
+	elseif input_service:get("special_1") and not self._is_refreshing then
+		if IS_XB1 then
 			self:_refresh_friends()
-		elseif not IS_PS4 then
+		elseif IS_PS4 then
 			self:_join_game()
 		end
-	elseif input_service:get("confirm_press") or not on_pressed then
-		local var_20_19 = self._friend_list_widgets[self._current_friend_index]
+	elseif input_service:get("confirm_press") or open_profile_pressed then
+		local friend_widget = self._friend_list_widgets[self._current_friend_index]
 
-		if not var_20_19 then
-			self:_open_profile(var_20_19)
+		if friend_widget then
+			self:_open_profile(friend_widget)
 		end
-	elseif not (input_service:get("move_down") or self._hold_down_timer > 0.5 or down_hotspot.on_pressed or down_hotspot.on_double_click or not (get < 0)) then
+	elseif input_service:get("move_down") or self._hold_down_timer > 0.5 or down_hotspot.on_pressed or down_hotspot.on_double_click or scroll_value < 0 then
 		if self._hold_down_timer > 0.5 then
 			self._hold_down_timer = 0.4
 		end
 
-		self._current_friend_index = math.clamp(self._current_friend_index + 1, 1, count)
-		self._cursor_position = math.clamp(self._cursor_position + 1, 1, math.min(num_visible_friends, count))
+		self._current_friend_index = math.clamp(self._current_friend_index + 1, 1, num_friends)
+		self._cursor_position = math.clamp(self._cursor_position + 1, 1, math.min(num_visible_friends, num_friends))
 
 		if self._cursor_position == num_visible_friends then
-			local _wanted_pos_2 = self._wanted_pos
+			local old_wanted_pos = self._wanted_pos
 
-			self._wanted_pos = math.clamp(self._wanted_pos + var_20_2, var_20_3, count * var_20_2 + var_20_2)
+			self._wanted_pos = math.clamp(self._wanted_pos + entry_size_y, base_pos_y, num_friends * entry_size_y + entry_size_y)
 			self._ui_animations.move = UIAnimation.init(UIAnimation.function_by_time, self._ui_scenegraph.friends_base.position, 2, self._ui_scenegraph.friends_base.position[2], self._wanted_pos, 0.3, math.easeOutCubic)
 
-			if self._wanted_pos ~= _wanted_pos_2 then
+			if self._wanted_pos ~= old_wanted_pos then
 				self._cursor_position = math.clamp(self._cursor_position - 1, 1, num_visible_friends)
 			end
 		end
-	elseif not (input_service:get("move_up") or self._hold_up_timer > 0.5 or up_hotspot.on_pressed or up_hotspot.on_double_click or not (get > 0)) then
+	elseif input_service:get("move_up") or self._hold_up_timer > 0.5 or up_hotspot.on_pressed or up_hotspot.on_double_click or scroll_value > 0 then
 		if self._hold_up_timer > 0.5 then
 			self._hold_up_timer = 0.4
 		end
 
-		self._current_friend_index = math.clamp(self._current_friend_index - 1, 1, count)
-		self._cursor_position = math.clamp(self._cursor_position - 1, 1, math.min(num_visible_friends, count))
+		self._current_friend_index = math.clamp(self._current_friend_index - 1, 1, num_friends)
+		self._cursor_position = math.clamp(self._cursor_position - 1, 1, math.min(num_visible_friends, num_friends))
 
-		if not (not (self._cursor_position <= 2) or not (num_visible_friends < count)) then
-			local _wanted_pos_3 = self._wanted_pos
+		if self._cursor_position <= 2 and num_visible_friends < num_friends then
+			local old_wanted_pos = self._wanted_pos
 
-			self._wanted_pos = math.clamp(self._wanted_pos - var_20_2, var_20_3, count * var_20_2 + var_20_2)
+			self._wanted_pos = math.clamp(self._wanted_pos - entry_size_y, base_pos_y, num_friends * entry_size_y + entry_size_y)
 			self._ui_animations.move = UIAnimation.init(UIAnimation.function_by_time, self._ui_scenegraph.friends_base.position, 2, self._ui_scenegraph.friends_base.position[2], self._wanted_pos, 0.3, math.easeOutCubic)
 
-			if self._wanted_pos ~= _wanted_pos_3 then
+			if self._wanted_pos ~= old_wanted_pos then
 				self._cursor_position = math.clamp(self._cursor_position + 1, 1, num_visible_friends)
 			end
 		end
-	elseif not (is_device_active or IS_PS4) then
-		local clamp = math.clamp(self._current_friend_index - (self._cursor_position - 1), 1, math.max(count - (num_visible_friends - 1), 1))
-		local clamp_2 = math.clamp(clamp + num_visible_friends - 1, 1, count)
+	elseif not gamepad_active and not IS_PS4 then
+		local first_index = math.clamp(self._current_friend_index - (self._cursor_position - 1), 1, math.max(num_friends - (num_visible_friends - 1), 1))
+		local last_index = math.clamp(first_index + num_visible_friends - 1, 1, num_friends)
 
-		for i = clamp, clamp_2 do
-			if not self._friend_list_widgets[i].content.entry_hotspot.on_pressed then
+		for i = first_index, last_index do
+			local entry = self._friend_list_widgets[i]
+			local entry_content = entry.content
+
+			if entry_content.entry_hotspot.on_pressed then
 				self._current_friend_index = i
-				self._cursor_position = i - (clamp - 1)
+				self._cursor_position = i - (first_index - 1)
 
 				break
 			end
 		end
 	end
 
-	local var_20_24 = self._friend_list_widgets[_current_friend_index_2]
+	local old_friend_widget = self._friend_list_widgets[old_index]
 
-	if not var_20_24 then
-		var_20_24.content.selected = false
+	if old_friend_widget then
+		old_friend_widget.content.selected = false
 	end
 
-	local var_20_25 = self._friend_list_widgets[self._current_friend_index]
+	local friend_widget = self._friend_list_widgets[self._current_friend_index]
 
-	if not var_20_25 then
-		var_20_25.content.selected = true
+	if friend_widget then
+		friend_widget.content.selected = true
 	end
 end
 
-ConsoleFriendsView._update_animations = function (self, arg_21_1, arg_21_2)
+ConsoleFriendsView._update_animations = function (self, dt, t)
 	-- function 21
-	local _ui_animations = self._ui_animations
+	local animations = self._ui_animations
 
-	for k, v in pairs(_ui_animations) do
-		UIAnimation.update(v, arg_21_1)
+	for animation_name, animation in pairs(animations) do
+		UIAnimation.update(animation, dt)
 
-		if not UIAnimation.completed(v) then
-			_ui_animations[k] = nil
+		if UIAnimation.completed(animation) then
+			animations[animation_name] = nil
 		end
 	end
 end
 
-ConsoleFriendsView._draw = function (self, arg_22_1, arg_22_2)
+ConsoleFriendsView._draw = function (self, dt, t)
 	-- function 22
-	local _ui_scenegraph = self._ui_scenegraph
-	local _ui_top_renderer = self._ui_top_renderer
+	local ui_scenegraph = self._ui_scenegraph
+	local ui_top_renderer = self._ui_top_renderer
 	local input_service = self:input_service()
-	local is_device_active = self._input_manager:is_device_active("gamepad")
+	local gamepad_active = self._input_manager:is_device_active("gamepad")
 
-	UIRenderer.begin_pass(_ui_top_renderer, _ui_scenegraph, input_service, arg_22_1, nil, self._render_settings)
+	UIRenderer.begin_pass(ui_top_renderer, ui_scenegraph, input_service, dt, nil, self._render_settings)
 
-	for i, v in ipairs(self._widgets) do
-		UIRenderer.draw_widget(_ui_top_renderer, v)
+	for _, widget in ipairs(self._widgets) do
+		UIRenderer.draw_widget(ui_top_renderer, widget)
 	end
 
-	for i_2, v_2 in ipairs(self._party_entries) do
-		UIRenderer.draw_widget(_ui_top_renderer, v_2)
+	for _, widget in ipairs(self._party_entries) do
+		UIRenderer.draw_widget(ui_top_renderer, widget)
 	end
 
-	if not self._friend_list_widgets then
-		local var_22_4 = table.clone(_ui_scenegraph.friends_mask.world_position)[2]
-		local num = var_22_4 + entry_definitions.friend_entry_size[2]
-		local num_2 = var_22_4 - (var_0_0.num_visible_friends + 1) * entry_definitions.friend_entry_size[2]
+	if self._friend_list_widgets then
+		local scenegraph_position = table.clone(ui_scenegraph.friends_mask.world_position)
+		local friends_mask_scenegraph_start_pos = scenegraph_position[2]
+		local mask_start = friends_mask_scenegraph_start_pos + entry_definitions.friend_entry_size[2]
+		local mask_end = friends_mask_scenegraph_start_pos - (definitions.num_visible_friends + 1) * entry_definitions.friend_entry_size[2]
 
-		for i_3, v_3 in ipairs(self._friend_list_widgets) do
-			local num_3 = _ui_scenegraph.friends_base.position[2] + v_3.offset[2]
+		for _, widget in ipairs(self._friend_list_widgets) do
+			local widget_position = ui_scenegraph.friends_base.position[2] + widget.offset[2]
 
-			if not (not (num_3 <= num) or not (num_2 <= num_3)) then
-				UIRenderer.draw_widget(_ui_top_renderer, v_3)
+			if widget_position <= mask_start and mask_end <= widget_position then
+				UIRenderer.draw_widget(ui_top_renderer, widget)
 			end
 		end
 	end
 
-	UIRenderer.end_pass(_ui_top_renderer)
+	UIRenderer.end_pass(ui_top_renderer)
 
-	if not is_device_active then
-		self._menu_input_description:draw(_ui_top_renderer, arg_22_1)
+	if gamepad_active then
+		self._menu_input_description:draw(ui_top_renderer, dt)
 	end
 end
 
 ConsoleFriendsView._handle_popup = function (self)
 	-- function 23
-	local query_result, var_23_1 = Managers.popup:query_result(self._popup_id)
+	local result, params = Managers.popup:query_result(self._popup_id)
 
-	if not query_result then
-		if query_result == "ok" then
+	if result then
+		if result == "ok" then
 			self._popup_id = nil
 		else
-			fassert(false, "[ConsoleFriendsView:_handle_popup] No implementation for the result %q", query_result)
+			fassert(false, "[ConsoleFriendsView:_handle_popup] No implementation for the result %q", result)
 		end
 	end
 end
 
-ConsoleFriendsView.destroy = function (arg_24_0)
+ConsoleFriendsView.destroy = function (self)
 	-- function 24
 	return
 end
@@ -676,23 +743,25 @@ ConsoleFriendsView.input_service = function (self)
 	return self._input_manager:get_service("console_friends_view")
 end
 
-ConsoleFriendsView._open_profile = function (arg_26_0, arg_26_1)
+ConsoleFriendsView._open_profile = function (self, widget)
 	-- function 26
-	local id = arg_26_1.content.friend.id
+	local content = widget.content
+	local id = content.friend.id
 
-	if not IS_XB1 then
+	if IS_XB1 then
 		Managers.account:show_player_profile(id)
-	elseif not IS_PS4 then
+	elseif IS_PS4 then
 		Managers.account:show_player_profile_with_account_id(id)
 	end
 end
 
-ConsoleFriendsView._send_invite = function (self, arg_27_1, arg_27_2)
+ConsoleFriendsView._send_invite = function (self, widget, t)
 	-- function 27
-	local id = arg_27_1.content.friend.id
-	local var_27_1 = self._invite_cooldown[id]
+	local content = widget.content
+	local friend_id = content.friend.id
+	local cooldown = self._invite_cooldown[friend_id]
 
-	if not (not self._invite_cooldown[id] and arg_27_2 < self._invite_cooldown[id] or Managers.account:has_session()) then
+	if (not self._invite_cooldown[friend_id] or not (t < self._invite_cooldown[friend_id])) and not Managers.account:has_session() then
 		return
 	end
 
@@ -700,16 +769,16 @@ ConsoleFriendsView._send_invite = function (self, arg_27_1, arg_27_2)
 
 	local invite_target = self._network_lobby:invite_target()
 
-	Managers.account:send_session_invitation(id, invite_target)
+	Managers.account:send_session_invitation(friend_id, invite_target)
 
-	self._invite_cooldown[id] = arg_27_2 + num
-	self._ui_animations["fade_invite_" .. id] = UIAnimation.init(UIAnimation.function_by_time, arg_27_1.style.invite_texture.color, 1, 255, 0, 1, math.easeInCubic)
-	self._ui_animations["move_invite_" .. id] = UIAnimation.init(UIAnimation.function_by_time, arg_27_1.style.invite_texture.offset, 1, 40, 70, 1, math.easeInCubic)
+	self._invite_cooldown[friend_id] = t + INVITE_COOLDOWN
+	self._ui_animations["fade_invite_" .. friend_id] = UIAnimation.init(UIAnimation.function_by_time, widget.style.invite_texture.color, 1, 255, 0, 1, math.easeInCubic)
+	self._ui_animations["move_invite_" .. friend_id] = UIAnimation.init(UIAnimation.function_by_time, widget.style.invite_texture.offset, 1, 40, 70, 1, math.easeInCubic)
 end
 
 ConsoleFriendsView.cleanup_popups = function (self)
 	-- function 28
-	if not self._popup_id then
+	if self._popup_id then
 		Managers.popup:cancel_popup(self._popup_id)
 
 		self._popup_id = nil

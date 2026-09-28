@@ -1,24 +1,25 @@
 -- chunkname: @scripts/ui/views/deus_menu/deus_cursed_chest_view_definitions.lua
 
-local game_start_windows = UISettings.game_start_windows
-local tbl = {
+local window_default_settings = UISettings.game_start_windows
+local small_window_size = {
 	400,
 	600
 }
-local spacing = game_start_windows.spacing
-local large_window_frame = game_start_windows.large_window_frame
-local var_0_4 = UIFrameSettings[large_window_frame].texture_sizes.vertical[1]
-local tbl_2 = {
-	tbl[1] * 3 + spacing * 2 + var_0_4 * 2,
-	tbl[2] + 80
+local small_window_spacing = window_default_settings.spacing
+local large_window_frame = window_default_settings.large_window_frame
+local large_window_frame_width = UIFrameSettings[large_window_frame].texture_sizes.vertical[1]
+local inner_window_size = {
+	small_window_size[1] * 3 + small_window_spacing * 2 + large_window_frame_width * 2,
+	small_window_size[2] + 80
 }
-local tbl_3 = {
-	tbl_2[1] + 50,
-	tbl_2[2]
+local window_size = {
+	inner_window_size[1] + 50,
+	inner_window_size[2]
 }
-local str = "menu_frame_11"
-local var_0_8 = UIFrameSettings[str].texture_sizes.vertical[1]
-local tbl_4 = {
+local window_frame_name = "menu_frame_11"
+local window_frame = UIFrameSettings[window_frame_name]
+local window_frame_width = window_frame.texture_sizes.vertical[1]
+local scenegraph_definition = {
 	root = {
 		is_root = true,
 		size = {
@@ -61,7 +62,7 @@ local tbl_4 = {
 		vertical_alignment = "center",
 		parent = "screen_center",
 		horizontal_alignment = "center",
-		size = tbl_3,
+		size = window_size,
 		position = {
 			0,
 			0,
@@ -72,7 +73,7 @@ local tbl_4 = {
 		vertical_alignment = "center",
 		parent = "window",
 		horizontal_alignment = "center",
-		size = tbl_3,
+		size = window_size,
 		position = {
 			0,
 			0,
@@ -83,7 +84,7 @@ local tbl_4 = {
 		vertical_alignment = "center",
 		parent = "screen",
 		horizontal_alignment = "center",
-		size = tbl_3,
+		size = window_size,
 		position = {
 			0,
 			0,
@@ -109,12 +110,12 @@ local tbl_4 = {
 		parent = "window",
 		horizontal_alignment = "center",
 		size = {
-			tbl_3[1] - var_0_8 * 2,
+			window_size[1] - window_frame_width * 2,
 			1000
 		},
 		position = {
 			0,
-			var_0_8,
+			window_frame_width,
 			3
 		}
 	},
@@ -123,12 +124,12 @@ local tbl_4 = {
 		parent = "window",
 		horizontal_alignment = "center",
 		size = {
-			tbl_3[1] - var_0_8 * 2,
+			window_size[1] - window_frame_width * 2,
 			500
 		},
 		position = {
 			0,
-			var_0_8,
+			window_frame_width,
 			4
 		}
 	},
@@ -137,12 +138,12 @@ local tbl_4 = {
 		parent = "window",
 		horizontal_alignment = "center",
 		size = {
-			tbl_3[1] - var_0_8 * 2,
+			window_size[1] - window_frame_width * 2,
 			200
 		},
 		position = {
 			0,
-			var_0_8,
+			window_frame_width,
 			5
 		}
 	},
@@ -278,7 +279,7 @@ local tbl_4 = {
 		horizontal_alignment = "right",
 		size = {
 			1000,
-			tbl_3[2]
+			window_size[2]
 		},
 		position = {
 			0,
@@ -320,7 +321,7 @@ local tbl_4 = {
 		horizontal_alignment = "right",
 		size = {
 			126,
-			tbl_3[2] - 20
+			window_size[2] - 20
 		},
 		position = {
 			-493,
@@ -371,7 +372,7 @@ local tbl_4 = {
 		}
 	}
 }
-local tbl_5 = {
+local title_text_style = {
 	use_shadow = true,
 	upper_case = true,
 	localize = false,
@@ -387,7 +388,7 @@ local tbl_5 = {
 		2
 	}
 }
-local tbl_6 = {
+local chest_name_text_style = {
 	use_shadow = true,
 	upper_case = true,
 	localize = false,
@@ -403,7 +404,7 @@ local tbl_6 = {
 		2
 	}
 }
-local tbl_7 = {
+local chest_lore_text_style = {
 	use_shadow = true,
 	upper_case = true,
 	localize = false,
@@ -420,18 +421,18 @@ local tbl_7 = {
 	}
 }
 
-local function fn(arg_1_0, arg_1_1, arg_1_2, arg_1_3)
+local function create_power_up_shop_item(scenegraph_id, size, masked, is_rectangular_icon)
 	-- function 1
-	local tbl = {
+	local background_color = {
 		255,
 		255,
 		255,
 		255
 	}
-	local tbl_2 = {
+	local icon = {
 		vertical_alignment = "center",
 		horizontal_alignment = "left",
-		masked = arg_1_2,
+		masked = masked,
 		color = {
 			255,
 			138,
@@ -448,16 +449,16 @@ local function fn(arg_1_0, arg_1_1, arg_1_2, arg_1_3)
 			66
 		}
 	}
-	local clone = table.clone(tbl_2)
+	local icon_disabled = table.clone(icon)
 
-	clone.color = {
+	icon_disabled.color = {
 		255,
 		80,
 		80,
 		80
 	}
 
-	local tbl_3 = {
+	local tbl = {
 		font_size = 20,
 		upper_case = true,
 		word_wrap = true,
@@ -473,38 +474,39 @@ local function fn(arg_1_0, arg_1_1, arg_1_2, arg_1_3)
 	}
 	local flag
 
-	flag = not arg_1_2 and "hell_shark_masked" and "hell_shark"
-	tbl_3.font_type = flag
-	tbl_3.text_color = Colors.get_color_table_with_alpha("font_title", 255)
-	tbl_3.offset = {
+	flag = (not masked or not "hell_shark_masked") and not not "hell_shark"
+	tbl.font_type = flag
+	tbl.text_color = Colors.get_color_table_with_alpha("font_title", 255)
+	tbl.offset = {
 		100,
-		arg_1_1[2] - 70,
+		size[2] - 70,
 		3
 	}
-	tbl_3.size = {
-		arg_1_1[1] - 270,
+	tbl.size = {
+		size[1] - 270,
 		30
 	}
 
-	local clone_2 = table.clone(tbl_3)
+	local title_text = tbl
+	local title_text_disabled = table.clone(title_text)
 
-	clone_2.text_color = {
+	title_text_disabled.text_color = {
 		255,
 		100,
 		100,
 		100
 	}
 
-	local clone_3 = table.clone(tbl_3)
+	local title_text_shadow = table.clone(title_text)
 
-	clone_3.text_color = Colors.get_color_table_with_alpha("black", 255)
-	clone_3.offset = {
-		tbl_3.offset[1] + 2,
-		tbl_3.offset[2] - 2,
-		tbl_3.offset[3] - 1
+	title_text_shadow.text_color = Colors.get_color_table_with_alpha("black", 255)
+	title_text_shadow.offset = {
+		title_text.offset[1] + 2,
+		title_text.offset[2] - 2,
+		title_text.offset[3] - 1
 	}
 
-	local tbl_4 = {
+	local tbl_2 = {
 		font_size = 20,
 		word_wrap = true,
 		horizontal_alignment = "right",
@@ -519,29 +521,30 @@ local function fn(arg_1_0, arg_1_1, arg_1_2, arg_1_3)
 	}
 	local flag_2
 
-	flag_2 = not arg_1_2 and "hell_shark_masked" and "hell_shark"
-	tbl_4.font_type = flag_2
-	tbl_4.text_color = Colors.get_color_table_with_alpha("font_title", 255)
-	tbl_4.offset = {
+	flag_2 = (not masked or not "hell_shark_masked") and not not "hell_shark"
+	tbl_2.font_type = flag_2
+	tbl_2.text_color = Colors.get_color_table_with_alpha("font_title", 255)
+	tbl_2.offset = {
 		330,
-		arg_1_1[2] - 70,
+		size[2] - 70,
 		3
 	}
-	tbl_4.size = {
+	tbl_2.size = {
 		100,
 		30
 	}
 
-	local clone_4 = table.clone(tbl_4)
+	local rarity_text = tbl_2
+	local rarity_text_shadow = table.clone(rarity_text)
 
-	clone_4.text_color = Colors.get_color_table_with_alpha("black", 255)
-	clone_4.offset = {
-		tbl_4.offset[1] + 2,
-		tbl_4.offset[2] - 2,
-		tbl_4.offset[3] - 1
+	rarity_text_shadow.text_color = Colors.get_color_table_with_alpha("black", 255)
+	rarity_text_shadow.offset = {
+		rarity_text.offset[1] + 2,
+		rarity_text.offset[2] - 2,
+		rarity_text.offset[3] - 1
 	}
 
-	local tbl_5 = {
+	local tbl_3 = {
 		font_size = 18,
 		word_wrap = true,
 		dynamic_font_size_word_wrap = true,
@@ -556,38 +559,39 @@ local function fn(arg_1_0, arg_1_1, arg_1_2, arg_1_3)
 	}
 	local flag_3
 
-	flag_3 = not arg_1_2 and "hell_shark_masked" and "hell_shark"
-	tbl_5.font_type = flag_3
-	tbl_5.text_color = Colors.get_color_table_with_alpha("font_default", 255)
-	tbl_5.offset = {
+	flag_3 = (not masked or not "hell_shark_masked") and not not "hell_shark"
+	tbl_3.font_type = flag_3
+	tbl_3.text_color = Colors.get_color_table_with_alpha("font_default", 255)
+	tbl_3.offset = {
 		100,
-		arg_1_1[2] - 167,
+		size[2] - 167,
 		3
 	}
-	tbl_5.size = {
-		arg_1_1[1] - 155,
+	tbl_3.size = {
+		size[1] - 155,
 		100
 	}
 
-	local clone_5 = table.clone(tbl_5)
+	local sub_text = tbl_3
+	local sub_text_disabled = table.clone(sub_text)
 
-	clone_5.text_color = {
+	sub_text_disabled.text_color = {
 		255,
 		80,
 		80,
 		80
 	}
 
-	local clone_6 = table.clone(tbl_5)
+	local sub_text_shadow = table.clone(sub_text)
 
-	clone_6.text_color = Colors.get_color_table_with_alpha("black", 255)
-	clone_6.offset = {
-		tbl_5.offset[1] + 2,
-		tbl_5.offset[2] - 2,
-		tbl_5.offset[3] - 1
+	sub_text_shadow.text_color = Colors.get_color_table_with_alpha("black", 255)
+	sub_text_shadow.offset = {
+		sub_text.offset[1] + 2,
+		sub_text.offset[2] - 2,
+		sub_text.offset[3] - 1
 	}
 
-	local tbl_6 = {
+	local tbl_4 = {
 		font_size = 22,
 		word_wrap = true,
 		horizontal_alignment = "left",
@@ -602,25 +606,25 @@ local function fn(arg_1_0, arg_1_1, arg_1_2, arg_1_3)
 	}
 	local flag_4
 
-	flag_4 = not arg_1_2 and "hell_shark_masked" and "hell_shark"
-	tbl_6.font_type = flag_4
-	tbl_6.text_color = Colors.get_color_table_with_alpha("font_default", 255)
-	tbl_6.offset = {
+	flag_4 = (not masked or not "hell_shark_masked") and not not "hell_shark"
+	tbl_4.font_type = flag_4
+	tbl_4.text_color = Colors.get_color_table_with_alpha("font_default", 255)
+	tbl_4.offset = {
 		-60,
 		70,
 		3
 	}
-	tbl_6.default_offset = {
+	tbl_4.default_offset = {
 		-60,
 		70,
 		3
 	}
-	tbl_6.size = {
+	tbl_4.size = {
 		55,
 		20
 	}
-	tbl_6.color_override = {}
-	tbl_6.color_override_table = {
+	tbl_4.color_override = {}
+	tbl_4.color_override_table = {
 		start_index = 0,
 		end_index = 0,
 		color = {
@@ -631,20 +635,21 @@ local function fn(arg_1_0, arg_1_1, arg_1_2, arg_1_3)
 		}
 	}
 
-	local clone_7 = table.clone(tbl_6)
+	local price_text = tbl_4
+	local price_text_disabled = table.clone(price_text)
 
-	clone_7.text_color = Colors.get_color_table_with_alpha("red", 255)
+	price_text_disabled.text_color = Colors.get_color_table_with_alpha("red", 255)
 
-	local clone_8 = table.clone(tbl_6)
+	local price_text_shadow = table.clone(price_text)
 
-	clone_8.text_color = Colors.get_color_table_with_alpha("black", 255)
-	clone_8.offset = {
-		tbl_6.offset[1] + 2,
-		tbl_6.offset[2] - 2,
-		tbl_6.offset[3] - 1
+	price_text_shadow.text_color = Colors.get_color_table_with_alpha("black", 255)
+	price_text_shadow.offset = {
+		price_text.offset[1] + 2,
+		price_text.offset[2] - 2,
+		price_text.offset[3] - 1
 	}
 
-	local tbl_7 = {
+	local tbl_5 = {
 		font_size = 18,
 		word_wrap = true,
 		horizontal_alignment = "right",
@@ -659,34 +664,35 @@ local function fn(arg_1_0, arg_1_1, arg_1_2, arg_1_3)
 	}
 	local flag_5
 
-	flag_5 = not arg_1_2 and "hell_shark_masked" and "hell_shark"
-	tbl_7.font_type = flag_5
-	tbl_7.text_color = {
+	flag_5 = (not masked or not "hell_shark_masked") and not not "hell_shark"
+	tbl_5.font_type = flag_5
+	tbl_5.text_color = {
 		255,
 		150,
 		150,
 		150
 	}
-	tbl_7.offset = {
+	tbl_5.offset = {
 		-155,
 		40,
 		3
 	}
-	tbl_7.size = {
+	tbl_5.size = {
 		80,
 		20
 	}
 
-	local clone_9 = table.clone(tbl_7)
+	local current_value_title_text = tbl_5
+	local current_value_title_text_shadow = table.clone(current_value_title_text)
 
-	clone_9.text_color = Colors.get_color_table_with_alpha("black", 255)
-	clone_9.offset = {
-		tbl_7.offset[1] + 2,
-		tbl_7.offset[2] - 2,
-		tbl_7.offset[3] - 1
+	current_value_title_text_shadow.text_color = Colors.get_color_table_with_alpha("black", 255)
+	current_value_title_text_shadow.offset = {
+		current_value_title_text.offset[1] + 2,
+		current_value_title_text.offset[2] - 2,
+		current_value_title_text.offset[3] - 1
 	}
 
-	local tbl_8 = {
+	local tbl_6 = {
 		font_size = 18,
 		word_wrap = true,
 		horizontal_alignment = "right",
@@ -701,56 +707,57 @@ local function fn(arg_1_0, arg_1_1, arg_1_2, arg_1_3)
 	}
 	local flag_6
 
-	flag_6 = not arg_1_2 and "hell_shark_masked" and "hell_shark"
-	tbl_8.font_type = flag_6
-	tbl_8.text_color = Colors.get_color_table_with_alpha("white", 255)
-	tbl_8.offset = {
+	flag_6 = (not masked or not "hell_shark_masked") and not not "hell_shark"
+	tbl_6.font_type = flag_6
+	tbl_6.text_color = Colors.get_color_table_with_alpha("white", 255)
+	tbl_6.offset = {
 		-60,
 		40,
 		3
 	}
-	tbl_8.size = {
+	tbl_6.size = {
 		30,
 		20
 	}
 
-	local clone_10 = table.clone(tbl_8)
+	local current_value_text = tbl_6
+	local current_value_text_shadow = table.clone(current_value_text)
 
-	clone_10.text_color = Colors.get_color_table_with_alpha("black", 255)
-	clone_10.offset = {
-		tbl_8.offset[1] + 2,
-		tbl_8.offset[2] - 2,
-		tbl_8.offset[3] - 1
+	current_value_text_shadow.text_color = Colors.get_color_table_with_alpha("black", 255)
+	current_value_text_shadow.offset = {
+		current_value_text.offset[1] + 2,
+		current_value_text.offset[2] - 2,
+		current_value_text.offset[3] - 1
 	}
 
-	local clone_11 = table.clone(tbl_7)
+	local max_value_title_text = table.clone(current_value_title_text)
 
-	clone_11.offset[2] = 15
+	max_value_title_text.offset[2] = 15
 
-	local clone_12 = table.clone(clone_11)
+	local max_value_title_text_shadow = table.clone(max_value_title_text)
 
-	clone_12.text_color = Colors.get_color_table_with_alpha("black", 255)
-	clone_12.offset = {
-		clone_11.offset[1] + 2,
-		clone_11.offset[2] - 2,
-		clone_11.offset[3] - 1
+	max_value_title_text_shadow.text_color = Colors.get_color_table_with_alpha("black", 255)
+	max_value_title_text_shadow.offset = {
+		max_value_title_text.offset[1] + 2,
+		max_value_title_text.offset[2] - 2,
+		max_value_title_text.offset[3] - 1
 	}
 
-	local clone_13 = table.clone(tbl_8)
+	local max_value_text = table.clone(current_value_text)
 
-	clone_13.offset[2] = 15
-	clone_13.text_color = Colors.get_color_table_with_alpha("font_title", 255)
+	max_value_text.offset[2] = 15
+	max_value_text.text_color = Colors.get_color_table_with_alpha("font_title", 255)
 
-	local clone_14 = table.clone(clone_13)
+	local max_value_text_shadow = table.clone(max_value_text)
 
-	clone_14.text_color = Colors.get_color_table_with_alpha("black", 255)
-	clone_14.offset = {
-		clone_13.offset[1] + 2,
-		clone_13.offset[2] - 2,
-		clone_13.offset[3] - 1
+	max_value_text_shadow.text_color = Colors.get_color_table_with_alpha("black", 255)
+	max_value_text_shadow.offset = {
+		max_value_text.offset[1] + 2,
+		max_value_text.offset[2] - 2,
+		max_value_text.offset[3] - 1
 	}
 
-	local tbl_9 = {
+	local passes = {
 		{
 			pass_type = "hotspot",
 			content_id = "button_hotspot"
@@ -774,9 +781,9 @@ local function fn(arg_1_0, arg_1_1, arg_1_2, arg_1_3)
 			pass_type = "texture",
 			style_id = "icon_discount_frame",
 			texture_id = "icon_discount_frame",
-			content_check_function = function (self)
+			content_check_function = function (content)
 				-- function 2
-				return self.has_discount
+				return content.has_discount
 			end
 		},
 		{
@@ -793,11 +800,11 @@ local function fn(arg_1_0, arg_1_1, arg_1_2, arg_1_3)
 			pass_type = "texture",
 			style_id = "icon",
 			texture_id = "icon",
-			content_check_function = function (self)
+			content_check_function = function (content)
 				-- function 3
-				local is_bought = self.is_bought
+				local is_bought = content.is_bought
 
-				is_bought = is_bought or not self.button_hotspot.disable_button
+				is_bought = not not is_bought or not not not content.button_hotspot.disable_button
 
 				return is_bought
 			end
@@ -806,11 +813,11 @@ local function fn(arg_1_0, arg_1_1, arg_1_2, arg_1_3)
 			pass_type = "texture",
 			style_id = "icon_disabled",
 			texture_id = "icon",
-			content_check_function = function (self)
+			content_check_function = function (content)
 				-- function 4
-				local disable_button = self.button_hotspot.disable_button
+				local disable_button = content.button_hotspot.disable_button
 
-				disable_button = not disable_button and not self.is_bought
+				disable_button = not not disable_button and not not not content.is_bought
 
 				return disable_button
 			end
@@ -819,11 +826,11 @@ local function fn(arg_1_0, arg_1_1, arg_1_2, arg_1_3)
 			style_id = "sub_text_disabled",
 			pass_type = "text",
 			text_id = "sub_text",
-			content_check_function = function (self)
+			content_check_function = function (content)
 				-- function 5
-				local disable_button = self.button_hotspot.disable_button
+				local disable_button = content.button_hotspot.disable_button
 
-				disable_button = not disable_button and not self.is_bought
+				disable_button = not not disable_button and not not not content.is_bought
 
 				return disable_button
 			end
@@ -832,11 +839,11 @@ local function fn(arg_1_0, arg_1_1, arg_1_2, arg_1_3)
 			style_id = "sub_text",
 			pass_type = "text",
 			text_id = "sub_text",
-			content_check_function = function (self)
+			content_check_function = function (content)
 				-- function 6
-				local is_bought = self.is_bought
+				local is_bought = content.is_bought
 
-				is_bought = is_bought or not self.button_hotspot.disable_button
+				is_bought = not not is_bought or not not not content.button_hotspot.disable_button
 
 				return is_bought
 			end
@@ -850,11 +857,11 @@ local function fn(arg_1_0, arg_1_1, arg_1_2, arg_1_3)
 			style_id = "title_text_disabled",
 			pass_type = "text",
 			text_id = "title_text",
-			content_check_function = function (self)
+			content_check_function = function (content)
 				-- function 7
-				local disable_button = self.button_hotspot.disable_button
+				local disable_button = content.button_hotspot.disable_button
 
-				disable_button = not disable_button and not self.is_bought
+				disable_button = not not disable_button and not not not content.is_bought
 
 				return disable_button
 			end
@@ -863,11 +870,11 @@ local function fn(arg_1_0, arg_1_1, arg_1_2, arg_1_3)
 			style_id = "title_text",
 			pass_type = "text",
 			text_id = "title_text",
-			content_check_function = function (self)
+			content_check_function = function (content)
 				-- function 8
-				local is_bought = self.is_bought
+				local is_bought = content.is_bought
 
-				is_bought = is_bought or not self.button_hotspot.disable_button
+				is_bought = not not is_bought or not not not content.button_hotspot.disable_button
 
 				return is_bought
 			end
@@ -891,20 +898,20 @@ local function fn(arg_1_0, arg_1_1, arg_1_2, arg_1_3)
 			style_id = "price_text",
 			pass_type = "text",
 			text_id = "price_text",
-			content_check_function = function (self)
+			content_check_function = function (content)
 				-- function 9
-				return not not self.button_hotspot.disable_button or not self.is_bought
+				return not content.button_hotspot.disable_button and not not not content.is_bought
 			end
 		},
 		{
 			style_id = "price_text_disabled",
 			pass_type = "text",
 			text_id = "price_text",
-			content_check_function = function (self)
+			content_check_function = function (content)
 				-- function 10
-				local disable_button = self.button_hotspot.disable_button
+				local disable_button = content.button_hotspot.disable_button
 
-				disable_button = not disable_button and not self.is_bought
+				disable_button = not not disable_button and not not not content.is_bought
 
 				return disable_button
 			end
@@ -913,33 +920,33 @@ local function fn(arg_1_0, arg_1_1, arg_1_2, arg_1_3)
 			style_id = "price_text_shadow",
 			pass_type = "text",
 			text_id = "price_text",
-			content_check_function = function (self)
+			content_check_function = function (content)
 				-- function 11
-				return not self.is_bought
+				return not content.is_bought
 			end
 		},
 		{
 			pass_type = "texture",
 			style_id = "price_icon",
 			texture_id = "price_icon",
-			content_check_function = function (self)
+			content_check_function = function (content)
 				-- function 12
-				return not self.is_bought
+				return not content.is_bought
 			end
 		},
 		{
 			style_id = "current_value_title_text",
 			pass_type = "text",
 			text_id = "current_value_title_text",
-			content_check_function = function (self)
+			content_check_function = function (content)
 				-- function 13
 				local current_value_text
 
-				if not self.is_bought then
-					current_value_text = self.current_value_text
+				if not content.is_bought then
+					current_value_text = content.current_value_text
 
-					if not current_value_text then
-						current_value_text = self.max_value_text
+					if current_value_text then
+						current_value_text = content.max_value_text
 					end
 				else
 					current_value_text = false
@@ -956,15 +963,15 @@ local function fn(arg_1_0, arg_1_1, arg_1_2, arg_1_3)
 			style_id = "current_value_title_text_shadow",
 			pass_type = "text",
 			text_id = "current_value_title_text",
-			content_check_function = function (self)
+			content_check_function = function (content)
 				-- function 14
 				local current_value_text
 
-				if not self.is_bought then
-					current_value_text = self.current_value_text
+				if not content.is_bought then
+					current_value_text = content.current_value_text
 
-					if not current_value_text then
-						current_value_text = self.max_value_text
+					if current_value_text then
+						current_value_text = content.max_value_text
 					end
 				else
 					current_value_text = false
@@ -981,15 +988,15 @@ local function fn(arg_1_0, arg_1_1, arg_1_2, arg_1_3)
 			style_id = "current_value_text",
 			pass_type = "text",
 			text_id = "current_value_text",
-			content_check_function = function (self)
+			content_check_function = function (content)
 				-- function 15
 				local current_value_text
 
-				if not self.is_bought then
-					current_value_text = self.current_value_text
+				if not content.is_bought then
+					current_value_text = content.current_value_text
 
-					if not current_value_text then
-						current_value_text = self.max_value_text
+					if current_value_text then
+						current_value_text = content.max_value_text
 					end
 				else
 					current_value_text = false
@@ -1006,15 +1013,15 @@ local function fn(arg_1_0, arg_1_1, arg_1_2, arg_1_3)
 			style_id = "current_value_text_shadow",
 			pass_type = "text",
 			text_id = "current_value_text",
-			content_check_function = function (self)
+			content_check_function = function (content)
 				-- function 16
 				local current_value_text
 
-				if not self.is_bought then
-					current_value_text = self.current_value_text
+				if not content.is_bought then
+					current_value_text = content.current_value_text
 
-					if not current_value_text then
-						current_value_text = self.max_value_text
+					if current_value_text then
+						current_value_text = content.max_value_text
 					end
 				else
 					current_value_text = false
@@ -1031,15 +1038,15 @@ local function fn(arg_1_0, arg_1_1, arg_1_2, arg_1_3)
 			style_id = "max_value_title_text",
 			pass_type = "text",
 			text_id = "max_value_title_text",
-			content_check_function = function (self)
+			content_check_function = function (content)
 				-- function 17
 				local current_value_text
 
-				if not self.is_bought then
-					current_value_text = self.current_value_text
+				if not content.is_bought then
+					current_value_text = content.current_value_text
 
-					if not current_value_text then
-						current_value_text = self.max_value_text
+					if current_value_text then
+						current_value_text = content.max_value_text
 					end
 				else
 					current_value_text = false
@@ -1056,15 +1063,15 @@ local function fn(arg_1_0, arg_1_1, arg_1_2, arg_1_3)
 			style_id = "max_value_title_text_shadow",
 			pass_type = "text",
 			text_id = "max_value_title_text",
-			content_check_function = function (self)
+			content_check_function = function (content)
 				-- function 18
 				local current_value_text
 
-				if not self.is_bought then
-					current_value_text = self.current_value_text
+				if not content.is_bought then
+					current_value_text = content.current_value_text
 
-					if not current_value_text then
-						current_value_text = self.max_value_text
+					if current_value_text then
+						current_value_text = content.max_value_text
 					end
 				else
 					current_value_text = false
@@ -1081,15 +1088,15 @@ local function fn(arg_1_0, arg_1_1, arg_1_2, arg_1_3)
 			style_id = "max_value_text",
 			pass_type = "text",
 			text_id = "max_value_text",
-			content_check_function = function (self)
+			content_check_function = function (content)
 				-- function 19
 				local current_value_text
 
-				if not self.is_bought then
-					current_value_text = self.current_value_text
+				if not content.is_bought then
+					current_value_text = content.current_value_text
 
-					if not current_value_text then
-						current_value_text = self.max_value_text
+					if current_value_text then
+						current_value_text = content.max_value_text
 					end
 				else
 					current_value_text = false
@@ -1106,15 +1113,15 @@ local function fn(arg_1_0, arg_1_1, arg_1_2, arg_1_3)
 			style_id = "max_value_text_shadow",
 			pass_type = "text",
 			text_id = "max_value_text",
-			content_check_function = function (self)
+			content_check_function = function (content)
 				-- function 20
 				local current_value_text
 
-				if not self.is_bought then
-					current_value_text = self.current_value_text
+				if not content.is_bought then
+					current_value_text = content.current_value_text
 
-					if not current_value_text then
-						current_value_text = self.max_value_text
+					if current_value_text then
+						current_value_text = content.max_value_text
 					end
 				else
 					current_value_text = false
@@ -1131,9 +1138,9 @@ local function fn(arg_1_0, arg_1_1, arg_1_2, arg_1_3)
 			style_id = "unlocked_text",
 			pass_type = "text",
 			text_id = "unlocked_text",
-			content_check_function = function (self)
+			content_check_function = function (content)
 				-- function 21
-				return self.is_bought
+				return content.is_bought
 			end
 		},
 		{
@@ -1145,13 +1152,13 @@ local function fn(arg_1_0, arg_1_1, arg_1_2, arg_1_3)
 			style_id = "set_progression",
 			pass_type = "text",
 			text_id = "set_progression",
-			content_check_function = function (self)
+			content_check_function = function (content)
 				-- function 22
-				return self.is_part_of_set
+				return content.is_part_of_set
 			end
 		}
 	}
-	local tbl_10 = {
+	local content = {
 		title_text = "",
 		icon_background = "button_frame_01",
 		is_bought = false,
@@ -1207,7 +1214,7 @@ local function fn(arg_1_0, arg_1_1, arg_1_2, arg_1_3)
 				}
 			}
 		},
-		size = arg_1_1,
+		size = size,
 		current_value_title_text = Localize("deus_shrine_current_value"),
 		max_value_title_text = Localize("deus_shrine_max_value"),
 		unlocked_text = Localize("deus_shrine_unlocked"),
@@ -1215,9 +1222,9 @@ local function fn(arg_1_0, arg_1_1, arg_1_2, arg_1_3)
 			"icon_bought_frame"
 		}
 	}
-	local tbl_11 = {
+	local tbl_7 = {
 		debug = {
-			masked = arg_1_2,
+			masked = masked,
 			color = {
 				255,
 				255,
@@ -1237,7 +1244,7 @@ local function fn(arg_1_0, arg_1_1, arg_1_2, arg_1_3)
 		icon_bought_frame = {
 			vertical_alignment = "center",
 			horizontal_alignment = "left",
-			masked = arg_1_2,
+			masked = masked,
 			color = {
 				255,
 				255,
@@ -1257,7 +1264,7 @@ local function fn(arg_1_0, arg_1_1, arg_1_2, arg_1_3)
 		icon_discount_frame = {
 			vertical_alignment = "center",
 			horizontal_alignment = "left",
-			masked = arg_1_2,
+			masked = masked,
 			color = {
 				255,
 				255,
@@ -1277,7 +1284,7 @@ local function fn(arg_1_0, arg_1_1, arg_1_2, arg_1_3)
 		icon_hover_frame = {
 			vertical_alignment = "center",
 			horizontal_alignment = "left",
-			masked = arg_1_2,
+			masked = masked,
 			color = {
 				255,
 				255,
@@ -1297,7 +1304,7 @@ local function fn(arg_1_0, arg_1_1, arg_1_2, arg_1_3)
 		icon_background = {
 			vertical_alignment = "center",
 			horizontal_alignment = "left",
-			masked = arg_1_2,
+			masked = masked,
 			color = {
 				255,
 				255,
@@ -1314,12 +1321,12 @@ local function fn(arg_1_0, arg_1_1, arg_1_2, arg_1_3)
 				3
 			}
 		},
-		icon = tbl_2,
-		icon_disabled = clone,
+		icon = icon,
+		icon_disabled = icon_disabled,
 		icon_bg = {
 			vertical_alignment = "center",
 			horizontal_alignment = "left",
-			masked = arg_1_2,
+			masked = masked,
 			color = {
 				255,
 				0,
@@ -1339,19 +1346,19 @@ local function fn(arg_1_0, arg_1_1, arg_1_2, arg_1_3)
 		background = {
 			vertical_alignment = "center",
 			horizontal_alignment = "center",
-			masked = arg_1_2,
-			color = tbl,
+			masked = masked,
+			color = background_color,
 			offset = {
 				0,
 				0,
 				0
 			},
-			texture_size = arg_1_1
+			texture_size = size
 		},
 		hover = {
 			vertical_alignment = "center",
 			horizontal_alignment = "center",
-			masked = arg_1_2,
+			masked = masked,
 			color = {
 				0,
 				255,
@@ -1363,22 +1370,22 @@ local function fn(arg_1_0, arg_1_1, arg_1_2, arg_1_3)
 				0,
 				1
 			},
-			texture_size = arg_1_1
+			texture_size = size
 		},
 		frame = {
 			vertical_alignment = "center",
 			horizontal_alignment = "center",
-			masked = arg_1_2,
-			color = tbl,
+			masked = masked,
+			color = background_color,
 			offset = {
 				0,
 				0,
 				2
 			},
-			texture_size = arg_1_1
+			texture_size = size
 		},
 		price_icon = {
-			masked = arg_1_2,
+			masked = masked,
 			color = {
 				255,
 				255,
@@ -1394,27 +1401,27 @@ local function fn(arg_1_0, arg_1_1, arg_1_2, arg_1_3)
 				20
 			}
 		},
-		price_text = tbl_6,
-		price_text_shadow = clone_8,
-		price_text_disabled = clone_7,
-		title_text_disabled = clone_2,
-		title_text = tbl_3,
-		title_text_shadow = clone_3,
-		rarity_text = tbl_4,
-		rarity_text_shadow = clone_4,
-		sub_text_disabled = clone_5,
-		sub_text = tbl_5,
-		sub_text_shadow = clone_6,
-		current_value_title_text = tbl_7,
-		current_value_title_text_shadow = clone_9,
-		current_value_text = tbl_8,
-		current_value_text_shadow = clone_10,
-		max_value_title_text = clone_11,
-		max_value_title_text_shadow = clone_12,
-		max_value_text = clone_13,
-		max_value_text_shadow = clone_14
+		price_text = price_text,
+		price_text_shadow = price_text_shadow,
+		price_text_disabled = price_text_disabled,
+		title_text_disabled = title_text_disabled,
+		title_text = title_text,
+		title_text_shadow = title_text_shadow,
+		rarity_text = rarity_text,
+		rarity_text_shadow = rarity_text_shadow,
+		sub_text_disabled = sub_text_disabled,
+		sub_text = sub_text,
+		sub_text_shadow = sub_text_shadow,
+		current_value_title_text = current_value_title_text,
+		current_value_title_text_shadow = current_value_title_text_shadow,
+		current_value_text = current_value_text,
+		current_value_text_shadow = current_value_text_shadow,
+		max_value_title_text = max_value_title_text,
+		max_value_title_text_shadow = max_value_title_text_shadow,
+		max_value_text = max_value_text,
+		max_value_text_shadow = max_value_text_shadow
 	}
-	local tbl_12 = {
+	local tbl_8 = {
 		font_size = 24,
 		upper_case = true,
 		word_wrap = true,
@@ -1430,20 +1437,20 @@ local function fn(arg_1_0, arg_1_1, arg_1_2, arg_1_3)
 	}
 	local flag_7
 
-	flag_7 = not arg_1_2 and "hell_shark_masked" and "hell_shark"
-	tbl_12.font_type = flag_7
-	tbl_12.text_color = Colors.get_color_table_with_alpha("font_default", 255)
-	tbl_12.offset = {
+	flag_7 = (not masked or not "hell_shark_masked") and not not "hell_shark"
+	tbl_8.font_type = flag_7
+	tbl_8.text_color = Colors.get_color_table_with_alpha("font_default", 255)
+	tbl_8.offset = {
 		-130,
 		40,
 		3
 	}
-	tbl_12.size = {
+	tbl_8.size = {
 		120,
 		30
 	}
-	tbl_11.unlocked_text = tbl_12
-	tbl_11.set_progression = {
+	tbl_7.unlocked_text = tbl_8
+	tbl_7.set_progression = {
 		word_wrap = false,
 		upper_case = false,
 		font_size = 20,
@@ -1470,74 +1477,77 @@ local function fn(arg_1_0, arg_1_1, arg_1_2, arg_1_3)
 		}
 	}
 
-	return {
-		element = {
-			passes = tbl_9
-		},
-		content = tbl_10,
-		style = tbl_11,
-		offset = {
-			0,
-			0,
-			0
-		},
-		scenegraph_id = arg_1_0
+	local style = tbl_7
+	local widget = {}
+	local element = {}
+
+	element.passes = passes
+	widget.element = element
+	widget.content = content
+	widget.style = style
+	widget.offset = {
+		0,
+		0,
+		0
 	}
+	widget.scenegraph_id = scenegraph_id
+
+	return widget
 end
 
-local tbl_8 = {
+local background_color = {
 	255,
 	25,
 	21,
 	36
 }
-local tbl_9 = {
+local background_wheel_color = {
 	255,
 	159,
 	154,
 	210
 }
-local tbl_10 = {
+local bottom_glow_back_smoke_color = {
 	200,
 	208,
 	149,
 	177
 }
-local tbl_11 = {
+local bottom_glow_front_smoke_color = {
 	200,
 	94,
 	67,
 	101
 }
-local tbl_12 = {
+local bottom_glow_front_2_smoke_color = {
 	200,
 	172,
 	101,
 	159
 }
-local tbl_13 = {
+local bottom_glow_back_ember_color = {
 	130,
 	250,
 	212,
 	251
 }
-local flag = true
-local tbl_14 = {
+local disable_with_gamepad = true
+local background_widgets = {
 	console_cursor = UIWidgets.create_console_cursor("console_cursor"),
-	window_frame = UIWidgets.create_frame("window_frame", tbl_4.window.size, "menu_frame_11", 10),
+	window_frame = UIWidgets.create_frame("window_frame", scenegraph_definition.window.size, "menu_frame_11", 10),
 	background_write_mask = UIWidgets.create_simple_texture("shrine_background_write_mask", "window"),
 	background_wheel_01 = UIWidgets.create_simple_rotated_texture("shrine_circle_background_01", 0, {
 		94,
 		94
-	}, "background_wheel_01", nil, nil, tbl_9),
+	}, "background_wheel_01", nil, nil, background_wheel_color),
 	background_wheel_02 = UIWidgets.create_simple_rotated_texture("shrine_circle_background_02", 0, {
 		230.5,
 		230.5
-	}, "background_wheel_02", nil, nil, tbl_9),
+	}, "background_wheel_02", nil, nil, background_wheel_color),
 	background_wheel_03 = UIWidgets.create_simple_rotated_texture("shrine_circle_background_03", 0, {
 		537,
 		537
-	}, "background_wheel_03", nil, nil, tbl_9),
+	}, "background_wheel_03", nil, nil, background_wheel_color),
 	bottom_glow_smoke_1 = UIWidgets.create_simple_uv_texture("forge_overview_bottom_glow_effect_smoke_1", {
 		{
 			0,
@@ -1547,7 +1557,7 @@ local tbl_14 = {
 			1,
 			0
 		}
-	}, "bottom_glow", nil, nil, tbl_10),
+	}, "bottom_glow", nil, nil, bottom_glow_back_smoke_color),
 	bottom_glow_smoke_2 = UIWidgets.create_simple_uv_texture("forge_overview_bottom_glow_effect_smoke_2", {
 		{
 			0,
@@ -1557,7 +1567,7 @@ local tbl_14 = {
 			1,
 			0
 		}
-	}, "bottom_glow_short", nil, nil, tbl_11),
+	}, "bottom_glow_short", nil, nil, bottom_glow_front_smoke_color),
 	bottom_glow_smoke_3 = UIWidgets.create_simple_uv_texture("forge_overview_bottom_glow_effect_embers_2", {
 		{
 			0,
@@ -1567,7 +1577,7 @@ local tbl_14 = {
 			1,
 			0
 		}
-	}, "bottom_glow_shortest", nil, nil, tbl_12),
+	}, "bottom_glow_shortest", nil, nil, bottom_glow_front_2_smoke_color),
 	bottom_glow_embers_1 = UIWidgets.create_simple_uv_texture("forge_overview_bottom_glow_effect_embers_1", {
 		{
 			0,
@@ -1577,7 +1587,7 @@ local tbl_14 = {
 			1,
 			0
 		}
-	}, "bottom_glow", nil, nil, tbl_13, 1),
+	}, "bottom_glow", nil, nil, bottom_glow_back_ember_color, 1),
 	bottom_glow_embers_3 = UIWidgets.create_simple_uv_texture("forge_overview_bottom_glow_effect_embers_3", {
 		{
 			0,
@@ -1587,8 +1597,8 @@ local tbl_14 = {
 			1,
 			0
 		}
-	}, "bottom_glow_short", nil, nil, tbl_13, 1),
-	window_background = UIWidgets.create_simple_rect("window", tbl_8),
+	}, "bottom_glow_short", nil, nil, bottom_glow_back_ember_color, 1),
+	window_background = UIWidgets.create_simple_rect("window", background_color),
 	top_corner_left = UIWidgets.create_simple_texture("athanor_decoration_corner", "top_corner_left"),
 	bottom_corner_left = UIWidgets.create_simple_uv_texture("athanor_decoration_corner", {
 		{
@@ -1620,16 +1630,16 @@ local tbl_14 = {
 			1
 		}
 	}, "options_background_mask"),
-	exit_button = UIWidgets.create_default_button("exit_button", tbl_4.exit_button.size, nil, nil, Localize("menu_close"), 24, nil, "button_detail_04", 34, flag),
+	exit_button = UIWidgets.create_default_button("exit_button", scenegraph_definition.exit_button.size, nil, nil, Localize("menu_close"), 24, nil, "button_detail_04", 34, disable_with_gamepad),
 	title = UIWidgets.create_simple_texture("frame_title_bg", "title"),
-	title_bg = UIWidgets.create_background("title_bg", tbl_4.title_bg.size, "menu_frame_bg_02"),
-	title_text = UIWidgets.create_simple_text(Localize("deus_cursed_chest_title"), "title_text", nil, nil, tbl_5),
-	chest_name_text = UIWidgets.create_simple_text(Localize("deus_cursed_chest_title"), "chest_name_text", nil, nil, tbl_6),
-	chest_lore_text = UIWidgets.create_simple_text(Localize("deus_cursed_chest_lore"), "chest_lore_text", nil, nil, tbl_7)
+	title_bg = UIWidgets.create_background("title_bg", scenegraph_definition.title_bg.size, "menu_frame_bg_02"),
+	title_text = UIWidgets.create_simple_text(Localize("deus_cursed_chest_title"), "title_text", nil, nil, title_text_style),
+	chest_name_text = UIWidgets.create_simple_text(Localize("deus_cursed_chest_title"), "chest_name_text", nil, nil, chest_name_text_style),
+	chest_lore_text = UIWidgets.create_simple_text(Localize("deus_cursed_chest_lore"), "chest_lore_text", nil, nil, chest_lore_text_style)
 }
 
 return {
-	scenegraph_definition = tbl_4,
-	background_widgets = tbl_14,
-	create_power_up_shop_item = fn
+	scenegraph_definition = scenegraph_definition,
+	background_widgets = background_widgets,
+	create_power_up_shop_item = create_power_up_shop_item
 }

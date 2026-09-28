@@ -1,17 +1,17 @@
 -- chunkname: @scripts/ui/views/unlock_key_view.lua
 
-local var_0_0 = local_require("scripts/ui/views/unlock_key_view_definitions")
+local definitions = local_require("scripts/ui/views/unlock_key_view_definitions")
 
 UnlockKeyView = class(UnlockKeyView)
 
-UnlockKeyView.init = function (self, arg_1_1)
+UnlockKeyView.init = function (self, ingame_ui_context)
 	-- function 1
-	self.ui_renderer = arg_1_1.ui_renderer
-	self.input_manager = arg_1_1.input_manager
-	self.ingame_ui = arg_1_1.ingame_ui
-	self.world = arg_1_1.world
-	self.statistics_db = arg_1_1.statistics_db
-	self.wwise_world = arg_1_1.dialogue_system.wwise_world
+	self.ui_renderer = ingame_ui_context.ui_renderer
+	self.input_manager = ingame_ui_context.input_manager
+	self.ingame_ui = ingame_ui_context.ingame_ui
+	self.world = ingame_ui_context.world
+	self.statistics_db = ingame_ui_context.statistics_db
+	self.wwise_world = ingame_ui_context.dialogue_system.wwise_world
 
 	local input_manager = self.input_manager
 
@@ -33,19 +33,19 @@ UnlockKeyView.input_service = function (self)
 	return self.input_manager:get_service("unlock_key_menu")
 end
 
-UnlockKeyView.destroy = function (arg_3_0)
+UnlockKeyView.destroy = function (self)
 	-- function 3
 	rawset(_G, "global_unlock_key_view", nil)
-	GarbageLeakDetector.register_object(arg_3_0, "UnlockKeyView")
+	GarbageLeakDetector.register_object(self, "UnlockKeyView")
 end
 
-local widget_definitions = var_0_0.widget_definitions
-local create_simple_texture_widget = var_0_0.create_simple_texture_widget
-local num = 0
+local widget_definitions = definitions.widget_definitions
+local create_simple_texture_widget = definitions.create_simple_texture_widget
+local index = 0
 
 UnlockKeyView.create_ui_elements = function (self)
 	-- function 4
-	self.ui_scenegraph = UISceneGraph.init_scenegraph(var_0_0.scenegraph_definition)
+	self.ui_scenegraph = UISceneGraph.init_scenegraph(definitions.scenegraph_definition)
 	self.background_widgets = {
 		create_simple_texture_widget("unlock_key_bg", "key_entry_background"),
 		create_simple_texture_widget("title_bar", "unlock_key_title_background")
@@ -83,7 +83,7 @@ UnlockKeyView.on_enter = function (self)
 	self.transition_on_completed_animation = nil
 end
 
-UnlockKeyView.on_exit = function (arg_7_0)
+UnlockKeyView.on_exit = function (self)
 	-- function 7
 	return
 end
@@ -106,55 +106,63 @@ UnlockKeyView.unsuspend = function (self)
 	self.suspended = nil
 end
 
-UnlockKeyView.update = function (self, arg_10_1, arg_10_2)
+UnlockKeyView.update = function (self, dt, t)
 	-- function 10
-	if not self.suspended then
+	if self.suspended then
 		return
 	end
 
 	local ui_renderer = self.ui_renderer
 	local ui_scenegraph = self.ui_scenegraph
-	local get_service = self.input_manager:get_service("unlock_key_menu")
+	local input_service = self.input_manager:get_service("unlock_key_menu")
 	local entry_animation = self.ui_animations.entry_animation
 
-	entry_animation = entry_animation or self.ui_animations.exit_animation
+	if not entry_animation then
+		-- Nothing
+	end
 
-	for k, v in pairs(self.ui_animations) do
-		UIAnimation.update(v, arg_10_1)
+	entry_animation = self.ui_animations.exit_animation
 
-		if k == "exit_animation" or not UIAnimation.completed(v) then
-			self.ui_animations[k] = nil
+	local menu_animation_active = entry_animation
 
-			if k == "entry_animation" then
+	::label_10_0::
+
+	for name, ui_animation in pairs(self.ui_animations) do
+		UIAnimation.update(ui_animation, dt)
+
+		if name ~= "exit_animation" and UIAnimation.completed(ui_animation) then
+			self.ui_animations[name] = nil
+
+			if name == "entry_animation" then
 				Managers.transition:fade_out(10)
 			end
 		end
 	end
 
-	if not self.ui_animations.exit_animation and not UIAnimation.completed(self.ui_animations.exit_animation) then
+	if self.ui_animations.exit_animation and UIAnimation.completed(self.ui_animations.exit_animation) then
 		Managers.transition:fade_out(10, nil)
 
 		self.ui_animations.exit_animation = nil
 
 		local transition_on_completed_animation = self.transition_on_completed_animation
 
-		if not transition_on_completed_animation then
+		if transition_on_completed_animation then
 			self.ingame_ui:handle_transition(transition_on_completed_animation)
 
 			self.transition_on_completed_animation = nil
 		end
 	end
 
-	if not self.fade_in_done then
-		self:draw_widgets(arg_10_1, arg_10_2)
+	if self.fade_in_done then
+		self:draw_widgets(dt, t)
 	end
 
-	if not entry_animation then
-		self:handle_input(get_service)
-		self:handle_controller_input(get_service, arg_10_1)
+	if not menu_animation_active then
+		self:handle_input(input_service)
+		self:handle_controller_input(input_service, dt)
 	end
 
-	if entry_animation or get_service:get("toggle_menu") or not self.cancel_button_widget.content.button_hotspot.on_release then
+	if not menu_animation_active and (input_service:get("toggle_menu") or self.cancel_button_widget.content.button_hotspot.on_release) then
 		self:exit()
 	end
 end
@@ -168,20 +176,20 @@ UnlockKeyView.exit = function (self)
 	self.transition_on_completed_animation = "exit_menu"
 end
 
-UnlockKeyView.draw_widgets = function (self, arg_12_1, arg_12_2)
+UnlockKeyView.draw_widgets = function (self, dt, t)
 	-- function 12
 	local ui_renderer = self.ui_renderer
 	local ui_scenegraph = self.ui_scenegraph
-	local get_service = self.input_manager:get_service("unlock_key_menu")
-	local active = Managers.input:get_device("gamepad").active()
+	local input_service = self.input_manager:get_service("unlock_key_menu")
+	local gamepad_active = Managers.input:get_device("gamepad").active()
 
-	UIRenderer.begin_pass(ui_renderer, ui_scenegraph, get_service, arg_12_1)
+	UIRenderer.begin_pass(ui_renderer, ui_scenegraph, input_service, dt)
 
-	for i, v in ipairs(self.background_widgets) do
-		UIRenderer.draw_widget(ui_renderer, v)
+	for _, widget in ipairs(self.background_widgets) do
+		UIRenderer.draw_widget(ui_renderer, widget)
 	end
 
-	if not active then
+	if gamepad_active then
 		UIRenderer.draw_widget(ui_renderer, self.confirm_gamepad_button_widget)
 		UIRenderer.draw_widget(ui_renderer, self.back_gamepad_button_widget)
 	end
@@ -191,9 +199,9 @@ UnlockKeyView.draw_widgets = function (self, arg_12_1, arg_12_2)
 	text_input_widget.content.text_field = self.key_text
 	text_input_widget.content.caret_index = self.key_text_index
 
-	local num = (1 + math.sin(arg_12_2 * 3 % math.pi)) / 2
+	local value = (1 + math.sin(t * 3 % math.pi)) / 2
 
-	text_input_widget.style.text.caret_color[1] = num * 255
+	text_input_widget.style.text.caret_color[1] = value * 255
 
 	UIRenderer.draw_widget(ui_renderer, text_input_widget)
 	UIRenderer.draw_widget(ui_renderer, self.processing_icon_widget)
@@ -203,21 +211,22 @@ UnlockKeyView.draw_widgets = function (self, arg_12_1, arg_12_2)
 	UIRenderer.end_pass(ui_renderer)
 end
 
-UnlockKeyView.handle_input = function (self, arg_13_1)
+UnlockKeyView.handle_input = function (self, input_service)
 	-- function 13
 	local keystrokes = Keyboard.keystrokes()
 
 	self.key_text, self.key_text_index, self.text_mode = KeystrokeHelper.parse_strokes(self.key_text, self.key_text_index, self.text_mode, keystrokes)
 	self.key_text = TextToUpper(self.key_text)
 
-	if not self.accept_button_widget.content.button_hotspot.on_release then
+	if self.accept_button_widget.content.button_hotspot.on_release then
 		local available_unlock_keys = self.available_unlock_keys
-		local count = #available_unlock_keys
+		local num_available_unlock_keys = #available_unlock_keys
 
-		for i = 1, count do
-			local var_13_3 = available_unlock_keys[i]
+		for i = 1, num_available_unlock_keys do
+			local key = available_unlock_keys[i]
+			local text = self.key_text
 
-			if self.key_text == var_13_3 then
+			if text == key then
 				print("HAIL TO THE KING BABY")
 			else
 				print("INVALID KEY YOU INVALID")
@@ -226,17 +235,17 @@ UnlockKeyView.handle_input = function (self, arg_13_1)
 	end
 end
 
-UnlockKeyView.handle_controller_input = function (self, arg_14_1, arg_14_2)
+UnlockKeyView.handle_controller_input = function (self, input_service, dt)
 	-- function 14
 	if self.controller_cooldown > 0 then
-		self.controller_cooldown = self.controller_cooldown - arg_14_2
+		self.controller_cooldown = self.controller_cooldown - dt
 	else
 		repeat
-			if not (self.confirm_gamepad_button_widget.content.gamepad_button.is_clicked == 0 or self.confirm_gamepad_button_widget.content.button_hotspot.is_clicked ~= 0) then
+			if self.confirm_gamepad_button_widget.content.gamepad_button.is_clicked == 0 or self.confirm_gamepad_button_widget.content.button_hotspot.is_clicked == 0 then
 				break
 			end
 
-			if not (self.back_gamepad_button_widget.content.gamepad_button.is_clicked == 0 or self.back_gamepad_button_widget.content.button_hotspot.is_clicked ~= 0) then
+			if self.back_gamepad_button_widget.content.gamepad_button.is_clicked == 0 or self.back_gamepad_button_widget.content.button_hotspot.is_clicked == 0 then
 				self.controller_cooldown = GamepadSettings.menu_cooldown
 			end
 
@@ -245,21 +254,21 @@ UnlockKeyView.handle_controller_input = function (self, arg_14_1, arg_14_2)
 	end
 end
 
-UnlockKeyView.on_reset = function (arg_15_0)
+UnlockKeyView.on_reset = function (self)
 	-- function 15
 	return
 end
 
-UnlockKeyView.on_apply = function (arg_16_0)
+UnlockKeyView.on_apply = function (self)
 	-- function 16
 	return
 end
 
-UnlockKeyView.on_menu_close = function (arg_17_0)
+UnlockKeyView.on_menu_close = function (self)
 	-- function 17
 	return
 end
 
-if not rawget(_G, "my_global_ass_pointer") then
+if rawget(_G, "my_global_ass_pointer") then
 	my_global_ass_pointer:create_ui_elements()
 end

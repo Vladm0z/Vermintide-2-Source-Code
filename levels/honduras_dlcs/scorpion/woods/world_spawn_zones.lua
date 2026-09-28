@@ -1,6 +1,6 @@
 -- chunkname: @levels/honduras_dlcs/scorpion/woods/world_spawn_zones.lua
 
-local tbl = {
+local path_markers = {
 	{
 		kind = "good",
 		main_path_index = 1,
@@ -170,7 +170,7 @@ local tbl = {
 		}
 	}
 }
-local tbl_2 = {
+local main_paths = {
 	{
 		path_length = 482.48200607299805,
 		travel_dist = {
@@ -575,8 +575,8 @@ local tbl_2 = {
 		}
 	}
 }
-local tbl_3 = {}
-local tbl_4 = {
+local crossroads = {}
+local zones = {
 	{
 		unique_zone_id = 1,
 		travel_dist = 10.000007629394531,
@@ -28498,7 +28498,7 @@ local tbl_4 = {
 		}
 	}
 }
-local tbl_5 = {
+local cover_points = {
 	302.57501220703125,
 	-98.41999816894531,
 	14.61274242401123,
@@ -30535,7 +30535,7 @@ local tbl_5 = {
 	0.41905781626701355,
 	-0.9079595804214478
 }
-local tbl_6 = {
+local position_lookup = {
 	{
 		402.332275390625,
 		40.681243896484375,
@@ -163202,20 +163202,20 @@ local tbl_6 = {
 		16.610015869140625
 	}
 }
-local num = 26533
-local num_2 = 48
-local num_3 = 482.482006073
-local str = "1"
+local number_of_spawns = 26533
+local num_main_zones = 48
+local total_main_path_length = 482.482006073
+local spawner_version = "1"
 
 return {
-	version = str,
-	number_of_spawns = num,
-	path_markers = tbl,
-	zones = tbl_4,
-	cover_points = tbl_5,
-	num_main_zones = num_2,
-	position_lookup = tbl_6,
-	main_paths = tbl_2,
-	crossroads = tbl_3,
-	total_main_path_length = num_3
+	version = spawner_version,
+	number_of_spawns = number_of_spawns,
+	path_markers = path_markers,
+	zones = zones,
+	cover_points = cover_points,
+	num_main_zones = num_main_zones,
+	position_lookup = position_lookup,
+	main_paths = main_paths,
+	crossroads = crossroads,
+	total_main_path_length = total_main_path_length
 }

@@ -4,13 +4,13 @@ require("scripts/settings/crafting/crafting_data")
 
 BackendInterfaceCraftingBase = class(BackendInterfaceCraftingBase)
 
-local var_0_0, var_0_1, var_0_2 = dofile("scripts/settings/crafting/crafting_recipes")
+local crafting_recipes, crafting_recipes_by_name, crafting_recipes_lookup = dofile("scripts/settings/crafting/crafting_recipes")
 
 BackendInterfaceCraftingBase.init = function (self)
 	-- function 1
-	self._crafting_recipes = var_0_0
-	self._crafting_recipes_by_name = var_0_1
-	self._crafting_recipes_lookup = var_0_2
+	self._crafting_recipes = crafting_recipes
+	self._crafting_recipes_by_name = crafting_recipes_by_name
+	self._crafting_recipes_lookup = crafting_recipes_lookup
 end
 
 BackendInterfaceCraftingBase.get_recipes = function (self)
@@ -18,9 +18,9 @@ BackendInterfaceCraftingBase.get_recipes = function (self)
 	return self._crafting_recipes
 end
 
-BackendInterfaceCraftingBase.get_recipe_by_name = function (self, arg_3_1)
+BackendInterfaceCraftingBase.get_recipe_by_name = function (self, name)
 	-- function 3
-	return self._crafting_recipes_by_name[arg_3_1]
+	return self._crafting_recipes_by_name[name]
 end
 
 BackendInterfaceCraftingBase.get_recipes_lookup = function (self)
@@ -28,162 +28,173 @@ BackendInterfaceCraftingBase.get_recipes_lookup = function (self)
 	return self._crafting_recipes_lookup
 end
 
-BackendInterfaceCraftingBase._get_valid_recipe = function (self, arg_5_1, arg_5_2)
+BackendInterfaceCraftingBase._get_valid_recipe = function (self, item_backend_ids, recipe_override)
 	-- function 5
-	local _crafting_recipes = self._crafting_recipes
+	local crafting_recipes = self._crafting_recipes
 
-	if not arg_5_2 then
-		local var_5_1 = var_0_1[arg_5_2]
-		local var_5_2, var_5_3 = self[var_5_1.validation_function](self, var_5_1, arg_5_1)
+	if recipe_override then
+		local recipe = crafting_recipes_by_name[recipe_override]
+		local validation_function = recipe.validation_function
+		local valid, item_backend_ids_and_amounts = self[validation_function](self, recipe, item_backend_ids)
 
-		if not var_5_2 then
-			return var_5_1, var_5_3
+		if valid then
+			return recipe, item_backend_ids_and_amounts
 		end
 
 		return
 	end
 
-	for i = 1, #_crafting_recipes do
-		local var_5_4 = _crafting_recipes[i]
-		local var_5_5, var_5_6 = self[var_5_4.validation_function](self, var_5_4, arg_5_1)
+	for i = 1, #crafting_recipes do
+		local recipe = crafting_recipes[i]
+		local validation_function = recipe.validation_function
+		local valid, item_backend_ids_and_amounts = self[validation_function](self, recipe, item_backend_ids)
 
-		if not var_5_5 then
-			return var_5_4, var_5_6
+		if valid then
+			return recipe, item_backend_ids_and_amounts
 		end
 	end
 end
 
-local tbl = {}
+local valid_item_ids = {}
 
-BackendInterfaceCraftingBase.salvage_validation_func = function (arg_6_0, arg_6_1, arg_6_2)
+BackendInterfaceCraftingBase.salvage_validation_func = function (self, recipe, item_backend_ids)
 	-- function 6
-	local get_interface = Managers.backend:get_interface("items")
-	local salvagable_slot_types = arg_6_1.salvagable_slot_types
+	local backend_items = Managers.backend:get_interface("items")
+	local salvagable_slot_types = recipe.salvagable_slot_types
 
-	table.clear(tbl)
+	table.clear(valid_item_ids)
 
-	for i = 1, #arg_6_2 do
-		local var_6_2 = arg_6_2[i]
-		local get_item_masterlist_data = get_interface:get_item_masterlist_data(var_6_2)
-		local flag = not get_item_masterlist_data and get_item_masterlist_data.slot_type
+	for i = 1, #item_backend_ids do
+		local backend_id = item_backend_ids[i]
+		local masterlist_data = backend_items:get_item_masterlist_data(backend_id)
+		local slot_type = not not masterlist_data and not not masterlist_data.slot_type
 
-		if not (not flag and salvagable_slot_types[flag]) then
+		if slot_type and not salvagable_slot_types[slot_type] then
 			return false
 		end
 
-		if not get_item_masterlist_data then
-			tbl[#tbl + 1] = {
+		if masterlist_data then
+			valid_item_ids[#valid_item_ids + 1] = {
 				amount = 1,
-				backend_id = var_6_2
+				backend_id = backend_id
 			}
 		end
 	end
 
-	if #tbl == 0 then
+	if #valid_item_ids == 0 then
 		return false
 	end
 
-	return true, tbl
+	return true, valid_item_ids
 end
 
-BackendInterfaceCraftingBase.craft_validation_func = function (self, arg_7_1, arg_7_2)
+BackendInterfaceCraftingBase.craft_validation_func = function (self, recipe, item_backend_ids)
 	-- function 7
-	local ingredients = arg_7_1.ingredients
-	local clone = table.clone(arg_7_2)
-	local num = 0
+	local ingredients = recipe.ingredients
+	local cloned_backend_ids = table.clone(item_backend_ids)
+	local num_valid_ingredients = 0
 
-	table.clear(tbl)
+	table.clear(valid_item_ids)
 
 	for i = 1, #ingredients do
-		local var_7_3 = ingredients[i]
-		local amount = var_7_3.amount
-		local _validate_ingredient, var_7_6 = self:_validate_ingredient(var_7_3, clone)
-		local multiple_check_func = var_7_3.multiple_check_func
+		local ingredient = ingredients[i]
+		local amount = ingredient.amount
+		local valid, ingredient_ids = self:_validate_ingredient(ingredient, cloned_backend_ids)
+		local multiple_check_func = ingredient.multiple_check_func
 
-		if not _validate_ingredient and not multiple_check_func then
-			_validate_ingredient = self[multiple_check_func](self, var_7_6)
+		if valid and multiple_check_func then
+			valid = self[multiple_check_func](self, ingredient_ids)
 		end
 
-		if not _validate_ingredient then
-			num = num + 1
+		if valid then
+			num_valid_ingredients = num_valid_ingredients + 1
 
-			for i_2, v in ipairs(var_7_6) do
-				tbl[#tbl + 1] = v
+			for _, data in ipairs(ingredient_ids) do
+				valid_item_ids[#valid_item_ids + 1] = data
 			end
 		end
 	end
 
-	if not (num ~= #ingredients or not (#clone > 0)) then
+	if num_valid_ingredients ~= #ingredients or #cloned_backend_ids > 0 then
 		return false
 	end
 
-	return true, tbl
+	return true, valid_item_ids
 end
 
-local tbl_2 = {}
+local ingredient_ids = {}
 
-BackendInterfaceCraftingBase._validate_ingredient = function (arg_8_0, arg_8_1, arg_8_2)
+BackendInterfaceCraftingBase._validate_ingredient = function (self, ingredient, item_backend_ids)
 	-- function 8
-	local get_interface = Managers.backend:get_interface("items")
-	local name = arg_8_1.name
-	local catergory = arg_8_1.catergory
-	local has_variable = arg_8_1.has_variable
-	local amount = arg_8_1.amount
+	local backend_items = Managers.backend:get_interface("items")
+	local ingredient_name = ingredient.name
+	local ingredient_category = ingredient.catergory
+	local has_variable = ingredient.has_variable
+	local amount_2 = ingredient.amount
 
-	amount = amount or 1
+	if not amount_2 then
+		-- Nothing
+	end
 
-	local num = 0
+	amount_2 = 1
 
-	table.clear(tbl_2)
+	local amount = amount_2
 
-	for i = 1, #arg_8_2 do
+	::label_8_0::
+
+	local total_found_ingredients = 0
+
+	table.clear(ingredient_ids)
+
+	for i = 1, #item_backend_ids do
 		repeat
-			local var_8_6 = arg_8_2[i]
-			local get_item_masterlist_data = get_interface:get_item_masterlist_data(var_8_6)
-			local flag = not get_item_masterlist_data and get_item_masterlist_data.name
+			local item_backend_id = item_backend_ids[i]
+			local masterlist_data = backend_items:get_item_masterlist_data(item_backend_id)
+			local item_name = not not masterlist_data and not not masterlist_data.name
 
-			if not (not flag and not name and name == flag) then
+			if not item_name or ingredient_name and ingredient_name ~= item_name then
 				break
 			end
 
-			if not catergory then
-				local var_8_9 = CraftingData[catergory.category_table]
-				local var_8_10 = get_item_masterlist_data[catergory.item_value]
+			if ingredient_category then
+				local category_table = CraftingData[ingredient_category.category_table]
+				local item_value = masterlist_data[ingredient_category.item_value]
 
-				if not table.contains(var_8_9, var_8_10) then
+				if not table.contains(category_table, item_value) then
 					break
 				end
 			end
 
-			if not (not has_variable and item_data[has_variable]) then
+			if has_variable and not item_data[has_variable] then
 				break
 			end
 
-			local can_stack = get_item_masterlist_data.can_stack
-			local var_8_12
-			local get_item_amount = get_interface:get_item_amount(var_8_6)
+			local can_stack = masterlist_data.can_stack
+			local amount_from_item
+			local item_amount = backend_items:get_item_amount(item_backend_id)
 
-			if not (not can_stack and not (get_item_amount < amount)) then
+			if can_stack and item_amount < amount then
 				break
 			else
-				var_8_12 = can_stack or not 1 or amount
+				amount_from_item = (can_stack or not 1) and not not amount
 			end
 
-			num = num + var_8_12
-			tbl_2[#tbl_2 + 1] = {
-				backend_id = var_8_6,
-				amount = var_8_12
+			total_found_ingredients = total_found_ingredients + amount_from_item
+			ingredient_ids[#ingredient_ids + 1] = {
+				backend_id = item_backend_id,
+				amount = amount_from_item
 			}
 
-			if num == amount then
-				for j = 1, #tbl_2 do
-					local backend_id = tbl_2[j].backend_id
-					local find = table.find(arg_8_2, backend_id)
+			if total_found_ingredients == amount then
+				for j = 1, #ingredient_ids do
+					local data = ingredient_ids[j]
+					local backend_id = data.backend_id
+					local index = table.find(item_backend_ids, backend_id)
 
-					table.remove(arg_8_2, find)
+					table.remove(item_backend_ids, index)
 				end
 
-				return true, tbl_2
+				return true, ingredient_ids
 			end
 		until true
 	end
@@ -191,82 +202,82 @@ BackendInterfaceCraftingBase._validate_ingredient = function (arg_8_0, arg_8_1, 
 	return false
 end
 
-BackendInterfaceCraftingBase.weapon_skin_application_validation_func = function (arg_9_0, arg_9_1, arg_9_2)
+BackendInterfaceCraftingBase.weapon_skin_application_validation_func = function (self, recipe, item_backend_ids)
 	-- function 9
-	local ingredients = arg_9_1.ingredients
-	local get_interface = Managers.backend:get_interface("items")
-	local clone = table.clone(arg_9_2)
+	local ingredients = recipe.ingredients
+	local backend_items = Managers.backend:get_interface("items")
+	local cloned_backend_ids = table.clone(item_backend_ids)
 
-	table.clear(tbl)
+	table.clear(valid_item_ids)
 
-	local var_9_3
-	local var_9_4
+	local weapon_name, skin_name
 
-	for i = 1, #clone do
-		local var_9_5 = clone[i]
-		local get_item_from_id = get_interface:get_item_from_id(var_9_5)
+	for i = 1, #cloned_backend_ids do
+		local backend_id = cloned_backend_ids[i]
+		local item = backend_items:get_item_from_id(backend_id)
 
-		if not get_item_from_id then
+		if not item then
 			return false
 		end
 
-		local data = get_item_from_id.data
-		local slot_type = data.slot_type
+		local item_data = item.data
+		local item_slot_type = item_data.slot_type
 
-		if not table.find(CraftingData.weapon_slot_types, slot_type) then
-			var_9_3 = data.name
-			tbl[#tbl + 1] = {
+		if table.find(CraftingData.weapon_slot_types, item_slot_type) then
+			weapon_name = item_data.name
+			valid_item_ids[#valid_item_ids + 1] = {
 				amount = 1,
-				backend_id = var_9_5
+				backend_id = backend_id
 			}
 		end
 
-		if not table.find(CraftingData.weapon_skin_slot_types, slot_type) then
-			var_9_4 = get_item_from_id.skin
-			tbl[#tbl + 1] = {
-				skin_name = var_9_4
+		if table.find(CraftingData.weapon_skin_slot_types, item_slot_type) then
+			skin_name = item.skin
+			valid_item_ids[#valid_item_ids + 1] = {
+				skin_name = skin_name
 			}
 		end
 
-		if slot_type == "crafting_material" then
-			for i_2, v in ipairs(ingredients) do
-				if not (not v.name and not v.amount and v.name ~= get_item_from_id.ItemId) then
-					tbl[#tbl + 1] = {
-						backend_id = var_9_5,
-						amount = v.amount
+		if item_slot_type == "crafting_material" then
+			for _, ingredient in ipairs(ingredients) do
+				if ingredient.name and ingredient.amount and ingredient.name == item.ItemId then
+					valid_item_ids[#valid_item_ids + 1] = {
+						backend_id = backend_id,
+						amount = ingredient.amount
 					}
 				end
 			end
 		end
 	end
 
-	if #tbl ~= 2 then
+	if #valid_item_ids ~= 2 then
 		return false
 	end
 
-	if not (not var_9_3 and var_9_4) then
+	if not weapon_name or not skin_name then
 		return false
 	end
 
-	if not WeaponSkins.is_matching_skin(var_9_3, var_9_4) then
+	if not WeaponSkins.is_matching_skin(weapon_name, skin_name) then
 		return false
 	end
 
-	return true, tbl
+	return true, valid_item_ids
 end
 
-BackendInterfaceCraftingBase.check_same_item_func = function (arg_10_0, arg_10_1)
+BackendInterfaceCraftingBase.check_same_item_func = function (self, item_backend_ids)
 	-- function 10
-	local get_interface = Managers.backend:get_interface("items")
-	local var_10_1
+	local backend_items = Managers.backend:get_interface("items")
+	local name
 
-	for i, v in ipairs(arg_10_1) do
-		local backend_id = v.backend_id
-		local name = get_interface:get_item_masterlist_data(backend_id).name
+	for _, data in ipairs(item_backend_ids) do
+		local item_backend_id = data.backend_id
+		local masterlist_data = backend_items:get_item_masterlist_data(item_backend_id)
+		local item_name = masterlist_data.name
 
-		var_10_1 = var_10_1 or name
+		name = not not name or not not item_name
 
-		if var_10_1 ~= name then
+		if name ~= item_name then
 			return false
 		end
 	end
@@ -274,12 +285,14 @@ BackendInterfaceCraftingBase.check_same_item_func = function (arg_10_0, arg_10_1
 	return true
 end
 
-BackendInterfaceCraftingBase.check_has_skin = function (arg_11_0, arg_11_1)
+BackendInterfaceCraftingBase.check_has_skin = function (self, item_backend_ids)
 	-- function 11
-	local get_interface = Managers.backend:get_interface("items")
-	local backend_id = arg_11_1[1].backend_id
+	local backend_items = Managers.backend:get_interface("items")
+	local data = item_backend_ids[1]
+	local item_backend_id = data.backend_id
+	local item_data = backend_items:get_item_from_id(item_backend_id)
 
-	if not get_interface:get_item_from_id(backend_id).skin then
+	if item_data.skin then
 		return true
 	end
 

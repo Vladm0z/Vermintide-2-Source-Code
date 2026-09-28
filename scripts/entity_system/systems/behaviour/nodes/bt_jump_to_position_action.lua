@@ -2,151 +2,167 @@
 
 require("scripts/entity_system/systems/behaviour/nodes/bt_node")
 
-local function fn(self)
+local function randomize(event)
 	-- function 1
-	if type(self) == "table" then
-		return self[Math.random(1, #self)]
+	if type(event) == "table" then
+		return event[Math.random(1, #event)]
 	else
-		return self
+		return event
 	end
 end
 
 BTJumpToPositionAction = class(BTJumpToPositionAction, BTNode)
 
-BTJumpToPositionAction.init = function (arg_2_0, ...)
+BTJumpToPositionAction.init = function (self, ...)
 	-- function 2
-	BTJumpToPositionAction.super.init(arg_2_0, ...)
+	BTJumpToPositionAction.super.init(self, ...)
 end
 
 BTJumpToPositionAction.name = "BTJumpToPositionAction"
 
-BTJumpToPositionAction.enter = function (self, arg_3_1, arg_3_2, arg_3_3)
+BTJumpToPositionAction.enter = function (self, unit, blackboard, t)
 	-- function 3
-	arg_3_2.action = self._tree_node.action_data
+	local action = self._tree_node.action_data
 
-	Managers.state.debug:drawer({
+	blackboard.action = action
+
+	local drawer = Managers.state.debug:drawer({
 		mode = "retained",
 		name = "BTJumpToPositionAction"
-	}):reset()
+	})
+
+	drawer:reset()
 
 	local assert = assert
-	local jump_from_pos = arg_3_2.jump_from_pos
+	local jump_from_pos = blackboard.jump_from_pos
 
-	jump_from_pos = not jump_from_pos and arg_3_2.exit_pos
+	jump_from_pos = not not jump_from_pos and not not blackboard.exit_pos
 
 	assert(jump_from_pos, "BTJumpToPositionAction needs jump_from_pos and exit_pos defined in blackboard.")
 
-	local unbox = arg_3_2.jump_from_pos:unbox()
-	local unbox_2 = arg_3_2.exit_pos:unbox()
+	local entrance_pos = blackboard.jump_from_pos:unbox()
+	local exit_pos = blackboard.exit_pos:unbox()
 
-	arg_3_2.jump_entrance_pos = Vector3Box(unbox)
-	arg_3_2.jump_exit_pos = Vector3Box(unbox_2)
-	arg_3_2.jump_ledge_lookat_direction = Vector3Box(Vector3.normalize(Vector3.flat(unbox_2 - unbox)))
+	blackboard.jump_entrance_pos = Vector3Box(entrance_pos)
+	blackboard.jump_exit_pos = Vector3Box(exit_pos)
+	blackboard.jump_ledge_lookat_direction = Vector3Box(Vector3.normalize(Vector3.flat(exit_pos - entrance_pos)))
 
-	local locomotion_extension = arg_3_2.locomotion_extension
+	local locomotion_extension = blackboard.locomotion_extension
 
 	locomotion_extension:set_affected_by_gravity(false)
 	locomotion_extension:set_movement_type("snap_to_navmesh")
 	locomotion_extension:set_rotation_speed(10)
 
-	arg_3_2.jump_state = "moving_to_ledge"
+	blackboard.jump_state = "moving_to_ledge"
 end
 
-BTJumpToPositionAction.leave = function (arg_4_0, arg_4_1, arg_4_2, arg_4_3, arg_4_4, arg_4_5)
+BTJumpToPositionAction.leave = function (self, unit, blackboard, t, reason, destroy)
 	-- function 4
-	arg_4_2.jump_spline_ground = nil
-	arg_4_2.jump_spline_ledge = nil
-	arg_4_2.jump_entrance_pos = nil
-	arg_4_2.jump_state = nil
-	arg_4_2.is_jumping = nil
-	arg_4_2.jump_ledge_lookat_direction = nil
-	arg_4_2.jump_entrance_pos = nil
-	arg_4_2.jump_exit_pos = nil
-	arg_4_2.is_smart_objecting = nil
-	arg_4_2.jump_start_finished = nil
-	arg_4_2.jump_from_pos = nil
-	arg_4_2.exit_pos = nil
+	blackboard.jump_spline_ground = nil
+	blackboard.jump_spline_ledge = nil
+	blackboard.jump_entrance_pos = nil
+	blackboard.jump_state = nil
+	blackboard.is_jumping = nil
+	blackboard.jump_ledge_lookat_direction = nil
+	blackboard.jump_entrance_pos = nil
+	blackboard.jump_exit_pos = nil
+	blackboard.is_smart_objecting = nil
+	blackboard.jump_start_finished = nil
+	blackboard.jump_from_pos = nil
+	blackboard.exit_pos = nil
 
-	if not arg_4_5 then
-		LocomotionUtils.set_animation_driven_movement(arg_4_1, false, true)
-		LocomotionUtils.set_animation_translation_scale(arg_4_1, Vector3(1, 1, 1))
-		arg_4_2.locomotion_extension:set_movement_type("snap_to_navmesh")
+	if not destroy then
+		LocomotionUtils.set_animation_driven_movement(unit, false, true)
+		LocomotionUtils.set_animation_translation_scale(unit, Vector3(1, 1, 1))
+
+		local locomotion_extension = blackboard.locomotion_extension
+
+		locomotion_extension:set_movement_type("snap_to_navmesh")
 	end
 
-	arg_4_2.navigation_extension:set_enabled(true)
+	local navigation_extension = blackboard.navigation_extension
 
-	ScriptUnit.extension(arg_4_1, "hit_reaction_system").force_ragdoll_on_death = nil
+	navigation_extension:set_enabled(true)
+
+	local hit_reaction_extension = ScriptUnit.extension(unit, "hit_reaction_system")
+
+	hit_reaction_extension.force_ragdoll_on_death = nil
 end
 
-BTJumpToPositionAction.run = function (arg_5_0, arg_5_1, arg_5_2, arg_5_3, arg_5_4)
+BTJumpToPositionAction.run = function (self, unit, blackboard, t, dt)
 	-- function 5
-	local navigation_extension = arg_5_2.navigation_extension
-	local locomotion_extension = arg_5_2.locomotion_extension
-	local var_5_2 = POSITION_LOOKUP[arg_5_1]
-	local unbox = arg_5_2.jump_entrance_pos:unbox()
-	local unbox_2 = arg_5_2.jump_exit_pos:unbox()
+	local navigation_extension = blackboard.navigation_extension
+	local locomotion_extension = blackboard.locomotion_extension
+	local unit_position = POSITION_LOOKUP[unit]
+	local entrance_pos = blackboard.jump_entrance_pos:unbox()
+	local exit_pos = blackboard.jump_exit_pos:unbox()
 
-	if not (arg_5_2.jump_state ~= "moving_to_ledge" or not (Vector3.distance_squared(unbox, var_5_2) < 1)) then
-		LocomotionUtils.set_animation_driven_movement(arg_5_1, false)
+	if blackboard.jump_state == "moving_to_ledge" and Vector3.distance_squared(entrance_pos, unit_position) < 1 then
+		LocomotionUtils.set_animation_driven_movement(unit, false)
 		locomotion_extension:set_wanted_velocity(Vector3.zero())
 		locomotion_extension:set_movement_type("script_driven")
 		navigation_extension:set_enabled(false)
 
-		arg_5_2.is_jumping = true
-		arg_5_2.jump_state = "moving_towards_smartobject_entrance"
+		blackboard.is_jumping = true
+		blackboard.jump_state = "moving_towards_smartobject_entrance"
 	end
 
-	if arg_5_2.jump_state == "moving_towards_smartobject_entrance" then
-		local var_5_5 = unbox
-		local unbox_3 = arg_5_2.jump_ledge_lookat_direction:unbox()
-		local look = Quaternion.look(unbox_3)
-		local num = var_5_5 - var_5_2
-		local length = Vector3.length(num)
+	if blackboard.jump_state == "moving_towards_smartobject_entrance" then
+		local move_target = entrance_pos
+		local look_direction_wanted = blackboard.jump_ledge_lookat_direction:unbox()
+		local wanted_rotation = Quaternion.look(look_direction_wanted)
+		local vector_to_target = move_target - unit_position
+		local distance_to_target = Vector3.length(vector_to_target)
 
-		if length > 0.1 then
-			local run_speed = arg_5_2.breed.run_speed
+		if distance_to_target > 0.1 then
+			local speed = blackboard.breed.run_speed
 
-			if length < run_speed * arg_5_4 then
-				run_speed = length / arg_5_4
+			if distance_to_target < speed * dt then
+				speed = distance_to_target / dt
 			end
 
-			local num_2 = Vector3.normalize(num) * run_speed
+			local direction_to_target = Vector3.normalize(vector_to_target)
+			local wanted_velocity = direction_to_target * speed
 
-			locomotion_extension:set_wanted_velocity(num_2)
-			locomotion_extension:set_wanted_rotation(look)
+			locomotion_extension:set_wanted_velocity(wanted_velocity)
+			locomotion_extension:set_wanted_rotation(wanted_rotation)
 		else
-			locomotion_extension:teleport_to(var_5_5, look)
-			LocomotionUtils.set_animation_driven_movement(arg_5_1, true)
-			Managers.state.network:anim_event(arg_5_1, arg_5_2.action.jump_animation)
+			locomotion_extension:teleport_to(move_target, wanted_rotation)
+			LocomotionUtils.set_animation_driven_movement(unit, true)
+			Managers.state.network:anim_event(unit, blackboard.action.jump_animation)
 
-			ScriptUnit.extension(arg_5_1, "hit_reaction_system").force_ragdoll_on_death = true
+			local hit_reaction_extension = ScriptUnit.extension(unit, "hit_reaction_system")
 
-			local num_3 = unbox_2 - unbox
-			local num_4 = Vector3.length(Vector3.flat(num_3)) / arg_5_2.action.horizontal_length
-			local z = num_3.z
+			hit_reaction_extension.force_ragdoll_on_death = true
 
-			arg_5_2.jump_state = "waiting_to_reach_end"
+			local jump_vector = exit_pos - entrance_pos
+			local horizontal_length = Vector3.length(Vector3.flat(jump_vector))
+			local animation_distance = blackboard.action.horizontal_length
+			local forward_factor = horizontal_length / animation_distance
+			local height_factor = jump_vector.z
+
+			blackboard.jump_state = "waiting_to_reach_end"
 		end
 	end
 
-	if arg_5_2.jump_state ~= "waiting_to_reach_end" or not arg_5_2.jump_start_finished then
-		navigation_extension:set_navbot_position(unbox_2)
-		locomotion_extension:teleport_to(unbox_2)
-		Managers.state.network:anim_event(arg_5_1, arg_5_2.action.land_animation)
+	if blackboard.jump_state == "waiting_to_reach_end" and blackboard.jump_start_finished then
+		navigation_extension:set_navbot_position(exit_pos)
+		locomotion_extension:teleport_to(exit_pos)
+		Managers.state.network:anim_event(unit, blackboard.action.land_animation)
 
-		arg_5_2.spawn_to_running = true
-		arg_5_2.jump_state = "waiting_for_landing_finished"
+		blackboard.spawn_to_running = true
+		blackboard.jump_state = "waiting_for_landing_finished"
 	end
 
-	if arg_5_2.jump_state ~= "waiting_for_landing_finished" or not arg_5_2.landing_finished then
-		arg_5_2.jump_state = "done"
+	if blackboard.jump_state == "waiting_for_landing_finished" and blackboard.landing_finished then
+		blackboard.jump_state = "done"
 	end
 
-	if arg_5_2.jump_state == "done" then
-		arg_5_2.jump_state = "done_for_reals"
-	elseif arg_5_2.jump_state == "done_for_reals" then
-		arg_5_2.jump_state = "done_for_reals2"
-	elseif arg_5_2.jump_state == "done_for_reals2" then
+	if blackboard.jump_state == "done" then
+		blackboard.jump_state = "done_for_reals"
+	elseif blackboard.jump_state == "done_for_reals" then
+		blackboard.jump_state = "done_for_reals2"
+	elseif blackboard.jump_state == "done_for_reals2" then
 		return "done"
 	end
 

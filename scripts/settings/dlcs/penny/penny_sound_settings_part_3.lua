@@ -1,8 +1,8 @@
 -- chunkname: @scripts/settings/dlcs/penny/penny_sound_settings_part_3.lua
 
-local penny_part_3 = DLCSettings.penny_part_3
+local settings = DLCSettings.penny_part_3
 
-penny_part_3.dialogue_lookup = {
+settings.dialogue_lookup = {
 	"dialogues/generated/lookup_wood_elf_dlc_drachenfels_castle",
 	"dialogues/generated/lookup_empire_soldier_dlc_drachenfels_castle",
 	"dialogues/generated/lookup_bright_wizard_dlc_drachenfels_castle",
@@ -11,7 +11,7 @@ penny_part_3.dialogue_lookup = {
 	"dialogues/generated/lookup_hero_conversations_dlc_drachenfels_castle",
 	"dialogues/generated/lookup_npc_dlc_drachenfels_castle"
 }
-penny_part_3.dialogue_settings = {
+settings.dialogue_settings = {
 	dlc_castle = {
 		"dialogues/generated/wood_elf_dlc_drachenfels_castle",
 		"dialogues/generated/empire_soldier_dlc_drachenfels_castle",
@@ -23,7 +23,7 @@ penny_part_3.dialogue_settings = {
 		"dialogues/generated/nwd_conversations_dlc_drachenfels"
 	}
 }
-penny_part_3.network_sound_events = {
+settings.network_sound_events = {
 	"Play_sorcerer_boss_shoot",
 	"Play_sorcerer_boss_special_ability_start",
 	"Play_sorcerer_boss_special_windup_end",

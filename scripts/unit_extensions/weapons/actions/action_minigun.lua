@@ -2,26 +2,24 @@
 
 ActionMinigun = class(ActionMinigun, ActionRangedBase)
 
-local scripts_unit_extensions_default_player_unit_buffs_settings_buff_perk_names = require("scripts/unit_extensions/default_player_unit/buffs/settings/buff_perk_names")
-local num = 1
-local num_2 = 1.2
-local num_3 = 3
-local num_4 = 2
-local num_5 = 6
-local num_6 = 3
-local num_7 = 10
-local set_flow_variable = Unit.set_flow_variable
-local flow_event = Unit.flow_event
+local buff_perks = require("scripts/unit_extensions/default_player_unit/buffs/settings/buff_perk_names")
+local BOT_THREAT_REFRESH_TIME = 1
+local BOT_THREAT_DURATION = 1.2
+local BOT_THREAT_AREA_W, BOT_THREAT_AREA_H, BOT_THREAT_AREA_D = 3, 2, 6
+local MAX_SHOTS_PER_FRAME = 3
+local FREE_ABILITY_AMMO_TIME = 10
+local unit_set_flow_variable = Unit.set_flow_variable
+local unit_flow_event = Unit.flow_event
 
-ActionMinigun.init = function (self, arg_1_1, arg_1_2, arg_1_3, arg_1_4, arg_1_5, arg_1_6, arg_1_7, arg_1_8)
+ActionMinigun.init = function (self, world, item_name, is_server, owner_unit, damage_unit, first_person_unit, weapon_unit, weapon_system)
 	-- function 1
-	ActionMinigun.super.init(self, arg_1_1, arg_1_2, arg_1_3, arg_1_4, arg_1_5, arg_1_6, arg_1_7, arg_1_8)
+	ActionMinigun.super.init(self, world, item_name, is_server, owner_unit, damage_unit, first_person_unit, weapon_unit, weapon_system)
 
-	self.career_extension = ScriptUnit.extension(arg_1_4, "career_system")
-	self.buff_extension = ScriptUnit.extension(arg_1_4, "buff_system")
-	self.weapon_extension = ScriptUnit.extension(arg_1_7, "weapon_system")
+	self.career_extension = ScriptUnit.extension(owner_unit, "career_system")
+	self.buff_extension = ScriptUnit.extension(owner_unit, "buff_system")
+	self.weapon_extension = ScriptUnit.extension(weapon_unit, "weapon_system")
 	self.ai_bot_group_system = Managers.state.entity:system("ai_bot_group_system")
-	self._attack_speed_anim_var_3p = Unit.animation_find_variable(arg_1_4, "attack_speed")
+	self._attack_speed_anim_var_3p = Unit.animation_find_variable(owner_unit, "attack_speed")
 	self._time_to_shoot = 0
 	self._last_avoidance_t = 0
 	self._free_ammo_t = 0
@@ -29,54 +27,54 @@ ActionMinigun.init = function (self, arg_1_1, arg_1_2, arg_1_3, arg_1_4, arg_1_5
 	self._num_extra_shots = 0
 end
 
-ActionMinigun.client_owner_start_action = function (self, arg_2_1, arg_2_2, arg_2_3, arg_2_4, arg_2_5)
+ActionMinigun.client_owner_start_action = function (self, new_action, t, chain_action_data, power_level, action_init_data)
 	-- function 2
-	local _time_to_shoot = self._time_to_shoot
+	local old_time_to_shoot = self._time_to_shoot
 
-	ActionMinigun.super.client_owner_start_action(self, arg_2_1, arg_2_2, arg_2_3, arg_2_4)
+	ActionMinigun.super.client_owner_start_action(self, new_action, t, chain_action_data, power_level)
 
-	local visual_heat_generation = arg_2_1.visual_heat_generation
+	local visual_heat_generation = new_action.visual_heat_generation
 
-	visual_heat_generation = visual_heat_generation or 0
+	visual_heat_generation = not not visual_heat_generation or not not 0
 	self._visual_heat_generation = visual_heat_generation
 
-	local base_anim_speed = arg_2_1.base_anim_speed
+	local base_anim_speed = new_action.base_anim_speed
 
-	base_anim_speed = base_anim_speed or 1
+	base_anim_speed = not not base_anim_speed or not not 1
 	self._base_anim_speed = base_anim_speed
-	self._shot_cost = arg_2_1.ammo_usage
+	self._shot_cost = new_action.ammo_usage
 	self._calculated_attack_speed = false
-	self._initial_rounds_per_second = arg_2_1.initial_rounds_per_second
-	self._max_rps = arg_2_1.max_rps
-	self._rps_loss_per_second = arg_2_1.rps_loss_per_second
-	self._rps_gain_per_shot = arg_2_1.rps_gain_per_shot
-	self._projectiles_per_shot = arg_2_1.shot_count
-	self._use_ability_as_ammo = arg_2_1.use_ability_as_ammo
-	self._check_near_wall = arg_2_1.dont_shoot_near_wall
+	self._initial_rounds_per_second = new_action.initial_rounds_per_second
+	self._max_rps = new_action.max_rps
+	self._rps_loss_per_second = new_action.rps_loss_per_second
+	self._rps_gain_per_shot = new_action.rps_gain_per_shot
+	self._projectiles_per_shot = new_action.shot_count
+	self._use_ability_as_ammo = new_action.use_ability_as_ammo
+	self._check_near_wall = new_action.dont_shoot_near_wall
 	self._near_wall = false
 
-	local clamp = math.clamp(self.weapon_extension:get_custom_data("windup"), 0, 1)
+	local windup = math.clamp(self.weapon_extension:get_custom_data("windup"), 0, 1)
 
-	self._current_rps = math.lerp(self._initial_rounds_per_second, self._max_rps, clamp)
+	self._current_rps = math.lerp(self._initial_rounds_per_second, self._max_rps, windup)
 	self._attack_speed_mod = 1
 	self._ammo_expended = 0
 	self.extra_buff_shot = false
 
-	self:_update_attack_speed(arg_2_2)
+	self:_update_attack_speed(t)
 
-	self._time_to_shoot = math.max(_time_to_shoot, arg_2_2 - 1 / self._current_rps)
+	self._time_to_shoot = math.max(old_time_to_shoot, t - 1 / self._current_rps)
 	self._first_shot = true
 
-	local fire_loop_start = arg_2_1.fire_loop_start
+	local fire_loop_start = new_action.fire_loop_start
 
-	if not fire_loop_start then
+	if fire_loop_start then
 		self.first_person_extension:play_hud_sound_event(fire_loop_start)
 	end
 
 	self:_play_vo()
 end
 
-ActionMinigun._update_attack_speed = function (self, arg_3_1)
+ActionMinigun._update_attack_speed = function (self, t)
 	-- function 3
 	if not self._calculated_attack_speed then
 		self._attack_speed_mod = ActionUtils.get_action_time_scale(self.owner_unit, self.current_action)
@@ -87,81 +85,91 @@ ActionMinigun._update_attack_speed = function (self, arg_3_1)
 	end
 end
 
-ActionMinigun._waiting_to_shoot = function (self, arg_4_1, arg_4_2)
+ActionMinigun._waiting_to_shoot = function (self, dt, t)
 	-- function 4
 	self:_update_animation_speed(self._current_rps)
 
-	if not self._check_near_wall then
+	if self._check_near_wall then
 		self:_update_near_wall()
 	end
 
-	if not self._near_wall then
-		self._time_to_shoot = arg_4_2 - 1 / self._current_rps
-	elseif not (self._near_wall or not (arg_4_2 >= self._time_to_shoot)) then
-		self:_shoot(arg_4_1, arg_4_2)
+	if self._near_wall then
+		self._time_to_shoot = t - 1 / self._current_rps
+	elseif not self._near_wall and t >= self._time_to_shoot then
+		self:_shoot(dt, t)
 	end
 end
 
 ActionMinigun.get_projectile_start_position_rotation = function (self)
 	-- function 5
-	local node = Unit.node(self.weapon_unit, "a_barrel")
-	local world_rotation = Unit.world_rotation(self.weapon_unit, node)
-	local forward = Quaternion.forward(world_rotation)
-	local right = Quaternion.right(world_rotation)
-	local num = Unit.world_position(self.weapon_unit, node) + forward * 0.4 + right * 0.1
-	local camera_position_rotation, var_5_6 = self.first_person_extension:camera_position_rotation()
+	local fire_node = Unit.node(self.weapon_unit, "a_barrel")
+	local barrel_rot = Unit.world_rotation(self.weapon_unit, fire_node)
+	local barrel_dir = Quaternion.forward(barrel_rot)
+	local barrel_right = Quaternion.right(barrel_rot)
+	local from_position = Unit.world_position(self.weapon_unit, fire_node) + barrel_dir * 0.4 + barrel_right * 0.1
+	local camera_pos, camera_rot = self.first_person_extension:camera_position_rotation()
 	local physics_world = World.physics_world(self.world)
-	local forward_2 = Quaternion.forward(var_5_6)
-	local var_5_9 = Managers.state.side.side_by_unit[self.owner_unit]
-	local look_at_enemy_or_static_position = WeaponHelper:look_at_enemy_or_static_position(physics_world, camera_position_rotation, forward_2, var_5_9, 0.15, 100)
-	local direction_length, var_5_12 = Vector3.direction_length(look_at_enemy_or_static_position - num)
+	local aim_dir = Quaternion.forward(camera_rot)
+	local side = Managers.state.side.side_by_unit[self.owner_unit]
+	local aim_at_pos = WeaponHelper:look_at_enemy_or_static_position(physics_world, camera_pos, aim_dir, side, 0.15, 100)
+	local shoot_direction, distance = Vector3.direction_length(aim_at_pos - from_position)
 
-	if var_5_12 < 2 then
-		num = camera_position_rotation
-		direction_length = Vector3.normalize(look_at_enemy_or_static_position - num)
+	if distance < 2 then
+		from_position = camera_pos
+		shoot_direction = Vector3.normalize(aim_at_pos - from_position)
 	end
 
-	local look = Quaternion.look(direction_length)
+	local rotation = Quaternion.look(shoot_direction)
 
-	return num, look
+	return from_position, rotation
 end
 
-ActionMinigun._shoot = function (self, arg_6_1, arg_6_2)
+ActionMinigun._shoot = function (self, dt, t)
 	-- function 6
-	self:_update_attack_speed(arg_6_2)
-	self:_update_bot_avoidance(arg_6_2)
+	self:_update_attack_speed(t)
+	self:_update_bot_avoidance(t)
 
-	local var_6_0
+	local max_shots
 
-	if not self._use_ability_as_ammo then
-		local current_ability_cooldown, var_6_2 = self.career_extension:current_ability_cooldown(1)
+	if self._use_ability_as_ammo then
+		local current_cooldown, max_cooldown = self.career_extension:current_ability_cooldown(1)
+		local ability_charge = max_cooldown - current_cooldown
 
-		var_6_0 = (var_6_2 - current_ability_cooldown) / self:_buffed_shot_cost()
+		max_shots = ability_charge / self:_buffed_shot_cost()
 	else
-		var_6_0 = self.ammo_extension:ammo_count()
+		max_shots = self.ammo_extension:ammo_count()
 	end
 
-	local num = self._current_rps * self._attack_speed_mod
-	local min = math.min(num * (arg_6_2 - self._time_to_shoot), var_6_0)
-	local floor = math.floor(min)
+	local fire_rounds_per_second = self._current_rps * self._attack_speed_mod
+	local rounds_to_fire = math.min(fire_rounds_per_second * (t - self._time_to_shoot), max_shots)
+	local num_projectiles = math.floor(rounds_to_fire)
 
-	if floor > 0 then
-		local flag = true
-		local _projectiles_per_shot = self._projectiles_per_shot
-		local _update_extra_shots = self:_update_extra_shots(self.buff_extension, 0, flag)
+	if num_projectiles > 0 then
+		local override_extra_shots = true
+		local projectiles_per_shot = self._projectiles_per_shot
+		local total_shots = projectiles_per_shot
+		local _update_extra_shots = self:_update_extra_shots(self.buff_extension, 0, override_extra_shots)
 
-		_update_extra_shots = _update_extra_shots or 0
-
-		if _update_extra_shots > 0 then
-			self.extra_buff_shot = true
-			self._num_extra_shots = _update_extra_shots
-			_projectiles_per_shot = _projectiles_per_shot + _update_extra_shots
+		if not _update_extra_shots then
+			-- Nothing
 		end
 
-		self._current_rps = math.clamp(self._current_rps + self._rps_gain_per_shot * floor, self._initial_rounds_per_second, self._max_rps)
-		self._time_last_fired = arg_6_2
-		self._time_to_shoot = arg_6_2 - (min - floor) / num
-		self._num_projectiles_per_shot = floor * _projectiles_per_shot
+		_update_extra_shots = 0
+
+		local buff_shots = _update_extra_shots
+
+		::label_6_0::
+
+		if buff_shots > 0 then
+			self.extra_buff_shot = true
+			self._num_extra_shots = buff_shots
+			total_shots = total_shots + buff_shots
+		end
+
+		self._current_rps = math.clamp(self._current_rps + self._rps_gain_per_shot * num_projectiles, self._initial_rounds_per_second, self._max_rps)
+		self._time_last_fired = t
+		self._time_to_shoot = t - (rounds_to_fire - num_projectiles) / fire_rounds_per_second
+		self._num_projectiles_per_shot = num_projectiles * total_shots
 		self._state = "start_shooting"
 		self._calculated_attack_speed = false
 	end
@@ -169,116 +177,118 @@ ActionMinigun._shoot = function (self, arg_6_1, arg_6_2)
 	self._first_shot = false
 end
 
-ActionMinigun._shooting = function (self, arg_7_1, arg_7_2)
+ActionMinigun._shooting = function (self, t, action_ended)
 	-- function 7
-	local _num_projectiles_per_shot = self._num_projectiles_per_shot
-	local _num_projectiles_spawned = self._num_projectiles_spawned
-	local num = _num_projectiles_per_shot - _num_projectiles_spawned
+	local num_projectiles_per_shot = self._num_projectiles_per_shot
+	local num_projectiles_spawned = self._num_projectiles_spawned
+	local num_shots_this_frame = num_projectiles_per_shot - num_projectiles_spawned
 
-	if not arg_7_2 then
-		num = math.min(num, num_6)
+	if not action_ended then
+		num_shots_this_frame = math.min(num_shots_this_frame, MAX_SHOTS_PER_FRAME)
 	end
 
-	self._num_projectiles_spawned = self:shoot(num, _num_projectiles_spawned, _num_projectiles_per_shot)
+	self._num_projectiles_spawned = self:shoot(num_shots_this_frame, num_projectiles_spawned, num_projectiles_per_shot)
 
-	if _num_projectiles_per_shot - self._num_projectiles_spawned <= 0 then
-		self:_staggered_shot_done(arg_7_1)
+	if num_projectiles_per_shot - self._num_projectiles_spawned <= 0 then
+		self:_staggered_shot_done(t)
 	end
 end
 
-ActionMinigun._staggered_shot_done = function (self, arg_8_1)
+ActionMinigun._staggered_shot_done = function (self, t)
 	-- function 8
 	local current_action = self.current_action
 	local first_person_extension = self.first_person_extension
 
-	if not current_action.apply_recoil then
+	if current_action.apply_recoil then
 		first_person_extension:apply_recoil()
 	end
 
-	if not current_action.recoil_settings then
-		first_person_extension:play_camera_recoil(current_action.recoil_settings, arg_8_1)
+	local recoil_settings = current_action.recoil_settings
+
+	if recoil_settings then
+		first_person_extension:play_camera_recoil(current_action.recoil_settings, t)
 	end
 
-	flow_event(self.weapon_unit, "lua_finish_shooting")
+	unit_flow_event(self.weapon_unit, "lua_finish_shooting")
 
-	if not self:_has_ammo() then
+	if self:_has_ammo() then
 		self._state = "waiting_to_shoot"
 	else
 		self._state = "finished_shooting"
 	end
 end
 
-ActionMinigun._finished_shooting = function (self, arg_9_1)
+ActionMinigun._finished_shooting = function (self, t)
 	-- function 9
 	self.weapon_extension:stop_action("action_complete")
 end
 
-ActionMinigun.finish = function (self, arg_10_1)
+ActionMinigun.finish = function (self, reason)
 	-- function 10
-	if not self._near_wall then
+	if self._near_wall then
 		self.first_person_extension:animation_set_variable("disable_shooting", 0)
 		CharacterStateHelper.play_animation_event_first_person(self.first_person_extension, "near_wall_updated")
 	end
 
-	ActionMinigun.super.finish(self, arg_10_1)
+	ActionMinigun.super.finish(self, reason)
 
-	local _initial_rounds_per_second = self._initial_rounds_per_second
-	local num = self._max_rps - _initial_rounds_per_second
-	local clamp = math.clamp((self._current_rps - _initial_rounds_per_second) / num, 0, 1)
+	local initial_rps = self._initial_rounds_per_second
+	local rps_range = self._max_rps - initial_rps
+	local windup = math.clamp((self._current_rps - initial_rps) / rps_range, 0, 1)
 
-	self.weapon_extension:set_custom_data("windup", clamp)
+	self.weapon_extension:set_custom_data("windup", windup)
 end
 
-ActionMinigun.proc_extra_shot = function (arg_11_0, arg_11_1)
+ActionMinigun.proc_extra_shot = function (self, t)
 	-- function 11
 	return false
 end
 
-ActionMinigun.gen_num_shots = function (arg_12_0)
+ActionMinigun.gen_num_shots = function (self)
 	-- function 12
 	return 1, 1
 end
 
-ActionMinigun.apply_shot_cost = function (self, arg_13_1)
+ActionMinigun.apply_shot_cost = function (self, t)
 	-- function 13
 	if not self._use_ability_as_ammo then
-		return ActionMinigun.super.apply_shot_cost(self, arg_13_1)
+		return ActionMinigun.super.apply_shot_cost(self, t)
 	end
 
-	self:_fake_activate_ability(arg_13_1)
+	self:_fake_activate_ability(t)
 
-	local _should_consume_ammo = self:_should_consume_ammo(arg_13_1)
+	local should_consume_ammo = self:_should_consume_ammo(t)
 	local buff_extension = self.buff_extension
 
-	if not buff_extension and not buff_extension:has_buff_perk(scripts_unit_extensions_default_player_unit_buffs_settings_buff_perk_names.free_ability_engineer) then
-		_should_consume_ammo = false
+	if buff_extension and buff_extension:has_buff_perk(buff_perks.free_ability_engineer) then
+		should_consume_ammo = false
 	end
 
-	if not _should_consume_ammo then
-		local _num_projectiles_per_shot = self._num_projectiles_per_shot
+	if should_consume_ammo then
+		local projectiles_per_shot = self._num_projectiles_per_shot
 
-		if not self.extra_buff_shot then
-			_num_projectiles_per_shot = math.max(_num_projectiles_per_shot - self._num_extra_shots, 1)
+		if self.extra_buff_shot then
+			projectiles_per_shot = math.max(projectiles_per_shot - self._num_extra_shots, 1)
 		end
 
-		self.career_extension:reduce_activated_ability_cooldown(-self:_buffed_shot_cost() * _num_projectiles_per_shot)
+		self.career_extension:reduce_activated_ability_cooldown(-self:_buffed_shot_cost() * projectiles_per_shot)
 
 		self.extra_buff_shot = false
 		self._num_extra_shots = 0
 	end
 end
 
-ActionMinigun._should_consume_ammo = function (self, arg_14_1)
+ActionMinigun._should_consume_ammo = function (self, t)
 	-- function 14
-	return arg_14_1 > self._free_ammo_t
+	return t > self._free_ammo_t
 end
 
 ActionMinigun._has_ammo = function (self)
 	-- function 15
-	if not self._use_ability_as_ammo then
-		local current_ability_cooldown, var_15_1 = self.career_extension:current_ability_cooldown(1)
+	if self._use_ability_as_ammo then
+		local ability_cooldown, max_cooldown = self.career_extension:current_ability_cooldown(1)
 
-		return var_15_1 - current_ability_cooldown >= self:_buffed_shot_cost()
+		return max_cooldown - ability_cooldown >= self:_buffed_shot_cost()
 	else
 		return self.ammo_extension:ammo_count() > 0
 	end
@@ -287,75 +297,80 @@ end
 ActionMinigun._play_vo = function (self)
 	-- function 16
 	local owner_unit = self.owner_unit
-	local extension_input = ScriptUnit.extension_input(owner_unit, "dialogue_system")
-	local alloc_table = FrameTable.alloc_table()
+	local dialogue_input = ScriptUnit.extension_input(owner_unit, "dialogue_system")
+	local event_data = FrameTable.alloc_table()
 
-	extension_input:trigger_networked_dialogue_event("activate_ability", alloc_table)
+	dialogue_input:trigger_networked_dialogue_event("activate_ability", event_data)
 end
 
-ActionMinigun._play_vfx = function (arg_17_0)
+ActionMinigun._play_vfx = function (self)
 	-- function 17
 	return
 end
 
-ActionMinigun._update_animation_speed = function (self, arg_18_1)
+ActionMinigun._update_animation_speed = function (self, shots_per_second)
 	-- function 18
-	local num = self._base_anim_speed * arg_18_1
-	local clamp = math.clamp(num, NetworkConstants.animation_variable_float.min, NetworkConstants.animation_variable_float.max)
+	local anim_time_scale = self._base_anim_speed * shots_per_second
 
-	self.first_person_extension:animation_set_variable("attack_speed", clamp)
+	anim_time_scale = math.clamp(anim_time_scale, NetworkConstants.animation_variable_float.min, NetworkConstants.animation_variable_float.max)
 
-	if not self._attack_speed_anim_var_3p then
-		Managers.state.network:anim_set_variable_float(self.owner_unit, "attack_speed", clamp)
+	self.first_person_extension:animation_set_variable("attack_speed", anim_time_scale)
+
+	if self._attack_speed_anim_var_3p then
+		Managers.state.network:anim_set_variable_float(self.owner_unit, "attack_speed", anim_time_scale)
 	end
 end
 
-ActionMinigun._update_bot_avoidance = function (self, arg_19_1)
+ActionMinigun._update_bot_avoidance = function (self, t)
 	-- function 19
-	if not (self.is_bot or not (arg_19_1 > self._last_avoidance_t + num)) then
-		self._last_avoidance_t = arg_19_1
+	if not self.is_bot and t > self._last_avoidance_t + BOT_THREAT_REFRESH_TIME then
+		self._last_avoidance_t = t
 
-		local get_projectile_start_position_rotation, var_19_1 = self:get_projectile_start_position_rotation()
-		local calculate_oobb, var_19_3, var_19_4 = AiUtils.calculate_oobb(num_5, get_projectile_start_position_rotation, var_19_1, num_4, num_3)
+		local current_position, current_rotation = self:get_projectile_start_position_rotation()
+		local threat_position, threat_rotation, threat_size = AiUtils.calculate_oobb(BOT_THREAT_AREA_D, current_position, current_rotation, BOT_THREAT_AREA_H, BOT_THREAT_AREA_W)
 
-		if not self.is_server then
-			self.ai_bot_group_system:queue_aoe_threat(calculate_oobb, "oobb", var_19_4, var_19_3, num_2, "Minigun")
+		if self.is_server then
+			self.ai_bot_group_system:queue_aoe_threat(threat_position, "oobb", threat_size, threat_rotation, BOT_THREAT_DURATION, "Minigun")
 		else
-			Managers.state.network.network_transmit:send_rpc_server("rpc_bot_create_threat_oobb", calculate_oobb, var_19_3, var_19_4, num_2)
+			local network_manager = Managers.state.network
+			local network_transmit = network_manager.network_transmit
+
+			network_transmit:send_rpc_server("rpc_bot_create_threat_oobb", threat_position, threat_rotation, threat_size, BOT_THREAT_DURATION)
 		end
 	end
 end
 
-ActionMinigun._fake_activate_ability = function (self, arg_20_1)
+ActionMinigun._fake_activate_ability = function (self, t)
 	-- function 20
 	local buff_extension = self.buff_extension
 
-	if not buff_extension then
-		local num = 1
-		local flag = false
+	if buff_extension then
+		local ability_id = 1
+		local trigger_ability = false
 
 		self._ammo_expended = self._ammo_expended + self:_buffed_shot_cost() * self._num_projectiles_per_shot
 
-		if not buff_extension:has_buff_perk(scripts_unit_extensions_default_player_unit_buffs_settings_buff_perk_names.free_ability) then
-			self._free_ammo_t = arg_20_1 + num_7
-			flag = true
+		if buff_extension:has_buff_perk(buff_perks.free_ability) then
+			self._free_ammo_t = t + FREE_ABILITY_AMMO_TIME
+			trigger_ability = true
 		elseif self._ammo_expended > self.career_extension:get_max_ability_cooldown() / 2 then
 			self._ammo_expended = 0
-			flag = true
+			trigger_ability = true
 		end
 
-		if not flag then
-			buff_extension:trigger_procs("on_ability_activated", self.owner_unit, num)
+		if trigger_ability then
+			buff_extension:trigger_procs("on_ability_activated", self.owner_unit, ability_id)
 			buff_extension:trigger_procs("on_ability_cooldown_started")
 
-			local network = Managers.state.network
-			local unit_game_object_id = network:unit_game_object_id(self.owner_unit)
+			local network_manager = Managers.state.network
+			local unit_id = network_manager:unit_game_object_id(self.owner_unit)
+			local game = network_manager:game()
 
-			if not network:game() then
-				if not self.is_server then
-					network.network_transmit:send_rpc_clients("rpc_ability_activated", unit_game_object_id, num)
+			if game then
+				if self.is_server then
+					network_manager.network_transmit:send_rpc_clients("rpc_ability_activated", unit_id, ability_id)
 				else
-					network.network_transmit:send_rpc_server("rpc_ability_activated", unit_game_object_id, num)
+					network_manager.network_transmit:send_rpc_server("rpc_ability_activated", unit_id, ability_id)
 				end
 			end
 		end
@@ -365,26 +380,26 @@ end
 ActionMinigun._update_near_wall = function (self)
 	-- function 21
 	local first_person_extension = self.first_person_extension
-	local current_position = first_person_extension:current_position()
-	local current_rotation = first_person_extension:current_rotation()
-	local str = "filter_in_line_of_sight_no_players_no_enemies"
-	local num = 1.35
-	local forward = Quaternion.forward(current_rotation)
+	local camera_position = first_person_extension:current_position()
+	local camera_rotation = first_person_extension:current_rotation()
+	local raycast_filter = "filter_in_line_of_sight_no_players_no_enemies"
+	local near_wall_length = 1.35
+	local direction = Quaternion.forward(camera_rotation)
 	local physics_world = World.physics_world(self.world)
-	local raycast, var_21_8, var_21_9 = PhysicsWorld.raycast(physics_world, current_position, forward, num, "all", "types", "both", "closest", "collision_filter", str)
-	local flag = not var_21_9 and var_21_9 <= num
+	local _, _, distance = PhysicsWorld.raycast(physics_world, camera_position, direction, near_wall_length, "all", "types", "both", "closest", "collision_filter", raycast_filter)
+	local near_wall = not not distance and distance <= near_wall_length
 
-	if flag ~= self._near_wall then
-		self._near_wall = flag
+	if near_wall ~= self._near_wall then
+		self._near_wall = near_wall
 
-		local var_21_11 = first_person_extension
+		local var_21_0 = first_person_extension
 		local animation_set_variable = first_person_extension.animation_set_variable
-		local str_2 = "disable_shooting"
-		local flag_2
+		local str = "disable_shooting"
+		local flag
 
-		flag_2 = not flag and 1 and 0
+		flag = (not near_wall or not 1) and not not 0
 
-		animation_set_variable(var_21_11, str_2, flag_2)
+		animation_set_variable(var_21_0, str, flag)
 		CharacterStateHelper.play_animation_event_first_person(first_person_extension, "near_wall_updated")
 	end
 end
@@ -393,8 +408,10 @@ ActionMinigun._buffed_shot_cost = function (self)
 	-- function 22
 	local buff_extension = self.buff_extension
 
-	if not buff_extension then
-		return (buff_extension:apply_buffs_to_value(self._shot_cost, "ammo_used_multiplier"))
+	if buff_extension then
+		local shot_cost = buff_extension:apply_buffs_to_value(self._shot_cost, "ammo_used_multiplier")
+
+		return shot_cost
 	end
 
 	return self._shot_cost

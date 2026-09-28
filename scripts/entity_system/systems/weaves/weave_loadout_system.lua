@@ -5,23 +5,23 @@ require("scripts/unit_extensions/default_player_unit/weaves/player_husk_weave_lo
 
 WeaveLoadoutSystem = class(WeaveLoadoutSystem, ExtensionSystemBase)
 
-local tbl = {
+local RPCS = {
 	"rpc_add_weave_buffs"
 }
-local tbl_2 = {
+local extension_list = {
 	"PlayerUnitWeaveLoadoutExtension",
 	"PlayerHuskWeaveLoadoutExtension"
 }
 
-WeaveLoadoutSystem.init = function (self, arg_1_1, arg_1_2)
+WeaveLoadoutSystem.init = function (self, entity_system_creation_context, system_name)
 	-- function 1
-	WeaveLoadoutSystem.super.init(self, arg_1_1, arg_1_2, tbl_2)
+	WeaveLoadoutSystem.super.init(self, entity_system_creation_context, system_name, extension_list)
 
-	local network_event_delegate = arg_1_1.network_event_delegate
+	local network_event_delegate = entity_system_creation_context.network_event_delegate
 
 	self.network_event_delegate = network_event_delegate
 
-	network_event_delegate:register(self, unpack(tbl))
+	network_event_delegate:register(self, unpack(RPCS))
 end
 
 WeaveLoadoutSystem.destroy = function (self)
@@ -31,15 +31,16 @@ WeaveLoadoutSystem.destroy = function (self)
 	self.network_event_delegate = nil
 end
 
-WeaveLoadoutSystem.rpc_add_weave_buffs = function (self, arg_3_1, arg_3_2, arg_3_3, arg_3_4, arg_3_5, arg_3_6)
+WeaveLoadoutSystem.rpc_add_weave_buffs = function (self, channel_id, go_id, num_buffs, buff_ids, buff_data_type_ids, buff_values)
 	-- function 3
-	if not self.is_server then
-		local var_3_0 = CHANNEL_TO_PEER_ID[arg_3_1]
+	if self.is_server then
+		local peer_id = CHANNEL_TO_PEER_ID[channel_id]
 
-		self.network_transmit:send_rpc_clients_except("rpc_add_weave_buffs", var_3_0, arg_3_2, arg_3_3, arg_3_4, arg_3_5, arg_3_6)
+		self.network_transmit:send_rpc_clients_except("rpc_add_weave_buffs", peer_id, go_id, num_buffs, buff_ids, buff_data_type_ids, buff_values)
 	end
 
-	local unit = self.unit_storage:unit(arg_3_2)
+	local unit = self.unit_storage:unit(go_id)
+	local weave_loadout_extension = ScriptUnit.extension(unit, "weave_loadout_system")
 
-	ScriptUnit.extension(unit, "weave_loadout_system"):add_buffs(arg_3_3, arg_3_4, arg_3_5, arg_3_6)
+	weave_loadout_extension:add_buffs(num_buffs, buff_ids, buff_data_type_ids, buff_values)
 end

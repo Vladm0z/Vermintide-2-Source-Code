@@ -3,22 +3,30 @@
 local script_data = script_data
 local infinite_ammo = script_data.infinite_ammo
 
-infinite_ammo = infinite_ammo or Development.parameter("infinite_ammo")
+infinite_ammo = not not infinite_ammo or not not Development.parameter("infinite_ammo")
 script_data.infinite_ammo = infinite_ammo
 GenericAmmoUserExtension = class(GenericAmmoUserExtension)
 
-GenericAmmoUserExtension.init = function (self, arg_1_1, arg_1_2, arg_1_3)
+GenericAmmoUserExtension.init = function (self, extension_init_context, unit, extension_init_data)
 	-- function 1
-	self.unit = arg_1_2
-	self.owner_unit = arg_1_3.owner_unit
-	self.item_name = arg_1_3.item_name
+	self.unit = unit
+	self.owner_unit = extension_init_data.owner_unit
+	self.item_name = extension_init_data.item_name
 	self._is_server = Managers.player.is_server
 
-	local ammo_percent = arg_1_3.ammo_percent
+	local ammo_percent_2 = extension_init_data.ammo_percent
 
-	ammo_percent = ammo_percent or 1
+	if not ammo_percent_2 then
+		-- Nothing
+	end
 
-	local ammo_data = arg_1_3.ammo_data
+	ammo_percent_2 = 1
+
+	local ammo_percent = ammo_percent_2
+
+	::label_1_0::
+
+	local ammo_data = extension_init_data.ammo_data
 
 	self._reload_time = ammo_data.reload_time
 	self._override_reload_time = nil
@@ -26,7 +34,7 @@ GenericAmmoUserExtension.init = function (self, arg_1_1, arg_1_2, arg_1_3)
 	self._single_clip = ammo_data.single_clip
 	self._infinite_ammo = ammo_data.infinite_ammo
 
-	if not ammo_data.infinite_ammo then
+	if ammo_data.infinite_ammo then
 		ammo_percent = 1
 	end
 
@@ -35,14 +43,14 @@ GenericAmmoUserExtension.init = function (self, arg_1_1, arg_1_2, arg_1_3)
 
 	local ammo_per_clip = ammo_data.ammo_per_clip
 
-	ammo_per_clip = ammo_per_clip or self._max_ammo
+	ammo_per_clip = not not ammo_per_clip or not not self._max_ammo
 	self._ammo_per_clip = ammo_per_clip
 	self._ammo_per_reload = ammo_data.ammo_per_reload
 	self._starting_loaded_ammo = ammo_data.starting_loaded_ammo
 
 	local starting_loaded_ammo = ammo_data.starting_loaded_ammo
 
-	starting_loaded_ammo = starting_loaded_ammo or 0
+	starting_loaded_ammo = not not starting_loaded_ammo or not not 0
 	self._current_ammo = starting_loaded_ammo
 	self._starting_reserve_ammo = ammo_data.starting_reserve_ammo
 	self._original_max_ammo = self._max_ammo
@@ -51,12 +59,12 @@ GenericAmmoUserExtension.init = function (self, arg_1_1, arg_1_2, arg_1_3)
 
 	local ammo_immediately_available = ammo_data.ammo_immediately_available
 
-	ammo_immediately_available = ammo_immediately_available or false
+	ammo_immediately_available = not not ammo_immediately_available or not not false
 	self._ammo_immediately_available = ammo_immediately_available
 
 	local reload_on_ammo_pickup = ammo_data.reload_on_ammo_pickup
 
-	reload_on_ammo_pickup = reload_on_ammo_pickup or false
+	reload_on_ammo_pickup = not not reload_on_ammo_pickup or not not false
 	self._reload_on_ammo_pickup = reload_on_ammo_pickup
 	self._play_reload_anim_on_wield_reload = ammo_data.play_reload_anim_on_wield_reload
 	self._has_wield_reload_anim = ammo_data.has_wield_reload_anim
@@ -77,36 +85,36 @@ GenericAmmoUserExtension.init = function (self, arg_1_1, arg_1_2, arg_1_3)
 
 	local ammo_type = ammo_data.ammo_type
 
-	ammo_type = ammo_type or "default"
+	ammo_type = not not ammo_type or not not "default"
 	self._ammo_type = ammo_type
 
 	local ammo_kind = ammo_data.ammo_kind
 
-	ammo_kind = ammo_kind or "default"
+	ammo_kind = not not ammo_kind or not not "default"
 	self._ammo_kind = ammo_kind
 
 	local block_ammo_pickup = ammo_data.block_ammo_pickup
 
-	block_ammo_pickup = block_ammo_pickup or false
+	block_ammo_pickup = not not block_ammo_pickup or not not false
 	self._block_ammo_pickup = block_ammo_pickup
 	self._play_reload_animation = true
-	self._reload_event = arg_1_3.reload_event
-	self.pickup_reload_event_1p = arg_1_3.pickup_reload_event_1p
+	self._reload_event = extension_init_data.reload_event
+	self.pickup_reload_event_1p = extension_init_data.pickup_reload_event_1p
 
-	local last_reload_event = arg_1_3.last_reload_event
+	local last_reload_event = extension_init_data.last_reload_event
 
-	last_reload_event = last_reload_event or self._reload_event
+	last_reload_event = not not last_reload_event or not not self._reload_event
 	self._last_reload_event = last_reload_event
-	self._no_ammo_reload_event = arg_1_3.no_ammo_reload_event
-	self.slot_name = arg_1_3.slot_name
+	self._no_ammo_reload_event = extension_init_data.no_ammo_reload_event
+	self.slot_name = extension_init_data.slot_name
 
-	local has_extension = ScriptUnit.has_extension(self.owner_unit, "first_person_system")
+	local first_person_extension = ScriptUnit.has_extension(self.owner_unit, "first_person_system")
 
-	if not has_extension then
-		self.first_person_extension = has_extension
-		self.first_person_unit = has_extension:get_first_person_unit()
+	if first_person_extension then
+		self.first_person_extension = first_person_extension
+		self.first_person_unit = first_person_extension:get_first_person_unit()
 
-		if not ammo_data.should_update_anim_ammo then
+		if ammo_data.should_update_anim_ammo then
 			self._should_update_anim_ammo = true
 
 			assert(self.first_person_unit)
@@ -114,7 +122,7 @@ GenericAmmoUserExtension.init = function (self, arg_1_1, arg_1_2, arg_1_3)
 	end
 end
 
-GenericAmmoUserExtension.extensions_ready = function (self, arg_2_1, arg_2_2)
+GenericAmmoUserExtension.extensions_ready = function (self, world, unit)
 	-- function 2
 	self:apply_buffs()
 	self:_update_anim_ammo()
@@ -122,7 +130,7 @@ end
 
 GenericAmmoUserExtension.apply_buffs = function (self)
 	-- function 3
-	if not (self.slot_name == "slot_ranged" or self.slot_name ~= "slot_career_skill_weapon") then
+	if self.slot_name == "slot_ranged" or self.slot_name == "slot_career_skill_weapon" then
 		self:_apply_buffs()
 	end
 
@@ -131,32 +139,41 @@ end
 
 GenericAmmoUserExtension._apply_buffs = function (self)
 	-- function 4
-	local extension = ScriptUnit.extension(self.owner_unit, "buff_system")
+	local buff_extension = ScriptUnit.extension(self.owner_unit, "buff_system")
 
-	self.owner_buff_extension = extension
-	self._ammo_per_clip = math.ceil(extension:apply_buffs_to_value(self._original_ammo_per_clip, "clip_size"))
-	self._max_ammo = math.ceil(extension:apply_buffs_to_value(self._original_max_ammo, "total_ammo"))
+	self.owner_buff_extension = buff_extension
+	self._ammo_per_clip = math.ceil(buff_extension:apply_buffs_to_value(self._original_ammo_per_clip, "clip_size"))
+	self._max_ammo = math.ceil(buff_extension:apply_buffs_to_value(self._original_max_ammo, "total_ammo"))
 	self._start_ammo = math.round(self._original_ammo_percent * self._max_ammo)
 end
 
 GenericAmmoUserExtension.refresh_buffs = function (self)
 	-- function 5
-	local total_ammo_fraction = self:total_ammo_fraction()
+	local ammo_percent = self:total_ammo_fraction()
 
 	self:_apply_buffs()
 
-	local num = self._start_ammo - self._current_ammo
+	local max_available_ammo = self._start_ammo - self._current_ammo
 	local _available_ammo = self._available_ammo
 
-	_available_ammo = _available_ammo or math.huge
-	self._available_ammo = math.min(num, _available_ammo)
+	if not _available_ammo then
+		-- Nothing
+	end
 
-	if total_ammo_fraction == 1 then
+	_available_ammo = math.huge
+
+	local available_ammo = _available_ammo
+
+	::label_5_0::
+
+	self._available_ammo = math.min(max_available_ammo, available_ammo)
+
+	if ammo_percent == 1 then
 		self:reset()
 	end
 end
 
-GenericAmmoUserExtension.destroy = function (arg_6_0)
+GenericAmmoUserExtension.destroy = function (self)
 	-- function 6
 	return
 end
@@ -165,30 +182,52 @@ GenericAmmoUserExtension.reset = function (self)
 	-- function 7
 	local _initialized = self._initialized
 
-	_initialized = not _initialized and self:total_remaining_ammo() == 0
+	if _initialized then
+		-- Nothing
+	end
+
+	if self:total_remaining_ammo() ~= 0 then
+		_initialized = false
+
+		goto label_7_0
+	end
+
+	_initialized = true
+
+	local no_ammo = _initialized
+
+	::label_7_0::
 
 	local _starting_loaded_ammo = self._starting_loaded_ammo
 
-	_starting_loaded_ammo = _starting_loaded_ammo or self._start_ammo
+	if not _starting_loaded_ammo then
+		-- Nothing
+	end
 
-	if not self._ammo_immediately_available then
-		self._current_ammo = _starting_loaded_ammo
+	_starting_loaded_ammo = self._start_ammo
+
+	local start_ammo = _starting_loaded_ammo
+
+	::label_7_1::
+
+	if self._ammo_immediately_available then
+		self._current_ammo = start_ammo
 	else
-		self._current_ammo = math.min(self._ammo_per_clip, _starting_loaded_ammo)
+		self._current_ammo = math.min(self._ammo_per_clip, start_ammo)
 	end
 
 	local _starting_reserve_ammo = self._starting_reserve_ammo
 
-	_starting_reserve_ammo = _starting_reserve_ammo or self._start_ammo - self._current_ammo
+	_starting_reserve_ammo = not not _starting_reserve_ammo or not not (self._start_ammo - self._current_ammo)
 	self._available_ammo = _starting_reserve_ammo
 	self._shots_fired = 0
 
 	self:_update_anim_ammo()
 
-	if not _initialized then
-		local has_extension = ScriptUnit.has_extension(self.owner_unit, "inventory_system")
+	if no_ammo then
+		local inventory_extension = ScriptUnit.has_extension(self.owner_unit, "inventory_system")
 
-		if not (not has_extension and self.slot_name ~= has_extension:get_wielded_slot_name()) then
+		if inventory_extension and self.slot_name == inventory_extension:get_wielded_slot_name() then
 			self:instant_reload(true, self._no_ammo_reload_event)
 		end
 	end
@@ -196,12 +235,13 @@ GenericAmmoUserExtension.reset = function (self)
 	self._initialized = true
 end
 
-GenericAmmoUserExtension.update = function (self, arg_8_1, arg_8_2, arg_8_3, arg_8_4, arg_8_5)
+GenericAmmoUserExtension.update = function (self, unit, input, dt, context, t)
 	-- function 8
-	local owner = Managers.player:owner(self.owner_unit)
+	local player_manager = Managers.player
+	local owner_player = player_manager:owner(self.owner_unit)
 
-	if not self._queued_reload then
-		if not self:can_reload() then
+	if self._queued_reload then
+		if self:can_reload() then
 			self:start_reload(true)
 		end
 
@@ -210,13 +250,13 @@ GenericAmmoUserExtension.update = function (self, arg_8_1, arg_8_2, arg_8_3, arg
 
 	self:_check_ammo()
 
-	if not (not self._next_reload_time and not (arg_8_5 > self._next_reload_time)) then
+	if self._next_reload_time and t > self._next_reload_time then
 		if not self._start_reloading then
-			local owner_buff_extension = self.owner_buff_extension
-			local num = self._ammo_per_clip - self._current_ammo
+			local buff_extension = self.owner_buff_extension
+			local missing_in_clip = self._ammo_per_clip - self._current_ammo
 			local _ammo_per_reload
 
-			if not (not self._ammo_per_reload and not (num >= self._ammo_per_reload)) then
+			if self._ammo_per_reload and missing_in_clip >= self._ammo_per_reload then
 				_ammo_per_reload = self._ammo_per_reload
 
 				if not _ammo_per_reload then
@@ -224,60 +264,80 @@ GenericAmmoUserExtension.update = function (self, arg_8_1, arg_8_2, arg_8_3, arg
 				end
 			end
 
-			_ammo_per_reload = num
+			_ammo_per_reload = missing_in_clip
+
+			local reload_amount = _ammo_per_reload
 
 			::label_8_0::
 
-			local min = math.min(_ammo_per_reload, self._available_ammo)
+			reload_amount = math.min(reload_amount, self._available_ammo)
+			self._current_ammo = self._current_ammo + reload_amount
 
-			self._current_ammo = self._current_ammo + min
+			if buff_extension then
+				local no_ammo_consumed = buff_extension:has_buff_type("no_ammo_consumed")
+				local has_buff_type = buff_extension:has_buff_type("markus_huntsman_activated_ability")
 
-			if not owner_buff_extension then
-				local has_buff_type = owner_buff_extension:has_buff_type("no_ammo_consumed")
-				local has_buff_type_2 = owner_buff_extension:has_buff_type("markus_huntsman_activated_ability")
-
-				has_buff_type_2 = has_buff_type_2 or owner_buff_extension:has_buff_type("markus_huntsman_activated_ability_duration")
-
-				local has_buff_type_3 = owner_buff_extension:has_buff_type("twitch_no_overcharge_no_ammo_reloads")
-
-				if not (has_buff_type or has_buff_type_2 or has_buff_type_3) then
-					self._available_ammo = self._available_ammo - min
+				if not has_buff_type then
+					-- Nothing
 				end
 
-				owner_buff_extension:trigger_procs("on_reload")
+				has_buff_type = buff_extension:has_buff_type("markus_huntsman_activated_ability_duration")
+
+				local markus_huntsman_ability = has_buff_type
+
+				::label_8_1::
+
+				local twitch_no_ammo_reloads = buff_extension:has_buff_type("twitch_no_overcharge_no_ammo_reloads")
+
+				if not no_ammo_consumed and not markus_huntsman_ability and not twitch_no_ammo_reloads then
+					self._available_ammo = self._available_ammo - reload_amount
+				end
+
+				buff_extension:trigger_procs("on_reload")
 				self:_update_anim_ammo()
 			end
 
-			if not (LEVEL_EDITOR_TEST or self._is_server) then
-				local network_id = owner:network_id()
-				local local_player_id = owner:local_player_id()
-				local on_reload = NetworkLookup.proc_events.on_reload
+			if not LEVEL_EDITOR_TEST and not self._is_server then
+				local peer_id = owner_player:network_id()
+				local local_player_id = owner_player:local_player_id()
+				local event_id = NetworkLookup.proc_events.on_reload
 
-				Managers.state.network.network_transmit:send_rpc_server("rpc_proc_event", network_id, local_player_id, on_reload)
+				Managers.state.network.network_transmit:send_rpc_server("rpc_proc_event", peer_id, local_player_id, event_id)
 			end
 		end
 
 		self._start_reloading = nil
 
-		if not (not (self._ammo_per_clip - self._current_ammo > 0) or not (self._available_ammo > 0)) then
+		local num_missing = self._ammo_per_clip - self._current_ammo
+
+		if num_missing > 0 and self._available_ammo > 0 then
 			local _override_reload_time = self._override_reload_time
 
-			_override_reload_time = _override_reload_time or self._reload_time
-			self._override_reload_time = nil
-
-			local var_8_12 = _override_reload_time
-
-			if not self.owner_buff_extension then
-				_override_reload_time = self.owner_buff_extension:apply_buffs_to_value(_override_reload_time, "reload_speed")
+			if not _override_reload_time then
+				-- Nothing
 			end
 
-			self._next_reload_time = arg_8_5 + _override_reload_time
+			_override_reload_time = self._reload_time
 
-			if not self._play_reload_animation then
-				Unit.set_flow_variable(self.unit, "wwise_reload_speed", var_8_12 / _override_reload_time)
-				self:start_reload_animation(_override_reload_time)
+			local reload_time = _override_reload_time
 
-				if not owner.bot_player then
+			::label_8_2::
+
+			self._override_reload_time = nil
+
+			local unmodded_reload_time = reload_time
+
+			if self.owner_buff_extension then
+				reload_time = self.owner_buff_extension:apply_buffs_to_value(reload_time, "reload_speed")
+			end
+
+			self._next_reload_time = t + reload_time
+
+			if self._play_reload_animation then
+				Unit.set_flow_variable(self.unit, "wwise_reload_speed", unmodded_reload_time / reload_time)
+				self:start_reload_animation(reload_time)
+
+				if not owner_player.bot_player then
 					Managers.state.controller_features:add_effect("rumble", {
 						rumble_effect = "reload_start"
 					})
@@ -286,7 +346,7 @@ GenericAmmoUserExtension.update = function (self, arg_8_1, arg_8_2, arg_8_3, arg
 		else
 			self._next_reload_time = nil
 
-			if not owner.bot_player then
+			if not owner_player.bot_player then
 				Managers.state.controller_features:add_effect("rumble", {
 					rumble_effect = "reload_over"
 				})
@@ -306,35 +366,46 @@ GenericAmmoUserExtension._check_ammo = function (self)
 		if self._current_ammo == 0 then
 			local unit = self.unit
 			local owner_unit = self.owner_unit
-			local owner = Managers.player:owner(self.owner_unit)
-			local owner_buff_extension = self.owner_buff_extension
+			local player_manager = Managers.player
+			local owner_player = player_manager:owner(self.owner_unit)
+			local buff_extension = self.owner_buff_extension
 
-			if not (not owner and owner.bot_player) then
+			if not owner_player or not owner_player.bot_player then
 				Unit.flow_event(unit, "used_last_ammo_clip")
 
-				if not owner_buff_extension then
-					owner_buff_extension:trigger_procs("on_ammo_clip_used")
+				if buff_extension then
+					buff_extension:trigger_procs("on_ammo_clip_used")
 				end
 			end
 
 			if self._available_ammo == 0 then
-				if not self._destroy_when_out_of_ammo then
-					local extension = ScriptUnit.extension(owner_unit, "inventory_system")
-					local has_extension = ScriptUnit.has_extension(owner_unit, "status_system")
+				if self._destroy_when_out_of_ammo then
+					local inventory_extension = ScriptUnit.extension(owner_unit, "inventory_system")
+					local status_extension = ScriptUnit.has_extension(owner_unit, "status_system")
 
-					extension:destroy_item_by_name(self.slot_name, self.item_name, false, true)
+					inventory_extension:destroy_item_by_name(self.slot_name, self.item_name, false, true)
 
-					if not (not self._last_ammo_used_was_given and self._force_wield_previous_weapon_when_ammo_given and not self._wield_previous_weapon_when_destroyed and not has_extension and CharacterStateHelper.pack_master_status(has_extension) or extension:get_wielded_slot_name() ~= self.slot_name) then
-						extension:wield_previous_weapon()
+					if (not self._last_ammo_used_was_given or not self._force_wield_previous_weapon_when_ammo_given) and self._wield_previous_weapon_when_destroyed then
+						local grabbed_by_packmaster = not not status_extension and not not CharacterStateHelper.pack_master_status(status_extension)
+
+						if not grabbed_by_packmaster then
+							local wielded_slot = inventory_extension:get_wielded_slot_name()
+
+							if wielded_slot == self.slot_name then
+								inventory_extension:wield_previous_weapon()
+							end
+						end
 					end
-				elseif not self._unwield_when_out_of_ammo then
-					ScriptUnit.extension(owner_unit, "inventory_system"):wield_previous_weapon()
-				else
-					local unit_owner = Managers.player:unit_owner(owner_unit)
-					local item_name = self.item_name
-					local var_9_8 = POSITION_LOOKUP[owner_unit]
+				elseif self._unwield_when_out_of_ammo then
+					local inventory_extension = ScriptUnit.extension(owner_unit, "inventory_system")
 
-					Managers.telemetry_events:player_ammo_depleted(unit_owner, item_name, var_9_8)
+					inventory_extension:wield_previous_weapon()
+				else
+					local player = Managers.player:unit_owner(owner_unit)
+					local item_name = self.item_name
+					local position = POSITION_LOOKUP[owner_unit]
+
+					Managers.telemetry_events:player_ammo_depleted(player, item_name, position)
 				end
 
 				Unit.flow_event(unit, "used_last_ammo")
@@ -343,100 +414,107 @@ GenericAmmoUserExtension._check_ammo = function (self)
 	end
 end
 
-GenericAmmoUserExtension.start_reload_animation = function (self, arg_10_1)
+GenericAmmoUserExtension.start_reload_animation = function (self, reload_time)
 	-- function 10
-	if not self.pickup_reload_event_1p then
+	if self.pickup_reload_event_1p then
 		local pickup_reload_event_1p = self.pickup_reload_event_1p
 
-		if not self.first_person_extension then
-			self.first_person_extension:animation_event(pickup_reload_event_1p)
-		end
-	end
-
-	local _reload_event = self._reload_event
-	local num = self._ammo_per_clip - self._current_ammo
-
-	if not self.reloaded_from_zero_ammo then
-		self.reloaded_from_zero_ammo = nil
-
-		if not self._no_ammo_reload_event then
-			_reload_event = self._no_ammo_reload_event
-		end
-	elseif not (num == 1 or self._available_ammo ~= 1) then
-		_reload_event = self._last_reload_event
-	end
-
-	_reload_event = self._override_reload_anim or _reload_event
-	self._override_reload_anim = nil
-
-	if not _reload_event then
-		if not self.first_person_extension then
+		if self.first_person_extension then
 			local first_person_extension = self.first_person_extension
 
-			first_person_extension:animation_set_variable("reload_time", arg_10_1)
-			first_person_extension:animation_event(_reload_event)
+			first_person_extension:animation_event(pickup_reload_event_1p)
+		end
+	end
+
+	local reload_event = self._reload_event
+	local num_missing = self._ammo_per_clip - self._current_ammo
+
+	if self.reloaded_from_zero_ammo then
+		self.reloaded_from_zero_ammo = nil
+
+		if self._no_ammo_reload_event then
+			reload_event = self._no_ammo_reload_event
+		end
+	elseif num_missing == 1 or self._available_ammo == 1 then
+		reload_event = self._last_reload_event
+	end
+
+	reload_event = not not self._override_reload_anim or not not reload_event
+	self._override_reload_anim = nil
+
+	if reload_event then
+		if self.first_person_extension then
+			local first_person_extension = self.first_person_extension
+
+			first_person_extension:animation_set_variable("reload_time", reload_time)
+			first_person_extension:animation_event(reload_event)
 		end
 
 		local go_id = Managers.state.unit_storage:go_id(self.owner_unit)
-		local var_10_5 = NetworkLookup.anims[_reload_event]
+		local event_id = NetworkLookup.anims[reload_event]
 
 		if not LEVEL_EDITOR_TEST then
-			if not self._is_server then
-				Managers.state.network.network_transmit:send_rpc_clients("rpc_anim_event", var_10_5, go_id)
+			if self._is_server then
+				Managers.state.network.network_transmit:send_rpc_clients("rpc_anim_event", event_id, go_id)
 			else
-				Managers.state.network.network_transmit:send_rpc_server("rpc_anim_event", var_10_5, go_id)
+				Managers.state.network.network_transmit:send_rpc_server("rpc_anim_event", event_id, go_id)
 			end
 		end
 	end
 end
 
-GenericAmmoUserExtension.remove_ammo = function (self, arg_11_1)
+GenericAmmoUserExtension.remove_ammo = function (self, amount)
 	-- function 11
-	if not (self._available_ammo ~= 0 or self._current_ammo ~= 0) then
+	if self._available_ammo == 0 and self._current_ammo == 0 then
 		return
 	end
 
-	self._available_ammo = math.floor(math.clamp(self._available_ammo - arg_11_1, 0, self._max_ammo))
+	local floored_ammo = math.floor(math.clamp(self._available_ammo - amount, 0, self._max_ammo))
+
+	self._available_ammo = floored_ammo
 end
 
-GenericAmmoUserExtension.add_ammo = function (self, arg_12_1)
+GenericAmmoUserExtension.add_ammo = function (self, amount)
 	-- function 12
-	if not self._destroy_when_out_of_ammo then
+	if self._destroy_when_out_of_ammo then
 		return
 	end
 
-	if not (self._available_ammo ~= 0 or self._current_ammo ~= 0) then
+	if self._available_ammo == 0 and self._current_ammo == 0 then
 		self.reloaded_from_zero_ammo = true
 
-		local unit_owner = Managers.player:unit_owner(self.owner_unit)
+		local player = Managers.player:unit_owner(self.owner_unit)
 		local item_name = self.item_name
-		local var_12_2 = POSITION_LOOKUP[self.owner_unit]
+		local position = POSITION_LOOKUP[self.owner_unit]
 
-		Managers.telemetry_events:player_ammo_refilled(unit_owner, item_name, var_12_2)
+		Managers.telemetry_events:player_ammo_refilled(player, item_name, position)
 
-		local owner_buff_extension = self.owner_buff_extension
+		local buff_extension = self.owner_buff_extension
 
-		if not owner_buff_extension then
-			owner_buff_extension:trigger_procs("on_gained_ammo_from_no_ammo")
+		if buff_extension then
+			buff_extension:trigger_procs("on_gained_ammo_from_no_ammo")
 
-			if not (LEVEL_EDITOR_TEST or self._is_server) then
-				local owner = Managers.player:owner(self.owner_unit)
-				local network_id = owner:network_id()
-				local local_player_id = owner:local_player_id()
-				local on_gained_ammo_from_no_ammo = NetworkLookup.proc_events.on_gained_ammo_from_no_ammo
+			if not LEVEL_EDITOR_TEST and not self._is_server then
+				local player_manager = Managers.player
+				local owner_player = player_manager:owner(self.owner_unit)
+				local peer_id = owner_player:network_id()
+				local local_player_id = owner_player:local_player_id()
+				local event_id = NetworkLookup.proc_events.on_gained_ammo_from_no_ammo
 
-				Managers.state.network.network_transmit:send_rpc_server("rpc_proc_event", network_id, local_player_id, on_gained_ammo_from_no_ammo)
+				Managers.state.network.network_transmit:send_rpc_server("rpc_proc_event", peer_id, local_player_id, event_id)
 			end
 		end
 	end
 
-	local var_12_8
+	local floored_ammo
 
-	if not arg_12_1 and not self._ammo_immediately_available then
-		self._current_ammo = math.floor(math.clamp(self._current_ammo + arg_12_1, 0, self._max_ammo))
-	elseif not arg_12_1 then
-		self._available_ammo = math.floor(math.clamp(self._available_ammo + arg_12_1, 0, self._max_ammo - (self._current_ammo - self._shots_fired)))
-	elseif not self._ammo_immediately_available then
+	if amount and self._ammo_immediately_available then
+		floored_ammo = math.floor(math.clamp(self._current_ammo + amount, 0, self._max_ammo))
+		self._current_ammo = floored_ammo
+	elseif amount then
+		floored_ammo = math.floor(math.clamp(self._available_ammo + amount, 0, self._max_ammo - (self._current_ammo - self._shots_fired)))
+		self._available_ammo = floored_ammo
+	elseif self._ammo_immediately_available then
 		self._current_ammo = self._max_ammo
 	else
 		self._available_ammo = self._max_ammo - (self._current_ammo - self._shots_fired)
@@ -445,122 +523,126 @@ GenericAmmoUserExtension.add_ammo = function (self, arg_12_1)
 	self:_update_anim_ammo()
 end
 
-GenericAmmoUserExtension.add_ammo_to_reserve = function (self, arg_13_1)
+GenericAmmoUserExtension.add_ammo_to_reserve = function (self, amount)
 	-- function 13
-	local _available_ammo = self._available_ammo
+	local prev_available_ammo = self._available_ammo
 
-	if not self._ammo_immediately_available then
-		self._current_ammo = math.min(self._max_ammo, self._current_ammo + arg_13_1)
+	if self._ammo_immediately_available then
+		self._current_ammo = math.min(self._max_ammo, self._current_ammo + amount)
 	else
 		local ammo_count = self:ammo_count()
 
-		self._available_ammo = math.min(self._max_ammo - ammo_count, self._available_ammo + arg_13_1)
+		self._available_ammo = math.min(self._max_ammo - ammo_count, self._available_ammo + amount)
 	end
 
-	self.owner_buff_extension:trigger_procs("on_gained_ammo_from_no_ammo")
+	local buff_extension = self.owner_buff_extension
 
-	if not (LEVEL_EDITOR_TEST or self._is_server) then
-		local owner = Managers.player:owner(self.owner_unit)
-		local network_id = owner:network_id()
-		local local_player_id = owner:local_player_id()
-		local on_gained_ammo_from_no_ammo = NetworkLookup.proc_events.on_gained_ammo_from_no_ammo
+	buff_extension:trigger_procs("on_gained_ammo_from_no_ammo")
 
-		Managers.state.network.network_transmit:send_rpc_server("rpc_proc_event", network_id, local_player_id, on_gained_ammo_from_no_ammo)
+	if not LEVEL_EDITOR_TEST and not self._is_server then
+		local player_manager = Managers.player
+		local owner_player = player_manager:owner(self.owner_unit)
+		local peer_id = owner_player:network_id()
+		local local_player_id = owner_player:local_player_id()
+		local event_id = NetworkLookup.proc_events.on_gained_ammo_from_no_ammo
+
+		Managers.state.network.network_transmit:send_rpc_server("rpc_proc_event", peer_id, local_player_id, event_id)
 	end
 
-	if _available_ammo ~= 0 or self._current_ammo ~= 0 or not self:can_reload() then
+	if prev_available_ammo == 0 and self._current_ammo == 0 and self:can_reload() then
 		self._queued_reload = true
 	end
 
 	self:_update_anim_ammo()
 end
 
-GenericAmmoUserExtension.use_ammo = function (self, arg_14_1, arg_14_2, arg_14_3)
+GenericAmmoUserExtension.use_ammo = function (self, ammo_used, given, check_ammo_immediately)
 	-- function 14
-	local owner_buff_extension = self.owner_buff_extension
-	local flag = false
+	local buff_extension = self.owner_buff_extension
+	local infinite_ammo = false
 
-	if not owner_buff_extension then
-		local num = math.round(arg_14_1 * owner_buff_extension:apply_buffs_to_value(1, "ammo_used_multiplier")) - arg_14_1
+	if buff_extension then
+		local extra_ammo_used = math.round(ammo_used * buff_extension:apply_buffs_to_value(1, "ammo_used_multiplier")) - ammo_used
 
-		if arg_14_1 + num > self:ammo_count() then
-			local num_2 = arg_14_1 + num - self:ammo_count()
+		if ammo_used + extra_ammo_used > self:ammo_count() then
+			local spillover = ammo_used + extra_ammo_used - self:ammo_count()
 
-			num = num - num_2
+			extra_ammo_used = extra_ammo_used - spillover
 
-			self:remove_ammo(math.min(num_2), self:remaining_ammo())
+			self:remove_ammo(math.min(spillover), self:remaining_ammo())
 		end
 
-		arg_14_1 = arg_14_1 + num
-		flag = owner_buff_extension:has_buff_perk("infinite_ammo")
+		ammo_used = ammo_used + extra_ammo_used
+		infinite_ammo = buff_extension:has_buff_perk("infinite_ammo")
 	end
 
-	if not ((flag or not self._infinite_ammo) and self.slot_name ~= "slot_ranged") then
-		arg_14_1 = 0
+	if (infinite_ammo or self._infinite_ammo) and self.slot_name == "slot_ranged" then
+		ammo_used = 0
 	end
 
-	if not script_data.infinite_ammo then
-		arg_14_1 = 0
+	if script_data.infinite_ammo then
+		ammo_used = 0
 	end
 
-	self._shots_fired = self._shots_fired + arg_14_1
+	self._shots_fired = self._shots_fired + ammo_used
 
-	if not owner_buff_extension then
-		owner_buff_extension:trigger_procs("on_ammo_used", self, arg_14_1)
+	if buff_extension then
+		buff_extension:trigger_procs("on_ammo_used", self, ammo_used)
 		Managers.state.achievement:trigger_event("ammo_used", self.owner_unit)
 
 		if self:total_remaining_ammo() == 0 then
-			owner_buff_extension:trigger_procs("on_last_ammo_used")
+			buff_extension:trigger_procs("on_last_ammo_used")
 		end
 
-		if not (LEVEL_EDITOR_TEST or self._is_server) then
-			local owner = Managers.player:owner(self.owner_unit)
-			local network_id = owner:network_id()
-			local local_player_id = owner:local_player_id()
-			local on_ammo_used = NetworkLookup.proc_events.on_ammo_used
+		if not LEVEL_EDITOR_TEST and not self._is_server then
+			local player_manager = Managers.player
+			local owner_player = player_manager:owner(self.owner_unit)
+			local peer_id = owner_player:network_id()
+			local local_player_id = owner_player:local_player_id()
+			local event_id = NetworkLookup.proc_events.on_ammo_used
 
-			Managers.state.network.network_transmit:send_rpc_server("rpc_proc_event", network_id, local_player_id, on_ammo_used)
+			Managers.state.network.network_transmit:send_rpc_server("rpc_proc_event", peer_id, local_player_id, event_id)
 
 			if self:total_remaining_ammo() == 0 then
-				local on_last_ammo_used = NetworkLookup.proc_events.on_last_ammo_used
+				event_id = NetworkLookup.proc_events.on_last_ammo_used
 
-				Managers.state.network.network_transmit:send_rpc_server("rpc_proc_event", network_id, local_player_id, on_last_ammo_used)
+				Managers.state.network.network_transmit:send_rpc_server("rpc_proc_event", peer_id, local_player_id, event_id)
 			end
 		end
 	end
 
 	self:_update_anim_ammo()
 
-	self._last_ammo_used_was_given = arg_14_2
+	self._last_ammo_used_was_given = given
 
 	fassert(self:ammo_count() >= 0, "ammo went below 0")
 
-	if not arg_14_3 then
+	if check_ammo_immediately then
 		self:_check_ammo()
 	end
 end
 
-GenericAmmoUserExtension.start_reload = function (self, arg_15_1, arg_15_2, arg_15_3)
+GenericAmmoUserExtension.start_reload = function (self, play_reload_animation, override_reload_time, override_reload_anim)
 	-- function 15
 	fassert(self:can_reload(), "Tried to start reloading without being able to reload")
 	fassert(self._next_reload_time == nil, "next_reload_time is nil")
 
-	self._override_reload_time = arg_15_2
+	self._override_reload_time = override_reload_time
 	self._start_reloading = true
 	self._next_reload_time = 0
-	self._play_reload_animation = arg_15_1
-	self._override_reload_anim = arg_15_3
+	self._play_reload_animation = play_reload_animation
+	self._override_reload_anim = override_reload_anim
 
-	local extension_input = ScriptUnit.extension_input(self.owner_unit, "dialogue_system")
-	local alloc_table = FrameTable.alloc_table()
+	local dialogue_input = ScriptUnit.extension_input(self.owner_unit, "dialogue_system")
+	local event_data = FrameTable.alloc_table()
 	local item_name = self.item_name
 
-	item_name = item_name or "UNKNOWN ITEM"
-	alloc_table.item_name = item_name
+	item_name = not not item_name or not not "UNKNOWN ITEM"
+	event_data.item_name = item_name
 
-	local str = "reload_started"
+	local event_name = "reload_started"
 
-	extension_input:trigger_dialogue_event(str, alloc_table)
+	dialogue_input:trigger_dialogue_event(event_name, event_data)
 end
 
 GenericAmmoUserExtension.abort_reload = function (self)
@@ -572,8 +654,10 @@ GenericAmmoUserExtension.abort_reload = function (self)
 
 	Unit.flow_event(self.unit, "stop_reload_sound")
 
-	if not self.first_person_extension then
-		self.first_person_extension:show_first_person_ammo(false)
+	if self.first_person_extension then
+		local first_person_extension = self.first_person_extension
+
+		first_person_extension:show_first_person_ammo(false)
 	end
 end
 
@@ -604,15 +688,15 @@ end
 
 GenericAmmoUserExtension.can_reload = function (self)
 	-- function 22
-	if not self:is_reloading() then
+	if self:is_reloading() then
 		return false
 	end
 
-	if not self:clip_full() then
+	if self:clip_full() then
 		return false
 	end
 
-	if self._infinite_ammo or not script_data.infinite_ammo then
+	if self._infinite_ammo or script_data.infinite_ammo then
 		return true
 	end
 
@@ -678,7 +762,7 @@ GenericAmmoUserExtension.infinite_ammo = function (self)
 	-- function 34
 	local _infinite_ammo = self._infinite_ammo
 
-	_infinite_ammo = _infinite_ammo or script_data.infinite_ammo
+	_infinite_ammo = not not _infinite_ammo or not not script_data.infinite_ammo
 
 	return _infinite_ammo
 end
@@ -693,43 +777,43 @@ GenericAmmoUserExtension.ammo_blocked = function (self)
 	return self._block_ammo_pickup
 end
 
-GenericAmmoUserExtension.add_ammo_to_clip = function (self, arg_37_1)
+GenericAmmoUserExtension.add_ammo_to_clip = function (self, ammo)
 	-- function 37
-	self._current_ammo = self._current_ammo + arg_37_1
+	self._current_ammo = self._current_ammo + ammo
 
 	self:_update_anim_ammo()
 end
 
-GenericAmmoUserExtension.instant_reload = function (self, arg_38_1, arg_38_2)
+GenericAmmoUserExtension.instant_reload = function (self, bonus_ammo, reload_anim_event)
 	-- function 38
-	if not arg_38_1 then
-		local num = self._ammo_per_clip - self._current_ammo
-		local min = math.min(num, self._available_ammo)
+	if not bonus_ammo then
+		local reload_amount = self._ammo_per_clip - self._current_ammo
 
-		self._current_ammo = self._current_ammo + min
-		self._available_ammo = self._available_ammo - min
+		reload_amount = math.min(reload_amount, self._available_ammo)
+		self._current_ammo = self._current_ammo + reload_amount
+		self._available_ammo = self._available_ammo - reload_amount
 		self._shots_fired = 0
 	else
 		self._current_ammo = self._ammo_per_clip
 		self._shots_fired = 0
 	end
 
-	if not arg_38_2 then
-		if not self.first_person_extension then
+	if reload_anim_event then
+		if self.first_person_extension then
 			local first_person_extension = self.first_person_extension
 
 			first_person_extension:animation_set_variable("reload_time", math.huge)
-			first_person_extension:animation_event(arg_38_2)
+			first_person_extension:animation_event(reload_anim_event)
 		end
 
 		if not LEVEL_EDITOR_TEST then
 			local go_id = Managers.state.unit_storage:go_id(self.owner_unit)
-			local var_38_4 = NetworkLookup.anims[arg_38_2]
+			local event_id = NetworkLookup.anims[reload_anim_event]
 
-			if not self.is_server then
-				Managers.state.network.network_transmit:send_rpc_clients("rpc_anim_event", var_38_4, go_id)
+			if self.is_server then
+				Managers.state.network.network_transmit:send_rpc_clients("rpc_anim_event", event_id, go_id)
 			else
-				Managers.state.network.network_transmit:send_rpc_server("rpc_anim_event", var_38_4, go_id)
+				Managers.state.network.network_transmit:send_rpc_server("rpc_anim_event", event_id, go_id)
 			end
 		end
 	end
@@ -743,7 +827,7 @@ GenericAmmoUserExtension._update_anim_ammo = function (self)
 		return
 	end
 
-	local num = self._current_ammo - self._shots_fired
+	local value = self._current_ammo - self._shots_fired
 
-	self.first_person_extension:animation_set_variable("ammo_count", num, true)
+	self.first_person_extension:animation_set_variable("ammo_count", value, true)
 end

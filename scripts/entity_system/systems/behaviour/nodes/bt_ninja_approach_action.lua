@@ -5,270 +5,299 @@ require("scripts/entity_system/systems/behaviour/nodes/bt_node")
 BTNinjaApproachAction = class(BTNinjaApproachAction, BTNode)
 BTNinjaApproachAction.name = "BTNinjaApproachAction"
 
-local POSITION_LOOKUP = POSITION_LOOKUP
+local position_lookup = POSITION_LOOKUP
 local script_data = script_data
 
-BTNinjaApproachAction.init = function (arg_1_0, ...)
+BTNinjaApproachAction.init = function (self, ...)
 	-- function 1
-	BTNinjaApproachAction.super.init(arg_1_0, ...)
+	BTNinjaApproachAction.super.init(self, ...)
 end
 
-local function fn(arg_2_0, arg_2_1, arg_2_2)
+local function debug3d(unit, text, color_name)
 	-- function 2
-	if not script_data.debug_ai_movement then
-		Debug.world_sticky_text(POSITION_LOOKUP[arg_2_0], arg_2_1, arg_2_2)
+	if script_data.debug_ai_movement then
+		Debug.world_sticky_text(position_lookup[unit], text, color_name)
 	end
 end
 
-BTNinjaApproachAction.enter = function (self, arg_3_1, arg_3_2, arg_3_3)
+BTNinjaApproachAction.enter = function (self, unit, blackboard, t)
 	-- function 3
-	arg_3_2.action = self._tree_node.action_data
+	local action = self._tree_node.action_data
 
-	local approach_fail_into_vanish_timer = arg_3_2.approach_fail_into_vanish_timer
+	blackboard.action = action
 
-	approach_fail_into_vanish_timer = approach_fail_into_vanish_timer or 0
-	arg_3_2.approach_fail_into_vanish_timer = approach_fail_into_vanish_timer
+	local approach_fail_into_vanish_timer = blackboard.approach_fail_into_vanish_timer
 
-	LocomotionUtils.set_animation_driven_movement(arg_3_1, false)
-	Managers.state.network:anim_event(arg_3_1, "move_fwd")
+	approach_fail_into_vanish_timer = not not approach_fail_into_vanish_timer or not not 0
+	blackboard.approach_fail_into_vanish_timer = approach_fail_into_vanish_timer
 
-	arg_3_2.move_state = "moving"
+	LocomotionUtils.set_animation_driven_movement(unit, false)
 
-	arg_3_2.navigation_extension:set_max_speed(arg_3_2.breed.run_speed)
+	local network_manager = Managers.state.network
 
-	arg_3_2.target_skulk_time = arg_3_3 + 0.5
+	network_manager:anim_event(unit, "move_fwd")
 
-	local skulk_jump_tries = arg_3_2.skulk_jump_tries
+	blackboard.move_state = "moving"
 
-	skulk_jump_tries = skulk_jump_tries or 0
-	arg_3_2.skulk_jump_tries = skulk_jump_tries
+	local navigation_extension = blackboard.navigation_extension
 
-	local locomotion_extension = arg_3_2.locomotion_extension
+	navigation_extension:set_max_speed(blackboard.breed.run_speed)
 
-	locomotion_extension:set_rotation_speed(5)
-	locomotion_extension:set_movement_type("snap_to_navmesh")
+	blackboard.target_skulk_time = t + 0.5
 
-	if not arg_3_2.skulk_data then
-		arg_3_2.skulk_data = {}
+	local skulk_jump_tries = blackboard.skulk_jump_tries
+
+	skulk_jump_tries = not not skulk_jump_tries or not not 0
+	blackboard.skulk_jump_tries = skulk_jump_tries
+
+	local locomotion = blackboard.locomotion_extension
+
+	locomotion:set_rotation_speed(5)
+	locomotion:set_movement_type("snap_to_navmesh")
+
+	if not blackboard.skulk_data then
+		blackboard.skulk_data = {}
 	end
 
-	local skulk_data = arg_3_2.skulk_data
+	local skulk_data = blackboard.skulk_data
 
-	if not arg_3_2.need_to_recalculate_skulk_pos then
-		arg_3_2.need_to_recalculate_skulk_pos = false
-		arg_3_2.skulk_pos = nil
+	if blackboard.need_to_recalculate_skulk_pos then
+		blackboard.need_to_recalculate_skulk_pos = false
+		blackboard.skulk_pos = nil
 	end
 
-	if not arg_3_2.skulk_pos then
-		local unbox = arg_3_2.skulk_pos:unbox()
+	if blackboard.skulk_pos then
+		local pos = blackboard.skulk_pos:unbox()
+		local ai_navigation = blackboard.navigation_extension
 
-		arg_3_2.navigation_extension:move_to(unbox)
+		ai_navigation:move_to(pos)
 	end
 end
 
-BTNinjaApproachAction.leave = function (arg_4_0, arg_4_1, arg_4_2, arg_4_3, arg_4_4, arg_4_5)
+BTNinjaApproachAction.leave = function (self, unit, blackboard, t, reason, destroy)
 	-- function 4
-	if arg_4_4 == "aborted" then
+	if reason == "aborted" then
 		-- Nothing
 	end
 
-	arg_4_2.in_los = nil
-	arg_4_2.action = nil
-	arg_4_2.ninja_approach = false
+	blackboard.in_los = nil
+	blackboard.action = nil
+	blackboard.ninja_approach = false
 
-	local get_default_breed_move_speed = AiUtils.get_default_breed_move_speed(arg_4_1, arg_4_2)
+	local default_move_speed = AiUtils.get_default_breed_move_speed(unit, blackboard)
+	local navigation_extension = blackboard.navigation_extension
 
-	arg_4_2.navigation_extension:set_max_speed(get_default_breed_move_speed)
+	navigation_extension:set_max_speed(default_move_speed)
 end
 
-local tbl = {}
-local num = 8
+local test_points = {}
+local close_range = 8
 
-BTNinjaApproachAction.run = function (self, arg_5_1, arg_5_2, arg_5_3, arg_5_4)
+BTNinjaApproachAction.run = function (self, unit, blackboard, t, dt)
 	-- function 5
-	local locomotion_extension = arg_5_2.locomotion_extension
-	local breed = arg_5_2.breed
+	local locomotion = blackboard.locomotion_extension
+	local breed = blackboard.breed
 
-	if not POSITION_LOOKUP[arg_5_2.target_unit] then
-		arg_5_2.target_unit = nil
+	if not position_lookup[blackboard.target_unit] then
+		blackboard.target_unit = nil
 
 		return "failed"
 	end
 
-	if not arg_5_2.high_ground_opportunity then
-		arg_5_2.high_ground_opportunity = false
+	if blackboard.high_ground_opportunity then
+		blackboard.high_ground_opportunity = false
 
 		return "done"
 	end
 
-	if not (arg_5_2.skulk_pos or self:get_new_goal(arg_5_1, arg_5_2, arg_5_3)) then
-		aiprint("Tried to find new GR skulk goal, but could not")
+	if not blackboard.skulk_pos then
+		local success = self:get_new_goal(unit, blackboard, t)
 
-		if not self:get_fallback_goal(arg_5_1, arg_5_2) then
-			fn(arg_5_1, "SkulkAction 2nd fallback goal 1", "green")
-			aiprint("Failed finding 2nd fallback goal")
+		if not success then
+			aiprint("Tried to find new GR skulk goal, but could not")
 
-			return "done"
+			local success = self:get_fallback_goal(unit, blackboard)
+
+			if not success then
+				debug3d(unit, "SkulkAction 2nd fallback goal 1", "green")
+				aiprint("Failed finding 2nd fallback goal")
+
+				return "done"
+			end
 		end
 	end
 
-	if not arg_5_2.dodging then
-		if arg_5_3 > arg_5_2.dodging then
-			arg_5_2.dodging = nil
+	if blackboard.dodging then
+		if t > blackboard.dodging then
+			blackboard.dodging = nil
 		end
 	else
-		local in_crosshairs_dodge, var_5_3 = LocomotionUtils.in_crosshairs_dodge(arg_5_1, arg_5_2, arg_5_3, 1, nil)
+		local dodge_vec, aim_vec = LocomotionUtils.in_crosshairs_dodge(unit, blackboard, t, 1, nil)
 
-		if not in_crosshairs_dodge then
-			self:dodge(arg_5_1, arg_5_2, in_crosshairs_dodge, var_5_3)
-			Managers.state.network:anim_event(arg_5_1, "dodge_run_fwd")
+		if dodge_vec then
+			self:dodge(unit, blackboard, dodge_vec, aim_vec)
 
-			arg_5_2.dodging = arg_5_3 + 1.5
+			local network_manager = Managers.state.network
+
+			network_manager:anim_event(unit, "dodge_run_fwd")
+
+			blackboard.dodging = t + 1.5
 		end
 	end
 
-	if not arg_5_2.dodge_pos then
-		local unbox = arg_5_2.dodge_pos:unbox()
-		local var_5_5 = POSITION_LOOKUP[arg_5_1]
-		local num_2 = unbox - var_5_5
-		local local_rotation = Unit.local_rotation(arg_5_1, 0)
-		local forward = Quaternion.forward(local_rotation)
+	if blackboard.dodge_pos then
+		local dodge_pos = blackboard.dodge_pos:unbox()
+		local pos = position_lookup[unit]
+		local to_dodge_pos = dodge_pos - pos
+		local rot = Unit.local_rotation(unit, 0)
+		local forward = Quaternion.forward(rot)
+		local dot = Vector3.dot(Vector3.normalize(to_dodge_pos), forward)
 
-		if Vector3.dot(Vector3.normalize(num_2), forward) < 0 then
-			arg_5_2.dodge_pos = nil
+		if dot < 0 then
+			blackboard.dodge_pos = nil
 
-			arg_5_2.navigation_extension:move_to(arg_5_2.skulk_pos:unbox())
+			local ai_navigation = blackboard.navigation_extension
 
-			if not script_data.debug_ai_movement then
-				QuickDrawerStay:line(var_5_5, var_5_5 + Vector3(0, 0, 3), Color(255, 0, 0))
+			ai_navigation:move_to(blackboard.skulk_pos:unbox())
+
+			if script_data.debug_ai_movement then
+				QuickDrawerStay:line(pos, pos + Vector3(0, 0, 3), Color(255, 0, 0))
 			end
 		else
 			return "running"
 		end
 	end
 
-	if not (not arg_5_2.urgency_to_engage and not (arg_5_2.urgency_to_engage > 0)) then
-		local var_5_9 = POSITION_LOOKUP[arg_5_2.target_unit]
-		local var_5_10 = POSITION_LOOKUP[arg_5_1]
-		local distance = Vector3.distance(var_5_10, var_5_9)
-		local flag = distance < num
+	if not blackboard.urgency_to_engage or blackboard.urgency_to_engage > 0 then
+		local enemy_pos = POSITION_LOOKUP[blackboard.target_unit]
+		local pos = position_lookup[unit]
+		local dist = Vector3.distance(pos, enemy_pos)
+		local in_close_range = dist < close_range
 
-		if arg_5_3 > arg_5_2.target_skulk_time or not flag then
-			if distance < breed.jump_range then
-				arg_5_2.skulk_jump_tries = arg_5_2.skulk_jump_tries + 1
+		if t > blackboard.target_skulk_time or in_close_range then
+			if dist < breed.jump_range then
+				blackboard.skulk_jump_tries = blackboard.skulk_jump_tries + 1
 
-				if not (math.random() < arg_5_2.skulk_jump_tries / 3) then
-					arg_5_2.in_los = self:check_free_los(arg_5_1, arg_5_2)
+				local rand = math.random()
+				local growing_aggro = rand < blackboard.skulk_jump_tries / 3
 
-					if not arg_5_2.in_los then
-						arg_5_2.skulk_jump_tries = 0
+				if growing_aggro then
+					blackboard.in_los = self:check_free_los(unit, blackboard)
 
-						fn(arg_5_1, "SkulkAction in LOS done!", "green")
+					if blackboard.in_los then
+						blackboard.skulk_jump_tries = 0
+
+						debug3d(unit, "SkulkAction in LOS done!", "green")
 
 						return "done"
 					else
-						self:get_new_goal(arg_5_1, arg_5_2, arg_5_3)
+						self:get_new_goal(unit, blackboard, t)
 					end
 
-					fn(arg_5_1, "ApproachAction not in LOS", "yellow")
-				elseif not flag then
-					arg_5_2.in_los = self:check_free_los(arg_5_1, arg_5_2)
+					debug3d(unit, "ApproachAction not in LOS", "yellow")
+				elseif in_close_range then
+					blackboard.in_los = self:check_free_los(unit, blackboard)
 
-					if not arg_5_2.in_los then
-						arg_5_2.skulk_jump_tries = 0
+					if blackboard.in_los then
+						blackboard.skulk_jump_tries = 0
 
-						fn(arg_5_1, "SkulkAction in LOS(close) done!", "green")
+						debug3d(unit, "SkulkAction in LOS(close) done!", "green")
 
 						return "done"
 					end
 
-					self:get_new_goal(arg_5_1, arg_5_2, arg_5_3)
-					fn(arg_5_1, "SkulkAction not in LOS", "yellow")
+					self:get_new_goal(unit, blackboard, t)
+					debug3d(unit, "SkulkAction not in LOS", "yellow")
 				end
 			else
 				aiprint("Too far away to crazy jump (A)")
 			end
 
-			arg_5_2.target_skulk_time = arg_5_3 + 0.5
+			blackboard.target_skulk_time = t + 0.5
 
-			aiprint("skulk try failed:", arg_5_2.skulk_jump_tries)
+			aiprint("skulk try failed:", blackboard.skulk_jump_tries)
 		end
 
-		if not arg_5_2.no_path_found then
-			if arg_5_3 > arg_5_2.approach_fail_into_vanish_timer then
-				arg_5_2.approach_fail_into_vanish_timer = arg_5_3 + 10
-				arg_5_2.ninja_vanish = true
-			elseif not arg_5_2.skulk_around_dir then
-				arg_5_2.skulk_around_dir = -arg_5_2.skulk_around_dir
+		if blackboard.no_path_found then
+			if t > blackboard.approach_fail_into_vanish_timer then
+				blackboard.approach_fail_into_vanish_timer = t + 10
+				blackboard.ninja_vanish = true
+			elseif blackboard.skulk_around_dir then
+				blackboard.skulk_around_dir = -blackboard.skulk_around_dir
 
-				self:get_new_goal(arg_5_1, arg_5_2, arg_5_3)
+				self:get_new_goal(unit, blackboard, t)
 			end
 		end
 	else
 		aiprint("GR no urgency to engage")
 	end
 
-	if not script_data.debug_ai_movement then
-		self:debug(arg_5_1, arg_5_2)
+	if script_data.debug_ai_movement then
+		self:debug(unit, blackboard)
 	end
 
-	locomotion_extension:set_wanted_rotation(nil)
+	locomotion:set_wanted_rotation(nil)
 
-	local unbox_2 = arg_5_2.skulk_pos:unbox()
+	local goal_pos = blackboard.skulk_pos:unbox()
+	local dist_to_goal = Vector3.distance(goal_pos, position_lookup[unit])
 
-	if Vector3.distance(unbox_2, POSITION_LOOKUP[arg_5_1]) < 3 then
-		if not self:get_new_goal(arg_5_1, arg_5_2, arg_5_3) then
+	if dist_to_goal < 3 then
+		local success = self:get_new_goal(unit, blackboard, t)
+
+		if success then
 			return "running"
 		end
 
-		arg_5_2.in_los = self:check_free_los(arg_5_1, arg_5_2)
+		blackboard.in_los = self:check_free_los(unit, blackboard)
 
-		if not (not arg_5_2.in_los and not (arg_5_3 > arg_5_2.target_skulk_time)) then
-			fn(arg_5_1, "SkulkAction in LOS first fallback", "green")
+		if blackboard.in_los and t > blackboard.target_skulk_time then
+			debug3d(unit, "SkulkAction in LOS first fallback", "green")
 
 			return "done"
 		end
 
-		if not self:get_fallback_goal(arg_5_1, arg_5_2) then
+		local success = self:get_fallback_goal(unit, blackboard)
+
+		if not success then
 			aiprint("Failed finding 2nd fallback goal")
-			fn(arg_5_1, "SkulkAction in LOS 2nd fallback goal 2", "green")
+			debug3d(unit, "SkulkAction in LOS 2nd fallback goal 2", "green")
 
 			return "done"
 		end
 	end
 
-	if arg_5_2.navigation_extension:number_failed_move_attempts() > 1 then
-		arg_5_2.ninja_vanish = true
+	if blackboard.navigation_extension:number_failed_move_attempts() > 1 then
+		blackboard.ninja_vanish = true
 
 		return "running"
 	end
 
-	local _nav_bot = arg_5_2.navigation_extension._nav_bot
-	local is_path_recomputation_needed = GwNavBot.is_path_recomputation_needed(_nav_bot)
-	local is_following_path = GwNavBot.is_following_path(_nav_bot)
-	local is_computing_new_path = GwNavBot.is_computing_new_path(_nav_bot)
+	local bot = blackboard.navigation_extension._nav_bot
+	local is_path_recomputation_needed = GwNavBot.is_path_recomputation_needed(bot)
+	local is_path_found = GwNavBot.is_following_path(bot)
+	local is_computing_path = GwNavBot.is_computing_new_path(bot)
 
-	if not arg_5_2.waiting_for_path then
-		if not is_following_path then
-			arg_5_2.waiting_for_path = nil
+	if blackboard.waiting_for_path then
+		if is_path_found then
+			blackboard.waiting_for_path = nil
 
-			if arg_5_2.move_state == "idle" then
-				arg_5_2.move_state = "moving"
+			if blackboard.move_state == "idle" then
+				blackboard.move_state = "moving"
 
-				Managers.state.network:anim_event(arg_5_1, "move_fwd")
+				Managers.state.network:anim_event(unit, "move_fwd")
 			end
-		elseif arg_5_2.move_state ~= "idle" then
-			arg_5_2.move_state = "idle"
+		elseif blackboard.move_state ~= "idle" then
+			blackboard.move_state = "idle"
 
-			Managers.state.network:anim_event(arg_5_1, "idle")
+			Managers.state.network:anim_event(unit, "idle")
 		end
 	end
 
 	return "running"
 end
 
-local tbl_2 = {}
-local tbl_3 = {
+local segment_list = {}
+local relative_positions = {
 	0.4,
 	0.5,
 	-0.4,
@@ -277,171 +306,178 @@ local tbl_3 = {
 	1.5
 }
 
-BTNinjaApproachAction.check_free_los = function (arg_6_0, arg_6_1, arg_6_2, arg_6_3)
+BTNinjaApproachAction.check_free_los = function (self, unit, blackboard, data)
 	-- function 6
-	local num = Unit.world_position(arg_6_2.target_unit, 0) + Vector3(0, 0, 0.2)
-	local var_6_1 = POSITION_LOOKUP[arg_6_2.target_unit]
+	local p2 = Unit.world_position(blackboard.target_unit, 0) + Vector3(0, 0, 0.2)
+	local enemy_pos = POSITION_LOOKUP[blackboard.target_unit]
 
-	if num.z < var_6_1.z then
-		Vector3.set_z(num, var_6_1.z + 0.1)
+	if p2.z < enemy_pos.z then
+		Vector3.set_z(p2, enemy_pos.z + 0.1)
 	end
 
-	local num_2 = POSITION_LOOKUP[arg_6_1] + Vector3(0, 0, 0.5)
-	local num_3 = num_2.z - num.z
-	local var_6_4
+	local p1 = position_lookup[unit] + Vector3(0, 0, 0.5)
+	local height_diff = p1.z - p2.z
+	local in_los
 
-	if math.abs(num_3) < 2 then
-		local get_data = World.get_data(arg_6_2.world, "physics_world")
+	if math.abs(height_diff) < 2 then
+		local physics_world = World.get_data(blackboard.world, "physics_world")
 
-		var_6_4 = WeaponHelper.multi_ray_test(get_data, num_2, num, tbl_3)
+		in_los = WeaponHelper.multi_ray_test(physics_world, p1, p2, relative_positions)
 	else
-		var_6_4 = BTPrepareForCrazyJumpAction.test_trajectory(arg_6_2, num_2, num, tbl_2)
+		in_los = BTPrepareForCrazyJumpAction.test_trajectory(blackboard, p1, p2, segment_list)
 	end
 
-	return var_6_4
+	return in_los
 end
 
-BTNinjaApproachAction.try_dodge_pos = function (arg_7_0, arg_7_1, arg_7_2, arg_7_3, arg_7_4)
+BTNinjaApproachAction.try_dodge_pos = function (self, unit, blackboard, pos, dodge_pos)
 	-- function 7
-	local triangle_from_position, var_7_1 = GwNavQueries.triangle_from_position(arg_7_2.nav_world, arg_7_4, 3, 3)
+	local success, z = GwNavQueries.triangle_from_position(blackboard.nav_world, dodge_pos, 3, 3)
 
-	if not triangle_from_position then
-		Vector3.set_z(arg_7_4, var_7_1)
+	if success then
+		Vector3.set_z(dodge_pos, z)
 
-		if not script_data.debug_ai_movement then
-			QuickDrawerStay:sphere(arg_7_3, 0.25)
-			QuickDrawerStay:sphere(arg_7_4, 0.25, Color(0, 0, 100))
-			QuickDrawerStay:line(arg_7_3, arg_7_4)
+		if script_data.debug_ai_movement then
+			QuickDrawerStay:sphere(pos, 0.25)
+			QuickDrawerStay:sphere(dodge_pos, 0.25, Color(0, 0, 100))
+			QuickDrawerStay:line(pos, dodge_pos)
 		end
 
-		if not GwNavQueries.raycast(arg_7_2.nav_world, arg_7_3, arg_7_4) then
-			if not script_data.debug_ai_movement then
-				QuickDrawerStay:line(arg_7_4, arg_7_4 + Vector3(0, 0, 0.5), Color(0, 255, 120))
+		local success = GwNavQueries.raycast(blackboard.nav_world, pos, dodge_pos)
+
+		if success then
+			if script_data.debug_ai_movement then
+				QuickDrawerStay:line(dodge_pos, dodge_pos + Vector3(0, 0, 0.5), Color(0, 255, 120))
 			end
 
-			arg_7_2.navigation_extension:move_to(arg_7_4)
+			blackboard.navigation_extension:move_to(dodge_pos)
 
 			return true
 		end
 	end
 end
 
-local num_2 = 2
-local num_3 = num_2 - 0.3
+local dodge_dist = 2
+local dodge_dist_check = dodge_dist - 0.3
 
-BTNinjaApproachAction.dodge = function (self, arg_8_1, arg_8_2, arg_8_3, arg_8_4)
+BTNinjaApproachAction.dodge = function (self, unit, blackboard, dodge_vec, aim_vec)
 	-- function 8
-	local var_8_0 = POSITION_LOOKUP[arg_8_1]
-	local current_velocity = arg_8_2.locomotion_extension:current_velocity()
-	local normalize = Vector3.normalize(current_velocity)
-	local normalize_2 = Vector3.normalize(arg_8_3)
-	local cross = Vector3.cross(-arg_8_4, Vector3.up())
+	local pos = position_lookup[unit]
+	local velocity = blackboard.locomotion_extension:current_velocity()
+	local normalized_velocity = Vector3.normalize(velocity)
+	local normalized_dodge_vec = Vector3.normalize(dodge_vec)
+	local left_right = Vector3.cross(-aim_vec, Vector3.up())
 
-	if Vector3.cross(normalize_2, arg_8_4).z > 0 then
-		cross = -cross
+	if Vector3.cross(normalized_dodge_vec, aim_vec).z > 0 then
+		left_right = -left_right
 	end
 
-	local num = cross * 2 + normalize
-	local num_4 = var_8_0 + num * num_2
+	local dodge_dir = left_right * 2 + normalized_velocity
+	local dodge_pos = pos + dodge_dir * dodge_dist
 
-	if not self:try_dodge_pos(arg_8_1, arg_8_2, var_8_0, num_4) then
-		local num_5 = var_8_0 + num * num_3
+	if self:try_dodge_pos(unit, blackboard, pos, dodge_pos) then
+		local pass_check_pos = pos + dodge_dir * dodge_dist_check
 
-		arg_8_2.dodge_pos = Vector3Box(num_5)
+		blackboard.dodge_pos = Vector3Box(pass_check_pos)
 
 		return
 	end
 
-	local num_6 = var_8_0 - num * num_2
+	dodge_pos = pos - dodge_dir * dodge_dist
 
-	if not self:try_dodge_pos(arg_8_1, arg_8_2, var_8_0, num_6) then
-		local num_7 = var_8_0 - num * num_3
+	if self:try_dodge_pos(unit, blackboard, pos, dodge_pos) then
+		local pass_check_pos = pos - dodge_dir * dodge_dist_check
 
-		arg_8_2.dodge_pos = Vector3Box(num_7)
+		blackboard.dodge_pos = Vector3Box(pass_check_pos)
 	end
 end
 
-BTNinjaApproachAction.in_crosshairs = function (arg_9_0, arg_9_1, arg_9_2, arg_9_3, arg_9_4)
+BTNinjaApproachAction.in_crosshairs = function (self, unit, blackboard, t, data)
 	-- function 9
-	local ENEMY_PLAYER_AND_BOT_UNITS = arg_9_2.side.ENEMY_PLAYER_AND_BOT_UNITS
+	local side = blackboard.side
+	local units = side.ENEMY_PLAYER_AND_BOT_UNITS
 
-	for i = 1, #ENEMY_PLAYER_AND_BOT_UNITS do
-		local var_9_1 = ENEMY_PLAYER_AND_BOT_UNITS[i]
+	for i = 1, #units do
+		local player_unit = units[i]
 
-		status_extension = ScriptUnit.extension(var_9_1, "status_system")
+		status_extension = ScriptUnit.extension(player_unit, "status_system")
 
-		if not arg_9_4.aiming_at_me then
-			if status_extension.aim_unit ~= arg_9_4.aiming_at_me then
-				arg_9_4.aim_at_me_timer = arg_9_3 + 0.5
-			elseif arg_9_3 > arg_9_4.aim_at_me_timer then
+		if data.aiming_at_me then
+			if status_extension.aim_unit ~= data.aiming_at_me then
+				data.aim_at_me_timer = t + 0.5
+			elseif t > data.aim_at_me_timer then
 				return true
 			end
 		end
 
-		if not status_extension.aim_unit then
-			arg_9_4.aiming_at_me = status_extension.aim_unit
+		if status_extension.aim_unit then
+			data.aiming_at_me = status_extension.aim_unit
 		end
 	end
 end
 
-BTNinjaApproachAction.get_fallback_goal = function (arg_10_0, arg_10_1, arg_10_2)
+BTNinjaApproachAction.get_fallback_goal = function (self, unit, blackboard)
 	-- function 10
-	local var_10_0 = POSITION_LOOKUP[arg_10_2.target_unit]
+	local target_pos = position_lookup[blackboard.target_unit]
 
-	if not var_10_0 then
+	if not target_pos then
 		return
 	end
 
-	table.clear(tbl)
+	table.clear(test_points)
 
-	local new_random_goal = LocomotionUtils.new_random_goal(arg_10_2.nav_world, arg_10_2, var_10_0, 1, 5, 10, tbl)
+	local pos = LocomotionUtils.new_random_goal(blackboard.nav_world, blackboard, target_pos, 1, 5, 10, test_points)
 
-	if not new_random_goal then
-		arg_10_2.debug_state = "2nd fallback"
+	if pos then
+		blackboard.debug_state = "2nd fallback"
 
 		aiprint("skulk around 2nd fallback -> success")
 
-		arg_10_2.skulk_pos = Vector3Box(new_random_goal)
+		blackboard.skulk_pos = Vector3Box(pos)
 
-		arg_10_2.navigation_extension:move_to(new_random_goal)
+		local ai_navigation = blackboard.navigation_extension
+
+		ai_navigation:move_to(pos)
 
 		return true
 	end
 end
 
-BTNinjaApproachAction.set_goal_at_target = function (arg_11_0, arg_11_1, arg_11_2)
+BTNinjaApproachAction.set_goal_at_target = function (self, unit, blackboard)
 	-- function 11
-	local num = POSITION_LOOKUP[arg_11_2.target_unit] + Vector3(0, 0, 0)
-	local find_center_tri = ConflictUtils.find_center_tri(arg_11_2.nav_world, num)
+	local pos = POSITION_LOOKUP[blackboard.target_unit] + Vector3(0, 0, 0)
 
-	if not find_center_tri then
-		arg_11_2.skulk_pos:store(find_center_tri)
+	pos = ConflictUtils.find_center_tri(blackboard.nav_world, pos)
 
-		arg_11_2.waiting_for_path = true
+	if pos then
+		blackboard.skulk_pos:store(pos)
 
-		arg_11_2.navigation_extension:move_to(find_center_tri)
+		blackboard.waiting_for_path = true
+
+		blackboard.navigation_extension:move_to(pos)
 	end
 end
 
-BTNinjaApproachAction.get_straight_at_goal = function (arg_12_0, arg_12_1, arg_12_2)
+BTNinjaApproachAction.get_straight_at_goal = function (self, unit, blackboard)
 	-- function 12
-	local target_unit = arg_12_2.target_unit
-	local var_12_1 = POSITION_LOOKUP[arg_12_1]
-	local var_12_2 = POSITION_LOOKUP[target_unit]
-	local var_12_3
+	local target_unit = blackboard.target_unit
+	local pos = POSITION_LOOKUP[unit]
+	local target_pos = POSITION_LOOKUP[target_unit]
+	local new_pos
 
-	if not arg_12_2.target_outside_navmesh then
-		local var_12_4 = ScriptUnit.extension(target_unit, "whereabouts_system").closest_positions[1]
+	if blackboard.target_outside_navmesh then
+		local whereabouts_extension = ScriptUnit.extension(target_unit, "whereabouts_system")
+		local closest_position = whereabouts_extension.closest_positions[1]
 
-		if not var_12_4 then
-			var_12_3 = var_12_4:unbox()
+		if closest_position then
+			new_pos = closest_position:unbox()
 		end
 	else
-		var_12_3 = var_12_2
+		new_pos = target_pos
 	end
 
-	if not var_12_3 then
-		arg_12_2.skulk_pos = Vector3Box(var_12_3)
+	if new_pos then
+		blackboard.skulk_pos = Vector3Box(new_pos)
 
 		return true
 	end
@@ -449,82 +485,85 @@ BTNinjaApproachAction.get_straight_at_goal = function (arg_12_0, arg_12_1, arg_1
 	return true
 end
 
-BTNinjaApproachAction.check_high_point_on_line = function (arg_13_0, arg_13_1, arg_13_2, arg_13_3, arg_13_4, arg_13_5, arg_13_6, arg_13_7, arg_13_8)
+BTNinjaApproachAction.check_high_point_on_line = function (self, nav_world, from_pos, dir, dist_left_to_rat, base_z, height_advantage, above, below)
 	-- function 13
-	arg_13_4 = arg_13_4 or math.floor(Vector3.distance(p1, rat_pos))
+	dist_left_to_rat = not not dist_left_to_rat or not not math.floor(Vector3.distance(p1, rat_pos))
 
-	for i = 2, arg_13_4 + 1 do
-		local num = arg_13_2 + arg_13_3 * i
-		local triangle_from_position, var_13_2 = GwNavQueries.triangle_from_position(arg_13_1, num, arg_13_7, arg_13_8)
+	for i = 2, dist_left_to_rat + 1 do
+		local check_height_pos = from_pos + dir * i
+		local success, z = GwNavQueries.triangle_from_position(nav_world, check_height_pos, above, below)
 
-		QuickDrawer:sphere(num, 0.2, Color(255, 255, 0))
+		QuickDrawer:sphere(check_height_pos, 0.2, Color(255, 255, 0))
 
-		if not (not triangle_from_position and not (arg_13_6 < var_13_2 - arg_13_5)) then
-			Vector3.set_z(num, var_13_2)
-			QuickDrawer:sphere(num, 0.3, Color(0, 255, 0))
+		if success and height_advantage < z - base_z then
+			Vector3.set_z(check_height_pos, z)
+			QuickDrawer:sphere(check_height_pos, 0.3, Color(0, 255, 0))
 
-			return num, i
+			return check_height_pos, i
 		else
-			QuickDrawer:sphere(num, 0.3, Color(255, 0, 0))
+			QuickDrawer:sphere(check_height_pos, 0.3, Color(255, 0, 0))
 		end
 	end
 end
 
-BTNinjaApproachAction.get_new_goal = function (arg_14_0, arg_14_1, arg_14_2, arg_14_3)
+BTNinjaApproachAction.get_new_goal = function (self, unit, blackboard, t)
 	-- function 14
-	local target_unit = arg_14_2.target_unit
+	local target_unit = blackboard.target_unit
 
-	if not Unit.alive(target_unit) then
-		local var_14_1
-		local num = 10
-		local num_2 = 15
-		local skulk_around_dir = arg_14_2.skulk_around_dir
+	if Unit.alive(target_unit) then
+		local pos
+		local min_dist = 10
+		local max_dist = 15
+		local dir = blackboard.skulk_around_dir
 
-		skulk_around_dir = skulk_around_dir or 1 - math.random(0, 1) * 2
-		arg_14_2.skulk_around_dir = skulk_around_dir
+		dir = not not dir or not not (1 - math.random(0, 1) * 2)
+		blackboard.skulk_around_dir = dir
 
-		local num_3 = math.random(10, 35) * skulk_around_dir
-		local num_4 = 5
-		local outside_goal = LocomotionUtils.outside_goal(arg_14_2.nav_world, POSITION_LOOKUP[arg_14_1], POSITION_LOOKUP[target_unit], num, num_2, num_3, num_4)
+		local angle = math.random(10, 35) * dir
+		local max_tries = 5
 
-		if not outside_goal then
-			arg_14_2.skulk_pos = Vector3Box(outside_goal)
+		pos = LocomotionUtils.outside_goal(blackboard.nav_world, POSITION_LOOKUP[unit], POSITION_LOOKUP[target_unit], min_dist, max_dist, angle, max_tries)
 
-			arg_14_2.navigation_extension:move_to(outside_goal)
+		if pos then
+			blackboard.skulk_pos = Vector3Box(pos)
+
+			local ai_navigation = blackboard.navigation_extension
+
+			ai_navigation:move_to(pos)
 
 			return true
 		end
 	end
 end
 
-BTNinjaApproachAction.anim_cb_dodge_finished = function (arg_15_0, arg_15_1, arg_15_2)
+BTNinjaApproachAction.anim_cb_dodge_finished = function (self, unit, params)
 	-- function 15
 	blackboard.anim_cb_dodge_finished = nil
 end
 
-BTNinjaApproachAction.debug = function (arg_16_0, arg_16_1, arg_16_2)
+BTNinjaApproachAction.debug = function (self, unit, blackboard)
 	-- function 16
-	if not arg_16_2.skulk_pos then
-		local unbox = arg_16_2.skulk_pos:unbox()
+	if blackboard.skulk_pos then
+		local pos = blackboard.skulk_pos:unbox()
 
-		QuickDrawer:sphere(unbox + Vector3(0, 0, 1), 0.5, Color(255, 144, 43, 207))
-		QuickDrawer:sphere(unbox + Vector3(0, 0, 1.5), 0.25, Color(255, 144, 43, 207))
-		QuickDrawer:sphere(unbox + Vector3(0, 0, 1.725), 0.125, Color(255, 144, 43, 207))
+		QuickDrawer:sphere(pos + Vector3(0, 0, 1), 0.5, Color(255, 144, 43, 207))
+		QuickDrawer:sphere(pos + Vector3(0, 0, 1.5), 0.25, Color(255, 144, 43, 207))
+		QuickDrawer:sphere(pos + Vector3(0, 0, 1.725), 0.125, Color(255, 144, 43, 207))
 
-		if not arg_16_2.in_los then
-			QuickDrawer:sphere(unbox + Vector3(0, 0, 2), 0.25, Color(255, 144, 43, 43))
+		if blackboard.in_los then
+			QuickDrawer:sphere(pos + Vector3(0, 0, 2), 0.25, Color(255, 144, 43, 43))
 		end
 	else
-		local var_16_1 = POSITION_LOOKUP[arg_16_1]
+		local pos = position_lookup[unit]
 
-		QuickDrawer:sphere(var_16_1 + Vector3(0, 0, 1), 0.5, Color(255, 144, 43, 207))
-		QuickDrawer:sphere(var_16_1 + Vector3(0, 0, 1.55), 0.25, Color(255, 144, 43, 207))
-		QuickDrawer:sphere(var_16_1 + Vector3(0, 0, 1.725), 0.125, Color(255, 144, 43, 207))
+		QuickDrawer:sphere(pos + Vector3(0, 0, 1), 0.5, Color(255, 144, 43, 207))
+		QuickDrawer:sphere(pos + Vector3(0, 0, 1.55), 0.25, Color(255, 144, 43, 207))
+		QuickDrawer:sphere(pos + Vector3(0, 0, 1.725), 0.125, Color(255, 144, 43, 207))
 	end
 
-	for i = 1, #tbl do
-		local unbox_2 = tbl[i]:unbox()
+	for i = 1, #test_points do
+		local pos = test_points[i]:unbox()
 
-		QuickDrawer:sphere(unbox_2 + Vector3(0, 0, 2), 0.5, Color(255, 43, 43, 207))
+		QuickDrawer:sphere(pos + Vector3(0, 0, 2), 0.5, Color(255, 43, 43, 207))
 	end
 end

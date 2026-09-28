@@ -13,145 +13,158 @@ end
 
 BTPackMasterSkulkAroundAction.name = "BTPackMasterSkulkAroundAction"
 
-BTPackMasterSkulkAroundAction.enter = function (self, arg_2_1, arg_2_2, arg_2_3)
+BTPackMasterSkulkAroundAction.enter = function (self, unit, blackboard, t)
 	-- function 2
-	LocomotionUtils.set_animation_driven_movement(arg_2_1, false)
-	arg_2_2.navigation_extension:set_max_speed(arg_2_2.breed.run_speed)
+	LocomotionUtils.set_animation_driven_movement(unit, false)
 
-	local action_data = self._tree_node.action_data
+	local navigation_extension = blackboard.navigation_extension
 
-	arg_2_2.action = action_data
+	navigation_extension:set_max_speed(blackboard.breed.run_speed)
 
-	local skulk_time = arg_2_2.skulk_time
+	local action = self._tree_node.action_data
 
-	skulk_time = skulk_time or arg_2_3 + action_data.skulk_time
-	arg_2_2.skulk_time = skulk_time
+	blackboard.action = action
 
-	local skulk_time_force_attack = arg_2_2.skulk_time_force_attack
+	local skulk_time = blackboard.skulk_time
 
-	skulk_time_force_attack = skulk_time_force_attack or arg_2_3 + action_data.skulk_time_force_attack
-	arg_2_2.skulk_time_force_attack = skulk_time_force_attack
-	arg_2_2.skulk_goal_get_fails = 0
-	arg_2_2.skulk_debug_state = "enter"
+	skulk_time = not not skulk_time or not not (t + action.skulk_time)
+	blackboard.skulk_time = skulk_time
 
-	arg_2_2.locomotion_extension:set_rotation_speed(5)
+	local skulk_time_force_attack = blackboard.skulk_time_force_attack
 
-	local attack_cooldown = arg_2_2.attack_cooldown
+	skulk_time_force_attack = not not skulk_time_force_attack or not not (t + action.skulk_time_force_attack)
+	blackboard.skulk_time_force_attack = skulk_time_force_attack
+	blackboard.skulk_goal_get_fails = 0
+	blackboard.skulk_debug_state = "enter"
 
-	attack_cooldown = attack_cooldown or 0
-	arg_2_2.attack_cooldown = attack_cooldown
+	local locomotion_extension = blackboard.locomotion_extension
+
+	locomotion_extension:set_rotation_speed(5)
+
+	local attack_cooldown = blackboard.attack_cooldown
+
+	attack_cooldown = not not attack_cooldown or not not 0
+	blackboard.attack_cooldown = attack_cooldown
 end
 
-BTPackMasterSkulkAroundAction.leave = function (arg_3_0, arg_3_1, arg_3_2, arg_3_3, arg_3_4, arg_3_5)
+BTPackMasterSkulkAroundAction.leave = function (self, unit, blackboard, t, reason, destroy)
 	-- function 3
-	arg_3_2.action = nil
-	arg_3_2.skulk_pos = nil
-	arg_3_2.skulk_around_dir = nil
-	arg_3_2.skulk_in_los = nil
-	arg_3_2.skulk_dogpile = nil
-	arg_3_2.skulk_debug_state = nil
-	arg_3_2.skulk_goal_get_fails = nil
+	blackboard.action = nil
+	blackboard.skulk_pos = nil
+	blackboard.skulk_around_dir = nil
+	blackboard.skulk_in_los = nil
+	blackboard.skulk_dogpile = nil
+	blackboard.skulk_debug_state = nil
+	blackboard.skulk_goal_get_fails = nil
 
-	if arg_3_4 == "failed" then
-		arg_3_2.target_unit = nil
-		arg_3_2.skulk_time = nil
-		arg_3_2.skulk_time_left = nil
+	if reason == "failed" then
+		blackboard.target_unit = nil
+		blackboard.skulk_time = nil
+		blackboard.skulk_time_left = nil
 	end
 
-	local get_default_breed_move_speed = AiUtils.get_default_breed_move_speed(arg_3_1, arg_3_2)
+	local default_move_speed = AiUtils.get_default_breed_move_speed(unit, blackboard)
+	local navigation_extension = blackboard.navigation_extension
 
-	arg_3_2.navigation_extension:set_max_speed(get_default_breed_move_speed)
+	navigation_extension:set_max_speed(default_move_speed)
 end
 
-local tbl = {}
+local test_points = {}
 
-BTPackMasterSkulkAroundAction.run = function (self, arg_4_1, arg_4_2, arg_4_3, arg_4_4)
+BTPackMasterSkulkAroundAction.run = function (self, unit, blackboard, t, dt)
 	-- function 4
-	if not AiUtils.is_of_interest_to_packmaster(arg_4_1, arg_4_2.target_unit) then
+	if not AiUtils.is_of_interest_to_packmaster(unit, blackboard.target_unit) then
 		return "failed"
 	end
 
-	local locomotion_extension = arg_4_2.locomotion_extension
-	local breed = arg_4_2.breed
-	local var_4_2 = POSITION_LOOKUP[arg_4_2.target_unit]
+	local locomotion_extension = blackboard.locomotion_extension
+	local breed = blackboard.breed
+	local target_pos = POSITION_LOOKUP[blackboard.target_unit]
 
-	if not script_data.debug_ai_movement then
-		arg_4_2.skulk_time_left = string.format("%.2f", arg_4_2.skulk_time - arg_4_3)
+	if script_data.debug_ai_movement then
+		blackboard.skulk_time_left = string.format("%.2f", blackboard.skulk_time - t)
 
-		self:debug(arg_4_1, arg_4_2)
+		self:debug(unit, blackboard)
 	end
 
-	if not (not (arg_4_3 > arg_4_2.skulk_time) or not (arg_4_3 > arg_4_2.attack_cooldown)) then
-		local action = arg_4_2.action
-		local flag = arg_4_3 > arg_4_2.skulk_time_force_attack
-		local slots_count = Managers.state.entity:system("ai_slot_system"):slots_count(arg_4_2.target_unit)
+	if t > blackboard.skulk_time and t > blackboard.attack_cooldown then
+		local action = blackboard.action
+		local waited_too_long = t > blackboard.skulk_time_force_attack
+		local ai_slot_system = Managers.state.entity:system("ai_slot_system")
+		local dogpile = ai_slot_system:slots_count(blackboard.target_unit)
+		local enough_aggro_on_player = dogpile >= action.dogpile_aggro_needed or not not script_data.ai_packmaster_ignore_dogpile
 
-		if slots_count >= action.dogpile_aggro_needed or script_data.ai_packmaster_ignore_dogpile or not flag then
-			arg_4_2.skulk_pos = nil
-			arg_4_2.skulk_around_dir = nil
+		if enough_aggro_on_player or waited_too_long then
+			blackboard.skulk_pos = nil
+			blackboard.skulk_around_dir = nil
 
 			return "done"
 		end
 
-		arg_4_2.skulk_dogpile = slots_count
-		arg_4_2.skulk_time = arg_4_3 + 1
+		blackboard.skulk_dogpile = dogpile
+		blackboard.skulk_time = t + 1
 	end
 
-	if not arg_4_2.skulk_pos then
-		self:get_new_goal(arg_4_1, arg_4_2)
+	if not blackboard.skulk_pos then
+		self:get_new_goal(unit, blackboard)
 
-		arg_4_2.skulk_debug_state = "get_new_goal"
+		blackboard.skulk_debug_state = "get_new_goal"
 
 		return "running"
 	end
 
-	local navigation_extension = arg_4_2.navigation_extension
+	local navigation_extension = blackboard.navigation_extension
 	local is_computing_path = navigation_extension:is_computing_path()
 
-	if not (arg_4_2.move_state == "moving" or is_computing_path) then
-		local network = Managers.state.network
+	if blackboard.move_state ~= "moving" and not is_computing_path then
+		local network_manager = Managers.state.network
 
-		arg_4_2.move_state = "moving"
+		blackboard.move_state = "moving"
 
-		local var_4_9 = network
-		local anim_event = network.anim_event
-		local var_4_11 = arg_4_1
-		local skulk_animation = arg_4_2.action.skulk_animation
+		local var_4_0 = network_manager
+		local anim_event = network_manager.anim_event
+		local var_4_2 = unit
+		local skulk_animation = blackboard.action.skulk_animation
 
-		skulk_animation = skulk_animation or "move_fwd"
+		skulk_animation = not not skulk_animation or not not "move_fwd"
 
-		anim_event(var_4_9, var_4_11, skulk_animation)
+		anim_event(var_4_0, var_4_2, skulk_animation)
 		navigation_extension:set_enabled(true)
 	end
 
-	local unbox = arg_4_2.skulk_pos:unbox()
-	local var_4_14 = POSITION_LOOKUP[arg_4_1]
-	local distance_squared = Vector3.distance_squared(unbox, var_4_14)
+	local goal_pos = blackboard.skulk_pos:unbox()
+	local position = POSITION_LOOKUP[unit]
+	local goal_distance_sq = Vector3.distance_squared(goal_pos, position)
 
 	locomotion_extension:set_wanted_rotation(nil)
 
-	if distance_squared < 9 then
-		if not self:get_new_goal(arg_4_1, arg_4_2) then
-			arg_4_2.skulk_debug_state = "new goal found"
+	if goal_distance_sq < 9 then
+		local goal_found = self:get_new_goal(unit, blackboard)
+
+		if goal_found then
+			blackboard.skulk_debug_state = "new goal found"
 		else
-			table.clear(tbl)
+			table.clear(test_points)
 
-			local new_random_goal = LocomotionUtils.new_random_goal(arg_4_2.nav_world, arg_4_2, var_4_2, 15, 30, 10, tbl)
+			local pos = LocomotionUtils.new_random_goal(blackboard.nav_world, blackboard, target_pos, 15, 30, 10, test_points)
 
-			if not new_random_goal then
-				arg_4_2.skulk_debug_state = "fallback"
-				arg_4_2.skulk_pos = Vector3Box(new_random_goal)
+			if pos then
+				blackboard.skulk_debug_state = "fallback"
+				blackboard.skulk_pos = Vector3Box(pos)
 
-				navigation_extension:move_to(new_random_goal)
+				navigation_extension:move_to(pos)
 			else
-				arg_4_2.skulk_debug_state = "fallback fail"
+				blackboard.skulk_debug_state = "fallback fail"
 			end
 		end
 	end
 
-	if not (not (Vector3.distance_squared(var_4_2, var_4_14) < arg_4_2.action.melee_override_distance_sqr) or not (arg_4_3 > arg_4_2.attack_cooldown)) then
-		arg_4_2.skulk_pos = nil
-		arg_4_2.skulk_around_dir = nil
+	local distance_to_target_squared = Vector3.distance_squared(target_pos, position)
+	local melee_override_distance_sqr = blackboard.action.melee_override_distance_sqr
+
+	if distance_to_target_squared < melee_override_distance_sqr and t > blackboard.attack_cooldown then
+		blackboard.skulk_pos = nil
+		blackboard.skulk_around_dir = nil
 
 		return "done"
 	end
@@ -159,64 +172,67 @@ BTPackMasterSkulkAroundAction.run = function (self, arg_4_1, arg_4_2, arg_4_3, a
 	return "running"
 end
 
-BTPackMasterSkulkAroundAction.get_new_goal = function (arg_5_0, arg_5_1, arg_5_2)
+BTPackMasterSkulkAroundAction.get_new_goal = function (self, unit, blackboard)
 	-- function 5
-	local target_unit = arg_5_2.target_unit
+	local target_unit = blackboard.target_unit
 
-	if not Unit.alive(target_unit) then
-		local skulk_goal_get_fails = arg_5_2.skulk_goal_get_fails
-		local var_5_2
-		local num = 10
-		local num_2 = 25
-		local skulk_around_dir = arg_5_2.skulk_around_dir
+	if Unit.alive(target_unit) then
+		local fails = blackboard.skulk_goal_get_fails
+		local pos
+		local min_dist = 10
+		local max_dist = 25
+		local dir = blackboard.skulk_around_dir
 
-		skulk_around_dir = skulk_around_dir or 1 - math.random(0, 1) * 2
-		arg_5_2.skulk_around_dir = skulk_around_dir
+		dir = not not dir or not not (1 - math.random(0, 1) * 2)
+		blackboard.skulk_around_dir = dir
 
-		local num_3 = math.random(10, 180) * skulk_around_dir
-		local num_4 = 5 + skulk_goal_get_fails * 5
-		local outside_goal = LocomotionUtils.outside_goal(arg_5_2.nav_world, POSITION_LOOKUP[arg_5_1], POSITION_LOOKUP[target_unit], num, num_2, num_3, 5, num_4, num_4)
+		local angle = math.random(10, 180) * dir
+		local above_below = 5 + fails * 5
 
-		if not outside_goal then
-			arg_5_2.skulk_goal_get_fails = 0
-			arg_5_2.skulk_pos = Vector3Box(outside_goal)
+		pos = LocomotionUtils.outside_goal(blackboard.nav_world, POSITION_LOOKUP[unit], POSITION_LOOKUP[target_unit], min_dist, max_dist, angle, 5, above_below, above_below)
 
-			arg_5_2.navigation_extension:move_to(outside_goal)
+		if pos then
+			blackboard.skulk_goal_get_fails = 0
+			blackboard.skulk_pos = Vector3Box(pos)
+
+			local navigation_extension = blackboard.navigation_extension
+
+			navigation_extension:move_to(pos)
 
 			return true
 		else
-			arg_5_2.skulk_goal_get_fails = skulk_goal_get_fails + 1
+			blackboard.skulk_goal_get_fails = fails + 1
 		end
 	end
 end
 
-BTPackMasterSkulkAroundAction.debug = function (arg_6_0, arg_6_1, arg_6_2)
+BTPackMasterSkulkAroundAction.debug = function (self, unit, blackboard)
 	-- function 6
-	local var_6_0 = POSITION_LOOKUP[arg_6_1]
+	local pos = POSITION_LOOKUP[unit]
 
-	if not arg_6_2.skulk_pos then
-		local unbox = arg_6_2.skulk_pos:unbox()
+	if blackboard.skulk_pos then
+		local skulk_pos = blackboard.skulk_pos:unbox()
 
-		QuickDrawer:sphere(unbox + Vector3(0, 0, 1), 0.5, Color(255, 144, 43, 207))
-		QuickDrawer:sphere(unbox + Vector3(0, 0, 1.5), 0.25, Color(255, 144, 43, 207))
-		QuickDrawer:sphere(unbox + Vector3(0, 0, 1.725), 0.125, Color(255, 144, 43, 207))
+		QuickDrawer:sphere(skulk_pos + Vector3(0, 0, 1), 0.5, Color(255, 144, 43, 207))
+		QuickDrawer:sphere(skulk_pos + Vector3(0, 0, 1.5), 0.25, Color(255, 144, 43, 207))
+		QuickDrawer:sphere(skulk_pos + Vector3(0, 0, 1.725), 0.125, Color(255, 144, 43, 207))
 
-		if not arg_6_2.in_los then
-			QuickDrawer:sphere(unbox + Vector3(0, 0, 2), 0.25, Color(255, 144, 43, 43))
+		if blackboard.in_los then
+			QuickDrawer:sphere(skulk_pos + Vector3(0, 0, 2), 0.25, Color(255, 144, 43, 43))
 		end
 	else
-		QuickDrawer:sphere(var_6_0 + Vector3(0, 0, 1), 0.5, Color(255, 144, 43, 207))
-		QuickDrawer:sphere(var_6_0 + Vector3(0, 0, 1.55), 0.25, Color(255, 144, 43, 207))
-		QuickDrawer:sphere(var_6_0 + Vector3(0, 0, 1.725), 0.125, Color(255, 144, 43, 207))
+		QuickDrawer:sphere(pos + Vector3(0, 0, 1), 0.5, Color(255, 144, 43, 207))
+		QuickDrawer:sphere(pos + Vector3(0, 0, 1.55), 0.25, Color(255, 144, 43, 207))
+		QuickDrawer:sphere(pos + Vector3(0, 0, 1.725), 0.125, Color(255, 144, 43, 207))
 	end
 
-	if not arg_6_2.skulk_in_los then
-		QuickDrawer:sphere(var_6_0 + Vector3(0, 0, 2), 0.25, Colors.get("red"))
+	if not blackboard.skulk_in_los then
+		QuickDrawer:sphere(pos + Vector3(0, 0, 2), 0.25, Colors.get("red"))
 	end
 
-	for i = 1, #tbl do
-		local unbox_2 = tbl[i]:unbox()
+	for i = 1, #test_points do
+		local pos = test_points[i]:unbox()
 
-		QuickDrawer:sphere(unbox_2 + Vector3(0, 0, 2), 0.5, Color(255, 43, 43, 207))
+		QuickDrawer:sphere(pos + Vector3(0, 0, 2), 0.5, Color(255, 43, 43, 207))
 	end
 end

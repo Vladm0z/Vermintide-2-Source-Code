@@ -2,40 +2,40 @@
 
 PlayerCharacterStateDodging = class(PlayerCharacterStateDodging, PlayerCharacterState)
 
-PlayerCharacterStateDodging.init = function (self, arg_1_1)
+PlayerCharacterStateDodging.init = function (self, character_state_init_context)
 	-- function 1
-	PlayerCharacterState.init(self, arg_1_1, "dodging")
+	PlayerCharacterState.init(self, character_state_init_context, "dodging")
 
-	local var_1_0 = arg_1_1
+	local context = character_state_init_context
 
 	self.movement_speed = 0
 	self.dodge_direction = Vector3Box(0, 0, 0)
 	self.last_position = Vector3Box(0, 0, 0)
 end
 
-PlayerCharacterStateDodging.on_enter_animation = function (self, arg_2_1)
+PlayerCharacterStateDodging.on_enter_animation = function (self, unit)
 	-- function 2
-	local get_movement_settings_table = PlayerUnitMovementSettings.get_movement_settings_table(arg_2_1)
-	local unbox = self.dodge_direction:unbox()
-	local x = Vector3.x(unbox)
-	local y = Vector3.y(unbox)
-	local str = "dodge_time"
-	local estimated_dodge_time = self.estimated_dodge_time
+	local movement_settings_table = PlayerUnitMovementSettings.get_movement_settings_table(unit)
+	local dodge_direction = self.dodge_direction:unbox()
+	local x_value = Vector3.x(dodge_direction)
+	local y_value = Vector3.y(dodge_direction)
+	local variable_name = "dodge_time"
+	local variable_value = self.estimated_dodge_time
 	local first_person_extension = self.first_person_extension
 
-	if math.abs(y) > math.abs(x) then
-		CharacterStateHelper.play_animation_event_with_variable_float(arg_2_1, "dodge_bwd", str, estimated_dodge_time)
+	if math.abs(y_value) > math.abs(x_value) then
+		CharacterStateHelper.play_animation_event_with_variable_float(unit, "dodge_bwd", variable_name, variable_value)
 		CharacterStateHelper.play_animation_event_first_person(first_person_extension, "dodge_bwd")
-	elseif x > 0 then
-		CharacterStateHelper.play_animation_event_with_variable_float(arg_2_1, "dodge_left", str, estimated_dodge_time)
+	elseif x_value > 0 then
+		CharacterStateHelper.play_animation_event_with_variable_float(unit, "dodge_left", variable_name, variable_value)
 		CharacterStateHelper.play_animation_event_first_person(first_person_extension, "dodge_left")
 	else
-		CharacterStateHelper.play_animation_event_with_variable_float(arg_2_1, "dodge_right", str, estimated_dodge_time)
+		CharacterStateHelper.play_animation_event_with_variable_float(unit, "dodge_right", variable_name, variable_value)
 		CharacterStateHelper.play_animation_event_first_person(first_person_extension, "dodge_right")
 	end
 end
 
-PlayerCharacterStateDodging.on_enter = function (self, arg_3_1, arg_3_2, arg_3_3, arg_3_4, arg_3_5, arg_3_6, arg_3_7)
+PlayerCharacterStateDodging.on_enter = function (self, unit, input, dt, context, t, previous_state, params)
 	-- function 3
 	local unit = self.unit
 	local input_extension = self.input_extension
@@ -44,196 +44,200 @@ PlayerCharacterStateDodging.on_enter = function (self, arg_3_1, arg_3_2, arg_3_3
 	local inventory_extension = self.inventory_extension
 	local health_extension = self.health_extension
 
-	self.dodge_direction:store(arg_3_7.dodge_direction)
+	self.dodge_direction:store(params.dodge_direction)
 
-	arg_3_7.dodge_direction = nil
+	params.dodge_direction = nil
 
-	local get_movement_settings_table = PlayerUnitMovementSettings.get_movement_settings_table(unit)
+	local movement_settings_table = PlayerUnitMovementSettings.get_movement_settings_table(unit)
 
-	status_extension:set_dodge_jump_override_t(arg_3_5, get_movement_settings_table.dodging.dodge_jump_override_timer)
-	self:start_dodge(unit, arg_3_5)
+	status_extension:set_dodge_jump_override_t(t, movement_settings_table.dodging.dodge_jump_override_timer)
+	self:start_dodge(unit, t)
 	CharacterStateHelper.look(input_extension, self.player.viewport_name, first_person_extension, status_extension, inventory_extension)
-	CharacterStateHelper.update_weapon_actions(arg_3_5, unit, input_extension, inventory_extension, health_extension)
+	CharacterStateHelper.update_weapon_actions(t, unit, input_extension, inventory_extension, health_extension)
 	self:on_enter_animation(unit)
 	self.locomotion_extension:enable_rotation_towards_velocity(false)
 
-	local forward = Quaternion.forward(first_person_extension:current_rotation())
+	local forward_direction = Quaternion.forward(first_person_extension:current_rotation())
 
-	Vector3.set_z(forward, 0)
+	Vector3.set_z(forward_direction, 0)
 
-	local normalize = Vector3.normalize(forward)
-	local look = Quaternion.look(normalize, Vector3(0, 0, 1))
+	forward_direction = Vector3.normalize(forward_direction)
 
-	Unit.set_local_rotation(unit, 0, look)
+	local flat_rotation = Quaternion.look(forward_direction, Vector3(0, 0, 1))
+
+	Unit.set_local_rotation(unit, 0, flat_rotation)
 end
 
-PlayerCharacterStateDodging.on_exit = function (self, arg_4_1, arg_4_2, arg_4_3, arg_4_4, arg_4_5, arg_4_6)
+PlayerCharacterStateDodging.on_exit = function (self, unit, input, dt, context, t, next_state)
 	-- function 4
-	local get_movement_settings_table = PlayerUnitMovementSettings.get_movement_settings_table(arg_4_1)
-	local max = math.max(get_movement_settings_table.dodging.dodge_cd, get_movement_settings_table.dodging.dodge_jump_override_timer - self.time_in_dodge)
+	local movement_settings_table = PlayerUnitMovementSettings.get_movement_settings_table(unit)
+	local cd = math.max(movement_settings_table.dodging.dodge_cd, movement_settings_table.dodging.dodge_jump_override_timer - self.time_in_dodge)
 
-	self.status_extension:set_dodge_cd(arg_4_5, max)
+	self.status_extension:set_dodge_cd(t, cd)
 
 	self.dodge_timer = nil
 	self.dodge_stand_still_timer = nil
 	self.dodge_return_timer = nil
 
 	self.locomotion_extension:enable_rotation_towards_velocity(true)
-	self.status_extension:start_dodge_cooldown(arg_4_5)
+	self.status_extension:start_dodge_cooldown(t)
 	self.buff_extension:trigger_procs("on_dodge_finished")
 
-	local network = Managers.state.network
+	local network_manager = Managers.state.network
 
-	if not network:game() then
-		CharacterStateHelper.play_animation_event(arg_4_1, "dodge_end")
+	if network_manager:game() then
+		CharacterStateHelper.play_animation_event(unit, "dodge_end")
 
 		if not LEVEL_EDITOR_TEST then
-			local unit_game_object_id = network:unit_game_object_id(arg_4_1)
+			local unit_id = network_manager:unit_game_object_id(unit)
 
 			self.status_extension:set_is_dodging(false)
-			network.network_transmit:send_rpc_server("rpc_status_change_bool", NetworkLookup.statuses.dodging, false, unit_game_object_id, 0)
+			network_manager.network_transmit:send_rpc_server("rpc_status_change_bool", NetworkLookup.statuses.dodging, false, unit_id, 0)
 		end
 	end
 end
 
-PlayerCharacterStateDodging.update = function (self, arg_5_1, arg_5_2, arg_5_3, arg_5_4, arg_5_5)
+PlayerCharacterStateDodging.update = function (self, unit, input, dt, context, t)
 	-- function 5
 	local csm = self.csm
 	local unit = self.unit
-	local get_movement_settings_table = PlayerUnitMovementSettings.get_movement_settings_table(unit)
+	local movement_settings_table = PlayerUnitMovementSettings.get_movement_settings_table(unit)
 	local input_extension = self.input_extension
 	local status_extension = self.status_extension
 	local first_person_extension = self.first_person_extension
 
-	self.time_in_dodge = self.time_in_dodge + arg_5_3
+	self.time_in_dodge = self.time_in_dodge + dt
 
 	ScriptUnit.extension(unit, "whereabouts_system"):set_is_onground()
 
-	if not CharacterStateHelper.do_common_state_transitions(status_extension, csm) then
+	if CharacterStateHelper.do_common_state_transitions(status_extension, csm) then
 		return
 	end
 
-	if not CharacterStateHelper.is_using_transport(status_extension) then
+	if CharacterStateHelper.is_using_transport(status_extension) then
 		csm:change_state("using_transport")
 
 		return
 	end
 
-	if csm.state_next or not status_extension.do_leap then
+	if not csm.state_next and status_extension.do_leap then
 		csm:change_state("leaping")
 
 		return true
 	end
 
-	if not CharacterStateHelper.is_pushed(status_extension) then
+	if CharacterStateHelper.is_pushed(status_extension) then
 		status_extension:set_pushed(false)
 
-		local pushed = get_movement_settings_table.stun_settings.pushed
+		local params = movement_settings_table.stun_settings.pushed
+		local hit_react_type = status_extension:hit_react_type()
 
-		pushed.hit_react_type = status_extension:hit_react_type() .. "_push"
+		params.hit_react_type = hit_react_type .. "_push"
 
-		csm:change_state("stunned", pushed)
-
-		return
-	end
-
-	if not CharacterStateHelper.is_charged(status_extension) then
-		local charged = get_movement_settings_table.charged_settings.charged
-
-		charged.hit_react_type = "charged"
-
-		csm:change_state("charged", charged)
+		csm:change_state("stunned", params)
 
 		return
 	end
 
-	if not CharacterStateHelper.is_block_broken(status_extension) then
+	if CharacterStateHelper.is_charged(status_extension) then
+		local params = movement_settings_table.charged_settings.charged
+
+		params.hit_react_type = "charged"
+
+		csm:change_state("charged", params)
+
+		return
+	end
+
+	if CharacterStateHelper.is_block_broken(status_extension) then
 		status_extension:set_block_broken(false)
 
-		local parry_broken = get_movement_settings_table.stun_settings.parry_broken
+		local params = movement_settings_table.stun_settings.parry_broken
 
-		parry_broken.hit_react_type = "medium_push"
+		params.hit_react_type = "medium_push"
 
-		csm:change_state("stunned", parry_broken)
+		csm:change_state("stunned", params)
 
 		return
 	end
 
 	local interactor_extension = self.interactor_extension
 
-	if not CharacterStateHelper.is_starting_interaction(input_extension, interactor_extension) then
-		local interaction_action_names, var_5_11 = InteractionHelper.interaction_action_names(unit)
+	if CharacterStateHelper.is_starting_interaction(input_extension, interactor_extension) then
+		local _, hold_input = InteractionHelper.interaction_action_names(unit)
 
-		interactor_extension:start_interaction(var_5_11)
+		interactor_extension:start_interaction(hold_input)
 
-		if not interactor_extension:allow_movement_during_interaction() then
+		if interactor_extension:allow_movement_during_interaction() then
 			return
 		end
 
-		local interaction_config = interactor_extension:interaction_config()
-		local temp_params = self.temp_params
+		local config = interactor_extension:interaction_config()
+		local params = self.temp_params
 
-		temp_params.swap_to_3p = interaction_config.swap_to_3p
-		temp_params.show_weapons = interaction_config.show_weapons
-		temp_params.activate_block = interaction_config.activate_block
-		temp_params.allow_rotation_update = interaction_config.allow_rotation_update
+		params.swap_to_3p = config.swap_to_3p
+		params.show_weapons = config.show_weapons
+		params.activate_block = config.activate_block
+		params.allow_rotation_update = config.allow_rotation_update
 
-		csm:change_state("interacting", temp_params)
+		csm:change_state("interacting", params)
 
 		return
 	end
 
-	if not self.locomotion_extension:is_animation_driven() then
+	if self.locomotion_extension:is_animation_driven() then
 		return
 	end
 
-	if (input_extension:get("jump") or not input_extension:get("jump_only") or not status_extension:can_override_dodge_with_jump(arg_5_5)) and not self.locomotion_extension:jump_allowed() then
-		local temp_params_2 = self.temp_params
+	if (input_extension:get("jump") or input_extension:get("jump_only")) and status_extension:can_override_dodge_with_jump(t) and self.locomotion_extension:jump_allowed() then
+		local params = self.temp_params
 
-		temp_params_2.post_dodge_jump = true
+		params.post_dodge_jump = true
 
-		csm:change_state("jumping", temp_params_2)
+		csm:change_state("jumping", params)
 
 		return
 	end
 
 	CharacterStateHelper.update_dodge_lock(unit, self.input_extension, status_extension)
 
-	if not (self.csm.state_next or self.locomotion_extension:is_on_ground()) then
+	if not self.csm.state_next and not self.locomotion_extension:is_on_ground() then
 		csm:change_state("falling", self.temp_params)
 
 		return
 	end
 
-	if not self:update_dodge(unit, arg_5_3, arg_5_5) then
-		local temp_params_3 = self.temp_params
+	if not self:update_dodge(unit, dt, t) then
+		local params = self.temp_params
 
-		csm:change_state("walking", temp_params_3)
+		csm:change_state("walking", params)
 	end
 
 	CharacterStateHelper.look(input_extension, self.player.viewport_name, first_person_extension, status_extension, self.inventory_extension)
-	CharacterStateHelper.update_weapon_actions(arg_5_5, unit, input_extension, self.inventory_extension, self.health_extension)
+	CharacterStateHelper.update_weapon_actions(t, unit, input_extension, self.inventory_extension, self.health_extension)
 
-	local get_move_animation = CharacterStateHelper.get_move_animation(self.locomotion_extension, input_extension, status_extension, self.move_anim)
+	local move_anim = CharacterStateHelper.get_move_animation(self.locomotion_extension, input_extension, status_extension, self.move_anim)
 
-	if get_move_animation ~= self.move_anim then
-		CharacterStateHelper.play_animation_event(unit, get_move_animation)
+	if move_anim ~= self.move_anim then
+		CharacterStateHelper.play_animation_event(unit, move_anim)
 
-		self.move_anim = get_move_animation
+		self.move_anim = move_anim
 	end
 end
 
-local tbl = {}
+local params = {}
 
-PlayerCharacterStateDodging.update_dodge = function (self, arg_6_1, arg_6_2, arg_6_3)
+PlayerCharacterStateDodging.update_dodge = function (self, unit, dt, t)
 	-- function 6
-	local get_movement_settings_table = PlayerUnitMovementSettings.get_movement_settings_table(arg_6_1)
-	local distance_left = self.distance_left
-	local get_dodge_cooldown = self.status_extension:get_dodge_cooldown()
-	local speed_modifier = get_movement_settings_table.dodging.speed_modifier
-	local distance_modifier = get_movement_settings_table.dodging.distance_modifier
+	local movement_settings_table = PlayerUnitMovementSettings.get_movement_settings_table(unit)
+	local last_distance_left = self.distance_left
+	local diminishing_return_factor = self.status_extension:get_dodge_cooldown()
+	local speed_modifier = movement_settings_table.dodging.speed_modifier
+	local distance_modifier = movement_settings_table.dodging.distance_modifier
+	local distance_moved = Vector3.distance(Unit.world_position(unit, 0), self.last_position:unbox())
+	local move_procent = distance_moved / self.distance_supposed_to_move
 
-	if Vector3.distance(Unit.world_position(arg_6_1, 0), self.last_position:unbox()) / self.distance_supposed_to_move < get_movement_settings_table.dodging.stop_threshold then
+	if move_procent < movement_settings_table.dodging.stop_threshold then
 		return false
 	end
 
@@ -241,44 +245,45 @@ PlayerCharacterStateDodging.update_dodge = function (self, arg_6_1, arg_6_2, arg
 		return false
 	end
 
-	local num = self.time_in_dodge * get_dodge_cooldown
-	local speed_at_times = get_movement_settings_table.dodging.speed_at_times
-	local flag = false
-	local num_2 = self.current_speed_setting_index + 1
+	local time_in_dodge = self.time_in_dodge * diminishing_return_factor
+	local speed_at_times = movement_settings_table.dodging.speed_at_times
+	local breaked = false
+	local start_point = self.current_speed_setting_index + 1
 
 	self.current_speed_setting_index = #speed_at_times
 
-	for i = num_2, #speed_at_times do
-		if num <= speed_at_times[i].time_in_dodge then
-			self.current_speed_setting_index = i - 1
+	for index = start_point, #speed_at_times do
+		if time_in_dodge <= speed_at_times[index].time_in_dodge then
+			self.current_speed_setting_index = index - 1
 
 			break
 		end
 	end
 
-	local flag_2 = false
+	local dodge_finished = false
 	local current_speed_setting_index = self.current_speed_setting_index
-	local num_3 = current_speed_setting_index + 1
+	local next_speed_setting_index = current_speed_setting_index + 1
 
-	if num_3 <= #speed_at_times then
-		local num_4 = speed_at_times[num_3].time_in_dodge - speed_at_times[current_speed_setting_index].time_in_dodge
-		local num_5 = (num - speed_at_times[current_speed_setting_index].time_in_dodge) / num_4
+	if next_speed_setting_index <= #speed_at_times then
+		local time_between_settings = speed_at_times[next_speed_setting_index].time_in_dodge - speed_at_times[current_speed_setting_index].time_in_dodge
+		local time_in_setting = time_in_dodge - speed_at_times[current_speed_setting_index].time_in_dodge
+		local percentage_in_between = time_in_setting / time_between_settings
 
-		self.speed = math.lerp(speed_at_times[current_speed_setting_index].speed, speed_at_times[num_3].speed, num_5) * speed_modifier * get_dodge_cooldown
+		self.speed = math.lerp(speed_at_times[current_speed_setting_index].speed, speed_at_times[next_speed_setting_index].speed, percentage_in_between) * speed_modifier * diminishing_return_factor
 	else
-		self.speed = speed_at_times[current_speed_setting_index].speed * speed_modifier * get_dodge_cooldown
+		self.speed = speed_at_times[current_speed_setting_index].speed * speed_modifier * diminishing_return_factor
 	end
 
-	local current_rotation = self.first_person_extension:current_rotation()
-	local look = Quaternion.look(Vector3.flat(Quaternion.forward(current_rotation)), Vector3.up())
-	local rotate = Quaternion.rotate(look, self.dodge_direction:unbox())
+	local unit_rotation = self.first_person_extension:current_rotation()
+	local flat_unit_rotation = Quaternion.look(Vector3.flat(Quaternion.forward(unit_rotation)), Vector3.up())
+	local move_direction = Quaternion.rotate(flat_unit_rotation, self.dodge_direction:unbox())
 
-	self.locomotion_extension:set_wanted_velocity(rotate * self.speed)
+	self.locomotion_extension:set_wanted_velocity(move_direction * self.speed)
 
-	local num_6 = self.speed * arg_6_2
+	local move_delta = self.speed * dt
 
-	self.distance_supposed_to_move = num_6
-	self.distance_left = self.distance_left - num_6
+	self.distance_supposed_to_move = move_delta
+	self.distance_left = self.distance_left - move_delta
 
 	return true
 end
@@ -289,85 +294,88 @@ PlayerCharacterStateDodging.get_is_dodging = function (self)
 
 	if not dodge_timer then
 		dodge_timer = self.dodge_stand_still_timer
-		dodge_timer = dodge_timer or self.dodge_return_timer
+		dodge_timer = not not dodge_timer or not not self.dodge_return_timer
 	end
 
 	return dodge_timer
 end
 
-PlayerCharacterStateDodging.start_dodge = function (self, arg_8_1, arg_8_2)
+PlayerCharacterStateDodging.start_dodge = function (self, unit, t)
 	-- function 8
-	local get_movement_settings_table = PlayerUnitMovementSettings.get_movement_settings_table(arg_8_1)
-	local network = Managers.state.network
+	local movement_settings_table = PlayerUnitMovementSettings.get_movement_settings_table(unit)
+	local network_manager = Managers.state.network
 
-	if not (not network:game() and LEVEL_EDITOR_TEST) then
-		local unit_game_object_id = network:unit_game_object_id(arg_8_1)
+	if network_manager:game() and not LEVEL_EDITOR_TEST then
+		local unit_id = network_manager:unit_game_object_id(unit)
 
 		self.status_extension:set_is_dodging(true)
-		network.network_transmit:send_rpc_server("rpc_status_change_bool", NetworkLookup.statuses.dodging, true, unit_game_object_id, 0)
+		network_manager.network_transmit:send_rpc_server("rpc_status_change_bool", NetworkLookup.statuses.dodging, true, unit_id, 0)
 	end
 
-	ScriptUnit.has_extension(arg_8_1, "buff_system"):trigger_procs("on_dodge", self.dodge_direction)
-	assert(#get_movement_settings_table.dodging.speed_at_times > 1, "not enough speed at times in movementsettings")
+	local buff_extension = ScriptUnit.has_extension(unit, "buff_system")
+
+	buff_extension:trigger_procs("on_dodge", self.dodge_direction)
+	assert(#movement_settings_table.dodging.speed_at_times > 1, "not enough speed at times in movementsettings")
 
 	self.current_speed_setting_index = 1
-	self.speed = get_movement_settings_table.dodging.speed_at_times[self.current_speed_setting_index].speed
+	self.speed = movement_settings_table.dodging.speed_at_times[self.current_speed_setting_index].speed
 	self.distance_supposed_to_move = 0
 	self.time_in_dodge = 0
-	self.distance_left = get_movement_settings_table.dodging.distance * get_movement_settings_table.dodging.distance_modifier * self.status_extension:get_dodge_cooldown()
+	self.distance_left = movement_settings_table.dodging.distance * movement_settings_table.dodging.distance_modifier * self.status_extension:get_dodge_cooldown()
 
-	self.last_position:store(Unit.world_position(arg_8_1, 0))
-	self:calculate_dodge_total_time(arg_8_1)
+	self.last_position:store(Unit.world_position(unit, 0))
+	self:calculate_dodge_total_time(unit)
 end
 
-PlayerCharacterStateDodging.calculate_dodge_total_time = function (self, arg_9_1)
+PlayerCharacterStateDodging.calculate_dodge_total_time = function (self, unit)
 	-- function 9
-	local num = 0.016666666666666666
-	local get_movement_settings_table = PlayerUnitMovementSettings.get_movement_settings_table(arg_9_1)
-	local flag = true
-	local num_2 = 0
-	local num_3 = 1
-	local num_4 = 0
+	local time_step = 0.016666666666666666
+	local movement_settings_table = PlayerUnitMovementSettings.get_movement_settings_table(unit)
+	local not_hit_end = true
+	local time_in_dodge = 0
+	local current_speed_setting_index = 1
+	local distance_travelled = 0
 	local dodge_fatigue = self.dodge_fatigue
-	local get_dodge_cooldown = self.status_extension:get_dodge_cooldown()
-	local speed_modifier = get_movement_settings_table.dodging.speed_modifier
-	local num_5 = get_movement_settings_table.dodging.distance_modifier * get_dodge_cooldown
-	local num_6 = get_movement_settings_table.dodging.speed_at_times[1].speed * speed_modifier * get_dodge_cooldown
+	local diminishing_return_factor = self.status_extension:get_dodge_cooldown()
+	local speed_modifier = movement_settings_table.dodging.speed_modifier
+	local distance_modifier = movement_settings_table.dodging.distance_modifier * diminishing_return_factor
+	local speed = movement_settings_table.dodging.speed_at_times[1].speed * speed_modifier * diminishing_return_factor
 
-	while not flag do
-		num_2 = num_2 + num
+	while not_hit_end do
+		time_in_dodge = time_in_dodge + time_step
 
-		local speed_at_times = get_movement_settings_table.dodging.speed_at_times
-		local flag_2 = false
-		local num_7 = num_3 + 1
+		local speed_at_times = movement_settings_table.dodging.speed_at_times
+		local breaked = false
+		local start_point = current_speed_setting_index + 1
 
-		num_3 = #speed_at_times
+		current_speed_setting_index = #speed_at_times
 
-		for i = num_7, #speed_at_times do
-			if num_2 <= speed_at_times[i].time_in_dodge then
-				num_3 = i - 1
+		for index = start_point, #speed_at_times do
+			if time_in_dodge <= speed_at_times[index].time_in_dodge then
+				current_speed_setting_index = index - 1
 
 				break
 			end
 		end
 
-		local num_8 = num_3 + 1
+		local next_speed_setting_index = current_speed_setting_index + 1
 
-		if num_8 <= #speed_at_times then
-			local num_9 = speed_at_times[num_8].time_in_dodge - speed_at_times[num_3].time_in_dodge
-			local num_10 = (num_2 - speed_at_times[num_3].time_in_dodge) / num_9
+		if next_speed_setting_index <= #speed_at_times then
+			local time_between_settings = speed_at_times[next_speed_setting_index].time_in_dodge - speed_at_times[current_speed_setting_index].time_in_dodge
+			local time_in_setting = time_in_dodge - speed_at_times[current_speed_setting_index].time_in_dodge
+			local percentage_in_between = time_in_setting / time_between_settings
 
-			num_6 = math.lerp(speed_at_times[num_3].speed, speed_at_times[num_8].speed, num_10) * speed_modifier * get_dodge_cooldown
+			speed = math.lerp(speed_at_times[current_speed_setting_index].speed, speed_at_times[next_speed_setting_index].speed, percentage_in_between) * speed_modifier * diminishing_return_factor
 		else
-			num_6 = speed_at_times[num_3].speed * speed_modifier
+			speed = speed_at_times[current_speed_setting_index].speed * speed_modifier
 		end
 
-		num_4 = num_4 + num_6 * num
+		distance_travelled = distance_travelled + speed * time_step
 
-		if num_4 > get_movement_settings_table.dodging.distance * num_5 * get_dodge_cooldown then
-			flag = false
+		if distance_travelled > movement_settings_table.dodging.distance * distance_modifier * diminishing_return_factor then
+			not_hit_end = false
 		end
 	end
 
-	self.estimated_dodge_time = num_2
+	self.estimated_dodge_time = time_in_dodge
 end

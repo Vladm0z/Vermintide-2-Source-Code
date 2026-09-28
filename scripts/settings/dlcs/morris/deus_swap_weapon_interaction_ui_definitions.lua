@@ -1,7 +1,7 @@
 -- chunkname: @scripts/settings/dlcs/morris/deus_swap_weapon_interaction_ui_definitions.lua
 
 local console_menu_scenegraphs = UISettings.console_menu_scenegraphs
-local tbl = {
+local scenegraph_definition = {
 	screen = {
 		scale = "fit",
 		size = {
@@ -71,7 +71,7 @@ local tbl = {
 		}
 	}
 }
-local tbl_2 = {
+local tooltip_passes = {
 	"equipped_item_title",
 	"item_titles",
 	"skin_applied",
@@ -81,23 +81,23 @@ local tbl_2 = {
 	"traits",
 	"keywords"
 }
-local tbl_3 = {
+local animation_definitions = {
 	on_enter = {
 		{
 			name = "fade_in",
 			start_progress = 0,
 			end_progress = 0.1,
-			init = function (arg_1_0, arg_1_1, arg_1_2, arg_1_3)
+			init = function (ui_scenegraph, scenegraph_definition, widgets, params)
 				-- function 1
-				arg_1_3.render_settings.alpha_multiplier = 0
+				params.render_settings.alpha_multiplier = 0
 			end,
-			update = function (arg_2_0, arg_2_1, arg_2_2, arg_2_3, arg_2_4)
+			update = function (ui_scenegraph, scenegraph_definition, widgets, progress, params)
 				-- function 2
-				local easeInCubic = math.easeInCubic(arg_2_3)
+				local anim_progress = math.easeInCubic(progress)
 
-				arg_2_4.render_settings.alpha_multiplier = easeInCubic
+				params.render_settings.alpha_multiplier = anim_progress
 			end,
-			on_complete = function (arg_3_0, arg_3_1, arg_3_2, arg_3_3)
+			on_complete = function (ui_scenegraph, scenegraph_definition, widgets, params)
 				-- function 3
 				return
 			end
@@ -108,18 +108,18 @@ local tbl_3 = {
 			name = "bounce",
 			start_progress = 0,
 			end_progress = 0.5,
-			init = function (arg_4_0, arg_4_1, arg_4_2, arg_4_3)
+			init = function (ui_scenegraph, scenegraph_definition, widgets, params)
 				-- function 4
-				arg_4_3.bounce_value = 1
+				params.bounce_value = 1
 			end,
-			update = function (arg_5_0, arg_5_1, arg_5_2, arg_5_3, arg_5_4)
+			update = function (ui_scenegraph, scenegraph_definition, widgets, progress, params)
 				-- function 5
-				local easeInCubic = math.easeInCubic(arg_5_3)
+				local anim_progress = math.easeInCubic(progress)
 				local time = Managers.time:time("main")
 
-				arg_5_0.pivot.local_position[1] = math.sin(time * 50) * 10 * (arg_5_4.bounce_value - arg_5_3)
+				ui_scenegraph.pivot.local_position[1] = math.sin(time * 50) * 10 * (params.bounce_value - progress)
 			end,
-			on_complete = function (arg_6_0, arg_6_1, arg_6_2, arg_6_3)
+			on_complete = function (ui_scenegraph, scenegraph_definition, widgets, params)
 				-- function 6
 				return
 			end
@@ -127,7 +127,7 @@ local tbl_3 = {
 	}
 }
 
-local function fn()
+local function create_chest_content_widget()
 	-- function 7
 	return {
 		scenegraph_id = "chest_content",
@@ -137,45 +137,45 @@ local function fn()
 					texture_id = "texture_id",
 					style_id = "coin_icon",
 					pass_type = "texture",
-					content_check_function = function (self)
+					content_check_function = function (content)
 						-- function 8
-						return self.show_coin_icon
+						return content.show_coin_icon
 					end
 				},
 				{
 					style_id = "cost_text",
 					pass_type = "text",
 					text_id = "cost_text",
-					content_check_function = function (self)
+					content_check_function = function (content)
 						-- function 9
-						return self.cost_text
+						return content.cost_text
 					end
 				},
 				{
 					style_id = "rarity",
 					pass_type = "text",
 					text_id = "rarity_text",
-					content_check_function = function (self)
+					content_check_function = function (content)
 						-- function 10
-						return self.rarity_text
+						return content.rarity_text
 					end
 				},
 				{
 					style_id = "reward_info",
 					pass_type = "text",
 					text_id = "reward_info_text",
-					content_check_function = function (self)
+					content_check_function = function (content)
 						-- function 11
-						return self.reward_info_text
+						return content.reward_info_text
 					end
 				},
 				{
 					style_id = "disabled_text",
 					pass_type = "text",
 					text_id = "disabled_text",
-					content_check_function = function (self)
+					content_check_function = function (content)
 						-- function 12
-						return self.disabled_text
+						return content.disabled_text
 					end
 				}
 			}
@@ -293,21 +293,21 @@ local function fn()
 	}
 end
 
-local flag = true
-local tbl_4 = {
-	chest_content = fn(),
-	weapon_tooltip = UIWidgets.create_simple_item_presentation("item_tooltip", tbl_2, flag),
+local force_equipped = true
+local widgets = {
+	chest_content = create_chest_content_widget(),
+	weapon_tooltip = UIWidgets.create_simple_item_presentation("item_tooltip", tooltip_passes, force_equipped),
 	background = UIWidgets.create_simple_rect("background", {
 		255,
 		0,
 		0,
 		0
 	}),
-	frame = UIWidgets.create_frame("background", tbl.background.size, "item_tooltip_frame_01")
+	frame = UIWidgets.create_frame("background", scenegraph_definition.background.size, "item_tooltip_frame_01")
 }
 
 return {
-	animation_definitions = tbl_3,
-	scenegraph_definition = tbl,
-	widgets = tbl_4
+	animation_definitions = animation_definitions,
+	scenegraph_definition = scenegraph_definition,
+	widgets = widgets
 }

@@ -4,104 +4,117 @@ require("scripts/entity_system/systems/behaviour/nodes/bt_node")
 
 BTDefendStandardAction = class(BTDefendStandardAction, BTNode)
 
-BTDefendStandardAction.init = function (arg_1_0, ...)
+BTDefendStandardAction.init = function (self, ...)
 	-- function 1
-	BTDefendStandardAction.super.init(arg_1_0, ...)
+	BTDefendStandardAction.super.init(self, ...)
 end
 
 BTDefendStandardAction.name = "BTDefendStandardAction"
 
-local function fn(self)
+local function randomize(event)
 	-- function 2
-	if type(self) == "table" then
-		return self[Math.random(1, #self)]
+	if type(event) == "table" then
+		return event[Math.random(1, #event)]
 	else
-		return self
+		return event
 	end
 end
 
-BTDefendStandardAction.enter = function (self, arg_3_1, arg_3_2, arg_3_3)
+BTDefendStandardAction.enter = function (self, unit, blackboard, t)
 	-- function 3
-	arg_3_2.action = self._tree_node.action_data
-	arg_3_2.active_node = BTDefendStandardAction
+	local action = self._tree_node.action_data
 
-	Managers.state.entity:system("ai_slot_system"):do_slot_search(arg_3_1, false)
+	blackboard.action = action
+	blackboard.active_node = BTDefendStandardAction
 
-	local local_position = Unit.local_position(arg_3_2.standard_unit, 0)
+	local ai_slot_system = Managers.state.entity:system("ai_slot_system")
 
-	arg_3_2.navigation_extension:move_to(local_position)
+	ai_slot_system:do_slot_search(unit, false)
 
-	arg_3_2.standard_position_boxed = Vector3Box(local_position)
+	local position = Unit.local_position(blackboard.standard_unit, 0)
 
-	Managers.state.network:anim_event(arg_3_1, "move_start_fwd")
+	blackboard.navigation_extension:move_to(position)
 
-	arg_3_2.move_state = "moving"
-	arg_3_2.moving_to_defend_standard = true
+	blackboard.standard_position_boxed = Vector3Box(position)
+
+	Managers.state.network:anim_event(unit, "move_start_fwd")
+
+	blackboard.move_state = "moving"
+	blackboard.moving_to_defend_standard = true
 end
 
-BTDefendStandardAction.leave = function (arg_4_0, arg_4_1, arg_4_2, arg_4_3, arg_4_4, arg_4_5)
+BTDefendStandardAction.leave = function (self, unit, blackboard, t, reason, destroy)
 	-- function 4
-	local get_default_breed_move_speed = AiUtils.get_default_breed_move_speed(arg_4_1, arg_4_2)
-	local navigation_extension = arg_4_2.navigation_extension
+	local default_move_speed = AiUtils.get_default_breed_move_speed(unit, blackboard)
+	local navigation_extension = blackboard.navigation_extension
 
 	navigation_extension:set_enabled(true)
-	navigation_extension:set_max_speed(get_default_breed_move_speed)
+	navigation_extension:set_max_speed(default_move_speed)
 
-	arg_4_2.action = nil
-	arg_4_2.active_node = nil
-	arg_4_2.moving_to_defend_standard = nil
-	arg_4_2.next_move_adjustment_t = nil
-	arg_4_2.reached_standard = nil
-	arg_4_2.standard_position_boxed = nil
+	blackboard.action = nil
+	blackboard.active_node = nil
+	blackboard.moving_to_defend_standard = nil
+	blackboard.next_move_adjustment_t = nil
+	blackboard.reached_standard = nil
+	blackboard.standard_position_boxed = nil
 
-	Managers.state.entity:system("ai_slot_system"):do_slot_search(arg_4_1, true)
+	local ai_slot_system = Managers.state.entity:system("ai_slot_system")
 
-	arg_4_2.move_state = "idle"
+	ai_slot_system:do_slot_search(unit, true)
+
+	blackboard.move_state = "idle"
 end
 
-BTDefendStandardAction.run = function (self, arg_5_1, arg_5_2, arg_5_3, arg_5_4)
+BTDefendStandardAction.run = function (self, unit, blackboard, t, dt)
 	-- function 5
-	if not HEALTH_ALIVE[arg_5_2.standard_unit] then
+	if not HEALTH_ALIVE[blackboard.standard_unit] then
 		return "done"
 	end
 
-	local unbox = arg_5_2.standard_position_boxed:unbox()
-	local var_5_1 = POSITION_LOOKUP[arg_5_1]
+	local standard_position = blackboard.standard_position_boxed:unbox()
+	local self_position = POSITION_LOOKUP[unit]
+	local distance_to_standard = Vector3.distance(standard_position, self_position)
 
-	if not (not (Vector3.distance(unbox, var_5_1) < 2.5) or arg_5_2.reached_standard) then
-		arg_5_2.reached_standard = true
+	if distance_to_standard < 2.5 and not blackboard.reached_standard then
+		blackboard.reached_standard = true
 
-		Managers.state.network:anim_event(arg_5_1, "idle")
-		self:_enable_navigation(arg_5_2, false)
+		Managers.state.network:anim_event(unit, "idle")
+		self:_enable_navigation(blackboard, false)
 
-		arg_5_2.next_move_adjustment_t = arg_5_3 + 1
+		blackboard.next_move_adjustment_t = t + 1
 
-		arg_5_2.navigation_extension:set_max_speed(arg_5_2.breed.walk_speed)
+		local navigation_extension = blackboard.navigation_extension
+
+		navigation_extension:set_max_speed(blackboard.breed.walk_speed)
 	end
 
-	if not arg_5_2.reached_standard then
-		local target_unit = arg_5_2.target_unit
+	if blackboard.reached_standard then
+		local target_unit = blackboard.target_unit
 
-		if not HEALTH_ALIVE[target_unit] then
-			local rotation_towards_unit_flat = LocomotionUtils.rotation_towards_unit_flat(arg_5_1, target_unit)
+		if HEALTH_ALIVE[target_unit] then
+			local rot = LocomotionUtils.rotation_towards_unit_flat(unit, target_unit)
 
-			arg_5_2.locomotion_extension:set_wanted_rotation(rotation_towards_unit_flat)
+			blackboard.locomotion_extension:set_wanted_rotation(rot)
 
-			local target_distance_to_standard = arg_5_2.target_distance_to_standard
+			local target_distance_to_standard = blackboard.target_distance_to_standard
 
-			if not (not target_distance_to_standard and not (target_distance_to_standard < arg_5_2.breed.defensive_threshold_distance)) then
+			if target_distance_to_standard and target_distance_to_standard < blackboard.breed.defensive_threshold_distance then
 				return "done"
 			end
 
-			if arg_5_3 > arg_5_2.next_move_adjustment_t then
-				self:_adjust_defend_position(arg_5_1, arg_5_2, target_unit, var_5_1, unbox, rotation_towards_unit_flat)
+			if t > blackboard.next_move_adjustment_t then
+				self:_adjust_defend_position(unit, blackboard, target_unit, self_position, standard_position, rot)
 
-				arg_5_2.next_move_adjustment_t = arg_5_3 + 1
-			elseif not (not arg_5_2.navigation_extension:has_reached_destination() and arg_5_2.has_reached_adjustment_position) then
-				self:_enable_navigation(arg_5_2, false)
-				Managers.state.network:anim_event(arg_5_1, "idle")
+				blackboard.next_move_adjustment_t = t + 1
+			else
+				local has_reached_destination = blackboard.navigation_extension:has_reached_destination()
 
-				arg_5_2.has_reached_adjustment_position = true
+				if has_reached_destination and not blackboard.has_reached_adjustment_position then
+					self:_enable_navigation(blackboard, false)
+					Managers.state.network:anim_event(unit, "idle")
+
+					blackboard.has_reached_adjustment_position = true
+				end
 			end
 		end
 	end
@@ -109,71 +122,78 @@ BTDefendStandardAction.run = function (self, arg_5_1, arg_5_2, arg_5_3, arg_5_4)
 	return "running"
 end
 
-BTDefendStandardAction._adjust_defend_position = function (self, arg_6_1, arg_6_2, arg_6_3, arg_6_4, arg_6_5, arg_6_6)
+BTDefendStandardAction._adjust_defend_position = function (self, unit, blackboard, target_unit, self_position, standard_position, rotation)
 	-- function 6
-	local var_6_0 = POSITION_LOOKUP[arg_6_3]
-	local num = arg_6_5 + Vector3.normalize(var_6_0 - arg_6_5) * Math.random_range(1, 1.5)
-	local nav_world = arg_6_2.nav_world
-	local num_2 = 1
-	local num_3 = 1
-	local triangle_from_position, var_6_6 = GwNavQueries.triangle_from_position(nav_world, num, num_2, num_3)
-	local var_6_7
+	local target_position = POSITION_LOOKUP[target_unit]
+	local standard_to_target_direction = Vector3.normalize(target_position - standard_position)
+	local wanted_move_position = standard_position + standard_to_target_direction * Math.random_range(1, 1.5)
+	local nav_world = blackboard.nav_world
+	local above, below = 1, 1
+	local is_on_navmesh, altitude = GwNavQueries.triangle_from_position(nav_world, wanted_move_position, above, below)
+	local position_on_navmesh
 
-	if not triangle_from_position then
-		var_6_7 = Vector3.copy(num)
-		var_6_7.z = var_6_6
+	if is_on_navmesh then
+		position_on_navmesh = Vector3.copy(wanted_move_position)
+		position_on_navmesh.z = altitude
 	else
-		local num_4 = 1
-		local num_5 = 0.05
+		local horizontal_limit = 1
+		local distance_from_nav_border = 0.05
 
-		var_6_7 = GwNavQueries.inside_position_from_outside_position(nav_world, num, num_2, num_3, num_4, num_5)
+		position_on_navmesh = GwNavQueries.inside_position_from_outside_position(nav_world, wanted_move_position, above, below, horizontal_limit, distance_from_nav_border)
 	end
 
-	if not (not var_6_7 and not (Vector3.distance(arg_6_4, var_6_7) > 1)) then
-		self:_enable_navigation(arg_6_2, true)
+	if position_on_navmesh then
+		local distance_to_move_position = Vector3.distance(self_position, position_on_navmesh)
 
-		arg_6_2.has_reached_adjustment_position = nil
+		if distance_to_move_position > 1 then
+			self:_enable_navigation(blackboard, true)
 
-		arg_6_2.navigation_extension:move_to(var_6_7)
+			blackboard.has_reached_adjustment_position = nil
 
-		local normalize = Vector3.normalize(var_6_7 - arg_6_4)
-		local _calculate_walk_dir = self:_calculate_walk_dir(Quaternion.right(arg_6_6), Quaternion.forward(arg_6_6), normalize, arg_6_4)
-		local _calculate_walk_animation = self:_calculate_walk_animation(_calculate_walk_dir)
+			blackboard.navigation_extension:move_to(position_on_navmesh)
 
-		Managers.state.network:anim_event(arg_6_1, _calculate_walk_animation)
+			local wanted_move_direction = Vector3.normalize(position_on_navmesh - self_position)
+			local walk_direction_identifier = self:_calculate_walk_dir(Quaternion.right(rotation), Quaternion.forward(rotation), wanted_move_direction, self_position)
+			local walk_anim = self:_calculate_walk_animation(walk_direction_identifier)
 
-		arg_6_2.move_state = "moving"
+			Managers.state.network:anim_event(unit, walk_anim)
+
+			blackboard.move_state = "moving"
+		end
 	end
 end
 
-BTDefendStandardAction._enable_navigation = function (arg_7_0, arg_7_1, arg_7_2)
+BTDefendStandardAction._enable_navigation = function (self, blackboard, enable)
 	-- function 7
-	if not arg_7_2 then
-		arg_7_1.navigation_extension:set_enabled(true)
+	if enable then
+		local navigation_extension = blackboard.navigation_extension
+
+		navigation_extension:set_enabled(true)
 	else
-		arg_7_1.navigation_extension:set_enabled(false)
-		arg_7_1.locomotion_extension:set_wanted_velocity(Vector3(0, 0, 0))
+		local navigation_extension = blackboard.navigation_extension
+
+		navigation_extension:set_enabled(false)
+		blackboard.locomotion_extension:set_wanted_velocity(Vector3(0, 0, 0))
 	end
 end
 
-BTDefendStandardAction._calculate_walk_animation = function (arg_8_0, arg_8_1)
+BTDefendStandardAction._calculate_walk_animation = function (self, walk_dir)
 	-- function 8
-	local var_8_0
-	local flag
+	local anim
 
-	flag = (arg_8_1 ~= "right" or not "move_right_walk" or arg_8_1 ~= "left") and (not "move_left_walk" or arg_8_1 ~= "forward" or not "move_fwd_walk" or "move_bwd_walk")
+	anim = (walk_dir ~= "right" or not "move_right_walk") and (walk_dir ~= "left" or not "move_left_walk") and (walk_dir ~= "forward" or not "move_fwd_walk") and not not "move_bwd_walk"
 
-	return flag
+	return anim
 end
 
-BTDefendStandardAction._calculate_walk_dir = function (arg_9_0, arg_9_1, arg_9_2, arg_9_3, arg_9_4)
+BTDefendStandardAction._calculate_walk_dir = function (self, right_vector, forward_vector, dir, pos)
 	-- function 9
-	local dot = Vector3.dot(arg_9_1, arg_9_3)
-	local dot_2 = Vector3.dot(arg_9_2, arg_9_3)
-	local abs = math.abs(dot)
-	local abs_2 = math.abs(dot_2)
+	local right_dot = Vector3.dot(right_vector, dir)
+	local fwd_dot = Vector3.dot(forward_vector, dir)
+	local abs_right = math.abs(right_dot)
+	local abs_fwd = math.abs(fwd_dot)
 
-	arg_9_3 = (not (abs_2 < abs) or not (dot > 0) or not "right" or not (abs_2 < abs)) and (not "left" or not (dot_2 > 0) or not "forward" or "backward")
+	dir = (not (abs_fwd < abs_right) or not (right_dot > 0) or not "right") and (not (abs_fwd < abs_right) or not "left") and (not (fwd_dot > 0) or not "forward") and not not "backward"
 
-	return arg_9_3
+	return dir
 end

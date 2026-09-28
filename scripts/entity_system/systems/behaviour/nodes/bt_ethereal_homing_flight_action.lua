@@ -4,9 +4,9 @@ require("scripts/entity_system/systems/behaviour/nodes/bt_node")
 
 BTEtherealHomingFlightAction = class(BTEtherealHomingFlightAction, BTNode)
 
-BTEtherealHomingFlightAction.init = function (arg_1_0, ...)
+BTEtherealHomingFlightAction.init = function (self, ...)
 	-- function 1
-	BTEtherealHomingFlightAction.super.init(arg_1_0, ...)
+	BTEtherealHomingFlightAction.super.init(self, ...)
 end
 
 BTEtherealHomingFlightAction.name = "BTEtherealHomingFlightAction"
@@ -16,39 +16,39 @@ BTEtherealHomingFlightAction.enter = function (self)
 	self._ai_bot_group_system = Managers.state.entity:system("ai_bot_group_system")
 end
 
-BTEtherealHomingFlightAction.leave = function (self, arg_3_1, arg_3_2, arg_3_3, arg_3_4, arg_3_5)
+BTEtherealHomingFlightAction.leave = function (self, unit, blackboard, t, reason, destroy)
 	-- function 3
-	local homing_target_unit = arg_3_2.homing_target_unit
+	local old_target_unit = blackboard.homing_target_unit
 
-	if not homing_target_unit then
-		self._ai_bot_group_system:ranged_attack_ended(arg_3_1, homing_target_unit, "shadow_skull")
+	if old_target_unit then
+		self._ai_bot_group_system:ranged_attack_ended(unit, old_target_unit, "shadow_skull")
 
-		arg_3_2.homing_target_unit = nil
+		blackboard.homing_target_unit = nil
 	end
 end
 
-BTEtherealHomingFlightAction.run = function (self, arg_4_1, arg_4_2, arg_4_3, arg_4_4, arg_4_5)
+BTEtherealHomingFlightAction.run = function (self, unit, blackboard, t, dt, bt_name)
 	-- function 4
-	if not arg_4_2.bot_target_delay then
-		arg_4_2.bot_target_delay = arg_4_3 + 6
-	elseif not (not (arg_4_3 > arg_4_2.bot_target_delay) or arg_4_2.is_target) then
-		arg_4_2.is_target = true
+	if not blackboard.bot_target_delay then
+		blackboard.bot_target_delay = t + 6
+	elseif t > blackboard.bot_target_delay and not blackboard.is_target then
+		blackboard.is_target = true
 	end
 
-	local homing_target_unit = arg_4_2.homing_target_unit
-	local target_unit = arg_4_2.target_unit
+	local old_target_unit = blackboard.homing_target_unit
+	local new_target_unit = blackboard.target_unit
 
-	if target_unit ~= homing_target_unit then
-		local _ai_bot_group_system = self._ai_bot_group_system
+	if new_target_unit ~= old_target_unit then
+		local ai_bot_group_system = self._ai_bot_group_system
 
-		if not homing_target_unit then
-			_ai_bot_group_system:ranged_attack_ended(arg_4_1, homing_target_unit, "shadow_skull")
+		if old_target_unit then
+			ai_bot_group_system:ranged_attack_ended(unit, old_target_unit, "shadow_skull")
 		end
 
-		if not target_unit and not arg_4_2.is_target then
-			_ai_bot_group_system:ranged_attack_started(arg_4_1, target_unit, "shadow_skull")
+		if new_target_unit and blackboard.is_target then
+			ai_bot_group_system:ranged_attack_started(unit, new_target_unit, "shadow_skull")
 
-			arg_4_2.homing_target_unit = target_unit
+			blackboard.homing_target_unit = new_target_unit
 		end
 	end
 

@@ -1,6 +1,6 @@
 -- chunkname: @scripts/settings/equipment/cosmetics_vs.lua
 
-local tbl = {
+local skaven_gutter_runner_skin_0000 = {
 	third_person_husk = "units/beings/player/dark_pact_third_person_base/skaven_gutter_runner/chr_third_person_base_husk",
 	first_person = "units/beings/player/dark_pact_first_person_base/skaven_common/chr_first_person_base",
 	third_person = "units/beings/player/dark_pact_third_person_base/skaven_gutter_runner/chr_third_person_base",
@@ -20,7 +20,7 @@ local tbl = {
 		"slot_hat"
 	}
 }
-local tbl_2 = {
+local skaven_pack_master_skin_0000 = {
 	third_person_husk = "units/beings/player/dark_pact_third_person_base/skaven_pack_master/chr_third_person_base_husk",
 	first_person = "units/beings/player/dark_pact_first_person_base/skaven_common/chr_first_person_base",
 	third_person = "units/beings/player/dark_pact_third_person_base/skaven_pack_master/chr_third_person_base",
@@ -40,7 +40,7 @@ local tbl_2 = {
 		"slot_hat"
 	}
 }
-local tbl_3 = {
+local skaven_wind_globadier_skin_0000 = {
 	third_person_husk = "units/beings/player/dark_pact_third_person_base/skaven_wind_globadier/chr_third_person_base_husk",
 	first_person = "units/beings/player/dark_pact_first_person_base/skaven_common/chr_first_person_base",
 	third_person = "units/beings/player/dark_pact_third_person_base/skaven_wind_globadier/chr_third_person_base",
@@ -60,7 +60,7 @@ local tbl_3 = {
 		"slot_hat"
 	}
 }
-local tbl_4 = {
+local skaven_warpfire_thrower_skin_0000 = {
 	third_person_husk = "units/beings/player/dark_pact_third_person_base/skaven_warpfire_thrower/chr_third_person_base_husk",
 	first_person = "units/beings/player/dark_pact_first_person_base/skaven_common/chr_first_person_base",
 	third_person = "units/beings/player/dark_pact_third_person_base/skaven_warpfire_thrower/chr_third_person_base",
@@ -80,7 +80,7 @@ local tbl_4 = {
 		"slot_hat"
 	}
 }
-local tbl_5 = {
+local skaven_ratling_gunner_skin_0000 = {
 	third_person_husk = "units/beings/player/dark_pact_third_person_base/skaven_ratlinggunner/chr_third_person_base_husk",
 	first_person = "units/beings/player/dark_pact_first_person_base/skaven_common/chr_first_person_base",
 	third_person = "units/beings/player/dark_pact_third_person_base/skaven_ratlinggunner/chr_third_person_base",
@@ -100,7 +100,7 @@ local tbl_5 = {
 		"slot_hat"
 	}
 }
-local tbl_6 = {
+local chaos_troll_skin_0000 = {
 	third_person_husk = "units/beings/player/dark_pact_third_person_base/chaos_troll/chr_third_person_base_husk",
 	first_person = "units/beings/player/dark_pact_first_person_base/chaos_troll/chr_first_person_base",
 	third_person = "units/beings/player/dark_pact_third_person_base/chaos_troll/chr_third_person_base",
@@ -120,7 +120,7 @@ local tbl_6 = {
 		"slot_hat"
 	}
 }
-local tbl_7 = {
+local skaven_rat_ogre_skin_0000 = {
 	third_person_husk = "units/beings/player/dark_pact_third_person_base/skaven_rat_ogre/chr_third_person_base_husk",
 	first_person = "units/beings/player/dark_pact_first_person_base/skaven_rat_ogre/chr_first_person_base",
 	third_person = "units/beings/player/dark_pact_third_person_base/skaven_rat_ogre/chr_third_person_base",
@@ -142,11 +142,11 @@ local tbl_7 = {
 }
 
 return {
-	skaven_gutter_runner_skin_0000 = table.clone(tbl),
-	skaven_pack_master_skin_0000 = table.clone(tbl_2),
-	skaven_wind_globadier_skin_0000 = table.clone(tbl_3),
-	skaven_warpfire_thrower_skin_0000 = table.clone(tbl_4),
-	skaven_ratling_gunner_skin_0000 = table.clone(tbl_5),
-	chaos_troll_skin_0000 = table.clone(tbl_6),
-	skaven_rat_ogre_skin_0000 = table.clone(tbl_7)
+	skaven_gutter_runner_skin_0000 = table.clone(skaven_gutter_runner_skin_0000),
+	skaven_pack_master_skin_0000 = table.clone(skaven_pack_master_skin_0000),
+	skaven_wind_globadier_skin_0000 = table.clone(skaven_wind_globadier_skin_0000),
+	skaven_warpfire_thrower_skin_0000 = table.clone(skaven_warpfire_thrower_skin_0000),
+	skaven_ratling_gunner_skin_0000 = table.clone(skaven_ratling_gunner_skin_0000),
+	chaos_troll_skin_0000 = table.clone(chaos_troll_skin_0000),
+	skaven_rat_ogre_skin_0000 = table.clone(skaven_rat_ogre_skin_0000)
 }

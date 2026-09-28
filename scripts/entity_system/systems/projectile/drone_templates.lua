@@ -2,7 +2,7 @@
 
 local DroneTemplates = DroneTemplates
 
-DroneTemplates = DroneTemplates or {}
+DroneTemplates = not not DroneTemplates or not not {}
 DroneTemplates = DroneTemplates
 
 DLCUtils.merge("drone_templates", DroneTemplates)

@@ -1,73 +1,108 @@
 -- chunkname: @scripts/ui/views/versus_menu/versus_inventory_grid.lua
 
-local var_0_0 = local_require("scripts/ui/views/versus_menu/versus_inventory_grid_definitions")
-local widgets = var_0_0.widgets
-local scenegraph_definition = var_0_0.scenegraph_definition
-local animation_definitions = var_0_0.animation_definitions
-local generic_input_actions = var_0_0.generic_input_actions
-local flag = false
+local definitions = local_require("scripts/ui/views/versus_menu/versus_inventory_grid_definitions")
+local widget_definitions = definitions.widgets
+local scenegraph_definition = definitions.scenegraph_definition
+local animation_definitions = definitions.animation_definitions
+local generic_input_actions = definitions.generic_input_actions
+local DO_RELOAD = false
 
 VersusInventoryGrid = class(VersusInventoryGrid)
 VersusInventoryGrid.NAME = "VersusInventoryGrid"
 
-local function fn(self, arg_1_1)
+local function item_sort_func(item_1, item_2)
 	-- function 1
-	local data = self.data
-	local data_2 = arg_1_1.data
-	local key = data.key
-	local key_2 = data_2.key
-	local power_level = self.power_level
+	local item_data_1 = item_1.data
+	local item_data_2 = item_2.data
+	local item_key_1 = item_data_1.key
+	local item_key_2 = item_data_2.key
+	local power_level = item_1.power_level
 
-	power_level = power_level or 0
+	if not power_level then
+		-- Nothing
+	end
 
-	local power_level_2 = arg_1_1.power_level
+	power_level = 0
 
-	power_level_2 = power_level_2 or 0
+	local item_1_power_level = power_level
 
-	local backend_id = self.backend_id
-	local backend_id_2 = arg_1_1.backend_id
-	local is_favorite_backend_id = ItemHelper.is_favorite_backend_id(backend_id, self)
+	::label_1_0::
 
-	if is_favorite_backend_id == ItemHelper.is_favorite_backend_id(backend_id_2, arg_1_1) then
-		if power_level == power_level_2 then
-			local rarity = self.rarity
+	local power_level_2 = item_2.power_level
 
-			rarity = rarity or data.rarity
+	if not power_level_2 then
+		-- Nothing
+	end
 
-			local rarity_2 = arg_1_1.rarity
+	power_level_2 = 0
 
-			rarity_2 = rarity_2 or data_2.rarity
+	local item_2_power_level = power_level_2
+
+	::label_1_1::
+
+	local item_1_backend_id = item_1.backend_id
+	local item_2_backend_id = item_2.backend_id
+	local item_1_favorited = ItemHelper.is_favorite_backend_id(item_1_backend_id, item_1)
+	local item_2_favorited = ItemHelper.is_favorite_backend_id(item_2_backend_id, item_2)
+
+	if item_1_favorited == item_2_favorited then
+		if item_1_power_level == item_2_power_level then
+			local rarity = item_1.rarity
+
+			if not rarity then
+				-- Nothing
+			end
+
+			rarity = item_data_1.rarity
+
+			local item_1_rarity = rarity
+
+			::label_1_2::
+
+			local rarity_2 = item_2.rarity
+
+			if not rarity_2 then
+				-- Nothing
+			end
+
+			rarity_2 = item_data_2.rarity
+
+			local item_2_rarity = rarity_2
+
+			::label_1_3::
 
 			local item_rarity_order = UISettings.item_rarity_order
-			local var_1_12 = item_rarity_order[rarity]
-			local var_1_13 = item_rarity_order[rarity_2]
+			local item_1_rarity_order = item_rarity_order[item_1_rarity]
+			local item_2_rarity_order = item_rarity_order[item_2_rarity]
 
-			if var_1_12 == var_1_13 then
-				local var_1_14 = Localize(data.item_type)
-				local var_1_15 = Localize(data_2.item_type)
+			if item_1_rarity_order == item_2_rarity_order then
+				local item_type_1 = Localize(item_data_1.item_type)
+				local item_type_2 = Localize(item_data_2.item_type)
 
-				if var_1_14 == var_1_15 then
-					local get_ui_information_from_item, var_1_17 = UIUtils.get_ui_information_from_item(self)
-					local get_ui_information_from_item_2, var_1_19 = UIUtils.get_ui_information_from_item(arg_1_1)
+				if item_type_1 == item_type_2 then
+					local _, item_1_display_name = UIUtils.get_ui_information_from_item(item_1)
+					local _, item_2_display_name = UIUtils.get_ui_information_from_item(item_2)
+					local item_name_1 = Localize(item_1_display_name)
+					local item_name_2 = Localize(item_2_display_name)
 
-					return Localize(var_1_17) < Localize(var_1_19)
+					return item_name_1 < item_name_2
 				else
-					return var_1_14 < var_1_15
+					return item_type_1 < item_type_2
 				end
 			else
-				return var_1_12 < var_1_13
+				return item_1_rarity_order < item_2_rarity_order
 			end
 		else
-			return power_level_2 < power_level
+			return item_2_power_level < item_1_power_level
 		end
-	elseif not is_favorite_backend_id then
+	elseif item_1_favorited then
 		return true
 	else
 		return false
 	end
 end
 
-local tbl = {
+local display_titles_by_slot_type = {
 	melee = Localize("inventory_screen_melee_weapon_title"),
 	ranged = Localize("inventory_screen_ranged_weapon_title"),
 	necklace = Localize("inventory_screen_necklace_title"),
@@ -79,79 +114,85 @@ VersusInventoryGrid._create_item_categories = function (self)
 	-- function 2
 	local career_index = self.career_index
 	local profile_index = self.profile_index
-	local item_slot_types_by_slot_name = SPProfiles[profile_index].careers[career_index].item_slot_types_by_slot_name
-	local tbl_2 = {}
+	local profile = SPProfiles[profile_index]
+	local careers = profile.careers
+	local career = careers[career_index]
+	local item_slot_types_by_slot_name = career.item_slot_types_by_slot_name
+	local categories = {}
 
-	for k, v in pairs(item_slot_types_by_slot_name) do
-		local ui_slot_index = InventorySettings.slots_by_name[k].ui_slot_index
+	for slot_name, slot_types in pairs(item_slot_types_by_slot_name) do
+		local slot = InventorySettings.slots_by_name[slot_name]
+		local ui_slot_index = slot.ui_slot_index
 
-		if not ui_slot_index then
-			local str = "( "
-			local str_2 = ""
-			local var_2_7
-			local tbl_3 = {}
+		if ui_slot_index then
+			local item_filter = "( "
+			local display_name = ""
+			local slot_icon
+			local potential_icons = {}
 
-			for i, v_2 in ipairs(v) do
-				local var_2_9 = tbl[v_2]
+			for index, slot_type in ipairs(slot_types) do
+				local slot_display_name = display_titles_by_slot_type[slot_type]
 
-				str_2 = str_2 .. var_2_9
-				str = str .. "slot_type == " .. v_2
+				display_name = display_name .. slot_display_name
+				item_filter = item_filter .. "slot_type == " .. slot_type
 
-				if i < #v then
-					str_2 = str_2 .. " - "
-					str = str .. " or "
+				if index < #slot_types then
+					display_name = display_name .. " - "
+					item_filter = item_filter .. " or "
 				else
-					str = str .. " ) and item_rarity ~= magic"
+					item_filter = item_filter .. " ) and item_rarity ~= magic"
 				end
 
-				for k_2, v_3 in pairs(UISettings.slot_icons) do
-					if not string.find(k_2, v_2) then
-						tbl_3[k_2] = v_3
+				for icon_key, icon in pairs(UISettings.slot_icons) do
+					if string.find(icon_key, slot_type) then
+						potential_icons[icon_key] = icon
 					end
 				end
 			end
 
-			for k_3, v_4 in pairs(tbl_3) do
-				local flag = true
+			for icon_key, icon in pairs(potential_icons) do
+				local is_correct_icon = true
 
-				for i_2, v_5 in ipairs(v) do
-					if not string.find(k_3, v_5) then
-						flag = false
+				for _, slot_type in ipairs(slot_types) do
+					if not string.find(icon_key, slot_type) then
+						is_correct_icon = false
 
 						break
 					end
 				end
 
-				if not flag then
-					var_2_7 = v_4
+				if is_correct_icon then
+					slot_icon = icon
 
 					break
 				end
 			end
 
-			tbl_2[ui_slot_index] = {
+			local category = {
 				hero_specific_filter = true,
-				name = k,
-				display_name = str_2,
-				icon = var_2_7,
-				item_types = v,
+				name = slot_name,
+				display_name = display_name,
+				icon = slot_icon,
+				item_types = slot_types,
 				slot_index = ui_slot_index,
-				slot_name = k,
-				item_filter = str
+				slot_name = slot_name,
+				item_filter = item_filter
 			}
+
+			categories[ui_slot_index] = category
 		end
 	end
 
-	return tbl_2
+	return categories
 end
 
-VersusInventoryGrid.on_enter = function (self, arg_3_1, arg_3_2)
+VersusInventoryGrid.on_enter = function (self, params, offset)
 	-- function 3
 	print("[HeroViewWindow] Enter Substate VersusInventoryGrid")
 
-	self.parent = arg_3_1.parent
+	self.parent = params.parent
 
-	local ingame_ui_context = arg_3_1.ingame_ui_context
+	local ingame_ui_context = params.ingame_ui_context
 
 	self.ui_renderer = ingame_ui_context.ui_renderer
 	self.ui_top_renderer = ingame_ui_context.ui_top_renderer
@@ -161,44 +202,44 @@ VersusInventoryGrid.on_enter = function (self, arg_3_1, arg_3_2)
 		snap_pixel_positions = true
 	}
 
-	local player = Managers.player
-	local local_player = player:local_player()
+	local player_manager = Managers.player
+	local local_player = player_manager:local_player()
 
 	self._stats_id = local_player:stats_id()
-	self.player_manager = player
+	self.player_manager = player_manager
 	self.peer_id = ingame_ui_context.peer_id
-	self.hero_name = arg_3_1.hero_name
-	self.career_index = arg_3_1.career_index
-	self.profile_index = arg_3_1.profile_index
+	self.hero_name = params.hero_name
+	self.career_index = params.career_index
+	self.profile_index = params.profile_index
 	self._category_settings = self:_create_item_categories()
 	self._animations = {}
 
-	self:create_ui_elements(arg_3_1, arg_3_2)
+	self:create_ui_elements(params, offset)
 
-	local var_3_3 = ItemGridUI:new(self._category_settings, self._widgets_by_name.item_grid, self.hero_name, self.career_index)
+	local item_grid = ItemGridUI:new(self._category_settings, self._widgets_by_name.item_grid, self.hero_name, self.career_index)
 
-	self._item_grid = var_3_3
+	self._item_grid = item_grid
 
-	var_3_3:mark_equipped_items(true)
-	var_3_3:mark_locked_items(true)
-	var_3_3:disable_locked_items(true)
-	var_3_3:disable_unwieldable_items(true)
-	var_3_3:disable_item_drag()
-	var_3_3:apply_item_sorting_function(fn)
+	item_grid:mark_equipped_items(true)
+	item_grid:mark_locked_items(true)
+	item_grid:disable_locked_items(true)
+	item_grid:disable_unwieldable_items(true)
+	item_grid:disable_item_drag()
+	item_grid:apply_item_sorting_function(item_sort_func)
 
-	local flag = not local_player and local_player.player_unit
+	local player_unit = not not local_player and not not local_player.player_unit
 
-	if not flag then
-		local has_extension = ScriptUnit.has_extension(flag, "inventory_system")
+	if player_unit then
+		local inventory_extension = ScriptUnit.has_extension(player_unit, "inventory_system")
 
-		if not has_extension then
-			has_extension:check_and_drop_pickups("enter_inventory")
+		if inventory_extension then
+			inventory_extension:check_and_drop_pickups("enter_inventory")
 		end
 	end
 
-	local loadout_slot_index = arg_3_1.loadout_slot_index
+	local loadout_slot_index = params.loadout_slot_index
 
-	loadout_slot_index = loadout_slot_index or 1
+	loadout_slot_index = not not loadout_slot_index or not not 1
 	self._selected_loadout_slot_index = loadout_slot_index
 
 	self:_change_category_by_index(self._selected_loadout_slot_index)
@@ -206,33 +247,33 @@ VersusInventoryGrid.on_enter = function (self, arg_3_1, arg_3_2)
 	self._job_done = false
 end
 
-VersusInventoryGrid.create_ui_elements = function (self, arg_4_1, arg_4_2)
+VersusInventoryGrid.create_ui_elements = function (self, params, offset)
 	-- function 4
 	self.ui_scenegraph = UISceneGraph.init_scenegraph(scenegraph_definition)
 
-	local tbl = {}
-	local tbl_2 = {}
+	local widgets = {}
+	local widgets_by_name = {}
 
-	for k, v in pairs(widgets) do
-		local var_4_2 = UIWidget.init(v)
+	for name, widget_definition in pairs(widget_definitions) do
+		local widget = UIWidget.init(widget_definition)
 
-		tbl[#tbl + 1] = var_4_2
-		tbl_2[k] = var_4_2
+		widgets[#widgets + 1] = widget
+		widgets_by_name[name] = widget
 	end
 
-	self._widgets = tbl
-	self._widgets_by_name = tbl_2
+	self._widgets = widgets
+	self._widgets_by_name = widgets_by_name
 
 	UIRenderer.clear_scenegraph_queue(self.ui_renderer)
 
 	self.ui_animator = UIAnimator:new(self.ui_scenegraph, animation_definitions)
 
-	if not arg_4_2 then
-		local local_position = self.ui_scenegraph.window.local_position
+	if offset then
+		local window_position = self.ui_scenegraph.window.local_position
 
-		local_position[1] = local_position[1] + arg_4_2[1]
-		local_position[2] = local_position[2] + arg_4_2[2]
-		local_position[3] = local_position[3] + arg_4_2[3]
+		window_position[1] = window_position[1] + offset[1]
+		window_position[2] = window_position[2] + offset[2]
+		window_position[3] = window_position[3] + offset[3]
 	end
 
 	self:_setup_tab_widget()
@@ -240,16 +281,20 @@ end
 
 VersusInventoryGrid._setup_tab_widget = function (self)
 	-- function 5
-	local item_slot_types_by_slot_name = SPProfiles[self.profile_index].careers[self.career_index].item_slot_types_by_slot_name
-	local tbl = {}
-	local tbl_2 = {}
+	local profile = SPProfiles[self.profile_index]
+	local careers = profile.careers
+	local career_index = self.career_index
+	local career = careers[career_index]
+	local loadout_equipment_slots = career.item_slot_types_by_slot_name
+	local career_category_settings_index_lookup = {}
+	local unique_categories = {}
 
-	for k, v in pairs(item_slot_types_by_slot_name) do
-		for i, v_2 in ipairs(v) do
-			for i_2, v_3 in ipairs(self._category_settings) do
-				if "slot_" .. v_2 == v_3.name then
-					tbl_2[i_2] = true
-					tbl[i_2] = i_2
+	for slot, names in pairs(loadout_equipment_slots) do
+		for _, name in ipairs(names) do
+			for category_index, category_setting in ipairs(self._category_settings) do
+				if "slot_" .. name == category_setting.name then
+					unique_categories[category_index] = true
+					career_category_settings_index_lookup[category_index] = category_index
 
 					break
 				end
@@ -257,48 +302,48 @@ VersusInventoryGrid._setup_tab_widget = function (self)
 		end
 	end
 
-	local num = 0
-	local tbl_3 = {}
+	local num_unique_item_tabs = 0
+	local tabs_category_index_lookups = {}
 
-	for k_2, v_4 in pairs(tbl_2) do
-		num = num + 1
-		tbl_3[#tbl_3 + 1] = k_2
+	for index, _ in pairs(unique_categories) do
+		num_unique_item_tabs = num_unique_item_tabs + 1
+		tabs_category_index_lookups[#tabs_category_index_lookups + 1] = index
 	end
 
-	local function fn(arg_6_0, arg_6_1)
+	local function sort_tabs_indices(a, b)
 		-- function 6
-		return arg_6_0 < arg_6_1
+		return a < b
 	end
 
-	table.sort(tbl_3, fn)
+	table.sort(tabs_category_index_lookups, sort_tabs_indices)
 
-	self._tabs_category_index_lookups = tbl_3
-	self._career_category_settings_index_lookup = tbl
+	self._tabs_category_index_lookups = tabs_category_index_lookups
+	self._career_category_settings_index_lookup = career_category_settings_index_lookup
 
-	local _widgets = self._widgets
-	local _widgets_by_name = self._widgets_by_name
-	local var_5_8 = UIWidget.init(UIWidgets.create_simple_centered_texture_amount("menu_frame_09_divider_vertical", {
+	local widgets = self._widgets
+	local widgets_by_name = self._widgets_by_name
+	local item_tabs_segments = UIWidget.init(UIWidgets.create_simple_centered_texture_amount("menu_frame_09_divider_vertical", {
 		5,
 		35
-	}, "item_tabs_segments", num - 1))
-	local var_5_9 = UIWidget.init(UIWidgets.create_simple_centered_texture_amount("menu_frame_09_divider_top", {
+	}, "item_tabs_segments", num_unique_item_tabs - 1))
+	local item_tabs_segments_top = UIWidget.init(UIWidgets.create_simple_centered_texture_amount("menu_frame_09_divider_top", {
 		17,
 		9
-	}, "item_tabs_segments_top", num - 1))
-	local var_5_10 = UIWidget.init(UIWidgets.create_simple_centered_texture_amount("menu_frame_09_divider_bottom", {
+	}, "item_tabs_segments_top", num_unique_item_tabs - 1))
+	local item_tabs_segments_bottom = UIWidget.init(UIWidgets.create_simple_centered_texture_amount("menu_frame_09_divider_bottom", {
 		17,
 		9
-	}, "item_tabs_segments_bottom", num - 1))
+	}, "item_tabs_segments_bottom", num_unique_item_tabs - 1))
 
-	_widgets_by_name.item_tabs_segments = var_5_8
-	_widgets_by_name.item_tabs_segments_top = var_5_9
-	_widgets_by_name.item_tabs_segments_bottom = var_5_10
-	_widgets[#_widgets + 1] = var_5_8
-	_widgets[#_widgets + 1] = var_5_9
-	_widgets[#_widgets + 1] = var_5_10
+	widgets_by_name.item_tabs_segments = item_tabs_segments
+	widgets_by_name.item_tabs_segments_top = item_tabs_segments_top
+	widgets_by_name.item_tabs_segments_bottom = item_tabs_segments_bottom
+	widgets[#widgets + 1] = item_tabs_segments
+	widgets[#widgets + 1] = item_tabs_segments_top
+	widgets[#widgets + 1] = item_tabs_segments_bottom
 end
 
-VersusInventoryGrid.on_exit = function (self, arg_7_1)
+VersusInventoryGrid.on_exit = function (self, params)
 	-- function 7
 	print("[HeroViewWindow] Exit Substate VersusInventoryGrid")
 
@@ -309,262 +354,279 @@ VersusInventoryGrid.on_exit = function (self, arg_7_1)
 	self._item_grid = nil
 end
 
-VersusInventoryGrid.update = function (self, arg_8_1, arg_8_2)
+VersusInventoryGrid.update = function (self, dt, t)
 	-- function 8
-	if not flag then
-		flag = false
+	if DO_RELOAD then
+		DO_RELOAD = false
 
 		self:create_ui_elements()
 	end
 
-	self._item_grid:update(arg_8_1, arg_8_2)
-	self:_update_animations(arg_8_1)
-	self:_handle_input(arg_8_1, arg_8_2)
+	self._item_grid:update(dt, t)
+	self:_update_animations(dt)
+	self:_handle_input(dt, t)
 	self:_update_page_info()
-	self:draw(arg_8_1)
+	self:draw(dt)
 
 	return self._job_done
 end
 
-VersusInventoryGrid.post_update = function (arg_9_0, arg_9_1, arg_9_2)
+VersusInventoryGrid.post_update = function (self, dt, t)
 	-- function 9
 	return
 end
 
-VersusInventoryGrid._update_animations = function (self, arg_10_1)
+VersusInventoryGrid._update_animations = function (self, dt)
 	-- function 10
-	self.ui_animator:update(arg_10_1)
+	self.ui_animator:update(dt)
 
-	local _animations = self._animations
+	local animations = self._animations
 	local ui_animator = self.ui_animator
 
-	for k, v in pairs(_animations) do
-		if not ui_animator:is_animation_completed(v) then
-			ui_animator:stop_animation(v)
+	for animation_name, animation_id in pairs(animations) do
+		if ui_animator:is_animation_completed(animation_id) then
+			ui_animator:stop_animation(animation_id)
 
-			_animations[k] = nil
+			animations[animation_name] = nil
 		end
 	end
 
-	local _widgets_by_name = self._widgets_by_name
+	local widgets_by_name = self._widgets_by_name
 end
 
-VersusInventoryGrid._is_button_pressed = function (arg_11_0, arg_11_1)
+VersusInventoryGrid._is_button_pressed = function (self, widget)
 	-- function 11
-	local button_hotspot = arg_11_1.content.button_hotspot
+	local content = widget.content
+	local hotspot = content.button_hotspot
 
-	if not button_hotspot.on_release then
-		button_hotspot.on_release = false
+	if hotspot.on_release then
+		hotspot.on_release = false
 
 		return true
 	end
 end
 
-VersusInventoryGrid._is_button_hovered = function (arg_12_0, arg_12_1)
+VersusInventoryGrid._is_button_hovered = function (self, widget)
 	-- function 12
-	if not arg_12_1.content.button_hotspot.on_hover_enter then
+	local content = widget.content
+	local hotspot = content.button_hotspot
+
+	if hotspot.on_hover_enter then
 		return true
 	end
 end
 
-VersusInventoryGrid._handle_input = function (self, arg_13_1, arg_13_2)
+VersusInventoryGrid._handle_input = function (self, dt, t)
 	-- function 13
-	local _widgets_by_name = self._widgets_by_name
+	local widgets_by_name = self._widgets_by_name
 	local parent = self.parent
-	local _item_grid = self._item_grid
-	local flag = false
-	local is_item_pressed, var_13_5 = _item_grid:is_item_pressed(flag)
-	local window_input_service = parent:window_input_service()
+	local item_grid = self._item_grid
+	local allow_single_press = false
+	local item, is_equipped = item_grid:is_item_pressed(allow_single_press)
+	local input_service = parent:window_input_service()
 
-	if not _item_grid:handle_favorite_marking(window_input_service) then
+	if item_grid:handle_favorite_marking(input_service) then
 		self:_play_sound("play_gui_inventory_item_hover")
 	end
 
-	if not _item_grid:is_item_hovered() then
+	if item_grid:is_item_hovered() then
 		self:_play_sound("play_gui_inventory_item_hover")
 	end
 
-	if not is_item_pressed then
-		self:_set_loadout_item(is_item_pressed, self._strict_slot_type)
+	if item then
+		self:_set_loadout_item(item, self._strict_slot_type)
 		self:_play_sound("play_gui_equipment_equip_hero")
 	end
 
-	if not is_item_pressed and var_13_5 and not window_input_service:get("toggle_menu") then
+	if (not item or not is_equipped) and input_service:get("toggle_menu") then
 		self._job_done = true
 	end
 
-	if not Managers.input:is_device_active("gamepad") then
-		local get_service = Managers.input:get_service("hero_view")
+	if Managers.input:is_device_active("gamepad") then
+		local input_service = Managers.input:get_service("hero_view")
 		local _selected_loadout_slot_index = parent._selected_loadout_slot_index
 
-		_selected_loadout_slot_index = _selected_loadout_slot_index or 1
+		if not _selected_loadout_slot_index then
+			-- Nothing
+		end
 
-		local count = #self._career_category_settings_index_lookup
+		_selected_loadout_slot_index = 1
 
-		if not (not get_service:get("cycle_previous") and not (_selected_loadout_slot_index > 1)) then
-			parent:set_selected_loadout_slot_index(_selected_loadout_slot_index - 1)
+		local current_index = _selected_loadout_slot_index
+
+		::label_13_0::
+
+		local num_tabs = #self._career_category_settings_index_lookup
+
+		if input_service:get("cycle_previous") and current_index > 1 then
+			parent:set_selected_loadout_slot_index(current_index - 1)
 			self:_play_sound("play_gui_inventory_tab_click")
-		elseif not (not get_service:get("cycle_next") and not (_selected_loadout_slot_index < count)) then
-			parent:set_selected_loadout_slot_index(_selected_loadout_slot_index + 1)
+		elseif input_service:get("cycle_next") and current_index < num_tabs then
+			parent:set_selected_loadout_slot_index(current_index + 1)
 			self:_play_sound("play_gui_inventory_tab_click")
 		end
 	end
 
-	local page_button_next = _widgets_by_name.page_button_next
-	local page_button_previous = _widgets_by_name.page_button_previous
+	local page_button_next = widgets_by_name.page_button_next
+	local page_button_previous = widgets_by_name.page_button_previous
 
-	UIWidgetUtils.animate_default_button(page_button_next, arg_13_1)
-	UIWidgetUtils.animate_default_button(page_button_previous, arg_13_1)
+	UIWidgetUtils.animate_default_button(page_button_next, dt)
+	UIWidgetUtils.animate_default_button(page_button_previous, dt)
 
-	if self:_is_button_hovered(page_button_next) or not self:_is_button_hovered(page_button_previous) then
+	if self:_is_button_hovered(page_button_next) or self:_is_button_hovered(page_button_previous) then
 		self:_play_sound("play_gui_inventory_next_hover")
 	end
 
-	if not self:_is_button_pressed(page_button_next) then
-		local num = self._current_page + 1
+	if self:_is_button_pressed(page_button_next) then
+		local next_page_index = self._current_page + 1
 
-		_item_grid:set_item_page(num)
+		item_grid:set_item_page(next_page_index)
 		self:_play_sound("play_gui_equipment_inventory_next_click")
-	elseif not self:_is_button_pressed(page_button_previous) then
-		local num_2 = self._current_page - 1
+	elseif self:_is_button_pressed(page_button_previous) then
+		local next_page_index = self._current_page - 1
 
-		_item_grid:set_item_page(num_2)
+		item_grid:set_item_page(next_page_index)
 		self:_play_sound("play_gui_equipment_inventory_next_click")
 	end
 end
 
 VersusInventoryGrid._update_page_info = function (self)
 	-- function 14
-	local get_page_info, var_14_1 = self._item_grid:get_page_info()
+	local current_page, total_pages = self._item_grid:get_page_info()
 
-	if not (get_page_info ~= self._current_page or var_14_1 == self._total_pages) then
-		self._total_pages = var_14_1
-		self._current_page = get_page_info
-		get_page_info = get_page_info or 1
-		var_14_1 = var_14_1 or 1
+	if current_page ~= self._current_page or total_pages ~= self._total_pages then
+		self._total_pages = total_pages
+		self._current_page = current_page
+		current_page = not not current_page or not not 1
+		total_pages = not not total_pages or not not 1
 
-		local _widgets_by_name = self._widgets_by_name
+		local widgets_by_name = self._widgets_by_name
 
-		_widgets_by_name.page_text_left.content.text = tostring(get_page_info)
-		_widgets_by_name.page_text_right.content.text = tostring(var_14_1)
-		_widgets_by_name.page_button_next.content.button_hotspot.disable_button = get_page_info == var_14_1
-		_widgets_by_name.page_button_previous.content.button_hotspot.disable_button = get_page_info == 1
+		widgets_by_name.page_text_left.content.text = tostring(current_page)
+		widgets_by_name.page_text_right.content.text = tostring(total_pages)
+		widgets_by_name.page_button_next.content.button_hotspot.disable_button = current_page == total_pages
+		widgets_by_name.page_button_previous.content.button_hotspot.disable_button = current_page == 1
 	end
 end
 
-VersusInventoryGrid._get_actual_loadout_category_index = function (self, arg_15_1)
+VersusInventoryGrid._get_actual_loadout_category_index = function (self, index)
 	-- function 15
-	return self._career_category_settings_index_lookup[arg_15_1]
+	return self._career_category_settings_index_lookup[index]
 end
 
 VersusInventoryGrid._update_selected_loadout_slot_index = function (self)
 	-- function 16
-	local get_selected_loadout_slot_index = self.parent:get_selected_loadout_slot_index()
-	local var_16_1 = self._career_category_settings_index_lookup[get_selected_loadout_slot_index]
+	local index = self.parent:get_selected_loadout_slot_index()
+	local internal_slot_index = self._career_category_settings_index_lookup[index]
 
-	if get_selected_loadout_slot_index ~= self._selected_loadout_slot_index then
-		self:_change_category_by_index(get_selected_loadout_slot_index)
+	if index ~= self._selected_loadout_slot_index then
+		self:_change_category_by_index(index)
 
-		self._selected_loadout_slot_index = get_selected_loadout_slot_index
-		self._internal_slot_index = var_16_1
+		self._selected_loadout_slot_index = index
+		self._internal_slot_index = internal_slot_index
 	end
 end
 
 VersusInventoryGrid._update_loadout_sync = function (self)
 	-- function 17
-	local _item_grid = self._item_grid
-	local loadout_sync_id = self.parent.loadout_sync_id
+	local item_grid = self._item_grid
+	local parent = self.parent
+	local loadout_sync_id = parent.loadout_sync_id
 
 	if loadout_sync_id ~= self._loadout_sync_id then
 		self._loadout_sync_id = loadout_sync_id
 
-		_item_grid:update_items_status()
+		item_grid:update_items_status()
 	end
 end
 
-VersusInventoryGrid._exit = function (self, arg_18_1)
+VersusInventoryGrid._exit = function (self, selected_level)
 	-- function 18
 	self.exit = true
-	self.exit_level_id = arg_18_1
+	self.exit_level_id = selected_level
 end
 
-VersusInventoryGrid.draw = function (self, arg_19_1)
+VersusInventoryGrid.draw = function (self, dt)
 	-- function 19
 	local ui_top_renderer = self.ui_top_renderer
 	local ui_scenegraph = self.ui_scenegraph
-	local window_input_service = self.parent:window_input_service()
+	local input_service = self.parent:window_input_service()
 
-	UIRenderer.begin_pass(ui_top_renderer, ui_scenegraph, window_input_service, arg_19_1, nil, self.render_settings)
+	UIRenderer.begin_pass(ui_top_renderer, ui_scenegraph, input_service, dt, nil, self.render_settings)
 
-	for i, v in ipairs(self._widgets) do
-		UIRenderer.draw_widget(ui_top_renderer, v)
+	for _, widget in ipairs(self._widgets) do
+		UIRenderer.draw_widget(ui_top_renderer, widget)
 	end
 
-	local _active_node_widgets = self._active_node_widgets
+	local active_node_widgets = self._active_node_widgets
 
-	if not _active_node_widgets then
-		for i_2, v_2 in ipairs(_active_node_widgets) do
-			UIRenderer.draw_widget(ui_top_renderer, v_2)
+	if active_node_widgets then
+		for _, widget in ipairs(active_node_widgets) do
+			UIRenderer.draw_widget(ui_top_renderer, widget)
 		end
 	end
 
 	UIRenderer.end_pass(ui_top_renderer)
 end
 
-VersusInventoryGrid._play_sound = function (self, arg_20_1)
+VersusInventoryGrid._play_sound = function (self, event)
 	-- function 20
-	self.parent:play_sound(arg_20_1)
+	self.parent:play_sound(event)
 end
 
-VersusInventoryGrid._change_category_by_index = function (self, arg_21_1, arg_21_2)
+VersusInventoryGrid._change_category_by_index = function (self, index, force_update)
 	-- function 21
-	local var_21_0 = self._career_category_settings_index_lookup[arg_21_1]
+	local internal_slot_index = self._career_category_settings_index_lookup[index]
 
-	if not arg_21_2 then
-		arg_21_1 = self._internal_slot_index or 1
+	if force_update then
+		index = not not self._internal_slot_index or not not 1
 	end
 
-	self._strict_slot_type = self._category_settings[arg_21_1].name
+	local actual_category_setting = self._category_settings[index]
+	local actual_category_name = actual_category_setting.name
 
-	if self._internal_slot_index == var_21_0 then
+	self._strict_slot_type = actual_category_name
+
+	if self._internal_slot_index == internal_slot_index then
 		return
 	end
 
-	local var_21_1 = self._category_settings[var_21_0]
-	local name = var_21_1.name
-	local display_name = var_21_1.display_name
+	local category_setting = self._category_settings[internal_slot_index]
+	local category_name = category_setting.name
+	local display_name = category_setting.display_name
 
 	self._widgets_by_name.item_grid_header.content.text = display_name
 
-	self._item_grid:change_category(name)
+	self._item_grid:change_category(category_name)
 
 	return true
 end
 
-VersusInventoryGrid._get_slot_by_type = function (arg_22_0, arg_22_1)
+VersusInventoryGrid._get_slot_by_type = function (self, slot_type)
 	-- function 22
-	local slots_by_slot_index = InventorySettings.slots_by_slot_index
+	local slots = InventorySettings.slots_by_slot_index
 
-	for k, v in pairs(slots_by_slot_index) do
-		if arg_22_1 == "slot_" .. v.type then
-			return v
+	for _, slot in pairs(slots) do
+		if slot_type == "slot_" .. slot.type then
+			return slot
 		end
 	end
 end
 
-VersusInventoryGrid._set_loadout_item = function (self, arg_23_1, arg_23_2)
+VersusInventoryGrid._set_loadout_item = function (self, item, strict_slot_type)
 	-- function 23
-	local profile_index = self.profile_index
-	local career_index = self.career_index
-	local var_23_2 = SPProfiles[profile_index].careers[career_index]
-	local data = arg_23_1.data
-	local flag = arg_23_2 or data.slot_type
-	local _get_slot_by_type = self:_get_slot_by_type(flag)
-	local backend_id = arg_23_1.backend_id
-	local name = var_23_2.name
-	local name_2 = _get_slot_by_type.name
+	local profile_index, career_index = self.profile_index, self.career_index
+	local profile = SPProfiles[profile_index]
+	local career = profile.careers[career_index]
+	local item_data = item.data
+	local slot_type = not not strict_slot_type or not not item_data.slot_type
+	local slot = self:_get_slot_by_type(slot_type)
+	local backend_id = item.backend_id
+	local career_name = career.name
+	local slot_name = slot.name
+	local backend_items = Managers.backend:get_interface("items")
 
-	Managers.backend:get_interface("items"):set_loadout_item(backend_id, name, name_2)
+	backend_items:set_loadout_item(backend_id, career_name, slot_name)
 	self.parent:new_item_equipped()
 
 	self._job_done = true

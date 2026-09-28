@@ -2,25 +2,25 @@
 
 LadderExtension = class(LadderExtension)
 
-LadderExtension.init = function (self, arg_1_1, arg_1_2, arg_1_3)
+LadderExtension.init = function (self, extension_init_context, unit, extension_init_data)
 	-- function 1
-	self._world = arg_1_1.world
-	self._unit = arg_1_2
+	self._world = extension_init_context.world
+	self._unit = unit
 	self._is_server = Managers.state.network.is_server
 	self._seed_x = Math.random()
 	self._seed_y = Math.random()
 
-	local get_data = Unit.get_data(arg_1_2, "ladder_shake_node")
+	local get_data = Unit.get_data(unit, "ladder_shake_node")
 
-	get_data = get_data or 0
+	get_data = not not get_data or not not 0
 	self._node = get_data
-	self._enable_shake = not Unit.get_data(arg_1_2, "disable_shake")
+	self._enable_shake = not Unit.get_data(unit, "disable_shake")
 	self._start_position = Vector3Box(Unit.world_position(self._unit, self._node))
-	self._top_position = Vector3Box(Unit.world_position(arg_1_2, Unit.node(arg_1_2, "node_top")))
-	self._bottom_position = Vector3Box(Unit.world_position(arg_1_2, Unit.node(arg_1_2, "node_bottom")))
+	self._top_position = Vector3Box(Unit.world_position(unit, Unit.node(unit, "node_top")))
+	self._bottom_position = Vector3Box(Unit.world_position(unit, Unit.node(unit, "node_bottom")))
 
-	if not self._is_server then
-		Managers.state.bot_nav_transition:register_ladder(arg_1_2)
+	if self._is_server then
+		Managers.state.bot_nav_transition:register_ladder(unit)
 	end
 end
 
@@ -38,59 +38,61 @@ LadderExtension.perlin_shake = {
 	octaves = 6
 }
 
-local function fn(arg_3_0, arg_3_1)
+local function calc_noise(x, seed)
 	-- function 3
-	local next_random, var_3_1 = Math.next_random(arg_3_0 * arg_3_1)
-	local next_random_2, var_3_3 = Math.next_random(next_random)
+	local next_seed, _ = Math.next_random(x * seed)
+	local _, value = Math.next_random(next_seed)
 
-	return var_3_3 * 2 - 1
+	return value * 2 - 1
 end
 
-local function fn_2(arg_4_0, arg_4_1)
+local function calc_smoothed_noise(x, seed)
 	-- function 4
-	return fn(arg_4_0, arg_4_1) / 2 + fn(arg_4_0 - 1, arg_4_1) / 4 + fn(arg_4_0 + 1, arg_4_1) / 4
+	return calc_noise(x, seed) / 2 + calc_noise(x - 1, seed) / 4 + calc_noise(x + 1, seed) / 4
 end
 
-local function fn_3(arg_5_0, arg_5_1)
+local function calc_interpolated_noise(x, seed)
 	-- function 5
-	local floor = math.floor(arg_5_0)
-	local num = arg_5_0 - floor
-	local var_5_2 = fn_2(floor, arg_5_1)
-	local var_5_3 = fn_2(floor + 1, arg_5_1)
+	local x_floored = math.floor(x)
+	local remainder = x - x_floored
+	local v1 = calc_smoothed_noise(x_floored, seed)
+	local v2 = calc_smoothed_noise(x_floored + 1, seed)
 
-	return math.lerp(var_5_2, var_5_3, num)
+	return math.lerp(v1, v2, remainder)
 end
 
-local function fn_4(arg_6_0, arg_6_1, arg_6_2, arg_6_3)
+local function calculate_perlin_value(x, persistance, number_of_octaves, seed)
 	-- function 6
-	local num = 0
-	local num_2 = 0
+	local total = 0
+	local max_value = 0
 
-	for i = 0, arg_6_2 do
-		local num_3 = 2^i
-		local num_4 = arg_6_1^i
+	for i = 0, number_of_octaves do
+		local frequency = 2^i
+		local amplitude = persistance^i
 
-		num = num + fn_3(arg_6_0 * num_3, arg_6_3) * num_4
-		num_2 = num_2 + num_4
+		total = total + calc_interpolated_noise(x * frequency, seed) * amplitude
+		max_value = max_value + amplitude
 	end
 
-	return num / num_2
+	local normalized_total = total / max_value
+
+	return normalized_total
 end
 
-LadderExtension.update_enabled = function (self, arg_7_1, arg_7_2, arg_7_3, arg_7_4, arg_7_5)
+LadderExtension.update_enabled = function (self, unit, input, dt, context, t)
 	-- function 7
-	if not self._shaking then
-		local num = arg_7_5 - self._shaking
-		local perlin_shake = self.perlin_shake
-		local duration = perlin_shake.duration
+	if self._shaking then
+		local shake_t = t - self._shaking
+		local config = self.perlin_shake
+		local duration = config.duration
 
-		if num < duration then
-			if not self._enable_shake then
-				local var_7_3 = fn_4(num * perlin_shake.frequency_multiplier, perlin_shake.persistance, perlin_shake.octaves, self._seed_x)
-				local var_7_4 = fn_4(num * perlin_shake.frequency_multiplier, perlin_shake.persistance, perlin_shake.octaves, self._seed_y)
-				local num_2 = perlin_shake.magnitude * math.lerp(1, 0, num / duration)^2
+		if shake_t < duration then
+			if self._enable_shake then
+				local perlin_value_x = calculate_perlin_value(shake_t * config.frequency_multiplier, config.persistance, config.octaves, self._seed_x)
+				local perlin_value_y = calculate_perlin_value(shake_t * config.frequency_multiplier, config.persistance, config.octaves, self._seed_y)
+				local magnitude = config.magnitude * math.lerp(1, 0, shake_t / duration)^2
 
-				Unit.set_local_position(self._unit, self._node, self._start_position:unbox() + Vector3(var_7_3 * num_2, var_7_4 * num_2, 0))
+				Unit.set_local_position(self._unit, self._node, self._start_position:unbox() + Vector3(perlin_value_x * magnitude, perlin_value_y * magnitude, 0))
 			end
 		else
 			Managers.state.entity:system("ladder_system"):disable_update_function("LadderExtension", "update", self._unit)
@@ -105,7 +107,7 @@ LadderExtension.is_shaking = function (self)
 	-- function 8
 	local flag
 
-	flag = not self._shaking and true and false
+	flag = (not self._shaking or not true) and not not false
 
 	return flag
 end
@@ -115,11 +117,11 @@ LadderExtension.shake = function (self)
 	if not self._shaking then
 		self._shaking = Managers.time:time("game")
 
-		if not self._is_server then
-			local current_level = LevelHelper:current_level(self._world)
-			local unit_index = Level.unit_index(current_level, self._unit)
+		if self._is_server then
+			local level = LevelHelper:current_level(self._world)
+			local level_index = Level.unit_index(level, self._unit)
 
-			Managers.state.network.network_transmit:send_rpc_clients("rpc_ladder_shake", unit_index)
+			Managers.state.network.network_transmit:send_rpc_clients("rpc_ladder_shake", level_index)
 		end
 
 		Managers.state.entity:system("ladder_system"):enable_update_function("LadderExtension", "update", self._unit, self)
@@ -130,7 +132,7 @@ end
 
 LadderExtension.destroy = function (self)
 	-- function 10
-	if not self._is_server then
+	if self._is_server then
 		Managers.state.bot_nav_transition:unregister_ladder(self._unit)
 	end
 end

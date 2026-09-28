@@ -8,7 +8,7 @@ require("scripts/network/lobby_members")
 
 local LobbyInternal = LobbyInternal
 
-LobbyInternal = LobbyInternal or {}
+LobbyInternal = not not LobbyInternal or not not {}
 LobbyInternal = LobbyInternal
 LobbyInternal.TYPE = "steam"
 LobbyInternal.lobby_data_version = 2
@@ -18,52 +18,60 @@ LobbyInternal.network_initialized = function ()
 	return not not LobbyInternal.client
 end
 
-LobbyInternal.create_lobby = function (self)
+LobbyInternal.create_lobby = function (network_options)
 	-- function 2
-	local privacy = self.privacy
+	local privacy_2 = network_options.privacy
 
-	privacy = privacy or "public"
+	if not privacy_2 then
+		-- Nothing
+	end
 
-	local flag = true
+	privacy_2 = "public"
 
-	return Network.create_steam_lobby(privacy, self.max_members, flag)
+	local privacy = privacy_2
+
+	::label_2_0::
+
+	local use_eac = true
+
+	return Network.create_steam_lobby(privacy, network_options.max_members, use_eac)
 end
 
-LobbyInternal.join_lobby = function (self)
+LobbyInternal.join_lobby = function (lobby_data)
 	-- function 3
-	local flag = true
+	local use_eac = true
 
-	return Network.join_steam_lobby(self.id, flag)
+	return Network.join_steam_lobby(lobby_data.id, use_eac)
 end
 
-LobbyInternal.leave_lobby = function (arg_4_0)
+LobbyInternal.leave_lobby = function (lobby)
 	-- function 4
-	Network.leave_steam_lobby(arg_4_0)
+	Network.leave_steam_lobby(lobby)
 end
 
-LobbyInternal.open_channel = function (arg_5_0, arg_5_1)
+LobbyInternal.open_channel = function (lobby, peer)
 	-- function 5
-	local open_channel = SteamLobby.open_channel(arg_5_0, arg_5_1)
+	local channel_id = SteamLobby.open_channel(lobby, peer)
 
-	printf("LobbyInternal.open_channel lobby: %s, to peer: %s channel: %s", arg_5_0, arg_5_1, open_channel)
+	printf("LobbyInternal.open_channel lobby: %s, to peer: %s channel: %s", lobby, peer, channel_id)
 
-	return open_channel
+	return channel_id
 end
 
-LobbyInternal.close_channel = function (arg_6_0, arg_6_1)
+LobbyInternal.close_channel = function (lobby, channel)
 	-- function 6
-	printf("LobbyInternal.close_channel lobby: %s, channel: %s", arg_6_0, arg_6_1)
-	SteamLobby.close_channel(arg_6_0, arg_6_1)
+	printf("LobbyInternal.close_channel lobby: %s, channel: %s", lobby, channel)
+	SteamLobby.close_channel(lobby, channel)
 end
 
-LobbyInternal.is_orphaned = function (self)
+LobbyInternal.is_orphaned = function (engine_lobby)
 	-- function 7
-	return self.is_orphaned(self)
+	return engine_lobby.is_orphaned(engine_lobby)
 end
 
-LobbyInternal.init_client = function (self)
+LobbyInternal.init_client = function (network_options)
 	-- function 8
-	LobbyInternal.client = Network.init_steam_client(self.config_file_name)
+	LobbyInternal.client = Network.init_steam_client(network_options.config_file_name)
 
 	if not LobbyInternal._peer_id_property_set then
 		LobbyInternal._peer_id_property_set = true
@@ -82,91 +90,91 @@ LobbyInternal.shutdown_client = function ()
 	LobbyInternal.client = nil
 end
 
-LobbyInternal.get_lobby_data_from_id = function (arg_10_0)
+LobbyInternal.get_lobby_data_from_id = function (id)
 	-- function 10
-	SteamLobby.request_lobby_data(arg_10_0)
+	SteamLobby.request_lobby_data(id)
 
-	return (SteamMisc.get_lobby_data(arg_10_0))
+	local data = SteamMisc.get_lobby_data(id)
+
+	return data
 end
 
-LobbyInternal.get_lobby_data_from_id_by_key = function (arg_11_0, arg_11_1)
+LobbyInternal.get_lobby_data_from_id_by_key = function (id, key)
 	-- function 11
-	local get_lobby_data_by_key = SteamMisc.get_lobby_data_by_key(arg_11_0, arg_11_1)
+	local data = SteamMisc.get_lobby_data_by_key(id, key)
 
-	return get_lobby_data_by_key == "" or not get_lobby_data_by_key or nil
+	return (data == "" or not data) and not not nil
 end
 
-LobbyInternal.ping = function (arg_12_0)
+LobbyInternal.ping = function (peer_id)
 	-- function 12
-	return Network.ping(arg_12_0)
+	return Network.ping(peer_id)
 end
 
-LobbyInternal.get_lobby = function (self, arg_13_1)
+LobbyInternal.get_lobby = function (lobby_browser, index)
 	-- function 13
-	local lobby = self:lobby(arg_13_1)
-	local data_all = self:data_all(arg_13_1)
+	local lobby_data = lobby_browser:lobby(index)
+	local lobby_data_all = lobby_browser:data_all(index)
 
-	data_all.id = lobby.id
+	lobby_data_all.id = lobby_data.id
 
-	local tbl = {}
+	local formatted_lobby_data = {}
 
-	for k, v in pairs(data_all) do
-		tbl[string.lower(k)] = v
+	for key, value in pairs(lobby_data_all) do
+		formatted_lobby_data[string.lower(key)] = value
 	end
 
-	return tbl
+	return formatted_lobby_data
 end
 
-LobbyInternal.clear_filter_requirements = function (arg_14_0)
+LobbyInternal.clear_filter_requirements = function (lobby_browser)
 	-- function 14
-	SteamLobbyBrowser.clear_filters(arg_14_0)
+	SteamLobbyBrowser.clear_filters(lobby_browser)
 end
 
-LobbyInternal.add_filter_requirements = function (self, arg_15_1)
+LobbyInternal.add_filter_requirements = function (requirements, lobby_browser)
 	-- function 15
-	SteamLobbyBrowser.clear_filters(arg_15_1)
-	SteamLobbyBrowser.add_slots_filter(arg_15_1, self.free_slots)
+	SteamLobbyBrowser.clear_filters(lobby_browser)
+	SteamLobbyBrowser.add_slots_filter(lobby_browser, requirements.free_slots)
 
-	local distance_filter = self.distance_filter
+	local distance_filter = requirements.distance_filter
 
 	fassert(distance_filter, "Missing or bad distance filer: %s", distance_filter)
-	SteamLobbyBrowser.add_distance_filter(arg_15_1, distance_filter)
-	mm_printf("Filter: Free slots = %s", tostring(self.free_slots))
-	mm_printf("Filter: Distance = %s", tostring(self.distance_filter))
+	SteamLobbyBrowser.add_distance_filter(lobby_browser, distance_filter)
+	mm_printf("Filter: Free slots = %s", tostring(requirements.free_slots))
+	mm_printf("Filter: Distance = %s", tostring(requirements.distance_filter))
 
-	for k, v in pairs(self.filters) do
-		local value = v.value
-		local comparison = v.comparison
+	for key, filter in pairs(requirements.filters) do
+		local value, comparison = filter.value, filter.comparison
 
-		SteamLobbyBrowser.add_filter(arg_15_1, k, value, comparison)
-		mm_printf("Filter: %s, comparison(%s), value=%s", tostring(k), tostring(comparison), tostring(value))
+		SteamLobbyBrowser.add_filter(lobby_browser, key, value, comparison)
+		mm_printf("Filter: %s, comparison(%s), value=%s", tostring(key), tostring(comparison), tostring(value))
 	end
 
-	for i, v_2 in ipairs(self.near_filters) do
-		local key = v_2.key
-		local value_2 = v_2.value
+	for _, filter in ipairs(requirements.near_filters) do
+		local key, value = filter.key, filter.value
 
-		SteamLobbyBrowser.add_near_filter(arg_15_1, key, value_2)
-		mm_printf("Near Filter: %s, value=%s", tostring(key), tostring(value_2))
+		SteamLobbyBrowser.add_near_filter(lobby_browser, key, value)
+		mm_printf("Near Filter: %s, value=%s", tostring(key), tostring(value))
 	end
 end
 
-LobbyInternal.user_name = function (arg_16_0)
+LobbyInternal.user_name = function (user)
 	-- function 16
-	return Steam.user_name(arg_16_0)
+	return Steam.user_name(user)
 end
 
-LobbyInternal.lobby_id = function (self)
+LobbyInternal.lobby_id = function (lobby)
 	-- function 17
-	return self:id()
+	return lobby:id()
 end
 
-LobbyInternal.is_friend = function (arg_18_0)
+LobbyInternal.is_friend = function (peer_id)
 	-- function 18
-	return Friends.in_category(arg_18_0, Friends.FRIEND_FLAG)
+	return Friends.in_category(peer_id, Friends.FRIEND_FLAG)
 end
 
-LobbyInternal.set_max_members = function (arg_19_0, arg_19_1)
+LobbyInternal.set_max_members = function (lobby, max_members)
 	-- function 19
-	SteamLobby.set_max_members(arg_19_0, arg_19_1)
+	SteamLobby.set_max_members(lobby, max_members)
 end

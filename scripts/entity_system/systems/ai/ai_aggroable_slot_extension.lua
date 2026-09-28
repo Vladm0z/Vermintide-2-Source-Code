@@ -2,13 +2,13 @@
 
 AIAggroableSlotExtension = class(AIAggroableSlotExtension, AIPlayerSlotExtension)
 
-AIAggroableSlotExtension.init = function (arg_1_0, arg_1_1, arg_1_2, arg_1_3)
+AIAggroableSlotExtension.init = function (self, extension_init_context, unit, extension_init_data)
 	-- function 1
-	local game_object_or_level_id, var_1_1 = Managers.state.network:game_object_or_level_id(arg_1_2)
+	local _, is_level_unit = Managers.state.network:game_object_or_level_id(unit)
 
-	if not var_1_1 then
-		POSITION_LOOKUP[arg_1_2] = Unit.world_position(arg_1_2, 0)
+	if is_level_unit then
+		POSITION_LOOKUP[unit] = Unit.world_position(unit, 0)
 	end
 
-	AIAggroableSlotExtension.super.init(arg_1_0, arg_1_1, arg_1_2, arg_1_3)
+	AIAggroableSlotExtension.super.init(self, extension_init_context, unit, extension_init_data)
 end

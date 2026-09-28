@@ -2,92 +2,92 @@
 
 require("scripts/unit_extensions/generic/generic_unit_aim_extension")
 
-local tbl = {}
-local tbl_2 = {
+local RPCS = {}
+local extensions = {
 	"GenericUnitAimExtension"
 }
 
 AimSystem = class(AimSystem, ExtensionSystemBase)
 
-AimSystem.init = function (self, arg_1_1, arg_1_2)
+AimSystem.init = function (self, context, system_name)
 	-- function 1
-	AimSystem.super.init(self, arg_1_1, arg_1_2, tbl_2)
+	AimSystem.super.init(self, context, system_name, extensions)
 
 	self._extensions = {}
 	self._frozen_extensions = {}
 end
 
-AimSystem.destroy = function (arg_2_0)
+AimSystem.destroy = function (self)
 	-- function 2
 	return
 end
 
-AimSystem.on_add_extension = function (self, arg_3_1, arg_3_2, arg_3_3, arg_3_4)
+AimSystem.on_add_extension = function (self, world, unit, extension_name, extension_init_data)
 	-- function 3
-	local add_extension = ScriptUnit.add_extension(self.extension_init_context, arg_3_2, arg_3_3, self.NAME, arg_3_4)
+	local extension = ScriptUnit.add_extension(self.extension_init_context, unit, extension_name, self.NAME, extension_init_data)
 
-	self._extensions[arg_3_2] = add_extension
+	self._extensions[unit] = extension
 
-	return add_extension
+	return extension
 end
 
-AimSystem.on_remove_extension = function (self, arg_4_1, arg_4_2)
+AimSystem.on_remove_extension = function (self, unit, extension_name)
 	-- function 4
-	self._frozen_extensions[arg_4_1] = nil
-	self._extensions[arg_4_1] = nil
+	self._frozen_extensions[unit] = nil
+	self._extensions[unit] = nil
 
-	ScriptUnit.remove_extension(arg_4_1, self.NAME)
+	ScriptUnit.remove_extension(unit, self.NAME)
 end
 
-AimSystem.on_freeze_extension = function (self, arg_5_1, arg_5_2)
+AimSystem.on_freeze_extension = function (self, unit, extension_name)
 	-- function 5
-	local var_5_0 = self._extensions[arg_5_1]
+	local extension = self._extensions[unit]
 
-	fassert(var_5_0, "Unit was already frozen.")
-	var_5_0.template[var_5_0.network_type].leave(var_5_0.unit, var_5_0.data)
+	fassert(extension, "Unit was already frozen.")
+	extension.template[extension.network_type].leave(extension.unit, extension.data)
 
-	self._frozen_extensions[arg_5_1] = var_5_0
-	self._extensions[arg_5_1] = nil
+	self._frozen_extensions[unit] = extension
+	self._extensions[unit] = nil
 
-	table.clear(var_5_0.data)
+	table.clear(extension.data)
 end
 
-AimSystem.freeze = function (self, arg_6_1, arg_6_2, arg_6_3)
+AimSystem.freeze = function (self, unit, extension_name, reason)
 	-- function 6
-	local _frozen_extensions = self._frozen_extensions
+	local frozen_extensions = self._frozen_extensions
 
-	if not _frozen_extensions[arg_6_1] then
+	if frozen_extensions[unit] then
 		return
 	end
 
-	local var_6_1 = self._extensions[arg_6_1]
+	local extension = self._extensions[unit]
 
-	fassert(var_6_1, "Unit to freeze didn't have unfrozen extension")
+	fassert(extension, "Unit to freeze didn't have unfrozen extension")
 
-	self._extensions[arg_6_1] = nil
-	_frozen_extensions[arg_6_1] = var_6_1
+	self._extensions[unit] = nil
+	frozen_extensions[unit] = extension
 
-	table.clear(var_6_1.data)
+	table.clear(extension.data)
 end
 
-AimSystem.unfreeze = function (self, arg_7_1)
+AimSystem.unfreeze = function (self, unit)
 	-- function 7
-	local var_7_0 = self._frozen_extensions[arg_7_1]
+	local extension = self._frozen_extensions[unit]
 
-	fassert(var_7_0, "Unit to unfreeze didn't have frozen extension")
+	fassert(extension, "Unit to unfreeze didn't have frozen extension")
 
-	self._frozen_extensions[arg_7_1] = nil
-	self._extensions[arg_7_1] = var_7_0
-	var_7_0.enabled = false
+	self._frozen_extensions[unit] = nil
+	self._extensions[unit] = extension
+	extension.enabled = false
 
-	var_7_0.template[var_7_0.network_type].init(var_7_0.unit, var_7_0.data)
+	extension.template[extension.network_type].init(extension.unit, extension.data)
 end
 
-AimSystem.update = function (self, arg_8_1, arg_8_2)
+AimSystem.update = function (self, context, t)
 	-- function 8
-	local dt = arg_8_1.dt
+	local dt = context.dt
 
-	for k, v in pairs(self._extensions) do
-		v:update(k, nil, dt, arg_8_1, arg_8_2)
+	for unit, extension in pairs(self._extensions) do
+		extension:update(unit, nil, dt, context, t)
 	end
 end

@@ -2,19 +2,19 @@
 
 BackendInterfaceProfileHash = class(BackendInterfaceProfileHash)
 
-BackendInterfaceProfileHash.init = function (arg_1_0)
+BackendInterfaceProfileHash.init = function (self)
 	-- function 1
 	return
 end
 
-BackendInterfaceProfileHash.on_authenticated = function (arg_2_0)
+BackendInterfaceProfileHash.on_authenticated = function (self)
 	-- function 2
-	local get_hashed_profile_id = Backend.get_hashed_profile_id()
+	local hash = Backend.get_hashed_profile_id()
 
-	if get_hashed_profile_id ~= SaveData.backend_profile_hash then
-		SaveData.backend_profile_hash = get_hashed_profile_id
+	if hash ~= SaveData.backend_profile_hash then
+		SaveData.backend_profile_hash = hash
 
-		if not SaveData.save_loaded then
+		if SaveData.save_loaded then
 			Managers.save:auto_save(SaveFileName, SaveData, nil)
 		end
 	end

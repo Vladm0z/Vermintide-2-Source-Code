@@ -1,9 +1,8 @@
 -- chunkname: @scripts/ui/gift_popup/gift_popup_ui_definitions.lua
 
-local num = 1920
-local num_2 = 1080
-local var_0_2
-local tbl = {
+local SIZE_X, SIZE_Y = 1920, 1080
+local RETAINED_MODE_ENABLED
+local scenegraph_definition = {
 	root = {
 		is_root = true,
 		size = {
@@ -212,9 +211,9 @@ local tbl = {
 	}
 }
 
-local function fn()
+local function create_reward_thumb_widget()
 	-- function 1
-	return {
+	local widget_definition = {
 		scenegraph_id = "thumb_widgets_pivot",
 		element = {
 			passes = {
@@ -236,18 +235,18 @@ local function fn()
 					pass_type = "texture",
 					style_id = "icon_frame",
 					texture_id = "icon_frame",
-					content_check_function = function (self)
+					content_check_function = function (content)
 						-- function 2
-						return self.draw_frame
+						return content.draw_frame
 					end
 				},
 				{
 					pass_type = "texture",
 					style_id = "selection",
 					texture_id = "selection",
-					content_check_function = function (self)
+					content_check_function = function (content)
 						-- function 3
-						return self.selected
+						return content.selected
 					end
 				}
 			}
@@ -330,9 +329,11 @@ local function fn()
 			0
 		}
 	}
+
+	return widget_definition
 end
 
-local tbl_2 = {
+local default_tooltip_style = {
 	font_size = 24,
 	max_width = 500,
 	localize = false,
@@ -347,9 +348,9 @@ local tbl_2 = {
 		3
 	}
 }
-local tbl_3 = {
+local widget_definitions = {
 	hero_icon = UIWidgets.create_simple_texture("hero_icon_medium_dwarf_ranger_yellow", "hero_icon"),
-	hero_icon_tooltip = UIWidgets.create_simple_tooltip("", "hero_icon_tooltip", nil, tbl_2),
+	hero_icon_tooltip = UIWidgets.create_simple_tooltip("", "hero_icon_tooltip", nil, default_tooltip_style),
 	title_text = UIWidgets.create_simple_text("Summer Solstice!", "title_text", 56, Colors.get_color_table_with_alpha("cheeseburger", 255), nil, "hell_shark_header"),
 	description_text = UIWidgets.create_simple_text("Holiday Bonus Rewards", "description_text", 28, Colors.get_color_table_with_alpha("white", 255), nil, "hell_shark_header"),
 	reward_name_text = UIWidgets.create_simple_text("", "reward_name_text", 28, Colors.get_color_table_with_alpha("cheeseburger", 255)),
@@ -366,7 +367,7 @@ local tbl_3 = {
 		0
 	})
 }
-local tbl_4 = {
+local generic_input_actions = {
 	default = {
 		{
 			input_action = "confirm",
@@ -382,33 +383,34 @@ local tbl_4 = {
 		}
 	}
 }
-local tbl_5 = {
+local animation_definitions = {
 	chest_unit_spawn = {
 		{
 			name = "rotation",
 			start_progress = 0,
 			end_progress = 0.7,
-			init = function (arg_4_0, arg_4_1, arg_4_2, arg_4_3)
+			init = function (ui_scenegraph, scenegraph_definition, widgets, params)
 				-- function 4
-				arg_4_2.popup_bg.style.texture_id.color[1] = 0
+				widgets.popup_bg.style.texture_id.color[1] = 0
 
-				local chest_unit = arg_4_3.chest_unit
+				local chest_unit = params.chest_unit
 
-				arg_4_3.rotation_value = 0
+				params.rotation_value = 0
 			end,
-			update = function (arg_5_0, arg_5_1, arg_5_2, arg_5_3, arg_5_4)
+			update = function (ui_scenegraph, scenegraph_definition, widgets, progress, params)
 				-- function 5
-				local chest_unit = arg_5_4.chest_unit
+				local chest_unit = params.chest_unit
 
-				if not chest_unit and not Unit.alive(chest_unit) then
-					local num = math.easeCubic(arg_5_3) * 720
-					local degrees_to_radians = math.degrees_to_radians(num)
-					local axis_angle = Quaternion.axis_angle(Vector3(0, 0, 1), degrees_to_radians)
+				if chest_unit and Unit.alive(chest_unit) then
+					local anim_progress = math.easeCubic(progress)
+					local degrees = anim_progress * 720
+					local radian_angle = math.degrees_to_radians(degrees)
+					local unit_rotation = Quaternion.axis_angle(Vector3(0, 0, 1), radian_angle)
 
-					Unit.set_local_rotation(chest_unit, 0, axis_angle)
+					Unit.set_local_rotation(chest_unit, 0, unit_rotation)
 				end
 			end,
-			on_complete = function (arg_6_0, arg_6_1, arg_6_2, arg_6_3)
+			on_complete = function (ui_scenegraph, scenegraph_definition, widgets, params)
 				-- function 6
 				return
 			end
@@ -417,61 +419,70 @@ local tbl_5 = {
 			name = "scale",
 			start_progress = 0,
 			end_progress = 0.25,
-			init = function (arg_7_0, arg_7_1, arg_7_2, arg_7_3)
+			init = function (ui_scenegraph, scenegraph_definition, widgets, params)
 				-- function 7
-				local chest_unit = arg_7_3.chest_unit
+				local chest_unit = params.chest_unit
 
-				if not chest_unit and not Unit.alive(chest_unit) then
-					local box, var_7_2 = Unit.box(chest_unit)
+				if chest_unit and Unit.alive(chest_unit) then
+					local unit_box, box_dimension = Unit.box(chest_unit)
 
-					if not var_7_2 then
-						local num = 0.15
-						local num_2 = 0
+					if box_dimension then
+						local max_value = 0.15
+						local largest_value = 0
 
-						if num_2 < var_7_2.x then
-							num_2 = var_7_2.x
+						if largest_value < box_dimension.x then
+							largest_value = box_dimension.x
 						end
 
-						if num_2 < var_7_2.z then
-							num_2 = var_7_2.z
+						if largest_value < box_dimension.z then
+							largest_value = box_dimension.z
 						end
 
-						if num_2 < var_7_2.y then
-							num_2 = var_7_2.y
+						if largest_value < box_dimension.y then
+							largest_value = box_dimension.y
 						end
 
-						if num < num_2 then
-							local num_3 = 1 - (num_2 - num) / num_2
-							local var_7_6 = Vector3(0, 0, 0)
+						if max_value < largest_value then
+							local diff = largest_value - max_value
+							local scale_fraction = 1 - diff / largest_value
+							local scale = Vector3(0, 0, 0)
 
-							Unit.set_local_scale(chest_unit, 0, var_7_6)
+							Unit.set_local_scale(chest_unit, 0, scale)
 
-							arg_7_3.end_scale_fraction = num_3
+							params.end_scale_fraction = scale_fraction
 						end
 					end
 				end
 			end,
-			update = function (arg_8_0, arg_8_1, arg_8_2, arg_8_3, arg_8_4)
+			update = function (ui_scenegraph, scenegraph_definition, widgets, progress, params)
 				-- function 8
-				local chest_unit = arg_8_4.chest_unit
+				local chest_unit = params.chest_unit
 
-				if not chest_unit and not Unit.alive(chest_unit) then
-					local easeCubic = math.easeCubic(arg_8_3)
-					local end_scale_fraction = arg_8_4.end_scale_fraction
+				if chest_unit and Unit.alive(chest_unit) then
+					local anim_progress = math.easeCubic(progress)
+					local end_scale_fraction_2 = params.end_scale_fraction
 
-					end_scale_fraction = end_scale_fraction or 0.15
-
-					local num = end_scale_fraction * easeCubic
-					local var_8_4 = Vector3(num, num, num)
-
-					if arg_8_3 == 1 then
-						print("scale_fraction", num)
+					if not end_scale_fraction_2 then
+						-- Nothing
 					end
 
-					Unit.set_local_scale(chest_unit, 0, var_8_4)
+					end_scale_fraction_2 = 0.15
+
+					local end_scale_fraction = end_scale_fraction_2
+
+					::label_8_0::
+
+					local scale_fraction = end_scale_fraction * anim_progress
+					local scale = Vector3(scale_fraction, scale_fraction, scale_fraction)
+
+					if progress == 1 then
+						print("scale_fraction", scale_fraction)
+					end
+
+					Unit.set_local_scale(chest_unit, 0, scale)
 				end
 			end,
-			on_complete = function (arg_9_0, arg_9_1, arg_9_2, arg_9_3)
+			on_complete = function (ui_scenegraph, scenegraph_definition, widgets, params)
 				-- function 9
 				return
 			end
@@ -480,35 +491,49 @@ local tbl_5 = {
 			name = "position",
 			start_progress = 0.01,
 			end_progress = 0.7,
-			init = function (arg_10_0, arg_10_1, arg_10_2, arg_10_3)
+			init = function (ui_scenegraph, scenegraph_definition, widgets, params)
 				-- function 10
 				return
 			end,
-			update = function (arg_11_0, arg_11_1, arg_11_2, arg_11_3, arg_11_4)
+			update = function (ui_scenegraph, scenegraph_definition, widgets, progress, params)
 				-- function 11
-				local chest_unit = arg_11_4.chest_unit
+				local chest_unit = params.chest_unit
 
-				if not chest_unit and not Unit.alive(chest_unit) then
-					local easeCubic = math.easeCubic(arg_11_3)
-					local reward_viewport = arg_11_4.reward_viewport
+				if chest_unit and Unit.alive(chest_unit) then
+					local anim_progress = math.easeCubic(progress)
+					local reward_viewport = params.reward_viewport
 					local camera = ScriptViewport.camera(reward_viewport)
-					local rotation = ScriptCamera.rotation(camera)
-					local num = ScriptCamera.position(camera) + Quaternion.forward(rotation)
+					local camera_rotation = ScriptCamera.rotation(camera)
+					local camera_position = ScriptCamera.position(camera)
+					local camera_forward_vector = Quaternion.forward(camera_rotation)
+					local unit_spawn_position = camera_position + camera_forward_vector
 
-					num.z = num.z - 0.3 + 0.29 * easeCubic
+					unit_spawn_position.z = unit_spawn_position.z - 0.3 + 0.29 * anim_progress
 
-					local box, var_11_7 = Unit.box(chest_unit)
-					local num_2 = Matrix4x4.translation(box) - Unit.world_position(chest_unit, 0)
-					local end_scale_fraction = arg_11_4.end_scale_fraction
+					local unit_box, box_dimension = Unit.box(chest_unit)
+					local unit_center_position = Matrix4x4.translation(unit_box)
+					local unit_root_position = Unit.world_position(chest_unit, 0)
+					local offset = unit_center_position - unit_root_position
+					local end_scale_fraction = params.end_scale_fraction
 
-					end_scale_fraction = end_scale_fraction or 0
+					if not end_scale_fraction then
+						-- Nothing
+					end
 
-					local num_3 = num - num_2 * end_scale_fraction
+					end_scale_fraction = 0
 
-					Unit.set_local_position(chest_unit, 0, num_3)
+					local scale_fraction = end_scale_fraction
+
+					::label_11_0::
+
+					offset = offset * scale_fraction
+
+					local display_position = unit_spawn_position - offset
+
+					Unit.set_local_position(chest_unit, 0, display_position)
 				end
 			end,
-			on_complete = function (arg_12_0, arg_12_1, arg_12_2, arg_12_3)
+			on_complete = function (ui_scenegraph, scenegraph_definition, widgets, params)
 				-- function 12
 				return
 			end
@@ -517,25 +542,25 @@ local tbl_5 = {
 			name = "bg_fade_in",
 			start_progress = 0.6,
 			end_progress = 1,
-			init = function (arg_13_0, arg_13_1, arg_13_2, arg_13_3)
+			init = function (ui_scenegraph, scenegraph_definition, widgets, params)
 				-- function 13
 				return
 			end,
-			update = function (arg_14_0, arg_14_1, arg_14_2, arg_14_3, arg_14_4)
+			update = function (ui_scenegraph, scenegraph_definition, widgets, progress, params)
 				-- function 14
-				local easeInCubic = math.easeInCubic(arg_14_3)
-				local divider = arg_14_2.divider
-				local popup_bg = arg_14_2.popup_bg
-				local title_text = arg_14_2.title_text
-				local description_text = arg_14_2.description_text
-				local num = 255 * easeInCubic
+				local anim_progress = math.easeInCubic(progress)
+				local divider = widgets.divider
+				local popup_bg = widgets.popup_bg
+				local title_text = widgets.title_text
+				local description_text = widgets.description_text
+				local alpha = 255 * anim_progress
 
-				divider.style.texture_id.color[1] = num
-				popup_bg.style.texture_id.color[1] = num
-				title_text.style.text.text_color[1] = num
-				description_text.style.text.text_color[1] = num
+				divider.style.texture_id.color[1] = alpha
+				popup_bg.style.texture_id.color[1] = alpha
+				title_text.style.text.text_color[1] = alpha
+				description_text.style.text.text_color[1] = alpha
 			end,
-			on_complete = function (arg_15_0, arg_15_1, arg_15_2, arg_15_3)
+			on_complete = function (ui_scenegraph, scenegraph_definition, widgets, params)
 				-- function 15
 				return
 			end
@@ -544,22 +569,23 @@ local tbl_5 = {
 			name = "button_fade_in",
 			start_progress = 1.4,
 			end_progress = 1.71,
-			init = function (arg_16_0, arg_16_1, arg_16_2, arg_16_3)
+			init = function (ui_scenegraph, scenegraph_definition, widgets, params)
 				-- function 16
 				return
 			end,
-			update = function (arg_17_0, arg_17_1, arg_17_2, arg_17_3, arg_17_4)
+			update = function (ui_scenegraph, scenegraph_definition, widgets, progress, params)
 				-- function 17
-				local num = 255 * math.easeInCubic(arg_17_3)
-				local claim_button = arg_17_2.claim_button
+				local anim_progress = math.easeInCubic(progress)
+				local alpha = 255 * anim_progress
+				local claim_button = widgets.claim_button
 
-				claim_button.style.texture.color[1] = num
-				claim_button.style.text.text_color[1] = num
-				claim_button.style.text_hover.text_color[1] = num
-				claim_button.style.text_selected.text_color[1] = num
-				claim_button.style.text_disabled.text_color[1] = num
+				claim_button.style.texture.color[1] = alpha
+				claim_button.style.text.text_color[1] = alpha
+				claim_button.style.text_hover.text_color[1] = alpha
+				claim_button.style.text_selected.text_color[1] = alpha
+				claim_button.style.text_disabled.text_color[1] = alpha
 			end,
-			on_complete = function (arg_18_0, arg_18_1, arg_18_2, arg_18_3)
+			on_complete = function (ui_scenegraph, scenegraph_definition, widgets, params)
 				-- function 18
 				return
 			end
@@ -568,19 +594,19 @@ local tbl_5 = {
 			name = "animation_fall",
 			start_progress = 0.65,
 			end_progress = 0.71,
-			init = function (arg_19_0, arg_19_1, arg_19_2, arg_19_3)
+			init = function (ui_scenegraph, scenegraph_definition, widgets, params)
 				-- function 19
 				return
 			end,
-			update = function (arg_20_0, arg_20_1, arg_20_2, arg_20_3, arg_20_4)
+			update = function (ui_scenegraph, scenegraph_definition, widgets, progress, params)
 				-- function 20
 				return
 			end,
-			on_complete = function (arg_21_0, arg_21_1, arg_21_2, arg_21_3)
+			on_complete = function (ui_scenegraph, scenegraph_definition, widgets, params)
 				-- function 21
-				local chest_unit = arg_21_3.chest_unit
+				local chest_unit = params.chest_unit
 
-				if not chest_unit and not Unit.alive(chest_unit) then
+				if chest_unit and Unit.alive(chest_unit) then
 					Unit.flow_event(chest_unit, "loot_chest_fall")
 				end
 			end
@@ -589,32 +615,32 @@ local tbl_5 = {
 			name = "chest_land",
 			start_progress = 0.71,
 			end_progress = 1,
-			init = function (arg_22_0, arg_22_1, arg_22_2, arg_22_3)
+			init = function (ui_scenegraph, scenegraph_definition, widgets, params)
 				-- function 22
 				return
 			end,
-			update = function (arg_23_0, arg_23_1, arg_23_2, arg_23_3, arg_23_4)
+			update = function (ui_scenegraph, scenegraph_definition, widgets, progress, params)
 				-- function 23
 				return
 			end,
-			on_complete = function (arg_24_0, arg_24_1, arg_24_2, arg_24_3)
+			on_complete = function (ui_scenegraph, scenegraph_definition, widgets, params)
 				-- function 24
-				WwiseWorld.trigger_event(arg_24_3.wwise_world, "hud_reward_chest_land")
+				WwiseWorld.trigger_event(params.wwise_world, "hud_reward_chest_land")
 			end
 		},
 		{
 			name = "animation_fall_xxx",
 			start_progress = 0.71,
 			end_progress = 1.71,
-			init = function (arg_25_0, arg_25_1, arg_25_2, arg_25_3)
+			init = function (ui_scenegraph, scenegraph_definition, widgets, params)
 				-- function 25
 				return
 			end,
-			update = function (arg_26_0, arg_26_1, arg_26_2, arg_26_3, arg_26_4)
+			update = function (ui_scenegraph, scenegraph_definition, widgets, progress, params)
 				-- function 26
 				return
 			end,
-			on_complete = function (arg_27_0, arg_27_1, arg_27_2, arg_27_3)
+			on_complete = function (ui_scenegraph, scenegraph_definition, widgets, params)
 				-- function 27
 				return
 			end
@@ -625,19 +651,19 @@ local tbl_5 = {
 			name = "animation_open",
 			start_progress = 0,
 			end_progress = 1,
-			init = function (arg_28_0, arg_28_1, arg_28_2, arg_28_3)
+			init = function (ui_scenegraph, scenegraph_definition, widgets, params)
 				-- function 28
-				local chest_unit = arg_28_3.chest_unit
+				local chest_unit = params.chest_unit
 
-				if not chest_unit and not Unit.alive(chest_unit) then
+				if chest_unit and Unit.alive(chest_unit) then
 					Unit.flow_event(chest_unit, "loot_chest_open")
 				end
 			end,
-			update = function (arg_29_0, arg_29_1, arg_29_2, arg_29_3, arg_29_4)
+			update = function (ui_scenegraph, scenegraph_definition, widgets, progress, params)
 				-- function 29
 				return
 			end,
-			on_complete = function (arg_30_0, arg_30_1, arg_30_2, arg_30_3)
+			on_complete = function (ui_scenegraph, scenegraph_definition, widgets, params)
 				-- function 30
 				return
 			end
@@ -646,52 +672,63 @@ local tbl_5 = {
 			name = "scale",
 			start_progress = 1.1,
 			end_progress = 1.25,
-			init = function (arg_31_0, arg_31_1, arg_31_2, arg_31_3)
+			init = function (ui_scenegraph, scenegraph_definition, widgets, params)
 				-- function 31
-				local chest_unit = arg_31_3.chest_unit
+				local chest_unit = params.chest_unit
 
-				if not chest_unit and not Unit.alive(chest_unit) then
-					local box, var_31_2 = Unit.box(chest_unit)
+				if chest_unit and Unit.alive(chest_unit) then
+					local unit_box, box_dimension = Unit.box(chest_unit)
 
-					if not var_31_2 then
-						local num = 0.1
-						local num_2 = 0
+					if box_dimension then
+						local max_value = 0.1
+						local largest_value = 0
 
-						if num_2 < var_31_2.x then
-							num_2 = var_31_2.x
+						if largest_value < box_dimension.x then
+							largest_value = box_dimension.x
 						end
 
-						if num_2 < var_31_2.z then
-							num_2 = var_31_2.z
+						if largest_value < box_dimension.z then
+							largest_value = box_dimension.z
 						end
 
-						if num_2 < var_31_2.y then
-							num_2 = var_31_2.y
+						if largest_value < box_dimension.y then
+							largest_value = box_dimension.y
 						end
 
-						if num < num_2 then
-							arg_31_3.end_scale_fraction = 1 - (num_2 - num) / num_2
+						if max_value < largest_value then
+							local diff = largest_value - max_value
+							local scale_fraction = 1 - diff / largest_value
+
+							params.end_scale_fraction = scale_fraction
 						end
 					end
 				end
 			end,
-			update = function (arg_32_0, arg_32_1, arg_32_2, arg_32_3, arg_32_4)
+			update = function (ui_scenegraph, scenegraph_definition, widgets, progress, params)
 				-- function 32
-				local chest_unit = arg_32_4.chest_unit
+				local chest_unit = params.chest_unit
 
-				if not chest_unit and not Unit.alive(chest_unit) then
-					local num = 1 - math.easeOutCubic(arg_32_3)
-					local end_scale_fraction = arg_32_4.end_scale_fraction
+				if chest_unit and Unit.alive(chest_unit) then
+					local anim_progress = 1 - math.easeOutCubic(progress)
+					local end_scale_fraction_2 = params.end_scale_fraction
 
-					end_scale_fraction = end_scale_fraction or 0.1
+					if not end_scale_fraction_2 then
+						-- Nothing
+					end
 
-					local num_2 = end_scale_fraction * num
-					local var_32_4 = Vector3(num_2, num_2, num_2)
+					end_scale_fraction_2 = 0.1
 
-					Unit.set_local_scale(chest_unit, 0, var_32_4)
+					local end_scale_fraction = end_scale_fraction_2
+
+					::label_32_0::
+
+					local scale_fraction = end_scale_fraction * anim_progress
+					local scale = Vector3(scale_fraction, scale_fraction, scale_fraction)
+
+					Unit.set_local_scale(chest_unit, 0, scale)
 				end
 			end,
-			on_complete = function (arg_33_0, arg_33_1, arg_33_2, arg_33_3)
+			on_complete = function (ui_scenegraph, scenegraph_definition, widgets, params)
 				-- function 33
 				return
 			end
@@ -702,19 +739,19 @@ local tbl_5 = {
 			name = "fade_in",
 			start_progress = 0,
 			end_progress = 1,
-			init = function (arg_34_0, arg_34_1, arg_34_2, arg_34_3)
+			init = function (ui_scenegraph, scenegraph_definition, widgets, params)
 				-- function 34
 				return
 			end,
-			update = function (arg_35_0, arg_35_1, arg_35_2, arg_35_3, arg_35_4)
+			update = function (ui_scenegraph, scenegraph_definition, widgets, progress, params)
 				-- function 35
-				local thumb_widgets = arg_35_2.thumb_widgets
+				local thumb_widgets = widgets.thumb_widgets
 
-				for i, v in ipairs(thumb_widgets) do
+				for index, widget in ipairs(thumb_widgets) do
 					-- Nothing
 				end
 			end,
-			on_complete = function (arg_36_0, arg_36_1, arg_36_2, arg_36_3)
+			on_complete = function (ui_scenegraph, scenegraph_definition, widgets, params)
 				-- function 36
 				return
 			end
@@ -723,9 +760,9 @@ local tbl_5 = {
 }
 
 return {
-	widget_definitions = tbl_3,
-	scenegraph_definition = tbl,
-	animation_definitions = tbl_5,
-	generic_input_actions = tbl_4,
-	create_reward_thumb_widget = fn
+	widget_definitions = widget_definitions,
+	scenegraph_definition = scenegraph_definition,
+	animation_definitions = animation_definitions,
+	generic_input_actions = generic_input_actions,
+	create_reward_thumb_widget = create_reward_thumb_widget
 }

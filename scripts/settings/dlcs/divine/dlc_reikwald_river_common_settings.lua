@@ -1,18 +1,18 @@
 -- chunkname: @scripts/settings/dlcs/divine/dlc_reikwald_river_common_settings.lua
 
-local divine = DLCSettings.divine
+local settings = DLCSettings.divine
 
-divine.unlock_settings = {
+settings.unlock_settings = {
 	divine = {
 		class = "AlwaysUnlocked"
 	}
 }
-divine.unlock_settings_xb1 = {
+settings.unlock_settings_xb1 = {
 	divine = {
 		class = "AlwaysUnlocked"
 	}
 }
-divine.unlock_settings_ps4 = {
+settings.unlock_settings_ps4 = {
 	CUSA13595_00 = {
 		divine = {
 			class = "AlwaysUnlocked"
@@ -24,20 +24,20 @@ divine.unlock_settings_ps4 = {
 		}
 	}
 }
-divine.statistics_definitions = {
+settings.statistics_definitions = {
 	"scripts/managers/backend/statistics_definitions_divine"
 }
-divine.statistics_lookup = {
+settings.statistics_lookup = {
 	"divine_nautical_miles_challenge",
 	"divine_anchor_challenge",
 	"divine_sink_ships_challenge",
 	"divine_cannon_challenge",
 	"divine_chaos_warrior_challenge"
 }
-divine.item_master_list_file_names = {
+settings.item_master_list_file_names = {
 	"scripts/settings/dlcs/divine/item_master_list_divine"
 }
-divine.ui_portrait_frame_settings = {
+settings.ui_portrait_frame_settings = {
 	frame_divine = {
 		{
 			texture = "portrait_frame_divine",

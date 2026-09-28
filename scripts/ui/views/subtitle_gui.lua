@@ -1,6 +1,6 @@
 -- chunkname: @scripts/ui/views/subtitle_gui.lua
 
-local tbl = {
+local scenegraph_definition = {
 	screen = {
 		scale = "fit",
 		position = {
@@ -44,10 +44,10 @@ local tbl = {
 }
 
 if not IS_WINDOWS then
-	tbl.screen.scale = "hud_fit"
+	scenegraph_definition.screen.scale = "hud_fit"
 end
 
-local tbl_2 = {
+local subtitle_widget_definition = {
 	scenegraph_id = "subtitle_background",
 	element = UIElements.StaticText,
 	content = {
@@ -69,12 +69,12 @@ local tbl_2 = {
 
 SubtitleGui = class(SubtitleGui)
 
-SubtitleGui.init = function (self, arg_1_1, arg_1_2)
+SubtitleGui.init = function (self, parent, ingame_ui_context)
 	-- function 1
-	self._parent = arg_1_1
-	self._dialogue_system = arg_1_2.dialogue_system
-	self._ui_renderer = arg_1_2.ui_renderer
-	self._input_manager = arg_1_2.input_manager
+	self._parent = parent
+	self._dialogue_system = ingame_ui_context.dialogue_system
+	self._ui_renderer = ingame_ui_context.ui_renderer
+	self._input_manager = ingame_ui_context.input_manager
 	self.playing_dialogues = {}
 	self.subtitles_to_display = {}
 	self.subtitle_list = {}
@@ -82,37 +82,37 @@ SubtitleGui.init = function (self, arg_1_1, arg_1_2)
 
 	self:_create_ui_elements()
 
-	local user_setting = Application.user_setting("use_subtitles")
+	local use_subtitles = Application.user_setting("use_subtitles")
 
-	if user_setting ~= nil then
-		UISettings.use_subtitles = user_setting
+	if use_subtitles ~= nil then
+		UISettings.use_subtitles = use_subtitles
 	end
 
 	if LAUNCH_MODE == "attract_benchmark" then
 		UISettings.use_subtitles = false
 	end
 
-	local event = Managers.state.event
+	local event_manager = Managers.state.event
 
-	if not event then
-		event:register(self, "ui_event_start_subtitle", "start_subtitle")
-		event:register(self, "ui_event_stop_subtitle", "stop_subtitle")
+	if event_manager then
+		event_manager:register(self, "ui_event_start_subtitle", "start_subtitle")
+		event_manager:register(self, "ui_event_stop_subtitle", "stop_subtitle")
 	end
 end
 
 SubtitleGui._create_ui_elements = function (self)
 	-- function 2
-	self._ui_scenegraph = UISceneGraph.init_scenegraph(tbl)
-	self._subtitle_widget = UIWidget.init(tbl_2)
+	self._ui_scenegraph = UISceneGraph.init_scenegraph(scenegraph_definition)
+	self._subtitle_widget = UIWidget.init(subtitle_widget_definition)
 end
 
 SubtitleGui.destroy = function (self)
 	-- function 3
-	local event = Managers.state.event
+	local event_manager = Managers.state.event
 
-	if not event then
-		event:unregister("ui_event_start_subtitle", self)
-		event:unregister("ui_event_stop_subtitle", self)
+	if event_manager then
+		event_manager:unregister("ui_event_start_subtitle", self)
+		event_manager:unregister("ui_event_stop_subtitle", self)
 	end
 
 	self.playing_dialogues = nil
@@ -120,24 +120,24 @@ SubtitleGui.destroy = function (self)
 	GarbageLeakDetector.register_object(self, "subtitle_gui")
 end
 
-SubtitleGui._add_subtitle = function (arg_4_0, arg_4_1, arg_4_2, arg_4_3)
+SubtitleGui._add_subtitle = function (self, unit, speaker, text)
 	-- function 4
-	local tbl = {
-		unit = arg_4_1,
-		speaker = arg_4_2,
-		text = arg_4_3
+	local new_entry = {
+		unit = unit,
+		speaker = speaker,
+		text = text
 	}
 
-	arg_4_0.subtitle_list[#arg_4_0.subtitle_list + 1] = tbl
+	self.subtitle_list[#self.subtitle_list + 1] = new_entry
 end
 
-SubtitleGui._remove_subtitle = function (self, arg_5_1)
+SubtitleGui._remove_subtitle = function (self, unit)
 	-- function 5
 	local subtitle_list = self.subtitle_list
-	local count = #subtitle_list
+	local num_subtitles = #subtitle_list
 
-	for i = 1, count do
-		if arg_5_1 == subtitle_list[i].unit then
+	for i = 1, num_subtitles do
+		if unit == subtitle_list[i].unit then
 			table.remove(subtitle_list, i)
 
 			break
@@ -145,154 +145,163 @@ SubtitleGui._remove_subtitle = function (self, arg_5_1)
 	end
 end
 
-SubtitleGui._has_subtitle_for_unit = function (self, arg_6_1)
+SubtitleGui._has_subtitle_for_unit = function (self, unit)
 	-- function 6
 	local subtitle_list = self.subtitle_list
-	local count = #subtitle_list
+	local num_subtitles = #subtitle_list
 
-	for i = 1, count do
-		if arg_6_1 == subtitle_list[i].unit then
+	for i = 1, num_subtitles do
+		if unit == subtitle_list[i].unit then
 			return true
 		end
 	end
 end
 
-local tbl_3 = {
+local customizer_data = {
 	root_scenegraph_id = "subtitle_background",
 	label = "Subtitles",
 	registry_key = "subtitle",
 	drag_scenegraph_id = "subtitle_background"
 }
 
-SubtitleGui.update = function (self, arg_7_1)
+SubtitleGui.update = function (self, dt)
 	-- function 7
 	if not UISettings.use_subtitles then
 		return
 	end
 
-	HudCustomizer.run(self._ui_renderer, self._ui_scenegraph, tbl_3)
+	HudCustomizer.run(self._ui_renderer, self._ui_scenegraph, customizer_data)
 
-	local flag = false
-	local _dialogue_system = self._dialogue_system
+	local remake_text = false
+	local dialogue_system = self._dialogue_system
 	local playing_dialogues = self.playing_dialogues
 
-	for k, v in pairs(playing_dialogues) do
-		if not HEALTH_ALIVE[k] then
-			playing_dialogues[k] = nil
+	for unit, dialogue in pairs(playing_dialogues) do
+		if not HEALTH_ALIVE[unit] then
+			playing_dialogues[unit] = nil
 
-			self:_remove_subtitle(k)
+			self:_remove_subtitle(unit)
 
-			flag = true
+			remake_text = true
 		end
 	end
 
-	for k_2, v_2 in pairs(_dialogue_system:dialogue_units()) do
-		local currently_playing_dialogue = v_2.currently_playing_dialogue
-		local flag_2 = playing_dialogues[k_2] ~= currently_playing_dialogue
+	for unit, extension in pairs(dialogue_system:dialogue_units()) do
+		local currently_playing_dialogue = extension.currently_playing_dialogue
+		local dialogue_changed = playing_dialogues[unit] ~= currently_playing_dialogue
 
-		if not currently_playing_dialogue then
-			if not flag_2 then
-				flag = true
+		if currently_playing_dialogue then
+			if dialogue_changed then
+				remake_text = true
 
-				local currently_playing_subtitle = currently_playing_dialogue.currently_playing_subtitle
+				local text_id = currently_playing_dialogue.currently_playing_subtitle
 
-				if not Managers.localizer:exists(currently_playing_subtitle) then
-					local var_7_6 = Localize(currently_playing_subtitle)
+				if Managers.localizer:exists(text_id) then
+					local dialogue_text = Localize(text_id)
 
-					if var_7_6 ~= "" then
-						if not self:_has_subtitle_for_unit(k_2) then
-							self:_remove_subtitle(k_2)
+					if dialogue_text ~= "" then
+						if self:_has_subtitle_for_unit(unit) then
+							self:_remove_subtitle(unit)
 						end
 
 						local speaker_name = currently_playing_dialogue.speaker_name
-						local var_7_8 = Localize("subtitle_name_" .. speaker_name)
-						local var_7_9 = DialogueSettings.speaker_color_lookup[speaker_name]
+						local localized_speaker_name = Localize("subtitle_name_" .. speaker_name)
+						local var_7_0 = DialogueSettings.speaker_color_lookup[speaker_name]
 
-						var_7_9 = var_7_9 or DialogueSettings.speaker_color_lookup.default
-
-						if not var_7_9 then
-							var_7_8 = string.format("{#color(%d,%d,%d)}%s{#reset()}", var_7_9[2], var_7_9[3], var_7_9[4], var_7_8)
+						if not var_7_0 then
+							-- Nothing
 						end
 
-						self:_add_subtitle(k_2, var_7_8, var_7_6)
+						var_7_0 = DialogueSettings.speaker_color_lookup.default
+
+						local color = var_7_0
+
+						::label_7_0::
+
+						if color then
+							localized_speaker_name = string.format("{#color(%d,%d,%d)}%s{#reset()}", color[2], color[3], color[4], localized_speaker_name)
+						end
+
+						self:_add_subtitle(unit, localized_speaker_name, dialogue_text)
 					end
 				end
 			end
 
-			playing_dialogues[k_2] = currently_playing_dialogue
+			playing_dialogues[unit] = currently_playing_dialogue
 		else
-			if not flag_2 then
-				self:_remove_subtitle(k_2)
+			if dialogue_changed then
+				self:_remove_subtitle(unit)
 
-				flag = true
+				remake_text = true
 			end
 
-			if not playing_dialogues[k_2] then
-				playing_dialogues[k_2] = nil
+			if playing_dialogues[unit] then
+				playing_dialogues[unit] = nil
 			end
 		end
 	end
 
-	if flag or not self._force_text_remake then
+	if remake_text or self._force_text_remake then
 		self._force_text_remake = nil
 
-		local str = ""
+		local text = ""
 		local subtitle_list = self.subtitle_list
-		local count = #subtitle_list
+		local num_subtitles = #subtitle_list
 
-		for i4 = 1, count do
-			local var_7_13 = subtitle_list[i4]
-			local speaker = var_7_13.speaker
-			local text = var_7_13.text
+		for i = 1, num_subtitles do
+			local entry = subtitle_list[i]
+			local entry_speaker = entry.speaker
+			local entry_text = entry.text
 
-			if speaker == "" then
-				str = str .. text .. "\n"
+			if entry_speaker == "" then
+				text = text .. entry_text .. "\n"
 			else
-				str = str .. speaker .. ": " .. text .. "\n"
+				text = text .. entry_speaker .. ": " .. entry_text .. "\n"
 			end
 		end
 
-		for k_3, v_3 in pairs(self.subtitles_to_display) do
-			local var_7_16 = Localize(k_3)
+		for speaker_name, subtitle in pairs(self.subtitles_to_display) do
+			local localized_speaker_name = Localize(speaker_name)
 
-			if var_7_16 == "" then
-				str = str .. Localize(v_3) .. "\n"
+			if localized_speaker_name == "" then
+				text = text .. Localize(subtitle) .. "\n"
 			else
-				str = str .. var_7_16 .. ": " .. Localize(v_3) .. "\n"
+				text = text .. localized_speaker_name .. ": " .. Localize(subtitle) .. "\n"
 			end
 		end
 
-		self._subtitle_text = str
+		self._subtitle_text = text
 	end
 
-	local get_service = self._input_manager:get_service("ingame_menu")
-	local _ui_renderer = self._ui_renderer
-	local _ui_scenegraph = self._ui_scenegraph
+	local input_manager = self._input_manager
+	local input_service = input_manager:get_service("ingame_menu")
+	local ui_renderer = self._ui_renderer
+	local ui_scenegraph = self._ui_scenegraph
 
-	UIRenderer.begin_pass(_ui_renderer, _ui_scenegraph, get_service, arg_7_1)
+	UIRenderer.begin_pass(ui_renderer, ui_scenegraph, input_service, dt)
 
 	if self._subtitle_text ~= "" then
-		local _subtitle_widget = self._subtitle_widget
+		local subtitle_widget = self._subtitle_widget
 
-		_subtitle_widget.content.text_field = self._subtitle_text
-		_subtitle_widget.style.text.font_size = UISettings.subtitles_font_size
-		_subtitle_widget.style.text.rect_color[1] = UISettings.subtitles_background_alpha
+		subtitle_widget.content.text_field = self._subtitle_text
+		subtitle_widget.style.text.font_size = UISettings.subtitles_font_size
+		subtitle_widget.style.text.rect_color[1] = UISettings.subtitles_background_alpha
 
-		UIRenderer.draw_widget(_ui_renderer, _subtitle_widget)
+		UIRenderer.draw_widget(ui_renderer, subtitle_widget)
 	end
 
-	UIRenderer.end_pass(_ui_renderer)
+	UIRenderer.end_pass(ui_renderer)
 end
 
-SubtitleGui.start_subtitle = function (self, arg_8_1, arg_8_2)
+SubtitleGui.start_subtitle = function (self, speaker_name, subtitle)
 	-- function 8
-	self.subtitles_to_display[arg_8_1] = arg_8_2
+	self.subtitles_to_display[speaker_name] = subtitle
 	self._force_text_remake = true
 end
 
-SubtitleGui.stop_subtitle = function (self, arg_9_1)
+SubtitleGui.stop_subtitle = function (self, speaker_name)
 	-- function 9
-	self.subtitles_to_display[arg_9_1] = nil
+	self.subtitles_to_display[speaker_name] = nil
 	self._force_text_remake = true
 end
 
@@ -300,7 +309,7 @@ SubtitleGui.is_displaying_subtitle = function (self)
 	-- function 10
 	local subtitles_to_display = self.subtitles_to_display
 
-	subtitles_to_display = not subtitles_to_display and self._subtitle_text ~= ""
+	subtitles_to_display = not not subtitles_to_display and self._subtitle_text ~= ""
 
 	return subtitles_to_display
 end

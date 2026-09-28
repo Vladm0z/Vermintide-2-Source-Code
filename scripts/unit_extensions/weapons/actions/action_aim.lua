@@ -2,85 +2,92 @@
 
 ActionAim = class(ActionAim, ActionBase)
 
-ActionAim.init = function (self, arg_1_1, arg_1_2, arg_1_3, arg_1_4, arg_1_5, arg_1_6, arg_1_7, arg_1_8)
+ActionAim.init = function (self, world, item_name, is_server, owner_unit, damage_unit, first_person_unit, weapon_unit, weapon_system)
 	-- function 1
-	ActionAim.super.init(self, arg_1_1, arg_1_2, arg_1_3, arg_1_4, arg_1_5, arg_1_6, arg_1_7, arg_1_8)
+	ActionAim.super.init(self, world, item_name, is_server, owner_unit, damage_unit, first_person_unit, weapon_unit, weapon_system)
 
-	self.ammo_extension = ScriptUnit.has_extension(arg_1_7, "ammo_system")
-	self.spread_extension = ScriptUnit.has_extension(arg_1_7, "spread_system")
-	self.weapon_extension = ScriptUnit.extension(arg_1_7, "weapon_system")
+	self.ammo_extension = ScriptUnit.has_extension(weapon_unit, "ammo_system")
+	self.spread_extension = ScriptUnit.has_extension(weapon_unit, "spread_system")
+	self.weapon_extension = ScriptUnit.extension(weapon_unit, "weapon_system")
 end
 
-local function fn(arg_2_0, arg_2_1, arg_2_2, arg_2_3)
+local function scale_delay_value(action_settings, value, owner_unit, buff_extension)
 	-- function 2
-	return arg_2_1 / ActionUtils.get_action_time_scale(arg_2_2, arg_2_0)
+	local new_value = value
+	local time_scale = ActionUtils.get_action_time_scale(owner_unit, action_settings)
+
+	new_value = new_value / time_scale
+
+	return new_value
 end
 
-ActionAim.client_owner_start_action = function (self, arg_3_1, arg_3_2)
+ActionAim.client_owner_start_action = function (self, new_action, t)
 	-- function 3
-	ActionAim.super.client_owner_start_action(self, arg_3_1, arg_3_2)
+	ActionAim.super.client_owner_start_action(self, new_action, t)
 
 	local owner_unit = self.owner_unit
 
-	self.current_action = arg_3_1
-	self.zoom_condition_function = arg_3_1.zoom_condition_function
+	self.current_action = new_action
+	self.zoom_condition_function = new_action.zoom_condition_function
 	self.played_aim_sound = false
 	self.heavy_aim_flow_done = false
 	self.fully_charged_triggered = false
 
-	local extension = ScriptUnit.extension(owner_unit, "buff_system")
+	local buff_extension = ScriptUnit.extension(owner_unit, "buff_system")
 
-	self.buff_extension = extension
+	self.buff_extension = buff_extension
 
-	local var_3_2 = fn
-	local var_3_3 = arg_3_1
-	local aim_sound_delay = arg_3_1.aim_sound_delay
+	local var_3_0 = scale_delay_value
+	local var_3_1 = new_action
+	local aim_sound_delay_2 = new_action.aim_sound_delay
 
-	aim_sound_delay = aim_sound_delay or 0
+	aim_sound_delay_2 = not not aim_sound_delay_2 or not not 0
 
-	local var_3_5 = var_3_2(var_3_3, aim_sound_delay, owner_unit, extension)
-	local var_3_6 = fn
-	local var_3_7 = arg_3_1
-	local aim_zoom_delay = arg_3_1.aim_zoom_delay
+	local aim_sound_delay = var_3_0(var_3_1, aim_sound_delay_2, owner_unit, buff_extension)
+	local var_3_3 = scale_delay_value
+	local var_3_4 = new_action
+	local aim_zoom_delay_2 = new_action.aim_zoom_delay
 
-	aim_zoom_delay = aim_zoom_delay or 0
+	aim_zoom_delay_2 = not not aim_zoom_delay_2 or not not 0
 
-	local var_3_9 = var_3_6(var_3_7, aim_zoom_delay, owner_unit, extension)
-	local var_3_10 = fn
-	local var_3_11 = arg_3_1
-	local heavy_aim_flow_delay = arg_3_1.heavy_aim_flow_delay
+	local aim_zoom_delay = var_3_3(var_3_4, aim_zoom_delay_2, owner_unit, buff_extension)
+	local var_3_6 = scale_delay_value
+	local var_3_7 = new_action
+	local heavy_aim_flow_delay_2 = new_action.heavy_aim_flow_delay
 
-	heavy_aim_flow_delay = heavy_aim_flow_delay or 0
+	heavy_aim_flow_delay_2 = not not heavy_aim_flow_delay_2 or not not 0
 
-	local var_3_13 = var_3_10(var_3_11, heavy_aim_flow_delay, owner_unit, extension)
-	local var_3_14 = fn
-	local var_3_15 = arg_3_1
-	local charge_time = arg_3_1.charge_time
+	local heavy_aim_flow_delay = var_3_6(var_3_7, heavy_aim_flow_delay_2, owner_unit, buff_extension)
+	local var_3_9 = scale_delay_value
+	local var_3_10 = new_action
+	local charge_time_2 = new_action.charge_time
 
-	charge_time = charge_time or 0
+	charge_time_2 = not not charge_time_2 or not not 0
 
-	local var_3_17 = var_3_14(var_3_15, charge_time, owner_unit, extension)
+	local charge_time = var_3_9(var_3_10, charge_time_2, owner_unit, buff_extension)
 
-	self.aim_sound_time = arg_3_2 + var_3_5
-	self.aim_zoom_time = arg_3_2 + var_3_9
-	self.heavy_aim_flow_time = arg_3_2 + var_3_13
-	self.charge_time_trigger = arg_3_2 + var_3_17
+	self.aim_sound_time = t + aim_sound_delay
+	self.aim_zoom_time = t + aim_zoom_delay
+	self.heavy_aim_flow_time = t + heavy_aim_flow_delay
+	self.charge_time_trigger = t + charge_time
 
-	local extension_2 = ScriptUnit.extension(owner_unit, "first_person_system")
+	local first_person_extension = ScriptUnit.extension(owner_unit, "first_person_system")
 
-	extension_2:disable_rig_movement()
-	extension_2:enable_rig_offset()
+	first_person_extension:disable_rig_movement()
+	first_person_extension:enable_rig_offset()
 
-	local spread_template_override = arg_3_1.spread_template_override
+	local spread_template_override = new_action.spread_template_override
 
-	if not spread_template_override then
+	if spread_template_override then
 		self.spread_extension:override_spread_template(spread_template_override)
 	end
 
-	local loaded_projectile_settings = arg_3_1.loaded_projectile_settings
+	local loaded_projectile_settings = new_action.loaded_projectile_settings
 
-	if not loaded_projectile_settings then
-		ScriptUnit.extension(owner_unit, "inventory_system"):set_loaded_projectile_override(loaded_projectile_settings)
+	if loaded_projectile_settings then
+		local inventory_extension = ScriptUnit.extension(owner_unit, "inventory_system")
+
+		inventory_extension:set_loaded_projectile_override(loaded_projectile_settings)
 	end
 
 	self.charge_ready_sound_event = self.current_action.charge_ready_sound_event
@@ -93,18 +100,18 @@ ActionAim._start_charge_sound = function (self)
 	local current_action = self.current_action
 	local owner_unit = self.owner_unit
 	local owner_player = self.owner_player
-	local flag = not owner_player and owner_player.bot_player
-	local flag_2 = not owner_player and not owner_player.remote
+	local is_bot = not not owner_player and not not owner_player.bot_player
+	local is_local = not not owner_player and not not not owner_player.remote
 	local wwise_world = self.wwise_world
 
-	if not (not flag_2 and flag) then
-		local start_charge_sound, var_4_7 = ActionUtils.start_charge_sound(wwise_world, self.weapon_unit, owner_unit, current_action)
+	if is_local and not is_bot then
+		local wwise_playing_id, wwise_source_id = ActionUtils.start_charge_sound(wwise_world, self.weapon_unit, owner_unit, current_action)
 
-		self.charging_sound_id = start_charge_sound
-		self.wwise_source_id = var_4_7
+		self.charging_sound_id = wwise_playing_id
+		self.wwise_source_id = wwise_source_id
 	end
 
-	ActionUtils.play_husk_sound_event(wwise_world, current_action.charge_sound_husk_name, owner_unit, flag)
+	ActionUtils.play_husk_sound_event(wwise_world, current_action.charge_sound_husk_name, owner_unit, is_bot)
 end
 
 ActionAim._stop_charge_sound = function (self)
@@ -112,162 +119,196 @@ ActionAim._stop_charge_sound = function (self)
 	local current_action = self.current_action
 	local owner_unit = self.owner_unit
 	local owner_player = self.owner_player
-	local flag = not owner_player and owner_player.bot_player
-	local flag_2 = not owner_player and not owner_player.remote
+	local is_bot = not not owner_player and not not owner_player.bot_player
+	local is_local = not not owner_player and not not not owner_player.remote
 	local wwise_world = self.wwise_world
 
-	if not (not flag_2 and flag) then
+	if is_local and not is_bot then
 		ActionUtils.stop_charge_sound(wwise_world, self.charging_sound_id, self.wwise_source_id, current_action)
 
 		self.charging_sound_id = nil
 		self.wwise_source_id = nil
 	end
 
-	ActionUtils.play_husk_sound_event(wwise_world, current_action.charge_sound_husk_stop_event, owner_unit, flag)
+	ActionUtils.play_husk_sound_event(wwise_world, current_action.charge_sound_husk_stop_event, owner_unit, is_bot)
 end
 
-ActionAim.client_owner_post_update = function (self, arg_6_1, arg_6_2, arg_6_3, arg_6_4)
+ActionAim.client_owner_post_update = function (self, dt, t, world, can_damage)
 	-- function 6
 	local current_action = self.current_action
 	local owner_unit = self.owner_unit
 
-	if not Application.user_setting("tobii_eyetracking") and not ScriptUnit.has_extension(owner_unit, "eyetracking_system") then
-		local extension = ScriptUnit.extension(owner_unit, "eyetracking_system")
+	if Application.user_setting("tobii_eyetracking") and ScriptUnit.has_extension(owner_unit, "eyetracking_system") then
+		local eyetracking_extension = ScriptUnit.extension(owner_unit, "eyetracking_system")
 
-		if not (not extension:get_is_feature_enabled("tobii_aim_at_gaze") and extension:get_aim_at_gaze_cancelled()) then
-			local extension_2 = ScriptUnit.extension(owner_unit, "input_system")
-			local get = extension_2:get("look_raw")
+		if eyetracking_extension:get_is_feature_enabled("tobii_aim_at_gaze") and not eyetracking_extension:get_aim_at_gaze_cancelled() then
+			local input_extension = ScriptUnit.extension(owner_unit, "input_system")
+			local get = input_extension:get("look_raw")
 
-			get = get or Vector3(0, 0, 0)
+			if not get then
+				-- Nothing
+			end
 
-			local get_2 = extension_2:get("look_raw_controller")
+			get = Vector3(0, 0, 0)
 
-			get_2 = get_2 or Vector3(0, 0, 0)
+			local move_input = get
 
-			if not (Vector3.length(get) > 0.01 or not (Vector3.length(get_2) > 0.01)) then
-				ScriptUnit.extension(owner_unit, "first_person_system"):stop_force_look_rotation()
-				extension:set_aim_at_gaze_cancelled(true)
+			::label_6_0::
+
+			local get_2 = input_extension:get("look_raw_controller")
+
+			if not get_2 then
+				-- Nothing
+			end
+
+			get_2 = Vector3(0, 0, 0)
+
+			local move_input_controller = get_2
+
+			::label_6_1::
+
+			if Vector3.length(move_input) > 0.01 or Vector3.length(move_input_controller) > 0.01 then
+				local first_person_extension = ScriptUnit.extension(owner_unit, "first_person_system")
+
+				first_person_extension:stop_force_look_rotation()
+				eyetracking_extension:set_aim_at_gaze_cancelled(true)
 			end
 		end
 	end
 
-	if not self.zoom_condition_function and not self.zoom_condition_function() then
-		local extension_3 = ScriptUnit.extension(owner_unit, "status_system")
-		local extension_4 = ScriptUnit.extension(owner_unit, "input_system")
-		local extension_5 = ScriptUnit.extension(owner_unit, "buff_system")
+	if not self.zoom_condition_function or self.zoom_condition_function() then
+		local status_extension = ScriptUnit.extension(owner_unit, "status_system")
+		local input_extension = ScriptUnit.extension(owner_unit, "input_system")
+		local buff_extension = ScriptUnit.extension(owner_unit, "buff_system")
 
-		if not (extension_3:is_zooming() or not (arg_6_2 >= self.aim_zoom_time)) then
-			extension_3:set_zooming(true, current_action.default_zoom)
+		if not status_extension:is_zooming() and t >= self.aim_zoom_time then
+			status_extension:set_zooming(true, current_action.default_zoom)
 		end
 
-		if not extension_5:has_buff_perk("increased_zoom") and not extension_3:is_zooming() and not extension_4:get("action_three") then
-			extension_3:switch_variable_zoom(current_action.buffed_zoom_thresholds)
+		if buff_extension:has_buff_perk("increased_zoom") and status_extension:is_zooming() and input_extension:get("action_three") then
+			status_extension:switch_variable_zoom(current_action.buffed_zoom_thresholds)
 		end
 	end
 
-	if not (self.played_aim_sound or not (arg_6_2 >= self.aim_sound_time) or Managers.player:owner(self.owner_unit).bot_player) then
+	if not self.played_aim_sound and t >= self.aim_sound_time and not Managers.player:owner(self.owner_unit).bot_player then
 		Managers.state.controller_features:add_effect("rumble", {
 			rumble_effect = "aim_start"
 		})
 
-		local aim_sound_event = current_action.aim_sound_event
+		local sound_event = current_action.aim_sound_event
 
-		if not aim_sound_event then
-			if not current_action.looping_aim_sound then
-				local aim_sound_event_2 = current_action.aim_sound_event
-				local unaim_sound_event = current_action.unaim_sound_event
+		if sound_event then
+			if current_action.looping_aim_sound then
+				local start_aim_id = current_action.aim_sound_event
+				local stop_aim_id = current_action.unaim_sound_event
 
-				self.weapon_extension:add_looping_audio("aim", aim_sound_event_2, unaim_sound_event, nil, nil, true)
+				self.weapon_extension:add_looping_audio("aim", start_aim_id, stop_aim_id, nil, nil, true)
 			else
 				local wwise_world = self.wwise_world
 
-				WwiseWorld.trigger_event(wwise_world, aim_sound_event)
+				WwiseWorld.trigger_event(wwise_world, sound_event)
 			end
 		end
 
 		self.played_aim_sound = true
 	end
 
-	if not (self.heavy_aim_flow_done or not (arg_6_2 >= self.heavy_aim_flow_time) or Managers.player:owner(self.owner_unit).bot_player) then
+	if not self.heavy_aim_flow_done and t >= self.heavy_aim_flow_time and not Managers.player:owner(self.owner_unit).bot_player then
 		Managers.state.controller_features:add_effect("rumble", {
 			rumble_effect = "aim_start"
 		})
 
 		local heavy_aim_flow_event = current_action.heavy_aim_flow_event
 
-		if not heavy_aim_flow_event then
+		if heavy_aim_flow_event then
 			Unit.flow_event(self.first_person_unit, heavy_aim_flow_event)
 		end
 
-		local heavy_aim_sound_event = current_action.heavy_aim_sound_event
+		local heavy_sound_event = current_action.heavy_aim_sound_event
 
-		if not heavy_aim_sound_event then
-			local wwise_world_2 = self.wwise_world
+		if heavy_sound_event then
+			local wwise_world = self.wwise_world
 
-			WwiseWorld.trigger_event(wwise_world_2, heavy_aim_sound_event)
+			WwiseWorld.trigger_event(wwise_world, heavy_sound_event)
 		end
 
 		self.heavy_aim_flow_done = true
 	end
 
-	if not (not (arg_6_2 > self.charge_time_trigger) or self.fully_charged_triggered) then
+	if t > self.charge_time_trigger and not self.fully_charged_triggered then
 		self.fully_charged_triggered = true
 
 		self.buff_extension:trigger_procs("on_full_charge")
 	end
 end
 
-ActionAim.finish = function (self, arg_7_1)
+ActionAim.finish = function (self, reason)
 	-- function 7
 	local current_action = self.current_action
 	local ammo_extension = self.ammo_extension
 	local owner_unit = self.owner_unit
 	local unzoom_condition_function = current_action.unzoom_condition_function
 
-	if not unzoom_condition_function and not unzoom_condition_function(arg_7_1) then
-		ScriptUnit.extension(owner_unit, "status_system"):set_zooming(false)
+	if not unzoom_condition_function or unzoom_condition_function(reason) then
+		local status_extension = ScriptUnit.extension(owner_unit, "status_system")
+
+		status_extension:set_zooming(false)
 	end
 
-	local extension = ScriptUnit.extension(owner_unit, "first_person_system")
+	local first_person_extension = ScriptUnit.extension(owner_unit, "first_person_system")
 
-	extension:enable_rig_movement()
-	extension:disable_rig_offset()
-	extension:stop_force_look_rotation()
+	first_person_extension:enable_rig_movement()
+	first_person_extension:disable_rig_offset()
+	first_person_extension:stop_force_look_rotation()
 
 	local reload_when_out_of_ammo_condition_func = current_action.reload_when_out_of_ammo_condition_func
 	local flag
 
-	flag = reload_when_out_of_ammo_condition_func or not true or reload_when_out_of_ammo_condition_func(owner_unit, arg_7_1)
+	if not reload_when_out_of_ammo_condition_func then
+		flag = true
 
-	if not ammo_extension and not ammo_extension:can_reload() and (ammo_extension:ammo_count() ~= 0 or not current_action.reload_when_out_of_ammo) and not flag then
-		local flag_2 = true
-
-		ammo_extension:start_reload(flag_2)
+		goto label_7_0
 	end
 
-	if not self.spread_extension then
+	flag = reload_when_out_of_ammo_condition_func(owner_unit, reason)
+
+	local do_out_of_ammo_reload = flag
+
+	::label_7_0::
+
+	if ammo_extension and ammo_extension:can_reload() and ammo_extension:ammo_count() == 0 and current_action.reload_when_out_of_ammo and do_out_of_ammo_reload then
+		local play_reload_animation = true
+
+		ammo_extension:start_reload(play_reload_animation)
+	end
+
+	if self.spread_extension then
 		self.spread_extension:reset_spread_template()
 	end
 
-	local unaim_sound_event = current_action.unaim_sound_event
+	local sound_event = current_action.unaim_sound_event
 
-	if not unaim_sound_event then
+	if sound_event then
 		local wwise_world = self.wwise_world
 
-		WwiseWorld.trigger_event(wwise_world, unaim_sound_event)
+		WwiseWorld.trigger_event(wwise_world, sound_event)
 	end
 
-	if not Managers.player:owner(owner_unit).bot_player then
+	local owner = Managers.player:owner(owner_unit)
+
+	if not owner.bot_player then
 		Managers.state.controller_features:add_effect("rumble", {
 			rumble_effect = "full_stop"
 		})
 	end
 
-	if not current_action.reset_aim_assist_on_exit then
-		extension:reset_aim_assist_multiplier()
+	if current_action.reset_aim_assist_on_exit then
+		first_person_extension:reset_aim_assist_multiplier()
 	end
 
-	ScriptUnit.extension(owner_unit, "inventory_system"):set_loaded_projectile_override(nil)
+	local inventory_extension = ScriptUnit.extension(owner_unit, "inventory_system")
+
+	inventory_extension:set_loaded_projectile_override(nil)
 	self.buff_extension:trigger_procs("on_charge_finished")
 
 	if not current_action.looping_aim_sound then

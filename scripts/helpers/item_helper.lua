@@ -6,10 +6,10 @@ local_require("scripts/settings/equipment/cosmetics")
 
 local ItemHelper = ItemHelper
 
-ItemHelper = ItemHelper or {}
+ItemHelper = not not ItemHelper or not not {}
 ItemHelper = ItemHelper
 
-local tbl = {
+local item_type_templates = {
 	melee = Weapons,
 	ranged = Weapons,
 	trinket = Attachments,
@@ -22,14 +22,14 @@ local tbl = {
 	weapon_pose = Cosmetics,
 	chips = Cosmetics
 }
-local tbl_2 = {
+local weapon_attack_stats_order = {
 	speed = 2,
 	range = 5,
 	damage = 1,
 	targets = 3,
 	stagger = 4
 }
-local tbl_3 = {
+local stats_localization_keys = {
 	burn = "item_compare_burn",
 	range = "item_compare_range",
 	armor_penetration = "item_compare_armor_penetration",
@@ -41,152 +41,200 @@ local tbl_3 = {
 	stagger = "item_compare_stagger"
 }
 
-ItemHelper.get_template_by_item_name = function (arg_1_0)
+ItemHelper.get_template_by_item_name = function (name)
 	-- function 1
-	local var_1_0 = ItemMasterList[arg_1_0]
+	local item_data = ItemMasterList[name]
 
-	fassert(var_1_0, "Requested template for item %s which does not exist.", arg_1_0)
+	fassert(item_data, "Requested template for item %s which does not exist.", name)
 
-	local slot_type = var_1_0.slot_type
-	local template = var_1_0.template
+	local slot_type = item_data.slot_type
+	local template_name = item_data.template
+	local temporary_template = item_data.temporary_template
 
-	template = var_1_0.temporary_template or template
+	template_name = not not temporary_template or not not template_name
 
-	local var_1_3 = tbl[slot_type]
-	local var_1_4
+	local item_type_template = item_type_templates[slot_type]
+	local template
 
-	if var_1_3 == Weapons then
-		var_1_4 = WeaponUtils.get_weapon_template(template)
+	if item_type_template == Weapons then
+		template = WeaponUtils.get_weapon_template(template_name)
 	elseif slot_type == "frame" then
-		var_1_4 = CosmeticUtils.generate_frame_template(arg_1_0)
+		template = CosmeticUtils.generate_frame_template(name)
 	else
-		var_1_4 = tbl[slot_type][template]
+		template = item_type_templates[slot_type][template_name]
 	end
 
-	fassert(var_1_4, "No template by name %s found for item_data %s.", template, arg_1_0)
+	fassert(template, "No template by name %s found for item_data %s.", template_name, name)
 
-	return var_1_4
+	return template
 end
 
-ItemHelper.get_slot_type = function (arg_2_0)
+ItemHelper.get_slot_type = function (slot)
 	-- function 2
-	local count = #InventorySettings.slots
+	local slots_n = #InventorySettings.slots
 
-	for i = 1, count do
-		local var_2_1 = InventorySettings[i]
+	for i = 1, slots_n do
+		local slot_settings = InventorySettings[i]
 
-		if var_2_1.name == arg_2_0 then
-			return var_2_1.type
+		if slot_settings.name == slot then
+			return slot_settings.type
 		end
 	end
 
-	fassert(false, "no slot in InventorySettings.slots with name: ", arg_2_0)
+	fassert(false, "no slot in InventorySettings.slots with name: ", slot)
 end
 
-ItemHelper.mark_sign_in_reward_as_new = function (arg_3_0, arg_3_1)
+ItemHelper.mark_sign_in_reward_as_new = function (reward_id, item_backend_id)
 	-- function 3
-	local new_sign_in_rewards = PlayerData.new_sign_in_rewards
+	local new_sign_in_rewards_2 = PlayerData.new_sign_in_rewards
 
-	new_sign_in_rewards = new_sign_in_rewards or {}
-
-	local var_3_1 = new_sign_in_rewards[arg_3_0]
-
-	if not var_3_1 then
-		var_3_1 = {}
-		new_sign_in_rewards[arg_3_0] = var_3_1
+	if not new_sign_in_rewards_2 then
+		-- Nothing
 	end
 
-	var_3_1[#var_3_1 + 1] = arg_3_1
+	new_sign_in_rewards_2 = {}
+
+	local new_sign_in_rewards = new_sign_in_rewards_2
+
+	::label_3_0::
+
+	local reward_items = new_sign_in_rewards[reward_id]
+
+	if not reward_items then
+		reward_items = {}
+		new_sign_in_rewards[reward_id] = reward_items
+	end
+
+	reward_items[#reward_items + 1] = item_backend_id
 	PlayerData.new_sign_in_rewards = new_sign_in_rewards
 
 	Managers.save:auto_save(SaveFileName, SaveData, nil)
 end
 
-ItemHelper.unmark_sign_in_reward_as_new = function (arg_4_0)
+ItemHelper.unmark_sign_in_reward_as_new = function (reward_id)
 	-- function 4
 	local new_sign_in_rewards = PlayerData.new_sign_in_rewards
 
 	fassert(new_sign_in_rewards, "Tried to unmark sign-in reward as new but the save data wasn't found")
 
-	local var_4_1 = new_sign_in_rewards[arg_4_0]
+	local reward_items = new_sign_in_rewards[reward_id]
 
-	if not var_4_1 then
-		for i, v in ipairs(var_4_1) do
-			ItemHelper.unmark_backend_id_as_new(v, true)
+	if reward_items then
+		for _, item_backend_id in ipairs(reward_items) do
+			ItemHelper.unmark_backend_id_as_new(item_backend_id, true)
 		end
 	end
 
-	new_sign_in_rewards[arg_4_0] = nil
+	new_sign_in_rewards[reward_id] = nil
 
 	Managers.save:auto_save(SaveFileName, SaveData, nil)
 end
 
-ItemHelper.has_new_sign_in_reward = function (arg_5_0)
+ItemHelper.has_new_sign_in_reward = function (reward_id)
 	-- function 5
-	if not arg_5_0 then
+	if reward_id then
+		local new_sign_in_rewards = PlayerData.new_sign_in_rewards
+		local reward_items = new_sign_in_rewards[reward_id]
 		local flag
 
-		flag = not PlayerData.new_sign_in_rewards[arg_5_0] and true and false
+		flag = (not reward_items or not true) and not not false
 
 		return flag
 	else
-		return next(PlayerData.new_sign_in_rewards) ~= nil
+		local has_rewards = next(PlayerData.new_sign_in_rewards) ~= nil
+
+		return has_rewards
 	end
 end
 
-ItemHelper.mark_backend_id_as_new = function (arg_6_0, arg_6_1, arg_6_2)
+ItemHelper.mark_backend_id_as_new = function (backend_id, item, skip_autosave)
 	-- function 6
-	local get_interface = Managers.backend:get_interface("items")
-	local data = (arg_6_1 or get_interface:get_item_from_id(arg_6_0)).data
-	local slot_type = data.slot_type
-	local can_wield = data.can_wield
-	local new_item_ids = PlayerData.new_item_ids
+	local item_interface = Managers.backend:get_interface("items")
+	local item = not not item or not not item_interface:get_item_from_id(backend_id)
+	local item_data = item.data
+	local slot_type = item_data.slot_type
+	local can_wield = item_data.can_wield
+	local new_item_ids_2 = PlayerData.new_item_ids
 
-	new_item_ids = new_item_ids or {}
-	new_item_ids[arg_6_0] = true
+	if not new_item_ids_2 then
+		-- Nothing
+	end
 
-	local CareerSettings = CareerSettings
-	local new_item_ids_by_career = PlayerData.new_item_ids_by_career
+	new_item_ids_2 = {}
 
-	new_item_ids_by_career = new_item_ids_by_career or {}
+	local new_item_ids = new_item_ids_2
 
-	for i, v in ipairs(can_wield) do
-		local var_6_7 = new_item_ids_by_career[v]
+	::label_6_0::
 
-		var_6_7 = var_6_7 or {}
+	new_item_ids[backend_id] = true
 
-		local var_6_8 = var_6_7[slot_type]
+	local career_settings = CareerSettings
+	local new_item_ids_by_career_2 = PlayerData.new_item_ids_by_career
 
-		var_6_8 = var_6_8 or {}
-		var_6_8[arg_6_0] = true
-		var_6_7[slot_type] = var_6_8
-		new_item_ids_by_career[v] = var_6_7
+	if not new_item_ids_by_career_2 then
+		-- Nothing
+	end
+
+	new_item_ids_by_career_2 = {}
+
+	local new_item_ids_by_career = new_item_ids_by_career_2
+
+	::label_6_1::
+
+	for _, career_name in ipairs(can_wield) do
+		local var_6_2 = new_item_ids_by_career[career_name]
+
+		if not var_6_2 then
+			-- Nothing
+		end
+
+		var_6_2 = {}
+
+		local item_ids_by_career = var_6_2
+
+		::label_6_2::
+
+		local var_6_3 = item_ids_by_career[slot_type]
+
+		if not var_6_3 then
+			-- Nothing
+		end
+
+		var_6_3 = {}
+
+		local item_ids_by_slot_type = var_6_3
+
+		::label_6_3::
+
+		item_ids_by_slot_type[backend_id] = true
+		item_ids_by_career[slot_type] = item_ids_by_slot_type
+		new_item_ids_by_career[career_name] = item_ids_by_career
 	end
 
 	PlayerData.new_item_ids = new_item_ids
 	PlayerData.new_item_ids_by_career = new_item_ids_by_career
 
-	if not arg_6_2 then
+	if skip_autosave then
 		return
 	end
 
 	Managers.save:auto_save(SaveFileName, SaveData, nil)
 end
 
-ItemHelper.unmark_backend_id_as_new = function (arg_7_0, arg_7_1)
+ItemHelper.unmark_backend_id_as_new = function (backend_id, skip_autosave)
 	-- function 7
 	local new_item_ids = PlayerData.new_item_ids
 	local new_item_ids_by_career = PlayerData.new_item_ids_by_career
 
-	assert(new_item_ids, "Requested to unmark item backend id %d without any save data.", arg_7_0)
+	assert(new_item_ids, "Requested to unmark item backend id %d without any save data.", backend_id)
 
-	new_item_ids[arg_7_0] = nil
+	new_item_ids[backend_id] = nil
 
-	for k, v in pairs(new_item_ids_by_career) do
-		for k_2, v_2 in pairs(v) do
-			for k_3, v_3 in pairs(v_2) do
-				if k_3 == arg_7_0 then
-					v_2[arg_7_0] = nil
+	for career_name, item_ids_by_slot_type in pairs(new_item_ids_by_career) do
+		for slot_type, backend_ids in pairs(item_ids_by_slot_type) do
+			for item_backend_id, _ in pairs(backend_ids) do
+				if item_backend_id == backend_id then
+					backend_ids[backend_id] = nil
 
 					break
 				end
@@ -194,7 +242,7 @@ ItemHelper.unmark_backend_id_as_new = function (arg_7_0, arg_7_1)
 		end
 	end
 
-	if not arg_7_1 then
+	if not skip_autosave then
 		Managers.save:auto_save(SaveFileName, SaveData, nil)
 	end
 end
@@ -204,32 +252,32 @@ ItemHelper.get_new_backend_ids = function ()
 	return PlayerData.new_item_ids
 end
 
-ItemHelper.is_new_backend_id = function (arg_9_0)
+ItemHelper.is_new_backend_id = function (backend_id)
 	-- function 9
 	local new_item_ids = PlayerData.new_item_ids
 
-	return not new_item_ids and new_item_ids[arg_9_0]
+	return not not new_item_ids and not not new_item_ids[backend_id]
 end
 
-ItemHelper.has_new_backend_ids_by_career_name_and_slot_type = function (arg_10_0, arg_10_1, arg_10_2)
+ItemHelper.has_new_backend_ids_by_career_name_and_slot_type = function (career_name, slot_type_name, rarities_to_ignore)
 	-- function 10
 	local new_item_ids_by_career = PlayerData.new_item_ids_by_career
 
-	for k, v in pairs(new_item_ids_by_career) do
-		if arg_10_0 == k then
-			for k_2, v_2 in pairs(v) do
-				if arg_10_1 == k_2 then
-					for k_3, v_3 in pairs(v_2) do
-						if not v_3 then
-							if not arg_10_2 then
-								local get_item_from_masterlist = BackendUtils.get_item_from_masterlist(k_3)
+	for career, item_ids_by_slot_type in pairs(new_item_ids_by_career) do
+		if career_name == career then
+			for slot_type, backend_ids in pairs(item_ids_by_slot_type) do
+				if slot_type_name == slot_type then
+					for item_backend_id, value in pairs(backend_ids) do
+						if value then
+							if rarities_to_ignore then
+								local item = BackendUtils.get_item_from_masterlist(item_backend_id)
 
-								if not get_item_from_masterlist then
-									if not arg_10_2[get_item_from_masterlist.rarity] then
+								if item then
+									if not rarities_to_ignore[item.rarity] then
 										return true
 									end
 								else
-									ItemHelper.unmark_backend_id_as_new(k_3)
+									ItemHelper.unmark_backend_id_as_new(item_backend_id)
 								end
 							else
 								return true
@@ -244,24 +292,24 @@ ItemHelper.has_new_backend_ids_by_career_name_and_slot_type = function (arg_10_0
 	return false
 end
 
-ItemHelper.has_new_backend_ids_by_slot_type = function (arg_11_0, arg_11_1)
+ItemHelper.has_new_backend_ids_by_slot_type = function (slot_type_name, rarities_to_ignore)
 	-- function 11
 	local new_item_ids_by_career = PlayerData.new_item_ids_by_career
 
-	for k, v in pairs(new_item_ids_by_career) do
-		for k_2, v_2 in pairs(v) do
-			if arg_11_0 == k_2 then
-				for k_3, v_3 in pairs(v_2) do
-					if not v_3 then
-						if not arg_11_1 then
-							local get_item_from_masterlist = BackendUtils.get_item_from_masterlist(k_3)
+	for career_name, item_ids_by_slot_type in pairs(new_item_ids_by_career) do
+		for slot_type, backend_ids in pairs(item_ids_by_slot_type) do
+			if slot_type_name == slot_type then
+				for item_backend_id, value in pairs(backend_ids) do
+					if value then
+						if rarities_to_ignore then
+							local item = BackendUtils.get_item_from_masterlist(item_backend_id)
 
-							if not get_item_from_masterlist then
-								if not arg_11_1[get_item_from_masterlist.rarity] then
+							if item then
+								if not rarities_to_ignore[item.rarity] then
 									return true
 								end
 							else
-								ItemHelper.unmark_backend_id_as_new(k_3)
+								ItemHelper.unmark_backend_id_as_new(item_backend_id)
 							end
 						else
 							return true
@@ -275,24 +323,24 @@ ItemHelper.has_new_backend_ids_by_slot_type = function (arg_11_0, arg_11_1)
 	return false
 end
 
-ItemHelper.has_new_backend_ids_by_career_name = function (arg_12_0, arg_12_1)
+ItemHelper.has_new_backend_ids_by_career_name = function (career_name, rarities_to_ignore)
 	-- function 12
 	local new_item_ids_by_career = PlayerData.new_item_ids_by_career
 
-	for k, v in pairs(new_item_ids_by_career) do
-		if arg_12_0 == k then
-			for k_2, v_2 in pairs(v) do
-				for k_3, v_3 in pairs(v_2) do
-					if not v_3 then
-						if not arg_12_1 then
-							local get_item_from_masterlist = BackendUtils.get_item_from_masterlist(k_3)
+	for career, item_ids_by_slot_type in pairs(new_item_ids_by_career) do
+		if career_name == career then
+			for slot_type, backend_ids in pairs(item_ids_by_slot_type) do
+				for item_backend_id, value in pairs(backend_ids) do
+					if value then
+						if rarities_to_ignore then
+							local item = BackendUtils.get_item_from_masterlist(item_backend_id)
 
-							if not get_item_from_masterlist then
-								if not arg_12_1[get_item_from_masterlist.rarity] then
+							if item then
+								if not rarities_to_ignore[item.rarity] then
 									return true
 								end
 							else
-								ItemHelper.unmark_backend_id_as_new(k_3)
+								ItemHelper.unmark_backend_id_as_new(item_backend_id)
 							end
 						else
 							return true
@@ -306,149 +354,198 @@ ItemHelper.has_new_backend_ids_by_career_name = function (arg_12_0, arg_12_1)
 	return false
 end
 
-ItemHelper.retrieve_weapon_item_statistics = function (arg_13_0, arg_13_1)
+ItemHelper.retrieve_weapon_item_statistics = function (item_data, backend_id)
 	-- function 13
-	local tbl = {}
-	local tbl_3 = {}
-	local compare_statistics = BackendUtils.get_item_template(arg_13_0, arg_13_1).compare_statistics
-	local flag = not compare_statistics and compare_statistics.attacks
-	local flag_2
+	local stats_data = {}
+	local stats_data_by_order = {}
+	local item_template = BackendUtils.get_item_template(item_data, backend_id)
+	local item_statistics = item_template.compare_statistics
+	local stats_by_attack = not not item_statistics and not not item_statistics.attacks
+	local perks_by_attack = not not item_statistics and not not item_statistics.perks
 
-	flag_2 = not compare_statistics and compare_statistics.perks
+	if stats_by_attack then
+		local light_attack_statistics = stats_by_attack.light_attack
+		local heavy_attack_statistics = stats_by_attack.heavy_attack
 
-	if not flag then
-		local light_attack = flag.light_attack
-		local heavy_attack = flag.heavy_attack
-
-		ItemHelper._retrieve_weapon_attack_data(light_attack, tbl)
-		ItemHelper._retrieve_weapon_attack_data(heavy_attack, tbl)
+		ItemHelper._retrieve_weapon_attack_data(light_attack_statistics, stats_data)
+		ItemHelper._retrieve_weapon_attack_data(heavy_attack_statistics, stats_data)
 	end
 
-	for k, v in pairs(tbl) do
-		tbl_3[tbl_2[k]] = v
+	for key, data in pairs(stats_data) do
+		local index = weapon_attack_stats_order[key]
+
+		stats_data_by_order[index] = data
 	end
 
-	return tbl_3
+	return stats_data_by_order
 end
 
-ItemHelper._retrieve_weapon_attack_data = function (arg_14_0, arg_14_1)
+ItemHelper._retrieve_weapon_attack_data = function (stats_data, data_store_table)
 	-- function 14
-	for k, v in pairs(arg_14_0) do
-		local var_14_0 = tbl_3[k]
-		local var_14_1 = arg_14_1[k]
+	for key, value in pairs(stats_data) do
+		local localization_key = stats_localization_keys[key]
+		local var_14_0 = data_store_table[key]
 
-		var_14_1 = var_14_1 or {}
-		var_14_1[#var_14_1 + 1] = {
-			key = k,
-			title = Localize(var_14_0),
-			value = v
+		if not var_14_0 then
+			-- Nothing
+		end
+
+		var_14_0 = {}
+
+		local weapon_data = var_14_0
+
+		::label_14_0::
+
+		weapon_data[#weapon_data + 1] = {
+			key = key,
+			title = Localize(localization_key),
+			value = value
 		}
-		arg_14_1[k] = var_14_1
+		data_store_table[key] = weapon_data
 	end
 end
 
-ItemHelper.weapon_stat_order_by_type = function (arg_15_0)
+ItemHelper.weapon_stat_order_by_type = function (stat_type)
 	-- function 15
-	return tbl_2[arg_15_0]
+	return weapon_attack_stats_order[stat_type]
 end
 
-ItemHelper.on_inventory_item_added = function (self)
+ItemHelper.on_inventory_item_added = function (item)
 	-- function 16
-	if self.data.slot_type == ItemType.LOOT_CHEST then
-		local world = Managers.world
+	if item.data.slot_type == ItemType.LOOT_CHEST then
+		local world_manager = Managers.world
 
-		if not world:has_world("level_world") then
-			local world_2 = world:world("level_world")
+		if world_manager:has_world("level_world") then
+			local world = world_manager:world("level_world")
 
-			LevelHelper:flow_event(world_2, "local_player_received_loot_chest")
+			LevelHelper:flow_event(world, "local_player_received_loot_chest")
 		end
 	end
 end
 
-ItemHelper.mark_backend_id_as_favorite = function (arg_17_0, arg_17_1, arg_17_2)
+ItemHelper.mark_backend_id_as_favorite = function (backend_id, item, save)
 	-- function 17
-	arg_17_1 = arg_17_1 or Managers.backend:get_interface("items"):get_item_from_id(arg_17_0)
+	if not item then
+		local item_interface = Managers.backend:get_interface("items")
 
-	local data = arg_17_1.data
-	local slot_type = data.slot_type
-	local can_wield = data.can_wield
-	local var_17_3
-
-	if not CosmeticUtils.is_cosmetic_item(slot_type) then
-		var_17_3 = arg_17_1.ItemId
-	else
-		var_17_3 = arg_17_0
+		item = item_interface:get_item_from_id(backend_id)
 	end
 
-	local favorite_item_ids = PlayerData.favorite_item_ids
+	local item_data = item.data
+	local slot_type = item_data.slot_type
+	local can_wield = item_data.can_wield
+	local item_id
 
-	favorite_item_ids = favorite_item_ids or {}
-	favorite_item_ids[var_17_3] = true
+	if CosmeticUtils.is_cosmetic_item(slot_type) then
+		item_id = item.ItemId
+	else
+		item_id = backend_id
+	end
 
-	local CareerSettings = CareerSettings
-	local favorite_item_ids_by_career = PlayerData.favorite_item_ids_by_career
+	local favorite_item_ids_2 = PlayerData.favorite_item_ids
 
-	favorite_item_ids_by_career = favorite_item_ids_by_career or {}
+	if not favorite_item_ids_2 then
+		-- Nothing
+	end
 
-	for i, v in ipairs(can_wield) do
-		local var_17_7 = favorite_item_ids_by_career[v]
+	favorite_item_ids_2 = {}
 
-		var_17_7 = var_17_7 or {}
+	local favorite_item_ids = favorite_item_ids_2
 
-		local var_17_8 = var_17_7[slot_type]
+	::label_17_0::
 
-		var_17_8 = var_17_8 or {}
-		var_17_8[var_17_3] = true
-		var_17_7[slot_type] = var_17_8
-		favorite_item_ids_by_career[v] = var_17_7
+	favorite_item_ids[item_id] = true
+
+	local career_settings = CareerSettings
+	local favorite_item_ids_by_career_2 = PlayerData.favorite_item_ids_by_career
+
+	if not favorite_item_ids_by_career_2 then
+		-- Nothing
+	end
+
+	favorite_item_ids_by_career_2 = {}
+
+	local favorite_item_ids_by_career = favorite_item_ids_by_career_2
+
+	::label_17_1::
+
+	for _, career_name in ipairs(can_wield) do
+		local var_17_2 = favorite_item_ids_by_career[career_name]
+
+		if not var_17_2 then
+			-- Nothing
+		end
+
+		var_17_2 = {}
+
+		local item_ids_by_career = var_17_2
+
+		::label_17_2::
+
+		local var_17_3 = item_ids_by_career[slot_type]
+
+		if not var_17_3 then
+			-- Nothing
+		end
+
+		var_17_3 = {}
+
+		local item_ids_by_slot_type = var_17_3
+
+		::label_17_3::
+
+		item_ids_by_slot_type[item_id] = true
+		item_ids_by_career[slot_type] = item_ids_by_slot_type
+		favorite_item_ids_by_career[career_name] = item_ids_by_career
 	end
 
 	PlayerData.favorite_item_ids = favorite_item_ids
 	PlayerData.favorite_item_ids_by_career = favorite_item_ids_by_career
 
-	if not arg_17_2 then
+	if save then
 		Managers.save:auto_save(SaveFileName, SaveData, nil)
 	end
 end
 
-ItemHelper.unmark_backend_id_as_favorite = function (arg_18_0, arg_18_1)
+ItemHelper.unmark_backend_id_as_favorite = function (backend_id, item)
 	-- function 18
-	if not arg_18_1 then
-		local get_interface = Managers.backend:get_interface("items")
+	if not item then
+		local item_interface = Managers.backend:get_interface("items")
 
-		if not get_interface then
+		if not item_interface then
 			return
 		end
 
-		arg_18_1 = get_interface:get_item_from_id(arg_18_0)
+		item = item_interface:get_item_from_id(backend_id)
 	end
 
-	local var_18_1
+	local item_id
 
-	if not arg_18_1 then
-		local slot_type = arg_18_1.data.slot_type
+	if item then
+		local item_data = item.data
+		local slot_type = item_data.slot_type
 
-		if not CosmeticUtils.is_cosmetic_item(slot_type) then
-			var_18_1 = arg_18_1.ItemId
+		if CosmeticUtils.is_cosmetic_item(slot_type) then
+			item_id = item.ItemId
 		else
-			var_18_1 = arg_18_0
+			item_id = backend_id
 		end
 	else
-		var_18_1 = arg_18_0
+		item_id = backend_id
 	end
 
 	local favorite_item_ids = PlayerData.favorite_item_ids
 	local favorite_item_ids_by_career = PlayerData.favorite_item_ids_by_career
 
-	assert(favorite_item_ids, "Requested to unmark item backend id %d without any save data.", var_18_1)
+	assert(favorite_item_ids, "Requested to unmark item backend id %d without any save data.", item_id)
 
-	favorite_item_ids[var_18_1] = nil
+	favorite_item_ids[item_id] = nil
 
-	for k, v in pairs(favorite_item_ids_by_career) do
-		for k_2, v_2 in pairs(v) do
-			for k_3, v_3 in pairs(v_2) do
-				if k_3 == var_18_1 then
-					v_2[var_18_1] = nil
+	for career_name, item_ids_by_slot_type in pairs(favorite_item_ids_by_career) do
+		for slot_type, backend_ids in pairs(item_ids_by_slot_type) do
+			for item_backend_id, _ in pairs(backend_ids) do
+				if item_backend_id == item_id then
+					backend_ids[item_id] = nil
 
 					break
 				end
@@ -462,64 +559,83 @@ ItemHelper.get_favorite_backend_ids = function ()
 	return PlayerData.favorite_item_ids
 end
 
-ItemHelper.is_favorite_backend_id = function (arg_20_0, arg_20_1)
+ItemHelper.is_favorite_backend_id = function (backend_id, item)
 	-- function 20
-	arg_20_1 = arg_20_1 or Managers.backend:get_interface("items"):get_item_from_id(arg_20_0)
+	if not item then
+		local item_interface = Managers.backend:get_interface("items")
 
-	local slot_type = arg_20_1.data.slot_type
-	local var_20_1
+		item = item_interface:get_item_from_id(backend_id)
+	end
 
-	if not CosmeticUtils.is_cosmetic_item(slot_type) then
-		var_20_1 = arg_20_1.ItemId
+	local item_data = item.data
+	local slot_type = item_data.slot_type
+	local item_id
+
+	if CosmeticUtils.is_cosmetic_item(slot_type) then
+		item_id = item.ItemId
 	else
-		var_20_1 = arg_20_0
+		item_id = backend_id
 	end
 
 	local favorite_item_ids = PlayerData.favorite_item_ids
 
-	return not favorite_item_ids and favorite_item_ids[var_20_1]
+	return not not favorite_item_ids and not not favorite_item_ids[item_id]
 end
 
-ItemHelper.is_equiped_backend_id = function (arg_21_0, arg_21_1)
+ItemHelper.is_equiped_backend_id = function (backend_id, career)
 	-- function 21
-	local equipped_by = Managers.backend:get_interface("items"):equipped_by(arg_21_0)
-	local count = #equipped_by
+	local item_interface = Managers.backend:get_interface("items")
+	local career_names = item_interface:equipped_by(backend_id)
+	local num_equipped_careers = #career_names
 
-	return (not (count > 0) or not arg_21_1) and table.contains(equipped_by, arg_21_1), equipped_by, count
+	return num_equipped_careers > 0 and not career or not not table.contains(career_names, career), career_names, num_equipped_careers
 end
 
-ItemHelper.get_equipped_slots = function (arg_22_0, arg_22_1)
+ItemHelper.get_equipped_slots = function (backend_id, career_name)
 	-- function 22
-	local tbl = {}
-	local num = 0
-	local var_22_2 = Managers.backend:get_interface("items"):get_loadout()[arg_22_1]
+	local slots = {}
+	local slots_n = 0
+	local item_interface = Managers.backend:get_interface("items")
+	local loadouts = item_interface:get_loadout()
+	local career_loadout = loadouts[career_name]
 
-	if not var_22_2 then
-		for k, v in pairs(var_22_2) do
-			if arg_22_0 == v then
-				num = num + 1
-				tbl[num] = k
+	if career_loadout then
+		for slot, id in pairs(career_loadout) do
+			if backend_id == id then
+				slots_n = slots_n + 1
+				slots[slots_n] = slot
 			end
 		end
 	end
 
-	return tbl, num
+	return slots, slots_n
 end
 
-ItemHelper.mark_keep_decoration_as_new = function (arg_23_0)
+ItemHelper.mark_keep_decoration_as_new = function (keep_decoration_id)
 	-- function 23
-	local new_keep_decoration_ids = PlayerData.new_keep_decoration_ids
+	local new_keep_decoration_ids_2 = PlayerData.new_keep_decoration_ids
 
-	new_keep_decoration_ids = new_keep_decoration_ids or {}
-	new_keep_decoration_ids[arg_23_0] = true
+	if not new_keep_decoration_ids_2 then
+		-- Nothing
+	end
+
+	new_keep_decoration_ids_2 = {}
+
+	local new_keep_decoration_ids = new_keep_decoration_ids_2
+
+	::label_23_0::
+
+	new_keep_decoration_ids[keep_decoration_id] = true
 	PlayerData.new_keep_decoration_ids = new_keep_decoration_ids
 
 	Managers.save:auto_save(SaveFileName, SaveData, nil)
 end
 
-ItemHelper.unmark_keep_decoration_as_new = function (arg_24_0)
+ItemHelper.unmark_keep_decoration_as_new = function (keep_decoration_id)
 	-- function 24
-	PlayerData.new_keep_decoration_ids[arg_24_0] = nil
+	local new_keep_decoration_ids = PlayerData.new_keep_decoration_ids
+
+	new_keep_decoration_ids[keep_decoration_id] = nil
 
 	Managers.save:auto_save(SaveFileName, SaveData, nil)
 end
@@ -529,11 +645,11 @@ ItemHelper.get_new_keep_decoration_ids = function ()
 	return PlayerData.new_keep_decoration_ids
 end
 
-ItemHelper.is_new_keep_decoration_id = function (arg_26_0)
+ItemHelper.is_new_keep_decoration_id = function (keep_decoration_id)
 	-- function 26
 	local new_keep_decoration_ids = PlayerData.new_keep_decoration_ids
 
-	return not new_keep_decoration_ids and new_keep_decoration_ids[arg_26_0]
+	return not not new_keep_decoration_ids and not not new_keep_decoration_ids[keep_decoration_id]
 end
 
 ItemHelper.tab_conversions = {
@@ -546,112 +662,127 @@ ItemHelper.tab_conversions = {
 }
 
 local tab_conversions = ItemHelper.tab_conversions
-local tbl_4 = {
+local skip_items = {
 	skin = true,
 	weapon_skin = true,
 	hat = true
 }
 
-ItemHelper.create_tab_unseen_item_stars = function (self)
+ItemHelper.create_tab_unseen_item_stars = function (tab_cat)
 	-- function 27
 	local menu_options = StoreLayoutConfig.menu_options
 
 	for i = 1, #menu_options do
-		self[menu_options[i]] = 0
+		local key = menu_options[i]
+
+		tab_cat[key] = 0
 	end
 
-	local get_peddler_stock = Managers.backend:get_interface("peddler"):get_peddler_stock()
-	local seen_shop_items = PlayerData.seen_shop_items
+	local backend_store = Managers.backend:get_interface("peddler")
+	local store_items = backend_store:get_peddler_stock()
+	local seen_items = PlayerData.seen_shop_items
 
-	for k, v in pairs(get_peddler_stock) do
-		local data = v.data
+	for item_key, peddler_item in pairs(store_items) do
+		local master_item_data = peddler_item.data
+		local seen_item = seen_items[peddler_item.key]
 
-		if not seen_shop_items[v.key] then
-			local item_type = data.item_type
-			local var_27_5 = tab_conversions[item_type]
+		if not seen_item then
+			local item_type = master_item_data.item_type
+			local tab_name = tab_conversions[item_type]
 
-			if self[var_27_5] ~= nil then
-				self[var_27_5] = self[var_27_5] + 1
+			if tab_cat[tab_name] ~= nil then
+				tab_cat[tab_name] = tab_cat[tab_name] + 1
 			end
 		end
 	end
 
-	for k_2, v_2 in pairs(StoreDlcSettingsByName) do
-		if not (seen_shop_items[k_2] or self.dlc == nil) then
-			self.dlc = self.dlc + 1
+	for dlc_name, dlc_settings in pairs(StoreDlcSettingsByName) do
+		local seen_dlc = seen_items[dlc_name]
+
+		if not seen_dlc and tab_cat.dlc ~= nil then
+			tab_cat.dlc = tab_cat.dlc + 1
 		end
 	end
 end
 
-ItemHelper.update_featured_unseen = function (self, arg_28_1)
+ItemHelper.update_featured_unseen = function (featured_peddler_items, tab_cat)
 	-- function 28
-	local seen_shop_items = PlayerData.seen_shop_items
+	local seen_items = PlayerData.seen_shop_items
 
-	arg_28_1.featured = 0
+	tab_cat.featured = 0
 
-	for i = 1, #self do
-		if not (seen_shop_items[self[i].key] or arg_28_1.featured == nil) then
-			arg_28_1.featured = arg_28_1.featured + 1
+	for i = 1, #featured_peddler_items do
+		local peddler_item = featured_peddler_items[i]
+		local seen_item = seen_items[peddler_item.key]
+
+		if not seen_item and tab_cat.featured ~= nil then
+			tab_cat.featured = tab_cat.featured + 1
 		end
 	end
 end
 
-ItemHelper.set_shop_item_seen = function (arg_29_0, arg_29_1, arg_29_2, arg_29_3)
+ItemHelper.set_shop_item_seen = function (item_key, item_type, tab_cat, optional_tab_name)
 	-- function 29
 	local seen_shop_items = PlayerData.seen_shop_items
 
-	if not seen_shop_items[arg_29_0] then
-		seen_shop_items[arg_29_0] = true
+	if not seen_shop_items[item_key] then
+		seen_shop_items[item_key] = true
 
-		local var_29_1 = tab_conversions[arg_29_1]
+		local tab_name = tab_conversions[item_type]
 
-		if arg_29_2[var_29_1] ~= nil then
-			arg_29_2[var_29_1] = arg_29_2[var_29_1] - 1
+		if tab_cat[tab_name] ~= nil then
+			tab_cat[tab_name] = tab_cat[tab_name] - 1
 		end
 
-		if not (not arg_29_3 and arg_29_2[arg_29_3] == nil) then
-			arg_29_2[arg_29_3] = arg_29_2[arg_29_3] - 1
+		if optional_tab_name and tab_cat[optional_tab_name] ~= nil then
+			tab_cat[optional_tab_name] = tab_cat[optional_tab_name] - 1
 		end
 	end
 end
 
-ItemHelper.set_all_shop_item_seen = function (self)
+ItemHelper.set_all_shop_item_seen = function (tab_cat)
 	-- function 30
-	local get_peddler_stock = Managers.backend:get_interface("peddler"):get_peddler_stock()
-	local seen_shop_items = PlayerData.seen_shop_items
+	local backend_store = Managers.backend:get_interface("peddler")
+	local store_items = backend_store:get_peddler_stock()
+	local seen_items = PlayerData.seen_shop_items
 
-	for k, v in pairs(get_peddler_stock) do
-		seen_shop_items[v.data.key] = true
+	for item_key, pedler_item in pairs(store_items) do
+		local master_item_data = pedler_item.data
+
+		seen_items[master_item_data.key] = true
 	end
 
-	for k_2, v_2 in pairs(StoreDlcSettingsByName) do
-		seen_shop_items[k_2] = true
+	for dlc_name, dlc_settings in pairs(StoreDlcSettingsByName) do
+		seen_items[dlc_name] = true
 	end
 
-	for k_3, v_3 in pairs(self) do
-		self[k_3] = 0
+	for tab_name, _ in pairs(tab_cat) do
+		tab_cat[tab_name] = 0
 	end
 
 	PlayerData.store_new_items = false
 
-	if not Managers.state.event then
+	if Managers.state.event then
 		Managers.state.event:trigger("set_all_shop_item_seen")
 	end
 end
 
 ItemHelper.has_unseen_shop_items = function ()
 	-- function 31
-	local get_peddler_stock = Managers.backend:get_interface("peddler"):get_peddler_stock()
-	local seen_shop_items = PlayerData.seen_shop_items
+	local backend_store = Managers.backend:get_interface("peddler")
+	local store_items = backend_store:get_peddler_stock()
+	local seen_items = PlayerData.seen_shop_items
 
-	for k, v in pairs(get_peddler_stock) do
-		if not seen_shop_items[v.data.key] then
+	for item_key, pedler_item in pairs(store_items) do
+		local master_item_data = pedler_item.data
+
+		if not seen_items[master_item_data.key] then
 			return true
 		end
 	end
 
-	for k_2, v_2 in pairs(StoreDlcSettingsByName) do
-		if not seen_shop_items[k_2] then
+	for dlc_name, dlc_settings in pairs(StoreDlcSettingsByName) do
+		if not seen_items[dlc_name] then
 			return true
 		end
 	end
@@ -659,7 +790,7 @@ ItemHelper.has_unseen_shop_items = function ()
 	return false
 end
 
-local tbl_5 = {
+local fake_item_types = {
 	weapon_pose = true,
 	weapon_skin = true,
 	hat = true,
@@ -668,7 +799,7 @@ local tbl_5 = {
 	skin = true
 }
 
-ItemHelper.is_fake_item = function (arg_32_0)
+ItemHelper.is_fake_item = function (item_type)
 	-- function 32
-	return tbl_5[arg_32_0]
+	return fake_item_types[item_type]
 end

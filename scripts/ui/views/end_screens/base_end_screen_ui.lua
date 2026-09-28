@@ -4,17 +4,17 @@ require("scripts/ui/hud_ui/rewards_popup_ui")
 
 BaseEndScreenUI = class(BaseEndScreenUI)
 
-BaseEndScreenUI.init = function (self, arg_1_1, arg_1_2, arg_1_3, arg_1_4)
+BaseEndScreenUI.init = function (self, ingame_ui_context, input_service, definitions, params)
 	-- function 1
-	self._ui_renderer = arg_1_1.ui_top_renderer
-	self._ingame_ui_context = arg_1_1
-	self._params = arg_1_4
+	self._ui_renderer = ingame_ui_context.ui_top_renderer
+	self._ingame_ui_context = ingame_ui_context
+	self._params = params
 
-	local world_manager = arg_1_1.world_manager
+	local world_manager = ingame_ui_context.world_manager
 	local world = world_manager:world("level_world")
 
 	self._wwise_world = world_manager:wwise_world(world)
-	self._input_service = arg_1_2
+	self._input_service = input_service
 	self._render_settings = {
 		alpha_multiplier = 1,
 		snap_pixel_positions = true
@@ -24,18 +24,18 @@ BaseEndScreenUI.init = function (self, arg_1_1, arg_1_2, arg_1_3, arg_1_4)
 	}
 	self._started = false
 	self._completed = false
-	self._rewards_popup = RewardsPopupUI:new(nil, arg_1_1)
+	self._rewards_popup = RewardsPopupUI:new(nil, ingame_ui_context)
 
-	self:_setup_rewards(arg_1_4)
-	self:_create_ui_elements(arg_1_3)
+	self:_setup_rewards(params)
+	self:_create_ui_elements(definitions)
 end
 
-BaseEndScreenUI._setup_rewards = function (self, arg_2_1)
+BaseEndScreenUI._setup_rewards = function (self, params)
 	-- function 2
-	local flag = not arg_2_1 and arg_2_1.rewards
+	local rewards = not not params and not not params.rewards
 
-	if not flag then
-		self._rewards_popup:present_rewards(flag)
+	if rewards then
+		self._rewards_popup:present_rewards(rewards)
 	end
 end
 
@@ -50,27 +50,27 @@ BaseEndScreenUI.on_fade_in = function (self)
 	self:_on_fade_in()
 end
 
-BaseEndScreenUI._on_fade_in = function (arg_5_0)
+BaseEndScreenUI._on_fade_in = function (self)
 	-- function 5
 	return
 end
 
-BaseEndScreenUI._start = function (arg_6_0)
+BaseEndScreenUI._start = function (self)
 	-- function 6
 	return
 end
 
-BaseEndScreenUI._update = function (arg_7_0, arg_7_1)
+BaseEndScreenUI._update = function (self, dt)
 	-- function 7
 	return
 end
 
-BaseEndScreenUI._destroy = function (arg_8_0)
+BaseEndScreenUI._destroy = function (self)
 	-- function 8
 	return
 end
 
-BaseEndScreenUI._draw_widgets = function (arg_9_0, arg_9_1)
+BaseEndScreenUI._draw_widgets = function (self, render_settings)
 	-- function 9
 	return
 end
@@ -84,21 +84,21 @@ BaseEndScreenUI.completed = function (self)
 	-- function 11
 	local _completed = self._completed
 
-	_completed = not _completed and self._rewards_popup:all_presentations_done()
+	_completed = not not _completed and not not self._rewards_popup:all_presentations_done()
 
 	return _completed
 end
 
-BaseEndScreenUI._play_sound = function (self, arg_12_1)
+BaseEndScreenUI._play_sound = function (self, event)
 	-- function 12
-	WwiseWorld.trigger_event(self._wwise_world, arg_12_1)
+	WwiseWorld.trigger_event(self._wwise_world, event)
 end
 
-BaseEndScreenUI._create_ui_elements = function (self, arg_13_1)
+BaseEndScreenUI._create_ui_elements = function (self, definitions)
 	-- function 13
-	self._ui_scenegraph = UISceneGraph.init_scenegraph(arg_13_1.scenegraph_definition)
-	self._widgets, self._widgets_by_name = UIUtils.create_widgets(arg_13_1.widget_definitions)
-	self._ui_animator = UIAnimator:new(self._ui_scenegraph, arg_13_1.animation_definitions)
+	self._ui_scenegraph = UISceneGraph.init_scenegraph(definitions.scenegraph_definition)
+	self._widgets, self._widgets_by_name = UIUtils.create_widgets(definitions.widget_definitions)
+	self._ui_animator = UIAnimator:new(self._ui_scenegraph, definitions.animation_definitions)
 end
 
 BaseEndScreenUI.start = function (self)
@@ -113,34 +113,35 @@ BaseEndScreenUI.started = function (self)
 	return self._started
 end
 
-BaseEndScreenUI.update = function (self, arg_16_1, arg_16_2)
+BaseEndScreenUI.update = function (self, dt, t)
 	-- function 16
 	if not self._started then
 		return
 	end
 
-	self._ui_animator:update(arg_16_1, arg_16_2)
-	self._rewards_popup:update(arg_16_1, arg_16_2)
-	self:_update(arg_16_1)
+	self._ui_animator:update(dt, t)
+	self._rewards_popup:update(dt, t)
+	self:_update(dt)
 end
 
-BaseEndScreenUI.draw = function (self, arg_17_1)
+BaseEndScreenUI.draw = function (self, dt)
 	-- function 17
 	if not self._started then
 		return
 	end
 
-	local _ui_renderer = self._ui_renderer
-	local _ui_scenegraph = self._ui_scenegraph
-	local _input_service = self._input_service
-	local _render_settings = self._render_settings
-	local alpha_multiplier = self._draw_flags.alpha_multiplier
+	local ui_renderer = self._ui_renderer
+	local ui_scenegraph = self._ui_scenegraph
+	local input_service = self._input_service
+	local render_settings = self._render_settings
+	local draw_flags = self._draw_flags
+	local alpha_multiplier = draw_flags.alpha_multiplier
 
-	alpha_multiplier = alpha_multiplier or 0
-	_render_settings.alpha_multiplier = alpha_multiplier
+	alpha_multiplier = not not alpha_multiplier or not not 0
+	render_settings.alpha_multiplier = alpha_multiplier
 
-	UIRenderer.begin_pass(_ui_renderer, _ui_scenegraph, _input_service, arg_17_1, nil, _render_settings)
-	UIRenderer.draw_all_widgets(_ui_renderer, self._widgets)
-	self:_draw_widgets(_ui_renderer, _render_settings)
-	UIRenderer.end_pass(_ui_renderer)
+	UIRenderer.begin_pass(ui_renderer, ui_scenegraph, input_service, dt, nil, render_settings)
+	UIRenderer.draw_all_widgets(ui_renderer, self._widgets)
+	self:_draw_widgets(ui_renderer, render_settings)
+	UIRenderer.end_pass(ui_renderer)
 end

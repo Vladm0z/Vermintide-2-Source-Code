@@ -1,6 +1,6 @@
 -- chunkname: @levels/honduras_dlcs/morris/sig_citadel/generated/tzeentch_path1/world_smartobjects.lua
 
-local tbl = {
+local smart_objects = {
 	["5f3c761e-1787-4c3a-b4e1-5381d01dea60"] = {
 		{
 			smart_object_index = 98,
@@ -4064,13 +4064,13 @@ local tbl = {
 		}
 	}
 }
-local num = 169
-local str = "v1"
-local str_2 = "2017.MAY.05.05"
+local smart_object_count = 169
+local version = "v1"
+local ledgelator_version = "2017.MAY.05.05"
 
 return {
-	smart_objects = tbl,
-	smart_object_count = num,
-	version = str,
-	ledgelator_version = str_2
+	smart_objects = smart_objects,
+	smart_object_count = smart_object_count,
+	version = version,
+	ledgelator_version = ledgelator_version
 }

@@ -2,7 +2,7 @@
 
 local DeusNodeSettings = DeusNodeSettings
 
-DeusNodeSettings = DeusNodeSettings or {
+DeusNodeSettings = not not DeusNodeSettings or not not {
 	inn = {
 		game_mode_key = "inn_deus",
 		mechanism_state = "inn_deus"

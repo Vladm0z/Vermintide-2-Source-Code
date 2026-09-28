@@ -1,7 +1,7 @@
 -- chunkname: @scripts/settings/dlcs/bless/talent_settings_bless.lua
 
-local scripts_unit_extensions_default_player_unit_buffs_settings_buff_perk_names = require("scripts/unit_extensions/default_player_unit/buffs/settings/buff_perk_names")
-local tbl = {
+local buff_perks = require("scripts/unit_extensions/default_player_unit/buffs/settings/buff_perk_names")
+local buff_tweak_data = {
 	victor_priest_ability_cooldown_on_hit = {
 		bonus = 0.25
 	},
@@ -43,7 +43,7 @@ local tbl = {
 		heal_window = 3
 	}
 }
-local tbl_2 = {
+local talent_buff_templates = {
 	victor_priest_ability_cooldown_on_hit = {
 		buffs = {
 			{
@@ -111,7 +111,7 @@ local tbl_2 = {
 				buff_func = "heal_stagger_targets_on_melee",
 				event = "on_stagger",
 				perks = {
-					scripts_unit_extensions_default_player_unit_buffs_settings_buff_perk_names.tank_healing
+					buff_perks.tank_healing
 				}
 			}
 		}
@@ -126,7 +126,7 @@ local tbl_2 = {
 				max_targets = 5,
 				bonus = 0.25,
 				perks = {
-					scripts_unit_extensions_default_player_unit_buffs_settings_buff_perk_names.linesman_healing
+					buff_perks.linesman_healing
 				}
 			}
 		}
@@ -333,7 +333,7 @@ local tbl_2 = {
 		}
 	}
 }
-local tbl_3 = {
+local talent_trees = {
 	{
 		{
 			"victor_priest_thp_tank",
@@ -367,7 +367,7 @@ local tbl_3 = {
 		}
 	}
 }
-local tbl_4 = {
+local talents = {
 	{
 		description = "vanguard_desc",
 		name = "victor_priest_vanguard",
@@ -453,10 +453,10 @@ local tbl_4 = {
 		icon = "victor_priest_2_1",
 		description_values = {
 			{
-				value = tbl.victor_priest_2_1.num_targets
+				value = buff_tweak_data.victor_priest_2_1.num_targets
 			},
 			{
-				value = tbl.victor_priest_2_1_buff.duration
+				value = buff_tweak_data.victor_priest_2_1_buff.duration
 			}
 		},
 		buffs = {
@@ -472,10 +472,10 @@ local tbl_4 = {
 		description_values = {
 			{
 				value_type = "percent",
-				value = tbl.victor_priest_2_2_buff.multiplier
+				value = buff_tweak_data.victor_priest_2_2_buff.multiplier
 			},
 			{
-				value = tbl.victor_priest_2_2_buff.max_stacks
+				value = buff_tweak_data.victor_priest_2_2_buff.max_stacks
 			}
 		},
 		buffs = {
@@ -491,13 +491,13 @@ local tbl_4 = {
 		description_values = {
 			{
 				value_type = "percent",
-				value = tbl.victor_priest_2_3_buff.bonus
+				value = buff_tweak_data.victor_priest_2_3_buff.bonus
 			},
 			{
-				value = tbl.victor_priest_2_3_buff.duration
+				value = buff_tweak_data.victor_priest_2_3_buff.duration
 			},
 			{
-				value = tbl.victor_priest_2_3_buff.max_stacks
+				value = buff_tweak_data.victor_priest_2_3_buff.max_stacks
 			}
 		},
 		buffs = {
@@ -596,7 +596,7 @@ local tbl_4 = {
 		description_values = {
 			{
 				value_type = "percent",
-				value = tbl.victor_priest_4_3.percent_fury_to_gain
+				value = buff_tweak_data.victor_priest_4_3.percent_fury_to_gain
 			}
 		},
 		buffs = {
@@ -612,7 +612,7 @@ local tbl_4 = {
 		description_values = {
 			{
 				value_type = "percent",
-				value = tbl.victor_priest_5_1_buff.multiplier
+				value = buff_tweak_data.victor_priest_5_1_buff.multiplier
 			}
 		},
 		buffs = {
@@ -628,7 +628,7 @@ local tbl_4 = {
 		description_values = {
 			{
 				value_type = "percent",
-				value = tbl.victor_priest_5_2_buff.multiplier
+				value = buff_tweak_data.victor_priest_5_2_buff.multiplier
 			}
 		},
 		buffs = {
@@ -644,7 +644,7 @@ local tbl_4 = {
 		description_values = {
 			{
 				value_type = "percent",
-				value = tbl.victor_priest_5_3_buff.multiplier
+				value = buff_tweak_data.victor_priest_5_3_buff.multiplier
 			}
 		},
 		buffs = {
@@ -680,7 +680,7 @@ local tbl_4 = {
 		icon = "victor_priest_6_3",
 		description_values = {
 			{
-				value = tbl.victor_priest_6_3_buff.heal_window
+				value = buff_tweak_data.victor_priest_6_3_buff.heal_window
 			}
 		},
 		buffs = {
@@ -696,21 +696,21 @@ local tbl_4 = {
 		buffs = {}
 	}
 }
-local str = "witch_hunter"
+local hero_name = "witch_hunter"
 
-table.merge(TalentBuffTemplates[str], tbl_2)
-table.append(TalentTrees[str], tbl_3)
-table.append(Talents[str], tbl_4)
+table.merge(TalentBuffTemplates[hero_name], talent_buff_templates)
+table.append(TalentTrees[hero_name], talent_trees)
+table.append(Talents[hero_name], talents)
 
 local WeaveLoadoutSettings = WeaveLoadoutSettings
 
-WeaveLoadoutSettings = WeaveLoadoutSettings or {}
+WeaveLoadoutSettings = not not WeaveLoadoutSettings or not not {}
 WeaveLoadoutSettings = WeaveLoadoutSettings
 WeaveLoadoutSettings.wh_priest = {
-	talent_tree = tbl_3[1],
+	talent_tree = talent_trees[1],
 	properties = {},
 	traits = {}
 }
 
-BuffUtils.copy_talent_buff_names(tbl_2)
-BuffUtils.apply_buff_tweak_data(tbl_2, tbl)
+BuffUtils.copy_talent_buff_names(talent_buff_templates)
+BuffUtils.apply_buff_tweak_data(talent_buff_templates, buff_tweak_data)

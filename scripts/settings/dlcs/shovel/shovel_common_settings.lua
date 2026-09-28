@@ -1,39 +1,39 @@
 -- chunkname: @scripts/settings/dlcs/shovel/shovel_common_settings.lua
 
-local shovel = DLCSettings.shovel
+local settings = DLCSettings.shovel
 
-shovel.career_setting_files = {
+settings.career_setting_files = {
 	"scripts/settings/dlcs/shovel/career_settings_shovel"
 }
-shovel.player_breeds = {
+settings.player_breeds = {
 	"scripts/settings/dlcs/shovel/player_breeds_shovel"
 }
-shovel.career_ability_settings = {
+settings.career_ability_settings = {
 	"scripts/settings/dlcs/shovel/career_ability_settings_shovel"
 }
-shovel.action_template_files = {
+settings.action_template_files = {
 	"scripts/settings/dlcs/shovel/action_templates_shovel"
 }
-shovel.talent_settings = {
+settings.talent_settings = {
 	"scripts/settings/dlcs/shovel/talent_settings_shovel"
 }
-shovel.profile_files = {
+settings.profile_files = {
 	"scripts/settings/dlcs/shovel/shovel_profiles"
 }
-shovel.material_effect_mappings_file_names = {
+settings.material_effect_mappings_file_names = {
 	"scripts/settings/material_effect_mappings_shovel"
 }
-shovel.statistics_definitions = {
+settings.statistics_definitions = {
 	"scripts/managers/backend/statistics_definitions_shovel"
 }
-shovel.statistics_lookup = {
+settings.statistics_lookup = {
 	"shovel_skeleton_attack_big",
 	"shovel_skeleton_defend",
 	"shovel_staff_balefire",
 	"shovel_skeleton_balefire",
 	"shovel_fast_staff_attack"
 }
-shovel.anim_lookup = {
+settings.anim_lookup = {
 	"to_ghost_scythe",
 	"to_quarter_staff",
 	"to_quarter_staff_wield",
@@ -77,7 +77,7 @@ shovel.anim_lookup = {
 	"career_select_spawn",
 	"career_select_spawn_02"
 }
-shovel.husk_lookup = {
+settings.husk_lookup = {
 	"units/beings/npcs/necromancer_skeleton/chr_npc_necromancer_skeleton",
 	"units/weapons/player/wpn_bw_necromancy_staff_01/wpn_bw_necromancy_staff_projectile_02_3p",
 	"units/weapons/player/wpn_necromancy_skull/wpn_necromancy_skull_3p",
@@ -87,7 +87,7 @@ shovel.husk_lookup = {
 	"units/beings/player/bright_wizard_necromancer/talents/trapped_soul_skull",
 	"units/weapons/player/wpn_bw_necromancy_staff_01/wpn_bw_necromancy_staff_projectile_03"
 }
-shovel.effects = {
+settings.effects = {
 	"fx/chr_chaos_warrior_cleave_impact_ground",
 	"fx/magic_wind_heavens_lightning_strike_01",
 	"fx/wpnfx_skull_explosion_3p",
@@ -106,8 +106,8 @@ shovel.effects = {
 	"fx/necromancer_cursed_explosion_blood",
 	"fx/necromancer_cursed_explosion_blue"
 }
-shovel._tracked_weapon_kill_stats = {}
-shovel.unlock_settings = {
+settings._tracked_weapon_kill_stats = {}
+settings.unlock_settings = {
 	shovel = {
 		id = "2585630",
 		class = "UnlockDlc",
@@ -119,7 +119,7 @@ shovel.unlock_settings = {
 		requires_restart = true
 	}
 }
-shovel.unlock_settings_xb1 = {
+settings.unlock_settings_xb1 = {
 	shovel = {
 		id = "35315039-4B53-3034-C05A-465731382100",
 		backend_reward_id = "shovel",
@@ -132,7 +132,7 @@ shovel.unlock_settings_xb1 = {
 		class = "UnlockDlc"
 	}
 }
-shovel.unlock_settings_ps4 = {
+settings.unlock_settings_ps4 = {
 	CUSA13595_00 = {
 		shovel = {
 			product_label = "V2USNECROMANCER0",
@@ -164,7 +164,7 @@ shovel.unlock_settings_ps4 = {
 		}
 	}
 }
-shovel.store_layout = {
+settings.store_layout = {
 	structure = {
 		cosmetics = {
 			sienna = {
@@ -200,74 +200,74 @@ shovel.store_layout = {
 		}
 	}
 }
-shovel.network_damage_types = {
+settings.network_damage_types = {
 	"cursed_blood_spread"
 }
-shovel.bt_enter_hooks = {
-	disable_perception = function (arg_1_0, arg_1_1, arg_1_2)
+settings.bt_enter_hooks = {
+	disable_perception = function (unit, blackboard, t)
 		-- function 1
-		arg_1_1.disable_perception_data = arg_1_1.override_target_selection_name
-		arg_1_1.override_target_selection_name = "perception_no_seeing"
+		blackboard.disable_perception_data = blackboard.override_target_selection_name
+		blackboard.override_target_selection_name = "perception_no_seeing"
 	end,
-	necromancer_trigger_explode = function (arg_2_0, arg_2_1, arg_2_2)
+	necromancer_trigger_explode = function (unit, blackboard, t)
 		-- function 2
-		if not arg_2_1.explosion_triggered then
-			arg_2_1.explosion_triggered = true
+		if not blackboard.explosion_triggered then
+			blackboard.explosion_triggered = true
 
-			AiUtils.kill_unit(arg_2_0)
+			AiUtils.kill_unit(unit)
 		end
 	end,
-	start_stand_ground = function (arg_3_0, arg_3_1, arg_3_2)
+	start_stand_ground = function (unit, blackboard, t)
 		-- function 3
-		arg_3_1.goal_destination = Vector3Box(arg_3_1.stand_ground_position:unbox())
+		blackboard.goal_destination = Vector3Box(blackboard.stand_ground_position:unbox())
 
-		arg_3_1.navigation_extension:set_enabled(true)
+		blackboard.navigation_extension:set_enabled(true)
 	end,
-	start_follow_commander = function (arg_4_0, arg_4_1, arg_4_2)
+	start_follow_commander = function (unit, blackboard, t)
 		-- function 4
-		if not arg_4_1.commander_extension then
-			arg_4_1.commander_extension:register_follow_node_update(arg_4_0)
-			arg_4_1.navigation_extension:set_enabled(true)
+		if blackboard.commander_extension then
+			blackboard.commander_extension:register_follow_node_update(unit)
+			blackboard.navigation_extension:set_enabled(true)
 		end
 	end,
-	start_command_attack = function (arg_5_0, arg_5_1, arg_5_2)
+	start_command_attack = function (unit, blackboard, t)
 		-- function 5
-		arg_5_1.new_command_attack = nil
-		arg_5_1.undergoing_command_attack = true
+		blackboard.new_command_attack = nil
+		blackboard.undergoing_command_attack = true
 	end
 }
-shovel.projectile_templates = {
+settings.projectile_templates = {
 	"necromancer_trapped_soul"
 }
-shovel.bt_leave_hooks = {
-	enable_perception = function (arg_6_0, arg_6_1, arg_6_2)
+settings.bt_leave_hooks = {
+	enable_perception = function (unit, blackboard, t)
 		-- function 6
-		arg_6_1.override_target_selection_name = arg_6_1.disable_perception_data
-		arg_6_1.disable_perception_data = nil
+		blackboard.override_target_selection_name = blackboard.disable_perception_data
+		blackboard.disable_perception_data = nil
 	end,
-	start_disabled_resume_timer = function (arg_7_0, arg_7_1, arg_7_2)
+	start_disabled_resume_timer = function (unit, blackboard, t)
 		-- function 7
-		arg_7_1.disabled_resume_time = arg_7_2 + 0.5
+		blackboard.disabled_resume_time = t + 0.5
 	end,
-	command_attack_done = function (arg_8_0, arg_8_1, arg_8_2)
+	command_attack_done = function (unit, blackboard, t)
 		-- function 8
-		arg_8_1.undergoing_command_attack = false
+		blackboard.undergoing_command_attack = false
 	end,
-	remove_charge_target = function (arg_9_0, arg_9_1, arg_9_2)
+	remove_charge_target = function (unit, blackboard, t)
 		-- function 9
-		if not (arg_9_1.anim_cb_charge_impact_finished or arg_9_1.commander_target == arg_9_1.charge_target) then
-			arg_9_1.stick_to_enemy_t = arg_9_2 + 5
-			arg_9_1.charge_target = nil
+		if blackboard.anim_cb_charge_impact_finished or blackboard.commander_target ~= blackboard.charge_target then
+			blackboard.stick_to_enemy_t = t + 5
+			blackboard.charge_target = nil
 		end
 	end,
-	stop_follow_commander = function (arg_10_0, arg_10_1, arg_10_2)
+	stop_follow_commander = function (unit, blackboard, t)
 		-- function 10
-		if not arg_10_1.commander_extension then
-			arg_10_1.commander_extension:unregister_follow_node_update(arg_10_0)
+		if blackboard.commander_extension then
+			blackboard.commander_extension:unregister_follow_node_update(unit)
 		end
 	end
 }
-shovel.progression_unlocks = {
+settings.progression_unlocks = {
 	bw_necromancer = {
 		description = "end_screen_career_unlocked",
 		profile = "bright_wizard",
@@ -277,9 +277,9 @@ shovel.progression_unlocks = {
 		unlock_type = "career"
 	}
 }
-shovel.systems = {
+settings.systems = {
 	"scripts/entity_system/systems/ai/ai_commander_system"
 }
-shovel.entity_extensions = {
+settings.entity_extensions = {
 	"scripts/unit_extensions/ai_commander/ai_commander_extension"
 }

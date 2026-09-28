@@ -1,43 +1,43 @@
 -- chunkname: @scripts/entity_system/systems/behaviour/trees/skaven/skaven_storm_vermin_warlord_behavior.lua
 
-local skaven_storm_vermin_warlord = BreedActions.skaven_storm_vermin_warlord
-local tbl = {
+local ACTIONS = BreedActions.skaven_storm_vermin_warlord
+local WARLORD_DEFENSIVE = {
 	"BTUtilityNode",
 	{
 		"BTChampionAttackAction",
 		name = "defensive_mode_spin",
 		condition = "can_see_player",
-		action_data = skaven_storm_vermin_warlord.defensive_mode_spin
+		action_data = ACTIONS.defensive_mode_spin
 	},
 	condition = "should_be_defensive",
 	name = "in_defensive"
 }
-local tbl_2 = {
+local WARLORD_OFFENSIVE = {
 	"BTSelector",
 	{
 		"BTUtilityNode",
 		{
 			"BTBossFollowAction",
 			name = "follow",
-			action_data = skaven_storm_vermin_warlord.follow
+			action_data = ACTIONS.follow
 		},
 		{
 			"BTMeleeOverlapAttackAction",
 			enter_hook = "on_warlord_disable_blocking",
 			name = "dual_combo_attack2",
-			action_data = skaven_storm_vermin_warlord.dual_combo_attack2
+			action_data = ACTIONS.dual_combo_attack2
 		},
 		{
 			"BTChampionAttackAction",
 			enter_hook = "on_warlord_disable_blocking",
 			name = "dual_attack_cleave",
-			action_data = skaven_storm_vermin_warlord.dual_attack_cleave
+			action_data = ACTIONS.dual_attack_cleave
 		},
 		{
 			"BTChampionAttackAction",
 			enter_hook = "on_warlord_disable_blocking",
 			name = "dual_lunge_attack",
-			action_data = skaven_storm_vermin_warlord.dual_lunge_attack
+			action_data = ACTIONS.dual_lunge_attack
 		},
 		name = "dual_wield_combat",
 		condition = "warlord_dual_wielding",
@@ -47,16 +47,16 @@ local tbl_2 = {
 		"BTUtilityNode",
 		{
 			"BTSequence",
-			action_data = skaven_storm_vermin_warlord.spawn_sequence,
+			action_data = ACTIONS.spawn_sequence,
 			{
 				"BTChampionAttackAction",
 				name = "special_attack_spin_pre_spawn",
-				action_data = skaven_storm_vermin_warlord.special_attack_spin
+				action_data = ACTIONS.special_attack_spin
 			},
 			{
 				"BTSpawnAllies",
 				name = "spawn",
-				action_data = skaven_storm_vermin_warlord.spawn_allies
+				action_data = ACTIONS.spawn_allies
 			},
 			enter_hook = "warlord_defensive_on_enter",
 			name = "spawn_sequence"
@@ -65,50 +65,50 @@ local tbl_2 = {
 			"BTTargetRageAction",
 			name = "turn_to_face_target",
 			condition = "target_changed",
-			action_data = skaven_storm_vermin_warlord.turn_to_face_target
+			action_data = ACTIONS.turn_to_face_target
 		},
 		{
 			"BTBossFollowAction",
 			name = "follow",
-			action_data = skaven_storm_vermin_warlord.follow
+			action_data = ACTIONS.follow
 		},
 		{
 			"BTChampionAttackAction",
 			name = "special_running_attack",
-			action_data = skaven_storm_vermin_warlord.special_running_attack
+			action_data = ACTIONS.special_running_attack
 		},
 		{
 			"BTChampionAttackAction",
 			name = "special_lunge_attack",
-			action_data = skaven_storm_vermin_warlord.special_lunge_attack
+			action_data = ACTIONS.special_lunge_attack
 		},
 		{
 			"BTRandom",
-			action_data = skaven_storm_vermin_warlord.special_attack_champion,
+			action_data = ACTIONS.special_attack_champion,
 			{
 				"BTChampionAttackAction",
 				name = "special_attack_cleave",
 				weight = 1,
-				action_data = skaven_storm_vermin_warlord.special_attack_cleave
+				action_data = ACTIONS.special_attack_cleave
 			},
 			{
 				"BTChampionAttackAction",
 				name = "special_attack_sweep_left",
 				weight = 0.5,
-				action_data = skaven_storm_vermin_warlord.special_attack_sweep_left
+				action_data = ACTIONS.special_attack_sweep_left
 			},
 			{
 				"BTChampionAttackAction",
 				name = "special_attack_sweep_right",
 				weight = 0.5,
-				action_data = skaven_storm_vermin_warlord.special_attack_sweep_right
+				action_data = ACTIONS.special_attack_sweep_right
 			},
 			name = "special_attack_champion"
 		},
 		{
 			"BTChampionAttackAction",
 			name = "special_attack_spin",
-			action_data = skaven_storm_vermin_warlord.special_attack_spin
+			action_data = ACTIONS.special_attack_spin
 		},
 		name = "halberd_combat",
 		condition = "warlord_halberding",
@@ -128,17 +128,17 @@ BreedBehaviors.storm_vermin_warlord = {
 	},
 	{
 		"BTSelector",
-		action_data = skaven_storm_vermin_warlord.intro_sequence,
+		action_data = ACTIONS.intro_sequence,
 		{
 			"BTMoveToGoalAction",
 			name = "move_to_goal",
 			condition = "has_goal_destination",
-			action_data = skaven_storm_vermin_warlord.follow
+			action_data = ACTIONS.follow
 		},
 		{
 			"BTIdleAction",
 			name = "intro_idle",
-			action_data = skaven_storm_vermin_warlord.intro_idle
+			action_data = ACTIONS.intro_idle
 		},
 		name = "intro_sequence",
 		leave_hook = "on_lord_warlord_intro_leave",
@@ -149,13 +149,13 @@ BreedBehaviors.storm_vermin_warlord = {
 		"BTSwitchWeaponsAction",
 		name = "switch_weapons",
 		condition = "switching_weapons",
-		action_data = skaven_storm_vermin_warlord.switch_weapons
+		action_data = ACTIONS.switch_weapons
 	},
 	{
 		"BTJumpToPositionAction",
 		name = "jump_to_position",
 		condition = "warlord_jump_down",
-		action_data = skaven_storm_vermin_warlord.jump_to_position
+		action_data = ACTIONS.jump_to_position
 	},
 	{
 		"BTFallAction",
@@ -183,7 +183,7 @@ BreedBehaviors.storm_vermin_warlord = {
 			"BTSmashDoorAction",
 			name = "smash_door",
 			condition = "at_door_smartobject",
-			action_data = skaven_storm_vermin_warlord.smash_door
+			action_data = ACTIONS.smash_door
 		},
 		condition = "at_smartobject",
 		name = "smartobject"
@@ -192,14 +192,14 @@ BreedBehaviors.storm_vermin_warlord = {
 		"BTStaggerAction",
 		name = "stagger",
 		condition = "stagger",
-		action_data = skaven_storm_vermin_warlord.stagger
+		action_data = ACTIONS.stagger
 	},
-	tbl,
-	tbl_2,
+	WARLORD_DEFENSIVE,
+	WARLORD_OFFENSIVE,
 	{
 		"BTIdleAction",
 		name = "defensive_idle",
-		action_data = skaven_storm_vermin_warlord.defensive_idle
+		action_data = ACTIONS.defensive_idle
 	},
 	{
 		"BTIdleAction",

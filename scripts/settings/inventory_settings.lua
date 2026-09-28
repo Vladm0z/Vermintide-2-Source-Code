@@ -207,15 +207,15 @@ InventorySettings.loadouts = {
 	}
 }
 
-local num = 0
+local max_num_custom_loadouts = 0
 
-for i, v in ipairs(InventorySettings.loadouts) do
-	if v.loadout_type == "custom" then
-		num = num + 1
+for _, loadout_data in ipairs(InventorySettings.loadouts) do
+	if loadout_data.loadout_type == "custom" then
+		max_num_custom_loadouts = max_num_custom_loadouts + 1
 	end
 end
 
-InventorySettings.MAX_NUM_CUSTOM_LOADOUTS = num
+InventorySettings.MAX_NUM_CUSTOM_LOADOUTS = max_num_custom_loadouts
 InventorySettings.default_loadout_allowed_game_modes = {
 	versus = true
 }
@@ -245,91 +245,91 @@ InventorySettings.enemy_weapon_slots = {}
 InventorySettings.attachment_slots = {}
 InventorySettings.career_skill_weapon_slots = {}
 
-for i_2, v_2 in ipairs(InventorySettings.slots) do
-	if v_2.category == "enemy_weapon" then
-		InventorySettings.enemy_weapon_slots[#InventorySettings.enemy_weapon_slots + 1] = v_2
-	elseif v_2.category == "weapon" then
-		InventorySettings.weapon_slots[#InventorySettings.weapon_slots + 1] = v_2
-	elseif v_2.category == "attachment" then
-		InventorySettings.attachment_slots[#InventorySettings.attachment_slots + 1] = v_2
-	elseif v_2.category == "career_skill_weapon" then
-		InventorySettings.career_skill_weapon_slots[#InventorySettings.career_skill_weapon_slots + 1] = v_2
+for index, slot in ipairs(InventorySettings.slots) do
+	if slot.category == "enemy_weapon" then
+		InventorySettings.enemy_weapon_slots[#InventorySettings.enemy_weapon_slots + 1] = slot
+	elseif slot.category == "weapon" then
+		InventorySettings.weapon_slots[#InventorySettings.weapon_slots + 1] = slot
+	elseif slot.category == "attachment" then
+		InventorySettings.attachment_slots[#InventorySettings.attachment_slots + 1] = slot
+	elseif slot.category == "career_skill_weapon" then
+		InventorySettings.career_skill_weapon_slots[#InventorySettings.career_skill_weapon_slots + 1] = slot
 	end
 end
 
 InventorySettings.slots_by_name = {}
 
-for i_3, v_3 in ipairs(InventorySettings.slots) do
-	InventorySettings.slots_by_name[v_3.name] = v_3
+for index, slot in ipairs(InventorySettings.slots) do
+	InventorySettings.slots_by_name[slot.name] = slot
 end
 
 InventorySettings.slot_names_by_type = {}
 
-for i_4, v_4 in ipairs(InventorySettings.slots) do
-	if not v_4.type then
-		if not InventorySettings.slot_names_by_type[v_4.type] then
-			InventorySettings.slot_names_by_type[v_4.type] = {}
+for index, slot in ipairs(InventorySettings.slots) do
+	if slot.type then
+		if not InventorySettings.slot_names_by_type[slot.type] then
+			InventorySettings.slot_names_by_type[slot.type] = {}
 		end
 
-		local var_0_1 = InventorySettings.slot_names_by_type[v_4.type]
+		local slot_names_table = InventorySettings.slot_names_by_type[slot.type]
 
-		var_0_1[#var_0_1 + 1] = v_4.name
+		slot_names_table[#slot_names_table + 1] = slot.name
 	end
 end
 
 InventorySettings.slots_by_wield_input = {}
 
-for i_5, v_5 in ipairs(InventorySettings.slots) do
-	if not v_5.wield_input then
-		local sub = string.sub(v_5.wield_input, 7)
-		local var_0_3 = tonumber(sub)
+for index, slot in ipairs(InventorySettings.slots) do
+	if slot.wield_input then
+		local index_string = string.sub(slot.wield_input, 7)
+		local index = tonumber(index_string)
 
-		v_5.wield_index = var_0_3
-		InventorySettings.slots_by_wield_input[var_0_3] = v_5
+		slot.wield_index = index
+		InventorySettings.slots_by_wield_input[index] = slot
 	end
 end
 
 InventorySettings.slots_by_inventory_button_index = {}
 
-for i_6, v_6 in ipairs(InventorySettings.slots) do
-	if not v_6.inventory_button_index then
-		InventorySettings.slots_by_inventory_button_index[v_6.inventory_button_index] = v_6
+for index, slot in ipairs(InventorySettings.slots) do
+	if slot.inventory_button_index then
+		InventorySettings.slots_by_inventory_button_index[slot.inventory_button_index] = slot
 	end
 end
 
 InventorySettings.slots_by_ui_slot_index = {}
 
-for i_7, v_7 in ipairs(InventorySettings.slots) do
-	if not v_7.ui_slot_index then
-		InventorySettings.slots_by_ui_slot_index[v_7.ui_slot_index] = v_7
+for index, slot in ipairs(InventorySettings.slots) do
+	if slot.ui_slot_index then
+		InventorySettings.slots_by_ui_slot_index[slot.ui_slot_index] = slot
 	end
 end
 
 InventorySettings.slots_by_cosmetic_index = {}
 
-for i_8, v_8 in ipairs(InventorySettings.slots) do
-	if not v_8.cosmetic_index then
-		InventorySettings.slots_by_cosmetic_index[v_8.cosmetic_index] = v_8
+for index, slot in ipairs(InventorySettings.slots) do
+	if slot.cosmetic_index then
+		InventorySettings.slots_by_cosmetic_index[slot.cosmetic_index] = slot
 	end
 end
 
 InventorySettings.slots_by_slot_index = {}
 
-for i_9, v_9 in ipairs(InventorySettings.slots) do
-	if not v_9.slot_index then
-		InventorySettings.slots_by_slot_index[v_9.slot_index] = v_9
+for index, slot in ipairs(InventorySettings.slots) do
+	if slot.slot_index then
+		InventorySettings.slots_by_slot_index[slot.slot_index] = slot
 	end
 end
 
 InventorySettings.slots_by_console_hud_index = {}
 
-for i_10, v_10 in ipairs(InventorySettings.slots) do
-	if not v_10.console_hud_index then
-		InventorySettings.slots_by_console_hud_index[v_10.console_hud_index] = v_10
+for index, slot in ipairs(InventorySettings.slots) do
+	if slot.console_hud_index then
+		InventorySettings.slots_by_console_hud_index[slot.console_hud_index] = slot
 	end
 end
 
-local tbl = {
+local equipment_slots = {
 	default = {
 		slot_necklace = true,
 		slot_trinket_1 = true,
@@ -350,25 +350,25 @@ local tbl = {
 InventorySettings.equipment_slots = {}
 InventorySettings.equipment_slots_by_mechanism = {}
 
-for k, v_11 in pairs(tbl) do
-	for i_11, v_12 in ipairs(InventorySettings.slots) do
-		local equipment_slots_by_mechanism = InventorySettings.equipment_slots_by_mechanism
-		local var_0_6 = InventorySettings.equipment_slots_by_mechanism[k]
+for mechanism, mechanism_equipment_slots in pairs(equipment_slots) do
+	for index, slot in ipairs(InventorySettings.slots) do
+		local equipment_slots_by_mechanism_2 = InventorySettings.equipment_slots_by_mechanism
+		local var_0_1 = InventorySettings.equipment_slots_by_mechanism[mechanism]
 
-		var_0_6 = var_0_6 or {}
-		equipment_slots_by_mechanism[k] = var_0_6
+		var_0_1 = not not var_0_1 or not not {}
+		equipment_slots_by_mechanism_2[mechanism] = var_0_1
 
-		local var_0_7 = InventorySettings.equipment_slots_by_mechanism[k]
+		local equipment_slots_by_mechanism = InventorySettings.equipment_slots_by_mechanism[mechanism]
 
-		if not v_11[v_12.name] then
-			var_0_7[#var_0_7 + 1] = v_12
+		if mechanism_equipment_slots[slot.name] then
+			equipment_slots_by_mechanism[#equipment_slots_by_mechanism + 1] = slot
 		end
 	end
 end
 
 InventorySettings.equipment_slots = InventorySettings.equipment_slots_by_mechanism.default
 
-local tbl_2 = {
+local jewellery_slots = {
 	slot_necklace = true,
 	slot_trinket_1 = true,
 	slot_ring = true
@@ -376,9 +376,9 @@ local tbl_2 = {
 
 InventorySettings.jewellery_slots = {}
 
-for i_12, v_13 in ipairs(InventorySettings.slots) do
-	if not tbl_2[v_13.name] then
-		InventorySettings.jewellery_slots[#InventorySettings.jewellery_slots + 1] = v_13
+for index, slot in ipairs(InventorySettings.slots) do
+	if jewellery_slots[slot.name] then
+		InventorySettings.jewellery_slots[#InventorySettings.jewellery_slots + 1] = slot
 	end
 end
 

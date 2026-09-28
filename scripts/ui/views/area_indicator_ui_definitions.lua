@@ -1,8 +1,7 @@
 -- chunkname: @scripts/ui/views/area_indicator_ui_definitions.lua
 
-local num = 1920
-local num_2 = 1080
-local tbl = {
+local SIZE_X, SIZE_Y = 1920, 1080
+local scenegraph_definition = {
 	screen = {
 		scale = "fit",
 		position = {
@@ -11,8 +10,8 @@ local tbl = {
 			UILayer.hud
 		},
 		size = {
-			num,
-			num_2
+			SIZE_X,
+			SIZE_Y
 		}
 	},
 	area_text_box = {
@@ -25,17 +24,17 @@ local tbl = {
 			100
 		},
 		size = {
-			num,
+			SIZE_X,
 			50
 		}
 	}
 }
 
 if not IS_WINDOWS then
-	tbl.screen.scale = "hud_fit"
+	scenegraph_definition.screen.scale = "hud_fit"
 end
 
-local tbl_2 = {
+local text_style = {
 	word_wrap = false,
 	font_size = 52,
 	localize = true,
@@ -51,11 +50,11 @@ local tbl_2 = {
 		1
 	}
 }
-local tbl_3 = {
-	area_text_box = UIWidgets.create_simple_text("placeholder_area_text", "area_text_box", nil, nil, tbl_2)
+local widget_definitions = {
+	area_text_box = UIWidgets.create_simple_text("placeholder_area_text", "area_text_box", nil, nil, text_style)
 }
 
 return {
-	scenegraph_definition = tbl,
-	widget_definitions = tbl_3
+	scenegraph_definition = scenegraph_definition,
+	widget_definitions = widget_definitions
 }

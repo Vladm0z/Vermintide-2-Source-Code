@@ -2,92 +2,92 @@
 
 require("math")
 
-local str = "Daniel Lindsley"
-local str_2 = "scm-1"
-local str_3 = "BSD"
-local str_4 = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/"
+local __author__ = "Daniel Lindsley"
+local __version__ = "scm-1"
+local __license__ = "BSD"
+local index_table = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/"
 
-function to_binary(arg_1_0)
+function to_binary(integer)
 	-- function 1
-	local var_1_0 = tonumber(arg_1_0)
-	local str = ""
+	local remaining = tonumber(integer)
+	local bin_bits = ""
 
 	for i = 7, 0, -1 do
-		local pow = math.pow(2, i)
+		local current_power = math.pow(2, i)
 
-		if pow <= var_1_0 then
-			str = str .. "1"
-			var_1_0 = var_1_0 - pow
+		if current_power <= remaining then
+			bin_bits = bin_bits .. "1"
+			remaining = remaining - current_power
 		else
-			str = str .. "0"
+			bin_bits = bin_bits .. "0"
 		end
 	end
 
-	return str
+	return bin_bits
 end
 
-function from_binary(arg_2_0)
+function from_binary(bin_bits)
 	-- function 2
-	return tonumber(arg_2_0, 2)
+	return tonumber(bin_bits, 2)
 end
 
-function to_base64(arg_3_0)
+function to_base64(to_encode)
 	-- function 3
-	local str = ""
-	local str_2 = ""
-	local str_3 = ""
+	local bit_pattern = ""
+	local encoded = ""
+	local trailing = ""
 
-	for i = 1, string.len(arg_3_0) do
-		str = str .. to_binary(string.byte(string.sub(arg_3_0, i, i)))
+	for i = 1, string.len(to_encode) do
+		bit_pattern = bit_pattern .. to_binary(string.byte(string.sub(to_encode, i, i)))
 	end
 
-	if string.len(str) % 3 == 2 then
-		str_3 = "=="
-		str = str .. "0000000000000000"
-	elseif string.len(str) % 3 == 1 then
-		str_3 = "="
-		str = str .. "00000000"
+	if string.len(bit_pattern) % 3 == 2 then
+		trailing = "=="
+		bit_pattern = bit_pattern .. "0000000000000000"
+	elseif string.len(bit_pattern) % 3 == 1 then
+		trailing = "="
+		bit_pattern = bit_pattern .. "00000000"
 	end
 
-	for j = 1, string.len(str), 6 do
-		local sub = string.sub(str, j, j + 5)
-		local var_3_4 = tonumber(from_binary(sub))
+	for i = 1, string.len(bit_pattern), 6 do
+		local byte = string.sub(bit_pattern, i, i + 5)
+		local offset = tonumber(from_binary(byte))
 
-		str_2 = str_2 .. string.sub(str_4, var_3_4 + 1, var_3_4 + 1)
+		encoded = encoded .. string.sub(index_table, offset + 1, offset + 1)
 	end
 
-	return string.sub(str_2, 1, -1 - string.len(str_3)) .. str_3
+	return string.sub(encoded, 1, -1 - string.len(trailing)) .. trailing
 end
 
-function from_base64(self)
+function from_base64(to_decode)
 	-- function 4
-	local gsub = self:gsub("%s", "")
-	local gsub_2 = gsub:gsub("=", "")
-	local str = ""
-	local str_2 = ""
+	local padded = to_decode:gsub("%s", "")
+	local unpadded = padded:gsub("=", "")
+	local bit_pattern = ""
+	local decoded = ""
 
-	for i = 1, string.len(gsub_2) do
-		local sub = string.sub(self, i, i)
-		local find, var_4_6 = string.find(str_4, sub)
+	for i = 1, string.len(unpadded) do
+		local char = string.sub(to_decode, i, i)
+		local offset, _ = string.find(index_table, char)
 
-		if find == nil then
-			error("Invalid character '" .. sub .. "' found.")
+		if offset == nil then
+			error("Invalid character '" .. char .. "' found.")
 		end
 
-		str = str .. string.sub(to_binary(find - 1), 3)
+		bit_pattern = bit_pattern .. string.sub(to_binary(offset - 1), 3)
 	end
 
-	for j = 1, string.len(str), 8 do
-		local sub_2 = string.sub(str, j, j + 7)
+	for i = 1, string.len(bit_pattern), 8 do
+		local byte = string.sub(bit_pattern, i, i + 7)
 
-		str_2 = str_2 .. string.char(from_binary(sub_2))
+		decoded = decoded .. string.char(from_binary(byte))
 	end
 
-	local num = gsub:len() - gsub_2:len()
+	local padding_length = padded:len() - unpadded:len()
 
-	if not (num == 1 or num ~= 2) then
-		str_2 = str_2:sub(1, -2)
+	if padding_length == 1 or padding_length == 2 then
+		decoded = decoded:sub(1, -2)
 	end
 
-	return str_2
+	return decoded
 end

@@ -1,9 +1,9 @@
 -- chunkname: @scripts/settings/terror_events/terror_events_dlc_morris_arena_cave.lua
 
-local scripts_settings_terror_events_terror_event_utils = require("scripts/settings/terror_events/terror_event_utils")
-local HARDEST = scripts_settings_terror_events_terror_event_utils.HARDEST
-local add_enhancements_for_difficulty = scripts_settings_terror_events_terror_event_utils.add_enhancements_for_difficulty
-local tbl = {
+local TerrorEventUtils = require("scripts/settings/terror_events/terror_event_utils")
+local HARDEST = TerrorEventUtils.HARDEST
+local boss_pre_spawn_func = TerrorEventUtils.add_enhancements_for_difficulty
+local terror_event_blueprints = {
 	arena_cave_terror = {
 		{
 			"inject_event",
@@ -82,9 +82,9 @@ local tbl = {
 		{
 			"continue_when_spawned_count",
 			duration = 60,
-			condition = function (self)
+			condition = function (counter)
 				-- function 1
-				return not (self.boss <= 0) or not (self.main <= 0) or self.elite <= 0
+				return counter.boss <= 0 and counter.main <= 0 and counter.elite <= 0
 			end
 		},
 		{
@@ -220,9 +220,9 @@ local tbl = {
 		{
 			"continue_when_spawned_count",
 			duration = 60,
-			condition = function (self)
+			condition = function (counter)
 				-- function 2
-				return self.main < 10
+				return counter.main < 10
 			end
 		},
 		{
@@ -250,17 +250,17 @@ local tbl = {
 		{
 			"continue_when_spawned_count",
 			duration = 60,
-			condition = function (self)
+			condition = function (counter)
 				-- function 3
-				return self.main < 8
+				return counter.main < 8
 			end
 		},
 		{
 			"continue_when_spawned_count",
 			duration = 60,
-			condition = function (self)
+			condition = function (counter)
 				-- function 4
-				return self.elite < 4
+				return counter.elite < 4
 			end
 		},
 		{
@@ -271,7 +271,7 @@ local tbl = {
 				"skaven_rat_ogre",
 				"skaven_stormfiend"
 			},
-			pre_spawn_func = add_enhancements_for_difficulty
+			pre_spawn_func = boss_pre_spawn_func
 		},
 		{
 			"delay",
@@ -302,17 +302,17 @@ local tbl = {
 		{
 			"continue_when_spawned_count",
 			duration = 60,
-			condition = function (self)
+			condition = function (counter)
 				-- function 5
-				return self.boss < 1
+				return counter.boss < 1
 			end
 		},
 		{
 			"continue_when_spawned_count",
 			duration = 60,
-			condition = function (self)
+			condition = function (counter)
 				-- function 6
-				return self.main < 10
+				return counter.main < 10
 			end
 		}
 	},
@@ -349,17 +349,17 @@ local tbl = {
 		{
 			"continue_when_spawned_count",
 			duration = 60,
-			condition = function (self)
+			condition = function (counter)
 				-- function 7
-				return self.main < 8
+				return counter.main < 8
 			end
 		},
 		{
 			"continue_when_spawned_count",
 			duration = 60,
-			condition = function (self)
+			condition = function (counter)
 				-- function 8
-				return self.elite < 4
+				return counter.elite < 4
 			end
 		},
 		{
@@ -414,9 +414,9 @@ local tbl = {
 		{
 			"continue_when_spawned_count",
 			duration = 60,
-			condition = function (self)
+			condition = function (counter)
 				-- function 9
-				return self.main < 8
+				return counter.main < 8
 			end
 		},
 		{
@@ -444,9 +444,9 @@ local tbl = {
 		{
 			"continue_when_spawned_count",
 			duration = 60,
-			condition = function (self)
+			condition = function (counter)
 				-- function 10
-				return self.main < 10
+				return counter.main < 10
 			end
 		},
 		{
@@ -457,7 +457,7 @@ local tbl = {
 				"chaos_troll",
 				"chaos_spawn"
 			},
-			pre_spawn_func = add_enhancements_for_difficulty
+			pre_spawn_func = boss_pre_spawn_func
 		},
 		{
 			"delay",
@@ -499,9 +499,9 @@ local tbl = {
 		{
 			"continue_when_spawned_count",
 			duration = 60,
-			condition = function (self)
+			condition = function (counter)
 				-- function 11
-				return self.boss < 1
+				return counter.boss < 1
 			end
 		},
 		{
@@ -523,9 +523,9 @@ local tbl = {
 		{
 			"continue_when_spawned_count",
 			duration = 60,
-			condition = function (self)
+			condition = function (counter)
 				-- function 12
-				return self.main < 10
+				return counter.main < 10
 			end
 		}
 	},
@@ -551,9 +551,9 @@ local tbl = {
 		{
 			"continue_when_spawned_count",
 			duration = 60,
-			condition = function (self)
+			condition = function (counter)
 				-- function 13
-				return self.main < 10
+				return counter.main < 10
 			end
 		},
 		{
@@ -581,9 +581,9 @@ local tbl = {
 		{
 			"continue_when_spawned_count",
 			duration = 60,
-			condition = function (self)
+			condition = function (counter)
 				-- function 14
-				return self.main < 10
+				return counter.main < 10
 			end
 		},
 		{
@@ -653,17 +653,17 @@ local tbl = {
 		{
 			"continue_when_spawned_count",
 			duration = 60,
-			condition = function (self)
+			condition = function (counter)
 				-- function 15
-				return self.elite < 3
+				return counter.elite < 3
 			end
 		},
 		{
 			"continue_when_spawned_count",
 			duration = 60,
-			condition = function (self)
+			condition = function (counter)
 				-- function 16
-				return self.main < 10
+				return counter.main < 10
 			end
 		},
 		{
@@ -671,7 +671,7 @@ local tbl = {
 			breed_name = "beastmen_minotaur",
 			spawner_id = "arena_cave_event",
 			spawn_counter_category = "boss",
-			pre_spawn_func = add_enhancements_for_difficulty
+			pre_spawn_func = boss_pre_spawn_func
 		},
 		{
 			"delay",
@@ -713,17 +713,17 @@ local tbl = {
 		{
 			"continue_when_spawned_count",
 			duration = 60,
-			condition = function (self)
+			condition = function (counter)
 				-- function 17
-				return self.boss < 1
+				return counter.boss < 1
 			end
 		},
 		{
 			"continue_when_spawned_count",
 			duration = 60,
-			condition = function (self)
+			condition = function (counter)
 				-- function 18
-				return self.main < 10
+				return counter.main < 10
 			end
 		}
 	},
@@ -749,9 +749,9 @@ local tbl = {
 		{
 			"continue_when_spawned_count",
 			duration = 60,
-			condition = function (self)
+			condition = function (counter)
 				-- function 19
-				return self.main < 10
+				return counter.main < 10
 			end
 		},
 		{
@@ -775,9 +775,9 @@ local tbl = {
 		{
 			"continue_when_spawned_count",
 			duration = 60,
-			condition = function (self)
+			condition = function (counter)
 				-- function 20
-				return self.main < 10
+				return counter.main < 10
 			end
 		},
 		{
@@ -850,9 +850,9 @@ local tbl = {
 		{
 			"continue_when_spawned_count",
 			duration = 60,
-			condition = function (self)
+			condition = function (counter)
 				-- function 21
-				return self.special < 1
+				return counter.special < 1
 			end
 		},
 		{
@@ -905,9 +905,9 @@ local tbl = {
 		{
 			"continue_when_spawned_count",
 			duration = 60,
-			condition = function (self)
+			condition = function (counter)
 				-- function 22
-				return self.special < 1
+				return counter.special < 1
 			end
 		},
 		{
@@ -940,9 +940,9 @@ local tbl = {
 		{
 			"continue_when_spawned_count",
 			duration = 60,
-			condition = function (self)
+			condition = function (counter)
 				-- function 23
-				return self.special < 1
+				return counter.special < 1
 			end
 		},
 		{
@@ -953,5 +953,5 @@ local tbl = {
 }
 
 return {
-	tbl
+	terror_event_blueprints
 }

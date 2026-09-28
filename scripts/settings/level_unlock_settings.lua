@@ -38,19 +38,19 @@ GameActsDisplayNames = {
 
 DLCUtils.dofile("level_unlock_settings")
 
-local tbl = {}
+local EMPTY_TABLE = {}
 
 require("scripts/settings/packaged_levels")
 
-local function fn(self)
+local function is_level_available_on_disk(level_data)
 	-- function 1
-	if not rawget(_G, "PACKAGED_LEVEL_PACKAGE_NAMES") then
-		local packages = self.packages
+	if rawget(_G, "PACKAGED_LEVEL_PACKAGE_NAMES") then
+		local packages = level_data.packages
 
 		for i = 1, #packages do
-			local var_1_1 = packages[i]
+			local package = packages[i]
 
-			if not PACKAGED_LEVEL_PACKAGE_NAMES[var_1_1] then
+			if not PACKAGED_LEVEL_PACKAGE_NAMES[package] then
 				return false
 			end
 		end
@@ -59,52 +59,64 @@ local function fn(self)
 	return true
 end
 
-local flag = true
+local only_release = true
 
-local function fn_2(arg_2_0, arg_2_1)
+local function validate_level_data(level_key, level_data)
 	-- function 2
-	if type(arg_2_1) == "table" then
-		local flag_2 = false
-		local packages = arg_2_1.packages
+	if type(level_data) == "table" then
+		local debug_level = false
+		local packages = level_data.packages
 
 		for i = 1, #packages do
-			if not string.find(packages[i], "^resource_packages/levels/debug/") then
-				flag_2 = true
+			if string.find(packages[i], "^resource_packages/levels/debug/") then
+				debug_level = true
 
 				break
 			end
 		end
 
-		if not flag_2 then
-			DebugLevels[arg_2_0] = true
+		if debug_level then
+			DebugLevels[level_key] = true
 		end
 
-		if not arg_2_1.act then
+		local act = level_data.act
+
+		if not act then
 			return false
 		end
 
-		local var_2_2 = LevelSettings[arg_2_0]
+		local level_settings = LevelSettings[level_key]
 
-		if not flag then
-			local unlockable = arg_2_1.unlockable
-			local var_2_4 = fn(arg_2_1)
+		if only_release then
+			local unlockable = level_data.unlockable
+			local available = is_level_available_on_disk(level_data)
 
-			return (not not var_2_2.hub_level or not unlockable) and not var_2_4 and not flag_2
+			return not level_settings.hub_level and not not unlockable and not not available and not not not debug_level
 		else
-			local unlockable_2 = arg_2_1.unlockable
+			local unlockable = level_data.unlockable
 
-			return not not var_2_2.hub_level or unlockable_2
+			return not level_settings.hub_level and not not unlockable
 		end
 	end
 end
 
-for k, v in pairs(LevelSettings) do
-	if not fn_2(k, v) then
-		local game_mode = v.game_mode
+for level_key, level_data in pairs(LevelSettings) do
+	local valid_level = validate_level_data(level_key, level_data)
 
-		game_mode = game_mode or v.mechanism
+	if valid_level then
+		local game_mode_2 = level_data.game_mode
 
-		if not game_mode then
+		if not game_mode_2 then
+			-- Nothing
+		end
+
+		game_mode_2 = level_data.mechanism
+
+		local game_mode = game_mode_2
+
+		::label_0_0::
+
+		if game_mode then
 			if not LevelGameModeTypes[game_mode] then
 				LevelGameModeTypes[game_mode] = true
 			end
@@ -113,10 +125,10 @@ for k, v in pairs(LevelSettings) do
 				UnlockableLevelsByGameMode[game_mode] = {}
 			end
 
-			UnlockableLevelsByGameMode[game_mode][#UnlockableLevelsByGameMode[game_mode] + 1] = k
+			UnlockableLevelsByGameMode[game_mode][#UnlockableLevelsByGameMode[game_mode] + 1] = level_key
 		end
 
-		local act = v.act
+		local act = level_data.act
 
 		if not GameActs[act] then
 			GameActs[act] = {}
@@ -126,85 +138,85 @@ for k, v in pairs(LevelSettings) do
 			MapPresentationActs[#MapPresentationActs + 1] = act
 		end
 
-		GameActs[act][#GameActs[act] + 1] = k
-		UnlockableLevels[#UnlockableLevels + 1] = k
+		GameActs[act][#GameActs[act] + 1] = level_key
+		UnlockableLevels[#UnlockableLevels + 1] = level_key
 
-		if not v.main_game_level then
-			MainGameLevels[#MainGameLevels + 1] = k
+		if level_data.main_game_level then
+			MainGameLevels[#MainGameLevels + 1] = level_key
 		end
 	end
 end
 
-local var_0_6
+local prologue_index
 
-for k_2 = 1, #MainGameLevels do
-	if MainGameLevels[k_2] == "prologue" then
-		var_0_6 = k_2
+for i = 1, #MainGameLevels do
+	if MainGameLevels[i] == "prologue" then
+		prologue_index = i
 	end
 end
 
 HelmgartLevels = table.clone(MainGameLevels)
 
-if not var_0_6 then
-	table.remove(HelmgartLevels, var_0_6)
+if prologue_index then
+	table.remove(HelmgartLevels, prologue_index)
 end
 
-for i, v_2 in ipairs(UnlockableLevels) do
-	local var_0_7 = LevelSettings[v_2]
-	local act_unlock_order = var_0_7.act_unlock_order
+for _, level_key in ipairs(UnlockableLevels) do
+	local level_data = LevelSettings[level_key]
+	local act_unlock_order = level_data.act_unlock_order
 
-	if not (not act_unlock_order and not (act_unlock_order > 0)) then
-		local act_2 = var_0_7.act
-		local var_0_10 = GameActs[act_2]
-		local tbl_2 = {}
+	if act_unlock_order and act_unlock_order > 0 then
+		local act = level_data.act
+		local act_levels = GameActs[act]
+		local required_levels = {}
 
-		for i_2, v_3 in ipairs(var_0_10) do
-			local act_unlock_order_2 = LevelSettings[v_3].act_unlock_order
+		for _, act_level_key in ipairs(act_levels) do
+			local act_level_unlock_order = LevelSettings[act_level_key].act_unlock_order
 
-			if not (not act_unlock_order_2 and not (act_unlock_order_2 < act_unlock_order)) then
-				tbl_2[#tbl_2 + 1] = v_3
+			if act_level_unlock_order and act_level_unlock_order < act_unlock_order then
+				required_levels[#required_levels + 1] = act_level_key
 			end
 		end
 
-		RequiredLevelUnlocksByLevel[v_2] = tbl_2
+		RequiredLevelUnlocksByLevel[level_key] = required_levels
 	end
 end
 
-for k_3, v_4 in pairs(GameActs) do
-	table.sort(v_4, function (arg_3_0, arg_3_1)
+for _, act_data in pairs(GameActs) do
+	table.sort(act_data, function (a, b)
 		-- function 3
-		return LevelSettings[arg_3_0].act_unlock_order < LevelSettings[arg_3_1].act_unlock_order
+		return LevelSettings[a].act_unlock_order < LevelSettings[b].act_unlock_order
 	end)
 end
 
 LevelUnlockUtils = {}
 
-LevelUnlockUtils.unlocked_level_difficulty_index = function (arg_4_0, arg_4_1, arg_4_2)
+LevelUnlockUtils.unlocked_level_difficulty_index = function (statistics_db, player_stats_id, level_key)
 	-- function 4
-	local get_default_difficulties, var_4_1 = Managers.state.difficulty:get_default_difficulties()
-	local find = table.find(get_default_difficulties, var_4_1)
-	local count = #get_default_difficulties
-	local completed_level_difficulty_index = LevelUnlockUtils.completed_level_difficulty_index(arg_4_0, arg_4_1, arg_4_2)
+	local difficulties, starting_difficulty = Managers.state.difficulty:get_default_difficulties()
+	local automatic_difficulty_unlock_index = table.find(difficulties, starting_difficulty)
+	local highest_available_difficulty_index = #difficulties
+	local completed_difficulty_index = LevelUnlockUtils.completed_level_difficulty_index(statistics_db, player_stats_id, level_key)
 
-	return math.max(math.min(completed_level_difficulty_index + 1, count), find)
+	return math.max(math.min(completed_difficulty_index + 1, highest_available_difficulty_index), automatic_difficulty_unlock_index)
 end
 
-LevelUnlockUtils.completed_level_difficulty_index = function (self, arg_5_1, arg_5_2)
+LevelUnlockUtils.completed_level_difficulty_index = function (statistics_db, player_stats_id, level_key)
 	-- function 5
-	local var_5_0 = LevelDifficultyDBNames[arg_5_2]
+	local level_difficulty_name = LevelDifficultyDBNames[level_key]
 
-	if not var_5_0 then
-		return math.min(5, self:get_persistent_stat(arg_5_1, "completed_levels_difficulty", var_5_0))
+	if level_difficulty_name then
+		return math.min(5, statistics_db:get_persistent_stat(player_stats_id, "completed_levels_difficulty", level_difficulty_name))
 	else
 		return 0
 	end
 end
 
-LevelUnlockUtils.is_journey_disabled = function (arg_6_0)
+LevelUnlockUtils.is_journey_disabled = function (journey_name)
 	-- function 6
 	local mechanism_setting_for_title
 
-	if not Managers.mechanism then
+	if Managers.mechanism then
 		mechanism_setting_for_title = Managers.mechanism:mechanism_setting_for_title("override_journeys")
 
 		if not mechanism_setting_for_title then
@@ -212,18 +224,20 @@ LevelUnlockUtils.is_journey_disabled = function (arg_6_0)
 		end
 	end
 
-	mechanism_setting_for_title = tbl
+	mechanism_setting_for_title = EMPTY_TABLE
+
+	local override_journeys = mechanism_setting_for_title
 
 	::label_6_0::
 
-	return mechanism_setting_for_title[arg_6_0] == false
+	return override_journeys[journey_name] == false
 end
 
-LevelUnlockUtils.is_chaos_waste_god_disabled = function (arg_7_0)
+LevelUnlockUtils.is_chaos_waste_god_disabled = function (god_name)
 	-- function 7
 	local mechanism_setting_for_title
 
-	if not Managers.mechanism then
+	if Managers.mechanism then
 		mechanism_setting_for_title = Managers.mechanism:mechanism_setting_for_title("override_gods")
 
 		if not mechanism_setting_for_title then
@@ -231,298 +245,338 @@ LevelUnlockUtils.is_chaos_waste_god_disabled = function (arg_7_0)
 		end
 	end
 
-	mechanism_setting_for_title = tbl
+	mechanism_setting_for_title = EMPTY_TABLE
+
+	local override_gods = mechanism_setting_for_title
 
 	::label_7_0::
 
-	return mechanism_setting_for_title[arg_7_0] == false
+	return override_gods[god_name] == false
 end
 
-LevelUnlockUtils.unlocked_journeys = function (arg_8_0, arg_8_1)
+LevelUnlockUtils.unlocked_journeys = function (statistics_db, player_stats_id)
 	-- function 8
-	local tbl = {}
+	local journeys = {}
 
 	for i = 1, #AvailableJourneyOrder do
-		local var_8_1 = AvailableJourneyOrder[i]
+		local journey_name = AvailableJourneyOrder[i]
 
-		if #tbl == 0 then
-			if not LevelUnlockUtils.is_journey_disabled(var_8_1) then
-				tbl[#tbl + 1] = var_8_1
+		if #journeys == 0 then
+			if not LevelUnlockUtils.is_journey_disabled(journey_name) then
+				journeys[#journeys + 1] = journey_name
 			end
 		else
-			local completed_journey_difficulty_index = LevelUnlockUtils.completed_journey_difficulty_index(arg_8_0, arg_8_1, AvailableJourneyOrder[i - 1])
+			local difficulty = LevelUnlockUtils.completed_journey_difficulty_index(statistics_db, player_stats_id, AvailableJourneyOrder[i - 1])
 
-			if not (script_data.unlock_all_levels or not completed_journey_difficulty_index or completed_journey_difficulty_index ~= 0) then
+			if not script_data.unlock_all_levels and (not difficulty or difficulty == 0) then
 				break
-			elseif not LevelUnlockUtils.is_journey_disabled(var_8_1) then
-				tbl[#tbl + 1] = var_8_1
+			elseif not LevelUnlockUtils.is_journey_disabled(journey_name) then
+				journeys[#journeys + 1] = journey_name
 			end
 		end
 	end
 
-	return tbl
+	return journeys
 end
 
-LevelUnlockUtils.completed_journey_difficulty_index = function (self, arg_9_1, arg_9_2)
+LevelUnlockUtils.completed_journey_difficulty_index = function (statistics_db, player_stats_id, journey_name)
 	-- function 9
-	local var_9_0 = JourneyDifficultyDBNames[arg_9_2]
+	local journey_difficulty_name = JourneyDifficultyDBNames[journey_name]
 
-	if not var_9_0 then
-		return (self:get_persistent_stat(arg_9_1, "completed_journeys_difficulty", var_9_0))
+	if journey_difficulty_name then
+		local difficulty_index = statistics_db:get_persistent_stat(player_stats_id, "completed_journeys_difficulty", journey_difficulty_name)
+
+		return difficulty_index
 	else
 		return 0
 	end
 end
 
-LevelUnlockUtils.completed_hero_journey_difficulty_index = function (self, arg_10_1, arg_10_2, arg_10_3)
+LevelUnlockUtils.completed_hero_journey_difficulty_index = function (statistics_db, player_stats_id, hero, journey_name)
 	-- function 10
-	local var_10_0 = JourneyDifficultyDBNames[arg_10_3]
+	local journey_difficulty_name = JourneyDifficultyDBNames[journey_name]
 
-	if not var_10_0 then
-		return (self:get_persistent_stat(arg_10_1, "completed_hero_journey_difficulty", arg_10_2, var_10_0))
+	if journey_difficulty_name then
+		local difficulty_index = statistics_db:get_persistent_stat(player_stats_id, "completed_hero_journey_difficulty", hero, journey_difficulty_name)
+
+		return difficulty_index
 	else
 		return 0
 	end
 end
 
-LevelUnlockUtils.completed_journey_dominant_god_difficulty_index = function (self, arg_11_1, arg_11_2)
+LevelUnlockUtils.completed_journey_dominant_god_difficulty_index = function (statistics_db, player_stats_id, dominant_god)
 	-- function 11
-	local var_11_0 = JourneyDominantGodDifficultyDBNames[arg_11_2]
+	local journey_dominant_god_difficulty_name = JourneyDominantGodDifficultyDBNames[dominant_god]
 
-	if not var_11_0 then
-		return (self:get_persistent_stat(arg_11_1, "completed_journey_dominant_god_difficulty", var_11_0))
+	if journey_dominant_god_difficulty_name then
+		local difficulty_index = statistics_db:get_persistent_stat(player_stats_id, "completed_journey_dominant_god_difficulty", journey_dominant_god_difficulty_name)
+
+		return difficulty_index
 	else
 		return 0
 	end
 end
 
-LevelUnlockUtils.highest_completed_difficulty_index_by_act = function (arg_12_0, arg_12_1, arg_12_2)
+LevelUnlockUtils.highest_completed_difficulty_index_by_act = function (statistics_db, player_stats_id, act_name)
 	-- function 12
-	local var_12_0 = GameActs[arg_12_2]
+	local act_levels = GameActs[act_name]
 
-	if not var_12_0 then
+	if not act_levels then
 		print(table.dump(GameActs, nil, 2))
-		fassert(false, "act name is not included in GameActs: %s", tostring(arg_12_2))
+		fassert(false, "act name is not included in GameActs: %s", tostring(act_name))
 
 		return math.huge
 	end
 
-	local huge = math.huge
+	local act_difficulty_completed_index = math.huge
 
-	for i, v in ipairs(var_12_0) do
-		local completed_level_difficulty_index = LevelUnlockUtils.completed_level_difficulty_index(arg_12_0, arg_12_1, v)
+	for _, level_key in ipairs(act_levels) do
+		local difficulty_index = LevelUnlockUtils.completed_level_difficulty_index(statistics_db, player_stats_id, level_key)
 
-		if not (not completed_level_difficulty_index and completed_level_difficulty_index > 5 or not (completed_level_difficulty_index < 0)) then
+		if not difficulty_index or difficulty_index > 5 or difficulty_index < 0 then
 			local fassert = fassert
 			local flag = false
 			local str = "highest completed difficulty index was incorrect: %s"
-			local var_12_6
+			local var_12_3
 
-			if not completed_level_difficulty_index then
-				var_12_6 = tostring(completed_level_difficulty_index)
+			if difficulty_index then
+				var_12_3 = tostring(difficulty_index)
 
-				if not var_12_6 then
+				if not var_12_3 then
 					-- Nothing
 				end
 			end
 
-			var_12_6 = "n/a"
+			var_12_3 = "n/a"
 
 			::label_12_0::
 
-			fassert(flag, str, var_12_6)
+			fassert(flag, str, var_12_3)
 		end
 
-		if completed_level_difficulty_index < huge then
-			huge = completed_level_difficulty_index
+		if difficulty_index < act_difficulty_completed_index then
+			act_difficulty_completed_index = difficulty_index
 		end
 	end
 
-	return huge
+	return act_difficulty_completed_index
 end
 
-LevelUnlockUtils.completed_adventure_difficulty = function (arg_13_0, arg_13_1)
+LevelUnlockUtils.completed_adventure_difficulty = function (statistics_db, player_stats_id)
 	-- function 13
 	return 1
 end
 
-LevelUnlockUtils.completed_main_game_difficulty = function (arg_14_0, arg_14_1)
+LevelUnlockUtils.completed_main_game_difficulty = function (statistics_db, player_stats_id)
 	-- function 14
-	local huge = math.huge
+	local main_game_difficulty_completed_index = math.huge
 
-	for i, v in ipairs(MainGameLevels) do
-		local completed_level_difficulty_index = LevelUnlockUtils.completed_level_difficulty_index(arg_14_0, arg_14_1, v)
+	for _, level_key in ipairs(MainGameLevels) do
+		local difficulty_completed_index = LevelUnlockUtils.completed_level_difficulty_index(statistics_db, player_stats_id, level_key)
 
-		if completed_level_difficulty_index < huge then
-			huge = completed_level_difficulty_index
+		if difficulty_completed_index < main_game_difficulty_completed_index then
+			main_game_difficulty_completed_index = difficulty_completed_index
 		end
 	end
 
-	return huge
+	return main_game_difficulty_completed_index
 end
 
-LevelUnlockUtils.completed_dlc_difficulty = function (arg_15_0, arg_15_1, arg_15_2)
+LevelUnlockUtils.completed_dlc_difficulty = function (statistics_db, player_stats_id, dlc_name)
 	-- function 15
-	local var_15_0
+	local dlc_area_settings
 
-	for k, v in pairs(AreaSettings) do
-		if v.dlc_name == arg_15_2 then
-			var_15_0 = v
+	for area_name, area_settings in pairs(AreaSettings) do
+		if area_settings.dlc_name == dlc_name then
+			dlc_area_settings = area_settings
 
 			break
 		end
 	end
 
-	fassert(var_15_0, "Area settings for dlc: %s does not exist.", arg_15_2)
+	fassert(dlc_area_settings, "Area settings for dlc: %s does not exist.", dlc_name)
 
-	local acts = var_15_0.acts
+	local acts = dlc_area_settings.acts
 
-	fassert(acts, "Acts for dlc: %s does not exist.", arg_15_2)
+	fassert(acts, "Acts for dlc: %s does not exist.", dlc_name)
 
-	local huge = math.huge
+	local dlc_difficulty_completed_index = math.huge
 
-	for i, v_2 in ipairs(acts) do
-		local highest_completed_difficulty_index_by_act = LevelUnlockUtils.highest_completed_difficulty_index_by_act(arg_15_0, arg_15_1, v_2)
+	for _, act_key in ipairs(acts) do
+		local difficulty_completed_index = LevelUnlockUtils.highest_completed_difficulty_index_by_act(statistics_db, player_stats_id, act_key)
 
-		if highest_completed_difficulty_index_by_act < huge then
-			huge = highest_completed_difficulty_index_by_act
+		if difficulty_completed_index < dlc_difficulty_completed_index then
+			dlc_difficulty_completed_index = difficulty_completed_index
 		end
 	end
 
-	return huge
+	return dlc_difficulty_completed_index
 end
 
-local function fn_3(arg_16_0, arg_16_1)
+local function sort_levels_by_order(a, b)
 	-- function 16
-	local LevelSettings = LevelSettings
-	local map_settings = LevelSettings[arg_16_0].map_settings
-	local map_settings_2 = LevelSettings[arg_16_1].map_settings
-	local sorting = map_settings.sorting
+	local level_settings = LevelSettings
+	local a_settings = level_settings[a].map_settings
+	local b_settings = level_settings[b].map_settings
+	local sorting = a_settings.sorting
 
-	sorting = sorting or 99
+	if not sorting then
+		-- Nothing
+	end
 
-	local sorting_2 = map_settings_2.sorting
+	sorting = 99
 
-	sorting_2 = sorting_2 or 99
+	local a_order = sorting
 
-	return sorting < sorting_2
+	::label_16_0::
+
+	local sorting_2 = b_settings.sorting
+
+	if not sorting_2 then
+		-- Nothing
+	end
+
+	sorting_2 = 99
+
+	local b_order = sorting_2
+
+	::label_16_1::
+
+	return a_order < b_order
 end
 
-LevelUnlockUtils.is_level_disabled = function (arg_17_0)
+LevelUnlockUtils.is_level_disabled = function (level_key)
 	-- function 17
 	local mechanism = Managers.mechanism
 
-	mechanism = not mechanism and Managers.mechanism:mechanism_setting_for_title("override_levels")
+	if mechanism then
+		-- Nothing
+	end
 
-	return not mechanism and mechanism[arg_17_0] == false
+	mechanism = Managers.mechanism:mechanism_setting_for_title("override_levels")
+
+	local override_levels = mechanism
+
+	::label_17_0::
+
+	return not not override_levels and override_levels[level_key] == false
 end
 
-local tbl_3 = {}
+local required_completed_levels = {}
 
-LevelUnlockUtils.get_required_completed_levels = function (self, arg_18_1, arg_18_2)
+LevelUnlockUtils.get_required_completed_levels = function (statistics_db, player_stats_id, level_key)
 	-- function 18
-	table.clear(tbl_3)
+	table.clear(required_completed_levels)
 
-	local required_acts = LevelSettings[arg_18_2].required_acts
+	local level_settings = LevelSettings[level_key]
+	local required_acts = level_settings.required_acts
 
-	if not required_acts then
-		for i, v in ipairs(required_acts) do
-			local var_18_1
-			local num = -1
-			local var_18_3 = GameActs[v]
+	if required_acts then
+		for _, act_key in ipairs(required_acts) do
+			local last_act_level_key
+			local highest_presentation_order = -1
+			local act_levels = GameActs[act_key]
 
-			for i_2, v_2 in ipairs(var_18_3) do
-				if not LevelUnlockUtils.is_level_disabled(v_2) then
-					local var_18_4 = LevelSettings[v_2]
+			for _, act_level_key in ipairs(act_levels) do
+				if not LevelUnlockUtils.is_level_disabled(act_level_key) then
+					local settings = LevelSettings[act_level_key]
 
-					if num < var_18_4.act_presentation_order then
-						num = var_18_4.act_presentation_order
-						var_18_1 = v_2
+					if highest_presentation_order < settings.act_presentation_order then
+						highest_presentation_order = settings.act_presentation_order
+						last_act_level_key = act_level_key
 					end
 				end
 			end
 
-			if not var_18_1 then
-				local get_persistent_stat = self:get_persistent_stat(arg_18_1, "completed_levels", var_18_1)
+			if last_act_level_key then
+				local level_stat = statistics_db:get_persistent_stat(player_stats_id, "completed_levels", last_act_level_key)
+				local level_completed = not not level_stat and level_stat ~= 0
 
-				if not (not get_persistent_stat and get_persistent_stat ~= 0) then
-					tbl_3[var_18_1] = true
+				if not level_completed then
+					required_completed_levels[last_act_level_key] = true
 				end
 			end
 		end
 	end
 
-	local var_18_6 = RequiredLevelUnlocksByLevel[arg_18_2]
+	local required_levels_unlocked_in_act = RequiredLevelUnlocksByLevel[level_key]
 
-	if not var_18_6 then
-		local var_18_7
-		local num_2 = -1
+	if required_levels_unlocked_in_act then
+		local last_act_level_key
+		local highest_presentation_order = -1
 
-		for i_3, v_3 in ipairs(var_18_6) do
-			if not LevelUnlockUtils.is_level_disabled(v_3) then
-				local var_18_9 = LevelSettings[v_3]
+		for _, required_act_level_key in ipairs(required_levels_unlocked_in_act) do
+			if not LevelUnlockUtils.is_level_disabled(required_act_level_key) then
+				local settings = LevelSettings[required_act_level_key]
 
-				if num_2 < var_18_9.act_presentation_order then
-					num_2 = var_18_9.act_presentation_order
-					var_18_7 = v_3
+				if highest_presentation_order < settings.act_presentation_order then
+					highest_presentation_order = settings.act_presentation_order
+					last_act_level_key = required_act_level_key
 				end
 			end
 		end
 
-		if not var_18_7 then
-			local get_persistent_stat_2 = self:get_persistent_stat(arg_18_1, "completed_levels", var_18_7)
+		if last_act_level_key then
+			local level_stat = statistics_db:get_persistent_stat(player_stats_id, "completed_levels", last_act_level_key)
+			local level_completed = not not level_stat and level_stat ~= 0
 
-			if not (not get_persistent_stat_2 and get_persistent_stat_2 ~= 0) then
-				tbl_3[var_18_7] = true
+			if not level_completed then
+				required_completed_levels[last_act_level_key] = true
 			end
 		end
 	end
 
-	return tbl_3
+	return required_completed_levels
 end
 
-LevelUnlockUtils.current_weave = function (arg_19_0, arg_19_1, arg_19_2)
+LevelUnlockUtils.current_weave = function (statistics_db, player_stats_id, ignore_dlc_check)
 	-- function 19
-	if not script_data.unlock_all_levels then
-		return WeaveSettings.templates_ordered[#WeaveSettings.templates_ordered].name
+	if script_data.unlock_all_levels then
+		local weave_data = WeaveSettings.templates_ordered[#WeaveSettings.templates_ordered]
+
+		return weave_data.name
 	end
 
-	if not arg_19_2 then
-		local var_19_0 = WeaveSettings.templates_ordered[1]
-		local dlc_name = var_19_0.dlc_name
+	if not ignore_dlc_check then
+		local weave_data = WeaveSettings.templates_ordered[1]
+		local dlc_name = weave_data.dlc_name
 
-		if not (not dlc_name and Managers.unlock:is_dlc_unlocked(dlc_name)) then
-			return var_19_0.name
+		if dlc_name and not Managers.unlock:is_dlc_unlocked(dlc_name) then
+			return weave_data.name
 		end
 	end
 
-	local templates_ordered = WeaveSettings.templates_ordered
-	local count = #templates_ordered
-	local num = 1
-	local flag = false
+	local weave_templates = WeaveSettings.templates_ordered
+	local num_entries = #weave_templates
+	local highest_consecutive_unlocked_weave = 1
+	local highest_consecutive_unlocked_weave_found = false
 
-	for i = 1, count do
-		local var_19_6 = templates_ordered[i]
+	for i = 1, num_entries do
+		local template = weave_templates[i]
+		local weave_completed = LevelUnlockUtils.weave_unlocked(statistics_db, player_stats_id, template.name, ignore_dlc_check)
 
-		if not LevelUnlockUtils.weave_unlocked(arg_19_0, arg_19_1, var_19_6.name, arg_19_2) then
-			local num_2 = i + 1
+		if weave_completed then
+			local next_weave = i + 1
 
-			if not (not templates_ordered[num_2] and LevelUnlockUtils.weave_disabled(num_2)) then
-				num = num_2
+			if weave_templates[next_weave] and not LevelUnlockUtils.weave_disabled(next_weave) then
+				highest_consecutive_unlocked_weave = next_weave
 			end
 		else
 			break
 		end
 	end
 
-	return templates_ordered[num].name
+	local weave_template = weave_templates[highest_consecutive_unlocked_weave]
+
+	return weave_template.name
 end
 
-LevelUnlockUtils.weave_disabled = function (arg_20_0)
+LevelUnlockUtils.weave_disabled = function (weave_name)
 	-- function 20
 	local mechanism_setting_for_title
 
-	if not Managers.mechanism then
+	if Managers.mechanism then
 		mechanism_setting_for_title = Managers.mechanism:mechanism_setting_for_title("override_weaves")
 
 		if not mechanism_setting_for_title then
@@ -530,58 +584,60 @@ LevelUnlockUtils.weave_disabled = function (arg_20_0)
 		end
 	end
 
-	mechanism_setting_for_title = tbl
+	mechanism_setting_for_title = EMPTY_TABLE
+
+	local override_weaves = mechanism_setting_for_title
 
 	::label_20_0::
 
-	if not (not mechanism_setting_for_title.levels and mechanism_setting_for_title.levels[arg_20_0] == nil) then
-		return not mechanism_setting_for_title.levels[arg_20_0]
+	if override_weaves.levels and override_weaves.levels[weave_name] ~= nil then
+		return not override_weaves.levels[weave_name]
 	end
 
-	local var_20_1 = WeaveSettings.templates[arg_20_0]
+	local weave_data = WeaveSettings.templates[weave_name]
 
-	if not var_20_1 then
+	if not weave_data then
 		return false
 	end
 
-	if not (not mechanism_setting_for_title.winds and mechanism_setting_for_title.winds[var_20_1.wind] == nil) then
-		return not mechanism_setting_for_title.winds[var_20_1.wind]
+	if override_weaves.winds and override_weaves.winds[weave_data.wind] ~= nil then
+		return not override_weaves.winds[weave_data.wind]
 	end
 
 	return false
 end
 
-LevelUnlockUtils.weave_unlocked = function (self, arg_21_1, arg_21_2, arg_21_3, arg_21_4)
+LevelUnlockUtils.weave_unlocked = function (statistics_db, player_stats_id, weave_name, ignore_dlc_check, num_players)
 	-- function 21
-	if not script_data.unlock_all_levels then
+	if script_data.unlock_all_levels then
 		return true
 	end
 
-	local var_21_0 = WeaveSettings.templates[arg_21_2]
+	local weave_data = WeaveSettings.templates[weave_name]
 
-	if not var_21_0 then
-		printf("LevelUnlockUtils.weave_unlocked: Unable to join weave '%s', no weave_data was found.", arg_21_2)
+	if not weave_data then
+		printf("LevelUnlockUtils.weave_unlocked: Unable to join weave '%s', no weave_data was found.", weave_name)
 
 		return false
 	end
 
-	if not arg_21_3 then
-		local dlc_name = var_21_0.dlc_name
+	if not ignore_dlc_check then
+		local dlc_name = weave_data.dlc_name
 
-		if not (not dlc_name and Managers.unlock:is_dlc_unlocked(dlc_name)) then
+		if dlc_name and not Managers.unlock:is_dlc_unlocked(dlc_name) then
 			return false
 		end
 	end
 
-	local tier = var_21_0.tier
-	local flag = not (tier <= 40) or self:get_persistent_stat(arg_21_1, "completed_weaves", arg_21_2) > 0
-	local flag_2 = false
+	local weave_tier = weave_data.tier
+	local completed_ever = weave_tier <= 40 and statistics_db:get_persistent_stat(player_stats_id, "completed_weaves", weave_name) > 0
+	local completed_season = false
 
-	if not flag then
+	if not completed_ever then
 		local max
 
-		if not arg_21_4 then
-			max = math.max(arg_21_4, 1)
+		if num_players then
+			max = math.max(num_players, 1)
 
 			if not max then
 				-- Nothing
@@ -590,14 +646,16 @@ LevelUnlockUtils.weave_unlocked = function (self, arg_21_1, arg_21_2, arg_21_3, 
 
 		max = 1
 
+		local min_players = max
+
 		do
 			local max_2
 		end
 
 		::label_21_0::
 
-		if not arg_21_4 then
-			max_2 = math.max(arg_21_4, 4)
+		if num_players then
+			max_2 = math.max(num_players, 4)
 
 			if not max_2 then
 				-- Nothing
@@ -606,72 +664,75 @@ LevelUnlockUtils.weave_unlocked = function (self, arg_21_1, arg_21_2, arg_21_3, 
 
 		max_2 = 4
 
+		local max_players = max_2
+
 		::label_21_1::
 
-		for i = max, max_2 do
-			local get_weave_score_stat = ScorpionSeasonalSettings.get_weave_score_stat(tier, i)
+		for i = min_players, max_players do
+			local stat_name = ScorpionSeasonalSettings.get_weave_score_stat(weave_tier, i)
 
-			flag_2 = self:get_persistent_stat(arg_21_1, ScorpionSeasonalSettings.current_season_name, get_weave_score_stat) > 0
+			completed_season = statistics_db:get_persistent_stat(player_stats_id, ScorpionSeasonalSettings.current_season_name, stat_name) > 0
 
-			if not flag_2 then
+			if completed_season then
 				break
 			end
 		end
 	end
 
-	return flag or flag_2
+	return not not completed_ever or not not completed_season
 end
 
-LevelUnlockUtils.level_unlocked = function (self, arg_22_1, arg_22_2, arg_22_3)
+LevelUnlockUtils.level_unlocked = function (statistics_db, player_stats_id, level_key, ignore_dlc_check)
 	-- function 22
-	if not script_data.unlock_all_levels then
+	if script_data.unlock_all_levels then
 		return true
 	end
 
-	if not LevelUnlockUtils.is_level_disabled(arg_22_2) then
+	if LevelUnlockUtils.is_level_disabled(level_key) then
 		return false
 	end
 
-	if arg_22_2 == "any" then
+	if level_key == "any" then
 		return true
 	end
 
-	local get_act_key_by_level = LevelUnlockUtils.get_act_key_by_level(arg_22_2)
-	local var_22_1 = LevelSettings[arg_22_2]
+	local act_key = LevelUnlockUtils.get_act_key_by_level(level_key)
+	local settings = LevelSettings[level_key]
 
-	if not arg_22_3 then
-		local dlc_name = var_22_1.dlc_name
+	if not ignore_dlc_check then
+		local dlc_name = settings.dlc_name
 
-		if not (not dlc_name and Managers.unlock:is_dlc_unlocked(dlc_name)) then
+		if dlc_name and not Managers.unlock:is_dlc_unlocked(dlc_name) then
 			return false
 		end
 	end
 
-	if not get_act_key_by_level then
-		local required_act_completed = var_22_1.required_act_completed
+	if not act_key then
+		local required_act_completed = settings.required_act_completed
 
-		if not (not required_act_completed and LevelUnlockUtils.act_completed(self, arg_22_1, required_act_completed)) then
+		if required_act_completed and not LevelUnlockUtils.act_completed(statistics_db, player_stats_id, required_act_completed) then
 			return false
 		end
 	else
-		local required_acts = var_22_1.required_acts
+		local required_acts = settings.required_acts
 
-		if not required_acts then
-			for i, v in ipairs(required_acts) do
-				if not LevelUnlockUtils.act_unlocked(self, arg_22_1, v) then
+		if required_acts then
+			for _, act_key in ipairs(required_acts) do
+				if not LevelUnlockUtils.act_unlocked(statistics_db, player_stats_id, act_key) then
 					return false
 				end
 			end
 		end
 
-		local var_22_5 = RequiredLevelUnlocksByLevel[arg_22_2]
+		local required_levels_unlocked_in_act = RequiredLevelUnlocksByLevel[level_key]
 
-		if not var_22_5 then
-			for i_2, v_2 in ipairs(var_22_5) do
-				if not LevelUnlockUtils.is_level_disabled(v_2) then
-					local get_persistent_stat = self:get_persistent_stat(arg_22_1, "completed_levels", v_2)
+		if required_levels_unlocked_in_act then
+			for _, required_act_level in ipairs(required_levels_unlocked_in_act) do
+				if not LevelUnlockUtils.is_level_disabled(required_act_level) then
+					local level_stat = statistics_db:get_persistent_stat(player_stats_id, "completed_levels", required_act_level)
+					local level_completed = not not level_stat and level_stat ~= 0
 
-					if not (not get_persistent_stat and get_persistent_stat ~= 0) then
+					if not level_completed then
 						return false
 					end
 				end
@@ -682,12 +743,14 @@ LevelUnlockUtils.level_unlocked = function (self, arg_22_1, arg_22_2, arg_22_3)
 	return true
 end
 
-LevelUnlockUtils.all_levels_completed = function (self, arg_23_1)
+LevelUnlockUtils.all_levels_completed = function (statistics_db, player_stats_id)
 	-- function 23
-	local adventure = UnlockableLevelsByGameMode.adventure
+	local level_keys = UnlockableLevelsByGameMode.adventure
 
-	for i, v in ipairs(adventure) do
-		if self:get_persistent_stat(arg_23_1, "completed_levels", v) == 0 then
+	for _, level_key in ipairs(level_keys) do
+		local times_completed = statistics_db:get_persistent_stat(player_stats_id, "completed_levels", level_key)
+
+		if times_completed == 0 then
 			return false
 		end
 	end
@@ -695,28 +758,29 @@ LevelUnlockUtils.all_levels_completed = function (self, arg_23_1)
 	return true
 end
 
-LevelUnlockUtils.get_act_key_by_level = function (arg_24_0)
+LevelUnlockUtils.get_act_key_by_level = function (level_key)
 	-- function 24
-	for k, v in pairs(GameActs) do
-		for i, v_2 in ipairs(v) do
-			if arg_24_0 == v_2 then
-				return k
+	for key, levels in pairs(GameActs) do
+		for _, act_level_key in ipairs(levels) do
+			if level_key == act_level_key then
+				return key
 			end
 		end
 	end
 end
 
-LevelUnlockUtils.act_unlocked = function (self, arg_25_1, arg_25_2)
+LevelUnlockUtils.act_unlocked = function (statistics_db, player_stats_id, act_key)
 	-- function 25
-	assert(GameActs[arg_25_2] ~= nil, "Act %s does not exist.", arg_25_2)
+	assert(GameActs[act_key] ~= nil, "Act %s does not exist.", act_key)
 
-	local var_25_0 = GameActs[arg_25_2]
+	local act_levels = GameActs[act_key]
 
-	for i, v in ipairs(var_25_0) do
-		if not LevelUnlockUtils.is_level_disabled(v) then
-			local get_persistent_stat = self:get_persistent_stat(arg_25_1, "completed_levels", v)
+	for _, level_key in ipairs(act_levels) do
+		if not LevelUnlockUtils.is_level_disabled(level_key) then
+			local level_stat = statistics_db:get_persistent_stat(player_stats_id, "completed_levels", level_key)
+			local level_completed = not not level_stat and level_stat ~= 0
 
-			if not (not get_persistent_stat and get_persistent_stat ~= 0) then
+			if not level_completed then
 				return false
 			end
 		end
@@ -725,16 +789,17 @@ LevelUnlockUtils.act_unlocked = function (self, arg_25_1, arg_25_2)
 	return true
 end
 
-LevelUnlockUtils.act_completed = function (self, arg_26_1, arg_26_2)
+LevelUnlockUtils.act_completed = function (statistics_db, player_stats_id, act_key)
 	-- function 26
-	assert(GameActs[arg_26_2] ~= nil, "Act %s does not exist.", arg_26_2)
+	assert(GameActs[act_key] ~= nil, "Act %s does not exist.", act_key)
 
-	local var_26_0 = GameActs[arg_26_2]
+	local act_levels = GameActs[act_key]
 
-	for i, v in ipairs(var_26_0) do
-		local get_persistent_stat = self:get_persistent_stat(arg_26_1, "completed_levels", v)
+	for _, level_key in ipairs(act_levels) do
+		local level_stat = statistics_db:get_persistent_stat(player_stats_id, "completed_levels", level_key)
+		local level_completed = not not level_stat and level_stat ~= 0
 
-		if not (not get_persistent_stat and get_persistent_stat ~= 0) then
+		if not level_completed then
 			return false
 		end
 	end
@@ -742,12 +807,12 @@ LevelUnlockUtils.act_completed = function (self, arg_26_1, arg_26_2)
 	return true
 end
 
-LevelUnlockUtils.num_acts_completed = function (arg_27_0, arg_27_1)
+LevelUnlockUtils.num_acts_completed = function (statistics_db, player_stats_id)
 	-- function 27
 	local num = 0
 
-	for k, v in pairs(GameActs) do
-		if not LevelUnlockUtils.act_completed(arg_27_0, arg_27_1, k) then
+	for act_key, _ in pairs(GameActs) do
+		if LevelUnlockUtils.act_completed(statistics_db, player_stats_id, act_key) then
 			num = num + 1
 		end
 	end
@@ -755,26 +820,26 @@ LevelUnlockUtils.num_acts_completed = function (arg_27_0, arg_27_1)
 	return num
 end
 
-LevelUnlockUtils.all_dlc_levels_completed = function (arg_28_0, arg_28_1, arg_28_2)
+LevelUnlockUtils.all_dlc_levels_completed = function (statistics_db, player_stats_id, dlc_name)
 	-- function 28
-	local var_28_0
+	local dlc_area_seetings
 
-	for k, v in pairs(AreaSettings) do
-		if v.dlc_name == arg_28_2 then
-			var_28_0 = v
+	for area_name, area_settings in pairs(AreaSettings) do
+		if area_settings.dlc_name == dlc_name then
+			dlc_area_seetings = area_settings
 
 			break
 		end
 	end
 
-	fassert(var_28_0, "Area settings for dlc: %s does not exist.", arg_28_2)
+	fassert(dlc_area_seetings, "Area settings for dlc: %s does not exist.", dlc_name)
 
-	local acts = var_28_0.acts
+	local acts = dlc_area_seetings.acts
 
-	fassert(acts, "Acts for dlc: %s does not exist.", arg_28_2)
+	fassert(acts, "Acts for dlc: %s does not exist.", dlc_name)
 
-	for i, v_2 in ipairs(acts) do
-		if not LevelUnlockUtils.act_completed(arg_28_0, arg_28_1, v_2) then
+	for _, act_key in ipairs(acts) do
+		if not LevelUnlockUtils.act_completed(statistics_db, player_stats_id, act_key) then
 			return false
 		end
 	end
@@ -784,50 +849,51 @@ end
 
 LevelUnlockUtils.set_all_acts_incompleted = function ()
 	-- function 29
-	local player = Managers.player
-	local statistics_db = player:statistics_db()
-	local stats_id = player:local_player():stats_id()
+	local player_manager = Managers.player
+	local statistics_db = player_manager:statistics_db()
+	local player = player_manager:local_player()
+	local stats_id = player:stats_id()
 
-	for i, v in ipairs(GameActsOrder) do
-		local min = math.min(i + 1, #GameActsOrder)
-		local var_29_4 = GameActsOrder[min]
+	for act_index, key in ipairs(GameActsOrder) do
+		local actual_act_index = math.min(act_index + 1, #GameActsOrder)
+		local act_key = GameActsOrder[actual_act_index]
 
-		fassert(var_29_4, "Could not find act for index %d.", min)
+		fassert(act_key, "Could not find act for index %d.", actual_act_index)
 
-		for i_2, v_2 in ipairs(GameActsOrder) do
-			local var_29_5 = GameActs[v_2]
+		for index, key in ipairs(GameActsOrder) do
+			local act_levels = GameActs[key]
 
-			for i_3, v_3 in ipairs(var_29_5) do
-				local get_persistent_stat = statistics_db:get_persistent_stat(stats_id, "completed_levels", v_3)
+			for _, level_key in ipairs(act_levels) do
+				local completed_times = statistics_db:get_persistent_stat(stats_id, "completed_levels", level_key)
 
-				while get_persistent_stat > 0 do
-					statistics_db:decrement_stat(stats_id, "completed_levels", v_3)
+				while completed_times > 0 do
+					statistics_db:decrement_stat(stats_id, "completed_levels", level_key)
 
-					get_persistent_stat = statistics_db:get_persistent_stat(stats_id, "completed_levels", v_3)
+					completed_times = statistics_db:get_persistent_stat(stats_id, "completed_levels", level_key)
 				end
 			end
 		end
 	end
 
-	local tbl = {}
+	local backend_stats = {}
 
-	statistics_db:generate_backend_stats(stats_id, tbl)
-	Managers.backend:set_stats(tbl)
+	statistics_db:generate_backend_stats(stats_id, backend_stats)
+	Managers.backend:set_stats(backend_stats)
 end
 
-LevelUnlockUtils.get_next_adventure_level = function (arg_30_0, arg_30_1)
+LevelUnlockUtils.get_next_adventure_level = function (statistics_db, player_stats_id)
 	-- function 30
-	for i = AdventureActStartId, #GameActsOrder do
-		local var_30_0 = GameActsOrder[i]
+	for act_id = AdventureActStartId, #GameActsOrder do
+		local act = GameActsOrder[act_id]
 
-		if not LevelUnlockUtils.act_completed(arg_30_0, arg_30_1, var_30_0) then
-			local var_30_1 = GameActs[var_30_0]
+		if not LevelUnlockUtils.act_completed(statistics_db, player_stats_id, act) then
+			local act_levels = GameActs[act]
 
-			for j = 1, #var_30_1 do
-				local var_30_2 = var_30_1[j]
+			for act_level_id = 1, #act_levels do
+				local act_level_key = act_levels[act_level_id]
 
-				if LevelUnlockUtils.completed_level_difficulty_index(arg_30_0, arg_30_1, var_30_2) <= 0 then
-					return var_30_2
+				if LevelUnlockUtils.completed_level_difficulty_index(statistics_db, player_stats_id, act_level_key) <= 0 then
+					return act_level_key
 				end
 			end
 		end
@@ -836,132 +902,138 @@ LevelUnlockUtils.get_next_adventure_level = function (arg_30_0, arg_30_1)
 	return nil
 end
 
-LevelUnlockUtils.debug_set_completed_game_difficulty = function (arg_31_0)
+LevelUnlockUtils.debug_set_completed_game_difficulty = function (difficulty)
 	-- function 31
 	local statistics_db = Managers.player:statistics_db()
-	local stats_id = Managers.player:local_player():stats_id()
+	local player = Managers.player:local_player()
+	local stats_id = player:stats_id()
 
-	for k, v in pairs(LevelDifficultyDBNames) do
-		local set_stat = statistics_db:set_stat(stats_id, "completed_levels_difficulty", v, arg_31_0)
+	for _, level_key in pairs(LevelDifficultyDBNames) do
+		local difficulty = statistics_db:set_stat(stats_id, "completed_levels_difficulty", level_key, difficulty)
 	end
 
-	local tbl = {}
+	local backend_stats = {}
 
-	statistics_db:generate_backend_stats(stats_id, tbl)
-	Managers.backend:set_stats(tbl)
+	statistics_db:generate_backend_stats(stats_id, backend_stats)
+	Managers.backend:set_stats(backend_stats)
 	Managers.backend:commit()
 end
 
-LevelUnlockUtils.debug_set_completed_journey_difficulty = function (arg_32_0, arg_32_1)
+LevelUnlockUtils.debug_set_completed_journey_difficulty = function (journey_name, difficulty_id)
 	-- function 32
 	local statistics_db = Managers.player:statistics_db()
-	local stats_id = Managers.player:local_player():stats_id()
-	local var_32_2 = JourneyDifficultyDBNames[arg_32_0]
+	local player = Managers.player:local_player()
+	local stats_id = player:stats_id()
+	local journey_difficulty_name = JourneyDifficultyDBNames[journey_name]
 
-	statistics_db:set_stat(stats_id, "completed_journeys_difficulty", var_32_2, arg_32_1)
+	statistics_db:set_stat(stats_id, "completed_journeys_difficulty", journey_difficulty_name, difficulty_id)
 
-	local tbl = {}
+	local backend_stats = {}
 
-	statistics_db:generate_backend_stats(stats_id, tbl)
-	Managers.backend:set_stats(tbl)
+	statistics_db:generate_backend_stats(stats_id, backend_stats)
+	Managers.backend:set_stats(backend_stats)
 	Managers.backend:commit()
 end
 
-LevelUnlockUtils.debug_set_completed_hero_journey_difficulty = function (arg_33_0, arg_33_1, arg_33_2)
+LevelUnlockUtils.debug_set_completed_hero_journey_difficulty = function (hero, journey_name, difficulty_id)
 	-- function 33
 	local statistics_db = Managers.player:statistics_db()
-	local stats_id = Managers.player:local_player():stats_id()
-	local var_33_2 = JourneyDifficultyDBNames[arg_33_1]
+	local player = Managers.player:local_player()
+	local stats_id = player:stats_id()
+	local journey_difficulty_name = JourneyDifficultyDBNames[journey_name]
 
-	statistics_db:set_stat(stats_id, "completed_hero_journey_difficulty", arg_33_0, var_33_2, arg_33_2)
+	statistics_db:set_stat(stats_id, "completed_hero_journey_difficulty", hero, journey_difficulty_name, difficulty_id)
 
-	local tbl = {}
+	local backend_stats = {}
 
-	statistics_db:generate_backend_stats(stats_id, tbl)
-	Managers.backend:set_stats(tbl)
+	statistics_db:generate_backend_stats(stats_id, backend_stats)
+	Managers.backend:set_stats(backend_stats)
 	Managers.backend:commit()
 end
 
-LevelUnlockUtils.debug_unlock_act = function (arg_34_0)
+LevelUnlockUtils.debug_unlock_act = function (act_index)
 	-- function 34
-	local player = Managers.player
-	local statistics_db = player:statistics_db()
-	local stats_id = player:local_player():stats_id()
-	local min = math.min(arg_34_0 + 1, #GameActsOrder)
-	local var_34_4 = GameActsOrder[min]
+	local player_manager = Managers.player
+	local statistics_db = player_manager:statistics_db()
+	local player = player_manager:local_player()
+	local stats_id = player:stats_id()
+	local actual_act_index = math.min(act_index + 1, #GameActsOrder)
+	local act_key = GameActsOrder[actual_act_index]
 
-	assert(var_34_4, "Could not find act for index %d.", min)
+	assert(act_key, "Could not find act for index %d.", actual_act_index)
 
-	local flag = false
+	local debug_act_passed = false
 
-	for i, v in ipairs(GameActsOrder) do
-		if v == var_34_4 then
-			flag = true
+	for index, key in ipairs(GameActsOrder) do
+		if key == act_key then
+			debug_act_passed = true
 		end
 
-		local var_34_6 = GameActs[v]
+		local act_levels = GameActs[key]
 
-		for i_2, v_2 in ipairs(var_34_6) do
-			if not flag then
-				statistics_db:increment_stat(stats_id, "completed_levels", v_2)
+		for _, level_key in ipairs(act_levels) do
+			if not debug_act_passed then
+				statistics_db:increment_stat(stats_id, "completed_levels", level_key)
 			else
-				local get_persistent_stat = statistics_db:get_persistent_stat(stats_id, "completed_levels", v_2)
+				local completed_times = statistics_db:get_persistent_stat(stats_id, "completed_levels", level_key)
 
-				while get_persistent_stat > 0 do
-					statistics_db:decrement_stat(stats_id, "completed_levels", v_2)
+				while completed_times > 0 do
+					statistics_db:decrement_stat(stats_id, "completed_levels", level_key)
 
-					get_persistent_stat = statistics_db:get_persistent_stat(stats_id, "completed_levels", v_2)
+					completed_times = statistics_db:get_persistent_stat(stats_id, "completed_levels", level_key)
 				end
 			end
 		end
 	end
 
-	local tbl = {}
+	local backend_stats = {}
 
-	statistics_db:generate_backend_stats(stats_id, tbl)
-	Managers.backend:set_stats(tbl)
+	statistics_db:generate_backend_stats(stats_id, backend_stats)
+	Managers.backend:set_stats(backend_stats)
 	Managers.backend:commit()
 end
 
-LevelUnlockUtils.debug_completed_act_levels = function (arg_35_0, arg_35_1)
+LevelUnlockUtils.debug_completed_act_levels = function (act_key, complete)
 	-- function 35
-	local player = Managers.player
-	local statistics_db = player:statistics_db()
-	local stats_id = player:local_player():stats_id()
-	local var_35_3 = GameActs[arg_35_0]
+	local player_manager = Managers.player
+	local statistics_db = player_manager:statistics_db()
+	local player = player_manager:local_player()
+	local stats_id = player:stats_id()
+	local act_levels = GameActs[act_key]
 
-	if not var_35_3 then
-		print("Could not find any levels for act", arg_35_0)
+	if not act_levels then
+		print("Could not find any levels for act", act_key)
 
 		return
 	end
 
-	for i, v in ipairs(var_35_3) do
-		if not arg_35_1 then
-			statistics_db:increment_stat(stats_id, "completed_levels", v)
+	for _, level_key in ipairs(act_levels) do
+		if complete then
+			statistics_db:increment_stat(stats_id, "completed_levels", level_key)
 		else
-			statistics_db:set_stat(stats_id, "completed_levels", v, 0)
+			statistics_db:set_stat(stats_id, "completed_levels", level_key, 0)
 		end
 	end
 
-	local tbl = {}
+	local backend_stats = {}
 
-	statistics_db:generate_backend_stats(stats_id, tbl)
-	Managers.backend:set_stats(tbl)
+	statistics_db:generate_backend_stats(stats_id, backend_stats)
+	Managers.backend:set_stats(backend_stats)
 	Managers.backend:commit()
 end
 
-LevelUnlockUtils.debug_complete_level = function (arg_36_0)
+LevelUnlockUtils.debug_complete_level = function (level_key)
 	-- function 36
-	local player = Managers.player
-	local statistics_db = player:statistics_db()
-	local stats_id = player:local_player():stats_id()
+	local player_manager = Managers.player
+	local statistics_db = player_manager:statistics_db()
+	local player = player_manager:local_player()
+	local stats_id = player:stats_id()
 
-	statistics_db:set_stat(stats_id, "completed_levels", arg_36_0, 1)
+	statistics_db:set_stat(stats_id, "completed_levels", level_key, 1)
 
-	local tbl = {}
+	local backend_stats = {}
 
-	statistics_db:generate_backend_stats(stats_id, tbl)
-	Managers.backend:set_stats(tbl)
+	statistics_db:generate_backend_stats(stats_id, backend_stats)
+	Managers.backend:set_stats(backend_stats)
 	Managers.backend:commit()
 end

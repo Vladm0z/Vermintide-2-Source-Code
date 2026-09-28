@@ -1,6 +1,7 @@
 -- chunkname: @scripts/settings/mutators/mutator_curse_khorne_champions.lua
 
-local var_0_0 = require("scripts/settings/mutators/mutator_base_curse_marked_enemies")("curse_khorne_champions_name", "curse_khorne_champions_desc", "deus_curse_khorne_01", "curse_khorne_champions_aoe", {
+local mutator_base_curse_marked_enemies = require("scripts/settings/mutators/mutator_base_curse_marked_enemies")
+local mutator = mutator_base_curse_marked_enemies("curse_khorne_champions_name", "curse_khorne_champions_desc", "deus_curse_khorne_01", "curse_khorne_champions_aoe", {
 	normal = {
 		mark_chance = 1,
 		max_marked_enemies = 2
@@ -31,8 +32,8 @@ local var_0_0 = require("scripts/settings/mutators/mutator_base_curse_marked_ene
 	skaven_storm_vermin_champion = true
 })
 
-var_0_0.packages = {
+mutator.packages = {
 	"resource_packages/mutators/mutator_curse_khorne_champions"
 }
 
-return var_0_0
+return mutator

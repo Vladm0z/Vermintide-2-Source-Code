@@ -2,70 +2,70 @@
 
 local UTF8Utils = UTF8Utils
 
-UTF8Utils = UTF8Utils or {}
+UTF8Utils = not not UTF8Utils or not not {}
 UTF8Utils = UTF8Utils
 
-local location = Utf8.location
+local Utf8_location = Utf8.location
 
-Utf8.length = function (arg_1_0)
+Utf8.length = function (text)
 	-- function 1
-	local count = #arg_1_0
-	local num = 1
+	local byte_length = #text
+	local next_byte_index = 1
 
-	for i = 1, count do
-		local location, var_1_3 = Utf8.location(arg_1_0, num)
+	for char_index = 1, byte_length do
+		local _, byte_index = Utf8.location(text, next_byte_index)
 
-		if count < var_1_3 then
-			return i
+		if byte_length < byte_index then
+			return char_index
 		end
 
-		num = var_1_3
+		next_byte_index = byte_index
 	end
 
 	return 0
 end
 
-UTF8Utils.sub_string = function (arg_2_0, arg_2_1, arg_2_2)
+UTF8Utils.sub_string = function (text, char_from, char_to)
 	-- function 2
-	if #arg_2_0 == 0 then
-		return arg_2_0
+	local num_bytes = #text
+
+	if num_bytes == 0 then
+		return text
 	end
 
-	local num = UTF8Utils.count_bytes(arg_2_0, arg_2_1 - 1, 1) + 1
-	local count_bytes = UTF8Utils.count_bytes(arg_2_0, arg_2_2 - arg_2_1 + 1, num)
+	local byte_from = UTF8Utils.count_bytes(text, char_from - 1, 1) + 1
+	local byte_to = UTF8Utils.count_bytes(text, char_to - char_from + 1, byte_from)
 
-	return string.sub(arg_2_0, num, count_bytes)
+	return string.sub(text, byte_from, byte_to)
 end
 
-UTF8Utils.count_bytes = function (arg_3_0, arg_3_1, arg_3_2)
+UTF8Utils.count_bytes = function (text, num_chars, start_byte)
 	-- function 3
-	local count = #arg_3_0
-	local var_3_1
+	local num_bytes = #text
+	local _
 
-	for i = 1, arg_3_1 do
-		local var_3_2
+	for char_index = 1, num_chars do
+		_, start_byte = Utf8_location(text, start_byte)
 
-		var_3_2, arg_3_2 = location(arg_3_0, arg_3_2)
-
-		if count < arg_3_2 then
+		if num_bytes < start_byte then
 			break
 		end
 	end
 
-	return arg_3_2 - 1
+	return start_byte - 1
 end
 
-UTF8Utils.clamp_byte_length = function (arg_4_0, arg_4_1)
+UTF8Utils.clamp_byte_length = function (text, max_bytes)
 	-- function 4
-	if arg_4_1 <= 0 then
+	if max_bytes <= 0 then
 		return ""
 	end
 
-	if arg_4_1 >= #arg_4_0 then
-		return arg_4_0
+	if max_bytes >= #text then
+		return text
 	end
 
-	local var_4_0 = location(arg_4_0, arg_4_1 + 1)
+	local next_byte_from = Utf8_location(text, max_bytes + 1)
 
-	return string.sub(arg_4_0, 1, var_4_0 - 1)
+	return string.sub(text, 1, next_byte_from - 1)
 end

@@ -2,25 +2,25 @@
 
 GenericUnitInteractableExtension = class(GenericUnitInteractableExtension)
 
-GenericUnitInteractableExtension.init = function (self, arg_1_1, arg_1_2, arg_1_3)
+GenericUnitInteractableExtension.init = function (self, extension_init_context, unit, extension_init_data)
 	-- function 1
-	self.unit = arg_1_2
-	self._is_level_object = Unit.level(arg_1_2) ~= nil
+	self.unit = unit
+	self._is_level_object = Unit.level(unit) ~= nil
 
-	local get_data = Unit.get_data(arg_1_2, "interaction_data", "interaction_type")
+	local get_data = Unit.get_data(unit, "interaction_data", "interaction_type")
 
-	get_data = get_data or "player_generic"
+	get_data = not not get_data or not not "player_generic"
 	self.interactable_type = get_data
-	self._override_interactable_action = Unit.get_data(arg_1_2, "override_interactable_action")
+	self._override_interactable_action = Unit.get_data(unit, "override_interactable_action")
 	self.interactor_unit = nil
 	self._enabled = true
 	self.num_times_successfully_completed = 0
 	self.interaction_result = nil
 
-	fassert(self.interactable_type, "Unit: %s missing interaction_type in its unit data, should it have an interaction extension?", arg_1_2)
+	fassert(self.interactable_type, "Unit: %s missing interaction_type in its unit data, should it have an interaction extension?", unit)
 end
 
-GenericUnitInteractableExtension.destroy = function (arg_2_0)
+GenericUnitInteractableExtension.destroy = function (self)
 	-- function 2
 	return
 end
@@ -30,45 +30,48 @@ GenericUnitInteractableExtension.interaction_type = function (self)
 	return self.interactable_type
 end
 
-GenericUnitInteractableExtension.local_only = function (arg_4_0)
+GenericUnitInteractableExtension.local_only = function (self)
 	-- function 4
 	return false
 end
 
-GenericUnitInteractableExtension.set_interactable_type = function (self, arg_5_1)
+GenericUnitInteractableExtension.set_interactable_type = function (self, new_interactable_type)
 	-- function 5
-	self.interactable_type = arg_5_1
+	self.interactable_type = new_interactable_type
 end
 
-GenericUnitInteractableExtension.set_is_being_interacted_with = function (self, arg_6_1, arg_6_2)
+GenericUnitInteractableExtension.set_is_being_interacted_with = function (self, interactor_unit, interaction_result)
 	-- function 6
 	local unit = self.unit
-	local interactable_type = self.interactable_type
+	local interaction_type = self.interactable_type
 
-	if not self.interactor_unit then
-		fassert(arg_6_1 == nil, "Interactor unit was already set.")
+	if self.interactor_unit then
+		fassert(interactor_unit == nil, "Interactor unit was already set.")
 
-		local interactor_unit = self.interactor_unit
-		local str = "lua_interaction_stopped_" .. interactable_type .. "_" .. InteractionResult[arg_6_2]
+		local current_interactor_unit = self.interactor_unit
+		local flow_event = "lua_interaction_stopped_" .. interaction_type .. "_" .. InteractionResult[interaction_result]
 
-		Unit.flow_event(unit, str)
+		Unit.flow_event(unit, flow_event)
 
-		if not (not NetworkUnit.is_network_unit(interactor_unit) and NetworkUnit.is_husk_unit(interactor_unit)) then
-			local str_2 = "lua_interaction_stopped_local_interactor_" .. interactable_type .. "_" .. InteractionResult[arg_6_2]
+		local is_interactor_network_unit = NetworkUnit.is_network_unit(current_interactor_unit)
+		local is_interactor_husk = not not is_interactor_network_unit and not not NetworkUnit.is_husk_unit(current_interactor_unit)
 
-			Unit.flow_event(unit, str_2)
+		if not is_interactor_husk then
+			local local_flow_event = "lua_interaction_stopped_local_interactor_" .. interaction_type .. "_" .. InteractionResult[interaction_result]
+
+			Unit.flow_event(unit, local_flow_event)
 		end
 	else
-		fassert(arg_6_1 ~= nil, "Interactor unit was already nil.")
-		Unit.set_flow_variable(unit, "lua_interaction_started_unit", arg_6_1)
+		fassert(interactor_unit ~= nil, "Interactor unit was already nil.")
+		Unit.set_flow_variable(unit, "lua_interaction_started_unit", interactor_unit)
 
-		local str_3 = "lua_interaction_started_" .. interactable_type
+		local flow_event = "lua_interaction_started_" .. interaction_type
 
-		Unit.flow_event(unit, str_3)
+		Unit.flow_event(unit, flow_event)
 	end
 
-	self.interactor_unit = arg_6_1
-	self.interaction_result = arg_6_2
+	self.interactor_unit = interactor_unit
+	self.interaction_result = interaction_result
 end
 
 GenericUnitInteractableExtension.is_being_interacted_with = function (self)
@@ -76,24 +79,42 @@ GenericUnitInteractableExtension.is_being_interacted_with = function (self)
 	return self.interactor_unit
 end
 
-GenericUnitInteractableExtension.hot_join_sync = function (self, arg_8_1)
+GenericUnitInteractableExtension.hot_join_sync = function (self, sender)
 	-- function 8
-	local unit = self.unit
+	local interactable_unit = self.unit
+	local only_once = Unit.get_data(interactable_unit, "interaction_data", "only_once")
 
-	if not Unit.get_data(unit, "interaction_data", "only_once") then
-		local game_object_or_level_id = Managers.state.network:game_object_or_level_id(self.unit)
-		local get_data = Unit.get_data(unit, "interaction_data", "used")
+	if only_once then
+		local network_manager = Managers.state.network
+		local interactable_unit_id = network_manager:game_object_or_level_id(self.unit)
+		local get_data = Unit.get_data(interactable_unit, "interaction_data", "used")
 
-		get_data = get_data or false
+		if not get_data then
+			-- Nothing
+		end
 
-		local get_data_2 = Unit.get_data(unit, "interaction_data", "individual_pickup")
+		get_data = false
 
-		get_data_2 = get_data_2 or false
+		local used = get_data
 
-		if get_data_2 or not get_data then
-			local var_8_4 = PEER_ID_TO_CHANNEL[arg_8_1]
+		::label_8_0::
 
-			RPC.rpc_sync_interactable_used_state(var_8_4, game_object_or_level_id, self._is_level_object, get_data)
+		local get_data_2 = Unit.get_data(interactable_unit, "interaction_data", "individual_pickup")
+
+		if not get_data_2 then
+			-- Nothing
+		end
+
+		get_data_2 = false
+
+		local individual_pickup = get_data_2
+
+		::label_8_1::
+
+		if not individual_pickup and used then
+			local channel_id = PEER_ID_TO_CHANNEL[sender]
+
+			RPC.rpc_sync_interactable_used_state(channel_id, interactable_unit_id, self._is_level_object, used)
 		end
 	end
 end
@@ -103,9 +124,9 @@ GenericUnitInteractableExtension.is_enabled = function (self)
 	return self._enabled
 end
 
-GenericUnitInteractableExtension.set_enabled = function (self, arg_10_1)
+GenericUnitInteractableExtension.set_enabled = function (self, enabled)
 	-- function 10
-	self._enabled = arg_10_1
+	self._enabled = enabled
 end
 
 GenericUnitInteractableExtension.override_interactable_action = function (self)

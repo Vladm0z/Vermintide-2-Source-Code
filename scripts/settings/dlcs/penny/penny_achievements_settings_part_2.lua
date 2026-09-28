@@ -1,8 +1,8 @@
 -- chunkname: @scripts/settings/dlcs/penny/penny_achievements_settings_part_2.lua
 
-local penny_part_2 = DLCSettings.penny_part_2
+local settings = DLCSettings.penny_part_2
 
-penny_part_2.achievement_outline = {
+settings.achievement_outline = {
 	levels = {
 		entries = {},
 		categories = {
@@ -26,6 +26,6 @@ penny_part_2.achievement_outline = {
 		}
 	}
 }
-penny_part_2.achievement_template_file_names = {
+settings.achievement_template_file_names = {
 	"scripts/managers/achievements/achievement_templates_penny_part_2"
 }

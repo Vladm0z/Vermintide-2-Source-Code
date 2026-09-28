@@ -1,6 +1,6 @@
 -- chunkname: @scripts/settings/mutators/mutator_curse_blood_storm_v2.lua
 
-local tbl = {
+local DIFFICULTY_POWER_LEVEL = {
 	harder = 60,
 	hard = 45,
 	normal = 30,
@@ -10,7 +10,7 @@ local tbl = {
 	cataclysm_2 = 110,
 	easy = 20
 }
-local tbl_2 = {
+local STORM_STATES = {
 	COOLDOWN = "COOLDOWN",
 	ACTIVE = "ACTIVE",
 	READY = "READY"
@@ -18,76 +18,76 @@ local tbl_2 = {
 
 script_data.blood_storm_debug = true
 
-local printf = printf
+local global_printf = printf
 
-local function fn(...)
+local function printf(...)
 	-- function 1
-	local var_1_0 = sprintf(...)
+	local message = sprintf(...)
 
-	printf("[MutatorCurseBloodStorm] %s", var_1_0)
+	global_printf("[MutatorCurseBloodStorm] %s", message)
 end
 
-local function fn_2(...)
+local function dprintf(...)
 	-- function 2
-	if not script_data.blood_storm_debug then
-		local var_2_0 = sprintf(...)
+	if script_data.blood_storm_debug then
+		local message = sprintf(...)
 
-		printf("[MutatorCurseBloodStorm] %s", var_2_0)
+		global_printf("[MutatorCurseBloodStorm] %s", message)
 	end
 end
 
-local var_0_5 = class(Storm)
+local Storm = class(Storm)
 
-var_0_5.init = function (self, arg_3_1, arg_3_2, arg_3_3, arg_3_4, arg_3_5, arg_3_6)
+Storm.init = function (self, vortex_template_name, inner_decal_unit_name, outer_decal_unit_name, min_cooldown, max_cooldown, logging_prefix)
 	-- function 3
-	self._logging_prefix = arg_3_6
+	self._logging_prefix = logging_prefix
 
-	fn_2("-%s- init", arg_3_6)
+	dprintf("-%s- init", logging_prefix)
 
-	self._vortex_template_name = arg_3_1
-	self._inner_decal_unit_name = arg_3_2
-	self._outer_decal_unit_name = arg_3_3
-	self._max_cooldown = arg_3_5
-	self._min_cooldown = arg_3_4
+	self._vortex_template_name = vortex_template_name
+	self._inner_decal_unit_name = inner_decal_unit_name
+	self._outer_decal_unit_name = outer_decal_unit_name
+	self._max_cooldown = max_cooldown
+	self._min_cooldown = min_cooldown
 	self._active_storm_data = nil
-	self._state = tbl_2.COOLDOWN
-	self._cooldown_end_t = Math.random_range(arg_3_4, arg_3_5)
+	self._state = STORM_STATES.COOLDOWN
+	self._cooldown_end_t = Math.random_range(min_cooldown, max_cooldown)
 end
 
-var_0_5.destroy = function (self)
+Storm.destroy = function (self)
 	-- function 4
-	fn_2("-%s- destroy", self._logging_prefix)
+	dprintf("-%s- destroy", self._logging_prefix)
 
-	if not self._active_storm_data then
+	if self._active_storm_data then
 		self:_clear_active_storm()
 	end
 end
 
-var_0_5.update = function (self, arg_5_1, arg_5_2)
+Storm.update = function (self, dt, t)
 	-- function 5
-	if self._state == tbl_2.COOLDOWN then
-		if arg_5_2 > self._cooldown_end_t then
-			self._state = tbl_2.READY
+	if self._state == STORM_STATES.COOLDOWN then
+		if t > self._cooldown_end_t then
+			self._state = STORM_STATES.READY
 
-			fn_2("-%s- new state %s", self._logging_prefix, self._state)
+			dprintf("-%s- new state %s", self._logging_prefix, self._state)
 		end
-	elseif self._state == tbl_2.READY then
+	elseif self._state == STORM_STATES.READY then
 		-- Nothing
-	elseif self._state == tbl_2.ACTIVE then
-		local summoned_vortex_unit = self._active_storm_data.summoned_vortex_unit
+	elseif self._state == STORM_STATES.ACTIVE then
+		local unit = self._active_storm_data.summoned_vortex_unit
 
-		if not summoned_vortex_unit then
-			if not Unit.alive(summoned_vortex_unit) then
-				local _min_cooldown = self._min_cooldown
-				local _max_cooldown = self._max_cooldown
+		if unit then
+			if not Unit.alive(unit) then
+				local min_cooldown = self._min_cooldown
+				local max_cooldown = self._max_cooldown
 
-				self._cooldown_end_t = Math.random_range(_min_cooldown, _max_cooldown)
-				self._state = tbl_2.COOLDOWN
+				self._cooldown_end_t = Math.random_range(min_cooldown, max_cooldown)
+				self._state = STORM_STATES.COOLDOWN
 
-				fn_2("-%s- new state %s", self._logging_prefix, self._state)
+				dprintf("-%s- new state %s", self._logging_prefix, self._state)
 				self:_clear_active_storm()
 			else
-				self._active_storm_data.latest_position = Unit.local_position(summoned_vortex_unit, 0)
+				self._active_storm_data.latest_position = Unit.local_position(unit, 0)
 			end
 		end
 	else
@@ -95,134 +95,137 @@ var_0_5.update = function (self, arg_5_1, arg_5_2)
 		local str = "unknown state %d"
 		local _state = self._state
 
-		_state = _state or "nil"
+		_state = not not _state or not not "nil"
 
 		ferror(str, _state)
 	end
 end
 
-var_0_5.spawn = function (self, arg_6_1)
+Storm.spawn = function (self, spawn_position)
 	-- function 6
-	fassert(self._state == tbl_2.READY, "prepare_spawn can only be called when the state of the storm is READY")
-	fn_2("-%s- spawn", self._logging_prefix)
+	fassert(self._state == STORM_STATES.READY, "prepare_spawn can only be called when the state of the storm is READY")
+	dprintf("-%s- spawn", self._logging_prefix)
 
-	if not self._active_storm_data then
+	if self._active_storm_data then
 		self:_clear_active_storm()
 	end
 
-	local _vortex_template_name = self._vortex_template_name
-	local var_6_1 = VortexTemplates[_vortex_template_name]
-	local num = 2
-	local min = math.min(num / var_6_1.full_inner_radius, 1)
-	local _inner_decal_unit_name = self._inner_decal_unit_name
-	local var_6_5
+	local vortex_template_name = self._vortex_template_name
+	local vortex_template = VortexTemplates[vortex_template_name]
+	local spawn_radius = 2
+	local inner_radius_p = math.min(spawn_radius / vortex_template.full_inner_radius, 1)
+	local inner_decal_unit_name = self._inner_decal_unit_name
+	local inner_decal_unit
 
-	if not _inner_decal_unit_name then
-		local from_quaternion_position = Matrix4x4.from_quaternion_position(Quaternion.identity(), arg_6_1)
-		local max = math.max(var_6_1.min_inner_radius, min * var_6_1.full_inner_radius)
+	if inner_decal_unit_name then
+		local inner_spawn_pose = Matrix4x4.from_quaternion_position(Quaternion.identity(), spawn_position)
+		local inner_radius = math.max(vortex_template.min_inner_radius, inner_radius_p * vortex_template.full_inner_radius)
 
-		Matrix4x4.set_scale(from_quaternion_position, Vector3(max, max, max))
+		Matrix4x4.set_scale(inner_spawn_pose, Vector3(inner_radius, inner_radius, inner_radius))
 
-		var_6_5 = Managers.state.unit_spawner:spawn_network_unit(_inner_decal_unit_name, "network_synched_dummy_unit", nil, from_quaternion_position)
+		inner_decal_unit = Managers.state.unit_spawner:spawn_network_unit(inner_decal_unit_name, "network_synched_dummy_unit", nil, inner_spawn_pose)
 	end
 
-	local _outer_decal_unit_name = self._outer_decal_unit_name
-	local var_6_9
+	local outer_decal_unit_name = self._outer_decal_unit_name
+	local outer_decal_unit
 
-	if not _outer_decal_unit_name then
-		local from_quaternion_position_2 = Matrix4x4.from_quaternion_position(Quaternion.identity(), arg_6_1)
-		local max_2 = math.max(var_6_1.min_outer_radius, min * var_6_1.full_outer_radius)
+	if outer_decal_unit_name then
+		local outer_spawn_pose = Matrix4x4.from_quaternion_position(Quaternion.identity(), spawn_position)
+		local outer_radius = math.max(vortex_template.min_outer_radius, inner_radius_p * vortex_template.full_outer_radius)
 
-		Matrix4x4.set_scale(from_quaternion_position_2, Vector3(max_2, max_2, max_2))
+		Matrix4x4.set_scale(outer_spawn_pose, Vector3(outer_radius, outer_radius, outer_radius))
 
-		var_6_9 = Managers.state.unit_spawner:spawn_network_unit(_outer_decal_unit_name, "network_synched_dummy_unit", nil, from_quaternion_position_2)
+		outer_decal_unit = Managers.state.unit_spawner:spawn_network_unit(outer_decal_unit_name, "network_synched_dummy_unit", nil, outer_spawn_pose)
 	end
 
-	local var_6_12 = self
-	local tbl = {
-		prepare_func = function (arg_7_0, arg_7_1)
+	local storm_instance = self
+	local optional_data = {
+		prepare_func = function (breed, extension_init_data)
 			-- function 7
-			arg_7_1.ai_supplementary_system = {
-				vortex_template_name = _vortex_template_name,
-				inner_decal_unit = var_6_5,
-				outer_decal_unit = var_6_9
+			extension_init_data.ai_supplementary_system = {
+				vortex_template_name = vortex_template_name,
+				inner_decal_unit = inner_decal_unit,
+				outer_decal_unit = outer_decal_unit
 			}
 		end,
-		spawned_func = function (arg_8_0, arg_8_1, arg_8_2)
+		spawned_func = function (vortex_unit, breed, optional_data)
 			-- function 8
-			var_6_12._active_storm_data.summoned_vortex_unit = arg_8_0
-			var_6_12._active_storm_data.vortex_extension = ScriptUnit.has_extension(arg_8_0, "ai_supplementary_system")
+			storm_instance._active_storm_data.summoned_vortex_unit = vortex_unit
+			storm_instance._active_storm_data.vortex_extension = ScriptUnit.has_extension(vortex_unit, "ai_supplementary_system")
 		end
 	}
-	local var_6_14 = arg_6_1
-	local breed_name = var_6_1.breed_name
-	local var_6_16 = Breeds[breed_name]
-	local str = "vortex"
-	local spawn_queued_unit = Managers.state.conflict:spawn_queued_unit(var_6_16, Vector3Box(var_6_14), QuaternionBox(Quaternion.identity()), str, nil, nil, tbl)
+	local spawn_pos = spawn_position
+	local breed_name = vortex_template.breed_name
+	local breed = Breeds[breed_name]
+	local spawn_category = "vortex"
+	local queue_id = Managers.state.conflict:spawn_queued_unit(breed, Vector3Box(spawn_pos), QuaternionBox(Quaternion.identity()), spawn_category, nil, nil, optional_data)
 
 	self._active_storm_data = {
-		queue_id = spawn_queued_unit,
-		starting_position = Vector3Box(arg_6_1)
+		queue_id = queue_id,
+		starting_position = Vector3Box(spawn_position)
 	}
-	self._state = tbl_2.ACTIVE
+	self._state = STORM_STATES.ACTIVE
 
-	fn_2("-%s- new state %s", self._logging_prefix, self._state)
+	dprintf("-%s- new state %s", self._logging_prefix, self._state)
 end
 
-var_0_5.get_state = function (self)
+Storm.get_state = function (self)
 	-- function 9
 	return self._state
 end
 
-var_0_5.get_position = function (self)
+Storm.get_position = function (self)
 	-- function 10
-	local _active_storm_data = self._active_storm_data
+	local active_storm_data = self._active_storm_data
 
-	if not _active_storm_data then
+	if not active_storm_data then
 		return nil
 	end
 
-	local summoned_vortex_unit = _active_storm_data.summoned_vortex_unit
+	local vortex_unit = active_storm_data.summoned_vortex_unit
 
-	if not summoned_vortex_unit then
+	if not vortex_unit then
 		return nil
 	end
 
-	if not Unit.alive(summoned_vortex_unit) then
+	if not Unit.alive(vortex_unit) then
 		return nil
 	end
 
-	local latest_position = _active_storm_data.latest_position
+	local latest_position = active_storm_data.latest_position
 
 	if not latest_position then
-		return _active_storm_data.starting_position:unbox()
+		local starting_position = active_storm_data.starting_position
+
+		return starting_position:unbox()
 	else
 		return latest_position
 	end
 end
 
-var_0_5.get_vortex_unit = function (self)
+Storm.get_vortex_unit = function (self)
 	-- function 11
-	local _active_storm_data = self._active_storm_data
+	local active_storm_data = self._active_storm_data
 
-	return not _active_storm_data and _active_storm_data.summoned_vortex_unit
+	return not not active_storm_data and not not active_storm_data.summoned_vortex_unit
 end
 
-var_0_5.get_vortex_extension = function (self)
+Storm.get_vortex_extension = function (self)
 	-- function 12
-	local _active_storm_data = self._active_storm_data
+	local active_storm_data = self._active_storm_data
 
-	return not _active_storm_data and _active_storm_data.vortex_extension
+	return not not active_storm_data and not not active_storm_data.vortex_extension
 end
 
-var_0_5._clear_active_storm = function (self)
+Storm._clear_active_storm = function (self)
 	-- function 13
-	local _active_storm_data = self._active_storm_data
+	local active_storm_data = self._active_storm_data
+	local summoned_vortex_unit = active_storm_data.summoned_vortex_unit
 
-	if not _active_storm_data.summoned_vortex_unit then
-		local queue_id = _active_storm_data.queue_id
+	if not summoned_vortex_unit then
+		local queue_id = active_storm_data.queue_id
 
-		if not queue_id then
+		if queue_id then
 			Managers.state.conflict:remove_queued_unit(queue_id)
 		end
 	end
@@ -230,18 +233,18 @@ var_0_5._clear_active_storm = function (self)
 	self._active_storm_data = nil
 end
 
-local num = 0.2
-local str = "curse_blood_storm_dot"
-local str_2 = "curse_blood_storm_dot_bots"
-local num_2 = 3
-local str_3 = "blood_storm"
-local str_4 = "units/decals/deus_decal_bloodstorm_inner"
-local str_5 = "units/decals/deus_decal_bloodstorm_outer"
-local num_3 = 15
-local num_4 = 20
-local num_5 = 10
-local num_6 = 30
-local num_7 = 10
+local BLEED_RATE = 0.2
+local BLEED_BUFF = "curse_blood_storm_dot"
+local BLEED_BUFF_BOTS = "curse_blood_storm_dot_bots"
+local STORM_COUNT = 3
+local VORTEX_TEMPLATE_NAME = "blood_storm"
+local INNER_DECAL_UNIT_NAME = "units/decals/deus_decal_bloodstorm_inner"
+local OUTER_DECAL_UNIT_NAME = "units/decals/deus_decal_bloodstorm_outer"
+local MIN_COOLDOWN = 15
+local MAX_COOLDOWN = 20
+local MIN_DISTANCE = 10
+local MAX_DISTANCE = 30
+local DISTANCE_TO_FORBIDDEN_POSITION_LIST = 10
 
 return {
 	description = "curse_blood_storm_desc",
@@ -250,103 +253,109 @@ return {
 	packages = {
 		"resource_packages/mutators/mutator_curse_blood_storm"
 	},
-	server_start_function = function (arg_14_0, arg_14_1)
+	server_start_function = function (context, data)
 		-- function 14
-		local tbl = {}
+		local storms = {}
 
-		for i = 1, num_2 do
-			tbl[#tbl + 1] = var_0_5:new(str_3, str_4, str_5, num_3, num_4, i)
+		for i = 1, STORM_COUNT do
+			storms[#storms + 1] = Storm:new(VORTEX_TEMPLATE_NAME, INNER_DECAL_UNIT_NAME, OUTER_DECAL_UNIT_NAME, MIN_COOLDOWN, MAX_COOLDOWN, i)
 		end
 
-		arg_14_1.storms = tbl
-		arg_14_1.next_bleed_time = 0
+		data.storms = storms
+		data.next_bleed_time = 0
 	end,
-	server_pre_update_function = function (arg_15_0, arg_15_1, arg_15_2, arg_15_3)
+	server_pre_update_function = function (context, data, dt, t)
 		-- function 15
-		if Managers.state.unit_spawner.game_session == nil or not global_is_inside_inn then
+		if Managers.state.unit_spawner.game_session == nil or global_is_inside_inn then
 			return
 		end
 
-		local flag = false
+		local should_bleed = false
 
-		if arg_15_3 > arg_15_1.next_bleed_time then
-			flag = true
-			arg_15_1.next_bleed_time = arg_15_3 + num
+		if t > data.next_bleed_time then
+			should_bleed = true
+			data.next_bleed_time = t + BLEED_RATE
 		end
 
-		local storms = arg_15_1.storms
+		local storms = data.storms
 
-		for i = 1, #storms do
-			storms[i]:update(arg_15_2, arg_15_3)
+		for storm_index = 1, #storms do
+			local storm = storms[storm_index]
+
+			storm:update(dt, t)
 		end
 
-		for j = 1, #storms do
-			local var_15_2 = storms[j]
-			local get_state = var_15_2:get_state()
+		for storm_index = 1, #storms do
+			local storm = storms[storm_index]
+			local state = storm:get_state()
 
-			if get_state == tbl_2.READY then
-				local get_random_alive_hero = PlayerUtils.get_random_alive_hero()
+			if state == STORM_STATES.READY then
+				local random_player = PlayerUtils.get_random_alive_hero()
 
-				if not get_random_alive_hero then
-					local var_15_5 = POSITION_LOOKUP[get_random_alive_hero]
-					local tbl_3 = {}
-					local PLAYER_AND_BOT_UNITS = Managers.state.side:get_side_from_name("heroes").PLAYER_AND_BOT_UNITS
+				if random_player then
+					local center_position = POSITION_LOOKUP[random_player]
+					local forbidden_position_list = {}
+					local side = Managers.state.side:get_side_from_name("heroes")
+					local players = side.PLAYER_AND_BOT_UNITS
 
-					for k = 1, #PLAYER_AND_BOT_UNITS do
-						local var_15_8 = PLAYER_AND_BOT_UNITS[k]
+					for player_index = 1, #players do
+						local unit = players[player_index]
 
-						tbl_3[#tbl_3 + 1] = POSITION_LOOKUP[var_15_8]
+						forbidden_position_list[#forbidden_position_list + 1] = POSITION_LOOKUP[unit]
 					end
 
-					for l = 1, #storms do
-						local var_15_9 = storms[l]
+					for i = 1, #storms do
+						local other_storm = storms[i]
 
-						tbl_3[#tbl_3 + 1] = var_15_9:get_position()
+						forbidden_position_list[#forbidden_position_list + 1] = other_storm:get_position()
 					end
 
 					local nav_world = Managers.state.entity:system("ai_system"):nav_world()
-					local tbl_4 = {}
+					local output_position_list = {}
 
-					ConflictUtils.find_positions_around_position(var_15_5, tbl_4, nav_world, num_5, num_6, 1, tbl_3, num_7)
+					ConflictUtils.find_positions_around_position(center_position, output_position_list, nav_world, MIN_DISTANCE, MAX_DISTANCE, 1, forbidden_position_list, DISTANCE_TO_FORBIDDEN_POSITION_LIST)
 
-					local var_15_12 = tbl_4[1]
+					local position_found = output_position_list[1]
 
-					if not var_15_12 then
-						var_15_2:spawn(var_15_12)
+					if position_found then
+						storm:spawn(position_found)
 					end
 				end
-			elseif get_state ~= tbl_2.ACTIVE or not flag then
-				local get_vortex_extension = var_15_2:get_vortex_extension()
-				local get_vortex_unit = var_15_2:get_vortex_unit()
+			elseif state == STORM_STATES.ACTIVE and should_bleed then
+				local vortex_extension = storm:get_vortex_extension()
+				local vortex_unit = storm:get_vortex_unit()
 
-				if not get_vortex_extension then
+				if vortex_extension then
 					local players = Managers.player:players()
 
-					for k_2, v in pairs(players) do
-						local player_unit = v.player_unit
+					for _, player in pairs(players) do
+						local player_unit = player.player_unit
 
-						if not ALIVE[player_unit] then
-							local var_15_17 = POSITION_LOOKUP[player_unit]
+						if ALIVE[player_unit] then
+							local position = POSITION_LOOKUP[player_unit]
+							local is_inside = vortex_extension:is_position_inside(position)
 
-							if not get_vortex_extension:is_position_inside(var_15_17) then
-								local system = Managers.state.entity:system("buff_system")
-								local get_difficulty = Managers.state.difficulty:get_difficulty()
-								local var_15_20 = tbl[get_difficulty]
-								local var_15_21
+							if is_inside then
+								local buff_system = Managers.state.entity:system("buff_system")
+								local difficulty = Managers.state.difficulty:get_difficulty()
+								local power_level = DIFFICULTY_POWER_LEVEL[difficulty]
+								local var_15_0
 
-								if not v.bot_player then
-									var_15_21 = str_2
+								if player.bot_player then
+									var_15_0 = BLEED_BUFF_BOTS
 
-									if not var_15_21 then
+									if not var_15_0 then
 										-- Nothing
 									end
 								end
 
-								var_15_21 = str
+								var_15_0 = BLEED_BUFF
+
+								local buff = var_15_0
 
 								::label_15_0::
 
-								system:add_buff(player_unit, var_15_21, get_vortex_unit, false, var_15_20)
+								buff_system:add_buff(player_unit, buff, vortex_unit, false, power_level)
 							end
 						end
 					end
@@ -354,13 +363,15 @@ return {
 			end
 		end
 	end,
-	server_player_hit_function = function (arg_16_0, arg_16_1, arg_16_2, arg_16_3, arg_16_4)
+	server_player_hit_function = function (context, data, hit_unit, attacker_unit, hit_data)
 		-- function 16
-		if arg_16_4[2] == "blood_storm" then
-			local extension_input = ScriptUnit.extension_input(arg_16_2, "dialogue_system")
-			local alloc_table = FrameTable.alloc_table()
+		local damage_type = hit_data[2]
 
-			extension_input:trigger_dialogue_event("curse_damage_taken", alloc_table)
+		if damage_type == "blood_storm" then
+			local dialogue_input = ScriptUnit.extension_input(hit_unit, "dialogue_system")
+			local event_data = FrameTable.alloc_table()
+
+			dialogue_input:trigger_dialogue_event("curse_damage_taken", event_data)
 		end
 	end
 }

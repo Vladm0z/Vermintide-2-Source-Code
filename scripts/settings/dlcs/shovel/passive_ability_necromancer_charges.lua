@@ -1,22 +1,21 @@
 -- chunkname: @scripts/settings/dlcs/shovel/passive_ability_necromancer_charges.lua
 
-local tbl = {
+local RPCS = {
 	"rpc_necromancer_passive_spawn_pet",
 	"rpc_necromancer_respawn_all_pets",
 	"rpc_necromancer_passive_kill_pets"
 }
-local var_0_1
-local var_0_2
+local PositionModesLookup
 
-NecromancerPositionModes, var_0_2 = table.enum_lookup("Absolute", "Relative")
+NecromancerPositionModes, PositionModesLookup = table.enum_lookup("Absolute", "Relative")
 PassiveAbilityNecromancerCharges = class(PassiveAbilityNecromancerCharges)
 
-PassiveAbilityNecromancerCharges.init = function (self, arg_1_1, arg_1_2, arg_1_3, arg_1_4)
+PassiveAbilityNecromancerCharges.init = function (self, extension_init_context, unit, extension_init_data, ability_init_data)
 	-- function 1
-	self._player = arg_1_3.player
-	self._is_local = arg_1_3.player.local_player
-	self._owner_unit = arg_1_2
-	self._is_server = arg_1_1.is_server
+	self._player = extension_init_data.player
+	self._is_local = extension_init_data.player.local_player
+	self._owner_unit = unit
+	self._is_server = extension_init_context.is_server
 	self._nav_world = Managers.state.entity:system("ai_system"):nav_world()
 	self._army_definition = {}
 	self._spawn_queue = {}
@@ -26,72 +25,74 @@ PassiveAbilityNecromancerCharges.init = function (self, arg_1_1, arg_1_2, arg_1_
 	self._pet_respawn_buffs = {}
 	self._last_spawn_index = 0
 	self._resummon_spawn_data = {}
-	self._network_transmit = arg_1_1.network_transmit
+	self._network_transmit = extension_init_context.network_transmit
 	self._network_event_delegate = self._network_transmit.network_event_delegate
 
-	self._network_event_delegate:register(self, unpack(tbl))
+	self._network_event_delegate:register(self, unpack(RPCS))
 
-	self._unit_storage = arg_1_1.unit_storage
+	self._unit_storage = extension_init_context.unit_storage
 	self._ping_explosion_params = {
-		source_attacker_unit = arg_1_2
+		source_attacker_unit = unit
 	}
 	self._dual_wield_params = {
-		source_attacker_unit = arg_1_2
+		source_attacker_unit = unit
 	}
 	self._achv_staff_gandalf_data = {}
 end
 
-PassiveAbilityNecromancerCharges.warm_up_skeletons = function (arg_2_0, arg_2_1)
+PassiveAbilityNecromancerCharges.warm_up_skeletons = function (self, breeds)
 	-- function 2
 	print("Necromancer - Warm up skeletons:")
 
 	local enemy_package_loader = Managers.level_transition_handler.enemy_package_loader
-	local flag = true
+	local ignore_breed_limits = true
 
-	for i, v in ipairs(arg_2_1) do
-		if not enemy_package_loader:is_breed_processed(v) then
-			printf("\t -> %s", v)
-			enemy_package_loader:request_breed(v, flag)
+	for k, breed_name in ipairs(breeds) do
+		if not enemy_package_loader:is_breed_processed(breed_name) then
+			printf("\t -> %s", breed_name)
+			enemy_package_loader:request_breed(breed_name, ignore_breed_limits)
 		end
 	end
 end
 
-PassiveAbilityNecromancerCharges.extensions_ready = function (self, arg_3_1, arg_3_2)
+PassiveAbilityNecromancerCharges.extensions_ready = function (self, world, unit)
 	-- function 3
 	self._buff_system = Managers.state.entity:system("buff_system")
-	self._buff_extension = ScriptUnit.extension(arg_3_2, "buff_system")
-	self._status_extension = ScriptUnit.extension(arg_3_2, "status_system")
-	self._talent_extension = ScriptUnit.extension(arg_3_2, "talent_system")
+	self._buff_extension = ScriptUnit.extension(unit, "buff_system")
+	self._status_extension = ScriptUnit.extension(unit, "status_system")
+	self._talent_extension = ScriptUnit.extension(unit, "talent_system")
 	self._cutscene_system = Managers.state.entity:system("cutscene_system")
 
-	local has_extension = ScriptUnit.has_extension(arg_3_2, "career_system")
+	local career_extension = ScriptUnit.has_extension(unit, "career_system")
 
-	if not has_extension then
-		local ability_id = has_extension:ability_id("bw_necromancer")
+	if career_extension then
+		local ability_id = career_extension:ability_id("bw_necromancer")
 
-		self._career_ability = has_extension:ability_by_id(ability_id)
+		self._career_ability = career_extension:ability_by_id(ability_id)
 	end
 
-	if self._is_local or not self._is_server then
-		self._commander_extension = ScriptUnit.extension(arg_3_2, "ai_commander_system")
+	if self._is_local or self._is_server then
+		self._commander_extension = ScriptUnit.extension(unit, "ai_commander_system")
 	end
 
 	self:_register_events()
-	self:_on_talents_changed(arg_3_2, ScriptUnit.extension(arg_3_2, "talent_system"))
+	self:_on_talents_changed(unit, ScriptUnit.extension(unit, "talent_system"))
 
 	self._start_update_t = Managers.time:time("game") + 3
 end
 
-PassiveAbilityNecromancerCharges._on_talents_changed = function (self, arg_4_1, arg_4_2)
+PassiveAbilityNecromancerCharges._on_talents_changed = function (self, unit, talent_extension)
 	-- function 4
-	if arg_4_1 ~= self._owner_unit then
+	if unit ~= self._owner_unit then
 		return
 	end
 
-	self._has_army = arg_4_2:has_talent("sienna_necromancer_6_1")
-	self._has_dual_wield = arg_4_2:has_talent("sienna_necromancer_6_2")
+	self._has_army = talent_extension:has_talent("sienna_necromancer_6_1")
+	self._has_dual_wield = talent_extension:has_talent("sienna_necromancer_6_2")
 
-	if not arg_4_2:has_talent("sienna_necromancer_6_3") then
+	local has_mix = talent_extension:has_talent("sienna_necromancer_6_3")
+
+	if has_mix then
 		self._army_definition = {
 			"pet_skeleton_with_shield",
 			"pet_skeleton_with_shield",
@@ -100,7 +101,7 @@ PassiveAbilityNecromancerCharges._on_talents_changed = function (self, arg_4_1, 
 			"pet_skeleton_armored",
 			"pet_skeleton_armored"
 		}
-	elseif not self._has_dual_wield then
+	elseif self._has_dual_wield then
 		self._army_definition = table.fill({}, 6, "pet_skeleton_dual_wield")
 	else
 		self._army_definition = table.fill({}, 6, "pet_skeleton")
@@ -108,31 +109,33 @@ PassiveAbilityNecromancerCharges._on_talents_changed = function (self, arg_4_1, 
 
 	local _has_army = self._has_army
 
-	_has_army = not _has_army and table.fill({}, 6, "pet_skeleton")
+	_has_army = not not _has_army and not not table.fill({}, 6, "pet_skeleton")
 	self._extra_army_skeletons = _has_army
 
-	local in_hub_level = Managers.level_transition_handler:in_hub_level()
+	local is_in_inn_level = Managers.level_transition_handler:in_hub_level()
 	local pets_forbidden_in_hub = script_data.pets_forbidden_in_hub
 
-	pets_forbidden_in_hub = not pets_forbidden_in_hub and in_hub_level
+	pets_forbidden_in_hub = not not pets_forbidden_in_hub and not not is_in_inn_level
 	self._pets_forbidden_in_level = pets_forbidden_in_hub
 
-	if not self._is_server then
+	if self._is_server then
 		self:warm_up_skeletons(self._army_definition)
 	end
 
 	self._force_respawn_pets = true
 end
 
-PassiveAbilityNecromancerCharges._register_events = function (arg_5_0)
+PassiveAbilityNecromancerCharges._register_events = function (self)
 	-- function 5
-	Managers.state.event:register(arg_5_0, "on_talents_changed", "_on_talents_changed")
+	Managers.state.event:register(self, "on_talents_changed", "_on_talents_changed")
 end
 
-PassiveAbilityNecromancerCharges._unregister_events = function (arg_6_0)
+PassiveAbilityNecromancerCharges._unregister_events = function (self)
 	-- function 6
-	if not Managers.state.event then
-		Managers.state.event:unregister("on_talents_changed", arg_6_0)
+	local event_manager = Managers.state.event
+
+	if event_manager then
+		Managers.state.event:unregister("on_talents_changed", self)
 	end
 end
 
@@ -141,7 +144,9 @@ PassiveAbilityNecromancerCharges.destroy = function (self)
 	self._network_event_delegate:unregister(self)
 	self:_unregister_events()
 
-	if not Managers.state.network:in_game_session() then
+	local in_game_session = Managers.state.network:in_game_session()
+
+	if not in_game_session then
 		return
 	end
 
@@ -149,113 +154,115 @@ PassiveAbilityNecromancerCharges.destroy = function (self)
 		return
 	end
 
-	if not self._is_server then
+	if self._is_server then
 		self:_kill_all_pets_server(true)
 	end
 end
 
-PassiveAbilityNecromancerCharges.update = function (self, arg_8_1, arg_8_2)
+PassiveAbilityNecromancerCharges.update = function (self, dt, t)
 	-- function 8
-	if arg_8_2 < self._start_update_t then
+	if t < self._start_update_t then
 		return
 	end
 
-	if not self._is_server then
+	if self._is_server then
 		self:_update_pets_server()
-		self:_update_spawning(arg_8_2)
+		self:_update_spawning(t)
 	end
 
-	self:_update_achievements(arg_8_2)
+	self:_update_achievements(t)
 end
 
-local tbl_2 = {}
-local num = 4
-local num_2 = 10
-local num_3 = math.pi * 0.05
+local relative_raise_positions = {}
+local offset = 4
+local num_positions = 10
+local angle_between_positions = math.pi * 0.05
 
-for i = 1, num_2 do
-	local num_4 = (i - (num_2 * 0.5 - 0.5)) * num_3
-	local var_0_8 = Vector3Box(Quaternion.rotate(Quaternion.axis_angle(Vector3.up(), num_4), Vector3.forward()) * num)
+for i = 1, num_positions do
+	local angle = (i - (num_positions * 0.5 - 0.5)) * angle_between_positions
+	local relative_pos = Vector3Box(Quaternion.rotate(Quaternion.axis_angle(Vector3.up(), angle), Vector3.forward()) * offset)
 
-	tbl_2[#tbl_2 + 1] = var_0_8
+	relative_raise_positions[#relative_raise_positions + 1] = relative_pos
 end
 
-PassiveAbilityNecromancerCharges.spawn_army_pet = function (self, arg_9_1, arg_9_2, arg_9_3)
+PassiveAbilityNecromancerCharges.spawn_army_pet = function (self, spawn_index, optional_position, optional_position_mode)
 	-- function 9
-	local _army_definition = self._army_definition
-	local str = "necromancer_pet_charges"
-	local var_9_2 = _army_definition[arg_9_1]
-	local count = #_army_definition
-	local flag = count <= arg_9_1
-	local _extra_army_skeletons = self._extra_army_skeletons
+	local army_def = self._army_definition
+	local template_name = "necromancer_pet_charges"
+	local breed_name = army_def[spawn_index]
+	local num_army = #army_def
+	local done = num_army <= spawn_index
+	local extra_skeletons = self._extra_army_skeletons
 
-	if not flag and not _extra_army_skeletons then
-		flag = false
+	if done and extra_skeletons then
+		done = false
 
-		if not var_9_2 then
-			arg_9_1 = arg_9_1 - count
-			var_9_2 = _extra_army_skeletons[arg_9_1]
-			str = "necromancer_pet_army"
-			flag = arg_9_1 >= #_extra_army_skeletons
+		if not breed_name then
+			spawn_index = spawn_index - num_army
+			breed_name = extra_skeletons[spawn_index]
+			template_name = "necromancer_pet_army"
+			done = spawn_index >= #extra_skeletons
 		end
 	end
 
-	if not var_9_2 then
-		self:spawn_pet(str, var_9_2, arg_9_2, arg_9_3)
+	if breed_name then
+		self:spawn_pet(template_name, breed_name, optional_position, optional_position_mode)
 	end
 
-	return flag
+	return done
 end
 
-PassiveAbilityNecromancerCharges.spawn_pet = function (self, arg_10_1, arg_10_2, arg_10_3, arg_10_4)
+PassiveAbilityNecromancerCharges.spawn_pet = function (self, template_name, breed_name, optional_position, optional_position_mode)
 	-- function 10
-	if not self._pets_forbidden_in_level then
+	if self._pets_forbidden_in_level then
 		return
 	end
 
-	if not arg_10_3 then
+	if not optional_position then
 		self._last_spawn_index = self._last_spawn_index + 1
-		arg_10_3 = tbl_2[self._last_spawn_index % #tbl_2 + 1]:unbox()
-		arg_10_4 = NecromancerPositionModes.Relative
+		optional_position = relative_raise_positions[self._last_spawn_index % #relative_raise_positions + 1]:unbox()
+		optional_position_mode = NecromancerPositionModes.Relative
 	end
 
-	if not self._is_server then
-		self:_queue_pet(arg_10_2, arg_10_3, arg_10_4, arg_10_1)
+	local is_server = self._is_server
+
+	if is_server then
+		self:_queue_pet(breed_name, optional_position, optional_position_mode, template_name)
 	else
-		local _network_transmit = self._network_transmit
-		local var_10_1 = NetworkLookup.breeds[arg_10_2]
-		local var_10_2 = NetworkLookup.controlled_unit_templates[arg_10_1]
-		local var_10_3 = var_0_2[arg_10_4]
+		local network_transmit = self._network_transmit
+		local breed_id = NetworkLookup.breeds[breed_name]
+		local template_id = NetworkLookup.controlled_unit_templates[template_name]
+		local position_mode_id = PositionModesLookup[optional_position_mode]
 
-		_network_transmit:send_rpc_server("rpc_necromancer_passive_spawn_pet", var_10_2, var_10_1, arg_10_3, var_10_3)
+		network_transmit:send_rpc_server("rpc_necromancer_passive_spawn_pet", template_id, breed_id, optional_position, position_mode_id)
 	end
 end
 
-PassiveAbilityNecromancerCharges.spawn_pets = function (self, arg_11_1, arg_11_2, arg_11_3)
+PassiveAbilityNecromancerCharges.spawn_pets = function (self, num_pets, template_name, breed_name)
 	-- function 11
-	for i = 1, arg_11_1 do
-		self:spawn_pet(arg_11_2, arg_11_3)
+	for i = 1, num_pets do
+		self:spawn_pet(template_name, breed_name)
 	end
 end
 
-PassiveAbilityNecromancerCharges._queue_pet = function (self, arg_12_1, arg_12_2, arg_12_3, arg_12_4)
+PassiveAbilityNecromancerCharges._queue_pet = function (self, breed_name, position, position_mode, template_name)
 	-- function 12
-	if not self:is_invalid_spawn_position(arg_12_2) then
-		arg_12_2 = Vector3.zero()
-		arg_12_3 = NecromancerPositionModes.Relative
+	if self:is_invalid_spawn_position(position) then
+		position = Vector3.zero()
+		position_mode = NecromancerPositionModes.Relative
 	end
 
 	self._spawn_queue[#self._spawn_queue + 1] = {
-		breed_name = arg_12_1,
-		position = Vector3Box(arg_12_2),
-		position_mode = arg_12_3,
-		template_name = arg_12_4
+		breed_name = breed_name,
+		position = Vector3Box(position),
+		position_mode = position_mode,
+		template_name = template_name
 	}
 end
 
-PassiveAbilityNecromancerCharges.store_buff_unit = function (self, arg_13_1)
+PassiveAbilityNecromancerCharges.store_buff_unit = function (self, buff_unit)
 	-- function 13
-	self._buff_unit = arg_13_1
+	self._buff_unit = buff_unit
 end
 
 PassiveAbilityNecromancerCharges.is_ready = function (self)
@@ -264,25 +271,30 @@ PassiveAbilityNecromancerCharges.is_ready = function (self)
 		return true
 	end
 
-	return not ScriptUnit.extension(self._buff_unit, "buff_system"):has_buff_type("raise_dead_ability")
+	local buff_extension = ScriptUnit.extension(self._buff_unit, "buff_system")
+	local has_buff = buff_extension:has_buff_type("raise_dead_ability")
+
+	return not has_buff
 end
 
-PassiveAbilityNecromancerCharges.rpc_necromancer_passive_spawn_pet = function (self, arg_15_1, arg_15_2, arg_15_3, arg_15_4, arg_15_5)
+PassiveAbilityNecromancerCharges.rpc_necromancer_passive_spawn_pet = function (self, channel_id, template_id, breed_id, position, position_mode_id)
 	-- function 15
 	assert(self._is_server, "[PassiveAbilityNecromancerCharges] 'rpc_necromancer_passive_spawn_pet' is a server only function.")
 
-	if CHANNEL_TO_PEER_ID[arg_15_1] ~= self._player.peer_id then
+	local peer_id = CHANNEL_TO_PEER_ID[channel_id]
+
+	if peer_id ~= self._player.peer_id then
 		return
 	end
 
-	local var_15_0 = NetworkLookup.breeds[arg_15_3]
-	local var_15_1 = NetworkLookup.controlled_unit_templates[arg_15_2]
-	local var_15_2 = var_0_2[arg_15_5]
+	local breed_name = NetworkLookup.breeds[breed_id]
+	local template_name = NetworkLookup.controlled_unit_templates[template_id]
+	local position_mode = PositionModesLookup[position_mode_id]
 
-	self:_queue_pet(var_15_0, arg_15_4, var_15_2, var_15_1)
+	self:_queue_pet(breed_name, position, position_mode, template_name)
 end
 
-PassiveAbilityNecromancerCharges.kill_pets = function (self, arg_16_1)
+PassiveAbilityNecromancerCharges.kill_pets = function (self, peer_id)
 	-- function 16
 	if not self._is_server then
 		self._network_transmit:send_rpc_server("rpc_necromancer_passive_kill_pets")
@@ -290,11 +302,15 @@ PassiveAbilityNecromancerCharges.kill_pets = function (self, arg_16_1)
 		return
 	end
 
-	if not self._has_army then
-		for k, v in pairs(self._spawned_pets) do
-			if not (not HEALTH_ALIVE[k] and v == "necromancer_pet_army") then
-				self:_remove_unit(k)
-				AiUtils.kill_unit(k)
+	if self._has_army then
+		for pet_unit, template_name in pairs(self._spawned_pets) do
+			if HEALTH_ALIVE[pet_unit] then
+				local army_template = "necromancer_pet_army"
+
+				if template_name ~= army_template then
+					self:_remove_unit(pet_unit)
+					AiUtils.kill_unit(pet_unit)
+				end
 			end
 		end
 	else
@@ -302,190 +318,204 @@ PassiveAbilityNecromancerCharges.kill_pets = function (self, arg_16_1)
 	end
 end
 
-PassiveAbilityNecromancerCharges.rpc_necromancer_passive_kill_pets = function (self, arg_17_1)
+PassiveAbilityNecromancerCharges.rpc_necromancer_passive_kill_pets = function (self, channel_id)
 	-- function 17
 	assert(self._is_server, "[PassiveAbilityNecromancerCharges] 'rpc_necromancer_passive_kill_pets' is a server only function.")
 
-	local var_17_0 = CHANNEL_TO_PEER_ID[arg_17_1]
+	local peer_id = CHANNEL_TO_PEER_ID[channel_id]
 
-	if var_17_0 ~= self._player.peer_id then
+	if peer_id ~= self._player.peer_id then
 		return
 	end
 
-	self:kill_pets(var_17_0)
+	self:kill_pets(peer_id)
 end
 
-PassiveAbilityNecromancerCharges.rpc_necromancer_respawn_all_pets = function (self, arg_18_1)
+PassiveAbilityNecromancerCharges.rpc_necromancer_respawn_all_pets = function (self, channel_id)
 	-- function 18
 	assert(self._is_server, "[PassiveAbilityNecromancerCharges] 'rpc_necromancer_respawn_pets' is a server only function.")
 
-	if CHANNEL_TO_PEER_ID[arg_18_1] ~= self._player.peer_id then
+	local peer_id = CHANNEL_TO_PEER_ID[channel_id]
+
+	if peer_id ~= self._player.peer_id then
 		return
 	end
 
-	for k in pairs(self._pet_respawn_buffs) do
-		self:consume_pet_charge(k)
+	for id in pairs(self._pet_respawn_buffs) do
+		self:consume_pet_charge(id)
 	end
 end
 
 PassiveAbilityNecromancerCharges._update_pets_server = function (self)
 	-- function 19
-	if not self._pets_forbidden_in_level then
+	if self._pets_forbidden_in_level then
 		return
 	end
 
-	local _status_extension = self._status_extension
+	local status_extension = self._status_extension
 
-	if not ((_status_extension:is_dead() or not _status_extension:is_ready_for_assisted_respawn()) and self._was_dead) then
+	if (status_extension:is_dead() or status_extension:is_ready_for_assisted_respawn()) and not self._was_dead then
 		self._was_dead = true
 
 		self:_kill_all_pets_server()
 	end
 end
 
-PassiveAbilityNecromancerCharges.invalid_spawn_position = function (arg_20_0)
+PassiveAbilityNecromancerCharges.invalid_spawn_position = function (self)
 	-- function 20
 	return Vector3(0, 0, -500)
 end
 
-PassiveAbilityNecromancerCharges.is_invalid_spawn_position = function (arg_21_0, arg_21_1)
+PassiveAbilityNecromancerCharges.is_invalid_spawn_position = function (self, position)
 	-- function 21
-	return not arg_21_1 and arg_21_1[3] < -400
+	return not position or position[3] < -400
 end
 
-PassiveAbilityNecromancerCharges._spawn_pet_server = function (self, arg_22_1, arg_22_2, arg_22_3, arg_22_4)
+PassiveAbilityNecromancerCharges._spawn_pet_server = function (self, breed_name, position, position_mode, template_name)
 	-- function 22
-	local _commander_extension = self._commander_extension
-	local _buff_extension = self._buff_extension
-	local _owner_unit = self._owner_unit
-	local side_id = Managers.state.side.side_by_unit[_owner_unit].side_id
-	local str = "resurrected"
-	local _queued_pets = self._queued_pets
-	local var_22_6 = Breeds[arg_22_1]
-	local tbl = {
+	local commander_ext = self._commander_extension
+	local owner_buff_extension = self._buff_extension
+	local necromancer_unit = self._owner_unit
+	local side_id = Managers.state.side.side_by_unit[necromancer_unit].side_id
+	local spawn_category = "resurrected"
+	local queued_pets = self._queued_pets
+	local breed = Breeds[breed_name]
+	local optional_data = {
 		ignore_event_counter = true,
 		ignore_breed_limits = true,
 		side_id = side_id,
-		spawned_func = function (arg_23_0, arg_23_1, arg_23_2)
+		spawned_func = function (pet_unit, breed, optional_data)
 			-- function 23
-			if not ALIVE[_owner_unit] then
-				self._spawned_pets[arg_23_0] = arg_22_4
-				_queued_pets[arg_23_2] = nil
+			if ALIVE[necromancer_unit] then
+				self._spawned_pets[pet_unit] = template_name
+				queued_pets[optional_data] = nil
 				self._num_queued_pets = self._num_queued_pets - 1
 
-				_buff_extension:trigger_procs("on_pet_spawned", arg_23_0)
+				owner_buff_extension:trigger_procs("on_pet_spawned", pet_unit)
 
-				local alloc_table = FrameTable.alloc_table()
+				local params = FrameTable.alloc_table()
 
-				alloc_table.source_attacker_unit = _owner_unit
+				params.source_attacker_unit = necromancer_unit
 
-				self._buff_system:add_buff_synced(arg_23_0, "sienna_necromancer_pet_attack_sfx", BuffSyncType.Local, alloc_table, self._player.peer_id)
-				self._buff_system:add_buff_synced(arg_23_0, "update_anim_movespeed", BuffSyncType.All)
+				self._buff_system:add_buff_synced(pet_unit, "sienna_necromancer_pet_attack_sfx", BuffSyncType.Local, params, self._player.peer_id)
+				self._buff_system:add_buff_synced(pet_unit, "update_anim_movespeed", BuffSyncType.All)
 
-				if not self._has_dual_wield then
-					self._buff_system:add_buff_synced(arg_23_0, "sienna_necromancer_passive_balefire", BuffSyncType.Local)
+				if self._has_dual_wield then
+					self._buff_system:add_buff_synced(pet_unit, "sienna_necromancer_passive_balefire", BuffSyncType.Local)
 				end
 
-				if arg_22_4 == "necromancer_pet_charges" then
-					if not self._has_dual_wield then
-						self._buff_system:add_buff_synced(arg_23_0, "sienna_necromancer_6_2_pet_buff", BuffSyncType.Local, self._dual_wield_params)
+				if template_name == "necromancer_pet_charges" then
+					if self._has_dual_wield then
+						self._buff_system:add_buff_synced(pet_unit, "sienna_necromancer_6_2_pet_buff", BuffSyncType.Local, self._dual_wield_params)
 					end
-				elseif arg_22_4 == "necromancer_pet_ability" then
-					local var_23_1 = BLACKBOARDS[arg_23_0]
+				elseif template_name == "necromancer_pet_ability" then
+					local bb = BLACKBOARDS[pet_unit]
 
-					var_23_1.ability_spawned = true
-					var_23_1.dont_follow_commander = true
+					bb.ability_spawned = true
+					bb.dont_follow_commander = true
 
 					if not self._talent_extension:has_talent("sienna_necromancer_6_3_2") then
-						var_23_1.navigation_extension:add_movement_modifier(0.35 + math.random() * 0.2)
+						local navigation_extension = bb.navigation_extension
+
+						navigation_extension:add_movement_modifier(0.35 + math.random() * 0.2)
 					end
 				end
 
-				local time = Managers.time:time("game")
+				local t = Managers.time:time("game")
 
-				_commander_extension:add_controlled_unit(arg_23_0, arg_22_4, time)
-				self:_extract_resummon_data(arg_23_0, arg_22_4)
+				commander_ext:add_controlled_unit(pet_unit, template_name, t)
+				self:_extract_resummon_data(pet_unit, template_name)
 			end
 		end
 	}
-	local var_22_8
+	local fp_rotation_flat
 
-	if not self._first_person_extension then
-		var_22_8 = self._first_person_extension:current_rotation()
-		var_22_8 = Quaternion.look(Vector3.flat(Quaternion.forward(var_22_8)), Vector3.up())
+	if self._first_person_extension then
+		fp_rotation_flat = self._first_person_extension:current_rotation()
+		fp_rotation_flat = Quaternion.look(Vector3.flat(Quaternion.forward(fp_rotation_flat)), Vector3.up())
 	else
-		local go_id = self._unit_storage:go_id(_owner_unit)
+		local game_object_id = self._unit_storage:go_id(necromancer_unit)
 		local game = Managers.state.network:game()
-		local game_object_field = GameSession.game_object_field(game, go_id, "aim_direction")
+		local aim_direction = GameSession.game_object_field(game, game_object_id, "aim_direction")
 
-		var_22_8 = Quaternion.look(Vector3.flat(game_object_field), Vector3.up())
+		fp_rotation_flat = Quaternion.look(Vector3.flat(aim_direction), Vector3.up())
 	end
 
-	if arg_22_3 == NecromancerPositionModes.Relative then
-		arg_22_2 = POSITION_LOOKUP[_owner_unit] + Quaternion.rotate(var_22_8, arg_22_2)
+	if position_mode == NecromancerPositionModes.Relative then
+		position = POSITION_LOOKUP[necromancer_unit] + Quaternion.rotate(fp_rotation_flat, position)
 	end
 
-	local _nav_world = self._nav_world
-	local triangle_from_position, var_22_14 = GwNavQueries.triangle_from_position(_nav_world, arg_22_2, 2, 2)
+	local nav_world = self._nav_world
+	local unit_is_on_navmesh, z = GwNavQueries.triangle_from_position(nav_world, position, 2, 2)
 
-	if not triangle_from_position then
-		arg_22_2.z = var_22_14
+	if unit_is_on_navmesh then
+		position.z = z
 	else
-		arg_22_2 = GwNavQueries.inside_position_from_outside_position(_nav_world, arg_22_2, 2, 2, 5, 1)
+		position = GwNavQueries.inside_position_from_outside_position(nav_world, position, 2, 2, 5, 1)
 	end
 
-	if not arg_22_2 then
+	if not position then
 		return false
 	end
 
-	_queued_pets[tbl] = Managers.state.conflict:spawn_queued_unit(var_22_6, Vector3Box(arg_22_2), QuaternionBox(var_22_8), str, nil, nil, tbl)
+	queued_pets[optional_data] = Managers.state.conflict:spawn_queued_unit(breed, Vector3Box(position), QuaternionBox(fp_rotation_flat), spawn_category, nil, nil, optional_data)
 	self._num_queued_pets = self._num_queued_pets + 1
 
 	return true
 end
 
-PassiveAbilityNecromancerCharges._kill_all_pets_server = function (self, arg_24_1)
+PassiveAbilityNecromancerCharges._kill_all_pets_server = function (self, is_destroy)
 	-- function 24
-	local _queued_pets = self._queued_pets
+	local queued_pets = self._queued_pets
 
-	for k, v in pairs(_queued_pets) do
-		_queued_pets[k] = nil
+	for spawn_data, queue_id in pairs(queued_pets) do
+		queued_pets[spawn_data] = nil
 		self._num_queued_pets = self._num_queued_pets - 1
 
-		Managers.state.conflict:remove_queued_unit(v)
+		Managers.state.conflict:remove_queued_unit(queue_id)
 	end
 
 	self._disable_pet_charges = true
 
-	local _spawned_pets = self._spawned_pets
+	local spawned_pets = self._spawned_pets
 
-	for k_2 in pairs(_spawned_pets) do
-		self:_remove_unit(k_2)
+	for controlled_unit in pairs(spawned_pets) do
+		self:_remove_unit(controlled_unit)
 
-		if not HEALTH_ALIVE[k_2] then
-			AiUtils.kill_unit(k_2)
+		if HEALTH_ALIVE[controlled_unit] then
+			AiUtils.kill_unit(controlled_unit)
 		end
 	end
 
 	self._disable_pet_charges = false
 
-	if not arg_24_1 then
+	if is_destroy then
 		return
 	end
 
 	self:_remove_pet_charges()
 end
 
-PassiveAbilityNecromancerCharges.resummon_pet = function (self, arg_25_1)
+PassiveAbilityNecromancerCharges.resummon_pet = function (self, controlled_unit)
 	-- function 25
-	local get_controlled_units = ScriptUnit.extension(self._owner_unit, "ai_commander_system"):get_controlled_units()
+	local commander_extension = ScriptUnit.extension(self._owner_unit, "ai_commander_system")
+	local get_controlled_units = commander_extension:get_controlled_units()
 
-	get_controlled_units = get_controlled_units or EMPTY_TABLE
+	if not get_controlled_units then
+		-- Nothing
+	end
 
-	local template = get_controlled_units[arg_25_1].template
+	get_controlled_units = EMPTY_TABLE
+
+	local controlled_units = get_controlled_units
+
+	::label_25_0::
+
+	local controlled_unit_data = controlled_units[controlled_unit]
+	local template = controlled_unit_data.template
 	local name
 
-	if not template then
+	if template then
 		name = template.name
 
 		if not name then
@@ -493,107 +523,125 @@ PassiveAbilityNecromancerCharges.resummon_pet = function (self, arg_25_1)
 		end
 	end
 
-	name = self._spawned_pets[arg_25_1]
+	name = self._spawned_pets[controlled_unit]
 
-	::label_25_0::
+	local template_name = name
 
-	self:_gather_resummon_data(arg_25_1, name)
+	::label_25_1::
+
+	self:_gather_resummon_data(controlled_unit, template_name)
 
 	self._disable_pet_charges = true
 
-	self:_remove_unit(arg_25_1)
-	AiUtils.kill_unit(arg_25_1)
+	self:_remove_unit(controlled_unit)
+	AiUtils.kill_unit(controlled_unit)
 
-	local name_2 = BLACKBOARDS[arg_25_1].breed.name
+	local breed_name = BLACKBOARDS[controlled_unit].breed.name
 
-	self:spawn_pets(1, name, name_2)
+	self:spawn_pets(1, template_name, breed_name)
 
 	self._disable_pet_charges = false
 end
 
-local tbl_3 = {}
+local EMPTY_TABLE = {}
 
-PassiveAbilityNecromancerCharges._gather_resummon_data = function (self, arg_26_1, arg_26_2)
+PassiveAbilityNecromancerCharges._gather_resummon_data = function (self, controlled_unit, template_name)
 	-- function 26
 	if not self._is_server then
 		return
 	end
 
-	local get_controlled_units = ScriptUnit.extension(self._owner_unit, "ai_commander_system"):get_controlled_units()
+	local commander_extension = ScriptUnit.extension(self._owner_unit, "ai_commander_system")
+	local get_controlled_units = commander_extension:get_controlled_units()
 
-	get_controlled_units = get_controlled_units or tbl_3
+	if not get_controlled_units then
+		-- Nothing
+	end
 
-	local start_t = get_controlled_units[arg_26_1].start_t
-	local get_damage_taken = ScriptUnit.extension(arg_26_1, "health_system"):get_damage_taken()
+	get_controlled_units = EMPTY_TABLE
+
+	local controlled_units = get_controlled_units
+
+	::label_26_0::
+
+	local controlled_unit_data = controlled_units[controlled_unit]
+	local start_t = controlled_unit_data.start_t
+	local health_extension = ScriptUnit.extension(controlled_unit, "health_system")
+	local damage_taken = health_extension:get_damage_taken()
 	local _resummon_spawn_data = self._resummon_spawn_data
-	local var_26_4 = self._resummon_spawn_data[arg_26_2]
+	local var_26_2 = self._resummon_spawn_data[template_name]
 
-	var_26_4 = var_26_4 or {}
-	_resummon_spawn_data[arg_26_2] = var_26_4
-	self._resummon_spawn_data[arg_26_2][#self._resummon_spawn_data[arg_26_2] + 1] = {
-		damage_taken = get_damage_taken,
+	var_26_2 = not not var_26_2 or not not {}
+	_resummon_spawn_data[template_name] = var_26_2
+	self._resummon_spawn_data[template_name][#self._resummon_spawn_data[template_name] + 1] = {
+		damage_taken = damage_taken,
 		start_t = start_t
 	}
 end
 
-PassiveAbilityNecromancerCharges._extract_resummon_data = function (self, arg_27_1, arg_27_2)
+PassiveAbilityNecromancerCharges._extract_resummon_data = function (self, unit, template_name)
 	-- function 27
-	local var_27_0 = self._resummon_spawn_data[arg_27_2]
+	local template_resummon_data = self._resummon_spawn_data[template_name]
 
-	if not var_27_0 then
+	if not template_resummon_data then
 		return
 	end
 
-	local var_27_1 = var_27_0[#var_27_0]
-	local damage_taken = var_27_1.damage_taken
-	local start_t = var_27_1.start_t
+	local resummon_data = template_resummon_data[#template_resummon_data]
+	local damage_taken = resummon_data.damage_taken
+	local start_t = resummon_data.start_t
+	local commander_extension = ScriptUnit.extension(self._owner_unit, "ai_commander_system")
+	local controlled_units = commander_extension:get_controlled_units()
+	local controlled_unit_data = controlled_units[unit]
 
-	ScriptUnit.extension(self._owner_unit, "ai_commander_system"):get_controlled_units()[arg_27_1].start_t = start_t
+	controlled_unit_data.start_t = start_t
 
-	ScriptUnit.extension(arg_27_1, "health_system"):set_server_damage_taken(var_27_1.damage_taken)
+	local health_extension = ScriptUnit.extension(unit, "health_system")
 
-	var_27_0[#var_27_0] = nil
+	health_extension:set_server_damage_taken(resummon_data.damage_taken)
 
-	if #var_27_0 == 0 then
-		self._resummon_spawn_data[arg_27_2] = nil
+	template_resummon_data[#template_resummon_data] = nil
+
+	if #template_resummon_data == 0 then
+		self._resummon_spawn_data[template_name] = nil
 	end
 end
 
-PassiveAbilityNecromancerCharges._remove_unit = function (self, arg_28_1)
+PassiveAbilityNecromancerCharges._remove_unit = function (self, controlled_unit)
 	-- function 28
-	self._spawned_pets[arg_28_1] = nil
+	self._spawned_pets[controlled_unit] = nil
 
-	self._commander_extension:remove_controlled_unit(arg_28_1)
+	self._commander_extension:remove_controlled_unit(controlled_unit)
 end
 
-PassiveAbilityNecromancerCharges.add_pet_charge = function (self, arg_29_1, arg_29_2)
+PassiveAbilityNecromancerCharges.add_pet_charge = function (self, removed_unit, override_duration)
 	-- function 29
 	assert(self._is_server, "[PassiveAbilityNecromancerCharges] Local only function")
-	Managers.state.event:unregister_referenced("on_ai_unit_destroyed", arg_29_1, self)
+	Managers.state.event:unregister_referenced("on_ai_unit_destroyed", removed_unit, self)
 
-	if not self._disable_pet_charges then
+	if self._disable_pet_charges then
 		return
 	end
 
-	local var_29_0
+	local params
 
-	if not arg_29_2 then
-		var_29_0 = FrameTable.alloc_table()
-		var_29_0.external_optional_duration = arg_29_2
+	if override_duration then
+		params = FrameTable.alloc_table()
+		params.external_optional_duration = override_duration
 	end
 
-	local add_buff_synced = self._buff_system:add_buff_synced(self._owner_unit, "sienna_pet_spawn_charge", BuffSyncType.ClientAndServer, var_29_0, self._player.peer_id)
+	local buff_id = self._buff_system:add_buff_synced(self._owner_unit, "sienna_pet_spawn_charge", BuffSyncType.ClientAndServer, params, self._player.peer_id)
 
-	self._pet_respawn_buffs[add_buff_synced] = true
+	self._pet_respawn_buffs[buff_id] = true
 end
 
-PassiveAbilityNecromancerCharges.consume_pet_charge = function (self, arg_30_1)
+PassiveAbilityNecromancerCharges.consume_pet_charge = function (self, buff_id)
 	-- function 30
 	assert(self._is_server, "[PassiveAbilityNecromancerCharges] Local only function")
 
-	self._pet_respawn_buffs[arg_30_1] = nil
+	self._pet_respawn_buffs[buff_id] = nil
 
-	self._buff_system:remove_buff_synced(self._owner_unit, arg_30_1)
+	self._buff_system:remove_buff_synced(self._owner_unit, buff_id)
 	self:spawn_pets(1, "necromancer_pet_charges")
 end
 
@@ -601,61 +649,61 @@ PassiveAbilityNecromancerCharges._remove_pet_charges = function (self)
 	-- function 31
 	assert(self._is_server, "[PassiveAbilityNecromancerCharges] Local only function")
 
-	local _owner_unit = self._owner_unit
-	local _buff_system = self._buff_system
+	local owner_unit = self._owner_unit
+	local buff_system = self._buff_system
 
-	for k in pairs(self._pet_respawn_buffs) do
-		_buff_system:remove_buff_synced(_owner_unit, k)
+	for buff_id in pairs(self._pet_respawn_buffs) do
+		buff_system:remove_buff_synced(owner_unit, buff_id)
 
-		self._pet_respawn_buffs[k] = nil
+		self._pet_respawn_buffs[buff_id] = nil
 	end
 end
 
-PassiveAbilityNecromancerCharges._update_spawning = function (self, arg_32_1)
+PassiveAbilityNecromancerCharges._update_spawning = function (self, t)
 	-- function 32
-	if not self._cutscene_system:is_active() then
+	if self._cutscene_system:is_active() then
 		return
 	end
 
-	local num = 0
-	local _spawn_queue = self._spawn_queue
+	local requeue_i = 0
+	local queue = self._spawn_queue
 
-	for i = 1, #_spawn_queue do
-		local var_32_2 = _spawn_queue[i]
-		local breed_name = var_32_2.breed_name
-		local position = var_32_2.position
-		local template_name = var_32_2.template_name
-		local position_mode = var_32_2.position_mode
-		local _spawn_pet_server = self:_spawn_pet_server(breed_name, position:unbox(), position_mode, template_name)
+	for i = 1, #queue do
+		local spawn_data = queue[i]
+		local breed_name = spawn_data.breed_name
+		local position = spawn_data.position
+		local template_name = spawn_data.template_name
+		local position_mode = spawn_data.position_mode
+		local success = self:_spawn_pet_server(breed_name, position:unbox(), position_mode, template_name)
 
-		_spawn_queue[i] = nil
+		queue[i] = nil
 
-		if not _spawn_pet_server then
-			num = num + 1
-			_spawn_queue[num] = var_32_2
+		if not success then
+			requeue_i = requeue_i + 1
+			queue[requeue_i] = spawn_data
 		end
 	end
 end
 
-PassiveAbilityNecromancerCharges._update_achievements = function (self, arg_33_1)
+PassiveAbilityNecromancerCharges._update_achievements = function (self, t)
 	-- function 33
-	if not self._is_local then
-		self:_achievement_staff_gandalf_update(arg_33_1)
+	if self._is_local then
+		self:_achievement_staff_gandalf_update(t)
 	end
 end
 
-PassiveAbilityNecromancerCharges.achievement_staff_gandalf_trigger = function (arg_34_0, arg_34_1, arg_34_2, arg_34_3)
+PassiveAbilityNecromancerCharges.achievement_staff_gandalf_trigger = function (self, target_unit, t, check_delay)
 	-- function 34
-	arg_34_0._achv_staff_gandalf_data[arg_34_1] = arg_34_2 + arg_34_3
+	self._achv_staff_gandalf_data[target_unit] = t + check_delay
 end
 
-PassiveAbilityNecromancerCharges._achievement_staff_gandalf_update = function (self, arg_35_1)
+PassiveAbilityNecromancerCharges._achievement_staff_gandalf_update = function (self, t)
 	-- function 35
-	for k, v in pairs(self._achv_staff_gandalf_data) do
-		if v < arg_35_1 then
-			self._achv_staff_gandalf_data[k] = nil
+	for unit, check_t in pairs(self._achv_staff_gandalf_data) do
+		if check_t < t then
+			self._achv_staff_gandalf_data[unit] = nil
 
-			Managers.state.achievement:trigger_event("necromancer_staff_gandalf_delayed_check", k)
+			Managers.state.achievement:trigger_event("necromancer_staff_gandalf_delayed_check", unit)
 		end
 	end
 end

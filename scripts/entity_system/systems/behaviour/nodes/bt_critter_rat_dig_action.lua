@@ -4,32 +4,39 @@ require("scripts/entity_system/systems/behaviour/nodes/bt_node")
 
 BTCritterRatDigAction = class(BTCritterRatDigAction, BTNode)
 
-BTCritterRatDigAction.init = function (arg_1_0, ...)
+BTCritterRatDigAction.init = function (self, ...)
 	-- function 1
-	BTCritterRatDigAction.super.init(arg_1_0, ...)
+	BTCritterRatDigAction.super.init(self, ...)
 end
 
 BTCritterRatDigAction.name = "BTCritterRatDigAction"
 
-BTCritterRatDigAction.enter = function (arg_2_0, arg_2_1, arg_2_2, arg_2_3)
+BTCritterRatDigAction.enter = function (self, unit, blackboard, t)
 	-- function 2
-	arg_2_2.navigation_extension:set_enabled(false)
-	arg_2_2.locomotion_extension:set_wanted_velocity(Vector3.zero())
-	Managers.state.network:anim_event(arg_2_1, "dig_ground")
+	local navigation_extension = blackboard.navigation_extension
+
+	navigation_extension:set_enabled(false)
+
+	local locomotion_extension = blackboard.locomotion_extension
+
+	locomotion_extension:set_wanted_velocity(Vector3.zero())
+	Managers.state.network:anim_event(unit, "dig_ground")
 end
 
-BTCritterRatDigAction.leave = function (arg_3_0, arg_3_1, arg_3_2, arg_3_3, arg_3_4, arg_3_5)
+BTCritterRatDigAction.leave = function (self, unit, blackboard, t, reason, destroy)
 	-- function 3
-	if arg_3_4 ~= "aborted" then
-		Managers.state.conflict:destroy_unit(arg_3_1, arg_3_2, "dig_ground")
+	if reason ~= "aborted" then
+		local conflict = Managers.state.conflict
+
+		conflict:destroy_unit(unit, blackboard, "dig_ground")
 	else
-		arg_3_2.navigation_extension:set_enabled(true)
+		blackboard.navigation_extension:set_enabled(true)
 	end
 end
 
-BTCritterRatDigAction.run = function (arg_4_0, arg_4_1, arg_4_2, arg_4_3)
+BTCritterRatDigAction.run = function (self, unit, blackboard, t)
 	-- function 4
-	if not arg_4_2.anim_cb_dig_finished then
+	if blackboard.anim_cb_dig_finished then
 		return "done"
 	else
 		return "running"

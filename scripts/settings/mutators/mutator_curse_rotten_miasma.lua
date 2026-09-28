@@ -1,108 +1,114 @@
 -- chunkname: @scripts/settings/mutators/mutator_curse_rotten_miasma.lua
 
-local num = 5
-local num_2 = 1
+local TARGET_RESPAWN_CHECK_DELAY = 5
+local TARGET_SPAWN_OFFSET_Z = 1
 
-local function fn(arg_1_0, arg_1_1)
+local function update_positions(rotten_miasma_safe_area, target_to_follow)
 	-- function 1
-	local game = Managers.state.network:game()
+	local game_session = Managers.state.network:game()
 
-	if not (not Unit.alive(arg_1_0) and not Unit.alive(arg_1_1) and game) then
+	if not Unit.alive(rotten_miasma_safe_area) or not Unit.alive(target_to_follow) or not game_session then
 		return
 	end
 
-	local local_position = Unit.local_position(arg_1_1, 0)
+	local target_pos = Unit.local_position(target_to_follow, 0)
 
-	Unit.set_local_position(arg_1_0, 0, local_position)
+	Unit.set_local_position(rotten_miasma_safe_area, 0, target_pos)
 end
 
-local function fn_2()
+local function get_new_target_to_follow()
 	-- function 2
-	local var_2_0 = Managers.state.entity:system("pickup_system"):get_pickups_by_type("deus_relic_01")[1]
+	local pickup_system = Managers.state.entity:system("pickup_system")
+	local pickup_units_by_type = pickup_system:get_pickups_by_type("deus_relic_01")
+	local deus_relic_pickup = pickup_units_by_type[1]
 
-	if not var_2_0 then
-		return var_2_0
+	if deus_relic_pickup then
+		return deus_relic_pickup
 	end
 
-	local PLAYER_UNITS = Managers.state.side:get_side_from_name("heroes").PLAYER_UNITS
+	local hero_side = Managers.state.side:get_side_from_name("heroes")
+	local PLAYER_UNITS = hero_side.PLAYER_UNITS
 
-	for i, v in ipairs(PLAYER_UNITS) do
-		if not ScriptUnit.extension(v, "inventory_system"):has_inventory_item("slot_level_event", "wpn_deus_relic_01") then
-			return v
+	for _, player_unit in ipairs(PLAYER_UNITS) do
+		local inventory_extension = ScriptUnit.extension(player_unit, "inventory_system")
+
+		if inventory_extension:has_inventory_item("slot_level_event", "wpn_deus_relic_01") then
+			return player_unit
 		end
 	end
 
 	return nil
 end
 
-local function fn_3(arg_3_0, arg_3_1)
+local function create_default_target(position, rotation)
 	-- function 3
-	local tbl = {
+	local extension_init_data = {
 		pickup_system = {
 			has_physics = true,
 			pickup_name = "deus_relic_01",
 			spawn_type = "dropped"
 		},
 		projectile_locomotion_system = {
-			network_position = AiAnimUtils.position_network_scale(arg_3_0, true),
-			network_rotation = AiAnimUtils.rotation_network_scale(arg_3_1, true),
+			network_position = AiAnimUtils.position_network_scale(position, true),
+			network_rotation = AiAnimUtils.rotation_network_scale(rotation, true),
 			network_velocity = AiAnimUtils.velocity_network_scale(Vector3.zero(), true),
 			network_angular_velocity = AiAnimUtils.velocity_network_scale(Vector3.zero(), true)
 		}
 	}
 
-	return Managers.state.unit_spawner:spawn_network_unit("units/weapons/player/pup_deus_relic_01/pup_deus_relic_01", "deus_relic", tbl, arg_3_0, arg_3_1)
+	return Managers.state.unit_spawner:spawn_network_unit("units/weapons/player/pup_deus_relic_01/pup_deus_relic_01", "deus_relic", extension_init_data, position, rotation)
 end
 
-local function fn_4()
+local function get_path_position()
 	-- function 4
-	local conflict = Managers.state.conflict
-	local get_main_paths = conflict.level_analysis:get_main_paths()
+	local conflict_director = Managers.state.conflict
+	local main_paths = conflict_director.level_analysis:get_main_paths()
 
-	if not get_main_paths then
+	if not main_paths then
 		return nil
 	end
 
-	local main_path_info = conflict.main_path_info
-	local main_path_player_info = conflict.main_path_player_info
-	local unbox = MainPathUtils.get_main_path_point_between_players(get_main_paths, main_path_info, main_path_player_info):unbox()
+	local main_path_info = conflict_director.main_path_info
+	local main_path_player_info = conflict_director.main_path_player_info
+	local path_position = MainPathUtils.get_main_path_point_between_players(main_paths, main_path_info, main_path_player_info):unbox()
 	local nav_world = Managers.state.entity:system("ai_system"):nav_world()
-	local pos_on_mesh = LocomotionUtils.pos_on_mesh(nav_world, unbox)
+	local position = LocomotionUtils.pos_on_mesh(nav_world, path_position)
 
-	if not pos_on_mesh then
+	if not position then
 		return nil
 	end
 
-	pos_on_mesh.z = pos_on_mesh.z + num_2
+	position.z = position.z + TARGET_SPAWN_OFFSET_Z
 
-	return pos_on_mesh
+	return position
 end
 
-local function fn_5(arg_5_0)
+local function setup_rotten_miasma(buff_name)
 	-- function 5
-	local var_5_0 = fn_4()
+	local position = get_path_position()
 
-	if not var_5_0 then
+	if not position then
 		return nil, nil
 	end
 
-	local identity = Quaternion.identity()
-	local var_5_2 = fn_2()
+	local rotation = Quaternion.identity()
+	local target_to_follow = get_new_target_to_follow()
 
-	var_5_2 = var_5_2 or fn_3(var_5_0, identity)
+	target_to_follow = not not target_to_follow or not not create_default_target(position, rotation)
 
-	local tbl = {
+	local extension_init_data = {
 		buff_system = {
 			initial_buff_names = {
-				arg_5_0
+				buff_name
 			}
 		}
 	}
+	local rotten_miasma_safe_area = Managers.state.unit_spawner:spawn_network_unit("units/gameplay/rotten_miasma_safe_area/rotten_miasma_safe_area_01", "buff_objective_unit", extension_init_data, position, rotation)
 
-	return Managers.state.unit_spawner:spawn_network_unit("units/gameplay/rotten_miasma_safe_area/rotten_miasma_safe_area_01", "buff_objective_unit", tbl, var_5_0, identity), var_5_2
+	return rotten_miasma_safe_area, target_to_follow
 end
 
-local str = "curse_rotten_miasma"
+local ROTTEN_MIASMA_DEBUFF = "curse_rotten_miasma"
 
 return {
 	description = "curse_rotten_miasma_desc",
@@ -111,42 +117,42 @@ return {
 	packages = {
 		"resource_packages/mutators/mutator_curse_rotten_miasma"
 	},
-	server_update_function = function (arg_6_0, arg_6_1, arg_6_2, arg_6_3)
+	server_update_function = function (context, data, dt, t)
 		-- function 6
-		if not arg_6_1.rotten_miasma_safe_area then
-			local var_6_0, var_6_1 = fn_5(str)
+		if not data.rotten_miasma_safe_area then
+			local rotten_miasma_safe_area, target_to_follow = setup_rotten_miasma(ROTTEN_MIASMA_DEBUFF)
 
-			arg_6_1.rotten_miasma_safe_area = var_6_0
-			arg_6_1.target_to_follow = var_6_1
+			data.rotten_miasma_safe_area = rotten_miasma_safe_area
+			data.target_to_follow = target_to_follow
 		end
 
-		local var_6_2 = fn_2()
+		local new_target_to_follow = get_new_target_to_follow()
 
-		if not var_6_2 then
-			arg_6_1.target_to_follow = var_6_2
-			arg_6_1.target_respawn_at = nil
+		if new_target_to_follow then
+			data.target_to_follow = new_target_to_follow
+			data.target_respawn_at = nil
 		else
-			local target_respawn_at = arg_6_1.target_respawn_at
+			local target_respawn_at = data.target_respawn_at
 
-			target_respawn_at = target_respawn_at or num + arg_6_3
-			arg_6_1.target_respawn_at = target_respawn_at
+			target_respawn_at = not not target_respawn_at or not not (TARGET_RESPAWN_CHECK_DELAY + t)
+			data.target_respawn_at = target_respawn_at
 
-			local var_6_4 = fn_4()
+			local position = get_path_position()
 
-			if not (arg_6_3 >= arg_6_1.target_respawn_at) or not var_6_4 then
-				local identity = Quaternion.identity()
+			if t >= data.target_respawn_at and position then
+				local rotation = Quaternion.identity()
 
-				arg_6_1.target_to_follow = fn_3(var_6_4, identity)
+				data.target_to_follow = create_default_target(position, rotation)
 			end
 		end
 
-		fn(arg_6_1.rotten_miasma_safe_area, arg_6_1.target_to_follow)
+		update_positions(data.rotten_miasma_safe_area, data.target_to_follow)
 	end,
-	server_stop_function = function (arg_7_0, arg_7_1, arg_7_2)
+	server_stop_function = function (context, data, is_destroy)
 		-- function 7
-		local rotten_miasma_safe_area = arg_7_1.rotten_miasma_safe_area
+		local rotten_miasma_safe_area = data.rotten_miasma_safe_area
 
-		if not ALIVE[rotten_miasma_safe_area] then
+		if ALIVE[rotten_miasma_safe_area] then
 			Managers.state.unit_spawner:mark_for_deletion(rotten_miasma_safe_area)
 		end
 	end

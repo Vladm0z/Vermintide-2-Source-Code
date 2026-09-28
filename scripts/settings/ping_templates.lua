@@ -72,17 +72,17 @@ PingMessagesByPingType = {
 }
 PingTemplates = {
 	generic_item = {
-		check_func = function (arg_1_0, arg_1_1, arg_1_2)
+		check_func = function (self, pinger_unit, pinged_unit)
 			-- function 1
-			if not arg_1_2 then
+			if pinged_unit then
 				-- Nothing
 			end
 
 			::label_1_0::
 
-			local has_extension = ScriptUnit.has_extension(arg_1_2, "pickup_system")
+			local has_extension = ScriptUnit.has_extension(pinged_unit, "pickup_system")
 
-			has_extension = has_extension or Managers.state.network:level_object_id(arg_1_2)
+			has_extension = not not has_extension or not not Managers.state.network:level_object_id(pinged_unit)
 
 			::label_1_1::
 
@@ -137,38 +137,38 @@ PingTemplates = {
 				}
 			}
 		},
-		exec_func = function (self, arg_2_1, arg_2_2, arg_2_3, arg_2_4, arg_2_5, arg_2_6)
+		exec_func = function (self, parent, pinger_unit, pinged_unit, ping_type, social_wheel_event_id, mechanism_key)
 			-- function 2
-			local var_2_0 = self.responses[arg_2_4]
+			local response = self.responses[ping_type]
 
-			if not var_2_0 then
-				local var_2_1 = PingMessagesByPingType[arg_2_6]
-				local flag = not var_2_1 and var_2_1[arg_2_4]
+			if response then
+				local ping_messages = PingMessagesByPingType[mechanism_key]
+				local messages = not not ping_messages and not not ping_messages[ping_type]
 
-				if not flag then
-					local flag_2 = not arg_2_3 and Unit.get_data(arg_2_3, "lookat_tag")
+				if messages then
+					local lookat_tag = not not pinged_unit and not not Unit.get_data(pinged_unit, "lookat_tag")
 
-					if not flag_2 then
-						local var_2_4, var_2_5, var_2_6 = unpack(var_2_0)
-						local var_2_7 = flag[flag_2]
+					if lookat_tag then
+						local do_ping, chat_messages, ping_icon = unpack(response)
+						local var_2_0 = messages[lookat_tag]
 
-						var_2_7 = var_2_7 or flag.default
-						var_2_5[1] = var_2_7
+						var_2_0 = not not var_2_0 or not not messages.default
+						chat_messages[1] = var_2_0
 
-						return var_2_4, var_2_5, var_2_6
+						return do_ping, chat_messages, ping_icon
 					end
 				end
 
-				return unpack(var_2_0)
+				return unpack(response)
 			end
 
 			return true, nil, nil
 		end
 	},
 	enemy_unit = {
-		check_func = function (arg_3_0, arg_3_1, arg_3_2)
+		check_func = function (self, pinger_unit, pinged_unit)
 			-- function 3
-			return not arg_3_2 and Managers.state.side:is_enemy(arg_3_1, arg_3_2)
+			return not not pinged_unit and not not Managers.state.side:is_enemy(pinger_unit, pinged_unit)
 		end,
 		responses = {
 			[PingTypes.ENEMY_GENERIC] = {
@@ -209,38 +209,39 @@ PingTemplates = {
 				}
 			}
 		},
-		exec_func = function (self, arg_4_1, arg_4_2, arg_4_3, arg_4_4, arg_4_5, arg_4_6)
+		exec_func = function (self, parent, pinger_unit, pinged_unit, ping_type, social_wheel_event_id, mechanism_key)
 			-- function 4
-			local var_4_0 = self.responses[arg_4_4]
+			local response = self.responses[ping_type]
 
-			if not var_4_0 then
-				local var_4_1 = PingMessagesByPingType[arg_4_6]
-				local flag = not var_4_1 and var_4_1[arg_4_4]
+			if response then
+				local ping_messages = PingMessagesByPingType[mechanism_key]
+				local messages = not not ping_messages and not not ping_messages[ping_type]
 
-				if not flag then
-					local flag_2 = not arg_4_3 and Unit.get_data(arg_4_3, "breed")
+				if messages then
+					local breed = not not pinged_unit and not not Unit.get_data(pinged_unit, "breed")
 
-					if not flag_2 then
-						local var_4_4, var_4_5, var_4_6 = unpack(var_4_0)
-						local var_4_7 = flag[flag_2.name]
+					if breed then
+						local do_ping, chat_messages, ping_icon = unpack(response)
+						local breed_name = breed.name
+						local var_4_0 = messages[breed_name]
 
-						var_4_7 = var_4_7 or flag.default
-						var_4_5[1] = var_4_7
+						var_4_0 = not not var_4_0 or not not messages.default
+						chat_messages[1] = var_4_0
 
-						return var_4_4, var_4_5, var_4_6
+						return do_ping, chat_messages, ping_icon
 					end
 				end
 
-				return unpack(var_4_0)
+				return unpack(response)
 			end
 
 			return true, nil, nil
 		end
 	},
 	friendly_unit = {
-		check_func = function (arg_5_0, arg_5_1, arg_5_2)
+		check_func = function (self, pinger_unit, pinged_unit)
 			-- function 5
-			return not arg_5_2 and not Managers.state.side:is_enemy(arg_5_1, arg_5_2)
+			return not not pinged_unit and not not not Managers.state.side:is_enemy(pinger_unit, pinged_unit)
 		end,
 		responses = {
 			[PingTypes.ENEMY_GENERIC] = {
@@ -287,21 +288,21 @@ PingTemplates = {
 				true
 			}
 		},
-		exec_func = function (self, arg_6_1, arg_6_2, arg_6_3, arg_6_4, arg_6_5, arg_6_6)
+		exec_func = function (self, parent, pinger_unit, pinged_unit, ping_type, social_wheel_event_id, mechanism_key)
 			-- function 6
-			local var_6_0 = self.responses[arg_6_4]
+			local response = self.responses[ping_type]
 
-			if not var_6_0 then
-				return unpack(var_6_0)
+			if response then
+				return unpack(response)
 			end
 
 			return false, nil, nil
 		end
 	},
 	position_only = {
-		check_func = function (arg_7_0, arg_7_1, arg_7_2)
+		check_func = function (self, pinger_unit, pinged_unit)
 			-- function 7
-			return not arg_7_2
+			return not pinged_unit
 		end,
 		responses = {
 			[PingTypes.ENEMY_GENERIC] = {
@@ -349,12 +350,12 @@ PingTemplates = {
 				"ping_hostile"
 			}
 		},
-		exec_func = function (self, arg_8_1, arg_8_2, arg_8_3, arg_8_4, arg_8_5, arg_8_6)
+		exec_func = function (self, parent, pinger_unit, pinged_unit, ping_type, social_wheel_event_id, mechanism_key)
 			-- function 8
-			local var_8_0 = self.responses[arg_8_4]
+			local response = self.responses[ping_type]
 
-			if not var_8_0 then
-				return unpack(var_8_0)
+			if response then
+				return unpack(response)
 			end
 
 			return true, nil, nil

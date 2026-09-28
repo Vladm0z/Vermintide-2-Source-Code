@@ -1,6 +1,6 @@
 -- chunkname: @scripts/settings/hit_effects/hit_effects_chaos_berzerker.lua
 
-local tbl = {
+local wounding_damage_types = {
 	"light_stab_fencer",
 	"light_stab_smiter",
 	"stab_fencer",
@@ -2351,7 +2351,7 @@ HitEffectsChaosBerzerker = {
 		armour_type = "cloth",
 		extra_conditions = {
 			death = false,
-			damage_type = tbl
+			damage_type = wounding_damage_types
 		}
 	},
 	wound_back = {

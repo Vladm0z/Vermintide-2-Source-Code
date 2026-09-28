@@ -2,44 +2,44 @@
 
 GameServerManager = class(GameServerManager)
 
-GameServerManager.init = function (self, arg_1_1)
+GameServerManager.init = function (self, level_transition_handler)
 	-- function 1
 	self._last_error_reason = ""
 end
 
-GameServerManager.setup_network_context = function (self, arg_2_1)
+GameServerManager.setup_network_context = function (self, network_context)
 	-- function 2
-	self._network_server = arg_2_1.network_server
-	self._network_transmit = arg_2_1.network_transmit
-	self._game_server = arg_2_1.game_server
-	self._profile_synchronizer = arg_2_1.profile_synchronizer
+	self._network_server = network_context.network_server
+	self._network_transmit = network_context.network_transmit
+	self._game_server = network_context.game_server
+	self._profile_synchronizer = network_context.profile_synchronizer
 end
 
 GameServerManager.destroy = function (self)
 	-- function 3
-	if not self._network_transmit then
+	if self._network_transmit then
 		self._network_transmit:destroy()
 
 		self._network_transmit = nil
 	end
 end
 
-GameServerManager.update = function (self, arg_4_1, arg_4_2)
+GameServerManager.update = function (self, dt, t)
 	-- function 4
 	self:_notify_backend_errors()
 end
 
-GameServerManager.peer_name = function (self, arg_5_1)
+GameServerManager.peer_name = function (self, peer_id)
 	-- function 5
-	return self._game_server:user_name(arg_5_1)
+	return self._game_server:user_name(peer_id)
 end
 
-GameServerManager.remove_peer = function (self, arg_6_1)
+GameServerManager.remove_peer = function (self, peer_id)
 	-- function 6
-	self._game_server:remove_peer(arg_6_1)
+	self._game_server:remove_peer(peer_id)
 end
 
-GameServerManager._update_game_server = function (self, arg_7_1, arg_7_2)
+GameServerManager._update_game_server = function (self, dt, t)
 	-- function 7
 	self:_update_leader()
 end
@@ -49,20 +49,30 @@ GameServerManager.server_name = function (self)
 	return self._game_server:server_name()
 end
 
-GameServerManager.set_leader_peer_id = function (self, arg_9_1)
+GameServerManager.set_leader_peer_id = function (self, leader_peer_id)
 	-- function 9
-	Managers.party:set_leader(arg_9_1)
+	Managers.party:set_leader(leader_peer_id)
 
-	local flag
+	local str
 
-	flag = arg_9_1 ~= nil or not "0" or arg_9_1
+	if leader_peer_id == nil then
+		str = "0"
 
-	local get_members = self._game_server:members():get_members()
+		goto label_9_0
+	end
 
-	for i, v in ipairs(get_members) do
-		local var_9_2 = PEER_ID_TO_CHANNEL[v]
+	str = leader_peer_id
 
-		RPC.rpc_game_server_set_group_leader(var_9_2, flag)
+	local non_nil_leader = str
+
+	::label_9_0::
+
+	local members = self._game_server:members():get_members()
+
+	for _, peer_id in ipairs(members) do
+		local channel_id = PEER_ID_TO_CHANNEL[peer_id]
+
+		RPC.rpc_game_server_set_group_leader(channel_id, non_nil_leader)
 	end
 end
 
@@ -78,72 +88,82 @@ end
 
 GameServerManager.get_transition = function (self)
 	-- function 12
-	if not self._wants_restart then
+	if self._wants_restart then
 		return "restart_game_server"
 	end
 end
 
-GameServerManager.hot_join_sync = function (arg_13_0, arg_13_1)
+GameServerManager.hot_join_sync = function (self, peer_id)
 	-- function 13
-	local matchmaking = Managers.matchmaking
+	local matchmaking_manager = Managers.matchmaking
 
-	if not matchmaking and not matchmaking:on_dedicated_server() then
+	if matchmaking_manager and matchmaking_manager:on_dedicated_server() then
 		return
 	end
 
 	local leader = Managers.party:leader()
-	local flag
+	local str
 
-	flag = leader ~= nil or not "0" or leader
+	if leader == nil then
+		str = "0"
 
-	local var_13_3 = PEER_ID_TO_CHANNEL[arg_13_1]
+		goto label_13_0
+	end
 
-	RPC.rpc_game_server_set_group_leader(var_13_3, flag)
+	str = leader
+
+	local non_nil_leader = str
+
+	::label_13_0::
+
+	local channel_id = PEER_ID_TO_CHANNEL[peer_id]
+
+	RPC.rpc_game_server_set_group_leader(channel_id, non_nil_leader)
 end
 
-GameServerManager.set_start_game_params = function (self, arg_14_1, arg_14_2, arg_14_3, arg_14_4, arg_14_5)
+GameServerManager.set_start_game_params = function (self, sender, level_key, game_mode, difficulty, private_game)
 	-- function 14
-	local leader = Managers.party:leader()
+	local current_leader = Managers.party:leader()
 
-	if arg_14_1 ~= leader then
-		mm_printf("Peer (%s) tried starting the game without being leader (%s)", arg_14_1, leader)
+	if sender ~= current_leader then
+		mm_printf("Peer (%s) tried starting the game without being leader (%s)", sender, current_leader)
 
 		return
 	end
 
-	local get_stored_lobby_data = self._game_server:get_stored_lobby_data()
+	local stored_lobby_data = self._game_server:get_stored_lobby_data()
 
-	get_stored_lobby_data.level_key = arg_14_2
-	get_stored_lobby_data.difficulty = arg_14_4
+	stored_lobby_data.level_key = level_key
+	stored_lobby_data.difficulty = difficulty
 
-	local var_14_2
+	local var_14_0
 
 	if not IS_PS4 then
-		var_14_2 = NetworkLookup.game_modes[arg_14_3]
+		var_14_0 = NetworkLookup.game_modes[game_mode]
 
-		if not var_14_2 then
+		if not var_14_0 then
 			-- Nothing
 		end
 	end
 
-	var_14_2 = arg_14_3
+	var_14_0 = game_mode
 
 	::label_14_0::
 
-	get_stored_lobby_data.game_mode = var_14_2
+	stored_lobby_data.game_mode = var_14_0
 
 	local flag
 
-	flag = not arg_14_5 and "true" and "false"
-	get_stored_lobby_data.is_private = flag
+	flag = (not private_game or not "true") and not not "false"
+	stored_lobby_data.is_private = flag
 
-	self._game_server:set_lobby_data(get_stored_lobby_data)
+	self._game_server:set_lobby_data(stored_lobby_data)
 
 	self._start_game_params = {
-		level_key = arg_14_2,
-		game_mode = arg_14_3,
-		difficulty = arg_14_4,
-		private_game = arg_14_5
+		level_key = level_key,
+		game_mode = game_mode,
+		difficulty = difficulty,
+		private_game = private_game
 	}
 end
 
@@ -151,26 +171,26 @@ GameServerManager._notify_backend_errors = function (self)
 	-- function 15
 	local backend = Managers.backend
 
-	if backend == nil or not backend:has_error() then
-		local error_string = backend:error_string()
+	if backend ~= nil and backend:has_error() then
+		local reason = backend:error_string()
 
-		if self._last_error_reason ~= error_string then
-			self:_say(error_string)
+		if self._last_error_reason ~= reason then
+			self:_say(reason)
 
-			self._last_error_reason = error_string
+			self._last_error_reason = reason
 		end
 	end
 end
 
-GameServerManager._say = function (arg_16_0, arg_16_1)
+GameServerManager._say = function (self, text)
 	-- function 16
-	arg_16_1 = UTF8Utils.sub_string(arg_16_1, 1, 128)
+	text = UTF8Utils.sub_string(text, 1, 128)
 
 	local chat = Managers.chat
 
-	if chat == nil or not chat:has_channel(1) then
-		local flag = false
+	if chat ~= nil and chat:has_channel(1) then
+		local localize_parameters = false
 
-		chat:send_system_chat_message(1, "backend_error_on_server", arg_16_1, flag, true)
+		chat:send_system_chat_message(1, "backend_error_on_server", text, localize_parameters, true)
 	end
 end

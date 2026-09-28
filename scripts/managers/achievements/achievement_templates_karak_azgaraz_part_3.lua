@@ -5,27 +5,27 @@ local add_levels_complete_challenge = AchievementTemplateHelper.add_levels_compl
 local add_meta_challenge = AchievementTemplateHelper.add_meta_challenge
 local achievements = AchievementTemplates.achievements
 local add_console_achievements = AchievementTemplateHelper.add_console_achievements
-local tbl = {
+local XB1_ACHIEVEMENT_ID = {
 	karak_azgaraz_complete_dlc_dwarf_beacons_legend = 121,
 	dwarf_big_jump = 118,
 	dwarf_pressure_pad = 114,
 	dwarf_crows = 115
 }
-local tbl_2 = {
+local PS4_ACHIEVEMENT_ID = {
 	dwarf_crows = "091"
 }
-local tbl_3 = {}
-local tbl_4 = {
+local all_difficulties = {}
+local portals = {
 	LevelSettings.dlc_dwarf_beacons
 }
-local tbl_5 = {
+local difficulties = {
 	"normal",
 	"hard",
 	"harder",
 	"hardest",
 	"cataclysm"
 }
-local tbl_6 = {
+local player_facing_diff_names = {
 	hardest = "legend",
 	hard = "veteran",
 	harder = "champion",
@@ -33,14 +33,14 @@ local tbl_6 = {
 	normal = "recruit"
 }
 
-for i = 1, #tbl_5 do
-	local var_0_11 = tbl_5[i]
-	local str = "karak_azgaraz_complete_dlc_dwarf_beacons_" .. tbl_6[var_0_11]
-	local str_2 = "achievement_beacons_" .. tbl_6[var_0_11]
+for i = 1, #difficulties do
+	local difficulty_name = difficulties[i]
+	local name = "karak_azgaraz_complete_dlc_dwarf_beacons_" .. player_facing_diff_names[difficulty_name]
+	local icon = "achievement_beacons_" .. player_facing_diff_names[difficulty_name]
 
-	tbl_3[i] = str
+	all_difficulties[i] = name
 
-	add_levels_complete_challenge(achievements, str, tbl_4, DifficultySettings[var_0_11].rank, str_2, nil, tbl[str], tbl_2[str])
+	add_levels_complete_challenge(achievements, name, portals, DifficultySettings[difficulty_name].rank, icon, nil, XB1_ACHIEVEMENT_ID[name], PS4_ACHIEVEMENT_ID[name])
 end
 
 achievements.dwarf_pressure_pad = {
@@ -51,35 +51,40 @@ achievements.dwarf_pressure_pad = {
 	events = {
 		"dwarf_pressure_pad"
 	},
-	completed = function (self, arg_1_1, arg_1_2)
+	completed = function (statistics_db, stats_id, template_data)
 		-- function 1
-		return self:get_persistent_stat(arg_1_1, "dwarf_pressure_pad") >= 1
+		return statistics_db:get_persistent_stat(stats_id, "dwarf_pressure_pad") >= 1
 	end,
-	on_event = function (self, arg_2_1, arg_2_2, arg_2_3, arg_2_4)
+	on_event = function (statistics_db, stats_id, template_data, event_name, event_data)
 		-- function 2
-		local var_2_0 = arg_2_4[1]
-		local var_2_1 = arg_2_4[2]
-		local var_2_2 = arg_2_4[3]
+		local unit = event_data[1]
+		local is_on_pad = event_data[2]
+		local complete_challenge = event_data[3]
 
-		if var_2_2 or Managers.player:unit_owner(var_2_0).bot_player or not arg_2_2.challenge_over then
-			return
+		if not complete_challenge then
+			local player = Managers.player:unit_owner(unit)
+			local is_bot = player.bot_player
+
+			if is_bot or template_data.challenge_over then
+				return
+			end
 		end
 
-		if not arg_2_2.num_on_pad then
-			arg_2_2.num_on_pad = 0
+		if not template_data.num_on_pad then
+			template_data.num_on_pad = 0
 		end
 
-		if not (not var_2_2 and not arg_2_2.num_on_pad and not (arg_2_2.num_on_pad >= 1)) then
-			self:increment_stat(arg_2_1, "dwarf_pressure_pad")
+		if complete_challenge and template_data.num_on_pad and template_data.num_on_pad >= 1 then
+			statistics_db:increment_stat(stats_id, "dwarf_pressure_pad")
 
-			arg_2_2.challenge_over = true
-		elseif not var_2_1 then
-			arg_2_2.num_on_pad = arg_2_2.num_on_pad + 1
+			template_data.challenge_over = true
+		elseif is_on_pad then
+			template_data.num_on_pad = template_data.num_on_pad + 1
 		else
-			arg_2_2.num_on_pad = arg_2_2.num_on_pad - 1
+			template_data.num_on_pad = template_data.num_on_pad - 1
 
-			if arg_2_2.num_on_pad < 1 then
-				arg_2_2.challenge_over = true
+			if template_data.num_on_pad < 1 then
+				template_data.challenge_over = true
 			end
 		end
 	end
@@ -92,19 +97,19 @@ achievements.dwarf_big_jump = {
 	events = {
 		"dwarf_big_jump"
 	},
-	completed = function (self, arg_3_1, arg_3_2)
+	completed = function (statistics_db, stats_id, template_data)
 		-- function 3
-		return self:get_persistent_stat(arg_3_1, "dwarf_big_jump") >= 1
+		return statistics_db:get_persistent_stat(stats_id, "dwarf_big_jump") >= 1
 	end,
-	on_event = function (self, arg_4_1, arg_4_2, arg_4_3, arg_4_4)
+	on_event = function (statistics_db, stats_id, template_data, event_name, event_data)
 		-- function 4
-		local var_4_0 = arg_4_4[1]
-		local time = Managers.time:time("game")
+		local is_landing = event_data[1]
+		local t = Managers.time:time("game")
 
-		if not (not var_4_0 and not arg_4_2.exit_t and not (time < arg_4_2.exit_t)) then
-			self:increment_stat(arg_4_1, "dwarf_big_jump")
-		elseif not var_4_0 then
-			arg_4_2.exit_t = time + 4
+		if is_landing and template_data.exit_t and t < template_data.exit_t then
+			statistics_db:increment_stat(stats_id, "dwarf_big_jump")
+		elseif not is_landing then
+			template_data.exit_t = t + 4
 		end
 	end
 }
@@ -116,13 +121,13 @@ achievements.dwarf_crows = {
 	events = {
 		"dwarf_crows"
 	},
-	completed = function (self, arg_5_1, arg_5_2)
+	completed = function (statistics_db, stats_id, template_data)
 		-- function 5
-		return self:get_persistent_stat(arg_5_1, "dwarf_crows") >= 1
+		return statistics_db:get_persistent_stat(stats_id, "dwarf_crows") >= 1
 	end,
-	on_event = function (self, arg_6_1, arg_6_2, arg_6_3, arg_6_4)
+	on_event = function (statistics_db, stats_id, template_data, event_name, event_data)
 		-- function 6
-		self:increment_stat(arg_6_1, "dwarf_crows")
+		statistics_db:increment_stat(stats_id, "dwarf_crows")
 	end
 }
 achievements.dwarf_speedrun = {
@@ -134,24 +139,24 @@ achievements.dwarf_speedrun = {
 		"dwarf_speedrun_start",
 		"dwarf_speedrun_end"
 	},
-	completed = function (self, arg_7_1, arg_7_2)
+	completed = function (statistics_db, stats_id, template_data)
 		-- function 7
-		return self:get_persistent_stat(arg_7_1, "dwarf_speedrun") >= 1
+		return statistics_db:get_persistent_stat(stats_id, "dwarf_speedrun") >= 1
 	end,
-	on_event = function (self, arg_8_1, arg_8_2, arg_8_3, arg_8_4)
+	on_event = function (statistics_db, stats_id, template_data, event_name, event_data)
 		-- function 8
-		if arg_8_3 == "dwarf_speedrun_start" then
-			arg_8_2.started = true
+		if event_name == "dwarf_speedrun_start" then
+			template_data.started = true
 
 			return
 		end
 
-		if arg_8_3 ~= "dwarf_speedrun_end" or not arg_8_2.started then
-			self:increment_stat(arg_8_1, "dwarf_speedrun")
+		if event_name == "dwarf_speedrun_end" and template_data.started then
+			statistics_db:increment_stat(stats_id, "dwarf_speedrun")
 		end
 	end
 }
-beacons_all_challenges = table.clone(tbl_3)
+beacons_all_challenges = table.clone(all_difficulties)
 
 table.remove(beacons_all_challenges, #beacons_all_challenges)
 
@@ -160,5 +165,5 @@ beacons_all_challenges[#beacons_all_challenges + 1] = "dwarf_big_jump"
 beacons_all_challenges[#beacons_all_challenges + 1] = "dwarf_crows"
 beacons_all_challenges[#beacons_all_challenges + 1] = "dwarf_speedrun"
 
-add_meta_challenge(achievements, "beacons_all_challenges", beacons_all_challenges, "achievement_beacons_meta", nil, tbl[name], tbl_2[name])
-add_console_achievements(tbl, tbl_2)
+add_meta_challenge(achievements, "beacons_all_challenges", beacons_all_challenges, "achievement_beacons_meta", nil, XB1_ACHIEVEMENT_ID[name], PS4_ACHIEVEMENT_ID[name])
+add_console_achievements(XB1_ACHIEVEMENT_ID, PS4_ACHIEVEMENT_ID)

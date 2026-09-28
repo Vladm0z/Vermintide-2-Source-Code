@@ -3,34 +3,34 @@
 require("scripts/entity_system/systems/tutorial/tutorial_templates")
 require("scripts/entity_system/systems/tutorial/tutorial_condition_evaluator")
 
-local num = 30
-local num_2 = 0.3
-local num_3 = 100
-local flag = true
+local TIME_TO_WAIT_BETWEEN_SHOWS = 30
+local TOOLTIP_MINIMUM_SHOW_TIME = 0.3
+local INFOSLATE_COOLDOWN = 100
+local DO_TUT_RELOAD = true
 
 function tutprintf(...)
 	-- function 1
-	if not script_data.tutorial_debug then
+	if script_data.tutorial_debug then
 		printf(...)
 	end
 end
 
-local function fn()
+local function on_save_ended_callback()
 	-- function 2
 	print("Tutorial - save done")
 end
 
-local function fn_2(self)
+local function save(extension)
 	-- function 3
-	local SaveData = SaveData
+	local save_data = SaveData
 
-	SaveData.tutorial_points = self.points
-	SaveData.completed_tutorials = self.completed_tutorials
+	save_data.tutorial_points = extension.points
+	save_data.completed_tutorials = extension.completed_tutorials
 
-	Managers.save:auto_save(SaveFileName, SaveData, fn)
+	Managers.save:auto_save(SaveFileName, SaveData, on_save_ended_callback)
 end
 
-local tbl = {
+local extensions = {
 	"PlayerTutorialExtension",
 	"ObjectiveHealthTutorialExtension",
 	"ObjectivePickupTutorialExtension",
@@ -40,13 +40,13 @@ local tbl = {
 
 TutorialSystem = class(TutorialSystem, ExtensionSystemBase)
 
-TutorialSystem.init = function (self, arg_4_1, arg_4_2)
+TutorialSystem.init = function (self, entity_system_creation_context, system_name)
 	-- function 4
-	TutorialSystem.super.init(self, arg_4_1, arg_4_2, tbl)
+	TutorialSystem.super.init(self, entity_system_creation_context, system_name, extensions)
 
 	self.player_units = {}
 	self.pacing = "pacing_relax"
-	self.dice_keeper = arg_4_1.dice_keeper
+	self.dice_keeper = entity_system_creation_context.dice_keeper
 	self.health_extensions = {}
 	self.raycast_units = {}
 	self._objective_tooltip_prioritized_list = nil
@@ -54,7 +54,7 @@ TutorialSystem.init = function (self, arg_4_1, arg_4_2)
 	self.unit_extension_data = {}
 	self.gui = World.create_screen_gui(self.world, "material", "materials/fonts/gw_fonts", "immediate")
 
-	local network_event_delegate = arg_4_1.network_event_delegate
+	local network_event_delegate = entity_system_creation_context.network_event_delegate
 
 	self.network_event_delegate = network_event_delegate
 
@@ -63,13 +63,13 @@ TutorialSystem.init = function (self, arg_4_1, arg_4_2)
 	local SaveData = SaveData
 	local seen_handbook_popups = SaveData.seen_handbook_popups
 
-	seen_handbook_popups = seen_handbook_popups or {}
+	seen_handbook_popups = not not seen_handbook_popups or not not {}
 	SaveData.seen_handbook_popups = seen_handbook_popups
 
 	Managers.state.event:register(self, "tutorial_trigger", "on_tutorial_trigger")
 
 	self._condition_context = TutorialConditionEvaluator:new()
-	flag = false
+	DO_TUT_RELOAD = false
 end
 
 TutorialSystem.destroy = function (self)
@@ -79,476 +79,502 @@ TutorialSystem.destroy = function (self)
 	table.clear(self)
 end
 
-local tbl_2 = {}
+local dummy_input = {}
 
-TutorialSystem.on_add_extension = function (self, arg_6_1, arg_6_2, arg_6_3, arg_6_4)
+TutorialSystem.on_add_extension = function (self, world, unit, extension_name, extension_init_data)
 	-- function 6
-	local tbl = {}
+	local extension = {}
 
-	if arg_6_3 == "PlayerTutorialExtension" then
-		self.player_units[arg_6_2] = tbl
+	if extension_name == "PlayerTutorialExtension" then
+		self.player_units[unit] = extension
 
 		local completed_tutorials = SaveData.completed_tutorials
 
-		completed_tutorials = completed_tutorials or {}
-		tbl.completed_tutorials = completed_tutorials
-		tbl.points = #tbl.completed_tutorials
-		tbl.tooltip_tutorial = {
+		completed_tutorials = not not completed_tutorials or not not {}
+		extension.completed_tutorials = completed_tutorials
+		extension.points = #extension.completed_tutorials
+		extension.tooltip_tutorial = {
 			active = false
 		}
-		tbl.objective_tooltips = {
+		extension.objective_tooltips = {
 			units_n = 0,
 			active = false,
 			units = {}
 		}
-		tbl.shown_times = {}
-		tbl.data = {
+		extension.shown_times = {}
+		extension.data = {
 			player_id = Network.peer_id(),
 			statistics_db = self.statistics_db,
 			dice_keeper = self.dice_keeper
 		}
 
-		local TutorialTemplates = TutorialTemplates
+		local tutorial_templates = TutorialTemplates
 
-		for k, v in pairs(TutorialTemplates) do
-			tbl.shown_times[k] = -1000
+		for name, template in pairs(tutorial_templates) do
+			extension.shown_times[name] = -1000
 
-			v.init_data(tbl.data)
+			template.init_data(extension.data)
 		end
 	end
 
-	if arg_6_3 == "ObjectiveHealthTutorialExtension" then
-		Managers.state.event:trigger("tutorial_event_add_health_bar", arg_6_2)
+	if extension_name == "ObjectiveHealthTutorialExtension" then
+		Managers.state.event:trigger("tutorial_event_add_health_bar", unit)
 
-		self.health_extensions[arg_6_2] = tbl
+		self.health_extensions[unit] = extension
 	end
 
-	if arg_6_3 == "ObjectivePickupTutorialExtension" then
-		local get_data = Unit.get_data(arg_6_2, "approach_text")
+	if extension_name == "ObjectivePickupTutorialExtension" then
+		local get_data = Unit.get_data(unit, "approach_text")
 
-		get_data = get_data or "<approach_text not set>"
-		tbl.approach_text = get_data
+		get_data = not not get_data or not not "<approach_text not set>"
+		extension.approach_text = get_data
 
-		local get_data_2 = Unit.get_data(arg_6_2, "disable_objective_ui")
+		local get_data_2 = Unit.get_data(unit, "disable_objective_ui")
 
-		get_data_2 = get_data_2 or false
-		tbl.disregard = get_data_2
+		get_data_2 = not not get_data_2 or not not false
+		extension.disregard = get_data_2
 	end
 
-	if arg_6_3 == "ObjectiveSocketTutorialExtension" then
-		local get_data_3 = Unit.get_data(arg_6_2, "approach_text")
+	if extension_name == "ObjectiveSocketTutorialExtension" then
+		local get_data_3 = Unit.get_data(unit, "approach_text")
 
-		get_data_3 = get_data_3 or "<approach_text not set>"
-		tbl.approach_text = get_data_3
+		get_data_3 = not not get_data_3 or not not "<approach_text not set>"
+		extension.approach_text = get_data_3
 
-		local get_data_4 = Unit.get_data(arg_6_2, "pickup_text")
+		local get_data_4 = Unit.get_data(unit, "pickup_text")
 
-		get_data_4 = get_data_4 or "<pickup_text not set>"
-		tbl.pickup_text = get_data_4
+		get_data_4 = not not get_data_4 or not not "<pickup_text not set>"
+		extension.pickup_text = get_data_4
 	end
 
-	if arg_6_3 == "ObjectiveUnitExtension" then
-		local get_data_5 = Unit.get_data(arg_6_2, "objective_server_only")
-		local var_6_8
-		local get_current_level_keys = Managers.level_transition_handler:get_current_level_keys()
+	if extension_name == "ObjectiveUnitExtension" then
+		local server_only = Unit.get_data(unit, "objective_server_only")
+		local network_synced
+		local level_transition_handler = Managers.level_transition_handler
+		local level_key = level_transition_handler:get_current_level_keys()
+		local level_settings = LevelSettings[level_key]
 
-		if not LevelSettings[get_current_level_keys].hub_level then
-			var_6_8 = Unit.get_data(arg_6_2, "network_synced")
+		if level_settings.hub_level then
+			network_synced = Unit.get_data(unit, "network_synced")
 		else
-			var_6_8 = true
+			network_synced = true
 		end
 
-		local var_6_10
+		local activate_func
 
-		if not (not Managers.player.is_server and get_data_5) then
-			function var_6_10(self, arg_7_1)
+		if Managers.player.is_server and not server_only then
+			function activate_func(extension, active)
 				-- function 7
-				if self.active == arg_7_1 then
-					Application.warning("[ObjectiveUnitExtension] Trying to set active on unit %q to %q when it's already %q", tostring(arg_6_2), arg_7_1, self.active)
+				if extension.active == active then
+					Application.warning("[ObjectiveUnitExtension] Trying to set active on unit %q to %q when it's already %q", tostring(unit), active, extension.active)
 				else
-					self.active = arg_7_1
+					extension.active = active
 
-					if not self.network_synced then
-						local network = Managers.state.network
-						local game_object_or_level_id, var_7_2 = network:game_object_or_level_id(self.unit)
+					local network_synced = extension.network_synced
 
-						network.network_transmit:send_rpc_clients("rpc_objective_unit_set_active", game_object_or_level_id, var_7_2, arg_7_1)
+					if network_synced then
+						local network_manager = Managers.state.network
+						local unit_id, is_level_unit = network_manager:game_object_or_level_id(extension.unit)
+
+						network_manager.network_transmit:send_rpc_clients("rpc_objective_unit_set_active", unit_id, is_level_unit, active)
 					end
 				end
 			end
-		elseif not (Managers.player.is_server or get_data_5) then
-			function var_6_10(self, arg_8_1)
+		elseif Managers.player.is_server or not server_only then
+			function activate_func(extension, active)
 				-- function 8
-				self.active = arg_8_1
+				extension.active = active
 			end
 		else
-			function var_6_10(self, arg_9_1)
+			function activate_func(extension, active)
 				-- function 9
-				self.active = arg_9_1
+				extension.active = active
 			end
 		end
 
-		tbl.unit = arg_6_2
-		tbl.active = false
-		tbl.proxy_active = arg_6_4.proxy_active
-		tbl.set_active = var_6_10
-		tbl.server_only = get_data_5
-		tbl.network_synced = var_6_8
+		extension.unit = unit
+		extension.active = false
+		extension.proxy_active = extension_init_data.proxy_active
+		extension.set_active = activate_func
+		extension.server_only = server_only
+		extension.network_synced = network_synced
 
-		local always_show = arg_6_4.always_show
+		local always_show = extension_init_data.always_show
 
-		always_show = always_show or Unit.get_data(arg_6_2, "always_show")
-		tbl.always_show = always_show
+		always_show = not not always_show or not not Unit.get_data(unit, "always_show")
+		extension.always_show = always_show
 
-		tbl.set_always_show = function (self, arg_10_1)
+		extension.set_always_show = function (extension, show)
 			-- function 10
-			self.always_show = arg_10_1
+			extension.always_show = show
 
-			if not Managers.player.is_server and get_data_5 or not self.network_synced then
-				local network = Managers.state.network
-				local game_object_or_level_id, var_10_2 = network:game_object_or_level_id(self.unit)
+			if Managers.player.is_server and not server_only then
+				local network_synced = extension.network_synced
 
-				network.network_transmit:send_rpc_clients("rpc_objective_unit_set_always_show", game_object_or_level_id, var_10_2, arg_10_1)
+				if network_synced then
+					local network_manager = Managers.state.network
+					local unit_id, is_level_unit = network_manager:game_object_or_level_id(extension.unit)
+
+					network_manager.network_transmit:send_rpc_clients("rpc_objective_unit_set_always_show", unit_id, is_level_unit, show)
+				end
 			end
 		end
 	end
 
-	if not POSITION_LOOKUP[arg_6_2] then
-		POSITION_LOOKUP[arg_6_2] = Unit.world_position(arg_6_2, 0)
+	if not POSITION_LOOKUP[unit] then
+		POSITION_LOOKUP[unit] = Unit.world_position(unit, 0)
 	end
 
-	ScriptUnit.set_extension(arg_6_2, "tutorial_system", tbl, tbl_2)
+	ScriptUnit.set_extension(unit, "tutorial_system", extension, dummy_input)
 
-	self.unit_extension_data[arg_6_2] = tbl
+	self.unit_extension_data[unit] = extension
 
-	return tbl
+	return extension
 end
 
-TutorialSystem.on_remove_extension = function (self, arg_11_1, arg_11_2)
+TutorialSystem.on_remove_extension = function (self, unit, extension_name)
 	-- function 11
-	self:_cleanup_extension(arg_11_1)
+	self:_cleanup_extension(unit)
 
-	self.frozen_unit_extension_data[arg_11_1] = nil
+	self.frozen_unit_extension_data[unit] = nil
 
-	ScriptUnit.remove_extension(arg_11_1, "tutorial_system")
+	ScriptUnit.remove_extension(unit, "tutorial_system")
 end
 
-TutorialSystem.on_freeze_extension = function (self, arg_12_1, arg_12_2)
+TutorialSystem.on_freeze_extension = function (self, unit, extension_name)
 	-- function 12
-	self:freeze(arg_12_1, arg_12_2)
+	self:freeze(unit, extension_name)
 end
 
-TutorialSystem.freeze = function (self, arg_13_1, arg_13_2, arg_13_3)
+TutorialSystem.freeze = function (self, unit, extension_name, reason)
 	-- function 13
-	local frozen_unit_extension_data = self.frozen_unit_extension_data
+	local frozen_extensions = self.frozen_unit_extension_data
 
-	if not frozen_unit_extension_data[arg_13_1] then
+	if frozen_extensions[unit] then
 		return
 	end
 
-	local var_13_1 = self.unit_extension_data[arg_13_1]
+	local extension = self.unit_extension_data[unit]
 
-	fassert(var_13_1, "Unit to freeze didn't have unfrozen extension")
-	self:_cleanup_extension(arg_13_1)
+	fassert(extension, "Unit to freeze didn't have unfrozen extension")
+	self:_cleanup_extension(unit)
 
-	frozen_unit_extension_data[arg_13_1] = var_13_1
+	frozen_extensions[unit] = extension
 end
 
-TutorialSystem.unfreeze = function (self, arg_14_1, arg_14_2, arg_14_3)
+TutorialSystem.unfreeze = function (self, unit, extension_name, data)
 	-- function 14
-	local var_14_0 = self.frozen_unit_extension_data[arg_14_1]
+	local extension = self.frozen_unit_extension_data[unit]
 
-	fassert(var_14_0, "Unit to unfreeze didn't have frozen extension")
+	fassert(extension, "Unit to unfreeze didn't have frozen extension")
 
-	self.frozen_unit_extension_data[arg_14_1] = nil
-	self.unit_extension_data[arg_14_1] = var_14_0
+	self.frozen_unit_extension_data[unit] = nil
+	self.unit_extension_data[unit] = extension
 
-	if arg_14_2 == "ObjectiveHealthTutorialExtension" then
-		Managers.state.event:trigger("tutorial_event_add_health_bar", arg_14_1)
+	if extension_name == "ObjectiveHealthTutorialExtension" then
+		Managers.state.event:trigger("tutorial_event_add_health_bar", unit)
 
-		self.health_extensions[arg_14_1] = var_14_0
-	elseif arg_14_2 == "PlayerTutorialExtension" then
-		self.player_units[arg_14_1] = var_14_0
+		self.health_extensions[unit] = extension
+	elseif extension_name == "PlayerTutorialExtension" then
+		self.player_units[unit] = extension
 	end
 
-	if not POSITION_LOOKUP[arg_14_1] then
-		POSITION_LOOKUP[arg_14_1] = Unit.world_position(arg_14_1, 0)
+	if not POSITION_LOOKUP[unit] then
+		POSITION_LOOKUP[unit] = Unit.world_position(unit, 0)
 	end
 end
 
-TutorialSystem._cleanup_extension = function (self, arg_15_1)
+TutorialSystem._cleanup_extension = function (self, unit)
 	-- function 15
-	if not self.health_extensions[arg_15_1] then
-		self.health_extensions[arg_15_1] = nil
+	if self.health_extensions[unit] then
+		self.health_extensions[unit] = nil
 
-		Managers.state.event:trigger("tutorial_event_remove_health_bar", arg_15_1)
+		Managers.state.event:trigger("tutorial_event_remove_health_bar", unit)
 	end
 
-	self.player_units[arg_15_1] = nil
+	self.player_units[unit] = nil
 
-	local var_15_0 = self.unit_extension_data[arg_15_1]
+	local extension = self.unit_extension_data[unit]
 
-	if not var_15_0 and not var_15_0.active then
-		var_15_0:set_active(false)
+	if extension and extension.active then
+		extension:set_active(false)
 	end
 
-	self.unit_extension_data[arg_15_1] = nil
+	self.unit_extension_data[unit] = nil
 end
 
-TutorialSystem.physics_async_update = function (self, arg_16_1, arg_16_2)
+TutorialSystem.physics_async_update = function (self, context, t)
 	-- function 16
-	if not script_data.tutorial_disabled then
+	if script_data.tutorial_disabled then
 		return
 	end
 
 	local world = self.world
 	local raycast_units = self.raycast_units
 
-	for k, v in pairs(self.player_units) do
-		local var_16_2 = raycast_units[k]
+	for unit, extension in pairs(self.player_units) do
+		local raycast_unit = raycast_units[unit]
 
-		raycast_units[k] = nil
+		raycast_units[unit] = nil
 
-		local is_looking_at_interactable = ScriptUnit.extension(k, "interactor_system"):is_looking_at_interactable()
+		local interactor_extension = ScriptUnit.extension(unit, "interactor_system")
+		local is_looking_at_interactable = interactor_extension:is_looking_at_interactable()
 
-		if not is_looking_at_interactable then
-			v.tooltip_tutorial.active = false
+		if is_looking_at_interactable then
+			extension.tooltip_tutorial.active = false
 		end
 
-		local extension = ScriptUnit.extension(k, "status_system")
+		local status_extension = ScriptUnit.extension(unit, "status_system")
 
-		if not (is_looking_at_interactable or extension:is_disabled()) then
-			self:iterate_tooltips(arg_16_2, k, v, var_16_2, world)
+		if not is_looking_at_interactable and not status_extension:is_disabled() then
+			self:iterate_tooltips(t, unit, extension, raycast_unit, world)
 		end
 
-		self:iterate_objective_tooltips(arg_16_2, k, v, var_16_2, world)
+		self:iterate_objective_tooltips(t, unit, extension, raycast_unit, world)
 
-		if not ((self.pacing == "pacing_peak_fade" or self.pacing == "pacing_relax") and script_data.info_slates_disabled) then
-			self:iterate_info_slates(arg_16_2, k, v, var_16_2, world)
+		if (self.pacing == "pacing_peak_fade" or self.pacing == "pacing_relax") and not script_data.info_slates_disabled then
+			self:iterate_info_slates(t, unit, extension, raycast_unit, world)
 		end
 
-		if not (not v.tooltip_tutorial.active and not (arg_16_2 > v.shown_times[v.tooltip_tutorial.name] + num_2)) then
-			v.tooltip_tutorial.active = false
+		if extension.tooltip_tutorial.active then
+			local shown_time = extension.shown_times[extension.tooltip_tutorial.name]
+
+			if t > shown_time + TOOLTIP_MINIMUM_SHOW_TIME then
+				extension.tooltip_tutorial.active = false
+			end
 		end
 
-		if not script_data.tutorial_debug then
-			if not DebugKeyHandler.key_pressed("f10", "add debug info slate", "tutorials") then
-				local num_3 = math.random() * 5
+		if script_data.tutorial_debug then
+			if DebugKeyHandler.key_pressed("f10", "add debug info slate", "tutorials") then
+				local duration = math.random() * 5
 
-				Managers.state.event:trigger("tutorial_event_queue_info_slate_entry", "tutorial", "DEBUG INFO SLATE, LOOK AT IT GOOOO", num_3 + 5)
+				Managers.state.event:trigger("tutorial_event_queue_info_slate_entry", "tutorial", "DEBUG INFO SLATE, LOOK AT IT GOOOO", duration + 5)
 			end
 
-			local res_w = RESOLUTION_LOOKUP.res_w
-			local res_h = RESOLUTION_LOOKUP.res_h
+			local res_x, res_y = RESOLUTION_LOOKUP.res_w, RESOLUTION_LOOKUP.res_h
 
-			Gui.rect(self.gui, Vector3(0, 0, 100), Vector2(350, res_h), Color(100, 25, 25, 25))
-			Debug.text("Tutorial points : %d", v.points)
+			Gui.rect(self.gui, Vector3(0, 0, 100), Vector2(350, res_y), Color(100, 25, 25, 25))
+			Debug.text("Tutorial points : %d", extension.points)
 			Debug.text("Completed tutorials:")
 			Debug.text("Shelved tutorials:")
 
-			for k_2, v_2 in pairs(TutorialTemplates) do
-				local var_16_8 = v.shown_times[k_2]
+			for name, template in pairs(TutorialTemplates) do
+				local last_shown_time = extension.shown_times[name]
 
-				if arg_16_2 < var_16_8 + num then
-					Debug.text(" * %s, %.1fs", k_2, var_16_8 + num - arg_16_2)
+				if t < last_shown_time + TIME_TO_WAIT_BETWEEN_SHOWS then
+					Debug.text(" * %s, %.1fs", name, last_shown_time + TIME_TO_WAIT_BETWEEN_SHOWS - t)
 				end
 			end
 
-			if not v.tooltip_tutorial.active then
-				Debug.text("Tooltip tutorial: " .. v.tooltip_tutorial.name)
+			if extension.tooltip_tutorial.active then
+				Debug.text("Tooltip tutorial: " .. extension.tooltip_tutorial.name)
 
-				if not v.tooltip_tutorial.world_position then
-					QuickDrawer:sphere(v.tooltip_tutorial.world_position:unbox(), 1, Colors.get("brown"))
+				if extension.tooltip_tutorial.world_position then
+					QuickDrawer:sphere(extension.tooltip_tutorial.world_position:unbox(), 1, Colors.get("brown"))
 				end
 			else
 				Debug.text("Tooltip tutorial: inactive")
 			end
 
-			if var_16_2 == nil then
+			if raycast_unit == nil then
 				Debug.text("Raycast unit: none")
 			else
-				Debug.text("Raycast unit: %s", Unit.debug_name(var_16_2))
+				Debug.text("Raycast unit: %s", Unit.debug_name(raycast_unit))
 			end
 
 			Debug.text("Extension data:")
 
-			for k_3, v_3 in pairs(v.data) do
-				Debug.text(" * %s = %s", k_3, tostring(v_3))
+			for k, v in pairs(extension.data) do
+				Debug.text(" * %s = %s", k, tostring(v))
 			end
 		end
 	end
 
-	flag = false
+	DO_TUT_RELOAD = false
 end
 
-TutorialSystem.iterate_tooltips = function (arg_17_0, arg_17_1, arg_17_2, arg_17_3, arg_17_4, arg_17_5)
+TutorialSystem.iterate_tooltips = function (self, t, unit, extension, raycast_unit, world)
 	-- function 17
-	local TutorialTooltipTemplates = TutorialTooltipTemplates
-	local TutorialTooltipTemplates_n = TutorialTooltipTemplates_n
-	local active = Managers.state.entity:system("play_go_tutorial_system"):active()
-	local get_current_level_keys = Managers.level_transition_handler:get_current_level_keys()
-	local hub_level = LevelSettings[get_current_level_keys].hub_level
+	local tooltip_templates = TutorialTooltipTemplates
+	local tooltip_templates_n = TutorialTooltipTemplates_n
+	local in_play_go = Managers.state.entity:system("play_go_tutorial_system"):active()
+	local level_transition_handler = Managers.level_transition_handler
+	local level_key = level_transition_handler:get_current_level_keys()
+	local level_settings = LevelSettings[level_key]
+	local is_in_inn = level_settings.hub_level
 
-	for i = 1, TutorialTooltipTemplates_n do
+	for i = 1, tooltip_templates_n do
 		repeat
-			local var_17_5 = TutorialTooltipTemplates[i]
-			local name = var_17_5.name
+			local template = tooltip_templates[i]
+			local name = template.name
 
-			if not (not active and var_17_5.allowed_in_tutorial) then
+			if in_play_go and not template.allowed_in_tutorial then
 				break
-			elseif active or not var_17_5.incompatible_in_game then
+			elseif not in_play_go and template.incompatible_in_game then
 				-- Nothing
-			elseif hub_level or not var_17_5.inn_only then
+			elseif not is_in_inn and template.inn_only then
 				break
 			end
 
-			var_17_5.update_data(arg_17_1, arg_17_2, arg_17_3.data)
+			template.update_data(t, unit, extension.data)
 
-			local can_show, var_17_8 = var_17_5.can_show(arg_17_1, arg_17_2, arg_17_3.data, arg_17_4, arg_17_5)
+			local ok, world_position = template.can_show(t, unit, extension.data, raycast_unit, world)
 
-			if not can_show then
+			if not ok then
 				break
 			end
 
-			if not var_17_5.get_text then
-				var_17_5.text = var_17_5.get_text(arg_17_3.data)
+			if template.get_text then
+				template.text = template.get_text(extension.data)
 			end
 
-			if not var_17_5.get_inputs then
-				var_17_5.inputs = var_17_5.get_inputs(arg_17_3.data)
+			if template.get_inputs then
+				template.inputs = template.get_inputs(extension.data)
 			end
 
-			if not var_17_5.get_gamepad_inputs then
-				var_17_5.gamepad_inputs = var_17_5.get_gamepad_inputs(arg_17_3.data)
+			if template.get_gamepad_inputs then
+				template.gamepad_inputs = template.get_gamepad_inputs(extension.data)
 			end
 
-			if not var_17_5.get_force_update then
-				var_17_5.force_update = var_17_5.get_force_update(arg_17_3.data)
+			if template.get_force_update then
+				template.force_update = template.get_force_update(extension.data)
 			end
 
-			arg_17_3.tooltip_tutorial.active = true
-			arg_17_3.tooltip_tutorial.name = name
+			extension.tooltip_tutorial.active = true
+			extension.tooltip_tutorial.name = name
 
-			if not var_17_8 then
-				arg_17_3.tooltip_tutorial.world_position = Vector3Box(var_17_8)
+			if world_position then
+				extension.tooltip_tutorial.world_position = Vector3Box(world_position)
 			else
-				arg_17_3.tooltip_tutorial.world_position = nil
+				extension.tooltip_tutorial.world_position = nil
 			end
 
-			arg_17_3.shown_times[name] = arg_17_1
+			extension.shown_times[name] = t
 
 			return
 		until true
 	end
 end
 
-local local_position = Unit.local_position
-local distance_squared = Vector3.distance_squared
-local var_0_10
+local unit_local_position = Unit.local_position
+local vector3_distance_sq = Vector3.distance_squared
+local sort_unit_position_upvalue
 
-local function fn_3(arg_18_0, arg_18_1)
+local function do_sort_objective_units(a, b)
 	-- function 18
-	local var_18_0 = local_position(arg_18_0, 0)
-	local var_18_1 = local_position(arg_18_1, 0)
+	local a_pos = unit_local_position(a, 0)
+	local b_pos = unit_local_position(b, 0)
+	local a_dist_sq = vector3_distance_sq(sort_unit_position_upvalue, a_pos)
+	local b_dist_sq = vector3_distance_sq(sort_unit_position_upvalue, b_pos)
 
-	return distance_squared(var_0_10, var_18_0) < distance_squared(var_0_10, var_18_1)
+	return a_dist_sq < b_dist_sq
 end
 
-TutorialSystem.prioritize_objective_tooltip = function (self, arg_19_1, arg_19_2)
+TutorialSystem.prioritize_objective_tooltip = function (self, objective_tooltip_name, reset)
 	-- function 19
-	if not arg_19_2 then
+	if reset then
 		self._objective_tooltip_prioritized_list = nil
 		self._prioritized_objective_tooltip = nil
 
 		return
 	end
 
-	fassert(TutorialTemplates[arg_19_1], "[TutorialSystem] There is no TutorialObjectiveTooltipTemplate with the name %s", arg_19_1)
-	fassert(TutorialTemplates[arg_19_1].display_type == "objective_tooltip", "[TutorialSystem] The tutorial template with the name %s is not an objective tooltip template (%s)", arg_19_1, TutorialTemplates[arg_19_1].display_type)
+	fassert(TutorialTemplates[objective_tooltip_name], "[TutorialSystem] There is no TutorialObjectiveTooltipTemplate with the name %s", objective_tooltip_name)
+	fassert(TutorialTemplates[objective_tooltip_name].display_type == "objective_tooltip", "[TutorialSystem] The tutorial template with the name %s is not an objective tooltip template (%s)", objective_tooltip_name, TutorialTemplates[objective_tooltip_name].display_type)
 
-	local TutorialObjectiveTooltipTemplates_n = TutorialObjectiveTooltipTemplates_n
+	local objective_tooltip_templates_n = TutorialObjectiveTooltipTemplates_n
 
 	self._objective_tooltip_prioritized_list = {}
-	self._objective_tooltip_prioritized_list[#self._objective_tooltip_prioritized_list + 1] = TutorialTemplates[arg_19_1]
+	self._objective_tooltip_prioritized_list[#self._objective_tooltip_prioritized_list + 1] = TutorialTemplates[objective_tooltip_name]
 
-	for i = 1, TutorialObjectiveTooltipTemplates_n do
-		if TutorialObjectiveTooltipTemplates[i].name ~= arg_19_1 then
+	for i = 1, objective_tooltip_templates_n do
+		if TutorialObjectiveTooltipTemplates[i].name ~= objective_tooltip_name then
 			self._objective_tooltip_prioritized_list[#self._objective_tooltip_prioritized_list + 1] = TutorialObjectiveTooltipTemplates[i]
 		end
 	end
 
-	self._prioritized_objective_tooltip = arg_19_1
+	self._prioritized_objective_tooltip = objective_tooltip_name
 end
 
-TutorialSystem.iterate_objective_tooltips = function (self, arg_20_1, arg_20_2, arg_20_3, arg_20_4, arg_20_5)
+TutorialSystem.iterate_objective_tooltips = function (self, t, unit, extension, raycast_unit, world)
 	-- function 20
 	local _objective_tooltip_prioritized_list = self._objective_tooltip_prioritized_list
 
-	_objective_tooltip_prioritized_list = _objective_tooltip_prioritized_list or TutorialObjectiveTooltipTemplates
+	if not _objective_tooltip_prioritized_list then
+		-- Nothing
+	end
 
-	local TutorialObjectiveTooltipTemplates_n = TutorialObjectiveTooltipTemplates_n
-	local objective_tooltips = arg_20_3.objective_tooltips
+	_objective_tooltip_prioritized_list = TutorialObjectiveTooltipTemplates
+
+	local objective_tooltip_templates = _objective_tooltip_prioritized_list
+
+	::label_20_0::
+
+	local objective_tooltip_templates_n = TutorialObjectiveTooltipTemplates_n
+	local objective_tooltips = extension.objective_tooltips
 
 	objective_tooltips.units_n = 0
 
-	for i = 1, TutorialObjectiveTooltipTemplates_n do
+	for i = 1, objective_tooltip_templates_n do
 		repeat
-			local var_20_3 = _objective_tooltip_prioritized_list[i]
-			local name = var_20_3.name
+			local template = objective_tooltip_templates[i]
+			local name = template.name
 
-			var_20_3.update_data(arg_20_1, arg_20_2, arg_20_3.data)
+			template.update_data(t, unit, extension.data)
 
-			local can_show, var_20_6, var_20_7 = var_20_3.can_show(arg_20_1, arg_20_2, arg_20_3.data, arg_20_4, arg_20_5)
+			local ok, objective_units, objective_units_n = template.can_show(t, unit, extension.data, raycast_unit, world)
 
-			if not can_show then
+			if not ok then
 				break
 			end
 
-			if not var_20_3.get_text then
-				var_20_3.text = var_20_3.get_text(arg_20_3.data)
+			if template.get_text then
+				template.text = template.get_text(extension.data)
 			end
 
-			if not var_20_3.get_action then
-				var_20_3.action = var_20_3.get_action(arg_20_3.data)
+			if template.get_action then
+				template.action = template.get_action(extension.data)
 			end
 
-			if not var_20_3.get_icon then
-				var_20_3.icon = var_20_3.get_icon(arg_20_3.data)
+			if template.get_icon then
+				template.icon = template.get_icon(extension.data)
 			end
 
-			if not var_20_3.get_alert then
-				var_20_3.alerts_horde = var_20_3.get_alert(arg_20_3.data)
+			if template.get_alert then
+				template.alerts_horde = template.get_alert(extension.data)
 			end
 
-			if not var_20_3.get_wave then
-				var_20_3.wave = var_20_3.get_wave(arg_20_3.data)
+			if template.get_wave then
+				template.wave = template.get_wave(extension.data)
 			end
 
 			objective_tooltips.active = true
 			objective_tooltips.name = name
-			objective_tooltips.units_n = var_20_7
+			objective_tooltips.units_n = objective_units_n
 
-			local units = objective_tooltips.units
+			local saved_units = objective_tooltips.units
 
-			for j = 1, var_20_7 do
-				units[j] = var_20_6[j]
+			for i = 1, objective_units_n do
+				saved_units[i] = objective_units[i]
 			end
 
-			local num = var_20_7 + 1
+			local i = objective_units_n + 1
 
-			while not units[num] do
-				units[num] = nil
-				num = num + 1
+			while saved_units[i] do
+				saved_units[i] = nil
+				i = i + 1
 			end
 
-			if var_20_7 > 1 then
-				var_0_10 = Unit.local_position(arg_20_2, 0)
+			if objective_units_n > 1 then
+				local unit_position = Unit.local_position(unit, 0)
 
-				local var_20_10 = fn_3
+				sort_unit_position_upvalue = unit_position
 
-				table.sort(units, var_20_10)
+				local sort_func = do_sort_objective_units
 
-				var_0_10 = nil
+				table.sort(saved_units, sort_func)
+
+				sort_unit_position_upvalue = nil
 			end
 
 			return
@@ -556,66 +582,70 @@ TutorialSystem.iterate_objective_tooltips = function (self, arg_20_1, arg_20_2, 
 	end
 end
 
-TutorialSystem.verify_info_slate = function (self, arg_21_1, arg_21_2, arg_21_3, arg_21_4)
+TutorialSystem.verify_info_slate = function (self, t, unit, raycast_unit, template)
 	-- function 21
-	local var_21_0 = self.player_units[arg_21_2]
+	local extension = self.player_units[unit]
 	local world = self.world
 
-	if not arg_21_4.do_not_verify then
+	if template.do_not_verify then
 		return true
 	end
 
-	return arg_21_4.can_show(arg_21_1, arg_21_2, var_21_0.data, arg_21_3, world)
+	return template.can_show(t, unit, extension.data, raycast_unit, world)
 end
 
-TutorialSystem.iterate_info_slates = function (arg_22_0, arg_22_1, arg_22_2, arg_22_3, arg_22_4, arg_22_5)
+TutorialSystem.iterate_info_slates = function (self, t, unit, extension, raycast_unit, world)
 	-- function 22
-	if not Application.user_setting("tutorials_enabled") then
-		local TutorialInfoSlateTemplates = TutorialInfoSlateTemplates
-		local TutorialInfoSlateTemplates_n = TutorialInfoSlateTemplates_n
+	if Application.user_setting("tutorials_enabled") then
+		local info_slate_templates = TutorialInfoSlateTemplates
+		local info_slate_templates_n = TutorialInfoSlateTemplates_n
 
-		for i = 1, TutorialInfoSlateTemplates_n do
+		for i = 1, info_slate_templates_n do
 			repeat
-				local var_22_2 = TutorialInfoSlateTemplates[i]
-				local name = var_22_2.name
-				local cooldown
+				local template = info_slate_templates[i]
+				local name = template.name
+				local cooldown_2
 
-				if not var_22_2.cooldown then
-					cooldown = var_22_2.cooldown
+				if template.cooldown then
+					cooldown_2 = template.cooldown
 
-					if not cooldown then
+					if not cooldown_2 then
 						-- Nothing
 					end
 				end
 
-				cooldown = num_3
+				cooldown_2 = INFOSLATE_COOLDOWN
+
+				local cooldown = cooldown_2
 
 				::label_22_0::
 
-				if arg_22_1 < arg_22_3.shown_times[name] + cooldown then
+				if t < extension.shown_times[name] + cooldown then
 					break
 				end
 
-				if not var_22_2.can_show(arg_22_1, arg_22_2, arg_22_3.data, arg_22_4, arg_22_5) then
-					arg_22_3.shown_times[name] = arg_22_1
+				if template.can_show(t, unit, extension.data, raycast_unit, world) then
+					extension.shown_times[name] = t
 
 					local get_text
 
-					if not var_22_2.get_text then
-						get_text = var_22_2.get_text(arg_22_3.data, var_22_2)
+					if template.get_text then
+						get_text = template.get_text(extension.data, template)
 
 						if not get_text then
 							-- Nothing
 						end
 					end
 
-					get_text = var_22_2.text
+					get_text = template.text
+
+					local text = get_text
 
 					::label_22_1::
 
-					local var_22_6 = Localize(get_text)
+					text = Localize(text)
 
-					Managers.state.event:trigger("tutorial_event_queue_info_slate_entry", var_22_6, nil, nil, var_22_2, arg_22_2, arg_22_4)
+					Managers.state.event:trigger("tutorial_event_queue_info_slate_entry", text, nil, nil, template, unit, raycast_unit)
 				end
 			until true
 		end
@@ -624,44 +654,44 @@ TutorialSystem.iterate_info_slates = function (arg_22_0, arg_22_1, arg_22_2, arg
 	end
 end
 
-TutorialSystem.on_tutorial_trigger = function (self, arg_23_1)
+TutorialSystem.on_tutorial_trigger = function (self, trigger_name)
 	-- function 23
-	local _condition_context = self._condition_context
+	local ctx = self._condition_context
 
-	if not _condition_context:get("has_max_level_character") then
+	if ctx:get("has_max_level_character") then
 		return
 	end
 
-	_condition_context:clear_cache()
+	ctx:clear_cache()
 
 	local seen_handbook_popups = SaveData.seen_handbook_popups
 
-	for k, v in pairs(HandbookSettings.popups) do
-		if not seen_handbook_popups[k] then
+	for popup_id, popup_settings in pairs(HandbookSettings.popups) do
+		if seen_handbook_popups[popup_id] then
 			-- Nothing
-		elseif not table.find(v.triggers, arg_23_1) then
+		elseif not table.find(popup_settings.triggers, trigger_name) then
 			-- Nothing
 		else
-			local conditions = v.conditions
+			local conditions = popup_settings.conditions
 
-			if not conditions then
-				for k_2 = 1, #conditions do
-					local var_23_3 = conditions[k_2]
+			if conditions then
+				for i = 1, #conditions do
+					local cond_name = conditions[i]
 
-					if not _condition_context:get(var_23_3) then
+					if not ctx:get(cond_name) then
 						goto label_23_0
 					end
 				end
 			end
 
-			local custom_condition = v.custom_condition
+			local condition_func = popup_settings.custom_condition
 
-			if not (not custom_condition and custom_condition(_condition_context)) then
+			if condition_func and not condition_func(ctx) then
 				-- Nothing
 			else
-				Managers.state.event:trigger("ui_show_popup", k, "handbook")
+				Managers.state.event:trigger("ui_show_popup", popup_id, "handbook")
 
-				seen_handbook_popups[k] = true
+				seen_handbook_popups[popup_id] = true
 			end
 		end
 
@@ -669,138 +699,141 @@ TutorialSystem.on_tutorial_trigger = function (self, arg_23_1)
 	end
 end
 
-TutorialSystem.rpc_tutorial_message = function (self, arg_24_1, arg_24_2, arg_24_3)
+TutorialSystem.rpc_tutorial_message = function (self, channel_id, template_id, message_id)
 	-- function 24
-	local var_24_0 = NetworkLookup.tutorials[arg_24_2]
+	local template_name = NetworkLookup.tutorials[template_id]
 
-	if not var_24_0 then
+	if not template_name then
 		return
 	end
 
-	local var_24_1 = NetworkLookup.tutorials[arg_24_3]
-	local var_24_2 = TutorialTemplates[var_24_0]
+	local message = NetworkLookup.tutorials[message_id]
+	local template = TutorialTemplates[template_name]
 
-	for k, v in pairs(self.player_units) do
-		local data = v.data
+	for unit, extension in pairs(self.player_units) do
+		local data = extension.data
 
-		var_24_2.on_message(data, var_24_1)
+		template.on_message(data, message)
 	end
 end
 
-TutorialSystem.rpc_pacing_changed = function (self, arg_25_1, arg_25_2)
+TutorialSystem.rpc_pacing_changed = function (self, channel_id, pacing_id)
 	-- function 25
-	local var_25_0 = NetworkLookup.pacing[arg_25_2]
+	local pacing = NetworkLookup.pacing[pacing_id]
 
-	self.pacing = var_25_0
+	self.pacing = pacing
 
-	tutprintf("Changing pacing state to %s", var_25_0)
+	tutprintf("Changing pacing state to %s", pacing)
 end
 
-TutorialSystem.rpc_objective_unit_set_active = function (arg_26_0, arg_26_1, arg_26_2, arg_26_3, arg_26_4)
+TutorialSystem.rpc_objective_unit_set_active = function (self, channel_id, level_object_id, is_level_unit, activate)
 	-- function 26
-	local game_object_or_level_unit = Managers.state.network:game_object_or_level_unit(arg_26_2, arg_26_3)
-	local has_extension = ScriptUnit.has_extension(game_object_or_level_unit, "tutorial_system")
+	local unit = Managers.state.network:game_object_or_level_unit(level_object_id, is_level_unit)
+	local extension = ScriptUnit.has_extension(unit, "tutorial_system")
 
-	if not has_extension then
-		has_extension:set_active(arg_26_4)
+	if extension then
+		extension:set_active(activate)
 	end
 end
 
-TutorialSystem.rpc_prioritize_objective_tooltip = function (self, arg_27_1, arg_27_2)
+TutorialSystem.rpc_prioritize_objective_tooltip = function (self, channel_id, prioritized_objective_tooltip_id)
 	-- function 27
-	local var_27_0 = NetworkLookup.objective_tooltips[arg_27_2]
+	local prioritized_objective_tooltip = NetworkLookup.objective_tooltips[prioritized_objective_tooltip_id]
 
-	self:prioritize_objective_tooltip(var_27_0)
+	self:prioritize_objective_tooltip(prioritized_objective_tooltip)
 end
 
-TutorialSystem.rpc_objective_unit_set_always_show = function (arg_28_0, arg_28_1, arg_28_2, arg_28_3, arg_28_4)
+TutorialSystem.rpc_objective_unit_set_always_show = function (self, channel_id, object_id, is_level_unit, show)
 	-- function 28
-	local game_object_or_level_unit = Managers.state.network:game_object_or_level_unit(arg_28_2, arg_28_3)
-	local has_extension = ScriptUnit.has_extension(game_object_or_level_unit, "tutorial_system")
+	local unit = Managers.state.network:game_object_or_level_unit(object_id, is_level_unit)
+	local extension = ScriptUnit.has_extension(unit, "tutorial_system")
 
-	if not has_extension then
-		has_extension:set_always_show(arg_28_4)
+	if extension then
+		extension:set_always_show(show)
 	end
 end
 
-TutorialSystem.flow_callback_show_health_bar = function (arg_29_0, arg_29_1, arg_29_2)
+TutorialSystem.flow_callback_show_health_bar = function (self, unit, show)
 	-- function 29
-	Managers.state.event:trigger("tutorial_event_show_health_bar", arg_29_1, arg_29_2)
+	local event_manager = Managers.state.event
+
+	event_manager:trigger("tutorial_event_show_health_bar", unit, show)
 end
 
-TutorialSystem.flow_callback_tutorial_message = function (arg_30_0, arg_30_1, arg_30_2)
+TutorialSystem.flow_callback_tutorial_message = function (self, template_name, message)
 	-- function 30
-	if not Managers.player.is_server then
-		local var_30_0 = NetworkLookup.tutorials[arg_30_1]
-		local var_30_1 = NetworkLookup.tutorials[arg_30_2]
+	if Managers.player.is_server then
+		local template_id = NetworkLookup.tutorials[template_name]
+		local message_id = NetworkLookup.tutorials[message]
+		local network_manager = Managers.state.network
 
-		Managers.state.network.network_transmit:send_rpc_all("rpc_tutorial_message", var_30_0, var_30_1)
+		network_manager.network_transmit:send_rpc_all("rpc_tutorial_message", template_id, message_id)
 	end
 end
 
-TutorialSystem.hot_join_sync = function (self, arg_31_1)
+TutorialSystem.hot_join_sync = function (self, peer_id)
 	-- function 31
-	local network = Managers.state.network
-	local get_entities = Managers.state.entity:get_entities("ObjectiveUnitExtension")
+	local network_manager = Managers.state.network
+	local units = Managers.state.entity:get_entities("ObjectiveUnitExtension")
 
-	for k, v in pairs(get_entities) do
-		if not v.active and v.server_only or not v.network_synced then
-			local game_object_or_level_id, var_31_3 = network:game_object_or_level_id(k)
+	for objective_unit, extension in pairs(units) do
+		if extension.active and not extension.server_only and extension.network_synced then
+			local unit_id, is_level_unit = network_manager:game_object_or_level_id(objective_unit)
 
-			network.network_transmit:send_rpc("rpc_objective_unit_set_active", arg_31_1, game_object_or_level_id, var_31_3, true)
+			network_manager.network_transmit:send_rpc("rpc_objective_unit_set_active", peer_id, unit_id, is_level_unit, true)
 		end
 	end
 
-	if not self._prioritized_objective_tooltip then
-		local var_31_4 = NetworkLookup.objective_tooltips[self._prioritized_objective_tooltip]
+	if self._prioritized_objective_tooltip then
+		local prioritized_objective_tooltip_id = NetworkLookup.objective_tooltips[self._prioritized_objective_tooltip]
 
-		network.network_transmit:send_rpc("rpc_prioritize_objective_tooltip", arg_31_1, var_31_4)
+		network_manager.network_transmit:send_rpc("rpc_prioritize_objective_tooltip", peer_id, prioritized_objective_tooltip_id)
 	end
 end
 
-TutorialSystem.update = function (self, arg_32_1, arg_32_2)
+TutorialSystem.update = function (self, context, t)
 	-- function 32
-	if not script_data.tutorial_disabled then
+	if script_data.tutorial_disabled then
 		return
 	end
 
 	local world = self.world
-	local get_data = World.get_data(self.world, "physics_world")
+	local physics_world = World.get_data(self.world, "physics_world")
 	local raycast_units = self.raycast_units
 
-	for k, v in pairs(self.player_units) do
-		if flag or not DebugKeyHandler.key_pressed("f3", "reset tutorials", "tutorials") then
-			v.completed_tutorials = {}
-			v.points = 0
-			v.tooltip_tutorial.active = false
-			v.data = {
+	for unit, extension in pairs(self.player_units) do
+		if DO_TUT_RELOAD or DebugKeyHandler.key_pressed("f3", "reset tutorials", "tutorials") then
+			extension.completed_tutorials = {}
+			extension.points = 0
+			extension.tooltip_tutorial.active = false
+			extension.data = {
 				player_id = Network.peer_id(),
 				statistics_db = self.statistics_db,
 				dice_keeper = self.dice_keeper
 			}
 
-			for k_2, v_2 in pairs(TutorialTemplates) do
-				v.shown_times[k_2] = -1000
+			for name, template in pairs(TutorialTemplates) do
+				extension.shown_times[name] = -1000
 
-				v_2.init_data(v.data)
+				template.init_data(extension.data)
 			end
 		end
 
-		local extension = ScriptUnit.extension(k, "first_person_system")
-		local current_position = extension:current_position()
-		local current_rotation = extension:current_rotation()
-		local forward = Quaternion.forward(current_rotation)
-		local immediate_raycast, var_32_8, var_32_9, var_32_10, var_32_11 = PhysicsWorld.immediate_raycast(get_data, current_position + forward, forward, 30, "closest", "collision_filter", "filter_tutorial")
-		local var_32_12
+		local first_person_extension = ScriptUnit.extension(unit, "first_person_system")
+		local camera_position = first_person_extension:current_position()
+		local camera_rotation = first_person_extension:current_rotation()
+		local camera_forward = Quaternion.forward(camera_rotation)
+		local result, hit_position, hit_distance, normal, actor = PhysicsWorld.immediate_raycast(physics_world, camera_position + camera_forward, camera_forward, 30, "closest", "collision_filter", "filter_tutorial")
+		local raycast_unit
 
-		if not immediate_raycast and not var_32_11 then
-			var_32_12 = Actor.unit(var_32_11)
+		if result and actor then
+			raycast_unit = Actor.unit(actor)
 
-			if not HEALTH_ALIVE[var_32_12] then
-				var_32_12 = nil
+			if not HEALTH_ALIVE[raycast_unit] then
+				raycast_unit = nil
 			end
 		end
 
-		raycast_units[k] = var_32_12
+		raycast_units[unit] = raycast_unit
 	end
 end

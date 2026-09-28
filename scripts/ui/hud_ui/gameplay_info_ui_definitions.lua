@@ -1,14 +1,13 @@
 -- chunkname: @scripts/ui/hud_ui/gameplay_info_ui_definitions.lua
 
-local num = 1920
-local num_2 = 1080
-local flag = false
-local tbl = {
+local SIZE_X, SIZE_Y = 1920, 1080
+local RETAINED_MODE_ENABLED = false
+local scenegraph_definition = {
 	screen = {
 		scale = "hud_scale_fit",
 		size = {
-			num,
-			num_2
+			SIZE_X,
+			SIZE_Y
 		},
 		position = {
 			0,
@@ -26,7 +25,7 @@ local tbl = {
 		},
 		position = {
 			0,
-			-num_2 * 0.3,
+			-SIZE_Y * 0.3,
 			15
 		}
 	},
@@ -101,7 +100,7 @@ local tbl = {
 		}
 	}
 }
-local tbl_2 = {
+local teleport_text_style = {
 	word_wrap = true,
 	upper_case = false,
 	localize = false,
@@ -125,7 +124,7 @@ local tbl_2 = {
 		0
 	}
 }
-local tbl_3 = {
+local spawn_text_style = {
 	font_size = 40,
 	upper_case = false,
 	localize = false,
@@ -148,7 +147,7 @@ local tbl_3 = {
 		0
 	}
 }
-local tbl_4 = {
+local spawn_reason_text_style = {
 	font_size = 24,
 	upper_case = false,
 	localize = false,
@@ -171,18 +170,18 @@ local tbl_4 = {
 		0
 	}
 }
-local tbl_5 = {
-	teleport_text = UIWidgets.create_simple_text("", "teleport_text", nil, nil, tbl_2, nil, flag)
+local widgets = {
+	teleport_text = UIWidgets.create_simple_text("", "teleport_text", nil, nil, teleport_text_style, nil, RETAINED_MODE_ENABLED)
 }
-local tbl_6 = {
-	spawn_text = UIWidgets.create_simple_text("", "spawn_text", nil, nil, tbl_3, nil, flag),
-	spawn_reason = UIWidgets.create_simple_text("", "spawn_reason", nil, nil, tbl_4, nil, flag)
+local spawn_info_widgets = {
+	spawn_text = UIWidgets.create_simple_text("", "spawn_text", nil, nil, spawn_text_style, nil, RETAINED_MODE_ENABLED),
+	spawn_reason = UIWidgets.create_simple_text("", "spawn_reason", nil, nil, spawn_reason_text_style, nil, RETAINED_MODE_ENABLED)
 }
-local tbl_7 = {}
+local animation_definitions = {}
 
 return {
-	scenegraph = tbl,
-	widgets = tbl_5,
-	spawn_info_widgets = tbl_6,
-	animation_definitions = tbl_7
+	scenegraph = scenegraph_definition,
+	widgets = widgets,
+	spawn_info_widgets = spawn_info_widgets,
+	animation_definitions = animation_definitions
 }

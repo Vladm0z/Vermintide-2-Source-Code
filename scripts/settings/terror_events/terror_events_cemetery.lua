@@ -1,7 +1,8 @@
 -- chunkname: @scripts/settings/terror_events/terror_events_cemetery.lua
 
-local count_event_breed = require("scripts/settings/terror_events/terror_event_utils").count_event_breed
-local tbl = {
+local TerrorEventUtils = require("scripts/settings/terror_events/terror_event_utils")
+local count_event_breed = TerrorEventUtils.count_event_breed
+local weighted_random_terror_events = {
 	cemetery_plague_brew_event_1 = {
 		"cemetery_plague_brew_event_1_a",
 		1,
@@ -27,7 +28,7 @@ local tbl = {
 		1
 	}
 }
-local tbl_2 = {
+local terror_event_blueprints = {
 	cemetery_plague_brew_event_1_a = {
 		{
 			"control_pacing",
@@ -478,9 +479,9 @@ local tbl_2 = {
 		{
 			"continue_when",
 			duration = 120,
-			condition = function (arg_1_0)
+			condition = function (t)
 				-- function 1
-				return not (count_event_breed("chaos_marauder") < 3) or not (count_event_breed("chaos_fanatic") < 3) or count_event_breed("chaos_marauder_with_shield") < 2
+				return count_event_breed("chaos_marauder") < 3 and count_event_breed("chaos_fanatic") < 3 and count_event_breed("chaos_marauder_with_shield") < 2
 			end
 		},
 		{
@@ -491,6 +492,6 @@ local tbl_2 = {
 }
 
 return {
-	tbl_2,
-	tbl
+	terror_event_blueprints,
+	weighted_random_terror_events
 }

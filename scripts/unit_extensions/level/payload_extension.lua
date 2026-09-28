@@ -3,28 +3,28 @@
 require("scripts/settings/payload_speed_settings")
 require("foundation/scripts/util/spline_curve")
 
-local num = 100
-local num_2 = 0.5
-local num_3 = 0.1
-local num_4 = 0.01
+local FRAMES = 100
+local ERROR_RECOUP_TIME = 0.5
+local MOVING_THRESHOLD = 0.1
+local EPSILON = 0.01
 
 PayloadExtension = class(PayloadExtension)
 
-PayloadExtension.init = function (self, arg_1_1, arg_1_2, arg_1_3)
+PayloadExtension.init = function (self, extension_init_context, unit, extension_init_data)
 	-- function 1
-	local world = arg_1_1.world
-	local network = Managers.state.network
+	local world = extension_init_context.world
+	local network_manager = Managers.state.network
 
-	self._unit = arg_1_2
+	self._unit = unit
 	self._world = world
 	self._is_server = Managers.player.is_server
-	self._game = network:game()
-	self._network_manager = network
+	self._game = network_manager:game()
+	self._network_manager = network_manager
 	self._extra_joint = nil
 
-	local current_level = LevelHelper:current_level(world)
+	local level = LevelHelper:current_level(world)
 
-	self._level_unit_index = Level.unit_index(current_level, arg_1_2)
+	self._level_unit_index = Level.unit_index(level, unit)
 	self._last_synched_spline_values = {
 		last_synch_time = 0,
 		error_compensation_speed = 0,
@@ -38,40 +38,40 @@ PayloadExtension.init = function (self, arg_1_1, arg_1_2, arg_1_3)
 	self._use_statemachine = false
 	self._speed_var_index = 0
 
-	if not Unit.has_data(arg_1_2, "payload_statemachine_speed_var") then
-		local get_data = Unit.get_data(arg_1_2, "payload_statemachine_speed_var")
+	if Unit.has_data(unit, "payload_statemachine_speed_var") then
+		local speed_var = Unit.get_data(unit, "payload_statemachine_speed_var")
 
-		if not Unit.animation_has_variable(arg_1_2, get_data) then
-			self._speed_var_index = Unit.animation_find_variable(arg_1_2, get_data)
+		if Unit.animation_has_variable(unit, speed_var) then
+			self._speed_var_index = Unit.animation_find_variable(unit, speed_var)
 			self._use_statemachine = true
 		end
 	end
 
-	local get_data_2 = Unit.get_data(arg_1_2, "wheel_diameter")
-	local num = 60
+	local wheel_diameter = Unit.get_data(unit, "wheel_diameter")
+	local wheel_frames = 60
 
-	if not Unit.has_data(arg_1_2, "payload_wheel_frames") then
-		num = Unit.get_data(arg_1_2, "payload_wheel_frames")
+	if Unit.has_data(unit, "payload_wheel_frames") then
+		wheel_frames = Unit.get_data(unit, "payload_wheel_frames")
 
-		if num == 0 then
-			num = 60
+		if wheel_frames == 0 then
+			wheel_frames = 60
 		end
 	end
 
-	self._anim_speed = 30 / num * get_data_2 * math.pi
+	self._anim_speed = 30 / wheel_frames * wheel_diameter * math.pi
 	self._anim_group = "wheels"
 
-	if not Unit.has_data(arg_1_2, "wheel_anim_group") then
-		self._anim_group = Unit.get_data(arg_1_2, "wheel_anim_group")
+	if Unit.has_data(unit, "wheel_anim_group") then
+		self._anim_group = Unit.get_data(unit, "wheel_anim_group")
 	end
 
 	if not DEDICATED_SERVER then
-		local get_data_3 = Unit.get_data(arg_1_2, "hazard_type")
-		local local_player = Managers.player:local_player()
+		local unit_hazard_type = Unit.get_data(unit, "hazard_type")
+		local player = Managers.player:local_player()
 		local statistics_db = Managers.player:statistics_db()
-		local stats_id = local_player:stats_id()
+		local stats_id = player:stats_id()
 
-		if not (get_data_3 ~= "sled" or statistics_db:get_persistent_stat(stats_id, "trail_sleigher") <= 50 or true) then
+		if unit_hazard_type == "sled" and (statistics_db:get_persistent_stat(stats_id, "trail_sleigher") <= 50 or false) then
 			Managers.state.event:register(self, "on_killed", "increment_kill_stat")
 		end
 	end
@@ -85,66 +85,68 @@ PayloadExtension.activate = function (self)
 	self._activated = true
 end
 
-PayloadExtension.deactivate = function (self, arg_3_1)
+PayloadExtension.deactivate = function (self, stop)
 	-- function 3
 	self._activated = false
-	self._stop_command_given = arg_3_1
+	self._stop_command_given = stop
 end
 
-PayloadExtension.destroy = function (arg_4_0)
+PayloadExtension.destroy = function (self)
 	-- function 4
-	Managers.state.event:unregister("on_killed", arg_4_0)
+	Managers.state.event:unregister("on_killed", self)
 end
 
-PayloadExtension.extensions_ready = function (arg_5_0)
+PayloadExtension.extensions_ready = function (self)
 	-- function 5
 	return
 end
 
-PayloadExtension.hot_join_sync = function (arg_6_0, arg_6_1)
+PayloadExtension.hot_join_sync = function (self, sender)
 	-- function 6
 	return
 end
 
-PayloadExtension.init_payload = function (self, arg_7_1)
+PayloadExtension.init_payload = function (self, payload_gizmos)
 	-- function 7
-	local _unit = self._unit
+	local unit = self._unit
 
-	self._spline_curve = self:_init_movement_spline(self._world, _unit, arg_7_1)
+	self._spline_curve = self:_init_movement_spline(self._world, unit, payload_gizmos)
 
-	local get_data = Unit.get_data(_unit, "extra_spline_joint")
+	local extra_joint = Unit.get_data(unit, "extra_spline_joint")
 
-	if not get_data then
-		local _init_movement_spline = self:_init_movement_spline(self._world, _unit, arg_7_1)
-		local node = Unit.node(_unit, get_data)
-		local distance = Vector3.distance(Vector3.flat(Unit.world_position(_unit, node)), Vector3.flat(Unit.local_position(_unit, 0)))
-		local num = Quaternion.forward(Unit.local_rotation(_unit, 0)) * distance
-		local movement = _init_movement_spline:movement()
-		local num_2 = distance / 1
+	if extra_joint then
+		local spline_curve = self:_init_movement_spline(self._world, unit, payload_gizmos)
+		local node = Unit.node(unit, extra_joint)
+		local distance = Vector3.distance(Vector3.flat(Unit.world_position(unit, node)), Vector3.flat(Unit.local_position(unit, 0)))
+		local distance_fwd = Quaternion.forward(Unit.local_rotation(unit, 0)) * distance
+		local movement = spline_curve:movement()
+		local speed = 1
+		local total_dt = distance / speed
 
 		movement:set_speed(1)
 
-		while num_2 > 0 do
-			local length = movement:_current_spline_subdivision().length
+		while total_dt > 0 do
+			local subdivision = movement:_current_spline_subdivision()
+			local sub_length = subdivision.length
 
-			if length <= num_2 then
-				movement:update(length)
+			if sub_length <= total_dt then
+				movement:update(sub_length)
 
-				num_2 = num_2 - length
+				total_dt = total_dt - sub_length
 			else
-				movement:update(num_2)
+				movement:update(total_dt)
 
-				num_2 = 0
+				total_dt = 0
 			end
 		end
 
 		self._extra_joint = {
-			spline = _init_movement_spline,
+			spline = spline_curve,
 			node = node
 		}
 	end
 
-	if not self._is_server then
+	if self._is_server then
 		self:_create_game_object()
 	end
 end
@@ -154,130 +156,173 @@ PayloadExtension.movement = function (self)
 	return self._spline_curve:movement()
 end
 
-PayloadExtension._push_player = function (self, arg_9_1, arg_9_2)
+PayloadExtension._push_player = function (self, player_unit, abs_speed)
 	-- function 9
-	local _unit = self._unit
-	local var_9_1 = POSITION_LOOKUP[_unit]
-	local box, var_9_3 = Unit.box(_unit, true)
-	local var_9_4 = POSITION_LOOKUP[arg_9_1]
-	local num = var_9_3 * 1.2
+	local unit = self._unit
+	local self_pos = POSITION_LOOKUP[unit]
+	local pose, half_extents = Unit.box(unit, true)
+	local player_pos = POSITION_LOOKUP[player_unit]
 
-	if not math.point_is_inside_oobb(var_9_4, box, num) then
-		local flat = Vector3.flat(var_9_1)
-		local flat_2 = Vector3.flat(var_9_4)
-		local num_2 = Vector3.normalize(flat_2 - flat) * arg_9_2
+	half_extents = half_extents * 1.2
 
-		ScriptUnit.extension(arg_9_1, "locomotion_system"):add_external_velocity(num_2)
+	if math.point_is_inside_oobb(player_pos, pose, half_extents) then
+		local unit_pos_flat = Vector3.flat(self_pos)
+		local player_pos_flat = Vector3.flat(player_pos)
+		local pushed_velocity = Vector3.normalize(player_pos_flat - unit_pos_flat) * abs_speed
+		local locomotion_extension = ScriptUnit.extension(player_unit, "locomotion_system")
+
+		locomotion_extension:add_external_velocity(pushed_velocity)
 	end
 end
 
-local tbl = {}
-local tbl_2 = {}
+local RESULT_TABLE = {}
+local STAGGERED = {}
 
-PayloadExtension._hit_enemies = function (self, arg_10_1, arg_10_2)
+PayloadExtension._hit_enemies = function (self, abs_speed, t)
 	-- function 10
-	local _unit = self._unit
-	local var_10_1 = POSITION_LOOKUP[_unit]
-	local flat = Vector3.flat(var_10_1)
-	local box, var_10_4 = Unit.box(_unit, true)
-	local normalize = Vector3.normalize(Matrix4x4.forward(box))
+	local payload_unit = self._unit
+	local payload_position = POSITION_LOOKUP[payload_unit]
+	local payload_position_flat = Vector3.flat(payload_position)
+	local payload_pose, half_extents = Unit.box(payload_unit, true)
+	local payload_forward = Vector3.normalize(Matrix4x4.forward(payload_pose))
 	local x
 
-	if var_10_4.x > var_10_4.y then
-		x = var_10_4.x
+	if half_extents.x > half_extents.y then
+		x = half_extents.x
 
 		if not x then
 			-- Nothing
 		end
 	end
 
-	x = var_10_4.y
+	x = half_extents.y
+
+	local largest_extent = x
 
 	::label_10_0::
 
-	x = not (x > var_10_4.z) or not x or var_10_4.z
+	largest_extent = (not (largest_extent > half_extents.z) or not largest_extent) and not not half_extents.z
 
-	local num = x * 2
-	local num_2 = var_10_4 * 1.2
-	local num_3 = var_10_4 * 2
-	local flag = Unit.get_data(_unit, "hazard_type") or "payload"
-	local var_10_11 = EnvironmentalHazards[flag]
-	local str = "torso"
-	local var_10_13
-	local var_10_14 = flag
-	local get_difficulty_rank = Managers.state.difficulty:get_difficulty_rank()
-	local var_10_16 = var_10_11.enemy.difficulty_power_level[get_difficulty_rank]
+	local radius = largest_extent * 2
+	local small_box_extents = half_extents * 1.2
+	local large_box_extents = half_extents * 2
+	local unit_hazard_type = Unit.get_data(payload_unit, "hazard_type")
+	local hazard_type = not not unit_hazard_type or not not "payload"
+	local hazard_settings = EnvironmentalHazards[hazard_type]
+	local hit_zone_name = "torso"
+	local hit_ragdoll_actor
+	local damage_source = hazard_type
+	local difficulty_rank = Managers.state.difficulty:get_difficulty_rank()
+	local var_10_1 = hazard_settings.enemy.difficulty_power_level[difficulty_rank]
 
-	if not var_10_16 then
-		var_10_16 = var_10_11.enemy.difficulty_power_level[2]
-		var_10_16 = var_10_16 or DefaultPowerLevel
+	if not var_10_1 then
+		-- Nothing
 	end
 
-	local damage_profile = var_10_11.enemy.damage_profile
+	var_10_1 = hazard_settings.enemy.difficulty_power_level[2]
 
-	damage_profile = damage_profile or "default"
+	if not var_10_1 then
+		-- Nothing
+	end
 
-	local var_10_18 = DamageProfileTemplates[damage_profile]
-	local var_10_19
-	local num_4 = 0
-	local flag_2 = false
-	local can_damage = var_10_11.enemy.can_damage
+	var_10_1 = DefaultPowerLevel
 
-	can_damage = can_damage or false
+	local power_level = var_10_1
 
-	local can_stagger = var_10_11.enemy.can_stagger
+	::label_10_1::
 
-	can_stagger = can_stagger or true
+	local damage_profile_2 = hazard_settings.enemy.damage_profile
 
-	local flag_3 = false
-	local flag_4 = false
-	local broadphase_query = AiUtils.broadphase_query(var_10_1, num, tbl, self._enemy_broadphase_categories)
+	if not damage_profile_2 then
+		-- Nothing
+	end
 
-	for i = 1, broadphase_query do
-		local var_10_27 = tbl[i]
-		local var_10_28 = POSITION_LOOKUP[var_10_27]
-		local point_is_inside_oobb = math.point_is_inside_oobb(var_10_28, box, num_2)
-		local point_is_inside_oobb_2 = math.point_is_inside_oobb(var_10_28, box, num_3)
+	damage_profile_2 = "default"
 
-		if not (not point_is_inside_oobb and tbl_2[var_10_27]) then
-			tbl_2[var_10_27] = true
+	local damage_profile_name = damage_profile_2
 
-			local num_5 = 0.5
+	::label_10_2::
 
-			if not (not (Vector3.dot(normalize, var_10_28 - var_10_1) > 0) and not (arg_10_1 > 2)) then
-				num_5 = arg_10_1 * 1.3
+	local damage_profile = DamageProfileTemplates[damage_profile_name]
+	local target_index
+	local boost_curve_multiplier = 0
+	local is_critical_strike = false
+	local can_damage_2 = hazard_settings.enemy.can_damage
+
+	if not can_damage_2 then
+		-- Nothing
+	end
+
+	can_damage_2 = false
+
+	local can_damage = can_damage_2
+
+	::label_10_3::
+
+	local can_stagger_2 = hazard_settings.enemy.can_stagger
+
+	if not can_stagger_2 then
+		-- Nothing
+	end
+
+	can_stagger_2 = true
+
+	local can_stagger = can_stagger_2
+
+	::label_10_4::
+
+	local blocking = false
+	local shield_breaking_hit = false
+	local num_hits = AiUtils.broadphase_query(payload_position, radius, RESULT_TABLE, self._enemy_broadphase_categories)
+
+	for i = 1, num_hits do
+		local hit_unit = RESULT_TABLE[i]
+		local enemy_position = POSITION_LOOKUP[hit_unit]
+		local inside_small_box = math.point_is_inside_oobb(enemy_position, payload_pose, small_box_extents)
+		local inside_large_box = math.point_is_inside_oobb(enemy_position, payload_pose, large_box_extents)
+
+		if inside_small_box and not STAGGERED[hit_unit] then
+			STAGGERED[hit_unit] = true
+
+			local power_level_multiplier = 0.5
+			local dot = Vector3.dot(payload_forward, enemy_position - payload_position)
+			local enemy_in_front = dot > 0
+
+			if enemy_in_front and abs_speed > 2 then
+				power_level_multiplier = abs_speed * 1.3
 			end
 
-			local num_6 = var_10_16 * num_5
-			local flat_2 = Vector3.flat(var_10_28)
-			local normalize_2 = Vector3.normalize(flat_2 - flat)
+			local current_power_level = power_level * power_level_multiplier
+			local enemy_position_flat = Vector3.flat(enemy_position)
+			local push_direction = Vector3.normalize(enemy_position_flat - payload_position_flat)
 
-			DamageUtils.server_apply_hit(arg_10_2, _unit, var_10_27, str, nil, normalize_2, var_10_13, var_10_14, num_6, var_10_18, var_10_19, num_4, flag_2, can_damage, can_stagger, flag_3, flag_4)
-		elseif (point_is_inside_oobb or not point_is_inside_oobb_2) and not tbl_2[var_10_27] then
-			tbl_2[var_10_27] = false
+			DamageUtils.server_apply_hit(t, payload_unit, hit_unit, hit_zone_name, nil, push_direction, hit_ragdoll_actor, damage_source, current_power_level, damage_profile, target_index, boost_curve_multiplier, is_critical_strike, can_damage, can_stagger, blocking, shield_breaking_hit)
+		elseif not inside_small_box and inside_large_box and STAGGERED[hit_unit] then
+			STAGGERED[hit_unit] = false
 		end
 	end
 end
 
-PayloadExtension.update = function (self, arg_11_1, arg_11_2, arg_11_3, arg_11_4, arg_11_5)
+PayloadExtension.update = function (self, unit, input, dt, context, t)
 	-- function 11
-	local _players_in_proximity, var_11_1 = self:_players_in_proximity()
-	local flag = _players_in_proximity > 0
-	local _unit = self._unit
+	local num_players_in_proximity, players_in_proximity = self:_players_in_proximity()
+	local has_players_in_proximity = num_players_in_proximity > 0
+	local unit = self._unit
 	local game = Managers.state.network:game()
-	local _id = self._id
-	local num = 0
-	local _spline_curve = self._spline_curve
+	local id = self._id
+	local new_speed = 0
+	local spline_curve = self._spline_curve
 	local movement = self._spline_curve:movement()
-	local metadata = movement:_current_spline().metadata
+	local current_spline = movement:_current_spline()
+	local metadata = current_spline.metadata
 	local current_spline_index = movement:current_spline_index()
 
-	if not _id and not game then
-		if not self._is_server then
+	if id and game then
+		if self._is_server then
 			local speed_settings = metadata.speed_settings
 			local pushed
 
-			if not flag then
+			if has_players_in_proximity then
 				pushed = speed_settings.pushed
 
 				if not pushed then
@@ -287,302 +332,317 @@ PayloadExtension.update = function (self, arg_11_1, arg_11_2, arg_11_3, arg_11_4
 
 			pushed = speed_settings.not_pushed
 
+			local used_speed_settings = pushed
+
 			::label_11_0::
 
-			local bonus_speed_per_player = pushed.bonus_speed_per_player
+			local bonus_speed_per_player = used_speed_settings.bonus_speed_per_player
 
-			bonus_speed_per_player = bonus_speed_per_player or 0
+			bonus_speed_per_player = not not bonus_speed_per_player or not not 0
 
-			local num_2 = bonus_speed_per_player * _players_in_proximity
-			local num_3 = pushed.speed + num_2
-			local acceleration = pushed.acceleration
+			local bonus_speed = bonus_speed_per_player * num_players_in_proximity
+			local target_speed = used_speed_settings.speed + bonus_speed
+			local acceleration = used_speed_settings.acceleration
 
-			if not ((not (num_3 > 0) or self._previous_status ~= "end" or not (num_3 < 0)) and (self._previous_status ~= "start" or self._activated)) then
-				num_3 = 0
+			if (not (target_speed > 0) or self._previous_status ~= "end") and (not (target_speed < 0) or self._previous_status ~= "start") and not self._activated then
+				target_speed = 0
 			end
 
-			local flag_2 = false
-			local speed = movement:speed()
-			local num_5 = num_3 - speed
+			local force_speed = false
+			local old_speed = movement:speed()
+			local wanted_speed_change = target_speed - old_speed
 
-			if not self._stop_command_given then
+			if self._stop_command_given then
 				self._stop_command_given = false
-				num = 0
-			elseif num_5 > 0 then
-				num = math.min(speed + acceleration * arg_11_3, num_3)
-			elseif num_5 < 0 then
-				num = math.max(speed - acceleration * arg_11_3, num_3)
+				new_speed = 0
+			elseif wanted_speed_change > 0 then
+				new_speed = math.min(old_speed + acceleration * dt, target_speed)
+			elseif wanted_speed_change < 0 then
+				new_speed = math.max(old_speed - acceleration * dt, target_speed)
 			else
-				num = num_3
+				new_speed = target_speed
 			end
 
-			if not (not (speed > 0) or not (num < 0)) then
-				Unit.flow_event(_unit, "lua_start_moving_backwards")
+			if old_speed > 0 and new_speed < 0 then
+				Unit.flow_event(unit, "lua_start_moving_backwards")
 			end
 
-			GameSession.set_game_object_field(game, _id, "speed", num)
+			GameSession.set_game_object_field(game, id, "speed", new_speed)
 
 			local current_subdivision_index = movement:current_subdivision_index()
 			local current_t = movement:current_t()
 
-			GameSession.set_game_object_field(game, _id, "spline_index", current_spline_index)
-			GameSession.set_game_object_field(game, _id, "subdivision_index", current_subdivision_index)
-			GameSession.set_game_object_field(game, _id, "spline_t", current_t)
+			GameSession.set_game_object_field(game, id, "spline_index", current_spline_index)
+			GameSession.set_game_object_field(game, id, "subdivision_index", current_subdivision_index)
+			GameSession.set_game_object_field(game, id, "spline_t", current_t)
 
 			local flow_event_data = metadata.flow_event_data
 			local flow_event = flow_event_data.flow_event
 			local event_thrown = flow_event_data.event_thrown
-			local abs = math.abs(num)
+			local push_speed = math.abs(new_speed)
 
-			if not (not flag and not (abs > 0.1)) then
-				for i = 1, _players_in_proximity do
-					self:_push_player(var_11_1[i], abs)
+			if has_players_in_proximity and push_speed > 0.1 then
+				for i = 1, num_players_in_proximity do
+					self:_push_player(players_in_proximity[i], push_speed)
 				end
 			end
 
-			if abs > 0 then
-				self:_hit_enemies(abs, arg_11_5)
+			if push_speed > 0 then
+				self:_hit_enemies(push_speed, t)
 			end
 
-			if not ((current_spline_index == self._previous_spline_index or not flow_event) and event_thrown) then
+			if current_spline_index ~= self._previous_spline_index and flow_event and not event_thrown then
 				LevelHelper:flow_event(self._world, flow_event)
 
 				flow_event_data.event_thrown = true
 
-				local _network_manager = self._network_manager
-				local network_transmit = _network_manager.network_transmit
-				local game_object_or_level_id = _network_manager:game_object_or_level_id(_unit)
+				local network_manager = self._network_manager
+				local network_transmit = network_manager.network_transmit
+				local payload_unit_id = network_manager:game_object_or_level_id(unit)
 
-				network_transmit:send_rpc_clients("rpc_payload_flow_event", game_object_or_level_id, current_spline_index)
+				network_transmit:send_rpc_clients("rpc_payload_flow_event", payload_unit_id, current_spline_index)
 			end
 		else
-			local _error_speed_calculation = self:_error_speed_calculation(arg_11_3, arg_11_5, game, _id, movement)
+			local error_compensation_speed = self:_error_speed_calculation(dt, t, game, id, movement)
+			local network_speed = GameSession.game_object_field(game, id, "speed")
 
-			num = GameSession.game_object_field(game, _id, "speed") + _error_speed_calculation
+			new_speed = network_speed + error_compensation_speed
 		end
 	end
 
-	movement:set_speed(num)
+	movement:set_speed(new_speed)
 
-	local update = movement:update(arg_11_3, arg_11_5)
+	local status = movement:update(dt, t)
 
-	if not (self._state == "stopped" or not (math.abs(num) < num_4)) then
+	if self._state ~= "stopped" and math.abs(new_speed) < EPSILON then
 		self._state = "stopped"
 
-		Unit.flow_event(_unit, "lua_stopped")
-	elseif not (self._state == "moving" or not (math.abs(num) >= num_4)) then
+		Unit.flow_event(unit, "lua_stopped")
+	elseif self._state ~= "moving" and math.abs(new_speed) >= EPSILON then
 		if not self._started then
-			Unit.flow_event(_unit, "lua_start")
+			Unit.flow_event(unit, "lua_start")
 
 			self._started = true
 		end
 
 		self._state = "moving"
 
-		Unit.flow_event(_unit, "lua_moving")
-	elseif not (update ~= "end" or self._previous_status == "end") then
-		Unit.flow_event(_unit, "lua_end")
+		Unit.flow_event(unit, "lua_moving")
+	elseif status == "end" and self._previous_status ~= "end" then
+		Unit.flow_event(unit, "lua_end")
 	end
 
-	self._previous_status = update
+	self._previous_status = status
 	self._previous_spline_index = current_spline_index
 
-	if not self._use_statemachine then
-		Unit.animation_set_variable(self._unit, self._speed_var_index, num / self._anim_speed)
+	if self._use_statemachine then
+		Unit.animation_set_variable(self._unit, self._speed_var_index, new_speed / self._anim_speed)
 	else
-		Unit.set_simple_animation_speed(self._unit, num / self._anim_speed, self._anim_group)
+		Unit.set_simple_animation_speed(self._unit, new_speed / self._anim_speed, self._anim_group)
 	end
 
-	Unit.set_local_position(_unit, 0, movement:current_position())
+	Unit.set_local_position(unit, 0, movement:current_position())
 
-	local current_tangent_direction = movement:current_tangent_direction()
-	local look = Quaternion.look(current_tangent_direction, Vector3.up())
+	local dir = movement:current_tangent_direction()
+	local rot = Quaternion.look(dir, Vector3.up())
 
-	Unit.set_local_rotation(_unit, 0, look)
+	Unit.set_local_rotation(unit, 0, rot)
 
-	if not self._extra_joint then
-		local inverse = Quaternion.inverse(look)
-		local movement_2 = self._extra_joint.spline:movement()
+	if self._extra_joint then
+		local inverse_rot = Quaternion.inverse(rot)
+		local movement = self._extra_joint.spline:movement()
 
-		movement_2:set_speed(num)
-		movement_2:update(arg_11_3, arg_11_5)
+		movement:set_speed(new_speed)
+		movement:update(dt, t)
 
 		local node = self._extra_joint.node
-		local current_tangent_direction_2 = movement_2:current_tangent_direction()
-		local rotate = Quaternion.rotate(inverse, current_tangent_direction_2)
-		local look_2 = Quaternion.look(rotate, Vector3.up())
+		local tangent_dir = movement:current_tangent_direction()
+		local local_tangent_dir = Quaternion.rotate(inverse_rot, tangent_dir)
+		local node_rot = Quaternion.look(local_tangent_dir, Vector3.up())
 
-		Unit.set_local_rotation(_unit, node, look_2)
+		Unit.set_local_rotation(unit, node, node_rot)
 	end
 end
 
-PayloadExtension.payload_flow_event = function (self, arg_12_1)
+PayloadExtension.payload_flow_event = function (self, spline_index)
 	-- function 12
-	local flow_event = self._spline_curve:splines()[arg_12_1].metadata.flow_event_data.flow_event
+	local spline_curve = self._spline_curve
+	local splines = spline_curve:splines()
+	local spline = splines[spline_index]
+	local metadata = spline.metadata
+	local flow_event_data = metadata.flow_event_data
+	local flow_event = flow_event_data.flow_event
 
 	LevelHelper:flow_event(self._world, flow_event)
 end
 
-local tbl_3 = {}
+local PLAYERS_IN_PROXIMITY = {}
 
 PayloadExtension._players_in_proximity = function (self)
 	-- function 13
-	local PLAYER_UNITS = self._side.PLAYER_UNITS
-	local count = #PLAYER_UNITS
-	local POSITION_LOOKUP = POSITION_LOOKUP
-	local world_position = Unit.world_position(self._unit, 0)
-	local num = 0
+	local side = self._side
+	local player_units = side.PLAYER_UNITS
+	local num_player_units = #player_units
+	local positions = POSITION_LOOKUP
+	local payload_position = Unit.world_position(self._unit, 0)
+	local num_players_in_proximity = 0
 
-	for i = 1, count do
-		local var_13_5 = PLAYER_UNITS[i]
-		local var_13_6 = POSITION_LOOKUP[var_13_5]
-		local distance = Vector3.distance(var_13_6, world_position)
-		local extension = ScriptUnit.extension(var_13_5, "status_system")
+	for i = 1, num_player_units do
+		local unit = player_units[i]
+		local position = positions[unit]
+		local distance = Vector3.distance(position, payload_position)
+		local status_extension = ScriptUnit.extension(unit, "status_system")
 
-		if not (not (distance < 5) or extension:is_disabled()) then
-			num = num + 1
-			tbl_3[num] = var_13_5
+		if distance < 5 and not status_extension:is_disabled() then
+			num_players_in_proximity = num_players_in_proximity + 1
+			PLAYERS_IN_PROXIMITY[num_players_in_proximity] = unit
 		end
 	end
 
-	return num, tbl_3
+	return num_players_in_proximity, PLAYERS_IN_PROXIMITY
 end
 
-PayloadExtension._error_speed_calculation = function (self, arg_14_1, arg_14_2, arg_14_3, arg_14_4, arg_14_5)
+PayloadExtension._error_speed_calculation = function (self, dt, t, game, id, movement)
 	-- function 14
-	local game_object_field = GameSession.game_object_field(arg_14_3, arg_14_4, "spline_index")
-	local game_object_field_2 = GameSession.game_object_field(arg_14_3, arg_14_4, "subdivision_index")
-	local game_object_field_3 = GameSession.game_object_field(arg_14_3, arg_14_4, "spline_t")
-	local _last_synched_spline_values = self._last_synched_spline_values
+	local spline_index = GameSession.game_object_field(game, id, "spline_index")
+	local subdiv = GameSession.game_object_field(game, id, "subdivision_index")
+	local spline_t = GameSession.game_object_field(game, id, "spline_t")
+	local old_vals = self._last_synched_spline_values
 
-	if not (_last_synched_spline_values.spline_index ~= game_object_field or _last_synched_spline_values.subdivision_index ~= game_object_field_2 or _last_synched_spline_values.spline_t == game_object_field_3) then
-		local current_spline_index = arg_14_5:current_spline_index()
-		local current_subdivision_index = arg_14_5:current_subdivision_index()
-		local current_t = arg_14_5:current_t()
-		local distance = arg_14_5:distance(current_spline_index, current_subdivision_index, current_t, game_object_field, game_object_field_2, game_object_field_3)
+	if old_vals.spline_index ~= spline_index or old_vals.subdivision_index ~= subdiv or old_vals.spline_t ~= spline_t then
+		local curr_spline_index = movement:current_spline_index()
+		local curr_subdivision_index = movement:current_subdivision_index()
+		local curr_spline_t = movement:current_t()
+		local error_distance = movement:distance(curr_spline_index, curr_subdivision_index, curr_spline_t, spline_index, subdiv, spline_t)
 
-		_last_synched_spline_values.spline_index = game_object_field
-		_last_synched_spline_values.subdivision_index = game_object_field_2
-		_last_synched_spline_values.spline_t = game_object_field_3
-		_last_synched_spline_values.error_compensation_speed = distance / num_2
-		_last_synched_spline_values.last_synch_time = arg_14_2
-	elseif arg_14_2 - _last_synched_spline_values.last_synch_time >= num_2 then
-		_last_synched_spline_values.error_compensation_speed = 0
+		old_vals.spline_index = spline_index
+		old_vals.subdivision_index = subdiv
+		old_vals.spline_t = spline_t
+		old_vals.error_compensation_speed = error_distance / ERROR_RECOUP_TIME
+		old_vals.last_synch_time = t
+	elseif t - old_vals.last_synch_time >= ERROR_RECOUP_TIME then
+		old_vals.error_compensation_speed = 0
 	end
 
-	return _last_synched_spline_values.error_compensation_speed
+	return old_vals.error_compensation_speed
 end
 
-PayloadExtension.set_game_object_id = function (self, arg_15_1)
+PayloadExtension.set_game_object_id = function (self, game_object_id)
 	-- function 15
-	local _game = self._game
-	local game_object_field = GameSession.game_object_field(_game, arg_15_1, "spline_index")
-	local game_object_field_2 = GameSession.game_object_field(_game, arg_15_1, "subdivision_index")
-	local game_object_field_3 = GameSession.game_object_field(_game, arg_15_1, "spline_t")
-	local game_object_field_4 = GameSession.game_object_field(_game, arg_15_1, "speed")
+	local game = self._game
+	local spline_index = GameSession.game_object_field(game, game_object_id, "spline_index")
+	local subdivision_index = GameSession.game_object_field(game, game_object_id, "subdivision_index")
+	local spline_t = GameSession.game_object_field(game, game_object_id, "spline_t")
+	local speed = GameSession.game_object_field(game, game_object_id, "speed")
 	local movement = self._spline_curve:movement()
 
-	movement:set_spline_index(game_object_field, game_object_field_2, game_object_field_3)
-	movement:set_speed(game_object_field_4)
+	movement:set_spline_index(spline_index, subdivision_index, spline_t)
+	movement:set_speed(speed)
 
-	self._id = arg_15_1
+	self._id = game_object_id
 end
 
-local tbl_4 = {}
+local gizmo_point_map = {}
 
-PayloadExtension._init_movement_spline = function (arg_16_0, arg_16_1, arg_16_2, arg_16_3)
+PayloadExtension._init_movement_spline = function (self, world, unit, payload_gizmos)
 	-- function 16
-	local get_data = Unit.get_data(arg_16_2, "spline_name")
-	local current_level = LevelHelper:current_level(arg_16_1)
-	local spline = Level.spline(current_level, get_data)
+	local spline_name = Unit.get_data(unit, "spline_name")
+	local level = LevelHelper:current_level(world)
+	local source_spline_points = Level.spline(level, spline_name)
+	local spline_points = source_spline_points
 
-	fassert(#spline > 0, "Could not find spline called %s for Payload unit in level, wrong name? or payload unit is used as a prop unintentionally", get_data)
+	fassert(#spline_points > 0, "Could not find spline called %s for Payload unit in level, wrong name? or payload unit is used as a prop unintentionally", spline_name)
 
-	local var_16_3 = SplineCurve:new(spline, "Bezier", "SplineMovementHermiteInterpolatedMetered", get_data, 10)
-	local splines = var_16_3:splines()
+	local spline_curve = SplineCurve:new(spline_points, "Bezier", "SplineMovementHermiteInterpolatedMetered", spline_name, 10)
+	local splines = spline_curve:splines()
 
-	table.clear(tbl_4)
+	table.clear(gizmo_point_map)
 
-	if not arg_16_3 then
-		for i = 1, #arg_16_3 do
-			local var_16_5 = arg_16_3[i]
-			local world_position = Unit.world_position(var_16_5, 0)
-			local huge = math.huge
-			local var_16_8
+	if payload_gizmos then
+		for i = 1, #payload_gizmos do
+			local gizmo_unit = payload_gizmos[i]
+			local gizmo_position = Unit.world_position(gizmo_unit, 0)
+			local smallest_distance, point = math.huge
 
-			for i_2, v in ipairs(splines) do
-				local points = v.points
-				local unbox = points[1]:unbox()
-				local distance = Vector3.distance(world_position, unbox)
+			for index, spline in ipairs(splines) do
+				local points = spline.points
+				local point_position = points[1]:unbox()
+				local distance = Vector3.distance(gizmo_position, point_position)
 
-				if distance < huge then
-					huge = distance
-					var_16_8 = points[1]
+				if distance < smallest_distance then
+					smallest_distance = distance
+					point = points[1]
 				end
 
-				if i_2 == #splines then
-					local unbox_2 = points[4]:unbox()
-					local distance_2 = Vector3.distance(world_position, unbox_2)
+				if index == #splines then
+					local point_position = points[4]:unbox()
+					local distance = Vector3.distance(gizmo_position, point_position)
 
-					if distance_2 < huge then
-						huge = distance_2
-						var_16_8 = points[4]
+					if distance < smallest_distance then
+						smallest_distance = distance
+						point = points[4]
 					end
 				end
 			end
 
-			tbl_4[var_16_8] = var_16_5
+			gizmo_point_map[point] = gizmo_unit
 		end
 	end
 
-	local str = "flat"
+	local speed_setting = "flat"
 
-	for i_3, v_2 in ipairs(splines) do
-		local var_16_15 = v_2.points[1]
-		local var_16_16 = tbl_4[var_16_15]
-		local var_16_17
+	for index, spline in ipairs(splines) do
+		local points = spline.points
+		local point = points[1]
+		local gizmo_unit = gizmo_point_map[point]
+		local flow_event
 
-		if not var_16_16 then
-			local get_data_2 = Unit.get_data(var_16_16, "speed_setting")
-			local get_data_3 = Unit.get_data(var_16_16, "flow_event")
+		if gizmo_unit then
+			local unit_speed_setting = Unit.get_data(gizmo_unit, "speed_setting")
+			local unit_flow_event = Unit.get_data(gizmo_unit, "flow_event")
 
-			str = get_data_2 == "" or not get_data_2 or str
-			var_16_17 = get_data_3 == "" or get_data_3
+			if unit_speed_setting ~= "" and not unit_speed_setting then
+				-- Nothing
+			end
+
+			flow_event = unit_flow_event ~= "" and not not unit_flow_event
 		end
 
-		local var_16_20 = PayloadSpeedSettings[str]
-
-		v_2.metadata = {
-			speed_settings = var_16_20,
+		local speed_settings = PayloadSpeedSettings[speed_setting]
+		local metadata = {
+			speed_settings = speed_settings,
 			flow_event_data = {
 				event_thrown = false,
-				flow_event = var_16_17
+				flow_event = flow_event
 			}
 		}
+
+		spline.metadata = metadata
 	end
 
-	return var_16_3
+	return spline_curve
 end
 
 PayloadExtension._create_game_object = function (self)
 	-- function 17
-	local _unit = self._unit
+	local unit = self._unit
 	local movement = self._spline_curve:movement()
-	local current_spline_index = movement:current_spline_index()
-	local current_subdivision_index = movement:current_subdivision_index()
-	local current_t = movement:current_t()
+	local spline_index = movement:current_spline_index()
+	local subdivision_index = movement:current_subdivision_index()
+	local spline_t = movement:current_t()
 	local speed = movement:speed()
-	local tbl = {
+	local game_object_data_table = {
 		go_type = NetworkLookup.go_types.payload,
 		level_unit_index = self._level_unit_index,
-		spline_index = current_spline_index,
-		subdivision_index = current_subdivision_index,
-		spline_t = current_t,
+		spline_index = spline_index,
+		subdivision_index = subdivision_index,
+		spline_t = spline_t,
 		speed = speed
 	}
-	local var_17_7 = callback(self, "cb_game_session_disconnect")
+	local callback = callback(self, "cb_game_session_disconnect")
+	local game_object_id = self._network_manager:create_game_object("payload", game_object_data_table, callback)
 
-	self._id = self._network_manager:create_game_object("payload", tbl, var_17_7)
+	self._id = game_object_id
 end
 
 PayloadExtension.cb_game_session_disconnect = function (self)
@@ -600,12 +660,12 @@ PayloadExtension.finished = function (self)
 	return self._previous_status == "end"
 end
 
-PayloadExtension.increment_kill_stat = function (self, arg_21_1, arg_21_2, arg_21_3, arg_21_4, arg_21_5)
+PayloadExtension.increment_kill_stat = function (self, killing_blow, breed_killed, breed_attacker, attacker_unit, ai_unit)
 	-- function 21
-	if arg_21_4 == self._unit then
-		local local_player = Managers.player:local_player()
+	if attacker_unit == self._unit then
+		local player = Managers.player:local_player()
 		local statistics_db = Managers.player:statistics_db()
-		local stats_id = local_player:stats_id()
+		local stats_id = player:stats_id()
 
 		statistics_db:increment_stat(stats_id, "trail_sleigher")
 	end

@@ -2,47 +2,49 @@
 
 local WwiseBankReference = WwiseBankReference
 
-WwiseBankReference = WwiseBankReference or {}
+WwiseBankReference = not not WwiseBankReference or not not {}
 WwiseBankReference = WwiseBankReference
 
-local function fn(self)
+local function lazy_init(self)
 	-- function 1
 	if not self.references then
 		self.references = {}
 	end
 end
 
-WwiseBankReference.add = function (self, arg_2_1)
+WwiseBankReference.add = function (self, bank_resource_name)
 	-- function 2
-	fn(self)
+	lazy_init(self)
 
 	local references = self.references
-	local var_2_1 = self.references[arg_2_1]
+	local var_2_1 = self.references[bank_resource_name]
 
-	var_2_1 = var_2_1 or 0
-	references[arg_2_1] = var_2_1 + 1
+	var_2_1 = not not var_2_1 or not not 0
+	references[bank_resource_name] = var_2_1 + 1
 end
 
-WwiseBankReference.remove = function (self, arg_3_1)
+WwiseBankReference.remove = function (self, bank_resource_name)
 	-- function 3
-	fn(self)
+	lazy_init(self)
 
-	local var_3_0 = self.references[arg_3_1]
+	local var_3_0 = self.references[bank_resource_name]
 
-	var_3_0 = var_3_0 or 0
+	var_3_0 = not not var_3_0 or not not 0
 
-	if var_3_0 - 1 <= 0 then
-		self.references[arg_3_1] = nil
+	local new_count = var_3_0 - 1
+
+	if new_count <= 0 then
+		self.references[bank_resource_name] = nil
 	end
 end
 
-WwiseBankReference.count = function (self, arg_4_1)
+WwiseBankReference.count = function (self, bank_resource_name)
 	-- function 4
-	fn(self)
+	lazy_init(self)
 
-	local var_4_0 = self.references[arg_4_1]
+	local var_4_0 = self.references[bank_resource_name]
 
-	var_4_0 = var_4_0 or 0
+	var_4_0 = not not var_4_0 or not not 0
 
 	return var_4_0
 end

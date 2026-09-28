@@ -1,11 +1,19 @@
 -- chunkname: @scripts/settings/breeds/breed_skaven_rat_ogre.lua
 
-local scripts_utils_stagger_types = require("scripts/utils/stagger_types")
+local stagger_types = require("scripts/utils/stagger_types")
 local BotConstants = BotConstants
 
-BotConstants = not BotConstants and BotConstants.default.DEFAULT_BOT_THREAT_DIFFICULTY_DATA
+if BotConstants then
+	-- Nothing
+end
 
-local tbl = {
+BotConstants = BotConstants.default.DEFAULT_BOT_THREAT_DIFFICULTY_DATA
+
+local default_bot_threat_difficulty_data = BotConstants
+
+::label_0_0::
+
+local breed_data = {
 	detection_radius = 9999999,
 	race = "skaven",
 	walk_speed = 5,
@@ -335,36 +343,36 @@ local tbl = {
 		stormfiend_warpfire = 1,
 		vortex_danger_zone = 1
 	},
-	custom_death_enter_function = function (arg_1_0, arg_1_1, arg_1_2, arg_1_3, arg_1_4, arg_1_5)
+	custom_death_enter_function = function (unit, killer_unit, damage_type, death_hit_zone, t, damage_source)
 		-- function 1
-		local var_1_0 = BLACKBOARDS[arg_1_0]
+		local blackboard = BLACKBOARDS[unit]
 
-		if not Unit.alive(arg_1_1) then
+		if not Unit.alive(killer_unit) then
 			return
 		end
 
-		QuestSettings.check_rat_ogre_killed_mid_leap(var_1_0, arg_1_1)
-		QuestSettings.check_rat_ogre_killed_without_dealing_damage(var_1_0, arg_1_1)
+		QuestSettings.check_rat_ogre_killed_mid_leap(blackboard, killer_unit)
+		QuestSettings.check_rat_ogre_killed_without_dealing_damage(blackboard, killer_unit)
 	end,
-	before_stagger_enter_function = function (arg_2_0, arg_2_1, arg_2_2, arg_2_3)
+	before_stagger_enter_function = function (unit, blackboard, attacker_unit, is_push)
 		-- function 2
-		Managers.state.achievement:trigger_event("rat_ogre_stagger", arg_2_0, arg_2_1, arg_2_2)
+		Managers.state.achievement:trigger_event("rat_ogre_stagger", unit, blackboard, attacker_unit)
 	end
 }
 
-Breeds.skaven_rat_ogre = table.create_copy(Breeds.skaven_rat_ogre, tbl)
+Breeds.skaven_rat_ogre = table.create_copy(Breeds.skaven_rat_ogre, breed_data)
 
-local tbl_2 = {
+local pushed_data = {
 	ahead_dist = 2,
 	push_width = 4,
 	push_forward_offset = 1,
 	push_stagger_distance = 1,
 	player_pushed_speed = 10,
 	push_stagger_impact = {
-		scripts_utils_stagger_types.medium,
-		scripts_utils_stagger_types.medium,
-		scripts_utils_stagger_types.none,
-		scripts_utils_stagger_types.none
+		stagger_types.medium,
+		stagger_types.medium,
+		stagger_types.none,
+		stagger_types.none
 	},
 	push_stagger_duration = {
 		1.5,
@@ -373,7 +381,7 @@ local tbl_2 = {
 		0
 	}
 }
-local tbl_3 = {
+local AttackIntensityPerDifficulty = {
 	melee_slam = {
 		easy = {
 			running = 2,
@@ -518,7 +526,7 @@ local tbl_3 = {
 		}
 	}
 }
-local tbl_4 = {
+local action_data = {
 	follow = {
 		follow_target_function_name = "_follow_target_rat_ogre",
 		move_anim = "move_start_fwd",
@@ -614,7 +622,7 @@ local tbl_4 = {
 		unblockable = false,
 		attack_time = 1.3333333333333333,
 		dodge_mitigation_radius_squared = 2.25,
-		difficulty_attack_intensity = tbl_3,
+		difficulty_attack_intensity = AttackIntensityPerDifficulty,
 		considerations = UtilityConsiderations.melee_slam,
 		attack_anim = {
 			"attack_slam",
@@ -625,11 +633,11 @@ local tbl_4 = {
 		blocked_difficulty_damage = BreedTweaks.difficulty_damage.boss_slam_attack,
 		difficulty_damage = BreedTweaks.difficulty_damage.boss_slam_attack,
 		stagger_impact = {
-			scripts_utils_stagger_types.weak,
-			scripts_utils_stagger_types.medium,
-			scripts_utils_stagger_types.none,
-			scripts_utils_stagger_types.none,
-			scripts_utils_stagger_types.weak
+			stagger_types.weak,
+			stagger_types.medium,
+			stagger_types.none,
+			stagger_types.none,
+			stagger_types.weak
 		},
 		bot_threats = {
 			{
@@ -637,10 +645,10 @@ local tbl_4 = {
 				start_time = 0.16666666666666666
 			}
 		},
-		hit_player_func = function (arg_3_0, arg_3_1, arg_3_2, arg_3_3)
+		hit_player_func = function (unit, blackboard, hit_unit, damage)
 			-- function 3
-			if not arg_3_3 then
-				arg_3_1.has_dealt_damage = true
+			if damage then
+				blackboard.has_dealt_damage = true
 			end
 		end
 	},
@@ -652,7 +660,7 @@ local tbl_4 = {
 		allow_friendly_fire = true,
 		attack_intensity_type = "combo",
 		action_weight = 1,
-		difficulty_attack_intensity = tbl_3,
+		difficulty_attack_intensity = AttackIntensityPerDifficulty,
 		considerations = UtilityConsiderations.rat_ogre_combo,
 		attacks = {
 			{
@@ -674,7 +682,7 @@ local tbl_4 = {
 				attack_anim = {
 					"attack_combo_fwd"
 				},
-				push_units_in_the_way = tbl_2,
+				push_units_in_the_way = pushed_data,
 				bot_threats = {
 					{
 						range = 3.5,
@@ -697,10 +705,10 @@ local tbl_4 = {
 						start_time = 1.9333333333333333
 					}
 				},
-				hit_player_func = function (arg_4_0, arg_4_1, arg_4_2, arg_4_3, arg_4_4, arg_4_5)
+				hit_player_func = function (unit, blackboard, hit_unit, action, attack, dealt_damage)
 					-- function 4
-					if not arg_4_5 then
-						arg_4_1.has_dealt_damage = true
+					if dealt_damage then
+						blackboard.has_dealt_damage = true
 					end
 				end
 			}
@@ -725,7 +733,7 @@ local tbl_4 = {
 		action_weight = 1,
 		ignore_ai_damage = true,
 		damage_type = "cutting",
-		difficulty_attack_intensity = tbl_3,
+		difficulty_attack_intensity = AttackIntensityPerDifficulty,
 		considerations = UtilityConsiderations.melee_shove,
 		attacks = {
 			{
@@ -770,11 +778,11 @@ local tbl_4 = {
 				push_ai = {
 					stagger_distance = 3,
 					stagger_impact = {
-						scripts_utils_stagger_types.explosion,
-						scripts_utils_stagger_types.heavy,
-						scripts_utils_stagger_types.none,
-						scripts_utils_stagger_types.none,
-						scripts_utils_stagger_types.explosion
+						stagger_types.explosion,
+						stagger_types.heavy,
+						stagger_types.none,
+						stagger_types.none,
+						stagger_types.explosion
 					},
 					stagger_duration = {
 						4.5,
@@ -784,7 +792,7 @@ local tbl_4 = {
 						4
 					}
 				},
-				bot_threat_difficulty_data = BotConstants,
+				bot_threat_difficulty_data = default_bot_threat_difficulty_data,
 				bot_threats = {
 					attack_shove_left = {
 						{
@@ -811,10 +819,10 @@ local tbl_4 = {
 						}
 					}
 				},
-				hit_player_func = function (arg_5_0, arg_5_1, arg_5_2, arg_5_3, arg_5_4, arg_5_5)
+				hit_player_func = function (unit, blackboard, hit_unit, action, attack, dealt_damage)
 					-- function 5
-					if not arg_5_5 then
-						arg_5_1.has_dealt_damage = true
+					if dealt_damage then
+						blackboard.has_dealt_damage = true
 					end
 				end
 			}
@@ -862,11 +870,11 @@ local tbl_4 = {
 				push_ai = {
 					stagger_distance = 3,
 					stagger_impact = {
-						scripts_utils_stagger_types.explosion,
-						scripts_utils_stagger_types.heavy,
-						scripts_utils_stagger_types.none,
-						scripts_utils_stagger_types.none,
-						scripts_utils_stagger_types.explosion
+						stagger_types.explosion,
+						stagger_types.heavy,
+						stagger_types.none,
+						stagger_types.none,
+						stagger_types.explosion
 					},
 					stagger_duration = {
 						4.5,
@@ -876,10 +884,10 @@ local tbl_4 = {
 						4
 					}
 				},
-				hit_player_func = function (arg_6_0, arg_6_1, arg_6_2, arg_6_3, arg_6_4, arg_6_5)
+				hit_player_func = function (unit, blackboard, hit_unit, action, attack, dealt_damage)
 					-- function 6
-					if not arg_6_5 then
-						arg_6_1.has_dealt_damage = true
+					if dealt_damage then
+						blackboard.has_dealt_damage = true
 					end
 				end
 			}
@@ -892,7 +900,7 @@ local tbl_4 = {
 	jump_slam = {
 		attack_intensity_type = "jump_slam",
 		action_weight = 1,
-		difficulty_attack_intensity = tbl_3,
+		difficulty_attack_intensity = AttackIntensityPerDifficulty,
 		considerations = UtilityConsiderations.jump_slam,
 		bot_threats = {
 			{
@@ -917,10 +925,10 @@ local tbl_4 = {
 		catapulted_player_speed = 7,
 		difficulty_damage = BreedTweaks.difficulty_damage.boss_slam_attack,
 		stagger_impact = {
-			scripts_utils_stagger_types.weak,
-			scripts_utils_stagger_types.medium,
-			scripts_utils_stagger_types.none,
-			scripts_utils_stagger_types.none
+			stagger_types.weak,
+			stagger_types.medium,
+			stagger_types.none,
+			stagger_types.none
 		}
 	},
 	climb = {
@@ -1004,8 +1012,8 @@ local tbl_4 = {
 	}
 }
 
-tbl_4.anti_ladder_melee_slam = table.clone(tbl_4.melee_slam)
-tbl_4.anti_ladder_melee_slam.considerations = UtilityConsiderations.anti_ladder_melee_slam
-tbl_4.fling_skaven = table.clone(tbl_4.melee_shove)
-tbl_4.fling_skaven.self_running_speed_threshold = 2
-BreedActions.skaven_rat_ogre = table.create_copy(BreedActions.skaven_rat_ogre, tbl_4)
+action_data.anti_ladder_melee_slam = table.clone(action_data.melee_slam)
+action_data.anti_ladder_melee_slam.considerations = UtilityConsiderations.anti_ladder_melee_slam
+action_data.fling_skaven = table.clone(action_data.melee_shove)
+action_data.fling_skaven.self_running_speed_threshold = 2
+BreedActions.skaven_rat_ogre = table.create_copy(BreedActions.skaven_rat_ogre, action_data)

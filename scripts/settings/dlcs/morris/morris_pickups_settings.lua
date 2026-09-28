@@ -1,24 +1,26 @@
 -- chunkname: @scripts/settings/dlcs/morris/morris_pickups_settings.lua
 
-local morris = DLCSettings.morris
+local settings = DLCSettings.morris
 
-local function fn(arg_1_0, arg_1_1)
+local function can_spawn_deus_pickup(params, is_debug_spawn)
 	-- function 1
 	if Managers.mechanism:current_mechanism_name() ~= "deus" then
 		return false
 	end
 
-	local get_current_level_keys = Managers.level_transition_handler:get_current_level_keys()
-	local var_1_1 = LevelSettings[get_current_level_keys]
+	local level_transition_handler = Managers.level_transition_handler
+	local level_key = level_transition_handler:get_current_level_keys()
+	local level_settings = LevelSettings[level_key]
+	local is_hub_level = not not level_settings and not not level_settings.hub_level
 
-	if not (not var_1_1 and var_1_1.hub_level) then
+	if is_hub_level then
 		return false
 	end
 
 	return true
 end
 
-morris.pickups = {
+settings.pickups = {
 	deus_weapon_chest = {
 		deus_weapon_chest = {
 			type = "deus_weapon_chest",
@@ -29,7 +31,7 @@ morris.pickups = {
 			unit_name = "units/props/inn/deus/deus_chest_01",
 			unit_template_name = "deus_weapon_chest",
 			hud_description = "deus_weapon_chest_hud_desc",
-			can_spawn_func = fn
+			can_spawn_func = can_spawn_deus_pickup
 		}
 	},
 	deus_soft_currency = {
@@ -45,19 +47,19 @@ morris.pickups = {
 			unit_template_name = "pickup_unit",
 			hud_description = "deus_soft_currency_item_desc",
 			disallow_bot_pickup = true,
-			on_pick_up_func = function (arg_2_0, arg_2_1, arg_2_2, arg_2_3)
+			on_pick_up_func = function (world, interactor_unit, is_server, interactable_unit)
 				-- function 2
 				local game_mode = Managers.state.game_mode:game_mode()
 
-				if not game_mode.on_picked_up_soft_currency then
-					game_mode:on_picked_up_soft_currency(arg_2_3, arg_2_1)
+				if game_mode.on_picked_up_soft_currency then
+					game_mode:on_picked_up_soft_currency(interactable_unit, interactor_unit)
 				end
 
-				local local_player = Managers.player:local_player()
+				local player = Managers.player:local_player()
 
-				Managers.state.event:trigger("player_pickup_deus_soft_currency", local_player)
+				Managers.state.event:trigger("player_pickup_deus_soft_currency", player)
 			end,
-			can_spawn_func = fn
+			can_spawn_func = can_spawn_deus_pickup
 		}
 	},
 	deus_cursed_chest = {
@@ -70,7 +72,7 @@ morris.pickups = {
 			unit_name = "units/props/inn/deus/deus_cursed_chest",
 			unit_template_name = "deus_cursed_chest",
 			hud_description = "deus_cursed_chest_hud_desc",
-			can_spawn_func = fn
+			can_spawn_func = can_spawn_deus_pickup
 		}
 	},
 	level_events = {
@@ -87,7 +89,7 @@ morris.pickups = {
 			unit_template_name = "deus_relic",
 			wield_on_pickup = true,
 			hud_description = "deus_relic_01_hud_desc",
-			can_spawn_func = fn
+			can_spawn_func = can_spawn_deus_pickup
 		},
 		deus_rally_flag = {
 			only_once = true,
@@ -105,7 +107,7 @@ morris.pickups = {
 			local_pickup_sound = true,
 			hud_description = "deus_rally_flag_01_hud_desc",
 			pickup_sound_event = "pickup_medkit",
-			can_spawn_func = fn
+			can_spawn_func = can_spawn_deus_pickup
 		},
 		tiny_explosive_barrel = {
 			only_once = true,
@@ -141,7 +143,7 @@ morris.pickups = {
 			item_name = "potion_liquid_bravado_01",
 			consumable_item = true,
 			local_pickup_sound = true,
-			can_spawn_func = fn
+			can_spawn_func = can_spawn_deus_pickup
 		},
 		vampiric_draught_potion = {
 			spawn_weighting = 0.2,
@@ -160,7 +162,7 @@ morris.pickups = {
 			item_name = "potion_vampiric_draught_01",
 			consumable_item = true,
 			local_pickup_sound = true,
-			can_spawn_func = fn
+			can_spawn_func = can_spawn_deus_pickup
 		},
 		moot_milk_potion = {
 			spawn_weighting = 0.2,
@@ -179,7 +181,7 @@ morris.pickups = {
 			item_name = "potion_moot_milk_01",
 			consumable_item = true,
 			local_pickup_sound = true,
-			can_spawn_func = fn
+			can_spawn_func = can_spawn_deus_pickup
 		},
 		friendly_murderer_potion = {
 			spawn_weighting = 0.2,
@@ -198,7 +200,7 @@ morris.pickups = {
 			item_name = "potion_friendly_murderer_01",
 			consumable_item = true,
 			local_pickup_sound = true,
-			can_spawn_func = fn
+			can_spawn_func = can_spawn_deus_pickup
 		},
 		killer_in_the_shadows_potion = {
 			spawn_weighting = 0.2,
@@ -217,7 +219,7 @@ morris.pickups = {
 			item_name = "potion_killer_in_the_shadows_01",
 			consumable_item = true,
 			local_pickup_sound = true,
-			can_spawn_func = fn
+			can_spawn_func = can_spawn_deus_pickup
 		},
 		pockets_full_of_bombs_potion = {
 			spawn_weighting = 0.1,
@@ -236,7 +238,7 @@ morris.pickups = {
 			item_name = "potion_pockets_full_of_bombs_01",
 			consumable_item = true,
 			local_pickup_sound = true,
-			can_spawn_func = fn
+			can_spawn_func = can_spawn_deus_pickup
 		},
 		hold_my_beer_potion = {
 			spawn_weighting = 0.2,
@@ -255,7 +257,7 @@ morris.pickups = {
 			item_name = "potion_hold_my_beer_01",
 			consumable_item = true,
 			local_pickup_sound = true,
-			can_spawn_func = fn
+			can_spawn_func = can_spawn_deus_pickup
 		},
 		poison_proof_potion = {
 			spawn_weighting = 0.2,
@@ -274,7 +276,7 @@ morris.pickups = {
 			item_name = "potion_poison_proof_01",
 			consumable_item = true,
 			local_pickup_sound = true,
-			can_spawn_func = fn
+			can_spawn_func = can_spawn_deus_pickup
 		}
 	},
 	grenades = {
@@ -297,10 +299,10 @@ morris.pickups = {
 		}
 	}
 }
-morris.pickup_system_extension_update = {
+settings.pickup_system_extension_update = {
 	"DeusChestExtension"
 }
-morris.loot_rat_pickups = {
+settings.loot_rat_pickups = {
 	deus = {
 		first_aid_kit = 6,
 		all_ammo_small = 6,
@@ -310,15 +312,15 @@ morris.loot_rat_pickups = {
 		healing_draught = 6
 	}
 }
-morris.bardin_scavenger_custom_potions = {
+settings.bardin_scavenger_custom_potions = {
 	deus = {}
 }
 
-local num = 1
-local deus = morris.loot_rat_pickups.deus
-local deus_2 = morris.bardin_scavenger_custom_potions.deus
+local loot_rat_deus_potion_amount = 1
+local deus_loot_rat_pickups = settings.loot_rat_pickups.deus
+local bardin_scavenger_custom_potions = settings.bardin_scavenger_custom_potions.deus
 
-for k, v in pairs(morris.pickups.deus_potions) do
-	deus[k] = num
-	deus_2[#deus_2 + 1] = k
+for deus_potion_name, _ in pairs(settings.pickups.deus_potions) do
+	deus_loot_rat_pickups[deus_potion_name] = loot_rat_deus_potion_amount
+	bardin_scavenger_custom_potions[#bardin_scavenger_custom_potions + 1] = deus_potion_name
 end

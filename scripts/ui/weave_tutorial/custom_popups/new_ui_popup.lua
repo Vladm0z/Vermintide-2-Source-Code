@@ -1,31 +1,31 @@
 -- chunkname: @scripts/ui/weave_tutorial/custom_popups/new_ui_popup.lua
 
-local var_0_0 = local_require("scripts/ui/weave_tutorial/custom_popups/new_ui_popup_definitions")
-local scenegraph_definition = var_0_0.scenegraph_definition
-local animation_definitions = var_0_0.animation_definitions
-local generic_input_actions = var_0_0.generic_input_actions
-local page_data = var_0_0.page_data
-local str = "new_ui_popup"
+local definitions = local_require("scripts/ui/weave_tutorial/custom_popups/new_ui_popup_definitions")
+local scenegraph_definition = definitions.scenegraph_definition
+local animation_definitions = definitions.animation_definitions
+local generic_input_actions = definitions.generic_input_actions
+local page_data_definitions = definitions.page_data
+local VIDEO_REFERENCE_NAME = "new_ui_popup"
 
 NewUIPopup = class(NewUIPopup)
 
-NewUIPopup.init = function (self, arg_1_1, arg_1_2)
+NewUIPopup.init = function (self, ui_context, parent)
 	-- function 1
-	self._ui_top_renderer = arg_1_1.ui_top_renderer
-	self._input_manager = arg_1_1.input_manager
-	self._world = arg_1_1.world
+	self._ui_top_renderer = ui_context.ui_top_renderer
+	self._input_manager = ui_context.input_manager
+	self._world = ui_context.world
 	self._wwise_world = Managers.world:wwise_world(self.world)
 	self._render_settings = {
 		snap_pixel_positions = true
 	}
-	self._parent = arg_1_2
+	self._parent = parent
 	self._animations = {}
 
 	self:_create_ui_elements()
 
-	local get_service = Managers.input:get_service("weave_tutorial")
+	local input_service = Managers.input:get_service("weave_tutorial")
 
-	self._menu_input_description = MenuInputDescriptionUI:new(nil, self._ui_top_renderer, get_service, 3, 900, generic_input_actions.default)
+	self._menu_input_description = MenuInputDescriptionUI:new(nil, self._ui_top_renderer, input_service, 3, 900, generic_input_actions.default)
 
 	self._menu_input_description:set_input_description(nil)
 end
@@ -41,31 +41,31 @@ NewUIPopup._create_ui_elements = function (self)
 
 	self._ui_scenegraph = UISceneGraph.init_scenegraph(scenegraph_definition)
 
-	local tbl = {}
-	local tbl_2 = {}
-	local tbl_3 = {}
-	local tbl_4 = {}
-	local base_widget_definitions = var_0_0.base_widget_definitions
+	local base_widgets = {}
+	local button_widgets = {}
+	local page_widgets = {}
+	local widgets_by_name = {}
+	local base_widget_definitions = definitions.base_widget_definitions
 
-	for k, v in pairs(base_widget_definitions) do
-		local var_3_5 = UIWidget.init(v)
+	for name, widget_definition in pairs(base_widget_definitions) do
+		local widget = UIWidget.init(widget_definition)
 
-		tbl[#tbl + 1] = var_3_5
-		tbl_4[k] = var_3_5
+		base_widgets[#base_widgets + 1] = widget
+		widgets_by_name[name] = widget
 	end
 
-	local page_widget_definitions = var_0_0.page_widget_definitions
+	local page_widget_definitions = definitions.page_widget_definitions
 
-	for k_2, v_2 in pairs(page_widget_definitions) do
-		local var_3_7 = UIWidget.init(v_2)
+	for name, widget_definition in pairs(page_widget_definitions) do
+		local widget = UIWidget.init(widget_definition)
 
-		tbl_3[#tbl_3 + 1] = var_3_7
-		tbl_4[k_2] = var_3_7
+		page_widgets[#page_widgets + 1] = widget
+		widgets_by_name[name] = widget
 	end
 
-	self._base_widgets = tbl
-	self._page_widgets = tbl_3
-	self._widgets_by_name = tbl_4
+	self._base_widgets = base_widgets
+	self._page_widgets = page_widgets
+	self._widgets_by_name = widgets_by_name
 	self._pages_seen = 0
 
 	UIRenderer.clear_scenegraph_queue(self._ui_top_renderer)
@@ -82,149 +82,167 @@ NewUIPopup._clear_page_data = function (self)
 	self._current_page_widgets = {}
 end
 
-NewUIPopup._change_page = function (self, arg_5_1)
+NewUIPopup._change_page = function (self, index)
 	-- function 5
 	self:_clear_page_data()
 
-	local var_5_0 = page_data[arg_5_1]
-	local widgets = var_5_0.widgets
-	local _widgets_by_name = self._widgets_by_name
+	local page_data = page_data_definitions[index]
+	local page_widgets = page_data.widgets
+	local widgets_by_name = self._widgets_by_name
 
-	for k, v in pairs(widgets) do
-		self._current_page_widgets[#self._current_page_widgets + 1] = _widgets_by_name[v]
+	for _, widget_name in pairs(page_widgets) do
+		self._current_page_widgets[#self._current_page_widgets + 1] = widgets_by_name[widget_name]
 	end
 
-	self:_create_video(var_5_0.video)
+	self:_create_video(page_data.video)
 
-	if arg_5_1 < #page_data then
+	local max_page_num = #page_data_definitions
+
+	if index < max_page_num then
 		self._current_page_widgets[#self._current_page_widgets + 1] = self._widgets_by_name.next_button
 	else
 		self._current_page_widgets[#self._current_page_widgets + 1] = self._widgets_by_name.ok_button
 	end
 
-	if arg_5_1 > 1 then
+	if index > 1 then
 		self._current_page_widgets[#self._current_page_widgets + 1] = self._widgets_by_name.prev_button
 	end
 
-	self._page_index = arg_5_1
+	self._page_index = index
 	self._button_index = nil
 
-	if arg_5_1 > self._pages_seen then
-		self:start_transition_animation("page_enter", "page_" .. arg_5_1)
+	if index > self._pages_seen then
+		self:start_transition_animation("page_enter", "page_" .. index)
 
-		self._pages_seen = arg_5_1
+		self._pages_seen = index
 	end
 end
 
-NewUIPopup._create_video = function (self, arg_6_1)
+NewUIPopup._create_video = function (self, video_data)
 	-- function 6
-	if not arg_6_1 then
+	if not video_data then
 		return
 	end
 
-	self._video_data = arg_6_1
-	self._video_widget = UIWidget.init(UIWidgets.create_video("video", self._video_data.material_name, str))
+	self._video_data = video_data
+	self._video_widget = UIWidget.init(UIWidgets.create_video("video", self._video_data.material_name, VIDEO_REFERENCE_NAME))
 end
 
 NewUIPopup._destroy_video = function (self)
 	-- function 7
-	local _ui_top_renderer = self._ui_top_renderer
+	local ui_top_renderer = self._ui_top_renderer
 
 	self._video_data = nil
 
-	if not self._video_widget then
-		UIWidget.destroy(_ui_top_renderer, self._video_widget)
+	if self._video_widget then
+		UIWidget.destroy(ui_top_renderer, self._video_widget)
 
 		self._video_widget = nil
 	end
 
-	if not _ui_top_renderer.video_players[str] then
-		UIRenderer.destroy_video_player(_ui_top_renderer, str, self._world)
+	if ui_top_renderer.video_players[VIDEO_REFERENCE_NAME] then
+		UIRenderer.destroy_video_player(ui_top_renderer, VIDEO_REFERENCE_NAME, self._world)
 	end
 end
 
-NewUIPopup.update = function (self, arg_8_1, arg_8_2)
+NewUIPopup.update = function (self, dt, input_service)
 	-- function 8
-	self:_update_animations(arg_8_1)
-	self:_handle_input(arg_8_1, arg_8_2)
-	self:_draw(arg_8_1, arg_8_2)
+	self:_update_animations(dt)
+	self:_handle_input(dt, input_service)
+	self:_draw(dt, input_service)
 end
 
-NewUIPopup._update_animations = function (self, arg_9_1)
+NewUIPopup._update_animations = function (self, dt)
 	-- function 9
-	self._ui_animator:update(arg_9_1)
+	self._ui_animator:update(dt)
 
-	local _animations = self._animations
-	local _ui_animator = self._ui_animator
+	local animations = self._animations
+	local ui_animator = self._ui_animator
 
-	for k, v in pairs(_animations) do
-		if not _ui_animator:is_animation_completed(v) then
-			_ui_animator:stop_animation(v)
+	for animation_name, animation_id in pairs(animations) do
+		if ui_animator:is_animation_completed(animation_id) then
+			ui_animator:stop_animation(animation_id)
 
-			_animations[k] = nil
+			animations[animation_name] = nil
 		end
 	end
 
-	if #page_data > self._page_index then
-		UIWidgetUtils.animate_default_button(self._widgets_by_name.next_button, arg_9_1)
+	local max_page_num = #page_data_definitions
+
+	if max_page_num > self._page_index then
+		UIWidgetUtils.animate_default_button(self._widgets_by_name.next_button, dt)
 	else
-		UIWidgetUtils.animate_default_button(self._widgets_by_name.ok_button, arg_9_1)
+		UIWidgetUtils.animate_default_button(self._widgets_by_name.ok_button, dt)
 	end
 
 	if self._page_index > 1 then
-		UIWidgetUtils.animate_default_button(self._widgets_by_name.prev_button, arg_9_1)
+		UIWidgetUtils.animate_default_button(self._widgets_by_name.prev_button, dt)
 	end
 end
 
-NewUIPopup._handle_input = function (self, arg_10_1, arg_10_2)
+NewUIPopup._handle_input = function (self, dt, input_service)
 	-- function 10
 	if not self._video_exanded then
-		self:_handle_keyboard_input(arg_10_1, arg_10_2)
+		self:_handle_keyboard_input(dt, input_service)
 
-		local get = arg_10_2:get("confirm", true)
-		local _page_index = self._page_index
-		local count = #page_data
+		local confirm_pressed = input_service:get("confirm", true)
+		local page_index = self._page_index
+		local max_page_num = #page_data_definitions
 
-		if count > self._page_index then
-			if not self._widgets_by_name.next_button.content.visible and not UIUtils.is_button_pressed(self._widgets_by_name.next_button, nil, get) then
-				_page_index = math.min(_page_index + 1, count)
+		if max_page_num > self._page_index then
+			local widget = self._widgets_by_name.next_button
+
+			if widget.content.visible and UIUtils.is_button_pressed(self._widgets_by_name.next_button, nil, confirm_pressed) then
+				page_index = math.min(page_index + 1, max_page_num)
 			end
-		elseif not self._widgets_by_name.ok_button.content.visible and not UIUtils.is_button_pressed(self._widgets_by_name.ok_button, nil, get) then
-			self._parent:hide()
+		else
+			local widget = self._widgets_by_name.ok_button
+
+			if widget.content.visible and UIUtils.is_button_pressed(self._widgets_by_name.ok_button, nil, confirm_pressed) then
+				self._parent:hide()
+			end
 		end
 
-		if (not (self._page_index > 1) or not self._widgets_by_name.prev_button.content.visible) and not UIUtils.is_button_pressed(self._widgets_by_name.prev_button, nil, get) then
-			_page_index = math.max(_page_index - 1, 1)
+		if self._page_index > 1 then
+			local widget = self._widgets_by_name.prev_button
+
+			if widget.content.visible and UIUtils.is_button_pressed(self._widgets_by_name.prev_button, nil, confirm_pressed) then
+				page_index = math.max(page_index - 1, 1)
+			end
 		end
 
-		if _page_index ~= self._page_index then
-			self:_change_page(_page_index)
+		if page_index ~= self._page_index then
+			self:_change_page(page_index)
 		end
 	end
 
-	self:_handle_expand_video(arg_10_2)
+	self:_handle_expand_video(input_service)
 end
 
-NewUIPopup._handle_keyboard_input = function (self, arg_11_1, arg_11_2)
+NewUIPopup._handle_keyboard_input = function (self, dt, input_service)
 	-- function 11
-	local tbl = {}
-	local _widgets_by_name = self._widgets_by_name
-	local _page_index = self._page_index
-	local count = #page_data
+	local button_widgets = {}
+	local widgets_by_name = self._widgets_by_name
+	local page_index = self._page_index
+	local max_page_num = #page_data_definitions
 
 	if self._page_index > 1 then
-		tbl[#tbl + 1] = _widgets_by_name.prev_button
+		button_widgets[#button_widgets + 1] = widgets_by_name.prev_button
 	end
 
-	if count > self._page_index then
-		tbl[#tbl + 1] = _widgets_by_name.next_button
+	if max_page_num > self._page_index then
+		button_widgets[#button_widgets + 1] = widgets_by_name.next_button
 	else
-		tbl[#tbl + 1] = _widgets_by_name.ok_button
+		button_widgets[#button_widgets + 1] = widgets_by_name.ok_button
 	end
 
-	if not Managers.input:is_device_active("mouse") then
-		for k, v in pairs(tbl) do
-			v.content.button_hotspot.is_selected = false
+	local mouse_active = Managers.input:is_device_active("mouse")
+
+	if mouse_active then
+		for _, button_data in pairs(button_widgets) do
+			local button_widget = button_data
+
+			button_widget.content.button_hotspot.is_selected = false
 		end
 
 		self._button_index = nil
@@ -232,116 +250,130 @@ NewUIPopup._handle_keyboard_input = function (self, arg_11_1, arg_11_2)
 		return
 	end
 
-	local count_2 = #tbl
+	local num_buttons = #button_widgets
 	local _button_index = self._button_index
 
-	_button_index = _button_index or count_2
-
-	local get_service = Managers.input:get_service("popup")
-
-	if not get_service:get("move_right_hold_continuous") then
-		_button_index = math.clamp(_button_index + 1, 1, count_2)
-	elseif not get_service:get("move_left_hold_continuous") then
-		_button_index = math.clamp(_button_index - 1, 1, count_2)
+	if not _button_index then
+		-- Nothing
 	end
 
-	if _button_index ~= self._button_index then
-		for i, v_2 in ipairs(tbl) do
-			v_2.content.button_hotspot.is_selected = _button_index == i
+	_button_index = num_buttons
+
+	local index = _button_index
+
+	::label_11_0::
+
+	local input_service = Managers.input:get_service("popup")
+
+	if input_service:get("move_right_hold_continuous") then
+		index = math.clamp(index + 1, 1, num_buttons)
+	elseif input_service:get("move_left_hold_continuous") then
+		index = math.clamp(index - 1, 1, num_buttons)
+	end
+
+	if index ~= self._button_index then
+		for idx, button_data in ipairs(button_widgets) do
+			local button_widget = button_data
+
+			button_widget.content.button_hotspot.is_selected = index == idx
 		end
 
-		self._button_index = _button_index
+		self._button_index = index
 
 		self:_play_sound("Play_hud_hover")
 	end
 end
 
-NewUIPopup._draw = function (self, arg_12_1, arg_12_2)
+NewUIPopup._draw = function (self, dt, input_service)
 	-- function 12
-	local _ui_top_renderer = self._ui_top_renderer
-	local _ui_scenegraph = self._ui_scenegraph
-	local _render_settings = self._render_settings
-	local is_device_active = Managers.input:is_device_active("gamepad")
+	local ui_top_renderer = self._ui_top_renderer
+	local ui_scenegraph = self._ui_scenegraph
+	local render_settings = self._render_settings
+	local gamepad_active = Managers.input:is_device_active("gamepad")
 
-	UIRenderer.begin_pass(_ui_top_renderer, _ui_scenegraph, arg_12_2, arg_12_1, nil, _render_settings)
+	UIRenderer.begin_pass(ui_top_renderer, ui_scenegraph, input_service, dt, nil, render_settings)
 
-	for i, v in ipairs(self._base_widgets) do
-		UIRenderer.draw_widget(_ui_top_renderer, v)
+	for _, widget in ipairs(self._base_widgets) do
+		UIRenderer.draw_widget(ui_top_renderer, widget)
 	end
 
-	for i_2, v_2 in ipairs(self._current_page_widgets) do
-		UIRenderer.draw_widget(_ui_top_renderer, v_2)
+	for _, widget in ipairs(self._current_page_widgets) do
+		UIRenderer.draw_widget(ui_top_renderer, widget)
 	end
 
-	self:_draw_video(_ui_top_renderer)
-	UIRenderer.end_pass(_ui_top_renderer)
+	self:_draw_video(ui_top_renderer)
+	UIRenderer.end_pass(ui_top_renderer)
 
-	if not is_device_active then
-		self._menu_input_description:draw(_ui_top_renderer, arg_12_1)
+	if gamepad_active then
+		self._menu_input_description:draw(ui_top_renderer, dt)
 	end
 end
 
-NewUIPopup._draw_video = function (self, arg_13_1)
+NewUIPopup._draw_video = function (self, renderer)
 	-- function 13
 	if not self._video_data then
 		return
 	end
 
-	if not arg_13_1.video_players[str] then
-		UIRenderer.create_video_player(arg_13_1, str, self._world, self._video_data.video_name, self._video_data.loop)
-	elseif not (not self._video_widget.content.video_content.video_completed and self._video_data.loop) then
-		UIRenderer.destroy_video_player(arg_13_1, str)
-
-		self._video_data.sound_started = false
-
-		if not self._video_data.sound_stop then
-			Managers.music:trigger_event(self._video_data.sound_stop)
-		end
-
-		if not Managers.transition:loading_icon_active() then
-			Managers.transition:show_loading_icon()
-		end
+	if not renderer.video_players[VIDEO_REFERENCE_NAME] then
+		UIRenderer.create_video_player(renderer, VIDEO_REFERENCE_NAME, self._world, self._video_data.video_name, self._video_data.loop)
 	else
-		if not self._video_data.sound_started then
-			if not self._video_data.sound_start then
-				Managers.music:trigger_event(self._video_data.sound_start)
+		local video_complete = self._video_widget.content.video_content.video_completed
+
+		if video_complete and not self._video_data.loop then
+			UIRenderer.destroy_video_player(renderer, VIDEO_REFERENCE_NAME)
+
+			self._video_data.sound_started = false
+
+			if self._video_data.sound_stop then
+				Managers.music:trigger_event(self._video_data.sound_stop)
 			end
 
-			self._video_data.sound_started = true
-		end
+			if not Managers.transition:loading_icon_active() then
+				Managers.transition:show_loading_icon()
+			end
+		else
+			if not self._video_data.sound_started then
+				if self._video_data.sound_start then
+					Managers.music:trigger_event(self._video_data.sound_start)
+				end
 
-		UIRenderer.draw_widget(arg_13_1, self._video_widget)
+				self._video_data.sound_started = true
+			end
+
+			UIRenderer.draw_widget(renderer, self._video_widget)
+		end
 	end
 end
 
-NewUIPopup._handle_expand_video = function (self, arg_14_1)
+NewUIPopup._handle_expand_video = function (self, input_service)
 	-- function 14
 	if not self._video_exanded then
-		if not UIUtils.is_button_pressed(self._widgets_by_name.video_hover) then
+		if UIUtils.is_button_pressed(self._widgets_by_name.video_hover) then
 			self._video_widget.scenegraph_id = "expanded_video"
 			self._video_exanded = true
 		end
-	elseif arg_14_1:get("left_release", true) or arg_14_1:get("confirm", true) or not arg_14_1:get("toggle_menu", true) then
+	elseif input_service:get("left_release", true) or input_service:get("confirm", true) or input_service:get("toggle_menu", true) then
 		self._video_widget.scenegraph_id = "video"
 		self._video_exanded = false
 	end
 end
 
-NewUIPopup.start_transition_animation = function (self, arg_15_1, arg_15_2)
+NewUIPopup.start_transition_animation = function (self, key, animation_name)
 	-- function 15
-	local tbl = {
+	local params = {
 		wwise_world = self._wwise_world,
 		render_settings = self._render_settings,
-		page_data = page_data[self._page_index],
+		page_data = page_data_definitions[self._page_index],
 		video_widget = self._video_widget
 	}
-	local _widgets_by_name = self._widgets_by_name
-	local start_animation = self._ui_animator:start_animation(arg_15_2, _widgets_by_name, scenegraph_definition, tbl)
+	local widgets = self._widgets_by_name
+	local anim_id = self._ui_animator:start_animation(animation_name, widgets, scenegraph_definition, params)
 
-	self._animations[arg_15_1] = start_animation
+	self._animations[key] = anim_id
 end
 
-NewUIPopup._play_sound = function (arg_16_0, arg_16_1)
+NewUIPopup._play_sound = function (self, event_name)
 	-- function 16
-	Managers.music:trigger_event(arg_16_1)
+	Managers.music:trigger_event(event_name)
 end

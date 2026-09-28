@@ -1,57 +1,57 @@
 -- chunkname: @scripts/entity_system/systems/behaviour/trees/skaven/skaven_storm_vermin_behavior.lua
 
-local skaven_storm_vermin = BreedActions.skaven_storm_vermin
-local skaven_storm_vermin_with_shield = BreedActions.skaven_storm_vermin_with_shield
-local tbl = {
+local ACTIONS = BreedActions.skaven_storm_vermin
+local ACTIONS_SHIELD = BreedActions.skaven_storm_vermin_with_shield
+local STORM_VERMIN_COMBAT_DESTRUCTIBLE_STATIC = {
 	"BTSelector",
 	{
 		"BTClanRatFollowAction",
 		name = "move_to_destructible",
-		action_data = skaven_storm_vermin.follow
+		action_data = ACTIONS.follow
 	},
 	{
 		"BTStormVerminAttackAction",
 		name = "cleave_destructible",
-		action_data = skaven_storm_vermin.special_attack_cleave
+		action_data = ACTIONS.special_attack_cleave
 	},
 	condition = "has_destructible_as_target",
 	name = "combat_destructible"
 }
-local tbl_2 = {
+local STORM_VERMIN_COMBAT = {
 	"BTUtilityNode",
 	{
 		"BTClanRatFollowAction",
 		name = "follow",
-		action_data = skaven_storm_vermin.follow
+		action_data = ACTIONS.follow
 	},
 	{
 		"BTRandom",
-		action_data = skaven_storm_vermin.running_attack,
+		action_data = ACTIONS.running_attack,
 		{
 			"BTStormVerminAttackAction",
 			weight = 1,
 			name = "running_special_attack_sweep",
 			condition = "ask_target_before_attacking",
-			action_data = skaven_storm_vermin.special_attack_sweep
+			action_data = ACTIONS.special_attack_sweep
 		},
 		name = "running_attack"
 	},
 	{
 		"BTRandom",
-		action_data = skaven_storm_vermin.special_attack,
+		action_data = ACTIONS.special_attack,
 		{
 			"BTStormVerminAttackAction",
 			weight = 1,
 			name = "special_attack_cleave",
 			condition = "ask_target_before_attacking",
-			action_data = skaven_storm_vermin.special_attack_cleave
+			action_data = ACTIONS.special_attack_cleave
 		},
 		{
 			"BTStormVerminAttackAction",
 			weight = 1,
 			name = "special_attack_sweep",
 			condition = "ask_target_before_attacking",
-			action_data = skaven_storm_vermin.special_attack_sweep
+			action_data = ACTIONS.special_attack_sweep
 		},
 		name = "special_attack"
 	},
@@ -59,32 +59,32 @@ local tbl_2 = {
 		"BTStormVerminPushAction",
 		name = "push_attack",
 		condition = "ask_target_before_attacking",
-		action_data = skaven_storm_vermin.push_attack
+		action_data = ACTIONS.push_attack
 	},
 	{
 		"BTCombatShoutAction",
 		name = "combat_shout",
-		action_data = skaven_storm_vermin.combat_shout
+		action_data = ACTIONS.combat_shout
 	},
 	condition = "confirmed_player_sighting",
 	name = "in_combat"
 }
-local tbl_3 = {
+local STORM_VERMIN_SHIELD_COMBAT = {
 	"BTUtilityNode",
 	{
 		"BTClanRatFollowAction",
 		name = "follow",
-		action_data = skaven_storm_vermin_with_shield.follow
+		action_data = ACTIONS_SHIELD.follow
 	},
 	{
 		"BTRandom",
-		action_data = skaven_storm_vermin_with_shield.special_attack,
+		action_data = ACTIONS_SHIELD.special_attack,
 		{
 			"BTStormVerminAttackAction",
 			weight = 1,
 			name = "special_attack_sweep",
 			condition = "ask_target_before_attacking",
-			action_data = skaven_storm_vermin_with_shield.special_attack_sweep
+			action_data = ACTIONS_SHIELD.special_attack_sweep
 		},
 		name = "special_attack"
 	},
@@ -92,35 +92,35 @@ local tbl_3 = {
 		"BTStormVerminPushAction",
 		name = "push_attack",
 		condition = "ask_target_before_attacking",
-		action_data = skaven_storm_vermin_with_shield.push_attack
+		action_data = ACTIONS_SHIELD.push_attack
 	},
 	{
 		"BTStormVerminPushAction",
 		name = "push_attack_wake_up",
 		condition = "ask_target_before_attacking",
-		action_data = skaven_storm_vermin_with_shield.push_attack_wake_up
+		action_data = ACTIONS_SHIELD.push_attack_wake_up
 	},
 	{
 		"BTComboAttackAction",
 		name = "frenzy_attack_ranged",
 		condition = "ask_target_before_attacking",
-		action_data = skaven_storm_vermin_with_shield.frenzy_attack_ranged
+		action_data = ACTIONS_SHIELD.frenzy_attack_ranged
 	},
 	{
 		"BTComboAttackAction",
 		name = "frenzy_attack",
 		condition = "ask_target_before_attacking",
-		action_data = skaven_storm_vermin_with_shield.frenzy_attack
+		action_data = ACTIONS_SHIELD.frenzy_attack
 	},
 	{
 		"BTCombatShoutAction",
 		name = "combat_shout",
-		action_data = skaven_storm_vermin_with_shield.combat_shout
+		action_data = ACTIONS_SHIELD.combat_shout
 	},
 	condition = "confirmed_player_sighting",
 	name = "in_combat"
 }
-local tbl_4 = {
+local STORM_VERMIN_SMART_OBJECT = {
 	"BTSelector",
 	{
 		"BTTeleportAction",
@@ -141,7 +141,7 @@ local tbl_4 = {
 		"BTSmashDoorAction",
 		name = "smash_door",
 		condition = "at_door_smartobject",
-		action_data = skaven_storm_vermin.smash_door
+		action_data = ACTIONS.smash_door
 	},
 	condition = "at_smartobject",
 	name = "smartobject"
@@ -168,27 +168,27 @@ BreedBehaviors.storm_vermin = {
 		"BTStaggerAction",
 		name = "stagger",
 		condition = "stagger",
-		action_data = skaven_storm_vermin.stagger
+		action_data = ACTIONS.stagger
 	},
 	{
 		"BTBlockedAction",
 		name = "blocked",
 		condition = "blocked",
-		action_data = skaven_storm_vermin.blocked
+		action_data = ACTIONS.blocked
 	},
-	tbl_4,
-	tbl_2,
+	STORM_VERMIN_SMART_OBJECT,
+	STORM_VERMIN_COMBAT,
 	{
 		"BTMoveToGoalAction",
 		name = "move_to_goal",
 		condition = "has_goal_destination",
-		action_data = skaven_storm_vermin.follow
+		action_data = ACTIONS.follow
 	},
 	{
 		"BTAlertedAction",
 		name = "alerted",
 		condition = "player_spotted",
-		action_data = skaven_storm_vermin.alerted
+		action_data = ACTIONS.alerted
 	},
 	{
 		"BTIdleAction",
@@ -222,28 +222,28 @@ BreedBehaviors.storm_vermin_commander = {
 		"BTStaggerAction",
 		name = "stagger",
 		condition = "stagger",
-		action_data = skaven_storm_vermin.stagger
+		action_data = ACTIONS.stagger
 	},
 	{
 		"BTBlockedAction",
 		name = "blocked",
 		condition = "blocked",
-		action_data = skaven_storm_vermin.blocked
+		action_data = ACTIONS.blocked
 	},
-	tbl_4,
-	tbl,
-	tbl_2,
+	STORM_VERMIN_SMART_OBJECT,
+	STORM_VERMIN_COMBAT_DESTRUCTIBLE_STATIC,
+	STORM_VERMIN_COMBAT,
 	{
 		"BTMoveToGoalAction",
 		name = "move_to_goal",
 		condition = "has_goal_destination",
-		action_data = skaven_storm_vermin.follow
+		action_data = ACTIONS.follow
 	},
 	{
 		"BTAlertedAction",
 		name = "alerted",
 		condition = "player_spotted",
-		action_data = skaven_storm_vermin.alerted
+		action_data = ACTIONS.alerted
 	},
 	{
 		"BTIdleAction",
@@ -277,22 +277,22 @@ BreedBehaviors.horde_vermin = {
 		"BTStaggerAction",
 		name = "stagger",
 		condition = "stagger",
-		action_data = skaven_storm_vermin.stagger
+		action_data = ACTIONS.stagger
 	},
 	{
 		"BTBlockedAction",
 		name = "blocked",
 		condition = "blocked",
-		action_data = skaven_storm_vermin.blocked
+		action_data = ACTIONS.blocked
 	},
-	tbl_4,
-	tbl,
-	tbl_2,
+	STORM_VERMIN_SMART_OBJECT,
+	STORM_VERMIN_COMBAT_DESTRUCTIBLE_STATIC,
+	STORM_VERMIN_COMBAT,
 	{
 		"BTMoveToGoalAction",
 		name = "move_to_goal",
 		condition = "has_goal_destination",
-		action_data = skaven_storm_vermin.follow
+		action_data = ACTIONS.follow
 	},
 	{
 		"BTIdleAction",
@@ -326,27 +326,27 @@ BreedBehaviors.shield_vermin = {
 		"BTStaggerAction",
 		name = "stagger",
 		condition = "stagger",
-		action_data = skaven_storm_vermin_with_shield.stagger
+		action_data = ACTIONS_SHIELD.stagger
 	},
 	{
 		"BTBlockedAction",
 		name = "blocked",
 		condition = "blocked",
-		action_data = skaven_storm_vermin_with_shield.blocked
+		action_data = ACTIONS_SHIELD.blocked
 	},
-	tbl_4,
-	tbl_3,
+	STORM_VERMIN_SMART_OBJECT,
+	STORM_VERMIN_SHIELD_COMBAT,
 	{
 		"BTMoveToGoalAction",
 		name = "move_to_goal",
 		condition = "has_goal_destination",
-		action_data = skaven_storm_vermin_with_shield.follow
+		action_data = ACTIONS_SHIELD.follow
 	},
 	{
 		"BTAlertedAction",
 		name = "alerted",
 		condition = "player_spotted",
-		action_data = skaven_storm_vermin_with_shield.alerted
+		action_data = ACTIONS_SHIELD.alerted
 	},
 	{
 		"BTIdleAction",

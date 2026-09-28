@@ -2,5 +2,5 @@
 
 local PickupSpawnType = PickupSpawnType
 
-PickupSpawnType = PickupSpawnType or table.enum("DropIfFull", "AlwaysDrop", "NeverDrop", "Replace")
+PickupSpawnType = not not PickupSpawnType or not not table.enum("DropIfFull", "AlwaysDrop", "NeverDrop", "Replace")
 PickupSpawnType = PickupSpawnType

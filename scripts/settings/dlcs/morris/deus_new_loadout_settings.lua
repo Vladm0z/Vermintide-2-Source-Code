@@ -2,10 +2,10 @@
 
 local DeusNewLoadoutSettings = DeusNewLoadoutSettings
 
-DeusNewLoadoutSettings = DeusNewLoadoutSettings or {
-	coin_formula = function (arg_1_0)
+DeusNewLoadoutSettings = not not DeusNewLoadoutSettings or not not {
+	coin_formula = function (progress)
 		-- function 1
-		return math.round(arg_1_0 * 600)
+		return math.round(progress * 600)
 	end
 }
 DeusNewLoadoutSettings = DeusNewLoadoutSettings

@@ -1,21 +1,21 @@
 -- chunkname: @scripts/ui/hud_ui/weave_timer_ui.lua
 
-local var_0_0 = local_require("scripts/ui/hud_ui/weave_timer_ui_definitions")
-local widgets = var_0_0.widgets
-local scenegraph_definition = var_0_0.scenegraph_definition
+local definitions = local_require("scripts/ui/hud_ui/weave_timer_ui_definitions")
+local widget_definitions = definitions.widgets
+local scenegraph_definition = definitions.scenegraph_definition
 
 WeaveTimerUI = class(WeaveTimerUI)
 PROGRESS_CUTOFF = 0.9
 BIG_SOUND_REMAINGING_TIME = 10
 
-local flag = false
+local DO_RELOAD = false
 
-WeaveTimerUI.init = function (self, arg_1_1, arg_1_2)
+WeaveTimerUI.init = function (self, parent, ingame_ui_context)
 	-- function 1
-	self._parent = arg_1_1
-	self._ui_renderer = arg_1_2.ui_renderer
-	self._ingame_ui_context = arg_1_2
-	self._wwise_world = arg_1_2.wwise_world
+	self._parent = parent
+	self._ui_renderer = ingame_ui_context.ui_renderer
+	self._ingame_ui_context = ingame_ui_context
+	self._wwise_world = ingame_ui_context.wwise_world
 	self._render_settings = {}
 	self._old_diff = 0
 	self._old_time = 0
@@ -23,7 +23,7 @@ WeaveTimerUI.init = function (self, arg_1_1, arg_1_2)
 	self:_create_ui_elements()
 end
 
-WeaveTimerUI.destroy = function (arg_2_0)
+WeaveTimerUI.destroy = function (self)
 	-- function 2
 	return
 end
@@ -34,96 +34,104 @@ WeaveTimerUI._create_ui_elements = function (self)
 
 	local _render_settings = self._render_settings
 
-	_render_settings = _render_settings or {}
+	_render_settings = not not _render_settings or not not {}
 	self._render_settings = _render_settings
 	self._widgets = {}
 
-	for k, v in pairs(widgets) do
-		local var_3_1 = UIWidget.init(v)
+	for name, widget in pairs(widget_definitions) do
+		local widget = UIWidget.init(widget)
 
-		self._widgets[k] = var_3_1
+		self._widgets[name] = widget
 	end
 
 	UIRenderer.clear_scenegraph_queue(self._ui_renderer)
 end
 
-WeaveTimerUI.update = function (self, arg_4_1, arg_4_2)
+WeaveTimerUI.update = function (self, dt, t)
 	-- function 4
-	self:_update_timer(arg_4_1, arg_4_2)
-	self:_draw(arg_4_1, arg_4_2)
+	self:_update_timer(dt, t)
+	self:_draw(dt, t)
 end
 
-WeaveTimerUI._play_sound = function (self, arg_5_1)
+WeaveTimerUI._play_sound = function (self, sound_event)
 	-- function 5
-	WwiseWorld.trigger_event(self._wwise_world, arg_5_1)
+	WwiseWorld.trigger_event(self._wwise_world, sound_event)
 end
 
-WeaveTimerUI._update_timer = function (self, arg_6_1, arg_6_2)
+WeaveTimerUI._update_timer = function (self, dt, t)
 	-- function 6
-	local weave = Managers.weave
+	local weave_manager = Managers.weave
 
-	if not weave:get_active_weave() then
-		local get_time_left = weave:get_time_left()
-		local max = math.max(get_time_left, 0)
-		local floor = math.floor(max / 60)
-		local floor_2 = math.floor(floor / 60)
-		local format = string.format("%d:%02d", floor - floor_2 * 60, max % 60)
-		local content = self._widgets.timer.content
-		local progress = content.progress
-		local num = 1 - get_time_left / WeaveSettings.max_time
+	if weave_manager:get_active_weave() then
+		local remaining_time_in_seconds = weave_manager:get_time_left()
+		local seconds = math.max(remaining_time_in_seconds, 0)
+		local minutes = math.floor(seconds / 60)
+		local hours = math.floor(minutes / 60)
+		local timer_text = string.format("%d:%02d", minutes - hours * 60, seconds % 60)
+		local widget = self._widgets.timer
+		local widget_content = widget.content
+		local old_progress = widget_content.progress
+		local max_time = WeaveSettings.max_time
+		local progress = 1 - remaining_time_in_seconds / max_time
 		local time = Managers.time:time("game")
 
-		if not (not (progress < PROGRESS_CUTOFF) or not (num >= PROGRESS_CUTOFF)) then
+		if old_progress < PROGRESS_CUTOFF and progress >= PROGRESS_CUTOFF then
 			self:_play_sound("menu_wind_countdown_warning")
-		elseif not (not (num > PROGRESS_CUTOFF) or not (num < 1)) then
-			local cos = math.cos(self._old_time * math.pi * 2)
-			local num_2 = math.cos(time * math.pi * 2) - cos
+		elseif progress > PROGRESS_CUTOFF and progress < 1 then
+			local old_time_progress = math.cos(self._old_time * math.pi * 2)
+			local time_progress = math.cos(time * math.pi * 2)
+			local diff = time_progress - old_time_progress
 
-			if not (not (self._old_diff > 0) or not (num_2 <= 0)) then
-				if get_time_left < BIG_SOUND_REMAINGING_TIME + 1 then
+			if self._old_diff > 0 and diff <= 0 then
+				if remaining_time_in_seconds < BIG_SOUND_REMAINGING_TIME + 1 then
 					self:_play_sound("menu_wind_countdown_count_big")
 				else
 					self:_play_sound("menu_wind_countdown_count_small")
 				end
 			end
 
-			self._old_diff = num_2
+			self._old_diff = diff
 		end
 
-		content.progress = num
-		content.progress_cutoff = PROGRESS_CUTOFF
-		content.timer_text_id = format
+		widget_content.progress = progress
+		widget_content.progress_cutoff = PROGRESS_CUTOFF
+		widget_content.timer_text_id = timer_text
 		self._old_time = time
 	end
 end
 
-WeaveTimerUI._update_bar = function (self, arg_7_1, arg_7_2)
+WeaveTimerUI._update_bar = function (self, dt, t)
 	-- function 7
-	local weave = Managers.weave
+	local weave_manager = Managers.weave
 
-	if not weave:get_active_weave() then
-		local get_time_left = weave:get_time_left()
-		local max = math.max(get_time_left, 0)
-		local floor = math.floor(max / 60)
-		local floor_2 = math.floor(floor / 60)
-		local content
+	if weave_manager:get_active_weave() then
+		local remaining_time_in_seconds = weave_manager:get_time_left()
+		local seconds = math.max(remaining_time_in_seconds, 0)
+		local minutes = math.floor(seconds / 60)
+		local hours = math.floor(minutes / 60)
+		local timer_text = string.format("%02d:%02d:%02d", hours, minutes - hours * 60, seconds % 60)
+		local max_time = WeaveSettings.max_time
+		local progress = 1 - remaining_time_in_seconds / max_time
+		local widget = self._widgets.timer_bar
+		local widget_content = widget.content
 
-		content.timer_text_id, content.progress, content = string.format("%02d:%02d:%02d", floor_2, floor - floor_2 * 60, max % 60), 1 - get_time_left / WeaveSettings.max_time, self._widgets.timer_bar.content
+		widget_content.progress = progress
+		widget_content.timer_text_id = timer_text
 	end
 end
 
-WeaveTimerUI._draw = function (self, arg_8_1, arg_8_2)
+WeaveTimerUI._draw = function (self, dt, t)
 	-- function 8
-	local _ui_renderer = self._ui_renderer
-	local _ui_scenegraph = self._ui_scenegraph
-	local _render_settings = self._render_settings
-	local get_service = Managers.input:get_service("ingame_menu")
+	local ui_renderer = self._ui_renderer
+	local ui_scenegraph = self._ui_scenegraph
+	local render_settings = self._render_settings
+	local input_service = Managers.input:get_service("ingame_menu")
 
-	UIRenderer.begin_pass(_ui_renderer, _ui_scenegraph, get_service, arg_8_1, nil, _render_settings)
+	UIRenderer.begin_pass(ui_renderer, ui_scenegraph, input_service, dt, nil, render_settings)
 
-	for k, v in pairs(self._widgets) do
-		UIRenderer.draw_widget(_ui_renderer, v)
+	for _, widget in pairs(self._widgets) do
+		UIRenderer.draw_widget(ui_renderer, widget)
 	end
 
-	UIRenderer.end_pass(_ui_renderer)
+	UIRenderer.end_pass(ui_renderer)
 end

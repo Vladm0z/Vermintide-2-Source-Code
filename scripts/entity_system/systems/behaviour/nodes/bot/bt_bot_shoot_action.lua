@@ -4,171 +4,196 @@ require("scripts/entity_system/systems/behaviour/nodes/bt_node")
 
 BTBotShootAction = class(BTBotShootAction, BTNode)
 
-BTBotShootAction.init = function (arg_1_0, ...)
+BTBotShootAction.init = function (self, ...)
 	-- function 1
-	BTBotShootAction.super.init(arg_1_0, ...)
+	BTBotShootAction.super.init(self, ...)
 end
 
 BTBotShootAction.name = "BTBotShootAction"
 
-local tbl = {
+local DEFAULT_AIM_DATA = {
 	min_radius_pseudo_random_c = 0.0557,
 	max_radius_pseudo_random_c = 0.01475,
 	min_radius = math.pi / 72,
 	max_radius = math.pi / 16
 }
-local var_0_1
-local num = 3
-local num_2 = 3
+local THIS_UNIT
+local disengage_above_nav = 3
+local disengage_below_nav = 3
 
-local function fn(...)
+local function dprint(...)
 	-- function 2
-	if not (not script_data.ai_bots_weapon_debug and script_data.debug_unit ~= var_0_1) then
+	if script_data.ai_bots_weapon_debug and script_data.debug_unit == THIS_UNIT then
 		print(...)
 	end
 end
 
-local function fn_2(arg_3_0, arg_3_1, arg_3_2, arg_3_3, arg_3_4)
+local function check_angle(nav_world, target_position, start_direction, angle, distance)
 	-- function 3
-	local num_3 = arg_3_1 + Quaternion.rotate(Quaternion(Vector3.up(), arg_3_3), arg_3_2) * arg_3_4
-	local triangle_from_position, var_3_2 = GwNavQueries.triangle_from_position(arg_3_0, num_3, num, num_2)
+	local direction = Quaternion.rotate(Quaternion(Vector3.up(), angle), start_direction)
+	local check_pos = target_position + direction * distance
+	local success, altitude = GwNavQueries.triangle_from_position(nav_world, check_pos, disengage_above_nav, disengage_below_nav)
 
-	if not triangle_from_position then
-		num_3.z = var_3_2
+	if success then
+		check_pos.z = altitude
 
-		return true, num_3
+		return true, check_pos
 	else
 		return false
 	end
 end
 
-local function fn_3(arg_4_0, arg_4_1, arg_4_2, arg_4_3)
+local function get_disengage_pos(nav_world, start_pos, disengage_vector, move_distance)
 	-- function 4
-	local normalize = Vector3.normalize(Vector3.flat(arg_4_2))
-	local var_4_1, var_4_2 = fn_2(arg_4_0, arg_4_1, normalize, 0, arg_4_3)
+	local disengage_direction = Vector3.normalize(Vector3.flat(disengage_vector))
+	local success, pos = check_angle(nav_world, start_pos, disengage_direction, 0, move_distance)
 
-	if not var_4_1 then
-		return var_4_2
+	if success then
+		return pos
 	end
 
-	local num = 3
-	local num_2 = math.pi / 2 / num
+	local subdivisions_per_side = 3
+	local angle_inc = math.pi / 2 / subdivisions_per_side
 
-	for i = 1, num do
-		local num_3 = num_2 * i
-		local var_4_6, var_4_7 = fn_2(arg_4_0, arg_4_1, normalize, num_3, arg_4_3)
-		local var_4_8 = var_4_7
+	for i = 1, subdivisions_per_side do
+		local angle = angle_inc * i
 
-		if not var_4_6 then
-			return var_4_8
+		success, pos = check_angle(nav_world, start_pos, disengage_direction, angle, move_distance)
+
+		if success then
+			return pos
 		end
 
-		local var_4_9, var_4_10 = fn_2(arg_4_0, arg_4_1, normalize, -num_3, arg_4_3)
-		local var_4_11 = var_4_10
+		success, pos = check_angle(nav_world, start_pos, disengage_direction, -angle, move_distance)
 
-		if not var_4_9 then
-			return var_4_11
+		if success then
+			return pos
 		end
 	end
 
 	return nil
 end
 
-local function fn_4(arg_5_0, arg_5_1, arg_5_2, arg_5_3)
+local function get_disengage_vector(current_pos, enemy_unit, keep_distance, keep_distance_sq)
 	-- function 5
-	if not ALIVE[arg_5_1] then
-		local var_5_0 = POSITION_LOOKUP[arg_5_1]
-		local distance_squared = Vector3.distance_squared(arg_5_0, var_5_0)
+	if ALIVE[enemy_unit] then
+		local target_unit_position = POSITION_LOOKUP[enemy_unit]
+		local dist_sq = Vector3.distance_squared(current_pos, target_unit_position)
 
-		if not (not (distance_squared < arg_5_3) or not (distance_squared > 0)) then
-			local sqrt = math.sqrt(distance_squared)
+		if dist_sq < keep_distance_sq and dist_sq > 0 then
+			local dist = math.sqrt(dist_sq)
 
-			return (arg_5_0 - var_5_0) * ((arg_5_2 - sqrt) / sqrt)
+			return (current_pos - target_unit_position) * ((keep_distance - dist) / dist)
 		end
 	end
 
 	return nil
 end
 
-BTBotShootAction.enter = function (self, arg_6_1, arg_6_2, arg_6_3)
+BTBotShootAction.enter = function (self, unit, blackboard, t)
 	-- function 6
-	local input_extension = arg_6_2.input_extension
-	local flag = false
+	local input_ext = blackboard.input_extension
+	local soft_aiming = false
 
-	input_extension:set_aiming(true, flag, true)
+	input_ext:set_aiming(true, soft_aiming, true)
 
-	local target_unit = arg_6_2.target_unit
+	local target_unit = blackboard.target_unit
 	local action_data = self._tree_node.action_data
-	local inventory_extension = arg_6_2.inventory_extension
+	local inventory_extension = blackboard.inventory_extension
 	local slot_name = action_data.slot_name
 
-	slot_name = slot_name or inventory_extension:get_wielded_slot_name()
+	if not slot_name then
+		-- Nothing
+	end
 
-	local item_data = inventory_extension:get_slot_data(slot_name).item_data
-	local get_item_template = BackendUtils.get_item_template(item_data)
-	local attack_meta_data = get_item_template.attack_meta_data
+	slot_name = inventory_extension:get_wielded_slot_name()
 
-	attack_meta_data = attack_meta_data or {}
+	local wielded_slot_name = slot_name
 
-	local actions = get_item_template.actions
+	::label_6_0::
+
+	local slot_data = inventory_extension:get_slot_data(wielded_slot_name)
+	local item_data = slot_data.item_data
+	local item_template = BackendUtils.get_item_template(item_data)
+	local attack_meta_data_2 = item_template.attack_meta_data
+
+	if not attack_meta_data_2 then
+		-- Nothing
+	end
+
+	attack_meta_data_2 = {}
+
+	local attack_meta_data = attack_meta_data_2
+
+	::label_6_1::
+
+	local actions = item_template.actions
 	local base_action_name = attack_meta_data.base_action_name
 
-	base_action_name = base_action_name or "action_one"
+	base_action_name = not not base_action_name or not not "action_one"
 
-	local var_6_11 = actions[base_action_name]
-	local default = var_6_11.default
+	local base_attack_action = actions[base_action_name]
+	local attack_action = base_attack_action.default
 	local charged_attack_action_name = attack_meta_data.charged_attack_action_name
 
-	charged_attack_action_name = charged_attack_action_name or "shoot_charged"
+	charged_attack_action_name = not not charged_attack_action_name or not not "shoot_charged"
 
-	local var_6_14 = var_6_11[charged_attack_action_name]
+	local var_6_5 = base_attack_action[charged_attack_action_name]
 
-	var_6_14 = var_6_14 or default
+	if not var_6_5 then
+		-- Nothing
+	end
 
-	local tbl_2 = {
+	var_6_5 = attack_action
+
+	local charged_attack_action = var_6_5
+
+	::label_6_2::
+
+	local tbl = {
 		num_aim_rolls = 0,
 		charging_shot = false,
 		disengage_update_time = 0,
 		obstructed = true,
 		attack_meta_data = attack_meta_data,
-		attack_action = default,
-		charged_attack_action = var_6_14
+		attack_action = attack_action,
+		charged_attack_action = charged_attack_action
 	}
 	local aim_data = attack_meta_data.aim_data
 
-	aim_data = aim_data or tbl
-	tbl_2.aim_data = aim_data
+	aim_data = not not aim_data or not not DEFAULT_AIM_DATA
+	tbl.aim_data = aim_data
 
 	local aim_data_charged = attack_meta_data.aim_data_charged
 
 	if not aim_data_charged then
 		aim_data_charged = attack_meta_data.aim_data
-		aim_data_charged = aim_data_charged or tbl
+		aim_data_charged = not not aim_data_charged or not not DEFAULT_AIM_DATA
 	end
 
-	tbl_2.aim_data_charged = aim_data_charged
-	tbl_2.reevaluate_aim_time = arg_6_3
-	tbl_2.can_charge_shot = attack_meta_data.can_charge_shot
-	tbl_2.ignore_disabled_enemies_charged = attack_meta_data.ignore_disabled_enemies_charged
-	tbl_2.charge_shot_delay = attack_meta_data.charge_shot_delay
+	tbl.aim_data_charged = aim_data_charged
+	tbl.reevaluate_aim_time = t
+	tbl.can_charge_shot = attack_meta_data.can_charge_shot
+	tbl.ignore_disabled_enemies_charged = attack_meta_data.ignore_disabled_enemies_charged
+	tbl.charge_shot_delay = attack_meta_data.charge_shot_delay
 
 	local fire_input = attack_meta_data.fire_input
 
-	fire_input = fire_input or "fire"
-	tbl_2.fire_input = fire_input
+	fire_input = not not fire_input or not not "fire"
+	tbl.fire_input = fire_input
 
 	local charge_input = attack_meta_data.charge_input
 
-	charge_input = charge_input or "charge_shot"
-	tbl_2.charge_input = charge_input
-	tbl_2.next_evaluate = arg_6_3 + action_data.evaluation_duration
-	tbl_2.next_evaluate_without_firing = arg_6_3 + action_data.evaluation_duration_without_firing
-	tbl_2.minimum_charge_time = attack_meta_data.minimum_charge_time
-	tbl_2.reevaluate_obstruction_time = arg_6_3
+	charge_input = not not charge_input or not not "charge_shot"
+	tbl.charge_input = charge_input
+	tbl.next_evaluate = t + action_data.evaluation_duration
+	tbl.next_evaluate_without_firing = t + action_data.evaluation_duration_without_firing
+	tbl.minimum_charge_time = attack_meta_data.minimum_charge_time
+	tbl.reevaluate_obstruction_time = t
 
 	local num
 
-	if not attack_meta_data.charge_above_range then
+	if attack_meta_data.charge_above_range then
 		num = attack_meta_data.charge_above_range^2
 
 		if not num then
@@ -178,13 +203,13 @@ BTBotShootAction.enter = function (self, arg_6_1, arg_6_2, arg_6_3)
 
 	num = nil
 
-	::label_6_0::
+	::label_6_3::
 
-	tbl_2.charge_range_squared = num
+	tbl.charge_range_squared = num
 
 	local num_2
 
-	if not attack_meta_data.max_range then
+	if attack_meta_data.max_range then
 		num_2 = attack_meta_data.max_range^2
 
 		if not num_2 then
@@ -194,13 +219,13 @@ BTBotShootAction.enter = function (self, arg_6_1, arg_6_2, arg_6_3)
 
 	num_2 = math.huge
 
-	::label_6_1::
+	::label_6_4::
 
-	tbl_2.max_range_squared = num_2
+	tbl.max_range_squared = num_2
 
 	local num_3
 
-	if not attack_meta_data.max_range_charged then
+	if attack_meta_data.max_range_charged then
 		num_3 = attack_meta_data.max_range_charged^2
 
 		if not num_3 then
@@ -208,7 +233,7 @@ BTBotShootAction.enter = function (self, arg_6_1, arg_6_2, arg_6_3)
 		end
 	end
 
-	if not attack_meta_data.max_range then
+	if attack_meta_data.max_range then
 		num_3 = attack_meta_data.max_range^2
 
 		if not num_3 then
@@ -218,184 +243,185 @@ BTBotShootAction.enter = function (self, arg_6_1, arg_6_2, arg_6_3)
 
 	num_3 = math.huge
 
-	::label_6_2::
+	::label_6_5::
 
-	tbl_2.max_range_squared_charged = num_3
-	tbl_2.charge_when_obstructed = attack_meta_data.charge_when_obstructed
-	tbl_2.charge_when_outside_max_range = attack_meta_data.charge_when_outside_max_range
-	tbl_2.charge_when_outside_max_range_charged = attack_meta_data.charge_when_outside_max_range_charged == nil or attack_meta_data.charge_when_outside_max_range_charged
+	tbl.max_range_squared_charged = num_3
+	tbl.charge_when_obstructed = attack_meta_data.charge_when_obstructed
+	tbl.charge_when_outside_max_range = attack_meta_data.charge_when_outside_max_range
+	tbl.charge_when_outside_max_range_charged = attack_meta_data.charge_when_outside_max_range_charged == nil or not not attack_meta_data.charge_when_outside_max_range_charged
 
 	local effective_against = attack_meta_data.effective_against
 
-	effective_against = effective_against or 0
-	tbl_2.effective_against = effective_against
+	effective_against = not not effective_against or not not 0
+	tbl.effective_against = effective_against
 
 	local effective_against_charged = attack_meta_data.effective_against_charged
 
-	effective_against_charged = effective_against_charged or 0
-	tbl_2.effective_against_charged = effective_against_charged
-	tbl_2.always_charge_before_firing = attack_meta_data.always_charge_before_firing
+	effective_against_charged = not not effective_against_charged or not not 0
+	tbl.effective_against_charged = effective_against_charged
+	tbl.always_charge_before_firing = attack_meta_data.always_charge_before_firing
 
 	local aim_at_node = attack_meta_data.aim_at_node
 
-	aim_at_node = aim_at_node or "j_spine"
-	tbl_2.aim_at_node = aim_at_node
+	aim_at_node = not not aim_at_node or not not "j_spine"
+	tbl.aim_at_node = aim_at_node
 
 	local aim_at_node_charged = attack_meta_data.aim_at_node_charged
 
 	if not aim_at_node_charged then
 		aim_at_node_charged = attack_meta_data.aim_at_node
-		aim_at_node_charged = aim_at_node_charged or "j_spine"
+		aim_at_node_charged = not not aim_at_node_charged or not not "j_spine"
 	end
 
-	tbl_2.aim_at_node_charged = aim_at_node_charged
-	tbl_2.projectile_info = default.projectile_info
-	tbl_2.projectile_info_charged = var_6_14.projectile_info
+	tbl.aim_at_node_charged = aim_at_node_charged
+	tbl.projectile_info = attack_action.projectile_info
+	tbl.projectile_info_charged = charged_attack_action.projectile_info
 
-	local min_speed = default.min_speed
+	local min_speed = attack_action.min_speed
 
-	min_speed = min_speed or default.speed
-	tbl_2.projectile_speed = min_speed
+	min_speed = not not min_speed or not not attack_action.speed
+	tbl.projectile_speed = min_speed
 
-	local max_speed = var_6_14.max_speed
+	local max_speed = charged_attack_action.max_speed
 
 	if not max_speed then
-		max_speed = var_6_14.min_speed
-		max_speed = max_speed or var_6_14.speed
+		max_speed = charged_attack_action.min_speed
+		max_speed = not not max_speed or not not charged_attack_action.speed
 	end
 
-	tbl_2.projectile_speed_charged = max_speed
-	tbl_2.obstruction_fuzzyness_range = attack_meta_data.obstruction_fuzzyness_range
+	tbl.projectile_speed_charged = max_speed
+	tbl.obstruction_fuzzyness_range = attack_meta_data.obstruction_fuzzyness_range
 
 	local obstruction_fuzzyness_range_charged = attack_meta_data.obstruction_fuzzyness_range_charged
 
-	obstruction_fuzzyness_range_charged = obstruction_fuzzyness_range_charged or attack_meta_data.obstruction_fuzzyness_range
-	tbl_2.obstruction_fuzzyness_range_charged = obstruction_fuzzyness_range_charged
+	obstruction_fuzzyness_range_charged = not not obstruction_fuzzyness_range_charged or not not attack_meta_data.obstruction_fuzzyness_range
+	tbl.obstruction_fuzzyness_range_charged = obstruction_fuzzyness_range_charged
 
 	local stop_fire_delay = attack_meta_data.stop_fire_delay
 
-	stop_fire_delay = stop_fire_delay or 0
-	tbl_2.stop_fire_delay = stop_fire_delay
+	stop_fire_delay = not not stop_fire_delay or not not 0
+	tbl.stop_fire_delay = stop_fire_delay
 
 	local stop_fire_delay_2 = attack_meta_data.stop_fire_delay
 
-	stop_fire_delay_2 = stop_fire_delay_2 or 0
-	tbl_2.stop_fire_t = arg_6_3 + stop_fire_delay_2
-	tbl_2.hold_fire_condition = attack_meta_data.hold_fire_condition
-	tbl_2.keep_distance = attack_meta_data.keep_distance
-	arg_6_2.shoot = tbl_2
-	arg_6_2.ranged_obstruction_by_static = nil
+	stop_fire_delay_2 = not not stop_fire_delay_2 or not not 0
+	tbl.stop_fire_t = t + stop_fire_delay_2
+	tbl.hold_fire_condition = attack_meta_data.hold_fire_condition
+	tbl.keep_distance = attack_meta_data.keep_distance
+	blackboard.shoot = tbl
+	blackboard.ranged_obstruction_by_static = nil
 
-	local shoot = arg_6_2.shoot
+	local shoot_bb = blackboard.shoot
 
-	self:_set_new_aim_target(arg_6_1, arg_6_3, shoot, target_unit, arg_6_2.first_person_extension)
-	self:_update_collision_filter(target_unit, shoot, arg_6_2.priority_target_enemy, arg_6_2.target_ally_unit, arg_6_2.target_ally_needs_aid, arg_6_2.target_ally_need_type)
+	self:_set_new_aim_target(unit, t, shoot_bb, target_unit, blackboard.first_person_extension)
+	self:_update_collision_filter(target_unit, shoot_bb, blackboard.priority_target_enemy, blackboard.target_ally_unit, blackboard.target_ally_needs_aid, blackboard.target_ally_need_type)
 end
 
-BTBotShootAction._update_collision_filter = function (arg_7_0, arg_7_1, arg_7_2, arg_7_3, arg_7_4, arg_7_5, arg_7_6)
+BTBotShootAction._update_collision_filter = function (self, target_unit, shoot_blackboard, priority_target_enemy, target_ally_unit, target_ally_needs_aid, need_type)
 	-- function 7
-	local attack_meta_data = arg_7_2.attack_meta_data
-	local var_7_1 = BLACKBOARDS[arg_7_1]
+	local attack_meta_data = shoot_blackboard.attack_meta_data
+	local target_bb = BLACKBOARDS[target_unit]
+	local has_important_target = (target_unit == priority_target_enemy or not not target_ally_needs_aid and (need_type == "hook" or need_type == "knocked_down" or need_type == "ledge") and not not target_bb) and target_bb.target_unit == target_ally_unit
 
-	if not (arg_7_1 == arg_7_3 or not arg_7_5 or (arg_7_6 == "hook" or arg_7_6 == "knocked_down" or arg_7_6 == "ledge" or not var_7_1) and var_7_1.target_unit == arg_7_4) then
-		arg_7_2.collision_filter = "filter_bot_ranged_line_of_sight_no_allies_no_enemies"
-		arg_7_2.collision_filter_charged = "filter_bot_ranged_line_of_sight_no_allies_no_enemies"
+	if has_important_target then
+		shoot_blackboard.collision_filter = "filter_bot_ranged_line_of_sight_no_allies_no_enemies"
+		shoot_blackboard.collision_filter_charged = "filter_bot_ranged_line_of_sight_no_allies_no_enemies"
 
 		return
 	end
 
 	local ignore_enemies_for_obstruction = attack_meta_data.ignore_enemies_for_obstruction
-	local flag = attack_meta_data.ignore_enemies_for_obstruction_charged ~= nil or not ignore_enemies_for_obstruction or attack_meta_data.ignore_enemies_for_obstruction_charged
-	local friendly_fire_ranged = Managers.state.difficulty:get_difficulty_settings().friendly_fire_ranged
-	local var_7_5
-	local var_7_6
+	local ignore_enemies_for_obstruction_charged = (attack_meta_data.ignore_enemies_for_obstruction_charged ~= nil or not ignore_enemies_for_obstruction) and not not attack_meta_data.ignore_enemies_for_obstruction_charged
+	local ff_ranged = Managers.state.difficulty:get_difficulty_settings().friendly_fire_ranged
+	local ignore_hitting_allies, ignore_hitting_allies_charged
 
-	if not friendly_fire_ranged then
-		var_7_5 = attack_meta_data.ignore_allies_for_obstruction
-		var_7_6 = attack_meta_data.ignore_allies_for_obstruction_charged
+	if ff_ranged then
+		ignore_hitting_allies = attack_meta_data.ignore_allies_for_obstruction
+		ignore_hitting_allies_charged = attack_meta_data.ignore_allies_for_obstruction_charged
 	else
-		var_7_5 = true
-		var_7_6 = true
+		ignore_hitting_allies = true
+		ignore_hitting_allies_charged = true
 	end
+
+	local flag
+
+	flag = (not ignore_enemies_for_obstruction or not ignore_hitting_allies or not "filter_bot_ranged_line_of_sight_no_allies_no_enemies") and (not ignore_hitting_allies or not "filter_bot_ranged_line_of_sight_no_allies") and (not ignore_enemies_for_obstruction or not "filter_bot_ranged_line_of_sight_no_enemies") and not not "filter_bot_ranged_line_of_sight"
+	shoot_blackboard.collision_filter = flag
 
 	local flag_2
 
-	flag_2 = not ignore_enemies_for_obstruction and not var_7_5 and "filter_bot_ranged_line_of_sight_no_allies_no_enemies" and not var_7_5 or "filter_bot_ranged_line_of_sight_no_allies" and not ignore_enemies_for_obstruction and "filter_bot_ranged_line_of_sight_no_enemies" and "filter_bot_ranged_line_of_sight"
-	arg_7_2.collision_filter = flag_2
-
-	local flag_3
-
-	flag_3 = not flag and not var_7_6 and "filter_bot_ranged_line_of_sight_no_allies_no_enemies" and not var_7_6 or "filter_bot_ranged_line_of_sight_no_allies" and not flag and "filter_bot_ranged_line_of_sight_no_enemies" and "filter_bot_ranged_line_of_sight"
-	arg_7_2.collision_filter_charged = flag_3
+	flag_2 = (not ignore_enemies_for_obstruction_charged or not ignore_hitting_allies_charged or not "filter_bot_ranged_line_of_sight_no_allies_no_enemies") and (not ignore_hitting_allies_charged or not "filter_bot_ranged_line_of_sight_no_allies") and (not ignore_enemies_for_obstruction_charged or not "filter_bot_ranged_line_of_sight_no_enemies") and not not "filter_bot_ranged_line_of_sight"
+	shoot_blackboard.collision_filter_charged = flag_2
 end
 
-BTBotShootAction.leave = function (self, arg_8_1, arg_8_2, arg_8_3, arg_8_4, arg_8_5)
+BTBotShootAction.leave = function (self, unit, blackboard, t, reason, destroy)
 	-- function 8
-	local input_extension = arg_8_2.input_extension
+	local input_ext = blackboard.input_extension
 
-	input_extension:set_aiming(false)
+	input_ext:set_aiming(false)
 
 	local action_data = self._tree_node.action_data
+	local shoot_blackboard = blackboard.shoot
 
-	if not arg_8_2.shoot.charging_shot and not action_data.abort_input then
-		input_extension[action_data.abort_input](input_extension)
+	if shoot_blackboard.charging_shot and action_data.abort_input then
+		input_ext[action_data.abort_input](input_ext)
 	end
 
-	arg_8_2.shoot = nil
+	blackboard.shoot = nil
 end
 
-BTBotShootAction.run = function (self, arg_9_1, arg_9_2, arg_9_3, arg_9_4)
+BTBotShootAction.run = function (self, unit, blackboard, t, dt)
 	-- function 9
-	var_0_1 = arg_9_1
+	THIS_UNIT = unit
 
-	local _aim, var_9_1 = self:_aim(arg_9_1, arg_9_2, arg_9_4, arg_9_3)
+	local done, evaluate = self:_aim(unit, blackboard, dt, t)
 
-	if not _aim then
+	if done then
 		return "done", "evaluate"
 	else
 		local str = "running"
 		local flag
 
-		flag = not var_9_1 and "evaluate" and nil
+		flag = (not evaluate or not "evaluate") and not not nil
 
 		return str, flag
 	end
 end
 
-BTBotShootAction._set_new_aim_target = function (arg_10_0, arg_10_1, arg_10_2, arg_10_3, arg_10_4, arg_10_5)
+BTBotShootAction._set_new_aim_target = function (self, self_unit, t, shoot_blackboard, target_unit, first_person_ext)
 	-- function 10
-	local flag = not arg_10_4 and Unit.get_data(arg_10_4, "breed")
+	local breed = not not target_unit and not not Unit.get_data(target_unit, "breed")
 
-	arg_10_3.target_unit = arg_10_4
-	arg_10_3.aim_start_time = arg_10_2
-	arg_10_3.aim_speed_yaw = 0
-	arg_10_3.aim_speed_pitch = 0
-	arg_10_3.target_breed = flag
-	arg_10_3.reevaluate_obstruction_time = arg_10_2
-	arg_10_3.obstructed = false
+	shoot_blackboard.target_unit = target_unit
+	shoot_blackboard.aim_start_time = t
+	shoot_blackboard.aim_speed_yaw = 0
+	shoot_blackboard.aim_speed_pitch = 0
+	shoot_blackboard.target_breed = breed
+	shoot_blackboard.reevaluate_obstruction_time = t
+	shoot_blackboard.obstructed = false
 end
 
-local function fn_5(arg_11_0, arg_11_1, arg_11_2, arg_11_3, arg_11_4)
+local function draw_estimated_arc(max_steps, max_time, position, velocity, gravity)
 	-- function 11
-	local num = arg_11_1 / arg_11_0
+	local time_step = max_time / max_steps
 
-	for i = 1, arg_11_0 do
-		local num_2 = arg_11_2 + arg_11_3 * num
-		local num_3 = num_2 - arg_11_2
+	for i = 1, max_steps do
+		local new_position = position + velocity * time_step
+		local delta = new_position - position
 
-		QuickDrawer:line(arg_11_2, num_2, Color(100, 200, 200))
+		QuickDrawer:line(position, new_position, Color(100, 200, 200))
 
-		arg_11_3 = arg_11_3 + arg_11_4 * num
-		arg_11_2 = num_2
+		velocity = velocity + gravity * time_step
+		position = new_position
 	end
 end
 
-BTBotShootAction._wanted_aim_rotation = function (arg_12_0, arg_12_1, arg_12_2, arg_12_3, arg_12_4, arg_12_5, arg_12_6)
+BTBotShootAction._wanted_aim_rotation = function (self, self_unit, target_unit, current_position, projectile_info, projectile_speed, aim_at_node)
 	-- function 12
 	local node
 
-	if not Unit.has_node(arg_12_2, arg_12_6) then
-		node = Unit.node(arg_12_2, arg_12_6)
+	if Unit.has_node(target_unit, aim_at_node) then
+		node = Unit.node(target_unit, aim_at_node)
 
 		if not node then
 			-- Nothing
@@ -404,14 +430,16 @@ BTBotShootAction._wanted_aim_rotation = function (arg_12_0, arg_12_1, arg_12_2, 
 
 	node = 0
 
+	local target_node = node
+
 	::label_12_0::
 
-	local world_position = Unit.world_position(arg_12_2, node)
-	local has_extension = ScriptUnit.has_extension(arg_12_2, "locomotion_system")
+	local target_pos = Unit.world_position(target_unit, target_node)
+	local target_locomotion_extension = ScriptUnit.has_extension(target_unit, "locomotion_system")
 	local current_velocity
 
-	if not has_extension then
-		current_velocity = has_extension:current_velocity()
+	if target_locomotion_extension then
+		current_velocity = target_locomotion_extension:current_velocity()
 
 		if not current_velocity then
 			-- Nothing
@@ -420,509 +448,541 @@ BTBotShootAction._wanted_aim_rotation = function (arg_12_0, arg_12_1, arg_12_2, 
 
 	current_velocity = Vector3.zero()
 
+	local target_current_velocity = current_velocity
+
 	::label_12_1::
 
-	local var_12_4
-	local var_12_5
-	local flag = not arg_12_4 and ProjectileTemplates.trajectory_templates[arg_12_4.trajectory_template_name].prediction_function
-	local flag_2 = not arg_12_4 and ProjectileGravitySettings[arg_12_4.gravity_settings]
+	local target_rotation, target_position
+	local prediction_function = not not projectile_info and not not ProjectileTemplates.trajectory_templates[projectile_info.trajectory_template_name].prediction_function
+	local gravity_setting = not not projectile_info and not not ProjectileGravitySettings[projectile_info.gravity_settings]
 
-	if not (not flag and not flag_2 and not (flag_2 > 0)) then
-		local var_12_8
-		local var_12_9
+	if prediction_function and gravity_setting and gravity_setting > 0 then
+		local angle
 
-		var_12_9, var_12_5 = flag(arg_12_5 / 100, -flag_2, arg_12_3, world_position, current_velocity)
+		angle, target_position = prediction_function(projectile_speed / 100, -gravity_setting, current_position, target_pos, target_current_velocity)
 
-		if not var_12_9 then
-			if arg_12_1 == script_data.debug_unit then
+		if not angle then
+			if self_unit == script_data.debug_unit then
 				print("BTBotShootAction no angle found, target out of range")
 			end
 
-			var_12_9 = math.pi * 0.25
+			angle = math.pi * 0.25
 		end
 
-		var_12_4 = Quaternion.multiply(Quaternion.look(Vector3.normalize(Vector3.flat(var_12_5 - arg_12_3)), Vector3.up()), Quaternion(Vector3.right(), var_12_9))
+		target_rotation = Quaternion.multiply(Quaternion.look(Vector3.normalize(Vector3.flat(target_position - current_position)), Vector3.up()), Quaternion(Vector3.right(), angle))
 	else
-		var_12_5 = world_position
-		var_12_4 = Quaternion.look(Vector3.normalize(var_12_5 - arg_12_3), Vector3.up())
+		target_position = target_pos
+		target_rotation = Quaternion.look(Vector3.normalize(target_position - current_position), Vector3.up())
 	end
 
-	return var_12_4, var_12_5
+	return target_rotation, target_position
 end
 
-BTBotShootAction._aim_position = function (self, arg_13_1, arg_13_2, arg_13_3, arg_13_4, arg_13_5, arg_13_6, arg_13_7)
+BTBotShootAction._aim_position = function (self, dt, t, self_unit, current_position, current_rotation, target_unit, shoot_blackboard)
 	-- function 13
-	local var_13_0
-	local var_13_1
-	local var_13_2
+	local projectile_info, projectile_speed, aim_at_node
 
-	if not arg_13_7.charging_shot then
-		var_13_0 = arg_13_7.projectile_info_charged
-		var_13_1 = arg_13_7.projectile_speed_charged
-		var_13_2 = not arg_13_7.target_breed and arg_13_7.target_breed.override_bot_target_node and arg_13_7.aim_at_node_charged
+	if shoot_blackboard.charging_shot then
+		projectile_info = shoot_blackboard.projectile_info_charged
+		projectile_speed = shoot_blackboard.projectile_speed_charged
+		aim_at_node = (not shoot_blackboard.target_breed or not shoot_blackboard.target_breed.override_bot_target_node) and not not shoot_blackboard.aim_at_node_charged
 	else
-		var_13_0 = arg_13_7.projectile_info
-		var_13_1 = arg_13_7.projectile_speed
-		var_13_2 = not arg_13_7.target_breed and arg_13_7.target_breed.override_bot_target_node and arg_13_7.aim_at_node
+		projectile_info = shoot_blackboard.projectile_info
+		projectile_speed = shoot_blackboard.projectile_speed
+		aim_at_node = (not shoot_blackboard.target_breed or not shoot_blackboard.target_breed.override_bot_target_node) and not not shoot_blackboard.aim_at_node
 	end
 
-	local _wanted_aim_rotation, var_13_4 = self:_wanted_aim_rotation(arg_13_3, arg_13_6, arg_13_4, var_13_0, var_13_1, var_13_2)
-	local yaw = Quaternion.yaw(arg_13_5)
-	local pitch = Quaternion.pitch(arg_13_5)
-	local yaw_2 = Quaternion.yaw(_wanted_aim_rotation)
-	local pitch_2 = Quaternion.pitch(_wanted_aim_rotation)
-	local _calculate_aim_speed, var_13_10 = self:_calculate_aim_speed(arg_13_3, arg_13_1, yaw, pitch, yaw_2, pitch_2, arg_13_7.aim_speed_yaw, arg_13_7.aim_speed_pitch)
+	local wanted_rotation, aim_position = self:_wanted_aim_rotation(self_unit, target_unit, current_position, projectile_info, projectile_speed, aim_at_node)
+	local current_yaw = Quaternion.yaw(current_rotation)
+	local current_pitch = Quaternion.pitch(current_rotation)
+	local wanted_yaw = Quaternion.yaw(wanted_rotation)
+	local wanted_pitch = Quaternion.pitch(wanted_rotation)
+	local yaw_speed, pitch_speed = self:_calculate_aim_speed(self_unit, dt, current_yaw, current_pitch, wanted_yaw, wanted_pitch, shoot_blackboard.aim_speed_yaw, shoot_blackboard.aim_speed_pitch)
 
-	arg_13_7.aim_speed_yaw = _calculate_aim_speed
-	arg_13_7.aim_speed_pitch = var_13_10
+	shoot_blackboard.aim_speed_yaw = yaw_speed
+	shoot_blackboard.aim_speed_pitch = pitch_speed
 
-	local num = yaw + _calculate_aim_speed * arg_13_1
-	local num_2 = pitch + var_13_10 * arg_13_1
-	local var_13_13 = Quaternion(Vector3.up(), num)
-	local var_13_14 = Quaternion(Vector3.right(), num_2)
-	local multiply = Quaternion.multiply(var_13_13, var_13_14)
+	local new_yaw = current_yaw + yaw_speed * dt
+	local new_pitch = current_pitch + pitch_speed * dt
+	local yaw_rot = Quaternion(Vector3.up(), new_yaw)
+	local pitch_rot = Quaternion(Vector3.right(), new_pitch)
+	local actual_rotation = Quaternion.multiply(yaw_rot, pitch_rot)
 	local pi = math.pi
-	local num_3 = (num - yaw_2 + pi) % (pi * 2) - pi
-	local num_4 = num_2 - pitch_2
+	local yaw_offset = (new_yaw - wanted_yaw + pi) % (pi * 2) - pi
+	local pitch_offset = new_pitch - wanted_pitch
 
-	return num_3, num_4, _wanted_aim_rotation, multiply, var_13_4
+	return yaw_offset, pitch_offset, wanted_rotation, actual_rotation, aim_position
 end
 
-BTBotShootAction._calculate_aim_speed = function (arg_14_0, arg_14_1, arg_14_2, arg_14_3, arg_14_4, arg_14_5, arg_14_6, arg_14_7, arg_14_8)
+BTBotShootAction._calculate_aim_speed = function (self, self_unit, dt, current_yaw, current_pitch, wanted_yaw, wanted_pitch, current_yaw_speed, current_pitch_speed)
 	-- function 14
 	local pi = math.pi
-	local num = (arg_14_5 - arg_14_3 + pi) % (pi * 2) - pi
-	local num_2 = arg_14_6 - arg_14_4
-	local sign = math.sign(num)
-	local sign_2 = math.sign(arg_14_7)
-	local flag = sign_2 == 0 or sign ~= sign_2
-	local num_3 = num * math.pi * 10
-	local var_14_7
-	local num_4 = 7.5
-	local num_5 = 25
+	local yaw_offset = (wanted_yaw - current_yaw + pi) % (pi * 2) - pi
+	local pitch_offset = wanted_pitch - current_pitch
+	local yaw_offset_sign = math.sign(yaw_offset)
+	local yaw_speed_sign = math.sign(current_yaw_speed)
+	local has_overshot = yaw_speed_sign ~= 0 and yaw_offset_sign ~= yaw_speed_sign
+	local wanted_yaw_speed = yaw_offset * math.pi * 10
+	local new_yaw_speed
+	local acceleration = 7.5
+	local deceleration = 25
 
-	if not (not flag and not (sign > 0)) then
-		var_14_7 = math.min(arg_14_7 + num_5 * arg_14_2, 0)
-	elseif not flag then
-		var_14_7 = math.max(arg_14_7 - num_5 * arg_14_2, 0)
-	elseif sign > 0 then
-		if arg_14_7 <= num_3 then
-			var_14_7 = math.min(arg_14_7 + num_4 * arg_14_2, num_3)
+	if has_overshot and yaw_offset_sign > 0 then
+		new_yaw_speed = math.min(current_yaw_speed + deceleration * dt, 0)
+	elseif has_overshot then
+		new_yaw_speed = math.max(current_yaw_speed - deceleration * dt, 0)
+	elseif yaw_offset_sign > 0 then
+		if current_yaw_speed <= wanted_yaw_speed then
+			new_yaw_speed = math.min(current_yaw_speed + acceleration * dt, wanted_yaw_speed)
 		else
-			var_14_7 = math.max(arg_14_7 - num_5 * arg_14_2, num_3)
+			new_yaw_speed = math.max(current_yaw_speed - deceleration * dt, wanted_yaw_speed)
 		end
-	elseif num_3 <= arg_14_7 then
-		var_14_7 = math.max(arg_14_7 - num_4 * arg_14_2, num_3)
+	elseif wanted_yaw_speed <= current_yaw_speed then
+		new_yaw_speed = math.max(current_yaw_speed - acceleration * dt, wanted_yaw_speed)
 	else
-		var_14_7 = math.min(arg_14_7 + num_5 * arg_14_2, num_3)
+		new_yaw_speed = math.min(current_yaw_speed + deceleration * dt, wanted_yaw_speed)
 	end
 
-	local num_6 = num_2 / arg_14_2
+	local lerped_pitch_speed = pitch_offset / dt
 
-	return var_14_7, num_6
+	return new_yaw_speed, lerped_pitch_speed
 end
 
-BTBotShootAction._may_attack = function (arg_15_0, arg_15_1, arg_15_2, arg_15_3, arg_15_4, arg_15_5)
+BTBotShootAction._may_attack = function (self, unit, enemy_unit, shoot_blackboard, range_squared, t)
 	-- function 15
-	local var_15_0 = BLACKBOARDS[arg_15_2]
+	local bb = BLACKBOARDS[enemy_unit]
 
-	if not var_15_0 then
+	if not bb then
 		return false
 	end
 
-	if not script_data.ai_bots_disable_player_range_attacks and not var_15_0.is_player then
+	if script_data.ai_bots_disable_player_range_attacks and bb.is_player then
 		return false
 	end
 
-	if not DamageUtils.is_enemy(arg_15_1, arg_15_2) then
+	if not DamageUtils.is_enemy(unit, enemy_unit) then
 		return false
 	end
 
-	local charging_shot = arg_15_3.charging_shot
-	local flag = not arg_15_3.minimum_charge_time and arg_15_3.always_charge_before_firing and not charging_shot and not charging_shot and arg_15_3.minimum_charge_time <= arg_15_5 - arg_15_3.charge_start_time
+	local charging = shoot_blackboard.charging_shot
+	local sufficiently_charged = (not shoot_blackboard.minimum_charge_time or shoot_blackboard.always_charge_before_firing or not not charging) and not not charging and shoot_blackboard.minimum_charge_time <= t - shoot_blackboard.charge_start_time
 	local max_range_squared_charged
 
-	if not charging_shot then
-		max_range_squared_charged = arg_15_3.max_range_squared_charged
+	if charging then
+		max_range_squared_charged = shoot_blackboard.max_range_squared_charged
 
 		if not max_range_squared_charged then
 			-- Nothing
 		end
 	end
 
-	max_range_squared_charged = arg_15_3.max_range_squared
+	max_range_squared_charged = shoot_blackboard.max_range_squared
+
+	local max_range_squared = max_range_squared_charged
 
 	::label_15_0::
 
-	local var_15_4
+	local may_fire
 
-	if not var_15_0.is_ai then
-		var_15_4 = not flag and not not var_15_0.hesitating and not not var_15_0.in_alerted_state and not not arg_15_3.obstructed or arg_15_4 < max_range_squared_charged
+	if bb.is_ai then
+		may_fire = not not sufficiently_charged and not bb.hesitating and not bb.in_alerted_state and not shoot_blackboard.obstructed and range_squared < max_range_squared
 	else
-		var_15_4 = not flag and not not arg_15_3.obstructed or arg_15_4 < max_range_squared_charged
+		may_fire = not not sufficiently_charged and not shoot_blackboard.obstructed and range_squared < max_range_squared
 	end
 
-	return var_15_4
+	return may_fire
 end
 
-BTBotShootAction._aim = function (self, arg_16_1, arg_16_2, arg_16_3, arg_16_4)
+BTBotShootAction._aim = function (self, unit, blackboard, dt, t)
 	-- function 16
-	local target_unit = arg_16_2.target_unit
-	local shoot = arg_16_2.shoot
+	local target_unit = blackboard.target_unit
+	local shoot_bb = blackboard.shoot
 
 	if not HEALTH_ALIVE[target_unit] then
-		return not shoot.stop_fire_t and arg_16_4 < shoot.stop_fire_t
+		return not shoot_bb.stop_fire_t or t < shoot_bb.stop_fire_t
 	end
 
-	local first_person_extension = arg_16_2.first_person_extension
-	local current_position = first_person_extension:current_position()
-	local current_rotation = first_person_extension:current_rotation()
+	local first_person_ext = blackboard.first_person_extension
+	local camera_position = first_person_ext:current_position()
+	local camera_rotation = first_person_ext:current_rotation()
 
-	if target_unit ~= shoot.target_unit then
-		self:_set_new_aim_target(arg_16_1, arg_16_4, shoot, target_unit, first_person_extension)
+	if target_unit ~= shoot_bb.target_unit then
+		self:_set_new_aim_target(unit, t, shoot_bb, target_unit, first_person_ext)
 	end
 
-	local target_breed = shoot.target_breed
-	local flag = not target_breed and target_breed.bots_stay_ranged
+	local target_breed = shoot_bb.target_breed
+	local breed_distance_override = not not target_breed and not not target_breed.bots_stay_ranged
 
-	if not (not flag and shoot.obstructed and not shoot.keep_distance and not (arg_16_4 > shoot.disengage_update_time)) then
-		self:_update_disengage_position(arg_16_2, arg_16_4, flag)
+	if (not breed_distance_override or shoot_bb.obstructed) and not shoot_bb.keep_distance or t > shoot_bb.disengage_update_time then
+		self:_update_disengage_position(blackboard, t, breed_distance_override)
 	else
-		shoot.disengage_position_set = false
+		shoot_bb.disengage_position_set = false
 	end
 
 	local action_data = self._tree_node.action_data
-	local _aim_position, var_16_9, var_16_10, var_16_11, var_16_12 = self:_aim_position(arg_16_3, arg_16_4, arg_16_1, current_position, current_rotation, target_unit, shoot)
+	local yaw_offset, pitch_offset, wanted_aim_rotation, actual_aim_rotation, actual_aim_position = self:_aim_position(dt, t, unit, camera_position, camera_rotation, target_unit, shoot_bb)
 
-	if arg_16_4 >= shoot.reevaluate_obstruction_time then
-		if not self:_reevaluate_obstruction(arg_16_1, shoot, action_data, arg_16_4, World.get_data(arg_16_2.world, "physics_world"), current_position, var_16_10, arg_16_1, target_unit, var_16_12, arg_16_2.priority_target_enemy, arg_16_2.target_ally_unit, arg_16_2.target_ally_needs_aid, arg_16_2.target_ally_need_type) then
-			if not arg_16_2.ranged_obstruction_by_static then
-				arg_16_2.ranged_obstruction_by_static = {
+	if t >= shoot_bb.reevaluate_obstruction_time then
+		if self:_reevaluate_obstruction(unit, shoot_bb, action_data, t, World.get_data(blackboard.world, "physics_world"), camera_position, wanted_aim_rotation, unit, target_unit, actual_aim_position, blackboard.priority_target_enemy, blackboard.target_ally_unit, blackboard.target_ally_needs_aid, blackboard.target_ally_need_type) then
+			if not blackboard.ranged_obstruction_by_static then
+				blackboard.ranged_obstruction_by_static = {
 					unit = target_unit,
-					timer = arg_16_4
+					timer = t
 				}
 			else
-				local ranged_obstruction_by_static = arg_16_2.ranged_obstruction_by_static
+				local obstructed_by_static = blackboard.ranged_obstruction_by_static
 
-				ranged_obstruction_by_static.unit = target_unit
-				ranged_obstruction_by_static.timer = arg_16_4
+				obstructed_by_static.unit = target_unit
+				obstructed_by_static.timer = t
 			end
 		else
-			arg_16_2.ranged_obstruction_by_static = nil
+			blackboard.ranged_obstruction_by_static = nil
 		end
 	end
 
-	local input_extension = arg_16_2.input_extension
-	local distance_squared = Vector3.distance_squared(current_position, var_16_12)
+	local input_ext = blackboard.input_extension
+	local range_squared = Vector3.distance_squared(camera_position, actual_aim_position)
 
-	if not self:_should_charge(shoot, distance_squared, target_unit, arg_16_4) then
-		self:_charge_shot(shoot, action_data, input_extension, arg_16_4)
+	if self:_should_charge(shoot_bb, range_squared, target_unit, t) then
+		self:_charge_shot(shoot_bb, action_data, input_ext, t)
 	end
 
-	input_extension:set_aim_rotation(var_16_11)
+	input_ext:set_aim_rotation(actual_aim_rotation)
 
-	if not self:_aim_good_enough(arg_16_3, arg_16_4, shoot, _aim_position, var_16_9) and not self:_may_attack(arg_16_1, target_unit, shoot, distance_squared, arg_16_4) then
-		self:_fire_shot(shoot, action_data, input_extension, arg_16_4)
+	if self:_aim_good_enough(dt, t, shoot_bb, yaw_offset, pitch_offset) and self:_may_attack(unit, target_unit, shoot_bb, range_squared, t) then
+		self:_fire_shot(shoot_bb, action_data, input_ext, t)
 	end
 
-	local flag_2 = true
+	local done_firing = true
 
-	if not shoot.fired and not shoot.hold_fire_condition and not shoot.hold_fire_condition(arg_16_4, arg_16_2) then
-		self:_fire_shot(shoot, action_data, input_extension, arg_16_4)
+	if shoot_bb.fired and shoot_bb.hold_fire_condition and shoot_bb.hold_fire_condition(t, blackboard) then
+		self:_fire_shot(shoot_bb, action_data, input_ext, t)
 
-		flag_2 = false
+		done_firing = false
 	end
 
-	local flag_3 = not flag_2 and not shoot.fired and arg_16_4 > shoot.next_evaluate and arg_16_4 > shoot.next_evaluate_without_firing
+	local evaluate = (not not done_firing and not shoot_bb.fired or not (t > shoot_bb.next_evaluate)) and t > shoot_bb.next_evaluate_without_firing
 
-	if not flag_3 then
-		if not script_data.ai_bots_debug_behavior then
-			if not shoot.fired then
+	if evaluate then
+		if script_data.ai_bots_debug_behavior then
+			if shoot_bb.fired then
 				script_data.ai_bots_debug_behavior_data.ranged_attacks = script_data.ai_bots_debug_behavior_data.ranged_attacks + 1
 			else
 				script_data.ai_bots_debug_behavior_data.failed_ranged_attacks = script_data.ai_bots_debug_behavior_data.failed_ranged_attacks + 1
 			end
 		end
 
-		shoot.next_evaluate = arg_16_4 + action_data.evaluation_duration
-		shoot.next_evaluate_without_firing = arg_16_4 + action_data.evaluation_duration_without_firing
-		shoot.fired = false
+		shoot_bb.next_evaluate = t + action_data.evaluation_duration
+		shoot_bb.next_evaluate_without_firing = t + action_data.evaluation_duration_without_firing
+		shoot_bb.fired = false
 	end
 
-	return false, flag_3
+	return false, evaluate
 end
 
-BTBotShootAction._aim_good_enough = function (arg_17_0, arg_17_1, arg_17_2, arg_17_3, arg_17_4, arg_17_5)
+BTBotShootAction._aim_good_enough = function (self, dt, t, shoot_blackboard, yaw_offset, pitch_offset)
 	-- function 17
-	local var_17_0 = arg_17_3
+	local bb = shoot_blackboard
 
-	if not var_17_0.reevaluate_aim_time then
-		var_17_0.reevaluate_aim_time = 0
+	if not bb.reevaluate_aim_time then
+		bb.reevaluate_aim_time = 0
 	end
 
-	if arg_17_2 > var_17_0.reevaluate_aim_time then
+	if t > bb.reevaluate_aim_time then
 		local aim_data_charged
 
-		if not var_17_0.charging_shot then
-			aim_data_charged = var_17_0.aim_data_charged
+		if bb.charging_shot then
+			aim_data_charged = bb.aim_data_charged
 
 			if not aim_data_charged then
 				-- Nothing
 			end
 		end
 
-		aim_data_charged = var_17_0.aim_data
+		aim_data_charged = bb.aim_data
+
+		local aim_data = aim_data_charged
 
 		::label_17_0::
 
-		local sqrt = math.sqrt(arg_17_5 * arg_17_5 + arg_17_4 * arg_17_4)
+		local offset = math.sqrt(pitch_offset * pitch_offset + yaw_offset * yaw_offset)
 
-		if sqrt > aim_data_charged.max_radius then
-			var_17_0.aim_good_enough = false
+		if offset > aim_data.max_radius then
+			bb.aim_good_enough = false
 
-			fn("bad aim - offset:", sqrt)
+			dprint("bad aim - offset:", offset)
 		else
-			local var_17_3
-			local num = var_17_0.num_aim_rolls + 1
+			local success
+			local num_rolls = bb.num_aim_rolls + 1
 
-			if sqrt < aim_data_charged.min_radius then
-				var_17_3 = Math.random() < aim_data_charged.min_radius_pseudo_random_c * num
+			if offset < aim_data.min_radius then
+				success = Math.random() < aim_data.min_radius_pseudo_random_c * num_rolls
 			else
-				var_17_3 = math.auto_lerp(aim_data_charged.min_radius, aim_data_charged.max_radius, aim_data_charged.min_radius_pseudo_random_c, aim_data_charged.max_radius_pseudo_random_c, sqrt) * num > Math.random()
+				local prob = math.auto_lerp(aim_data.min_radius, aim_data.max_radius, aim_data.min_radius_pseudo_random_c, aim_data.max_radius_pseudo_random_c, offset) * num_rolls
+
+				success = prob > Math.random()
 			end
 
-			if not var_17_3 then
-				var_17_0.aim_good_enough = true
-				var_17_0.num_aim_rolls = 0
+			if success then
+				bb.aim_good_enough = true
+				bb.num_aim_rolls = 0
 
-				fn("fire! - offset:", sqrt, " num_rolls:", num)
+				dprint("fire! - offset:", offset, " num_rolls:", num_rolls)
 			else
-				var_17_0.aim_good_enough = false
-				var_17_0.num_aim_rolls = num
+				bb.aim_good_enough = false
+				bb.num_aim_rolls = num_rolls
 
-				fn("not yet - offset:", sqrt, " num_rolls:", num)
+				dprint("not yet - offset:", offset, " num_rolls:", num_rolls)
 			end
 		end
 
-		var_17_0.reevaluate_aim_time = arg_17_2 + 0.1
+		bb.reevaluate_aim_time = t + 0.1
 	end
 
-	return var_17_0.aim_good_enough
+	return bb.aim_good_enough
 end
 
-BTBotShootAction._should_charge = function (arg_18_0, arg_18_1, arg_18_2, arg_18_3, arg_18_4)
+BTBotShootAction._should_charge = function (self, shoot_blackboard, range_squared, target_unit, t)
 	-- function 18
-	local next_charge_shot_t = arg_18_1.next_charge_shot_t
+	local next_charge_shot_t = shoot_blackboard.next_charge_shot_t
 
-	if not (not arg_18_1.can_charge_shot and not next_charge_shot_t and not (arg_18_4 < next_charge_shot_t)) then
+	if not shoot_blackboard.can_charge_shot or next_charge_shot_t and t < next_charge_shot_t then
 		return false
 	end
 
-	if not arg_18_1.ignore_disabled_enemies_charged and not BLACKBOARDS[arg_18_3].in_vortex then
+	if shoot_blackboard.ignore_disabled_enemies_charged then
+		local target_bb = BLACKBOARDS[target_unit]
+
+		if target_bb.in_vortex then
+			return false
+		end
+	end
+
+	local max_range_squared_charged = shoot_blackboard.max_range_squared_charged
+
+	if range_squared > shoot_blackboard.max_range_squared_charged and not shoot_blackboard.charge_when_outside_max_range_charged then
 		return false
 	end
 
-	local max_range_squared_charged = arg_18_1.max_range_squared_charged
+	if shoot_blackboard.obstructed then
+		local charge_when_obstructed = shoot_blackboard.charge_when_obstructed
 
-	if not (not (arg_18_2 > arg_18_1.max_range_squared_charged) or arg_18_1.charge_when_outside_max_range_charged) then
-		return false
-	end
-
-	if not arg_18_1.obstructed then
-		local charge_when_obstructed = arg_18_1.charge_when_obstructed
-
-		charge_when_obstructed = charge_when_obstructed or false
+		charge_when_obstructed = not not charge_when_obstructed or not not false
 
 		return charge_when_obstructed
 	end
 
-	if arg_18_2 > arg_18_1.max_range_squared then
-		return arg_18_1.charge_when_outside_max_range
+	local max_range_squared = shoot_blackboard.max_range_squared
+
+	if max_range_squared < range_squared then
+		return shoot_blackboard.charge_when_outside_max_range
 	end
 
-	if arg_18_1.always_charge_before_firing or not arg_18_1.charging_shot then
+	if shoot_blackboard.always_charge_before_firing or shoot_blackboard.charging_shot then
 		return true
 	end
 
-	if not (not arg_18_1.charge_range_squared and not (arg_18_2 > arg_18_1.charge_range_squared)) then
+	if shoot_blackboard.charge_range_squared and range_squared > shoot_blackboard.charge_range_squared then
 		return true
 	end
 
-	local target_breed = arg_18_1.target_breed
+	local target_breed = shoot_blackboard.target_breed
 
-	if not target_breed then
-		local category_mask = target_breed.category_mask
+	if target_breed then
+		local target_breed_category_mask = target_breed.category_mask
+		local charge_shot_util = bit.band(target_breed_category_mask, shoot_blackboard.effective_against_charged)
+		local normal_shot_util = bit.band(target_breed_category_mask, shoot_blackboard.effective_against)
 
-		return bit.band(category_mask, arg_18_1.effective_against_charged) > bit.band(category_mask, arg_18_1.effective_against)
+		return normal_shot_util < charge_shot_util
 	end
 
 	return false
 end
 
-BTBotShootAction._fire_shot = function (arg_19_0, arg_19_1, arg_19_2, arg_19_3, arg_19_4)
+BTBotShootAction._fire_shot = function (self, shoot_blackboard, action_data, input_extension, t)
 	-- function 19
-	arg_19_1.fired = true
-	arg_19_1.stop_fire_t = arg_19_4 + arg_19_1.stop_fire_delay
+	shoot_blackboard.fired = true
+	shoot_blackboard.stop_fire_t = t + shoot_blackboard.stop_fire_delay
 
-	if arg_19_2.fire_input ~= "none" then
-		local fire_input = arg_19_2.fire_input
+	if action_data.fire_input ~= "none" then
+		local fire_input = action_data.fire_input
 
-		fire_input = fire_input or arg_19_1.fire_input
+		if not fire_input then
+			-- Nothing
+		end
 
-		arg_19_3[fire_input](arg_19_3)
+		fire_input = shoot_blackboard.fire_input
+
+		local input = fire_input
+
+		::label_19_0::
+
+		input_extension[input](input_extension)
 	end
 
-	if not arg_19_1.charge_shot_delay then
-		arg_19_1.next_charge_shot_t = arg_19_4 + arg_19_1.charge_shot_delay
+	if shoot_blackboard.charge_shot_delay then
+		shoot_blackboard.next_charge_shot_t = t + shoot_blackboard.charge_shot_delay
 	end
 end
 
-BTBotShootAction._charge_shot = function (arg_20_0, arg_20_1, arg_20_2, arg_20_3, arg_20_4)
+BTBotShootAction._charge_shot = function (self, shoot_blackboard, action_data, input_extension, t)
 	-- function 20
-	if not arg_20_1.charging_shot then
-		arg_20_1.charge_start_time = arg_20_4
-		arg_20_1.charging_shot = true
+	if not shoot_blackboard.charging_shot then
+		shoot_blackboard.charge_start_time = t
+		shoot_blackboard.charging_shot = true
 	end
 
-	local charge_input = arg_20_2.charge_input
+	local charge_input = action_data.charge_input
 
-	charge_input = charge_input or arg_20_1.charge_input
+	if not charge_input then
+		-- Nothing
+	end
 
-	arg_20_3[charge_input](arg_20_3)
+	charge_input = shoot_blackboard.charge_input
+
+	local input = charge_input
+
+	::label_20_0::
+
+	input_extension[input](input_extension)
 end
 
-BTBotShootAction._update_disengage_position = function (arg_21_0, arg_21_1, arg_21_2, arg_21_3)
+BTBotShootAction._update_disengage_position = function (self, blackboard, t, breed_distance_override)
 	-- function 21
-	local current_position = arg_21_1.first_person_extension:current_position()
-	local shoot = arg_21_1.shoot
-	local flag = arg_21_3 or shoot.keep_distance
-	local num = flag * flag
-	local num_2 = 0
-	local zero = Vector3.zero()
-	local proximite_enemies = arg_21_1.proximite_enemies
+	local first_person_ext = blackboard.first_person_extension
+	local self_position = first_person_ext:current_position()
+	local shoot_bb = blackboard.shoot
+	local keep_distance = not not breed_distance_override or not not shoot_bb.keep_distance
+	local keep_distance_sq = keep_distance * keep_distance
+	local num_close_targets = 0
+	local disengage_vector = Vector3.zero()
+	local proximite_enemies = blackboard.proximite_enemies
 
-	if not proximite_enemies then
+	if proximite_enemies then
 		for i = 1, #proximite_enemies do
-			local var_21_7 = fn_4(current_position, proximite_enemies[i], flag, num)
+			local result = get_disengage_vector(self_position, proximite_enemies[i], keep_distance, keep_distance_sq)
 
-			if not var_21_7 then
-				num_2 = num_2 + 1
-				zero = zero + var_21_7
+			if result then
+				num_close_targets = num_close_targets + 1
+				disengage_vector = disengage_vector + result
 			end
 		end
 	end
 
-	if num_2 <= 0 then
-		local target_unit = arg_21_1.shoot.target_unit
-		local var_21_9 = fn_4(current_position, target_unit, flag, num)
+	if num_close_targets <= 0 then
+		local target_unit = blackboard.shoot.target_unit
+		local result = get_disengage_vector(self_position, target_unit, keep_distance, keep_distance_sq)
 
-		if not var_21_9 then
-			num_2 = 1
-			zero = var_21_9
+		if result then
+			num_close_targets = 1
+			disengage_vector = result
 		end
 	end
 
-	local var_21_10
-	local var_21_11
+	local disengage_position, should_stop
 
-	if num_2 > 0 then
-		local nav_world = arg_21_1.nav_world
-		local divide = Vector3.divide(zero, num_2)
+	if num_close_targets > 0 then
+		local nav_world = blackboard.nav_world
 
-		var_21_10 = fn_3(nav_world, current_position, divide, Vector3.length(divide))
+		disengage_vector = Vector3.divide(disengage_vector, num_close_targets)
+		disengage_position = get_disengage_pos(nav_world, self_position, disengage_vector, Vector3.length(disengage_vector))
 	end
 
-	if not var_21_10 then
-		local navigation_destination_override = arg_21_1.navigation_destination_override
-		local unbox = navigation_destination_override:unbox()
+	if disengage_position then
+		local override_box = blackboard.navigation_destination_override
+		local override_destination = override_box:unbox()
+		local disengage_position_set = shoot_bb.disengage_position_set
 
-		if not (not shoot.disengage_position_set and not (Vector3.distance_squared(var_21_10, unbox) > 0.01)) then
-			navigation_destination_override:store(var_21_10)
+		if not disengage_position_set or Vector3.distance_squared(disengage_position, override_destination) > 0.01 then
+			override_box:store(disengage_position)
 
-			shoot.disengage_position_set = true
-			shoot.stop_at_current_position = var_21_11
+			shoot_bb.disengage_position_set = true
+			shoot_bb.stop_at_current_position = should_stop
 		end
 
-		local num_3 = 5
-		local num_4 = 10
-		local distance = Vector3.distance(current_position, var_21_10)
+		local min_dist = 5
+		local max_dist = 10
+		local distance = Vector3.distance(self_position, disengage_position)
+		local interval = math.auto_lerp(min_dist, max_dist, 0.5, 2, math.clamp(distance, min_dist, max_dist))
 
-		shoot.disengage_update_time = arg_21_2 + math.auto_lerp(num_3, num_4, 0.5, 2, math.clamp(distance, num_3, num_4))
+		shoot_bb.disengage_update_time = t + interval
 	end
 end
 
-BTBotShootAction._reevaluate_obstruction = function (self, arg_22_1, arg_22_2, arg_22_3, arg_22_4, arg_22_5, arg_22_6, arg_22_7, arg_22_8, arg_22_9, arg_22_10, arg_22_11, arg_22_12, arg_22_13, arg_22_14)
+BTBotShootAction._reevaluate_obstruction = function (self, unit, shoot_blackboard, action_data, t, physics_world, ray_from, wanted_aim_rotation, self_unit, target_unit, actual_aim_position, priority_target_enemy, target_ally_unit, target_ally_needs_aid, target_ally_need_type)
 	-- function 22
-	self:_update_collision_filter(arg_22_9, arg_22_2, arg_22_11, arg_22_12, arg_22_13, arg_22_14)
+	self:_update_collision_filter(target_unit, shoot_blackboard, priority_target_enemy, target_ally_unit, target_ally_needs_aid, target_ally_need_type)
 
-	local forward = Quaternion.forward(arg_22_7)
-	local minimum_obstruction_reevaluation_time = arg_22_3.minimum_obstruction_reevaluation_time
-	local maximum_obstruction_reevaluation_time = arg_22_3.maximum_obstruction_reevaluation_time
+	local direction = Quaternion.forward(wanted_aim_rotation)
+	local min = action_data.minimum_obstruction_reevaluation_time
+	local max = action_data.maximum_obstruction_reevaluation_time
 	local collision_filter_charged
 
-	if not arg_22_2.charging_shot then
-		collision_filter_charged = arg_22_2.collision_filter_charged
+	if shoot_blackboard.charging_shot then
+		collision_filter_charged = shoot_blackboard.collision_filter_charged
 
 		if not collision_filter_charged then
 			-- Nothing
 		end
 	end
 
-	collision_filter_charged = arg_22_2.collision_filter
+	collision_filter_charged = shoot_blackboard.collision_filter
+
+	local collision_filter = collision_filter_charged
 
 	::label_22_0::
 
-	local _is_shot_obstructed, var_22_5, var_22_6 = self:_is_shot_obstructed(arg_22_5, arg_22_6, forward, arg_22_1, arg_22_9, arg_22_10, collision_filter_charged)
-	local var_22_7
+	local obstructed, distance_from_target, obstructed_by_static = self:_is_shot_obstructed(physics_world, ray_from, direction, unit, target_unit, actual_aim_position, collision_filter)
+	local fuzzyness
 
-	if not _is_shot_obstructed then
-		if not arg_22_2.charging_shot then
-			var_22_7 = arg_22_2.obstruction_fuzzyness_range_charged
+	if obstructed then
+		if shoot_blackboard.charging_shot then
+			fuzzyness = shoot_blackboard.obstruction_fuzzyness_range_charged
 		else
-			var_22_7 = arg_22_2.obstruction_fuzzyness_range
+			fuzzyness = shoot_blackboard.obstruction_fuzzyness_range
 		end
 
-		if not (not var_22_7 and not (var_22_5 <= var_22_7)) then
-			_is_shot_obstructed = false
+		if fuzzyness and distance_from_target <= fuzzyness then
+			obstructed = false
 		end
 	end
 
-	arg_22_2.obstructed = _is_shot_obstructed
-	arg_22_2.reevaluate_obstruction_time = arg_22_4 + minimum_obstruction_reevaluation_time + Math.random() * (maximum_obstruction_reevaluation_time - minimum_obstruction_reevaluation_time)
+	shoot_blackboard.obstructed = obstructed
+	shoot_blackboard.reevaluate_obstruction_time = t + min + Math.random() * (max - min)
 
-	return var_22_6
+	return obstructed_by_static
 end
 
-local num_3 = 1
-local num_4 = 2
-local num_5 = 3
-local num_6 = 4
+local INDEX_POSITION = 1
+local INDEX_DISTANCE = 2
+local INDEX_NORMAL = 3
+local INDEX_ACTOR = 4
 
-BTBotShootAction._is_shot_obstructed = function (arg_23_0, arg_23_1, arg_23_2, arg_23_3, arg_23_4, arg_23_5, arg_23_6, arg_23_7)
+BTBotShootAction._is_shot_obstructed = function (self, physics_world, from, direction, self_unit, target_unit, actual_aim_position, collision_filter)
 	-- function 23
-	local length = Vector3.length(arg_23_6 - arg_23_2)
+	local max_distance = Vector3.length(actual_aim_position - from)
 
-	PhysicsWorld.prepare_actors_for_raycast(arg_23_1, arg_23_2, arg_23_3, 0.01, 0.5, length * length)
+	PhysicsWorld.prepare_actors_for_raycast(physics_world, from, direction, 0.01, 0.5, max_distance * max_distance)
 
-	local immediate_raycast = PhysicsWorld.immediate_raycast(arg_23_1, arg_23_2, arg_23_3, length, "all", "collision_filter", arg_23_7)
+	local raycast_hits = PhysicsWorld.immediate_raycast(physics_world, from, direction, max_distance, "all", "collision_filter", collision_filter)
 
-	if not immediate_raycast then
+	if not raycast_hits then
 		return false
 	end
 
-	local count = #immediate_raycast
+	local num_hits = #raycast_hits
 
-	for i = 1, count do
-		local var_23_3 = immediate_raycast[i]
-		local var_23_4 = var_23_3[num_6]
-		local unit = Actor.unit(var_23_4)
+	for i = 1, num_hits do
+		local hit = raycast_hits[i]
+		local hit_actor = hit[INDEX_ACTOR]
+		local hit_unit = Actor.unit(hit_actor)
 
-		if unit == arg_23_5 then
+		if hit_unit == target_unit then
 			return false
-		elseif unit ~= arg_23_4 then
-			local is_static = Actor.is_static(var_23_4)
+		elseif hit_unit ~= self_unit then
+			local obstructed_by_static = Actor.is_static(hit_actor)
 
-			return true, length - var_23_3[num_4], is_static
+			return true, max_distance - hit[INDEX_DISTANCE], obstructed_by_static
 		end
 	end
 

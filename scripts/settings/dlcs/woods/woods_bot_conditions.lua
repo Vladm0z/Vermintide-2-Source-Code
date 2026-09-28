@@ -3,13 +3,13 @@
 local BTConditions = BTConditions
 local can_activate = BTConditions.can_activate
 
-can_activate = can_activate or {}
+can_activate = not not can_activate or not not {}
 BTConditions.can_activate = can_activate
 
 local BTConditions_2 = BTConditions
 local can_activate_non_combat = BTConditions.can_activate_non_combat
 
-can_activate_non_combat = can_activate_non_combat or {}
+can_activate_non_combat = not not can_activate_non_combat or not not {}
 BTConditions_2.can_activate_non_combat = can_activate_non_combat
 
 table.merge_recursive(BTConditions.ability_check_categories, {
@@ -18,40 +18,40 @@ table.merge_recursive(BTConditions.ability_check_categories, {
 	}
 })
 
-local num = 100
-local num_2 = 8
-local num_3 = 1.5
+local wall_max_distance_sq = 100
+local wall_prio_distance = 8
+local wall_placement_bias = 1.5
 
-BTConditions.can_activate.we_thornsister = function (self)
+BTConditions.can_activate.we_thornsister = function (blackboard)
 	-- function 1
-	local unit = self.unit
-	local has_extension = ScriptUnit.has_extension(unit, "talent_system")
-	local flag = not has_extension and has_extension:has_talent("kerillian_thorn_sister_debuff_wall")
+	local self_unit = blackboard.unit
+	local talent_extension = ScriptUnit.has_extension(self_unit, "talent_system")
+	local is_smiter_ability = not not talent_extension and not not talent_extension:has_talent("kerillian_thorn_sister_debuff_wall")
 
-	if not flag then
-		local get_threat_value, var_1_4 = Managers.state.conflict:get_threat_value()
+	if not is_smiter_ability then
+		local threat, num_enemies = Managers.state.conflict:get_threat_value()
 
-		if var_1_4 < 20 then
+		if num_enemies < 20 then
 			return false
 		end
 	end
 
-	local var_1_5 = POSITION_LOOKUP[unit]
-	local target_unit = self.target_unit
-	local var_1_7 = BLACKBOARDS[target_unit]
-	local var_1_8
-	local num_2 = 0
+	local self_position = POSITION_LOOKUP[self_unit]
+	local target_unit = blackboard.target_unit
+	local target_blackboard = BLACKBOARDS[target_unit]
+	local wall_target
+	local forward_offset = 0
 
-	if not target_unit then
-		local distance_squared = Vector3.distance_squared(var_1_5, POSITION_LOOKUP[target_unit])
+	if target_unit then
+		local wall_target_distance_sq = Vector3.distance_squared(self_position, POSITION_LOOKUP[target_unit])
 
-		if not (not (distance_squared <= num) or not (distance_squared >= 4)) then
-			if not flag then
-				local flag_2 = not var_1_7 and var_1_7.breed
+		if wall_target_distance_sq <= wall_max_distance_sq and wall_target_distance_sq >= 4 then
+			if is_smiter_ability then
+				local target_breed = not not target_blackboard and not not target_blackboard.breed
 				local threat_value
 
-				if not flag_2 then
-					threat_value = flag_2.threat_value
+				if target_breed then
+					threat_value = target_breed.threat_value
 
 					if not threat_value then
 						-- Nothing
@@ -60,30 +60,38 @@ BTConditions.can_activate.we_thornsister = function (self)
 
 				threat_value = 0
 
+				local target_threat_value = threat_value
+
 				::label_1_0::
 
-				if not (target_unit == self.priority_target_enemy or target_unit == self.urgent_target_enemy or target_unit == self.opportunity_target_enemy or not (threat_value >= 8)) then
-					var_1_8 = target_unit
+				if target_unit == blackboard.priority_target_enemy or target_unit == blackboard.urgent_target_enemy or target_unit == blackboard.opportunity_target_enemy or target_threat_value >= 8 then
+					wall_target = target_unit
 				end
-			elseif #self.proximite_enemies >= 10 then
-				var_1_8 = target_unit
-				num_2 = -(math.sqrt(distance_squared) / num_3)
+			else
+				local proximite_enemies = blackboard.proximite_enemies
+				local num_proximite_enemies = #proximite_enemies
+
+				if num_proximite_enemies >= 10 then
+					wall_target = target_unit
+					forward_offset = -(math.sqrt(wall_target_distance_sq) / wall_placement_bias)
+				end
 			end
 		end
 	end
 
-	if not var_1_8 then
-		local var_1_13 = POSITION_LOOKUP[var_1_8]
-		local normalize = Vector3.normalize(var_1_13 - var_1_5)
-		local num_4 = var_1_13 + normalize * math.max(num_2, 0)
-		local nav_world = self.nav_world
-		local flag_3 = not var_1_7 and var_1_7.navigation_extension
-		local flag_4 = not flag_3 and flag_3:traverse_logic()
+	if wall_target then
+		local wall_target_position = POSITION_LOOKUP[wall_target]
+		local wall_target_direction = Vector3.normalize(wall_target_position - self_position)
+		local check_position = wall_target_position + wall_target_direction * math.max(forward_offset, 0)
+		local nav_world = blackboard.nav_world
+		local navigation_extension = not not target_blackboard and not not target_blackboard.navigation_extension
+		local traverse_logic = not not navigation_extension and not not navigation_extension:traverse_logic()
+		local success = not not is_smiter_ability or not not LocomotionUtils.ray_can_go_on_mesh(nav_world, self_position, check_position, traverse_logic, 1, 1)
 
-		if not (flag or LocomotionUtils.ray_can_go_on_mesh(nav_world, var_1_5, num_4, flag_4, 1, 1)) then
-			local num_5 = var_1_13 + normalize * num_2
+		if success then
+			local target_pos = wall_target_position + wall_target_direction * forward_offset
 
-			self.activate_ability_data.aim_position:store(num_5)
+			blackboard.activate_ability_data.aim_position:store(target_pos)
 
 			return true
 		end

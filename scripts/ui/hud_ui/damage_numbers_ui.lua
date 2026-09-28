@@ -1,8 +1,7 @@
 -- chunkname: @scripts/ui/hud_ui/damage_numbers_ui.lua
 
-local num = 1920
-local num_2 = 1080
-local tbl = {
+local SIZE_X, SIZE_Y = 1920, 1080
+local scenegraph_definition = {
 	screen = {
 		scale = "fit",
 		position = {
@@ -11,8 +10,8 @@ local tbl = {
 			UILayer.hud
 		},
 		size = {
-			num,
-			num_2
+			SIZE_X,
+			SIZE_Y
 		}
 	},
 	text_root = {
@@ -44,37 +43,41 @@ local tbl = {
 		}
 	}
 }
-local min_streak_font_size
+local min_streak_font_size_2
 
-if not GameModeSettings.versus then
-	min_streak_font_size = GameModeSettings.versus.min_streak_font_size
+if GameModeSettings.versus then
+	min_streak_font_size_2 = GameModeSettings.versus.min_streak_font_size
 
-	if not min_streak_font_size then
+	if not min_streak_font_size_2 then
 		-- Nothing
 	end
 end
 
-min_streak_font_size = 36
+min_streak_font_size_2 = 36
+
+local min_streak_font_size = min_streak_font_size_2
 
 do
-	local max_streak_font_size
+	local max_streak_font_size_2
 end
 
 ::label_0_0::
 
-if not GameModeSettings.versus then
-	max_streak_font_size = GameModeSettings.versus.max_streak_font_size
+if GameModeSettings.versus then
+	max_streak_font_size_2 = GameModeSettings.versus.max_streak_font_size
 
-	if not max_streak_font_size then
+	if not max_streak_font_size_2 then
 		-- Nothing
 	end
 end
 
-max_streak_font_size = 64
+max_streak_font_size_2 = 64
+
+local max_streak_font_size = max_streak_font_size_2
 
 ::label_0_1::
 
-local tbl_2 = {
+local default_text_style = {
 	word_wrap = false,
 	font_size = 24,
 	localize = false,
@@ -89,29 +92,29 @@ local tbl_2 = {
 		1
 	}
 }
-local tbl_3 = {
-	damage_text = UIWidgets.create_simple_text("0", "damage_text", nil, nil, tbl_2)
+local widget_definitions = {
+	damage_text = UIWidgets.create_simple_text("0", "damage_text", nil, nil, default_text_style)
 }
 
 DamageNumbersUI = class(DamageNumbersUI)
 
-DamageNumbersUI.init = function (self, arg_1_1, arg_1_2)
+DamageNumbersUI.init = function (self, parent, ingame_ui_context)
 	-- function 1
-	self._parent = arg_1_1
-	self.ui_renderer = arg_1_2.ui_renderer
+	self._parent = parent
+	self.ui_renderer = ingame_ui_context.ui_renderer
 	self.camera = Managers.camera
-	self.input_manager = arg_1_2.input_manager
+	self.input_manager = ingame_ui_context.input_manager
 	self._time = 0
 	self._unit_text_size = 0.2
 	self._unit_text_time = math.huge
 	self._unit_texts = {}
 	self._unit_texts_summed = {}
 
-	local world = Managers.world
-	local str = "player_1"
-	local str_2 = "level_world"
-	local world_2 = world:world(str_2)
-	local viewport = ScriptWorld.viewport(world_2, str)
+	local world_manager = Managers.world
+	local viewport_name = "player_1"
+	local world_name = "level_world"
+	local world = world_manager:world(world_name)
+	local viewport = ScriptWorld.viewport(world, viewport_name)
 
 	self.camera = ScriptViewport.camera(viewport)
 
@@ -119,316 +122,335 @@ DamageNumbersUI.init = function (self, arg_1_1, arg_1_2)
 	Managers.state.event:register(self, "add_damage_number", "event_add_damage_number")
 	Managers.state.event:register(self, "alter_damage_number", "event_alter_damage_number")
 
-	local settings = Managers.state.game_mode:settings()
+	local game_mode_settings = Managers.state.game_mode:settings()
 end
 
-DamageNumbersUI.update = function (self, arg_2_1)
+DamageNumbersUI.update = function (self, dt)
 	-- function 2
-	self._time = self._time + arg_2_1
+	self._time = self._time + dt
 
-	self:draw(arg_2_1)
+	self:draw(dt)
 end
 
-DamageNumbersUI.event_alter_damage_number = function (self, arg_3_1, arg_3_2, arg_3_3)
+DamageNumbersUI.event_alter_damage_number = function (self, unit, damage_number, overrides)
 	-- function 3
-	if not arg_3_2 then
-		arg_3_2.text = arg_3_3.text
+	if damage_number then
+		damage_number.text = overrides.text
 
 		local _time = self._time
-		local time = arg_3_3.time
+		local time = overrides.time
 
-		time = time or self._unit_text_time
-		arg_3_2.time = _time + time
-		arg_3_2.starting_time = self._time
+		time = not not time or not not self._unit_text_time
+		damage_number.time = _time + time
+		damage_number.starting_time = self._time
 
-		local color = arg_3_3.color
+		local color = overrides.color
 
-		color = color or arg_3_2.color
-		arg_3_2.color = color
-		arg_3_2.color_saved = arg_3_3.color
+		color = not not color or not not damage_number.color
+		damage_number.color = color
+		damage_number.color_saved = overrides.color
 
-		local size = arg_3_3.size
+		local size = overrides.size
 
-		size = size or arg_3_2.size
-		arg_3_2.size = size
+		size = not not size or not not damage_number.size
+		damage_number.size = size
 
-		local damage = arg_3_3.damage
+		local damage = overrides.damage
 
-		damage = damage or arg_3_2.damage
-		arg_3_2.damage = damage
+		damage = not not damage or not not damage_number.damage
+		damage_number.damage = damage
 	end
 end
 
-local tbl_4 = {}
-local tbl_5 = {
-	default = function (self, arg_4_1, arg_4_2)
+local dummy_table = {}
+local SetupFuncs = {
+	default = function (data, override_data, index)
 		-- function 4
-		self.random_x_offset = math.random(-60, 60)
-		self.random_y_offset = math.random(-60, 60)
+		data.random_x_offset = math.random(-60, 60)
+		data.random_y_offset = math.random(-60, 60)
 	end,
-	floating_damage = function (self, arg_5_1)
+	floating_damage = function (data, index)
 		-- function 5
-		local num = 50
-		local num_2 = 125
-		local num_3 = math.random() - 0.5
+		local x_range = 50
+		local y_range = 125
+		local x = math.random() - 0.5
 
-		self.random_x_offset = num_3 * num
-		self.random_y_offset = math.sin(2 * num_3 + math.pi * 0.5) * num_2
+		data.random_x_offset = x * x_range
+		data.random_y_offset = math.sin(2 * x + math.pi * 0.5) * y_range
 	end,
-	critical_strike = function (self, arg_6_1, arg_6_2, arg_6_3)
+	critical_strike = function (data, override_data, index, unit)
 		-- function 6
-		self.unit = arg_6_3
+		data.unit = unit
 	end,
-	streak_damage = function (self, arg_7_1, arg_7_2, arg_7_3)
+	streak_damage = function (data, override_data, index, unit)
 		-- function 7
-		self.unit = arg_7_3
+		data.unit = unit
 	end,
-	floating_radial_damage = function (self, arg_8_1, arg_8_2)
+	floating_radial_damage = function (data, override_data, index)
 		-- function 8
-		local angle = self.angle
+		local angle_2 = data.angle
 
-		angle = angle or (arg_8_2 - 1) * 0.5
+		if not angle_2 then
+			-- Nothing
+		end
 
-		local num = 150
-		local random = math.random(200, 700)
-		local cos = math.cos(angle)
+		angle_2 = (index - 1) * 0.5
 
-		self.random_x_offset = cos * num
-		self.floating_speed_x = cos * random
+		local angle = angle_2
 
-		local sin = math.sin(angle)
+		::label_8_0::
 
-		self.random_y_offset = sin * num
-		self.floating_speed_y = sin * random
+		local radius = 150
+		local floating_speed = math.random(200, 700)
+		local x_angle = math.cos(angle)
+
+		data.random_x_offset = x_angle * radius
+		data.floating_speed_x = x_angle * floating_speed
+
+		local y_angle = math.sin(angle)
+
+		data.random_y_offset = y_angle * radius
+		data.floating_speed_y = y_angle * floating_speed
 	end
 }
 
-local function fn(arg_9_0, arg_9_1)
+local function default_complete_function(unit_text, t)
 	-- function 9
 	return true
 end
 
-DamageNumbersUI.event_add_damage_number = function (self, arg_10_1, arg_10_2, arg_10_3, arg_10_4, arg_10_5, arg_10_6, arg_10_7, arg_10_8)
+DamageNumbersUI.event_add_damage_number = function (self, damage, size, unit, time, color, is_critical_strike, z_offset_override, override_data)
 	-- function 10
-	arg_10_8 = arg_10_8 or tbl_4
+	override_data = not not override_data or not not dummy_table
 
-	local world_position = Camera.world_position(self.camera)
-	local world_position_2 = Unit.world_position(arg_10_3, 0)
-	local normalize = Vector3.normalize(world_position_2 - world_position)
-	local forward = Quaternion.forward(Camera.world_rotation(self.camera))
-	local dot = Vector3.dot(forward, normalize)
+	local camera_position = Camera.world_position(self.camera)
+	local unit_position = Unit.world_position(unit, 0)
+	local cam_to_unit_dir = Vector3.normalize(unit_position - camera_position)
+	local cam_direction = Quaternion.forward(Camera.world_rotation(self.camera))
+	local forward_dot = Vector3.dot(cam_direction, cam_to_unit_dir)
+	local is_infront = forward_dot >= 0 and forward_dot <= 1
 
-	if not (not (dot >= 0) or dot <= 1) then
-		arg_10_2 = arg_10_2 or 1
-		arg_10_5 = arg_10_5 or Vector3(255, 255, 255)
+	if is_infront then
+		size = not not size or not not 1
+		color = not not color or not not Vector3(255, 255, 255)
 
-		local DamageNumberVariants = DamageNumberVariants
+		local update_funcs = DamageNumberVariants
 
-		if not self._unit_texts[arg_10_3] then
-			self._unit_texts[arg_10_3] = {}
+		if not self._unit_texts[unit] then
+			self._unit_texts[unit] = {}
 		end
 
-		local num = #self._unit_texts[arg_10_3] + 1
-		local variant_name = arg_10_8.variant_name
+		local index = #self._unit_texts[unit] + 1
+		local variant_name_2 = override_data.variant_name
 
-		variant_name = variant_name or "default"
+		if not variant_name_2 then
+			-- Nothing
+		end
 
-		local var_10_8 = DamageNumberVariants[variant_name]
-		local var_10_9
+		variant_name_2 = "default"
+
+		local variant_name = variant_name_2
+
+		::label_10_0::
+
+		local variant = DamageNumberVariants[variant_name]
+		local count
 		local tbl = {
 			random_y_offset = 0,
 			alpha = 255,
 			floating_speed_x = 0,
 			random_x_offset = 0,
 			floating_speed_y = 150,
-			size = arg_10_2,
-			text = arg_10_1,
+			size = size,
+			text = damage,
 			color = {
 				255,
-				arg_10_5.x,
-				arg_10_5.y,
-				arg_10_5.z
+				color.x,
+				color.y,
+				color.z
 			},
-			time = self._time + (arg_10_4 or self._unit_text_time)
+			time = self._time + (not not time or not not self._unit_text_time)
 		}
-		local floating_speed = arg_10_8.floating_speed
+		local floating_speed = override_data.floating_speed
 
-		floating_speed = floating_speed or 150
+		floating_speed = not not floating_speed or not not 150
 		tbl.floating_speed = floating_speed
 		tbl.starting_time = self._time
-		tbl.z_offset = arg_10_7
-		tbl.update_function = var_10_8.update
+		tbl.z_offset = z_offset_override
+		tbl.update_function = variant.update
 
-		local complete = var_10_8.complete
+		local complete = variant.complete
 
-		complete = complete or fn
+		complete = not not complete or not not default_complete_function
 		tbl.complete_function = complete
-		tbl.start_function = var_10_8.start
-		tbl.damage = arg_10_8.damage
-		tbl.using_bucket_damage = arg_10_8.using_bucket_damage
+		tbl.start_function = variant.start
+		tbl.damage = override_data.damage
+		tbl.using_bucket_damage = override_data.using_bucket_damage
 
-		tbl_5[variant_name](tbl, arg_10_8, num, arg_10_3)
+		local new_text = tbl
 
-		if not arg_10_6 then
-			arg_10_8.update_function = DamageNumberVariants.critical_strike.update
+		SetupFuncs[variant_name](new_text, override_data, index, unit)
+
+		if is_critical_strike then
+			override_data.update_function = DamageNumberVariants.critical_strike.update
 		end
 
-		tbl.color_saved = tbl.color
-		self._unit_texts[arg_10_3][num] = tbl
+		new_text.color_saved = new_text.color
+		self._unit_texts[unit][index] = new_text
 
-		if not arg_10_8.ref then
-			arg_10_8.ref = tbl
+		if override_data.ref then
+			override_data.ref = new_text
 		end
 	end
 end
 
 DamageNumbersUI.destroy = function (self)
 	-- function 11
-	for k, v in pairs(self._unit_texts) do
-		self:_destroy_unit_texts(k)
+	for unit, categories in pairs(self._unit_texts) do
+		self:_destroy_unit_texts(unit)
 	end
 
-	if not Managers.state.event then
+	if Managers.state.event then
 		Managers.state.event:unregister("add_damage_number", self)
 		Managers.state.event:unregister(self, "alter_damage_number")
 	end
 end
 
-DamageNumbersUI._destroy_unit_texts = function (arg_12_0, arg_12_1)
+DamageNumbersUI._destroy_unit_texts = function (self, unit)
 	-- function 12
-	arg_12_0._unit_texts[arg_12_1] = nil
+	self._unit_texts[unit] = nil
 end
 
 DamageNumbersUI.create_ui_elements = function (self)
 	-- function 13
-	self.ui_scenegraph = UISceneGraph.init_scenegraph(tbl)
-	self.damage_text = UIWidget.init(tbl_3.damage_text)
+	self.ui_scenegraph = UISceneGraph.init_scenegraph(scenegraph_definition)
+	self.damage_text = UIWidget.init(widget_definitions.damage_text)
 
 	UIRenderer.clear_scenegraph_queue(self.ui_renderer)
 end
 
 DamageNumberVariants = {
 	default = {
-		update = function (self, arg_14_1, arg_14_2, arg_14_3, arg_14_4, arg_14_5, arg_14_6)
+		update = function (unit_text, t, damage_text_widget, inverse_scale, world_to_screen_position, progress, ease_out_proggress)
 			-- function 14
-			local size = self.size
+			local font_size = unit_text.size
 
-			arg_14_2.style.text.font_size = size
-			arg_14_2.style.text_shadow.font_size = size
+			damage_text_widget.style.text.font_size = font_size
+			damage_text_widget.style.text_shadow.font_size = font_size
 		end
 	},
 	floating_damage = {
-		update = function (self, arg_15_1, arg_15_2, arg_15_3, arg_15_4, arg_15_5, arg_15_6)
+		update = function (unit_text, t, damage_text_widget, inverse_scale, world_to_screen_position, progress, ease_out_proggress)
 			-- function 15
-			local size = self.size
+			local font_size = unit_text.size
 
-			arg_15_2.style.text.font_size = size
-			arg_15_2.style.text_shadow.font_size = size
+			damage_text_widget.style.text.font_size = font_size
+			damage_text_widget.style.text_shadow.font_size = font_size
 
-			local num = arg_15_4.x * arg_15_3
-			local num_2 = arg_15_4.z * arg_15_3
-			local offset = arg_15_2.offset
+			local x = world_to_screen_position.x * inverse_scale
+			local y = world_to_screen_position.z * inverse_scale
+			local offset = damage_text_widget.offset
 
-			offset[1] = num + self.random_x_offset
-			offset[2] = num_2 + self.random_y_offset + arg_15_6 * self.floating_speed
+			offset[1] = x + unit_text.random_x_offset
+			offset[2] = y + unit_text.random_y_offset + ease_out_proggress * unit_text.floating_speed
 		end
 	},
 	critical_strike = {
-		update = function (self, arg_16_1, arg_16_2, arg_16_3, arg_16_4, arg_16_5, arg_16_6)
+		update = function (unit_text, t, damage_text_widget, inverse_scale, world_to_screen_position, progress, ease_out_proggress)
 			-- function 16
-			local size = self.size
-			local easeOutCubic = math.easeOutCubic(math.min(arg_16_5 * 7, 1))
-			local num = size + math.ease_pulse(easeOutCubic) * 60
+			local font_size = unit_text.size
+			local size_progress = math.easeOutCubic(math.min(progress * 7, 1))
 
-			arg_16_2.style.text.font_size = num
-			arg_16_2.style.text_shadow.font_size = num
+			font_size = font_size + math.ease_pulse(size_progress) * 60
+			damage_text_widget.style.text.font_size = font_size
+			damage_text_widget.style.text_shadow.font_size = font_size
 		end
 	},
 	streak_damage = {
-		update = function (self, arg_17_1, arg_17_2, arg_17_3, arg_17_4, arg_17_5, arg_17_6)
+		update = function (unit_text, t, damage_text_widget, inverse_scale, world_to_screen_position, progress, ease_out_proggress)
 			-- function 17
-			local size = self.size
-			local num = arg_17_4.x * arg_17_3
-			local num_2 = arg_17_4.z * arg_17_3
+			local font_size = unit_text.size
+			local x = world_to_screen_position.x * inverse_scale
+			local y = world_to_screen_position.z * inverse_scale
 
-			arg_17_2.offset[1] = num
-			arg_17_2.offset[2] = num_2 + 60
+			damage_text_widget.offset[1] = x
+			damage_text_widget.offset[2] = y + 60
 
-			local num_3 = 255
+			local alpha = 255
 
-			arg_17_2.style.text.text_color[1] = num_3
-			arg_17_2.style.text_shadow.text_color[1] = num_3
+			damage_text_widget.style.text.text_color[1] = alpha
+			damage_text_widget.style.text_shadow.text_color[1] = alpha
 		end,
-		complete = function (self, arg_18_1, arg_18_2)
+		complete = function (unit_text, t, damage_text_widget)
 			-- function 18
-			self.update_function = DamageNumberVariants.streak_damage.pop_update
-			self.complete_function = DamageNumberVariants.streak_damage.pop_complete
-			self.time = arg_18_1 + 0.4
-			self.starting_time = arg_18_1
+			unit_text.update_function = DamageNumberVariants.streak_damage.pop_update
+			unit_text.complete_function = DamageNumberVariants.streak_damage.pop_complete
+			unit_text.time = t + 0.4
+			unit_text.starting_time = t
 
-			if not self.using_bucket_damage then
-				local damage = self.damage
-				local floor = math.floor(damage)
-				local num = damage % 1 * 100
+			if unit_text.using_bucket_damage then
+				local raw_damage = unit_text.damage
+				local dmg_int = math.floor(raw_damage)
+				local dmg_dec = raw_damage % 1 * 100
 
-				self.dmg_int = floor
-				self.dmg_dec = num
+				unit_text.dmg_int = dmg_int
+				unit_text.dmg_dec = dmg_dec
 
-				local auto_lerp = math.auto_lerp(0, 75, min_streak_font_size, max_streak_font_size, damage)
+				local ts = math.auto_lerp(0, 75, min_streak_font_size, max_streak_font_size, raw_damage)
 
-				self.size = auto_lerp
+				unit_text.size = ts
 
-				if num > 0 then
-					self.text = string.format("{#size(%s)}%s{#size(%s)}.%s", auto_lerp, floor, math.floor(auto_lerp / 2), num)
+				if dmg_dec > 0 then
+					unit_text.text = string.format("{#size(%s)}%s{#size(%s)}.%s", ts, dmg_int, math.floor(ts / 2), dmg_dec)
 				end
 			end
 
 			return false
 		end,
-		pop_update = function (self, arg_19_1, arg_19_2, arg_19_3, arg_19_4, arg_19_5, arg_19_6)
+		pop_update = function (unit_text, t, damage_text_widget, inverse_scale, world_to_screen_position, progress, ease_out_proggress)
 			-- function 19
-			local size = self.size
+			local font_size = unit_text.size
 
-			arg_19_2.style.text.font_size = size
+			damage_text_widget.style.text.font_size = font_size
 
-			local num = size + (35 * math.sin(arg_19_5 * math.pi - math.pi * 2) + 0)
-			local dmg_int = self.dmg_int
-			local dmg_dec = self.dmg_dec
+			local ts = font_size + (35 * math.sin(progress * math.pi - math.pi * 2) + 0)
+			local dmg_int = unit_text.dmg_int
+			local dmg_dec = unit_text.dmg_dec
 
 			if dmg_dec > 0 then
-				self.text = string.format("{#size(%s)}%s{#size(%s)}.%s", num, dmg_int, math.floor(num / 2), dmg_dec)
+				unit_text.text = string.format("{#size(%s)}%s{#size(%s)}.%s", ts, dmg_int, math.floor(ts / 2), dmg_dec)
 			else
-				self.text = string.format("{#size(%s)}%s", num, dmg_int)
+				unit_text.text = string.format("{#size(%s)}%s", ts, dmg_int)
 			end
 
-			local num_2 = 255
+			local alpha = 255
 
-			arg_19_2.style.text.text_color[1] = num_2
-			arg_19_2.style.text_shadow.text_color[1] = num_2
+			damage_text_widget.style.text.text_color[1] = alpha
+			damage_text_widget.style.text_shadow.text_color[1] = alpha
 
-			local num_3 = arg_19_4.x * arg_19_3
-			local num_4 = arg_19_4.z * arg_19_3
+			local x = world_to_screen_position.x * inverse_scale
+			local y = world_to_screen_position.z * inverse_scale
 
-			arg_19_2.offset[1] = num_3
-			arg_19_2.offset[2] = num_4 + 60
+			damage_text_widget.offset[1] = x
+			damage_text_widget.offset[2] = y + 60
 		end,
-		pop_complete = function (self, arg_20_1, arg_20_2)
+		pop_complete = function (unit_text, t, damage_text_widget)
 			-- function 20
-			self.update_function = DamageNumberVariants.streak_damage_fadeout.update
-			self.complete_function = fn
-			self.time = arg_20_1 + 2
-			self.starting_time = arg_20_1
-			self.floating_speed = 150
+			unit_text.update_function = DamageNumberVariants.streak_damage_fadeout.update
+			unit_text.complete_function = default_complete_function
+			unit_text.time = t + 2
+			unit_text.starting_time = t
+			unit_text.floating_speed = 150
 
-			if not self.using_bucket_damage then
-				local damage = self.damage
-				local floor = math.floor(damage)
-				local num = damage % 1 * 100
+			if unit_text.using_bucket_damage then
+				local raw_damage = unit_text.damage
+				local dmg_int = math.floor(raw_damage)
+				local dmg_dec = raw_damage % 1 * 100
 
-				if num > 0 then
-					local auto_lerp = math.auto_lerp(0, 75, min_streak_font_size, max_streak_font_size, damage)
+				if dmg_dec > 0 then
+					local ts = math.auto_lerp(0, 75, min_streak_font_size, max_streak_font_size, raw_damage)
 
-					self.text = string.format("{#size(%s)}%s{#size(%s)}.%s", auto_lerp, floor, auto_lerp / 2, num)
+					unit_text.text = string.format("{#size(%s)}%s{#size(%s)}.%s", ts, dmg_int, ts / 2, dmg_dec)
 				end
 			end
 
@@ -436,113 +458,119 @@ DamageNumberVariants = {
 		end
 	},
 	streak_damage_fadeout = {
-		update = function (self, arg_21_1, arg_21_2, arg_21_3, arg_21_4, arg_21_5, arg_21_6)
+		update = function (unit_text, t, damage_text_widget, inverse_scale, world_to_screen_position, progress, ease_out_proggress)
 			-- function 21
-			arg_21_2.style.text.text_color = self.color
+			damage_text_widget.style.text.text_color = unit_text.color
 
-			local size = self.size
+			local font_size = unit_text.size
 
-			arg_21_2.style.text.font_size = size
-			arg_21_2.style.text_shadow.font_size = size
+			damage_text_widget.style.text.font_size = font_size
+			damage_text_widget.style.text_shadow.font_size = font_size
 
-			local num = arg_21_4.x * arg_21_3
-			local num_2 = arg_21_4.z * arg_21_3
+			local x = world_to_screen_position.x * inverse_scale
+			local y = world_to_screen_position.z * inverse_scale
 
-			arg_21_2.offset[1] = num
-			arg_21_2.offset[2] = num_2 + 60 + arg_21_6 * self.floating_speed
+			damage_text_widget.offset[1] = x
+			damage_text_widget.offset[2] = y + 60 + ease_out_proggress * unit_text.floating_speed
 		end
 	},
 	floating_radial_damage = {
-		update = function (self, arg_22_1, arg_22_2, arg_22_3, arg_22_4, arg_22_5, arg_22_6)
+		update = function (unit_text, t, damage_text_widget, inverse_scale, world_to_screen_position, progress, ease_out_proggress)
 			-- function 22
-			local size = self.size
+			local font_size = unit_text.size
 
-			arg_22_2.style.text.font_size = size
-			arg_22_2.style.text_shadow.font_size = size
+			damage_text_widget.style.text.font_size = font_size
+			damage_text_widget.style.text_shadow.font_size = font_size
 
-			local num = arg_22_4.x * arg_22_3
-			local num_2 = arg_22_4.z * arg_22_3
+			local x = world_to_screen_position.x * inverse_scale
+			local y = world_to_screen_position.z * inverse_scale
 
-			arg_22_2.offset[1] = num + arg_22_6 * self.floating_speed_x
-			arg_22_2.offset[2] = num_2 + arg_22_6 * self.floating_speed_y
+			damage_text_widget.offset[1] = x + ease_out_proggress * unit_text.floating_speed_x
+			damage_text_widget.offset[2] = y + ease_out_proggress * unit_text.floating_speed_y
 
-			if arg_22_5 > 0.5 then
-				local num_3 = arg_22_2.style.text.text_color[1] * 0.99
+			if progress > 0.5 then
+				local alpha = damage_text_widget.style.text.text_color[1]
 
-				arg_22_2.style.text.text_color[1] = num_3
-				arg_22_2.style.text_shadow.text_color[1] = num_3
+				alpha = alpha * 0.99
+				damage_text_widget.style.text.text_color[1] = alpha
+				damage_text_widget.style.text_shadow.text_color[1] = alpha
 			end
 		end
 	}
 }
 
-DamageNumbersUI.draw = function (self, arg_23_1)
+DamageNumbersUI.draw = function (self, dt)
 	-- function 23
 	local ui_renderer = self.ui_renderer
 	local ui_scenegraph = self.ui_scenegraph
-	local get_service = self.input_manager:get_service("ingame_menu")
+	local input_service = self.input_manager:get_service("ingame_menu")
 
-	UIRenderer.begin_pass(ui_renderer, ui_scenegraph, get_service, arg_23_1)
+	UIRenderer.begin_pass(ui_renderer, ui_scenegraph, input_service, dt)
 
-	local damage_text = self.damage_text
-	local content = damage_text.content
-	local offset = damage_text.offset
+	local damage_text_widget = self.damage_text
+	local damage_text_content = damage_text_widget.content
+	local damage_text_offset = damage_text_widget.offset
 	local world_to_screen = Camera.world_to_screen
-	local inv_scale = RESOLUTION_LOOKUP.inv_scale
-	local world_position = Unit.world_position
+	local inverse_scale = RESOLUTION_LOOKUP.inv_scale
+	local World_position = Unit.world_position
 	local easeOutCubic = math.easeOutCubic
 	local camera = self.camera
 
-	for k, v in pairs(self._unit_texts) do
-		if not Unit.alive(k) then
-			local var_23_11 = world_position(k, 0)
-			local z_offset
+	for unit, unit_texts in pairs(self._unit_texts) do
+		if Unit.alive(unit) then
+			local world_position = World_position(unit, 0)
+			local z_offset_2
 
-			if not v[1] then
-				z_offset = v[1].z_offset
+			if unit_texts[1] then
+				z_offset_2 = unit_texts[1].z_offset
 
-				if not z_offset then
+				if not z_offset_2 then
 					-- Nothing
 				end
 			end
 
-			z_offset = 1.85
+			z_offset_2 = 1.85
+
+			local z_offset = z_offset_2
 
 			::label_23_0::
 
-			var_23_11[3] = var_23_11[3] + z_offset
+			world_position[3] = world_position[3] + z_offset
 
-			local var_23_13 = world_to_screen(camera, var_23_11)
+			local world_to_screen_position = world_to_screen(camera, world_position)
 
-			for k_2 = #v, 1, -1 do
-				local var_23_14 = v[k_2]
+			for i = #unit_texts, 1, -1 do
+				local unit_text = unit_texts[i]
 
-				if not (self._time > var_23_14.time) or not var_23_14.complete_function(var_23_14, self._time, damage_text) then
-					table.swap_delete(v, k_2)
+				if self._time > unit_text.time and unit_text.complete_function(unit_text, self._time, damage_text_widget) then
+					table.swap_delete(unit_texts, i)
 				else
-					local text = var_23_14.text
-					local floating_lerp = var_23_14.floating_lerp
-					local num = 1 - (var_23_14.time - self._time) / (var_23_14.time - var_23_14.starting_time)
-					local var_23_18 = easeOutCubic(num)
-					local num_2 = var_23_13.x * inv_scale
-					local num_3 = var_23_13.z * inv_scale
+					local text = unit_text.text
+					local floating_lerp = unit_text.floating_lerp
+					local time_left = unit_text.time - self._time
+					local total_time = unit_text.time - unit_text.starting_time
+					local inv_progress = time_left / total_time
+					local progress = 1 - inv_progress
+					local ease_out_proggress = easeOutCubic(progress)
+					local x = world_to_screen_position.x * inverse_scale
+					local y = world_to_screen_position.z * inverse_scale
 
-					offset[1] = num_2 + var_23_14.random_x_offset
-					offset[2] = num_3 + var_23_14.random_y_offset + var_23_18 * var_23_14.floating_speed
+					damage_text_offset[1] = x + unit_text.random_x_offset
+					damage_text_offset[2] = y + unit_text.random_y_offset + ease_out_proggress * unit_text.floating_speed
 
-					local num_4 = (1 - var_23_18) * 255
+					local alpha = (1 - ease_out_proggress) * 255
 
-					content.text = text
-					damage_text.style.text.text_color = var_23_14.color
-					damage_text.style.text.text_color[1] = num_4
-					damage_text.style.text_shadow.text_color[1] = num_4
+					damage_text_content.text = text
+					damage_text_widget.style.text.text_color = unit_text.color
+					damage_text_widget.style.text.text_color[1] = alpha
+					damage_text_widget.style.text_shadow.text_color[1] = alpha
 
-					var_23_14.update_function(var_23_14, self._time, damage_text, inv_scale, var_23_13, num, var_23_18)
-					UIRenderer.draw_widget(ui_renderer, damage_text)
+					unit_text.update_function(unit_text, self._time, damage_text_widget, inverse_scale, world_to_screen_position, progress, ease_out_proggress)
+					UIRenderer.draw_widget(ui_renderer, damage_text_widget)
 				end
 			end
 		else
-			self:_destroy_unit_texts(k)
+			self:_destroy_unit_texts(unit)
 		end
 	end
 

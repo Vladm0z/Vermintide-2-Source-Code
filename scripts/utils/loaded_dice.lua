@@ -2,150 +2,151 @@
 
 LoadedDice = {}
 
-LoadedDice.create = function (self, arg_1_1)
+LoadedDice.create = function (probabilities, normalized)
 	-- function 1
-	local count = #self
-	local tbl = {}
-	local tbl_2 = {}
+	local n = #probabilities
+	local alias = {}
+	local prob = {}
 
-	if not arg_1_1 then
-		tbl_2 = table.clone(self)
+	if normalized then
+		prob = table.clone(probabilities)
 	else
-		local num = 0
+		local sum = 0
 
-		for i = 1, count do
-			num = num + self[i]
+		for i = 1, n do
+			sum = sum + probabilities[i]
 		end
 
-		for j = 1, count do
-			tbl_2[j] = self[j] / num
+		for i = 1, n do
+			prob[i] = probabilities[i] / sum
 		end
 	end
 
-	local tbl_3 = {}
-	local tbl_4 = {}
-	local num_2 = 1 / count
+	local small = {}
+	local large = {}
+	local average = 1 / n
 
-	for k = 1, count do
-		if num_2 <= tbl_2[k] then
-			tbl_4[#tbl_4 + 1] = k
+	for i = 1, n do
+		if average <= prob[i] then
+			large[#large + 1] = i
 		else
-			tbl_3[#tbl_3 + 1] = k
+			small[#small + 1] = i
 		end
 	end
 
-	while not (next(tbl_3) == nil or next(tbl_4) == nil) do
-		local var_1_7 = tbl_3[#tbl_3]
+	while next(small) ~= nil and next(large) ~= nil do
+		local less = small[#small]
 
-		tbl_3[#tbl_3] = nil
+		small[#small] = nil
 
-		local var_1_8 = tbl_4[#tbl_4]
+		local more = large[#large]
 
-		tbl_4[#tbl_4] = nil
-		tbl[var_1_7] = var_1_8
-		tbl_2[var_1_8] = tbl_2[var_1_8] + tbl_2[var_1_7] - num_2
+		large[#large] = nil
+		alias[less] = more
+		prob[more] = prob[more] + prob[less] - average
 
-		if num_2 <= tbl_2[var_1_8] then
-			tbl_4[#tbl_4 + 1] = var_1_8
+		if average <= prob[more] then
+			large[#large + 1] = more
 		else
-			tbl_3[#tbl_3 + 1] = var_1_8
+			small[#small + 1] = more
 		end
 	end
 
-	while next(tbl_3) ~= nil do
-		tbl_2[tbl_3[#tbl_3]] = num_2
-		tbl_3[#tbl_3] = nil
+	while next(small) ~= nil do
+		prob[small[#small]] = average
+		small[#small] = nil
 	end
 
-	while next(tbl_4) ~= nil do
-		tbl_2[tbl_4[#tbl_4]] = num_2
-		tbl_4[#tbl_4] = nil
+	while next(large) ~= nil do
+		prob[large[#large]] = average
+		large[#large] = nil
 	end
 
-	for l = 1, count do
-		tbl_2[l] = tbl_2[l] * count
+	for i = 1, n do
+		prob[i] = prob[i] * n
 	end
 
-	return tbl_2, tbl
+	return prob, alias
 end
 
-LoadedDice.roll = function (self, arg_2_1)
+LoadedDice.roll = function (prob, alias)
 	-- function 2
-	local random = math.random(1, #self)
+	local column = math.random(1, #prob)
+	local biased_coin_toss = math.random() < prob[column]
 
-	return not (math.random() < self[random]) and random and arg_2_1[random]
+	return (not biased_coin_toss or not column) and not not alias[column]
 end
 
-LoadedDice.roll_seeded = function (self, arg_3_1, arg_3_2)
+LoadedDice.roll_seeded = function (prob, alias, seed)
 	-- function 3
-	local next_random, var_3_1 = Math.next_random(arg_3_2, 1, #self)
-	local next_random_2, var_3_3 = Math.next_random(next_random)
-	local flag = var_3_3 < self[var_3_1]
+	local seed, column = Math.next_random(seed, 1, #prob)
+	local seed, random_value = Math.next_random(seed)
+	local biased_coin_toss = random_value < prob[column]
 
-	return next_random_2, not flag and var_3_1 and arg_3_1[var_3_1]
+	return seed, (not biased_coin_toss or not column) and not not alias[column]
 end
 
-local tbl = {}
+local only_prob_table = {}
 
-LoadedDice.create_from_mixed = function (self, arg_4_1)
+LoadedDice.create_from_mixed = function (mixed_table, normalized)
 	-- function 4
-	local var_4_0 = tbl
-	local num = #self / 2
+	local only_prob_table = only_prob_table
+	local num_probabilities = #mixed_table / 2
 
-	for i = num, #var_4_0 do
-		var_4_0[i] = nil
+	for i = num_probabilities, #only_prob_table do
+		only_prob_table[i] = nil
 	end
 
-	for j = 1, num do
-		var_4_0[j] = self[j * 2]
+	for i = 1, num_probabilities do
+		only_prob_table[i] = mixed_table[i * 2]
 	end
 
-	local var_4_2, var_4_3 = LoadedDice.create(var_4_0, arg_4_1)
+	local p, a = LoadedDice.create(only_prob_table, normalized)
 
 	return {
-		var_4_2,
-		var_4_3
+		p,
+		a
 	}
 end
 
-LoadedDice.roll_easy = function (self)
+LoadedDice.roll_easy = function (loaded_table)
 	-- function 5
-	return LoadedDice.roll(self[1], self[2])
+	return LoadedDice.roll(loaded_table[1], loaded_table[2])
 end
 
-LoadedDice.roll_easy_seeded = function (self, arg_6_1)
+LoadedDice.roll_easy_seeded = function (loaded_table, seed)
 	-- function 6
-	return LoadedDice.roll_seeded(self[1], self[2], arg_6_1)
+	return LoadedDice.roll_seeded(loaded_table[1], loaded_table[2], seed)
 end
 
 LoadedDice.test = function ()
 	-- function 7
-	local tbl = {
+	local test = {
 		10,
 		5,
 		3,
 		2
 	}
-	local var_7_1, var_7_2 = LoadedDice.create(tbl, false)
-	local num = 100000
-	local tbl_2 = {
+	local p, a = LoadedDice.create(test, false)
+	local tries = 100000
+	local count = {
 		0,
 		0,
 		0,
 		0
 	}
 
-	for i = 1, num do
-		local roll = LoadedDice.roll(var_7_1, var_7_2)
+	for i = 1, tries do
+		local column = LoadedDice.roll(p, a)
 
-		tbl_2[roll] = tbl_2[roll] + 1
+		count[column] = count[column] + 1
 	end
 
-	local str = "Loaded Dice | "
+	local s = "Loaded Dice | "
 
-	for j = 1, #tbl do
-		str = str .. tbl[j] .. "->" .. tbl_2[j] .. "( " .. tbl_2[j] / num .. "% ) | "
+	for i = 1, #test do
+		s = s .. test[i] .. "->" .. count[i] .. "( " .. count[i] / tries .. "% ) | "
 	end
 
-	print(str)
+	print(s)
 end

@@ -4,7 +4,7 @@ local PlayFabClientApi = require("PlayFab.PlayFabClientApi")
 
 BackendInterfaceHeroAttributesPlayFab = class(BackendInterfaceHeroAttributesPlayFab)
 
-local tbl = {
+local DEFAULT_READ_ONLY_ATTRIBUTES = {
 	wood_elf_experience_pool = 0,
 	empire_soldier_experience = 0,
 	wood_elf_experience = 0,
@@ -24,16 +24,16 @@ local tbl = {
 	dwarf_ranger_experience_pool = 0,
 	empire_soldier_tutorial_experience = 0
 }
-local tbl_2 = {
+local DEFAULT_CHARACTER_ATTRIBUTES = {
 	career = 1,
 	bot_career = 1
 }
 
-BackendInterfaceHeroAttributesPlayFab.init = function (self, arg_1_1)
+BackendInterfaceHeroAttributesPlayFab.init = function (self, backend_mirror)
 	-- function 1
 	self._attributes = {}
 	self._attributes_to_save = {}
-	self._backend_mirror = arg_1_1
+	self._backend_mirror = backend_mirror
 
 	self:_refresh()
 
@@ -49,30 +49,30 @@ BackendInterfaceHeroAttributesPlayFab._refresh = function (self)
 	-- function 3
 	table.clear(self._attributes)
 
-	local _backend_mirror = self._backend_mirror
+	local mirror = self._backend_mirror
 
-	if not script_data.honduras_demo then
-		for k, v in pairs(DEFAULT_DEMO_ATTRIBUTES) do
-			self._attributes[k] = v
+	if script_data.honduras_demo then
+		for attribute_name, default_value in pairs(DEFAULT_DEMO_ATTRIBUTES) do
+			self._attributes[attribute_name] = default_value
 		end
 	else
-		for k_2, v_2 in pairs(tbl) do
-			local get_read_only_data = _backend_mirror:get_read_only_data(k_2)
+		for attribute_name, default_value in pairs(DEFAULT_READ_ONLY_ATTRIBUTES) do
+			local backend_value = mirror:get_read_only_data(attribute_name)
 
-			self._attributes[k_2] = get_read_only_data or v_2
+			self._attributes[attribute_name] = not not backend_value or not not default_value
 		end
 	end
 
-	local get_characters_data = _backend_mirror:get_characters_data()
-	local _attributes = self._attributes
+	local characters_data = mirror:get_characters_data()
+	local attributes = self._attributes
 
-	for k_3, v_3 in pairs(get_characters_data) do
-		for k_4, v_4 in pairs(tbl_2) do
-			local format = string.format("%s_%s", k_3, k_4)
-			local var_3_5 = v_3[k_4]
+	for character, data in pairs(characters_data) do
+		for attribute_name, default_value in pairs(DEFAULT_CHARACTER_ATTRIBUTES) do
+			local key = string.format("%s_%s", character, attribute_name)
+			local var_3_0 = data[attribute_name]
 
-			var_3_5 = var_3_5 or v_4
-			_attributes[format] = var_3_5
+			var_3_0 = not not var_3_0 or not not default_value
+			attributes[key] = var_3_0
 		end
 	end
 
@@ -84,34 +84,34 @@ BackendInterfaceHeroAttributesPlayFab.ready = function (self)
 	return self._initialized
 end
 
-BackendInterfaceHeroAttributesPlayFab.update = function (arg_5_0, arg_5_1)
+BackendInterfaceHeroAttributesPlayFab.update = function (self, dt)
 	-- function 5
 	return
 end
 
-BackendInterfaceHeroAttributesPlayFab.get = function (self, arg_6_1, arg_6_2)
+BackendInterfaceHeroAttributesPlayFab.get = function (self, hero, attribute)
 	-- function 6
-	if not self._dirty then
+	if self._dirty then
 		self:_refresh()
 	end
 
-	local str = arg_6_1 .. "_" .. arg_6_2
+	local key = hero .. "_" .. attribute
 
-	return self._attributes[str]
+	return self._attributes[key]
 end
 
-BackendInterfaceHeroAttributesPlayFab.set = function (self, arg_7_1, arg_7_2, arg_7_3)
+BackendInterfaceHeroAttributesPlayFab.set = function (self, hero, attribute, value)
 	-- function 7
-	fassert(arg_7_3 ~= nil, "Trying to set a hero attribute to nil, don't do this")
+	fassert(value ~= nil, "Trying to set a hero attribute to nil, don't do this")
 
-	local _backend_mirror = self._backend_mirror
+	local mirror = self._backend_mirror
 
-	if not tbl_2[arg_7_2] then
-		_backend_mirror:set_career_read_only_data(arg_7_1, arg_7_2, arg_7_3, nil, false)
+	if DEFAULT_CHARACTER_ATTRIBUTES[attribute] then
+		mirror:set_career_read_only_data(hero, attribute, value, nil, false)
 	else
-		local str = arg_7_1 .. "_" .. arg_7_2
+		local key = hero .. "_" .. attribute
 
-		_backend_mirror:set_read_only_data(str, arg_7_3, true)
+		mirror:set_read_only_data(key, value, true)
 	end
 
 	self._dirty = true

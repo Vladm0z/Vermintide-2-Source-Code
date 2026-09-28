@@ -1,48 +1,48 @@
 -- chunkname: @scripts/ui/ui_resolution.lua
 
-local round = math.round
+local math_round = math.round
 
-local function fn(self, arg_1_1, arg_1_2)
+local function scale_vector3(vec, scale, do_round)
 	-- function 1
-	if not arg_1_2 then
+	if do_round then
 		local Vector3 = Vector3
-		local var_1_1 = round(self[1] * arg_1_1)
-		local var_1_2 = round(self[2] * arg_1_1)
-		local var_1_3 = self[3]
+		local var_1_1 = math_round(vec[1] * scale)
+		local var_1_2 = math_round(vec[2] * scale)
+		local var_1_3 = vec[3]
 
-		var_1_3 = var_1_3 or 0
+		var_1_3 = not not var_1_3 or not not 0
 
 		return Vector3(var_1_1, var_1_2, var_1_3)
 	else
 		local Vector3_2 = Vector3
-		local num = self[1] * arg_1_1
-		local num_2 = self[2] * arg_1_1
-		local var_1_7 = self[3]
+		local num = vec[1] * scale
+		local num_2 = vec[2] * scale
+		local var_1_7 = vec[3]
 
-		var_1_7 = var_1_7 or 0
+		var_1_7 = not not var_1_7 or not not 0
 
 		return Vector3_2(num, num_2, var_1_7)
 	end
 end
 
-function UIScaleVectorToResolution(arg_2_0, arg_2_1)
+function UIScaleVectorToResolution(vec, pixel_snap)
 	-- function 2
-	return fn(arg_2_0, RESOLUTION_LOOKUP.scale, arg_2_1)
+	return scale_vector3(vec, RESOLUTION_LOOKUP.scale, pixel_snap)
 end
 
-function UIInverseScaleVectorToResolution(arg_3_0, arg_3_1)
+function UIInverseScaleVectorToResolution(vec, pixel_snap)
 	-- function 3
-	return fn(arg_3_0, RESOLUTION_LOOKUP.inv_scale, arg_3_1)
+	return scale_vector3(vec, RESOLUTION_LOOKUP.inv_scale, pixel_snap)
 end
 
-function UIScaleVectorToResolutionRealCoordinates(self)
+function UIScaleVectorToResolutionRealCoordinates(vec)
 	-- function 4
 	local scale = RESOLUTION_LOOKUP.scale
 	local Vector3 = Vector3
-	local num = self[1] * scale
-	local var_4_3 = self[2]
+	local num = vec[1] * scale
+	local var_4_2 = vec[2]
 
-	var_4_3 = var_4_3 or 0
+	var_4_2 = not not var_4_2 or not not 0
 
-	return Vector3(num, var_4_3, self[3] * scale)
+	return Vector3(num, var_4_2, vec[3] * scale)
 end

@@ -1,6 +1,6 @@
 -- chunkname: @levels/honduras/nurgle/world_spawn_zones.lua
 
-local tbl = {
+local path_markers = {
 	{
 		roaming_set = "random",
 		main_path_index = 1,
@@ -695,7 +695,7 @@ local tbl = {
 		}
 	}
 }
-local tbl_2 = {
+local main_paths = {
 	{
 		path_length = 11.399369239807129,
 		travel_dist = {
@@ -2625,7 +2625,7 @@ local tbl_2 = {
 		}
 	}
 }
-local tbl_3 = {
+local crossroads = {
 	B = {
 		main_path_index = 9,
 		num_roads = 8,
@@ -2635,7 +2635,7 @@ local tbl_3 = {
 		}
 	}
 }
-local tbl_4 = {
+local zones = {
 	{
 		unique_zone_id = 1,
 		roaming_set = "random",
@@ -53868,7 +53868,7 @@ local tbl_4 = {
 		}
 	}
 }
-local tbl_5 = {
+local cover_points = {
 	150.4324951171875,
 	-244.57749938964844,
 	18.600364685058594,
@@ -60055,7 +60055,7 @@ local tbl_5 = {
 	0.8479990363121033,
 	-0.529997706413269
 }
-local tbl_6 = {
+local position_lookup = {
 	{
 		-7.424259185791016,
 		-258.2681884765625,
@@ -294592,20 +294592,20 @@ local tbl_6 = {
 		16.51150131225586
 	}
 }
-local num = 46907
-local num_2 = 172
-local num_3 = 1783.6069047451
-local str = "1"
+local number_of_spawns = 46907
+local num_main_zones = 172
+local total_main_path_length = 1783.6069047451
+local spawner_version = "1"
 
 return {
-	version = str,
-	number_of_spawns = num,
-	path_markers = tbl,
-	zones = tbl_4,
-	cover_points = tbl_5,
-	num_main_zones = num_2,
-	position_lookup = tbl_6,
-	main_paths = tbl_2,
-	crossroads = tbl_3,
-	total_main_path_length = num_3
+	version = spawner_version,
+	number_of_spawns = number_of_spawns,
+	path_markers = path_markers,
+	zones = zones,
+	cover_points = cover_points,
+	num_main_zones = num_main_zones,
+	position_lookup = position_lookup,
+	main_paths = main_paths,
+	crossroads = crossroads,
+	total_main_path_length = total_main_path_length
 }

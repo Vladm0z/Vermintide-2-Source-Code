@@ -4,186 +4,186 @@ require("scripts/settings/dlcs/morris/deus_map_populate_settings")
 require("scripts/managers/game_mode/mechanisms/deus_gen_engine")
 require("scripts/helpers/deus_gen_utils")
 
-local function fn(self, arg_1_1)
+local function shuffle_array(table, random_generator)
 	-- function 1
-	for i = #self, 2, -1 do
-		local var_1_0 = arg_1_1(1, i)
+	for ii = #table, 2, -1 do
+		local swap = random_generator(1, ii)
 
-		self[var_1_0], self[i] = self[i], self[var_1_0]
+		table[swap], table[ii] = table[ii], table[swap]
 	end
 
-	return self
+	return table
 end
 
-local function fn_2(arg_2_0, arg_2_1)
+local function get_random_key_list(table1, random_generator)
 	-- function 2
-	local tbl = {}
+	local keys = {}
 
-	for k, v in pairs(arg_2_0) do
-		tbl[#tbl + 1] = k
+	for key, _ in pairs(table1) do
+		keys[#keys + 1] = key
 	end
 
-	table.sort(tbl)
+	table.sort(keys)
 
-	for k_2 = #tbl, 2, -1 do
-		local var_2_1 = arg_2_1(1, k_2)
+	for ii = #keys, 2, -1 do
+		local swap = random_generator(1, ii)
 
-		tbl[var_2_1], tbl[k_2] = tbl[k_2], tbl[var_2_1]
+		keys[swap], keys[ii] = keys[ii], keys[swap]
 	end
 
-	return tbl
+	return keys
 end
 
-local function fn_3(arg_3_0)
+local function get_nodes_list(nodes)
 	-- function 3
-	local tbl = {}
+	local nodes_list = {}
 
-	for k, v in pairs(arg_3_0) do
-		tbl[#tbl + 1] = v
+	for _, node in pairs(nodes) do
+		nodes_list[#nodes_list + 1] = node
 	end
 
-	return tbl
+	return nodes_list
 end
 
-local function fn_4(arg_4_0, arg_4_1)
+local function get_nodes_above_progress(nodes, progress)
 	-- function 4
-	local tbl = {}
+	local chosen_nodes = {}
 
-	for k, v in pairs(arg_4_0) do
-		if arg_4_1 < v.run_progress then
-			tbl[#tbl + 1] = v
+	for _, node in pairs(nodes) do
+		if progress < node.run_progress then
+			chosen_nodes[#chosen_nodes + 1] = node
 		end
 	end
 
-	return tbl
+	return chosen_nodes
 end
 
-local function fn_5(arg_5_0, arg_5_1)
+local function filter_node_types(node_list, types)
 	-- function 5
-	local tbl = {}
+	local new_node_list = {}
 
-	for i, v in ipairs(arg_5_0) do
-		if not table.contains(arg_5_1, v.type) then
-			tbl[#tbl + 1] = v
+	for _, node in ipairs(node_list) do
+		if table.contains(types, node.type) then
+			new_node_list[#new_node_list + 1] = node
 		end
 	end
 
-	return tbl
+	return new_node_list
 end
 
-local function fn_6(self, arg_6_1)
+local function get_paths(nodes, node_key)
 	-- function 6
-	if #self[arg_6_1].prev == 0 then
+	if #nodes[node_key].prev == 0 then
 		return {
 			{
-				arg_6_1
+				node_key
 			}
 		}
 	end
 
-	local tbl = {}
+	local paths = {}
 
-	for i, v in ipairs(self[arg_6_1].prev) do
-		local var_6_1 = fn_6(self, v)
+	for _, prev in ipairs(nodes[node_key].prev) do
+		local prev_paths = get_paths(nodes, prev)
 
-		for i_2, v_2 in ipairs(var_6_1) do
-			v_2[#v_2 + 1] = arg_6_1
-			tbl[#tbl + 1] = v_2
+		for _, prev_path in ipairs(prev_paths) do
+			prev_path[#prev_path + 1] = node_key
+			paths[#paths + 1] = prev_path
 		end
 	end
 
-	return tbl
+	return paths
 end
 
-local function fn_7(arg_7_0, arg_7_1)
+local function get_all_ancestors_and_descendants(nodes, node_key)
 	-- function 7
-	local tbl = {}
+	local all_nodes = {}
 
-	local function fn(arg_8_0)
+	local function go_forward(other_node_key)
 		-- function 8
-		for i, v in ipairs(arg_7_0[arg_8_0].next) do
-			if not tbl[v] then
-				tbl[v] = true
+		for _, next in ipairs(nodes[other_node_key].next) do
+			if not all_nodes[next] then
+				all_nodes[next] = true
 
-				fn(v)
+				go_forward(next)
 			end
 		end
 	end
 
-	local function fn_2(arg_9_0)
+	local function go_backward(other_node_key)
 		-- function 9
-		for i, v in ipairs(arg_7_0[arg_9_0].prev) do
-			if not tbl[v] then
-				tbl[v] = true
+		for _, prev in ipairs(nodes[other_node_key].prev) do
+			if not all_nodes[prev] then
+				all_nodes[prev] = true
 
-				fn_2(v)
+				go_backward(prev)
 			end
 		end
 	end
 
-	fn(arg_7_1)
-	fn_2(arg_7_1)
+	go_forward(node_key)
+	go_backward(node_key)
 
-	return tbl
+	return all_nodes
 end
 
-local function fn_8(self, arg_10_1)
+local function get_first_playable_descendants(nodes, node_key)
 	-- function 10
-	if #self[arg_10_1].next == 0 then
+	if #nodes[node_key].next == 0 then
 		return {}
 	end
 
-	local tbl = {}
+	local playable_descendants = {}
 
-	for i, v in ipairs(self[arg_10_1].next) do
-		local type = self[v].type
+	for _, next in ipairs(nodes[node_key].next) do
+		local next_type = nodes[next].type
 
-		if not (type == "SIGNATURE" or type == "TRAVEL" or type ~= "ARENA") then
-			tbl[#tbl + 1] = v
+		if next_type == "SIGNATURE" or next_type == "TRAVEL" or next_type == "ARENA" then
+			playable_descendants[#playable_descendants + 1] = next
 		else
-			local var_10_2 = fn_8(self, v)
+			local other_playable_descendants = get_first_playable_descendants(nodes, next)
 
-			for i_2, v_2 in ipairs(var_10_2) do
-				tbl[#tbl + 1] = v_2
+			for _, other_non_dummy_descendent in ipairs(other_playable_descendants) do
+				playable_descendants[#playable_descendants + 1] = other_non_dummy_descendent
 			end
 		end
 	end
 
-	return tbl
+	return playable_descendants
 end
 
-local function fn_9(self, arg_11_1, arg_11_2)
+local function get_descendants(nodes, node_key, depth)
 	-- function 11
-	if arg_11_2 > 1 then
-		arg_11_2 = arg_11_2 - 1
+	if depth > 1 then
+		depth = depth - 1
 
-		local tbl = {}
+		local all_descendants = {}
 
-		for i, v in ipairs(self[arg_11_1].next) do
-			local var_11_1 = fn_9(self, v, arg_11_2)
+		for _, next_node_key in ipairs(nodes[node_key].next) do
+			local visibles_from_descendant = get_descendants(nodes, next_node_key, depth)
 
-			for k, v_2 in pairs(var_11_1) do
-				tbl[k] = v_2
+			for visible_from_descendant_node_key, visible_from_descendant in pairs(visibles_from_descendant) do
+				all_descendants[visible_from_descendant_node_key] = visible_from_descendant
 			end
 		end
 
-		return tbl
+		return all_descendants
 	else
-		return self[arg_11_1].next
+		return nodes[node_key].next
 	end
 end
 
-local function fn_10(arg_12_0, arg_12_1, arg_12_2, arg_12_3)
+local function prevent_same_level_choice(config, working_graph, node_key, level)
 	-- function 12
-	local prev = arg_12_1[arg_12_2].prev
+	local prev = working_graph[node_key].prev
 
-	for i, v in ipairs(prev) do
-		local var_12_1 = arg_12_1[v]
+	for _, prev_node_key in ipairs(prev) do
+		local prev_node = working_graph[prev_node_key]
 
-		for i_2, v_2 in ipairs(var_12_1.next) do
-			local var_12_2 = arg_12_1[v_2]
+		for _, next_node_key in ipairs(prev_node.next) do
+			local next_node = working_graph[next_node_key]
 
-			if not (v_2 == arg_12_2 or var_12_2.level ~= arg_12_3) then
+			if next_node_key ~= node_key and next_node.level == level then
 				return false
 			end
 		end
@@ -192,15 +192,15 @@ local function fn_10(arg_12_0, arg_12_1, arg_12_2, arg_12_3)
 	return true
 end
 
-local function fn_11(arg_13_0, arg_13_1, arg_13_2, arg_13_3)
+local function prevent_same_level_on_same_path(config, working_graph, node_key, level)
 	-- function 13
-	local var_13_0 = fn_6(arg_13_1, arg_13_2)
+	local paths = get_paths(working_graph, node_key)
 
-	for i, v in ipairs(var_13_0) do
-		for k = #v, 1, -1 do
-			local var_13_1 = v[k]
+	for _, path in ipairs(paths) do
+		for i = #path, 1, -1 do
+			local node_in_path = path[i]
 
-			if not (var_13_1 == arg_13_2 or arg_13_1[var_13_1].level ~= arg_13_3) then
+			if node_in_path ~= node_key and working_graph[node_in_path].level == level then
 				return false
 			end
 		end
@@ -209,45 +209,49 @@ local function fn_11(arg_13_0, arg_13_1, arg_13_2, arg_13_3)
 	return true
 end
 
-local function fn_12(self, arg_14_1, arg_14_2, arg_14_3)
+local function last_signature_level_is_specific_level(config, working_graph, node_key, level)
 	-- function 14
-	local var_14_0 = arg_14_1[arg_14_2]
+	local node = working_graph[node_key]
 
-	for i, v in ipairs(var_14_0.next) do
-		if #arg_14_1[v].next == 0 then
-			return self.SPECIFIC_SIGNATURE_LEVEL == arg_14_3
+	for _, next_node_key in ipairs(node.next) do
+		local next_node = working_graph[next_node_key]
+
+		if #next_node.next == 0 then
+			local specific_level = config.SPECIFIC_SIGNATURE_LEVEL
+
+			return specific_level == level
 		end
 	end
 
 	return true
 end
 
-local tbl = {
+local LEVEL_VALIDATIONS = {
 	SIGNATURE = {
-		prevent_same_level_choice = fn_10,
-		last_signature_level_is_specific_level = fn_12,
-		prevent_same_level_on_same_path = fn_11
+		prevent_same_level_choice = prevent_same_level_choice,
+		last_signature_level_is_specific_level = last_signature_level_is_specific_level,
+		prevent_same_level_on_same_path = prevent_same_level_on_same_path
 	},
 	TRAVEL = {
-		prevent_same_level_choice = fn_10,
-		prevent_same_level_on_same_path = fn_11
+		prevent_same_level_choice = prevent_same_level_choice,
+		prevent_same_level_on_same_path = prevent_same_level_on_same_path
 	},
 	SHOP = {
-		prevent_same_level_choice = fn_10
+		prevent_same_level_choice = prevent_same_level_choice
 	},
 	ARENA = {}
 }
-local tbl_2 = {
-	lower_priority_of_already_used_levels_on_path = function (arg_15_0, arg_15_1, arg_15_2, arg_15_3)
+local LEVEL_SHUFFLERS = {
+	lower_priority_of_already_used_levels_on_path = function (context, working_graph, node_key, levels)
 		-- function 15
-		local function fn(arg_16_0, arg_16_1)
+		local function is_level_already_used(current_node_key, level)
 			-- function 16
-			if arg_15_1[arg_16_0].level == arg_16_1 then
+			if working_graph[current_node_key].level == level then
 				return true
 			end
 
-			for i, v in ipairs(arg_15_1[arg_16_0].prev) do
-				if not fn(v, arg_16_1) then
+			for _, prev_node_key in ipairs(working_graph[current_node_key].prev) do
+				if is_level_already_used(prev_node_key, level) then
 					return true
 				end
 			end
@@ -255,73 +259,82 @@ local tbl_2 = {
 			return false
 		end
 
-		local count = #arg_15_3
+		local swap_to_index = #levels
 
-		for i = #arg_15_3, 1, -1 do
-			local var_15_2 = arg_15_3[i]
+		for i = #levels, 1, -1 do
+			local level = levels[i]
 
-			if not fn(arg_15_2, var_15_2) then
-				arg_15_3[i] = arg_15_3[count]
-				arg_15_3[count] = var_15_2
-				count = count - 1
+			if is_level_already_used(node_key, level) then
+				local level_to_swap = levels[swap_to_index]
+
+				levels[i] = level_to_swap
+				levels[swap_to_index] = level
+				swap_to_index = swap_to_index - 1
 			end
 		end
 	end
 }
-local tbl_3 = {
-	last_signature_level_is_specific_level = function (self, arg_17_1, arg_17_2)
+local LABEL_OVERRIDES = {
+	last_signature_level_is_specific_level = function (context, working_graph, labels)
 		-- function 17
-		local SPECIFIC_SIGNATURE_LEVEL = self.config.SPECIFIC_SIGNATURE_LEVEL
+		local config = context.config
+		local sig_level = config.SPECIFIC_SIGNATURE_LEVEL
 
-		fassert(SPECIFIC_SIGNATURE_LEVEL, "you need to specify a SPECIFIC_SIGNATURE_LEVEL when using LABEL_OVERRIDES.last_signature_level_is_specific_level")
+		fassert(sig_level, "you need to specify a SPECIFIC_SIGNATURE_LEVEL when using LABEL_OVERRIDES.last_signature_level_is_specific_level")
 
-		local SIGNATURE = arg_17_2.SIGNATURE
-		local var_17_2
+		local sig_labels = labels.SIGNATURE
+		local last_level_label
 
-		for i, v in ipairs(arg_17_1.final.prev) do
-			local var_17_3 = arg_17_1[v]
+		for _, prev_node_key in ipairs(working_graph.final.prev) do
+			local prev_node = working_graph[prev_node_key]
 
-			if var_17_3.type == "SIGNATURE" then
-				var_17_2 = var_17_3.label
-
-				break
-			end
-		end
-
-		fassert(var_17_2, "a graph needs to have a signature level just before the end in order for LABEL_OVERRIDES.last_signature_level_is_specific_level to work")
-
-		local var_17_4
-
-		for k, v_2 in pairs(SIGNATURE) do
-			if v_2 == SPECIFIC_SIGNATURE_LEVEL then
-				var_17_4 = k
+			if prev_node.type == "SIGNATURE" then
+				last_level_label = prev_node.label
 
 				break
 			end
 		end
 
-		fassert(var_17_4, sprintf("In LABEL_OVERRIDES.last_signature_level_is_specific_level the level %s was not found in the level availability", SPECIFIC_SIGNATURE_LEVEL))
+		fassert(last_level_label, "a graph needs to have a signature level just before the end in order for LABEL_OVERRIDES.last_signature_level_is_specific_level to work")
 
-		SIGNATURE[var_17_4], SIGNATURE[var_17_2] = SIGNATURE[var_17_2], SPECIFIC_SIGNATURE_LEVEL
+		local specific_level_label
 
-		return arg_17_2
+		for label, level in pairs(sig_labels) do
+			if level == sig_level then
+				specific_level_label = label
+
+				break
+			end
+		end
+
+		fassert(specific_level_label, sprintf("In LABEL_OVERRIDES.last_signature_level_is_specific_level the level %s was not found in the level availability", sig_level))
+
+		local other_level = sig_labels[last_level_label]
+
+		sig_labels[last_level_label] = sig_level
+		sig_labels[specific_level_label] = other_level
+
+		return labels
 	end
 }
-local tbl_4 = {
-	prevent_modifier_on_curse_abundance_of_life = function (arg_18_0, arg_18_1, arg_18_2, arg_18_3)
+local MINOR_MODIFIER_VALIDATORS = {
+	prevent_modifier_on_curse_abundance_of_life = function (context, working_graph, node_key, modifier_group)
 		-- function 18
-		return arg_18_1[arg_18_2].curse ~= "curse_abundance_of_life" or not not table.contains(arg_18_3, "increased_grenades") or not table.contains(arg_18_3, "increased_healing")
+		local node = working_graph[node_key]
+
+		return (node.curse ~= "curse_abundance_of_life" or not table.contains(modifier_group, "increased_grenades")) and not not not table.contains(modifier_group, "increased_healing")
 	end
 }
 
-local function fn_13(self, arg_19_1, arg_19_2, arg_19_3, arg_19_4)
+local function validate_level_placement(config, indent, working_graph, node_key, level)
 	-- function 19
-	local type = arg_19_2[arg_19_3].type
-	local var_19_1 = self.LEVEL_VALIDATIONS[type]
-	local var_19_2 = tbl[type]
+	local node = working_graph[node_key]
+	local node_type = node.type
+	local validator_names = config.LEVEL_VALIDATIONS[node_type]
+	local validators = LEVEL_VALIDATIONS[node_type]
 
-	for i, v in ipairs(var_19_1) do
-		if not var_19_2[v](self, arg_19_2, arg_19_3, arg_19_4) then
+	for _, validator_name in ipairs(validator_names) do
+		if not validators[validator_name](config, working_graph, node_key, level) then
 			return false
 		end
 	end
@@ -329,16 +342,16 @@ local function fn_13(self, arg_19_1, arg_19_2, arg_19_3, arg_19_4)
 	return true
 end
 
-local function fn_14(self, arg_20_1, arg_20_2)
+local function validate_until_the_end(context, working_graph, node_key)
 	-- function 20
-	local var_20_0 = arg_20_1[arg_20_2]
+	local node = working_graph[node_key]
 
-	if not fn_13(self.config, self.indent, arg_20_1, arg_20_2, var_20_0.level, self.indent) then
+	if not validate_level_placement(context.config, context.indent, working_graph, node_key, node.level, context.indent) then
 		return false
 	end
 
-	for i, v in ipairs(var_20_0.next) do
-		if not fn_14(self, arg_20_1, v) then
+	for _, next_node_key in ipairs(node.next) do
+		if not validate_until_the_end(context, working_graph, next_node_key) then
 			return false
 		end
 	end
@@ -346,79 +359,78 @@ local function fn_14(self, arg_20_1, arg_20_2)
 	return true
 end
 
-local function fn_15(self, arg_21_1, arg_21_2, arg_21_3)
+local function get_available_paths(context, working_graph, node_key, level)
 	-- function 21
-	local type = arg_21_1[arg_21_2].type
-	local var_21_1 = self.config.LEVEL_AVAILABILITY[type]
-	local clone = table.clone(var_21_1[arg_21_3].paths)
+	local node = working_graph[node_key]
+	local node_type = node.type
+	local levels_available = context.config.LEVEL_AVAILABILITY[node_type]
+	local paths = table.clone(levels_available[level].paths)
 
-	local function fn(arg_22_0)
+	local function filter_paths_node(node_key_to_filter)
 		-- function 22
-		local var_22_0 = arg_21_1[arg_22_0]
+		local node_to_filter = working_graph[node_key_to_filter]
 
-		if var_22_0.level == arg_21_3 then
-			local index_of = table.index_of(clone, var_22_0.path)
+		if node_to_filter.level == level then
+			local index = table.index_of(paths, node_to_filter.path)
 
-			if index_of ~= -1 then
-				table.swap_delete(clone, index_of)
+			if index ~= -1 then
+				table.swap_delete(paths, index)
 			end
 		end
 	end
 
-	local function fn_2(arg_23_0)
+	local function filter_paths_backwards(node_key_to_filter)
 		-- function 23
-		local var_23_0 = arg_21_1[arg_23_0]
+		local node_to_filter = working_graph[node_key_to_filter]
 
-		for i, v in ipairs(var_23_0.prev) do
-			fn(v)
-			fn_2(v)
+		for _, prev in ipairs(node_to_filter.prev) do
+			filter_paths_node(prev)
+			filter_paths_backwards(prev)
 		end
 	end
 
-	local function fn_3(arg_24_0)
+	local function filter_paths_forwards(node_key_to_filter)
 		-- function 24
-		local var_24_0 = arg_21_1[arg_24_0]
+		local node_to_filter = working_graph[node_key_to_filter]
 
-		for i, v in ipairs(var_24_0.next) do
-			fn(v)
-			fn_3(v)
+		for _, next in ipairs(node_to_filter.next) do
+			filter_paths_node(next)
+			filter_paths_forwards(next)
 		end
 	end
 
-	fn(arg_21_2)
-	fn_2(arg_21_2)
-	fn_3(arg_21_2)
+	filter_paths_node(node_key)
+	filter_paths_backwards(node_key)
+	filter_paths_forwards(node_key)
 
-	return clone
+	return paths
 end
 
-local var_0_19
-local var_0_20
-local var_0_21
+local create_process_node_action, create_assign_level_and_path_action, create_process_connections_action
 
-local function fn_16(arg_25_0, arg_25_1, arg_25_2)
+function create_process_connections_action(context, working_graph, node_key)
 	-- function 25
-	local function fn_2()
+	local function executor()
 		-- function 26
-		local var_26_0 = arg_25_1[arg_25_2]
-		local var_26_1 = fn(table.clone(var_26_0.next), arg_25_0.random_generator)
-		local tbl = {}
+		local node = working_graph[node_key]
+		local connections = shuffle_array(table.clone(node.next), context.random_generator)
+		local next_actions = {}
 
-		for i = 1, #var_26_1 do
-			tbl[i] = function ()
+		for i = 1, #connections do
+			next_actions[i] = function ()
 				-- function 27
-				return var_0_19(arg_25_0, arg_25_1, var_26_1[i])
+				return create_process_node_action(context, working_graph, connections[i])
 			end
 		end
 
-		return true, tbl
+		return true, next_actions
 	end
 
 	return {
-		name = "connections " .. arg_25_2,
+		name = "connections " .. node_key,
 		run = function ()
 			-- function 28
-			return fn_2()
+			return executor()
 		end,
 		retry = function ()
 			-- function 29
@@ -427,27 +439,27 @@ local function fn_16(arg_25_0, arg_25_1, arg_25_2)
 	}
 end
 
-function var_0_19(arg_30_0, arg_30_1, arg_30_2)
+function create_process_node_action(context, working_graph, node_key)
 	-- function 30
-	local var_30_0 = arg_30_1[arg_30_2]
-	local type = var_30_0.type
+	local node = working_graph[node_key]
+	local node_type = node.type
 
 	return {
-		name = "node " .. arg_30_2,
+		name = "node " .. node_key,
 		run = function ()
 			-- function 31
-			if not var_30_0.level then
-				return fn_14(arg_30_0, arg_30_1, arg_30_2)
+			if node.level then
+				return validate_until_the_end(context, working_graph, node_key)
 			end
 
-			local tbl = {
+			local next_actions = {
 				function ()
 					-- function 32
-					return var_0_20(arg_30_0, arg_30_1, arg_30_2)
+					return create_assign_level_and_path_action(context, working_graph, node_key)
 				end
 			}
 
-			return true, tbl
+			return true, next_actions
 		end,
 		retry = function ()
 			-- function 33
@@ -456,62 +468,61 @@ function var_0_19(arg_30_0, arg_30_1, arg_30_2)
 	}
 end
 
-function var_0_20(self, arg_34_1, arg_34_2)
+function create_assign_level_and_path_action(context, working_graph, node_key)
 	-- function 34
-	local var_34_0 = arg_34_1[arg_34_2]
-	local type = var_34_0.type
-	local label = var_34_0.label
-	local var_34_3 = self.config.LEVEL_AVAILABILITY[type]
+	local node = working_graph[node_key]
+	local node_type = node.type
+	local node_label = node.label
+	local levels_available = context.config.LEVEL_AVAILABILITY[node_type]
 
-	local function fn_3()
+	local function create_shuffled_levels()
 		-- function 35
-		local var_35_0 = fn_2(var_34_3, self.random_generator)
+		local levels = get_random_key_list(levels_available, context.random_generator)
 
-		for i, v in ipairs(self.config.LEVEL_SHUFFLERS) do
-			tbl_2[v](self, arg_34_1, arg_34_2, var_35_0)
+		for _, shuffler_name in ipairs(context.config.LEVEL_SHUFFLERS) do
+			LEVEL_SHUFFLERS[shuffler_name](context, working_graph, node_key, levels)
 		end
 
-		table.reverse(var_35_0)
+		table.reverse(levels)
 
-		return var_35_0
+		return levels
 	end
 
-	local var_34_5
+	local shuffled_levels_available
 
-	local function fn_4()
+	local function executor()
 		-- function 36
-		if not (not label and label == 0) then
-			var_34_0.level = self.shuffled_levels_for_labels[type][label]
+		if node_label and node_label ~= 0 then
+			node.level = context.shuffled_levels_for_labels[node_type][node_label]
 
-			local paths = var_34_3[var_34_0.level].paths
-			local var_36_1 = fn(table.clone(paths), self.random_generator)
+			local paths = levels_available[node.level].paths
 
-			var_34_0.path = var_36_1[1]
+			paths = shuffle_array(table.clone(paths), context.random_generator)
+			node.path = paths[1]
 		else
-			if not var_34_5 then
-				var_34_5 = fn_3()
+			if not shuffled_levels_available then
+				shuffled_levels_available = create_shuffled_levels()
 			end
 
-			while #var_34_5 > 0 do
-				local var_36_2 = var_34_5[#var_34_5]
+			while #shuffled_levels_available > 0 do
+				local level_to_try = shuffled_levels_available[#shuffled_levels_available]
 
-				var_34_5[#var_34_5] = nil
+				shuffled_levels_available[#shuffled_levels_available] = nil
 
-				if not fn_13(self.config, self.indent, arg_34_1, arg_34_2, var_36_2) then
-					if var_34_0.type == "SHOP" then
-						var_34_0.level = var_36_2
+				if validate_level_placement(context.config, context.indent, working_graph, node_key, level_to_try) then
+					if node.type == "SHOP" then
+						node.level = level_to_try
 
 						break
 					else
-						local var_36_3 = fn_15(self, arg_34_1, arg_34_2, var_36_2)
+						local paths = get_available_paths(context, working_graph, node_key, level_to_try)
 
-						if #var_36_3 == 0 then
+						if #paths == 0 then
 							-- Nothing
 						else
-							local var_36_4 = fn(table.clone(var_36_3), self.random_generator)
-
-							var_34_0.level = var_36_2
-							var_34_0.path = var_36_4[1]
+							paths = shuffle_array(table.clone(paths), context.random_generator)
+							node.level = level_to_try
+							node.path = paths[1]
 
 							break
 						end
@@ -520,81 +531,84 @@ function var_0_20(self, arg_34_1, arg_34_2)
 			end
 		end
 
-		if not var_34_0.level then
+		if not node.level then
 			return false
 		end
 
-		local tbl = {
+		local next_actions = {
 			function ()
 				-- function 37
-				return fn_16(self, arg_34_1, arg_34_2)
+				return create_process_connections_action(context, working_graph, node_key)
 			end
 		}
 
-		return true, tbl
+		return true, next_actions
 	end
 
 	return {
-		name = "level " .. arg_34_2,
+		name = "level " .. node_key,
 		run = function ()
 			-- function 38
-			return fn_4()
+			return executor()
 		end,
 		retry = function ()
 			-- function 39
-			var_34_0.level = nil
-			var_34_0.path = nil
+			node.level = nil
+			node.path = nil
 
-			if not (not label and label == 0) then
+			if node_label and node_label ~= 0 then
 				return false
 			else
-				return fn_4()
+				return executor()
 			end
 		end
 	}
 end
 
-local function fn_17(self, arg_40_1)
+local function find_missing_progress_sub_path(working_graph, path)
 	-- function 40
-	local num = -1
-	local num_2 = -1
+	local sub_path_start_index = -1
+	local sub_path_end_index = -1
 
-	for i, v in ipairs(arg_40_1) do
-		if not self[v].run_progress then
-			if num == -1 then
-				num = i
+	for index, node_key in ipairs(path) do
+		if not working_graph[node_key].run_progress then
+			if sub_path_start_index == -1 then
+				sub_path_start_index = index
 			end
 
-			num_2 = i
-		elseif num ~= -1 then
-			return num, num_2
+			sub_path_end_index = index
+		elseif sub_path_start_index ~= -1 then
+			return sub_path_start_index, sub_path_end_index
 		end
 	end
 
-	return num, num_2
+	return sub_path_start_index, sub_path_end_index
 end
 
-local function fn_18(self, arg_41_1)
+local function filter_non_progress_nodes(working_graph, path)
 	-- function 41
-	local tbl = {}
+	local filtered_path = {}
 
-	for i, v in ipairs(arg_41_1) do
-		if self[v].type ~= "START" then
-			tbl[#tbl + 1] = v
+	for _, node_key in ipairs(path) do
+		local node = working_graph[node_key]
+		local type = node.type
+
+		if type ~= "START" then
+			filtered_path[#filtered_path + 1] = node_key
 		end
 	end
 
-	return tbl
+	return filtered_path
 end
 
-local function fn_19(self, arg_42_1, arg_42_2, arg_42_3)
+local function apply_progress(working_graph, path, start_index, end_index)
 	-- function 42
-	local var_42_0 = self[arg_42_1[arg_42_2 - 1]]
-	local var_42_1 = self[arg_42_1[arg_42_3 + 1]]
+	local node_before = working_graph[path[start_index - 1]]
+	local node_after = working_graph[path[end_index + 1]]
 	local run_progress
 
-	if not var_42_0 then
-		run_progress = var_42_0.run_progress
+	if node_before then
+		run_progress = node_before.run_progress
 
 		if not run_progress then
 			-- Nothing
@@ -603,14 +617,16 @@ local function fn_19(self, arg_42_1, arg_42_2, arg_42_3)
 
 	run_progress = 0
 
+	local start_prog = run_progress
+
 	do
 		local run_progress_2
 	end
 
 	::label_42_0::
 
-	if not var_42_1 then
-		run_progress_2 = var_42_1.run_progress
+	if node_after then
+		run_progress_2 = node_after.run_progress
 
 		if not run_progress_2 then
 			-- Nothing
@@ -619,78 +635,81 @@ local function fn_19(self, arg_42_1, arg_42_2, arg_42_3)
 
 	run_progress_2 = 0.9999
 
+	local end_prog = run_progress_2
+
 	::label_42_1::
 
-	local num = arg_42_3 - arg_42_2
-	local num_2 = 0
+	local length_of_lerp = end_index - start_index
+	local index_offset = 0
 
-	if not var_42_0 then
-		num = num + 1
-		num_2 = 1
+	if node_before then
+		length_of_lerp = length_of_lerp + 1
+		index_offset = 1
 	end
 
-	if not var_42_1 then
-		num = num + 1
+	if node_after then
+		length_of_lerp = length_of_lerp + 1
 	end
 
-	for i = arg_42_2, arg_42_3 do
-		local num_3 = i - arg_42_2
-		local lerp = math.lerp(run_progress, run_progress_2, (num_3 + num_2) / num)
+	for index = start_index, end_index do
+		local lerp_index = index - start_index
+		local progress = math.lerp(start_prog, end_prog, (lerp_index + index_offset) / length_of_lerp)
 
-		self[arg_42_1[i]].run_progress = lerp
+		working_graph[path[index]].run_progress = progress
 	end
 end
 
-local function fn_20(arg_43_0, arg_43_1)
+local function calculate_progress(context, working_graph)
 	-- function 43
-	local var_43_0 = fn_6(arg_43_1, "final")
+	local paths = get_paths(working_graph, "final")
 
-	table.sort(var_43_0, function (arg_44_0, arg_44_1)
+	table.sort(paths, function (path_1, path_2)
 		-- function 44
-		return #arg_44_0 > #arg_44_1
+		return #path_1 > #path_2
 	end)
 
-	for i, v in ipairs(var_43_0) do
-		local var_43_1 = fn_18(arg_43_1, v)
+	for _, path in ipairs(paths) do
+		local filtered_path = filter_non_progress_nodes(working_graph, path)
 
 		while true do
-			local var_43_2, var_43_3 = fn_17(arg_43_1, var_43_1)
+			local sub_path_start_index, sub_path_end_index = find_missing_progress_sub_path(working_graph, filtered_path)
 
-			if var_43_2 == -1 then
+			if sub_path_start_index == -1 then
 				break
 			end
 
-			fn_19(arg_43_1, var_43_1, var_43_2, var_43_3)
+			apply_progress(working_graph, filtered_path, sub_path_start_index, sub_path_end_index)
 		end
 
-		for i_2, v_2 in ipairs(v) do
-			local var_43_4 = arg_43_1[v_2]
+		for _, node_key in ipairs(path) do
+			local node = working_graph[node_key]
 
-			if var_43_4.run_progress == nil then
-				var_43_4.run_progress = 0
+			if node.run_progress == nil then
+				node.run_progress = 0
 			end
 		end
 	end
 end
 
-local function fn_21(self, arg_45_1, arg_45_2)
+local function assign_random_curse(context, node, god)
 	-- function 45
-	local type = arg_45_1.type
-	local var_45_1 = self.config.AVAILABLE_CURSES[type][arg_45_2]
+	local node_type = node.type
+	local curses = context.config.AVAILABLE_CURSES[node_type][god]
+	local curse = curses[context.random_generator(1, #curses)]
 
-	arg_45_1.curse = var_45_1[self.random_generator(1, #var_45_1)]
-	arg_45_1.god = arg_45_2
+	node.curse = curse
+	node.god = god
 end
 
-local function fn_22(self, arg_46_1, arg_46_2)
+local function assign_minor_modifier_group(context, working_graph, node_key)
 	-- function 46
-	local var_46_0 = arg_46_1[arg_46_2]
-	local var_46_1 = fn(table.clone(self.config.AVAILABLE_MINOR_MODIFIERS), self.random_generator)
+	local node = working_graph[node_key]
+	local minor_modifier_groups = shuffle_array(table.clone(context.config.AVAILABLE_MINOR_MODIFIERS), context.random_generator)
 
-	local function fn_2(arg_47_0)
+	local function is_valid_minor_modifier_group(minor_modifier_group)
 		-- function 47
-		for i, v in ipairs(self.config.MINOR_MODIFIER_VALIDATORS) do
-			if not tbl_4[v](self, arg_46_1, arg_46_2, arg_47_0) then
+		for _, validator in ipairs(context.config.MINOR_MODIFIER_VALIDATORS) do
+			if not MINOR_MODIFIER_VALIDATORS[validator](context, working_graph, node_key, minor_modifier_group) then
 				return false
 			end
 		end
@@ -698,188 +717,192 @@ local function fn_22(self, arg_46_1, arg_46_2)
 		return true
 	end
 
-	for i, v in ipairs(var_46_1) do
-		if not fn_2(v) then
-			var_46_0.minor_modifier_group = v
+	for _, minor_modifier_group in ipairs(minor_modifier_groups) do
+		if is_valid_minor_modifier_group(minor_modifier_group) then
+			node.minor_modifier_group = minor_modifier_group
 
 			return
 		end
 	end
 end
 
-local function fn_23(arg_48_0, arg_48_1, arg_48_2, arg_48_3, arg_48_4, arg_48_5)
+local function spread_curse_on_hot_spot(context, working_graph, god, hot_spot_center_key, squared_range, possible_cursed_nodes)
 	-- function 48
-	local tbl = {
-		god = arg_48_2,
-		center_key = arg_48_3,
+	local hot_spot_data = {
+		god = god,
+		center_key = hot_spot_center_key,
 		nodes = {}
 	}
-	local var_48_1 = arg_48_1[arg_48_3]
+	local hot_spot_center = working_graph[hot_spot_center_key]
 
-	fn_21(arg_48_0, var_48_1, arg_48_2)
-	table.swap_delete(arg_48_5, table.index_of(arg_48_5, var_48_1))
+	assign_random_curse(context, hot_spot_center, god)
+	table.swap_delete(possible_cursed_nodes, table.index_of(possible_cursed_nodes, hot_spot_center))
 
-	tbl.nodes[#tbl.nodes + 1] = var_48_1.name
+	hot_spot_data.nodes[#hot_spot_data.nodes + 1] = hot_spot_center.name
 
-	for i = #arg_48_5, 1, -1 do
-		local var_48_2 = arg_48_5[i]
-		local num = var_48_1.layout_x - var_48_2.layout_x
-		local num_2 = var_48_1.layout_y - var_48_2.layout_y
+	for possible_index = #possible_cursed_nodes, 1, -1 do
+		local possible_node = possible_cursed_nodes[possible_index]
+		local dx, dy = hot_spot_center.layout_x - possible_node.layout_x, hot_spot_center.layout_y - possible_node.layout_y
+		local squared_distance = dx * dx + dy * dy
 
-		if arg_48_4 > num * num + num_2 * num_2 then
-			fn_21(arg_48_0, var_48_2, arg_48_2)
-			table.swap_delete(arg_48_5, i)
+		if squared_distance < squared_range then
+			assign_random_curse(context, possible_node, god)
+			table.swap_delete(possible_cursed_nodes, possible_index)
 
-			tbl.nodes[#tbl.nodes + 1] = var_48_2.name
+			hot_spot_data.nodes[#hot_spot_data.nodes + 1] = possible_node.name
 		end
 	end
 
-	arg_48_0.hot_spots[#arg_48_0.hot_spots + 1] = tbl
+	context.hot_spots[#context.hot_spots + 1] = hot_spot_data
 
-	return arg_48_5
+	return possible_cursed_nodes
 end
 
-local function fn_24(self, arg_49_1)
+local function spread_curse(context, working_graph)
 	-- function 49
-	local random_generator = self.random_generator(self.config.CURSES_HOT_SPOTS_MIN_COUNT, self.config.CURSES_HOT_SPOTS_MAX_COUNT)
-	local var_49_1 = fn_4(arg_49_1, self.config.CURSES_MIN_PROGRESS)
-	local var_49_2 = fn_5(var_49_1, self.config.CURSEABLE_NODE_TYPES)
+	local hot_spot_count = context.random_generator(context.config.CURSES_HOT_SPOTS_MIN_COUNT, context.config.CURSES_HOT_SPOTS_MAX_COUNT)
+	local nodes_above_progress = get_nodes_above_progress(working_graph, context.config.CURSES_MIN_PROGRESS)
+	local possible_cursed_nodes = filter_node_types(nodes_above_progress, context.config.CURSEABLE_NODE_TYPES)
 
-	if not self.config.NO_DOMINANT_GOD then
-		local num = self.config.CURSES_HOT_SPOT_MAX_RANGE * self.config.CURSES_HOT_SPOT_MAX_RANGE
+	if not context.config.NO_DOMINANT_GOD then
+		local squared_god_range = context.config.CURSES_HOT_SPOT_MAX_RANGE * context.config.CURSES_HOT_SPOT_MAX_RANGE
 
-		var_49_2 = fn_23(self, arg_49_1, self.dominant_god, "final", num, var_49_2)
+		possible_cursed_nodes = spread_curse_on_hot_spot(context, working_graph, context.dominant_god, "final", squared_god_range, possible_cursed_nodes)
 	end
 
-	local tbl = {}
-	local AVAILABLE_GODS = self.config.AVAILABLE_GODS
+	local remaining_gods = {}
+	local available_gods = context.config.AVAILABLE_GODS
 
-	for i = 2, random_generator do
-		if #tbl == 0 then
-			for i_2, v in ipairs(AVAILABLE_GODS) do
-				if not (self.config.NO_DOMINANT_GOD or v == self.dominant_god) then
-					tbl[#tbl + 1] = v
+	for i = 2, hot_spot_count do
+		if #remaining_gods == 0 then
+			for _, god in ipairs(available_gods) do
+				if context.config.NO_DOMINANT_GOD or god ~= context.dominant_god then
+					remaining_gods[#remaining_gods + 1] = god
 				end
 			end
 		end
 
-		local random_generator_2 = self.random_generator(1, #tbl)
-		local var_49_7 = tbl[random_generator_2]
+		local index = context.random_generator(1, #remaining_gods)
+		local god = remaining_gods[index]
 
-		table.swap_delete(tbl, random_generator_2)
+		table.swap_delete(remaining_gods, index)
 
-		if #var_49_2 > 0 then
-			local var_49_8 = var_49_2[self.random_generator(1, #var_49_2)]
-			local num_2 = self.config.CURSES_HOT_SPOT_MIN_RANGE + self.random_generator() * (self.config.CURSES_HOT_SPOT_MAX_RANGE - self.config.CURSES_HOT_SPOT_MAX_RANGE)
+		if #possible_cursed_nodes > 0 then
+			local hot_spot_center_index = context.random_generator(1, #possible_cursed_nodes)
+			local hot_spot_center = possible_cursed_nodes[hot_spot_center_index]
+			local god_range = context.config.CURSES_HOT_SPOT_MIN_RANGE + context.random_generator() * (context.config.CURSES_HOT_SPOT_MAX_RANGE - context.config.CURSES_HOT_SPOT_MAX_RANGE)
 
-			var_49_2 = fn_23(self, arg_49_1, var_49_7, var_49_8.name, num_2 * num_2, var_49_2)
+			possible_cursed_nodes = spread_curse_on_hot_spot(context, working_graph, god, hot_spot_center.name, god_range * god_range, possible_cursed_nodes)
 		end
 	end
 end
 
-local function fn_25(self, arg_50_1)
+local function spread_belakor(context, working_graph)
 	-- function 50
-	local tbl = {}
-	local ARENA_BELAKOR_SHOWS_UP_IN_DEPTH = self.config.ARENA_BELAKOR_SHOWS_UP_IN_DEPTH
+	local possible_belakor_nodes = {}
+	local depth = context.config.ARENA_BELAKOR_SHOWS_UP_IN_DEPTH
 
-	for k, v in pairs(arg_50_1) do
-		if not (v.type == "START" or v.type == "SHOP" or v.type == "ARENA") then
-			local var_50_2
-			local var_50_3 = fn_9(arg_50_1, k, ARENA_BELAKOR_SHOWS_UP_IN_DEPTH)
-			local tbl_2 = {}
+	for node_key, node in pairs(working_graph) do
+		if node.type ~= "START" and node.type ~= "SHOP" and node.type ~= "ARENA" then
+			local final_nodes
+			local possible_arena_belakor_nodes = get_descendants(working_graph, node_key, depth)
+			local possible_arena_belakor_nodes_without_shops = {}
 
-			for i, v_2 in ipairs(var_50_3) do
-				if arg_50_1[v_2].type == "SHOP" then
-					local var_50_5 = fn_8(arg_50_1, v_2)
+			for _, possible_node_key in ipairs(possible_arena_belakor_nodes) do
+				local possible_node = working_graph[possible_node_key]
 
-					for i_2, v_3 in ipairs(var_50_5) do
-						tbl_2[#tbl_2 + 1] = v_3
+				if possible_node.type == "SHOP" then
+					local shop_playable_connections = get_first_playable_descendants(working_graph, possible_node_key)
+
+					for _, shop_playable_connection_node_key in ipairs(shop_playable_connections) do
+						possible_arena_belakor_nodes_without_shops[#possible_arena_belakor_nodes_without_shops + 1] = shop_playable_connection_node_key
 					end
 				else
-					tbl_2[#tbl_2 + 1] = v_2
+					possible_arena_belakor_nodes_without_shops[#possible_arena_belakor_nodes_without_shops + 1] = possible_node_key
 				end
 			end
 
-			for i_3, v_4 in ipairs(tbl_2) do
-				local var_50_6 = arg_50_1[v_4]
+			for _, possible_node_key in ipairs(possible_arena_belakor_nodes_without_shops) do
+				local possible_node = working_graph[possible_node_key]
 
 				repeat
-					if #var_50_6.next == 0 then
-						var_50_6 = nil
+					if #possible_node.next == 0 then
+						possible_node = nil
 
 						break
 					end
 
-					var_50_6 = arg_50_1[var_50_6.next[1]]
-				until not (var_50_6.type == "SIGNATURE" or var_50_6.type ~= "TRAVEL")
+					possible_node = working_graph[possible_node.next[1]]
+				until possible_node.type == "SIGNATURE" or possible_node.type == "TRAVEL"
 
-				if not var_50_6 then
-					var_50_2 = var_50_2 or {}
-					var_50_2[v_4] = true
+				if possible_node then
+					final_nodes = not not final_nodes or not not {}
+					final_nodes[possible_node_key] = true
 				end
 			end
 
-			if not var_50_2 then
-				local tbl_3 = {}
+			if final_nodes then
+				local final_list = {}
 
-				for k_2, v_5 in pairs(var_50_2) do
-					tbl_3[#tbl_3 + 1] = k_2
+				for final_node_key, _ in pairs(final_nodes) do
+					final_list[#final_list + 1] = final_node_key
 				end
 
-				v.possible_arena_belakor_nodes = tbl_3
-				tbl[#tbl + 1] = k
-			end
-		end
-	end
-
-	local mirror_array_inplace = table.mirror_array_inplace(tbl)
-	local var_50_9 = fn_8(arg_50_1, "start")
-	local tbl_4 = {}
-
-	for i10 = 1, #var_50_9 do
-		local var_50_11 = var_50_9[i10]
-
-		if not mirror_array_inplace[var_50_11] then
-			local tbl_5 = {}
-			local num = 1
-
-			tbl_4[#tbl_4 + 1] = tbl_5
-			tbl_5[num] = var_50_9[i10]
-
-			local var_50_14 = fn_9(arg_50_1, var_50_11, 1)
-
-			for i11 = 1, #var_50_14 do
-				if not mirror_array_inplace[var_50_14[i11]] then
-					num = num + 1
-					tbl_5[num] = var_50_14[i11]
-				end
+				node.possible_arena_belakor_nodes = final_list
+				possible_belakor_nodes[#possible_belakor_nodes + 1] = node_key
 			end
 		end
 	end
 
-	local random_generator = self.random_generator
-	local tbl_6 = {}
+	local belakor_node_map = table.mirror_array_inplace(possible_belakor_nodes)
+	local first_playable_nodes = get_first_playable_descendants(working_graph, "start")
+	local belakor_paths = {}
 
-	for i12 = 1, #tbl_4 do
-		local var_50_17 = tbl_4[i12]
-		local count = #var_50_17
+	for i = 1, #first_playable_nodes do
+		local path_start_node = first_playable_nodes[i]
 
-		if count > 0 then
-			local var_50_19 = var_50_17[random_generator(1, count)]
+		if belakor_node_map[path_start_node] then
+			local path = {}
+			local path_n = 1
 
-			tbl_6[#tbl_6 + 1] = var_50_19
+			belakor_paths[#belakor_paths + 1] = path
+			path[path_n] = first_playable_nodes[i]
 
-			for i13 = i12 + 1, #tbl_4 do
-				local var_50_20 = tbl_4[i13]
+			local path_next = get_descendants(working_graph, path_start_node, 1)
 
-				if not table.contains(var_50_20, var_50_19) then
-					table.clear(var_50_20)
+			for j = 1, #path_next do
+				if belakor_node_map[path_next[j]] then
+					path_n = path_n + 1
+					path[path_n] = path_next[j]
+				end
+			end
+		end
+	end
+
+	local random_generator = context.random_generator
+	local belakor_nodes = {}
+
+	for path_id = 1, #belakor_paths do
+		local path = belakor_paths[path_id]
+		local path_n = #path
+
+		if path_n > 0 then
+			local rand_node = random_generator(1, path_n)
+			local rand_node_name = path[rand_node]
+
+			belakor_nodes[#belakor_nodes + 1] = rand_node_name
+
+			for next_path_id = path_id + 1, #belakor_paths do
+				local next_path = belakor_paths[next_path_id]
+
+				if table.contains(next_path, rand_node_name) then
+					table.clear(next_path)
 				else
-					for i14 = 1, #var_50_17 do
-						local find = table.find(var_50_20, var_50_17[i14])
+					for i = 1, #path do
+						local overlapping_node_idx = table.find(next_path, path[i])
 
-						if not find then
-							table.remove(var_50_20, find)
+						if overlapping_node_idx then
+							table.remove(next_path, overlapping_node_idx)
 						end
 					end
 				end
@@ -887,41 +910,54 @@ local function fn_25(self, arg_50_1)
 		end
 	end
 
-	for i15 = 1, #tbl_6 do
-		local var_50_22 = tbl_6[i15]
+	for i = 1, #belakor_nodes do
+		local belakor_node_key = belakor_nodes[i]
 
-		fn_21(self, arg_50_1[var_50_22], "belakor")
+		assign_random_curse(context, working_graph[belakor_node_key], "belakor")
 	end
 end
 
-local function fn_26(self, arg_51_1)
+local function spread_minor_modifier_groups(context, working_graph)
 	-- function 51
-	local var_51_0 = fn_4(arg_51_1, self.config.MINOR_MODIFIABLE_MIN_PROGRESS)
-	local var_51_1 = fn_5(var_51_0, self.config.MINOR_MODIFIABLE_NODE_TYPES)
+	local nodes_above_progress = get_nodes_above_progress(working_graph, context.config.MINOR_MODIFIABLE_MIN_PROGRESS)
+	local possible_minor_modifiable_nodes = filter_node_types(nodes_above_progress, context.config.MINOR_MODIFIABLE_NODE_TYPES)
 
-	for i, v in ipairs(var_51_1) do
-		if not (self.random_generator() < self.config.MINOR_MODIFIABLE_NODE_CHANCE) then
-			fn_22(self, arg_51_1, v.name)
+	for _, possible_minor_modifiable_node in ipairs(possible_minor_modifiable_nodes) do
+		local can_assign_minor_modifier = context.random_generator() < context.config.MINOR_MODIFIABLE_NODE_CHANCE
+
+		if can_assign_minor_modifier then
+			assign_minor_modifier_group(context, working_graph, possible_minor_modifiable_node.name)
 		end
 	end
 end
 
-local function fn_27(self, arg_52_1)
+local function assign_conflict_settings(context, working_graph)
 	-- function 52
-	for k, v in pairs(arg_52_1) do
-		if not (v.type == "SIGNATURE" or v.type == "TRAVEL" or v.type ~= "ARENA") then
-			local var_52_0 = self.config.CONFLICT_DIRECTORS[v.god]
+	for _, base_node in pairs(working_graph) do
+		if base_node.type == "SIGNATURE" or base_node.type == "TRAVEL" or base_node.type == "ARENA" then
+			local var_52_0 = context.config.CONFLICT_DIRECTORS[base_node.god]
 
-			var_52_0 = var_52_0 or self.config.CONFLICT_DIRECTORS.default
-			v.conflict_settings = var_52_0[self.random_generator(1, #var_52_0)]
+			if not var_52_0 then
+				-- Nothing
+			end
+
+			var_52_0 = context.config.CONFLICT_DIRECTORS.default
+
+			local possible_conflict_settings = var_52_0
+
+			::label_52_0::
+
+			base_node.conflict_settings = possible_conflict_settings[context.random_generator(1, #possible_conflict_settings)]
 		end
 	end
 end
 
-local function fn_28(self, arg_53_1, arg_53_2)
+local function check_if_power_up_is_already_granted_in_nodes(working_graph, nodes, power_up)
 	-- function 53
-	for k, v in pairs(arg_53_1) do
-		if arg_53_2 == self[k].terror_event_power_up then
+	for node_key, _ in pairs(nodes) do
+		local node = working_graph[node_key]
+
+		if power_up == node.terror_event_power_up then
 			return true
 		end
 	end
@@ -929,153 +965,153 @@ local function fn_28(self, arg_53_1, arg_53_2)
 	return false
 end
 
-local function fn_29(self, arg_54_1, arg_54_2)
+local function get_visible_nodes(nodes, node_key, depth)
 	-- function 54
-	local next = self[arg_54_1].next
+	local descendants = nodes[node_key].next
 
-	if arg_54_2 > 1 then
-		arg_54_2 = arg_54_2 - 1
+	if depth > 1 then
+		depth = depth - 1
 
-		local tbl = {}
+		local all_visible_nodes = {}
 
-		for i, v in ipairs(next) do
-			tbl[v] = self[v]
+		for _, descendant in ipairs(descendants) do
+			all_visible_nodes[descendant] = nodes[descendant]
 
-			local var_54_2 = fn_29(self, v, arg_54_2)
+			local visibles_from_descendant = get_visible_nodes(nodes, descendant, depth)
 
-			for k, v_2 in pairs(var_54_2) do
-				tbl[k] = v_2
+			for visible_from_descendant_node_key, visible_from_descendant in pairs(visibles_from_descendant) do
+				all_visible_nodes[visible_from_descendant_node_key] = visible_from_descendant
 			end
 		end
 
-		return tbl
+		return all_visible_nodes
 	else
-		local tbl_2 = {}
+		local all_visible_nodes = {}
 
-		for i_2, v_3 in ipairs(next) do
-			tbl_2[v_3] = self[v_3]
+		for _, descendant in ipairs(descendants) do
+			all_visible_nodes[descendant] = nodes[descendant]
 		end
 
-		return tbl_2
+		return all_visible_nodes
 	end
 end
 
-local function fn_30(self, arg_55_1)
+local function spread_terror_event_power_ups(context, working_graph)
 	-- function 55
-	local random_generator = self.random_generator
-	local var_55_1 = fn_2(arg_55_1, random_generator)
+	local random_generator = context.random_generator
+	local node_key_list = get_random_key_list(working_graph, random_generator)
 
-	for i, v in ipairs(var_55_1) do
-		local var_55_2 = arg_55_1[v]
+	for _, base_node_key in ipairs(node_key_list) do
+		local base_node = working_graph[base_node_key]
 
-		if not (var_55_2.type == "SIGNATURE" or var_55_2.type ~= "TRAVEL") then
-			local var_55_3 = fn_7(arg_55_1, v)
+		if base_node.type == "SIGNATURE" or base_node.type == "TRAVEL" then
+			local all_nodes = get_all_ancestors_and_descendants(working_graph, base_node_key)
 
-			for i_2, v_2 in ipairs(var_55_2.prev) do
-				local var_55_4 = fn_29(arg_55_1, v_2, self.config.POWER_UP_LOOKAHEAD)
+			for _, prev_node_key in ipairs(base_node.prev) do
+				local visible_nodes = get_visible_nodes(working_graph, prev_node_key, context.config.POWER_UP_LOOKAHEAD)
 
-				for k, v_3 in pairs(var_55_4) do
-					if not (v_3.type == "SIGNATURE" or v_3.type ~= "TRAVEL") then
-						var_55_3[k] = v_3
+				for visible_node_key, visible_node in pairs(visible_nodes) do
+					if visible_node.type == "SIGNATURE" or visible_node.type == "TRAVEL" then
+						all_nodes[visible_node_key] = visible_node
 					end
 				end
 			end
 
-			local var_55_5 = fn(table.clone(self.config.TERROR_POWER_UPS), random_generator)
+			local available_power_ups = shuffle_array(table.clone(context.config.TERROR_POWER_UPS), random_generator)
 
-			for i_3, v_4 in ipairs(var_55_5) do
-				local var_55_6 = v_4[1]
-				local var_55_7 = v_4[2]
+			for _, available_power_up in ipairs(available_power_ups) do
+				local available_power_up_name = available_power_up[1]
+				local available_power_up_rarity = available_power_up[2]
 
-				if not fn_28(arg_55_1, var_55_3, var_55_6) then
-					var_55_2.terror_event_power_up = var_55_6
-					var_55_2.terror_event_power_up_rarity = var_55_7
+				if not check_if_power_up_is_already_granted_in_nodes(working_graph, all_nodes, available_power_up_name) then
+					base_node.terror_event_power_up = available_power_up_name
+					base_node.terror_event_power_up_rarity = available_power_up_rarity
 
 					break
 				end
 			end
 
-			if not var_55_2.terror_event_power_up then
+			if not base_node.terror_event_power_up then
 				Application.warning("could not assign power_up to node, add more power_ups or reduce lookahead in the settings.")
 			end
 		end
 	end
 end
 
-local function fn_31(arg_56_0, arg_56_1, arg_56_2)
+local function get_level_name(level, path, theme)
 	-- function 56
-	return arg_56_0 .. "_" .. arg_56_2 .. "_path" .. arg_56_1
+	return level .. "_" .. theme .. "_path" .. path
 end
 
-function deus_generate_seeds(arg_57_0)
+function deus_generate_seeds(level_seed)
 	-- function 57
-	local create_random_generator = DeusGenUtils.create_random_generator(arg_57_0)
-	local var_57_1, var_57_2 = create_random_generator()
-	local var_57_3, var_57_4 = create_random_generator()
-	local var_57_5, var_57_6 = create_random_generator()
-	local var_57_7, var_57_8 = create_random_generator()
-	local var_57_9, var_57_10 = create_random_generator()
+	local random_generator = DeusGenUtils.create_random_generator(level_seed)
+	local _, weapon_pickup_seed = random_generator()
+	local _, pickups_seed = random_generator()
+	local _, mutator_seed = random_generator()
+	local _, blessings_seed = random_generator()
+	local _, power_ups_seed = random_generator()
 
 	return {
-		weapon_pickup_seed = var_57_2,
-		pickups_seed = var_57_4,
-		mutator_seed = var_57_6,
-		blessings_seed = var_57_8,
-		power_ups_seed = var_57_10
+		weapon_pickup_seed = weapon_pickup_seed,
+		pickups_seed = pickups_seed,
+		mutator_seed = mutator_seed,
+		blessings_seed = blessings_seed,
+		power_ups_seed = power_ups_seed
 	}
 end
 
-function deus_populate_graph(arg_58_0, arg_58_1, arg_58_2, arg_58_3, arg_58_4)
+function deus_populate_graph(base_graph, seed, config, dominant_god, with_belakor)
 	-- function 58
-	local create_random_generator = DeusGenUtils.create_random_generator(arg_58_1)
-	local clone = table.clone(arg_58_0)
-	local tbl = {
+	local random_generator = DeusGenUtils.create_random_generator(seed)
+	local working_graph = table.clone(base_graph)
+	local context = {
 		indent = 0,
-		random_generator = create_random_generator,
-		config = arg_58_2,
-		dominant_god = arg_58_3,
+		random_generator = random_generator,
+		config = config,
+		dominant_god = dominant_god,
 		hot_spots = {}
 	}
-	local tbl_2 = {}
-	local tbl_4 = {}
+	local shuffled_levels_for_labels = {}
+	local level_availability_types = {}
 
-	for k, v in pairs(arg_58_2.LEVEL_AVAILABILITY) do
-		tbl_4[#tbl_4 + 1] = k
+	for type, _ in pairs(config.LEVEL_AVAILABILITY) do
+		level_availability_types[#level_availability_types + 1] = type
 	end
 
-	table.sort(tbl_4)
+	table.sort(level_availability_types)
 
-	for k_2, v_2 in pairs(tbl_4) do
-		local var_58_5 = arg_58_2.LEVEL_AVAILABILITY[v_2]
+	for _, type in pairs(level_availability_types) do
+		local levels = config.LEVEL_AVAILABILITY[type]
 
-		tbl_2[v_2] = fn_2(var_58_5, create_random_generator)
+		levels = get_random_key_list(levels, random_generator)
+		shuffled_levels_for_labels[type] = levels
 	end
 
-	for i, v_3 in ipairs(arg_58_2.LABEL_OVERRIDES) do
-		tbl_2 = tbl_3[v_3](tbl, clone, tbl_2)
+	for _, label_override in ipairs(config.LABEL_OVERRIDES) do
+		shuffled_levels_for_labels = LABEL_OVERRIDES[label_override](context, working_graph, shuffled_levels_for_labels)
 	end
 
-	tbl.shuffled_levels_for_labels = tbl_2
+	context.shuffled_levels_for_labels = shuffled_levels_for_labels
 
-	local function fn(arg_59_0, arg_59_1)
+	local function per_action_callback(action_list, action)
 		-- function 59
-		tbl.indent = #arg_59_0
+		context.indent = #action_list
 	end
 
-	local tbl_5 = {
-		fn_16(tbl, clone, "start")
+	local action_list = {
+		create_process_connections_action(context, working_graph, "start")
 	}
-	local get_generator = DeusGenEngine.get_generator(tbl_5, fn)
-	local var_58_9
-	local var_58_10
-	local num = 100000
+	local generator = DeusGenEngine.get_generator(action_list, per_action_callback)
+	local error_message, result
+	local process_count = 100000
 
-	for i6 = 1, num do
-		var_58_10, var_58_9 = get_generator()
+	for i = 1, process_count do
+		result, error_message = generator()
 
-		if not var_58_10 then
-			if not var_58_9 then
-				Application.warning("[deus_populate_graph.lua] failed to populate graph, maybe the settings are impossible to solve? error: " .. (var_58_9 or "N/A"))
+		if result then
+			if error_message then
+				Application.warning("[deus_populate_graph.lua] failed to populate graph, maybe the settings are impossible to solve? error: " .. (not not error_message or not not "N/A"))
 
 				return nil
 			end
@@ -1084,37 +1120,37 @@ function deus_populate_graph(arg_58_0, arg_58_1, arg_58_2, arg_58_3, arg_58_4)
 		end
 	end
 
-	if not var_58_10 then
-		Application.warning("[deus_populate_graph.lua] failed to populate graph, maybe the settings are impossible to solve? error: " .. (var_58_9 or "N/A"))
+	if not result then
+		Application.warning("[deus_populate_graph.lua] failed to populate graph, maybe the settings are impossible to solve? error: " .. (not not error_message or not not "N/A"))
 
 		return nil
 	end
 
-	fn_20(tbl, clone)
-	fn_24(tbl, clone)
+	calculate_progress(context, working_graph)
+	spread_curse(context, working_graph)
 
-	if not arg_58_4 then
-		fn_25(tbl, clone)
+	if with_belakor then
+		spread_belakor(context, working_graph)
 	end
 
-	fn_26(tbl, clone)
-	fn_27(tbl, clone)
-	fn_30(tbl, clone)
+	spread_minor_modifier_groups(context, working_graph)
+	assign_conflict_settings(context, working_graph)
+	spread_terror_event_power_ups(context, working_graph)
 
-	local tbl_6 = {}
+	local complete_graph = {}
 
-	for k_3, v_4 in pairs(clone) do
-		local var_58_13, var_58_14 = create_random_generator()
-		local var_58_15 = deus_generate_seeds(var_58_14)
-		local weapon_pickup_seed = var_58_15.weapon_pickup_seed
-		local pickups_seed = var_58_15.pickups_seed
-		local mutator_seed = var_58_15.mutator_seed
-		local blessings_seed = var_58_15.blessings_seed
-		local power_ups_seed = var_58_15.power_ups_seed
-		local tbl_7 = {
-			layout_x = v_4.layout_x,
-			layout_y = v_4.layout_y,
-			level_seed = var_58_14,
+	for key, base_node in pairs(working_graph) do
+		local _, level_seed = random_generator()
+		local seeds = deus_generate_seeds(level_seed)
+		local weapon_pickup_seed = seeds.weapon_pickup_seed
+		local pickups_seed = seeds.pickups_seed
+		local mutator_seed = seeds.mutator_seed
+		local blessings_seed = seeds.blessings_seed
+		local power_ups_seed = seeds.power_ups_seed
+		local tbl = {
+			layout_x = base_node.layout_x,
+			layout_y = base_node.layout_y,
+			level_seed = level_seed,
 			weapon_pickup_seed = weapon_pickup_seed,
 			system_seeds = {
 				pickups = pickups_seed,
@@ -1123,88 +1159,92 @@ function deus_populate_graph(arg_58_0, arg_58_1, arg_58_2, arg_58_3, arg_58_4)
 				power_ups = power_ups_seed
 			}
 		}
-		local god = v_4.god
+		local god = base_node.god
 
-		god = god or "wastes"
-		tbl_7.theme = god
-		tbl_7.minor_modifier_group = v_4.minor_modifier_group
-		tbl_7.run_progress = v_4.run_progress
+		god = not not god or not not "wastes"
+		tbl.theme = god
+		tbl.minor_modifier_group = base_node.minor_modifier_group
+		tbl.run_progress = base_node.run_progress
 
-		local conflict_settings = v_4.conflict_settings
+		local conflict_settings = base_node.conflict_settings
 
-		conflict_settings = conflict_settings or "disabled"
-		tbl_7.conflict_settings = conflict_settings
-		tbl_7.level_type = v_4.type
-		tbl_7.mutators = arg_58_2.MUTATORS[v_4.type]
-		tbl_7.terror_event_power_up = v_4.terror_event_power_up
-		tbl_7.terror_event_power_up_rarity = v_4.terror_event_power_up_rarity
-		tbl_7.possible_arena_belakor_nodes = v_4.possible_arena_belakor_nodes
-		tbl_7.next = table.clone(v_4.next)
+		conflict_settings = not not conflict_settings or not not "disabled"
+		tbl.conflict_settings = conflict_settings
+		tbl.level_type = base_node.type
+		tbl.mutators = config.MUTATORS[base_node.type]
+		tbl.terror_event_power_up = base_node.terror_event_power_up
+		tbl.terror_event_power_up_rarity = base_node.terror_event_power_up_rarity
+		tbl.possible_arena_belakor_nodes = base_node.possible_arena_belakor_nodes
+		tbl.next = table.clone(base_node.next)
 
-		if not (not script_data.deus_shoppify_run and v_4.type == "START" or v_4.type == "ARENA") then
-			local keys = table.keys(DeusShopSettings.shop_types)
+		local node = tbl
 
-			v_4.level = keys[create_random_generator(1, #keys)]
-			v_4.type = "SHOP"
+		if script_data.deus_shoppify_run and base_node.type ~= "START" and base_node.type ~= "ARENA" then
+			local shop_types = table.keys(DeusShopSettings.shop_types)
+			local random_id = random_generator(1, #shop_types)
+			local shop_type = shop_types[random_id]
+
+			base_node.level = shop_type
+			base_node.type = "SHOP"
 		end
 
-		if not (v_4.type == "SIGNATURE" or v_4.type == "TRAVEL" or v_4.type ~= "ARENA") then
-			tbl_7.base_level = v_4.level
-			tbl_7.path = v_4.path
+		if base_node.type == "SIGNATURE" or base_node.type == "TRAVEL" or base_node.type == "ARENA" then
+			node.base_level = base_node.level
+			node.path = base_node.path
 
-			local themes = arg_58_2.LEVEL_AVAILABILITY[v_4.type][v_4.level].themes
+			local themes = config.LEVEL_AVAILABILITY[base_node.type][base_node.level].themes
 			local contains = table.contains
-			local var_58_27 = themes
-			local god_2 = v_4.god
+			local var_58_4 = themes
+			local god_2 = base_node.god
 
-			god_2 = god_2 or "wastes"
+			god_2 = not not god_2 or not not "wastes"
 
-			if not contains(var_58_27, god_2) then
-				local var_58_29 = themes[1]
+			if not contains(var_58_4, god_2) then
+				local any_theme = themes[1]
 				local warning = Application.warning
 				local format = string.format
 				local str = "[deus_populate_graph.lua] theme %s not found for level %s, using %s"
-				local god_3 = v_4.god
+				local god_3 = base_node.god
 
-				god_3 = god_3 or "wastes"
+				god_3 = not not god_3 or not not "wastes"
 
-				warning(format(str, god_3, v_4.level, var_58_29))
+				warning(format(str, god_3, base_node.level, any_theme))
 
-				tbl_7.level = fn_31(v_4.level, v_4.path, var_58_29)
+				node.level = get_level_name(base_node.level, base_node.path, any_theme)
 			else
-				local var_58_34 = fn_31
-				local level = v_4.level
-				local path = v_4.path
-				local god_4 = v_4.god
+				local var_58_10 = get_level_name
+				local level = base_node.level
+				local path = base_node.path
+				local god_4 = base_node.god
 
-				god_4 = god_4 or "wastes"
-				tbl_7.level = var_58_34(level, path, god_4)
+				god_4 = not not god_4 or not not "wastes"
+				node.level = var_58_10(level, path, god_4)
 			end
 
-			local var_58_38 = arg_58_2.LEVEL_ALIAS[tbl_7.level]
+			local level_alias = config.LEVEL_ALIAS[node.level]
 
-			if not arg_58_2.LEVEL_ALIAS[tbl_7.level] then
-				tbl_7.level = var_58_38
+			if config.LEVEL_ALIAS[node.level] then
+				node.level = level_alias
 			end
 
-			tbl_7.curse = v_4.curse
-			tbl_7.node_type = "ingame"
-		elseif v_4.type == "SHOP" then
-			tbl_7.base_level = v_4.level
-			tbl_7.level = v_4.level
-			tbl_7.path = 0
-			tbl_7.node_type = "shop"
-		elseif v_4.type == "START" then
-			tbl_7.level = "dlc_morris_map"
-			tbl_7.path = 0
-			tbl_7.base_level = "dlc_morris_map"
-			tbl_7.node_type = "start"
+			node.curse = base_node.curse
+			node.node_type = "ingame"
+		elseif base_node.type == "SHOP" then
+			node.base_level = base_node.level
+			node.level = base_node.level
+			node.path = 0
+			node.node_type = "shop"
+		elseif base_node.type == "START" then
+			node.level = "dlc_morris_map"
+			node.path = 0
+			node.base_level = "dlc_morris_map"
+			node.node_type = "start"
 		end
 
-		printf("Generated node with: Level <%s>, level_seed <%s>, Run progress <%s>", tbl_7.level, var_58_14, tbl_7.run_progress)
+		printf("Generated node with: Level <%s>, level_seed <%s>, Run progress <%s>", node.level, level_seed, node.run_progress)
 
-		tbl_6[k_3] = tbl_7
+		complete_graph[key] = node
 	end
 
-	return tbl_6
+	return complete_graph
 end

@@ -2,7 +2,7 @@
 
 local Paintings = Paintings
 
-Paintings = Paintings or {}
+Paintings = not not Paintings or not not {}
 Paintings = Paintings
 Paintings.hidden = {
 	sound_event = "painting_none_description",
@@ -2123,7 +2123,7 @@ DefaultPaintings = {
 	"hidden"
 }
 
-local tbl = {
+local painting_order = {
 	"hor_none",
 	"hor_dragon01",
 	"hor_highelf01",
@@ -2266,21 +2266,21 @@ local tbl = {
 }
 local PaintingOrder = PaintingOrder
 
-PaintingOrder = PaintingOrder or {}
+PaintingOrder = not not PaintingOrder or not not {}
 PaintingOrder = PaintingOrder
 
-for i, v in ipairs(tbl) do
-	if not (table.contains(PaintingOrder, v) or table.contains(DefaultPaintings, v)) then
-		PaintingOrder[#PaintingOrder + 1] = v
+for _, painting in ipairs(painting_order) do
+	if not table.contains(PaintingOrder, painting) and not table.contains(DefaultPaintings, painting) then
+		PaintingOrder[#PaintingOrder + 1] = painting
 	end
 end
 
-local str = "resource_packages/keep_paintings/keep_painting_"
+local prefix = "resource_packages/keep_paintings/keep_painting_"
 local PaintingPackageNames = PaintingPackageNames
 
-PaintingPackageNames = PaintingPackageNames or {}
+PaintingPackageNames = not not PaintingPackageNames or not not {}
 PaintingPackageNames = PaintingPackageNames
 
-for k, v_2 in pairs(Paintings) do
-	PaintingPackageNames[str .. k] = true
+for painting_name, _ in pairs(Paintings) do
+	PaintingPackageNames[prefix .. painting_name] = true
 end

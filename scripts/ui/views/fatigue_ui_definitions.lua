@@ -1,6 +1,6 @@
 -- chunkname: @scripts/ui/views/fatigue_ui_definitions.lua
 
-local tbl = {
+local scenegraph_definition = {
 	root = {
 		scale = "fit",
 		position = {
@@ -69,7 +69,7 @@ local tbl = {
 		}
 	}
 }
-local tbl_2 = {
+local shield_animations = {
 	state_2 = {
 		time = 0.2,
 		pictures = {
@@ -90,7 +90,7 @@ local tbl_2 = {
 		}
 	}
 }
-local tbl_3 = {
+local shield = {
 	scenegraph_id = "shield",
 	element = {
 		passes = {
@@ -102,9 +102,9 @@ local tbl_3 = {
 				pass_type = "texture",
 				style_id = "texture_glow_id",
 				texture_id = "texture_glow_id",
-				content_check_function = function (self)
+				content_check_function = function (content)
 					-- function 1
-					return self.show_glow
+					return content.show_glow
 				end
 			}
 		}
@@ -137,10 +137,10 @@ local tbl_3 = {
 		},
 		state_animations = {
 			state_1 = {
-				state_3 = tbl_2.state_3
+				state_3 = shield_animations.state_3
 			},
 			state_2 = {
-				state_3 = tbl_2.state_3
+				state_3 = shield_animations.state_3
 			}
 		},
 		texture_glow_id = {
@@ -166,6 +166,6 @@ local tbl_3 = {
 }
 
 return {
-	scenegraph_definition = tbl,
-	shield_definition = tbl_3
+	scenegraph_definition = scenegraph_definition,
+	shield_definition = shield
 }

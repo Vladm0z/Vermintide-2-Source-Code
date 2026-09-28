@@ -2,45 +2,45 @@
 
 CameraStateFollowChaosSpawnGrabbed = class(CameraStateFollowChaosSpawnGrabbed, CameraState)
 
-CameraStateFollowChaosSpawnGrabbed.init = function (self, arg_1_1)
+CameraStateFollowChaosSpawnGrabbed.init = function (self, camera_state_init_context)
 	-- function 1
-	CameraState.init(self, arg_1_1, "chaos_spawn_grabbed")
+	CameraState.init(self, camera_state_init_context, "chaos_spawn_grabbed")
 
 	self._follow_unit = nil
 	self._follow_node = 0
 end
 
-CameraStateFollowChaosSpawnGrabbed.on_enter = function (self, arg_2_1, arg_2_2, arg_2_3, arg_2_4, arg_2_5, arg_2_6, arg_2_7)
+CameraStateFollowChaosSpawnGrabbed.on_enter = function (self, unit, input, dt, context, t, previous_state, params)
 	-- function 2
 	local camera_extension = self.camera_extension
-	local get_follow_data, var_2_2 = camera_extension:get_follow_data()
+	local follow_unit, follow_node = camera_extension:get_follow_data()
 	local viewport_name = camera_extension.viewport_name
 
-	self._follow_unit = get_follow_data
-	self._follow_node = var_2_2
+	self._follow_unit = follow_unit
+	self._follow_node = follow_node
 
-	local camera = Managers.state.camera
-	local normalize = Vector3.normalize(Vector3.flat(Quaternion.forward(Unit.local_rotation(get_follow_data, 0))))
-	local atan2 = math.atan2(normalize.y, normalize.x)
+	local camera_manager = Managers.state.camera
+	local root_look_dir = Vector3.normalize(Vector3.flat(Quaternion.forward(Unit.local_rotation(follow_unit, 0))))
+	local yaw = math.atan2(root_look_dir.y, root_look_dir.x)
 
-	camera:set_pitch_yaw(viewport_name, -0.5, atan2)
-	Unit.set_data(arg_2_1, "camera", "settings_node", "chaos_spawn_grabbed")
+	camera_manager:set_pitch_yaw(viewport_name, -0.5, yaw)
+	Unit.set_data(unit, "camera", "settings_node", "chaos_spawn_grabbed")
 end
 
-CameraStateFollowChaosSpawnGrabbed.on_exit = function (self, arg_3_1, arg_3_2, arg_3_3, arg_3_4, arg_3_5, arg_3_6)
+CameraStateFollowChaosSpawnGrabbed.on_exit = function (self, unit, input, dt, context, t, next_state)
 	-- function 3
 	self._follow_unit = nil
 end
 
-CameraStateFollowChaosSpawnGrabbed.update = function (self, arg_4_1, arg_4_2, arg_4_3, arg_4_4, arg_4_5)
+CameraStateFollowChaosSpawnGrabbed.update = function (self, unit, input, dt, context, t)
 	-- function 4
 	local csm = self.csm
 	local unit = self.unit
 	local camera_extension = self.camera_extension
-	local _follow_unit = self._follow_unit
-	local _follow_node = self._follow_node
+	local follow_unit = self._follow_unit
+	local follow_node = self._follow_node
 
-	if not Unit.alive(_follow_unit) then
+	if not Unit.alive(follow_unit) then
 		csm:change_state("idle")
 
 		return
@@ -49,12 +49,12 @@ CameraStateFollowChaosSpawnGrabbed.update = function (self, arg_4_1, arg_4_2, ar
 	local external_state_change = camera_extension.external_state_change
 	local external_state_change_params = camera_extension.external_state_change_params
 
-	if not (not external_state_change and external_state_change == self.name) then
+	if external_state_change and external_state_change ~= self.name then
 		csm:change_state(external_state_change, external_state_change_params)
 		camera_extension:set_external_state_change(nil)
 
 		return
 	end
 
-	CameraStateHelper.set_local_pose(unit, _follow_unit, _follow_node)
+	CameraStateHelper.set_local_pose(unit, follow_unit, follow_node)
 end

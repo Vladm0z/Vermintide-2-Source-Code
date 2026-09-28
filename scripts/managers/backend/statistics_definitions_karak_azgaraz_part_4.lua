@@ -1,7 +1,7 @@
 -- chunkname: @scripts/managers/backend/statistics_definitions_karak_azgaraz_part_4.lua
 
 local player = StatisticsDefinitions.player
-local tbl = {
+local database_names = {
 	"dwarf_feculent_buboes",
 	"dwarf_statue_emote",
 	"dwarf_go_fish",
@@ -10,12 +10,12 @@ local tbl = {
 	"whaling_all_challenges"
 }
 
-for i = 1, #tbl do
-	local var_0_2 = tbl[i]
+for i = 1, #database_names do
+	local name = database_names[i]
 
-	player[var_0_2] = {
+	player[name] = {
 		value = 0,
 		source = "player_data",
-		database_name = var_0_2
+		database_name = name
 	}
 end

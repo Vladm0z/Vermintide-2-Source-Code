@@ -4,42 +4,42 @@ require("scripts/entity_system/systems/behaviour/nodes/bt_node")
 
 BTTentacleSpawnAction = class(BTTentacleSpawnAction, BTNode)
 
-BTTentacleSpawnAction.init = function (arg_1_0, ...)
+BTTentacleSpawnAction.init = function (self, ...)
 	-- function 1
-	BTTentacleSpawnAction.super.init(arg_1_0, ...)
+	BTTentacleSpawnAction.super.init(self, ...)
 end
 
 BTTentacleSpawnAction.name = "BTTentacleSpawnAction"
 
-BTTentacleSpawnAction.enter = function (self, arg_2_1, arg_2_2, arg_2_3)
+BTTentacleSpawnAction.enter = function (self, unit, blackboard, t)
 	-- function 2
-	local action_data = self._tree_node.action_data
+	local action = self._tree_node.action_data
 
-	arg_2_2.action = action_data
+	blackboard.action = action
 
-	if not action_data and not action_data.duration then
-		arg_2_2.spawn_finished_t = arg_2_3 + action_data.duration
+	if action and action.duration then
+		blackboard.spawn_finished_t = t + action.duration
 	end
 
-	local network = Managers.state.network
+	local network_manager = Managers.state.network
 
-	if not action_data and not action_data.animation then
-		network:anim_event(arg_2_1, action_data.animation)
+	if action and action.animation then
+		network_manager:anim_event(unit, action.animation)
 	end
 end
 
-BTTentacleSpawnAction.leave = function (arg_3_0, arg_3_1, arg_3_2, arg_3_3, arg_3_4, arg_3_5)
+BTTentacleSpawnAction.leave = function (self, unit, blackboard, t, reason, destroy)
 	-- function 3
-	arg_3_2.spawn = false
+	blackboard.spawn = false
 end
 
-BTTentacleSpawnAction.run = function (arg_4_0, arg_4_1, arg_4_2, arg_4_3, arg_4_4)
+BTTentacleSpawnAction.run = function (self, unit, blackboard, t, dt)
 	-- function 4
-	local action = arg_4_2.action
+	local action = blackboard.action
 
-	if not action and not action.duration then
-		if arg_4_3 > arg_4_2.spawn_finished_t then
-			arg_4_2.spawn_finished_t = nil
+	if action and action.duration then
+		if t > blackboard.spawn_finished_t then
+			blackboard.spawn_finished_t = nil
 
 			return "done"
 		end

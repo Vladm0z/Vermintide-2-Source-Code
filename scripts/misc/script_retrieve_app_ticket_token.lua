@@ -10,10 +10,10 @@ end
 
 ScriptReceiveAppTicketToken.update = function (self)
 	-- function 2
-	local poll_encrypted_app_ticket = Steam.poll_encrypted_app_ticket()
+	local encrypted_app_ticket_raw = Steam.poll_encrypted_app_ticket()
 
-	if not poll_encrypted_app_ticket then
-		self._encrypted_app_ticket = string.tohex(poll_encrypted_app_ticket)
+	if encrypted_app_ticket_raw then
+		self._encrypted_app_ticket = string.tohex(encrypted_app_ticket_raw)
 		self._done = true
 		self._error = false
 	end
@@ -21,10 +21,12 @@ end
 
 ScriptReceiveAppTicketToken.info = function (self)
 	-- function 3
-	return {
+	local info = {
 		encrypted_app_ticket = self._encrypted_app_ticket,
 		error = self._error
 	}
+
+	return info
 end
 
 ScriptReceiveAppTicketToken.done = function (self)
@@ -32,7 +34,7 @@ ScriptReceiveAppTicketToken.done = function (self)
 	return self._done
 end
 
-ScriptReceiveAppTicketToken.close = function (arg_5_0)
+ScriptReceiveAppTicketToken.close = function (self)
 	-- function 5
 	return
 end

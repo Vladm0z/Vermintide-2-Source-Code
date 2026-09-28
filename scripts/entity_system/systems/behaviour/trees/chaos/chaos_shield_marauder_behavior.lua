@@ -1,6 +1,6 @@
 -- chunkname: @scripts/entity_system/systems/behaviour/trees/chaos/chaos_shield_marauder_behavior.lua
 
-local chaos_marauder_with_shield = BreedActions.chaos_marauder_with_shield
+local ACTIONS = BreedActions.chaos_marauder_with_shield
 
 BreedBehaviors.shield_marauder = {
 	"BTSelector",
@@ -23,13 +23,13 @@ BreedBehaviors.shield_marauder = {
 		"BTStaggerAction",
 		name = "stagger",
 		condition = "stagger",
-		action_data = chaos_marauder_with_shield.stagger
+		action_data = ACTIONS.stagger
 	},
 	{
 		"BTBlockedAction",
 		name = "blocked",
 		condition = "blocked",
-		action_data = chaos_marauder_with_shield.blocked
+		action_data = ACTIONS.blocked
 	},
 	{
 		"BTSelector",
@@ -52,7 +52,7 @@ BreedBehaviors.shield_marauder = {
 			"BTSmashDoorAction",
 			name = "smash_door",
 			condition = "at_door_smartobject",
-			action_data = chaos_marauder_with_shield.smash_door
+			action_data = ACTIONS.smash_door
 		},
 		condition = "at_smartobject",
 		name = "smartobject"
@@ -61,27 +61,27 @@ BreedBehaviors.shield_marauder = {
 		"BTHesitateAction",
 		name = "hesitate",
 		condition = "is_alerted",
-		action_data = chaos_marauder_with_shield.alerted
+		action_data = ACTIONS.alerted
 	},
 	{
 		"BTUtilityNode",
-		action_data = chaos_marauder_with_shield.utility_action,
+		action_data = ACTIONS.utility_action,
 		{
 			"BTClanRatFollowAction",
 			name = "follow",
-			action_data = chaos_marauder_with_shield.follow
+			action_data = ACTIONS.follow
 		},
 		{
 			"BTAttackAction",
 			name = "running_attack",
 			condition = "ask_target_before_attacking",
-			action_data = chaos_marauder_with_shield.running_attack
+			action_data = ACTIONS.running_attack
 		},
 		{
 			"BTAttackAction",
 			name = "normal_attack",
 			condition = "ask_target_before_attacking",
-			action_data = chaos_marauder_with_shield.normal_attack
+			action_data = ACTIONS.normal_attack
 		},
 		name = "in_combat",
 		condition = "confirmed_player_sighting"
@@ -90,13 +90,13 @@ BreedBehaviors.shield_marauder = {
 		"BTAlertedAction",
 		name = "alerted",
 		condition = "player_spotted",
-		action_data = chaos_marauder_with_shield.alerted
+		action_data = ACTIONS.alerted
 	},
 	{
 		"BTMoveToGoalAction",
 		name = "move_to_goal",
 		condition = "has_goal_destination",
-		action_data = chaos_marauder_with_shield.follow
+		action_data = ACTIONS.follow
 	},
 	{
 		"BTIdleAction",

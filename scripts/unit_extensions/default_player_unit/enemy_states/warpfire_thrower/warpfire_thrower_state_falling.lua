@@ -2,18 +2,20 @@
 
 WarpfireThrowerStateFalling = class(WarpfireThrowerStateFalling, EnemyCharacterStateFalling)
 
-WarpfireThrowerStateFalling.init = function (self, arg_1_1)
+WarpfireThrowerStateFalling.init = function (self, character_state_init_context)
 	-- function 1
-	WarpfireThrowerStateFalling.super.init(self, arg_1_1)
+	WarpfireThrowerStateFalling.super.init(self, character_state_init_context)
 
 	self._fire_ability_id = self._career_extension:ability_id("fire")
 end
 
-WarpfireThrowerStateFalling.update = function (self, arg_2_1, arg_2_2, arg_2_3, arg_2_4, arg_2_5)
+WarpfireThrowerStateFalling.update = function (self, unit, input, dt, context, t)
 	-- function 2
-	local is_in_ghost_mode = self._ghost_mode_extension:is_in_ghost_mode()
+	local ghost_mode_extension = self._ghost_mode_extension
+	local in_ghost_mode = ghost_mode_extension:is_in_ghost_mode()
+	local handled = self:common_movement(in_ghost_mode, dt, unit)
 
-	if not self:common_movement(is_in_ghost_mode, arg_2_3, arg_2_1) then
-		CharacterStateHelper.update_weapon_actions(arg_2_5, arg_2_1, self._input_extension, self._inventory_extension, self._health_extension)
+	if not handled then
+		CharacterStateHelper.update_weapon_actions(t, unit, self._input_extension, self._inventory_extension, self._health_extension)
 	end
 end

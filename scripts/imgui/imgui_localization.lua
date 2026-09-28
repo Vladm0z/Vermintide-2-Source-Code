@@ -2,7 +2,7 @@
 
 ImguiLocalization = class(ImguiLocalization)
 
-local tbl = {
+local LOCALES = {
 	"br-pt",
 	"de",
 	"en",
@@ -25,46 +25,46 @@ end
 
 ImguiLocalization.update = function (self)
 	-- function 2
-	local remove = table.remove(self._action_queue)
+	local action = table.remove(self._action_queue)
 
-	if not remove then
-		remove()
+	if action then
+		action()
 	end
 end
 
-ImguiLocalization.action_push = function (self, arg_3_1)
+ImguiLocalization.action_push = function (self, thunk)
 	-- function 3
-	local _action_queue = self._action_queue
+	local queue = self._action_queue
 
-	_action_queue.n = _action_queue.n + 1
+	queue.n = queue.n + 1
 
-	table.insert(_action_queue, 1, arg_3_1)
+	table.insert(queue, 1, thunk)
 end
 
 ImguiLocalization.draw = function (self)
 	-- function 4
-	local begin_window = Imgui.begin_window("Localization", "menu_bar")
-	local language_id = Managers.localizer:language_id()
-	local count = #self._action_queue
-	local flag = count == 0
+	local do_close = Imgui.begin_window("Localization", "menu_bar")
+	local current_locale = Managers.localizer:language_id()
+	local queue_n = #self._action_queue
+	local is_queue_empty = queue_n == 0
 
-	if not Imgui.begin_menu_bar() then
-		if not Imgui.menu_item("Save") then
-			Managers.localizer:set_locale_override_setting(language_id)
+	if Imgui.begin_menu_bar() then
+		if Imgui.menu_item("Save") then
+			Managers.localizer:set_locale_override_setting(current_locale)
 		end
 
-		if not Imgui.menu_item("Clear") then
+		if Imgui.menu_item("Clear") then
 			Managers.localizer:set_locale_override_setting(nil)
 		end
 
 		Imgui.end_menu_bar()
 	end
 
-	for i, v in ipairs(tbl) do
-		local flag_2 = v == language_id
+	for i, locale in ipairs(LOCALES) do
+		local is_selected = locale == current_locale
 
-		if not Imgui.radio_button(v, flag_2) and not flag then
-			Managers.localizer:_set_locale(v)
+		if Imgui.radio_button(locale, is_selected) and is_queue_empty then
+			Managers.localizer:_set_locale(locale)
 		end
 
 		Imgui.same_line()
@@ -74,54 +74,54 @@ ImguiLocalization.draw = function (self)
 	Imgui.text("Locale override")
 	Imgui.separator()
 
-	local input_text = Imgui.input_text("Localize text", self._text)
+	local text = Imgui.input_text("Localize text", self._text)
 
-	self._text = input_text
+	self._text = text
 
-	local _action_queue = self._action_queue
-	local _cached_localizations = self._cached_localizations
+	local queue = self._action_queue
+	local cache = self._cached_localizations
 
-	if not Imgui.button("Localize") and not flag then
-		_action_queue.n = 0
+	if Imgui.button("Localize") and is_queue_empty then
+		queue.n = 0
 
-		local find = table.find(tbl, language_id)
+		local j = table.find(LOCALES, current_locale)
 
-		for i_2, v_2 in ipairs(tbl) do
-			_cached_localizations[i_2] = "<>"
+		for i, locale in ipairs(LOCALES) do
+			cache[i] = "<>"
 
-			if i_2 ~= find then
+			if i ~= j then
 				self:action_push(NOP)
 				self:action_push(function ()
 					-- function 5
-					Managers.localizer:_set_locale(v_2)
+					Managers.localizer:_set_locale(locale)
 				end)
 				self:action_push(NOP)
 				self:action_push(function ()
 					-- function 6
-					local var_6_0 = Localize(input_text)
+					local loc = Localize(text)
 
-					self._cached_localizations[i_2] = var_6_0
+					self._cached_localizations[i] = loc
 				end)
 			end
 		end
 
 		self:action_push(function ()
 			-- function 7
-			Managers.localizer:_set_locale(language_id)
+			Managers.localizer:_set_locale(current_locale)
 		end)
 		self:action_push(function ()
 			-- function 8
-			local var_8_0 = Localize(input_text)
+			local loc = Localize(text)
 
-			self._cached_localizations[find] = var_8_0
+			self._cached_localizations[j] = loc
 		end)
 	end
 
 	local progress_bar = Imgui.progress_bar
 	local num
 
-	if _action_queue.n > 0 then
-		num = 1 - count / _action_queue.n
+	if queue.n > 0 then
+		num = 1 - queue_n / queue.n
 
 		if not num then
 			-- Nothing
@@ -134,47 +134,55 @@ ImguiLocalization.draw = function (self)
 
 	progress_bar(num)
 
-	for i_3, v_3 in ipairs(tbl) do
-		local var_4_11 = _cached_localizations[i_3]
+	for i, locale in ipairs(LOCALES) do
+		local var_4_2 = cache[i]
 
-		var_4_11 = var_4_11 or ""
+		if not var_4_2 then
+			-- Nothing
+		end
 
-		Imgui.text_colored(v_3, 200, 200, 200, 255)
-		Imgui.same_line(50 - Imgui.calculate_text_size(v_3))
+		var_4_2 = ""
 
-		if string.sub(var_4_11, 1, 1) == "<" then
-			Imgui.text_colored(var_4_11, 255, 200, 200, 255)
+		local loc_text = var_4_2
+
+		::label_4_1::
+
+		Imgui.text_colored(locale, 200, 200, 200, 255)
+		Imgui.same_line(50 - Imgui.calculate_text_size(locale))
+
+		if string.sub(loc_text, 1, 1) == "<" then
+			Imgui.text_colored(loc_text, 255, 200, 200, 255)
 		else
-			Imgui.text(var_4_11)
+			Imgui.text(loc_text)
 		end
 	end
 
 	Imgui.separator()
 
-	if not (not UnlocalizedStrings and table.is_empty(UnlocalizedStrings)) then
+	if UnlocalizedStrings and not table.is_empty(UnlocalizedStrings) then
 		Imgui.text("Unlocalized strings encountered so far:")
 		Imgui.same_line()
 
-		local button = Imgui.button("Copy to clipboard")
+		local copy_to_clipboard = Imgui.button("Copy to clipboard")
 
 		Imgui.begin_child_window("UnlocalizedStrings", 0, 0, true)
 
-		local keys = table.keys(UnlocalizedStrings)
+		local sorted_strings = table.keys(UnlocalizedStrings)
 
-		table.sort(keys)
+		table.sort(sorted_strings)
 
-		if not button then
-			Clipboard.put(table.concat(keys, "\n"))
+		if copy_to_clipboard then
+			Clipboard.put(table.concat(sorted_strings, "\n"))
 		end
 
-		for i_4, v_4 in ipairs(keys) do
-			if not Imgui.tree_node(v_4) then
-				local text = Imgui.text
-				local var_4_15 = UnlocalizedStrings[v_4]
+		for _, unloc_key in ipairs(sorted_strings) do
+			if Imgui.tree_node(unloc_key) then
+				local text_2 = Imgui.text
+				local var_4_4 = UnlocalizedStrings[unloc_key]
 
-				var_4_15 = var_4_15 or "?"
+				var_4_4 = not not var_4_4 or not not "?"
 
-				text(var_4_15)
+				text_2(var_4_4)
 				Imgui.tree_pop()
 			end
 		end
@@ -184,10 +192,10 @@ ImguiLocalization.draw = function (self)
 
 	Imgui.end_window()
 
-	return begin_window
+	return do_close
 end
 
-ImguiLocalization.is_persistent = function (arg_9_0)
+ImguiLocalization.is_persistent = function (self)
 	-- function 9
 	return false
 end

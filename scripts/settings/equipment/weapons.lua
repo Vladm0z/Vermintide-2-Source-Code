@@ -25,48 +25,48 @@ DamageTypes = {
 
 local Weapons = Weapons
 
-Weapons = Weapons or {}
+Weapons = not not Weapons or not not {}
 Weapons = Weapons
 
-local var_0_1 = dofile("scripts/settings/equipment/honduras_weapon_templates")
+local weapon_template_files_names = dofile("scripts/settings/equipment/honduras_weapon_templates")
 
-for k, v in pairs(DLCSettings) do
-	if not v.weapon_template_file_names then
-		table.append(var_0_1, v.weapon_template_file_names)
+for _, dlc in pairs(DLCSettings) do
+	if dlc.weapon_template_file_names then
+		table.append(weapon_template_files_names, dlc.weapon_template_file_names)
 	end
 end
 
-for k_2 = 1, #var_0_1 do
-	local var_0_2 = var_0_1[k_2]
-	local var_0_3 = dofile(var_0_2)
+for i = 1, #weapon_template_files_names do
+	local file_name = weapon_template_files_names[i]
+	local weapon_templates = dofile(file_name)
 
-	if not var_0_3 then
-		for k_3, v_2 in pairs(var_0_3) do
-			local actions = v_2.actions
-			local tbl = {}
+	if weapon_templates then
+		for template_name, template in pairs(weapon_templates) do
+			local actions = template.actions
+			local required_projectile_unit_templates = {}
 
-			v_2.required_projectile_unit_templates = tbl
+			template.required_projectile_unit_templates = required_projectile_unit_templates
 
-			for k_4, v_3 in pairs(actions) do
-				for k_5, v_4 in pairs(v_3) do
-					local projectile_info = v_4.projectile_info
+			for _, sub_actions in pairs(actions) do
+				for _, sub_action_data in pairs(sub_actions) do
+					local projectile_info = sub_action_data.projectile_info
 
-					if not projectile_info then
+					if projectile_info then
 						local projectile_units_template = projectile_info.projectile_units_template
 
-						if not projectile_units_template then
-							tbl[projectile_units_template] = projectile_info.use_weapon_skin == true
+						if projectile_units_template then
+							required_projectile_unit_templates[projectile_units_template] = projectile_info.use_weapon_skin == true
 						end
 					end
 				end
 			end
 
-			Weapons[k_3] = v_2
+			Weapons[template_name] = template
 		end
 	end
 end
 
-table.clear(var_0_1)
+table.clear(weapon_template_files_names)
 
 DAMAGE_TYPES_AOE = {
 	warpfire_face = true,
@@ -77,128 +77,162 @@ DAMAGE_TYPES_AOE = {
 	warpfire_ground = true
 }
 
-local function fn(arg_1_0, arg_1_1, arg_1_2)
+local function kinda_equals(a, b, tolerence)
 	-- function 1
-	return arg_1_2 > math.abs(arg_1_0 - arg_1_1)
+	return tolerence > math.abs(a - b)
 end
 
-local tbl_2 = {}
+local buff_params = {}
 
-local function fn_2(arg_2_0, arg_2_1, arg_2_2, arg_2_3, arg_2_4, arg_2_5)
+local function add_dot(dot_template_name, hit_unit, attacker_unit, damage_source, power_level, source_attacker_unit)
 	-- function 2
-	if not ScriptUnit.has_extension(arg_2_1, "buff_system") then
-		table.clear(tbl_2)
+	if ScriptUnit.has_extension(hit_unit, "buff_system") then
+		table.clear(buff_params)
 
-		tbl_2.attacker_unit = arg_2_2
-		tbl_2.damage_source = arg_2_3
-		tbl_2.power_level = arg_2_4
-		tbl_2.source_attacker_unit = arg_2_5
+		buff_params.attacker_unit = attacker_unit
+		buff_params.damage_source = damage_source
+		buff_params.power_level = power_level
+		buff_params.source_attacker_unit = source_attacker_unit
 
-		ScriptUnit.extension(arg_2_1, "buff_system"):add_buff(arg_2_0, tbl_2)
+		local buff_extension = ScriptUnit.extension(hit_unit, "buff_system")
+
+		buff_extension:add_buff(dot_template_name, buff_params)
 	end
 end
 
-local function fn_3(arg_3_0, arg_3_1, arg_3_2, arg_3_3, arg_3_4, arg_3_5)
+local function add_dot_network_synced(dot_template_name, hit_unit, attacker_unit, damage_source, power_level, source_attacker_unit)
 	-- function 3
-	if not ScriptUnit.has_extension(arg_3_1, "buff_system") then
-		table.clear(tbl_2)
+	if ScriptUnit.has_extension(hit_unit, "buff_system") then
+		table.clear(buff_params)
 
-		tbl_2.attacker_unit = arg_3_2
-		tbl_2.damage_source = arg_3_3
-		tbl_2.power_level = arg_3_4
-		tbl_2.source_attacker_unit = arg_3_5
+		buff_params.attacker_unit = attacker_unit
+		buff_params.damage_source = damage_source
+		buff_params.power_level = power_level
+		buff_params.source_attacker_unit = source_attacker_unit
 
-		Managers.state.entity:system("buff_system"):add_buff_synced(arg_3_1, arg_3_0, BuffSyncType.All, tbl_2)
+		local buff_system = Managers.state.entity:system("buff_system")
 
-		if not arg_3_5 then
-			local unit_breed = AiUtils.unit_breed(arg_3_1)
+		buff_system:add_buff_synced(hit_unit, dot_template_name, BuffSyncType.All, buff_params)
 
-			if not (not unit_breed and unit_breed.is_hero) then
-				AiUtils.alert_unit_of_enemy(arg_3_1, arg_3_5)
+		if source_attacker_unit then
+			local breed = AiUtils.unit_breed(hit_unit)
+
+			if breed and not breed.is_hero then
+				AiUtils.alert_unit_of_enemy(hit_unit, source_attacker_unit)
 			end
 		end
 	end
 end
 
 Dots = {
-	poison_dot = function (arg_4_0, arg_4_1, arg_4_2, arg_4_3, arg_4_4, arg_4_5, arg_4_6, arg_4_7, arg_4_8, arg_4_9, arg_4_10)
+	poison_dot = function (dot_template_name, damage_profile, target_index, power_level, target_unit, attacker_unit, hit_zone_name, damage_source, boost_curve_multiplier, is_critical_strike, source_attacker_unit)
 		-- function 4
-		local var_4_0
+		local target_settings
 
-		if not arg_4_1 then
-			var_4_0 = arg_4_1.targets[arg_4_2] or arg_4_1.default_target
-			arg_4_0 = arg_4_0 or var_4_0.dot_template_name or arg_4_1.dot_template_name
+		if damage_profile then
+			target_settings = not not damage_profile.targets[target_index] or not not damage_profile.default_target
+			dot_template_name = not not dot_template_name or not not target_settings.dot_template_name or not not damage_profile.dot_template_name
 		end
 
-		if not arg_4_0 then
+		if not dot_template_name then
 			return false
 		end
 
-		local flag = true
-		local unit_breed = AiUtils.unit_breed(arg_4_4)
-		local get_data = Unit.get_data(arg_4_4, "armor")
-		local get_target_armor = ActionUtils.get_target_armor(arg_4_6, unit_breed, get_data)
+		local do_dot = true
+		local breed = AiUtils.unit_breed(target_unit)
+		local armor_override = Unit.get_data(target_unit, "armor")
+		local breed_armor = ActionUtils.get_target_armor(hit_zone_name, breed, armor_override)
 
-		if not (not var_4_0 and get_target_armor ~= 2) then
-			local var_4_5 = BoostCurves[var_4_0.boost_curve_type]
+		if target_settings and breed_armor == 2 then
+			local boost_curve = BoostCurves[target_settings.boost_curve_type]
+			local predicted_damage = DamageUtils.calculate_damage(DamageOutput, target_unit, attacker_unit, hit_zone_name, power_level, boost_curve, boost_curve_multiplier, is_critical_strike, damage_profile, target_index, false, damage_source)
 
-			if DamageUtils.calculate_damage(DamageOutput, arg_4_4, arg_4_5, arg_4_6, arg_4_3, var_4_5, arg_4_8, arg_4_9, arg_4_1, arg_4_2, false, arg_4_7) <= 0 then
-				flag = false
+			if predicted_damage <= 0 then
+				do_dot = false
 			end
 		end
 
-		if not flag then
-			fn_2(arg_4_0, arg_4_4, arg_4_5, arg_4_7, arg_4_3, arg_4_10)
+		if do_dot then
+			add_dot(dot_template_name, target_unit, attacker_unit, damage_source, power_level, source_attacker_unit)
 		end
 
-		return flag
+		return do_dot
 	end,
-	burning_dot = function (arg_5_0, arg_5_1, arg_5_2, arg_5_3, arg_5_4, arg_5_5, arg_5_6, arg_5_7, arg_5_8, arg_5_9, arg_5_10)
+	burning_dot = function (dot_template_name, damage_profile, target_index, power_level, target_unit, attacker_unit, hit_zone_name, damage_source, boost_curve_multiplier, is_critical_strike, source_attacker_unit)
 		-- function 5
-		if not (not arg_5_1 and arg_5_0) then
-			local var_5_0 = arg_5_1.targets[arg_5_2]
+		if damage_profile and not dot_template_name then
+			local var_5_0 = damage_profile.targets[target_index]
 
-			var_5_0 = var_5_0 or arg_5_1.default_target
-			arg_5_0 = var_5_0.dot_template_name or arg_5_1.dot_template_name
+			if not var_5_0 then
+				-- Nothing
+			end
+
+			var_5_0 = damage_profile.default_target
+
+			local target_settings = var_5_0
+
+			::label_5_0::
+
+			dot_template_name = not not target_settings.dot_template_name or not not damage_profile.dot_template_name
 		end
 
-		if not arg_5_0 then
+		if not dot_template_name then
 			return false
 		end
 
-		local unit_breed = AiUtils.unit_breed(arg_5_4)
+		local breed = AiUtils.unit_breed(target_unit)
 
-		if not (not unit_breed and unit_breed.is_hero) then
-			local has_extension = ScriptUnit.has_extension(arg_5_5, "talent_system")
+		if breed and not breed.is_hero then
+			local has_extension = ScriptUnit.has_extension(attacker_unit, "talent_system")
 
-			has_extension = has_extension or ScriptUnit.has_extension(arg_5_10, "talent_system")
-			arg_5_0 = not has_extension and not has_extension:has_talent("sienna_adept_infinite_burn") and InfiniteBurnDotLookup[arg_5_0] and arg_5_0
+			if not has_extension then
+				-- Nothing
+			end
 
-			local has_extension_2 = ScriptUnit.has_extension(arg_5_5, "buff_system")
+			has_extension = ScriptUnit.has_extension(source_attacker_unit, "talent_system")
 
-			if not has_extension_2 then
-				has_extension_2:trigger_procs("on_enemy_ignited", arg_5_0, arg_5_1, arg_5_2, arg_5_4, arg_5_6, arg_5_7, arg_5_9)
+			local talent_extension = has_extension
+
+			::label_5_1::
+
+			if talent_extension and talent_extension:has_talent("sienna_adept_infinite_burn") and not InfiniteBurnDotLookup[dot_template_name] then
+				-- Nothing
+			end
+
+			local attacker_unit_buff_extension = ScriptUnit.has_extension(attacker_unit, "buff_system")
+
+			if attacker_unit_buff_extension then
+				attacker_unit_buff_extension:trigger_procs("on_enemy_ignited", dot_template_name, damage_profile, target_index, target_unit, hit_zone_name, damage_source, is_critical_strike)
 			end
 		end
 
-		fn_3(arg_5_0, arg_5_4, arg_5_5, arg_5_7, arg_5_3, arg_5_10)
+		add_dot_network_synced(dot_template_name, target_unit, attacker_unit, damage_source, power_level, source_attacker_unit)
 
 		return true
 	end,
-	slow_debuff = function (arg_6_0, arg_6_1, arg_6_2, arg_6_3, arg_6_4, arg_6_5, arg_6_6, arg_6_7, arg_6_8, arg_6_9, arg_6_10)
+	slow_debuff = function (dot_template_name, damage_profile, target_index, power_level, target_unit, attacker_unit, hit_zone_name, damage_source, boost_curve_multiplier, is_critical_strike, source_attacker_unit)
 		-- function 6
-		if not (not arg_6_1 and arg_6_0) then
-			local var_6_0 = arg_6_1.targets[arg_6_2]
+		if damage_profile and not dot_template_name then
+			local var_6_0 = damage_profile.targets[target_index]
 
-			var_6_0 = var_6_0 or arg_6_1.default_target
-			arg_6_0 = var_6_0.dot_template_name or arg_6_1.dot_template_name
+			if not var_6_0 then
+				-- Nothing
+			end
+
+			var_6_0 = damage_profile.default_target
+
+			local target_settings = var_6_0
+
+			::label_6_0::
+
+			dot_template_name = not not target_settings.dot_template_name or not not damage_profile.dot_template_name
 		end
 
-		if not arg_6_0 then
+		if not dot_template_name then
 			return false
 		end
 
-		fn_2(arg_6_0, arg_6_4, arg_6_5, arg_6_7, arg_6_3, arg_6_10)
+		add_dot(dot_template_name, target_unit, attacker_unit, damage_source, power_level, source_attacker_unit)
 
 		return true
 	end
@@ -206,7 +240,7 @@ Dots = {
 
 local DotTypeLookup = DotTypeLookup
 
-DotTypeLookup = DotTypeLookup or {
+DotTypeLookup = not not DotTypeLookup or not not {
 	weapon_bleed_dot_dagger = "poison_dot",
 	burning_dot_fire_grenade = "burning_dot",
 	burning_dot_3tick = "burning_dot",
@@ -232,7 +266,7 @@ DotTypeLookup = DotTypeLookup
 
 DLCUtils.merge("dot_type_lookup", DotTypeLookup)
 
-local tbl_3 = {
+local checked_templates = {
 	bright_wizard = {},
 	dwarf_ranger = {},
 	empire_soldier = {},
@@ -247,143 +281,196 @@ local tbl_3 = {
 	vs_rat_ogre = {}
 }
 
-for k_6, v_5 in pairs(ItemMasterList) do
-	local slot_type = v_5.slot_type
+for _, item in pairs(ItemMasterList) do
+	local slot_type = item.slot_type
 
-	if not (slot_type == "melee" or slot_type == "ranged" or slot_type == "grenade" or slot_type == "healthkit" or slot_type ~= "potion") then
-		local template = v_5.template
+	if slot_type == "melee" or slot_type == "ranged" or slot_type == "grenade" or slot_type == "healthkit" or slot_type == "potion" then
+		local template_2 = item.template
 
-		template = template or v_5.temporary_template
+		if not template_2 then
+			-- Nothing
+		end
 
-		fassert(rawget(Weapons, template), "Weapon template [\"%s\"] does not exist!", template)
+		template_2 = item.temporary_template
 
-		local can_wield = v_5.can_wield
+		local template_name = template_2
 
-		for i11 = 1, #can_wield do
-			local var_0_17 = can_wield[i11]
-			local profile_name = CareerSettings[var_0_17].profile_name
-			local var_0_19 = CareerActionNames[profile_name]
+		::label_0_0::
 
-			if not (not tbl_3[profile_name] and tbl_3[profile_name][template]) then
-				tbl_3[profile_name][template] = true
+		fassert(rawget(Weapons, template_name), "Weapon template [\"%s\"] does not exist!", template_name)
 
-				local actions_2 = rawget(Weapons, template).actions
+		local careers = item.can_wield
 
-				for i12 = 1, #var_0_19 do
-					local var_0_21 = var_0_19[i12]
+		for i = 1, #careers do
+			local career_name = careers[i]
+			local career_data = CareerSettings[career_name]
+			local profile_name = career_data.profile_name
+			local action_names = CareerActionNames[profile_name]
 
-					actions_2[var_0_21] = ActionTemplates[var_0_21]
+			if checked_templates[profile_name] and not checked_templates[profile_name][template_name] then
+				checked_templates[profile_name][template_name] = true
+
+				local template = rawget(Weapons, template_name)
+				local actions = template.actions
+
+				for j = 1, #action_names do
+					local action_name = action_names[j]
+
+					actions[action_name] = ActionTemplates[action_name]
 				end
 			end
 		end
 	end
 end
 
-local MeleeBuffTypes = MeleeBuffTypes
+local MeleeBuffTypes_2 = MeleeBuffTypes
 
-MeleeBuffTypes = MeleeBuffTypes or {
+if not MeleeBuffTypes_2 then
+	-- Nothing
+end
+
+MeleeBuffTypes_2 = {
 	MELEE_1H = true,
 	MELEE_2H = true
 }
 
-local RangedBuffTypes = RangedBuffTypes
+local MeleeBuffTypes = MeleeBuffTypes_2
 
-RangedBuffTypes = RangedBuffTypes or {
+::label_0_1::
+
+local RangedBuffTypes_2 = RangedBuffTypes
+
+if not RangedBuffTypes_2 then
+	-- Nothing
+end
+
+RangedBuffTypes_2 = {
 	RANGED_ABILITY = true,
 	RANGED = true
 }
 
-local num = 1.919366
-local num_2 = 0.6
-local num_3 = 0.65
+local RangedBuffTypes = RangedBuffTypes_2
 
-for k_7, v_6 in pairs(Weapons) do
-	v_6.name = k_7
+::label_0_2::
 
-	local crosshair_style = v_6.crosshair_style
+local WEAPON_DAMAGE_UNIT_LENGTH_EXTENT = 1.919366
+local TAP_ATTACK_BASE_RANGE_OFFSET = 0.6
+local HOLD_ATTACK_BASE_RANGE_OFFSET = 0.65
 
-	crosshair_style = crosshair_style or "dot"
-	v_6.crosshair_style = crosshair_style
+for item_template_name, item_template in pairs(Weapons) do
+	item_template.name = item_template_name
 
-	local attack_meta_data = v_6.attack_meta_data
-	local flag = not attack_meta_data and attack_meta_data.tap_attack
-	local flag_2 = not attack_meta_data and attack_meta_data.hold_attack
-	local flag_3 = not flag and flag.max_range == nil
-	local flag_4 = not flag_2 and flag_2.max_range == nil
+	local crosshair_style = item_template.crosshair_style
 
-	if not RangedBuffTypes[v_6.buff_type] and not attack_meta_data then
+	crosshair_style = not not crosshair_style or not not "dot"
+	item_template.crosshair_style = crosshair_style
+
+	local attack_meta_data = item_template.attack_meta_data
+	local tap_attack_meta_data = not not attack_meta_data and not not attack_meta_data.tap_attack
+	local hold_attack_meta_data = not not attack_meta_data and not not attack_meta_data.hold_attack
+	local set_default_tap_attack_range = not not tap_attack_meta_data and tap_attack_meta_data.max_range == nil
+	local set_default_hold_attack_range = not not hold_attack_meta_data and hold_attack_meta_data.max_range == nil
+
+	if RangedBuffTypes[item_template.buff_type] and attack_meta_data then
 		local effective_against = attack_meta_data.effective_against
 
-		effective_against = effective_against or 0
+		effective_against = not not effective_against or not not 0
 		attack_meta_data.effective_against = effective_against
 
 		local effective_against_charged = attack_meta_data.effective_against_charged
 
-		effective_against_charged = effective_against_charged or 0
+		effective_against_charged = not not effective_against_charged or not not 0
 		attack_meta_data.effective_against_charged = effective_against_charged
 		attack_meta_data.effective_against_combined = bit.bor(attack_meta_data.effective_against, attack_meta_data.effective_against_charged)
 	end
 
-	if not MeleeBuffTypes[v_6.buff_type] then
-		fassert(attack_meta_data, "Missing attack metadata for weapon %s", k_7)
-		fassert(flag, "Missing tap_attack metadata for weapon %s", k_7)
-		fassert(flag_2, "Missing hold_attack metadata for weapon %s", k_7)
-		fassert(flag.arc, "Missing arc parameter in tap_attack metadata for weapon %s", k_7)
-		fassert(flag_2.arc, "Missing arc parameter in hold_attack metadata for weapon %s", k_7)
+	if MeleeBuffTypes[item_template.buff_type] then
+		fassert(attack_meta_data, "Missing attack metadata for weapon %s", item_template_name)
+		fassert(tap_attack_meta_data, "Missing tap_attack metadata for weapon %s", item_template_name)
+		fassert(hold_attack_meta_data, "Missing hold_attack metadata for weapon %s", item_template_name)
+		fassert(tap_attack_meta_data.arc, "Missing arc parameter in tap_attack metadata for weapon %s", item_template_name)
+		fassert(hold_attack_meta_data.arc, "Missing arc parameter in hold_attack metadata for weapon %s", item_template_name)
 	end
 
-	local actions_3 = v_6.actions
+	local actions = item_template.actions
 
-	for k_8, v_7 in pairs(actions_3) do
-		for k_9, v_8 in pairs(v_7) do
-			v_8.lookup_data = {
-				item_template_name = k_7,
-				action_name = k_8,
-				sub_action_name = k_9
-			}
+	for action_name, sub_actions in pairs(actions) do
+		for sub_action_name, sub_action_data in pairs(sub_actions) do
+			local lookup_data = {}
 
-			local kind = v_8.kind
-			local var_0_37 = ActionAssertFuncs[kind]
+			lookup_data.item_template_name = item_template_name
+			lookup_data.action_name = action_name
+			lookup_data.sub_action_name = sub_action_name
+			sub_action_data.lookup_data = lookup_data
 
-			if not var_0_37 then
-				var_0_37(k_7, k_8, k_9, v_8)
+			local action_kind = sub_action_data.kind
+			local action_assert_func = ActionAssertFuncs[action_kind]
+
+			if action_assert_func then
+				action_assert_func(item_template_name, action_name, sub_action_name, sub_action_data)
 			end
 
-			if k_8 == "action_one" then
-				local range_mod = v_8.range_mod
+			if action_name == "action_one" then
+				local range_mod_2 = sub_action_data.range_mod
 
-				range_mod = range_mod or 1
+				if not range_mod_2 then
+					-- Nothing
+				end
 
-				if not flag_3 and not string.find(k_9, "light_attack") then
-					local max_range = flag.max_range
+				range_mod_2 = 1
 
-					max_range = max_range or math.huge
+				local range_mod = range_mod_2
 
-					local num_4 = num_2 + num * range_mod
+				::label_0_3::
 
-					flag.max_range = math.min(max_range, num_4)
-				elseif not flag_4 and not string.find(k_9, "heavy_attack") then
-					local max_range_2 = flag_2.max_range
+				if set_default_tap_attack_range and string.find(sub_action_name, "light_attack") then
+					local max_range = tap_attack_meta_data.max_range
 
-					max_range_2 = max_range_2 or math.huge
+					if not max_range then
+						-- Nothing
+					end
 
-					local num_5 = num_3 + num * range_mod
+					max_range = math.huge
 
-					flag_2.max_range = math.min(max_range_2, num_5)
+					local current_attack_range = max_range
+
+					::label_0_4::
+
+					local tap_attack_range = TAP_ATTACK_BASE_RANGE_OFFSET + WEAPON_DAMAGE_UNIT_LENGTH_EXTENT * range_mod
+
+					tap_attack_meta_data.max_range = math.min(current_attack_range, tap_attack_range)
+				elseif set_default_hold_attack_range and string.find(sub_action_name, "heavy_attack") then
+					local max_range_2 = hold_attack_meta_data.max_range
+
+					if not max_range_2 then
+						-- Nothing
+					end
+
+					max_range_2 = math.huge
+
+					local current_attack_range = max_range_2
+
+					::label_0_5::
+
+					local hold_attack_range = HOLD_ATTACK_BASE_RANGE_OFFSET + WEAPON_DAMAGE_UNIT_LENGTH_EXTENT * range_mod
+
+					hold_attack_meta_data.max_range = math.min(current_attack_range, hold_attack_range)
 				end
 			end
 
-			local impact_data = v_8.impact_data
+			local impact_data = sub_action_data.impact_data
 
-			if not impact_data then
+			if impact_data then
 				local pickup_settings = impact_data.pickup_settings
 
-				if not pickup_settings then
+				if pickup_settings then
 					local link_hit_zones = pickup_settings.link_hit_zones
 
-					if not link_hit_zones then
-						for i19 = 1, #link_hit_zones do
-							link_hit_zones[link_hit_zones[i19]] = true
+					if link_hit_zones then
+						for i = 1, #link_hit_zones do
+							local hit_zone_name = link_hit_zones[i]
+
+							link_hit_zones[hit_zone_name] = true
 						end
 					end
 				end

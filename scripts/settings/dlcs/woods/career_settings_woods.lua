@@ -46,39 +46,38 @@ CareerSettings.we_thornsister = {
 			item_name = "thornsister_hat_0000"
 		}
 	},
-	is_unlocked_function = function (self, arg_1_1, arg_1_2)
+	is_unlocked_function = function (career, hero_name, hero_level)
 		-- function 1
-		local override_available_for_mechanism, var_1_1 = self:override_available_for_mechanism()
+		local unlocked, reason = career:override_available_for_mechanism()
 
-		if not override_available_for_mechanism then
-			return override_available_for_mechanism, var_1_1
+		if not unlocked then
+			return unlocked, reason
 		end
 
-		local var_1_2
-		local is_dlc_unlocked, var_1_4, var_1_5 = self:is_dlc_unlocked()
-		local var_1_6 = var_1_5
-		local var_1_7 = var_1_4
+		local dlc_name
 
-		if not is_dlc_unlocked then
-			return false, var_1_7, var_1_6
+		unlocked, reason, dlc_name = career:is_dlc_unlocked()
+
+		if not unlocked then
+			return false, reason, dlc_name
 		end
 
-		return true, var_1_7, var_1_6
+		return true, reason, dlc_name
 	end,
-	is_dlc_unlocked = function (arg_2_0)
+	is_dlc_unlocked = function (career)
 		-- function 2
-		if not Managers.unlock:is_dlc_unlocked("woods") then
+		if Managers.unlock:is_dlc_unlocked("woods") then
 			return true, nil, "woods"
 		else
 			return false, "dlc_not_owned", "woods"
 		end
 	end,
-	override_available_for_mechanism = function (self)
+	override_available_for_mechanism = function (career)
 		-- function 3
-		local mechanism_setting_for_title = Managers.mechanism:mechanism_setting_for_title("override_career_availability")
-		local display_name = self.display_name
+		local settings = Managers.mechanism:mechanism_setting_for_title("override_career_availability")
+		local career_name = career.display_name
 
-		if not (not mechanism_setting_for_title and mechanism_setting_for_title[display_name] ~= false) then
+		if settings and settings[career_name] == false then
 			return false, "disabled_for_mechanism"
 		end
 
@@ -130,7 +129,7 @@ CareerSettings.we_thornsister = {
 
 local OverchargeData = OverchargeData
 
-OverchargeData = OverchargeData or {}
+OverchargeData = not not OverchargeData or not not {}
 OverchargeData = OverchargeData
 OverchargeData.we_thornsister = {
 	overcharge_value_decrease_rate = 1,
@@ -173,14 +172,14 @@ OverchargeData.we_thornsister = {
 
 local PlayerUnitStatusSettings = PlayerUnitStatusSettings
 
-PlayerUnitStatusSettings = PlayerUnitStatusSettings or {}
+PlayerUnitStatusSettings = not not PlayerUnitStatusSettings or not not {}
 PlayerUnitStatusSettings = PlayerUnitStatusSettings
 
 local PlayerUnitStatusSettings_2 = PlayerUnitStatusSettings
 local merge = table.merge
 local overcharge_values = PlayerUnitStatusSettings.overcharge_values
 
-overcharge_values = overcharge_values or {}
+overcharge_values = not not overcharge_values or not not {}
 PlayerUnitStatusSettings_2.overcharge_values = merge(overcharge_values, {
 	life_staff_light = 4
 })

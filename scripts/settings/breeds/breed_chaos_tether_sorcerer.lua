@@ -158,13 +158,13 @@ local tbl = {
 			}
 		}
 	},
-	run_on_spawn = function (arg_1_0, ...)
+	run_on_spawn = function (unit, ...)
 		-- function 1
-		return AiBreedSnippets.on_chaos_sorcerer_spawn(arg_1_0, ...)
+		return AiBreedSnippets.on_chaos_sorcerer_spawn(unit, ...)
 	end,
-	on_weapon_wield = function (arg_2_0)
+	on_weapon_wield = function (unit)
 		-- function 2
-		Unit.flow_event(arg_2_0, "lua_spawn_tether_staff_effect")
+		Unit.flow_event(unit, "lua_spawn_tether_staff_effect")
 	end,
 	target_player_sound_events = {
 		witch_hunter = "chaos_sorcerer_plague_targeting_saltspyre",
@@ -189,7 +189,7 @@ local tbl = {
 }
 local setting = Development.setting("disable_plague_sorcerer")
 
-setting = setting or false
+setting = not not setting or not not false
 tbl.disabled = setting
 tbl.allowed_layers = {
 	planks = 1.5,
@@ -205,26 +205,28 @@ tbl.allowed_layers = {
 	fire_grenade = 10
 }
 
-tbl.custom_death_enter_function = function (arg_3_0, arg_3_1, arg_3_2, arg_3_3, arg_3_4)
+tbl.custom_death_enter_function = function (unit, killer_unit, damage_type, death_hit_zone, t)
 	-- function 3
-	local var_3_0 = BLACKBOARDS[arg_3_0]
+	local blackboard = BLACKBOARDS[unit]
 
-	if not Unit.alive(arg_3_1) then
+	if not Unit.alive(killer_unit) then
 		return
 	end
 
-	local teleport_at_t = var_3_0.teleport_at_t
+	local teleport_at_t = blackboard.teleport_at_t
 
-	if not teleport_at_t then
-		QuestSettings.check_corruptor_killed_at_teleport_time(var_3_0, teleport_at_t, arg_3_4, arg_3_1)
+	if teleport_at_t then
+		QuestSettings.check_corruptor_killed_at_teleport_time(blackboard, teleport_at_t, t, killer_unit)
 	end
 
-	QuestSettings.check_corruptor_killed_while_grabbing(var_3_0, arg_3_1)
+	QuestSettings.check_corruptor_killed_while_grabbing(blackboard, killer_unit)
 end
 
-Breeds.chaos_tether_sorcerer = table.create_copy(Breeds.chaos_tether_sorcerer, tbl)
+local breed_data = tbl
 
-local tbl_2 = {
+Breeds.chaos_tether_sorcerer = table.create_copy(Breeds.chaos_tether_sorcerer, breed_data)
+
+local action_data = {
 	spawn = {
 		spawning_effect = "fx/chr_chaos_sorcerer_teleport"
 	},
@@ -288,24 +290,24 @@ local tbl_2 = {
 		}
 	},
 	stagger = {
-		custom_enter_function = function (arg_4_0, arg_4_1, arg_4_2, arg_4_3)
+		custom_enter_function = function (unit, blackboard, t, action)
 			-- function 4
-			local var_4_0
+			local stagger_anims
 
-			arg_4_1.stagger_ignore_anim_cb = true
+			blackboard.stagger_ignore_anim_cb = true
 
-			if not arg_4_1.corruptor_grab_stagger then
-				var_4_0 = arg_4_3.grabbing_stagger_anims[arg_4_1.stagger_type]
-				arg_4_1.stagger_time = arg_4_2 + 1
+			if blackboard.corruptor_grab_stagger then
+				stagger_anims = action.grabbing_stagger_anims[blackboard.stagger_type]
+				blackboard.stagger_time = t + 1
 			else
-				var_4_0 = arg_4_3.stagger_anims[arg_4_1.stagger_type]
+				stagger_anims = action.stagger_anims[blackboard.stagger_type]
 			end
 
-			return var_4_0, "idle"
+			return stagger_anims, "idle"
 		end,
-		custom_exit_function = function (arg_5_0, arg_5_1, arg_5_2)
+		custom_exit_function = function (unit, blackboard, t)
 			-- function 5
-			arg_5_1.corruptor_grab_stagger = nil
+			blackboard.corruptor_grab_stagger = nil
 		end,
 		stagger_anims = {
 			{
@@ -550,4 +552,4 @@ local tbl_2 = {
 	}
 }
 
-BreedActions.chaos_tether_sorcerer = table.create_copy(BreedActions.chaos_tether_sorcerer, tbl_2)
+BreedActions.chaos_tether_sorcerer = table.create_copy(BreedActions.chaos_tether_sorcerer, action_data)

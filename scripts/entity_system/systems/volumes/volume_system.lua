@@ -5,7 +5,7 @@ require("scripts/unit_extensions/generic/generic_volume_templates")
 
 VolumeSystem = class(VolumeSystem, ExtensionSystemBase)
 
-local tbl = {
+local extensions = {
 	"PlayerVolumeExtension",
 	"BotVolumeExtension",
 	"AIVolumeExtension",
@@ -13,9 +13,9 @@ local tbl = {
 	"LocalPlayerVolumeExtension"
 }
 
-VolumeSystem.init = function (self, arg_1_1, arg_1_2)
+VolumeSystem.init = function (self, context, name)
 	-- function 1
-	VolumeSystem.super.init(self, arg_1_1, arg_1_2, tbl)
+	VolumeSystem.super.init(self, context, name, extensions)
 
 	self._volume_system = EngineOptimizedExtensions.volume_init_system(self._volume_system, VolumeSystemSettings.updates_per_frame)
 	self.nav_tag_volume_handler = nil
@@ -33,131 +33,132 @@ VolumeSystem.destroy = function (self)
 	self.nav_tag_volumes_to_create = nil
 end
 
-local tbl_2 = {}
+local dummy_table = {}
 
-VolumeSystem.on_add_extension = function (self, arg_3_1, arg_3_2, arg_3_3, arg_3_4)
+VolumeSystem.on_add_extension = function (self, world, unit, extension_name, extension_init_data)
 	-- function 3
 	local fassert = fassert
 	local is_server = self.is_server
 
-	is_server = is_server or arg_3_3 == "LocalPlayerVolumeExtension"
+	is_server = not not is_server or extension_name == "LocalPlayerVolumeExtension"
 
 	fassert(is_server, "Only LocalPlayerVolumeExtension is allowed on clients!")
-	EngineOptimizedExtensions.volume_on_add_extension(self._volume_system, arg_3_2, arg_3_3)
-	ScriptUnit.set_extension(arg_3_2, self.name, tbl_2)
+	EngineOptimizedExtensions.volume_on_add_extension(self._volume_system, unit, extension_name)
+	ScriptUnit.set_extension(unit, self.name, dummy_table)
 
-	return tbl_2
+	return dummy_table
 end
 
-VolumeSystem.on_remove_extension = function (self, arg_4_1, arg_4_2)
+VolumeSystem.on_remove_extension = function (self, unit, extension_name)
 	-- function 4
-	self:_cleanup_extension(arg_4_1, arg_4_2)
+	self:_cleanup_extension(unit, extension_name)
 end
 
-VolumeSystem.on_freeze_extension = function (self, arg_5_1, arg_5_2)
+VolumeSystem.on_freeze_extension = function (self, unit, extension_name)
 	-- function 5
-	self:_cleanup_extension(arg_5_1, arg_5_2)
+	self:_cleanup_extension(unit, extension_name)
 end
 
-VolumeSystem.freeze = function (self, arg_6_1, arg_6_2, arg_6_3)
+VolumeSystem.freeze = function (self, unit, extension_name, reason)
 	-- function 6
-	self:_cleanup_extension(arg_6_1, arg_6_2)
+	self:_cleanup_extension(unit, extension_name)
 end
 
-VolumeSystem.unfreeze = function (self, arg_7_1, arg_7_2)
+VolumeSystem.unfreeze = function (self, unit, extension_name)
 	-- function 7
-	EngineOptimizedExtensions.volume_on_add_extension(self._volume_system, arg_7_1, arg_7_2)
-	ScriptUnit.set_extension(arg_7_1, self.name, tbl_2)
+	EngineOptimizedExtensions.volume_on_add_extension(self._volume_system, unit, extension_name)
+	ScriptUnit.set_extension(unit, self.name, dummy_table)
 end
 
-VolumeSystem._cleanup_extension = function (self, arg_8_1, arg_8_2)
+VolumeSystem._cleanup_extension = function (self, unit, extension_name)
 	-- function 8
-	if ScriptUnit.has_extension(arg_8_1, "volume_system") == nil then
+	local extension = ScriptUnit.has_extension(unit, "volume_system")
+
+	if extension == nil then
 		return
 	end
 
-	local var_8_0 = self._unit_dead_cbs[arg_8_1]
+	local dead_unit_cb = self._unit_dead_cbs[unit]
 
-	if not var_8_0 then
-		var_8_0()
+	if dead_unit_cb then
+		dead_unit_cb()
 
-		self._unit_dead_cbs[arg_8_1] = nil
+		self._unit_dead_cbs[unit] = nil
 	end
 
-	EngineOptimizedExtensions.volume_on_remove_extension(self._volume_system, arg_8_1, arg_8_2)
-	ScriptUnit.remove_extension(arg_8_1, self.name)
+	EngineOptimizedExtensions.volume_on_remove_extension(self._volume_system, unit, extension_name)
+	ScriptUnit.remove_extension(unit, self.name)
 end
 
-VolumeSystem.update = function (self, arg_9_1, arg_9_2)
+VolumeSystem.update = function (self, context, t)
 	-- function 9
-	EngineOptimizedExtensions.volume_update(self._volume_system, arg_9_2, arg_9_1.dt)
+	EngineOptimizedExtensions.volume_update(self._volume_system, t, context.dt)
 end
 
-VolumeSystem.register_volume = function (self, arg_10_1, arg_10_2, arg_10_3)
+VolumeSystem.register_volume = function (self, volume_name, volume_type, params)
 	-- function 10
-	local current_level = LevelHelper:current_level(self.world)
+	local level = LevelHelper:current_level(self.world)
 
-	fassert(Level.has_volume(current_level, arg_10_1), "No volume named %q exists in current level", arg_10_1)
+	fassert(Level.has_volume(level, volume_name), "No volume named %q exists in current level", volume_name)
 
-	local sub_type = arg_10_3.sub_type
+	local sub_type = params.sub_type
 
-	for i, v in ipairs(tbl) do
-		local var_10_2 = VolumeExtensionSettings[arg_10_2][sub_type][v]
+	for _, extension_name in ipairs(extensions) do
+		local settings = VolumeExtensionSettings[volume_type][sub_type][extension_name]
 
-		if not var_10_2 then
-			local tbl_2 = {
-				volume_name = arg_10_1,
-				volume_type = arg_10_2,
-				level = current_level,
-				params = arg_10_3,
-				settings = var_10_2,
-				inverted = arg_10_3.invert_volume
+		if settings then
+			local volume = {
+				volume_name = volume_name,
+				volume_type = volume_type,
+				level = level,
+				params = params,
+				settings = settings,
+				inverted = params.invert_volume
 			}
-			local var_10_4
-			local var_10_5
+			local on_enter, on_exit
 
-			if not GenericVolumeTemplates.functions and not GenericVolumeTemplates.functions[tbl_2.volume_type] and not GenericVolumeTemplates.functions[tbl_2.volume_type][tbl_2.params.sub_type] then
-				var_10_4 = GenericVolumeTemplates.functions[tbl_2.volume_type][tbl_2.params.sub_type].on_enter
-				var_10_5 = GenericVolumeTemplates.functions[tbl_2.volume_type][tbl_2.params.sub_type].on_exit
+			if GenericVolumeTemplates.functions and GenericVolumeTemplates.functions[volume.volume_type] and GenericVolumeTemplates.functions[volume.volume_type][volume.params.sub_type] then
+				on_enter = GenericVolumeTemplates.functions[volume.volume_type][volume.params.sub_type].on_enter
+				on_exit = GenericVolumeTemplates.functions[volume.volume_type][volume.params.sub_type].on_exit
 			end
 
-			local filter = var_10_2.filter
+			local filter = settings.filter
 
-			EngineOptimizedExtensions.volume_register_volume(self._volume_system, current_level, arg_10_1, v, arg_10_3.invert_volume, tbl_2, var_10_4, var_10_5, filter)
+			EngineOptimizedExtensions.volume_register_volume(self._volume_system, level, volume_name, extension_name, params.invert_volume, volume, on_enter, on_exit, filter)
 		end
 	end
 
 	if not LEVEL_EDITOR_TEST then
-		local nav_tag_layer_costs = VolumeSystemSettings.nav_tag_layer_costs
+		local layer_costs = VolumeSystemSettings.nav_tag_layer_costs
 
-		nav_tag_layer_costs = not nav_tag_layer_costs[arg_10_2] and nav_tag_layer_costs[arg_10_2][sub_type]
+		layer_costs = not not layer_costs[volume_type] and not not layer_costs[volume_type][sub_type]
 
-		if not nav_tag_layer_costs then
-			local str = arg_10_2 .. "_" .. sub_type
+		if layer_costs then
+			local layer_name = volume_type .. "_" .. sub_type
 
-			if not self.nav_tag_volume_handler then
-				self:create_nav_tag_volume(arg_10_1, str, nav_tag_layer_costs)
+			if self.nav_tag_volume_handler then
+				self:create_nav_tag_volume(volume_name, layer_name, layer_costs)
 			else
 				local nav_tag_volumes_to_create = self.nav_tag_volumes_to_create
 
 				nav_tag_volumes_to_create[#nav_tag_volumes_to_create + 1] = {
-					volume_name = arg_10_1,
-					layer_name = str,
-					layer_costs = nav_tag_layer_costs
+					volume_name = volume_name,
+					layer_name = layer_name,
+					layer_costs = layer_costs
 				}
 			end
 		end
 	end
 end
 
-VolumeSystem.unregister_volume = function (self, arg_11_1)
+VolumeSystem.unregister_volume = function (self, volume_name)
 	-- function 11
-	local current_level = LevelHelper:current_level(self.world)
+	local level = LevelHelper:current_level(self.world)
 
-	fassert(Level.has_volume(current_level, arg_11_1), "No volume named %q exists in current level", arg_11_1)
+	fassert(Level.has_volume(level, volume_name), "No volume named %q exists in current level", volume_name)
 
-	for i, v in ipairs(tbl) do
-		EngineOptimizedExtensions.volume_unregister_volume(self._volume_system, current_level, arg_11_1, v)
+	for _, extension_name in ipairs(extensions) do
+		EngineOptimizedExtensions.volume_unregister_volume(self._volume_system, level, volume_name, extension_name)
 	end
 end
 
@@ -168,87 +169,104 @@ VolumeSystem.ai_ready = function (self)
 	local nav_tag_volumes_to_create = self.nav_tag_volumes_to_create
 
 	for i = 1, #nav_tag_volumes_to_create do
-		local var_12_1 = nav_tag_volumes_to_create[i]
+		local volume_data = nav_tag_volumes_to_create[i]
 
-		self:create_nav_tag_volume(var_12_1.volume_name, var_12_1.layer_name, var_12_1.layer_costs)
+		self:create_nav_tag_volume(volume_data.volume_name, volume_data.layer_name, volume_data.layer_costs)
 	end
 
 	self.nav_tag_volumes_to_create = nil
 end
 
-VolumeSystem.create_nav_tag_volume_from_data = function (self, arg_13_1, arg_13_2, arg_13_3)
+VolumeSystem.create_nav_tag_volume_from_data = function (self, pos, size, layer_name)
 	-- function 13
-	if not LevelHelper:current_level_settings().no_bots_allowed then
+	local level_settings = LevelHelper:current_level_settings()
+
+	if level_settings.no_bots_allowed then
 		return
 	end
 
 	local nav_tag_volume_handler = self.nav_tag_volume_handler
-	local create_mapping = nav_tag_volume_handler:create_mapping(arg_13_1, arg_13_2, arg_13_3)
+	local volume_name = nav_tag_volume_handler:create_mapping(pos, size, layer_name)
 
-	nav_tag_volume_handler:create_tag_volume_from_mappings(create_mapping)
+	nav_tag_volume_handler:create_tag_volume_from_mappings(volume_name)
 
-	return create_mapping
+	return volume_name
 end
 
-VolumeSystem.get_volume_mapping_from_lookup_id = function (self, arg_14_1)
+VolumeSystem.get_volume_mapping_from_lookup_id = function (self, lookup_id)
 	-- function 14
 	local nav_tag_volume_handler = self.nav_tag_volume_handler
 
-	return self.nav_tag_volume_handler:get_mapping_from_lookup_id(arg_14_1)
+	return self.nav_tag_volume_handler:get_mapping_from_lookup_id(lookup_id)
 end
 
-VolumeSystem.destroy_nav_tag_volume = function (self, arg_15_1)
+VolumeSystem.destroy_nav_tag_volume = function (self, volume_name)
 	-- function 15
-	self.nav_tag_volume_handler:destroy_nav_tag_volume(arg_15_1)
+	local nav_tag_volume_handler = self.nav_tag_volume_handler
+
+	nav_tag_volume_handler:destroy_nav_tag_volume(volume_name)
 end
 
-VolumeSystem.create_nav_tag_volume = function (self, arg_16_1, arg_16_2, arg_16_3)
+VolumeSystem.create_nav_tag_volume = function (self, volume_name, layer_name, layer_costs)
 	-- function 16
-	if not LevelHelper:current_level_settings().no_bots_allowed then
+	local level_settings = LevelHelper:current_level_settings()
+
+	if level_settings.no_bots_allowed then
 		return
 	end
 
 	local nav_tag_volume_handler = self.nav_tag_volume_handler
 
-	nav_tag_volume_handler:set_mapping_layer_name(arg_16_1, arg_16_2)
-	nav_tag_volume_handler:create_tag_volume_from_mappings(arg_16_1)
+	nav_tag_volume_handler:set_mapping_layer_name(volume_name, layer_name)
+	nav_tag_volume_handler:create_tag_volume_from_mappings(volume_name)
 
-	local entity = Managers.state.entity
-	local BotVolumeExtension = arg_16_3.BotVolumeExtension
-	local AIVolumeExtension = arg_16_3.AIVolumeExtension
+	local entity_manager = Managers.state.entity
+	local layer_cost_bot = layer_costs.BotVolumeExtension
+	local layer_cost_ai = layer_costs.AIVolumeExtension
 
-	if not BotVolumeExtension then
-		NAV_TAG_VOLUME_LAYER_COST_BOTS[arg_16_2] = BotVolumeExtension
+	if layer_cost_bot then
+		NAV_TAG_VOLUME_LAYER_COST_BOTS[layer_name] = layer_cost_bot
 
-		Managers.state.bot_nav_transition:set_layer_cost(arg_16_2, BotVolumeExtension)
+		local bot_nav_transition_manager = Managers.state.bot_nav_transition
+
+		bot_nav_transition_manager:set_layer_cost(layer_name, layer_cost_bot)
 	end
 
-	if not AIVolumeExtension then
-		NAV_TAG_VOLUME_LAYER_COST_AI[arg_16_2] = AIVolumeExtension
+	if layer_cost_ai then
+		NAV_TAG_VOLUME_LAYER_COST_AI[layer_name] = layer_cost_ai
 
-		local get_entities = entity:get_entities("AINavigationExtension")
+		local ai_extensions = entity_manager:get_entities("AINavigationExtension")
 
-		for k, v in pairs(get_entities) do
-			v:set_layer_cost(arg_16_2, AIVolumeExtension)
+		for _, extension in pairs(ai_extensions) do
+			extension:set_layer_cost(layer_name, layer_cost_ai)
 		end
 	end
 end
 
-VolumeSystem.volume_has_units_inside = function (self, arg_17_1)
+VolumeSystem.volume_has_units_inside = function (self, volume_name)
 	-- function 17
-	return EngineOptimizedExtensions.volume_has_any_units_inside(self._volume_system, arg_17_1)
+	return EngineOptimizedExtensions.volume_has_any_units_inside(self._volume_system, volume_name)
 end
 
-VolumeSystem.any_alive_human_players_inside = function (self, arg_18_1)
+VolumeSystem.any_alive_human_players_inside = function (self, volume_name)
 	-- function 18
-	local PLAYER_UNITS = Managers.state.side:get_side_from_name("heroes").PLAYER_UNITS
+	local side = Managers.state.side:get_side_from_name("heroes")
+	local PLAYER_UNITS = side.PLAYER_UNITS
 
-	for i, v in ipairs(PLAYER_UNITS) do
-		local alive = Unit.alive(v)
+	for _, player_unit in ipairs(PLAYER_UNITS) do
+		local alive = Unit.alive(player_unit)
 
-		alive = not alive and ScriptUnit.has_extension(v, "status_system")
+		if alive then
+			-- Nothing
+		end
 
-		if not alive and alive:is_disabled() or not EngineOptimizedExtensions.volume_has_all_units_inside(self._volume_system, arg_18_1, v) then
+		alive = ScriptUnit.has_extension(player_unit, "status_system")
+
+		local status_ext = alive
+
+		::label_18_0::
+
+		if status_ext and not status_ext:is_disabled() and EngineOptimizedExtensions.volume_has_all_units_inside(self._volume_system, volume_name, player_unit) then
 			return true
 		end
 	end
@@ -256,94 +274,120 @@ VolumeSystem.any_alive_human_players_inside = function (self, arg_18_1)
 	return false
 end
 
-VolumeSystem.all_alive_human_players_inside = function (self, arg_19_1)
+VolumeSystem.all_alive_human_players_inside = function (self, volume_name)
 	-- function 19
-	local PLAYER_UNITS = Managers.state.side:get_side_from_name("heroes").PLAYER_UNITS
-	local num = 0
-	local tbl = {}
+	local side = Managers.state.side:get_side_from_name("heroes")
+	local PLAYER_UNITS = side.PLAYER_UNITS
+	local to_test_count = 0
+	local to_test = {}
 
-	for i, v in ipairs(PLAYER_UNITS) do
-		local alive = Unit.alive(v)
-
-		alive = not alive and ScriptUnit.has_extension(v, "status_system")
-
-		if not (not alive and alive:is_disabled()) then
-			num = num + 1
-			tbl[num] = v
-		end
-	end
-
-	if num ~= 0 then
-		return EngineOptimizedExtensions.volume_has_all_units_inside(self._volume_system, arg_19_1, unpack(tbl))
-	end
-
-	return false
-end
-
-VolumeSystem.all_alive_or_respawned_human_players_inside = function (self, arg_20_1)
-	-- function 20
-	local PLAYER_UNITS = Managers.state.side:get_side_from_name("heroes").PLAYER_UNITS
-	local num = 0
-	local tbl = {}
-
-	for i, v in ipairs(PLAYER_UNITS) do
-		local alive = Unit.alive(v)
-
-		alive = not alive and ScriptUnit.has_extension(v, "status_system")
-
-		if not (not alive and not alive:is_disabled() and not alive:is_disabled() and alive:is_ready_for_assisted_respawn()) then
-			num = num + 1
-			tbl[num] = v
-		end
-	end
-
-	if num ~= 0 then
-		return EngineOptimizedExtensions.volume_has_all_units_inside(self._volume_system, arg_20_1, unpack(tbl))
-	end
-
-	return false
-end
-
-VolumeSystem.all_human_players_inside_disabled = function (self, arg_21_1)
-	-- function 21
-	local human_players = Managers.player:human_players()
-	local num = 0
-	local tbl = {}
-
-	for k, v in pairs(human_players) do
-		local player_unit = v.player_unit
+	for _, player_unit in ipairs(PLAYER_UNITS) do
 		local alive = Unit.alive(player_unit)
 
-		alive = not alive and ScriptUnit.has_extension(player_unit, "status_system")
+		if alive then
+			-- Nothing
+		end
 
-		if not alive then
-			if not alive:is_disabled() then
+		alive = ScriptUnit.has_extension(player_unit, "status_system")
+
+		local status_ext = alive
+
+		::label_19_0::
+
+		if status_ext and not status_ext:is_disabled() then
+			to_test_count = to_test_count + 1
+			to_test[to_test_count] = player_unit
+		end
+	end
+
+	if to_test_count ~= 0 then
+		return EngineOptimizedExtensions.volume_has_all_units_inside(self._volume_system, volume_name, unpack(to_test))
+	end
+
+	return false
+end
+
+VolumeSystem.all_alive_or_respawned_human_players_inside = function (self, volume_name)
+	-- function 20
+	local side = Managers.state.side:get_side_from_name("heroes")
+	local PLAYER_UNITS = side.PLAYER_UNITS
+	local to_test_count = 0
+	local to_test = {}
+
+	for _, player_unit in ipairs(PLAYER_UNITS) do
+		local alive = Unit.alive(player_unit)
+
+		if alive then
+			-- Nothing
+		end
+
+		alive = ScriptUnit.has_extension(player_unit, "status_system")
+
+		local status_ext = alive
+
+		::label_20_0::
+
+		if status_ext and (not status_ext:is_disabled() or status_ext:is_disabled() and not status_ext:is_ready_for_assisted_respawn()) then
+			to_test_count = to_test_count + 1
+			to_test[to_test_count] = player_unit
+		end
+	end
+
+	if to_test_count ~= 0 then
+		return EngineOptimizedExtensions.volume_has_all_units_inside(self._volume_system, volume_name, unpack(to_test))
+	end
+
+	return false
+end
+
+VolumeSystem.all_human_players_inside_disabled = function (self, volume_name)
+	-- function 21
+	local human_players = Managers.player:human_players()
+	local to_test_count = 0
+	local to_test = {}
+
+	for _, player in pairs(human_players) do
+		local player_unit = player.player_unit
+		local alive = Unit.alive(player_unit)
+
+		if alive then
+			-- Nothing
+		end
+
+		alive = ScriptUnit.has_extension(player_unit, "status_system")
+
+		local status_ext = alive
+
+		::label_21_0::
+
+		if status_ext then
+			if not status_ext:is_disabled() then
 				return false
 			end
 
-			num = num + 1
-			tbl[num] = player_unit
+			to_test_count = to_test_count + 1
+			to_test[to_test_count] = player_unit
 		end
 	end
 
-	if num ~= 0 then
-		return EngineOptimizedExtensions.volume_has_all_units_inside(self._volume_system, arg_21_1, unpack(tbl))
+	if to_test_count ~= 0 then
+		return EngineOptimizedExtensions.volume_has_all_units_inside(self._volume_system, volume_name, unpack(to_test))
 	end
 
 	return false
 end
 
-VolumeSystem.player_inside = function (self, arg_22_1, arg_22_2)
+VolumeSystem.player_inside = function (self, volume_name, unit)
 	-- function 22
-	return EngineOptimizedExtensions.volume_has_all_units_inside(self._volume_system, arg_22_1, arg_22_2)
+	return EngineOptimizedExtensions.volume_has_all_units_inside(self._volume_system, volume_name, unit)
 end
 
-VolumeSystem.register_track_unit_dead = function (arg_23_0, arg_23_1, arg_23_2)
+VolumeSystem.register_track_unit_dead = function (self, unit, cb)
 	-- function 23
-	arg_23_0._unit_dead_cbs[arg_23_1] = arg_23_2
+	self._unit_dead_cbs[unit] = cb
 end
 
-VolumeSystem.unregister_track_unit_dead = function (arg_24_0, arg_24_1, arg_24_2)
+VolumeSystem.unregister_track_unit_dead = function (self, unit, cb)
 	-- function 24
-	arg_24_0._unit_dead_cbs[arg_24_1] = nil
+	self._unit_dead_cbs[unit] = nil
 end

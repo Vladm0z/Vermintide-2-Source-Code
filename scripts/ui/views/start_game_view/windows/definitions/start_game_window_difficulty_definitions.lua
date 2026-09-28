@@ -1,38 +1,38 @@
 -- chunkname: @scripts/ui/views/start_game_view/windows/definitions/start_game_window_difficulty_definitions.lua
 
-local game_start_windows = UISettings.game_start_windows
-local frame = game_start_windows.frame
-local size = game_start_windows.size
-local spacing = game_start_windows.spacing
-local var_0_4 = UIFrameSettings[frame].texture_sizes.vertical[1]
-local var_0_5 = UIFrameSettings[frame].texture_sizes.horizontal[2]
-local num = size[1] * 2 + spacing * 2
-local num_2 = size[1] - (var_0_4 * 2 + 60)
-local tbl = {
-	size[1] * 2 + spacing,
-	size[2]
+local window_default_settings = UISettings.game_start_windows
+local window_frame = window_default_settings.frame
+local window_size = window_default_settings.size
+local window_spacing = window_default_settings.spacing
+local window_frame_width = UIFrameSettings[window_frame].texture_sizes.vertical[1]
+local window_frame_height = UIFrameSettings[window_frame].texture_sizes.horizontal[2]
+local window_width_offset = window_size[1] * 2 + window_spacing * 2
+local window_text_width = window_size[1] - (window_frame_width * 2 + 60)
+local large_window_size = {
+	window_size[1] * 2 + window_spacing,
+	window_size[2]
 }
-local tbl_2 = {
-	tbl[1] - 20,
+local difficulty_option_size = {
+	large_window_size[1] - 20,
 	108
 }
-local tbl_3 = {
+local animation_definitions = {
 	on_enter = {
 		{
 			name = "fade_in",
 			start_progress = 0,
 			end_progress = 0.3,
-			init = function (arg_1_0, arg_1_1, arg_1_2, arg_1_3)
+			init = function (ui_scenegraph, scenegraph_definition, widgets, params)
 				-- function 1
-				arg_1_3.render_settings.alpha_multiplier = 0
+				params.render_settings.alpha_multiplier = 0
 			end,
-			update = function (arg_2_0, arg_2_1, arg_2_2, arg_2_3, arg_2_4)
+			update = function (ui_scenegraph, scenegraph_definition, widgets, progress, params)
 				-- function 2
-				local easeOutCubic = math.easeOutCubic(arg_2_3)
+				local anim_progress = math.easeOutCubic(progress)
 
-				arg_2_4.render_settings.alpha_multiplier = easeOutCubic
+				params.render_settings.alpha_multiplier = anim_progress
 			end,
-			on_complete = function (arg_3_0, arg_3_1, arg_3_2, arg_3_3)
+			on_complete = function (ui_scenegraph, scenegraph_definition, widgets, params)
 				-- function 3
 				return
 			end
@@ -43,24 +43,24 @@ local tbl_3 = {
 			name = "fade_out",
 			start_progress = 0,
 			end_progress = 0.3,
-			init = function (arg_4_0, arg_4_1, arg_4_2, arg_4_3)
+			init = function (ui_scenegraph, scenegraph_definition, widgets, params)
 				-- function 4
-				arg_4_3.render_settings.alpha_multiplier = 1
+				params.render_settings.alpha_multiplier = 1
 			end,
-			update = function (arg_5_0, arg_5_1, arg_5_2, arg_5_3, arg_5_4)
+			update = function (ui_scenegraph, scenegraph_definition, widgets, progress, params)
 				-- function 5
-				local easeOutCubic = math.easeOutCubic(arg_5_3)
+				local anim_progress = math.easeOutCubic(progress)
 
-				arg_5_4.render_settings.alpha_multiplier = 1 - easeOutCubic
+				params.render_settings.alpha_multiplier = 1 - anim_progress
 			end,
-			on_complete = function (arg_6_0, arg_6_1, arg_6_2, arg_6_3)
+			on_complete = function (ui_scenegraph, scenegraph_definition, widgets, params)
 				-- function 6
 				return
 			end
 		}
 	}
 }
-local tbl_4 = {
+local scenegraph_definition = {
 	root = {
 		is_root = true,
 		size = {
@@ -103,9 +103,9 @@ local tbl_4 = {
 		vertical_alignment = "center",
 		parent = "menu_root",
 		horizontal_alignment = "center",
-		size = tbl,
+		size = large_window_size,
 		position = {
-			size[1] / 2 + spacing / 2,
+			window_size[1] / 2 + window_spacing / 2,
 			0,
 			1
 		}
@@ -114,9 +114,9 @@ local tbl_4 = {
 		vertical_alignment = "center",
 		parent = "window",
 		horizontal_alignment = "right",
-		size = size,
+		size = window_size,
 		position = {
-			size[1] + spacing,
+			window_size[1] + window_spacing,
 			0,
 			1
 		}
@@ -139,7 +139,7 @@ local tbl_4 = {
 		vertical_alignment = "top",
 		parent = "difficulty_root",
 		horizontal_alignment = "left",
-		size = tbl_2,
+		size = difficulty_option_size,
 		position = {
 			0,
 			0,
@@ -165,7 +165,7 @@ local tbl_4 = {
 		parent = "difficulty_texture",
 		horizontal_alignment = "center",
 		size = {
-			num_2,
+			window_text_width,
 			50
 		},
 		position = {
@@ -193,8 +193,8 @@ local tbl_4 = {
 		parent = "difficulty_title_divider",
 		horizontal_alignment = "center",
 		size = {
-			num_2,
-			size[2] / 2
+			window_text_width,
+			window_size[2] / 2
 		},
 		position = {
 			0,
@@ -207,7 +207,7 @@ local tbl_4 = {
 		parent = "info_window",
 		horizontal_alignment = "center",
 		size = {
-			size[1],
+			window_size[1],
 			200
 		},
 		position = {
@@ -235,7 +235,7 @@ local tbl_4 = {
 		parent = "background_fade",
 		horizontal_alignment = "center",
 		size = {
-			size[1],
+			window_size[1],
 			100
 		},
 		position = {
@@ -263,7 +263,7 @@ local tbl_4 = {
 		parent = "warning_bg",
 		horizontal_alignment = "center",
 		size = {
-			size[1],
+			window_size[1],
 			100
 		},
 		position = {
@@ -277,7 +277,7 @@ local tbl_4 = {
 		parent = "background_fade",
 		horizontal_alignment = "center",
 		size = {
-			num_2,
+			window_text_width,
 			20
 		},
 		position = {
@@ -291,7 +291,7 @@ local tbl_4 = {
 		parent = "difficulty_chest_info",
 		horizontal_alignment = "center",
 		size = {
-			num_2,
+			window_text_width,
 			20
 		},
 		position = {
@@ -305,7 +305,7 @@ local tbl_4 = {
 		parent = "difficulty_xp_multiplier",
 		horizontal_alignment = "center",
 		size = {
-			num_2,
+			window_text_width,
 			20
 		},
 		position = {
@@ -319,7 +319,7 @@ local tbl_4 = {
 		parent = "difficulty_xp_multiplier",
 		horizontal_alignment = "center",
 		size = {
-			num_2,
+			window_text_width,
 			20
 		},
 		position = {
@@ -333,7 +333,7 @@ local tbl_4 = {
 		parent = "difficulty_lock_text",
 		horizontal_alignment = "center",
 		size = {
-			num_2,
+			window_text_width,
 			20
 		},
 		position = {
@@ -376,7 +376,7 @@ local tbl_4 = {
 		horizontal_alignment = "center",
 		size = {
 			16,
-			size[2] - 230
+			window_size[2] - 230
 		},
 		position = {
 			300,
@@ -390,7 +390,7 @@ local tbl_4 = {
 		horizontal_alignment = "center",
 		size = {
 			16,
-			size[2]
+			window_size[2]
 		},
 		position = {
 			-300,
@@ -441,7 +441,7 @@ local tbl_4 = {
 		}
 	}
 }
-local tbl_5 = {
+local extreme_difficulty_text_style = {
 	word_wrap = false,
 	upper_case = true,
 	localize = false,
@@ -461,7 +461,7 @@ local tbl_5 = {
 		2
 	}
 }
-local tbl_6 = {
+local description_text_style = {
 	word_wrap = true,
 	font_size = 18,
 	localize = false,
@@ -476,7 +476,7 @@ local tbl_6 = {
 		2
 	}
 }
-local tbl_7 = {
+local difficulty_text_style = {
 	font_size = 36,
 	upper_case = true,
 	localize = false,
@@ -497,7 +497,7 @@ local tbl_7 = {
 		2
 	}
 }
-local tbl_8 = {
+local difficulty_chest_info_style = {
 	font_size = 20,
 	upper_case = false,
 	localize = false,
@@ -518,7 +518,7 @@ local tbl_8 = {
 		2
 	}
 }
-local tbl_9 = {
+local difficulty_xp_multiplier_style = {
 	font_size = 20,
 	upper_case = false,
 	localize = false,
@@ -534,7 +534,7 @@ local tbl_9 = {
 		2
 	}
 }
-local tbl_10 = {
+local difficulty_lock_text_style = {
 	font_size = 18,
 	upper_case = false,
 	localize = false,
@@ -555,7 +555,7 @@ local tbl_10 = {
 		2
 	}
 }
-local tbl_11 = {
+local difficulty_second_lock_text_style = {
 	font_size = 18,
 	upper_case = false,
 	localize = false,
@@ -577,7 +577,7 @@ local tbl_11 = {
 		2
 	}
 }
-local tbl_12 = {
+local difficulty_is_locked_text_style = {
 	font_size = 20,
 	upper_case = false,
 	localize = false,
@@ -598,7 +598,7 @@ local tbl_12 = {
 		2
 	}
 }
-local tbl_13 = {
+local dlc_is_locked_text_style = {
 	font_size = 20,
 	upper_case = false,
 	localize = false,
@@ -620,25 +620,25 @@ local tbl_13 = {
 	}
 }
 
-local function fn(arg_7_0, arg_7_1, arg_7_2, arg_7_3, arg_7_4, arg_7_5)
+local function create_difficulty_button(scenegraph_id, size, background_icon, background_icon_unlit, background_texture, dlc_locked)
 	-- function 7
-	local flag = true
-	local str = "difficulty_option_1"
-	local num = 0.5
-	local get_atlas_settings_by_texture_name = UIAtlasHelper.get_atlas_settings_by_texture_name(str)
-	local tbl = {
-		math.floor(get_atlas_settings_by_texture_name.size[1] * num),
-		math.floor(get_atlas_settings_by_texture_name.size[2] * num)
+	local dynamic_font_size = true
+	local icon_name = "difficulty_option_1"
+	local icon_scale = 0.5
+	local icon_settings = UIAtlasHelper.get_atlas_settings_by_texture_name(icon_name)
+	local icon_size = {
+		math.floor(icon_settings.size[1] * icon_scale),
+		math.floor(icon_settings.size[2] * icon_scale)
 	}
-	local flag_2 = arg_7_4 or "button_bg_01"
-	local get_atlas_settings_by_texture_name_2 = UIAtlasHelper.get_atlas_settings_by_texture_name(flag_2)
-	local str_2 = "menu_frame_08"
-	local var_7_8 = UIFrameSettings[str_2]
-	local var_7_9 = var_7_8.texture_sizes.corner[1]
-	local str_3 = "frame_outer_glow_01"
-	local var_7_11 = UIFrameSettings[str_3].texture_sizes.corner[1]
-
-	return {
+	local background_texture = not not background_texture or not not "button_bg_01"
+	local background_texture_settings = UIAtlasHelper.get_atlas_settings_by_texture_name(background_texture)
+	local frame_name = "menu_frame_08"
+	local frame_settings = UIFrameSettings[frame_name]
+	local frame_width = frame_settings.texture_sizes.corner[1]
+	local new_frame_name = "frame_outer_glow_01"
+	local new_frame_settings = UIFrameSettings[new_frame_name]
+	local new_frame_width = new_frame_settings.texture_sizes.corner[1]
+	local widget = {
 		element = {
 			passes = {
 				{
@@ -660,14 +660,14 @@ local function fn(arg_7_0, arg_7_1, arg_7_2, arg_7_3, arg_7_4, arg_7_5)
 					texture_id = "background_icon",
 					style_id = "background_icon",
 					pass_type = "texture",
-					content_check_function = function (self)
+					content_check_function = function (content)
 						-- function 8
-						local button_hotspot = self.button_hotspot
-						local background_icon = self.background_icon
+						local button_hotspot = content.button_hotspot
+						local background_icon = content.background_icon
 
-						if not background_icon then
+						if background_icon then
 							background_icon = button_hotspot.is_hover
-							background_icon = background_icon or button_hotspot.is_selected
+							background_icon = not not background_icon or not not button_hotspot.is_selected
 						end
 
 						return background_icon
@@ -677,12 +677,12 @@ local function fn(arg_7_0, arg_7_1, arg_7_2, arg_7_3, arg_7_4, arg_7_5)
 					texture_id = "background_icon_unlit",
 					style_id = "background_icon_unlit",
 					pass_type = "texture",
-					content_check_function = function (self)
+					content_check_function = function (content)
 						-- function 9
-						local button_hotspot = self.button_hotspot
-						local background_icon_unlit = self.background_icon_unlit
+						local button_hotspot = content.button_hotspot
+						local background_icon_unlit = content.background_icon_unlit
 
-						background_icon_unlit = not background_icon_unlit and not button_hotspot.is_hover
+						background_icon_unlit = not not background_icon_unlit and not not not button_hotspot.is_hover
 
 						return background_icon_unlit
 					end
@@ -691,9 +691,9 @@ local function fn(arg_7_0, arg_7_1, arg_7_2, arg_7_3, arg_7_4, arg_7_5)
 					texture_id = "dlc_locked_texture",
 					style_id = "dlc_locked_texture",
 					pass_type = "texture",
-					content_check_function = function (self)
+					content_check_function = function (content)
 						-- function 10
-						return self.dlc_locked
+						return content.dlc_locked
 					end
 				},
 				{
@@ -705,27 +705,31 @@ local function fn(arg_7_0, arg_7_1, arg_7_2, arg_7_3, arg_7_4, arg_7_5)
 					texture_id = "new_texture",
 					style_id = "new_texture",
 					pass_type = "texture",
-					content_check_function = function (self)
+					content_check_function = function (content)
 						-- function 11
-						return self.new
+						return content.new
 					end
 				},
 				{
 					texture_id = "icon",
 					style_id = "icon",
 					pass_type = "texture",
-					content_check_function = function (self)
+					content_check_function = function (content)
 						-- function 12
-						return not self.button_hotspot.disable_button
+						local button_hotspot = content.button_hotspot
+
+						return not button_hotspot.disable_button
 					end
 				},
 				{
 					texture_id = "icon",
 					style_id = "icon_disabled",
 					pass_type = "texture",
-					content_check_function = function (self)
+					content_check_function = function (content)
 						-- function 13
-						return self.button_hotspot.disable_button
+						local button_hotspot = content.button_hotspot
+
+						return button_hotspot.disable_button
 					end
 				},
 				{
@@ -772,18 +776,22 @@ local function fn(arg_7_0, arg_7_1, arg_7_2, arg_7_3, arg_7_4, arg_7_5)
 					style_id = "title_text",
 					pass_type = "text",
 					text_id = "title_text",
-					content_check_function = function (self)
+					content_check_function = function (content)
 						-- function 14
-						return not self.button_hotspot.disable_button
+						local button_hotspot = content.button_hotspot
+
+						return not button_hotspot.disable_button
 					end
 				},
 				{
 					style_id = "title_text_disabled",
 					pass_type = "text",
 					text_id = "title_text",
-					content_check_function = function (self)
+					content_check_function = function (content)
 						-- function 15
-						return self.button_hotspot.disable_button
+						local button_hotspot = content.button_hotspot
+
+						return button_hotspot.disable_button
 					end
 				},
 				{
@@ -798,9 +806,11 @@ local function fn(arg_7_0, arg_7_1, arg_7_2, arg_7_3, arg_7_4, arg_7_5)
 				{
 					style_id = "button_disabled_rect",
 					pass_type = "rect",
-					content_check_function = function (self)
+					content_check_function = function (content)
 						-- function 16
-						return self.button_hotspot.disable_button
+						local button_hotspot = content.button_hotspot
+
+						return button_hotspot.disable_button
 					end
 				}
 			}
@@ -817,24 +827,24 @@ local function fn(arg_7_0, arg_7_1, arg_7_2, arg_7_3, arg_7_4, arg_7_5)
 			select_glow = "button_state_default_2",
 			background_fade = "button_bg_fade",
 			skull_select_glow = "menu_options_button_glow_03",
-			background_icon = arg_7_2,
-			background_icon_unlit = arg_7_3,
-			icon = str,
-			frame = var_7_8.texture,
+			background_icon = background_icon,
+			background_icon_unlit = background_icon_unlit,
+			icon = icon_name,
+			frame = frame_settings.texture,
 			button_hotspot = {},
-			dlc_locked = arg_7_5,
+			dlc_locked = dlc_locked,
 			background = {
 				uvs = {
 					{
 						0,
-						1 - math.min(arg_7_1[2] / get_atlas_settings_by_texture_name_2.size[2], 1)
+						1 - math.min(size[2] / background_texture_settings.size[2], 1)
 					},
 					{
-						math.min(arg_7_1[1] / get_atlas_settings_by_texture_name_2.size[1], 1),
+						math.min(size[1] / background_texture_settings.size[1], 1),
 						1
 					}
 				},
-				texture_id = flag_2
+				texture_id = background_texture
 			}
 		},
 		style = {
@@ -850,7 +860,7 @@ local function fn(arg_7_0, arg_7_1, arg_7_2, arg_7_3, arg_7_4, arg_7_5)
 					0,
 					0
 				},
-				size = arg_7_1
+				size = size
 			},
 			background_fade = {
 				color = {
@@ -860,13 +870,13 @@ local function fn(arg_7_0, arg_7_1, arg_7_2, arg_7_3, arg_7_4, arg_7_5)
 					255
 				},
 				offset = {
-					var_7_9,
-					var_7_9,
+					frame_width,
+					frame_width,
 					1
 				},
 				size = {
-					arg_7_1[1] - var_7_9 * 2,
-					arg_7_1[2] - var_7_9 * 2
+					size[1] - frame_width * 2,
+					size[2] - frame_width * 2
 				}
 			},
 			background_icon = {
@@ -953,8 +963,8 @@ local function fn(arg_7_0, arg_7_1, arg_7_2, arg_7_3, arg_7_4, arg_7_5)
 					2
 				},
 				size = {
-					arg_7_1[1],
-					math.min(arg_7_1[2] - 5, 80)
+					size[1],
+					math.min(size[2] - 5, 80)
 				}
 			},
 			select_glow = {
@@ -970,8 +980,8 @@ local function fn(arg_7_0, arg_7_1, arg_7_2, arg_7_3, arg_7_4, arg_7_5)
 					3
 				},
 				size = {
-					arg_7_1[1],
-					math.min(arg_7_1[2] - 5, 80)
+					size[1],
+					math.min(size[2] - 5, 80)
 				}
 			},
 			title_text = {
@@ -981,7 +991,7 @@ local function fn(arg_7_0, arg_7_1, arg_7_2, arg_7_3, arg_7_4, arg_7_5)
 				horizontal_alignment = "left",
 				vertical_alignment = "center",
 				font_type = "hell_shark_header",
-				dynamic_font_size = flag,
+				dynamic_font_size = dynamic_font_size,
 				text_color = Colors.get_color_table_with_alpha("font_button_normal", 255),
 				default_text_color = Colors.get_color_table_with_alpha("font_button_normal", 255),
 				select_text_color = Colors.get_color_table_with_alpha("white", 255),
@@ -991,8 +1001,8 @@ local function fn(arg_7_0, arg_7_1, arg_7_2, arg_7_3, arg_7_4, arg_7_5)
 					6
 				},
 				size = {
-					arg_7_1[1] - 140,
-					arg_7_1[2]
+					size[1] - 140,
+					size[2]
 				}
 			},
 			title_text_disabled = {
@@ -1002,7 +1012,7 @@ local function fn(arg_7_0, arg_7_1, arg_7_2, arg_7_3, arg_7_4, arg_7_5)
 				horizontal_alignment = "left",
 				vertical_alignment = "center",
 				font_type = "hell_shark_header",
-				dynamic_font_size = flag,
+				dynamic_font_size = dynamic_font_size,
 				text_color = Colors.get_color_table_with_alpha("gray", 255),
 				default_text_color = Colors.get_color_table_with_alpha("gray", 255),
 				offset = {
@@ -1011,8 +1021,8 @@ local function fn(arg_7_0, arg_7_1, arg_7_2, arg_7_3, arg_7_4, arg_7_5)
 					6
 				},
 				size = {
-					arg_7_1[1] - 140,
-					arg_7_1[2]
+					size[1] - 140,
+					size[2]
 				}
 			},
 			title_text_shadow = {
@@ -1022,7 +1032,7 @@ local function fn(arg_7_0, arg_7_1, arg_7_2, arg_7_3, arg_7_4, arg_7_5)
 				horizontal_alignment = "left",
 				vertical_alignment = "center",
 				font_type = "hell_shark_header",
-				dynamic_font_size = flag,
+				dynamic_font_size = dynamic_font_size,
 				text_color = Colors.get_color_table_with_alpha("black", 255),
 				default_text_color = Colors.get_color_table_with_alpha("black", 255),
 				offset = {
@@ -1031,8 +1041,8 @@ local function fn(arg_7_0, arg_7_1, arg_7_2, arg_7_3, arg_7_4, arg_7_5)
 					5
 				},
 				size = {
-					arg_7_1[1] - 140,
-					arg_7_1[2]
+					size[1] - 140,
+					size[2]
 				}
 			},
 			button_clicked_rect = {
@@ -1047,7 +1057,7 @@ local function fn(arg_7_0, arg_7_1, arg_7_2, arg_7_3, arg_7_4, arg_7_5)
 					0,
 					7
 				},
-				size = arg_7_1
+				size = size
 			},
 			button_disabled_rect = {
 				color = {
@@ -1061,7 +1071,7 @@ local function fn(arg_7_0, arg_7_1, arg_7_2, arg_7_3, arg_7_4, arg_7_5)
 					0,
 					5
 				},
-				size = arg_7_1
+				size = size
 			},
 			glass_top = {
 				color = {
@@ -1072,11 +1082,11 @@ local function fn(arg_7_0, arg_7_1, arg_7_2, arg_7_3, arg_7_4, arg_7_5)
 				},
 				offset = {
 					0,
-					arg_7_1[2] - (var_7_9 + 9),
+					size[2] - (frame_width + 9),
 					6
 				},
 				size = {
-					arg_7_1[1],
+					size[1],
 					11
 				}
 			},
@@ -1089,11 +1099,11 @@ local function fn(arg_7_0, arg_7_1, arg_7_2, arg_7_3, arg_7_4, arg_7_5)
 				},
 				offset = {
 					0,
-					var_7_9 - 11,
+					frame_width - 11,
 					6
 				},
 				size = {
-					arg_7_1[1],
+					size[1],
 					11
 				}
 			},
@@ -1109,9 +1119,9 @@ local function fn(arg_7_0, arg_7_1, arg_7_2, arg_7_3, arg_7_4, arg_7_5)
 					0,
 					10
 				},
-				size = arg_7_1,
-				texture_size = var_7_8.texture_size,
-				texture_sizes = var_7_8.texture_sizes
+				size = size,
+				texture_size = frame_settings.texture_size,
+				texture_sizes = frame_settings.texture_sizes
 			},
 			new_texture = {
 				color = {
@@ -1121,8 +1131,8 @@ local function fn(arg_7_0, arg_7_1, arg_7_2, arg_7_3, arg_7_4, arg_7_5)
 					255
 				},
 				offset = {
-					arg_7_1[1] - 126,
-					arg_7_1[2] - 56,
+					size[1] - 126,
+					size[2] - 56,
 					6
 				},
 				size = {
@@ -1185,10 +1195,10 @@ local function fn(arg_7_0, arg_7_1, arg_7_2, arg_7_3, arg_7_4, arg_7_5)
 				color = Colors.get_color_table_with_alpha("font_button_normal", 255),
 				default_color = Colors.get_color_table_with_alpha("font_button_normal", 255),
 				select_color = Colors.get_color_table_with_alpha("white", 255),
-				texture_size = tbl,
+				texture_size = icon_size,
 				offset = {
-					54 - tbl[1] / 2,
-					54 - tbl[2] / 2,
+					54 - icon_size[1] / 2,
+					54 - icon_size[2] / 2,
 					12
 				}
 			},
@@ -1211,10 +1221,10 @@ local function fn(arg_7_0, arg_7_1, arg_7_2, arg_7_3, arg_7_4, arg_7_5)
 					40,
 					40
 				},
-				texture_size = tbl,
+				texture_size = icon_size,
 				offset = {
-					54 - tbl[1] / 2,
-					54 - tbl[2] / 2,
+					54 - icon_size[1] / 2,
+					54 - icon_size[2] / 2,
 					12
 				}
 			},
@@ -1232,41 +1242,46 @@ local function fn(arg_7_0, arg_7_1, arg_7_2, arg_7_3, arg_7_4, arg_7_5)
 				},
 				size = {
 					28,
-					arg_7_1[2]
+					size[2]
 				}
 			}
 		},
-		scenegraph_id = arg_7_0,
+		scenegraph_id = scenegraph_id,
 		offset = {
 			0,
 			0,
 			0
 		}
 	}
+
+	return widget
 end
 
-function create_buy_button(arg_17_0, arg_17_1, arg_17_2, arg_17_3, arg_17_4, arg_17_5, arg_17_6, arg_17_7, arg_17_8, arg_17_9)
+function create_buy_button(scenegraph_id, size, frame_name, background_texture, text, font_size, optional_color_name, optional_detail_texture, optional_detail_offset, disable_with_gamepad)
 	-- function 17
-	arg_17_3 = arg_17_3 or "button_bg_01"
+	background_texture = not not background_texture or not not "button_bg_01"
 
-	local get_atlas_settings_by_texture_name = UIAtlasHelper.get_atlas_settings_by_texture_name(arg_17_3)
-	local var_17_1
+	local background_texture_settings = UIAtlasHelper.get_atlas_settings_by_texture_name(background_texture)
+	local var_17_0
 
-	if not arg_17_2 then
-		var_17_1 = UIFrameSettings[arg_17_2]
+	if frame_name then
+		var_17_0 = UIFrameSettings[frame_name]
 
-		if not var_17_1 then
+		if not var_17_0 then
 			-- Nothing
 		end
 	end
 
-	var_17_1 = UIFrameSettings.button_frame_01
+	var_17_0 = UIFrameSettings.button_frame_01
+
+	local frame_settings = var_17_0
 
 	::label_17_0::
 
-	local var_17_2 = var_17_1.texture_sizes.corner[1]
-	local flag = arg_17_7 or "button_detail_01"
-	local size = UIAtlasHelper.get_atlas_settings_by_texture_name(flag).size
+	local frame_width = frame_settings.texture_sizes.corner[1]
+	local side_detail_texture = not not optional_detail_texture or not not "button_detail_01"
+	local side_detail_texture_settings = UIAtlasHelper.get_atlas_settings_by_texture_name(side_detail_texture)
+	local side_detail_texture_size = side_detail_texture_settings.size
 
 	return {
 		element = {
@@ -1280,9 +1295,9 @@ function create_buy_button(arg_17_0, arg_17_1, arg_17_2, arg_17_3, arg_17_4, arg
 					texture_id = "frame",
 					style_id = "frame",
 					pass_type = "texture_frame",
-					content_check_function = function (self)
+					content_check_function = function (content)
 						-- function 18
-						return self.draw_frame
+						return content.draw_frame
 					end
 				},
 				{
@@ -1302,27 +1317,33 @@ function create_buy_button(arg_17_0, arg_17_1, arg_17_2, arg_17_3, arg_17_4, arg
 				{
 					style_id = "disabled_rect",
 					pass_type = "rect",
-					content_check_function = function (self)
+					content_check_function = function (content)
 						-- function 19
-						return self.button_hotspot.disable_button
+						local button_hotspot = content.button_hotspot
+
+						return button_hotspot.disable_button
 					end
 				},
 				{
 					style_id = "title_text",
 					pass_type = "text",
 					text_id = "title_text",
-					content_check_function = function (self)
+					content_check_function = function (content)
 						-- function 20
-						return not self.button_hotspot.disable_button
+						local button_hotspot = content.button_hotspot
+
+						return not button_hotspot.disable_button
 					end
 				},
 				{
 					style_id = "title_text_disabled",
 					pass_type = "text",
 					text_id = "title_text",
-					content_check_function = function (self)
+					content_check_function = function (content)
 						-- function 21
-						return self.button_hotspot.disable_button
+						local button_hotspot = content.button_hotspot
+
+						return button_hotspot.disable_button
 					end
 				},
 				{
@@ -1347,22 +1368,22 @@ function create_buy_button(arg_17_0, arg_17_1, arg_17_2, arg_17_3, arg_17_4, arg
 			hover_glow = "button_state_default",
 			draw_frame = true,
 			button_hotspot = {},
-			title_text = arg_17_4 or "n/a",
-			frame = var_17_1.texture,
+			title_text = not not text or not not "n/a",
+			frame = frame_settings.texture,
 			background = {
 				uvs = {
 					{
 						0,
-						1 - arg_17_1[2] / get_atlas_settings_by_texture_name.size[2]
+						1 - size[2] / background_texture_settings.size[2]
 					},
 					{
-						arg_17_1[1] / get_atlas_settings_by_texture_name.size[1],
+						size[1] / background_texture_settings.size[1],
 						1
 					}
 				},
-				texture_id = arg_17_3
+				texture_id = background_texture
 			},
-			disable_with_gamepad = arg_17_9
+			disable_with_gamepad = disable_with_gamepad
 		},
 		style = {
 			background = {
@@ -1387,12 +1408,12 @@ function create_buy_button(arg_17_0, arg_17_1, arg_17_2, arg_17_3, arg_17_4, arg
 				},
 				offset = {
 					0,
-					var_17_2 - 2,
+					frame_width - 2,
 					3
 				},
 				size = {
-					arg_17_1[1],
-					math.min(arg_17_1[2] - 5, 80)
+					size[1],
+					math.min(size[2] - 5, 80)
 				}
 			},
 			clicked_rect = {
@@ -1428,7 +1449,7 @@ function create_buy_button(arg_17_0, arg_17_1, arg_17_2, arg_17_3, arg_17_4, arg
 				vertical_alignment = "center",
 				dynamic_font_size = true,
 				font_type = "hell_shark",
-				font_size = arg_17_5 or 24,
+				font_size = not not font_size or not not 24,
 				text_color = Colors.get_color_table_with_alpha("font_button_normal", 255),
 				default_text_color = Colors.get_color_table_with_alpha("font_button_normal", 255),
 				select_text_color = {
@@ -1438,8 +1459,8 @@ function create_buy_button(arg_17_0, arg_17_1, arg_17_2, arg_17_3, arg_17_4, arg
 					250
 				},
 				size = {
-					arg_17_1[1] - 40,
-					arg_17_1[2]
+					size[1] - 40,
+					size[2]
 				},
 				offset = {
 					20,
@@ -1454,12 +1475,12 @@ function create_buy_button(arg_17_0, arg_17_1, arg_17_2, arg_17_3, arg_17_4, arg
 				vertical_alignment = "center",
 				dynamic_font_size = true,
 				font_type = "hell_shark",
-				font_size = arg_17_5 or 24,
+				font_size = not not font_size or not not 24,
 				text_color = Colors.get_color_table_with_alpha("gray", 255),
 				default_text_color = Colors.get_color_table_with_alpha("gray", 255),
 				size = {
-					arg_17_1[1] - 40,
-					arg_17_1[2]
+					size[1] - 40,
+					size[2]
 				},
 				offset = {
 					20,
@@ -1474,12 +1495,12 @@ function create_buy_button(arg_17_0, arg_17_1, arg_17_2, arg_17_3, arg_17_4, arg
 				vertical_alignment = "center",
 				dynamic_font_size = true,
 				font_type = "hell_shark",
-				font_size = arg_17_5 or 24,
+				font_size = not not font_size or not not 24,
 				text_color = Colors.get_color_table_with_alpha("black", 255),
 				default_text_color = Colors.get_color_table_with_alpha("black", 255),
 				size = {
-					arg_17_1[1] - 40,
-					arg_17_1[2]
+					size[1] - 40,
+					size[2]
 				},
 				offset = {
 					22,
@@ -1488,8 +1509,8 @@ function create_buy_button(arg_17_0, arg_17_1, arg_17_2, arg_17_3, arg_17_4, arg
 				}
 			},
 			frame = {
-				texture_size = var_17_1.texture_size,
-				texture_sizes = var_17_1.texture_sizes,
+				texture_size = frame_settings.texture_size,
+				texture_sizes = frame_settings.texture_sizes,
 				color = {
 					255,
 					255,
@@ -1511,11 +1532,11 @@ function create_buy_button(arg_17_0, arg_17_1, arg_17_2, arg_17_3, arg_17_4, arg
 				},
 				offset = {
 					0,
-					arg_17_1[2] - (var_17_2 + 11),
+					size[2] - (frame_width + 11),
 					4
 				},
 				size = {
-					arg_17_1[1],
+					size[1],
 					11
 				}
 			},
@@ -1528,16 +1549,16 @@ function create_buy_button(arg_17_0, arg_17_1, arg_17_2, arg_17_3, arg_17_4, arg
 				},
 				offset = {
 					0,
-					var_17_2 - 9,
+					frame_width - 9,
 					4
 				},
 				size = {
-					arg_17_1[1],
+					size[1],
 					11
 				}
 			}
 		},
-		scenegraph_id = arg_17_0,
+		scenegraph_id = scenegraph_id,
 		offset = {
 			0,
 			0,
@@ -1546,12 +1567,12 @@ function create_buy_button(arg_17_0, arg_17_1, arg_17_2, arg_17_3, arg_17_4, arg
 	}
 end
 
-local flag = true
-local tbl_14 = {
+local disable_with_gamepad = true
+local widgets = {
 	background_fade = UIWidgets.create_simple_texture("options_window_fade_01", "info_window"),
 	background_mask = UIWidgets.create_simple_texture("mask_rect", "info_window"),
-	info_window = UIWidgets.create_frame("info_window", size, frame, 20),
-	window = UIWidgets.create_frame("window", tbl, frame, 10),
+	info_window = UIWidgets.create_frame("info_window", window_size, window_frame, 20),
+	window = UIWidgets.create_frame("window", large_window_size, window_frame, 10),
 	info_bg_fade = UIWidgets.create_simple_texture("difficulty_gradient", "background_fade", nil, nil, {
 		128,
 		255,
@@ -1560,18 +1581,18 @@ local tbl_14 = {
 	}),
 	difficulty_bottom_divider = UIWidgets.create_simple_texture("divider_01_bottom", "difficulty_bottom_divider"),
 	extreme_difficulty_bg = UIWidgets.create_simple_texture("extreme_difficulty_bg", "warning_texture"),
-	extremely_hard_text = UIWidgets.create_simple_text(Localize("difficulty_cataclysm_warning"), "warning_bg", nil, nil, tbl_5),
-	difficulty_title = UIWidgets.create_simple_text("difficulty_title", "difficulty_title", nil, nil, tbl_7),
+	extremely_hard_text = UIWidgets.create_simple_text(Localize("difficulty_cataclysm_warning"), "warning_bg", nil, nil, extreme_difficulty_text_style),
+	difficulty_title = UIWidgets.create_simple_text("difficulty_title", "difficulty_title", nil, nil, difficulty_text_style),
 	difficulty_texture = UIWidgets.create_simple_texture("difficulty_option_1", "difficulty_texture"),
 	difficulty_title_divider = UIWidgets.create_simple_texture("divider_01_top", "difficulty_title_divider"),
-	description_text = UIWidgets.create_simple_text(Localize("start_game_window_adventure_desc"), "description_text", nil, nil, tbl_6),
-	difficulty_chest_info = UIWidgets.create_simple_text("", "difficulty_chest_info", nil, nil, tbl_8),
-	difficulty_lock_text = UIWidgets.create_simple_text("difficulty_lock_text", "requirement_bg", nil, nil, tbl_10),
-	difficulty_second_lock_text = UIWidgets.create_simple_text("n/a", "requirement_bg", nil, nil, tbl_11),
-	difficulty_is_locked_text = UIWidgets.create_simple_text("n/a", "requirement_bg", nil, nil, tbl_12),
-	dlc_lock_text = UIWidgets.create_simple_text(Localize("cataclysm_no_wom"), "buy_button", nil, nil, tbl_13),
-	select_button = UIWidgets.create_default_button("select_button", tbl_4.select_button.size, nil, nil, Localize("confirm_menu_button_name"), 32, nil, nil, nil, flag),
-	buy_button = create_buy_button("buy_button", tbl_4.buy_button.size, nil, "wom_button", Localize("menu_weave_area_no_wom_button"), 32, nil, nil, nil, flag),
+	description_text = UIWidgets.create_simple_text(Localize("start_game_window_adventure_desc"), "description_text", nil, nil, description_text_style),
+	difficulty_chest_info = UIWidgets.create_simple_text("", "difficulty_chest_info", nil, nil, difficulty_chest_info_style),
+	difficulty_lock_text = UIWidgets.create_simple_text("difficulty_lock_text", "requirement_bg", nil, nil, difficulty_lock_text_style),
+	difficulty_second_lock_text = UIWidgets.create_simple_text("n/a", "requirement_bg", nil, nil, difficulty_second_lock_text_style),
+	difficulty_is_locked_text = UIWidgets.create_simple_text("n/a", "requirement_bg", nil, nil, difficulty_is_locked_text_style),
+	dlc_lock_text = UIWidgets.create_simple_text(Localize("cataclysm_no_wom"), "buy_button", nil, nil, dlc_is_locked_text_style),
+	select_button = UIWidgets.create_default_button("select_button", scenegraph_definition.select_button.size, nil, nil, Localize("confirm_menu_button_name"), 32, nil, nil, nil, disable_with_gamepad),
+	buy_button = create_buy_button("buy_button", scenegraph_definition.buy_button.size, nil, "wom_button", Localize("menu_weave_area_no_wom_button"), 32, nil, nil, nil, disable_with_gamepad),
 	game_options_left_chain = UIWidgets.create_tiled_texture("game_options_left_chain", "chain_link_01", {
 		16,
 		19
@@ -1585,9 +1606,9 @@ local tbl_14 = {
 }
 
 return {
-	widgets = tbl_14,
-	create_difficulty_button = fn,
-	scenegraph_definition = tbl_4,
-	animation_definitions = tbl_3,
+	widgets = widgets,
+	create_difficulty_button = create_difficulty_button,
+	scenegraph_definition = scenegraph_definition,
+	animation_definitions = animation_definitions,
 	create_dlc_difficulty_divider = UIWidgets.create_simple_texture
 }

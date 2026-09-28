@@ -77,7 +77,7 @@ local tbl = {
 }
 local setting = Development.setting("disable_vortex_sorcerer")
 
-setting = setting or false
+setting = not not setting or not not false
 tbl.disabled = setting
 tbl.hitzone_multiplier_types = {
 	head = "headshot"
@@ -198,22 +198,24 @@ tbl.status_effect_settings = {
 	})
 }
 
-tbl.custom_death_enter_function = function (arg_1_0, arg_1_1, arg_1_2, arg_1_3, arg_1_4, arg_1_5)
+tbl.custom_death_enter_function = function (unit, killer_unit, damage_type, death_hit_zone, t, damage_source)
 	-- function 1
-	local var_1_0 = BLACKBOARDS[arg_1_0]
+	local blackboard = BLACKBOARDS[unit]
 
-	if not Unit.alive(arg_1_1) then
+	if not Unit.alive(killer_unit) then
 		return
 	end
 
-	QuestSettings.check_vortex_sorcerer_killed_while_summoning(var_1_0, arg_1_1)
-	QuestSettings.check_vortex_sorcerer_killed_while_ally_in_vortex(var_1_0, arg_1_1)
-	QuestSettings.check_vortex_sorcerer_killed_by_melee(arg_1_1, arg_1_5)
+	QuestSettings.check_vortex_sorcerer_killed_while_summoning(blackboard, killer_unit)
+	QuestSettings.check_vortex_sorcerer_killed_while_ally_in_vortex(blackboard, killer_unit)
+	QuestSettings.check_vortex_sorcerer_killed_by_melee(killer_unit, damage_source)
 end
 
-Breeds.chaos_vortex_sorcerer = table.create_copy(Breeds.chaos_vortex_sorcerer, tbl)
+local breed_data = tbl
 
-local tbl_2 = {
+Breeds.chaos_vortex_sorcerer = table.create_copy(Breeds.chaos_vortex_sorcerer, breed_data)
+
+local action_data = {
 	skulk_approach = {
 		teleport_closer_summon_limit = 2,
 		vortex_template_name = "standard",
@@ -278,11 +280,13 @@ local tbl_2 = {
 		}
 	},
 	stagger = {
-		custom_enter_function = function (arg_2_0, arg_2_1, arg_2_2, arg_2_3)
+		custom_enter_function = function (unit, blackboard, t, action)
 			-- function 2
-			arg_2_1.stagger_ignore_anim_cb = true
+			blackboard.stagger_ignore_anim_cb = true
 
-			return arg_2_3.stagger_anims[arg_2_1.stagger_type], "idle"
+			local stagger_anims = action.stagger_anims[blackboard.stagger_type]
+
+			return stagger_anims, "idle"
 		end,
 		stagger_anims = {
 			{
@@ -407,4 +411,4 @@ local tbl_2 = {
 	}
 }
 
-BreedActions.chaos_vortex_sorcerer = table.create_copy(BreedActions.chaos_vortex_sorcerer, tbl_2)
+BreedActions.chaos_vortex_sorcerer = table.create_copy(BreedActions.chaos_vortex_sorcerer, action_data)

@@ -1,23 +1,23 @@
 -- chunkname: @scripts/entity_system/systems/tutorial/tutorial_templates.lua
 
-local function fn(arg_1_0)
+local function apply_outline(unit)
 	-- function 1
 	return
 end
 
-local function fn_2(arg_2_0)
+local function has_melee_weapon_equipped(unit)
 	-- function 2
-	local extension = ScriptUnit.extension(arg_2_0, "inventory_system")
-	local get_wielded_slot_name = extension:get_wielded_slot_name()
-	local get_slot_data = extension:get_slot_data(get_wielded_slot_name)
+	local inventory_extension = ScriptUnit.extension(unit, "inventory_system")
+	local slot_name = inventory_extension:get_wielded_slot_name()
+	local slot_data = inventory_extension:get_slot_data(slot_name)
 
-	if get_slot_data == nil then
+	if slot_data == nil then
 		return false
 	end
 
-	local right_unit_1p = get_slot_data.right_unit_1p
+	local right_unit_1p = slot_data.right_unit_1p
 
-	if not ScriptUnit.has_extension(right_unit_1p, "ammo_system") then
+	if ScriptUnit.has_extension(right_unit_1p, "ammo_system") then
 		return false
 	end
 
@@ -35,61 +35,58 @@ TutorialTemplates.core_needs_help = {
 	display_type = "tooltip",
 	icon = "hud_tutorial_icon_attention",
 	is_mission_tutorial = true,
-	init_data = function (arg_3_0)
+	init_data = function (data)
 		-- function 3
 		return
 	end,
-	clear_data = function (arg_4_0)
+	clear_data = function (data)
 		-- function 4
 		return
 	end,
-	update_data = function (arg_5_0, arg_5_1, arg_5_2)
+	update_data = function (t, unit, data)
 		-- function 5
 		return
 	end,
-	can_show = function (arg_6_0, arg_6_1, arg_6_2, arg_6_3)
+	can_show = function (t, unit, data, raycast_unit)
 		-- function 6
-		local human_and_bot_players = Managers.player:human_and_bot_players()
-		local local_position = Unit.local_position(arg_6_1, 0)
-		local huge = math.huge
-		local var_6_3
-		local var_6_4
-		local var_6_5
-		local var_6_6
+		local players = Managers.player:human_and_bot_players()
+		local unit_position = Unit.local_position(unit, 0)
+		local best_distance_sq = math.huge
+		local best_unit_position, has_raycast_unit, raycast_unit_pos, raycast_unit_dist
 
-		for k, v in pairs(human_and_bot_players) do
-			local player_unit = v.player_unit
+		for k, player in pairs(players) do
+			local player_unit = player.player_unit
 
-			if not (not Unit.alive(player_unit) and arg_6_1 == player_unit) then
-				local extension = ScriptUnit.extension(player_unit, "status_system")
+			if Unit.alive(player_unit) and unit ~= player_unit then
+				local status_extension = ScriptUnit.extension(player_unit, "status_system")
 
-				if extension:is_dead() or extension:is_pounced_down() or extension:get_is_ledge_hanging() or not extension:is_grabbed_by_pack_master() then
-					local local_position_2 = Unit.local_position(player_unit, 0)
-					local distance_squared = Vector3.distance_squared(local_position, local_position_2)
+				if not status_extension:is_dead() and (status_extension:is_pounced_down() or status_extension:get_is_ledge_hanging() or status_extension:is_grabbed_by_pack_master()) then
+					local player_position = Unit.local_position(player_unit, 0)
+					local distance_sq = Vector3.distance_squared(unit_position, player_position)
 
-					if player_unit == arg_6_3 then
-						var_6_4 = true
-						var_6_5 = local_position_2
-						var_6_6 = distance_squared
+					if player_unit == raycast_unit then
+						has_raycast_unit = true
+						raycast_unit_pos = player_position
+						raycast_unit_dist = distance_sq
 					end
 
-					if distance_squared < huge then
-						huge = distance_squared
-						var_6_3 = local_position_2
+					if distance_sq < best_distance_sq then
+						best_distance_sq = distance_sq
+						best_unit_position = player_position
 					end
 				end
 			end
 		end
 
-		if not (not var_6_4 and not (var_6_6 < 400)) then
-			return true, var_6_5
-		elseif not var_6_3 then
-			return true, var_6_3
+		if has_raycast_unit and raycast_unit_dist < 400 then
+			return true, raycast_unit_pos
+		elseif best_unit_position then
+			return true, best_unit_position
 		end
 
 		return false
 	end,
-	is_completed = function (arg_7_0, arg_7_1, arg_7_2, arg_7_3)
+	is_completed = function (t, start_t, unit, data)
 		-- function 7
 		return false
 	end
@@ -103,83 +100,86 @@ TutorialTemplates.core_revive = {
 	display_type = "tooltip",
 	icon = "hud_tutorial_icon_attention",
 	is_mission_tutorial = true,
-	init_data = function (arg_8_0)
+	init_data = function (data)
 		-- function 8
 		return
 	end,
-	clear_data = function (arg_9_0)
+	clear_data = function (data)
 		-- function 9
 		return
 	end,
-	update_data = function (arg_10_0, arg_10_1, arg_10_2)
+	update_data = function (t, unit, data)
 		-- function 10
 		return
 	end,
-	can_show = function (arg_11_0, arg_11_1, arg_11_2, arg_11_3, arg_11_4)
+	can_show = function (t, unit, data, raycast_unit, world)
 		-- function 11
-		local human_and_bot_players = Managers.player:human_and_bot_players()
-		local local_position = Unit.local_position(arg_11_1, 0)
-		local huge = math.huge
-		local var_11_3
-		local var_11_4
-		local var_11_5
-		local var_11_6
+		local players = Managers.player:human_and_bot_players()
+		local unit_position = Unit.local_position(unit, 0)
+		local best_distance_sq = math.huge
+		local best_unit_position, has_raycast_unit, raycast_unit_pos, raycast_unit_dist
 
-		for k, v in pairs(human_and_bot_players) do
-			local player_unit = v.player_unit
+		for k, player in pairs(players) do
+			local player_unit = player.player_unit
 
-			if not (not Unit.alive(player_unit) and arg_11_1 == player_unit) then
-				local extension = ScriptUnit.extension(player_unit, "status_system")
+			if Unit.alive(player_unit) and unit ~= player_unit then
+				local status_extension = ScriptUnit.extension(player_unit, "status_system")
 
-				if not (not extension:is_knocked_down() and extension:is_dead()) then
-					local local_position_2 = Unit.local_position(player_unit, 0)
-					local distance_squared = Vector3.distance_squared(local_position, local_position_2)
+				if status_extension:is_knocked_down() and not status_extension:is_dead() then
+					local player_position = Unit.local_position(player_unit, 0)
+					local distance_sq = Vector3.distance_squared(unit_position, player_position)
 
-					if player_unit == arg_11_3 then
-						var_11_4 = true
-						var_11_5 = local_position_2
-						var_11_6 = distance_squared
+					if player_unit == raycast_unit then
+						has_raycast_unit = true
+						raycast_unit_pos = player_position
+						raycast_unit_dist = distance_sq
 					end
 
-					if distance_squared < huge then
-						huge = distance_squared
-						var_11_3 = local_position_2
+					if distance_sq < best_distance_sq then
+						best_distance_sq = distance_sq
+						best_unit_position = player_position
 					end
 				end
 			end
 		end
 
-		local num = 14400
+		local max_distance_sq = 14400
 
-		if not (not var_11_4 and not (var_11_6 < 400)) then
-			return true, var_11_5
-		elseif not (not var_11_3 and not (huge < num)) then
-			return true, var_11_3
+		if has_raycast_unit and raycast_unit_dist < 400 then
+			return true, raycast_unit_pos
+		elseif best_unit_position and best_distance_sq < max_distance_sq then
+			return true, best_unit_position
 		end
 
 		return false
 	end,
-	is_completed = function (arg_12_0, arg_12_1, arg_12_2, arg_12_3)
+	is_completed = function (t, start_t, unit, data)
 		-- function 12
 		return false
 	end
 }
 
-local function fn_3(arg_13_0, arg_13_1, arg_13_2, arg_13_3, arg_13_4)
+local function find_best(unit, unit_position, units, best_position, best_distance_sq)
 	-- function 13
-	for k, v in pairs(arg_13_2) do
-		if not (not v.projectile_info.show_warning_icon and v.owner_unit == arg_13_0) then
-			local local_position = Unit.local_position(k, 0)
-			local distance_squared = Vector3.distance_squared(arg_13_1, local_position)
+	for projectile_unit, projectile_extension in pairs(units) do
+		local show_warning_icon = projectile_extension.projectile_info.show_warning_icon
 
-			if distance_squared < arg_13_4 then
-				arg_13_4 = distance_squared
-				arg_13_3 = local_position
+		if show_warning_icon then
+			local owner_unit = projectile_extension.owner_unit
+
+			if owner_unit ~= unit then
+				local projectile_position = Unit.local_position(projectile_unit, 0)
+				local distance_sq = Vector3.distance_squared(unit_position, projectile_position)
+
+				if distance_sq < best_distance_sq then
+					best_distance_sq = distance_sq
+					best_position = projectile_position
+				end
 			end
 		end
 	end
 
-	return arg_13_3, arg_13_4
+	return best_position, best_distance_sq
 end
 
 TutorialTemplates.advanced_grenade = {
@@ -189,34 +189,34 @@ TutorialTemplates.advanced_grenade = {
 	display_type = "tooltip",
 	icon = "grenade_icon",
 	is_mission_tutorial = true,
-	init_data = function (arg_14_0)
+	init_data = function (data)
 		-- function 14
 		return
 	end,
-	clear_data = function (arg_15_0)
+	clear_data = function (data)
 		-- function 15
 		return
 	end,
-	update_data = function (arg_16_0, arg_16_1, arg_16_2)
+	update_data = function (t, unit, data)
 		-- function 16
 		return
 	end,
-	can_show = function (arg_17_0, arg_17_1, arg_17_2, arg_17_3, arg_17_4)
+	can_show = function (t, unit, data, raycast_unit, world)
 		-- function 17
-		local local_position = Unit.local_position(arg_17_1, 0)
-		local entity = Managers.state.entity
-		local var_17_2
-		local num = 400
-		local var_17_4, var_17_5 = fn_3(arg_17_1, local_position, entity:get_entities("PlayerProjectileUnitExtension"), var_17_2, num)
-		local var_17_6 = fn_3(arg_17_1, local_position, entity:get_entities("PlayerProjectileHuskExtension"), var_17_4, var_17_5)
+		local unit_position = Unit.local_position(unit, 0)
+		local entity_manager = Managers.state.entity
+		local best_position, best_distance_sq = nil, 400
 
-		if var_17_6 == nil then
+		best_position, best_distance_sq = find_best(unit, unit_position, entity_manager:get_entities("PlayerProjectileUnitExtension"), best_position, best_distance_sq)
+		best_position = find_best(unit, unit_position, entity_manager:get_entities("PlayerProjectileHuskExtension"), best_position, best_distance_sq)
+
+		if best_position == nil then
 			return false
 		end
 
-		return true, var_17_6
+		return true, best_position
 	end,
-	is_completed = function (arg_18_0, arg_18_1, arg_18_2, arg_18_3)
+	is_completed = function (t, start_t, unit, data)
 		-- function 18
 		return false
 	end
@@ -237,58 +237,59 @@ TutorialTemplates.play_go_tutorial_tooltip = {
 		action_instant_drink_potion = "d_right",
 		action_instant_grenade_throw = "right_shoulder"
 	},
-	get_text = function (self, arg_19_1)
+	get_text = function (data, template)
 		-- function 19
-		return self.text
+		return data.text
 	end,
-	get_inputs = function (self)
+	get_inputs = function (data)
 		-- function 20
-		return self.inputs
+		return data.inputs
 	end,
-	get_gamepad_inputs = function (self)
+	get_gamepad_inputs = function (data)
 		-- function 21
-		return self.gamepad_inputs
+		return data.gamepad_inputs
 	end,
-	get_force_update = function (self)
+	get_force_update = function (data)
 		-- function 22
-		return self.force_update
+		return data.force_update
 	end,
-	init_data = function (arg_23_0)
+	init_data = function (data)
 		-- function 23
 		return
 	end,
-	clear_data = function (arg_24_0)
+	clear_data = function (data)
 		-- function 24
 		return
 	end,
-	update_data = function (arg_25_0, arg_25_1, arg_25_2)
+	update_data = function (t, unit, data)
 		-- function 25
-		if not arg_25_2.force_update then
-			arg_25_2.force_update = false
+		if data.force_update then
+			data.force_update = false
 		end
 	end,
-	can_show = function (arg_26_0, arg_26_1, arg_26_2, arg_26_3, arg_26_4)
+	can_show = function (t, unit, data, raycast_unit, world)
 		-- function 26
-		local get_missions, var_26_1 = Managers.state.entity:system("mission_system"):get_missions()
+		local mission_system = Managers.state.entity:system("mission_system")
+		local active_missions, completed_missions = mission_system:get_missions()
 
-		for k, v in pairs(get_missions) do
-			if get_missions[k].mission_data.tooltip_text ~= nil then
-				if not (arg_26_2.text == nil or get_missions[k].mission_data.tooltip_text == arg_26_2.text) then
-					arg_26_2.text = get_missions[k].mission_data.tooltip_text
+		for mission_name, mission_data in pairs(active_missions) do
+			if active_missions[mission_name].mission_data.tooltip_text ~= nil then
+				if data.text ~= nil and active_missions[mission_name].mission_data.tooltip_text ~= data.text then
+					data.text = active_missions[mission_name].mission_data.tooltip_text
 
-					local mission_data = get_missions[k].mission_data
+					local mission_data = active_missions[mission_name].mission_data
 
-					arg_26_2.inputs = mission_data.tooltip_inputs
-					arg_26_2.gamepad_inputs = mission_data.tooltip_gamepad_inputs
-					arg_26_2.force_update = true
+					data.inputs = mission_data.tooltip_inputs
+					data.gamepad_inputs = mission_data.tooltip_gamepad_inputs
+					data.force_update = true
 				end
 
-				arg_26_2.text = get_missions[k].mission_data.tooltip_text
+				data.text = active_missions[mission_name].mission_data.tooltip_text
 
-				local mission_data_2 = get_missions[k].mission_data
+				local mission_data = active_missions[mission_name].mission_data
 
-				arg_26_2.inputs = mission_data_2.tooltip_inputs
-				arg_26_2.gamepad_inputs = mission_data_2.tooltip_gamepad_inputs
+				data.inputs = mission_data.tooltip_inputs
+				data.gamepad_inputs = mission_data.tooltip_gamepad_inputs
 
 				return true
 			end
@@ -296,7 +297,7 @@ TutorialTemplates.play_go_tutorial_tooltip = {
 
 		return false
 	end,
-	is_completed = function (arg_27_0, arg_27_1, arg_27_2, arg_27_3)
+	is_completed = function (t, start_t, unit, data)
 		-- function 27
 		return false
 	end
@@ -308,52 +309,56 @@ TutorialTemplates.elite_cage_respawn = {
 	display_type = "tooltip",
 	icon = "hud_tutorial_icon_rescue",
 	is_mission_tutorial = true,
-	init_data = function (arg_28_0)
+	init_data = function (data)
 		-- function 28
 		return
 	end,
-	clear_data = function (arg_29_0)
+	clear_data = function (data)
 		-- function 29
 		return
 	end,
-	update_data = function (arg_30_0, arg_30_1, arg_30_2)
+	update_data = function (t, unit, data)
 		-- function 30
 		return
 	end,
-	can_show = function (arg_31_0, arg_31_1, arg_31_2, arg_31_3, arg_31_4)
+	can_show = function (t, unit, data, raycast_unit, world)
 		-- function 31
-		local human_and_bot_players = Managers.player:human_and_bot_players()
-		local local_position = Unit.local_position(arg_31_1, 0)
-		local huge = math.huge
-		local var_31_3
+		local players = Managers.player:human_and_bot_players()
+		local unit_position = Unit.local_position(unit, 0)
+		local best_distance_sq = math.huge
+		local best_unit_position
 
-		for k, v in pairs(human_and_bot_players) do
-			local player_unit = v.player_unit
+		for k, player in pairs(players) do
+			local player_unit = player.player_unit
 
-			if not Unit.alive(player_unit) and arg_31_1 == player_unit or not ScriptUnit.extension(player_unit, "status_system"):is_ready_for_assisted_respawn() then
-				local local_position_2 = Unit.local_position(player_unit, 0)
-				local distance_squared = Vector3.distance_squared(local_position, local_position_2)
+			if Unit.alive(player_unit) and unit ~= player_unit then
+				local status_extension = ScriptUnit.extension(player_unit, "status_system")
 
-				if distance_squared < huge then
-					huge = distance_squared
-					var_31_3 = local_position_2
+				if status_extension:is_ready_for_assisted_respawn() then
+					local player_position = Unit.local_position(player_unit, 0)
+					local distance_sq = Vector3.distance_squared(unit_position, player_position)
+
+					if distance_sq < best_distance_sq then
+						best_distance_sq = distance_sq
+						best_unit_position = player_position
+					end
 				end
 			end
 		end
 
-		if not var_31_3 then
-			return true, var_31_3 + Vector3.up()
+		if best_unit_position then
+			return true, best_unit_position + Vector3.up()
 		end
 
 		return false
 	end,
-	is_completed = function (arg_32_0, arg_32_1, arg_32_2, arg_32_3)
+	is_completed = function (t, start_t, unit, data)
 		-- function 32
 		return false
 	end
 }
 
-local tbl = {
+local enemy_texts = {
 	skaven_loot_rat = "tutorial_infoslate_elite_enemy_loot_rat",
 	skaven_storm_vermin = "tutorial_infoslate_elite_enemy_storm_vermin",
 	skaven_ratling_gunner = {
@@ -381,7 +386,7 @@ local tbl = {
 		"tutorial_infoslate_elite_enemy_pack_master_02"
 	}
 }
-local tbl_2 = {}
+local objective_units = {}
 
 TutorialTemplates.objective_pickup = {
 	priority = 4,
@@ -393,100 +398,104 @@ TutorialTemplates.objective_pickup = {
 	game_mode_icons = {
 		weave = "hud_weaves_icon_mission"
 	},
-	get_text = function (self)
+	get_text = function (data)
 		-- function 33
-		return self.objective_text
+		return data.objective_text
 	end,
-	init_data = function (arg_34_0)
+	init_data = function (data)
 		-- function 34
 		return
 	end,
-	clear_data = function (arg_35_0)
+	clear_data = function (data)
 		-- function 35
 		return
 	end,
-	update_data = function (arg_36_0, arg_36_1, arg_36_2)
+	update_data = function (t, unit, data)
 		-- function 36
 		return
 	end,
-	can_show = function (arg_37_0, arg_37_1, arg_37_2, arg_37_3, arg_37_4)
+	can_show = function (t, unit, data, raycast_unit, world)
 		-- function 37
-		local extension = ScriptUnit.extension(arg_37_1, "inventory_system")
-		local get_wielded_slot_name = extension:get_wielded_slot_name()
-		local get_slot_data = extension:get_slot_data(get_wielded_slot_name)
-		local get_entities = Managers.state.entity:get_entities("ObjectivePickupTutorialExtension")
+		local inventory_extension = ScriptUnit.extension(unit, "inventory_system")
+		local slot_name = inventory_extension:get_wielded_slot_name()
+		local slot_data = inventory_extension:get_slot_data(slot_name)
+		local obj_units = Managers.state.entity:get_entities("ObjectivePickupTutorialExtension")
 
-		if not (get_wielded_slot_name ~= "slot_level_event" or get_slot_data == nil) then
-			for k, v in pairs(get_entities) do
-				local get_data = Unit.get_data(k, "interaction_data", "item_name")
-				local var_37_5 = ItemMasterList[get_data]
-				local left_hand_unit = var_37_5.left_hand_unit
-				local right_hand_unit = var_37_5.right_hand_unit
-				local flag = not left_hand_unit and left_hand_unit == get_slot_data.left_hand_unit_name
+		if slot_name == "slot_level_event" and slot_data ~= nil then
+			for objective_unit, _ in pairs(obj_units) do
+				local obj_pickup_name = Unit.get_data(objective_unit, "interaction_data", "item_name")
+				local obj_wpn_data = ItemMasterList[obj_pickup_name]
+				local obj_left_hand_unit = obj_wpn_data.left_hand_unit
+				local obj_right_hand_unit = obj_wpn_data.right_hand_unit
+				local carrying_objective_item = not not obj_left_hand_unit and obj_left_hand_unit == slot_data.left_hand_unit_name
 
-				flag = not flag and right_hand_unit == get_slot_data.right_hand_unit_name
+				carrying_objective_item = not not carrying_objective_item and obj_right_hand_unit == slot_data.right_hand_unit_name
 
-				if not flag then
+				if carrying_objective_item then
 					return false
 				end
 			end
 		end
 
-		local local_position = Unit.local_position(arg_37_1, 0)
-		local num = 10000
-		local num_2 = 0
+		local unit_position = Unit.local_position(unit, 0)
+		local best_distance_sq = 10000
+		local objective_units_n = 0
 
-		for k_2, v_2 in pairs(get_entities) do
-			if not (not ALIVE[k_2] and arg_37_1 == k_2) then
-				local disregard = v_2.disregard
+		for pickup_unit, pickup_extension in pairs(obj_units) do
+			if ALIVE[pickup_unit] and unit ~= pickup_unit then
+				local disregard = pickup_extension.disregard
 
-				if (disregard or not ScriptUnit.has_extension(k_2, "death_system")) and not ScriptUnit.extension(k_2, "death_system"):has_death_started() then
-					disregard = true
+				if not disregard and ScriptUnit.has_extension(pickup_unit, "death_system") then
+					local death_extension = ScriptUnit.extension(pickup_unit, "death_system")
+
+					if death_extension:has_death_started() then
+						disregard = true
+					end
 				end
 
-				local local_position_2 = Unit.local_position(k_2, 0)
-				local distance_squared = Vector3.distance_squared(local_position, local_position_2)
+				local pickup_unit_position = Unit.local_position(pickup_unit, 0)
+				local distance_sq = Vector3.distance_squared(unit_position, pickup_unit_position)
 
-				if not (disregard or not (distance_squared < num)) then
-					local get_data_2 = Unit.get_data(k_2, "required_mission_type")
+				if not disregard and distance_sq < best_distance_sq then
+					local required_mission_type = Unit.get_data(pickup_unit, "required_mission_type")
 
-					if not (not get_data_2 and get_data_2 == "") then
-						local flag_2 = false
-						local get_missions = Managers.state.entity:system("mission_system"):get_missions()
+					if required_mission_type and required_mission_type ~= "" then
+						local add_unit = false
+						local missions = Managers.state.entity:system("mission_system"):get_missions()
 
-						for k_3, v_3 in pairs(get_missions) do
-							if v_3.mission_type == get_data_2 then
-								flag_2 = true
+						for _, mission in pairs(missions) do
+							if mission.mission_type == required_mission_type then
+								add_unit = true
 
 								break
 							end
 						end
 
-						if not flag_2 then
-							num_2 = num_2 + 1
-							tbl_2[num_2] = k_2
+						if add_unit then
+							objective_units_n = objective_units_n + 1
+							objective_units[objective_units_n] = pickup_unit
 						end
 					else
-						num_2 = num_2 + 1
-						tbl_2[num_2] = k_2
+						objective_units_n = objective_units_n + 1
+						objective_units[objective_units_n] = pickup_unit
 					end
 				end
 			end
 		end
 
-		if num_2 > 0 then
-			local var_37_18 = tbl_2[1]
-			local get_data_3 = Unit.get_data(var_37_18, "tutorial_text_id")
+		if objective_units_n > 0 then
+			local unit = objective_units[1]
+			local get_data = Unit.get_data(unit, "tutorial_text_id")
 
-			get_data_3 = get_data_3 or "tutorial_no_text"
-			arg_37_2.objective_text = get_data_3
+			get_data = not not get_data or not not "tutorial_no_text"
+			data.objective_text = get_data
 
-			return true, tbl_2, num_2
+			return true, objective_units, objective_units_n
 		end
 
 		return false
 	end,
-	is_completed = function (arg_38_0, arg_38_1, arg_38_2, arg_38_3)
+	is_completed = function (t, start_t, unit, data)
 		-- function 38
 		return false
 	end
@@ -501,77 +510,85 @@ TutorialTemplates.objective_socket = {
 	game_mode_icons = {
 		weave = "hud_weaves_icon_mission"
 	},
-	get_text = function (self)
+	get_text = function (data)
 		-- function 39
-		return self.objective_text
+		return data.objective_text
 	end,
-	init_data = function (arg_40_0)
+	init_data = function (data)
 		-- function 40
 		return
 	end,
-	clear_data = function (arg_41_0)
+	clear_data = function (data)
 		-- function 41
 		return
 	end,
-	update_data = function (arg_42_0, arg_42_1, arg_42_2)
+	update_data = function (t, unit, data)
 		-- function 42
 		return
 	end,
-	can_show = function (arg_43_0, arg_43_1, arg_43_2, arg_43_3, arg_43_4)
+	can_show = function (t, unit, data, raycast_unit, world)
 		-- function 43
-		local local_position = Unit.local_position(arg_43_1, 0)
-		local extension = ScriptUnit.extension(arg_43_1, "inventory_system")
-		local get_wielded_slot_name = extension:get_wielded_slot_name()
-		local get_slot_data = extension:get_slot_data(get_wielded_slot_name)
+		local unit_position = Unit.local_position(unit, 0)
+		local inventory_extension = ScriptUnit.extension(unit, "inventory_system")
+		local slot_name = inventory_extension:get_wielded_slot_name()
+		local slot_data = inventory_extension:get_slot_data(slot_name)
 
-		if not (get_wielded_slot_name ~= "slot_level_event" or get_slot_data == nil) then
-			local get_entities = Managers.state.entity:get_entities("ObjectiveSocketUnitExtension")
-			local right_unit_1p = get_slot_data.right_unit_1p
+		if slot_name == "slot_level_event" and slot_data ~= nil then
+			local units = Managers.state.entity:get_entities("ObjectiveSocketUnitExtension")
+			local right_unit_1p = slot_data.right_unit_1p
 
-			right_unit_1p = right_unit_1p or get_slot_data.left_unit_1p
+			if not right_unit_1p then
+				-- Nothing
+			end
 
-			if not ScriptUnit.has_extension(right_unit_1p, "limited_item_track_system") then
+			right_unit_1p = slot_data.left_unit_1p
+
+			local weapon_unit_1p = right_unit_1p
+
+			::label_43_0::
+
+			if not ScriptUnit.has_extension(weapon_unit_1p, "limited_item_track_system") then
 				return false
 			end
 
-			local get_data = Unit.get_data
-			local num = 0
-			local var_43_8 = get_data(right_unit_1p, "socket_type")
+			local unit_get_data = Unit.get_data
+			local objective_units_n = 0
+			local wpn_socket_type = unit_get_data(weapon_unit_1p, "socket_type")
 
-			for k, v in pairs(get_entities) do
-				local var_43_9 = get_data(k, "socket_type")
+			for socket_unit, socket_extension in pairs(units) do
+				local socket_type = unit_get_data(socket_unit, "socket_type")
 
-				if not (not var_43_8 and not var_43_9 and var_43_8 ~= var_43_9) then
-					local flag = get_data(k, "sockets_enabled") ~= false
-					local var_43_11 = get_data(k, "tutorial_text_enabled")
+				if not wpn_socket_type or not socket_type or wpn_socket_type == socket_type then
+					local sockets_enabled = unit_get_data(socket_unit, "sockets_enabled") ~= false
+					local tutorial_text_enabled = unit_get_data(socket_unit, "tutorial_text_enabled")
 
-					if not flag and not var_43_11 then
-						local distance_squared = Vector3.distance_squared(local_position, Unit.local_position(k, 0))
+					if sockets_enabled and tutorial_text_enabled then
+						local distance_sq = Vector3.distance_squared(unit_position, Unit.local_position(socket_unit, 0))
 
-						if not (not (v.num_closed_sockets < v.num_sockets) or not (distance_squared < v.distance)) then
-							num = num + 1
-							tbl_2[num] = k
+						if socket_extension.num_closed_sockets < socket_extension.num_sockets and distance_sq < socket_extension.distance then
+							objective_units_n = objective_units_n + 1
+							objective_units[objective_units_n] = socket_unit
 						end
 					end
 				end
 			end
 
-			if num == 0 then
+			if objective_units_n == 0 then
 				return false
 			end
 
-			local var_43_13 = tbl_2[1]
-			local get_data_2 = Unit.get_data(var_43_13, "tutorial_text_id")
+			local first_socket_unit = objective_units[1]
+			local get_data = Unit.get_data(first_socket_unit, "tutorial_text_id")
 
-			get_data_2 = get_data_2 or "tutorial_no_text"
-			arg_43_2.objective_text = get_data_2
+			get_data = not not get_data or not not "tutorial_no_text"
+			data.objective_text = get_data
 
-			return true, tbl_2, num
+			return true, objective_units, objective_units_n
 		end
 
 		return false
 	end,
-	is_completed = function (arg_44_0, arg_44_1, arg_44_2, arg_44_3)
+	is_completed = function (t, start_t, unit, data)
 		-- function 44
 		return false
 	end
@@ -586,92 +603,92 @@ TutorialTemplates.objective_unit = {
 	game_mode_icons = {
 		weave = "hud_weaves_icon_mission"
 	},
-	get_text = function (self)
+	get_text = function (data)
 		-- function 45
-		return self.objective_text
+		return data.objective_text
 	end,
-	get_icon = function (self)
+	get_icon = function (data)
 		-- function 46
-		return self.objective_icon
+		return data.objective_icon
 	end,
-	get_alert = function (self)
+	get_alert = function (data)
 		-- function 47
-		return self.alerts_horde
+		return data.alerts_horde
 	end,
-	get_wave = function (self)
+	get_wave = function (data)
 		-- function 48
-		return self.objective_wave
+		return data.objective_wave
 	end,
-	init_data = function (arg_49_0)
+	init_data = function (data)
 		-- function 49
 		return
 	end,
-	clear_data = function (arg_50_0)
+	clear_data = function (data)
 		-- function 50
 		return
 	end,
-	update_data = function (arg_51_0, arg_51_1, arg_51_2)
+	update_data = function (t, unit, data)
 		-- function 51
 		return
 	end,
-	can_show = function (arg_52_0, arg_52_1, arg_52_2, arg_52_3, arg_52_4)
+	can_show = function (t, unit, data, raycast_unit, world)
 		-- function 52
-		local local_position = Unit.local_position(arg_52_1, 0)
-		local get_entities = Managers.state.entity:get_entities("ObjectiveUnitExtension")
-		local distance_squared = Vector3.distance_squared
-		local var_52_3
-		local huge = math.huge
-		local num = 0
+		local unit_position = Unit.local_position(unit, 0)
+		local units = Managers.state.entity:get_entities("ObjectiveUnitExtension")
+		local vector3_distance_squared = Vector3.distance_squared
+		local best_unit
+		local best_distance_sq = math.huge
+		local objective_units_n = 0
 
-		for k, v in pairs(get_entities) do
-			if not v.active then
-				local var_52_6 = distance_squared(local_position, Unit.local_position(k, 0))
+		for objective_unit, extension in pairs(units) do
+			if extension.active then
+				local distance_sq = vector3_distance_squared(unit_position, Unit.local_position(objective_unit, 0))
 
-				if var_52_6 < huge then
-					var_52_3 = k
-					huge = var_52_6
+				if distance_sq < best_distance_sq then
+					best_unit = objective_unit
+					best_distance_sq = distance_sq
 				end
 
-				if not v.always_show then
-					num = num + 1
-					tbl_2[num] = k
+				if extension.always_show then
+					objective_units_n = objective_units_n + 1
+					objective_units[objective_units_n] = objective_unit
 				end
 			end
 		end
 
-		if not (not var_52_3 and get_entities[var_52_3].always_show) then
-			num = num + 1
-			tbl_2[num] = var_52_3
+		if best_unit and not units[best_unit].always_show then
+			objective_units_n = objective_units_n + 1
+			objective_units[objective_units_n] = best_unit
 		end
 
-		if num > 0 then
-			local get_data = Unit.get_data
-			local var_52_8 = get_data(var_52_3, "tutorial_text_id")
+		if objective_units_n > 0 then
+			local unit_get_data = Unit.get_data
+			local var_52_0 = unit_get_data(best_unit, "tutorial_text_id")
 
-			var_52_8 = var_52_8 or "tutorial_no_text"
-			arg_52_2.objective_text = var_52_8
+			var_52_0 = not not var_52_0 or not not "tutorial_no_text"
+			data.objective_text = var_52_0
 
-			local var_52_9 = get_data(var_52_3, "alerts_horde")
+			local var_52_1 = unit_get_data(best_unit, "alerts_horde")
 
-			var_52_9 = var_52_9 or false
-			arg_52_2.alerts_horde = var_52_9
+			var_52_1 = not not var_52_1 or not not false
+			data.alerts_horde = var_52_1
 
-			local var_52_10 = get_data(var_52_3, "icon")
+			local var_52_2 = unit_get_data(best_unit, "icon")
 
-			var_52_10 = var_52_10 or "hud_tutorial_icon_mission"
-			arg_52_2.objective_icon = var_52_10
+			var_52_2 = not not var_52_2 or not not "hud_tutorial_icon_mission"
+			data.objective_icon = var_52_2
 
-			local var_52_11 = get_data(var_52_3, "tutorial_wave")
+			local var_52_3 = unit_get_data(best_unit, "tutorial_wave")
 
-			var_52_11 = var_52_11 or false
-			arg_52_2.objective_wave = var_52_11
+			var_52_3 = not not var_52_3 or not not false
+			data.objective_wave = var_52_3
 
-			return true, tbl_2, num
+			return true, objective_units, objective_units_n
 		end
 
 		return false
 	end,
-	is_completed = function (arg_53_0, arg_53_1, arg_53_2, arg_53_3)
+	is_completed = function (t, start_t, unit, data)
 		-- function 53
 		return false
 	end
@@ -683,29 +700,29 @@ TutorialInfoSlateTemplates_n = 0
 TutorialObjectiveTooltipTemplates = {}
 TutorialObjectiveTooltipTemplates_n = 0
 
-for k, v in pairs(TutorialTemplates) do
-	v.name = k
+for name, template in pairs(TutorialTemplates) do
+	template.name = name
 
-	if v.display_type == "tooltip" then
-		local priority = v.priority
+	if template.display_type == "tooltip" then
+		local priority = template.priority
 
-		priority = priority or 0
-		v.priority = priority
+		priority = not not priority or not not 0
+		template.priority = priority
 		TutorialTooltipTemplates_n = TutorialTooltipTemplates_n + 1
-		TutorialTooltipTemplates[TutorialTooltipTemplates_n] = v
-	elseif v.display_type == "info_slate" then
+		TutorialTooltipTemplates[TutorialTooltipTemplates_n] = template
+	elseif template.display_type == "info_slate" then
 		TutorialInfoSlateTemplates_n = TutorialInfoSlateTemplates_n + 1
-		TutorialInfoSlateTemplates[TutorialInfoSlateTemplates_n] = v
-	elseif v.display_type == "objective_tooltip" then
+		TutorialInfoSlateTemplates[TutorialInfoSlateTemplates_n] = template
+	elseif template.display_type == "objective_tooltip" then
 		TutorialObjectiveTooltipTemplates_n = TutorialObjectiveTooltipTemplates_n + 1
-		TutorialObjectiveTooltipTemplates[TutorialObjectiveTooltipTemplates_n] = v
+		TutorialObjectiveTooltipTemplates[TutorialObjectiveTooltipTemplates_n] = template
 	end
 end
 
-local function fn_4(self, arg_54_1)
+local function tooltip_sort_function(t1, t2)
 	-- function 54
-	return self.priority > arg_54_1.priority
+	return t1.priority > t2.priority
 end
 
-table.sort(TutorialTooltipTemplates, fn_4)
-table.sort(TutorialObjectiveTooltipTemplates, fn_4)
+table.sort(TutorialTooltipTemplates, tooltip_sort_function)
+table.sort(TutorialObjectiveTooltipTemplates, tooltip_sort_function)

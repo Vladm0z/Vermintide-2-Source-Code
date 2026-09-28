@@ -2,17 +2,19 @@
 
 GameModeHelper = class(GameModeHelper)
 
-GameModeHelper.side_is_dead = function (arg_1_0, arg_1_1)
+GameModeHelper.side_is_dead = function (side_name, ignore_bots)
 	-- function 1
-	local occupied_slots = Managers.state.side:get_party_from_side_name(arg_1_0).occupied_slots
+	local party = Managers.state.side:get_party_from_side_name(side_name)
+	local occupied_slots = party.occupied_slots
 
 	for i = 1, #occupied_slots do
-		local var_1_1 = occupied_slots[i]
-		local health_state = var_1_1.game_mode_data.health_state
-		local flag = health_state == "dead" or health_state == "respawn" or health_state ~= "respawning"
-		local flag_2 = not arg_1_1 and var_1_1.is_bot
+		local status = occupied_slots[i]
+		local data = status.game_mode_data
+		local health_state = data.health_state
+		local is_alive = health_state ~= "dead" and health_state ~= "respawn" and health_state ~= "respawning"
+		local should_ignore = not not ignore_bots and not not status.is_bot
 
-		if not (not flag and flag_2) then
+		if is_alive and not should_ignore then
 			return false
 		end
 	end
@@ -20,14 +22,17 @@ GameModeHelper.side_is_dead = function (arg_1_0, arg_1_1)
 	return true
 end
 
-GameModeHelper.side_is_disabled = function (arg_2_0)
+GameModeHelper.side_is_disabled = function (side_name)
 	-- function 2
-	local occupied_slots = Managers.state.side:get_party_from_side_name(arg_2_0).occupied_slots
+	local party = Managers.state.side:get_party_from_side_name(side_name)
+	local occupied_slots = party.occupied_slots
 
 	for i = 1, #occupied_slots do
-		local health_state = occupied_slots[i].game_mode_data.health_state
+		local status = occupied_slots[i]
+		local data = status.game_mode_data
+		local health_state = data.health_state
 
-		if not (not health_state and health_state ~= "alive") then
+		if not health_state or health_state == "alive" then
 			return false
 		end
 	end
@@ -35,16 +40,17 @@ GameModeHelper.side_is_disabled = function (arg_2_0)
 	return true
 end
 
-GameModeHelper.side_delaying_loss = function (arg_3_0)
+GameModeHelper.side_delaying_loss = function (side_name)
 	-- function 3
-	local PLAYER_AND_BOT_UNITS = Managers.state.side:get_side_from_name(arg_3_0).PLAYER_AND_BOT_UNITS
-	local count = #PLAYER_AND_BOT_UNITS
+	local side = Managers.state.side:get_side_from_name(side_name)
+	local player_units = side.PLAYER_AND_BOT_UNITS
+	local num_human_players = #player_units
 
-	for i = 1, count do
-		local var_3_2 = PLAYER_AND_BOT_UNITS[i]
-		local has_extension = ScriptUnit.has_extension(var_3_2, "buff_system")
+	for i = 1, num_human_players do
+		local player_unit = player_units[i]
+		local buff_extension = ScriptUnit.has_extension(player_unit, "buff_system")
 
-		if not has_extension and not has_extension:has_buff_perk("invulnerable") then
+		if buff_extension and buff_extension:has_buff_perk("invulnerable") then
 			return true
 		end
 	end
@@ -52,57 +58,58 @@ GameModeHelper.side_delaying_loss = function (arg_3_0)
 	return false
 end
 
-GameModeHelper.get_object_sets = function (arg_4_0, arg_4_1)
+GameModeHelper.get_object_sets = function (level_name, game_mode_key)
 	-- function 4
-	local object_sets = GameModeSettings[arg_4_1].object_sets
-	local tbl = {}
-	local tbl_2 = {}
+	local game_mode_object_sets = GameModeSettings[game_mode_key].object_sets
+	local spawned_object_sets = {}
+	local object_sets = {}
+	local num_nested_levels = LevelResource.nested_level_count(level_name)
 
-	if LevelResource.nested_level_count(arg_4_0) > 0 then
-		local nested_level_object_set_names = LevelResource.nested_level_object_set_names(arg_4_0, 1)
+	if num_nested_levels > 0 then
+		local available_level_sets = LevelResource.nested_level_object_set_names(level_name, 1)
 
-		for i, v in ipairs(nested_level_object_set_names) do
-			local tbl_3 = {
+		for key, set in ipairs(available_level_sets) do
+			local object_set_table = {
 				type = "",
-				key = i,
-				units = LevelResource.nested_level_unit_indices_in_object_set(arg_4_0, 1, v)
+				key = key,
+				units = LevelResource.nested_level_unit_indices_in_object_set(level_name, 1, set)
 			}
 
-			if not (object_sets[v] or v ~= "shadow_lights") then
-				tbl[#tbl + 1] = v
-			elseif string.sub(v, 1, 5) == "flow_" then
-				tbl[#tbl + 1] = v
-				tbl_3.type = "flow"
-			elseif string.sub(v, 1, 5) == "team_" then
-				tbl[#tbl + 1] = v
-				tbl_3.type = "team"
+			if game_mode_object_sets[set] or set == "shadow_lights" then
+				spawned_object_sets[#spawned_object_sets + 1] = set
+			elseif string.sub(set, 1, 5) == "flow_" then
+				spawned_object_sets[#spawned_object_sets + 1] = set
+				object_set_table.type = "flow"
+			elseif string.sub(set, 1, 5) == "team_" then
+				spawned_object_sets[#spawned_object_sets + 1] = set
+				object_set_table.type = "team"
 			end
 
-			tbl_2[v] = tbl_3
+			object_sets[set] = object_set_table
 		end
 	else
-		local object_set_names = LevelResource.object_set_names(arg_4_0)
+		local available_level_sets = LevelResource.object_set_names(level_name)
 
-		for i_2, v_2 in ipairs(object_set_names) do
-			local tbl_4 = {
+		for key, set in ipairs(available_level_sets) do
+			local object_set_table = {
 				type = "",
-				key = i_2,
-				units = LevelResource.unit_indices_in_object_set(arg_4_0, v_2)
+				key = key,
+				units = LevelResource.unit_indices_in_object_set(level_name, set)
 			}
 
-			if not (object_sets[v_2] or v_2 ~= "shadow_lights") then
-				tbl[#tbl + 1] = v_2
-			elseif string.sub(v_2, 1, 5) == "flow_" then
-				tbl[#tbl + 1] = v_2
-				tbl_4.type = "flow"
-			elseif string.sub(v_2, 1, 5) == "team_" then
-				tbl[#tbl + 1] = v_2
-				tbl_4.type = "team"
+			if game_mode_object_sets[set] or set == "shadow_lights" then
+				spawned_object_sets[#spawned_object_sets + 1] = set
+			elseif string.sub(set, 1, 5) == "flow_" then
+				spawned_object_sets[#spawned_object_sets + 1] = set
+				object_set_table.type = "flow"
+			elseif string.sub(set, 1, 5) == "team_" then
+				spawned_object_sets[#spawned_object_sets + 1] = set
+				object_set_table.type = "team"
 			end
 
-			tbl_2[v_2] = tbl_4
+			object_sets[set] = object_set_table
 		end
 	end
 
-	return tbl_2, tbl
+	return object_sets, spawned_object_sets
 end

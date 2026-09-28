@@ -2,20 +2,20 @@
 
 require("scripts/settings/dlcs/belakor/belakor_balancing")
 
-local scripts_unit_extensions_default_player_unit_buffs_settings_buff_perk_names = require("scripts/unit_extensions/default_player_unit/buffs/settings/buff_perk_names")
-local belakor = DLCSettings.belakor
+local buff_perks = require("scripts/unit_extensions/default_player_unit/buffs/settings/buff_perk_names")
+local settings = DLCSettings.belakor
 
-local function fn()
+local function is_server()
 	-- function 1
 	return Managers.state.network.is_server
 end
 
-local function fn_2(arg_2_0, arg_2_1)
+local function teleport_validation_func(pos, validation_data)
 	-- function 2
-	local ENEMY_PLAYER_AND_BOT_POSITIONS = arg_2_1.side.ENEMY_PLAYER_AND_BOT_POSITIONS
+	local enemy_positions = validation_data.side.ENEMY_PLAYER_AND_BOT_POSITIONS
 
-	for i = 1, #ENEMY_PLAYER_AND_BOT_POSITIONS do
-		if Vector3.distance_squared(arg_2_0, ENEMY_PLAYER_AND_BOT_POSITIONS[i]) < arg_2_1.min_dist_sqr then
+	for i = 1, #enemy_positions do
+		if Vector3.distance_squared(pos, enemy_positions[i]) < validation_data.min_dist_sqr then
 			return false
 		end
 	end
@@ -23,7 +23,7 @@ local function fn_2(arg_2_0, arg_2_1)
 	return true
 end
 
-local tbl = {
+local GREY_WINGS_TELEPORT_STATES = {
 	IDLE = 1,
 	COOLDOWN = 5,
 	FINDING_TELEPORT_POSITION = 2,
@@ -31,318 +31,331 @@ local tbl = {
 	LANDING = 4
 }
 
-belakor.buff_function_templates = {
-	update_belakor_grey_wings_teleport_trigger = function (arg_3_0, arg_3_1, arg_3_2)
+settings.buff_function_templates = {
+	update_belakor_grey_wings_teleport_trigger = function (unit, buff, params)
 		-- function 3
-		if not fn() then
+		if not is_server() then
 			return
 		end
 
-		local var_3_0 = BLACKBOARDS[arg_3_0]
-		local target_unit = var_3_0.target_unit
-		local parent_buff_shared_table = arg_3_1.parent_buff_shared_table
+		local blackboard = BLACKBOARDS[unit]
+		local target_unit = blackboard.target_unit
+		local parent_buff_shared_table = buff.parent_buff_shared_table
 
 		if not target_unit then
 			return
 		end
 
-		if var_3_0.move_state == "stagger" then
+		if blackboard.move_state == "stagger" then
 			parent_buff_shared_table.teleport = true
 
 			return
 		end
 
-		local var_3_3 = POSITION_LOOKUP[arg_3_0]
-		local var_3_4 = POSITION_LOOKUP[target_unit]
+		local owner_position = POSITION_LOOKUP[unit]
+		local target_unit_position = POSITION_LOOKUP[target_unit]
+		local distance = Vector3.length(target_unit_position - owner_position)
+		local template = buff.template
 
-		if Vector3.length(var_3_4 - var_3_3) > arg_3_1.template.max_distance_to_trigger_teleport_from_combo_attack then
+		if distance > template.max_distance_to_trigger_teleport_from_combo_attack then
 			return
 		end
 
-		local combo_attack_data = var_3_0.combo_attack_data
+		local combo_attack_data = blackboard.combo_attack_data
 
-		if not ((var_3_0.move_state ~= "attacking" or not combo_attack_data or combo_attack_data.current_attack_name == "attack_wild_flailing" or combo_attack_data.current_attack_name == "attack_heavy") and combo_attack_data.aborted) then
+		if blackboard.move_state == "attacking" and combo_attack_data and (combo_attack_data.current_attack_name == "attack_wild_flailing" or combo_attack_data.current_attack_name == "attack_heavy") and not combo_attack_data.aborted then
 			parent_buff_shared_table.teleport = true
 		end
 	end,
-	apply_belakor_grey_wings = function (arg_4_0, arg_4_1, arg_4_2)
+	apply_belakor_grey_wings = function (unit, buff, params)
 		-- function 4
-		if not fn() then
+		if not is_server() then
 			return
 		end
 
-		local parent_buff_shared_table = arg_4_1.parent_buff_shared_table
+		local shared_table = buff.parent_buff_shared_table
 
-		parent_buff_shared_table.teleport_state = tbl.IDLE
+		shared_table.teleport_state = GREY_WINGS_TELEPORT_STATES.IDLE
 
-		local teleport_available_buff = arg_4_1.template.teleport_available_buff
+		local teleport_available_buff = buff.template.teleport_available_buff
+		local buff_extension = ScriptUnit.has_extension(unit, "buff_system")
 
-		parent_buff_shared_table.teleport_available_buff_id = ScriptUnit.has_extension(arg_4_0, "buff_system"):add_buff(teleport_available_buff)
-		parent_buff_shared_table.blackboard = BLACKBOARDS[arg_4_0]
-		parent_buff_shared_table.side = Managers.state.side.side_by_unit[arg_4_0]
-		parent_buff_shared_table.health_extension = ScriptUnit.extension(arg_4_0, "health_system")
+		shared_table.teleport_available_buff_id = buff_extension:add_buff(teleport_available_buff)
+		shared_table.blackboard = BLACKBOARDS[unit]
+		shared_table.side = Managers.state.side.side_by_unit[unit]
+		shared_table.health_extension = ScriptUnit.extension(unit, "health_system")
 	end,
-	update_belakor_grey_wings = function (arg_5_0, arg_5_1, arg_5_2)
+	update_belakor_grey_wings = function (unit, buff, params)
 		-- function 5
-		if not fn() then
+		if not is_server() then
 			return
 		end
 
-		local time = Managers.time:time("game")
-		local has_extension = ScriptUnit.has_extension(arg_5_0, "buff_system")
-		local parent_buff_shared_table = arg_5_1.parent_buff_shared_table
-		local blackboard = parent_buff_shared_table.blackboard
-		local template = arg_5_1.template
+		local t = Managers.time:time("game")
+		local buff_extension = ScriptUnit.has_extension(unit, "buff_system")
+		local shared_table = buff.parent_buff_shared_table
+		local blackboard = shared_table.blackboard
+		local template = buff.template
 
-		if not (not parent_buff_shared_table.teleport and parent_buff_shared_table.teleport_state ~= tbl.IDLE) then
-			parent_buff_shared_table.teleport_state = tbl.FINDING_TELEPORT_POSITION
-			parent_buff_shared_table.teleport = false
+		if shared_table.teleport and shared_table.teleport_state == GREY_WINGS_TELEPORT_STATES.IDLE then
+			shared_table.teleport_state = GREY_WINGS_TELEPORT_STATES.FINDING_TELEPORT_POSITION
+			shared_table.teleport = false
 			blackboard.umbral_leap = true
 			blackboard.in_vortex = true
 
-			local var_5_5 = POSITION_LOOKUP[arg_5_0]
+			local unit_pos = POSITION_LOOKUP[unit]
 			local teleport_effect = template.teleport_effect
 
-			if not teleport_effect then
-				local var_5_7 = NetworkLookup.effects[teleport_effect]
-				local num = 0
-				local identity = Quaternion.identity()
+			if teleport_effect then
+				local effect_name_id = NetworkLookup.effects[teleport_effect]
+				local node_id = 0
+				local rotation_offset = Quaternion.identity()
+				local network_manager = Managers.state.network
 
-				Managers.state.network:rpc_play_particle_effect(nil, var_5_7, NetworkConstants.invalid_game_object_id, num, var_5_5, identity, false)
+				network_manager:rpc_play_particle_effect(nil, effect_name_id, NetworkConstants.invalid_game_object_id, node_id, unit_pos, rotation_offset, false)
 			end
 		end
 
-		if parent_buff_shared_table.teleport_state == tbl.COOLDOWN then
-			if not parent_buff_shared_table.teleport_cooldown_t then
-				parent_buff_shared_table.teleport_cooldown_t = time + template.teleport_cooldown
+		if shared_table.teleport_state == GREY_WINGS_TELEPORT_STATES.COOLDOWN then
+			if not shared_table.teleport_cooldown_t then
+				local teleport_cooldown = template.teleport_cooldown
+
+				shared_table.teleport_cooldown_t = t + teleport_cooldown
 			end
 
-			if not parent_buff_shared_table.teleport_available_buff_id then
-				has_extension:remove_buff(parent_buff_shared_table.teleport_available_buff_id)
+			if shared_table.teleport_available_buff_id then
+				buff_extension:remove_buff(shared_table.teleport_available_buff_id)
 
-				parent_buff_shared_table.teleport_available_buff_id = nil
+				shared_table.teleport_available_buff_id = nil
 			end
 
-			parent_buff_shared_table.teleport = false
+			shared_table.teleport = false
 
-			if time > parent_buff_shared_table.teleport_cooldown_t then
-				local teleport_available_buff = arg_5_1.template.teleport_available_buff
+			if t > shared_table.teleport_cooldown_t then
+				local teleport_available_buff = buff.template.teleport_available_buff
 
-				parent_buff_shared_table.teleport_available_buff_id = has_extension:add_buff(teleport_available_buff)
-				parent_buff_shared_table.teleport_state = tbl.IDLE
+				shared_table.teleport_available_buff_id = buff_extension:add_buff(teleport_available_buff)
+				shared_table.teleport_state = GREY_WINGS_TELEPORT_STATES.IDLE
 			end
 		end
 
-		if parent_buff_shared_table.teleport_state == tbl.FINDING_TELEPORT_POSITION then
-			local function fn_3()
+		if shared_table.teleport_state == GREY_WINGS_TELEPORT_STATES.FINDING_TELEPORT_POSITION then
+			local function nav_callback()
 				-- function 6
-				if not (not ALIVE[arg_5_0] and parent_buff_shared_table.teleport_state == tbl.FINDING_TELEPORT_POSITION) then
+				if not ALIVE[unit] or shared_table.teleport_state ~= GREY_WINGS_TELEPORT_STATES.FINDING_TELEPORT_POSITION then
 					return
 				end
 
-				local var_6_0 = POSITION_LOOKUP[arg_5_0]
-				local flag = true
+				local unit_pos = POSITION_LOOKUP[unit]
+				local far_teleport = true
 				local target_unit = blackboard.target_unit
 
-				if not target_unit then
-					local var_6_3 = POSITION_LOOKUP[arg_5_0]
-					local var_6_4 = POSITION_LOOKUP[target_unit]
+				if target_unit then
+					local owner_position = POSITION_LOOKUP[unit]
+					local target_unit_position = POSITION_LOOKUP[target_unit]
+					local distance = Vector3.length(target_unit_position - owner_position)
 
-					if Vector3.length(var_6_4 - var_6_3) > template.min_distance_to_trigger_gap_closer_teleport then
-						flag = false
+					if distance > template.min_distance_to_trigger_gap_closer_teleport then
+						far_teleport = false
 					end
 				end
 
-				local var_6_5
-				local var_6_6
-				local var_6_7
-				local var_6_8
-				local find_valid_pos_attempts = template.find_valid_pos_attempts
-				local side = parent_buff_shared_table.side
+				local teleport_position, min_dist, max_dist, min_player_dist
+				local tries = template.find_valid_pos_attempts
+				local side = shared_table.side
 
-				if not flag then
-					var_6_6 = template.min_teleport_distance
-					var_6_7 = template.max_teleport_distance
-					var_6_8 = template.min_dist_from_players
+				if far_teleport then
+					min_dist = template.min_teleport_distance
+					max_dist = template.max_teleport_distance
+					min_player_dist = template.min_dist_from_players
 				else
-					var_6_6 = template.min_teleport_distance_gap_closer
-					var_6_7 = template.max_teleport_distance_gap_closer
-					var_6_8 = template.min_dist_from_players_gap_closer
+					min_dist = template.min_teleport_distance_gap_closer
+					max_dist = template.max_teleport_distance_gap_closer
+					min_player_dist = template.min_dist_from_players_gap_closer
 				end
 
-				local tbl_2 = {
+				local validation_data = {
 					side = side,
-					min_dist_sqr = var_6_8 * var_6_8
+					min_dist_sqr = min_player_dist * min_player_dist
 				}
-				local get_spawn_pos_on_circle_with_func_range = ConflictUtils.get_spawn_pos_on_circle_with_func_range(blackboard.nav_world, var_6_0, var_6_6, var_6_7, find_valid_pos_attempts, fn_2, tbl_2, 8, 8)
 
-				if not get_spawn_pos_on_circle_with_func_range then
-					parent_buff_shared_table.teleport_t = time + template.teleport_delay
-					parent_buff_shared_table.teleport_position = Vector3Box(get_spawn_pos_on_circle_with_func_range)
-					parent_buff_shared_table.teleport_origin_position = Vector3Box(var_6_0)
-					parent_buff_shared_table.target_unit = blackboard.target_unit
-					parent_buff_shared_table.teleport_state = tbl.TELEPORTING
+				teleport_position = ConflictUtils.get_spawn_pos_on_circle_with_func_range(blackboard.nav_world, unit_pos, min_dist, max_dist, tries, teleport_validation_func, validation_data, 8, 8)
+
+				if teleport_position then
+					shared_table.teleport_t = t + template.teleport_delay
+					shared_table.teleport_position = Vector3Box(teleport_position)
+					shared_table.teleport_origin_position = Vector3Box(unit_pos)
+					shared_table.target_unit = blackboard.target_unit
+					shared_table.teleport_state = GREY_WINGS_TELEPORT_STATES.TELEPORTING
 				end
 			end
 
-			Managers.state.entity:system("ai_navigation_system"):add_safe_navigation_callback(fn_3)
+			local ai_navigation_system = Managers.state.entity:system("ai_navigation_system")
+
+			ai_navigation_system:add_safe_navigation_callback(nav_callback)
 		end
 
-		if not ((parent_buff_shared_table.teleport_state ~= tbl.TELEPORTING or not ALIVE[arg_5_0]) and not (time > parent_buff_shared_table.teleport_t)) then
-			local function fn_4()
+		if shared_table.teleport_state == GREY_WINGS_TELEPORT_STATES.TELEPORTING and ALIVE[unit] and t > shared_table.teleport_t then
+			local function nav_callback()
 				-- function 7
-				local var_7_0 = POSITION_LOOKUP[arg_5_0]
-				local unbox = parent_buff_shared_table.teleport_position:unbox()
+				local unit_pos = POSITION_LOOKUP[unit]
+				local teleport_position = shared_table.teleport_position:unbox()
 				local teleport_effect = template.teleport_effect
 
-				if not teleport_effect then
-					local var_7_3 = NetworkLookup.effects[teleport_effect]
-					local num = 0
-					local identity = Quaternion.identity()
+				if teleport_effect then
+					local effect_name_id = NetworkLookup.effects[teleport_effect]
+					local node_id = 0
+					local rotation_offset = Quaternion.identity()
+					local network_manager = Managers.state.network
 
-					Managers.state.network:rpc_play_particle_effect(nil, var_7_3, NetworkConstants.invalid_game_object_id, num, var_7_0, identity, false)
+					network_manager:rpc_play_particle_effect(nil, effect_name_id, NetworkConstants.invalid_game_object_id, node_id, unit_pos, rotation_offset, false)
 				end
 
 				local teleport_effect_trail = template.teleport_effect_trail
 
-				if not teleport_effect_trail then
-					local network = Managers.state.network
-					local num_2 = 0
-					local normalize = Vector3.normalize(var_7_0 - unbox)
-					local look = Quaternion.look(normalize, Vector3.up())
-					local var_7_11 = NetworkLookup.effects[teleport_effect_trail]
+				if teleport_effect_trail then
+					local network_manager = Managers.state.network
+					local node_id = 0
+					local dir = Vector3.normalize(unit_pos - teleport_position)
+					local trail_rotation_offset = Quaternion.look(dir, Vector3.up())
+					local trail_effect_name_id = NetworkLookup.effects[teleport_effect_trail]
 
-					network:rpc_play_particle_effect(nil, var_7_11, NetworkConstants.invalid_game_object_id, num_2, var_7_0, look, false)
+					network_manager:rpc_play_particle_effect(nil, trail_effect_name_id, NetworkConstants.invalid_game_object_id, node_id, unit_pos, trail_rotation_offset, false)
 				end
 
-				blackboard.umbral_leap_destination = Vector3Box(unbox)
-				parent_buff_shared_table.teleport_state = tbl.COOLDOWN
+				blackboard.umbral_leap_destination = Vector3Box(teleport_position)
+				shared_table.teleport_state = GREY_WINGS_TELEPORT_STATES.COOLDOWN
 			end
 
-			Managers.state.entity:system("ai_navigation_system"):add_safe_navigation_callback(fn_4)
+			local ai_navigation_system = Managers.state.entity:system("ai_navigation_system")
+
+			ai_navigation_system:add_safe_navigation_callback(nav_callback)
 		end
 	end,
-	remove_belakor_grey_wings = function (arg_8_0, arg_8_1, arg_8_2)
+	remove_belakor_grey_wings = function (unit, buff, params)
 		-- function 8
-		if not fn() then
+		if not is_server() then
 			return
 		end
 	end,
-	apply_belakor_homing_skull_drain_stamina = function (arg_9_0, arg_9_1, arg_9_2)
+	apply_belakor_homing_skull_drain_stamina = function (unit, buff, params)
 		-- function 9
-		local fatigue_type = arg_9_1.template.fatigue_type
-		local has_extension = ScriptUnit.has_extension(arg_9_0, "status_system")
+		local fatigue_type = buff.template.fatigue_type
+		local status_extension = ScriptUnit.has_extension(unit, "status_system")
 
-		if not has_extension then
-			has_extension:add_fatigue_points(fatigue_type)
+		if status_extension then
+			status_extension:add_fatigue_points(fatigue_type)
 		end
 	end,
-	belakor_cultists_apply_eye_glow = function (arg_10_0, arg_10_1, arg_10_2)
+	belakor_cultists_apply_eye_glow = function (unit, buff, params)
 		-- function 10
-		if not ALIVE[arg_10_0] then
-			arg_10_1.material_res_id = Unit.get_material_resource_id(arg_10_0, "mtr_eyes")
+		if ALIVE[unit] then
+			buff.material_res_id = Unit.get_material_resource_id(unit, "mtr_eyes")
 
-			Unit.set_material(arg_10_0, "mtr_eyes", "units/beings/enemies/mtr_eyes_belakor_cultist")
+			Unit.set_material(unit, "mtr_eyes", "units/beings/enemies/mtr_eyes_belakor_cultist")
 		end
 	end,
-	belakor_cultists_remove_eye_glow = function (arg_11_0, arg_11_1, arg_11_2)
+	belakor_cultists_remove_eye_glow = function (unit, buff, params)
 		-- function 11
-		if not ALIVE[arg_11_0] and not arg_11_1.material_res_id then
-			Unit.set_material_from_id(arg_11_0, "mtr_eyes", arg_11_1.material_res_id)
+		if ALIVE[unit] and buff.material_res_id then
+			Unit.set_material_from_id(unit, "mtr_eyes", buff.material_res_id)
 		end
 	end,
-	apply_one_from_list = function (arg_12_0, arg_12_1, arg_12_2)
+	apply_one_from_list = function (unit, buff, params)
 		-- function 12
-		if not fn() then
-			local buff_list = arg_12_1.template.buff_list
-			local var_12_1 = buff_list[math.random(1, #buff_list)]
-			local system = Managers.state.entity:system("buff_system")
-			local var_12_3 = system
-			local add_buff = system.add_buff
-			local var_12_5 = arg_12_0
-			local var_12_6 = var_12_1
-			local attacker_unit = arg_12_1.attacker_unit
+		if is_server() then
+			local buff_list = buff.template.buff_list
+			local buff_to_add_id = math.random(1, #buff_list)
+			local buff_to_add = buff_list[buff_to_add_id]
+			local buff_system = Managers.state.entity:system("buff_system")
+			local var_12_0 = buff_system
+			local add_buff = buff_system.add_buff
+			local var_12_2 = unit
+			local var_12_3 = buff_to_add
+			local attacker_unit = buff.attacker_unit
 
-			attacker_unit = attacker_unit or arg_12_0
+			attacker_unit = not not attacker_unit or not not unit
 
-			add_buff(var_12_3, var_12_5, var_12_6, attacker_unit, false)
+			add_buff(var_12_0, var_12_2, var_12_3, attacker_unit, false)
 		end
 	end,
-	apply_homing_skull_achieve = function (arg_13_0, arg_13_1, arg_13_2)
+	apply_homing_skull_achieve = function (unit, buff, params)
 		-- function 13
-		Managers.state.achievement:trigger_event("register_skull_hit", arg_13_0)
+		Managers.state.achievement:trigger_event("register_skull_hit", unit)
 	end
 }
-belakor.proc_functions = {
-	belakor_crystal_drop = function (arg_14_0, arg_14_1, arg_14_2)
+settings.proc_functions = {
+	belakor_crystal_drop = function (owner_unit, buff, params)
 		-- function 14
-		if not fn() then
-			local var_14_0 = arg_14_2[1]
-			local num = Unit.world_position(var_14_0, 0) + Vector3(0, 0, 1.5)
+		if is_server() then
+			local killed_unit = params[1]
+			local position = Unit.world_position(killed_unit, 0) + Vector3(0, 0, 1.5)
 
-			BelakorBalancing.spawn_crystal_func(num)
+			BelakorBalancing.spawn_crystal_func(position)
 		end
 
 		return true
 	end,
-	belakor_shadow_lieutenant_drop_crystal = function (arg_15_0, arg_15_1, arg_15_2)
+	belakor_shadow_lieutenant_drop_crystal = function (owner_unit, buff, params)
 		-- function 15
-		if not fn() then
-			local var_15_0 = arg_15_2[1]
-			local node = Unit.node(var_15_0, "c_spine")
-			local world_position = Unit.world_position(var_15_0, node)
-			local system = Managers.state.entity:system("pickup_system")
-			local flag = true
-			local identity = Quaternion.identity()
-			local str = "dropped"
-			local var_15_7 = Vector3(6 * math.random() - 3, 6 * math.random() - 3, 3)
-			local str_2 = "belakor_crystal"
-			local str_3 = "belakor_crystal_throw"
+		if is_server() then
+			local killed_unit = params[1]
+			local parent_node = Unit.node(killed_unit, "c_spine")
+			local position = Unit.world_position(killed_unit, parent_node)
+			local pickup_system = Managers.state.entity:system("pickup_system")
+			local with_physics = true
+			local rotation = Quaternion.identity()
+			local spawn_type = "dropped"
+			local velocity = Vector3(6 * math.random() - 3, 6 * math.random() - 3, 3)
+			local pickup_name = "belakor_crystal"
+			local override_unit_template_name = "belakor_crystal_throw"
 
-			system:spawn_pickup(str_2, world_position, identity, flag, str, var_15_7, str_3)
+			pickup_system:spawn_pickup(pickup_name, position, rotation, with_physics, spawn_type, velocity, override_unit_template_name)
 
 			local world = Managers.world:world("level_world")
-			local find_dialogue_unit = LevelHelper:find_dialogue_unit(world, "ferry_lady")
+			local intro_vo_unit = LevelHelper:find_dialogue_unit(world, "ferry_lady")
+			local dialogue_extension = not not intro_vo_unit and not not ScriptUnit.has_extension(intro_vo_unit, "dialogue_system")
 
-			if not (not find_dialogue_unit and ScriptUnit.has_extension(find_dialogue_unit, "dialogue_system")) then
-				local extension_input = ScriptUnit.extension_input(find_dialogue_unit, "dialogue_system")
-				local alloc_table = FrameTable.alloc_table()
-				local get_current_level_keys = Managers.level_transition_handler:get_current_level_keys()
-				local var_15_15
-				local flag_2
+			if dialogue_extension then
+				local dialogue_input = ScriptUnit.extension_input(intro_vo_unit, "dialogue_system")
+				local event_data = FrameTable.alloc_table()
+				local level_transition_handler = Managers.level_transition_handler
+				local level_key = level_transition_handler:get_current_level_keys()
+				local event_name
 
-				flag_2 = get_current_level_keys == "arena_belakor" or not "shadow_curse_crystal_dropped" or "shadow_curse_vortex_crystal"
+				event_name = (level_key == "arena_belakor" or not "shadow_curse_crystal_dropped") and not not "shadow_curse_vortex_crystal"
 
-				extension_input:trigger_dialogue_event(flag_2, alloc_table)
+				dialogue_input:trigger_dialogue_event(event_name, event_data)
 			end
 		end
 
 		return true
 	end,
-	on_grey_wings_damage_taken = function (arg_16_0, arg_16_1, arg_16_2)
+	on_grey_wings_damage_taken = function (owner_unit, buff, params)
 		-- function 16
-		if not fn() then
+		if not is_server() then
 			return
 		end
 
-		local var_16_0 = BLACKBOARDS[arg_16_0]
-		local var_16_1 = arg_16_2[1]
+		local blackboard = BLACKBOARDS[owner_unit]
+		local attacker_unit = params[1]
 
-		if var_16_0.target_unit ~= var_16_1 then
+		if blackboard.target_unit ~= attacker_unit then
 			return
 		end
 
-		local valid_damage_types = arg_16_1.template.valid_damage_types
-		local var_16_3 = arg_16_2[3]
+		local buff_template = buff.template
+		local valid_damage_types = buff_template.valid_damage_types
+		local damage_source = params[3]
 
-		if not (not valid_damage_types and valid_damage_types[var_16_3]) then
+		if valid_damage_types and not valid_damage_types[damage_source] then
 			return
 		end
 
-		arg_16_1.parent_buff_shared_table.teleport = true
+		buff.parent_buff_shared_table.teleport = true
 	end
 }
-belakor.explosion_templates = {
+settings.explosion_templates = {
 	homing_skull_explosion = {
 		explosion = {
 			alert_enemies = false,
@@ -365,21 +378,22 @@ belakor.explosion_templates = {
 		}
 	},
 	homing_skull_impact = {
-		server_hit_func = function (arg_17_0, arg_17_1, arg_17_2, arg_17_3, arg_17_4, arg_17_5)
+		server_hit_func = function (projectile_unit, damage_source, owner_unit, hit_position, recent_impacts, explosion_template)
 			-- function 17
-			local local_position = Unit.local_position(arg_17_0, 0)
+			local explosion_position = Unit.local_position(projectile_unit, 0)
 			local world = Managers.world:world("level_world")
 
-			arg_17_5 = ExplosionUtils.get_template("homing_skull_explosion")
+			explosion_template = ExplosionUtils.get_template("homing_skull_explosion")
 
-			DamageUtils.create_explosion(world, arg_17_0, local_position, Quaternion.identity(), arg_17_5, 1, arg_17_1, true, false, arg_17_2, false)
+			DamageUtils.create_explosion(world, projectile_unit, explosion_position, Quaternion.identity(), explosion_template, 1, damage_source, true, false, owner_unit, false)
 
-			local game_object_or_level_id = Managers.state.network:game_object_or_level_id(arg_17_0)
-			local var_17_3 = NetworkLookup.explosion_templates[arg_17_5.name]
-			local var_17_4 = NetworkLookup.damage_sources[arg_17_1]
+			local network_manager = Managers.state.network
+			local attacker_unit_id = network_manager:game_object_or_level_id(projectile_unit)
+			local explosion_template_id = NetworkLookup.explosion_templates[explosion_template.name]
+			local damage_source_id = NetworkLookup.damage_sources[damage_source]
 
-			Managers.state.network.network_transmit:send_rpc_clients("rpc_create_explosion", game_object_or_level_id, false, local_position, Quaternion.identity(), var_17_3, 1, var_17_4, 0, false, game_object_or_level_id)
-			AiUtils.kill_unit(arg_17_0, nil, nil, "undefined", nil)
+			Managers.state.network.network_transmit:send_rpc_clients("rpc_create_explosion", attacker_unit_id, false, explosion_position, Quaternion.identity(), explosion_template_id, 1, damage_source_id, 0, false, attacker_unit_id)
+			AiUtils.kill_unit(projectile_unit, nil, nil, "undefined", nil)
 		end
 	},
 	tiny_explosive_barrel = {
@@ -448,7 +462,7 @@ belakor.explosion_templates = {
 	}
 }
 
-local tbl_2 = {
+local grey_wings_valid_damage_types = {
 	light_blunt_linesman = true,
 	light_slashing_tank = true,
 	drakegun = true,
@@ -506,7 +520,7 @@ local tbl_2 = {
 	light_stab_smiter = true
 }
 
-belakor.buff_templates = {
+settings.buff_templates = {
 	orb_test_01 = {
 		buffs = {
 			{
@@ -576,7 +590,7 @@ belakor.buff_templates = {
 				event = "on_damage_taken",
 				name = "belakor_grey_wings",
 				buff_func = "on_grey_wings_damage_taken",
-				valid_damage_types = tbl_2
+				valid_damage_types = grey_wings_valid_damage_types
 			},
 			{
 				min_dist_from_players_gap_closer = 3,
@@ -616,7 +630,7 @@ belakor.buff_templates = {
 			{
 				name = "belakor_grey_wings_teleport_available",
 				perks = {
-					scripts_unit_extensions_default_player_unit_buffs_settings_buff_perk_names.invulnerable_ranged
+					buff_perks.invulnerable_ranged
 				}
 			},
 			{
@@ -668,7 +682,7 @@ belakor.buff_templates = {
 				max_stacks = 1,
 				duration = 2.5,
 				perks = {
-					scripts_unit_extensions_default_player_unit_buffs_settings_buff_perk_names.overpowered
+					buff_perks.overpowered
 				}
 			},
 			{
@@ -692,7 +706,7 @@ belakor.buff_templates = {
 				priority_buff = true,
 				debuff = true,
 				perks = {
-					scripts_unit_extensions_default_player_unit_buffs_settings_buff_perk_names.invulnerable
+					buff_perks.invulnerable
 				}
 			},
 			{
@@ -700,7 +714,7 @@ belakor.buff_templates = {
 				name = "belakor_homing_skull_debuff_delayed_banish_stun",
 				duration = 5,
 				perks = {
-					scripts_unit_extensions_default_player_unit_buffs_settings_buff_perk_names.overpowered
+					buff_perks.overpowered
 				}
 			}
 		}

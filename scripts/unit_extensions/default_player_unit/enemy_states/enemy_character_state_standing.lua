@@ -2,105 +2,111 @@
 
 EnemyCharacterStateStanding = class(EnemyCharacterStateStanding, EnemyCharacterState)
 
-EnemyCharacterStateStanding.init = function (self, arg_1_1)
+EnemyCharacterStateStanding.init = function (self, character_state_init_context)
 	-- function 1
-	EnemyCharacterState.init(self, arg_1_1, "standing")
+	EnemyCharacterState.init(self, character_state_init_context, "standing")
 
 	self.wherabouts_extension = ScriptUnit.extension(self._unit, "whereabouts_system")
 end
 
-EnemyCharacterStateStanding.on_enter = function (self, arg_2_1, arg_2_2, arg_2_3, arg_2_4, arg_2_5, arg_2_6, arg_2_7)
+EnemyCharacterStateStanding.on_enter = function (self, unit, input, dt, context, t, previous_state, params)
 	-- function 2
-	local _unit = self._unit
-	local _input_extension = self._input_extension
+	local unit = self._unit
+	local input_extension = self._input_extension
 
 	self._locomotion_extension:set_wanted_velocity(Vector3.zero())
 
-	local _inventory_extension = self._inventory_extension
-	local _first_person_extension = self._first_person_extension
-	local _status_extension = self._status_extension
-	local toggle_crouch = _input_extension.toggle_crouch
+	local inventory_extension = self._inventory_extension
+	local first_person_extension = self._first_person_extension
+	local status_extension = self._status_extension
+	local toggle_crouch = input_extension.toggle_crouch
 
-	CharacterStateHelper.look(_input_extension, self._player.viewport_name, _first_person_extension, _status_extension, self._inventory_extension)
-	CharacterStateHelper.update_weapon_actions(arg_2_5, _unit, _input_extension, _inventory_extension, self._health_extension)
+	CharacterStateHelper.look(input_extension, self._player.viewport_name, first_person_extension, status_extension, self._inventory_extension)
+	CharacterStateHelper.update_weapon_actions(t, unit, input_extension, inventory_extension, self._health_extension)
 
-	self.time_when_can_be_pushed = arg_2_5 + PlayerUnitMovementSettings.get_movement_settings_table(_unit).soft_collision.grace_time_pushed_entering_standing
+	local movement_settings_table = PlayerUnitMovementSettings.get_movement_settings_table(unit)
 
-	if arg_2_6 == "dummy" then
-		_first_person_extension:set_first_person_mode(false)
-		_first_person_extension:toggle_visibility(CameraTransitionSettings.perspective_transition_time)
+	self.time_when_can_be_pushed = t + movement_settings_table.soft_collision.grace_time_pushed_entering_standing
+
+	if previous_state == "dummy" then
+		first_person_extension:set_first_person_mode(false)
+		first_person_extension:toggle_visibility(CameraTransitionSettings.perspective_transition_time)
 	end
 
-	local owner = Managers.player:owner(_unit)
+	local player = Managers.player:owner(unit)
 
-	CharacterStateHelper.change_camera_state(owner, "follow")
+	CharacterStateHelper.change_camera_state(player, "follow")
 
-	self.side = Managers.state.side.side_by_unit[_unit]
+	self.side = Managers.state.side.side_by_unit[unit]
 	self.current_animation = "idle"
 
-	if not _status_extension:get_unarmed() then
-		CharacterStateHelper.play_animation_event(_unit, "to_combat")
+	if not status_extension:get_unarmed() then
+		CharacterStateHelper.play_animation_event(unit, "to_combat")
 	end
 
-	CharacterStateHelper.play_animation_event(_unit, "idle")
-	CharacterStateHelper.play_animation_event_first_person(_first_person_extension, "idle")
+	CharacterStateHelper.play_animation_event(unit, "idle")
+	CharacterStateHelper.play_animation_event_first_person(first_person_extension, "idle")
 end
 
-local tbl = {}
-local tbl_2 = {}
-local tbl_3 = {}
+local pos1 = {}
+local pos2 = {}
+local results = {}
 
-EnemyCharacterStateStanding.teleport = function (self, arg_3_1, arg_3_2, arg_3_3)
+EnemyCharacterStateStanding.teleport = function (self, unit, t, dt)
 	-- function 3
 	local viewport_name = self._player.viewport_name
 	local viewport = ScriptWorld.viewport(self._world, viewport_name)
 	local camera = ScriptViewport.camera(viewport)
-	local position = ScriptCamera.position(camera)
-	local rotation = ScriptCamera.rotation(camera)
-	local forward = Quaternion.forward(rotation)
-	local num = 30
-	local immediate_raycast, var_3_8, var_3_9, var_3_10, var_3_11 = PhysicsWorld.immediate_raycast(self._physics_world, position, forward, num, "closest", "collision_filter", "filter_enemy_ray_projectile")
+	local camera_position = ScriptCamera.position(camera)
+	local camera_rotation = ScriptCamera.rotation(camera)
+	local camera_forward = Quaternion.forward(camera_rotation)
+	local max_dist = 30
+	local result, hit_position, hit_distance, normal, actor = PhysicsWorld.immediate_raycast(self._physics_world, camera_position, camera_forward, max_dist, "closest", "collision_filter", "filter_enemy_ray_projectile")
 
-	if not immediate_raycast then
-		if not World.umbra_available(self._world) then
-			local num_2 = position + forward * num
+	if result then
+		if World.umbra_available(self._world) then
+			local endp = camera_position + camera_forward * max_dist
 
-			tbl[1] = position
-			tbl_2[1] = num_2
-			tbl[2] = position
-			tbl_2[2] = num_2 + Vector3(0, 0, 0.1)
-			tbl[3] = position
-			tbl_2[3] = num_2 - Vector3(0, 0, 0.1)
+			pos1[1] = camera_position
+			pos2[1] = endp
+			pos1[2] = camera_position
+			pos2[2] = endp + Vector3(0, 0, 0.1)
+			pos1[3] = camera_position
+			pos2[3] = endp - Vector3(0, 0, 0.1)
 
-			if World.umbra_has_line_of_sight_many(self._world, tbl, tbl_2, tbl_3) > 0 then
+			local num_hit = World.umbra_has_line_of_sight_many(self._world, pos1, pos2, results)
+
+			if num_hit > 0 then
 				Debug.string("UMBRA HIT")
 			end
 		end
 
-		if Vector3.dot(var_3_10, Vector3.up()) > 0.8 then
-			QuickDrawer:sphere(var_3_8, 0.25, Color(255, 100, 0))
+		local dot = Vector3.dot(normal, Vector3.up())
+
+		if dot > 0.8 then
+			QuickDrawer:sphere(hit_position, 0.25, Color(255, 100, 0))
 		else
-			QuickDrawer:sphere(var_3_8, 0.25, Color(255, 255, 0))
+			QuickDrawer:sphere(hit_position, 0.25, Color(255, 255, 0))
 
-			local num_3 = var_3_8 - forward * 0.6
-			local immediate_raycast_2, var_3_15, var_3_16, var_3_17, var_3_18 = PhysicsWorld.immediate_raycast(self._physics_world, num_3, -Vector3.up(), 6, "closest", "collision_filter", "filter_enemy_ray_projectile")
-			local num_4 = 0.4
+			local infront_wall_pos = hit_position - camera_forward * 0.6
+			local ground_in_front_of_wall, hit_position1, hit_distance1, normal, actor = PhysicsWorld.immediate_raycast(self._physics_world, infront_wall_pos, -Vector3.up(), 6, "closest", "collision_filter", "filter_enemy_ray_projectile")
+			local step_xy_dist = 0.4
 
-			for i = 1, 10 do
-				local num_5 = var_3_8 + i * Vector3(0, 0, 0.2)
-				local immediate_raycast_3, var_3_22, var_3_23, var_3_24, var_3_25 = PhysicsWorld.immediate_raycast(self._physics_world, num_5, forward, num_4, "closest", "collision_filter", "filter_enemy_ray_projectile")
+			for k = 1, 10 do
+				local p = hit_position + k * Vector3(0, 0, 0.2)
+				local step_hit, pos, hit_dist, normal, actor = PhysicsWorld.immediate_raycast(self._physics_world, p, camera_forward, step_xy_dist, "closest", "collision_filter", "filter_enemy_ray_projectile")
 
-				if not immediate_raycast_3 then
-					QuickDrawer:line(num_5, num_5 + forward * num_4)
+				if not step_hit then
+					QuickDrawer:line(p, p + camera_forward * step_xy_dist)
 
-					local num_6 = 0.3
+					local down_dist = 0.3
 
 					for j = 1, 4 do
-						local num_7 = num_5 + j * forward * 0.1
-						local immediate_raycast_4, var_3_29, var_3_30, var_3_31, var_3_32 = PhysicsWorld.immediate_raycast(self._physics_world, num_5, -Vector3.up(), num_6, "closest", "collision_filter", "filter_enemy_ray_projectile")
+						local find_ledge_p = p + j * camera_forward * 0.1
+						local stand_hit, pos, dist, normal, actor = PhysicsWorld.immediate_raycast(self._physics_world, p, -Vector3.up(), down_dist, "closest", "collision_filter", "filter_enemy_ray_projectile")
 
-						if not immediate_raycast_4 then
-							QuickDrawer:sphere(var_3_29, 0.75, Color(255, 255, 0))
+						if stand_hit then
+							QuickDrawer:sphere(pos, 0.75, Color(255, 255, 0))
 
 							break
 						end
@@ -110,40 +116,40 @@ EnemyCharacterStateStanding.teleport = function (self, arg_3_1, arg_3_2, arg_3_3
 				end
 			end
 
-			local num_8 = 0.2
-			local num_9 = 3
-			local num_10 = var_3_8 + forward * num_8 + Vector3.up() * num_9
-			local immediate_raycast_5, var_3_37, var_3_38, var_3_39, var_3_40 = PhysicsWorld.immediate_raycast(self._physics_world, num_10, -Vector3.up(), num_9, "closest", "collision_filter", "filter_enemy_ray_projectile")
+			local ledge_check_dist = 0.2
+			local look_up_dist = 3
+			local behind_wall_pos = hit_position + camera_forward * ledge_check_dist + Vector3.up() * look_up_dist
+			local ground_on_ledge, hit_position2, hit_distance2, normal, actor = PhysicsWorld.immediate_raycast(self._physics_world, behind_wall_pos, -Vector3.up(), look_up_dist, "closest", "collision_filter", "filter_enemy_ray_projectile")
 
-			if not immediate_raycast_5 then
-				local num_11 = var_3_37 - forward * num_8
-				local immediate_raycast_6, var_3_43, var_3_44, var_3_45, var_3_46 = PhysicsWorld.immediate_raycast(self._physics_world, num_11, forward, num_8, "closest", "collision_filter", "filter_enemy_ray_projectile")
+			if ground_on_ledge then
+				local outside_pos = hit_position2 - camera_forward * ledge_check_dist
+				local wall_between, p1, hp1, normal, actor = PhysicsWorld.immediate_raycast(self._physics_world, outside_pos, camera_forward, ledge_check_dist, "closest", "collision_filter", "filter_enemy_ray_projectile")
 
-				immediate_raycast_5 = not immediate_raycast_6
+				ground_on_ledge = not wall_between
 			end
 
-			if not immediate_raycast_2 and not immediate_raycast_5 then
-				if var_3_16 < var_3_38 then
-					QuickDrawer:line(num_3, var_3_15)
-					QuickDrawer:sphere(var_3_15, 0.25, Color(0, 125, 0))
+			if ground_in_front_of_wall and ground_on_ledge then
+				if hit_distance1 < hit_distance2 then
+					QuickDrawer:line(infront_wall_pos, hit_position1)
+					QuickDrawer:sphere(hit_position1, 0.25, Color(0, 125, 0))
 				else
-					QuickDrawer:line(num_3, var_3_37)
-					QuickDrawer:sphere(var_3_37, 0.25, Color(0, 0, 125))
+					QuickDrawer:line(infront_wall_pos, hit_position2)
+					QuickDrawer:sphere(hit_position2, 0.25, Color(0, 0, 125))
 				end
-			elseif not immediate_raycast_2 then
-				QuickDrawer:sphere(var_3_15, 0.25, Color(0, 125, 0))
-				QuickDrawer:line(var_3_15, num_3, Color(0, 125, 0))
-			elseif not immediate_raycast_5 then
-				QuickDrawer:sphere(var_3_37, 0.25, Color(0, 0, 125))
-				QuickDrawer:line(var_3_37, num_10, Color(0, 0, 125))
+			elseif ground_in_front_of_wall then
+				QuickDrawer:sphere(hit_position1, 0.25, Color(0, 125, 0))
+				QuickDrawer:line(hit_position1, infront_wall_pos, Color(0, 125, 0))
+			elseif ground_on_ledge then
+				QuickDrawer:sphere(hit_position2, 0.25, Color(0, 0, 125))
+				QuickDrawer:line(hit_position2, behind_wall_pos, Color(0, 0, 125))
 			end
 		end
 	else
-		local num_12 = position + forward * num
-		local immediate_raycast_7, var_3_49, var_3_50, var_3_51, var_3_52 = PhysicsWorld.immediate_raycast(self._physics_world, num_12, -Vector3.up(), 6, "closest", "collision_filter", "filter_enemy_ray_projectile")
+		local end_pos = camera_position + camera_forward * max_dist
+		local on_ground_pos, hit_position, hit_distance, normal, actor = PhysicsWorld.immediate_raycast(self._physics_world, end_pos, -Vector3.up(), 6, "closest", "collision_filter", "filter_enemy_ray_projectile")
 
-		if not immediate_raycast_7 then
-			QuickDrawer:sphere(var_3_49, 0.25, Color(155, 225, 100))
+		if on_ground_pos then
+			QuickDrawer:sphere(hit_position, 0.25, Color(155, 225, 100))
 		end
 	end
 end
@@ -152,40 +158,43 @@ EnemyCharacterStateStanding.common_state_changes = function (self)
 	-- function 4
 	self:handle_disabled_ghost_mode()
 
-	local _csm = self._csm
-	local _unit = self._unit
-	local _locomotion_extension = self._locomotion_extension
-	local _status_extension = self._status_extension
-	local _first_person_extension = self._first_person_extension
+	local csm = self._csm
+	local unit = self._unit
+	local locomotion_extension = self._locomotion_extension
+	local status_extension = self._status_extension
+	local first_person_extension = self._first_person_extension
 	local CharacterStateHelper = CharacterStateHelper
-	local career_settings = self._career_extension:career_settings()
-	local _inventory_extension = self._inventory_extension
+	local career_data = self._career_extension:career_settings()
+	local inventory_extension = self._inventory_extension
 
-	if not _locomotion_extension:is_on_ground() then
+	if locomotion_extension:is_on_ground() then
 		self.wherabouts_extension:set_is_onground()
 	end
 
-	if not CharacterStateHelper.do_common_state_transitions(_status_extension, _csm) then
+	if CharacterStateHelper.do_common_state_transitions(status_extension, csm) then
 		return true
 	end
 
-	if not CharacterStateHelper.is_using_transport(_status_extension) then
-		_csm:change_state("using_transport")
-
-		return true
-	end
-
-	if _csm.state_next or not _status_extension.do_leap then
-		_csm:change_state("leaping")
+	if CharacterStateHelper.is_using_transport(status_extension) then
+		csm:change_state("using_transport")
 
 		return true
 	end
 
-	if not self._input_extension:get("character_inspecting") then
-		local get_item_data_and_weapon_extensions, var_4_9, var_4_10 = CharacterStateHelper.get_item_data_and_weapon_extensions(self._inventory_extension)
+	if not csm.state_next and status_extension.do_leap then
+		csm:change_state("leaping")
 
-		if not CharacterStateHelper.get_current_action_data(var_4_10, var_4_9) then
-			_csm:change_state("inspecting")
+		return true
+	end
+
+	local input_extension = self._input_extension
+
+	if input_extension:get("character_inspecting") then
+		local _, right_hand_weapon_extension, left_hand_weapon_extension = CharacterStateHelper.get_item_data_and_weapon_extensions(self._inventory_extension)
+		local current_action_settings = CharacterStateHelper.get_current_action_data(left_hand_weapon_extension, right_hand_weapon_extension)
+
+		if not current_action_settings then
+			csm:change_state("inspecting")
 
 			return true
 		end
@@ -194,121 +203,127 @@ EnemyCharacterStateStanding.common_state_changes = function (self)
 	return false
 end
 
-EnemyCharacterStateStanding.common_movement = function (self, arg_5_1)
+EnemyCharacterStateStanding.common_movement = function (self, t)
 	-- function 5
-	local _csm = self._csm
-	local _unit = self._unit
-	local _first_person_extension = self._first_person_extension
-	local _ghost_mode_extension = self._ghost_mode_extension
-	local _input_extension = self._input_extension
-	local _locomotion_extension = self._locomotion_extension
-	local _status_extension = self._status_extension
+	local csm = self._csm
+	local unit = self._unit
+	local first_person_extension = self._first_person_extension
+	local ghost_mode_extension = self._ghost_mode_extension
+	local input_extension = self._input_extension
+	local locomotion_extension = self._locomotion_extension
+	local status_extension = self._status_extension
 	local CharacterStateHelper = CharacterStateHelper
-	local is_device_active = Managers.input:is_device_active("gamepad")
-	local is_crouching = _status_extension:is_crouching()
+	local gamepad_active = Managers.input:is_device_active("gamepad")
+	local is_crouching = status_extension:is_crouching()
 
-	if (_input_extension:get("jump") or not _input_extension:get("jump_only") or _status_extension:is_crouching()) and (not is_crouching or CharacterStateHelper.can_uncrouch(_unit) or not _locomotion_extension:jump_allowed()) then
-		if not is_crouching then
-			CharacterStateHelper.uncrouch(_unit, arg_5_1, _first_person_extension, _status_extension)
+	if (input_extension:get("jump") or input_extension:get("jump_only")) and not status_extension:is_crouching() and (not is_crouching or CharacterStateHelper.can_uncrouch(unit)) and locomotion_extension:jump_allowed() then
+		if is_crouching then
+			CharacterStateHelper.uncrouch(unit, t, first_person_extension, status_extension)
 		end
 
-		_csm:change_state("jumping")
-		_first_person_extension:change_state("jumping")
+		csm:change_state("jumping")
+		first_person_extension:change_state("jumping")
 
 		return
 	end
 
-	local get_movement_settings_table = PlayerUnitMovementSettings.get_movement_settings_table(_unit)
+	local movement_settings_table = PlayerUnitMovementSettings.get_movement_settings_table(unit)
 
-	if not CharacterStateHelper.is_pushed(_status_extension) then
-		_status_extension:set_pushed(false)
+	if CharacterStateHelper.is_pushed(status_extension) then
+		status_extension:set_pushed(false)
 
-		local pushed = get_movement_settings_table.stun_settings.pushed
+		local params = movement_settings_table.stun_settings.pushed
+		local hit_react_type = status_extension:hit_react_type()
 
-		pushed.hit_react_type = _status_extension:hit_react_type() .. "_push"
+		params.hit_react_type = hit_react_type .. "_push"
 
-		_csm:change_state("stunned", pushed)
-
-		return true
-	end
-
-	if not _locomotion_extension:is_animation_driven() then
-		_csm:change_state("walking")
+		csm:change_state("stunned", params)
 
 		return true
 	end
 
-	local _interactor_extension = self._interactor_extension
+	if locomotion_extension:is_animation_driven() then
+		csm:change_state("walking")
 
-	if not CharacterStateHelper.is_starting_interaction(_input_extension, _interactor_extension) then
-		local interaction_action_names, var_5_14 = InteractionHelper.interaction_action_names(_unit)
+		return true
+	end
 
-		_interactor_extension:start_interaction(var_5_14)
+	local interactor_extension = self._interactor_extension
 
-		if not _interactor_extension:allow_movement_during_interaction() then
+	if CharacterStateHelper.is_starting_interaction(input_extension, interactor_extension) then
+		local _, hold_input = InteractionHelper.interaction_action_names(unit)
+
+		interactor_extension:start_interaction(hold_input)
+
+		if interactor_extension:allow_movement_during_interaction() then
 			return
 		end
 
-		local interaction_config = _interactor_extension:interaction_config()
-		local _temp_params = self._temp_params
+		local config = interactor_extension:interaction_config()
+		local params = self._temp_params
 
-		_temp_params.swap_to_3p = interaction_config.swap_to_3p
-		_temp_params.show_weapons = interaction_config.show_weapons
-		_temp_params.activate_block = interaction_config.activate_block
-		_temp_params.allow_rotation_update = interaction_config.allow_rotation_update
+		params.swap_to_3p = config.swap_to_3p
+		params.show_weapons = config.show_weapons
+		params.activate_block = config.activate_block
+		params.allow_rotation_update = config.allow_rotation_update
 
-		_csm:change_state("interacting", _temp_params)
-
-		return true
-	end
-
-	if not CharacterStateHelper.has_move_input(_input_extension) then
-		local _temp_params_2 = self._temp_params
-
-		_csm:change_state("walking", _temp_params_2)
-		_first_person_extension:change_state("walking")
+		csm:change_state("interacting", params)
 
 		return true
 	end
 
-	if not _locomotion_extension:is_on_ground() then
-		_csm:change_state("falling")
-		_first_person_extension:change_state("falling")
+	local is_moving = CharacterStateHelper.has_move_input(input_extension)
+
+	if is_moving then
+		local params = self._temp_params
+
+		csm:change_state("walking", params)
+		first_person_extension:change_state("walking")
 
 		return true
 	end
 
-	if not _input_extension:get("character_inspecting") then
-		local get_item_data_and_weapon_extensions, var_5_19, var_5_20 = CharacterStateHelper.get_item_data_and_weapon_extensions(self._inventory_extension)
+	if not locomotion_extension:is_on_ground() then
+		csm:change_state("falling")
+		first_person_extension:change_state("falling")
 
-		if not CharacterStateHelper.get_current_action_data(var_5_20, var_5_19) then
-			_csm:change_state("inspecting")
+		return true
+	end
+
+	if input_extension:get("character_inspecting") then
+		local _, right_hand_weapon_extension, left_hand_weapon_extension = CharacterStateHelper.get_item_data_and_weapon_extensions(self._inventory_extension)
+		local current_action_settings = CharacterStateHelper.get_current_action_data(left_hand_weapon_extension, right_hand_weapon_extension)
+
+		if not current_action_settings then
+			csm:change_state("inspecting")
 
 			return true
 		end
 	end
 
-	local _inventory_extension = self._inventory_extension
-	local _first_person_extension_2 = self._first_person_extension
-	local toggle_crouch = _input_extension.toggle_crouch
+	local inventory_extension = self._inventory_extension
+	local first_person_extension = self._first_person_extension
+	local toggle_crouch = input_extension.toggle_crouch
 
-	if not (arg_5_1 > self.time_when_can_be_pushed) or not self._player:is_player_controlled() then
-		self.current_animation = CharacterStateHelper.update_soft_collision_movement(_first_person_extension_2, _status_extension, _locomotion_extension, _unit, self._world, self.current_animation, self.side)
+	if t > self.time_when_can_be_pushed and self._player:is_player_controlled() then
+		self.current_animation = CharacterStateHelper.update_soft_collision_movement(first_person_extension, status_extension, locomotion_extension, unit, self._world, self.current_animation, self.side)
 	end
 
-	CharacterStateHelper.ghost_mode(self._ghost_mode_extension, _input_extension)
-	CharacterStateHelper.look(_input_extension, self._player.viewport_name, self._first_person_extension, _status_extension, self._inventory_extension)
+	CharacterStateHelper.ghost_mode(self._ghost_mode_extension, input_extension)
+	CharacterStateHelper.look(input_extension, self._player.viewport_name, self._first_person_extension, status_extension, self._inventory_extension)
 
 	return false
 end
 
-EnemyCharacterStateStanding.update = function (self, arg_6_1, arg_6_2, arg_6_3, arg_6_4, arg_6_5)
+EnemyCharacterStateStanding.update = function (self, unit, input, dt, context, t)
 	-- function 6
-	if not self:common_state_changes() then
+	local handled = self:common_state_changes()
+
+	if handled then
 		return
 	end
 
-	self:_update_taunt_dialogue(arg_6_5)
+	self:_update_taunt_dialogue(t)
 
-	local common_movement = self:common_movement(arg_6_5)
+	handled = self:common_movement(t)
 end

@@ -2,73 +2,73 @@
 
 DataCounter = {}
 
-local function fn(arg_1_0, arg_1_1, arg_1_2)
+local function count_table(t, seen_data, count)
 	-- function 1
-	if not arg_1_1[arg_1_0] then
+	if seen_data[t] then
 		return 0, 0
 	end
 
-	arg_1_1[arg_1_0] = true
+	seen_data[t] = true
 
 	local type = type
-	local num = 0
-	local num_2 = 0
+	local table_count = 0
+	local value_count = 0
 
-	for k, v in pairs(arg_1_0) do
-		local var_1_3 = type(k)
-		local var_1_4 = type(v)
+	for k, v in pairs(t) do
+		local k_type = type(k)
+		local v_type = type(v)
 
-		if var_1_3 == "table" then
-			local var_1_5, var_1_6 = fn(k, arg_1_1, arg_1_2 + 1)
+		if k_type == "table" then
+			local recursed_table_count, recursed_value_count = count_table(k, seen_data, count + 1)
 
-			num = num + var_1_5 + 1
-			num_2 = num_2 + var_1_6
+			table_count = table_count + recursed_table_count + 1
+			value_count = value_count + recursed_value_count
 
 			local str = ""
 
-			for k_2 = 1, arg_1_2 do
+			for i = 1, count do
 				str = str .. "\t"
 			end
 
-			printf(str .. "%s[%6d, %6d]", tostring(k), var_1_5, var_1_6)
+			printf(str .. "%s[%6d, %6d]", tostring(k), recursed_table_count, recursed_value_count)
 		end
 
-		if var_1_4 == "table" then
-			local var_1_8, var_1_9 = fn(v, arg_1_1, arg_1_2 + 1)
+		if v_type == "table" then
+			local recursed_table_count, recursed_value_count = count_table(v, seen_data, count + 1)
 
-			num = num + var_1_8 + 1
-			num_2 = num_2 + var_1_9
+			table_count = table_count + recursed_table_count + 1
+			value_count = value_count + recursed_value_count
 
-			local str_2 = ""
+			local str = ""
 
-			for l = 1, arg_1_2 do
-				str_2 = str_2 .. "\t"
+			for i = 1, count do
+				str = str .. "\t"
 			end
 
-			printf(str_2 .. "%s[%6d, %6d]", tostring(k), var_1_8, var_1_9)
+			printf(str .. "%s[%6d, %6d]", tostring(k), recursed_table_count, recursed_value_count)
 		else
-			num_2 = num_2 + 1
+			value_count = value_count + 1
 		end
 	end
 
-	return num, num_2
+	return table_count, value_count
 end
 
-DataCounter.analyze_table = function (arg_2_0, arg_2_1, ...)
+DataCounter.analyze_table = function (t, name, ...)
 	-- function 2
-	local tbl = {}
+	local seen_data = {}
 
 	for i = 1, select("#", ...) do
-		local var_2_1 = select(i, ...)
+		local value = select(i, ...)
 
-		if not var_2_1 then
-			tbl[var_2_1] = true
+		if value then
+			seen_data[value] = true
 		end
 	end
 
-	print(arg_2_1)
+	print(name)
 
-	local var_2_2, var_2_3 = fn(arg_2_0, tbl, 1)
+	local num_tables, num_values = count_table(t, seen_data, 1)
 
-	printf("Analyzed table %q with %d table counts and value counts of %d", arg_2_1 or "unknown", var_2_2, var_2_3)
+	printf("Analyzed table %q with %d table counts and value counts of %d", not not name or not not "unknown", num_tables, num_values)
 end

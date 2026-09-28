@@ -1,120 +1,121 @@
 -- chunkname: @scripts/helpers/network_utils.lua
 
-function mm_printf_force(arg_1_0, ...)
+function mm_printf_force(format_text, ...)
 	-- function 1
-	arg_1_0 = "[Matchmaking] " .. arg_1_0
+	format_text = "[Matchmaking] " .. format_text
 
-	printf(arg_1_0, ...)
+	printf(format_text, ...)
 end
 
-function mm_printf(arg_2_0, ...)
+function mm_printf(format_text, ...)
 	-- function 2
-	if not script_data.matchmaking_debug then
-		arg_2_0 = "[Matchmaking] " .. arg_2_0
+	if script_data.matchmaking_debug then
+		format_text = "[Matchmaking] " .. format_text
 
-		printf(arg_2_0, ...)
+		printf(format_text, ...)
 	end
 end
 
 script_data.matchmaking_debug = true
 NetworkUtils = {}
 
-NetworkUtils.network_safe_position = function (self)
+NetworkUtils.network_safe_position = function (pos)
 	-- function 3
-	local min = NetworkConstants.position.min
-	local max = NetworkConstants.position.max
-	local x = self.x
-	local y = self.y
-	local z = self.z
-	local flag = not (min <= x) or x <= max
-	local flag_2 = not (min <= y) or y <= max
-	local flag_3 = not (min <= z) or z <= max
+	local pos_min = NetworkConstants.position.min
+	local pos_max = NetworkConstants.position.max
+	local pos_x = pos.x
+	local pos_y = pos.y
+	local pos_z = pos.z
+	local in_range_x = pos_min <= pos_x and pos_x <= pos_max
+	local in_range_y = pos_min <= pos_y and pos_y <= pos_max
+	local in_range_z = pos_min <= pos_z and pos_z <= pos_max
+	local in_range = not not in_range_x and not not in_range_y and not not in_range_z
 
-	return not flag and not flag_2 and flag_3
+	return in_range
 end
 
-NetworkUtils.get_network_safe_damage_hotjoin_sync = function (arg_4_0)
+NetworkUtils.get_network_safe_damage_hotjoin_sync = function (damage)
 	-- function 4
-	local min = NetworkConstants.damage_hotjoin_sync.min
-	local max = NetworkConstants.damage_hotjoin_sync.max
+	local damage_min = NetworkConstants.damage_hotjoin_sync.min
+	local damage_max = NetworkConstants.damage_hotjoin_sync.max
 
-	arg_4_0 = math.clamp(arg_4_0, min, max)
+	damage = math.clamp(damage, damage_min, damage_max)
 
-	return arg_4_0
+	return damage
 end
 
-NetworkUtils.network_clamp_position = function (arg_5_0)
+NetworkUtils.network_clamp_position = function (pos)
 	-- function 5
-	local position = NetworkConstants.position
-	local min = position.min
-	local max = position.max
+	local pos_constant = NetworkConstants.position
+	local pos_min = pos_constant.min
+	local pos_max = pos_constant.max
 
-	return Vector3.clamp(arg_5_0, min, max)
+	return Vector3.clamp(pos, pos_min, pos_max)
 end
 
-NetworkUtils.announce_chat_peer_joined = function (arg_6_0, arg_6_1)
+NetworkUtils.announce_chat_peer_joined = function (peer_id, lobby)
 	-- function 6
-	local player_name = PlayerUtils.player_name(arg_6_0, arg_6_1)
-	local format = string.format(Localize("system_chat_player_joined_the_game"), player_name)
-	local flag = true
+	local sender = PlayerUtils.player_name(peer_id, lobby)
+	local message = string.format(Localize("system_chat_player_joined_the_game"), sender)
+	local pop_chat = true
 
-	Managers.chat:add_local_system_message(1, format, flag)
+	Managers.chat:add_local_system_message(1, message, pop_chat)
 end
 
-local set = table.set({
+local peer_left_ignored_states = table.set({
 	"MatchmakingStatePartyJoins",
 	"MatchmakingStateJoinGame"
 })
 
-NetworkUtils.announce_chat_peer_left = function (arg_7_0, arg_7_1)
+NetworkUtils.announce_chat_peer_left = function (peer_id, lobby)
 	-- function 7
-	local matchmaking = Managers.matchmaking
-	local flag = not matchmaking and matchmaking:state()
-	local flag_2 = not flag and flag.NAME
+	local matchmaking_manager = Managers.matchmaking
+	local matchmaking_state = not not matchmaking_manager and not not matchmaking_manager:state()
+	local matchmaking_state_name = not not matchmaking_state and not not matchmaking_state.NAME
 
-	if not set[flag_2] then
+	if peer_left_ignored_states[matchmaking_state_name] then
 		return
 	end
 
-	local player_name = PlayerUtils.player_name(arg_7_0, arg_7_1)
-	local format = string.format(Localize("system_chat_player_left_the_game"), player_name)
-	local flag_3 = true
+	local sender = PlayerUtils.player_name(peer_id, lobby)
+	local message = string.format(Localize("system_chat_player_left_the_game"), sender)
+	local pop_chat = true
 
-	Managers.chat:add_local_system_message(1, format, flag_3)
+	Managers.chat:add_local_system_message(1, message, pop_chat)
 end
 
-local tbl = {}
+local cached_ip_port = {}
 
-NetworkUtils.split_ip_port = function (arg_8_0)
+NetworkUtils.split_ip_port = function (ip_port)
 	-- function 8
-	local split, var_8_1 = string.split(arg_8_0, ":", tbl)
+	local parts, n = string.split(ip_port, ":", cached_ip_port)
 
-	if not (not split and not (var_8_1 >= 2)) then
-		return split[1], split[2]
+	if parts and n >= 2 then
+		return parts[1], parts[2]
 	end
 
 	return nil, nil
 end
 
-NetworkUtils.net_pack_flexmatch_ticket = function (arg_9_0)
+NetworkUtils.net_pack_flexmatch_ticket = function (ticket)
 	-- function 9
-	local max_string_length = NetworkConstants.max_string_length
-	local count = #arg_9_0
-	local ceil = math.ceil(count / max_string_length)
+	local STRING_MAX = NetworkConstants.max_string_length
+	local id_size = #ticket
+	local parts = math.ceil(id_size / STRING_MAX)
 	local max_size = Network.type_info("flexmatch_ticket").max_size
 
-	fassert(ceil <= max_size, "Flexmatch ticket is too big (%s>%s)", count, max_size * max_string_length)
+	fassert(parts <= max_size, "Flexmatch ticket is too big (%s>%s)", id_size, max_size * STRING_MAX)
 
-	local tbl = {}
+	local networkified_ticket = {}
 
-	for i = 1, ceil do
-		tbl[i] = string.sub(arg_9_0, (i - 1) * max_string_length + 1, math.min(i * max_string_length, count))
+	for i = 1, parts do
+		networkified_ticket[i] = string.sub(ticket, (i - 1) * STRING_MAX + 1, math.min(i * STRING_MAX, id_size))
 	end
 
-	return tbl
+	return networkified_ticket
 end
 
-NetworkUtils.unnet_pack_flexmatch_ticket = function (arg_10_0)
+NetworkUtils.unnet_pack_flexmatch_ticket = function (packed_ticket)
 	-- function 10
-	return table.concat(arg_10_0)
+	return table.concat(packed_ticket)
 end

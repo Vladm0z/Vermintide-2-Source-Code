@@ -1,8 +1,8 @@
 -- chunkname: @scripts/settings/dlcs/holly/holly_sound_settings.lua
 
-local holly = DLCSettings.holly
+local settings = DLCSettings.holly
 
-holly.dialogue_lookup = {
+settings.dialogue_lookup = {
 	"dialogues/generated/lookup_witch_hunter_magnus_tower",
 	"dialogues/generated/lookup_bright_wizard_magnus_tower",
 	"dialogues/generated/lookup_dwarf_ranger_magnus_tower",
@@ -19,7 +19,7 @@ holly.dialogue_lookup = {
 	"dialogues/generated/lookup_empire_soldier_forest_ambush",
 	"dialogues/generated/lookup_wood_elf_forest_ambush"
 }
-holly.dialogue_settings = {
+settings.dialogue_settings = {
 	magnus = {
 		"dialogues/generated/witch_hunter_magnus_tower",
 		"dialogues/generated/bright_wizard_magnus_tower",

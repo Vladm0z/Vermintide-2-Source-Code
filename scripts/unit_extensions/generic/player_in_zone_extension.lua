@@ -2,18 +2,18 @@
 
 PlayerInZoneExtension = class(PlayerInZoneExtension)
 
-PlayerInZoneExtension.init = function (self, arg_1_1, arg_1_2)
+PlayerInZoneExtension.init = function (self, extension_init_context, unit)
 	-- function 1
-	self._unit = arg_1_2
+	self._unit = unit
 
 	self:_get_script_data()
 
-	self._world = arg_1_1.world
-	self._extension_init_context = arg_1_1
+	self._world = extension_init_context.world
+	self._extension_init_context = extension_init_context
 	self._activated = false
 	self._state = "_idle"
 	self._client_state = "progress_inactive"
-	self._is_server = arg_1_1.is_server
+	self._is_server = extension_init_context.is_server
 	self._state_data = {}
 	self._closest_player_distance = math.huge
 	self._player_distances = {}
@@ -43,9 +43,10 @@ PlayerInZoneExtension._get_script_data = function (self)
 	self._show_progress_bar_personal = Unit.get_data(self._unit, "player_in_zone", "show_progress_bar_personal")
 	self._progress_zone_size = Unit.get_data(self._unit, "player_in_zone", "zone_radius")
 
+	local time_modifier_has_data = Unit.has_data(self._unit, "player_in_zone", "time_modifier_per_player")
 	local get_data
 
-	if not Unit.has_data(self._unit, "player_in_zone", "time_modifier_per_player") then
+	if time_modifier_has_data then
 		get_data = Unit.get_data(self._unit, "player_in_zone", "time_modifier_per_player")
 
 		if not get_data then
@@ -59,18 +60,20 @@ PlayerInZoneExtension._get_script_data = function (self)
 
 	self._time_modifier_per_player = get_data
 
-	local flag = Unit.get_data(self._unit, "player_in_zone", "player_side") or "heroes"
+	local player_side = Unit.get_data(self._unit, "player_in_zone", "player_side")
+	local side_name = not not player_side or not not "heroes"
+	local side = Managers.state.side:get_side_from_name(side_name)
 
-	self._player_units = Managers.state.side:get_side_from_name(flag).PLAYER_UNITS
+	self._player_units = side.PLAYER_UNITS
 end
 
 PlayerInZoneExtension._create_game_object = function (self)
 	-- function 3
-	local current_level = LevelHelper:current_level(self._world)
+	local level = LevelHelper:current_level(self._world)
 
-	self._level_unit_index = Level.unit_index(current_level, self._unit)
+	self._level_unit_index = Level.unit_index(level, self._unit)
 
-	local tbl = {
+	local go_data_table = {
 		progress_time = 0,
 		go_type = NetworkLookup.go_types.progress_timer,
 		level_unit_index = self._level_unit_index,
@@ -78,9 +81,9 @@ PlayerInZoneExtension._create_game_object = function (self)
 		progress_is_frozen = self._progress_is_frozen,
 		counting_up = self._progress_bar_countdown
 	}
-	local var_3_2 = callback(self, "cb_game_session_disconnect")
+	local callback = callback(self, "cb_game_session_disconnect")
 
-	self._go_id = Managers.state.network:create_game_object("progress_timer", tbl, var_3_2)
+	self._go_id = Managers.state.network:create_game_object("progress_timer", go_data_table, callback)
 end
 
 PlayerInZoneExtension.cb_game_session_disconnect = function (self)
@@ -88,9 +91,9 @@ PlayerInZoneExtension.cb_game_session_disconnect = function (self)
 	self._go_id = nil
 end
 
-PlayerInZoneExtension.on_game_object_created = function (self, arg_5_1)
+PlayerInZoneExtension.on_game_object_created = function (self, go_id)
 	-- function 5
-	self._go_id = arg_5_1
+	self._go_id = go_id
 end
 
 PlayerInZoneExtension.on_game_object_destroyed = function (self)
@@ -104,7 +107,7 @@ PlayerInZoneExtension.extensions_ready = function (self)
 		return
 	end
 
-	if not Managers.state.network:in_game_session() then
+	if Managers.state.network:in_game_session() then
 		self:_create_game_object()
 	else
 		self._waiting_for_game_session = true
@@ -146,7 +149,7 @@ PlayerInZoneExtension.progress = function (self)
 	return self._state_data.end_progression_timer
 end
 
-PlayerInZoneExtension.update = function (self, arg_15_1, arg_15_2, arg_15_3, arg_15_4, arg_15_5)
+PlayerInZoneExtension.update = function (self, unit, input, dt, context, t)
 	-- function 15
 	if not self._activated then
 		return
@@ -154,91 +157,91 @@ PlayerInZoneExtension.update = function (self, arg_15_1, arg_15_2, arg_15_3, arg
 
 	self:_update_distances()
 
-	if not self._is_server then
-		self:_update_state(arg_15_3, arg_15_5)
+	if self._is_server then
+		self:_update_state(dt, t)
 	else
-		self:_update_client(arg_15_3)
+		self:_update_client(dt)
 	end
 end
 
-PlayerInZoneExtension._update_client = function (self, arg_16_1)
+PlayerInZoneExtension._update_client = function (self, dt)
 	-- function 16
-	local _go_id = self._go_id
+	local go_id = self._go_id
 
-	if not _go_id then
+	if not go_id then
 		return
 	end
 
-	local _game = self._game
-	local game_object_field = GameSession.game_object_field(_game, _go_id, "progress_time")
-	local game_object_field_2 = GameSession.game_object_field(_game, _go_id, "unit_in_progress")
-	local game_object_field_3 = GameSession.game_object_field(_game, _go_id, "counting_up")
-	local game_object_field_4 = GameSession.game_object_field(_game, _go_id, "progress_is_frozen")
-	local _client_state = self._client_state
+	local game = self._game
+	local progress_time = GameSession.game_object_field(game, go_id, "progress_time")
+	local unit_in_progress = GameSession.game_object_field(game, go_id, "unit_in_progress")
+	local counting_up = GameSession.game_object_field(game, go_id, "counting_up")
+	local progress_is_frozen = GameSession.game_object_field(game, go_id, "progress_is_frozen")
+	local state = self._client_state
 
-	if _client_state == "progress_inactive" then
-		if not game_object_field_2 then
+	if state == "progress_inactive" then
+		if unit_in_progress then
 			self._client_state = "progress_active"
-			self._state_data.end_progression_timer = game_object_field
+			self._state_data.end_progression_timer = progress_time
 
 			self:_trigger_start_events()
 		end
-	elseif _client_state == "progress_active" then
-		if self._has_been_in_zone or not self:_local_player_in_zone() then
+	elseif state == "progress_active" then
+		if not self._has_been_in_zone and self:_local_player_in_zone() then
 			self._has_been_in_zone = true
 		end
 
-		if not game_object_field_4 then
-			self._state_data.end_progression_timer = game_object_field
+		if progress_is_frozen then
+			self._state_data.end_progression_timer = progress_time
 		else
-			self:_client_progress(game_object_field_3, game_object_field, arg_16_1)
+			self:_client_progress(counting_up, progress_time, dt)
 		end
 
-		if not game_object_field_2 then
+		if not unit_in_progress then
 			self._client_state = "progress_inactive"
 
-			self:_client_unit_inactive(game_object_field)
+			self:_client_unit_inactive(progress_time)
 		end
 	end
 
 	self:_check_progress_percent(self._state_data.end_progression_timer)
 end
 
-PlayerInZoneExtension._client_unit_inactive = function (self, arg_17_1)
+PlayerInZoneExtension._client_unit_inactive = function (self, progress_time)
 	-- function 17
-	self._state_data.end_progression_timer = arg_17_1
-	self._progress_time = arg_17_1
+	self._state_data.end_progression_timer = progress_time
+	self._progress_time = progress_time
 	self._has_been_in_zone = false
 
 	self:_trigger_stop_events()
 end
 
-PlayerInZoneExtension._client_progress = function (self, arg_18_1, arg_18_2, arg_18_3)
+PlayerInZoneExtension._client_progress = function (self, counting_up, progress_time, dt)
 	-- function 18
-	if not arg_18_1 then
-		local _fulfill_in_zone_check, var_18_1 = self:_fulfill_in_zone_check()
+	if counting_up then
+		local _, num_players = self:_fulfill_in_zone_check()
 
-		self._state_data.end_progression_timer = self:_count_up(arg_18_3, var_18_1)
+		self._state_data.end_progression_timer = self:_count_up(dt, num_players)
 	else
-		self._state_data.end_progression_timer = self:_count_down(arg_18_3)
+		self._state_data.end_progression_timer = self:_count_down(dt)
 	end
 end
 
 PlayerInZoneExtension.set_active = function (self)
 	-- function 19
-	if not self._activated then
+	if self._activated then
 		return
 	end
 
-	local network = Managers.state.network
+	local network_manager = Managers.state.network
 	local unit_index = LevelHelper:unit_index(self._world, self._unit)
 
-	if not self._is_server then
-		if not unit_index then
-			network.network_transmit:send_rpc_clients("rpc_player_in_zone_set_active", unit_index)
+	if self._is_server then
+		if unit_index then
+			network_manager.network_transmit:send_rpc_clients("rpc_player_in_zone_set_active", unit_index)
 		end
-	elseif not unit_index then
-		network.network_transmit:send_rpc_server("rpc_player_in_zone_set_active", unit_index)
+	elseif unit_index then
+		network_manager.network_transmit:send_rpc_server("rpc_player_in_zone_set_active", unit_index)
 	end
 
 	self:set_active_rpc()
@@ -249,105 +252,112 @@ PlayerInZoneExtension.set_active_rpc = function (self)
 	self._activated = true
 end
 
-PlayerInZoneExtension._update_state = function (self, arg_21_1, arg_21_2)
+PlayerInZoneExtension._update_state = function (self, dt, t)
 	-- function 21
-	self[self._state](self, arg_21_1, arg_21_2, self._state_data)
+	self[self._state](self, dt, t, self._state_data)
 end
 
-PlayerInZoneExtension.hot_join_sync = function (self, arg_22_1)
+PlayerInZoneExtension.hot_join_sync = function (self, peer_id)
 	-- function 22
-	if not self._activated then
-		local network = Managers.state.network
+	if self._activated then
+		local network_manager = Managers.state.network
 		local unit_index = LevelHelper:unit_index(self._world, self._unit)
 
-		if not unit_index then
-			network.network_transmit:send_rpc("rpc_player_in_zone_set_active", arg_22_1, unit_index)
+		if unit_index then
+			network_manager.network_transmit:send_rpc("rpc_player_in_zone_set_active", peer_id, unit_index)
 		end
 	end
 end
 
-PlayerInZoneExtension.destroy = function (arg_23_0)
+PlayerInZoneExtension.destroy = function (self)
 	-- function 23
-	Managers.state.network.network_transmit.network_event_delegate:unregister(arg_23_0)
+	local network_event_delegate = Managers.state.network.network_transmit.network_event_delegate
+
+	network_event_delegate:unregister(self)
 end
 
 PlayerInZoneExtension._update_distances = function (self)
 	-- function 24
-	local local_position = Unit.local_position(self._unit, 0)
-	local _player_units = self._player_units
-	local _player_distances = self._player_distances
+	local unit_pos = Unit.local_position(self._unit, 0)
+	local human_players = self._player_units
+	local player_distances = self._player_distances
 
-	table.clear(_player_distances)
+	table.clear(player_distances)
 
-	local huge = math.huge
+	local closest_player_distance = math.huge
 
-	for k, v in pairs(_player_units) do
-		local var_24_4 = POSITION_LOOKUP[v]
+	for _, unit in pairs(human_players) do
+		local player_pos = POSITION_LOOKUP[unit]
 
-		if not var_24_4 then
-			local distance_squared = Vector3.distance_squared(local_position, var_24_4)
+		if player_pos then
+			local distance_squared = Vector3.distance_squared(unit_pos, player_pos)
 
-			if distance_squared < huge then
-				huge = distance_squared
+			if distance_squared < closest_player_distance then
+				closest_player_distance = distance_squared
 			end
 
-			_player_distances[v] = distance_squared
+			player_distances[unit] = distance_squared
 		end
 	end
 
-	self._closest_player_distance = huge
+	self._closest_player_distance = closest_player_distance
 end
 
-PlayerInZoneExtension._idle = function (self, arg_25_1, arg_25_2)
+PlayerInZoneExtension._idle = function (self, dt, t)
 	-- function 25
-	if not self:_fulfill_in_zone_check() then
+	if self:_fulfill_in_zone_check() then
 		self._state = "_progress_check"
 	end
 end
 
 PlayerInZoneExtension._fulfill_in_zone_check = function (self)
 	-- function 26
-	local num = self._progress_zone_size * self._progress_zone_size
+	local progress_zone_size = self._progress_zone_size * self._progress_zone_size
+	local closest_player = self._closest_player_distance
 
-	if not (num >= self._closest_player_distance) then
+	if not (closest_player <= progress_zone_size) then
 		return false, 0
 	end
 
-	local num_2 = 0
-	local num_3 = 0
+	local players_in_zone = 0
+	local total_players = 0
 
-	for k, v in pairs(self._player_distances) do
-		num_3 = num_3 + 1
+	for _, distance_squared in pairs(self._player_distances) do
+		total_players = total_players + 1
 
-		if v < num then
-			num_2 = num_2 + 1
+		if distance_squared < progress_zone_size then
+			players_in_zone = players_in_zone + 1
 		end
 	end
 
-	return num_3 == num_2 or num_2 >= self._num_player_in_zone, num_2
+	local all_inside = total_players == players_in_zone
+
+	return not not all_inside or players_in_zone >= self._num_player_in_zone, players_in_zone
 end
 
 PlayerInZoneExtension._local_player_in_zone = function (self)
 	-- function 27
-	local local_player = Managers.player:local_player()
+	local player = Managers.player:local_player()
 
-	if not local_player then
+	if not player then
 		return false
 	end
 
-	local player_unit = local_player.player_unit
+	local player_unit = player.player_unit
 
 	if not player_unit then
 		return false
 	end
 
-	local var_27_2 = self._player_distances[player_unit]
+	local player_distance = self._player_distances[player_unit]
 
-	if not var_27_2 then
+	if not player_distance then
 		return false
 	end
 
-	if var_27_2 > self._progress_zone_size * self._progress_zone_size then
+	local progress_zone_size = self._progress_zone_size * self._progress_zone_size
+
+	if progress_zone_size < player_distance then
 		return false
 	end
 
@@ -356,108 +366,108 @@ end
 
 PlayerInZoneExtension._progress_frozen = function (self)
 	-- function 28
-	local _fulfill_in_zone_check, var_28_1 = self:_fulfill_in_zone_check()
+	local fulfill_in_zone_check, _ = self:_fulfill_in_zone_check()
 
-	if not _fulfill_in_zone_check then
+	if fulfill_in_zone_check then
 		self._state = "_progress_check"
 	end
 
-	local _go_id = self._go_id
-	local _game = self._game
+	local go_id = self._go_id
+	local game = self._game
 
-	if not (not _go_id and GameSession.game_object_field(_game, _go_id, "progress_is_frozen")) then
-		GameSession.set_game_object_field(_game, _go_id, "progress_is_frozen", true)
+	if go_id and not GameSession.game_object_field(game, go_id, "progress_is_frozen") then
+		GameSession.set_game_object_field(game, go_id, "progress_is_frozen", true)
 	end
 end
 
-PlayerInZoneExtension._progress_check = function (self, arg_29_1, arg_29_2)
+PlayerInZoneExtension._progress_check = function (self, dt, t)
 	-- function 29
-	local _go_id = self._go_id
-	local _game = self._game
-	local var_29_2
+	local go_id = self._go_id
+	local game = self._game
+	local new_state
 
 	if not self._progress_check_entered then
 		self._progress_check_entered = true
 
-		if not _go_id then
-			if not GameSession.game_object_field(_game, _go_id, "unit_in_progress") then
-				GameSession.set_game_object_field(_game, _go_id, "unit_in_progress", true)
+		if go_id then
+			if not GameSession.game_object_field(game, go_id, "unit_in_progress") then
+				GameSession.set_game_object_field(game, go_id, "unit_in_progress", true)
 			end
 
-			if not GameSession.game_object_field(_game, _go_id, "progress_is_frozen") then
-				GameSession.set_game_object_field(_game, _go_id, "progress_is_frozen", false)
+			if GameSession.game_object_field(game, go_id, "progress_is_frozen") then
+				GameSession.set_game_object_field(game, go_id, "progress_is_frozen", false)
 			end
 		end
 
 		self:_trigger_start_events()
 	end
 
-	local _fulfill_in_zone_check, var_29_4 = self:_fulfill_in_zone_check()
+	local fulfill_in_zone_check, num_players = self:_fulfill_in_zone_check()
 
-	if not _fulfill_in_zone_check then
+	if fulfill_in_zone_check then
 		if not self._has_register_count_up then
 			self._has_register_count_up = true
 
 			self:_register_count_up(true)
 		end
 
-		if self._has_been_in_zone or not self:_local_player_in_zone() then
+		if not self._has_been_in_zone and self:_local_player_in_zone() then
 			self._has_been_in_zone = true
 		end
 
-		self._state_data.end_progression_timer = self:_count_up(arg_29_1, var_29_4)
+		self._state_data.end_progression_timer = self:_count_up(dt, num_players)
 
 		if self._state_data.end_progression_timer == 1 then
-			var_29_2 = "_progress_finished"
+			new_state = "_progress_finished"
 		end
 	else
-		if not self._progress_bar_smooth_back then
-			if not self._has_register_count_up then
+		if self._progress_bar_smooth_back then
+			if self._has_register_count_up then
 				self._has_register_count_up = false
 
 				self:_register_count_up(false)
 			end
 
-			self._state_data.end_progression_timer = self:_count_down(arg_29_1)
-		elseif not self._progress_bar_freeze then
-			var_29_2 = "_progress_frozen"
+			self._state_data.end_progression_timer = self:_count_down(dt)
+		elseif self._progress_bar_freeze then
+			new_state = "_progress_frozen"
 		else
 			self._state_data.end_progression_timer = 0
 		end
 
 		if self._state_data.end_progression_timer == 0 then
-			if not _go_id and not GameSession.game_object_field(_game, _go_id, "unit_in_progress") then
-				GameSession.set_game_object_field(_game, _go_id, "unit_in_progress", false)
+			if go_id and GameSession.game_object_field(game, go_id, "unit_in_progress") then
+				GameSession.set_game_object_field(game, go_id, "unit_in_progress", false)
 			end
 
-			var_29_2 = "_idle"
+			new_state = "_idle"
 		end
 	end
 
 	self:_check_progress_percent(self._state_data.end_progression_timer)
 
-	if not _go_id then
-		GameSession.set_game_object_field(_game, _go_id, "progress_time", self._state_data.end_progression_timer)
+	if go_id then
+		GameSession.set_game_object_field(game, go_id, "progress_time", self._state_data.end_progression_timer)
 	end
 
-	if not var_29_2 then
-		if var_29_2 ~= "_progress_frozen" then
+	if new_state then
+		if new_state ~= "_progress_frozen" then
 			self._has_been_in_zone = false
 
 			self:_trigger_stop_events()
 		end
 
 		self._progress_check_entered = nil
-		self._state = var_29_2
+		self._state = new_state
 	end
 end
 
 PlayerInZoneExtension._progress_finished = function (self)
 	-- function 30
-	local network = Managers.state.network
-	local unit_index = LevelHelper:unit_index(self._world, self._unit)
+	local network_manager = Managers.state.network
+	local unit_id = LevelHelper:unit_index(self._world, self._unit)
 
-	network.network_transmit:send_rpc_clients("rpc_player_in_zone_end_event", unit_index)
+	network_manager.network_transmit:send_rpc_clients("rpc_player_in_zone_end_event", unit_id)
 	self:end_event()
 end
 
@@ -473,43 +483,43 @@ PlayerInZoneExtension._trigger_stop_events = function (self)
 	Unit.flow_event(self._unit, "lua_stop_progression")
 end
 
-PlayerInZoneExtension._check_progress_percent = function (self, arg_33_1)
+PlayerInZoneExtension._check_progress_percent = function (self, end_progression_timer)
 	-- function 33
-	local _progression_percentage = self._progression_percentage
-	local _unit = self._unit
+	local progression_percentage = self._progression_percentage
+	local unit = self._unit
 
-	for k, v in pairs(self._progression_percentage) do
-		local num = k / 100
+	for percent, is_triggerd in pairs(self._progression_percentage) do
+		local small_percent = percent / 100
 
-		if not (not (num < arg_33_1) or v) then
-			Unit.flow_event(_unit, "lua_check_progression_" .. k .. "_start")
+		if small_percent < end_progression_timer and not is_triggerd then
+			Unit.flow_event(unit, "lua_check_progression_" .. percent .. "_start")
 
-			_progression_percentage[k] = true
-		elseif not (arg_33_1 < num) or not v then
-			Unit.flow_event(_unit, "lua_check_progression_" .. k .. "_stop")
+			progression_percentage[percent] = true
+		elseif end_progression_timer < small_percent and is_triggerd then
+			Unit.flow_event(unit, "lua_check_progression_" .. percent .. "_stop")
 
-			_progression_percentage[k] = false
+			progression_percentage[percent] = false
 		end
 	end
 end
 
-PlayerInZoneExtension._count_up = function (self, arg_34_1, arg_34_2)
+PlayerInZoneExtension._count_up = function (self, dt, num_players)
 	-- function 34
-	local _timer = self._timer
-	local num = 1
+	local timer = self._timer
+	local time_tweak_modifier = 1
 
-	if not (not arg_34_2 and not (arg_34_2 > 1)) then
-		num = num + self._time_modifier_per_player * arg_34_2
+	if num_players and num_players > 1 then
+		time_tweak_modifier = time_tweak_modifier + self._time_modifier_per_player * num_players
 	end
 
-	return math.clamp(self:_current_time() + arg_34_1 / _timer * num, 0, 1)
+	return math.clamp(self:_current_time() + dt / timer * time_tweak_modifier, 0, 1)
 end
 
-PlayerInZoneExtension._count_down = function (self, arg_35_1)
+PlayerInZoneExtension._count_down = function (self, dt)
 	-- function 35
-	local _timer = self._timer
+	local timer = self._timer
 
-	return math.clamp(self:_current_time() - arg_35_1 / _timer, 0, 1)
+	return math.clamp(self:_current_time() - dt / timer, 0, 1)
 end
 
 PlayerInZoneExtension._reset = function (self)
@@ -522,13 +532,13 @@ PlayerInZoneExtension._reset = function (self)
 
 	self:_check_progress_percent(self._state_data.end_progression_timer)
 
-	if not self._is_server then
-		local _go_id = self._go_id
+	if self._is_server then
+		local go_id = self._go_id
 
-		if not _go_id then
-			local _game = self._game
+		if go_id then
+			local game = self._game
 
-			GameSession.set_game_object_field(_game, _go_id, "progress_time", self._state_data.end_progression_timer)
+			GameSession.set_game_object_field(game, go_id, "progress_time", self._state_data.end_progression_timer)
 		end
 	end
 end
@@ -539,45 +549,45 @@ PlayerInZoneExtension.end_event = function (self)
 	Unit.flow_event(self._unit, "lua_start_end_event")
 end
 
-PlayerInZoneExtension._register_count_up = function (self, arg_38_1)
+PlayerInZoneExtension._register_count_up = function (self, is_counting_up)
 	-- function 38
-	local _go_id = self._go_id
-	local _game = self._game
+	local go_id = self._go_id
+	local game = self._game
 
-	GameSession.set_game_object_field(_game, _go_id, "counting_up", arg_38_1)
+	GameSession.set_game_object_field(game, go_id, "counting_up", is_counting_up)
 end
 
-PlayerInZoneExtension._debug_drawer = function (self, arg_39_1)
+PlayerInZoneExtension._debug_drawer = function (self, current_debug_state)
 	-- function 39
-	if arg_39_1 == "counting" then
+	if current_debug_state == "counting" then
 		local _drawer = self._drawer
 
-		_drawer = _drawer or Managers.state.debug:drawer({
+		_drawer = not not _drawer or not not Managers.state.debug:drawer({
 			mode = "immediate"
 		})
 		self._drawer = _drawer
 
 		self._drawer:reset()
 
-		local end_progression_timer = self._state_data.end_progression_timer
-		local num = math.lerp(1, 0, end_progression_timer) * 255
-		local num_2 = math.lerp(0, 1, end_progression_timer) * 255
+		local timer_progress = self._state_data.end_progression_timer
+		local red = math.lerp(1, 0, timer_progress) * 255
+		local green = math.lerp(0, 1, timer_progress) * 255
 
-		self._drawer:sphere(Unit.local_position(self._unit, 0), self._progress_zone_size, Color(num, num_2, 0), 30, 30)
-	elseif arg_39_1 == "stop" then
+		self._drawer:sphere(Unit.local_position(self._unit, 0), self._progress_zone_size, Color(red, green, 0), 30, 30)
+	elseif current_debug_state == "stop" then
 		local _drawer_2 = self._drawer
 
-		_drawer_2 = _drawer_2 or Managers.state.debug:drawer({
+		_drawer_2 = not not _drawer_2 or not not Managers.state.debug:drawer({
 			mode = "immediate"
 		})
 		self._drawer = _drawer_2
 
 		self._drawer:reset()
 		self._drawer:sphere(Unit.local_position(self._unit, 0), self._progress_zone_size, Color(255, 255, 0), 10, 10)
-	elseif arg_39_1 == "idle" then
+	elseif current_debug_state == "idle" then
 		local _drawer_3 = self._drawer
 
-		_drawer_3 = _drawer_3 or Managers.state.debug:drawer({
+		_drawer_3 = not not _drawer_3 or not not Managers.state.debug:drawer({
 			mode = "immediate"
 		})
 		self._drawer = _drawer_3

@@ -1,13 +1,13 @@
 -- chunkname: @scripts/ui/views/level_end/states/definitions/end_view_state_score_definitions.lua
 
-local num = 20
-local num_2 = 4
-local tbl = {
+local MAX_SCORE_PANEL_ROWS = 20
+local num_players = 4
+local player_score_size = {
 	250,
 	580
 }
-local num_3 = 1400 + tbl[1]
-local tbl_2 = {
+local topics_hover_length = 1400 + player_score_size[1]
+local scenegraph_definition = {
 	screen = {
 		scale = "fit",
 		size = {
@@ -26,7 +26,7 @@ local tbl_2 = {
 		horizontal_alignment = "center",
 		size = {
 			350,
-			tbl[2]
+			player_score_size[2]
 		},
 		position = {
 			0,
@@ -80,7 +80,7 @@ local tbl_2 = {
 		vertical_alignment = "center",
 		parent = "screen",
 		horizontal_alignment = "center",
-		size = tbl,
+		size = player_score_size,
 		position = {
 			-700,
 			0,
@@ -91,7 +91,7 @@ local tbl_2 = {
 		vertical_alignment = "center",
 		parent = "screen",
 		horizontal_alignment = "center",
-		size = tbl,
+		size = player_score_size,
 		position = {
 			-375,
 			0,
@@ -102,7 +102,7 @@ local tbl_2 = {
 		vertical_alignment = "center",
 		parent = "screen",
 		horizontal_alignment = "center",
-		size = tbl,
+		size = player_score_size,
 		position = {
 			375,
 			0,
@@ -113,7 +113,7 @@ local tbl_2 = {
 		vertical_alignment = "center",
 		parent = "screen",
 		horizontal_alignment = "center",
-		size = tbl,
+		size = player_score_size,
 		position = {
 			700,
 			0,
@@ -177,7 +177,7 @@ local tbl_2 = {
 		}
 	}
 }
-local tbl_3 = {
+local summary_title_style = {
 	word_wrap = true,
 	font_size = 52,
 	localize = false,
@@ -192,7 +192,7 @@ local tbl_3 = {
 		2
 	}
 }
-local tbl_4 = {
+local difficulty_subtitle_style = {
 	word_wrap = true,
 	font_size = 32,
 	localize = false,
@@ -207,7 +207,7 @@ local tbl_4 = {
 		2
 	}
 }
-local tbl_5 = {
+local tobii_title_style = {
 	word_wrap = true,
 	upper_case = true,
 	localize = false,
@@ -223,7 +223,7 @@ local tbl_5 = {
 		2
 	}
 }
-local tbl_6 = {
+local tobii_description_style = {
 	word_wrap = true,
 	upper_case = true,
 	localize = false,
@@ -239,15 +239,15 @@ local tbl_6 = {
 		2
 	}
 }
-local tbl_7 = {
+local widgets = {
 	level = UIWidgets.create_level_widget("level"),
-	summary_title = UIWidgets.create_simple_text(Localize("end_screen_scoreboard"), "summary_title", nil, nil, tbl_3),
+	summary_title = UIWidgets.create_simple_text(Localize("end_screen_scoreboard"), "summary_title", nil, nil, summary_title_style),
 	title_bg = UIWidgets.create_simple_texture("tab_menu_bg_03", "title_bg"),
-	scores_topics = UIWidgets.create_score_topics("scores_topics", tbl_2.scores_topics.size, num_3, num)
+	scores_topics = UIWidgets.create_score_topics("scores_topics", scenegraph_definition.scores_topics.size, topics_hover_length, MAX_SCORE_PANEL_ROWS)
 }
 
-if not Development.parameter("tobii_button") then
-	tbl_2.tobii_window = {
+if Development.parameter("tobii_button") then
+	scenegraph_definition.tobii_window = {
 		vertical_alignment = "top",
 		parent = "screen",
 		horizontal_alignment = "center",
@@ -261,7 +261,7 @@ if not Development.parameter("tobii_button") then
 			1
 		}
 	}
-	tbl_2.tobii_button = {
+	scenegraph_definition.tobii_button = {
 		vertical_alignment = "bottom",
 		parent = "tobii_window",
 		horizontal_alignment = "center",
@@ -275,7 +275,7 @@ if not Development.parameter("tobii_button") then
 			30
 		}
 	}
-	tbl_2.tobii_description = {
+	scenegraph_definition.tobii_description = {
 		vertical_alignment = "bottom",
 		parent = "tobii_window",
 		horizontal_alignment = "center",
@@ -289,7 +289,7 @@ if not Development.parameter("tobii_button") then
 			10
 		}
 	}
-	tbl_2.tobii_title = {
+	scenegraph_definition.tobii_title = {
 		vertical_alignment = "center",
 		parent = "tobii_window",
 		horizontal_alignment = "center",
@@ -303,7 +303,7 @@ if not Development.parameter("tobii_button") then
 			10
 		}
 	}
-	tbl_2.tobii_title_divider = {
+	scenegraph_definition.tobii_title_divider = {
 		vertical_alignment = "center",
 		parent = "tobii_title",
 		horizontal_alignment = "center",
@@ -317,7 +317,7 @@ if not Development.parameter("tobii_button") then
 			-3
 		}
 	}
-	tbl_2.tobii_title_effect = {
+	scenegraph_definition.tobii_title_effect = {
 		vertical_alignment = "bottom",
 		parent = "tobii_title_divider",
 		horizontal_alignment = "center",
@@ -331,50 +331,50 @@ if not Development.parameter("tobii_button") then
 			-1
 		}
 	}
-	tbl_2.scores_topics.position[2] = -50
-	tbl_2.player_panel_1.position[2] = -50
-	tbl_2.player_panel_2.position[2] = -50
-	tbl_2.player_panel_3.position[2] = -50
-	tbl_2.player_panel_4.position[2] = -50
-	tbl_7.tobii_description = UIWidgets.create_simple_text("did you beat the beta challenge leader with your time?", "tobii_description", nil, nil, tbl_6)
-	tbl_7.tobii_title = UIWidgets.create_simple_text("check out your score and if you won!", "tobii_title", nil, nil, tbl_5)
-	tbl_7.tobii_title_effect = UIWidgets.create_simple_texture("play_button_frame_glow", "tobii_title_effect")
-	tbl_7.tobii_title_divider = UIWidgets.create_simple_texture("divider_01_top", "tobii_title_divider")
-	tbl_7.tobii_button = UIWidgets.create_default_button("tobii_button", tbl_2.tobii_button.size, nil, nil, "Read More", 24)
-	tbl_7.tobii_window_frame = UIWidgets.create_frame("tobii_window", tbl_2.tobii_window.size, "menu_frame_12", 10)
-	tbl_7.tobii_window = UIWidgets.create_background("tobii_window", tbl_2.tobii_window.size, "menu_frame_bg_01")
-	tbl_7.tobii_window_background_fade = UIWidgets.create_simple_texture("options_window_fade_01", "tobii_window", nil, nil, nil, 1)
+	scenegraph_definition.scores_topics.position[2] = -50
+	scenegraph_definition.player_panel_1.position[2] = -50
+	scenegraph_definition.player_panel_2.position[2] = -50
+	scenegraph_definition.player_panel_3.position[2] = -50
+	scenegraph_definition.player_panel_4.position[2] = -50
+	widgets.tobii_description = UIWidgets.create_simple_text("did you beat the beta challenge leader with your time?", "tobii_description", nil, nil, tobii_description_style)
+	widgets.tobii_title = UIWidgets.create_simple_text("check out your score and if you won!", "tobii_title", nil, nil, tobii_title_style)
+	widgets.tobii_title_effect = UIWidgets.create_simple_texture("play_button_frame_glow", "tobii_title_effect")
+	widgets.tobii_title_divider = UIWidgets.create_simple_texture("divider_01_top", "tobii_title_divider")
+	widgets.tobii_button = UIWidgets.create_default_button("tobii_button", scenegraph_definition.tobii_button.size, nil, nil, "Read More", 24)
+	widgets.tobii_window_frame = UIWidgets.create_frame("tobii_window", scenegraph_definition.tobii_window.size, "menu_frame_12", 10)
+	widgets.tobii_window = UIWidgets.create_background("tobii_window", scenegraph_definition.tobii_window.size, "menu_frame_bg_01")
+	widgets.tobii_window_background_fade = UIWidgets.create_simple_texture("options_window_fade_01", "tobii_window", nil, nil, nil, 1)
 end
 
-local tbl_8 = {
-	player_score_1 = UIWidgets.create_score_entry("player_panel_1", tbl_2.player_panel_1.size, num, "left"),
-	player_score_2 = UIWidgets.create_score_entry("player_panel_2", tbl_2.player_panel_2.size, num),
-	player_score_3 = UIWidgets.create_score_entry("player_panel_3", tbl_2.player_panel_3.size, num, "left"),
-	player_score_4 = UIWidgets.create_score_entry("player_panel_4", tbl_2.player_panel_4.size, num)
+local score_widgets = {
+	player_score_1 = UIWidgets.create_score_entry("player_panel_1", scenegraph_definition.player_panel_1.size, MAX_SCORE_PANEL_ROWS, "left"),
+	player_score_2 = UIWidgets.create_score_entry("player_panel_2", scenegraph_definition.player_panel_2.size, MAX_SCORE_PANEL_ROWS),
+	player_score_3 = UIWidgets.create_score_entry("player_panel_3", scenegraph_definition.player_panel_3.size, MAX_SCORE_PANEL_ROWS, "left"),
+	player_score_4 = UIWidgets.create_score_entry("player_panel_4", scenegraph_definition.player_panel_4.size, MAX_SCORE_PANEL_ROWS)
 }
-local tbl_9 = {
+local hero_widgets = {
 	player_frame_1 = UIWidgets.create_portrait_frame("player_frame_1", "default", "-", 1, nil, "unit_frame_portrait_default"),
 	player_frame_2 = UIWidgets.create_portrait_frame("player_frame_2", "default", "-", 1, nil, "unit_frame_portrait_default"),
 	player_frame_3 = UIWidgets.create_portrait_frame("player_frame_3", "default", "-", 1, nil, "unit_frame_portrait_default"),
 	player_frame_4 = UIWidgets.create_portrait_frame("player_frame_4", "default", "-", 1, nil, "unit_frame_portrait_default")
 }
-local tbl_10 = {
+local animation_definitions = {
 	transition_enter = {
 		{
 			name = "fade_in",
 			start_progress = 0,
 			end_progress = 0.3,
-			init = function (arg_1_0, arg_1_1, arg_1_2, arg_1_3)
+			init = function (ui_scenegraph, scenegraph_definition, widgets, params)
 				-- function 1
-				arg_1_3.render_settings.alpha_multiplier = 0
+				params.render_settings.alpha_multiplier = 0
 			end,
-			update = function (arg_2_0, arg_2_1, arg_2_2, arg_2_3, arg_2_4)
+			update = function (ui_scenegraph, scenegraph_definition, widgets, progress, params)
 				-- function 2
-				local easeOutCubic = math.easeOutCubic(arg_2_3)
+				local anim_progress = math.easeOutCubic(progress)
 
-				arg_2_4.render_settings.alpha_multiplier = easeOutCubic
+				params.render_settings.alpha_multiplier = anim_progress
 			end,
-			on_complete = function (arg_3_0, arg_3_1, arg_3_2, arg_3_3)
+			on_complete = function (ui_scenegraph, scenegraph_definition, widgets, params)
 				-- function 3
 				return
 			end
@@ -383,18 +383,18 @@ local tbl_10 = {
 			name = "move_inner_panels",
 			start_progress = 0,
 			end_progress = 0.3,
-			init = function (arg_4_0, arg_4_1, arg_4_2, arg_4_3)
+			init = function (ui_scenegraph, scenegraph_definition, widgets, params)
 				-- function 4
-				arg_4_3.render_settings.alpha_multiplier = 0
+				params.render_settings.alpha_multiplier = 0
 			end,
-			update = function (arg_5_0, arg_5_1, arg_5_2, arg_5_3, arg_5_4)
+			update = function (ui_scenegraph, scenegraph_definition, widgets, progress, params)
 				-- function 5
-				local easeInCubic = math.easeInCubic(1 - arg_5_3)
+				local anim_progress = math.easeInCubic(1 - progress)
 
-				arg_5_0.player_panel_2.local_position[1] = -375 - 400 * easeInCubic
-				arg_5_0.player_panel_3.local_position[1] = 375 + 400 * easeInCubic
+				ui_scenegraph.player_panel_2.local_position[1] = -375 - 400 * anim_progress
+				ui_scenegraph.player_panel_3.local_position[1] = 375 + 400 * anim_progress
 			end,
-			on_complete = function (arg_6_0, arg_6_1, arg_6_2, arg_6_3)
+			on_complete = function (ui_scenegraph, scenegraph_definition, widgets, params)
 				-- function 6
 				return
 			end
@@ -403,18 +403,18 @@ local tbl_10 = {
 			name = "move_outer_panels",
 			start_progress = 0,
 			end_progress = 0.4,
-			init = function (arg_7_0, arg_7_1, arg_7_2, arg_7_3)
+			init = function (ui_scenegraph, scenegraph_definition, widgets, params)
 				-- function 7
-				arg_7_3.render_settings.alpha_multiplier = 0
+				params.render_settings.alpha_multiplier = 0
 			end,
-			update = function (arg_8_0, arg_8_1, arg_8_2, arg_8_3, arg_8_4)
+			update = function (ui_scenegraph, scenegraph_definition, widgets, progress, params)
 				-- function 8
-				local easeInCubic = math.easeInCubic(1 - arg_8_3)
+				local anim_progress = math.easeInCubic(1 - progress)
 
-				arg_8_0.player_panel_1.local_position[1] = -700 - 400 * easeInCubic
-				arg_8_0.player_panel_4.local_position[1] = 700 + 400 * easeInCubic
+				ui_scenegraph.player_panel_1.local_position[1] = -700 - 400 * anim_progress
+				ui_scenegraph.player_panel_4.local_position[1] = 700 + 400 * anim_progress
 			end,
-			on_complete = function (arg_9_0, arg_9_1, arg_9_2, arg_9_3)
+			on_complete = function (ui_scenegraph, scenegraph_definition, widgets, params)
 				-- function 9
 				return
 			end
@@ -423,19 +423,19 @@ local tbl_10 = {
 			name = "move_level",
 			start_progress = 0,
 			end_progress = 0.3,
-			init = function (arg_10_0, arg_10_1, arg_10_2, arg_10_3)
+			init = function (ui_scenegraph, scenegraph_definition, widgets, params)
 				-- function 10
-				local num = 1
+				local anim_progress = 1
 
-				arg_10_0.level.local_position[2] = arg_10_1.level.position[2] + 50 * num
+				ui_scenegraph.level.local_position[2] = scenegraph_definition.level.position[2] + 50 * anim_progress
 			end,
-			update = function (arg_11_0, arg_11_1, arg_11_2, arg_11_3, arg_11_4)
+			update = function (ui_scenegraph, scenegraph_definition, widgets, progress, params)
 				-- function 11
-				local num = 1 - math.easeOutCubic(arg_11_3)
+				local anim_progress = 1 - math.easeOutCubic(progress)
 
-				arg_11_0.level.local_position[2] = arg_11_1.level.position[2] + 50 * num
+				ui_scenegraph.level.local_position[2] = scenegraph_definition.level.position[2] + 50 * anim_progress
 			end,
-			on_complete = function (arg_12_0, arg_12_1, arg_12_2, arg_12_3)
+			on_complete = function (ui_scenegraph, scenegraph_definition, widgets, params)
 				-- function 12
 				return
 			end
@@ -446,17 +446,17 @@ local tbl_10 = {
 			name = "fade_out",
 			start_progress = 0,
 			end_progress = 0.3,
-			init = function (arg_13_0, arg_13_1, arg_13_2, arg_13_3)
+			init = function (ui_scenegraph, scenegraph_definition, widgets, params)
 				-- function 13
-				arg_13_3.render_settings.alpha_multiplier = 1
+				params.render_settings.alpha_multiplier = 1
 			end,
-			update = function (arg_14_0, arg_14_1, arg_14_2, arg_14_3, arg_14_4)
+			update = function (ui_scenegraph, scenegraph_definition, widgets, progress, params)
 				-- function 14
-				local easeInCubic = math.easeInCubic(arg_14_3)
+				local anim_progress = math.easeInCubic(progress)
 
-				arg_14_4.render_settings.alpha_multiplier = 1 - easeInCubic
+				params.render_settings.alpha_multiplier = 1 - anim_progress
 			end,
-			on_complete = function (arg_15_0, arg_15_1, arg_15_2, arg_15_3)
+			on_complete = function (ui_scenegraph, scenegraph_definition, widgets, params)
 				-- function 15
 				return
 			end
@@ -465,10 +465,10 @@ local tbl_10 = {
 }
 
 return {
-	widgets = tbl_7,
-	hero_widgets = tbl_9,
-	score_widgets = tbl_8,
-	player_score_size = tbl,
-	scenegraph_definition = tbl_2,
-	animation_definitions = tbl_10
+	widgets = widgets,
+	hero_widgets = hero_widgets,
+	score_widgets = score_widgets,
+	player_score_size = player_score_size,
+	scenegraph_definition = scenegraph_definition,
+	animation_definitions = animation_definitions
 }

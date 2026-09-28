@@ -7,45 +7,45 @@ local check_level_list_difficulty = AchievementTemplateHelper.check_level_list_d
 local hero_level = AchievementTemplateHelper.hero_level
 local add_weapon_kill_challenge = AchievementTemplateHelper.add_weapon_kill_challenge
 local add_weapon_levels_challenge = AchievementTemplateHelper.add_weapon_levels_challenge
-local PLACEHOLDER_ICON = AchievementTemplateHelper.PLACEHOLDER_ICON
+local placeholder_icon = AchievementTemplateHelper.PLACEHOLDER_ICON
 
-local function fn(self, arg_1_1, arg_1_2, arg_1_3)
+local function _has_completed_weave_seasonal(statistics_db, stats_id, season_id, weave_id)
 	-- function 1
-	local flag = false
-	local get_season_name = ScorpionSeasonalSettings.get_season_name(arg_1_2)
+	local complete = false
+	local season_name = ScorpionSeasonalSettings.get_season_name(season_id)
 
-	for i = 1, 4 do
-		local get_weave_score_stat_for_season = ScorpionSeasonalSettings.get_weave_score_stat_for_season(arg_1_2, arg_1_3, i)
+	for player = 1, 4 do
+		local stat_name = ScorpionSeasonalSettings.get_weave_score_stat_for_season(season_id, weave_id, player)
 
-		flag = self:get_persistent_stat(arg_1_1, get_season_name, get_weave_score_stat_for_season) > 0
+		complete = statistics_db:get_persistent_stat(stats_id, season_name, stat_name) > 0
 
-		if not flag then
+		if complete then
 			break
 		end
 	end
 
-	return flag
+	return complete
 end
 
-local function fn_2(arg_2_0, arg_2_1, arg_2_2, arg_2_3, arg_2_4)
+local function _has_completed_tier_seasonal(statistics_db, stats_id, season_id, from, to)
 	-- function 2
-	local flag = false
-	local num = 0
+	local complete = false
+	local counter = 0
 
-	for i = arg_2_3, arg_2_4 do
-		flag = fn(arg_2_0, arg_2_1, arg_2_2, i)
+	for tier = from, to do
+		complete = _has_completed_weave_seasonal(statistics_db, stats_id, season_id, tier)
 
-		if not flag then
+		if not complete then
 			break
 		end
 
-		num = num + 1
+		counter = counter + 1
 	end
 
-	return flag, num
+	return complete, counter
 end
 
-local tbl = {
+local seasonal_list_of_weaves_from_to = {
 	tier_1 = {
 		from = 1,
 		to = 40
@@ -67,67 +67,70 @@ local tbl = {
 		}
 	}
 }
-local current_season_id = ScorpionSeasonalSettings.current_season_id
+local season_num = ScorpionSeasonalSettings.current_season_id
+local season_offset = 2
 
-for i = 2, current_season_id do
-	local get_season_name = ScorpionSeasonalSettings.get_season_name(i)
+for season_id = season_offset, season_num do
+	local season_name = ScorpionSeasonalSettings.get_season_name(season_id)
 
-	for k, v in pairs(tbl) do
-		local disable_for_seasons = v.disable_for_seasons
+	for tier, tbl in pairs(seasonal_list_of_weaves_from_to) do
+		local disable_for_seasons = tbl.disable_for_seasons
 
-		if not (not disable_for_seasons and table.contains(disable_for_seasons, i)) then
-			local str = "scorpion_" .. k .. "_season_" .. i
-			local from = v.from
-			local to = v.to
+		if not disable_for_seasons or not table.contains(disable_for_seasons, season_id) then
+			local id = "scorpion_" .. tier .. "_season_" .. season_id
+			local from = tbl.from
+			local to = tbl.to
 
-			AchievementTemplates.achievements[str] = {
+			AchievementTemplates.achievements[id] = {
 				required_dlc = "scorpion",
-				name = "achv_scorpion_" .. k .. "_seasonal_name",
-				desc = "achv_scorpion_" .. k .. "_seasonal_desc",
-				icon = "achievement_trophy_scorpion_" .. k .. "_season_" .. i,
-				disable_on_consoles = i ~= current_season_id,
-				completed = function (arg_3_0, arg_3_1)
+				name = "achv_scorpion_" .. tier .. "_seasonal_name",
+				desc = "achv_scorpion_" .. tier .. "_seasonal_desc",
+				icon = "achievement_trophy_scorpion_" .. tier .. "_season_" .. season_id,
+				disable_on_consoles = season_id ~= season_num,
+				completed = function (statistics_db, stats_id)
 					-- function 3
-					local var_3_0, var_3_1 = fn_2(arg_3_0, arg_3_1, i, from, to)
+					local has_completed, _ = _has_completed_tier_seasonal(statistics_db, stats_id, season_id, from, to)
 
-					return var_3_0
+					return has_completed
 				end,
-				progress = function (arg_4_0, arg_4_1)
+				progress = function (statistics_db, stats_id)
 					-- function 4
-					local num = to - from + 1
-					local var_4_1, var_4_2 = fn_2(arg_4_0, arg_4_1, i, from, to)
+					local total = to - from + 1
+					local _, completed_amunt = _has_completed_tier_seasonal(statistics_db, stats_id, season_id, from, to)
 
 					return {
-						var_4_2,
-						num
+						completed_amunt,
+						total
 					}
 				end
 			}
 		end
 	end
 
-	local num = 40
-	local str_2 = "scorpion_complete_unranked_weaves_season_" .. i
+	local num_quickplay_weaves_required = 40
+	local quickplay_achievement_id = "scorpion_complete_unranked_weaves_season_" .. season_id
 
-	AchievementTemplates.achievements[str_2] = {
+	AchievementTemplates.achievements[quickplay_achievement_id] = {
 		ID_XB1 = 78,
 		name = "achv_scorpion_complete_unranked_weaves_name",
 		desc = "achv_scorpion_complete_unranked_weaves_desc",
 		ID_PS4 = "077",
 		icon = "achievement_trophy_scorpion_complete_unranked_weaves_season_2",
 		required_dlc = "scorpion",
-		disable_on_consoles = i ~= current_season_id,
-		completed = function (self, arg_5_1)
+		disable_on_consoles = season_id ~= season_num,
+		completed = function (statistics_db, stats_id)
 			-- function 5
-			return self:get_persistent_stat(arg_5_1, get_season_name, "weave_quickplay_wins") >= num
+			local weave_quickplay_wins = statistics_db:get_persistent_stat(stats_id, season_name, "weave_quickplay_wins")
+
+			return weave_quickplay_wins >= num_quickplay_weaves_required
 		end,
-		progress = function (self, arg_6_1)
+		progress = function (statistics_db, stats_id)
 			-- function 6
-			local get_persistent_stat = self:get_persistent_stat(arg_6_1, get_season_name, "weave_quickplay_wins")
+			local weave_quickplay_wins = statistics_db:get_persistent_stat(stats_id, season_name, "weave_quickplay_wins")
 
 			return {
-				get_persistent_stat,
-				num
+				weave_quickplay_wins,
+				num_quickplay_weaves_required
 			}
 		end
 	}
@@ -137,17 +140,18 @@ AchievementTemplates.achievements.scorpion_bardin_reach_level_35 = {
 	name = "achv_scorpion_bardin_reach_level_35_name",
 	icon = "achievement_trophy_scorpion_bardin_reach_level_35",
 	desc = "achv_scorpion_bardin_reach_level_35_desc",
-	completed = function (arg_7_0, arg_7_1)
+	completed = function (statistics_db, stats_id)
 		-- function 7
 		return hero_level("dwarf_ranger") >= 35
 	end,
-	progress = function (arg_8_0, arg_8_1)
+	progress = function (statistics_db, stats_id)
 		-- function 8
-		local var_8_0 = hero_level("dwarf_ranger")
-		local min = math.min(var_8_0, 35)
+		local level = hero_level("dwarf_ranger")
+
+		level = math.min(level, 35)
 
 		return {
-			min,
+			level,
 			35
 		}
 	end
@@ -156,17 +160,18 @@ AchievementTemplates.achievements.scorpion_kerillian_reach_level_35 = {
 	name = "achv_scorpion_kerillian_reach_level_35_name",
 	icon = "achievement_trophy_scorpion_kerillian_reach_level_35",
 	desc = "achv_scorpion_kerillian_reach_level_35_desc",
-	completed = function (arg_9_0, arg_9_1)
+	completed = function (statistics_db, stats_id)
 		-- function 9
 		return hero_level("wood_elf") >= 35
 	end,
-	progress = function (arg_10_0, arg_10_1)
+	progress = function (statistics_db, stats_id)
 		-- function 10
-		local var_10_0 = hero_level("wood_elf")
-		local min = math.min(var_10_0, 35)
+		local level = hero_level("wood_elf")
+
+		level = math.min(level, 35)
 
 		return {
-			min,
+			level,
 			35
 		}
 	end
@@ -175,17 +180,18 @@ AchievementTemplates.achievements.scorpion_markus_reach_level_35 = {
 	name = "achv_scorpion_markus_reach_level_35_name",
 	icon = "achievement_trophy_scorpion_markus_reach_level_35",
 	desc = "achv_scorpion_markus_reach_level_35_desc",
-	completed = function (arg_11_0, arg_11_1)
+	completed = function (statistics_db, stats_id)
 		-- function 11
 		return hero_level("empire_soldier") >= 35
 	end,
-	progress = function (arg_12_0, arg_12_1)
+	progress = function (statistics_db, stats_id)
 		-- function 12
-		local var_12_0 = hero_level("empire_soldier")
-		local min = math.min(var_12_0, 35)
+		local level = hero_level("empire_soldier")
+
+		level = math.min(level, 35)
 
 		return {
-			min,
+			level,
 			35
 		}
 	end
@@ -194,17 +200,18 @@ AchievementTemplates.achievements.scorpion_sienna_reach_level_35 = {
 	name = "achv_scorpion_sienna_reach_level_35_name",
 	icon = "achievement_trophy_scorpion_sienna_reach_level_35",
 	desc = "achv_scorpion_sienna_reach_level_35_desc",
-	completed = function (arg_13_0, arg_13_1)
+	completed = function (statistics_db, stats_id)
 		-- function 13
 		return hero_level("bright_wizard") >= 35
 	end,
-	progress = function (arg_14_0, arg_14_1)
+	progress = function (statistics_db, stats_id)
 		-- function 14
-		local var_14_0 = hero_level("bright_wizard")
-		local min = math.min(var_14_0, 35)
+		local level = hero_level("bright_wizard")
+
+		level = math.min(level, 35)
 
 		return {
-			min,
+			level,
 			35
 		}
 	end
@@ -213,17 +220,18 @@ AchievementTemplates.achievements.scorpion_victor_reach_level_35 = {
 	name = "achv_scorpion_victor_reach_level_35_name",
 	icon = "achievement_trophy_scorpion_victor_reach_level_35",
 	desc = "achv_scorpion_victor_reach_level_35_desc",
-	completed = function (arg_15_0, arg_15_1)
+	completed = function (statistics_db, stats_id)
 		-- function 15
 		return hero_level("witch_hunter") >= 35
 	end,
-	progress = function (arg_16_0, arg_16_1)
+	progress = function (statistics_db, stats_id)
 		-- function 16
-		local var_16_0 = hero_level("witch_hunter")
-		local min = math.min(var_16_0, 35)
+		local level = hero_level("witch_hunter")
+
+		level = math.min(level, 35)
 
 		return {
-			min,
+			level,
 			35
 		}
 	end
@@ -233,79 +241,79 @@ AchievementTemplates.achievements.scorpion_complete_helmgart_act_one_cataclysm =
 	name = "achv_scorpion_complete_helmgart_act_one_cataclysm_name",
 	icon = "achievement_trophy_scorpion_complete_act_one_cataclysm",
 	desc = "achv_scorpion_complete_helmgart_act_one_cataclysm_desc",
-	completed = function (arg_17_0, arg_17_1)
+	completed = function (statistics_db, stats_id)
 		-- function 17
-		local num = 0
-		local rank = DifficultySettings.cataclysm.rank
+		local count = 0
+		local diff = DifficultySettings.cataclysm.rank
 
-		if not check_level_difficulty(arg_17_0, arg_17_1, LevelSettings.military.level_id, rank) then
-			num = num + 1
+		if check_level_difficulty(statistics_db, stats_id, LevelSettings.military.level_id, diff) then
+			count = count + 1
 		end
 
-		if not check_level_difficulty(arg_17_0, arg_17_1, LevelSettings.catacombs.level_id, rank) then
-			num = num + 1
+		if check_level_difficulty(statistics_db, stats_id, LevelSettings.catacombs.level_id, diff) then
+			count = count + 1
 		end
 
-		if not check_level_difficulty(arg_17_0, arg_17_1, LevelSettings.mines.level_id, rank) then
-			num = num + 1
+		if check_level_difficulty(statistics_db, stats_id, LevelSettings.mines.level_id, diff) then
+			count = count + 1
 		end
 
-		if not check_level_difficulty(arg_17_0, arg_17_1, LevelSettings.ground_zero.level_id, rank) then
-			num = num + 1
+		if check_level_difficulty(statistics_db, stats_id, LevelSettings.ground_zero.level_id, diff) then
+			count = count + 1
 		end
 
-		return num >= 4
+		return count >= 4
 	end,
-	progress = function (arg_18_0, arg_18_1)
+	progress = function (statistics_db, stats_id)
 		-- function 18
-		local num = 0
-		local rank = DifficultySettings.cataclysm.rank
+		local count = 0
+		local diff = DifficultySettings.cataclysm.rank
 
-		if not check_level_difficulty(arg_18_0, arg_18_1, LevelSettings.military.level_id, rank) then
-			num = num + 1
+		if check_level_difficulty(statistics_db, stats_id, LevelSettings.military.level_id, diff) then
+			count = count + 1
 		end
 
-		if not check_level_difficulty(arg_18_0, arg_18_1, LevelSettings.catacombs.level_id, rank) then
-			num = num + 1
+		if check_level_difficulty(statistics_db, stats_id, LevelSettings.catacombs.level_id, diff) then
+			count = count + 1
 		end
 
-		if not check_level_difficulty(arg_18_0, arg_18_1, LevelSettings.mines.level_id, rank) then
-			num = num + 1
+		if check_level_difficulty(statistics_db, stats_id, LevelSettings.mines.level_id, diff) then
+			count = count + 1
 		end
 
-		if not check_level_difficulty(arg_18_0, arg_18_1, LevelSettings.ground_zero.level_id, rank) then
-			num = num + 1
+		if check_level_difficulty(statistics_db, stats_id, LevelSettings.ground_zero.level_id, diff) then
+			count = count + 1
 		end
 
 		return {
-			num,
+			count,
 			4
 		}
 	end,
-	requirements = function (arg_19_0, arg_19_1)
+	requirements = function (statistics_db, stats_id)
 		-- function 19
-		local rank = DifficultySettings.cataclysm.rank
-		local var_19_1 = check_level_difficulty(arg_19_0, arg_19_1, LevelSettings.military.level_id, rank)
-		local var_19_2 = check_level_difficulty(arg_19_0, arg_19_1, LevelSettings.catacombs.level_id, rank)
-		local var_19_3 = check_level_difficulty(arg_19_0, arg_19_1, LevelSettings.mines.level_id, rank)
-		local var_19_4 = check_level_difficulty(arg_19_0, arg_19_1, LevelSettings.ground_zero.level_id, rank)
+		local diff = DifficultySettings.cataclysm.rank
+		local complete_military = check_level_difficulty(statistics_db, stats_id, LevelSettings.military.level_id, diff)
+		local complete_catacombs = check_level_difficulty(statistics_db, stats_id, LevelSettings.catacombs.level_id, diff)
+		local complete_mines = check_level_difficulty(statistics_db, stats_id, LevelSettings.mines.level_id, diff)
+		local complete_ground_zero = check_level_difficulty(statistics_db, stats_id, LevelSettings.ground_zero.level_id, diff)
 
 		return {
 			{
 				name = "level_name_military",
-				completed = var_19_1
+				completed = complete_military
 			},
 			{
 				name = "level_name_catacombs",
-				completed = var_19_2
+				completed = complete_catacombs
 			},
 			{
 				name = "level_name_mines",
-				completed = var_19_3
+				completed = complete_mines
 			},
 			{
 				name = "level_name_ground_zero",
-				completed = var_19_4
+				completed = complete_ground_zero
 			}
 		}
 	end
@@ -315,79 +323,79 @@ AchievementTemplates.achievements.scorpion_complete_helmgart_act_two_cataclysm =
 	name = "achv_scorpion_complete_helmgart_act_two_cataclysm_name",
 	icon = "achievement_trophy_scorpion_complete_act_two_cataclysm",
 	desc = "achv_scorpion_complete_helmgart_act_two_cataclysm_desc",
-	completed = function (arg_20_0, arg_20_1)
+	completed = function (statistics_db, stats_id)
 		-- function 20
-		local num = 0
-		local rank = DifficultySettings.cataclysm.rank
+		local count = 0
+		local diff = DifficultySettings.cataclysm.rank
 
-		if not check_level_difficulty(arg_20_0, arg_20_1, LevelSettings.elven_ruins.level_id, rank) then
-			num = num + 1
+		if check_level_difficulty(statistics_db, stats_id, LevelSettings.elven_ruins.level_id, diff) then
+			count = count + 1
 		end
 
-		if not check_level_difficulty(arg_20_0, arg_20_1, LevelSettings.bell.level_id, rank) then
-			num = num + 1
+		if check_level_difficulty(statistics_db, stats_id, LevelSettings.bell.level_id, diff) then
+			count = count + 1
 		end
 
-		if not check_level_difficulty(arg_20_0, arg_20_1, LevelSettings.fort.level_id, rank) then
-			num = num + 1
+		if check_level_difficulty(statistics_db, stats_id, LevelSettings.fort.level_id, diff) then
+			count = count + 1
 		end
 
-		if not check_level_difficulty(arg_20_0, arg_20_1, LevelSettings.skaven_stronghold.level_id, rank) then
-			num = num + 1
+		if check_level_difficulty(statistics_db, stats_id, LevelSettings.skaven_stronghold.level_id, diff) then
+			count = count + 1
 		end
 
-		return num >= 4
+		return count >= 4
 	end,
-	progress = function (arg_21_0, arg_21_1)
+	progress = function (statistics_db, stats_id)
 		-- function 21
-		local num = 0
-		local rank = DifficultySettings.cataclysm.rank
+		local count = 0
+		local diff = DifficultySettings.cataclysm.rank
 
-		if not check_level_difficulty(arg_21_0, arg_21_1, LevelSettings.elven_ruins.level_id, rank) then
-			num = num + 1
+		if check_level_difficulty(statistics_db, stats_id, LevelSettings.elven_ruins.level_id, diff) then
+			count = count + 1
 		end
 
-		if not check_level_difficulty(arg_21_0, arg_21_1, LevelSettings.bell.level_id, rank) then
-			num = num + 1
+		if check_level_difficulty(statistics_db, stats_id, LevelSettings.bell.level_id, diff) then
+			count = count + 1
 		end
 
-		if not check_level_difficulty(arg_21_0, arg_21_1, LevelSettings.fort.level_id, rank) then
-			num = num + 1
+		if check_level_difficulty(statistics_db, stats_id, LevelSettings.fort.level_id, diff) then
+			count = count + 1
 		end
 
-		if not check_level_difficulty(arg_21_0, arg_21_1, LevelSettings.skaven_stronghold.level_id, rank) then
-			num = num + 1
+		if check_level_difficulty(statistics_db, stats_id, LevelSettings.skaven_stronghold.level_id, diff) then
+			count = count + 1
 		end
 
 		return {
-			num,
+			count,
 			4
 		}
 	end,
-	requirements = function (arg_22_0, arg_22_1)
+	requirements = function (statistics_db, stats_id)
 		-- function 22
-		local rank = DifficultySettings.cataclysm.rank
-		local var_22_1 = check_level_difficulty(arg_22_0, arg_22_1, LevelSettings.elven_ruins.level_id, rank)
-		local var_22_2 = check_level_difficulty(arg_22_0, arg_22_1, LevelSettings.bell.level_id, rank)
-		local var_22_3 = check_level_difficulty(arg_22_0, arg_22_1, LevelSettings.fort.level_id, rank)
-		local var_22_4 = check_level_difficulty(arg_22_0, arg_22_1, LevelSettings.skaven_stronghold.level_id, rank)
+		local diff = DifficultySettings.cataclysm.rank
+		local complete_elven_ruins = check_level_difficulty(statistics_db, stats_id, LevelSettings.elven_ruins.level_id, diff)
+		local complete_bell = check_level_difficulty(statistics_db, stats_id, LevelSettings.bell.level_id, diff)
+		local complete_fort = check_level_difficulty(statistics_db, stats_id, LevelSettings.fort.level_id, diff)
+		local complete_skaven_stronghold = check_level_difficulty(statistics_db, stats_id, LevelSettings.skaven_stronghold.level_id, diff)
 
 		return {
 			{
 				name = "level_name_elven_ruins",
-				completed = var_22_1
+				completed = complete_elven_ruins
 			},
 			{
 				name = "level_name_bell",
-				completed = var_22_2
+				completed = complete_bell
 			},
 			{
 				name = "level_name_forest_fort",
-				completed = var_22_3
+				completed = complete_fort
 			},
 			{
 				name = "level_name_skaven_stronghold",
-				completed = var_22_4
+				completed = complete_skaven_stronghold
 			}
 		}
 	end
@@ -397,79 +405,79 @@ AchievementTemplates.achievements.scorpion_complete_helmgart_act_three_cataclysm
 	name = "achv_scorpion_complete_helmgart_act_three_cataclysm_name",
 	icon = "achievement_trophy_scorpion_complete_act_three_cataclysm",
 	desc = "achv_scorpion_complete_helmgart_act_three_cataclysm_desc",
-	completed = function (arg_23_0, arg_23_1)
+	completed = function (statistics_db, stats_id)
 		-- function 23
-		local num = 0
-		local rank = DifficultySettings.cataclysm.rank
+		local count = 0
+		local diff = DifficultySettings.cataclysm.rank
 
-		if not check_level_difficulty(arg_23_0, arg_23_1, LevelSettings.farmlands.level_id, rank) then
-			num = num + 1
+		if check_level_difficulty(statistics_db, stats_id, LevelSettings.farmlands.level_id, diff) then
+			count = count + 1
 		end
 
-		if not check_level_difficulty(arg_23_0, arg_23_1, LevelSettings.ussingen.level_id, rank) then
-			num = num + 1
+		if check_level_difficulty(statistics_db, stats_id, LevelSettings.ussingen.level_id, diff) then
+			count = count + 1
 		end
 
-		if not check_level_difficulty(arg_23_0, arg_23_1, LevelSettings.nurgle.level_id, rank) then
-			num = num + 1
+		if check_level_difficulty(statistics_db, stats_id, LevelSettings.nurgle.level_id, diff) then
+			count = count + 1
 		end
 
-		if not check_level_difficulty(arg_23_0, arg_23_1, LevelSettings.warcamp.level_id, rank) then
-			num = num + 1
+		if check_level_difficulty(statistics_db, stats_id, LevelSettings.warcamp.level_id, diff) then
+			count = count + 1
 		end
 
-		return num >= 4
+		return count >= 4
 	end,
-	progress = function (arg_24_0, arg_24_1)
+	progress = function (statistics_db, stats_id)
 		-- function 24
-		local num = 0
-		local rank = DifficultySettings.cataclysm.rank
+		local count = 0
+		local diff = DifficultySettings.cataclysm.rank
 
-		if not check_level_difficulty(arg_24_0, arg_24_1, LevelSettings.farmlands.level_id, rank) then
-			num = num + 1
+		if check_level_difficulty(statistics_db, stats_id, LevelSettings.farmlands.level_id, diff) then
+			count = count + 1
 		end
 
-		if not check_level_difficulty(arg_24_0, arg_24_1, LevelSettings.ussingen.level_id, rank) then
-			num = num + 1
+		if check_level_difficulty(statistics_db, stats_id, LevelSettings.ussingen.level_id, diff) then
+			count = count + 1
 		end
 
-		if not check_level_difficulty(arg_24_0, arg_24_1, LevelSettings.nurgle.level_id, rank) then
-			num = num + 1
+		if check_level_difficulty(statistics_db, stats_id, LevelSettings.nurgle.level_id, diff) then
+			count = count + 1
 		end
 
-		if not check_level_difficulty(arg_24_0, arg_24_1, LevelSettings.warcamp.level_id, rank) then
-			num = num + 1
+		if check_level_difficulty(statistics_db, stats_id, LevelSettings.warcamp.level_id, diff) then
+			count = count + 1
 		end
 
 		return {
-			num,
+			count,
 			4
 		}
 	end,
-	requirements = function (arg_25_0, arg_25_1)
+	requirements = function (statistics_db, stats_id)
 		-- function 25
-		local rank = DifficultySettings.cataclysm.rank
-		local var_25_1 = check_level_difficulty(arg_25_0, arg_25_1, LevelSettings.farmlands.level_id, rank)
-		local var_25_2 = check_level_difficulty(arg_25_0, arg_25_1, LevelSettings.ussingen.level_id, rank)
-		local var_25_3 = check_level_difficulty(arg_25_0, arg_25_1, LevelSettings.nurgle.level_id, rank)
-		local var_25_4 = check_level_difficulty(arg_25_0, arg_25_1, LevelSettings.warcamp.level_id, rank)
+		local diff = DifficultySettings.cataclysm.rank
+		local complete_farmlands = check_level_difficulty(statistics_db, stats_id, LevelSettings.farmlands.level_id, diff)
+		local complete_ussingen = check_level_difficulty(statistics_db, stats_id, LevelSettings.ussingen.level_id, diff)
+		local complete_nurgle = check_level_difficulty(statistics_db, stats_id, LevelSettings.nurgle.level_id, diff)
+		local complete_warcamp = check_level_difficulty(statistics_db, stats_id, LevelSettings.warcamp.level_id, diff)
 
 		return {
 			{
 				name = "level_name_farmlands",
-				completed = var_25_1
+				completed = complete_farmlands
 			},
 			{
 				name = "level_name_ussingen",
-				completed = var_25_2
+				completed = complete_ussingen
 			},
 			{
 				name = "level_name_nurgle",
-				completed = var_25_3
+				completed = complete_nurgle
 			},
 			{
 				name = "level_name_warcamp",
-				completed = var_25_4
+				completed = complete_warcamp
 			}
 		}
 	end
@@ -479,75 +487,77 @@ AchievementTemplates.achievements.scorpion_complete_skittergate_cataclysm = {
 	name = "achv_scorpion_complete_skittergate_cataclysm_name",
 	icon = "achievement_trophy_scorpion_complete_skittergate_cataclysm",
 	desc = "achv_scorpion_complete_skittergate_cataclysm_desc",
-	completed = function (arg_26_0, arg_26_1)
+	completed = function (statistics_db, stats_id)
 		-- function 26
-		local rank = DifficultySettings.cataclysm.rank
+		local diff = DifficultySettings.cataclysm.rank
 
-		return check_level_difficulty(arg_26_0, arg_26_1, LevelSettings.skittergate.level_id, rank)
+		return check_level_difficulty(statistics_db, stats_id, LevelSettings.skittergate.level_id, diff)
 	end
 }
 
-local var_0_17 = (function (arg_27_0)
+local function remove_prologue(levels)
 	-- function 27
-	local var_27_0
+	local prologue_index
 
-	for i, v in ipairs(arg_27_0) do
-		if v == "prologue" then
-			var_27_0 = i
+	for i, level in ipairs(levels) do
+		if level == "prologue" then
+			prologue_index = i
 		end
 	end
 
-	local var_27_1 = arg_27_0
+	local ret = levels
 
-	if not var_27_0 then
-		table.remove(var_27_1, var_27_0)
+	if prologue_index then
+		table.remove(ret, prologue_index)
 	end
 
-	return var_27_1
-end)(MainGameLevels)
+	return ret
+end
+
+local main_game_levels = remove_prologue(MainGameLevels)
 
 AchievementTemplates.achievements.scorpion_complete_all_helmgart_levels_cataclysm = {
 	required_dlc = "scorpion",
 	name = "achv_scorpion_complete_all_helmgart_levels_cataclysm_name",
 	icon = "achievement_trophy_scorpion_complete_all_helmgart_levels_cataclysm",
 	desc = "achv_scorpion_complete_all_helmgart_levels_cataclysm_desc",
-	completed = function (arg_28_0, arg_28_1)
+	completed = function (statistics_db, stats_id)
 		-- function 28
 		local rank = DifficultySettings.cataclysm.rank
 
-		return check_level_list_difficulty(arg_28_0, arg_28_1, var_0_17, rank)
+		return check_level_list_difficulty(statistics_db, stats_id, main_game_levels, rank)
 	end,
-	progress = function (arg_29_0, arg_29_1)
+	progress = function (statistics_db, stats_id)
 		-- function 29
 		local rank = DifficultySettings.cataclysm.rank
-		local num = 0
+		local num_completed = 0
 
-		for i, v in ipairs(var_0_17) do
-			if not check_level_difficulty(arg_29_0, arg_29_1, v, rank) then
-				num = num + 1
+		for _, level in ipairs(main_game_levels) do
+			if check_level_difficulty(statistics_db, stats_id, level, rank) then
+				num_completed = num_completed + 1
 			end
 		end
 
 		return {
-			num,
-			#var_0_17
+			num_completed,
+			#main_game_levels
 		}
 	end,
-	requirements = function (arg_30_0, arg_30_1)
+	requirements = function (statistics_db, stats_id)
 		-- function 30
-		local tbl = {}
+		local reqs = {}
 		local rank = DifficultySettings.cataclysm.rank
 
-		for i, v in ipairs(var_0_17) do
-			local var_30_2 = check_level_difficulty(arg_30_0, arg_30_1, v, rank)
+		for _, level in ipairs(main_game_levels) do
+			local completed = check_level_difficulty(statistics_db, stats_id, level, rank)
 
-			table.insert(tbl, {
-				name = LevelSettings[v].display_name,
-				completed = var_30_2
+			table.insert(reqs, {
+				name = LevelSettings[level].display_name,
+				completed = completed
 			})
 		end
 
-		return tbl
+		return reqs
 	end
 }
 AchievementTemplates.achievements.scorpion_complete_bogenhafen_cataclysm = {
@@ -556,53 +566,53 @@ AchievementTemplates.achievements.scorpion_complete_bogenhafen_cataclysm = {
 	required_dlc_extra = "bogenhafen",
 	icon = "achievement_trophy_scorpion_complete_bogenhafen_cataclysm",
 	desc = "achv_scorpion_complete_bogenhafen_cataclysm_desc",
-	completed = function (arg_31_0, arg_31_1)
+	completed = function (statistics_db, stats_id)
 		-- function 31
-		local num = 0
-		local rank = DifficultySettings.cataclysm.rank
+		local count = 0
+		local diff = DifficultySettings.cataclysm.rank
 
-		if not check_level_difficulty(arg_31_0, arg_31_1, LevelSettings.dlc_bogenhafen_slum.level_id, rank) then
-			num = num + 1
+		if check_level_difficulty(statistics_db, stats_id, LevelSettings.dlc_bogenhafen_slum.level_id, diff) then
+			count = count + 1
 		end
 
-		if not check_level_difficulty(arg_31_0, arg_31_1, LevelSettings.dlc_bogenhafen_city.level_id, rank) then
-			num = num + 1
+		if check_level_difficulty(statistics_db, stats_id, LevelSettings.dlc_bogenhafen_city.level_id, diff) then
+			count = count + 1
 		end
 
-		return num >= 2
+		return count >= 2
 	end,
-	progress = function (arg_32_0, arg_32_1)
+	progress = function (statistics_db, stats_id)
 		-- function 32
-		local num = 0
-		local rank = DifficultySettings.cataclysm.rank
+		local count = 0
+		local diff = DifficultySettings.cataclysm.rank
 
-		if not check_level_difficulty(arg_32_0, arg_32_1, LevelSettings.dlc_bogenhafen_slum.level_id, rank) then
-			num = num + 1
+		if check_level_difficulty(statistics_db, stats_id, LevelSettings.dlc_bogenhafen_slum.level_id, diff) then
+			count = count + 1
 		end
 
-		if not check_level_difficulty(arg_32_0, arg_32_1, LevelSettings.dlc_bogenhafen_city.level_id, rank) then
-			num = num + 1
+		if check_level_difficulty(statistics_db, stats_id, LevelSettings.dlc_bogenhafen_city.level_id, diff) then
+			count = count + 1
 		end
 
 		return {
-			num,
+			count,
 			2
 		}
 	end,
-	requirements = function (arg_33_0, arg_33_1)
+	requirements = function (statistics_db, stats_id)
 		-- function 33
-		local rank = DifficultySettings.cataclysm.rank
-		local var_33_1 = check_level_difficulty(arg_33_0, arg_33_1, LevelSettings.dlc_bogenhafen_slum.level_id, rank)
-		local var_33_2 = check_level_difficulty(arg_33_0, arg_33_1, LevelSettings.dlc_bogenhafen_city.level_id, rank)
+		local diff = DifficultySettings.cataclysm.rank
+		local complete_bogenhafen_slum = check_level_difficulty(statistics_db, stats_id, LevelSettings.dlc_bogenhafen_slum.level_id, diff)
+		local complete_bogenhafen_city = check_level_difficulty(statistics_db, stats_id, LevelSettings.dlc_bogenhafen_city.level_id, diff)
 
 		return {
 			{
 				name = "level_name_bogenhafen_slum",
-				completed = var_33_1
+				completed = complete_bogenhafen_slum
 			},
 			{
 				name = "level_name_bogenhafen_city",
-				completed = var_33_2
+				completed = complete_bogenhafen_city
 			}
 		}
 	end
@@ -613,66 +623,66 @@ AchievementTemplates.achievements.scorpion_complete_back_to_ubersreik_cataclysm 
 	required_dlc_extra = "holly",
 	icon = "achievement_trophy_scorpion_complete_back_to_ubersreik_cataclysm",
 	desc = "achv_scorpion_complete_back_to_ubersreik_cataclysm_desc",
-	completed = function (arg_34_0, arg_34_1)
+	completed = function (statistics_db, stats_id)
 		-- function 34
-		local num = 0
-		local rank = DifficultySettings.cataclysm.rank
+		local count = 0
+		local diff = DifficultySettings.cataclysm.rank
 
-		if not check_level_difficulty(arg_34_0, arg_34_1, LevelSettings.magnus.level_id, rank) then
-			num = num + 1
+		if check_level_difficulty(statistics_db, stats_id, LevelSettings.magnus.level_id, diff) then
+			count = count + 1
 		end
 
-		if not check_level_difficulty(arg_34_0, arg_34_1, LevelSettings.cemetery.level_id, rank) then
-			num = num + 1
+		if check_level_difficulty(statistics_db, stats_id, LevelSettings.cemetery.level_id, diff) then
+			count = count + 1
 		end
 
-		if not check_level_difficulty(arg_34_0, arg_34_1, LevelSettings.forest_ambush.level_id, rank) then
-			num = num + 1
+		if check_level_difficulty(statistics_db, stats_id, LevelSettings.forest_ambush.level_id, diff) then
+			count = count + 1
 		end
 
-		return num >= 3
+		return count >= 3
 	end,
-	progress = function (arg_35_0, arg_35_1)
+	progress = function (statistics_db, stats_id)
 		-- function 35
-		local num = 0
-		local rank = DifficultySettings.cataclysm.rank
+		local count = 0
+		local diff = DifficultySettings.cataclysm.rank
 
-		if not check_level_difficulty(arg_35_0, arg_35_1, LevelSettings.magnus.level_id, rank) then
-			num = num + 1
+		if check_level_difficulty(statistics_db, stats_id, LevelSettings.magnus.level_id, diff) then
+			count = count + 1
 		end
 
-		if not check_level_difficulty(arg_35_0, arg_35_1, LevelSettings.cemetery.level_id, rank) then
-			num = num + 1
+		if check_level_difficulty(statistics_db, stats_id, LevelSettings.cemetery.level_id, diff) then
+			count = count + 1
 		end
 
-		if not check_level_difficulty(arg_35_0, arg_35_1, LevelSettings.forest_ambush.level_id, rank) then
-			num = num + 1
+		if check_level_difficulty(statistics_db, stats_id, LevelSettings.forest_ambush.level_id, diff) then
+			count = count + 1
 		end
 
 		return {
-			num,
+			count,
 			3
 		}
 	end,
-	requirements = function (arg_36_0, arg_36_1)
+	requirements = function (statistics_db, stats_id)
 		-- function 36
-		local rank = DifficultySettings.cataclysm.rank
-		local var_36_1 = check_level_difficulty(arg_36_0, arg_36_1, LevelSettings.magnus.level_id, rank)
-		local var_36_2 = check_level_difficulty(arg_36_0, arg_36_1, LevelSettings.cemetery.level_id, rank)
-		local var_36_3 = check_level_difficulty(arg_36_0, arg_36_1, LevelSettings.forest_ambush.level_id, rank)
+		local diff = DifficultySettings.cataclysm.rank
+		local complete_holly_magnus = check_level_difficulty(statistics_db, stats_id, LevelSettings.magnus.level_id, diff)
+		local complete_holly_cemetery = check_level_difficulty(statistics_db, stats_id, LevelSettings.cemetery.level_id, diff)
+		local complete_holly_forest_ambush = check_level_difficulty(statistics_db, stats_id, LevelSettings.forest_ambush.level_id, diff)
 
 		return {
 			{
 				name = "level_name_magnus",
-				completed = var_36_1
+				completed = complete_holly_magnus
 			},
 			{
 				name = "level_name_cemetery",
-				completed = var_36_2
+				completed = complete_holly_cemetery
 			},
 			{
 				name = "level_name_forest_ambush",
-				completed = var_36_3
+				completed = complete_holly_forest_ambush
 			}
 		}
 	end
@@ -683,152 +693,156 @@ AchievementTemplates.achievements.scorpion_complete_plaza_cataclysm = {
 	required_dlc_extra = "holly",
 	icon = "achievement_trophy_scorpion_complete_plaza_cataclysm",
 	desc = "achv_scorpion_complete_plaza_cataclysm_desc",
-	completed = function (arg_37_0, arg_37_1)
+	completed = function (statistics_db, stats_id)
 		-- function 37
-		local num = 0
-		local rank = DifficultySettings.cataclysm.rank
+		local count = 0
+		local diff = DifficultySettings.cataclysm.rank
 
-		if not check_level_difficulty(arg_37_0, arg_37_1, LevelSettings.plaza.level_id, rank) then
-			num = num + 1
+		if check_level_difficulty(statistics_db, stats_id, LevelSettings.plaza.level_id, diff) then
+			count = count + 1
 		end
 
-		return num >= 1
+		return count >= 1
 	end
 }
 
-local function fn_3(self, arg_38_1, arg_38_2, arg_38_3)
+local function _has_completed_tier(statistics_db, stats_id, from, to)
 	-- function 38
-	local flag = false
-	local num = 0
-	local current_season_id = ScorpionSeasonalSettings.current_season_id
+	local complete = false
+	local counter = 0
+	local current_season = ScorpionSeasonalSettings.current_season_id
 
-	for i = arg_38_2, arg_38_3 do
-		for j = 1, 4 do
-			local str = "weave_score_weave_" .. i .. "_" .. j .. "_players"
+	for tier = from, to do
+		for player = 1, 4 do
+			local stat_name = "weave_score_weave_" .. tier .. "_" .. player .. "_players"
 
 			if not IS_WINDOWS then
-				for k = 1, current_season_id do
-					if k == 1 then
-						str = "weave_score_weave_" .. i .. "_" .. j .. "_players"
+				for season_index = 1, current_season do
+					if season_index == 1 then
+						stat_name = "weave_score_weave_" .. tier .. "_" .. player .. "_players"
 					else
-						str = i .. "_" .. j
+						stat_name = tier .. "_" .. player
 					end
 
-					local get_season_name = ScorpionSeasonalSettings.get_season_name(k)
+					local season_name = ScorpionSeasonalSettings.get_season_name(season_index)
 
-					flag = self:get_persistent_stat(arg_38_1, get_season_name, str) > 0
+					complete = statistics_db:get_persistent_stat(stats_id, season_name, stat_name) > 0
 
-					if not flag then
+					if complete then
 						break
 					end
 				end
 			else
-				flag = self:get_persistent_stat(arg_38_1, "season_1", str) > 0
+				complete = statistics_db:get_persistent_stat(stats_id, "season_1", stat_name) > 0
 			end
 
-			if not flag then
+			if complete then
 				break
 			end
 		end
 
-		if not flag then
+		if not complete then
 			break
 		end
 
-		num = num + 1
+		counter = counter + 1
 	end
 
-	return flag, num
+	return complete, counter
 end
 
-local function fn_4(self, arg_39_1, arg_39_2, arg_39_3)
+local function _has_completed_wind_in_order(statistics_db, stats_id, wind, amount_of_weaves)
 	-- function 39
-	local flag = false
-	local num = 0
+	local complete = false
+	local counter = 0
 
-	for k, v in pairs(WeaveSettings.templates_ordered) do
-		if arg_39_2 == v.wind then
-			for k_2 = 1, 4 do
-				local str = "weave_score_weave_" .. v.tier .. "_" .. k_2 .. "_players"
+	for _, template in pairs(WeaveSettings.templates_ordered) do
+		if wind == template.wind then
+			for player = 1, 4 do
+				local stat_name = "weave_score_weave_" .. template.tier .. "_" .. player .. "_players"
 
-				flag = self:get_persistent_stat(arg_39_1, "season_1", str) > 0
+				complete = statistics_db:get_persistent_stat(stats_id, "season_1", stat_name) > 0
 
-				if not flag then
+				if complete then
 					break
 				end
 			end
 
-			if not flag then
+			if not complete then
 				break
 			end
 
-			num = num + 1
+			counter = counter + 1
 
-			if num == arg_39_3 then
+			if counter == amount_of_weaves then
 				break
 			end
 		end
 	end
 
-	return flag, num
+	return complete, counter
 end
 
-local function fn_5(self, arg_40_1, arg_40_2, arg_40_3)
+local function _complet_winds(statistics_db, stats_id, wind, amount_of_weaves)
 	-- function 40
-	local num = 0
+	local counter = 0
 
-	for k, v in pairs(WeaveSettings.templates_ordered) do
-		if arg_40_2 == v.wind then
-			local str = "weave_score_weave_" .. v.tier .. "_" .. 1 .. "_players"
+	for _, template in pairs(WeaveSettings.templates_ordered) do
+		if wind == template.wind then
+			local stat_name = "weave_score_weave_" .. template.tier .. "_" .. 1 .. "_players"
 
-			self:set_stat(arg_40_1, "season_1", str, 10)
+			statistics_db:set_stat(stats_id, "season_1", stat_name, 10)
 
-			num = num + 1
+			counter = counter + 1
 
-			if num == arg_40_3 then
+			if counter == amount_of_weaves then
 				break
 			end
 		end
 	end
 end
 
-local function fn_6(self, arg_41_1, arg_41_2, arg_41_3)
+local function _uncomplet_winds(statistics_db, stats_id, wind, amount_of_weaves)
 	-- function 41
-	local num = 0
+	local counter = 0
 
-	for k, v in pairs(WeaveSettings.templates_ordered) do
-		if arg_41_2 == v.wind then
-			local str = "weave_score_weave_" .. v.tier .. "_" .. 1 .. "_players"
+	for _, template in pairs(WeaveSettings.templates_ordered) do
+		if wind == template.wind then
+			local stat_name = "weave_score_weave_" .. template.tier .. "_" .. 1 .. "_players"
 
-			self:set_stat(arg_41_1, "season_1", str, 0)
+			statistics_db:set_stat(stats_id, "season_1", stat_name, 0)
 
-			num = num + 1
+			counter = counter + 1
 
-			if num == arg_41_3 then
+			if counter == amount_of_weaves then
 				break
 			end
 		end
 	end
 end
 
-local function fn_7(self, arg_42_1, arg_42_2)
+local function _weave_completed_career_rainbow(statistics_db, stats_id, career)
 	-- function 42
-	local flag = false
-	local num = 0
-	local count = #WeaveSettings.winds
+	local complete = false
+	local counter = 0
+	local amount_of_weaves = #WeaveSettings.winds
 
-	for k, v in pairs(WeaveSettings.winds) do
-		local str = "weave_rainbow_" .. v .. "_" .. arg_42_2 .. "_season_1"
+	for _, wind in pairs(WeaveSettings.winds) do
+		local id_rainbow = "weave_rainbow_" .. wind .. "_" .. career .. "_season_1"
 
-		if not (self:get_persistent_stat(arg_42_1, "season_1", str) > 0) then
-			num = num + 1
+		complete = statistics_db:get_persistent_stat(stats_id, "season_1", id_rainbow) > 0
+
+		if complete then
+			counter = counter + 1
 		end
 	end
 
-	return num == count, num
+	complete = counter == amount_of_weaves
+
+	return complete, counter
 end
 
-local tbl_2 = {
+local wind_order = {
 	"life",
 	"metal",
 	"heavens",
@@ -838,45 +852,45 @@ local tbl_2 = {
 	"shadow",
 	"fire"
 }
-local num_2 = 5
+local num_weaves_per_wind = 5
 
-for l = 1, #tbl_2 do
-	local str_3 = "scorpion_weaves_" .. l .. "_season_1"
-	local var_0_26 = tbl_2[l]
-	local var_0_27 = WeaveSettings.weave_wind_ranges[var_0_26]
+for i = 1, #wind_order do
+	local id = "scorpion_weaves_" .. i .. "_season_1"
+	local wind = wind_order[i]
+	local weave_ids = WeaveSettings.weave_wind_ranges[wind]
 
-	AchievementTemplates.achievements[str_3] = {
+	AchievementTemplates.achievements[id] = {
 		required_dlc = "scorpion",
-		name = "achv_scorpion_weaves_" .. l .. "_season_1_name",
-		desc = "achv_scorpion_weaves_" .. l .. "_season_1_desc",
-		icon = "achievement_trophy_scorpion_weaves_" .. l .. "_season_1",
-		completed = function (arg_43_0, arg_43_1)
+		name = "achv_scorpion_weaves_" .. i .. "_season_1_name",
+		desc = "achv_scorpion_weaves_" .. i .. "_season_1_desc",
+		icon = "achievement_trophy_scorpion_weaves_" .. i .. "_season_1",
+		completed = function (statistics_db, stats_id)
 			-- function 43
-			local flag = true
+			local completed = true
 
-			for i = 1, num_2 do
-				local var_43_1 = var_0_27[i]
+			for k = 1, num_weaves_per_wind do
+				local weave_id = weave_ids[k]
 
-				flag = not flag and fn(arg_43_0, arg_43_1, ScorpionSeasonalSettings.current_season_id, var_43_1)
+				completed = not not completed and not not _has_completed_weave_seasonal(statistics_db, stats_id, ScorpionSeasonalSettings.current_season_id, weave_id)
 			end
 
-			return flag
+			return completed
 		end,
-		progress = function (arg_44_0, arg_44_1)
+		progress = function (statistics_db, stats_id)
 			-- function 44
-			local num = 0
+			local count = 0
 
-			for i = 1, num_2 do
-				local var_44_1 = var_0_27[i]
+			for k = 1, num_weaves_per_wind do
+				local weave_id = weave_ids[k]
 
-				if not fn(arg_44_0, arg_44_1, ScorpionSeasonalSettings.current_season_id, var_44_1) then
-					num = num + 1
+				if _has_completed_weave_seasonal(statistics_db, stats_id, ScorpionSeasonalSettings.current_season_id, weave_id) then
+					count = count + 1
 				end
 			end
 
 			return {
-				num,
-				num_2
+				count,
+				num_weaves_per_wind
 			}
 		end
 	}
@@ -889,16 +903,18 @@ AchievementTemplates.achievements.scorpion_complete_unranked_weaves = {
 	icon = "icons_placeholder",
 	ID_PS4 = "077",
 	desc = "achv_scorpion_complete_unranked_weaves_desc",
-	completed = function (self, arg_45_1)
+	completed = function (statistics_db, stats_id)
 		-- function 45
-		return self:get_persistent_stat(arg_45_1, "season_1", "weave_quickplay_wins") >= 40
+		local weave_quickplay_wins = statistics_db:get_persistent_stat(stats_id, "season_1", "weave_quickplay_wins")
+
+		return weave_quickplay_wins >= 40
 	end,
-	progress = function (self, arg_46_1)
+	progress = function (statistics_db, stats_id)
 		-- function 46
-		local get_persistent_stat = self:get_persistent_stat(arg_46_1, "season_1", "weave_quickplay_wins")
+		local weave_quickplay_wins = statistics_db:get_persistent_stat(stats_id, "season_1", "weave_quickplay_wins")
 
 		return {
-			get_persistent_stat,
+			weave_quickplay_wins,
 			40
 		}
 	end
@@ -938,51 +954,52 @@ AchievementTemplates.ps4_achievement_ids = {
 	"080"
 }
 
-for i_2, v_2 in ipairs(AchievementTemplates.complete_weaves_list) do
-	local str_4 = "scorpion_complete_weaves_" .. i_2
+for i, weave_number in ipairs(AchievementTemplates.complete_weaves_list) do
+	local id = "scorpion_complete_weaves_" .. i
 
-	AchievementTemplates.achievements[str_4] = {
+	AchievementTemplates.achievements[id] = {
 		required_dlc = "scorpion",
-		name = "achv_scorpion_complete_weaves_" .. i_2 .. "_name",
+		name = "achv_scorpion_complete_weaves_" .. i .. "_name",
 		desc = function ()
 			-- function 47
-			return string.format(Localize("achv_scorpion_complete_weaves_" .. i_2 .. "_desc"), v_2)
+			return string.format(Localize("achv_scorpion_complete_weaves_" .. i .. "_desc"), weave_number)
 		end,
-		ID_XB1 = AchievementTemplates.xbox_achievement_ids[i_2],
-		ID_PS4 = AchievementTemplates.ps4_achievement_ids[i_2],
-		icon = "achievement_trophy_scorpion_complete_weaves_" .. i_2,
-		completed = function (self, arg_48_1)
+		ID_XB1 = AchievementTemplates.xbox_achievement_ids[i],
+		ID_PS4 = AchievementTemplates.ps4_achievement_ids[i],
+		icon = "achievement_trophy_scorpion_complete_weaves_" .. i,
+		completed = function (statistics_db, stats_id)
 			-- function 48
-			local num = 1
-			local var_48_1 = v_2
-			local var_48_2, var_48_3 = fn_3(self, arg_48_1, num, var_48_1)
+			local from = 1
+			local to = weave_number
+			local completed, count = _has_completed_tier(statistics_db, stats_id, from, to)
 
 			if not IS_WINDOWS then
-				return var_48_2
+				return completed
 			else
-				local get_persistent_stat = self:get_persistent_stat(arg_48_1, "scorpion_weaves_won")
+				local weaves_won = statistics_db:get_persistent_stat(stats_id, "scorpion_weaves_won")
+				local num_completed_weaves = math.min(count + weaves_won, weave_number)
 
-				return math.min(var_48_3 + get_persistent_stat, v_2) >= v_2
+				return num_completed_weaves >= weave_number
 			end
 		end,
-		progress = function (self, arg_49_1)
+		progress = function (statistics_db, stats_id)
 			-- function 49
-			local num = 1
-			local var_49_1 = v_2
-			local var_49_2, var_49_3 = fn_3(self, arg_49_1, num, var_49_1)
+			local from = 1
+			local to = weave_number
+			local completed, count = _has_completed_tier(statistics_db, stats_id, from, to)
 
 			if not IS_WINDOWS then
 				return {
-					var_49_3,
-					v_2
+					count,
+					weave_number
 				}
 			else
-				local get_persistent_stat = self:get_persistent_stat(arg_49_1, "scorpion_weaves_won")
-				local min = math.min(var_49_3 + get_persistent_stat, v_2)
+				local weaves_won = statistics_db:get_persistent_stat(stats_id, "scorpion_weaves_won")
+				local num_completed_weaves = math.min(count + weaves_won, weave_number)
 
 				return {
-					min,
-					v_2
+					num_completed_weaves,
+					weave_number
 				}
 			end
 		end
@@ -1004,90 +1021,90 @@ AchievementTemplates._list_of_weaves_from_to = {
 	}
 }
 
-for k_2, v_3 in pairs(AchievementTemplates._list_of_weaves_from_to) do
-	local str_5 = "scorpion_" .. k_2 .. "_season_1"
+for weave, table in pairs(AchievementTemplates._list_of_weaves_from_to) do
+	local id = "scorpion_" .. weave .. "_season_1"
 
-	AchievementTemplates.achievements[str_5] = {
+	AchievementTemplates.achievements[id] = {
 		required_dlc = "scorpion",
-		name = "achv_scorpion_" .. k_2 .. "_season_1_name",
-		desc = "achv_scorpion_" .. k_2 .. "_season_1_desc",
-		icon = "achievement_trophy_scorpion_" .. k_2 .. "_season_1",
-		completed = function (arg_50_0, arg_50_1)
+		name = "achv_scorpion_" .. weave .. "_season_1_name",
+		desc = "achv_scorpion_" .. weave .. "_season_1_desc",
+		icon = "achievement_trophy_scorpion_" .. weave .. "_season_1",
+		completed = function (statistics_db, stats_id)
 			-- function 50
-			local from = v_3.from
-			local to = v_3.to
-			local var_50_2, var_50_3 = fn_2(arg_50_0, arg_50_1, ScorpionSeasonalSettings.current_season_id, from, to)
+			local from = table.from
+			local to = table.to
+			local has_completed, _ = _has_completed_tier_seasonal(statistics_db, stats_id, ScorpionSeasonalSettings.current_season_id, from, to)
 
-			return var_50_2
+			return has_completed
 		end,
-		progress = function (arg_51_0, arg_51_1)
+		progress = function (statistics_db, stats_id)
 			-- function 51
-			local from = v_3.from
-			local to = v_3.to
-			local num = to - from + 1
-			local var_51_3, var_51_4 = fn_2(arg_51_0, arg_51_1, ScorpionSeasonalSettings.current_season_id, from, to)
+			local from = table.from
+			local to = table.to
+			local total = to - from + 1
+			local _, completed_amunt = _has_completed_tier_seasonal(statistics_db, stats_id, ScorpionSeasonalSettings.current_season_id, from, to)
 
 			return {
-				var_51_4,
-				num
+				completed_amunt,
+				total
 			}
 		end
 	}
 end
 
-local heroes = PROFILES_BY_AFFILIATION.heroes
+local profiles = PROFILES_BY_AFFILIATION.heroes
 
-for i8 = 1, #heroes do
-	local var_0_31 = FindProfileIndex(heroes[i8])
+for i = 1, #profiles do
+	local profile_index = FindProfileIndex(profiles[i])
 
-	for k_3, v_4 in pairs(SPProfiles[var_0_31].careers) do
-		local name = v_4.name
-		local var_0_33 = CareerNameAchievementMapping[name]
-		local str_6 = "scorpion_weaves_complete_" .. name .. "_season_1"
+	for career_index, career in pairs(SPProfiles[profile_index].careers) do
+		local career_name = career.name
+		local mapped_career_name = CareerNameAchievementMapping[career_name]
+		local id = "scorpion_weaves_complete_" .. career_name .. "_season_1"
 
-		AchievementTemplates.achievements[str_6] = {
+		AchievementTemplates.achievements[id] = {
 			required_dlc = "scorpion",
-			name = "achv_scorpion_weaves_complete_" .. var_0_33 .. "_season_1_name",
-			desc = "achv_scorpion_weaves_complete_" .. var_0_33 .. "_season_1_desc",
-			icon = "achievement_trophy_scorpion_weaves_complete_" .. var_0_33 .. "_season_1",
-			completed = function (self, arg_52_1)
+			name = "achv_scorpion_weaves_complete_" .. mapped_career_name .. "_season_1_name",
+			desc = "achv_scorpion_weaves_complete_" .. mapped_career_name .. "_season_1_desc",
+			icon = "achievement_trophy_scorpion_weaves_complete_" .. mapped_career_name .. "_season_1",
+			completed = function (statistics_db, stats_id)
 				-- function 52
-				local str = "weaves_complete_" .. name .. "_season_1"
+				local stat_name = "weaves_complete_" .. career_name .. "_season_1"
+				local amount_of_weaves = 40
+				local completed = statistics_db:get_persistent_stat(stats_id, "season_1", stat_name)
 
-				return 40 <= self:get_persistent_stat(arg_52_1, "season_1", str)
+				return amount_of_weaves <= completed
 			end,
-			progress = function (self, arg_53_1)
+			progress = function (statistics_db, stats_id)
 				-- function 53
-				local str = "weaves_complete_" .. name .. "_season_1"
-				local num = 40
-				local get_persistent_stat = self:get_persistent_stat(arg_53_1, "season_1", str)
+				local stat_name = "weaves_complete_" .. career_name .. "_season_1"
+				local amount_of_weaves = 40
+				local completed = statistics_db:get_persistent_stat(stats_id, "season_1", stat_name)
 
 				return {
-					get_persistent_stat,
-					num
+					completed,
+					amount_of_weaves
 				}
 			end
 		}
-
-		local str_7 = "scorpion_weaves_rainbow_" .. name .. "_season_1"
-
-		AchievementTemplates.achievements[str_7] = {
+		id = "scorpion_weaves_rainbow_" .. career_name .. "_season_1"
+		AchievementTemplates.achievements[id] = {
 			required_dlc = "scorpion",
-			name = "achv_scorpion_weaves_rainbow_" .. var_0_33 .. "_season_1_name",
-			desc = "achv_scorpion_weaves_rainbow_" .. var_0_33 .. "_season_1_desc",
-			icon = "achievement_trophy_scorpion_weaves_rainbow_" .. var_0_33 .. "_season_1",
-			completed = function (arg_54_0, arg_54_1)
+			name = "achv_scorpion_weaves_rainbow_" .. mapped_career_name .. "_season_1_name",
+			desc = "achv_scorpion_weaves_rainbow_" .. mapped_career_name .. "_season_1_desc",
+			icon = "achievement_trophy_scorpion_weaves_rainbow_" .. mapped_career_name .. "_season_1",
+			completed = function (statistics_db, stats_id)
 				-- function 54
-				return fn_7(arg_54_0, arg_54_1, name)
+				return _weave_completed_career_rainbow(statistics_db, stats_id, career_name)
 			end,
-			progress = function (arg_55_0, arg_55_1)
+			progress = function (statistics_db, stats_id)
 				-- function 55
-				local count = #WeaveSettings.winds
-				local var_55_1, var_55_2 = fn_7(arg_55_0, arg_55_1, name)
+				local total_winds = #WeaveSettings.winds
+				local _, amount_finished = _weave_completed_career_rainbow(statistics_db, stats_id, career_name)
 
 				return {
-					var_55_2,
-					count
+					amount_finished,
+					total_winds
 				}
 			end
 		}
@@ -1099,11 +1116,12 @@ AchievementTemplates.achievements.scorpion_weaves_life_season_1 = {
 	name = "achv_scorpion_weaves_life_season_1_name",
 	icon = "achievement_trophy_scorpion_weaves_life_season_1",
 	desc = "achv_scorpion_weaves_life_season_1_desc",
-	completed = function (self, arg_56_1)
+	completed = function (statistics_db, stats_id)
 		-- function 56
-		local str = "scorpion_weaves_life_season_1"
+		local stat_name = "scorpion_weaves_life_season_1"
+		local completed = statistics_db:get_persistent_stat(stats_id, "season_1", stat_name) > 0
 
-		return self:get_persistent_stat(arg_56_1, "season_1", str) > 0
+		return completed
 	end
 }
 AchievementTemplates.achievements.scorpion_weaves_heavens_season_1 = {
@@ -1112,11 +1130,12 @@ AchievementTemplates.achievements.scorpion_weaves_heavens_season_1 = {
 	display_completion_ui = true,
 	icon = "achievement_trophy_scorpion_weaves_heavens_season_1",
 	desc = "achv_scorpion_weaves_heavens_season_1_desc",
-	completed = function (self, arg_57_1)
+	completed = function (statistics_db, stats_id)
 		-- function 57
-		local str = "scorpion_weaves_heavens_season_1"
+		local stat_name = "scorpion_weaves_heavens_season_1"
+		local completed = statistics_db:get_persistent_stat(stats_id, "season_1", stat_name) > 0
 
-		return self:get_persistent_stat(arg_57_1, "season_1", str) > 0
+		return completed
 	end
 }
 AchievementTemplates.achievements.scorpion_weaves_death_season_1 = {
@@ -1124,11 +1143,12 @@ AchievementTemplates.achievements.scorpion_weaves_death_season_1 = {
 	name = "achv_scorpion_weaves_death_season_1_name",
 	icon = "achievement_trophy_scorpion_weaves_death_season_1",
 	desc = "achv_scorpion_weaves_death_season_1_desc",
-	completed = function (self, arg_58_1)
+	completed = function (statistics_db, stats_id)
 		-- function 58
-		local str = "scorpion_weaves_death_season_1"
+		local stat_name = "scorpion_weaves_death_season_1"
+		local completed = statistics_db:get_persistent_stat(stats_id, "season_1", stat_name) > 0
 
-		return self:get_persistent_stat(arg_58_1, "season_1", str) > 0
+		return completed
 	end
 }
 AchievementTemplates.achievements.scorpion_weaves_beasts_season_1 = {
@@ -1136,11 +1156,12 @@ AchievementTemplates.achievements.scorpion_weaves_beasts_season_1 = {
 	name = "achv_scorpion_weaves_beasts_season_1_name",
 	icon = "achievement_trophy_scorpion_weaves_beasts_season_1",
 	desc = "achv_scorpion_weaves_beasts_season_1_desc",
-	completed = function (self, arg_59_1)
+	completed = function (statistics_db, stats_id)
 		-- function 59
-		local str = "scorpion_weaves_beasts_season_1"
+		local stat_name = "scorpion_weaves_beasts_season_1"
+		local completed = statistics_db:get_persistent_stat(stats_id, "season_1", stat_name) > 0
 
-		return self:get_persistent_stat(arg_59_1, "season_1", str) > 0
+		return completed
 	end
 }
 AchievementTemplates.achievements.scorpion_weaves_light_season_1 = {
@@ -1148,11 +1169,12 @@ AchievementTemplates.achievements.scorpion_weaves_light_season_1 = {
 	name = "achv_scorpion_weaves_light_season_1_name",
 	icon = "achievement_trophy_scorpion_weaves_light_season_1",
 	desc = "achv_scorpion_weaves_light_season_1_desc",
-	completed = function (self, arg_60_1)
+	completed = function (statistics_db, stats_id)
 		-- function 60
-		local str = "scorpion_weaves_light_season_1"
+		local stat_name = "scorpion_weaves_light_season_1"
+		local completed = statistics_db:get_persistent_stat(stats_id, "season_1", stat_name) > 0
 
-		return self:get_persistent_stat(arg_60_1, "season_1", str) > 0
+		return completed
 	end
 }
 AchievementTemplates.achievements.scorpion_weaves_fire_season_1 = {
@@ -1161,11 +1183,12 @@ AchievementTemplates.achievements.scorpion_weaves_fire_season_1 = {
 	display_completion_ui = true,
 	icon = "achievement_trophy_scorpion_weaves_fire_season_1",
 	desc = "achv_scorpion_weaves_fire_season_1_desc",
-	completed = function (self, arg_61_1)
+	completed = function (statistics_db, stats_id)
 		-- function 61
-		local str = "scorpion_weaves_fire_season_1"
+		local stat_name = "scorpion_weaves_fire_season_1"
+		local completed = statistics_db:get_persistent_stat(stats_id, "season_1", stat_name) > 0
 
-		return self:get_persistent_stat(arg_61_1, "season_1", str) > 0
+		return completed
 	end
 }
 AchievementTemplates.achievements.scorpion_weaves_shadow_season_1 = {
@@ -1173,11 +1196,12 @@ AchievementTemplates.achievements.scorpion_weaves_shadow_season_1 = {
 	name = "achv_scorpion_weaves_shadow_season_1_name",
 	icon = "achievement_trophy_scorpion_weaves_shadow_season_1",
 	desc = "achv_scorpion_weaves_shadow_season_1_desc",
-	completed = function (self, arg_62_1)
+	completed = function (statistics_db, stats_id)
 		-- function 62
-		local str = "scorpion_weaves_shadow_season_1"
+		local stat_name = "scorpion_weaves_shadow_season_1"
+		local completed = statistics_db:get_persistent_stat(stats_id, "season_1", stat_name) > 0
 
-		return self:get_persistent_stat(arg_62_1, "season_1", str) > 0
+		return completed
 	end
 }
 AchievementTemplates.achievements.scorpion_weaves_metal_season_1 = {
@@ -1189,11 +1213,12 @@ AchievementTemplates.achievements.scorpion_weaves_metal_season_1 = {
 		-- function 63
 		return string.format(Localize("achv_scorpion_weaves_metal_season_1_desc"), QuestSettings.bladestorm_duration)
 	end,
-	completed = function (self, arg_64_1)
+	completed = function (statistics_db, stats_id)
 		-- function 64
-		local str = "scorpion_weaves_metal_season_1"
+		local stat_name = "scorpion_weaves_metal_season_1"
+		local completed = statistics_db:get_persistent_stat(stats_id, "season_1", stat_name) > 0
 
-		return self:get_persistent_stat(arg_64_1, "season_1", str) > 0
+		return completed
 	end
 }
 AchievementTemplates.achievements.elven_ruins_align_leylines_timed_cata = {
@@ -1205,9 +1230,9 @@ AchievementTemplates.achievements.elven_ruins_align_leylines_timed_cata = {
 		-- function 65
 		return string.format(Localize("achv_elven_ruins_align_leylines_timed_cata_desc"), QuestSettings.elven_ruins_speed_event_cata)
 	end,
-	completed = function (self, arg_66_1)
+	completed = function (statistics_db, stats_id)
 		-- function 66
-		return self:get_persistent_stat(arg_66_1, "elven_ruins_speed_event_cata") > 0
+		return statistics_db:get_persistent_stat(stats_id, "elven_ruins_speed_event_cata") > 0
 	end
 }
 AchievementTemplates.achievements.farmlands_rescue_prisoners_timed_cata = {
@@ -1219,9 +1244,9 @@ AchievementTemplates.achievements.farmlands_rescue_prisoners_timed_cata = {
 		-- function 67
 		return string.format(Localize("achv_farmlands_rescue_prisoners_timed_cata_desc"), QuestSettings.farmlands_speed_event)
 	end,
-	completed = function (self, arg_68_1)
+	completed = function (statistics_db, stats_id)
 		-- function 68
-		return self:get_persistent_stat(arg_68_1, "farmlands_speed_event_cata") > 0
+		return statistics_db:get_persistent_stat(stats_id, "farmlands_speed_event_cata") > 0
 	end
 }
 AchievementTemplates.achievements.military_kill_chaos_warriors_in_event_cata = {
@@ -1233,9 +1258,9 @@ AchievementTemplates.achievements.military_kill_chaos_warriors_in_event_cata = {
 		-- function 69
 		return string.format(Localize("achv_military_kill_chaos_warriors_in_event_cata_desc"), 3)
 	end,
-	completed = function (self, arg_70_1)
+	completed = function (statistics_db, stats_id)
 		-- function 70
-		return self:get_persistent_stat(arg_70_1, "military_statue_kill_chaos_warriors_cata") > 0
+		return statistics_db:get_persistent_stat(stats_id, "military_statue_kill_chaos_warriors_cata") > 0
 	end
 }
 AchievementTemplates.achievements.ground_zero_burblespew_tornado_enemies_cata = {
@@ -1247,9 +1272,9 @@ AchievementTemplates.achievements.ground_zero_burblespew_tornado_enemies_cata = 
 		-- function 71
 		return string.format(Localize("achv_ground_zero_burblespew_tornado_enemies_cata_desc"), QuestSettings.halescourge_tornado_enemies_cata)
 	end,
-	completed = function (self, arg_72_1)
+	completed = function (statistics_db, stats_id)
 		-- function 72
-		return self:get_persistent_stat(arg_72_1, "halescourge_tornado_enemies_cata") > 0
+		return statistics_db:get_persistent_stat(stats_id, "halescourge_tornado_enemies_cata") > 0
 	end
 }
 AchievementTemplates.achievements.fort_kill_enemies_cannonball_cata = {
@@ -1261,9 +1286,9 @@ AchievementTemplates.achievements.fort_kill_enemies_cannonball_cata = {
 		-- function 73
 		return string.format(Localize("achv_fort_kill_enemies_cannonball_cata_desc"), QuestSettings.forest_fort_kill_cannonball_cata)
 	end,
-	completed = function (self, arg_74_1)
+	completed = function (statistics_db, stats_id)
 		-- function 74
-		return self:get_persistent_stat(arg_74_1, "forest_fort_kill_cannonball_cata") > 0
+		return statistics_db:get_persistent_stat(stats_id, "forest_fort_kill_cannonball_cata") > 0
 	end
 }
 AchievementTemplates.achievements.nurgle_player_showered_in_pus_cata = {
@@ -1275,9 +1300,9 @@ AchievementTemplates.achievements.nurgle_player_showered_in_pus_cata = {
 		-- function 75
 		return string.format(Localize("achv_nurgle_player_showered_in_pus_cata_desc"), QuestSettings.nurgle_bathed_all_cata)
 	end,
-	completed = function (self, arg_76_1)
+	completed = function (statistics_db, stats_id)
 		-- function 76
-		return self:get_persistent_stat(arg_76_1, "nurgle_bathed_all_cata") > 0
+		return statistics_db:get_persistent_stat(stats_id, "nurgle_bathed_all_cata") > 0
 	end
 }
 AchievementTemplates.achievements.bell_destroy_bell_flee_timed_cata = {
@@ -1289,9 +1314,9 @@ AchievementTemplates.achievements.bell_destroy_bell_flee_timed_cata = {
 		-- function 77
 		return string.format(Localize("achv_bell_destroy_bell_flee_timed_cata_desc"), QuestSettings.bell_speed_event_cata)
 	end,
-	completed = function (self, arg_78_1)
+	completed = function (statistics_db, stats_id)
 		-- function 78
-		return self:get_persistent_stat(arg_78_1, "bell_speed_event_cata") > 0
+		return statistics_db:get_persistent_stat(stats_id, "bell_speed_event_cata") > 0
 	end
 }
 AchievementTemplates.achievements.catacombs_stay_inside_ritual_pool_cata = {
@@ -1303,9 +1328,9 @@ AchievementTemplates.achievements.catacombs_stay_inside_ritual_pool_cata = {
 		-- function 79
 		return string.format(Localize("achv_catacombs_stay_inside_ritual_pool_cata_desc"), QuestSettings.volume_corpse_pit_damage_cata)
 	end,
-	completed = function (self, arg_80_1)
+	completed = function (statistics_db, stats_id)
 		-- function 80
-		return self:get_persistent_stat(arg_80_1, "catacombs_added_souls_cata") > 0
+		return statistics_db:get_persistent_stat(stats_id, "catacombs_added_souls_cata") > 0
 	end
 }
 AchievementTemplates.achievements.mines_kill_final_troll_timed_cata = {
@@ -1317,9 +1342,9 @@ AchievementTemplates.achievements.mines_kill_final_troll_timed_cata = {
 		-- function 81
 		return string.format(Localize("achv_mines_kill_final_troll_timed_cata_desc"), QuestSettings.mines_speed_event_cata)
 	end,
-	completed = function (self, arg_82_1)
+	completed = function (statistics_db, stats_id)
 		-- function 82
-		return self:get_persistent_stat(arg_82_1, "mines_speed_event_cata") > 0
+		return statistics_db:get_persistent_stat(stats_id, "mines_speed_event_cata") > 0
 	end
 }
 AchievementTemplates.achievements.warcamp_bodvarr_charge_warriors_cata = {
@@ -1331,9 +1356,9 @@ AchievementTemplates.achievements.warcamp_bodvarr_charge_warriors_cata = {
 		-- function 83
 		return string.format(Localize("achv_warcamp_bodvarr_charge_warriors_cata_desc"), QuestSettings.exalted_champion_charge_chaos_warrior_cata)
 	end,
-	completed = function (self, arg_84_1)
+	completed = function (statistics_db, stats_id)
 		-- function 84
-		return self:get_persistent_stat(arg_84_1, "exalted_champion_charge_chaos_warrior_cata") > 0
+		return statistics_db:get_persistent_stat(stats_id, "exalted_champion_charge_chaos_warrior_cata") > 0
 	end
 }
 AchievementTemplates.achievements.skaven_stronghold_skarrik_kill_skaven_cata = {
@@ -1345,9 +1370,9 @@ AchievementTemplates.achievements.skaven_stronghold_skarrik_kill_skaven_cata = {
 		-- function 85
 		return string.format(Localize("achv_skaven_stronghold_skarrik_kill_skaven_cata_desc"), QuestSettings.storm_vermin_warlord_kills_enemies_cata)
 	end,
-	completed = function (self, arg_86_1)
+	completed = function (statistics_db, stats_id)
 		-- function 86
-		return self:get_persistent_stat(arg_86_1, "storm_vermin_warlord_kills_enemies_cata") > 0
+		return statistics_db:get_persistent_stat(stats_id, "storm_vermin_warlord_kills_enemies_cata") > 0
 	end
 }
 AchievementTemplates.achievements.ussingen_no_event_barrels_cata = {
@@ -1356,9 +1381,9 @@ AchievementTemplates.achievements.ussingen_no_event_barrels_cata = {
 	display_completion_ui = true,
 	icon = "achievement_trophy_ussingen_no_event_barrels_cata",
 	desc = "achv_ussingen_no_event_barrels_cata_desc",
-	completed = function (self, arg_87_1)
+	completed = function (statistics_db, stats_id)
 		-- function 87
-		return self:get_persistent_stat(arg_87_1, "ussingen_used_no_barrels_cata") > 0
+		return statistics_db:get_persistent_stat(stats_id, "ussingen_used_no_barrels_cata") > 0
 	end
 }
 AchievementTemplates.achievements.skittergate_deathrattler_rasknitt_timed_cata = {
@@ -1370,13 +1395,13 @@ AchievementTemplates.achievements.skittergate_deathrattler_rasknitt_timed_cata =
 		-- function 88
 		return string.format(Localize("achv_skittergate_deathrattler_rasknitt_timed_cata_desc"), QuestSettings.skittergate_speed_event_cata)
 	end,
-	completed = function (self, arg_89_1)
+	completed = function (statistics_db, stats_id)
 		-- function 89
-		return self:get_persistent_stat(arg_89_1, "skittergate_speed_event_cata") > 0
+		return statistics_db:get_persistent_stat(stats_id, "skittergate_speed_event_cata") > 0
 	end
 }
 
-local tbl_3 = {
+local helmgart_cata_level_name_stats = {
 	achv_mines_kill_final_troll_timed_cata_name = "mines_speed_event_cata",
 	achv_ussingen_no_event_barrels_cata_name = "ussingen_used_no_barrels_cata",
 	achv_military_kill_chaos_warriors_in_event_cata_name = "military_statue_kill_chaos_warriors_cata",
@@ -1396,48 +1421,52 @@ AchievementTemplates.achievements.complete_all_helmgart_level_achievements_cata 
 	name = "achv_complete_all_helmgart_level_achievements_cata_name",
 	icon = "achievement_trophy_complete_all_helmgart_level_achievements_cata",
 	desc = "achv_complete_all_helmgart_level_achievements_cata_desc",
-	completed = function (self, arg_90_1)
+	completed = function (statistics_db, stats_id)
 		-- function 90
-		for k, v in pairs(tbl_3) do
-			if not (self:get_persistent_stat(arg_90_1, v) > 0) then
+		for _, stat_name in pairs(helmgart_cata_level_name_stats) do
+			local completed = statistics_db:get_persistent_stat(stats_id, stat_name) > 0
+
+			if not completed then
 				return false
 			end
 		end
 
 		return true
 	end,
-	progress = function (self, arg_91_1)
+	progress = function (statistics_db, stats_id)
 		-- function 91
-		local num = 0
-		local num_2 = 0
+		local count = 0
+		local total = 0
 
-		for k, v in pairs(tbl_3) do
-			num_2 = num_2 + 1
+		for _, stat_name in pairs(helmgart_cata_level_name_stats) do
+			total = total + 1
 
-			if not (self:get_persistent_stat(arg_91_1, v) > 0) then
-				num = num + 1
+			local completed = statistics_db:get_persistent_stat(stats_id, stat_name) > 0
+
+			if completed then
+				count = count + 1
 			end
 		end
 
 		return {
-			num,
-			num_2
+			count,
+			total
 		}
 	end,
-	requirements = function (self, arg_92_1)
+	requirements = function (statistics_db, stats_id)
 		-- function 92
-		local tbl = {}
+		local reqs = {}
 
-		for k, v in pairs(tbl_3) do
-			local flag = self:get_persistent_stat(arg_92_1, v) > 0
+		for achv_name, stat_name in pairs(helmgart_cata_level_name_stats) do
+			local completed = statistics_db:get_persistent_stat(stats_id, stat_name) > 0
 
-			table.insert(tbl, {
-				name = k,
-				completed = flag
+			table.insert(reqs, {
+				name = achv_name,
+				completed = completed
 			})
 		end
 
-		return tbl
+		return reqs
 	end
 }
 AchievementTemplates.achievements.scorpion_cataclysm_unlock_kill_all_lords = {
@@ -1445,62 +1474,62 @@ AchievementTemplates.achievements.scorpion_cataclysm_unlock_kill_all_lords = {
 	name = "achv_scorpion_cataclysm_unlock_kill_all_lords_name",
 	icon = "achivement_trophy_scorpion_cataclysm_unlock_kill_all_lords",
 	desc = "achv_scorpion_cataclysm_unlock_kill_all_lords_desc",
-	completed = function (self, arg_93_1)
+	completed = function (statistics_db, stats_id)
 		-- function 93
-		local flag = self:get_persistent_stat(arg_93_1, "kill_chaos_exalted_champion_scorpion_hardest") >= 5
-		local flag_2 = self:get_persistent_stat(arg_93_1, "kill_chaos_exalted_sorcerer_scorpion_hardest") >= 5
-		local flag_3 = self:get_persistent_stat(arg_93_1, "kill_skaven_grey_seer_scorpion_hardest") >= 5
-		local flag_4 = self:get_persistent_stat(arg_93_1, "kill_skaven_storm_vermin_warlord_scorpion_hardest") >= 5
+		local champion_completed = statistics_db:get_persistent_stat(stats_id, "kill_chaos_exalted_champion_scorpion_hardest") >= 5
+		local sorcerer_completed = statistics_db:get_persistent_stat(stats_id, "kill_chaos_exalted_sorcerer_scorpion_hardest") >= 5
+		local gray_seer_completed = statistics_db:get_persistent_stat(stats_id, "kill_skaven_grey_seer_scorpion_hardest") >= 5
+		local storm_vermin_completed = statistics_db:get_persistent_stat(stats_id, "kill_skaven_storm_vermin_warlord_scorpion_hardest") >= 5
 
-		return not flag and not flag_2 and not flag_3 and flag_4
+		return not not champion_completed and not not sorcerer_completed and not not gray_seer_completed and not not storm_vermin_completed
 	end,
-	requirements = function (self, arg_94_1)
+	requirements = function (statistics_db, stats_id)
 		-- function 94
-		local flag = self:get_persistent_stat(arg_94_1, "kill_chaos_exalted_champion_scorpion_hardest") >= 5
-		local flag_2 = self:get_persistent_stat(arg_94_1, "kill_chaos_exalted_sorcerer_scorpion_hardest") >= 5
-		local flag_3 = self:get_persistent_stat(arg_94_1, "kill_skaven_grey_seer_scorpion_hardest") >= 5
-		local flag_4 = self:get_persistent_stat(arg_94_1, "kill_skaven_storm_vermin_warlord_scorpion_hardest") >= 5
+		local champion_completed = statistics_db:get_persistent_stat(stats_id, "kill_chaos_exalted_champion_scorpion_hardest") >= 5
+		local sorcerer_completed = statistics_db:get_persistent_stat(stats_id, "kill_chaos_exalted_sorcerer_scorpion_hardest") >= 5
+		local gray_seer_completed = statistics_db:get_persistent_stat(stats_id, "kill_skaven_grey_seer_scorpion_hardest") >= 5
+		local storm_vermin_completed = statistics_db:get_persistent_stat(stats_id, "kill_skaven_storm_vermin_warlord_scorpion_hardest") >= 5
 
 		return {
 			{
 				name = "chaos_exalted_champion",
-				completed = flag
+				completed = champion_completed
 			},
 			{
 				name = "chaos_exalted_sorcerer",
-				completed = flag_2
+				completed = sorcerer_completed
 			},
 			{
 				name = "skaven_storm_vermin_warlord",
-				completed = flag_4
+				completed = storm_vermin_completed
 			},
 			{
 				name = "skaven_grey_seer",
-				completed = flag_3
+				completed = gray_seer_completed
 			}
 		}
 	end
 }
 
 local achievements = AchievementTemplates.achievements
-local var_0_38
+local auto_icon
 
-add_weapon_kill_challenge(achievements, "scorpion_bardin_weapon_skin_1", "dr_1h_throwing_axes", 1000, var_0_38, "scorpion")
-add_weapon_kill_challenge(achievements, "scorpion_kerillian_weapon_skin_1", "we_1h_spears_shield", 1000, var_0_38, "scorpion")
-add_weapon_kill_challenge(achievements, "scorpion_markus_weapon_skin_1", "es_2h_heavy_spear", 1000, var_0_38, "scorpion")
-add_weapon_kill_challenge(achievements, "scorpion_sienna_weapon_skin_1", "bw_1h_flail_flaming", 1000, var_0_38, "scorpion")
-add_weapon_kill_challenge(achievements, "scorpion_victor_weapon_skin_1", "wh_2h_billhook", 1000, var_0_38, "scorpion")
+add_weapon_kill_challenge(achievements, "scorpion_bardin_weapon_skin_1", "dr_1h_throwing_axes", 1000, auto_icon, "scorpion")
+add_weapon_kill_challenge(achievements, "scorpion_kerillian_weapon_skin_1", "we_1h_spears_shield", 1000, auto_icon, "scorpion")
+add_weapon_kill_challenge(achievements, "scorpion_markus_weapon_skin_1", "es_2h_heavy_spear", 1000, auto_icon, "scorpion")
+add_weapon_kill_challenge(achievements, "scorpion_sienna_weapon_skin_1", "bw_1h_flail_flaming", 1000, auto_icon, "scorpion")
+add_weapon_kill_challenge(achievements, "scorpion_victor_weapon_skin_1", "wh_2h_billhook", 1000, auto_icon, "scorpion")
 
-local tbl_4 = {
+local s2_lord_levels = {
 	"warcamp",
 	"skaven_stronghold",
 	"ground_zero",
 	"skittergate"
 }
-local str_8 = "hardest"
+local s2_lord_difficulty = "hardest"
 
-add_weapon_levels_challenge(achievements, "scorpion_bardin_weapon_skin_2", "dr_1h_throwing_axes", tbl_4, str_8, var_0_38, "scorpion")
-add_weapon_levels_challenge(achievements, "scorpion_kerillian_weapon_skin_2", "we_1h_spears_shield", tbl_4, str_8, var_0_38, "scorpion")
-add_weapon_levels_challenge(achievements, "scorpion_markus_weapon_skin_2", "es_2h_heavy_spear", tbl_4, str_8, var_0_38, "scorpion")
-add_weapon_levels_challenge(achievements, "scorpion_sienna_weapon_skin_2", "bw_1h_flail_flaming", tbl_4, str_8, var_0_38, "scorpion")
-add_weapon_levels_challenge(achievements, "scorpion_victor_weapon_skin_2", "wh_2h_billhook", tbl_4, str_8, var_0_38, "scorpion")
+add_weapon_levels_challenge(achievements, "scorpion_bardin_weapon_skin_2", "dr_1h_throwing_axes", s2_lord_levels, s2_lord_difficulty, auto_icon, "scorpion")
+add_weapon_levels_challenge(achievements, "scorpion_kerillian_weapon_skin_2", "we_1h_spears_shield", s2_lord_levels, s2_lord_difficulty, auto_icon, "scorpion")
+add_weapon_levels_challenge(achievements, "scorpion_markus_weapon_skin_2", "es_2h_heavy_spear", s2_lord_levels, s2_lord_difficulty, auto_icon, "scorpion")
+add_weapon_levels_challenge(achievements, "scorpion_sienna_weapon_skin_2", "bw_1h_flail_flaming", s2_lord_levels, s2_lord_difficulty, auto_icon, "scorpion")
+add_weapon_levels_challenge(achievements, "scorpion_victor_weapon_skin_2", "wh_2h_billhook", s2_lord_levels, s2_lord_difficulty, auto_icon, "scorpion")

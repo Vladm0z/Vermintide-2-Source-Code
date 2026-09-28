@@ -4,124 +4,127 @@ require("scripts/entity_system/systems/behaviour/nodes/bt_node")
 
 BTStormVerminPushAction = class(BTStormVerminPushAction, BTNode)
 
-BTStormVerminPushAction.init = function (arg_1_0, ...)
+BTStormVerminPushAction.init = function (self, ...)
 	-- function 1
-	BTStormVerminPushAction.super.init(arg_1_0, ...)
+	BTStormVerminPushAction.super.init(self, ...)
 end
 
 BTStormVerminPushAction.name = "BTStormVerminPushAction"
 
-local function fn(self)
+local function randomize(event)
 	-- function 2
-	if type(self) == "table" then
-		return self[Math.random(1, #self)]
+	if type(event) == "table" then
+		return event[Math.random(1, #event)]
 	else
-		return self
+		return event
 	end
 end
 
-BTStormVerminPushAction.enter = function (self, arg_3_1, arg_3_2, arg_3_3)
+BTStormVerminPushAction.enter = function (self, unit, blackboard, t)
 	-- function 3
-	local action_data = self._tree_node.action_data
+	local action = self._tree_node.action_data
 
-	arg_3_2.action = action_data
-	arg_3_2.active_node = BTStormVerminPushAction
-	arg_3_2.attack_finished = false
-	arg_3_2.attack_aborted = false
-	arg_3_2.attack_token = true
+	blackboard.action = action
+	blackboard.active_node = BTStormVerminPushAction
+	blackboard.attack_finished = false
+	blackboard.attack_aborted = false
+	blackboard.attack_token = true
 
-	local network = Managers.state.network
-	local navigation_extension = arg_3_2.navigation_extension
+	local network_manager = Managers.state.network
+	local navigation_extension = blackboard.navigation_extension
 
-	arg_3_2.navigation_extension:set_enabled(false)
-	arg_3_2.locomotion_extension:set_wanted_velocity(Vector3.zero())
+	blackboard.navigation_extension:set_enabled(false)
+	blackboard.locomotion_extension:set_wanted_velocity(Vector3.zero())
 
-	local target_unit = arg_3_2.target_unit
+	local target_unit = blackboard.target_unit
 
-	arg_3_2.attacking_target = target_unit
-	arg_3_2.move_state = "attacking"
+	blackboard.attacking_target = target_unit
+	blackboard.move_state = "attacking"
 
-	local var_3_4 = fn(action_data.attack_anim)
+	local attack_anim = randomize(action.attack_anim)
 
-	network:anim_event(arg_3_1, var_3_4)
+	network_manager:anim_event(unit, attack_anim)
 
-	arg_3_2.spawn_to_running = nil
-	arg_3_2.wake_up_push = 0
+	blackboard.spawn_to_running = nil
+	blackboard.wake_up_push = 0
 
-	if not action_data.attack_finished_duration then
-		local get_difficulty = Managers.state.difficulty:get_difficulty()
-		local var_3_6 = action_data.attack_finished_duration[get_difficulty]
+	if action.attack_finished_duration then
+		local difficulty = Managers.state.difficulty:get_difficulty()
+		local attack_finished_duration = action.attack_finished_duration[difficulty]
 
-		if not var_3_6 then
-			arg_3_2.attack_finished_t = arg_3_3 + Math.random_range(var_3_6[1], var_3_6[2])
+		if attack_finished_duration then
+			blackboard.attack_finished_t = t + Math.random_range(attack_finished_duration[1], attack_finished_duration[2])
 		end
 	end
 
-	AiUtils.add_attack_intensity(target_unit, action_data, arg_3_2)
+	AiUtils.add_attack_intensity(target_unit, action, blackboard)
 end
 
-BTStormVerminPushAction.leave = function (arg_4_0, arg_4_1, arg_4_2, arg_4_3, arg_4_4, arg_4_5)
+BTStormVerminPushAction.leave = function (self, unit, blackboard, t, reason, destroy)
 	-- function 4
-	arg_4_2.navigation_extension:set_enabled(true)
+	blackboard.navigation_extension:set_enabled(true)
 
-	arg_4_2.active_node = nil
-	arg_4_2.attack_aborted = nil
-	arg_4_2.attacking_target = nil
-	arg_4_2.attack_finished = nil
-	arg_4_2.attack_anim = nil
-	arg_4_2.attack_finished_t = nil
-	arg_4_2.attack_token = nil
+	blackboard.active_node = nil
+	blackboard.attack_aborted = nil
+	blackboard.attacking_target = nil
+	blackboard.attack_finished = nil
+	blackboard.attack_anim = nil
+	blackboard.attack_finished_t = nil
+	blackboard.attack_token = nil
 end
 
-BTStormVerminPushAction.run = function (self, arg_5_1, arg_5_2, arg_5_3, arg_5_4)
+BTStormVerminPushAction.run = function (self, unit, blackboard, t, dt)
 	-- function 5
-	if not arg_5_2.attack_aborted then
-		Managers.state.network:anim_event(arg_5_1, "idle")
+	if blackboard.attack_aborted then
+		local network_manager = Managers.state.network
+
+		network_manager:anim_event(unit, "idle")
 
 		return "done"
-	elseif not arg_5_2.attack_finished_t and arg_5_3 > arg_5_2.attack_finished_t and arg_5_2.attack_finished and arg_5_2.attack_finished_t or not arg_5_2.attack_finished then
+	elseif (not blackboard.attack_finished_t or not (t > blackboard.attack_finished_t) or not blackboard.attack_finished) and not blackboard.attack_finished_t and blackboard.attack_finished then
 		return "done"
 	else
-		self:attack(arg_5_1, arg_5_3, arg_5_4, arg_5_2)
+		self:attack(unit, t, dt, blackboard)
 
 		return "running"
 	end
 end
 
-BTStormVerminPushAction.attack = function (arg_6_0, arg_6_1, arg_6_2, arg_6_3, arg_6_4)
+BTStormVerminPushAction.attack = function (self, unit, t, dt, blackboard)
 	-- function 6
-	local locomotion_extension = arg_6_4.locomotion_extension
-	local attacking_target = arg_6_4.attacking_target
+	local locomotion = blackboard.locomotion_extension
+	local attacking_target = blackboard.attacking_target
 
-	if not Unit.alive(attacking_target) then
-		local rotation_towards_unit_flat = LocomotionUtils.rotation_towards_unit_flat(arg_6_1, attacking_target)
+	if Unit.alive(attacking_target) then
+		local rotation = LocomotionUtils.rotation_towards_unit_flat(unit, attacking_target)
 
-		locomotion_extension:set_wanted_rotation(rotation_towards_unit_flat)
+		locomotion:set_wanted_rotation(rotation)
 	end
 end
 
-BTStormVerminPushAction.anim_cb_stormvermin_push = function (arg_7_0, arg_7_1, arg_7_2, arg_7_3)
+BTStormVerminPushAction.anim_cb_stormvermin_push = function (self, unit, blackboard, target_unit)
 	-- function 7
-	if not (not DamageUtils.check_distance(arg_7_2.action, arg_7_2, arg_7_1, arg_7_3) and DamageUtils.check_infront(arg_7_1, arg_7_3)) then
+	if not DamageUtils.check_distance(blackboard.action, blackboard, unit, target_unit) or not DamageUtils.check_infront(unit, target_unit) then
 		return
 	end
 
-	local action = arg_7_2.action
+	local action = blackboard.action
 
-	AiUtils.damage_target(arg_7_3, arg_7_1, action, action.damage)
+	AiUtils.damage_target(target_unit, unit, action, action.damage)
 
-	local has_extension = ScriptUnit.has_extension(arg_7_3, "status_system")
+	local status_extension = ScriptUnit.has_extension(target_unit, "status_system")
 
-	if not (not has_extension and has_extension:is_disabled()) then
-		StatusUtils.set_pushed_network(arg_7_3, true)
+	if status_extension and not status_extension:is_disabled() then
+		StatusUtils.set_pushed_network(target_unit, true)
 
-		local num = Quaternion.forward(Unit.local_rotation(arg_7_1, 0)) * action.impact_push_speed
+		local velocity = Quaternion.forward(Unit.local_rotation(unit, 0)) * action.impact_push_speed
+		local locomotion_extension = ScriptUnit.extension(target_unit, "locomotion_system")
 
-		ScriptUnit.extension(arg_7_3, "locomotion_system"):add_external_velocity(num, action.max_impact_push_speed)
+		locomotion_extension:add_external_velocity(velocity, action.max_impact_push_speed)
 	end
 end
 
-BTStormVerminPushAction.anim_cb_attack_finished = function (arg_8_0, arg_8_1, arg_8_2)
+BTStormVerminPushAction.anim_cb_attack_finished = function (self, unit, blackboard)
 	-- function 8
-	arg_8_2.attack_finished = true
+	blackboard.attack_finished = true
 end

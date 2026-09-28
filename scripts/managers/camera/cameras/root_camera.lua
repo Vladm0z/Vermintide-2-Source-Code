@@ -15,142 +15,159 @@ RootCamera.init = function (self)
 	self._environment_params = {}
 end
 
-RootCamera.set_root_unit = function (self, arg_2_1, arg_2_2, arg_2_3)
+RootCamera.set_root_unit = function (self, unit, object, preserve_yaw)
 	-- function 2
-	BaseCamera.set_root_unit(self, arg_2_1, arg_2_2)
+	BaseCamera.set_root_unit(self, unit, object)
 
-	if not arg_2_3 then
-		local world_rotation = Unit.world_rotation(arg_2_1, 0)
-		local forward = Quaternion.forward(world_rotation)
-		local var_2_2 = Vector3(forward.x, forward.y, 0)
-		local normalize = Vector3.normalize(var_2_2)
-		local atan2 = math.atan2(normalize.x, normalize.y)
+	if not preserve_yaw then
+		local rotation = Unit.world_rotation(unit, 0)
+		local forward = Quaternion.forward(rotation)
+		local forward_flat = Vector3(forward.x, forward.y, 0)
+		local forward_flat_normalized = Vector3.normalize(forward_flat)
+		local init_yaw = math.atan2(forward_flat_normalized.x, forward_flat_normalized.y)
 
-		if not script_data.spawn_debug then
-			Managers.state.debug:drawer({
+		if script_data.spawn_debug then
+			local drawer = Managers.state.debug:drawer({
 				name = "spawn"
-			}):quaternion(Unit.world_position(arg_2_1, 0), Unit.world_rotation(arg_2_1, 0), 1)
+			})
+
+			drawer:quaternion(Unit.world_position(unit, 0), Unit.world_rotation(unit, 0), 1)
 		end
 
-		self._aim_yaw = -atan2
+		self._aim_yaw = -init_yaw
 	end
 end
 
-RootCamera.parse_parameters = function (self, arg_3_1, arg_3_2)
+RootCamera.parse_parameters = function (self, camera_settings, parent_node)
 	-- function 3
-	if not arg_3_1.name then
-		self._name = arg_3_1.name
+	if camera_settings.name then
+		self._name = camera_settings.name
 	end
 
-	local num = math.pi / 180
-	local vertical_fov = arg_3_1.vertical_fov
+	local degrees_to_radians = math.pi / 180
+	local vertical_fov = camera_settings.vertical_fov
 
-	vertical_fov = not vertical_fov and arg_3_1.vertical_fov * num
+	vertical_fov = not not vertical_fov and not not (camera_settings.vertical_fov * degrees_to_radians)
 	self._vertical_fov = vertical_fov
 
-	local should_apply_fov_multiplier = arg_3_1.should_apply_fov_multiplier
+	local should_apply_fov_multiplier = camera_settings.should_apply_fov_multiplier
 
-	should_apply_fov_multiplier = should_apply_fov_multiplier or false
+	should_apply_fov_multiplier = not not should_apply_fov_multiplier or not not false
 	self._should_apply_fov_multiplier = should_apply_fov_multiplier
 
-	local num_2
+	local num
 
-	if not arg_3_1.default_fov then
-		num_2 = arg_3_1.default_fov * num
+	if camera_settings.default_fov then
+		num = camera_settings.default_fov * degrees_to_radians
 
-		if not num_2 then
+		if not num then
 			-- Nothing
 		end
 	end
 
-	num_2 = self._vertical_fov
+	num = self._vertical_fov
 
 	::label_3_0::
 
-	self._default_fov = num_2
-	self._near_range = arg_3_1.near_range
-	self._far_range = arg_3_1.far_range
+	self._default_fov = num
+	self._near_range = camera_settings.near_range
+	self._far_range = camera_settings.far_range
 
-	local pitch_min = arg_3_1.pitch_min
+	local pitch_min = camera_settings.pitch_min
 
-	pitch_min = not pitch_min and arg_3_1.pitch_min * num
+	pitch_min = not not pitch_min and not not (camera_settings.pitch_min * degrees_to_radians)
 	self._pitch_min = pitch_min
 
-	local pitch_max = arg_3_1.pitch_max
+	local pitch_max = camera_settings.pitch_max
 
-	pitch_max = not pitch_max and arg_3_1.pitch_max * num
+	pitch_max = not not pitch_max and not not (camera_settings.pitch_max * degrees_to_radians)
 	self._pitch_max = pitch_max
 
-	local pitch_speed = arg_3_1.pitch_speed
+	local pitch_speed = camera_settings.pitch_speed
 
-	pitch_speed = not pitch_speed and arg_3_1.pitch_speed * num
+	pitch_speed = not not pitch_speed and not not (camera_settings.pitch_speed * degrees_to_radians)
 	self._pitch_speed = pitch_speed
 
-	local yaw_speed = arg_3_1.yaw_speed
+	local yaw_speed = camera_settings.yaw_speed
 
-	yaw_speed = not yaw_speed and arg_3_1.yaw_speed * num
+	yaw_speed = not not yaw_speed and not not (camera_settings.yaw_speed * degrees_to_radians)
 	self._yaw_speed = yaw_speed
 
-	local pitch_offset = arg_3_1.pitch_offset
+	local pitch_offset = camera_settings.pitch_offset
 
-	pitch_offset = not pitch_offset and arg_3_1.pitch_offset * num
+	pitch_offset = not not pitch_offset and not not (camera_settings.pitch_offset * degrees_to_radians)
 	self._pitch_offset = pitch_offset
-	self._safe_position_offset = arg_3_1.safe_position_offset
-	self._tree_transitions = arg_3_1.tree_transitions
-	self._node_transitions = arg_3_1.node_transitions
+	self._safe_position_offset = camera_settings.safe_position_offset
+	self._tree_transitions = camera_settings.tree_transitions
+	self._node_transitions = camera_settings.node_transitions
 
-	local fade_to_black = arg_3_1.fade_to_black
+	local fade_to_black = camera_settings.fade_to_black
 
-	fade_to_black = fade_to_black or 0
+	fade_to_black = not not fade_to_black or not not 0
 	self._fade_to_black = fade_to_black
 
-	if not arg_3_1.root_object_name then
-		self._object_name = arg_3_1.root_object_name
+	if camera_settings.root_object_name then
+		self._object_name = camera_settings.root_object_name
 	end
 end
 
-RootCamera.update = function (self, arg_4_1, arg_4_2, arg_4_3, arg_4_4)
+RootCamera.update = function (self, dt, data, pitch_speed, yaw_speed)
 	-- function 4
 	if not self:active() then
 		return
 	end
 
-	local var_4_0
-	local var_4_1
-	local _root_unit = self._root_unit
-	local _root_object = self._root_object
+	local position, rotation
+	local root_unit = self._root_unit
+	local root_object = self._root_object
 
-	if not _root_unit and not Unit.alive(_root_unit) then
-		var_4_0 = Unit.world_position(_root_unit, _root_object)
-		var_4_1 = Unit.world_rotation(_root_unit, _root_object)
+	if root_unit and Unit.alive(root_unit) then
+		position = Unit.world_position(root_unit, root_object)
+		rotation = Unit.world_rotation(root_unit, root_object)
 
-		self._root_position:store(var_4_0)
-		self._root_rotation:store(var_4_1)
+		self._root_position:store(position)
+		self._root_rotation:store(rotation)
 	else
-		var_4_0 = self._root_position:unbox()
-		var_4_1 = self._root_rotation:unbox()
+		position = self._root_position:unbox()
+		rotation = self._root_rotation:unbox()
 	end
 
-	BaseCamera.update(self, arg_4_1, var_4_0, var_4_1, arg_4_2)
+	BaseCamera.update(self, dt, position, rotation, data)
 end
 
-RootCamera.update_pitch_yaw = function (self, arg_5_1, arg_5_2, arg_5_3)
+RootCamera.update_pitch_yaw = function (self, dt, data, current_node)
 	-- function 5
-	local pitch_speed = arg_5_2.pitch_speed
+	local pitch_speed_2 = data.pitch_speed
 
-	pitch_speed = pitch_speed or self._pitch_speed
+	if not pitch_speed_2 then
+		-- Nothing
+	end
 
-	local yaw_speed = arg_5_2.yaw_speed
+	pitch_speed_2 = self._pitch_speed
 
-	yaw_speed = yaw_speed or self._yaw_speed
+	local pitch_speed = pitch_speed_2
 
-	local num = 1
-	local num_2 = 1
-	local var_5_4
+	::label_5_0::
+
+	local yaw_speed_2 = data.yaw_speed
+
+	if not yaw_speed_2 then
+		-- Nothing
+	end
+
+	yaw_speed_2 = self._yaw_speed
+
+	local yaw_speed = yaw_speed_2
+
+	::label_5_1::
+
+	local dyn_pitch_scale = 1
+	local dyn_yaw_scale = 1
+	local max_yaw_speed
 	local unbox
 
-	if not arg_5_2.look_controller_input then
-		unbox = arg_5_2.look_controller_input:unbox()
+	if data.look_controller_input then
+		unbox = data.look_controller_input:unbox()
 
 		if not unbox then
 			-- Nothing
@@ -159,68 +176,71 @@ RootCamera.update_pitch_yaw = function (self, arg_5_1, arg_5_2, arg_5_3)
 
 	unbox = Vector3(0, 0, 0)
 
-	::label_5_0::
+	local look_vec = unbox
 
-	if not self._root_unit and not Unit.alive(self._root_unit) then
-		num = 1
-		num_2 = 1
-		var_5_4 = Unit.get_data(self._root_unit, "camera", "dynamic_max_yaw_speed")
+	::label_5_2::
+
+	if self._root_unit and Unit.alive(self._root_unit) then
+		dyn_pitch_scale = 1
+		dyn_yaw_scale = 1
+		max_yaw_speed = Unit.get_data(self._root_unit, "camera", "dynamic_max_yaw_speed")
 	end
 
-	local var_5_6
+	local yaw_delta_value
 
-	if not var_5_4 and not yaw_speed then
+	if max_yaw_speed and yaw_speed then
 		local _accumulated_dt = self._accumulated_dt
 
-		_accumulated_dt = _accumulated_dt or 0
+		_accumulated_dt = not not _accumulated_dt or not not 0
 		self._accumulated_dt = _accumulated_dt
 
-		if math.abs(unbox.x) > 0 then
-			local num_3 = var_5_4 * (self._accumulated_dt + arg_5_1)
+		if math.abs(look_vec.x) > 0 then
+			local total_dt = self._accumulated_dt + dt
+			local max_speed = max_yaw_speed * total_dt
 
-			var_5_6 = math.clamp(unbox.x * yaw_speed * num_2, -num_3, num_3)
+			yaw_delta_value = math.clamp(look_vec.x * yaw_speed * dyn_yaw_scale, -max_speed, max_speed)
 			self._accumulated_dt = 0
 		else
-			var_5_6 = 0
-			self._accumulated_dt = self._accumulated_dt + arg_5_1
+			yaw_delta_value = 0
+			self._accumulated_dt = self._accumulated_dt + dt
 
 			if self._accumulated_dt > 0.1 then
 				self._accumulated_dt = 0
 			end
 		end
-	elseif not yaw_speed then
+	elseif yaw_speed then
 		self._accumulated_dt = 0
-		var_5_6 = unbox.x * yaw_speed * num_2
+		yaw_delta_value = look_vec.x * yaw_speed * dyn_yaw_scale
 	end
 
-	local num_4 = unbox.y * pitch_speed * num
-	local constraint_function = arg_5_3:constraint_function()
+	local pitch_delta_value = look_vec.y * pitch_speed * dyn_pitch_scale
+	local constraint_function = current_node:constraint_function()
 
-	if not constraint_function then
-		local local_rotation = Unit.local_rotation(self._root_unit, 0)
-		local forward = Quaternion.forward(local_rotation)
-		local normalize = Vector3.normalize(Vector3.flat(forward))
-		local atan2 = math.atan2(normalize.x, normalize.y)
-		local num_5 = (atan2 + self._aim_yaw + math.pi) % (2 * math.pi) - math.pi
-		local _aim_pitch = self._aim_pitch
-		local var_5_17, var_5_18 = constraint_function(num_5, _aim_pitch, var_5_6, num_4)
+	if constraint_function then
+		local rot = Unit.local_rotation(self._root_unit, 0)
+		local dir = Quaternion.forward(rot)
+		local norm_flat_dir = Vector3.normalize(Vector3.flat(dir))
+		local yaw = math.atan2(norm_flat_dir.x, norm_flat_dir.y)
+		local yaw_diff = (yaw + self._aim_yaw + math.pi) % (2 * math.pi) - math.pi
+		local relative_pitch = self._aim_pitch
+		local new_yaw, new_pitch = constraint_function(yaw_diff, relative_pitch, yaw_delta_value, pitch_delta_value)
 
-		self._aim_yaw = (var_5_17 - atan2) % (2 * math.pi)
+		self._aim_yaw = (new_yaw - yaw) % (2 * math.pi)
 
-		if not var_5_18 then
-			if not pitch_speed then
-				self._aim_pitch = math.clamp(self._aim_pitch + num_4, self._pitch_min, self._pitch_max)
+		if not new_pitch then
+			if pitch_speed then
+				self._aim_pitch = math.clamp(self._aim_pitch + pitch_delta_value, self._pitch_min, self._pitch_max)
 			end
 		else
-			self._aim_pitch = var_5_18
+			self._aim_pitch = new_pitch
 		end
 	else
-		if not pitch_speed then
-			self._aim_pitch = math.clamp(self._aim_pitch + num_4, self._pitch_min, self._pitch_max)
+		if pitch_speed then
+			self._aim_pitch = math.clamp(self._aim_pitch + pitch_delta_value, self._pitch_min, self._pitch_max)
 		end
 
-		if not yaw_speed then
-			self._aim_yaw = (self._aim_yaw - var_5_6) % (2 * math.pi)
+		if yaw_speed then
+			self._aim_yaw = (self._aim_yaw - yaw_delta_value) % (2 * math.pi)
 		end
 	end
 end
@@ -235,12 +255,12 @@ RootCamera.aim_yaw = function (self)
 	return self._aim_yaw
 end
 
-RootCamera.set_aim_pitch = function (self, arg_8_1)
+RootCamera.set_aim_pitch = function (self, pitch)
 	-- function 8
-	self._aim_pitch = arg_8_1
+	self._aim_pitch = pitch
 end
 
-RootCamera.set_aim_yaw = function (self, arg_9_1)
+RootCamera.set_aim_yaw = function (self, yaw)
 	-- function 9
-	self._aim_yaw = arg_9_1
+	self._aim_yaw = yaw
 end

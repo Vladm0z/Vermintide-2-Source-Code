@@ -7,39 +7,71 @@ require("scripts/ui/hud_ui/world_marker_templates/world_marker_template_store")
 require("scripts/ui/hud_ui/world_marker_templates/world_marker_template_pet_nameplate")
 require("scripts/ui/hud_ui/world_marker_templates/world_marker_template_pet_cancel")
 
-local tbl = {}
-local tbl_2 = {}
-local num = 1
-local num_2 = 5
+local temp_array_markers_to_remove = {}
+local temp_marker_raycast_queue = {}
+local RAYCASTS_PER_FRAME = 1
+local RAYCASTS_FRAME_DELAY = 5
 
-local function fn(self, arg_1_1)
+local function raycast_sort_func(a, b)
 	-- function 1
-	local raycast_frame_count = self.raycast_frame_count
+	local raycast_frame_count = a.raycast_frame_count
 
-	raycast_frame_count = raycast_frame_count or 0
-
-	local raycast_frame_count_2 = arg_1_1.raycast_frame_count
-
-	raycast_frame_count_2 = raycast_frame_count_2 or 0
-
-	if raycast_frame_count == raycast_frame_count_2 then
-		local distance = self.widget.content.distance
-
-		distance = distance or 0
-
-		local distance_2 = arg_1_1.widget.content.distance
-
-		distance_2 = distance_2 or 0
-
-		return distance < distance_2
+	if not raycast_frame_count then
+		-- Nothing
 	end
 
-	return raycast_frame_count_2 < raycast_frame_count
+	raycast_frame_count = 0
+
+	local a_frame_count = raycast_frame_count
+
+	::label_1_0::
+
+	local raycast_frame_count_2 = b.raycast_frame_count
+
+	if not raycast_frame_count_2 then
+		-- Nothing
+	end
+
+	raycast_frame_count_2 = 0
+
+	local b_frame_count = raycast_frame_count_2
+
+	::label_1_1::
+
+	if a_frame_count == b_frame_count then
+		local distance = a.widget.content.distance
+
+		if not distance then
+			-- Nothing
+		end
+
+		distance = 0
+
+		local a_distance = distance
+
+		::label_1_2::
+
+		local distance_2 = b.widget.content.distance
+
+		if not distance_2 then
+			-- Nothing
+		end
+
+		distance_2 = 0
+
+		local b_distance = distance_2
+
+		::label_1_3::
+
+		return a_distance < b_distance
+	end
+
+	return b_frame_count < a_frame_count
 end
 
 DLCUtils.require_list("ui_world_marker_templates")
 
-local tbl_3 = {
+local scenegraph_definition = {
 	root = {
 		scale = "fit",
 		position = {
@@ -67,43 +99,43 @@ local tbl_3 = {
 		}
 	}
 }
-local str = "ping"
+local DEBUG_MARKER = "ping"
 
 WorldMarkerUI = class(WorldMarkerUI)
 
-WorldMarkerUI.init = function (self, arg_2_1, arg_2_2)
+WorldMarkerUI.init = function (self, parent, ingame_ui_context)
 	-- function 2
-	self._parent = arg_2_1
-	self.ui_renderer = arg_2_2.ui_renderer
-	self.ingame_ui = arg_2_2.ingame_ui
-	self.input_manager = arg_2_2.input_manager
+	self._parent = parent
+	self.ui_renderer = ingame_ui_context.ui_renderer
+	self.ingame_ui = ingame_ui_context.ingame_ui
+	self.input_manager = ingame_ui_context.input_manager
 	self._render_settings = {
 		alpha_multiplier = 1,
 		snap_pixel_positions = false
 	}
 	self._raycast_frame_counter = 0
 	self._aiming_alpha_multiplier = 1
-	self._game_world = arg_2_2.world_manager:world("level_world")
-	self.local_player = arg_2_2.player
+	self._game_world = ingame_ui_context.world_manager:world("level_world")
+	self.local_player = ingame_ui_context.player
 
 	self:_create_ui_elements()
 
-	local event = Managers.state.event
+	local event_manager = Managers.state.event
 
-	event:register(self, "add_world_marker_unit", "event_add_world_marker_unit")
-	event:register(self, "add_world_marker_position", "event_add_world_marker_position")
-	event:register(self, "remove_world_marker", "event_remove_world_marker")
-	event:register(self, "on_spectator_target_changed", "on_spectator_target_changed")
+	event_manager:register(self, "add_world_marker_unit", "event_add_world_marker_unit")
+	event_manager:register(self, "add_world_marker_position", "event_add_world_marker_position")
+	event_manager:register(self, "remove_world_marker", "event_remove_world_marker")
+	event_manager:register(self, "on_spectator_target_changed", "on_spectator_target_changed")
 end
 
-WorldMarkerUI.destroy = function (arg_3_0)
+WorldMarkerUI.destroy = function (self)
 	-- function 3
-	local event = Managers.state.event
+	local event_manager = Managers.state.event
 
-	event:unregister("add_world_marker_unit", arg_3_0)
-	event:unregister("add_world_marker_position", arg_3_0)
-	event:unregister("remove_world_marker", arg_3_0)
-	event:unregister("on_spectator_target_changed", arg_3_0)
+	event_manager:unregister("add_world_marker_unit", self)
+	event_manager:unregister("add_world_marker_position", self)
+	event_manager:unregister("remove_world_marker", self)
+	event_manager:unregister("on_spectator_target_changed", self)
 end
 
 WorldMarkerUI._create_ui_elements = function (self)
@@ -112,149 +144,161 @@ WorldMarkerUI._create_ui_elements = function (self)
 	self._markers = {}
 	self._markers_by_id = {}
 	self._markers_by_type = {}
-	self.ui_scenegraph = UISceneGraph.init_scenegraph(tbl_3)
+	self.ui_scenegraph = UISceneGraph.init_scenegraph(scenegraph_definition)
 
-	local tbl = {}
+	local widget_definitions_by_type = {}
 
-	self._widget_definitions_by_type = tbl
+	self._widget_definitions_by_type = widget_definitions_by_type
 
-	for k, v in pairs(WorldMarkerTemplates) do
-		tbl[k] = v.create_widget_definition("pivot")
+	for marker_type, settings in pairs(WorldMarkerTemplates) do
+		widget_definitions_by_type[marker_type] = settings.create_widget_definition("pivot")
 	end
 end
 
-WorldMarkerUI.event_remove_world_marker = function (self, arg_5_1)
+WorldMarkerUI.event_remove_world_marker = function (self, id)
 	-- function 5
-	local var_5_0
-	local _markers = self._markers
+	local marker_to_remove
+	local markers = self._markers
 
-	for i = 1, #_markers do
-		local var_5_2 = _markers[i]
+	for i = 1, #markers do
+		local marker = markers[i]
 
-		if var_5_2.id == arg_5_1 then
-			var_5_0 = var_5_2
+		if marker.id == id then
+			marker_to_remove = marker
 
 			break
 		end
 	end
 
-	if not var_5_0 then
-		self:_unregister_marker(var_5_0)
+	if marker_to_remove then
+		self:_unregister_marker(marker_to_remove)
 	end
 end
 
-WorldMarkerUI.event_add_world_marker_unit = function (self, arg_6_1, arg_6_2, arg_6_3)
+WorldMarkerUI.event_add_world_marker_unit = function (self, marker_type, unit, callback)
 	-- function 6
-	local _create_widget_by_type = self:_create_widget_by_type(arg_6_1)
-	local _register_marker = self:_register_marker({
-		type = arg_6_1,
-		unit = arg_6_2,
-		widget = _create_widget_by_type
+	local widget = self:_create_widget_by_type(marker_type)
+	local id = self:_register_marker({
+		type = marker_type,
+		unit = unit,
+		widget = widget
 	})
-	local on_enter = WorldMarkerTemplates[arg_6_1].on_enter
+	local on_enter = WorldMarkerTemplates[marker_type].on_enter
 
-	if not on_enter then
-		on_enter(_create_widget_by_type)
+	if on_enter then
+		on_enter(widget)
 	end
 
-	if not arg_6_3 then
-		arg_6_3(_register_marker, _create_widget_by_type)
+	if callback then
+		callback(id, widget)
 	end
 end
 
-WorldMarkerUI.event_add_world_marker_position = function (self, arg_7_1, arg_7_2, arg_7_3)
+WorldMarkerUI.event_add_world_marker_position = function (self, marker_type, world_position, callback)
 	-- function 7
-	local _create_widget_by_type = self:_create_widget_by_type(arg_7_1)
-	local tbl = {
-		type = arg_7_1,
-		world_position = Vector3Box(arg_7_2),
-		widget = _create_widget_by_type
+	local widget = self:_create_widget_by_type(marker_type)
+	local marker = {
+		type = marker_type,
+		world_position = Vector3Box(world_position),
+		widget = widget
 	}
-	local _register_marker = self:_register_marker(tbl)
-	local on_enter = WorldMarkerTemplates[arg_7_1].on_enter
+	local id = self:_register_marker(marker)
+	local settings = WorldMarkerTemplates[marker_type]
+	local on_enter = settings.on_enter
 
-	if not on_enter then
-		on_enter(_create_widget_by_type)
+	if on_enter then
+		on_enter(widget)
 	end
 
-	if not arg_7_3 then
-		arg_7_3(_register_marker, _create_widget_by_type)
+	if callback then
+		callback(id, widget)
 	end
 end
 
-WorldMarkerUI.on_spectator_target_changed = function (self, arg_8_1)
+WorldMarkerUI.on_spectator_target_changed = function (self, spectated_player_unit)
 	-- function 8
-	self._spectated_player_unit = arg_8_1
-	self._spectated_player = Managers.player:owner(arg_8_1)
+	self._spectated_player_unit = spectated_player_unit
+	self._spectated_player = Managers.player:owner(spectated_player_unit)
 	self._is_spectator = true
 	self.local_player = self._spectated_player
 end
 
-WorldMarkerUI._register_marker = function (self, arg_9_1)
+WorldMarkerUI._register_marker = function (self, marker)
 	-- function 9
-	local _markers = self._markers
-	local _markers_by_id = self._markers_by_id
-	local _markers_by_type = self._markers_by_type
+	local markers = self._markers
+	local markers_by_id = self._markers_by_id
+	local markers_by_type = self._markers_by_type
 
 	self._id_counter = self._id_counter + 1
 
-	local _id_counter = self._id_counter
+	local id = self._id_counter
 
-	arg_9_1.id = _id_counter
-	_markers_by_id[_id_counter] = arg_9_1
-	_markers[#_markers + 1] = arg_9_1
+	marker.id = id
+	markers_by_id[id] = marker
+	markers[#markers + 1] = marker
 
-	local type = arg_9_1.type
-	local var_9_5 = _markers_by_type[type]
+	local marker_type = marker.type
+	local var_9_0 = markers_by_type[marker_type]
 
-	var_9_5 = var_9_5 or {}
-	_markers_by_type[type] = var_9_5
-	var_9_5[#var_9_5 + 1] = arg_9_1
+	if not var_9_0 then
+		-- Nothing
+	end
 
-	return _id_counter
+	var_9_0 = {}
+
+	local type_markers = var_9_0
+
+	::label_9_0::
+
+	markers_by_type[marker_type] = type_markers
+	type_markers[#type_markers + 1] = marker
+
+	return id
 end
 
-WorldMarkerUI._unregister_marker = function (self, arg_10_1)
+WorldMarkerUI._unregister_marker = function (self, marker)
 	-- function 10
-	local _markers = self._markers
-	local _markers_by_id = self._markers_by_id
-	local _markers_by_type = self._markers_by_type
-	local id = arg_10_1.id
+	local markers = self._markers
+	local markers_by_id = self._markers_by_id
+	local markers_by_type = self._markers_by_type
+	local id = marker.id
 
-	_markers_by_id[id] = nil
+	markers_by_id[id] = nil
 
-	for i = 1, #_markers do
-		if _markers[i].id == id then
-			table.remove(_markers, i)
+	for i = 1, #markers do
+		if markers[i].id == id then
+			table.remove(markers, i)
 
 			break
 		end
 	end
 
-	local var_10_4 = _markers_by_type[arg_10_1.type]
+	local marker_type = marker.type
+	local type_markers = markers_by_type[marker_type]
 
-	for j = 1, #var_10_4 do
-		if var_10_4[j].id == id then
-			table.remove(var_10_4, j)
+	for i = 1, #type_markers do
+		if type_markers[i].id == id then
+			table.remove(type_markers, i)
 
 			break
 		end
 	end
 end
 
-WorldMarkerUI._create_widget_by_type = function (self, arg_11_1)
+WorldMarkerUI._create_widget_by_type = function (self, widget_type)
 	-- function 11
-	local var_11_0 = self._widget_definitions_by_type[arg_11_1]
+	local widget_definitions_by_type = self._widget_definitions_by_type
+	local definition = widget_definitions_by_type[widget_type]
 
-	return UIWidget.init(var_11_0)
+	return UIWidget.init(definition)
 end
 
-WorldMarkerUI.update = function (arg_12_0, arg_12_1, arg_12_2)
+WorldMarkerUI.update = function (self, dt, t)
 	-- function 12
 	return
 end
 
-WorldMarkerUI.post_update = function (self, arg_13_1, arg_13_2)
+WorldMarkerUI.post_update = function (self, dt, t)
 	-- function 13
 	local player_unit = self.local_player.player_unit
 
@@ -262,420 +306,476 @@ WorldMarkerUI.post_update = function (self, arg_13_1, arg_13_2)
 		return
 	end
 
-	local flag = self._raycast_frame_counter == 0
+	local raycasts_allowed = self._raycast_frame_counter == 0
 
-	self._raycast_frame_counter = (self._raycast_frame_counter + 1) % num_2
+	self._raycast_frame_counter = (self._raycast_frame_counter + 1) % RAYCASTS_FRAME_DELAY
 
-	local _camera = self._camera
+	local camera = self._camera
 
-	if not _camera then
+	if camera then
 		local ui_renderer = self.ui_renderer
 		local ui_scenegraph = self.ui_scenegraph
-		local get_service = self.input_manager:get_service("Player")
-		local _render_settings = self._render_settings
-		local local_position = Camera.local_position(_camera)
-		local local_rotation = Camera.local_rotation(_camera)
-		local forward = Quaternion.forward(local_rotation)
-		local forward_2 = Quaternion.forward(local_rotation)
-		local up = Quaternion.up(local_rotation)
-		local right = Quaternion.right(local_rotation)
-		local normalize = Vector3.normalize(Vector3.flat(right))
-		local near_range = Camera.near_range(_camera)
-		local num_3 = local_position + forward
-		local local_pose = Camera.local_pose(_camera)
-		local right_2 = Matrix4x4.right(local_pose)
-		local num_4 = -right_2
-		local up_2 = Matrix4x4.up(local_pose)
-		local num_5 = -up_2
-		local _markers_by_id = self._markers_by_id
-		local _markers_by_type = self._markers_by_type
+		local input_service = self.input_manager:get_service("Player")
+		local render_settings = self._render_settings
+		local camera_position = Camera.local_position(camera)
+		local camera_rotation = Camera.local_rotation(camera)
+		local camera_forward = Quaternion.forward(camera_rotation)
+		local camera_direction = Quaternion.forward(camera_rotation)
+		local camera_up = Quaternion.up(camera_rotation)
+		local camera_right_vector = Quaternion.right(camera_rotation)
 
-		for k, v in pairs(_markers_by_type) do
-			local var_13_23 = WorldMarkerTemplates[k]
-			local screen_clamp = var_13_23.screen_clamp
-			local only_when_clamped = var_13_23.only_when_clamped
-			local draw_behind = var_13_23.draw_behind
-			local screen_margins = var_13_23.screen_margins
-			local max_distance = var_13_23.max_distance
-			local life_time = var_13_23.life_time
-			local check_line_of_sight = var_13_23.check_line_of_sight
+		camera_right_vector = Vector3.normalize(Vector3.flat(camera_right_vector))
 
-			for k_2 = 1, #v do
-				local var_13_31 = v[k_2]
-				local flag_2 = _markers_by_id[var_13_31.id] ~= nil
-				local flag_3 = false
-				local widget = var_13_31.widget
+		local camera_near_range = Camera.near_range(camera)
+		local camera_position_center = camera_position + camera_forward
+		local camera_pose = Camera.local_pose(camera)
+		local camera_position_right = Matrix4x4.right(camera_pose)
+		local camera_position_left = -camera_position_right
+		local camera_position_up = Matrix4x4.up(camera_pose)
+		local camera_position_down = -camera_position_up
+		local markers_by_id = self._markers_by_id
+		local markers_by_type = self._markers_by_type
+
+		for marker_type, markers in pairs(markers_by_type) do
+			local settings = WorldMarkerTemplates[marker_type]
+			local screen_clamp = settings.screen_clamp
+			local only_when_clamped = settings.only_when_clamped
+			local draw_behind = settings.draw_behind
+			local screen_margins = settings.screen_margins
+			local max_distance = settings.max_distance
+			local life_time = settings.life_time
+			local check_line_of_sight = settings.check_line_of_sight
+
+			for i = 1, #markers do
+				local marker = markers[i]
+				local id = marker.id
+				local update = markers_by_id[id] ~= nil
+				local remove = false
+				local widget = marker.widget
 				local content = widget.content
-				local var_13_36
+				local marker_position
 
-				if not flag_2 then
-					local world_position = var_13_31.world_position
+				if update then
+					local world_position = marker.world_position
 
-					if not world_position then
-						var_13_36 = world_position:unbox()
+					if world_position then
+						marker_position = world_position:unbox()
 					else
-						local unit = var_13_31.unit
+						local unit = marker.unit
 
-						if not Unit.alive(unit) then
-							local unit_node = var_13_23.unit_node
-							local node
+						if Unit.alive(unit) then
+							local unit_node = settings.unit_node
+							local node_2
 
-							if not unit_node then
-								node = Unit.node(unit, unit_node)
+							if unit_node then
+								node_2 = Unit.node(unit, unit_node)
 
-								if not node then
+								if not node_2 then
 									-- Nothing
 								end
 							end
 
-							node = 0
+							node_2 = 0
+
+							local node = node_2
 
 							::label_13_0::
 
-							var_13_36 = Unit.world_position(unit, node)
+							marker_position = Unit.world_position(unit, node)
 						else
-							flag_3 = true
+							remove = true
 						end
 					end
 
-					if not life_time then
-						local duration = var_13_31.duration
+					if life_time then
+						local duration_2 = marker.duration
 
-						duration = duration or 0
+						if not duration_2 then
+							-- Nothing
+						end
 
-						local min = math.min(duration + arg_13_1, life_time)
+						duration_2 = 0
 
-						if life_time <= min then
-							flag_3 = true
+						local duration = duration_2
+
+						::label_13_1::
+
+						duration = math.min(duration + dt, life_time)
+
+						if life_time <= duration then
+							remove = true
 						else
-							var_13_31.duration = min
+							marker.duration = duration
 						end
 					end
 				end
 
-				if not flag_3 then
-					flag_2 = false
-					tbl[#tbl + 1] = var_13_31
+				if remove then
+					update = false
+					temp_array_markers_to_remove[#temp_array_markers_to_remove + 1] = marker
 				end
 
-				if not flag_2 then
-					local position_offset = var_13_23.position_offset
+				if update then
+					local position_offset = settings.position_offset
 
-					if not position_offset then
-						var_13_36.x = var_13_36.x + position_offset[1]
-						var_13_36.y = var_13_36.y + position_offset[2]
-						var_13_36.z = var_13_36.z + position_offset[3]
+					if position_offset then
+						marker_position.x = marker_position.x + position_offset[1]
+						marker_position.y = marker_position.y + position_offset[2]
+						marker_position.z = marker_position.z + position_offset[3]
 					end
 
-					var_13_31.position = var_13_36
+					marker.position = marker_position
 
-					local distance = Vector3.distance(var_13_36, local_position)
+					local distance = Vector3.distance(marker_position, camera_position)
 
 					content.distance = distance
 
-					local flag_4 = not max_distance and max_distance < distance
-					local flag_5 = false
-					local flag_6 = not flag_4
+					local out_of_reach = not not max_distance and max_distance < distance
+					local animating = false
+					local draw = not out_of_reach
 
-					if not flag_4 then
-						local normalize_2 = Vector3.normalize(var_13_36 - local_position)
-						local dot = Vector3.dot(forward_2, normalize_2)
-						local dot_2 = Vector3.dot(normalize, normalize_2)
+					if not out_of_reach then
+						local marker_direction = Vector3.normalize(marker_position - camera_position)
+						local forward_dot_dir = Vector3.dot(camera_direction, marker_direction)
+						local right_vector_dot = Vector3.dot(camera_right_vector, marker_direction)
 
-						content.forward_dot_dir = dot
+						content.forward_dot_dir = forward_dot_dir
 
-						local flag_7 = Camera.inside_frustum(_camera, var_13_36) > 0
-						local cross = Vector3.cross(forward_2, Vector3.up())
-						local dot_3 = Vector3.dot(cross, normalize_2)
-						local atan2 = math.atan2(dot_3, dot)
-						local flag_8
+						local is_inside_frustum = Camera.inside_frustum(camera, marker_position) > 0
+						local camera_left = Vector3.cross(camera_direction, Vector3.up())
+						local left_dot_dir = Vector3.dot(camera_left, marker_direction)
+						local angle = math.atan2(left_dot_dir, forward_dot_dir)
+						local flag
 
-						flag_8 = not (dot < 0) or not true or false
+						if forward_dot_dir < 0 then
+							flag = true
 
-						local flag_9 = var_13_36.z < local_position.z
-						local _convert_world_to_screen_position, var_13_58, var_13_59 = self:_convert_world_to_screen_position(_camera, var_13_36)
-						local flag_10 = false
+							goto label_13_2
+						end
 
-						if not screen_clamp then
-							if var_13_23.screen_clamp_method == "tutorial" then
-								local normalize_3 = Vector3.normalize(Vector3.flat(forward))
-								local normalize_4 = Vector3.normalize(Vector3.flat(normalize_2))
-								local dot_4 = Vector3.dot(normalize_3, normalize_4)
-								local dot_5 = Vector3.dot(normalize, normalize_4)
+						flag = false
 
-								content.forward_dot_flat = dot_4
-								content.right_dot_flat = dot_5
+						local is_behind = flag
 
-								local var_13_65
-								local var_13_66
-								local _tutorial_clamp_to_screen, var_13_68
+						::label_13_2::
 
-								_tutorial_clamp_to_screen, var_13_68, flag_10 = self:_tutorial_clamp_to_screen(_convert_world_to_screen_position, var_13_58, dot_4, dot_5, var_13_23)
+						local is_under = marker_position.z < camera_position.z
+						local x, y, distance_from_camera = self:_convert_world_to_screen_position(camera, marker_position)
+						local is_clamped = false
 
-								local _lerp_speed = content._lerp_speed
+						if screen_clamp then
+							if settings.screen_clamp_method == "tutorial" then
+								local camera_forward_vector = Vector3.normalize(Vector3.flat(camera_forward))
+								local direction_flat = Vector3.normalize(Vector3.flat(marker_direction))
+								local forward_dot_flat = Vector3.dot(camera_forward_vector, direction_flat)
+								local right_dot_flat = Vector3.dot(camera_right_vector, direction_flat)
 
-								if not (not _lerp_speed and flag_10 == content.is_clamped) then
-									_lerp_speed = 0
+								content.forward_dot_flat = forward_dot_flat
+								content.right_dot_flat = right_dot_flat
+
+								local clamped_x, clamped_y
+
+								clamped_x, clamped_y, is_clamped = self:_tutorial_clamp_to_screen(x, y, forward_dot_flat, right_dot_flat, settings)
+
+								local lerp_speed = content._lerp_speed
+
+								if not lerp_speed or is_clamped ~= content.is_clamped then
+									lerp_speed = 0
 								end
 
-								local min_2 = math.min(_lerp_speed + arg_13_1, 1)
+								lerp_speed = math.min(lerp_speed + dt, 1)
+
 								local offset = widget.offset
 
-								_convert_world_to_screen_position = math.lerp(offset[1], _tutorial_clamp_to_screen, min_2)
-								var_13_58 = math.lerp(offset[2], var_13_68, min_2)
-								content._lerp_speed = min_2
+								x = math.lerp(offset[1], clamped_x, lerp_speed)
+								y = math.lerp(offset[2], clamped_y, lerp_speed)
+								content._lerp_speed = lerp_speed
 							else
-								_convert_world_to_screen_position, var_13_58, flag_10 = self:_normal_clamp_to_screen(_convert_world_to_screen_position, var_13_58, screen_margins, flag_8, flag_9, var_13_36, num_3, num_4, right_2, up_2, num_5)
+								x, y, is_clamped = self:_normal_clamp_to_screen(x, y, screen_margins, is_behind, is_under, marker_position, camera_position_center, camera_position_left, camera_position_right, camera_position_up, camera_position_down)
 							end
 						end
 
-						if not flag_10 then
-							if not ((only_when_clamped or not flag_8) and draw_behind) then
-								flag_6 = false
-							elseif not flag_7 then
-								local get_size_scaled = UISceneGraph.get_size_scaled(ui_scenegraph, "root")
-								local var_13_73
-								local var_13_74
+						if not is_clamped then
+							if only_when_clamped or is_behind and not draw_behind then
+								draw = false
+							elseif not is_inside_frustum then
+								local root_size = UISceneGraph.get_size_scaled(ui_scenegraph, "root")
+								local vertical_pixel_overlap, horizontal_pixel_overlap
 
-								if _convert_world_to_screen_position < 0 then
-									var_13_74 = math.abs(_convert_world_to_screen_position)
-								elseif _convert_world_to_screen_position > get_size_scaled[1] then
-									var_13_74 = _convert_world_to_screen_position - get_size_scaled[1]
+								if x < 0 then
+									horizontal_pixel_overlap = math.abs(x)
+								elseif x > root_size[1] then
+									horizontal_pixel_overlap = x - root_size[1]
 								end
 
-								if var_13_58 < 0 then
-									var_13_73 = math.abs(var_13_58)
-								elseif var_13_58 > get_size_scaled[2] then
-									var_13_73 = var_13_58 - get_size_scaled[2]
+								if y < 0 then
+									vertical_pixel_overlap = math.abs(y)
+								elseif y > root_size[2] then
+									vertical_pixel_overlap = y - root_size[2]
 								end
 
-								if var_13_73 or not var_13_74 then
-									flag_6 = false
+								if vertical_pixel_overlap or horizontal_pixel_overlap then
+									draw = false
 
-									local check_widget_visible = var_13_23.check_widget_visible
+									local check_widget_visible = settings.check_widget_visible
 
-									if not check_widget_visible then
-										flag_6 = check_widget_visible(widget, var_13_73, var_13_74)
+									if check_widget_visible then
+										draw = check_widget_visible(widget, vertical_pixel_overlap, horizontal_pixel_overlap)
 									end
 								else
-									flag_6 = false
+									draw = false
 								end
 							end
 						end
 
-						content.is_inside_frustum = flag_7
-						content.is_clamped = flag_10
-						content.is_under = flag_9
+						content.is_inside_frustum = is_inside_frustum
+						content.is_clamped = is_clamped
+						content.is_under = is_under
 						content.distance = distance
-						content.angle = atan2
+						content.angle = angle
 
-						local offset_2 = widget.offset
+						local offset = widget.offset
 
-						offset_2[1] = _convert_world_to_screen_position
-						offset_2[2] = var_13_58
+						offset[1] = x
+						offset[2] = y
 
-						if not flag_6 and not check_line_of_sight then
-							local raycast_frame_count = var_13_31.raycast_frame_count
+						if draw and check_line_of_sight then
+							local raycast_frame_count = marker.raycast_frame_count
 
-							raycast_frame_count = raycast_frame_count or 0
-							var_13_31.raycast_frame_count = raycast_frame_count + 1
+							raycast_frame_count = not not raycast_frame_count or not not 0
+							marker.raycast_frame_count = raycast_frame_count + 1
 
-							if not flag then
-								tbl_2[#tbl_2 + 1] = var_13_31
+							if raycasts_allowed then
+								temp_marker_raycast_queue[#temp_marker_raycast_queue + 1] = marker
 							end
 						end
 					end
 
-					var_13_31.draw = flag_6
-					content.do_update = not flag_4
+					marker.draw = draw
+					content.do_update = not out_of_reach
 				end
 			end
 		end
 
-		if not flag then
-			local count = #tbl_2
+		if raycasts_allowed then
+			local num_raycast_queue = #temp_marker_raycast_queue
 
-			if count > 1 then
-				table.sort(tbl_2, fn)
+			if num_raycast_queue > 1 then
+				table.sort(temp_marker_raycast_queue, raycast_sort_func)
 			end
 
-			for l = 1, count do
-				if l > num then
+			for i = 1, num_raycast_queue do
+				if i > RAYCASTS_PER_FRAME then
 					break
 				end
 
-				local var_13_79 = tbl_2[l]
+				local marker = temp_marker_raycast_queue[i]
+				local result = self:_raycast_marker(marker)
 
-				var_13_79.raycast_result, var_13_79.raycast_frame_count = self:_raycast_marker(var_13_79), 0
+				marker.raycast_frame_count = 0
+				marker.raycast_result = result
 			end
 
-			table.clear(tbl_2)
+			table.clear(temp_marker_raycast_queue)
 		end
 
-		local flag_11 = not ScriptUnit.has_extension(player_unit, "status_system"):get_is_aiming()
-		local max = math.max(0.25, UIUtils.animate_value(self._aiming_alpha_multiplier, arg_13_1 * 5, flag_11))
+		local status_extension = ScriptUnit.has_extension(player_unit, "status_system")
+		local is_not_aiming = not status_extension:get_is_aiming()
+		local alpha_multiplier = math.max(0.25, UIUtils.animate_value(self._aiming_alpha_multiplier, dt * 5, is_not_aiming))
 
-		self._aiming_alpha_multiplier = max
+		self._aiming_alpha_multiplier = alpha_multiplier
 
-		UIRenderer.begin_pass(ui_renderer, ui_scenegraph, get_service, arg_13_1, nil, _render_settings)
+		UIRenderer.begin_pass(ui_renderer, ui_scenegraph, input_service, dt, nil, render_settings)
 
-		for k_3, v_2 in pairs(_markers_by_type) do
-			local var_13_82 = WorldMarkerTemplates[k_3]
+		for marker_type, markers in pairs(markers_by_type) do
+			local settings = WorldMarkerTemplates[marker_type]
 
-			for i6 = 1, #v_2 do
-				local var_13_83 = v_2[i6]
-				local widget_2 = var_13_83.widget
-				local content_2 = widget_2.content
-				local distance_2 = content_2.distance
-				local draw = var_13_83.draw
-				local flag_12 = false
-				local scale_settings = var_13_82.scale_settings
-				local update_function = var_13_82.update_function
+			for i = 1, #markers do
+				local marker = markers[i]
+				local widget = marker.widget
+				local content = widget.content
+				local distance = content.distance
+				local draw = marker.draw
+				local animating = false
+				local scale_settings = settings.scale_settings
+				local update_function = settings.update_function
 
-				if not content_2.do_update and not update_function then
-					flag_12 = update_function(ui_renderer, widget_2, var_13_83, var_13_82, arg_13_1, arg_13_2)
+				if content.do_update and update_function then
+					animating = update_function(ui_renderer, widget, marker, settings, dt, t)
 				end
 
-				if flag_12 or not scale_settings then
-					local _get_scale = self:_get_scale(scale_settings, distance_2)
+				if not animating and scale_settings then
+					local scale = self:_get_scale(scale_settings, distance)
 
-					self:_apply_scale(widget_2, _get_scale)
+					self:_apply_scale(widget, scale)
 				end
 
-				if not draw then
-					local alpha_multiplier = widget_2.alpha_multiplier
+				if draw then
+					local alpha_multiplier_2 = widget.alpha_multiplier
 
-					alpha_multiplier = alpha_multiplier or 1
-
-					if not var_13_82.ignore_aiming then
-						alpha_multiplier = alpha_multiplier * max
+					if not alpha_multiplier_2 then
+						-- Nothing
 					end
 
-					_render_settings.alpha_multiplier = alpha_multiplier
+					alpha_multiplier_2 = 1
 
-					UIRenderer.draw_widget(ui_renderer, widget_2)
+					local widget_alpha_multiplier = alpha_multiplier_2
+
+					::label_13_3::
+
+					if not settings.ignore_aiming then
+						widget_alpha_multiplier = widget_alpha_multiplier * alpha_multiplier
+					end
+
+					render_settings.alpha_multiplier = widget_alpha_multiplier
+
+					UIRenderer.draw_widget(ui_renderer, widget)
 				end
 			end
 		end
 
 		UIRenderer.end_pass(ui_renderer)
 	else
-		local str = "player_1"
-		local _game_world = self._game_world
+		local viewport_name = "player_1"
+		local game_world = self._game_world
 
-		if not Managers.state.camera:has_viewport(str) then
-			local viewport = ScriptWorld.viewport(_game_world, str)
+		if Managers.state.camera:has_viewport(viewport_name) then
+			local viewport = ScriptWorld.viewport(game_world, viewport_name)
 
 			self._camera = ScriptViewport.camera(viewport)
 		end
 	end
 
-	local count_2 = #tbl
+	local markers_to_remove = #temp_array_markers_to_remove
 
-	if count_2 > 0 then
-		for i7 = 1, count_2 do
-			local var_13_97 = tbl[i7]
+	if markers_to_remove > 0 then
+		for i = 1, markers_to_remove do
+			local marker = temp_array_markers_to_remove[i]
 
-			self:_unregister_marker(var_13_97)
+			self:_unregister_marker(marker)
 		end
 
-		table.clear(tbl)
+		table.clear(temp_array_markers_to_remove)
 	end
 end
 
-WorldMarkerUI._raycast_marker = function (self, arg_14_1)
+WorldMarkerUI._raycast_marker = function (self, marker)
 	-- function 14
-	local content = arg_14_1.widget.content
-	local position = arg_14_1.position
+	local widget = marker.widget
+	local content = widget.content
+	local marker_position = marker.position
 	local distance = content.distance
-	local world = Managers.world
-	local str = "level_world"
+	local world_manager = Managers.world
+	local world_name = "level_world"
 
-	if not world:has_world(str) then
+	if not world_manager:has_world(world_name) then
 		return
 	end
 
-	local world_2 = world:world(str)
-	local get_data = World.get_data(world_2, "physics_world")
-	local _camera = self._camera
-	local local_position = Camera.local_position(_camera)
-	local local_rotation = Camera.local_rotation(_camera)
+	local world = world_manager:world(world_name)
+	local physics_world = World.get_data(world, "physics_world")
+	local camera = self._camera
+	local camera_position = Camera.local_position(camera)
+	local camera_rotation = Camera.local_rotation(camera)
 
-	return PhysicsWorld.immediate_raycast(get_data, local_position, Vector3.normalize(position - local_position), distance, "closest", "collision_filter", "filter_physics_projectile")
+	return PhysicsWorld.immediate_raycast(physics_world, camera_position, Vector3.normalize(marker_position - camera_position), distance, "closest", "collision_filter", "filter_physics_projectile")
 end
 
-WorldMarkerUI._get_scale = function (arg_15_0, arg_15_1, arg_15_2)
+WorldMarkerUI._get_scale = function (self, settings, distance)
 	-- function 15
-	local min_scale = arg_15_1.min_scale
-	local start_scale_distance = arg_15_1.start_scale_distance
-	local end_scale_distance = arg_15_1.end_scale_distance
+	local min_scale = settings.min_scale
+	local start_scale_distance = settings.start_scale_distance
+	local end_scale_distance = settings.end_scale_distance
 
-	if start_scale_distance < arg_15_2 then
-		local num = arg_15_2 - start_scale_distance
-		local min = math.min(end_scale_distance, num)
-		local max = math.max(0, min)
+	if start_scale_distance < distance then
+		local scale_distance = distance - start_scale_distance
+		local distance = math.min(end_scale_distance, scale_distance)
 
-		return (math.max(min_scale, 1 - max / end_scale_distance))
+		distance = math.max(0, distance)
+
+		local scale = math.max(min_scale, 1 - distance / end_scale_distance)
+
+		return scale
 	end
 
 	return 1
 end
 
-WorldMarkerUI._apply_scale = function (arg_16_0, arg_16_1, arg_16_2)
+WorldMarkerUI._apply_scale = function (self, widget, scale)
 	-- function 16
-	local style = arg_16_1.style
+	local style = widget.style
+	local content = widget.content
 
-	arg_16_1.content.scale = arg_16_2
+	content.scale = scale
 
-	local num = 0.2
+	local lerp_multiplier = 0.2
 
-	for k, v in pairs(style) do
-		local default_size = v.default_size
+	for _, pass_style in pairs(style) do
+		local default_size = pass_style.default_size
 
-		if not default_size then
-			local area_size = v.area_size
+		if default_size then
+			local area_size = pass_style.area_size
 
 			if not area_size then
-				area_size = v.texture_size
-				area_size = area_size or v.size
+				-- Nothing
 			end
 
-			area_size[1] = math.lerp(area_size[1], default_size[1] * arg_16_2, num)
-			area_size[2] = math.lerp(area_size[2], default_size[2] * arg_16_2, num)
+			area_size = pass_style.texture_size
+
+			if not area_size then
+				-- Nothing
+			end
+
+			area_size = pass_style.size
+
+			local current_size = area_size
+
+			::label_16_0::
+
+			current_size[1] = math.lerp(current_size[1], default_size[1] * scale, lerp_multiplier)
+			current_size[2] = math.lerp(current_size[2], default_size[2] * scale, lerp_multiplier)
 		end
 
-		local animation_offset = v.animation_offset
-
-		animation_offset = animation_offset or v.default_offset
+		local animation_offset = pass_style.animation_offset
 
 		if not animation_offset then
-			local offset = v.offset
+			-- Nothing
+		end
 
-			offset[1] = math.lerp(offset[1], animation_offset[1] * arg_16_2, num)
-			offset[2] = math.lerp(offset[2], animation_offset[2] * arg_16_2, num)
+		animation_offset = pass_style.default_offset
 
-			local offset_2 = v.offset
+		local source_offset = animation_offset
+
+		::label_16_1::
+
+		if source_offset then
+			local offset = pass_style.offset
+
+			offset[1] = math.lerp(offset[1], source_offset[1] * scale, lerp_multiplier)
+			offset[2] = math.lerp(offset[2], source_offset[2] * scale, lerp_multiplier)
+
+			local offset = pass_style.offset
 		end
 	end
 end
 
-WorldMarkerUI._convert_world_to_screen_position = function (arg_17_0, arg_17_1, arg_17_2)
+WorldMarkerUI._convert_world_to_screen_position = function (self, camera, world_position)
 	-- function 17
-	if not arg_17_1 then
-		local world_to_screen, var_17_1 = Camera.world_to_screen(arg_17_1, arg_17_2)
+	if camera then
+		local world_to_screen, distance = Camera.world_to_screen(camera, world_position)
 		local inv_scale = RESOLUTION_LOOKUP.inv_scale
 
-		return world_to_screen.x * inv_scale, world_to_screen.y * inv_scale, var_17_1
+		return world_to_screen.x * inv_scale, world_to_screen.y * inv_scale, distance
 	end
 end
 
-WorldMarkerUI._normal_clamp_to_screen = function (self, arg_18_1, arg_18_2, arg_18_3, arg_18_4, arg_18_5, arg_18_6, arg_18_7, arg_18_8, arg_18_9, arg_18_10, arg_18_11)
+WorldMarkerUI._normal_clamp_to_screen = function (self, x, y, screen_margins, is_behind, is_under, world_position, camera_position_center, camera_position_left, camera_position_right, camera_position_up, camera_position_down)
 	-- function 18
-	local get_size_scaled = UISceneGraph.get_size_scaled(self.ui_scenegraph, "root")
+	local root_size = UISceneGraph.get_size_scaled(self.ui_scenegraph, "root")
 	local up
 
-	if not arg_18_3 then
-		up = arg_18_3.up
+	if screen_margins then
+		up = screen_margins.up
 
 		if not up then
 			-- Nothing
@@ -684,14 +784,16 @@ WorldMarkerUI._normal_clamp_to_screen = function (self, arg_18_1, arg_18_2, arg_
 
 	up = 0
 
+	local margin_up = up
+
 	do
 		local down
 	end
 
 	::label_18_0::
 
-	if not arg_18_3 then
-		down = arg_18_3.down
+	if screen_margins then
+		down = screen_margins.down
 
 		if not down then
 			-- Nothing
@@ -700,14 +802,16 @@ WorldMarkerUI._normal_clamp_to_screen = function (self, arg_18_1, arg_18_2, arg_
 
 	down = 0
 
+	local margin_down = down
+
 	do
 		local left
 	end
 
 	::label_18_1::
 
-	if not arg_18_3 then
-		left = arg_18_3.left
+	if screen_margins then
+		left = screen_margins.left
 
 		if not left then
 			-- Nothing
@@ -716,14 +820,16 @@ WorldMarkerUI._normal_clamp_to_screen = function (self, arg_18_1, arg_18_2, arg_
 
 	left = 0
 
+	local margin_left = left
+
 	do
 		local right
 	end
 
 	::label_18_2::
 
-	if not arg_18_3 then
-		right = arg_18_3.right
+	if screen_margins then
+		right = screen_margins.right
 
 		if not right then
 			-- Nothing
@@ -732,107 +838,108 @@ WorldMarkerUI._normal_clamp_to_screen = function (self, arg_18_1, arg_18_2, arg_
 
 	right = 0
 
+	local margin_right = right
+
 	::label_18_3::
 
-	local max = math.max(left, math.min(arg_18_1, get_size_scaled[1] - right))
-	local max_2 = math.max(down, math.min(arg_18_2, get_size_scaled[2] - up))
-	local flag = max ~= arg_18_1 or max_2 ~= arg_18_2 or arg_18_4
+	local clamped_x = math.max(margin_left, math.min(x, root_size[1] - margin_right))
+	local clamped_y = math.max(margin_down, math.min(y, root_size[2] - margin_up))
+	local is_clamped = clamped_x ~= x or clamped_y ~= y or not not is_behind
 
-	if not arg_18_4 then
-		local distance = Vector3.distance(Vector3.flat(arg_18_6), Vector3.flat(arg_18_7 + arg_18_8))
-		local distance_2 = Vector3.distance(Vector3.flat(arg_18_6), Vector3.flat(arg_18_7 + arg_18_9))
-		local num = distance - distance_2
-		local num_2 = math.abs(num) / 2
-		local distance_3 = Vector3.distance(Vector3.flat(arg_18_6), Vector3.flat(arg_18_7 + arg_18_10))
-		local distance_4 = Vector3.distance(Vector3.flat(arg_18_6), Vector3.flat(arg_18_7 + arg_18_11))
-		local num_3 = (distance_3 - distance_4) / 2
-		local num_4 = math.abs(num_3) / 1 - 1
+	if is_behind then
+		local camera_distance_left = Vector3.distance(Vector3.flat(world_position), Vector3.flat(camera_position_center + camera_position_left))
+		local camera_distance_right = Vector3.distance(Vector3.flat(world_position), Vector3.flat(camera_position_center + camera_position_right))
+		local camera_distances_difference_horizontal = camera_distance_left - camera_distance_right
+		local x_percent = math.abs(camera_distances_difference_horizontal) / 2
+		local camera_distance_up = Vector3.distance(Vector3.flat(world_position), Vector3.flat(camera_position_center + camera_position_up))
+		local camera_distance_down = Vector3.distance(Vector3.flat(world_position), Vector3.flat(camera_position_center + camera_position_down))
+		local camera_distances_difference_vertical = (camera_distance_up - camera_distance_down) / 2
+		local y_percent = math.abs(camera_distances_difference_vertical) / 1 - 1
 
-		if distance < distance_2 then
-			max = math.lerp(left, (get_size_scaled[1] - right) * 0.5, 1 - num_2)
+		if camera_distance_left < camera_distance_right then
+			clamped_x = math.lerp(margin_left, (root_size[1] - margin_right) * 0.5, 1 - x_percent)
 		else
-			max = math.lerp((get_size_scaled[1] - right) * 0.5, get_size_scaled[1] - right, num_2)
+			clamped_x = math.lerp((root_size[1] - margin_right) * 0.5, root_size[1] - margin_right, x_percent)
 		end
 
-		if distance_3 < distance_4 then
-			max_2 = math.lerp(down, (get_size_scaled[2] - up) * 0.5, 1 - num_4)
+		if camera_distance_up < camera_distance_down then
+			clamped_y = math.lerp(margin_down, (root_size[2] - margin_up) * 0.5, 1 - y_percent)
 		else
-			max_2 = math.lerp((get_size_scaled[2] - up) * 0.5, get_size_scaled[2] - up, num_4)
+			clamped_y = math.lerp((root_size[2] - margin_up) * 0.5, root_size[2] - margin_up, y_percent)
 		end
 
-		if not arg_18_5 then
-			max_2 = max_2 * -1
+		if is_under then
+			clamped_y = clamped_y * -1
 		end
 
-		if not (left <= max or not (max <= get_size_scaled[2] - right)) then
-			if not (max_2 > get_size_scaled[2] / 2 or arg_18_5) then
-				max_2 = get_size_scaled[2] - up
+		if margin_left <= clamped_x or clamped_x <= root_size[2] - margin_right then
+			if clamped_y > root_size[2] / 2 or not is_under then
+				clamped_y = root_size[2] - margin_up
 			else
-				max_2 = down
+				clamped_y = margin_down
 			end
 		end
 	end
 
-	return max, max_2, flag
+	return clamped_x, clamped_y, is_clamped
 end
 
-WorldMarkerUI._is_clamped = function (self, arg_19_1, arg_19_2)
+WorldMarkerUI._is_clamped = function (self, x, y)
 	-- function 19
-	local get_size_scaled = UISceneGraph.get_size_scaled(self.ui_scenegraph, "root")
+	local root_size = UISceneGraph.get_size_scaled(self.ui_scenegraph, "root")
 	local scale = RESOLUTION_LOOKUP.scale
-	local num = get_size_scaled[1] * scale
-	local num_2 = get_size_scaled[2] * scale
-	local num_3 = get_size_scaled[1] * 0.5
-	local num_4 = get_size_scaled[2] * 0.5
-	local res_w = RESOLUTION_LOOKUP.res_w
-	local res_h = RESOLUTION_LOOKUP.res_h
-	local num_5 = res_w * 0.5
-	local num_6 = res_h * 0.5
-	local num_7 = arg_19_1 - num_5
-	local num_8 = num_6 - arg_19_2
-	local flag = false
-	local flag_2 = false
+	local scaled_root_size_x = root_size[1] * scale
+	local scaled_root_size_y = root_size[2] * scale
+	local scaled_root_size_x_half = root_size[1] * 0.5
+	local scaled_root_size_y_half = root_size[2] * 0.5
+	local screen_width, screen_height = RESOLUTION_LOOKUP.res_w, RESOLUTION_LOOKUP.res_h
+	local center_x = screen_width * 0.5
+	local center_y = screen_height * 0.5
+	local x_diff = x - center_x
+	local y_diff = center_y - y
+	local is_x_clamped = false
+	local is_y_clamped = false
 
-	if math.abs(num_7) > num_3 * 0.9 then
-		flag = true
+	if math.abs(x_diff) > scaled_root_size_x_half * 0.9 then
+		is_x_clamped = true
 	end
 
-	if math.abs(num_8) > num_4 * 0.9 then
-		flag_2 = true
+	if math.abs(y_diff) > scaled_root_size_y_half * 0.9 then
+		is_y_clamped = true
 	end
 
-	local flag_3
+	local flag
 
-	flag_3 = flag or not flag_2 or true or false
+	flag = (is_x_clamped or is_y_clamped) and not not true or not not false
 
-	return flag_3
+	return flag
 end
 
-WorldMarkerUI._tutorial_clamp_to_screen = function (arg_20_0, arg_20_1, arg_20_2, arg_20_3, arg_20_4, arg_20_5)
+WorldMarkerUI._tutorial_clamp_to_screen = function (self, x, y, forward_dot, right_dot, settings)
 	-- function 20
-	local RESOLUTION_LOOKUP = RESOLUTION_LOOKUP
-	local scale = RESOLUTION_LOOKUP.scale
-	local num = RESOLUTION_LOOKUP.res_w * 0.5
-	local num_2 = RESOLUTION_LOOKUP.res_h * 0.5
-	local flag = math.abs(arg_20_1 * scale - num) > num * 0.9
-	local flag_2 = math.abs(num_2 - arg_20_2 * scale) > num_2 * 0.9
-	local flag_3 = flag or flag_2 or arg_20_3 < 0
+	local resolution_lookup = RESOLUTION_LOOKUP
+	local scale = resolution_lookup.scale
+	local screen_x_half = resolution_lookup.res_w * 0.5
+	local screen_y_half = resolution_lookup.res_h * 0.5
+	local is_x_clamped = math.abs(x * scale - screen_x_half) > screen_x_half * 0.9
+	local is_y_clamped = math.abs(screen_y_half - y * scale) > screen_y_half * 0.9
+	local is_clamped = not not is_x_clamped or not not is_y_clamped or forward_dot < 0
 
-	if not flag_3 then
-		local inv_scale = RESOLUTION_LOOKUP.inv_scale
-		local distance_from_center = arg_20_5.distance_from_center
+	if is_clamped then
+		local inverse_scale = resolution_lookup.inv_scale
+		local distance_from_center = settings.distance_from_center
 
-		arg_20_1 = inv_scale * num + arg_20_4 * distance_from_center.width
-		arg_20_2 = inv_scale * num_2 + arg_20_3 * distance_from_center.height
+		x = inverse_scale * screen_x_half + right_dot * distance_from_center.width
+		y = inverse_scale * screen_y_half + forward_dot * distance_from_center.height
 	end
 
-	return arg_20_1, arg_20_2, flag_3
+	return x, y, is_clamped
 end
 
-local num_3 = 1
-local num_4 = 2
-local num_5 = 3
-local num_6 = 4
+local INDEX_POSITION = 1
+local INDEX_DISTANCE = 2
+local INDEX_NORMAL = 3
+local INDEX_ACTOR = 4
 
 WorldMarkerUI._test_raycast = function (self)
 	-- function 21
@@ -842,69 +949,73 @@ WorldMarkerUI._test_raycast = function (self)
 		return
 	end
 
-	local str = "ping"
+	local input_action = "ping"
+	local input_service = self.input_manager:get_service("Player")
+	local input_pressed = input_service:get(input_action)
 
-	if not self.input_manager:get_service("Player"):get(str) then
+	if input_pressed then
 		self._broadphase = Broadphase(255, 15)
 		self._broadphase_ids = {}
 
-		local str_2 = "climbing"
-		local level_jump_units = Managers.state.entity:system("nav_graph_system"):level_jump_units()
-		local num = 0
+		local marker_type = "climbing"
+		local nav_graph_system = Managers.state.entity:system("nav_graph_system")
+		local jump_units = nav_graph_system:level_jump_units()
+		local num_units = 0
 
-		for k, v in pairs(level_jump_units) do
-			if not Unit.alive(k) then
-				local world_position = Unit.world_position(k, 0)
-				local add = Broadphase.add(self._broadphase, k, world_position, 1)
+		for unit, _ in pairs(jump_units) do
+			if Unit.alive(unit) then
+				local world_position = Unit.world_position(unit, 0)
+				local id = Broadphase.add(self._broadphase, unit, world_position, 1)
 
-				self._broadphase_ids[add] = k
-				num = num + 1
+				self._broadphase_ids[id] = unit
+				num_units = num_units + 1
 			end
 		end
 
-		local _camera = self._camera
-		local local_position = Camera.local_position(_camera)
-		local tbl = {}
-		local query = Broadphase.query(self._broadphase, local_position, 10, tbl)
+		local camera = self._camera
+		local camera_position = Camera.local_position(camera)
+		local broadphase_results = {}
+		local num_hits = Broadphase.query(self._broadphase, camera_position, 10, broadphase_results)
 
-		print("num_hits", query, num)
+		print("num_hits", num_hits, num_units)
 
-		for k_2 = 1, query do
-			local var_21_11 = tbl[k_2]
+		for i = 1, num_hits do
+			local unit = broadphase_results[i]
 
-			self:event_add_world_marker_unit(str_2, var_21_11)
+			self:event_add_world_marker_unit(marker_type, unit)
 		end
 	end
 end
 
-WorldMarkerUI._get_raycast_position = function (self, arg_22_1, arg_22_2, arg_22_3, arg_22_4, arg_22_5)
+WorldMarkerUI._get_raycast_position = function (self, unit, from, to, physics_world, collision_filter)
 	-- function 22
-	local immediate_raycast = PhysicsWorld.immediate_raycast(arg_22_4, arg_22_2, arg_22_3, 100, "all", "collision_filter", arg_22_5)
+	local result = PhysicsWorld.immediate_raycast(physics_world, from, to, 100, "all", "collision_filter", collision_filter)
 
-	if not immediate_raycast then
+	if not result then
 		return
 	end
 
-	local huge = math.huge
-	local var_22_2
+	local closest_distance = math.huge
+	local closest_hit
 	local owner_unit = self.owner_unit
-	local count = #immediate_raycast
+	local num_hits = #result
 
-	for i = 1, count do
-		local var_22_5 = immediate_raycast[i]
-		local var_22_6 = var_22_5[num_3]
-		local var_22_7 = var_22_5[num_4]
-		local var_22_8 = var_22_5[num_5]
-		local var_22_9 = var_22_5[num_6]
-		local unit = Actor.unit(var_22_9)
+	for i = 1, num_hits do
+		local hit = result[i]
+		local hit_position = hit[INDEX_POSITION]
+		local hit_distance = hit[INDEX_DISTANCE]
+		local hit_normal = hit[INDEX_NORMAL]
+		local hit_actor = hit[INDEX_ACTOR]
+		local hit_unit = Actor.unit(hit_actor)
+		local hit_self = hit_unit == unit or hit_unit == owner_unit
 
-		if not (unit == arg_22_1 or unit == owner_unit or not (var_22_7 < huge)) then
-			huge = var_22_7
-			var_22_2 = var_22_5
+		if not hit_self and hit_distance < closest_distance then
+			closest_distance = hit_distance
+			closest_hit = hit
 		end
 	end
 
-	if not var_22_2 then
-		return var_22_2[num_3]
+	if closest_hit then
+		return closest_hit[INDEX_POSITION]
 	end
 end

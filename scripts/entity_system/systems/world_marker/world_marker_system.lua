@@ -5,17 +5,17 @@ require("scripts/unit_extensions/world_markers/store_world_marker_extension")
 
 WorldMarkerSystem = class(WorldMarkerSystem, ExtensionSystemBase)
 
-local tbl = {
+local extensions = {
 	"PlayerEquipmentWorldMarkerExtension",
 	"StoreWorldMarkerExtension"
 }
 
-WorldMarkerSystem.init = function (self, arg_1_1, arg_1_2)
+WorldMarkerSystem.init = function (self, entity_system_creation_context, system_name)
 	-- function 1
-	self.super.init(self, arg_1_1, arg_1_2, tbl)
+	self.super.init(self, entity_system_creation_context, system_name, extensions)
 end
 
-WorldMarkerSystem.destroy = function (arg_2_0)
+WorldMarkerSystem.destroy = function (self)
 	-- function 2
 	return
 end

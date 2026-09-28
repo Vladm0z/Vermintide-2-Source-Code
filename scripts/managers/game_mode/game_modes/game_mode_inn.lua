@@ -4,20 +4,20 @@ require("scripts/managers/game_mode/game_modes/game_mode_base")
 require("scripts/managers/game_mode/spawning_components/adventure_spawning")
 require("scripts/managers/game_mode/adventure_profile_rules")
 
-local flag = false
-local flag_2 = false
+local COMPLETE_LEVEL_VAR = false
+local FAIL_LEVEL_VAR = false
 
 GameModeInn = class(GameModeInn, GameModeBase)
 
-GameModeInn.init = function (self, arg_1_1, arg_1_2, ...)
+GameModeInn.init = function (self, settings, world, ...)
 	-- function 1
-	GameModeInn.super.init(self, arg_1_1, arg_1_2, ...)
+	GameModeInn.super.init(self, settings, world, ...)
 
 	self._adventure_profile_rules = AdventureProfileRules:new(self._profile_synchronizer, self._network_server)
 
-	local get_side_from_name = Managers.state.side:get_side_from_name("heroes")
+	local hero_side = Managers.state.side:get_side_from_name("heroes")
 
-	self._adventure_spawning = AdventureSpawning:new(self._profile_synchronizer, get_side_from_name, self._is_server, self._network_server)
+	self._adventure_spawning = AdventureSpawning:new(self._profile_synchronizer, hero_side, self._is_server, self._network_server)
 
 	self:_register_player_spawner(self._adventure_spawning)
 
@@ -33,26 +33,28 @@ GameModeInn.init = function (self, arg_1_1, arg_1_2, ...)
 	self._player_manager = Managers.player
 	self._statistics_db = self._player_manager:statistics_db()
 
-	Managers.state.event:register(self, "level_start_local_player_spawned", "event_local_player_spawned")
+	local event_manager = Managers.state.event
+
+	event_manager:register(self, "level_start_local_player_spawned", "event_local_player_spawned")
 
 	self._local_player_spawned = false
 end
 
-GameModeInn.destroy = function (arg_2_0)
+GameModeInn.destroy = function (self)
 	-- function 2
-	local event = Managers.state.event
+	local event_manager = Managers.state.event
 
-	if not event then
-		event:unregister("level_start_local_player_spawned", arg_2_0)
+	if event_manager then
+		event_manager:unregister("level_start_local_player_spawned", self)
 	end
 end
 
-GameModeInn.register_rpcs = function (self, arg_3_1, arg_3_2)
+GameModeInn.register_rpcs = function (self, network_event_delegate, network_transmit)
 	-- function 3
-	GameModeInn.super.register_rpcs(self, arg_3_1, arg_3_2)
-	self._adventure_spawning:register_rpcs(arg_3_1, arg_3_2)
+	GameModeInn.super.register_rpcs(self, network_event_delegate, network_transmit)
+	self._adventure_spawning:register_rpcs(network_event_delegate, network_transmit)
 
-	self._network_event_delegate = arg_3_1
+	self._network_event_delegate = network_event_delegate
 
 	self._network_event_delegate:register(self, "rpc_waystone_active")
 end
@@ -67,81 +69,83 @@ GameModeInn.unregister_rpcs = function (self)
 	GameModeInn.super.unregister_rpcs(self)
 end
 
-GameModeInn.update = function (self, arg_5_1, arg_5_2)
+GameModeInn.update = function (self, t, dt)
 	-- function 5
 	self:_update_objectives()
-	self._adventure_spawning:update(arg_5_1, arg_5_2)
+	self._adventure_spawning:update(t, dt)
 end
 
-GameModeInn.server_update = function (self, arg_6_1, arg_6_2)
+GameModeInn.server_update = function (self, t, dt)
 	-- function 6
-	self._adventure_spawning:server_update(arg_6_1, arg_6_2)
+	self._adventure_spawning:server_update(t, dt)
 end
 
-GameModeInn.evaluate_end_conditions = function (self, arg_7_1)
+GameModeInn.evaluate_end_conditions = function (self, round_started)
 	-- function 7
-	if not flag then
-		flag = false
+	if COMPLETE_LEVEL_VAR then
+		COMPLETE_LEVEL_VAR = false
 
 		return true, "won"
 	end
 
-	if not self:_is_time_up() then
+	if self:_is_time_up() then
 		return true, "reload"
 	end
 
-	if not flag_2 then
-		flag_2 = false
+	if FAIL_LEVEL_VAR then
+		FAIL_LEVEL_VAR = false
 
 		return true, "lost"
 	end
 
-	if not self:update_end_level_areas() then
+	if self:update_end_level_areas() then
 		return true, "start_game"
-	elseif not self._level_completed then
+	elseif self._level_completed then
 		return true, "start_game"
 	else
 		return false
 	end
 end
 
-GameModeInn.event_local_player_spawned = function (self, arg_8_1)
+GameModeInn.event_local_player_spawned = function (self, is_initial_spawn)
 	-- function 8
 	self._local_player_spawned = true
-	self._is_initial_spawn = arg_8_1
+	self._is_initial_spawn = is_initial_spawn
 end
 
-GameModeInn.COMPLETE_LEVEL = function (arg_9_0)
+GameModeInn.COMPLETE_LEVEL = function (self)
 	-- function 9
-	flag = true
+	COMPLETE_LEVEL_VAR = true
 end
 
-GameModeInn.FAIL_LEVEL = function (arg_10_0)
+GameModeInn.FAIL_LEVEL = function (self)
 	-- function 10
-	flag_2 = true
+	FAIL_LEVEL_VAR = true
 end
 
-GameModeInn.player_entered_game_session = function (self, arg_11_1, arg_11_2, arg_11_3)
+GameModeInn.player_entered_game_session = function (self, peer_id, local_player_id, requested_party_index)
 	-- function 11
-	GameModeInn.super.player_entered_game_session(self, arg_11_1, arg_11_2, arg_11_3)
+	GameModeInn.super.player_entered_game_session(self, peer_id, local_player_id, requested_party_index)
 
-	if Managers.party:get_player_status(arg_11_1, arg_11_2).party_id ~= 1 then
-		local num = 1
+	local status = Managers.party:get_player_status(peer_id, local_player_id)
 
-		Managers.party:assign_peer_to_party(arg_11_1, arg_11_2, num)
+	if status.party_id ~= 1 then
+		local party_id = 1
+
+		Managers.party:assign_peer_to_party(peer_id, local_player_id, party_id)
 	end
 
-	self._adventure_profile_rules:handle_profile_delegation_for_joining_player(arg_11_1, arg_11_2)
+	self._adventure_profile_rules:handle_profile_delegation_for_joining_player(peer_id, local_player_id)
 end
 
-GameModeInn.flow_callback_add_spawn_point = function (self, arg_12_1)
+GameModeInn.flow_callback_add_spawn_point = function (self, unit)
 	-- function 12
-	self._adventure_spawning:add_spawn_point(arg_12_1)
+	self._adventure_spawning:add_spawn_point(unit)
 end
 
-GameModeInn.respawn_unit_spawned = function (self, arg_13_1)
+GameModeInn.respawn_unit_spawned = function (self, unit)
 	-- function 13
-	self._adventure_spawning:respawn_unit_spawned(arg_13_1)
+	self._adventure_spawning:respawn_unit_spawned(unit)
 end
 
 GameModeInn.get_respawn_handler = function (self)
@@ -149,20 +153,22 @@ GameModeInn.get_respawn_handler = function (self)
 	return self._adventure_spawning:get_respawn_handler()
 end
 
-GameModeInn.respawn_gate_unit_spawned = function (self, arg_15_1)
+GameModeInn.respawn_gate_unit_spawned = function (self, unit)
 	-- function 15
-	self._adventure_spawning:respawn_gate_unit_spawned(arg_15_1)
+	self._adventure_spawning:respawn_gate_unit_spawned(unit)
 end
 
-GameModeInn.force_respawn = function (self, arg_16_1, arg_16_2)
+GameModeInn.force_respawn = function (self, peer_id, local_player_id)
 	-- function 16
-	if Managers.party:get_player_status(arg_16_1, arg_16_2).party_id == 0 then
-		local num = 1
+	local status = Managers.party:get_player_status(peer_id, local_player_id)
 
-		Managers.party:assign_peer_to_party(arg_16_1, arg_16_2, num)
+	if status.party_id == 0 then
+		local party_id = 1
+
+		Managers.party:assign_peer_to_party(peer_id, local_player_id, party_id)
 	end
 
-	self._adventure_spawning:force_respawn(arg_16_1, arg_16_2)
+	self._adventure_spawning:force_respawn(peer_id, local_player_id)
 end
 
 GameModeInn._update_objectives = function (self)
@@ -170,14 +176,14 @@ GameModeInn._update_objectives = function (self)
 	if not self._objective_units then
 		self._objective_units = Managers.state.entity:get_entities("ObjectiveUnitExtension")
 
-		for k, v in pairs(self._objective_units) do
-			local get_data = Unit.get_data(k, "objective_id")
+		for unit, extension in pairs(self._objective_units) do
+			local id = Unit.get_data(unit, "objective_id")
 
-			if not get_data then
-				self._objective_markers[get_data] = k
+			if id then
+				self._objective_markers[id] = unit
 			end
 
-			self:_deactivate_objective_marker(k)
+			self:_deactivate_objective_marker(unit)
 		end
 	else
 		self:_update_objective_marker()
@@ -188,24 +194,24 @@ GameModeInn._update_objective_marker = function (self)
 	-- function 18
 	local is_game_matchmaking = self._matchmaking_manager:is_game_matchmaking()
 
-	if not (not self._show_tutorial and is_game_matchmaking) then
-		local _should_show_tutorial, var_18_2 = self:_should_show_tutorial()
+	if self._show_tutorial and not is_game_matchmaking then
+		local show_tutorial, tutorial_step = self:_should_show_tutorial()
 
-		if not _should_show_tutorial then
-			self:_state_tutorial(var_18_2)
+		if show_tutorial then
+			self:_state_tutorial(tutorial_step)
 		end
 
-		self._show_tutorial = _should_show_tutorial
+		self._show_tutorial = show_tutorial
 	end
 
-	if not is_game_matchmaking then
+	if is_game_matchmaking then
 		self:_state_game_is_matchmaking()
-	elseif not (is_game_matchmaking or self._show_tutorial) then
+	elseif not is_game_matchmaking and not self._show_tutorial then
 		self:_state_choose_map()
 	end
 end
 
-local tbl = {
+local WAYSTONE_TYPE = {
 	"waystone",
 	"waystone",
 	"waystone_weave"
@@ -213,34 +219,34 @@ local tbl = {
 
 GameModeInn._state_game_is_matchmaking = function (self)
 	-- function 19
-	if not self._is_server then
-		local waystone_is_active, var_19_1 = self._matchmaking_manager:waystone_is_active()
+	if self._is_server then
+		local waystone_is_active, waystone_type = self._matchmaking_manager:waystone_is_active()
 
 		if self._waystone_is_active ~= waystone_is_active then
-			Managers.state.network.network_transmit:send_rpc_clients("rpc_waystone_active", var_19_1, waystone_is_active, self._current_waystone_type)
+			Managers.state.network.network_transmit:send_rpc_clients("rpc_waystone_active", waystone_type, waystone_is_active, self._current_waystone_type)
 
 			self._waystone_is_active = waystone_is_active
-			self._waystone_type = var_19_1
+			self._waystone_type = waystone_type
 		end
 	end
 
-	local _current_objective_id = self._current_objective_id
+	local current_objective_id = self._current_objective_id
 
-	if not self._waystone_is_active then
+	if self._waystone_is_active then
 		self._current_waystone_type = self._waystone_type
 
-		local var_19_3 = tbl[self._waystone_type]
+		local unit_id = WAYSTONE_TYPE[self._waystone_type]
 
-		if var_19_3 ~= _current_objective_id then
-			self:_deactivate_objective_marker(_current_objective_id)
-			self:_activate_objective_marker(var_19_3)
+		if unit_id ~= current_objective_id then
+			self:_deactivate_objective_marker(current_objective_id)
+			self:_activate_objective_marker(unit_id)
 		end
-	elseif not _current_objective_id then
-		self:_deactivate_objective_marker(_current_objective_id)
+	elseif current_objective_id then
+		self:_deactivate_objective_marker(current_objective_id)
 	end
 end
 
-local tbl_2 = {
+local MAP_TYPE = {
 	"map",
 	"map",
 	"wom_tutorial_weave_select"
@@ -248,104 +254,108 @@ local tbl_2 = {
 
 GameModeInn._state_choose_map = function (self)
 	-- function 20
-	local _current_objective_id = self._current_objective_id
-	local var_20_1 = tbl_2[self._current_waystone_type]
+	local current_objective_id = self._current_objective_id
+	local unit_id = MAP_TYPE[self._current_waystone_type]
 
-	if not self._is_server and not self._waystone_is_active then
+	if self._is_server and self._waystone_is_active then
 		Managers.state.network.network_transmit:send_rpc_clients("rpc_waystone_active", self._waystone_type, false, self._current_waystone_type)
 
 		self._waystone_is_active = false
 	end
 
-	if var_20_1 ~= _current_objective_id then
-		self:_deactivate_objective_marker(_current_objective_id)
-		self:_activate_objective_marker(var_20_1)
+	if unit_id ~= current_objective_id then
+		self:_deactivate_objective_marker(current_objective_id)
+		self:_activate_objective_marker(unit_id)
 	end
 end
 
 GameModeInn._should_show_tutorial = function (self)
 	-- function 21
-	local local_player = self._player_manager:local_player(1)
+	local player = self._player_manager:local_player(1)
 
-	if not local_player then
-		local stats_id = local_player:stats_id()
-		local get_persistent_stat = self._statistics_db:get_persistent_stat(stats_id, "scorpion_onboarding_step")
+	if player then
+		local stats_id = player:stats_id()
+		local tutorial_step = self._statistics_db:get_persistent_stat(stats_id, "scorpion_onboarding_step")
 
-		return not (get_persistent_stat > 0) or get_persistent_stat < 10, get_persistent_stat
+		return tutorial_step > 0 and tutorial_step < 10, tutorial_step
 	end
 
 	return false
 end
 
-GameModeInn._state_tutorial = function (self, arg_22_1)
+GameModeInn._state_tutorial = function (self, tutorial_step)
 	-- function 22
-	local _current_objective_id = self._current_objective_id
-	local var_22_1
+	local current_objective_id = self._current_objective_id
+	local unit_id
 
-	if arg_22_1 == 1 then
-		var_22_1 = "wom_tutorial_mission_select"
-	elseif arg_22_1 == 3 then
-		var_22_1 = "wom_tutorial_weave_area"
-	elseif arg_22_1 == 4 then
-		var_22_1 = "wom_tutorial_athanor"
-	elseif arg_22_1 == 5 then
-		var_22_1 = "wom_tutorial_weave_select"
-	elseif arg_22_1 == 6 then
-		var_22_1 = "wom_tutorial_weave_select"
-	elseif arg_22_1 == 7 then
-		var_22_1 = "wom_tutorial_athanor"
-	elseif arg_22_1 == 8 then
-		var_22_1 = "wom_tutorial_weave_select"
-	elseif arg_22_1 == 9 then
-		var_22_1 = "wom_tutorial_athanor"
+	if tutorial_step == 1 then
+		unit_id = "wom_tutorial_mission_select"
+	elseif tutorial_step == 3 then
+		unit_id = "wom_tutorial_weave_area"
+	elseif tutorial_step == 4 then
+		unit_id = "wom_tutorial_athanor"
+	elseif tutorial_step == 5 then
+		unit_id = "wom_tutorial_weave_select"
+	elseif tutorial_step == 6 then
+		unit_id = "wom_tutorial_weave_select"
+	elseif tutorial_step == 7 then
+		unit_id = "wom_tutorial_athanor"
+	elseif tutorial_step == 8 then
+		unit_id = "wom_tutorial_weave_select"
+	elseif tutorial_step == 9 then
+		unit_id = "wom_tutorial_athanor"
 	end
 
-	if var_22_1 ~= _current_objective_id then
-		self:_deactivate_objective_marker(_current_objective_id)
-		self:_activate_objective_marker(var_22_1)
+	if unit_id ~= current_objective_id then
+		self:_deactivate_objective_marker(current_objective_id)
+		self:_activate_objective_marker(unit_id)
 	end
 end
 
-GameModeInn._activate_objective_marker = function (self, arg_23_1)
+GameModeInn._activate_objective_marker = function (self, unit_id)
 	-- function 23
-	local var_23_0 = self._objective_markers[arg_23_1]
+	local unit = self._objective_markers[unit_id]
 
-	if not var_23_0 then
-		self._current_objective_id = arg_23_1
+	if unit then
+		self._current_objective_id = unit_id
 
-		ScriptUnit.extension(var_23_0, "tutorial_system"):set_active(true)
+		local extension = ScriptUnit.extension(unit, "tutorial_system")
+
+		extension:set_active(true)
 	end
 end
 
-GameModeInn._deactivate_objective_marker = function (self, arg_24_1)
+GameModeInn._deactivate_objective_marker = function (self, unit_id)
 	-- function 24
-	local var_24_0 = self._objective_markers[arg_24_1]
+	local unit = self._objective_markers[unit_id]
 
-	if not var_24_0 then
-		ScriptUnit.extension(var_24_0, "tutorial_system"):set_active(false)
+	if unit then
+		local extension = ScriptUnit.extension(unit, "tutorial_system")
+
+		extension:set_active(false)
 	end
 
 	self._current_objective_id = nil
 end
 
-GameModeInn.rpc_waystone_active = function (self, arg_25_1, arg_25_2, arg_25_3, arg_25_4)
+GameModeInn.rpc_waystone_active = function (self, channel_id, waystone_type, waystone_is_active, current_waystone_type)
 	-- function 25
-	self._waystone_is_active = arg_25_3
-	self._waystone_type = arg_25_2
-	self._current_waystone_type = arg_25_4
+	self._waystone_is_active = waystone_is_active
+	self._waystone_type = waystone_type
+	self._current_waystone_type = current_waystone_type
 end
 
-GameModeInn.hot_join_sync = function (self, arg_26_1)
+GameModeInn.hot_join_sync = function (self, peer_id)
 	-- function 26
 	self._waystone_is_active = false
 	self._waystone_type = 0
 
-	local var_26_0 = PEER_ID_TO_CHANNEL[arg_26_1]
+	local channel_id = PEER_ID_TO_CHANNEL[peer_id]
 
-	RPC.rpc_waystone_active(var_26_0, self._waystone_type, self._waystone_is_active, self._current_waystone_type)
+	RPC.rpc_waystone_active(channel_id, self._waystone_type, self._waystone_is_active, self._current_waystone_type)
 end
 
-GameModeInn.local_player_ready_to_start = function (self, arg_27_1, arg_27_2)
+GameModeInn.local_player_ready_to_start = function (self, player, loading_context)
 	-- function 27
 	if not self._local_player_spawned then
 		return false
@@ -354,42 +364,41 @@ GameModeInn.local_player_ready_to_start = function (self, arg_27_1, arg_27_2)
 	return true
 end
 
-GameModeInn.local_player_game_starts = function (self, arg_28_1, arg_28_2)
+GameModeInn.local_player_game_starts = function (self, player, loading_context)
 	-- function 28
-	local show_profile_on_startup = arg_28_2.show_profile_on_startup
+	local show_profile_on_startup = loading_context.show_profile_on_startup
 
-	arg_28_2.show_profile_on_startup = nil
+	loading_context.show_profile_on_startup = nil
 
-	if not (not show_profile_on_startup and LEVEL_EDITOR_TEST or Development.parameter("skip-start-menu")) then
-		local PLATFORM = PLATFORM
-		local var_28_2
-		local var_28_3
+	if show_profile_on_startup and not LEVEL_EDITOR_TEST and not Development.parameter("skip-start-menu") then
+		local platform = PLATFORM
+		local transition_name, menu_state_name
 
-		if not IS_CONSOLE then
-			var_28_2 = "initial_character_selection_force"
-			var_28_3 = "character"
-		elseif GameSettingsDevelopment.skip_start_screen or not Development.parameter("skip_start_screen") then
-			local flag = not not SaveData.first_hero_selection_made or not Managers.backend:is_waiting_for_user_input()
+		if IS_CONSOLE then
+			transition_name = "initial_character_selection_force"
+			menu_state_name = "character"
+		elseif GameSettingsDevelopment.skip_start_screen or Development.parameter("skip_start_screen") then
+			local show_hero_selection = not SaveData.first_hero_selection_made and not not not Managers.backend:is_waiting_for_user_input()
 
-			var_28_2 = "initial_start_menu_view_force"
-			var_28_3 = not flag and "character" and "overview"
+			transition_name = "initial_start_menu_view_force"
+			menu_state_name = (not show_hero_selection or not "character") and not not "overview"
 		else
-			var_28_2 = "initial_character_selection_force"
-			var_28_3 = "character"
+			transition_name = "initial_character_selection_force"
+			menu_state_name = "character"
 		end
 
-		Managers.ui:handle_transition(var_28_2, {
-			menu_state_name = var_28_3,
+		Managers.ui:handle_transition(transition_name, {
+			menu_state_name = menu_state_name,
 			on_exit_callback = callback(self, "_cb_start_menu_closed")
 		})
 	else
 		self:_cb_start_menu_closed()
 	end
 
-	if not self._is_initial_spawn then
+	if self._is_initial_spawn then
 		LevelHelper:flow_event(self._world, "local_player_spawned")
 
-		if not Development.parameter("attract_mode") then
+		if Development.parameter("attract_mode") then
 			LevelHelper:flow_event(self._world, "start_benchmark")
 		else
 			LevelHelper:flow_event(self._world, "level_start_local_player_spawned")
@@ -403,24 +412,27 @@ GameModeInn._cb_start_menu_closed = function (self)
 	-- function 29
 	print("[GameModeInn] Start menu closed")
 
-	local _world = self._world
-	local flag = false
+	local world = self._world
+	local player_data_changed = false
+	local first_time_store_release = not PlayerData.first_time_store_release
 
-	if not not PlayerData.first_time_store_release then
-		LevelHelper:flow_event(_world, "first_time_store_release")
+	if first_time_store_release then
+		LevelHelper:flow_event(world, "first_time_store_release")
 
 		PlayerData.first_time_store_release = true
-		flag = true
+		player_data_changed = true
 	end
 
-	if not PlayerData.store_new_items and not GameSettingsDevelopment.store_nags then
-		LevelHelper:flow_event(_world, "shop_new_items")
+	local store_new_items = PlayerData.store_new_items
+
+	if store_new_items and GameSettingsDevelopment.store_nags then
+		LevelHelper:flow_event(world, "shop_new_items")
 
 		PlayerData.store_new_items = false
-		flag = true
+		player_data_changed = true
 	end
 
-	if not flag then
+	if player_data_changed then
 		Managers.save:auto_save(SaveFileName, SaveData, nil)
 	end
 

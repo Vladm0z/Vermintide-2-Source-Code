@@ -1,61 +1,73 @@
 -- chunkname: @scripts/ui/views/tutorial_ui_animation_definitions.lua
 
-local tbl = {
+local info_slate_enter = {
 	{
 		name = "entry",
 		start_progress = 0,
 		end_progress = 1,
-		init = function (self, arg_1_1, arg_1_2, arg_1_3)
+		init = function (ui_scenegraph, scenegraph_definition, widget, params)
 			-- function 1
-			local position = self[arg_1_3.start_id].position
-			local position_2 = self[arg_1_2.scenegraph_id].position
+			local start_position = ui_scenegraph[params.start_id].position
+			local ui_local_position = ui_scenegraph[widget.scenegraph_id].position
 
-			position_2[1] = position[1]
-			position_2[2] = position[2]
+			ui_local_position[1] = start_position[1]
+			ui_local_position[2] = start_position[2]
 
-			local size = self[arg_1_3.start_id].size
-			local size_2 = self[arg_1_2.scenegraph_id].size
+			local start_size = ui_scenegraph[params.start_id].size
+			local ui_size = ui_scenegraph[widget.scenegraph_id].size
 
-			size_2[1] = size[1]
-			size_2[2] = size[2]
+			ui_size[1] = start_size[1]
+			ui_size[2] = start_size[2]
 
-			local var_1_4 = self[arg_1_2.style.icon_texture.scenegraph_id]
+			local icon_scenegraph_id = widget.style.icon_texture.scenegraph_id
+			local icon_definition = ui_scenegraph[icon_scenegraph_id]
+			local icon_local_position = icon_definition.position
 
-			var_1_4.position[2] = 0
-			arg_1_2.content.icon_texture.fraction = 1
-			var_1_4.size[1] = 0
-			var_1_4.size[2] = 0
-			arg_1_2.style.description_text.text_color[1] = 0
+			icon_local_position[2] = 0
+			widget.content.icon_texture.fraction = 1
+			icon_definition.size[1] = 0
+			icon_definition.size[2] = 0
+			widget.style.description_text.text_color[1] = 0
 
-			for k, v in pairs(arg_1_2.style) do
-				if not v.color then
-					local color = v.color
+			for name, style_data in pairs(widget.style) do
+				if style_data.color then
+					local color = style_data.color
 					local flag
 
-					flag = not v.background_component and 0 and v.default_alpha
+					flag = (not style_data.background_component or not 0) and not not style_data.default_alpha
 					color[1] = flag
 				end
 			end
 
-			arg_1_2.element.dirty = true
+			widget.element.dirty = true
 		end,
-		update = function (arg_2_0, arg_2_1, arg_2_2, arg_2_3, arg_2_4)
+		update = function (ui_scenegraph, scenegraph_definition, widget, local_progress, params)
 			-- function 2
-			local flag
+			local num
 
-			flag = arg_2_3 ~= 1 or not 1 or math.catmullrom(arg_2_3, 2, 0, 1, -1)
+			if local_progress == 1 then
+				num = 1
 
-			local smoothstep = math.smoothstep(arg_2_3, 0, 1)
+				goto label_2_0
+			end
 
-			for k, v in pairs(arg_2_2.style) do
-				if not v.color and not v.background_component then
-					v.color[1] = v.default_alpha * smoothstep
+			num = math.catmullrom(local_progress, 2, 0, 1, -1)
+
+			local catmullrom_value = num
+
+			::label_2_0::
+
+			local smooth_value = math.smoothstep(local_progress, 0, 1)
+
+			for name, style_data in pairs(widget.style) do
+				if style_data.color and style_data.background_component then
+					style_data.color[1] = style_data.default_alpha * smooth_value
 				end
 			end
 
-			arg_2_2.element.dirty = true
+			widget.element.dirty = true
 		end,
-		on_complete = function (arg_3_0, arg_3_1, arg_3_2, arg_3_3)
+		on_complete = function (ui_scenegraph, scenegraph_definition, widget, params)
 			-- function 3
 			return
 		end
@@ -64,167 +76,186 @@ local tbl = {
 		name = "fade_in_text_and_icon",
 		start_progress = 1,
 		end_progress = 2,
-		init = function (self, arg_4_1, arg_4_2, arg_4_3)
+		init = function (ui_scenegraph, scenegraph_definition, widget, params)
 			-- function 4
-			local var_4_0 = self[arg_4_2.style.icon_texture.scenegraph_id]
+			local icon_scenegraph_id = widget.style.icon_texture.scenegraph_id
+			local icon_definition = ui_scenegraph[icon_scenegraph_id]
 
-			var_4_0.position[3] = var_4_0.position[3] + 10
-			arg_4_2.element.dirty = true
+			icon_definition.position[3] = icon_definition.position[3] + 10
+			widget.element.dirty = true
 		end,
-		update = function (self, arg_5_1, arg_5_2, arg_5_3, arg_5_4)
+		update = function (ui_scenegraph, scenegraph_definition, widget, local_progress, params)
 			-- function 5
-			local flag
+			local num
 
-			flag = arg_5_3 ~= 1 or not 1 or math.catmullrom(arg_5_3, -15, 0, 1, 1)
+			if local_progress == 1 then
+				num = 1
 
-			local smoothstep = math.smoothstep(arg_5_3, 0, 1)
-			local var_5_2 = self[arg_5_2.style.icon_texture.scenegraph_id]
+				goto label_5_0
+			end
 
-			var_5_2.size[1] = 62 * flag
-			var_5_2.size[2] = 62 * flag
-			arg_5_2.style.description_text.text_color[1] = math.lerp(0, 255, smoothstep)
+			num = math.catmullrom(local_progress, -15, 0, 1, 1)
 
-			local clamp = math.clamp(math.catmullrom(arg_5_3, -8, 0.4, 0, -1), 0, 1)
+			local catmullrom_value = num
 
-			arg_5_2.style.frame_glow_top_texture.color[1] = clamp * 255
-			arg_5_2.style.frame_glow_bottom_texture.color[1] = clamp * 255
-			arg_5_2.element.dirty = true
+			::label_5_0::
+
+			local smooth_value = math.smoothstep(local_progress, 0, 1)
+			local icon_scenegraph_id = widget.style.icon_texture.scenegraph_id
+			local icon_definition = ui_scenegraph[icon_scenegraph_id]
+
+			icon_definition.size[1] = 62 * catmullrom_value
+			icon_definition.size[2] = 62 * catmullrom_value
+			widget.style.description_text.text_color[1] = math.lerp(0, 255, smooth_value)
+
+			local value = math.clamp(math.catmullrom(local_progress, -8, 0.4, 0, -1), 0, 1)
+
+			widget.style.frame_glow_top_texture.color[1] = value * 255
+			widget.style.frame_glow_bottom_texture.color[1] = value * 255
+			widget.element.dirty = true
 		end,
-		on_complete = function (self, arg_6_1, arg_6_2, arg_6_3)
+		on_complete = function (ui_scenegraph, scenegraph_definition, widget, params)
 			-- function 6
-			local var_6_0 = self[arg_6_2.style.icon_texture.scenegraph_id]
+			local icon_scenegraph_id = widget.style.icon_texture.scenegraph_id
+			local icon_definition = ui_scenegraph[icon_scenegraph_id]
 
-			var_6_0.position[3] = var_6_0.position[3] - 10
+			icon_definition.position[3] = icon_definition.position[3] - 10
 		end
 	}
 }
-local tbl_2 = {
+local info_slate_exit = {
 	{
 		name = "exit",
 		start_progress = 0,
 		end_progress = 1,
-		init = function (arg_7_0, arg_7_1, arg_7_2, arg_7_3)
+		init = function (ui_scenegraph, scenegraph_definition, widget, params)
 			-- function 7
 			return
 		end,
-		update = function (arg_8_0, arg_8_1, arg_8_2, arg_8_3, arg_8_4)
+		update = function (ui_scenegraph, scenegraph_definition, widget, local_progress, params)
 			-- function 8
-			local smoothstep = math.smoothstep(arg_8_3, 1, 0)
+			local smooth_value = math.smoothstep(local_progress, 1, 0)
 
-			for k, v in pairs(arg_8_2.style) do
-				if not v.color then
-					v.color[1] = v.default_alpha * smoothstep
+			for name, style_data in pairs(widget.style) do
+				if style_data.color then
+					style_data.color[1] = style_data.default_alpha * smooth_value
 				end
 			end
 
-			arg_8_2.style.description_text.text_color[1] = 255 * smoothstep
-			arg_8_2.element.dirty = true
+			widget.style.description_text.text_color[1] = 255 * smooth_value
+			widget.element.dirty = true
 		end,
-		on_complete = function (arg_9_0, arg_9_1, arg_9_2, arg_9_3)
+		on_complete = function (ui_scenegraph, scenegraph_definition, widget, params)
 			-- function 9
-			local random = math.random()
+			local lol = math.random()
 		end
 	}
 }
-local tbl_3 = {
+local info_slate_flash = {
 	{
 		name = "flash",
 		start_progress = 0,
 		end_progress = 1,
-		init = function (arg_10_0, arg_10_1, arg_10_2, arg_10_3)
+		init = function (ui_scenegraph, scenegraph_definition, widget, params)
 			-- function 10
 			return
 		end,
-		update = function (arg_11_0, arg_11_1, arg_11_2, arg_11_3, arg_11_4)
+		update = function (ui_scenegraph, scenegraph_definition, widget, local_progress, params)
 			-- function 11
-			local clamp = math.clamp(math.catmullrom(arg_11_3, -8, 0.4, 0, -1), 0, 1)
+			local value = math.clamp(math.catmullrom(local_progress, -8, 0.4, 0, -1), 0, 1)
 
-			arg_11_2.style.frame_glow_top_texture.color[1] = clamp * 255
-			arg_11_2.style.frame_glow_bottom_texture.color[1] = clamp * 255
-			arg_11_2.element.dirty = true
+			widget.style.frame_glow_top_texture.color[1] = value * 255
+			widget.style.frame_glow_bottom_texture.color[1] = value * 255
+			widget.element.dirty = true
 		end,
-		on_complete = function (arg_12_0, arg_12_1, arg_12_2, arg_12_3)
+		on_complete = function (ui_scenegraph, scenegraph_definition, widget, params)
 			-- function 12
 			return
 		end
 	}
 }
-local tbl_4 = {
+local info_slate_move_slot = {
 	{
 		name = "move_up",
 		start_progress = 0,
 		end_progress = 2,
-		init = function (arg_13_0, arg_13_1, arg_13_2, arg_13_3)
+		init = function (ui_scenegraph, scenegraph_definition, widget, params)
 			-- function 13
 			return
 		end,
-		update = function (self, arg_14_1, arg_14_2, arg_14_3, arg_14_4)
+		update = function (ui_scenegraph, scenegraph_definition, widget, local_progress, params)
 			-- function 14
-			local smoothstep = math.smoothstep(arg_14_3, 0, 1)
-			local position = self[arg_14_4.start_id].position
-			local position_2 = self[arg_14_4.end_id].position
+			local smooth_value = math.smoothstep(local_progress, 0, 1)
+			local start_position = ui_scenegraph[params.start_id].position
+			local end_position = ui_scenegraph[params.end_id].position
+			local ui_local_position = ui_scenegraph[widget.scenegraph_id].position
 
-			self[arg_14_2.scenegraph_id].position[2] = math.lerp(position[2], position_2[2], smoothstep)
-			arg_14_2.element.dirty = true
+			ui_local_position[2] = math.lerp(start_position[2], end_position[2], smooth_value)
+			widget.element.dirty = true
 		end,
-		on_complete = function (arg_15_0, arg_15_1, arg_15_2, arg_15_3)
+		on_complete = function (ui_scenegraph, scenegraph_definition, widget, params)
 			-- function 15
 			return
 		end
 	}
 }
-local tbl_5 = {
+local mission_goal_wait = {
 	{
 		name = "wait",
 		start_progress = 0,
 		end_progress = 1,
-		init = function (arg_16_0, arg_16_1, arg_16_2, arg_16_3)
+		init = function (ui_scenegraph, scenegraph_definition, widget, params)
 			-- function 16
 			return
 		end,
-		update = function (arg_17_0, arg_17_1, arg_17_2, arg_17_3, arg_17_4)
+		update = function (ui_scenegraph, scenegraph_definition, widget, local_progress, params)
 			-- function 17
 			return
 		end,
-		on_complete = function (arg_18_0, arg_18_1, arg_18_2, arg_18_3)
+		on_complete = function (ui_scenegraph, scenegraph_definition, widget, params)
 			-- function 18
 			return
 		end
 	}
 }
-local tbl_6 = {
+local mission_goal_move_up = {
 	{
 		name = "move_up",
 		start_progress = 0,
 		end_progress = 2,
-		init = function (arg_19_0, arg_19_1, arg_19_2, arg_19_3)
+		init = function (ui_scenegraph, scenegraph_definition, widget, params)
 			-- function 19
 			return
 		end,
-		update = function (self, arg_20_1, arg_20_2, arg_20_3, arg_20_4)
+		update = function (ui_scenegraph, scenegraph_definition, widget, local_progress, params)
 			-- function 20
-			local smoothstep = math.smoothstep(arg_20_3, 0, 1)
-			local position = self.info_slate_slot1_start.position
-			local position_2 = self.info_slate_mission_goal_end.position
+			local smooth_value = math.smoothstep(local_progress, 0, 1)
+			local start_position = ui_scenegraph.info_slate_slot1_start.position
+			local end_position = ui_scenegraph.info_slate_mission_goal_end.position
+			local ui_local_position = ui_scenegraph[widget.scenegraph_id].position
 
-			self[arg_20_2.scenegraph_id].position[2] = math.lerp(position[2], position_2[2], smoothstep)
+			ui_local_position[2] = math.lerp(start_position[2], end_position[2], smooth_value)
 
-			local size = self.info_slate_slot1_start.size
-			local size_2 = self.info_slate_mission_goal_end.size
-			local size_3 = self[arg_20_2.scenegraph_id].size
+			local start_size = ui_scenegraph.info_slate_slot1_start.size
+			local end_size = ui_scenegraph.info_slate_mission_goal_end.size
+			local ui_size = ui_scenegraph[widget.scenegraph_id].size
 
-			size_3[2] = math.lerp(size[2], size_2[2], smoothstep)
+			ui_size[2] = math.lerp(start_size[2], end_size[2], smooth_value)
 
-			local num = (size_3[2] - 6) / size[2]
-			local var_20_7 = self[arg_20_2.style.icon_texture.scenegraph_id]
+			local fraction = (ui_size[2] - 6) / start_size[2]
+			local icon_scenegraph_id = widget.style.icon_texture.scenegraph_id
+			local icon_definition = ui_scenegraph[icon_scenegraph_id]
 
-			var_20_7.size[2] = 62 * num
-			var_20_7.position[2] = math.lerp(0, 15, smoothstep)
-			arg_20_2.content.icon_texture.fraction = num
-			arg_20_2.style.icon_texture.color[1] = math.lerp(255, 150, smoothstep)
-			arg_20_2.element.dirty = true
+			icon_definition.size[2] = 62 * fraction
+
+			local icon_local_position = icon_definition.position
+
+			icon_local_position[2] = math.lerp(0, 15, smooth_value)
+			widget.content.icon_texture.fraction = fraction
+			widget.style.icon_texture.color[1] = math.lerp(255, 150, smooth_value)
+			widget.element.dirty = true
 		end,
-		on_complete = function (arg_21_0, arg_21_1, arg_21_2, arg_21_3)
+		on_complete = function (ui_scenegraph, scenegraph_definition, widget, params)
 			-- function 21
 			return
 		end
@@ -232,10 +263,10 @@ local tbl_6 = {
 }
 
 return {
-	info_slate_enter = tbl,
-	info_slate_exit = tbl_2,
-	info_slate_flash = tbl_3,
-	info_slate_move_slot = tbl_4,
-	mission_goal_wait = tbl_5,
-	mission_goal_move_up = tbl_6
+	info_slate_enter = info_slate_enter,
+	info_slate_exit = info_slate_exit,
+	info_slate_flash = info_slate_flash,
+	info_slate_move_slot = info_slate_move_slot,
+	mission_goal_wait = mission_goal_wait,
+	mission_goal_move_up = mission_goal_move_up
 }

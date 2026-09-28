@@ -2,9 +2,9 @@
 
 require("scripts/utils/colors")
 
-local morris = DLCSettings.morris
+local settings = DLCSettings.morris
 
-morris.ui_views = {
+settings.ui_views = {
 	{
 		name = "deus_cursed_chest",
 		class_name = "DeusCursedChestView",
@@ -38,7 +38,7 @@ morris.ui_views = {
 		}
 	}
 }
-morris.ingame_hud_components = {
+settings.ingame_hud_components = {
 	{
 		use_hud_scale = true,
 		class_name = "EnergyBarUI",
@@ -48,16 +48,16 @@ morris.ingame_hud_components = {
 		}
 	}
 }
-morris.ui_end_screens = {
+settings.ui_end_screens = {
 	deus_victory = {
 		file_name = "scripts/ui/views/end_screens/deus_victory_end_screen_ui",
 		class_name = "DeusVictoryEndScreenUI"
 	}
 }
-morris.ui_materials = {
+settings.ui_materials = {
 	"materials/ui/ui_1080p_morris_single_textures"
 }
-morris.start_game_windows = {
+settings.start_game_windows = {
 	"scripts/ui/dlc_morris/views/start_game_view/windows/start_game_window_deus_panel",
 	"scripts/ui/dlc_morris/views/start_game_view/windows/start_game_window_deus_background",
 	"scripts/ui/dlc_morris/views/start_game_view/windows/start_game_window_deus_quickplay",
@@ -69,7 +69,7 @@ morris.start_game_windows = {
 	"scripts/ui/dlc_morris/views/start_game_view/windows/start_game_window_deus_weekly_event",
 	"scripts/ui/dlc_morris/views/start_game_view/windows/start_game_window_deus_journey_selection"
 }
-morris.start_game_save_data_table_map = {
+settings.start_game_save_data_table_map = {
 	deus = {
 		difficulty_selection_custom = "deus_custom",
 		custom = "deus_custom",
@@ -80,15 +80,15 @@ morris.start_game_save_data_table_map = {
 	}
 }
 
-local deus = morris.start_game_save_data_table_map.deus
+local deus_save_data_table_map = settings.start_game_save_data_table_map.deus
 
-morris.start_game_save_data_table_map_console = table.clone(morris.start_game_save_data_table_map)
+settings.start_game_save_data_table_map_console = table.clone(settings.start_game_save_data_table_map)
 
-local deus_2 = morris.start_game_save_data_table_map_console.deus
+local deus_save_data_table_map_console = settings.start_game_save_data_table_map_console.deus
 
-deus_2.twitch = "deus_custom"
-deus_2.difficulty_selection_twitch = "deus_custom"
-morris.start_game_window_layout_console = {
+deus_save_data_table_map_console.twitch = "deus_custom"
+deus_save_data_table_map_console.difficulty_selection_twitch = "deus_custom"
+settings.start_game_window_layout_console = {
 	windows = {
 		deus_background = {
 			class_name = "StartGameWindowDeusBackground",
@@ -152,11 +152,11 @@ morris.start_game_window_layout_console = {
 				deus_panel = 1,
 				deus_quickplay = 3
 			},
-			can_add_function = function (self)
+			can_add_function = function (overview)
 				-- function 3
-				return self:is_in_mechanism("deus")
+				return overview:is_in_mechanism("deus")
 			end,
-			save_data_table = deus_2.custom
+			save_data_table = deus_save_data_table_map_console.custom
 		},
 		{
 			sound_event_enter = "hud_morris_start_menu_category",
@@ -176,11 +176,11 @@ morris.start_game_window_layout_console = {
 				deus_custom_game = 3,
 				deus_background = 2
 			},
-			can_add_function = function (self)
+			can_add_function = function (overview)
 				-- function 4
-				return self:is_in_mechanism("deus")
+				return overview:is_in_mechanism("deus")
 			end,
-			save_data_table = deus_2.custom
+			save_data_table = deus_save_data_table_map_console.custom
 		},
 		{
 			sound_event_enter = "hud_morris_start_menu_category",
@@ -198,19 +198,19 @@ morris.start_game_window_layout_console = {
 				deus_twitch = 3,
 				deus_background = 2
 			},
-			can_add_function = function (self)
+			can_add_function = function (overview)
 				-- function 5
-				local is_in_mechanism = self:is_in_mechanism("deus")
+				local is_in_mechanism = overview:is_in_mechanism("deus")
 
-				is_in_mechanism = not is_in_mechanism and self:can_use_streaming()
+				is_in_mechanism = not not is_in_mechanism and not not overview:can_use_streaming()
 
 				return is_in_mechanism
 			end,
-			should_draw_god_info = function (self)
+			should_draw_god_info = function (ingame_ui_context)
 				-- function 6
-				return self.is_server
+				return ingame_ui_context.is_server
 			end,
-			save_data_table = deus_2.twitch
+			save_data_table = deus_save_data_table_map_console.twitch
 		},
 		{
 			sound_event_enter = "hud_morris_start_menu_category",
@@ -227,20 +227,23 @@ morris.start_game_window_layout_console = {
 				deus_panel = 1,
 				deus_weekly_event = 3
 			},
-			can_add_function = function (self)
+			can_add_function = function (overview)
 				-- function 7
-				if not Managers.account:offline_mode() then
+				local offline_mode = Managers.account:offline_mode()
+
+				if offline_mode then
 					return false
 				end
 
-				local get_weekly_chaos_wastes_game_mode_data = Managers.backend:get_interface("live_events"):get_weekly_chaos_wastes_game_mode_data()
-				local is_in_mechanism = self:is_in_mechanism("deus")
+				local live_event_interface = Managers.backend:get_interface("live_events")
+				local game_mode_data = live_event_interface:get_weekly_chaos_wastes_game_mode_data()
+				local is_in_mechanism = overview:is_in_mechanism("deus")
 
-				is_in_mechanism = not is_in_mechanism and not table.is_empty(get_weekly_chaos_wastes_game_mode_data)
+				is_in_mechanism = not not is_in_mechanism and not not not table.is_empty(game_mode_data)
 
 				return is_in_mechanism
 			end,
-			save_data_table = deus_2.twitch
+			save_data_table = deus_save_data_table_map_console.twitch
 		},
 		{
 			sound_event_enter = "hud_morris_start_menu_category",
@@ -255,15 +258,15 @@ morris.start_game_window_layout_console = {
 				deus_panel = 1,
 				deus_lobby_browser = 3
 			},
-			can_add_function = function (self)
+			can_add_function = function (overview)
 				-- function 8
-				local is_in_mechanism = self:is_in_mechanism("deus")
+				local is_in_mechanism = overview:is_in_mechanism("deus")
 
-				is_in_mechanism = not is_in_mechanism and not IS_XB1
+				is_in_mechanism = not not is_in_mechanism and not not not IS_XB1
 
 				return is_in_mechanism
 			end,
-			save_data_table = deus_2.lobby_browser
+			save_data_table = deus_save_data_table_map_console.lobby_browser
 		},
 		{
 			sound_event_enter = "hud_morris_start_menu_category",
@@ -274,7 +277,7 @@ morris.start_game_window_layout_console = {
 				panel = 1,
 				background = 2
 			},
-			save_data_table = deus_2.custom
+			save_data_table = deus_save_data_table_map_console.custom
 		},
 		{
 			sound_event_enter = "hud_morris_start_menu_category",
@@ -285,7 +288,7 @@ morris.start_game_window_layout_console = {
 				panel = 1,
 				background = 2
 			},
-			save_data_table = deus_2.twitch
+			save_data_table = deus_save_data_table_map_console.twitch
 		}
 	},
 	mechanism_custom_game = {
@@ -306,10 +309,10 @@ morris.start_game_window_layout_console = {
 		layout_name = "deus_selection_journey_layout_quickplay"
 	}
 }
-morris.breed_textures = {
+settings.breed_textures = {
 	chaos_greed_pinata = "unit_frame_portrait_enemy_sphere"
 }
-morris.chest_upgrade_score_topics = {
+settings.chest_upgrade_score_topics = {
 	deus = {
 		{
 			texture = "loot_mutator_icon_06",
@@ -343,7 +346,7 @@ morris.chest_upgrade_score_topics = {
 		}
 	}
 }
-morris.controller_settings = {
+settings.controller_settings = {
 	IngameMenuKeymaps = {
 		win32 = {
 			hotkey_deus_inventory = {
@@ -375,10 +378,10 @@ morris.controller_settings = {
 		}
 	}
 }
-morris.portrait_materials = {
+settings.portrait_materials = {
 	"materials/ui/ui_1080p_morris_single_textures"
 }
-morris.inventory_consumable_slot_colors = {
+settings.inventory_consumable_slot_colors = {
 	potion_liquid_bravado_01 = Colors.get_color_table_with_alpha("deus_potion", 255),
 	potion_vampiric_draught_01 = Colors.get_color_table_with_alpha("deus_potion", 255),
 	potion_moot_milk_01 = Colors.get_color_table_with_alpha("deus_potion", 255),
@@ -388,12 +391,12 @@ morris.inventory_consumable_slot_colors = {
 	potion_hold_my_beer_01 = Colors.get_color_table_with_alpha("deus_potion", 255),
 	potion_poison_proof_01 = Colors.get_color_table_with_alpha("deus_potion", 255)
 }
-morris.ui_settings = {
+settings.ui_settings = {
 	deus = {
 		show_coin_pickup_in_chat = false
 	}
 }
-morris.start_game_layout_console_generic_inputs = {
+settings.start_game_layout_console_generic_inputs = {
 	deus_default = {
 		ignore_generic_actions = true,
 		actions = {
@@ -539,7 +542,7 @@ morris.start_game_layout_console_generic_inputs = {
 				description_text = "map_friend_button_tooltip",
 				content_check_function = function ()
 					-- function 9
-					return not not IS_WINDOWS or not Managers.account:offline_mode()
+					return not IS_WINDOWS and not not not Managers.account:offline_mode()
 				end
 			}
 		}
@@ -579,7 +582,7 @@ morris.start_game_layout_console_generic_inputs = {
 				description_text = "map_friend_button_tooltip",
 				content_check_function = function ()
 					-- function 10
-					return not not IS_WINDOWS or not Managers.account:offline_mode()
+					return not IS_WINDOWS and not not not Managers.account:offline_mode()
 				end
 			}
 		}
@@ -614,7 +617,7 @@ morris.start_game_layout_console_generic_inputs = {
 				description_text = "map_friend_button_tooltip",
 				content_check_function = function ()
 					-- function 11
-					return not not IS_WINDOWS or not Managers.account:offline_mode()
+					return not IS_WINDOWS and not not not Managers.account:offline_mode()
 				end
 			}
 		}
@@ -712,7 +715,7 @@ morris.start_game_layout_console_generic_inputs = {
 			description_text = "map_friend_button_tooltip",
 			content_check_function = function ()
 				-- function 12
-				return not not IS_WINDOWS or not Managers.account:offline_mode()
+				return not IS_WINDOWS and not not not Managers.account:offline_mode()
 			end
 		}
 	},
@@ -744,7 +747,7 @@ morris.start_game_layout_console_generic_inputs = {
 			description_text = "map_friend_button_tooltip",
 			content_check_function = function ()
 				-- function 13
-				return not not IS_WINDOWS or not Managers.account:offline_mode()
+				return not IS_WINDOWS and not not not Managers.account:offline_mode()
 			end
 		}
 	},
@@ -776,7 +779,7 @@ morris.start_game_layout_console_generic_inputs = {
 			description_text = "map_friend_button_tooltip",
 			content_check_function = function ()
 				-- function 14
-				return not not IS_WINDOWS or not Managers.account:offline_mode()
+				return not IS_WINDOWS and not not not Managers.account:offline_mode()
 			end
 		}
 	},
@@ -808,7 +811,7 @@ morris.start_game_layout_console_generic_inputs = {
 			description_text = "map_friend_button_tooltip",
 			content_check_function = function ()
 				-- function 15
-				return not not IS_WINDOWS or not Managers.account:offline_mode()
+				return not IS_WINDOWS and not not not Managers.account:offline_mode()
 			end
 		}
 	},
@@ -829,7 +832,7 @@ morris.start_game_layout_console_generic_inputs = {
 			description_text = "map_friend_button_tooltip",
 			content_check_function = function ()
 				-- function 16
-				return not not IS_WINDOWS or not Managers.account:offline_mode()
+				return not IS_WINDOWS and not not not Managers.account:offline_mode()
 			end
 		}
 	},
@@ -850,7 +853,7 @@ morris.start_game_layout_console_generic_inputs = {
 			description_text = "map_friend_button_tooltip",
 			content_check_function = function ()
 				-- function 17
-				return not not IS_WINDOWS or not Managers.account:offline_mode()
+				return not IS_WINDOWS and not not not Managers.account:offline_mode()
 			end
 		}
 	}

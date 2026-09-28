@@ -1,48 +1,48 @@
 -- chunkname: @core/gwnav/lua/safe_require.lua
 
-local num = 0
-local tbl = {}
-local var_0_2
+local error_level = 0
+local safely_required_modules = {}
+local latest_safely_required_file
 
-function safe_require(arg_1_0)
+function safe_require(file)
 	-- function 1
-	if tbl[arg_1_0] == nil then
-		var_0_2 = arg_1_0
-		required_module = require(arg_1_0)
+	if safely_required_modules[file] == nil then
+		latest_safely_required_file = file
+		required_module = require(file)
 
-		if var_0_2 ~= nil then
-			print_warning("`safe_require` called on unguarded file '" .. arg_1_0 .. "', falling back to `require` i.e. looping `require` calls will raise errors")
+		if latest_safely_required_file ~= nil then
+			print_warning("`safe_require` called on unguarded file '" .. file .. "', falling back to `require` i.e. looping `require` calls will raise errors")
 
-			var_0_2 = nil
+			latest_safely_required_file = nil
 
 			return required_module
 		end
 
-		tbl[arg_1_0] = required_module
-	elseif num == 1 then
-		require(arg_1_0)
+		safely_required_modules[file] = required_module
+	elseif error_level == 1 then
+		require(file)
 	end
 
-	return tbl[arg_1_0]
+	return safely_required_modules[file]
 end
 
 function safe_require_guard()
 	-- function 2
-	local tbl_2 = {}
+	local new_module = {}
 
-	if var_0_2 == nil then
+	if latest_safely_required_file == nil then
 		print_warning("`safe_require` should be used for modules using `safe_require_guard`, otherwise looping `require` calls will raise errors")
 
-		return tbl_2
+		return new_module
 	end
 
-	tbl[var_0_2] = tbl_2
-	var_0_2 = nil
+	safely_required_modules[latest_safely_required_file] = new_module
+	latest_safely_required_file = nil
 
-	return tbl_2
+	return new_module
 end
 
-function set_safe_require_error_level(arg_3_0)
+function set_safe_require_error_level(new_error_level)
 	-- function 3
-	num = arg_3_0
+	error_level = new_error_level
 end

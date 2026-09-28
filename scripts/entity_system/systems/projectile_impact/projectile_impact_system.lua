@@ -8,8 +8,8 @@ require("scripts/unit_extensions/weapons/projectiles/projectile_impact/player_pr
 
 ProjectileImpactSystem = class(ProjectileImpactSystem, ExtensionSystemBase)
 
-local tbl = {}
-local tbl_2 = {
+local RPCS = {}
+local extensions = {
 	"ProjectileBaseImpactUnitExtension",
 	"ProjectileRaycastImpactUnitExtension",
 	"PlayerProjectileImpactUnitExtension",
@@ -17,15 +17,15 @@ local tbl_2 = {
 	"ProjectileLinearSphereSweepImpactUnitExtension"
 }
 
-ProjectileImpactSystem.init = function (self, arg_1_1, arg_1_2)
+ProjectileImpactSystem.init = function (self, entity_system_creation_context, system_name)
 	-- function 1
-	ProjectileImpactSystem.super.init(self, arg_1_1, arg_1_2, tbl_2)
+	ProjectileImpactSystem.super.init(self, entity_system_creation_context, system_name, extensions)
 
-	local network_event_delegate = arg_1_1.network_event_delegate
+	local network_event_delegate = entity_system_creation_context.network_event_delegate
 
 	self.network_event_delegate = network_event_delegate
 
-	network_event_delegate:register(self, unpack(tbl))
+	network_event_delegate:register(self, unpack(RPCS))
 
 	self.network_transmit = Managers.state.network.network_transmit
 end

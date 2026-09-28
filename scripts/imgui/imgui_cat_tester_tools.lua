@@ -5,7 +5,7 @@ ImguiCatTesterTools = class(ImguiCatTesterTools)
 local ImguiCatTesterTools = ImguiCatTesterTools
 local curated_pickup_list = ImguiCatTesterTools.curated_pickup_list
 
-curated_pickup_list = curated_pickup_list or {
+curated_pickup_list = not not curated_pickup_list or not not {
 	"all_ammo_small",
 	"cooldown_reduction_potion",
 	"damage_boost_potion",
@@ -29,7 +29,7 @@ ImguiCatTesterTools.curated_pickup_list = curated_pickup_list
 local ImguiCatTesterTools_2 = ImguiCatTesterTools
 local curated_breed_list = ImguiCatTesterTools.curated_breed_list
 
-curated_breed_list = curated_breed_list or {
+curated_breed_list = not not curated_breed_list or not not {
 	"beastmen_bestigor",
 	"beastmen_gor",
 	"beastmen_minotaur",
@@ -64,7 +64,7 @@ curated_breed_list = curated_breed_list or {
 }
 ImguiCatTesterTools_2.curated_breed_list = curated_breed_list
 
-local tbl = {
+local localization_placeholders = {
 	beastmen_ungor = "Ungor",
 	_UNKNOWN = "Unknown",
 	beastmen_bestigor = "Bestigor",
@@ -76,44 +76,44 @@ local tbl = {
 	skaven_storm_vermin_with_shield = "Stormvermin w/ Shield"
 }
 
-local function fn(arg_1_0)
+local function custom_localize(key)
 	-- function 1
-	local var_1_0 = tbl[arg_1_0]
+	local val = localization_placeholders[key]
 
-	if not var_1_0 then
-		var_1_0 = Localize(arg_1_0)
-		tbl[arg_1_0] = var_1_0
+	if not val then
+		val = Localize(key)
+		localization_placeholders[key] = val
 	end
 
-	return var_1_0
+	return val
 end
 
-local function fn_2(arg_2_0, arg_2_1)
+local function cmp_localized_strings(a, b)
 	-- function 2
-	return fn(arg_2_0) < fn(arg_2_1)
+	return custom_localize(a) < custom_localize(b)
 end
 
 ImguiCatTesterTools.init = function (self)
 	-- function 3
-	table.sort(ImguiCatTesterTools.curated_breed_list, fn_2)
+	table.sort(ImguiCatTesterTools.curated_breed_list, cmp_localized_strings)
 
 	self._breed_index = 0
 	self._breed_filter_text = ""
-	self._breed_names = table.map(ImguiCatTesterTools.curated_breed_list, fn)
+	self._breed_names = table.map(ImguiCatTesterTools.curated_breed_list, custom_localize)
 	self._breed_results = table.shallow_copy(self._breed_names)
 
-	table.sort(ImguiCatTesterTools.curated_pickup_list, fn_2)
+	table.sort(ImguiCatTesterTools.curated_pickup_list, cmp_localized_strings)
 
 	self._pickup_index = 0
 	self._pickup_filter_text = ""
-	self._pickup_names = table.map(ImguiCatTesterTools.curated_pickup_list, function (arg_4_0)
+	self._pickup_names = table.map(ImguiCatTesterTools.curated_pickup_list, function (pickup_name)
 		-- function 4
-		local var_4_0 = AllPickups[arg_4_0]
-		local var_4_1 = fn
+		local pickup_settings = AllPickups[pickup_name]
+		local var_4_0 = custom_localize
 		local hud_description
 
-		if not var_4_0 then
-			hud_description = var_4_0.hud_description
+		if pickup_settings then
+			hud_description = pickup_settings.hud_description
 
 			if not hud_description then
 				-- Nothing
@@ -124,30 +124,30 @@ ImguiCatTesterTools.init = function (self)
 
 		::label_4_0::
 
-		return var_4_1(hud_description)
+		return var_4_0(hud_description)
 	end)
 	self._pickup_results = table.shallow_copy(self._pickup_names)
 
 	table.sort(self._pickup_names)
 end
 
-ImguiCatTesterTools.update = function (arg_5_0)
+ImguiCatTesterTools.update = function (self)
 	-- function 5
 	return
 end
 
 ImguiCatTesterTools.draw = function (self)
 	-- function 6
-	local begin_window = Imgui.begin_window("CAT Tester Tools")
+	local do_close = Imgui.begin_window("CAT Tester Tools")
 
 	Imgui.begin_child_window("Pickups", 0, 150, false)
 
 	self._pickup_index, self._pickup_results, self._pickup_filter_text = ImguiX.combo_search(self._pickup_index, self._pickup_results, self._pickup_filter_text, self._pickup_names)
 
-	local var_6_1 = ImguiCatTesterTools.curated_pickup_list[self._pickup_index]
+	local pickup_name = ImguiCatTesterTools.curated_pickup_list[self._pickup_index]
 
-	if not Imgui.button("Spawn Pickup", 100, 20) and not var_6_1 then
-		self:_spawn_pickup(var_6_1)
+	if Imgui.button("Spawn Pickup", 100, 20) and pickup_name then
+		self:_spawn_pickup(pickup_name)
 	end
 
 	Imgui.end_child_window()
@@ -155,10 +155,10 @@ ImguiCatTesterTools.draw = function (self)
 
 	self._breed_index, self._breed_results, self._breed_filter_text = ImguiX.combo_search(self._breed_index, self._breed_results, self._breed_filter_text, self._breed_names)
 
-	local var_6_2 = ImguiCatTesterTools.curated_breed_list[self._breed_index]
+	local breed_name = ImguiCatTesterTools.curated_breed_list[self._breed_index]
 
-	if not Imgui.button("Spawn Breed", 100, 20) and not var_6_2 then
-		self:_spawn_breed(var_6_2)
+	if Imgui.button("Spawn Breed", 100, 20) and breed_name then
+		self:_spawn_breed(breed_name)
 	end
 
 	Imgui.end_child_window()
@@ -169,7 +169,7 @@ ImguiCatTesterTools.draw = function (self)
 	local str = "Disable AI Perception"
 	local disable_ai_perception = script_data.disable_ai_perception
 
-	disable_ai_perception = disable_ai_perception or false
+	disable_ai_perception = not not disable_ai_perception or not not false
 	script_data.disable_ai_perception = checkbox(str, disable_ai_perception)
 
 	local script_data_2 = script_data
@@ -177,7 +177,7 @@ ImguiCatTesterTools.draw = function (self)
 	local str_2 = "Player Invincible"
 	local player_invincible = script_data.player_invincible
 
-	player_invincible = player_invincible or false
+	player_invincible = not not player_invincible or not not false
 	script_data_2.player_invincible = checkbox_2(str_2, player_invincible)
 
 	local script_data_3 = script_data
@@ -185,7 +185,7 @@ ImguiCatTesterTools.draw = function (self)
 	local str_3 = "Infinite Ammo"
 	local infinite_ammo = script_data.infinite_ammo
 
-	infinite_ammo = infinite_ammo or false
+	infinite_ammo = not not infinite_ammo or not not false
 	script_data_3.infinite_ammo = checkbox_3(str_3, infinite_ammo)
 
 	local script_data_4 = script_data
@@ -193,7 +193,7 @@ ImguiCatTesterTools.draw = function (self)
 	local str_4 = "Disable Overcharge"
 	local disable_overcharge = script_data.disable_overcharge
 
-	disable_overcharge = disable_overcharge or false
+	disable_overcharge = not not disable_overcharge or not not false
 	script_data_4.disable_overcharge = checkbox_4(str_4, disable_overcharge)
 
 	local script_data_5 = script_data
@@ -201,16 +201,16 @@ ImguiCatTesterTools.draw = function (self)
 	local str_5 = "Short Ability Cooldowns"
 	local short_ability_cooldowns = script_data.short_ability_cooldowns
 
-	short_ability_cooldowns = short_ability_cooldowns or false
+	short_ability_cooldowns = not not short_ability_cooldowns or not not false
 	script_data_5.short_ability_cooldowns = checkbox_5(str_5, short_ability_cooldowns)
 
-	if not Imgui.radio_button("Normal crit", not not script_data.no_critical_strikes or not script_data.always_critical_strikes) then
+	if Imgui.radio_button("Normal crit", not script_data.no_critical_strikes and not not not script_data.always_critical_strikes) then
 		script_data.no_critical_strikes = false
 		script_data.always_critical_strikes = false
-	elseif not Imgui.radio_button("Never crit", not not script_data.no_critical_strikes) then
+	elseif Imgui.radio_button("Never crit", not not script_data.no_critical_strikes) then
 		script_data.no_critical_strikes = true
 		script_data.always_critical_strikes = false
-	elseif not Imgui.radio_button("Always crit", not not script_data.always_critical_strikes) then
+	elseif Imgui.radio_button("Always crit", not not script_data.always_critical_strikes) then
 		script_data.no_critical_strikes = false
 		script_data.always_critical_strikes = true
 	end
@@ -218,25 +218,27 @@ ImguiCatTesterTools.draw = function (self)
 	Imgui.end_child_window()
 	Imgui.end_window()
 
-	return begin_window
+	return do_close
 end
 
-ImguiCatTesterTools._spawn_pickup = function (arg_7_0, arg_7_1)
+ImguiCatTesterTools._spawn_pickup = function (self, pickup_name)
 	-- function 7
-	local main_world = Application.main_world()
-	local player_aim_raycast = Managers.state.conflict:player_aim_raycast(main_world, false, "filter_ray_horde_spawn")
+	local world = Application.main_world()
+	local position = Managers.state.conflict:player_aim_raycast(world, false, "filter_ray_horde_spawn")
 
-	if not player_aim_raycast then
-		Managers.state.network.network_transmit:send_rpc_server("rpc_spawn_pickup_with_physics", NetworkLookup.pickup_names[arg_7_1], player_aim_raycast, Quaternion.identity(), NetworkLookup.pickup_spawn_types.dropped)
+	if position then
+		Managers.state.network.network_transmit:send_rpc_server("rpc_spawn_pickup_with_physics", NetworkLookup.pickup_names[pickup_name], position, Quaternion.identity(), NetworkLookup.pickup_spawn_types.dropped)
 	end
 end
 
-ImguiCatTesterTools._spawn_breed = function (arg_8_0, arg_8_1)
+ImguiCatTesterTools._spawn_breed = function (self, breed_name)
 	-- function 8
-	Managers.state.conflict:aim_spawning(Breeds[arg_8_1], true)
+	local conflict_director = Managers.state.conflict
+
+	conflict_director:aim_spawning(Breeds[breed_name], true)
 end
 
-ImguiCatTesterTools.is_persistent = function (arg_9_0)
+ImguiCatTesterTools.is_persistent = function (self)
 	-- function 9
 	return false
 end

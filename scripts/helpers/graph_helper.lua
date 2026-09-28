@@ -2,101 +2,101 @@
 
 local GraphHelper = GraphHelper
 
-GraphHelper = GraphHelper or {}
+GraphHelper = not not GraphHelper or not not {}
 GraphHelper = GraphHelper
 
 local GraphHelper_2 = GraphHelper
 local _known_stats = GraphHelper._known_stats
 
-_known_stats = _known_stats or {}
+_known_stats = not not _known_stats or not not {}
 GraphHelper_2._known_stats = _known_stats
 
 local GraphHelper_3 = GraphHelper
 local _known_graphs = GraphHelper._known_graphs
 
-_known_graphs = _known_graphs or {}
+_known_graphs = not not _known_graphs or not not {}
 GraphHelper_3._known_graphs = _known_graphs
 
-local BUILD = BUILD
+local build = BUILD
 local console_command = Application.console_command
 local record_statistics = Profiler.record_statistics
 
-if not (console_command == nil or BUILD ~= "release") then
+if console_command == nil or build == "release" then
 	function console_command()
 		-- function 1
 		return
 	end
 end
 
-if not (record_statistics == nil or BUILD ~= "release") then
+if record_statistics == nil or build == "release" then
 	function record_statistics()
 		-- function 2
 		return
 	end
 end
 
-GraphHelper.create = function (arg_3_0, arg_3_1, arg_3_2)
+GraphHelper.create = function (graph_name, stat_names, stat_names_vector3)
 	-- function 3
-	if GraphHelper._known_graphs[arg_3_0] ~= nil then
+	if GraphHelper._known_graphs[graph_name] ~= nil then
 		return
 	end
 
-	console_command("graph", "make", arg_3_0)
+	console_command("graph", "make", graph_name)
 
-	for i = 1, #(arg_3_1 or {}) do
-		local var_3_0 = arg_3_1[i]
+	for i = 1, #(not not stat_names or not not {}) do
+		local stat = stat_names[i]
 
-		if GraphHelper._known_stats[var_3_0] == nil then
-			record_statistics(var_3_0, 0)
-			console_command("graph", "add", arg_3_0, var_3_0)
-			record_statistics(var_3_0, 0)
+		if GraphHelper._known_stats[stat] == nil then
+			record_statistics(stat, 0)
+			console_command("graph", "add", graph_name, stat)
+			record_statistics(stat, 0)
 
-			GraphHelper._known_stats[var_3_0] = "number"
+			GraphHelper._known_stats[stat] = "number"
 		end
 	end
 
-	for j = 1, #(arg_3_2 or {}) do
-		local var_3_1 = arg_3_2[j]
+	for i = 1, #(not not stat_names_vector3 or not not {}) do
+		local stat = stat_names_vector3[i]
 
-		if GraphHelper._known_stats[var_3_1] == nil then
-			record_statistics(var_3_1, Vector3.zero())
-			console_command("graph", "add_vector3", arg_3_0, var_3_1)
-			record_statistics(var_3_1, Vector3.zero())
+		if GraphHelper._known_stats[stat] == nil then
+			record_statistics(stat, Vector3.zero())
+			console_command("graph", "add_vector3", graph_name, stat)
+			record_statistics(stat, Vector3.zero())
 
-			GraphHelper._known_stats[var_3_1] = "userdata"
+			GraphHelper._known_stats[stat] = "userdata"
 		end
 	end
 
-	console_command("graph", "show", arg_3_0)
+	console_command("graph", "show", graph_name)
 end
 
-GraphHelper.show = function (arg_4_0)
+GraphHelper.show = function (graph_name)
 	-- function 4
-	console_command("graph", "show", arg_4_0)
+	console_command("graph", "show", graph_name)
 end
 
-GraphHelper.hide = function (arg_5_0)
+GraphHelper.hide = function (graph_name)
 	-- function 5
-	console_command("graph", "hide", arg_5_0)
+	console_command("graph", "hide", graph_name)
 end
 
-GraphHelper.set_range = function (arg_6_0, arg_6_1, arg_6_2)
+GraphHelper.set_range = function (graph_name, min, max)
 	-- function 6
-	console_command("graph", "range", arg_6_0, tostring(arg_6_1), tostring(arg_6_2))
+	console_command("graph", "range", graph_name, tostring(min), tostring(max))
 end
 
-GraphHelper.update_range = function (arg_7_0)
+GraphHelper.update_range = function (graph_name)
 	-- function 7
-	console_command("graph", "range", arg_7_0)
+	console_command("graph", "range", graph_name)
 end
 
-GraphHelper.set_color = function (arg_8_0, arg_8_1)
+GraphHelper.set_color = function (stat, color)
 	-- function 8
-	console_command("graph", "color", arg_8_1)
+	console_command("graph", "color", color)
 end
 
-GraphHelper.record_statistics = function (arg_9_0, arg_9_1)
+GraphHelper.record_statistics = function (stat, value)
 	-- function 9
-	assert(GraphHelper._known_stats[arg_9_0] == type(arg_9_1))
-	record_statistics(arg_9_0, arg_9_1)
+	assert(GraphHelper._known_stats[stat] == type(value))
+	record_statistics(stat, value)
 end

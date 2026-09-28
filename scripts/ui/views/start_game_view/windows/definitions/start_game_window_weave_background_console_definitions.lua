@@ -1,19 +1,23 @@
 -- chunkname: @scripts/ui/views/start_game_view/windows/definitions/start_game_window_weave_background_console_definitions.lua
 
-local large_window_size = UISettings.game_start_windows.large_window_size
-local str = "menu_frame_11"
-local var_0_2 = UIFrameSettings[str].texture_sizes.vertical[1]
-local tbl = {
-	large_window_size[1] - var_0_2 * 2,
-	large_window_size[2] - var_0_2 * 2
+local window_default_settings = UISettings.game_start_windows
+local large_window_size = window_default_settings.large_window_size
+local window_frame_name = "menu_frame_11"
+local window_frame = UIFrameSettings[window_frame_name]
+local window_frame_width = window_frame.texture_sizes.vertical[1]
+local window_size = {
+	large_window_size[1] - window_frame_width * 2,
+	large_window_size[2] - window_frame_width * 2
 }
-local num = 1.5
-local num_2 = 0
-local tbl_2 = {
+local wheel_scale = 1.5
+
+window_frame_width = 0
+window_size = {
 	1920,
 	1080
 }
-local tbl_3 = {
+
+local scenegraph_definition = {
 	root = {
 		is_root = true,
 		size = {
@@ -68,7 +72,7 @@ local tbl_3 = {
 		vertical_alignment = "center",
 		parent = "menu_root",
 		horizontal_alignment = "center",
-		size = tbl_2,
+		size = window_size,
 		position = {
 			0,
 			0,
@@ -79,9 +83,9 @@ local tbl_3 = {
 		vertical_alignment = "center",
 		parent = "parent_window",
 		horizontal_alignment = "right",
-		size = tbl_2,
+		size = window_size,
 		position = {
-			-num_2,
+			-window_frame_width,
 			0,
 			1
 		}
@@ -91,7 +95,7 @@ local tbl_3 = {
 		parent = "window",
 		horizontal_alignment = "center",
 		size = {
-			tbl_2[1],
+			window_size[1],
 			84
 		},
 		position = {
@@ -105,7 +109,7 @@ local tbl_3 = {
 		parent = "top_panel",
 		horizontal_alignment = "center",
 		size = {
-			tbl_2[1],
+			window_size[1],
 			500
 		},
 		position = {
@@ -119,8 +123,8 @@ local tbl_3 = {
 		parent = "window",
 		horizontal_alignment = "center",
 		size = {
-			math.floor(1022 * num),
-			math.floor(1022 * num)
+			math.floor(1022 * wheel_scale),
+			math.floor(1022 * wheel_scale)
 		},
 		position = {
 			0,
@@ -133,8 +137,8 @@ local tbl_3 = {
 		parent = "background_wheel",
 		horizontal_alignment = "center",
 		size = {
-			math.floor(188 * num),
-			math.floor(188 * num)
+			math.floor(188 * wheel_scale),
+			math.floor(188 * wheel_scale)
 		},
 		position = {
 			0,
@@ -147,8 +151,8 @@ local tbl_3 = {
 		parent = "background_wheel",
 		horizontal_alignment = "center",
 		size = {
-			math.floor(461 * num),
-			math.floor(461 * num)
+			math.floor(461 * wheel_scale),
+			math.floor(461 * wheel_scale)
 		},
 		position = {
 			0,
@@ -161,8 +165,8 @@ local tbl_3 = {
 		parent = "background_wheel",
 		horizontal_alignment = "center",
 		size = {
-			math.floor(1074 * num),
-			math.floor(1074 * num)
+			math.floor(1074 * wheel_scale),
+			math.floor(1074 * wheel_scale)
 		},
 		position = {
 			0,
@@ -231,8 +235,8 @@ local tbl_3 = {
 		parent = "window",
 		horizontal_alignment = "center",
 		size = {
-			tbl_2[1],
-			tbl_2[2]
+			window_size[1],
+			window_size[2]
 		},
 		position = {
 			0,
@@ -245,7 +249,7 @@ local tbl_3 = {
 		parent = "window",
 		horizontal_alignment = "center",
 		size = {
-			tbl_2[1],
+			window_size[1],
 			500
 		},
 		position = {
@@ -259,7 +263,7 @@ local tbl_3 = {
 		parent = "window",
 		horizontal_alignment = "center",
 		size = {
-			tbl_2[1],
+			window_size[1],
 			200
 		},
 		position = {
@@ -269,81 +273,81 @@ local tbl_3 = {
 		}
 	}
 }
-local tbl_4 = {
+local window_background_color = {
 	255,
 	153,
 	50,
 	204
 }
-local tbl_5 = {
+local background_color = {
 	255,
 	0,
 	0,
 	0
 }
-local tbl_6 = {
+local bottom_glow_back_smoke_color = {
 	200,
 	138,
 	0,
 	147
 }
-local tbl_7 = {
+local bottom_glow_front_smoke_color = {
 	255,
 	138,
 	0,
 	187
 }
-local tbl_8 = {
+local bottom_glow_front_2_smoke_color = {
 	200,
 	128,
 	0,
 	217
 }
-local tbl_9 = {
+local bottom_glow_back_ember_color = {
 	130,
 	255,
 	255,
 	255
 }
-local tbl_10 = {
+local top_glow_back_smoke_color = {
 	200,
 	138,
 	0,
 	147
 }
-local tbl_11 = {
+local wheel_color = {
 	255,
 	138,
 	0,
 	147
 }
-local tbl_12 = {
+local bottom_hdr_widgets = {
 	hdr_background_write_mask = UIWidgets.create_simple_texture("ui_write_mask", "window"),
-	hdr_background_wheel_1 = UIWidgets.create_simple_texture("athanor_skilltree_background_effect", "background_wheel", nil, nil, tbl_11, 5),
+	hdr_background_wheel_1 = UIWidgets.create_simple_texture("athanor_skilltree_background_effect", "background_wheel", nil, nil, wheel_color, 5),
 	hdr_wheel_ring_1_1 = UIWidgets.create_simple_rotated_texture("athanor_skilltree_ring_effect_1", 0, {
-		math.floor(188 * num) / 2,
-		math.floor(188 * num) / 2
-	}, "wheel_ring_1", nil, nil, tbl_11),
+		math.floor(188 * wheel_scale) / 2,
+		math.floor(188 * wheel_scale) / 2
+	}, "wheel_ring_1", nil, nil, wheel_color),
 	hdr_wheel_ring_1_2 = UIWidgets.create_simple_rotated_texture("athanor_skilltree_ring_effect_2", 0, {
-		math.floor(461 * num) / 2,
-		math.floor(461 * num) / 2
-	}, "wheel_ring_2", nil, nil, tbl_11),
+		math.floor(461 * wheel_scale) / 2,
+		math.floor(461 * wheel_scale) / 2
+	}, "wheel_ring_2", nil, nil, wheel_color),
 	hdr_wheel_ring_1_3 = UIWidgets.create_simple_rotated_texture("athanor_skilltree_ring_effect_3", 0, {
-		math.floor(1074 * num) / 2,
-		math.floor(1074 * num) / 2
-	}, "wheel_ring_3", nil, nil, tbl_11),
+		math.floor(1074 * wheel_scale) / 2,
+		math.floor(1074 * wheel_scale) / 2
+	}, "wheel_ring_3", nil, nil, wheel_color),
 	hdr_wheel_ring_2_1 = UIWidgets.create_simple_rotated_texture("athanor_skilltree_ring_effect_1", 0, {
-		math.floor(188 * num) / 2,
-		math.floor(188 * num) / 2
-	}, "wheel_ring_1", nil, nil, tbl_11),
+		math.floor(188 * wheel_scale) / 2,
+		math.floor(188 * wheel_scale) / 2
+	}, "wheel_ring_1", nil, nil, wheel_color),
 	hdr_wheel_ring_2_2 = UIWidgets.create_simple_rotated_texture("athanor_skilltree_ring_effect_2", 0, {
-		math.floor(461 * num) / 2,
-		math.floor(461 * num) / 2
-	}, "wheel_ring_2", nil, nil, tbl_11),
+		math.floor(461 * wheel_scale) / 2,
+		math.floor(461 * wheel_scale) / 2
+	}, "wheel_ring_2", nil, nil, wheel_color),
 	hdr_wheel_ring_2_3 = UIWidgets.create_simple_rotated_texture("athanor_skilltree_ring_effect_3", 0, {
-		math.floor(1074 * num) / 2,
-		math.floor(1074 * num) / 2
-	}, "wheel_ring_3", nil, nil, tbl_11),
+		math.floor(1074 * wheel_scale) / 2,
+		math.floor(1074 * wheel_scale) / 2
+	}, "wheel_ring_3", nil, nil, wheel_color),
 	top_glow_smoke_1 = UIWidgets.create_simple_uv_texture("forge_overview_top_glow_effect_smoke_1", {
 		{
 			0,
@@ -353,40 +357,40 @@ local tbl_12 = {
 			1,
 			1
 		}
-	}, "top_glow", nil, nil, tbl_10, 0)
+	}, "top_glow", nil, nil, top_glow_back_smoke_color, 0)
 }
-local tbl_13 = {
+local bottom_widgets = {
 	background_write_mask = UIWidgets.create_simple_texture("athanor_background_write_mask", "window"),
 	background_wheel_1 = UIWidgets.create_simple_rotated_texture("athanor_skilltree_background", 0, {
-		math.floor(1022 * num) / 2,
-		math.floor(1022 * num) / 2
-	}, "background_wheel", nil, nil, tbl_11),
+		math.floor(1022 * wheel_scale) / 2,
+		math.floor(1022 * wheel_scale) / 2
+	}, "background_wheel", nil, nil, wheel_color),
 	wheel_ring_1_1 = UIWidgets.create_simple_rotated_texture("athanor_skilltree_ring_1", 0, {
-		math.floor(188 * num) / 2,
-		math.floor(188 * num) / 2
-	}, "wheel_ring_1", nil, nil, tbl_11),
+		math.floor(188 * wheel_scale) / 2,
+		math.floor(188 * wheel_scale) / 2
+	}, "wheel_ring_1", nil, nil, wheel_color),
 	wheel_ring_1_2 = UIWidgets.create_simple_rotated_texture("athanor_skilltree_ring_2", 0, {
-		math.floor(461 * num) / 2,
-		math.floor(461 * num) / 2
-	}, "wheel_ring_2", nil, nil, tbl_11),
+		math.floor(461 * wheel_scale) / 2,
+		math.floor(461 * wheel_scale) / 2
+	}, "wheel_ring_2", nil, nil, wheel_color),
 	wheel_ring_1_3 = UIWidgets.create_simple_rotated_texture("athanor_skilltree_ring_3", 0, {
-		math.floor(1074 * num) / 2,
-		math.floor(1074 * num) / 2
-	}, "wheel_ring_3", nil, nil, tbl_11),
+		math.floor(1074 * wheel_scale) / 2,
+		math.floor(1074 * wheel_scale) / 2
+	}, "wheel_ring_3", nil, nil, wheel_color),
 	wheel_ring_2_1 = UIWidgets.create_simple_rotated_texture("athanor_skilltree_ring_1", 0, {
-		math.floor(188 * num) / 2,
-		math.floor(188 * num) / 2
-	}, "wheel_ring_1", nil, nil, tbl_11),
+		math.floor(188 * wheel_scale) / 2,
+		math.floor(188 * wheel_scale) / 2
+	}, "wheel_ring_1", nil, nil, wheel_color),
 	wheel_ring_2_2 = UIWidgets.create_simple_rotated_texture("athanor_skilltree_ring_2", 0, {
-		math.floor(461 * num) / 2,
-		math.floor(461 * num) / 2
-	}, "wheel_ring_2", nil, nil, tbl_11),
+		math.floor(461 * wheel_scale) / 2,
+		math.floor(461 * wheel_scale) / 2
+	}, "wheel_ring_2", nil, nil, wheel_color),
 	wheel_ring_2_3 = UIWidgets.create_simple_rotated_texture("athanor_skilltree_ring_3", 0, {
-		math.floor(1074 * num) / 2,
-		math.floor(1074 * num) / 2
-	}, "wheel_ring_3", nil, nil, tbl_11),
-	window_background = UIWidgets.create_simple_rect("window", tbl_4),
-	screen_background = UIWidgets.create_simple_rect("screen", tbl_5),
+		math.floor(1074 * wheel_scale) / 2,
+		math.floor(1074 * wheel_scale) / 2
+	}, "wheel_ring_3", nil, nil, wheel_color),
+	window_background = UIWidgets.create_simple_rect("window", window_background_color),
+	screen_background = UIWidgets.create_simple_rect("screen", background_color),
 	bottom_glow_smoke_1 = UIWidgets.create_simple_uv_texture("forge_overview_bottom_glow_effect_smoke_1", {
 		{
 			0,
@@ -396,7 +400,7 @@ local tbl_13 = {
 			1,
 			0
 		}
-	}, "bottom_glow", nil, nil, tbl_6),
+	}, "bottom_glow", nil, nil, bottom_glow_back_smoke_color),
 	bottom_glow_smoke_2 = UIWidgets.create_simple_uv_texture("forge_overview_bottom_glow_effect_smoke_2", {
 		{
 			0,
@@ -406,7 +410,7 @@ local tbl_13 = {
 			1,
 			0
 		}
-	}, "bottom_glow_short", nil, nil, tbl_7),
+	}, "bottom_glow_short", nil, nil, bottom_glow_front_smoke_color),
 	bottom_glow_smoke_3 = UIWidgets.create_simple_uv_texture("forge_overview_bottom_glow_effect_embers_2", {
 		{
 			0,
@@ -416,7 +420,7 @@ local tbl_13 = {
 			1,
 			0
 		}
-	}, "bottom_glow_shortest", nil, nil, tbl_8),
+	}, "bottom_glow_shortest", nil, nil, bottom_glow_front_2_smoke_color),
 	bottom_glow_embers_1 = UIWidgets.create_simple_uv_texture("forge_overview_bottom_glow_effect_embers_1", {
 		{
 			0,
@@ -426,7 +430,7 @@ local tbl_13 = {
 			1,
 			0
 		}
-	}, "bottom_glow", nil, nil, tbl_9, 1),
+	}, "bottom_glow", nil, nil, bottom_glow_back_ember_color, 1),
 	bottom_glow_embers_3 = UIWidgets.create_simple_uv_texture("forge_overview_bottom_glow_effect_embers_3", {
 		{
 			0,
@@ -436,9 +440,9 @@ local tbl_13 = {
 			1,
 			0
 		}
-	}, "bottom_glow_short", nil, nil, tbl_9, 1)
+	}, "bottom_glow_short", nil, nil, bottom_glow_back_ember_color, 1)
 }
-local tbl_14 = {
+local top_widgets = {
 	top_corner_left = UIWidgets.create_simple_texture("athanor_decoration_corner", "top_corner_left"),
 	top_corner_right = UIWidgets.create_simple_uv_texture("athanor_decoration_corner", {
 		{
@@ -471,23 +475,23 @@ local tbl_14 = {
 		}
 	}, "bottom_corner_right")
 }
-local tbl_15 = {
+local animation_definitions = {
 	on_enter = {
 		{
 			name = "fade_in",
 			start_progress = 0,
 			end_progress = 0.3,
-			init = function (arg_1_0, arg_1_1, arg_1_2, arg_1_3)
+			init = function (ui_scenegraph, scenegraph_definition, widgets, params)
 				-- function 1
-				arg_1_3.render_settings.alpha_multiplier = 0
+				params.render_settings.alpha_multiplier = 0
 			end,
-			update = function (arg_2_0, arg_2_1, arg_2_2, arg_2_3, arg_2_4)
+			update = function (ui_scenegraph, scenegraph_definition, widgets, progress, params)
 				-- function 2
-				local easeOutCubic = math.easeOutCubic(arg_2_3)
+				local anim_progress = math.easeOutCubic(progress)
 
-				arg_2_4.render_settings.alpha_multiplier = easeOutCubic
+				params.render_settings.alpha_multiplier = anim_progress
 			end,
-			on_complete = function (arg_3_0, arg_3_1, arg_3_2, arg_3_3)
+			on_complete = function (ui_scenegraph, scenegraph_definition, widgets, params)
 				-- function 3
 				return
 			end
@@ -498,17 +502,17 @@ local tbl_15 = {
 			name = "fade_out",
 			start_progress = 0,
 			end_progress = 0.3,
-			init = function (arg_4_0, arg_4_1, arg_4_2, arg_4_3)
+			init = function (ui_scenegraph, scenegraph_definition, widgets, params)
 				-- function 4
-				arg_4_3.render_settings.alpha_multiplier = 1
+				params.render_settings.alpha_multiplier = 1
 			end,
-			update = function (arg_5_0, arg_5_1, arg_5_2, arg_5_3, arg_5_4)
+			update = function (ui_scenegraph, scenegraph_definition, widgets, progress, params)
 				-- function 5
-				local easeOutCubic = math.easeOutCubic(arg_5_3)
+				local anim_progress = math.easeOutCubic(progress)
 
-				arg_5_4.render_settings.alpha_multiplier = 1 - easeOutCubic
+				params.render_settings.alpha_multiplier = 1 - anim_progress
 			end,
-			on_complete = function (arg_6_0, arg_6_1, arg_6_2, arg_6_3)
+			on_complete = function (ui_scenegraph, scenegraph_definition, widgets, params)
 				-- function 6
 				return
 			end
@@ -517,10 +521,10 @@ local tbl_15 = {
 }
 
 return {
-	window_background_color = tbl_4,
-	top_widgets = tbl_14,
-	bottom_widgets = tbl_13,
-	bottom_hdr_widgets = tbl_12,
-	scenegraph_definition = tbl_3,
-	animation_definitions = tbl_15
+	window_background_color = window_background_color,
+	top_widgets = top_widgets,
+	bottom_widgets = bottom_widgets,
+	bottom_hdr_widgets = bottom_hdr_widgets,
+	scenegraph_definition = scenegraph_definition,
+	animation_definitions = animation_definitions
 }

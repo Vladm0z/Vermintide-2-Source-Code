@@ -10,18 +10,18 @@ AIBrain = class(AIBrain)
 
 local BLACKBOARDS = BLACKBOARDS
 
-AIBrain.init = function (self, arg_1_1, arg_1_2, arg_1_3, arg_1_4, arg_1_5)
+AIBrain.init = function (self, world, unit, blackboard, breed, behavior)
 	-- function 1
-	self._unit = arg_1_2
-	BLACKBOARDS[arg_1_2] = arg_1_3
-	self._blackboard = arg_1_3
-	arg_1_3.attacks_done = 0
-	arg_1_3.breed = arg_1_4
-	arg_1_3.destination_dist = 0
-	arg_1_3.nav_target_dist_sq = 0
+	self._unit = unit
+	BLACKBOARDS[unit] = blackboard
+	self._blackboard = blackboard
+	blackboard.attacks_done = 0
+	blackboard.breed = breed
+	blackboard.destination_dist = 0
+	blackboard.nav_target_dist_sq = 0
 
-	self:load_brain(arg_1_5)
-	self:init_utility_actions(arg_1_3, arg_1_4)
+	self:load_brain(behavior)
+	self:init_utility_actions(blackboard, breed)
 end
 
 AIBrain.destroy = function (self)
@@ -33,46 +33,48 @@ AIBrain.destroy = function (self)
 	self:exit_last_action()
 end
 
-AIBrain.unfreeze = function (self, arg_3_1, arg_3_2)
+AIBrain.unfreeze = function (self, blackboard, behavior)
 	-- function 3
-	arg_3_1.attacks_done = 0
-	arg_3_1.destination_dist = 0
-	arg_3_1.nav_target_dist_sq = 0
+	blackboard.attacks_done = 0
+	blackboard.destination_dist = 0
+	blackboard.nav_target_dist_sq = 0
 
-	self:load_brain(arg_3_2)
-	self:init_utility_actions(arg_3_1, arg_3_1.breed)
+	self:load_brain(behavior)
+	self:init_utility_actions(blackboard, blackboard.breed)
 end
 
-AIBrain.init_utility_actions = function (self, arg_4_1, arg_4_2)
+AIBrain.init_utility_actions = function (self, blackboard, breed)
 	-- function 4
-	local tbl = {}
-	local action_data = self._bt:action_data()
+	local utility_actions = {}
+	local actions = self._bt:action_data()
 
-	for k, v in pairs(action_data) do
-		if not v.considerations then
-			tbl[k] = {
+	for action_name, data in pairs(actions) do
+		if data.considerations then
+			utility_actions[action_name] = {
 				last_time = -math.huge,
 				time_since_last = math.huge,
 				last_done_time = -math.huge,
 				time_since_last_done = math.huge
 			}
 
-			if not v.init_blackboard then
-				for k_2, v_2 in pairs(v.init_blackboard) do
-					arg_4_1[k_2] = v_2
+			if data.init_blackboard then
+				for name, value in pairs(data.init_blackboard) do
+					blackboard[name] = value
 				end
 			end
 		end
 	end
 
-	arg_4_1.utility_actions = tbl
+	blackboard.utility_actions = utility_actions
 end
 
-AIBrain.load_brain = function (self, arg_5_1)
+AIBrain.load_brain = function (self, tree_name)
 	-- function 5
-	self._bt = Managers.state.entity:system("ai_system"):behavior_tree(arg_5_1)
+	local ai_system = Managers.state.entity:system("ai_system")
 
-	fassert(self._bt, "Cannot find behavior tree '%s' specified for unit '%s'", arg_5_1, self._unit)
+	self._bt = ai_system:behavior_tree(tree_name)
+
+	fassert(self._bt, "Cannot find behavior tree '%s' specified for unit '%s'", tree_name, self._unit)
 end
 
 AIBrain.bt = function (self)
@@ -82,17 +84,17 @@ end
 
 AIBrain.exit_last_action = function (self)
 	-- function 7
-	local _blackboard = self._blackboard
+	local blackboard = self._blackboard
 
-	_blackboard.exit_last_action = true
+	blackboard.exit_last_action = true
 
 	local root = self._bt:root()
-	local time = Managers.time:time("game")
+	local t = Managers.time:time("game")
 
-	root:set_running_child(self._unit, _blackboard, time, nil, "aborted", true)
+	root:set_running_child(self._unit, blackboard, t, nil, "aborted", true)
 end
 
-AIBrain.update = function (self, arg_8_1, arg_8_2, arg_8_3)
+AIBrain.update = function (self, unit, t, dt)
 	-- function 8
-	local evaluate = self._bt:root():evaluate(arg_8_1, self._blackboard, arg_8_2, arg_8_3)
+	local result = self._bt:root():evaluate(unit, self._blackboard, t, dt)
 end

@@ -1,17 +1,17 @@
 -- chunkname: @scripts/settings/breeds/breed_chaos_spawn.lua
 
-local scripts_utils_stagger_types = require("scripts/utils/stagger_types")
-local tbl = {
+local stagger_types = require("scripts/utils/stagger_types")
+local pushed_data = {
 	ahead_dist = 1.5,
 	push_width = 2.5,
 	push_forward_offset = 1,
 	push_stagger_distance = 1,
 	player_pushed_speed = 8,
 	push_stagger_impact = {
-		scripts_utils_stagger_types.medium,
-		scripts_utils_stagger_types.medium,
-		scripts_utils_stagger_types.none,
-		scripts_utils_stagger_types.none
+		stagger_types.medium,
+		stagger_types.medium,
+		stagger_types.none,
+		stagger_types.none
 	},
 	push_stagger_duration = {
 		1.5,
@@ -22,9 +22,17 @@ local tbl = {
 }
 local BotConstants = BotConstants
 
-BotConstants = not BotConstants and BotConstants.default.DEFAULT_BOT_THREAT_DIFFICULTY_DATA
+if BotConstants then
+	-- Nothing
+end
 
-local tbl_2 = {
+BotConstants = BotConstants.default.DEFAULT_BOT_THREAT_DIFFICULTY_DATA
+
+local default_bot_threat_difficulty_data = BotConstants
+
+::label_0_0::
+
+local breed_data = {
 	detection_radius = 9999999,
 	boss_damage_reduction = true,
 	walk_speed = 3.5,
@@ -343,22 +351,22 @@ local tbl_2 = {
 		stormfiend_warpfire = 1,
 		vortex_danger_zone = 1
 	},
-	custom_death_enter_function = function (arg_1_0, arg_1_1, arg_1_2, arg_1_3, arg_1_4, arg_1_5)
+	custom_death_enter_function = function (unit, killer_unit, damage_type, death_hit_zone, t, damage_source)
 		-- function 1
-		local var_1_0 = BLACKBOARDS[arg_1_0]
+		local blackboard = BLACKBOARDS[unit]
 
-		if not Unit.alive(arg_1_1) then
+		if not Unit.alive(killer_unit) then
 			return
 		end
 
-		QuestSettings.check_chaos_spawn_killed_while_grabbing(var_1_0, arg_1_1)
-		QuestSettings.check_chaos_spawn_killed_without_having_grabbed(var_1_0, arg_1_1)
+		QuestSettings.check_chaos_spawn_killed_while_grabbing(blackboard, killer_unit)
+		QuestSettings.check_chaos_spawn_killed_without_having_grabbed(blackboard, killer_unit)
 	end
 }
 
-Breeds.chaos_spawn = table.create_copy(Breeds.chaos_spawn, tbl_2)
+Breeds.chaos_spawn = table.create_copy(Breeds.chaos_spawn, breed_data)
 
-local tbl_3 = {
+local breed_data_norsca = {
 	combat_music_state = "champion_chaos_exalted_norsca",
 	allowed_layers = {
 		end_zone = 0,
@@ -378,22 +386,22 @@ local tbl_3 = {
 	}
 }
 
-for k, v in pairs(tbl_2) do
-	local var_0_5 = tbl_3[k]
+for key, value in pairs(breed_data) do
+	local keep_value = breed_data_norsca[key]
 
-	if var_0_5 == "SET_TO_NIL" then
-		tbl_3[k] = nil
-	elseif var_0_5 ~= nil then
-		tbl_3[k] = var_0_5
+	if keep_value == "SET_TO_NIL" then
+		breed_data_norsca[key] = nil
+	elseif keep_value ~= nil then
+		breed_data_norsca[key] = keep_value
 	else
-		tbl_3[k] = v
+		breed_data_norsca[key] = value
 	end
 end
 
-Breeds.chaos_spawn_exalted_champion_norsca = table.create_copy(Breeds.chaos_spawn_exalted_champion_norsca, tbl_3)
+Breeds.chaos_spawn_exalted_champion_norsca = table.create_copy(Breeds.chaos_spawn_exalted_champion_norsca, breed_data_norsca)
 Breeds.chaos_spawn_exalted_champion_norsca.is_always_spawnable = nil
 
-local tbl_4 = {
+local AttackIntensityPerDifficulty = {
 	melee_slam = {
 		easy = {
 			running = 2,
@@ -500,7 +508,7 @@ local tbl_4 = {
 		}
 	}
 }
-local tbl_5 = {
+local action_data = {
 	climb = {
 		catapult_players = {
 			speed = 7,
@@ -517,7 +525,7 @@ local tbl_5 = {
 		allow_friendly_fire = true,
 		attack_intensity_type = "combo",
 		action_weight = 1,
-		difficulty_attack_intensity = tbl_4,
+		difficulty_attack_intensity = AttackIntensityPerDifficulty,
 		considerations = UtilityConsiderations.chaos_spawn_combo,
 		attacks = {
 			{
@@ -540,7 +548,7 @@ local tbl_5 = {
 				attack_anim = {
 					"attack_melee_combo"
 				},
-				push_units_in_the_way = tbl,
+				push_units_in_the_way = pushed_data,
 				bot_threats = {
 					{
 						range = 3.5,
@@ -584,7 +592,7 @@ local tbl_5 = {
 				attack_anim = {
 					"attack_melee_combo_2"
 				},
-				push_units_in_the_way = tbl,
+				push_units_in_the_way = pushed_data,
 				bot_threats = {
 					{
 						range = 3.5,
@@ -623,7 +631,7 @@ local tbl_5 = {
 		unblockable = false,
 		attack_time = 1.1666666666666667,
 		dodge_mitigation_radius_squared = 2.25,
-		difficulty_attack_intensity = tbl_4,
+		difficulty_attack_intensity = AttackIntensityPerDifficulty,
 		considerations = UtilityConsiderations.chaos_spawn_melee_slam,
 		attack_anim = {
 			"attack_melee_claw"
@@ -631,10 +639,10 @@ local tbl_5 = {
 		blocked_difficulty_damage = BreedTweaks.difficulty_damage.boss_slam_attack_blocked,
 		difficulty_damage = BreedTweaks.difficulty_damage.boss_slam_attack,
 		stagger_impact = {
-			scripts_utils_stagger_types.weak,
-			scripts_utils_stagger_types.medium,
-			scripts_utils_stagger_types.none,
-			scripts_utils_stagger_types.none
+			stagger_types.weak,
+			stagger_types.medium,
+			stagger_types.none,
+			stagger_types.none
 		},
 		bot_threats = {
 			{
@@ -651,7 +659,7 @@ local tbl_5 = {
 		action_weight = 1,
 		ignore_ai_damage = true,
 		damage_type = "cutting",
-		difficulty_attack_intensity = tbl_4,
+		difficulty_attack_intensity = AttackIntensityPerDifficulty,
 		considerations = UtilityConsiderations.spawn_melee_shove,
 		attacks = {
 			{
@@ -687,11 +695,11 @@ local tbl_5 = {
 				push_ai = {
 					stagger_distance = 3,
 					stagger_impact = {
-						scripts_utils_stagger_types.explosion,
-						scripts_utils_stagger_types.heavy,
-						scripts_utils_stagger_types.none,
-						scripts_utils_stagger_types.none,
-						scripts_utils_stagger_types.explosion
+						stagger_types.explosion,
+						stagger_types.heavy,
+						stagger_types.none,
+						stagger_types.none,
+						stagger_types.explosion
 					},
 					stagger_duration = {
 						4.5,
@@ -701,7 +709,7 @@ local tbl_5 = {
 						4
 					}
 				},
-				bot_threat_difficulty_data = BotConstants,
+				bot_threat_difficulty_data = default_bot_threat_difficulty_data,
 				bot_threats = {
 					{
 						collision_type = "cylinder",
@@ -759,11 +767,11 @@ local tbl_5 = {
 				push_ai = {
 					stagger_distance = 3,
 					stagger_impact = {
-						scripts_utils_stagger_types.explosion,
-						scripts_utils_stagger_types.heavy,
-						scripts_utils_stagger_types.none,
-						scripts_utils_stagger_types.none,
-						scripts_utils_stagger_types.explosion
+						stagger_types.explosion,
+						stagger_types.heavy,
+						stagger_types.none,
+						stagger_types.none,
+						stagger_types.explosion
 					},
 					stagger_duration = {
 						4.5,
@@ -861,19 +869,21 @@ local tbl_5 = {
 				attack_anim = {
 					"attack_grab"
 				},
-				hit_player_func = function (arg_2_0, arg_2_1, arg_2_2, arg_2_3, arg_2_4)
+				hit_player_func = function (unit, blackboard, hit_unit, action, attack)
 					-- function 2
-					local has_extension = ScriptUnit.has_extension(arg_2_2, "status_system")
+					local status_extension = ScriptUnit.has_extension(hit_unit, "status_system")
 
-					if not (has_extension:is_disabled() or has_extension:is_invisible()) then
-						arg_2_1.victim_grabbed = arg_2_2
-						arg_2_1.has_grabbed = true
+					if not status_extension:is_disabled() and not status_extension:is_invisible() then
+						blackboard.victim_grabbed = hit_unit
+						blackboard.has_grabbed = true
 
-						Managers.state.network:anim_event(arg_2_0, "attack_grab_player")
-						StatusUtils.set_grabbed_by_chaos_spawn_network(arg_2_2, true, arg_2_0)
+						local network_manager = Managers.state.network
 
-						arg_2_1.grabbed_time = 0
-						arg_2_1.grabbed_state = "tentacle_grab"
+						network_manager:anim_event(unit, "attack_grab_player")
+						StatusUtils.set_grabbed_by_chaos_spawn_network(hit_unit, true, unit)
+
+						blackboard.grabbed_time = 0
+						blackboard.grabbed_state = "tentacle_grab"
 					end
 				end,
 				continious_overlap = {
@@ -883,7 +893,7 @@ local tbl_5 = {
 						start_time = 0.6666666666666666
 					}
 				},
-				bot_threat_difficulty_data = BotConstants,
+				bot_threat_difficulty_data = default_bot_threat_difficulty_data,
 				bot_threats = {
 					{
 						collision_type = "cylinder",
@@ -1212,4 +1222,4 @@ local tbl_5 = {
 	}
 }
 
-BreedActions.chaos_spawn = table.create_copy(BreedActions.chaos_spawn, tbl_5)
+BreedActions.chaos_spawn = table.create_copy(BreedActions.chaos_spawn, action_data)

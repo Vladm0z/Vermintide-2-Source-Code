@@ -1,7 +1,7 @@
 -- chunkname: @scripts/ui/views/hero_view/windows/definitions/hero_window_crafting_inventory_console_definitions.lua
 
 local console_menu_scenegraphs = UISettings.console_menu_scenegraphs
-local tbl = {
+local scenegraph_definition = {
 	screen = console_menu_scenegraphs.screen,
 	area = console_menu_scenegraphs.area,
 	area_left = console_menu_scenegraphs.area_left,
@@ -326,7 +326,7 @@ local tbl = {
 		}
 	}
 }
-local tbl_2 = {
+local page_number_left_text_style = {
 	word_wrap = true,
 	font_size = 26,
 	localize = false,
@@ -341,7 +341,7 @@ local tbl_2 = {
 		2
 	}
 }
-local tbl_3 = {
+local page_number_right_text_style = {
 	word_wrap = true,
 	font_size = 26,
 	localize = false,
@@ -356,7 +356,7 @@ local tbl_3 = {
 		2
 	}
 }
-local tbl_4 = {
+local page_number_center_text_style = {
 	word_wrap = true,
 	font_size = 26,
 	localize = false,
@@ -372,12 +372,12 @@ local tbl_4 = {
 	}
 }
 
-local function fn(arg_1_0)
+local function create_search_input_widget(parent)
 	-- function 1
-	local button_frame_01 = UIFrameSettings.button_frame_01
-	local frame_outer_glow_01 = UIFrameSettings.frame_outer_glow_01
-	local var_1_2 = frame_outer_glow_01.texture_sizes.horizontal[2]
-	local size = tbl.search_input.size
+	local frame_settings = UIFrameSettings.button_frame_01
+	local glow_settings = UIFrameSettings.frame_outer_glow_01
+	local glow_width = glow_settings.texture_sizes.horizontal[2]
+	local size = scenegraph_definition.search_input.size
 
 	return {
 		scenegraph_id = "search_input",
@@ -396,23 +396,23 @@ local function fn(arg_1_0)
 					style_id = "bg_texture",
 					texture_id = "bg_texture",
 					pass_type = "texture",
-					content_change_function = function (self, arg_2_1)
+					content_change_function = function (content, style)
 						-- function 2
 						local disabled_color
 
-						if not self.hotspot.disable_button then
-							disabled_color = arg_2_1.disabled_color
+						if content.hotspot.disable_button then
+							disabled_color = style.disabled_color
 
 							if not disabled_color then
 								-- Nothing
 							end
 						end
 
-						disabled_color = arg_2_1.base_color
+						disabled_color = style.base_color
 
 						::label_2_0::
 
-						arg_2_1.color = disabled_color
+						style.color = disabled_color
 					end
 				},
 				{
@@ -429,18 +429,18 @@ local function fn(arg_1_0)
 					style_id = "glow",
 					texture_id = "glow",
 					pass_type = "texture_frame",
-					content_change_function = function (self, arg_3_1)
+					content_change_function = function (content, style)
 						-- function 3
-						local parent = self.parent
+						local parent = content.parent
 						local filter_selected = parent:filter_selected()
 						local filter_active = parent:filter_active()
 
-						if filter_selected or not self.input_active then
-							arg_3_1.color[1] = 255
-						elseif not (not self.hotspot.is_hover and filter_active) then
-							arg_3_1.color[1] = 100
+						if filter_selected or content.input_active then
+							style.color[1] = 255
+						elseif content.hotspot.is_hover and not filter_active then
+							style.color[1] = 100
 						else
-							arg_3_1.color[1] = 0
+							style.color[1] = 0
 						end
 					end
 				},
@@ -448,34 +448,34 @@ local function fn(arg_1_0)
 					style_id = "search_placeholder",
 					pass_type = "text",
 					text_id = "search_placeholder",
-					content_check_function = function (self)
+					content_check_function = function (content)
 						-- function 4
-						return self.search_query ~= "" or not not self.input_active or not self.hotspot.disable_button
+						return content.search_query == "" and not content.input_active and not not not content.hotspot.disable_button
 					end
 				},
 				{
 					style_id = "disabled_text",
 					pass_type = "text",
 					text_id = "disabled_text",
-					content_check_function = function (self)
+					content_check_function = function (content)
 						-- function 5
-						return self.hotspot.disable_button
+						return content.hotspot.disable_button
 					end
 				},
 				{
 					style_id = "search_query",
 					pass_type = "text",
 					text_id = "search_query",
-					content_check_function = function (self)
+					content_check_function = function (content)
 						-- function 6
-						return not self.hotspot.disable_button
+						return not content.hotspot.disable_button
 					end,
-					content_change_function = function (self, arg_7_1)
+					content_change_function = function (content, style)
 						-- function 7
-						if not self.input_active then
-							arg_7_1.caret_color[1] = 0
+						if not content.input_active then
+							style.caret_color[1] = 0
 						else
-							arg_7_1.caret_color[1] = 127 + 128 * math.sin(5 * Managers.time:time("ui"))
+							style.caret_color[1] = 127 + 128 * math.sin(5 * Managers.time:time("ui"))
 						end
 					end
 				},
@@ -487,94 +487,97 @@ local function fn(arg_1_0)
 						-- function 8
 						return not Managers.input:is_device_active("gamepad")
 					end,
-					content_change_function = function (self, arg_9_1)
+					content_change_function = function (content, style)
 						-- function 9
-						local filter_active = self.parent.parent:filter_active()
+						local parent = content.parent.parent
+						local filter_active = parent:filter_active()
 
-						if filter_active ~= self.filter_active then
-							self.filter_active = filter_active
+						if filter_active ~= content.filter_active then
+							content.filter_active = filter_active
 
-							if not filter_active then
-								Colors.copy_to(arg_9_1.parent.search_filters_glow.color, Colors.color_definitions.white)
+							if filter_active then
+								Colors.copy_to(style.parent.search_filters_glow.color, Colors.color_definitions.white)
 							else
-								Colors.copy_to(arg_9_1.parent.search_filters_glow.color, Colors.color_definitions.font_title)
+								Colors.copy_to(style.parent.search_filters_glow.color, Colors.color_definitions.font_title)
 							end
 						end
 
-						local num = 0
+						local alpha = 0
 
-						if not self.is_hover then
-							num = 255
-						elseif not self.filter_active then
-							num = 200
+						if content.is_hover then
+							alpha = 255
+						elseif content.filter_active then
+							alpha = 200
 						end
 
-						arg_9_1.parent.search_filters_glow.color[1] = num
+						style.parent.search_filters_glow.color[1] = alpha
 					end
 				},
 				{
 					style_id = "search_filters_bg",
 					texture_id = "search_filters_bg",
 					pass_type = "texture",
-					content_change_function = function (self, arg_10_1)
+					content_change_function = function (content, style)
 						-- function 10
 						local disabled_color
 
-						if not self.search_filters_hotspot.disable_button then
-							disabled_color = arg_10_1.disabled_color
+						if content.search_filters_hotspot.disable_button then
+							disabled_color = style.disabled_color
 
 							if not disabled_color then
 								-- Nothing
 							end
 						end
 
-						disabled_color = arg_10_1.base_color
+						disabled_color = style.base_color
 
 						::label_10_0::
 
-						arg_10_1.color = disabled_color
+						style.color = disabled_color
 					end
 				},
 				{
 					style_id = "search_filters_icon",
 					texture_id = "search_filters_icon",
 					pass_type = "texture",
-					content_change_function = function (self, arg_11_1)
+					content_change_function = function (content, style)
 						-- function 11
 						local disabled_color
 
-						if not self.search_filters_hotspot.disable_button then
-							disabled_color = arg_11_1.disabled_color
+						if content.search_filters_hotspot.disable_button then
+							disabled_color = style.disabled_color
 
 							if not disabled_color then
 								-- Nothing
 							end
 						end
 
-						disabled_color = arg_11_1.base_color
+						disabled_color = style.base_color
 
 						::label_11_0::
 
-						arg_11_1.color = disabled_color
+						style.color = disabled_color
 					end
 				},
 				{
 					style_id = "search_filters_glow",
 					texture_id = "search_filters_glow",
 					pass_type = "texture",
-					content_change_function = function (self, arg_12_1)
+					content_change_function = function (content, style)
 						-- function 12
-						if not Managers.input:is_device_active("gamepad") then
+						local gamepad_active = Managers.input:is_device_active("gamepad")
+
+						if not gamepad_active then
 							return
 						end
 
-						local parent = self.parent
+						local parent = content.parent
 						local filter_selected = parent:filter_selected()
 						local filter_active = parent:filter_active()
-						local color = arg_12_1.parent.search_filters_glow.color
+						local color = style.parent.search_filters_glow.color
 						local flag
 
-						flag = filter_selected or not filter_active or 255 or 0
+						flag = (filter_selected or filter_active) and not not 255 or not not 0
 						color[1] = flag
 					end
 				},
@@ -587,22 +590,22 @@ local function fn(arg_1_0)
 					style_id = "clear_icon",
 					texture_id = "clear_icon",
 					pass_type = "texture",
-					content_check_function = function (self)
+					content_check_function = function (content)
 						-- function 13
-						return self.search_query == "" or not self.hotspot.disable_button
+						return content.search_query ~= "" and not not not content.hotspot.disable_button
 					end,
-					content_change_function = function (self, arg_14_1)
+					content_change_function = function (content, style)
 						-- function 14
-						local clear_hotspot = self.clear_hotspot
+						local clear_hotspot = content.clear_hotspot
 						local is_hover = clear_hotspot.is_hover
 
 						if is_hover ~= clear_hotspot.was_hover then
 							clear_hotspot.was_hover = is_hover
 
-							if not is_hover then
-								Colors.copy_to(arg_14_1.color, Colors.color_definitions.font_title)
+							if is_hover then
+								Colors.copy_to(style.color, Colors.color_definitions.font_title)
 							else
-								Colors.copy_to(arg_14_1.color, Colors.color_definitions.very_dark_gray)
+								Colors.copy_to(style.color, Colors.color_definitions.very_dark_gray)
 							end
 						end
 					end
@@ -624,8 +627,8 @@ local function fn(arg_1_0)
 			hotspot = {
 				allow_multi_hover = true
 			},
-			frame = button_frame_01.texture,
-			glow = frame_outer_glow_01.texture,
+			frame = frame_settings.texture,
+			glow = glow_settings.texture,
 			details = {
 				texture_id = "button_detail_04",
 				uvs = {
@@ -641,7 +644,7 @@ local function fn(arg_1_0)
 			},
 			search_filters_hotspot = {},
 			clear_hotspot = {},
-			parent = arg_1_0
+			parent = parent
 		},
 		style = {
 			bg_texture = {
@@ -670,8 +673,8 @@ local function fn(arg_1_0)
 				}
 			},
 			frame = {
-				texture_size = button_frame_01.texture_size,
-				texture_sizes = button_frame_01.texture_sizes,
+				texture_size = frame_settings.texture_size,
+				texture_sizes = frame_settings.texture_sizes,
 				offset = {
 					0,
 					0,
@@ -710,11 +713,11 @@ local function fn(arg_1_0)
 			},
 			glow = {
 				frame_margins = {
-					-var_1_2,
-					-var_1_2
+					-glow_width,
+					-glow_width
 				},
-				texture_size = frame_outer_glow_01.texture_size,
-				texture_sizes = frame_outer_glow_01.texture_sizes,
+				texture_size = glow_settings.texture_size,
+				texture_sizes = glow_settings.texture_sizes,
 				offset = {
 					0,
 					0,
@@ -921,30 +924,30 @@ local function fn(arg_1_0)
 	}
 end
 
-local tbl_5 = {
+local FILTER_COLOR_DEFAULT = {
 	255,
 	32,
 	32,
 	32
 }
-local tbl_6 = {
+local FILTER_COLOR_SELECTED = {
 	255,
 	139,
 	69,
 	19
 }
 
-local function fn_2(arg_15_0, arg_15_1, arg_15_2)
+local function create_search_filters_widget(scenegraph_id, ui_renderer, search_definitions)
 	-- function 15
-	local size = tbl[arg_15_0].size
-	local tbl_2 = {
-		size[1],
+	local sg_size = scenegraph_definition[scenegraph_id].size
+	local size = {
+		sg_size[1],
 		450
 	}
-	local num = -20
-	local button_frame_01 = UIFrameSettings.button_frame_01
-	local tbl_3 = {
-		scenegraph_id = arg_15_0,
+	local base_offset = -20
+	local frame_settings = UIFrameSettings.button_frame_01
+	local widget = {
+		scenegraph_id = scenegraph_id,
 		offset = {
 			0,
 			0,
@@ -1001,25 +1004,25 @@ local function fn_2(arg_15_0, arg_15_1, arg_15_2)
 					style_id = "reset_filter_hotspot",
 					pass_type = "hotspot",
 					content_id = "reset_filter_hotspot",
-					content_change_function = function (self, arg_16_1)
+					content_change_function = function (hotspot, style)
 						-- function 16
-						if not self.on_pressed then
-							local parent = self.parent
-							local query = parent.query
+						if hotspot.on_pressed then
+							local content = hotspot.parent
+							local query = content.query
 
 							if not table.is_empty(query) then
 								table.clear(query.sort)
 								table.clear(query.filter)
 
 								query.only_new = nil
-								parent.query_dirty = true
+								content.query_dirty = true
 							end
 						end
 
-						local color = arg_16_1.parent.reset_filter_fg.color
+						local color = style.parent.reset_filter_fg.color
 						local flag
 
-						flag = not self.is_hover and 255 and 0
+						flag = (not hotspot.is_hover or not 255) and not not 0
 						color[1] = flag
 					end
 				},
@@ -1027,7 +1030,7 @@ local function fn_2(arg_15_0, arg_15_1, arg_15_2)
 					texture_id = "reset_filter_bg",
 					style_id = "reset_filter_bg",
 					pass_type = "texture",
-					content_check_function = function (arg_17_0, arg_17_1)
+					content_check_function = function (content, style)
 						-- function 17
 						return not Managers.input:is_device_active("gamepad")
 					end
@@ -1036,7 +1039,7 @@ local function fn_2(arg_15_0, arg_15_1, arg_15_2)
 					texture_id = "reset_filter_fg",
 					style_id = "reset_filter_fg",
 					pass_type = "texture",
-					content_check_function = function (arg_18_0, arg_18_1)
+					content_check_function = function (content, style)
 						-- function 18
 						return not Managers.input:is_device_active("gamepad")
 					end
@@ -1057,7 +1060,7 @@ local function fn_2(arg_15_0, arg_15_1, arg_15_2)
 			reset_filter_fg = "achievement_refresh_on",
 			query_dirty = false,
 			sort_text = "Sort by",
-			frame = button_frame_01.texture,
+			frame = frame_settings.texture,
 			reset_filter_hotspot = {},
 			close_filter_hotspot = {},
 			area_hotspot = {},
@@ -1078,7 +1081,7 @@ local function fn_2(arg_15_0, arg_15_1, arg_15_2)
 					0,
 					0
 				},
-				area_size = tbl_2
+				area_size = size
 			},
 			bg = {
 				vertical_alignment = "top",
@@ -1093,7 +1096,7 @@ local function fn_2(arg_15_0, arg_15_1, arg_15_2)
 					64,
 					64
 				},
-				texture_size = tbl_2
+				texture_size = size
 			},
 			gamepad_background = {
 				offset = {
@@ -1110,9 +1113,9 @@ local function fn_2(arg_15_0, arg_15_1, arg_15_2)
 			},
 			frame = {
 				vertical_alignment = "top",
-				texture_size = button_frame_01.texture_size,
-				texture_sizes = button_frame_01.texture_sizes,
-				area_size = tbl_2,
+				texture_size = frame_settings.texture_size,
+				texture_sizes = frame_settings.texture_sizes,
+				area_size = size,
 				offset = {
 					0,
 					0,
@@ -1135,7 +1138,7 @@ local function fn_2(arg_15_0, arg_15_1, arg_15_2)
 				text_color = Colors.get_table("font_title"),
 				offset = {
 					0,
-					-10 + num,
+					-10 + base_offset,
 					3
 				}
 			},
@@ -1148,7 +1151,7 @@ local function fn_2(arg_15_0, arg_15_1, arg_15_2)
 				},
 				offset = {
 					0,
-					-50 + num,
+					-50 + base_offset,
 					3
 				}
 			},
@@ -1162,7 +1165,7 @@ local function fn_2(arg_15_0, arg_15_1, arg_15_2)
 				text_color = Colors.get_table("font_title"),
 				offset = {
 					0,
-					-10 + num - 150,
+					-10 + base_offset - 150,
 					3
 				}
 			},
@@ -1175,7 +1178,7 @@ local function fn_2(arg_15_0, arg_15_1, arg_15_2)
 				},
 				offset = {
 					0,
-					-50 + num - 150,
+					-50 + base_offset - 150,
 					3
 				}
 			},
@@ -1188,7 +1191,7 @@ local function fn_2(arg_15_0, arg_15_1, arg_15_2)
 				},
 				offset = {
 					170,
-					-60 + num + -20,
+					-60 + base_offset + -20,
 					3
 				},
 				angle = math.pi * 0.5,
@@ -1206,7 +1209,7 @@ local function fn_2(arg_15_0, arg_15_1, arg_15_2)
 				},
 				offset = {
 					-15,
-					-15 + num + 20,
+					-15 + base_offset + 20,
 					3
 				}
 			},
@@ -1245,7 +1248,7 @@ local function fn_2(arg_15_0, arg_15_1, arg_15_2)
 				},
 				offset = {
 					-15,
-					-15 + num + 20,
+					-15 + base_offset + 20,
 					4
 				},
 				color = {
@@ -1264,7 +1267,7 @@ local function fn_2(arg_15_0, arg_15_1, arg_15_2)
 				},
 				offset = {
 					-15,
-					-15 + num + 20,
+					-15 + base_offset + 20,
 					5
 				},
 				color = {
@@ -1276,9 +1279,9 @@ local function fn_2(arg_15_0, arg_15_1, arg_15_2)
 			}
 		}
 	}
-	local passes = tbl_3.element.passes
-	local content = tbl_3.content
-	local style = tbl_3.style
+	local passes = widget.element.passes
+	local content = widget.content
+	local style = widget.style
 
 	content.current_gamepad_index = {
 		1,
@@ -1286,16 +1289,14 @@ local function fn_2(arg_15_0, arg_15_1, arg_15_2)
 	}
 	content.gamepad_input_matrix = {}
 
-	local num_2 = 1
-	local tbl_4 = {
+	local current_input_row = 1
+	local font_data = {
 		font_type = "hell_shark",
 		font_size = 24
 	}
-	local var_15_10, var_15_11 = UIFontByResolution(tbl_4)
-	local var_15_12 = var_15_10[1]
-	local var_15_13 = var_15_11
-	local var_15_14 = var_15_10[3]
-	local tbl_5 = {
+	local font, size_of_font = UIFontByResolution(font_data)
+	local font_material, font_size, font_name = font[1], size_of_font, font[3]
+	local sort_by = {
 		{
 			name = "rarity",
 			text = Utf8.upper(Localize("search_filter_rarity"))
@@ -1305,166 +1306,175 @@ local function fn_2(arg_15_0, arg_15_1, arg_15_2)
 			text = Utf8.upper(Localize("search_filter_power"))
 		}
 	}
-	local num_3 = 50
-	local num_4 = 0
-	local num_5 = -num_3 * 0.5
-	local tbl_6 = {}
+	local spacing = 50
+	local offset = 0
+	local row_size = -spacing * 0.5
+	local widths = {}
 
-	for i = 1, #tbl_5 do
-		local text = tbl_5[i].text
-		local text_size = UIRenderer.text_size(arg_15_1, text, var_15_12, var_15_13, tbl_2[1])
+	for i = 1, #sort_by do
+		local text = sort_by[i].text
+		local width = UIRenderer.text_size(ui_renderer, text, font_material, font_size, size[1])
 
-		tbl_6[#tbl_6 + 1] = text_size
-		num_5 = num_5 + text_size + num_3
+		widths[#widths + 1] = width
+		row_size = row_size + width + spacing
 	end
 
-	local num_6 = tbl_2[1] * 0.5 - num_5 * 0.5
+	offset = size[1] * 0.5 - row_size * 0.5
 
-	for j = 1, #tbl_5 do
-		local var_15_23 = tbl_5[j]
-		local text_2 = var_15_23.text
-		local str = "sort_items_" .. var_15_23.name
+	for i = 1, #sort_by do
+		local sort = sort_by[i]
+		local text = sort.text
+		local name = "sort_items_" .. sort.name
 
 		passes[#passes + 1] = {
 			pass_type = "hotspot",
-			content_id = str .. "_hotspot",
-			style_id = str .. "_hotspot",
-			content_change_function = function (self, arg_19_1)
+			content_id = name .. "_hotspot",
+			style_id = name .. "_hotspot",
+			content_change_function = function (content, style)
 				-- function 19
-				if self.on_pressed or self.on_double_click or not self.gamepad_pressed then
-					local sort = self.parent.query.sort
-					local var_19_1 = sort[str]
+				if content.on_pressed or content.on_double_click or content.gamepad_pressed then
+					local query_sort = content.parent.query.sort
+					local sort_option = query_sort[name]
 
-					table.clear(sort)
+					table.clear(query_sort)
 
-					if var_19_1 == "descending" then
-						sort[str] = "ascending"
-					elseif not var_19_1 then
-						sort[str] = "descending"
+					if sort_option == "descending" then
+						query_sort[name] = "ascending"
+					elseif not sort_option then
+						query_sort[name] = "descending"
 					end
 
-					self.gamepad_pressed = nil
+					content.gamepad_pressed = nil
 				end
 			end
 		}
 		passes[#passes + 1] = {
 			pass_type = "text",
-			text_id = str .. "_text",
-			style_id = str .. "_text",
-			content_change_function = function (self, arg_20_1)
+			text_id = name .. "_text",
+			style_id = name .. "_text",
+			content_change_function = function (content, style)
 				-- function 20
-				local is_device_active = Managers.input:is_device_active("gamepad")
-				local current_gamepad_index = self.current_gamepad_index
-				local var_20_2 = current_gamepad_index[1]
-				local var_20_3 = current_gamepad_index[2]
-				local var_20_4 = self.gamepad_input_matrix[var_20_2][var_20_3]
-				local str_2 = str .. "_hotspot"
-				local flag = not is_device_active and str_2 == var_20_4
-				local is_hover = self[str_2].is_hover
+				local gamepad_active = Managers.input:is_device_active("gamepad")
+				local current_gamepad_index = content.current_gamepad_index
+				local current_row = current_gamepad_index[1]
+				local current_column = current_gamepad_index[2]
+				local current_gamepad_hotspot = content.gamepad_input_matrix[current_row][current_column]
+				local hotspot_name = name .. "_hotspot"
+				local gamepad_selected = not not gamepad_active and hotspot_name == current_gamepad_hotspot
+				local hotspot = content[hotspot_name]
+				local is_hover_2 = hotspot.is_hover
 
-				is_hover = is_hover or flag
+				if not is_hover_2 then
+					-- Nothing
+				end
 
-				local text_color = arg_20_1.text_color
+				is_hover_2 = gamepad_selected
+
+				local is_hover = is_hover_2
+
+				::label_20_0::
+
+				local text_color = style.text_color
+				local flag
+
+				flag = (not is_hover or not 255) and not not 128
+				text_color[1] = flag
+
+				local text_color_2 = style.text_color
 				local flag_2
 
-				flag_2 = not is_hover and 255 and 128
-				text_color[1] = flag_2
+				flag_2 = (content.query.sort[name] or is_hover) and not not 255 or not not 128
+				text_color_2[2] = flag_2
 
-				local text_color_2 = arg_20_1.text_color
+				local text_color_3 = style.text_color
 				local flag_3
 
-				flag_3 = self.query.sort[str] or not is_hover or 255 or 128
-				text_color_2[2] = flag_3
+				flag_3 = (content.query.sort[name] or is_hover) and not not 255 or not not 128
+				text_color_3[3] = flag_3
 
-				local text_color_3 = arg_20_1.text_color
+				local text_color_4 = style.text_color
 				local flag_4
 
-				flag_4 = self.query.sort[str] or not is_hover or 255 or 128
-				text_color_3[3] = flag_4
-
-				local text_color_4 = arg_20_1.text_color
-				local flag_5
-
-				flag_5 = self.query.sort[str] or not is_hover or 255 or 128
-				text_color_4[4] = flag_5
+				flag_4 = (content.query.sort[name] or is_hover) and not not 255 or not not 128
+				text_color_4[4] = flag_4
 			end
 		}
 		passes[#passes + 1] = {
 			pass_type = "rounded_background",
-			style_id = str .. "_foreground"
+			style_id = name .. "_foreground"
 		}
 		passes[#passes + 1] = {
 			pass_type = "rounded_background",
-			style_id = str .. "_background",
-			content_change_function = function (self, arg_21_1)
+			style_id = name .. "_background",
+			content_change_function = function (content, style)
 				-- function 21
-				local var_21_0 = self[str .. "_hotspot"]
-				local color = arg_21_1.color
+				local hotspot = content[name .. "_hotspot"]
+				local color = style.color
 				local flag
 
-				flag = not self.query.sort[str] and 255 and 128
+				flag = (not content.query.sort[name] or not 255) and not not 128
 				color[1] = flag
 			end
 		}
 		passes[#passes + 1] = {
 			pass_type = "triangle",
-			style_id = str .. "_arrow_up",
-			content_check_function = function (self, arg_22_1)
+			style_id = name .. "_arrow_up",
+			content_check_function = function (content, style)
 				-- function 22
-				return self.query.sort[str] == "ascending"
+				return content.query.sort[name] == "ascending"
 			end
 		}
 		passes[#passes + 1] = {
 			pass_type = "triangle",
-			style_id = str .. "_arrow_down",
-			content_check_function = function (self, arg_23_1)
+			style_id = name .. "_arrow_down",
+			content_check_function = function (content, style)
 				-- function 23
-				return self.query.sort[str] == "descending"
+				return content.query.sort[name] == "descending"
 			end
 		}
 		passes[#passes + 1] = {
 			pass_type = "triangle",
-			style_id = str .. "_small_arrow_up",
-			content_check_function = function (self, arg_24_1)
+			style_id = name .. "_small_arrow_up",
+			content_check_function = function (content, style)
 				-- function 24
-				return not self.query.sort[str]
+				return not content.query.sort[name]
 			end
 		}
 		passes[#passes + 1] = {
 			pass_type = "triangle",
-			style_id = str .. "_small_arrow_down",
-			content_check_function = function (self, arg_25_1)
+			style_id = name .. "_small_arrow_down",
+			content_check_function = function (content, style)
 				-- function 25
-				return not self.query.sort[str]
+				return not content.query.sort[name]
 			end
 		}
-		content[str .. "_text"] = text_2
-		content[str .. "_hotspot"] = {}
+		content[name .. "_text"] = text
+		content[name .. "_hotspot"] = {}
 
 		local gamepad_input_matrix = content.gamepad_input_matrix
-		local var_15_27 = content.gamepad_input_matrix[num_2]
+		local var_15_1 = content.gamepad_input_matrix[current_input_row]
 
-		var_15_27 = var_15_27 or {}
-		gamepad_input_matrix[num_2] = var_15_27
-		content.gamepad_input_matrix[num_2][#content.gamepad_input_matrix[num_2] + 1] = str .. "_hotspot"
-		style[str .. "_hotspot"] = {
+		var_15_1 = not not var_15_1 or not not {}
+		gamepad_input_matrix[current_input_row] = var_15_1
+		content.gamepad_input_matrix[current_input_row][#content.gamepad_input_matrix[current_input_row] + 1] = name .. "_hotspot"
+		style[name .. "_hotspot"] = {
 			vertical_alignment = "top",
 			horizontal_alignment = "left",
 			area_size = {
-				tbl_6[j] + 40,
+				widths[i] + 40,
 				35
 			},
 			offset = {
-				num_6,
+				offset,
 				-110,
 				51
 			}
 		}
-		style[str .. "_text"] = {
+		style[name .. "_text"] = {
 			vertical_alignment = "center",
 			horizontal_alignment = "left",
-			font_size = tbl_4.font_size,
-			font_type = tbl_4.font_type,
+			font_size = font_data.font_size,
+			font_type = font_data.font_type,
 			text_color = {
 				255,
 				128,
@@ -1472,17 +1482,17 @@ local function fn_2(arg_15_0, arg_15_1, arg_15_2)
 				128
 			},
 			offset = {
-				num_6,
+				offset,
 				-110,
 				51
 			}
 		}
-		style[str .. "_foreground"] = {
+		style[name .. "_foreground"] = {
 			vertical_alignment = "top",
 			corner_radius = 5,
 			horizontal_alignment = "left",
 			rect_size = {
-				tbl_6[j] + 40,
+				widths[i] + 40,
 				35
 			},
 			color = {
@@ -1492,17 +1502,17 @@ local function fn_2(arg_15_0, arg_15_1, arg_15_2)
 				0
 			},
 			offset = {
-				num_6 - 10,
+				offset - 10,
 				-112,
 				50
 			}
 		}
-		style[str .. "_background"] = {
+		style[name .. "_background"] = {
 			vertical_alignment = "top",
 			corner_radius = 5,
 			horizontal_alignment = "left",
 			rect_size = {
-				tbl_6[j] + 40 + 2,
+				widths[i] + 40 + 2,
 				37
 			},
 			color = {
@@ -1512,12 +1522,12 @@ local function fn_2(arg_15_0, arg_15_1, arg_15_2)
 				128
 			},
 			offset = {
-				num_6 - 10 - 1,
+				offset - 10 - 1,
 				-111,
 				49
 			}
 		}
-		style[str .. "_arrow_up"] = {
+		style[name .. "_arrow_up"] = {
 			vertical_alignment = "center",
 			horizontal_alignment = "left",
 			triangle_alignment = "up",
@@ -1532,12 +1542,12 @@ local function fn_2(arg_15_0, arg_15_1, arg_15_2)
 				255
 			},
 			offset = {
-				num_6 + 5 + tbl_6[j],
+				offset + 5 + widths[i],
 				-110,
 				53
 			}
 		}
-		style[str .. "_arrow_down"] = {
+		style[name .. "_arrow_down"] = {
 			vertical_alignment = "center",
 			horizontal_alignment = "left",
 			triangle_alignment = "down",
@@ -1552,12 +1562,12 @@ local function fn_2(arg_15_0, arg_15_1, arg_15_2)
 				255
 			},
 			offset = {
-				num_6 + 5 + tbl_6[j],
+				offset + 5 + widths[i],
 				-108,
 				53
 			}
 		}
-		style[str .. "_small_arrow_up"] = {
+		style[name .. "_small_arrow_up"] = {
 			vertical_alignment = "center",
 			horizontal_alignment = "left",
 			triangle_alignment = "up",
@@ -1572,12 +1582,12 @@ local function fn_2(arg_15_0, arg_15_1, arg_15_2)
 				128
 			},
 			offset = {
-				num_6 + 10 + tbl_6[j],
+				offset + 10 + widths[i],
 				-105,
 				53
 			}
 		}
-		style[str .. "_small_arrow_down"] = {
+		style[name .. "_small_arrow_down"] = {
 			vertical_alignment = "center",
 			horizontal_alignment = "left",
 			triangle_alignment = "down",
@@ -1592,147 +1602,148 @@ local function fn_2(arg_15_0, arg_15_1, arg_15_2)
 				128
 			},
 			offset = {
-				num_6 + 10 + tbl_6[j],
+				offset + 10 + widths[i],
 				-115,
 				53
 			}
 		}
-		num_6 = num_6 + tbl_6[j] + num_3
+		offset = offset + widths[i] + spacing
 	end
 
-	local num_7 = num_2 + 1
-	local tbl_7 = {}
+	current_input_row = current_input_row + 1
 
-	for k, v in pairs(RaritySettings) do
-		tbl_7[#tbl_7 + 1] = v
+	local rarities = {}
+
+	for _, rarity_data in pairs(RaritySettings) do
+		rarities[#rarities + 1] = rarity_data
 	end
 
-	local function fn(self, arg_26_1)
+	local function sort_func(a, b)
 		-- function 26
-		return self.order < arg_26_1.order
+		return a.order < b.order
 	end
 
-	table.sort(tbl_7, fn)
+	table.sort(rarities, sort_func)
 
-	local num_8 = 3
-	local num_9 = 26
-	local num_10 = -num_9 * 0.5
-	local tbl_8 = {}
-	local tbl_9 = {}
+	local entries_per_row = 3
+	local spacing = 26
+	local row_size = -spacing * 0.5
+	local offsets = {}
+	local widths = {}
 
-	for i4 = 1, #tbl_7 do
-		local var_15_36 = tbl_7[i4]
-		local text_size_2 = UIRenderer.text_size(arg_15_1, Localize(var_15_36.display_name), var_15_12, var_15_13, tbl_2[1])
+	for i = 1, #rarities do
+		local rarity_data = rarities[i]
+		local width = UIRenderer.text_size(ui_renderer, Localize(rarity_data.display_name), font_material, font_size, size[1])
 
-		tbl_9[#tbl_9 + 1] = text_size_2
-		num_10 = num_10 + text_size_2 + num_9
+		widths[#widths + 1] = width
+		row_size = row_size + width + spacing
 
-		if not (i4 % num_8 == 0 or i4 ~= #tbl_7) then
-			tbl_8[#tbl_8 + 1] = tbl_2[1] * 0.5 - num_10 * 0.5
-			num_10 = -num_9 * 0.5
+		if i % entries_per_row == 0 or i == #rarities then
+			offsets[#offsets + 1] = size[1] * 0.5 - row_size * 0.5
+			row_size = -spacing * 0.5
 		end
 	end
 
-	local num_11 = 1
-	local var_15_39 = tbl_8[num_11]
+	local current_index = 1
+	local offset = offsets[current_index]
 
-	for i5 = 1, #tbl_7 do
-		local var_15_40 = tbl_7[i5]
-		local ceil = math.ceil(i5 / num_8)
+	for i = 1, #rarities do
+		local rarity_data = rarities[i]
+		local offset_index = math.ceil(i / entries_per_row)
 
-		if ceil ~= num_11 then
-			var_15_39 = tbl_8[ceil]
-			num_11 = ceil
-			num_7 = num_7 + 1
+		if offset_index ~= current_index then
+			offset = offsets[offset_index]
+			current_index = offset_index
+			current_input_row = current_input_row + 1
 		end
 
 		passes[#passes + 1] = {
 			pass_type = "hotspot",
-			content_id = var_15_40.name .. "_hotspot",
-			style_id = var_15_40.name .. "_hotspot",
-			content_change_function = function (self, arg_27_1)
+			content_id = rarity_data.name .. "_hotspot",
+			style_id = rarity_data.name .. "_hotspot",
+			content_change_function = function (content, style)
 				-- function 27
-				if self.on_pressed or self.on_double_click or not self.gamepad_pressed then
-					if not self.parent.query.filter[var_15_40.name] then
-						self.parent.query.filter[var_15_40.name] = true
+				if content.on_pressed or content.on_double_click or content.gamepad_pressed then
+					if not content.parent.query.filter[rarity_data.name] then
+						content.parent.query.filter[rarity_data.name] = true
 					else
-						self.parent.query.filter[var_15_40.name] = nil
+						content.parent.query.filter[rarity_data.name] = nil
 					end
 
-					self.gamepad_pressed = nil
+					content.gamepad_pressed = nil
 				end
 			end
 		}
-		content[var_15_40.name .. "_hotspot"] = {}
+		content[rarity_data.name .. "_hotspot"] = {}
 
 		local gamepad_input_matrix_2 = content.gamepad_input_matrix
-		local var_15_43 = content.gamepad_input_matrix[num_7]
+		local var_15_3 = content.gamepad_input_matrix[current_input_row]
 
-		var_15_43 = var_15_43 or {}
-		gamepad_input_matrix_2[num_7] = var_15_43
-		content.gamepad_input_matrix[num_7][#content.gamepad_input_matrix[num_7] + 1] = var_15_40.name .. "_hotspot"
-		style[var_15_40.name .. "_hotspot"] = {
+		var_15_3 = not not var_15_3 or not not {}
+		gamepad_input_matrix_2[current_input_row] = var_15_3
+		content.gamepad_input_matrix[current_input_row][#content.gamepad_input_matrix[current_input_row] + 1] = rarity_data.name .. "_hotspot"
+		style[rarity_data.name .. "_hotspot"] = {
 			vertical_alignment = "top",
 			horizontal_alignment = "left",
 			area_size = {
-				tbl_9[i5] + 20,
+				widths[i] + 20,
 				42,
 				0
 			},
 			offset = {
-				var_15_39 - 10,
-				-250 + (num_11 - 1) * -50 - 15,
+				offset - 10,
+				-250 + (current_index - 1) * -50 - 15,
 				50
 			}
 		}
 		passes[#passes + 1] = {
 			pass_type = "rect_text",
-			text_id = var_15_40.name,
-			style_id = var_15_40.name,
-			content_change_function = function (self, arg_28_1)
+			text_id = rarity_data.name,
+			style_id = rarity_data.name,
+			content_change_function = function (content, style)
 				-- function 28
-				local is_device_active = Managers.input:is_device_active("gamepad")
-				local current_gamepad_index = self.current_gamepad_index
-				local var_28_2 = current_gamepad_index[1]
-				local var_28_3 = current_gamepad_index[2]
-				local var_28_4 = self.gamepad_input_matrix[var_28_2][var_28_3]
-				local str = var_15_40.name .. "_hotspot"
-				local flag = not is_device_active and str == var_28_4
+				local gamepad_active = Managers.input:is_device_active("gamepad")
+				local current_gamepad_index = content.current_gamepad_index
+				local current_row = current_gamepad_index[1]
+				local current_column = current_gamepad_index[2]
+				local current_gamepad_hotspot = content.gamepad_input_matrix[current_row][current_column]
+				local hotspot_name = rarity_data.name .. "_hotspot"
+				local gamepad_selected = not not gamepad_active and hotspot_name == current_gamepad_hotspot
 
-				if self[str].is_hover or not flag then
+				if content[hotspot_name].is_hover or gamepad_selected then
 					local hovered_border_color
 
-					if not self.query.filter[var_15_40.name] then
-						hovered_border_color = arg_28_1.hovered_border_color
+					if not content.query.filter[rarity_data.name] then
+						hovered_border_color = style.hovered_border_color
 
 						if not hovered_border_color then
 							-- Nothing
 						end
 					end
 
-					hovered_border_color = arg_28_1.default_border_color
+					hovered_border_color = style.default_border_color
 
 					::label_28_0::
 
-					arg_28_1.border_color = hovered_border_color
-					arg_28_1.text_color = arg_28_1.hovered_text_color
-				elseif not self.query.filter[var_15_40.name] then
-					arg_28_1.border_color = arg_28_1.selected_border_color
-					arg_28_1.text_color = arg_28_1.selected_text_color
+					style.border_color = hovered_border_color
+					style.text_color = style.hovered_text_color
+				elseif not content.query.filter[rarity_data.name] then
+					style.border_color = style.selected_border_color
+					style.text_color = style.selected_text_color
 				else
-					arg_28_1.border_color = arg_28_1.default_border_color
-					arg_28_1.text_color = arg_28_1.default_text_color
+					style.border_color = style.default_border_color
+					style.text_color = style.default_text_color
 				end
 			end
 		}
-		content[var_15_40.name] = var_15_40.display_name
-		style[var_15_40.name] = {
+		content[rarity_data.name] = rarity_data.display_name
+		style[rarity_data.name] = {
 			localize = true,
 			horizontal_alignment = "left",
 			border = 1,
 			vertical_alignment = "top",
-			font_size = tbl_4.font_size,
-			font_type = tbl_4.font_type,
+			font_size = font_data.font_size,
+			font_type = font_data.font_type,
 			rect_color = {
 				255,
 				10,
@@ -1741,39 +1752,39 @@ local function fn_2(arg_15_0, arg_15_1, arg_15_2)
 			},
 			text_color = {
 				160,
-				var_15_40.color[2],
-				var_15_40.color[3],
-				var_15_40.color[4]
+				rarity_data.color[2],
+				rarity_data.color[3],
+				rarity_data.color[4]
 			},
 			border_color = {
 				160,
-				var_15_40.frame_color[2],
-				var_15_40.frame_color[3],
-				var_15_40.frame_color[4]
+				rarity_data.frame_color[2],
+				rarity_data.frame_color[3],
+				rarity_data.frame_color[4]
 			},
 			selected_border_color = {
 				160,
-				var_15_40.frame_color[2],
-				var_15_40.frame_color[3],
-				var_15_40.frame_color[4]
+				rarity_data.frame_color[2],
+				rarity_data.frame_color[3],
+				rarity_data.frame_color[4]
 			},
 			selected_text_color = {
 				160,
-				var_15_40.color[2],
-				var_15_40.color[3],
-				var_15_40.color[4]
+				rarity_data.color[2],
+				rarity_data.color[3],
+				rarity_data.color[4]
 			},
 			hovered_border_color = {
 				255,
-				var_15_40.frame_color[2],
-				var_15_40.frame_color[3],
-				var_15_40.frame_color[4]
+				rarity_data.frame_color[2],
+				rarity_data.frame_color[3],
+				rarity_data.frame_color[4]
 			},
 			hovered_text_color = {
 				255,
-				var_15_40.color[2],
-				var_15_40.color[3],
-				var_15_40.color[4]
+				rarity_data.color[2],
+				rarity_data.color[3],
+				rarity_data.color[4]
 			},
 			default_border_color = {
 				160,
@@ -1789,12 +1800,12 @@ local function fn_2(arg_15_0, arg_15_1, arg_15_2)
 			},
 			line_colors = {},
 			offset = {
-				var_15_39,
-				-250 + (num_11 - 1) * -50,
+				offset,
+				-250 + (current_index - 1) * -50,
 				50
 			}
 		}
-		var_15_39 = var_15_39 + tbl_9[i5] + num_9
+		offset = offset + widths[i] + spacing
 	end
 
 	passes[#passes + 1] = {
@@ -1802,13 +1813,14 @@ local function fn_2(arg_15_0, arg_15_1, arg_15_2)
 		pass_type = "hotspot",
 		scenegraph_id = "new_checkbox",
 		content_id = "checkbox_hotspot",
-		content_change_function = function (self, arg_29_1)
+		content_change_function = function (content, style)
 			-- function 29
-			if self.on_pressed or self.on_double_click or not self.gamepad_pressed then
-				local flag = not self.parent.query.only_new
+			if content.on_pressed or content.on_double_click or content.gamepad_pressed then
+				local query = content.parent.query
+				local only_new = not query.only_new
 
-				self.parent.query.only_new = not flag and true
-				self.gamepad_pressed = false
+				content.parent.query.only_new = not not only_new and not not true
+				content.gamepad_pressed = false
 			end
 		end
 	}
@@ -1817,30 +1829,30 @@ local function fn_2(arg_15_0, arg_15_1, arg_15_2)
 		pass_type = "text",
 		text_id = "checkbox_text",
 		scenegraph_id = "new_checkbox",
-		content_change_function = function (self, arg_30_1)
+		content_change_function = function (content, style)
 			-- function 30
-			local is_device_active = Managers.input:is_device_active("gamepad")
-			local current_gamepad_index = self.current_gamepad_index
-			local var_30_2 = current_gamepad_index[1]
-			local var_30_3 = current_gamepad_index[2]
-			local var_30_4 = self.gamepad_input_matrix[var_30_2][var_30_3]
-			local str = "checkbox_hotspot"
-			local flag = not is_device_active and str == var_30_4
+			local gamepad_active = Managers.input:is_device_active("gamepad")
+			local current_gamepad_index = content.current_gamepad_index
+			local current_row = current_gamepad_index[1]
+			local current_column = current_gamepad_index[2]
+			local current_gamepad_hotspot = content.gamepad_input_matrix[current_row][current_column]
+			local hotspot_name = "checkbox_hotspot"
+			local gamepad_selected = not not gamepad_active and hotspot_name == current_gamepad_hotspot
 			local selected_color
 
-			if self.checkbox_hotspot.is_hover or not flag then
-				selected_color = arg_30_1.selected_color
+			if content.checkbox_hotspot.is_hover or gamepad_selected then
+				selected_color = style.selected_color
 
 				if not selected_color then
 					-- Nothing
 				end
 			end
 
-			selected_color = arg_30_1.base_color
+			selected_color = style.base_color
 
 			::label_30_0::
 
-			arg_30_1.text_color = selected_color
+			style.text_color = selected_color
 		end
 	}
 	passes[#passes + 1] = {
@@ -1848,9 +1860,11 @@ local function fn_2(arg_15_0, arg_15_1, arg_15_2)
 		scenegraph_id = "new_checkbox",
 		texture_id = "checkbox_marker",
 		pass_type = "texture",
-		content_check_function = function (self, arg_31_1)
+		content_check_function = function (content, style)
 			-- function 31
-			return self.query.only_new
+			local query = content.query
+
+			return query.only_new
 		end
 	}
 	passes[#passes + 1] = {
@@ -1858,30 +1872,30 @@ local function fn_2(arg_15_0, arg_15_1, arg_15_2)
 		texture_id = "checkbox_frame",
 		pass_type = "texture_frame",
 		style_id = "checkbox_frame",
-		content_change_function = function (self, arg_32_1)
+		content_change_function = function (content, style)
 			-- function 32
-			local is_device_active = Managers.input:is_device_active("gamepad")
-			local current_gamepad_index = self.current_gamepad_index
-			local var_32_2 = current_gamepad_index[1]
-			local var_32_3 = current_gamepad_index[2]
-			local var_32_4 = self.gamepad_input_matrix[var_32_2][var_32_3]
-			local str = "checkbox_hotspot"
-			local flag = not is_device_active and str == var_32_4
+			local gamepad_active = Managers.input:is_device_active("gamepad")
+			local current_gamepad_index = content.current_gamepad_index
+			local current_row = current_gamepad_index[1]
+			local current_column = current_gamepad_index[2]
+			local current_gamepad_hotspot = content.gamepad_input_matrix[current_row][current_column]
+			local hotspot_name = "checkbox_hotspot"
+			local gamepad_selected = not not gamepad_active and hotspot_name == current_gamepad_hotspot
 			local selected_color
 
-			if self.checkbox_hotspot.is_hover or not flag then
-				selected_color = arg_32_1.selected_color
+			if content.checkbox_hotspot.is_hover or gamepad_selected then
+				selected_color = style.selected_color
 
 				if not selected_color then
 					-- Nothing
 				end
 			end
 
-			selected_color = arg_32_1.base_color
+			selected_color = style.base_color
 
 			::label_32_0::
 
-			arg_32_1.text_color = selected_color
+			style.text_color = selected_color
 		end
 	}
 	passes[#passes + 1] = {
@@ -1890,28 +1904,29 @@ local function fn_2(arg_15_0, arg_15_1, arg_15_2)
 		pass_type = "rect"
 	}
 
-	local menu_frame_06 = UIFrameSettings.menu_frame_06
+	local frame_settings = UIFrameSettings.menu_frame_06
 
-	content.checkbox_frame = menu_frame_06.texture
+	content.checkbox_frame = frame_settings.texture
 	content.checkbox_marker = "matchmaking_checkbox"
 	content.checkbox_hotspot = {}
 	content.checkbox_text = Localize("only_new_filter")
+	current_input_row = current_input_row + 1
 
-	local num_12 = num_7 + 1
 	local gamepad_input_matrix_3 = content.gamepad_input_matrix
-	local var_15_47 = content.gamepad_input_matrix[num_12]
+	local var_15_5 = content.gamepad_input_matrix[current_input_row]
 
-	var_15_47 = var_15_47 or {}
-	gamepad_input_matrix_3[num_12] = var_15_47
-	content.gamepad_input_matrix[num_12][#content.gamepad_input_matrix[num_12] + 1] = "checkbox_hotspot"
+	var_15_5 = not not var_15_5 or not not {}
+	gamepad_input_matrix_3[current_input_row] = var_15_5
+	content.gamepad_input_matrix[current_input_row][#content.gamepad_input_matrix[current_input_row] + 1] = "checkbox_hotspot"
 
-	local num_13 = UIRenderer.text_size(arg_15_1, content.checkbox_text, var_15_12, var_15_13, tbl_2[1]) * 0.5 + 20
+	local width = UIRenderer.text_size(ui_renderer, content.checkbox_text, font_material, font_size, size[1])
+	local checkbox_offset = width * 0.5 + 20
 
 	style.checkbox_text = {
 		vertical_alignment = "center",
 		horizontal_alignment = "center",
-		font_size = tbl_4.font_size,
-		font_type = tbl_4.font_type,
+		font_size = font_data.font_size,
+		font_type = font_data.font_type,
 		text_color = Colors.get_color_table_with_alpha("gray", 255),
 		base_color = Colors.get_color_table_with_alpha("gray", 255),
 		selected_color = Colors.get_color_table_with_alpha("white", 255),
@@ -1929,7 +1944,7 @@ local function fn_2(arg_15_0, arg_15_1, arg_15_2)
 			24.8
 		},
 		offset = {
-			num_13 + 4,
+			checkbox_offset + 4,
 			3,
 			1
 		},
@@ -1943,7 +1958,7 @@ local function fn_2(arg_15_0, arg_15_1, arg_15_2)
 			30
 		},
 		offset = {
-			num_13,
+			checkbox_offset,
 			0,
 			0
 		},
@@ -1961,10 +1976,10 @@ local function fn_2(arg_15_0, arg_15_1, arg_15_2)
 			30,
 			30
 		},
-		texture_size = menu_frame_06.texture_size,
-		texture_sizes = menu_frame_06.texture_sizes,
+		texture_size = frame_settings.texture_size,
+		texture_sizes = frame_settings.texture_sizes,
 		offset = {
-			num_13,
+			checkbox_offset,
 			0,
 			1
 		},
@@ -1976,10 +1991,10 @@ local function fn_2(arg_15_0, arg_15_1, arg_15_2)
 		}
 	}
 
-	return tbl_3
+	return widget
 end
 
-local tbl_7 = {
+local widgets = {
 	material_text_1 = UIWidgets.create_craft_material_widget("material_text_1"),
 	material_text_2 = UIWidgets.create_craft_material_widget("material_text_2"),
 	material_text_3 = UIWidgets.create_craft_material_widget("material_text_3"),
@@ -1988,7 +2003,7 @@ local tbl_7 = {
 	material_text_6 = UIWidgets.create_craft_material_widget("material_text_6"),
 	material_text_7 = UIWidgets.create_craft_material_widget("material_text_7"),
 	item_tooltip = UIWidgets.create_simple_item_presentation("item_tooltip", UISettings.console_tooltip_pass_definitions),
-	item_grid = UIWidgets.create_grid("item_grid", tbl.item_grid.size, 6, 5, 16, 10, false),
+	item_grid = UIWidgets.create_grid("item_grid", scenegraph_definition.item_grid.size, 6, 5, 16, 10, false),
 	page_button_next = UIWidgets.create_arrow_button("page_button_next", math.pi),
 	page_button_previous = UIWidgets.create_arrow_button("page_button_previous"),
 	input_icon_next = UIWidgets.create_simple_texture("xbone_button_icon_a", "input_icon_next"),
@@ -2004,29 +2019,29 @@ local tbl_7 = {
 		}
 	}, "input_arrow_next"),
 	input_arrow_previous = UIWidgets.create_simple_texture("settings_arrow_normal", "input_arrow_previous"),
-	page_text_center = UIWidgets.create_simple_text("/", "page_text_area", nil, nil, tbl_4),
-	page_text_left = UIWidgets.create_simple_text("0", "page_text_area", nil, nil, tbl_2),
-	page_text_right = UIWidgets.create_simple_text("0", "page_text_area", nil, nil, tbl_3),
+	page_text_center = UIWidgets.create_simple_text("/", "page_text_area", nil, nil, page_number_center_text_style),
+	page_text_left = UIWidgets.create_simple_text("0", "page_text_area", nil, nil, page_number_left_text_style),
+	page_text_right = UIWidgets.create_simple_text("0", "page_text_area", nil, nil, page_number_right_text_style),
 	page_text_area = UIWidgets.create_simple_texture("tab_menu_bg_03", "page_text_area")
 }
-local tbl_8 = {
+local animation_definitions = {
 	on_enter = {
 		{
 			name = "fade_in",
 			start_progress = 0,
 			end_progress = 0.3,
-			init = function (arg_33_0, arg_33_1, arg_33_2, arg_33_3)
+			init = function (ui_scenegraph, scenegraph_definition, widgets, params)
 				-- function 33
-				arg_33_3.render_settings.alpha_multiplier = 0
+				params.render_settings.alpha_multiplier = 0
 			end,
-			update = function (arg_34_0, arg_34_1, arg_34_2, arg_34_3, arg_34_4)
+			update = function (ui_scenegraph, scenegraph_definition, widgets, progress, params)
 				-- function 34
-				local easeOutCubic = math.easeOutCubic(arg_34_3)
+				local anim_progress = math.easeOutCubic(progress)
 
-				arg_34_4.render_settings.alpha_multiplier = easeOutCubic
-				arg_34_0.area_left.local_position[1] = arg_34_1.area_left.position[1] + -100 * (1 - easeOutCubic)
+				params.render_settings.alpha_multiplier = anim_progress
+				ui_scenegraph.area_left.local_position[1] = scenegraph_definition.area_left.position[1] + -100 * (1 - anim_progress)
 			end,
-			on_complete = function (arg_35_0, arg_35_1, arg_35_2, arg_35_3)
+			on_complete = function (ui_scenegraph, scenegraph_definition, widgets, params)
 				-- function 35
 				return
 			end
@@ -2037,27 +2052,27 @@ local tbl_8 = {
 			name = "fade_out",
 			start_progress = 0,
 			end_progress = 0.3,
-			init = function (arg_36_0, arg_36_1, arg_36_2, arg_36_3)
+			init = function (ui_scenegraph, scenegraph_definition, widgets, params)
 				-- function 36
-				arg_36_3.render_settings.alpha_multiplier = 1
+				params.render_settings.alpha_multiplier = 1
 			end,
-			update = function (arg_37_0, arg_37_1, arg_37_2, arg_37_3, arg_37_4)
+			update = function (ui_scenegraph, scenegraph_definition, widgets, progress, params)
 				-- function 37
-				local easeOutCubic = math.easeOutCubic(arg_37_3)
+				local anim_progress = math.easeOutCubic(progress)
 
-				arg_37_4.render_settings.alpha_multiplier = 1 - easeOutCubic
+				params.render_settings.alpha_multiplier = 1 - anim_progress
 			end,
-			on_complete = function (arg_38_0, arg_38_1, arg_38_2, arg_38_3)
+			on_complete = function (ui_scenegraph, scenegraph_definition, widgets, params)
 				-- function 38
 				return
 			end
 		}
 	}
 }
-local button_frame_01 = UIFrameSettings.button_frame_01
-local tbl_9 = {
-	texture_size = button_frame_01.texture_size,
-	texture_sizes = button_frame_01.texture_sizes,
+local frame_settings = UIFrameSettings.button_frame_01
+local frame_style = {
+	texture_size = frame_settings.texture_size,
+	texture_sizes = frame_settings.texture_sizes,
 	offset = {
 		0,
 		0,
@@ -2070,8 +2085,8 @@ local tbl_9 = {
 		255
 	}
 }
-local tbl_10 = {
-	pc_frame = UIWidgets.create_simple_frame(button_frame_01.texture, button_frame_01.texture_size, button_frame_01.texture_sizes.corner, button_frame_01.texture_sizes.vertical, button_frame_01.texture_sizes.horizontal, "pc_bg", tbl_9),
+local pc_filter_widgets = {
+	pc_frame = UIWidgets.create_simple_frame(frame_settings.texture, frame_settings.texture_size, frame_settings.texture_sizes.corner, frame_settings.texture_sizes.vertical, frame_settings.texture_sizes.horizontal, "pc_bg", frame_style),
 	pc_bg = UIWidgets.create_simple_texture("button_bg_01", "pc_bg", nil, nil, {
 		255,
 		64,
@@ -2079,14 +2094,14 @@ local tbl_10 = {
 		64
 	}),
 	divider = UIWidgets.create_simple_texture("edge_divider_04_horizontal", "pc_divider"),
-	apply_button = UIWidgets.create_default_button("pc_apply_button", tbl.pc_apply_button.size, nil, nil, Localize("input_description_apply"), 18, nil, nil, nil, true, true)
+	apply_button = UIWidgets.create_default_button("pc_apply_button", scenegraph_definition.pc_apply_button.size, nil, nil, Localize("input_description_apply"), 18, nil, nil, nil, true, true)
 }
 
 return {
-	widgets = tbl_7,
-	scenegraph_definition = tbl,
-	animation_definitions = tbl_8,
-	create_search_input_widget = fn,
-	create_search_filters_widget = fn_2,
-	pc_filter_widgets = tbl_10
+	widgets = widgets,
+	scenegraph_definition = scenegraph_definition,
+	animation_definitions = animation_definitions,
+	create_search_input_widget = create_search_input_widget,
+	create_search_filters_widget = create_search_filters_widget,
+	pc_filter_widgets = pc_filter_widgets
 }

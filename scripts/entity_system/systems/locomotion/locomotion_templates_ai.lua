@@ -1,381 +1,405 @@
 -- chunkname: @scripts/entity_system/systems/locomotion/locomotion_templates_ai.lua
 
-local LocomotionTemplates = LocomotionTemplates
-
-LocomotionTemplates = LocomotionTemplates or {}
-LocomotionTemplates = LocomotionTemplates
-
 local LocomotionTemplates_2 = LocomotionTemplates
-local var_0_2
-local var_0_3
-local flag = true
 
-if not flag then
-	local start = Profiler.start
-	local stop = Profiler.stop
+LocomotionTemplates_2 = not not LocomotionTemplates_2 or not not {}
+LocomotionTemplates = LocomotionTemplates_2
+
+local LocomotionTemplates = LocomotionTemplates
+local detailed_profiler_start, detailed_profiler_stop
+local DETAILED_PROFILING = true
+
+if DETAILED_PROFILING then
+	detailed_profiler_start = Profiler.start
+	detailed_profiler_start = Profiler.stop
 else
-	local function fn()
+	function detailed_profiler_start()
 		-- function 1
 		return
 	end
 
-	local function fn_2()
+	function detailed_profiler_stop()
 		-- function 2
 		return
 	end
 end
 
-LocomotionTemplates_2.AILocomotionExtension = {}
+LocomotionTemplates.AILocomotionExtension = {}
 
-LocomotionTemplates_2.AILocomotionExtension.init = function (self, arg_3_1)
+LocomotionTemplates.AILocomotionExtension.init = function (data, nav_world)
 	-- function 3
-	self.nav_world = arg_3_1
-	self.destroy_units = {}
-	self.all_update_units = {}
-	self.affected_by_gravity_update_units = {}
-	self.animation_update_units = {}
-	self.animation_and_script_update_units = {}
-	self.rotation_speed_modifier_update_units = {}
-	self.script_driven_update_units = {}
-	self.snap_to_navmesh_update_units = {}
-	self.get_to_navmesh_update_units = {}
-	self.mover_constrained_update_units = {}
+	data.nav_world = nav_world
+	data.destroy_units = {}
+	data.all_update_units = {}
+	data.affected_by_gravity_update_units = {}
+	data.animation_update_units = {}
+	data.animation_and_script_update_units = {}
+	data.rotation_speed_modifier_update_units = {}
+	data.script_driven_update_units = {}
+	data.snap_to_navmesh_update_units = {}
+	data.get_to_navmesh_update_units = {}
+	data.mover_constrained_update_units = {}
 end
 
-LocomotionTemplates_2.AILocomotionExtension.update = function (arg_4_0, arg_4_1, arg_4_2)
+LocomotionTemplates.AILocomotionExtension.update = function (data, t, dt)
 	-- function 4
-	LocomotionTemplates_2.AILocomotionExtension.validate2(arg_4_0, arg_4_1, arg_4_2)
-	LocomotionTemplates_2.AILocomotionExtension.update_alive(arg_4_0, arg_4_1, arg_4_2)
-	LocomotionTemplates_2.AILocomotionExtension.update_velocity(arg_4_0, arg_4_1, arg_4_2)
-	LocomotionTemplates_2.AILocomotionExtension.update_animation_driven_units(arg_4_0, arg_4_1, arg_4_2)
-	LocomotionTemplates_2.AILocomotionExtension.update_gravity(arg_4_0, arg_4_1, arg_4_2)
-	LocomotionTemplates_2.AILocomotionExtension.update_rotation(arg_4_0, arg_4_1, arg_4_2)
-	LocomotionTemplates_2.AILocomotionExtension.update_position(arg_4_0, arg_4_1, arg_4_2)
-	LocomotionTemplates_2.AILocomotionExtension.update_out_of_range(arg_4_0, arg_4_1, arg_4_2)
-	LocomotionTemplates_2.AILocomotionExtension.update_network(arg_4_0, arg_4_1, arg_4_2)
+	LocomotionTemplates.AILocomotionExtension.validate2(data, t, dt)
+	LocomotionTemplates.AILocomotionExtension.update_alive(data, t, dt)
+	LocomotionTemplates.AILocomotionExtension.update_velocity(data, t, dt)
+	LocomotionTemplates.AILocomotionExtension.update_animation_driven_units(data, t, dt)
+	LocomotionTemplates.AILocomotionExtension.update_gravity(data, t, dt)
+	LocomotionTemplates.AILocomotionExtension.update_rotation(data, t, dt)
+	LocomotionTemplates.AILocomotionExtension.update_position(data, t, dt)
+	LocomotionTemplates.AILocomotionExtension.update_out_of_range(data, t, dt)
+	LocomotionTemplates.AILocomotionExtension.update_network(data, t, dt)
 end
 
-LocomotionTemplates_2.AILocomotionExtension.validate2 = function (self, arg_5_1, arg_5_2)
+LocomotionTemplates.AILocomotionExtension.validate2 = function (data, t, dt)
 	-- function 5
-	local all_update_units = self.all_update_units
-	local snap_to_navmesh_update_units = self.snap_to_navmesh_update_units
-	local get_to_navmesh_update_units = self.get_to_navmesh_update_units
-	local mover_constrained_update_units = self.mover_constrained_update_units
-	local script_driven_update_units = self.script_driven_update_units
+	local all_update_units = data.all_update_units
+	local snap_to_navmesh_update_units = data.snap_to_navmesh_update_units
+	local get_to_navmesh_update_units = data.get_to_navmesh_update_units
+	local mover_constrained_update_units = data.mover_constrained_update_units
+	local script_driven_update_units = data.script_driven_update_units
 
-	for k, v in pairs(all_update_units) do
-		assert(script_driven_update_units[k] ~= nil or snap_to_navmesh_update_units[k] ~= nil or mover_constrained_update_units[k] ~= nil or get_to_navmesh_update_units[k] ~= nil)
+	for unit, extension in pairs(all_update_units) do
+		assert(script_driven_update_units[unit] ~= nil or snap_to_navmesh_update_units[unit] ~= nil or mover_constrained_update_units[unit] ~= nil or get_to_navmesh_update_units[unit] ~= nil)
 
-		local _wanted_velocity = v._wanted_velocity
+		local wanted_velocity = extension._wanted_velocity
 
-		if not _wanted_velocity then
-			fassert(Vector3.is_valid(_wanted_velocity), "Invalid velocity %s", _wanted_velocity)
+		if wanted_velocity then
+			fassert(Vector3.is_valid(wanted_velocity), "Invalid velocity %s", wanted_velocity)
 		end
 	end
 end
 
-LocomotionTemplates_2.AILocomotionExtension.update_alive = function (self, arg_6_1, arg_6_2)
+LocomotionTemplates.AILocomotionExtension.update_alive = function (data, t, dt)
 	-- function 6
-	for k, v in pairs(self.destroy_units) do
-		self.destroy_units[k] = nil
-		self.all_update_units[k] = nil
-		self.affected_by_gravity_update_units[k] = nil
-		self.animation_update_units[k] = nil
-		self.animation_and_script_update_units[k] = nil
-		self.rotation_speed_modifier_update_units[k] = nil
-		self.script_driven_update_units[k] = nil
-		self.snap_to_navmesh_update_units[k] = nil
-		self.get_to_navmesh_update_units[k] = nil
-		self.mover_constrained_update_units[k] = nil
+	for unit, extension in pairs(data.destroy_units) do
+		data.destroy_units[unit] = nil
+		data.all_update_units[unit] = nil
+		data.affected_by_gravity_update_units[unit] = nil
+		data.animation_update_units[unit] = nil
+		data.animation_and_script_update_units[unit] = nil
+		data.rotation_speed_modifier_update_units[unit] = nil
+		data.script_driven_update_units[unit] = nil
+		data.snap_to_navmesh_update_units[unit] = nil
+		data.get_to_navmesh_update_units[unit] = nil
+		data.mover_constrained_update_units[unit] = nil
 	end
 end
 
-LocomotionTemplates_2.AILocomotionExtension.update_velocity = function (self, arg_7_1, arg_7_2)
+LocomotionTemplates.AILocomotionExtension.update_velocity = function (data, t, dt)
 	-- function 7
-	for k, v in pairs(self.all_update_units) do
-		local _wanted_velocity = v._wanted_velocity
+	for unit, extension in pairs(data.all_update_units) do
+		local _wanted_velocity = extension._wanted_velocity
 
-		_wanted_velocity = _wanted_velocity or v._velocity:unbox()
-		v._wanted_velocity = _wanted_velocity
+		_wanted_velocity = not not _wanted_velocity or not not extension._velocity:unbox()
+		extension._wanted_velocity = _wanted_velocity
 	end
 end
 
-LocomotionTemplates_2.AILocomotionExtension.update_gravity = function (self, arg_8_1, arg_8_2)
+LocomotionTemplates.AILocomotionExtension.update_gravity = function (data, t, dt)
 	-- function 8
-	for k, v in pairs(self.affected_by_gravity_update_units) do
-		v._wanted_velocity.z = v._velocity.z - v._gravity * arg_8_2
+	for unit, extension in pairs(data.affected_by_gravity_update_units) do
+		extension._wanted_velocity.z = extension._velocity.z - extension._gravity * dt
 	end
 end
 
-LocomotionTemplates_2.AILocomotionExtension.update_animation_driven_units = function (self, arg_9_1, arg_9_2)
+LocomotionTemplates.AILocomotionExtension.update_animation_driven_units = function (data, t, dt)
 	-- function 9
-	for k, v in pairs(self.animation_update_units) do
-		local animation_wanted_root_pose = Unit.animation_wanted_root_pose(k)
-		local translation = Matrix4x4.translation(animation_wanted_root_pose)
-		local rotation = Matrix4x4.rotation(animation_wanted_root_pose)
-		local local_position = Unit.local_position(k, 0)
-		local local_rotation = Unit.local_rotation(k, 0)
-		local up = Quaternion.up(local_rotation)
-		local inverse = Quaternion.inverse(local_rotation)
-		local multiply = Quaternion.multiply(inverse, rotation)
-		local num = Quaternion.yaw(multiply) * v._animation_rotation_scale
-		local multiply_2 = Quaternion.multiply(local_rotation, Quaternion(up, num))
-		local num_2 = (translation - local_position) / arg_9_2
+	for unit, extension in pairs(data.animation_update_units) do
+		local wanted_pose = Unit.animation_wanted_root_pose(unit)
+		local wanted_position = Matrix4x4.translation(wanted_pose)
+		local wanted_rotation = Matrix4x4.rotation(wanted_pose)
+		local current_position = Unit.local_position(unit, 0)
+		local current_rotation = Unit.local_rotation(unit, 0)
+		local up_vector = Quaternion.up(current_rotation)
+		local current_rotation_inv = Quaternion.inverse(current_rotation)
+		local delta_rotation = Quaternion.multiply(current_rotation_inv, wanted_rotation)
+		local yaw_rotation_radians = Quaternion.yaw(delta_rotation)
 
-		v._wanted_velocity = Vector3.multiply_elements(num_2, v:get_animation_translation_scale())
-		v._wanted_rotation = multiply_2
+		yaw_rotation_radians = yaw_rotation_radians * extension._animation_rotation_scale
+		wanted_rotation = Quaternion.multiply(current_rotation, Quaternion(up_vector, yaw_rotation_radians))
+
+		local wanted_velocity = (wanted_position - current_position) / dt
+
+		wanted_velocity = Vector3.multiply_elements(wanted_velocity, extension:get_animation_translation_scale())
+		extension._wanted_velocity = wanted_velocity
+		extension._wanted_rotation = wanted_rotation
 	end
 
-	for k_2, v_2 in pairs(self.animation_and_script_update_units) do
-		local animation_wanted_root_pose_2 = Unit.animation_wanted_root_pose(k_2)
-		local num_3 = (Matrix4x4.translation(animation_wanted_root_pose_2) - Unit.local_position(k_2, 0)) / arg_9_2
+	for unit, extension in pairs(data.animation_and_script_update_units) do
+		local wanted_pose = Unit.animation_wanted_root_pose(unit)
+		local wanted_position = Matrix4x4.translation(wanted_pose)
+		local current_position = Unit.local_position(unit, 0)
+		local wanted_velocity = (wanted_position - current_position) / dt
 
-		v_2._wanted_velocity = Vector3.multiply_elements(num_3, v_2:get_animation_translation_scale())
+		wanted_velocity = Vector3.multiply_elements(wanted_velocity, extension:get_animation_translation_scale())
+		extension._wanted_velocity = wanted_velocity
 	end
 end
 
-LocomotionTemplates_2.AILocomotionExtension.update_rotation = function (self, arg_10_1, arg_10_2)
+LocomotionTemplates.AILocomotionExtension.update_rotation = function (data, t, dt)
 	-- function 10
-	local length_squared = Vector3.length_squared
-	local flat = Vector3.flat
-	local look = Quaternion.look
-	local up = Vector3.up()
-	local set_local_rotation = Unit.set_local_rotation
-	local local_rotation = Unit.local_rotation
-	local lerp = Quaternion.lerp
+	local Vector3_length_squared = Vector3.length_squared
+	local Vector3_flat = Vector3.flat
+	local Quaternion_look = Quaternion.look
+	local up_vector = Vector3.up()
+	local Unit_set_local_rotation = Unit.set_local_rotation
+	local Unit_local_rotation = Unit.local_rotation
+	local Quaternion_lerp = Quaternion.lerp
 
-	for k, v in pairs(self.all_update_units) do
+	for unit, extension in pairs(data.all_update_units) do
 		repeat
-			local _wanted_velocity = v._wanted_velocity
-			local _wanted_rotation = v._wanted_rotation
+			local wanted_velocity = extension._wanted_velocity
+			local wanted_rotation = extension._wanted_rotation
 
-			if not _wanted_rotation then
-				local var_10_9 = flat(_wanted_velocity)
+			if not wanted_rotation then
+				local flat_velocity = Vector3_flat(wanted_velocity)
 
-				if length_squared(var_10_9) < 0.010000000000000002 then
+				if Vector3_length_squared(flat_velocity) < 0.010000000000000002 then
 					break
 				end
 
-				_wanted_rotation = look(var_10_9, up)
+				wanted_rotation = Quaternion_look(flat_velocity, up_vector)
 			end
 
-			v._wanted_rotation = nil
+			extension._wanted_rotation = nil
 
-			if not v._lerp_rotation then
-				local num = v._rotation_speed * v._rotation_speed_modifier * arg_10_2
+			if extension._lerp_rotation then
+				do
+					local step = extension._rotation_speed * extension._rotation_speed_modifier * dt
 
-				if num >= 1 then
-					local var_10_11 = _wanted_rotation
+					if step >= 1 then
+						do
+							local new_rotation = wanted_rotation
 
-					set_local_rotation(k, 0, var_10_11)
+							Unit_set_local_rotation(unit, 0, new_rotation)
+						end
 
-					break
+						break
+					end
+
+					local current_rotation = Unit_local_rotation(unit, 0)
+					local new_rotation = Quaternion_lerp(current_rotation, wanted_rotation, step)
+
+					Unit_set_local_rotation(unit, 0, new_rotation)
 				end
-
-				local var_10_12 = local_rotation(k, 0)
-				local var_10_13 = lerp(var_10_12, _wanted_rotation, num)
-
-				set_local_rotation(k, 0, var_10_13)
 
 				break
 			end
 
-			set_local_rotation(k, 0, _wanted_rotation)
+			Unit_set_local_rotation(unit, 0, wanted_rotation)
 		until true
 	end
 
-	for k_2, v_2 in pairs(self.rotation_speed_modifier_update_units) do
-		local num_2 = v_2._rotation_speed_modifier_lerp_end_time - v_2._rotation_speed_modifier_lerp_start_time
-		local num_3 = math.max(0, arg_10_1 - v_2._rotation_speed_modifier_lerp_start_time) / num_2
+	for unit, extension in pairs(data.rotation_speed_modifier_update_units) do
+		local lerp_total_time = extension._rotation_speed_modifier_lerp_end_time - extension._rotation_speed_modifier_lerp_start_time
+		local time_in_lerp = math.max(0, t - extension._rotation_speed_modifier_lerp_start_time)
+		local lerp_percentage = time_in_lerp / lerp_total_time
 
-		if num_3 >= 1 then
-			v_2._rotation_speed_modifier = 1
-			v_2._rotation_speed_modifier_lerp_end_time = nil
-			v_2._rotation_speed_modifier_lerp_start_time = nil
-			v_2._rotation_speed_modifier_lerp_start_value = nil
-			self.rotation_speed_modifier_update_units[k_2] = nil
+		if lerp_percentage >= 1 then
+			extension._rotation_speed_modifier = 1
+			extension._rotation_speed_modifier_lerp_end_time = nil
+			extension._rotation_speed_modifier_lerp_start_time = nil
+			extension._rotation_speed_modifier_lerp_start_value = nil
+			data.rotation_speed_modifier_update_units[unit] = nil
 		else
-			v_2._rotation_speed_modifier = math.lerp(v_2._rotation_speed_modifier_lerp_start_value, 1, num_3)
+			extension._rotation_speed_modifier = math.lerp(extension._rotation_speed_modifier_lerp_start_value, 1, lerp_percentage)
 		end
 	end
 end
 
-LocomotionTemplates_2.AILocomotionExtension.update_position = function (self, arg_11_1, arg_11_2)
+LocomotionTemplates.AILocomotionExtension.update_position = function (data, t, dt)
 	-- function 11
-	local local_position = Unit.local_position
-	local set_local_position = Unit.set_local_position
-	local mover = Unit.mover
-	local move = Mover.move
-	local nav_world = self.nav_world
-	local num = 0.0001
+	local Unit_local_position = Unit.local_position
+	local Unit_set_local_position = Unit.set_local_position
+	local Unit_mover = Unit.mover
+	local Mover_move = Mover.move
+	local nav_world = data.nav_world
+	local MIN_SPEED_SQ = 0.0001
 
-	if arg_11_2 == 0 then
-		arg_11_2 = 0.00016666666666666666
+	if dt == 0 then
+		dt = 0.00016666666666666666
 	end
 
-	for k, v in pairs(self.script_driven_update_units) do
-		local _wanted_velocity = v._wanted_velocity
-		local num_2 = local_position(k, 0) + _wanted_velocity * arg_11_2
+	for unit, extension in pairs(data.script_driven_update_units) do
+		local wanted_velocity = extension._wanted_velocity
+		local current_position = Unit_local_position(unit, 0)
+		local final_position = current_position + wanted_velocity * dt
 
-		v._velocity:store(_wanted_velocity)
-		set_local_position(k, 0, num_2)
+		extension._velocity:store(wanted_velocity)
+		Unit_set_local_position(unit, 0, final_position)
 	end
 
-	for k_2, v_2 in pairs(self.get_to_navmesh_update_units) do
-		local var_11_8
-		local var_11_9
-		local var_11_10 = POSITION_LOOKUP[k_2]
-		local var_11_11 = BLACKBOARDS[k_2]
+	for unit, extension in pairs(data.get_to_navmesh_update_units) do
+		local final_velocity, final_position
+		local current_position = POSITION_LOOKUP[unit]
+		local blackboard = BLACKBOARDS[unit]
+		local has_reached_destination = blackboard.navigation_extension:has_reached_destination(0.1)
 
-		if not var_11_11.navigation_extension:has_reached_destination(0.1) then
-			var_11_8 = Vector3(0, 0, 0)
-			var_11_9 = var_11_10
+		if has_reached_destination then
+			final_velocity = Vector3(0, 0, 0)
+			final_position = current_position
 		else
-			local triangle_from_position, var_11_13 = GwNavQueries.triangle_from_position(nav_world, var_11_10, 0.5, 0.5)
+			local is_position_on_navmesh, altitude = GwNavQueries.triangle_from_position(nav_world, current_position, 0.5, 0.5)
 
-			if not triangle_from_position then
-				self.get_to_navmesh_update_units[k_2] = nil
-				self.snap_to_navmesh_update_units[k_2] = v_2
+			if is_position_on_navmesh then
+				data.get_to_navmesh_update_units[unit] = nil
+				data.snap_to_navmesh_update_units[unit] = extension
 			else
-				local inside_position_from_outside_position = GwNavQueries.inside_position_from_outside_position(nav_world, var_11_10, 1, 1, 5)
+				local mesh_position = GwNavQueries.inside_position_from_outside_position(nav_world, current_position, 1, 1, 5)
 
-				if not inside_position_from_outside_position then
-					if not self.animation_update_units[k_2] then
-						var_11_8 = v_2._wanted_velocity
-						var_11_9 = var_11_10 - var_11_8 * arg_11_2
+				if mesh_position then
+					if data.animation_update_units[unit] then
+						final_velocity = extension._wanted_velocity
+						final_position = current_position - final_velocity * dt
 					else
-						local run_speed = var_11_11.breed.run_speed
-						local num_3 = var_11_10 - inside_position_from_outside_position
+						local speed = blackboard.breed.run_speed
+						local to_goal = current_position - mesh_position
 
-						var_11_8 = Vector3.normalize(num_3) * run_speed
-						var_11_9 = var_11_10 - var_11_8 * arg_11_2
-						var_11_8.z = 0
+						final_velocity = Vector3.normalize(to_goal) * speed
+						final_position = current_position - final_velocity * dt
+						final_velocity.z = 0
 					end
 				else
-					var_11_8 = Vector3(0, 0, 0)
-					var_11_9 = var_11_10
+					final_velocity = Vector3(0, 0, 0)
+					final_position = current_position
 				end
 
-				v_2._velocity:store(var_11_8)
-				set_local_position(k_2, 0, var_11_9)
+				extension._velocity:store(final_velocity)
+				Unit_set_local_position(unit, 0, final_position)
 			end
 		end
 	end
 
-	local length_squared = Vector3.length_squared
-	local move_on_navmesh = GwNavQueries.move_on_navmesh
-	local triangle_from_position_2 = GwNavQueries.triangle_from_position
+	local Vector3_length_squared = Vector3.length_squared
+	local GwNavQueries_move_on_navmesh = GwNavQueries.move_on_navmesh
+	local GwNavQueries_triangle_from_position = GwNavQueries.triangle_from_position
 
-	for k_3, v_3 in pairs(self.snap_to_navmesh_update_units) do
-		local _wanted_velocity_2 = v_3._wanted_velocity
-		local var_11_21 = local_position(k_3, 0)
-		local var_11_22 = length_squared(Vector3.flat(_wanted_velocity_2))
-		local var_11_23
-		local var_11_24
-		local var_11_25 = move_on_navmesh(nav_world, var_11_21, _wanted_velocity_2, arg_11_2)
-		local num_4 = (var_11_25 - var_11_21) / arg_11_2
+	for unit, extension in pairs(data.snap_to_navmesh_update_units) do
+		local wanted_velocity = extension._wanted_velocity
+		local current_position = Unit_local_position(unit, 0)
+		local wanted_velocity_flat_size_sq = Vector3_length_squared(Vector3.flat(wanted_velocity))
+		local final_position, final_velocity
 
-		v_3._velocity:store(num_4)
-		set_local_position(k_3, 0, var_11_25)
+		final_position = GwNavQueries_move_on_navmesh(nav_world, current_position, wanted_velocity, dt)
+		final_velocity = (final_position - current_position) / dt
+
+		extension._velocity:store(final_velocity)
+		Unit_set_local_position(unit, 0, final_position)
 	end
 
-	for k_4, v_4 in pairs(self.mover_constrained_update_units) do
-		local var_11_27
+	for unit, extension in pairs(data.mover_constrained_update_units) do
+		local mover_displacement
 
-		if not v_4._mover_displacement_duration then
-			v_4._mover_displacement_t = v_4._mover_displacement_t - arg_11_2
-			var_11_27 = v_4._mover_displacement:unbox() * (v_4._mover_displacement_t / v_4._mover_displacement_duration)
+		if extension._mover_displacement_duration then
+			extension._mover_displacement_t = extension._mover_displacement_t - dt
+			mover_displacement = extension._mover_displacement:unbox() * (extension._mover_displacement_t / extension._mover_displacement_duration)
 
-			if v_4._mover_displacement_t <= 0 then
-				v_4._mover_displacement_duration = nil
+			if extension._mover_displacement_t <= 0 then
+				extension._mover_displacement_duration = nil
 			end
 		else
-			var_11_27 = Vector3(0, 0, 0)
+			mover_displacement = Vector3(0, 0, 0)
 		end
 
-		local var_11_28 = local_position(k_4, 0)
-		local _wanted_velocity_3 = v_4._wanted_velocity
-		local mover_2 = Unit.mover(k_4)
+		local current_position = Unit_local_position(unit, 0)
+		local wanted_velocity = extension._wanted_velocity
+		local mover = Unit.mover(unit)
 
-		move(mover_2, _wanted_velocity_3 * arg_11_2, arg_11_2)
+		Mover_move(mover, wanted_velocity * dt, dt)
 
-		local num_5 = Mover.position(mover_2) - var_11_27
-		local num_6 = (num_5 - var_11_28) / arg_11_2
+		local final_position = Mover.position(mover) - mover_displacement
+		local final_velocity = (final_position - current_position) / dt
+		local mover_collides_down = Mover.collides_down(mover)
 
-		if not (not Mover.collides_down(mover_2) and not (Mover.standing_frames(mover_2) > 0)) then
-			num_6.z = 0
-			v_4._is_falling = false
+		if mover_collides_down and Mover.standing_frames(mover) > 0 then
+			final_velocity.z = 0
+			extension._is_falling = false
 		else
-			num_6.z = _wanted_velocity_3.z
+			final_velocity.z = wanted_velocity.z
 
-			if not v_4._check_falling then
-				local distance_squared = Vector3.distance_squared(v_4._last_fall_position:unbox(), num_5)
+			if extension._check_falling then
+				local dist_sq = Vector3.distance_squared(extension._last_fall_position:unbox(), final_position)
 
-				if not (not v_4._is_falling and not (distance_squared > 0.0625)) then
-					local get_data = World.get_data(v_4._world, "physics_world")
-					local num_7 = 0.5
-					local num_8 = 1.5
-					local var_11_37 = Vector3(num_7, num_8, num_7)
-					local look = Quaternion.look(Vector3(0, 0, 1))
-					local num_9 = num_5 + Vector3(0, 0, -1)
-					local flag
+				if not extension._is_falling or dist_sq > 0.0625 then
+					local physics_world = World.get_data(extension._world, "physics_world")
+					local radius = 0.5
+					local half_height = 1.5
+					local size = Vector3(radius, half_height, radius)
+					local rotation = Quaternion.look(Vector3(0, 0, 1))
+					local test_pos = final_position + Vector3(0, 0, -1)
+					local str
 
-					flag = not (num_8 - num_7 > 0) or not "capsule" or "sphere"
+					if half_height - radius > 0 then
+						str = "capsule"
 
-					local immediate_overlap, var_11_42 = PhysicsWorld.immediate_overlap(get_data, "shape", flag, "position", num_9, "rotation", look, "size", var_11_37, "collision_filter", "filter_environment_overlap")
+						goto label_11_0
+					end
 
-					v_4._is_falling = var_11_42 == 0
+					str = "sphere"
 
-					v_4._last_fall_position:store(num_5)
+					local shape = str
+
+					::label_11_0::
+
+					local hit_actors, num_hit_actors = PhysicsWorld.immediate_overlap(physics_world, "shape", shape, "position", test_pos, "rotation", rotation, "size", size, "collision_filter", "filter_environment_overlap")
+
+					extension._is_falling = num_hit_actors == 0
+
+					extension._last_fall_position:store(final_position)
 				end
 			end
 		end
 
-		v_4._velocity:store(num_6)
-		set_local_position(k_4, 0, num_5)
+		extension._velocity:store(final_velocity)
+		Unit_set_local_position(unit, 0, final_position)
 	end
 
-	local set_position = Mover.set_position
+	local Mover_set_position = Mover.set_position
 
-	for k_5, v_5 in pairs(self.all_update_units) do
-		v_5._wanted_velocity = nil
+	for unit, extension in pairs(data.all_update_units) do
+		extension._wanted_velocity = nil
 
-		local var_11_44 = mover(k_5)
+		local mover = Unit_mover(unit)
 
-		if not (not var_11_44 and self.mover_constrained_update_units[k_5] ~= nil) then
-			set_position(var_11_44, local_position(k_5, 0))
+		if mover and data.mover_constrained_update_units[unit] == nil then
+			Mover_set_position(mover, Unit_local_position(unit, 0))
 		end
 	end
 end
 
-LocomotionTemplates_2.AILocomotionExtension.update_out_of_range = function (self, arg_12_1, arg_12_2)
+LocomotionTemplates.AILocomotionExtension.update_out_of_range = function (data, t, dt)
 	-- function 12
-	local conflict = Managers.state.conflict
-	local local_position = Unit.local_position
-	local extension = ScriptUnit.extension
-	local min = NetworkConstants.position.min
-	local max = NetworkConstants.position.max
+	local conflict_director = Managers.state.conflict
+	local Unit_local_position = Unit.local_position
+	local ScriptUnit_extension = ScriptUnit.extension
+	local pos_min = NetworkConstants.position.min
+	local pos_max = NetworkConstants.position.max
 
-	for k, v in pairs(self.all_update_units) do
-		local var_12_5 = local_position(k, 0)
-		local x = var_12_5.x
-		local y = var_12_5.y
-		local z = var_12_5.z
-		local flag = x < min or max < x
-		local flag_2 = y < min or max < y
-		local flag_3 = z < min or max < z
+	for unit, extension in pairs(data.all_update_units) do
+		local pos = Unit_local_position(unit, 0)
+		local pos_x = pos.x
+		local pos_y = pos.y
+		local pos_z = pos.z
+		local out_of_range_x = pos_x < pos_min or pos_max < pos_x
+		local out_of_range_y = pos_y < pos_min or pos_max < pos_y
+		local out_of_range_z = pos_z < pos_min or pos_max < pos_z
 
-		if flag or flag_2 or not flag_3 then
-			local _blackboard = extension(k, "ai_system")._blackboard
+		if out_of_range_x or out_of_range_y or out_of_range_z then
+			local ai_extension = ScriptUnit_extension(unit, "ai_system")
+			local blackboard = ai_extension._blackboard
 
-			self.all_update_units[k] = nil
+			data.all_update_units[unit] = nil
 
-			conflict:destroy_unit(k, _blackboard, "out_of_range")
+			conflict_director:destroy_unit(unit, blackboard, "out_of_range")
 		end
 	end
 end
 
-LocomotionTemplates_2.AILocomotionExtension.update_network = function (self, arg_13_1, arg_13_2)
+LocomotionTemplates.AILocomotionExtension.update_network = function (data, t, dt)
 	-- function 13
 	local game = Managers.state.network:game()
 
@@ -384,29 +408,29 @@ LocomotionTemplates_2.AILocomotionExtension.update_network = function (self, arg
 	end
 
 	local unit_storage = Managers.state.unit_storage
-	local local_position = Unit.local_position
-	local local_rotation = Unit.local_rotation
-	local min = Vector3.min
-	local max = Vector3.max
-	local set_game_object_field = GameSession.set_game_object_field
-	local enemy_velocity = NetworkConstants.enemy_velocity
-	local min_2 = enemy_velocity.min
-	local max_2 = enemy_velocity.max
-	local var_13_10 = Vector3(min_2, min_2, min_2)
-	local var_13_11 = Vector3(max_2, max_2, max_2)
+	local Unit_local_position = Unit.local_position
+	local Unit_local_rotation = Unit.local_rotation
+	local V3_min = Vector3.min
+	local V3_max = Vector3.max
+	local GameSession_set_game_object_field = GameSession.set_game_object_field
+	local constant = NetworkConstants.enemy_velocity
+	local vel_min = constant.min
+	local vel_max = constant.max
+	local vel_min_v3 = Vector3(vel_min, vel_min, vel_min)
+	local vel_max_v3 = Vector3(vel_max, vel_max, vel_max)
 
-	for k, v in pairs(self.all_update_units) do
-		local go_id = unit_storage:go_id(k)
-		local var_13_13 = local_position(k, 0)
-		local var_13_14 = local_rotation(k, 0)
-		local yaw = Quaternion.yaw(var_13_14)
-		local unbox = v._velocity:unbox()
+	for unit, extension in pairs(data.all_update_units) do
+		local go_id = unit_storage:go_id(unit)
+		local pos = Unit_local_position(unit, 0)
+		local rot = Unit_local_rotation(unit, 0)
+		local yaw = Quaternion.yaw(rot)
+		local velocity = extension._velocity:unbox()
 
-		set_game_object_field(game, go_id, "position", var_13_13)
-		set_game_object_field(game, go_id, "yaw_rot", yaw)
+		GameSession_set_game_object_field(game, go_id, "position", pos)
+		GameSession_set_game_object_field(game, go_id, "yaw_rot", yaw)
 
-		local var_13_17 = min(max(unbox, var_13_10), var_13_11)
+		velocity = V3_min(V3_max(velocity, vel_min_v3), vel_max_v3)
 
-		set_game_object_field(game, go_id, "velocity", var_13_17)
+		GameSession_set_game_object_field(game, go_id, "velocity", velocity)
 	end
 end

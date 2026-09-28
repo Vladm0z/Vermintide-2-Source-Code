@@ -1,16 +1,16 @@
 -- chunkname: @scripts/ui/views/start_game_view/windows/definitions/start_game_window_mutator_grid_definitions.lua
 
-local game_start_windows = UISettings.game_start_windows
-local frame = game_start_windows.frame
-local size = game_start_windows.size
-local spacing = game_start_windows.spacing
-local var_0_4 = UIFrameSettings[frame].texture_sizes.vertical[1]
-local num = size[1] - (var_0_4 * 2 + 60)
-local tbl = {
-	size[1] * 2 + spacing,
-	size[2]
+local window_default_settings = UISettings.game_start_windows
+local window_frame = window_default_settings.frame
+local window_size = window_default_settings.size
+local window_spacing = window_default_settings.spacing
+local window_frame_width = UIFrameSettings[window_frame].texture_sizes.vertical[1]
+local window_text_width = window_size[1] - (window_frame_width * 2 + 60)
+local actual_window_size = {
+	window_size[1] * 2 + window_spacing,
+	window_size[2]
 }
-local tbl_2 = {
+local scenegraph_definition = {
 	root = {
 		is_root = true,
 		size = {
@@ -53,7 +53,7 @@ local tbl_2 = {
 		vertical_alignment = "center",
 		parent = "menu_root",
 		horizontal_alignment = "center",
-		size = size,
+		size = window_size,
 		position = {
 			0,
 			0,
@@ -64,7 +64,7 @@ local tbl_2 = {
 		vertical_alignment = "center",
 		parent = "window",
 		horizontal_alignment = "left",
-		size = tbl,
+		size = actual_window_size,
 		position = {
 			0,
 			0,
@@ -75,7 +75,7 @@ local tbl_2 = {
 		vertical_alignment = "center",
 		parent = "actual_window",
 		horizontal_alignment = "center",
-		size = tbl,
+		size = actual_window_size,
 		position = {
 			0,
 			20,
@@ -115,7 +115,7 @@ local tbl_2 = {
 		parent = "title_text_detail",
 		horizontal_alignment = "center",
 		size = {
-			size[1],
+			window_size[1],
 			50
 		},
 		position = {
@@ -129,8 +129,8 @@ local tbl_2 = {
 		parent = "window",
 		horizontal_alignment = "center",
 		size = {
-			num,
-			size[2] / 2
+			window_text_width,
+			window_size[2] / 2
 		},
 		position = {
 			0,
@@ -143,7 +143,7 @@ local tbl_2 = {
 		parent = "actual_window",
 		horizontal_alignment = "right",
 		size = {
-			tbl[1] * 0.4,
+			actual_window_size[1] * 0.4,
 			42
 		},
 		position = {
@@ -171,7 +171,7 @@ local tbl_2 = {
 		parent = "actual_window",
 		horizontal_alignment = "left",
 		size = {
-			tbl[1] * 0.4,
+			actual_window_size[1] * 0.4,
 			42
 		},
 		position = {
@@ -199,7 +199,7 @@ local tbl_2 = {
 		parent = "actual_window",
 		horizontal_alignment = "center",
 		size = {
-			tbl[1],
+			actual_window_size[1],
 			0
 		},
 		position = {
@@ -213,7 +213,7 @@ local tbl_2 = {
 		parent = "actual_window",
 		horizontal_alignment = "center",
 		size = {
-			tbl[1] * 0.2,
+			actual_window_size[1] * 0.2,
 			42
 		},
 		position = {
@@ -223,7 +223,7 @@ local tbl_2 = {
 		}
 	}
 }
-local tbl_3 = {
+local page_number_left_text_style = {
 	vertical_alignment = "center",
 	font_size = 20,
 	localize = false,
@@ -232,12 +232,12 @@ local tbl_3 = {
 	font_type = "hell_shark",
 	text_color = Colors.get_color_table_with_alpha("font_default", 255),
 	offset = {
-		-(tbl[1] * 0.1 + 5),
+		-(actual_window_size[1] * 0.1 + 5),
 		4,
 		2
 	}
 }
-local tbl_4 = {
+local page_number_right_text_style = {
 	vertical_alignment = "center",
 	font_size = 20,
 	localize = false,
@@ -246,12 +246,12 @@ local tbl_4 = {
 	font_type = "hell_shark",
 	text_color = Colors.get_color_table_with_alpha("font_default", 255),
 	offset = {
-		tbl[1] * 0.1 + 4,
+		actual_window_size[1] * 0.1 + 4,
 		4,
 		2
 	}
 }
-local tbl_5 = {
+local page_number_center_text_style = {
 	vertical_alignment = "center",
 	font_size = 20,
 	localize = false,
@@ -266,9 +266,9 @@ local tbl_5 = {
 	}
 }
 
-local function fn(arg_1_0, arg_1_1)
+local function create_window_divider(scenegraph_id, size)
 	-- function 1
-	return {
+	local widget = {
 		element = {
 			passes = {
 				{
@@ -307,11 +307,11 @@ local function fn(arg_1_0, arg_1_1)
 					6
 				},
 				size = {
-					arg_1_1[1] - 10,
+					size[1] - 10,
 					5
 				},
 				texture_tiling_size = {
-					arg_1_1[1] - 10,
+					size[1] - 10,
 					5
 				}
 			},
@@ -340,7 +340,7 @@ local function fn(arg_1_0, arg_1_1)
 					255
 				},
 				offset = {
-					arg_1_1[1] - 12,
+					size[1] - 12,
 					-6,
 					10
 				},
@@ -350,18 +350,20 @@ local function fn(arg_1_0, arg_1_1)
 				}
 			}
 		},
-		scenegraph_id = arg_1_0,
+		scenegraph_id = scenegraph_id,
 		offset = {
 			0,
 			0,
 			0
 		}
 	}
+
+	return widget
 end
 
-local function fn_2(arg_2_0, arg_2_1)
+local function create_vertical_window_divider(scenegraph_id, size)
 	-- function 2
-	return {
+	local widget = {
 		element = {
 			passes = {
 				{
@@ -401,11 +403,11 @@ local function fn_2(arg_2_0, arg_2_1)
 				},
 				size = {
 					5,
-					arg_2_1[2] - 9
+					size[2] - 9
 				},
 				texture_tiling_size = {
 					5,
-					arg_2_1[2] - 9
+					size[2] - 9
 				}
 			},
 			edge_holder_top = {
@@ -417,7 +419,7 @@ local function fn_2(arg_2_0, arg_2_1)
 				},
 				offset = {
 					-6,
-					arg_2_1[2] - 7,
+					size[2] - 7,
 					10
 				},
 				size = {
@@ -443,18 +445,20 @@ local function fn_2(arg_2_0, arg_2_1)
 				}
 			}
 		},
-		scenegraph_id = arg_2_0,
+		scenegraph_id = scenegraph_id,
 		offset = {
 			0,
 			0,
 			0
 		}
 	}
+
+	return widget
 end
 
-local tbl_6 = {
-	item_grid = UIWidgets.create_grid("item_grid", tbl_2.item_grid.size, 8, 11, 12, 12, true),
-	window_frame = UIWidgets.create_frame("actual_window", tbl, frame, 10),
+local widgets = {
+	item_grid = UIWidgets.create_grid("item_grid", scenegraph_definition.item_grid.size, 8, 11, 12, 12, true),
+	window_frame = UIWidgets.create_frame("actual_window", actual_window_size, window_frame, 10),
 	window = UIWidgets.create_tiled_texture("actual_window", "background_leather_02", {
 		520,
 		820
@@ -465,14 +469,14 @@ local tbl_6 = {
 		255
 	}),
 	window_background_fade = UIWidgets.create_simple_texture("options_window_fade_01", "actual_window", nil, nil, nil, 1),
-	page_button_next = UIWidgets.create_simple_window_button("page_button_next", tbl_2.page_button_next.size, Localize("menu_next"), 16),
-	page_button_previous = UIWidgets.create_simple_window_button("page_button_previous", tbl_2.page_button_previous.size, Localize("menu_previous"), 16),
-	page_button_divider = fn("page_button_divider", tbl_2.page_button_divider.size),
-	page_button_edge_left = fn_2("page_button_edge_left", tbl_2.page_button_edge_left.size),
-	page_button_edge_right = fn_2("page_button_edge_right", tbl_2.page_button_edge_right.size),
-	page_text_center = UIWidgets.create_simple_text("/", "page_text_area", nil, nil, tbl_5),
-	page_text_left = UIWidgets.create_simple_text("0", "page_text_area", nil, nil, tbl_3),
-	page_text_right = UIWidgets.create_simple_text("0", "page_text_area", nil, nil, tbl_4),
+	page_button_next = UIWidgets.create_simple_window_button("page_button_next", scenegraph_definition.page_button_next.size, Localize("menu_next"), 16),
+	page_button_previous = UIWidgets.create_simple_window_button("page_button_previous", scenegraph_definition.page_button_previous.size, Localize("menu_previous"), 16),
+	page_button_divider = create_window_divider("page_button_divider", scenegraph_definition.page_button_divider.size),
+	page_button_edge_left = create_vertical_window_divider("page_button_edge_left", scenegraph_definition.page_button_edge_left.size),
+	page_button_edge_right = create_vertical_window_divider("page_button_edge_right", scenegraph_definition.page_button_edge_right.size),
+	page_text_center = UIWidgets.create_simple_text("/", "page_text_area", nil, nil, page_number_center_text_style),
+	page_text_left = UIWidgets.create_simple_text("0", "page_text_area", nil, nil, page_number_left_text_style),
+	page_text_right = UIWidgets.create_simple_text("0", "page_text_area", nil, nil, page_number_right_text_style),
 	page_text_area = UIWidgets.create_simple_rect("page_text_area", {
 		255,
 		0,
@@ -482,6 +486,6 @@ local tbl_6 = {
 }
 
 return {
-	widgets = tbl_6,
-	scenegraph_definition = tbl_2
+	widgets = widgets,
+	scenegraph_definition = scenegraph_definition
 }

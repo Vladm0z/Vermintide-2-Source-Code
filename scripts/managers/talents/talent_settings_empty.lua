@@ -2,10 +2,10 @@
 
 local TalentTrees = TalentTrees
 
-TalentTrees = TalentTrees or {}
+TalentTrees = not not TalentTrees or not not {}
 TalentTrees = TalentTrees
 
-local tbl = {
+local empty = {
 	{
 		{
 			"empty",
@@ -40,13 +40,13 @@ local tbl = {
 	}
 }
 
-TalentTrees.vs_gutter_runner = tbl
-TalentTrees.vs_poison_wind_globadier = tbl
-TalentTrees.vs_packmaster = tbl
-TalentTrees.vs_ratling_gunner = tbl
-TalentTrees.vs_warpfire_thrower = tbl
-TalentTrees.vs_chaos_troll = tbl
-TalentTrees.vs_rat_ogre = tbl
+TalentTrees.vs_gutter_runner = empty
+TalentTrees.vs_poison_wind_globadier = empty
+TalentTrees.vs_packmaster = empty
+TalentTrees.vs_ratling_gunner = empty
+TalentTrees.vs_warpfire_thrower = empty
+TalentTrees.vs_chaos_troll = empty
+TalentTrees.vs_rat_ogre = empty
 Talents.vs_gutter_runner = {
 	{
 		description = "empty",

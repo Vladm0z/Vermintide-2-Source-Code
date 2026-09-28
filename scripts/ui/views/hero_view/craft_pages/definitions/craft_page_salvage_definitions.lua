@@ -1,24 +1,24 @@
 -- chunkname: @scripts/ui/views/hero_view/craft_pages/definitions/craft_page_salvage_definitions.lua
 
-local game_start_windows = UISettings.game_start_windows
-local background = game_start_windows.background
-local frame = game_start_windows.frame
-local size = game_start_windows.size
-local spacing = game_start_windows.spacing
-local var_0_5 = UIFrameSettings[frame].texture_sizes.vertical[1]
-local var_0_6 = UIFrameSettings[frame].texture_sizes.horizontal[2]
-local num = size[1] - (var_0_5 * 2 + 60)
-local tbl = {
+local window_default_settings = UISettings.game_start_windows
+local window_background = window_default_settings.background
+local window_frame = window_default_settings.frame
+local window_size = window_default_settings.size
+local window_spacing = window_default_settings.spacing
+local window_frame_width = UIFrameSettings[window_frame].texture_sizes.vertical[1]
+local window_frame_height = UIFrameSettings[window_frame].texture_sizes.horizontal[2]
+local window_text_width = window_size[1] - (window_frame_width * 2 + 60)
+local auto_fill_button_size = {
 	60,
 	60
 }
-local num_2 = tbl[2] + 10
+local auto_fill_button_offset = auto_fill_button_size[2] + 10
 
 NUM_CRAFT_SLOTS_X = 3
 NUM_CRAFT_SLOTS_Y = 3
 NUM_CRAFT_SLOTS = NUM_CRAFT_SLOTS_X * NUM_CRAFT_SLOTS_Y
 
-local tbl_2 = {
+local scenegraph_definition = {
 	root = {
 		is_root = true,
 		size = {
@@ -61,7 +61,7 @@ local tbl_2 = {
 		vertical_alignment = "center",
 		parent = "menu_root",
 		horizontal_alignment = "center",
-		size = size,
+		size = window_size,
 		position = {
 			0,
 			0,
@@ -87,7 +87,7 @@ local tbl_2 = {
 		parent = "window",
 		horizontal_alignment = "center",
 		size = {
-			size[1] - 100,
+			window_size[1] - 100,
 			60
 		},
 		position = {
@@ -142,7 +142,7 @@ local tbl_2 = {
 		vertical_alignment = "center",
 		parent = "window",
 		horizontal_alignment = "right",
-		size = tbl,
+		size = auto_fill_button_size,
 		position = {
 			-42,
 			74,
@@ -153,10 +153,10 @@ local tbl_2 = {
 		vertical_alignment = "top",
 		parent = "auto_fill_buttons",
 		horizontal_alignment = "left",
-		size = tbl,
+		size = auto_fill_button_size,
 		position = {
 			0,
-			-num_2 * 0,
+			-auto_fill_button_offset * 0,
 			1
 		}
 	},
@@ -164,10 +164,10 @@ local tbl_2 = {
 		vertical_alignment = "top",
 		parent = "auto_fill_buttons",
 		horizontal_alignment = "left",
-		size = tbl,
+		size = auto_fill_button_size,
 		position = {
 			0,
-			-num_2 * 1,
+			-auto_fill_button_offset * 1,
 			1
 		}
 	},
@@ -175,10 +175,10 @@ local tbl_2 = {
 		vertical_alignment = "top",
 		parent = "auto_fill_buttons",
 		horizontal_alignment = "left",
-		size = tbl,
+		size = auto_fill_button_size,
 		position = {
 			0,
-			-num_2 * 2,
+			-auto_fill_button_offset * 2,
 			1
 		}
 	},
@@ -186,10 +186,10 @@ local tbl_2 = {
 		vertical_alignment = "top",
 		parent = "auto_fill_buttons",
 		horizontal_alignment = "left",
-		size = tbl,
+		size = auto_fill_button_size,
 		position = {
 			0,
-			-num_2 * 3,
+			-auto_fill_button_offset * 3,
 			1
 		}
 	},
@@ -197,28 +197,28 @@ local tbl_2 = {
 		vertical_alignment = "top",
 		parent = "auto_fill_buttons",
 		horizontal_alignment = "left",
-		size = tbl,
+		size = auto_fill_button_size,
 		position = {
 			0,
-			-num_2 * 4,
+			-auto_fill_button_offset * 4,
 			1
 		}
 	}
 }
 
-local function fn(self)
+local function should_show_glow(content)
 	-- function 1
-	local button_hotspot = self.button_hotspot
+	local hotspot = content.button_hotspot
 
 	return true
 end
 
-local function fn_2(arg_2_0, arg_2_1, arg_2_2, arg_2_3)
+local function create_auto_fill_button(scenegraph_id, icon_name, hover_color, hover_texture)
 	-- function 2
-	local var_2_0 = tbl
-	local str = "menu_frame_bg_04"
-	local num = 7
-	local get_atlas_settings_by_texture_name = UIAtlasHelper.get_atlas_settings_by_texture_name(str)
+	local size = auto_fill_button_size
+	local background_texture = "menu_frame_bg_04"
+	local frame_width = 7
+	local bg_texture = UIAtlasHelper.get_atlas_settings_by_texture_name(background_texture)
 
 	return {
 		element = {
@@ -246,7 +246,7 @@ local function fn_2(arg_2_0, arg_2_1, arg_2_2, arg_2_3)
 					texture_id = "texture_hover",
 					style_id = "texture_hover",
 					pass_type = "texture",
-					content_check_function = fn
+					content_check_function = should_show_glow
 				},
 				{
 					style_id = "texture_icon",
@@ -278,13 +278,13 @@ local function fn_2(arg_2_0, arg_2_1, arg_2_2, arg_2_3)
 						0
 					},
 					{
-						var_2_0[1] / get_atlas_settings_by_texture_name.size[1],
-						var_2_0[2] / get_atlas_settings_by_texture_name.size[2]
+						size[1] / bg_texture.size[1],
+						size[2] / bg_texture.size[2]
 					}
 				},
-				texture_id = str
+				texture_id = background_texture
 			},
-			texture_hover = arg_2_3 or "crafting_icon_hover",
+			texture_hover = not not hover_texture or not not "crafting_icon_hover",
 			texture_icon = {
 				uvs = {
 					{
@@ -296,7 +296,7 @@ local function fn_2(arg_2_0, arg_2_1, arg_2_2, arg_2_3)
 						1
 					}
 				},
-				texture_id = arg_2_1
+				texture_id = icon_name
 			}
 		},
 		style = {
@@ -328,13 +328,13 @@ local function fn_2(arg_2_0, arg_2_1, arg_2_2, arg_2_3)
 					255
 				},
 				offset = {
-					num,
-					num - 2,
+					frame_width,
+					frame_width - 2,
 					1
 				},
 				size = {
-					var_2_0[1] - num * 2,
-					var_2_0[2] - num * 2
+					size[1] - frame_width * 2,
+					size[2] - frame_width * 2
 				}
 			},
 			texture_hover = {
@@ -346,14 +346,14 @@ local function fn_2(arg_2_0, arg_2_1, arg_2_2, arg_2_3)
 				},
 				default_color = {
 					127,
-					arg_2_2[2],
-					arg_2_2[3],
-					arg_2_2[4]
+					hover_color[2],
+					hover_color[3],
+					hover_color[4]
 				},
-				hover_color = arg_2_2,
+				hover_color = hover_color,
 				offset = {
 					0,
-					num - 2,
+					frame_width - 2,
 					3
 				}
 			},
@@ -385,7 +385,7 @@ local function fn_2(arg_2_0, arg_2_1, arg_2_2, arg_2_3)
 				}
 			}
 		},
-		scenegraph_id = arg_2_0,
+		scenegraph_id = scenegraph_id,
 		offset = {
 			0,
 			0,
@@ -394,11 +394,11 @@ local function fn_2(arg_2_0, arg_2_1, arg_2_2, arg_2_3)
 	}
 end
 
-local flag = true
-local tbl_3 = {
+local disable_with_gamepad = true
+local widgets = {
 	item_grid_bg = UIWidgets.create_simple_texture("crafting_bg_01", "item_grid", nil, nil, nil, -1),
-	item_grid = UIWidgets.create_grid("item_grid", tbl_2.item_grid.size, NUM_CRAFT_SLOTS_X, NUM_CRAFT_SLOTS_Y, 20, 20),
-	craft_button = UIWidgets.create_default_button("craft_button", tbl_2.craft_button.size, nil, nil, Localize("hero_view_crafting_salvage"), 24, nil, "button_detail_02", nil, flag),
+	item_grid = UIWidgets.create_grid("item_grid", scenegraph_definition.item_grid.size, NUM_CRAFT_SLOTS_X, NUM_CRAFT_SLOTS_Y, 20, 20),
+	craft_button = UIWidgets.create_default_button("craft_button", scenegraph_definition.craft_button.size, nil, nil, Localize("hero_view_crafting_salvage"), 24, nil, "button_detail_02", nil, disable_with_gamepad),
 	craft_bar_fg = UIWidgets.create_simple_texture("crafting_bar_fg", "craft_bar_fg"),
 	craft_bar_bg = UIWidgets.create_simple_rect("craft_bar_bg", {
 		255,
@@ -407,34 +407,34 @@ local tbl_3 = {
 		0
 	}),
 	craft_bar = UIWidgets.create_simple_texture("crafting_bar", "craft_bar", nil, nil, nil, 2),
-	auto_fill_plentiful = fn_2("auto_fill_plentiful", "store_tag_icon_weapon_plentiful", Colors.get_table("plentiful")),
-	auto_fill_common = fn_2("auto_fill_common", "store_tag_icon_weapon_common", Colors.get_table("common")),
-	auto_fill_rare = fn_2("auto_fill_rare", "store_tag_icon_weapon_rare", Colors.get_table("rare")),
-	auto_fill_exotic = fn_2("auto_fill_exotic", "store_tag_icon_weapon_exotic", Colors.get_table("exotic")),
-	auto_fill_clear = fn_2("auto_fill_clear", "layout_button_back", {
+	auto_fill_plentiful = create_auto_fill_button("auto_fill_plentiful", "store_tag_icon_weapon_plentiful", Colors.get_table("plentiful")),
+	auto_fill_common = create_auto_fill_button("auto_fill_common", "store_tag_icon_weapon_common", Colors.get_table("common")),
+	auto_fill_rare = create_auto_fill_button("auto_fill_rare", "store_tag_icon_weapon_rare", Colors.get_table("rare")),
+	auto_fill_exotic = create_auto_fill_button("auto_fill_exotic", "store_tag_icon_weapon_exotic", Colors.get_table("exotic")),
+	auto_fill_clear = create_auto_fill_button("auto_fill_clear", "layout_button_back", {
 		100,
 		255,
 		100,
 		100
 	}, "button_state_default")
 }
-local tbl_4 = {
+local animation_definitions = {
 	on_enter = {
 		{
 			name = "fade_in",
 			start_progress = 0,
 			end_progress = 0.3,
-			init = function (arg_3_0, arg_3_1, arg_3_2, arg_3_3)
+			init = function (ui_scenegraph, scenegraph_definition, widgets, params)
 				-- function 3
-				arg_3_3.render_settings.alpha_multiplier = 0
+				params.render_settings.alpha_multiplier = 0
 			end,
-			update = function (arg_4_0, arg_4_1, arg_4_2, arg_4_3, arg_4_4)
+			update = function (ui_scenegraph, scenegraph_definition, widgets, progress, params)
 				-- function 4
-				local easeOutCubic = math.easeOutCubic(arg_4_3)
+				local anim_progress = math.easeOutCubic(progress)
 
-				arg_4_4.render_settings.alpha_multiplier = easeOutCubic
+				params.render_settings.alpha_multiplier = anim_progress
 			end,
-			on_complete = function (arg_5_0, arg_5_1, arg_5_2, arg_5_3)
+			on_complete = function (ui_scenegraph, scenegraph_definition, widgets, params)
 				-- function 5
 				return
 			end
@@ -445,17 +445,17 @@ local tbl_4 = {
 			name = "fade_out",
 			start_progress = 0,
 			end_progress = 0.3,
-			init = function (arg_6_0, arg_6_1, arg_6_2, arg_6_3)
+			init = function (ui_scenegraph, scenegraph_definition, widgets, params)
 				-- function 6
-				arg_6_3.render_settings.alpha_multiplier = 1
+				params.render_settings.alpha_multiplier = 1
 			end,
-			update = function (arg_7_0, arg_7_1, arg_7_2, arg_7_3, arg_7_4)
+			update = function (ui_scenegraph, scenegraph_definition, widgets, progress, params)
 				-- function 7
-				local easeOutCubic = math.easeOutCubic(arg_7_3)
+				local anim_progress = math.easeOutCubic(progress)
 
-				arg_7_4.render_settings.alpha_multiplier = 1 - easeOutCubic
+				params.render_settings.alpha_multiplier = 1 - anim_progress
 			end,
-			on_complete = function (arg_8_0, arg_8_1, arg_8_2, arg_8_3)
+			on_complete = function (ui_scenegraph, scenegraph_definition, widgets, params)
 				-- function 8
 				return
 			end
@@ -464,7 +464,7 @@ local tbl_4 = {
 }
 
 return {
-	widgets = tbl_3,
-	scenegraph_definition = tbl_2,
-	animation_definitions = tbl_4
+	widgets = widgets,
+	scenegraph_definition = scenegraph_definition,
+	animation_definitions = animation_definitions
 }

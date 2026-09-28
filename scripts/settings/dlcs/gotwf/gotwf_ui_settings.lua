@@ -1,14 +1,14 @@
 -- chunkname: @scripts/settings/dlcs/gotwf/gotwf_ui_settings.lua
 
-local gotwf = DLCSettings.gotwf
+local settings = DLCSettings.gotwf
 
-gotwf.store_state_filenames = {
+settings.store_state_filenames = {
 	"scripts/ui/views/hero_view/windows/hero_window_gotwf_overview",
 	"scripts/ui/views/hero_view/windows/hero_window_gotwf_panel",
 	"scripts/ui/views/hero_view/windows/hero_window_gotwf_item_preview",
 	"scripts/ui/views/hero_view/windows/hero_window_gotwf_background"
 }
-gotwf.store_windows = {
+settings.store_windows = {
 	gotwf_overview = {
 		class_name = "HeroWindowGotwfOverview",
 		name = "gotwf_overview"
@@ -29,7 +29,7 @@ gotwf.store_windows = {
 		class_name = "HeroWindowGotwfItemPreview"
 	}
 }
-gotwf.store_window_layouts = {
+settings.store_window_layouts = {
 	{
 		sound_event_enter = "Play_hud_gotwf_open",
 		name = "gotwf_overview",
@@ -43,7 +43,7 @@ gotwf.store_window_layouts = {
 		}
 	}
 }
-gotwf.store_layout = {
+settings.store_layout = {
 	pages = {
 		sound_event_enter = "Play_hud_store_kruber",
 		layout = "category",

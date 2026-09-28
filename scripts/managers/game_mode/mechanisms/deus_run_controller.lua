@@ -13,7 +13,7 @@ require("scripts/utils/hash_utils")
 
 DeusRunController = class(DeusRunController)
 
-local tbl = {
+local RPCS = {
 	"rpc_deus_shop_heal_player",
 	"rpc_deus_shop_blessing_selected",
 	"rpc_deus_shop_power_up_bought",
@@ -26,9 +26,9 @@ local tbl = {
 	"rpc_deus_grant_end_of_level_power_ups",
 	"rpc_deus_remove_power_up"
 }
-local num = 1
-local num_2 = 10000
-local tbl_2 = {
+local REAL_PLAYER_LOCAL_ID = 1
+local DISCOUNT_CONVERSION_EPSILON = 10000
+local stats_to_save = {
 	{
 		"kills_per_breed",
 		"skaven_storm_vermin"
@@ -138,7 +138,7 @@ local tbl_2 = {
 		"revives"
 	}
 }
-local tbl_3 = {
+local loot_chest_rewards = {
 	normal = {
 		"loot_chest_01_06",
 		2
@@ -163,81 +163,82 @@ local tbl_3 = {
 
 script_data.deus_run_controller_debug = true
 
-local print = print
+local global_print = print
 
-local function fn(...)
+local function dprint(...)
 	-- function 1
-	if not script_data.deus_run_controller_debug then
-		print("[DeusRunController] ", ...)
+	if script_data.deus_run_controller_debug then
+		global_print("[DeusRunController] ", ...)
 	end
 end
 
-local function fn_2(...)
+local function print(...)
 	-- function 2
-	print("[DeusRunController] ", ...)
+	global_print("[DeusRunController] ", ...)
 end
 
-local function fn_3(arg_3_0, arg_3_1)
+local function low_precision_float_comparison(a, b)
 	-- function 3
-	if not (arg_3_0 or arg_3_1) then
+	if not a and not b then
 		return true
-	elseif not (not arg_3_0 and arg_3_1) then
+	elseif not a or not b then
 		return false
 	end
 
-	return math.round_with_precision(arg_3_0, 2) == math.round_with_precision(arg_3_1, 2)
+	return math.round_with_precision(a, 2) == math.round_with_precision(b, 2)
 end
 
-local function fn_4(arg_4_0, arg_4_1, arg_4_2, arg_4_3)
+local function calculate_next_shop_heal(current_health, current_coins, default_heal_amount, default_heal_cost)
 	-- function 4
-	local var_4_0
-	local var_4_1
-	local num = arg_4_2 / arg_4_3
+	local heal_amount, heal_cost
+	local health_per_coin = default_heal_amount / default_heal_cost
 
-	if arg_4_0 <= 1 - DeusShopSettings.heal_amount then
-		var_4_0 = arg_4_2
+	if current_health <= 1 - DeusShopSettings.heal_amount then
+		heal_amount = default_heal_amount
 	else
-		var_4_0 = 1 - arg_4_0
+		heal_amount = 1 - current_health
 	end
 
-	local ceil = math.ceil(var_4_0 / num)
+	heal_cost = math.ceil(heal_amount / health_per_coin)
 
-	if arg_4_1 < ceil then
-		ceil = arg_4_1
-		var_4_0 = ceil * num
+	if current_coins < heal_cost then
+		heal_cost = current_coins
+		heal_amount = heal_cost * health_per_coin
 	end
 
-	return var_4_0, ceil
+	return heal_amount, heal_cost
 end
 
-DeusRunController.init = function (self, arg_5_1, arg_5_2, arg_5_3, arg_5_4, arg_5_5, arg_5_6, arg_5_7, arg_5_8, arg_5_9, arg_5_10)
+DeusRunController.init = function (self, run_id, is_server, network_handler, server_peer_id, own_peer_id, own_initial_loadout, own_initial_talents, own_initial_bot_loadout, own_initial_bot_talents, weapon_group_whitelist)
 	-- function 5
-	self._run_state = DeusRunState:new(arg_5_1, arg_5_2, arg_5_3, arg_5_4, arg_5_5, arg_5_6, arg_5_7, arg_5_8, arg_5_9, arg_5_10)
-	self._network_handler = arg_5_3
+	self._run_state = DeusRunState:new(run_id, is_server, network_handler, server_peer_id, own_peer_id, own_initial_loadout, own_initial_talents, own_initial_bot_loadout, own_initial_bot_talents, weapon_group_whitelist)
+	self._network_handler = network_handler
 end
 
-DeusRunController.network_context_created = function (self, arg_6_1, arg_6_2, arg_6_3, arg_6_4, arg_6_5)
+DeusRunController.network_context_created = function (self, lobby, server_peer_id, own_peer_id, is_server, network_handler)
 	-- function 6
-	self._run_state:network_context_created(arg_6_1, arg_6_2, arg_6_3, arg_6_4, arg_6_5)
+	self._run_state:network_context_created(lobby, server_peer_id, own_peer_id, is_server, network_handler)
 
-	self._network_handler = arg_6_5
+	self._network_handler = network_handler
 
-	local num = self._run_state:get_host_migration_count() + 1
+	local host_migration_count = self._run_state:get_host_migration_count()
 
-	self._run_state:set_host_migration_count(num)
+	host_migration_count = host_migration_count + 1
+
+	self._run_state:set_host_migration_count(host_migration_count)
 end
 
-DeusRunController.register_rpcs = function (self, arg_7_1)
+DeusRunController.register_rpcs = function (self, network_event_delegate)
 	-- function 7
-	self._network_event_delegate = arg_7_1
+	self._network_event_delegate = network_event_delegate
 
-	arg_7_1:register(self, unpack(tbl))
-	self._run_state:register_rpcs(arg_7_1)
+	network_event_delegate:register(self, unpack(RPCS))
+	self._run_state:register_rpcs(network_event_delegate)
 end
 
 DeusRunController.unregister_rpcs = function (self)
 	-- function 8
-	if not self._network_event_delegate then
+	if self._network_event_delegate then
 		self._network_event_delegate:unregister(self)
 	end
 
@@ -284,74 +285,84 @@ DeusRunController.handle_run_ended = function (self)
 	self._run_state:set_run_ended(true)
 end
 
-DeusRunController.setup_run = function (self, arg_16_1, arg_16_2, arg_16_3, arg_16_4, arg_16_5, arg_16_6, arg_16_7, arg_16_8, arg_16_9)
+DeusRunController.setup_run = function (self, run_seed, difficulty, journey_name, dominant_god, initial_own_soft_currency, telemetry_id, with_belakor, mutators, boons)
 	-- function 16
-	self._run_state:set_run_seed(arg_16_1)
-	self._run_state:set_run_difficulty(arg_16_2)
-	self._run_state:set_journey_name(arg_16_3)
-	self._run_state:set_dominant_god(arg_16_4)
-	self._run_state:set_belakor_enabled(arg_16_7)
-	self._run_state:set_event_mutators(arg_16_8)
-	self._run_state:set_event_boons(arg_16_9)
+	self._run_state:set_run_seed(run_seed)
+	self._run_state:set_run_difficulty(difficulty)
+	self._run_state:set_journey_name(journey_name)
+	self._run_state:set_dominant_god(dominant_god)
+	self._run_state:set_belakor_enabled(with_belakor)
+	self._run_state:set_event_mutators(mutators)
+	self._run_state:set_event_boons(boons)
 
-	local var_16_0 = DEUS_MAP_POPULATE_SETTINGS[arg_16_3]
+	local var_16_0 = DEUS_MAP_POPULATE_SETTINGS[journey_name]
 
-	var_16_0 = var_16_0 or DEUS_MAP_POPULATE_SETTINGS.default
-	self._path_graph = deus_generate_graph(arg_16_1, arg_16_3, arg_16_4, var_16_0, arg_16_7)
+	if not var_16_0 then
+		-- Nothing
+	end
+
+	var_16_0 = DEUS_MAP_POPULATE_SETTINGS.default
+
+	local populate_config = var_16_0
+
+	::label_16_0::
+
+	self._path_graph = deus_generate_graph(run_seed, journey_name, dominant_god, populate_config, with_belakor)
 
 	self._run_state:set_current_node_key("start")
 
 	self._run_start_time = os.time()
 
-	self._run_state:set_own_player_telemetry_id(arg_16_6)
+	self._run_state:set_own_player_telemetry_id(telemetry_id)
 
-	local get_own_peer_id = self._run_state:get_own_peer_id()
-	local get_player_profile, var_16_3 = self._run_state:get_player_profile(get_own_peer_id, num)
-	local var_16_4
-	local var_16_5
-	local var_16_6
+	local own_peer_id = self._run_state:get_own_peer_id()
+	local profile_index, career_index = self._run_state:get_player_profile(own_peer_id, REAL_PLAYER_LOCAL_ID)
+	local melee_item_string, ranged_item_string, initial_talents_for_career
 
-	if get_player_profile ~= 0 then
-		local name = SPProfiles[get_player_profile].careers[var_16_3].name
+	if profile_index ~= 0 then
+		local profile = SPProfiles[profile_index]
+		local career_name = profile.careers[career_index].name
+		local initial_talents = self._run_state:get_own_initial_talents()
 
-		var_16_6 = self._run_state:get_own_initial_talents()[name]
+		initial_talents_for_career = initial_talents[career_name]
 
-		local var_16_8 = self._run_state:get_own_initial_loadout()[name]
-		local slot_melee = var_16_8.slot_melee
-		local slot_ranged = var_16_8.slot_ranged
+		local initial_loadout = self._run_state:get_own_initial_loadout()
+		local initial_loadout_for_career = initial_loadout[career_name]
+		local melee_item = initial_loadout_for_career.slot_melee
+		local ranged_item = initial_loadout_for_career.slot_ranged
 
-		var_16_4 = DeusWeaponGeneration.serialize_weapon(slot_melee)
-		var_16_5 = DeusWeaponGeneration.serialize_weapon(slot_ranged)
+		melee_item_string = DeusWeaponGeneration.serialize_weapon(melee_item)
+		ranged_item_string = DeusWeaponGeneration.serialize_weapon(ranged_item)
 	end
 
-	local get_run_id = self._run_state:get_run_id()
+	local run_id = self._run_state:get_run_id()
 
-	if not self._run_state:is_server() then
-		self._run_state:set_player_soft_currency(get_own_peer_id, num, arg_16_5)
-		self._run_state:set_peer_initialized(get_own_peer_id, true)
+	if self._run_state:is_server() then
+		self._run_state:set_player_soft_currency(own_peer_id, REAL_PLAYER_LOCAL_ID, initial_own_soft_currency)
+		self._run_state:set_peer_initialized(own_peer_id, true)
 
-		if get_player_profile ~= 0 then
-			self:_add_initial_power_ups(get_own_peer_id, num, get_player_profile, var_16_3, var_16_6)
-			self:_add_initial_weapons_to_loadout(get_own_peer_id, num, get_player_profile, var_16_3, var_16_4, var_16_5)
-			self._run_state:set_profile_initialized(get_own_peer_id, num, get_player_profile, var_16_3, true)
+		if profile_index ~= 0 then
+			self:_add_initial_power_ups(own_peer_id, REAL_PLAYER_LOCAL_ID, profile_index, career_index, initial_talents_for_career)
+			self:_add_initial_weapons_to_loadout(own_peer_id, REAL_PLAYER_LOCAL_ID, profile_index, career_index, melee_item_string, ranged_item_string)
+			self._run_state:set_profile_initialized(own_peer_id, REAL_PLAYER_LOCAL_ID, profile_index, career_index, true)
 		end
 
-		Managers.telemetry_events:deus_run_started(get_run_id, arg_16_3, arg_16_1, arg_16_4, arg_16_2, #arg_16_8 > 0, arg_16_8, arg_16_9)
-		self:_add_coin_tracking_entry(get_own_peer_id, num, arg_16_5, "set initial soft currency")
+		Managers.telemetry_events:deus_run_started(run_id, journey_name, run_seed, dominant_god, difficulty, #mutators > 0, mutators, boons)
+		self:_add_coin_tracking_entry(own_peer_id, REAL_PLAYER_LOCAL_ID, initial_own_soft_currency, "set initial soft currency")
 	else
-		local get_server_peer_id = self._run_state:get_server_peer_id()
-		local var_16_13 = PEER_ID_TO_CHANNEL[get_server_peer_id]
+		local server_peer_id = self._run_state:get_server_peer_id()
+		local server_channel_id = PEER_ID_TO_CHANNEL[server_peer_id]
 
-		RPC.rpc_deus_set_initial_soft_currency(var_16_13, arg_16_5)
+		RPC.rpc_deus_set_initial_soft_currency(server_channel_id, initial_own_soft_currency)
 
-		if get_player_profile ~= 0 then
-			self:_add_initial_power_ups(get_own_peer_id, num, get_player_profile, var_16_3, var_16_6)
-			self:_add_initial_weapons_to_loadout(get_own_peer_id, num, get_player_profile, var_16_3, var_16_4, var_16_5)
-			RPC.rpc_deus_set_initial_setup(var_16_13, get_player_profile, var_16_3, var_16_6, var_16_4, var_16_5)
+		if profile_index ~= 0 then
+			self:_add_initial_power_ups(own_peer_id, REAL_PLAYER_LOCAL_ID, profile_index, career_index, initial_talents_for_career)
+			self:_add_initial_weapons_to_loadout(own_peer_id, REAL_PLAYER_LOCAL_ID, profile_index, career_index, melee_item_string, ranged_item_string)
+			RPC.rpc_deus_set_initial_setup(server_channel_id, profile_index, career_index, initial_talents_for_career, melee_item_string, ranged_item_string)
 		end
 	end
 
-	fn_2(sprintf("starting <%s> with seed <%s> on difficulty <%s> and dominant god <%s> with belakor <%s>", arg_16_3, arg_16_1, arg_16_2, arg_16_4, arg_16_7))
+	print(sprintf("starting <%s> with seed <%s> on difficulty <%s> and dominant god <%s> with belakor <%s>", journey_name, run_seed, difficulty, dominant_god, with_belakor))
 end
 
 DeusRunController.is_weekly_event_packages_loaded = function (self)
@@ -364,104 +375,120 @@ DeusRunController.get_state_revision = function (self)
 	return self._run_state:get_revision()
 end
 
-DeusRunController.rpc_deus_set_initial_soft_currency = function (self, arg_19_1, arg_19_2)
+DeusRunController.rpc_deus_set_initial_soft_currency = function (self, sender_channel_id, initial_own_soft_currency)
 	-- function 19
-	local var_19_0 = CHANNEL_TO_PEER_ID[arg_19_1]
+	local sender = CHANNEL_TO_PEER_ID[sender_channel_id]
 
-	if not self._run_state:get_peer_initialized(var_19_0) then
-		local var_19_1
-		local get_current_node_key = self._run_state:get_current_node_key()
-		local _get_graph_data = self:_get_graph_data()
-		local var_19_4 = _get_graph_data[get_current_node_key]
+	if not self._run_state:get_peer_initialized(sender) then
+		local progress
+		local current_node_key = self._run_state:get_current_node_key()
+		local path_graph = self:_get_graph_data()
+		local current_node = path_graph[current_node_key]
 
-		if var_19_4.node_type == "ingame" then
-			var_19_1 = var_19_4.run_progress
+		if current_node.node_type == "ingame" then
+			progress = current_node.run_progress
 		else
-			local get_traversed_nodes = self._run_state:get_traversed_nodes()
+			local traversed_nodes = self._run_state:get_traversed_nodes()
 
-			for i = #get_traversed_nodes, 1, -1 do
-				local var_19_6 = _get_graph_data[get_traversed_nodes[i]]
+			for i = #traversed_nodes, 1, -1 do
+				local node = path_graph[traversed_nodes[i]]
 
-				if var_19_6.node_type == "ingame" then
-					var_19_1 = var_19_6.run_progress
+				if node.node_type == "ingame" then
+					progress = node.run_progress
 
 					break
 				end
 			end
 		end
 
-		var_19_1 = var_19_1 or 0
+		progress = not not progress or not not 0
 
-		local num_2 = DeusNewLoadoutSettings.coin_formula(var_19_1) + arg_19_2
+		local extra_coins = DeusNewLoadoutSettings.coin_formula(progress)
+		local new_coins = extra_coins + initial_own_soft_currency
 
-		self._run_state:set_player_soft_currency(var_19_0, num, num_2)
-		self._run_state:set_peer_initialized(var_19_0, true)
-		self:_add_coin_tracking_entry(var_19_0, num, num_2, "set initial soft currency")
+		self._run_state:set_player_soft_currency(sender, REAL_PLAYER_LOCAL_ID, new_coins)
+		self._run_state:set_peer_initialized(sender, true)
+		self:_add_coin_tracking_entry(sender, REAL_PLAYER_LOCAL_ID, new_coins, "set initial soft currency")
 	end
 end
 
-DeusRunController.rpc_deus_set_initial_setup = function (self, arg_20_1, arg_20_2, arg_20_3, arg_20_4, arg_20_5, arg_20_6)
+DeusRunController.rpc_deus_set_initial_setup = function (self, sender_channel_id, profile_index, career_index, initial_talents_for_career, melee_item_string, ranged_item_string)
 	-- function 20
-	local var_20_0 = CHANNEL_TO_PEER_ID[arg_20_1]
+	local sender = CHANNEL_TO_PEER_ID[sender_channel_id]
 
-	if not self._run_state:get_profile_initialized(var_20_0, num, arg_20_2, arg_20_3) then
-		self:_add_initial_power_ups(var_20_0, num, arg_20_2, arg_20_3, arg_20_4)
-		self:_add_initial_weapons_to_loadout(var_20_0, num, arg_20_2, arg_20_3, arg_20_5, arg_20_6)
-		self._run_state:set_profile_initialized(var_20_0, num, arg_20_2, arg_20_3, true)
+	if not self._run_state:get_profile_initialized(sender, REAL_PLAYER_LOCAL_ID, profile_index, career_index) then
+		self:_add_initial_power_ups(sender, REAL_PLAYER_LOCAL_ID, profile_index, career_index, initial_talents_for_career)
+		self:_add_initial_weapons_to_loadout(sender, REAL_PLAYER_LOCAL_ID, profile_index, career_index, melee_item_string, ranged_item_string)
+		self._run_state:set_profile_initialized(sender, REAL_PLAYER_LOCAL_ID, profile_index, career_index, true)
 	end
 
-	local get_granted_non_party_end_of_level_power_ups = self._run_state:get_granted_non_party_end_of_level_power_ups(var_20_0, num, arg_20_2, arg_20_3)
+	local granted_non_party_end_of_level_power_ups = self._run_state:get_granted_non_party_end_of_level_power_ups(sender, REAL_PLAYER_LOCAL_ID, profile_index, career_index)
 
-	for k, v in pairs(self:_get_graph_data()) do
-		if not (not v.grant_random_power_up_count and table.index_of(get_granted_non_party_end_of_level_power_ups, k) ~= -1) then
-			RPC.rpc_deus_grant_end_of_level_power_ups(arg_20_1, k)
+	for node_key, node in pairs(self:_get_graph_data()) do
+		local granted_random_power_up_count = node.grant_random_power_up_count
+
+		if granted_random_power_up_count and table.index_of(granted_non_party_end_of_level_power_ups, node_key) == -1 then
+			RPC.rpc_deus_grant_end_of_level_power_ups(sender_channel_id, node_key)
 		end
 	end
 end
 
-DeusRunController.rpc_deus_grant_end_of_level_power_ups = function (self, arg_21_1, arg_21_2)
+DeusRunController.rpc_deus_grant_end_of_level_power_ups = function (self, sender_channel_id, node_key)
 	-- function 21
-	local var_21_0 = self:_get_graph_data()[arg_21_2]
-	local grant_random_power_up_count = var_21_0.grant_random_power_up_count
-	local terror_event_power_up_rarity = var_21_0.terror_event_power_up_rarity
-	local get_own_peer_id = self._run_state:get_own_peer_id()
-	local power_ups = var_21_0.system_seeds.power_ups
+	local path_graph = self:_get_graph_data()
+	local node = path_graph[node_key]
+	local granted_random_power_up_count = node.grant_random_power_up_count
+	local power_up_rarity = node.terror_event_power_up_rarity
+	local local_peer_id = self._run_state:get_own_peer_id()
+	local power_ups = node.system_seeds.power_ups
 
-	power_ups = power_ups or 0
+	if not power_ups then
+		-- Nothing
+	end
 
-	local fnv32_hash = HashUtils.fnv32_hash(get_own_peer_id .. "_" .. power_ups)
-	local run_progress = var_21_0.run_progress
-	local get_player_profile, var_21_8 = self._run_state:get_player_profile(get_own_peer_id, num)
-	local get_player_power_ups = self._run_state:get_player_power_ups(get_own_peer_id, num, get_player_profile, var_21_8)
-	local name = SPProfiles[get_player_profile].careers[var_21_8].name
-	local var_21_11
-	local generate_random_power_ups, var_21_13 = DeusPowerUpUtils.generate_random_power_ups(fnv32_hash, grant_random_power_up_count, get_player_power_ups, self._run_state:get_run_difficulty(), run_progress, DeusPowerUpAvailabilityTypes.weapon_chest, name, terror_event_power_up_rarity)
-	local flag = true
-	local clone = table.clone(get_player_power_ups, flag)
+	power_ups = 0
 
-	table.append(clone, var_21_13)
+	local node_power_up_seed = power_ups
 
-	local power_ups_to_encoded_string = DeusPowerUpUtils.power_ups_to_encoded_string(var_21_13)
-	local get_server_peer_id = self._run_state:get_server_peer_id()
-	local var_21_18 = PEER_ID_TO_CHANNEL[get_server_peer_id]
-	local var_21_19 = arg_21_2
+	::label_21_0::
 
-	RPC.rpc_deus_add_power_ups(var_21_18, power_ups_to_encoded_string, var_21_19)
+	local power_up_seed = HashUtils.fnv32_hash(local_peer_id .. "_" .. node_power_up_seed)
+	local run_progress = node.run_progress
+	local profile_index, career_index = self._run_state:get_player_profile(local_peer_id, REAL_PLAYER_LOCAL_ID)
+	local existing_power_ups = self._run_state:get_player_power_ups(local_peer_id, REAL_PLAYER_LOCAL_ID, profile_index, career_index)
+	local profile = SPProfiles[profile_index]
+	local career_name = profile.careers[career_index].name
+	local new_power_ups
+
+	power_up_seed, new_power_ups = DeusPowerUpUtils.generate_random_power_ups(power_up_seed, granted_random_power_up_count, existing_power_ups, self._run_state:get_run_difficulty(), run_progress, DeusPowerUpAvailabilityTypes.weapon_chest, career_name, power_up_rarity)
+
+	local skip_metatable = true
+
+	existing_power_ups = table.clone(existing_power_ups, skip_metatable)
+
+	table.append(existing_power_ups, new_power_ups)
+
+	local new_power_ups_string = DeusPowerUpUtils.power_ups_to_encoded_string(new_power_ups)
+	local server_peer_id = self._run_state:get_server_peer_id()
+	local server_channel_id = PEER_ID_TO_CHANNEL[server_peer_id]
+	local granted_by_end_of_level_node_key = node_key
+
+	RPC.rpc_deus_add_power_ups(server_channel_id, new_power_ups_string, granted_by_end_of_level_node_key)
 end
 
-DeusRunController.profile_changed = function (self, arg_22_1, arg_22_2, arg_22_3, arg_22_4, arg_22_5)
+DeusRunController.profile_changed = function (self, peer_id, local_player_id, profile_index, career_index, is_bot)
 	-- function 22
-	if self._run_state:get_own_peer_id() ~= arg_22_1 then
+	if self._run_state:get_own_peer_id() ~= peer_id then
 		return
 	end
 
-	if not self._run_state:get_profile_initialized(arg_22_1, arg_22_2, arg_22_3, arg_22_4, arg_22_5) then
+	if self._run_state:get_profile_initialized(peer_id, local_player_id, profile_index, career_index, is_bot) then
 		return
 	end
 
 	local get_own_initial_bot_talents
 
-	if not arg_22_5 then
+	if is_bot then
 		get_own_initial_bot_talents = self._run_state:get_own_initial_bot_talents()
 
 		if not get_own_initial_bot_talents then
@@ -471,13 +498,16 @@ DeusRunController.profile_changed = function (self, arg_22_1, arg_22_2, arg_22_3
 
 	get_own_initial_bot_talents = self._run_state:get_own_initial_talents()
 
+	local initial_talents = get_own_initial_bot_talents
+
 	::label_22_0::
 
-	local name = SPProfiles[arg_22_3].careers[arg_22_4].name
-	local var_22_2 = get_own_initial_bot_talents[name]
+	local profile = SPProfiles[profile_index]
+	local career_name = profile.careers[career_index].name
+	local initial_talents_for_career = initial_talents[career_name]
 	local get_own_initial_bot_loadout
 
-	if not arg_22_5 then
+	if is_bot then
 		get_own_initial_bot_loadout = self._run_state:get_own_initial_bot_loadout()
 
 		if not get_own_initial_bot_loadout then
@@ -487,58 +517,60 @@ DeusRunController.profile_changed = function (self, arg_22_1, arg_22_2, arg_22_3
 
 	get_own_initial_bot_loadout = self._run_state:get_own_initial_loadout()
 
+	local initial_loadout = get_own_initial_bot_loadout
+
 	::label_22_1::
 
-	local var_22_4 = get_own_initial_bot_loadout[name]
-	local slot_melee = var_22_4.slot_melee
-	local slot_ranged = var_22_4.slot_ranged
-	local serialize_weapon = DeusWeaponGeneration.serialize_weapon(slot_melee)
-	local serialize_weapon_2 = DeusWeaponGeneration.serialize_weapon(slot_ranged)
+	local initial_loadout_for_career = initial_loadout[career_name]
+	local melee_item = initial_loadout_for_career.slot_melee
+	local ranged_item = initial_loadout_for_career.slot_ranged
+	local melee_item_string = DeusWeaponGeneration.serialize_weapon(melee_item)
+	local ranged_item_string = DeusWeaponGeneration.serialize_weapon(ranged_item)
 
-	self:_add_initial_power_ups(arg_22_1, arg_22_2, arg_22_3, arg_22_4, var_22_2)
-	self:_add_initial_weapons_to_loadout(arg_22_1, arg_22_2, arg_22_3, arg_22_4, serialize_weapon, serialize_weapon_2)
+	self:_add_initial_power_ups(peer_id, local_player_id, profile_index, career_index, initial_talents_for_career)
+	self:_add_initial_weapons_to_loadout(peer_id, local_player_id, profile_index, career_index, melee_item_string, ranged_item_string)
 
-	if not self._run_state:is_server() then
-		fassert(arg_22_3 ~= 0, "the host must have a profile assigned already")
-		self._run_state:set_profile_initialized(arg_22_1, arg_22_2, arg_22_3, arg_22_4, true)
+	if self._run_state:is_server() then
+		fassert(profile_index ~= 0, "the host must have a profile assigned already")
+		self._run_state:set_profile_initialized(peer_id, local_player_id, profile_index, career_index, true)
 	else
-		local get_server_peer_id = self._run_state:get_server_peer_id()
-		local var_22_10 = PEER_ID_TO_CHANNEL[get_server_peer_id]
+		local server_peer_id = self._run_state:get_server_peer_id()
+		local server_channel_id = PEER_ID_TO_CHANNEL[server_peer_id]
 
-		RPC.rpc_deus_set_initial_setup(var_22_10, arg_22_3, arg_22_4, var_22_2, serialize_weapon, serialize_weapon_2)
+		RPC.rpc_deus_set_initial_setup(server_channel_id, profile_index, career_index, initial_talents_for_career, melee_item_string, ranged_item_string)
 	end
 end
 
-DeusRunController._add_initial_power_ups = function (self, arg_23_1, arg_23_2, arg_23_3, arg_23_4, arg_23_5)
+DeusRunController._add_initial_power_ups = function (self, peer_id, local_player_id, profile_index, career_index, initial_talents_for_career)
 	-- function 23
-	local tbl = {}
+	local talent_power_ups = {}
 
-	for i = 1, #arg_23_5 do
-		local var_23_1 = arg_23_5[i]
+	for tier = 1, #initial_talents_for_career do
+		local column = initial_talents_for_career[tier]
 
-		if var_23_1 ~= 0 then
-			local get_talent_power_up_from_tier_and_column, var_23_3 = DeusPowerUpUtils.get_talent_power_up_from_tier_and_column(i, var_23_1)
+		if column ~= 0 then
+			local power_up, rarity = DeusPowerUpUtils.get_talent_power_up_from_tier_and_column(tier, column)
 
-			tbl[#tbl + 1] = DeusPowerUpUtils.generate_specific_power_up(get_talent_power_up_from_tier_and_column.name, var_23_3)
+			talent_power_ups[#talent_power_ups + 1] = DeusPowerUpUtils.generate_specific_power_up(power_up.name, rarity)
 		end
 	end
 
-	local get_player_power_ups = self._run_state:get_player_power_ups(arg_23_1, arg_23_2, arg_23_3, arg_23_4)
-	local flag = true
-	local clone = table.clone(get_player_power_ups, flag)
+	local existing_power_ups = self._run_state:get_player_power_ups(peer_id, local_player_id, profile_index, career_index)
+	local skip_metatable = true
+	local new_power_ups = table.clone(existing_power_ups, skip_metatable)
 
-	table.append(clone, tbl)
+	table.append(new_power_ups, talent_power_ups)
 
-	local get_event_boons = self._run_state:get_event_boons()
+	local event_boons = self._run_state:get_event_boons()
 
-	table.append(clone, get_event_boons)
-	self._run_state:set_player_power_ups(arg_23_1, arg_23_2, arg_23_3, arg_23_4, clone)
+	table.append(new_power_ups, event_boons)
+	self._run_state:set_player_power_ups(peer_id, local_player_id, profile_index, career_index, new_power_ups)
 end
 
-DeusRunController._add_initial_weapons_to_loadout = function (self, arg_24_1, arg_24_2, arg_24_3, arg_24_4, arg_24_5, arg_24_6)
+DeusRunController._add_initial_weapons_to_loadout = function (self, peer_id, local_player_id, profile_index, career_index, melee_item_string, ranged_item_string)
 	-- function 24
-	self._run_state:set_player_loadout(arg_24_1, arg_24_2, arg_24_3, arg_24_4, "slot_melee", arg_24_5)
-	self._run_state:set_player_loadout(arg_24_1, arg_24_2, arg_24_3, arg_24_4, "slot_ranged", arg_24_6)
+	self._run_state:set_player_loadout(peer_id, local_player_id, profile_index, career_index, "slot_melee", melee_item_string)
+	self._run_state:set_player_loadout(peer_id, local_player_id, profile_index, career_index, "slot_ranged", ranged_item_string)
 end
 
 DeusRunController.get_run_id = function (self)
@@ -580,38 +612,47 @@ DeusRunController.handle_level_won = function (self)
 	-- function 32
 	self:_blessings_handle_level_won()
 
-	local num = self._run_state:get_completed_level_count() + 1
+	local completed_level_count = self._run_state:get_completed_level_count()
 
-	self._run_state:set_completed_level_count(num)
+	completed_level_count = completed_level_count + 1
 
-	local get_traversed_nodes = self._run_state:get_traversed_nodes()
-	local get_current_node_key = self._run_state:get_current_node_key()
-	local flag = true
-	local clone = table.clone(get_traversed_nodes, flag)
+	self._run_state:set_completed_level_count(completed_level_count)
 
-	clone[#clone + 1] = get_current_node_key
+	local traversed_nodes = self._run_state:get_traversed_nodes()
+	local current_node_key = self._run_state:get_current_node_key()
+	local skip_metatable = true
 
-	self._run_state:set_traversed_nodes(clone)
+	traversed_nodes = table.clone(traversed_nodes, skip_metatable)
+	traversed_nodes[#traversed_nodes + 1] = current_node_key
 
-	if not self:_get_graph_data()[get_current_node_key].curse then
-		local get_peers = self._network_handler:get_peers()
+	self._run_state:set_traversed_nodes(traversed_nodes)
 
-		for i, v in ipairs(get_peers) do
-			local num_2 = self._run_state:get_cursed_levels_completed(v) + 1
+	local path_graph = self:_get_graph_data()
+	local current_node = path_graph[current_node_key]
 
-			self._run_state:set_cursed_levels_completed(v, num_2)
+	if current_node.curse then
+		local peers = self._network_handler:get_peers()
+
+		for _, peer in ipairs(peers) do
+			local cursed_nodes_completed = self._run_state:get_cursed_levels_completed(peer)
+
+			cursed_nodes_completed = cursed_nodes_completed + 1
+
+			self._run_state:set_cursed_levels_completed(peer, cursed_nodes_completed)
 		end
 	end
 end
 
 DeusRunController.handle_map_exited = function (self)
 	-- function 33
-	if not self._run_state:get_arena_belakor_node() then
-		local get_peers = self._network_handler:get_peers()
+	local arena_belakor_node = self._run_state:get_arena_belakor_node()
 
-		for i, v in ipairs(get_peers) do
-			if not self._run_state:get_seen_arena_belakor_node(v) then
-				self._run_state:set_seen_arena_belakor_node(v, true)
+	if arena_belakor_node then
+		local peers = self._network_handler:get_peers()
+
+		for _, peer in ipairs(peers) do
+			if not self._run_state:get_seen_arena_belakor_node(peer) then
+				self._run_state:set_seen_arena_belakor_node(peer, true)
 			end
 		end
 	end
@@ -624,89 +665,89 @@ end
 
 DeusRunController.has_completed_current_node = function (self)
 	-- function 35
-	local get_current_node_key = self._run_state:get_current_node_key()
+	local current_node_key = self._run_state:get_current_node_key()
 
-	if get_current_node_key == "start" then
+	if current_node_key == "start" then
 		return false
 	else
-		local get_traversed_nodes = self._run_state:get_traversed_nodes()
+		local traversed_nodes = self._run_state:get_traversed_nodes()
 
-		return table.contains(get_traversed_nodes, get_current_node_key)
+		return table.contains(traversed_nodes, current_node_key)
 	end
 end
 
-DeusRunController.handle_shrine_entered = function (self, arg_36_1)
+DeusRunController.handle_shrine_entered = function (self, shrine_node_key)
 	-- function 36
-	self._run_state:set_current_node_key(arg_36_1)
+	self._run_state:set_current_node_key(shrine_node_key)
 
-	local get_traversed_nodes = self._run_state:get_traversed_nodes()
-	local flag = true
-	local clone = table.clone(get_traversed_nodes, flag)
+	local traversed_nodes = self._run_state:get_traversed_nodes()
+	local skip_metatable = true
 
-	clone[#clone + 1] = arg_36_1
+	traversed_nodes = table.clone(traversed_nodes, skip_metatable)
+	traversed_nodes[#traversed_nodes + 1] = shrine_node_key
 
-	self._run_state:set_traversed_nodes(clone)
+	self._run_state:set_traversed_nodes(traversed_nodes)
 end
 
 DeusRunController.get_traversed_nodes = function (self)
 	-- function 37
 	local get_traversed_nodes = self._run_state:get_traversed_nodes()
 
-	get_traversed_nodes = get_traversed_nodes or {}
+	get_traversed_nodes = not not get_traversed_nodes or not not {}
 
 	return get_traversed_nodes
 end
 
 DeusRunController.get_unreachable_nodes = function (self)
 	-- function 38
-	local get_current_node_key = self:get_current_node_key()
-	local tbl = {
-		[get_current_node_key] = true
+	local current_node_key = self:get_current_node_key()
+	local reachable_nodes = {
+		[current_node_key] = true
 	}
-	local get_traversed_nodes = self._run_state:get_traversed_nodes()
+	local traversed_nodes = self._run_state:get_traversed_nodes()
 
-	for i, v in ipairs(get_traversed_nodes) do
-		tbl[v] = true
+	for _, traversed_node_key in ipairs(traversed_nodes) do
+		reachable_nodes[traversed_node_key] = true
 	end
 
-	local _get_graph_data = self:_get_graph_data()
+	local graph_data = self:_get_graph_data()
 
-	local function fn(arg_39_0)
+	local function add_to_reachable_from(node_key)
 		-- function 39
-		local var_39_0 = _get_graph_data[arg_39_0]
+		local node = graph_data[node_key]
 
-		for i, v in ipairs(var_39_0.next) do
-			tbl[v] = true
+		for _, next_node_key in ipairs(node.next) do
+			reachable_nodes[next_node_key] = true
 
-			fn(v)
+			add_to_reachable_from(next_node_key)
 		end
 	end
 
-	fn(get_current_node_key)
+	add_to_reachable_from(current_node_key)
 
-	local tbl_2 = {}
+	local unreachable_nodes = {}
 
-	for k, v_2 in pairs(_get_graph_data) do
-		if not tbl[k] then
-			tbl_2[#tbl_2 + 1] = k
+	for node_key, _ in pairs(graph_data) do
+		if not reachable_nodes[node_key] then
+			unreachable_nodes[#unreachable_nodes + 1] = node_key
 		end
 	end
 
-	return tbl_2
+	return unreachable_nodes
 end
 
 DeusRunController.get_visited_nodes = function (self)
 	-- function 40
-	local get_traversed_nodes = self:get_traversed_nodes()
-	local get_current_node_key = self:get_current_node_key()
-	local flag = true
-	local clone = table.clone(get_traversed_nodes, flag)
+	local traversed_nodes = self:get_traversed_nodes()
+	local current_node_key = self:get_current_node_key()
+	local skip_metatable = true
+	local visited_nodes = table.clone(traversed_nodes, skip_metatable)
 
-	if not table.contains(clone, get_current_node_key) then
-		table.insert(clone, get_current_node_key)
+	if not table.contains(visited_nodes, current_node_key) then
+		table.insert(visited_nodes, current_node_key)
 	end
 
-	return clone
+	return visited_nodes
 end
 
 DeusRunController.get_completed_level_count = function (self)
@@ -716,89 +757,99 @@ end
 
 DeusRunController.get_map_visibility = function (self)
 	-- function 42
-	local _get_graph_data = self:_get_graph_data()
-	local get_current_node_key = self._run_state:get_current_node_key()
+	local graph_data = self:_get_graph_data()
+	local current_node_key = self._run_state:get_current_node_key()
 	local get_traversed_nodes = self._run_state:get_traversed_nodes()
 
-	get_traversed_nodes = get_traversed_nodes or {}
-
-	local tbl = {}
-
-	for k, v in pairs(_get_graph_data) do
-		tbl[k] = DeusMapVisibilitySettings.STRONG_FOG_LEVEL
+	if not get_traversed_nodes then
+		-- Nothing
 	end
 
-	local function fn(arg_43_0)
-		-- function 43
-		tbl[arg_43_0] = DeusMapVisibilitySettings.WEAK_FOG_LEVEL
+	get_traversed_nodes = {}
 
-		local function fn(arg_44_0, arg_44_1)
+	local traversed_nodes = get_traversed_nodes
+
+	::label_42_0::
+
+	local level_data = {}
+
+	for node_key, _ in pairs(graph_data) do
+		level_data[node_key] = DeusMapVisibilitySettings.STRONG_FOG_LEVEL
+	end
+
+	local function spread_from_node(node_key)
+		-- function 43
+		level_data[node_key] = DeusMapVisibilitySettings.WEAK_FOG_LEVEL
+
+		local function spread_level_reduction(nested_node_key, levels_to_go)
 			-- function 44
-			if arg_44_1 > DeusMapVisibilitySettings.STRONG_FOG_LEVEL then
+			if levels_to_go > DeusMapVisibilitySettings.STRONG_FOG_LEVEL then
 				return
 			end
 
-			tbl[arg_44_0] = math.min(tbl[arg_44_0], arg_44_1)
+			level_data[nested_node_key] = math.min(level_data[nested_node_key], levels_to_go)
 
-			for i, v in ipairs(_get_graph_data[arg_44_0].next) do
-				fn(v, arg_44_1 + 1)
+			for _, next_node_key in ipairs(graph_data[nested_node_key].next) do
+				spread_level_reduction(next_node_key, levels_to_go + 1)
 			end
 		end
 
-		for i, v in ipairs(_get_graph_data[arg_43_0].next) do
-			fn(v, DeusMapVisibilitySettings.WEAK_FOG_LEVEL)
+		for _, next_node_key in ipairs(graph_data[node_key].next) do
+			spread_level_reduction(next_node_key, DeusMapVisibilitySettings.WEAK_FOG_LEVEL)
 		end
 	end
 
-	fn(get_current_node_key)
+	spread_from_node(current_node_key)
 
-	if not script_data.deus_fog_with_no_memory then
-		for i, v_2 in ipairs(get_traversed_nodes) do
-			tbl[v_2] = DeusMapVisibilitySettings.WEAK_FOG_LEVEL
+	if script_data.deus_fog_with_no_memory then
+		for _, traversed_node_key in ipairs(traversed_nodes) do
+			level_data[traversed_node_key] = DeusMapVisibilitySettings.WEAK_FOG_LEVEL
 		end
 
-		tbl.start = DeusMapVisibilitySettings.WEAK_FOG_LEVEL
+		level_data.start = DeusMapVisibilitySettings.WEAK_FOG_LEVEL
 	else
-		for i_2, v_3 in ipairs(get_traversed_nodes) do
-			fn(v_3)
+		for _, traversed_node_key in ipairs(traversed_nodes) do
+			spread_from_node(traversed_node_key)
 		end
 
-		fn("start")
+		spread_from_node("start")
 	end
 
-	local get_arena_belakor_node = self._run_state:get_arena_belakor_node()
+	local arena_belakor = self._run_state:get_arena_belakor_node()
 
-	if not get_arena_belakor_node then
-		tbl[get_arena_belakor_node] = 0
+	if arena_belakor then
+		level_data[arena_belakor] = 0
 	end
 
-	tbl.final = 0
+	level_data.final = 0
 
-	return tbl
+	return level_data
 end
 
-DeusRunController.get_end_of_level_rewards_arguments = function (self, arg_45_1, arg_45_2)
+DeusRunController.get_end_of_level_rewards_arguments = function (self, game_won, quickplay)
 	-- function 45
-	local get_completed_level_count = self._run_state:get_completed_level_count()
-	local get_own_peer_id = self._run_state:get_own_peer_id()
-	local get_player_soft_currency = self._run_state:get_player_soft_currency(get_own_peer_id, num)
-	local get_current_node_key = self._run_state:get_current_node_key()
-	local run_progress = self:_get_graph_data()[get_current_node_key].run_progress
-	local get_run_difficulty = self._run_state:get_run_difficulty()
-	local var_45_6 = tbl_3[get_run_difficulty][1]
-	local var_45_7 = tbl_3[get_run_difficulty][2]
+	local completed_level_count = self._run_state:get_completed_level_count()
+	local own_peer_id = self._run_state:get_own_peer_id()
+	local soft_currency = self._run_state:get_player_soft_currency(own_peer_id, REAL_PLAYER_LOCAL_ID)
+	local current_node_key = self._run_state:get_current_node_key()
+	local graph_data = self:_get_graph_data()
+	local current_node = graph_data[current_node_key]
+	local run_progress = current_node.run_progress
+	local difficulty = self._run_state:get_run_difficulty()
+	local loot_chest_name = loot_chest_rewards[difficulty][1]
+	local loot_chest_num = loot_chest_rewards[difficulty][2]
 
 	return {
-		deus_completed_level_count = get_completed_level_count,
-		deus_soft_currency = get_player_soft_currency,
-		deus_item_name = var_45_6,
-		deus_num_duplicates = var_45_7,
+		deus_completed_level_count = completed_level_count,
+		deus_soft_currency = soft_currency,
+		deus_item_name = loot_chest_name,
+		deus_num_duplicates = loot_chest_num,
 		chest_upgrade_data = {
-			quickplay = arg_45_2,
-			game_won = arg_45_1,
-			cursed_chests_purified = self._run_state:get_cursed_chests_purified(get_own_peer_id),
-			cursed_levels_completed = self._run_state:get_cursed_levels_completed(get_own_peer_id),
-			coin_chests_collected = self._run_state:get_coin_chests_collected(get_own_peer_id),
+			quickplay = quickplay,
+			game_won = game_won,
+			cursed_chests_purified = self._run_state:get_cursed_chests_purified(own_peer_id),
+			cursed_levels_completed = self._run_state:get_cursed_levels_completed(own_peer_id),
+			coin_chests_collected = self._run_state:get_coin_chests_collected(own_peer_id),
 			run_progress = run_progress
 		}
 	}
@@ -806,70 +857,72 @@ end
 
 DeusRunController.get_mission_results = function (self)
 	-- function 46
-	local tbl = {}
-	local get_own_peer_id = self._run_state:get_own_peer_id()
+	local mission_results = {}
+	local peer_id = self._run_state:get_own_peer_id()
 
-	tbl[#tbl + 1] = {
+	mission_results[#mission_results + 1] = {
 		text = "deus_cursed_chests_purified",
-		experience = self._run_state:get_cursed_chests_purified(get_own_peer_id) * DeusExperienceSettings.CURSED_CHESTS
+		experience = self._run_state:get_cursed_chests_purified(peer_id) * DeusExperienceSettings.CURSED_CHESTS
 	}
-	tbl[#tbl + 1] = {
+	mission_results[#mission_results + 1] = {
 		text = "deus_cursed_levels_beaten",
-		experience = self._run_state:get_cursed_levels_completed(get_own_peer_id) * DeusExperienceSettings.CURSES
+		experience = self._run_state:get_cursed_levels_completed(peer_id) * DeusExperienceSettings.CURSES
 	}
-	tbl[#tbl + 1] = {
+	mission_results[#mission_results + 1] = {
 		text = "deus_coin_chests_collected",
-		experience = self._run_state:get_coin_chests_collected(get_own_peer_id) * DeusExperienceSettings.COINS
+		experience = self._run_state:get_coin_chests_collected(peer_id) * DeusExperienceSettings.COINS
 	}
 
-	return tbl
+	return mission_results
 end
 
 DeusRunController.record_cursed_chest_purified = function (self)
 	-- function 47
-	local get_peers = self._network_handler:get_peers()
+	local peers = self._network_handler:get_peers()
 
-	for i, v in ipairs(get_peers) do
-		local num = self._run_state:get_cursed_chests_purified(v) + 1
+	for _, peer in ipairs(peers) do
+		local cursed_chests_purified = self._run_state:get_cursed_chests_purified(peer)
 
-		self._run_state:set_cursed_chests_purified(v, num)
+		cursed_chests_purified = cursed_chests_purified + 1
+
+		self._run_state:set_cursed_chests_purified(peer, cursed_chests_purified)
 	end
 end
 
-DeusRunController.save_persisted_score = function (self, arg_48_1, arg_48_2)
+DeusRunController.save_persisted_score = function (self, statistics_db, stats_id)
 	-- function 48
-	local split_unique_player_id, var_48_1 = PlayerUtils.split_unique_player_id(arg_48_2)
-	local tbl = {}
+	local peer_id, local_player_id = PlayerUtils.split_unique_player_id(stats_id)
+	local saved_data = {}
 
-	for i, v in ipairs(tbl_2) do
-		if not arg_48_1:has_stat(unpack(v)) then
-			tbl[i] = arg_48_1:get_stat(arg_48_2, unpack(v))
+	for index, stat_type in ipairs(stats_to_save) do
+		if statistics_db:has_stat(unpack(stat_type)) then
+			saved_data[index] = statistics_db:get_stat(stats_id, unpack(stat_type))
 		else
-			tbl[i] = 0
+			saved_data[index] = 0
 		end
 	end
 
-	self._run_state:set_persisted_score(split_unique_player_id, var_48_1, tbl)
+	self._run_state:set_persisted_score(peer_id, local_player_id, saved_data)
 end
 
-DeusRunController.restore_persisted_score = function (self, arg_49_1, arg_49_2, arg_49_3)
+DeusRunController.restore_persisted_score = function (self, statistics_db, peer_id, local_player_id)
 	-- function 49
-	local unique_player_id = PlayerUtils.unique_player_id(arg_49_2, arg_49_3)
-	local get_persisted_score = self._run_state:get_persisted_score(arg_49_2, arg_49_3)
+	local stats_id = PlayerUtils.unique_player_id(peer_id, local_player_id)
+	local persisted_score = self._run_state:get_persisted_score(peer_id, local_player_id)
 
-	for i, v in ipairs(tbl_2) do
-		local var_49_2 = get_persisted_score[i]
-		local clone = table.clone(v)
+	for index, stat_type in ipairs(stats_to_save) do
+		local value = persisted_score[index]
+		local args = table.clone(stat_type)
 
-		clone[#clone + 1] = var_49_2 or 0
+		args[#args + 1] = not not value or not not 0
 
-		arg_49_1:set_non_persistent_stat(unique_player_id, unpack(clone))
+		statistics_db:set_non_persistent_stat(stats_id, unpack(args))
 	end
 end
 
-DeusRunController.save_scoreboard = function (self, arg_50_1)
+DeusRunController.save_scoreboard = function (self, scoreboard)
 	-- function 50
-	self._run_state:set_scoreboard(arg_50_1)
+	self._run_state:set_scoreboard(scoreboard)
 end
 
 DeusRunController.get_scoreboard = function (self)
@@ -897,200 +950,213 @@ DeusRunController.get_peers = function (self)
 	return self._network_handler:get_peers()
 end
 
-DeusRunController.set_own_player_avatar_info = function (self, arg_56_1, arg_56_2, arg_56_3, arg_56_4)
+DeusRunController.set_own_player_avatar_info = function (self, level, name, frame, versus_level)
 	-- function 56
-	self._run_state:set_own_player_level(arg_56_1)
-	self._run_state:set_own_versus_player_level(arg_56_4)
-	self._run_state:set_own_player_frame(arg_56_3)
-	self._run_state:set_own_player_name(arg_56_2)
+	self._run_state:set_own_player_level(level)
+	self._run_state:set_own_versus_player_level(versus_level)
+	self._run_state:set_own_player_frame(frame)
+	self._run_state:set_own_player_name(name)
 end
 
 DeusRunController.get_own_loadout = function (self)
 	-- function 57
-	if not self._destroyed then
-		local get_own_peer_id = self._run_state:get_own_peer_id()
-		local get_player_profile, var_57_2 = self._run_state:get_player_profile(get_own_peer_id, num)
-		local name = SPProfiles[get_player_profile].careers[var_57_2].name
-		local var_57_4 = self._run_state:get_own_initial_loadout()[name]
-		local slot_melee = var_57_4.slot_melee
-		local slot_ranged = var_57_4.slot_ranged
+	if self._destroyed then
+		local local_peer_id = self._run_state:get_own_peer_id()
+		local profile_index, career_index = self._run_state:get_player_profile(local_peer_id, REAL_PLAYER_LOCAL_ID)
+		local profile = SPProfiles[profile_index]
+		local career_name = profile.careers[career_index].name
+		local initial_loadout = self._run_state:get_own_initial_loadout()
+		local initial_loadout_for_career = initial_loadout[career_name]
+		local melee_item = initial_loadout_for_career.slot_melee
+		local ranged_item = initial_loadout_for_career.slot_ranged
 
-		return slot_melee, slot_ranged
+		return melee_item, ranged_item
 	else
-		local get_own_loadout_serialized, var_57_8 = self:get_own_loadout_serialized()
-		local deserialize_weapon = DeusWeaponGeneration.deserialize_weapon(get_own_loadout_serialized)
-		local deserialize_weapon_2 = DeusWeaponGeneration.deserialize_weapon(var_57_8)
+		local melee_item_string, ranged_item_string = self:get_own_loadout_serialized()
+		local melee_item = DeusWeaponGeneration.deserialize_weapon(melee_item_string)
+		local ranged_item = DeusWeaponGeneration.deserialize_weapon(ranged_item_string)
 
-		return deserialize_weapon, deserialize_weapon_2
+		return melee_item, ranged_item
 	end
 end
 
 DeusRunController.get_own_loadout_serialized = function (self)
 	-- function 58
-	local get_own_peer_id = self._run_state:get_own_peer_id()
-	local get_player_profile, var_58_2 = self._run_state:get_player_profile(get_own_peer_id, num)
-	local get_player_loadout = self._run_state:get_player_loadout(get_own_peer_id, num, get_player_profile, var_58_2, "slot_melee")
-	local get_player_loadout_2 = self._run_state:get_player_loadout(get_own_peer_id, num, get_player_profile, var_58_2, "slot_ranged")
+	local local_peer_id = self._run_state:get_own_peer_id()
+	local profile_index, career_index = self._run_state:get_player_profile(local_peer_id, REAL_PLAYER_LOCAL_ID)
+	local melee_item_string = self._run_state:get_player_loadout(local_peer_id, REAL_PLAYER_LOCAL_ID, profile_index, career_index, "slot_melee")
+	local ranged_item_string = self._run_state:get_player_loadout(local_peer_id, REAL_PLAYER_LOCAL_ID, profile_index, career_index, "slot_ranged")
 
-	return get_player_loadout, get_player_loadout_2
+	return melee_item_string, ranged_item_string
 end
 
-DeusRunController.get_loadout = function (self, arg_59_1, arg_59_2, arg_59_3, arg_59_4)
+DeusRunController.get_loadout = function (self, peer_id, local_player_id, profile_index, career_index)
 	-- function 59
-	local get_player_loadout = self._run_state:get_player_loadout(arg_59_1, arg_59_2, arg_59_3, arg_59_4, "slot_melee")
-	local get_player_loadout_2 = self._run_state:get_player_loadout(arg_59_1, arg_59_2, arg_59_3, arg_59_4, "slot_ranged")
-	local flag = not get_player_loadout and DeusWeaponGeneration.deserialize_weapon(get_player_loadout)
-	local flag_2 = not get_player_loadout_2 and DeusWeaponGeneration.deserialize_weapon(get_player_loadout_2)
+	local melee_item_string = self._run_state:get_player_loadout(peer_id, local_player_id, profile_index, career_index, "slot_melee")
+	local ranged_item_string = self._run_state:get_player_loadout(peer_id, local_player_id, profile_index, career_index, "slot_ranged")
+	local melee_item = not not melee_item_string and not not DeusWeaponGeneration.deserialize_weapon(melee_item_string)
+	local ranged_item = not not ranged_item_string and not not DeusWeaponGeneration.deserialize_weapon(ranged_item_string)
 
-	return flag, flag_2
+	return melee_item, ranged_item
 end
 
-DeusRunController.save_loadout = function (self, arg_60_1, arg_60_2)
+DeusRunController.save_loadout = function (self, item, slot_name)
 	-- function 60
-	local get_own_peer_id = self._run_state:get_own_peer_id()
-	local get_player_profile, var_60_2 = self._run_state:get_player_profile(get_own_peer_id, num)
-	local serialize_weapon = DeusWeaponGeneration.serialize_weapon(arg_60_1)
+	local local_peer_id = self._run_state:get_own_peer_id()
+	local profile_index, career_index = self._run_state:get_player_profile(local_peer_id, REAL_PLAYER_LOCAL_ID)
+	local item_string = DeusWeaponGeneration.serialize_weapon(item)
 
-	self._run_state:set_player_loadout(get_own_peer_id, num, get_player_profile, var_60_2, arg_60_2, serialize_weapon)
+	self._run_state:set_player_loadout(local_peer_id, REAL_PLAYER_LOCAL_ID, profile_index, career_index, slot_name, item_string)
 
 	if not self._run_state:is_server() then
-		local get_server_peer_id = self._run_state:get_server_peer_id()
-		local var_60_5 = PEER_ID_TO_CHANNEL[get_server_peer_id]
+		local server_peer_id = self._run_state:get_server_peer_id()
+		local server_channel_id = PEER_ID_TO_CHANNEL[server_peer_id]
 
-		RPC.rpc_deus_save_loadout(var_60_5, arg_60_2, serialize_weapon)
+		RPC.rpc_deus_save_loadout(server_channel_id, slot_name, item_string)
 	end
 end
 
-DeusRunController.rpc_deus_save_loadout = function (self, arg_61_1, arg_61_2, arg_61_3)
+DeusRunController.rpc_deus_save_loadout = function (self, sender_channel_id, slot_name, item_string)
 	-- function 61
-	local var_61_0 = CHANNEL_TO_PEER_ID[arg_61_1]
-	local get_player_profile, var_61_2 = self._run_state:get_player_profile(var_61_0, num)
+	local sender = CHANNEL_TO_PEER_ID[sender_channel_id]
+	local profile_index, career_index = self._run_state:get_player_profile(sender, REAL_PLAYER_LOCAL_ID)
 
-	self._run_state:set_player_loadout(var_61_0, num, get_player_profile, var_61_2, arg_61_2, arg_61_3)
+	self._run_state:set_player_loadout(sender, REAL_PLAYER_LOCAL_ID, profile_index, career_index, slot_name, item_string)
 end
 
-DeusRunController.on_soft_currency_picked_up = function (self, arg_62_1, arg_62_2)
+DeusRunController.on_soft_currency_picked_up = function (self, amount, type)
 	-- function 62
-	local get_own_peer_id = self._run_state:get_own_peer_id()
+	local own_peer_id = self._run_state:get_own_peer_id()
 
-	self:_add_soft_currency_to_peer(get_own_peer_id, arg_62_1)
+	self:_add_soft_currency_to_peer(own_peer_id, amount)
 
 	if not self._run_state:is_server() then
-		local get_server_peer_id = self._run_state:get_server_peer_id()
-		local var_62_2 = PEER_ID_TO_CHANNEL[get_server_peer_id]
+		local server_peer_id = self._run_state:get_server_peer_id()
+		local server_channel_id = PEER_ID_TO_CHANNEL[server_peer_id]
 
-		RPC.rpc_deus_soft_currency_picked_up(var_62_2, arg_62_1, arg_62_2)
-	elseif arg_62_2 == DeusSoftCurrencySettings.types.GROUND then
-		local num = self._run_state:get_ground_coins_picked_up() + 1
+		RPC.rpc_deus_soft_currency_picked_up(server_channel_id, amount, type)
+	elseif type == DeusSoftCurrencySettings.types.GROUND then
+		local ground_coins_picked_up = self._run_state:get_ground_coins_picked_up()
 
-		self._run_state:set_ground_coins_picked_up(num)
-	elseif arg_62_2 == DeusSoftCurrencySettings.types.MONSTER then
-		local num_2 = self._run_state:get_monster_coins_picked_up() + 1
+		ground_coins_picked_up = ground_coins_picked_up + 1
 
-		self._run_state:set_monster_coins_picked_up(num_2)
+		self._run_state:set_ground_coins_picked_up(ground_coins_picked_up)
+	elseif type == DeusSoftCurrencySettings.types.MONSTER then
+		local monster_coins_picked_up = self._run_state:get_monster_coins_picked_up()
+
+		monster_coins_picked_up = monster_coins_picked_up + 1
+
+		self._run_state:set_monster_coins_picked_up(monster_coins_picked_up)
 	end
 end
 
-DeusRunController.get_player_soft_currency = function (self, arg_63_1)
+DeusRunController.get_player_soft_currency = function (self, peer_id)
 	-- function 63
-	return self._run_state:get_player_soft_currency(arg_63_1, num)
+	return self._run_state:get_player_soft_currency(peer_id, REAL_PLAYER_LOCAL_ID)
 end
 
-DeusRunController.rpc_deus_soft_currency_picked_up = function (self, arg_64_1, arg_64_2, arg_64_3)
+DeusRunController.rpc_deus_soft_currency_picked_up = function (self, sender_channel_id, amount, type)
 	-- function 64
-	local var_64_0 = CHANNEL_TO_PEER_ID[arg_64_1]
+	local sender = CHANNEL_TO_PEER_ID[sender_channel_id]
 
-	self:_add_soft_currency_to_peer(var_64_0, arg_64_2)
+	self:_add_soft_currency_to_peer(sender, amount)
 end
 
-DeusRunController._add_soft_currency_to_peer = function (self, arg_65_1, arg_65_2)
+DeusRunController._add_soft_currency_to_peer = function (self, peer_id, amount)
 	-- function 65
-	local num_2 = self._run_state:get_coin_chests_collected(arg_65_1) + 1
+	local coin_chests_collected = self._run_state:get_coin_chests_collected(peer_id)
 
-	self._run_state:set_coin_chests_collected(arg_65_1, num_2)
+	coin_chests_collected = coin_chests_collected + 1
 
-	local num_3 = self._run_state:get_player_soft_currency(arg_65_1, num) + arg_65_2
+	self._run_state:set_coin_chests_collected(peer_id, coin_chests_collected)
 
-	self._run_state:set_player_soft_currency(arg_65_1, num, num_3)
-	self:_add_coin_tracking_entry(arg_65_1, num, arg_65_2, "add coins")
+	local coins = self._run_state:get_player_soft_currency(peer_id, REAL_PLAYER_LOCAL_ID)
+	local new_coins = coins + amount
+
+	self._run_state:set_player_soft_currency(peer_id, REAL_PLAYER_LOCAL_ID, new_coins)
+	self:_add_coin_tracking_entry(peer_id, REAL_PLAYER_LOCAL_ID, amount, "add coins")
 end
 
-DeusRunController.grant_soft_currency = function (self, arg_66_1, arg_66_2)
+DeusRunController.grant_soft_currency = function (self, peer_id, amount)
 	-- function 66
-	self:_add_soft_currency_to_peer(arg_66_1, arg_66_2)
+	self:_add_soft_currency_to_peer(peer_id, amount)
 end
 
 DeusRunController.get_shop_heal_data = function (self)
 	-- function 67
-	local get_own_peer_id = self._run_state:get_own_peer_id()
-	local get_player_profile, var_67_2 = self._run_state:get_player_profile(get_own_peer_id, num)
-	local get_player_health_percentage = self._run_state:get_player_health_percentage(get_own_peer_id, num, get_player_profile, var_67_2)
-	local get_player_soft_currency = self._run_state:get_player_soft_currency(get_own_peer_id, num)
+	local local_peer_id = self._run_state:get_own_peer_id()
+	local profile_index, career_index = self._run_state:get_player_profile(local_peer_id, REAL_PLAYER_LOCAL_ID)
+	local current_health = self._run_state:get_player_health_percentage(local_peer_id, REAL_PLAYER_LOCAL_ID, profile_index, career_index)
+	local current_coins = self._run_state:get_player_soft_currency(local_peer_id, REAL_PLAYER_LOCAL_ID)
 	local heal_amount = DeusShopSettings.heal_amount
 	local heal_cost = DeusShopSettings.heal_cost
-	local var_67_7, var_67_8 = fn_4(get_player_health_percentage, get_player_soft_currency, heal_amount, heal_cost)
-	local var_67_9 = var_67_8
 
-	return var_67_7, var_67_9
+	heal_amount, heal_cost = calculate_next_shop_heal(current_health, current_coins, heal_amount, heal_cost)
+
+	return heal_amount, heal_cost
 end
 
 DeusRunController.shop_buy_health = function (self)
 	-- function 68
-	local get_own_peer_id = self._run_state:get_own_peer_id()
+	local local_peer_id = self._run_state:get_own_peer_id()
+	local success = self:_try_buy_health(local_peer_id)
 
-	if not (not self:_try_buy_health(get_own_peer_id) and self._run_state:is_server()) then
-		local get_server_peer_id = self._run_state:get_server_peer_id()
-		local var_68_2 = PEER_ID_TO_CHANNEL[get_server_peer_id]
+	if success and not self._run_state:is_server() then
+		local server_peer_id = self._run_state:get_server_peer_id()
+		local server_channel_id = PEER_ID_TO_CHANNEL[server_peer_id]
 
-		RPC.rpc_deus_shop_heal_player(var_68_2)
+		RPC.rpc_deus_shop_heal_player(server_channel_id)
 	end
 end
 
-DeusRunController.shop_buy_blessing = function (self, arg_69_1)
+DeusRunController.shop_buy_blessing = function (self, blessing_name)
 	-- function 69
-	if not (not self:_try_buy_blessing(self._run_state:get_own_peer_id(), arg_69_1) and self._run_state:is_server()) then
-		local get_server_peer_id = self._run_state:get_server_peer_id()
-		local var_69_1 = PEER_ID_TO_CHANNEL[get_server_peer_id]
+	local success = self:_try_buy_blessing(self._run_state:get_own_peer_id(), blessing_name)
 
-		RPC.rpc_deus_shop_blessing_selected(var_69_1, arg_69_1)
+	if success and not self._run_state:is_server() then
+		local server_peer_id = self._run_state:get_server_peer_id()
+		local server_channel_id = PEER_ID_TO_CHANNEL[server_peer_id]
+
+		RPC.rpc_deus_shop_blessing_selected(server_channel_id, blessing_name)
 	end
 end
 
-DeusRunController.shop_buy_power_up = function (self, arg_70_1, arg_70_2)
+DeusRunController.shop_buy_power_up = function (self, power_up, discount)
 	-- function 70
-	local _try_buy_power_up = self:_try_buy_power_up(self._run_state:get_own_peer_id(), arg_70_1, arg_70_2)
+	local success = self:_try_buy_power_up(self._run_state:get_own_peer_id(), power_up, discount)
 
-	if not (not _try_buy_power_up and self._run_state:is_server()) then
-		local get_server_peer_id = self._run_state:get_server_peer_id()
-		local var_70_2 = PEER_ID_TO_CHANNEL[get_server_peer_id]
+	if success and not self._run_state:is_server() then
+		local server_peer_id = self._run_state:get_server_peer_id()
+		local server_channel_id = PEER_ID_TO_CHANNEL[server_peer_id]
 
-		RPC.rpc_deus_shop_power_up_bought(var_70_2, arg_70_1.rarity, arg_70_1.name, arg_70_1.client_id, math.round(arg_70_2 * num_2))
+		RPC.rpc_deus_shop_power_up_bought(server_channel_id, power_up.rarity, power_up.name, power_up.client_id, math.round(discount * DISCOUNT_CONVERSION_EPSILON))
 	end
 
-	if not _try_buy_power_up then
-		local get_own_peer_id = self._run_state:get_own_peer_id()
+	if success then
+		local local_peer_id = self._run_state:get_own_peer_id()
 
-		self:_check_set_completed(arg_70_1, true, get_own_peer_id, num)
+		self:_check_set_completed(power_up, true, local_peer_id, REAL_PLAYER_LOCAL_ID)
 	end
 end
 
-DeusRunController._try_buy_health = function (self, arg_71_1)
+DeusRunController._try_buy_health = function (self, peer_id)
 	-- function 71
-	local get_player_profile, var_71_1 = self._run_state:get_player_profile(arg_71_1, num)
-	local get_player_health_percentage = self._run_state:get_player_health_percentage(arg_71_1, num, get_player_profile, var_71_1)
-	local get_player_soft_currency = self._run_state:get_player_soft_currency(arg_71_1, num)
+	local profile_index, career_index = self._run_state:get_player_profile(peer_id, REAL_PLAYER_LOCAL_ID)
+	local current_health = self._run_state:get_player_health_percentage(peer_id, REAL_PLAYER_LOCAL_ID, profile_index, career_index)
+	local current_coins = self._run_state:get_player_soft_currency(peer_id, REAL_PLAYER_LOCAL_ID)
 
-	if get_player_health_percentage < 1 then
+	if current_health < 1 then
 		local heal_amount = DeusShopSettings.heal_amount
 		local heal_cost = DeusShopSettings.heal_cost
-		local var_71_6, var_71_7 = fn_4(get_player_health_percentage, get_player_soft_currency, heal_amount, heal_cost)
 
-		if var_71_7 <= get_player_soft_currency then
-			local clamp = math.clamp(get_player_health_percentage + var_71_6, 0, 1)
+		heal_amount, heal_cost = calculate_next_shop_heal(current_health, current_coins, heal_amount, heal_cost)
 
-			self._run_state:set_player_soft_currency(arg_71_1, num, get_player_soft_currency - var_71_7)
-			self._run_state:set_player_health_percentage(arg_71_1, num, get_player_profile, var_71_1, clamp)
-			self:_add_coin_tracking_entry(arg_71_1, num, -var_71_7, "health")
+		if heal_cost <= current_coins then
+			local new_health = math.clamp(current_health + heal_amount, 0, 1)
+
+			self._run_state:set_player_soft_currency(peer_id, REAL_PLAYER_LOCAL_ID, current_coins - heal_cost)
+			self._run_state:set_player_health_percentage(peer_id, REAL_PLAYER_LOCAL_ID, profile_index, career_index, new_health)
+			self:_add_coin_tracking_entry(peer_id, REAL_PLAYER_LOCAL_ID, -heal_cost, "health")
 
 			return true
 		end
@@ -1099,219 +1165,245 @@ DeusRunController._try_buy_health = function (self, arg_71_1)
 	return false
 end
 
-DeusRunController.rpc_deus_shop_heal_player = function (self, arg_72_1)
+DeusRunController.rpc_deus_shop_heal_player = function (self, sender_channel_id)
 	-- function 72
-	local var_72_0 = CHANNEL_TO_PEER_ID[arg_72_1]
+	local sender = CHANNEL_TO_PEER_ID[sender_channel_id]
+	local success = self:_try_buy_health(sender)
 
-	if not self:_try_buy_health(var_72_0) then
-		local get_player_profile, var_72_2 = self._run_state:get_player_profile(var_72_0, num)
-		local get_player_health_percentage = self._run_state:get_player_health_percentage(var_72_0, num, get_player_profile, var_72_2)
-		local get_player_soft_currency = self._run_state:get_player_soft_currency(var_72_0, num)
+	if not success then
+		local profile_index, career_index = self._run_state:get_player_profile(sender, REAL_PLAYER_LOCAL_ID)
+		local current_health = self._run_state:get_player_health_percentage(sender, REAL_PLAYER_LOCAL_ID, profile_index, career_index)
+		local current_coins = self._run_state:get_player_soft_currency(sender, REAL_PLAYER_LOCAL_ID)
 
-		self._run_state:set_player_soft_currency(var_72_0, num, get_player_soft_currency)
-		self._run_state:set_player_health_percentage(var_72_0, num, get_player_profile, var_72_2, get_player_health_percentage)
+		self._run_state:set_player_soft_currency(sender, REAL_PLAYER_LOCAL_ID, current_coins)
+		self._run_state:set_player_health_percentage(sender, REAL_PLAYER_LOCAL_ID, profile_index, career_index, current_health)
 	end
 end
 
-DeusRunController.rpc_deus_shop_blessing_selected = function (self, arg_73_1, arg_73_2)
+DeusRunController.rpc_deus_shop_blessing_selected = function (self, sender_channel_id, blessing_name)
 	-- function 73
-	local var_73_0 = CHANNEL_TO_PEER_ID[arg_73_1]
+	local sender = CHANNEL_TO_PEER_ID[sender_channel_id]
+	local success = self:_try_buy_blessing(sender, blessing_name)
 
-	if not self:_try_buy_blessing(var_73_0, arg_73_2) then
-		local get_blessings_with_buyer = self._run_state:get_blessings_with_buyer()
-		local get_player_soft_currency = self._run_state:get_player_soft_currency(var_73_0, num)
+	if not success then
+		local blessings_with_buyer = self._run_state:get_blessings_with_buyer()
+		local current_coins = self._run_state:get_player_soft_currency(sender, REAL_PLAYER_LOCAL_ID)
 
-		self._run_state:set_blessings_with_buyer(get_blessings_with_buyer)
-		self._run_state:set_player_soft_currency(var_73_0, num, get_player_soft_currency)
+		self._run_state:set_blessings_with_buyer(blessings_with_buyer)
+		self._run_state:set_player_soft_currency(sender, REAL_PLAYER_LOCAL_ID, current_coins)
 	end
 end
 
-DeusRunController.rpc_deus_shop_power_up_bought = function (self, arg_74_1, arg_74_2, arg_74_3, arg_74_4, arg_74_5)
+DeusRunController.rpc_deus_shop_power_up_bought = function (self, sender_channel_id, rarity, power_up_name, power_up_client_id, discount)
 	-- function 74
-	local var_74_0 = CHANNEL_TO_PEER_ID[arg_74_1]
+	local sender = CHANNEL_TO_PEER_ID[sender_channel_id]
 
-	arg_74_5 = arg_74_5 / num_2
+	discount = discount / DISCOUNT_CONVERSION_EPSILON
 
-	local flag = true
-	local clone = table.clone(DeusPowerUps[arg_74_2][arg_74_3], flag)
+	local skip_metatable = true
+	local power_up = table.clone(DeusPowerUps[rarity][power_up_name], skip_metatable)
 
-	clone.client_id = arg_74_4
+	power_up.client_id = power_up_client_id
 
-	if not self:_try_buy_power_up(var_74_0, clone, arg_74_5) then
-		local get_player_profile, var_74_4 = self._run_state:get_player_profile(var_74_0, num)
-		local get_player_power_ups = self._run_state:get_player_power_ups(var_74_0, num, get_player_profile, var_74_4)
-		local get_player_soft_currency = self._run_state:get_player_soft_currency(var_74_0, num)
+	local success = self:_try_buy_power_up(sender, power_up, discount)
 
-		self._run_state:set_player_power_ups(var_74_0, num, get_player_profile, var_74_4, get_player_power_ups)
-		self._run_state:set_player_soft_currency(var_74_0, num, get_player_soft_currency)
+	if not success then
+		local profile_index, career_index = self._run_state:get_player_profile(sender, REAL_PLAYER_LOCAL_ID)
+		local power_ups = self._run_state:get_player_power_ups(sender, REAL_PLAYER_LOCAL_ID, profile_index, career_index)
+		local current_coins = self._run_state:get_player_soft_currency(sender, REAL_PLAYER_LOCAL_ID)
+
+		self._run_state:set_player_power_ups(sender, REAL_PLAYER_LOCAL_ID, profile_index, career_index, power_ups)
+		self._run_state:set_player_soft_currency(sender, REAL_PLAYER_LOCAL_ID, current_coins)
 	end
 end
 
-DeusRunController.get_player_power_ups = function (self, arg_75_1, arg_75_2)
+DeusRunController.get_player_power_ups = function (self, peer_id, local_player_id)
 	-- function 75
-	local get_player_profile, var_75_1 = self._run_state:get_player_profile(arg_75_1, arg_75_2)
+	local profile_index, career_index = self._run_state:get_player_profile(peer_id, local_player_id)
+	local power_ups = self._run_state:get_player_power_ups(peer_id, local_player_id, profile_index, career_index)
 
-	return (self._run_state:get_player_power_ups(arg_75_1, arg_75_2, get_player_profile, var_75_1))
+	return power_ups
 end
 
-DeusRunController.get_power_ups = function (self, arg_76_1, arg_76_2, arg_76_3, arg_76_4)
+DeusRunController.get_power_ups = function (self, peer_id, local_player_id, profile_index, career_index)
 	-- function 76
-	return (self._run_state:get_player_power_ups(arg_76_1, arg_76_2, arg_76_3, arg_76_4))
+	local power_ups = self._run_state:get_player_power_ups(peer_id, local_player_id, profile_index, career_index)
+
+	return power_ups
 end
 
 DeusRunController.get_party_power_ups = function (self)
 	-- function 77
-	return (self._run_state:get_party_power_ups())
+	local power_ups = self._run_state:get_party_power_ups()
+
+	return power_ups
 end
 
-DeusRunController.generate_random_power_ups = function (self, arg_78_1, arg_78_2, arg_78_3)
+DeusRunController.generate_random_power_ups = function (self, count, availability_type, extra_seed)
 	-- function 78
-	arg_78_3 = arg_78_3 or "0"
+	extra_seed = not not extra_seed or not not "0"
 
-	local get_own_peer_id = self._run_state:get_own_peer_id()
-	local get_current_node_key = self._run_state:get_current_node_key()
-	local var_78_2 = self:_get_graph_data()[get_current_node_key]
-	local power_ups = var_78_2.system_seeds.power_ups
+	local local_peer_id = self._run_state:get_own_peer_id()
+	local current_node_key = self._run_state:get_current_node_key()
+	local graph_data = self:_get_graph_data()
+	local current_node = graph_data[current_node_key]
+	local power_ups = current_node.system_seeds.power_ups
 
-	power_ups = power_ups or 0
+	if not power_ups then
+		-- Nothing
+	end
 
-	local fnv32_hash = HashUtils.fnv32_hash(arg_78_3 .. "_" .. get_own_peer_id .. "_" .. power_ups)
-	local run_progress = var_78_2.run_progress
-	local get_player_profile, var_78_7 = self._run_state:get_player_profile(get_own_peer_id, num)
-	local get_player_power_ups = self._run_state:get_player_power_ups(get_own_peer_id, num, get_player_profile, var_78_7)
-	local name = SPProfiles[get_player_profile].careers[var_78_7].name
-	local var_78_10
-	local generate_random_power_ups, var_78_12 = DeusPowerUpUtils.generate_random_power_ups(fnv32_hash, arg_78_1, get_player_power_ups, self._run_state:get_run_difficulty(), run_progress, arg_78_2, name)
+	power_ups = 0
 
-	return var_78_12
+	local node_power_up_seed = power_ups
+
+	::label_78_0::
+
+	local power_up_seed = HashUtils.fnv32_hash(extra_seed .. "_" .. local_peer_id .. "_" .. node_power_up_seed)
+	local run_progress = current_node.run_progress
+	local profile_index, career_index = self._run_state:get_player_profile(local_peer_id, REAL_PLAYER_LOCAL_ID)
+	local existing_power_ups = self._run_state:get_player_power_ups(local_peer_id, REAL_PLAYER_LOCAL_ID, profile_index, career_index)
+	local profile = SPProfiles[profile_index]
+	local career_name = profile.careers[career_index].name
+	local new_power_ups
+
+	power_up_seed, new_power_ups = DeusPowerUpUtils.generate_random_power_ups(power_up_seed, count, existing_power_ups, self._run_state:get_run_difficulty(), run_progress, availability_type, career_name)
+
+	return new_power_ups
 end
 
-local function fn_5(self, arg_79_1)
+local function is_reward_of_set(set, power_up)
 	-- function 79
-	return table.find_func(self.rewards, function (arg_80_0, arg_80_1)
+	return table.find_func(set.rewards, function (_, reward)
 		-- function 80
-		return arg_80_1.name ~= arg_79_1.name or arg_80_1.rarity == arg_79_1.rarity
+		return reward.name == power_up.name and reward.rarity == power_up.rarity
 	end)
 end
 
-DeusRunController.add_power_ups = function (self, arg_81_1, arg_81_2, arg_81_3)
+DeusRunController.add_power_ups = function (self, new_power_ups, local_player_id, present)
 	-- function 81
-	if #arg_81_1 == 0 then
+	if #new_power_ups == 0 then
 		return
 	end
 
-	fassert(arg_81_2, "Invalid local_player_id")
+	fassert(local_player_id, "Invalid local_player_id")
 
-	local get_own_peer_id = self._run_state:get_own_peer_id()
-	local get_player_profile, var_81_2 = self._run_state:get_player_profile(get_own_peer_id, arg_81_2)
-	local get_player_power_ups = self._run_state:get_player_power_ups(get_own_peer_id, arg_81_2, get_player_profile, var_81_2)
-	local flag = true
-	local clone = table.clone(get_player_power_ups, flag)
+	local local_peer_id = self._run_state:get_own_peer_id()
+	local profile_index, career_index = self._run_state:get_player_profile(local_peer_id, local_player_id)
+	local power_ups = self._run_state:get_player_power_ups(local_peer_id, local_player_id, profile_index, career_index)
+	local skip_metatable = true
 
-	table.append(clone, arg_81_1)
-	self._run_state:set_player_power_ups(get_own_peer_id, arg_81_2, get_player_profile, var_81_2, clone)
+	power_ups = table.clone(power_ups, skip_metatable)
+
+	table.append(power_ups, new_power_ups)
+	self._run_state:set_player_power_ups(local_peer_id, local_player_id, profile_index, career_index, power_ups)
 
 	if not self._run_state:is_server() then
-		local power_ups_to_encoded_string = DeusPowerUpUtils.power_ups_to_encoded_string(arg_81_1)
-		local get_server_peer_id = self._run_state:get_server_peer_id()
-		local var_81_8 = PEER_ID_TO_CHANNEL[get_server_peer_id]
-		local str = ""
+		local new_power_ups_string = DeusPowerUpUtils.power_ups_to_encoded_string(new_power_ups)
+		local server_peer_id = self._run_state:get_server_peer_id()
+		local server_channel_id = PEER_ID_TO_CHANNEL[server_peer_id]
+		local granted_by_end_of_level_node_key = ""
 
-		RPC.rpc_deus_add_power_ups(var_81_8, power_ups_to_encoded_string, str)
+		RPC.rpc_deus_add_power_ups(server_channel_id, new_power_ups_string, granted_by_end_of_level_node_key)
 	end
 
-	local player = Managers.player:player(get_own_peer_id, arg_81_2)
+	local player = Managers.player:player(local_peer_id, local_player_id)
 
-	if not player then
-		local has_extension = ScriptUnit.has_extension(player.player_unit, "buff_system")
+	if player then
+		local buff_extension = ScriptUnit.has_extension(player.player_unit, "buff_system")
 
-		if not has_extension then
-			has_extension:trigger_procs("on_boon_granted")
+		if buff_extension then
+			buff_extension:trigger_procs("on_boon_granted")
 		end
 	end
 
-	local flag_2 = not player and player.player_unit
+	local player_unit = not not player and not not player.player_unit
 
-	if not flag_2 then
-		local system = Managers.state.entity:system("buff_system")
-		local get_talents_interface = Managers.backend:get_talents_interface()
-		local get_interface = Managers.backend:get_interface("deus")
+	if player_unit then
+		local buff_system = Managers.state.entity:system("buff_system")
+		local talent_interface = Managers.backend:get_talents_interface()
+		local deus_backend = Managers.backend:get_interface("deus")
 
-		for i = 1, #arg_81_1 do
-			local var_81_16 = arg_81_1[i]
+		for i = 1, #new_power_ups do
+			local power_up = new_power_ups[i]
 
-			DeusPowerUpUtils.activate_deus_power_up(var_81_16, system, get_talents_interface, get_interface, self, flag_2, get_player_profile, var_81_2)
+			DeusPowerUpUtils.activate_deus_power_up(power_up, buff_system, talent_interface, deus_backend, self, player_unit, profile_index, career_index)
 
-			if not arg_81_3 then
+			if present then
 				Managers.state.event:trigger("present_rewards", {
 					{
 						type = "deus_power_up",
-						power_up = var_81_16
+						power_up = power_up
 					}
 				})
 			end
 		end
 	end
 
-	for j = 1, #arg_81_1 do
-		local var_81_17 = arg_81_1[j]
+	for i = 1, #new_power_ups do
+		local power_up = new_power_ups[i]
 
-		self:_check_set_completed(var_81_17, arg_81_3, get_own_peer_id, arg_81_2)
+		self:_check_set_completed(power_up, present, local_peer_id, local_player_id)
 	end
 end
 
-DeusRunController.remove_power_ups = function (self, arg_82_1, arg_82_2)
+DeusRunController.remove_power_ups = function (self, power_up_name, local_player_id)
 	-- function 82
-	fassert(arg_82_2, "[DeusRunController:remove_power_ups] Invalid local_player_id")
+	fassert(local_player_id, "[DeusRunController:remove_power_ups] Invalid local_player_id")
 
-	local get_own_peer_id = self._run_state:get_own_peer_id()
-	local get_player_profile, var_82_2 = self._run_state:get_player_profile(get_own_peer_id, arg_82_2)
-	local get_player_power_ups = self._run_state:get_player_power_ups(get_own_peer_id, arg_82_2, get_player_profile, var_82_2)
-	local var_82_4 = NetworkLookup.deus_power_up_templates[arg_82_1]
-	local flag = true
-	local clone = table.clone(get_player_power_ups, flag)
-	local num = -1
+	local local_peer_id = self._run_state:get_own_peer_id()
+	local profile_index, career_index = self._run_state:get_player_profile(local_peer_id, local_player_id)
+	local power_ups = self._run_state:get_player_power_ups(local_peer_id, local_player_id, profile_index, career_index)
+	local power_up_id = NetworkLookup.deus_power_up_templates[power_up_name]
+	local skip_metatable = true
 
-	for i = 1, #clone do
-		if clone[i].name == arg_82_1 then
-			num = i
+	power_ups = table.clone(power_ups, skip_metatable)
+
+	local to_remove_idx = -1
+
+	for i = 1, #power_ups do
+		local power_up = power_ups[i]
+		local name = power_up.name
+
+		if name == power_up_name then
+			to_remove_idx = i
 
 			break
 		end
 	end
 
-	if num ~= -1 then
-		local player = Managers.player:player(get_own_peer_id, arg_82_2)
+	if to_remove_idx ~= -1 then
+		local player = Managers.player:player(local_peer_id, local_player_id)
 
-		if not player then
-			local has_extension = ScriptUnit.has_extension(player.player_unit, "buff_system")
+		if player then
+			local buff_extension = ScriptUnit.has_extension(player.player_unit, "buff_system")
 
-			if not has_extension then
-				local var_82_10 = clone[num]
+			if buff_extension then
+				local power_up_instance = power_ups[to_remove_idx]
 
-				if not var_82_10 then
-					local var_82_11 = DeusPowerUps[var_82_10.rarity][var_82_10.name]
+				if power_up_instance then
+					local power_up = DeusPowerUps[power_up_instance.rarity][power_up_instance.name]
 
-					if not var_82_11 then
-						local get_buff_type = has_extension:get_buff_type(var_82_11.buff_name)
-						local flag_2 = not get_buff_type and get_buff_type.id
+					if power_up then
+						local buff = buff_extension:get_buff_type(power_up.buff_name)
+						local id = not not buff and not not buff.id
 
-						if not flag_2 then
-							has_extension:remove_buff(flag_2)
+						if id then
+							buff_extension:remove_buff(id)
 						end
 					end
 				end
 			end
 		end
 
-		if not self._run_state:is_server() then
-			table.swap_delete(clone, num)
-			self._run_state:set_player_power_ups(get_own_peer_id, arg_82_2, get_player_profile, var_82_2, clone)
+		if self._run_state:is_server() then
+			table.swap_delete(power_ups, to_remove_idx)
+			self._run_state:set_player_power_ups(local_peer_id, local_player_id, profile_index, career_index, power_ups)
 		else
-			local get_server_peer_id = self._run_state:get_server_peer_id()
-			local var_82_15 = PEER_ID_TO_CHANNEL[get_server_peer_id]
+			local server_peer_id = self._run_state:get_server_peer_id()
+			local server_channel_id = PEER_ID_TO_CHANNEL[server_peer_id]
 
-			RPC.rpc_deus_remove_power_up(var_82_15, var_82_4)
+			RPC.rpc_deus_remove_power_up(server_channel_id, power_up_id)
 		end
 
 		return true
@@ -1320,48 +1412,64 @@ DeusRunController.remove_power_ups = function (self, arg_82_1, arg_82_2)
 	end
 end
 
-DeusRunController._check_set_completed = function (self, arg_83_1, arg_83_2, arg_83_3, arg_83_4)
+DeusRunController._check_set_completed = function (self, added_power_up, present, local_peer_id, local_player_id)
 	-- function 83
-	local var_83_0 = DeusPowerUpSetLookup[arg_83_1.rarity]
+	local var_83_0 = DeusPowerUpSetLookup[added_power_up.rarity]
 
-	var_83_0 = not var_83_0 and DeusPowerUpSetLookup[arg_83_1.rarity][arg_83_1.name]
+	if var_83_0 then
+		-- Nothing
+	end
 
-	if not var_83_0 then
+	var_83_0 = DeusPowerUpSetLookup[added_power_up.rarity][added_power_up.name]
+
+	local related_sets = var_83_0
+
+	::label_83_0::
+
+	if not related_sets then
 		return
 	end
 
-	for i = 1, #var_83_0 do
+	for set_i = 1, #related_sets do
 		repeat
-			local var_83_1 = var_83_0[i]
+			local set = related_sets[set_i]
 
-			if not fn_5(var_83_1, arg_83_1) then
+			if is_reward_of_set(set, added_power_up) then
 				break
 			end
 
-			local num = 0
+			local num_set_pieces = 0
 
-			for j = 1, #var_83_1.pieces do
-				local var_83_3 = var_83_1.pieces[j]
+			for piece_i = 1, #set.pieces do
+				local piece = set.pieces[piece_i]
 
-				if not self:has_power_up_by_name(arg_83_3, var_83_3.name, var_83_3.rarity) then
-					num = num + 1
+				if self:has_power_up_by_name(local_peer_id, piece.name, piece.rarity) then
+					num_set_pieces = num_set_pieces + 1
 				end
 			end
 
-			local num_required_pieces = var_83_1.num_required_pieces
+			local num_required_pieces_2 = set.num_required_pieces
 
-			num_required_pieces = num_required_pieces or #var_83_1.pieces
+			if not num_required_pieces_2 then
+				-- Nothing
+			end
 
-			if num == num_required_pieces then
-				local select_array = table.select_array(var_83_1.rewards, function (arg_84_0, arg_84_1)
+			num_required_pieces_2 = #set.pieces
+
+			local num_required_pieces = num_required_pieces_2
+
+			::label_83_1::
+
+			if num_set_pieces == num_required_pieces then
+				local reward_power_ups = table.select_array(set.rewards, function (_, reward)
 					-- function 84
-					if not self:has_power_up_by_name(arg_83_3, arg_84_1.name, arg_84_1.rarity) then
-						return DeusPowerUpUtils.generate_specific_power_up(arg_84_1.name, arg_84_1.rarity)
+					if not self:has_power_up_by_name(local_peer_id, reward.name, reward.rarity) then
+						return DeusPowerUpUtils.generate_specific_power_up(reward.name, reward.rarity)
 					end
 				end)
 
-				if not table.is_empty(select_array) then
-					self:add_power_ups(select_array, arg_83_4, arg_83_2)
+				if not table.is_empty(reward_power_ups) then
+					self:add_power_ups(reward_power_ups, local_player_id, present)
 				end
 			end
 		until true
@@ -1370,67 +1478,78 @@ end
 
 DeusRunController.try_grant_end_of_level_deus_power_ups = function (self)
 	-- function 85
-	local get_current_node_key = self:get_current_node_key()
-	local var_85_1 = self:_get_graph_data()[get_current_node_key]
-	local grant_random_power_up_count = var_85_1.grant_random_power_up_count
-	local terror_event_power_up_rarity = var_85_1.terror_event_power_up_rarity
+	local current_node_key = self:get_current_node_key()
+	local path_graph = self:_get_graph_data()
+	local current_node = path_graph[current_node_key]
+	local granted_random_power_up_count = current_node.grant_random_power_up_count
+	local power_up_rarity = current_node.terror_event_power_up_rarity
 
-	if not grant_random_power_up_count then
-		local get_own_peer_id = self._run_state:get_own_peer_id()
-		local power_ups = var_85_1.system_seeds.power_ups
+	if granted_random_power_up_count then
+		local local_peer_id = self._run_state:get_own_peer_id()
+		local power_ups = current_node.system_seeds.power_ups
 
-		power_ups = power_ups or 0
+		if not power_ups then
+			-- Nothing
+		end
 
-		local fnv32_hash = HashUtils.fnv32_hash(get_own_peer_id .. "_" .. power_ups)
-		local run_progress = var_85_1.run_progress
-		local get_player_profile, var_85_9 = self._run_state:get_player_profile(get_own_peer_id, num)
-		local get_player_power_ups = self._run_state:get_player_power_ups(get_own_peer_id, num, get_player_profile, var_85_9)
-		local name = SPProfiles[get_player_profile].careers[var_85_9].name
-		local generate_random_power_ups, var_85_13 = DeusPowerUpUtils.generate_random_power_ups(fnv32_hash, grant_random_power_up_count, get_player_power_ups, self._run_state:get_run_difficulty(), run_progress, DeusPowerUpAvailabilityTypes.weapon_chest, name, terror_event_power_up_rarity)
-		local flag = true
-		local clone = table.clone(get_player_power_ups, flag)
+		power_ups = 0
 
-		table.append(clone, var_85_13)
-		self._run_state:set_player_power_ups(get_own_peer_id, num, get_player_profile, var_85_9, clone)
+		local node_power_up_seed = power_ups
 
-		local get_granted_non_party_end_of_level_power_ups = self._run_state:get_granted_non_party_end_of_level_power_ups(get_own_peer_id, num, get_player_profile, var_85_9)
-		local clone_2 = table.clone(get_granted_non_party_end_of_level_power_ups, flag)
+		::label_85_0::
 
-		clone_2[#clone_2 + 1] = get_current_node_key
+		local power_up_seed = HashUtils.fnv32_hash(local_peer_id .. "_" .. node_power_up_seed)
+		local run_progress = current_node.run_progress
+		local profile_index, career_index = self._run_state:get_player_profile(local_peer_id, REAL_PLAYER_LOCAL_ID)
+		local existing_power_ups = self._run_state:get_player_power_ups(local_peer_id, REAL_PLAYER_LOCAL_ID, profile_index, career_index)
+		local profile = SPProfiles[profile_index]
+		local career_name = profile.careers[career_index].name
+		local _, new_power_ups = DeusPowerUpUtils.generate_random_power_ups(power_up_seed, granted_random_power_up_count, existing_power_ups, self._run_state:get_run_difficulty(), run_progress, DeusPowerUpAvailabilityTypes.weapon_chest, career_name, power_up_rarity)
+		local skip_metatable = true
 
-		self._run_state:set_granted_non_party_end_of_level_power_ups(get_own_peer_id, num, get_player_profile, var_85_9, clone_2)
+		existing_power_ups = table.clone(existing_power_ups, skip_metatable)
+
+		table.append(existing_power_ups, new_power_ups)
+		self._run_state:set_player_power_ups(local_peer_id, REAL_PLAYER_LOCAL_ID, profile_index, career_index, existing_power_ups)
+
+		local granted_non_party_end_of_level_power_ups = self._run_state:get_granted_non_party_end_of_level_power_ups(local_peer_id, REAL_PLAYER_LOCAL_ID, profile_index, career_index)
+
+		granted_non_party_end_of_level_power_ups = table.clone(granted_non_party_end_of_level_power_ups, skip_metatable)
+		granted_non_party_end_of_level_power_ups[#granted_non_party_end_of_level_power_ups + 1] = current_node_key
+
+		self._run_state:set_granted_non_party_end_of_level_power_ups(local_peer_id, REAL_PLAYER_LOCAL_ID, profile_index, career_index, granted_non_party_end_of_level_power_ups)
 
 		if not self._run_state:is_server() then
-			local power_ups_to_encoded_string = DeusPowerUpUtils.power_ups_to_encoded_string(var_85_13)
-			local get_server_peer_id = self._run_state:get_server_peer_id()
-			local var_85_20 = PEER_ID_TO_CHANNEL[get_server_peer_id]
-			local var_85_21 = get_current_node_key
+			local new_power_ups_string = DeusPowerUpUtils.power_ups_to_encoded_string(new_power_ups)
+			local server_peer_id = self._run_state:get_server_peer_id()
+			local server_channel_id = PEER_ID_TO_CHANNEL[server_peer_id]
+			local granted_by_end_of_level_node_key = current_node_key
 
-			RPC.rpc_deus_add_power_ups(var_85_20, power_ups_to_encoded_string, var_85_21)
+			RPC.rpc_deus_add_power_ups(server_channel_id, new_power_ups_string, granted_by_end_of_level_node_key)
 		end
 
-		for i = 1, #var_85_13 do
-			local var_85_22 = var_85_13[i]
+		for i = 1, #new_power_ups do
+			local power_up = new_power_ups[i]
 
-			self:_check_set_completed(var_85_22, true, get_own_peer_id, num)
+			self:_check_set_completed(power_up, true, local_peer_id, REAL_PLAYER_LOCAL_ID)
 		end
 
-		return var_85_13
+		return new_power_ups
 	else
-		local terror_event_power_up = var_85_1.terror_event_power_up
+		local power_up_name = current_node.terror_event_power_up
 
-		if not terror_event_power_up then
-			local generate_specific_power_up = DeusPowerUpUtils.generate_specific_power_up(terror_event_power_up, terror_event_power_up_rarity)
-			local get_party_power_ups = self._run_state:get_party_power_ups()
-			local flag_2 = true
-			local clone_3 = table.clone(get_party_power_ups, flag_2)
+		if power_up_name then
+			local power_up = DeusPowerUpUtils.generate_specific_power_up(power_up_name, power_up_rarity)
+			local party_power_ups = self._run_state:get_party_power_ups()
+			local skip_metatable = true
 
-			clone_3[#clone_3 + 1] = generate_specific_power_up
+			party_power_ups = table.clone(party_power_ups, skip_metatable)
+			party_power_ups[#party_power_ups + 1] = power_up
 
-			self._run_state:set_party_power_ups(clone_3)
+			self._run_state:set_party_power_ups(party_power_ups)
 
 			return {
-				generate_specific_power_up
+				power_up
 			}
 		end
 	end
@@ -1443,86 +1562,92 @@ end
 
 DeusRunController.has_own_seen_arena_belakor_node = function (self)
 	-- function 87
-	local get_own_peer_id = self._run_state:get_own_peer_id()
+	local local_peer_id = self._run_state:get_own_peer_id()
 
-	return self._run_state:get_seen_arena_belakor_node(get_own_peer_id)
+	return self._run_state:get_seen_arena_belakor_node(local_peer_id)
 end
 
-DeusRunController.rpc_deus_add_power_ups = function (self, arg_88_1, arg_88_2, arg_88_3)
+DeusRunController.rpc_deus_add_power_ups = function (self, sender_channel_id, encoded_power_ups_string, granted_by_end_of_level_node_key)
 	-- function 88
-	local var_88_0 = CHANNEL_TO_PEER_ID[arg_88_1]
-	local encoded_string_to_power_ups = DeusPowerUpUtils.encoded_string_to_power_ups(arg_88_2)
-	local get_player_profile, var_88_3 = self._run_state:get_player_profile(var_88_0, num)
-	local get_player_power_ups = self._run_state:get_player_power_ups(var_88_0, num, get_player_profile, var_88_3)
-	local flag = true
-	local clone = table.clone(get_player_power_ups, flag)
+	local sender = CHANNEL_TO_PEER_ID[sender_channel_id]
+	local new_power_ups = DeusPowerUpUtils.encoded_string_to_power_ups(encoded_power_ups_string)
+	local profile_index, career_index = self._run_state:get_player_profile(sender, REAL_PLAYER_LOCAL_ID)
+	local power_ups = self._run_state:get_player_power_ups(sender, REAL_PLAYER_LOCAL_ID, profile_index, career_index)
+	local skip_metatable = true
 
-	table.append(encoded_string_to_power_ups, clone)
-	self._run_state:set_player_power_ups(var_88_0, num, get_player_profile, var_88_3, encoded_string_to_power_ups)
+	power_ups = table.clone(power_ups, skip_metatable)
 
-	if arg_88_3 ~= "" then
-		local get_granted_non_party_end_of_level_power_ups = self._run_state:get_granted_non_party_end_of_level_power_ups(var_88_0, num, get_player_profile, var_88_3)
-		local clone_2 = table.clone(get_granted_non_party_end_of_level_power_ups, flag)
+	table.append(new_power_ups, power_ups)
+	self._run_state:set_player_power_ups(sender, REAL_PLAYER_LOCAL_ID, profile_index, career_index, new_power_ups)
 
-		clone_2[#clone_2 + 1] = arg_88_3
+	if granted_by_end_of_level_node_key ~= "" then
+		local granted_non_party_end_of_level_power_ups = self._run_state:get_granted_non_party_end_of_level_power_ups(sender, REAL_PLAYER_LOCAL_ID, profile_index, career_index)
 
-		self._run_state:set_granted_non_party_end_of_level_power_ups(var_88_0, num, get_player_profile, var_88_3, clone_2)
+		granted_non_party_end_of_level_power_ups = table.clone(granted_non_party_end_of_level_power_ups, skip_metatable)
+		granted_non_party_end_of_level_power_ups[#granted_non_party_end_of_level_power_ups + 1] = granted_by_end_of_level_node_key
+
+		self._run_state:set_granted_non_party_end_of_level_power_ups(sender, REAL_PLAYER_LOCAL_ID, profile_index, career_index, granted_non_party_end_of_level_power_ups)
 	end
 
-	local player = Managers.player:player(var_88_0, num)
+	local player = Managers.player:player(sender, REAL_PLAYER_LOCAL_ID)
 
-	if not player then
-		local has_extension = ScriptUnit.has_extension(player.player_unit, "buff_system")
+	if player then
+		local buff_extension = ScriptUnit.has_extension(player.player_unit, "buff_system")
 
-		if not has_extension then
-			has_extension:trigger_procs("on_boon_granted")
+		if buff_extension then
+			buff_extension:trigger_procs("on_boon_granted")
 		end
 	end
 end
 
-DeusRunController.rpc_deus_remove_power_up = function (self, arg_89_1, arg_89_2)
+DeusRunController.rpc_deus_remove_power_up = function (self, sender_channel_id, power_up_id)
 	-- function 89
-	local var_89_0 = CHANNEL_TO_PEER_ID[arg_89_1]
-	local get_player_profile, var_89_2 = self._run_state:get_player_profile(var_89_0, num)
-	local get_player_power_ups = self._run_state:get_player_power_ups(var_89_0, num, get_player_profile, var_89_2)
-	local var_89_4 = NetworkLookup.deus_power_up_templates[arg_89_2]
-	local flag = true
-	local clone = table.clone(get_player_power_ups, flag)
-	local num_2 = -1
+	local sender = CHANNEL_TO_PEER_ID[sender_channel_id]
+	local profile_index, career_index = self._run_state:get_player_profile(sender, REAL_PLAYER_LOCAL_ID)
+	local power_ups = self._run_state:get_player_power_ups(sender, REAL_PLAYER_LOCAL_ID, profile_index, career_index)
+	local power_up_name = NetworkLookup.deus_power_up_templates[power_up_id]
+	local skip_metatable = true
 
-	for i = 1, #clone do
-		if clone[i].name == var_89_4 then
-			num_2 = i
+	power_ups = table.clone(power_ups, skip_metatable)
+
+	local to_remove_idx = -1
+
+	for i = 1, #power_ups do
+		local power_up = power_ups[i]
+		local name = power_up.name
+
+		if name == power_up_name then
+			to_remove_idx = i
 
 			break
 		end
 	end
 
-	local player = Managers.player:player(var_89_0, num)
+	local player = Managers.player:player(sender, REAL_PLAYER_LOCAL_ID)
 
-	if not player then
-		local has_extension = ScriptUnit.has_extension(player.player_unit, "buff_system")
+	if player then
+		local buff_extension = ScriptUnit.has_extension(player.player_unit, "buff_system")
 
-		if not has_extension then
-			local var_89_10 = clone[num_2]
+		if buff_extension then
+			local power_up_instance = power_ups[to_remove_idx]
 
-			if not var_89_10 then
-				local var_89_11 = DeusPowerUps[var_89_10.rarity][var_89_10.name]
+			if power_up_instance then
+				local power_up = DeusPowerUps[power_up_instance.rarity][power_up_instance.name]
 
-				if not var_89_11 then
-					local get_buff_type = has_extension:get_buff_type(var_89_11.buff_name)
-					local flag_2 = not get_buff_type and get_buff_type.id
+				if power_up then
+					local buff = buff_extension:get_buff_type(power_up.buff_name)
+					local id = not not buff and not not buff.id
 
-					if not flag_2 then
-						has_extension:remove_buff(flag_2)
+					if id then
+						buff_extension:remove_buff(id)
 					end
 				end
 			end
 		end
 	end
 
-	table.swap_delete(clone, num_2)
-	self._run_state:set_player_power_ups(var_89_0, num, get_player_profile, var_89_2, clone)
+	table.swap_delete(power_ups, to_remove_idx)
+	self._run_state:set_player_power_ups(sender, REAL_PLAYER_LOCAL_ID, profile_index, career_index, power_ups)
 end
 
 DeusRunController.get_blessings = function (self)
@@ -1535,62 +1660,73 @@ DeusRunController.get_blessings_with_buyer = function (self)
 	return self._run_state:get_blessings_with_buyer()
 end
 
-DeusRunController.has_blessing = function (self, arg_92_1)
+DeusRunController.has_blessing = function (self, blessing_name)
 	-- function 92
-	local get_blessings = self._run_state:get_blessings()
+	local blessings = self._run_state:get_blessings()
 
-	return table.contains(get_blessings, arg_92_1)
+	return table.contains(blessings, blessing_name)
 end
 
 DeusRunController.generate_random_blessing_name = function (self)
 	-- function 93
-	local var_93_0
-	local tbl = {}
-	local get_current_node_key = self._run_state:get_current_node_key()
-	local blessings = self:_get_graph_data()[get_current_node_key].system_seeds.blessings
+	local random_blessing_name
+	local blessing_keys = {}
+	local current_node_key = self._run_state:get_current_node_key()
+	local path_graph = self:_get_graph_data()
+	local current_node = path_graph[current_node_key]
+	local blessings_2 = current_node.system_seeds.blessings
 
-	blessings = blessings or 0
+	if not blessings_2 then
+		-- Nothing
+	end
 
-	local DeusBlessingSettings = DeusBlessingSettings
-	local get_blessings = self._run_state:get_blessings()
+	blessings_2 = 0
 
-	for k, v in pairs(DeusBlessingSettings) do
-		if not table.contains(get_blessings, k) then
-			table.insert(tbl, k)
+	local seed = blessings_2
+
+	::label_93_0::
+
+	local blessing_settings = DeusBlessingSettings
+	local blessings = self._run_state:get_blessings()
+
+	for blessing_name, _ in pairs(blessing_settings) do
+		if not table.contains(blessings, blessing_name) then
+			table.insert(blessing_keys, blessing_name)
 		end
 	end
 
-	if #tbl > 0 then
-		local next_random, var_93_7 = Math.next_random(blessings, 1, #tbl)
+	if #blessing_keys > 0 then
+		local _, random_blessing_index = Math.next_random(seed, 1, #blessing_keys)
 
-		var_93_0 = tbl[var_93_7]
+		random_blessing_name = blessing_keys[random_blessing_index]
 	end
 
-	return var_93_0
+	return random_blessing_name
 end
 
-DeusRunController.remove_blessing = function (self, arg_94_1)
+DeusRunController.remove_blessing = function (self, blessing_to_remove)
 	-- function 94
-	local get_blessings_with_buyer = self._run_state:get_blessings_with_buyer()
-	local flag = true
-	local clone = table.clone(get_blessings_with_buyer, flag)
+	local blessings_with_buyer = self._run_state:get_blessings_with_buyer()
+	local skip_metatable = true
 
-	for k, v in pairs(clone) do
-		if arg_94_1 == k then
-			clone[k] = nil
+	blessings_with_buyer = table.clone(blessings_with_buyer, skip_metatable)
+
+	for blessing_name, _ in pairs(blessings_with_buyer) do
+		if blessing_to_remove == blessing_name then
+			blessings_with_buyer[blessing_name] = nil
 		end
 	end
 
-	self._run_state:set_blessings_with_buyer(clone)
+	self._run_state:set_blessings_with_buyer(blessings_with_buyer)
 end
 
-DeusRunController.has_power_up = function (self, arg_95_1, arg_95_2)
+DeusRunController.has_power_up = function (self, peer_id, power_up_client_id)
 	-- function 95
-	local get_player_profile, var_95_1 = self._run_state:get_player_profile(arg_95_1, num)
-	local get_player_power_ups = self._run_state:get_player_power_ups(arg_95_1, num, get_player_profile, var_95_1)
+	local profile_index, career_index = self._run_state:get_player_profile(peer_id, REAL_PLAYER_LOCAL_ID)
+	local power_ups = self._run_state:get_player_power_ups(peer_id, REAL_PLAYER_LOCAL_ID, profile_index, career_index)
 
-	for i, v in ipairs(get_player_power_ups) do
-		if v.client_id == arg_95_2 then
+	for _, power_up in ipairs(power_ups) do
+		if power_up.client_id == power_up_client_id then
 			return true
 		end
 	end
@@ -1598,15 +1734,15 @@ DeusRunController.has_power_up = function (self, arg_95_1, arg_95_2)
 	return false
 end
 
-DeusRunController.has_power_up_by_name = function (self, arg_96_1, arg_96_2, arg_96_3)
+DeusRunController.has_power_up_by_name = function (self, peer_id, power_up_name, power_up_rarity)
 	-- function 96
-	local get_player_profile, var_96_1 = self._run_state:get_player_profile(arg_96_1, num)
-	local get_player_power_ups = self._run_state:get_player_power_ups(arg_96_1, num, get_player_profile, var_96_1)
+	local profile_index, career_index = self._run_state:get_player_profile(peer_id, REAL_PLAYER_LOCAL_ID)
+	local power_ups = self._run_state:get_player_power_ups(peer_id, REAL_PLAYER_LOCAL_ID, profile_index, career_index)
 
-	for i = 1, #get_player_power_ups do
-		local var_96_3 = get_player_power_ups[i]
+	for i = 1, #power_ups do
+		local power_up = power_ups[i]
 
-		if not (var_96_3.name ~= arg_96_2 or var_96_3.rarity ~= arg_96_3) then
+		if power_up.name == power_up_name and power_up.rarity == power_up_rarity then
 			return true
 		end
 	end
@@ -1614,18 +1750,18 @@ DeusRunController.has_power_up_by_name = function (self, arg_96_1, arg_96_2, arg
 	return false
 end
 
-DeusRunController.reached_max_power_ups = function (self, arg_97_1, arg_97_2)
+DeusRunController.reached_max_power_ups = function (self, peer_id, power_up_name)
 	-- function 97
-	local get_player_profile, var_97_1 = self._run_state:get_player_profile(arg_97_1, num)
-	local get_player_power_ups = self._run_state:get_player_power_ups(arg_97_1, num, get_player_profile, var_97_1)
-	local max_amount = DeusPowerUpTemplates[arg_97_2].max_amount
-	local num_2 = 0
+	local profile_index, career_index = self._run_state:get_player_profile(peer_id, REAL_PLAYER_LOCAL_ID)
+	local power_ups = self._run_state:get_player_power_ups(peer_id, REAL_PLAYER_LOCAL_ID, profile_index, career_index)
+	local max_amount = DeusPowerUpTemplates[power_up_name].max_amount
+	local amount = 0
 
-	for i, v in ipairs(get_player_power_ups) do
-		if v.name == arg_97_2 then
-			num_2 = num_2 + 1
+	for _, power_up in ipairs(power_ups) do
+		if power_up.name == power_up_name then
+			amount = amount + 1
 
-			if max_amount <= num_2 then
+			if max_amount <= amount then
 				return true
 			end
 		end
@@ -1636,69 +1772,72 @@ end
 
 DeusRunController._blessings_handle_level_won = function (self)
 	-- function 98
-	local get_blessings_with_buyer = self._run_state:get_blessings_with_buyer()
-	local tbl = {}
+	local blessings_with_buyer = self._run_state:get_blessings_with_buyer()
+	local new_blessings = {}
 
-	for k, v in pairs(get_blessings_with_buyer) do
-		local var_98_2 = DeusBlessingSettings[k]
-		local flag = true
+	for blessing_name, buyer in pairs(blessings_with_buyer) do
+		local blessing_data = DeusBlessingSettings[blessing_name]
+		local is_active = true
 
-		if not var_98_2.is_permanent then
-			local num = self._run_state:get_blessing_lifetime(k) - 1
+		if not blessing_data.is_permanent then
+			local lifetime = self._run_state:get_blessing_lifetime(blessing_name)
 
-			self._run_state:set_blessing_lifetime(k, num)
+			lifetime = lifetime - 1
 
-			if num <= 0 then
-				flag = false
+			self._run_state:set_blessing_lifetime(blessing_name, lifetime)
+
+			if lifetime <= 0 then
+				is_active = false
 			end
 		end
 
-		if not flag then
-			tbl[k] = v
+		if is_active then
+			new_blessings[blessing_name] = buyer
 		end
 	end
 
-	self._run_state:set_blessings_with_buyer(tbl)
+	self._run_state:set_blessings_with_buyer(new_blessings)
 end
 
-DeusRunController._try_buy_blessing = function (self, arg_99_1, arg_99_2)
+DeusRunController._try_buy_blessing = function (self, buyer, blessing_name)
 	-- function 99
-	local var_99_0 = DeusBlessingSettings[arg_99_2]
+	local blessing_data = DeusBlessingSettings[blessing_name]
 
-	fassert(var_99_0, "No blessing with the name [%s] was found, check the blessings settings", arg_99_2)
+	fassert(blessing_data, "No blessing with the name [%s] was found, check the blessings settings", blessing_name)
 
-	if not self:has_blessing(arg_99_2) then
+	if self:has_blessing(blessing_name) then
 		return false
 	end
 
-	local get_player_soft_currency = self._run_state:get_player_soft_currency(arg_99_1, num)
-	local var_99_2 = DeusCostSettings.shop.blessings[arg_99_2]
+	local current_coins = self._run_state:get_player_soft_currency(buyer, REAL_PLAYER_LOCAL_ID)
+	local blessing_cost = DeusCostSettings.shop.blessings[blessing_name]
 
-	if get_player_soft_currency < var_99_2 then
+	if current_coins < blessing_cost then
 		return false
 	end
 
-	if not var_99_0.grant_item then
-		local grant_item = var_99_0.grant_item
+	if blessing_data.grant_item then
+		local grant_item = blessing_data.grant_item
 		local item_name = grant_item.item_name
 		local slot_name = grant_item.slot_name
-		local get_player_profile, var_99_7 = self._run_state:get_player_profile(arg_99_1, num)
-		local get_player_additional_items = self._run_state:get_player_additional_items(arg_99_1, num, get_player_profile, var_99_7)
+		local profile_index, career_index = self._run_state:get_player_profile(buyer, REAL_PLAYER_LOCAL_ID)
+		local additional_items = self._run_state:get_player_additional_items(buyer, REAL_PLAYER_LOCAL_ID, profile_index, career_index)
 
-		local function fn()
+		local function can_add_additional_items()
 			-- function 100
-			local name = SPProfiles[get_player_profile].careers[var_99_7].name
-			local var_100_1 = CareerSettings[name]
-			local flag = not var_100_1 and var_100_1.additional_item_slots
+			local profile = SPProfiles[profile_index]
+			local career_name = profile.careers[career_index].name
+			local career_data = CareerSettings[career_name]
+			local additional_item_slots = not not career_data and not not career_data.additional_item_slots
 
-			if not flag then
-				local var_100_3 = flag[slot_name]
+			if additional_item_slots then
+				local slot_count = additional_item_slots[slot_name]
 
-				if not var_100_3 then
+				if slot_count then
 					local count
 
-					if not get_player_additional_items[slot_name] then
-						count = #get_player_additional_items[slot_name].items
+					if additional_items[slot_name] then
+						count = #additional_items[slot_name].items
 
 						if not count then
 							-- Nothing
@@ -1707,9 +1846,11 @@ DeusRunController._try_buy_blessing = function (self, arg_99_1, arg_99_2)
 
 					count = 0
 
+					local current_item_count = count
+
 					::label_100_0::
 
-					return count < var_100_3
+					return current_item_count < slot_count
 				else
 					return false
 				end
@@ -1718,131 +1859,159 @@ DeusRunController._try_buy_blessing = function (self, arg_99_1, arg_99_2)
 			end
 		end
 
-		local function fn_2()
+		local function add_to_additional_items()
 			-- function 101
-			get_player_additional_items = table.clone(get_player_additional_items)
+			additional_items = table.clone(additional_items)
 
-			local var_101_0 = get_player_additional_items[slot_name]
+			local var_101_0 = additional_items[slot_name]
 
-			var_101_0 = var_101_0 or {
+			if not var_101_0 then
+				-- Nothing
+			end
+
+			var_101_0 = {
 				items = {}
 			}
-			var_101_0.items[#var_101_0.items + 1] = ItemMasterList[item_name]
-			get_player_additional_items[slot_name] = var_101_0
 
-			self._run_state:set_player_additional_items(arg_99_1, num, get_player_profile, var_99_7, get_player_additional_items)
+			local slot_additional_items = var_101_0
+
+			::label_101_0::
+
+			slot_additional_items.items[#slot_additional_items.items + 1] = ItemMasterList[item_name]
+			additional_items[slot_name] = slot_additional_items
+
+			self._run_state:set_player_additional_items(buyer, REAL_PLAYER_LOCAL_ID, profile_index, career_index, additional_items)
 		end
 
 		if slot_name == "slot_grenade" then
-			if not (not self._run_state:get_player_consumable_grenade_slot(arg_99_1, num, get_player_profile, var_99_7) and fn()) then
-				self._run_state:set_player_consumable_grenade_slot(arg_99_1, num, get_player_profile, var_99_7, item_name)
+			local current_grenade = self._run_state:get_player_consumable_grenade_slot(buyer, REAL_PLAYER_LOCAL_ID, profile_index, career_index)
+
+			if not current_grenade or not can_add_additional_items() then
+				self._run_state:set_player_consumable_grenade_slot(buyer, REAL_PLAYER_LOCAL_ID, profile_index, career_index, item_name)
 			else
-				fn_2()
+				add_to_additional_items()
 			end
 		elseif slot_name == "slot_potion" then
-			self._run_state:set_player_consumable_potion_slot(arg_99_1, num, get_player_profile, var_99_7, item_name)
+			self._run_state:set_player_consumable_potion_slot(buyer, REAL_PLAYER_LOCAL_ID, profile_index, career_index, item_name)
 
-			if not (not self._run_state:get_player_consumable_potion_slot(arg_99_1, num, get_player_profile, var_99_7) and fn()) then
-				self._run_state:set_player_consumable_potion_slot(arg_99_1, num, get_player_profile, var_99_7, item_name)
+			local current_potion = self._run_state:get_player_consumable_potion_slot(buyer, REAL_PLAYER_LOCAL_ID, profile_index, career_index)
+
+			if not current_potion or not can_add_additional_items() then
+				self._run_state:set_player_consumable_potion_slot(buyer, REAL_PLAYER_LOCAL_ID, profile_index, career_index, item_name)
 			else
-				fn_2()
+				add_to_additional_items()
 			end
 		elseif slot_name == "slot_healthkit" then
-			self._run_state:set_player_consumable_healthkit_slot(arg_99_1, num, get_player_profile, var_99_7, item_name)
+			self._run_state:set_player_consumable_healthkit_slot(buyer, REAL_PLAYER_LOCAL_ID, profile_index, career_index, item_name)
 
-			if not (not self._run_state:get_player_consumable_healthkit_slot(arg_99_1, num, get_player_profile, var_99_7) and fn()) then
-				self._run_state:set_player_consumable_healthkit_slot(arg_99_1, num, get_player_profile, var_99_7, item_name)
+			local current_healthkit = self._run_state:get_player_consumable_healthkit_slot(buyer, REAL_PLAYER_LOCAL_ID, profile_index, career_index)
+
+			if not current_healthkit or not can_add_additional_items() then
+				self._run_state:set_player_consumable_healthkit_slot(buyer, REAL_PLAYER_LOCAL_ID, profile_index, career_index, item_name)
 			else
-				fn_2()
+				add_to_additional_items()
 			end
 		end
-	elseif not var_99_0.improve_all_weapons then
-		local improve_all_weapons = var_99_0.improve_all_weapons
-		local get_run_difficulty = self._run_state:get_run_difficulty()
-		local var_99_13 = improve_all_weapons[DifficultySettings[get_run_difficulty].rank]
+	elseif blessing_data.improve_all_weapons then
+		local power_level_table = blessing_data.improve_all_weapons
+		local difficulty = self._run_state:get_run_difficulty()
+		local difficulty_settings = DifficultySettings[difficulty]
+		local difficulty_rank = difficulty_settings.rank
+		local var_99_0 = power_level_table[difficulty_rank]
 
-		var_99_13 = var_99_13 or improve_all_weapons[DifficultySettings.normal.rank]
+		if not var_99_0 then
+			-- Nothing
+		end
 
-		local get_peers = self._network_handler:get_peers()
+		var_99_0 = power_level_table[DifficultySettings.normal.rank]
 
-		for i = 1, #get_peers do
-			local var_99_15 = get_peers[i]
-			local get_player_profile_2, var_99_17 = self._run_state:get_player_profile(var_99_15, num)
-			local get_player_loadout = self._run_state:get_player_loadout(var_99_15, num, get_player_profile_2, var_99_17, "slot_melee")
-			local get_player_loadout_2 = self._run_state:get_player_loadout(var_99_15, num, get_player_profile_2, var_99_17, "slot_ranged")
+		local power_level = var_99_0
 
-			if not get_player_loadout then
-				local deserialize_weapon = DeusWeaponGeneration.deserialize_weapon(get_player_loadout)
+		::label_99_0::
 
-				deserialize_weapon.power_level = deserialize_weapon.power_level + var_99_13
+		local peers = self._network_handler:get_peers()
 
-				local serialize_weapon = DeusWeaponGeneration.serialize_weapon(deserialize_weapon)
+		for i = 1, #peers do
+			local peer_id = peers[i]
+			local profile_index, career_index = self._run_state:get_player_profile(peer_id, REAL_PLAYER_LOCAL_ID)
+			local melee_item_string = self._run_state:get_player_loadout(peer_id, REAL_PLAYER_LOCAL_ID, profile_index, career_index, "slot_melee")
+			local ranged_item_string = self._run_state:get_player_loadout(peer_id, REAL_PLAYER_LOCAL_ID, profile_index, career_index, "slot_ranged")
 
-				self._run_state:set_player_loadout(var_99_15, num, get_player_profile_2, var_99_17, "slot_melee", serialize_weapon)
+			if melee_item_string then
+				local melee_item = DeusWeaponGeneration.deserialize_weapon(melee_item_string)
+
+				melee_item.power_level = melee_item.power_level + power_level
+				melee_item_string = DeusWeaponGeneration.serialize_weapon(melee_item)
+
+				self._run_state:set_player_loadout(peer_id, REAL_PLAYER_LOCAL_ID, profile_index, career_index, "slot_melee", melee_item_string)
 			end
 
-			if not get_player_loadout_2 then
-				local deserialize_weapon_2 = DeusWeaponGeneration.deserialize_weapon(get_player_loadout_2)
+			if ranged_item_string then
+				local ranged_item = DeusWeaponGeneration.deserialize_weapon(ranged_item_string)
 
-				deserialize_weapon_2.power_level = deserialize_weapon_2.power_level + var_99_13
+				ranged_item.power_level = ranged_item.power_level + power_level
+				ranged_item_string = DeusWeaponGeneration.serialize_weapon(ranged_item)
 
-				local serialize_weapon_2 = DeusWeaponGeneration.serialize_weapon(deserialize_weapon_2)
-
-				self._run_state:set_player_loadout(var_99_15, num, get_player_profile_2, var_99_17, "slot_ranged", serialize_weapon_2)
+				self._run_state:set_player_loadout(peer_id, REAL_PLAYER_LOCAL_ID, profile_index, career_index, "slot_ranged", ranged_item_string)
 			end
 		end
 	end
 
-	local get_blessings_with_buyer = self._run_state:get_blessings_with_buyer()
-	local flag = true
-	local clone = table.clone(get_blessings_with_buyer, flag)
+	local blessings_with_buyer = self._run_state:get_blessings_with_buyer()
+	local skip_metatable = true
 
-	clone[arg_99_2] = arg_99_1
+	blessings_with_buyer = table.clone(blessings_with_buyer, skip_metatable)
+	blessings_with_buyer[blessing_name] = buyer
 
-	self._run_state:set_blessings_with_buyer(clone)
-	self._run_state:set_player_soft_currency(arg_99_1, num, get_player_soft_currency - var_99_2)
+	self._run_state:set_blessings_with_buyer(blessings_with_buyer)
+	self._run_state:set_player_soft_currency(buyer, REAL_PLAYER_LOCAL_ID, current_coins - blessing_cost)
 
-	local get_bought_blessings = self._run_state:get_bought_blessings()
-	local clone_2 = table.clone(get_bought_blessings, flag)
+	local bought_blessings = self._run_state:get_bought_blessings()
 
-	clone_2[#clone_2 + 1] = arg_99_2
+	bought_blessings = table.clone(bought_blessings, skip_metatable)
+	bought_blessings[#bought_blessings + 1] = blessing_name
 
-	self._run_state:set_bought_blessings(clone_2)
-	self:_add_coin_tracking_entry(arg_99_1, num, -var_99_2, "blessing")
+	self._run_state:set_bought_blessings(bought_blessings)
+	self:_add_coin_tracking_entry(buyer, REAL_PLAYER_LOCAL_ID, -blessing_cost, "blessing")
 
 	return true
 end
 
-DeusRunController._try_buy_power_up = function (self, arg_102_1, arg_102_2, arg_102_3)
+DeusRunController._try_buy_power_up = function (self, buyer, power_up, discount)
 	-- function 102
-	if not self:has_power_up(arg_102_1, arg_102_2.client_id) then
+	local has_power_up = self:has_power_up(buyer, power_up.client_id)
+
+	if has_power_up then
 		return false
 	end
 
-	local rarity = arg_102_2.rarity
-	local var_102_1 = DeusCostSettings.shop.power_ups[rarity]
-	local num_2 = var_102_1 - math.round(var_102_1 * arg_102_3)
-	local get_player_profile, var_102_4 = self._run_state:get_player_profile(arg_102_1, num)
-	local get_player_soft_currency = self._run_state:get_player_soft_currency(arg_102_1, num)
+	local rarity = power_up.rarity
+	local power_up_cost = DeusCostSettings.shop.power_ups[rarity]
 
-	if get_player_soft_currency < num_2 then
+	power_up_cost = power_up_cost - math.round(power_up_cost * discount)
+
+	local profile_index, career_index = self._run_state:get_player_profile(buyer, REAL_PLAYER_LOCAL_ID)
+	local current_coins = self._run_state:get_player_soft_currency(buyer, REAL_PLAYER_LOCAL_ID)
+
+	if current_coins < power_up_cost then
 		return false
 	end
 
-	local get_player_power_ups = self._run_state:get_player_power_ups(arg_102_1, num, get_player_profile, var_102_4)
-	local flag = true
-	local clone = table.clone(get_player_power_ups, flag)
+	local power_ups = self._run_state:get_player_power_ups(buyer, REAL_PLAYER_LOCAL_ID, profile_index, career_index)
+	local skip_metatable = true
 
-	table.insert(clone, arg_102_2)
-	self._run_state:set_player_power_ups(arg_102_1, num, get_player_profile, var_102_4, clone)
+	power_ups = table.clone(power_ups, skip_metatable)
 
-	local num_3 = get_player_soft_currency - num_2
+	table.insert(power_ups, power_up)
+	self._run_state:set_player_power_ups(buyer, REAL_PLAYER_LOCAL_ID, profile_index, career_index, power_ups)
 
-	self._run_state:set_player_soft_currency(arg_102_1, num, num_3)
+	local new_coins = current_coins - power_up_cost
+
+	self._run_state:set_player_soft_currency(buyer, REAL_PLAYER_LOCAL_ID, new_coins)
 
 	local str
 
-	if arg_102_3 == 0 then
+	if discount == 0 then
 		str = rarity .. "_power_up"
 
 		if not str then
@@ -1852,296 +2021,299 @@ DeusRunController._try_buy_power_up = function (self, arg_102_1, arg_102_2, arg_
 
 	str = rarity .. "_discounted_power_up"
 
+	local tracking_event = str
+
 	::label_102_0::
 
-	self:_add_coin_tracking_entry(arg_102_1, num, -num_2, str)
+	self:_add_coin_tracking_entry(buyer, REAL_PLAYER_LOCAL_ID, -power_up_cost, tracking_event)
 
-	local get_bought_power_ups = self._run_state:get_bought_power_ups()
-	local clone_2 = table.clone(get_bought_power_ups, flag)
+	local bought_power_ups = self._run_state:get_bought_power_ups()
 
-	clone_2[#clone_2 + 1] = arg_102_2.name
+	bought_power_ups = table.clone(bought_power_ups, skip_metatable)
+	bought_power_ups[#bought_power_ups + 1] = power_up.name
 
-	self._run_state:set_bought_power_ups(clone_2)
+	self._run_state:set_bought_power_ups(bought_power_ups)
 
 	return true
 end
 
-DeusRunController.grant_party_power_up = function (self, arg_103_1, arg_103_2)
+DeusRunController.grant_party_power_up = function (self, power_up_name, power_up_rarity)
 	-- function 103
 	if not self._run_state:is_server() then
 		ferror("DeusRunController:grant_party_power_up is designed to only be called on the server")
 	end
 
-	local generate_specific_power_up = DeusPowerUpUtils.generate_specific_power_up(arg_103_1, arg_103_2)
-	local get_party_power_ups = self._run_state:get_party_power_ups()
-	local flag = true
-	local clone = table.clone(get_party_power_ups, flag)
+	local power_up = DeusPowerUpUtils.generate_specific_power_up(power_up_name, power_up_rarity)
+	local party_power_ups = self._run_state:get_party_power_ups()
+	local skip_metatable = true
 
-	clone[#clone + 1] = generate_specific_power_up
+	party_power_ups = table.clone(party_power_ups, skip_metatable)
+	party_power_ups[#party_power_ups + 1] = power_up
 
-	self._run_state:set_party_power_ups(clone)
+	self._run_state:set_party_power_ups(party_power_ups)
 
-	return generate_specific_power_up
+	return power_up
 end
 
-DeusRunController.get_player_profile = function (self, arg_104_1, arg_104_2)
+DeusRunController.get_player_profile = function (self, peer_id, local_player_id)
 	-- function 104
-	local get_player_profile, var_104_1 = self._run_state:get_player_profile(arg_104_1, arg_104_2)
+	local profile_index, career_index = self._run_state:get_player_profile(peer_id, local_player_id)
 
-	return get_player_profile, var_104_1
+	return profile_index, career_index
 end
 
-DeusRunController.get_player_level = function (self, arg_105_1)
+DeusRunController.get_player_level = function (self, peer_id)
 	-- function 105
-	return self._run_state:get_player_level(arg_105_1)
+	return self._run_state:get_player_level(peer_id)
 end
 
-DeusRunController.get_versus_player_level = function (self, arg_106_1)
+DeusRunController.get_versus_player_level = function (self, peer_id)
 	-- function 106
-	return self._run_state:get_versus_player_level(arg_106_1)
+	return self._run_state:get_versus_player_level(peer_id)
 end
 
-DeusRunController.get_player_name = function (self, arg_107_1)
+DeusRunController.get_player_name = function (self, peer_id)
 	-- function 107
-	return self._run_state:get_player_name(arg_107_1)
+	return self._run_state:get_player_name(peer_id)
 end
 
-DeusRunController.get_player_frame = function (self, arg_108_1)
+DeusRunController.get_player_frame = function (self, peer_id)
 	-- function 108
-	return self._run_state:get_player_frame(arg_108_1)
+	return self._run_state:get_player_frame(peer_id)
 end
 
-DeusRunController.get_player_health_state = function (self, arg_109_1, arg_109_2)
+DeusRunController.get_player_health_state = function (self, peer_id, local_player_id)
 	-- function 109
-	local get_player_profile, var_109_1 = self._run_state:get_player_profile(arg_109_1, arg_109_2)
+	local profile_index, career_index = self._run_state:get_player_profile(peer_id, local_player_id)
 
-	return self._run_state:get_player_health_state(arg_109_1, arg_109_2, get_player_profile, var_109_1)
+	return self._run_state:get_player_health_state(peer_id, local_player_id, profile_index, career_index)
 end
 
-DeusRunController.get_player_health_percentage = function (self, arg_110_1, arg_110_2)
+DeusRunController.get_player_health_percentage = function (self, peer_id, local_player_id)
 	-- function 110
-	local get_player_profile, var_110_1 = self._run_state:get_player_profile(arg_110_1, arg_110_2)
+	local profile_index, career_index = self._run_state:get_player_profile(peer_id, local_player_id)
 
-	return self._run_state:get_player_health_percentage(arg_110_1, arg_110_2, get_player_profile, var_110_1)
+	return self._run_state:get_player_health_percentage(peer_id, local_player_id, profile_index, career_index)
 end
 
-DeusRunController.get_player_melee_ammo = function (self, arg_111_1, arg_111_2)
+DeusRunController.get_player_melee_ammo = function (self, peer_id, local_player_id)
 	-- function 111
-	local get_player_profile, var_111_1 = self._run_state:get_player_profile(arg_111_1, arg_111_2)
+	local profile_index, career_index = self._run_state:get_player_profile(peer_id, local_player_id)
 
-	return self._run_state:get_player_melee_ammo(arg_111_1, arg_111_2, get_player_profile, var_111_1)
+	return self._run_state:get_player_melee_ammo(peer_id, local_player_id, profile_index, career_index)
 end
 
-DeusRunController.get_player_ranged_ammo = function (self, arg_112_1, arg_112_2)
+DeusRunController.get_player_ranged_ammo = function (self, peer_id, local_player_id)
 	-- function 112
-	local get_player_profile, var_112_1 = self._run_state:get_player_profile(arg_112_1, arg_112_2)
+	local profile_index, career_index = self._run_state:get_player_profile(peer_id, local_player_id)
 
-	return self._run_state:get_player_ranged_ammo(arg_112_1, arg_112_2, get_player_profile, var_112_1)
+	return self._run_state:get_player_ranged_ammo(peer_id, local_player_id, profile_index, career_index)
 end
 
-DeusRunController.get_player_health_percentage = function (self, arg_113_1, arg_113_2)
+DeusRunController.get_player_health_percentage = function (self, peer_id, local_player_id)
 	-- function 113
-	local get_player_profile, var_113_1 = self._run_state:get_player_profile(arg_113_1, arg_113_2)
+	local profile_index, career_index = self._run_state:get_player_profile(peer_id, local_player_id)
 
-	return self._run_state:get_player_health_percentage(arg_113_1, arg_113_2, get_player_profile, var_113_1)
+	return self._run_state:get_player_health_percentage(peer_id, local_player_id, profile_index, career_index)
 end
 
-DeusRunController.get_player_consumable_healthkit_slot = function (self, arg_114_1, arg_114_2)
+DeusRunController.get_player_consumable_healthkit_slot = function (self, peer_id, local_player_id)
 	-- function 114
-	local get_player_profile, var_114_1 = self._run_state:get_player_profile(arg_114_1, arg_114_2)
+	local profile_index, career_index = self._run_state:get_player_profile(peer_id, local_player_id)
 
-	return self._run_state:get_player_consumable_healthkit_slot(arg_114_1, arg_114_2, get_player_profile, var_114_1)
+	return self._run_state:get_player_consumable_healthkit_slot(peer_id, local_player_id, profile_index, career_index)
 end
 
-DeusRunController.get_player_consumable_potion_slot = function (self, arg_115_1, arg_115_2)
+DeusRunController.get_player_consumable_potion_slot = function (self, peer_id, local_player_id)
 	-- function 115
-	local get_player_profile, var_115_1 = self._run_state:get_player_profile(arg_115_1, arg_115_2)
+	local profile_index, career_index = self._run_state:get_player_profile(peer_id, local_player_id)
 
-	return self._run_state:get_player_consumable_potion_slot(arg_115_1, arg_115_2, get_player_profile, var_115_1)
+	return self._run_state:get_player_consumable_potion_slot(peer_id, local_player_id, profile_index, career_index)
 end
 
-DeusRunController.get_player_additional_items = function (self, arg_116_1, arg_116_2)
+DeusRunController.get_player_additional_items = function (self, peer_id, local_player_id)
 	-- function 116
-	local get_player_profile, var_116_1 = self._run_state:get_player_profile(arg_116_1, arg_116_2)
+	local profile_index, career_index = self._run_state:get_player_profile(peer_id, local_player_id)
 
-	return self._run_state:get_player_additional_items(arg_116_1, arg_116_2, get_player_profile, var_116_1)
+	return self._run_state:get_player_additional_items(peer_id, local_player_id, profile_index, career_index)
 end
 
-DeusRunController.get_player_consumable_grenade_slot = function (self, arg_117_1, arg_117_2)
+DeusRunController.get_player_consumable_grenade_slot = function (self, peer_id, local_player_id)
 	-- function 117
-	local get_player_profile, var_117_1 = self._run_state:get_player_profile(arg_117_1, arg_117_2)
+	local profile_index, career_index = self._run_state:get_player_profile(peer_id, local_player_id)
 
-	return self._run_state:get_player_consumable_grenade_slot(arg_117_1, arg_117_2, get_player_profile, var_117_1)
+	return self._run_state:get_player_consumable_grenade_slot(peer_id, local_player_id, profile_index, career_index)
 end
 
-DeusRunController.get_player_persistent_buffs = function (self, arg_118_1, arg_118_2)
+DeusRunController.get_player_persistent_buffs = function (self, peer_id, local_player_id)
 	-- function 118
-	local get_player_profile, var_118_1 = self._run_state:get_player_profile(arg_118_1, arg_118_2)
+	local profile_index, career_index = self._run_state:get_player_profile(peer_id, local_player_id)
 
-	return self._run_state:get_player_persistent_buffs(arg_118_1, arg_118_2, get_player_profile, var_118_1)
+	return self._run_state:get_player_persistent_buffs(peer_id, local_player_id, profile_index, career_index)
 end
 
-DeusRunController.restore_game_mode_data = function (self, arg_119_1, arg_119_2, arg_119_3, arg_119_4)
+DeusRunController.restore_game_mode_data = function (self, peer_id, local_player_id, profile_index, career_index)
 	-- function 119
-	local tbl = {}
+	local data = {}
+	local spawned_once = self._run_state:get_player_spawned_once(peer_id, local_player_id, profile_index, career_index)
 
-	if not self._run_state:get_player_spawned_once(arg_119_1, arg_119_2, arg_119_3, arg_119_4) then
-		tbl.health_state = "alive"
-		tbl.health_percentage = 1
-		tbl.ammo = {
+	if not spawned_once then
+		data.health_state = "alive"
+		data.health_percentage = 1
+		data.ammo = {
 			slot_ranged = 1,
 			slot_melee = 1
 		}
-		tbl.consumables = {}
-		tbl.additional_items = {}
+		data.consumables = {}
+		data.additional_items = {}
 
-		local get_run_difficulty = self._run_state:get_run_difficulty()
-		local var_119_2 = DifficultySettings[get_run_difficulty]
+		local difficulty = self._run_state:get_run_difficulty()
+		local difficulty_settings = DifficultySettings[difficulty]
 
-		tbl.consumables.slot_healthkit = var_119_2.slot_healthkit
-		tbl.consumables.slot_potion = var_119_2.slot_potion
-		tbl.consumables.slot_grenade = var_119_2.slot_grenade
+		data.consumables.slot_healthkit = difficulty_settings.slot_healthkit
+		data.consumables.slot_potion = difficulty_settings.slot_potion
+		data.consumables.slot_grenade = difficulty_settings.slot_grenade
 
-		self._run_state:set_player_spawned_once(arg_119_1, arg_119_2, arg_119_3, arg_119_4, true)
-		self:save_game_mode_data(arg_119_1, arg_119_2, arg_119_3, arg_119_4, tbl)
+		self._run_state:set_player_spawned_once(peer_id, local_player_id, profile_index, career_index, true)
+		self:save_game_mode_data(peer_id, local_player_id, profile_index, career_index, data)
 	else
-		tbl.health_state = self._run_state:get_player_health_state(arg_119_1, arg_119_2, arg_119_3, arg_119_4)
-		tbl.health_percentage = self._run_state:get_player_health_percentage(arg_119_1, arg_119_2, arg_119_3, arg_119_4)
-		tbl.ammo = {
-			slot_melee = self._run_state:get_player_melee_ammo(arg_119_1, arg_119_2, arg_119_3, arg_119_4),
-			slot_ranged = self._run_state:get_player_ranged_ammo(arg_119_1, arg_119_2, arg_119_3, arg_119_4)
+		data.health_state = self._run_state:get_player_health_state(peer_id, local_player_id, profile_index, career_index)
+		data.health_percentage = self._run_state:get_player_health_percentage(peer_id, local_player_id, profile_index, career_index)
+		data.ammo = {
+			slot_melee = self._run_state:get_player_melee_ammo(peer_id, local_player_id, profile_index, career_index),
+			slot_ranged = self._run_state:get_player_ranged_ammo(peer_id, local_player_id, profile_index, career_index)
 		}
-		tbl.consumables = {}
-		tbl.consumables.slot_healthkit = self._run_state:get_player_consumable_healthkit_slot(arg_119_1, arg_119_2, arg_119_3, arg_119_4)
-		tbl.consumables.slot_potion = self._run_state:get_player_consumable_potion_slot(arg_119_1, arg_119_2, arg_119_3, arg_119_4)
-		tbl.consumables.slot_grenade = self._run_state:get_player_consumable_grenade_slot(arg_119_1, arg_119_2, arg_119_3, arg_119_4)
+		data.consumables = {}
+		data.consumables.slot_healthkit = self._run_state:get_player_consumable_healthkit_slot(peer_id, local_player_id, profile_index, career_index)
+		data.consumables.slot_potion = self._run_state:get_player_consumable_potion_slot(peer_id, local_player_id, profile_index, career_index)
+		data.consumables.slot_grenade = self._run_state:get_player_consumable_grenade_slot(peer_id, local_player_id, profile_index, career_index)
 
-		local flag = true
+		local skip_metatable = true
 
-		tbl.additional_items = table.clone(self._run_state:get_player_additional_items(arg_119_1, arg_119_2, arg_119_3, arg_119_4), flag)
+		data.additional_items = table.clone(self._run_state:get_player_additional_items(peer_id, local_player_id, profile_index, career_index), skip_metatable)
 	end
 
-	return tbl
+	return data
 end
 
-DeusRunController.save_game_mode_data = function (self, arg_120_1, arg_120_2, arg_120_3, arg_120_4, arg_120_5)
+DeusRunController.save_game_mode_data = function (self, peer_id, local_player_id, profile_index, career_index, data)
 	-- function 120
-	if not self._destroyed then
+	if self._destroyed then
 		return
 	end
 
-	local get_player_health_state = self._run_state:get_player_health_state(arg_120_1, arg_120_2, arg_120_3, arg_120_4)
-	local health_state = arg_120_5.health_state
+	local existing_health_state = self._run_state:get_player_health_state(peer_id, local_player_id, profile_index, career_index)
+	local new_health_state = data.health_state
 
-	if get_player_health_state ~= health_state then
-		self._run_state:set_player_health_state(arg_120_1, arg_120_2, arg_120_3, arg_120_4, health_state)
+	if existing_health_state ~= new_health_state then
+		self._run_state:set_player_health_state(peer_id, local_player_id, profile_index, career_index, new_health_state)
 	end
 
-	local get_player_health_percentage = self._run_state:get_player_health_percentage(arg_120_1, arg_120_2, arg_120_3, arg_120_4)
-	local health_percentage = arg_120_5.health_percentage
+	local existing_health_percentage = self._run_state:get_player_health_percentage(peer_id, local_player_id, profile_index, career_index)
+	local new_health_percentage = data.health_percentage
 
-	if not fn_3(get_player_health_percentage, health_percentage) then
-		self._run_state:set_player_health_percentage(arg_120_1, arg_120_2, arg_120_3, arg_120_4, health_percentage)
+	if not low_precision_float_comparison(existing_health_percentage, new_health_percentage) then
+		self._run_state:set_player_health_percentage(peer_id, local_player_id, profile_index, career_index, new_health_percentage)
 	end
 
-	local get_player_melee_ammo = self._run_state:get_player_melee_ammo(arg_120_1, arg_120_2, arg_120_3, arg_120_4)
-	local slot_melee = arg_120_5.ammo.slot_melee
+	local existing_melee_ammo = self._run_state:get_player_melee_ammo(peer_id, local_player_id, profile_index, career_index)
+	local new_melee_ammo = data.ammo.slot_melee
 
-	if not fn_3(get_player_melee_ammo, slot_melee) then
-		self._run_state:set_player_melee_ammo(arg_120_1, arg_120_2, arg_120_3, arg_120_4, slot_melee)
+	if not low_precision_float_comparison(existing_melee_ammo, new_melee_ammo) then
+		self._run_state:set_player_melee_ammo(peer_id, local_player_id, profile_index, career_index, new_melee_ammo)
 	end
 
-	local get_player_ranged_ammo = self._run_state:get_player_ranged_ammo(arg_120_1, arg_120_2, arg_120_3, arg_120_4)
-	local slot_ranged = arg_120_5.ammo.slot_ranged
+	local existing_ranged_ammo = self._run_state:get_player_ranged_ammo(peer_id, local_player_id, profile_index, career_index)
+	local new_ranged_ammo = data.ammo.slot_ranged
 
-	if not fn_3(get_player_ranged_ammo, slot_ranged) then
-		self._run_state:set_player_ranged_ammo(arg_120_1, arg_120_2, arg_120_3, arg_120_4, slot_ranged)
+	if not low_precision_float_comparison(existing_ranged_ammo, new_ranged_ammo) then
+		self._run_state:set_player_ranged_ammo(peer_id, local_player_id, profile_index, career_index, new_ranged_ammo)
 	end
 
-	local get_player_consumable_healthkit_slot = self._run_state:get_player_consumable_healthkit_slot(arg_120_1, arg_120_2, arg_120_3, arg_120_4)
-	local slot_healthkit = arg_120_5.consumables.slot_healthkit
+	local existing_consumable_healthkit_slot = self._run_state:get_player_consumable_healthkit_slot(peer_id, local_player_id, profile_index, career_index)
+	local new_consumable_healthkit_slot = data.consumables.slot_healthkit
 
-	if get_player_consumable_healthkit_slot ~= slot_healthkit then
-		self._run_state:set_player_consumable_healthkit_slot(arg_120_1, arg_120_2, arg_120_3, arg_120_4, slot_healthkit)
+	if existing_consumable_healthkit_slot ~= new_consumable_healthkit_slot then
+		self._run_state:set_player_consumable_healthkit_slot(peer_id, local_player_id, profile_index, career_index, new_consumable_healthkit_slot)
 	end
 
-	local get_player_consumable_potion_slot = self._run_state:get_player_consumable_potion_slot(arg_120_1, arg_120_2, arg_120_3, arg_120_4)
-	local slot_potion = arg_120_5.consumables.slot_potion
+	local existing_consumable_potion_slot = self._run_state:get_player_consumable_potion_slot(peer_id, local_player_id, profile_index, career_index)
+	local new_consumable_potion_slot = data.consumables.slot_potion
 
-	if get_player_consumable_potion_slot ~= slot_potion then
-		self._run_state:set_player_consumable_potion_slot(arg_120_1, arg_120_2, arg_120_3, arg_120_4, slot_potion)
+	if existing_consumable_potion_slot ~= new_consumable_potion_slot then
+		self._run_state:set_player_consumable_potion_slot(peer_id, local_player_id, profile_index, career_index, new_consumable_potion_slot)
 	end
 
-	local get_player_consumable_grenade_slot = self._run_state:get_player_consumable_grenade_slot(arg_120_1, arg_120_2, arg_120_3, arg_120_4)
-	local slot_grenade = arg_120_5.consumables.slot_grenade
+	local existing_consumable_grenade_slot = self._run_state:get_player_consumable_grenade_slot(peer_id, local_player_id, profile_index, career_index)
+	local new_consumable_grenade_slot = data.consumables.slot_grenade
 
-	if get_player_consumable_grenade_slot ~= slot_grenade then
-		self._run_state:set_player_consumable_grenade_slot(arg_120_1, arg_120_2, arg_120_3, arg_120_4, slot_grenade)
+	if existing_consumable_grenade_slot ~= new_consumable_grenade_slot then
+		self._run_state:set_player_consumable_grenade_slot(peer_id, local_player_id, profile_index, career_index, new_consumable_grenade_slot)
 	end
 
-	local get_player_additional_items = self._run_state:get_player_additional_items(arg_120_1, arg_120_2, arg_120_3, arg_120_4)
-	local additional_items = arg_120_5.additional_items
-	local flag = false
+	local existing_additional_items = self._run_state:get_player_additional_items(peer_id, local_player_id, profile_index, career_index)
+	local new_additional_items = data.additional_items
+	local additional_items_changed = false
 
-	for k, v in pairs(arg_120_5.additional_items) do
-		local var_120_17 = get_player_additional_items[k]
+	for new_slot_name, new_slot_data in pairs(data.additional_items) do
+		local existing_slot_data = existing_additional_items[new_slot_name]
 
-		if not var_120_17 then
-			flag = true
+		if not existing_slot_data then
+			additional_items_changed = true
 
 			break
 		end
 
-		local items = v.items
-		local items_2 = var_120_17.items
+		local new_items = new_slot_data.items
+		local existing_items = existing_slot_data.items
 
-		if #items ~= #items_2 then
-			flag = true
+		if #new_items ~= #existing_items then
+			additional_items_changed = true
 
 			break
 		end
 
-		for k_2 = 1, #items do
-			if items[k_2].key ~= items_2[k_2].key then
-				flag = true
+		for i = 1, #new_items do
+			if new_items[i].key ~= existing_items[i].key then
+				additional_items_changed = true
 
 				break
 			end
 		end
 
-		if not flag then
+		if additional_items_changed then
 			break
 		end
 	end
 
-	if not flag then
-		local clone = table.clone(additional_items)
+	if additional_items_changed then
+		new_additional_items = table.clone(new_additional_items)
 
-		self._run_state:set_player_additional_items(arg_120_1, arg_120_2, arg_120_3, arg_120_4, clone)
+		self._run_state:set_player_additional_items(peer_id, local_player_id, profile_index, career_index, new_additional_items)
 	end
 end
 
-DeusRunController.save_persistent_buffs = function (self, arg_121_1, arg_121_2, arg_121_3, arg_121_4, arg_121_5)
+DeusRunController.save_persistent_buffs = function (self, peer_id, local_player_id, profile_index, career_index, persistent_buffs)
 	-- function 121
-	if not self._destroyed then
+	if self._destroyed then
 		return
 	end
 
-	local get_player_persistent_buffs = self._run_state:get_player_persistent_buffs(arg_121_1, arg_121_2, arg_121_3, arg_121_4)
-	local flag = false
+	local existing_persistent_buffs = self._run_state:get_player_persistent_buffs(peer_id, local_player_id, profile_index, career_index)
+	local commit_buffs = false
 
-	if #get_player_persistent_buffs ~= #arg_121_5 then
-		flag = true
+	if #existing_persistent_buffs ~= #persistent_buffs then
+		commit_buffs = true
 	else
-		for i, v in ipairs(get_player_persistent_buffs) do
-			flag = flag or get_player_persistent_buffs[i] ~= arg_121_5[i]
+		for index, buff in ipairs(existing_persistent_buffs) do
+			commit_buffs = not not commit_buffs or existing_persistent_buffs[index] ~= persistent_buffs[index]
 		end
 	end
 
-	if not flag then
-		arg_121_5 = table.clone(arg_121_5)
+	if commit_buffs then
+		persistent_buffs = table.clone(persistent_buffs)
 
-		self._run_state:set_player_persistent_buffs(arg_121_1, arg_121_2, arg_121_3, arg_121_4, arg_121_5)
+		self._run_state:set_player_persistent_buffs(peer_id, local_player_id, profile_index, career_index, persistent_buffs)
 	end
 end
 
@@ -2152,31 +2324,31 @@ end
 
 DeusRunController._get_graph_data = function (self)
 	-- function 123
-	local get_arena_belakor_node = self._run_state:get_arena_belakor_node()
+	local current_arena_belakor_node = self._run_state:get_arena_belakor_node()
 
-	if not (not get_arena_belakor_node and self._swapped_arena_belakor_node) then
-		local var_123_1 = self._path_graph[get_arena_belakor_node]
+	if current_arena_belakor_node and not self._swapped_arena_belakor_node then
+		local node_to_edit = self._path_graph[current_arena_belakor_node]
 
-		var_123_1.minor_modifier_group = {}
-		var_123_1.level_type = "ARENA"
-		var_123_1.base_level = "arena_belakor"
-		var_123_1.theme = "belakor"
-		var_123_1.level = "arena_belakor"
-		var_123_1.path = 1
-		var_123_1.mutators = {}
-		var_123_1.grant_random_power_up_count = 2
-		var_123_1.curse = nil
-		var_123_1.terror_event_power_up = nil
-		var_123_1.terror_event_power_up_rarity = "unique"
+		node_to_edit.minor_modifier_group = {}
+		node_to_edit.level_type = "ARENA"
+		node_to_edit.base_level = "arena_belakor"
+		node_to_edit.theme = "belakor"
+		node_to_edit.level = "arena_belakor"
+		node_to_edit.path = 1
+		node_to_edit.mutators = {}
+		node_to_edit.grant_random_power_up_count = 2
+		node_to_edit.curse = nil
+		node_to_edit.terror_event_power_up = nil
+		node_to_edit.terror_event_power_up_rarity = "unique"
 		self._swapped_arena_belakor_node = true
 	end
 
 	return self._path_graph
 end
 
-DeusRunController.set_current_node_key = function (self, arg_124_1)
+DeusRunController.set_current_node_key = function (self, node_key)
 	-- function 124
-	self._run_state:set_current_node_key(arg_124_1)
+	self._run_state:set_current_node_key(node_key)
 end
 
 DeusRunController.get_current_node_key = function (self)
@@ -2189,36 +2361,43 @@ DeusRunController.get_coins_spent = function (self)
 	return self._run_state:get_coins_spent()
 end
 
-DeusRunController.get_cursed_chests_purified = function (self, arg_127_1)
+DeusRunController.get_cursed_chests_purified = function (self, peer_id)
 	-- function 127
-	return self._run_state:get_cursed_chests_purified(arg_127_1)
+	return self._run_state:get_cursed_chests_purified(peer_id)
 end
 
 DeusRunController.get_current_node = function (self)
 	-- function 128
-	local get_current_node_key = self:get_current_node_key()
+	local current_node_key = self:get_current_node_key()
+	local path_graph = self:_get_graph_data()
 
-	return self:_get_graph_data()[get_current_node_key]
+	return path_graph[current_node_key]
 end
 
-DeusRunController.get_node = function (self, arg_129_1)
+DeusRunController.get_node = function (self, node_key)
 	-- function 129
-	return self:_get_graph_data()[arg_129_1]
+	local path_graph = self:_get_graph_data()
+
+	return path_graph[node_key]
 end
 
 DeusRunController.can_spawn_belakor_locus = function (self)
 	-- function 130
-	local var_130_0 = self:_get_graph_data()[self._run_state:get_current_node_key()]
+	local path_graph = self:_get_graph_data()
+	local current_node_key = self._run_state:get_current_node_key()
+	local current_node = path_graph[current_node_key]
 
-	if var_130_0.base_level == "arena_belakor" then
+	if current_node.base_level == "arena_belakor" then
 		return true
 	end
 
-	if var_130_0.theme ~= "belakor" then
+	local theme = current_node.theme
+
+	if theme ~= "belakor" then
 		return false
 	end
 
-	return var_130_0.possible_arena_belakor_nodes ~= nil
+	return current_node.possible_arena_belakor_nodes ~= nil
 end
 
 DeusRunController.unlock_arena_belakor = function (self)
@@ -2227,80 +2406,83 @@ DeusRunController.unlock_arena_belakor = function (self)
 		ferror("DeusRunController:unlock_arena_belakor is designed to only be called on the server")
 	end
 
-	local var_131_0 = self:_get_graph_data()[self._run_state:get_current_node_key()]
-	local possible_arena_belakor_nodes = var_131_0.possible_arena_belakor_nodes
+	local path_graph = self:_get_graph_data()
+	local current_node_key = self._run_state:get_current_node_key()
+	local current_node = path_graph[current_node_key]
+	local possible_arena_belakor_nodes = current_node.possible_arena_belakor_nodes
 
-	if not possible_arena_belakor_nodes then
-		local level_seed = var_131_0.level_seed
-		local next_random, var_131_4 = Math.next_random(level_seed, 1, #possible_arena_belakor_nodes)
-		local var_131_5 = possible_arena_belakor_nodes[var_131_4]
+	if possible_arena_belakor_nodes then
+		local seed = current_node.level_seed
+		local _, next_index = Math.next_random(seed, 1, #possible_arena_belakor_nodes)
+		local arena_belakor_node = possible_arena_belakor_nodes[next_index]
 
-		self._run_state:set_arena_belakor_node(var_131_5)
+		self._run_state:set_arena_belakor_node(arena_belakor_node)
 	end
 end
 
 DeusRunController.get_weapon_pool = function (self)
 	-- function 132
-	local get_base_weapon_pool = self:get_base_weapon_pool()
-	local clone = table.clone(get_base_weapon_pool)
-	local get_own_weapon_pool_excludes = self._run_state:get_own_weapon_pool_excludes()
-	local clone_2 = table.clone(get_own_weapon_pool_excludes)
+	local base_weapon_pool = self:get_base_weapon_pool()
+	local weapon_pool = table.clone(base_weapon_pool)
+	local pool_excludes = self._run_state:get_own_weapon_pool_excludes()
+	local excluded_weapon_groups = table.clone(pool_excludes)
 
-	for k, v in pairs(clone_2) do
-		for k_2, v_2 in pairs(v) do
-			clone[k][k_2] = nil
+	for pool_rarity, weapon_groups in pairs(excluded_weapon_groups) do
+		for excluded_weapon_group, _ in pairs(weapon_groups) do
+			weapon_pool[pool_rarity][excluded_weapon_group] = nil
 		end
 	end
 
-	local get_weapon_pool_slot_amounts = DeusWeaponGeneration.get_weapon_pool_slot_amounts(get_base_weapon_pool, clone)
-	local DeusWeaponGroups = DeusWeaponGroups
-	local tbl = {}
+	local slot_amounts = DeusWeaponGeneration.get_weapon_pool_slot_amounts(base_weapon_pool, weapon_pool)
+	local deus_weapon_groups = DeusWeaponGroups
+	local temp_empty_slots = {}
 
-	for k_3, v_3 in pairs(clone) do
-		table.clear(tbl)
+	for rarity, _ in pairs(weapon_pool) do
+		table.clear(temp_empty_slots)
 
-		for k_4, v_4 in pairs(get_weapon_pool_slot_amounts[k_3]) do
-			if v_4 == 0 then
-				table.insert(tbl, k_4)
+		for slot_type, amount in pairs(slot_amounts[rarity]) do
+			if amount == 0 then
+				table.insert(temp_empty_slots, slot_type)
 			end
 		end
 
-		if #tbl > 0 then
-			for k_5, v_5 in pairs(get_base_weapon_pool[k_3]) do
-				local slot_type = DeusWeaponGroups[k_5].slot_type
+		if #temp_empty_slots > 0 then
+			for weapon_group_name, _ in pairs(base_weapon_pool[rarity]) do
+				local weapon_group = deus_weapon_groups[weapon_group_name]
+				local slot_type = weapon_group.slot_type
 
-				if not table.contains(tbl, slot_type) then
-					get_own_weapon_pool_excludes[k_3][k_5] = nil
-					clone[k_3][k_5] = get_base_weapon_pool[k_3][k_5]
+				if table.contains(temp_empty_slots, slot_type) then
+					pool_excludes[rarity][weapon_group_name] = nil
+					weapon_pool[rarity][weapon_group_name] = base_weapon_pool[rarity][weapon_group_name]
 				end
 			end
 		end
 	end
 
-	self._run_state:set_own_weapon_pool_excludes(get_own_weapon_pool_excludes)
+	self._run_state:set_own_weapon_pool_excludes(pool_excludes)
 
-	return clone
+	return weapon_pool
 end
 
 DeusRunController.get_slot_chances = function (self)
 	-- function 133
-	local melee = DeusSlotChance.melee
-	local ranged = DeusSlotChance.ranged
+	local slot_chance_melee = DeusSlotChance.melee
+	local slot_chance_ranged = DeusSlotChance.ranged
 	local slot_chance_multiplier = DeusSlotChance.slot_chance_multiplier
-	local get_own_loadout, var_133_4 = self:get_own_loadout()
+	local melee_weapon, ranged_weapon = self:get_own_loadout()
 
-	if not get_own_loadout and not var_133_4 then
-		local order = RaritySettings[get_own_loadout.rarity].order
-		local order_2 = RaritySettings[var_133_4.rarity].order
+	if melee_weapon and ranged_weapon then
+		local melee_weapon_rarity_order = RaritySettings[melee_weapon.rarity].order
+		local ranged_weapon_rarity_order = RaritySettings[ranged_weapon.rarity].order
 
-		if order_2 < order then
-			ranged = ranged * slot_chance_multiplier
-		elseif order < order_2 then
-			melee = melee * slot_chance_multiplier
+		if ranged_weapon_rarity_order < melee_weapon_rarity_order then
+			slot_chance_ranged = slot_chance_ranged * slot_chance_multiplier
+		elseif melee_weapon_rarity_order < ranged_weapon_rarity_order then
+			slot_chance_melee = slot_chance_melee * slot_chance_multiplier
 		end
 	end
 
-	return melee, ranged
+	return slot_chance_melee, slot_chance_ranged
 end
 
 DeusRunController.get_own_weapon_pool_excludes = function (self)
@@ -2310,43 +2492,45 @@ end
 
 DeusRunController.get_base_weapon_pool = function (self)
 	-- function 135
-	local get_own_peer_id = self._run_state:get_own_peer_id()
-	local get_player_profile, var_135_2 = self._run_state:get_player_profile(get_own_peer_id, num)
-	local name = SPProfiles[get_player_profile].careers[var_135_2].name
-	local get_own_weapon_pool_data = self._run_state:get_own_weapon_pool_data()
+	local peer_id = self._run_state:get_own_peer_id()
+	local profile_index, career_index = self._run_state:get_player_profile(peer_id, REAL_PLAYER_LOCAL_ID)
+	local profile = SPProfiles[profile_index]
+	local career_name = profile.careers[career_index].name
+	local weapon_pool_data = self._run_state:get_own_weapon_pool_data()
+	local is_weapon_pool_valid = not not weapon_pool_data and weapon_pool_data.career_index == career_index and weapon_pool_data.profile_index == profile_index
 
-	if not (not get_own_weapon_pool_data and get_own_weapon_pool_data.career_index ~= var_135_2 or get_own_weapon_pool_data.profile_index == get_player_profile) then
-		local generate_weapon_pool = DeusWeaponGeneration.generate_weapon_pool(name, self._run_state:get_weapon_group_whitelist())
+	if not is_weapon_pool_valid then
+		local base_weapon_pool = DeusWeaponGeneration.generate_weapon_pool(career_name, self._run_state:get_weapon_group_whitelist())
 
-		get_own_weapon_pool_data = {
-			profile_index = get_player_profile,
-			career_index = var_135_2,
-			base_weapon_pool = generate_weapon_pool
+		weapon_pool_data = {
+			profile_index = profile_index,
+			career_index = career_index,
+			base_weapon_pool = base_weapon_pool
 		}
 
-		self._run_state:set_own_weapon_pool_data(get_own_weapon_pool_data)
+		self._run_state:set_own_weapon_pool_data(weapon_pool_data)
 	end
 
-	return get_own_weapon_pool_data.base_weapon_pool
+	return weapon_pool_data.base_weapon_pool
 end
 
-DeusRunController.purchase_chest = function (self, arg_136_1, arg_136_2, arg_136_3)
+DeusRunController.purchase_chest = function (self, rarity, chest_type, cost)
 	-- function 136
-	local get_own_peer_id = self._run_state:get_own_peer_id()
-	local get_player_soft_currency = self._run_state:get_player_soft_currency(get_own_peer_id, num)
+	local own_peer_id = self._run_state:get_own_peer_id()
+	local current_coins = self._run_state:get_player_soft_currency(own_peer_id, REAL_PLAYER_LOCAL_ID)
 
-	if get_player_soft_currency < arg_136_3 then
+	if current_coins < cost then
 		return false
 	end
 
-	local num_2 = get_player_soft_currency - arg_136_3
+	local new_coins = current_coins - cost
 
-	self._run_state:set_player_soft_currency(get_own_peer_id, num, num_2)
+	self._run_state:set_player_soft_currency(own_peer_id, REAL_PLAYER_LOCAL_ID, new_coins)
 
 	local str
 
-	if not arg_136_1 then
-		str = arg_136_1 .. "_"
+	if rarity then
+		str = rarity .. "_"
 
 		if not str then
 			-- Nothing
@@ -2355,120 +2539,127 @@ DeusRunController.purchase_chest = function (self, arg_136_1, arg_136_2, arg_136
 
 	str = ""
 
+	local event_type_rarity_prefix = str
+
 	::label_136_0::
 
-	local str_2 = str .. arg_136_2 .. "_chest"
+	local event_type = event_type_rarity_prefix .. chest_type .. "_chest"
 
-	self:_add_coin_tracking_entry(get_own_peer_id, num, -arg_136_3, str_2)
-	self:_record_chest_purchased_for_tracking(arg_136_1, arg_136_2)
+	self:_add_coin_tracking_entry(own_peer_id, REAL_PLAYER_LOCAL_ID, -cost, event_type)
+	self:_record_chest_purchased_for_tracking(rarity, chest_type)
 
 	if not self._run_state:is_server() then
-		local get_server_peer_id = self._run_state:get_server_peer_id()
-		local var_136_6 = PEER_ID_TO_CHANNEL[get_server_peer_id]
-		local var_136_7 = NetworkLookup.rarities[arg_136_1 or "common"]
-		local var_136_8 = NetworkLookup.deus_chest_types[arg_136_2]
+		local server_peer_id = self._run_state:get_server_peer_id()
+		local server_channel_id = PEER_ID_TO_CHANNEL[server_peer_id]
+		local rarity_lookup = NetworkLookup.rarities[not not rarity or not not "common"]
+		local chest_type_lookup = NetworkLookup.deus_chest_types[chest_type]
 
-		RPC.rpc_deus_chest_unlocked(var_136_6, arg_136_3, var_136_7, var_136_8)
+		RPC.rpc_deus_chest_unlocked(server_channel_id, cost, rarity_lookup, chest_type_lookup)
 	end
 
 	return true
 end
 
-DeusRunController.remove_weapon_from_pool = function (self, arg_137_1, arg_137_2)
+DeusRunController.remove_weapon_from_pool = function (self, rarity, weapon_key)
 	-- function 137
-	self:_remove_weapon_from_pool(arg_137_1, arg_137_2)
+	self:_remove_weapon_from_pool(rarity, weapon_key)
 end
 
-DeusRunController._remove_weapon_from_pool = function (self, arg_138_1, arg_138_2)
+DeusRunController._remove_weapon_from_pool = function (self, weapon_rarity, weapon_key)
 	-- function 138
-	local get_own_weapon_pool_excludes = self._run_state:get_own_weapon_pool_excludes()
-	local base_item = DeusWeapons[arg_138_2].base_item
-	local get_lower_rarities = RarityUtils.get_lower_rarities(arg_138_1)
+	local pool_excludes = self._run_state:get_own_weapon_pool_excludes()
+	local weapon_group_name = DeusWeapons[weapon_key].base_item
+	local rarities = RarityUtils.get_lower_rarities(weapon_rarity)
 
-	table.insert(get_lower_rarities, arg_138_1)
+	table.insert(rarities, weapon_rarity)
 
-	for i, v in ipairs(get_lower_rarities) do
-		local var_138_3 = get_own_weapon_pool_excludes[v]
+	for _, rarity in ipairs(rarities) do
+		local var_138_0 = pool_excludes[rarity]
 
-		var_138_3 = var_138_3 or {}
-		get_own_weapon_pool_excludes[v] = var_138_3
-		get_own_weapon_pool_excludes[v][base_item] = true
+		var_138_0 = not not var_138_0 or not not {}
+		pool_excludes[rarity] = var_138_0
+		pool_excludes[rarity][weapon_group_name] = true
 	end
 
-	self._run_state:set_own_weapon_pool_excludes(get_own_weapon_pool_excludes)
+	self._run_state:set_own_weapon_pool_excludes(pool_excludes)
 end
 
-DeusRunController.rpc_deus_chest_unlocked = function (self, arg_139_1, arg_139_2, arg_139_3, arg_139_4)
+DeusRunController.rpc_deus_chest_unlocked = function (self, sender_channel_id, cost, rarity_lookup, chest_type_lookup)
 	-- function 139
-	local var_139_0 = CHANNEL_TO_PEER_ID[arg_139_1]
-	local var_139_1 = NetworkLookup.rarities[arg_139_3]
-	local var_139_2 = NetworkLookup.deus_chest_types[arg_139_4]
-	local num_2 = self._run_state:get_player_soft_currency(var_139_0, num) - arg_139_2
+	local sender = CHANNEL_TO_PEER_ID[sender_channel_id]
+	local rarity = NetworkLookup.rarities[rarity_lookup]
+	local chest_type = NetworkLookup.deus_chest_types[chest_type_lookup]
+	local current_coins = self._run_state:get_player_soft_currency(sender, REAL_PLAYER_LOCAL_ID)
+	local new_coins = current_coins - cost
 
-	self._run_state:set_player_soft_currency(var_139_0, num, num_2)
-	self:_record_chest_purchased_for_tracking(var_139_1, var_139_2)
+	self._run_state:set_player_soft_currency(sender, REAL_PLAYER_LOCAL_ID, new_coins)
+	self:_record_chest_purchased_for_tracking(rarity, chest_type)
 
-	local var_139_4
+	local event_type
 
-	if var_139_2 == DEUS_CHEST_TYPES.power_up then
-		var_139_4 = var_139_2 .. "_chest"
+	if chest_type == DEUS_CHEST_TYPES.power_up then
+		event_type = chest_type .. "_chest"
 	else
-		var_139_4 = var_139_1 .. "_" .. var_139_2 .. "_chest"
+		event_type = rarity .. "_" .. chest_type .. "_chest"
 	end
 
-	self:_add_coin_tracking_entry(var_139_0, num, -arg_139_2, var_139_4)
+	self:_add_coin_tracking_entry(sender, REAL_PLAYER_LOCAL_ID, -cost, event_type)
 end
 
-DeusRunController._record_chest_purchased_for_tracking = function (self, arg_140_1, arg_140_2)
+DeusRunController._record_chest_purchased_for_tracking = function (self, rarity, chest_type)
 	-- function 140
-	if arg_140_2 == DEUS_CHEST_TYPES.power_up then
-		local num = self._run_state:get_power_up_chests_used() + 1
+	if chest_type == DEUS_CHEST_TYPES.power_up then
+		local count = self._run_state:get_power_up_chests_used()
 
-		self._run_state:set_power_up_chests_used(num)
+		count = count + 1
+
+		self._run_state:set_power_up_chests_used(count)
 	else
-		local var_140_1
+		local chest_table
 
-		if arg_140_2 == DEUS_CHEST_TYPES.swap_melee then
-			var_140_1 = self._run_state:get_melee_swap_chests_used()
-		elseif arg_140_2 == DEUS_CHEST_TYPES.swap_ranged then
-			var_140_1 = self._run_state:get_ranged_swap_chests_used()
-		elseif arg_140_2 == DEUS_CHEST_TYPES.upgrade then
-			var_140_1 = self._run_state:get_upgrade_chests_used()
+		if chest_type == DEUS_CHEST_TYPES.swap_melee then
+			chest_table = self._run_state:get_melee_swap_chests_used()
+		elseif chest_type == DEUS_CHEST_TYPES.swap_ranged then
+			chest_table = self._run_state:get_ranged_swap_chests_used()
+		elseif chest_type == DEUS_CHEST_TYPES.upgrade then
+			chest_table = self._run_state:get_upgrade_chests_used()
 		end
 
-		fassert(var_140_1, "unknown %s chest_type", arg_140_2)
+		fassert(chest_table, "unknown %s chest_type", chest_type)
 
-		local flag = true
-		local clone = table.clone(var_140_1, flag)
-		local num_2
+		local skip_metatable = true
 
-		if not clone[arg_140_1] then
-			num_2 = clone[arg_140_1] + 1
+		chest_table = table.clone(chest_table, skip_metatable)
 
-			if not num_2 then
+		local num
+
+		if chest_table[rarity] then
+			num = chest_table[rarity] + 1
+
+			if not num then
 				-- Nothing
 			end
 		end
 
-		num_2 = 1
+		num = 1
 
 		::label_140_0::
 
-		clone[arg_140_1] = num_2
+		chest_table[rarity] = num
 
-		if arg_140_2 == DEUS_CHEST_TYPES.swap_melee then
-			self._run_state:set_melee_swap_chests_used(clone)
-		elseif arg_140_2 == DEUS_CHEST_TYPES.swap_ranged then
-			self._run_state:set_ranged_swap_chests_used(clone)
-		elseif arg_140_2 == DEUS_CHEST_TYPES.upgrade then
-			self._run_state:set_upgrade_chests_used(clone)
+		if chest_type == DEUS_CHEST_TYPES.swap_melee then
+			self._run_state:set_melee_swap_chests_used(chest_table)
+		elseif chest_type == DEUS_CHEST_TYPES.swap_ranged then
+			self._run_state:set_ranged_swap_chests_used(chest_table)
+		elseif chest_type == DEUS_CHEST_TYPES.upgrade then
+			self._run_state:set_upgrade_chests_used(chest_table)
 		end
 	end
 end
 
-DeusRunController.set_twitch_level_vote = function (self, arg_141_1)
+DeusRunController.set_twitch_level_vote = function (self, node_key)
 	-- function 141
-	self._run_state:set_twitch_level_vote(arg_141_1)
+	self._run_state:set_twitch_level_vote(node_key)
 end
 
 DeusRunController.get_twitch_level_vote = function (self)
@@ -2476,21 +2667,30 @@ DeusRunController.get_twitch_level_vote = function (self)
 	return self._run_state:get_twitch_level_vote()
 end
 
-DeusRunController.request_standard_twitch_level_vote = function (self, arg_143_1)
+DeusRunController.request_standard_twitch_level_vote = function (self, twitch_manager)
 	-- function 143
-	local get_graph_data = self:get_graph_data()
-	local next = self:get_current_node().next
-	local var_143_2 = get_graph_data[next[1]]
-	local var_143_3 = get_graph_data[next[2]]
-	local tbl = {
-		TwitchVoteDeusSelectLevelNames[var_143_2.base_level],
-		TwitchVoteDeusSelectLevelNames[var_143_3.base_level]
+	local graph = self:get_graph_data()
+	local current_node = self:get_current_node()
+	local next_node_keys = current_node.next
+	local next_node_a = graph[next_node_keys[1]]
+	local next_node_b = graph[next_node_keys[2]]
+	local vote_templates = {
+		TwitchVoteDeusSelectLevelNames[next_node_a.base_level],
+		TwitchVoteDeusSelectLevelNames[next_node_b.base_level]
 	}
 	local user_setting = Application.user_setting("twitch_vote_time")
 
-	user_setting = user_setting or TwitchSettings.default_vote_time
+	if not user_setting then
+		-- Nothing
+	end
 
-	arg_143_1:register_vote(user_setting, "standard_vote", nil, tbl, true)
+	user_setting = TwitchSettings.default_vote_time
+
+	local vote_time = user_setting
+
+	::label_143_0::
+
+	twitch_manager:register_vote(vote_time, "standard_vote", nil, vote_templates, true)
 end
 
 DeusRunController.map_finished_voting = function (self)
@@ -2498,27 +2698,31 @@ DeusRunController.map_finished_voting = function (self)
 	self._run_state:set_twitch_level_vote(nil)
 end
 
-DeusRunController._add_coin_tracking_entry = function (self, arg_145_1, arg_145_2, arg_145_3, arg_145_4)
+DeusRunController._add_coin_tracking_entry = function (self, peer_id, local_player_id, coins, description)
 	-- function 145
-	local _run_state = self._run_state
+	local run_state = self._run_state
 
-	if not _run_state:is_server() then
+	if not run_state:is_server() then
 		return
 	end
 
-	local get_player_telemetry_id = _run_state:get_player_telemetry_id(arg_145_1, arg_145_2)
-	local get_run_id = _run_state:get_run_id()
+	local telemetry_id = run_state:get_player_telemetry_id(peer_id, local_player_id)
+	local run_id = run_state:get_run_id()
 
-	Managers.telemetry_events:deus_coins_changed(get_player_telemetry_id, get_run_id, arg_145_3, arg_145_4)
+	Managers.telemetry_events:deus_coins_changed(telemetry_id, run_id, coins, description)
 
-	if arg_145_3 > 0 then
-		local num = self._run_state:get_coins_earned() + arg_145_3
+	if coins > 0 then
+		local coins_earned = self._run_state:get_coins_earned()
 
-		self._run_state:set_coins_earned(num)
+		coins_earned = coins_earned + coins
+
+		self._run_state:set_coins_earned(coins_earned)
 	else
-		local num_2 = self._run_state:get_coins_spent() + arg_145_3
+		local coins_spent = self._run_state:get_coins_spent()
 
-		self._run_state:set_coins_spent(num_2)
+		coins_spent = coins_spent + coins
+
+		self._run_state:set_coins_spent(coins_spent)
 	end
 end
 
@@ -2534,155 +2738,161 @@ end
 
 DeusRunController.get_deus_weapon_chest_type = function (self)
 	-- function 148
-	local _deus_weapon_chest_distribution = self._deus_weapon_chest_distribution
+	local chest_distribution = self._deus_weapon_chest_distribution
 
-	if not (not _deus_weapon_chest_distribution and #_deus_weapon_chest_distribution ~= 0) then
-		local get_current_node_key = self._run_state:get_current_node_key()
-		local var_148_2 = self:_get_graph_data()[get_current_node_key]
-		local level = var_148_2.level
-		local deus_weapon_chest_distribution = LevelSettings[level].deus_weapon_chest_distribution
+	if not chest_distribution or #chest_distribution == 0 then
+		local run_state = self._run_state
+		local current_node_key = run_state:get_current_node_key()
+		local path_graph = self:_get_graph_data()
+		local current_node = path_graph[current_node_key]
+		local level_key = current_node.level
+		local level_settings = LevelSettings[level_key]
+		local distribution = level_settings.deus_weapon_chest_distribution
 
-		assert(deus_weapon_chest_distribution, string.format("No deus_weapon_chest_distribution set for %s", level))
+		assert(distribution, string.format("No deus_weapon_chest_distribution set for %s", level_key))
 
-		_deus_weapon_chest_distribution = {}
+		chest_distribution = {}
 
-		for k, v in pairs(deus_weapon_chest_distribution) do
-			for k_2 = 1, v do
-				_deus_weapon_chest_distribution[#_deus_weapon_chest_distribution + 1] = k
+		for chest_type, amount in pairs(distribution) do
+			for i = 1, amount do
+				chest_distribution[#chest_distribution + 1] = chest_type
 			end
 		end
 
-		local level_seed = var_148_2.level_seed
-		local fnv32_hash = HashUtils.fnv32_hash(level_seed)
+		local seed = current_node.level_seed
 
-		table.shuffle(_deus_weapon_chest_distribution, fnv32_hash)
+		seed = HashUtils.fnv32_hash(seed)
 
-		self._deus_weapon_chest_distribution = _deus_weapon_chest_distribution
+		table.shuffle(chest_distribution, seed)
+
+		self._deus_weapon_chest_distribution = chest_distribution
 	end
 
-	local var_148_7 = _deus_weapon_chest_distribution[#_deus_weapon_chest_distribution]
+	local chest_type = chest_distribution[#chest_distribution]
 
-	_deus_weapon_chest_distribution[#_deus_weapon_chest_distribution] = nil
+	chest_distribution[#chest_distribution] = nil
 
-	return var_148_7
+	return chest_type
 end
 
-DeusRunController.get_level_ended_tracking_data = function (self, arg_149_1, arg_149_2, arg_149_3)
+DeusRunController.get_level_ended_tracking_data = function (self, statistics_db, game_won, num_bots)
 	-- function 149
-	local _level_start_time = self._level_start_time
+	local level_start_time = self._level_start_time
 
-	fassert(_level_start_time, " DeusRunController:handle_level_start was never called")
+	fassert(level_start_time, " DeusRunController:handle_level_start was never called")
 
-	local difftime = os.difftime(os.time(), _level_start_time)
-	local _run_state = self._run_state
-	local get_current_node_key = _run_state:get_current_node_key()
-	local var_149_4 = self:_get_graph_data()[get_current_node_key]
-	local run_progress = var_149_4.run_progress
-	local get_own_peer_id = self._run_state:get_own_peer_id()
-	local unique_player_id = PlayerUtils.unique_player_id(get_own_peer_id, num)
-	local get_stat = arg_149_1:get_stat(unique_player_id, "times_revived")
-	local round = math.round(math.lerp(-DifficultyTweak.range, DifficultyTweak.range, run_progress))
+	local level_duration_in_seconds = os.difftime(os.time(), level_start_time)
+	local run_state = self._run_state
+	local current_node_key = run_state:get_current_node_key()
+	local path_graph = self:_get_graph_data()
+	local current_node = path_graph[current_node_key]
+	local run_progress = current_node.run_progress
+	local own_peer_id = self._run_state:get_own_peer_id()
+	local stats_id = PlayerUtils.unique_player_id(own_peer_id, REAL_PLAYER_LOCAL_ID)
+	local times_revived = statistics_db:get_stat(stats_id, "times_revived")
+	local difficulty_tweak = math.round(math.lerp(-DifficultyTweak.range, DifficultyTweak.range, run_progress))
 	local tbl = {
-		run_id = _run_state:get_run_id(),
+		run_id = run_state:get_run_id(),
 		peer_ids = self._network_handler:get_peers(),
-		run_seed = _run_state:get_run_seed(),
-		journey_name = _run_state:get_journey_name(),
-		dominant_god = _run_state:get_dominant_god(),
-		difficulty = _run_state:get_run_difficulty(),
-		difficulty_tweak = round,
-		level = var_149_4.base_level,
-		path = var_149_4.path
+		run_seed = run_state:get_run_seed(),
+		journey_name = run_state:get_journey_name(),
+		dominant_god = run_state:get_dominant_god(),
+		difficulty = run_state:get_run_difficulty(),
+		difficulty_tweak = difficulty_tweak,
+		level = current_node.base_level,
+		path = current_node.path
 	}
-	local curse = var_149_4.curse
+	local curse = current_node.curse
 
-	curse = curse or "None"
+	curse = not not curse or not not "None"
 	tbl.curse = curse
-	tbl.theme = var_149_4.theme
-	tbl.level_duration_in_seconds = difftime
-	tbl.game_won = arg_149_2
-	tbl.times_revived = get_stat
-	tbl.num_bots = arg_149_3
+	tbl.theme = current_node.theme
+	tbl.level_duration_in_seconds = level_duration_in_seconds
+	tbl.game_won = game_won
+	tbl.times_revived = times_revived
+	tbl.num_bots = num_bots
 
 	return tbl
 end
 
-DeusRunController.get_level_started_tracking_data = function (self, arg_150_1, arg_150_2)
+DeusRunController.get_level_started_tracking_data = function (self, statistics_db, num_bots)
 	-- function 150
-	local _run_state = self._run_state
-	local get_current_node_key = _run_state:get_current_node_key()
-	local var_150_2 = self:_get_graph_data()[get_current_node_key]
-	local run_progress = var_150_2.run_progress
-	local round = math.round(math.lerp(-DifficultyTweak.range, DifficultyTweak.range, run_progress))
+	local run_state = self._run_state
+	local current_node_key = run_state:get_current_node_key()
+	local path_graph = self:_get_graph_data()
+	local current_node = path_graph[current_node_key]
+	local run_progress = current_node.run_progress
+	local difficulty_tweak = math.round(math.lerp(-DifficultyTweak.range, DifficultyTweak.range, run_progress))
 	local tbl = {
-		run_id = _run_state:get_run_id(),
+		run_id = run_state:get_run_id(),
 		peer_ids = self._network_handler:get_peers(),
-		run_seed = _run_state:get_run_seed(),
-		journey_name = _run_state:get_journey_name(),
-		dominant_god = _run_state:get_dominant_god(),
-		difficulty = _run_state:get_run_difficulty(),
-		difficulty_tweak = round,
-		level = var_150_2.base_level,
-		path = var_150_2.path
+		run_seed = run_state:get_run_seed(),
+		journey_name = run_state:get_journey_name(),
+		dominant_god = run_state:get_dominant_god(),
+		difficulty = run_state:get_run_difficulty(),
+		difficulty_tweak = difficulty_tweak,
+		level = current_node.base_level,
+		path = current_node.path
 	}
-	local curse = var_150_2.curse
+	local curse = current_node.curse
 
-	curse = curse or "None"
+	curse = not not curse or not not "None"
 	tbl.curse = curse
-	tbl.theme = var_150_2.theme
-	tbl.num_bots = arg_150_2
+	tbl.theme = current_node.theme
+	tbl.num_bots = num_bots
 
 	return tbl
 end
 
-DeusRunController.get_run_tracking_data = function (self, arg_151_1)
+DeusRunController.get_run_tracking_data = function (self, game_won)
 	-- function 151
-	local _run_start_time = self._run_start_time
+	local run_start_time = self._run_start_time
 
-	fassert(_run_start_time, " DeusRunController:setup_run was never called")
+	fassert(run_start_time, " DeusRunController:setup_run was never called")
 
-	local difftime = os.difftime(os.time(), _run_start_time)
-	local _run_state = self._run_state
-	local get_own_peer_id = _run_state:get_own_peer_id()
-	local get_traversed_nodes = _run_state:get_traversed_nodes()
-	local tbl = {}
-	local num = 0
-	local num_2 = 0
-	local num_3 = 0
-	local _get_graph_data = self:_get_graph_data()
+	local run_duration_in_seconds = os.difftime(os.time(), run_start_time)
+	local run_state = self._run_state
+	local own_peer_id = run_state:get_own_peer_id()
+	local traversed_nodes = run_state:get_traversed_nodes()
+	local completed_levels = {}
+	local shops_visited = 0
+	local completed_travel_levels = 0
+	local completed_signature_levels = 0
+	local path_graph = self:_get_graph_data()
 
-	for i, v in ipairs(get_traversed_nodes) do
-		local var_151_10 = _get_graph_data[v]
+	for _, traversed_node_key in ipairs(traversed_nodes) do
+		local node = path_graph[traversed_node_key]
 
-		tbl[#tbl + 1] = var_151_10.level
+		completed_levels[#completed_levels + 1] = node.level
 
-		if var_151_10.level_type == "SIGNATURE" then
-			num_3 = num_3 + 1
-		elseif var_151_10.level_type == "TRAVEL" then
-			num_2 = num_2 + 1
-		elseif var_151_10.level_type == "SHOP" then
-			num = num + 1
+		if node.level_type == "SIGNATURE" then
+			completed_signature_levels = completed_signature_levels + 1
+		elseif node.level_type == "TRAVEL" then
+			completed_travel_levels = completed_travel_levels + 1
+		elseif node.level_type == "SHOP" then
+			shops_visited = shops_visited + 1
 		end
 	end
 
 	return {
-		run_id = _run_state:get_run_id(),
-		run_duration_in_seconds = difftime,
-		completed_levels = tbl,
-		game_won = arg_151_1,
-		blessings_boughts = _run_state:get_bought_blessings(),
-		power_ups_bought = _run_state:get_bought_power_ups(),
-		ground_coins_picked_up = _run_state:get_ground_coins_picked_up(),
-		monster_coins_picked_up = _run_state:get_monster_coins_picked_up(),
-		melee_swap_chests_used = _run_state:get_melee_swap_chests_used(),
-		ranged_swap_chests_used = _run_state:get_ranged_swap_chests_used(),
-		upgrade_chests_used = _run_state:get_upgrade_chests_used(),
-		power_up_chests_used = _run_state:get_power_up_chests_used(),
-		cursed_chests_used = _run_state:get_cursed_chests_purified(get_own_peer_id),
-		coins_earned = _run_state:get_coins_earned(),
-		coins_spent = _run_state:get_coins_spent(),
-		shops_visited = num,
-		signature_levels_completed = num_3,
-		travel_levels_completed = num_2,
-		host_migration_count = _run_state:get_host_migration_count()
+		run_id = run_state:get_run_id(),
+		run_duration_in_seconds = run_duration_in_seconds,
+		completed_levels = completed_levels,
+		game_won = game_won,
+		blessings_boughts = run_state:get_bought_blessings(),
+		power_ups_bought = run_state:get_bought_power_ups(),
+		ground_coins_picked_up = run_state:get_ground_coins_picked_up(),
+		monster_coins_picked_up = run_state:get_monster_coins_picked_up(),
+		melee_swap_chests_used = run_state:get_melee_swap_chests_used(),
+		ranged_swap_chests_used = run_state:get_ranged_swap_chests_used(),
+		upgrade_chests_used = run_state:get_upgrade_chests_used(),
+		power_up_chests_used = run_state:get_power_up_chests_used(),
+		cursed_chests_used = run_state:get_cursed_chests_purified(own_peer_id),
+		coins_earned = run_state:get_coins_earned(),
+		coins_spent = run_state:get_coins_spent(),
+		shops_visited = shops_visited,
+		signature_levels_completed = completed_signature_levels,
+		travel_levels_completed = completed_travel_levels,
+		host_migration_count = run_state:get_host_migration_count()
 	}
 end

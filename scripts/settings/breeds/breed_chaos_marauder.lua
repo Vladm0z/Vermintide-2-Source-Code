@@ -1,7 +1,7 @@
 -- chunkname: @scripts/settings/breeds/breed_chaos_marauder.lua
 
-local scripts_utils_stagger_types = require("scripts/utils/stagger_types")
-local tbl = {
+local stagger_types = require("scripts/utils/stagger_types")
+local breed_data = {
 	detection_radius = 12,
 	ai_strength = 1,
 	walk_speed = 2.3,
@@ -114,21 +114,21 @@ local tbl = {
 		40,
 		40
 	},
-	stagger_modifier_function = function (arg_1_0, arg_1_1, arg_1_2, arg_1_3, arg_1_4, arg_1_5)
+	stagger_modifier_function = function (stagger_type, duration, length, hit_zone_name, blackboard, breed)
 		-- function 1
-		if arg_1_4.stagger_type == scripts_utils_stagger_types.heavy then
-			if arg_1_0 ~= scripts_utils_stagger_types.heavy or not arg_1_4.heavy_stagger_immune_time then
-				arg_1_0 = scripts_utils_stagger_types.none
-				arg_1_1 = 0
-				arg_1_2 = 0
-			elseif arg_1_0 == scripts_utils_stagger_types.heavy or not arg_1_4.stagger_immune_time then
-				arg_1_0 = scripts_utils_stagger_types.none
-				arg_1_1 = 0
-				arg_1_2 = 0
+		if blackboard.stagger_type == stagger_types.heavy then
+			if stagger_type == stagger_types.heavy and blackboard.heavy_stagger_immune_time then
+				stagger_type = stagger_types.none
+				duration = 0
+				length = 0
+			elseif stagger_type ~= stagger_types.heavy and blackboard.stagger_immune_time then
+				stagger_type = stagger_types.none
+				duration = 0
+				length = 0
 			end
 		end
 
-		return arg_1_0, arg_1_1, arg_1_2
+		return stagger_type, duration, length
 	end,
 	BTHesitationVariations = {
 		hesitate = {
@@ -307,13 +307,13 @@ local tbl = {
 	}
 }
 
-Breeds.chaos_marauder = table.create_copy(Breeds.chaos_marauder, tbl)
-Breeds.chaos_marauder_tutorial = table.create_copy(Breeds.chaos_marauder_tutorial, tbl)
+Breeds.chaos_marauder = table.create_copy(Breeds.chaos_marauder, breed_data)
+Breeds.chaos_marauder_tutorial = table.create_copy(Breeds.chaos_marauder_tutorial, breed_data)
 Breeds.chaos_marauder_tutorial.behavior = "marauder_tutorial"
 Breeds.chaos_marauder_tutorial.horde_behavior = "marauder_tutorial"
 Breeds.chaos_marauder_tutorial.debug_spawn_category = "Misc"
 
-local tbl_2 = {
+local AttackIntensityPerDifficulty = {
 	normal = {
 		easy = {
 			normal = 2
@@ -373,7 +373,7 @@ local tbl_2 = {
 		}
 	}
 }
-local tbl_3 = {
+local action_data = {
 	idle = {
 		anim_cycle_index = 0,
 		animations = {
@@ -551,7 +551,7 @@ local tbl_3 = {
 		player_push_speed = 3,
 		attack_intensity_type = "running",
 		action_weight = 10,
-		difficulty_attack_intensity = tbl_2,
+		difficulty_attack_intensity = AttackIntensityPerDifficulty,
 		considerations = UtilityConsiderations.marauder_running_attack,
 		default_attack = {
 			anims = {
@@ -579,7 +579,7 @@ local tbl_3 = {
 		player_push_speed = 5,
 		attack_intensity_type = "normal",
 		action_weight = 1,
-		difficulty_attack_intensity = tbl_2,
+		difficulty_attack_intensity = AttackIntensityPerDifficulty,
 		considerations = UtilityConsiderations.marauder_attack,
 		dodge_window_start = BreedTweaks.dodge_windows.normal_attack,
 		dodge_window_duration = BreedTweaks.dodge_window_durations.normal_attack,
@@ -721,7 +721,7 @@ local tbl_3 = {
 		player_push_speed = 5,
 		attack_intensity_type = "normal",
 		action_weight = 1,
-		difficulty_attack_intensity = tbl_2,
+		difficulty_attack_intensity = AttackIntensityPerDifficulty,
 		considerations = UtilityConsiderations.marauder_attack,
 		default_attack = {
 			anims = {
@@ -788,17 +788,19 @@ local tbl_3 = {
 	},
 	stagger = {
 		scale_animation_speeds = true,
-		custom_enter_function = function (arg_2_0, arg_2_1, arg_2_2, arg_2_3)
+		custom_enter_function = function (unit, blackboard, t, action)
 			-- function 2
-			if arg_2_1.stagger_type == scripts_utils_stagger_types.heavy then
-				arg_2_1.stagger_immune_time = arg_2_2 + 2.25
-				arg_2_1.heavy_stagger_immune_time = arg_2_2 + 1.5
-			elseif arg_2_1.stagger_type == scripts_utils_stagger_types.explosion then
-				arg_2_1.stagger_immune_time = arg_2_2 + 3.5
-				arg_2_1.heavy_stagger_immune_time = arg_2_2 + 3
+			if blackboard.stagger_type == stagger_types.heavy then
+				blackboard.stagger_immune_time = t + 2.25
+				blackboard.heavy_stagger_immune_time = t + 1.5
+			elseif blackboard.stagger_type == stagger_types.explosion then
+				blackboard.stagger_immune_time = t + 3.5
+				blackboard.heavy_stagger_immune_time = t + 3
 			end
 
-			return arg_2_3.stagger_anims[arg_2_1.stagger_type], "idle"
+			local stagger_anims = action.stagger_anims[blackboard.stagger_type]
+
+			return stagger_anims, "idle"
 		end,
 		stagger_anims = {
 			{
@@ -1049,5 +1051,5 @@ local tbl_3 = {
 	}
 }
 
-tbl_3.fallback_idle = tbl_3.idle
-BreedActions.chaos_marauder = table.create_copy(BreedActions.chaos_marauder, tbl_3)
+action_data.fallback_idle = action_data.idle
+BreedActions.chaos_marauder = table.create_copy(BreedActions.chaos_marauder, action_data)

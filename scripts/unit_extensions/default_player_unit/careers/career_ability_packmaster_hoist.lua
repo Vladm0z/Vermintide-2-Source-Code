@@ -4,19 +4,19 @@ CareerAbilityPackmasterHoist = class(CareerAbilityPackmasterHoist, CareerAbility
 
 CareerAbilityPackmasterHoist._ability_available = function (self)
 	-- function 1
-	local _ability_available = self.super._ability_available(self)
-	local _status_extension = self._status_extension
-	local _locomotion_extension = self._locomotion_extension
+	local ability_available = self.super._ability_available(self)
+	local status_extension = self._status_extension
+	local locomotion_extension = self._locomotion_extension
 
-	if not _ability_available then
+	if ability_available then
 		-- Nothing
 	end
 
 	::label_1_0::
 
-	local get_is_packmaster_dragging = _status_extension:get_is_packmaster_dragging()
+	local get_is_packmaster_dragging = status_extension:get_is_packmaster_dragging()
 
-	get_is_packmaster_dragging = not get_is_packmaster_dragging and _locomotion_extension:is_on_ground()
+	get_is_packmaster_dragging = not not get_is_packmaster_dragging and not not locomotion_extension:is_on_ground()
 
 	::label_1_1::
 

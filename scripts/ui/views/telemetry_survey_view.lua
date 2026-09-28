@@ -1,21 +1,21 @@
 -- chunkname: @scripts/ui/views/telemetry_survey_view.lua
 
-local var_0_0 = local_require("scripts/ui/views/telemetry_survey_view_definitions")
+local definitions = local_require("scripts/ui/views/telemetry_survey_view_definitions")
 
 TelemetrySurveyView = class(TelemetrySurveyView)
 
-local num = 20
+local SURVEY_TIMEOUT = 20
 
-TelemetrySurveyView.init = function (self, arg_1_1)
+TelemetrySurveyView.init = function (self, ingame_ui_context)
 	-- function 1
-	self.ui_renderer = arg_1_1.ui_renderer
-	self.ui_top_renderer = arg_1_1.ui_top_renderer
-	self.ingame_ui = arg_1_1.ingame_ui
-	self.input_manager = arg_1_1.input_manager
-	self.world_manager = arg_1_1.world_manager
-	self.time_manager = arg_1_1.time_manager
-	self.peer_id = arg_1_1.peer_id
-	self.is_server = arg_1_1.is_server
+	self.ui_renderer = ingame_ui_context.ui_renderer
+	self.ui_top_renderer = ingame_ui_context.ui_top_renderer
+	self.ingame_ui = ingame_ui_context.ingame_ui
+	self.input_manager = ingame_ui_context.input_manager
+	self.world_manager = ingame_ui_context.world_manager
+	self.time_manager = ingame_ui_context.time_manager
+	self.peer_id = ingame_ui_context.peer_id
+	self.is_server = ingame_ui_context.is_server
 	self.active = false
 	self.opened = false
 	self.timed_out = false
@@ -45,14 +45,14 @@ TelemetrySurveyView.input_service = function (self)
 	return self.input_manager:get_service("telemetry_survey")
 end
 
-TelemetrySurveyView.set_transition = function (self, arg_3_1)
+TelemetrySurveyView.set_transition = function (self, transition)
 	-- function 3
-	self.transition_to = arg_3_1
+	self.transition_to = transition
 end
 
-TelemetrySurveyView.set_survey_context = function (self, arg_4_1)
+TelemetrySurveyView.set_survey_context = function (self, survey_context)
 	-- function 4
-	self.survey_context = arg_4_1
+	self.survey_context = survey_context
 end
 
 TelemetrySurveyView.get_survey_context = function (self)
@@ -64,7 +64,7 @@ TelemetrySurveyView.is_survey_answered = function (self)
 	-- function 6
 	local survey_answered = self.survey_answered
 
-	survey_answered = not survey_answered and self.survey_confirmed
+	survey_answered = not not survey_answered and not not self.survey_confirmed
 
 	return survey_answered
 end
@@ -76,31 +76,31 @@ end
 
 TelemetrySurveyView.create_ui_elements = function (self)
 	-- function 8
-	self.ui_scenegraph = UISceneGraph.init_scenegraph(var_0_0.scenegraph_definition)
-	self.background_1 = UIWidget.init(var_0_0.widget_definitions.background_1)
-	self.background_2 = UIWidget.init(var_0_0.widget_definitions.background_2)
-	self.headers = UIWidget.init(var_0_0.widget_definitions.headers)
+	self.ui_scenegraph = UISceneGraph.init_scenegraph(definitions.scenegraph_definition)
+	self.background_1 = UIWidget.init(definitions.widget_definitions.background_1)
+	self.background_2 = UIWidget.init(definitions.widget_definitions.background_2)
+	self.headers = UIWidget.init(definitions.widget_definitions.headers)
 
-	local tbl = {}
+	local survey_ratings = {}
 
 	for i = 1, 5 do
-		tbl[i] = UIWidget.init(var_0_0.survey_rating_definitions(i))
+		survey_ratings[i] = UIWidget.init(definitions.survey_rating_definitions(i))
 	end
 
-	self.survey_ratings = tbl
-	self.continue_button = UIWidget.init(var_0_0.widget_definitions.continue_button)
+	self.survey_ratings = survey_ratings
+	self.continue_button = UIWidget.init(definitions.widget_definitions.continue_button)
 end
 
 TelemetrySurveyView.destroy = function (self)
 	-- function 9
-	if not self.active then
+	if self.active then
 		self:set_active(false)
 	end
 end
 
-TelemetrySurveyView.play_sound = function (self, arg_10_1)
+TelemetrySurveyView.play_sound = function (self, event)
 	-- function 10
-	WwiseWorld.trigger_event(self.wwise_world, arg_10_1)
+	WwiseWorld.trigger_event(self.wwise_world, event)
 end
 
 TelemetrySurveyView.on_enter = function (self)
@@ -118,7 +118,7 @@ TelemetrySurveyView.on_exit = function (self)
 
 	self.opened = false
 
-	if not self.survey_answered and not self.survey_confirmed then
+	if self.survey_answered and self.survey_confirmed then
 		self:record_telemetry_survey()
 	end
 
@@ -136,37 +136,37 @@ TelemetrySurveyView.record_telemetry_survey = function (self)
 	-- function 14
 	assert(self.session_rating ~= 0, "Session rating was never set!")
 
-	local player_from_peer_id = Managers.player:player_from_peer_id(self.peer_id)
+	local player = Managers.player:player_from_peer_id(self.peer_id)
 
-	Managers.telemetry.event:session_rating(player_from_peer_id, self.session_rating)
+	Managers.telemetry.event:session_rating(player, self.session_rating)
 end
 
-TelemetrySurveyView.update = function (self, arg_15_1)
+TelemetrySurveyView.update = function (self, dt)
 	-- function 15
 	if not self.active then
 		return
 	end
 
-	local get_service = self.input_manager:get_service("ingame_menu")
-	local time = self.time_manager:time("game")
-	local num = self.end_time - time
+	local input_service = self.input_manager:get_service("ingame_menu")
+	local curr_time = self.time_manager:time("game")
+	local time_left = self.end_time - curr_time
 
 	self:update_rating_buttons()
-	self:update_time_text(num)
+	self:update_time_text(time_left)
 	self:update_button_disabled()
-	self:handle_interaction(arg_15_1)
-	self:draw(arg_15_1)
+	self:handle_interaction(dt)
+	self:draw(dt)
 
-	if time >= self.end_time then
+	if curr_time >= self.end_time then
 		self.timed_out = true
 
 		self:transition()
 	end
 end
 
-TelemetrySurveyView.update_time_text = function (arg_16_0, arg_16_1)
+TelemetrySurveyView.update_time_text = function (self, time_left)
 	-- function 16
-	arg_16_0.headers.content.time_left = tostring(math.round(arg_16_1, 0))
+	self.headers.content.time_left = tostring(math.round(time_left, 0))
 end
 
 TelemetrySurveyView.update_rating_buttons = function (self)
@@ -174,15 +174,16 @@ TelemetrySurveyView.update_rating_buttons = function (self)
 	local survey_ratings = self.survey_ratings
 
 	for i = #survey_ratings, 1, -1 do
-		local var_17_1 = survey_ratings[i]
+		local button = survey_ratings[i]
+		local is_clicked = button.content.button_hotspot.is_clicked == 0
 
-		if not (var_17_1.content.button_hotspot.is_clicked == 0) then
+		if is_clicked then
 			self.session_rating = i
 			self.survey_answered = true
 		elseif i <= self.session_rating then
-			var_17_1.content.button_hotspot.is_selected = true
+			button.content.button_hotspot.is_selected = true
 		else
-			var_17_1.content.button_hotspot.is_selected = false
+			button.content.button_hotspot.is_selected = false
 		end
 	end
 end
@@ -191,38 +192,40 @@ TelemetrySurveyView.update_button_disabled = function (self)
 	-- function 18
 	self.continue_button.content.disabled = not self.survey_answered
 
-	local disabled = self.continue_button.content.disabled
-	local text = self.continue_button.style.text
+	local is_disabled = self.continue_button.content.disabled
+	local text_style = self.continue_button.style.text
 	local disabled_color
 
-	if not disabled then
-		disabled_color = text.disabled_color
+	if is_disabled then
+		disabled_color = text_style.disabled_color
 
 		if not disabled_color then
 			-- Nothing
 		end
 	end
 
-	disabled_color = text.base_color
+	disabled_color = text_style.base_color
+
+	local text_color = disabled_color
 
 	::label_18_0::
 
-	text.text_color = disabled_color
+	text_style.text_color = text_color
 end
 
-TelemetrySurveyView.set_active = function (self, arg_19_1)
+TelemetrySurveyView.set_active = function (self, active)
 	-- function 19
-	self.active = arg_19_1
+	self.active = active
 
 	local input_manager = self.input_manager
 
-	if not arg_19_1 then
+	if active then
 		ShowCursorStack.show("TelemetrySurveyView")
 		input_manager:block_device_except_service("telemetry_survey", "keyboard")
 		input_manager:block_device_except_service("telemetry_survey", "mouse")
 		input_manager:block_device_except_service("telemetry_survey", "gamepad")
 
-		self.end_time = self.time_manager:time("game") + num
+		self.end_time = self.time_manager:time("game") + SURVEY_TIMEOUT
 	else
 		ShowCursorStack.hide("TelemetrySurveyView")
 		input_manager:device_unblock_all_services("keyboard")
@@ -231,19 +234,21 @@ TelemetrySurveyView.set_active = function (self, arg_19_1)
 	end
 end
 
-TelemetrySurveyView.handle_interaction = function (self, arg_20_1)
+TelemetrySurveyView.handle_interaction = function (self, dt)
 	-- function 20
-	if not self.opened then
-		if not self.continue_button.content.disabled then
+	if self.opened then
+		local is_disabled = self.continue_button.content.disabled
+
+		if not is_disabled then
 			local on_release = self.continue_button.content.button_hotspot.on_release
 			local on_hover_enter = self.continue_button.content.button_hotspot.on_hover_enter
-			local get_service = self.input_manager:get_service("telemetry_survey")
+			local input_service = self.input_manager:get_service("telemetry_survey")
 
-			if not self.continue_button.content.button_hotspot.on_hover_enter then
+			if self.continue_button.content.button_hotspot.on_hover_enter then
 				self:play_sound("Play_hud_hover")
 			end
 
-			if get_service:get("confirm") or not on_release then
+			if input_service:get("confirm") or on_release then
 				self.survey_confirmed = true
 
 				self:transition()
@@ -254,14 +259,14 @@ TelemetrySurveyView.handle_interaction = function (self, arg_20_1)
 	end
 end
 
-TelemetrySurveyView.draw = function (self, arg_21_1)
+TelemetrySurveyView.draw = function (self, dt)
 	-- function 21
 	local ui_top_renderer = self.ui_top_renderer
 	local ui_scenegraph = self.ui_scenegraph
-	local get_service = self.input_manager:get_service("telemetry_survey")
+	local input_service = self.input_manager:get_service("telemetry_survey")
 	local survey_ratings = self.survey_ratings
 
-	UIRenderer.begin_pass(ui_top_renderer, ui_scenegraph, get_service, arg_21_1)
+	UIRenderer.begin_pass(ui_top_renderer, ui_scenegraph, input_service, dt)
 	UIRenderer.draw_widget(ui_top_renderer, self.background_1)
 	UIRenderer.draw_widget(ui_top_renderer, self.background_2)
 	UIRenderer.draw_widget(ui_top_renderer, self.headers)

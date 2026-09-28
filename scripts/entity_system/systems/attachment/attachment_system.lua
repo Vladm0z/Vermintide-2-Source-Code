@@ -5,25 +5,25 @@ require("scripts/unit_extensions/default_player_unit/attachment/player_husk_atta
 
 AttachmentSystem = class(AttachmentSystem, ExtensionSystemBase)
 
-local tbl = {
+local RPCS = {
 	"rpc_create_attachment",
 	"rpc_remove_attachment",
 	"rpc_add_attachment_buffs"
 }
-local tbl_2 = {
+local extension_list = {
 	"PlayerUnitAttachmentExtension",
 	"PlayerHuskAttachmentExtension"
 }
 
-AttachmentSystem.init = function (self, arg_1_1, arg_1_2)
+AttachmentSystem.init = function (self, entity_system_creation_context, system_name)
 	-- function 1
-	AttachmentSystem.super.init(self, arg_1_1, arg_1_2, tbl_2)
+	AttachmentSystem.super.init(self, entity_system_creation_context, system_name, extension_list)
 
-	local network_event_delegate = arg_1_1.network_event_delegate
+	local network_event_delegate = entity_system_creation_context.network_event_delegate
 
 	self.network_event_delegate = network_event_delegate
 
-	network_event_delegate:register(self, unpack(tbl))
+	network_event_delegate:register(self, unpack(RPCS))
 end
 
 AttachmentSystem.destroy = function (self)
@@ -33,74 +33,78 @@ AttachmentSystem.destroy = function (self)
 	self.network_event_delegate = nil
 end
 
-AttachmentSystem.on_add_extension = function (self, arg_3_1, arg_3_2, arg_3_3, arg_3_4)
+AttachmentSystem.on_add_extension = function (self, world, unit, extension_name, extension_init_data)
 	-- function 3
-	arg_3_4.is_server = self.is_server
+	extension_init_data.is_server = self.is_server
 
-	return AttachmentSystem.super.on_add_extension(self, arg_3_1, arg_3_2, arg_3_3, arg_3_4)
+	return AttachmentSystem.super.on_add_extension(self, world, unit, extension_name, extension_init_data)
 end
 
-AttachmentSystem.create_attachment = function (arg_4_0, arg_4_1, arg_4_2, arg_4_3)
+AttachmentSystem.create_attachment = function (self, unit, slot_id, item_name_id)
 	-- function 4
-	local extension = ScriptUnit.extension(arg_4_1, "attachment_system")
-	local var_4_1 = NetworkLookup.equipment_slots[arg_4_2]
-	local var_4_2 = NetworkLookup.item_names[arg_4_3]
-	local var_4_3 = ItemMasterList[var_4_2]
+	local attachment_extension = ScriptUnit.extension(unit, "attachment_system")
+	local slot_name = NetworkLookup.equipment_slots[slot_id]
+	local item_name = NetworkLookup.item_names[item_name_id]
+	local item_data = ItemMasterList[item_name]
 
-	extension:create_attachment(var_4_1, var_4_3)
+	attachment_extension:create_attachment(slot_name, item_data)
 end
 
-AttachmentSystem.remove_attachment = function (arg_5_0, arg_5_1, arg_5_2)
+AttachmentSystem.remove_attachment = function (self, unit, slot_id)
 	-- function 5
-	local extension = ScriptUnit.extension(arg_5_1, "attachment_system")
-	local var_5_1 = NetworkLookup.equipment_slots[arg_5_2]
+	local attachment_extension = ScriptUnit.extension(unit, "attachment_system")
+	local slot_name = NetworkLookup.equipment_slots[slot_id]
 
-	extension:remove_attachment(var_5_1)
+	attachment_extension:remove_attachment(slot_name)
 end
 
-AttachmentSystem.add_attachment_buffs = function (arg_6_0, arg_6_1, arg_6_2, arg_6_3, arg_6_4, arg_6_5, arg_6_6)
+AttachmentSystem.add_attachment_buffs = function (self, unit, slot_id, num_buffs, buff_ids, buff_value_type_ids, buff_values)
 	-- function 6
-	local var_6_0 = NetworkLookup.equipment_slots[arg_6_2]
-	local buffs_from_rpc_params = BuffUtils.buffs_from_rpc_params(arg_6_3, arg_6_4, arg_6_5, arg_6_6)
+	local slot_name = NetworkLookup.equipment_slots[slot_id]
+	local buffs = BuffUtils.buffs_from_rpc_params(num_buffs, buff_ids, buff_value_type_ids, buff_values)
+	local attachment_extension = ScriptUnit.extension(unit, "attachment_system")
 
-	ScriptUnit.extension(arg_6_1, "attachment_system"):set_buffs_to_slot(var_6_0, buffs_from_rpc_params)
+	attachment_extension:set_buffs_to_slot(slot_name, buffs)
 end
 
-AttachmentSystem.rpc_create_attachment = function (self, arg_7_1, arg_7_2, arg_7_3, arg_7_4)
+AttachmentSystem.rpc_create_attachment = function (self, channel_id, unit_go_id, slot_id, item_name_id)
 	-- function 7
-	if not self.is_server then
-		local var_7_0 = CHANNEL_TO_PEER_ID[arg_7_1]
+	if self.is_server then
+		local peer_id = CHANNEL_TO_PEER_ID[channel_id]
 
-		self.network_transmit:send_rpc_clients_except("rpc_create_attachment", var_7_0, arg_7_2, arg_7_3, arg_7_4)
+		self.network_transmit:send_rpc_clients_except("rpc_create_attachment", peer_id, unit_go_id, slot_id, item_name_id)
 	end
 
-	local unit = self.unit_storage:unit(arg_7_2)
+	local unit_storage = self.unit_storage
+	local unit = unit_storage:unit(unit_go_id)
 
-	self:create_attachment(unit, arg_7_3, arg_7_4)
+	self:create_attachment(unit, slot_id, item_name_id)
 end
 
-AttachmentSystem.rpc_remove_attachment = function (self, arg_8_1, arg_8_2, arg_8_3)
+AttachmentSystem.rpc_remove_attachment = function (self, channel_id, unit_go_id, slot_id)
 	-- function 8
-	if not self.is_server then
-		local var_8_0 = CHANNEL_TO_PEER_ID[arg_8_1]
+	if self.is_server then
+		local peer_id = CHANNEL_TO_PEER_ID[channel_id]
 
-		self.network_transmit:send_rpc_clients_except("rpc_remove_attachment", var_8_0, arg_8_2, arg_8_3)
+		self.network_transmit:send_rpc_clients_except("rpc_remove_attachment", peer_id, unit_go_id, slot_id)
 	end
 
-	local unit = self.unit_storage:unit(arg_8_2)
+	local unit_storage = self.unit_storage
+	local unit = unit_storage:unit(unit_go_id)
 
-	self:remove_attachment(unit, arg_8_3)
+	self:remove_attachment(unit, slot_id)
 end
 
-AttachmentSystem.rpc_add_attachment_buffs = function (self, arg_9_1, arg_9_2, arg_9_3, arg_9_4, arg_9_5, arg_9_6, arg_9_7)
+AttachmentSystem.rpc_add_attachment_buffs = function (self, channel_id, go_id, slot_id, num_buffs, buff_ids, buff_value_type_ids, buff_values)
 	-- function 9
-	if not self.is_server then
-		local var_9_0 = CHANNEL_TO_PEER_ID[arg_9_1]
+	if self.is_server then
+		local peer_id = CHANNEL_TO_PEER_ID[channel_id]
 
-		self.network_transmit:send_rpc_clients_except("rpc_add_attachment_buffs", var_9_0, arg_9_2, arg_9_3, arg_9_4, arg_9_5, arg_9_6, arg_9_7)
+		self.network_transmit:send_rpc_clients_except("rpc_add_attachment_buffs", peer_id, go_id, slot_id, num_buffs, buff_ids, buff_value_type_ids, buff_values)
 	end
 
-	local unit = self.unit_storage:unit(arg_9_2)
+	local unit_storage = self.unit_storage
+	local unit = unit_storage:unit(go_id)
 
-	self:add_attachment_buffs(unit, arg_9_3, arg_9_4, arg_9_5, arg_9_6, arg_9_7)
+	self:add_attachment_buffs(unit, slot_id, num_buffs, buff_ids, buff_value_type_ids, buff_values)
 end

@@ -1,6 +1,6 @@
 -- chunkname: @scripts/settings/mutators/mutator_geheimnisnacht_2021_hard_mode.lua
 
-local tbl = {
+local possible_grudge_marks = {
 	chaos_warrior = {
 		chance = 0.15,
 		base_grudgemark_name = "elite_base",
@@ -10,159 +10,188 @@ local tbl = {
 		}
 	}
 }
-
-return {
+local mutator = {
 	description = "description_mutator_geheimnisnacht_2021_hard_mode",
 	display_name = "display_name_mutator_geheimnisnacht_2021_hard_mode",
 	icon = "mutator_icon_geheimnisnacht_2021_difficulty",
-	server_ai_spawned_function = function (arg_1_0, arg_1_1, arg_1_2)
+	server_ai_spawned_function = function (context, data, spawned_unit)
 		-- function 1
-		arg_1_1.enemies_to_be_buffed[#arg_1_1.enemies_to_be_buffed + 1] = arg_1_2
+		data.enemies_to_be_buffed[#data.enemies_to_be_buffed + 1] = spawned_unit
 	end,
-	server_stop_function = function (arg_2_0, arg_2_1, arg_2_2)
+	server_stop_function = function (context, data, is_destroy)
 		-- function 2
-		if not arg_2_2 then
+		if not is_destroy then
 			Managers.telemetry_events:geheimnisnacht_hard_mode_toggled(false)
 		end
 
-		local enemy_units = Managers.state.side:get_side_from_name("heroes"):enemy_units()
-		local count = #enemy_units
+		local hero_side = Managers.state.side:get_side_from_name("heroes")
+		local spawned_enemies = hero_side:enemy_units()
+		local num_enemies = #spawned_enemies
 
-		for i = 1, count do
-			local var_2_2 = enemy_units[i]
+		for i = 1, num_enemies do
+			local unit = spawned_enemies[i]
 
-			if not ALIVE[var_2_2] then
-				local has_extension = ScriptUnit.has_extension(var_2_2, "buff_system")
+			if ALIVE[unit] then
+				local buff_ext = ScriptUnit.has_extension(unit, "buff_system")
 
-				if not has_extension then
-					local get_buff_type = has_extension:get_buff_type("geheimnisnacht_2021_event_health")
+				if buff_ext then
+					local has_buff = buff_ext:get_buff_type("geheimnisnacht_2021_event_health")
 
-					if not get_buff_type then
-						has_extension:remove_buff(get_buff_type.id)
+					if has_buff then
+						buff_ext:remove_buff(has_buff.id)
 					end
 				end
 			end
 		end
 	end,
-	client_start_function = function (arg_3_0, arg_3_1)
+	client_start_function = function (context, data)
 		-- function 3
-		local flag = true
-		local var_3_1 = Localize("system_chat_geheimnisnacht_2021_hard_mode_on")
+		local pop_chat = true
+		local message = Localize("system_chat_geheimnisnacht_2021_hard_mode_on")
 
-		Managers.chat:add_local_system_message(1, var_3_1, flag)
+		Managers.chat:add_local_system_message(1, message, pop_chat)
 	end,
-	client_stop_function = function (arg_4_0, arg_4_1, arg_4_2)
+	client_stop_function = function (context, data, is_destroy)
 		-- function 4
-		if not arg_4_2 then
-			local flag = true
-			local var_4_1 = Localize("system_chat_geheimnisnacht_2021_hard_mode_off")
+		if not is_destroy then
+			local pop_chat = true
+			local message = Localize("system_chat_geheimnisnacht_2021_hard_mode_off")
 
-			Managers.chat:add_local_system_message(1, var_4_1, flag)
+			Managers.chat:add_local_system_message(1, message, pop_chat)
 		end
 
-		local enemy_units = Managers.state.side:get_side_from_name("heroes"):enemy_units()
-		local count = #enemy_units
+		local hero_side = Managers.state.side:get_side_from_name("heroes")
+		local spawned_enemies = hero_side:enemy_units()
+		local num_enemies = #spawned_enemies
 
-		for i = 1, count do
-			local var_4_4 = enemy_units[i]
+		for i = 1, num_enemies do
+			local unit = spawned_enemies[i]
 
-			if not ALIVE[var_4_4] then
-				local has_extension = ScriptUnit.has_extension(var_4_4, "buff_system")
+			if ALIVE[unit] then
+				local buff_ext = ScriptUnit.has_extension(unit, "buff_system")
 
-				if not has_extension then
-					local get_buff_type = has_extension:get_buff_type("geheimnisnacht_2021_event_health")
+				if buff_ext then
+					local has_buff = buff_ext:get_buff_type("geheimnisnacht_2021_event_health")
 
-					if not get_buff_type then
-						has_extension:remove_buff(get_buff_type.id)
+					if has_buff then
+						buff_ext:remove_buff(has_buff.id)
 					end
 				end
 			end
 		end
 	end,
-	server_start_function = function (arg_5_0, arg_5_1)
+	server_start_function = function (context, data)
 		-- function 5
 		Managers.telemetry_events:geheimnisnacht_hard_mode_toggled(true)
 
-		local enemy_units = Managers.state.side:get_side_from_name("heroes"):enemy_units()
-		local count = #enemy_units
-		local system = Managers.state.entity:system("buff_system")
+		local hero_side = Managers.state.side:get_side_from_name("heroes")
+		local spawned_enemies = hero_side:enemy_units()
+		local num_enemies = #spawned_enemies
+		local buff_system = Managers.state.entity:system("buff_system")
 
-		arg_5_1.enemies_to_be_buffed = {}
+		data.enemies_to_be_buffed = {}
 
-		for i = 1, count do
-			local var_5_3 = enemy_units[i]
+		for i = 1, num_enemies do
+			local unit = spawned_enemies[i]
 
-			if not ALIVE[var_5_3] then
-				local has_extension = ScriptUnit.has_extension(var_5_3, "buff_system")
+			if ALIVE[unit] then
+				local buff_ext = ScriptUnit.has_extension(unit, "buff_system")
 
-				if not has_extension then
-					local get_buff_type = has_extension:get_buff_type("geheimnisnacht_2021_event_health")
+				if buff_ext then
+					local has_buff = buff_ext:get_buff_type("geheimnisnacht_2021_event_health")
 
-					if not (not system and get_buff_type) then
-						system:add_buff(var_5_3, "geheimnisnacht_2021_event_horde_buff", var_5_3)
+					if buff_system and not has_buff then
+						buff_system:add_buff(unit, "geheimnisnacht_2021_event_horde_buff", unit)
 					end
 				end
 			end
 		end
 	end,
-	server_update_function = function (arg_6_0, arg_6_1, arg_6_2, arg_6_3)
+	server_update_function = function (context, data, dt, t)
 		-- function 6
-		local enemies_to_be_buffed = arg_6_1.enemies_to_be_buffed
+		local enemies_to_be_buffed = data.enemies_to_be_buffed
 
 		if table.size(enemies_to_be_buffed) == 0 then
 			return
 		end
 
-		local network = Managers.state.network
-		local system = Managers.state.entity:system("buff_system")
+		local network_manager = Managers.state.network
+		local buff_system = Managers.state.entity:system("buff_system")
 
 		for i = #enemies_to_be_buffed, 1, -1 do
-			local var_6_3 = enemies_to_be_buffed[i]
+			local enemy_unit = enemies_to_be_buffed[i]
+			local unit_id = network_manager:unit_game_object_id(enemy_unit)
 
-			if not network:unit_game_object_id(var_6_3) and not system then
-				system:add_buff(var_6_3, "geheimnisnacht_2021_event_horde_buff", var_6_3)
+			if unit_id and buff_system then
+				buff_system:add_buff(enemy_unit, "geheimnisnacht_2021_event_horde_buff", enemy_unit)
 				table.swap_delete(enemies_to_be_buffed, i)
 			end
 		end
 	end,
-	post_ai_spawned_function = function (arg_7_0, arg_7_1, arg_7_2, arg_7_3)
+	post_ai_spawned_function = function (mutator_context, mutator_data, breed, optional_data)
 		-- function 7
-		local name = arg_7_2.name
-		local var_7_1 = tbl[name]
+		local breed_name = breed.name
+		local grudge_data = possible_grudge_marks[breed_name]
 
-		if not var_7_1 then
-			local grudge_mark_state_by_breed = arg_7_1.grudge_mark_state_by_breed
+		if grudge_data then
+			local grudge_mark_state_by_breed = mutator_data.grudge_mark_state_by_breed
 
-			grudge_mark_state_by_breed = grudge_mark_state_by_breed or {}
-			arg_7_1.grudge_mark_state_by_breed = grudge_mark_state_by_breed
+			if not grudge_mark_state_by_breed then
+				-- Nothing
+			end
 
-			local var_7_3
-			local spawn_chance = arg_7_3.spawn_chance
+			grudge_mark_state_by_breed = {}
 
-			spawn_chance = spawn_chance or var_7_1.chance
+			local state_by_breed = grudge_mark_state_by_breed
 
-			local var_7_5 = grudge_mark_state_by_breed[name]
-			local flip_coin, var_7_7 = PseudoRandomDistribution.flip_coin(var_7_5, spawn_chance)
-			local var_7_8
+			::label_7_0::
 
-			grudge_mark_state_by_breed[name], var_7_8 = var_7_7, flip_coin
+			mutator_data.grudge_mark_state_by_breed = state_by_breed
 
-			if not var_7_8 then
-				local names = var_7_1.names
-				local var_7_10 = names[math.random(1, #names)]
-				local enhancements = arg_7_3.enhancements
+			local success
+			local spawn_chance = optional_data.spawn_chance
 
-				enhancements = enhancements or {}
+			if not spawn_chance then
+				-- Nothing
+			end
 
-				local base_grudgemark_name = var_7_1.base_grudgemark_name
+			spawn_chance = grudge_data.chance
 
-				if not base_grudgemark_name then
-					enhancements[#enhancements + 1] = BreedEnhancements[base_grudgemark_name]
+			local chance = spawn_chance
+
+			::label_7_1::
+
+			local breed_state = state_by_breed[breed_name]
+
+			success, breed_state = PseudoRandomDistribution.flip_coin(breed_state, chance)
+			state_by_breed[breed_name] = breed_state
+
+			if success then
+				local names = grudge_data.names
+				local grudge_mark_name = names[math.random(1, #names)]
+				local enhancements = optional_data.enhancements
+
+				if not enhancements then
+					-- Nothing
 				end
 
-				enhancements[#enhancements + 1] = BreedEnhancements[var_7_10]
-				arg_7_3.enhancements = enhancements
+				enhancements = {}
+
+				local list = enhancements
+
+				::label_7_2::
+
+				local base_grudgemark_name = grudge_data.base_grudgemark_name
+
+				if base_grudgemark_name then
+					list[#list + 1] = BreedEnhancements[base_grudgemark_name]
+				end
+
+				list[#list + 1] = BreedEnhancements[grudge_mark_name]
+				optional_data.enhancements = list
 			end
 		end
 	end
 }
+
+return mutator

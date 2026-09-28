@@ -2,7 +2,7 @@
 
 local Demosettings = Demosettings
 
-Demosettings = Demosettings or {
+Demosettings = not not Demosettings or not not {
 	disable_free_flight = true,
 	career_index = "we_shade",
 	disable_intro_trailer = true,
@@ -48,25 +48,25 @@ if DemoSettings.key_combinations_allowed == nil then
 		local KEYSTROKE_ALT_ENTER = Window.KEYSTROKE_ALT_ENTER
 		local flag
 
-		flag = BUILD == "dev" or BUILD == "debug" or true or false
+		flag = (BUILD == "dev" or BUILD == "debug") and not not true or not not false
 		tbl[KEYSTROKE_ALT_ENTER] = flag
 
 		local KEYSTROKE_ALT_F4 = Window.KEYSTROKE_ALT_F4
 		local flag_2
 
-		flag_2 = BUILD == "dev" or BUILD == "debug" or true or false
+		flag_2 = (BUILD == "dev" or BUILD == "debug") and not not true or not not false
 		tbl[KEYSTROKE_ALT_F4] = flag_2
 
 		local KEYSTROKE_ALT_TAB = Window.KEYSTROKE_ALT_TAB
 		local flag_3
 
-		flag_3 = BUILD == "dev" or BUILD == "debug" or true or false
+		flag_3 = (BUILD == "dev" or BUILD == "debug") and not not true or not not false
 		tbl[KEYSTROKE_ALT_TAB] = flag_3
 
 		local KEYSTROKE_WINDOWS = Window.KEYSTROKE_WINDOWS
 		local flag_4
 
-		flag_4 = BUILD == "dev" or BUILD == "debug" or true or false
+		flag_4 = (BUILD == "dev" or BUILD == "debug") and not not true or not not false
 		tbl[KEYSTROKE_WINDOWS] = flag_4
 		DemoSettings.key_combinations_allowed = tbl
 	end

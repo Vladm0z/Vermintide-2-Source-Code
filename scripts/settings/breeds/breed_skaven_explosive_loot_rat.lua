@@ -1,6 +1,6 @@
 -- chunkname: @scripts/settings/breeds/breed_skaven_explosive_loot_rat.lua
 
-local tbl = {
+local breed_data = {
 	detection_radius = 999,
 	aoe_height = 1,
 	walk_speed = 3,
@@ -270,9 +270,9 @@ local tbl = {
 	}
 }
 
-Breeds.skaven_explosive_loot_rat = table.create_copy(Breeds.skaven_explosive_loot_rat, tbl)
+Breeds.skaven_explosive_loot_rat = table.create_copy(Breeds.skaven_explosive_loot_rat, breed_data)
 
-local tbl_2 = {
+local action_data = {
 	smash_door = {
 		unblockable = true,
 		damage = 1,
@@ -553,4 +553,4 @@ local tbl_2 = {
 	}
 }
 
-BreedActions.skaven_explosive_loot_rat = table.create_copy(BreedActions.skaven_explosive_loot_rat, tbl_2)
+BreedActions.skaven_explosive_loot_rat = table.create_copy(BreedActions.skaven_explosive_loot_rat, action_data)

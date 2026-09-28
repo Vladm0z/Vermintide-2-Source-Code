@@ -1,7 +1,7 @@
 -- chunkname: @scripts/ui/hud_ui/pet_ui_definitions.lua
 
-local flag = true
-local tbl = {
+local RETAINED_MODE_ENABLED = true
+local SKULL_TEXTURES = {
 	"necromancer_hud_skull_01",
 	"necromancer_hud_skull_02",
 	"necromancer_hud_skull_03",
@@ -9,7 +9,7 @@ local tbl = {
 	"necromancer_hud_skull_05",
 	"necromancer_hud_skull_06"
 }
-local tbl_2 = {
+local SKULL_GLOW_TEXTURES = {
 	"necromancer_hud_skull_01_eyes",
 	"necromancer_hud_skull_02_eyes",
 	"necromancer_hud_skull_03_eyes",
@@ -17,21 +17,21 @@ local tbl_2 = {
 	"necromancer_hud_skull_05_eyes",
 	"necromancer_hud_skull_06_eyes"
 }
-local tbl_3 = {
+local COMMAND_TO_ICON = {
 	[CommandStates.Following] = "necromancer_command_coin_follow",
 	[CommandStates.Attacking] = "necromancer_command_coin_attack",
 	[CommandStates.StandingGround] = "necromancer_command_coin_defend"
 }
-local tbl_4 = {
+local COMMAND_TO_TEXT = {
 	[CommandStates.Following] = "shovel_skeleton_state_follow",
 	[CommandStates.Attacking] = "shovel_skeleton_state_attack",
 	[CommandStates.StandingGround] = "shovel_skeleton_state_defend"
 }
-local tbl_5 = {
+local ROOT_SIZE = {
 	1920,
 	1080
 }
-local tbl_6 = {
+local tbl = {
 	root = {
 		is_root = true,
 		position = {
@@ -39,23 +39,23 @@ local tbl_6 = {
 			0,
 			UILayer.hud
 		},
-		size = tbl_5
+		size = ROOT_SIZE
 	}
 }
-local tbl_7 = {
+local tbl_2 = {
 	position = {
 		0,
 		0,
 		UILayer.hud_inventory
 	},
-	size = tbl_5
+	size = ROOT_SIZE
 }
-local flag_2
+local flag
 
-flag_2 = not IS_CONSOLE and "hud_fit" and "fit"
-tbl_7.scale = flag_2
-tbl_6.screen = tbl_7
-tbl_6.container = {
+flag = (not IS_CONSOLE or not "hud_fit") and not not "fit"
+tbl_2.scale = flag
+tbl.screen = tbl_2
+tbl.container = {
 	vertical_alignment = "bottom",
 	parent = "screen",
 	horizontal_alignment = "center",
@@ -69,7 +69,7 @@ tbl_6.container = {
 		80
 	}
 }
-tbl_6.skull_pivot = {
+tbl.skull_pivot = {
 	vertical_alignment = "top",
 	parent = "container",
 	horizontal_alignment = "left",
@@ -84,7 +84,8 @@ tbl_6.skull_pivot = {
 	}
 }
 
-local tbl_8 = {
+local scenegraph_definition = tbl
+local container_widget_definition = {
 	scenegraph_id = "container",
 	element = {
 		passes = {
@@ -92,14 +93,14 @@ local tbl_8 = {
 				pass_type = "texture",
 				style_id = "bg",
 				texture_id = "bg",
-				retained_mode = flag
+				retained_mode = RETAINED_MODE_ENABLED
 			},
 			{
 				pass_type = "texture",
 				style_id = "enumerator_bg",
 				texture_id = "enumerator_bg",
-				retained_mode = flag,
-				content_check_function = function (arg_1_0)
+				retained_mode = RETAINED_MODE_ENABLED,
+				content_check_function = function (content)
 					-- function 1
 					return Application.user_setting("numeric_ui")
 				end
@@ -108,45 +109,45 @@ local tbl_8 = {
 				style_id = "help_text",
 				pass_type = "text",
 				text_id = "help_text",
-				retained_mode = flag,
-				content_check_function = function (self)
+				retained_mode = RETAINED_MODE_ENABLED,
+				content_check_function = function (content)
 					-- function 2
-					return self.in_command_mode
+					return content.in_command_mode
 				end
 			},
 			{
 				pass_type = "texture",
 				style_id = "state_glow",
 				texture_id = "state_glow",
-				retained_mode = flag,
-				content_check_function = function (self)
+				retained_mode = RETAINED_MODE_ENABLED,
+				content_check_function = function (content)
 					-- function 3
-					return self.show_glow
+					return content.show_glow
 				end
 			},
 			{
 				pass_type = "texture",
 				style_id = "state",
 				texture_id = "state",
-				retained_mode = flag
+				retained_mode = RETAINED_MODE_ENABLED
 			},
 			{
 				pass_type = "texture",
 				style_id = "state_icon",
 				texture_id = "state_icon",
-				retained_mode = flag
+				retained_mode = RETAINED_MODE_ENABLED
 			},
 			{
 				style_id = "pet_amount_text",
 				pass_type = "text",
 				text_id = "pet_amount_text",
-				retained_mode = flag
+				retained_mode = RETAINED_MODE_ENABLED
 			},
 			{
 				style_id = "pet_amount_text_shadow",
 				pass_type = "text",
 				text_id = "pet_amount_text_shadow",
-				retained_mode = flag
+				retained_mode = RETAINED_MODE_ENABLED
 			}
 		}
 	},
@@ -224,7 +225,7 @@ local tbl_8 = {
 			},
 			offset = {
 				0,
-				tbl_6.container.size[2] + 50,
+				scenegraph_definition.container.size[2] + 50,
 				4
 			}
 		},
@@ -284,7 +285,7 @@ local tbl_8 = {
 		}
 	}
 }
-local tbl_9 = {
+local pet_widget_definition = {
 	scenegraph_id = "skull_pivot",
 	offset = {
 		0,
@@ -297,16 +298,16 @@ local tbl_9 = {
 				pass_type = "texture",
 				style_id = "icon",
 				texture_id = "icon",
-				retained_mode = flag
+				retained_mode = RETAINED_MODE_ENABLED
 			},
 			{
 				pass_type = "texture",
 				style_id = "icon_glow",
 				texture_id = "icon_glow",
-				retained_mode = flag,
-				content_check_function = function (arg_4_0, arg_4_1)
+				retained_mode = RETAINED_MODE_ENABLED,
+				content_check_function = function (content, style)
 					-- function 4
-					return arg_4_1.color[1] > 0
+					return style.color[1] > 0
 				end
 			}
 		}
@@ -345,40 +346,40 @@ local tbl_9 = {
 	}
 }
 
-local function fn(arg_5_0, arg_5_1, arg_5_2)
+local function reposition_widget(widget, index, total)
 	-- function 5
-	arg_5_0.offset[1] = 36 * (6 - arg_5_1)
+	widget.offset[1] = 36 * (6 - index)
 end
 
-local function fn_2(arg_6_0, arg_6_1, arg_6_2)
+local function set_progress(immediate_materials, retained_materials, t)
 	-- function 6
-	local flag_2 = not flag and arg_6_1 and arg_6_0
+	local materials = (not RETAINED_MODE_ENABLED or not retained_materials) and not not immediate_materials
 
-	for i = 1, #flag_2 do
-		Material.set_scalar(flag_2[i], "progress", arg_6_2)
+	for i = 1, #materials do
+		Material.set_scalar(materials[i], "progress", t)
 	end
 end
 
-local tbl_10 = {
+local animation_definitions = {
 	change_command_state = {
 		{
 			name = "spin_half_1",
 			delay = 0,
 			duration = 0.1,
-			init = function (arg_7_0, arg_7_1, arg_7_2, arg_7_3)
+			init = function (ui_scenegraph, _, container_widget, command_state)
 				-- function 7
 				return
 			end,
-			update = function (arg_8_0, arg_8_1, arg_8_2, arg_8_3, arg_8_4)
+			update = function (ui_scenegraph, _, container_widget, progress, command_state)
 				-- function 8
-				fn_2(arg_8_2.content.materials, arg_8_2.content.retained_materials, arg_8_3 * 0.5)
+				set_progress(container_widget.content.materials, container_widget.content.retained_materials, progress * 0.5)
 			end,
-			on_complete = function (arg_9_0, arg_9_1, arg_9_2, arg_9_3)
+			on_complete = function (ui_scenegraph, _, container_widget, command_state)
 				-- function 9
-				local content = arg_9_2.content
-				local var_9_1 = tbl_3[arg_9_3]
+				local content = container_widget.content
+				local var_9_1 = COMMAND_TO_ICON[command_state]
 
-				var_9_1 = var_9_1 or "icons_placeholder"
+				var_9_1 = not not var_9_1 or not not "icons_placeholder"
 				content.state_icon = var_9_1
 			end
 		},
@@ -386,17 +387,17 @@ local tbl_10 = {
 			name = "spin_half_2",
 			delay = 0.1,
 			duration = 0.1,
-			init = function (arg_10_0, arg_10_1, arg_10_2, arg_10_3)
+			init = function (ui_scenegraph, _, container_widget, command_state)
 				-- function 10
 				return
 			end,
-			update = function (arg_11_0, arg_11_1, arg_11_2, arg_11_3, arg_11_4)
+			update = function (ui_scenegraph, _, container_widget, progress, command_state)
 				-- function 11
-				fn_2(arg_11_2.content.materials, arg_11_2.content.retained_materials, arg_11_3 * 0.5 + 0.5)
+				set_progress(container_widget.content.materials, container_widget.content.retained_materials, progress * 0.5 + 0.5)
 			end,
-			on_complete = function (arg_12_0, arg_12_1, arg_12_2, arg_12_3)
+			on_complete = function (ui_scenegraph, _, container_widget, command_state)
 				-- function 12
-				fn_2(arg_12_2.content.materials, arg_12_2.content.retained_materials, 0)
+				set_progress(container_widget.content.materials, container_widget.content.retained_materials, 0)
 			end
 		}
 	},
@@ -405,20 +406,20 @@ local tbl_10 = {
 			name = "dissolve_icon",
 			delay = 0,
 			duration = 0.2,
-			init = function (arg_13_0, arg_13_1, arg_13_2)
+			init = function (ui_scenegraph, _, pet_widget)
 				-- function 13
-				local color = arg_13_2.style.icon.color
+				local color = pet_widget.style.icon.color
 
 				color[1], color[2], color[3], color[4] = 0, 0, 0, 0
 			end,
-			update = function (arg_14_0, arg_14_1, arg_14_2, arg_14_3)
+			update = function (ui_scenegraph, _, pet_widget, progress)
 				-- function 14
-				local num = 255 * arg_14_3
-				local color = arg_14_2.style.icon.color
+				local value = 255 * progress
+				local color = pet_widget.style.icon.color
 
-				color[1], color[2], color[3], color[4] = num, num, num, num
+				color[1], color[2], color[3], color[4] = value, value, value, value
 			end,
-			on_complete = function (arg_15_0, arg_15_1, arg_15_2)
+			on_complete = function (ui_scenegraph, _, pet_widget)
 				-- function 15
 				return
 			end
@@ -429,15 +430,15 @@ local tbl_10 = {
 			name = "fade_in_skull_glow",
 			delay = 0.2,
 			duration = 0.2,
-			init = function (arg_16_0, arg_16_1, arg_16_2)
+			init = function (ui_scenegraph, _, pet_widget)
 				-- function 16
-				arg_16_2.style.icon_glow.color[1] = 0
+				pet_widget.style.icon_glow.color[1] = 0
 			end,
-			update = function (arg_17_0, arg_17_1, arg_17_2, arg_17_3)
+			update = function (ui_scenegraph, _, pet_widget, progress)
 				-- function 17
-				arg_17_2.style.icon_glow.color[1] = 255 * arg_17_3
+				pet_widget.style.icon_glow.color[1] = 255 * progress
 			end,
-			on_complete = function (arg_18_0, arg_18_1, arg_18_2)
+			on_complete = function (ui_scenegraph, _, pet_widget)
 				-- function 18
 				return
 			end
@@ -448,15 +449,15 @@ local tbl_10 = {
 			name = "fade_out_skull_glow",
 			delay = 0.2,
 			duration = 0.2,
-			init = function (arg_19_0, arg_19_1, arg_19_2)
+			init = function (ui_scenegraph, _, pet_widget)
 				-- function 19
-				arg_19_2.style.icon_glow.color[1] = 255
+				pet_widget.style.icon_glow.color[1] = 255
 			end,
-			update = function (arg_20_0, arg_20_1, arg_20_2, arg_20_3)
+			update = function (ui_scenegraph, _, pet_widget, progress)
 				-- function 20
-				arg_20_2.style.icon_glow.color[1] = 255 - 255 * arg_20_3
+				pet_widget.style.icon_glow.color[1] = 255 - 255 * progress
 			end,
-			on_complete = function (arg_21_0, arg_21_1, arg_21_2)
+			on_complete = function (ui_scenegraph, _, pet_widget)
 				-- function 21
 				return
 			end
@@ -465,14 +466,14 @@ local tbl_10 = {
 }
 
 return {
-	scenegraph_definition = tbl_6,
-	animation_definitions = tbl_10,
-	container_widget_definition = tbl_8,
-	pet_widget_definition = tbl_9,
-	reposition_widget = fn,
-	SKULL_TEXTURES = tbl,
-	SKULL_GLOW_TEXTURES = tbl_2,
-	COMMAND_TO_ICON = tbl_3,
-	COMMAND_TO_TEXT = tbl_4,
-	RETAINED_MODE_ENABLED = flag
+	scenegraph_definition = scenegraph_definition,
+	animation_definitions = animation_definitions,
+	container_widget_definition = container_widget_definition,
+	pet_widget_definition = pet_widget_definition,
+	reposition_widget = reposition_widget,
+	SKULL_TEXTURES = SKULL_TEXTURES,
+	SKULL_GLOW_TEXTURES = SKULL_GLOW_TEXTURES,
+	COMMAND_TO_ICON = COMMAND_TO_ICON,
+	COMMAND_TO_TEXT = COMMAND_TO_TEXT,
+	RETAINED_MODE_ENABLED = RETAINED_MODE_ENABLED
 }

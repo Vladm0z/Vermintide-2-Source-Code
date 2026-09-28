@@ -1,31 +1,31 @@
 -- chunkname: @scripts/ui/dlc_versus/views/start_game_view/windows/definitions/start_game_window_versus_custom_game_definitions.lua
 
-local game_start_windows = UISettings.game_start_windows
-local frame = game_start_windows.frame
-local size = game_start_windows.size
-local var_0_3 = UIFrameSettings[frame].texture_sizes.horizontal[2]
-local tbl = {
-	size[1],
+local window_default_settings = UISettings.game_start_windows
+local window_frame = window_default_settings.frame
+local window_size = window_default_settings.size
+local window_frame_height = UIFrameSettings[window_frame].texture_sizes.horizontal[2]
+local game_option_size = {
+	window_size[1],
 	194
 }
-local var_0_5 = size[1]
-local tbl_2 = {
+local window_text_width = window_size[1]
+local animation_definitions = {
 	on_enter = {
 		{
 			name = "fade_in",
 			start_progress = 0,
 			end_progress = 0.3,
-			init = function (arg_1_0, arg_1_1, arg_1_2, arg_1_3)
+			init = function (ui_scenegraph, scenegraph_definition, widgets, params)
 				-- function 1
-				arg_1_3.render_settings.alpha_multiplier = 0
+				params.render_settings.alpha_multiplier = 0
 			end,
-			update = function (arg_2_0, arg_2_1, arg_2_2, arg_2_3, arg_2_4)
+			update = function (ui_scenegraph, scenegraph_definition, widgets, progress, params)
 				-- function 2
-				local easeOutCubic = math.easeOutCubic(arg_2_3)
+				local anim_progress = math.easeOutCubic(progress)
 
-				arg_2_4.render_settings.alpha_multiplier = easeOutCubic
+				params.render_settings.alpha_multiplier = anim_progress
 			end,
-			on_complete = function (arg_3_0, arg_3_1, arg_3_2, arg_3_3)
+			on_complete = function (ui_scenegraph, scenegraph_definition, widgets, params)
 				-- function 3
 				return
 			end
@@ -36,22 +36,22 @@ local tbl_2 = {
 			name = "fade_out",
 			start_progress = 0,
 			end_progress = 0.3,
-			init = function (arg_4_0, arg_4_1, arg_4_2, arg_4_3)
+			init = function (ui_scenegraph, scenegraph_definition, widgets, params)
 				-- function 4
-				arg_4_3.render_settings.alpha_multiplier = 1
+				params.render_settings.alpha_multiplier = 1
 			end,
-			update = function (arg_5_0, arg_5_1, arg_5_2, arg_5_3, arg_5_4)
+			update = function (ui_scenegraph, scenegraph_definition, widgets, progress, params)
 				-- function 5
-				arg_5_4.render_settings.alpha_multiplier = 1
+				params.render_settings.alpha_multiplier = 1
 			end,
-			on_complete = function (arg_6_0, arg_6_1, arg_6_2, arg_6_3)
+			on_complete = function (ui_scenegraph, scenegraph_definition, widgets, params)
 				-- function 6
 				return
 			end
 		}
 	}
 }
-local tbl_3 = {
+local scenegraph_definition = {
 	root = {
 		is_root = true,
 		size = {
@@ -94,7 +94,7 @@ local tbl_3 = {
 		vertical_alignment = "center",
 		parent = "menu_root",
 		horizontal_alignment = "left",
-		size = size,
+		size = window_size,
 		position = {
 			220,
 			0,
@@ -106,12 +106,12 @@ local tbl_3 = {
 		parent = "window",
 		horizontal_alignment = "center",
 		size = {
-			size[1],
-			var_0_3
+			window_size[1],
+			window_frame_height
 		},
 		position = {
 			0,
-			-var_0_3,
+			-window_frame_height,
 			1
 		}
 	},
@@ -120,7 +120,7 @@ local tbl_3 = {
 		parent = "window",
 		horizontal_alignment = "center",
 		size = {
-			size[1] + 70,
+			window_size[1] + 70,
 			470
 		},
 		position = {
@@ -134,7 +134,7 @@ local tbl_3 = {
 		parent = "custom_game_background",
 		horizontal_alignment = "center",
 		size = {
-			var_0_5,
+			window_text_width,
 			50
 		},
 		position = {
@@ -148,7 +148,7 @@ local tbl_3 = {
 		parent = "custom_game_background",
 		horizontal_alignment = "center",
 		size = {
-			var_0_5,
+			window_text_width,
 			50
 		},
 		position = {
@@ -176,7 +176,7 @@ local tbl_3 = {
 		parent = "custom_game_divider",
 		horizontal_alignment = "center",
 		size = {
-			var_0_5,
+			window_text_width,
 			200
 		},
 		position = {
@@ -190,8 +190,8 @@ local tbl_3 = {
 		parent = "window",
 		horizontal_alignment = "center",
 		size = {
-			tbl[1],
-			tbl[2]
+			game_option_size[1],
+			game_option_size[2]
 		},
 		position = {
 			-15,
@@ -204,12 +204,12 @@ local tbl_3 = {
 		parent = "window",
 		horizontal_alignment = "center",
 		size = {
-			tbl[1],
-			tbl[2]
+			game_option_size[1],
+			game_option_size[2]
 		},
 		position = {
 			-15,
-			-75 + tbl[2],
+			-75 + game_option_size[2],
 			1
 		}
 	},
@@ -218,12 +218,12 @@ local tbl_3 = {
 		parent = "window",
 		horizontal_alignment = "center",
 		size = {
-			tbl[1],
-			tbl[2]
+			game_option_size[1],
+			game_option_size[2]
 		},
 		position = {
 			-15,
-			-75 + tbl[2] * 2,
+			-75 + game_option_size[2] * 2,
 			1
 		}
 	},
@@ -232,8 +232,8 @@ local tbl_3 = {
 		parent = "window",
 		horizontal_alignment = "center",
 		size = {
-			tbl[1],
-			tbl[2]
+			game_option_size[1],
+			game_option_size[2]
 		},
 		position = {
 			0,
@@ -260,8 +260,8 @@ local tbl_3 = {
 		parent = "window",
 		horizontal_alignment = "center",
 		size = {
-			tbl[1],
-			tbl[2] + 22
+			game_option_size[1],
+			game_option_size[2] + 22
 		},
 		position = {
 			0,
@@ -270,7 +270,7 @@ local tbl_3 = {
 		}
 	}
 }
-local tbl_4 = {
+local custom_game_title_style = {
 	font_size = 50,
 	upper_case = true,
 	localize = false,
@@ -287,7 +287,7 @@ local tbl_4 = {
 		2
 	}
 }
-local tbl_5 = {
+local custom_game_description_style = {
 	font_size = 28,
 	upper_case = false,
 	localize = false,
@@ -303,7 +303,7 @@ local tbl_5 = {
 		2
 	}
 }
-local tbl_6 = {
+local custom_game_sub_title_style = {
 	font_size = 34,
 	upper_case = false,
 	localize = false,
@@ -319,21 +319,21 @@ local tbl_6 = {
 		2
 	}
 }
-local tbl_7 = {
-	custom_game_description_background = UIWidgets.create_rect_with_outer_frame("custom_game_background", tbl_3.custom_game_background.size, "frame_outer_fade_02", nil, UISettings.console_start_game_menu_rect_color),
-	custom_game_title = UIWidgets.create_simple_text(Localize("start_game_window_specific_title"), "custom_game_title", nil, nil, tbl_4),
-	quickplay_sub_title = UIWidgets.create_simple_text(Localize("versus_start_game_window_player_hosted_server"), "custom_game_sub_title", nil, nil, tbl_6),
+local widgets = {
+	custom_game_description_background = UIWidgets.create_rect_with_outer_frame("custom_game_background", scenegraph_definition.custom_game_background.size, "frame_outer_fade_02", nil, UISettings.console_start_game_menu_rect_color),
+	custom_game_title = UIWidgets.create_simple_text(Localize("start_game_window_specific_title"), "custom_game_title", nil, nil, custom_game_title_style),
+	quickplay_sub_title = UIWidgets.create_simple_text(Localize("versus_start_game_window_player_hosted_server"), "custom_game_sub_title", nil, nil, custom_game_sub_title_style),
 	custom_game_divider = UIWidgets.create_simple_texture("divider_01_top", "custom_game_divider"),
-	custom_game_description = UIWidgets.create_simple_text(Localize("start_game_host_versus_desc"), "custom_game_description", nil, nil, tbl_5),
+	custom_game_description = UIWidgets.create_simple_text(Localize("start_game_host_versus_desc"), "custom_game_description", nil, nil, custom_game_description_style),
 	play_button = UIWidgets.create_icon_and_name_button("play_button", "options_button_icon_quickplay", Localize("start_game_window_other_options_always_host"))
 }
-local tbl_8 = {
+local selector_input_definition = {
 	"play_button"
 }
 
 return {
-	scenegraph_definition = tbl_3,
-	widgets = tbl_7,
-	animation_definitions = tbl_2,
-	selector_input_definition = tbl_8
+	scenegraph_definition = scenegraph_definition,
+	widgets = widgets,
+	animation_definitions = animation_definitions,
+	selector_input_definition = selector_input_definition
 }

@@ -2,36 +2,36 @@
 
 ProjectileRaycastImpactUnitExtension = class(ProjectileRaycastImpactUnitExtension, ProjectileBaseImpactUnitExtension)
 
-local num = 1
-local num_2 = 2
-local num_3 = 3
-local num_4 = 4
+local INDEX_POSITION = 1
+local INDEX_DISTANCE = 2
+local INDEX_NORMAL = 3
+local INDEX_ACTOR = 4
 
-ProjectileRaycastImpactUnitExtension.init = function (self, arg_1_1, arg_1_2, arg_1_3)
+ProjectileRaycastImpactUnitExtension.init = function (self, extension_init_context, unit, extension_init_data)
 	-- function 1
-	ProjectileRaycastImpactUnitExtension.super.init(self, arg_1_1, arg_1_2, arg_1_3)
+	ProjectileRaycastImpactUnitExtension.super.init(self, extension_init_context, unit, extension_init_data)
 
-	local collision_filter = arg_1_3.collision_filter
+	local collision_filter = extension_init_data.collision_filter
 
-	collision_filter = collision_filter or "filter_player_ray_projectile"
+	collision_filter = not not collision_filter or not not "filter_player_ray_projectile"
 	self.collision_filter = collision_filter
 	self.network_manager = Managers.state.network
 	self.is_server = Managers.player.is_server
-	self.owner_unit = arg_1_3.owner_unit
+	self.owner_unit = extension_init_data.owner_unit
 
-	local owner = Managers.player:owner(self.owner_unit)
+	local owner_player = Managers.player:owner(self.owner_unit)
 	local local_player
 
-	if not owner then
-		local_player = owner.local_player
+	if owner_player then
+		local_player = owner_player.local_player
 
 		if not local_player then
 			-- Nothing
 		end
 	end
 
-	if not owner then
-		local_player = owner.bot_player
+	if owner_player then
+		local_player = owner_player.bot_player
 
 		if not local_player then
 			-- Nothing
@@ -43,121 +43,127 @@ ProjectileRaycastImpactUnitExtension.init = function (self, arg_1_1, arg_1_2, ar
 	::label_1_0::
 
 	self.owner_is_local = local_player
-	self.server_side_raycast = arg_1_3.server_side_raycast
+	self.server_side_raycast = extension_init_data.server_side_raycast
 	self.is_server = Managers.player.is_server
-	self._dont_target_friendly = arg_1_3.dont_target_friendly
-	self._dont_target_patrols = arg_1_3.dont_target_patrols
-	self._ignore_dead = arg_1_3.ignore_dead
+	self._dont_target_friendly = extension_init_data.dont_target_friendly
+	self._dont_target_patrols = extension_init_data.dont_target_patrols
+	self._ignore_dead = extension_init_data.ignore_dead
 	self.last_position = nil
 end
 
-ProjectileRaycastImpactUnitExtension.extensions_ready = function (self, arg_2_1, arg_2_2)
+ProjectileRaycastImpactUnitExtension.extensions_ready = function (self, world, unit)
 	-- function 2
-	self.locomotion_extension = ScriptUnit.extension(arg_2_2, "projectile_locomotion_system")
+	self.locomotion_extension = ScriptUnit.extension(unit, "projectile_locomotion_system")
 end
 
-ProjectileRaycastImpactUnitExtension.update = function (self, arg_3_1, arg_3_2, arg_3_3, arg_3_4, arg_3_5)
+ProjectileRaycastImpactUnitExtension.update = function (self, unit, input, dt, context, t)
 	-- function 3
-	ProjectileRaycastImpactUnitExtension.super.update(self, arg_3_1, arg_3_2, arg_3_3, arg_3_4, arg_3_5)
+	ProjectileRaycastImpactUnitExtension.super.update(self, unit, input, dt, context, t)
 
-	if not (not self.server_side_raycast and self.is_server) then
+	if self.server_side_raycast and not self.is_server then
 		return
 	end
 
-	if not (self.server_side_raycast or self.owner_is_local) then
+	if not self.server_side_raycast and not self.owner_is_local then
 		return
 	end
 
-	if not self.locomotion_extension:moved_this_frame() then
+	local locomotion_extension = self.locomotion_extension
+
+	if not locomotion_extension:moved_this_frame() then
 		return
 	end
 
 	local physics_world = self.physics_world
 	local collision_filter = self.collision_filter
-	local var_3_2 = POSITION_LOOKUP[arg_3_1]
-	local local_position = Unit.local_position(arg_3_1, 0)
+	local previous_position = POSITION_LOOKUP[unit]
+	local current_position = Unit.local_position(unit, 0)
 
-	if not self.last_position then
-		self:_do_raycast(arg_3_1, self.last_position:unbox(), local_position, physics_world, collision_filter, arg_3_5, arg_3_3)
+	if self.last_position then
+		self:_do_raycast(unit, self.last_position:unbox(), current_position, physics_world, collision_filter, t, dt)
 	else
 		self.last_position = Vector3Box()
 	end
 
-	self.last_position:store(var_3_2)
-	self:_do_raycast(arg_3_1, var_3_2, local_position, physics_world, collision_filter, arg_3_5, arg_3_3)
+	self.last_position:store(previous_position)
+	self:_do_raycast(unit, previous_position, current_position, physics_world, collision_filter, t, dt)
 end
 
-ProjectileRaycastImpactUnitExtension._do_raycast = function (self, arg_4_1, arg_4_2, arg_4_3, arg_4_4, arg_4_5, arg_4_6, arg_4_7)
+ProjectileRaycastImpactUnitExtension._do_raycast = function (self, unit, from, to, physics_world, collision_filter, t, dt)
 	-- function 4
-	local direction_length, var_4_1 = Vector3.direction_length(arg_4_3 - arg_4_2)
+	local direction, length = Vector3.direction_length(to - from)
 
-	if var_4_1 < math.epsilon then
-		var_4_1 = math.epsilon
+	if length < math.epsilon then
+		length = math.epsilon
 	end
 
-	if not script_data.debug_projectiles then
-		QuickDrawerStay:vector(arg_4_2, direction_length, Color(255, 255, 255, 0))
+	if script_data.debug_projectiles then
+		QuickDrawerStay:vector(from, direction, Color(255, 255, 255, 0))
 	end
 
-	PhysicsWorld.prepare_actors_for_raycast(arg_4_4, arg_4_2, direction_length, 0.1, 9, var_4_1 * var_4_1)
+	PhysicsWorld.prepare_actors_for_raycast(physics_world, from, direction, 0.1, 9, length * length)
 
-	local immediate_raycast = PhysicsWorld.immediate_raycast(arg_4_4, arg_4_2, direction_length, var_4_1, "all", "collision_filter", arg_4_5)
+	local result = PhysicsWorld.immediate_raycast(physics_world, from, direction, length, "all", "collision_filter", collision_filter)
 
-	if not immediate_raycast then
+	if not result then
 		return
 	end
 
-	local count = #immediate_raycast
+	local num_hits = #result
 
-	for i = 1, count do
-		local var_4_4 = immediate_raycast[i]
-		local var_4_5 = var_4_4[num_4]
-		local unit = Actor.unit(var_4_5)
+	for i = 1, num_hits do
+		local hit = result[i]
+		local hit_actor = hit[INDEX_ACTOR]
+		local hit_unit = Actor.unit(hit_actor)
+		local valid = self:_valid_target(unit, hit_unit, hit_actor)
 
-		if not self:_valid_target(arg_4_1, unit, var_4_5) then
-			local num_actors = Unit.num_actors(unit)
-			local var_4_8
+		if valid then
+			local num_actors = Unit.num_actors(hit_unit)
+			local actor_index
 
 			for j = 0, num_actors - 1 do
-				if var_4_5 == Unit.actor(unit, j) then
-					var_4_8 = j
+				local actor = Unit.actor(hit_unit, j)
+
+				if hit_actor == actor then
+					actor_index = j
 
 					break
 				end
 			end
 
-			local var_4_9 = var_4_4[num]
-			local var_4_10 = var_4_4[num_2]
-			local var_4_11 = var_4_4[num_3]
+			local hit_position = hit[INDEX_POSITION]
+			local hit_distance = hit[INDEX_DISTANCE]
+			local hit_normal = hit[INDEX_NORMAL]
 
-			self:impact(unit, var_4_9, direction_length, var_4_11, var_4_8)
+			self:impact(hit_unit, hit_position, direction, hit_normal, actor_index)
 		end
 	end
 end
 
-ProjectileRaycastImpactUnitExtension._valid_target = function (self, arg_5_1, arg_5_2, arg_5_3)
+ProjectileRaycastImpactUnitExtension._valid_target = function (self, unit, hit_unit, hit_actor)
 	-- function 5
-	if not (arg_5_2 == arg_5_1 or arg_5_2 ~= self.owner_unit) then
+	if hit_unit == unit or hit_unit == self.owner_unit then
 		return false
 	end
 
-	if Unit.actor(arg_5_2, "c_afro") == arg_5_3 then
+	if Unit.actor(hit_unit, "c_afro") == hit_actor then
 		return false
 	end
 
-	if not self._dont_target_friendly then
-		local side = Managers.state.side
+	if self._dont_target_friendly then
+		local side_manager = Managers.state.side
+		local has_side = side_manager.side_by_unit[hit_unit]
 
-		if not (not side.side_by_unit[arg_5_2] and side:is_enemy(self.owner_unit, arg_5_2)) then
+		if has_side and not side_manager:is_enemy(self.owner_unit, hit_unit) then
 			return false
 		end
 	end
 
-	if not (not self._dont_target_patrols and not AiUtils.is_part_of_patrol(arg_5_2) and AiUtils.is_aggroed(arg_5_2)) then
+	if self._dont_target_patrols and AiUtils.is_part_of_patrol(hit_unit) and not AiUtils.is_aggroed(hit_unit) then
 		return false
 	end
 
-	if not (not self._ignore_dead and not ScriptUnit.has_extension(arg_5_2, "health_system") and HEALTH_ALIVE[arg_5_2]) then
+	if self._ignore_dead and ScriptUnit.has_extension(hit_unit, "health_system") and not HEALTH_ALIVE[hit_unit] then
 		return false
 	end
 

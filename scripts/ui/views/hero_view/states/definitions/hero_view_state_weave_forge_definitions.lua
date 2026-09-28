@@ -1,23 +1,24 @@
 -- chunkname: @scripts/ui/views/hero_view/states/definitions/hero_view_state_weave_forge_definitions.lua
 
-local game_start_windows = UISettings.game_start_windows
-local background = game_start_windows.background
-local frame = game_start_windows.frame
-local size = game_start_windows.size
-local spacing = game_start_windows.spacing
-local large_window_frame = game_start_windows.large_window_frame
-local var_0_6 = UIFrameSettings[large_window_frame].texture_sizes.vertical[1]
-local tbl = {
-	size[1] * 3 + spacing * 2 + var_0_6 * 2,
-	size[2] + 80
+local window_default_settings = UISettings.game_start_windows
+local small_window_background = window_default_settings.background
+local small_window_frame = window_default_settings.frame
+local small_window_size = window_default_settings.size
+local small_window_spacing = window_default_settings.spacing
+local large_window_frame = window_default_settings.large_window_frame
+local large_window_frame_width = UIFrameSettings[large_window_frame].texture_sizes.vertical[1]
+local inner_window_size = {
+	small_window_size[1] * 3 + small_window_spacing * 2 + large_window_frame_width * 2,
+	small_window_size[2] + 80
 }
-local tbl_2 = {
-	tbl[1] + 50,
-	tbl[2]
+local window_size = {
+	inner_window_size[1] + 50,
+	inner_window_size[2]
 }
-local str = "menu_frame_11"
-local var_0_10 = UIFrameSettings[str].texture_sizes.vertical[1]
-local tbl_3 = {
+local window_frame_name = "menu_frame_11"
+local window_frame = UIFrameSettings[window_frame_name]
+local window_frame_width = window_frame.texture_sizes.vertical[1]
+local scenegraph_definition = {
 	root = {
 		is_root = true,
 		size = {
@@ -88,7 +89,7 @@ local tbl_3 = {
 		vertical_alignment = "center",
 		parent = "screen",
 		horizontal_alignment = "center",
-		size = tbl_2,
+		size = window_size,
 		position = {
 			0,
 			0,
@@ -99,7 +100,7 @@ local tbl_3 = {
 		vertical_alignment = "center",
 		parent = "screen",
 		horizontal_alignment = "center",
-		size = tbl_2,
+		size = window_size,
 		position = {
 			0,
 			0,
@@ -111,8 +112,8 @@ local tbl_3 = {
 		parent = "window",
 		horizontal_alignment = "center",
 		size = {
-			tbl_2[1] - 5,
-			tbl_2[2] - 5
+			window_size[1] - 5,
+			window_size[2] - 5
 		},
 		position = {
 			0,
@@ -124,7 +125,7 @@ local tbl_3 = {
 		vertical_alignment = "center",
 		parent = "window_frame",
 		horizontal_alignment = "center",
-		size = tbl_2,
+		size = window_size,
 		position = {
 			0,
 			0,
@@ -135,7 +136,7 @@ local tbl_3 = {
 		vertical_alignment = "center",
 		parent = "window",
 		horizontal_alignment = "center",
-		size = tbl,
+		size = inner_window_size,
 		position = {
 			0,
 			0,
@@ -147,7 +148,7 @@ local tbl_3 = {
 		parent = "inner_window",
 		horizontal_alignment = "center",
 		size = {
-			tbl[1],
+			inner_window_size[1],
 			50
 		},
 		position = {
@@ -213,13 +214,13 @@ local tbl_3 = {
 		}
 	}
 }
-local tbl_4 = {
+local windows = {
 	cosmetics_inventory = {
 		class_name = "HeroWindowCosmeticsInventory",
 		name = "cosmetics_inventory"
 	}
 }
-local tbl_5 = {
+local window_layouts = {
 	{
 		sound_event_enter = "play_gui_equipment_button",
 		name = "test",
@@ -228,7 +229,7 @@ local tbl_5 = {
 		windows = {}
 	}
 }
-local tbl_6 = {
+local title_text_style = {
 	use_shadow = true,
 	upper_case = true,
 	localize = false,
@@ -244,14 +245,14 @@ local tbl_6 = {
 		2
 	}
 }
-local flag = true
-local tbl_7 = {
-	window = UIWidgets.create_frame("window_frame", tbl_3.window_frame.size, "menu_frame_11"),
-	exit_button = UIWidgets.create_default_button("exit_button", tbl_3.exit_button.size, nil, nil, Localize("menu_close"), 24, nil, "button_detail_04", 34, flag),
-	back_button = UIWidgets.create_default_button("exit_button", tbl_3.exit_button.size, nil, nil, Localize("menu_back"), 24, nil, "button_detail_04", 34, flag),
+local disable_with_gamepad = true
+local widgets = {
+	window = UIWidgets.create_frame("window_frame", scenegraph_definition.window_frame.size, "menu_frame_11"),
+	exit_button = UIWidgets.create_default_button("exit_button", scenegraph_definition.exit_button.size, nil, nil, Localize("menu_close"), 24, nil, "button_detail_04", 34, disable_with_gamepad),
+	back_button = UIWidgets.create_default_button("exit_button", scenegraph_definition.exit_button.size, nil, nil, Localize("menu_back"), 24, nil, "button_detail_04", 34, disable_with_gamepad),
 	title = UIWidgets.create_simple_texture("frame_title_bg", "title"),
-	title_bg = UIWidgets.create_background("title_bg", tbl_3.title_bg.size, "menu_frame_bg_02"),
-	title_text = UIWidgets.create_simple_text(Localize("menu_weave_forge_title"), "title_text", nil, nil, tbl_6),
+	title_bg = UIWidgets.create_background("title_bg", scenegraph_definition.title_bg.size, "menu_frame_bg_02"),
+	title_text = UIWidgets.create_simple_text(Localize("menu_weave_forge_title"), "title_text", nil, nil, title_text_style),
 	loading_icon = {
 		scenegraph_id = "loading_icon",
 		element = {
@@ -260,16 +261,26 @@ local tbl_7 = {
 					style_id = "texture_id",
 					pass_type = "rotated_texture",
 					texture_id = "texture_id",
-					content_change_function = function (arg_1_0, arg_1_1, arg_1_2, arg_1_3)
+					content_change_function = function (content, style, _, dt)
 						-- function 1
-						local progress = arg_1_1.progress
+						local progress_2 = style.progress
 
-						progress = progress or 0
+						if not progress_2 then
+							-- Nothing
+						end
 
-						local num = (progress + arg_1_3) % 1
+						progress_2 = 0
 
-						arg_1_1.angle = math.pow(2, math.smoothstep(num, 0, 1)) * (math.pi * 2)
-						arg_1_1.progress = num
+						local progress = progress_2
+
+						::label_1_0::
+
+						progress = (progress + dt) % 1
+
+						local angle = math.pow(2, math.smoothstep(progress, 0, 1)) * (math.pi * 2)
+
+						style.angle = angle
+						style.progress = progress
 					end
 				},
 				{
@@ -327,23 +338,23 @@ local tbl_7 = {
 		}
 	}
 }
-local tbl_8 = {
+local animation_definitions = {
 	on_enter = {
 		{
 			name = "fade_in",
 			start_progress = 0,
 			end_progress = 0.3,
-			init = function (arg_2_0, arg_2_1, arg_2_2, arg_2_3)
+			init = function (ui_scenegraph, scenegraph_definition, widgets, params)
 				-- function 2
-				arg_2_3.render_settings.alpha_multiplier = 0
+				params.render_settings.alpha_multiplier = 0
 			end,
-			update = function (arg_3_0, arg_3_1, arg_3_2, arg_3_3, arg_3_4)
+			update = function (ui_scenegraph, scenegraph_definition, widgets, progress, params)
 				-- function 3
-				local easeOutCubic = math.easeOutCubic(arg_3_3)
+				local anim_progress = math.easeOutCubic(progress)
 
-				arg_3_4.render_settings.alpha_multiplier = 1
+				params.render_settings.alpha_multiplier = 1
 			end,
-			on_complete = function (arg_4_0, arg_4_1, arg_4_2, arg_4_3)
+			on_complete = function (ui_scenegraph, scenegraph_definition, widgets, params)
 				-- function 4
 				return
 			end
@@ -354,24 +365,24 @@ local tbl_8 = {
 			name = "fade_out",
 			start_progress = 0,
 			end_progress = 0.3,
-			init = function (arg_5_0, arg_5_1, arg_5_2, arg_5_3)
+			init = function (ui_scenegraph, scenegraph_definition, widgets, params)
 				-- function 5
-				arg_5_3.render_settings.alpha_multiplier = 1
+				params.render_settings.alpha_multiplier = 1
 			end,
-			update = function (arg_6_0, arg_6_1, arg_6_2, arg_6_3, arg_6_4)
+			update = function (ui_scenegraph, scenegraph_definition, widgets, progress, params)
 				-- function 6
-				local easeOutCubic = math.easeOutCubic(arg_6_3)
+				local anim_progress = math.easeOutCubic(progress)
 
-				arg_6_4.render_settings.alpha_multiplier = 1
+				params.render_settings.alpha_multiplier = 1
 			end,
-			on_complete = function (arg_7_0, arg_7_1, arg_7_2, arg_7_3)
+			on_complete = function (ui_scenegraph, scenegraph_definition, widgets, params)
 				-- function 7
 				return
 			end
 		}
 	}
 }
-local tbl_9 = {
+local generic_input_actions = {
 	default = {
 		{
 			input_action = "confirm",
@@ -396,11 +407,11 @@ local tbl_9 = {
 }
 
 return {
-	windows = tbl_4,
-	widgets = tbl_7,
-	window_layouts = tbl_5,
-	scenegraph_definition = tbl_3,
-	animation_definitions = tbl_8,
+	windows = windows,
+	widgets = widgets,
+	window_layouts = window_layouts,
+	scenegraph_definition = scenegraph_definition,
+	animation_definitions = animation_definitions,
 	console_cursor_definition = UIWidgets.create_console_cursor("console_cursor"),
-	generic_input_actions = tbl_9
+	generic_input_actions = generic_input_actions
 }

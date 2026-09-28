@@ -1,6 +1,6 @@
 -- chunkname: @scripts/ui/views/unlock_key_view_definitions.lua
 
-local tbl = {
+local scenegraph_definition = {
 	root = {
 		position = {
 			0,
@@ -143,15 +143,15 @@ local tbl = {
 		}
 	}
 }
-local tbl_2 = {
+local BUTTON_TYPES = {
 	confirm = "(A)",
 	back = "(B)"
 }
 
-local function fn(arg_1_0, arg_1_1)
+local function create_gamepad_button_widget(button_type, scenegraph_id)
 	-- function 1
 	return {
-		element = UIElements.GamepadButton(arg_1_0),
+		element = UIElements.GamepadButton(button_type),
 		content = {
 			texture_click_id = "small_button_gold_selected",
 			texture_id = "small_button_gold_normal",
@@ -161,7 +161,7 @@ local function fn(arg_1_0, arg_1_1)
 			gamepad_button = {
 				is_clicked = 10
 			},
-			button_type_text_field = tbl_2[arg_1_0]
+			button_type_text_field = BUTTON_TYPES[button_type]
 		},
 		style = {
 			text = {
@@ -189,13 +189,13 @@ local function fn(arg_1_0, arg_1_1)
 				}
 			}
 		},
-		scenegraph_id = arg_1_1
+		scenegraph_id = scenegraph_id
 	}
 end
 
-local tbl_3 = {
-	confirm_gamepad_button_widget = fn("confirm", "confirm_gamepad_button"),
-	back_gamepad_button_widget = fn("back", "back_gamepad_button"),
+local widget_definitions = {
+	confirm_gamepad_button_widget = create_gamepad_button_widget("confirm", "confirm_gamepad_button"),
+	back_gamepad_button_widget = create_gamepad_button_widget("back", "back_gamepad_button"),
 	processing_icon = {
 		scenegraph_id = "processing_icon",
 		element = {
@@ -440,7 +440,7 @@ local tbl_3 = {
 		}
 	}
 }
-local tbl_4 = {
+local simple_texture_template = {
 	scenegraph_id = "",
 	element = UIElements.SimpleTexture,
 	content = {
@@ -449,16 +449,16 @@ local tbl_4 = {
 	style = {}
 }
 
-local function fn_2(arg_2_0, arg_2_1)
+local function create_simple_texture_widget(texture_id, scenegraph_id)
 	-- function 2
-	tbl_4.content.texture_id = arg_2_0
-	tbl_4.scenegraph_id = arg_2_1
+	simple_texture_template.content.texture_id = texture_id
+	simple_texture_template.scenegraph_id = scenegraph_id
 
-	return UIWidget.init(tbl_4)
+	return UIWidget.init(simple_texture_template)
 end
 
 return {
-	scenegraph_definition = tbl,
-	widget_definitions = tbl_3,
-	create_simple_texture_widget = fn_2
+	scenegraph_definition = scenegraph_definition,
+	widget_definitions = widget_definitions,
+	create_simple_texture_widget = create_simple_texture_widget
 }

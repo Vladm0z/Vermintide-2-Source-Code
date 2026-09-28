@@ -1,7 +1,7 @@
 -- chunkname: @scripts/managers/backend/statistics_definitions_woods.lua
 
 local player = StatisticsDefinitions.player
-local tbl = {
+local database_names = {
 	"complete_all_helmgart_levels_recruit_we_thornsister",
 	"complete_all_helmgart_levels_veteran_we_thornsister",
 	"complete_all_helmgart_levels_champion_we_thornsister",
@@ -30,32 +30,32 @@ local tbl = {
 	"woods_free_abilities_used"
 }
 
-for i = 1, #tbl do
-	local var_0_2 = tbl[i]
+for i = 1, #database_names do
+	local name = database_names[i]
 
-	player[var_0_2] = {
+	player[name] = {
 		value = 0,
 		source = "player_data",
-		database_name = var_0_2
+		database_name = name
 	}
 end
 
-local tbl_2 = {
+local relevant_careers = {
 	we_thornsister = true
 }
 
-for k, v in pairs(CareerSettings) do
-	if not tbl_2[k] then
-		player.mission_streak[k] = {}
+for career, _ in pairs(CareerSettings) do
+	if relevant_careers[career] then
+		player.mission_streak[career] = {}
 
-		for k_2, v_2 in pairs(LevelSettings) do
-			if not table.contains(UnlockableLevels, k_2) then
-				local str = "mission_streak_" .. k .. "_" .. k_2
+		for level_key, _ in pairs(LevelSettings) do
+			if table.contains(UnlockableLevels, level_key) then
+				local database_name = "mission_streak_" .. career .. "_" .. level_key
 
-				player.mission_streak[k][k_2] = {
+				player.mission_streak[career][level_key] = {
 					value = 0,
 					source = "player_data",
-					database_name = str
+					database_name = database_name
 				}
 			end
 		end

@@ -1,6 +1,6 @@
 -- chunkname: @scripts/entity_system/systems/behaviour/trees/training_dummy_behavior.lua
 
-local training_dummy = BreedActions.training_dummy
+local ACTIONS = BreedActions.training_dummy
 
 BreedBehaviors.training_dummy = {
 	"BTSelector",
@@ -8,7 +8,7 @@ BreedBehaviors.training_dummy = {
 		"BTDummyStaggerAction",
 		name = "stagger",
 		condition = "stagger",
-		action_data = training_dummy.stagger
+		action_data = ACTIONS.stagger
 	},
 	{
 		"BTNilAction",

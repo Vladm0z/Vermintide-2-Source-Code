@@ -1,20 +1,20 @@
 -- chunkname: @scripts/network/smartmatch_xb1.lua
 
-local flag = true
+local DEBUG_SMARTMATCH = true
 
-local function fn()
+local function dprintf()
 	-- function 1
 	return
 end
 
-if not flag then
-	function fn(...)
+if DEBUG_SMARTMATCH then
+	function dprintf(...)
 		-- function 2
 		print("[SmartMatch]", string.format(...))
 	end
 end
 
-local tbl = {
+local HOPPER_PARAMS_LUT = {
 	default_stage_hopper = {
 		"difficulty",
 		"stage"
@@ -43,7 +43,7 @@ local tbl = {
 		"weave_index"
 	}
 }
-local tbl_2 = {
+local HOPPER_PARAM_TYPE_LUT = {
 	network_hash = "string",
 	strict_matchmaking = "number",
 	weave_index = "number",
@@ -54,7 +54,7 @@ local tbl_2 = {
 	difficulty = "number",
 	level = "collection"
 }
-local tbl_3 = {
+local OPTIONAL_HOPPER_PARAM_LUT = {
 	default_stage_hopper = {},
 	new_stage_hopper = {
 		strict_matchmaking = true
@@ -69,32 +69,32 @@ local tbl_3 = {
 		powerlevel = true
 	}
 }
-local tbl_4 = {
-	[SmartMatchStatus.UNKNOWN] = "UNKNOWN",
-	[SmartMatchStatus.SEARCHING] = "SEARCHING",
-	[SmartMatchStatus.EXPIRED] = "EXPIRED",
-	[SmartMatchStatus.FOUND] = "FOUND"
-}
-local tbl_5 = {
-	[MultiplayerSession.READY] = "READY",
-	[MultiplayerSession.WORKING] = "WORKING",
-	[MultiplayerSession.SHUTDOWN] = "SHUTDOWN",
-	[MultiplayerSession.BROKEN] = "BROKEN"
-}
+local SMARTMATCH_STATUS_LUT = {}
 
+SMARTMATCH_STATUS_LUT[SmartMatchStatus.UNKNOWN] = "UNKNOWN"
+SMARTMATCH_STATUS_LUT[SmartMatchStatus.SEARCHING] = "SEARCHING"
+SMARTMATCH_STATUS_LUT[SmartMatchStatus.EXPIRED] = "EXPIRED"
+SMARTMATCH_STATUS_LUT[SmartMatchStatus.FOUND] = "FOUND"
+
+local SMARTMATCH_SESSION_STATUS_LUT = {}
+
+SMARTMATCH_SESSION_STATUS_LUT[MultiplayerSession.READY] = "READY"
+SMARTMATCH_SESSION_STATUS_LUT[MultiplayerSession.WORKING] = "WORKING"
+SMARTMATCH_SESSION_STATUS_LUT[MultiplayerSession.SHUTDOWN] = "SHUTDOWN"
+SMARTMATCH_SESSION_STATUS_LUT[MultiplayerSession.BROKEN] = "BROKEN"
 SmartMatch = class(SmartMatch)
 
-SmartMatch.init = function (self, arg_3_1, arg_3_2, arg_3_3, arg_3_4)
+SmartMatch.init = function (self, hopper_name, is_host, ticket_params, timeout)
 	-- function 3
-	self._hopper_name = arg_3_1 or LobbyInternal.HOPPER_NAME
-	self._is_host = arg_3_2 or false
-	self._ticket_params = arg_3_3 or {}
-	self._timout = arg_3_4 or 90
+	self._hopper_name = not not hopper_name or not not LobbyInternal.HOPPER_NAME
+	self._is_host = not not is_host or not not false
+	self._ticket_params = not not ticket_params or not not {}
+	self._timout = not not timeout or not not 90
 	self._ticket_id = nil
 	self._user_id = Managers.account:user_id()
 
-	if not table.is_empty(self._ticket_params) then
-		fn("No params sent to SmartMatch")
+	if table.is_empty(self._ticket_params) then
+		dprintf("No params sent to SmartMatch")
 	end
 
 	self:_create_smartmatch_session()
@@ -106,16 +106,16 @@ end
 
 SmartMatch._create_smartmatch_session = function (self)
 	-- function 4
-	local guid = Application.guid()
-	local _hopper_name = self._hopper_name
-	local SMARTMATCH_SESSION_TEMPLATE_NAME = LobbyInternal.SMARTMATCH_SESSION_TEMPLATE_NAME
-	local var_4_3
-	local num = 0
-	local num_2 = 0
-	local var_4_6
+	local session_name = Application.guid()
+	local hopper_name = self._hopper_name
+	local session_template_name = LobbyInternal.SMARTMATCH_SESSION_TEMPLATE_NAME
+	local keywords
+	local min_num_members = 0
+	local max_num_members = 0
+	local guest_user_ids
 
-	self._session_id = Network.create_multiplayer_session_host(self._user_id, guid, SMARTMATCH_SESSION_TEMPLATE_NAME, var_4_3, num, num_2, var_4_6)
-	self._session_name = guid
+	self._session_id = Network.create_multiplayer_session_host(self._user_id, session_name, session_template_name, keywords, min_num_members, max_num_members, guest_user_ids)
+	self._session_name = session_name
 end
 
 SmartMatch._handle_smartmatch_session = function (self)
@@ -123,12 +123,28 @@ SmartMatch._handle_smartmatch_session = function (self)
 	local status = MultiplayerSession.status(self._session_id)
 
 	if status ~= self._status then
-		local var_5_1 = fn
+		local var_5_0 = dprintf
 		local str = "Session status changed from: %s to %s"
-		local var_5_3
+		local var_5_2
 
-		if not self._status then
-			var_5_3 = tbl_5[self._status]
+		if self._status then
+			var_5_2 = SMARTMATCH_SESSION_STATUS_LUT[self._status]
+
+			if not var_5_2 then
+				-- Nothing
+			end
+		end
+
+		var_5_2 = "NONE"
+
+		do
+			local var_5_3
+		end
+
+		::label_5_0::
+
+		if status then
+			var_5_3 = SMARTMATCH_SESSION_STATUS_LUT[status]
 
 			if not var_5_3 then
 				-- Nothing
@@ -137,25 +153,9 @@ SmartMatch._handle_smartmatch_session = function (self)
 
 		var_5_3 = "NONE"
 
-		do
-			local var_5_4
-		end
-
-		::label_5_0::
-
-		if not status then
-			var_5_4 = tbl_5[status]
-
-			if not var_5_4 then
-				-- Nothing
-			end
-		end
-
-		var_5_4 = "NONE"
-
 		::label_5_1::
 
-		var_5_1(str, var_5_3, var_5_4)
+		var_5_0(str, var_5_2, var_5_3)
 
 		self._status = status
 		self._ready = status == MultiplayerSession.READY
@@ -163,7 +163,7 @@ SmartMatch._handle_smartmatch_session = function (self)
 	end
 end
 
-SmartMatch._start_smartmatch = function (self, arg_6_1)
+SmartMatch._start_smartmatch = function (self, dt)
 	-- function 6
 	if not self._ready then
 		return
@@ -171,7 +171,7 @@ SmartMatch._start_smartmatch = function (self, arg_6_1)
 
 	local num
 
-	if not self._is_host then
+	if self._is_host then
 		num = self._timout * 10
 
 		if not num then
@@ -181,13 +181,15 @@ SmartMatch._start_smartmatch = function (self, arg_6_1)
 
 	num = self._timout
 
+	local timeout_in_seconds = num
+
 	do
 		local ALWAYS
 	end
 
 	::label_6_0::
 
-	if not self._is_host then
+	if self._is_host then
 		ALWAYS = PreserveSessionMode.ALWAYS
 
 		if not ALWAYS then
@@ -197,131 +199,133 @@ SmartMatch._start_smartmatch = function (self, arg_6_1)
 
 	ALWAYS = PreserveSessionMode.NEVER
 
+	local preserve_session_mode = ALWAYS
+
 	::label_6_1::
 
-	local var_6_2 = fn
+	local var_6_2 = dprintf
 	local str = "PreserveSessionMode %s. is host %s"
 	local flag
 
-	flag = ALWAYS ~= PreserveSessionMode.ALWAYS or not "ALWAYS" or "NEVER"
+	flag = (preserve_session_mode ~= PreserveSessionMode.ALWAYS or not "ALWAYS") and not not "NEVER"
 
 	local flag_2
 
-	flag_2 = not self._is_host and "TRUE" and "FALSE"
+	flag_2 = (not self._is_host or not "TRUE") and not not "FALSE"
 
 	var_6_2(str, flag, flag_2)
 
-	local var_6_6
+	local ticket_param_str
 
-	if not self._ticket_params then
-		var_6_6 = self:_convert_to_json(self._hopper_name, self._ticket_params)
+	if self._ticket_params then
+		ticket_param_str = self:_convert_to_json(self._hopper_name, self._ticket_params)
 
-		fn("Ticket Params: %s Hopper Name: %s", var_6_6, self._hopper_name)
+		dprintf("Ticket Params: %s Hopper Name: %s", ticket_param_str, self._hopper_name)
 	end
 
-	local var_6_7 = fn
+	local var_6_6 = dprintf
 	local str_2 = "Starting SmartMatch with session_id: %s Hopper name: %s PreserveSessionMode: %s Ticket params: %s Timeout: %i"
-	local var_6_9 = tostring(self._session_id)
+	local var_6_8 = tostring(self._session_id)
 	local _hopper_name = self._hopper_name
 	local flag_3
 
-	flag_3 = ALWAYS ~= PreserveSessionMode.ALWAYS or not "ALWAYS" or "NEVER"
+	flag_3 = (preserve_session_mode ~= PreserveSessionMode.ALWAYS or not "ALWAYS") and not not "NEVER"
 
-	var_6_7(str_2, var_6_9, _hopper_name, flag_3, var_6_6, num)
-	MultiplayerSession.start_smartmatch(self._session_id, self._hopper_name, num, ALWAYS, var_6_6)
+	var_6_6(str_2, var_6_8, _hopper_name, flag_3, ticket_param_str, timeout_in_seconds)
+	MultiplayerSession.start_smartmatch(self._session_id, self._hopper_name, timeout_in_seconds, preserve_session_mode, ticket_param_str)
 
 	self._smartmatch_started = true
 	self._state = "_check_smartmatch_result"
 end
 
-SmartMatch._check_smartmatch_result = function (self, arg_7_1)
+SmartMatch._check_smartmatch_result = function (self, dt)
 	-- function 7
 	if not self._ready then
 		return
 	end
 
-	local start_smartmatch_result, var_7_1 = MultiplayerSession.start_smartmatch_result(self._session_id)
+	local ticket_id, estimated_waiting_time = MultiplayerSession.start_smartmatch_result(self._session_id)
 
-	if not (not self._ticket_id and self._ticket_id == start_smartmatch_result and start_smartmatch_result == "") then
-		fn("Started smartmatch with ticket_id: %s", start_smartmatch_result)
+	if (not self._ticket_id or self._ticket_id ~= ticket_id) and ticket_id ~= "" then
+		dprintf("Started smartmatch with ticket_id: %s", ticket_id)
 
-		self._ticket_id = start_smartmatch_result
+		self._ticket_id = ticket_id
 	end
 
 	if not self._estimated_waiting_time then
-		fn("[Start] Estimated waiting time: %s", var_7_1)
+		dprintf("[Start] Estimated waiting time: %s", estimated_waiting_time)
 
-		self._estimated_waiting_time = var_7_1
+		self._estimated_waiting_time = estimated_waiting_time
 	end
 
 	local smartmatch_status = MultiplayerSession.smartmatch_status(self._session_id)
-	local smartmatch_result, var_7_4, var_7_5 = MultiplayerSession.smartmatch_result(self._session_id)
+	local session_name, session_template_name, estimated_waiting_time = MultiplayerSession.smartmatch_result(self._session_id)
 
-	self._estimated_waiting_time = not (var_7_5 > 0) or not var_7_5 or self._estimated_waiting_time
+	self._estimated_waiting_time = (not (estimated_waiting_time > 0) or not estimated_waiting_time) and not not self._estimated_waiting_time
 
 	if self._smartmatch_status ~= smartmatch_status then
-		if not flag then
-			local var_7_6 = fn
+		if DEBUG_SMARTMATCH then
+			local var_7_0 = dprintf
 			local str = "SmartMatch Status Changed from %s to %s"
-			local var_7_8
+			local var_7_2
 
-			if not self._smartmatch_status then
-				var_7_8 = tbl_4[self._smartmatch_status]
+			if self._smartmatch_status then
+				var_7_2 = SMARTMATCH_STATUS_LUT[self._smartmatch_status]
 
-				if not var_7_8 then
+				if not var_7_2 then
 					-- Nothing
 				end
 			end
 
-			var_7_8 = "NONE"
+			var_7_2 = "NONE"
 
 			do
-				local var_7_9
+				local var_7_3
 			end
 
 			::label_7_0::
 
-			if not smartmatch_status then
-				var_7_9 = tbl_4[smartmatch_status]
+			if smartmatch_status then
+				var_7_3 = SMARTMATCH_STATUS_LUT[smartmatch_status]
 
-				if not var_7_9 then
+				if not var_7_3 then
 					-- Nothing
 				end
 			end
 
-			var_7_9 = "NONE"
+			var_7_3 = "NONE"
 
 			::label_7_1::
 
-			var_7_6(str, var_7_8, var_7_9)
+			var_7_0(str, var_7_2, var_7_3)
 
-			if smartmatch_result ~= "" then
-				fn("Current session name: %s. Smartmatch session name: %s. Smartmatch session template: %s", self._session_name, smartmatch_result, var_7_4)
+			if session_name ~= "" then
+				dprintf("Current session name: %s. Smartmatch session name: %s. Smartmatch session template: %s", self._session_name, session_name, session_template_name)
 			end
 		end
 
 		self._smartmatch_status = smartmatch_status
 
 		if self._smartmatch_status == SmartMatchStatus.FOUND then
-			local flag_2 = smartmatch_result == self._session_name
-			local var_7_11 = fn
+			local is_my_own_session = session_name == self._session_name
+			local var_7_4 = dprintf
 			local str_2 = "Found session - Session name: %s %s Session template: %s"
-			local var_7_13 = smartmatch_result
-			local flag_3
+			local var_7_6 = session_name
+			local flag
 
-			flag_3 = not flag_2 and "(My own session)" and ""
+			flag = (not is_my_own_session or not "(My own session)") and not not ""
 
-			var_7_11(str_2, var_7_13, flag_3, var_7_4)
+			var_7_4(str_2, var_7_6, flag, session_template_name)
 
-			self._found_session_name = smartmatch_result
-			self._found_session_template = var_7_4
+			self._found_session_name = session_name
+			self._found_session_template = session_template_name
 			self._done = true
-			self._failed = flag_2
+			self._failed = is_my_own_session
 
-			if not self._failed then
-				fn("Smartmatch failed because: FOUND_SESSION == MY_SESSION")
+			if self._failed then
+				dprintf("Smartmatch failed because: FOUND_SESSION == MY_SESSION")
 			else
-				fn("Smartmatch SUCCESS!")
+				dprintf("Smartmatch SUCCESS!")
 			end
 
 			self._state = "_smartmatch_done"
@@ -329,46 +333,46 @@ SmartMatch._check_smartmatch_result = function (self, arg_7_1)
 			self._done = true
 			self._failed = true
 
-			fn("Smartmatch failed because: TIMEOUT")
+			dprintf("Smartmatch failed because: TIMEOUT")
 
 			self._state = "_smartmatch_done"
 		end
 	end
 end
 
-SmartMatch._smartmatch_done = function (arg_8_0, arg_8_1)
+SmartMatch._smartmatch_done = function (self, dt)
 	-- function 8
 	return
 end
 
-SmartMatch._convert_to_json = function (arg_9_0, arg_9_1, arg_9_2)
+SmartMatch._convert_to_json = function (self, hopper_name, params)
 	-- function 9
-	local var_9_0 = tbl[arg_9_1]
-	local var_9_1 = tbl_3[arg_9_1]
+	local lut_variables = HOPPER_PARAMS_LUT[hopper_name]
+	local optional_lut_variables = OPTIONAL_HOPPER_PARAM_LUT[hopper_name]
 
-	fassert(var_9_0, "[SmartMatch::_convert_to_json] No such hopper_name:  %s", arg_9_1)
+	fassert(lut_variables, "[SmartMatch::_convert_to_json] No such hopper_name:  %s", hopper_name)
 
 	local str = ""
 
-	for i, v in ipairs(var_9_0) do
-		local var_9_3 = tbl_2[v]
-		local var_9_4 = arg_9_2[v]
+	for _, var in ipairs(lut_variables) do
+		local var_type = HOPPER_PARAM_TYPE_LUT[var]
+		local val = params[var]
 
-		fassert(var_9_4 or var_9_1[v], "[SmartMatch::_convert_to_json] Missing variable [%s] in params", v)
+		fassert(not not val or not not optional_lut_variables[var], "[SmartMatch::_convert_to_json] Missing variable [%s] in params", var)
 
-		if not var_9_4 then
-			if var_9_3 == "number" then
-				str = str .. string.format("%q:%i,", v, var_9_4)
-			elseif var_9_3 == "string" then
-				str = str .. string.format("%q:%q,", v, var_9_4)
-			elseif var_9_3 == "collection" then
-				str = str .. string.format("%q:[", v)
+		if val then
+			if var_type == "number" then
+				str = str .. string.format("%q:%i,", var, val)
+			elseif var_type == "string" then
+				str = str .. string.format("%q:%q,", var, val)
+			elseif var_type == "collection" then
+				str = str .. string.format("%q:[", var)
 
-				for i_2, v_2 in ipairs(var_9_4) do
-					if i_2 == 1 then
-						str = str .. string.format("%q", tostring(v_2))
+				for idx, value in ipairs(val) do
+					if idx == 1 then
+						str = str .. string.format("%q", tostring(value))
 					else
-						str = str .. string.format(",%q", tostring(v_2))
+						str = str .. string.format(",%q", tostring(value))
 					end
 				end
 
@@ -380,22 +384,22 @@ SmartMatch._convert_to_json = function (arg_9_0, arg_9_1, arg_9_2)
 	if str == "" then
 		return
 	else
-		local sub = string.sub(str, 1, -2)
+		str = string.sub(str, 1, -2)
 
-		print("Hopper name:", arg_9_1, "JSON_DATA:", string.format("{%s}", sub))
+		print("Hopper name:", hopper_name, "JSON_DATA:", string.format("{%s}", str))
 
-		return string.format("{%s}", sub)
+		return string.format("{%s}", str)
 	end
 end
 
-SmartMatch.update = function (self, arg_10_1)
+SmartMatch.update = function (self, dt)
 	-- function 10
 	self:_handle_smartmatch_session()
-	self[self._state](self, arg_10_1)
+	self[self._state](self, dt)
 
 	local _ready = self._ready
 
-	_ready = not _ready and not self._done
+	_ready = not not _ready and not not not self._done
 
 	return _ready
 end
@@ -417,7 +421,7 @@ end
 
 SmartMatch.destroy = function (self)
 	-- function 14
-	local tbl = {
+	local session_data = {
 		destroy_session = true,
 		state = "_cleanup_ticket",
 		user_id = self._user_id,
@@ -426,5 +430,5 @@ SmartMatch.destroy = function (self)
 		session_name = self._session_name
 	}
 
-	Managers.account:add_session_to_cleanup(tbl)
+	Managers.account:add_session_to_cleanup(session_data)
 end

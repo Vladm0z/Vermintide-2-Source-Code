@@ -2,7 +2,7 @@
 
 local AttackTemplates = AttackTemplates
 
-AttackTemplates = AttackTemplates or {}
+AttackTemplates = not not AttackTemplates or not not {}
 AttackTemplates = AttackTemplates
 AttackTemplates.pull_smiter = {
 	stagger_value = 2,

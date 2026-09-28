@@ -2,18 +2,27 @@
 
 local testify = script_data.testify
 
-testify = not testify and require("scripts/entity_system/systems/cutscene/cutscene_system_testify")
+if testify then
+	-- Nothing
+end
+
+testify = require("scripts/entity_system/systems/cutscene/cutscene_system_testify")
+
+local cut_scene_system_testify = testify
+
+::label_0_0::
+
 CutsceneSystem = class(CutsceneSystem, ExtensionSystemBase)
 
-local tbl = {
+local extensions = {
 	"CutsceneCamera"
 }
 
-CutsceneSystem.init = function (self, arg_1_1, arg_1_2)
+CutsceneSystem.init = function (self, context, name)
 	-- function 1
-	CutsceneSystem.super.init(self, arg_1_1, arg_1_2, tbl)
+	CutsceneSystem.super.init(self, context, name, extensions)
 
-	self.world = arg_1_1.world
+	self.world = context.world
 	self.cameras = {}
 	self.active_camera = nil
 	self.ingame_hud_enabled = nil
@@ -32,48 +41,49 @@ CutsceneSystem.destroy = function (self)
 	self.active_camera = nil
 	self.ui_event_queue = nil
 
-	if not self._should_hide_loading_icon then
+	if self._should_hide_loading_icon then
 		Managers.transition:hide_loading_icon()
 
 		self._should_hide_loading_icon = nil
 	end
 end
 
-CutsceneSystem.on_add_extension = function (arg_3_0, arg_3_1, arg_3_2, arg_3_3, arg_3_4)
+CutsceneSystem.on_add_extension = function (self, world, unit, extension_name, extension_init_data)
 	-- function 3
-	local on_add_extension = CutsceneSystem.super.on_add_extension(arg_3_0, arg_3_1, arg_3_2, arg_3_3, arg_3_4)
+	local extension = CutsceneSystem.super.on_add_extension(self, world, unit, extension_name, extension_init_data)
 
-	arg_3_0.cameras[arg_3_2] = on_add_extension
+	self.cameras[unit] = extension
 
-	return on_add_extension
+	return extension
 end
 
-CutsceneSystem.on_remove_extension = function (self, arg_4_1, arg_4_2)
+CutsceneSystem.on_remove_extension = function (self, unit, extension_name)
 	-- function 4
-	local var_4_0 = self.cameras[arg_4_1]
+	local camera_to_remove = self.cameras[unit]
+	local active_camera = self.active_camera
 
-	if self.active_camera == var_4_0 then
-		local var_4_1
+	if active_camera == camera_to_remove then
+		active_camera = nil
 	end
 
-	local var_4_2
+	camera_to_remove = nil
 
-	CutsceneSystem.super.on_remove_extension(self, arg_4_1, arg_4_2)
+	CutsceneSystem.super.on_remove_extension(self, unit, extension_name)
 end
 
 CutsceneSystem.update = function (self)
 	-- function 5
 	local active_camera = self.active_camera
 
-	if not active_camera then
+	if active_camera then
 		self:set_first_person_mode(false)
 		active_camera:update()
 	end
 
 	self:handle_loading_icon()
 
-	if not script_data.testify then
-		Testify:poll_requests_through_handler(testify, self)
+	if script_data.testify then
+		Testify:poll_requests_through_handler(cut_scene_system_testify, self)
 	end
 end
 
@@ -81,7 +91,7 @@ CutsceneSystem.unsafe_entity_update = function (self)
 	-- function 6
 	local active_camera = self.active_camera
 
-	if not active_camera then
+	if active_camera then
 		active_camera:unsafe_entity_update()
 	end
 end
@@ -93,9 +103,9 @@ end
 
 CutsceneSystem.handle_loading_icon = function (self)
 	-- function 8
-	if not self.active_camera then
+	if self.active_camera then
 		Managers.transition:show_loading_icon()
-	elseif self.active_camera or not self._should_hide_loading_icon then
+	elseif not self.active_camera and self._should_hide_loading_icon then
 		Managers.transition:hide_loading_icon()
 
 		self._should_hide_loading_icon = nil
@@ -104,11 +114,11 @@ end
 
 CutsceneSystem.skip_pressed = function (self)
 	-- function 9
-	if not self.active_camera and not script_data.skippable_cutscenes then
-		if not self.event_on_skip then
-			local current_level = LevelHelper:current_level(self.world)
+	if self.active_camera and script_data.skippable_cutscenes then
+		if self.event_on_skip then
+			local level = LevelHelper:current_level(self.world)
 
-			Level.trigger_event(current_level, self.event_on_skip)
+			Level.trigger_event(level, self.event_on_skip)
 		end
 
 		self.event_on_skip = nil
@@ -118,46 +128,47 @@ CutsceneSystem.skip_pressed = function (self)
 	end
 end
 
-CutsceneSystem.set_first_person_mode = function (arg_10_0, arg_10_1)
+CutsceneSystem.set_first_person_mode = function (self, enabled)
 	-- function 10
-	local player_unit = Managers.player:local_player().player_unit
+	local local_player = Managers.player:local_player()
+	local player_unit = local_player.player_unit
 
-	if not Unit.alive(player_unit) then
-		local extension = ScriptUnit.extension(player_unit, "status_system")
+	if Unit.alive(player_unit) then
+		local status_extension = ScriptUnit.extension(player_unit, "status_system")
 
-		if not (not arg_10_1 and extension:is_disabled()) then
-			local extension_2 = ScriptUnit.extension(player_unit, "first_person_system")
+		if not enabled or not status_extension:is_disabled() then
+			local first_person_extension = ScriptUnit.extension(player_unit, "first_person_system")
 
-			if arg_10_1 ~= extension_2.first_person_mode then
-				extension_2:set_first_person_mode(arg_10_1)
+			if enabled ~= first_person_extension.first_person_mode then
+				first_person_extension:set_first_person_mode(enabled)
 			end
 		end
 	end
 end
 
-CutsceneSystem.flow_cb_activate_cutscene_camera = function (self, arg_11_1, arg_11_2, arg_11_3, arg_11_4)
+CutsceneSystem.flow_cb_activate_cutscene_camera = function (self, camera_unit, transition_data, ingame_hud_enabled, letterbox_enabled)
 	-- function 11
 	if not self.active_camera then
 		self:set_first_person_mode(false)
 	end
 
-	local var_11_0 = self.cameras[arg_11_1]
+	local camera = self.cameras[camera_unit]
 
-	var_11_0:activate(arg_11_2)
+	camera:activate(transition_data)
 
-	self.active_camera = var_11_0
-	self.ingame_hud_enabled = arg_11_3
+	self.active_camera = camera
+	self.ingame_hud_enabled = ingame_hud_enabled
 	self._should_hide_loading_icon = true
 
-	if not IS_PS4 then
+	if IS_PS4 then
 		Managers.state.event:trigger("realtime_multiplay", false)
 	end
 
-	if IS_WINDOWS or not Managers.account:should_throttle() then
+	if not IS_WINDOWS and Managers.account:should_throttle() then
 		Application.set_time_step_policy("throttle", 30)
 	end
 
-	pdArray.push_back2(self.ui_event_queue, "set_letterbox_enabled", arg_11_4)
+	pdArray.push_back2(self.ui_event_queue, "set_letterbox_enabled", letterbox_enabled)
 end
 
 CutsceneSystem.flow_cb_deactivate_cutscene_cameras = function (self)
@@ -167,43 +178,43 @@ CutsceneSystem.flow_cb_deactivate_cutscene_cameras = function (self)
 	self.active_camera = nil
 	self.ingame_hud_enabled = true
 
-	if not self._should_hide_loading_icon then
+	if self._should_hide_loading_icon then
 		Managers.transition:hide_loading_icon()
 
 		self._should_hide_loading_icon = nil
 	end
 
-	if not IS_PS4 then
+	if IS_PS4 then
 		Managers.state.event:trigger("realtime_multiplay", true)
 	end
 
-	if IS_WINDOWS or not Managers.account:should_throttle() then
+	if not IS_WINDOWS and Managers.account:should_throttle() then
 		Application.set_time_step_policy("no_throttle")
 	end
 
 	pdArray.push_back2(self.ui_event_queue, "set_letterbox_enabled", false)
 end
 
-CutsceneSystem.flow_cb_activate_cutscene_logic = function (self, arg_13_1, arg_13_2, arg_13_3)
+CutsceneSystem.flow_cb_activate_cutscene_logic = function (self, player_input_enabled, event_on_activate, event_on_skip)
 	-- function 13
-	if not arg_13_2 then
-		local current_level = LevelHelper:current_level(self.world)
+	if event_on_activate then
+		local level = LevelHelper:current_level(self.world)
 
-		Level.trigger_event(current_level, arg_13_2)
+		Level.trigger_event(level, event_on_activate)
 	end
 
-	self.event_on_skip = arg_13_3
+	self.event_on_skip = event_on_skip
 	self.cutscene_started = true
 
-	pdArray.push_back2(self.ui_event_queue, "set_player_input_enabled", arg_13_1)
+	pdArray.push_back2(self.ui_event_queue, "set_player_input_enabled", player_input_enabled)
 end
 
-CutsceneSystem.flow_cb_deactivate_cutscene_logic = function (self, arg_14_1)
+CutsceneSystem.flow_cb_deactivate_cutscene_logic = function (self, event_on_deactivate)
 	-- function 14
-	if not arg_14_1 then
-		local current_level = LevelHelper:current_level(self.world)
+	if event_on_deactivate then
+		local level = LevelHelper:current_level(self.world)
 
-		Level.trigger_event(current_level, arg_14_1)
+		Level.trigger_event(level, event_on_deactivate)
 	end
 
 	self.event_on_skip = nil
@@ -211,54 +222,54 @@ CutsceneSystem.flow_cb_deactivate_cutscene_logic = function (self, arg_14_1)
 	pdArray.push_back2(self.ui_event_queue, "set_player_input_enabled", true)
 end
 
-CutsceneSystem.flow_cb_cutscene_effect = function (self, arg_15_1, arg_15_2)
+CutsceneSystem.flow_cb_cutscene_effect = function (self, name, flow_params)
 	-- function 15
-	if arg_15_1 == "fx_fade" then
-		local tbl = {
-			arg_15_2.fade_in_time,
-			arg_15_2.hold_time,
-			arg_15_2.fade_out_time,
-			arg_15_2.color
+	if name == "fx_fade" then
+		local args = {
+			flow_params.fade_in_time,
+			flow_params.hold_time,
+			flow_params.fade_out_time,
+			flow_params.color
 		}
 
-		pdArray.push_back2(self.ui_event_queue, arg_15_1, tbl)
+		pdArray.push_back2(self.ui_event_queue, name, args)
 
 		return
-	elseif arg_15_1 == "fx_text_popup" then
-		local tbl_2 = {
-			arg_15_2.fade_in_time,
-			arg_15_2.hold_time,
-			arg_15_2.fade_out_time,
-			arg_15_2.text
+	elseif name == "fx_text_popup" then
+		local args = {
+			flow_params.fade_in_time,
+			flow_params.hold_time,
+			flow_params.fade_out_time,
+			flow_params.text
 		}
 
-		pdArray.push_back2(self.ui_event_queue, arg_15_1, tbl_2)
+		pdArray.push_back2(self.ui_event_queue, name, args)
 
 		return
 	end
 
-	fassert(false, "[CutsceneSystem] Tried to register unknown cutsene effect named %q from flow", arg_15_1)
+	fassert(false, "[CutsceneSystem] Tried to register unknown cutsene effect named %q from flow", name)
 end
 
 CutsceneSystem.has_intro_cutscene_finished_playing = function (self)
 	-- function 16
 	local cutscene_started = self.cutscene_started
 
-	cutscene_started = not cutscene_started and self.ingame_hud_enabled
+	cutscene_started = not not cutscene_started and not not self.ingame_hud_enabled
 
 	return cutscene_started
 end
 
-CutsceneSystem.fade_game_logo = function (self, arg_17_1, arg_17_2)
+CutsceneSystem.fade_game_logo = function (self, is_fade_in, time)
 	-- function 17
-	if not arg_17_1 then
+	if is_fade_in then
 		self.fade_in_game_logo = true
-		self.fade_in_game_logo_time = arg_17_2
+		self.fade_in_game_logo_time = time
 		self.fade_out_game_logo = nil
 		self.fade_out_game_logo_time = nil
 	else
 		self.fade_out_game_logo = true
-		self.fade_out_game_logo_time = arg_17_2
+		self.fade_out_game_logo_time = time
 		self.fade_in_game_logo = nil
 		self.fade_in_game_logo_time = nil
 	end

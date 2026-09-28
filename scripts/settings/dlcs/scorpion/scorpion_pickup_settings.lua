@@ -1,6 +1,8 @@
 -- chunkname: @scripts/settings/dlcs/scorpion/scorpion_pickup_settings.lua
 
-DLCSettings.scorpion.pickups = {
+local settings = DLCSettings.scorpion
+
+settings.pickups = {
 	ammo = {
 		ammo_throwing_axe_01_t2_magic_01 = {
 			only_once = true,
@@ -15,17 +17,17 @@ DLCSettings.scorpion.pickups = {
 			consumable_item = true,
 			local_pickup_sound = true,
 			hud_description = "interaction_ammunition_axe",
-			can_interact_func = function (arg_1_0, arg_1_1, arg_1_2)
+			can_interact_func = function (interactor_unit, interactable_unit, data)
 				-- function 1
-				local has_extension = ScriptUnit.has_extension(arg_1_0, "inventory_system")
+				local inventory_extension = ScriptUnit.has_extension(interactor_unit, "inventory_system")
 
-				return not has_extension and has_extension:has_ammo_consuming_weapon_equipped("throwing_axe")
+				return not not inventory_extension and not not inventory_extension:has_ammo_consuming_weapon_equipped("throwing_axe")
 			end,
-			outline_available_func = function (arg_2_0)
+			outline_available_func = function (local_player_unit)
 				-- function 2
-				local has_extension = ScriptUnit.has_extension(arg_2_0, "inventory_system")
+				local inventory_extension = ScriptUnit.has_extension(local_player_unit, "inventory_system")
 
-				return not has_extension and has_extension:has_ammo_consuming_weapon_equipped("throwing_axe")
+				return not not inventory_extension and not not inventory_extension:has_ammo_consuming_weapon_equipped("throwing_axe")
 			end
 		},
 		link_ammo_throwing_axe_01_t2_magic_01 = {
@@ -41,17 +43,17 @@ DLCSettings.scorpion.pickups = {
 			consumable_item = true,
 			local_pickup_sound = true,
 			hud_description = "interaction_ammunition_axe",
-			can_interact_func = function (arg_3_0, arg_3_1, arg_3_2)
+			can_interact_func = function (interactor_unit, interactable_unit, data)
 				-- function 3
-				local has_extension = ScriptUnit.has_extension(arg_3_0, "inventory_system")
+				local inventory_extension = ScriptUnit.has_extension(interactor_unit, "inventory_system")
 
-				return not has_extension and has_extension:has_ammo_consuming_weapon_equipped("throwing_axe")
+				return not not inventory_extension and not not inventory_extension:has_ammo_consuming_weapon_equipped("throwing_axe")
 			end,
-			outline_available_func = function (arg_4_0)
+			outline_available_func = function (local_player_unit)
 				-- function 4
-				local has_extension = ScriptUnit.has_extension(arg_4_0, "inventory_system")
+				local inventory_extension = ScriptUnit.has_extension(local_player_unit, "inventory_system")
 
-				return not has_extension and has_extension:has_ammo_consuming_weapon_equipped("throwing_axe")
+				return not not inventory_extension and not not inventory_extension:has_ammo_consuming_weapon_equipped("throwing_axe")
 			end
 		}
 	}

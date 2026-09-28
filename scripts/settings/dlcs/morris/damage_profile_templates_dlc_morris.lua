@@ -1,6 +1,6 @@
 -- chunkname: @scripts/settings/dlcs/morris/damage_profile_templates_dlc_morris.lua
 
-local tbl = {
+local damage_templates = {
 	armor_breaker = {
 		charge_value = "light_attack",
 		no_stagger_damage_reduction_ranged = true,
@@ -1018,10 +1018,10 @@ local tbl = {
 	}
 }
 
-tbl.we_deus_01_special_charged = table.clone(tbl.we_deus_01_fast)
-tbl.we_deus_01_special_charged.default_target.dot_template_name = "we_deus_01_dot_special_charged"
-tbl.we_deus_01_charged = table.clone(tbl.we_deus_01_fast)
-tbl.we_deus_01_charged.default_target.dot_template_name = "we_deus_01_dot_charged"
+damage_templates.we_deus_01_special_charged = table.clone(damage_templates.we_deus_01_fast)
+damage_templates.we_deus_01_special_charged.default_target.dot_template_name = "we_deus_01_dot_special_charged"
+damage_templates.we_deus_01_charged = table.clone(damage_templates.we_deus_01_fast)
+damage_templates.we_deus_01_charged.default_target.dot_template_name = "we_deus_01_dot_charged"
 DamageProfileTemplates.dr_deus_01 = {
 	charge_value = "projectile",
 	no_stagger_damage_reduction_ranged = true,
@@ -1134,16 +1134,16 @@ DamageProfileTemplates.dr_deus_01_glance.default_target.power_distribution.attac
 DamageProfileTemplates.dr_deus_01_glance.default_target.power_distribution.impact = 1
 DamageProfileTemplates.dr_deus_01_glance.default_target.attack_template = "drakegun_glance"
 DamageProfileTemplates.dr_deus_01_glance.default_target.damage_type = "grenade_glance"
-DamageProfileTemplates.deus_relic_small_explosion = table.clone(tbl.we_deus_01_small_explosion)
+DamageProfileTemplates.deus_relic_small_explosion = table.clone(damage_templates.we_deus_01_small_explosion)
 DamageProfileTemplates.deus_relic_small_explosion.default_target.dot_template_name = nil
-DamageProfileTemplates.deus_relic_small_explosion_glance = table.clone(tbl.we_deus_01_small_explosion_glance)
+DamageProfileTemplates.deus_relic_small_explosion_glance = table.clone(damage_templates.we_deus_01_small_explosion_glance)
 DamageProfileTemplates.deus_relic_small_explosion_glance.default_target.dot_template_name = nil
-DamageProfileTemplates.deus_relic_large_explosion = table.clone(tbl.we_deus_01_large_explosion)
+DamageProfileTemplates.deus_relic_large_explosion = table.clone(damage_templates.we_deus_01_large_explosion)
 DamageProfileTemplates.deus_relic_large_explosion.default_target.dot_template_name = nil
-DamageProfileTemplates.deus_relic_large_explosion_glance = table.clone(tbl.we_deus_01_large_explosion_glance)
+DamageProfileTemplates.deus_relic_large_explosion_glance = table.clone(damage_templates.we_deus_01_large_explosion_glance)
 DamageProfileTemplates.deus_relic_large_explosion_glance.default_target.dot_template_name = nil
 
-local num = 1.35
+local kruber_bonus = 1.35
 
 DamageProfileTemplates.medium_slashing_tank_es_01 = {
 	stagger_duration_modifier = 1.5,
@@ -1154,8 +1154,8 @@ DamageProfileTemplates.medium_slashing_tank_es_01 = {
 			boost_curve_type = "tank_curve",
 			boost_curve_coefficient_headshot = 1,
 			power_distribution = {
-				attack = 0.3 * num,
-				impact = 0.2 * num
+				attack = 0.3 * kruber_bonus,
+				impact = 0.2 * kruber_bonus
 			},
 			armor_modifier = {
 				attack = {
@@ -1178,16 +1178,16 @@ DamageProfileTemplates.medium_slashing_tank_es_01 = {
 			boost_curve_type = "tank_curve",
 			attack_template = "slashing_tank",
 			power_distribution = {
-				attack = 0.1 * num,
-				impact = 0.15 * num
+				attack = 0.1 * kruber_bonus,
+				impact = 0.15 * kruber_bonus
 			}
 		},
 		{
 			boost_curve_type = "tank_curve",
 			attack_template = "light_slashing_tank",
 			power_distribution = {
-				attack = 0.075 * num,
-				impact = 0.1 * num
+				attack = 0.075 * kruber_bonus,
+				impact = 0.1 * kruber_bonus
 			}
 		}
 	},
@@ -1211,8 +1211,8 @@ DamageProfileTemplates.medium_slashing_tank_es_01 = {
 		boost_curve_type = "tank_curve",
 		attack_template = "light_slashing_tank",
 		power_distribution = {
-			attack = 0.05 * num,
-			impact = 0.05 * num
+			attack = 0.05 * kruber_bonus,
+			impact = 0.05 * kruber_bonus
 		}
 	},
 	cleave_distribution = {
@@ -1281,8 +1281,8 @@ DamageProfileTemplates.medium_stab_es_01 = {
 		boost_curve_coefficient = 1,
 		boost_curve_coefficient_headshot = 2,
 		power_distribution = {
-			impact = 0.175 * num,
-			attack = 0.3 * num
+			impact = 0.175 * kruber_bonus,
+			attack = 0.3 * kruber_bonus
 		}
 	}
 }
@@ -1295,8 +1295,8 @@ DamageProfileTemplates.light_slash_stab_es_01 = {
 			boost_curve_coefficient = 0.75,
 			boost_curve_coefficient_headshot = 2,
 			power_distribution = {
-				impact = 0.1 * num,
-				attack = 0.2 * num
+				impact = 0.1 * kruber_bonus,
+				attack = 0.2 * kruber_bonus
 			},
 			armor_modifier = {
 				impact = {
@@ -1358,8 +1358,8 @@ DamageProfileTemplates.light_slash_stab_es_01 = {
 		boost_curve_coefficient = 0.75,
 		boost_curve_coefficient_headshot = 2,
 		power_distribution = {
-			impact = 0.075 * num,
-			attack = 0.1 * num
+			impact = 0.075 * kruber_bonus,
+			attack = 0.1 * kruber_bonus
 		}
 	}
 }
@@ -1369,8 +1369,8 @@ DamageProfileTemplates.medium_slashing_linesman_spear_es_01 = {
 		boost_curve_type = "linesman_curve",
 		attack_template = "light_slashing_linesman",
 		power_distribution = {
-			impact = 0.05 * num,
-			attack = 0.075 * num
+			impact = 0.05 * kruber_bonus,
+			attack = 0.075 * kruber_bonus
 		}
 	},
 	armor_modifier = {
@@ -1395,8 +1395,8 @@ DamageProfileTemplates.medium_slashing_linesman_spear_es_01 = {
 			attack_template = "slashing_linesman",
 			boost_curve_coefficient_headshot = 4,
 			power_distribution = {
-				impact = 0.2 * num,
-				attack = 0.175 * num
+				impact = 0.2 * kruber_bonus,
+				attack = 0.175 * kruber_bonus
 			}
 		},
 		{
@@ -1404,8 +1404,8 @@ DamageProfileTemplates.medium_slashing_linesman_spear_es_01 = {
 			attack_template = "slashing_linesman",
 			boost_curve_coefficient_headshot = 3,
 			power_distribution = {
-				impact = 0.175 * num,
-				attack = 0.125 * num
+				impact = 0.175 * kruber_bonus,
+				attack = 0.125 * kruber_bonus
 			}
 		},
 		{
@@ -1413,8 +1413,8 @@ DamageProfileTemplates.medium_slashing_linesman_spear_es_01 = {
 			attack_template = "light_slashing_linesman",
 			boost_curve_coefficient_headshot = 2.5,
 			power_distribution = {
-				impact = 0.1 * num,
-				attack = 0.1 * num
+				impact = 0.1 * kruber_bonus,
+				attack = 0.1 * kruber_bonus
 			}
 		}
 	},
@@ -1485,10 +1485,10 @@ DamageProfileTemplates.medium_slashing_smiter_es_01 = {
 		boost_curve_coefficient = 2,
 		attack_template = "slashing_smiter",
 		power_distribution = {
-			impact = 0.25 * num,
-			attack = 0.4 * num
+			impact = 0.25 * kruber_bonus,
+			attack = 0.4 * kruber_bonus
 		}
 	}
 }
 
-return tbl
+return damage_templates

@@ -1,25 +1,24 @@
 -- chunkname: @scripts/ui/hud_ui/weave_timer_ui_definitions.lua
 
-local num = 1920
-local num_2 = 1080
-local num_3 = 1.5
-local tbl = {
-	250 * num_3,
-	21 * num_3
+local SIZE_X, SIZE_Y = 1920, 1080
+local multiplier = 1.5
+local BAR_SIZE = {
+	250 * multiplier,
+	21 * multiplier
 }
-local tbl_2 = {
-	21 * num_3,
-	21 * num_3
+local TIP_SIZE = {
+	21 * multiplier,
+	21 * multiplier
 }
-local tbl_3 = {
+local ICON_SIZE = {
 	70,
 	50
 }
-local tbl_4 = {
-	325 * num_3,
-	40 * num_3
+local WINDOW_SIZE = {
+	325 * multiplier,
+	40 * multiplier
 }
-local tbl_5 = {
+local scenegraph_definition = {
 	screen = {
 		scale = "fit",
 		position = {
@@ -28,8 +27,8 @@ local tbl_5 = {
 			UILayer.hud
 		},
 		size = {
-			num,
-			num_2
+			SIZE_X,
+			SIZE_Y
 		}
 	},
 	timer_bg = {
@@ -52,10 +51,10 @@ local tbl_5 = {
 		horizontal_alignment = "right",
 		position = {
 			-20,
-			-20 - tbl_4[2],
+			-20 - WINDOW_SIZE[2],
 			0
 		},
-		size = tbl_4
+		size = WINDOW_SIZE
 	},
 	timer_icon = {
 		vertical_alignment = "center",
@@ -66,7 +65,7 @@ local tbl_5 = {
 			0,
 			1
 		},
-		size = tbl_3
+		size = ICON_SIZE
 	},
 	timer_bar = {
 		vertical_alignment = "center",
@@ -77,7 +76,7 @@ local tbl_5 = {
 			0,
 			1
 		},
-		size = tbl
+		size = BAR_SIZE
 	},
 	outer_frame = {
 		vertical_alignment = "center",
@@ -89,16 +88,16 @@ local tbl_5 = {
 			1
 		},
 		size = {
-			tbl[1] + 26,
-			tbl[2] + 26
+			BAR_SIZE[1] + 26,
+			BAR_SIZE[2] + 26
 		}
 	}
 }
 
-local function fn(arg_1_0, arg_1_1)
+local function create_progress_bar(scenegraph_id, texture)
 	-- function 1
-	local button_frame_02 = UIFrameSettings.button_frame_02
-	local frame_outer_glow_02 = UIFrameSettings.frame_outer_glow_02
+	local frame_settings = UIFrameSettings.button_frame_02
+	local outer_frame_settings = UIFrameSettings.frame_outer_glow_02
 
 	return {
 		element = {
@@ -121,21 +120,21 @@ local function fn(arg_1_0, arg_1_1)
 					style_id = "progress_bar_fill",
 					pass_type = "texture_uv",
 					content_id = "progress_bar_fill_id",
-					content_change_function = function (self, arg_2_1)
+					content_change_function = function (content, style)
 						-- function 2
-						arg_2_1.texture_size[1] = tbl[1] - self.parent.progress * tbl[1]
-						self.uvs[1][1] = self.parent.progress
-						self.uvs[2][1] = 1
-						arg_2_1.offset[1] = self.parent.progress * tbl[1]
+						style.texture_size[1] = BAR_SIZE[1] - content.parent.progress * BAR_SIZE[1]
+						content.uvs[1][1] = content.parent.progress
+						content.uvs[2][1] = 1
+						style.offset[1] = content.parent.progress * BAR_SIZE[1]
 					end
 				},
 				{
 					style_id = "progress_bar_tip",
 					pass_type = "texture_uv",
 					content_id = "progress_bar_tip",
-					content_change_function = function (self, arg_3_1)
+					content_change_function = function (content, style)
 						-- function 3
-						arg_3_1.offset[1] = self.parent.progress * tbl[1]
+						style.offset[1] = content.parent.progress * BAR_SIZE[1]
 					end
 				},
 				{
@@ -148,17 +147,17 @@ local function fn(arg_1_0, arg_1_1)
 					pass_type = "texture_frame",
 					texture_id = "outer_frame_id",
 					style_id = "outer_frame",
-					content_check_function = function (self)
+					content_check_function = function (content)
 						-- function 4
-						return self.progress > 0.9
+						return content.progress > 0.9
 					end,
-					content_change_function = function (self, arg_5_1, arg_5_2, arg_5_3)
+					content_change_function = function (content, style, ui_animations, dt)
 						-- function 5
-						if self.progress >= 0.9 then
-							local num = 192 + math.sin(self.timer) * 64
+						if content.progress >= 0.9 then
+							local alpha = 192 + math.sin(content.timer) * 64
 
-							arg_5_1.color[1] = num
-							self.timer = self.timer + arg_5_3 * 7
+							style.color[1] = alpha
+							content.timer = content.timer + dt * 7
 						end
 					end
 				},
@@ -217,8 +216,8 @@ local function fn(arg_1_0, arg_1_1)
 					}
 				}
 			},
-			frame_id = button_frame_02.texture,
-			outer_frame_id = frame_outer_glow_02.texture,
+			frame_id = frame_settings.texture,
+			outer_frame_id = outer_frame_settings.texture,
 			progress_bar_end_left_id = {
 				texture_id = "weave_bar_end",
 				uvs = {
@@ -274,8 +273,8 @@ local function fn(arg_1_0, arg_1_1)
 					2
 				},
 				texture_size = {
-					tbl[1],
-					tbl[2]
+					BAR_SIZE[1],
+					BAR_SIZE[2]
 				}
 			},
 			progress_bar_fill = {
@@ -291,8 +290,8 @@ local function fn(arg_1_0, arg_1_1)
 					1
 				},
 				texture_size = {
-					tbl[1],
-					tbl[2] - 1
+					BAR_SIZE[1],
+					BAR_SIZE[2] - 1
 				}
 			},
 			progress_bar_tip = {
@@ -306,8 +305,8 @@ local function fn(arg_1_0, arg_1_1)
 					255
 				},
 				texture_size = {
-					tbl_2[1],
-					tbl_2[2] - 1
+					TIP_SIZE[1],
+					TIP_SIZE[2] - 1
 				},
 				offset = {
 					0,
@@ -327,8 +326,8 @@ local function fn(arg_1_0, arg_1_1)
 					0,
 					3
 				},
-				texture_size = button_frame_02.texture_size,
-				texture_sizes = button_frame_02.texture_sizes
+				texture_size = frame_settings.texture_size,
+				texture_sizes = frame_settings.texture_sizes
 			},
 			outer_frame = {
 				color = {
@@ -342,8 +341,8 @@ local function fn(arg_1_0, arg_1_1)
 					0,
 					10
 				},
-				texture_size = frame_outer_glow_02.texture_size,
-				texture_sizes = frame_outer_glow_02.texture_sizes
+				texture_size = outer_frame_settings.texture_size,
+				texture_sizes = outer_frame_settings.texture_sizes
 			},
 			progress_bar_end_right = {
 				vertical_alignment = "center",
@@ -360,8 +359,8 @@ local function fn(arg_1_0, arg_1_1)
 					4
 				},
 				texture_size = {
-					17 * num_3,
-					21 * num_3
+					17 * multiplier,
+					21 * multiplier
 				}
 			},
 			progress_bar_end_left = {
@@ -379,8 +378,8 @@ local function fn(arg_1_0, arg_1_1)
 					4
 				},
 				texture_size = {
-					17 * num_3,
-					21 * num_3
+					17 * multiplier,
+					21 * multiplier
 				}
 			},
 			timer_text = {
@@ -416,13 +415,13 @@ local function fn(arg_1_0, arg_1_1)
 				}
 			}
 		},
-		scenegraph_id = arg_1_0
+		scenegraph_id = scenegraph_id
 	}
 end
 
-local function fn_2(arg_6_0, arg_6_1)
+local function create_timer(texture, scenegraph_id)
 	-- function 6
-	local get_atlas_settings_by_texture_name = UIAtlasHelper.get_atlas_settings_by_texture_name(arg_6_0)
+	local texture_settings = UIAtlasHelper.get_atlas_settings_by_texture_name(texture)
 
 	return {
 		element = {
@@ -446,17 +445,17 @@ local function fn_2(arg_6_0, arg_6_1)
 					style_id = "background",
 					texture_id = "background_id",
 					pass_type = "texture",
-					content_check_function = function (self)
+					content_check_function = function (content)
 						-- function 7
-						return self.progress >= self.progress_cutoff
+						return content.progress >= content.progress_cutoff
 					end,
-					content_change_function = function (self, arg_8_1)
+					content_change_function = function (content, style)
 						-- function 8
-						if self.progress >= self.progress_cutoff then
+						if content.progress >= content.progress_cutoff then
 							local time = Managers.time:time("game")
 							local cos
 
-							if self.progress < 1 then
+							if content.progress < 1 then
 								cos = math.cos(time * math.pi * 2)
 
 								if not cos then
@@ -466,10 +465,12 @@ local function fn_2(arg_6_0, arg_6_1)
 
 							cos = 1
 
+							local progress = cos
+
 							::label_8_0::
 
-							arg_8_1.color[1] = 192 + cos * 64
-							arg_8_1.texture_size[1] = math.lerp(get_atlas_settings_by_texture_name.size[1], get_atlas_settings_by_texture_name.size[1] * 1.25, cos)
+							style.color[1] = 192 + progress * 64
+							style.texture_size[1] = math.lerp(texture_settings.size[1], texture_settings.size[1] * 1.25, progress)
 						end
 					end
 				}
@@ -481,7 +482,7 @@ local function fn_2(arg_6_0, arg_6_1)
 			progress = 0,
 			timer_text_id = "00:00",
 			time_left_id = "timer_prefix_time_left",
-			background_id = arg_6_0
+			background_id = texture
 		},
 		style = {
 			time_left = {
@@ -507,7 +508,7 @@ local function fn_2(arg_6_0, arg_6_1)
 			background = {
 				vertical_alignment = "bottom",
 				horizontal_alignment = "center",
-				texture_size = get_atlas_settings_by_texture_name.size,
+				texture_size = texture_settings.size,
 				color = {
 					255,
 					255,
@@ -553,15 +554,15 @@ local function fn_2(arg_6_0, arg_6_1)
 				}
 			}
 		},
-		scenegraph_id = arg_6_1
+		scenegraph_id = scenegraph_id
 	}
 end
 
-local tbl_6 = {
-	timer = fn_2("weaves_timer_highlight", "timer_bg")
+local widgets = {
+	timer = create_timer("weaves_timer_highlight", "timer_bg")
 }
 
 return {
-	scenegraph_definition = tbl_5,
-	widgets = tbl_6
+	scenegraph_definition = scenegraph_definition,
+	widgets = widgets
 }

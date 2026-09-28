@@ -1,101 +1,103 @@
 -- chunkname: @scripts/utils/global_utils.lua
 
-local flag = BUILD == "release"
+local release_build = BUILD == "release"
 local script_data = script_data
+local flag
+
+flag = (not release_build or not true) and not not nil
+script_data.disable_debug_position_lookup = flag
+
+local unit_alive = Unit.alive
 local flag_2
 
-flag_2 = not flag and true and nil
-script_data.disable_debug_position_lookup = flag_2
-
-local alive = Unit.alive
-local flag_3
-
-flag_3 = not script_data.packaged_build and true and false
-PACKAGED_BUILD = flag_3
+flag_2 = (not script_data.packaged_build or not true) and not not false
+PACKAGED_BUILD = flag_2
 
 local RESOLUTION_LOOKUP = RESOLUTION_LOOKUP
 
-RESOLUTION_LOOKUP = RESOLUTION_LOOKUP or {}
+RESOLUTION_LOOKUP = not not RESOLUTION_LOOKUP or not not {}
 RESOLUTION_LOOKUP = RESOLUTION_LOOKUP
 
 local POSITION_LOOKUP = POSITION_LOOKUP
 
-POSITION_LOOKUP = POSITION_LOOKUP or Script.new_map(256)
+POSITION_LOOKUP = not not POSITION_LOOKUP or not not Script.new_map(256)
 POSITION_LOOKUP = POSITION_LOOKUP
 
 local BLACKBOARDS = BLACKBOARDS
 
-BLACKBOARDS = BLACKBOARDS or Script.new_map(256)
+BLACKBOARDS = not not BLACKBOARDS or not not Script.new_map(256)
 BLACKBOARDS = BLACKBOARDS
 
 local HEALTH_ALIVE = HEALTH_ALIVE
 
-HEALTH_ALIVE = HEALTH_ALIVE or Script.new_map(1024)
+HEALTH_ALIVE = not not HEALTH_ALIVE or not not Script.new_map(1024)
 HEALTH_ALIVE = HEALTH_ALIVE
 ALIVE = POSITION_LOOKUP
 
 local FROZEN = FROZEN
 
-FROZEN = FROZEN or {}
+FROZEN = not not FROZEN or not not {}
 FROZEN = FROZEN
 
-local POSITION_LOOKUP_2 = POSITION_LOOKUP
-local RESOLUTION_LOOKUP_2 = RESOLUTION_LOOKUP
+local position_lookup = POSITION_LOOKUP
+local resolution_lookup = RESOLUTION_LOOKUP
 local BREED_DIE_LOOKUP = BREED_DIE_LOOKUP
 
-BREED_DIE_LOOKUP = BREED_DIE_LOOKUP or {}
+BREED_DIE_LOOKUP = not not BREED_DIE_LOOKUP or not not {}
 BREED_DIE_LOOKUP = BREED_DIE_LOOKUP
 
 function CLEAR_POSITION_LOOKUP()
 	-- function 1
-	table.clear(POSITION_LOOKUP_2)
+	table.clear(position_lookup)
 end
 
 local world_position = Unit.world_position
 
 function UPDATE_POSITION_LOOKUP()
 	-- function 2
-	EngineOptimized.update_position_lookup(POSITION_LOOKUP_2)
+	EngineOptimized.update_position_lookup(position_lookup)
 end
 
-function UPDATE_RESOLUTION_LOOKUP(arg_3_0, arg_3_1)
+function UPDATE_RESOLUTION_LOOKUP(force_update, optional_scale_multiplier)
 	-- function 3
 	local is_minimized = Window.is_minimized()
 
-	RESOLUTION_LOOKUP_2.minimized = is_minimized
+	resolution_lookup.minimized = is_minimized
 
-	local resolution, var_3_2 = Application.resolution()
+	local w, h = Application.resolution()
 
-	if not is_minimized then
-		resolution = RESOLUTION_LOOKUP_2.res_w or 1920
-		var_3_2 = RESOLUTION_LOOKUP_2.res_h or 1080
+	if is_minimized then
+		w = not not resolution_lookup.res_w or not not 1920
+		h = not not resolution_lookup.res_h or not not 1080
 	end
 
-	local flag = resolution ~= RESOLUTION_LOOKUP_2.res_w or var_3_2 ~= RESOLUTION_LOOKUP_2.res_h
-	local num = resolution / 1920
-	local num_2 = var_3_2 / 1080
-	local min = math.min(num, num_2)
+	local resolution_modified = w ~= resolution_lookup.res_w or h ~= resolution_lookup.res_h
+	local width_scale = w / 1920
+	local height_scale = h / 1080
+	local scale = math.min(width_scale, height_scale)
 
-	min = not Application.user_setting("hud_clamp_ui_scaling") and math.min(min, 1) and min
-
-	local flag_2 = false
-
-	if not arg_3_1 then
-		min = min * arg_3_1
+	if Application.user_setting("hud_clamp_ui_scaling") and not math.min(scale, 1) then
+		-- Nothing
 	end
 
-	if RESOLUTION_LOOKUP_2.scale ~= min then
-		flag_2 = true
+	local scale_modified = false
+
+	if optional_scale_multiplier then
+		scale = scale * optional_scale_multiplier
 	end
 
-	if flag or flag_2 or not arg_3_0 then
-		RESOLUTION_LOOKUP_2.res_w = resolution
-		RESOLUTION_LOOKUP_2.res_h = var_3_2
-		RESOLUTION_LOOKUP_2.scale = min
-		RESOLUTION_LOOKUP_2.inv_scale = 1 / min
+	if resolution_lookup.scale ~= scale then
+		scale_modified = true
 	end
 
-	RESOLUTION_LOOKUP_2.modified = flag or arg_3_0
+	if resolution_modified or scale_modified or force_update then
+		resolution_lookup.res_w = w
+		resolution_lookup.res_h = h
+		resolution_lookup.scale = scale
+		resolution_lookup.inv_scale = 1 / scale
+	end
+
+	resolution_lookup.modified = not not resolution_modified or not not force_update
 end
 
 function CLEAR_ALL_PLAYER_LISTS()

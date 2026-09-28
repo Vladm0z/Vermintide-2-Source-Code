@@ -5,26 +5,46 @@ SingleWeaponUnitTemplates.templates = {}
 
 DLCUtils.require("single_weapon_templates")
 
-SingleWeaponUnitTemplates.get_template = function (arg_1_0, arg_1_1)
+SingleWeaponUnitTemplates.get_template = function (projectile_template, is_husk)
 	-- function 1
 	local templates = SingleWeaponUnitTemplates.templates
-	local flag
+	local str
 
-	flag = (arg_1_1 ~= true or not "husk" or arg_1_1 ~= false) and (not "unit" or nil)
+	if is_husk == true then
+		str = "husk"
 
-	local var_1_2
+		goto label_1_0
+	end
 
-	if not flag then
-		var_1_2 = templates[arg_1_0][flag]
+	if is_husk == false then
+		str = "unit"
 
-		if not var_1_2 then
+		goto label_1_0
+	end
+
+	str = nil
+
+	local husk_key = str
+
+	do
+		local var_1_1
+	end
+
+	::label_1_0::
+
+	if husk_key then
+		var_1_1 = templates[projectile_template][husk_key]
+
+		if not var_1_1 then
 			-- Nothing
 		end
 	end
 
-	var_1_2 = templates[arg_1_0]
+	var_1_1 = templates[projectile_template]
 
-	::label_1_0::
+	local template = var_1_1
 
-	return var_1_2
+	::label_1_1::
+
+	return template
 end

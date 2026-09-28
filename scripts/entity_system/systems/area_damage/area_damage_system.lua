@@ -2,8 +2,8 @@
 
 AreaDamageSystem = class(AreaDamageSystem, ExtensionSystemBase)
 
-local alive = Unit.alive
-local tbl = {
+local unit_alive = Unit.alive
+local RPCS = {
 	"rpc_add_liquid_damage_blob",
 	"rpc_area_damage",
 	"rpc_create_explosion",
@@ -19,7 +19,7 @@ local tbl = {
 	"rpc_necromancer_create_curse_weave",
 	"rpc_necromancer_create_curse_area"
 }
-local tbl_2 = {
+local extensions = {
 	"AreaDamageExtension",
 	"TimedExplosionExtension",
 	"LiquidAreaDamageExtension",
@@ -30,20 +30,20 @@ local tbl_2 = {
 	"DamageBlobHuskExtension",
 	"ProximityMineExtension"
 }
-local num = 128
-local num_2 = 15
+local AOE_DAMAGE_RING_BUFFER_SIZE = 128
+local NUM_UNITS_TO_DAMAGE_PER_FRAME = 15
 
-DLCUtils.append("area_damage_extension", tbl_2)
+DLCUtils.append("area_damage_extension", extensions)
 
-AreaDamageSystem.init = function (self, arg_1_1, arg_1_2)
+AreaDamageSystem.init = function (self, entity_system_creation_context, system_name)
 	-- function 1
-	AreaDamageSystem.super.init(self, arg_1_1, arg_1_2, tbl_2)
+	AreaDamageSystem.super.init(self, entity_system_creation_context, system_name, extensions)
 
-	local network_event_delegate = arg_1_1.network_event_delegate
+	local network_event_delegate = entity_system_creation_context.network_event_delegate
 
 	self.network_event_delegate = network_event_delegate
 
-	network_event_delegate:register(self, unpack(tbl))
+	network_event_delegate:register(self, unpack(RPCS))
 
 	self.liquid_extensions = {}
 	self.liquid_extension_indexes = {}
@@ -53,79 +53,80 @@ AreaDamageSystem.init = function (self, arg_1_1, arg_1_2)
 	self:_create_aoe_damage_buffer()
 end
 
-local tbl_3 = {
+local LIQUID_EXTENSIONS = {
 	"DamageBlobExtension",
 	"DamageWaveExtension",
 	"LiquidAreaDamageExtension"
 }
 
-AreaDamageSystem.on_add_extension = function (self, arg_2_1, arg_2_2, arg_2_3, arg_2_4)
+AreaDamageSystem.on_add_extension = function (self, world, unit, extension_name, extension_init_data)
 	-- function 2
-	local on_add_extension = AreaDamageSystem.super.on_add_extension(self, arg_2_1, arg_2_2, arg_2_3, arg_2_4)
+	local extension = AreaDamageSystem.super.on_add_extension(self, world, unit, extension_name, extension_init_data)
 
-	if not table.contains(tbl_3, arg_2_3) then
-		local num = self.num_liquid_extensions + 1
+	if table.contains(LIQUID_EXTENSIONS, extension_name) then
+		local num_liquid_extensions = self.num_liquid_extensions
+		local new_index = num_liquid_extensions + 1
 
-		self.liquid_extensions[num] = on_add_extension
-		self.liquid_extension_indexes[on_add_extension] = num
-		self.num_liquid_extensions = num
+		self.liquid_extensions[new_index] = extension
+		self.liquid_extension_indexes[extension] = new_index
+		self.num_liquid_extensions = new_index
 	end
 
-	local source_attacker_unit = arg_2_4.source_attacker_unit
+	local source_attacker = extension_init_data.source_attacker_unit
 
-	if not source_attacker_unit then
-		local tbl = {
-			source_attacker_unit = source_attacker_unit,
-			breed = Unit.get_data(source_attacker_unit, "breed")
+	if source_attacker then
+		local data = {
+			source_attacker_unit = source_attacker,
+			breed = Unit.get_data(source_attacker, "breed")
 		}
 
-		self._source_attacker_unit_data[arg_2_2] = tbl
+		self._source_attacker_unit_data[unit] = data
 
-		local owner = Managers.player:owner(source_attacker_unit)
+		local player = Managers.player:owner(source_attacker)
 
-		if not owner then
-			tbl.attacker_unique_id = owner:unique_id()
-			tbl.attacker_side = Managers.state.side.side_by_unit[source_attacker_unit]
+		if player then
+			data.attacker_unique_id = player:unique_id()
+			data.attacker_side = Managers.state.side.side_by_unit[source_attacker]
 		end
 	end
 
-	if not on_add_extension.is_transient and not self.is_server then
-		Managers.level_transition_handler.transient_package_loader:add_unit(arg_2_2, on_add_extension.transient_name_override)
+	if extension.is_transient and self.is_server then
+		Managers.level_transition_handler.transient_package_loader:add_unit(unit, extension.transient_name_override)
 	end
 
-	return on_add_extension
+	return extension
 end
 
-AreaDamageSystem.has_source_attacker_unit_data = function (self, arg_3_1)
+AreaDamageSystem.has_source_attacker_unit_data = function (self, unit)
 	-- function 3
-	return self._source_attacker_unit_data[arg_3_1]
+	return self._source_attacker_unit_data[unit]
 end
 
-AreaDamageSystem.on_remove_extension = function (self, arg_4_1, arg_4_2)
+AreaDamageSystem.on_remove_extension = function (self, unit, extension_name)
 	-- function 4
-	local extension = ScriptUnit.extension(arg_4_1, "area_damage_system")
+	local extension = ScriptUnit.extension(unit, "area_damage_system")
 	local liquid_extension_indexes = self.liquid_extension_indexes
-	local var_4_2 = liquid_extension_indexes[extension]
+	local extension_index = liquid_extension_indexes[extension]
 
-	if not var_4_2 then
+	if extension_index then
 		local liquid_extensions = self.liquid_extensions
 		local num_liquid_extensions = self.num_liquid_extensions
-		local var_4_5 = liquid_extensions[num_liquid_extensions]
+		local last_extension = liquid_extensions[num_liquid_extensions]
 
-		liquid_extensions[var_4_2] = var_4_5
+		liquid_extensions[extension_index] = last_extension
 		liquid_extensions[num_liquid_extensions] = nil
-		liquid_extension_indexes[var_4_5] = var_4_2
+		liquid_extension_indexes[last_extension] = extension_index
 		liquid_extension_indexes[extension] = nil
 		self.num_liquid_extensions = num_liquid_extensions - 1
 	end
 
-	self._source_attacker_unit_data[arg_4_1] = nil
+	self._source_attacker_unit_data[unit] = nil
 
-	if not extension.is_transient and not self.is_server then
-		Managers.level_transition_handler.transient_package_loader:remove_unit(arg_4_1)
+	if extension.is_transient and self.is_server then
+		Managers.level_transition_handler.transient_package_loader:remove_unit(unit)
 	end
 
-	AreaDamageSystem.super.on_remove_extension(self, arg_4_1, arg_4_2)
+	AreaDamageSystem.super.on_remove_extension(self, unit, extension_name)
 end
 
 AreaDamageSystem.destroy = function (self)
@@ -133,43 +134,44 @@ AreaDamageSystem.destroy = function (self)
 	self.network_event_delegate:unregister(self)
 end
 
-AreaDamageSystem.update = function (self, arg_6_1, arg_6_2)
+AreaDamageSystem.update = function (self, context, t)
 	-- function 6
-	AreaDamageSystem.super.update(self, arg_6_1, arg_6_2)
+	AreaDamageSystem.super.update(self, context, t)
 	self:_update_aoe_damage_buffer()
 end
 
-AreaDamageSystem.create_explosion = function (self, arg_7_1, arg_7_2, arg_7_3, arg_7_4, arg_7_5, arg_7_6, arg_7_7, arg_7_8, arg_7_9)
+AreaDamageSystem.create_explosion = function (self, attacker_unit, position, rotation, explosion_template_name, scale, damage_source, attacker_power_level, is_critical_strike, source_attacker_unit)
 	-- function 7
-	if not NetworkUtils.network_safe_position(arg_7_2) then
+	if not NetworkUtils.network_safe_position(position) then
 		return false
 	end
 
-	local network = Managers.state.network
+	local network_manager = Managers.state.network
+	local game = network_manager:game()
 
-	if not network:game() then
-		local get_template = ExplosionUtils.get_template(arg_7_4)
-		local clone = table.clone(get_template)
-		local get_difficulty = Managers.state.difficulty:get_difficulty()
+	if game then
+		local original_template = ExplosionUtils.get_template(explosion_template_name)
+		local explosion_template = table.clone(original_template)
+		local difficulty_name = Managers.state.difficulty:get_difficulty()
 
-		if not clone.scaling then
-			clone.explosion.radius = clone.explosion.radius[get_difficulty]
+		if explosion_template.scaling then
+			explosion_template.explosion.radius = explosion_template.explosion.radius[difficulty_name]
 		end
 
-		local flag = false
+		local is_husk = false
 
-		DamageUtils.create_explosion(self.world, arg_7_1, arg_7_2, arg_7_3, clone, arg_7_5, arg_7_6, self.is_server, flag, arg_7_1, arg_7_7, arg_7_8)
+		DamageUtils.create_explosion(self.world, attacker_unit, position, rotation, explosion_template, scale, damage_source, self.is_server, is_husk, attacker_unit, attacker_power_level, is_critical_strike)
 
-		if not alive(arg_7_1) then
-			local game_object_or_level_id, var_7_6 = network:game_object_or_level_id(arg_7_1)
+		if unit_alive(attacker_unit) then
+			local attacker_unit_id, attacker_is_level_unit = network_manager:game_object_or_level_id(attacker_unit)
 
-			if not game_object_or_level_id then
-				local var_7_7 = NetworkLookup.explosion_templates[arg_7_4]
-				local var_7_8 = NetworkLookup.damage_sources[arg_7_6]
+			if attacker_unit_id then
+				local explosion_template_id = NetworkLookup.explosion_templates[explosion_template_name]
+				local damage_source_id = NetworkLookup.damage_sources[damage_source]
 				local clamp
 
-				if not arg_7_7 then
-					clamp = math.clamp(arg_7_7, MIN_POWER_LEVEL, MAX_POWER_LEVEL)
+				if attacker_power_level then
+					clamp = math.clamp(attacker_power_level, MIN_POWER_LEVEL, MAX_POWER_LEVEL)
 
 					if not clamp then
 						-- Nothing
@@ -178,64 +180,79 @@ AreaDamageSystem.create_explosion = function (self, arg_7_1, arg_7_2, arg_7_3, a
 
 				clamp = 0
 
+				local attacker_power_level = clamp
+
 				::label_7_0::
 
-				local flag_2 = not not arg_7_8
-				local unit_game_object_id = network:unit_game_object_id(arg_7_9)
+				local is_critical_strike = not not is_critical_strike
+				local unit_game_object_id = network_manager:unit_game_object_id(source_attacker_unit)
 
-				unit_game_object_id = unit_game_object_id or game_object_or_level_id
+				if not unit_game_object_id then
+					-- Nothing
+				end
 
-				if not self.is_server then
-					self.network_transmit:send_rpc_clients("rpc_create_explosion", game_object_or_level_id, var_7_6, arg_7_2, arg_7_3, var_7_7, arg_7_5, var_7_8, clamp, flag_2, unit_game_object_id)
+				unit_game_object_id = attacker_unit_id
+
+				local source_attacker_unit_id = unit_game_object_id
+
+				::label_7_1::
+
+				if self.is_server then
+					self.network_transmit:send_rpc_clients("rpc_create_explosion", attacker_unit_id, attacker_is_level_unit, position, rotation, explosion_template_id, scale, damage_source_id, attacker_power_level, is_critical_strike, source_attacker_unit_id)
 				else
-					self.network_transmit:send_rpc_server("rpc_create_explosion", game_object_or_level_id, var_7_6, arg_7_2, arg_7_3, var_7_7, arg_7_5, var_7_8, clamp, flag_2, unit_game_object_id)
+					self.network_transmit:send_rpc_server("rpc_create_explosion", attacker_unit_id, attacker_is_level_unit, position, rotation, explosion_template_id, scale, damage_source_id, attacker_power_level, is_critical_strike, source_attacker_unit_id)
 				end
 			end
 		end
 	end
 end
 
-AreaDamageSystem.enable_area_damage = function (self, arg_8_1, arg_8_2)
+AreaDamageSystem.enable_area_damage = function (self, unit, enable)
 	-- function 8
 	fassert(self.is_server, "You better call this on the server, or it's gonna craaash")
-	ScriptUnit.extension(arg_8_1, "area_damage_system"):enable_area_damage(arg_8_2)
 
-	local level_object_id = Managers.state.network:level_object_id(arg_8_1)
+	local area_damage_extension = ScriptUnit.extension(unit, "area_damage_system")
 
-	self.network_transmit:send_rpc_clients("rpc_enable_area_damage", level_object_id, arg_8_2)
+	area_damage_extension:enable_area_damage(enable)
+
+	local level_index = Managers.state.network:level_object_id(unit)
+
+	self.network_transmit:send_rpc_clients("rpc_enable_area_damage", level_index, enable)
 end
 
-AreaDamageSystem.is_position_in_liquid = function (self, arg_9_1, arg_9_2)
+AreaDamageSystem.is_position_in_liquid = function (self, position, nav_cost_map_table)
 	-- function 9
 	local liquid_extensions = self.liquid_extensions
 	local num_liquid_extensions = self.num_liquid_extensions
-	local flag = false
+	local result = false
 
 	for i = 1, num_liquid_extensions do
-		flag = liquid_extensions[i]:is_position_inside(arg_9_1, arg_9_2)
+		local extension = liquid_extensions[i]
 
-		if not flag then
+		result = extension:is_position_inside(position, nav_cost_map_table)
+
+		if result then
 			break
 		end
 	end
 
-	return flag
+	return result
 end
 
 AreaDamageSystem._create_aoe_damage_buffer = function (self)
 	-- function 10
-	local var_10_0 = num
+	local buffer_size = AOE_DAMAGE_RING_BUFFER_SIZE
 
 	self._aoe_damage_ring_buffer = {
 		write_index = 1,
 		read_index = 1,
 		size = 0,
-		buffer = Script.new_array(var_10_0),
-		max_size = var_10_0
+		buffer = Script.new_array(buffer_size),
+		max_size = buffer_size
 	}
 
-	for i = 1, var_10_0 do
-		self._aoe_damage_ring_buffer.buffer[i] = {
+	for index = 1, buffer_size do
+		self._aoe_damage_ring_buffer.buffer[index] = {
 			radius = 0,
 			radius_max = 0,
 			max_damage_radius = 0,
@@ -255,214 +272,242 @@ AreaDamageSystem._create_aoe_damage_buffer = function (self)
 	end
 end
 
-AreaDamageSystem.add_aoe_damage_target = function (self, arg_11_1, arg_11_2, arg_11_3, arg_11_4, arg_11_5, arg_11_6, arg_11_7, arg_11_8, arg_11_9, arg_11_10, arg_11_11, arg_11_12, arg_11_13, arg_11_14, arg_11_15, arg_11_16, arg_11_17, arg_11_18, arg_11_19, arg_11_20, arg_11_21)
+AreaDamageSystem.add_aoe_damage_target = function (self, hit_unit, attacker_unit, impact_position, shield_blocked, do_damage, hit_zone_name, damage_source, hit_distance, push_speed, radius, max_damage_radius, radius_min, radius_max, full_power_level, actual_power_level, hit_direction, explosion_template_name, is_critical_strike, allow_critical_proc, source_attacker_unit, target_number)
 	-- function 11
-	local _aoe_damage_ring_buffer = self._aoe_damage_ring_buffer
-	local buffer = _aoe_damage_ring_buffer.buffer
-	local read_index = _aoe_damage_ring_buffer.read_index
-	local write_index = _aoe_damage_ring_buffer.write_index
-	local size = _aoe_damage_ring_buffer.size
-	local max_size = _aoe_damage_ring_buffer.max_size
+	local aoe_damage_ring_buffer = self._aoe_damage_ring_buffer
+	local buffer = aoe_damage_ring_buffer.buffer
+	local read_index = aoe_damage_ring_buffer.read_index
+	local write_index = aoe_damage_ring_buffer.write_index
+	local size = aoe_damage_ring_buffer.size
+	local max_size = aoe_damage_ring_buffer.max_size
 
 	if max_size < size + 1 then
-		local var_11_6 = buffer[read_index]
+		local aoe_damage_data = buffer[read_index]
 
-		self:_damage_unit(var_11_6)
+		self:_damage_unit(aoe_damage_data)
 
 		size = size - 1
-		_aoe_damage_ring_buffer.read_index = read_index % max_size + 1
+		aoe_damage_ring_buffer.read_index = read_index % max_size + 1
 	end
 
-	local var_11_7 = buffer[write_index]
+	local aoe_damage_data = buffer[write_index]
 
-	var_11_7.hit_unit = arg_11_1
-	var_11_7.attacker_unit = arg_11_2
-	var_11_7.source_attacker_unit = arg_11_20
+	aoe_damage_data.hit_unit = hit_unit
+	aoe_damage_data.attacker_unit = attacker_unit
+	aoe_damage_data.source_attacker_unit = source_attacker_unit
 
-	var_11_7.impact_position:store(arg_11_3)
+	aoe_damage_data.impact_position:store(impact_position)
 
-	var_11_7.shield_blocked = arg_11_4
-	var_11_7.do_damage = arg_11_5
-	var_11_7.hit_zone_name = arg_11_6
-	var_11_7.damage_source = arg_11_7
-	var_11_7.hit_distance = arg_11_8
-	var_11_7.push_speed = arg_11_9
-	var_11_7.radius = arg_11_10
-	var_11_7.max_damage_radius = arg_11_11
-	var_11_7.radius_min = arg_11_12
-	var_11_7.radius_max = arg_11_13
-	var_11_7.full_power_level = arg_11_14
-	var_11_7.actual_power_level = arg_11_15
+	aoe_damage_data.shield_blocked = shield_blocked
+	aoe_damage_data.do_damage = do_damage
+	aoe_damage_data.hit_zone_name = hit_zone_name
+	aoe_damage_data.damage_source = damage_source
+	aoe_damage_data.hit_distance = hit_distance
+	aoe_damage_data.push_speed = push_speed
+	aoe_damage_data.radius = radius
+	aoe_damage_data.max_damage_radius = max_damage_radius
+	aoe_damage_data.radius_min = radius_min
+	aoe_damage_data.radius_max = radius_max
+	aoe_damage_data.full_power_level = full_power_level
+	aoe_damage_data.actual_power_level = actual_power_level
 
-	var_11_7.hit_direction:store(arg_11_16)
+	aoe_damage_data.hit_direction:store(hit_direction)
 
-	var_11_7.explosion_template_name = arg_11_17
-	var_11_7.is_critical_strike = arg_11_18
-	var_11_7.allow_critical_proc = arg_11_19
-	var_11_7.target_number = arg_11_21
-	_aoe_damage_ring_buffer.size = size + 1
-	_aoe_damage_ring_buffer.write_index = write_index % max_size + 1
+	aoe_damage_data.explosion_template_name = explosion_template_name
+	aoe_damage_data.is_critical_strike = is_critical_strike
+	aoe_damage_data.allow_critical_proc = allow_critical_proc
+	aoe_damage_data.target_number = target_number
+	size = size + 1
+	aoe_damage_ring_buffer.size = size
+	aoe_damage_ring_buffer.write_index = write_index % max_size + 1
 end
 
 AreaDamageSystem._update_aoe_damage_buffer = function (self)
 	-- function 12
-	local _aoe_damage_ring_buffer = self._aoe_damage_ring_buffer
+	local aoe_damage_ring_buffer = self._aoe_damage_ring_buffer
 
-	if _aoe_damage_ring_buffer.size == 0 then
+	if aoe_damage_ring_buffer.size == 0 then
 		return
 	end
 
-	local buffer = _aoe_damage_ring_buffer.buffer
-	local read_index = _aoe_damage_ring_buffer.read_index
-	local max_size = _aoe_damage_ring_buffer.max_size
-	local min = math.min(num_2, _aoe_damage_ring_buffer.size)
+	local buffer = aoe_damage_ring_buffer.buffer
+	local read_index = aoe_damage_ring_buffer.read_index
+	local max_size = aoe_damage_ring_buffer.max_size
+	local num_updates = math.min(NUM_UNITS_TO_DAMAGE_PER_FRAME, aoe_damage_ring_buffer.size)
 
-	for i = 1, min do
-		local var_12_5 = buffer[read_index]
+	for i = 1, num_updates do
+		local aoe_damage_data = buffer[read_index]
 
-		self:_damage_unit(var_12_5)
+		self:_damage_unit(aoe_damage_data)
 
 		read_index = read_index % max_size + 1
-		_aoe_damage_ring_buffer.size = _aoe_damage_ring_buffer.size - 1
+		aoe_damage_ring_buffer.size = aoe_damage_ring_buffer.size - 1
 	end
 
-	_aoe_damage_ring_buffer.read_index = read_index
+	aoe_damage_ring_buffer.read_index = read_index
 end
 
-AreaDamageSystem._damage_unit = function (arg_13_0, arg_13_1)
+AreaDamageSystem._damage_unit = function (self, aoe_damage_data)
 	-- function 13
-	local hit_unit = arg_13_1.hit_unit
-	local attacker_unit = arg_13_1.attacker_unit
-	local source_attacker_unit = arg_13_1.source_attacker_unit
-	local unbox = arg_13_1.impact_position:unbox()
-	local shield_blocked = arg_13_1.shield_blocked
-	local do_damage = arg_13_1.do_damage
-	local hit_zone_name = arg_13_1.hit_zone_name
-	local damage_source = arg_13_1.damage_source
-	local hit_distance = arg_13_1.hit_distance
-	local push_speed = arg_13_1.push_speed
-	local radius = arg_13_1.radius
-	local max_damage_radius = arg_13_1.max_damage_radius
-	local radius_min = arg_13_1.radius_min
-	local radius_max = arg_13_1.radius_max
-	local full_power_level = arg_13_1.full_power_level
-	local actual_power_level = arg_13_1.actual_power_level
-	local unbox_2 = arg_13_1.hit_direction:unbox()
-	local explosion_template_name = arg_13_1.explosion_template_name
-	local is_critical_strike = arg_13_1.is_critical_strike
-	local allow_critical_proc = arg_13_1.allow_critical_proc
-	local target_number = arg_13_1.target_number
+	local hit_unit = aoe_damage_data.hit_unit
+	local attacker_unit = aoe_damage_data.attacker_unit
+	local source_attacker_unit = aoe_damage_data.source_attacker_unit
+	local impact_position = aoe_damage_data.impact_position:unbox()
+	local shield_blocked = aoe_damage_data.shield_blocked
+	local do_damage = aoe_damage_data.do_damage
+	local hit_zone_name = aoe_damage_data.hit_zone_name
+	local damage_source = aoe_damage_data.damage_source
+	local hit_distance = aoe_damage_data.hit_distance
+	local push_speed = aoe_damage_data.push_speed
+	local radius = aoe_damage_data.radius
+	local max_damage_radius = aoe_damage_data.max_damage_radius
+	local radius_min = aoe_damage_data.radius_min
+	local radius_max = aoe_damage_data.radius_max
+	local full_power_level = aoe_damage_data.full_power_level
+	local actual_power_level = aoe_damage_data.actual_power_level
+	local hit_direction = aoe_damage_data.hit_direction:unbox()
+	local explosion_template_name = aoe_damage_data.explosion_template_name
+	local is_critical_strike = aoe_damage_data.is_critical_strike
+	local allow_critical_proc = aoe_damage_data.allow_critical_proc
+	local target_number = aoe_damage_data.target_number
+	local hit_unit_alive = unit_alive(hit_unit)
 
-	if not alive(hit_unit) then
+	if not hit_unit_alive then
 		return
 	end
 
-	if not alive(attacker_unit) then
+	local attacker_unit_alive = unit_alive(attacker_unit)
+
+	if not attacker_unit_alive then
 		return
 	end
 
-	local get_template = ExplosionUtils.get_template(explosion_template_name)
-	local explosion = get_template.explosion
-	local unit_breed = AiUtils.unit_breed(hit_unit)
+	local explosion_template = ExplosionUtils.get_template(explosion_template_name)
+	local explosion_data = explosion_template.explosion
+	local breed = AiUtils.unit_breed(hit_unit)
 
-	if not unit_breed then
+	if breed then
 		-- Nothing
 	end
 
 	::label_13_0::
 
-	local immune_breeds = explosion.immune_breeds
+	local immune_breeds = explosion_data.immune_breeds
+
+	if immune_breeds then
+		-- Nothing
+	end
+
+	immune_breeds = explosion_data.immune_breeds[breed.name]
 
 	if not immune_breeds then
-		immune_breeds = explosion.immune_breeds[unit_breed.name]
-		immune_breeds = immune_breeds or explosion.immune_breeds.all
+		-- Nothing
 	end
+
+	immune_breeds = explosion_data.immune_breeds.all
+
+	local breed_immunity = immune_breeds
 
 	::label_13_1::
 
 	local owner = Managers.player:owner(hit_unit)
 
-	owner = not owner and not Managers.player:owner(hit_unit):is_player_controlled()
+	if owner then
+		-- Nothing
+	end
 
-	local bot_damage_immunity
+	owner = not Managers.player:owner(hit_unit):is_player_controlled()
 
-	if not owner then
-		bot_damage_immunity = explosion.bot_damage_immunity
+	local bot = owner
 
-		if not bot_damage_immunity then
+	do
+		local bot_damage_immunity_2
+	end
+
+	::label_13_2::
+
+	if bot then
+		bot_damage_immunity_2 = explosion_data.bot_damage_immunity
+
+		if not bot_damage_immunity_2 then
 			-- Nothing
 		end
 	end
 
-	bot_damage_immunity = false
+	bot_damage_immunity_2 = false
 
-	::label_13_2::
+	local bot_damage_immunity = bot_damage_immunity_2
 
-	local flag = immune_breeds or bot_damage_immunity
+	::label_13_3::
 
-	if not shield_blocked then
+	local is_immune = not not breed_immunity or not not bot_damage_immunity
+
+	if shield_blocked then
 		hit_distance = math.lerp(hit_distance, radius, 0.5)
 	end
 
-	local flag_2 = max_damage_radius < hit_distance
-	local owner_2 = Managers.player:owner(attacker_unit)
+	local glancing_hit = max_damage_radius < hit_distance
+	local attacker_player = Managers.player:owner(attacker_unit)
+	local attacker_is_player = attacker_player ~= nil
 
-	if not (owner_2 ~= nil) then
-		local var_13_30 = rawget(ItemMasterList, damage_source)
+	if attacker_is_player then
+		local item_data = rawget(ItemMasterList, damage_source)
 
-		if not (not unit_breed and not var_13_30 and IGNORED_ITEM_TYPES_FOR_BUFFS[var_13_30.item_type]) then
-			local str = "aoe"
+		if breed and item_data and not IGNORED_ITEM_TYPES_FOR_BUFFS[item_data.item_type] then
+			local attack_type = "aoe"
 
-			if not (not var_13_30 and var_13_30.item_type ~= "grenade") then
-				str = "grenade"
+			if item_data and item_data.item_type == "grenade" then
+				attack_type = "grenade"
 			end
 
-			if not get_template.ignore_buffs then
-				local flag_3 = false
+			if not explosion_template.ignore_buffs then
+				local send_to_server = false
 
-				if not owner_2 and not owner_2.remote then
-					local peer_id = owner_2.peer_id
-					local var_13_34 = NetworkLookup.buff_attack_types[str]
-					local network = Managers.state.network
-					local unit_game_object_id = network:unit_game_object_id(attacker_unit)
-					local unit_game_object_id_2 = network:unit_game_object_id(hit_unit)
-					local var_13_38 = NetworkLookup.hit_zones[hit_zone_name]
-					local var_13_39 = NetworkLookup.buff_weapon_types["n/a"]
-					local var_13_40 = NetworkLookup.damage_sources[damage_source]
-					local var_13_41 = PEER_ID_TO_CHANNEL[peer_id]
+				if attacker_player and attacker_player.remote then
+					local peer_id = attacker_player.peer_id
+					local attack_type_id = NetworkLookup.buff_attack_types[attack_type]
+					local network_manager = Managers.state.network
+					local attacker_unit_id = network_manager:unit_game_object_id(attacker_unit)
+					local hit_unit_id = network_manager:unit_game_object_id(hit_unit)
+					local hit_zone_id = NetworkLookup.hit_zones[hit_zone_name]
+					local buff_weapon_type_id = NetworkLookup.buff_weapon_types["n/a"]
+					local damage_source_id = NetworkLookup.damage_sources[damage_source]
+					local channel_id = PEER_ID_TO_CHANNEL[peer_id]
 
-					RPC.rpc_buff_on_attack(var_13_41, unit_game_object_id, unit_game_object_id_2, var_13_34, not is_critical_strike and allow_critical_proc and false, var_13_38, 1, var_13_39, var_13_40)
-					DamageUtils.buff_on_attack(attacker_unit, hit_unit, str, not is_critical_strike and allow_critical_proc, hit_zone_name, target_number, flag_3, "n/a", nil, damage_source)
-				elseif not owner_2 then
-					DamageUtils.buff_on_attack(attacker_unit, hit_unit, str, not is_critical_strike and allow_critical_proc, hit_zone_name, target_number, flag_3, "n/a", nil, damage_source)
+					RPC.rpc_buff_on_attack(channel_id, attacker_unit_id, hit_unit_id, attack_type_id, (not is_critical_strike or not allow_critical_proc) and not not false, hit_zone_id, 1, buff_weapon_type_id, damage_source_id)
+					DamageUtils.buff_on_attack(attacker_unit, hit_unit, attack_type, not not is_critical_strike and not not allow_critical_proc, hit_zone_name, target_number, send_to_server, "n/a", nil, damage_source)
+				elseif attacker_player then
+					DamageUtils.buff_on_attack(attacker_unit, hit_unit, attack_type, not not is_critical_strike and not not allow_critical_proc, hit_zone_name, target_number, send_to_server, "n/a", nil, damage_source)
 				end
 			end
 
-			if not (get_template.no_aggro or unit_breed.cannot_be_aggroed) then
+			if not explosion_template.no_aggro and not breed.cannot_be_aggroed then
 				AiUtils.aggro_unit_of_enemy(hit_unit, attacker_unit)
 			end
 		end
 	end
 
-	if not flag then
-		local flag_4 = false
-		local var_13_43 = BLACKBOARDS[hit_unit]
-		local owner_3 = Managers.player:owner(hit_unit)
-		local flag_5 = not owner_3 and not owner_3:is_player_controlled()
+	if not is_immune then
+		local blocking = false
+		local blackboard = BLACKBOARDS[hit_unit]
+		local player = Managers.player:owner(hit_unit)
+		local is_bot = not not player and not not not player:is_player_controlled()
 
-		if not var_13_43 and not (radius < hit_distance) or not var_13_43.shield_user then
-			local stagger = var_13_43.stagger
+		if blackboard and radius < hit_distance and blackboard.shield_user then
+			local stagger = blackboard.stagger
 
-			flag_4 = not stagger and stagger < 1
+			blocking = not stagger or stagger < 1
 		end
 
-		local var_13_47
+		local hit_ragdoll_actor
 
-		if (flag_4 or not unit_breed) and not unit_breed.hitbox_ragdoll_translation then
-			var_13_47 = unit_breed.hitbox_ragdoll_translation.j_spine or unit_breed.hitbox_ragdoll_translation.j_spine1
+		if not blocking and breed and breed.hitbox_ragdoll_translation then
+			hit_ragdoll_actor = not not breed.hitbox_ragdoll_translation.j_spine or not not breed.hitbox_ragdoll_translation.j_spine1
 		end
 
-		if not (not flag_5 and explosion.bot_damage_profile) then
+		local bot_damage_profile_name = not not is_bot and not not explosion_data.bot_damage_profile
+
+		if not bot_damage_profile_name then
 			-- Nothing
 		end
 
@@ -470,330 +515,374 @@ AreaDamageSystem._damage_unit = function (arg_13_0, arg_13_1)
 			local damage_profile_glance
 		end
 
-		::label_13_3::
+		::label_13_4::
 
-		if not flag_2 then
-			damage_profile_glance = explosion.damage_profile_glance
+		if glancing_hit then
+			damage_profile_glance = explosion_data.damage_profile_glance
 
 			if not damage_profile_glance then
 				-- Nothing
 			end
 		end
 
-		damage_profile_glance = explosion.damage_profile
-		damage_profile_glance = damage_profile_glance or "default"
+		damage_profile_glance = explosion_data.damage_profile
 
-		::label_13_4::
-
-		if not do_damage and not flag then
-			damage_profile_glance = damage_profile_glance .. "_no_damage"
+		if not damage_profile_glance then
+			-- Nothing
 		end
 
-		local time = Managers.time:time("game")
-		local var_13_50 = DamageProfileTemplates[damage_profile_glance]
-		local var_13_51 = target_number
-		local num = 0
-		local num_2 = 1
-		local flag_6 = false
-		local var_13_55
-		local flag_7 = false
-		local num_3 = 0
+		damage_profile_glance = "default"
 
-		DamageUtils.add_damage_network_player(var_13_50, var_13_51, actual_power_level, hit_unit, attacker_unit, hit_zone_name, unbox, unbox_2, damage_source, var_13_47, num, flag_6, var_13_55, flag_7, num_3, num_2, source_attacker_unit)
+		local damage_profile_name = damage_profile_glance
 
-		if not HEALTH_ALIVE[hit_unit] then
-			DamageUtils.stagger_ai(time, var_13_50, var_13_51, actual_power_level, hit_unit, attacker_unit, hit_zone_name, unbox_2, num, flag_6, shield_blocked, damage_source, source_attacker_unit)
-		elseif not explosion.on_death_func then
-			explosion.on_death_func(hit_unit)
+		::label_13_5::
+
+		if not do_damage or is_immune then
+			damage_profile_name = damage_profile_name .. "_no_damage"
 		end
 
-		DamageUtils.apply_dot(var_13_50, var_13_51, full_power_level, hit_unit, attacker_unit, hit_zone_name, damage_source, num, flag_6, explosion, source_attacker_unit)
+		local t = Managers.time:time("game")
+		local damage_profile = DamageProfileTemplates[damage_profile_name]
+		local target_index = target_number
+		local boost_curve_multiplier = 0
+		local backstab_multiplier = 1
 
-		if not (not push_speed and not DamageUtils.is_player_unit(hit_unit) and ScriptUnit.extension(hit_unit, "status_system"):is_disabled()) then
-			ScriptUnit.extension(hit_unit, "locomotion_system"):add_external_velocity(unbox_2 * push_speed)
+		is_critical_strike = false
+
+		local added_dot
+		local first_hit = false
+		local total_hits = 0
+
+		DamageUtils.add_damage_network_player(damage_profile, target_index, actual_power_level, hit_unit, attacker_unit, hit_zone_name, impact_position, hit_direction, damage_source, hit_ragdoll_actor, boost_curve_multiplier, is_critical_strike, added_dot, first_hit, total_hits, backstab_multiplier, source_attacker_unit)
+
+		local target_alive = HEALTH_ALIVE[hit_unit]
+
+		if target_alive then
+			DamageUtils.stagger_ai(t, damage_profile, target_index, actual_power_level, hit_unit, attacker_unit, hit_zone_name, hit_direction, boost_curve_multiplier, is_critical_strike, shield_blocked, damage_source, source_attacker_unit)
+		elseif explosion_data.on_death_func then
+			explosion_data.on_death_func(hit_unit)
+		end
+
+		DamageUtils.apply_dot(damage_profile, target_index, full_power_level, hit_unit, attacker_unit, hit_zone_name, damage_source, boost_curve_multiplier, is_critical_strike, explosion_data, source_attacker_unit)
+
+		if push_speed and DamageUtils.is_player_unit(hit_unit) then
+			local status_extension = ScriptUnit.extension(hit_unit, "status_system")
+
+			if not status_extension:is_disabled() then
+				local locomotion_system = ScriptUnit.extension(hit_unit, "locomotion_system")
+
+				locomotion_system:add_external_velocity(hit_direction * push_speed)
+			end
 		end
 	end
 end
 
-AreaDamageSystem.rpc_area_damage = function (self, arg_14_1, arg_14_2, arg_14_3)
+AreaDamageSystem.rpc_area_damage = function (self, channel_id, go_id, position)
 	-- function 14
-	local unit = self.unit_storage:unit(arg_14_2)
+	local unit = self.unit_storage:unit(go_id)
 
-	if not unit then
-		Unit.set_local_position(unit, 0, arg_14_3)
-		ScriptUnit.extension(unit, "area_damage_system"):start_area_damage()
+	if unit then
+		Unit.set_local_position(unit, 0, position)
+
+		local area_damage_extension = ScriptUnit.extension(unit, "area_damage_system")
+
+		area_damage_extension:start_area_damage()
 	end
 end
 
-AreaDamageSystem.rpc_create_explosion = function (self, arg_15_1, arg_15_2, arg_15_3, arg_15_4, arg_15_5, arg_15_6, arg_15_7, arg_15_8, arg_15_9, arg_15_10, arg_15_11)
+AreaDamageSystem.rpc_create_explosion = function (self, channel_id, attacker_unit_id, attacker_is_level_unit, position, rotation, explosion_template_name_id, scale, damage_source_id, attacker_power_level, is_critical_strike, source_attacker_unit_id)
 	-- function 15
-	if not self.is_server then
-		local var_15_0 = CHANNEL_TO_PEER_ID[arg_15_1]
+	if self.is_server then
+		local peer_id = CHANNEL_TO_PEER_ID[channel_id]
 
-		self.network_transmit:send_rpc_clients_except("rpc_create_explosion", var_15_0, arg_15_2, arg_15_3, arg_15_4, arg_15_5, arg_15_6, arg_15_7, arg_15_8, arg_15_9 or 0, arg_15_10, arg_15_11)
+		self.network_transmit:send_rpc_clients_except("rpc_create_explosion", peer_id, attacker_unit_id, attacker_is_level_unit, position, rotation, explosion_template_name_id, scale, damage_source_id, not not attacker_power_level or not not 0, is_critical_strike, source_attacker_unit_id)
 	end
 
-	local var_15_1
+	local attacker_unit
 
-	if not arg_15_3 then
-		var_15_1 = LevelHelper:unit_by_index(self.world, arg_15_2)
+	if attacker_is_level_unit then
+		attacker_unit = LevelHelper:unit_by_index(self.world, attacker_unit_id)
 	else
-		var_15_1 = self.unit_storage:unit(arg_15_2)
+		attacker_unit = self.unit_storage:unit(attacker_unit_id)
 	end
 
-	local unit = self.unit_storage:unit(arg_15_11)
-	local var_15_3 = NetworkLookup.explosion_templates[arg_15_6]
-	local get_template = ExplosionUtils.get_template(var_15_3)
-	local var_15_5 = NetworkLookup.damage_sources[arg_15_8]
-	local flag = true
+	local source_attacker_unit = self.unit_storage:unit(source_attacker_unit_id)
+	local explosion_template_name = NetworkLookup.explosion_templates[explosion_template_name_id]
+	local explosion_template = ExplosionUtils.get_template(explosion_template_name)
+	local damage_source = NetworkLookup.damage_sources[damage_source_id]
+	local is_husk = true
 
-	DamageUtils.create_explosion(self.world, var_15_1, arg_15_4, arg_15_5, get_template, arg_15_7, var_15_5, self.is_server, flag, var_15_1, arg_15_9, arg_15_10, unit)
+	DamageUtils.create_explosion(self.world, attacker_unit, position, rotation, explosion_template, scale, damage_source, self.is_server, is_husk, attacker_unit, attacker_power_level, is_critical_strike, source_attacker_unit)
 end
 
-AreaDamageSystem.rpc_enable_area_damage = function (arg_16_0, arg_16_1, arg_16_2, arg_16_3)
+AreaDamageSystem.rpc_enable_area_damage = function (self, channel_id, level_index, enable)
 	-- function 16
-	local game_object_or_level_unit = Managers.state.network:game_object_or_level_unit(arg_16_2, true)
+	local unit = Managers.state.network:game_object_or_level_unit(level_index, true)
+	local area_damage_extension = ScriptUnit.extension(unit, "area_damage_system")
 
-	ScriptUnit.extension(game_object_or_level_unit, "area_damage_system"):enable(arg_16_3)
+	area_damage_extension:enable(enable)
 end
 
-AreaDamageSystem.rpc_create_liquid_damage_area = function (self, arg_17_1, arg_17_2, arg_17_3, arg_17_4, arg_17_5)
+AreaDamageSystem.rpc_create_liquid_damage_area = function (self, channel_id, source_unit_go_id, position, flow_direction, liquid_template_id)
 	-- function 17
 	fassert(self.is_server, "Error! Only the server should create Liquid Damage Areas!")
 
-	local unit = self.unit_storage:unit(arg_17_2)
-	local var_17_1 = NetworkLookup.liquid_area_damage_templates[arg_17_5]
-	local tbl = {
+	local source_unit = self.unit_storage:unit(source_unit_go_id)
+	local liquid_template = NetworkLookup.liquid_area_damage_templates[liquid_template_id]
+	local extension_init_data = {
 		area_damage_system = {
-			flow_dir = arg_17_4,
-			liquid_template = var_17_1,
-			source_unit = unit
+			flow_dir = flow_direction,
+			liquid_template = liquid_template,
+			source_unit = source_unit
 		}
 	}
-	local str = "units/hub_elements/empty"
-	local spawn_network_unit = Managers.state.unit_spawner:spawn_network_unit(str, "liquid_aoe_unit", tbl, arg_17_3)
+	local aoe_unit_name = "units/hub_elements/empty"
+	local liquid_aoe_unit = Managers.state.unit_spawner:spawn_network_unit(aoe_unit_name, "liquid_aoe_unit", extension_init_data, position)
+	local liquid_area_damage_extension = ScriptUnit.extension(liquid_aoe_unit, "area_damage_system")
 
-	ScriptUnit.extension(spawn_network_unit, "area_damage_system"):ready()
+	liquid_area_damage_extension:ready()
 end
 
-AreaDamageSystem.rpc_add_liquid_damage_blob = function (self, arg_18_1, arg_18_2, arg_18_3, arg_18_4, arg_18_5)
+AreaDamageSystem.rpc_add_liquid_damage_blob = function (self, channel_id, liquid_unit_id, blob_id, position, is_filled)
 	-- function 18
-	local unit = self.unit_storage:unit(arg_18_2)
+	local unit = self.unit_storage:unit(liquid_unit_id)
 
-	if not unit then
-		ScriptUnit.extension(unit, "area_damage_system"):add_damage_blob(arg_18_3, arg_18_4, arg_18_5)
+	if unit then
+		local liquid_area_damage_extension = ScriptUnit.extension(unit, "area_damage_system")
+
+		liquid_area_damage_extension:add_damage_blob(blob_id, position, is_filled)
 	end
 end
 
-AreaDamageSystem.rpc_update_liquid_damage_blob = function (self, arg_19_1, arg_19_2, arg_19_3, arg_19_4)
+AreaDamageSystem.rpc_update_liquid_damage_blob = function (self, channel_id, liquid_unit_id, blob_id, state)
 	-- function 19
-	local unit = self.unit_storage:unit(arg_19_2)
+	local unit = self.unit_storage:unit(liquid_unit_id)
 
 	if not unit then
 		return
 	end
 
-	local extension = ScriptUnit.extension(unit, "area_damage_system")
+	local liquid_area_damage_extension = ScriptUnit.extension(unit, "area_damage_system")
 
-	arg_19_4 = NetworkLookup.liquid_damage_blob_states[arg_19_4]
+	state = NetworkLookup.liquid_damage_blob_states[state]
 
-	if arg_19_4 == "filled" then
-		extension:set_damage_blob_filled(arg_19_3)
-	elseif arg_19_4 == "remove" then
-		extension:remove_damage_blob(arg_19_3)
-	elseif arg_19_4 == "destroy" then
-		extension:destroy(arg_19_3)
+	if state == "filled" then
+		liquid_area_damage_extension:set_damage_blob_filled(blob_id)
+	elseif state == "remove" then
+		liquid_area_damage_extension:remove_damage_blob(blob_id)
+	elseif state == "destroy" then
+		liquid_area_damage_extension:destroy(blob_id)
 	end
 end
 
-AreaDamageSystem.rpc_damage_wave_set_state = function (self, arg_20_1, arg_20_2, arg_20_3)
+AreaDamageSystem.rpc_damage_wave_set_state = function (self, channel_id, unit_id, state)
 	-- function 20
-	local unit = self.unit_storage:unit(arg_20_2)
+	local unit = self.unit_storage:unit(unit_id)
 
 	if not unit then
 		return
 	end
 
-	local extension = ScriptUnit.extension(unit, "area_damage_system")
+	local damage_wave_extension = ScriptUnit.extension(unit, "area_damage_system")
 
-	arg_20_3 = NetworkLookup.damage_wave_states[arg_20_3]
+	state = NetworkLookup.damage_wave_states[state]
 
-	if arg_20_3 == "impact" then
-		extension:on_wavefront_impact(unit)
-	elseif arg_20_3 == "running" then
-		extension:set_running_wave(unit)
-	elseif arg_20_3 == "arrived" then
-		extension:set_wave_arrived(unit)
-	elseif arg_20_3 == "hide" then
-		extension:hide_wave(unit)
+	if state == "impact" then
+		damage_wave_extension:on_wavefront_impact(unit)
+	elseif state == "running" then
+		damage_wave_extension:set_running_wave(unit)
+	elseif state == "arrived" then
+		damage_wave_extension:set_wave_arrived(unit)
+	elseif state == "hide" then
+		damage_wave_extension:hide_wave(unit)
 	end
 end
 
-AreaDamageSystem._create_damage_wave = function (self, arg_21_1, arg_21_2, arg_21_3, arg_21_4, arg_21_5)
+AreaDamageSystem._create_damage_wave = function (self, source_unit, position, damage_wave_template, unit_name, optional_extension_init_data)
 	-- function 21
 	fassert(self.is_server, "Error! Only the server should create Damage Waves!")
 
-	arg_21_4 = arg_21_4 or "units/hub_elements/empty"
+	unit_name = not not unit_name or not not "units/hub_elements/empty"
 
-	local flag = arg_21_5 or {}
-	local area_damage_system = flag.area_damage_system
+	local extension_init_data = not not optional_extension_init_data or not not {}
+	local area_damage_system = extension_init_data.area_damage_system
 
-	area_damage_system = area_damage_system or {}
-	area_damage_system.damage_wave_template_name = arg_21_3
-	area_damage_system.source_unit = arg_21_1
-	flag.area_damage_system = area_damage_system
+	if not area_damage_system then
+		-- Nothing
+	end
 
-	local spawn_network_unit = Managers.state.unit_spawner:spawn_network_unit(arg_21_4, "damage_wave_unit", flag, arg_21_2)
+	area_damage_system = {}
 
-	return (ScriptUnit.extension(spawn_network_unit, "area_damage_system"))
+	local area_system_data = area_damage_system
+
+	::label_21_0::
+
+	area_system_data.damage_wave_template_name = damage_wave_template
+	area_system_data.source_unit = source_unit
+	extension_init_data.area_damage_system = area_system_data
+
+	local damage_wave_unit = Managers.state.unit_spawner:spawn_network_unit(unit_name, "damage_wave_unit", extension_init_data, position)
+	local damage_wave_extension = ScriptUnit.extension(damage_wave_unit, "area_damage_system")
+
+	return damage_wave_extension
 end
 
-AreaDamageSystem.rpc_create_damage_wave = function (self, arg_22_1, arg_22_2, arg_22_3, arg_22_4, arg_22_5)
+AreaDamageSystem.rpc_create_damage_wave = function (self, channel_id, source_unit_go_id, position, optional_target_position, damage_wave_template_id)
 	-- function 22
 	fassert(self.is_server, "Error! Only the server should create Damage Waves!")
 
-	local str = "units/hub_elements/empty"
-	local unit = self.unit_storage:unit(arg_22_2)
-	local var_22_2 = NetworkLookup.damage_wave_templates[arg_22_5]
+	local unit_name = "units/hub_elements/empty"
+	local source_unit = self.unit_storage:unit(source_unit_go_id)
+	local damage_wave_template = NetworkLookup.damage_wave_templates[damage_wave_template_id]
+	local damage_wave_extension = self:_create_damage_wave(source_unit, position, damage_wave_template, unit_name)
 
-	self:_create_damage_wave(unit, arg_22_3, var_22_2, str):launch_wave(nil, arg_22_4)
+	damage_wave_extension:launch_wave(nil, optional_target_position)
 end
 
-AreaDamageSystem.rpc_create_thornsister_push_wave = function (self, arg_23_1, arg_23_2, arg_23_3, arg_23_4, arg_23_5, arg_23_6, arg_23_7, arg_23_8)
+AreaDamageSystem.rpc_create_thornsister_push_wave = function (self, channel_id, source_unit_go_id, position, optional_target_position, damage_wave_template_id, power_level, segments, wall_index)
 	-- function 23
 	fassert(self.is_server, "Error! Only the server should create thornsister push waves!")
 
-	local str = "units/hub_elements/empty"
-	local unit = self.unit_storage:unit(arg_23_2)
-	local var_23_2 = NetworkLookup.damage_wave_templates[arg_23_5]
-	local _create_damage_wave = self:_create_damage_wave(unit, arg_23_3, var_23_2)
-	local tbl = {}
+	local unit_name = "units/hub_elements/empty"
+	local source_unit = self.unit_storage:unit(source_unit_go_id)
+	local damage_wave_template = NetworkLookup.damage_wave_templates[damage_wave_template_id]
+	local damage_wave_extension = self:_create_damage_wave(source_unit, position, damage_wave_template)
+	local segment_positions = {}
 
-	for i = 1, #arg_23_7 do
-		tbl[i] = Vector3Box(arg_23_7[i])
+	for i = 1, #segments do
+		segment_positions[i] = Vector3Box(segments[i])
 	end
 
-	local tbl_2 = {
-		power_level = arg_23_6,
-		boxed_wall_segments = tbl,
-		wall_index = arg_23_8
+	local optional_data = {
+		power_level = power_level,
+		boxed_wall_segments = segment_positions,
+		wall_index = wall_index
 	}
 
-	_create_damage_wave:launch_wave(nil, arg_23_4, tbl_2)
+	damage_wave_extension:launch_wave(nil, optional_target_position, optional_data)
 end
 
-AreaDamageSystem.rpc_necromancer_create_curse_weave = function (self, arg_24_1, arg_24_2, arg_24_3, arg_24_4, arg_24_5)
+AreaDamageSystem.rpc_necromancer_create_curse_weave = function (self, channel_id, source_unit_id, position, wave_direction, num_instances)
 	-- function 24
-	local unit = self.unit_storage:unit(arg_24_2)
+	local source_unit = self.unit_storage:unit(source_unit_id)
 
-	if not unit then
+	if not source_unit then
 		return
 	end
 
-	local str = "units/hub_elements/empty"
-	local str_2 = "necromancer_curse_wave"
-	local has_extension = ScriptUnit.has_extension(unit, "talent_system")
+	local unit_name = "units/hub_elements/empty"
+	local damage_wave_template = "necromancer_curse_wave"
+	local talent_extension = ScriptUnit.has_extension(source_unit, "talent_system")
 
-	if not has_extension and not has_extension:has_talent("sienna_necromancer_6_3") then
-		str_2 = "necromancer_curse_wave_linger"
+	if talent_extension and talent_extension:has_talent("sienna_necromancer_6_3") then
+		damage_wave_template = "necromancer_curse_wave_linger"
 	end
 
-	local var_24_4 = DamageWaveTemplates.templates[str_2]
-	local tbl = {
+	local wave_template = DamageWaveTemplates.templates[damage_wave_template]
+	local extension_init_data = {
 		area_damage_system = {
 			player_units_inside = {},
 			ai_hit_by_wavefront = {}
 		}
 	}
-	local num_waves = var_24_4.num_waves
-	local spawn_separation_dist = var_24_4.spawn_separation_dist
-	local target_separation_dist = var_24_4.target_separation_dist
-	local num = (var_24_4.max_speed + var_24_4.start_speed * 0.5) * var_24_4.time_of_life
-	local extension = ScriptUnit.extension(unit, "talent_system")
-	local flag = false
+	local num_waves = wave_template.num_waves
+	local spawn_separation_dist = wave_template.spawn_separation_dist
+	local target_separation_dist = wave_template.target_separation_dist
+	local wave_distance = (wave_template.max_speed + wave_template.start_speed * 0.5) * wave_template.time_of_life
+	local talent_extension = ScriptUnit.extension(source_unit, "talent_system")
+	local has_circle_talent = false
 
-	if not flag then
-		local num_2 = 2 * math.pi / num_waves
+	if has_circle_talent then
+		local step = 2 * math.pi / num_waves
 
 		for i = 0, num_waves - 1 do
-			local num_3 = i * num_2
-			local rotate = Quaternion.rotate(Quaternion.axis_angle(Vector3.up(), num_3), arg_24_4)
-			local num_4 = arg_24_3 + rotate * spawn_separation_dist
-			local num_5 = arg_24_3 + rotate * num
+			local angle = i * step
+			local direction = Quaternion.rotate(Quaternion.axis_angle(Vector3.up(), angle), wave_direction)
+			local spawn_position = position + direction * spawn_separation_dist
+			local target_position = position + direction * wave_distance
+			local damage_wave_extension = self:_create_damage_wave(source_unit, spawn_position, damage_wave_template, unit_name, extension_init_data)
 
-			self:_create_damage_wave(unit, num_4, str_2, str, tbl):launch_wave(nil, num_5)
+			damage_wave_extension:launch_wave(nil, target_position)
 		end
 	else
-		local look = Quaternion.look(arg_24_4, Vector3.up())
-		local right = Quaternion.right(look)
+		local rotation = Quaternion.look(wave_direction, Vector3.up())
+		local right = Quaternion.right(rotation)
 
-		for j = -(num_waves * 0.5) + 0.5, num_waves * 0.5 - 0.5 do
-			local num_6 = arg_24_3 + right * j * spawn_separation_dist
-			local num_7 = arg_24_3 + right * j * target_separation_dist + arg_24_4 * num
+		for i = -(num_waves * 0.5) + 0.5, num_waves * 0.5 - 0.5 do
+			local spawn_position = position + right * i * spawn_separation_dist
+			local target_position = position + right * i * target_separation_dist + wave_direction * wave_distance
 
-			if not script_data.debug_necromancer_curse_wave then
-				QuickDrawerStay:sphere(num_6, 0.5, Colors.get("yellow"))
-				QuickDrawerStay:sphere(num_7, 0.5, Colors.get("green"))
+			if script_data.debug_necromancer_curse_wave then
+				QuickDrawerStay:sphere(spawn_position, 0.5, Colors.get("yellow"))
+				QuickDrawerStay:sphere(target_position, 0.5, Colors.get("green"))
 			end
 
-			self:_create_damage_wave(unit, num_6, str_2, str, tbl):launch_wave(nil, num_7)
+			local damage_wave_extension = self:_create_damage_wave(source_unit, spawn_position, damage_wave_template, unit_name, extension_init_data)
+
+			damage_wave_extension:launch_wave(nil, target_position)
 		end
 	end
 end
 
-AreaDamageSystem.rpc_necromancer_create_curse_area = function (self, arg_25_1, arg_25_2, arg_25_3, arg_25_4, arg_25_5)
+AreaDamageSystem.rpc_necromancer_create_curse_area = function (self, channel_id, source_unit_id, position, wave_direction, num_instances)
 	-- function 25
-	local unit = self.unit_storage:unit(arg_25_2)
+	local source_unit = self.unit_storage:unit(source_unit_id)
 
-	if not unit then
+	if not source_unit then
 		return
 	end
 
 	local world = self.world
-	local unit_2 = self.unit_storage:unit(arg_25_2)
-	local get_template = ExplosionUtils.get_template("sienna_necromancer_curse_area")
+	local owner_unit = self.unit_storage:unit(source_unit_id)
+	local explosion_template = ExplosionUtils.get_template("sienna_necromancer_curse_area")
 
-	if not get_template.explosion then
-		local flag = true
+	if explosion_template.explosion then
+		local is_husk = true
 		local is_server = Managers.state.network.is_server
 
-		DamageUtils.create_explosion(world, unit_2, arg_25_3, Quaternion.identity(), get_template, 1, "career_ability", is_server, flag, unit, false, nil, unit)
+		DamageUtils.create_explosion(world, owner_unit, position, Quaternion.identity(), explosion_template, 1, "career_ability", is_server, is_husk, source_unit, false, nil, source_unit)
 	end
 
-	if not get_template.aoe then
-		DamageUtils.create_aoe(world, unit_2, arg_25_3, "career_ability", get_template)
+	if explosion_template.aoe then
+		DamageUtils.create_aoe(world, owner_unit, position, "career_ability", explosion_template)
 	end
 end
 
-AreaDamageSystem.rpc_add_damage_wave_fx = function (self, arg_26_1, arg_26_2, arg_26_3, arg_26_4, arg_26_5, arg_26_6)
+AreaDamageSystem.rpc_add_damage_wave_fx = function (self, channel_id, damage_wave_unit_id, position, rotation, fx_idx, name_index)
 	-- function 26
-	local unit = self.unit_storage:unit(arg_26_2)
+	local unit = self.unit_storage:unit(damage_wave_unit_id)
 
-	if not unit then
-		ScriptUnit.extension(unit, "area_damage_system"):add_damage_wave_fx(arg_26_3, arg_26_4, arg_26_5, arg_26_6)
+	if unit then
+		local damage_wave_extension = ScriptUnit.extension(unit, "area_damage_system")
+
+		damage_wave_extension:add_damage_wave_fx(position, rotation, fx_idx, name_index)
 	end
 end
 
-AreaDamageSystem.rpc_add_damage_blob_fx = function (self, arg_27_1, arg_27_2, arg_27_3, arg_27_4)
+AreaDamageSystem.rpc_add_damage_blob_fx = function (self, channel_id, damage_blob_unit_id, position, life_time_percentage)
 	-- function 27
-	local unit = self.unit_storage:unit(arg_27_2)
+	local unit = self.unit_storage:unit(damage_blob_unit_id)
 
-	if not unit then
-		ScriptUnit.extension(unit, "area_damage_system"):add_damage_blob_fx(arg_27_3, arg_27_4)
+	if unit then
+		local damage_blob_extension = ScriptUnit.extension(unit, "area_damage_system")
+
+		damage_blob_extension:add_damage_blob_fx(position, life_time_percentage)
 	end
 end
 
-AreaDamageSystem.rpc_abort_damage_blob = function (self, arg_28_1, arg_28_2)
+AreaDamageSystem.rpc_abort_damage_blob = function (self, channel_id, damage_blob_unit_id)
 	-- function 28
-	local unit = self.unit_storage:unit(arg_28_2)
+	local unit = self.unit_storage:unit(damage_blob_unit_id)
 
-	if not unit then
-		if not self.is_server then
-			local var_28_1 = CHANNEL_TO_PEER_ID[arg_28_1]
+	if unit then
+		if self.is_server then
+			local peer_id = CHANNEL_TO_PEER_ID[channel_id]
 
-			self.network_transmit:send_rpc_clients_except("rpc_abort_damage_blob", var_28_1, arg_28_2)
+			self.network_transmit:send_rpc_clients_except("rpc_abort_damage_blob", peer_id, damage_blob_unit_id)
 		end
 
-		ScriptUnit.extension(unit, "area_damage_system"):abort()
+		local damage_blob_extension = ScriptUnit.extension(unit, "area_damage_system")
+
+		damage_blob_extension:abort()
 	end
 end

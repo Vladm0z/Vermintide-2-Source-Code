@@ -2,14 +2,14 @@
 
 ImguiDebugMenu = class(ImguiDebugMenu)
 
-local function fn(self, arg_1_1)
+local function cmp_setting_name(a, b)
 	-- function 1
-	return self.setting_name < arg_1_1.setting_name
+	return a.setting_name < b.setting_name
 end
 
-local function fn_2(self, arg_2_1)
+local function cmp_name(a, b)
 	-- function 2
-	return self.name < arg_2_1.name
+	return a.name < b.name
 end
 
 ImguiDebugMenu.init = function (self)
@@ -17,63 +17,62 @@ ImguiDebugMenu.init = function (self)
 	self._needle = ""
 
 	local settings = require("scripts/utils/debug_screen_config").settings
-	local tbl = {}
+	local settings_by_category = {}
 
-	for i, v in ipairs(settings) do
-		local category = v.category
-		local var_3_3 = tbl[v.category]
+	for i, setting in ipairs(settings) do
+		local category = setting.category
+		local var_3_1 = settings_by_category[setting.category]
 
-		var_3_3 = var_3_3 or {}
-		tbl[category] = var_3_3
+		var_3_1 = not not var_3_1 or not not {}
+		settings_by_category[category] = var_3_1
 
-		table.insert(tbl[v.category], v)
+		table.insert(settings_by_category[setting.category], setting)
 	end
 
 	self._settings = settings
 	self._settings_categories = {}
 
-	for k, v_2 in pairs(tbl) do
-		table.sort(v_2, fn)
+	for name, list in pairs(settings_by_category) do
+		table.sort(list, cmp_setting_name)
 		table.insert(self._settings_categories, {
-			name = k,
-			list = v_2
+			name = name,
+			list = list
 		})
 	end
 
-	table.sort(self._settings_categories, fn_2)
+	table.sort(self._settings_categories, cmp_name)
 
 	self._options = {}
 end
 
-ImguiDebugMenu.update = function (arg_4_0)
+ImguiDebugMenu.update = function (self)
 	-- function 4
 	return
 end
 
-local find = string.find
-local lower = string.lower
+local find, lower = string.find, string.lower
 
-local function fn_3(arg_5_0, arg_5_1)
+local function ifind(h, n)
 	-- function 5
-	return find(lower(arg_5_0), lower(arg_5_1))
+	return find(lower(h), lower(n))
 end
 
-ImguiDebugMenu._find_needle = function (arg_6_0, arg_6_1, arg_6_2)
+ImguiDebugMenu._find_needle = function (self, setting, needle)
 	-- function 6
-	local var_6_0 = fn_3(arg_6_1.setting_name, arg_6_2)
+	local var_6_0 = ifind(setting.setting_name, needle)
 
 	if not var_6_0 then
-		var_6_0 = fn_3(arg_6_1.description, arg_6_2)
-		var_6_0 = var_6_0 or fn_3(arg_6_1.category, arg_6_2)
+		var_6_0 = ifind(setting.description, needle)
+		var_6_0 = not not var_6_0 or not not ifind(setting.category, needle)
 	end
 
 	return var_6_0
 end
 
-ImguiDebugMenu._find_needle_list = function (self, arg_7_1, arg_7_2)
+ImguiDebugMenu._find_needle_list = function (self, setting_list, needle)
 	-- function 7
-	for i = 1, #arg_7_1 do
-		if not self:_find_needle(arg_7_1[i], arg_7_2) then
+	for i = 1, #setting_list do
+		if self:_find_needle(setting_list[i], needle) then
 			return true
 		end
 	end
@@ -83,28 +82,27 @@ end
 
 ImguiDebugMenu.draw = function (self)
 	-- function 8
-	local begin_window = Imgui.begin_window("DebugMenu")
-	local input_text = Imgui.input_text("Search", self._needle)
+	local do_close = Imgui.begin_window("DebugMenu")
+	local needle = Imgui.input_text("Search", self._needle)
 
-	self._needle = input_text
+	self._needle = needle
 
 	Imgui.begin_child_window("Settings", 0, 0, true)
 
-	local flag = true
+	local no_matches = true
 
-	for k, v in pairs(self._settings_categories) do
-		local name = v.name
-		local list = v.list
+	for _, sc in pairs(self._settings_categories) do
+		local category, setting_list = sc.name, sc.list
 
-		if not self:_find_needle_list(list, input_text) then
-			flag = false
+		if self:_find_needle_list(setting_list, needle) then
+			no_matches = false
 
-			if not Imgui.collapsing_header(name, false) then
-				for k_2 = 1, #list do
-					local var_8_5 = list[k_2]
+			if Imgui.collapsing_header(category, false) then
+				for i = 1, #setting_list do
+					local setting = setting_list[i]
 
-					if not self:_find_needle(var_8_5, input_text) then
-						self:_show_debug_setting(var_8_5)
+					if self:_find_needle(setting, needle) then
+						self:_show_debug_setting(setting)
 					end
 				end
 
@@ -113,128 +111,136 @@ ImguiDebugMenu.draw = function (self)
 		end
 	end
 
-	if not flag then
+	if no_matches then
 		Imgui.text("No matches.")
 	end
 
 	Imgui.end_child_window()
 	Imgui.end_window()
 
-	return begin_window
+	return do_close
 end
 
-ImguiDebugMenu._set_setting = function (arg_9_0, arg_9_1, arg_9_2)
+ImguiDebugMenu._set_setting = function (self, key, val)
 	-- function 9
-	Development.set_setting(arg_9_1, arg_9_2)
+	Development.set_setting(key, val)
 
-	script_data[arg_9_1] = arg_9_2
+	script_data[key] = val
 
-	Development.clear_param_cache(arg_9_1)
+	Development.clear_param_cache(key)
 end
 
-ImguiDebugMenu._show_debug_setting = function (self, arg_10_1)
+ImguiDebugMenu._show_debug_setting = function (self, setting)
 	-- function 10
-	local setting_name = arg_10_1.setting_name
+	local setting_name = setting.setting_name
 
 	Imgui.text(setting_name)
 
-	if not Imgui.is_item_hovered() then
+	if Imgui.is_item_hovered() then
 		Imgui.begin_tool_tip()
 		Imgui.text_colored(setting_name, 127, 127, 127, 255)
-		Imgui.text(arg_10_1.description)
+		Imgui.text(setting.description)
 		Imgui.end_tool_tip()
 	end
 
 	Imgui.same_line(360 - Imgui.calculate_text_size(setting_name))
 	Imgui.spacing(0)
 
-	if not arg_10_1.is_boolean then
+	if setting.is_boolean then
 		Imgui.same_line()
 
-		local var_10_1 = script_data[setting_name]
+		local val = script_data[setting_name]
 
-		if not Imgui.radio_button("false##" .. setting_name, var_10_1 == false) then
-			var_10_1 = false
+		if Imgui.radio_button("false##" .. setting_name, val == false) then
+			val = false
 		end
 
 		Imgui.same_line()
 
-		if not Imgui.radio_button("true##" .. setting_name, var_10_1 == true) then
-			var_10_1 = true
+		if Imgui.radio_button("true##" .. setting_name, val == true) then
+			val = true
 		end
 
 		Imgui.same_line()
 
-		if not Imgui.small_button("Reset") then
-			var_10_1 = nil
+		if Imgui.small_button("Reset") then
+			val = nil
 		end
 
-		self:_set_setting(setting_name, var_10_1)
-	elseif arg_10_1.load_items_source_func or not arg_10_1.item_source then
+		self:_set_setting(setting_name, val)
+	elseif setting.load_items_source_func or setting.item_source then
 		Imgui.same_line()
 
-		local var_10_2
+		local options
 
-		if not arg_10_1.load_items_source_func then
-			var_10_2 = self._options
+		if setting.load_items_source_func then
+			options = self._options
 
-			arg_10_1.load_items_source_func(var_10_2)
+			setting.load_items_source_func(options)
 		else
-			var_10_2 = arg_10_1.item_source
+			options = setting.item_source
 		end
 
-		local find = table.find(var_10_2, script_data[setting_name])
+		local find = table.find(options, script_data[setting_name])
 
-		find = find or 0
+		if not find then
+			-- Nothing
+		end
+
+		find = 0
+
+		local index = find
+
+		::label_10_0::
 
 		Imgui.push_item_width(200)
 
-		local combo = Imgui.combo("Choice", find, var_10_2)
+		index = Imgui.combo("Choice", index, options)
 
 		Imgui.pop_item_width()
 		Imgui.same_line()
 
-		if not Imgui.small_button("Reset") then
-			combo = 0
+		if Imgui.small_button("Reset") then
+			index = 0
 		end
 
-		self:_set_setting(setting_name, var_10_2[combo])
+		self:_set_setting(setting_name, options[index])
 
-		if not arg_10_1.func then
+		if setting.func then
 			Imgui.same_line()
 
-			if not Imgui.small_button("Execute") then
-				arg_10_1.func(var_10_2, combo)
+			if Imgui.small_button("Execute") then
+				setting.func(options, index)
 			end
 		end
-	elseif not arg_10_1.preset then
+	elseif setting.preset then
 		Imgui.same_line()
 
-		if not Imgui.small_button("Activate preset") then
-			for k, v in pairs(arg_10_1.preset) do
+		if Imgui.small_button("Activate preset") then
+			for k, v in pairs(setting.preset) do
 				self:_set_setting(k, v)
 			end
 		end
-	elseif not arg_10_1.command_list then
-		for i, v_2 in ipairs(arg_10_1.command_list) do
+	elseif setting.command_list then
+		for _, def in ipairs(setting.command_list) do
 			Imgui.same_line()
 
-			if not Imgui.small_button(v_2.description) then
-				for i_2, v_3 in ipairs(v_2.commands) do
-					Application.console_command(unpack(v_3))
+			if Imgui.small_button(def.description) then
+				for _, cmd in ipairs(def.commands) do
+					Application.console_command(unpack(cmd))
 				end
 			end
 		end
-	elseif not arg_10_1.func then
+	elseif setting.func then
 		Imgui.same_line()
 
-		if not Imgui.small_button("Execute") then
-			arg_10_1.func()
+		if Imgui.small_button("Execute") then
+			setting.func()
 		end
 	end
 end
 
-ImguiDebugMenu.is_persistent = function (arg_11_0)
+ImguiDebugMenu.is_persistent = function (self)
 	-- function 11
 	return false
 end

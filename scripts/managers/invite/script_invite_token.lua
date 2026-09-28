@@ -2,27 +2,27 @@
 
 ScriptInviteToken = class(ScriptInviteToken)
 
-ScriptInviteToken.init = function (arg_1_0, arg_1_1)
+ScriptInviteToken.init = function (self, token)
 	-- function 1
 	return
 end
 
-ScriptInviteToken.update = function (arg_2_0)
+ScriptInviteToken.update = function (self)
 	-- function 2
 	return
 end
 
-ScriptInviteToken.info = function (arg_3_0)
+ScriptInviteToken.info = function (self)
 	-- function 3
 	return {}
 end
 
-ScriptInviteToken.done = function (arg_4_0)
+ScriptInviteToken.done = function (self)
 	-- function 4
 	return true
 end
 
-ScriptInviteToken.close = function (arg_5_0)
+ScriptInviteToken.close = function (self)
 	-- function 5
 	return
 end

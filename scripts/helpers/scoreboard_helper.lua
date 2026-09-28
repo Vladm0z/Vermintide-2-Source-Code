@@ -2,7 +2,7 @@
 
 local ScoreboardHelper = ScoreboardHelper
 
-ScoreboardHelper = ScoreboardHelper or {}
+ScoreboardHelper = not not ScoreboardHelper or not not {}
 ScoreboardHelper = ScoreboardHelper
 ScoreboardHelper.scoreboard_topic_stats = {
 	{
@@ -46,9 +46,9 @@ ScoreboardHelper.scoreboard_topic_stats = {
 				"beastmen_bestigor"
 			}
 		},
-		sort_function = function (self, arg_1_1)
+		sort_function = function (a, b)
 			-- function 1
-			return self.score > arg_1_1.score
+			return a.score > b.score
 		end
 	},
 	{
@@ -88,54 +88,54 @@ ScoreboardHelper.scoreboard_topic_stats = {
 				"beastmen_standard_bearer"
 			}
 		},
-		sort_function = function (self, arg_2_1)
+		sort_function = function (a, b)
 			-- function 2
-			return self.score > arg_2_1.score
+			return a.score > b.score
 		end
 	},
 	{
 		name = "kills_total",
 		stat_type = "kills_total",
 		display_text = "scoreboard_topic_kills_total",
-		sort_function = function (self, arg_3_1)
+		sort_function = function (a, b)
 			-- function 3
-			return self.score > arg_3_1.score
+			return a.score > b.score
 		end
 	},
 	{
 		name = "kills_melee",
 		stat_type = "kills_melee",
 		display_text = "scoreboard_topic_kills_melee",
-		sort_function = function (self, arg_4_1)
+		sort_function = function (a, b)
 			-- function 4
-			return self.score > arg_4_1.score
+			return a.score > b.score
 		end
 	},
 	{
 		name = "kills_ranged",
 		stat_type = "kills_ranged",
 		display_text = "scoreboard_topic_kills_ranged",
-		sort_function = function (self, arg_5_1)
+		sort_function = function (a, b)
 			-- function 5
-			return self.score > arg_5_1.score
+			return a.score > b.score
 		end
 	},
 	{
 		name = "damage_taken",
 		stat_type = "damage_taken",
 		display_text = "scoreboard_topic_damage_taken",
-		sort_function = function (self, arg_6_1)
+		sort_function = function (a, b)
 			-- function 6
-			return self.score < arg_6_1.score
+			return a.score < b.score
 		end
 	},
 	{
 		name = "damage_dealt",
 		stat_type = "damage_dealt",
 		display_text = "scoreboard_topic_damage_dealt",
-		sort_function = function (self, arg_7_1)
+		sort_function = function (a, b)
 			-- function 7
-			return self.score > arg_7_1.score
+			return a.score > b.score
 		end
 	},
 	{
@@ -167,36 +167,36 @@ ScoreboardHelper.scoreboard_topic_stats = {
 				"beastmen_minotaur"
 			}
 		},
-		sort_function = function (self, arg_8_1)
+		sort_function = function (a, b)
 			-- function 8
-			return self.score > arg_8_1.score
+			return a.score > b.score
 		end
 	},
 	{
 		name = "headshots",
 		stat_type = "headshots",
 		display_text = "scoreboard_topic_headshots",
-		sort_function = function (self, arg_9_1)
+		sort_function = function (a, b)
 			-- function 9
-			return self.score > arg_9_1.score
+			return a.score > b.score
 		end
 	},
 	{
 		name = "saves",
 		stat_type = "saves",
 		display_text = "scoreboard_topic_saves",
-		sort_function = function (self, arg_10_1)
+		sort_function = function (a, b)
 			-- function 10
-			return self.score > arg_10_1.score
+			return a.score > b.score
 		end
 	},
 	{
 		name = "revives",
 		stat_type = "revives",
 		display_text = "scoreboard_topic_revives",
-		sort_function = function (self, arg_11_1)
+		sort_function = function (a, b)
 			-- function 11
-			return self.score > arg_11_1.score
+			return a.score > b.score
 		end
 	}
 }
@@ -223,118 +223,129 @@ ScoreboardHelper.scoreboard_grouped_topic_stats = {
 	}
 }
 
-local num = 0
+local score_count_per_player = 0
 
-for i, v in ipairs(ScoreboardHelper.scoreboard_grouped_topic_stats) do
-	num = num + #v.stats
+for _, group_settings in ipairs(ScoreboardHelper.scoreboard_grouped_topic_stats) do
+	score_count_per_player = score_count_per_player + #group_settings.stats
 end
 
-ScoreboardHelper.num_stats_per_player = num
+ScoreboardHelper.num_stats_per_player = score_count_per_player
 
-local tbl = {}
+local TEMP_TABLE = {}
 
-local function fn(self, arg_12_1, arg_12_2)
+local function get_score(statistics_db, stats_id, stat_type)
 	-- function 12
-	if type(arg_12_2) == "table" then
-		return self:get_stat(arg_12_1, unpack(arg_12_2))
+	if type(stat_type) == "table" then
+		return statistics_db:get_stat(stats_id, unpack(stat_type))
 	else
-		return self:get_stat(arg_12_1, arg_12_2)
+		return statistics_db:get_stat(stats_id, stat_type)
 	end
 end
 
-local function fn_2(arg_13_0, arg_13_1, arg_13_2, arg_13_3)
+local function get_score_by_name(statistics_db, stats_id, stat_name, saved_scoreboard_data)
 	-- function 13
-	local var_13_0
+	local topic
 
-	for i, v in ipairs(ScoreboardHelper.scoreboard_topic_stats) do
-		if v.name == arg_13_2 then
-			var_13_0 = v
+	for _, topic_data in ipairs(ScoreboardHelper.scoreboard_topic_stats) do
+		if topic_data.name == stat_name then
+			topic = topic_data
 
 			break
 		end
 	end
 
-	assert(var_13_0, "Could not find stats topic with name: %s", arg_13_2)
+	assert(topic, "Could not find stats topic with name: %s", stat_name)
 
-	local var_13_1
-	local stat_types = var_13_0.stat_types
+	local score_amount
+	local stat_types = topic.stat_types
 
 	if stat_types ~= nil then
-		local count = #stat_types
-		local num = 0
+		local stat_types_n = #stat_types
+		local score = 0
 
-		for k = 1, count do
-			local var_13_5 = stat_types[k]
+		for i = 1, stat_types_n do
+			local stat_type = stat_types[i]
 
-			num = num + fn(arg_13_0, arg_13_1, var_13_5)
+			score = score + get_score(statistics_db, stats_id, stat_type)
 		end
 
-		var_13_1 = num
+		score_amount = score
 	else
-		local stat_type = var_13_0.stat_type
+		local stat_type = topic.stat_type
+		local score = get_score(statistics_db, stats_id, stat_type)
 
-		var_13_1 = fn(arg_13_0, arg_13_1, stat_type)
+		score_amount = score
 	end
 
-	if not arg_13_3 then
-		table.clear(tbl)
+	if saved_scoreboard_data then
+		table.clear(TEMP_TABLE)
 
-		local var_13_7 = arg_13_3[arg_13_1]
+		local player_data = saved_scoreboard_data[stats_id]
 		local scores
 
-		if not var_13_7 then
-			scores = var_13_7.scores
+		if player_data then
+			scores = player_data.scores
 
 			if not scores then
 				-- Nothing
 			end
 		end
 
-		scores = tbl
+		scores = TEMP_TABLE
+
+		local player_data_scores = scores
 
 		::label_13_0::
 
-		local var_13_9 = scores[arg_13_2]
+		local var_13_1 = player_data_scores[stat_name]
 
-		var_13_9 = var_13_9 or 0
-
-		if var_13_9 > 0 then
-			print(string.format("### Adding saved score for %q: %i ID: %s", arg_13_2, var_13_9, arg_13_1))
+		if not var_13_1 then
+			-- Nothing
 		end
 
-		var_13_1 = var_13_1 + var_13_9
+		var_13_1 = 0
+
+		local saved_score_amount = var_13_1
+
+		::label_13_1::
+
+		if saved_score_amount > 0 then
+			print(string.format("### Adding saved score for %q: %i ID: %s", stat_name, saved_score_amount, stats_id))
+		end
+
+		score_amount = score_amount + saved_score_amount
 	end
 
-	assert(var_13_1 ~= nil, "Couldn't find scoreboard statistic for '%s'", var_13_0.name)
+	assert(score_amount ~= nil, "Couldn't find scoreboard statistic for '%s'", topic.name)
 
 	return {
-		score = var_13_1,
-		stat_name = arg_13_2,
-		display_text = var_13_0.display_text
+		score = score_amount,
+		stat_name = stat_name,
+		display_text = topic.display_text
 	}
 end
 
-ScoreboardHelper.get_weave_stats = function (arg_14_0, arg_14_1)
+ScoreboardHelper.get_weave_stats = function (statistics_db, profile_synchronizer)
 	-- function 14
-	assert(arg_14_0, "Missing statistics_database reference.")
-	assert(arg_14_1, "Missing profile_synchronizer reference.")
+	assert(statistics_db, "Missing statistics_database reference.")
+	assert(profile_synchronizer, "Missing profile_synchronizer reference.")
 
-	local get_current_players = ScoreboardHelper.get_current_players()
-	local tbl = {}
+	local bots_and_players = ScoreboardHelper.get_current_players()
+	local player_list = {}
 
-	for k, v in pairs(get_current_players) do
-		local network_id = v:network_id()
-		local name = v:name()
-		local stats_id = v:stats_id()
-		local profile_by_peer = arg_14_1:profile_by_peer(network_id, v:local_player_id())
-		local is_player_controlled = v:is_player_controlled()
+	for _, player in pairs(bots_and_players) do
+		local player_peer_id = player:network_id()
+		local player_name = player:name()
+		local stats_id = player:stats_id()
+		local profile_index = profile_synchronizer:profile_by_peer(player_peer_id, player:local_player_id())
+		local is_player_controlled = player:is_player_controlled()
 
-		tbl[stats_id] = {
-			name = name,
-			peer_id = network_id,
-			local_player_id = v:local_player_id(),
+		player_list[stats_id] = {
+			name = player_name,
+			peer_id = player_peer_id,
+			local_player_id = player:local_player_id(),
 			stats_id = stats_id,
-			profile_index = profile_by_peer,
+			profile_index = profile_index,
 			is_player_controlled = is_player_controlled,
 			scores = {}
 		}
@@ -342,68 +353,74 @@ ScoreboardHelper.get_weave_stats = function (arg_14_0, arg_14_1)
 
 	local scoreboard_topic_stats = ScoreboardHelper.scoreboard_topic_stats
 
-	for i, v_2 in ipairs(scoreboard_topic_stats) do
-		local stat_types = v_2.stat_types
+	for i, topic in ipairs(scoreboard_topic_stats) do
+		local stat_types = topic.stat_types
 
-		for k_2, v_3 in pairs(tbl) do
+		for stats_id, player_data in pairs(player_list) do
 			if stat_types ~= nil then
-				local count = #stat_types
-				local num = 0
+				local stat_types_n = #stat_types
+				local score = 0
 
-				for i6 = 1, count do
-					local var_14_11 = stat_types[i6]
+				for i = 1, stat_types_n do
+					local stat_type = stat_types[i]
 
-					num = num + fn(arg_14_0, v_3.stats_id, var_14_11)
+					score = score + get_score(statistics_db, player_data.stats_id, stat_type)
 				end
 
-				tbl[k_2].scores[v_2.name] = num
-			else
-				local stat_type = v_2.stat_type
-				local var_14_13 = fn(arg_14_0, v_3.stats_id, stat_type)
+				local data = player_list[stats_id]
 
-				tbl[k_2].scores[v_2.name] = var_14_13
+				data.scores[topic.name] = score
+			else
+				local stat_type = topic.stat_type
+				local score = get_score(statistics_db, player_data.stats_id, stat_type)
+				local data = player_list[stats_id]
+
+				data.scores[topic.name] = score
 			end
 		end
 	end
 
-	return tbl
+	return player_list
 end
 
-ScoreboardHelper.get_grouped_topic_statistics = function (arg_15_0, arg_15_1, arg_15_2)
+ScoreboardHelper.get_grouped_topic_statistics = function (statistics_db, profile_synchronizer, saved_scoreboard_data)
 	-- function 15
-	assert(arg_15_0, "Missing statistics_database reference.")
-	assert(arg_15_1, "Missing profile_synchronizer reference.")
+	assert(statistics_db, "Missing statistics_database reference.")
+	assert(profile_synchronizer, "Missing profile_synchronizer reference.")
 
-	local get_current_players = ScoreboardHelper.get_current_players()
-	local tbl = {}
+	local bots_and_players = ScoreboardHelper.get_current_players()
+	local player_list = {}
 
-	for k, v in pairs(get_current_players) do
-		local network_id = v:network_id()
-		local name = v:name()
-		local stats_id = v:stats_id()
-		local profile_by_peer = arg_15_1:profile_by_peer(network_id, v:local_player_id())
-		local player_unit = v.player_unit
-		local flag = not Unit.alive(player_unit) and ScriptUnit.extension(player_unit, "career_system")
-		local career_index
+	for _, player in pairs(bots_and_players) do
+		local player_peer_id = player:network_id()
+		local player_name = player:name()
+		local stats_id = player:stats_id()
+		local profile_index = profile_synchronizer:profile_by_peer(player_peer_id, player:local_player_id())
+		local player_unit = player.player_unit
+		local unit_alive = Unit.alive(player_unit)
+		local career_extension = not not unit_alive and not not ScriptUnit.extension(player_unit, "career_system")
+		local career_index_2
 
-		if not flag then
-			career_index = flag:career_index()
+		if career_extension then
+			career_index_2 = career_extension:career_index()
 
-			if not career_index then
+			if not career_index_2 then
 				-- Nothing
 			end
 		end
 
-		career_index = v:career_index()
+		career_index_2 = player:career_index()
+
+		local career_index = career_index_2
 
 		::label_15_0::
 
-		local is_player_controlled = v:is_player_controlled()
-		local get_player_level = ExperienceSettings.get_player_level(v)
+		local is_player_controlled = player:is_player_controlled()
+		local player_level = ExperienceSettings.get_player_level(player)
 		local get_versus_player_level
 
-		if not is_player_controlled then
-			get_versus_player_level = ExperienceSettings.get_versus_player_level(v)
+		if is_player_controlled then
+			get_versus_player_level = ExperienceSettings.get_versus_player_level(player)
 
 			if not get_versus_player_level then
 				-- Nothing
@@ -412,137 +429,142 @@ ScoreboardHelper.get_grouped_topic_statistics = function (arg_15_0, arg_15_1, ar
 
 		get_versus_player_level = 0
 
+		local versus_player_level = get_versus_player_level
+
 		::label_15_1::
 
-		local var_15_12 = SPProfiles[profile_by_peer].careers[career_index]
-		local preview_wield_slot = var_15_12.preview_wield_slot
-		local var_15_14 = InventorySettings.slot_names_by_type[preview_wield_slot][1]
-		local get_cosmetic_slot = CosmeticUtils.get_cosmetic_slot(v, "slot_frame")
-		local get_cosmetic_slot_2 = CosmeticUtils.get_cosmetic_slot(v, "slot_skin")
-		local get_cosmetic_slot_3 = CosmeticUtils.get_cosmetic_slot(v, "slot_hat")
-		local get_cosmetic_slot_4 = CosmeticUtils.get_cosmetic_slot(v, var_15_14)
-		local get_cosmetic_slot_5 = CosmeticUtils.get_cosmetic_slot(v, "slot_pose")
+		local profile = SPProfiles[profile_index]
+		local careers = profile.careers
+		local career_settings = careers[career_index]
+		local preview_wield_slot_type = career_settings.preview_wield_slot
+		local preview_wield_slot = InventorySettings.slot_names_by_type[preview_wield_slot_type]
+		local preview_wield_slot_name = preview_wield_slot[1]
+		local portrait_frame = CosmeticUtils.get_cosmetic_slot(player, "slot_frame")
+		local hero_skin = CosmeticUtils.get_cosmetic_slot(player, "slot_skin")
+		local hat = CosmeticUtils.get_cosmetic_slot(player, "slot_hat")
+		local weapon = CosmeticUtils.get_cosmetic_slot(player, preview_wield_slot_name)
+		local weapon_pose = CosmeticUtils.get_cosmetic_slot(player, "slot_pose")
 
-		if not CosmeticUtils.is_valid(get_cosmetic_slot_2) then
-			get_cosmetic_slot_2 = CosmeticUtils.get_default_cosmetic_slot(var_15_12, "slot_skin")
+		if not CosmeticUtils.is_valid(hero_skin) then
+			hero_skin = CosmeticUtils.get_default_cosmetic_slot(career_settings, "slot_skin")
 		end
 
-		if not CosmeticUtils.is_valid(get_cosmetic_slot_3) then
-			get_cosmetic_slot_3 = CosmeticUtils.get_default_cosmetic_slot(var_15_12, "slot_hat")
+		if not CosmeticUtils.is_valid(hat) then
+			hat = CosmeticUtils.get_default_cosmetic_slot(career_settings, "slot_hat")
 		end
 
-		if not CosmeticUtils.is_valid(get_cosmetic_slot_4) then
-			get_cosmetic_slot_4 = CosmeticUtils.get_default_cosmetic_slot(var_15_12, var_15_14)
+		if not CosmeticUtils.is_valid(weapon) then
+			weapon = CosmeticUtils.get_default_cosmetic_slot(career_settings, preview_wield_slot_name)
 		end
 
-		if not CosmeticUtils.is_valid(get_cosmetic_slot_5) then
-			get_cosmetic_slot_5 = CosmeticUtils.get_default_cosmetic_slot(var_15_12, "slot_pose")
+		if not CosmeticUtils.is_valid(weapon_pose) then
+			weapon_pose = CosmeticUtils.get_default_cosmetic_slot(career_settings, "slot_pose")
 		end
 
-		tbl[stats_id] = {
-			name = name,
-			peer_id = network_id,
-			local_player_id = v:local_player_id(),
+		player_list[stats_id] = {
+			name = player_name,
+			peer_id = player_peer_id,
+			local_player_id = player:local_player_id(),
 			career_index = career_index,
 			stats_id = stats_id,
-			profile_index = profile_by_peer,
+			profile_index = profile_index,
 			is_player_controlled = is_player_controlled,
-			player_level = get_player_level,
-			versus_player_level = get_versus_player_level,
-			portrait_frame = not get_cosmetic_slot and get_cosmetic_slot.item_name,
-			hero_skin = not get_cosmetic_slot_2 and get_cosmetic_slot_2.item_name,
-			weapon = get_cosmetic_slot_4,
-			weapon_pose = get_cosmetic_slot_5,
-			hat = get_cosmetic_slot_3
+			player_level = player_level,
+			versus_player_level = versus_player_level,
+			portrait_frame = not not portrait_frame and not not portrait_frame.item_name,
+			hero_skin = not not hero_skin and not not hero_skin.item_name,
+			weapon = weapon,
+			weapon_pose = weapon_pose,
+			hat = hat
 		}
 	end
 
-	for k_2, v_2 in pairs(tbl) do
-		local tbl_2 = {}
+	for stats_id, player_data in pairs(player_list) do
+		local scores = {}
 
-		for i, v_3 in ipairs(ScoreboardHelper.scoreboard_grouped_topic_stats) do
-			local group_name = v_3.group_name
-			local stats = v_3.stats
+		for _, grouped_stat_data in ipairs(ScoreboardHelper.scoreboard_grouped_topic_stats) do
+			local group_name = grouped_stat_data.group_name
+			local stats = grouped_stat_data.stats
 
-			tbl_2[group_name] = {}
+			scores[group_name] = {}
 
-			local var_15_23 = tbl_2[group_name]
+			local group_scores = scores[group_name]
 
-			for k_3, v_4 in pairs(stats) do
-				local var_15_24 = fn_2(arg_15_0, k_2, v_4, arg_15_2)
+			for _, stat_name in pairs(stats) do
+				local score_data = get_score_by_name(statistics_db, stats_id, stat_name, saved_scoreboard_data)
 
-				var_15_23[#var_15_23 + 1] = var_15_24
+				group_scores[#group_scores + 1] = score_data
 			end
 		end
 
-		v_2.group_scores = tbl_2
+		player_data.group_scores = scores
 	end
 
-	return tbl
+	return player_list
 end
 
-local tbl_2 = {}
-local tbl_3 = {}
+local PLAYERS = {}
+local OCCUPIED_SLOTS = {}
 
-ScoreboardHelper.get_current_players = function (self)
+ScoreboardHelper.get_current_players = function (optional_profile_synchronizer)
 	-- function 16
-	local max_instance_members = Managers.mechanism:max_instance_members()
+	local max_members = Managers.mechanism:max_instance_members()
 	local human_and_bot_players = Managers.player:human_and_bot_players()
 
-	if max_instance_members >= table.size(human_and_bot_players) then
+	if max_members >= table.size(human_and_bot_players) then
 		return human_and_bot_players
 	else
-		table.clear(tbl_2)
-		table.clear(tbl_3)
+		table.clear(PLAYERS)
+		table.clear(OCCUPIED_SLOTS)
 
-		local var_16_2 = tbl_2
+		local gathered_players = PLAYERS
 		local human_players = Managers.player:human_players()
-		local bots = Managers.player:bots()
+		local bot_players = Managers.player:bots()
 
-		for k, v in pairs(human_players) do
-			local var_16_5
+		for _, player in pairs(human_players) do
+			local player_profile_index
 
-			if not self then
-				local network_id = v:network_id()
-				local local_player_id = v:local_player_id()
+			if optional_profile_synchronizer then
+				local player_peer_id = player:network_id()
+				local local_player_id = player:local_player_id()
 
-				var_16_5 = self:profile_by_peer(network_id, local_player_id)
+				player_profile_index = optional_profile_synchronizer:profile_by_peer(player_peer_id, local_player_id)
 			else
-				var_16_5 = v:profile_index()
+				player_profile_index = player:profile_index()
 			end
 
-			if not tbl_3[var_16_5] then
-				var_16_2[#var_16_2 + 1] = v
-				tbl_3[var_16_5] = true
+			if not OCCUPIED_SLOTS[player_profile_index] then
+				gathered_players[#gathered_players + 1] = player
+				OCCUPIED_SLOTS[player_profile_index] = true
 			end
 
-			if max_instance_members <= #var_16_2 then
+			if max_members <= #gathered_players then
 				break
 			end
 		end
 
-		for k_2, v_2 in pairs(bots) do
-			if max_instance_members <= #var_16_2 then
+		for _, bot_player in pairs(bot_players) do
+			if max_members <= #gathered_players then
 				break
 			end
 
-			local profile_index = v_2:profile_index()
+			local bot_profile_index = bot_player:profile_index()
 
-			if not tbl_3[profile_index] then
-				var_16_2[#var_16_2 + 1] = v_2
+			if not OCCUPIED_SLOTS[bot_profile_index] then
+				gathered_players[#gathered_players + 1] = bot_player
 			end
 		end
 
-		return var_16_2
+		return gathered_players
 	end
 end
 
 ScoreboardHelper.debug_get_grouped_topic_statistics = function ()
 	-- function 17
-	local tbl = {}
+	local player_list = {}
 
 	for i = 1, 4 do
-		local tbl_2 = {
+		local tbl = {
 			career_index = 1,
 			portrait_frame = "default",
 			player_level = 1,
@@ -554,37 +576,37 @@ ScoreboardHelper.debug_get_grouped_topic_statistics = function ()
 		}
 		local flag
 
-		flag = i ~= 1 or not true or false
-		tbl_2.is_player_controlled = flag
-		tbl[i] = tbl_2
+		flag = (i ~= 1 or not true) and not not false
+		tbl.is_player_controlled = flag
+		player_list[i] = tbl
 	end
 
-	for k, v in pairs(tbl) do
-		local tbl_3 = {}
+	for stats_id, player_data in pairs(player_list) do
+		local scores = {}
 
-		for i_2, v_2 in ipairs(ScoreboardHelper.scoreboard_grouped_topic_stats) do
-			local group_name = v_2.group_name
-			local stats = v_2.stats
+		for _, grouped_stat_data in ipairs(ScoreboardHelper.scoreboard_grouped_topic_stats) do
+			local group_name = grouped_stat_data.group_name
+			local stats = grouped_stat_data.stats
 
-			tbl_3[group_name] = {}
+			scores[group_name] = {}
 
-			local var_17_6 = tbl_3[group_name]
+			local group_scores = scores[group_name]
 
-			for k_2, v_3 in pairs(stats) do
-				local tbl_4 = {
+			for _, stat_name in pairs(stats) do
+				local score_data = {
 					score = 10,
 					display_text = "display_text!",
-					stat_name = "stat_name_" .. tostring(k_2)
+					stat_name = "stat_name_" .. tostring(_)
 				}
 
-				var_17_6[#var_17_6 + 1] = tbl_4
+				group_scores[#group_scores + 1] = score_data
 			end
 		end
 
-		v.group_scores = tbl_3
+		player_data.group_scores = scores
 	end
 
-	return tbl
+	return player_list
 end
 
 ScoreboardHelper.scoreboard_topic_stats_versus = {
@@ -613,9 +635,9 @@ ScoreboardHelper.scoreboard_topic_stats_versus = {
 				"vs_warpfire_thrower"
 			}
 		},
-		sort_function = function (self, arg_18_1)
+		sort_function = function (a, b)
 			-- function 18
-			return self.score > arg_18_1.score
+			return a.score > b.score
 		end
 	},
 	{
@@ -783,9 +805,9 @@ ScoreboardHelper.scoreboard_topic_stats_versus = {
 				"hero_we_waywatcher"
 			}
 		},
-		sort_function = function (self, arg_19_1)
+		sort_function = function (a, b)
 			-- function 19
-			return self.score > arg_19_1.score
+			return a.score > b.score
 		end
 	},
 	{
@@ -873,36 +895,36 @@ ScoreboardHelper.scoreboard_topic_stats_versus = {
 				"hero_we_waywatcher"
 			}
 		},
-		sort_function = function (self, arg_20_1)
+		sort_function = function (a, b)
 			-- function 20
-			return self.score > arg_20_1.score
+			return a.score > b.score
 		end
 	},
 	{
 		name = "vs_damage_dealt_to_pactsworn",
 		stat_type = "vs_damage_dealt_to_pactsworn",
 		display_text = "scoreboard_topic_damage_dealt_pactsworn",
-		sort_function = function (self, arg_21_1)
+		sort_function = function (a, b)
 			-- function 21
-			return self.score > arg_21_1.score
+			return a.score > b.score
 		end
 	},
 	{
 		name = "saves",
 		stat_type = "saves",
 		display_text = "scoreboard_topic_saves",
-		sort_function = function (self, arg_22_1)
+		sort_function = function (a, b)
 			-- function 22
-			return self.score > arg_22_1.score
+			return a.score > b.score
 		end
 	},
 	{
 		name = "revives",
 		stat_type = "revives",
 		display_text = "scoreboard_topic_revives",
-		sort_function = function (self, arg_23_1)
+		sort_function = function (a, b)
 			-- function 23
-			return self.score > arg_23_1.score
+			return a.score > b.score
 		end
 	},
 	{
@@ -919,9 +941,9 @@ ScoreboardHelper.scoreboard_topic_stats_versus = {
 				"vs_packmaster"
 			}
 		},
-		sort_function = function (self, arg_24_1)
+		sort_function = function (a, b)
 			-- function 24
-			return self.score > arg_24_1.score
+			return a.score > b.score
 		end
 	},
 	{
@@ -934,9 +956,9 @@ ScoreboardHelper.scoreboard_topic_stats_versus = {
 				"vs_gutter_runner"
 			}
 		},
-		sort_function = function (self, arg_25_1)
+		sort_function = function (a, b)
 			-- function 25
-			return self.score > arg_25_1.score
+			return a.score > b.score
 		end
 	},
 	{
@@ -949,18 +971,18 @@ ScoreboardHelper.scoreboard_topic_stats_versus = {
 				"vs_packmaster"
 			}
 		},
-		sort_function = function (self, arg_26_1)
+		sort_function = function (a, b)
 			-- function 26
-			return self.score > arg_26_1.score
+			return a.score > b.score
 		end
 	},
 	{
 		name = "kills_total",
 		stat_type = "kills_total",
 		display_text = "scoreboard_topic_kills_total",
-		sort_function = function (self, arg_27_1)
+		sort_function = function (a, b)
 			-- function 27
-			return self.score > arg_27_1.score
+			return a.score > b.score
 		end
 	},
 	{
@@ -976,9 +998,9 @@ ScoreboardHelper.scoreboard_topic_stats_versus = {
 				"vs_rat_ogre"
 			}
 		},
-		sort_function = function (self, arg_28_1)
+		sort_function = function (a, b)
 			-- function 28
-			return self.score > arg_28_1.score
+			return a.score > b.score
 		end
 	},
 	{
@@ -989,9 +1011,9 @@ ScoreboardHelper.scoreboard_topic_stats_versus = {
 				"vs_chaos_troll"
 			}
 		},
-		sort_function = function (self, arg_29_1)
+		sort_function = function (a, b)
 			-- function 29
-			return self.score > arg_29_1.score
+			return a.score > b.score
 		end
 	},
 	{
@@ -1002,9 +1024,9 @@ ScoreboardHelper.scoreboard_topic_stats_versus = {
 				"vs_rat_ogre"
 			}
 		},
-		sort_function = function (self, arg_30_1)
+		sort_function = function (a, b)
 			-- function 30
-			return self.score > arg_30_1.score
+			return a.score > b.score
 		end
 	},
 	{
@@ -1016,9 +1038,9 @@ ScoreboardHelper.scoreboard_topic_stats_versus = {
 				"vs_chaos_troll"
 			}
 		},
-		sort_function = function (self, arg_31_1)
+		sort_function = function (a, b)
 			-- function 31
-			return self.score > arg_31_1.score
+			return a.score > b.score
 		end
 	}
 }
@@ -1042,32 +1064,33 @@ ScoreboardHelper.scoreboard_grouped_topic_stats_versus = {
 	}
 }
 
-ScoreboardHelper.get_versus_stats = function (arg_32_0, arg_32_1)
+ScoreboardHelper.get_versus_stats = function (statistics_db, saved_scoreboard_stats)
 	-- function 32
-	assert(arg_32_0, "Missing statistics_database reference.")
+	assert(statistics_db, "Missing statistics_database reference.")
 
 	local human_players = Managers.player:human_players()
-	local game_mechanism = Managers.mechanism:game_mechanism()
-	local party = Managers.party
-	local tbl = {}
+	local mechanism = Managers.mechanism:game_mechanism()
+	local party_manager = Managers.party
+	local player_list = {}
 
-	for k, v in pairs(human_players) do
+	for _, player in pairs(human_players) do
 		repeat
-			local network_id = v:network_id()
-			local get_persistent_profile_index_reservation, var_32_6 = Managers.mechanism:get_persistent_profile_index_reservation(network_id)
+			local player_peer_id = player:network_id()
+			local profile_index, career_index = Managers.mechanism:get_persistent_profile_index_reservation(player_peer_id)
 
-			if not (get_persistent_profile_index_reservation == 0 or var_32_6 ~= 0) then
+			if profile_index == 0 or career_index == 0 then
 				break
 			end
 
-			local name = v:name()
-			local stats_id = v:stats_id()
-			local local_player_id = v:local_player_id()
-			local get_player_level = ExperienceSettings.get_player_level(v)
+			local player_name = player:name()
+			local stats_id = player:stats_id()
+			local local_player_id = player:local_player_id()
+			local player_level = ExperienceSettings.get_player_level(player)
+			local is_player_controlled = player:is_player_controlled()
 			local get_versus_player_level
 
-			if not v:is_player_controlled() then
-				get_versus_player_level = ExperienceSettings.get_versus_player_level(v)
+			if is_player_controlled then
+				get_versus_player_level = ExperienceSettings.get_versus_player_level(player)
 
 				if not get_versus_player_level then
 					-- Nothing
@@ -1076,97 +1099,99 @@ ScoreboardHelper.get_versus_stats = function (arg_32_0, arg_32_1)
 
 			get_versus_player_level = 0
 
+			local versus_player_level = get_versus_player_level
+
 			::label_32_0::
 
-			local get_hero_cosmetics, var_32_13, var_32_14, var_32_15, var_32_16, var_32_17, var_32_18 = game_mechanism:get_hero_cosmetics(network_id, local_player_id)
+			local weapon, weapon_pose, weapon_pose_skin, hero_skin, hat, portrait_frame, pactsworn_cosmetics = mechanism:get_hero_cosmetics(player_peer_id, local_player_id)
 
-			tbl[stats_id] = {
-				name = name,
-				peer_id = network_id,
+			player_list[stats_id] = {
+				name = player_name,
+				peer_id = player_peer_id,
 				local_player_id = local_player_id,
 				stats_id = stats_id,
-				profile_index = get_persistent_profile_index_reservation,
-				career_index = var_32_6,
-				player_level = get_player_level,
-				versus_player_level = get_versus_player_level,
-				portrait_frame = var_32_17,
-				hero_skin = var_32_15,
+				profile_index = profile_index,
+				career_index = career_index,
+				player_level = player_level,
+				versus_player_level = versus_player_level,
+				portrait_frame = portrait_frame,
+				hero_skin = hero_skin,
 				weapon = {
-					item_name = get_hero_cosmetics
+					item_name = weapon
 				},
 				weapon_pose = {
-					item_name = var_32_13,
-					skin_name = var_32_14
+					item_name = weapon_pose,
+					skin_name = weapon_pose_skin
 				},
 				hat = {
-					item_name = var_32_16
+					item_name = hat
 				},
-				pactsworn_cosmetics = var_32_18,
+				pactsworn_cosmetics = pactsworn_cosmetics,
 				scores = {}
 			}
 		until true
 	end
 
-	local scoreboard_topic_stats_versus = ScoreboardHelper.scoreboard_topic_stats_versus
+	local scoreboard_topic_stats = ScoreboardHelper.scoreboard_topic_stats_versus
 
-	for i, v_2 in ipairs(scoreboard_topic_stats_versus) do
-		local stat_types = v_2.stat_types
+	for i, topic in ipairs(scoreboard_topic_stats) do
+		local stat_types = topic.stat_types
 
-		for k_2, v_3 in pairs(tbl) do
+		for stats_id, player_data in pairs(player_list) do
 			if stat_types ~= nil then
-				local count = #stat_types
-				local num = 0
+				local stat_types_n = #stat_types
+				local score = 0
 
-				for i6 = 1, count do
-					local var_32_23 = stat_types[i6]
+				for i = 1, stat_types_n do
+					local stat_type = stat_types[i]
 
-					num = num + fn(arg_32_0, v_3.stats_id, var_32_23)
+					score = score + get_score(statistics_db, player_data.stats_id, stat_type)
 				end
 
-				local var_32_24 = tbl[k_2]
-				local flag = not arg_32_1 and arg_32_1[k_2]
-				local scores = var_32_24.scores
-				local name_2 = v_2.name
-				local var_32_28
+				local data = player_list[stats_id]
+				local saved_data = not not saved_scoreboard_stats and not not saved_scoreboard_stats[stats_id]
+				local scores = data.scores
+				local name = topic.name
+				local var_32_3
 
-				if not flag and not flag.scores then
-					var_32_28 = flag.scores[v_2.name]
+				if saved_data and saved_data.scores then
+					var_32_3 = saved_data.scores[topic.name]
 
-					if not var_32_28 then
+					if not var_32_3 then
 						-- Nothing
 					end
 				end
 
-				var_32_28 = 0
+				var_32_3 = 0
 
 				::label_32_1::
 
-				scores[name_2] = num + var_32_28
+				scores[name] = score + var_32_3
 			else
-				local stat_type = v_2.stat_type
-				local var_32_30 = fn(arg_32_0, v_3.stats_id, stat_type)
-				local var_32_31 = tbl[k_2]
-				local flag_2 = not arg_32_1 and arg_32_1[k_2]
-				local scores_2 = var_32_31.scores
-				local name_3 = v_2.name
-				local var_32_35
+				local stat_type = topic.stat_type
+				local score = get_score(statistics_db, player_data.stats_id, stat_type)
+				local data = player_list[stats_id]
+				local saved_data = not not saved_scoreboard_stats and not not saved_scoreboard_stats[stats_id]
+				local scores_2 = data.scores
+				local name_2 = topic.name
+				local var_32_6
 
-				if not flag_2 and not flag_2.scores then
-					var_32_35 = flag_2.scores[v_2.name]
+				if saved_data and saved_data.scores then
+					var_32_6 = saved_data.scores[topic.name]
 
-					if not var_32_35 then
+					if not var_32_6 then
 						-- Nothing
 					end
 				end
 
-				var_32_35 = 0
+				var_32_6 = 0
 
 				::label_32_2::
 
-				scores_2[name_3] = var_32_30 + var_32_35
+				scores_2[name_2] = score + var_32_6
 			end
 		end
 	end
 
-	return tbl, #scoreboard_topic_stats_versus
+	return player_list, #scoreboard_topic_stats
 end

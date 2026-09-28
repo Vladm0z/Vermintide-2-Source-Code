@@ -1,144 +1,144 @@
 -- chunkname: @scripts/entity_system/systems/behaviour/trees/chaos/chaos_exalted_champion_behavior.lua
 
-local chaos_exalted_champion = BreedActions.chaos_exalted_champion
-local tbl = {
+local ACTIONS = BreedActions.chaos_exalted_champion
+local CHAOS_EXALTED_CHAMPION_WARCAMP_COMBAT = {
 	"BTUtilityNode",
 	{
 		"BTSequence",
-		action_data = chaos_exalted_champion.spawn_sequence,
+		action_data = ACTIONS.spawn_sequence,
 		{
 			"BTChampionAttackAction",
 			name = "special_attack_aoe",
-			action_data = chaos_exalted_champion.special_attack_aoe_defensive
+			action_data = ACTIONS.special_attack_aoe_defensive
 		},
 		{
 			"BTSpawnAllies",
 			name = "spawn_allies",
-			action_data = chaos_exalted_champion.spawn_allies
+			action_data = ACTIONS.spawn_allies
 		},
 		name = "spawn_sequence"
 	},
 	{
 		"BTSequence",
-		action_data = chaos_exalted_champion.angry_charge_sequence,
+		action_data = ACTIONS.angry_charge_sequence,
 		{
 			"BTMeleeOverlapAttackAction",
 			name = "angry_charge",
-			action_data = chaos_exalted_champion.angry_charge
+			action_data = ACTIONS.angry_charge
 		},
 		{
 			"BTMeleeOverlapAttackAction",
 			name = "angry_charge",
-			action_data = chaos_exalted_champion.angry_charge
+			action_data = ACTIONS.angry_charge
 		},
 		{
 			"BTMeleeOverlapAttackAction",
 			name = "angry_charge",
-			action_data = chaos_exalted_champion.angry_charge
+			action_data = ACTIONS.angry_charge
 		},
 		name = "angry_charge_sequence"
 	},
 	{
 		"BTClanRatFollowAction",
 		name = "follow",
-		action_data = chaos_exalted_champion.follow
+		action_data = ACTIONS.follow
 	},
 	{
 		"BTThrowWeaponAction",
 		name = "throw_weapon",
-		action_data = chaos_exalted_champion.throw_weapon
+		action_data = ACTIONS.throw_weapon
 	},
 	{
 		"BTMeleeOverlapAttackAction",
 		name = "charge",
-		action_data = chaos_exalted_champion.charge
+		action_data = ACTIONS.charge
 	},
 	{
 		"BTChampionAttackAction",
 		name = "special_attack_aoe",
-		action_data = chaos_exalted_champion.special_attack_aoe
+		action_data = ACTIONS.special_attack_aoe
 	},
 	{
 		"BTStormVerminAttackAction",
 		enter_hook = "keep_target",
 		name = "special_attack_cleave",
 		leave_hook = "reset_keep_target",
-		action_data = chaos_exalted_champion.special_attack_cleave
+		action_data = ACTIONS.special_attack_cleave
 	},
 	{
 		"BTStormVerminAttackAction",
 		name = "special_attack_sweep",
-		action_data = chaos_exalted_champion.special_attack_sweep
+		action_data = ACTIONS.special_attack_sweep
 	},
 	{
 		"BTStormVerminAttackAction",
 		name = "special_attack_launch",
-		action_data = chaos_exalted_champion.special_attack_launch
+		action_data = ACTIONS.special_attack_launch
 	},
 	{
 		"BTStormVerminAttackAction",
 		name = "special_attack_kick",
-		action_data = chaos_exalted_champion.special_attack_kick
+		action_data = ACTIONS.special_attack_kick
 	},
 	condition = "can_see_player",
 	name = "in_combat"
 }
-local tbl_2 = {
+local CHAOS_EXALTED_CHAMPION_WARCAMP_DEFENSIVE = {
 	"BTUtilityNode",
 	{
 		"BTChampionAttackAction",
 		name = "special_attack_aoe_defensive",
-		action_data = chaos_exalted_champion.special_attack_aoe_defensive
+		action_data = ACTIONS.special_attack_aoe_defensive
 	},
 	{
 		"BTThrowWeaponAction",
 		name = "throw_weapon",
-		action_data = chaos_exalted_champion.throw_weapon
+		action_data = ACTIONS.throw_weapon
 	},
 	{
 		"BTStormVerminAttackAction",
 		name = "special_attack_launch_defensive",
-		action_data = chaos_exalted_champion.special_attack_launch_defensive
+		action_data = ACTIONS.special_attack_launch_defensive
 	},
 	{
 		"BTStormVerminAttackAction",
 		name = "special_attack_kick",
-		action_data = chaos_exalted_champion.special_attack_kick
+		action_data = ACTIONS.special_attack_kick
 	},
 	condition = "should_be_defensive",
 	name = "in_defensive"
 }
-local tbl_3 = {
+local CHAOS_EXALTED_CHAMPION_NORSCA_COMBAT = {
 	"BTUtilityNode",
 	{
 		"BTClanRatFollowAction",
 		name = "follow",
-		action_data = chaos_exalted_champion.follow
+		action_data = ACTIONS.follow
 	},
 	{
 		"BTMeleeOverlapAttackAction",
 		name = "norsca_charge",
-		action_data = chaos_exalted_champion.norsca_charge
+		action_data = ACTIONS.norsca_charge
 	},
 	{
 		"BTStormVerminAttackAction",
 		name = "special_attack_cleave",
-		action_data = chaos_exalted_champion.special_attack_cleave
+		action_data = ACTIONS.special_attack_cleave
 	},
 	{
 		"BTStormVerminAttackAction",
 		name = "special_attack_sweep",
-		action_data = chaos_exalted_champion.special_attack_sweep
+		action_data = ACTIONS.special_attack_sweep
 	},
 	{
 		"BTStormVerminAttackAction",
 		name = "special_attack_launch",
-		action_data = chaos_exalted_champion.special_attack_launch
+		action_data = ACTIONS.special_attack_launch
 	},
 	condition = "can_see_player",
 	name = "in_combat"
 }
-local tbl_4 = {
+local CHAOS_EXALTED_CHAMPION_SMART_OBJECT = {
 	"BTSelector",
 	{
 		"BTTeleportAction",
@@ -159,7 +159,7 @@ local tbl_4 = {
 		"BTSmashDoorAction",
 		name = "smash_door",
 		condition = "at_door_smartobject",
-		action_data = chaos_exalted_champion.smash_door
+		action_data = ACTIONS.smash_door
 	},
 	condition = "at_smartobject",
 	name = "smartobject"
@@ -174,17 +174,17 @@ BreedBehaviors.chaos_exalted_champion_warcamp = {
 	},
 	{
 		"BTSelector",
-		action_data = chaos_exalted_champion.intro_sequence,
+		action_data = ACTIONS.intro_sequence,
 		{
 			"BTMoveToGoalAction",
 			name = "move_to_goal",
 			condition = "has_goal_destination",
-			action_data = chaos_exalted_champion.follow
+			action_data = ACTIONS.follow
 		},
 		{
 			"BTIdleAction",
 			name = "intro_idle",
-			action_data = chaos_exalted_champion.intro_idle
+			action_data = ACTIONS.intro_idle
 		},
 		name = "intro_sequence",
 		leave_hook = "on_lord_intro_leave",
@@ -196,26 +196,26 @@ BreedBehaviors.chaos_exalted_champion_warcamp = {
 		condition = "is_falling",
 		name = "falling"
 	},
-	tbl_4,
+	CHAOS_EXALTED_CHAMPION_SMART_OBJECT,
 	{
 		"BTChampionAttackAction",
 		leave_hook = "reset_chain_stagger",
 		name = "retaliation_aoe",
 		condition = "warcamp_retaliation_aoe",
-		action_data = chaos_exalted_champion.special_attack_retaliation_aoe
+		action_data = ACTIONS.special_attack_retaliation_aoe
 	},
 	{
 		"BTStaggerAction",
 		name = "stagger",
 		condition = "stagger",
-		action_data = chaos_exalted_champion.stagger
+		action_data = ACTIONS.stagger
 	},
-	tbl_2,
-	tbl,
+	CHAOS_EXALTED_CHAMPION_WARCAMP_DEFENSIVE,
+	CHAOS_EXALTED_CHAMPION_WARCAMP_COMBAT,
 	{
 		"BTIdleAction",
 		name = "defensive_idle",
-		action_data = chaos_exalted_champion.defensive_idle
+		action_data = ACTIONS.defensive_idle
 	},
 	{
 		"BTIdleAction",
@@ -244,16 +244,16 @@ BreedBehaviors.chaos_exalted_champion_norsca = {
 		"BTTransformAction",
 		name = "transform",
 		condition = "boss_phase_two",
-		action_data = chaos_exalted_champion.transform
+		action_data = ACTIONS.transform
 	},
-	tbl_4,
+	CHAOS_EXALTED_CHAMPION_SMART_OBJECT,
 	{
 		"BTStaggerAction",
 		name = "stagger",
 		condition = "stagger",
-		action_data = chaos_exalted_champion.stagger
+		action_data = ACTIONS.stagger
 	},
-	tbl_3,
+	CHAOS_EXALTED_CHAMPION_NORSCA_COMBAT,
 	{
 		"BTIdleAction",
 		condition = "no_target",

@@ -5,44 +5,46 @@ require("scripts/entity_system/systems/behaviour/nodes/bt_node")
 BTSwitchWeaponsAction = class(BTSwitchWeaponsAction, BTNode)
 BTSwitchWeaponsAction.name = "BTSwitchWeaponsAction"
 
-BTSwitchWeaponsAction.init = function (arg_1_0, ...)
+BTSwitchWeaponsAction.init = function (self, ...)
 	-- function 1
-	BTSwitchWeaponsAction.super.init(arg_1_0, ...)
+	BTSwitchWeaponsAction.super.init(self, ...)
 end
 
-BTSwitchWeaponsAction.enter = function (self, arg_2_1, arg_2_2, arg_2_3)
+BTSwitchWeaponsAction.enter = function (self, unit, blackboard, t)
 	-- function 2
-	local action_data = self._tree_node.action_data
+	local action = self._tree_node.action_data
 
-	arg_2_2.action = action_data
-	arg_2_2.active_node = BTSwitchWeaponsAction
+	blackboard.action = action
+	blackboard.active_node = BTSwitchWeaponsAction
 
-	arg_2_2.navigation_extension:set_enabled(false)
-	arg_2_2.locomotion_extension:set_wanted_velocity(Vector3(0, 0, 0))
+	blackboard.navigation_extension:set_enabled(false)
+	blackboard.locomotion_extension:set_wanted_velocity(Vector3(0, 0, 0))
 
-	local has_extension = ScriptUnit.has_extension(arg_2_1, "ai_inventory_system")
+	local ai_inventory_ext = ScriptUnit.has_extension(unit, "ai_inventory_system")
 	local switch_weapon_index
 
-	if not action_data then
-		switch_weapon_index = action_data.switch_weapon_index
+	if action then
+		switch_weapon_index = action.switch_weapon_index
 
 		if not switch_weapon_index then
 			-- Nothing
 		end
 	end
 
-	switch_weapon_index = arg_2_2.switching_weapons
+	switch_weapon_index = blackboard.switching_weapons
+
+	local wanted_set = switch_weapon_index
 
 	::label_2_0::
 
-	has_extension:wield_item_set(switch_weapon_index)
+	ai_inventory_ext:wield_item_set(wanted_set)
 
-	arg_2_2.inventory_item_set = switch_weapon_index
+	blackboard.inventory_item_set = wanted_set
 
 	local switch_done_time
 
-	if not action_data then
-		switch_done_time = action_data.switch_done_time
+	if action then
+		switch_done_time = action.switch_done_time
 
 		if not switch_done_time then
 			-- Nothing
@@ -53,32 +55,34 @@ BTSwitchWeaponsAction.enter = function (self, arg_2_1, arg_2_2, arg_2_3)
 
 	::label_2_1::
 
-	arg_2_2.switching_done_time = arg_2_3 + switch_done_time
-	arg_2_2.move_state = "idle"
+	blackboard.switching_done_time = t + switch_done_time
+	blackboard.move_state = "idle"
 
-	local flag = not action_data and action_data.switch_animation
+	local switch_animation = not not action and not not action.switch_animation
 
-	if flag == "to_combat" then
-		AiUtils.enter_combat(arg_2_1, arg_2_2)
-	elseif flag == "to_passive" then
-		AiUtils.enter_passive(arg_2_1, arg_2_2)
-	elseif not flag then
-		Managers.state.network:anim_event(arg_2_1, flag)
+	if switch_animation == "to_combat" then
+		AiUtils.enter_combat(unit, blackboard)
+	elseif switch_animation == "to_passive" then
+		AiUtils.enter_passive(unit, blackboard)
+	elseif switch_animation then
+		Managers.state.network:anim_event(unit, switch_animation)
 	end
 end
 
-BTSwitchWeaponsAction.leave = function (arg_3_0, arg_3_1, arg_3_2, arg_3_3, arg_3_4, arg_3_5)
+BTSwitchWeaponsAction.leave = function (self, unit, blackboard, t, reason, destroy)
 	-- function 3
-	arg_3_2.switching_weapons = false
-	arg_3_2.has_switched_weapons = true
-	arg_3_2.spawn_to_running = nil
+	blackboard.switching_weapons = false
+	blackboard.has_switched_weapons = true
+	blackboard.spawn_to_running = nil
 
-	arg_3_2.navigation_extension:set_enabled(true)
+	local navigation_extension = blackboard.navigation_extension
+
+	navigation_extension:set_enabled(true)
 end
 
-BTSwitchWeaponsAction.run = function (arg_4_0, arg_4_1, arg_4_2, arg_4_3, arg_4_4)
+BTSwitchWeaponsAction.run = function (self, unit, blackboard, t, dt)
 	-- function 4
-	if arg_4_3 > arg_4_2.switching_done_time then
+	if t > blackboard.switching_done_time then
 		return "done"
 	end
 

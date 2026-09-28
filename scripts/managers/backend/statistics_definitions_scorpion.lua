@@ -4,47 +4,47 @@ require("scripts/settings/weave_settings")
 require("scripts/settings/dlcs/scorpion/scorpion_seasonal_settings")
 
 local player = StatisticsDefinitions.player
-local current_season_id = ScorpionSeasonalSettings.current_season_id
-local num = 2
-local tbl = {
+local num_seasons = ScorpionSeasonalSettings.current_season_id
+local season_offset = 2
+local database_names_repeating = {
 	"weave_quickplay_wins"
 }
 
-for i = num, current_season_id do
-	local str = "s" .. i
+for season_id = season_offset, num_seasons do
+	local season_name = "s" .. season_id
 
-	player[str] = {}
+	player[season_name] = {}
 
-	local var_0_5 = player[str]
+	local season_table = player[season_name]
 
-	if i == 2 then
-		var_0_5.weave_quickplay_wins = {
+	if season_id == 2 then
+		season_table.weave_quickplay_wins = {
 			value = 0,
 			database_name = "weave_quickplay_wins",
 			source = "player_data"
 		}
 	else
-		for j = 1, #tbl do
-			local var_0_6 = tbl[j]
-			local str_2 = str .. "_" .. var_0_6
+		for db_name_id = 1, #database_names_repeating do
+			local stat_name = database_names_repeating[db_name_id]
+			local database_name = season_name .. "_" .. stat_name
 
-			var_0_5[var_0_6] = {
+			season_table[stat_name] = {
 				value = 0,
 				source = "player_data",
-				database_name = str_2
+				database_name = database_name
 			}
 		end
 	end
 
-	for k = 1, 500 do
-		for l = 1, 4 do
-			local str_3 = k .. "_" .. l
-			local str_4 = str .. "_" .. str_3
+	for i = 1, 500 do
+		for j = 1, 4 do
+			local id = i .. "_" .. j
+			local db_name = season_name .. "_" .. id
 
-			var_0_5[str_3] = {
+			season_table[id] = {
 				value = 0,
 				source = "player_data",
-				database_name = str_4
+				database_name = db_name
 			}
 		end
 	end
@@ -52,43 +52,43 @@ end
 
 player.season_1 = {}
 
-for i4 = 1, 500 do
-	local tbl_2 = {
+for i = 1, 500 do
+	local definition = {
 		value = 0,
 		source = "player_data"
 	}
 
-	for i5 = 1, 4 do
-		local str_5 = "weave_score_weave_" .. i4 .. "_" .. i5 .. "_players"
-		local str_6 = "season_1_" .. str_5
+	for j = 1, 4 do
+		local id = "weave_score_weave_" .. i .. "_" .. j .. "_players"
+		local database_name = "season_1_" .. id
 
-		player.season_1[str_5] = table.clone(tbl_2)
-		player.season_1[str_5].database_name = str_6
+		player.season_1[id] = table.clone(definition)
+		player.season_1[id].database_name = database_name
 	end
 end
 
-local heroes = PROFILES_BY_AFFILIATION.heroes
+local profiles = PROFILES_BY_AFFILIATION.heroes
 
-for i6 = 1, #heroes do
-	local var_0_14 = FindProfileIndex(heroes[i6])
+for i = 1, #profiles do
+	local profile_index = FindProfileIndex(profiles[i])
 
-	for k_2, v in pairs(SPProfiles[var_0_14].careers) do
-		local tbl_3 = {
+	for _, career in pairs(SPProfiles[profile_index].careers) do
+		local definition = {
 			value = 0,
 			source = "player_data"
 		}
-		local str_7 = "weaves_complete_" .. v.display_name .. "_season_1"
-		local str_8 = "season_1_" .. str_7
+		local id = "weaves_complete_" .. career.display_name .. "_season_1"
+		local database_name = "season_1_" .. id
 
-		player.season_1[str_7] = table.clone(tbl_3)
-		player.season_1[str_7].database_name = str_8
+		player.season_1[id] = table.clone(definition)
+		player.season_1[id].database_name = database_name
 
-		for i_2, v_2 in ipairs(WeaveSettings.winds) do
-			local str_9 = "weave_rainbow_" .. v_2 .. "_" .. v.display_name .. "_season_1"
-			local str_10 = "season_1_" .. str_9
+		for _, wind in ipairs(WeaveSettings.winds) do
+			local id_rainbow = "weave_rainbow_" .. wind .. "_" .. career.display_name .. "_season_1"
+			local database_name_rainbow = "season_1_" .. id_rainbow
 
-			player.season_1[str_9] = table.clone(tbl_3)
-			player.season_1[str_9].database_name = str_10
+			player.season_1[id_rainbow] = table.clone(definition)
+			player.season_1[id_rainbow].database_name = database_name_rainbow
 		end
 	end
 end
@@ -99,29 +99,29 @@ player.season_1.weave_quickplay_wins = {
 	source = "player_data"
 }
 
-local tbl_4 = {
+local base_definitions = {
 	value = 0,
 	source = "player_data"
 }
 
-for k_3, v_3 in pairs(DifficultySettings) do
-	local str_11 = "weave_quickplay_" .. k_3 .. "_wins"
-	local str_12 = "season_1_" .. str_11
+for difficulty, difficulty_data in pairs(DifficultySettings) do
+	local id_difficulty_quickplay_wins = "weave_quickplay_" .. difficulty .. "_wins"
+	local database_name_weave_quickplay_difficulty_wins = "season_1_" .. id_difficulty_quickplay_wins
 
-	player.season_1[str_11] = table.clone(tbl_4)
-	player.season_1[str_11].database_name = str_12
+	player.season_1[id_difficulty_quickplay_wins] = table.clone(base_definitions)
+	player.season_1[id_difficulty_quickplay_wins].database_name = database_name_weave_quickplay_difficulty_wins
 end
 
-for i_3, v_4 in ipairs(WeaveSettings.winds) do
-	local str_13 = "scorpion_weaves_" .. v_4 .. "_season_1"
-	local str_14 = "season_1_" .. str_13
-	local tbl_5 = {
+for _, wind in ipairs(WeaveSettings.winds) do
+	local id = "scorpion_weaves_" .. wind .. "_season_1"
+	local database_name = "season_1_" .. id
+	local definition = {
 		value = 0,
 		source = "player_data"
 	}
 
-	player.season_1[str_13] = table.clone(tbl_5)
-	player.season_1[str_13].database_name = str_14
+	player.season_1[id] = table.clone(definition)
+	player.season_1[id].database_name = database_name
 end
 
 player.season_1.weave_life_stepped_in_bush = {
@@ -150,25 +150,25 @@ player.season_1.weave_shadow_kill_no_shrouded = {
 	source = "player_data"
 }
 
-local templates = WeaveSettings.templates
+local weave_templates = WeaveSettings.templates
 
 player.completed_weaves = {}
 player.season_1.weave_won = {}
 
-for k_4, v_5 in pairs(templates) do
-	player.completed_weaves[k_4] = {
+for weave_name, weave_data in pairs(weave_templates) do
+	player.completed_weaves[weave_name] = {
 		value = 0,
 		source = "player_data",
-		database_name = "completed_" .. k_4
+		database_name = "completed_" .. weave_name
 	}
 
-	local num_2 = 1
-	local tier = v_5.tier
+	local weave_season = 1
+	local weave_tier = weave_data.tier
 
-	player.season_1.weave_won[tier] = {
+	player.season_1.weave_won[weave_tier] = {
 		value = 0,
 		source = "player_data",
-		database_name = "weave_won_" .. num_2 .. "_" .. tier
+		database_name = "weave_won_" .. weave_season .. "_" .. weave_tier
 	}
 end
 

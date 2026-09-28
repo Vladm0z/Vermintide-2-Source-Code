@@ -1,30 +1,39 @@
 -- chunkname: @scripts/settings/light_weight_projectile_effects.lua
 
-local function fn(arg_1_0)
+local function INVENTORY_UNIT(owner_unit)
 	-- function 1
-	local default_inventory_template = Unit.get_data(arg_1_0, "breed").default_inventory_template
+	local breed = Unit.get_data(owner_unit, "breed")
+	local inventory_template = breed.default_inventory_template
+	local inventory_extension = ScriptUnit.extension(owner_unit, "ai_inventory_system")
+	local inventory_unit = inventory_extension:get_unit(inventory_template)
 
-	return (ScriptUnit.extension(arg_1_0, "ai_inventory_system"):get_unit(default_inventory_template))
+	return inventory_unit
 end
 
-local function fn_2(arg_2_0)
+local function INVENTORY_UNIT_VS(owner_unit)
 	-- function 2
-	return (ScriptUnit.extension(arg_2_0, "inventory_system"):get_weapon_unit())
+	local inventory_extension = ScriptUnit.extension(owner_unit, "inventory_system")
+	local inventory_unit = inventory_extension:get_weapon_unit()
+
+	return inventory_unit
 end
 
-local function fn_3(arg_3_0)
+local function IS_HUSK_UNIT(owner_unit)
 	-- function 3
-	return not NetworkUnit.is_network_unit(arg_3_0) and NetworkUnit.is_husk_unit(arg_3_0)
+	local is_network_unit = NetworkUnit.is_network_unit(owner_unit)
+	local is_husk = not not is_network_unit and not not NetworkUnit.is_husk_unit(owner_unit)
+
+	return is_husk
 end
 
-local function fn_4(arg_4_0)
+local function IS_UNIT_1P(owner_unit)
 	-- function 4
-	return not fn_3(arg_4_0)
+	return not IS_HUSK_UNIT(owner_unit)
 end
 
-local function fn_5(arg_5_0)
+local function IS_UNIT_3P(owner_unit)
 	-- function 5
-	return fn_3(arg_5_0)
+	return IS_HUSK_UNIT(owner_unit)
 end
 
 LightWeightProjectileEffects = {
@@ -41,7 +50,7 @@ LightWeightProjectileEffects = {
 			{
 				particle_name = "fx/wpnfx_skaven_ratlinggun_muzzlefx",
 				link = "p_fx",
-				unit_function = fn
+				unit_function = INVENTORY_UNIT
 			}
 		},
 		sfx = {
@@ -56,29 +65,29 @@ LightWeightProjectileEffects = {
 			{
 				particle_name = "fx/wpnfx_skaven_ratlinggun_bullet_trail_vs",
 				kill_policy = "stop",
-				condition_function = fn_4
+				condition_function = IS_UNIT_1P
 			},
 			{
 				particle_name = "fx/wpnfx_skaven_ratlinggun_muzzlefx_vs",
 				link = "p_fx",
-				unit_function = fn_2,
-				condition_function = fn_4
+				unit_function = INVENTORY_UNIT_VS,
+				condition_function = IS_UNIT_1P
 			},
 			{
 				particle_name = "fx/wpnfx_skaven_ratlinggun_bullet",
 				kill_policy = "destroy",
-				condition_function = fn_5
+				condition_function = IS_UNIT_3P
 			},
 			{
 				particle_name = "fx/wpnfx_skaven_ratlinggun_bullet_trail",
 				kill_policy = "stop",
-				condition_function = fn_5
+				condition_function = IS_UNIT_3P
 			},
 			{
 				particle_name = "fx/wpnfx_skaven_ratlinggun_muzzlefx",
 				link = "p_fx",
-				unit_function = fn_2,
-				condition_function = fn_5
+				unit_function = INVENTORY_UNIT_VS,
+				condition_function = IS_UNIT_3P
 			}
 		},
 		sfx = {

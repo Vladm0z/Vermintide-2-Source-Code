@@ -4,88 +4,96 @@ require("scripts/entity_system/systems/behaviour/nodes/bt_node")
 
 BTMountUnitAction = class(BTMountUnitAction, BTNode)
 
-BTMountUnitAction.init = function (arg_1_0, ...)
+BTMountUnitAction.init = function (self, ...)
 	-- function 1
-	BTMountUnitAction.super.init(arg_1_0, ...)
+	BTMountUnitAction.super.init(self, ...)
 end
 
 BTMountUnitAction.name = "BTMountUnitAction"
 
-BTMountUnitAction.enter = function (self, arg_2_1, arg_2_2, arg_2_3)
+BTMountUnitAction.enter = function (self, unit, blackboard, t)
 	-- function 2
-	local network = Managers.state.network
-	local action_data = self._tree_node.action_data
+	local network_manager = Managers.state.network
+	local action = self._tree_node.action_data
 
-	arg_2_2.action = action_data
+	blackboard.action = action
 
-	local animation = action_data.animation
+	local animation_2 = action.animation
 
-	animation = animation or "idle"
+	if not animation_2 then
+		-- Nothing
+	end
 
-	local optional_spawn_data = arg_2_2.optional_spawn_data
+	animation_2 = "idle"
 
-	arg_2_2.navigation_extension:set_enabled(false)
-	arg_2_2.locomotion_extension:set_wanted_velocity(Vector3.zero())
-	network:anim_event(arg_2_1, animation)
+	local animation = animation_2
 
-	local mounted_data = arg_2_2.mounted_data
+	::label_2_0::
 
-	arg_2_2.waiting_for_pickup = nil
+	local optional_spawn_data = blackboard.optional_spawn_data
 
-	if not mounted_data then
+	blackboard.navigation_extension:set_enabled(false)
+	blackboard.locomotion_extension:set_wanted_velocity(Vector3.zero())
+	network_manager:anim_event(unit, animation)
+
+	local mounted_data = blackboard.mounted_data
+
+	blackboard.waiting_for_pickup = nil
+
+	if mounted_data then
 		local mount_unit = mounted_data.mount_unit
 
-		if not HEALTH_ALIVE[mount_unit] then
-			local var_2_6 = POSITION_LOOKUP[mount_unit]
-			local local_rotation = Unit.local_rotation(mount_unit, 0)
+		if HEALTH_ALIVE[mount_unit] then
+			local mount_position = POSITION_LOOKUP[mount_unit]
+			local mount_rotation = Unit.local_rotation(mount_unit, 0)
 
-			Unit.set_local_position(arg_2_1, 0, var_2_6)
-			Unit.set_local_rotation(arg_2_1, 0, local_rotation)
+			Unit.set_local_position(unit, 0, mount_position)
+			Unit.set_local_rotation(unit, 0, mount_rotation)
 		end
 	end
 end
 
-BTMountUnitAction.leave = function (arg_3_0, arg_3_1, arg_3_2, arg_3_3, arg_3_4, arg_3_5)
+BTMountUnitAction.leave = function (self, unit, blackboard, t, reason, destroy)
 	-- function 3
-	arg_3_2.navigation_extension:set_enabled(true)
+	blackboard.navigation_extension:set_enabled(true)
 
-	arg_3_2.mounting_finished = nil
-	arg_3_2.should_mount_unit = nil
-	arg_3_2.goal_destination = nil
+	blackboard.mounting_finished = nil
+	blackboard.should_mount_unit = nil
+	blackboard.goal_destination = nil
 
-	local mounted_data = arg_3_2.mounted_data
+	local mounted_data = blackboard.mounted_data
 
-	if not mounted_data then
+	if mounted_data then
 		mounted_data.knocked_off_mounted_timer = nil
 	end
 end
 
-local alive = Unit.alive
+local Unit_alive = Unit.alive
 
-BTMountUnitAction.run = function (arg_4_0, arg_4_1, arg_4_2, arg_4_3, arg_4_4)
+BTMountUnitAction.run = function (self, unit, blackboard, t, dt)
 	-- function 4
-	local mounting_finished = arg_4_2.mounting_finished
-	local action = arg_4_2.action
+	local mounting_finished = blackboard.mounting_finished
+	local action = blackboard.action
 
-	if not mounting_finished then
-		local mounted_data = arg_4_2.mounted_data
+	if mounting_finished then
+		local mounted_data = blackboard.mounted_data
 
-		if not mounted_data then
+		if mounted_data then
 			local mount_unit = mounted_data.mount_unit
 
-			if not HEALTH_ALIVE[mount_unit] then
-				local var_4_4 = BLACKBOARDS[mount_unit]
+			if HEALTH_ALIVE[mount_unit] then
+				local mount_blackboard = BLACKBOARDS[mount_unit]
 
-				var_4_4.mounting_finished = true
-				var_4_4.linked_unit = arg_4_1
-				arg_4_2.hp_at_knocked_off = nil
+				mount_blackboard.mounting_finished = true
+				mount_blackboard.linked_unit = unit
+				blackboard.hp_at_knocked_off = nil
 
 				local game = Managers.state.network:game()
 				local go_id = Managers.state.unit_storage:go_id(mount_unit)
-				local go_id_2 = Managers.state.unit_storage:go_id(arg_4_1)
+				local target_go_id = Managers.state.unit_storage:go_id(unit)
 
-				if not game and not go_id and not go_id_2 then
-					GameSession.set_game_object_field(game, go_id, "animation_synced_unit_id", go_id_2)
+				if game and go_id and target_go_id then
+					GameSession.set_game_object_field(game, go_id, "animation_synced_unit_id", target_go_id)
 				end
 			end
 		end

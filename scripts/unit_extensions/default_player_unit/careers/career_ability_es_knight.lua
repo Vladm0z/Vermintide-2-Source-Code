@@ -2,13 +2,13 @@
 
 CareerAbilityESKnight = class(CareerAbilityESKnight)
 
-CareerAbilityESKnight.init = function (self, arg_1_1, arg_1_2, arg_1_3)
+CareerAbilityESKnight.init = function (self, extension_init_context, unit, extension_init_data)
 	-- function 1
-	self._owner_unit = arg_1_2
-	self._world = arg_1_1.world
+	self._owner_unit = unit
+	self._world = extension_init_context.world
 	self._wwise_world = Managers.world:wwise_world(self._world)
 
-	local player = arg_1_3.player
+	local player = extension_init_data.player
 
 	self._player = player
 	self._is_server = player.is_server
@@ -20,183 +20,188 @@ CareerAbilityESKnight.init = function (self, arg_1_1, arg_1_2, arg_1_3)
 	self._decal_unit_name = "units/decals/decal_arrow"
 	self._fov_lerp_time = 0
 	self._lunge_events = {
-		start = function (self)
+		start = function (this)
 			-- function 2
-			local first_person_extension = self.first_person_extension
-			local unit = self.unit
+			local first_person_extension = this.first_person_extension
+			local unit_3p = this.unit
 
 			first_person_extension:play_hud_sound_event("Play_career_ability_kruber_charge_enter")
 			first_person_extension:play_hud_sound_event("Play_career_ability_kruber_charge_forward")
-			first_person_extension:play_remote_unit_sound_event("Play_career_ability_kruber_charge_enter", unit, 0)
-			first_person_extension:play_remote_unit_sound_event("Play_career_ability_kruber_charge_forward", unit, 0)
+			first_person_extension:play_remote_unit_sound_event("Play_career_ability_kruber_charge_enter", unit_3p, 0)
+			first_person_extension:play_remote_unit_sound_event("Play_career_ability_kruber_charge_forward", unit_3p, 0)
 		end,
-		impact = function (self)
+		impact = function (this)
 			-- function 3
-			local first_person_extension = self.first_person_extension
-			local _first_person_unit = self._first_person_unit
-			local unit = self.unit
-			local wwise_world = self.wwise_world
-			local _num_impacts = self._num_impacts
+			local first_person_extension = this.first_person_extension
+			local unit_1p = this._first_person_unit
+			local unit_3p = this.unit
+			local wwise_world = this.wwise_world
+			local num_impacts = this._num_impacts
 
-			Unit.flow_event(_first_person_unit, "lua_es_knight_activated_impact")
-			WwiseWorld.set_global_parameter(wwise_world, "knight_charge_num_impacts", _num_impacts)
+			Unit.flow_event(unit_1p, "lua_es_knight_activated_impact")
+			WwiseWorld.set_global_parameter(wwise_world, "knight_charge_num_impacts", num_impacts)
 			first_person_extension:play_hud_sound_event("Play_career_ability_kruber_charge_hit_player")
-			first_person_extension:play_remote_unit_sound_event("Play_career_ability_kruber_charge_hit_player", unit, 0)
+			first_person_extension:play_remote_unit_sound_event("Play_career_ability_kruber_charge_hit_player", unit_3p, 0)
 		end,
-		finished = function (self)
+		finished = function (this)
 			-- function 4
-			local first_person_extension = self.first_person_extension
-			local unit = self.unit
+			local first_person_extension = this.first_person_extension
+			local unit_3p = this.unit
 
 			first_person_extension:play_hud_sound_event("Stop_career_ability_kruber_charge_forward")
-			first_person_extension:play_remote_unit_sound_event("Stop_career_ability_kruber_charge_forward", unit, 0)
+			first_person_extension:play_remote_unit_sound_event("Stop_career_ability_kruber_charge_forward", unit_3p, 0)
 		end
 	}
 end
 
-CareerAbilityESKnight.extensions_ready = function (self, arg_5_1, arg_5_2)
+CareerAbilityESKnight.extensions_ready = function (self, world, unit)
 	-- function 5
-	self._first_person_extension = ScriptUnit.has_extension(arg_5_2, "first_person_system")
-	self._status_extension = ScriptUnit.extension(arg_5_2, "status_system")
-	self._career_extension = ScriptUnit.extension(arg_5_2, "career_system")
-	self._buff_extension = ScriptUnit.extension(arg_5_2, "buff_system")
-	self._input_extension = ScriptUnit.has_extension(arg_5_2, "input_system")
+	self._first_person_extension = ScriptUnit.has_extension(unit, "first_person_system")
+	self._status_extension = ScriptUnit.extension(unit, "status_system")
+	self._career_extension = ScriptUnit.extension(unit, "career_system")
+	self._buff_extension = ScriptUnit.extension(unit, "buff_system")
+	self._input_extension = ScriptUnit.has_extension(unit, "input_system")
 
-	if not self._first_person_extension then
+	if self._first_person_extension then
 		self._first_person_unit = self._first_person_extension:get_first_person_unit()
 	end
 end
 
-CareerAbilityESKnight.destroy = function (arg_6_0)
+CareerAbilityESKnight.destroy = function (self)
 	-- function 6
 	return
 end
 
-CareerAbilityESKnight.update = function (self, arg_7_1, arg_7_2, arg_7_3, arg_7_4, arg_7_5)
+CareerAbilityESKnight.update = function (self, unit, input, dt, context, t)
 	-- function 7
 	if not self:_ability_available() then
 		return
 	end
 
-	local _input_extension = self._input_extension
+	local input_extension = self._input_extension
 
-	if not _input_extension then
+	if not input_extension then
 		return
 	end
 
 	if not self._is_priming then
-		if not _input_extension:get("action_career") then
+		if input_extension:get("action_career") then
 			self:_start_priming()
 		end
-	elseif not self._is_priming then
-		self:_update_priming(arg_7_3)
+	elseif self._is_priming then
+		self:_update_priming(dt)
 
-		if not _input_extension:get("action_two") then
+		if input_extension:get("action_two") then
 			self:_stop_priming()
 
 			return
 		end
 
-		if not _input_extension:get("weapon_reload") then
+		if input_extension:get("weapon_reload") then
 			self:_stop_priming()
 
 			return
 		end
 
-		if not _input_extension:get("toggle_menu") then
+		if input_extension:get("toggle_menu") then
 			self:_stop_priming()
 
 			return
 		end
 
-		if not _input_extension:get("action_career_hold") then
+		if not input_extension:get("action_career_hold") then
 			self:_run_ability()
 		end
 	end
 end
 
-CareerAbilityESKnight.stop = function (self, arg_8_1)
+CareerAbilityESKnight.stop = function (self, reason)
 	-- function 8
-	if arg_8_1 == "pushed" or arg_8_1 == "stunned" or not self._is_priming then
+	if reason ~= "pushed" and reason ~= "stunned" and self._is_priming then
 		self:_stop_priming()
 	end
 end
 
 CareerAbilityESKnight._ability_available = function (self)
 	-- function 9
-	local _career_extension = self._career_extension
-	local _status_extension = self._status_extension
-	local can_use_activated_ability = _career_extension:can_use_activated_ability()
+	local career_extension = self._career_extension
+	local status_extension = self._status_extension
+	local can_use_activated_ability = career_extension:can_use_activated_ability()
 
-	can_use_activated_ability = not can_use_activated_ability and not _status_extension:is_disabled()
+	can_use_activated_ability = not not can_use_activated_ability and not not not status_extension:is_disabled()
 
 	return can_use_activated_ability
 end
 
 CareerAbilityESKnight._start_priming = function (self)
 	-- function 10
-	if not self._local_player then
-		local _decal_unit_name = self._decal_unit_name
+	if self._local_player then
+		local decal_unit_name = self._decal_unit_name
+		local unit_spawner = Managers.state.unit_spawner
 
-		self._decal_unit = Managers.state.unit_spawner:spawn_local_unit(_decal_unit_name)
+		self._decal_unit = unit_spawner:spawn_local_unit(decal_unit_name)
 
-		local str = "lua_es_knight_activated_start_priming"
+		local flow_event = "lua_es_knight_activated_start_priming"
 
-		Unit.flow_event(self._owner_unit, str)
-		Unit.flow_event(self._first_person_unit, str)
+		Unit.flow_event(self._owner_unit, flow_event)
+		Unit.flow_event(self._first_person_unit, flow_event)
 	end
 
-	local _buff_extension = self._buff_extension
-	local str_2 = "planted_decrease_movement"
-	local tbl = {
+	local buff_extension = self._buff_extension
+	local buff_template_name = "planted_decrease_movement"
+	local buff_params = {
 		external_optional_multiplier = 0.3
 	}
 
-	self._buff_id = _buff_extension:add_buff(str_2, tbl)
+	self._buff_id = buff_extension:add_buff(buff_template_name, buff_params)
 	self._is_priming = true
 end
 
-CareerAbilityESKnight._update_priming = function (self, arg_11_1)
+CareerAbilityESKnight._update_priming = function (self, dt)
 	-- function 11
-	if not self._decal_unit then
-		local _first_person_extension = self._first_person_extension
-		local local_position = Unit.local_position(self._owner_unit, 0)
-		local current_rotation = _first_person_extension:current_rotation()
-		local flat = Vector3.flat(Vector3.normalize(Quaternion.forward(current_rotation)))
-		local look = Quaternion.look(flat, Vector3.up())
+	if self._decal_unit then
+		local first_person_extension = self._first_person_extension
+		local player_position = Unit.local_position(self._owner_unit, 0)
+		local player_rotation = first_person_extension:current_rotation()
+		local player_direction_flat = Vector3.flat(Vector3.normalize(Quaternion.forward(player_rotation)))
+		local player_rotation_flat = Quaternion.look(player_direction_flat, Vector3.up())
 
-		Unit.set_local_position(self._decal_unit, 0, local_position)
-		Unit.set_local_rotation(self._decal_unit, 0, look)
+		Unit.set_local_position(self._decal_unit, 0, player_position)
+		Unit.set_local_rotation(self._decal_unit, 0, player_rotation_flat)
 	end
 
-	if not self._local_player then
-		local num = 2.5
-		local num_2 = self._fov_lerp_time / num
-		local lerp = math.lerp(1, 0.95, num_2)
+	if self._local_player then
+		local total_lerp_time = 2.5
+		local lerp_value = self._fov_lerp_time / total_lerp_time
+		local fov_multiplier = math.lerp(1, 0.95, lerp_value)
 
-		self._fov_lerp_time = math.min(self._fov_lerp_time + arg_11_1, num)
+		self._fov_lerp_time = math.min(self._fov_lerp_time + dt, total_lerp_time)
 
-		Managers.state.camera:set_additional_fov_multiplier(lerp)
+		Managers.state.camera:set_additional_fov_multiplier(fov_multiplier)
 	end
 end
 
 CareerAbilityESKnight._stop_priming = function (self)
 	-- function 12
-	if not self._decal_unit then
-		Managers.state.unit_spawner:mark_for_deletion(self._decal_unit)
+	if self._decal_unit then
+		local unit_spawner = Managers.state.unit_spawner
+
+		unit_spawner:mark_for_deletion(self._decal_unit)
 	end
 
-	if not self._buff_id then
-		self._buff_extension:remove_buff(self._buff_id)
+	if self._buff_id then
+		local buff_extension = self._buff_extension
+
+		buff_extension:remove_buff(self._buff_id)
 
 		self._buff_id = nil
 	end
 
-	if not self._local_player then
-		local str = "lua_es_knight_activated_stop_priming"
+	if self._local_player then
+		local flow_event = "lua_es_knight_activated_stop_priming"
 
-		Unit.flow_event(self._owner_unit, str)
-		Unit.flow_event(self._first_person_unit, str)
+		Unit.flow_event(self._owner_unit, flow_event)
+		Unit.flow_event(self._first_person_unit, flow_event)
 
 		self._fov_lerp_time = 0
 
@@ -210,43 +215,43 @@ CareerAbilityESKnight._run_ability = function (self)
 	-- function 13
 	self:_stop_priming()
 
-	local _owner_unit = self._owner_unit
-	local _is_server = self._is_server
-	local _status_extension = self._status_extension
-	local _career_extension = self._career_extension
-	local _buff_extension = self._buff_extension
-	local extension = ScriptUnit.extension(_owner_unit, "talent_system")
-	local _network_manager = self._network_manager
-	local network_transmit = _network_manager.network_transmit
-	local unit_game_object_id = _network_manager:unit_game_object_id(_owner_unit)
-	local str = "markus_knight_activated_ability"
+	local owner_unit = self._owner_unit
+	local is_server = self._is_server
+	local status_extension = self._status_extension
+	local career_extension = self._career_extension
+	local buff_extension = self._buff_extension
+	local talent_extension = ScriptUnit.extension(owner_unit, "talent_system")
+	local network_manager = self._network_manager
+	local network_transmit = network_manager.network_transmit
+	local owner_unit_id = network_manager:unit_game_object_id(owner_unit)
+	local buff_name = "markus_knight_activated_ability"
 
-	_buff_extension:add_buff(str, {
-		attacker_unit = _owner_unit
+	buff_extension:add_buff(buff_name, {
+		attacker_unit = owner_unit
 	})
 
-	if not extension:has_talent("markus_knight_ability_invulnerability", "empire_soldier", true) then
-		local str_2 = "markus_knight_ability_invulnerability_buff"
+	if talent_extension:has_talent("markus_knight_ability_invulnerability", "empire_soldier", true) then
+		buff_name = "markus_knight_ability_invulnerability_buff"
 
-		_buff_extension:add_buff(str_2, {
-			attacker_unit = _owner_unit
+		buff_extension:add_buff(buff_name, {
+			attacker_unit = owner_unit
 		})
 
-		local var_13_11 = NetworkLookup.buff_templates[str_2]
+		local buff_template_name_id = NetworkLookup.buff_templates[buff_name]
 
-		if not _is_server then
-			network_transmit:send_rpc_clients("rpc_add_buff", unit_game_object_id, var_13_11, unit_game_object_id, 0, false)
+		if is_server then
+			network_transmit:send_rpc_clients("rpc_add_buff", owner_unit_id, buff_template_name_id, owner_unit_id, 0, false)
 		else
-			network_transmit:send_rpc_server("rpc_add_buff", unit_game_object_id, var_13_11, unit_game_object_id, 0, false)
+			network_transmit:send_rpc_server("rpc_add_buff", owner_unit_id, buff_template_name_id, owner_unit_id, 0, false)
 		end
 	end
 
-	_status_extension:set_noclip(true, "skill_knight")
+	status_extension:set_noclip(true, "skill_knight")
 
-	local num = 0.03
-	local num_2 = 0.15
+	local hold_duration = 0.03
+	local windup_duration = 0.15
 
-	_status_extension.do_lunge = {
+	status_extension.do_lunge = {
 		animation_end_event = "foot_knight_ability_charge_hit",
 		allow_rotation = false,
 		falloff_to_speed = 5,
@@ -260,59 +265,62 @@ CareerAbilityESKnight._run_ability = function (self)
 		initial_speed = 20,
 		animation_event = "foot_knight_ability_charge_start",
 		lunge_events = self._lunge_events,
-		speed_function = function (arg_14_0, arg_14_1)
+		speed_function = function (lunge_time, duration)
 			-- function 14
-			local num_3 = 0.25
-			local num_4 = arg_14_0 - num - num_2
-			local num_5 = arg_14_1 - num - num_2 - num_3
-			local num_6 = 0
-			local num_7 = -3
-			local num_8 = 20
-			local num_9 = 15
-			local num_10 = 2
+			local end_duration = 0.25
+			local rush_time = lunge_time - hold_duration - windup_duration
+			local rush_duration = duration - hold_duration - windup_duration - end_duration
+			local start_speed = 0
+			local windup_speed = -3
+			local end_speed = 20
+			local rush_speed = 15
+			local normal_move_speed = 2
 
-			if not (not (num_4 <= 0) or not (num > 0)) then
-				local num_11 = -num_4 / (num + num_2)
+			if rush_time <= 0 and hold_duration > 0 then
+				local t = -rush_time / (hold_duration + windup_duration)
 
-				return math.lerp(0, -1, num_11)
-			elseif num_4 < num_2 then
-				local num_12 = num_4 / num_2
-				local cos = math.cos((num_12 + 1) * math.pi * 0.5)
+				return math.lerp(0, -1, t)
+			elseif rush_time < windup_duration then
+				local t_value = rush_time / windup_duration
+				local interpolation_value = math.cos((t_value + 1) * math.pi * 0.5)
 
-				return math.min(math.lerp(num_7, num_6, cos), num_9)
-			elseif num_4 < num_5 then
-				local num_13 = num_4 / num_5
-				local min = math.min(num_4 / (num_5 / 3), 1)
-				local cos_2 = math.cos(num_13 * math.pi * 0.5)
-				local var_14_14
-				local num_14 = 0.25
+				return math.min(math.lerp(windup_speed, start_speed, interpolation_value), rush_speed)
+			elseif rush_time < rush_duration then
+				local t_value = rush_time / rush_duration
+				local acceleration = math.min(rush_time / (rush_duration / 3), 1)
+				local interpolation_value = math.cos(t_value * math.pi * 0.5)
+				local offset
+				local step_time = 0.25
 
-				if num_4 > 8 * num_14 then
-					var_14_14 = 0
-				elseif num_4 > 7 * num_14 then
-					var_14_14 = (num_4 - 1.4) / num_14
-				elseif num_4 > 6 * num_14 then
-					var_14_14 = (num_4 - 6 * num_14) / num_14
-				elseif num_4 > 5 * num_14 then
-					var_14_14 = (num_4 - 5 * num_14) / num_14
-				elseif num_4 > 4 * num_14 then
-					var_14_14 = (num_4 - 4 * num_14) / num_14
-				elseif num_4 > 3 * num_14 then
-					var_14_14 = (num_4 - 3 * num_14) / num_14
-				elseif num_4 > 2 * num_14 then
-					var_14_14 = (num_4 - 2 * num_14) / num_14
-				elseif num_14 < num_4 then
-					var_14_14 = (num_4 - num_14) / num_14
+				if rush_time > 8 * step_time then
+					offset = 0
+				elseif rush_time > 7 * step_time then
+					offset = (rush_time - 1.4) / step_time
+				elseif rush_time > 6 * step_time then
+					offset = (rush_time - 6 * step_time) / step_time
+				elseif rush_time > 5 * step_time then
+					offset = (rush_time - 5 * step_time) / step_time
+				elseif rush_time > 4 * step_time then
+					offset = (rush_time - 4 * step_time) / step_time
+				elseif rush_time > 3 * step_time then
+					offset = (rush_time - 3 * step_time) / step_time
+				elseif rush_time > 2 * step_time then
+					offset = (rush_time - 2 * step_time) / step_time
+				elseif step_time < rush_time then
+					offset = (rush_time - step_time) / step_time
 				else
-					var_14_14 = num_4 / num_14
+					offset = rush_time / step_time
 				end
 
-				return (1 - var_14_14 * 0.4) * (min * min) * math.lerp(num_8, num_9, cos_2)
-			else
-				local num_15 = (num_4 - num_5) / num_3
-				local num_16 = 1 + math.cos((num_15 + 1) * math.pi * 0.5)
+				local offset_multiplier = 1 - offset * 0.4
+				local speed = offset_multiplier * (acceleration * acceleration) * math.lerp(end_speed, rush_speed, interpolation_value)
 
-				return math.lerp(num_10, num_8, num_16)
+				return speed
+			else
+				local t_value = (rush_time - rush_duration) / end_duration
+				local interpolation_value = 1 + math.cos((t_value + 1) * math.pi * 0.5)
+
+				return math.lerp(normal_move_speed, end_speed, interpolation_value)
 			end
 		end,
 		damage = {
@@ -344,20 +352,20 @@ CareerAbilityESKnight._run_ability = function (self)
 		}
 	}
 
-	if not extension:has_talent("markus_knight_wide_charge", "empire_soldier", true) then
-		_status_extension.do_lunge.damage.width = 5
-		_status_extension.do_lunge.damage.interrupt_on_max_hit_mass = false
+	if talent_extension:has_talent("markus_knight_wide_charge", "empire_soldier", true) then
+		status_extension.do_lunge.damage.width = 5
+		status_extension.do_lunge.damage.interrupt_on_max_hit_mass = false
 	end
 
-	_career_extension:start_activated_ability_cooldown()
+	career_extension:start_activated_ability_cooldown()
 	self:_play_vo()
 end
 
 CareerAbilityESKnight._play_vo = function (self)
 	-- function 15
-	local _owner_unit = self._owner_unit
-	local extension_input = ScriptUnit.extension_input(_owner_unit, "dialogue_system")
-	local alloc_table = FrameTable.alloc_table()
+	local owner_unit = self._owner_unit
+	local dialogue_input = ScriptUnit.extension_input(owner_unit, "dialogue_system")
+	local event_data = FrameTable.alloc_table()
 
-	extension_input:trigger_networked_dialogue_event("activate_ability", alloc_table)
+	dialogue_input:trigger_networked_dialogue_event("activate_ability", event_data)
 end

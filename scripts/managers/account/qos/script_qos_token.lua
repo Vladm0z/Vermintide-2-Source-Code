@@ -2,54 +2,76 @@
 
 ScriptQoSToken = class(ScriptQoSToken)
 
-ScriptQoSToken.init = function (self, arg_1_1)
+ScriptQoSToken.init = function (self, token)
 	-- function 1
-	self._token = arg_1_1
+	self._token = token
 	self._result = {}
 	self._done = false
 end
 
 ScriptQoSToken.update = function (self)
 	-- function 2
-	local status, var_2_1, var_2_2, var_2_3 = QoS.status(self._token)
+	local in_progress, done, error_code, result_code = QoS.status(self._token)
 
-	self._done = var_2_1
-	self._result_code = var_2_3
+	self._done = done
+	self._result_code = result_code
 end
 
 ScriptQoSToken.info = function (self)
 	-- function 3
-	local tbl = {}
-	local flag = bit.band(self._result_code, QoS.UP_FAILED) > 0
-	local flag_2 = bit.band(self._result_code, QoS.DOWN_FAILED) > 0
+	local info = {}
+	local up_failed = bit.band(self._result_code, QoS.UP_FAILED) > 0
+	local down_failed = bit.band(self._result_code, QoS.DOWN_FAILED) > 0
 
-	tbl.up_failed = flag
-	tbl.down_failed = flag_2
+	info.up_failed = up_failed
+	info.down_failed = down_failed
 
-	if flag or not flag_2 then
+	if up_failed or down_failed then
 		local str = "Your"
-		local flag_3
+		local str_2
 
-		flag_3 = not flag and " upload bandwidth " and ""
+		if up_failed then
+			str_2 = " upload bandwidth "
 
-		local flag_4
+			goto label_3_0
+		end
 
-		flag_4 = not flag_2 and " download bandwidth " and ""
+		str_2 = ""
 
-		local var_3_6 = str
-		local var_3_7 = flag_3
-		local flag_5
+		local up_str = str_2
 
-		flag_5 = not flag and not flag_2 and "and" and ""
+		do
+			local str_3
+		end
 
-		local var_3_9 = flag_4
-		local flag_6
+		::label_3_0::
 
-		flag_6 = not flag and not flag_2 and "are too low" and "is too low"
-		tbl.error = var_3_6 .. var_3_7 .. flag_5 .. var_3_9 .. flag_6
+		if down_failed then
+			str_3 = " download bandwidth "
+
+			goto label_3_1
+		end
+
+		str_3 = ""
+
+		local down_str = str_3
+
+		::label_3_1::
+
+		local var_3_2 = str
+		local var_3_3 = up_str
+		local flag
+
+		flag = (not up_failed or not down_failed or not "and") and not not ""
+
+		local var_3_5 = down_str
+		local flag_2
+
+		flag_2 = (not up_failed or not down_failed or not "are too low") and not not "is too low"
+		info.error = var_3_2 .. var_3_3 .. flag .. var_3_5 .. flag_2
 	end
 
-	return tbl
+	return info
 end
 
 ScriptQoSToken.done = function (self)

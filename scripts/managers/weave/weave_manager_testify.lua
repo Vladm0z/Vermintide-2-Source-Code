@@ -2,24 +2,28 @@
 
 require("scripts/settings/weave_settings")
 
-return {
-	set_next_weave = function (self, arg_1_1)
+local WeaveManagerTestify = {
+	set_next_weave = function (weave_manager, weave_name)
 		-- function 1
-		self._remaining_time = WeaveSettings.starting_time
+		weave_manager._remaining_time = WeaveSettings.starting_time
 
-		self:set_next_weave(arg_1_1)
-		self:set_next_objective(1)
+		weave_manager:set_next_weave(weave_name)
+		weave_manager:set_next_objective(1)
 	end,
-	get_weave_end_zone = function (arg_2_0, arg_2_1)
+	get_weave_end_zone = function (weave_manager, weave_number)
 		-- function 2
-		return WeaveSettings.templates_ordered[arg_2_1].objectives[1].end_zone_name
+		local weave_template = WeaveSettings.templates_ordered[weave_number]
+
+		return weave_template.objectives[1].end_zone_name
 	end,
-	weave_remaining_time = function (self)
+	weave_remaining_time = function (weave_manager)
 		-- function 3
-		return self._remaining_time
+		return weave_manager._remaining_time
 	end,
-	get_active_weave_phase = function (self)
+	get_active_weave_phase = function (weave_manager)
 		-- function 4
-		return self:get_active_weave_phase()
+		return weave_manager:get_active_weave_phase()
 	end
 }
+
+return WeaveManagerTestify

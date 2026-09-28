@@ -1,6 +1,6 @@
 -- chunkname: @levels/honduras/nurgle/world_nav_tag_volumes.lua
 
-local tbl = {
+local nav_tag_volumes = {
 	volume_142 = {
 		delay_nav_tag_volume_creation = true,
 		alt_max = 15.552921295166016,
@@ -5465,9 +5465,9 @@ local tbl = {
 		}
 	}
 }
-local str = "1"
+local version = "1"
 
 return {
-	version = str,
-	nav_tag_volumes = tbl
+	version = version,
+	nav_tag_volumes = nav_tag_volumes
 }

@@ -2,19 +2,19 @@
 
 DebugEventManagerRPC = class(DebugEventManagerRPC)
 
-DebugEventManagerRPC.init = function (self, arg_1_1)
+DebugEventManagerRPC.init = function (self, network_event_delegate)
 	-- function 1
-	self._event_delegate = arg_1_1
+	self._event_delegate = network_event_delegate
 
 	self._event_delegate:register(self, "rpc_event_manager_event")
 end
 
-DebugEventManagerRPC.rpc_event_manager_event = function (arg_2_0, arg_2_1, ...)
+DebugEventManagerRPC.rpc_event_manager_event = function (self, channel_id, ...)
 	-- function 2
-	local event = Managers.state.event
+	local event_manager = Managers.state.event
 
-	if not event then
-		event:trigger(...)
+	if event_manager then
+		event_manager:trigger(...)
 	end
 end
 

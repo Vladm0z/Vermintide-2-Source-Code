@@ -1,28 +1,29 @@
 -- chunkname: @scripts/settings/versus_custom_settings_templates.lua
 
-local function fn(arg_1_0, arg_1_1, arg_1_2, arg_1_3)
+local function numeric_incremented_value_table(min_val, max_val, step, optional_additional_values)
 	-- function 1
-	local tbl = {
-		arg_1_0
-	}
-	local num = (arg_1_1 - arg_1_0) / arg_1_2
+	local settings = {}
 
-	for i = 1, num do
-		tbl[i + 1] = arg_1_0 + arg_1_2 * i
+	settings[1] = min_val
+
+	local num_steps = (max_val - min_val) / step
+
+	for i = 1, num_steps do
+		settings[i + 1] = min_val + step * i
 	end
 
-	if not arg_1_3 then
-		for k, v in pairs(arg_1_3) do
-			tbl[#tbl + 1] = v
+	if optional_additional_values then
+		for k, v in pairs(optional_additional_values) do
+			settings[#settings + 1] = v
 		end
 
-		table.clear(arg_1_3)
+		table.clear(optional_additional_values)
 	end
 
-	return tbl
+	return settings
 end
 
-local tbl = {
+local custom_game_settings_template = {
 	{
 		default = true,
 		setting_name = "early_win_enabled",
@@ -63,19 +64,19 @@ local tbl = {
 	{
 		default = 250,
 		setting_name = "knockdown_hp",
-		values = fn(0, 500, 50)
+		values = numeric_incremented_value_table(0, 500, 50)
 	},
 	{
 		default = false,
 		setting_name = "round_time_limit",
-		values = fn(3, 20, 1, {
+		values = numeric_incremented_value_table(3, 20, 1, {
 			false
 		})
 	},
 	{
 		default = 100,
 		setting_name = "horde_ability_recharge_rate_percent",
-		values = fn(0, 500, 25)
+		values = numeric_incremented_value_table(0, 500, 25)
 	},
 	{
 		default = false,
@@ -89,19 +90,19 @@ local tbl = {
 	{
 		default = "default",
 		setting_name = "pactsworn_respawn_timer",
-		values = fn(0, 60, 5, {
+		values = numeric_incremented_value_table(0, 60, 5, {
 			"default"
 		})
 	},
 	{
 		default = 40,
 		setting_name = "catch_up_with_heroes",
-		values = fn(0, 100, 10)
+		values = numeric_incremented_value_table(0, 100, 10)
 	},
 	{
 		default = 1,
 		setting_name = "hero_damage_taken",
-		values = fn(0.1, 5, 0.1)
+		values = numeric_incremented_value_table(0.1, 5, 0.1)
 	},
 	{
 		default = false,
@@ -114,12 +115,12 @@ local tbl = {
 	{
 		default = 8,
 		setting_name = "special_spawn_range_distance",
-		values = fn(0, 100, 2)
+		values = numeric_incremented_value_table(0, 100, 2)
 	},
 	{
 		default = 12,
 		setting_name = "boss_spawn_range_distance",
-		values = fn(0, 100, 2)
+		values = numeric_incremented_value_table(0, 100, 2)
 	},
 	{
 		default = false,
@@ -132,37 +133,37 @@ local tbl = {
 	{
 		default = 2,
 		setting_name = "num_pactsworn_picking_options",
-		values = fn(1, 7, 1)
+		values = numeric_incremented_value_table(1, 7, 1)
 	},
 	{
 		default = 1,
 		setting_name = "vs_ratling_gunner_spawn_chance_multiplier",
-		values = fn(0, 1, 0.1)
+		values = numeric_incremented_value_table(0, 1, 0.1)
 	},
 	{
 		default = 1,
 		setting_name = "vs_packmaster_spawn_chance_multiplier",
-		values = fn(0, 1, 0.1)
+		values = numeric_incremented_value_table(0, 1, 0.1)
 	},
 	{
 		default = 1,
 		setting_name = "vs_gutter_runner_spawn_chance_multiplier",
-		values = fn(0, 1, 0.1)
+		values = numeric_incremented_value_table(0, 1, 0.1)
 	},
 	{
 		default = 1,
 		setting_name = "vs_poison_wind_globadier_spawn_chance_multiplier",
-		values = fn(0, 1, 0.1)
+		values = numeric_incremented_value_table(0, 1, 0.1)
 	},
 	{
 		default = 1,
 		setting_name = "vs_warpfire_thrower_spawn_chance_multiplier",
-		values = fn(0, 1, 0.1)
+		values = numeric_incremented_value_table(0, 1, 0.1)
 	},
 	{
 		default = "default",
 		setting_name = "vs_chaos_troll_spawn_chance_multiplier",
-		values = fn(0.1, 1, 0.1, {
+		values = numeric_incremented_value_table(0.1, 1, 0.1, {
 			false,
 			"default"
 		})
@@ -170,7 +171,7 @@ local tbl = {
 	{
 		default = "default",
 		setting_name = "vs_rat_ogre_spawn_chance_multiplier",
-		values = fn(0.1, 1, 0.1, {
+		values = numeric_incremented_value_table(0.1, 1, 0.1, {
 			false,
 			"default"
 		})
@@ -178,53 +179,53 @@ local tbl = {
 	{
 		default = 50,
 		setting_name = "vs_ratling_gunner_hp",
-		values = fn(10, 1000, 10)
+		values = numeric_incremented_value_table(10, 1000, 10)
 	},
 	{
 		default = 50,
 		setting_name = "vs_packmaster_hp",
-		values = fn(10, 1000, 10)
+		values = numeric_incremented_value_table(10, 1000, 10)
 	},
 	{
 		default = 30,
 		setting_name = "vs_gutter_runner_hp",
-		values = fn(10, 1000, 10)
+		values = numeric_incremented_value_table(10, 1000, 10)
 	},
 	{
 		default = 30,
 		setting_name = "vs_poison_wind_globadier_hp",
-		values = fn(10, 1000, 10)
+		values = numeric_incremented_value_table(10, 1000, 10)
 	},
 	{
 		default = 50,
 		setting_name = "vs_warpfire_thrower_hp",
-		values = fn(10, 1000, 10)
+		values = numeric_incremented_value_table(10, 1000, 10)
 	},
 	{
 		default = 800,
 		setting_name = "vs_chaos_troll_hp",
-		values = fn(100, 5000, 100)
+		values = numeric_incremented_value_table(100, 5000, 100)
 	},
 	{
 		default = 800,
 		setting_name = "vs_rat_ogre_hp",
-		values = fn(100, 5000, 100)
+		values = numeric_incremented_value_table(100, 5000, 100)
 	}
 }
-local num = 0
+local id = 0
 
-for i, v in ipairs(tbl) do
-	num = num + 1
-	v.id = num
-	tbl[v.setting_name] = v
+for _, setting in ipairs(custom_game_settings_template) do
+	id = id + 1
+	setting.id = id
+	custom_game_settings_template[setting.setting_name] = setting
 
-	local values = v.values
+	local values = setting.values
 
-	v.values_reverse_lookup = {}
+	setting.values_reverse_lookup = {}
 
-	for k, v_2 in pairs(values) do
-		v.values_reverse_lookup[v_2] = k
+	for k, v in pairs(values) do
+		setting.values_reverse_lookup[v] = k
 	end
 end
 
-return tbl
+return custom_game_settings_template

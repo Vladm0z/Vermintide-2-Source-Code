@@ -3,7 +3,7 @@
 HitReactions = {}
 
 local DamageDataIndex = DamageDataIndex
-local tbl = {
+local ignored_damage_types = {
 	temporary_health_degen = true,
 	kinetic = true,
 	buff_shared_medpack = true,
@@ -19,38 +19,42 @@ local tbl = {
 	life_drain = true
 }
 
-local function fn(arg_1_0, arg_1_1)
+local function trigger_player_friendly_fire_dialogue(player_unit, attacker_unit)
 	-- function 1
-	local player = Managers.player
+	local player_manager = Managers.player
 
-	if arg_1_0 == arg_1_1 or not player:is_player_unit(arg_1_1) then
-		local player_profile = ScriptUnit.extension(arg_1_0, "dialogue_system").context.player_profile
-		local player_profile_2 = ScriptUnit.extension(arg_1_1, "dialogue_system").context.player_profile
-		local extension_input = ScriptUnit.extension_input(arg_1_0, "dialogue_system")
-		local alloc_table = FrameTable.alloc_table()
+	if player_unit ~= attacker_unit and player_manager:is_player_unit(attacker_unit) then
+		local profile_name_victim = ScriptUnit.extension(player_unit, "dialogue_system").context.player_profile
+		local profile_name_attacker = ScriptUnit.extension(attacker_unit, "dialogue_system").context.player_profile
+		local dialogue_input = ScriptUnit.extension_input(player_unit, "dialogue_system")
+		local event_data = FrameTable.alloc_table()
 
-		alloc_table.target = player_profile
-		alloc_table.player_profile = player_profile_2
+		event_data.target = profile_name_victim
+		event_data.player_profile = profile_name_attacker
 
-		extension_input:trigger_dialogue_event("friendly_fire", alloc_table)
+		dialogue_input:trigger_dialogue_event("friendly_fire", event_data)
 	end
 end
 
-local function fn_2(arg_2_0, arg_2_1, arg_2_2, arg_2_3)
+local function trigger_enemy_armor_hit_dialogue(enemy_unit, player_unit, damage_dealt, hit)
 	-- function 2
-	local player = Managers.player
-	local unit_owner = player:unit_owner(arg_2_1)
+	local player_manager = Managers.player
+	local owner = player_manager:unit_owner(player_unit)
 
-	if not (not player:is_player_unit(arg_2_1) and unit_owner.remote and arg_2_1 == arg_2_0 and not Unit.alive(arg_2_0) and ScriptUnit.extension(arg_2_1, "buff_system"):has_buff_perk("potion_armor_penetration") ~= false and not (arg_2_2 < 0.5)) then
-		local get_data = Unit.get_data(arg_2_0, "breed")
+	if player_manager:is_player_unit(player_unit) and not owner.remote and player_unit ~= enemy_unit and Unit.alive(enemy_unit) then
+		local buff_extension = ScriptUnit.extension(player_unit, "buff_system")
 
-		if not (not get_data and get_data.armor_category ~= 2 or arg_2_3[4] == "head" or arg_2_3[4] == "neck") then
-			SurroundingAwareSystem.add_event(arg_2_1, "armor_hit", DialogueSettings.armor_hit_broadcast_range, "profile_name", ScriptUnit.extension(arg_2_1, "dialogue_system").context.player_profile)
+		if buff_extension:has_buff_perk("potion_armor_penetration") == false and damage_dealt < 0.5 then
+			local breed_data = Unit.get_data(enemy_unit, "breed")
+
+			if breed_data and breed_data.armor_category == 2 and hit[4] ~= "head" and hit[4] ~= "neck" then
+				SurroundingAwareSystem.add_event(player_unit, "armor_hit", DialogueSettings.armor_hit_broadcast_range, "profile_name", ScriptUnit.extension(player_unit, "dialogue_system").context.player_profile)
+			end
 		end
 	end
 end
 
-local tbl_2 = {
+local dot_hit_types = {
 	bleed = true,
 	burninating = true,
 	arrow_poison_dot = true
@@ -58,172 +62,191 @@ local tbl_2 = {
 
 HitReactions.templates = {
 	ai_default = {
-		unit = function (arg_3_0, arg_3_1, arg_3_2, arg_3_3, arg_3_4)
+		unit = function (unit, dt, context, t, hit)
 			-- function 3
-			local var_3_0 = arg_3_4[DamageDataIndex.ATTACKER]
-			local var_3_1 = arg_3_4[DamageDataIndex.DAMAGE_TYPE]
-			local var_3_2 = arg_3_4[DamageDataIndex.DAMAGE_AMOUNT]
-			local flag = arg_3_0 ~= var_3_0
+			local attacker_unit = hit[DamageDataIndex.ATTACKER]
+			local damage_type = hit[DamageDataIndex.DAMAGE_TYPE]
+			local damage_taken = hit[DamageDataIndex.DAMAGE_AMOUNT]
+			local damaged_by_other = unit ~= attacker_unit
 
-			if var_3_1 == "push" or not flag then
-				ScriptUnit.extension(arg_3_0, "ai_system"):attacked(var_3_0, arg_3_3, arg_3_4)
-				fn_2(arg_3_0, var_3_0, var_3_2, arg_3_4)
+			if damage_type ~= "push" and damaged_by_other then
+				ScriptUnit.extension(unit, "ai_system"):attacked(attacker_unit, t, hit)
+				trigger_enemy_armor_hit_dialogue(unit, attacker_unit, damage_taken, hit)
 			end
 
-			Managers.state.game_mode:ai_hit_by_player(arg_3_0, var_3_0, arg_3_4)
+			Managers.state.game_mode:ai_hit_by_player(unit, attacker_unit, hit)
 		end,
-		husk = function (arg_4_0, arg_4_1, arg_4_2, arg_4_3, arg_4_4)
+		husk = function (unit, dt, context, t, hit)
 			-- function 4
-			local var_4_0 = arg_4_4[DamageDataIndex.ATTACKER]
+			local attacker_unit = hit[DamageDataIndex.ATTACKER]
 
-			Managers.state.game_mode:ai_hit_by_player(arg_4_0, var_4_0, arg_4_4)
+			Managers.state.game_mode:ai_hit_by_player(unit, attacker_unit, hit)
 		end
 	},
 	player = {
-		unit = function (arg_5_0, arg_5_1, arg_5_2, arg_5_3, arg_5_4)
+		unit = function (unit, dt, context, t, hit)
 			-- function 5
-			local var_5_0 = arg_5_4[DamageDataIndex.DAMAGE_TYPE]
+			local damage_type = hit[DamageDataIndex.DAMAGE_TYPE]
 
-			if not tbl[var_5_0] then
-				local extension = ScriptUnit.extension(arg_5_0, "first_person_system")
+			if not ignored_damage_types[damage_type] then
+				local first_person_extension = ScriptUnit.extension(unit, "first_person_system")
 
-				if not (not (arg_5_4[DamageDataIndex.DAMAGE_AMOUNT] > 0) or Development.parameter("screen_space_player_camera_reactions") == false) then
-					extension:animation_event("shake_get_hit")
+				if hit[DamageDataIndex.DAMAGE_AMOUNT] > 0 and Development.parameter("screen_space_player_camera_reactions") ~= false then
+					first_person_extension:animation_event("shake_get_hit")
 				end
 
-				local var_5_2 = arg_5_4[DamageDataIndex.ATTACKER]
+				local attacker = hit[DamageDataIndex.ATTACKER]
 
-				if not tbl_2[var_5_0] then
-					fn(arg_5_0, var_5_2)
+				if not dot_hit_types[damage_type] then
+					trigger_player_friendly_fire_dialogue(unit, attacker)
 				end
 			end
 		end,
-		husk = function (arg_6_0, arg_6_1, arg_6_2, arg_6_3, arg_6_4)
+		husk = function (unit, dt, context, t, hit)
 			-- function 6
-			local var_6_0 = arg_6_4[DamageDataIndex.ATTACKER]
-			local var_6_1 = arg_6_4[DamageDataIndex.DAMAGE_TYPE]
+			local attacker = hit[DamageDataIndex.ATTACKER]
+			local damage_type = hit[DamageDataIndex.DAMAGE_TYPE]
 
-			if not (tbl[var_6_1] or tbl_2[var_6_1]) then
-				fn(arg_6_0, var_6_0)
+			if not ignored_damage_types[damage_type] and not dot_hit_types[damage_type] then
+				trigger_player_friendly_fire_dialogue(unit, attacker)
 			end
 		end
 	},
 	level_object = {
-		unit = function (arg_7_0, arg_7_1, arg_7_2, arg_7_3, arg_7_4)
+		unit = function (unit, dt, context, t, hit)
 			-- function 7
-			local current_health = ScriptUnit.extension(arg_7_0, "health_system"):current_health()
+			local health_extension = ScriptUnit.extension(unit, "health_system")
+			local current_health = health_extension:current_health()
 
-			Unit.set_flow_variable(arg_7_0, "current_health", current_health)
-			Unit.flow_event(arg_7_0, "lua_on_damage_taken")
+			Unit.set_flow_variable(unit, "current_health", current_health)
+			Unit.flow_event(unit, "lua_on_damage_taken")
 		end,
-		husk = function (arg_8_0, arg_8_1, arg_8_2, arg_8_3, arg_8_4)
+		husk = function (unit, dt, context, t, hit)
 			-- function 8
-			local current_health = ScriptUnit.extension(arg_8_0, "health_system"):current_health()
+			local health_extension = ScriptUnit.extension(unit, "health_system")
+			local current_health = health_extension:current_health()
 
-			Unit.set_flow_variable(arg_8_0, "current_health", current_health)
-			Unit.flow_event(arg_8_0, "lua_on_damage_taken")
+			Unit.set_flow_variable(unit, "current_health", current_health)
+			Unit.flow_event(unit, "lua_on_damage_taken")
 		end
 	},
 	dummy = {
-		unit = function (arg_9_0, arg_9_1, arg_9_2, arg_9_3, arg_9_4)
+		unit = function (unit, dt, context, t, hit)
 			-- function 9
-			local var_9_0 = arg_9_4[2]
-			local flag = false
+			local hit_type = hit[2]
+			local ignore_damage_taken_flow_event = false
 
-			if not var_9_0 then
-				flag = tbl_2[var_9_0]
+			if hit_type then
+				ignore_damage_taken_flow_event = dot_hit_types[hit_type]
 			end
 
-			if not flag then
-				local current_health = ScriptUnit.extension(arg_9_0, "health_system"):current_health()
+			if not ignore_damage_taken_flow_event then
+				local health_extension = ScriptUnit.extension(unit, "health_system")
+				local current_health = health_extension:current_health()
 
-				Unit.set_flow_variable(arg_9_0, "current_health", current_health)
-				Unit.flow_event(arg_9_0, "lua_on_damage_taken")
+				Unit.set_flow_variable(unit, "current_health", current_health)
+				Unit.flow_event(unit, "lua_on_damage_taken")
 			end
 		end,
-		husk = function (arg_10_0, arg_10_1, arg_10_2, arg_10_3, arg_10_4)
+		husk = function (unit, dt, context, t, hit)
 			-- function 10
-			local var_10_0 = arg_10_4[2]
-			local flag = false
+			local hit_type = hit[2]
+			local ignore_damage_taken_flow_event = false
 
-			if not var_10_0 then
-				flag = tbl_2[var_10_0]
+			if hit_type then
+				ignore_damage_taken_flow_event = dot_hit_types[hit_type]
 			end
 
-			if not flag then
-				local current_health = ScriptUnit.extension(arg_10_0, "health_system"):current_health()
+			if not ignore_damage_taken_flow_event then
+				local health_extension = ScriptUnit.extension(unit, "health_system")
+				local current_health = health_extension:current_health()
 
-				Unit.set_flow_variable(arg_10_0, "current_health", current_health)
-				Unit.flow_event(arg_10_0, "lua_on_damage_taken")
+				Unit.set_flow_variable(unit, "current_health", current_health)
+				Unit.flow_event(unit, "lua_on_damage_taken")
 			end
 		end
 	},
 	ai_ethereal_skull_knock_back = {
-		unit = function (arg_11_0, arg_11_1, arg_11_2, arg_11_3, arg_11_4)
+		unit = function (unit, dt, context, t, hit)
 			-- function 11
-			local var_11_0 = arg_11_4[DamageDataIndex.ATTACKER]
+			local attacker_unit = hit[DamageDataIndex.ATTACKER]
+			local is_player = Managers.player:is_player_unit(attacker_unit)
 
-			if not Managers.player:is_player_unit(var_11_0) then
+			if not is_player then
 				return
 			end
 
-			local var_11_1 = arg_11_4[DamageDataIndex.DAMAGE_TYPE]
-			local var_11_2 = arg_11_4[DamageDataIndex.DAMAGE_AMOUNT]
-			local var_11_3 = arg_11_4[DamageDataIndex.DIRECTION]
-			local var_11_4 = arg_11_4[DamageDataIndex.POSITION]
-			local flag = arg_11_0 ~= var_11_0
+			local damage_type = hit[DamageDataIndex.DAMAGE_TYPE]
+			local damage_taken = hit[DamageDataIndex.DAMAGE_AMOUNT]
+			local hit_direction = hit[DamageDataIndex.DIRECTION]
+			local hit_position = hit[DamageDataIndex.POSITION]
+			local damaged_by_other = unit ~= attacker_unit
 
-			if var_11_1 == "push" or not flag then
-				ScriptUnit.extension(arg_11_0, "ai_system"):attacked(var_11_0, arg_11_3, arg_11_4)
-				fn_2(arg_11_0, var_11_0, var_11_2, arg_11_4)
+			if damage_type ~= "push" and damaged_by_other then
+				ScriptUnit.extension(unit, "ai_system"):attacked(attacker_unit, t, hit)
+				trigger_enemy_armor_hit_dialogue(unit, attacker_unit, damage_taken, hit)
 			end
 
-			local extension = ScriptUnit.extension(arg_11_0, "projectile_locomotion_system")
+			local locomotion_extension = ScriptUnit.extension(unit, "projectile_locomotion_system")
 
-			if not (not extension and arg_11_4[2] == "bleed" or arg_11_4[7] == "dot_debuff") then
-				extension:set_knockback(var_11_0, var_11_3, var_11_4, arg_11_3)
+			if locomotion_extension and hit[2] ~= "bleed" and hit[7] ~= "dot_debuff" then
+				locomotion_extension:set_knockback(attacker_unit, hit_direction, hit_position, t)
 			end
 
-			Managers.state.game_mode:ai_hit_by_player(arg_11_0, var_11_0, arg_11_4)
+			Managers.state.game_mode:ai_hit_by_player(unit, attacker_unit, hit)
 		end,
-		husk = function (arg_12_0, arg_12_1, arg_12_2, arg_12_3, arg_12_4)
+		husk = function (unit, dt, context, t, hit)
 			-- function 12
-			local var_12_0 = arg_12_4[DamageDataIndex.ATTACKER]
+			local attacker_unit = hit[DamageDataIndex.ATTACKER]
+			local is_player = Managers.player:is_player_unit(attacker_unit)
 
-			if not Managers.player:is_player_unit(var_12_0) then
+			if not is_player then
 				return
 			end
 
-			Managers.state.game_mode:ai_hit_by_player(arg_12_0, var_12_0, arg_12_4)
+			Managers.state.game_mode:ai_hit_by_player(unit, attacker_unit, hit)
 		end
 	},
 	chaos_bulwark = {
-		unit = function (arg_13_0, arg_13_1, arg_13_2, arg_13_3, arg_13_4)
+		unit = function (unit, dt, context, t, hit)
 			-- function 13
-			HitReactions.templates.ai_default.unit(arg_13_0, arg_13_1, arg_13_2, arg_13_3, arg_13_4)
+			HitReactions.templates.ai_default.unit(unit, dt, context, t, hit)
 
-			if not (not (arg_13_4[DamageDataIndex.HIT_ZONE] == "weakspot") and ScriptUnit.extension(arg_13_0, "ai_shield_system").is_blocking) then
-				Unit.flow_event(arg_13_0, "lua_on_weakspot_hit")
+			local hit_weakspot = hit[DamageDataIndex.HIT_ZONE] == "weakspot"
+
+			if hit_weakspot then
+				local ai_shield_extension = ScriptUnit.extension(unit, "ai_shield_system")
+
+				if not ai_shield_extension.is_blocking then
+					Unit.flow_event(unit, "lua_on_weakspot_hit")
+				end
 			end
 		end,
-		husk = function (arg_14_0, arg_14_1, arg_14_2, arg_14_3, arg_14_4)
+		husk = function (unit, dt, context, t, hit)
 			-- function 14
-			HitReactions.templates.ai_default.husk(arg_14_0, arg_14_1, arg_14_2, arg_14_3, arg_14_4)
+			HitReactions.templates.ai_default.husk(unit, dt, context, t, hit)
 
-			if not (not (arg_14_4[DamageDataIndex.HIT_ZONE] == "weakspot") and ScriptUnit.extension(arg_14_0, "ai_shield_system"):get_is_blocking()) then
-				Unit.flow_event(arg_14_0, "lua_on_weakspot_hit")
+			local hit_weakspot = hit[DamageDataIndex.HIT_ZONE] == "weakspot"
+
+			if hit_weakspot then
+				local ai_shield_extension = ScriptUnit.extension(unit, "ai_shield_system")
+
+				if not ai_shield_extension:get_is_blocking() then
+					Unit.flow_event(unit, "lua_on_weakspot_hit")
+				end
 			end
 		end
 	}
 }
 
-HitReactions.get_reaction = function (arg_15_0, arg_15_1)
+HitReactions.get_reaction = function (hit_reaction_template, is_husk)
 	-- function 15
-	local var_15_0 = HitReactions.templates[arg_15_0]
+	local templates = HitReactions.templates
+	local reaction_table = templates[hit_reaction_template]
 
-	if not (not arg_15_1 and var_15_0.husk == nil) then
-		return var_15_0.husk
+	if is_husk and reaction_table.husk ~= nil then
+		return reaction_table.husk
 	end
 
-	return var_15_0.unit
+	return reaction_table.unit
 end

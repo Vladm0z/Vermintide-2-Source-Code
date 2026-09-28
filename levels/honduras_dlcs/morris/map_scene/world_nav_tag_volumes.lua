@@ -1,9 +1,9 @@
 -- chunkname: @levels/honduras_dlcs/morris/map_scene/world_nav_tag_volumes.lua
 
-local tbl = {}
-local str = "1"
+local nav_tag_volumes = {}
+local version = "1"
 
 return {
-	version = str,
-	nav_tag_volumes = tbl
+	version = version,
+	nav_tag_volumes = nav_tag_volumes
 }

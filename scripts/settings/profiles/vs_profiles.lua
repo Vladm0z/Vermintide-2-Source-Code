@@ -1,6 +1,6 @@
 -- chunkname: @scripts/settings/profiles/vs_profiles.lua
 
-local tbl = {
+local base_character_states = {
 	"EnemyCharacterStateDead",
 	"EnemyCharacterStateInteracting",
 	"EnemyCharacterStateInspecting",
@@ -17,7 +17,7 @@ local tbl = {
 	"EnemyCharacterStateJumpAcross",
 	"EnemyCharacterStateStaggered"
 }
-local tbl_2 = {
+local base_camera_states = {
 	"CameraStateIdle",
 	"CameraStateFollow",
 	"CameraStateFollowThirdPerson",
@@ -30,8 +30,7 @@ local tbl_2 = {
 	"CameraStateObserver",
 	"CameraStateInteraction"
 }
-
-return {
+local VSProfiles = {
 	{
 		character_vo = "vs_undecided",
 		display_name = "vs_undecided",
@@ -46,7 +45,7 @@ return {
 		base_character_states = {
 			"PlayerCharacterStateDead"
 		},
-		base_camera_states = tbl_2
+		base_camera_states = base_camera_states
 	},
 	{
 		career_voice_parameter = "dwarf_career_voice_effect",
@@ -83,8 +82,8 @@ return {
 		careers = {
 			CareerSettings.vs_poison_wind_globadier
 		},
-		base_character_states = tbl,
-		base_camera_states = tbl_2
+		base_character_states = base_character_states,
+		base_camera_states = base_camera_states
 	},
 	{
 		career_voice_parameter = "victor_career_voice_effect",
@@ -122,8 +121,8 @@ return {
 		careers = {
 			CareerSettings.vs_gutter_runner
 		},
-		base_character_states = tbl,
-		base_camera_states = tbl_2
+		base_character_states = base_character_states,
+		base_camera_states = base_camera_states
 	},
 	{
 		career_voice_parameter = "kerillian_career_voice_effect",
@@ -160,8 +159,8 @@ return {
 		careers = {
 			CareerSettings.vs_packmaster
 		},
-		base_character_states = tbl,
-		base_camera_states = tbl_2
+		base_character_states = base_character_states,
+		base_camera_states = base_camera_states
 	},
 	{
 		career_voice_parameter = "dwarf_career_voice_effect",
@@ -198,8 +197,8 @@ return {
 		careers = {
 			CareerSettings.vs_ratling_gunner
 		},
-		base_character_states = tbl,
-		base_camera_states = tbl_2
+		base_character_states = base_character_states,
+		base_camera_states = base_camera_states
 	},
 	{
 		career_voice_parameter = "dwarf_career_voice_effect",
@@ -236,8 +235,8 @@ return {
 		careers = {
 			CareerSettings.vs_warpfire_thrower
 		},
-		base_character_states = tbl,
-		base_camera_states = tbl_2
+		base_character_states = base_character_states,
+		base_camera_states = base_camera_states
 	},
 	{
 		career_voice_parameter = "dwarf_career_voice_effect",
@@ -275,8 +274,8 @@ return {
 		careers = {
 			CareerSettings.vs_chaos_troll
 		},
-		base_character_states = tbl,
-		base_camera_states = tbl_2
+		base_character_states = base_character_states,
+		base_camera_states = base_camera_states
 	},
 	{
 		career_voice_parameter = "dwarf_career_voice_effect",
@@ -312,8 +311,8 @@ return {
 		careers = {
 			CareerSettings.vs_rat_ogre
 		},
-		base_character_states = tbl,
-		base_camera_states = tbl_2
+		base_character_states = base_character_states,
+		base_camera_states = base_camera_states
 	},
 	{
 		role = "spectator",
@@ -331,3 +330,5 @@ return {
 		}
 	}
 }
+
+return VSProfiles

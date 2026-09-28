@@ -8,25 +8,25 @@ NewsTickerManager.init = function (self)
 	-- function 1
 	self._server_name = "cdn.fatsharkgames.se"
 
-	if not IS_WINDOWS then
+	if IS_WINDOWS then
 		local parameter = Development.parameter("news_ticker_url")
 
-		parameter = parameter or "http://cdn.fatsharkgames.se/vermintide_2_news_ticker.txt"
+		parameter = not not parameter or not not "http://cdn.fatsharkgames.se/vermintide_2_news_ticker.txt"
 		self._loading_screen_url = parameter
 
 		local parameter_2 = Development.parameter("news_ticker_ingame_url")
 
-		parameter_2 = parameter_2 or "http://cdn.fatsharkgames.se/vermintide_2_news_ticker_ingame.txt"
+		parameter_2 = not not parameter_2 or not not "http://cdn.fatsharkgames.se/vermintide_2_news_ticker_ingame.txt"
 		self._ingame_url = parameter_2
 	else
 		local parameter_3 = Development.parameter("news_ticker_url_xb1")
 
-		parameter_3 = parameter_3 or "vermintide_2_news_ticker_" .. PLATFORM .. ".txt"
+		parameter_3 = not not parameter_3 or not not ("vermintide_2_news_ticker_" .. PLATFORM .. ".txt")
 		self._loading_screen_url = parameter_3
 
 		local parameter_4 = Development.parameter("news_ticker_ingame_url_xb1")
 
-		parameter_4 = parameter_4 or "vermintide_2_news_ticker_ingame_" .. PLATFORM .. ".txt"
+		parameter_4 = not not parameter_4 or not not ("vermintide_2_news_ticker_ingame_" .. PLATFORM .. ".txt")
 		self._ingame_url = parameter_4
 	end
 
@@ -34,83 +34,91 @@ NewsTickerManager.init = function (self)
 	self._ingame_text = nil
 end
 
-local function fn(self)
+local function lines(str)
 	-- function 2
-	local tbl = {}
+	local t = {}
 
-	local function fn(arg_3_0)
+	local function helper(line)
 		-- function 3
-		table.insert(tbl, arg_3_0)
+		table.insert(t, line)
 
 		return ""
 	end
 
-	fn((self:gsub("(.-)\r?\n", fn)))
+	helper((str:gsub("(.-)\r?\n", helper)))
 
-	return tbl
+	return t
 end
 
-NewsTickerManager.update = function (arg_4_0, arg_4_1)
+NewsTickerManager.update = function (self, dt)
 	-- function 4
 	return
 end
 
-NewsTickerManager.destroy = function (arg_5_0)
+NewsTickerManager.destroy = function (self)
 	-- function 5
 	return
 end
 
-local function fn_2(arg_6_0, arg_6_1, arg_6_2, arg_6_3, arg_6_4)
+local function _callback_wrapper(success, http_code, response_headers, data, userdata_callback)
 	-- function 6
-	local tbl = {
+	local info = {
 		done = false
 	}
 
-	if not (not arg_6_0 and not (arg_6_1 >= 200) or not (arg_6_1 < 300)) then
-		tbl.done = true
-		tbl.data = arg_6_3
+	if success and http_code >= 200 and http_code < 300 then
+		info.done = true
+		info.data = data
 	end
 
-	arg_6_4(tbl)
+	userdata_callback(info)
 end
 
-NewsTickerManager._load = function (self, arg_7_1, arg_7_2)
+NewsTickerManager._load = function (self, url, callback)
 	-- function 7
-	if not rawget(_G, "Curl") then
-		Managers.curl:get(arg_7_1, nil, fn_2, arg_7_2)
-	elseif not rawget(_G, "Http") then
-		local get_uri = Http.get_uri(self._server_name, 80, arg_7_1)
+	if rawget(_G, "Curl") then
+		Managers.curl:get(url, nil, _callback_wrapper, callback)
+	elseif rawget(_G, "Http") then
+		local message = Http.get_uri(self._server_name, 80, url)
 
-		if not get_uri then
-			local find = string.find(get_uri, "HTTP/1.1 200 OK")
-
-			find = find or string.find(get_uri, "HTTP/1.0 200 OK")
+		if message then
+			local find = string.find(message, "HTTP/1.1 200 OK")
 
 			if not find then
-				local find_2, var_7_3 = string.find(get_uri, "\r\n\r\n")
-				local str = ""
+				-- Nothing
+			end
 
-				if not var_7_3 then
-					str = string.sub(get_uri, var_7_3 + 1)
+			find = string.find(message, "HTTP/1.0 200 OK")
+
+			local is_ok = find
+
+			::label_7_0::
+
+			if is_ok then
+				local start_idx, end_idx = string.find(message, "\r\n\r\n")
+				local formatted_message = ""
+
+				if end_idx then
+					formatted_message = string.sub(message, end_idx + 1)
 				end
 
-				local tbl = {
+				local info = {
 					done = true,
-					data = str
+					data = formatted_message
 				}
 
-				arg_7_2(tbl)
+				callback(info)
 
 				return
 			end
 		end
 
-		local tbl_2 = {
+		local info = {
 			done = true,
 			data = ""
 		}
 
-		arg_7_2(tbl_2)
+		callback(info)
 	else
 		self:cb_loading_screen_loaded({
 			done = true,
@@ -128,18 +136,18 @@ NewsTickerManager.refresh_loading_screen_message = function (self)
 	local _load = self._load
 	local parameter = Development.parameter("news_ticker_url_xb1")
 
-	parameter = parameter or self._loading_screen_url
+	parameter = not not parameter or not not self._loading_screen_url
 
 	_load(var_8_0, parameter, callback(self, "cb_loading_screen_loaded"))
 end
 
-NewsTickerManager.cb_loading_screen_loaded = function (self, arg_9_1)
+NewsTickerManager.cb_loading_screen_loaded = function (self, info)
 	-- function 9
-	if not self._refreshing_loading_screen_message and not arg_9_1.done then
-		local data = arg_9_1.data
+	if self._refreshing_loading_screen_message and info.done then
+		local str = info.data
 
-		if not (not data and data == "") then
-			self._loading_screen_text = data
+		if str and str ~= "" then
+			self._loading_screen_text = str
 		else
 			self._loading_screen_text = nil
 		end
@@ -150,7 +158,9 @@ end
 
 NewsTickerManager.loading_screen_text = function (self)
 	-- function 10
-	return self._loading_screen_text
+	local text = self._loading_screen_text
+
+	return text
 end
 
 NewsTickerManager.refresh_ingame_message = function (self)
@@ -162,7 +172,7 @@ NewsTickerManager.refresh_ingame_message = function (self)
 	local _load = self._load
 	local parameter = Development.parameter("news_ticker_ingame_url_xb1")
 
-	parameter = parameter or self._ingame_url
+	parameter = not not parameter or not not self._ingame_url
 
 	_load(var_11_0, parameter, callback(self, "cb_ingame_loaded"))
 end
@@ -172,13 +182,13 @@ NewsTickerManager.refreshing_ingame_message = function (self)
 	return self._refreshing_ingame_message
 end
 
-NewsTickerManager.cb_ingame_loaded = function (self, arg_13_1)
+NewsTickerManager.cb_ingame_loaded = function (self, info)
 	-- function 13
-	if not self._refreshing_ingame_message and not arg_13_1.done then
-		local data = arg_13_1.data
+	if self._refreshing_ingame_message and info.done then
+		local str = info.data
 
-		if not (not data and data == "") then
-			self._ingame_text = data
+		if str and str ~= "" then
+			self._ingame_text = str
 		else
 			self._ingame_text = nil
 		end
@@ -189,5 +199,7 @@ end
 
 NewsTickerManager.ingame_text = function (self)
 	-- function 14
-	return self._ingame_text
+	local text = self._ingame_text
+
+	return text
 end

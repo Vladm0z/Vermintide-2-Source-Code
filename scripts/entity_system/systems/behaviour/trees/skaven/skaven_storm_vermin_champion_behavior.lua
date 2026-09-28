@@ -1,6 +1,6 @@
 -- chunkname: @scripts/entity_system/systems/behaviour/trees/skaven/skaven_storm_vermin_champion_behavior.lua
 
-local skaven_storm_vermin_champion = BreedActions.skaven_storm_vermin_champion
+local ACTIONS = BreedActions.skaven_storm_vermin_champion
 
 BreedBehaviors.storm_vermin_champion = {
 	"BTSelector",
@@ -35,7 +35,7 @@ BreedBehaviors.storm_vermin_champion = {
 			"BTSmashDoorAction",
 			name = "smash_door",
 			condition = "at_door_smartobject",
-			action_data = skaven_storm_vermin_champion.smash_door
+			action_data = ACTIONS.smash_door
 		},
 		condition = "at_smartobject",
 		name = "smartobject"
@@ -44,13 +44,13 @@ BreedBehaviors.storm_vermin_champion = {
 		"BTStaggerAction",
 		name = "stagger",
 		condition = "stagger",
-		action_data = skaven_storm_vermin_champion.stagger
+		action_data = ACTIONS.stagger
 	},
 	{
 		"BTIdleAction",
 		name = "defensive_idle",
 		condition = "should_defensive_idle",
-		action_data = skaven_storm_vermin_champion.defensive_idle
+		action_data = ACTIONS.defensive_idle
 	},
 	{
 		"BTSelector",
@@ -60,65 +60,65 @@ BreedBehaviors.storm_vermin_champion = {
 				"BTTargetRageAction",
 				name = "turn_to_face_target",
 				condition = "target_changed",
-				action_data = skaven_storm_vermin_champion.turn_to_face_target
+				action_data = ACTIONS.turn_to_face_target
 			},
 			{
 				"BTBossFollowAction",
 				name = "follow",
-				action_data = skaven_storm_vermin_champion.follow
+				action_data = ACTIONS.follow
 			},
 			{
 				"BTChampionAttackAction",
 				name = "special_running_attack",
-				action_data = skaven_storm_vermin_champion.special_running_attack
+				action_data = ACTIONS.special_running_attack
 			},
 			{
 				"BTChampionAttackAction",
 				name = "special_lunge_attack",
-				action_data = skaven_storm_vermin_champion.special_lunge_attack
+				action_data = ACTIONS.special_lunge_attack
 			},
 			{
 				"BTRandom",
-				action_data = skaven_storm_vermin_champion.special_attack_champion,
+				action_data = ACTIONS.special_attack_champion,
 				{
 					"BTChampionAttackAction",
 					name = "special_attack_cleave",
 					weight = 1,
-					action_data = skaven_storm_vermin_champion.special_attack_cleave
+					action_data = ACTIONS.special_attack_cleave
 				},
 				{
 					"BTChampionAttackAction",
 					name = "special_attack_sweep_left",
 					weight = 0.5,
-					action_data = skaven_storm_vermin_champion.special_attack_sweep_left
+					action_data = ACTIONS.special_attack_sweep_left
 				},
 				{
 					"BTChampionAttackAction",
 					name = "special_attack_sweep_right",
 					weight = 0.5,
-					action_data = skaven_storm_vermin_champion.special_attack_sweep_right
+					action_data = ACTIONS.special_attack_sweep_right
 				},
 				name = "special_attack_champion"
 			},
 			{
 				"BTChampionAttackAction",
 				name = "special_attack_spin",
-				action_data = skaven_storm_vermin_champion.special_attack_spin
+				action_data = ACTIONS.special_attack_spin
 			},
 			{
 				"BTChampionAttackAction",
 				name = "defensive_mode_spin",
-				action_data = skaven_storm_vermin_champion.defensive_mode_spin
+				action_data = ACTIONS.defensive_mode_spin
 			},
 			{
 				"BTChampionAttackAction",
 				name = "special_attack_shatter",
-				action_data = skaven_storm_vermin_champion.special_attack_shatter
+				action_data = ACTIONS.special_attack_shatter
 			},
 			{
 				"BTChampionAttackAction",
 				name = "defensive_attack_shatter",
-				action_data = skaven_storm_vermin_champion.defensive_attack_shatter
+				action_data = ACTIONS.defensive_attack_shatter
 			},
 			name = "combat"
 		},

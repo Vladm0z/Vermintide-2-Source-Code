@@ -5,281 +5,322 @@ require("scripts/entity_system/systems/behaviour/nodes/bt_node")
 BTSkulkApproachAction = class(BTSkulkApproachAction, BTNode)
 BTSkulkApproachAction.name = "BTSkulkApproachAction"
 
-BTSkulkApproachAction.init = function (arg_1_0, ...)
+BTSkulkApproachAction.init = function (self, ...)
 	-- function 1
-	BTSkulkApproachAction.super.init(arg_1_0, ...)
+	BTSkulkApproachAction.super.init(self, ...)
 end
 
-BTSkulkApproachAction.enter = function (self, arg_2_1, arg_2_2, arg_2_3)
+BTSkulkApproachAction.enter = function (self, unit, blackboard, t)
 	-- function 2
-	local action_data = self._tree_node.action_data
-	local target_dist = arg_2_2.target_dist
+	local action = self._tree_node.action_data
+	local target_dist = blackboard.target_dist
 	local min
 
-	if not target_dist then
-		min = math.min(action_data.skulk_init_distance, target_dist)
+	if target_dist then
+		min = math.min(action.skulk_init_distance, target_dist)
 
 		if not min then
 			-- Nothing
 		end
 	end
 
-	min = action_data.skulk_init_distance
+	min = action.skulk_init_distance
+
+	local skulk_start_radius = min
 
 	::label_2_0::
 
-	local skulk_data = arg_2_2.skulk_data
+	local skulk_data_2 = blackboard.skulk_data
 
-	skulk_data = skulk_data or {}
+	if not skulk_data_2 then
+		-- Nothing
+	end
 
-	local direction = skulk_data.direction
+	skulk_data_2 = {}
 
-	direction = direction or 1 - math.random(0, 1) * 2
+	local skulk_data = skulk_data_2
+
+	::label_2_1::
+
+	local direction_2 = skulk_data.direction
+
+	if not direction_2 then
+		-- Nothing
+	end
+
+	direction_2 = 1 - math.random(0, 1) * 2
+
+	local direction = direction_2
+
+	::label_2_2::
+
 	skulk_data.direction = direction
 
 	local radius = skulk_data.radius
 
-	radius = radius or min
+	radius = not not radius or not not skulk_start_radius
 	skulk_data.radius = radius
 
 	local skulk_around_time = skulk_data.skulk_around_time
 
-	skulk_around_time = skulk_around_time or 0
+	skulk_around_time = not not skulk_around_time or not not 0
 	skulk_data.skulk_around_time = skulk_around_time
 	skulk_data.next_random_goal_at_radius = skulk_data.radius
-	arg_2_2.skulk_data = skulk_data
-	arg_2_2.action = action_data
+	blackboard.skulk_data = skulk_data
+	blackboard.action = action
 
-	if arg_2_2.move_state ~= "idle" then
-		self:idle(arg_2_1, arg_2_2)
+	if blackboard.move_state ~= "idle" then
+		self:idle(unit, blackboard)
 	end
 
-	arg_2_2.navigation_extension:set_max_speed(arg_2_2.breed.run_speed)
-	LocomotionUtils.set_animation_driven_movement(arg_2_1, false)
+	local ai_navigation = blackboard.navigation_extension
 
-	if not arg_2_2.move_pos then
-		local unbox = arg_2_2.move_pos:unbox()
+	ai_navigation:set_max_speed(blackboard.breed.run_speed)
+	LocomotionUtils.set_animation_driven_movement(unit, false)
 
-		self:move_to(unbox, arg_2_1, arg_2_2)
+	if blackboard.move_pos then
+		local move_pos = blackboard.move_pos:unbox()
+
+		self:move_to(move_pos, unit, blackboard)
 	end
 
-	local network = Managers.state.network
-	local tutorial_message_template = action_data.tutorial_message_template
+	local network_manager = Managers.state.network
+	local tutorial_message_template = action.tutorial_message_template
 
-	if not tutorial_message_template then
-		local var_2_10 = NetworkLookup.tutorials[tutorial_message_template]
-		local var_2_11 = NetworkLookup.tutorials[arg_2_2.breed.name]
+	if tutorial_message_template then
+		local template_id = NetworkLookup.tutorials[tutorial_message_template]
+		local message_id = NetworkLookup.tutorials[blackboard.breed.name]
 
-		network.network_transmit:send_rpc_all("rpc_tutorial_message", var_2_10, var_2_11)
+		network_manager.network_transmit:send_rpc_all("rpc_tutorial_message", template_id, message_id)
 	end
 end
 
-BTSkulkApproachAction.leave = function (self, arg_3_1, arg_3_2, arg_3_3, arg_3_4, arg_3_5)
+BTSkulkApproachAction.leave = function (self, unit, blackboard, t, reason, destroy)
 	-- function 3
-	arg_3_2.skulk_data.animation_state = nil
-	arg_3_2.action = nil
+	local skulk_data = blackboard.skulk_data
 
-	local get_default_breed_move_speed = AiUtils.get_default_breed_move_speed(arg_3_1, arg_3_2)
-	local navigation_extension = arg_3_2.navigation_extension
+	skulk_data.animation_state = nil
+	blackboard.action = nil
 
-	navigation_extension:set_max_speed(get_default_breed_move_speed)
+	local default_move_speed = AiUtils.get_default_breed_move_speed(unit, blackboard)
+	local navigation_extension = blackboard.navigation_extension
 
-	if arg_3_4 == "aborted" then
-		local is_following_path = navigation_extension:is_following_path()
+	navigation_extension:set_max_speed(default_move_speed)
 
-		if not (not arg_3_2.move_pos and not is_following_path and arg_3_2.move_state ~= "idle") then
-			self:start_move_animation(arg_3_1, arg_3_2)
+	if reason == "aborted" then
+		local path_found = navigation_extension:is_following_path()
+
+		if blackboard.move_pos and path_found and blackboard.move_state == "idle" then
+			self:start_move_animation(unit, blackboard)
 		end
 	end
 end
 
-local num = 0.5
+local RADIUS_DECRESE_PER_TEST = 0.5
 
-BTSkulkApproachAction.run = function (self, arg_4_1, arg_4_2, arg_4_3, arg_4_4)
+BTSkulkApproachAction.run = function (self, unit, blackboard, t, dt)
 	-- function 4
-	self:update_skulk_data(arg_4_1, arg_4_2, arg_4_4)
+	self:update_skulk_data(unit, blackboard, dt)
 
-	local navigation_extension = arg_4_2.navigation_extension
-	local is_following_path = navigation_extension:is_following_path()
-	local number_failed_move_attempts = navigation_extension:number_failed_move_attempts()
+	local ai_navigation = blackboard.navigation_extension
+	local path_found = ai_navigation:is_following_path()
+	local failed_attempts = ai_navigation:number_failed_move_attempts()
 
-	if not (not arg_4_2.move_pos and not is_following_path and arg_4_2.move_state ~= "idle") then
-		self:start_move_animation(arg_4_1, arg_4_2)
+	if blackboard.move_pos and path_found and blackboard.move_state == "idle" then
+		self:start_move_animation(unit, blackboard)
 	end
 
-	local skulk_data = arg_4_2.skulk_data
-	local action = arg_4_2.action
+	local skulk_data = blackboard.skulk_data
+	local action = blackboard.action
+	local commit_to_target = self:commit_to_target(unit, blackboard, dt)
 
-	if not self:commit_to_target(arg_4_1, arg_4_2, arg_4_4) then
+	if commit_to_target then
 		skulk_data.radius = action.skulk_init_distance
 
 		return "done"
 	end
 
-	if not arg_4_2.move_pos then
-		if not (self:at_goal(arg_4_1, arg_4_2) or not (number_failed_move_attempts > 0)) then
-			arg_4_2.move_pos = nil
+	local position = blackboard.move_pos
+
+	if position then
+		local at_goal = self:at_goal(unit, blackboard)
+
+		if at_goal or failed_attempts > 0 then
+			blackboard.move_pos = nil
 		end
 
 		return "running"
 	end
 
 	if skulk_data.radius <= skulk_data.next_random_goal_at_radius then
-		local get_random_goal_on_circle = self:get_random_goal_on_circle(arg_4_1, arg_4_2)
+		local position = self:get_random_goal_on_circle(unit, blackboard)
 
-		if not get_random_goal_on_circle then
-			self:move_to(get_random_goal_on_circle, arg_4_1, arg_4_2)
+		if position then
+			self:move_to(position, unit, blackboard)
 
 			return "running"
 		end
 
-		skulk_data.next_random_goal_at_radius = skulk_data.radius - num
+		skulk_data.next_random_goal_at_radius = skulk_data.radius - RADIUS_DECRESE_PER_TEST
 	end
 
-	if arg_4_2.move_state ~= "idle" then
-		self:idle(arg_4_1, arg_4_2)
+	if blackboard.move_state ~= "idle" then
+		self:idle(unit, blackboard)
 	end
 
 	return "running"
 end
 
-BTSkulkApproachAction.update_skulk_data = function (arg_5_0, arg_5_1, arg_5_2, arg_5_3)
+BTSkulkApproachAction.update_skulk_data = function (self, unit, blackboard, dt)
 	-- function 5
-	local action = arg_5_2.action
-	local skulk_init_distance = action.skulk_init_distance
-	local skulk_data = arg_5_2.skulk_data
-	local var_5_3
+	local action = blackboard.action
+	local start_radius = action.skulk_init_distance
+	local skulk_data = blackboard.skulk_data
+	local d_radius
 
-	if not arg_5_2.move_pos then
-		var_5_3 = arg_5_3 * action.decrease_radius_speed
+	if blackboard.move_pos then
+		local decrease_radius_speed = action.decrease_radius_speed
+
+		d_radius = dt * decrease_radius_speed
 	else
-		var_5_3 = num
+		d_radius = RADIUS_DECRESE_PER_TEST
 	end
 
-	local num_2 = skulk_data.radius - var_5_3
+	local radius = skulk_data.radius - d_radius
 
-	skulk_data.radius = math.clamp(num_2, 0, skulk_init_distance)
-	skulk_data.skulk_around_time = skulk_data.skulk_around_time + arg_5_3
+	radius = math.clamp(radius, 0, start_radius)
+	skulk_data.radius = radius
+	skulk_data.skulk_around_time = skulk_data.skulk_around_time + dt
 end
 
-local num_2 = 5
+local MINIMUM_SKULK_RADIUS = 5
 
-BTSkulkApproachAction.commit_to_target = function (arg_6_0, arg_6_1, arg_6_2, arg_6_3)
+BTSkulkApproachAction.commit_to_target = function (self, unit, blackboard, dt)
 	-- function 6
-	local action = arg_6_2.action
-	local previous_attacker = arg_6_2.previous_attacker
+	local action = blackboard.action
+	local has_been_attacked = blackboard.previous_attacker
+	local target_dist = blackboard.target_dist
+	local commit_radius = action.commit_distance
+	local inside_commit_radius = target_dist < commit_radius
+	local commit_to_target = not not inside_commit_radius or not not has_been_attacked or blackboard.skulk_data.radius <= MINIMUM_SKULK_RADIUS
 
-	return arg_6_2.target_dist < action.commit_distance or previous_attacker or arg_6_2.skulk_data.radius <= num_2
+	return commit_to_target
 end
 
-BTSkulkApproachAction.at_goal = function (arg_7_0, arg_7_1, arg_7_2)
+BTSkulkApproachAction.at_goal = function (self, unit, blackboard)
 	-- function 7
-	local skulk_data = arg_7_2.skulk_data
-	local move_pos = arg_7_2.move_pos
+	local skulk_data = blackboard.skulk_data
+	local position_boxed = blackboard.move_pos
 
-	if not move_pos then
+	if not position_boxed then
 		return false
 	end
 
-	local unbox = move_pos:unbox()
+	local position = position_boxed:unbox()
+	local distance = Vector3.distance_squared(position, POSITION_LOOKUP[unit])
 
-	if Vector3.distance_squared(unbox, POSITION_LOOKUP[arg_7_1]) < 0.25 then
+	if distance < 0.25 then
 		return true
 	end
 end
 
-BTSkulkApproachAction.move_to = function (arg_8_0, arg_8_1, arg_8_2, arg_8_3)
+BTSkulkApproachAction.move_to = function (self, position, unit, blackboard)
 	-- function 8
-	local skulk_data = arg_8_3.skulk_data
+	local skulk_data = blackboard.skulk_data
+	local ai_navigation = blackboard.navigation_extension
 
-	arg_8_3.navigation_extension:move_to(arg_8_1)
+	ai_navigation:move_to(position)
 
-	arg_8_3.move_pos = Vector3Box(arg_8_1)
+	blackboard.move_pos = Vector3Box(position)
 end
 
-BTSkulkApproachAction.idle = function (self, arg_9_1, arg_9_2)
+BTSkulkApproachAction.idle = function (self, unit, blackboard)
 	-- function 9
-	self:anim_event(arg_9_1, arg_9_2, "idle")
+	self:anim_event(unit, blackboard, "idle")
 
-	arg_9_2.move_state = "idle"
+	blackboard.move_state = "idle"
 end
 
-BTSkulkApproachAction.start_move_animation = function (self, arg_10_1, arg_10_2)
+BTSkulkApproachAction.start_move_animation = function (self, unit, blackboard)
 	-- function 10
-	self:anim_event(arg_10_1, arg_10_2, "move_fwd_run")
+	self:anim_event(unit, blackboard, "move_fwd_run")
 
-	arg_10_2.move_state = "moving"
+	blackboard.move_state = "moving"
 end
 
-BTSkulkApproachAction.anim_event = function (arg_11_0, arg_11_1, arg_11_2, arg_11_3)
+BTSkulkApproachAction.anim_event = function (self, unit, blackboard, anim)
 	-- function 11
-	local skulk_data = arg_11_2.skulk_data
+	local skulk_data = blackboard.skulk_data
 
-	if skulk_data.animation_state ~= arg_11_3 then
-		Managers.state.network:anim_event(arg_11_1, arg_11_3)
+	if skulk_data.animation_state ~= anim then
+		Managers.state.network:anim_event(unit, anim)
 
-		skulk_data.animation_state = arg_11_3
+		skulk_data.animation_state = anim
 	end
 end
 
-local num_3 = 15
+local TRIES = 15
 
-BTSkulkApproachAction.get_random_goal_on_circle = function (arg_12_0, arg_12_1, arg_12_2)
+BTSkulkApproachAction.get_random_goal_on_circle = function (self, unit, blackboard)
 	-- function 12
-	local skulk_data = arg_12_2.skulk_data
+	local skulk_data = blackboard.skulk_data
 	local radius = skulk_data.radius
-	local target_unit = arg_12_2.target_unit
-	local var_12_3 = POSITION_LOOKUP[target_unit]
-	local var_12_4 = POSITION_LOOKUP[arg_12_1]
+	local target_unit = blackboard.target_unit
+	local target_position = POSITION_LOOKUP[target_unit]
+	local unit_position = POSITION_LOOKUP[unit]
 	local direction = skulk_data.direction
-	local num = Vector3.up() * 0.2
-	local num_2 = var_12_4 - var_12_3
-	local look = Quaternion.look(num_2, Vector3.up())
-	local forward = Quaternion.forward(look)
-	local forward_2 = Vector3.forward()
-	local get_angle_between_vectors, var_12_12 = AiUtils.get_angle_between_vectors(forward, forward_2)
+	local offset = Vector3.up() * 0.2
+	local look_at_direction = unit_position - target_position
+	local target_to_unit_rotation = Quaternion.look(look_at_direction, Vector3.up())
+	local target_to_unit_forward = Quaternion.forward(target_to_unit_rotation)
+	local rotation_forward = Vector3.forward()
+	local a, angle = AiUtils.get_angle_between_vectors(target_to_unit_forward, rotation_forward)
 
-	for i = 1, num_3 do
-		local num_4 = (i * 3 + Math.random(0, 3)) * direction
+	for i = 1, TRIES do
+		local random_angle = (i * 3 + Math.random(0, 3)) * direction
 
-		if i == num_3 then
-			num_4 = 2 * direction
+		if i == TRIES then
+			random_angle = 2 * direction
 		end
 
-		local num_5 = var_12_12 + num_4
-		local degrees_to_radians = math.degrees_to_radians(num_5)
-		local num_6 = radius + Math.random(-1, 0)
-		local axis_angle = Quaternion.axis_angle(Vector3.up(), degrees_to_radians)
-		local num_7 = var_12_3 + Quaternion.forward(axis_angle) * num_6
-		local nav_world = arg_12_2.nav_world
-		local triangle_from_position, var_12_21 = GwNavQueries.triangle_from_position(nav_world, num_7, 5, 5)
+		local final_angle = angle + random_angle
+		local radians = math.degrees_to_radians(final_angle)
+		local random_radius = Math.random(-1, 0)
+		local final_radius = radius + random_radius
+		local rotation = Quaternion.axis_angle(Vector3.up(), radians)
+		local forward_vector = Quaternion.forward(rotation)
+		local position = target_position + forward_vector * final_radius
+		local nav_world = blackboard.nav_world
+		local on_navmesh, altitude = GwNavQueries.triangle_from_position(nav_world, position, 5, 5)
 
-		if not triangle_from_position then
-			num_7.z = var_12_21
+		if on_navmesh then
+			position.z = altitude
 
-			if not script_data.ai_globadier_behavior then
-				QuickDrawerStay:sphere(num_7 + num, 0.25, Colors.get("aqua_marine"))
+			if script_data.ai_globadier_behavior then
+				QuickDrawerStay:sphere(position + offset, 0.25, Colors.get("aqua_marine"))
 			end
 
-			arg_12_2.wanted_distance = num_6
+			blackboard.wanted_distance = final_radius
 
-			return num_7
-		elseif not script_data.ai_globadier_behavior then
-			QuickDrawerStay:sphere(num_7 + num, 0.25, Colors.get_color_with_alpha("aqua_marine", 100))
+			return position
+		elseif script_data.ai_globadier_behavior then
+			QuickDrawerStay:sphere(position + offset, 0.25, Colors.get_color_with_alpha("aqua_marine", 100))
 		end
 	end
 
 	return false
 end
 
-BTSkulkApproachAction.debug_show_skulk_circle = function (arg_13_0, arg_13_1, arg_13_2)
+BTSkulkApproachAction.debug_show_skulk_circle = function (self, unit, blackboard)
 	-- function 13
-	local skulk_init_distance = arg_13_2.action.skulk_init_distance
-	local radius = arg_13_2.skulk_data.radius
-	local target_unit = arg_13_2.target_unit
-	local var_13_3 = POSITION_LOOKUP[target_unit]
-	local num = Vector3.up() * 0.2
+	local action = blackboard.action
+	local skulk_start_radius = action.skulk_init_distance
+	local skulk_data = blackboard.skulk_data
+	local radius = skulk_data.radius
+	local target_unit = blackboard.target_unit
+	local target_position = POSITION_LOOKUP[target_unit]
+	local offset = Vector3.up() * 0.2
 
-	QuickDrawer:circle(var_13_3 + num, radius, Vector3.up(), Colors.get("light_green"))
-	QuickDrawer:circle(var_13_3 + num, skulk_init_distance, Vector3.up(), Colors.get("light_green"))
+	QuickDrawer:circle(target_position + offset, radius, Vector3.up(), Colors.get("light_green"))
+	QuickDrawer:circle(target_position + offset, skulk_start_radius, Vector3.up(), Colors.get("light_green"))
 end

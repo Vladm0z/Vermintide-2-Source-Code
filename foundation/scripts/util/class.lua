@@ -1,78 +1,79 @@
 -- chunkname: @foundation/scripts/util/class.lua
 
-local tbl = {
-	__index = function ()
-		-- function 1
-		error("This object has been destroyed", 2)
-	end
-}
-local tbl_2 = {
+local destroyed_mt = {}
+
+destroyed_mt.__index = function ()
+	-- function 1
+	error("This object has been destroyed", 2)
+end
+
+local special_functions = {
 	new = true,
 	__index = true,
 	super = true,
 	delete = true
 }
 
-function class(self, ...)
+function class(class_table, ...)
 	-- function 2
-	local args = ...
+	local super = ...
 
-	if not (not (select("#", ...) >= 1) or args ~= nil) then
+	if select("#", ...) >= 1 and super == nil then
 		ferror("Trying to inherit from nil")
 	end
 
-	if not self then
-		self = {
+	if not class_table then
+		class_table = {
 			___is_class_metatable___ = true,
-			super = args
+			super = super
 		}
-		self.__index = self
+		class_table.__index = class_table
 
-		self.new = function (arg_3_0, ...)
+		class_table.new = function (self, ...)
 			-- function 3
-			local tbl = {}
+			local object = {}
 
-			setmetatable(tbl, self)
+			setmetatable(object, class_table)
 
-			if not tbl.init then
-				tbl:init(...)
+			if object.init then
+				object:init(...)
 			end
 
-			return tbl
+			return object
 		end
 
-		self.delete = function (self, ...)
+		class_table.delete = function (self, ...)
 			-- function 4
-			if not self.destroy then
+			if self.destroy then
 				self:destroy(...)
 			end
 
-			setmetatable(self, tbl)
+			setmetatable(self, destroyed_mt)
 		end
 	end
 
-	if not args then
-		for k, v in pairs(args) do
-			if not tbl_2[k] then
-				self[k] = v
+	if super then
+		for k, v in pairs(super) do
+			if not special_functions[k] then
+				class_table[k] = v
 			end
 		end
 	end
 
-	return self
+	return class_table
 end
 
-function is_class_instance(arg_5_0)
+function is_class_instance(object)
 	-- function 5
-	if type(arg_5_0) ~= "table" then
+	if type(object) ~= "table" then
 		return false
 	end
 
-	local var_5_0 = getmetatable(arg_5_0)
+	local metatable = getmetatable(object)
 
-	if var_5_0 == nil then
+	if metatable == nil then
 		return false
 	end
 
-	return rawget(var_5_0, "___is_class_metatable___") == true
+	return rawget(metatable, "___is_class_metatable___") == true
 end

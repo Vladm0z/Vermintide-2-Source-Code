@@ -4,212 +4,238 @@ require("scripts/entity_system/systems/behaviour/nodes/bt_node")
 
 BTAttackAction = class(BTAttackAction, BTNode)
 
-BTAttackAction.init = function (arg_1_0, ...)
+BTAttackAction.init = function (self, ...)
 	-- function 1
-	BTAttackAction.super.init(arg_1_0, ...)
+	BTAttackAction.super.init(self, ...)
 end
 
 BTAttackAction.name = "BTAttackAction"
 
-local function fn(self)
+local function randomize(event)
 	-- function 2
-	if type(self) == "table" then
-		return self[Math.random(1, #self)]
+	if type(event) == "table" then
+		return event[Math.random(1, #event)]
 	else
-		return self
+		return event
 	end
 end
 
-local num = 1.5
-local tbl = {}
+local DEFAULT_DODGE_ROTATION_TIME = 1.5
+local EMPTY_TABLE = {}
 
-BTAttackAction.enter = function (self, arg_3_1, arg_3_2, arg_3_3)
+BTAttackAction.enter = function (self, unit, blackboard, t)
 	-- function 3
-	local action_data = self._tree_node.action_data
+	local action = self._tree_node.action_data
 
-	arg_3_2.action = action_data
-	arg_3_2.active_node = BTAttackAction
-	arg_3_2.attack_aborted = false
-	arg_3_2.attack_finished = false
-	arg_3_2.attack_finished_t = nil
-	arg_3_2.attack_token = true
-	arg_3_2.locked_attack_rotation = false
-	arg_3_2.moving_attack = action_data.moving_attack
-	arg_3_2.past_damage_in_attack = false
-	arg_3_2.target_speed = 0
+	blackboard.action = action
+	blackboard.active_node = BTAttackAction
+	blackboard.attack_aborted = false
+	blackboard.attack_finished = false
+	blackboard.attack_finished_t = nil
+	blackboard.attack_token = true
+	blackboard.locked_attack_rotation = false
+	blackboard.moving_attack = action.moving_attack
+	blackboard.past_damage_in_attack = false
+	blackboard.target_speed = 0
 
-	local target_unit = arg_3_2.target_unit
-	local has_extension = ScriptUnit.has_extension(target_unit, "status_system")
-	local has_extension_2 = ScriptUnit.has_extension(target_unit, "ai_slot_system")
-	local _select_attack = self:_select_attack(action_data, arg_3_1, target_unit, arg_3_2, has_extension)
+	local target_unit = blackboard.target_unit
+	local target_unit_status_extension = ScriptUnit.has_extension(target_unit, "status_system")
+	local target_unit_slot_extension = ScriptUnit.has_extension(target_unit, "ai_slot_system")
+	local attack = self:_select_attack(action, unit, target_unit, blackboard, target_unit_status_extension)
+	local attack_anim = randomize(attack.anims)
 
-	arg_3_2.attack_anim = fn(_select_attack.anims)
+	blackboard.attack_anim = attack_anim
 
-	if not action_data.blocked_anim then
-		arg_3_2.blocked_anim = action_data.blocked_anim
+	if action.blocked_anim then
+		blackboard.blocked_anim = action.blocked_anim
 	end
 
-	local damage_box_range = _select_attack.damage_box_range
+	local box_range = attack.damage_box_range
 
-	if not damage_box_range then
-		arg_3_2.attack_range_up = damage_box_range.up
-		arg_3_2.attack_range_down = damage_box_range.down
-		arg_3_2.attack_range_flat = damage_box_range.flat
+	if box_range then
+		blackboard.attack_range_up = box_range.up
+		blackboard.attack_range_down = box_range.down
+		blackboard.attack_range_flat = box_range.flat
 	end
 
-	if not arg_3_2.attack_token and not has_extension then
-		local breed = arg_3_2.breed
+	if blackboard.attack_token and target_unit_status_extension then
+		local breed = blackboard.breed
 
-		if not (not breed.use_backstab_vo and not has_extension_2 and not (has_extension_2.num_occupied_slots <= 5)) then
-			local unit_owner = Managers.player:unit_owner(target_unit)
+		if breed.use_backstab_vo and target_unit_slot_extension and target_unit_slot_extension.num_occupied_slots <= 5 then
+			local player = Managers.player:unit_owner(target_unit)
 
-			if not (not unit_owner and unit_owner.bot_player) then
-				local unit_is_flanking_player = AiUtils.unit_is_flanking_player(arg_3_1, target_unit)
+			if player and not player.bot_player then
+				local is_flanking = AiUtils.unit_is_flanking_player(unit, target_unit)
 
-				if not unit_is_flanking_player then
-					arg_3_2.backstab_attack_trigger = true
+				if is_flanking then
+					blackboard.backstab_attack_trigger = true
 				end
 
-				if not unit_owner.local_player then
-					if not unit_is_flanking_player then
-						local extension = ScriptUnit.extension(arg_3_1, "dialogue_system")
-						local make_unit_auto_source, var_3_11 = WwiseUtils.make_unit_auto_source(arg_3_2.world, arg_3_1, extension.voice_node)
-						local backstab_player_sound_event = breed.backstab_player_sound_event
+				if player.local_player then
+					if is_flanking then
+						local dialogue_extension = ScriptUnit.extension(unit, "dialogue_system")
+						local wwise_source, wwise_world = WwiseUtils.make_unit_auto_source(blackboard.world, unit, dialogue_extension.voice_node)
+						local sound_event = breed.backstab_player_sound_event
+						local audio_system_extension = Managers.state.entity:system("audio_system")
 
-						Managers.state.entity:system("audio_system"):_play_event_with_source(var_3_11, backstab_player_sound_event, make_unit_auto_source)
+						audio_system_extension:_play_event_with_source(wwise_world, sound_event, wwise_source)
 					end
 				else
-					local network = Managers.state.network
-					local network_transmit = network.network_transmit
-					local unit_game_object_id = network:unit_game_object_id(arg_3_1)
-					local network_id = unit_owner:network_id()
+					local network_manager = Managers.state.network
+					local network_transmit = network_manager.network_transmit
+					local unit_id = network_manager:unit_game_object_id(unit)
+					local peer_id = player:network_id()
 
-					network_transmit:send_rpc("rpc_check_trigger_backstab_sfx", network_id, unit_game_object_id)
+					network_transmit:send_rpc("rpc_check_trigger_backstab_sfx", peer_id, unit_id)
 				end
 			end
 		end
 	end
 
-	arg_3_2.target_unit_status_extension = has_extension
-	arg_3_2.attack_setup_delayed = true
-	arg_3_2.attacking_target = target_unit
-	arg_3_2.spawn_to_running = nil
+	blackboard.target_unit_status_extension = target_unit_status_extension
+	blackboard.attack_setup_delayed = true
+	blackboard.attacking_target = target_unit
+	blackboard.spawn_to_running = nil
 
-	local rotation_towards_unit_flat = LocomotionUtils.rotation_towards_unit_flat(arg_3_1, target_unit)
+	local rotation = LocomotionUtils.rotation_towards_unit_flat(unit, target_unit)
 
-	arg_3_2.attack_rotation = QuaternionBox(rotation_towards_unit_flat)
-	arg_3_2.attack_rotation_lock_timer = arg_3_3
+	blackboard.attack_rotation = QuaternionBox(rotation)
+	blackboard.attack_rotation_lock_timer = t
 
-	local dodge_window_start = action_data.dodge_window_start
-	local dodge_window_duration = action_data.dodge_window_duration
+	local dodge_window_start = action.dodge_window_start
+	local dodge_window_duration_2 = action.dodge_window_duration
 
-	dodge_window_duration = dodge_window_duration or tbl
-
-	local get_difficulty = Managers.state.difficulty:get_difficulty()
-
-	if not (not dodge_window_start and type(dodge_window_start) ~= "table") then
-		dodge_window_start = dodge_window_start[get_difficulty]
+	if not dodge_window_duration_2 then
+		-- Nothing
 	end
 
-	local num_2
+	dodge_window_duration_2 = EMPTY_TABLE
 
-	if not dodge_window_start then
-		num_2 = dodge_window_start + arg_3_3
+	local dodge_window_duration = dodge_window_duration_2
 
-		if not num_2 then
+	::label_3_0::
+
+	local difficulty = Managers.state.difficulty:get_difficulty()
+
+	if dodge_window_start and type(dodge_window_start) == "table" then
+		dodge_window_start = dodge_window_start[difficulty]
+	end
+
+	local num
+
+	if dodge_window_start then
+		num = dodge_window_start + t
+
+		if not num then
 			-- Nothing
 		end
 	end
 
-	num_2 = arg_3_3
+	num = t
 
-	::label_3_0::
+	::label_3_1::
 
-	arg_3_2.attack_dodge_window_start = num_2
+	blackboard.attack_dodge_window_start = num
 
-	local var_3_22 = dodge_window_duration[get_difficulty]
+	local var_3_2 = dodge_window_duration[difficulty]
 
-	var_3_22 = var_3_22 or num
-	arg_3_2.attack_dodge_window_duration = var_3_22
+	var_3_2 = not not var_3_2 or not not DEFAULT_DODGE_ROTATION_TIME
+	blackboard.attack_dodge_window_duration = var_3_2
 
-	if not action_data.attack_finished_duration then
-		local var_3_23 = action_data.attack_finished_duration[get_difficulty]
+	if action.attack_finished_duration then
+		local attack_finished_duration = action.attack_finished_duration[difficulty]
 
-		if not var_3_23 then
-			arg_3_2.attack_finished_t = arg_3_3 + Math.random_range(var_3_23[1], var_3_23[2])
+		if attack_finished_duration then
+			blackboard.attack_finished_t = t + Math.random_range(attack_finished_duration[1], attack_finished_duration[2])
 		end
 	end
 
-	AiUtils.add_attack_intensity(target_unit, action_data, arg_3_2)
+	AiUtils.add_attack_intensity(target_unit, action, blackboard)
 
-	if not arg_3_2.moving_attack and not ScriptUnit.has_extension(arg_3_1, "ai_slot_system") then
-		Managers.state.entity:system("ai_slot_system"):set_release_slot_lock(arg_3_1, true)
+	if blackboard.moving_attack and ScriptUnit.has_extension(unit, "ai_slot_system") then
+		local ai_slot_system = Managers.state.entity:system("ai_slot_system")
 
-		arg_3_2.keep_target = true
+		ai_slot_system:set_release_slot_lock(unit, true)
+
+		blackboard.keep_target = true
 	end
 
-	local has_extension_3 = ScriptUnit.has_extension(target_unit, "attack_intensity_system")
+	local target_unit_attack_intensity_extension = ScriptUnit.has_extension(target_unit, "attack_intensity_system")
 
-	if not has_extension_3 then
-		arg_3_2.target_unit_attack_intensity_extension = has_extension_3
+	if target_unit_attack_intensity_extension then
+		blackboard.target_unit_attack_intensity_extension = target_unit_attack_intensity_extension
 	end
 end
 
-BTAttackAction._select_attack = function (arg_4_0, arg_4_1, arg_4_2, arg_4_3, arg_4_4, arg_4_5)
+BTAttackAction._select_attack = function (self, action, unit, target_unit, blackboard, target_unit_status_extension)
 	-- function 4
-	local get_data = Unit.get_data(arg_4_3, "target_type")
+	local target_type = Unit.get_data(target_unit, "target_type")
 
-	if not get_data then
+	if target_type then
 		-- Nothing
 	end
 
 	::label_4_0::
 
-	local target_type_exceptions = arg_4_1.target_type_exceptions
+	local target_type_exceptions = action.target_type_exceptions
 
-	target_type_exceptions = not target_type_exceptions and arg_4_1.target_type_exceptions[get_data]
+	if target_type_exceptions then
+		-- Nothing
+	end
+
+	target_type_exceptions = action.target_type_exceptions[target_type]
+
+	local target_exception_attack = target_type_exceptions
 
 	::label_4_1::
 
-	if not target_type_exceptions then
-		return target_type_exceptions
+	if target_exception_attack then
+		return target_exception_attack
 	else
-		local var_4_2 = POSITION_LOOKUP[arg_4_2]
-		local var_4_3 = POSITION_LOOKUP[arg_4_3]
+		local self_pos = POSITION_LOOKUP[unit]
+		local var_4_1 = POSITION_LOOKUP[target_unit]
 
-		var_4_3 = var_4_3 or Unit.world_position(arg_4_2, 0)
+		if not var_4_1 then
+			-- Nothing
+		end
 
-		local num = var_4_3.z - var_4_2.z
-		local distance = Vector3.distance(Vector3.flat(var_4_2), Vector3.flat(var_4_3))
-		local default_attack = arg_4_1.default_attack
-		local high_attack = arg_4_1.high_attack
-		local mid_attack = arg_4_1.mid_attack
-		local low_attack = arg_4_1.low_attack
-		local step_attack = arg_4_1.step_attack
-		local step_attack_with_callback = arg_4_1.step_attack_with_callback
-		local knocked_down_attack = arg_4_1.knocked_down_attack
+		var_4_1 = Unit.world_position(unit, 0)
 
-		if not (not high_attack and not (num > high_attack.z_threshold)) then
+		local target_pos = var_4_1
+
+		::label_4_2::
+
+		local z_offset = target_pos.z - self_pos.z
+		local flat_distance = Vector3.distance(Vector3.flat(self_pos), Vector3.flat(target_pos))
+		local default_attack = action.default_attack
+		local high_attack = action.high_attack
+		local mid_attack = action.mid_attack
+		local low_attack = action.low_attack
+		local step_attack = action.step_attack
+		local step_attack_with_callback = action.step_attack_with_callback
+		local knocked_down_attack = action.knocked_down_attack
+
+		if high_attack and z_offset > high_attack.z_threshold then
 			return high_attack
-		elseif not (not mid_attack and not (num < mid_attack.z_threshold) or not (distance > mid_attack.flat_threshold)) then
+		elseif mid_attack and z_offset < mid_attack.z_threshold and flat_distance > mid_attack.flat_threshold then
 			return mid_attack
-		elseif not (not low_attack and not (num < low_attack.z_threshold)) then
+		elseif low_attack and z_offset < low_attack.z_threshold then
 			return low_attack
-		elseif not knocked_down_attack and (not (num < knocked_down_attack.z_threshold) or not arg_4_5) and not arg_4_5:is_knocked_down() then
+		elseif knocked_down_attack and z_offset < knocked_down_attack.z_threshold and target_unit_status_extension and target_unit_status_extension:is_knocked_down() then
 			return knocked_down_attack
 		else
-			if not step_attack_with_callback then
-				local target_speed_away = arg_4_4.target_speed_away
+			if step_attack_with_callback then
+				local target_speed_away = blackboard.target_speed_away
 				local step_speed_moving = step_attack_with_callback.step_speed_moving
 
-				step_speed_moving = step_speed_moving or 1
+				step_speed_moving = not not step_speed_moving or not not 1
 
 				if step_speed_moving < target_speed_away then
 					local step_distance_moving = step_attack_with_callback.step_distance_moving
 
-					step_distance_moving = step_distance_moving or 1.5
+					step_distance_moving = not not step_distance_moving or not not 1.5
 
-					if not (step_distance_moving < distance) then
+					if not (step_distance_moving < flat_distance) then
 						-- Nothing
 					end
 				end
@@ -217,40 +243,40 @@ BTAttackAction._select_attack = function (arg_4_0, arg_4_1, arg_4_2, arg_4_3, ar
 				do
 					local step_distance_stationary = step_attack_with_callback.step_distance_stationary
 
-					step_distance_stationary = step_distance_stationary or 2.5
+					step_distance_stationary = not not step_distance_stationary or not not 2.5
 
-					if step_distance_stationary < distance then
+					if step_distance_stationary < flat_distance then
 						-- Nothing
 					end
 				end
 
-				::label_4_2::
+				::label_4_3::
 
-				arg_4_4.moving_attack_with_callback = true
+				blackboard.moving_attack_with_callback = true
 
-				if not step_attack_with_callback.attack_hit_animation then
-					arg_4_4.attack_hit_animation = step_attack_with_callback.attack_hit_animation
+				if step_attack_with_callback.attack_hit_animation then
+					blackboard.attack_hit_animation = step_attack_with_callback.attack_hit_animation
 				end
 
 				do return step_attack_with_callback end
 
-				goto label_4_6
+				goto label_4_7
 			end
 
-			::label_4_3::
+			::label_4_4::
 
-			if not step_attack then
-				local target_speed_away_2 = arg_4_4.target_speed_away
+			if step_attack then
+				local target_speed_away_2 = blackboard.target_speed_away
 				local step_speed_moving_2 = step_attack.step_speed_moving
 
-				step_speed_moving_2 = step_speed_moving_2 or 1
+				step_speed_moving_2 = not not step_speed_moving_2 or not not 1
 
 				if step_speed_moving_2 < target_speed_away_2 then
 					local step_distance_moving_2 = step_attack.step_distance_moving
 
-					step_distance_moving_2 = step_distance_moving_2 or 1.5
+					step_distance_moving_2 = not not step_distance_moving_2 or not not 1.5
 
-					if not (step_distance_moving_2 < distance) then
+					if not (step_distance_moving_2 < flat_distance) then
 						-- Nothing
 					end
 				end
@@ -258,352 +284,425 @@ BTAttackAction._select_attack = function (arg_4_0, arg_4_1, arg_4_2, arg_4_3, ar
 				do
 					local step_distance_stationary_2 = step_attack.step_distance_stationary
 
-					step_distance_stationary_2 = step_distance_stationary_2 or 2.5
+					step_distance_stationary_2 = not not step_distance_stationary_2 or not not 2.5
 
-					if step_distance_stationary_2 < distance then
+					if step_distance_stationary_2 < flat_distance then
 						-- Nothing
 					end
 				end
 
-				::label_4_4::
+				::label_4_5::
 
-				arg_4_4.moving_attack = step_attack.moving_attack
+				blackboard.moving_attack = step_attack.moving_attack
 
 				do return step_attack end
 
-				goto label_4_6
+				goto label_4_7
 			end
 
-			::label_4_5::
+			::label_4_6::
 
 			return default_attack
 		end
 	end
 
-	::label_4_6::
+	::label_4_7::
 end
 
-BTAttackAction.leave = function (self, arg_5_1, arg_5_2, arg_5_3, arg_5_4, arg_5_5)
+BTAttackAction.leave = function (self, unit, blackboard, t, reason, destroy)
 	-- function 5
-	local get_default_breed_move_speed = AiUtils.get_default_breed_move_speed(arg_5_1, arg_5_2)
-	local navigation_extension = arg_5_2.navigation_extension
+	local default_move_speed = AiUtils.get_default_breed_move_speed(unit, blackboard)
+	local navigation_extension = blackboard.navigation_extension
 
 	navigation_extension:set_enabled(true)
-	navigation_extension:set_max_speed(get_default_breed_move_speed)
+	navigation_extension:set_max_speed(default_move_speed)
 
-	if arg_5_2.move_state == "idle" or not HEALTH_ALIVE[arg_5_1] then
-		arg_5_2.move_state = "idle"
+	if blackboard.move_state ~= "idle" and HEALTH_ALIVE[unit] then
+		blackboard.move_state = "idle"
 	end
 
-	if not arg_5_2.moving_attack and not ScriptUnit.has_extension(arg_5_1, "ai_slot_system") then
-		Managers.state.entity:system("ai_slot_system"):set_release_slot_lock(arg_5_1, false)
+	if blackboard.moving_attack and ScriptUnit.has_extension(unit, "ai_slot_system") then
+		local ai_slot_system = Managers.state.entity:system("ai_slot_system")
 
-		arg_5_2.keep_target = nil
+		ai_slot_system:set_release_slot_lock(unit, false)
+
+		blackboard.keep_target = nil
 	end
 
-	if not ScriptUnit.has_extension(arg_5_1, "ai_shield_system") then
-		ScriptUnit.extension(arg_5_1, "ai_shield_system"):set_is_blocking(true)
+	if ScriptUnit.has_extension(unit, "ai_shield_system") then
+		local shield_extension = ScriptUnit.extension(unit, "ai_shield_system")
+
+		shield_extension:set_is_blocking(true)
 	end
 
-	self:clear_blackboard(arg_5_1, arg_5_2, arg_5_3)
+	self:clear_blackboard(unit, blackboard, t)
 end
 
-BTAttackAction.clear_blackboard = function (arg_6_0, arg_6_1, arg_6_2, arg_6_3)
+BTAttackAction.clear_blackboard = function (self, unit, blackboard, t)
 	-- function 6
-	if not arg_6_2.action.use_box_range then
-		arg_6_2.attack_range_up = nil
-		arg_6_2.attack_range_down = nil
-		arg_6_2.attack_range_flat = nil
+	if blackboard.action.use_box_range then
+		blackboard.attack_range_up = nil
+		blackboard.attack_range_down = nil
+		blackboard.attack_range_flat = nil
 	end
 
-	arg_6_2.action = nil
-	arg_6_2.active_node = nil
-	arg_6_2.anim_cb_attack_cooldown = nil
-	arg_6_2.anim_cb_damage = nil
-	arg_6_2.anim_cb_running_attack_end = nil
-	arg_6_2.anim_cb_running_attack_start = nil
-	arg_6_2.anim_cb_stagger_immune = nil
-	arg_6_2.attack_aborted = nil
-	arg_6_2.attack_anim = nil
-	arg_6_2.attack_dodge_window_start = nil
-	arg_6_2.attack_dodge_window_duration = nil
-	arg_6_2.attack_finished = nil
-	arg_6_2.attack_finished_duration = nil
-	arg_6_2.attack_finished_t = nil
-	arg_6_2.attack_hit_animation = nil
-	arg_6_2.attack_rotation = nil
-	arg_6_2.attack_rotation_lock_timer = nil
-	arg_6_2.attack_token = nil
-	arg_6_2.attacking_target = nil
-	arg_6_2.backstab_attack_trigger = nil
-	arg_6_2.locked_attack_rotation = nil
-	arg_6_2.moving_attack = nil
-	arg_6_2.moving_attack_with_callback = nil
-	arg_6_2.past_damage_in_attack = nil
-	arg_6_2.target_speed = 0
-	arg_6_2.target_unit_attack_intensity_extension = nil
-	arg_6_2.target_unit_status_extension = nil
+	blackboard.action = nil
+	blackboard.active_node = nil
+	blackboard.anim_cb_attack_cooldown = nil
+	blackboard.anim_cb_damage = nil
+	blackboard.anim_cb_running_attack_end = nil
+	blackboard.anim_cb_running_attack_start = nil
+	blackboard.anim_cb_stagger_immune = nil
+	blackboard.attack_aborted = nil
+	blackboard.attack_anim = nil
+	blackboard.attack_dodge_window_start = nil
+	blackboard.attack_dodge_window_duration = nil
+	blackboard.attack_finished = nil
+	blackboard.attack_finished_duration = nil
+	blackboard.attack_finished_t = nil
+	blackboard.attack_hit_animation = nil
+	blackboard.attack_rotation = nil
+	blackboard.attack_rotation_lock_timer = nil
+	blackboard.attack_token = nil
+	blackboard.attacking_target = nil
+	blackboard.backstab_attack_trigger = nil
+	blackboard.locked_attack_rotation = nil
+	blackboard.moving_attack = nil
+	blackboard.moving_attack_with_callback = nil
+	blackboard.past_damage_in_attack = nil
+	blackboard.target_speed = 0
+	blackboard.target_unit_attack_intensity_extension = nil
+	blackboard.target_unit_status_extension = nil
 end
 
-BTAttackAction.run = function (self, arg_7_1, arg_7_2, arg_7_3, arg_7_4)
+BTAttackAction.run = function (self, unit, blackboard, t, dt)
 	-- function 7
-	if not Unit.alive(arg_7_2.attacking_target) then
+	if not Unit.alive(blackboard.attacking_target) then
 		return "done"
 	end
 
-	if not arg_7_2.attack_aborted then
+	if blackboard.attack_aborted then
 		return "done"
 	end
 
-	if not arg_7_2.anim_cb_damage then
-		arg_7_2.anim_cb_damage = nil
-		arg_7_2.past_damage_in_attack = true
+	if blackboard.anim_cb_damage then
+		blackboard.anim_cb_damage = nil
+		blackboard.past_damage_in_attack = true
 
-		if not arg_7_2.moving_attack then
-			arg_7_2.navigation_extension:set_enabled(false)
-			arg_7_2.locomotion_extension:set_wanted_velocity(Vector3(0, 0, 0))
+		if blackboard.moving_attack then
+			blackboard.navigation_extension:set_enabled(false)
+			blackboard.locomotion_extension:set_wanted_velocity(Vector3(0, 0, 0))
 		end
 
-		if not ScriptUnit.has_extension(arg_7_1, "ai_shield_system") then
-			ScriptUnit.extension(arg_7_1, "ai_shield_system"):set_is_blocking(false)
+		if ScriptUnit.has_extension(unit, "ai_shield_system") then
+			local shield_extension = ScriptUnit.extension(unit, "ai_shield_system")
+
+			shield_extension:set_is_blocking(false)
 		end
 	end
 
-	if not arg_7_2.anim_cb_attack_cooldown and not arg_7_2.attack_finished_t and arg_7_3 > arg_7_2.attack_finished_t and arg_7_2.attack_finished_t or not arg_7_2.attack_finished then
+	if (not blackboard.anim_cb_attack_cooldown or not blackboard.attack_finished_t or not (t > blackboard.attack_finished_t)) and not blackboard.attack_finished_t and blackboard.attack_finished then
 		return "done"
 	end
 
-	if not arg_7_2.moving_attack then
-		local breed = arg_7_2.breed
-		local destination_dist = arg_7_2.destination_dist
-		local target_speed_away_small_sample = arg_7_2.target_speed_away_small_sample
+	if blackboard.moving_attack then
+		local breed = blackboard.breed
+		local distance = blackboard.destination_dist
+		local target_speed = blackboard.target_speed_away_small_sample
 		local run_speed = breed.run_speed
 
-		if destination_dist > 0.5 then
-			if not arg_7_2.locked_attack_rotation then
-				target_speed_away_small_sample = run_speed * 0.85
+		if distance > 0.5 then
+			if blackboard.locked_attack_rotation then
+				target_speed = run_speed * 0.85
 			else
-				target_speed_away_small_sample = run_speed * 1.1
+				target_speed = run_speed * 1.1
 			end
-		elseif not arg_7_2.locked_attack_rotation then
-			target_speed_away_small_sample = run_speed * 0.65
+		elseif blackboard.locked_attack_rotation then
+			target_speed = run_speed * 0.65
 		else
-			target_speed_away_small_sample = target_speed_away_small_sample * 1.2
+			target_speed = target_speed * 1.2
 		end
 
-		if math.abs(target_speed_away_small_sample - arg_7_2.target_speed) > 0.25 then
-			arg_7_2.target_speed = target_speed_away_small_sample
+		if math.abs(target_speed - blackboard.target_speed) > 0.25 then
+			blackboard.target_speed = target_speed
 
-			arg_7_2.navigation_extension:set_max_speed(math.clamp(target_speed_away_small_sample, 0, run_speed))
-		end
-	end
+			local navigation_extension = blackboard.navigation_extension
 
-	if not arg_7_2.attack_setup_delayed then
-		if not arg_7_2.moving_attack then
-			arg_7_2.locomotion_extension:set_wanted_velocity(Vector3.zero())
-			arg_7_2.navigation_extension:set_enabled(false)
-		end
-
-		arg_7_2.attack_setup_delayed = false
-	end
-
-	if not arg_7_2.moving_attack_with_callback then
-		if not arg_7_2.anim_cb_running_attack_start then
-			arg_7_2.navigation_extension:set_enabled(true)
-
-			arg_7_2.anim_cb_running_attack_start = nil
-		elseif not arg_7_2.anim_cb_running_attack_end then
-			arg_7_2.locomotion_extension:set_wanted_velocity(Vector3.zero())
-			arg_7_2.navigation_extension:set_enabled(false)
-
-			arg_7_2.anim_cb_running_attack_end = nil
+			navigation_extension:set_max_speed(math.clamp(target_speed, 0, run_speed))
 		end
 	end
 
-	self:_attack(arg_7_1, arg_7_3, arg_7_4, arg_7_2)
-	self:_handle_movement(arg_7_1, arg_7_3, arg_7_4, arg_7_2)
+	if blackboard.attack_setup_delayed then
+		if not blackboard.moving_attack then
+			blackboard.locomotion_extension:set_wanted_velocity(Vector3.zero())
+			blackboard.navigation_extension:set_enabled(false)
+		end
+
+		blackboard.attack_setup_delayed = false
+	end
+
+	if blackboard.moving_attack_with_callback then
+		if blackboard.anim_cb_running_attack_start then
+			blackboard.navigation_extension:set_enabled(true)
+
+			blackboard.anim_cb_running_attack_start = nil
+		elseif blackboard.anim_cb_running_attack_end then
+			blackboard.locomotion_extension:set_wanted_velocity(Vector3.zero())
+			blackboard.navigation_extension:set_enabled(false)
+
+			blackboard.anim_cb_running_attack_end = nil
+		end
+	end
+
+	self:_attack(unit, t, dt, blackboard)
+	self:_handle_movement(unit, t, dt, blackboard)
 
 	return "running"
 end
 
-BTAttackAction.attack_cooldown = function (self, arg_8_1, arg_8_2)
+BTAttackAction.attack_cooldown = function (self, unit, blackboard)
 	-- function 8
-	local time = Managers.time:time("game")
+	local t = Managers.time:time("game")
+	local cooldown, cooldown_at = self:_get_attack_cooldown_finished_at(unit, blackboard, t)
 
-	arg_8_2.is_in_attack_cooldown, arg_8_2.attack_cooldown_at = self:_get_attack_cooldown_finished_at(arg_8_1, arg_8_2, time)
+	blackboard.attack_cooldown_at = cooldown_at
+	blackboard.is_in_attack_cooldown = cooldown
 end
 
-BTAttackAction.attack_success = function (arg_9_0, arg_9_1, arg_9_2)
+BTAttackAction.attack_success = function (self, unit, blackboard)
 	-- function 9
-	if not arg_9_2.breed.use_backstab_vo and not arg_9_2.backstab_attack_trigger then
-		Managers.state.entity:system("dialogue_system"):trigger_backstab_hit(arg_9_2.target_unit, arg_9_1)
+	local breed = blackboard.breed
 
-		arg_9_2.backstab_attack_trigger = false
+	if breed.use_backstab_vo and blackboard.backstab_attack_trigger then
+		local dialogue_system = Managers.state.entity:system("dialogue_system")
+
+		dialogue_system:trigger_backstab_hit(blackboard.target_unit, unit)
+
+		blackboard.backstab_attack_trigger = false
 	end
 
-	if not arg_9_2.attack_hit_animation then
-		Managers.state.network:anim_event(arg_9_1, arg_9_2.attack_hit_animation)
-		arg_9_2.locomotion_extension:set_wanted_velocity(Vector3.zero())
-		arg_9_2.navigation_extension:set_enabled(false)
+	if blackboard.attack_hit_animation then
+		Managers.state.network:anim_event(unit, blackboard.attack_hit_animation)
+		blackboard.locomotion_extension:set_wanted_velocity(Vector3.zero())
+		blackboard.navigation_extension:set_enabled(false)
 	end
 end
 
-BTAttackAction.attack_blocked = function (arg_10_0, arg_10_1, arg_10_2, arg_10_3)
+BTAttackAction.attack_blocked = function (self, unit, blackboard, direction)
 	-- function 10
-	local action = arg_10_2.action
-	local attacking_target = arg_10_2.attacking_target
-	local player_push_speed_blocked = action.player_push_speed_blocked
+	local action = blackboard.action
+	local target_unit = blackboard.attacking_target
+	local blocked_push_speed = action.player_push_speed_blocked
 
-	if not player_push_speed_blocked then
-		local has_extension = ScriptUnit.has_extension(attacking_target, "status_system")
+	if blocked_push_speed then
+		local status_ext = ScriptUnit.has_extension(target_unit, "status_system")
 
-		if not (not has_extension and has_extension:is_disabled()) then
-			local var_10_4 = POSITION_LOOKUP[arg_10_1]
+		if status_ext and not status_ext:is_disabled() then
+			local var_10_0 = POSITION_LOOKUP[unit]
 
-			var_10_4 = var_10_4 or Unit.world_position(arg_10_1, 0)
+			if not var_10_0 then
+				-- Nothing
+			end
 
-			local var_10_5 = POSITION_LOOKUP[attacking_target]
+			var_10_0 = Unit.world_position(unit, 0)
 
-			var_10_5 = var_10_5 or Unit.local_position(attacking_target, 0)
+			local attacker_pos = var_10_0
 
-			local normalize = Vector3.normalize(var_10_5 - var_10_4)
-			local has_extension_2 = ScriptUnit.has_extension(attacking_target, "locomotion_system")
+			::label_10_0::
 
-			if not has_extension_2 then
-				has_extension_2:add_external_velocity(player_push_speed_blocked * normalize, action.max_player_push_speed)
+			local var_10_1 = POSITION_LOOKUP[target_unit]
+
+			if not var_10_1 then
+				-- Nothing
+			end
+
+			var_10_1 = Unit.local_position(target_unit, 0)
+
+			local target_pos = var_10_1
+
+			::label_10_1::
+
+			local damage_direction = Vector3.normalize(target_pos - attacker_pos)
+			local target_locomotion = ScriptUnit.has_extension(target_unit, "locomotion_system")
+
+			if target_locomotion then
+				target_locomotion:add_external_velocity(blocked_push_speed * damage_direction, action.max_player_push_speed)
 			end
 		end
 	end
 end
 
-BTAttackAction._attack = function (arg_11_0, arg_11_1, arg_11_2, arg_11_3, arg_11_4)
+BTAttackAction._attack = function (self, unit, t, dt, blackboard)
 	-- function 11
-	local var_11_0 = arg_11_4
+	local bb = blackboard
 
-	if var_11_0.move_state ~= "attacking" then
-		var_11_0.move_state = "attacking"
+	if bb.move_state ~= "attacking" then
+		bb.move_state = "attacking"
 
-		Managers.state.network:anim_event(arg_11_1, var_11_0.attack_anim)
+		Managers.state.network:anim_event(unit, bb.attack_anim)
 	end
 end
 
-local num_2 = 4
+local DEFAULT_DODGE_DISTANCE_THRESHOLD = 4
 
-BTAttackAction._handle_movement = function (arg_12_0, arg_12_1, arg_12_2, arg_12_3, arg_12_4)
+BTAttackAction._handle_movement = function (self, unit, t, dt, blackboard)
 	-- function 12
-	local var_12_0 = arg_12_4
-	local target_dist = arg_12_4.target_dist
-	local attack_dodge_window_start = var_12_0.attack_dodge_window_start
+	local bb = blackboard
+	local distance = blackboard.target_dist
+	local attack_dodge_window_start = bb.attack_dodge_window_start
 
-	attack_dodge_window_start = not attack_dodge_window_start and arg_12_2 > var_12_0.attack_dodge_window_start
+	if attack_dodge_window_start then
+		-- Nothing
+	end
 
-	if not (not attack_dodge_window_start and var_12_0.past_damage_in_attack) then
-		local target_unit_status_extension = var_12_0.target_unit_status_extension
+	if not (t > bb.attack_dodge_window_start) then
+		attack_dodge_window_start = false
 
-		if not target_unit_status_extension then
-			local get_is_dodging = target_unit_status_extension:get_is_dodging()
+		goto label_12_0
+	end
 
-			get_is_dodging = get_is_dodging or target_unit_status_extension:is_invisible()
+	attack_dodge_window_start = true
 
-			local flag = not not get_is_dodging or arg_12_2 > var_12_0.attack_rotation_lock_timer
-			local flag_2 = not get_is_dodging and not not var_12_0.locked_attack_rotation or target_dist < num_2
+	local is_in_dodge_window = attack_dodge_window_start
 
-			if not flag then
-				local rotation_towards_unit_flat = LocomotionUtils.rotation_towards_unit_flat(arg_12_1, var_12_0.attacking_target)
+	::label_12_0::
 
-				var_12_0.attack_rotation:store(rotation_towards_unit_flat)
+	if is_in_dodge_window and not bb.past_damage_in_attack then
+		local target_status_ext = bb.target_unit_status_extension
 
-				if not var_12_0.locked_attack_rotation then
-					var_12_0.locked_attack_rotation = false
+		if target_status_ext then
+			local get_is_dodging = target_status_ext:get_is_dodging()
+
+			if not get_is_dodging then
+				-- Nothing
+			end
+
+			get_is_dodging = target_status_ext:is_invisible()
+
+			local target_is_dodging = get_is_dodging
+
+			::label_12_1::
+
+			local should_rotate = not target_is_dodging and t > bb.attack_rotation_lock_timer
+			local should_lock_rotation = not not target_is_dodging and not bb.locked_attack_rotation and distance < DEFAULT_DODGE_DISTANCE_THRESHOLD
+
+			if should_rotate then
+				local rotation = LocomotionUtils.rotation_towards_unit_flat(unit, bb.attacking_target)
+
+				bb.attack_rotation:store(rotation)
+
+				if bb.locked_attack_rotation then
+					bb.locked_attack_rotation = false
 				end
-			elseif not flag_2 then
-				var_12_0.attack_rotation_lock_timer = arg_12_2 + arg_12_4.attack_dodge_window_duration
-				var_12_0.locked_attack_rotation = true
+			elseif should_lock_rotation then
+				bb.attack_rotation_lock_timer = t + blackboard.attack_dodge_window_duration
+				bb.locked_attack_rotation = true
 			end
 		end
 
-		var_12_0.locomotion_extension:set_wanted_rotation(arg_12_4.attack_rotation:unbox())
+		local locomotion_extension = bb.locomotion_extension
+
+		locomotion_extension:set_wanted_rotation(blackboard.attack_rotation:unbox())
 	else
-		var_12_0.locomotion_extension:set_wanted_rotation(arg_12_4.attack_rotation:unbox())
+		local locomotion_extension = bb.locomotion_extension
+
+		locomotion_extension:set_wanted_rotation(blackboard.attack_rotation:unbox())
 	end
 
-	if not (not var_12_0.locked_attack_rotation and not var_12_0.attack_rotation_lock_timer and arg_12_2 > var_12_0.attack_rotation_lock_timer or not (target_dist > num_2)) then
-		var_12_0.locked_attack_rotation = false
+	if (not bb.locked_attack_rotation or not bb.attack_rotation_lock_timer or not (t > bb.attack_rotation_lock_timer)) and distance > DEFAULT_DODGE_DISTANCE_THRESHOLD then
+		bb.locked_attack_rotation = false
 	end
 end
 
-BTAttackAction._get_attack_cooldown_finished_at = function (arg_13_0, arg_13_1, arg_13_2, arg_13_3)
+BTAttackAction._get_attack_cooldown_finished_at = function (self, unit, blackboard, t)
 	-- function 13
-	local attacking_target = arg_13_2.attacking_target
+	local attacking_target = blackboard.attacking_target
 
 	if not Unit.alive(attacking_target) then
 		return false, 0
 	end
 
-	local diminishing_damage = arg_13_2.action.diminishing_damage
+	local diminishing_damage_data = blackboard.action.diminishing_damage
+
+	if not diminishing_damage_data then
+		return false, 0
+	end
+
+	local target_unit_slot_extension = ScriptUnit.has_extension(attacking_target, "ai_slot_system")
+
+	if not target_unit_slot_extension or not target_unit_slot_extension.has_slots_attached then
+		return false, 0
+	end
+
+	local slots_n = target_unit_slot_extension.num_occupied_slots
+
+	if slots_n == 0 then
+		return false, 0
+	end
+
+	local diminishing_damage = diminishing_damage_data[math.min(slots_n, 9)]
 
 	if not diminishing_damage then
-		return false, 0
-	end
+		local action_data = blackboard.action
+		local difficulty = Managers.state.difficulty:get_difficulty()
 
-	local has_extension = ScriptUnit.has_extension(attacking_target, "ai_slot_system")
-
-	if not (not has_extension and has_extension.has_slots_attached) then
-		return false, 0
-	end
-
-	local num_occupied_slots = has_extension.num_occupied_slots
-
-	if num_occupied_slots == 0 then
-		return false, 0
-	end
-
-	local var_13_4 = diminishing_damage[math.min(num_occupied_slots, 9)]
-
-	if not var_13_4 then
-		local action = arg_13_2.action
-		local get_difficulty = Managers.state.difficulty:get_difficulty()
-
-		if not action.diminishing_damage and not action.difficulty_diminishing_damage then
-			var_13_4 = action.difficulty_diminishing_damage[get_difficulty][math.min(num_occupied_slots, 9)]
+		if action_data.diminishing_damage and action_data.difficulty_diminishing_damage then
+			diminishing_damage_data = action_data.difficulty_diminishing_damage[difficulty]
+			diminishing_damage = diminishing_damage_data[math.min(slots_n, 9)]
 		end
 	end
 
-	local cooldown = var_13_4.cooldown
-	local random = AiUtils.random(cooldown[1], cooldown[2])
+	local cooldown_data = diminishing_damage.cooldown
+	local cooldown = AiUtils.random(cooldown_data[1], cooldown_data[2])
 
-	return true, random + arg_13_3
+	return true, cooldown + t
 end
 
-BTAttackAction.anim_cb_attack_vce = function (arg_14_0, arg_14_1, arg_14_2)
+BTAttackAction.anim_cb_attack_vce = function (self, unit, blackboard)
 	-- function 14
-	if not Managers.state.network:game() and not arg_14_2.target_unit_status_extension then
-		Managers.state.entity:system("dialogue_system"):trigger_attack(arg_14_2, arg_14_2.target_unit, arg_14_1, false, false)
+	local network_manager = Managers.state.network
+	local game = network_manager:game()
+
+	if game and blackboard.target_unit_status_extension then
+		local dialogue_system = Managers.state.entity:system("dialogue_system")
+
+		dialogue_system:trigger_attack(blackboard, blackboard.target_unit, unit, false, false)
 	end
 end
 
-BTAttackAction.anim_cb_attack_vce_long = function (arg_15_0, arg_15_1, arg_15_2)
+BTAttackAction.anim_cb_attack_vce_long = function (self, unit, blackboard)
 	-- function 15
-	if not Managers.state.network:game() and not arg_15_2.target_unit_status_extension then
-		Managers.state.entity:system("dialogue_system"):trigger_attack(arg_15_2, arg_15_2.target_unit, arg_15_1, false, true)
+	local network_manager = Managers.state.network
+	local game = network_manager:game()
+
+	if game and blackboard.target_unit_status_extension then
+		local dialogue_system = Managers.state.entity:system("dialogue_system")
+
+		dialogue_system:trigger_attack(blackboard, blackboard.target_unit, unit, false, true)
 	end
 end
 
-BTAttackAction.anim_cb_running_attack_start = function (arg_16_0, arg_16_1, arg_16_2)
+BTAttackAction.anim_cb_running_attack_start = function (self, unit, blackboard)
 	-- function 16
-	if not Managers.state.network:game() then
-		arg_16_2.anim_cb_running_attack_start = true
+	local network_manager = Managers.state.network
+	local game = network_manager:game()
+
+	if game then
+		blackboard.anim_cb_running_attack_start = true
 	end
 end
 
-BTAttackAction.anim_cb_attack_finished = function (arg_17_0, arg_17_1, arg_17_2)
+BTAttackAction.anim_cb_attack_finished = function (self, unit, blackboard)
 	-- function 17
-	if not arg_17_2.attack_finished then
+	if blackboard.attack_finished then
 		return
 	end
 
-	if not Managers.state.network:game() then
-		arg_17_2.attacks_done = arg_17_2.attacks_done + 1
-		arg_17_2.attack_finished = true
+	local network_manager = Managers.state.network
+	local game = network_manager:game()
+
+	if game then
+		blackboard.attacks_done = blackboard.attacks_done + 1
+		blackboard.attack_finished = true
 	end
 end

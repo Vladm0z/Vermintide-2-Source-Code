@@ -1,40 +1,40 @@
 -- chunkname: @scripts/ui/views/character_selection_view/states/definitions/character_selection_state_versus_loadouts_definitions.lua
 
 local console_menu_scenegraphs = UISettings.console_menu_scenegraphs
-local num = 426
-local num_2 = 240
-local tbl = {
+local video_window_width = 426
+local video_window_height = 240
+local career_info_size = {
 	450,
 	170
 }
-local tbl_2 = {
+local talent_icon_size = {
 	60,
 	60
 }
-local tbl_3 = {
+local talent_grid_icon_size = {
 	40,
 	40
 }
-local num_3 = 10
-local tbl_4 = {
+local talent_spacing = 10
+local talent_grid_spacing = {
 	20,
 	10
 }
-local tbl_5 = {
+local weapon_icon_size = {
 	138.75,
 	136.5
 }
-local num_4 = -30
-local tbl_6 = {
+local weapon_spacing = -30
+local weapon_slots = {
 	"slot_melee",
 	"slot_ranged"
 }
-local tbl_7 = {
+local button_size = {
 	48,
 	48
 }
-local num_5 = 6
-local tbl_8 = {
+local NUM_PERKS = 6
+local scenegraph_definition = {
 	screen = console_menu_scenegraphs.screen,
 	area = console_menu_scenegraphs.area,
 	area_left = console_menu_scenegraphs.area_left,
@@ -239,7 +239,7 @@ local tbl_8 = {
 		vertical_alignment = "top",
 		parent = "loadout_window",
 		horizontal_alignment = "left",
-		size = tbl_7,
+		size = button_size,
 		position = {
 			-80,
 			-5,
@@ -250,7 +250,7 @@ local tbl_8 = {
 		vertical_alignment = "top",
 		parent = "button",
 		horizontal_alignment = "left",
-		size = tbl_7,
+		size = button_size,
 		position = {
 			51.5,
 			50,
@@ -261,7 +261,7 @@ local tbl_8 = {
 		vertical_alignment = "top",
 		parent = "button",
 		horizontal_alignment = "left",
-		size = tbl_7,
+		size = button_size,
 		position = {
 			329,
 			50,
@@ -344,7 +344,7 @@ local tbl_8 = {
 		vertical_alignment = "top",
 		parent = "loadout_window",
 		horizontal_alignment = "left",
-		size = tbl_7,
+		size = button_size,
 		position = {
 			0,
 			-5,
@@ -505,7 +505,7 @@ local tbl_8 = {
 		parent = "area_right",
 		horizontal_alignment = "right",
 		size = {
-			tbl[1] + 20,
+			career_info_size[1] + 20,
 			885
 		},
 		position = {
@@ -519,8 +519,8 @@ local tbl_8 = {
 		parent = "info_window",
 		horizontal_alignment = "center",
 		size = {
-			num,
-			num_2
+			video_window_width,
+			video_window_height
 		},
 		position = {
 			0,
@@ -561,7 +561,7 @@ local tbl_8 = {
 		parent = "info_window",
 		horizontal_alignment = "center",
 		size = {
-			tbl[1] + 20,
+			career_info_size[1] + 20,
 			625
 		},
 		position = {
@@ -577,7 +577,7 @@ local tbl_8 = {
 		vertical_alignment = "top",
 		parent = "scrollbar_window",
 		horizontal_alignment = "center",
-		size = tbl,
+		size = career_info_size,
 		position = {
 			0,
 			0,
@@ -617,7 +617,7 @@ local tbl_8 = {
 		parent = "passive_window",
 		horizontal_alignment = "left",
 		size = {
-			tbl[1] * 0.65,
+			career_info_size[1] * 0.65,
 			50
 		},
 		position = {
@@ -645,7 +645,7 @@ local tbl_8 = {
 		parent = "passive_window",
 		horizontal_alignment = "right",
 		size = {
-			tbl[1] * 0.3,
+			career_info_size[1] * 0.3,
 			50
 		},
 		position = {
@@ -659,8 +659,8 @@ local tbl_8 = {
 		parent = "passive_icon",
 		horizontal_alignment = "left",
 		size = {
-			tbl[1] - 110,
-			tbl[2] - 90
+			career_info_size[1] - 110,
+			career_info_size[2] - 90
 		},
 		position = {
 			90,
@@ -672,10 +672,10 @@ local tbl_8 = {
 		vertical_alignment = "top",
 		parent = "passive_window",
 		horizontal_alignment = "left",
-		size = tbl,
+		size = career_info_size,
 		position = {
 			0,
-			-tbl[2],
+			-career_info_size[2],
 			1
 		}
 	},
@@ -712,7 +712,7 @@ local tbl_8 = {
 		parent = "active_window",
 		horizontal_alignment = "left",
 		size = {
-			tbl[1] * 0.6,
+			career_info_size[1] * 0.6,
 			50
 		},
 		position = {
@@ -740,7 +740,7 @@ local tbl_8 = {
 		parent = "active_window",
 		horizontal_alignment = "right",
 		size = {
-			tbl[1] * 0.3,
+			career_info_size[1] * 0.3,
 			50
 		},
 		position = {
@@ -754,8 +754,8 @@ local tbl_8 = {
 		parent = "active_icon",
 		horizontal_alignment = "left",
 		size = {
-			tbl[1] - 110,
-			tbl[2] - 90
+			career_info_size[1] - 110,
+			career_info_size[2] - 90
 		},
 		position = {
 			90,
@@ -768,7 +768,7 @@ local tbl_8 = {
 		parent = "active_window",
 		horizontal_alignment = "left",
 		size = {
-			tbl[1] * 0.6,
+			career_info_size[1] * 0.6,
 			50
 		},
 		position = {
@@ -835,17 +835,17 @@ local tbl_8 = {
 	}
 }
 
-for i = 1, num_5 do
-	local num_6 = i - 1
+for i = 1, NUM_PERKS do
+	local parent = i - 1
 
 	if i == 1 then
-		num_6 = "anchor"
+		parent = "anchor"
 	end
 
-	tbl_8["career_perk_" .. i] = {
+	scenegraph_definition["career_perk_" .. i] = {
 		vertical_alignment = "bottom",
 		horizontal_alignment = "left",
-		parent = "career_perk_" .. num_6,
+		parent = "career_perk_" .. parent,
 		size = {
 			410,
 			1
@@ -858,7 +858,7 @@ for i = 1, num_5 do
 	}
 end
 
-local tbl_9 = {
+local hero_career_style = {
 	font_size = 40,
 	upper_case = true,
 	localize = false,
@@ -875,7 +875,7 @@ local tbl_9 = {
 		2
 	}
 }
-local tbl_10 = {
+local hero_name_style = {
 	word_wrap = true,
 	font_size = 30,
 	localize = false,
@@ -890,7 +890,7 @@ local tbl_10 = {
 		2
 	}
 }
-local tbl_11 = {
+local hero_level_style = {
 	word_wrap = true,
 	font_size = 52,
 	localize = false,
@@ -905,7 +905,7 @@ local tbl_11 = {
 		2
 	}
 }
-local tbl_12 = {
+local description_text_style = {
 	word_wrap = true,
 	use_shadow = true,
 	localize = false,
@@ -921,7 +921,7 @@ local tbl_12 = {
 		2
 	}
 }
-local tbl_13 = {
+local type_title_text_style = {
 	word_wrap = true,
 	use_shadow = true,
 	localize = false,
@@ -937,7 +937,7 @@ local tbl_13 = {
 		2
 	}
 }
-local tbl_14 = {
+local sub_title_text_style = {
 	font_size = 32,
 	upper_case = false,
 	localize = false,
@@ -954,7 +954,7 @@ local tbl_14 = {
 		2
 	}
 }
-local tbl_15 = {
+local loadout_header_style = {
 	vertical_alignment = "top",
 	upper_case = true,
 	localize = true,
@@ -968,7 +968,7 @@ local tbl_15 = {
 		2
 	}
 }
-local tbl_16 = {
+local button_header_style = {
 	vertical_alignment = "center",
 	upper_case = true,
 	localize = false,
@@ -982,7 +982,7 @@ local tbl_16 = {
 		2
 	}
 }
-local tbl_17 = {
+local selected_loadout_header_style = {
 	font_size = 35,
 	upper_case = true,
 	localize = false,
@@ -997,7 +997,7 @@ local tbl_17 = {
 		2
 	}
 }
-local tbl_18 = {
+local selected_loadout_desc_style = {
 	word_wrap = true,
 	upper_case = false,
 	localize = false,
@@ -1013,12 +1013,12 @@ local tbl_18 = {
 		2
 	},
 	area_size = {
-		tbl_8.selected_loadout_header.size[1] - 20,
+		scenegraph_definition.selected_loadout_header.size[1] - 20,
 		90
 	}
 }
 
-local function fn(arg_1_0, arg_1_1)
+local function create_info_text(text, scenegraph_id)
 	-- function 1
 	return {
 		element = {
@@ -1027,32 +1027,32 @@ local function fn(arg_1_0, arg_1_1)
 					style_id = "text",
 					pass_type = "text",
 					text_id = "text",
-					content_change_function = function (self, arg_2_1)
+					content_change_function = function (content, style)
 						-- function 2
 						local locked_text_color
 
-						if not self.locked then
-							locked_text_color = arg_2_1.locked_text_color
+						if content.locked then
+							locked_text_color = style.locked_text_color
 
 							if not locked_text_color then
 								-- Nothing
 							end
 						end
 
-						locked_text_color = arg_2_1.default_text_color
+						locked_text_color = style.default_text_color
 
 						::label_2_0::
 
-						arg_2_1.text_color = locked_text_color
+						style.text_color = locked_text_color
 					end
 				},
 				{
 					style_id = "text_shadow",
 					pass_type = "text",
 					text_id = "text",
-					content_check_function = function (self)
+					content_check_function = function (content)
 						-- function 3
-						return self.use_shadow
+						return content.use_shadow
 					end
 				}
 			}
@@ -1060,8 +1060,8 @@ local function fn(arg_1_0, arg_1_1)
 		content = {
 			use_shadow = true,
 			disable_with_gamepad = true,
-			text = arg_1_0,
-			original_text = arg_1_0
+			text = text,
+			original_text = text
 		},
 		style = {
 			text = {
@@ -1102,142 +1102,142 @@ local function fn(arg_1_0, arg_1_1)
 			0,
 			0
 		},
-		scenegraph_id = arg_1_1
+		scenegraph_id = scenegraph_id
 	}
 end
 
-local function fn_2(arg_4_0, arg_4_1)
+local function create_loadout_equipment(scenegraph_id, offset)
 	-- function 4
-	local tbl = {
+	local widget_def = {
 		element = {}
 	}
-	local tbl_2 = {}
-	local tbl_3 = {}
-	local tbl_4 = {}
-	local flag = arg_4_1 or {
+	local passes = {}
+	local content = {}
+	local style = {}
+	local offset = not not offset or not not {
 		0,
 		0,
 		0
 	}
 
-	for i, v in ipairs(tbl_6) do
-		tbl_2[#tbl_2 + 1] = {
+	for i, slot_name in ipairs(weapon_slots) do
+		passes[#passes + 1] = {
 			pass_type = "hotspot",
-			style_id = v .. "_hotspot",
-			content_id = v,
-			content_check_function = function (self)
+			style_id = slot_name .. "_hotspot",
+			content_id = slot_name,
+			content_check_function = function (content)
 				-- function 5
-				return self.item
+				return content.item
 			end
 		}
-		tbl_2[#tbl_2 + 1] = {
+		passes[#passes + 1] = {
 			texture_id = "weapon_frame",
 			pass_type = "texture",
-			style_id = v .. "_frame"
+			style_id = slot_name .. "_frame"
 		}
-		tbl_2[#tbl_2 + 1] = {
+		passes[#passes + 1] = {
 			texture_id = "equipment_hover_frame",
 			pass_type = "texture",
-			style_id = v .. "_frame",
-			content_check_function = function (self, arg_6_1)
+			style_id = slot_name .. "_frame",
+			content_check_function = function (content, style)
 				-- function 6
-				return self[v].is_hover
+				return content[slot_name].is_hover
 			end
 		}
-		tbl_2[#tbl_2 + 1] = {
+		passes[#passes + 1] = {
 			texture_id = "lock",
 			pass_type = "texture",
-			style_id = v .. "_lock",
-			content_check_function = function (self, arg_7_1)
+			style_id = slot_name .. "_lock",
+			content_check_function = function (content, style)
 				-- function 7
-				local is_hover = self[v].is_hover
+				local is_hover = content[slot_name].is_hover
 
-				is_hover = not is_hover and self[v].locked
+				is_hover = not not is_hover and not not content[slot_name].locked
 
 				return is_hover
 			end
 		}
-		tbl_2[#tbl_2 + 1] = {
+		passes[#passes + 1] = {
 			texture_id = "lock",
 			pass_type = "texture",
-			style_id = v .. "_lock_shadow",
-			content_check_function = function (self, arg_8_1)
+			style_id = slot_name .. "_lock_shadow",
+			content_check_function = function (content, style)
 				-- function 8
-				local is_hover = self[v].is_hover
+				local is_hover = content[slot_name].is_hover
 
-				is_hover = not is_hover and self[v].locked
+				is_hover = not not is_hover and not not content[slot_name].locked
 
 				return is_hover
 			end
 		}
-		tbl_2[#tbl_2 + 1] = {
+		passes[#passes + 1] = {
 			texture_id = "icon",
 			pass_type = "texture",
-			style_id = v .. "_icon",
-			content_id = v,
-			content_check_function = function (self)
+			style_id = slot_name .. "_icon",
+			content_id = slot_name,
+			content_check_function = function (content)
 				-- function 9
-				local item = self.item
+				local item = content.item
 
-				item = not item and self.icon
+				item = not not item and not not content.icon
 
 				return item
 			end
 		}
-		tbl_2[#tbl_2 + 1] = {
+		passes[#passes + 1] = {
 			texture_id = "mask",
 			pass_type = "texture",
-			style_id = v .. "_mask"
+			style_id = slot_name .. "_mask"
 		}
-		tbl_2[#tbl_2 + 1] = {
+		passes[#passes + 1] = {
 			texture_id = "background",
 			pass_type = "texture",
-			style_id = v .. "_mask"
+			style_id = slot_name .. "_mask"
 		}
-		tbl_2[#tbl_2 + 1] = {
+		passes[#passes + 1] = {
 			style_id = "weapon_tooltip",
 			scenegraph_id = "weapon_tooltip",
 			pass_type = "item_tooltip",
 			item_id = "item",
-			content_id = v,
-			content_check_function = function (self)
+			content_id = slot_name,
+			content_check_function = function (content)
 				-- function 10
-				local item = self.item
+				local item = content.item
 
-				item = not item and self.is_hover
+				item = not not item and not not content.is_hover
 
 				return item
 			end
 		}
-		tbl_3[v] = {
+		content[slot_name] = {
 			no_equipped_item = true,
 			is_selected = true
 		}
-		tbl_4[v] = {
+		style[slot_name] = {
 			vertical_alignment = "center",
 			horizontal_alignment = "center",
-			area_size = tbl_5,
-			texture_size = tbl_5,
+			area_size = weapon_icon_size,
+			texture_size = weapon_icon_size,
 			offset = {
-				(i - 1) * (tbl_5[1] + num_4),
+				(i - 1) * (weapon_icon_size[1] + weapon_spacing),
 				0,
 				0
 			}
 		}
-		tbl_4[v .. "_hotspot"] = {
+		style[slot_name .. "_hotspot"] = {
 			vertical_alignment = "center",
 			horizontal_alignment = "center",
 			area_size = {
-				tbl_5[1] * 0.75,
-				tbl_5[2] * 0.75
+				weapon_icon_size[1] * 0.75,
+				weapon_icon_size[2] * 0.75
 			},
 			offset = {
-				(i - 1) * (tbl_5[1] + num_4),
+				(i - 1) * (weapon_icon_size[1] + weapon_spacing),
 				0,
 				10
 			}
 		}
-		tbl_4[v .. "_icon"] = {
+		style[slot_name .. "_icon"] = {
 			vertical_alignment = "center",
 			horizontal_alignment = "center",
 			masked = true,
@@ -1250,12 +1250,12 @@ local function fn_2(arg_4_0, arg_4_1)
 				65
 			},
 			offset = {
-				(i - 1) * (tbl_5[1] + num_4),
+				(i - 1) * (weapon_icon_size[1] + weapon_spacing),
 				0,
 				3
 			}
 		}
-		tbl_4[v .. "_mask"] = {
+		style[slot_name .. "_mask"] = {
 			vertical_alignment = "center",
 			horizontal_alignment = "center",
 			area_size = {
@@ -1267,36 +1267,36 @@ local function fn_2(arg_4_0, arg_4_1)
 				55
 			},
 			offset = {
-				(i - 1) * (tbl_5[1] + num_4),
+				(i - 1) * (weapon_icon_size[1] + weapon_spacing),
 				0,
 				2
 			}
 		}
-		tbl_4[v .. "_frame"] = {
+		style[slot_name .. "_frame"] = {
 			vertical_alignment = "center",
 			horizontal_alignment = "center",
-			texture_size = tbl_5,
+			texture_size = weapon_icon_size,
 			offset = {
-				(i - 1) * (tbl_5[1] + num_4),
+				(i - 1) * (weapon_icon_size[1] + weapon_spacing),
 				0,
 				1
 			}
 		}
-		tbl_4[v .. "_hover_frame"] = {
+		style[slot_name .. "_hover_frame"] = {
 			vertical_alignment = "center",
 			horizontal_alignment = "center",
-			texture_size = tbl_5,
+			texture_size = weapon_icon_size,
 			offset = {
-				(i - 1) * (tbl_5[1] + num_4),
+				(i - 1) * (weapon_icon_size[1] + weapon_spacing),
 				0,
 				1
 			}
 		}
-		tbl_4[v .. "_lock"] = {
+		style[slot_name .. "_lock"] = {
 			vertical_alignment = "center",
 			horizontal_alignment = "center",
 			offset = {
-				(i - 1) * (tbl_5[1] + num_4),
+				(i - 1) * (weapon_icon_size[1] + weapon_spacing),
 				0,
 				5
 			},
@@ -1306,11 +1306,11 @@ local function fn_2(arg_4_0, arg_4_1)
 				46
 			}
 		}
-		tbl_4[v .. "_lock_shadow"] = {
+		style[slot_name .. "_lock_shadow"] = {
 			vertical_alignment = "center",
 			horizontal_alignment = "center",
 			offset = {
-				(i - 1) * (tbl_5[1] + num_4) + 2,
+				(i - 1) * (weapon_icon_size[1] + weapon_spacing) + 2,
 				-2,
 				4
 			},
@@ -1322,151 +1322,151 @@ local function fn_2(arg_4_0, arg_4_1)
 		}
 	end
 
-	tbl_3.equipment_hover_frame = "loadout_item_slot_glow_console"
-	tbl_3.background = "icon_bg_default"
-	tbl_3.mask = "mask_rect"
-	tbl_3.weapon_frame = "loadout_item_slot_console"
-	tbl_3.lock = "lobby_icon_lock"
-	tbl_4.weapon_tooltip = {
+	content.equipment_hover_frame = "loadout_item_slot_glow_console"
+	content.background = "icon_bg_default"
+	content.mask = "mask_rect"
+	content.weapon_frame = "loadout_item_slot_console"
+	content.lock = "lobby_icon_lock"
+	style.weapon_tooltip = {
 		draw_downwards = false
 	}
-	tbl.element.passes = tbl_2
-	tbl.content = tbl_3
-	tbl.style = tbl_4
-	tbl.scenegraph_id = arg_4_0
-	tbl.offset = flag
+	widget_def.element.passes = passes
+	widget_def.content = content
+	widget_def.style = style
+	widget_def.scenegraph_id = scenegraph_id
+	widget_def.offset = offset
 
-	return tbl
+	return widget_def
 end
 
-local function fn_3(arg_11_0, arg_11_1)
+local function create_loadout_talents(scenegraph_id, offset)
 	-- function 11
-	local tbl = {
+	local widget_def = {
 		element = {}
 	}
-	local tbl_3 = {}
-	local tbl_4 = {}
-	local tbl_5 = {}
-	local flag = arg_11_1 or {
+	local passes = {}
+	local content = {}
+	local style = {}
+	local offset = not not offset or not not {
 		0,
 		0,
 		0
 	}
-	local str = "frame_outer_glow_01"
-	local var_11_6 = UIFrameSettings[str]
+	local hover_frame = "frame_outer_glow_01"
+	local frame_settings = UIFrameSettings[hover_frame]
 
 	for i = 1, MaxTalentPoints do
-		local str_2 = "talent_" .. i
+		local talent_id = "talent_" .. i
 
-		tbl_3[#tbl_3 + 1] = {
+		passes[#passes + 1] = {
 			texture_id = "talent_frame",
 			pass_type = "texture",
-			style_id = str_2 .. "_frame"
+			style_id = talent_id .. "_frame"
 		}
-		tbl_3[#tbl_3 + 1] = {
+		passes[#passes + 1] = {
 			texture_id = "talent_hover_frame",
 			pass_type = "texture_frame",
-			style_id = str_2 .. "_hover_frame",
-			content_check_function = function (self, arg_12_1)
+			style_id = talent_id .. "_hover_frame",
+			content_check_function = function (content, style)
 				-- function 12
-				return self[str_2].is_hover
+				return content[talent_id].is_hover
 			end
 		}
-		tbl_3[#tbl_3 + 1] = {
+		passes[#passes + 1] = {
 			pass_type = "hotspot",
-			style_id = str_2,
-			content_id = str_2
+			style_id = talent_id,
+			content_id = talent_id
 		}
-		tbl_3[#tbl_3 + 1] = {
+		passes[#passes + 1] = {
 			texture_id = "icon",
 			pass_type = "texture",
-			style_id = str_2,
-			content_id = str_2,
-			content_check_function = function (self)
+			style_id = talent_id,
+			content_id = talent_id,
+			content_check_function = function (content)
 				-- function 13
-				local talent = self.talent
+				local talent = content.talent
 
-				talent = not talent and self.icon
+				talent = not not talent and not not content.icon
 
 				return talent
 			end
 		}
-		tbl_3[#tbl_3 + 1] = {
+		passes[#passes + 1] = {
 			texture_id = "lock_icon",
 			pass_type = "texture",
-			style_id = str_2 .. "_lock",
-			content_check_function = function (self)
+			style_id = talent_id .. "_lock",
+			content_check_function = function (content)
 				-- function 14
-				local talent = self[str_2].talent
+				local talent = content[talent_id].talent
 
-				if not talent then
-					talent = self[str_2].is_hover
-					talent = not talent and self.locked
+				if talent then
+					talent = content[talent_id].is_hover
+					talent = not not talent and not not content.locked
 				end
 
 				return talent
 			end
 		}
-		tbl_3[#tbl_3 + 1] = {
+		passes[#passes + 1] = {
 			texture_id = "lock_icon",
 			pass_type = "texture",
-			style_id = str_2 .. "_lock_shadow",
-			content_check_function = function (self)
+			style_id = talent_id .. "_lock_shadow",
+			content_check_function = function (content)
 				-- function 15
-				local talent = self[str_2].talent
+				local talent = content[talent_id].talent
 
-				if not talent then
-					talent = self[str_2].is_hover
-					talent = not talent and self.locked
+				if talent then
+					talent = content[talent_id].is_hover
+					talent = not not talent and not not content.locked
 				end
 
 				return talent
 			end
 		}
-		tbl_3[#tbl_3 + 1] = {
+		passes[#passes + 1] = {
 			style_id = "talent_tooltip",
 			scenegraph_id = "talent_tooltip",
 			pass_type = "talent_tooltip",
 			talent_id = "talent",
-			content_id = str_2,
-			content_check_function = function (self)
+			content_id = talent_id,
+			content_check_function = function (content)
 				-- function 16
-				local talent = self.talent
+				local talent = content.talent
 
-				talent = not talent and self.is_hover
+				talent = not not talent and not not content.is_hover
 
 				return talent
 			end
 		}
-		tbl_4[str_2] = {
+		content[talent_id] = {
 			is_selected = true
 		}
-		tbl_5[str_2] = {
+		style[talent_id] = {
 			vertical_alignment = "center",
 			horizontal_alignment = "center",
-			area_size = tbl_2,
-			texture_size = tbl_2,
+			area_size = talent_icon_size,
+			texture_size = talent_icon_size,
 			offset = {
-				(i - 1) * (tbl_2[1] + num_3),
+				(i - 1) * (talent_icon_size[1] + talent_spacing),
 				0,
 				0
 			}
 		}
-		tbl_5[str_2 .. "_frame"] = {
+		style[talent_id .. "_frame"] = {
 			vertical_alignment = "center",
 			horizontal_alignment = "center",
-			texture_size = tbl_2,
+			texture_size = talent_icon_size,
 			offset = {
-				(i - 1) * (tbl_2[1] + num_3),
+				(i - 1) * (talent_icon_size[1] + talent_spacing),
 				0,
 				1
 			}
 		}
-		tbl_5[str_2 .. "_hover_frame"] = {
+		style[talent_id .. "_hover_frame"] = {
 			horizontal_alignment = "center",
 			vertical_alignment = "center",
-			texture_size = var_11_6.texture_size,
-			texture_sizes = var_11_6.texture_sizes,
+			texture_size = frame_settings.texture_size,
+			texture_sizes = frame_settings.texture_sizes,
 			color = {
 				255,
 				255,
@@ -1474,7 +1474,7 @@ local function fn_3(arg_11_0, arg_11_1)
 				255
 			},
 			offset = {
-				(i - 1) * (tbl_2[1] + num_3),
+				(i - 1) * (talent_icon_size[1] + talent_spacing),
 				0,
 				0
 			},
@@ -1483,7 +1483,7 @@ local function fn_3(arg_11_0, arg_11_1)
 				85
 			}
 		}
-		tbl_5[str_2 .. "_lock"] = {
+		style[talent_id .. "_lock"] = {
 			vertical_alignment = "center",
 			horizontal_alignment = "center",
 			texture_size = {
@@ -1497,12 +1497,12 @@ local function fn_3(arg_11_0, arg_11_1)
 				255
 			},
 			offset = {
-				(i - 1) * (tbl_2[1] + num_3),
+				(i - 1) * (talent_icon_size[1] + talent_spacing),
 				0,
 				5
 			}
 		}
-		tbl_5[str_2 .. "_lock_shadow"] = {
+		style[talent_id .. "_lock_shadow"] = {
 			vertical_alignment = "center",
 			horizontal_alignment = "center",
 			texture_size = {
@@ -1516,63 +1516,63 @@ local function fn_3(arg_11_0, arg_11_1)
 				0
 			},
 			offset = {
-				(i - 1) * (tbl_2[1] + num_3) + 2,
+				(i - 1) * (talent_icon_size[1] + talent_spacing) + 2,
 				-2,
 				4
 			}
 		}
 	end
 
-	tbl_4.talent_hover_frame = var_11_6.texture
-	tbl_4.talent_frame = "talent_frame"
-	tbl_4.lock_icon = "lobby_icon_lock"
-	tbl_5.talent_tooltip = {
+	content.talent_hover_frame = frame_settings.texture
+	content.talent_frame = "talent_frame"
+	content.lock_icon = "lobby_icon_lock"
+	style.talent_tooltip = {
 		draw_downwards = false
 	}
-	tbl.element.passes = tbl_3
-	tbl.content = tbl_4
-	tbl.style = tbl_5
-	tbl.scenegraph_id = arg_11_0
-	tbl.offset = flag
+	widget_def.element.passes = passes
+	widget_def.content = content
+	widget_def.style = style
+	widget_def.scenegraph_id = scenegraph_id
+	widget_def.offset = offset
 
-	return tbl
+	return widget_def
 end
 
-local function fn_4(arg_17_0, arg_17_1)
+local function create_talent_grid(scenegraph_id, offset)
 	-- function 17
-	local tbl = {
+	local widget_def = {
 		element = {}
 	}
-	local tbl_2 = {}
-	local tbl_5 = {}
-	local tbl_6 = {}
-	local flag = arg_17_1 or {
+	local passes = {}
+	local content = {}
+	local style = {}
+	local offset = not not offset or not not {
 		0,
 		0,
 		0
 	}
-	local num = 25
-	local str = "frame_outer_glow_01"
-	local var_17_7 = UIFrameSettings[str]
+	local talent_initial_offset = 25
+	local hover_frame = "frame_outer_glow_01"
+	local frame_settings = UIFrameSettings[hover_frame]
 
 	for i = 1, MaxTalentPoints do
-		local str_2 = "talent_row_" .. i
+		local talent_row_id = "talent_row_" .. i
 
-		tbl_2[#tbl_2 + 1] = {
+		passes[#passes + 1] = {
 			texture_id = "talent_frame",
 			pass_type = "text",
-			text_id = str_2 .. "_header",
-			style_id = str_2 .. "_header"
+			text_id = talent_row_id .. "_header",
+			style_id = talent_row_id .. "_header"
 		}
-		tbl_2[#tbl_2 + 1] = {
+		passes[#passes + 1] = {
 			texture_id = "talent_frame",
 			pass_type = "text",
-			text_id = str_2 .. "_name",
-			style_id = str_2 .. "_name"
+			text_id = talent_row_id .. "_name",
+			style_id = talent_row_id .. "_name"
 		}
-		tbl_5[str_2 .. "_header"] = tostring(i)
-		tbl_5[str_2 .. "_name"] = " "
-		tbl_6[str_2 .. "_header"] = {
+		content[talent_row_id .. "_header"] = tostring(i)
+		content[talent_row_id .. "_name"] = " "
+		style[talent_row_id .. "_header"] = {
 			vertical_alignment = "top",
 			horizontal_alignment = "left",
 			localize = false,
@@ -1581,11 +1581,11 @@ local function fn_4(arg_17_0, arg_17_1)
 			text_color = Colors.get_color_table_with_alpha("font_default", 255),
 			offset = {
 				0,
-				-(i - 1) * (tbl_3[2] + tbl_4[2]) - tbl_3[2] * 0.125,
+				-(i - 1) * (talent_grid_icon_size[2] + talent_grid_spacing[2]) - talent_grid_icon_size[2] * 0.125,
 				2
 			}
 		}
-		tbl_6[str_2 .. "_name"] = {
+		style[talent_row_id .. "_name"] = {
 			vertical_alignment = "top",
 			horizontal_alignment = "left",
 			localize = false,
@@ -1593,104 +1593,104 @@ local function fn_4(arg_17_0, arg_17_1)
 			font_type = "hell_shark_header",
 			text_color = Colors.get_color_table_with_alpha("font_default", 255),
 			offset = {
-				num + 3 * (tbl_3[1] + tbl_4[1]),
-				-(i - 1) * (tbl_3[2] + tbl_4[2]) - tbl_3[2] * 0.125,
+				talent_initial_offset + 3 * (talent_grid_icon_size[1] + talent_grid_spacing[1]),
+				-(i - 1) * (talent_grid_icon_size[2] + talent_grid_spacing[2]) - talent_grid_icon_size[2] * 0.125,
 				2
 			}
 		}
-		tbl_6["talent_tooltip_" .. i] = {
+		style["talent_tooltip_" .. i] = {
 			offset = {
 				0,
-				-(i - 1) * (tbl_3[2] + tbl_4[2]),
+				-(i - 1) * (talent_grid_icon_size[2] + talent_grid_spacing[2]),
 				0
 			}
 		}
 
 		for j = 1, 3 do
-			local str_3 = "talent_" .. i .. "_" .. j
+			local talent_id = "talent_" .. i .. "_" .. j
 
-			tbl_2[#tbl_2 + 1] = {
+			passes[#passes + 1] = {
 				texture_id = "talent_frame",
 				pass_type = "texture",
-				style_id = str_3 .. "_frame"
+				style_id = talent_id .. "_frame"
 			}
-			tbl_2[#tbl_2 + 1] = {
+			passes[#passes + 1] = {
 				texture_id = "talent_hover_frame",
 				pass_type = "texture_frame",
-				style_id = str_3 .. "_hover_frame",
-				content_check_function = function (self, arg_18_1)
+				style_id = talent_id .. "_hover_frame",
+				content_check_function = function (content, style)
 					-- function 18
-					return self[str_3].is_hover
+					return content[talent_id].is_hover
 				end
 			}
-			tbl_2[#tbl_2 + 1] = {
+			passes[#passes + 1] = {
 				pass_type = "hotspot",
-				style_id = str_3,
-				content_id = str_3,
-				content_check_function = function (self)
+				style_id = talent_id,
+				content_id = talent_id,
+				content_check_function = function (content)
 					-- function 19
-					return self.talent
+					return content.talent
 				end
 			}
-			tbl_2[#tbl_2 + 1] = {
+			passes[#passes + 1] = {
 				texture_id = "icon",
 				pass_type = "texture",
-				style_id = str_3,
-				content_id = str_3,
-				content_check_function = function (self)
+				style_id = talent_id,
+				content_id = talent_id,
+				content_check_function = function (content)
 					-- function 20
-					local talent = self.talent
+					local talent = content.talent
 
-					talent = not talent and self.icon
+					talent = not not talent and not not content.icon
 
 					return talent
 				end
 			}
-			tbl_2[#tbl_2 + 1] = {
+			passes[#passes + 1] = {
 				scenegraph_id = "talent_grid_tooltip",
 				pass_type = "talent_tooltip",
 				talent_id = "talent",
 				style_id = "talent_tooltip_" .. i,
-				content_id = str_3,
-				content_check_function = function (self)
+				content_id = talent_id,
+				content_check_function = function (content)
 					-- function 21
-					local talent = self.talent
+					local talent = content.talent
 
-					talent = not talent and self.is_hover
+					talent = not not talent and not not content.is_hover
 
 					return talent
 				end
 			}
-			tbl_5[str_3] = {
+			content[talent_id] = {
 				is_selected = true
 			}
-			tbl_6[str_3] = {
+			style[talent_id] = {
 				vertical_alignment = "top",
 				saturated = true,
 				horizontal_alignment = "left",
-				area_size = tbl_3,
-				texture_size = tbl_3,
+				area_size = talent_grid_icon_size,
+				texture_size = talent_grid_icon_size,
 				offset = {
-					num + (j - 1) * (tbl_3[1] + tbl_4[1]),
-					-(i - 1) * (tbl_3[2] + tbl_4[2]),
+					talent_initial_offset + (j - 1) * (talent_grid_icon_size[1] + talent_grid_spacing[1]),
+					-(i - 1) * (talent_grid_icon_size[2] + talent_grid_spacing[2]),
 					0
 				}
 			}
-			tbl_6[str_3 .. "_frame"] = {
+			style[talent_id .. "_frame"] = {
 				vertical_alignment = "top",
 				horizontal_alignment = "left",
-				texture_size = tbl_3,
+				texture_size = talent_grid_icon_size,
 				offset = {
-					num + (j - 1) * (tbl_3[1] + tbl_4[1]),
-					-(i - 1) * (tbl_3[2] + tbl_4[2]),
+					talent_initial_offset + (j - 1) * (talent_grid_icon_size[1] + talent_grid_spacing[1]),
+					-(i - 1) * (talent_grid_icon_size[2] + talent_grid_spacing[2]),
 					1
 				}
 			}
-			tbl_6[str_3 .. "_hover_frame"] = {
+			style[talent_id .. "_hover_frame"] = {
 				horizontal_alignment = "left",
 				vertical_alignment = "top",
-				texture_size = var_17_7.texture_size,
-				texture_sizes = var_17_7.texture_sizes,
+				texture_size = frame_settings.texture_size,
+				texture_sizes = frame_settings.texture_sizes,
 				color = {
 					255,
 					255,
@@ -1698,8 +1698,8 @@ local function fn_4(arg_17_0, arg_17_1)
 					255
 				},
 				offset = {
-					-12.5 + num + (j - 1) * (tbl_3[1] + tbl_4[1]),
-					12.5 - (i - 1) * (tbl_3[2] + tbl_4[2]),
+					-12.5 + talent_initial_offset + (j - 1) * (talent_grid_icon_size[1] + talent_grid_spacing[1]),
+					12.5 - (i - 1) * (talent_grid_icon_size[2] + talent_grid_spacing[2]),
 					0
 				},
 				area_size = {
@@ -1710,19 +1710,19 @@ local function fn_4(arg_17_0, arg_17_1)
 		end
 	end
 
-	tbl_5.talent_hover_frame = var_17_7.texture
-	tbl_5.talent_frame = "talent_frame"
-	tbl_5.lock_icon = "lobby_icon_lock"
-	tbl.element.passes = tbl_2
-	tbl.content = tbl_5
-	tbl.style = tbl_6
-	tbl.scenegraph_id = arg_17_0
-	tbl.offset = flag
+	content.talent_hover_frame = frame_settings.texture
+	content.talent_frame = "talent_frame"
+	content.lock_icon = "lobby_icon_lock"
+	widget_def.element.passes = passes
+	widget_def.content = content
+	widget_def.style = style
+	widget_def.scenegraph_id = scenegraph_id
+	widget_def.offset = offset
 
-	return tbl
+	return widget_def
 end
 
-local function fn_5(arg_22_0, arg_22_1, arg_22_2)
+local function create_header(text, scenegraph_id, text_style)
 	-- function 22
 	return {
 		element = {
@@ -1731,12 +1731,12 @@ local function fn_5(arg_22_0, arg_22_1, arg_22_2)
 					style_id = "text",
 					pass_type = "text",
 					text_id = "text",
-					content_change_function = function (self, arg_23_1)
+					content_change_function = function (content, style)
 						-- function 23
-						local offset = arg_23_1.offset
+						local offset = style.offset
 						local flag
 
-						flag = not self.default_loadout and 25 and 0
+						flag = (not content.default_loadout or not 25) and not not 0
 						offset[1] = flag
 					end
 				},
@@ -1744,9 +1744,9 @@ local function fn_5(arg_22_0, arg_22_1, arg_22_2)
 					pass_type = "texture",
 					style_id = "lock_icon",
 					texture_id = "lock_icon",
-					content_check_function = function (self, arg_24_1)
+					content_check_function = function (content, style)
 						-- function 24
-						return self.default_loadout
+						return content.default_loadout
 					end
 				}
 			}
@@ -1754,10 +1754,10 @@ local function fn_5(arg_22_0, arg_22_1, arg_22_2)
 		content = {
 			lock_icon = "lobby_icon_lock",
 			default_loadout = false,
-			text = arg_22_0
+			text = text
 		},
 		style = {
-			text = arg_22_2,
+			text = text_style,
 			lock_icon = {
 				vertical_alignment = "top",
 				horizontal_alignment = "left",
@@ -1773,19 +1773,19 @@ local function fn_5(arg_22_0, arg_22_1, arg_22_2)
 			0,
 			0
 		},
-		scenegraph_id = arg_22_1
+		scenegraph_id = scenegraph_id
 	}
 end
 
-local function fn_6(arg_25_0, arg_25_1, arg_25_2, arg_25_3, arg_25_4)
+local function create_back_button(scenegraph_id, texture, hover_texture, offset, size_multiplier)
 	-- function 25
-	local get_atlas_settings_by_texture_name = UIAtlasHelper.get_atlas_settings_by_texture_name(arg_25_1)
+	local texture_settings = UIAtlasHelper.get_atlas_settings_by_texture_name(texture)
 	local tbl
 
-	if not arg_25_4 then
+	if size_multiplier then
 		tbl = {
-			get_atlas_settings_by_texture_name.size[1] * arg_25_4,
-			get_atlas_settings_by_texture_name.size[2] * arg_25_4
+			texture_settings.size[1] * size_multiplier,
+			texture_settings.size[2] * size_multiplier
 		}
 
 		if not tbl then
@@ -1793,7 +1793,9 @@ local function fn_6(arg_25_0, arg_25_1, arg_25_2, arg_25_3, arg_25_4)
 		end
 	end
 
-	tbl = get_atlas_settings_by_texture_name.size
+	tbl = texture_settings.size
+
+	local texture_size = tbl
 
 	::label_25_0::
 
@@ -1829,8 +1831,8 @@ local function fn_6(arg_25_0, arg_25_1, arg_25_2, arg_25_3, arg_25_4)
 		},
 		content = {
 			button_hotspot = {},
-			texture_id = arg_25_1,
-			selected_texture = arg_25_2
+			texture_id = texture,
+			selected_texture = hover_texture
 		},
 		style = {
 			button_hotspot = {
@@ -1848,8 +1850,8 @@ local function fn_6(arg_25_0, arg_25_1, arg_25_2, arg_25_3, arg_25_4)
 				vertical_alignment = "center",
 				horizontal_alignment = "center",
 				texture_size = {
-					tbl[1],
-					tbl[2]
+					texture_size[1],
+					texture_size[2]
 				},
 				color = Colors.get_color_table_with_alpha("font_button_normal", 255),
 				offset = {
@@ -1862,8 +1864,8 @@ local function fn_6(arg_25_0, arg_25_1, arg_25_2, arg_25_3, arg_25_4)
 				vertical_alignment = "center",
 				horizontal_alignment = "center",
 				texture_size = {
-					tbl[1],
-					tbl[2]
+					texture_size[1],
+					texture_size[2]
 				},
 				color = {
 					255,
@@ -1881,8 +1883,8 @@ local function fn_6(arg_25_0, arg_25_1, arg_25_2, arg_25_3, arg_25_4)
 				vertical_alignment = "center",
 				horizontal_alignment = "center",
 				texture_size = {
-					tbl[1],
-					tbl[2]
+					texture_size[1],
+					texture_size[2]
 				},
 				color = Colors.get_color_table_with_alpha("white", 255),
 				offset = {
@@ -1895,8 +1897,8 @@ local function fn_6(arg_25_0, arg_25_1, arg_25_2, arg_25_3, arg_25_4)
 				vertical_alignment = "center",
 				horizontal_alignment = "center",
 				texture_size = {
-					tbl[1],
-					tbl[2]
+					texture_size[1],
+					texture_size[2]
 				},
 				color = {
 					0,
@@ -1911,28 +1913,26 @@ local function fn_6(arg_25_0, arg_25_1, arg_25_2, arg_25_3, arg_25_4)
 				}
 			}
 		},
-		offset = arg_25_3 or {
+		offset = not not offset or not not {
 			0,
 			0,
 			0
 		},
-		scenegraph_id = arg_25_0
+		scenegraph_id = scenegraph_id
 	}
 end
 
-local var_0_31
-local str = "icons_placeholder"
-local var_0_33
-local str_2 = ""
-local var_0_35
-local var_0_36
-local var_0_37
-local flag = false
-local flag_2 = true
-local flag_3 = false
-local flag_4 = true
-local tbl_19 = {
-	locked_info_text = fn("", "locked_info_text"),
+local button_frame_name
+local button_background_texture = "icons_placeholder"
+local button_font_size
+local button_text = ""
+local button_optional_color_name, button_optional_detail_texture, button_optional_detail_offset
+local button_disable_with_gamepad = false
+local button_skip_side_detail = true
+local button_masked = false
+local fit_background_texture = true
+local widgets = {
+	locked_info_text = create_info_text("", "locked_info_text"),
 	hero_info_panel = UIWidgets.create_simple_texture("item_slot_side_fade", "hero_info_panel", nil, nil, {
 		255,
 		0,
@@ -1943,11 +1943,11 @@ local tbl_19 = {
 	hero_info_level_bg = UIWidgets.create_simple_texture("hero_level_bg", "hero_info_level_bg"),
 	hero_info_divider = UIWidgets.create_simple_texture("divider_vertical_hero_middle", "hero_info_divider"),
 	hero_info_divider_edge = UIWidgets.create_simple_texture("divider_vertical_hero_end", "hero_info_divider_edge"),
-	info_career_name = UIWidgets.create_simple_text("n/a", "info_career_name", nil, nil, tbl_9),
-	info_hero_name = UIWidgets.create_simple_text("n/a", "info_hero_name", nil, nil, tbl_10),
-	info_hero_level = UIWidgets.create_simple_text("n/a", "info_hero_level", nil, nil, tbl_11),
-	loadout_window_background = UIWidgets.create_rect_with_outer_frame("loadout_window_bg", tbl_8.loadout_window_bg.size, "frame_outer_fade_02", 0, Colors.get_color_table_with_alpha("console_menu_rect", 192)),
-	loadout_frame = UIWidgets.create_rect_with_outer_frame("button", tbl_7, "frame_outer_glow_01", nil, {
+	info_career_name = UIWidgets.create_simple_text("n/a", "info_career_name", nil, nil, hero_career_style),
+	info_hero_name = UIWidgets.create_simple_text("n/a", "info_hero_name", nil, nil, hero_name_style),
+	info_hero_level = UIWidgets.create_simple_text("n/a", "info_hero_level", nil, nil, hero_level_style),
+	loadout_window_background = UIWidgets.create_rect_with_outer_frame("loadout_window_bg", scenegraph_definition.loadout_window_bg.size, "frame_outer_fade_02", 0, Colors.get_color_table_with_alpha("console_menu_rect", 192)),
+	loadout_frame = UIWidgets.create_rect_with_outer_frame("button", button_size, "frame_outer_glow_01", nil, {
 		0,
 		255,
 		255,
@@ -1958,59 +1958,70 @@ local tbl_19 = {
 		255,
 		255
 	}),
-	confirm_button = UIWidgets.create_default_button("confirm_button", tbl_8.confirm_button.size, nil, nil, Localize("input_description_confirm"), nil, nil, nil, nil, true),
+	confirm_button = UIWidgets.create_default_button("confirm_button", scenegraph_definition.confirm_button.size, nil, nil, Localize("input_description_confirm"), nil, nil, nil, nil, true),
 	loadout_info_divider = UIWidgets.create_simple_texture("infoslate_frame_02_horizontal", "loadout_info_divider"),
-	selected_loadout_header = UIWidgets.create_simple_text("DEFAULT LOADOUT", "selected_loadout_header", nil, nil, tbl_17),
-	selected_loadout_desc = UIWidgets.create_simple_text("Lorem ipsum dolor sit amet, consectetur adipiscing elit. Aenean dolor justo, maximus sit amet tristique eget, laoreet non erat.", "selected_loadout_header", nil, nil, tbl_18),
+	selected_loadout_header = UIWidgets.create_simple_text("DEFAULT LOADOUT", "selected_loadout_header", nil, nil, selected_loadout_header_style),
+	selected_loadout_desc = UIWidgets.create_simple_text("Lorem ipsum dolor sit amet, consectetur adipiscing elit. Aenean dolor justo, maximus sit amet tristique eget, laoreet non erat.", "selected_loadout_header", nil, nil, selected_loadout_desc_style),
 	selected_loadout_icon = UIWidgets.create_simple_texture("icons_placeholder", "selected_loadout_icon")
 }
-local tbl_20 = {
-	weapons_header = fn_5("hero_window_equipment", "weapons_header", tbl_15),
-	loadout_weapons = fn_2("weapons", {
+local loadout_widgets = {
+	weapons_header = create_header("hero_window_equipment", "weapons_header", loadout_header_style),
+	loadout_weapons = create_loadout_equipment("weapons", {
 		0,
 		0,
 		10
 	}),
-	talents_header = fn_5("hero_window_talents", "talents_header", tbl_15),
-	loadout_talents = fn_3("talents", {
+	talents_header = create_header("hero_window_talents", "talents_header", loadout_header_style),
+	loadout_talents = create_loadout_talents("talents", {
 		0,
 		0,
 		10
 	})
 }
-local tbl_21 = {
-	item_grid = UIWidgets.create_grid("item_grid", tbl_8.item_grid.size, 3, 5, 25, 10, false, nil, false),
-	talent_grid = fn_4("talent_grid"),
-	back_button = fn_6("back_button", "layout_button_back", "layout_button_back_glow", {
+local loadout_selection_widgets = {
+	item_grid = UIWidgets.create_grid("item_grid", scenegraph_definition.item_grid.size, 3, 5, 25, 10, false, nil, false),
+	talent_grid = create_talent_grid("talent_grid"),
+	back_button = create_back_button("back_button", "layout_button_back", "layout_button_back_glow", {
 		-60,
 		-20,
 		100
 	}, 0.5)
 }
-local tbl_22 = {}
+local loadout_button_widgets = {}
 
-for i_2, v in ipairs(InventorySettings.loadouts) do
-	local flag_5
+for idx, loadout_data in ipairs(InventorySettings.loadouts) do
+	local num
 
-	flag_5 = v.loadout_type ~= "custom" or not -20 or 0
-	tbl_22[#tbl_22 + 1] = UIWidgets.create_default_button("button", tbl_7, var_0_31, str, str_2, var_0_33, var_0_35, var_0_36, var_0_37, flag, flag_2, flag_3, {
+	if loadout_data.loadout_type == "custom" then
+		num = -20
+
+		goto label_0_0
+	end
+
+	num = 0
+
+	local offset = num
+
+	::label_0_0::
+
+	loadout_button_widgets[#loadout_button_widgets + 1] = UIWidgets.create_default_button("button", button_size, button_frame_name, button_background_texture, button_text, button_font_size, button_optional_color_name, button_optional_detail_texture, button_optional_detail_offset, button_disable_with_gamepad, button_skip_side_detail, button_masked, {
 		0,
-		flag_5 - (tbl_7[1] + 5) * (i_2 - 1),
+		offset - (button_size[1] + 5) * (idx - 1),
 		0
-	}, flag_4)
+	}, fit_background_texture)
 end
 
-local flag_6 = true
-local tbl_23 = {
+local disable_with_gamepad = true
+local info_window_widgets = {
 	background = UIWidgets.create_simple_rect("screen", {
 		0,
 		0,
 		0,
 		0
 	}, 100),
-	info_window_background = UIWidgets.create_rect_with_outer_frame("info_window", tbl_8.info_window.size, "frame_outer_fade_02", 0, Colors.get_color_table_with_alpha("console_menu_rect", 192)),
+	info_window_background = UIWidgets.create_rect_with_outer_frame("info_window", scenegraph_definition.info_window.size, "frame_outer_fade_02", 0, Colors.get_color_table_with_alpha("console_menu_rect", 192)),
 	mask = UIWidgets.create_simple_texture("mask_rect", "scrollbar_anchor"),
-	info_window_video = UIWidgets.create_frame("info_window_video", tbl_8.info_window_video.size, "menu_frame_06"),
+	info_window_video = UIWidgets.create_frame("info_window_video", scenegraph_definition.info_window_video.size, "menu_frame_06"),
 	info_video_edge_left = UIWidgets.create_simple_texture("frame_detail_03", "info_video_edge_left"),
 	info_video_edge_right = UIWidgets.create_simple_uv_texture("frame_detail_03", {
 		{
@@ -2022,47 +2033,47 @@ local tbl_23 = {
 			1
 		}
 	}, "info_video_edge_right"),
-	perk_title_text = UIWidgets.create_simple_text(Localize("hero_view_perk_title"), "perk_title_text", nil, nil, tbl_14),
+	perk_title_text = UIWidgets.create_simple_text(Localize("hero_view_perk_title"), "perk_title_text", nil, nil, sub_title_text_style),
 	perk_title_divider = UIWidgets.create_simple_texture("infoslate_frame_02_horizontal", "perk_title_divider", true),
-	passive_title_text = UIWidgets.create_simple_text("n/a", "passive_title_text", nil, nil, tbl_14),
-	passive_type_title = UIWidgets.create_simple_text(Localize("hero_view_passive_ability"), "passive_type_title", nil, nil, tbl_13),
+	passive_title_text = UIWidgets.create_simple_text("n/a", "passive_title_text", nil, nil, sub_title_text_style),
+	passive_type_title = UIWidgets.create_simple_text(Localize("hero_view_passive_ability"), "passive_type_title", nil, nil, type_title_text_style),
 	passive_title_divider = UIWidgets.create_simple_texture("infoslate_frame_02_horizontal", "passive_title_divider", true),
-	passive_description_text = UIWidgets.create_simple_text("n/a", "passive_description_text", nil, nil, tbl_12),
+	passive_description_text = UIWidgets.create_simple_text("n/a", "passive_description_text", nil, nil, description_text_style),
 	passive_icon = UIWidgets.create_simple_texture("icons_placeholder", "passive_icon", true),
 	passive_icon_frame = UIWidgets.create_simple_texture("talent_frame", "passive_icon_frame", true),
-	active_title_text = UIWidgets.create_simple_text("n/a", "active_title_text", nil, nil, tbl_14),
-	active_type_title = UIWidgets.create_simple_text(Localize("hero_view_activated_ability"), "active_type_title", nil, nil, tbl_13),
+	active_title_text = UIWidgets.create_simple_text("n/a", "active_title_text", nil, nil, sub_title_text_style),
+	active_type_title = UIWidgets.create_simple_text(Localize("hero_view_activated_ability"), "active_type_title", nil, nil, type_title_text_style),
 	active_title_divider = UIWidgets.create_simple_texture("infoslate_frame_02_horizontal", "active_title_divider", true),
-	active_description_text = UIWidgets.create_simple_text("n/a", "active_description_text", nil, nil, tbl_12),
+	active_description_text = UIWidgets.create_simple_text("n/a", "active_description_text", nil, nil, description_text_style),
 	active_icon = UIWidgets.create_simple_texture("icons_placeholder", "active_icon", true),
 	active_icon_frame = UIWidgets.create_simple_texture("talent_frame", "active_icon_frame", true)
 }
 
-for l = 1, num_5 do
-	tbl_23["career_perk_" .. l] = UIWidgets.create_career_perk_text("career_perk_" .. l)
+for i = 1, NUM_PERKS do
+	info_window_widgets["career_perk_" .. i] = UIWidgets.create_career_perk_text("career_perk_" .. i)
 end
 
-local tbl_24 = {
+local animation_definitions = {
 	on_enter = {
 		{
 			name = "fade_in",
 			start_progress = 0,
 			end_progress = 0.3,
-			init = function (arg_26_0, arg_26_1, arg_26_2, arg_26_3)
+			init = function (ui_scenegraph, scenegraph_definition, widgets, params)
 				-- function 26
-				arg_26_3.render_settings.alpha_multiplier = 0
-				arg_26_0.area_left.local_position[1] = arg_26_1.area_left.position[1] - 200
-				arg_26_0.area_right.local_position[1] = arg_26_1.area_right.position[1] + 200
+				params.render_settings.alpha_multiplier = 0
+				ui_scenegraph.area_left.local_position[1] = scenegraph_definition.area_left.position[1] - 200
+				ui_scenegraph.area_right.local_position[1] = scenegraph_definition.area_right.position[1] + 200
 			end,
-			update = function (arg_27_0, arg_27_1, arg_27_2, arg_27_3, arg_27_4)
+			update = function (ui_scenegraph, scenegraph_definition, widgets, progress, params)
 				-- function 27
-				local easeOutCubic = math.easeOutCubic(arg_27_3)
+				local anim_progress = math.easeOutCubic(progress)
 
-				arg_27_4.render_settings.alpha_multiplier = easeOutCubic * easeOutCubic * easeOutCubic
-				arg_27_0.area_left.local_position[1] = math.lerp(arg_27_1.area_left.position[1] - 200, arg_27_1.area_left.position[1], easeOutCubic)
-				arg_27_0.area_right.local_position[1] = math.lerp(arg_27_1.area_right.position[1] + 400, arg_27_1.area_right.position[1], easeOutCubic)
+				params.render_settings.alpha_multiplier = anim_progress * anim_progress * anim_progress
+				ui_scenegraph.area_left.local_position[1] = math.lerp(scenegraph_definition.area_left.position[1] - 200, scenegraph_definition.area_left.position[1], anim_progress)
+				ui_scenegraph.area_right.local_position[1] = math.lerp(scenegraph_definition.area_right.position[1] + 400, scenegraph_definition.area_right.position[1], anim_progress)
 			end,
-			on_complete = function (arg_28_0, arg_28_1, arg_28_2, arg_28_3)
+			on_complete = function (ui_scenegraph, scenegraph_definition, widgets, params)
 				-- function 28
 				return
 			end
@@ -2073,19 +2084,19 @@ local tbl_24 = {
 			name = "slide_and_fade_in",
 			start_progress = 0,
 			end_progress = 0.3,
-			init = function (arg_29_0, arg_29_1, arg_29_2, arg_29_3)
+			init = function (ui_scenegraph, scenegraph_definition, widgets, params)
 				-- function 29
-				arg_29_3.render_settings.alpha_multiplier = 0
-				arg_29_0.loadout_anchor.local_position[1] = arg_29_1.loadout_anchor.position[1] - 75
+				params.render_settings.alpha_multiplier = 0
+				ui_scenegraph.loadout_anchor.local_position[1] = scenegraph_definition.loadout_anchor.position[1] - 75
 			end,
-			update = function (arg_30_0, arg_30_1, arg_30_2, arg_30_3, arg_30_4)
+			update = function (ui_scenegraph, scenegraph_definition, widgets, progress, params)
 				-- function 30
-				local easeOutCubic = math.easeOutCubic(arg_30_3)
+				local anim_progress = math.easeOutCubic(progress)
 
-				arg_30_4.render_settings.alpha_multiplier = easeOutCubic * easeOutCubic * easeOutCubic
-				arg_30_0.loadout_anchor.local_position[1] = math.lerp(arg_30_1.loadout_anchor.position[1] - 75, arg_30_1.loadout_anchor.position[1], easeOutCubic)
+				params.render_settings.alpha_multiplier = anim_progress * anim_progress * anim_progress
+				ui_scenegraph.loadout_anchor.local_position[1] = math.lerp(scenegraph_definition.loadout_anchor.position[1] - 75, scenegraph_definition.loadout_anchor.position[1], anim_progress)
 			end,
-			on_complete = function (arg_31_0, arg_31_1, arg_31_2, arg_31_3)
+			on_complete = function (ui_scenegraph, scenegraph_definition, widgets, params)
 				-- function 31
 				return
 			end
@@ -2096,26 +2107,26 @@ local tbl_24 = {
 			name = "slide_and_fade_in",
 			start_progress = 0,
 			end_progress = 0.3,
-			init = function (arg_32_0, arg_32_1, arg_32_2, arg_32_3)
+			init = function (ui_scenegraph, scenegraph_definition, widgets, params)
 				-- function 32
-				arg_32_3.render_settings.alpha_multiplier = 0
-				arg_32_0.loadout_anchor.local_position[1] = arg_32_1.loadout_anchor.position[1] + 75
+				params.render_settings.alpha_multiplier = 0
+				ui_scenegraph.loadout_anchor.local_position[1] = scenegraph_definition.loadout_anchor.position[1] + 75
 			end,
-			update = function (arg_33_0, arg_33_1, arg_33_2, arg_33_3, arg_33_4)
+			update = function (ui_scenegraph, scenegraph_definition, widgets, progress, params)
 				-- function 33
-				local easeOutCubic = math.easeOutCubic(arg_33_3)
+				local anim_progress = math.easeOutCubic(progress)
 
-				arg_33_4.render_settings.alpha_multiplier = easeOutCubic * easeOutCubic * easeOutCubic
-				arg_33_0.loadout_anchor.local_position[1] = math.lerp(arg_33_1.loadout_anchor.position[1] + 75, arg_33_1.loadout_anchor.position[1], easeOutCubic)
+				params.render_settings.alpha_multiplier = anim_progress * anim_progress * anim_progress
+				ui_scenegraph.loadout_anchor.local_position[1] = math.lerp(scenegraph_definition.loadout_anchor.position[1] + 75, scenegraph_definition.loadout_anchor.position[1], anim_progress)
 			end,
-			on_complete = function (arg_34_0, arg_34_1, arg_34_2, arg_34_3)
+			on_complete = function (ui_scenegraph, scenegraph_definition, widgets, params)
 				-- function 34
 				return
 			end
 		}
 	}
 }
-local tbl_25 = {
+local generic_input_actions = {
 	default = {
 		{
 			input_action = "d_vertical",
@@ -2138,18 +2149,18 @@ local tbl_25 = {
 
 return {
 	tag_scenegraph_id = "tag",
-	scenegraph_definition = tbl_8,
-	widget_definitions = tbl_19,
-	loadout_widgets_definitions = tbl_20,
-	loadout_selection_widget_definitions = tbl_21,
-	loadout_button_widget_definitions = tbl_22,
-	info_window_widgets_definitions = tbl_23,
-	animation_definitions = tbl_24,
+	scenegraph_definition = scenegraph_definition,
+	widget_definitions = widgets,
+	loadout_widgets_definitions = loadout_widgets,
+	loadout_selection_widget_definitions = loadout_selection_widgets,
+	loadout_button_widget_definitions = loadout_button_widgets,
+	info_window_widgets_definitions = info_window_widgets,
+	animation_definitions = animation_definitions,
 	console_cursor_definition = UIWidgets.create_console_cursor("console_cursor"),
-	hero_icon_widget = UIWidgets.create_hero_icon_widget("hero_icon_root", tbl_8.hero_icon_root.size),
-	hero_widget = UIWidgets.create_hero_widget("hero_root", tbl_8.hero_root.size),
-	weapon_slots = tbl_6,
+	hero_icon_widget = UIWidgets.create_hero_icon_widget("hero_icon_root", scenegraph_definition.hero_icon_root.size),
+	hero_widget = UIWidgets.create_hero_widget("hero_root", scenegraph_definition.hero_root.size),
+	weapon_slots = weapon_slots,
 	tag_widget_func = UIWidgets.create_tag,
-	generic_input_actions = tbl_25,
-	NUM_PERKS = num_5
+	generic_input_actions = generic_input_actions,
+	NUM_PERKS = NUM_PERKS
 }

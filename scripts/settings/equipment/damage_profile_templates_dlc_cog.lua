@@ -1,15 +1,14 @@
 -- chunkname: @scripts/settings/equipment/damage_profile_templates_dlc_cog.lua
 
-local tbl = {
+local engineer_ability_shot_dropoff_ranges = {
 	dropoff_start = 10,
 	dropoff_end = 20
 }
-local tbl_2 = {
+local shotgun_dropoff_ranges = {
 	dropoff_start = 8,
 	dropoff_end = 15
 }
-
-return {
+local damage_templates = {
 	engineer_ability_shot = {
 		charge_value = "instant_projectile",
 		shield_break = false,
@@ -86,7 +85,7 @@ return {
 				attack = 0.125,
 				impact = 0.05
 			},
-			range_modifier_settings = tbl
+			range_modifier_settings = engineer_ability_shot_dropoff_ranges
 		}
 	},
 	engineer_ability_shot_armor_pierce = {
@@ -165,7 +164,7 @@ return {
 				attack = 0.36,
 				impact = 0.25
 			},
-			range_modifier_settings = tbl
+			range_modifier_settings = engineer_ability_shot_dropoff_ranges
 		}
 	},
 	shot_sniper_pistol = {
@@ -244,7 +243,9 @@ return {
 				attack = 0.5,
 				impact = 0.5
 			},
-			range_modifier_settings = tbl_2
+			range_modifier_settings = shotgun_dropoff_ranges
 		}
 	}
 }
+
+return damage_templates

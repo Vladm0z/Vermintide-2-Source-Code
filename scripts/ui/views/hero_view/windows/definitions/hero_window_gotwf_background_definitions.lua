@@ -1,13 +1,13 @@
 -- chunkname: @scripts/ui/views/hero_view/windows/definitions/hero_window_gotwf_background_definitions.lua
 
-local game_start_windows = UISettings.game_start_windows
-local background = game_start_windows.background
-local frame = game_start_windows.frame
-local size = game_start_windows.size
-local var_0_4 = UIFrameSettings[frame].texture_sizes.vertical[1]
-local var_0_5 = UIFrameSettings[frame].texture_sizes.horizontal[2]
-local num = size[1] - (var_0_4 * 2 + 60)
-local tbl = {
+local window_default_settings = UISettings.game_start_windows
+local window_background = window_default_settings.background
+local window_frame = window_default_settings.frame
+local window_size = window_default_settings.size
+local window_frame_width = UIFrameSettings[window_frame].texture_sizes.vertical[1]
+local window_frame_height = UIFrameSettings[window_frame].texture_sizes.horizontal[2]
+local window_text_width = window_size[1] - (window_frame_width * 2 + 60)
+local scenegraph_definition = {
 	root = {
 		is_root = true,
 		size = {
@@ -73,7 +73,7 @@ local tbl = {
 		}
 	}
 }
-local tbl_2 = {
+local loading_overlay_widgets = {
 	loading_overlay = UIWidgets.create_simple_rect("loading_overlay", {
 		255,
 		12,
@@ -84,7 +84,7 @@ local tbl_2 = {
 	loading_overlay_loading_frame = UIWidgets.create_simple_texture("loading_title_divider_background", "loading_detail", nil, nil, nil, 1)
 }
 
-local function fn(arg_1_0)
+local function create_rect_fade(scenegraph_id)
 	-- function 1
 	return {
 		element = {
@@ -92,24 +92,24 @@ local function fn(arg_1_0)
 				{
 					style_id = "rect",
 					pass_type = "rect",
-					content_check_function = function (self)
+					content_check_function = function (content)
 						-- function 2
-						local fade_start = self.fade_start
+						local fade_start = content.fade_start
 
-						return fade_start <= self.progress or self.progress <= 1 - fade_start
+						return fade_start <= content.progress or content.progress <= 1 - fade_start
 					end,
-					content_change_function = function (self, arg_3_1)
+					content_change_function = function (content, style)
 						-- function 3
-						local fade_start = self.fade_start
+						local fade_start = content.fade_start
 
-						if fade_start < self.progress then
-							local num = (self.progress - fade_start) / (1 - fade_start)
+						if fade_start < content.progress then
+							local fade_progress = (content.progress - fade_start) / (1 - fade_start)
 
-							arg_3_1.color[1] = num * 255
+							style.color[1] = fade_progress * 255
 						else
-							local num_2 = 1 - self.progress / (1 - fade_start)
+							local fade_progress = 1 - content.progress / (1 - fade_start)
 
-							arg_3_1.color[1] = num_2 * 255
+							style.color[1] = fade_progress * 255
 						end
 					end
 				}
@@ -139,36 +139,36 @@ local function fn(arg_1_0)
 			0,
 			0
 		},
-		scenegraph_id = arg_1_0
+		scenegraph_id = scenegraph_id
 	}
 end
 
-local tbl_3 = {
-	background_fade = fn("screen")
+local viewport_widgets = {
+	background_fade = create_rect_fade("screen")
 }
-local create_simple_texture = UIWidgets.create_simple_texture("gradient_dice_game_reward", "screen", nil, nil, {
+local background_rect = UIWidgets.create_simple_texture("gradient_dice_game_reward", "screen", nil, nil, {
 	80,
 	255,
 	255,
 	255
 })
-local tbl_4 = {
+local animation_definitions = {
 	on_enter = {
 		{
 			name = "fade_in",
 			start_progress = 0,
 			end_progress = 0.3,
-			init = function (arg_4_0, arg_4_1, arg_4_2, arg_4_3)
+			init = function (ui_scenegraph, scenegraph_definition, widgets, params)
 				-- function 4
-				arg_4_3.render_settings.alpha_multiplier = 0
+				params.render_settings.alpha_multiplier = 0
 			end,
-			update = function (arg_5_0, arg_5_1, arg_5_2, arg_5_3, arg_5_4)
+			update = function (ui_scenegraph, scenegraph_definition, widgets, progress, params)
 				-- function 5
-				local easeOutCubic = math.easeOutCubic(arg_5_3)
+				local anim_progress = math.easeOutCubic(progress)
 
-				arg_5_4.render_settings.alpha_multiplier = easeOutCubic
+				params.render_settings.alpha_multiplier = anim_progress
 			end,
-			on_complete = function (arg_6_0, arg_6_1, arg_6_2, arg_6_3)
+			on_complete = function (ui_scenegraph, scenegraph_definition, widgets, params)
 				-- function 6
 				return
 			end
@@ -179,17 +179,17 @@ local tbl_4 = {
 			name = "fade_out",
 			start_progress = 0,
 			end_progress = 0.3,
-			init = function (arg_7_0, arg_7_1, arg_7_2, arg_7_3)
+			init = function (ui_scenegraph, scenegraph_definition, widgets, params)
 				-- function 7
-				arg_7_3.render_settings.alpha_multiplier = 1
+				params.render_settings.alpha_multiplier = 1
 			end,
-			update = function (arg_8_0, arg_8_1, arg_8_2, arg_8_3, arg_8_4)
+			update = function (ui_scenegraph, scenegraph_definition, widgets, progress, params)
 				-- function 8
-				local easeOutCubic = math.easeOutCubic(arg_8_3)
+				local anim_progress = math.easeOutCubic(progress)
 
-				arg_8_4.render_settings.alpha_multiplier = 1 - easeOutCubic
+				params.render_settings.alpha_multiplier = 1 - anim_progress
 			end,
-			on_complete = function (arg_9_0, arg_9_1, arg_9_2, arg_9_3)
+			on_complete = function (ui_scenegraph, scenegraph_definition, widgets, params)
 				-- function 9
 				return
 			end
@@ -198,9 +198,9 @@ local tbl_4 = {
 }
 
 return {
-	viewport_widgets = tbl_3,
-	background_rect = create_simple_texture,
-	scenegraph_definition = tbl,
-	animation_definitions = tbl_4,
-	loading_overlay_widgets = tbl_2
+	viewport_widgets = viewport_widgets,
+	background_rect = background_rect,
+	scenegraph_definition = scenegraph_definition,
+	animation_definitions = animation_definitions,
+	loading_overlay_widgets = loading_overlay_widgets
 }

@@ -1,7 +1,7 @@
 -- chunkname: @scripts/ui/views/level_end/states/definitions/end_view_state_score_vs_definitions.lua
 
-local num = 20
-local tbl = {
+local MAX_SCORE_PANEL_ROWS = 20
+local tab_layouts = {
 	{
 		class_name = "EndViewStateScoreVSTabReport",
 		name = "end_view_state_score_vs_tab_report",
@@ -17,11 +17,11 @@ local tbl = {
 		display_name = "end_view_state_score_vs_tab_details_display_name"
 	}
 }
-local tbl_2 = {
+local tab_size = {
 	210,
 	48
 }
-local tbl_3 = {
+local scenegraph_definition = {
 	screen = {
 		scale = "fit",
 		size = {
@@ -135,11 +135,11 @@ local tbl_3 = {
 		horizontal_alignment = "right",
 		size = {
 			0,
-			tbl_2[2]
+			tab_size[2]
 		},
 		position = {
 			-300,
-			-110 + tbl_2[2] * 0.5,
+			-110 + tab_size[2] * 0.5,
 			14
 		}
 	},
@@ -148,7 +148,7 @@ local tbl_3 = {
 		parent = "tab",
 		horizontal_alignment = "center",
 		size = {
-			tbl_2[1],
+			tab_size[1],
 			2
 		},
 		position = {
@@ -240,19 +240,19 @@ local tbl_3 = {
 		}
 	}
 }
-local tbl_4 = {
+local selected_color = {
 	255,
 	197,
 	188,
 	175
 }
-local get_color_table_with_alpha = Colors.get_color_table_with_alpha("local_player_team", 255)
-local get_color_table_with_alpha_2 = Colors.get_color_table_with_alpha("local_player_team_lighter", 255)
-local get_color_table_with_alpha_3 = Colors.get_color_table_with_alpha("local_player_team_darker", 255)
-local get_color_table_with_alpha_4 = Colors.get_color_table_with_alpha("opponent_team", 255)
-local get_color_table_with_alpha_5 = Colors.get_color_table_with_alpha("opponent_team_lighter", 255)
-local get_color_table_with_alpha_6 = Colors.get_color_table_with_alpha("opponent_team_darkened", 255)
-local tbl_5 = {
+local hammers_team_color = Colors.get_color_table_with_alpha("local_player_team", 255)
+local hammers_team_color_light = Colors.get_color_table_with_alpha("local_player_team_lighter", 255)
+local hammers_team_color_dark = Colors.get_color_table_with_alpha("local_player_team_darker", 255)
+local skulls_team_color = Colors.get_color_table_with_alpha("opponent_team", 255)
+local skulls_team_color_light = Colors.get_color_table_with_alpha("opponent_team_lighter", 255)
+local skulls_team_color_dark = Colors.get_color_table_with_alpha("opponent_team_darkened", 255)
+local summary_title_style = {
 	word_wrap = true,
 	font_size = 150,
 	localize = false,
@@ -267,7 +267,7 @@ local tbl_5 = {
 		2
 	}
 }
-local tbl_6 = {
+local level_text_style = {
 	word_wrap = true,
 	font_size = 52,
 	localize = false,
@@ -275,14 +275,14 @@ local tbl_6 = {
 	horizontal_alignment = "top",
 	vertical_alignment = "left",
 	font_type = "hell_shark_header",
-	text_color = tbl_4,
+	text_color = selected_color,
 	offset = {
 		0,
 		0,
 		2
 	}
 }
-local tbl_7 = {
+local match_finished_text_style = {
 	word_wrap = true,
 	font_size = 28,
 	localize = false,
@@ -297,7 +297,7 @@ local tbl_7 = {
 		2
 	}
 }
-local tbl_8 = {
+local tab_selection_style = {
 	word_wrap = true,
 	font_size = 24,
 	localize = false,
@@ -305,8 +305,8 @@ local tbl_8 = {
 	horizontal_alignment = "center",
 	vertical_alignment = "center",
 	font_type = "hell_shark_header",
-	text_color = tbl_4,
-	hover_color = tbl_4,
+	text_color = selected_color,
+	hover_color = selected_color,
 	base_color = {
 		255,
 		128,
@@ -319,7 +319,7 @@ local tbl_8 = {
 		2
 	}
 }
-local tbl_9 = {
+local team_score_style = {
 	word_wrap = false,
 	upper_case = true,
 	localize = false,
@@ -340,9 +340,9 @@ local tbl_9 = {
 	}
 }
 
-local function fn(arg_2_0, arg_2_1)
+local function create_tab_selection(scenegraph_id, color)
 	-- function 2
-	local size = tbl_3[arg_2_0].size
+	local size = scenegraph_definition[scenegraph_id].size
 
 	return {
 		element = {
@@ -358,7 +358,7 @@ local function fn(arg_2_0, arg_2_1)
 			rect = {
 				vertical_alignment = "bottom",
 				horizontal_alignment = "center",
-				color = arg_2_1 or {
+				color = not not color or not not {
 					255,
 					255,
 					255,
@@ -377,26 +377,37 @@ local function fn(arg_2_0, arg_2_1)
 			0,
 			0
 		},
-		scenegraph_id = arg_2_0
+		scenegraph_id = scenegraph_id
 	}
 end
 
-local function fn_2(arg_3_0, arg_3_1, arg_3_2)
+local function create_team_score(team, team_name, score)
 	-- function 3
-	local flag = arg_3_0 == "local_team"
-	local flag_2
+	local is_local_team = team == "local_team"
+	local str
 
-	flag_2 = not flag and "team_icon_local" and "team_icon_opponent"
+	if is_local_team then
+		str = "team_icon_local"
 
-	local var_3_2 = tbl_3[flag_2]
-	local clone = table.clone(var_3_2.size)
+		goto label_3_0
+	end
 
-	clone[1] = 140
+	str = "team_icon_opponent"
 
-	local var_3_4 = UISettings.teams_ui_assets[arg_3_1]
+	local scenegraph_id = str
+
+	::label_3_0::
+
+	local scenegraph_data = scenegraph_definition[scenegraph_id]
+	local size = table.clone(scenegraph_data.size)
+
+	size[1] = 140
+
+	local settings = UISettings.teams_ui_assets
+	local team_ui_settings = settings[team_name]
 	local get_color_table_with_alpha
 
-	if not flag then
+	if is_local_team then
 		get_color_table_with_alpha = Colors.get_color_table_with_alpha("local_player_team_lighter", 255)
 
 		if not get_color_table_with_alpha then
@@ -406,34 +417,37 @@ local function fn_2(arg_3_0, arg_3_1, arg_3_2)
 
 	get_color_table_with_alpha = Colors.get_color_table_with_alpha("opponent_team_lighter", 255)
 
-	::label_3_0::
+	local team_color = get_color_table_with_alpha
 
-	local clone_2 = table.clone(tbl_9)
+	::label_3_1::
 
-	clone_2.size = clone
-	clone_2.text_color = get_color_table_with_alpha
-	clone_2.offset = {
+	local internal_score_style = table.clone(team_score_style)
+
+	internal_score_style.size = size
+	internal_score_style.text_color = team_color
+	internal_score_style.offset = {
 		70,
 		0,
 		0
 	}
 
-	local tbl = {
+	local widget = {
 		element = {
 			passes = {}
 		},
 		content = {},
 		style = {},
-		scenegraph_id = flag_2,
+		scenegraph_id = scenegraph_id,
 		offset = {
 			0,
 			0,
 			0
 		}
 	}
-	local passes = tbl.element.passes
-	local content = tbl.content
-	local style = tbl.style
+	local element = widget.element
+	local passes = element.passes
+	local content = widget.content
+	local style = widget.style
 
 	passes[#passes + 1] = {
 		pass_type = "texture",
@@ -445,8 +459,8 @@ local function fn_2(arg_3_0, arg_3_1, arg_3_2)
 		style_id = "icon_bg",
 		texture_id = "icon_bg"
 	}
-	content.icon = var_3_4.team_icon
-	content.icon_bg = var_3_4.background_texture
+	content.icon = team_ui_settings.team_icon
+	content.icon_bg = team_ui_settings.background_texture
 	style.icon = {
 		vertical_alignment = "center",
 		horizontal_alignment = "center",
@@ -454,7 +468,7 @@ local function fn_2(arg_3_0, arg_3_1, arg_3_2)
 			80,
 			80
 		},
-		color = get_color_table_with_alpha,
+		color = team_color,
 		offset = {
 			-70,
 			0,
@@ -467,7 +481,7 @@ local function fn_2(arg_3_0, arg_3_1, arg_3_2)
 		80
 	}
 	style.icon_bg.offset[3] = 0
-	style.icon_bg.color = get_color_table_with_alpha
+	style.icon_bg.color = team_color
 	passes[#passes + 1] = {
 		style_id = "score",
 		pass_type = "text",
@@ -478,9 +492,9 @@ local function fn_2(arg_3_0, arg_3_1, arg_3_2)
 		pass_type = "text",
 		text_id = "score"
 	}
-	content.score = tostring(arg_3_2)
-	style.score = clone_2
-	style.score_shadow = table.clone(clone_2)
+	content.score = tostring(score)
+	style.score = internal_score_style
+	style.score_shadow = table.clone(internal_score_style)
 	style.score_shadow.text_color = {
 		255,
 		0,
@@ -493,15 +507,15 @@ local function fn_2(arg_3_0, arg_3_1, arg_3_2)
 		-1
 	}
 
-	return tbl
+	return widget
 end
 
-local function fn_3(arg_4_0, arg_4_1, arg_4_2, arg_4_3)
+local function create_tab_text(text, gamepad_text, scenegraph_id, text_style)
 	-- function 4
 	local offset
 
-	if not arg_4_3 then
-		offset = arg_4_3.offset
+	if text_style then
+		offset = text_style.offset
 
 		if not offset then
 			-- Nothing
@@ -514,58 +528,79 @@ local function fn_3(arg_4_0, arg_4_1, arg_4_2, arg_4_3)
 		2
 	}
 
+	local text_offset = offset
+
 	do
-		local text_color
+		local text_color_2
 	end
 
 	::label_4_0::
 
-	if not arg_4_3 then
-		text_color = arg_4_3.text_color
+	if text_style then
+		text_color_2 = text_style.text_color
 
-		if not text_color then
+		if not text_color_2 then
 			-- Nothing
 		end
 	end
 
-	text_color = {
+	text_color_2 = {
 		255,
 		255,
 		255,
 		255
 	}
 
+	local text_color = text_color_2
+
 	::label_4_1::
 
-	local clone = table.clone(arg_4_3)
-	local shadow_color = arg_4_3.shadow_color
+	local text_shadow_style = table.clone(text_style)
+	local shadow_color = text_style.shadow_color
 
-	shadow_color = shadow_color or {
+	if not shadow_color then
+		-- Nothing
+	end
+
+	shadow_color = {
 		255,
 		0,
 		0,
 		0
 	}
 
-	local shadow_offset = arg_4_3.shadow_offset
+	local text_shadow_style_color = shadow_color
 
-	shadow_offset = shadow_offset or {
+	::label_4_2::
+
+	local shadow_offset = text_style.shadow_offset
+
+	if not shadow_offset then
+		-- Nothing
+	end
+
+	shadow_offset = {
 		2,
 		2,
 		0
 	}
-	shadow_color[1] = text_color[1]
-	clone.text_color = shadow_color
-	clone.offset = {
-		offset[1] + shadow_offset[1],
-		offset[2] - shadow_offset[2],
-		offset[3] - 1
+
+	local text_shadow_offset = shadow_offset
+
+	::label_4_3::
+
+	text_shadow_style_color[1] = text_color[1]
+	text_shadow_style.text_color = text_shadow_style_color
+	text_shadow_style.offset = {
+		text_offset[1] + text_shadow_offset[1],
+		text_offset[2] - text_shadow_offset[2],
+		text_offset[3] - 1
 	}
-	clone.skip_button_rendering = true
+	text_shadow_style.skip_button_rendering = true
 
-	local clone_2 = table.clone(arg_4_3)
+	local gamepad_text_style = table.clone(text_style)
 
-	clone_2.offset[1] = clone_2.font_size * 0.75
+	gamepad_text_style.offset[1] = gamepad_text_style.font_size * 0.75
 
 	local tbl = {
 		element = {
@@ -574,7 +609,7 @@ local function fn_3(arg_4_0, arg_4_1, arg_4_2, arg_4_3)
 					style_id = "hotspot",
 					pass_type = "hotspot",
 					content_id = "hotspot",
-					content_check_function = function (arg_5_0, arg_5_1)
+					content_check_function = function (content, style)
 						-- function 5
 						return not Managers.input:is_device_active("gamepad")
 					end
@@ -583,34 +618,34 @@ local function fn_3(arg_4_0, arg_4_1, arg_4_2, arg_4_3)
 					style_id = "text",
 					pass_type = "text",
 					text_id = "text",
-					content_check_function = function (arg_6_0, arg_6_1)
+					content_check_function = function (content, style)
 						-- function 6
 						return not Managers.input:is_device_active("gamepad")
 					end,
-					content_change_function = function (self, arg_7_1)
+					content_change_function = function (content, style)
 						-- function 7
 						local hover_color
 
-						if not self.hotspot.is_hover then
-							hover_color = arg_7_1.hover_color
+						if content.hotspot.is_hover then
+							hover_color = style.hover_color
 
 							if not hover_color then
 								-- Nothing
 							end
 						end
 
-						hover_color = arg_7_1.base_color
+						hover_color = style.base_color
 
 						::label_7_0::
 
-						arg_7_1.text_color = hover_color
+						style.text_color = hover_color
 					end
 				},
 				{
 					style_id = "gamepad_text",
 					pass_type = "text",
 					text_id = "gamepad_text",
-					content_check_function = function (arg_8_0, arg_8_1)
+					content_check_function = function (content, style)
 						-- function 8
 						return Managers.input:is_device_active("gamepad")
 					end
@@ -619,7 +654,7 @@ local function fn_3(arg_4_0, arg_4_1, arg_4_2, arg_4_3)
 					style_id = "text_shadow",
 					pass_type = "text",
 					text_id = "text",
-					content_check_function = function (arg_9_0, arg_9_1)
+					content_check_function = function (content, style)
 						-- function 9
 						return not Managers.input:is_device_active("gamepad")
 					end
@@ -628,15 +663,15 @@ local function fn_3(arg_4_0, arg_4_1, arg_4_2, arg_4_3)
 		}
 	}
 	local tbl_2 = {
-		text = arg_4_0,
-		gamepad_text = arg_4_1,
-		original_text = arg_4_0,
+		text = text,
+		gamepad_text = gamepad_text,
+		original_text = text,
 		color = text_color
 	}
 	local use_shadow
 
-	if not arg_4_3 then
-		use_shadow = arg_4_3.use_shadow
+	if text_style then
+		use_shadow = text_style.use_shadow
 
 		if not use_shadow then
 			-- Nothing
@@ -645,7 +680,7 @@ local function fn_3(arg_4_0, arg_4_1, arg_4_2, arg_4_3)
 
 	use_shadow = false
 
-	::label_4_2::
+	::label_4_4::
 
 	tbl_2.use_shadow = use_shadow
 	tbl_2.hotspot = {}
@@ -659,25 +694,25 @@ local function fn_3(arg_4_0, arg_4_1, arg_4_2, arg_4_3)
 				60
 			}
 		},
-		text = arg_4_3,
-		gamepad_text = clone_2,
-		text_shadow = clone
+		text = text_style,
+		gamepad_text = gamepad_text_style,
+		text_shadow = text_shadow_style
 	}
 	tbl.offset = {
 		0,
 		0,
 		0
 	}
-	tbl.scenegraph_id = arg_4_2
+	tbl.scenegraph_id = scenegraph_id
 
 	return tbl
 end
 
-local flag = true
-local tbl_10 = {
+local disable_with_gamepad = true
+local widgets = {
 	level = UIWidgets.create_level_widget("level"),
-	level_text = UIWidgets.create_simple_text("Righteous Stand", "level_text", nil, nil, tbl_6),
-	match_finsihed_text = UIWidgets.create_simple_text(Localize("vs_match_completed"), "match_finished_text", nil, nil, tbl_7),
+	level_text = UIWidgets.create_simple_text("Righteous Stand", "level_text", nil, nil, level_text_style),
+	match_finsihed_text = UIWidgets.create_simple_text(Localize("vs_match_completed"), "match_finished_text", nil, nil, match_finished_text_style),
 	banner = UIWidgets.create_shader_tiled_texture("panel", "carousel_end_screen_panel", {
 		512,
 		200
@@ -696,37 +731,37 @@ local tbl_10 = {
 		0,
 		10
 	}),
-	tab_selection = fn("tab_selection", {
+	tab_selection = create_tab_selection("tab_selection", {
 		255,
 		201,
 		201,
 		201
 	}),
-	prev_tab = fn_3("$KEY;ingame_menu__cycle_prev_raw:", "$KEY;ingame_menu__cycle_prev_raw:", "tab_selection", tbl_8),
-	next_tab = fn_3("$KEY;ingame_menu__cycle_next_alt_raw:", "$KEY;ingame_menu__cycle_next_alt_raw:", "tab_selection", tbl_8),
-	back_to_keep_button = UIWidgets.create_default_button("back_to_keep_button", tbl_3.back_to_keep_button.size, nil, nil, Localize("return_to_inn"), 25, nil, nil, nil, flag)
+	prev_tab = create_tab_text("$KEY;ingame_menu__cycle_prev_raw:", "$KEY;ingame_menu__cycle_prev_raw:", "tab_selection", tab_selection_style),
+	next_tab = create_tab_text("$KEY;ingame_menu__cycle_next_alt_raw:", "$KEY;ingame_menu__cycle_next_alt_raw:", "tab_selection", tab_selection_style),
+	back_to_keep_button = UIWidgets.create_default_button("back_to_keep_button", scenegraph_definition.back_to_keep_button.size, nil, nil, Localize("return_to_inn"), 25, nil, nil, nil, disable_with_gamepad)
 }
-local tbl_11 = {
+local animation_definitions = {
 	transition_enter = {
 		{
 			name = "fade_in",
 			start_progress = 0,
 			end_progress = 0.3,
-			init = function (arg_10_0, arg_10_1, arg_10_2, arg_10_3)
+			init = function (ui_scenegraph, scenegraph_definition, widgets, params)
 				-- function 10
-				arg_10_3.render_settings.alpha_multiplier = 0
-				arg_10_0.panel.local_position[2] = arg_10_1.panel.position[2] + 200
-				arg_10_0.back_to_keep_button.local_position[2] = arg_10_1.back_to_keep_button.position[2] - 200
+				params.render_settings.alpha_multiplier = 0
+				ui_scenegraph.panel.local_position[2] = scenegraph_definition.panel.position[2] + 200
+				ui_scenegraph.back_to_keep_button.local_position[2] = scenegraph_definition.back_to_keep_button.position[2] - 200
 			end,
-			update = function (arg_11_0, arg_11_1, arg_11_2, arg_11_3, arg_11_4)
+			update = function (ui_scenegraph, scenegraph_definition, widgets, progress, params)
 				-- function 11
-				local easeOutCubic = math.easeOutCubic(arg_11_3)
+				local eased_progress = math.easeOutCubic(progress)
 
-				arg_11_4.render_settings.alpha_multiplier = easeOutCubic
-				arg_11_0.panel.local_position[2] = math.lerp(arg_11_1.panel.position[2] + 200, arg_11_1.panel.position[2], easeOutCubic)
-				arg_11_0.back_to_keep_button.local_position[2] = math.lerp(arg_11_1.back_to_keep_button.position[2] - 200, arg_11_1.back_to_keep_button.position[2], easeOutCubic)
+				params.render_settings.alpha_multiplier = eased_progress
+				ui_scenegraph.panel.local_position[2] = math.lerp(scenegraph_definition.panel.position[2] + 200, scenegraph_definition.panel.position[2], eased_progress)
+				ui_scenegraph.back_to_keep_button.local_position[2] = math.lerp(scenegraph_definition.back_to_keep_button.position[2] - 200, scenegraph_definition.back_to_keep_button.position[2], eased_progress)
 			end,
-			on_complete = function (arg_12_0, arg_12_1, arg_12_2, arg_12_3)
+			on_complete = function (ui_scenegraph, scenegraph_definition, widgets, params)
 				-- function 12
 				return
 			end
@@ -737,17 +772,17 @@ local tbl_11 = {
 			name = "fade_out",
 			start_progress = 0,
 			end_progress = 0.3,
-			init = function (arg_13_0, arg_13_1, arg_13_2, arg_13_3)
+			init = function (ui_scenegraph, scenegraph_definition, widgets, params)
 				-- function 13
-				arg_13_3.render_settings.alpha_multiplier = 1
+				params.render_settings.alpha_multiplier = 1
 			end,
-			update = function (arg_14_0, arg_14_1, arg_14_2, arg_14_3, arg_14_4)
+			update = function (ui_scenegraph, scenegraph_definition, widgets, progress, params)
 				-- function 14
-				local easeInCubic = math.easeInCubic(arg_14_3)
+				local anim_progress = math.easeInCubic(progress)
 
-				arg_14_4.render_settings.alpha_multiplier = 1 - easeInCubic
+				params.render_settings.alpha_multiplier = 1 - anim_progress
 			end,
-			on_complete = function (arg_15_0, arg_15_1, arg_15_2, arg_15_3)
+			on_complete = function (ui_scenegraph, scenegraph_definition, widgets, params)
 				-- function 15
 				return
 			end
@@ -755,7 +790,7 @@ local tbl_11 = {
 	}
 }
 
-local function fn_4(arg_16_0, arg_16_1)
+local function create_tab(scenegraph_id, text)
 	-- function 16
 	return {
 		element = {
@@ -769,20 +804,20 @@ local function fn_4(arg_16_0, arg_16_1)
 					style_id = "text",
 					pass_type = "text",
 					text_id = "text",
-					content_check_function = function (self, arg_17_1)
+					content_check_function = function (content, style)
 						-- function 17
-						return not not self.hotspot.is_hover or not self.hotspot.is_selected
+						return not content.hotspot.is_hover and not not not content.hotspot.is_selected
 					end
 				},
 				{
 					style_id = "hover_text",
 					pass_type = "text",
 					text_id = "text",
-					content_check_function = function (self)
+					content_check_function = function (content)
 						-- function 18
-						local is_hover = self.hotspot.is_hover
+						local is_hover = content.hotspot.is_hover
 
-						is_hover = is_hover or self.hotspot.is_selected
+						is_hover = not not is_hover or not not content.hotspot.is_selected
 
 						return is_hover
 					end
@@ -795,7 +830,7 @@ local function fn_4(arg_16_0, arg_16_1)
 			}
 		},
 		content = {
-			text = arg_16_1,
+			text = text,
 			hotspot = {}
 		},
 		style = {
@@ -804,7 +839,7 @@ local function fn_4(arg_16_0, arg_16_1)
 				horizontal_alignment = "center",
 				area_size = {
 					0,
-					tbl_2[2]
+					tab_size[2]
 				}
 			},
 			text = {
@@ -829,7 +864,7 @@ local function fn_4(arg_16_0, arg_16_1)
 				horizontal_alignment = "center",
 				vertical_alignment = "center",
 				font_type = "hell_shark",
-				text_color = tbl_4,
+				text_color = selected_color,
 				line_colors = {},
 				offset = {
 					0,
@@ -853,7 +888,7 @@ local function fn_4(arg_16_0, arg_16_1)
 				}
 			}
 		},
-		scenegraph_id = arg_16_0,
+		scenegraph_id = scenegraph_id,
 		offset = {
 			0,
 			0,
@@ -863,11 +898,11 @@ local function fn_4(arg_16_0, arg_16_1)
 end
 
 return {
-	widgets = tbl_10,
-	tab_layouts = tbl,
-	scenegraph_definition = tbl_3,
-	animation_definitions = tbl_11,
-	create_tab = fn_4,
-	tab_size = tbl_2,
-	create_team_score_func = fn_2
+	widgets = widgets,
+	tab_layouts = tab_layouts,
+	scenegraph_definition = scenegraph_definition,
+	animation_definitions = animation_definitions,
+	create_tab = create_tab,
+	tab_size = tab_size,
+	create_team_score_func = create_team_score
 }

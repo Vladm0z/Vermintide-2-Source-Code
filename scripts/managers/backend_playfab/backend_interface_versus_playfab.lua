@@ -1,11 +1,11 @@
 -- chunkname: @scripts/managers/backend_playfab/backend_interface_versus_playfab.lua
 
-local scripts_managers_backend_playfab_settings_flexmatch_queue_status = require("scripts/managers/backend_playfab/settings/flexmatch_queue_status")
-local scripts_managers_game_mode_mechanisms_reservation_handler_types = require("scripts/managers/game_mode/mechanisms/reservation_handler_types")
+local FlexmatchQueueStatus = require("scripts/managers/backend_playfab/settings/flexmatch_queue_status")
+local ReservationHandlerTypes = require("scripts/managers/game_mode/mechanisms/reservation_handler_types")
 
 BackendInterfaceVersusPlayFab = class(BackendInterfaceVersusPlayFab)
 
-local tbl = {
+local LOADOUT_INTERFACE_OVERRIDES = {
 	slot_necklace = "versus",
 	slot_hat = "versus",
 	slot_ring = "versus",
@@ -17,59 +17,67 @@ local tbl = {
 	slot_melee = "versus"
 }
 
-local function fn(arg_1_0, ...)
+local function debug_printf(text, ...)
 	-- function 1
-	arg_1_0 = "[BackendInterfaceVersusPlayFab] " .. arg_1_0
+	text = "[BackendInterfaceVersusPlayFab] " .. text
 
-	printf(arg_1_0, ...)
+	printf(text, ...)
 end
 
-local function fn_2(self, arg_2_1, arg_2_2, ...)
+local function print_error(data, code, text, ...)
 	-- function 2
-	local var_2_0
+	local error_msg
 
-	if not self.response then
-		arg_2_1 = arg_2_1 or -1
+	if data.response then
+		code = not not code or not not -1
 
-		local status = self.status
+		local status_2 = data.status
 
-		status = status or "UNKNOWN_ERROR"
+		if not status_2 then
+			-- Nothing
+		end
 
-		local response = self.response
+		status_2 = "UNKNOWN_ERROR"
 
-		var_2_0 = string.format("[%s] %s (%d)", status, response, arg_2_1)
-	elseif not self.message then
-		var_2_0 = self.message
+		local status = status_2
+
+		::label_2_0::
+
+		local response = data.response
+
+		error_msg = string.format("[%s] %s (%d)", status, response, code)
+	elseif data.message then
+		error_msg = data.message
 	else
-		var_2_0 = "Unknown Error"
+		error_msg = "Unknown Error"
 	end
 
-	fn(var_2_0)
-	fn(arg_2_2, ...)
-	table.dump(self, "BackendInterfaceVersusPlayFab", 5)
+	debug_printf(error_msg)
+	debug_printf(text, ...)
+	table.dump(data, "BackendInterfaceVersusPlayFab", 5)
 end
 
-local function fn_3(arg_3_0)
+local function parse_response(data)
 	-- function 3
-	local var_3_0, var_3_1 = pcall(cjson.decode, arg_3_0)
+	local result, parsed_data = pcall(cjson.decode, data)
 
-	if not var_3_0 then
-		return var_3_1
+	if result then
+		return parsed_data
 	end
 
 	return {
-		response = tostring(arg_3_0)
+		response = tostring(data)
 	}
 end
 
-BackendInterfaceVersusPlayFab.init = function (self, arg_4_1)
+BackendInterfaceVersusPlayFab.init = function (self, backend_mirror)
 	-- function 4
-	self._backend_mirror = arg_4_1
+	self._backend_mirror = backend_mirror
 	self._profile_data = {}
 	self._items_interface = Managers.backend:get_interface("items")
 
-	Managers.backend:add_loadout_interface_override("versus", tbl)
-	Managers.backend:add_loadout_interface_override("inn_vs", tbl)
+	Managers.backend:add_loadout_interface_override("versus", LOADOUT_INTERFACE_OVERRIDES)
+	Managers.backend:add_loadout_interface_override("inn_vs", LOADOUT_INTERFACE_OVERRIDES)
 
 	self._dirty = true
 	self._is_matchmaking = false
@@ -81,8 +89,17 @@ BackendInterfaceVersusPlayFab._refresh = function (self)
 	-- function 5
 	local get_read_only_data = self._backend_mirror:get_read_only_data("vs_profile_data")
 
-	get_read_only_data = get_read_only_data or "{}"
-	self._profile_data = cjson.decode(get_read_only_data)
+	if not get_read_only_data then
+		-- Nothing
+	end
+
+	get_read_only_data = "{}"
+
+	local vs_profile_data = get_read_only_data
+
+	::label_5_0::
+
+	self._profile_data = cjson.decode(vs_profile_data)
 	self._dirty = false
 end
 
@@ -91,72 +108,73 @@ BackendInterfaceVersusPlayFab.make_dirty = function (self)
 	self._dirty = true
 end
 
-BackendInterfaceVersusPlayFab.ready = function (arg_7_0)
+BackendInterfaceVersusPlayFab.ready = function (self)
 	-- function 7
 	return true
 end
 
-BackendInterfaceVersusPlayFab.get_profile_data = function (self, arg_8_1)
+BackendInterfaceVersusPlayFab.get_profile_data = function (self, key)
 	-- function 8
-	if not self._dirty then
+	if self._dirty then
 		self:_refresh()
 	end
 
-	return self._profile_data[arg_8_1]
+	return self._profile_data[key]
 end
 
-BackendInterfaceVersusPlayFab.get_loadout_item_id = function (self, arg_9_1, arg_9_2, arg_9_3)
+BackendInterfaceVersusPlayFab.get_loadout_item_id = function (self, career_name, slot_name, is_bot)
 	-- function 9
-	if not self._dirty then
+	if self._dirty then
 		self:_refresh()
 	end
 
-	return self._items_interface:get_loadout_item_id(arg_9_1, arg_9_2, arg_9_3)
+	return self._items_interface:get_loadout_item_id(career_name, slot_name, is_bot)
 end
 
-BackendInterfaceVersusPlayFab.set_loadout_item = function (self, arg_10_1, arg_10_2, arg_10_3)
+BackendInterfaceVersusPlayFab.set_loadout_item = function (self, item_id, career_name, slot_name)
 	-- function 10
-	if not self._dirty then
+	if self._dirty then
 		self:_refresh()
 	end
 
 	self._dirty = true
 
-	return self._items_interface:set_loadout_item(arg_10_1, arg_10_2, arg_10_3)
+	return self._items_interface:set_loadout_item(item_id, career_name, slot_name)
 end
 
-local tbl_2 = {
+local post_headers = {
 	"Content-Type: application/json"
 }
-local tbl_3 = {
+local get_headers = {
 	"User-Agent: Warhammer: Vermintide 2",
 	"Accept: application/json"
 }
 
-BackendInterfaceVersusPlayFab.request_regions = function (self, arg_11_1)
+BackendInterfaceVersusPlayFab.request_regions = function (self, external_cb)
 	-- function 11
-	fassert(arg_11_1 ~= nil, "request_regions is missing external_cb")
+	fassert(external_cb ~= nil, "request_regions is missing external_cb")
 
-	local tbl = {
+	local request = {
 		FunctionName = "getMatchMakingRegions",
 		FunctionParameter = {}
 	}
-	local var_11_1 = callback(self, "request_matchmaking_regions_cb", arg_11_1)
+	local success_callback = callback(self, "request_matchmaking_regions_cb", external_cb)
+	local request_queue = self._backend_mirror:request_queue()
 
-	self._backend_mirror:request_queue():enqueue(tbl, var_11_1, true)
+	request_queue:enqueue(request, success_callback, true)
 end
 
-BackendInterfaceVersusPlayFab.request_matchmaking_regions_cb = function (arg_12_0, arg_12_1, arg_12_2)
+BackendInterfaceVersusPlayFab.request_matchmaking_regions_cb = function (self, external_cb, result)
 	-- function 12
-	local FunctionResult = arg_12_2.FunctionResult
+	local function_result = result.FunctionResult
 
-	arg_12_1(FunctionResult)
+	external_cb(function_result)
 
-	if not (not FunctionResult.success and FunctionResult.regions) then
-		if type(arg_12_2) == "table" then
-			table.dump(arg_12_2, "BackendInterfaceVersusPlayFab", 5)
+	if not function_result.success or not function_result.regions then
+		if type(result) == "table" then
+			table.dump(result, "BackendInterfaceVersusPlayFab", 5)
 		else
-			print("getMatchmakingQueueTicket result: %s", tostring(arg_12_2))
+			print("getMatchmakingQueueTicket result: %s", tostring(result))
 		end
 
 		Crashify.print_exception("BackendInterfaceVersusPlayFab", "Failed to get matchmaking regions")
@@ -165,170 +183,170 @@ end
 
 BackendInterfaceVersusPlayFab.get_matchmaking_url = function (self)
 	-- function 13
-	if not self._base_url then
+	if self._base_url then
 		return self._base_url
 	end
 
 	return self._backend_mirror:get_matchmaking_url()
 end
 
-BackendInterfaceVersusPlayFab.start_matchmaking = function (self, arg_14_1, arg_14_2)
+BackendInterfaceVersusPlayFab.start_matchmaking = function (self, queue_tickets, external_cb)
 	-- function 14
-	fn("Starting matchmaking")
+	debug_printf("Starting matchmaking")
 
-	local get_matchmaking_url = self:get_matchmaking_url()
-	local format = string.format("%s/matchmaking/start", get_matchmaking_url)
-	local var_14_2 = callback(self, "_start_matchmaking_cb", arg_14_2)
-	local encode = cjson.encode({
-		queueTickets = table.values(arg_14_1)
+	local base_url = self:get_matchmaking_url()
+	local url = string.format("%s/matchmaking/start", base_url)
+	local cb = callback(self, "_start_matchmaking_cb", external_cb)
+	local body = cjson.encode({
+		queueTickets = table.values(queue_tickets)
 	})
 
-	Managers.curl:post(format, encode, tbl_2, var_14_2)
+	Managers.curl:post(url, body, post_headers, cb)
 end
 
-BackendInterfaceVersusPlayFab._start_matchmaking_cb = function (self, arg_15_1, arg_15_2, arg_15_3, arg_15_4, arg_15_5)
+BackendInterfaceVersusPlayFab._start_matchmaking_cb = function (self, external_cb, result, code, headers, data)
 	-- function 15
-	local var_15_0 = fn_3(arg_15_5)
+	local parsed_data = parse_response(data)
 
-	if not var_15_0.debug_msg then
-		Managers.chat:add_local_system_message(1, var_15_0.debug_msg, true)
+	if parsed_data.debug_msg then
+		Managers.chat:add_local_system_message(1, parsed_data.debug_msg, true)
 	end
 
-	if not (not arg_15_2 and arg_15_3 == 200) then
-		fn_2(var_15_0, arg_15_3, "Failed to start matchmaking. result: %s", tostring(arg_15_2))
+	if not result or code ~= 200 then
+		print_error(parsed_data, code, "Failed to start matchmaking. result: %s", tostring(result))
 		Crashify.print_exception("BackendInterfaceVersusPlayFab", "Failed to start matchmaking")
 
-		if not arg_15_1 then
-			arg_15_1(arg_15_2, arg_15_3, arg_15_4, nil)
+		if external_cb then
+			external_cb(result, code, headers, nil)
 		end
 
 		return
 	end
 
-	self._matchmaking_session_id = var_15_0.matchmakingSessionId
+	self._matchmaking_session_id = parsed_data.matchmakingSessionId
 	self._is_matchmaking = true
-	self._matchmaking_status = var_15_0.status
+	self._matchmaking_status = parsed_data.status
 
-	fn("Matchmaking started. matchmakingSessionId: %s", var_15_0.matchmakingSessionId)
+	debug_printf("Matchmaking started. matchmakingSessionId: %s", parsed_data.matchmakingSessionId)
 
-	if not arg_15_1 then
-		arg_15_1(arg_15_2, arg_15_3, arg_15_4, var_15_0)
+	if external_cb then
+		external_cb(result, code, headers, parsed_data)
 	end
 end
 
-BackendInterfaceVersusPlayFab.cancel_matchmaking = function (self, arg_16_1)
+BackendInterfaceVersusPlayFab.cancel_matchmaking = function (self, external_cb)
 	-- function 16
-	fn("Cancelling matchmaking")
+	debug_printf("Cancelling matchmaking")
 
 	if not self:is_matchmaking() then
-		if not arg_16_1 then
-			arg_16_1(true, 200)
+		if external_cb then
+			external_cb(true, 200)
 		end
 
 		return
 	end
 
 	if not self._matchmaking_session_id then
-		fn("Failed to cancel matchmaking. Reason: missing matchmaking_session_id")
+		debug_printf("Failed to cancel matchmaking. Reason: missing matchmaking_session_id")
 
-		if not arg_16_1 then
-			arg_16_1(false, 404)
+		if external_cb then
+			external_cb(false, 404)
 		end
 
 		return
 	end
 
-	local get_matchmaking_url = self:get_matchmaking_url()
-	local format = string.format("%s/matchmaking/sessions/%s/cancel", get_matchmaking_url, self._matchmaking_session_id)
-	local var_16_2 = callback(self, "_cancel_matchmaking_cb", arg_16_1)
-	local encode = cjson.encode({
+	local base_url = self:get_matchmaking_url()
+	local url = string.format("%s/matchmaking/sessions/%s/cancel", base_url, self._matchmaking_session_id)
+	local cb = callback(self, "_cancel_matchmaking_cb", external_cb)
+	local body = cjson.encode({
 		matchmakingSessionId = self._matchmaking_session_id
 	})
 
-	Managers.curl:post(format, encode, tbl_2, var_16_2)
+	Managers.curl:post(url, body, post_headers, cb)
 end
 
-BackendInterfaceVersusPlayFab._cancel_matchmaking_cb = function (self, arg_17_1, arg_17_2, arg_17_3, arg_17_4, arg_17_5)
+BackendInterfaceVersusPlayFab._cancel_matchmaking_cb = function (self, external_cb, result, code, headers, data)
 	-- function 17
 	self._matchmaking_session_id = nil
 	self._is_matchmaking = nil
 
-	local var_17_0 = fn_3(arg_17_5)
+	local parsed_data = parse_response(data)
 
-	if not var_17_0.debug_msg then
-		Managers.chat:add_local_system_message(1, var_17_0.debug_msg, true)
+	if parsed_data.debug_msg then
+		Managers.chat:add_local_system_message(1, parsed_data.debug_msg, true)
 	end
 
-	if not (not arg_17_2 and arg_17_3 == 200) then
-		fn_2(var_17_0, arg_17_3, "Failed to cancel matchmaking. result: %s", tostring(arg_17_2))
+	if not result or code ~= 200 then
+		print_error(parsed_data, code, "Failed to cancel matchmaking. result: %s", tostring(result))
 
-		if not arg_17_1 then
-			arg_17_1(arg_17_2, arg_17_3, arg_17_4, nil)
+		if external_cb then
+			external_cb(result, code, headers, nil)
 		end
 
 		return
 	end
 
-	fn("Matchmaking cancelled")
+	debug_printf("Matchmaking cancelled")
 
-	if not arg_17_1 then
-		arg_17_1(arg_17_2, arg_17_3, arg_17_4, var_17_0)
+	if external_cb then
+		external_cb(result, code, headers, parsed_data)
 	end
 end
 
-BackendInterfaceVersusPlayFab.fetch_matchmaking_session_data = function (self, arg_18_1)
+BackendInterfaceVersusPlayFab.fetch_matchmaking_session_data = function (self, external_cb)
 	-- function 18
 	if not self._matchmaking_session_id then
-		fn("Failed to fetch matchmaking session data. Reason: missing matchmaking_session_id")
+		debug_printf("Failed to fetch matchmaking session data. Reason: missing matchmaking_session_id")
 
-		if not arg_18_1 then
-			arg_18_1(false, 404)
+		if external_cb then
+			external_cb(false, 404)
 		end
 
 		return false
 	end
 
-	local get_matchmaking_url = self:get_matchmaking_url()
-	local format = string.format("%s/matchmaking/sessions/%s", get_matchmaking_url, self._matchmaking_session_id)
-	local var_18_2 = callback(self, "_fetch_matchmaking_session_data_cb", arg_18_1)
+	local base_url = self:get_matchmaking_url()
+	local url = string.format("%s/matchmaking/sessions/%s", base_url, self._matchmaking_session_id)
+	local cb = callback(self, "_fetch_matchmaking_session_data_cb", external_cb)
 
-	Managers.curl:get(format, tbl_3, var_18_2)
+	Managers.curl:get(url, get_headers, cb)
 end
 
-BackendInterfaceVersusPlayFab._fetch_matchmaking_session_data_cb = function (self, arg_19_1, arg_19_2, arg_19_3, arg_19_4, arg_19_5)
+BackendInterfaceVersusPlayFab._fetch_matchmaking_session_data_cb = function (self, external_cb, result, code, headers, data)
 	-- function 19
-	local var_19_0 = fn_3(arg_19_5)
+	local parsed_data = parse_response(data)
 
-	if not var_19_0.debug_msg then
-		Managers.chat:add_local_system_message(1, var_19_0.debug_msg, true)
+	if parsed_data.debug_msg then
+		Managers.chat:add_local_system_message(1, parsed_data.debug_msg, true)
 	end
 
-	if not (not arg_19_2 and arg_19_3 == 200) then
-		fn_2(var_19_0, arg_19_3, "Failed to fetch matchmaking session data. result: %s", tostring(arg_19_2))
+	if not result or code ~= 200 then
+		print_error(parsed_data, code, "Failed to fetch matchmaking session data. result: %s", tostring(result))
 		Crashify.print_exception("BackendInterfaceVersusPlayFab", "Failed to fetch matchmaking session data")
 
-		if not arg_19_1 then
-			arg_19_1(arg_19_2, arg_19_3, arg_19_4, nil)
+		if external_cb then
+			external_cb(result, code, headers, nil)
 		end
 
 		return
 	end
 
-	if var_19_0.status ~= self._matchmaking_status then
-		fn("Matchmaking session data fetched. matchmakingSessionId: %s, status: %s", var_19_0.matchmakingSessionId, var_19_0.status)
+	if parsed_data.status ~= self._matchmaking_status then
+		debug_printf("Matchmaking session data fetched. matchmakingSessionId: %s, status: %s", parsed_data.matchmakingSessionId, parsed_data.status)
 
-		self._matchmaking_status = var_19_0.status
+		self._matchmaking_status = parsed_data.status
 	end
 
-	if var_19_0.status == scripts_managers_backend_playfab_settings_flexmatch_queue_status.Succeeded then
+	if parsed_data.status == FlexmatchQueueStatus.Succeeded then
 		self._is_matchmaking = false
-	elseif var_19_0.status == scripts_managers_backend_playfab_settings_flexmatch_queue_status.Failed then
-		fn_2(var_19_0, arg_19_3, "Matchmaking changed to unwanted status '%s'. result: %s", var_19_0.status, tostring(arg_19_2))
-		Crashify.print_exception("BackendInterfaceVersusPlayFab", "Matchmaking changed to unwanted status '%s'", var_19_0.status)
+	elseif parsed_data.status == FlexmatchQueueStatus.Failed then
+		print_error(parsed_data, code, "Matchmaking changed to unwanted status '%s'. result: %s", parsed_data.status, tostring(result))
+		Crashify.print_exception("BackendInterfaceVersusPlayFab", "Matchmaking changed to unwanted status '%s'", parsed_data.status)
 	end
 
-	if not arg_19_1 then
-		arg_19_1(arg_19_2, arg_19_3, arg_19_4, var_19_0)
+	if external_cb then
+		external_cb(result, code, headers, parsed_data)
 	end
 end
 
@@ -337,45 +355,46 @@ BackendInterfaceVersusPlayFab.is_matchmaking = function (self)
 	return self._is_matchmaking
 end
 
-BackendInterfaceVersusPlayFab.request_matchmaking_ticket = function (self, arg_21_1, arg_21_2)
+BackendInterfaceVersusPlayFab.request_matchmaking_ticket = function (self, latency_list, external_cb)
 	-- function 21
-	fn("Requesting matchmaking ticket")
-	fassert(arg_21_2 ~= nil, "request_matchmaking_ticket is missing external_cb")
+	debug_printf("Requesting matchmaking ticket")
+	fassert(external_cb ~= nil, "request_matchmaking_ticket is missing external_cb")
 
-	local tbl = {
+	local request = {
 		FunctionName = "getMatchmakingQueueTicket",
 		FunctionParameter = {
 			alias_type = "mission",
 			matchmaking_type = "quickplay",
 			peer_id = Steam.user_id(),
-			latency_list = arg_21_1,
+			latency_list = latency_list,
 			network_hash = LobbySetup.network_hash()
 		}
 	}
-	local var_21_1 = callback(self, "request_matchmaking_ticket_cb", arg_21_2)
+	local success_callback = callback(self, "request_matchmaking_ticket_cb", external_cb)
+	local request_queue = self._backend_mirror:request_queue()
 
-	self._backend_mirror:request_queue():enqueue(tbl, var_21_1, true)
+	request_queue:enqueue(request, success_callback, true)
 end
 
-BackendInterfaceVersusPlayFab.request_matchmaking_ticket_cb = function (self, arg_22_1, arg_22_2)
+BackendInterfaceVersusPlayFab.request_matchmaking_ticket_cb = function (self, external_cb, result)
 	-- function 22
-	fn("Matchmaking ticket response")
+	debug_printf("Matchmaking ticket response")
 
-	local FunctionResult = arg_22_2.FunctionResult
+	local function_result = result.FunctionResult
 
-	if not FunctionResult.ticket then
-		self._base_url = FunctionResult.url
+	if function_result.ticket then
+		self._base_url = function_result.url
 	else
-		if type(FunctionResult) == "table" then
-			table.dump(FunctionResult, "BackendInterfaceVersusPlayFab", 5)
+		if type(function_result) == "table" then
+			table.dump(function_result, "BackendInterfaceVersusPlayFab", 5)
 		else
-			print("getMatchmakingQueueTicket result: %s", tostring(FunctionResult))
+			print("getMatchmakingQueueTicket result: %s", tostring(function_result))
 		end
 
 		Crashify.print_exception("BackendInterfaceVersusPlayFab", "Failed to get matchmaking queue ticket")
 	end
 
-	arg_22_1(FunctionResult)
+	external_cb(function_result)
 end
 
 BackendInterfaceVersusPlayFab.reset_fetched_data = function (self)
@@ -392,12 +411,12 @@ BackendInterfaceVersusPlayFab.get_game_session_data = function (self)
 	return self._game_session_data
 end
 
-BackendInterfaceVersusPlayFab.set_matchmaking_session_id = function (self, arg_25_1)
+BackendInterfaceVersusPlayFab.set_matchmaking_session_id = function (self, session_id)
 	-- function 25
 	assert(not DEDICATED_SERVER, "player function only")
 
-	self._matchmaking_session_id = arg_25_1
-	self._is_matchmaking = arg_25_1 ~= nil
+	self._matchmaking_session_id = session_id
+	self._is_matchmaking = session_id ~= nil
 end
 
 BackendInterfaceVersusPlayFab.get_matchmaking_session_id = function (self)
@@ -405,35 +424,44 @@ BackendInterfaceVersusPlayFab.get_matchmaking_session_id = function (self)
 	return self._matchmaking_session_id
 end
 
-BackendInterfaceVersusPlayFab.is_player_in_backfilling_data = function (self, arg_27_1)
+BackendInterfaceVersusPlayFab.is_player_in_backfilling_data = function (self, player_id)
 	-- function 27
-	return table.contains(self._backfilling_player_ids, arg_27_1)
+	return table.contains(self._backfilling_player_ids, player_id)
 end
 
-BackendInterfaceVersusPlayFab.matchmaking_enabled = function (arg_28_0, arg_28_1)
+BackendInterfaceVersusPlayFab.matchmaking_enabled = function (self, matchmaking_type)
 	-- function 28
-	local get_title_settings = Managers.backend:get_title_settings()
-	local versus = get_title_settings.versus
+	local backend_manager = Managers.backend
+	local title_settings = backend_manager:get_title_settings()
+	local versus = title_settings.versus
 
-	versus = not versus and get_title_settings.versus.matchmaking_settings
+	if versus then
+		-- Nothing
+	end
 
-	if not versus then
+	versus = title_settings.versus.matchmaking_settings
+
+	local matchmaking_settings = versus
+
+	::label_28_0::
+
+	if not matchmaking_settings then
 		return true
 	end
 
-	local var_28_2 = versus[arg_28_1]
+	local type_settings = matchmaking_settings[matchmaking_type]
 
-	if not var_28_2 then
+	if not type_settings then
 		return true
 	end
 
-	local enabled = var_28_2.enabled
+	local enabled = type_settings.enabled
 
 	if enabled == nil then
 		return true
 	end
 
-	local disabled_reason = var_28_2.disabled_reason
+	local reason = type_settings.disabled_reason
 
-	return enabled, disabled_reason
+	return enabled, reason
 end

@@ -1,22 +1,21 @@
 -- chunkname: @scripts/settings/equipment/weapon_templates/vs_packmaster_claw.lua
 
-local tbl = {
-	actions = {},
-	right_hand_attachment_node_linking = AttachmentNodeLinking.vs_packmaster_claw
-}
+local weapon_template = {}
 
-tbl.wield_anim = "idle"
-tbl.display_unit = "units/weapons/weapon_display/display_2h_weapon"
-tbl.buff_type = "MELEE_2H"
-tbl.weapon_type = "POLEARM"
-tbl.max_fatigue_points = 6
-tbl.dodge_count = 3
-tbl.block_angle = 90
-tbl.outer_block_angle = 360
-tbl.block_fatigue_point_multiplier = 0.5
-tbl.outer_block_fatigue_point_multiplier = 2
-tbl.sound_event_block_within_arc = "weapon_foley_blunt_1h_block_wood"
-tbl.buffs = {
+weapon_template.actions = {}
+weapon_template.right_hand_attachment_node_linking = AttachmentNodeLinking.vs_packmaster_claw
+weapon_template.wield_anim = "idle"
+weapon_template.display_unit = "units/weapons/weapon_display/display_2h_weapon"
+weapon_template.buff_type = "MELEE_2H"
+weapon_template.weapon_type = "POLEARM"
+weapon_template.max_fatigue_points = 6
+weapon_template.dodge_count = 3
+weapon_template.block_angle = 90
+weapon_template.outer_block_angle = 360
+weapon_template.block_fatigue_point_multiplier = 0.5
+weapon_template.outer_block_fatigue_point_multiplier = 2
+weapon_template.sound_event_block_within_arc = "weapon_foley_blunt_1h_block_wood"
+weapon_template.buffs = {
 	change_dodge_distance = {
 		external_optional_multiplier = 1.2
 	},
@@ -24,7 +23,7 @@ tbl.buffs = {
 		external_optional_multiplier = 1.2
 	}
 }
-tbl.attack_meta_data = {
+weapon_template.attack_meta_data = {
 	tap_attack = {
 		arc = 0
 	},
@@ -32,7 +31,7 @@ tbl.attack_meta_data = {
 		arc = 0
 	}
 }
-tbl.aim_assist_settings = {
+weapon_template.aim_assist_settings = {
 	max_range = 5,
 	no_aim_input_multiplier = 0,
 	vertical_only = true,
@@ -44,12 +43,12 @@ tbl.aim_assist_settings = {
 		skaven_slave = 0.5
 	}
 }
-tbl.tooltip_keywords = {
+weapon_template.tooltip_keywords = {
 	"weapon_keyword_high_damage",
 	"weapon_keyword_armour_piercing",
 	"weapon_keyword_shield_breaking"
 }
-tbl.tooltip_compare = {
+weapon_template.tooltip_compare = {
 	light = {
 		action_name = "action_one",
 		sub_action_name = "light_attack_left"
@@ -59,7 +58,7 @@ tbl.tooltip_compare = {
 		sub_action_name = "heavy_attack_left"
 	}
 }
-tbl.tooltip_detail = {
+weapon_template.tooltip_detail = {
 	light = {
 		action_name = "action_one",
 		sub_action_name = "default"
@@ -73,27 +72,27 @@ tbl.tooltip_detail = {
 		sub_action_name = "push"
 	}
 }
-tbl.wwise_dep_right_hand = {
+weapon_template.wwise_dep_right_hand = {
 	"wwise/one_handed_axes"
 }
 
-local clone = table.clone(tbl)
+local vs_packmaster_claw = table.clone(weapon_template)
 
-clone.crosshair_style = "dot"
+vs_packmaster_claw.crosshair_style = "dot"
 
-local clone_2 = table.clone(tbl)
+local vs_poison_wind_globadier_orb = table.clone(weapon_template)
 
-clone_2.right_hand_attachment_node_linking = AttachmentNodeLinking.vs_poison_wind_globadier_orb
-clone_2.crosshair_style = "dot"
+vs_poison_wind_globadier_orb.right_hand_attachment_node_linking = AttachmentNodeLinking.vs_poison_wind_globadier_orb
+vs_poison_wind_globadier_orb.crosshair_style = "dot"
 
-local clone_3 = table.clone(tbl)
+local vs_gutter_runner_claws = table.clone(weapon_template)
 
-clone_3.right_hand_attachment_node_linking = AttachmentNodeLinking.vs_gutter_runner_claws.right
-clone_3.left_hand_attachment_node_linking = AttachmentNodeLinking.vs_gutter_runner_claws.left
-clone_3.crosshair_style = "dot"
+vs_gutter_runner_claws.right_hand_attachment_node_linking = AttachmentNodeLinking.vs_gutter_runner_claws.right
+vs_gutter_runner_claws.left_hand_attachment_node_linking = AttachmentNodeLinking.vs_gutter_runner_claws.left
+vs_gutter_runner_claws.crosshair_style = "dot"
 
 return {
-	vs_packmaster_claw = clone,
-	vs_poison_wind_globadier_orb = clone_2,
-	vs_gutter_runner_claws = clone_3
+	vs_packmaster_claw = vs_packmaster_claw,
+	vs_poison_wind_globadier_orb = vs_poison_wind_globadier_orb,
+	vs_gutter_runner_claws = vs_gutter_runner_claws
 }

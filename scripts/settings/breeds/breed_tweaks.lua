@@ -4,7 +4,7 @@ require("foundation/scripts/util/math")
 
 BreedTweaks = {}
 
-local tbl = {
+local health_step_multipliers = {
 	1,
 	1,
 	1.5,
@@ -15,7 +15,7 @@ local tbl = {
 	7.5,
 	1
 }
-local tbl_2 = {
+local stagger_step_multipliers = {
 	1,
 	0.85,
 	1.4,
@@ -26,7 +26,7 @@ local tbl_2 = {
 	3.5,
 	0.85
 }
-local tbl_3 = {
+local elite_stagger_step_multipliers = {
 	1,
 	1,
 	1.7,
@@ -37,7 +37,7 @@ local tbl_3 = {
 	3.5,
 	1
 }
-local tbl_4 = {
+local mass_step_multipliers = {
 	1,
 	1,
 	1.7,
@@ -48,7 +48,7 @@ local tbl_4 = {
 	4.5,
 	1
 }
-local tbl_5 = {
+local elite_health_step_multipliers = {
 	1,
 	1,
 	1.5,
@@ -59,7 +59,7 @@ local tbl_5 = {
 	7.4,
 	1.5
 }
-local tbl_6 = {
+local elite_stagger_step_multipliers = {
 	1,
 	1,
 	1.7,
@@ -70,7 +70,7 @@ local tbl_6 = {
 	4,
 	1
 }
-local tbl_7 = {
+local elite_mass_step_multipliers = {
 	1,
 	1,
 	1.7,
@@ -81,7 +81,7 @@ local tbl_7 = {
 	4.5,
 	1
 }
-local tbl_8 = {
+local horde_health_step_multipliers = {
 	1,
 	1,
 	1.5,
@@ -92,7 +92,7 @@ local tbl_8 = {
 	6,
 	1
 }
-local tbl_9 = {
+local horde_stagger_step_multipliers = {
 	1,
 	1,
 	1.5,
@@ -103,7 +103,7 @@ local tbl_9 = {
 	3,
 	1
 }
-local tbl_10 = {
+local horde_mass_step_multipliers = {
 	1,
 	1,
 	1.5,
@@ -114,7 +114,7 @@ local tbl_10 = {
 	3,
 	1
 }
-local tbl_11 = {
+local boss_health_step_multipliers = {
 	1,
 	1,
 	1.5,
@@ -125,7 +125,7 @@ local tbl_11 = {
 	8,
 	1
 }
-local tbl_12 = {
+local event_lord_health_step_multipliers = {
 	1,
 	1,
 	1.5,
@@ -137,110 +137,111 @@ local tbl_12 = {
 	1
 }
 
-local function fn(arg_1_0)
+local function networkify_health(health_amount)
 	-- function 1
-	arg_1_0 = math.clamp(arg_1_0, 0, 8191.5)
+	health_amount = math.clamp(health_amount, 0, 8191.5)
 
-	local num = arg_1_0 % 1
-	local num_2 = math.round(num * 4) * 0.25
+	local decimal = health_amount % 1
+	local rounded_decimal = math.round(decimal * 4) * 0.25
 
-	return math.floor(arg_1_0) + num_2
+	return math.floor(health_amount) + rounded_decimal
 end
 
-local function fn_2(arg_2_0, arg_2_1)
+local function health_steps(value, step_multipliers)
 	-- function 2
-	local tbl = {}
+	local value_steps = {}
 
 	for i = 1, 9 do
-		local num = arg_2_0 * arg_2_1[i]
+		local step_value = value * step_multipliers[i]
+		local networkifyed_health = networkify_health(step_value)
 
-		tbl[i] = fn(num)
+		value_steps[i] = networkifyed_health
 	end
 
-	return tbl
+	return value_steps
 end
 
-local function fn_3(arg_3_0, arg_3_1)
+local function steps(value, step_multipliers)
 	-- function 3
-	local tbl = {}
+	local value_steps = {}
 
 	for i = 1, 9 do
-		local num = arg_3_0 * arg_3_1[i]
-		local num_2 = num % 1
-		local num_3 = math.round(num_2 * 4) * 0.25
+		local raw_value = value * step_multipliers[i]
+		local decimal = raw_value % 1
+		local rounded_decimal = math.round(decimal * 4) * 0.25
 
-		tbl[i] = math.floor(num) + num_3
+		value_steps[i] = math.floor(raw_value) + rounded_decimal
 	end
 
-	return tbl
+	return value_steps
 end
 
 BreedTweaks.max_health = {
-	slave_rat = fn_2(4, tbl_8),
-	fanatic = fn_2(8, tbl_8),
-	ungor = fn_2(6, tbl_8),
-	clan_rat = fn_2(8, tbl),
-	clan_rat_with_shield = fn_2(8, tbl),
-	marauder = fn_2(16, tbl),
-	gor = fn_2(12, tbl),
-	berzerker = fn_2(18, tbl_5),
-	plague_monk = fn_2(18, tbl_5),
-	stormvermin = fn_2(16, tbl_5),
-	stormvermin_with_shield = fn_2(16, tbl_5),
-	raider = fn_2(30, tbl_5),
-	bestigor = fn_2(20, tbl_5),
-	chaos_warrior = fn_2(46, tbl_5),
-	chaos_bulwark = fn_2(56, tbl_5),
-	chaos_spawn = fn_2(800, tbl_11),
-	chaos_troll = fn_2(600, tbl_11),
-	chaos_troll_chief = fn_2(600, tbl_12),
-	rat_ogre = fn_2(800, tbl_11),
-	stormfiend = fn_2(600, tbl_11),
-	corruptor_sorcerer = fn_2(20, tbl),
-	vortex_sorcerer = fn_2(20, tbl),
-	warpfire_thrower = fn_2(12, tbl),
-	globadier = fn_2(20, tbl),
-	gutter_runner = fn_2(12, tbl),
-	pack_master = fn_2(25, tbl),
-	ratling_gunner = fn_2(12, tbl),
-	standard_bearer = fn_2(20, tbl),
-	stormvermin_warlord = fn_2(500, tbl_11),
-	exalted_champion = fn_2(700, tbl_11),
-	exalted_sorcerer = fn_2(1000, tbl_11),
-	norsca_champion = fn_2(600, tbl_11),
-	grey_seer = fn_2(500, tbl_11),
-	stormfiend_boss = fn_2(600, tbl_11)
+	slave_rat = health_steps(4, horde_health_step_multipliers),
+	fanatic = health_steps(8, horde_health_step_multipliers),
+	ungor = health_steps(6, horde_health_step_multipliers),
+	clan_rat = health_steps(8, health_step_multipliers),
+	clan_rat_with_shield = health_steps(8, health_step_multipliers),
+	marauder = health_steps(16, health_step_multipliers),
+	gor = health_steps(12, health_step_multipliers),
+	berzerker = health_steps(18, elite_health_step_multipliers),
+	plague_monk = health_steps(18, elite_health_step_multipliers),
+	stormvermin = health_steps(16, elite_health_step_multipliers),
+	stormvermin_with_shield = health_steps(16, elite_health_step_multipliers),
+	raider = health_steps(30, elite_health_step_multipliers),
+	bestigor = health_steps(20, elite_health_step_multipliers),
+	chaos_warrior = health_steps(46, elite_health_step_multipliers),
+	chaos_bulwark = health_steps(56, elite_health_step_multipliers),
+	chaos_spawn = health_steps(800, boss_health_step_multipliers),
+	chaos_troll = health_steps(600, boss_health_step_multipliers),
+	chaos_troll_chief = health_steps(600, event_lord_health_step_multipliers),
+	rat_ogre = health_steps(800, boss_health_step_multipliers),
+	stormfiend = health_steps(600, boss_health_step_multipliers),
+	corruptor_sorcerer = health_steps(20, health_step_multipliers),
+	vortex_sorcerer = health_steps(20, health_step_multipliers),
+	warpfire_thrower = health_steps(12, health_step_multipliers),
+	globadier = health_steps(20, health_step_multipliers),
+	gutter_runner = health_steps(12, health_step_multipliers),
+	pack_master = health_steps(25, health_step_multipliers),
+	ratling_gunner = health_steps(12, health_step_multipliers),
+	standard_bearer = health_steps(20, health_step_multipliers),
+	stormvermin_warlord = health_steps(500, boss_health_step_multipliers),
+	exalted_champion = health_steps(700, boss_health_step_multipliers),
+	exalted_sorcerer = health_steps(1000, boss_health_step_multipliers),
+	norsca_champion = health_steps(600, boss_health_step_multipliers),
+	grey_seer = health_steps(500, boss_health_step_multipliers),
+	stormfiend_boss = health_steps(600, boss_health_step_multipliers)
 }
 BreedTweaks.diff_stagger_resist = {
-	slave_rat = fn_3(1, tbl_2),
-	fanatic = fn_3(1.4, tbl_2),
-	ungor = fn_3(1.3, tbl_2),
-	clan_rat = fn_3(2.1, tbl_2),
-	gor = fn_3(2.4, tbl_2),
-	marauder = fn_3(2.65, tbl_2),
-	stormvermin = fn_3(2.25, tbl_6),
-	bestigor = fn_3(3.25, tbl_6),
-	raider = fn_3(3, tbl_6),
-	warrior = fn_3(4.8, tbl_6),
-	berzerker = fn_3(2.7, tbl_6),
-	plague_monk = fn_3(3, tbl_6),
-	packmaster = fn_3(4, tbl_6),
-	ratling_gunner = fn_3(2.5, tbl_6),
-	sorcerer = fn_3(2.7, tbl_6)
+	slave_rat = steps(1, stagger_step_multipliers),
+	fanatic = steps(1.4, stagger_step_multipliers),
+	ungor = steps(1.3, stagger_step_multipliers),
+	clan_rat = steps(2.1, stagger_step_multipliers),
+	gor = steps(2.4, stagger_step_multipliers),
+	marauder = steps(2.65, stagger_step_multipliers),
+	stormvermin = steps(2.25, elite_stagger_step_multipliers),
+	bestigor = steps(3.25, elite_stagger_step_multipliers),
+	raider = steps(3, elite_stagger_step_multipliers),
+	warrior = steps(4.8, elite_stagger_step_multipliers),
+	berzerker = steps(2.7, elite_stagger_step_multipliers),
+	plague_monk = steps(3, elite_stagger_step_multipliers),
+	packmaster = steps(4, elite_stagger_step_multipliers),
+	ratling_gunner = steps(2.5, elite_stagger_step_multipliers),
+	sorcerer = steps(2.7, elite_stagger_step_multipliers)
 }
 BreedTweaks.stagger_reduction = {
-	marauder = fn_3(0.2, tbl_2),
-	gor = fn_3(0.1, tbl_2),
-	stormvermin = fn_3(1, tbl_6),
-	raider = fn_3(0.9, tbl_6),
-	warrior = fn_3(1.8, tbl_6),
-	bestigor = fn_3(1, tbl_6),
-	berzerker = fn_3(0.75, tbl_6),
-	plague_monk = fn_3(1.35, tbl_6),
-	sorcerer = fn_3(2, tbl_6),
-	packmaster = fn_3(2, tbl_6),
-	ratling_gunner = fn_3(1, tbl_6),
-	stormvermin_warlord = fn_3(1.35, tbl_6)
+	marauder = steps(0.2, stagger_step_multipliers),
+	gor = steps(0.1, stagger_step_multipliers),
+	stormvermin = steps(1, elite_stagger_step_multipliers),
+	raider = steps(0.9, elite_stagger_step_multipliers),
+	warrior = steps(1.8, elite_stagger_step_multipliers),
+	bestigor = steps(1, elite_stagger_step_multipliers),
+	berzerker = steps(0.75, elite_stagger_step_multipliers),
+	plague_monk = steps(1.35, elite_stagger_step_multipliers),
+	sorcerer = steps(2, elite_stagger_step_multipliers),
+	packmaster = steps(2, elite_stagger_step_multipliers),
+	ratling_gunner = steps(1, elite_stagger_step_multipliers),
+	stormvermin_warlord = steps(1.35, elite_stagger_step_multipliers)
 }
 BreedTweaks.stagger_duration = {
 	slave_rat = {
@@ -399,21 +400,21 @@ BreedTweaks.stagger_duration_difficulty_mod = {
 	}
 }
 BreedTweaks.hit_mass_counts = {
-	slave_rat = fn_3(0.8, tbl_4),
-	fanatic = fn_3(1.25, tbl_4),
-	ungor = fn_3(1, tbl_4),
-	clan_rat = fn_3(1.5, tbl_4),
-	clan_rat_shield_block = fn_3(1.5, tbl_4),
-	marauder = fn_3(3, tbl_4),
-	gor = fn_3(2.75, tbl_4),
-	stormvermin = fn_3(5, tbl_4),
-	stormvermin_shield_block = fn_3(8, tbl_4),
-	bestigor = fn_3(8, tbl_4),
-	raider = fn_3(5, tbl_4),
-	berzerker = fn_3(3, tbl_4),
-	marauder_shield_block = fn_3(5, tbl_4),
-	plague_monk = fn_3(2.5, tbl_4),
-	sorcerer = fn_3(8, tbl_4)
+	slave_rat = steps(0.8, mass_step_multipliers),
+	fanatic = steps(1.25, mass_step_multipliers),
+	ungor = steps(1, mass_step_multipliers),
+	clan_rat = steps(1.5, mass_step_multipliers),
+	clan_rat_shield_block = steps(1.5, mass_step_multipliers),
+	marauder = steps(3, mass_step_multipliers),
+	gor = steps(2.75, mass_step_multipliers),
+	stormvermin = steps(5, mass_step_multipliers),
+	stormvermin_shield_block = steps(8, mass_step_multipliers),
+	bestigor = steps(8, mass_step_multipliers),
+	raider = steps(5, mass_step_multipliers),
+	berzerker = steps(3, mass_step_multipliers),
+	marauder_shield_block = steps(5, mass_step_multipliers),
+	plague_monk = steps(2.5, mass_step_multipliers),
+	sorcerer = steps(8, mass_step_multipliers)
 }
 BreedTweaks.difficulty_damage = {
 	beastmen_roamer_attack = {

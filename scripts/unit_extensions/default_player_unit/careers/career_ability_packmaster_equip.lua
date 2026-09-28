@@ -2,43 +2,44 @@
 
 CareerAbilityPackmasterEquip = class(CareerAbilityPackmasterEquip, CareerAbilityDarkPactBase)
 
-CareerAbilityPackmasterEquip.init = function (self, arg_1_1, arg_1_2, arg_1_3, arg_1_4)
+CareerAbilityPackmasterEquip.init = function (self, extension_init_context, unit, extension_init_data, ability_data)
 	-- function 1
-	self.super.init(self, arg_1_1, arg_1_2, arg_1_3, arg_1_4)
+	self.super.init(self, extension_init_context, unit, extension_init_data, ability_data)
 
 	self._ability_default_startup_delay_time = self._ability_data.startup_delay_time
 
 	self:freeze()
 end
 
-CareerAbilityPackmasterEquip.update = function (self, arg_2_1, arg_2_2, arg_2_3, arg_2_4, arg_2_5)
+CareerAbilityPackmasterEquip.update = function (self, unit, input, dt, context, t)
 	-- function 2
-	if not self._freezed then
+	if self._freezed then
 		return
 	end
 
 	if not self._equip_ready then
 		if not self._equip_startup_delay_time then
-			if not self:_ability_available() then
-				self._equip_startup_delay_time = arg_2_5 + self._ability_default_startup_delay_time
+			if self:_ability_available() then
+				self._equip_startup_delay_time = t + self._ability_default_startup_delay_time
 			end
-		elseif not (self._equip_ready or not (arg_2_5 >= self._equip_startup_delay_time)) then
+		elseif not self._equip_ready and t >= self._equip_startup_delay_time then
 			self._equip_ready = true
 		end
 	end
 
-	local _equip_startup_delay_time = self._equip_startup_delay_time
+	local startup_delay_time = self._equip_startup_delay_time
 
-	if not _equip_startup_delay_time then
-		local _ability_default_startup_delay_time = self._ability_default_startup_delay_time
+	if startup_delay_time then
+		local default_delay_time = self._ability_default_startup_delay_time
+		local fraction = math.clamp((startup_delay_time - t) / default_delay_time, 0, 1)
 
-		self._startup_delay_fraction = math.clamp((_equip_startup_delay_time - arg_2_5) / _ability_default_startup_delay_time, 0, 1)
+		self._startup_delay_fraction = fraction
 	end
 end
 
 CareerAbilityPackmasterEquip.was_triggered = function (self)
 	-- function 3
-	if not self:_ability_available() and not self._equip_ready then
+	if self:_ability_available() and self._equip_ready then
 		self:_start()
 
 		return true

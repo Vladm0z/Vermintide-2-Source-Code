@@ -1,36 +1,49 @@
 -- chunkname: @scripts/ui/round_end_emblem_popup/round_end_emblem_popup_ui_definitions.lua
 
-local num = 1920
-local num_2 = 1080
-local str = "emblem_gold_back"
-local size = UIAtlasHelper.get_atlas_settings_by_texture_name(str).size
-local str_2 = "emblem_gold_left_arm_inner"
-local size_2 = UIAtlasHelper.get_atlas_settings_by_texture_name(str_2).size
-local str_3 = "emblem_gold_right_arm_inner"
-local size_3 = UIAtlasHelper.get_atlas_settings_by_texture_name(str_3).size
-local str_4 = "emblem_gold_left_arm_outer"
-local size_4 = UIAtlasHelper.get_atlas_settings_by_texture_name(str_4).size
-local str_5 = "emblem_gold_right_arm_outer"
-local size_5 = UIAtlasHelper.get_atlas_settings_by_texture_name(str_5).size
-local str_6 = "emblem_gold_left_inner"
-local size_6 = UIAtlasHelper.get_atlas_settings_by_texture_name(str_6).size
-local str_7 = "emblem_gold_right_inner"
-local size_7 = UIAtlasHelper.get_atlas_settings_by_texture_name(str_7).size
-local str_8 = "emblem_gold_left_outer"
-local size_8 = UIAtlasHelper.get_atlas_settings_by_texture_name(str_8).size
-local str_9 = "emblem_gold_right_outer"
-local size_9 = UIAtlasHelper.get_atlas_settings_by_texture_name(str_9).size
-local str_10 = "emblem_gold_middle"
-local size_10 = UIAtlasHelper.get_atlas_settings_by_texture_name(str_10).size
-local str_11 = "emblem_gold_top"
-local size_11 = UIAtlasHelper.get_atlas_settings_by_texture_name(str_11).size
-local str_12 = "emblem_smoke_big"
-local size_12 = UIAtlasHelper.get_atlas_settings_by_texture_name(str_12).size
-local str_13 = "emblem_smoke_middle"
-local size_13 = UIAtlasHelper.get_atlas_settings_by_texture_name(str_13).size
-local str_14 = "emblem_smoke_side"
-local size_14 = UIAtlasHelper.get_atlas_settings_by_texture_name(str_14).size
-local tbl = {
+local SIZE_X, SIZE_Y = 1920, 1080
+local background_texture = "emblem_gold_back"
+local background_settings = UIAtlasHelper.get_atlas_settings_by_texture_name(background_texture)
+local background_size = background_settings.size
+local arm_inner_left_texture = "emblem_gold_left_arm_inner"
+local arm_inner_left_settings = UIAtlasHelper.get_atlas_settings_by_texture_name(arm_inner_left_texture)
+local arm_inner_left_size = arm_inner_left_settings.size
+local arm_inner_right_texture = "emblem_gold_right_arm_inner"
+local arm_inner_right_settings = UIAtlasHelper.get_atlas_settings_by_texture_name(arm_inner_right_texture)
+local arm_inner_right_size = arm_inner_right_settings.size
+local arm_outer_left_texture = "emblem_gold_left_arm_outer"
+local arm_outer_left_settings = UIAtlasHelper.get_atlas_settings_by_texture_name(arm_outer_left_texture)
+local arm_outer_left_size = arm_outer_left_settings.size
+local arm_outer_right_texture = "emblem_gold_right_arm_outer"
+local arm_outer_right_settings = UIAtlasHelper.get_atlas_settings_by_texture_name(arm_outer_right_texture)
+local arm_outer_right_size = arm_outer_right_settings.size
+local inner_left_texture = "emblem_gold_left_inner"
+local inner_left_settings = UIAtlasHelper.get_atlas_settings_by_texture_name(inner_left_texture)
+local inner_left_size = inner_left_settings.size
+local inner_right_texture = "emblem_gold_right_inner"
+local inner_right_settings = UIAtlasHelper.get_atlas_settings_by_texture_name(inner_right_texture)
+local inner_right_size = inner_right_settings.size
+local outer_left_texture = "emblem_gold_left_outer"
+local outer_left_settings = UIAtlasHelper.get_atlas_settings_by_texture_name(outer_left_texture)
+local outer_left_size = outer_left_settings.size
+local outer_right_texture = "emblem_gold_right_outer"
+local outer_right_settings = UIAtlasHelper.get_atlas_settings_by_texture_name(outer_right_texture)
+local outer_right_size = outer_right_settings.size
+local skull_texture = "emblem_gold_middle"
+local skull_settings = UIAtlasHelper.get_atlas_settings_by_texture_name(skull_texture)
+local skull_size = skull_settings.size
+local medalion_texture = "emblem_gold_top"
+local medalion_settings = UIAtlasHelper.get_atlas_settings_by_texture_name(medalion_texture)
+local medalion_size = medalion_settings.size
+local smoke_background_texture = "emblem_smoke_big"
+local smoke_background_settings = UIAtlasHelper.get_atlas_settings_by_texture_name(smoke_background_texture)
+local smoke_background_size = smoke_background_settings.size
+local smoke_skull_texture = "emblem_smoke_middle"
+local smoke_skull_settings = UIAtlasHelper.get_atlas_settings_by_texture_name(smoke_skull_texture)
+local smoke_skull_size = smoke_skull_settings.size
+local smoke_wing_texture = "emblem_smoke_side"
+local smoke_wing_settings = UIAtlasHelper.get_atlas_settings_by_texture_name(smoke_wing_texture)
+local smoke_wing_size = smoke_wing_settings.size
+local scenegraph_definition = {
 	screen = {
 		scale = "fit",
 		position = {
@@ -39,8 +52,8 @@ local tbl = {
 			UILayer.end_screen_banner
 		},
 		size = {
-			num,
-			num_2
+			SIZE_X,
+			SIZE_Y
 		}
 	},
 	pivot = {
@@ -94,7 +107,7 @@ local tbl = {
 			0,
 			1
 		},
-		size = size
+		size = background_size
 	},
 	smoke_background = {
 		vertical_alignment = "center",
@@ -105,7 +118,7 @@ local tbl = {
 			0,
 			0
 		},
-		size = size_12
+		size = smoke_background_size
 	},
 	arm_inner_left = {
 		vertical_alignment = "bottom",
@@ -116,7 +129,7 @@ local tbl = {
 			-7,
 			4
 		},
-		size = size_2
+		size = arm_inner_left_size
 	},
 	arm_inner_right = {
 		vertical_alignment = "bottom",
@@ -127,7 +140,7 @@ local tbl = {
 			-7,
 			4
 		},
-		size = size_3
+		size = arm_inner_right_size
 	},
 	smoke_wing_left = {
 		vertical_alignment = "top",
@@ -138,7 +151,7 @@ local tbl = {
 			0,
 			-1
 		},
-		size = size_14
+		size = smoke_wing_size
 	},
 	smoke_wing_right = {
 		vertical_alignment = "top",
@@ -149,29 +162,29 @@ local tbl = {
 			0,
 			-1
 		},
-		size = size_14
+		size = smoke_wing_size
 	},
 	arm_outer_left = {
 		vertical_alignment = "bottom",
 		parent = "pivot",
 		horizontal_alignment = "right",
 		position = {
-			-(size_4[1] - 24),
-			size_4[2] + 25,
+			-(arm_outer_left_size[1] - 24),
+			arm_outer_left_size[2] + 25,
 			5
 		},
-		size = size_4
+		size = arm_outer_left_size
 	},
 	arm_outer_right = {
 		vertical_alignment = "bottom",
 		parent = "pivot",
 		horizontal_alignment = "left",
 		position = {
-			size_5[1] - 24,
-			size_5[2] + 25,
+			arm_outer_right_size[1] - 24,
+			arm_outer_right_size[2] + 25,
 			5
 		},
-		size = size_5
+		size = arm_outer_right_size
 	},
 	inner_left = {
 		vertical_alignment = "top",
@@ -182,7 +195,7 @@ local tbl = {
 			-26,
 			-3
 		},
-		size = size_6
+		size = inner_left_size
 	},
 	inner_right = {
 		vertical_alignment = "top",
@@ -193,7 +206,7 @@ local tbl = {
 			-26,
 			-3
 		},
-		size = size_7
+		size = inner_right_size
 	},
 	outer_left = {
 		vertical_alignment = "top",
@@ -204,7 +217,7 @@ local tbl = {
 			-28,
 			-3
 		},
-		size = size_8
+		size = outer_left_size
 	},
 	outer_right = {
 		vertical_alignment = "top",
@@ -215,7 +228,7 @@ local tbl = {
 			-28,
 			-3
 		},
-		size = size_9
+		size = outer_right_size
 	},
 	skull = {
 		vertical_alignment = "center",
@@ -226,7 +239,7 @@ local tbl = {
 			12,
 			8
 		},
-		size = size_10
+		size = skull_size
 	},
 	smoke_skull = {
 		vertical_alignment = "top",
@@ -237,7 +250,7 @@ local tbl = {
 			0,
 			7
 		},
-		size = size_13
+		size = smoke_skull_size
 	},
 	medalion = {
 		vertical_alignment = "center",
@@ -248,10 +261,10 @@ local tbl = {
 			86,
 			9
 		},
-		size = size_11
+		size = medalion_size
 	}
 }
-local tbl_2 = {
+local title_text_style = {
 	word_wrap = true,
 	font_size = 52,
 	localize = false,
@@ -266,7 +279,7 @@ local tbl_2 = {
 		2
 	}
 }
-local tbl_3 = {
+local sub_title_text_style = {
 	font_size = 24,
 	upper_case = false,
 	localize = false,
@@ -288,36 +301,50 @@ local tbl_3 = {
 	}
 }
 
-local function fn(arg_1_0)
+local function create_emblem_widget(tier_name)
 	-- function 1
-	local str = "emblem_" .. arg_1_0 .. "_back"
-	local size = UIAtlasHelper.get_atlas_settings_by_texture_name(str).size
-	local str_2 = "emblem_" .. arg_1_0 .. "_left_arm_inner"
-	local size_2 = UIAtlasHelper.get_atlas_settings_by_texture_name(str_2).size
-	local str_3 = "emblem_" .. arg_1_0 .. "_right_arm_inner"
-	local size_3 = UIAtlasHelper.get_atlas_settings_by_texture_name(str_3).size
-	local str_4 = "emblem_" .. arg_1_0 .. "_left_arm_outer"
-	local size_4 = UIAtlasHelper.get_atlas_settings_by_texture_name(str_4).size
-	local str_5 = "emblem_" .. arg_1_0 .. "_right_arm_outer"
-	local size_5 = UIAtlasHelper.get_atlas_settings_by_texture_name(str_5).size
-	local str_6 = "emblem_" .. arg_1_0 .. "_left_inner"
-	local size_6 = UIAtlasHelper.get_atlas_settings_by_texture_name(str_6).size
-	local str_7 = "emblem_" .. arg_1_0 .. "_right_inner"
-	local size_7 = UIAtlasHelper.get_atlas_settings_by_texture_name(str_7).size
-	local str_8 = "emblem_" .. arg_1_0 .. "_left_outer"
-	local size_8 = UIAtlasHelper.get_atlas_settings_by_texture_name(str_8).size
-	local str_9 = "emblem_" .. arg_1_0 .. "_right_outer"
-	local size_9 = UIAtlasHelper.get_atlas_settings_by_texture_name(str_9).size
-	local str_10 = "emblem_" .. arg_1_0 .. "_middle"
-	local size_10 = UIAtlasHelper.get_atlas_settings_by_texture_name(str_10).size
-	local str_11 = "emblem_" .. arg_1_0 .. "_top"
-	local size_11 = UIAtlasHelper.get_atlas_settings_by_texture_name(str_11).size
-	local str_12 = "emblem_smoke_big"
-	local size_12 = UIAtlasHelper.get_atlas_settings_by_texture_name(str_12).size
-	local str_13 = "emblem_smoke_middle"
-	local size_13 = UIAtlasHelper.get_atlas_settings_by_texture_name(str_13).size
-	local str_14 = "emblem_smoke_side"
-	local size_14 = UIAtlasHelper.get_atlas_settings_by_texture_name(str_14).size
+	local background_texture = "emblem_" .. tier_name .. "_back"
+	local background_settings = UIAtlasHelper.get_atlas_settings_by_texture_name(background_texture)
+	local background_size = background_settings.size
+	local arm_inner_left_texture = "emblem_" .. tier_name .. "_left_arm_inner"
+	local arm_inner_left_settings = UIAtlasHelper.get_atlas_settings_by_texture_name(arm_inner_left_texture)
+	local arm_inner_left_size = arm_inner_left_settings.size
+	local arm_inner_right_texture = "emblem_" .. tier_name .. "_right_arm_inner"
+	local arm_inner_right_settings = UIAtlasHelper.get_atlas_settings_by_texture_name(arm_inner_right_texture)
+	local arm_inner_right_size = arm_inner_right_settings.size
+	local arm_outer_left_texture = "emblem_" .. tier_name .. "_left_arm_outer"
+	local arm_outer_left_settings = UIAtlasHelper.get_atlas_settings_by_texture_name(arm_outer_left_texture)
+	local arm_outer_left_size = arm_outer_left_settings.size
+	local arm_outer_right_texture = "emblem_" .. tier_name .. "_right_arm_outer"
+	local arm_outer_right_settings = UIAtlasHelper.get_atlas_settings_by_texture_name(arm_outer_right_texture)
+	local arm_outer_right_size = arm_outer_right_settings.size
+	local inner_left_texture = "emblem_" .. tier_name .. "_left_inner"
+	local inner_left_settings = UIAtlasHelper.get_atlas_settings_by_texture_name(inner_left_texture)
+	local inner_left_size = inner_left_settings.size
+	local inner_right_texture = "emblem_" .. tier_name .. "_right_inner"
+	local inner_right_settings = UIAtlasHelper.get_atlas_settings_by_texture_name(inner_right_texture)
+	local inner_right_size = inner_right_settings.size
+	local outer_left_texture = "emblem_" .. tier_name .. "_left_outer"
+	local outer_left_settings = UIAtlasHelper.get_atlas_settings_by_texture_name(outer_left_texture)
+	local outer_left_size = outer_left_settings.size
+	local outer_right_texture = "emblem_" .. tier_name .. "_right_outer"
+	local outer_right_settings = UIAtlasHelper.get_atlas_settings_by_texture_name(outer_right_texture)
+	local outer_right_size = outer_right_settings.size
+	local skull_texture = "emblem_" .. tier_name .. "_middle"
+	local skull_settings = UIAtlasHelper.get_atlas_settings_by_texture_name(skull_texture)
+	local skull_size = skull_settings.size
+	local medalion_texture = "emblem_" .. tier_name .. "_top"
+	local medalion_settings = UIAtlasHelper.get_atlas_settings_by_texture_name(medalion_texture)
+	local medalion_size = medalion_settings.size
+	local smoke_background_texture = "emblem_smoke_big"
+	local smoke_background_settings = UIAtlasHelper.get_atlas_settings_by_texture_name(smoke_background_texture)
+	local smoke_background_size = smoke_background_settings.size
+	local smoke_skull_texture = "emblem_smoke_middle"
+	local smoke_skull_settings = UIAtlasHelper.get_atlas_settings_by_texture_name(smoke_skull_texture)
+	local smoke_skull_size = smoke_skull_settings.size
+	local smoke_wing_texture = "emblem_smoke_side"
+	local smoke_wing_settings = UIAtlasHelper.get_atlas_settings_by_texture_name(smoke_wing_texture)
+	local smoke_wing_size = smoke_wing_settings.size
 
 	return {
 		scenegraph_id = "pivot",
@@ -403,9 +430,9 @@ local function fn(arg_1_0)
 			}
 		},
 		content = {
-			skull = str_10,
-			medalion = str_11,
-			background = str,
+			skull = skull_texture,
+			medalion = medalion_texture,
+			background = background_texture,
 			smoke_wing = {
 				uvs = {
 					{
@@ -417,18 +444,18 @@ local function fn(arg_1_0)
 						1
 					}
 				},
-				texture_id = str_14
+				texture_id = smoke_wing_texture
 			},
-			smoke_skull = str_13,
-			smoke_background = str_12,
-			outer_left = str_8,
-			outer_right = str_9,
-			inner_left = str_6,
-			inner_right = str_7,
-			arm_inner_left = str_2,
-			arm_inner_right = str_3,
-			arm_outer_left = str_4,
-			arm_outer_right = str_5
+			smoke_skull = smoke_skull_texture,
+			smoke_background = smoke_background_texture,
+			outer_left = outer_left_texture,
+			outer_right = outer_right_texture,
+			inner_left = inner_left_texture,
+			inner_right = inner_right_texture,
+			arm_inner_left = arm_inner_left_texture,
+			arm_inner_right = arm_inner_right_texture,
+			arm_outer_left = arm_outer_left_texture,
+			arm_outer_right = arm_outer_right_texture
 		},
 		style = {
 			smoke_background = {
@@ -540,10 +567,10 @@ local function fn(arg_1_0)
 					1
 				},
 				pivot = {
-					size_8[1],
-					size_8[2]
+					outer_left_size[1],
+					outer_left_size[2]
 				},
-				texture_size = size_8,
+				texture_size = outer_left_size,
 				color = {
 					255,
 					255,
@@ -563,9 +590,9 @@ local function fn(arg_1_0)
 				},
 				pivot = {
 					0,
-					size_9[2]
+					outer_right_size[2]
 				},
-				texture_size = size_9,
+				texture_size = outer_right_size,
 				color = {
 					255,
 					255,
@@ -584,10 +611,10 @@ local function fn(arg_1_0)
 					1
 				},
 				pivot = {
-					size_6[1],
+					inner_left_size[1],
 					0
 				},
-				texture_size = size_6,
+				texture_size = inner_left_size,
 				color = {
 					255,
 					255,
@@ -609,7 +636,7 @@ local function fn(arg_1_0)
 					0,
 					0
 				},
-				texture_size = size_7,
+				texture_size = inner_right_size,
 				color = {
 					255,
 					255,
@@ -628,10 +655,10 @@ local function fn(arg_1_0)
 					1
 				},
 				pivot = {
-					size_2[1],
+					arm_inner_left_size[1],
 					0
 				},
-				texture_size = size_2,
+				texture_size = arm_inner_left_size,
 				color = {
 					255,
 					255,
@@ -653,7 +680,7 @@ local function fn(arg_1_0)
 					0,
 					0
 				},
-				texture_size = size_3,
+				texture_size = arm_inner_right_size,
 				color = {
 					255,
 					255,
@@ -675,7 +702,7 @@ local function fn(arg_1_0)
 					123,
 					31
 				},
-				texture_size = size_4,
+				texture_size = arm_outer_left_size,
 				color = {
 					255,
 					255,
@@ -694,10 +721,10 @@ local function fn(arg_1_0)
 					1
 				},
 				pivot = {
-					size_5[1] - 123,
+					arm_outer_right_size[1] - 123,
 					31
 				},
-				texture_size = size_5,
+				texture_size = arm_outer_right_size,
 				color = {
 					255,
 					255,
@@ -714,194 +741,210 @@ local function fn(arg_1_0)
 	}
 end
 
-local tbl_4 = {
-	title_title = UIWidgets.create_simple_text("", "title_title", nil, nil, tbl_2),
-	sub_title_text = UIWidgets.create_simple_text(Localize("interaction_weave_leaderboard"), "sub_title_text", nil, nil, tbl_3)
+local widget_definitions = {
+	title_title = UIWidgets.create_simple_text("", "title_title", nil, nil, title_text_style),
+	sub_title_text = UIWidgets.create_simple_text(Localize("interaction_weave_leaderboard"), "sub_title_text", nil, nil, sub_title_text_style)
 }
 
-local function fn_2(arg_2_0)
+local function ease_elastic(t)
 	-- function 2
-	local num = 1.70158
-	local num_2 = 0
-	local num_3 = 1
+	local s = 1.70158
+	local p = 0
+	local a = 1
 
-	if arg_2_0 == 0 then
+	if t == 0 then
 		return 0
 	end
 
-	if arg_2_0 == 1 then
+	if t == 1 then
 		return 1
 	end
 
-	if num_2 == 0 then
-		num_2 = 0.3
+	if p == 0 then
+		p = 0.3
 	end
 
-	if num_3 < 1 then
-		num_3 = 1
-		num = num_2 / 4
+	if a < 1 then
+		a = 1
+		s = p / 4
 	else
-		num = num_2 / (2 * math.pi) * math.asin(1 / num_3)
+		s = p / (2 * math.pi) * math.asin(1 / a)
 	end
 
-	return num_3 * math.pow(2, -40 * arg_2_0) * math.sin((arg_2_0 * 1 - num) * (2 * math.pi) / num_2) + 1
+	return a * math.pow(2, -40 * t) * math.sin((t * 1 - s) * (2 * math.pi) / p) + 1
 end
 
-local tbl_5 = {
+local animations = {
 	present_entry = {
 		{
 			name = "init",
 			start_progress = 0,
 			end_progress = 0.1,
-			init = function (self, arg_3_1, arg_3_2, arg_3_3)
+			init = function (ui_scenegraph, scenegraph_definition, widgets, params)
 				-- function 3
-				local style = arg_3_2.emblem.style
-				local num = 40
-				local num_2 = -100
-				local num_3 = 50
-				local arm_inner_left = style.arm_inner_left
+				local emblem = widgets.emblem
+				local style = emblem.style
+				local width = 40
+				local height = -100
+				local degrees = 50
+				local style_name = "arm_inner_left"
+				local pass_style = style[style_name]
 
-				if not arm_inner_left then
-					local scenegraph_id = arm_inner_left.scenegraph_id
-					local local_position = self[scenegraph_id].local_position
-					local position = arg_3_1[scenegraph_id].position
+				if pass_style then
+					local scenegraph_id = pass_style.scenegraph_id
+					local position = ui_scenegraph[scenegraph_id].local_position
+					local default_position = scenegraph_definition[scenegraph_id].position
 
-					local_position[1] = position[1]
-					local_position[2] = position[2] + num_2
-					arm_inner_left.angle = math.degrees_to_radians(num_3)
-					arm_inner_left.color[1] = 0
+					position[1] = default_position[1]
+					position[2] = default_position[2] + height
+					pass_style.angle = math.degrees_to_radians(degrees)
+					pass_style.color[1] = 0
 				end
 
-				local arm_inner_right = style.arm_inner_right
+				local style_name = "arm_inner_right"
+				local pass_style = style[style_name]
 
-				if not arm_inner_right then
-					local scenegraph_id_2 = arm_inner_right.scenegraph_id
-					local local_position_2 = self[scenegraph_id_2].local_position
-					local position_2 = arg_3_1[scenegraph_id_2].position
+				if pass_style then
+					local scenegraph_id = pass_style.scenegraph_id
+					local position = ui_scenegraph[scenegraph_id].local_position
+					local default_position = scenegraph_definition[scenegraph_id].position
 
-					local_position_2[1] = position_2[1]
-					local_position_2[2] = position_2[2] + num_2
-					arm_inner_right.angle = math.degrees_to_radians(-num_3)
-					arm_inner_right.color[1] = 0
+					position[1] = default_position[1]
+					position[2] = default_position[2] + height
+					pass_style.angle = math.degrees_to_radians(-degrees)
+					pass_style.color[1] = 0
 				end
 
-				local arm_outer_left = style.arm_outer_left
+				local style_name = "arm_outer_left"
+				local pass_style = style[style_name]
 
-				if not arm_outer_left then
-					local scenegraph_id_3 = arm_outer_left.scenegraph_id
-					local local_position_3 = self[scenegraph_id_3].local_position
-					local position_3 = arg_3_1[scenegraph_id_3].position
+				if pass_style then
+					local scenegraph_id = pass_style.scenegraph_id
+					local position = ui_scenegraph[scenegraph_id].local_position
+					local default_position = scenegraph_definition[scenegraph_id].position
 
-					local_position_3[1] = position_3[1] + 130
-					local_position_3[2] = position_3[2] + num_2 + 40
-					arm_outer_left.angle = math.degrees_to_radians(-num_3)
-					arm_outer_left.color[1] = 0
+					position[1] = default_position[1] + 130
+					position[2] = default_position[2] + height + 40
+					pass_style.angle = math.degrees_to_radians(-degrees)
+					pass_style.color[1] = 0
 				end
 
-				local arm_outer_right = style.arm_outer_right
+				local style_name = "arm_outer_right"
+				local pass_style = style[style_name]
 
-				if not arm_outer_right then
-					local scenegraph_id_4 = arm_outer_right.scenegraph_id
-					local local_position_4 = self[scenegraph_id_4].local_position
-					local position_4 = arg_3_1[scenegraph_id_4].position
+				if pass_style then
+					local scenegraph_id = pass_style.scenegraph_id
+					local position = ui_scenegraph[scenegraph_id].local_position
+					local default_position = scenegraph_definition[scenegraph_id].position
 
-					local_position_4[1] = position_4[1] - 130
-					local_position_4[2] = position_4[2] + num_2 + 40
-					arm_outer_right.angle = math.degrees_to_radians(num_3)
-					arm_outer_right.color[1] = 0
+					position[1] = default_position[1] - 130
+					position[2] = default_position[2] + height + 40
+					pass_style.angle = math.degrees_to_radians(degrees)
+					pass_style.color[1] = 0
 				end
 
-				local inner_left = style.inner_left
+				local style_name = "inner_left"
+				local pass_style = style[style_name]
 
-				if not inner_left then
-					local scenegraph_id_5 = inner_left.scenegraph_id
-					local local_position_5 = self[scenegraph_id_5].local_position
-					local position_5 = arg_3_1[scenegraph_id_5].position
+				if pass_style then
+					local scenegraph_id = pass_style.scenegraph_id
+					local position = ui_scenegraph[scenegraph_id].local_position
+					local default_position = scenegraph_definition[scenegraph_id].position
 
-					inner_left.angle = math.degrees_to_radians(num_3 - 15)
-					inner_left.color[1] = 0
+					pass_style.angle = math.degrees_to_radians(degrees - 15)
+					pass_style.color[1] = 0
 				end
 
-				local inner_right = style.inner_right
+				local style_name = "inner_right"
+				local pass_style = style[style_name]
 
-				if not inner_right then
-					local scenegraph_id_6 = inner_right.scenegraph_id
-					local local_position_6 = self[scenegraph_id_6].local_position
-					local position_6 = arg_3_1[scenegraph_id_6].position
+				if pass_style then
+					local scenegraph_id = pass_style.scenegraph_id
+					local position = ui_scenegraph[scenegraph_id].local_position
+					local default_position = scenegraph_definition[scenegraph_id].position
 
-					inner_right.angle = math.degrees_to_radians(-(num_3 - 15))
-					inner_right.color[1] = 0
+					pass_style.angle = math.degrees_to_radians(-(degrees - 15))
+					pass_style.color[1] = 0
 				end
 
-				local outer_left = style.outer_left
+				local style_name = "outer_left"
+				local pass_style = style[style_name]
 
-				if not outer_left then
-					local scenegraph_id_7 = outer_left.scenegraph_id
-					local local_position_7 = self[scenegraph_id_7].local_position
-					local position_7 = arg_3_1[scenegraph_id_7].position
+				if pass_style then
+					local scenegraph_id = pass_style.scenegraph_id
+					local position = ui_scenegraph[scenegraph_id].local_position
+					local default_position = scenegraph_definition[scenegraph_id].position
 
-					outer_left.angle = math.degrees_to_radians(-(num_3 - 15))
-					outer_left.color[1] = 0
+					pass_style.angle = math.degrees_to_radians(-(degrees - 15))
+					pass_style.color[1] = 0
 				end
 
-				local outer_right = style.outer_right
+				local style_name = "outer_right"
+				local pass_style = style[style_name]
 
-				if not outer_right then
-					local scenegraph_id_8 = outer_right.scenegraph_id
-					local local_position_8 = self[scenegraph_id_8].local_position
-					local position_8 = arg_3_1[scenegraph_id_8].position
+				if pass_style then
+					local scenegraph_id = pass_style.scenegraph_id
+					local position = ui_scenegraph[scenegraph_id].local_position
+					local default_position = scenegraph_definition[scenegraph_id].position
 
-					outer_right.angle = math.degrees_to_radians(num_3 - 15)
-					outer_right.color[1] = 0
+					pass_style.angle = math.degrees_to_radians(degrees - 15)
+					pass_style.color[1] = 0
 				end
 
-				local medalion = style.medalion
+				local style_name = "medalion"
+				local pass_style = style[style_name]
 
-				if not medalion then
-					medalion.color[1] = 0
+				if pass_style then
+					pass_style.color[1] = 0
 				end
 
-				local skull = style.skull
+				local style_name = "skull"
+				local pass_style = style[style_name]
 
-				if not skull then
-					skull.color[1] = 0
+				if pass_style then
+					pass_style.color[1] = 0
 				end
 
-				local background = style.background
+				local style_name = "background"
+				local pass_style = style[style_name]
 
-				if not background then
-					background.color[1] = 0
+				if pass_style then
+					pass_style.color[1] = 0
 				end
 
-				local smoke_background = style.smoke_background
+				local style_name = "smoke_background"
+				local pass_style = style[style_name]
 
-				if not smoke_background then
-					smoke_background.color[1] = 0
+				if pass_style then
+					pass_style.color[1] = 0
 				end
 
-				local smoke_skull = style.smoke_skull
+				local style_name = "smoke_skull"
+				local pass_style = style[style_name]
 
-				if not smoke_skull then
-					smoke_skull.color[1] = 0
+				if pass_style then
+					pass_style.color[1] = 0
 				end
 
-				local smoke_wing_left = style.smoke_wing_left
+				local style_name = "smoke_wing_left"
+				local pass_style = style[style_name]
 
-				if not smoke_wing_left then
-					smoke_wing_left.color[1] = 0
+				if pass_style then
+					pass_style.color[1] = 0
 				end
 
-				local smoke_wing_right = style.smoke_wing_right
+				local style_name = "smoke_wing_right"
+				local pass_style = style[style_name]
 
-				if not smoke_wing_right then
-					smoke_wing_right.color[1] = 0
+				if pass_style then
+					pass_style.color[1] = 0
 				end
 			end,
-			update = function (arg_4_0, arg_4_1, arg_4_2, arg_4_3, arg_4_4)
+			update = function (ui_scenegraph, scenegraph_definition, widgets, progress, params)
 				-- function 4
 				return
 			end,
-			on_complete = function (arg_5_0, arg_5_1, arg_5_2, arg_5_3)
+			on_complete = function (ui_scenegraph, scenegraph_definition, widgets, params)
 				-- function 5
 				return
 			end
@@ -910,19 +953,19 @@ local tbl_5 = {
 			name = "init_title_text",
 			start_progress = 0,
 			end_progress = 0.1,
-			init = function (arg_6_0, arg_6_1, arg_6_2, arg_6_3)
+			init = function (ui_scenegraph, scenegraph_definition, widgets, params)
 				-- function 6
-				local title_title = arg_6_2.title_title
-				local sub_title_text = arg_6_2.sub_title_text
+				local title_title = widgets.title_title
+				local sub_title_text = widgets.sub_title_text
 
 				title_title.alpha_multiplier = 0
 				sub_title_text.alpha_multiplier = 0
 			end,
-			update = function (arg_7_0, arg_7_1, arg_7_2, arg_7_3, arg_7_4)
+			update = function (ui_scenegraph, scenegraph_definition, widgets, progress, params)
 				-- function 7
 				return
 			end,
-			on_complete = function (arg_8_0, arg_8_1, arg_8_2, arg_8_3)
+			on_complete = function (ui_scenegraph, scenegraph_definition, widgets, params)
 				-- function 8
 				return
 			end
@@ -931,63 +974,66 @@ local tbl_5 = {
 			name = "overall_alpha_in",
 			start_progress = 0,
 			end_progress = 0.3,
-			init = function (arg_9_0, arg_9_1, arg_9_2, arg_9_3)
+			init = function (ui_scenegraph, scenegraph_definition, widgets, params)
 				-- function 9
-				arg_9_3.render_settings.alpha_multiplier = 0
+				params.render_settings.alpha_multiplier = 0
 			end,
-			update = function (arg_10_0, arg_10_1, arg_10_2, arg_10_3, arg_10_4)
+			update = function (ui_scenegraph, scenegraph_definition, widgets, progress, params)
 				-- function 10
-				local easeOutCubic = math.easeOutCubic(arg_10_3)
+				local anim_progress = math.easeOutCubic(progress)
 
-				arg_10_4.render_settings.alpha_multiplier = easeOutCubic
-				arg_10_4.render_settings.blur_progress = easeOutCubic
+				params.render_settings.alpha_multiplier = anim_progress
+				params.render_settings.blur_progress = anim_progress
 			end,
-			on_complete = function (arg_11_0, arg_11_1, arg_11_2, arg_11_3)
+			on_complete = function (ui_scenegraph, scenegraph_definition, widgets, params)
 				-- function 11
-				WwiseWorld.trigger_event(arg_11_3.wwise_world, "versus_round_end_coin_bird_finnish")
+				WwiseWorld.trigger_event(params.wwise_world, "versus_round_end_coin_bird_finnish")
 			end
 		},
 		{
 			name = "background_entry",
 			start_progress = 0,
 			end_progress = 0.5,
-			init = function (arg_12_0, arg_12_1, arg_12_2, arg_12_3)
+			init = function (ui_scenegraph, scenegraph_definition, widgets, params)
 				-- function 12
 				return
 			end,
-			update = function (self, arg_13_1, arg_13_2, arg_13_3, arg_13_4)
+			update = function (ui_scenegraph, scenegraph_definition, widgets, progress, params)
 				-- function 13
-				local easeInCubic = math.easeInCubic(arg_13_3)
-				local easeOutCubic = math.easeOutCubic(1 - easeInCubic)
-				local easeInCubic_2 = math.easeInCubic(easeInCubic)
-				local style = arg_13_2.emblem.style
-				local num = 0.5
-				local num_2 = 255 * easeInCubic_2
-				local background = style.background
+				local anim_progress = math.easeInCubic(progress)
+				local size_anim_fraction = math.easeOutCubic(1 - anim_progress)
+				local alpha_progress = math.easeInCubic(anim_progress)
+				local emblem = widgets.emblem
+				local style = emblem.style
+				local size_fraction = 0.5
+				local alpha = 255 * alpha_progress
+				local style_name = "background"
+				local pass_style = style[style_name]
 
-				if not background then
-					local scenegraph_id = background.scenegraph_id
-					local size = self[scenegraph_id].size
-					local size_2 = arg_13_1[scenegraph_id].size
+				if pass_style then
+					local scenegraph_id = pass_style.scenegraph_id
+					local size = ui_scenegraph[scenegraph_id].size
+					local default_size = scenegraph_definition[scenegraph_id].size
 
-					size[1] = size_2[1] + size_2[1] * num * easeOutCubic
-					size[2] = size_2[2] + size_2[2] * num * easeOutCubic
-					background.color[1] = num_2
+					size[1] = default_size[1] + default_size[1] * size_fraction * size_anim_fraction
+					size[2] = default_size[2] + default_size[2] * size_fraction * size_anim_fraction
+					pass_style.color[1] = alpha
 				end
 
-				local skull = style.skull
+				local style_name = "skull"
+				local pass_style = style[style_name]
 
-				if not skull then
-					local scenegraph_id_2 = skull.scenegraph_id
-					local size_3 = self[scenegraph_id_2].size
-					local size_4 = arg_13_1[scenegraph_id_2].size
+				if pass_style then
+					local scenegraph_id = pass_style.scenegraph_id
+					local size = ui_scenegraph[scenegraph_id].size
+					local default_size = scenegraph_definition[scenegraph_id].size
 
-					size_3[1] = size_4[1] + size_4[1] * num * easeOutCubic
-					size_3[2] = size_4[2] + size_4[2] * num * easeOutCubic
-					skull.color[1] = num_2
+					size[1] = default_size[1] + default_size[1] * size_fraction * size_anim_fraction
+					size[2] = default_size[2] + default_size[2] * size_fraction * size_anim_fraction
+					pass_style.color[1] = alpha
 				end
 			end,
-			on_complete = function (arg_14_0, arg_14_1, arg_14_2, arg_14_3)
+			on_complete = function (ui_scenegraph, scenegraph_definition, widgets, params)
 				-- function 14
 				return
 			end
@@ -996,29 +1042,31 @@ local tbl_5 = {
 			name = "background_smoke",
 			start_progress = 0.5,
 			end_progress = 1,
-			init = function (arg_15_0, arg_15_1, arg_15_2, arg_15_3)
+			init = function (ui_scenegraph, scenegraph_definition, widgets, params)
 				-- function 15
 				return
 			end,
-			update = function (self, arg_16_1, arg_16_2, arg_16_3, arg_16_4)
+			update = function (ui_scenegraph, scenegraph_definition, widgets, progress, params)
 				-- function 16
-				local num = 1 - math.easeOutCubic(arg_16_3)
-				local style = arg_16_2.emblem.style
-				local num_2 = 1
-				local num_3 = 255 * num
-				local smoke_background = style.smoke_background
+				local alpha_progress = 1 - math.easeOutCubic(progress)
+				local emblem = widgets.emblem
+				local style = emblem.style
+				local size_fraction = 1
+				local alpha = 255 * alpha_progress
+				local style_name = "smoke_background"
+				local pass_style = style[style_name]
 
-				if not smoke_background then
-					local scenegraph_id = smoke_background.scenegraph_id
-					local size = self[scenegraph_id].size
-					local size_2 = arg_16_1[scenegraph_id].size
+				if pass_style then
+					local scenegraph_id = pass_style.scenegraph_id
+					local size = ui_scenegraph[scenegraph_id].size
+					local default_size = scenegraph_definition[scenegraph_id].size
 
-					size[1] = size_2[1] + size_2[1] * num_2 * arg_16_3
-					size[2] = size_2[2] + size_2[2] * num_2 * arg_16_3
-					smoke_background.color[1] = num_3
+					size[1] = default_size[1] + default_size[1] * size_fraction * progress
+					size[2] = default_size[2] + default_size[2] * size_fraction * progress
+					pass_style.color[1] = alpha
 				end
 			end,
-			on_complete = function (arg_17_0, arg_17_1, arg_17_2, arg_17_3)
+			on_complete = function (ui_scenegraph, scenegraph_definition, widgets, params)
 				-- function 17
 				return
 			end
@@ -1027,27 +1075,29 @@ local tbl_5 = {
 			name = "skull_bounce",
 			start_progress = 0.45,
 			end_progress = 0.75,
-			init = function (arg_18_0, arg_18_1, arg_18_2, arg_18_3)
+			init = function (ui_scenegraph, scenegraph_definition, widgets, params)
 				-- function 18
 				return
 			end,
-			update = function (self, arg_19_1, arg_19_2, arg_19_3, arg_19_4)
+			update = function (ui_scenegraph, scenegraph_definition, widgets, progress, params)
 				-- function 19
-				local ease_pulse = math.ease_pulse(math.easeCubic(arg_19_3))
-				local style = arg_19_2.emblem.style
-				local num = 0.03
-				local skull = style.skull
+				local bounce_progress = math.ease_pulse(math.easeCubic(progress))
+				local emblem = widgets.emblem
+				local style = emblem.style
+				local size_fraction = 0.03
+				local style_name = "skull"
+				local pass_style = style[style_name]
 
-				if not skull then
-					local scenegraph_id = skull.scenegraph_id
-					local size = self[scenegraph_id].size
-					local size_2 = arg_19_1[scenegraph_id].size
+				if pass_style then
+					local scenegraph_id = pass_style.scenegraph_id
+					local size = ui_scenegraph[scenegraph_id].size
+					local default_size = scenegraph_definition[scenegraph_id].size
 
-					size[1] = size_2[1] + size_2[1] * num * ease_pulse
-					size[2] = size_2[2] + size_2[1] * num * ease_pulse
+					size[1] = default_size[1] + default_size[1] * size_fraction * bounce_progress
+					size[2] = default_size[2] + default_size[1] * size_fraction * bounce_progress
 				end
 			end,
-			on_complete = function (arg_20_0, arg_20_1, arg_20_2, arg_20_3)
+			on_complete = function (ui_scenegraph, scenegraph_definition, widgets, params)
 				-- function 20
 				return
 			end
@@ -1056,40 +1106,45 @@ local tbl_5 = {
 			name = "fade_in_arms",
 			start_progress = 0.8,
 			end_progress = 0.9,
-			init = function (arg_21_0, arg_21_1, arg_21_2, arg_21_3)
+			init = function (ui_scenegraph, scenegraph_definition, widgets, params)
 				-- function 21
 				return
 			end,
-			update = function (arg_22_0, arg_22_1, arg_22_2, arg_22_3, arg_22_4)
+			update = function (ui_scenegraph, scenegraph_definition, widgets, progress, params)
 				-- function 22
-				local easeInCubic = math.easeInCubic(arg_22_3)
-				local style = arg_22_2.emblem.style
-				local num = 255 * easeInCubic
-				local arm_inner_left = style.arm_inner_left
+				local alpha_progress = math.easeInCubic(progress)
+				local emblem = widgets.emblem
+				local style = emblem.style
+				local alpha = 255 * alpha_progress
+				local style_name = "arm_inner_left"
+				local pass_style = style[style_name]
 
-				if not arm_inner_left then
-					arm_inner_left.color[1] = num
+				if pass_style then
+					pass_style.color[1] = alpha
 				end
 
-				local arm_inner_right = style.arm_inner_right
+				local style_name = "arm_inner_right"
+				local pass_style = style[style_name]
 
-				if not arm_inner_right then
-					arm_inner_right.color[1] = num
+				if pass_style then
+					pass_style.color[1] = alpha
 				end
 
-				local arm_outer_left = style.arm_outer_left
+				local style_name = "arm_outer_left"
+				local pass_style = style[style_name]
 
-				if not arm_outer_left then
-					arm_outer_left.color[1] = num
+				if pass_style then
+					pass_style.color[1] = alpha
 				end
 
-				local arm_outer_right = style.arm_outer_right
+				local style_name = "arm_outer_right"
+				local pass_style = style[style_name]
 
-				if not arm_outer_right then
-					arm_outer_right.color[1] = num
+				if pass_style then
+					pass_style.color[1] = alpha
 				end
 			end,
-			on_complete = function (arg_23_0, arg_23_1, arg_23_2, arg_23_3)
+			on_complete = function (ui_scenegraph, scenegraph_definition, widgets, params)
 				-- function 23
 				return
 			end
@@ -1098,56 +1153,65 @@ local tbl_5 = {
 			name = "move_up",
 			start_progress = 0.8,
 			end_progress = 1.2,
-			init = function (arg_24_0, arg_24_1, arg_24_2, arg_24_3)
+			init = function (ui_scenegraph, scenegraph_definition, widgets, params)
 				-- function 24
 				return
 			end,
-			update = function (self, arg_25_1, arg_25_2, arg_25_3, arg_25_4)
+			update = function (ui_scenegraph, scenegraph_definition, widgets, progress, params)
 				-- function 25
-				local num = 1 - math.easeCubic(arg_25_3)
-				local style = arg_25_2.emblem.style
-				local num_2 = 40
-				local num_3 = -100
-				local num_4 = 50
-				local arm_inner_left = style.arm_inner_left
+				local position_anim_fraction = 1 - math.easeCubic(progress)
+				local emblem = widgets.emblem
+				local style = emblem.style
+				local width = 40
+				local height = -100
+				local degrees = 50
+				local style_name = "arm_inner_left"
+				local pass_style = style[style_name]
 
-				if not arm_inner_left then
-					local scenegraph_id = arm_inner_left.scenegraph_id
-					local local_position = self[scenegraph_id].local_position
-					local position = arg_25_1[scenegraph_id].position
+				if pass_style then
+					local scenegraph_id = pass_style.scenegraph_id
+					local position = ui_scenegraph[scenegraph_id].local_position
+					local default_position = scenegraph_definition[scenegraph_id].position
 
-					local_position[1] = position[1]
-					local_position[2] = position[2] + num_3 * num
+					position[1] = default_position[1]
+					position[2] = default_position[2] + height * position_anim_fraction
 				end
 
-				local arm_inner_right = style.arm_inner_right
+				local style_name = "arm_inner_right"
+				local pass_style = style[style_name]
 
-				if not arm_inner_right then
-					local scenegraph_id_2 = arm_inner_right.scenegraph_id
-					local local_position_2 = self[scenegraph_id_2].local_position
-					local position_2 = arg_25_1[scenegraph_id_2].position
+				if pass_style then
+					local scenegraph_id = pass_style.scenegraph_id
+					local position = ui_scenegraph[scenegraph_id].local_position
+					local default_position = scenegraph_definition[scenegraph_id].position
 
-					local_position_2[1] = position_2[1]
-					local_position_2[2] = position_2[2] + num_3 * num
+					position[1] = default_position[1]
+					position[2] = default_position[2] + height * position_anim_fraction
 				end
 
-				local arm_outer_left = style.arm_outer_left
+				local style_name = "arm_outer_left"
+				local pass_style = style[style_name]
 
-				if not arm_outer_left then
-					local scenegraph_id_3 = arm_outer_left.scenegraph_id
+				if pass_style then
+					local scenegraph_id = pass_style.scenegraph_id
+					local position = ui_scenegraph[scenegraph_id].local_position
+					local default_position = scenegraph_definition[scenegraph_id].position
 
-					self[scenegraph_id_3].local_position[2] = arg_25_1[scenegraph_id_3].position[2] + num_3 * num + 40
+					position[2] = default_position[2] + height * position_anim_fraction + 40
 				end
 
-				local arm_outer_right = style.arm_outer_right
+				local style_name = "arm_outer_right"
+				local pass_style = style[style_name]
 
-				if not arm_outer_right then
-					local scenegraph_id_4 = arm_outer_right.scenegraph_id
+				if pass_style then
+					local scenegraph_id = pass_style.scenegraph_id
+					local position = ui_scenegraph[scenegraph_id].local_position
+					local default_position = scenegraph_definition[scenegraph_id].position
 
-					self[scenegraph_id_4].local_position[2] = arg_25_1[scenegraph_id_4].position[2] + num_3 * num + 40
+					position[2] = default_position[2] + height * position_anim_fraction + 40
 				end
 			end,
-			on_complete = function (arg_26_0, arg_26_1, arg_26_2, arg_26_3)
+			on_complete = function (ui_scenegraph, scenegraph_definition, widgets, params)
 				-- function 26
 				return
 			end
@@ -1156,40 +1220,45 @@ local tbl_5 = {
 			name = "fade_in_wings",
 			start_progress = 1.15,
 			end_progress = 1.25,
-			init = function (arg_27_0, arg_27_1, arg_27_2, arg_27_3)
+			init = function (ui_scenegraph, scenegraph_definition, widgets, params)
 				-- function 27
 				return
 			end,
-			update = function (arg_28_0, arg_28_1, arg_28_2, arg_28_3, arg_28_4)
+			update = function (ui_scenegraph, scenegraph_definition, widgets, progress, params)
 				-- function 28
-				local easeInCubic = math.easeInCubic(arg_28_3)
-				local style = arg_28_2.emblem.style
-				local num = 255 * easeInCubic
-				local inner_left = style.inner_left
+				local alpha_progress = math.easeInCubic(progress)
+				local emblem = widgets.emblem
+				local style = emblem.style
+				local alpha = 255 * alpha_progress
+				local style_name = "inner_left"
+				local pass_style = style[style_name]
 
-				if not inner_left then
-					inner_left.color[1] = num
+				if pass_style then
+					pass_style.color[1] = alpha
 				end
 
-				local inner_right = style.inner_right
+				local style_name = "inner_right"
+				local pass_style = style[style_name]
 
-				if not inner_right then
-					inner_right.color[1] = num
+				if pass_style then
+					pass_style.color[1] = alpha
 				end
 
-				local outer_left = style.outer_left
+				local style_name = "outer_left"
+				local pass_style = style[style_name]
 
-				if not outer_left then
-					outer_left.color[1] = num
+				if pass_style then
+					pass_style.color[1] = alpha
 				end
 
-				local outer_right = style.outer_right
+				local style_name = "outer_right"
+				local pass_style = style[style_name]
 
-				if not outer_right then
-					outer_right.color[1] = num
+				if pass_style then
+					pass_style.color[1] = alpha
 				end
 			end,
-			on_complete = function (arg_29_0, arg_29_1, arg_29_2, arg_29_3)
+			on_complete = function (ui_scenegraph, scenegraph_definition, widgets, params)
 				-- function 29
 				return
 			end
@@ -1198,22 +1267,24 @@ local tbl_5 = {
 			name = "fade_in_medalion",
 			start_progress = 1,
 			end_progress = 1.1,
-			init = function (arg_30_0, arg_30_1, arg_30_2, arg_30_3)
+			init = function (ui_scenegraph, scenegraph_definition, widgets, params)
 				-- function 30
 				return
 			end,
-			update = function (arg_31_0, arg_31_1, arg_31_2, arg_31_3, arg_31_4)
+			update = function (ui_scenegraph, scenegraph_definition, widgets, progress, params)
 				-- function 31
-				local ease_out_exp = math.ease_out_exp(arg_31_3)
-				local style = arg_31_2.emblem.style
-				local num = 255 * ease_out_exp
-				local medalion = style.medalion
+				local alpha_progress = math.ease_out_exp(progress)
+				local emblem = widgets.emblem
+				local style = emblem.style
+				local alpha = 255 * alpha_progress
+				local style_name = "medalion"
+				local pass_style = style[style_name]
 
-				if not medalion then
-					medalion.color[1] = num
+				if pass_style then
+					pass_style.color[1] = alpha
 				end
 			end,
-			on_complete = function (arg_32_0, arg_32_1, arg_32_2, arg_32_3)
+			on_complete = function (ui_scenegraph, scenegraph_definition, widgets, params)
 				-- function 32
 				return
 			end
@@ -1222,24 +1293,28 @@ local tbl_5 = {
 			name = "move_medalion",
 			start_progress = 1,
 			end_progress = 1.3,
-			init = function (arg_33_0, arg_33_1, arg_33_2, arg_33_3)
+			init = function (ui_scenegraph, scenegraph_definition, widgets, params)
 				-- function 33
 				return
 			end,
-			update = function (arg_34_0, arg_34_1, arg_34_2, arg_34_3, arg_34_4)
+			update = function (ui_scenegraph, scenegraph_definition, widgets, progress, params)
 				-- function 34
-				local num = 1 - math.ease_out_exp(arg_34_3)
-				local style = arg_34_2.emblem.style
-				local num_2 = 200 * num
-				local medalion = style.medalion
+				local anim_progress = 1 - math.ease_out_exp(progress)
+				local emblem = widgets.emblem
+				local style = emblem.style
+				local height = 200 * anim_progress
+				local style_name = "medalion"
+				local pass_style = style[style_name]
 
-				if not medalion then
-					local scenegraph_id = medalion.scenegraph_id
+				if pass_style then
+					local scenegraph_id = pass_style.scenegraph_id
+					local position = ui_scenegraph[scenegraph_id].local_position
+					local default_position = scenegraph_definition[scenegraph_id].position
 
-					arg_34_0[scenegraph_id].local_position[2] = arg_34_1[scenegraph_id].position[2] + num_2
+					position[2] = default_position[2] + height
 				end
 			end,
-			on_complete = function (arg_35_0, arg_35_1, arg_35_2, arg_35_3)
+			on_complete = function (ui_scenegraph, scenegraph_definition, widgets, params)
 				-- function 35
 				return
 			end
@@ -1248,24 +1323,28 @@ local tbl_5 = {
 			name = "skull_bounce_down",
 			start_progress = 1.15,
 			end_progress = 1.55,
-			init = function (arg_36_0, arg_36_1, arg_36_2, arg_36_3)
+			init = function (ui_scenegraph, scenegraph_definition, widgets, params)
 				-- function 36
 				return
 			end,
-			update = function (arg_37_0, arg_37_1, arg_37_2, arg_37_3, arg_37_4)
+			update = function (ui_scenegraph, scenegraph_definition, widgets, progress, params)
 				-- function 37
-				local ease_pulse = math.ease_pulse(math.easeOutCubic(arg_37_3))
-				local style = arg_37_2.emblem.style
-				local num = 0.03
-				local skull = style.skull
+				local bounce_progress = math.ease_pulse(math.easeOutCubic(progress))
+				local emblem = widgets.emblem
+				local style = emblem.style
+				local size_fraction = 0.03
+				local style_name = "skull"
+				local pass_style = style[style_name]
 
-				if not skull then
-					local scenegraph_id = skull.scenegraph_id
+				if pass_style then
+					local scenegraph_id = pass_style.scenegraph_id
+					local position = ui_scenegraph[scenegraph_id].local_position
+					local default_position = scenegraph_definition[scenegraph_id].position
 
-					arg_37_0[scenegraph_id].local_position[2] = arg_37_1[scenegraph_id].position[2] - 5 * ease_pulse
+					position[2] = default_position[2] - 5 * bounce_progress
 				end
 			end,
-			on_complete = function (arg_38_0, arg_38_1, arg_38_2, arg_38_3)
+			on_complete = function (ui_scenegraph, scenegraph_definition, widgets, params)
 				-- function 38
 				return
 			end
@@ -1274,29 +1353,31 @@ local tbl_5 = {
 			name = "smoke_skull",
 			start_progress = 1.15,
 			end_progress = 2.15,
-			init = function (arg_39_0, arg_39_1, arg_39_2, arg_39_3)
+			init = function (ui_scenegraph, scenegraph_definition, widgets, params)
 				-- function 39
 				return
 			end,
-			update = function (self, arg_40_1, arg_40_2, arg_40_3, arg_40_4)
+			update = function (ui_scenegraph, scenegraph_definition, widgets, progress, params)
 				-- function 40
-				local num = 1 - math.easeOutCubic(arg_40_3)
-				local easeOutCubic = math.easeOutCubic(arg_40_3)
-				local style = arg_40_2.emblem.style
-				local num_2 = 0.6
-				local num_3 = 255 * num
-				local smoke_skull = style.smoke_skull
+				local alpha_progress = 1 - math.easeOutCubic(progress)
+				local size_progress = math.easeOutCubic(progress)
+				local emblem = widgets.emblem
+				local style = emblem.style
+				local size_fraction = 0.6
+				local alpha = 255 * alpha_progress
+				local style_name = "smoke_skull"
+				local pass_style = style[style_name]
 
-				if not smoke_skull then
-					local scenegraph_id = smoke_skull.scenegraph_id
-					local size = self[scenegraph_id].size
-					local size_2 = arg_40_1[scenegraph_id].size
+				if pass_style then
+					local scenegraph_id = pass_style.scenegraph_id
+					local size = ui_scenegraph[scenegraph_id].size
+					local default_size = scenegraph_definition[scenegraph_id].size
 
-					size[2] = size_2[2] / 2 + size_2[2] * num_2 * easeOutCubic
-					smoke_skull.color[1] = num_3
+					size[2] = default_size[2] / 2 + default_size[2] * size_fraction * size_progress
+					pass_style.color[1] = alpha
 				end
 			end,
-			on_complete = function (arg_41_0, arg_41_1, arg_41_2, arg_41_3)
+			on_complete = function (ui_scenegraph, scenegraph_definition, widgets, params)
 				-- function 41
 				return
 			end
@@ -1305,40 +1386,43 @@ local tbl_5 = {
 			name = "smoke_wings",
 			start_progress = 1.3,
 			end_progress = 2.6,
-			init = function (arg_42_0, arg_42_1, arg_42_2, arg_42_3)
+			init = function (ui_scenegraph, scenegraph_definition, widgets, params)
 				-- function 42
 				return
 			end,
-			update = function (self, arg_43_1, arg_43_2, arg_43_3, arg_43_4)
+			update = function (ui_scenegraph, scenegraph_definition, widgets, progress, params)
 				-- function 43
-				local num = 1 - math.easeOutCubic(arg_43_3)
-				local easeOutCubic = math.easeOutCubic(arg_43_3)
-				local style = arg_43_2.emblem.style
-				local num_2 = 0.6
-				local num_3 = 255 * num
-				local smoke_wing_left = style.smoke_wing_left
+				local alpha_progress = 1 - math.easeOutCubic(progress)
+				local size_progress = math.easeOutCubic(progress)
+				local emblem = widgets.emblem
+				local style = emblem.style
+				local size_fraction = 0.6
+				local alpha = 255 * alpha_progress
+				local style_name = "smoke_wing_left"
+				local pass_style = style[style_name]
 
-				if not smoke_wing_left then
-					local scenegraph_id = smoke_wing_left.scenegraph_id
-					local size = self[scenegraph_id].size
-					local size_2 = arg_43_1[scenegraph_id].size
+				if pass_style then
+					local scenegraph_id = pass_style.scenegraph_id
+					local size = ui_scenegraph[scenegraph_id].size
+					local default_size = scenegraph_definition[scenegraph_id].size
 
-					size[2] = size_2[2] + size_2[2] * num_2 * easeOutCubic
-					smoke_wing_left.color[1] = num_3
+					size[2] = default_size[2] + default_size[2] * size_fraction * size_progress
+					pass_style.color[1] = alpha
 				end
 
-				local smoke_wing_right = style.smoke_wing_right
+				local style_name = "smoke_wing_right"
+				local pass_style = style[style_name]
 
-				if not smoke_wing_right then
-					local scenegraph_id_2 = smoke_wing_right.scenegraph_id
-					local size_3 = self[scenegraph_id_2].size
-					local size_4 = arg_43_1[scenegraph_id_2].size
+				if pass_style then
+					local scenegraph_id = pass_style.scenegraph_id
+					local size = ui_scenegraph[scenegraph_id].size
+					local default_size = scenegraph_definition[scenegraph_id].size
 
-					size_3[2] = size_4[2] + size_4[2] * num_2 * easeOutCubic
-					smoke_wing_right.color[1] = num_3
+					size[2] = default_size[2] + default_size[2] * size_fraction * size_progress
+					pass_style.color[1] = alpha
 				end
 			end,
-			on_complete = function (arg_44_0, arg_44_1, arg_44_2, arg_44_3)
+			on_complete = function (ui_scenegraph, scenegraph_definition, widgets, params)
 				-- function 44
 				return
 			end
@@ -1347,101 +1431,114 @@ local tbl_5 = {
 			name = "fold_out",
 			start_progress = 1.1,
 			end_progress = 3.1,
-			init = function (arg_45_0, arg_45_1, arg_45_2, arg_45_3)
+			init = function (ui_scenegraph, scenegraph_definition, widgets, params)
 				-- function 45
 				return
 			end,
-			update = function (self, arg_46_1, arg_46_2, arg_46_3, arg_46_4)
+			update = function (ui_scenegraph, scenegraph_definition, widgets, progress, params)
 				-- function 46
-				local var_46_0 = fn_2(arg_46_3)
-				local num = 1 - math.easeInCubic(var_46_0)
-				local style = arg_46_2.emblem.style
-				local num_2 = 40
-				local num_3 = 0
-				local num_4 = 50
-				local arm_inner_left = style.arm_inner_left
+				local elastic_progress = ease_elastic(progress)
+				local anim_progress = 1 - math.easeInCubic(elastic_progress)
+				local emblem = widgets.emblem
+				local style = emblem.style
+				local width = 40
+				local height = 0
+				local degrees = 50
+				local style_name = "arm_inner_left"
+				local pass_style = style[style_name]
 
-				if not arm_inner_left then
-					local scenegraph_id = arm_inner_left.scenegraph_id
+				if pass_style then
+					local scenegraph_id = pass_style.scenegraph_id
+					local position = ui_scenegraph[scenegraph_id].local_position
+					local default_position = scenegraph_definition[scenegraph_id].position
 
-					self[scenegraph_id].local_position[1] = arg_46_1[scenegraph_id].position[1]
-					arm_inner_left.angle = math.degrees_to_radians(num_4 * num)
+					position[1] = default_position[1]
+					pass_style.angle = math.degrees_to_radians(degrees * anim_progress)
 				end
 
-				local arm_inner_right = style.arm_inner_right
+				local style_name = "arm_inner_right"
+				local pass_style = style[style_name]
 
-				if not arm_inner_right then
-					local scenegraph_id_2 = arm_inner_right.scenegraph_id
+				if pass_style then
+					local scenegraph_id = pass_style.scenegraph_id
+					local position = ui_scenegraph[scenegraph_id].local_position
+					local default_position = scenegraph_definition[scenegraph_id].position
 
-					self[scenegraph_id_2].local_position[1] = arg_46_1[scenegraph_id_2].position[1]
-					arm_inner_right.angle = math.degrees_to_radians(-num_4 * num)
+					position[1] = default_position[1]
+					pass_style.angle = math.degrees_to_radians(-degrees * anim_progress)
 				end
 
-				local arm_outer_left = style.arm_outer_left
+				local style_name = "arm_outer_left"
+				local pass_style = style[style_name]
 
-				if not arm_outer_left then
-					local scenegraph_id_3 = arm_outer_left.scenegraph_id
-					local local_position = self[scenegraph_id_3].local_position
-					local position = arg_46_1[scenegraph_id_3].position
+				if pass_style then
+					local scenegraph_id = pass_style.scenegraph_id
+					local position = ui_scenegraph[scenegraph_id].local_position
+					local default_position = scenegraph_definition[scenegraph_id].position
 
-					local_position[1] = position[1] + 130 * num
-					local_position[2] = position[2] + num_3 + 40 * num
-					arm_outer_left.angle = math.degrees_to_radians(-num_4 * num)
+					position[1] = default_position[1] + 130 * anim_progress
+					position[2] = default_position[2] + height + 40 * anim_progress
+					pass_style.angle = math.degrees_to_radians(-degrees * anim_progress)
 				end
 
-				local arm_outer_right = style.arm_outer_right
+				local style_name = "arm_outer_right"
+				local pass_style = style[style_name]
 
-				if not arm_outer_right then
-					local scenegraph_id_4 = arm_outer_right.scenegraph_id
-					local local_position_2 = self[scenegraph_id_4].local_position
-					local position_2 = arg_46_1[scenegraph_id_4].position
+				if pass_style then
+					local scenegraph_id = pass_style.scenegraph_id
+					local position = ui_scenegraph[scenegraph_id].local_position
+					local default_position = scenegraph_definition[scenegraph_id].position
 
-					local_position_2[1] = position_2[1] - 130 * num
-					local_position_2[2] = position_2[2] + num_3 + 40 * num
-					arm_outer_right.angle = math.degrees_to_radians(num_4 * num)
+					position[1] = default_position[1] - 130 * anim_progress
+					position[2] = default_position[2] + height + 40 * anim_progress
+					pass_style.angle = math.degrees_to_radians(degrees * anim_progress)
 				end
 
-				local inner_left = style.inner_left
+				local style_name = "inner_left"
+				local pass_style = style[style_name]
 
-				if not inner_left then
-					local scenegraph_id_5 = inner_left.scenegraph_id
-					local local_position_3 = self[scenegraph_id_5].local_position
-					local position_3 = arg_46_1[scenegraph_id_5].position
+				if pass_style then
+					local scenegraph_id = pass_style.scenegraph_id
+					local position = ui_scenegraph[scenegraph_id].local_position
+					local default_position = scenegraph_definition[scenegraph_id].position
 
-					inner_left.angle = math.degrees_to_radians((num_4 - 15) * num)
+					pass_style.angle = math.degrees_to_radians((degrees - 15) * anim_progress)
 				end
 
-				local inner_right = style.inner_right
+				local style_name = "inner_right"
+				local pass_style = style[style_name]
 
-				if not inner_right then
-					local scenegraph_id_6 = inner_right.scenegraph_id
-					local local_position_4 = self[scenegraph_id_6].local_position
-					local position_4 = arg_46_1[scenegraph_id_6].position
+				if pass_style then
+					local scenegraph_id = pass_style.scenegraph_id
+					local position = ui_scenegraph[scenegraph_id].local_position
+					local default_position = scenegraph_definition[scenegraph_id].position
 
-					inner_right.angle = math.degrees_to_radians(-(num_4 - 15) * num)
+					pass_style.angle = math.degrees_to_radians(-(degrees - 15) * anim_progress)
 				end
 
-				local outer_left = style.outer_left
+				local style_name = "outer_left"
+				local pass_style = style[style_name]
 
-				if not outer_left then
-					local scenegraph_id_7 = outer_left.scenegraph_id
-					local local_position_5 = self[scenegraph_id_7].local_position
-					local position_5 = arg_46_1[scenegraph_id_7].position
+				if pass_style then
+					local scenegraph_id = pass_style.scenegraph_id
+					local position = ui_scenegraph[scenegraph_id].local_position
+					local default_position = scenegraph_definition[scenegraph_id].position
 
-					outer_left.angle = math.degrees_to_radians(-(num_4 - 15) * num)
+					pass_style.angle = math.degrees_to_radians(-(degrees - 15) * anim_progress)
 				end
 
-				local outer_right = style.outer_right
+				local style_name = "outer_right"
+				local pass_style = style[style_name]
 
-				if not outer_right then
-					local scenegraph_id_8 = outer_right.scenegraph_id
-					local local_position_6 = self[scenegraph_id_8].local_position
-					local position_6 = arg_46_1[scenegraph_id_8].position
+				if pass_style then
+					local scenegraph_id = pass_style.scenegraph_id
+					local position = ui_scenegraph[scenegraph_id].local_position
+					local default_position = scenegraph_definition[scenegraph_id].position
 
-					outer_right.angle = math.degrees_to_radians((num_4 - 15) * num)
+					pass_style.angle = math.degrees_to_radians((degrees - 15) * anim_progress)
 				end
 			end,
-			on_complete = function (arg_47_0, arg_47_1, arg_47_2, arg_47_3)
+			on_complete = function (ui_scenegraph, scenegraph_definition, widgets, params)
 				-- function 47
 				return
 			end
@@ -1450,25 +1547,25 @@ local tbl_5 = {
 			name = "fade_in_title_text",
 			start_progress = 1.1,
 			end_progress = 1.6,
-			init = function (arg_48_0, arg_48_1, arg_48_2, arg_48_3)
+			init = function (ui_scenegraph, scenegraph_definition, widgets, params)
 				-- function 48
 				return
 			end,
-			update = function (arg_49_0, arg_49_1, arg_49_2, arg_49_3, arg_49_4)
+			update = function (ui_scenegraph, scenegraph_definition, widgets, progress, params)
 				-- function 49
-				local easeOutCubic = math.easeOutCubic(arg_49_3)
-				local title_title = arg_49_2.title_title
-				local sub_title_text = arg_49_2.sub_title_text
+				local anim_progress = math.easeOutCubic(progress)
+				local title_title = widgets.title_title
+				local sub_title_text = widgets.sub_title_text
 
-				title_title.alpha_multiplier = easeOutCubic
-				sub_title_text.alpha_multiplier = easeOutCubic
+				title_title.alpha_multiplier = anim_progress
+				sub_title_text.alpha_multiplier = anim_progress
 
-				local num = 20
+				local height = 20
 
-				title_title.offset[2] = num - num * easeOutCubic
-				sub_title_text.offset[2] = -num + num * easeOutCubic
+				title_title.offset[2] = height - height * anim_progress
+				sub_title_text.offset[2] = -height + height * anim_progress
 			end,
-			on_complete = function (arg_50_0, arg_50_1, arg_50_2, arg_50_3)
+			on_complete = function (ui_scenegraph, scenegraph_definition, widgets, params)
 				-- function 50
 				return
 			end
@@ -1477,18 +1574,18 @@ local tbl_5 = {
 			name = "overall_alpha_out",
 			start_progress = 7.1,
 			end_progress = 7.6,
-			init = function (arg_51_0, arg_51_1, arg_51_2, arg_51_3)
+			init = function (ui_scenegraph, scenegraph_definition, widgets, params)
 				-- function 51
 				return
 			end,
-			update = function (arg_52_0, arg_52_1, arg_52_2, arg_52_3, arg_52_4)
+			update = function (ui_scenegraph, scenegraph_definition, widgets, progress, params)
 				-- function 52
-				local num = 1 - math.easeOutCubic(arg_52_3)
+				local anim_progress = 1 - math.easeOutCubic(progress)
 
-				arg_52_4.render_settings.alpha_multiplier = num
-				arg_52_4.render_settings.blur_progress = num
+				params.render_settings.alpha_multiplier = anim_progress
+				params.render_settings.blur_progress = anim_progress
 			end,
-			on_complete = function (arg_53_0, arg_53_1, arg_53_2, arg_53_3)
+			on_complete = function (ui_scenegraph, scenegraph_definition, widgets, params)
 				-- function 53
 				return
 			end
@@ -1497,20 +1594,20 @@ local tbl_5 = {
 			name = "fade_out_title_text",
 			start_progress = 6.1,
 			end_progress = 6.6,
-			init = function (arg_54_0, arg_54_1, arg_54_2, arg_54_3)
+			init = function (ui_scenegraph, scenegraph_definition, widgets, params)
 				-- function 54
 				return
 			end,
-			update = function (arg_55_0, arg_55_1, arg_55_2, arg_55_3, arg_55_4)
+			update = function (ui_scenegraph, scenegraph_definition, widgets, progress, params)
 				-- function 55
-				local num = 1 - math.easeOutCubic(arg_55_3)
-				local title_title = arg_55_2.title_title
-				local sub_title_text = arg_55_2.sub_title_text
+				local anim_progress = 1 - math.easeOutCubic(progress)
+				local title_title = widgets.title_title
+				local sub_title_text = widgets.sub_title_text
 
-				title_title.alpha_multiplier = num
-				sub_title_text.alpha_multiplier = num
+				title_title.alpha_multiplier = anim_progress
+				sub_title_text.alpha_multiplier = anim_progress
 			end,
-			on_complete = function (arg_56_0, arg_56_1, arg_56_2, arg_56_3)
+			on_complete = function (ui_scenegraph, scenegraph_definition, widgets, params)
 				-- function 56
 				return
 			end
@@ -1519,8 +1616,8 @@ local tbl_5 = {
 }
 
 return {
-	animations = tbl_5,
-	create_emblem_widget = fn,
-	scenegraph_definition = tbl,
-	widget_definitions = tbl_4
+	animations = animations,
+	create_emblem_widget = create_emblem_widget,
+	scenegraph_definition = scenegraph_definition,
+	widget_definitions = widget_definitions
 }

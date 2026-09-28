@@ -5,38 +5,38 @@ require("scripts/ui/views/loading_view")
 StateLoadingRunning = class(StateLoadingRunning)
 StateLoadingRunning.NAME = "StateLoadingRunning"
 
-StateLoadingRunning.on_enter = function (self, arg_1_1)
+StateLoadingRunning.on_enter = function (self, params)
 	-- function 1
 	print("[Gamestate] Enter Substate StateLoadingRunning")
 	self:_init_network()
 
-	self._loading_view = arg_1_1.loading_view
+	self._loading_view = params.loading_view
 	self._previous_session_error_headers_lookup = {
 		host_left_game = "popup_notice_topic",
 		kicked_by_server = "popup_notice_topic",
 		afk_kick = "popup_notice_topic"
 	}
 
-	local get_current_level_key = Managers.level_transition_handler:get_current_level_key()
+	local level_key = Managers.level_transition_handler:get_current_level_key()
 
-	self.parent:set_lobby_host_data(get_current_level_key)
+	self.parent:set_lobby_host_data(level_key)
 
 	local loading_context = self.parent.parent.loading_context
 
-	if not loading_context.previous_session_error then
+	if loading_context.previous_session_error then
 		local previous_session_error = loading_context.previous_session_error
 
 		loading_context.previous_session_error = nil
 
 		local parent = self.parent
-		local var_1_4 = parent
+		local var_1_1 = parent
 		local create_popup = parent.create_popup
-		local var_1_6 = previous_session_error
-		local var_1_7 = self._previous_session_error_headers_lookup[previous_session_error]
+		local var_1_3 = previous_session_error
+		local var_1_4 = self._previous_session_error_headers_lookup[previous_session_error]
 
-		var_1_7 = var_1_7 or "popup_notice_topic"
+		var_1_4 = not not var_1_4 or not not "popup_notice_topic"
 
-		create_popup(var_1_4, var_1_6, var_1_7, "continue")
+		create_popup(var_1_1, var_1_3, var_1_4, "continue")
 	end
 end
 
@@ -48,32 +48,34 @@ StateLoadingRunning._init_network = function (self)
 		self.parent:register_rpcs()
 	end
 
-	local WAIT_FOR_LEVEL_LOAD = StateLoading.LoadoutResyncStates.WAIT_FOR_LEVEL_LOAD
+	local loadout_resync_state = StateLoading.LoadoutResyncStates.WAIT_FOR_LEVEL_LOAD
 
 	print("[StateLoadingRunning] Selecting loadout_resync_state...", loading_context.join_lobby_data, loading_context.join_server_data, loading_context.start_lobby_data)
 
-	if loading_context.join_lobby_data or not loading_context.join_server_data then
+	if loading_context.join_lobby_data or loading_context.join_server_data then
 		self.parent:set_matchmaking(false)
 		LobbySetup.setup_network_options()
 		self.parent:setup_join_lobby(nil, loading_context.setup_voip)
 		self.parent:clear_network_loading_context()
 		Managers.transition:show_icon_background()
-	elseif not loading_context.start_lobby_data then
+	elseif loading_context.start_lobby_data then
 		self.parent:set_matchmaking(true)
 		self.parent:clear_network_loading_context()
 
-		local lobby_client = loading_context.start_lobby_data.lobby_client
+		local start_lobby_data = loading_context.start_lobby_data
+		local lobby_client = start_lobby_data.lobby_client
+		local network_client_setup_successful = self.parent:setup_network_client(true, lobby_client)
 
-		if not self.parent:setup_network_client(true, lobby_client) then
+		if network_client_setup_successful then
 			local peer_id = Network.peer_id()
 			local lobby_host = lobby_client:lobby_host()
-			local flag = false
-			local _network_client = self.parent._network_client
+			local is_server = false
+			local network_handler = self.parent._network_client
 
-			self.parent:setup_chat_manager(lobby_client, lobby_host, peer_id, flag)
-			self.parent:setup_deed_manager(lobby_client, lobby_host, peer_id, flag, _network_client)
-			self.parent:setup_enemy_package_loader(lobby_client, lobby_host, peer_id, _network_client)
-			self.parent:setup_global_managers(lobby_client, lobby_host, peer_id, flag, _network_client)
+			self.parent:setup_chat_manager(lobby_client, lobby_host, peer_id, is_server)
+			self.parent:setup_deed_manager(lobby_client, lobby_host, peer_id, is_server, network_handler)
+			self.parent:setup_enemy_package_loader(lobby_client, lobby_host, peer_id, network_handler)
+			self.parent:setup_global_managers(lobby_client, lobby_host, peer_id, is_server, network_handler)
 		end
 
 		loading_context.start_lobby_data = nil
@@ -83,37 +85,37 @@ StateLoadingRunning._init_network = function (self)
 		self._network_server = loading_context.network_server
 		self._network_client = loading_context.network_client
 
-		if not self._network_server then
+		if self._network_server then
 			self.parent:setup_network_transmit(self._network_server)
-		elseif not self._network_client then
+		elseif self._network_client then
 			self._network_client:set_wait_for_state_loading(nil)
 			self.parent:setup_network_transmit(self._network_client)
 		end
 
-		WAIT_FOR_LEVEL_LOAD = StateLoading.LoadoutResyncStates.CHECK_RESYNC
+		loadout_resync_state = StateLoading.LoadoutResyncStates.CHECK_RESYNC
 	end
 
 	if self.parent:loadout_resync_state() == StateLoading.LoadoutResyncStates.IDLE then
-		print("[StateLoadingRunning] loadout_resync_state IDLE ->", WAIT_FOR_LEVEL_LOAD)
-		self.parent:set_loadout_resync_state(WAIT_FOR_LEVEL_LOAD)
+		print("[StateLoadingRunning] loadout_resync_state IDLE ->", loadout_resync_state)
+		self.parent:set_loadout_resync_state(loadout_resync_state)
 	else
 		print("[StateLoadingRunning] Ignoring selected loadout_resync_state, wasn't IDLE")
 	end
 end
 
-StateLoadingRunning.update = function (self, arg_3_1)
+StateLoadingRunning.update = function (self, dt)
 	-- function 3
-	if not IS_XB1 and not self.parent:waiting_for_cleanup() then
+	if IS_XB1 and self.parent:waiting_for_cleanup() then
 		return
 	end
 
 	local level_transition_handler = Managers.level_transition_handler
 
-	if (LEVEL_EDITOR_TEST or not self.parent._network_server) and level_transition_handler:needs_level_load() and not self.parent._network_client or not self.parent._network_client:is_fully_synced() and not level_transition_handler:needs_level_load() then
+	if not LEVEL_EDITOR_TEST and (not self.parent._network_server or not level_transition_handler:needs_level_load()) and self.parent._network_client and self.parent._network_client:is_fully_synced() and level_transition_handler:needs_level_load() then
 		if not self.parent:loading_view_setup_done() then
-			local get_current_level_key = level_transition_handler:get_current_level_key()
+			local level_key = level_transition_handler:get_current_level_key()
 
-			self.parent:setup_loading_view(get_current_level_key)
+			self.parent:setup_loading_view(level_key)
 		end
 
 		if not self.parent:menu_assets_setup_done() then
@@ -123,18 +125,18 @@ StateLoadingRunning.update = function (self, arg_3_1)
 		self.parent:load_current_level()
 	end
 
-	if not (not script_data.honduras_demo and self.parent:loading_view_setup_done()) then
-		local get_current_level_key_2 = level_transition_handler:get_current_level_key()
+	if script_data.honduras_demo and not self.parent:loading_view_setup_done() then
+		local level_key = level_transition_handler:get_current_level_key()
 
-		self.parent:setup_loading_view(get_current_level_key_2)
+		self.parent:setup_loading_view(level_key)
 	end
 
-	if not (not self.parent:has_joined() and Managers.load_time:has_lobby()) then
+	if self.parent:has_joined() and not Managers.load_time:has_lobby() then
 		Managers.load_time:set_lobby(self.parent:get_lobby())
 	end
 end
 
-StateLoadingRunning.on_exit = function (arg_4_0, arg_4_1)
+StateLoadingRunning.on_exit = function (self, application_shutdown)
 	-- function 4
 	return
 end

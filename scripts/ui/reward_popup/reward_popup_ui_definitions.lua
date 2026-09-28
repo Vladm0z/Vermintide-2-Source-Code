@@ -1,15 +1,14 @@
 -- chunkname: @scripts/ui/reward_popup/reward_popup_ui_definitions.lua
 
-local num = 1920
-local num_2 = 1080
-local tbl = {
+local SIZE_X, SIZE_Y = 1920, 1080
+local CLOSE_BUTTON_SIZE = {
 	370,
 	70
 }
-local num_3 = 9
-local num_4 = 7
-local num_5 = 5
-local tbl_2 = {
+local ITEM_LIST_MAX_COLUMNS = 9
+local ITEM_LIST_MAX_ROWS = 7
+local PADDING = 5
+local scenegraph_definition = {
 	screen = {
 		scale = "fit",
 		position = {
@@ -18,8 +17,8 @@ local tbl_2 = {
 			UILayer.end_screen_banner
 		},
 		size = {
-			num,
-			num_2
+			SIZE_X,
+			SIZE_Y
 		}
 	},
 	background = {
@@ -332,12 +331,12 @@ local tbl_2 = {
 			10
 		},
 		offset = {
-			0.5 * num_5,
-			0.5 * num_5 + 80 + 15,
+			0.5 * PADDING,
+			0.5 * PADDING + 80 + 15,
 			0
 		},
 		size = {
-			(80 + num_5) * num_3,
+			(80 + PADDING) * ITEM_LIST_MAX_COLUMNS,
 			80
 		}
 	},
@@ -402,10 +401,10 @@ local tbl_2 = {
 			100,
 			1
 		},
-		size = tbl
+		size = CLOSE_BUTTON_SIZE
 	}
 }
-local tbl_3 = {
+local title_text_style = {
 	word_wrap = true,
 	font_size = 46,
 	localize = false,
@@ -420,7 +419,7 @@ local tbl_3 = {
 		2
 	}
 }
-local tbl_4 = {
+local level_text_style = {
 	word_wrap = true,
 	font_size = 46,
 	localize = false,
@@ -436,7 +435,7 @@ local tbl_4 = {
 	}
 }
 
-local function fn(arg_1_0, arg_1_1)
+local function create_icon_widget(texture, scenegraph_id)
 	-- function 1
 	return {
 		element = {
@@ -461,7 +460,7 @@ local function fn(arg_1_0, arg_1_1)
 		content = {
 			frame = "reward_pop_up_item_frame",
 			background = "reward_pop_up_item_bg",
-			texture_id = arg_1_0
+			texture_id = texture
 		},
 		style = {
 			texture_id = {
@@ -515,11 +514,11 @@ local function fn(arg_1_0, arg_1_1)
 			0,
 			0
 		},
-		scenegraph_id = arg_1_1
+		scenegraph_id = scenegraph_id
 	}
 end
 
-local function fn_2(arg_2_0, arg_2_1)
+local function create_item_widget(texture, scenegraph_id)
 	-- function 2
 	return {
 		element = {
@@ -544,7 +543,7 @@ local function fn_2(arg_2_0, arg_2_1)
 		content = {
 			frame = "reward_pop_up_item_frame",
 			rarity_texture = "icon_bg_plentiful",
-			texture_id = arg_2_0
+			texture_id = texture
 		},
 		style = {
 			texture_id = {
@@ -592,92 +591,92 @@ local function fn_2(arg_2_0, arg_2_1)
 			0,
 			0
 		},
-		scenegraph_id = arg_2_1
+		scenegraph_id = scenegraph_id
 	}
 end
 
-local function fn_3(arg_3_0)
+local function create_item_list_widget(scenegraph_id)
 	-- function 3
-	local tbl = {}
-	local tbl_2 = {
+	local passes = {}
+	local content = {
 		frame = "reward_pop_up_item_frame",
 		illusion = "item_frame_illusion",
 		no_equipped_item = true
 	}
-	local tbl_3 = {}
+	local style = {}
 
-	for i = 1, num_3 * num_4 do
-		local str = "rarity" .. i
-		local str_2 = "icon" .. i
-		local str_3 = "illusion" .. i
-		local str_4 = "frame" .. i
-		local str_5 = "tooltip" .. i
-		local str_6 = "item" .. i
+	for i = 1, ITEM_LIST_MAX_COLUMNS * ITEM_LIST_MAX_ROWS do
+		local rarity_key = "rarity" .. i
+		local icon_key = "icon" .. i
+		local illusion_key = "illusion" .. i
+		local frame_key = "frame" .. i
+		local tooltip_key = "tooltip" .. i
+		local item_key = "item" .. i
 
-		local function fn(self)
+		local function content_check_function(arg_content)
 			-- function 4
-			return self[str_6]
+			return arg_content[item_key]
 		end
 
-		tbl[#tbl + 1] = {
+		passes[#passes + 1] = {
 			pass_type = "texture",
-			style_id = str,
-			texture_id = str,
-			content_check_function = fn
+			style_id = rarity_key,
+			texture_id = rarity_key,
+			content_check_function = content_check_function
 		}
-		tbl[#tbl + 1] = {
+		passes[#passes + 1] = {
 			pass_type = "texture",
-			style_id = str_2,
-			texture_id = str_2,
-			content_check_function = fn
+			style_id = icon_key,
+			texture_id = icon_key,
+			content_check_function = content_check_function
 		}
-		tbl[#tbl + 1] = {
+		passes[#passes + 1] = {
 			texture_id = "illusion",
 			pass_type = "texture",
-			style_id = str_3,
-			content_check_function = function (self)
+			style_id = illusion_key,
+			content_check_function = function (arg_content)
 				-- function 5
-				local var_5_0 = self[str_6]
+				local var_5_0 = arg_content[item_key]
 
-				var_5_0 = not var_5_0 and self[str_3]
+				var_5_0 = not not var_5_0 and not not arg_content[illusion_key]
 
 				return var_5_0
 			end
 		}
-		tbl[#tbl + 1] = {
+		passes[#passes + 1] = {
 			texture_id = "frame",
 			pass_type = "texture",
-			style_id = str_4,
-			content_check_function = fn
+			style_id = frame_key,
+			content_check_function = content_check_function
 		}
-		tbl[#tbl + 1] = {
+		passes[#passes + 1] = {
 			pass_type = "hover",
-			style_id = str_5,
-			content_check_function = fn
+			style_id = tooltip_key,
+			content_check_function = content_check_function
 		}
-		tbl[#tbl + 1] = {
+		passes[#passes + 1] = {
 			pass_type = "item_tooltip",
-			item_id = str_6,
-			style_id = str_5,
-			content_check_function = function (self)
+			item_id = item_key,
+			style_id = tooltip_key,
+			content_check_function = function (arg_content)
 				-- function 6
-				if not self[str_6] then
+				if not arg_content[item_key] then
 					return false
 				end
 
-				local selected_i = self.selected_i
+				local selected_i = arg_content.selected_i
 
-				if not selected_i then
+				if selected_i then
 					return selected_i == i
 				else
-					return self.is_hover
+					return arg_content.is_hover
 				end
 			end
 		}
-		tbl_2[str] = "icons_placeholder"
-		tbl_2[str_2] = "icons_placeholder"
-		tbl_2[str_3] = false
-		tbl_3[str] = {
+		content[rarity_key] = "icons_placeholder"
+		content[icon_key] = "icons_placeholder"
+		content[illusion_key] = false
+		style[rarity_key] = {
 			offset = {
 				0,
 				0,
@@ -688,7 +687,7 @@ local function fn_3(arg_3_0)
 				80
 			}
 		}
-		tbl_3[str_2] = {
+		style[icon_key] = {
 			offset = {
 				0,
 				0,
@@ -699,7 +698,7 @@ local function fn_3(arg_3_0)
 				80
 			}
 		}
-		tbl_3[str_3] = {
+		style[illusion_key] = {
 			offset = {
 				0,
 				0,
@@ -710,7 +709,7 @@ local function fn_3(arg_3_0)
 				80
 			}
 		}
-		tbl_3[str_4] = {
+		style[frame_key] = {
 			offset = {
 				0,
 				0,
@@ -721,7 +720,7 @@ local function fn_3(arg_3_0)
 				80
 			}
 		}
-		tbl_3[str_5] = {
+		style[tooltip_key] = {
 			font_type = "hell_shark",
 			localize = true,
 			font_size = 18,
@@ -745,25 +744,25 @@ local function fn_3(arg_3_0)
 		}
 	end
 
-	local frame_outer_glow_04_big = UIFrameSettings.frame_outer_glow_04_big
+	local cursor_frame_settings = UIFrameSettings.frame_outer_glow_04_big
 
-	tbl[#tbl + 1] = {
+	passes[#passes + 1] = {
 		pass_type = "texture_frame",
 		style_id = "cursor",
 		texture_id = "cursor",
-		content_check_function = function (self)
+		content_check_function = function (arg_content)
 			-- function 7
-			return self.selected_i
+			return arg_content.selected_i
 		end
 	}
-	tbl_2.cursor = frame_outer_glow_04_big.texture
-	tbl_3.cursor = {
+	content.cursor = cursor_frame_settings.texture
+	style.cursor = {
 		size = {
 			80,
 			80
 		},
-		texture_size = frame_outer_glow_04_big.texture_size,
-		texture_sizes = frame_outer_glow_04_big.texture_sizes,
+		texture_size = cursor_frame_settings.texture_size,
+		texture_sizes = cursor_frame_settings.texture_sizes,
 		frame_margins = {
 			-22,
 			-22
@@ -782,21 +781,21 @@ local function fn_3(arg_3_0)
 	}
 
 	return {
-		scenegraph_id = arg_3_0,
+		scenegraph_id = scenegraph_id,
 		offset = {
 			0,
 			0,
 			0
 		},
 		element = {
-			passes = tbl
+			passes = passes
 		},
-		content = tbl_2,
-		style = tbl_3
+		content = content,
+		style = style
 	}
 end
 
-local function fn_4(arg_8_0, arg_8_1)
+local function create_weapon_skin_widget(texture, scenegraph_id)
 	-- function 8
 	return {
 		element = {
@@ -827,7 +826,7 @@ local function fn_4(arg_8_0, arg_8_1)
 			frame = "reward_pop_up_item_frame",
 			rarity_texture = "icon_bg_plentiful",
 			illusion_overlay = "item_frame_illusion",
-			texture_id = arg_8_0
+			texture_id = texture
 		},
 		style = {
 			texture_id = {
@@ -888,66 +887,66 @@ local function fn_4(arg_8_0, arg_8_1)
 			0,
 			0
 		},
-		scenegraph_id = arg_8_1
+		scenegraph_id = scenegraph_id
 	}
 end
 
-local function fn_5(arg_9_0, arg_9_1)
+local function create_description_text_widget(text, scenegraph_id)
 	-- function 9
-	local tbl = {
+	local text_offset = {
 		0,
 		6,
 		2
 	}
-	local tbl_2 = {
+	local text_style = {
 		vertical_alignment = "bottom",
 		word_wrap = true,
 		horizontal_alignment = "center",
 		font_size = 28,
 		font_type = "hell_shark",
 		text_color = Colors.get_color_table_with_alpha("font_default", 255),
-		offset = tbl
+		offset = text_offset
 	}
-	local clone = table.clone(tbl_2)
+	local text_shadow_style = table.clone(text_style)
 
-	clone.text_color = {
+	text_shadow_style.text_color = {
 		255,
 		0,
 		0,
 		1
 	}
-	clone.offset = {
-		tbl[1] + 2,
-		tbl[2] - 2,
-		tbl[3] - 1
+	text_shadow_style.offset = {
+		text_offset[1] + 2,
+		text_offset[2] - 2,
+		text_offset[3] - 1
 	}
 
-	local tbl_3 = {
+	local title_text_offset = {
 		0,
 		0,
 		2
 	}
-	local tbl_4 = {
+	local title_text_style = {
 		vertical_alignment = "top",
 		word_wrap = true,
 		horizontal_alignment = "center",
 		font_size = 46,
 		font_type = "hell_shark_header",
 		text_color = Colors.get_color_table_with_alpha("font_title", 255),
-		offset = tbl_3
+		offset = title_text_offset
 	}
-	local clone_2 = table.clone(tbl_4)
+	local title_text_shadow_style = table.clone(title_text_style)
 
-	clone_2.text_color = {
+	title_text_shadow_style.text_color = {
 		255,
 		0,
 		0,
 		1
 	}
-	clone_2.offset = {
-		tbl_3[1] + 2,
-		tbl_3[2] - 2,
-		tbl_3[3] - 1
+	title_text_shadow_style.offset = {
+		title_text_offset[1] + 2,
+		title_text_offset[2] - 2,
+		title_text_offset[3] - 1
 	}
 
 	return {
@@ -976,25 +975,25 @@ local function fn_5(arg_9_0, arg_9_1)
 			}
 		},
 		content = {
-			text = arg_9_0,
-			title_text = arg_9_0
+			text = text,
+			title_text = text
 		},
 		style = {
-			title_text = tbl_4,
-			title_text_shadow = clone_2,
-			text = tbl_2,
-			text_shadow = clone
+			title_text = title_text_style,
+			title_text_shadow = title_text_shadow_style,
+			text = text_style,
+			text_shadow = text_shadow_style
 		},
 		offset = {
 			0,
 			0,
 			0
 		},
-		scenegraph_id = arg_9_1
+		scenegraph_id = scenegraph_id
 	}
 end
 
-local function fn_6(arg_10_0)
+local function create_power_up(scenegraph_id)
 	-- function 10
 	return {
 		element = {
@@ -1058,9 +1057,9 @@ local function fn_6(arg_10_0)
 					style_id = "set_progression",
 					pass_type = "text",
 					text_id = "set_progression",
-					content_check_function = function (self)
+					content_check_function = function (content)
 						-- function 11
-						return self.is_part_of_set
+						return content.is_part_of_set
 					end
 				}
 			}
@@ -1132,7 +1131,7 @@ local function fn_6(arg_10_0)
 				},
 				texture_size = {
 					242,
-					tbl_2.deus_power_up.size[2]
+					scenegraph_definition.deus_power_up.size[2]
 				},
 				offset = {
 					0,
@@ -1151,7 +1150,7 @@ local function fn_6(arg_10_0)
 				},
 				texture_size = {
 					242,
-					tbl_2.deus_power_up.size[2]
+					scenegraph_definition.deus_power_up.size[2]
 				},
 				offset = {
 					114,
@@ -1208,7 +1207,7 @@ local function fn_6(arg_10_0)
 				dynamic_font_size = true,
 				area_size = {
 					240,
-					tbl_2.deus_power_up.size[2]
+					scenegraph_definition.deus_power_up.size[2]
 				},
 				text_color = Colors.get_color_table_with_alpha("font_title", 255),
 				offset = {
@@ -1266,7 +1265,7 @@ local function fn_6(arg_10_0)
 				dynamic_font_size = true,
 				area_size = {
 					240,
-					tbl_2.deus_power_up.size[2]
+					scenegraph_definition.deus_power_up.size[2]
 				},
 				text_color = Colors.get_color_table_with_alpha("black", 255),
 				offset = {
@@ -1332,11 +1331,11 @@ local function fn_6(arg_10_0)
 			0,
 			0
 		},
-		scenegraph_id = arg_10_0
+		scenegraph_id = scenegraph_id
 	}
 end
 
-local function fn_7(arg_12_0)
+local function create_deus_icon(scenegraph_id)
 	-- function 12
 	return {
 		element = {
@@ -1345,26 +1344,26 @@ local function fn_7(arg_12_0)
 					texture_id = "icon",
 					style_id = "icon",
 					pass_type = "texture",
-					content_check_function = function (self)
+					content_check_function = function (content)
 						-- function 13
-						return self.icon
+						return content.icon
 					end
 				},
 				{
 					texture_id = "icon_bg",
 					style_id = "icon_bg",
 					pass_type = "texture",
-					content_check_function = function (self)
+					content_check_function = function (content)
 						-- function 14
-						return self.icon
+						return content.icon
 					end
 				},
 				{
 					style_id = "rectangular_bg",
 					pass_type = "rect",
-					content_check_function = function (self)
+					content_check_function = function (content)
 						-- function 15
-						return self.icon
+						return content.icon
 					end
 				}
 			}
@@ -1448,11 +1447,11 @@ local function fn_7(arg_12_0)
 			0,
 			10
 		},
-		scenegraph_id = arg_12_0
+		scenegraph_id = scenegraph_id
 	}
 end
 
-local tbl_5 = {
+local tooltip_passes = {
 	"item_titles",
 	"skin_applied",
 	"fatigue",
@@ -1461,10 +1460,10 @@ local tbl_5 = {
 	"traits",
 	"keywords"
 }
-local tbl_6 = {
-	title = UIWidgets.create_simple_text("n/a", "title_root", nil, nil, tbl_3),
-	level = UIWidgets.create_simple_text("n/a", "level_root", nil, nil, tbl_4),
-	description = fn_5("n/a", "title_root"),
+local widget_definitions = {
+	title = UIWidgets.create_simple_text("n/a", "title_root", nil, nil, title_text_style),
+	level = UIWidgets.create_simple_text("n/a", "level_root", nil, nil, level_text_style),
+	description = create_description_text_widget("n/a", "title_root"),
 	texture = {
 		scenegraph_id = "item_root",
 		element = {
@@ -1506,15 +1505,15 @@ local tbl_6 = {
 			0
 		}
 	},
-	icon = fn("icons_placeholder", "item_root"),
-	item = fn_2("icons_placeholder", "item_root"),
-	frame = fn_2("icons_placeholder", "item_root"),
-	weapon_skin = fn_4("icons_placeholder", "item_root"),
-	keep_decoration_painting = fn_4("icons_placeholder", "item_root"),
-	skin = fn_4("icons_placeholder", "item_root"),
-	loot_chest = fn_2("icons_placeholder", "item_root"),
+	icon = create_icon_widget("icons_placeholder", "item_root"),
+	item = create_item_widget("icons_placeholder", "item_root"),
+	frame = create_item_widget("icons_placeholder", "item_root"),
+	weapon_skin = create_weapon_skin_widget("icons_placeholder", "item_root"),
+	keep_decoration_painting = create_weapon_skin_widget("icons_placeholder", "item_root"),
+	skin = create_weapon_skin_widget("icons_placeholder", "item_root"),
+	loot_chest = create_item_widget("icons_placeholder", "item_root"),
 	career = UIWidgets.create_simple_texture("icons_placeholder", "career_root"),
-	item_list = fn_3("item_list_root"),
+	item_list = create_item_list_widget("item_list_root"),
 	background_top = UIWidgets.create_simple_texture("reward_popup_panel", "background_top"),
 	background_center = UIWidgets.create_simple_uv_texture("reward_pop_up_01_bg", {
 		{
@@ -1562,7 +1561,7 @@ local tbl_6 = {
 		0,
 		0
 	}),
-	claim_button = UIWidgets.create_default_button("claim_button", tbl, nil, nil, Localize("welcome_currency_popup_button_claim"), nil, nil, nil, nil, true),
+	claim_button = UIWidgets.create_default_button("claim_button", CLOSE_BUTTON_SIZE, nil, nil, Localize("welcome_currency_popup_button_claim"), nil, nil, nil, nil, true),
 	deus_background_top = UIWidgets.create_simple_texture("reward_popup_panel_morris", "deus_background_top"),
 	deus_background_bottom = UIWidgets.create_simple_uv_texture("reward_popup_panel_morris", {
 		{
@@ -1594,72 +1593,74 @@ local tbl_6 = {
 			1
 		}
 	}, "deus_background_bottom_glow"),
-	deus_item = fn_2("icons_placeholder", "deus_item_root"),
-	deus_item_tooltip = UIWidgets.create_simple_item_presentation("deus_item_tooltip", tbl_5),
-	item_tooltip = UIWidgets.create_simple_item_presentation("item_tooltip", tbl_5),
-	deus_power_up = fn_6("deus_power_up"),
-	deus_icon = fn_7("deus_icon")
+	deus_item = create_item_widget("icons_placeholder", "deus_item_root"),
+	deus_item_tooltip = UIWidgets.create_simple_item_presentation("deus_item_tooltip", tooltip_passes),
+	item_tooltip = UIWidgets.create_simple_item_presentation("item_tooltip", tooltip_passes),
+	deus_power_up = create_power_up("deus_power_up"),
+	deus_icon = create_deus_icon("deus_icon")
 }
 
-local function fn_8(self, arg_16_1)
+local function scale_to_percent(style, fraction)
 	-- function 16
-	local texture_size = self.texture_size
-	local default_texture_size = self.default_texture_size
+	local dst = style.texture_size
+	local src = style.default_texture_size
 
-	texture_size[1] = default_texture_size[1] * (2 - arg_16_1)
-	texture_size[2] = default_texture_size[2] * (2 - arg_16_1)
+	dst[1] = src[1] * (2 - fraction)
+	dst[2] = src[2] * (2 - fraction)
 end
 
-local tbl_7 = {
+local animations = {
 	entry_enter = {
 		{
 			name = "fade_in_title_text",
 			duration = 0.2,
 			init = NOP,
-			update = function (self, arg_17_1, arg_17_2, arg_17_3, arg_17_4)
+			update = function (ui_scenegraph, scenegraph_definition, widget_type, progress, params)
 				-- function 17
-				if not arg_17_4.played_text_reveal_sound_1 then
-					arg_17_4.played_text_reveal_sound_1 = true
+				if not params.played_text_reveal_sound_1 then
+					params.played_text_reveal_sound_1 = true
 
-					WwiseWorld.trigger_event(arg_17_4.wwise_world, "hud_compleation_ver2")
+					WwiseWorld.trigger_event(params.wwise_world, "hud_compleation_ver2")
 				end
 
-				local easeOutCubic = math.easeOutCubic(arg_17_3)
+				local anim_fraction = math.easeOutCubic(progress)
 
-				for k, v in pairs(arg_17_2) do
-					local widget = v.widget
-					local widget_type = v.widget_type
+				for _, data in pairs(widget_type) do
+					local widget = data.widget
+					local widget_type = data.widget_type
 
-					v.alpha_multiplier = easeOutCubic
+					data.alpha_multiplier = anim_fraction
 
 					if widget_type == "level" then
-						widget.style.text.font_size = tbl_4.font_size * math.catmullrom(easeOutCubic, -0.5, 1, 1, -0.5)
+						local text_style = widget.style.text
+
+						text_style.font_size = level_text_style.font_size * math.catmullrom(anim_fraction, -0.5, 1, 1, -0.5)
 					elseif widget_type == "item" then
 						local scenegraph_id = widget.scenegraph_id
-						local size = arg_17_1[scenegraph_id].size
-						local size_2 = self[scenegraph_id].size
-						local ease_out_exp = math.ease_out_exp(arg_17_3)
+						local default_size = scenegraph_definition[scenegraph_id].size
+						local size = ui_scenegraph[scenegraph_id].size
+						local size_fraction = math.ease_out_exp(progress)
 
-						size_2[1] = size[1] + size[1] * (1 - ease_out_exp)
-						size_2[2] = size[2] + size[2] * (1 - ease_out_exp)
+						size[1] = default_size[1] + default_size[1] * (1 - size_fraction)
+						size[2] = default_size[2] + default_size[2] * (1 - size_fraction)
 					elseif widget_type == "deus_item" then
-						local scenegraph_id_2 = widget.scenegraph_id
-						local size_3 = arg_17_1[scenegraph_id_2].size
-						local size_4 = self[scenegraph_id_2].size
-						local ease_out_exp_2 = math.ease_out_exp(arg_17_3)
+						local scenegraph_id = widget.scenegraph_id
+						local default_size = scenegraph_definition[scenegraph_id].size
+						local size = ui_scenegraph[scenegraph_id].size
+						local size_fraction = math.ease_out_exp(progress)
 
-						size_4[1] = size_3[1] + size_3[1] * (1 - ease_out_exp_2) * 3
-						size_4[2] = size_3[2] + size_3[2] * (1 - ease_out_exp_2) * 3
+						size[1] = default_size[1] + default_size[1] * (1 - size_fraction) * 3
+						size[2] = default_size[2] + default_size[2] * (1 - size_fraction) * 3
 					elseif widget_type == "deus_icon" then
-						local ease_out_exp_3 = math.ease_out_exp(arg_17_3)
+						local size_fraction = math.ease_out_exp(progress)
 
-						fn_8(widget.style.icon, 2 - ease_out_exp_3)
-						fn_8(widget.style.icon_bg, 2 - ease_out_exp_3)
-						fn_8(widget.style.rectangular_bg, 2 - ease_out_exp_3)
+						scale_to_percent(widget.style.icon, 2 - size_fraction)
+						scale_to_percent(widget.style.icon_bg, 2 - size_fraction)
+						scale_to_percent(widget.style.rectangular_bg, 2 - size_fraction)
 					end
 				end
 			end,
-			on_complete = function (arg_18_0, arg_18_1, arg_18_2, arg_18_3)
+			on_complete = function (ui_scenegraph, scenegraph_definition, widget_type, params)
 				-- function 18
 				return
 			end
@@ -1669,19 +1670,19 @@ local tbl_7 = {
 		{
 			name = "fade_out_title_text",
 			duration = 0.2,
-			init = function (arg_19_0, arg_19_1, arg_19_2, arg_19_3)
+			init = function (ui_scenegraph, scenegraph_definition, widget_type, params)
 				-- function 19
 				return
 			end,
-			update = function (arg_20_0, arg_20_1, arg_20_2, arg_20_3, arg_20_4)
+			update = function (ui_scenegraph, scenegraph_definition, widget_type, progress, params)
 				-- function 20
-				local num = 1 - math.easeOutCubic(arg_20_3)
+				local alpha_multiplier = 1 - math.easeOutCubic(progress)
 
-				for k, v in pairs(arg_20_2) do
-					v.alpha_multiplier = num
+				for _, data in pairs(widget_type) do
+					data.alpha_multiplier = alpha_multiplier
 				end
 			end,
-			on_complete = function (arg_21_0, arg_21_1, arg_21_2, arg_21_3)
+			on_complete = function (ui_scenegraph, scenegraph_definition, widget_type, params)
 				-- function 21
 				return
 			end
@@ -1692,37 +1693,41 @@ local tbl_7 = {
 			name = "reset",
 			start_progress = 0,
 			end_progress = 0,
-			init = function (arg_22_0, arg_22_1, arg_22_2, arg_22_3)
+			init = function (ui_scenegraph, scenegraph_definition, widgets, params)
 				-- function 22
-				local deus_background_top = arg_22_2.deus_background_top
-				local deus_background_bottom = arg_22_2.deus_background_bottom
-				local background_top = arg_22_2.background_top
-				local background_bottom = arg_22_2.background_bottom
-				local background_center = arg_22_2.background_center
+				local deus_background_top_widget = widgets.deus_background_top
+				local deus_background_bottom_widget = widgets.deus_background_bottom
+				local background_top_widget = widgets.background_top
+				local background_bottom_widget = widgets.background_bottom
+				local background_center_widget = widgets.background_center
+				local background_center_scenegraph_id = background_center_widget.scenegraph_id
+				local current_background_center_size = ui_scenegraph[background_center_scenegraph_id].size
 
-				arg_22_0[background_center.scenegraph_id].size[2] = 0
-				background_top.style.texture_id.color[1] = 0
-				background_bottom.style.texture_id.color[1] = 0
-				deus_background_top.style.texture_id.color[1] = 0
-				deus_background_bottom.style.texture_id.color[1] = 0
-				background_center.style.texture_id.color[1] = 255
+				current_background_center_size[2] = 0
+				background_top_widget.style.texture_id.color[1] = 0
+				background_bottom_widget.style.texture_id.color[1] = 0
+				deus_background_top_widget.style.texture_id.color[1] = 0
+				deus_background_bottom_widget.style.texture_id.color[1] = 0
+				background_center_widget.style.texture_id.color[1] = 255
 
-				local scenegraph_id = background_top.scenegraph_id
-				local position = arg_22_1[scenegraph_id].position
+				local background_top_scenegraph_id = background_top_widget.scenegraph_id
+				local default_background_top_position = scenegraph_definition[background_top_scenegraph_id].position
+				local current_background_top_position = ui_scenegraph[background_top_scenegraph_id].local_position
 
-				arg_22_0[scenegraph_id].local_position[2] = position[2]
+				current_background_top_position[2] = default_background_top_position[2]
 
-				local scenegraph_id_2 = background_bottom.scenegraph_id
-				local position_2 = arg_22_1[scenegraph_id_2].position
+				local background_bottom_scenegraph_id = background_bottom_widget.scenegraph_id
+				local default_background_bottom_position = scenegraph_definition[background_bottom_scenegraph_id].position
+				local current_background_bottom_position = ui_scenegraph[background_bottom_scenegraph_id].local_position
 
-				arg_22_0[scenegraph_id_2].local_position[2] = position_2[2]
-				arg_22_2.claim_button.alpha_multiplier = 0
+				current_background_bottom_position[2] = default_background_bottom_position[2]
+				widgets.claim_button.alpha_multiplier = 0
 			end,
-			update = function (arg_23_0, arg_23_1, arg_23_2, arg_23_3, arg_23_4)
+			update = function (ui_scenegraph, scenegraph_definition, widgets, progress, params)
 				-- function 23
 				return
 			end,
-			on_complete = function (arg_24_0, arg_24_1, arg_24_2, arg_24_3)
+			on_complete = function (ui_scenegraph, scenegraph_definition, widgets, params)
 				-- function 24
 				return
 			end
@@ -1731,15 +1736,17 @@ local tbl_7 = {
 			name = "fade_in_blur",
 			start_progress = 0,
 			end_progress = 0.3,
-			init = function (arg_25_0, arg_25_1, arg_25_2, arg_25_3)
+			init = function (ui_scenegraph, scenegraph_definition, widgets, params)
 				-- function 25
 				return
 			end,
-			update = function (arg_26_0, arg_26_1, arg_26_2, arg_26_3, arg_26_4)
+			update = function (ui_scenegraph, scenegraph_definition, widgets, progress, params)
 				-- function 26
-				arg_26_4.blur_progress = math.easeOutCubic(arg_26_3)
+				local anim_fraction = math.easeOutCubic(progress)
+
+				params.blur_progress = anim_fraction
 			end,
-			on_complete = function (arg_27_0, arg_27_1, arg_27_2, arg_27_3)
+			on_complete = function (ui_scenegraph, scenegraph_definition, widgets, params)
 				-- function 27
 				return
 			end
@@ -1748,25 +1755,25 @@ local tbl_7 = {
 			name = "background_fade_in",
 			start_progress = 0.3,
 			end_progress = 0.5,
-			init = function (arg_28_0, arg_28_1, arg_28_2, arg_28_3)
+			init = function (ui_scenegraph, scenegraph_definition, widgets, params)
 				-- function 28
-				if not arg_28_3.played_start_sound then
-					arg_28_3.played_start_sound = true
+				if not params.played_start_sound then
+					params.played_start_sound = true
 
-					WwiseWorld.trigger_event(arg_28_3.wwise_world, "hud_difficulty_increased_start")
+					WwiseWorld.trigger_event(params.wwise_world, "hud_difficulty_increased_start")
 				end
 			end,
-			update = function (arg_29_0, arg_29_1, arg_29_2, arg_29_3, arg_29_4)
+			update = function (ui_scenegraph, scenegraph_definition, widgets, progress, params)
 				-- function 29
-				local easeInCubic = math.easeInCubic(arg_29_3)
-				local background_top = arg_29_2.background_top
-				local background_bottom = arg_29_2.background_bottom
-				local num = 255 * easeInCubic
+				local anim_fraction = math.easeInCubic(progress)
+				local background_top_widget = widgets.background_top
+				local background_bottom_widget = widgets.background_bottom
+				local alpha = 255 * anim_fraction
 
-				background_top.style.texture_id.color[1] = num
-				background_bottom.style.texture_id.color[1] = num
+				background_top_widget.style.texture_id.color[1] = alpha
+				background_bottom_widget.style.texture_id.color[1] = alpha
 			end,
-			on_complete = function (arg_30_0, arg_30_1, arg_30_2, arg_30_3)
+			on_complete = function (ui_scenegraph, scenegraph_definition, widgets, params)
 				-- function 30
 				return
 			end
@@ -1775,28 +1782,30 @@ local tbl_7 = {
 			name = "background_entry",
 			start_progress = 0,
 			end_progress = 0.4,
-			init = function (arg_31_0, arg_31_1, arg_31_2, arg_31_3)
+			init = function (ui_scenegraph, scenegraph_definition, widgets, params)
 				-- function 31
 				return
 			end,
-			update = function (self, arg_32_1, arg_32_2, arg_32_3, arg_32_4)
+			update = function (ui_scenegraph, scenegraph_definition, widgets, progress, params)
 				-- function 32
-				local easeOutCubic = math.easeOutCubic(arg_32_3)
-				local scenegraph_id = arg_32_2.background_top.scenegraph_id
-				local size = arg_32_1[scenegraph_id].size
-				local size_2 = self[scenegraph_id].size
-				local scenegraph_id_2 = arg_32_2.background_bottom.scenegraph_id
-				local size_3 = arg_32_1[scenegraph_id_2].size
-				local size_4 = self[scenegraph_id_2].size
-				local catmullrom = math.catmullrom(arg_32_3, -4, 1, 1, -1)
+				local anim_fraction = math.easeOutCubic(progress)
+				local background_top_widget = widgets.background_top
+				local background_top_scenegraph_id = background_top_widget.scenegraph_id
+				local default_background_top_size = scenegraph_definition[background_top_scenegraph_id].size
+				local current_background_top_size = ui_scenegraph[background_top_scenegraph_id].size
+				local background_bottom_widget = widgets.background_bottom
+				local background_bottom_scenegraph_id = background_bottom_widget.scenegraph_id
+				local default_background_bottom_size = scenegraph_definition[background_bottom_scenegraph_id].size
+				local current_background_bottom_size = ui_scenegraph[background_bottom_scenegraph_id].size
+				local anim_size_fraction = math.catmullrom(progress, -4, 1, 1, -1)
 
-				size_2[1] = size[1] * catmullrom
-				size_2[2] = size[2] * catmullrom
-				size_4[1] = size_3[1] * catmullrom
-				size_4[2] = size_3[2] * catmullrom
-				arg_32_2.claim_button.content.alpha_multiplier = arg_32_3
+				current_background_top_size[1] = default_background_top_size[1] * anim_size_fraction
+				current_background_top_size[2] = default_background_top_size[2] * anim_size_fraction
+				current_background_bottom_size[1] = default_background_bottom_size[1] * anim_size_fraction
+				current_background_bottom_size[2] = default_background_bottom_size[2] * anim_size_fraction
+				widgets.claim_button.content.alpha_multiplier = progress
 			end,
-			on_complete = function (arg_33_0, arg_33_1, arg_33_2, arg_33_3)
+			on_complete = function (ui_scenegraph, scenegraph_definition, widgets, params)
 				-- function 33
 				return
 			end
@@ -1805,49 +1814,57 @@ local tbl_7 = {
 			name = "background_expand",
 			start_progress = 0.4,
 			end_progress = 0.5,
-			init = function (arg_34_0, arg_34_1, arg_34_2, arg_34_3)
+			init = function (ui_scenegraph, scenegraph_definition, widgets, params)
 				-- function 34
 				return
 			end,
-			update = function (self, arg_35_1, arg_35_2, arg_35_3, arg_35_4)
+			update = function (ui_scenegraph, scenegraph_definition, widgets, progress, params)
 				-- function 35
-				local easeOutCubic = math.easeOutCubic(arg_35_3)
-				local scenegraph_id = arg_35_2.background_top.scenegraph_id
-				local position = arg_35_1[scenegraph_id].position
-				local local_position = self[scenegraph_id].local_position
-				local scenegraph_id_2 = arg_35_2.background_bottom.scenegraph_id
-				local position_2 = arg_35_1[scenegraph_id_2].position
-				local local_position_2 = self[scenegraph_id_2].local_position
-				local background_center = arg_35_2.background_center
-				local scenegraph_id_3 = background_center.scenegraph_id
-				local size = self[scenegraph_id_3].size
-				local size_2 = arg_35_1[scenegraph_id_3].size
+				local anim_fraction = math.easeOutCubic(progress)
+				local background_top_widget = widgets.background_top
+				local background_top_scenegraph_id = background_top_widget.scenegraph_id
+				local default_background_top_position = scenegraph_definition[background_top_scenegraph_id].position
+				local current_background_top_position = ui_scenegraph[background_top_scenegraph_id].local_position
+				local background_bottom_widget = widgets.background_bottom
+				local background_bottom_scenegraph_id = background_bottom_widget.scenegraph_id
+				local default_background_bottom_position = scenegraph_definition[background_bottom_scenegraph_id].position
+				local current_background_bottom_position = ui_scenegraph[background_bottom_scenegraph_id].local_position
+				local background_center_widget = widgets.background_center
+				local background_center_scenegraph_id = background_center_widget.scenegraph_id
+				local current_background_center_size = ui_scenegraph[background_center_scenegraph_id].size
+				local default_background_center_size = scenegraph_definition[background_center_scenegraph_id].size
 
-				size[2] = math.ceil(size_2[2] * easeOutCubic)
+				current_background_center_size[2] = math.ceil(default_background_center_size[2] * anim_fraction)
 
-				local num = size_2[2] / 2
-				local num_2 = size_2[2] / 82
-				local uvs = background_center.content.texture_id.uvs
-				local num_3 = num_2 * easeOutCubic
+				local half_center_height = default_background_center_size[2] / 2
+				local height_fraction = default_background_center_size[2] / 82
+				local center_uvs = background_center_widget.content.texture_id.uvs
+				local total_uv_change = height_fraction * anim_fraction
 
-				uvs[1][2] = math.min(0.5 + num_3, 1)
-				uvs[2][2] = math.max(0.5 - num_3, 0)
-				local_position[2] = position[2] + num * easeOutCubic
-				local_position_2[2] = position_2[2] - num * easeOutCubic
-				arg_35_2.background_top_glow.content.texture_id.uvs[2][2] = easeOutCubic
+				center_uvs[1][2] = math.min(0.5 + total_uv_change, 1)
+				center_uvs[2][2] = math.max(0.5 - total_uv_change, 0)
+				current_background_top_position[2] = default_background_top_position[2] + half_center_height * anim_fraction
+				current_background_bottom_position[2] = default_background_bottom_position[2] - half_center_height * anim_fraction
 
-				local num_4 = 55 * easeOutCubic
+				local background_top_glow_widget = widgets.background_top_glow
 
-				self.background_top_glow.size[2] = num_4
-				self.background_top_glow.local_position[2] = -num_4
-				arg_35_2.background_bottom_glow.content.texture_id.uvs[2][2] = easeOutCubic
+				background_top_glow_widget.content.texture_id.uvs[2][2] = anim_fraction
 
-				local num_5 = 55 * easeOutCubic
+				local new_top_glow_height = 55 * anim_fraction
 
-				self.background_bottom_glow.size[2] = num_5
-				self.background_bottom_glow.local_position[2] = num_5
+				ui_scenegraph.background_top_glow.size[2] = new_top_glow_height
+				ui_scenegraph.background_top_glow.local_position[2] = -new_top_glow_height
+
+				local background_bottom_glow_widget = widgets.background_bottom_glow
+
+				background_bottom_glow_widget.content.texture_id.uvs[2][2] = anim_fraction
+
+				local new_bottom_glow_height = 55 * anim_fraction
+
+				ui_scenegraph.background_bottom_glow.size[2] = new_bottom_glow_height
+				ui_scenegraph.background_bottom_glow.local_position[2] = new_bottom_glow_height
 			end,
-			on_complete = function (arg_36_0, arg_36_1, arg_36_2, arg_36_3)
+			on_complete = function (ui_scenegraph, scenegraph_definition, widgets, params)
 				-- function 36
 				return
 			end
@@ -1858,55 +1875,63 @@ local tbl_7 = {
 			name = "background_collapse",
 			start_progress = 0,
 			end_progress = 0.15,
-			init = function (arg_37_0, arg_37_1, arg_37_2, arg_37_3)
+			init = function (ui_scenegraph, scenegraph_definition, widgets, params)
 				-- function 37
 				return
 			end,
-			update = function (self, arg_38_1, arg_38_2, arg_38_3, arg_38_4)
+			update = function (ui_scenegraph, scenegraph_definition, widgets, progress, params)
 				-- function 38
-				local easeInCubic = math.easeInCubic(arg_38_3)
-				local num = 1 - math.easeInCubic(arg_38_3)
-				local scenegraph_id = arg_38_2.background_top.scenegraph_id
-				local position = arg_38_1[scenegraph_id].position
-				local local_position = self[scenegraph_id].local_position
-				local scenegraph_id_2 = arg_38_2.background_bottom.scenegraph_id
-				local position_2 = arg_38_1[scenegraph_id_2].position
-				local local_position_2 = self[scenegraph_id_2].local_position
-				local background_center = arg_38_2.background_center
-				local scenegraph_id_3 = background_center.scenegraph_id
-				local size = self[scenegraph_id_3].size
-				local size_2 = arg_38_1[scenegraph_id_3].size
+				local anim_fraction = math.easeInCubic(progress)
+				local inv_anim_fraction = 1 - math.easeInCubic(progress)
+				local background_top_widget = widgets.background_top
+				local background_top_scenegraph_id = background_top_widget.scenegraph_id
+				local default_background_top_position = scenegraph_definition[background_top_scenegraph_id].position
+				local current_background_top_position = ui_scenegraph[background_top_scenegraph_id].local_position
+				local background_bottom_widget = widgets.background_bottom
+				local background_bottom_scenegraph_id = background_bottom_widget.scenegraph_id
+				local default_background_bottom_position = scenegraph_definition[background_bottom_scenegraph_id].position
+				local current_background_bottom_position = ui_scenegraph[background_bottom_scenegraph_id].local_position
+				local background_center_widget = widgets.background_center
+				local background_center_scenegraph_id = background_center_widget.scenegraph_id
+				local current_background_center_size = ui_scenegraph[background_center_scenegraph_id].size
+				local default_background_center_size = scenegraph_definition[background_center_scenegraph_id].size
 
-				size[2] = math.ceil(size_2[2] - size_2[2] * easeInCubic)
+				current_background_center_size[2] = math.ceil(default_background_center_size[2] - default_background_center_size[2] * anim_fraction)
 
-				local num_2 = size_2[2] / 2
-				local num_3 = size_2[2] / 82
-				local uvs = background_center.content.texture_id.uvs
-				local num_4 = num_3 * num
+				local half_center_height = default_background_center_size[2] / 2
+				local height_fraction = default_background_center_size[2] / 82
+				local center_uvs = background_center_widget.content.texture_id.uvs
+				local total_uv_change = height_fraction * inv_anim_fraction
 
-				uvs[1][2] = math.min(0.5 + num_4, 1)
-				uvs[2][2] = math.max(0.5 - num_4, 0)
-				local_position[2] = position[2] + num_2 - num_2 * easeInCubic
-				local_position_2[2] = position_2[2] - num_2 + num_2 * easeInCubic
-				arg_38_2.background_top_glow.content.texture_id.uvs[2][2] = num
+				center_uvs[1][2] = math.min(0.5 + total_uv_change, 1)
+				center_uvs[2][2] = math.max(0.5 - total_uv_change, 0)
+				current_background_top_position[2] = default_background_top_position[2] + half_center_height - half_center_height * anim_fraction
+				current_background_bottom_position[2] = default_background_bottom_position[2] - half_center_height + half_center_height * anim_fraction
 
-				local num_5 = 55 * num
+				local background_top_glow_widget = widgets.background_top_glow
 
-				self.background_top_glow.size[2] = num_5
-				self.background_top_glow.local_position[2] = -num_5
-				arg_38_2.background_bottom_glow.content.texture_id.uvs[2][2] = num
+				background_top_glow_widget.content.texture_id.uvs[2][2] = inv_anim_fraction
 
-				local num_6 = 55 * num
+				local new_top_glow_height = 55 * inv_anim_fraction
 
-				self.background_bottom_glow.size[2] = num_6
-				self.background_bottom_glow.local_position[2] = num_6
+				ui_scenegraph.background_top_glow.size[2] = new_top_glow_height
+				ui_scenegraph.background_top_glow.local_position[2] = -new_top_glow_height
+
+				local background_bottom_glow_widget = widgets.background_bottom_glow
+
+				background_bottom_glow_widget.content.texture_id.uvs[2][2] = inv_anim_fraction
+
+				local new_bottom_glow_height = 55 * inv_anim_fraction
+
+				ui_scenegraph.background_bottom_glow.size[2] = new_bottom_glow_height
+				ui_scenegraph.background_bottom_glow.local_position[2] = new_bottom_glow_height
 			end,
-			on_complete = function (arg_39_0, arg_39_1, arg_39_2, arg_39_3)
+			on_complete = function (ui_scenegraph, scenegraph_definition, widgets, params)
 				-- function 39
-				if not arg_39_3.played_end_sound then
-					arg_39_3.played_end_sound = true
+				if not params.played_end_sound then
+					params.played_end_sound = true
 
-					WwiseWorld.trigger_event(arg_39_3.wwise_world, "hud_difficulty_increased_end")
+					WwiseWorld.trigger_event(params.wwise_world, "hud_difficulty_increased_end")
 				end
 			end
 		},
@@ -1914,22 +1939,23 @@ local tbl_7 = {
 			name = "fade_out_background",
 			start_progress = 0.15,
 			end_progress = 0.4,
-			init = function (arg_40_0, arg_40_1, arg_40_2, arg_40_3)
+			init = function (ui_scenegraph, scenegraph_definition, widgets, params)
 				-- function 40
 				return
 			end,
-			update = function (arg_41_0, arg_41_1, arg_41_2, arg_41_3, arg_41_4)
+			update = function (ui_scenegraph, scenegraph_definition, widgets, progress, params)
 				-- function 41
-				local background_top = arg_41_2.background_top
-				local background_center = arg_41_2.background_center
-				local background_bottom = arg_41_2.background_bottom
-				local num = 255 - 255 * math.easeOutCubic(arg_41_3)
+				local background_top_widget = widgets.background_top
+				local background_center_widget = widgets.background_center
+				local background_bottom_widget = widgets.background_bottom
+				local anim_fraction = math.easeOutCubic(progress)
+				local alpha = 255 - 255 * anim_fraction
 
-				background_top.style.texture_id.color[1] = num
-				background_bottom.style.texture_id.color[1] = num
-				background_center.style.texture_id.color[1] = num
+				background_top_widget.style.texture_id.color[1] = alpha
+				background_bottom_widget.style.texture_id.color[1] = alpha
+				background_center_widget.style.texture_id.color[1] = alpha
 			end,
-			on_complete = function (arg_42_0, arg_42_1, arg_42_2, arg_42_3)
+			on_complete = function (ui_scenegraph, scenegraph_definition, widgets, params)
 				-- function 42
 				return
 			end
@@ -1938,15 +1964,17 @@ local tbl_7 = {
 			name = "fade_out_blur",
 			start_progress = 0.4,
 			end_progress = 0.5,
-			init = function (arg_43_0, arg_43_1, arg_43_2, arg_43_3)
+			init = function (ui_scenegraph, scenegraph_definition, widgets, params)
 				-- function 43
 				return
 			end,
-			update = function (arg_44_0, arg_44_1, arg_44_2, arg_44_3, arg_44_4)
+			update = function (ui_scenegraph, scenegraph_definition, widgets, progress, params)
 				-- function 44
-				arg_44_4.blur_progress = math.easeOutCubic(1 - arg_44_3)
+				local anim_fraction = math.easeOutCubic(1 - progress)
+
+				params.blur_progress = anim_fraction
 			end,
-			on_complete = function (arg_45_0, arg_45_1, arg_45_2, arg_45_3)
+			on_complete = function (ui_scenegraph, scenegraph_definition, widgets, params)
 				-- function 45
 				return
 			end
@@ -1957,37 +1985,41 @@ local tbl_7 = {
 			name = "reset",
 			start_progress = 0,
 			end_progress = 0,
-			init = function (arg_46_0, arg_46_1, arg_46_2, arg_46_3)
+			init = function (ui_scenegraph, scenegraph_definition, widgets, params)
 				-- function 46
-				local background_top = arg_46_2.background_top
-				local background_bottom = arg_46_2.background_bottom
-				local deus_background_top = arg_46_2.deus_background_top
-				local deus_background_bottom = arg_46_2.deus_background_bottom
-				local background_center = arg_46_2.background_center
+				local background_top_widget = widgets.background_top
+				local background_bottom_widget = widgets.background_bottom
+				local deus_background_top_widget = widgets.deus_background_top
+				local deus_background_bottom_widget = widgets.deus_background_bottom
+				local background_center_widget = widgets.background_center
+				local background_center_scenegraph_id = background_center_widget.scenegraph_id
+				local current_background_center_size = ui_scenegraph[background_center_scenegraph_id].size
 
-				arg_46_0[background_center.scenegraph_id].size[2] = 0
-				background_top.style.texture_id.color[1] = 0
-				background_bottom.style.texture_id.color[1] = 0
-				deus_background_top.style.texture_id.color[1] = 0
-				deus_background_bottom.style.texture_id.color[1] = 0
-				background_center.style.texture_id.color[1] = 0
+				current_background_center_size[2] = 0
+				background_top_widget.style.texture_id.color[1] = 0
+				background_bottom_widget.style.texture_id.color[1] = 0
+				deus_background_top_widget.style.texture_id.color[1] = 0
+				deus_background_bottom_widget.style.texture_id.color[1] = 0
+				background_center_widget.style.texture_id.color[1] = 0
 
-				local scenegraph_id = deus_background_top.scenegraph_id
-				local position = arg_46_1[scenegraph_id].position
+				local background_top_scenegraph_id = deus_background_top_widget.scenegraph_id
+				local default_background_top_position = scenegraph_definition[background_top_scenegraph_id].position
+				local current_background_top_position = ui_scenegraph[background_top_scenegraph_id].local_position
 
-				arg_46_0[scenegraph_id].local_position[2] = position[2]
+				current_background_top_position[2] = default_background_top_position[2]
 
-				local scenegraph_id_2 = deus_background_bottom.scenegraph_id
-				local position_2 = arg_46_1[scenegraph_id_2].position
+				local background_bottom_scenegraph_id = deus_background_bottom_widget.scenegraph_id
+				local default_background_bottom_position = scenegraph_definition[background_bottom_scenegraph_id].position
+				local current_background_bottom_position = ui_scenegraph[background_bottom_scenegraph_id].local_position
 
-				arg_46_0[scenegraph_id_2].local_position[2] = position_2[2]
-				arg_46_3.skip_blur = true
+				current_background_bottom_position[2] = default_background_bottom_position[2]
+				params.skip_blur = true
 			end,
-			update = function (arg_47_0, arg_47_1, arg_47_2, arg_47_3, arg_47_4)
+			update = function (ui_scenegraph, scenegraph_definition, widgets, progress, params)
 				-- function 47
 				return
 			end,
-			on_complete = function (arg_48_0, arg_48_1, arg_48_2, arg_48_3)
+			on_complete = function (ui_scenegraph, scenegraph_definition, widgets, params)
 				-- function 48
 				return
 			end
@@ -1996,25 +2028,25 @@ local tbl_7 = {
 			name = "background_fade_in",
 			start_progress = 0,
 			end_progress = 0.3,
-			init = function (arg_49_0, arg_49_1, arg_49_2, arg_49_3)
+			init = function (ui_scenegraph, scenegraph_definition, widgets, params)
 				-- function 49
-				if not arg_49_3.played_start_sound then
-					arg_49_3.played_start_sound = true
+				if not params.played_start_sound then
+					params.played_start_sound = true
 
-					WwiseWorld.trigger_event(arg_49_3.wwise_world, "hud_difficulty_increased_start")
+					WwiseWorld.trigger_event(params.wwise_world, "hud_difficulty_increased_start")
 				end
 			end,
-			update = function (arg_50_0, arg_50_1, arg_50_2, arg_50_3, arg_50_4)
+			update = function (ui_scenegraph, scenegraph_definition, widgets, progress, params)
 				-- function 50
-				local easeInCubic = math.easeInCubic(arg_50_3)
-				local deus_background_top = arg_50_2.deus_background_top
-				local deus_background_bottom = arg_50_2.deus_background_bottom
-				local num = 255 * easeInCubic
+				local anim_fraction = math.easeInCubic(progress)
+				local background_top_widget = widgets.deus_background_top
+				local background_bottom_widget = widgets.deus_background_bottom
+				local alpha = 255 * anim_fraction
 
-				deus_background_top.style.texture_id.color[1] = num
-				deus_background_bottom.style.texture_id.color[1] = num
+				background_top_widget.style.texture_id.color[1] = alpha
+				background_bottom_widget.style.texture_id.color[1] = alpha
 			end,
-			on_complete = function (arg_51_0, arg_51_1, arg_51_2, arg_51_3)
+			on_complete = function (ui_scenegraph, scenegraph_definition, widgets, params)
 				-- function 51
 				return
 			end
@@ -2023,25 +2055,27 @@ local tbl_7 = {
 			name = "background_entry",
 			start_progress = 0,
 			end_progress = 0.4,
-			init = function (arg_52_0, arg_52_1, arg_52_2, arg_52_3)
+			init = function (ui_scenegraph, scenegraph_definition, widgets, params)
 				-- function 52
 				return
 			end,
-			update = function (self, arg_53_1, arg_53_2, arg_53_3, arg_53_4)
+			update = function (ui_scenegraph, scenegraph_definition, widgets, progress, params)
 				-- function 53
-				local easeOutCubic = math.easeOutCubic(arg_53_3)
-				local scenegraph_id = arg_53_2.deus_background_top.scenegraph_id
-				local size = arg_53_1[scenegraph_id].size
-				local size_2 = self[scenegraph_id].size
-				local scenegraph_id_2 = arg_53_2.deus_background_bottom.scenegraph_id
-				local size_3 = arg_53_1[scenegraph_id_2].size
-				local size_4 = self[scenegraph_id_2].size
-				local ease_in_exp = math.ease_in_exp(arg_53_3)
+				local anim_fraction = math.easeOutCubic(progress)
+				local background_top_widget = widgets.deus_background_top
+				local background_top_scenegraph_id = background_top_widget.scenegraph_id
+				local default_background_top_size = scenegraph_definition[background_top_scenegraph_id].size
+				local current_background_top_size = ui_scenegraph[background_top_scenegraph_id].size
+				local background_bottom_widget = widgets.deus_background_bottom
+				local background_bottom_scenegraph_id = background_bottom_widget.scenegraph_id
+				local default_background_bottom_size = scenegraph_definition[background_bottom_scenegraph_id].size
+				local current_background_bottom_size = ui_scenegraph[background_bottom_scenegraph_id].size
+				local anim_size_fraction = math.ease_in_exp(progress)
 
-				size_2[2] = size[2] * ease_in_exp
-				size_4[2] = size_3[2] * ease_in_exp
+				current_background_top_size[2] = default_background_top_size[2] * anim_size_fraction
+				current_background_bottom_size[2] = default_background_bottom_size[2] * anim_size_fraction
 			end,
-			on_complete = function (arg_54_0, arg_54_1, arg_54_2, arg_54_3)
+			on_complete = function (ui_scenegraph, scenegraph_definition, widgets, params)
 				-- function 54
 				return
 			end
@@ -2050,49 +2084,57 @@ local tbl_7 = {
 			name = "background_expand",
 			start_progress = 0.3,
 			end_progress = 0.4,
-			init = function (arg_55_0, arg_55_1, arg_55_2, arg_55_3)
+			init = function (ui_scenegraph, scenegraph_definition, widgets, params)
 				-- function 55
 				return
 			end,
-			update = function (self, arg_56_1, arg_56_2, arg_56_3, arg_56_4)
+			update = function (ui_scenegraph, scenegraph_definition, widgets, progress, params)
 				-- function 56
-				local easeOutCubic = math.easeOutCubic(arg_56_3)
-				local scenegraph_id = arg_56_2.deus_background_top.scenegraph_id
-				local position = arg_56_1[scenegraph_id].position
-				local local_position = self[scenegraph_id].local_position
-				local scenegraph_id_2 = arg_56_2.deus_background_bottom.scenegraph_id
-				local position_2 = arg_56_1[scenegraph_id_2].position
-				local local_position_2 = self[scenegraph_id_2].local_position
-				local background_center = arg_56_2.background_center
-				local scenegraph_id_3 = background_center.scenegraph_id
-				local size = self[scenegraph_id_3].size
-				local size_2 = arg_56_1[scenegraph_id_3].size
+				local anim_fraction = math.easeOutCubic(progress)
+				local background_top_widget = widgets.deus_background_top
+				local background_top_scenegraph_id = background_top_widget.scenegraph_id
+				local default_background_top_position = scenegraph_definition[background_top_scenegraph_id].position
+				local current_background_top_position = ui_scenegraph[background_top_scenegraph_id].local_position
+				local background_bottom_widget = widgets.deus_background_bottom
+				local background_bottom_scenegraph_id = background_bottom_widget.scenegraph_id
+				local default_background_bottom_position = scenegraph_definition[background_bottom_scenegraph_id].position
+				local current_background_bottom_position = ui_scenegraph[background_bottom_scenegraph_id].local_position
+				local background_center_widget = widgets.background_center
+				local background_center_scenegraph_id = background_center_widget.scenegraph_id
+				local current_background_center_size = ui_scenegraph[background_center_scenegraph_id].size
+				local default_background_center_size = scenegraph_definition[background_center_scenegraph_id].size
 
-				size[2] = math.ceil(size_2[2] * easeOutCubic)
+				current_background_center_size[2] = math.ceil(default_background_center_size[2] * anim_fraction)
 
-				local num = size_2[2] / 2
-				local num_2 = size_2[2] / 82
-				local uvs = background_center.content.texture_id.uvs
-				local num_3 = num_2 * easeOutCubic
+				local half_center_height = default_background_center_size[2] / 2
+				local height_fraction = default_background_center_size[2] / 82
+				local center_uvs = background_center_widget.content.texture_id.uvs
+				local total_uv_change = height_fraction * anim_fraction
 
-				uvs[1][2] = math.min(0.5 + num_3, 1)
-				uvs[2][2] = math.max(0.5 - num_3, 0)
-				local_position[2] = position[2] + num * easeOutCubic
-				local_position_2[2] = position_2[2] - num * easeOutCubic
-				arg_56_2.deus_background_top_glow.content.texture_id.uvs[2][2] = easeOutCubic
+				center_uvs[1][2] = math.min(0.5 + total_uv_change, 1)
+				center_uvs[2][2] = math.max(0.5 - total_uv_change, 0)
+				current_background_top_position[2] = default_background_top_position[2] + half_center_height * anim_fraction
+				current_background_bottom_position[2] = default_background_bottom_position[2] - half_center_height * anim_fraction
 
-				local num_4 = 55 * easeOutCubic
+				local background_top_glow_widget = widgets.deus_background_top_glow
 
-				self.deus_background_top_glow.size[2] = num_4
-				self.deus_background_top_glow.local_position[2] = -num_4
-				arg_56_2.deus_background_bottom_glow.content.texture_id.uvs[2][2] = easeOutCubic
+				background_top_glow_widget.content.texture_id.uvs[2][2] = anim_fraction
 
-				local num_5 = 55 * easeOutCubic
+				local new_top_glow_height = 55 * anim_fraction
 
-				self.deus_background_bottom_glow.size[2] = num_5
-				self.deus_background_bottom_glow.local_position[2] = num_5
+				ui_scenegraph.deus_background_top_glow.size[2] = new_top_glow_height
+				ui_scenegraph.deus_background_top_glow.local_position[2] = -new_top_glow_height
+
+				local background_bottom_glow_widget = widgets.deus_background_bottom_glow
+
+				background_bottom_glow_widget.content.texture_id.uvs[2][2] = anim_fraction
+
+				local new_bottom_glow_height = 55 * anim_fraction
+
+				ui_scenegraph.deus_background_bottom_glow.size[2] = new_bottom_glow_height
+				ui_scenegraph.deus_background_bottom_glow.local_position[2] = new_bottom_glow_height
 			end,
-			on_complete = function (arg_57_0, arg_57_1, arg_57_2, arg_57_3)
+			on_complete = function (ui_scenegraph, scenegraph_definition, widgets, params)
 				-- function 57
 				return
 			end
@@ -2103,55 +2145,63 @@ local tbl_7 = {
 			name = "background_collapse",
 			start_progress = 0,
 			end_progress = 0.15,
-			init = function (arg_58_0, arg_58_1, arg_58_2, arg_58_3)
+			init = function (ui_scenegraph, scenegraph_definition, widgets, params)
 				-- function 58
 				return
 			end,
-			update = function (self, arg_59_1, arg_59_2, arg_59_3, arg_59_4)
+			update = function (ui_scenegraph, scenegraph_definition, widgets, progress, params)
 				-- function 59
-				local easeInCubic = math.easeInCubic(arg_59_3)
-				local num = 1 - math.easeInCubic(arg_59_3)
-				local scenegraph_id = arg_59_2.deus_background_top.scenegraph_id
-				local position = arg_59_1[scenegraph_id].position
-				local local_position = self[scenegraph_id].local_position
-				local scenegraph_id_2 = arg_59_2.deus_background_bottom.scenegraph_id
-				local position_2 = arg_59_1[scenegraph_id_2].position
-				local local_position_2 = self[scenegraph_id_2].local_position
-				local background_center = arg_59_2.background_center
-				local scenegraph_id_3 = background_center.scenegraph_id
-				local size = self[scenegraph_id_3].size
-				local size_2 = arg_59_1[scenegraph_id_3].size
+				local anim_fraction = math.easeInCubic(progress)
+				local inv_anim_fraction = 1 - math.easeInCubic(progress)
+				local background_top_widget = widgets.deus_background_top
+				local background_top_scenegraph_id = background_top_widget.scenegraph_id
+				local default_background_top_position = scenegraph_definition[background_top_scenegraph_id].position
+				local current_background_top_position = ui_scenegraph[background_top_scenegraph_id].local_position
+				local background_bottom_widget = widgets.deus_background_bottom
+				local background_bottom_scenegraph_id = background_bottom_widget.scenegraph_id
+				local default_background_bottom_position = scenegraph_definition[background_bottom_scenegraph_id].position
+				local current_background_bottom_position = ui_scenegraph[background_bottom_scenegraph_id].local_position
+				local background_center_widget = widgets.background_center
+				local background_center_scenegraph_id = background_center_widget.scenegraph_id
+				local current_background_center_size = ui_scenegraph[background_center_scenegraph_id].size
+				local default_background_center_size = scenegraph_definition[background_center_scenegraph_id].size
 
-				size[2] = math.ceil(size_2[2] - size_2[2] * easeInCubic)
+				current_background_center_size[2] = math.ceil(default_background_center_size[2] - default_background_center_size[2] * anim_fraction)
 
-				local num_2 = size_2[2] / 2
-				local num_3 = size_2[2] / 82
-				local uvs = background_center.content.texture_id.uvs
-				local num_4 = num_3 * num
+				local half_center_height = default_background_center_size[2] / 2
+				local height_fraction = default_background_center_size[2] / 82
+				local center_uvs = background_center_widget.content.texture_id.uvs
+				local total_uv_change = height_fraction * inv_anim_fraction
 
-				uvs[1][2] = math.min(0.5 + num_4, 1)
-				uvs[2][2] = math.max(0.5 - num_4, 0)
-				local_position[2] = position[2] + num_2 - num_2 * easeInCubic
-				local_position_2[2] = position_2[2] - num_2 + num_2 * easeInCubic
-				arg_59_2.deus_background_top_glow.content.texture_id.uvs[2][2] = num
+				center_uvs[1][2] = math.min(0.5 + total_uv_change, 1)
+				center_uvs[2][2] = math.max(0.5 - total_uv_change, 0)
+				current_background_top_position[2] = default_background_top_position[2] + half_center_height - half_center_height * anim_fraction
+				current_background_bottom_position[2] = default_background_bottom_position[2] - half_center_height + half_center_height * anim_fraction
 
-				local num_5 = 55 * num
+				local background_top_glow_widget = widgets.deus_background_top_glow
 
-				self.deus_background_top_glow.size[2] = num_5
-				self.deus_background_top_glow.local_position[2] = -num_5
-				arg_59_2.deus_background_bottom_glow.content.texture_id.uvs[2][2] = num
+				background_top_glow_widget.content.texture_id.uvs[2][2] = inv_anim_fraction
 
-				local num_6 = 55 * num
+				local new_top_glow_height = 55 * inv_anim_fraction
 
-				self.deus_background_bottom_glow.size[2] = num_6
-				self.deus_background_bottom_glow.local_position[2] = num_6
+				ui_scenegraph.deus_background_top_glow.size[2] = new_top_glow_height
+				ui_scenegraph.deus_background_top_glow.local_position[2] = -new_top_glow_height
+
+				local background_bottom_glow_widget = widgets.deus_background_bottom_glow
+
+				background_bottom_glow_widget.content.texture_id.uvs[2][2] = inv_anim_fraction
+
+				local new_bottom_glow_height = 55 * inv_anim_fraction
+
+				ui_scenegraph.deus_background_bottom_glow.size[2] = new_bottom_glow_height
+				ui_scenegraph.deus_background_bottom_glow.local_position[2] = new_bottom_glow_height
 			end,
-			on_complete = function (arg_60_0, arg_60_1, arg_60_2, arg_60_3)
+			on_complete = function (ui_scenegraph, scenegraph_definition, widgets, params)
 				-- function 60
-				if not arg_60_3.played_end_sound then
-					arg_60_3.played_end_sound = true
+				if not params.played_end_sound then
+					params.played_end_sound = true
 
-					WwiseWorld.trigger_event(arg_60_3.wwise_world, "hud_difficulty_increased_end")
+					WwiseWorld.trigger_event(params.wwise_world, "hud_difficulty_increased_end")
 				end
 			end
 		},
@@ -2159,29 +2209,30 @@ local tbl_7 = {
 			name = "fade_out_background",
 			start_progress = 0.15,
 			end_progress = 0.4,
-			init = function (arg_61_0, arg_61_1, arg_61_2, arg_61_3)
+			init = function (ui_scenegraph, scenegraph_definition, widgets, params)
 				-- function 61
 				return
 			end,
-			update = function (arg_62_0, arg_62_1, arg_62_2, arg_62_3, arg_62_4)
+			update = function (ui_scenegraph, scenegraph_definition, widgets, progress, params)
 				-- function 62
-				local deus_background_top = arg_62_2.deus_background_top
-				local deus_background_bottom = arg_62_2.deus_background_bottom
-				local background_center = arg_62_2.background_center
-				local num = 255 - 255 * math.easeOutCubic(arg_62_3)
+				local background_top_widget = widgets.deus_background_top
+				local background_bottom_widget = widgets.deus_background_bottom
+				local background_center_widget = widgets.background_center
+				local anim_fraction = math.easeOutCubic(progress)
+				local alpha = 255 - 255 * anim_fraction
 
-				deus_background_top.style.texture_id.color[1] = num
-				deus_background_bottom.style.texture_id.color[1] = num
-				background_center.style.texture_id.color[1] = num
+				background_top_widget.style.texture_id.color[1] = alpha
+				background_bottom_widget.style.texture_id.color[1] = alpha
+				background_center_widget.style.texture_id.color[1] = alpha
 			end,
-			on_complete = function (arg_63_0, arg_63_1, arg_63_2, arg_63_3)
+			on_complete = function (ui_scenegraph, scenegraph_definition, widgets, params)
 				-- function 63
 				return
 			end
 		}
 	}
 }
-local tbl_8 = {
+local generic_input_actions = {
 	default = {
 		{
 			input_action = "confirm",
@@ -2203,11 +2254,11 @@ local tbl_8 = {
 }
 
 return {
-	animations = tbl_7,
-	scenegraph_definition = tbl_2,
-	widget_definitions = tbl_6,
-	item_list_max_columns = num_3,
-	item_list_max_rows = num_4,
-	item_list_padding = num_5,
-	generic_input_actions = tbl_8
+	animations = animations,
+	scenegraph_definition = scenegraph_definition,
+	widget_definitions = widget_definitions,
+	item_list_max_columns = ITEM_LIST_MAX_COLUMNS,
+	item_list_max_rows = ITEM_LIST_MAX_ROWS,
+	item_list_padding = PADDING,
+	generic_input_actions = generic_input_actions
 }

@@ -3,7 +3,7 @@
 HeartbeatReporter = class(HeartbeatReporter)
 HeartbeatReporter.NAME = "HeartbeatReporter"
 
-local num = 300
+local SAMPLE_INTERVAL = 300
 
 HeartbeatReporter.init = function (self)
 	-- function 1
@@ -12,21 +12,21 @@ HeartbeatReporter.init = function (self)
 	Managers.telemetry_events:heartbeat()
 end
 
-HeartbeatReporter.destroy = function (arg_2_0)
+HeartbeatReporter.destroy = function (self)
 	-- function 2
 	return
 end
 
-HeartbeatReporter.update = function (self, arg_3_1, arg_3_2)
+HeartbeatReporter.update = function (self, dt, t)
 	-- function 3
-	if arg_3_2 - self._last_sample_time > num then
+	if t - self._last_sample_time > SAMPLE_INTERVAL then
 		Managers.telemetry_events:heartbeat()
 
-		self._last_sample_time = math.floor(arg_3_2)
+		self._last_sample_time = math.floor(t)
 	end
 end
 
-HeartbeatReporter.report = function (arg_4_0)
+HeartbeatReporter.report = function (self)
 	-- function 4
 	return
 end

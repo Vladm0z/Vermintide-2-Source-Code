@@ -1,6 +1,6 @@
 -- chunkname: @scripts/settings/hit_effects/hit_effects_skaven_pack_master.lua
 
-local tbl = {
+local wounding_damage_types = {
 	"light_stab_fencer",
 	"light_stab_smiter",
 	"stab_fencer",
@@ -17,7 +17,7 @@ local tbl = {
 	"slashing_linesman",
 	"heavy_slashing_linesman"
 }
-local tbl_2 = {
+local dismembering_damage_types = {
 	"heavy_stab_smiter",
 	"light_slashing_smiter",
 	"slashing_smiter",
@@ -2440,7 +2440,7 @@ HitEffectsSkavenPackMaster = {
 		armour_type = "cloth",
 		extra_conditions = {
 			death = false,
-			damage_type = tbl
+			damage_type = wounding_damage_types
 		}
 	},
 	wound_tail = {
@@ -2450,7 +2450,7 @@ HitEffectsSkavenPackMaster = {
 		extra_conditions = {
 			death = false,
 			is_critical_strike = true,
-			damage_type = tbl_2,
+			damage_type = dismembering_damage_types,
 			hit_zone = {
 				"tail"
 			}

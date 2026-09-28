@@ -1,6 +1,6 @@
 -- chunkname: @scripts/settings/equipment/damage_profile_templates_dlc_shovel.lua
 
-return {
+local damage_templates = {
 	heavy_slashing_linesman_scythe = {
 		charge_value = "heavy_attack",
 		critical_strike = {
@@ -1941,3 +1941,5 @@ return {
 		}
 	}
 }
+
+return damage_templates

@@ -2,14 +2,14 @@
 
 NavigationPath = class(NavigationPath)
 
-NavigationPath.init = function (self, arg_1_1, arg_1_2)
+NavigationPath.init = function (self, path, callback)
 	-- function 1
 	self._path = {}
 	self._current_index = 1
-	self._callback = arg_1_2
+	self._callback = callback
 
-	for i = 1, #arg_1_1 do
-		self._path[i] = Vector3Box(arg_1_1[i])
+	for i = 1, #path do
+		self._path[i] = Vector3Box(path[i])
 	end
 end
 
@@ -53,16 +53,16 @@ NavigationPath.path = function (self)
 	return self._path
 end
 
-NavigationPath.draw = function (self, arg_10_1, arg_10_2)
+NavigationPath.draw = function (self, color, offset)
 	-- function 10
 	local drawer = Managers.state.debug:drawer({
 		mode = "immediate",
 		name = "nav_path"
 	})
-	local flag = arg_10_2 or Vector3(0, 0, 0)
-	local var_10_2
+	local offset = not not offset or not not Vector3(0, 0, 0)
+	local previous_node
 
-	for i, v in ipairs(self._path) do
-		drawer:sphere(v:unbox() + Vector3.up() * 0.05 + flag, 0.05, arg_10_1)
+	for _, node in ipairs(self._path) do
+		drawer:sphere(node:unbox() + Vector3.up() * 0.05 + offset, 0.05, color)
 	end
 end

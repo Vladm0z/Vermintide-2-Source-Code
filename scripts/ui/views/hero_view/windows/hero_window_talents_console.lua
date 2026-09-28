@@ -2,24 +2,24 @@
 
 require("scripts/ui/hud_ui/scrollbar_ui")
 
-local var_0_0 = local_require("scripts/ui/views/hero_view/windows/definitions/hero_window_talents_console_definitions")
-local widgets = var_0_0.widgets
-local scenegraph_definition = var_0_0.scenegraph_definition
-local animation_definitions = var_0_0.animation_definitions
-local generic_input_actions = var_0_0.generic_input_actions
-local NUM_PERKS = var_0_0.NUM_PERKS
-local flag = false
+local definitions = local_require("scripts/ui/views/hero_view/windows/definitions/hero_window_talents_console_definitions")
+local widget_definitions = definitions.widgets
+local scenegraph_definition = definitions.scenegraph_definition
+local animation_definitions = definitions.animation_definitions
+local generic_input_actions = definitions.generic_input_actions
+local NUM_PERKS = definitions.NUM_PERKS
+local DO_RELOAD = false
 
 HeroWindowTalentsConsole = class(HeroWindowTalentsConsole)
 HeroWindowTalentsConsole.NAME = "HeroWindowTalentsConsole"
 
-HeroWindowTalentsConsole.on_enter = function (self, arg_1_1, arg_1_2)
+HeroWindowTalentsConsole.on_enter = function (self, params, offset)
 	-- function 1
 	print("[HeroViewWindow] Enter Substate HeroWindowTalentsConsole")
 
-	self.parent = arg_1_1.parent
+	self.parent = params.parent
 
-	local ingame_ui_context = arg_1_1.ingame_ui_context
+	local ingame_ui_context = params.ingame_ui_context
 
 	self.ui_renderer = ingame_ui_context.ui_renderer
 	self.ui_top_renderer = ingame_ui_context.ui_top_renderer
@@ -29,124 +29,130 @@ HeroWindowTalentsConsole.on_enter = function (self, arg_1_1, arg_1_2)
 		snap_pixel_positions = true
 	}
 
-	local player = Managers.player
-	local local_player = player:local_player()
+	local player_manager = Managers.player
+	local local_player = player_manager:local_player()
 
 	self._stats_id = local_player:stats_id()
-	self.player_manager = player
+	self.player_manager = player_manager
 	self.player = local_player
 	self.peer_id = ingame_ui_context.peer_id
 	self._animations = {}
 
-	self:create_ui_elements(arg_1_1, arg_1_2)
+	self:create_ui_elements(params, offset)
 
-	self.hero_name = arg_1_1.hero_name
-	self.career_index = arg_1_1.career_index
+	self.hero_name = params.hero_name
+	self.career_index = params.career_index
 
-	local var_1_3 = FindProfileIndex(self.hero_name)
+	local profile_index = FindProfileIndex(self.hero_name)
 
-	self._career_name = SPProfiles[var_1_3].careers[self.career_index].name
+	self._career_name = SPProfiles[profile_index].careers[self.career_index].name
 
-	local get_experience = ExperienceSettings.get_experience(self.hero_name)
+	local experience = ExperienceSettings.get_experience(self.hero_name)
 
-	self.hero_level = ExperienceSettings.get_level(get_experience)
+	self.hero_level = ExperienceSettings.get_level(experience)
 
 	self:_initialize_talents()
 	self:_start_transition_animation("on_enter")
 end
 
-HeroWindowTalentsConsole._start_transition_animation = function (self, arg_2_1)
+HeroWindowTalentsConsole._start_transition_animation = function (self, animation_name)
 	-- function 2
-	local tbl = {
+	local params = {
 		wwise_world = self.wwise_world,
 		render_settings = self.render_settings
 	}
-	local tbl_2 = {}
-	local start_animation = self.ui_animator:start_animation(arg_2_1, tbl_2, scenegraph_definition, tbl)
+	local widgets = {}
+	local anim_id = self.ui_animator:start_animation(animation_name, widgets, scenegraph_definition, params)
 
-	self._animations[arg_2_1] = start_animation
+	self._animations[animation_name] = anim_id
 end
 
-HeroWindowTalentsConsole.on_exit = function (self, arg_3_1)
+HeroWindowTalentsConsole.on_exit = function (self, params)
 	-- function 3
 	print("[HeroViewWindow] Exit Substate HeroWindowTalentsConsole")
 
 	self.ui_animator = nil
 
-	local _talent_interface = self._talent_interface
-	local _career_name = self._career_name
+	local talent_interface = self._talent_interface
+	local career_name = self._career_name
 
-	_talent_interface:set_talents(_career_name, self._selected_talents)
+	talent_interface:set_talents(career_name, self._selected_talents)
 
-	local player_unit = self.player.player_unit
+	local player = self.player
+	local player_unit = player.player_unit
 
-	if not Unit.alive(player_unit) then
-		ScriptUnit.extension(player_unit, "talent_system"):talents_changed()
-		ScriptUnit.extension(player_unit, "inventory_system"):apply_buffs_to_ammo()
+	if Unit.alive(player_unit) then
+		local talent_extension = ScriptUnit.extension(player_unit, "talent_system")
+
+		talent_extension:talents_changed()
+
+		local inventory_extension = ScriptUnit.extension(player_unit, "inventory_system")
+
+		inventory_extension:apply_buffs_to_ammo()
 	end
 end
 
-HeroWindowTalentsConsole._inject_additional_scenegraph_definitions = function (arg_4_0, arg_4_1)
+HeroWindowTalentsConsole._inject_additional_scenegraph_definitions = function (self, scenegraph_definition)
 	-- function 4
-	for k, v in pairs(CareerSettings) do
-		if not v.additional_ui_info_file then
-			local var_4_0 = local_require(v.additional_ui_info_file)
+	for _, career_settings in pairs(CareerSettings) do
+		if career_settings.additional_ui_info_file then
+			local additional_ui_definitions = local_require(career_settings.additional_ui_info_file)
 
-			for k_2, v_2 in pairs(var_4_0.scenegraph_definition_to_inject) do
-				arg_4_1[k_2] = v_2
+			for name, data in pairs(additional_ui_definitions.scenegraph_definition_to_inject) do
+				scenegraph_definition[name] = data
 			end
 		end
 	end
 end
 
-HeroWindowTalentsConsole.create_ui_elements = function (self, arg_5_1, arg_5_2)
+HeroWindowTalentsConsole.create_ui_elements = function (self, params, offset)
 	-- function 5
 	self:_inject_additional_scenegraph_definitions(scenegraph_definition)
 
 	self._ui_scenegraph = UISceneGraph.init_scenegraph(scenegraph_definition)
 
-	local tbl = {}
-	local tbl_2 = {}
+	local widgets = {}
+	local widgets_by_name = {}
 
-	for k, v in pairs(widgets) do
-		local var_5_2 = UIWidget.init(v)
+	for name, widget_definition in pairs(widget_definitions) do
+		local widget = UIWidget.init(widget_definition)
 
-		tbl[#tbl + 1] = var_5_2
-		tbl_2[k] = var_5_2
+		widgets[#widgets + 1] = widget
+		widgets_by_name[name] = widget
 	end
 
-	self._widgets = tbl
-	self._widgets_by_name = tbl_2
+	self._widgets = widgets
+	self._widgets_by_name = widgets_by_name
 	self._additional_widgets = {}
 	self._additional_widgets_by_name = {}
 
-	local get_service = Managers.input:get_service("hero_view")
-	local num = UILayer.default + 300
+	local input_service = Managers.input:get_service("hero_view")
+	local gui_layer = UILayer.default + 300
 
-	self._menu_input_description = MenuInputDescriptionUI:new(nil, self.ui_top_renderer, get_service, 7, num, generic_input_actions.default, true)
+	self._menu_input_description = MenuInputDescriptionUI:new(nil, self.ui_top_renderer, input_service, 7, gui_layer, generic_input_actions.default, true)
 
 	self._menu_input_description:set_input_description(nil)
 	UIRenderer.clear_scenegraph_queue(self.ui_renderer)
 
 	self.ui_animator = UIAnimator:new(self._ui_scenegraph, animation_definitions)
 
-	if not arg_5_2 then
-		local local_position = self._ui_scenegraph.window.local_position
+	if offset then
+		local window_position = self._ui_scenegraph.window.local_position
 
-		local_position[1] = local_position[1] + arg_5_2[1]
-		local_position[2] = local_position[2] + arg_5_2[2]
-		local_position[3] = local_position[3] + arg_5_2[3]
+		window_position[1] = window_position[1] + offset[1]
+		window_position[2] = window_position[2] + offset[2]
+		window_position[3] = window_position[3] + offset[3]
 	end
 end
 
 HeroWindowTalentsConsole._initialize_talents = function (self)
 	-- function 6
-	local _career_name = self._career_name
-	local get_interface = Managers.backend:get_interface("talents")
-	local get_talents = get_interface:get_talents(_career_name)
+	local career_name = self._career_name
+	local talent_interface = Managers.backend:get_interface("talents")
+	local current_talents = talent_interface:get_talents(career_name)
 
-	self._selected_talents = table.clone(get_talents)
-	self._talent_interface = get_interface
+	self._selected_talents = table.clone(current_talents)
+	self._talent_interface = talent_interface
 
 	self:_update_talents(true)
 
@@ -158,192 +164,195 @@ HeroWindowTalentsConsole._input_service = function (self)
 	-- function 7
 	local parent = self.parent
 
-	if not parent:is_friends_list_active() then
+	if parent:is_friends_list_active() then
 		return FAKE_INPUT_SERVICE
 	end
 
 	return parent:window_input_service()
 end
 
-HeroWindowTalentsConsole.update = function (self, arg_8_1, arg_8_2)
+HeroWindowTalentsConsole.update = function (self, dt, t)
 	-- function 8
-	if not flag then
-		flag = false
+	if DO_RELOAD then
+		DO_RELOAD = false
 
 		self:create_ui_elements()
 	end
 
-	self:_update_animations(arg_8_1)
+	self:_update_animations(dt)
 	self:_update_talent_sync()
-	self:_handle_gamepad_input(arg_8_1, arg_8_2)
-	self:_handle_input(arg_8_1, arg_8_2)
-	self:draw(arg_8_1, arg_8_2)
+	self:_handle_gamepad_input(dt, t)
+	self:_handle_input(dt, t)
+	self:draw(dt, t)
 end
 
-HeroWindowTalentsConsole.post_update = function (arg_9_0, arg_9_1, arg_9_2)
+HeroWindowTalentsConsole.post_update = function (self, dt, t)
 	-- function 9
 	return
 end
 
-HeroWindowTalentsConsole._update_talents = function (self, arg_10_1)
+HeroWindowTalentsConsole._update_talents = function (self, initialize)
 	-- function 10
-	self:_populate_talents_by_hero(arg_10_1)
-	self:_populate_career_info(arg_10_1)
-	self:_update_backend_talents(arg_10_1)
+	self:_populate_talents_by_hero(initialize)
+	self:_populate_career_info(initialize)
+	self:_update_backend_talents(initialize)
 end
 
-HeroWindowTalentsConsole._update_backend_talents = function (self, arg_11_1)
+HeroWindowTalentsConsole._update_backend_talents = function (self, initialize)
 	-- function 11
-	if not arg_11_1 then
+	if initialize then
 		return
 	end
 
-	local _talent_interface = self._talent_interface
-	local _career_name = self._career_name
+	local talent_interface = self._talent_interface
+	local career_name = self._career_name
 
-	_talent_interface:set_talents(_career_name, self._selected_talents)
+	talent_interface:set_talents(career_name, self._selected_talents)
 end
 
-HeroWindowTalentsConsole._update_animations = function (self, arg_12_1)
+HeroWindowTalentsConsole._update_animations = function (self, dt)
 	-- function 12
-	self.ui_animator:update(arg_12_1)
+	self.ui_animator:update(dt)
 
-	local _animations = self._animations
+	local animations = self._animations
 	local ui_animator = self.ui_animator
 
-	for k, v in pairs(_animations) do
-		if not ui_animator:is_animation_completed(v) then
-			ui_animator:stop_animation(v)
+	for animation_name, animation_id in pairs(animations) do
+		if ui_animator:is_animation_completed(animation_id) then
+			ui_animator:stop_animation(animation_id)
 
-			_animations[k] = nil
+			animations[animation_name] = nil
 		end
 	end
 end
 
-HeroWindowTalentsConsole._is_button_pressed = function (arg_13_0, arg_13_1)
+HeroWindowTalentsConsole._is_button_pressed = function (self, widget)
 	-- function 13
-	local button_hotspot = arg_13_1.content.button_hotspot
+	local content = widget.content
+	local hotspot = content.button_hotspot
 
-	if not button_hotspot.on_pressed then
-		button_hotspot.on_pressed = false
+	if hotspot.on_pressed then
+		hotspot.on_pressed = false
 
 		return true
 	end
 end
 
-HeroWindowTalentsConsole._is_button_released = function (arg_14_0, arg_14_1)
+HeroWindowTalentsConsole._is_button_released = function (self, widget)
 	-- function 14
-	local button_hotspot = arg_14_1.content.button_hotspot
+	local content = widget.content
+	local hotspot = content.button_hotspot
 
-	if not button_hotspot.on_release then
-		button_hotspot.on_release = false
+	if hotspot.on_release then
+		hotspot.on_release = false
 
 		return true
 	end
 end
 
-HeroWindowTalentsConsole._is_stepper_button_pressed = function (arg_15_0, arg_15_1)
+HeroWindowTalentsConsole._is_stepper_button_pressed = function (self, widget)
 	-- function 15
-	local content = arg_15_1.content
-	local button_hotspot_left = content.button_hotspot_left
-	local button_hotspot_right = content.button_hotspot_right
+	local content = widget.content
+	local hotspot_left = content.button_hotspot_left
+	local hotspot_right = content.button_hotspot_right
 
-	if not button_hotspot_left.on_release then
-		button_hotspot_left.on_release = false
+	if hotspot_left.on_release then
+		hotspot_left.on_release = false
 
 		return true, -1
-	elseif not button_hotspot_right.on_release then
-		button_hotspot_right.on_release = false
+	elseif hotspot_right.on_release then
+		hotspot_right.on_release = false
 
 		return true, 1
 	end
 end
 
-HeroWindowTalentsConsole._is_button_hover_enter = function (arg_16_0, arg_16_1)
+HeroWindowTalentsConsole._is_button_hover_enter = function (self, widget)
 	-- function 16
-	local button_hotspot = arg_16_1.content.button_hotspot
-	local on_hover_enter = button_hotspot.on_hover_enter
+	local content = widget.content
+	local hotspot = content.button_hotspot
+	local on_hover_enter = hotspot.on_hover_enter
 
-	on_hover_enter = not on_hover_enter and not button_hotspot.is_selected
+	on_hover_enter = not not on_hover_enter and not not not hotspot.is_selected
 
 	return on_hover_enter
 end
 
-HeroWindowTalentsConsole._handle_gamepad_input = function (self, arg_17_1, arg_17_2)
+HeroWindowTalentsConsole._handle_gamepad_input = function (self, dt, t)
 	-- function 17
-	local _input_service = self:_input_service()
-	local _focused_row = self._focused_row
-	local _focused_column = self._focused_column
+	local input_service = self:_input_service()
+	local focused_row = self._focused_row
+	local focused_column = self._focused_column
 
-	if not _focused_row and not _focused_column then
-		local flag = false
+	if focused_row and focused_column then
+		local modified = false
 
-		if not (_focused_column > 1) or not _input_service:get("move_left_hold_continuous") then
-			_focused_column = _focused_column - 1
-			flag = true
-		elseif not (_focused_column < NumTalentColumns) or not _input_service:get("move_right_hold_continuous") then
-			_focused_column = _focused_column + 1
-			flag = true
+		if focused_column > 1 and input_service:get("move_left_hold_continuous") then
+			focused_column = focused_column - 1
+			modified = true
+		elseif focused_column < NumTalentColumns and input_service:get("move_right_hold_continuous") then
+			focused_column = focused_column + 1
+			modified = true
 		end
 
-		if not (_focused_row > 1) or not _input_service:get("move_up_hold_continuous") then
-			_focused_row = _focused_row - 1
-			flag = true
-		elseif not (_focused_row < NumTalentRows) or not _input_service:get("move_down_hold_continuous") then
-			_focused_row = _focused_row + 1
-			flag = true
+		if focused_row > 1 and input_service:get("move_up_hold_continuous") then
+			focused_row = focused_row - 1
+			modified = true
+		elseif focused_row < NumTalentRows and input_service:get("move_down_hold_continuous") then
+			focused_row = focused_row + 1
+			modified = true
 		end
 
-		if not flag then
-			self:_set_talent_focused(_focused_row, _focused_column)
+		if modified then
+			self:_set_talent_focused(focused_row, focused_column)
 			self:_play_sound("play_gui_talents_selection_hover")
 		end
 
-		local _can_press_talent, var_17_5 = self:_can_press_talent(_focused_row, _focused_column)
+		local can_press, is_selected = self:_can_press_talent(focused_row, focused_column)
 
-		if not _can_press_talent then
-			if var_17_5 or not _input_service:get("confirm", true) then
-				self:_set_talent_selected(_focused_row, _focused_column)
-			elseif not _input_service:get("refresh", true) then
-				self:_set_talent_selected(_focused_row, 0)
+		if can_press then
+			if not is_selected and input_service:get("confirm", true) then
+				self:_set_talent_selected(focused_row, focused_column)
+			elseif input_service:get("refresh", true) then
+				self:_set_talent_selected(focused_row, 0)
 			end
 		end
 	end
 end
 
-HeroWindowTalentsConsole._handle_input = function (self, arg_18_1, arg_18_2)
+HeroWindowTalentsConsole._handle_input = function (self, dt, t)
 	-- function 18
 	local parent = self.parent
-	local _widgets_by_name = self._widgets_by_name
-	local _is_talent_hovered, var_18_3 = self:_is_talent_hovered()
+	local widgets_by_name = self._widgets_by_name
+	local hover_row, hover_column = self:_is_talent_hovered()
 
-	if not _is_talent_hovered and not var_18_3 then
+	if hover_row and hover_column then
 		self:_play_sound("play_gui_talents_selection_hover")
-		self:_set_talent_focused(_is_talent_hovered, var_18_3)
+		self:_set_talent_focused(hover_row, hover_column)
 	end
 
-	if not self:_is_disabled_talent_hovered() then
+	if self:_is_disabled_talent_hovered() then
 		self:_play_sound("play_gui_talents_selection_hover_disabled")
 	end
 
-	local _is_talent_pressed, var_18_5 = self:_is_talent_pressed()
+	local row, column = self:_is_talent_pressed()
 
-	if not _is_talent_pressed and not var_18_5 then
-		self:_set_talent_selected(_is_talent_pressed, var_18_5)
+	if row and column then
+		self:_set_talent_selected(row, column)
 	end
 end
 
-HeroWindowTalentsConsole._set_talent_selected = function (self, arg_19_1, arg_19_2)
+HeroWindowTalentsConsole._set_talent_selected = function (self, row, column)
 	-- function 19
-	local _selected_talents = self._selected_talents
+	local selected_talents = self._selected_talents
 
-	if not (not _selected_talents[arg_19_1] and _selected_talents[arg_19_1] ~= 0 and arg_19_2 == 0) then
+	if not selected_talents[row] or selected_talents[row] == 0 and column ~= 0 then
 		self:_play_sound("play_gui_talent_unlock")
 	else
 		self:_play_sound("play_gui_talents_selection_click")
 	end
 
-	_selected_talents[arg_19_1] = arg_19_2
+	selected_talents[row] = column
 
 	self:_update_talents()
 	self.parent:update_talent_sync()
@@ -356,12 +365,12 @@ HeroWindowTalentsConsole._update_talent_sync = function (self)
 	local talent_sync_id = self.parent.talent_sync_id
 
 	if talent_sync_id ~= self._talent_sync_id then
-		local _career_name = self._career_name
-		local get_interface = Managers.backend:get_interface("talents")
-		local get_talents = get_interface:get_talents(_career_name)
+		local career_name = self._career_name
+		local talent_interface = Managers.backend:get_interface("talents")
+		local current_talents = talent_interface:get_talents(career_name)
 
-		self._selected_talents = table.clone(get_talents)
-		self._talent_interface = get_interface
+		self._selected_talents = table.clone(current_talents)
+		self._talent_interface = talent_interface
 
 		self:_update_talents(true)
 
@@ -369,75 +378,76 @@ HeroWindowTalentsConsole._update_talent_sync = function (self)
 	end
 end
 
-HeroWindowTalentsConsole.draw = function (self, arg_21_1, arg_21_2)
+HeroWindowTalentsConsole.draw = function (self, dt, t)
 	-- function 21
 	local ui_renderer = self.ui_renderer
 	local ui_top_renderer = self.ui_top_renderer
-	local _ui_scenegraph = self._ui_scenegraph
-	local _input_service = self:_input_service()
-	local is_device_active = Managers.input:is_device_active("gamepad")
+	local ui_scenegraph = self._ui_scenegraph
+	local input_service = self:_input_service()
+	local gamepad_active = Managers.input:is_device_active("gamepad")
 
-	UIRenderer.begin_pass(ui_top_renderer, _ui_scenegraph, _input_service, arg_21_1, nil, self.render_settings)
+	UIRenderer.begin_pass(ui_top_renderer, ui_scenegraph, input_service, dt, nil, self.render_settings)
 
-	for i, v in ipairs(self._widgets) do
-		UIRenderer.draw_widget(ui_top_renderer, v)
+	for _, widget in ipairs(self._widgets) do
+		UIRenderer.draw_widget(ui_top_renderer, widget)
 	end
 
-	local _active_node_widgets = self._active_node_widgets
+	local active_node_widgets = self._active_node_widgets
 
-	if not _active_node_widgets then
-		for i_2, v_2 in ipairs(_active_node_widgets) do
-			UIRenderer.draw_widget(ui_top_renderer, v_2)
+	if active_node_widgets then
+		for _, widget in ipairs(active_node_widgets) do
+			UIRenderer.draw_widget(ui_top_renderer, widget)
 		end
 	end
 
-	for i_3, v_3 in ipairs(self._additional_widgets) do
-		UIRenderer.draw_widget(ui_top_renderer, v_3)
+	for _, widget in ipairs(self._additional_widgets) do
+		UIRenderer.draw_widget(ui_top_renderer, widget)
 	end
 
 	UIRenderer.end_pass(ui_top_renderer)
 
-	if not (not is_device_active and self.parent:input_blocked()) then
-		self._menu_input_description:draw(ui_top_renderer, arg_21_1)
+	if gamepad_active and not self.parent:input_blocked() then
+		self._menu_input_description:draw(ui_top_renderer, dt)
 	end
 
-	if not self._scrollbar then
-		self._scrollbar:update(arg_21_1, arg_21_2, ui_top_renderer, _input_service, self.render_settings)
+	if self._scrollbar then
+		self._scrollbar:update(dt, t, ui_top_renderer, input_service, self.render_settings)
 	end
 end
 
-HeroWindowTalentsConsole._play_sound = function (self, arg_22_1)
+HeroWindowTalentsConsole._play_sound = function (self, event)
 	-- function 22
-	self.parent:play_sound(arg_22_1)
+	self.parent:play_sound(event)
 end
 
-HeroWindowTalentsConsole._populate_talents_by_hero = function (self, arg_23_1)
+HeroWindowTalentsConsole._populate_talents_by_hero = function (self, initialize)
 	-- function 23
 	self:_clear_talents()
 
-	local _widgets_by_name = self._widgets_by_name
+	local widgets_by_name = self._widgets_by_name
 	local hero_name = self.hero_name
 	local career_index = self.career_index
-	local var_23_3 = FindProfileIndex(hero_name)
-	local var_23_4 = SPProfiles[var_23_3].careers[career_index]
-	local num = (career_index - 1) * NumTalentRows
-	local var_23_6 = TalentTrees[hero_name][var_23_4.talent_tree_index]
-	local _selected_talents = self._selected_talents
-	local get_talent_overrides_by_career = PlayerUtils.get_talent_overrides_by_career(var_23_4.display_name)
+	local profile_index = FindProfileIndex(hero_name)
+	local profile = SPProfiles[profile_index]
+	local career_settings = profile.careers[career_index]
+	local start_index = (career_index - 1) * NumTalentRows
+	local tree = TalentTrees[hero_name][career_settings.talent_tree_index]
+	local talents = self._selected_talents
+	local override_talents = PlayerUtils.get_talent_overrides_by_career(career_settings.display_name)
 
 	for i = 1, NumTalentRows do
-		local var_23_9 = _widgets_by_name["talent_row_" .. i]
+		local widget = widgets_by_name["talent_row_" .. i]
 
-		if not var_23_9 then
-			local content = var_23_9.content
-			local style = var_23_9.style
-			local var_23_12 = _selected_talents[i]
-			local flag = not var_23_12 and var_23_12 == 0
-			local str = "talent_point_" .. i
-			local is_unlocked = ProgressionUnlocks.is_unlocked(str, self.hero_level)
+		if widget then
+			local content = widget.content
+			local style = widget.style
+			local selected_column = talents[i]
+			local no_talent_selected = not selected_column or selected_column == 0
+			local unlock_name = "talent_point_" .. i
+			local row_unlocked = ProgressionUnlocks.is_unlocked(unlock_name, self.hero_level)
 			local get_color_table_with_alpha
 
-			if not is_unlocked then
+			if row_unlocked then
 				get_color_table_with_alpha = Colors.get_color_table_with_alpha("green", 255)
 
 				if not get_color_table_with_alpha then
@@ -447,54 +457,56 @@ HeroWindowTalentsConsole._populate_talents_by_hero = function (self, arg_23_1)
 
 			get_color_table_with_alpha = Colors.get_color_table_with_alpha("red", 255)
 
+			local level_text_color = get_color_table_with_alpha
+
 			::label_23_0::
 
-			local get_unlock = ProgressionUnlocks.get_unlock(str)
+			local talent_template = ProgressionUnlocks.get_unlock(unlock_name)
 
-			content.level_text = tostring(get_unlock.level_requirement)
-			style.level_text.text_color = get_color_table_with_alpha
+			content.level_text = tostring(talent_template.level_requirement)
+			style.level_text.text_color = level_text_color
 
-			if not (not is_unlocked and flag) then
-				local animations = var_23_9.animations
+			if row_unlocked and not no_talent_selected then
+				local animations = widget.animations
 
 				table.clear(animations)
 			end
 
-			local glow_frame = style.glow_frame
+			local glow_frame_style = style.glow_frame
 
-			glow_frame.color[1] = 0
+			glow_frame_style.color[1] = 0
 
-			if not arg_23_1 and not is_unlocked and not flag then
-				local _animate_pulse = self:_animate_pulse(glow_frame.color, 1, 255, 100, 2)
+			if initialize and row_unlocked and no_talent_selected then
+				local anim = self:_animate_pulse(glow_frame_style.color, 1, 255, 100, 2)
 
-				UIWidget.animate(var_23_9, _animate_pulse)
+				UIWidget.animate(widget, anim)
 			end
 
 			for j = 1, NumTalentColumns do
-				local flag_2 = var_23_12 == j
-				local var_23_22 = var_23_6[i][j]
-				local talent_id = TalentIDLookup[var_23_22].talent_id
-				local get_talent_by_id = TalentUtils.get_talent_by_id(hero_name, talent_id)
-				local str_2 = "_" .. tostring(j)
-				local str_3 = "icon" .. str_2
-				local str_4 = "hotspot" .. str_2
-				local str_5 = "title_text" .. str_2
-				local str_6 = "background_glow" .. str_2
-				local var_23_30 = content[str_4]
-				local flag_3 = not is_unlocked
+				local is_selected = selected_column == j
+				local talent_name = tree[i][j]
+				local id = TalentIDLookup[talent_name].talent_id
+				local talent_data = TalentUtils.get_talent_by_id(hero_name, id)
+				local name_suffix = "_" .. tostring(j)
+				local icon_name = "icon" .. name_suffix
+				local hotspot_name = "hotspot" .. name_suffix
+				local title_text_name = "title_text" .. name_suffix
+				local background_glow_name = "background_glow" .. name_suffix
+				local hotspot = content[hotspot_name]
+				local talent_locked = not row_unlocked
 
-				flag_3 = (flag_3 or not get_talent_overrides_by_career) and get_talent_overrides_by_career[var_23_22] == false
+				talent_locked = (not not talent_locked or not not override_talents) and override_talents[talent_name] == false
 
-				if not ((flag_2 or not flag) and flag_3) then
-					style[str_3].saturated = false
+				if is_selected or no_talent_selected and not talent_locked then
+					style[icon_name].saturated = false
 				else
-					style[str_3].saturated = true
+					style[icon_name].saturated = true
 				end
 
 				local icon
 
-				if not get_talent_by_id then
-					icon = get_talent_by_id.icon
+				if talent_data then
+					icon = talent_data.icon
 
 					if not icon then
 						-- Nothing
@@ -505,137 +517,142 @@ HeroWindowTalentsConsole._populate_talents_by_hero = function (self, arg_23_1)
 
 				::label_23_1::
 
-				content[str_3] = icon
+				content[icon_name] = icon
 
-				local var_23_35
+				local var_23_4
 
-				if not get_talent_by_id then
+				if talent_data then
 					local Localize = Localize
-					local display_name = get_talent_by_id.display_name
+					local display_name = talent_data.display_name
 
-					display_name = display_name or get_talent_by_id.name
-					var_23_35 = Localize(display_name)
+					display_name = not not display_name or not not talent_data.name
+					var_23_4 = Localize(display_name)
 
-					if not var_23_35 then
+					if not var_23_4 then
 						-- Nothing
 					end
 				end
 
-				var_23_35 = "Undefined"
+				var_23_4 = "Undefined"
 
 				::label_23_2::
 
-				content[str_5] = var_23_35
-				var_23_30.is_selected = flag_2
-				var_23_30.talent = get_talent_by_id
-				var_23_30.talent_id = talent_id
-				var_23_30.disabled = flag_3
+				content[title_text_name] = var_23_4
+				hotspot.is_selected = is_selected
+				hotspot.talent = talent_data
+				hotspot.talent_id = id
+				hotspot.disabled = talent_locked
 
-				if not flag_3 then
-					style[str_6].saturated = false
+				if not talent_locked then
+					style[background_glow_name].saturated = false
 				else
-					style[str_6].saturated = true
+					style[background_glow_name].saturated = true
 				end
 			end
 		end
 	end
 
-	local var_23_36 = self
+	local var_23_5 = self
 	local _set_talent_focused = self._set_talent_focused
 	local _focused_row = self._focused_row
 
-	_focused_row = _focused_row or 1
+	_focused_row = not not _focused_row or not not 1
 
 	local _focused_column = self._focused_column
 
-	_focused_column = _focused_column or 1
+	_focused_column = not not _focused_column or not not 1
 
-	_set_talent_focused(var_23_36, _focused_row, _focused_column)
+	_set_talent_focused(var_23_5, _focused_row, _focused_column)
 end
 
 HeroWindowTalentsConsole._clear_talents = function (self)
 	-- function 24
-	local _widgets_by_name = self._widgets_by_name
+	local widgets_by_name = self._widgets_by_name
 
 	for i = 1, NumTalentRows do
-		local var_24_1 = _widgets_by_name["talent_row_" .. i]
+		local widget = widgets_by_name["talent_row_" .. i]
 
-		if not var_24_1 then
-			local content = var_24_1.content
-			local style = var_24_1.style
+		if widget then
+			local content = widget.content
+			local style = widget.style
 
 			for j = 1, NumTalentColumns do
-				local str = "_" .. tostring(j)
-				local str_2 = "icon" .. str
-				local str_3 = "hotspot" .. str
-				local str_4 = "title_text" .. str
+				local name_suffix = "_" .. tostring(j)
+				local icon_name = "icon" .. name_suffix
+				local hotspot_name = "hotspot" .. name_suffix
+				local title_text_name = "title_text" .. name_suffix
 
-				content[str_2] = "icons_placeholder"
-				content[str_4] = "Undefined"
-				content[str_3].is_selected = false
-				content[str_3].disabled = true
+				content[icon_name] = "icons_placeholder"
+				content[title_text_name] = "Undefined"
+				content[hotspot_name].is_selected = false
+				content[hotspot_name].disabled = true
 			end
 		end
 	end
 end
 
-HeroWindowTalentsConsole._set_talent_focused = function (self, arg_25_1, arg_25_2)
+HeroWindowTalentsConsole._set_talent_focused = function (self, row, column)
 	-- function 25
-	local _widgets_by_name = self._widgets_by_name
+	local widgets_by_name = self._widgets_by_name
 
 	for i = 1, NumTalentRows do
-		local var_25_1 = _widgets_by_name["talent_row_" .. i]
+		local widget = widgets_by_name["talent_row_" .. i]
 
-		if not var_25_1 then
-			local content = var_25_1.content
+		if widget then
+			local content = widget.content
 
 			for j = 1, NumTalentColumns do
-				local str = "_" .. tostring(j)
-				local var_25_4 = content["hotspot" .. str]
-				local flag = i ~= arg_25_1 or j == arg_25_2
+				local name_suffix = "_" .. tostring(j)
+				local hotspot_name = "hotspot" .. name_suffix
+				local hotspot = content[hotspot_name]
+				local focused = i == row and j == column
 
-				var_25_4.focused = flag
+				hotspot.focused = focused
 
-				if not flag then
-					local talent = var_25_4.talent
-					local disabled = var_25_4.disabled
-					local is_selected = var_25_4.is_selected
+				if focused then
+					local talent = hotspot.talent
+					local locked = hotspot.disabled
+					local selected = hotspot.is_selected
 
-					self:_set_talent_tooltip(talent, is_selected, disabled)
+					self:_set_talent_tooltip(talent, selected, locked)
 				end
 			end
 		end
 	end
 
-	self._focused_row = arg_25_1
-	self._focused_column = arg_25_2
+	self._focused_row = row
+	self._focused_column = column
 end
 
-HeroWindowTalentsConsole._can_press_talent = function (self, arg_26_1, arg_26_2)
+HeroWindowTalentsConsole._can_press_talent = function (self, row, column)
 	-- function 26
-	local var_26_0 = self._widgets_by_name["talent_row_" .. arg_26_1].content["hotspot_" .. arg_26_2]
+	local widgets_by_name = self._widgets_by_name
+	local widget = widgets_by_name["talent_row_" .. row]
+	local content = widget.content
+	local hotspot = content["hotspot_" .. column]
 
-	return not var_26_0.disabled, var_26_0.is_selected
+	return not hotspot.disabled, hotspot.is_selected
 end
 
 HeroWindowTalentsConsole._is_talent_pressed = function (self)
 	-- function 27
-	local _widgets_by_name = self._widgets_by_name
+	local widgets_by_name = self._widgets_by_name
 
 	for i = 1, NumTalentRows do
-		local var_27_1 = _widgets_by_name["talent_row_" .. i]
+		local widget = widgets_by_name["talent_row_" .. i]
 
-		if not var_27_1 then
-			local content = var_27_1.content
+		if widget then
+			local content = widget.content
 
 			for j = 1, NumTalentColumns do
-				local str = "_" .. tostring(j)
-				local var_27_4 = content["hotspot" .. str]
+				local name_suffix = "_" .. tostring(j)
+				local hotspot_name = "hotspot" .. name_suffix
+				local hotspot = content[hotspot_name]
 
-				if not var_27_4.disabled then
-					if not (not var_27_4.on_pressed and var_27_4.is_selected) then
+				if not hotspot.disabled then
+					if hotspot.on_pressed and not hotspot.is_selected then
 						return i, j
-					elseif not var_27_4.on_right_click then
+					elseif hotspot.on_right_click then
 						return i, 0
 					end
 				end
@@ -646,19 +663,20 @@ end
 
 HeroWindowTalentsConsole._is_talent_hovered = function (self)
 	-- function 28
-	local _widgets_by_name = self._widgets_by_name
+	local widgets_by_name = self._widgets_by_name
 
 	for i = 1, NumTalentRows do
-		local var_28_1 = _widgets_by_name["talent_row_" .. i]
+		local widget = widgets_by_name["talent_row_" .. i]
 
-		if not var_28_1 then
-			local content = var_28_1.content
+		if widget then
+			local content = widget.content
 
 			for j = 1, NumTalentColumns do
-				local str = "_" .. tostring(j)
-				local var_28_4 = content["hotspot" .. str]
+				local name_suffix = "_" .. tostring(j)
+				local hotspot_name = "hotspot" .. name_suffix
+				local hotspot = content[hotspot_name]
 
-				if not (not var_28_4.on_hover_enter and var_28_4.disabled) then
+				if hotspot.on_hover_enter and not hotspot.disabled then
 					return i, j
 				end
 			end
@@ -668,19 +686,20 @@ end
 
 HeroWindowTalentsConsole._is_disabled_talent_hovered = function (self)
 	-- function 29
-	local _widgets_by_name = self._widgets_by_name
+	local widgets_by_name = self._widgets_by_name
 
 	for i = 1, NumTalentRows do
-		local var_29_1 = _widgets_by_name["talent_row_" .. i]
+		local widget = widgets_by_name["talent_row_" .. i]
 
-		if not var_29_1 then
-			local content = var_29_1.content
+		if widget then
+			local content = widget.content
 
 			for j = 1, NumTalentColumns do
-				local str = "_" .. tostring(j)
-				local var_29_4 = content["hotspot" .. str]
+				local name_suffix = "_" .. tostring(j)
+				local hotspot_name = "hotspot" .. name_suffix
+				local hotspot = content[hotspot_name]
 
-				if not var_29_4.on_hover_enter and not var_29_4.disabled then
+				if hotspot.on_hover_enter and hotspot.disabled then
 					return i, j
 				end
 			end
@@ -688,118 +707,132 @@ HeroWindowTalentsConsole._is_disabled_talent_hovered = function (self)
 	end
 end
 
-HeroWindowTalentsConsole._populate_career_info = function (self, arg_30_1)
+HeroWindowTalentsConsole._populate_career_info = function (self, initialize)
 	-- function 30
 	local ui_renderer = self.ui_renderer
-	local _ui_scenegraph = self._ui_scenegraph
+	local ui_scenegraph = self._ui_scenegraph
 	local hero_name = self.hero_name
 	local career_index = self.career_index
-	local var_30_4 = FindProfileIndex(hero_name)
-	local var_30_5 = SPProfiles[var_30_4].careers[career_index]
-	local name = var_30_5.name
-	local character_selection_image = var_30_5.character_selection_image
-	local display_name = var_30_5.display_name
-	local _widgets_by_name = self._widgets_by_name
+	local profile_index = FindProfileIndex(hero_name)
+	local profile = SPProfiles[profile_index]
+	local career_settings = profile.careers[career_index]
+	local career_name = career_settings.name
+	local character_selection_image = career_settings.character_selection_image
+	local display_name = career_settings.display_name
+	local widgets_by_name = self._widgets_by_name
+	local get_color_table_with_alpha
 
-	if not (not Colors.color_definitions[name] and Colors.get_color_table_with_alpha(name, 255)) then
-		local tbl = {
-			255,
-			255,
-			255,
-			255
-		}
+	if Colors.color_definitions[career_name] then
+		get_color_table_with_alpha = Colors.get_color_table_with_alpha(career_name, 255)
+
+		if not get_color_table_with_alpha then
+			-- Nothing
+		end
 	end
 
-	local get_passive_ability_by_career = CareerUtils.get_passive_ability_by_career(var_30_5)
-	local get_ability_data_by_career = CareerUtils.get_ability_data_by_career(var_30_5, 1)
-	local display_name_2 = get_passive_ability_by_career.display_name
-	local icon = get_passive_ability_by_career.icon
-	local display_name_3 = get_ability_data_by_career.display_name
-	local icon_2 = get_ability_data_by_career.icon
+	get_color_table_with_alpha = {
+		255,
+		255,
+		255,
+		255
+	}
 
-	_widgets_by_name.passive_title_text.content.text = Localize(display_name_2)
-	_widgets_by_name.passive_description_text.content.text = UIUtils.get_ability_description(get_passive_ability_by_career)
-	_widgets_by_name.passive_icon.content.texture_id = icon
-	_widgets_by_name.active_title_text.content.text = Localize(display_name_3)
-	_widgets_by_name.active_description_text.content.text = UIUtils.get_ability_description(get_ability_data_by_career)
-	_widgets_by_name.active_icon.content.texture_id = icon_2
+	local career_color = get_color_table_with_alpha
 
-	local perks = get_passive_ability_by_career.perks
-	local num = 0
-	local num_2 = 0
+	::label_30_0::
+
+	local passive_ability_data = CareerUtils.get_passive_ability_by_career(career_settings)
+	local activated_ability_data = CareerUtils.get_ability_data_by_career(career_settings, 1)
+	local passive_display_name = passive_ability_data.display_name
+	local passive_icon = passive_ability_data.icon
+	local activated_display_name = activated_ability_data.display_name
+	local activated_icon = activated_ability_data.icon
+
+	widgets_by_name.passive_title_text.content.text = Localize(passive_display_name)
+	widgets_by_name.passive_description_text.content.text = UIUtils.get_ability_description(passive_ability_data)
+	widgets_by_name.passive_icon.content.texture_id = passive_icon
+	widgets_by_name.active_title_text.content.text = Localize(activated_display_name)
+	widgets_by_name.active_description_text.content.text = UIUtils.get_ability_description(activated_ability_data)
+	widgets_by_name.active_icon.content.texture_id = activated_icon
+
+	local passive_perks = passive_ability_data.perks
+	local total_perks_height = 0
+	local perks_height_spacing = 0
 
 	for i = 1, NUM_PERKS do
-		local var_30_20 = _widgets_by_name["career_perk_" .. i]
-		local content = var_30_20.content
-		local style = var_30_20.style
-		local size = _ui_scenegraph[var_30_20.scenegraph_id].size
+		local widget = widgets_by_name["career_perk_" .. i]
+		local content = widget.content
+		local style = widget.style
+		local scenegraph_id = widget.scenegraph_id
+		local scenegraph = ui_scenegraph[scenegraph_id]
+		local size = scenegraph.size
+		local offset = widget.offset
 
-		var_30_20.offset[2] = -num
+		offset[2] = -total_perks_height
 
-		local var_30_24 = perks[i]
+		local data = passive_perks[i]
 
-		if not var_30_24 then
-			local var_30_25 = Localize(var_30_24.display_name)
-			local get_perk_description = UIUtils.get_perk_description(var_30_24)
-			local title_text = style.title_text
-			local description_text = style.description_text
-			local description_text_shadow = style.description_text_shadow
+		if data then
+			local display_name = Localize(data.display_name)
+			local description = UIUtils.get_perk_description(data)
+			local title_text_style = style.title_text
+			local description_text_style = style.description_text
+			local description_text_shadow_style = style.description_text_shadow
 
-			content.title_text = var_30_25
-			content.description_text = get_perk_description
+			content.title_text = display_name
+			content.description_text = description
 
-			local get_text_height = UIUtils.get_text_height(ui_renderer, size, title_text, var_30_25)
-			local get_text_height_2 = UIUtils.get_text_height(ui_renderer, size, description_text, get_perk_description)
+			local title_height = UIUtils.get_text_height(ui_renderer, size, title_text_style, display_name)
+			local description_height = UIUtils.get_text_height(ui_renderer, size, description_text_style, description)
 
-			description_text.offset[2] = -get_text_height_2
-			description_text_shadow.offset[2] = -(get_text_height_2 + 2)
-			num = num + get_text_height + get_text_height_2 + num_2
+			description_text_style.offset[2] = -description_height
+			description_text_shadow_style.offset[2] = -(description_height + 2)
+			total_perks_height = total_perks_height + title_height + description_height + perks_height_spacing
 		end
 
-		content.visible = var_30_24 ~= nil
+		content.visible = data ~= nil
 	end
 
-	local num_3 = 260
-	local max = math.max(num - num_3, 0)
+	local PERK_TEXT_AREA = 260
+	local base_excess = math.max(total_perks_height - PERK_TEXT_AREA, 0)
 
-	self:_setup_additional_career_info(var_30_5, max)
+	self:_setup_additional_career_info(career_settings, base_excess)
 end
 
-HeroWindowTalentsConsole._setup_additional_career_info = function (self, arg_31_1, arg_31_2)
+HeroWindowTalentsConsole._setup_additional_career_info = function (self, career_settings, optional_base_excess)
 	-- function 31
-	local flag = arg_31_2 or 0
+	local base_excess = not not optional_base_excess or not not 0
 
-	if not arg_31_1.additional_ui_info_file then
-		local var_31_1 = local_require(arg_31_1.additional_ui_info_file)
-		local str = "scrollbar_window"
-		local str_2 = "scrollbar_anchor"
-		local var_31_4 = self._ui_scenegraph[str].size[2]
-		local tbl = {
+	if career_settings.additional_ui_info_file then
+		local additional_info_definitions = local_require(career_settings.additional_ui_info_file)
+		local scroll_area_scenegraph_id = "scrollbar_window"
+		local scroll_area_anchor_scenegraph_id = "scrollbar_anchor"
+		local height = self._ui_scenegraph[scroll_area_scenegraph_id].size[2]
+		local base_offset = {
 			0,
-			-var_31_4,
+			-height,
 			0
 		}
-		local num = 0
-		local var_31_7
+		local scroll_height = 0
 
-		self._additional_widgets, self._additional_widgets_by_name, var_31_7 = var_31_1.setup(str, tbl)
+		self._additional_widgets, self._additional_widgets_by_name, scroll_height = additional_info_definitions.setup(scroll_area_scenegraph_id, base_offset)
 
-		local var_31_8
-		local flag_2 = true
+		local optional_scroll_area_hotspot_widget
+		local enable_auto_scroll = true
 
-		self._scrollbar = ScrollbarUI:new(self._ui_scenegraph, str, str_2, var_31_7, flag_2, var_31_8)
+		self._scrollbar = ScrollbarUI:new(self._ui_scenegraph, scroll_area_scenegraph_id, scroll_area_anchor_scenegraph_id, scroll_height, enable_auto_scroll, optional_scroll_area_hotspot_widget)
 	else
 		table.clear(self._additional_widgets)
 		table.clear(self._additional_widgets_by_name)
 
-		if flag > 0 then
-			local str_3 = "scrollbar_window"
-			local str_4 = "scrollbar_anchor"
-			local flag_3 = true
-			local var_31_13
+		if base_excess > 0 then
+			local scroll_area_scenegraph_id = "scrollbar_window"
+			local scroll_area_anchor_scenegraph_id = "scrollbar_anchor"
+			local enable_auto_scroll = true
+			local optional_scroll_area_hotspot
 
-			self._scrollbar = ScrollbarUI:new(self._ui_scenegraph, str_3, str_4, flag, flag_3, var_31_13)
-		elseif not self._scrollbar then
+			self._scrollbar = ScrollbarUI:new(self._ui_scenegraph, scroll_area_scenegraph_id, scroll_area_anchor_scenegraph_id, base_excess, enable_auto_scroll, optional_scroll_area_hotspot)
+		elseif self._scrollbar then
 			self._scrollbar:destroy(self._ui_scenegraph)
 
 			self._scrollbar = nil
@@ -807,34 +840,35 @@ HeroWindowTalentsConsole._setup_additional_career_info = function (self, arg_31_
 	end
 end
 
-HeroWindowTalentsConsole._animate_pulse = function (arg_32_0, arg_32_1, arg_32_2, arg_32_3, arg_32_4, arg_32_5)
+HeroWindowTalentsConsole._animate_pulse = function (self, target, target_index, from, to, speed)
 	-- function 32
-	return (UIAnimation.init(UIAnimation.pulse_animation, arg_32_1, arg_32_2, arg_32_3, arg_32_4, arg_32_5))
+	local new_animation = UIAnimation.init(UIAnimation.pulse_animation, target, target_index, from, to, speed)
+
+	return new_animation
 end
 
-HeroWindowTalentsConsole._set_talent_tooltip = function (self, arg_33_1, arg_33_2, arg_33_3)
+HeroWindowTalentsConsole._set_talent_tooltip = function (self, talent, selected, locked)
 	-- function 33
-	local _widgets_by_name = self._widgets_by_name
-	local tooltip_title = _widgets_by_name.tooltip_title
-	local tooltip_description = _widgets_by_name.tooltip_description
-	local tooltip_info = _widgets_by_name.tooltip_info
+	local widgets_by_name = self._widgets_by_name
+	local title_widget = widgets_by_name.tooltip_title
+	local description_widget = widgets_by_name.tooltip_description
+	local info_widget = widgets_by_name.tooltip_info
 	local Localize = Localize
-	local display_name = arg_33_1.display_name
+	local display_name_2 = talent.display_name
 
-	display_name = display_name or arg_33_1.name
+	display_name_2 = not not display_name_2 or not not talent.name
 
-	local var_33_6 = Localize(display_name)
-	local get_talent_description = UIUtils.get_talent_description(arg_33_1)
-	local var_33_8
-	local var_33_9
+	local display_name = Localize(display_name_2)
+	local description = UIUtils.get_talent_description(talent)
+	local requirement_text, information_text
 
-	if not arg_33_3 then
-		var_33_8 = Localize("talent_locked_desc")
-	elseif not arg_33_2 then
+	if locked then
+		requirement_text = Localize("talent_locked_desc")
+	elseif not selected then
 		-- Nothing
 	end
 
-	tooltip_title.content.text = var_33_6
-	tooltip_description.content.text = get_talent_description
-	tooltip_info.content.text = var_33_8 or var_33_9 or ""
+	title_widget.content.text = display_name
+	description_widget.content.text = description
+	info_widget.content.text = not not requirement_text or not not information_text or not not ""
 end

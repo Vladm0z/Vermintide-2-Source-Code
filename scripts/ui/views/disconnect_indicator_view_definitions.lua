@@ -1,10 +1,10 @@
 -- chunkname: @scripts/ui/views/disconnect_indicator_view_definitions.lua
 
-local num = 64
-local num_2 = 8
-local num_3 = 200
-local num_4 = 800
-local tbl = {
+local icon_size = 64
+local padding = 8
+local distance_from_bottom = 200
+local max_text_width = 800
+local scenegraph_definition = {
 	screen = {
 		vertical_alignment = "center",
 		horizontal_alignment = "center",
@@ -24,12 +24,12 @@ local tbl = {
 		parent = "screen",
 		horizontal_alignment = "center",
 		size = {
-			num,
-			num
+			icon_size,
+			icon_size
 		},
 		position = {
 			0,
-			num_3,
+			distance_from_bottom,
 			1
 		}
 	},
@@ -38,11 +38,11 @@ local tbl = {
 		parent = "indicator",
 		horizontal_alignment = "left",
 		size = {
-			num_4,
+			max_text_width,
 			100
 		},
 		position = {
-			num + num_2,
+			icon_size + padding,
 			0,
 			1
 		}
@@ -50,10 +50,10 @@ local tbl = {
 }
 
 if not IS_WINDOWS then
-	tbl.screen.scale = "hud_fit"
+	scenegraph_definition.screen.scale = "hud_fit"
 end
 
-local function fn(arg_1_0, arg_1_1, arg_1_2, arg_1_3, arg_1_4)
+local function create_texture_with_text(texture, text, scenegraph_id, text_scenegraph_id, text_style)
 	-- function 1
 	return {
 		element = {
@@ -71,18 +71,18 @@ local function fn(arg_1_0, arg_1_1, arg_1_2, arg_1_3, arg_1_4)
 			}
 		},
 		content = {
-			texture_id = arg_1_0,
-			text = arg_1_1
+			texture_id = texture,
+			text = text
 		},
 		style = {
-			text = arg_1_4 or {
+			text = not not text_style or not not {
 				vertical_alignment = "center",
 				horizontal_alignment = "left",
 				word_wrap = true,
 				font_size = 26,
 				font_type = "hell_shark",
 				text_color = Colors.get_color_table_with_alpha("white", 255),
-				scenegraph_id = arg_1_3
+				scenegraph_id = text_scenegraph_id
 			},
 			texture_id = {
 				color = {
@@ -93,13 +93,15 @@ local function fn(arg_1_0, arg_1_1, arg_1_2, arg_1_3, arg_1_4)
 				}
 			}
 		},
-		scenegraph_id = arg_1_2
+		scenegraph_id = scenegraph_id
 	}
 end
 
-return {
-	scenegraph_definition = tbl,
-	icon_text = fn("icon_connection_lost", "", "indicator", "text", nil),
-	padding = num_2,
-	max_text_width = num_4
+local definitions = {
+	scenegraph_definition = scenegraph_definition,
+	icon_text = create_texture_with_text("icon_connection_lost", "", "indicator", "text", nil),
+	padding = padding,
+	max_text_width = max_text_width
 }
+
+return definitions

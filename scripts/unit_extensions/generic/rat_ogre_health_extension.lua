@@ -2,19 +2,29 @@
 
 RatOgreHealthExtension = class(RatOgreHealthExtension, GenericHealthExtension)
 
-RatOgreHealthExtension.init = function (self, arg_1_1, arg_1_2, ...)
+RatOgreHealthExtension.init = function (self, extension_init_context, unit, ...)
 	-- function 1
-	RatOgreHealthExtension.super.init(self, arg_1_1, arg_1_2, ...)
+	RatOgreHealthExtension.super.init(self, extension_init_context, unit, ...)
 
-	self._wounded_anim_variable = Unit.animation_find_variable(arg_1_2, "wounded")
+	self._wounded_anim_variable = Unit.animation_find_variable(unit, "wounded")
 end
 
-RatOgreHealthExtension.update = function (self, arg_2_1, ...)
+RatOgreHealthExtension.update = function (self, dt, ...)
 	-- function 2
 	local unit = self.unit
-	local flag
+	local num
 
-	flag = not (self.damage / self.health > 0.5) or not 1 or 0
+	if self.damage / self.health > 0.5 then
+		num = 1
 
-	Unit.animation_set_variable(unit, self._wounded_anim_variable, flag)
+		goto label_2_0
+	end
+
+	num = 0
+
+	local wounded_value = num
+
+	::label_2_0::
+
+	Unit.animation_set_variable(unit, self._wounded_anim_variable, wounded_value)
 end

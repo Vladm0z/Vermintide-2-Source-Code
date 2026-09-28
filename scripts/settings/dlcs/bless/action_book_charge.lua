@@ -2,112 +2,112 @@
 
 ActionBookCharge = class(ActionBookCharge, ActionMeleeStart)
 
-local set_flow_variable = Unit.set_flow_variable
-local flow_event = Unit.flow_event
+local unit_set_flow_variable = Unit.set_flow_variable
+local unit_flow_event = Unit.flow_event
 
-ActionBookCharge.init = function (self, arg_1_1, arg_1_2, arg_1_3, arg_1_4, arg_1_5, arg_1_6, arg_1_7, arg_1_8)
+ActionBookCharge.init = function (self, world, item_name, is_server, owner_unit, damage_unit, first_person_unit, weapon_unit, weapon_system)
 	-- function 1
-	ActionBookCharge.super.init(self, arg_1_1, arg_1_2, arg_1_3, arg_1_4, arg_1_5, arg_1_6, arg_1_7, arg_1_8)
+	ActionBookCharge.super.init(self, world, item_name, is_server, owner_unit, damage_unit, first_person_unit, weapon_unit, weapon_system)
 
-	self.weapon_extension = ScriptUnit.extension(arg_1_7, "weapon_system")
-	self.inventory_extension = ScriptUnit.extension(arg_1_4, "inventory_system")
-	self.first_person_extension = ScriptUnit.extension(arg_1_4, "first_person_system")
-	self.owner_unit = arg_1_4
+	self.weapon_extension = ScriptUnit.extension(weapon_unit, "weapon_system")
+	self.inventory_extension = ScriptUnit.extension(owner_unit, "inventory_system")
+	self.first_person_extension = ScriptUnit.extension(owner_unit, "first_person_system")
+	self.owner_unit = owner_unit
 
-	local get_all_weapon_unit, var_1_1 = self.inventory_extension:get_all_weapon_unit()
+	local left_hand_unit, right_hand_unit = self.inventory_extension:get_all_weapon_unit()
 
-	self._left_hand_unit = get_all_weapon_unit
-	self._right_hand_unit = var_1_1
+	self._left_hand_unit = left_hand_unit
+	self._right_hand_unit = right_hand_unit
 	self._current_segment = -1
 	self._sfx_active = false
 	self._charge_sfx = false
 end
 
-local function fn(arg_2_0, arg_2_1, arg_2_2, arg_2_3, arg_2_4)
+local function scale_charge_value(action_settings, value, owner_unit, buff_extension, increase)
 	-- function 2
-	local var_2_0 = arg_2_1
-	local get_action_time_scale = ActionUtils.get_action_time_scale(arg_2_2, arg_2_0)
+	local new_value = value
+	local time_scale = ActionUtils.get_action_time_scale(owner_unit, action_settings)
 
-	if not arg_2_4 then
-		var_2_0 = var_2_0 * get_action_time_scale
+	if increase then
+		new_value = new_value * time_scale
 	else
-		var_2_0 = var_2_0 * (1 / get_action_time_scale)
+		new_value = new_value * (1 / time_scale)
 	end
 
-	return var_2_0
+	return new_value
 end
 
-ActionBookCharge.client_owner_start_action = function (self, arg_3_1, arg_3_2, arg_3_3, arg_3_4, arg_3_5)
+ActionBookCharge.client_owner_start_action = function (self, new_action, t, chain_action_data, power_level, action_init_data)
 	-- function 3
-	ActionBookCharge.super.client_owner_start_action(self, arg_3_1, arg_3_2, arg_3_3, arg_3_4, arg_3_5)
+	ActionBookCharge.super.client_owner_start_action(self, new_action, t, chain_action_data, power_level, action_init_data)
 
 	self.charge = self.weapon_extension:get_custom_data("charge")
 
 	local owner_unit = self.owner_unit
-	local extension = ScriptUnit.extension(owner_unit, "buff_system")
-	local var_3_2 = fn
-	local var_3_3 = arg_3_1
-	local charge_speed = arg_3_1.charge_speed
+	local buff_extension = ScriptUnit.extension(owner_unit, "buff_system")
+	local var_3_0 = scale_charge_value
+	local var_3_1 = new_action
+	local charge_speed = new_action.charge_speed
 
-	charge_speed = charge_speed or 0.3
-	self.charge_speed = var_3_2(var_3_3, charge_speed, owner_unit, extension, true)
+	charge_speed = not not charge_speed or not not 0.3
+	self.charge_speed = var_3_0(var_3_1, charge_speed, owner_unit, buff_extension, true)
 
-	local var_3_5 = fn
-	local var_3_6 = arg_3_1
-	local initial_charge_delay = arg_3_1.initial_charge_delay
+	local var_3_3 = scale_charge_value
+	local var_3_4 = new_action
+	local initial_charge_delay = new_action.initial_charge_delay
 
-	initial_charge_delay = initial_charge_delay or 0
-	self.initial_charge_delay = var_3_5(var_3_6, initial_charge_delay, owner_unit, extension, false)
-	self.start_time = arg_3_2
+	initial_charge_delay = not not initial_charge_delay or not not 0
+	self.initial_charge_delay = var_3_3(var_3_4, initial_charge_delay, owner_unit, buff_extension, false)
+	self.start_time = t
 
 	self:_update_visual_charge(self.charge)
 end
 
-ActionBookCharge.client_owner_post_update = function (self, arg_4_1, arg_4_2, arg_4_3)
+ActionBookCharge.client_owner_post_update = function (self, dt, t, world)
 	-- function 4
-	ActionBookCharge.super.client_owner_post_update(self, arg_4_1, arg_4_2, arg_4_3)
+	ActionBookCharge.super.client_owner_post_update(self, dt, t, world)
 
-	if arg_4_2 < self.start_time + self.initial_charge_delay then
+	if t < self.start_time + self.initial_charge_delay then
 		return
 	end
 
-	if not (not (self.charge < 1) or self._sfx_active) then
+	if self.charge < 1 and not self._sfx_active then
 		self._sfx_active = true
 
 		self.first_person_extension:play_hud_sound_event("priest_melee_book_charge")
 	end
 
-	self.charge = self.charge + self.charge_speed * arg_4_1
+	self.charge = self.charge + self.charge_speed * dt
 
 	self.weapon_extension:set_custom_data("charge", self.charge)
 	self:_update_visual_charge(self.charge)
 end
 
-ActionBookCharge._update_visual_charge = function (self, arg_5_1)
+ActionBookCharge._update_visual_charge = function (self, current_charge)
 	-- function 5
-	if not self._right_hand_unit then
-		local clamp = math.clamp(arg_5_1, 0, 1)
+	if self._right_hand_unit then
+		local visual_charge = math.clamp(current_charge, 0, 1)
 
-		set_flow_variable(self._right_hand_unit, "current_charge", clamp)
-		flow_event(self._right_hand_unit, "lua_update_charge")
+		unit_set_flow_variable(self._right_hand_unit, "current_charge", visual_charge)
+		unit_flow_event(self._right_hand_unit, "lua_update_charge")
 	end
 
 	local inventory_extension = self.inventory_extension
 
-	if not (not (arg_5_1 >= 1) or self._charge_sfx) then
+	if current_charge >= 1 and not self._charge_sfx then
 		self._charge_sfx = true
 
 		self.first_person_extension:play_hud_sound_event("priest_melee_book_charge_end")
 
 		self._sfx_active = false
-	elseif not (arg_5_1 < 1) or not self._charge_sfx then
+	elseif current_charge < 1 and self._charge_sfx then
 		self._charge_sfx = false
 	end
 end
 
-ActionBookCharge.finish = function (self, arg_6_1)
+ActionBookCharge.finish = function (self, reason)
 	-- function 6
-	ActionChangeMode.super.finish(self, arg_6_1)
+	ActionChangeMode.super.finish(self, reason)
 
 	if self.charge < 1 then
 		self._sfx_active = false

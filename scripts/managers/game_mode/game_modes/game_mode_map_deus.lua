@@ -6,11 +6,11 @@ require("scripts/ui/views/deus_menu/deus_map_decision_view")
 local require = require
 local flag
 
-flag = not script_data.FEATURE_old_map_ui and "scripts/ui/views/deus_menu/deus_shop_view" and "scripts/ui/views/deus_menu/deus_shop_view_v2"
+flag = (not script_data.FEATURE_old_map_ui or not "scripts/ui/views/deus_menu/deus_shop_view") and not not "scripts/ui/views/deus_menu/deus_shop_view_v2"
 
 require(flag)
 
-local tbl = {
+local UI_RENDERER_MATERIALS = {
 	"material",
 	"materials/ui/ui_1080p_hud_atlas_textures",
 	"material",
@@ -33,28 +33,28 @@ local tbl = {
 	"materials/ui/ui_1080p_versus_rewards_atlas"
 }
 
-for k, v in pairs(DLCSettings) do
-	local portrait_materials = v.portrait_materials
+for _, dlc in pairs(DLCSettings) do
+	local portrait_materials = dlc.portrait_materials
 
-	if not portrait_materials then
-		for i, v_2 in ipairs(portrait_materials) do
-			tbl[#tbl + 1] = "material"
-			tbl[#tbl + 1] = v_2
+	if portrait_materials then
+		for _, path in ipairs(portrait_materials) do
+			UI_RENDERER_MATERIALS[#UI_RENDERER_MATERIALS + 1] = "material"
+			UI_RENDERER_MATERIALS[#UI_RENDERER_MATERIALS + 1] = path
 		end
 	end
 end
 
-local flag_2 = false
-local flag_3 = false
-local num = 1
-local tbl_2 = {
+local COMPLETE_LEVEL_VAR = false
+local FAIL_LEVEL_VAR = false
+local FADE_DURATION = 1
+local states = {
 	WAITING_FOR_PLAYERS_AFTER_SHOP = 4,
 	MAP_DECISION = 1,
 	SHOP = 3,
 	FINISHING = 5,
 	WAITING_FOR_PLAYERS_AFTER_MAP_DECISION = 2
 }
-local tbl_3 = {
+local shared_state_spec = {
 	server = {
 		state = {
 			default_value = 0,
@@ -71,157 +71,159 @@ local tbl_3 = {
 	}
 }
 
-SharedState.validate_spec(tbl_3)
+SharedState.validate_spec(shared_state_spec)
 
 GameModeMapDeus = class(GameModeMapDeus, GameModeBase)
 
-GameModeMapDeus.init = function (self, arg_1_1, arg_1_2, arg_1_3, arg_1_4, arg_1_5, arg_1_6, arg_1_7, arg_1_8)
+GameModeMapDeus.init = function (self, settings, world, network_handler, is_server, profile_synchronizer, level_key, statistics_db, game_mode_settings)
 	-- function 1
-	GameModeMapDeus.super.init(self, arg_1_1, arg_1_2, arg_1_3, arg_1_4, arg_1_5, arg_1_6, arg_1_7, arg_1_8)
-	fassert(arg_1_8.deus_run_controller, "GameModeMapDeus is missing initialization data, see DeusMechanism.")
+	GameModeMapDeus.super.init(self, settings, world, network_handler, is_server, profile_synchronizer, level_key, statistics_db, game_mode_settings)
+	fassert(game_mode_settings.deus_run_controller, "GameModeMapDeus is missing initialization data, see DeusMechanism.")
 
-	self._deus_run_controller = arg_1_8.deus_run_controller
+	self._deus_run_controller = game_mode_settings.deus_run_controller
 	self._own_peer_id = self._deus_run_controller:get_own_peer_id()
 
-	local get_server_peer_id = self._deus_run_controller:get_server_peer_id()
+	local server_peer_id = self._deus_run_controller:get_server_peer_id()
 
-	self._shared_state = SharedState:new("deus_game_mode_map_" .. self._deus_run_controller:get_run_id(), tbl_3, arg_1_4, not arg_1_4 and arg_1_3 and nil, get_server_peer_id, self._own_peer_id)
-	self._is_server = arg_1_4
+	self._shared_state = SharedState:new("deus_game_mode_map_" .. self._deus_run_controller:get_run_id(), shared_state_spec, is_server, (not is_server or not network_handler) and not not nil, server_peer_id, self._own_peer_id)
+	self._is_server = is_server
 	self._ui_done = true
 	self._adventure_profile_rules = AdventureProfileRules:new(self._profile_synchronizer, self._network_server)
 
-	local var_1_1 = UIRenderer.create(self._world, unpack(tbl))
-	local world = Managers.world:world("top_ingame_view")
-	local var_1_3 = UIRenderer.create(world, unpack(tbl))
-	local tbl_2 = {
-		ui_renderer = var_1_1,
-		ui_top_renderer = var_1_3,
+	local ui_renderer = UIRenderer.create(self._world, unpack(UI_RENDERER_MATERIALS))
+	local top_world = Managers.world:world("top_ingame_view")
+	local ui_top_renderer = UIRenderer.create(top_world, unpack(UI_RENDERER_MATERIALS))
+	local context = {
+		ui_renderer = ui_renderer,
+		ui_top_renderer = ui_top_renderer,
 		is_server = self._is_server,
-		server_peer_id = get_server_peer_id,
+		server_peer_id = server_peer_id,
 		input_manager = Managers.input,
 		deus_run_controller = self._deus_run_controller,
-		wwise_world = Managers.world:wwise_world(arg_1_2),
-		network_server = not arg_1_4 and arg_1_3 and nil,
+		wwise_world = Managers.world:wwise_world(world),
+		network_server = (not is_server or not network_handler) and not not nil,
 		own_peer_id = self._own_peer_id,
-		world = arg_1_2
+		world = world
 	}
 
-	self._map_decision_view = DeusMapDecisionView:new(tbl_2)
-	self._shop_view = DeusShopView:new(tbl_2)
+	self._map_decision_view = DeusMapDecisionView:new(context)
+	self._shop_view = DeusShopView:new(context)
 end
 
-GameModeMapDeus.register_rpcs = function (self, arg_2_1, arg_2_2)
+GameModeMapDeus.register_rpcs = function (self, network_event_delegate, network_transmit)
 	-- function 2
-	GameModeMapDeus.super.register_rpcs(self, arg_2_1, arg_2_2)
+	GameModeMapDeus.super.register_rpcs(self, network_event_delegate, network_transmit)
 	self._shared_state:register_rpcs(self._network_event_delegate)
-	self._map_decision_view:register_rpcs(arg_2_1, arg_2_2)
-	self._shop_view:register_rpcs(arg_2_1, arg_2_2)
+	self._map_decision_view:register_rpcs(network_event_delegate, network_transmit)
+	self._shop_view:register_rpcs(network_event_delegate, network_transmit)
 end
 
 GameModeMapDeus.unregister_rpcs = function (self)
 	-- function 3
 	self._shared_state:unregister_rpcs()
 
-	if not self._map_decision_view then
+	if self._map_decision_view then
 		self._map_decision_view:unregister_rpcs()
 	end
 
-	if not self._shop_view then
+	if self._shop_view then
 		self._shop_view:unregister_rpcs()
 	end
 end
 
-GameModeMapDeus.ended = function (self, arg_4_1)
+GameModeMapDeus.ended = function (self, reason)
 	-- function 4
-	if not self._network_server:are_all_peers_ingame() then
+	local all_peers_ingame = self._network_server:are_all_peers_ingame()
+
+	if not all_peers_ingame then
 		self._network_server:disconnect_joining_peers()
 	end
 end
 
-GameModeMapDeus.local_player_ready_to_start = function (arg_5_0, arg_5_1)
+GameModeMapDeus.local_player_ready_to_start = function (self, player)
 	-- function 5
-	local profile_index = arg_5_1:profile_index()
-	local career_index = arg_5_1:career_index()
+	local profile_index = player:profile_index()
+	local career_index = player:career_index()
 
-	if not (profile_index == 0 or career_index == 0 or profile_index == nil or career_index ~= nil) then
+	if profile_index == 0 or career_index == 0 or profile_index == nil or career_index == nil then
 		return false
 	end
 
 	return true
 end
 
-GameModeMapDeus.local_player_game_starts = function (self, arg_6_1, arg_6_2)
+GameModeMapDeus.local_player_game_starts = function (self, player, loading_context)
 	-- function 6
 	self._game_started = true
 
-	if not self._is_server then
+	if self._is_server then
 		self._node_decided = nil
 
-		self._shared_state:set_server(self._shared_state:get_key("state"), tbl_2.MAP_DECISION)
+		self._shared_state:set_server(self._shared_state:get_key("state"), states.MAP_DECISION)
 	end
 
 	self._shared_state:full_sync()
 
-	local profile_index = arg_6_1:profile_index()
-	local career_index = arg_6_1:career_index()
+	local profile_index = player:profile_index()
+	local career_index = player:career_index()
 
-	CosmeticUtils.sync_local_player_cosmetics(arg_6_1, profile_index, career_index)
+	CosmeticUtils.sync_local_player_cosmetics(player, profile_index, career_index)
 end
 
-GameModeMapDeus.profile_changed = function (self, arg_7_1, arg_7_2, arg_7_3, arg_7_4)
+GameModeMapDeus.profile_changed = function (self, peer_id, local_player_id, profile_index, career_index)
 	-- function 7
-	if arg_7_1 == self._own_peer_id then
-		local player = Managers.player:player(arg_7_1, arg_7_2)
+	if peer_id == self._own_peer_id then
+		local player = Managers.player:player(peer_id, local_player_id)
 
-		CosmeticUtils.sync_local_player_cosmetics(player, arg_7_3, arg_7_4)
+		CosmeticUtils.sync_local_player_cosmetics(player, profile_index, career_index)
 	end
 end
 
 GameModeMapDeus.mutators = function (self)
 	-- function 8
-	local tbl = {}
+	local mutators_list = {}
 
-	self:append_live_event_mutators(tbl)
+	self:append_live_event_mutators(mutators_list)
 
-	local get_event_mutators = self._deus_run_controller:get_event_mutators()
+	local event_mutators = self._deus_run_controller:get_event_mutators()
 
-	if not get_event_mutators then
-		local set = table.set(tbl)
+	if event_mutators then
+		local mutators_list_keys = table.set(mutators_list)
 
-		for i = 1, #get_event_mutators do
-			local var_8_3 = get_event_mutators[i]
+		for i = 1, #event_mutators do
+			local event_mutator = event_mutators[i]
 
-			if not set[var_8_3] then
-				tbl[#tbl + 1] = var_8_3
+			if not mutators_list_keys[event_mutator] then
+				mutators_list[#mutators_list + 1] = event_mutator
 			end
 		end
 	end
 
-	return tbl
+	return mutators_list
 end
 
-GameModeMapDeus.update = function (self, arg_9_1, arg_9_2)
+GameModeMapDeus.update = function (self, t, dt)
 	-- function 9
-	local get_server = self._shared_state:get_server(self._shared_state:get_key("state"))
-	local get_own = self._shared_state:get_own(self._shared_state:get_key("state"))
+	local server_state = self._shared_state:get_server(self._shared_state:get_key("state"))
+	local own_state = self._shared_state:get_own(self._shared_state:get_key("state"))
 
-	if get_server == 0 then
+	if server_state == 0 then
 		return
 	end
 
-	if get_own == tbl_2.MAP_DECISION then
-		local _map_decision_view = self._map_decision_view
+	if own_state == states.MAP_DECISION then
+		local map_decision_view = self._map_decision_view
 
-		if not _map_decision_view then
-			_map_decision_view:update(arg_9_2, arg_9_1)
+		if map_decision_view then
+			map_decision_view:update(dt, t)
 		end
 	end
 
-	if get_own == tbl_2.SHOP then
-		local _shop_view = self._shop_view
+	if own_state == states.SHOP then
+		local shop_view = self._shop_view
 
-		if not _shop_view then
-			_shop_view:update(arg_9_2, arg_9_1)
+		if shop_view then
+			shop_view:update(dt, t)
 		end
 	end
 
@@ -229,51 +231,51 @@ GameModeMapDeus.update = function (self, arg_9_1, arg_9_2)
 		return
 	end
 
-	if get_own ~= get_server then
-		if get_server == tbl_2.MAP_DECISION then
+	if own_state ~= server_state then
+		if server_state == states.MAP_DECISION then
 			self._ui_done = false
 
 			Managers.ui:handle_transition("close_active", {
 				use_fade = true,
-				fade_in_speed = num,
-				fade_out_speed = num
+				fade_in_speed = FADE_DURATION,
+				fade_out_speed = FADE_DURATION
 			})
 
-			local tbl = {
-				finish_cb = function (arg_10_0)
+			local transition_params = {
+				finish_cb = function (data)
 					-- function 10
-					if not self._is_server then
-						self._node_decided = arg_10_0
+					if self._is_server then
+						self._node_decided = data
 					end
 
-					Managers.transition:fade_in(num, function ()
+					Managers.transition:fade_in(FADE_DURATION, function ()
 						-- function 11
 						self._ui_done = true
 					end)
 				end
 			}
 
-			self._map_decision_view:start(tbl)
+			self._map_decision_view:start(transition_params)
 			Wwise.set_state("level_morris_map", "map")
-		elseif get_server == tbl_2.WAITING_FOR_PLAYERS_AFTER_MAP_DECISION then
+		elseif server_state == states.WAITING_FOR_PLAYERS_AFTER_MAP_DECISION then
 			-- Nothing
-		elseif get_server == tbl_2.SHOP then
+		elseif server_state == states.SHOP then
 			self._ui_done = false
 
 			Managers.ui:handle_transition("close_active", {
 				use_fade = true,
-				fade_in_speed = num,
-				fade_out_speed = num
+				fade_in_speed = FADE_DURATION,
+				fade_out_speed = FADE_DURATION
 			})
 
-			local tbl_3 = {
+			local transition_params = {
 				finish_cb = function ()
 					-- function 12
-					if not self._is_server then
+					if self._is_server then
 						self._shop_view_finished = true
 					end
 
-					Managers.transition:fade_in(num, function ()
+					Managers.transition:fade_in(FADE_DURATION, function ()
 						-- function 13
 						self._shop_view:destroy_idol()
 
@@ -282,48 +284,48 @@ GameModeMapDeus.update = function (self, arg_9_1, arg_9_2)
 				end
 			}
 
-			self._shop_view:start(tbl_3)
+			self._shop_view:start(transition_params)
 			Wwise.set_state("level_morris_map", "shrine")
-		elseif get_server == tbl_2.WAITING_FOR_PLAYERS_AFTER_SHOP then
+		elseif server_state == states.WAITING_FOR_PLAYERS_AFTER_SHOP then
 			-- Nothing
-		elseif get_server == tbl_2.FINISHING then
+		elseif server_state == states.FINISHING then
 			-- Nothing
 		end
 
-		self._shared_state:set_own(self._shared_state:get_key("state"), get_server)
+		self._shared_state:set_own(self._shared_state:get_key("state"), server_state)
 	end
 end
 
-GameModeMapDeus.post_update = function (self, arg_14_1, arg_14_2)
+GameModeMapDeus.post_update = function (self, dt, t)
 	-- function 14
-	local get_own = self._shared_state:get_own(self._shared_state:get_key("state"))
+	local own_state = self._shared_state:get_own(self._shared_state:get_key("state"))
 
-	if get_own == tbl_2.MAP_DECISION then
-		local _map_decision_view = self._map_decision_view
+	if own_state == states.MAP_DECISION then
+		local map_decision_view = self._map_decision_view
 
-		if not _map_decision_view then
-			_map_decision_view:post_update(arg_14_1, arg_14_2)
+		if map_decision_view then
+			map_decision_view:post_update(dt, t)
 		end
 	end
 
-	if get_own == tbl_2.SHOP then
-		local _shop_view = self._shop_view
+	if own_state == states.SHOP then
+		local shop_view = self._shop_view
 
-		if not _shop_view then
-			_shop_view:post_update(arg_14_1, arg_14_2)
+		if shop_view then
+			shop_view:post_update(dt, t)
 		end
 	end
 end
 
 GameModeMapDeus.destroy = function (self)
 	-- function 15
-	if not self._map_decision_view then
+	if self._map_decision_view then
 		self._map_decision_view:destroy()
 
 		self._map_decision_view = nil
 	end
 
-	if not self._shop_view then
+	if self._shop_view then
 		self._shop_view:destroy()
 
 		self._shop_view = nil
@@ -334,48 +336,53 @@ GameModeMapDeus.destroy = function (self)
 	self._shared_state = nil
 end
 
-GameModeMapDeus.server_update = function (self, arg_16_1, arg_16_2)
+GameModeMapDeus.server_update = function (self, t, dt)
 	-- function 16
-	GameModeMapDeus.super.server_update(self, arg_16_1, arg_16_2)
+	GameModeMapDeus.super.server_update(self, t, dt)
 
-	local get_server = self._shared_state:get_server(self._shared_state:get_key("state"))
+	local current_state = self._shared_state:get_server(self._shared_state:get_key("state"))
 
-	if get_server == tbl_2.MAP_DECISION then
-		if not self._node_decided then
-			self._shared_state:set_server(self._shared_state:get_key("state"), tbl_2.WAITING_FOR_PLAYERS_AFTER_MAP_DECISION)
+	if current_state == states.MAP_DECISION then
+		if self._node_decided then
+			self._shared_state:set_server(self._shared_state:get_key("state"), states.WAITING_FOR_PLAYERS_AFTER_MAP_DECISION)
 		end
-	elseif get_server == tbl_2.WAITING_FOR_PLAYERS_AFTER_MAP_DECISION then
-		if not self:_are_all_peers_in_same_state() then
-			if self._deus_run_controller:get_graph_data()[self._node_decided].node_type == "shop" then
+	elseif current_state == states.WAITING_FOR_PLAYERS_AFTER_MAP_DECISION then
+		if self:_are_all_peers_in_same_state() then
+			local graph = self._deus_run_controller:get_graph_data()
+			local new_node = graph[self._node_decided]
+
+			if new_node.node_type == "shop" then
 				self._shop_view_finished = nil
 
 				self._deus_run_controller:handle_shrine_entered(self._node_decided)
-				self._shared_state:set_server(self._shared_state:get_key("state"), tbl_2.SHOP)
+				self._shared_state:set_server(self._shared_state:get_key("state"), states.SHOP)
 			else
-				self._shared_state:set_server(self._shared_state:get_key("state"), tbl_2.FINISHING)
+				self._shared_state:set_server(self._shared_state:get_key("state"), states.FINISHING)
 			end
 		end
-	elseif get_server == tbl_2.SHOP then
-		if not self._shop_view_finished then
-			self._shared_state:set_server(self._shared_state:get_key("state"), tbl_2.WAITING_FOR_PLAYERS_AFTER_SHOP)
+	elseif current_state == states.SHOP then
+		if self._shop_view_finished then
+			self._shared_state:set_server(self._shared_state:get_key("state"), states.WAITING_FOR_PLAYERS_AFTER_SHOP)
 		end
-	elseif get_server == tbl_2.WAITING_FOR_PLAYERS_AFTER_SHOP then
-		if not self:_are_all_peers_in_same_state() then
+	elseif current_state == states.WAITING_FOR_PLAYERS_AFTER_SHOP then
+		if self:_are_all_peers_in_same_state() then
 			self._node_decided = nil
 
-			self._shared_state:set_server(self._shared_state:get_key("state"), tbl_2.MAP_DECISION)
+			self._shared_state:set_server(self._shared_state:get_key("state"), states.MAP_DECISION)
 		end
-	elseif get_server ~= tbl_2.FINISHING or not self:_are_all_peers_in_same_state() then
+	elseif current_state == states.FINISHING and self:_are_all_peers_in_same_state() then
 		self._final_node_selected = self._node_decided
 	end
 end
 
 GameModeMapDeus._are_all_peers_in_same_state = function (self)
 	-- function 17
-	local get_server = self._shared_state:get_server(self._shared_state:get_key("state"))
+	local server_state = self._shared_state:get_server(self._shared_state:get_key("state"))
 
-	for i, v in ipairs(self._deus_run_controller:get_peers()) do
-		if self._shared_state:get_peer(v, self._shared_state:get_key("state")) ~= get_server then
+	for _, peer_id in ipairs(self._deus_run_controller:get_peers()) do
+		local peer_state = self._shared_state:get_peer(peer_id, self._shared_state:get_key("state"))
+
+		if peer_state ~= server_state then
 			return false
 		end
 	end
@@ -383,42 +390,44 @@ GameModeMapDeus._are_all_peers_in_same_state = function (self)
 	return true
 end
 
-GameModeMapDeus.player_entered_game_session = function (self, arg_18_1, arg_18_2, arg_18_3)
+GameModeMapDeus.player_entered_game_session = function (self, peer_id, local_player_id, requested_party_index)
 	-- function 18
-	GameModeMapDeus.super.player_entered_game_session(self, arg_18_1, arg_18_2, arg_18_3)
+	GameModeMapDeus.super.player_entered_game_session(self, peer_id, local_player_id, requested_party_index)
 
-	if Managers.party:get_player_status(arg_18_1, arg_18_2).party_id ~= 1 then
-		local num = 1
+	local status = Managers.party:get_player_status(peer_id, local_player_id)
 
-		Managers.party:assign_peer_to_party(arg_18_1, arg_18_2, num)
+	if status.party_id ~= 1 then
+		local party_id = 1
+
+		Managers.party:assign_peer_to_party(peer_id, local_player_id, party_id)
 	end
 
-	self._adventure_profile_rules:handle_profile_delegation_for_joining_player(arg_18_1, arg_18_2)
+	self._adventure_profile_rules:handle_profile_delegation_for_joining_player(peer_id, local_player_id)
 end
 
-GameModeMapDeus.evaluate_end_conditions = function (self, arg_19_1)
+GameModeMapDeus.evaluate_end_conditions = function (self, round_started)
 	-- function 19
-	if not flag_2 then
-		flag_2 = false
+	if COMPLETE_LEVEL_VAR then
+		COMPLETE_LEVEL_VAR = false
 
 		return true, "won"
 	end
 
-	if not self:_is_time_up() then
+	if self:_is_time_up() then
 		return true, "reload"
 	end
 
-	if not flag_3 then
-		flag_3 = false
+	if FAIL_LEVEL_VAR then
+		FAIL_LEVEL_VAR = false
 
 		return true, "lost"
 	end
 
-	if not self._level_completed then
+	if self._level_completed then
 		return true, "won"
 	end
 
-	if not self._final_node_selected then
+	if self._final_node_selected then
 		self._deus_run_controller:handle_map_exited()
 
 		return true, "won", self._final_node_selected

@@ -1,6 +1,6 @@
 -- chunkname: @scripts/settings/equipment/damage_profile_templates_scorpion.lua
 
-return {
+local damage_templates = {
 	ungor_archer_arrow = {
 		no_stagger_damage_reduction = true,
 		charge_value = "projectile",
@@ -97,3 +97,5 @@ return {
 		}
 	}
 }
+
+return damage_templates

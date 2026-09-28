@@ -1,10 +1,10 @@
 -- chunkname: @PlayFab/json.lua
 
-local tbl = {
+local json = {
 	_version = "0.1.0"
 }
-local var_0_1
-local tbl_2 = {
+local encode
+local escape_char_map = {
 	["\f"] = "\\f",
 	["\b"] = "\\b",
 	["\n"] = "\\n",
@@ -13,410 +13,409 @@ local tbl_2 = {
 	["\r"] = "\\r",
 	["\""] = "\\\""
 }
-local tbl_3 = {
+local escape_char_map_inv = {
 	["\\/"] = "/"
 }
 
-for k, v in pairs(tbl_2) do
-	tbl_3[v] = k
+for k, v in pairs(escape_char_map) do
+	escape_char_map_inv[v] = k
 end
 
-local function fn(self)
+local function escape_char(c)
 	-- function 1
-	local var_1_0 = tbl_2[self]
+	local var_1_0 = escape_char_map[c]
 
-	var_1_0 = var_1_0 or string.format("\\u%04x", self:byte())
+	var_1_0 = not not var_1_0 or not not string.format("\\u%04x", c:byte())
 
 	return var_1_0
 end
 
-local function fn_2(arg_2_0)
+local function encode_nil(val)
 	-- function 2
 	return "null"
 end
 
-local function fn_3(self, arg_3_1)
+local function encode_table(val, stack)
 	-- function 3
-	local tbl = {}
+	local res = {}
 
-	arg_3_1 = arg_3_1 or {}
+	stack = not not stack or not not {}
 
-	if not arg_3_1[self] then
+	if stack[val] then
 		error("circular reference")
 	end
 
-	arg_3_1[self] = true
+	stack[val] = true
 
-	if not (self[1] ~= nil or next(self) ~= nil) then
-		local num = 0
+	if val[1] ~= nil or next(val) == nil then
+		local n = 0
 
-		for k in pairs(self) do
+		for k in pairs(val) do
 			if type(k) ~= "number" then
 				error("invalid table: mixed or invalid key types")
 			end
 
-			num = num + 1
+			n = n + 1
 		end
 
-		if num ~= #self then
+		if n ~= #val then
 			error("invalid table: sparse array")
 		end
 
-		for i, v in ipairs(self) do
-			table.insert(tbl, var_0_1(v, arg_3_1))
+		for i, v in ipairs(val) do
+			table.insert(res, encode(v, stack))
 		end
 
-		arg_3_1[self] = nil
+		stack[val] = nil
 
-		return "[" .. table.concat(tbl, ",") .. "]"
+		return "[" .. table.concat(res, ",") .. "]"
 	else
-		for k_2, v_2 in pairs(self) do
-			if type(k_2) ~= "string" then
+		for k, v in pairs(val) do
+			if type(k) ~= "string" then
 				error("invalid table: mixed or invalid key types")
 			end
 
-			table.insert(tbl, var_0_1(k_2, arg_3_1) .. ":" .. var_0_1(v_2, arg_3_1))
+			table.insert(res, encode(k, stack) .. ":" .. encode(v, stack))
 		end
 
-		arg_3_1[self] = nil
+		stack[val] = nil
 
-		return "{" .. table.concat(tbl, ",") .. "}"
+		return "{" .. table.concat(res, ",") .. "}"
 	end
 end
 
-local function fn_4(self)
+local function encode_string(val)
 	-- function 4
-	return "\"" .. self:gsub("[%z\x01-\x1F\\\"]", fn) .. "\""
+	return "\"" .. val:gsub("[%z\x01-\x1F\\\"]", escape_char) .. "\""
 end
 
-local function fn_5(arg_5_0)
+local function encode_number(val)
 	-- function 5
-	if not (arg_5_0 ~= arg_5_0 or arg_5_0 <= -math.huge or not (arg_5_0 >= math.huge)) then
-		error("unexpected number value '" .. tostring(arg_5_0) .. "'")
+	if val ~= val or val <= -math.huge or val >= math.huge then
+		error("unexpected number value '" .. tostring(val) .. "'")
 	end
 
-	return string.format("%.14g", arg_5_0)
+	return string.format("%.14g", val)
 end
 
-local tbl_4 = {
-	["nil"] = fn_2,
-	table = fn_3,
-	string = fn_4,
-	number = fn_5,
+local type_func_map = {
+	["nil"] = encode_nil,
+	table = encode_table,
+	string = encode_string,
+	number = encode_number,
 	boolean = tostring
 }
 
-function var_0_1(arg_6_0, arg_6_1)
+function encode(val, stack)
 	-- function 6
-	local var_6_0 = type(arg_6_0)
-	local var_6_1 = tbl_4[var_6_0]
+	local t = type(val)
+	local f = type_func_map[t]
 
-	if not var_6_1 then
-		return var_6_1(arg_6_0, arg_6_1)
+	if f then
+		return f(val, stack)
 	end
 
-	error("unexpected type '" .. var_6_0 .. "'")
+	error("unexpected type '" .. t .. "'")
 end
 
-tbl.encode = function (arg_7_0)
+json.encode = function (val)
 	-- function 7
-	return (var_0_1(arg_7_0))
+	return (encode(val))
 end
 
-local var_0_10
+local parse
 
-local function fn_6(...)
+local function create_set(...)
 	-- function 8
-	local tbl = {}
+	local res = {}
 
 	for i = 1, select("#", ...) do
-		tbl[select(i, ...)] = true
+		res[select(i, ...)] = true
 	end
 
-	return tbl
+	return res
 end
 
-local var_0_12 = fn_6(" ", "\t", "\r", "\n")
-local var_0_13 = fn_6(" ", "\t", "\r", "\n", "]", "}", ",")
-local var_0_14 = fn_6("\\", "/", "\"", "b", "f", "n", "r", "t", "u")
-local var_0_15 = fn_6("true", "false", "null")
-local tbl_5 = {
+local space_chars = create_set(" ", "\t", "\r", "\n")
+local delim_chars = create_set(" ", "\t", "\r", "\n", "]", "}", ",")
+local escape_chars = create_set("\\", "/", "\"", "b", "f", "n", "r", "t", "u")
+local literals = create_set("true", "false", "null")
+local literal_map = {
 	["false"] = false,
 	["true"] = true
 }
 
-local function fn_7(self, arg_9_1, arg_9_2, arg_9_3)
+local function next_char(str, idx, set, negate)
 	-- function 9
-	for i = arg_9_1, #self do
-		if arg_9_2[self:sub(i, i)] ~= arg_9_3 then
+	for i = idx, #str do
+		if set[str:sub(i, i)] ~= negate then
 			return i
 		end
 	end
 
-	return #self + 1
+	return #str + 1
 end
 
-local function fn_8(self, arg_10_1, arg_10_2)
+local function decode_error(str, idx, msg)
 	-- function 10
-	local num = 1
-	local num_2 = 1
+	local line_count = 1
+	local col_count = 1
 
-	for i = 1, arg_10_1 - 1 do
-		num_2 = num_2 + 1
+	for i = 1, idx - 1 do
+		col_count = col_count + 1
 
-		if self:sub(i, i) == "\n" then
-			num = num + 1
-			num_2 = 1
+		if str:sub(i, i) == "\n" then
+			line_count = line_count + 1
+			col_count = 1
 		end
 	end
 
-	error(string.format("%s at line %d col %d", arg_10_2, num, num_2))
+	error(string.format("%s at line %d col %d", msg, line_count, col_count))
 end
 
-local function fn_9(arg_11_0)
+local function codepoint_to_utf8(n)
 	-- function 11
-	local floor = math.floor
+	local f = math.floor
 
-	if arg_11_0 <= 127 then
-		return string.char(arg_11_0)
-	elseif arg_11_0 <= 2047 then
-		return string.char(floor(arg_11_0 / 64) + 192, arg_11_0 % 64 + 128)
-	elseif arg_11_0 <= 65535 then
-		return string.char(floor(arg_11_0 / 4096) + 224, floor(arg_11_0 % 4096 / 64) + 128, arg_11_0 % 64 + 128)
-	elseif arg_11_0 <= 1114111 then
-		return string.char(floor(arg_11_0 / 262144) + 240, floor(arg_11_0 % 262144 / 4096) + 128, floor(arg_11_0 % 4096 / 64) + 128, arg_11_0 % 64 + 128)
+	if n <= 127 then
+		return string.char(n)
+	elseif n <= 2047 then
+		return string.char(f(n / 64) + 192, n % 64 + 128)
+	elseif n <= 65535 then
+		return string.char(f(n / 4096) + 224, f(n % 4096 / 64) + 128, n % 64 + 128)
+	elseif n <= 1114111 then
+		return string.char(f(n / 262144) + 240, f(n % 262144 / 4096) + 128, f(n % 4096 / 64) + 128, n % 64 + 128)
 	end
 
-	error(string.format("invalid unicode codepoint '%x'", arg_11_0))
+	error(string.format("invalid unicode codepoint '%x'", n))
 end
 
-local function fn_10(self)
+local function parse_unicode_escape(s)
 	-- function 12
-	local var_12_0 = tonumber(self:sub(3, 6), 16)
-	local var_12_1 = tonumber(self:sub(9, 12), 16)
+	local n1 = tonumber(s:sub(3, 6), 16)
+	local n2 = tonumber(s:sub(9, 12), 16)
 
-	if not var_12_1 then
-		return fn_9((var_12_0 - 55296) * 1024 + (var_12_1 - 56320) + 65536)
+	if n2 then
+		return codepoint_to_utf8((n1 - 55296) * 1024 + (n2 - 56320) + 65536)
 	else
-		return fn_9(var_12_0)
+		return codepoint_to_utf8(n1)
 	end
 end
 
-local function fn_11(self, arg_13_1)
+local function parse_string(str, i)
 	-- function 13
-	local flag = false
-	local flag_2 = false
-	local flag_3 = false
-	local var_13_3
+	local has_unicode_escape = false
+	local has_surrogate_escape = false
+	local has_escape = false
+	local last
 
-	for i = arg_13_1 + 1, #self do
-		local byte = self:byte(i)
+	for j = i + 1, #str do
+		local x = str:byte(j)
 
-		if byte < 32 then
-			fn_8(self, i, "control character in string")
+		if x < 32 then
+			decode_error(str, j, "control character in string")
 		end
 
-		if var_13_3 == 92 then
-			if byte == 117 then
-				local sub = self:sub(i + 1, i + 5)
+		if last == 92 then
+			if x == 117 then
+				local hex = str:sub(j + 1, j + 5)
 
-				if not sub:find("%x%x%x%x") then
-					fn_8(self, i, "invalid unicode escape in string")
+				if not hex:find("%x%x%x%x") then
+					decode_error(str, j, "invalid unicode escape in string")
 				end
 
-				if not sub:find("^[dD][89aAbB]") then
-					flag_2 = true
+				if hex:find("^[dD][89aAbB]") then
+					has_surrogate_escape = true
 				else
-					flag = true
+					has_unicode_escape = true
 				end
 			else
-				local char = string.char(byte)
+				local c = string.char(x)
 
-				if not var_0_14[char] then
-					fn_8(self, i, "invalid escape char '" .. char .. "' in string")
+				if not escape_chars[c] then
+					decode_error(str, j, "invalid escape char '" .. c .. "' in string")
 				end
 
-				flag_3 = true
+				has_escape = true
 			end
 
-			var_13_3 = nil
-		elseif byte == 34 then
-			local sub_2 = self:sub(arg_13_1 + 1, i - 1)
+			last = nil
+		elseif x == 34 then
+			local s = str:sub(i + 1, j - 1)
 
-			if not flag_2 then
-				sub_2 = sub_2:gsub("\\u[dD][89aAbB]..\\u....", fn_10)
+			if has_surrogate_escape then
+				s = s:gsub("\\u[dD][89aAbB]..\\u....", parse_unicode_escape)
 			end
 
-			if not flag then
-				sub_2 = sub_2:gsub("\\u....", fn_10)
+			if has_unicode_escape then
+				s = s:gsub("\\u....", parse_unicode_escape)
 			end
 
-			if not flag_3 then
-				sub_2 = sub_2:gsub("\\.", tbl_3)
+			if has_escape then
+				s = s:gsub("\\.", escape_char_map_inv)
 			end
 
-			return sub_2, i + 1
+			return s, j + 1
 		else
-			var_13_3 = byte
+			last = x
 		end
 	end
 
-	fn_8(self, arg_13_1, "expected closing quote for string")
+	decode_error(str, i, "expected closing quote for string")
 end
 
-local function fn_12(self, arg_14_1)
+local function parse_number(str, i)
 	-- function 14
-	local var_14_0 = fn_7(self, arg_14_1, var_0_13)
-	local sub = self:sub(arg_14_1, var_14_0 - 1)
-	local var_14_2 = tonumber(sub)
+	local x = next_char(str, i, delim_chars)
+	local s = str:sub(i, x - 1)
+	local n = tonumber(s)
 
-	if not var_14_2 then
-		fn_8(self, arg_14_1, "invalid number '" .. sub .. "'")
+	if not n then
+		decode_error(str, i, "invalid number '" .. s .. "'")
 	end
 
-	return var_14_2, var_14_0
+	return n, x
 end
 
-local function fn_13(self, arg_15_1)
+local function parse_literal(str, i)
 	-- function 15
-	local var_15_0 = fn_7(self, arg_15_1, var_0_13)
-	local sub = self:sub(arg_15_1, var_15_0 - 1)
+	local x = next_char(str, i, delim_chars)
+	local word = str:sub(i, x - 1)
 
-	if not var_0_15[sub] then
-		fn_8(self, arg_15_1, "invalid literal '" .. sub .. "'")
+	if not literals[word] then
+		decode_error(str, i, "invalid literal '" .. word .. "'")
 	end
 
-	return tbl_5[sub], var_15_0
+	return literal_map[word], x
 end
 
-local function fn_14(self, arg_16_1)
+local function parse_array(str, i)
 	-- function 16
-	local tbl = {}
-	local num = 1
+	local res = {}
+	local n = 1
 
-	arg_16_1 = arg_16_1 + 1
+	i = i + 1
 
 	while true do
-		local var_16_2
+		local x
 
-		arg_16_1 = fn_7(self, arg_16_1, var_0_12, true)
+		i = next_char(str, i, space_chars, true)
 
-		if self:sub(arg_16_1, arg_16_1) == "]" then
-			arg_16_1 = arg_16_1 + 1
+		if str:sub(i, i) == "]" then
+			i = i + 1
 
 			break
 		end
 
-		tbl[num], arg_16_1 = var_0_10(self, arg_16_1)
-		num = num + 1
-		arg_16_1 = fn_7(self, arg_16_1, var_0_12, true)
+		x, i = parse(str, i)
+		res[n] = x
+		n = n + 1
+		i = next_char(str, i, space_chars, true)
 
-		local sub = self:sub(arg_16_1, arg_16_1)
+		local chr = str:sub(i, i)
 
-		arg_16_1 = arg_16_1 + 1
+		i = i + 1
 
-		if sub == "]" then
+		if chr == "]" then
 			break
 		end
 
-		if sub ~= "," then
-			fn_8(self, arg_16_1, "expected ']' or ','")
+		if chr ~= "," then
+			decode_error(str, i, "expected ']' or ','")
 		end
 	end
 
-	return tbl, arg_16_1
+	return res, i
 end
 
-local function fn_15(self, arg_17_1)
+local function parse_object(str, i)
 	-- function 17
-	local tbl = {}
+	local res = {}
 
-	arg_17_1 = arg_17_1 + 1
+	i = i + 1
 
 	while true do
-		local var_17_1
-		local var_17_2
+		local key, val
 
-		arg_17_1 = fn_7(self, arg_17_1, var_0_12, true)
+		i = next_char(str, i, space_chars, true)
 
-		if self:sub(arg_17_1, arg_17_1) == "}" then
-			arg_17_1 = arg_17_1 + 1
+		if str:sub(i, i) == "}" then
+			i = i + 1
 
 			break
 		end
 
-		if self:sub(arg_17_1, arg_17_1) ~= "\"" then
-			fn_8(self, arg_17_1, "expected string for key")
+		if str:sub(i, i) ~= "\"" then
+			decode_error(str, i, "expected string for key")
 		end
 
-		local var_17_3
+		key, i = parse(str, i)
+		i = next_char(str, i, space_chars, true)
 
-		var_17_3, arg_17_1 = var_0_10(self, arg_17_1)
-		arg_17_1 = fn_7(self, arg_17_1, var_0_12, true)
-
-		if self:sub(arg_17_1, arg_17_1) ~= ":" then
-			fn_8(self, arg_17_1, "expected ':' after key")
+		if str:sub(i, i) ~= ":" then
+			decode_error(str, i, "expected ':' after key")
 		end
 
-		arg_17_1 = fn_7(self, arg_17_1 + 1, var_0_12, true)
-		tbl[var_17_3], arg_17_1 = var_0_10(self, arg_17_1)
-		arg_17_1 = fn_7(self, arg_17_1, var_0_12, true)
+		i = next_char(str, i + 1, space_chars, true)
+		val, i = parse(str, i)
+		res[key] = val
+		i = next_char(str, i, space_chars, true)
 
-		local sub = self:sub(arg_17_1, arg_17_1)
+		local chr = str:sub(i, i)
 
-		arg_17_1 = arg_17_1 + 1
+		i = i + 1
 
-		if sub == "}" then
+		if chr == "}" then
 			break
 		end
 
-		if sub ~= "," then
-			fn_8(self, arg_17_1, "expected '}' or ','")
+		if chr ~= "," then
+			decode_error(str, i, "expected '}' or ','")
 		end
 	end
 
-	return tbl, arg_17_1
+	return res, i
 end
 
-local tbl_6 = {
-	["\""] = fn_11,
-	["0"] = fn_12,
-	["1"] = fn_12,
-	["2"] = fn_12,
-	["3"] = fn_12,
-	["4"] = fn_12,
-	["5"] = fn_12,
-	["6"] = fn_12,
-	["7"] = fn_12,
-	["8"] = fn_12,
-	["9"] = fn_12,
-	["-"] = fn_12,
-	t = fn_13,
-	f = fn_13,
-	n = fn_13,
-	["["] = fn_14,
-	["{"] = fn_15
+local char_func_map = {
+	["\""] = parse_string,
+	["0"] = parse_number,
+	["1"] = parse_number,
+	["2"] = parse_number,
+	["3"] = parse_number,
+	["4"] = parse_number,
+	["5"] = parse_number,
+	["6"] = parse_number,
+	["7"] = parse_number,
+	["8"] = parse_number,
+	["9"] = parse_number,
+	["-"] = parse_number,
+	t = parse_literal,
+	f = parse_literal,
+	n = parse_literal,
+	["["] = parse_array,
+	["{"] = parse_object
 }
 
-function var_0_10(self, arg_18_1)
+function parse(str, idx)
 	-- function 18
-	local sub = self:sub(arg_18_1, arg_18_1)
-	local var_18_1 = tbl_6[sub]
+	local chr = str:sub(idx, idx)
+	local f = char_func_map[chr]
 
-	if not var_18_1 then
-		return var_18_1(self, arg_18_1)
+	if f then
+		return f(str, idx)
 	end
 
-	fn_8(self, arg_18_1, "unexpected character '" .. sub .. "'")
+	decode_error(str, idx, "unexpected character '" .. chr .. "'")
 end
 
-tbl.decode = function (arg_19_0)
+json.decode = function (str)
 	-- function 19
-	if type(arg_19_0) ~= "string" then
-		error("expected argument of type string, got " .. type(arg_19_0))
+	if type(str) ~= "string" then
+		error("expected argument of type string, got " .. type(str))
 	end
 
-	return (var_0_10(arg_19_0, fn_7(arg_19_0, 1, var_0_12, true)))
+	return (parse(str, next_char(str, 1, space_chars, true)))
 end
 
-return tbl
+return json

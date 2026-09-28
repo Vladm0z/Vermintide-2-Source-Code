@@ -1,6 +1,6 @@
 -- chunkname: @scripts/ui/views/hero_view/states/weave_forge_window_layout.lua
 
-local tbl = {
+local windows = {
 	overview = {
 		alignment_index = 2,
 		name = "overview",
@@ -27,7 +27,7 @@ local tbl = {
 		class_name = "HeroWindowWeaveForgePanel"
 	}
 }
-local tbl_2 = {
+local window_layouts = {
 	{
 		sound_event_enter = "menu_magic_forge_overview_menu",
 		name = "weave_overview",
@@ -61,10 +61,10 @@ local tbl_2 = {
 		}
 	}
 }
-local num = 5
+local MAX_ACTIVE_WINDOWS = 5
 
 return {
-	max_active_windows = num,
-	windows = tbl,
-	window_layouts = tbl_2
+	max_active_windows = MAX_ACTIVE_WINDOWS,
+	windows = windows,
+	window_layouts = window_layouts
 }

@@ -2,33 +2,33 @@
 
 require("core/gwnav/lua/safe_require")
 
-local var_0_0 = safe_require_guard()
+local NavHelpers = safe_require_guard()
 local Color = stingray.Color
 local Unit = stingray.Unit
 
-var_0_0.unit_script_data = function (arg_1_0, arg_1_1, ...)
+NavHelpers.unit_script_data = function (unit, default, ...)
 	-- function 1
-	if not arg_1_0 and not Unit.alive(arg_1_0) and not Unit.has_data(arg_1_0, ...) then
-		return Unit.get_data(arg_1_0, ...)
+	if unit and Unit.alive(unit) and Unit.has_data(unit, ...) then
+		return Unit.get_data(unit, ...)
 	else
-		return arg_1_1
+		return default
 	end
 end
 
-var_0_0.get_layer_and_smartobject = function (arg_2_0, arg_2_1)
+NavHelpers.get_layer_and_smartobject = function (unit, script_object_name)
 	-- function 2
-	local unit_script_data = var_0_0.unit_script_data(arg_2_0, false, arg_2_1, "is_exclusive")
+	local is_exclusive = NavHelpers.unit_script_data(unit, false, script_object_name, "is_exclusive")
 
-	if not unit_script_data then
-		return unit_script_data, Color(255, 0, 0), -1, -1, -1
+	if is_exclusive then
+		return is_exclusive, Color(255, 0, 0), -1, -1, -1
 	end
 
-	local unit_script_data_2 = var_0_0.unit_script_data(arg_2_0, -1, arg_2_1, "layer_id")
-	local unit_script_data_3 = var_0_0.unit_script_data(arg_2_0, -1, arg_2_1, "smartobject_id")
-	local unit_script_data_4 = var_0_0.unit_script_data(arg_2_0, -1, arg_2_1, "user_data_id")
-	local var_2_4 = Color(var_0_0.unit_script_data(arg_2_0, 0, arg_2_1, "color", "r"), var_0_0.unit_script_data(arg_2_0, 255, arg_2_1, "color", "g"), var_0_0.unit_script_data(arg_2_0, 0, arg_2_1, "color", "b"))
+	local layer_id = NavHelpers.unit_script_data(unit, -1, script_object_name, "layer_id")
+	local smartobject_id = NavHelpers.unit_script_data(unit, -1, script_object_name, "smartobject_id")
+	local user_data_id = NavHelpers.unit_script_data(unit, -1, script_object_name, "user_data_id")
+	local nav_tag_color = Color(NavHelpers.unit_script_data(unit, 0, script_object_name, "color", "r"), NavHelpers.unit_script_data(unit, 255, script_object_name, "color", "g"), NavHelpers.unit_script_data(unit, 0, script_object_name, "color", "b"))
 
-	return unit_script_data, var_2_4, unit_script_data_2, unit_script_data_3, unit_script_data_4
+	return is_exclusive, nav_tag_color, layer_id, smartobject_id, user_data_id
 end
 
-return var_0_0
+return NavHelpers

@@ -3,28 +3,28 @@
 MatchmakingStateIngame = class(MatchmakingStateIngame)
 MatchmakingStateIngame.NAME = "MatchmakingStateIngame"
 
-MatchmakingStateIngame.init = function (self, arg_1_1)
+MatchmakingStateIngame.init = function (self, params)
 	-- function 1
-	self.lobby = arg_1_1.lobby
-	self.matchmaking_manager = arg_1_1.matchmaking_manager
+	self.lobby = params.lobby
+	self.matchmaking_manager = params.matchmaking_manager
 end
 
-MatchmakingStateIngame.destroy = function (arg_2_0)
+MatchmakingStateIngame.destroy = function (self)
 	-- function 2
 	return
 end
 
-MatchmakingStateIngame.on_enter = function (self, arg_3_1)
+MatchmakingStateIngame.on_enter = function (self, state_context)
 	-- function 3
-	self.state_context = arg_3_1
+	self.state_context = state_context
 end
 
-MatchmakingStateIngame.on_exit = function (arg_4_0)
+MatchmakingStateIngame.on_exit = function (self)
 	-- function 4
 	return
 end
 
-MatchmakingStateIngame.update = function (arg_5_0, arg_5_1, arg_5_2)
+MatchmakingStateIngame.update = function (self, dt, t)
 	-- function 5
 	return nil
 end

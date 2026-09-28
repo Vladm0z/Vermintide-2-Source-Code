@@ -1,12 +1,12 @@
 -- chunkname: @scripts/settings/dlcs/shovel/shovel_sound_settings.lua
 
-local shovel = DLCSettings.shovel
+local settings = DLCSettings.shovel
 
-shovel.dialogue_lookup = {
+settings.dialogue_lookup = {
 	"dialogues/generated/lookup_bright_wizard_shovel",
 	"dialogues/generated/lookup_dlc_shovel"
 }
-shovel.dialogue_settings = {
+settings.dialogue_settings = {
 	inn_level = {
 		"dialogues/generated/dlc_shovel"
 	},
@@ -23,14 +23,14 @@ shovel.dialogue_settings = {
 		"dialogues/generated/dlc_shovel"
 	}
 }
-shovel.dialogue_events = {
+settings.dialogue_events = {
 	"minion_command_attack",
 	"minion_command_defend"
 }
-shovel.auto_load_files = {
+settings.auto_load_files = {
 	"dialogues/generated/bright_wizard_shovel"
 }
-shovel.network_sound_events = {
+settings.network_sound_events = {
 	"Play_career_necro_ability_raise_dead_cast",
 	"Play_career_necro_ability_raise_dead_cast_husk",
 	"Play_career_necro_ability_raise_dead_spawn",

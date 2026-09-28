@@ -1,39 +1,39 @@
 -- chunkname: @scripts/settings/dlcs/bless/bless_common_settings.lua
 
-local bless = DLCSettings.bless
+local settings = DLCSettings.bless
 
-bless.career_setting_files = {
+settings.career_setting_files = {
 	"scripts/settings/dlcs/bless/career_settings_bless"
 }
-bless.player_breeds = {
+settings.player_breeds = {
 	"scripts/settings/dlcs/bless/player_breeds_bless"
 }
-bless.career_ability_settings = {
+settings.career_ability_settings = {
 	"scripts/settings/dlcs/bless/career_ability_settings_bless"
 }
-bless.action_template_files = {
+settings.action_template_files = {
 	"scripts/settings/dlcs/bless/action_templates_bless"
 }
-bless.talent_settings = {
+settings.talent_settings = {
 	"scripts/settings/dlcs/bless/talent_settings_bless"
 }
-bless.profile_files = {
+settings.profile_files = {
 	"scripts/settings/dlcs/bless/bless_profiles"
 }
-bless.statistics_definitions = {
+settings.statistics_definitions = {
 	"scripts/managers/backend/statistics_definitions_bless"
 }
-bless.statistics_lookup = {
+settings.statistics_lookup = {
 	"bless_punch_back",
 	"bless_saved_by_perk",
 	"bless_block_attacks",
 	"bless_righteous_stagger",
 	"bless_unbreakable_damage_block"
 }
-bless.hero_hud_components = {
+settings.hero_hud_components = {
 	"PriestResourceBarUI"
 }
-bless.anim_lookup = {
+settings.anim_lookup = {
 	"bless_start",
 	"bless_cancel",
 	"bless_self",
@@ -47,15 +47,15 @@ bless.anim_lookup = {
 	"book_cast_buff_03",
 	"spell_pose"
 }
-bless.effects = {
+settings.effects = {
 	"fx/wp_enemy_explosion"
 }
-bless.tracked_weapon_kills_per_breed_stats = {}
-bless._tracked_weapon_kill_stats = {}
-bless.dot_type_lookup = {
+settings.tracked_weapon_kills_per_breed_stats = {}
+settings._tracked_weapon_kill_stats = {}
+settings.dot_type_lookup = {
 	victor_priest_nuke_dot = "burning_dot"
 }
-bless.unlock_settings = {
+settings.unlock_settings = {
 	bless = {
 		id = "1782450",
 		class = "UnlockDlc",
@@ -67,7 +67,7 @@ bless.unlock_settings = {
 		requires_restart = true
 	}
 }
-bless.unlock_settings_xb1 = {
+settings.unlock_settings_xb1 = {
 	bless = {
 		id = "4A4E4E39-5646-3058-C053-53384D518F00",
 		backend_reward_id = "bless",
@@ -80,7 +80,7 @@ bless.unlock_settings_xb1 = {
 		class = "UnlockDlc"
 	}
 }
-bless.unlock_settings_ps4 = {
+settings.unlock_settings_ps4 = {
 	CUSA13595_00 = {
 		bless = {
 			product_label = "V2USWARRIORPRIES",
@@ -112,7 +112,7 @@ bless.unlock_settings_ps4 = {
 		}
 	}
 }
-bless.progression_unlocks = {
+settings.progression_unlocks = {
 	wh_priest = {
 		description = "end_screen_career_unlocked",
 		profile = "witch_hunter",

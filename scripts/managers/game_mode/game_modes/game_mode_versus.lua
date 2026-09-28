@@ -9,20 +9,29 @@ require("scripts/managers/admin/dedicated_server_commands")
 require("scripts/ui/views/pactsworn_video_transition_view")
 require("scripts/managers/game_mode/versus_party_selection_logic")
 
-local scripts_managers_game_mode_mechanisms_reservation_handler_types = require("scripts/managers/game_mode/mechanisms/reservation_handler_types")
+local ReservationHandlerTypes = require("scripts/managers/game_mode/mechanisms/reservation_handler_types")
 local script_data = script_data
 local disable_gamemode_end = script_data.disable_gamemode_end
 
-disable_gamemode_end = disable_gamemode_end or Development.parameter("disable_gamemode_end")
+disable_gamemode_end = not not disable_gamemode_end or not not Development.parameter("disable_gamemode_end")
 script_data.disable_gamemode_end = disable_gamemode_end
 
 local testify = script_data.testify
 
-testify = not testify and require("scripts/managers/game_mode/game_modes/game_mode_versus_testify")
+if testify then
+	-- Nothing
+end
+
+testify = require("scripts/managers/game_mode/game_modes/game_mode_versus_testify")
+
+local game_mode_versus_testify = testify
+
+::label_0_0::
+
 GameModeVersus = class(GameModeVersus, GameModeBase)
 GameModeVersus.WAIT_FOR_CLIENTS_TO_LEAVE_TIMEOUT = 30
 
-local tbl = {
+local RPCS = {
 	"rpc_rejoin_parties",
 	"rpc_sync_next_horde_time",
 	"rpc_selectable_careers_request",
@@ -30,54 +39,61 @@ local tbl = {
 	"rpc_set_playable_boss_can_be_picked"
 }
 
-GameModeVersus.init = function (self, arg_1_1, arg_1_2, ...)
+GameModeVersus.init = function (self, settings, world, ...)
 	-- function 1
-	GameModeVersus.super.init(self, arg_1_1, arg_1_2, ...)
+	GameModeVersus.super.init(self, settings, world, ...)
 
 	self._game_end_condition_timer = nil
 	self._round_id = nil
 	self._objectives_completed = nil
 	self._total_main_objectives = nil
-	self._training_mode = LevelSettings[self._level_key].training_mode
 
-	local get_side_from_name = Managers.state.side:get_side_from_name("heroes")
-	local get_side_from_name_2 = Managers.state.side:get_side_from_name("dark_pact")
+	local level_settings = LevelSettings[self._level_key]
+
+	self._training_mode = level_settings.training_mode
+
+	local hero_side = Managers.state.side:get_side_from_name("heroes")
+	local dark_pact_side = Managers.state.side:get_side_from_name("dark_pact")
 
 	self._mechanism = Managers.mechanism:game_mechanism()
 	self._current_mechanism_state = self._mechanism:get_state()
-	self._adventure_spawning = AdventureSpawning:new(self._profile_synchronizer, get_side_from_name, self._is_server, self._network_server)
-	self._versus_spawning = VersusSpawning:new("dark_pact", self._profile_synchronizer, get_side_from_name_2.available_profiles, self._is_server, arg_1_1, self._dark_pact_career_delegator)
+	self._adventure_spawning = AdventureSpawning:new(self._profile_synchronizer, hero_side, self._is_server, self._network_server)
+	self._versus_spawning = VersusSpawning:new("dark_pact", self._profile_synchronizer, dark_pact_side.available_profiles, self._is_server, settings, self._dark_pact_career_delegator)
 	self.pactsworn_video_transition_view = PactswornVideoTransitionView:new(self._world)
 
 	self:_register_player_spawner(self._adventure_spawning)
 
 	self._active_transporters = {}
 
-	local party = get_side_from_name.party
-	local party_2 = get_side_from_name_2.party
+	local hero_party = hero_side.party
+	local dark_pact_party = dark_pact_side.party
 
 	self._bot_players = {
-		[party.party_id] = {},
-		[party_2.party_id] = {}
+		[hero_party.party_id] = {},
+		[dark_pact_party.party_id] = {}
 	}
 	self._horde_timer = math.huge
 	self._time_until_next_horde = math.huge
-	self._hero_side = get_side_from_name
-	self._dark_pact_side = get_side_from_name_2
+	self._hero_side = hero_side
+	self._dark_pact_side = dark_pact_side
 	self._available_profiles_by_party = {
-		[party.party_id] = table.clone(PROFILES_BY_AFFILIATION.heroes),
-		[party_2.party_id] = table.clone(PROFILES_BY_AFFILIATION.dark_pact)
+		[hero_party.party_id] = table.clone(PROFILES_BY_AFFILIATION.heroes),
+		[dark_pact_party.party_id] = table.clone(PROFILES_BY_AFFILIATION.dark_pact)
 	}
 
-	Managers.state.event:register(self, "level_start_local_player_spawned", "event_local_player_spawned", "gm_event_initial_peers_spawned", "gm_event_initial_peers_spawned", "end_screen_ui_complete", "event_end_screen_ui_complete", "event_set_loadout_items", "event_set_loadout_items")
+	local event_manager = Managers.state.event
 
-	self._win_conditions = Managers.mechanism:game_mechanism():win_conditions()
+	event_manager:register(self, "level_start_local_player_spawned", "event_local_player_spawned", "gm_event_initial_peers_spawned", "gm_event_initial_peers_spawned", "end_screen_ui_complete", "event_end_screen_ui_complete", "event_set_loadout_items", "event_set_loadout_items")
 
-	local get_objective_settings = self._mechanism:get_objective_settings()
+	local mechanism = Managers.mechanism:game_mechanism()
 
-	self._win_conditions:setup_round(self._is_server, get_objective_settings)
+	self._win_conditions = mechanism:win_conditions()
 
-	if not self._is_server then
+	local objective_settings = self._mechanism:get_objective_settings()
+
+	self._win_conditions:setup_round(self._is_server, objective_settings)
+
+	if self._is_server then
 		self._dark_pact_career_delegator = VersusDarkPactCareerDelegator:new()
 
 		self:_create_game_mode_data_game_object()
@@ -85,16 +101,16 @@ GameModeVersus.init = function (self, arg_1_1, arg_1_2, ...)
 		self._lobby_host = self._network_server.lobby_host
 		self._profile_requester = self._network_server:profile_requester()
 
-		if not DEDICATED_SERVER then
+		if DEDICATED_SERVER then
 			self._start_game_timeout_timer = 0
 		end
 	end
 
-	if not arg_1_1.surge_events and not arg_1_1.enable_horde_surge then
-		local get_level_seed = Managers.mechanism:get_level_seed()
-		local var_1_6 = arg_1_1.surge_events.events[self._level_key]
+	if settings.surge_events and settings.enable_horde_surge then
+		local seed = Managers.mechanism:get_level_seed()
+		local surge_events = settings.surge_events.events[self._level_key]
 
-		self._horde_surge_handler = HordeSurgeHandler:new(self._is_server, arg_1_2, var_1_6, get_level_seed)
+		self._horde_surge_handler = HordeSurgeHandler:new(self._is_server, world, surge_events, seed)
 	end
 
 	self._boss_has_been_played = false
@@ -105,12 +121,12 @@ GameModeVersus.init = function (self, arg_1_1, arg_1_2, ...)
 	self._transition_state_time = 0
 	self._hero_bots_enabled = true
 
-	if not self._mechanism:custom_settings_enabled() then
+	if self._mechanism:custom_settings_enabled() then
 		self._hero_bots_enabled = self._mechanism:get_custom_game_setting("hero_bots_enabled")
 
 		local get_custom_game_setting = self._mechanism:get_custom_game_setting("hero_rescues_enabled")
 
-		get_custom_game_setting = get_custom_game_setting or false
+		get_custom_game_setting = not not get_custom_game_setting or not not false
 		self._hero_rescues_enabled = get_custom_game_setting
 	end
 end
@@ -122,28 +138,29 @@ end
 
 GameModeVersus._create_game_mode_data_game_object = function (self)
 	-- function 3
-	local network = Managers.state.network
-	local get_objective_settings = self._mechanism:get_objective_settings()
+	local network_manager = Managers.state.network
+	local objective_settings = self._mechanism:get_objective_settings()
 	local tbl = {
 		go_type = NetworkLookup.go_types.game_mode_data
 	}
-	local round_timer = get_objective_settings.round_timer
+	local round_timer = objective_settings.round_timer
 
-	round_timer = round_timer or 36000
+	round_timer = not not round_timer or not not 36000
 	tbl.round_timer = round_timer
 
-	local create_game_object = network:create_game_object("game_mode_data_carousel", tbl)
-	local game = network:game()
-	local var_3_6 = callback(self, "game_session_disconnect")
+	local game_mode_data = tbl
+	local go_id = network_manager:create_game_object("game_mode_data_carousel", game_mode_data)
+	local game_session = network_manager:game()
+	local disconnect_callback = callback(self, "game_session_disconnect")
 
-	self._win_conditions:on_game_mode_data_created(game, create_game_object, var_3_6)
+	self._win_conditions:on_game_mode_data_created(game_session, go_id, disconnect_callback)
 
-	self._go_id = create_game_object
+	self._go_id = go_id
 end
 
-GameModeVersus.on_game_mode_data_created = function (self, arg_4_1, arg_4_2)
+GameModeVersus.on_game_mode_data_created = function (self, game_session, go_id)
 	-- function 4
-	self._win_conditions:on_game_mode_data_created(arg_4_1, arg_4_2)
+	self._win_conditions:on_game_mode_data_created(game_session, go_id)
 end
 
 GameModeVersus.on_game_mode_data_destroyed = function (self)
@@ -165,19 +182,19 @@ GameModeVersus.cleanup_game_mode_units = function (self)
 	self:_clear_bots(true)
 end
 
-GameModeVersus.register_rpcs = function (self, arg_8_1, arg_8_2)
+GameModeVersus.register_rpcs = function (self, network_event_delegate, network_transmit)
 	-- function 8
-	GameModeVersus.super.register_rpcs(self, arg_8_1, arg_8_2)
-	arg_8_1:register(self, unpack(tbl))
-	self._adventure_spawning:register_rpcs(arg_8_1, arg_8_2)
-	self._versus_spawning:register_rpcs(arg_8_1, arg_8_2)
+	GameModeVersus.super.register_rpcs(self, network_event_delegate, network_transmit)
+	network_event_delegate:register(self, unpack(RPCS))
+	self._adventure_spawning:register_rpcs(network_event_delegate, network_transmit)
+	self._versus_spawning:register_rpcs(network_event_delegate, network_transmit)
 
-	if not self._horde_surge_handler then
-		self._horde_surge_handler:register_rpcs(arg_8_1, arg_8_2)
+	if self._horde_surge_handler then
+		self._horde_surge_handler:register_rpcs(network_event_delegate, network_transmit)
 	end
 
-	if not self._win_conditions then
-		self._win_conditions:register_rpcs(arg_8_1, arg_8_2)
+	if self._win_conditions then
+		self._win_conditions:register_rpcs(network_event_delegate, network_transmit)
 	end
 end
 
@@ -187,51 +204,52 @@ GameModeVersus.unregister_rpcs = function (self)
 	self._versus_spawning:unregister_rpcs()
 	self._network_event_delegate:unregister(self)
 
-	if not self._horde_surge_handler then
+	if self._horde_surge_handler then
 		self._horde_surge_handler:unregister_rpcs()
 	end
 
-	if not self._win_conditions then
+	if self._win_conditions then
 		self._win_conditions:unregister_rpcs()
 	end
 
 	GameModeVersus.super.unregister_rpcs(self)
 end
 
-GameModeVersus.event_local_player_spawned = function (self, arg_10_1)
+GameModeVersus.event_local_player_spawned = function (self, is_initial_spawn)
 	-- function 10
-	local current_level = LevelHelper:current_level(self._world)
-	local str = "versus_activator"
+	local level = LevelHelper:current_level(self._world)
+	local versus_safe_zone_name = "versus_activator"
 
-	if not Level.has_volume(current_level, str) then
-		Managers.state.entity:system("round_started_system"):set_start_area(str)
+	if Level.has_volume(level, versus_safe_zone_name) then
+		Managers.state.entity:system("round_started_system"):set_start_area(versus_safe_zone_name)
 	end
 
-	self._is_initial_spawn = arg_10_1
+	self._is_initial_spawn = is_initial_spawn
 
-	local _win_conditions = self._win_conditions
-	local local_player = Managers.player:local_player()
-	local get_side_from_player_unique_id = Managers.state.side:get_side_from_player_unique_id(local_player:unique_id())
-	local flag = not get_side_from_player_unique_id and get_side_from_player_unique_id:name() == "heroes"
+	local win_conditions = self._win_conditions
+	local player = Managers.player:local_player()
+	local side = Managers.state.side:get_side_from_player_unique_id(player:unique_id())
+	local is_hero = not not side and side:name() == "heroes"
 
-	if not (not flag and self._local_player_spawned) then
+	if is_hero and not self._local_player_spawned then
 		Managers.transition:force_fade_in()
 
 		self._delayed_fade_out_timer = Managers.time:time("game") + 0.5
 	end
 
-	if not (not flag and _win_conditions:is_round_timer_started()) then
-		local player_unit = local_player.player_unit
+	if is_hero and not win_conditions:is_round_timer_started() then
+		local player_unit = player.player_unit
+		local career_extension = ScriptUnit.has_extension(player_unit, "career_system")
 
-		ScriptUnit.has_extension(player_unit, "career_system"):set_activated_ability_cooldown_paused()
+		career_extension:set_activated_ability_cooldown_paused()
 	end
 
-	if not arg_10_1 then
+	if is_initial_spawn then
 		LevelHelper:flow_event(self._world, "local_player_spawned")
 
-		local format = string.format("versus_%s", get_side_from_player_unique_id:name())
+		local object_set_name = string.format("versus_%s", side:name())
 
-		Managers.state.game_mode:set_object_set_enabled(format, true)
+		Managers.state.game_mode:set_object_set_enabled(object_set_name, true)
 	end
 
 	self._local_player_spawned = true
@@ -242,87 +260,91 @@ GameModeVersus.party_selection_logic = function (self)
 	return self._versus_party_selection_logic
 end
 
-GameModeVersus.hot_join_sync = function (self, arg_12_1)
+GameModeVersus.hot_join_sync = function (self, peer_id)
 	-- function 12
-	if not self._initial_peers_spawned then
-		self._network_transmit:send_rpc("rpc_gm_event_initial_peers_spawned", arg_12_1)
+	if self._initial_peers_spawned then
+		self._network_transmit:send_rpc("rpc_gm_event_initial_peers_spawned", peer_id)
 	end
 
-	if not self._versus_party_selection_logic then
-		self._versus_party_selection_logic:hot_join_sync(arg_12_1)
+	if self._versus_party_selection_logic then
+		self._versus_party_selection_logic:hot_join_sync(peer_id)
 	end
 
-	self._win_conditions:hot_join_sync(arg_12_1)
+	self._win_conditions:hot_join_sync(peer_id)
 
-	if not self._horde_surge_handler then
-		self._horde_surge_handler:hot_join_sync(arg_12_1)
+	if self._horde_surge_handler then
+		self._horde_surge_handler:hot_join_sync(peer_id)
 	end
 
-	if self._game_mode_state == "match_running_state" then
-		local str = "round_started_set_" .. self._mechanism:get_current_set()
+	local state = self._game_mode_state
 
-		self._network_transmit:send_rpc_clients("rpc_trigger_level_event", str)
-		self._network_transmit:send_rpc("rpc_trigger_level_event", arg_12_1, "remove_safe_zone_wall")
+	if state == "match_running_state" then
+		local event_name = "round_started_set_" .. self._mechanism:get_current_set()
+
+		self._network_transmit:send_rpc_clients("rpc_trigger_level_event", event_name)
+		self._network_transmit:send_rpc("rpc_trigger_level_event", peer_id, "remove_safe_zone_wall")
 	end
 end
 
 GameModeVersus.destroy = function (self)
 	-- function 13
-	if not self._is_server then
+	if self._is_server then
 		self._dark_pact_career_delegator:destroy()
 	end
 
-	if not self._versus_party_selection_logic then
+	if self._versus_party_selection_logic then
 		self._versus_party_selection_logic:destroy()
 
 		self._versus_party_selection_logic = nil
 	end
 
-	local event = Managers.state.event
+	local event_manager = Managers.state.event
 
-	if not event then
-		event:unregister("level_start_local_player_spawned", self)
-		event:unregister("gm_event_initial_peers_spawned", self)
-		event:unregister("end_screen_ui_complete", self)
-		event:unregister("event_set_loadout_items", self)
+	if event_manager then
+		event_manager:unregister("level_start_local_player_spawned", self)
+		event_manager:unregister("gm_event_initial_peers_spawned", self)
+		event_manager:unregister("end_screen_ui_complete", self)
+		event_manager:unregister("event_set_loadout_items", self)
 	end
 end
 
-GameModeVersus.evaluate_end_conditions = function (self, arg_14_1, arg_14_2, arg_14_3)
+GameModeVersus.evaluate_end_conditions = function (self, round_started, dt, t)
 	-- function 14
 	repeat
-		if not (not script_data.auto_complete_rounds and self._game_mode_state == "match_running_state" or self._game_mode_state ~= "pre_start_round_state") then
+		if script_data.auto_complete_rounds and (self._game_mode_state == "match_running_state" or self._game_mode_state == "pre_start_round_state") then
 			break
 		end
 
-		if self._training_mode or not script_data.disable_gamemode_end then
+		if self._training_mode or script_data.disable_gamemode_end then
 			return false
 		end
 
-		if not (arg_14_1 or self._level_completed or self._level_failed) then
+		if not round_started and not self._level_completed and not self._level_failed then
 			return false
 		end
 	until true
 
-	local flag = true
-	local flag_2 = false
-	local is_round_timer_over = self._win_conditions:is_round_timer_over()
-	local all_objectives_completed = Managers.state.entity:system("objective_system"):all_objectives_completed()
-	local party_won_early = self._win_conditions.party_won_early
-	local side_is_dead = GameModeHelper.side_is_dead("heroes", flag)
-	local side_is_disabled = GameModeHelper.side_is_disabled("heroes")
-	local flag_3 = side_is_dead or side_is_disabled
-	local flag_4 = Managers.state.side:get_party_from_side_name("dark_pact").num_used_slots == 0
+	local ignore_bots = true
+	local round_ended = false
+	local round_timer_over = self._win_conditions:is_round_timer_over()
+	local objective_system = Managers.state.entity:system("objective_system")
+	local all_objectives_completed = objective_system:all_objectives_completed()
+	local party_won_early_data = self._win_conditions.party_won_early
+	local humans_dead = GameModeHelper.side_is_dead("heroes", ignore_bots)
+	local heroes_disabled = GameModeHelper.side_is_disabled("heroes")
+	local heroes_dead_or_disabled = not not humans_dead or not not heroes_disabled
+	local party = Managers.state.side:get_party_from_side_name("dark_pact")
+	local no_pactsworn_players = party.num_used_slots == 0
 
-	if not script_data.disable_gamemode_end_hero_check then
-		flag_3 = false
-		flag_4 = false
+	if script_data.disable_gamemode_end_hero_check then
+		heroes_dead_or_disabled = false
+		no_pactsworn_players = false
 	end
 
 	local _level_failed
 
 	if not self._lose_condition_disabled then
-		if not (flag_3 or flag_4) then
+		if not heroes_dead_or_disabled and not no_pactsworn_players then
 			-- Nothing
 		end
 
@@ -335,37 +357,48 @@ GameModeVersus.evaluate_end_conditions = function (self, arg_14_1, arg_14_2, arg
 		end
 	end
 
-	if not (is_round_timer_over or all_objectives_completed or party_won_early) then
+	if not round_timer_over and not all_objectives_completed and not party_won_early_data then
 		-- Nothing
 	end
 
 	::label_14_4::
 
 	_level_failed = script_data.auto_complete_rounds
-	_level_failed = _level_failed or false
+
+	if not _level_failed then
+		-- Nothing
+	end
+
+	_level_failed = false
+
+	local game_should_end_early = _level_failed
 
 	::label_14_5::
 
-	if not self._level_completed then
+	if self._level_completed then
 		local _level_complete_timer = self._level_complete_timer
 
-		_level_complete_timer = _level_complete_timer or arg_14_3 + 0.4
+		_level_complete_timer = not not _level_complete_timer or not not (t + 0.4)
 		self._level_complete_timer = _level_complete_timer
-		flag_2 = arg_14_3 >= self._level_complete_timer
+		round_ended = t >= self._level_complete_timer
 
 		if not self._last_hero_down_riser_played then
-			Managers.state.entity:system("audio_system"):play_2d_audio_event("Play_versus_hud_last_hero_down_riser")
+			local audio_system = Managers.state.entity:system("audio_system")
+
+			audio_system:play_2d_audio_event("Play_versus_hud_last_hero_down_riser")
 
 			self._last_hero_down_riser_played = true
 		end
-	elseif not self:is_about_to_end_game_early() then
-		if not _level_failed and not self._game_end_condition_timer then
-			if arg_14_3 > self._game_end_condition_timer then
-				flag_2 = true
+	elseif self:is_about_to_end_game_early() then
+		if game_should_end_early and self._game_end_condition_timer then
+			if t > self._game_end_condition_timer then
+				round_ended = true
 			end
 		else
-			if not self._last_hero_down_riser_played then
-				Managers.state.entity:system("audio_system"):play_2d_audio_event("Stop_versus_hud_last_hero_down_riser_interrupted")
+			if self._last_hero_down_riser_played then
+				local audio_system = Managers.state.entity:system("audio_system")
+
+				audio_system:play_2d_audio_event("Stop_versus_hud_last_hero_down_riser_interrupted")
 
 				self._last_hero_down_riser_played = false
 			end
@@ -374,28 +407,32 @@ GameModeVersus.evaluate_end_conditions = function (self, arg_14_1, arg_14_2, arg
 
 			self._game_end_condition_timer = nil
 		end
-	elseif not _level_failed then
+	elseif game_should_end_early then
 		self:set_about_to_end_game_early(true)
-		Managers.state.entity:system("audio_system"):play_2d_audio_event("Play_versus_hud_last_hero_down_riser")
+
+		local audio_system = Managers.state.entity:system("audio_system")
+
+		audio_system:play_2d_audio_event("Play_versus_hud_last_hero_down_riser")
 
 		self._last_hero_down_riser_played = true
 
-		if not script_data.auto_complete_rounds then
-			self._game_end_condition_timer = arg_14_3
-		elseif not side_is_dead then
-			self._game_end_condition_timer = arg_14_3 + GameModeSettings.versus.lose_condition_time_dead
+		if script_data.auto_complete_rounds then
+			self._game_end_condition_timer = t
+		elseif humans_dead then
+			self._game_end_condition_timer = t + GameModeSettings.versus.lose_condition_time_dead
 		else
-			self._game_end_condition_timer = arg_14_3 + GameModeSettings.versus.lose_condition_time
+			self._game_end_condition_timer = t + GameModeSettings.versus.lose_condition_time
 		end
 	end
 
-	if not flag_2 then
-		local _get_end_reason, var_14_12 = self:_get_end_reason(party_won_early)
-		local _handle_round_end = self:_handle_round_end(_get_end_reason, var_14_12, all_objectives_completed)
+	if round_ended then
+		local reason, reason_data = self:_get_end_reason(party_won_early_data)
+
+		reason = self:_handle_round_end(reason, reason_data, all_objectives_completed)
 
 		self._mechanism:server_decide_side_order()
 
-		if DEDICATED_SERVER or not self._mechanism:is_hosting_versus_custom_game() then
+		if DEDICATED_SERVER or self._mechanism:is_hosting_versus_custom_game() then
 			Managers.party:server_update_all_client_friend_parties()
 		end
 
@@ -405,69 +442,84 @@ GameModeVersus.evaluate_end_conditions = function (self, arg_14_1, arg_14_2, arg
 
 		self:change_game_mode_state("post_round_state")
 
-		return true, _handle_round_end, var_14_12
+		return true, reason, reason_data
 	else
 		return false
 	end
 end
 
-GameModeVersus._handle_round_end = function (self, arg_15_1, arg_15_2, arg_15_3)
+GameModeVersus._handle_round_end = function (self, reason, reason_data, all_objectives_completed)
 	-- function 15
 	local parameter = Development.parameter("versus_quick_match_end")
 
-	parameter = parameter or self._current_mechanism_state ~= "round_2" or self._mechanism:is_last_set()
+	if not parameter then
+		if self._current_mechanism_state == "round_2" then
+			parameter = self._mechanism:is_last_set()
+		else
+			parameter = false
+		end
+	end
 
-	local party_id = Managers.state.side:get_side_from_name("heroes").party.party_id
-	local flag = not arg_15_2 and arg_15_2.party_id == party_id or false
-	local flag_2 = arg_15_3 or flag
+	goto label_15_0
 
-	if not (arg_15_1 == "party_one_won_early" or arg_15_1 ~= "party_two_won_early") then
-		self:_trigger_early_win_vo(arg_15_2.party_id)
-	elseif not parameter then
-		arg_15_1 = self._win_conditions:get_match_results()
+	parameter = true
 
-		if arg_15_1 == "draw" then
+	local all_rounds_played = parameter
+
+	::label_15_0::
+
+	local hero_party_id = Managers.state.side:get_side_from_name("heroes").party.party_id
+	local heroes_won_early = (not reason_data or reason_data.party_id ~= hero_party_id) and not not false
+	local heroes_won = not not all_objectives_completed or not not heroes_won_early
+
+	if reason == "party_one_won_early" or reason == "party_two_won_early" then
+		self:_trigger_early_win_vo(reason_data.party_id)
+	elseif all_rounds_played then
+		reason = self._win_conditions:get_match_results()
+
+		if reason == "draw" then
 			self:_trigger_draw_vo()
 		end
-	elseif not flag_2 then
-		Managers.state.entity:system("dialogue_system"):trigger_mission_giver_event("vs_mg_heroes_team_wipe")
+	elseif not heroes_won then
+		local dialogue_system = Managers.state.entity:system("dialogue_system")
+
+		dialogue_system:trigger_mission_giver_event("vs_mg_heroes_team_wipe")
 	end
 
-	self:_server_on_round_over(flag_2)
+	self:_server_on_round_over(heroes_won)
 	self:_round_end_telemetry()
 
-	if arg_15_1 ~= "round_end" then
-		self:_match_end_telemetry(arg_15_1)
+	if reason ~= "round_end" then
+		self:_match_end_telemetry(reason)
 	end
 
-	return arg_15_1
+	return reason
 end
 
-GameModeVersus._get_end_reason = function (self, arg_16_1)
+GameModeVersus._get_end_reason = function (self, party_won_early_data)
 	-- function 16
-	local str = "round_end"
-	local var_16_1
+	local reason = "round_end"
+	local reason_data
 
-	if not arg_16_1 then
-		local var_16_2
-		local update_early_win_conditions
+	if not party_won_early_data then
+		local _
 
-		update_early_win_conditions, arg_16_1 = self._win_conditions:update_early_win_conditions()
+		_, party_won_early_data = self._win_conditions:update_early_win_conditions()
 	end
 
-	if not arg_16_1 then
-		str = arg_16_1.party_id ~= 1 or not "party_one_won_early" or "party_two_won_early"
-		var_16_1 = arg_16_1
+	if party_won_early_data then
+		reason = (party_won_early_data.party_id ~= 1 or not "party_one_won_early") and not not "party_two_won_early"
+		reason_data = party_won_early_data
 	end
 
-	return str, var_16_1
+	return reason, reason_data
 end
 
 GameModeVersus.ready_to_transition = function (self)
 	-- function 17
-	local flag = self._current_mechanism_state ~= "round_2" or not self._mechanism:should_start_next_set()
+	local all_rounds_played = self._current_mechanism_state == "round_2" and not not not self._mechanism:should_start_next_set()
 
-	if flag or not self._win_conditions.party_won_early then
+	if all_rounds_played or self._win_conditions.party_won_early then
 		self._network_transmit:send_rpc_clients("rpc_rejoin_parties")
 
 		if not DEDICATED_SERVER then
@@ -482,43 +534,43 @@ GameModeVersus.ready_to_transition = function (self)
 		Managers.level_transition_handler:promote_next_level_data()
 	end
 
-	printf("[GameModeVersus] Ready to transition. _transition_state: %s, _is_server: %s, all_rounds_played: %s, party_won-early: %s", self._transition_state, self._is_server, flag, self._win_conditions.party_won_early)
+	printf("[GameModeVersus] Ready to transition. _transition_state: %s, _is_server: %s, all_rounds_played: %s, party_won-early: %s", self._transition_state, self._is_server, all_rounds_played, self._win_conditions.party_won_early)
 end
 
 GameModeVersus.wanted_transition = function (self)
 	-- function 18
-	local _transition_state = self._transition_state
+	local state = self._transition_state
 
-	if _transition_state == "next_level" then
+	if state == "next_level" then
 		return "complete_level"
-	elseif _transition_state == "restart_game_server" then
+	elseif state == "restart_game_server" then
 		return "restart_game_server"
-	elseif _transition_state == "quit_game" then
+	elseif state == "quit_game" then
 		return "quit_game"
-	elseif _transition_state == "versus_migration" then
+	elseif state == "versus_migration" then
 		return "versus_migration"
 	end
 end
 
 GameModeVersus.server_character_selection_completed = function (self)
 	-- function 19
-	if not self._settings.display_parading_view then
+	if self._settings.display_parading_view then
 		self:change_game_mode_state("player_team_parading_state")
 	else
 		self:change_game_mode_state("pre_start_round_state")
 	end
 end
 
-GameModeVersus.pre_update = function (self, arg_20_1, arg_20_2)
+GameModeVersus.pre_update = function (self, t, dt)
 	-- function 20
-	local _game_mode_state = self._game_mode_state
+	local state = self._game_mode_state
 
-	if not self._is_server and not self:is_in_round_state() then
-		self:_handle_bots(arg_20_1, arg_20_2)
+	if self._is_server and self:is_in_round_state() then
+		self:_handle_bots(t, dt)
 	end
 
-	if not self._versus_party_selection_logic then
-		self._versus_party_selection_logic:pre_update(arg_20_1, arg_20_2)
+	if self._versus_party_selection_logic then
+		self._versus_party_selection_logic:pre_update(t, dt)
 	end
 end
 
@@ -526,79 +578,80 @@ GameModeVersus.player_ready = function (self)
 	-- function 21
 	local _local_player_spawned = self._local_player_spawned
 
-	_local_player_spawned = not _local_player_spawned and not self._delayed_fade_out_timer
+	_local_player_spawned = not not _local_player_spawned and not not not self._delayed_fade_out_timer
 
 	return _local_player_spawned
 end
 
-GameModeVersus.update = function (self, arg_22_1, arg_22_2)
+GameModeVersus.update = function (self, t, dt)
 	-- function 22
-	if not self._is_server then
+	if self._is_server then
 		self._dark_pact_career_delegator:update()
-		self:_update_hero_rushing(arg_22_1)
+		self:_update_hero_rushing(t)
 	else
-		self:_client_update(arg_22_1, arg_22_2)
+		self:_client_update(t, dt)
 	end
 
-	if not (not self._delayed_fade_out_timer and not (arg_22_1 > self._delayed_fade_out_timer)) then
+	if self._delayed_fade_out_timer and t > self._delayed_fade_out_timer then
 		Managers.transition:fade_out(GameSettings.transition_fade_out_speed)
 
 		self._delayed_fade_out_timer = nil
 	end
 
-	if not self._initial_peers_ready then
-		local _game_mode_state = self._game_mode_state
+	if self._initial_peers_ready then
+		local state = self._game_mode_state
 
-		if not self:is_in_round_state() then
-			self._adventure_spawning:update(arg_22_1, arg_22_2)
+		if self:is_in_round_state() then
+			self._adventure_spawning:update(t, dt)
 
-			if _game_mode_state == "match_running_state" then
+			if state == "match_running_state" then
 				-- Nothing
 			end
 		end
 
-		if not self.pactsworn_video_transition_view then
-			self.pactsworn_video_transition_view:update(arg_22_2)
+		if self.pactsworn_video_transition_view then
+			self.pactsworn_video_transition_view:update(dt)
 		end
 	end
 
-	if not script_data.testify then
-		Testify:poll_requests_through_handler(testify, self)
+	if script_data.testify then
+		Testify:poll_requests_through_handler(game_mode_versus_testify, self)
 	end
 end
 
-local tbl_2 = {}
+local parties_scratch = {}
 
-GameModeVersus._clear_profile_reservations = function (self, arg_23_1)
+GameModeVersus._clear_profile_reservations = function (self, optional_party)
 	-- function 23
-	local var_23_0 = tbl_2
+	local parties = parties_scratch
 
-	if not arg_23_1 then
-		var_23_0[1] = arg_23_1
+	if optional_party then
+		parties[1] = optional_party
 	else
-		var_23_0 = Managers.party:game_participating_parties()
+		parties = Managers.party:game_participating_parties()
 	end
 
-	for i = 1, #var_23_0 do
-		local var_23_1 = var_23_0[i]
-		local _profile_synchronizer = self._profile_synchronizer
-		local occupied_slots = var_23_1.occupied_slots
+	for i = 1, #parties do
+		local party = parties[i]
+		local profile_synchronizer = self._profile_synchronizer
+		local occupied_slots = party.occupied_slots
 
-		for j = 1, #occupied_slots do
-			local var_23_4 = occupied_slots[j]
-			local peer_id = var_23_4.peer_id
-			local local_player_id = var_23_4.local_player_id
+		for slot_i = 1, #occupied_slots do
+			local status = occupied_slots[slot_i]
+			local peer_id = status.peer_id
+			local local_player_id = status.local_player_id
+			local profile_index = profile_synchronizer:profile_by_peer(peer_id, local_player_id)
 
-			if not _profile_synchronizer:profile_by_peer(peer_id, local_player_id) then
-				_profile_synchronizer:unassign_profiles_of_peer(peer_id, local_player_id)
+			if profile_index then
+				profile_synchronizer:unassign_profiles_of_peer(peer_id, local_player_id)
 			end
 
-			_profile_synchronizer:clear_profile_index_reservation(peer_id, true)
+			profile_synchronizer:clear_profile_index_reservation(peer_id, true)
 		end
 	end
 end
 
-GameModeVersus._game_mode_state_changed = function (self, arg_24_1, arg_24_2)
+GameModeVersus._game_mode_state_changed = function (self, state_name, old_state_name)
 	-- function 24
 	if self._current_mechanism_state == "round_1" then
 		self._round_id = 1
@@ -606,14 +659,14 @@ GameModeVersus._game_mode_state_changed = function (self, arg_24_1, arg_24_2)
 		self._round_id = 2
 	end
 
-	if not self._is_server then
+	if self._is_server then
 		self._start_game_timeout_timer = 0
 	end
 
-	if arg_24_1 == "waiting_for_players_to_join" then
+	if state_name == "waiting_for_players_to_join" then
 		self._mechanism:increment_total_rounds_started()
-	elseif arg_24_1 == "character_selection_state" then
-		if not self._is_server then
+	elseif state_name == "character_selection_state" then
+		if self._is_server then
 			self:_clear_profile_reservations()
 		end
 
@@ -630,26 +683,28 @@ GameModeVersus._game_mode_state_changed = function (self, arg_24_1, arg_24_2)
 
 		self:_stop_advertise_playing()
 
-		if not self._mechanism:custom_settings_enabled() then
+		if self._mechanism:custom_settings_enabled() then
 			self:_custom_settings_telemetry()
 		end
-	elseif arg_24_1 == "player_team_parading_state" then
-		if not (arg_24_2 ~= "character_selection_state") then
+	elseif state_name == "player_team_parading_state" then
+		local is_hot_joining = old_state_name ~= "character_selection_state"
+
+		if is_hot_joining then
 			self._versus_party_selection_logic = VersusPartySelectionLogic:new(self._is_server, self._settings, self._network_server, self._profile_synchronizer, self._network_event_delegate, self._network_transmit)
 		end
 
-		local _get_parading_screen_duration = self:_get_parading_screen_duration()
+		local duration = self:_get_parading_screen_duration()
 
 		Managers.ui:handle_transition("versus_team_parading_view", {
 			menu_state_name = "parading",
-			duration = _get_parading_screen_duration
+			duration = duration
 		})
 
-		self._parading_timer = Managers.time:time("game") + _get_parading_screen_duration
+		self._parading_timer = Managers.time:time("game") + duration
 
 		self:_stop_advertise_playing()
-	elseif arg_24_1 == "pre_start_round_state" then
-		if not self._versus_party_selection_logic then
+	elseif state_name == "pre_start_round_state" then
+		if self._versus_party_selection_logic then
 			self._versus_party_selection_logic:destroy()
 
 			self._versus_party_selection_logic = nil
@@ -666,23 +721,29 @@ GameModeVersus._game_mode_state_changed = function (self, arg_24_1, arg_24_2)
 			fade_in_speed = GameSettings.transition_fade_in_speed
 		})
 
-		if not self._is_server then
-			Managers.state.entity:system("ghost_mode_system"):set_active(true)
+		if self._is_server then
+			local ghost_mode = Managers.state.entity:system("ghost_mode_system")
+
+			ghost_mode:set_active(true)
 		end
-	elseif arg_24_1 == "match_running_state" then
+	elseif state_name == "match_running_state" then
 		if not DEDICATED_SERVER then
 			self:_round_start_telemetry()
 		end
 
-		if not (arg_24_2 ~= "pre_start_round_state") then
+		local is_hot_join = old_state_name ~= "pre_start_round_state"
+
+		if is_hot_join then
 			self:_init_pact_sworn_camera_state()
 			self:_advertise_playing()
 		end
 
-		if not self._is_server then
-			Managers.state.entity:system("ghost_mode_system"):set_active(true)
+		if self._is_server then
+			local ghost_mode = Managers.state.entity:system("ghost_mode_system")
+
+			ghost_mode:set_active(true)
 		end
-	elseif arg_24_1 == "post_round_state" then
+	elseif state_name == "post_round_state" then
 		self:play_sound("Stop_versus_hud_last_hero_down_riser")
 		self:_register_disabled_as_eliminiations()
 		self._win_conditions:round_ended()
@@ -690,17 +751,17 @@ GameModeVersus._game_mode_state_changed = function (self, arg_24_1, arg_24_2)
 	end
 end
 
-GameModeVersus._advertise_playing = function (arg_25_0)
+GameModeVersus._advertise_playing = function (self)
 	-- function 25
 	return
 end
 
-GameModeVersus._stop_advertise_playing = function (arg_26_0)
+GameModeVersus._stop_advertise_playing = function (self)
 	-- function 26
 	if not DEDICATED_SERVER then
 		local network_handler = Managers.mechanism:network_handler()
 
-		if not network_handler.lobby_client and not network_handler.lobby_client.stop_advertise_playing then
+		if network_handler.lobby_client and network_handler.lobby_client.stop_advertise_playing then
 			network_handler.lobby_client:stop_advertise_playing()
 		end
 	end
@@ -715,26 +776,26 @@ GameModeVersus._update_profiles = function (self)
 	local parties = Managers.party:parties()
 
 	for i = 1, #parties do
-		local var_27_1 = parties[i]
+		local party = parties[i]
 
-		if not var_27_1.game_participating then
-			local occupied_slots = var_27_1.occupied_slots
+		if party.game_participating then
+			local occupied_slots = party.occupied_slots
 
 			for j = 1, #occupied_slots do
-				local var_27_3 = occupied_slots[j]
+				local status = occupied_slots[j]
 
-				self:_update_profile_in_party(var_27_3.peer_id, var_27_3.local_player_id, var_27_1.party_id)
+				self:_update_profile_in_party(status.peer_id, status.local_player_id, party.party_id)
 			end
 		end
 	end
 end
 
-GameModeVersus._init_pact_sworn_camera_state = function (arg_28_0)
+GameModeVersus._init_pact_sworn_camera_state = function (self)
 	-- function 28
-	local get_local_player_party = Managers.party:get_local_player_party()
-	local var_28_1 = Managers.state.side.side_by_party[get_local_player_party]
+	local party = Managers.party:get_local_player_party()
+	local side = Managers.state.side.side_by_party[party]
 
-	if not (not var_28_1 and var_28_1:name() ~= "dark_pact") then
+	if side and side:name() == "dark_pact" then
 		local local_player = Managers.player:local_player()
 
 		CharacterStateHelper.change_camera_state(local_player, "observer", {
@@ -745,169 +806,191 @@ end
 
 GameModeVersus._spawn_pact_sworn = function (self)
 	-- function 29
-	local system = Managers.state.entity:system("versus_horde_ability_system")
-	local get_party_from_name = Managers.party:get_party_from_name("dark_pact")
-	local num = 0
-	local occupied_slots = get_party_from_name.occupied_slots
+	local horde_ability_system = Managers.state.entity:system("versus_horde_ability_system")
+	local party = Managers.party:get_party_from_name("dark_pact")
+	local spawn_time = 0
+	local occupied_slots = party.occupied_slots
 
-	for i = 1, #occupied_slots do
-		local var_29_4 = occupied_slots[i]
-		local peer_id = var_29_4.peer_id
-		local local_player_id = var_29_4.local_player_id
+	for j = 1, #occupied_slots do
+		local status = occupied_slots[j]
+		local peer_id = status.peer_id
+		local local_player_id = status.local_player_id
 
 		self._versus_spawning:setup_data(peer_id, local_player_id)
 
-		if not self._is_server then
-			self._versus_spawning:set_spawn_state(peer_id, local_player_id, "w8_for_profile", 0, num, true)
-			system:server_register_peer(peer_id)
+		if self._is_server then
+			self._versus_spawning:set_spawn_state(peer_id, local_player_id, "w8_for_profile", 0, spawn_time, true)
+			horde_ability_system:server_register_peer(peer_id)
 		end
 	end
 end
 
-GameModeVersus.assign_temporary_dark_pact_profile = function (self, arg_30_1)
+GameModeVersus.assign_temporary_dark_pact_profile = function (self, status)
 	-- function 30
-	local vs_undecided = PROFILES_BY_NAME.vs_undecided
+	local profile = PROFILES_BY_NAME.vs_undecided
 
-	self:set_profile(arg_30_1, vs_undecided.index, 1, false)
+	self:set_profile(status, profile.index, 1, false)
 end
 
 GameModeVersus.round_started = function (self)
 	-- function 31
-	if not self._is_server then
-		Managers.state.entity:system("dialogue_system"):queue_mission_giver_event("vs_mg_heroes_left_safe_room")
+	if self._is_server then
+		local dialogue_system = Managers.state.entity:system("dialogue_system")
+
+		dialogue_system:queue_mission_giver_event("vs_mg_heroes_left_safe_room")
 	end
 
-	Managers.state.entity:system("versus_horde_ability_system"):on_round_started()
+	local horde_ability_system = Managers.state.entity:system("versus_horde_ability_system")
+
+	horde_ability_system:on_round_started()
 end
 
-GameModeVersus.server_update = function (self, arg_32_1, arg_32_2)
+GameModeVersus.server_update = function (self, t, dt)
 	-- function 32
-	GameModeVersus.super.server_update(self, arg_32_1, arg_32_2)
+	GameModeVersus.super.server_update(self, t, dt)
 
-	local get_slot_reservation_handler = self._mechanism:get_slot_reservation_handler(Network.peer_id(), scripts_managers_game_mode_mechanisms_reservation_handler_types.session)
+	local reservation_handler = self._mechanism:get_slot_reservation_handler(Network.peer_id(), ReservationHandlerTypes.session)
 
-	if not DEDICATED_SERVER then
-		self:_handle_dedicated_input(arg_32_1, arg_32_2)
+	if DEDICATED_SERVER then
+		self:_handle_dedicated_input(t, dt)
 	end
 
-	if not get_slot_reservation_handler and not get_slot_reservation_handler.handle_dangling_peers then
-		get_slot_reservation_handler:handle_dangling_peers()
+	if reservation_handler and reservation_handler.handle_dangling_peers then
+		reservation_handler:handle_dangling_peers()
 	end
 
-	if not self._initial_peers_ready then
+	if self._initial_peers_ready then
 		if not self._initial_peers_spawned then
 			self:_update_initial_peers_spawned()
 		end
 
-		self._win_conditions:server_update(arg_32_1, arg_32_2)
+		self._win_conditions:server_update(t, dt)
 	end
 
-	local _game_mode_state = self._game_mode_state
+	local state = self._game_mode_state
 
-	if _game_mode_state == "initial_state" then
-		if not DEDICATED_SERVER then
-			if not get_slot_reservation_handler:is_empty() then
+	if state == "initial_state" then
+		if DEDICATED_SERVER then
+			if reservation_handler:is_empty() then
 				self:change_game_mode_state("dedicated_server_abort_game")
 			else
-				self._mechanism:signal_reservers_to_join(arg_32_1, self._network_server)
+				self._mechanism:signal_reservers_to_join(t, self._network_server)
 				self:change_game_mode_state("waiting_for_players_to_join")
 			end
 		else
 			self:change_game_mode_state("waiting_for_players_to_join")
 		end
-	elseif _game_mode_state == "waiting_for_players_to_join" then
-		self._start_game_timeout_timer = self._start_game_timeout_timer + arg_32_2
+	elseif state == "waiting_for_players_to_join" then
+		self._start_game_timeout_timer = self._start_game_timeout_timer + dt
 
-		local members_map = self._network_server.lobby_host:members():members_map()
+		local lobby_host = self._network_server.lobby_host
+		local members_map = lobby_host:members():members_map()
 		local DEDICATED_SERVER = DEDICATED_SERVER
 
-		if not DEDICATED_SERVER then
-			DEDICATED_SERVER = get_slot_reservation_handler:is_all_reserved_peers_joined(members_map)
-			DEDICATED_SERVER = not DEDICATED_SERVER and self._initial_peers_ready
+		if DEDICATED_SERVER then
+			-- Nothing
 		end
 
-		local flag = not not DEDICATED_SERVER or self._initial_peers_ready
+		DEDICATED_SERVER = reservation_handler:is_all_reserved_peers_joined(members_map)
 
-		if DEDICATED_SERVER or not flag then
-			if not (self._current_mechanism_state ~= "round_1" or self._mechanism:get_current_set() ~= 1) then
-				if not self._settings.display_character_picking_view then
+		if DEDICATED_SERVER then
+			-- Nothing
+		end
+
+		DEDICATED_SERVER = self._initial_peers_ready
+
+		local dedicated_server_peers_have_joined = DEDICATED_SERVER
+
+		::label_32_0::
+
+		local player_hosted_initial_peers_ready = not DEDICATED_SERVER and not not self._initial_peers_ready
+
+		if dedicated_server_peers_have_joined or player_hosted_initial_peers_ready then
+			if self._current_mechanism_state == "round_1" and self._mechanism:get_current_set() == 1 then
+				if self._settings.display_character_picking_view then
 					self:change_game_mode_state("character_selection_state")
 				end
-			elseif not self._profile_synchronizer:all_synced() then
-				self:change_game_mode_state("pre_start_round_state")
+			else
+				local ready_to_change_state = self._profile_synchronizer:all_synced()
+
+				if ready_to_change_state then
+					self:change_game_mode_state("pre_start_round_state")
+				end
 			end
-		elseif not self:_start_game_timeout() then
+		elseif self:_start_game_timeout() then
 			self._start_game_timeout_timer = 0
 
-			for k, v in pairs(members_map) do
-				if not self._network_server:is_peer_ready(k) then
-					printf("[game_mode_versus] kicking timed out peer %s in state %s", k, self._game_mode_state)
-					self._network_server:kick_peer(k)
+			for peer_id, _ in pairs(members_map) do
+				local member_is_done_loading = self._network_server:is_peer_ready(peer_id)
+
+				if not member_is_done_loading then
+					printf("[game_mode_versus] kicking timed out peer %s in state %s", peer_id, self._game_mode_state)
+					self._network_server:kick_peer(peer_id)
 				end
 			end
 		end
-	elseif _game_mode_state == "dedicated_server_abort_game" then
+	elseif state == "dedicated_server_abort_game" then
 		self._network_server:all_client_peers_disconnected()
 
-		if not self._network_server:all_client_peers_disconnected() then
-			if not script_data.testify then
+		if self._network_server:all_client_peers_disconnected() then
+			if script_data.testify then
 				self._transition_state = "restart_game_server"
-			elseif not self:_delay_abort_game(arg_32_1) then
+			elseif self:_delay_abort_game(t) then
 				-- Nothing
 			else
 				self._transition_state = "quit_game"
 			end
 		end
-	elseif _game_mode_state == "character_selection_state" then
+	elseif state == "character_selection_state" then
 		-- Nothing
-	elseif _game_mode_state == "player_team_parading_state" then
-		if arg_32_1 > self._parading_timer then
+	elseif state == "player_team_parading_state" then
+		if t > self._parading_timer then
 			self:change_game_mode_state("pre_start_round_state")
 		end
-	elseif _game_mode_state == "pre_start_round_state" then
-		self._adventure_spawning:server_update(arg_32_1, arg_32_2)
-		self._versus_spawning:update(arg_32_1, arg_32_2)
+	elseif state == "pre_start_round_state" then
+		self._adventure_spawning:server_update(t, dt)
+		self._versus_spawning:update(t, dt)
 
-		local ceil = math.ceil(self.pre_round_start_timer - arg_32_1)
+		local time_left = math.ceil(self.pre_round_start_timer - t)
 
-		if not self._initial_peers_spawned then
+		if self._initial_peers_spawned then
 			if not self._time_left then
-				self._time_left = ceil
+				self._time_left = time_left
 			end
 
-			if not (not self._is_server and self._pre_round_start_vo) then
-				local system = Managers.state.entity:system("dialogue_system")
+			if self._is_server and not self._pre_round_start_vo then
+				local dialogue_system = Managers.state.entity:system("dialogue_system")
 
-				if not system:has_local_player_moved_from_start_position() then
+				if dialogue_system:has_local_player_moved_from_start_position() then
 					self._pre_round_start_vo = true
 
-					system:queue_mission_giver_event("vs_mg_round_start")
+					dialogue_system:queue_mission_giver_event("vs_mg_round_start")
 				end
 			end
 
-			if ceil < self._time_left then
-				self._time_left = ceil
+			if time_left < self._time_left then
+				self._time_left = time_left
 
-				if not (not self._is_server and DEDICATED_SERVER) then
-					Managers.state.event:trigger("ui_update_start_round_counter", ceil)
-					Managers.state.event:trigger("ui_tab_update_start_round_counter", ceil)
+				if self._is_server and not DEDICATED_SERVER then
+					Managers.state.event:trigger("ui_update_start_round_counter", time_left)
+					Managers.state.event:trigger("ui_tab_update_start_round_counter", time_left)
 				end
 
-				Managers.state.network.network_transmit:send_rpc_clients("rpc_update_start_round_countdown_timer", ceil)
+				Managers.state.network.network_transmit:send_rpc_clients("rpc_update_start_round_countdown_timer", time_left)
 			end
 		end
 
-		if not (arg_32_1 > self.pre_round_start_timer) or not self._initial_peers_spawned then
-			local current_level = LevelHelper:current_level(self._world)
-			local str = "round_started_set_" .. self._mechanism:get_current_set()
+		if t > self.pre_round_start_timer and self._initial_peers_spawned then
+			local level = LevelHelper:current_level(self._world)
+			local event_name = "round_started_set_" .. self._mechanism:get_current_set()
 
-			Level.trigger_event(current_level, str)
-			Managers.state.network.network_transmit:send_rpc_clients("rpc_trigger_level_event", str)
-			Level.trigger_event(current_level, "remove_safe_zone_wall")
+			Level.trigger_event(level, event_name)
+			Managers.state.network.network_transmit:send_rpc_clients("rpc_trigger_level_event", event_name)
+			Level.trigger_event(level, "remove_safe_zone_wall")
 			Managers.state.network.network_transmit:send_rpc_clients("rpc_trigger_level_event", "remove_safe_zone_wall")
 			self:change_game_mode_state("match_running_state")
 
-			if not (not self._is_server and DEDICATED_SERVER) then
+			if self._is_server and not DEDICATED_SERVER then
 				Managers.state.event:trigger("ui_round_started")
 			end
 
@@ -915,27 +998,29 @@ GameModeVersus.server_update = function (self, arg_32_1, arg_32_2)
 
 			self._time_left = nil
 		end
-	elseif _game_mode_state == "match_running_state" then
-		self._adventure_spawning:server_update(arg_32_1, arg_32_2)
-		self._versus_spawning:update(arg_32_1, arg_32_2)
+	elseif state == "match_running_state" then
+		self._adventure_spawning:server_update(t, dt)
+		self._versus_spawning:update(t, dt)
 
-		if not self._horde_surge_handler then
-			self._horde_surge_handler:server_update(arg_32_1, arg_32_2)
+		if self._horde_surge_handler then
+			self._horde_surge_handler:server_update(t, dt)
 		end
-	elseif _game_mode_state == "post_round_state" then
+	elseif state == "post_round_state" then
 		-- Nothing
 	else
-		fassert(false, "Unknown state", _game_mode_state)
+		fassert(false, "Unknown state", state)
 	end
 
-	if not DEDICATED_SERVER and not self._settings.allow_hotjoining_ongoing_game and not self._settings.allowed_hotjoin_states[_game_mode_state] then
-		self._mechanism:signal_reservers_to_join(arg_32_1, self._network_server)
+	if DEDICATED_SERVER and self._settings.allow_hotjoining_ongoing_game and self._settings.allowed_hotjoin_states[state] then
+		self._mechanism:signal_reservers_to_join(t, self._network_server)
 	end
 
-	if self._transition_state == "wait_until_empty" then
-		self._transition_state_time = self._transition_state_time + arg_32_2
+	local state = self._transition_state
 
-		if (self._transition_state_time > GameModeVersus.WAIT_FOR_CLIENTS_TO_LEAVE_TIMEOUT or not self._network_server:all_client_peers_disconnected()) and not self:_delay_abort_game(arg_32_1) then
+	if state == "wait_until_empty" then
+		self._transition_state_time = self._transition_state_time + dt
+
+		if (self._transition_state_time > GameModeVersus.WAIT_FOR_CLIENTS_TO_LEAVE_TIMEOUT or self._network_server:all_client_peers_disconnected()) and self:_delay_abort_game(t) then
 			-- Nothing
 		else
 			self._transition_state = "quit_game"
@@ -943,98 +1028,103 @@ GameModeVersus.server_update = function (self, arg_32_1, arg_32_2)
 	end
 end
 
-local num = 30
+local MAX_DELAY_ABORT_TIME = 30
 
-GameModeVersus._delay_abort_game = function (self, arg_33_1)
+GameModeVersus._delay_abort_game = function (self, t)
 	-- function 33
 	local batch_in_flight = Managers.telemetry:batch_in_flight()
 	local has_events_to_post = Managers.telemetry:has_events_to_post()
+	local should_delay = not not batch_in_flight or not not has_events_to_post
 
-	if not (batch_in_flight or has_events_to_post) then
+	if should_delay then
 		local _delay_abort_game_timer = self._delay_abort_game_timer
 
-		_delay_abort_game_timer = _delay_abort_game_timer or arg_33_1 + num
+		_delay_abort_game_timer = not not _delay_abort_game_timer or not not (t + MAX_DELAY_ABORT_TIME)
 		self._delay_abort_game_timer = _delay_abort_game_timer
 	end
 
-	if not (not has_events_to_post and batch_in_flight) then
+	if has_events_to_post and not batch_in_flight then
 		Managers.telemetry:post_batch()
 	end
 
 	local _delay_abort_game_timer_2 = self._delay_abort_game_timer
 
-	_delay_abort_game_timer_2 = not _delay_abort_game_timer_2 and arg_33_1 < self._delay_abort_game_timer
+	_delay_abort_game_timer_2 = not not _delay_abort_game_timer_2 and t < self._delay_abort_game_timer
 
 	return _delay_abort_game_timer_2
 end
 
-GameModeVersus._client_update = function (self, arg_34_1, arg_34_2)
+GameModeVersus._client_update = function (self, t, dt)
 	-- function 34
-	self._win_conditions:client_update(arg_34_1, arg_34_2)
+	self._win_conditions:client_update(t, dt)
 
-	if self._game_mode_state == "match_running_state" then
+	local state = self._game_mode_state
+
+	if state == "match_running_state" then
 		-- Nothing
 	end
 
-	if not self._horde_surge_handler then
-		self._horde_surge_handler:client_update(arg_34_1, arg_34_2)
+	if self._horde_surge_handler then
+		self._horde_surge_handler:client_update(t, dt)
 	end
 
-	if not self.pactsworn_video_transition_view then
-		self.pactsworn_video_transition_view:update(arg_34_2)
+	if self.pactsworn_video_transition_view then
+		self.pactsworn_video_transition_view:update(dt)
 	end
 end
 
 GameModeVersus._start_game_timeout = function (self)
 	-- function 35
-	local num = 10
+	local timeout = 10
 
 	if self._game_mode_state == "waiting_for_players_to_join" then
-		num = 120
+		timeout = 120
 	end
 
-	return num < self._start_game_timeout_timer
+	return timeout < self._start_game_timeout_timer
 end
 
-GameModeVersus._update_initial_peers_spawned = function (arg_36_0)
+GameModeVersus._update_initial_peers_spawned = function (self)
 	-- function 36
-	local flag = true
-	local player = Managers.player
-	local occupied_slots = Managers.party:get_party_from_name("heroes").occupied_slots
+	local all_spawned = true
+	local player_manager = Managers.player
+	local party = Managers.party:get_party_from_name("heroes")
+	local occupied_slots = party.occupied_slots
 
-	for i = 1, #occupied_slots do
-		local var_36_3 = occupied_slots[i]
-		local peer_id = var_36_3.peer_id
-		local local_player_id = var_36_3.local_player_id
-		local player_2 = player:player(peer_id, local_player_id)
+	for j = 1, #occupied_slots do
+		local status = occupied_slots[j]
+		local peer_id = status.peer_id
+		local local_player_id = status.local_player_id
+		local player = player_manager:player(peer_id, local_player_id)
+		local has_player_unit = Unit.alive(player.player_unit)
 
-		if not Unit.alive(player_2.player_unit) then
-			flag = false
+		if not has_player_unit then
+			all_spawned = false
 		end
 	end
 
-	if not flag then
+	if all_spawned then
 		Managers.state.game_mode:trigger_event("initial_peers_spawned")
 	end
 end
 
-GameModeVersus._handle_dedicated_input = function (arg_37_0, arg_37_1, arg_37_2)
+GameModeVersus._handle_dedicated_input = function (self, t, dt)
 	-- function 37
 	CommandWindow.update()
 
-	local read_line = CommandWindow.read_line()
+	local input = CommandWindow.read_line()
 
-	if not read_line then
-		Managers.admin:execute_command(read_line)
+	if input then
+		Managers.admin:execute_command(input)
 	end
 end
 
-GameModeVersus.all_peers_ready = function (arg_38_0)
+GameModeVersus.all_peers_ready = function (self)
 	-- function 38
-	GameModeVersus.super.all_peers_ready(arg_38_0)
+	GameModeVersus.super.all_peers_ready(self)
 end
 
-GameModeVersus.complete_level = function (self, arg_39_1)
+GameModeVersus.complete_level = function (self, level_key)
 	-- function 39
 	self._level_completed = true
 end
@@ -1044,56 +1134,56 @@ GameModeVersus.FAIL_LEVEL = function (self)
 	self._level_failed = true
 end
 
-GameModeVersus.evaluate_end_condition_outcome = function (arg_41_0, arg_41_1, arg_41_2)
+GameModeVersus.evaluate_end_condition_outcome = function (self, reason, player)
 	-- function 41
-	if not (DEDICATED_SERVER or arg_41_1 ~= nil) then
+	if DEDICATED_SERVER or reason == nil then
 		return false, false
 	end
 
-	local flag = false
-	local flag_2 = false
-	local network_id = arg_41_2:network_id()
-	local local_player_id = arg_41_2:local_player_id()
-	local get_party_from_player_id = Managers.party:get_party_from_player_id(network_id, local_player_id)
+	local game_won, game_lost = false, false
+	local peer_id = player:network_id()
+	local local_player_id = player:local_player_id()
+	local party = Managers.party:get_party_from_player_id(peer_id, local_player_id)
 
-	if not (arg_41_1 == "party_one_won" or arg_41_1 ~= "party_one_won_early") then
-		if get_party_from_player_id.party_id == 1 then
-			flag = true
-		elseif get_party_from_player_id.party_id == 2 then
-			flag_2 = true
+	if reason == "party_one_won" or reason == "party_one_won_early" then
+		if party.party_id == 1 then
+			game_won = true
+		elseif party.party_id == 2 then
+			game_lost = true
 		end
-	elseif not (arg_41_1 == "party_two_won" or arg_41_1 ~= "party_two_won_early") then
-		if get_party_from_player_id.party_id == 1 then
-			flag_2 = true
-		elseif get_party_from_player_id.party_id == 2 then
-			flag = true
+	elseif reason == "party_two_won" or reason == "party_two_won_early" then
+		if party.party_id == 1 then
+			game_lost = true
+		elseif party.party_id == 2 then
+			game_won = true
 		end
 	end
 
-	return flag, flag_2, arg_41_1
+	return game_won, game_lost, reason
 end
 
-GameModeVersus.gm_event_end_conditions_met = function (self, arg_42_1, arg_42_2, arg_42_3)
+GameModeVersus.gm_event_end_conditions_met = function (self, reason, checkpoint_available, percentages_completed)
 	-- function 42
-	local system = Managers.state.entity:system("objective_system")
+	local objective_system = Managers.state.entity:system("objective_system")
 
-	self._objectives_completed = system:num_completed_main_objectives()
-	self._total_main_objectives = system:num_main_objectives()
-	self._end_reason = arg_42_1
+	self._objectives_completed = objective_system:num_completed_main_objectives()
+	self._total_main_objectives = objective_system:num_main_objectives()
+	self._end_reason = reason
 end
 
 GameModeVersus.gm_event_initial_peers_spawned = function (self)
 	-- function 43
-	local var_43_0
+	local pre_start_round_duration
+	local is_initial_set = Managers.mechanism:game_mechanism():get_current_set() == 1
 
-	if not (Managers.mechanism:game_mechanism():get_current_set() == 1) then
-		var_43_0 = Managers.state.game_mode:setting("initial_set_pre_start_duration")
+	if is_initial_set then
+		pre_start_round_duration = Managers.state.game_mode:setting("initial_set_pre_start_duration")
 	else
-		var_43_0 = Managers.state.game_mode:setting("pre_start_round_duration")
+		pre_start_round_duration = Managers.state.game_mode:setting("pre_start_round_duration")
 	end
 
-	self._pre_start_round_countdown = var_43_0
-	self.pre_round_start_timer = Managers.time:time("game") + var_43_0
+	self._pre_start_round_countdown = pre_start_round_duration
+	self.pre_round_start_timer = Managers.time:time("game") + pre_start_round_duration
 	self._initial_peers_spawned = true
 end
 
@@ -1102,295 +1192,307 @@ GameModeVersus.initial_peers_spawned = function (self)
 	return self._initial_peers_spawned
 end
 
-GameModeVersus.get_extra_observer_units = function (self, arg_45_1)
+GameModeVersus.get_extra_observer_units = function (self, optional_slot_id)
 	-- function 45
-	local var_45_0
+	local extra_units
 
 	if not Managers.state.game_mode:is_round_started() then
-		local get_current_spawn_group = Managers.mechanism:game_mechanism():get_current_spawn_group()
-		local get_spawn_point, var_45_3, var_45_4 = self._versus_spawning:get_spawn_point(get_current_spawn_group, arg_45_1)
+		local mechanism = Managers.mechanism:game_mechanism()
+		local spawn_group = mechanism:get_current_spawn_group()
+		local _, _, unit = self._versus_spawning:get_spawn_point(spawn_group, optional_slot_id)
 
-		if not var_45_4 then
-			var_45_0 = {
-				var_45_4
+		if unit then
+			extra_units = {
+				unit
 			}
 		end
 	end
 
-	return var_45_0
+	return extra_units
 end
 
-GameModeVersus._player_entered_party = function (self, arg_46_1, arg_46_2, arg_46_3)
+GameModeVersus._player_entered_party = function (self, party, side, player)
 	-- function 46
-	local name = arg_46_2:name()
+	local side_name = side:name()
 
-	if not (not arg_46_3 and not arg_46_3.local_player and name ~= "heroes") then
-		local peer_id = arg_46_3.peer_id
-		local local_player_id = arg_46_3:local_player_id()
-		local get_player_status = Managers.party:get_player_status(peer_id, local_player_id)
+	if player and player.local_player and side_name == "heroes" then
+		local peer_id = player.peer_id
+		local local_player_id = player:local_player_id()
+		local player_status = Managers.party:get_player_status(peer_id, local_player_id)
 
-		if not get_player_status.preferred_profile_index then
-			local profile_by_peer, var_46_5 = self._profile_synchronizer:profile_by_peer(peer_id, local_player_id)
+		if not player_status.preferred_profile_index then
+			local profile_index, career_index = self._profile_synchronizer:profile_by_peer(peer_id, local_player_id)
 
-			get_player_status.preferred_profile_index = profile_by_peer
-			get_player_status.preferred_career_index = var_46_5
+			player_status.preferred_profile_index = profile_index
+			player_status.preferred_career_index = career_index
 		end
 	end
 end
 
-GameModeVersus.player_entered_game_session = function (self, arg_47_1, arg_47_2, arg_47_3)
+GameModeVersus.player_entered_game_session = function (self, peer_id, local_player_id, requested_party_index)
 	-- function 47
-	GameModeVersus.super.player_entered_game_session(self, arg_47_1, arg_47_2, arg_47_3)
+	GameModeVersus.super.player_entered_game_session(self, peer_id, local_player_id, requested_party_index)
 
-	local party = Managers.party
-	local handle_party_assignment_for_joining_peer = self._mechanism:handle_party_assignment_for_joining_peer(arg_47_1, arg_47_2)
+	local party_manager = Managers.party
+	local assigned_party_id = self._mechanism:handle_party_assignment_for_joining_peer(peer_id, local_player_id)
 
-	printf("[GameModeVersus] player_entered_game_session: %s:%s, party_id: %s", arg_47_1, arg_47_2, handle_party_assignment_for_joining_peer)
+	printf("[GameModeVersus] player_entered_game_session: %s:%s, party_id: %s", peer_id, local_player_id, assigned_party_id)
 
-	local update_wanted_hero_character, var_47_3 = self._mechanism:update_wanted_hero_character(arg_47_1, arg_47_2, handle_party_assignment_for_joining_peer)
-	local var_47_4 = self._bot_players[handle_party_assignment_for_joining_peer]
+	local profile_index, career_index = self._mechanism:update_wanted_hero_character(peer_id, local_player_id, assigned_party_id)
+	local bot_players = self._bot_players[assigned_party_id]
 
-	if not (not var_47_4 and not (#var_47_4 > 0)) then
-		if not self._settings.duplicate_hero_profiles_allowed then
-			self:_remove_last_added_bot(handle_party_assignment_for_joining_peer)
+	if bot_players and #bot_players > 0 then
+		if self._settings.duplicate_hero_profiles_allowed then
+			self:_remove_last_added_bot(assigned_party_id)
 		else
-			local flag = true
+			local remove_instant = true
 
-			self:_remove_bot_by_profile(handle_party_assignment_for_joining_peer, update_wanted_hero_character, flag)
+			self:_remove_bot_by_profile(assigned_party_id, profile_index, remove_instant)
 		end
 	end
 
-	local get_party_from_player_id, var_47_7 = Managers.party:get_party_from_player_id(arg_47_1, arg_47_2)
+	local _, current_party_id = Managers.party:get_party_from_player_id(peer_id, local_player_id)
 
-	if handle_party_assignment_for_joining_peer ~= var_47_7 then
-		party:request_join_party(arg_47_1, arg_47_2, handle_party_assignment_for_joining_peer)
-	elseif not self._mechanism:profiles_reservable() then
-		self:_update_profile_in_party(arg_47_1, arg_47_2, handle_party_assignment_for_joining_peer)
+	if assigned_party_id ~= current_party_id then
+		party_manager:request_join_party(peer_id, local_player_id, assigned_party_id)
+	elseif self._mechanism:profiles_reservable() then
+		self:_update_profile_in_party(peer_id, local_player_id, assigned_party_id)
 	end
 end
 
-GameModeVersus.player_left_game_session = function (self, arg_48_1, arg_48_2)
+GameModeVersus.player_left_game_session = function (self, peer_id, local_player_id)
 	-- function 48
 	if table.size(self._network_server.peer_state_machines) - 1 <= 0 then
 		self:change_game_mode_state("dedicated_server_abort_game")
 	end
 end
 
-GameModeVersus._assign_peer_to_wanted_hero_profile = function (self, arg_49_1, arg_49_2, arg_49_3)
+GameModeVersus._assign_peer_to_wanted_hero_profile = function (self, peer_id, local_player_id, party_id)
 	-- function 49
-	local get_player_status = Managers.party:get_player_status(arg_49_1, arg_49_2)
+	local party_manager = Managers.party
+	local status = party_manager:get_player_status(peer_id, local_player_id)
 
-	assert(not get_player_status.is_bot, "this should not be called on a bot, due to profile reservations ")
+	assert(not status.is_bot, "this should not be called on a bot, due to profile reservations ")
 
-	local get_persistent_profile_index_reservation, var_49_2 = Managers.mechanism:get_persistent_profile_index_reservation(arg_49_1)
-	local update_wanted_hero_character, var_49_4, var_49_5 = self._mechanism:update_wanted_hero_character(arg_49_1, arg_49_2, arg_49_3)
+	local previous_profile_index, previous_career_index = Managers.mechanism:get_persistent_profile_index_reservation(peer_id)
+	local profile_index, career_index, reason = self._mechanism:update_wanted_hero_character(peer_id, local_player_id, party_id)
 
-	printf("[GameModeVersus] assigned profile for %s: profile_index: %s, career_index: %s, reason: %s (previous: %s, %s)", arg_49_1, update_wanted_hero_character, var_49_4, var_49_5, get_persistent_profile_index_reservation, var_49_2)
-	self:set_profile(get_player_status, update_wanted_hero_character, var_49_4, nil)
+	printf("[GameModeVersus] assigned profile for %s: profile_index: %s, career_index: %s, reason: %s (previous: %s, %s)", peer_id, profile_index, career_index, reason, previous_profile_index, previous_career_index)
+	self:set_profile(status, profile_index, career_index, nil)
 
-	return update_wanted_hero_character, var_49_4
+	return profile_index, career_index
 end
 
-GameModeVersus.set_profile = function (self, arg_50_1, arg_50_2, arg_50_3, arg_50_4)
+GameModeVersus.set_profile = function (self, status, profile_index, career_index, optional_force_respawn)
 	-- function 50
-	local var_50_0
+	local force_respawn
 
-	if arg_50_4 ~= nil then
-		var_50_0 = arg_50_4
+	if optional_force_respawn ~= nil then
+		force_respawn = optional_force_respawn
 	else
-		var_50_0 = self:is_in_round_state()
+		force_respawn = self:is_in_round_state()
 	end
 
-	local var_50_1 = SPProfiles[arg_50_2]
+	local profile = SPProfiles[profile_index]
 
-	if not self._is_server then
-		self._profile_requester:request_profile(arg_50_1.peer_id, arg_50_1.local_player_id, var_50_1.display_name, var_50_1.careers[arg_50_3].display_name, var_50_0)
+	if self._is_server then
+		self._profile_requester:request_profile(status.peer_id, status.local_player_id, profile.display_name, profile.careers[career_index].display_name, force_respawn)
 	else
-		Managers.state.network:request_profile(arg_50_1.local_player_id, var_50_1.display_name, var_50_1.careers[arg_50_3].display_name, var_50_0)
+		Managers.state.network:request_profile(status.local_player_id, profile.display_name, profile.careers[career_index].display_name, force_respawn)
 	end
 end
 
-GameModeVersus._update_profile_in_party = function (self, arg_51_1, arg_51_2, arg_51_3)
+GameModeVersus._update_profile_in_party = function (self, peer_id, local_player_id, party_id)
 	-- function 51
-	local get_player_status = Managers.party:get_player_status(arg_51_1, arg_51_2)
+	local status = Managers.party:get_player_status(peer_id, local_player_id)
 
-	if not get_player_status.is_bot then
+	if status.is_bot then
 		return
 	end
 
-	self._profile_synchronizer:unassign_profiles_of_peer(arg_51_1, arg_51_2)
+	self._profile_synchronizer:unassign_profiles_of_peer(peer_id, local_player_id)
 
-	local get_party = Managers.party:get_party(arg_51_3)
+	local party = Managers.party:get_party(party_id)
 
-	if get_party.name == "heroes" then
-		local _assign_peer_to_wanted_hero_profile, var_51_3 = self:_assign_peer_to_wanted_hero_profile(arg_51_1, arg_51_2, arg_51_3)
-	elseif get_party.name == "dark_pact" then
-		self:assign_temporary_dark_pact_profile(get_player_status)
+	if party.name == "heroes" then
+		local profile_index, career_index = self:_assign_peer_to_wanted_hero_profile(peer_id, local_player_id, party_id)
+	elseif party.name == "dark_pact" then
+		self:assign_temporary_dark_pact_profile(status)
 	end
 end
 
-GameModeVersus.player_joined_party = function (self, arg_52_1, arg_52_2, arg_52_3, arg_52_4, arg_52_5)
+GameModeVersus.player_joined_party = function (self, peer_id, local_player_id, new_party_id, slot_id, old_party_id)
 	-- function 52
-	GameModeVersus.super.player_joined_party(self, arg_52_1, arg_52_2, arg_52_3, arg_52_4, arg_52_5)
+	GameModeVersus.super.player_joined_party(self, peer_id, local_player_id, new_party_id, slot_id, old_party_id)
 
-	local get_party = Managers.party:get_party(arg_52_3)
-	local var_52_1 = get_party.slots[arg_52_4]
+	local party = Managers.party:get_party(new_party_id)
+	local status = party.slots[slot_id]
 
-	if not var_52_1.is_bot then
+	if status.is_bot then
 		return
 	end
 
-	printf("[GAMEMODEVERSUS] player_joined_party: %s, %s, %s, is_bot: %s, game_mode_state: %s, has_party_selection_logic: %s", arg_52_1, arg_52_2, arg_52_3, var_52_1.is_bot, self._game_mode_state, self._versus_party_selection_logic)
+	printf("[GAMEMODEVERSUS] player_joined_party: %s, %s, %s, is_bot: %s, game_mode_state: %s, has_party_selection_logic: %s", peer_id, local_player_id, new_party_id, status.is_bot, self._game_mode_state, self._versus_party_selection_logic)
 
-	if arg_52_3 == 0 then
+	if new_party_id == 0 then
 		return
 	end
 
-	if not self._versus_party_selection_logic then
-		self._versus_party_selection_logic:player_joined_party(arg_52_1, arg_52_2, arg_52_3, arg_52_4)
-	elseif not self._is_server and not self._mechanism:profiles_reservable() then
-		self:_update_profile_in_party(arg_52_1, arg_52_2, arg_52_3)
+	if self._versus_party_selection_logic then
+		self._versus_party_selection_logic:player_joined_party(peer_id, local_player_id, new_party_id, slot_id)
+	elseif self._is_server and self._mechanism:profiles_reservable() then
+		self:_update_profile_in_party(peer_id, local_player_id, new_party_id)
 	end
 
-	local name = Managers.state.side.side_by_party[get_party]:name()
+	local side = Managers.state.side.side_by_party[party]
+	local side_name = side:name()
 
-	if not self._is_server and name ~= "dark_pact" or not self:is_in_round_state() then
-		local get_spawn_time = self._versus_spawning:get_spawn_time(get_party)
+	if self._is_server and side_name == "dark_pact" and self:is_in_round_state() then
+		local spawn_time = self._versus_spawning:get_spawn_time(party)
 
-		self._versus_spawning:setup_data(arg_52_1, arg_52_2)
-		self._versus_spawning:set_spawn_state(arg_52_1, arg_52_2, "w8_for_profile", 0, get_spawn_time, true)
-		Managers.state.entity:system("versus_horde_ability_system"):server_register_peer(arg_52_1)
+		self._versus_spawning:setup_data(peer_id, local_player_id)
+		self._versus_spawning:set_spawn_state(peer_id, local_player_id, "w8_for_profile", 0, spawn_time, true)
+
+		local horde_ability_system = Managers.state.entity:system("versus_horde_ability_system")
+
+		horde_ability_system:server_register_peer(peer_id)
 	end
 
-	local player = var_52_1.player
+	local player = status.player
 
-	if not player and not player.local_player then
-		if name == "spectators" then
-			local system = Managers.state.entity:system("camera_system")
-			local spectator = PROFILES_BY_NAME.spectator
+	if player and player.local_player then
+		if side_name == "spectators" then
+			local camera_system = Managers.state.entity:system("camera_system")
+			local profile = PROFILES_BY_NAME.spectator
 
-			system:initialize_camera_states(player, spectator.index, 1)
+			camera_system:initialize_camera_states(player, profile.index, 1)
 			CharacterStateHelper.change_camera_state(player, "observer")
-		elseif name ~= "dark_pact" or not self:is_in_round_state() then
+		elseif side_name == "dark_pact" and self:is_in_round_state() then
 			CharacterStateHelper.change_camera_state(player, "observer", {
 				input_service_name = "dark_pact_selection"
 			})
 		end
 
-		if Managers.mechanism:get_persistent_profile_index_reservation(arg_52_1) ~= 0 then
+		local reserved_profile = Managers.mechanism:get_persistent_profile_index_reservation(peer_id)
+
+		if reserved_profile ~= 0 then
 			self:update_local_hero_cosmetics()
 		end
 	end
 end
 
-GameModeVersus.profile_changed = function (self, arg_53_1, arg_53_2, arg_53_3, arg_53_4, arg_53_5)
+GameModeVersus.profile_changed = function (self, peer_id, local_player_id, profile_index, career_index, is_bot)
 	-- function 53
-	if not (arg_53_5 or arg_53_1 ~= Network.peer_id()) then
+	if not is_bot and peer_id == Network.peer_id() then
 		self:update_local_hero_cosmetics()
 	end
 end
 
-GameModeVersus.server_validate_horde_timer = function (self, arg_54_1)
+GameModeVersus.server_validate_horde_timer = function (self, t)
 	-- function 54
-	local conflict = Managers.state.conflict
+	local cm = Managers.state.conflict
 
-	if not conflict then
+	if not cm then
 		return
 	end
 
-	local get_horde_timer, var_54_2 = conflict:get_horde_timer()
+	local cm_next_horde_time, horde_delayed = cm:get_horde_timer()
 
-	self._horde_delayed = var_54_2
+	self._horde_delayed = horde_delayed
 
-	if self._horde_timer ~= get_horde_timer or not var_54_2 then
-		self._horde_timer = get_horde_timer
+	if self._horde_timer ~= cm_next_horde_time or horde_delayed then
+		self._horde_timer = cm_next_horde_time
 
 		if not self._horde_timer then
 			return
 		end
 
-		self._time_until_next_horde = self._horde_timer - arg_54_1
+		self._time_until_next_horde = self._horde_timer - t
 
 		if self._time_until_next_horde > 0 then
-			Managers.state.network.network_transmit:send_rpc_clients("rpc_sync_next_horde_time", self._time_until_next_horde, var_54_2)
+			Managers.state.network.network_transmit:send_rpc_clients("rpc_sync_next_horde_time", self._time_until_next_horde, horde_delayed)
 		end
 	end
 end
 
-GameModeVersus.rpc_sync_next_horde_time = function (self, arg_55_1, arg_55_2, arg_55_3)
+GameModeVersus.rpc_sync_next_horde_time = function (self, channel_id, time_until_next_horde, horde_delayed)
 	-- function 55
-	self._time_until_next_horde = arg_55_2 + Managers.time:time("game")
-	self._horde_delayed = arg_55_3
+	local t = Managers.time:time("game")
+
+	self._time_until_next_horde = time_until_next_horde + t
+	self._horde_delayed = horde_delayed
 end
 
-GameModeVersus.display_debug_horde_timer_pactsworn = function (self, arg_56_1, arg_56_2)
+GameModeVersus.display_debug_horde_timer_pactsworn = function (self, t, dt)
 	-- function 56
 	if not self._settings.show_horde_timer_pactsworn then
 		return
 	end
 
-	local local_player = Managers.player:local_player()
+	local player = Managers.player:local_player()
+	local side = Managers.state.side:get_side_from_player_unique_id(player:unique_id())
 
-	if Managers.state.side:get_side_from_player_unique_id(local_player:unique_id())._name == "dark_pact" then
-		local _time_until_next_horde = self._time_until_next_horde
-		local num = RESOLUTION_LOOKUP.res_w * 0.6
-		local var_56_3 = Color(100, 255, 0)
-		local var_56_4 = Vector3(num, 0, 10)
-		local num_2 = 40
+	if side._name == "dark_pact" then
+		local horde_timer = self._time_until_next_horde
+		local screen_width = RESOLUTION_LOOKUP.res_w
+		local pos_x = screen_width * 0.6
+		local color = Color(100, 255, 0)
+		local text_pos = Vector3(pos_x, 0, 10)
+		local font_size = 40
 
-		if not (not _time_until_next_horde and not (_time_until_next_horde >= 0) or not (_time_until_next_horde <= 1000)) then
-			if not self._horde_delayed then
-				_time_until_next_horde = string.format("Next horde(DELAYED): %2d", _time_until_next_horde - arg_56_1)
+		if horde_timer and horde_timer >= 0 and horde_timer <= 1000 then
+			if self._horde_delayed then
+				horde_timer = string.format("Next horde(DELAYED): %2d", horde_timer - t)
 			else
-				_time_until_next_horde = string.format("Next horde: %2d", _time_until_next_horde - arg_56_1)
+				horde_timer = string.format("Next horde: %2d", horde_timer - t)
 			end
 
-			Debug.draw_text(_time_until_next_horde, var_56_4, num_2, var_56_3)
+			Debug.draw_text(horde_timer, text_pos, font_size, color)
 		else
-			local str = "Next horde: NIL"
+			horde_timer = "Next horde: NIL"
 
-			Debug.draw_text(str, var_56_4, num_2, var_56_3)
+			Debug.draw_text(horde_timer, text_pos, font_size, color)
 		end
 	end
 end
 
 GameModeVersus.players_left_safe_zone = function (self)
 	-- function 57
-	if not self._horde_surge_handler then
+	if self._horde_surge_handler then
 		self._horde_surge_handler:activate()
 	end
 end
 
-GameModeVersus.player_left_party = function (self, arg_58_1, arg_58_2, arg_58_3, arg_58_4, arg_58_5)
+GameModeVersus.player_left_party = function (self, peer_id, local_player_id, party_id, slot_id, old_slot_data)
 	-- function 58
-	if not self._versus_party_selection_logic then
-		self._versus_party_selection_logic:player_left_party(arg_58_1, arg_58_2, arg_58_3, arg_58_4, arg_58_5)
+	if self._versus_party_selection_logic then
+		self._versus_party_selection_logic:player_left_party(peer_id, local_player_id, party_id, slot_id, old_slot_data)
 	end
 end
 
-GameModeVersus.local_player_ready_to_start = function (self, arg_59_1)
+GameModeVersus.local_player_ready_to_start = function (self, player)
 	-- function 59
-	local _game_mode_state = self._game_mode_state
+	local state = self._game_mode_state
 
-	if not (self._is_server or self:is_in_round_state() or _game_mode_state == "character_selection_state") then
+	if not self._is_server and not self:is_in_round_state() and state ~= "character_selection_state" then
 		return false
 	end
 
-	if not (not self._is_server and self._initial_peers_ready) then
+	if self._is_server and not self._initial_peers_ready then
 		return false
 	end
 
 	return true
 end
 
-GameModeVersus.local_player_game_starts = function (self, arg_60_1, arg_60_2)
+GameModeVersus.local_player_game_starts = function (self, player, loading_context)
 	-- function 60
-	local network_id = arg_60_1:network_id()
-	local local_player_id = arg_60_1:local_player_id()
-	local get_party_from_player_id = Managers.party:get_party_from_player_id(network_id, local_player_id)
-	local var_60_3 = Managers.state.side.side_by_party[get_party_from_player_id]
+	local peer_id = player:network_id()
+	local local_player_id = player:local_player_id()
+	local party = Managers.party:get_party_from_player_id(peer_id, local_player_id)
+	local side = Managers.state.side.side_by_party[party]
 
-	self:_player_entered_party(get_party_from_player_id, var_60_3, arg_60_1)
+	self:_player_entered_party(party, side, player)
 end
 
 GameModeVersus.level_key = function (self)
@@ -1404,17 +1506,24 @@ GameModeVersus._start_objective = function (self)
 		return
 	end
 
-	if not self:_get_objectives_current_set() then
-		Managers.state.entity:system("objective_system"):server_activate_first_objective()
+	local objectives = self:_get_objectives_current_set()
+
+	if objectives then
+		local objective_system = Managers.state.entity:system("objective_system")
+
+		objective_system:server_activate_first_objective()
 	end
 end
 
 GameModeVersus._get_objective_list_name_current_set = function (self)
 	-- function 63
-	local objective_lists = self._mechanism:get_objective_settings().objective_lists
+	local settings = self._mechanism:get_objective_settings()
+	local objective_lists = settings.objective_lists
 
-	if not objective_lists then
-		return objective_lists[Managers.mechanism:game_mechanism():get_current_set()]
+	if objective_lists then
+		local current_set = Managers.mechanism:game_mechanism():get_current_set()
+
+		return objective_lists[current_set]
 	end
 end
 
@@ -1425,16 +1534,20 @@ end
 
 GameModeVersus.get_current_objective_data = function (self)
 	-- function 65
-	local system = Managers.state.entity:system("objective_system")
+	local objective_system = Managers.state.entity:system("objective_system")
+	local objectives = self:_get_objectives_current_set()
+	local current_objective_id = objective_system:current_objective_index()
 
-	return self:_get_objectives_current_set()[system:current_objective_index()]
+	return objectives[current_objective_id]
 end
 
 GameModeVersus.get_next_objective_data = function (self)
 	-- function 66
-	local system = Managers.state.entity:system("objective_system")
+	local objective_system = Managers.state.entity:system("objective_system")
+	local objectives = self:_get_objectives_current_set()
+	local next_objective_id = objective_system:current_objective_index() + 1
 
-	return self:_get_objectives_current_set()[system:current_objective_index() + 1]
+	return objectives[next_objective_id]
 end
 
 GameModeVersus.disable_player_spawning = function (self)
@@ -1442,37 +1555,42 @@ GameModeVersus.disable_player_spawning = function (self)
 	self._adventure_spawning:set_spawning_disabled(true)
 end
 
-GameModeVersus.enable_player_spawning = function (self, arg_68_1, arg_68_2)
+GameModeVersus.enable_player_spawning = function (self, safe_position, safe_rotation)
 	-- function 68
 	self._adventure_spawning:set_spawning_disabled(false)
-	self._adventure_spawning:force_update_spawn_positions(arg_68_1, arg_68_2)
+	self._adventure_spawning:force_update_spawn_positions(safe_position, safe_rotation)
 end
 
-GameModeVersus.teleport_despawned_players = function (self, arg_69_1)
+GameModeVersus.teleport_despawned_players = function (self, position)
 	-- function 69
-	self._adventure_spawning:teleport_despawned_players(arg_69_1)
+	self._adventure_spawning:teleport_despawned_players(position)
 end
 
-GameModeVersus.flow_callback_add_spawn_point = function (self, arg_70_1)
+GameModeVersus.flow_callback_add_spawn_point = function (self, unit)
 	-- function 70
-	self._adventure_spawning:add_spawn_point(arg_70_1)
+	self._adventure_spawning:add_spawn_point(unit)
 end
 
-GameModeVersus.flow_callback_add_game_mode_specific_spawn_point = function (self, arg_71_1, arg_71_2)
+GameModeVersus.flow_callback_add_game_mode_specific_spawn_point = function (self, unit, sides)
 	-- function 71
-	for i, v in ipairs(arg_71_2) do
-		if v == "heroes" then
-			self._adventure_spawning:add_spawn_point_to_spawn_group(arg_71_1)
-		elseif v == "dark_pact" then
-			self._versus_spawning:add_spawn_point(arg_71_1)
+	for _, side_name in ipairs(sides) do
+		if side_name == "heroes" then
+			self._adventure_spawning:add_spawn_point_to_spawn_group(unit)
+		elseif side_name == "dark_pact" then
+			self._versus_spawning:add_spawn_point(unit)
 		end
 	end
 end
 
-GameModeVersus.respawn_unit_spawned = function (self, arg_72_1)
+GameModeVersus.respawn_unit_spawned = function (self, unit)
 	-- function 72
-	if not (not self._hero_rescues_enabled and Unit.get_data(arg_72_1, "vs_set_id") ~= self._mechanism:get_current_set()) then
-		self._adventure_spawning:respawn_unit_spawned(arg_72_1)
+	if self._hero_rescues_enabled then
+		local set_id = Unit.get_data(unit, "vs_set_id")
+		local current_set = self._mechanism:get_current_set()
+
+		if set_id == current_set then
+			self._adventure_spawning:respawn_unit_spawned(unit)
+		end
 	end
 end
 
@@ -1481,60 +1599,65 @@ GameModeVersus.get_respawn_handler = function (self)
 	return self._adventure_spawning:get_respawn_handler()
 end
 
-GameModeVersus.respawn_gate_unit_spawned = function (self, arg_74_1)
+GameModeVersus.respawn_gate_unit_spawned = function (self, unit)
 	-- function 74
-	self._adventure_spawning:respawn_gate_unit_spawned(arg_74_1)
+	self._adventure_spawning:respawn_gate_unit_spawned(unit)
 end
 
-GameModeVersus.set_respawning_enabled = function (self, arg_75_1)
+GameModeVersus.set_respawning_enabled = function (self, enabled)
 	-- function 75
-	self._adventure_spawning:set_respawning_enabled(arg_75_1)
+	self._adventure_spawning:set_respawning_enabled(enabled)
 end
 
-GameModeVersus.force_respawn = function (self, arg_76_1, arg_76_2)
+GameModeVersus.force_respawn = function (self, peer_id, local_player_id)
 	-- function 76
-	local get_party_from_player_id = Managers.party:get_party_from_player_id(arg_76_1, arg_76_2)
-	local name = Managers.state.side.side_by_party[get_party_from_player_id]:name()
+	local party = Managers.party:get_party_from_player_id(peer_id, local_player_id)
+	local side = Managers.state.side.side_by_party[party]
+	local side_name = side:name()
 
-	if not self:is_in_round_state() then
-		if name == "heroes" then
-			self._adventure_spawning:force_respawn(arg_76_1, arg_76_2)
-		elseif name == "dark_pact" then
-			self._versus_spawning:force_respawn(arg_76_1, arg_76_2)
+	if self:is_in_round_state() then
+		if side_name == "heroes" then
+			self._adventure_spawning:force_respawn(peer_id, local_player_id)
+		elseif side_name == "dark_pact" then
+			self._versus_spawning:force_respawn(peer_id, local_player_id)
 		end
 	end
 end
 
-GameModeVersus._handle_bots = function (self, arg_77_1, arg_77_2)
+GameModeVersus._handle_bots = function (self, t, dt)
 	-- function 77
 	if not self._hero_bots_enabled then
 		return
 	end
 
-	if not (Managers.state.network == nil or not Managers.state.network.game_session_shutdown) then
+	local in_session = Managers.state.network ~= nil and not not not Managers.state.network.game_session_shutdown
+
+	if not in_session then
 		return
 	end
 
-	for k, v in pairs(self._bot_players) do
-		local get_party = Managers.party:get_party(k)
+	for party_id, bot_players in pairs(self._bot_players) do
+		local party = Managers.party:get_party(party_id)
 
-		if not self._settings.party_settings[get_party.name].using_bots then
-			self:_remove_partyless_bots(v)
+		if self._settings.party_settings[party.name].using_bots then
+			self:_remove_partyless_bots(bot_players)
 
-			local num_slots = get_party.num_slots
-			local num = num_slots - #v
+			local num_slots = party.num_slots
+			local num_bot_players = #bot_players
+			local delta = num_slots - num_bot_players
 
-			if num > 0 then
-				local num_2 = num_slots - get_party.num_used_slots
+			if delta > 0 then
+				local open_slots = num_slots - party.num_used_slots
+				local num_bots_to_add = math.min(delta, open_slots)
 
-				if math.min(num, num_2) > 0 then
-					self:_add_bot(k)
+				if num_bots_to_add > 0 then
+					self:_add_bot(party_id)
 
 					return
 				end
-			elseif num < 0 then
-				for k_2 = 1, math.abs(num) do
-					self:_remove_last_added_bot(k)
+			elseif delta < 0 then
+				for i = 1, math.abs(delta) do
+					self:_remove_last_added_bot(party_id)
 				end
 			end
 		end
@@ -1548,233 +1671,227 @@ end
 
 GameModeVersus.update_local_hero_cosmetics = function (self)
 	-- function 79
-	if not DEDICATED_SERVER then
+	if DEDICATED_SERVER then
 		return
 	end
 
 	local local_player = Managers.player:local_player()
-	local network_id = local_player:network_id()
+	local peer_id = local_player:network_id()
 	local local_player_id = local_player:local_player_id()
-	local get_persistent_profile_index_reservation, var_79_4 = Managers.mechanism:get_persistent_profile_index_reservation(network_id)
-	local var_79_5 = SPProfiles[get_persistent_profile_index_reservation].careers[var_79_4]
-	local name = var_79_5.name
-	local preview_wield_slot = var_79_5.preview_wield_slot
-	local var_79_8 = InventorySettings.slot_names_by_type[preview_wield_slot][1]
-	local get_loadout_item = BackendUtils.get_loadout_item(name, var_79_8)
-	local get_loadout_item_2 = BackendUtils.get_loadout_item(name, "slot_pose")
-	local flag = not get_loadout_item_2 and CosmeticUtils.get_weapon_pose_skin(get_loadout_item_2.key)
-	local get_loadout_item_3 = BackendUtils.get_loadout_item(name, "slot_skin")
-	local get_loadout_item_4 = BackendUtils.get_loadout_item(name, "slot_hat")
-	local get_loadout_item_5 = BackendUtils.get_loadout_item(name, "slot_frame")
-	local flag_2
+	local profile_index, career_index = Managers.mechanism:get_persistent_profile_index_reservation(peer_id)
+	local profile = SPProfiles[profile_index]
+	local careers = profile.careers
+	local career_settings = careers[career_index]
+	local career_name = career_settings.name
+	local preview_wield_slot_type = career_settings.preview_wield_slot
+	local preview_wield_slot = InventorySettings.slot_names_by_type[preview_wield_slot_type]
+	local weapon_slot = preview_wield_slot[1]
+	local weapon = BackendUtils.get_loadout_item(career_name, weapon_slot)
+	local weapon_pose = BackendUtils.get_loadout_item(career_name, "slot_pose")
+	local weapon_pose_skin = not not weapon_pose and not not CosmeticUtils.get_weapon_pose_skin(weapon_pose.key)
+	local hero_skin = BackendUtils.get_loadout_item(career_name, "slot_skin")
+	local hat = BackendUtils.get_loadout_item(career_name, "slot_hat")
+	local frame = BackendUtils.get_loadout_item(career_name, "slot_frame")
 
-	flag_2 = not get_loadout_item and get_loadout_item.data.name and CosmeticUtils.get_default_cosmetic_slot(var_79_5, var_79_8).item_name
+	weapon = (not weapon or not weapon.data.name) and not not CosmeticUtils.get_default_cosmetic_slot(career_settings, weapon_slot).item_name
+	weapon_pose = (not weapon_pose or not weapon_pose.data.name) and not not CosmeticUtils.get_default_cosmetic_slot(career_settings, "slot_pose").item_name
+	weapon_pose_skin = (not weapon_pose_skin or not weapon_pose_skin.skin) and not not "n/a"
+	hero_skin = (not hero_skin or not hero_skin.data.name) and not not CosmeticUtils.get_default_cosmetic_slot(career_settings, "slot_skin").item_name
+	hat = (not hat or not hat.data.name) and not not CosmeticUtils.get_default_cosmetic_slot(career_settings, "slot_hat").item_name
+	frame = (not frame or not frame.data.name) and not not CosmeticUtils.get_default_cosmetic_slot(career_settings, "slot_frame").item_name
 
-	local flag_3
+	local pactsworn_cosmetics = self:_pack_pactsworn_cosmetics()
+	local existing_weapon, existing_pose, exisiting_weapon_pose_skin, existing_hero_skin, existing_hat, existing_frame, exisiting_pactsworn_cosmetics = self._mechanism:get_hero_cosmetics(peer_id, local_player_id)
 
-	flag_3 = not get_loadout_item_2 and get_loadout_item_2.data.name and CosmeticUtils.get_default_cosmetic_slot(var_79_5, "slot_pose").item_name
-
-	local flag_4
-
-	flag_4 = not flag and flag.skin and "n/a"
-
-	local flag_5
-
-	flag_5 = not get_loadout_item_3 and get_loadout_item_3.data.name and CosmeticUtils.get_default_cosmetic_slot(var_79_5, "slot_skin").item_name
-
-	local flag_6
-
-	flag_6 = not get_loadout_item_4 and get_loadout_item_4.data.name and CosmeticUtils.get_default_cosmetic_slot(var_79_5, "slot_hat").item_name
-
-	local flag_7
-
-	flag_7 = not get_loadout_item_5 and get_loadout_item_5.data.name and CosmeticUtils.get_default_cosmetic_slot(var_79_5, "slot_frame").item_name
-
-	local _pack_pactsworn_cosmetics = self:_pack_pactsworn_cosmetics()
-	local get_hero_cosmetics, var_79_23, var_79_24, var_79_25, var_79_26, var_79_27, var_79_28 = self._mechanism:get_hero_cosmetics(network_id, local_player_id)
-
-	if flag_2 ~= get_hero_cosmetics or flag_3 ~= var_79_23 or var_79_24 ~= flag_4 or flag_5 ~= var_79_25 or flag_6 ~= var_79_26 or flag_7 ~= var_79_27 or not table.recursive_compare(var_79_28, _pack_pactsworn_cosmetics) then
-		self._mechanism:set_hero_cosmetics(network_id, local_player_id, var_79_8, flag_2, flag_3, flag_4, flag_5, flag_6, flag_7, _pack_pactsworn_cosmetics)
+	if weapon ~= existing_weapon or weapon_pose ~= existing_pose or exisiting_weapon_pose_skin ~= weapon_pose_skin or hero_skin ~= existing_hero_skin or hat ~= existing_hat or frame ~= existing_frame or table.recursive_compare(exisiting_pactsworn_cosmetics, pactsworn_cosmetics) then
+		self._mechanism:set_hero_cosmetics(peer_id, local_player_id, weapon_slot, weapon, weapon_pose, weapon_pose_skin, hero_skin, hat, frame, pactsworn_cosmetics)
 	end
 end
 
-GameModeVersus._pack_pactsworn_cosmetics = function (arg_80_0)
+GameModeVersus._pack_pactsworn_cosmetics = function (self)
 	-- function 80
-	local tbl = {}
+	local pactsworn_cosmetics = {}
 
 	for i = 1, #SPProfiles do
-		local var_80_1 = SPProfiles[i]
+		local profile = SPProfiles[i]
 
-		if var_80_1.affiliation == "dark_pact" then
-			local var_80_2 = var_80_1.careers[1]
-			local name = var_80_2.name
+		if profile.affiliation == "dark_pact" then
+			local careers = profile.careers
+			local career_index = 1
+			local career_settings = careers[career_index]
+			local career_name = career_settings.name
 
-			if name ~= "vs_undecided" then
-				local preview_wield_slot = var_80_2.preview_wield_slot
-				local var_80_5 = InventorySettings.slot_names_by_type[preview_wield_slot][1]
-				local get_loadout_item = BackendUtils.get_loadout_item(name, var_80_5)
-				local get_loadout_item_2 = BackendUtils.get_loadout_item(name, "slot_skin")
-				local flag
+			if career_name ~= "vs_undecided" then
+				local preview_wield_slot_type = career_settings.preview_wield_slot
+				local preview_wield_slot = InventorySettings.slot_names_by_type[preview_wield_slot_type]
+				local weapon_slot = preview_wield_slot[1]
+				local weapon = BackendUtils.get_loadout_item(career_name, weapon_slot)
+				local pactsworn_skin = BackendUtils.get_loadout_item(career_name, "slot_skin")
 
-				flag = not get_loadout_item_2 and get_loadout_item_2.data.name and CosmeticUtils.get_default_cosmetic_slot(var_80_2, "slot_skin").item_name
-
-				local flag_2
-
-				flag_2 = not get_loadout_item and get_loadout_item.data.name and var_80_2.base_weapon
-				tbl[name] = {
-					weapon_slot = var_80_5,
-					skin = flag,
-					weapon = flag_2
+				pactsworn_skin = (not pactsworn_skin or not pactsworn_skin.data.name) and not not CosmeticUtils.get_default_cosmetic_slot(career_settings, "slot_skin").item_name
+				weapon = (not weapon or not weapon.data.name) and not not career_settings.base_weapon
+				pactsworn_cosmetics[career_name] = {
+					weapon_slot = weapon_slot,
+					skin = pactsworn_skin,
+					weapon = weapon
 				}
 			end
 		end
 	end
 
-	return tbl
+	return pactsworn_cosmetics
 end
 
-GameModeVersus._get_first_available_bot_profile = function (self, arg_81_1)
+GameModeVersus._get_first_available_bot_profile = function (self, party_id)
 	-- function 81
-	local var_81_0 = self._available_profiles_by_party[arg_81_1]
-	local _profile_synchronizer = self._profile_synchronizer
-	local tbl = {}
+	local available_profiles = self._available_profiles_by_party[party_id]
+	local profile_synchronizer = self._profile_synchronizer
+	local free_profiles = {}
 
-	for i = 1, #var_81_0 do
-		local var_81_3 = var_81_0[i]
-		local var_81_4 = FindProfileIndex(var_81_3)
+	for i = 1, #available_profiles do
+		local name = available_profiles[i]
+		local profile_index = FindProfileIndex(name)
 
-		if not _profile_synchronizer:is_profile_in_use(var_81_4) then
-			tbl[#tbl + 1] = var_81_4
+		if not profile_synchronizer:is_profile_in_use(profile_index) then
+			free_profiles[#free_profiles + 1] = profile_index
 		end
 	end
 
-	table.shuffle(tbl)
+	table.shuffle(free_profiles)
 
-	for j = 1, #tbl do
-		local var_81_5 = tbl[j]
-		local var_81_6 = SPProfiles[var_81_5]
-		local display_name = var_81_6.display_name
-		local tbl_2 = {}
+	for i = 1, #free_profiles do
+		local profile_index = free_profiles[i]
+		local profile = SPProfiles[profile_index]
+		local display_name = profile.display_name
+		local career_indices = {}
 
-		for k = 1, #var_81_6.careers do
-			tbl_2[k] = k
+		for i = 1, #profile.careers do
+			career_indices[i] = i
 		end
 
-		table.shuffle(tbl_2)
+		table.shuffle(career_indices)
 
-		for l = 1, #tbl_2 do
-			local var_81_9 = tbl_2[l]
-			local var_81_10 = var_81_6.careers[var_81_9]
+		for j = 1, #career_indices do
+			local career_index = career_indices[j]
+			local career = profile.careers[career_index]
 
-			if not var_81_10 and not var_81_10:is_unlocked_function(display_name, math.huge) then
-				return var_81_5, var_81_9
+			if career and career:is_unlocked_function(display_name, math.huge) then
+				return profile_index, career_index
 			end
 		end
 	end
 
-	fassert(false, "Failed to find available bot profile profile for party " .. tostring(arg_81_1))
+	fassert(false, "Failed to find available bot profile profile for party " .. tostring(party_id))
 end
 
-GameModeVersus._add_bot = function (self, arg_82_1)
+GameModeVersus._add_bot = function (self, party_id)
 	-- function 82
-	local get_party = Managers.party:get_party(arg_82_1)
-	local find_first_empty_slot_id = Managers.party:find_first_empty_slot_id(get_party)
-	local get_bot_profile, var_82_3 = self._profile_synchronizer:get_bot_profile(arg_82_1, find_first_empty_slot_id)
-	local parse_hero_profile_availability = self._mechanism:parse_hero_profile_availability(get_bot_profile, arg_82_1, nil, nil)
-	local var_82_5 = self._bot_players[arg_82_1]
+	local party = Managers.party:get_party(party_id)
+	local slot_id = Managers.party:find_first_empty_slot_id(party)
+	local profile_index, career_index = self._profile_synchronizer:get_bot_profile(party_id, slot_id)
 
-	if not parse_hero_profile_availability then
-		for i = 1, #var_82_5 do
-			if parse_hero_profile_availability == var_82_5[i]:profile_index() then
-				parse_hero_profile_availability = nil
+	profile_index = self._mechanism:parse_hero_profile_availability(profile_index, party_id, nil, nil)
+
+	local bot_players = self._bot_players[party_id]
+
+	if profile_index then
+		for i = 1, #bot_players do
+			local bot_player = bot_players[i]
+
+			if profile_index == bot_player:profile_index() then
+				profile_index = nil
 
 				break
 			end
 		end
 	end
 
-	if not parse_hero_profile_availability then
-		parse_hero_profile_availability, var_82_3 = self:_get_first_available_bot_profile(arg_82_1)
+	if not profile_index then
+		profile_index, career_index = self:_get_first_available_bot_profile(party_id)
 	end
 
-	local _add_bot_to_party = self:_add_bot_to_party(arg_82_1, parse_hero_profile_availability, var_82_3, find_first_empty_slot_id)
+	local player = self:_add_bot_to_party(party_id, profile_index, career_index, slot_id)
 
-	var_82_5[#var_82_5 + 1] = _add_bot_to_party
+	bot_players[#bot_players + 1] = player
 end
 
-GameModeVersus._remove_bot = function (self, arg_83_1, arg_83_2)
+GameModeVersus._remove_bot = function (self, bot_player, remove_instant)
 	-- function 83
-	printf("_remove_bot: %s", tostring(arg_83_2))
+	printf("_remove_bot: %s", tostring(remove_instant))
 
-	for k, v in pairs(self._bot_players) do
-		local index_of = table.index_of(v, arg_83_1)
+	for party_id, bot_players in pairs(self._bot_players) do
+		local index = table.index_of(bot_players, bot_player)
 
-		if index_of >= 1 then
-			if not arg_83_2 then
-				self:_remove_bot_instant(arg_83_1)
+		if index >= 1 then
+			if remove_instant then
+				self:_remove_bot_instant(bot_player)
 			else
-				self:_remove_bot_update_safe(arg_83_1)
+				self:_remove_bot_update_safe(bot_player)
 			end
 
-			local count = #v
+			local last = #bot_players
 
-			v[index_of] = v[count]
-			v[count] = nil
+			bot_players[index] = bot_players[last]
+			bot_players[last] = nil
 
 			break
 		end
 	end
 end
 
-GameModeVersus._clear_bots = function (self, arg_84_1)
+GameModeVersus._clear_bots = function (self, remove_instant)
 	-- function 84
-	for k, v in pairs(self._bot_players) do
-		for k_2 = #v, 1, -1 do
-			self:_remove_bot(v[k_2], arg_84_1)
+	for key, bot_players in pairs(self._bot_players) do
+		for i = #bot_players, 1, -1 do
+			self:_remove_bot(bot_players[i], remove_instant)
 		end
 	end
 end
 
-GameModeVersus._remove_partyless_bots = function (self, arg_85_1)
+GameModeVersus._remove_partyless_bots = function (self, bot_players)
 	-- function 85
-	local party = Managers.party
+	local party_manager = Managers.party
+	local num_bots = #bot_players
 
-	for i = #arg_85_1, 1, -1 do
-		local var_85_1 = arg_85_1[i]
-		local network_id = var_85_1:network_id()
-		local local_player_id = var_85_1:local_player_id()
+	for i = num_bots, 1, -1 do
+		local bot_player = bot_players[i]
+		local peer_id = bot_player:network_id()
+		local local_player_id = bot_player:local_player_id()
+		local party = party_manager:get_party_from_player_id(peer_id, local_player_id)
 
-		if not party:get_party_from_player_id(network_id, local_player_id) then
-			self:_remove_bot(arg_85_1[i])
+		if not party then
+			self:_remove_bot(bot_players[i])
 		end
 	end
 end
 
-GameModeVersus._remove_last_added_bot = function (self, arg_86_1, arg_86_2)
+GameModeVersus._remove_last_added_bot = function (self, party_id, remove_instant)
 	-- function 86
 	printf("_remove_last_added_bot")
 
-	local var_86_0 = self._bot_players[arg_86_1]
-	local count = #var_86_0
+	local bot_players = self._bot_players[party_id]
+	local last = #bot_players
 
-	self:_remove_bot(var_86_0[count], arg_86_2)
+	self:_remove_bot(bot_players[last], remove_instant)
 end
 
-GameModeVersus._remove_bot_by_profile = function (self, arg_87_1, arg_87_2, arg_87_3)
+GameModeVersus._remove_bot_by_profile = function (self, party_id, profile_index, remove_instant)
 	-- function 87
-	printf("_remove_bot_by_profile: %s, from party: %s", arg_87_2, arg_87_1)
+	printf("_remove_bot_by_profile: %s, from party: %s", profile_index, party_id)
 
-	local var_87_0 = self._bot_players[arg_87_1]
+	local bot_players = self._bot_players[party_id]
 
-	for i, v in ipairs(var_87_0) do
-		if v:profile_index() == arg_87_2 then
-			printf("found bot by profile to remove: %s", arg_87_2)
+	for i, bot_player in ipairs(bot_players) do
+		local bot_profile_index = bot_player:profile_index()
 
-			return self:_remove_bot(var_87_0[i], arg_87_3)
+		if bot_profile_index == profile_index then
+			printf("found bot by profile to remove: %s", profile_index)
+
+			return self:_remove_bot(bot_players[i], remove_instant)
 		end
 	end
 
-	return self:_remove_last_added_bot(arg_87_1, arg_87_3)
+	return self:_remove_last_added_bot(party_id, remove_instant)
 end
 
 GameModeVersus.get_active_respawn_units = function (self)
@@ -1802,95 +1919,102 @@ GameModeVersus.in_training_mode = function (self)
 	return self._training_mode
 end
 
-GameModeVersus.get_num_occupied_profile_enemy_role = function (arg_93_0, arg_93_1, arg_93_2, arg_93_3)
+GameModeVersus.get_num_occupied_profile_enemy_role = function (self, profile_synchronizer, party, enemy_role)
 	-- function 93
-	local num = 0
-	local occupied_slots = arg_93_2.occupied_slots
+	local num_enemy_role_occupied = 0
+	local occupied_slots = party.occupied_slots
 
 	for i = 1, #occupied_slots do
-		local var_93_2 = occupied_slots[i]
-		local peer_id = var_93_2.peer_id
-		local local_player_id = var_93_2.local_player_id
-		local profile_by_peer = arg_93_1:profile_by_peer(peer_id, local_player_id)
+		local status = occupied_slots[i]
+		local peer_id = status.peer_id
+		local local_player_id = status.local_player_id
+		local profile_index = profile_synchronizer:profile_by_peer(peer_id, local_player_id)
 
-		if not (not profile_by_peer and SPProfiles[profile_by_peer].enemy_role ~= arg_93_3) then
-			num = num + 1
+		if profile_index then
+			local profile = SPProfiles[profile_index]
+
+			if profile.enemy_role == enemy_role then
+				num_enemy_role_occupied = num_enemy_role_occupied + 1
+			end
 		end
 	end
 
-	return num
+	return num_enemy_role_occupied
 end
 
-GameModeVersus.get_end_screen_config = function (self, arg_94_1, arg_94_2, arg_94_3, arg_94_4)
+GameModeVersus.get_end_screen_config = function (self, game_won, game_lost, player, reason)
 	-- function 94
-	local var_94_0
-	local var_94_1
-	local var_94_2
+	local screen_name, screen_config, params
+	local ended_early = reason == "party_one_won_early" or reason == "party_two_won_early" or not not Development.parameter("versus_quick_match_end")
 
-	if arg_94_4 == "party_one_won_early" or arg_94_4 == "party_two_won_early" or Development.parameter("versus_quick_match_end") or not self._mechanism:should_start_next_set() then
-		var_94_0 = "carousel_round_end"
-		var_94_1 = {
+	if not ended_early and self._mechanism:should_start_next_set() then
+		screen_name = "carousel_round_end"
+		screen_config = {
 			objectives_completed = self._objectives_completed,
 			total_main_objectives = self._total_main_objectives,
 			display_screen_delay = self._settings.end_of_match_view_display_screen_delay
 		}
 	else
-		var_94_0 = not arg_94_1 and "victory" and not arg_94_2 or "defeat" and "draw"
-		var_94_1 = {
+		screen_name = (not game_won or not "victory") and (not game_lost or not "defeat") and not not "draw"
+		screen_config = {
 			show_act_presentation = false,
 			display_screen_delay = self._settings.end_of_match_view_display_screen_delay
 		}
-		var_94_2 = {
-			reason = arg_94_4
+		params = {
+			reason = reason
 		}
 	end
 
-	return var_94_0 or "none", var_94_1 or {}, var_94_2
+	return not not screen_name or not not "none", not not screen_config or not not {}, params
 end
 
-GameModeVersus.get_end_of_round_screen_settings = function (arg_95_0)
+GameModeVersus.get_end_of_round_screen_settings = function (self)
 	-- function 95
 	return "carousel_round_end", {}, {}
 end
 
-GameModeVersus.ended = function (self, arg_96_1)
+GameModeVersus.ended = function (self, reason)
 	-- function 96
-	if not ((self._current_mechanism_state ~= "round_2" or not self._mechanism:is_last_set()) and self._network_server:are_all_peers_ingame()) then
-		self._network_server:disconnect_joining_peers()
+	if self._current_mechanism_state == "round_2" and self._mechanism:is_last_set() then
+		local all_peers_ingame = self._network_server:are_all_peers_ingame()
+
+		if not all_peers_ingame then
+			self._network_server:disconnect_joining_peers()
+		end
 	end
 end
 
-GameModeVersus.get_player_wounds = function (self, arg_97_1)
+GameModeVersus.get_player_wounds = function (self, profile)
 	-- function 97
-	local affiliation = arg_97_1.affiliation
-	local var_97_1 = self._settings.player_wounds[affiliation]
+	local affiliation = profile.affiliation
+	local player_wounds = self._settings.player_wounds[affiliation]
 
-	if not (not self._mechanism:custom_settings_enabled() and affiliation ~= "heroes") then
-		var_97_1 = self._mechanism:get_custom_game_setting("wounds_amount") + 1
+	if self._mechanism:custom_settings_enabled() and affiliation == "heroes" then
+		player_wounds = self._mechanism:get_custom_game_setting("wounds_amount") + 1
 	end
 
-	fassert(var_97_1, "Couldn't find player wounds for affiliation (%s)", affiliation)
+	fassert(player_wounds, "Couldn't find player wounds for affiliation (%s)", affiliation)
 
-	return var_97_1
+	return player_wounds
 end
 
-GameModeVersus.get_initial_inventory = function (arg_98_0, arg_98_1, arg_98_2, arg_98_3, arg_98_4, arg_98_5)
+GameModeVersus.get_initial_inventory = function (self, healthkit, potion, grenade, additional_items, profile)
 	-- function 98
-	local var_98_0
+	local initial_inventory
 
-	if arg_98_5.affiliation == "heroes" then
-		var_98_0 = {
+	if profile.affiliation == "heroes" then
+		initial_inventory = {
 			slot_packmaster_claw = "packmaster_claw_combo",
-			slot_healthkit = arg_98_1,
-			slot_potion = arg_98_2,
-			slot_grenade = arg_98_3,
-			additional_items = arg_98_4
+			slot_healthkit = healthkit,
+			slot_potion = potion,
+			slot_grenade = grenade,
+			additional_items = additional_items
 		}
 	else
-		var_98_0 = {}
+		initial_inventory = {}
 	end
 
-	return var_98_0
+	return initial_inventory
 end
 
 GameModeVersus.round_id = function (self)
@@ -1898,43 +2022,44 @@ GameModeVersus.round_id = function (self)
 	return self._round_id
 end
 
-GameModeVersus.allowed_interactions = function (arg_100_0, arg_100_1, arg_100_2)
+GameModeVersus.allowed_interactions = function (self, unit, interaction_type)
 	-- function 100
-	local name = Managers.state.side.side_by_unit[arg_100_1]:name()
-	local allowed_interactions = GameModeSettings.versus.side_settings[name].allowed_interactions
+	local side = Managers.state.side.side_by_unit[unit]
+	local side_name = side:name()
+	local allowed_interactions = GameModeSettings.versus.side_settings[side_name].allowed_interactions
 
 	if not allowed_interactions then
 		return true
 	end
 
-	if name == "dark_pact" then
-		local has_extension = ScriptUnit.has_extension(arg_100_1, "ghost_mode_system")
+	if side_name == "dark_pact" then
+		local ghost_mode = ScriptUnit.has_extension(unit, "ghost_mode_system")
 
-		if not has_extension and not has_extension:is_in_ghost_mode() then
-			return allowed_interactions.ghost_mode[arg_100_2] ~= nil
+		if ghost_mode and ghost_mode:is_in_ghost_mode() then
+			return allowed_interactions.ghost_mode[interaction_type] ~= nil
 		end
 
-		return allowed_interactions.normal[arg_100_2] ~= nil
+		return allowed_interactions.normal[interaction_type] ~= nil
 	else
-		return allowed_interactions[arg_100_2] ~= nil
+		return allowed_interactions[interaction_type] ~= nil
 	end
 end
 
-GameModeVersus._disable_side_object_sets = function (arg_101_0)
+GameModeVersus._disable_side_object_sets = function (self)
 	-- function 101
 	local sides = Managers.state.side:sides()
 
 	for i = 1, #sides do
-		local var_101_1 = sides[i]
-		local format = string.format("versus_%s", var_101_1:name())
+		local side = sides[i]
+		local object_set_name = string.format("versus_%s", side:name())
 
-		Managers.state.game_mode:set_object_set_enabled(format, false)
+		Managers.state.game_mode:set_object_set_enabled(object_set_name, false)
 	end
 end
 
-GameModeVersus.rpc_rejoin_parties = function (self, arg_102_1)
+GameModeVersus.rpc_rejoin_parties = function (self, channel_id)
 	-- function 102
-	if not self._is_server then
+	if self._is_server then
 		return
 	end
 
@@ -1943,133 +2068,160 @@ GameModeVersus.rpc_rejoin_parties = function (self, arg_102_1)
 	self._transition_state = "versus_migration"
 end
 
-GameModeVersus.event_end_screen_ui_complete = function (arg_103_0)
+GameModeVersus.event_end_screen_ui_complete = function (self)
 	-- function 103
 	return
 end
 
-GameModeVersus.play_sound = function (self, arg_104_1)
+GameModeVersus.play_sound = function (self, event)
 	-- function 104
 	local wwise_world = Managers.world:wwise_world(self._world)
 
-	WwiseWorld.trigger_event(wwise_world, arg_104_1)
+	WwiseWorld.trigger_event(wwise_world, event)
 end
 
-GameModeVersus._server_on_round_over = function (arg_105_0, arg_105_1)
+GameModeVersus._server_on_round_over = function (self, heroes_win)
 	-- function 105
-	local system = Managers.state.entity:system("audio_system")
-	local flag
+	local audio_system = Managers.state.entity:system("audio_system")
+	local str
 
-	flag = not arg_105_1 and "Play_versus_hud_round_end_heroes_win" and "Play_versus_hud_round_end_heroes_fail"
+	if heroes_win then
+		str = "Play_versus_hud_round_end_heroes_win"
 
-	system:play_2d_audio_event(flag)
+		goto label_105_0
+	end
+
+	str = "Play_versus_hud_round_end_heroes_fail"
+
+	local round_over_sfx = str
+
+	::label_105_0::
+
+	audio_system:play_2d_audio_event(round_over_sfx)
 end
 
-GameModeVersus.pick_pactsworn_spawn_category = function (self, arg_106_1, arg_106_2)
+GameModeVersus.pick_pactsworn_spawn_category = function (self, profile_synchronizer, party)
 	-- function 106
 	local dark_pact_profile_rules = self._settings.dark_pact_profile_rules
-	local tbl = {}
+	local available_roles = {}
 
-	for k, v in pairs(dark_pact_profile_rules) do
-		if v > self:get_num_occupied_profile_enemy_role(arg_106_1, arg_106_2, k) then
-			tbl[#tbl + 1] = k
+	for role, max in pairs(dark_pact_profile_rules) do
+		local cur = self:get_num_occupied_profile_enemy_role(profile_synchronizer, party, role)
+
+		if cur < max then
+			available_roles[#available_roles + 1] = role
 		end
 	end
 
-	assert(#tbl ~= 0, "unable to pick pactsworn spawn category, no categories available")
+	assert(#available_roles ~= 0, "unable to pick pactsworn spawn category, no categories available")
 
-	return tbl[Math.random(1, #tbl)]
+	return available_roles[Math.random(1, #available_roles)]
 end
 
-GameModeVersus._round_start_telemetry = function (arg_107_0)
+GameModeVersus._round_start_telemetry = function (self)
 	-- function 107
-	local game_mechanism = Managers.mechanism:game_mechanism()
-	local local_player = Managers.player:local_player()
-	local player_unit = local_player.player_unit
-	local total_rounds_started = game_mechanism:total_rounds_started()
-	local match_id = game_mechanism:match_id()
-	local telemetry_id = local_player:telemetry_id()
-	local var_107_6
-	local var_107_7
-	local var_107_8
+	local mechanism = Managers.mechanism:game_mechanism()
+	local player = Managers.player:local_player()
+	local local_player_unit = player.player_unit
+	local game_round = mechanism:total_rounds_started()
+	local match_id = mechanism:match_id()
+	local player_id = player:telemetry_id()
+	local slot_melee, slot_ranged, talents
 
-	if not (not Unit.alive(player_unit) and Managers.state.side:versus_is_dark_pact(player_unit)) then
-		local var_107_9 = Managers.player:player_loadouts()[local_player:unique_id()]
+	if Unit.alive(local_player_unit) and not Managers.state.side:versus_is_dark_pact(local_player_unit) then
+		local player_loadouts = Managers.player:player_loadouts()
+		local loadout = player_loadouts[player:unique_id()]
 
-		if not var_107_9 then
+		if not loadout then
 			return
 		end
 
-		var_107_6 = not var_107_9.slot_melee and var_107_9.slot_melee.key
-		var_107_7 = not var_107_9.slot_ranged and var_107_9.slot_ranged.key
+		slot_melee = not not loadout.slot_melee and not not loadout.slot_melee.key
+		slot_ranged = not not loadout.slot_ranged and not not loadout.slot_ranged.key
 
-		if not ScriptUnit.has_extension(player_unit, "talent_system") then
-			var_107_8 = ScriptUnit.extension(player_unit, "talent_system"):get_talent_names()
+		if ScriptUnit.has_extension(local_player_unit, "talent_system") then
+			talents = ScriptUnit.extension(local_player_unit, "talent_system"):get_talent_names()
 		end
 	end
 
-	Managers.telemetry_events:versus_round_started(telemetry_id, total_rounds_started, match_id, var_107_6, var_107_7, var_107_8)
+	Managers.telemetry_events:versus_round_started(player_id, game_round, match_id, slot_melee, slot_ranged, talents)
 end
 
 GameModeVersus._custom_settings_telemetry = function (self)
 	-- function 108
-	local get_telemetry_data, var_108_1, var_108_2 = self._mechanism:get_custom_game_settings_handler():get_telemetry_data()
-	local telemetry_id = Managers.player:local_player():telemetry_id()
+	local custom_settings_handler = self._mechanism:get_custom_game_settings_handler()
+	local settings_hash_map, is_default_settings, modified_settings = custom_settings_handler:get_telemetry_data()
+	local player = Managers.player:local_player()
+	local player_id = player:telemetry_id()
 	local match_id = self._mechanism:match_id()
 
-	Managers.telemetry_events:versus_custom_game_settings(telemetry_id, match_id, get_telemetry_data, var_108_1, var_108_2)
+	Managers.telemetry_events:versus_custom_game_settings(player_id, match_id, settings_hash_map, is_default_settings, modified_settings)
 end
 
 GameModeVersus._round_end_telemetry = function (self)
 	-- function 109
-	local game_mechanism = Managers.mechanism:game_mechanism()
-	local party_id = Managers.state.side:get_side_from_name("heroes").party.party_id
-	local total_rounds_started = game_mechanism:total_rounds_started()
-	local match_id = game_mechanism:match_id()
-	local get_current_score = self._win_conditions:get_current_score(party_id)
+	local mechanism = Managers.mechanism:game_mechanism()
+	local heroes_party_id = Managers.state.side:get_side_from_name("heroes").party.party_id
+	local game_round = mechanism:total_rounds_started()
+	local match_id = mechanism:match_id()
+	local score = self._win_conditions:get_current_score(heroes_party_id)
 
-	Managers.telemetry_events:versus_round_ended(get_current_score, total_rounds_started, match_id)
+	Managers.telemetry_events:versus_round_ended(score, game_round, match_id)
 end
 
-GameModeVersus._match_end_telemetry = function (self, arg_110_1)
+GameModeVersus._match_end_telemetry = function (self, results)
 	-- function 110
-	local var_110_0
-	local var_110_1
+	local is_draw, winning_party
 	local match_id = self._mechanism:match_id()
-	local flag
+	local num
 
-	flag = (arg_110_1 == "party_one_won" or arg_110_1 == "party_one_won_early" or 1 or arg_110_1 == "party_two_won" or arg_110_1 == "party_two_won_early") and 2
-
-	local tbl = {}
-
-	if not flag then
-		local occupied_slots = Managers.party:get_party(flag).occupied_slots
-
-		for i = 1, #occupied_slots do
-			local peer_id = occupied_slots[i].peer_id
-
-			tbl[i] = not peer_id and self._mechanism:get_peer_backend_id(peer_id)
-		end
+	if results == "party_one_won" or results == "party_one_won_early" then
+		num = 1
+	elseif results == "party_two_won" or results == "party_two_won_early" then
+		num = 2
 	else
-		var_110_0 = true
+		num = false
 	end
 
-	Managers.telemetry_events:versus_match_ended(match_id, var_110_0, tbl)
+	goto label_110_0
+
+	num = true
+
+	local winning_party_id = num
+
+	::label_110_0::
+
+	local winning_party = {}
+
+	if winning_party_id then
+		local slots = Managers.party:get_party(winning_party_id).occupied_slots
+
+		for i = 1, #slots do
+			local peer_id = slots[i].peer_id
+			local backend_id = not not peer_id and not not self._mechanism:get_peer_backend_id(peer_id)
+
+			winning_party[i] = backend_id
+		end
+	else
+		is_draw = true
+	end
+
+	Managers.telemetry_events:versus_match_ended(match_id, is_draw, winning_party)
 end
 
-GameModeVersus.activated_ability_telemetry = function (arg_111_0, arg_111_1, arg_111_2)
+GameModeVersus.activated_ability_telemetry = function (self, ability_name, player)
 	-- function 111
-	local game_mechanism = Managers.mechanism:game_mechanism()
-	local total_rounds_started = game_mechanism:total_rounds_started()
-	local match_id = game_mechanism:match_id()
-	local telemetry_id = arg_111_2:telemetry_id()
+	local mechanism = Managers.mechanism:game_mechanism()
+	local game_round = mechanism:total_rounds_started()
+	local match_id = mechanism:match_id()
+	local player_id = player:telemetry_id()
 
-	Managers.telemetry_events:versus_activated_ability(match_id, total_rounds_started, telemetry_id, arg_111_1)
+	Managers.telemetry_events:versus_activated_ability(match_id, game_round, player_id, ability_name)
 end
 
 GameModeVersus.menu_access_allowed_in_state = function (self)
 	-- function 112
-	if not self:is_in_round_state() then
+	if self:is_in_round_state() then
 		return true
 	end
 
@@ -2081,7 +2233,7 @@ GameModeVersus.request_selectable_dark_pact_careers = function (self)
 	self._network_transmit:send_rpc_server("rpc_selectable_careers_request")
 end
 
-local tbl_3 = {
+local pre_match_states = {
 	waiting_for_players_to_join = true,
 	character_selection_state = true,
 	initial_state = true
@@ -2089,17 +2241,17 @@ local tbl_3 = {
 
 GameModeVersus.is_in_pre_match_state = function (self)
 	-- function 114
-	return tbl_3[self._game_mode_state]
+	return pre_match_states[self._game_mode_state]
 end
 
-local tbl_4 = {
+local round_states = {
 	pre_start_round_state = true,
 	match_running_state = true
 }
 
 GameModeVersus.is_in_round_state = function (self)
 	-- function 115
-	return tbl_4[self._game_mode_state]
+	return round_states[self._game_mode_state]
 end
 
 GameModeVersus.match_is_running = function (self)
@@ -2117,35 +2269,39 @@ GameModeVersus.game_mode_state = function (self)
 	return self._game_mode_state
 end
 
-GameModeVersus.rpc_selectable_careers_request = function (self, arg_119_1)
+GameModeVersus.rpc_selectable_careers_request = function (self, channel_id)
 	-- function 119
 	assert(self._is_server, "[GameModeVersus] 'rpc_selectable_careers_request' may only be received by the server")
 
-	local var_119_0 = CHANNEL_TO_PEER_ID[arg_119_1]
+	local peer_id = CHANNEL_TO_PEER_ID[channel_id]
 
-	if not var_119_0 then
+	if not peer_id then
 		return
 	end
 
-	local request_careers, var_119_2 = self._dark_pact_career_delegator:request_careers(var_119_0)
-	local var_119_3 = NetworkLookup.versus_dark_pact_profile_rules[var_119_2]
+	local profiles, enemy_role = self._dark_pact_career_delegator:request_careers(peer_id)
+	local enemy_role_id = NetworkLookup.versus_dark_pact_profile_rules[enemy_role]
 
-	for i = 1, #request_careers do
-		request_careers[i] = PROFILES_BY_NAME[request_careers[i]].index
+	for i = 1, #profiles do
+		local profile_id = PROFILES_BY_NAME[profiles[i]].index
+
+		profiles[i] = profile_id
 	end
 
-	self._network_transmit:send_rpc("rpc_selectable_careers_response", var_119_0, var_119_3, request_careers)
+	self._network_transmit:send_rpc("rpc_selectable_careers_response", peer_id, enemy_role_id, profiles)
 end
 
-GameModeVersus.rpc_selectable_careers_response = function (arg_120_0, arg_120_1, arg_120_2, arg_120_3)
+GameModeVersus.rpc_selectable_careers_response = function (self, channel_id, enemy_role_id, profile_ids)
 	-- function 120
-	local var_120_0 = NetworkLookup.versus_dark_pact_profile_rules[arg_120_2]
+	local enemy_role = NetworkLookup.versus_dark_pact_profile_rules[enemy_role_id]
 
-	for i = 1, #arg_120_3 do
-		arg_120_3[i] = SPProfiles[arg_120_3[i]].display_name
+	for i = 1, #profile_ids do
+		local profile = SPProfiles[profile_ids[i]]
+
+		profile_ids[i] = profile.display_name
 	end
 
-	Managers.state.event:trigger("versus_received_selectable_careers_response", var_120_0, arg_120_3)
+	Managers.state.event:trigger("versus_received_selectable_careers_response", enemy_role, profile_ids)
 end
 
 GameModeVersus.increment_num_picks_for_career = function (self)
@@ -2158,101 +2314,117 @@ GameModeVersus.decrement_num_picks_for_career = function (self)
 	self._dark_pact_career_delegator:decrement_num_picks_for_career()
 end
 
-GameModeVersus.set_playable_boss_can_be_picked = function (self, arg_123_1)
+GameModeVersus.set_playable_boss_can_be_picked = function (self, bool)
 	-- function 123
-	if not self._boss_has_been_played then
+	if self._boss_has_been_played then
 		return
 	end
 
-	if not self._is_server then
+	if self._is_server then
 		printf("[VS BOSS] trigger playable boss")
 
 		self._boss_has_been_played = true
 
-		self._dark_pact_career_delegator:set_playable_boss_can_be_picked(arg_123_1)
+		self._dark_pact_career_delegator:set_playable_boss_can_be_picked(bool)
 	else
 		printf("[VS BOSS] trigger playable boss")
-		self._network_transmit:send_rpc_server("rpc_set_playable_boss_can_be_picked", arg_123_1)
+		self._network_transmit:send_rpc_server("rpc_set_playable_boss_can_be_picked", bool)
 	end
 end
 
-GameModeVersus.rpc_set_playable_boss_can_be_picked = function (self, arg_124_1)
+GameModeVersus.rpc_set_playable_boss_can_be_picked = function (self, bool)
 	-- function 124
 	assert(self._is_server, "[Trying to set the boss to be pickable by client, it should only happen on server]")
 
 	self._boss_has_been_played = true
 
-	self._dark_pact_career_delegator:set_playable_boss_can_be_picked(arg_124_1)
+	self._dark_pact_career_delegator:set_playable_boss_can_be_picked(bool)
 end
 
-GameModeVersus._get_parading_screen_duration = function (arg_125_0)
+GameModeVersus._get_parading_screen_duration = function (self)
 	-- function 125
-	local num = 0
-	local setting = Managers.state.game_mode:setting("parading_times")
+	local duration = 0
+	local parading_times = Managers.state.game_mode:setting("parading_times")
 
-	for k, v in pairs(setting) do
-		num = num + v
+	for _, time in pairs(parading_times) do
+		duration = duration + time
 	end
 
-	return num
+	return duration
 end
 
-GameModeVersus.projectile_hit_character = function (arg_126_0, arg_126_1, arg_126_2, arg_126_3, arg_126_4, arg_126_5, arg_126_6, arg_126_7, arg_126_8)
+GameModeVersus.projectile_hit_character = function (self, attacker_player, source_attacker_unit, attacker_unit, hit_unit, hit_position, hit_breed, attack_direction, predicted_damage)
 	-- function 126
-	arg_126_3 = arg_126_2 or arg_126_3
+	attacker_unit = not not source_attacker_unit or not not attacker_unit
 
-	if not DamageUtils.is_player_unit(arg_126_3) then
-		if not Managers.state.side:is_enemy(arg_126_3, arg_126_4) then
+	if DamageUtils.is_player_unit(attacker_unit) then
+		local is_enemy = Managers.state.side:is_enemy(attacker_unit, hit_unit)
+
+		if not is_enemy then
 			return
 		end
 
-		arg_126_1 = arg_126_1 or Managers.player:owner(arg_126_3)
-		arg_126_6 = arg_126_6 or AiUtils.unit_breed(arg_126_4)
+		attacker_player = not not attacker_player or not not Managers.player:owner(attacker_unit)
+		hit_breed = not not hit_breed or not not AiUtils.unit_breed(hit_unit)
 
-		if not arg_126_6.is_player then
-			local flag = not arg_126_1.local_player
+		if hit_breed.is_player then
+			local husk = not attacker_player.local_player
 
-			DamageUtils.add_hit_reaction(arg_126_4, arg_126_6, flag, arg_126_7, false)
+			DamageUtils.add_hit_reaction(hit_unit, hit_breed, husk, attack_direction, false)
 		end
 
-		if not Managers.state.side:versus_is_dark_pact(arg_126_3) then
-			local system = Managers.state.entity:system("audio_system")
-			local local_player = arg_126_1.local_player
+		local attacker_is_dark_pact = Managers.state.side:versus_is_dark_pact(attacker_unit)
 
-			arg_126_8 = arg_126_8 or 0
+		if attacker_is_dark_pact then
+			local audio_system = Managers.state.entity:system("audio_system")
+			local is_local_player = attacker_player.local_player
 
-			system:vs_play_pactsworn_hit_enemy(arg_126_5, local_player, arg_126_1, arg_126_8, Managers.time:time("game"))
+			predicted_damage = not not predicted_damage or not not 0
+
+			audio_system:vs_play_pactsworn_hit_enemy(hit_position, is_local_player, attacker_player, predicted_damage, Managers.time:time("game"))
 		end
 	end
 end
 
-GameModeVersus._trigger_early_win_vo = function (arg_127_0, arg_127_1)
+GameModeVersus._trigger_early_win_vo = function (self, winning_party_id)
 	-- function 127
-	local get_party = Managers.party:get_party(arg_127_1)
-	local var_127_1 = Managers.state.side.side_by_party[get_party]
-	local flag
+	local party = Managers.party:get_party(winning_party_id)
+	local side = Managers.state.side.side_by_party[party]
+	local num
 
-	flag = arg_127_1 ~= 1 or not 2 or 1
+	if winning_party_id == 1 then
+		num = 2
 
-	local get_party_2 = Managers.party:get_party(flag)
-	local var_127_4 = Managers.state.side.side_by_party[get_party_2]
-	local system = Managers.state.entity:system("dialogue_system")
+		goto label_127_0
+	end
 
-	system:trigger_mission_giver_event("vs_mg_early_win", nil, var_127_1:name())
-	system:trigger_mission_giver_event("vs_mg_early_loss", nil, var_127_4:name())
+	num = 1
+
+	local losing_party_id = num
+
+	::label_127_0::
+
+	local losing_party = Managers.party:get_party(losing_party_id)
+	local losing_side = Managers.state.side.side_by_party[losing_party]
+	local dialogue_system = Managers.state.entity:system("dialogue_system")
+
+	dialogue_system:trigger_mission_giver_event("vs_mg_early_win", nil, side:name())
+	dialogue_system:trigger_mission_giver_event("vs_mg_early_loss", nil, losing_side:name())
 end
 
-GameModeVersus._trigger_draw_vo = function (arg_128_0)
+GameModeVersus._trigger_draw_vo = function (self)
 	-- function 128
-	Managers.state.entity:system("dialogue_system"):queue_mission_giver_event("vs_mg_match_draw")
+	local dialogue_system = Managers.state.entity:system("dialogue_system")
+
+	dialogue_system:queue_mission_giver_event("vs_mg_match_draw")
 end
 
-local num_2 = 70
-local num_3 = 5
-local tbl_5 = {}
-local tbl_6 = {}
+local hero_rush_min_dist = 70
+local hero_rush_grace_delay = 5
+local hero_rush_unit_scratch = {}
+local hero_rush_distance_scratch = {}
 
-GameModeVersus._update_hero_rushing = function (self, arg_129_1)
+GameModeVersus._update_hero_rushing = function (self, t)
 	-- function 129
 	if not self._is_server then
 		return
@@ -2260,54 +2432,76 @@ GameModeVersus._update_hero_rushing = function (self, arg_129_1)
 
 	local _last_played_hero_rushed_t = self._last_played_hero_rushed_t
 
-	_last_played_hero_rushed_t = _last_played_hero_rushed_t or 0
+	if not _last_played_hero_rushed_t then
+		-- Nothing
+	end
 
-	if arg_129_1 - _last_played_hero_rushed_t < 60 then
+	_last_played_hero_rushed_t = 0
+
+	local last_played_hero_rushed_t = _last_played_hero_rushed_t
+
+	::label_129_0::
+
+	if t - last_played_hero_rushed_t < 60 then
 		return
 	end
 
-	table.clear(tbl_5)
-	table.clear(tbl_6)
+	table.clear(hero_rush_unit_scratch)
+	table.clear(hero_rush_distance_scratch)
 
-	local num = 0
-	local conflict = Managers.state.conflict
-	local PLAYER_UNITS = Managers.state.side:get_side_from_name("heroes").PLAYER_UNITS
+	local num_info = 0
+	local conflict_director = Managers.state.conflict
+	local hero_side = Managers.state.side:get_side_from_name("heroes")
+	local hero_units = hero_side.PLAYER_UNITS
 
-	for i = 1, #PLAYER_UNITS do
-		local var_129_4 = PLAYER_UNITS[i]
-		local get_main_path_player_data = conflict:get_main_path_player_data(var_129_4)
+	for i = 1, #hero_units do
+		local hero_unit = hero_units[i]
+		local info = conflict_director:get_main_path_player_data(hero_unit)
 
-		if not get_main_path_player_data and not get_main_path_player_data.travel_dist and not ScriptUnit.has_extension(var_129_4, "career_system") then
-			num = num + 1
-			tbl_5[num] = var_129_4
-			tbl_6[var_129_4] = get_main_path_player_data.travel_dist
+		if info and info.travel_dist and ScriptUnit.has_extension(hero_unit, "career_system") then
+			num_info = num_info + 1
+			hero_rush_unit_scratch[num_info] = hero_unit
+			hero_rush_distance_scratch[hero_unit] = info.travel_dist
 		end
 	end
 
-	if num > 1 then
-		table.sort(tbl_5, function (arg_130_0, arg_130_1)
+	if num_info > 1 then
+		table.sort(hero_rush_unit_scratch, function (unit_a, unit_b)
 			-- function 130
-			return tbl_6[arg_130_0] < tbl_6[arg_130_1]
+			return hero_rush_distance_scratch[unit_a] < hero_rush_distance_scratch[unit_b]
 		end)
 
-		local var_129_6 = tbl_5[num]
-		local var_129_7 = tbl_5[num - 1]
+		local ahead_unit, behind_unit = hero_rush_unit_scratch[num_info], hero_rush_unit_scratch[num_info - 1]
+		local ahead_dist = hero_rush_distance_scratch[ahead_unit]
+		local behind_dist = hero_rush_distance_scratch[behind_unit]
 
-		if tbl_6[var_129_6] - tbl_6[var_129_7] > num_2 then
+		if ahead_dist - behind_dist > hero_rush_min_dist then
 			local _hero_rush_grace_delay = self._hero_rush_grace_delay
 
-			_hero_rush_grace_delay = _hero_rush_grace_delay or arg_129_1 + num_3
-			self._hero_rush_grace_delay = _hero_rush_grace_delay
+			if not _hero_rush_grace_delay then
+				-- Nothing
+			end
 
-			if _hero_rush_grace_delay < arg_129_1 then
-				local profile_index = ScriptUnit.extension(var_129_6, "career_system"):profile_index()
-				local display_name = SPProfiles[profile_index].display_name
+			_hero_rush_grace_delay = t + hero_rush_grace_delay
 
-				Managers.state.entity:system("dialogue_system"):queue_mission_giver_event("vs_mg_hero_rushing", {
-					target_name = display_name
+			local grace_delay = _hero_rush_grace_delay
+
+			::label_129_1::
+
+			self._hero_rush_grace_delay = grace_delay
+
+			if grace_delay < t then
+				local career_extension = ScriptUnit.extension(ahead_unit, "career_system")
+				local profile_index = career_extension:profile_index()
+				local profile = SPProfiles[profile_index]
+				local profile_name = profile.display_name
+				local dialogue_system = Managers.state.entity:system("dialogue_system")
+
+				dialogue_system:queue_mission_giver_event("vs_mg_hero_rushing", {
+					target_name = profile_name
 				})
 
-				self._last_played_hero_rushed_t = arg_129_1
+				self._last_played_hero_rushed_t = t
 				self._hero_rush_grace_delay = nil
 			end
 		else
@@ -2316,43 +2510,42 @@ GameModeVersus._update_hero_rushing = function (self, arg_129_1)
 	end
 end
 
-GameModeVersus._register_disabled_as_eliminiations = function (arg_131_0)
+GameModeVersus._register_disabled_as_eliminiations = function (self)
 	-- function 131
 	local players = Managers.player:players()
 	local statistics_db = Managers.player:statistics_db()
 
-	for k, v in pairs(players) do
+	for _, player in pairs(players) do
 		repeat
-			local var_131_2
-			local var_131_3
-			local has_extension = ScriptUnit.has_extension(v.player_unit, "status_system")
+			local credit_elim_to, breed_name
+			local status_extension = ScriptUnit.has_extension(player.player_unit, "status_system")
 
-			if not has_extension then
-				if has_extension:is_grabbed_by_pack_master() or not has_extension:is_hanging_from_hook() then
-					var_131_2 = has_extension:query_pack_master_player()
-					var_131_3 = "vs_packmaster"
-				elseif not has_extension:is_pounced_down() then
-					var_131_2 = Managers.player:owner(has_extension:get_pouncer_unit())
-					var_131_3 = "vs_gutter_runner"
-				elseif not has_extension:is_disabled_by_pact_sworn() then
+			if status_extension then
+				if status_extension:is_grabbed_by_pack_master() or status_extension:is_hanging_from_hook() then
+					credit_elim_to = status_extension:query_pack_master_player()
+					breed_name = "vs_packmaster"
+				elseif status_extension:is_pounced_down() then
+					credit_elim_to = Managers.player:owner(status_extension:get_pouncer_unit())
+					breed_name = "vs_gutter_runner"
+				elseif status_extension:is_disabled_by_pact_sworn() then
 					-- Nothing
 				end
 			end
 
-			if not var_131_2 then
-				local stats_id = var_131_2:stats_id()
+			if credit_elim_to then
+				local stats_id = credit_elim_to:stats_id()
 
-				if not statistics_db:is_registered(stats_id) then
-					if not has_extension:is_knocked_down() then
-						statistics_db:increment_stat(stats_id, "kills_per_breed", var_131_3)
+				if statistics_db:is_registered(stats_id) then
+					if status_extension:is_knocked_down() then
+						statistics_db:increment_stat(stats_id, "kills_per_breed", breed_name)
 
 						break
 					end
 
-					local name = Unit.get_data(v.player_unit, "breed").name
+					local killed_breed_name = Unit.get_data(player.player_unit, "breed").name
 
-					statistics_db:increment_stat(stats_id, "vs_knockdowns_per_breed", name)
-					statistics_db:increment_stat(stats_id, "eliminations_as_breed", var_131_3)
+					statistics_db:increment_stat(stats_id, "vs_knockdowns_per_breed", killed_breed_name)
+					statistics_db:increment_stat(stats_id, "eliminations_as_breed", breed_name)
 				end
 			end
 		until true

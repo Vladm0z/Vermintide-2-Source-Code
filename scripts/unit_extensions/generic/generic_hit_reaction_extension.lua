@@ -12,30 +12,39 @@ local script_data = script_data
 
 GenericHitReactionExtension = class(GenericHitReactionExtension)
 
-local function fn(arg_1_0, arg_1_1)
+local function get_damage_direction(unit, direction_vector)
 	-- function 1
-	local has_node = Unit.has_node(arg_1_0, "j_spine1")
+	local has_node = Unit.has_node(unit, "j_spine1")
 
-	has_node = not has_node and Unit.node(arg_1_0, "j_spine1")
+	if has_node then
+		-- Nothing
+	end
 
-	if not has_node then
-		local world_rotation = Unit.world_rotation(arg_1_0, has_node)
+	has_node = Unit.node(unit, "j_spine1")
 
-		if not Quaternion.is_valid(world_rotation) then
+	local node = has_node
+
+	::label_1_0::
+
+	if node then
+		local unit_rotation = Unit.world_rotation(unit, node)
+
+		if not Quaternion.is_valid(unit_rotation) then
 			return "front"
 		end
 
-		local forward = Quaternion.forward(world_rotation)
+		local unit_direction = Quaternion.forward(unit_rotation)
 
-		if not Vector3.is_valid(forward) then
+		if not Vector3.is_valid(unit_direction) then
 			return "front"
 		end
 
-		forward.z = 0
+		unit_direction.z = 0
 
-		local var_1_3 = Vector3(arg_1_1.x, arg_1_1.y, 0)
+		local flat_hit_direction = Vector3(direction_vector.x, direction_vector.y, 0)
+		local dot = Vector3.dot(Vector3.normalize(flat_hit_direction), Vector3.normalize(unit_direction))
 
-		if Vector3.dot(Vector3.normalize(var_1_3), Vector3.normalize(forward)) < 0 then
+		if dot < 0 then
 			return "front"
 		end
 	end
@@ -43,55 +52,56 @@ local function fn(arg_1_0, arg_1_1)
 	return "back"
 end
 
-local function fn_2(arg_2_0, arg_2_1, arg_2_2)
+local function get_attacker_direction(attacker_unit, hit_direction, explosion_push)
 	-- function 2
-	local var_2_0
-	local var_2_1
+	local distal_direction, lateral_direction
 
-	if not (not Unit.alive(arg_2_0) and arg_2_2) then
-		if not ScriptUnit.has_extension(arg_2_0, "first_person_system") then
-			arg_2_0 = ScriptUnit.extension(arg_2_0, "first_person_system"):get_first_person_unit()
+	if Unit.alive(attacker_unit) and not explosion_push then
+		if ScriptUnit.has_extension(attacker_unit, "first_person_system") then
+			local first_person_extension = ScriptUnit.extension(attacker_unit, "first_person_system")
+
+			attacker_unit = first_person_extension:get_first_person_unit()
 		end
 
-		local world_rotation = Unit.world_rotation(arg_2_0, 0)
+		local attacker_rotation = Unit.world_rotation(attacker_unit, 0)
 
-		var_2_0 = Quaternion.forward(world_rotation)
-		var_2_0.z = 0
-		var_2_0 = Vector3.normalize(var_2_0)
-		var_2_1 = Quaternion.right(world_rotation)
-		var_2_1.z = 0
-		var_2_1 = Vector3.normalize(var_2_1)
+		distal_direction = Quaternion.forward(attacker_rotation)
+		distal_direction.z = 0
+		distal_direction = Vector3.normalize(distal_direction)
+		lateral_direction = Quaternion.right(attacker_rotation)
+		lateral_direction.z = 0
+		lateral_direction = Vector3.normalize(lateral_direction)
 	else
-		var_2_0 = arg_2_1
-		var_2_1 = Vector3.cross(Vector3(0, 0, 1), var_2_0)
+		distal_direction = hit_direction
+		lateral_direction = Vector3.cross(Vector3(0, 0, 1), distal_direction)
 	end
 
-	return var_2_0, var_2_1
+	return distal_direction, lateral_direction
 end
 
-local function fn_3(arg_3_0, arg_3_1)
+local function check_single_condition(control, test)
 	-- function 3
-	if type(arg_3_1) == "table" then
-		for i = 1, #arg_3_1 do
-			if arg_3_1[i] == arg_3_0 then
+	if type(test) == "table" then
+		for i = 1, #test do
+			if test[i] == control then
 				return true
 			end
 		end
 
 		return false
 	else
-		return arg_3_1 == arg_3_0
+		return test == control
 	end
 end
 
-local function fn_4(self, arg_4_1)
+local function check_conditions(control, test)
 	-- function 4
-	local conditions = arg_4_1.conditions
+	local test_conditions = test.conditions
 
-	for k, v in pairs(conditions) do
-		if not fn_3(self[k], v) then
+	for key, test_value in pairs(test_conditions) do
+		if not check_single_condition(control[key], test_value) then
 			return false
-		elseif not (self.death ~= true or conditions.death == true) then
+		elseif control.death == true and test_conditions.death ~= true then
 			return false
 		end
 	end
@@ -99,99 +109,99 @@ local function fn_4(self, arg_4_1)
 	return true
 end
 
-local function fn_5(self, arg_5_1, ...)
+local function map_function(event, func, ...)
 	-- function 5
-	if type(self) == "table" then
-		local count = #self
+	if type(event) == "table" then
+		local num_events = #event
 
-		for i = 1, count do
-			arg_5_1(self[i], ...)
+		for i = 1, num_events do
+			func(event[i], ...)
 		end
 	else
-		arg_5_1(self, ...)
+		func(event, ...)
 	end
 end
 
-local function fn_6(arg_6_0, arg_6_1, arg_6_2, arg_6_3)
+local function play_effect(hit_effect_name, world, hit_direction, position)
 	-- function 6
-	local look = Quaternion.look(arg_6_2)
+	local hit_rotation = Quaternion.look(hit_direction)
 
-	World.create_particles(arg_6_1, arg_6_0, arg_6_3, look)
+	World.create_particles(world, hit_effect_name, position, hit_rotation)
 end
 
-local function fn_7(arg_7_0, arg_7_1, arg_7_2, arg_7_3, arg_7_4, arg_7_5, arg_7_6, arg_7_7)
+local function play_sound(event_id, wwise_world, wwise_source_id, damage_type, enemy_type, weapon_type, hit_zone, is_husk)
 	-- function 7
-	fassert(SoundEvents[arg_7_0], "Could not find sound event %q in any template", arg_7_0)
+	fassert(SoundEvents[event_id], "Could not find sound event %q in any template", event_id)
 
-	local var_7_0 = SoundEvents[arg_7_0][tostring(arg_7_7)]
+	local event_name = SoundEvents[event_id][tostring(is_husk)]
 
-	WwiseWorld.trigger_event(arg_7_1, var_7_0, arg_7_2)
+	WwiseWorld.trigger_event(wwise_world, event_name, wwise_source_id)
 end
 
-local function fn_8(arg_8_0, arg_8_1)
+local function send_flow_event(event, unit)
 	-- function 8
-	if not (arg_8_0 ~= "dismember_torso" or Unit.has_animation_state_machine(arg_8_1)) then
+	if event == "dismember_torso" and not Unit.has_animation_state_machine(unit) then
 		return
 	end
 
-	Unit.flow_event(arg_8_1, arg_8_0)
+	Unit.flow_event(unit, event)
 end
 
-local is_player_unit = DamageUtils.is_player_unit
+local is_player = DamageUtils.is_player_unit
 
-GenericHitReactionExtension.init = function (self, arg_9_1, arg_9_2, arg_9_3)
+GenericHitReactionExtension.init = function (self, extension_init_context, unit, extension_init_data)
 	-- function 9
-	self.world = arg_9_1.world
-	self.is_husk = arg_9_3.is_husk
-	self.unit = arg_9_2
+	self.world = extension_init_context.world
+	self.is_husk = extension_init_data.is_husk
+	self.unit = unit
 	self.is_server = Managers.player.is_server
 
-	if arg_9_3.is_husk == nil then
+	if extension_init_data.is_husk == nil then
 		self.is_husk = not Managers.player.is_server
 	end
 
-	local hit_reaction_template = arg_9_3.hit_reaction_template
+	local hit_reaction_template = extension_init_data.hit_reaction_template
 
-	hit_reaction_template = hit_reaction_template or Unit.get_data(arg_9_2, "hit_reaction")
+	hit_reaction_template = not not hit_reaction_template or not not Unit.get_data(unit, "hit_reaction")
 	self.hit_reaction_template = hit_reaction_template
 
 	fassert(self.hit_reaction_template)
 
-	self.hit_effect_template = arg_9_3.hit_effect_template
+	self.hit_effect_template = extension_init_data.hit_effect_template
 end
 
-GenericHitReactionExtension.set_hit_effect_template_id = function (self, arg_10_1)
+GenericHitReactionExtension.set_hit_effect_template_id = function (self, template_id)
 	-- function 10
-	self.hit_effect_template = arg_10_1
+	self.hit_effect_template = template_id
 end
 
-GenericHitReactionExtension.extensions_ready = function (self, arg_11_1, arg_11_2)
+GenericHitReactionExtension.extensions_ready = function (self, world, unit)
 	-- function 11
-	self.health_extension = ScriptUnit.extension(arg_11_2, "health_system")
+	self.health_extension = ScriptUnit.extension(unit, "health_system")
 
 	fassert(self.health_extension)
 
-	self.death_extension = ScriptUnit.extension(arg_11_2, "death_system")
+	self.death_extension = ScriptUnit.extension(unit, "death_system")
 
-	local has_extension = ScriptUnit.has_extension(arg_11_2, "dialogue_system")
+	local has_extension = ScriptUnit.has_extension(unit, "dialogue_system")
 
-	has_extension = not has_extension and ScriptUnit.extension(arg_11_2, "dialogue_system")
+	has_extension = not not has_extension and not not ScriptUnit.extension(unit, "dialogue_system")
 	self.dialogue_extension = has_extension
 
-	local has_extension_2 = ScriptUnit.has_extension(arg_11_2, "locomotion_system")
+	local has_extension_2 = ScriptUnit.has_extension(unit, "locomotion_system")
 
-	has_extension_2 = not has_extension_2 and ScriptUnit.extension(arg_11_2, "locomotion_system")
+	has_extension_2 = not not has_extension_2 and not not ScriptUnit.extension(unit, "locomotion_system")
 	self.locomotion_extension = has_extension_2
 
-	local has_extension_3 = ScriptUnit.has_extension(arg_11_2, "ai_system")
+	local has_extension_3 = ScriptUnit.has_extension(unit, "ai_system")
 
-	has_extension_3 = not has_extension_3 and ScriptUnit.extension(arg_11_2, "ai_system")
+	has_extension_3 = not not has_extension_3 and not not ScriptUnit.extension(unit, "ai_system")
 	self.ai_extension = has_extension_3
 
 	local breed
 
-	if not BLACKBOARDS[arg_11_2] then
-		breed = BLACKBOARDS[arg_11_2].breed
+	if BLACKBOARDS[unit] then
+		breed = BLACKBOARDS[unit].breed
 
 		if not breed then
 			-- Nothing
@@ -205,7 +215,7 @@ GenericHitReactionExtension.extensions_ready = function (self, arg_11_1, arg_11_
 	self._breed = breed
 end
 
-GenericHitReactionExtension.destroy = function (arg_12_0)
+GenericHitReactionExtension.destroy = function (self)
 	-- function 12
 	return
 end
@@ -217,31 +227,31 @@ GenericHitReactionExtension.unfreeze = function (self)
 	self._delayed_push = nil
 end
 
-GenericHitReactionExtension.reset = function (arg_14_0)
+GenericHitReactionExtension.reset = function (self)
 	-- function 14
 	return
 end
 
-local STRIDE = DamageDataIndex.STRIDE
-local DAMAGE_AMOUNT = DamageDataIndex.DAMAGE_AMOUNT
-local DAMAGE_TYPE = DamageDataIndex.DAMAGE_TYPE
-local tbl = {}
-local tbl_2 = {}
-local tbl_3 = {}
+local DD_STRIDE = DamageDataIndex.STRIDE
+local DD_DAMAGE_AMOUNT = DamageDataIndex.DAMAGE_AMOUNT
+local DD_DAMAGE_TYPE = DamageDataIndex.DAMAGE_TYPE
+local biggest_hit = {}
+local conditions = {}
+local temp_effect_results = {}
 
-GenericHitReactionExtension.update = function (self, arg_15_1, arg_15_2, arg_15_3, arg_15_4, arg_15_5)
+GenericHitReactionExtension.update = function (self, unit, input, dt, context, t)
 	-- function 15
-	if not self._delayed_flow then
-		fn_5(self._delayed_flow, fn_8, arg_15_1)
+	if self._delayed_flow then
+		map_function(self._delayed_flow, send_flow_event, unit)
 
 		self._delayed_flow = nil
 
 		return
 	end
 
-	if not self._delayed_animation then
-		if not Unit.has_animation_state_machine(arg_15_1) then
-			Unit.animation_event(arg_15_1, self._delayed_animation)
+	if self._delayed_animation then
+		if Unit.has_animation_state_machine(unit) then
+			Unit.animation_event(unit, self._delayed_animation)
 		end
 
 		self._delayed_animation = nil
@@ -249,8 +259,10 @@ GenericHitReactionExtension.update = function (self, arg_15_1, arg_15_2, arg_15_
 		return
 	end
 
-	if not self._delayed_push then
-		if not self:_do_push(arg_15_1, arg_15_3) then
+	if self._delayed_push then
+		local has_pushed = self:_do_push(unit, dt)
+
+		if has_pushed then
 			self._delayed_push = nil
 		end
 
@@ -258,153 +270,157 @@ GenericHitReactionExtension.update = function (self, arg_15_1, arg_15_2, arg_15_
 	end
 
 	local health_extension = self.health_extension
-	local recent_damages, var_15_2 = health_extension:recent_damages()
+	local damages, num_damages = health_extension:recent_damages()
 
-	if var_15_2 == 0 then
+	if num_damages == 0 then
 		return
 	end
 
-	local num = -1000
-	local var_15_4
-	local var_15_5 = STRIDE
+	local best_damage_amount = -1000
+	local best_damage_index
+	local stride = DD_STRIDE
 
-	for i = 1, var_15_2, var_15_5 do
-		local var_15_6 = recent_damages[i + DAMAGE_AMOUNT - 1]
-		local var_15_7 = recent_damages[i + DAMAGE_TYPE - 1]
+	for i = 1, num_damages, stride do
+		local damage_amount = damages[i + DD_DAMAGE_AMOUNT - 1]
+		local damage_type = damages[i + DD_DAMAGE_TYPE - 1]
 
 		if self.hit_reaction_template == "player" then
-			local tbl_4 = {}
+			local hit = {}
 
-			pack_index[var_15_5](tbl_4, 1, unpack_index[var_15_5](recent_damages, i))
+			pack_index[stride](hit, 1, unpack_index[stride](damages, i))
 
-			local var_15_9 = tbl_4[DamageDataIndex.ATTACKER]
+			local attacker_unit = hit[DamageDataIndex.ATTACKER]
 
-			Managers.state.game_mode:player_hit(arg_15_1, var_15_9, tbl_4)
+			Managers.state.game_mode:player_hit(unit, attacker_unit, hit)
 		end
 
-		if not (var_15_7 == "heal" or not (num < var_15_6) or not (var_15_6 >= 0)) then
-			num = var_15_6
-			var_15_4 = i
+		if damage_type ~= "heal" and best_damage_amount < damage_amount and damage_amount >= 0 then
+			best_damage_amount = damage_amount
+			best_damage_index = i
 		end
 	end
 
-	if num < 0 then
+	if best_damage_amount < 0 then
 		return
 	end
 
-	pack_index[var_15_5](tbl, 1, unpack_index[var_15_5](recent_damages, var_15_4))
+	pack_index[stride](biggest_hit, 1, unpack_index[stride](damages, best_damage_index))
 
 	local is_alive = health_extension:is_alive()
-	local flag = not is_alive
+	local is_dead = not is_alive
 
-	if not is_alive then
-		HitReactions.get_reaction(self.hit_reaction_template, self.is_husk)(arg_15_1, arg_15_3, arg_15_4, arg_15_5, tbl)
+	if is_alive then
+		local hit_reaction = HitReactions.get_reaction(self.hit_reaction_template, self.is_husk)
+
+		hit_reaction(unit, dt, context, t, biggest_hit)
 	end
 
 	if not self.hit_effect_template then
 		return
 	end
 
-	local var_15_12 = tbl[DamageDataIndex.DAMAGE_TYPE]
-	local unbox = Vector3Aux.unbox(tbl[DamageDataIndex.POSITION])
-	local unbox_2 = Vector3Aux.unbox(tbl[DamageDataIndex.DIRECTION])
-	local var_15_15 = tbl[DamageDataIndex.HIT_ZONE]
-	local var_15_16 = tbl[DamageDataIndex.DAMAGE_AMOUNT]
-	local var_15_17 = tbl[DamageDataIndex.ATTACKER]
-	local var_15_18 = tbl[DamageDataIndex.CRITICAL_HIT]
-	local var_15_19 = is_player_unit(var_15_17)
-	local var_15_20 = tbl[DamageDataIndex.DAMAGE_SOURCE_NAME]
-	local var_15_21 = fn(arg_15_1, unbox_2)
-	local flag_2 = false
+	local damage_type = biggest_hit[DamageDataIndex.DAMAGE_TYPE]
+	local hit_position = Vector3Aux.unbox(biggest_hit[DamageDataIndex.POSITION])
+	local damage_direction = Vector3Aux.unbox(biggest_hit[DamageDataIndex.DIRECTION])
+	local hit_zone_name = biggest_hit[DamageDataIndex.HIT_ZONE]
+	local damage_amount = biggest_hit[DamageDataIndex.DAMAGE_AMOUNT]
+	local attacker_unit = biggest_hit[DamageDataIndex.ATTACKER]
+	local is_critical_strike = biggest_hit[DamageDataIndex.CRITICAL_HIT]
+	local attacker_is_player = is_player(attacker_unit)
+	local offending_weapon = biggest_hit[DamageDataIndex.DAMAGE_SOURCE_NAME]
+	local hit_direction = get_damage_direction(unit, damage_direction)
+	local is_husk = false
 
-	if not var_15_19 then
-		flag_2 = NetworkUnit.is_husk_unit(var_15_17)
+	if attacker_is_player then
+		is_husk = NetworkUnit.is_husk_unit(attacker_unit)
 	end
 
-	tbl_2.damage_type = var_15_12
-	tbl_2.hit_zone = var_15_15
-	tbl_2.hit_position = unbox
-	tbl_2.hit_direction = var_15_21
-	tbl_2.death = flag
-	tbl_2.weapon_type = var_15_20
-	tbl_2.is_husk = flag_2
-	tbl_2.damage = var_15_16 > 0
-	tbl_2.is_critical_strike = var_15_18
+	conditions.damage_type = damage_type
+	conditions.hit_zone = hit_zone_name
+	conditions.hit_position = hit_position
+	conditions.hit_direction = hit_direction
+	conditions.death = is_dead
+	conditions.weapon_type = offending_weapon
+	conditions.is_husk = is_husk
+	conditions.damage = damage_amount > 0
+	conditions.is_critical_strike = is_critical_strike
 
-	if not self.ai_extension then
-		tbl_2.action = self.ai_extension:current_action_name()
+	if self.ai_extension then
+		conditions.action = self.ai_extension:current_action_name()
 	end
 
-	local _resolve_effects, var_15_24 = self:_resolve_effects(tbl_2, tbl_3)
-	local var_15_25 = tbl_2
-	local has_extension = ScriptUnit.has_extension(var_15_17, "buff_system")
+	local hit_effects, num_effects = self:_resolve_effects(conditions, temp_effect_results)
+	local parameters = conditions
+	local buff_extension = ScriptUnit.has_extension(attacker_unit, "buff_system")
 
-	var_15_25.force_dismember = not has_extension and has_extension:has_buff_perk("bloody_mess")
+	parameters.force_dismember = not not buff_extension and not not buff_extension:has_buff_perk("bloody_mess")
 
-	for j = 1, var_15_24 do
-		self:_execute_effect(arg_15_1, _resolve_effects[j], tbl, var_15_25, arg_15_5, arg_15_3)
+	for i = 1, num_effects do
+		self:_execute_effect(unit, hit_effects[i], biggest_hit, parameters, t, dt)
 	end
 end
 
-GenericHitReactionExtension._resolve_effects = function (self, arg_16_1, arg_16_2)
+GenericHitReactionExtension._resolve_effects = function (self, effect_conditions, results)
 	-- function 16
-	local hit_effect_template = self.hit_effect_template
-	local var_16_1 = HitTemplates[hit_effect_template]
+	local template_name = self.hit_effect_template
+	local templates = HitTemplates[template_name]
 
-	fassert(var_16_1, "Hit effect template %q does not exist", hit_effect_template)
+	fassert(templates, "Hit effect template %q does not exist", template_name)
 
-	local num = 0
+	local num_results = 0
 
-	for i = 1, #var_16_1 do
-		local var_16_3 = var_16_1[i]
+	for i = 1, #templates do
+		local current_template = templates[i]
 
-		if not fn_4(arg_16_1, var_16_3) then
-			num = num + 1
-			arg_16_2[num] = var_16_3
+		if check_conditions(effect_conditions, current_template) then
+			num_results = num_results + 1
+			results[num_results] = current_template
 
 			break
 		end
 	end
 
-	return arg_16_2, num
+	return results, num_results
 end
 
-GenericHitReactionExtension._can_wall_nail = function (self, arg_17_1)
+GenericHitReactionExtension._can_wall_nail = function (self, effect_template)
 	-- function 17
-	if not arg_17_1.disable_wall_nail then
+	if effect_template.disable_wall_nail then
 		return false
 	end
 
-	if arg_17_1.do_dismember or not self._delayed_flow then
+	local do_dismember = effect_template.do_dismember
+
+	if do_dismember or self._delayed_flow then
 		return false
 	end
 
-	local flow_event = arg_17_1.flow_event
+	local flow_event = effect_template.flow_event
 
-	if not (not flow_event and type(flow_event) ~= "string") then
-		if not DismemberFlowEvents[flow_event] then
+	if flow_event and type(flow_event) == "string" then
+		if DismemberFlowEvents[flow_event] then
 			return false
 		end
-	elseif not (not flow_event and type(flow_event) ~= "table") then
-		local count = #flow_event
+	elseif flow_event and type(flow_event) == "table" then
+		local num_flow_events = #flow_event
 
-		for i = 1, count do
-			local var_17_2 = flow_event[i]
+		for i = 1, num_flow_events do
+			local flow_event_string = flow_event[i]
 
-			if not DismemberFlowEvents[var_17_2] then
+			if DismemberFlowEvents[flow_event_string] then
 				return false
 			end
 		end
-	elseif not flow_event then
+	elseif flow_event then
 		fassert(false, "unhandle flow_event type %s", type(flow_event))
 	end
 
 	return true
 end
 
-GenericHitReactionExtension.set_death_sound_event_id = function (self, arg_18_1)
+GenericHitReactionExtension.set_death_sound_event_id = function (self, playing_id)
 	-- function 18
-	self._death_sound_event_id = arg_18_1
+	self._death_sound_event_id = playing_id
 end
 
 GenericHitReactionExtension.death_sound_event_id = function (self)
@@ -412,64 +428,71 @@ GenericHitReactionExtension.death_sound_event_id = function (self)
 	return self._death_sound_event_id
 end
 
-local tbl_4 = {
+local allowed_diagonal_hit_zones = {
 	left_arm = true,
 	right_arm = true,
 	torso = true
 }
 
-GenericHitReactionExtension._check_for_diagonal_dismemberment = function (arg_20_0, arg_20_1, arg_20_2, arg_20_3, arg_20_4)
+GenericHitReactionExtension._check_for_diagonal_dismemberment = function (self, unit, actor_name, hit_direction, hit_zone)
 	-- function 20
-	if not Unit.actor(arg_20_1, arg_20_2) then
+	if not Unit.actor(unit, actor_name) then
 		return nil, false
 	end
 
-	local center_of_mass = Actor.center_of_mass(Unit.actor(arg_20_1, arg_20_2))
+	local impact_position = Actor.center_of_mass(Unit.actor(unit, actor_name))
 
-	if not Vector3.is_valid(center_of_mass) then
+	if not Vector3.is_valid(impact_position) then
 		return nil, false
 	end
 
-	local num = center_of_mass + arg_20_3 * 2
-	local num_2 = center_of_mass + Vector3(0, 0, -2)
-	local dot = Vector3.dot(Vector3.normalize(center_of_mass - num), Vector3.normalize(center_of_mass - num_2))
-	local flag = not (dot > 0.51) or dot < 0.7
-	local forward = Quaternion.forward(Unit.local_rotation(arg_20_1, 0))
-	local flat_angle = Vector3.flat_angle(forward, arg_20_3)
-	local var_20_7
-	local flag_2
+	local line_pos = impact_position + hit_direction * 2
+	local dot_pos = impact_position + Vector3(0, 0, -2)
+	local dot = Vector3.dot(Vector3.normalize(impact_position - line_pos), Vector3.normalize(impact_position - dot_pos))
+	local is_diagonal = dot > 0.51 and dot < 0.7
+	local hit_unit_dir = Quaternion.forward(Unit.local_rotation(unit, 0))
+	local angle = Vector3.flat_angle(hit_unit_dir, hit_direction)
+	local direction
 
-	flag_2 = (flat_angle < -math.pi * 0.75 or flat_angle > math.pi * 0.75 or nil or not (flat_angle < -math.pi * 0.25) or not "right" or not (flat_angle < math.pi * 0.25)) and (not nil or "left")
+	if angle < -math.pi * 0.75 or angle > math.pi * 0.75 then
+		direction = nil
+	elseif angle < -math.pi * 0.25 then
+		direction = "right"
+	elseif angle < math.pi * 0.25 then
+		direction = nil
+	else
+		direction = "left"
+	end
 
-	local var_20_9
-	local flag_3 = true
+	local new_dismember_event
+	local should_replace_old = true
 
-	if not flag and not flag_2 then
-		var_20_9 = "dismember_torso_" .. flag_2
+	if is_diagonal and direction then
+		new_dismember_event = "dismember_torso_" .. direction
 
-		if not (arg_20_4 == "torso" or not (math.random() > 0.5)) then
-			flag_3 = false
+		if hit_zone ~= "torso" and math.random() > 0.5 then
+			should_replace_old = false
 		end
 	end
 
-	return var_20_9, flag_3
+	return new_dismember_event, should_replace_old
 end
 
-local tbl_5 = {
+local restricted_regions = {
 	at = true,
 	de = true
 }
 
-GenericHitReactionExtension._is_dismembering_allowed = function (arg_21_0, arg_21_1)
+GenericHitReactionExtension._is_dismembering_allowed = function (self, parameters)
 	-- function 21
-	if not IS_CONSOLE then
-		if not (not arg_21_1.is_critical_strike and Managers.account:console_type_setting("allow_dismemberment")) then
+	if IS_CONSOLE then
+		if not parameters.is_critical_strike or not Managers.account:console_type_setting("allow_dismemberment") then
 			return false
 		end
 
-		local region = Managers.account:region()
+		local country_code = Managers.account:region()
 
-		if not tbl_5[region] then
+		if restricted_regions[country_code] then
 			return false
 		end
 	end
@@ -477,7 +500,7 @@ GenericHitReactionExtension._is_dismembering_allowed = function (arg_21_0, arg_2
 	return BloodSettings.dismemberment.enabled
 end
 
-local tbl_6 = {
+local status_effect_overrides = {
 	bw_necromancer = {
 		[StatusEffectNames.burning] = {
 			override = StatusEffectNames.burning_balefire,
@@ -517,371 +540,446 @@ local tbl_6 = {
 		}
 	}
 }
-local tbl_7 = {}
-local tbl_8 = {}
+local FLOW_EVENTS = {}
+local WWISE_PARAMETERS = {}
 
-GenericHitReactionExtension._execute_effect = function (self, arg_22_1, arg_22_2, arg_22_3, arg_22_4, arg_22_5, arg_22_6)
+GenericHitReactionExtension._execute_effect = function (self, unit, effect_template, effect_biggest_hit, parameters, t, dt)
 	-- function 22
 	local world = self.world
-	local get_data = Unit.get_data(arg_22_1, "breed")
-	local var_22_2 = arg_22_3[DamageDataIndex.ATTACKER]
-	local unbox = Vector3Aux.unbox(arg_22_3[DamageDataIndex.DIRECTION])
-	local var_22_4 = arg_22_3[DamageDataIndex.DAMAGE_TYPE]
-	local hit_zone = arg_22_4.hit_zone
+	local breed_data = Unit.get_data(unit, "breed")
+	local attacker_unit = effect_biggest_hit[DamageDataIndex.ATTACKER]
+	local hit_direction = Vector3Aux.unbox(effect_biggest_hit[DamageDataIndex.DIRECTION])
+	local damage_type = effect_biggest_hit[DamageDataIndex.DAMAGE_TYPE]
+	local hit_zone = parameters.hit_zone
 
-	if not get_data.hit_zones[hit_zone] then
+	if not breed_data.hit_zones[hit_zone] then
 		print("Error no hitzone in breed that matches hitzone:", hit_zone)
 
 		return
 	end
 
-	local hit_zones = get_data.hit_zones
+	local hit_zones = breed_data.hit_zones
 
-	hit_zones = not hit_zones and get_data.hit_zones[hit_zone].actors
-
-	local death_extension = self.death_extension
-	local var_22_8 = arg_22_3[DamageDataIndex.HIT_RAGDOLL_ACTOR_NAME]
-	local _can_wall_nail = self:_can_wall_nail(arg_22_2)
-	local flag = not death_extension and death_extension.death_has_started
-
-	if not arg_22_2.buff then
-		Managers.state.entity:system("buff_system"):add_buff(self.unit, arg_22_2.buff, var_22_2)
-	end
-
-	local timed_status = arg_22_2.timed_status
-
-	if not timed_status then
-		local has_extension = ScriptUnit.has_extension(var_22_2, "career_system")
-		local flag_2 = not has_extension and has_extension:career_name()
-		local var_22_14 = tbl_6[flag_2]
-
-		if not var_22_14 then
-			local var_22_15 = var_22_14[timed_status]
-
-			timed_status = not var_22_15 and not var_22_15.damage_types[var_22_4] and var_22_15.override and timed_status
-		end
-	end
-
-	if not timed_status then
-		Managers.state.status_effect:add_timed_status(arg_22_1, timed_status)
-	end
-
-	local flag_3 = false
-	local var_22_17 = tbl_7
-
-	table.clear(var_22_17)
-
-	local flow_event = arg_22_2.flow_event
-
-	if not flow_event then
-		if type(flow_event) == "table" then
-			for i = 1, #flow_event do
-				var_22_17[#var_22_17 + 1] = flow_event[i]
-			end
-		else
-			var_22_17[#var_22_17 + 1] = flow_event
-		end
-
-		flag_3 = true
-	end
-
-	if not self:_is_dismembering_allowed(arg_22_4) then
+	if hit_zones then
 		-- Nothing
 	end
 
+	hit_zones = breed_data.hit_zones[hit_zone].actors
+
+	local actors = hit_zones
+
 	::label_22_0::
 
-	local do_dismember = arg_22_2.do_dismember
+	local death_ext = self.death_extension
+	local hit_ragdoll_actor_name = effect_biggest_hit[DamageDataIndex.HIT_RAGDOLL_ACTOR_NAME]
+	local can_wall_nail = self:_can_wall_nail(effect_template)
+	local death_has_started = not not death_ext and not not death_ext.death_has_started
 
-	if not do_dismember then
-		do_dismember = arg_22_4.force_dismember
-		do_dismember = not do_dismember and arg_22_4.death
+	if effect_template.buff then
+		local buff_system = Managers.state.entity:system("buff_system")
+
+		buff_system:add_buff(self.unit, effect_template.buff, attacker_unit)
+	end
+
+	local timed_status = effect_template.timed_status
+
+	if timed_status then
+		local career_extension = ScriptUnit.has_extension(attacker_unit, "career_system")
+		local career_name = not not career_extension and not not career_extension:career_name()
+		local overrides_by_status = status_effect_overrides[career_name]
+
+		if overrides_by_status then
+			local overrides_by_damage_type = overrides_by_status[timed_status]
+
+			if overrides_by_damage_type and overrides_by_damage_type.damage_types[damage_type] and not overrides_by_damage_type.override then
+				-- Nothing
+			end
+		end
+	end
+
+	if timed_status then
+		Managers.state.status_effect:add_timed_status(unit, timed_status)
+	end
+
+	local has_flow_event = false
+	local flow_events = FLOW_EVENTS
+
+	table.clear(flow_events)
+
+	local hit_reaction_flow_event = effect_template.flow_event
+
+	if hit_reaction_flow_event then
+		if type(hit_reaction_flow_event) == "table" then
+			for i = 1, #hit_reaction_flow_event do
+				flow_events[#flow_events + 1] = hit_reaction_flow_event[i]
+			end
+		else
+			flow_events[#flow_events + 1] = hit_reaction_flow_event
+		end
+
+		has_flow_event = true
+	end
+
+	local is_dismember_allowed = self:_is_dismembering_allowed(parameters)
+
+	if is_dismember_allowed then
+		-- Nothing
 	end
 
 	::label_22_1::
 
-	if not (not do_dismember and not death_extension and death_extension:is_wall_nailed()) then
-		local var_22_20 = Dismemberments[get_data.name][hit_zone]
-		local var_22_21
-		local var_22_22
+	local do_dismember = effect_template.do_dismember
 
-		if not arg_22_2.do_diagonal_dismemberments and not tbl_4[hit_zone] then
-			var_22_21, var_22_22 = self:_check_for_diagonal_dismemberment(arg_22_1, hit_zones[1], unbox, hit_zone)
+	if not do_dismember then
+		-- Nothing
+	end
+
+	do_dismember = parameters.force_dismember
+
+	if do_dismember then
+		-- Nothing
+	end
+
+	do_dismember = parameters.death
+
+	local dismember = do_dismember
+
+	::label_22_2::
+
+	if dismember and (not death_ext or not death_ext:is_wall_nailed()) then
+		local event_table = Dismemberments[breed_data.name]
+		local dismember_flow_event = event_table[hit_zone]
+		local new_dismember_flow_event, should_replace_old
+
+		if effect_template.do_diagonal_dismemberments and allowed_diagonal_hit_zones[hit_zone] then
+			new_dismember_flow_event, should_replace_old = self:_check_for_diagonal_dismemberment(unit, actors[1], hit_direction, hit_zone)
 		end
 
-		if var_22_20 or not var_22_21 then
-			if not var_22_21 and not var_22_22 then
-				table.clear(var_22_17)
+		if dismember_flow_event or new_dismember_flow_event then
+			if new_dismember_flow_event and should_replace_old then
+				table.clear(flow_events)
 
-				var_22_17[#var_22_17 + 1] = var_22_21
+				flow_events[#flow_events + 1] = new_dismember_flow_event
 			else
-				var_22_17[#var_22_17 + 1] = var_22_20
-				var_22_17[#var_22_17 + 1] = var_22_21
+				flow_events[#flow_events + 1] = dismember_flow_event
+				flow_events[#flow_events + 1] = new_dismember_flow_event
 			end
 
-			flag_3 = true
+			has_flow_event = true
 		end
 	end
 
-	if not flag_3 then
-		if not arg_22_4.death and not death_extension then
-			if not flag and not table.contains(var_22_17, "dismember_torso") then
-				flag_3 = false
+	if has_flow_event then
+		if parameters.death and death_ext then
+			if death_has_started and table.contains(flow_events, "dismember_torso") then
+				has_flow_event = false
 			end
 
-			local alloc_table = FrameTable.alloc_table()
+			local temp_table = FrameTable.alloc_table()
 
-			for j = 1, #var_22_17 do
-				alloc_table[#alloc_table + 1] = var_22_17[j]
+			for i = 1, #flow_events do
+				temp_table[#temp_table + 1] = flow_events[i]
 			end
 
-			self._delayed_flow = alloc_table
-		elseif not flag then
-			flag_3 = false
+			self._delayed_flow = temp_table
+		elseif death_has_started then
+			has_flow_event = false
 		else
-			fn_5(var_22_17, fn_8, arg_22_1)
+			map_function(flow_events, send_flow_event, unit)
 		end
 	end
 
 	local locomotion_extension = self.locomotion_extension
 
-	locomotion_extension = not locomotion_extension and self.locomotion_extension._is_falling
+	if locomotion_extension then
+		-- Nothing
+	end
 
-	if not (not _can_wall_nail and not arg_22_4.death and var_22_8 == "n/a") then
+	locomotion_extension = self.locomotion_extension._is_falling
+
+	local is_falling = locomotion_extension
+
+	::label_22_3::
+
+	if can_wall_nail and parameters.death and hit_ragdoll_actor_name ~= "n/a" then
 		self._delayed_animation = "ragdoll"
-	elseif (self.force_ragdoll_on_death or not locomotion_extension or flag) and not arg_22_4.death then
+	elseif (self.force_ragdoll_on_death or is_falling) and not death_has_started and parameters.death then
 		self._delayed_animation = "ragdoll"
-	elseif not arg_22_2.animations and not Unit.has_animation_state_machine(arg_22_1) then
-		local var_22_25 = Vector3(unbox.x, unbox.y, 0)
-		local normalize = Vector3.normalize(var_22_25)
-		local animations = arg_22_2.animations
+	elseif effect_template.animations and Unit.has_animation_state_machine(unit) then
+		local hit_direction_flat = Vector3(hit_direction.x, hit_direction.y, 0)
+
+		hit_direction_flat = Vector3.normalize(hit_direction_flat)
+
+		local animations = effect_template.animations
 		local angles = animations.angles
 
-		if not angles then
-			local forward = Quaternion.forward(Unit.local_rotation(arg_22_1, 0))
-			local normalize_2 = Vector3.normalize(Vector3.flat(forward))
-			local flag_4 = false
-			local num = (math.atan2(normalize.y, normalize.x) - math.atan2(normalize_2.y, normalize_2.x)) % (math.pi * 2)
+		if angles then
+			local fwd = Quaternion.forward(Unit.local_rotation(unit, 0))
+			local flat_fwd = Vector3.normalize(Vector3.flat(fwd))
+			local found = false
+			local angle = (math.atan2(hit_direction_flat.y, hit_direction_flat.x) - math.atan2(flat_fwd.y, flat_fwd.x)) % (math.pi * 2)
 
-			for k = 1, #angles do
-				local var_22_33 = angles[k]
+			for i = 1, #angles do
+				local angle_data = angles[i]
 
-				if num < var_22_33.to then
-					animations = var_22_33.animations
-					flag_4 = true
+				if angle < angle_data.to then
+					animations = angle_data.animations
+					found = true
 
 					break
 				end
 			end
 
-			if not flag_4 then
+			if not found then
 				animations = angles[1].animations
 			end
 		end
 
-		local var_22_34 = animations[math.random(#animations)]
+		local random_animation = math.random(#animations)
+		local animation_event = animations[random_animation]
 
-		if not flag and not death_extension:second_hit_ragdoll_allowed() then
-			var_22_34 = "ragdoll"
-		elseif not flag then
-			var_22_34 = nil
+		if death_has_started and death_ext:second_hit_ragdoll_allowed() then
+			animation_event = "ragdoll"
+		elseif death_has_started then
+			animation_event = nil
 		end
 
-		if not var_22_34 and flag_3 and not arg_22_4.death then
-			self._delayed_animation = var_22_34
-		end
-	end
-
-	local hit_effect_name = arg_22_2.hit_effect_name
-	local husk_hit_effect_name = arg_22_2.husk_hit_effect_name
-	local var_22_37
-
-	if not BloodSettings.hit_effects.enabled then
-		if not husk_hit_effect_name and not Unit.alive(var_22_2) and not NetworkUnit.is_network_unit(var_22_2) and not NetworkUnit.is_husk_unit(var_22_2) then
-			var_22_37 = husk_hit_effect_name
-		elseif not hit_effect_name then
-			var_22_37 = hit_effect_name
+		if animation_event and (has_flow_event or parameters.death) then
+			self._delayed_animation = animation_event
 		end
 	end
 
-	local flag_5 = not (arg_22_3[DamageDataIndex.DAMAGE_AMOUNT] > 0) or not not get_data.no_blood_splatter_on_damage or not arg_22_2.disable_blood
-	local sound_event = arg_22_2.sound_event
-	local var_22_40
+	local hit_effect_name = effect_template.hit_effect_name
+	local husk_hit_effect_name = effect_template.husk_hit_effect_name
+	local hit_effect
 
-	if var_22_37 or flag_5 or not sound_event then
-		if not HEALTH_ALIVE[arg_22_1] then
-			var_22_40 = Vector3Aux.unbox(arg_22_3[DamageDataIndex.POSITION])
+	if BloodSettings.hit_effects.enabled then
+		if husk_hit_effect_name and Unit.alive(attacker_unit) and (not NetworkUnit.is_network_unit(attacker_unit) or NetworkUnit.is_husk_unit(attacker_unit)) then
+			hit_effect = husk_hit_effect_name
+		elseif hit_effect_name then
+			hit_effect = hit_effect_name
+		end
+	end
+
+	local damage_amount = effect_biggest_hit[DamageDataIndex.DAMAGE_AMOUNT]
+	local should_spawn_blood = damage_amount > 0 and not breed_data.no_blood_splatter_on_damage and not not not effect_template.disable_blood
+	local sound_event = effect_template.sound_event
+	local impact_position
+
+	if hit_effect or should_spawn_blood or sound_event then
+		if HEALTH_ALIVE[unit] then
+			local hit_position = Vector3Aux.unbox(effect_biggest_hit[DamageDataIndex.POSITION])
+
+			impact_position = hit_position
 		else
-			local count = #hit_zones
+			local num_actors = #actors
 
-			for l = 1, count do
-				local var_22_42 = hit_zones[l]
+			for i = 1, num_actors do
+				local actor_name = actors[i]
 
-				if not Unit.has_node(arg_22_1, var_22_42) then
-					var_22_40 = Unit.world_position(arg_22_1, Unit.node(arg_22_1, var_22_42))
+				if Unit.has_node(unit, actor_name) then
+					impact_position = Unit.world_position(unit, Unit.node(unit, actor_name))
 
 					break
-				elseif not Unit.find_actor(arg_22_1, var_22_42) then
-					var_22_40 = Actor.center_of_mass(Unit.actor(arg_22_1, var_22_42))
+				elseif Unit.find_actor(unit, actor_name) then
+					impact_position = Actor.center_of_mass(Unit.actor(unit, actor_name))
 
 					break
 				end
 			end
 
-			if not (not var_22_40 and not var_22_40 and Vector3.is_valid(var_22_40)) then
-				if not Unit.has_node(arg_22_1, "c_hips") then
-					var_22_40 = Unit.world_position(arg_22_1, Unit.node(arg_22_1, "c_hips"))
-				elseif not Unit.find_actor(arg_22_1, "c_hips") then
-					var_22_40 = Actor.center_of_mass(Unit.actor(arg_22_1, "c_hips"))
+			if not impact_position or impact_position and not Vector3.is_valid(impact_position) then
+				if Unit.has_node(unit, "c_hips") then
+					impact_position = Unit.world_position(unit, Unit.node(unit, "c_hips"))
+				elseif Unit.find_actor(unit, "c_hips") then
+					impact_position = Actor.center_of_mass(Unit.actor(unit, "c_hips"))
 				end
 			end
 
-			if not (not var_22_40 and not var_22_40 and Vector3.is_valid(var_22_40)) then
-				var_22_37 = nil
-				flag_5 = nil
+			if not impact_position or impact_position and not Vector3.is_valid(impact_position) then
+				hit_effect = nil
+				should_spawn_blood = nil
 				sound_event = nil
 			end
 		end
 	end
 
-	if not flag_5 then
-		Managers.state.blood:add_blood_ball(var_22_40, unbox, var_22_4, arg_22_1)
+	if should_spawn_blood then
+		Managers.state.blood:add_blood_ball(impact_position, hit_direction, damage_type, unit)
 	end
 
-	if not var_22_37 then
-		fn_5(var_22_37, fn_6, world, unbox, var_22_40)
+	if hit_effect then
+		map_function(hit_effect, play_effect, world, hit_direction, impact_position)
 	end
 
-	if not ((BloodSettings.ragdoll_push.enabled or not flag) and arg_22_2.push) then
-		local var_22_43 = get_data.hit_zones[hit_zone]
+	local should_push = (BloodSettings.ragdoll_push.enabled or not death_has_started) and not not effect_template.push
 
-		var_22_43 = not var_22_43 and get_data.hit_zones[hit_zone].push_actors
+	if should_push then
+		local var_22_3 = breed_data.hit_zones[hit_zone]
 
-		if not var_22_43 then
+		if var_22_3 then
+			-- Nothing
+		end
+
+		var_22_3 = breed_data.hit_zones[hit_zone].push_actors
+
+		local push_actors = var_22_3
+
+		::label_22_4::
+
+		if push_actors then
 			self._delayed_push = {
 				timeout = 0.1,
-				push_parameters = arg_22_2.push,
-				explosion_push = arg_22_2.explosion_push,
-				attacker = var_22_2,
+				push_parameters = effect_template.push,
+				explosion_push = effect_template.explosion_push,
+				attacker = attacker_unit,
 				hit_direction_table = {
-					unbox.x,
-					unbox.y,
-					unbox.z
+					hit_direction.x,
+					hit_direction.y,
+					hit_direction.z
 				},
-				push_actors = var_22_43
+				push_actors = push_actors
 			}
 		end
 	end
 
-	if not sound_event then
+	if sound_event then
 		local wwise_world = Managers.world:wwise_world(world)
-		local make_auto_source = WwiseWorld.make_auto_source(wwise_world, var_22_40)
+		local wwise_source_id = WwiseWorld.make_auto_source(wwise_world, impact_position)
 
-		table.clear(tbl_8)
+		table.clear(WWISE_PARAMETERS)
 
-		tbl_8.damage_type = arg_22_4.damage_type
-		tbl_8.enemy_type = get_data.name
-		tbl_8.weapon_type = arg_22_4.weapon_type
-		tbl_8.hit_zone = hit_zone
-		tbl_8.husk = NetworkUnit.is_husk_unit(arg_22_1)
+		WWISE_PARAMETERS.damage_type = parameters.damage_type
+		WWISE_PARAMETERS.enemy_type = breed_data.name
+		WWISE_PARAMETERS.weapon_type = parameters.weapon_type
+		WWISE_PARAMETERS.hit_zone = hit_zone
+		WWISE_PARAMETERS.husk = NetworkUnit.is_husk_unit(unit)
 
 		local dialogue_extension = self.dialogue_extension
 
-		if not dialogue_extension and not dialogue_extension.wwise_voice_switch_group then
-			tbl_8[dialogue_extension.wwise_voice_switch_group] = dialogue_extension.wwise_voice_switch_value
+		if dialogue_extension and dialogue_extension.wwise_voice_switch_group then
+			WWISE_PARAMETERS[dialogue_extension.wwise_voice_switch_group] = dialogue_extension.wwise_voice_switch_value
 		end
 
-		Managers.state.entity:system("sound_environment_system"):set_source_environment(make_auto_source, var_22_40)
+		Managers.state.entity:system("sound_environment_system"):set_source_environment(wwise_source_id, impact_position)
 
-		for k_2, v in pairs(tbl_8) do
-			WwiseWorld.set_switch(wwise_world, make_auto_source, k_2, v)
+		for param_name, param_value in pairs(WWISE_PARAMETERS) do
+			WwiseWorld.set_switch(wwise_world, wwise_source_id, param_name, param_value)
 		end
 
-		fn_5(sound_event, fn_7, wwise_world, make_auto_source, tbl_8.damage_type, tbl_8.enemy_type, tbl_8.weapon_type, tbl_8.hit_zone, tbl_8.husk)
+		map_function(sound_event, play_sound, wwise_world, wwise_source_id, WWISE_PARAMETERS.damage_type, WWISE_PARAMETERS.enemy_type, WWISE_PARAMETERS.weapon_type, WWISE_PARAMETERS.hit_zone, WWISE_PARAMETERS.husk)
 	end
 
-	if not (not arg_22_4.death and not death_extension and flag) then
-		Unit.flow_event(arg_22_1, "lua_on_death")
+	if parameters.death and death_ext and not death_has_started then
+		Unit.flow_event(unit, "lua_on_death")
 
-		death_extension.death_has_started = true
+		death_ext.death_has_started = true
 	end
 end
 
-GenericHitReactionExtension._do_push = function (self, arg_23_1, arg_23_2)
+GenericHitReactionExtension._do_push = function (self, unit, dt)
 	-- function 23
-	local _delayed_push = self._delayed_push
-	local push_parameters = _delayed_push.push_parameters
-	local hit_direction_table = _delayed_push.hit_direction_table
-	local attacker = _delayed_push.attacker
-	local push_actors = _delayed_push.push_actors
-	local num = _delayed_push.timeout - arg_23_2
-	local explosion_push = _delayed_push.explosion_push
+	local delayed_push = self._delayed_push
+	local push_parameters = delayed_push.push_parameters
+	local hit_direction_table = delayed_push.hit_direction_table
+	local attacker_unit = delayed_push.attacker
+	local push_actors = delayed_push.push_actors
+	local timeout = delayed_push.timeout - dt
+	local explosion_push = delayed_push.explosion_push
 
-	_delayed_push.timeout = num
+	delayed_push.timeout = timeout
 
-	local count = #push_actors
-	local var_23_8
+	local num_actors = #push_actors
+	local actor
 
-	for i = 1, count do
-		local var_23_9 = push_actors[i]
+	for i = 1, num_actors do
+		local actor_name = push_actors[i]
 
-		var_23_8 = Unit.actor(arg_23_1, push_actors[i]) or var_23_8
+		actor = not not Unit.actor(unit, push_actors[i]) or not not actor
 	end
 
-	if not var_23_8 then
-		return num <= 0
+	if not actor then
+		return timeout <= 0
 	end
 
-	local var_23_10 = Vector3(hit_direction_table[1], hit_direction_table[2], 0)
-	local normalize = Vector3.normalize(var_23_10)
-	local var_23_12, var_23_13 = fn_2(attacker, normalize, explosion_push or push_parameters.always_use_hit_direction)
+	local hit_direction = Vector3(hit_direction_table[1], hit_direction_table[2], 0)
 
-	if Vector3.dot(var_23_13, normalize) <= 0 then
-		var_23_13 = -var_23_13
+	hit_direction = Vector3.normalize(hit_direction)
+
+	local distal_direction, lateral_direction = get_attacker_direction(attacker_unit, hit_direction, not not explosion_push or not not push_parameters.always_use_hit_direction)
+
+	if Vector3.dot(lateral_direction, hit_direction) <= 0 then
+		lateral_direction = -lateral_direction
 	end
 
-	local distal_force = push_parameters.distal_force
+	local distal_force_2 = push_parameters.distal_force
 
-	distal_force = distal_force or 0
-
-	local lateral_force = push_parameters.lateral_force
-
-	lateral_force = lateral_force or 0
-
-	local vertical_force = push_parameters.vertical_force
-
-	vertical_force = vertical_force or 0
-
-	local flag = not attacker and ScriptUnit.has_extension(attacker, "buff_system")
-
-	if not flag then
-		flag:trigger_procs("on_body_pushed")
-
-		distal_force = flag:apply_buffs_to_value(distal_force, "hit_force")
-		lateral_force = flag:apply_buffs_to_value(lateral_force, "hit_force")
-		vertical_force = flag:apply_buffs_to_value(vertical_force, "hit_force")
+	if not distal_force_2 then
+		-- Nothing
 	end
 
-	local num_2 = var_23_12 * distal_force
-	local num_3 = var_23_13 * lateral_force
-	local var_23_20 = Vector3(0, 0, vertical_force)
-	local num_4 = num_2 + num_3 + var_23_20
-	local num_5 = 60
-	local get_data = Unit.get_data(arg_23_1, "breed")
+	distal_force_2 = 0
 
-	if not get_data.scale_death_push then
-		num_4 = num_4 * get_data.scale_death_push
+	local distal_force = distal_force_2
+
+	::label_23_0::
+
+	local lateral_force_2 = push_parameters.lateral_force
+
+	if not lateral_force_2 then
+		-- Nothing
 	end
 
-	local num_6 = num_4 * 0.25
-	local num_7 = Vector3.normalize(num_6) * num_5
-	local num_8 = Vector3.length(num_6) * 1 / count
+	lateral_force_2 = 0
 
-	for j = 1, count do
-		local actor = Unit.actor(arg_23_1, push_actors[j])
+	local lateral_force = lateral_force_2
 
-		if not actor then
-			Actor.push(actor, num_7, num_8)
+	::label_23_1::
+
+	local vertical_force_2 = push_parameters.vertical_force
+
+	if not vertical_force_2 then
+		-- Nothing
+	end
+
+	vertical_force_2 = 0
+
+	local vertical_force = vertical_force_2
+
+	::label_23_2::
+
+	local buff_extension = not not attacker_unit and not not ScriptUnit.has_extension(attacker_unit, "buff_system")
+
+	if buff_extension then
+		buff_extension:trigger_procs("on_body_pushed")
+
+		distal_force = buff_extension:apply_buffs_to_value(distal_force, "hit_force")
+		lateral_force = buff_extension:apply_buffs_to_value(lateral_force, "hit_force")
+		vertical_force = buff_extension:apply_buffs_to_value(vertical_force, "hit_force")
+	end
+
+	local distal_vector = distal_direction * distal_force
+	local lateral_vector = lateral_direction * lateral_force
+	local vertical_vector = Vector3(0, 0, vertical_force)
+	local push_force = distal_vector + lateral_vector + vertical_vector
+	local push_velocity_factor = 60
+	local breed = Unit.get_data(unit, "breed")
+
+	if breed.scale_death_push then
+		push_force = push_force * breed.scale_death_push
+	end
+
+	push_force = push_force * 0.25
+
+	local push_velocity = Vector3.normalize(push_force) * push_velocity_factor
+	local push_mass = Vector3.length(push_force) * 1
+	local push_mass_actor = push_mass / num_actors
+
+	for i = 1, num_actors do
+		actor = Unit.actor(unit, push_actors[i])
+
+		if actor then
+			Actor.push(actor, push_velocity, push_mass_actor)
 		end
 	end
 

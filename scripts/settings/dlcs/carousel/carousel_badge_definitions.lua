@@ -2,15 +2,15 @@
 
 local BadgeDefinitions = BadgeDefinitions
 
-BadgeDefinitions = BadgeDefinitions or {}
+BadgeDefinitions = not not BadgeDefinitions or not not {}
 BadgeDefinitions = BadgeDefinitions
 
-local function fn()
+local function random_badge()
 	-- function 1
 	return string.format("badge_generic_%02d", math.random(7))
 end
 
-local function fn_2()
+local function random_color()
 	-- function 2
 	return {
 		255,

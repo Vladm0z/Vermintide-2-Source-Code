@@ -4,92 +4,96 @@ require("scripts/entity_system/systems/behaviour/nodes/bt_node")
 
 BTLootRatAlertedAction = class(BTLootRatAlertedAction, BTNode)
 
-BTLootRatAlertedAction.init = function (arg_1_0, ...)
+BTLootRatAlertedAction.init = function (self, ...)
 	-- function 1
-	BTLootRatAlertedAction.super.init(arg_1_0, ...)
+	BTLootRatAlertedAction.super.init(self, ...)
 end
 
 BTLootRatAlertedAction.name = "BTLootRatAlertedAction"
 
-BTLootRatAlertedAction.enter = function (self, arg_2_1, arg_2_2, arg_2_3)
+BTLootRatAlertedAction.enter = function (self, unit, blackboard, t)
 	-- function 2
-	arg_2_2.action = self._tree_node.action_data
-	arg_2_2.move_animation_name = nil
-	arg_2_2.anim_cb_rotation_start = false
-	arg_2_2.anim_cb_move = false
+	local action = self._tree_node.action_data
 
-	if arg_2_2.confirmed_player_sighting == nil then
-		self:init_alerted(arg_2_1, arg_2_2)
+	blackboard.action = action
+	blackboard.move_animation_name = nil
+	blackboard.anim_cb_rotation_start = false
+	blackboard.anim_cb_move = false
+
+	if blackboard.confirmed_player_sighting == nil then
+		self:init_alerted(unit, blackboard)
 	end
 
-	arg_2_2.navigation_extension:set_enabled(false)
-	arg_2_2.locomotion_extension:set_wanted_velocity(Vector3.zero())
+	blackboard.navigation_extension:set_enabled(false)
+	blackboard.locomotion_extension:set_wanted_velocity(Vector3.zero())
 end
 
-BTLootRatAlertedAction.init_alerted = function (arg_3_0, arg_3_1, arg_3_2)
+BTLootRatAlertedAction.init_alerted = function (self, unit, blackboard)
 	-- function 3
-	local network = Managers.state.network
-	local unit_game_object_id = network:unit_game_object_id(arg_3_1)
+	local network_manager = Managers.state.network
+	local unit_id = network_manager:unit_game_object_id(unit)
 
-	if not script_data.enable_alert_icon then
-		local str = "detect"
-		local node = Unit.node(arg_3_1, "c_head")
-		local str_2 = "player_1"
-		local var_3_5 = Vector3(255, 0, 0)
-		local var_3_6 = Vector3(0, 0, 1)
-		local num = 0.5
-		local str_3 = "!"
+	if script_data.enable_alert_icon then
+		local category_name = "detect"
+		local head_node = Unit.node(unit, "c_head")
+		local viewport_name = "player_1"
+		local color_vector = Vector3(255, 0, 0)
+		local offset_vector = Vector3(0, 0, 1)
+		local text_size = 0.5
+		local debug_start_string = "!"
 
-		Managers.state.debug_text:output_unit_text(str_3, num, arg_3_1, node, var_3_6, nil, str, var_3_5, str_2)
-		network.network_transmit:send_rpc_clients("rpc_enemy_is_alerted", unit_game_object_id, true)
+		Managers.state.debug_text:output_unit_text(debug_start_string, text_size, unit, head_node, offset_vector, nil, category_name, color_vector, viewport_name)
+		network_manager.network_transmit:send_rpc_clients("rpc_enemy_is_alerted", unit_id, true)
 	end
 
-	local str_4 = "alerted"
+	local animation_name = "alerted"
 
-	network:anim_event(arg_3_1, str_4)
+	network_manager:anim_event(unit, animation_name)
 
-	arg_3_2.move_animation_name = str_4
+	blackboard.move_animation_name = animation_name
 
-	if not ScriptUnit.has_extension(arg_3_1, "ai_inventory_system") then
-		network.network_transmit:send_rpc_all("rpc_ai_inventory_wield", unit_game_object_id, 1)
+	if ScriptUnit.has_extension(unit, "ai_inventory_system") then
+		network_manager.network_transmit:send_rpc_all("rpc_ai_inventory_wield", unit_id, 1)
 	end
 end
 
-BTLootRatAlertedAction.leave = function (arg_4_0, arg_4_1, arg_4_2, arg_4_3, arg_4_4, arg_4_5)
+BTLootRatAlertedAction.leave = function (self, unit, blackboard, t, reason, destroy)
 	-- function 4
-	if not script_data.enable_alert_icon then
-		local str = "detect"
+	if script_data.enable_alert_icon then
+		local category_name = "detect"
 
-		Managers.state.debug_text:clear_unit_text(arg_4_1, str)
+		Managers.state.debug_text:clear_unit_text(unit, category_name)
 
-		local network = Managers.state.network
-		local unit_game_object_id = network:unit_game_object_id(arg_4_1)
+		local network_manager = Managers.state.network
+		local unit_id = network_manager:unit_game_object_id(unit)
 
-		network.network_transmit:send_rpc_clients("rpc_enemy_is_alerted", unit_game_object_id, false)
+		network_manager.network_transmit:send_rpc_clients("rpc_enemy_is_alerted", unit_id, false)
 	end
 
-	if not arg_4_5 then
-		arg_4_2.locomotion_extension:use_lerp_rotation(true)
-		LocomotionUtils.set_animation_driven_movement(arg_4_1, false)
-		LocomotionUtils.set_animation_rotation_scale(arg_4_1, 1)
+	if not destroy then
+		local locomotion_extension = blackboard.locomotion_extension
+
+		locomotion_extension:use_lerp_rotation(true)
+		LocomotionUtils.set_animation_driven_movement(unit, false)
+		LocomotionUtils.set_animation_rotation_scale(unit, 1)
 	end
 
-	arg_4_2.navigation_extension:set_enabled(true)
-	AiUtils.activate_unit(arg_4_2)
+	blackboard.navigation_extension:set_enabled(true)
+	AiUtils.activate_unit(blackboard)
 
-	arg_4_2.spawn_to_running = true
+	blackboard.spawn_to_running = true
 end
 
-BTLootRatAlertedAction.run = function (arg_5_0, arg_5_1, arg_5_2, arg_5_3, arg_5_4)
+BTLootRatAlertedAction.run = function (self, unit, blackboard, t, dt)
 	-- function 5
-	if not arg_5_2.confirmed_player_sighting then
+	if blackboard.confirmed_player_sighting then
 		return "done"
 	end
 
-	if not arg_5_2.anim_cb_move then
-		arg_5_2.anim_cb_move = false
-		arg_5_2.move_state = "moving"
-		arg_5_2.anim_locked = 0
+	if blackboard.anim_cb_move then
+		blackboard.anim_cb_move = false
+		blackboard.move_state = "moving"
+		blackboard.anim_locked = 0
 
 		return "done"
 	else

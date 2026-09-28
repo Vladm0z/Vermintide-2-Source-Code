@@ -12,66 +12,66 @@ AchievementTemplates.achievements.holly_complete_recruit = {
 	ID_PS4 = "061",
 	icon = "achievement_holly_complete_all_recruit_desc",
 	required_dlc = "holly",
-	completed = function (arg_1_0, arg_1_1)
+	completed = function (statistics_db, stats_id)
 		-- function 1
-		local num = 0
-		local rank = DifficultySettings.normal.rank
+		local count = 0
+		local diff = DifficultySettings.normal.rank
 
-		if not check_level_difficulty(arg_1_0, arg_1_1, LevelSettings.magnus.level_id, rank) then
-			num = num + 1
+		if check_level_difficulty(statistics_db, stats_id, LevelSettings.magnus.level_id, diff) then
+			count = count + 1
 		end
 
-		if not check_level_difficulty(arg_1_0, arg_1_1, LevelSettings.cemetery.level_id, rank) then
-			num = num + 1
+		if check_level_difficulty(statistics_db, stats_id, LevelSettings.cemetery.level_id, diff) then
+			count = count + 1
 		end
 
-		if not check_level_difficulty(arg_1_0, arg_1_1, LevelSettings.forest_ambush.level_id, rank) then
-			num = num + 1
+		if check_level_difficulty(statistics_db, stats_id, LevelSettings.forest_ambush.level_id, diff) then
+			count = count + 1
 		end
 
-		return num >= 3
+		return count >= 3
 	end,
-	progress = function (arg_2_0, arg_2_1)
+	progress = function (statistics_db, stats_id)
 		-- function 2
-		local num = 0
-		local rank = DifficultySettings.normal.rank
+		local count = 0
+		local diff = DifficultySettings.normal.rank
 
-		if not check_level_difficulty(arg_2_0, arg_2_1, LevelSettings.magnus.level_id, rank) then
-			num = num + 1
+		if check_level_difficulty(statistics_db, stats_id, LevelSettings.magnus.level_id, diff) then
+			count = count + 1
 		end
 
-		if not check_level_difficulty(arg_2_0, arg_2_1, LevelSettings.cemetery.level_id, rank) then
-			num = num + 1
+		if check_level_difficulty(statistics_db, stats_id, LevelSettings.cemetery.level_id, diff) then
+			count = count + 1
 		end
 
-		if not check_level_difficulty(arg_2_0, arg_2_1, LevelSettings.forest_ambush.level_id, rank) then
-			num = num + 1
+		if check_level_difficulty(statistics_db, stats_id, LevelSettings.forest_ambush.level_id, diff) then
+			count = count + 1
 		end
 
 		return {
-			num,
+			count,
 			3
 		}
 	end,
-	requirements = function (arg_3_0, arg_3_1)
+	requirements = function (statistics_db, stats_id)
 		-- function 3
-		local rank = DifficultySettings.normal.rank
-		local var_3_1 = check_level_difficulty(arg_3_0, arg_3_1, LevelSettings.magnus.level_id, rank)
-		local var_3_2 = check_level_difficulty(arg_3_0, arg_3_1, LevelSettings.cemetery.level_id, rank)
-		local var_3_3 = check_level_difficulty(arg_3_0, arg_3_1, LevelSettings.forest_ambush.level_id, rank)
+		local diff = DifficultySettings.normal.rank
+		local complete_holly_magnus = check_level_difficulty(statistics_db, stats_id, LevelSettings.magnus.level_id, diff)
+		local complete_holly_cemetery = check_level_difficulty(statistics_db, stats_id, LevelSettings.cemetery.level_id, diff)
+		local complete_holly_forest_ambush = check_level_difficulty(statistics_db, stats_id, LevelSettings.forest_ambush.level_id, diff)
 
 		return {
 			{
 				name = "level_name_magnus",
-				completed = var_3_1
+				completed = complete_holly_magnus
 			},
 			{
 				name = "level_name_cemetery",
-				completed = var_3_2
+				completed = complete_holly_cemetery
 			},
 			{
 				name = "level_name_forest_ambush",
-				completed = var_3_3
+				completed = complete_holly_forest_ambush
 			}
 		}
 	end
@@ -83,66 +83,66 @@ AchievementTemplates.achievements.holly_complete_veteran = {
 	ID_PS4 = "062",
 	icon = "achievement_holly_complete_all_veteran_desc",
 	required_dlc = "holly",
-	completed = function (arg_4_0, arg_4_1)
+	completed = function (statistics_db, stats_id)
 		-- function 4
-		local num = 0
-		local rank = DifficultySettings.hard.rank
+		local count = 0
+		local diff = DifficultySettings.hard.rank
 
-		if not check_level_difficulty(arg_4_0, arg_4_1, LevelSettings.magnus.level_id, rank) then
-			num = num + 1
+		if check_level_difficulty(statistics_db, stats_id, LevelSettings.magnus.level_id, diff) then
+			count = count + 1
 		end
 
-		if not check_level_difficulty(arg_4_0, arg_4_1, LevelSettings.cemetery.level_id, rank) then
-			num = num + 1
+		if check_level_difficulty(statistics_db, stats_id, LevelSettings.cemetery.level_id, diff) then
+			count = count + 1
 		end
 
-		if not check_level_difficulty(arg_4_0, arg_4_1, LevelSettings.forest_ambush.level_id, rank) then
-			num = num + 1
+		if check_level_difficulty(statistics_db, stats_id, LevelSettings.forest_ambush.level_id, diff) then
+			count = count + 1
 		end
 
-		return num >= 3
+		return count >= 3
 	end,
-	progress = function (arg_5_0, arg_5_1)
+	progress = function (statistics_db, stats_id)
 		-- function 5
-		local num = 0
-		local rank = DifficultySettings.hard.rank
+		local count = 0
+		local diff = DifficultySettings.hard.rank
 
-		if not check_level_difficulty(arg_5_0, arg_5_1, LevelSettings.magnus.level_id, rank) then
-			num = num + 1
+		if check_level_difficulty(statistics_db, stats_id, LevelSettings.magnus.level_id, diff) then
+			count = count + 1
 		end
 
-		if not check_level_difficulty(arg_5_0, arg_5_1, LevelSettings.cemetery.level_id, rank) then
-			num = num + 1
+		if check_level_difficulty(statistics_db, stats_id, LevelSettings.cemetery.level_id, diff) then
+			count = count + 1
 		end
 
-		if not check_level_difficulty(arg_5_0, arg_5_1, LevelSettings.forest_ambush.level_id, rank) then
-			num = num + 1
+		if check_level_difficulty(statistics_db, stats_id, LevelSettings.forest_ambush.level_id, diff) then
+			count = count + 1
 		end
 
 		return {
-			num,
+			count,
 			3
 		}
 	end,
-	requirements = function (arg_6_0, arg_6_1)
+	requirements = function (statistics_db, stats_id)
 		-- function 6
-		local rank = DifficultySettings.hard.rank
-		local var_6_1 = check_level_difficulty(arg_6_0, arg_6_1, LevelSettings.magnus.level_id, rank)
-		local var_6_2 = check_level_difficulty(arg_6_0, arg_6_1, LevelSettings.cemetery.level_id, rank)
-		local var_6_3 = check_level_difficulty(arg_6_0, arg_6_1, LevelSettings.forest_ambush.level_id, rank)
+		local diff = DifficultySettings.hard.rank
+		local complete_holly_magnus = check_level_difficulty(statistics_db, stats_id, LevelSettings.magnus.level_id, diff)
+		local complete_holly_cemetery = check_level_difficulty(statistics_db, stats_id, LevelSettings.cemetery.level_id, diff)
+		local complete_holly_forest_ambush = check_level_difficulty(statistics_db, stats_id, LevelSettings.forest_ambush.level_id, diff)
 
 		return {
 			{
 				name = "level_name_magnus",
-				completed = var_6_1
+				completed = complete_holly_magnus
 			},
 			{
 				name = "level_name_cemetery",
-				completed = var_6_2
+				completed = complete_holly_cemetery
 			},
 			{
 				name = "level_name_forest_ambush",
-				completed = var_6_3
+				completed = complete_holly_forest_ambush
 			}
 		}
 	end
@@ -154,66 +154,66 @@ AchievementTemplates.achievements.holly_complete_champion = {
 	ID_PS4 = "063",
 	icon = "achievement_holly_complete_all_champion_desc",
 	required_dlc = "holly",
-	completed = function (arg_7_0, arg_7_1)
+	completed = function (statistics_db, stats_id)
 		-- function 7
-		local num = 0
-		local rank = DifficultySettings.harder.rank
+		local count = 0
+		local diff = DifficultySettings.harder.rank
 
-		if not check_level_difficulty(arg_7_0, arg_7_1, LevelSettings.magnus.level_id, rank) then
-			num = num + 1
+		if check_level_difficulty(statistics_db, stats_id, LevelSettings.magnus.level_id, diff) then
+			count = count + 1
 		end
 
-		if not check_level_difficulty(arg_7_0, arg_7_1, LevelSettings.cemetery.level_id, rank) then
-			num = num + 1
+		if check_level_difficulty(statistics_db, stats_id, LevelSettings.cemetery.level_id, diff) then
+			count = count + 1
 		end
 
-		if not check_level_difficulty(arg_7_0, arg_7_1, LevelSettings.forest_ambush.level_id, rank) then
-			num = num + 1
+		if check_level_difficulty(statistics_db, stats_id, LevelSettings.forest_ambush.level_id, diff) then
+			count = count + 1
 		end
 
-		return num >= 3
+		return count >= 3
 	end,
-	progress = function (arg_8_0, arg_8_1)
+	progress = function (statistics_db, stats_id)
 		-- function 8
-		local num = 0
-		local rank = DifficultySettings.harder.rank
+		local count = 0
+		local diff = DifficultySettings.harder.rank
 
-		if not check_level_difficulty(arg_8_0, arg_8_1, LevelSettings.magnus.level_id, rank) then
-			num = num + 1
+		if check_level_difficulty(statistics_db, stats_id, LevelSettings.magnus.level_id, diff) then
+			count = count + 1
 		end
 
-		if not check_level_difficulty(arg_8_0, arg_8_1, LevelSettings.cemetery.level_id, rank) then
-			num = num + 1
+		if check_level_difficulty(statistics_db, stats_id, LevelSettings.cemetery.level_id, diff) then
+			count = count + 1
 		end
 
-		if not check_level_difficulty(arg_8_0, arg_8_1, LevelSettings.forest_ambush.level_id, rank) then
-			num = num + 1
+		if check_level_difficulty(statistics_db, stats_id, LevelSettings.forest_ambush.level_id, diff) then
+			count = count + 1
 		end
 
 		return {
-			num,
+			count,
 			3
 		}
 	end,
-	requirements = function (arg_9_0, arg_9_1)
+	requirements = function (statistics_db, stats_id)
 		-- function 9
-		local rank = DifficultySettings.harder.rank
-		local var_9_1 = check_level_difficulty(arg_9_0, arg_9_1, LevelSettings.magnus.level_id, rank)
-		local var_9_2 = check_level_difficulty(arg_9_0, arg_9_1, LevelSettings.cemetery.level_id, rank)
-		local var_9_3 = check_level_difficulty(arg_9_0, arg_9_1, LevelSettings.forest_ambush.level_id, rank)
+		local diff = DifficultySettings.harder.rank
+		local complete_holly_magnus = check_level_difficulty(statistics_db, stats_id, LevelSettings.magnus.level_id, diff)
+		local complete_holly_cemetery = check_level_difficulty(statistics_db, stats_id, LevelSettings.cemetery.level_id, diff)
+		local complete_holly_forest_ambush = check_level_difficulty(statistics_db, stats_id, LevelSettings.forest_ambush.level_id, diff)
 
 		return {
 			{
 				name = "level_name_magnus",
-				completed = var_9_1
+				completed = complete_holly_magnus
 			},
 			{
 				name = "level_name_cemetery",
-				completed = var_9_2
+				completed = complete_holly_cemetery
 			},
 			{
 				name = "level_name_forest_ambush",
-				completed = var_9_3
+				completed = complete_holly_forest_ambush
 			}
 		}
 	end
@@ -225,66 +225,66 @@ AchievementTemplates.achievements.holly_complete_legend = {
 	ID_PS4 = "064",
 	icon = "achievement_holly_complete_all_legend_desc",
 	required_dlc = "holly",
-	completed = function (arg_10_0, arg_10_1)
+	completed = function (statistics_db, stats_id)
 		-- function 10
-		local num = 0
-		local rank = DifficultySettings.hardest.rank
+		local count = 0
+		local diff = DifficultySettings.hardest.rank
 
-		if not check_level_difficulty(arg_10_0, arg_10_1, LevelSettings.magnus.level_id, rank) then
-			num = num + 1
+		if check_level_difficulty(statistics_db, stats_id, LevelSettings.magnus.level_id, diff) then
+			count = count + 1
 		end
 
-		if not check_level_difficulty(arg_10_0, arg_10_1, LevelSettings.cemetery.level_id, rank) then
-			num = num + 1
+		if check_level_difficulty(statistics_db, stats_id, LevelSettings.cemetery.level_id, diff) then
+			count = count + 1
 		end
 
-		if not check_level_difficulty(arg_10_0, arg_10_1, LevelSettings.forest_ambush.level_id, rank) then
-			num = num + 1
+		if check_level_difficulty(statistics_db, stats_id, LevelSettings.forest_ambush.level_id, diff) then
+			count = count + 1
 		end
 
-		return num >= 3
+		return count >= 3
 	end,
-	progress = function (arg_11_0, arg_11_1)
+	progress = function (statistics_db, stats_id)
 		-- function 11
-		local num = 0
-		local rank = DifficultySettings.hardest.rank
+		local count = 0
+		local diff = DifficultySettings.hardest.rank
 
-		if not check_level_difficulty(arg_11_0, arg_11_1, LevelSettings.magnus.level_id, rank) then
-			num = num + 1
+		if check_level_difficulty(statistics_db, stats_id, LevelSettings.magnus.level_id, diff) then
+			count = count + 1
 		end
 
-		if not check_level_difficulty(arg_11_0, arg_11_1, LevelSettings.cemetery.level_id, rank) then
-			num = num + 1
+		if check_level_difficulty(statistics_db, stats_id, LevelSettings.cemetery.level_id, diff) then
+			count = count + 1
 		end
 
-		if not check_level_difficulty(arg_11_0, arg_11_1, LevelSettings.forest_ambush.level_id, rank) then
-			num = num + 1
+		if check_level_difficulty(statistics_db, stats_id, LevelSettings.forest_ambush.level_id, diff) then
+			count = count + 1
 		end
 
 		return {
-			num,
+			count,
 			3
 		}
 	end,
-	requirements = function (arg_12_0, arg_12_1)
+	requirements = function (statistics_db, stats_id)
 		-- function 12
-		local rank = DifficultySettings.hardest.rank
-		local var_12_1 = check_level_difficulty(arg_12_0, arg_12_1, LevelSettings.magnus.level_id, rank)
-		local var_12_2 = check_level_difficulty(arg_12_0, arg_12_1, LevelSettings.cemetery.level_id, rank)
-		local var_12_3 = check_level_difficulty(arg_12_0, arg_12_1, LevelSettings.forest_ambush.level_id, rank)
+		local diff = DifficultySettings.hardest.rank
+		local complete_holly_magnus = check_level_difficulty(statistics_db, stats_id, LevelSettings.magnus.level_id, diff)
+		local complete_holly_cemetery = check_level_difficulty(statistics_db, stats_id, LevelSettings.cemetery.level_id, diff)
+		local complete_holly_forest_ambush = check_level_difficulty(statistics_db, stats_id, LevelSettings.forest_ambush.level_id, diff)
 
 		return {
 			{
 				name = "level_name_magnus",
-				completed = var_12_1
+				completed = complete_holly_magnus
 			},
 			{
 				name = "level_name_cemetery",
-				completed = var_12_2
+				completed = complete_holly_cemetery
 			},
 			{
 				name = "level_name_forest_ambush",
-				completed = var_12_3
+				completed = complete_holly_forest_ambush
 			}
 		}
 	end
@@ -294,16 +294,16 @@ AchievementTemplates.achievements.holly_complete_plaza_recruit = {
 	name = "achv_holly_plaza_recruit_name",
 	icon = "achievement_holly_plaza_recruit_desc",
 	desc = "achv_holly_plaza_recruit_desc",
-	completed = function (arg_13_0, arg_13_1)
+	completed = function (statistics_db, stats_id)
 		-- function 13
-		local num = 0
-		local rank = DifficultySettings.normal.rank
+		local count = 0
+		local diff = DifficultySettings.normal.rank
 
-		if not check_level_difficulty(arg_13_0, arg_13_1, LevelSettings.plaza.level_id, rank) then
-			num = num + 1
+		if check_level_difficulty(statistics_db, stats_id, LevelSettings.plaza.level_id, diff) then
+			count = count + 1
 		end
 
-		return num >= 1
+		return count >= 1
 	end
 }
 AchievementTemplates.achievements.holly_complete_plaza_veteran = {
@@ -311,16 +311,16 @@ AchievementTemplates.achievements.holly_complete_plaza_veteran = {
 	name = "achv_holly_plaza_veteran_name",
 	icon = "achievement_holly_plaza_veteran_desc",
 	desc = "achv_holly_plaza_veteran_desc",
-	completed = function (arg_14_0, arg_14_1)
+	completed = function (statistics_db, stats_id)
 		-- function 14
-		local num = 0
-		local rank = DifficultySettings.hard.rank
+		local count = 0
+		local diff = DifficultySettings.hard.rank
 
-		if not check_level_difficulty(arg_14_0, arg_14_1, LevelSettings.plaza.level_id, rank) then
-			num = num + 1
+		if check_level_difficulty(statistics_db, stats_id, LevelSettings.plaza.level_id, diff) then
+			count = count + 1
 		end
 
-		return num >= 1
+		return count >= 1
 	end
 }
 AchievementTemplates.achievements.holly_complete_plaza_champion = {
@@ -328,16 +328,16 @@ AchievementTemplates.achievements.holly_complete_plaza_champion = {
 	name = "achv_holly_plaza_champion_name",
 	icon = "achievement_holly_plaza_champion_desc",
 	desc = "achv_holly_plaza_champion_desc",
-	completed = function (arg_15_0, arg_15_1)
+	completed = function (statistics_db, stats_id)
 		-- function 15
-		local num = 0
-		local rank = DifficultySettings.harder.rank
+		local count = 0
+		local diff = DifficultySettings.harder.rank
 
-		if not check_level_difficulty(arg_15_0, arg_15_1, LevelSettings.plaza.level_id, rank) then
-			num = num + 1
+		if check_level_difficulty(statistics_db, stats_id, LevelSettings.plaza.level_id, diff) then
+			count = count + 1
 		end
 
-		return num >= 1
+		return count >= 1
 	end
 }
 AchievementTemplates.achievements.holly_complete_plaza_legend = {
@@ -345,16 +345,16 @@ AchievementTemplates.achievements.holly_complete_plaza_legend = {
 	name = "achv_holly_plaza_legend_name",
 	icon = "achievement_holly_plaza_legend_desc",
 	desc = "achv_holly_plaza_legend_desc",
-	completed = function (arg_16_0, arg_16_1)
+	completed = function (statistics_db, stats_id)
 		-- function 16
-		local num = 0
-		local rank = DifficultySettings.hardest.rank
+		local count = 0
+		local diff = DifficultySettings.hardest.rank
 
-		if not check_level_difficulty(arg_16_0, arg_16_1, LevelSettings.plaza.level_id, rank) then
-			num = num + 1
+		if check_level_difficulty(statistics_db, stats_id, LevelSettings.plaza.level_id, diff) then
+			count = count + 1
 		end
 
-		return num >= 1
+		return count >= 1
 	end
 }
 AchievementTemplates.achievements.holly_find_all_runes = {
@@ -365,15 +365,16 @@ AchievementTemplates.achievements.holly_find_all_runes = {
 	display_completion_ui = true,
 	icon = "achievement_holly_find_all_runes_desc",
 	required_dlc = "holly",
-	completed = function (self, arg_17_1)
+	completed = function (statistics_db, stats_id)
 		-- function 17
-		if self:get_persistent_stat(arg_17_1, "holly_find_all_runes") == 0 then
-			local flag = self:get_persistent_stat(arg_17_1, "holly_cemetery_rune") > 0
-			local flag_2 = self:get_persistent_stat(arg_17_1, "holly_forest_ambush_rune") > 0
-			local flag_3 = self:get_persistent_stat(arg_17_1, "holly_magnus_rune") > 0
+		if statistics_db:get_persistent_stat(stats_id, "holly_find_all_runes") == 0 then
+			local cemetery = statistics_db:get_persistent_stat(stats_id, "holly_cemetery_rune") > 0
+			local forest = statistics_db:get_persistent_stat(stats_id, "holly_forest_ambush_rune") > 0
+			local magnus = statistics_db:get_persistent_stat(stats_id, "holly_magnus_rune") > 0
+			local fulfill = not not cemetery and not not forest and not not magnus
 
-			if not (not flag and not flag_2 and flag_3) then
-				self:increment_stat(arg_17_1, "holly_find_all_runes")
+			if fulfill then
+				statistics_db:increment_stat(stats_id, "holly_find_all_runes")
 
 				return true
 			end
@@ -381,47 +382,47 @@ AchievementTemplates.achievements.holly_find_all_runes = {
 			return false
 		end
 
-		return self:get_persistent_stat(arg_17_1, "holly_find_all_runes") > 0
+		return statistics_db:get_persistent_stat(stats_id, "holly_find_all_runes") > 0
 	end,
-	progress = function (self, arg_18_1)
+	progress = function (statistics_db, stats_id)
 		-- function 18
-		local num = 0
+		local count = 0
 
-		if self:get_persistent_stat(arg_18_1, "holly_cemetery_rune") > 0 then
-			num = num + 1
+		if statistics_db:get_persistent_stat(stats_id, "holly_cemetery_rune") > 0 then
+			count = count + 1
 		end
 
-		if self:get_persistent_stat(arg_18_1, "holly_forest_ambush_rune") > 0 then
-			num = num + 1
+		if statistics_db:get_persistent_stat(stats_id, "holly_forest_ambush_rune") > 0 then
+			count = count + 1
 		end
 
-		if self:get_persistent_stat(arg_18_1, "holly_magnus_rune") > 0 then
-			num = num + 1
+		if statistics_db:get_persistent_stat(stats_id, "holly_magnus_rune") > 0 then
+			count = count + 1
 		end
 
 		return {
-			num,
+			count,
 			3
 		}
 	end,
-	requirements = function (self, arg_19_1)
+	requirements = function (statistics_db, stats_id)
 		-- function 19
-		local flag = self:get_persistent_stat(arg_19_1, "holly_cemetery_rune") > 0
-		local flag_2 = self:get_persistent_stat(arg_19_1, "holly_forest_ambush_rune") > 0
-		local flag_3 = self:get_persistent_stat(arg_19_1, "holly_magnus_rune") > 0
+		local cemetery = statistics_db:get_persistent_stat(stats_id, "holly_cemetery_rune") > 0
+		local forest = statistics_db:get_persistent_stat(stats_id, "holly_forest_ambush_rune") > 0
+		local magnus = statistics_db:get_persistent_stat(stats_id, "holly_magnus_rune") > 0
 
 		return {
 			{
 				name = "holly_cemetery_rune",
-				completed = flag
+				completed = cemetery
 			},
 			{
 				name = "holly_forest_ambush_rune",
-				completed = flag_2
+				completed = forest
 			},
 			{
 				name = "holly_magnus_rune",
-				completed = flag_3
+				completed = magnus
 			}
 		}
 	end
@@ -434,9 +435,9 @@ AchievementTemplates.achievements.holly_magnus_barrel_relay_race = {
 	icon = "achievement_holly_magnus_barrel_relay_race_desc",
 	display_completion_ui = true,
 	desc = "achv_holly_magnus_barrel_relay_race_desc",
-	completed = function (self, arg_20_1)
+	completed = function (statistics_db, stats_id)
 		-- function 20
-		return self:get_persistent_stat(arg_20_1, "holly_magnus_barrel_relay_race") > 0
+		return statistics_db:get_persistent_stat(stats_id, "holly_magnus_barrel_relay_race") > 0
 	end
 }
 AchievementTemplates.achievements.holly_magnus_barrel_relay_race_hardest = {
@@ -445,9 +446,9 @@ AchievementTemplates.achievements.holly_magnus_barrel_relay_race_hardest = {
 	display_completion_ui = true,
 	icon = "achievement_holly_magnus_barrel_relay_race_hardest_desc",
 	desc = "achv_holly_magnus_barrel_relay_race_hardest_desc",
-	completed = function (self, arg_21_1)
+	completed = function (statistics_db, stats_id)
 		-- function 21
-		return self:get_persistent_stat(arg_21_1, "holly_magnus_barrel_relay_race_hardest") > 0
+		return statistics_db:get_persistent_stat(stats_id, "holly_magnus_barrel_relay_race_hardest") > 0
 	end
 }
 AchievementTemplates.achievements.holly_magnus_secret_room = {
@@ -456,9 +457,9 @@ AchievementTemplates.achievements.holly_magnus_secret_room = {
 	display_completion_ui = true,
 	icon = "achievement_holly_magnus_secret_room_desc",
 	desc = "achv_holly_magnus_secret_room_desc",
-	completed = function (self, arg_22_1)
+	completed = function (statistics_db, stats_id)
 		-- function 22
-		return self:get_persistent_stat(arg_22_1, "holly_magnus_secret_room") > 0
+		return statistics_db:get_persistent_stat(stats_id, "holly_magnus_secret_room") > 0
 	end
 }
 AchievementTemplates.achievements.holly_magnus_gutter_runner_treasure = {
@@ -469,9 +470,9 @@ AchievementTemplates.achievements.holly_magnus_gutter_runner_treasure = {
 	icon = "achievement_holly_magnus_gutter_runner_treasure_desc",
 	display_completion_ui = true,
 	desc = "achv_holly_magnus_gutter_runner_treasure_desc",
-	completed = function (self, arg_23_1)
+	completed = function (statistics_db, stats_id)
 		-- function 23
-		return self:get_persistent_stat(arg_23_1, "holly_magnus_gutter_runner_treasure") > 0
+		return statistics_db:get_persistent_stat(stats_id, "holly_magnus_gutter_runner_treasure") > 0
 	end
 }
 AchievementTemplates.achievements.holly_magnus_gutter_runner_treasure_hardest = {
@@ -480,9 +481,9 @@ AchievementTemplates.achievements.holly_magnus_gutter_runner_treasure_hardest = 
 	display_completion_ui = true,
 	icon = "achievement_holly_magnus_gutter_runner_treasure_hardest_desc",
 	desc = "achv_holly_magnus_gutter_runner_treasure_hardest_desc",
-	completed = function (self, arg_24_1)
+	completed = function (statistics_db, stats_id)
 		-- function 24
-		return self:get_persistent_stat(arg_24_1, "holly_magnus_gutter_runner_treasure_hardest") > 0
+		return statistics_db:get_persistent_stat(stats_id, "holly_magnus_gutter_runner_treasure_hardest") > 0
 	end
 }
 AchievementTemplates.achievements.holly_forest_ambush_synchronized_explosives = {
@@ -493,9 +494,9 @@ AchievementTemplates.achievements.holly_forest_ambush_synchronized_explosives = 
 	icon = "achievement_holly_forest_ambush_synchronized_explosives_desc",
 	display_completion_ui = true,
 	desc = "achv_holly_forest_ambush_synchronized_explosives_desc",
-	completed = function (self, arg_25_1)
+	completed = function (statistics_db, stats_id)
 		-- function 25
-		return self:get_persistent_stat(arg_25_1, "holly_forest_ambush_synchronized_explosives") > 0
+		return statistics_db:get_persistent_stat(stats_id, "holly_forest_ambush_synchronized_explosives") > 0
 	end
 }
 AchievementTemplates.achievements.holly_forest_ambush_synchronized_explosives_hardest = {
@@ -504,9 +505,9 @@ AchievementTemplates.achievements.holly_forest_ambush_synchronized_explosives_ha
 	display_completion_ui = true,
 	icon = "achievement_holly_forest_ambush_synchronized_explosives_hardest_desc",
 	desc = "achv_holly_forest_ambush_synchronized_explosives_hardest_desc",
-	completed = function (self, arg_26_1)
+	completed = function (statistics_db, stats_id)
 		-- function 26
-		return self:get_persistent_stat(arg_26_1, "holly_forest_ambush_synchronized_explosives_hardest") > 0
+		return statistics_db:get_persistent_stat(stats_id, "holly_forest_ambush_synchronized_explosives_hardest") > 0
 	end
 }
 AchievementTemplates.achievements.holly_forest_ambush_bretonnian_dance = {
@@ -515,9 +516,9 @@ AchievementTemplates.achievements.holly_forest_ambush_bretonnian_dance = {
 	display_completion_ui = true,
 	icon = "achievement_holly_forest_ambush_bretonnian_dance_desc",
 	desc = "achv_holly_forest_ambush_bretonnian_dance_desc",
-	completed = function (self, arg_27_1)
+	completed = function (statistics_db, stats_id)
 		-- function 27
-		return self:get_persistent_stat(arg_27_1, "holly_forest_ambush_bretonnian_dance") > 0
+		return statistics_db:get_persistent_stat(stats_id, "holly_forest_ambush_bretonnian_dance") > 0
 	end
 }
 AchievementTemplates.achievements.holly_forest_ambush_dragonbane_gem = {
@@ -526,9 +527,9 @@ AchievementTemplates.achievements.holly_forest_ambush_dragonbane_gem = {
 	display_completion_ui = true,
 	icon = "achievement_holly_forest_ambush_dragonbane_gem_desc",
 	desc = "achv_holly_forest_ambush_dragonbane_gem_desc",
-	completed = function (self, arg_28_1)
+	completed = function (statistics_db, stats_id)
 		-- function 28
-		return self:get_persistent_stat(arg_28_1, "holly_forest_ambush_dragonbane_gem") > 0
+		return statistics_db:get_persistent_stat(stats_id, "holly_forest_ambush_dragonbane_gem") > 0
 	end
 }
 AchievementTemplates.achievements.holly_cemetery_sleep = {
@@ -537,9 +538,9 @@ AchievementTemplates.achievements.holly_cemetery_sleep = {
 	display_completion_ui = true,
 	icon = "achievement_holly_cemetery_sleep_desc",
 	desc = "achv_holly_cemetery_sleep_desc",
-	completed = function (self, arg_29_1)
+	completed = function (statistics_db, stats_id)
 		-- function 29
-		return self:get_persistent_stat(arg_29_1, "holly_cemetery_sleep") > 0
+		return statistics_db:get_persistent_stat(stats_id, "holly_cemetery_sleep") > 0
 	end
 }
 AchievementTemplates.achievements.holly_cemetery_synchronized_chains = {
@@ -550,9 +551,9 @@ AchievementTemplates.achievements.holly_cemetery_synchronized_chains = {
 	icon = "achievement_holly_cemetery_synchronized_chains_desc",
 	display_completion_ui = true,
 	desc = "achv_holly_cemetery_synchronized_chains_desc",
-	completed = function (self, arg_30_1)
+	completed = function (statistics_db, stats_id)
 		-- function 30
-		return self:get_persistent_stat(arg_30_1, "holly_cemetery_synchronized_chains") > 0
+		return statistics_db:get_persistent_stat(stats_id, "holly_cemetery_synchronized_chains") > 0
 	end
 }
 AchievementTemplates.achievements.holly_cemetery_synchronized_chains_hardest = {
@@ -561,9 +562,9 @@ AchievementTemplates.achievements.holly_cemetery_synchronized_chains_hardest = {
 	display_completion_ui = true,
 	icon = "achievement_holly_cemetery_synchronized_chains_hardest_desc",
 	desc = "achv_holly_cemetery_synchronized_chains_hardest_desc",
-	completed = function (self, arg_31_1)
+	completed = function (statistics_db, stats_id)
 		-- function 31
-		return self:get_persistent_stat(arg_31_1, "holly_cemetery_synchronized_chains_hardest") > 0
+		return statistics_db:get_persistent_stat(stats_id, "holly_cemetery_synchronized_chains_hardest") > 0
 	end
 }
 AchievementTemplates.achievements.holly_cemetery_bones = {
@@ -574,35 +575,35 @@ AchievementTemplates.achievements.holly_cemetery_bones = {
 	icon = "achievement_holly_cemetery_bones_desc",
 	display_completion_ui = true,
 	desc = "achv_holly_cemetery_bones_desc",
-	completed = function (self, arg_32_1)
+	completed = function (statistics_db, stats_id)
 		-- function 32
-		return self:get_persistent_stat(arg_32_1, "holly_cemetery_bones") > 0
+		return statistics_db:get_persistent_stat(stats_id, "holly_cemetery_bones") > 0
 	end
 }
 AchievementTemplates.achievements.holly_cemetery_rune = {
 	name = "achv_holly_cemetery_rune_name",
 	required_dlc = "holly",
 	desc = "achv_holly_cemetery_rune_desc",
-	completed = function (self, arg_33_1)
+	completed = function (statistics_db, stats_id)
 		-- function 33
-		return self:get_persistent_stat(arg_33_1, "holly_cemetery_rune") > 0
+		return statistics_db:get_persistent_stat(stats_id, "holly_cemetery_rune") > 0
 	end
 }
 AchievementTemplates.achievements.holly_forest_ambush_rune = {
 	name = "achv_holly_forest_ambush_rune_name",
 	required_dlc = "holly",
 	desc = "achv_holly_forest_ambush_rune_desc",
-	completed = function (self, arg_34_1)
+	completed = function (statistics_db, stats_id)
 		-- function 34
-		return self:get_persistent_stat(arg_34_1, "holly_forest_ambush_rune") > 0
+		return statistics_db:get_persistent_stat(stats_id, "holly_forest_ambush_rune") > 0
 	end
 }
 AchievementTemplates.achievements.holly_magnus_rune = {
 	name = "achv_holly_magnus_rune_name",
 	required_dlc = "holly",
 	desc = "achv_holly_magnus_rune_desc",
-	completed = function (self, arg_35_1)
+	completed = function (statistics_db, stats_id)
 		-- function 35
-		return self:get_persistent_stat(arg_35_1, "holly_magnus_rune") > 0
+		return statistics_db:get_persistent_stat(stats_id, "holly_magnus_rune") > 0
 	end
 }

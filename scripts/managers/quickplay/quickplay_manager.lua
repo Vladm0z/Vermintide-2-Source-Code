@@ -1,22 +1,24 @@
 -- chunkname: @scripts/managers/quickplay/quickplay_manager.lua
 
-local tbl = {
+local rpcs = {
 	"rpc_set_has_pending_quick_game"
 }
 
 QuickplayManager = class(QuickplayManager)
 
-QuickplayManager.init = function (self, arg_1_1, arg_1_2)
+QuickplayManager.init = function (self, loading_context, is_server)
 	-- function 1
-	self._is_server = arg_1_2
+	self._is_server = is_server
 	self._has_pending_quick_game = false
-	self._is_quick_game = not not arg_1_1.quickplay_bonus
-	arg_1_1.quickplay_bonus = nil
+	self._is_quick_game = not not loading_context.quickplay_bonus
+	loading_context.quickplay_bonus = nil
 
-	if not arg_1_2 then
+	if not is_server then
 		self._joined_via_quickplay = self._is_quick_game
 
-		if not LevelSettings[Managers.level_transition_handler:get_current_level_key()].hub_level then
+		local level_settings = LevelSettings[Managers.level_transition_handler:get_current_level_key()]
+
+		if level_settings.hub_level then
 			self:set_has_pending_quick_game(self._is_quick_game)
 		end
 	end
@@ -32,13 +34,13 @@ QuickplayManager.set_is_weave_quick_game = function (self)
 	self._is_quick_game = true
 end
 
-QuickplayManager.set_has_pending_quick_game = function (self, arg_4_1)
+QuickplayManager.set_has_pending_quick_game = function (self, value)
 	-- function 4
-	if (self._has_pending_quick_game == arg_4_1 or not self._is_server) and not self._network_transmit then
-		self._network_transmit:send_rpc_clients("rpc_set_has_pending_quick_game", arg_4_1)
+	if self._has_pending_quick_game ~= value and self._is_server and self._network_transmit then
+		self._network_transmit:send_rpc_clients("rpc_set_has_pending_quick_game", value)
 	end
 
-	self._has_pending_quick_game = arg_4_1
+	self._has_pending_quick_game = value
 end
 
 QuickplayManager.has_pending_quick_game = function (self)
@@ -46,9 +48,9 @@ QuickplayManager.has_pending_quick_game = function (self)
 	return self._has_pending_quick_game
 end
 
-QuickplayManager.on_round_start = function (self, arg_6_1, arg_6_2, arg_6_3)
+QuickplayManager.on_round_start = function (self, network_event_delegate, event_manager, network_transmit)
 	-- function 6
-	self:_register_rpcs(arg_6_1, arg_6_3)
+	self:_register_rpcs(network_event_delegate, network_transmit)
 end
 
 QuickplayManager.on_round_end = function (self)
@@ -56,20 +58,20 @@ QuickplayManager.on_round_end = function (self)
 	self:_unregister_rpcs()
 end
 
-QuickplayManager._register_rpcs = function (self, arg_8_1, arg_8_2)
+QuickplayManager._register_rpcs = function (self, network_event_delegate, network_transmit)
 	-- function 8
 	if not self._network_event_delegate then
-		self._network_event_delegate = arg_8_1
+		self._network_event_delegate = network_event_delegate
 
-		arg_8_1:register(self, unpack(tbl))
+		network_event_delegate:register(self, unpack(rpcs))
 
-		self._network_transmit = arg_8_2
+		self._network_transmit = network_transmit
 	end
 end
 
 QuickplayManager._unregister_rpcs = function (self)
 	-- function 9
-	if not self._network_event_delegate then
+	if self._network_event_delegate then
 		self._network_event_delegate:unregister(self)
 
 		self._network_event_delegate = nil
@@ -77,16 +79,16 @@ QuickplayManager._unregister_rpcs = function (self)
 	end
 end
 
-QuickplayManager.hot_join_sync = function (self, arg_10_1)
+QuickplayManager.hot_join_sync = function (self, peer_id)
 	-- function 10
-	if not self._has_pending_quick_game then
-		self._network_transmit:send_rpc("rpc_set_has_pending_quick_game", arg_10_1, true)
+	if self._has_pending_quick_game then
+		self._network_transmit:send_rpc("rpc_set_has_pending_quick_game", peer_id, true)
 	end
 end
 
-QuickplayManager.rpc_set_has_pending_quick_game = function (self, arg_11_1, arg_11_2)
+QuickplayManager.rpc_set_has_pending_quick_game = function (self, channel_id, value)
 	-- function 11
 	if not self._joined_via_quickplay then
-		self:set_has_pending_quick_game(arg_11_2)
+		self:set_has_pending_quick_game(value)
 	end
 end

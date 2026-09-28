@@ -1,6 +1,6 @@
 -- chunkname: @scripts/settings/hit_effects/hit_effects_chaos_marauder.lua
 
-local tbl = {
+local wounding_damage_types = {
 	"light_stab_fencer",
 	"light_stab_smiter",
 	"stab_fencer",
@@ -19,7 +19,7 @@ local tbl = {
 	"slashing_tank",
 	"heavy_slashing_tank"
 }
-local tbl_2 = {
+local dismembering_damage_types = {
 	"heavy_stab_smiter",
 	"light_slashing_smiter",
 	"slashing_smiter",
@@ -2598,7 +2598,7 @@ HitEffectsChaosMarauder = {
 		armour_type = "cloth",
 		extra_conditions = {
 			death = false,
-			damage_type = tbl
+			damage_type = wounding_damage_types
 		}
 	},
 	wound_left_arm = {
@@ -2609,7 +2609,7 @@ HitEffectsChaosMarauder = {
 		extra_conditions = {
 			death = false,
 			is_critical_strike = true,
-			damage_type = tbl_2,
+			damage_type = dismembering_damage_types,
 			hit_zone = {
 				"left_arm"
 			}
@@ -2678,51 +2678,53 @@ HitEffectsChaosMarauder = {
 	}
 }
 
-local function fn(self, ...)
+local function get_variable(template, ...)
 	-- function 1
-	local var_1_0 = self
+	local val = template
 
 	for i = 1, select("#", ...) do
-		var_1_0 = var_1_0[select(i, ...)]
+		local key = select(i, ...)
 
-		if not var_1_0 then
+		val = val[key]
+
+		if not val then
 			break
 		end
 	end
 
-	if not var_1_0 then
+	if not val then
 		-- Nothing
 	end
 
 	::label_1_0::
 
-	local inherits = self.inherits
+	local inherits = template.inherits
 
-	inherits = not inherits and fn(HitEffectsChaosMarauder[self.inherits], ...)
+	inherits = not not inherits and not not get_variable(HitEffectsChaosMarauder[template.inherits], ...)
 
 	::label_1_1::
 
 	return inherits
 end
 
-for k, v in pairs(HitEffectsChaosMarauder) do
-	local var_0_3 = fn(v, "extra_conditions", "death")
-	local var_0_4 = fn(v, "timed_status")
-	local var_0_5 = rawget(StatusEffectNames, (var_0_4 or "") .. "_death_critical")
+for hit_effect_name, hit_effect_data in pairs(HitEffectsChaosMarauder) do
+	local death = get_variable(hit_effect_data, "extra_conditions", "death")
+	local timed_status = get_variable(hit_effect_data, "timed_status")
+	local critical_variant = rawget(StatusEffectNames, (not not timed_status or not not "") .. "_death_critical")
 
-	if not var_0_3 and not var_0_5 then
-		local str = k .. "_critical"
-		local tbl_3 = {
+	if death and critical_variant then
+		local new_hit_effect_name = hit_effect_name .. "_critical"
+		local new_hit_effect_data = {
 			do_dismember = false,
 			do_diagonal_dismemberments = false,
-			inherits = k,
+			inherits = hit_effect_name,
 			extra_conditions = {
 				is_critical_strike = true
 			},
-			timed_status = var_0_5
+			timed_status = critical_variant
 		}
 
-		HitEffectsChaosMarauder[str] = tbl_3
+		HitEffectsChaosMarauder[new_hit_effect_name] = new_hit_effect_data
 	end
 end
 

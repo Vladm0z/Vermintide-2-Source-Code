@@ -1,18 +1,18 @@
 -- chunkname: @scripts/ui/views/versus_menu/versus_party_char_selection_view_definitions.lua
 
-local flag = false
-local num = 1600
-local num_2 = 318
-local num_3 = 60
-local tbl = {
+local RETAINED_MODE = false
+local slider_length = 1600
+local hero_group_width = 318
+local hero_group_spacing = 60
+local player_name_box_size = {
 	474,
 	46
 }
-local tbl_2 = {
+local hero_portrait_size = {
 	70,
 	80
 }
-local tbl_3 = {
+local scenegraph_position = {
 	screen = {
 		0,
 		0,
@@ -54,12 +54,12 @@ local tbl_3 = {
 		2
 	},
 	hero_group_1 = {
-		-(num_2 + num_3) * 2,
+		-(hero_group_width + hero_group_spacing) * 2,
 		0,
 		1
 	},
 	hero_group_2 = {
-		-(num_2 + num_3),
+		-(hero_group_width + hero_group_spacing),
 		0,
 		1
 	},
@@ -69,12 +69,12 @@ local tbl_3 = {
 		1
 	},
 	hero_group_4 = {
-		num_2 + num_3,
+		hero_group_width + hero_group_spacing,
 		0,
 		1
 	},
 	hero_group_5 = {
-		(num_2 + num_3) * 2,
+		(hero_group_width + hero_group_spacing) * 2,
 		0,
 		1
 	},
@@ -164,15 +164,15 @@ local tbl_3 = {
 		10
 	}
 }
-local tbl_4 = {
+local scenegraph_size = {
 	screen = {
 		1920,
 		1080
 	},
-	player_name_box_1 = tbl,
-	player_name_box_2 = tbl,
-	player_name_box_3 = tbl,
-	player_name_box_4 = tbl,
+	player_name_box_1 = player_name_box_size,
+	player_name_box_2 = player_name_box_size,
+	player_name_box_3 = player_name_box_size,
+	player_name_box_4 = player_name_box_size,
 	bottom_bar = {
 		1920,
 		250
@@ -186,23 +186,23 @@ local tbl_4 = {
 		0
 	},
 	hero_group_1 = {
-		num_2,
+		hero_group_width,
 		91
 	},
 	hero_group_2 = {
-		num_2,
+		hero_group_width,
 		91
 	},
 	hero_group_3 = {
-		num_2,
+		hero_group_width,
 		91
 	},
 	hero_group_4 = {
-		num_2,
+		hero_group_width,
 		91
 	},
 	hero_group_5 = {
-		num_2,
+		hero_group_width,
 		91
 	},
 	background = {
@@ -282,220 +282,220 @@ local tbl_4 = {
 		120
 	}
 }
-local tbl_5 = {
+local scenegraph_definition = {
 	screen = {
 		scale = "fit",
-		size = tbl_4.screen,
-		position = tbl_3.screen
+		size = scenegraph_size.screen,
+		position = scenegraph_position.screen
 	},
 	menu_root = {
 		vertical_alignment = "center",
 		parent = "screen",
 		horizontal_alignment = "center",
-		size = tbl_4.menu_root,
-		position = tbl_3.menu_root
+		size = scenegraph_size.menu_root,
+		position = scenegraph_position.menu_root
 	},
 	bottom_bar = {
 		vertical_alignment = "bottom",
 		scale = "fit_width",
 		horizontal_alignment = "center",
-		size = tbl_4.bottom_bar,
-		position = tbl_3.bottom_bar
+		size = scenegraph_size.bottom_bar,
+		position = scenegraph_position.bottom_bar
 	},
 	player_name_box_1 = {
 		vertical_alignment = "bottom",
 		parent = "bottom_bar",
 		horizontal_alignment = "center",
-		size = tbl_4.player_name_box_1,
-		position = tbl_3.player_name_box_1
+		size = scenegraph_size.player_name_box_1,
+		position = scenegraph_position.player_name_box_1
 	},
 	player_name_box_2 = {
 		vertical_alignment = "bottom",
 		parent = "bottom_bar",
 		horizontal_alignment = "center",
-		size = tbl_4.player_name_box_2,
-		position = tbl_3.player_name_box_2
+		size = scenegraph_size.player_name_box_2,
+		position = scenegraph_position.player_name_box_2
 	},
 	player_name_box_3 = {
 		vertical_alignment = "bottom",
 		parent = "bottom_bar",
 		horizontal_alignment = "center",
-		size = tbl_4.player_name_box_3,
-		position = tbl_3.player_name_box_3
+		size = scenegraph_size.player_name_box_3,
+		position = scenegraph_position.player_name_box_3
 	},
 	player_name_box_4 = {
 		vertical_alignment = "bottom",
 		parent = "bottom_bar",
 		horizontal_alignment = "center",
-		size = tbl_4.player_name_box_4,
-		position = tbl_3.player_name_box_4
+		size = scenegraph_size.player_name_box_4,
+		position = scenegraph_position.player_name_box_4
 	},
 	hero_roster = {
 		vertical_alignment = "bottom",
 		parent = "bottom_bar",
 		horizontal_alignment = "center",
-		size = tbl_4.hero_roster,
-		position = tbl_3.hero_roster
+		size = scenegraph_size.hero_roster,
+		position = scenegraph_position.hero_roster
 	},
 	hero_group_1 = {
 		vertical_alignment = "center",
 		parent = "hero_roster",
 		horizontal_alignment = "center",
-		size = tbl_4.hero_group_1,
-		position = tbl_3.hero_group_1
+		size = scenegraph_size.hero_group_1,
+		position = scenegraph_position.hero_group_1
 	},
 	hero_group_2 = {
 		vertical_alignment = "center",
 		parent = "hero_roster",
 		horizontal_alignment = "center",
-		size = tbl_4.hero_group_2,
-		position = tbl_3.hero_group_2
+		size = scenegraph_size.hero_group_2,
+		position = scenegraph_position.hero_group_2
 	},
 	hero_group_3 = {
 		vertical_alignment = "center",
 		parent = "hero_roster",
 		horizontal_alignment = "center",
-		size = tbl_4.hero_group_3,
-		position = tbl_3.hero_group_3
+		size = scenegraph_size.hero_group_3,
+		position = scenegraph_position.hero_group_3
 	},
 	hero_group_4 = {
 		vertical_alignment = "center",
 		parent = "hero_roster",
 		horizontal_alignment = "center",
-		size = tbl_4.hero_group_4,
-		position = tbl_3.hero_group_4
+		size = scenegraph_size.hero_group_4,
+		position = scenegraph_position.hero_group_4
 	},
 	hero_group_5 = {
 		vertical_alignment = "center",
 		parent = "hero_roster",
 		horizontal_alignment = "center",
-		size = tbl_4.hero_group_5,
-		position = tbl_3.hero_group_5
+		size = scenegraph_size.hero_group_5,
+		position = scenegraph_position.hero_group_5
 	},
 	background = {
 		vertical_alignment = "bottom",
 		parent = "menu_root",
 		horizontal_alignment = "center",
-		size = tbl_4.background,
-		position = tbl_3.background
+		size = scenegraph_size.background,
+		position = scenegraph_position.background
 	},
 	progress_bar_anchor = {
 		vertical_alignment = "bottom",
 		parent = "screen",
 		horizontal_alignment = "center",
-		size = tbl_4.progress_bar,
-		position = tbl_3.progress_bar_anchor
+		size = scenegraph_size.progress_bar,
+		position = scenegraph_position.progress_bar_anchor
 	},
 	progress_bar = {
 		vertical_alignment = "bottom",
 		parent = "progress_bar_anchor",
-		size = tbl_4.progress_bar,
-		position = tbl_3.progress_bar
+		size = scenegraph_size.progress_bar,
+		position = scenegraph_position.progress_bar
 	},
 	progress_bar_edge_bottom = {
 		vertical_alignment = "bottom",
 		parent = "progress_bar_anchor",
-		size = tbl_4.progress_bar_edge_bottom,
-		position = tbl_3.progress_bar_edge_bottom
+		size = scenegraph_size.progress_bar_edge_bottom,
+		position = scenegraph_position.progress_bar_edge_bottom
 	},
 	progress_bar_edge_top = {
 		vertical_alignment = "bottom",
 		parent = "progress_bar_anchor",
-		size = tbl_4.progress_bar_edge_top,
-		position = tbl_3.progress_bar_edge_top
+		size = scenegraph_size.progress_bar_edge_top,
+		position = scenegraph_position.progress_bar_edge_top
 	},
 	progress_bar_end_glow = {
 		vertical_alignment = "center",
 		parent = "progress_bar",
 		horizontal_alignment = "right",
-		size = tbl_4.progress_bar_end_glow,
-		position = tbl_3.progress_bar_end_glow
+		size = scenegraph_size.progress_bar_end_glow,
+		position = scenegraph_position.progress_bar_end_glow
 	},
 	progress_bar_passive = {
 		vertical_alignment = "bottom",
 		parent = "progress_bar",
-		size = tbl_4.progress_bar_passive,
-		position = tbl_3.progress_bar_passive
+		size = scenegraph_size.progress_bar_passive,
+		position = scenegraph_position.progress_bar_passive
 	},
 	progress_bar_rect = {
 		vertical_alignment = "bottom",
 		parent = "progress_bar",
-		size = tbl_4.progress_bar_rect,
-		position = tbl_3.progress_bar_rect
+		size = scenegraph_size.progress_bar_rect,
+		position = scenegraph_position.progress_bar_rect
 	},
 	progress_point = {
 		vertical_alignment = "center",
 		parent = "progress_bar_rect",
 		horizontal_alignment = "left",
-		size = tbl_4.progress_point,
-		position = tbl_3.progress_point
+		size = scenegraph_size.progress_point,
+		position = scenegraph_position.progress_point
 	},
 	countdown_timer = {
 		vertical_alignment = "center",
 		parent = "screen",
 		horizontal_alignment = "center",
-		size = tbl_4.countdown_timer,
-		position = tbl_3.countdown_timer
+		size = scenegraph_size.countdown_timer,
+		position = scenegraph_position.countdown_timer
 	},
 	selected_career_title = {
 		vertical_alignment = "top",
 		parent = "screen",
 		horizontal_alignment = "left",
-		size = tbl_4.selected_career_title,
-		position = tbl_3.selected_career_title
+		size = scenegraph_size.selected_career_title,
+		position = scenegraph_position.selected_career_title
 	},
 	selected_hero_title = {
 		vertical_alignment = "top",
 		parent = "screen",
 		horizontal_alignment = "left",
-		size = tbl_4.selected_hero_title,
-		position = tbl_3.selected_hero_title
+		size = scenegraph_size.selected_hero_title,
+		position = scenegraph_position.selected_hero_title
 	},
 	player_info_text_background = {
 		vertical_alignment = "bottom",
 		scale = "fit_width",
 		horizontal_alignment = "center",
-		size = tbl_4.player_info_text_background,
-		position = tbl_3.player_info_text_background
+		size = scenegraph_size.player_info_text_background,
+		position = scenegraph_position.player_info_text_background
 	},
 	player_info_text = {
 		vertical_alignment = "bottom",
 		parent = "player_info_text_background",
 		horizontal_alignment = "center",
-		size = tbl_4.player_info_text,
-		position = tbl_3.player_info_text
+		size = scenegraph_size.player_info_text,
+		position = scenegraph_position.player_info_text
 	},
 	local_player_picking_frame = {
 		vertical_alignment = "bottom",
 		scale = "fit",
 		horizontal_alignment = "center",
-		size = tbl_4.local_player_picking_frame,
-		position = tbl_3.local_player_picking_frame
+		size = scenegraph_size.local_player_picking_frame,
+		position = scenegraph_position.local_player_picking_frame
 	},
 	local_player_flame_highlight = {
 		vertical_alignment = "bottom",
 		parent = "bottom_bar",
 		horizontal_alignment = "center",
-		size = tbl_4.local_player_flame_highlight,
-		position = tbl_3.local_player_flame_highlight
+		size = scenegraph_size.local_player_flame_highlight,
+		position = scenegraph_position.local_player_flame_highlight
 	},
 	hero_name_text_anchor = {
 		vertical_alignment = "top",
 		parent = "screen",
 		horizontal_alignment = "left",
-		size = tbl_4.hero_name_text_anchor,
-		position = tbl_3.hero_name_text_anchor
+		size = scenegraph_size.hero_name_text_anchor,
+		position = scenegraph_position.hero_name_text_anchor
 	},
 	parading_info = {
 		vertical_alignment = "center",
 		parent = "menu_root",
 		horizontal_alignment = "center",
-		size = tbl_4.parading_info,
-		position = tbl_3.parading_info
+		size = scenegraph_size.parading_info,
+		position = scenegraph_position.parading_info
 	}
 }
 
-local function fn(arg_1_0)
+local function create_progress_marker(scenegraph_id)
 	-- function 1
 	return {
 		element = {
@@ -509,13 +509,13 @@ local function fn(arg_1_0)
 					texture_id = "glow",
 					style_id = "glow",
 					pass_type = "texture",
-					content_check_function = function (self)
+					content_check_function = function (content)
 						-- function 2
-						local highlight = self.highlight
+						local highlight = content.highlight
 
-						if not highlight then
-							highlight = self.is_local_player
-							highlight = not highlight and not self.done
+						if highlight then
+							highlight = content.is_local_player
+							highlight = not not highlight and not not not content.done
 						end
 
 						return highlight
@@ -525,38 +525,41 @@ local function fn(arg_1_0)
 					texture_id = "glow_done",
 					style_id = "glow_done",
 					pass_type = "texture",
-					content_check_function = function (self)
+					content_check_function = function (content)
 						-- function 3
-						return self.done
+						return content.done
 					end
 				},
 				{
 					style_id = "glow_done_animation",
 					pass_type = "texture",
 					texture_id = "glow_done",
-					content_check_function = function (self)
+					content_check_function = function (content)
 						-- function 4
-						return self.done
+						return content.done
 					end,
-					content_change_function = function (self, arg_5_1, arg_5_2, arg_5_3)
+					content_change_function = function (content, style, ui_animations, dt)
 						-- function 5
-						local done = self.done
-						local anim_progress = arg_5_1.anim_progress
+						local done = content.done
+						local anim_progress = style.anim_progress
 
-						if not done then
-							anim_progress = arg_5_1.anim_progress or 0
+						if done then
+							anim_progress = not not style.anim_progress or not not 0
 
-							local texture_size = arg_5_1.texture_size
-							local default_size = arg_5_1.default_size
-							local num = 2
-							local easeOutCubic = math.easeOutCubic(anim_progress)
+							local texture_size = style.texture_size
+							local default_size = style.default_size
+							local size_multiplier = 2
+							local ease_progress = math.easeOutCubic(anim_progress)
 
-							texture_size[1] = default_size[1] + default_size[1] * num * easeOutCubic
-							texture_size[2] = default_size[2] + default_size[2] * num * easeOutCubic
-							arg_5_1.color[1] = 255 * (1 - easeOutCubic)
-							arg_5_1.anim_progress = math.min(anim_progress + arg_5_3, 1)
-						elseif not anim_progress then
-							arg_5_1.anim_progress = nil
+							texture_size[1] = default_size[1] + default_size[1] * size_multiplier * ease_progress
+							texture_size[2] = default_size[2] + default_size[2] * size_multiplier * ease_progress
+
+							local color = style.color
+
+							color[1] = 255 * (1 - ease_progress)
+							style.anim_progress = math.min(anim_progress + dt, 1)
+						elseif anim_progress then
+							style.anim_progress = nil
 						end
 					end
 				}
@@ -656,18 +659,18 @@ local function fn(arg_1_0)
 			0,
 			0
 		},
-		scenegraph_id = arg_1_0
+		scenegraph_id = scenegraph_id
 	}
 end
 
-local function fn_2(arg_6_0, arg_6_1)
+local function create_roster_hero_widget(scenegraph_id, size)
 	-- function 6
-	local str = "versus_hero_selection_hero_portrait_frame"
-	local var_6_1 = UIFrameSettings[str]
-	local var_6_2 = var_6_1.texture_sizes.horizontal[2]
-	local str_2 = "shadow_frame_02"
-	local var_6_4 = UIFrameSettings[str_2]
-	local var_6_5 = var_6_4.texture_sizes.horizontal[2]
+	local frame_style = "versus_hero_selection_hero_portrait_frame"
+	local frame_settings = UIFrameSettings[frame_style]
+	local frame_width = frame_settings.texture_sizes.horizontal[2]
+	local shadow_frame_style = "shadow_frame_02"
+	local shadow_frame_settings = UIFrameSettings[shadow_frame_style]
+	local shadow_frame_width = shadow_frame_settings.texture_sizes.horizontal[2]
 
 	return {
 		alpha_multiplier = 1,
@@ -686,18 +689,18 @@ local function fn_2(arg_6_0, arg_6_1)
 					texture_id = "lock_texture",
 					style_id = "lock_texture",
 					pass_type = "texture",
-					content_check_function = function (self)
+					content_check_function = function (content)
 						-- function 7
-						return self.locked
+						return content.locked
 					end
 				},
 				{
 					texture_id = "lock_texture",
 					style_id = "lock_texture_shadow",
 					pass_type = "texture",
-					content_check_function = function (self)
+					content_check_function = function (content)
 						-- function 8
-						return self.locked
+						return content.locked
 					end
 				},
 				{
@@ -714,13 +717,13 @@ local function fn_2(arg_6_0, arg_6_1)
 					pass_type = "texture_frame",
 					style_id = "frame_passive",
 					texture_id = "frame_passive",
-					content_check_function = function (self)
+					content_check_function = function (content)
 						-- function 9
-						local locked = self.locked
+						local locked = content.locked
 
 						if not locked then
-							locked = self.taken
-							locked = locked or self.other_picking
+							locked = content.taken
+							locked = not not locked or not not content.other_picking
 						end
 
 						return locked
@@ -730,13 +733,13 @@ local function fn_2(arg_6_0, arg_6_1)
 					pass_type = "texture_frame",
 					style_id = "frame_passive",
 					texture_id = "frame_passive",
-					content_check_function = function (self)
+					content_check_function = function (content)
 						-- function 10
-						local locked = self.locked
+						local locked = content.locked
 
 						if not locked then
-							locked = self.taken
-							locked = locked or self.other_picking
+							locked = content.taken
+							locked = not not locked or not not content.other_picking
 						end
 
 						return locked
@@ -746,20 +749,20 @@ local function fn_2(arg_6_0, arg_6_1)
 					pass_type = "texture_frame",
 					style_id = "local_player_frame",
 					texture_id = "local_player_frame",
-					content_check_function = function (self)
+					content_check_function = function (content)
 						-- function 11
-						return not not self.locked or not not self.taken or not self.other_picking
+						return not content.locked and not content.taken and not not not content.other_picking
 					end
 				},
 				{
 					pass_type = "texture",
 					style_id = "other_hover",
 					texture_id = "other_hover",
-					content_check_function = function (self)
+					content_check_function = function (content)
 						-- function 12
-						local hovered_by_other = self.hovered_by_other
+						local hovered_by_other = content.hovered_by_other
 
-						hovered_by_other = not hovered_by_other and not self.button_hotspot.is_hover
+						hovered_by_other = not not hovered_by_other and not not not content.button_hotspot.is_hover
 
 						return hovered_by_other
 					end
@@ -768,11 +771,11 @@ local function fn_2(arg_6_0, arg_6_1)
 					pass_type = "texture",
 					style_id = "local_player_select_frame",
 					texture_id = "local_player_select_frame",
-					content_check_function = function (self)
+					content_check_function = function (content)
 						-- function 13
-						local is_hover = self.button_hotspot.is_hover
+						local is_hover = content.button_hotspot.is_hover
 
-						is_hover = is_hover or self.gamepad_selected
+						is_hover = not not is_hover or not not content.gamepad_selected
 
 						return is_hover
 					end
@@ -791,14 +794,14 @@ local function fn_2(arg_6_0, arg_6_1)
 			taken = false,
 			local_player_select_frame = "versus_hero_selection_frame",
 			button_hotspot = {},
-			local_player_frame = var_6_1.texture,
-			frame_passive = var_6_4.texture,
-			size = arg_6_1
+			local_player_frame = frame_settings.texture,
+			frame_passive = shadow_frame_settings.texture,
+			size = size
 		},
 		style = {
 			portrait = {
-				size = arg_6_1,
-				default_size = arg_6_1,
+				size = size,
+				default_size = size,
 				color = {
 					255,
 					255,
@@ -834,13 +837,13 @@ local function fn_2(arg_6_0, arg_6_1)
 					255
 				},
 				offset = {
-					(arg_6_1[1] - 50) / 2,
-					(arg_6_1[2] - 57) / 2,
+					(size[1] - 50) / 2,
+					(size[2] - 57) / 2,
 					5
 				},
 				default_offset = {
-					(arg_6_1[1] - 50) / 2,
-					(arg_6_1[2] - 57) / 2,
+					(size[1] - 50) / 2,
+					(size[2] - 57) / 2,
 					5
 				}
 			},
@@ -862,13 +865,13 @@ local function fn_2(arg_6_0, arg_6_1)
 					0
 				},
 				offset = {
-					(arg_6_1[1] - 50) / 2 + 2,
-					(arg_6_1[2] - 57) / 2 - 2,
+					(size[1] - 50) / 2 + 2,
+					(size[2] - 57) / 2 - 2,
 					4
 				},
 				default_offset = {
-					(arg_6_1[1] - 50) / 2 + 2,
-					(arg_6_1[2] - 57) / 2 - 2,
+					(size[1] - 50) / 2 + 2,
+					(size[2] - 57) / 2 - 2,
 					4
 				}
 			},
@@ -876,12 +879,12 @@ local function fn_2(arg_6_0, arg_6_1)
 				vertical_alignment = "bottom",
 				horizontal_alignment = "left",
 				texture_size = {
-					arg_6_1[1],
-					arg_6_1[2] - 2
+					size[1],
+					size[2] - 2
 				},
 				default_size = {
-					arg_6_1[1],
-					arg_6_1[2] - 2
+					size[1],
+					size[2] - 2
 				},
 				color = Colors.get_color_table_with_alpha("local_player_picking", 255),
 				offset = {
@@ -899,12 +902,12 @@ local function fn_2(arg_6_0, arg_6_1)
 				vertical_alignment = "bottom",
 				horizontal_alignment = "left",
 				texture_size = {
-					arg_6_1[1],
-					arg_6_1[2] - 2
+					size[1],
+					size[2] - 2
 				},
 				default_size = {
-					arg_6_1[1],
-					arg_6_1[2] - 2
+					size[1],
+					size[2] - 2
 				},
 				color = Colors.get_color_table_with_alpha("other_player_picking", 255),
 				offset = {
@@ -920,18 +923,18 @@ local function fn_2(arg_6_0, arg_6_1)
 			},
 			local_player_frame = {
 				size = {
-					arg_6_1[1] - 2,
-					arg_6_1[2] - 2
+					size[1] - 2,
+					size[2] - 2
 				},
 				default_size = {
-					arg_6_1[1] - 2,
-					arg_6_1[2] - 2
+					size[1] - 2,
+					size[2] - 2
 				},
-				texture_size = var_6_1.texture_size,
-				texture_sizes = var_6_1.texture_sizes,
+				texture_size = frame_settings.texture_size,
+				texture_sizes = frame_settings.texture_sizes,
 				frame_margins = {
-					-var_6_2,
-					-var_6_2
+					-frame_width,
+					-frame_width
 				},
 				color = {
 					255,
@@ -951,13 +954,13 @@ local function fn_2(arg_6_0, arg_6_1)
 				}
 			},
 			frame_passive = {
-				size = arg_6_1,
-				default_size = arg_6_1,
-				texture_size = var_6_4.texture_size,
-				texture_sizes = var_6_4.texture_sizes,
+				size = size,
+				default_size = size,
+				texture_size = shadow_frame_settings.texture_size,
+				texture_sizes = shadow_frame_settings.texture_sizes,
 				frame_margins = {
-					-var_6_5,
-					-var_6_5
+					-shadow_frame_width,
+					-shadow_frame_width
 				},
 				color = {
 					255,
@@ -980,12 +983,12 @@ local function fn_2(arg_6_0, arg_6_1)
 				vertical_alignment = "bottom",
 				horizontal_alignment = "left",
 				texture_size = {
-					arg_6_1[1] + 16,
-					arg_6_1[2] + 20
+					size[1] + 16,
+					size[2] + 20
 				},
 				default_size = {
-					arg_6_1[1] + 16,
-					arg_6_1[2] + 20
+					size[1] + 16,
+					size[2] + 20
 				},
 				color = Colors.get_color_table_with_alpha("local_player_picking", 255),
 				offset = {
@@ -1003,12 +1006,12 @@ local function fn_2(arg_6_0, arg_6_1)
 				vertical_alignment = "bottom",
 				horizontal_alignment = "left",
 				texture_size = {
-					arg_6_1[1] + 16,
-					arg_6_1[2] + 20
+					size[1] + 16,
+					size[2] + 20
 				},
 				default_size = {
-					arg_6_1[1] + 16,
-					arg_6_1[2] + 20
+					size[1] + 16,
+					size[2] + 20
 				},
 				color = Colors.get_color_table_with_alpha("other_player_picking", 255),
 				offset = {
@@ -1028,13 +1031,13 @@ local function fn_2(arg_6_0, arg_6_1)
 			0,
 			0
 		},
-		scenegraph_id = arg_6_0
+		scenegraph_id = scenegraph_id
 	}
 end
 
-local function fn_3(arg_14_0)
+local function create_hero_roster_detail_widget(scenegraph_id)
 	-- function 14
-	return {
+	local widget = {
 		element = {
 			passes = {
 				{
@@ -1046,10 +1049,10 @@ local function fn_3(arg_14_0)
 					style_id = "hero_name",
 					pass_type = "text",
 					text_id = "hero_name",
-					content_change_function = function (self, arg_15_1)
+					content_change_function = function (content, style)
 						-- function 15
-						if not self.taken then
-							arg_15_1.text_color = {
+						if content.taken then
+							style.text_color = {
 								255,
 								76,
 								35,
@@ -1062,9 +1065,9 @@ local function fn_3(arg_14_0)
 					style_id = "available_text",
 					pass_type = "text",
 					text_id = "available_text",
-					content_check_function = function (self)
+					content_check_function = function (content)
 						-- function 16
-						return self.side == "dark_pact"
+						return content.side == "dark_pact"
 					end
 				}
 			}
@@ -1147,39 +1150,44 @@ local function fn_3(arg_14_0)
 			-25,
 			100
 		},
-		scenegraph_id = arg_14_0
+		scenegraph_id = scenegraph_id
 	}
+
+	return widget
 end
 
-local function fn_4()
+local function create_hero_roster_widget_defitions()
 	-- function 17
-	local tbl = {}
-	local tbl_3 = {
+	local roster_hero_widgets = {}
+	local hero_groups = {
 		4,
 		4,
 		4,
 		4,
 		4
 	}
-	local tbl_4 = {}
+	local hero_roster_detail_widgets = {}
 
-	for i = 1, #tbl_3 do
-		local var_17_3 = tbl_3[i]
-		local str = "hero_group_" .. i
-		local var_17_5 = tbl_5[str]
-		local num = 10
-		local num_2 = var_17_5.size[1] - num / 2
+	for i = 1, #hero_groups do
+		local num_careers = hero_groups[i]
+		local parent_group = "hero_group_" .. i
+		local parent = scenegraph_definition[parent_group]
+		local border_wid = 10
+		local group_wid = parent.size[1] - border_wid / 2
 
-		tbl[i] = {}
-		tbl_4[i] = fn_3("hero_group_" .. i)
+		roster_hero_widgets[i] = {}
 
-		for j = 1, var_17_3 do
-			local str_2 = "hero_root_" .. i .. "_" .. j
+		local detail_widget = create_hero_roster_detail_widget("hero_group_" .. i)
 
-			tbl_5[str_2] = {
+		hero_roster_detail_widgets[i] = detail_widget
+
+		for j = 1, num_careers do
+			local name = "hero_root_" .. i .. "_" .. j
+
+			scenegraph_definition[name] = {
 				vertical_alignment = "center",
 				horizontal_alignment = "left",
-				parent = str,
+				parent = parent_group,
 				size = {
 					70,
 					80
@@ -1190,27 +1198,26 @@ local function fn_4()
 					1
 				}
 			}
-			tbl[i][j] = fn_2(str_2, tbl_2)
+			roster_hero_widgets[i][j] = create_roster_hero_widget(name, hero_portrait_size)
 		end
 	end
 
-	return tbl, tbl_4
+	return roster_hero_widgets, hero_roster_detail_widgets
 end
 
-local function fn_5(arg_18_0, arg_18_1, arg_18_2)
+local function create_player_box_widget(scenegraph_id, offset, size)
 	-- function 18
-	local flag = arg_18_2 or tbl_5[arg_18_0].size
-	local flag_2 = arg_18_1 or {
+	local size = not not size or not not scenegraph_definition[scenegraph_id].size
+	local offset = not not offset or not not {
 		0,
 		0,
 		11
 	}
-	local str = "menu_frame_12"
-	local var_18_3 = UIFrameSettings[str]
-	local var_18_4 = var_18_3.texture_sizes.horizontal[2]
-	local button_frame_02 = UIFrameSettings.button_frame_02
-
-	return {
+	local frame_style = "menu_frame_12"
+	local frame_settings = UIFrameSettings[frame_style]
+	local frame_width = frame_settings.texture_sizes.horizontal[2]
+	local mute_button_frame_settings = UIFrameSettings.button_frame_02
+	local widget = {
 		element = {
 			passes = {
 				{
@@ -1232,12 +1239,12 @@ local function fn_5(arg_18_0, arg_18_1, arg_18_2)
 					pass_type = "texture",
 					style_id = "mute_background_fade",
 					texture_id = "mute_background_fade",
-					content_check_function = function (self)
+					content_check_function = function (content)
 						-- function 19
-						local is_player = self.is_player
-						local is_player_2 = self.is_player
+						local is_player = content.is_player
+						local is_player_2 = content.is_player
 
-						is_player_2 = not is_player_2 and not self.is_local_player
+						is_player_2 = not not is_player_2 and not not not content.is_local_player
 
 						return is_player_2
 					end
@@ -1246,12 +1253,12 @@ local function fn_5(arg_18_0, arg_18_1, arg_18_2)
 					texture_id = "mute_button_frame",
 					style_id = "mute_button_frame",
 					pass_type = "texture_frame",
-					content_check_function = function (self)
+					content_check_function = function (content)
 						-- function 20
-						local is_player = self.is_player
-						local is_player_2 = self.is_player
+						local is_player = content.is_player
+						local is_player_2 = content.is_player
 
-						is_player_2 = not is_player_2 and not self.is_local_player
+						is_player_2 = not not is_player_2 and not not not content.is_local_player
 
 						return is_player_2
 					end
@@ -1260,12 +1267,12 @@ local function fn_5(arg_18_0, arg_18_1, arg_18_2)
 					pass_type = "texture",
 					style_id = "mute_icon",
 					texture_id = "mute_icon",
-					content_check_function = function (self)
+					content_check_function = function (content)
 						-- function 21
-						local is_player = self.is_player
-						local is_player_2 = self.is_player
+						local is_player = content.is_player
+						local is_player_2 = content.is_player
 
-						is_player_2 = not is_player_2 and not self.is_local_player
+						is_player_2 = not not is_player_2 and not not not content.is_local_player
 
 						return is_player_2
 					end
@@ -1274,11 +1281,11 @@ local function fn_5(arg_18_0, arg_18_1, arg_18_2)
 					pass_type = "texture",
 					style_id = "mute_icon_hovered",
 					texture_id = "mute_icon",
-					content_check_function = function (self)
+					content_check_function = function (content)
 						-- function 22
-						local is_player = self.is_player
+						local is_player = content.is_player
 
-						is_player = not is_player and not not self.is_local_player or self.hotspot.is_hover
+						is_player = not not is_player and not content.is_local_player and not not content.hotspot.is_hover
 
 						return is_player
 					end
@@ -1287,11 +1294,11 @@ local function fn_5(arg_18_0, arg_18_1, arg_18_2)
 					pass_type = "texture",
 					style_id = "mute_icon_muted",
 					texture_id = "mute_icon_muted",
-					content_check_function = function (self)
+					content_check_function = function (content)
 						-- function 23
-						local is_player = self.is_player
+						local is_player = content.is_player
 
-						is_player = not is_player and not not self.is_local_player or self.muted
+						is_player = not not is_player and not content.is_local_player and not not content.muted
 
 						return is_player
 					end
@@ -1300,11 +1307,11 @@ local function fn_5(arg_18_0, arg_18_1, arg_18_2)
 					style_id = "mute_icon",
 					pass_type = "hotspot",
 					content_id = "hotspot",
-					content_check_function = function (self)
+					content_check_function = function (content)
 						-- function 24
-						local is_player = self.parent.is_player
+						local is_player = content.parent.is_player
 
-						is_player = not is_player and not self.parent.is_local_player
+						is_player = not not is_player and not not not content.parent.is_local_player
 
 						return is_player
 					end
@@ -1320,8 +1327,8 @@ local function fn_5(arg_18_0, arg_18_1, arg_18_2)
 			is_local_player = false,
 			background = "item_tooltip_background",
 			mute_icon = "tab_menu_icon_01",
-			mute_button_frame = button_frame_02.texture,
-			frame = var_18_3.texture,
+			mute_button_frame = mute_button_frame_settings.texture,
+			frame = frame_settings.texture,
 			hotspot = {}
 		},
 		style = {
@@ -1329,7 +1336,7 @@ local function fn_5(arg_18_0, arg_18_1, arg_18_2)
 				vertical_alignment = "center",
 				masked = true,
 				horizontal_alignment = "center",
-				texture_size = tbl,
+				texture_size = player_name_box_size,
 				texture_tiling_size = {
 					256,
 					256
@@ -1348,15 +1355,15 @@ local function fn_5(arg_18_0, arg_18_1, arg_18_2)
 			},
 			frame = {
 				size = {
-					flag[1] - 6,
-					flag[2] - 6
+					size[1] - 6,
+					size[2] - 6
 				},
-				default_size = flag,
-				texture_size = var_18_3.texture_size,
-				texture_sizes = var_18_3.texture_sizes,
+				default_size = size,
+				texture_size = frame_settings.texture_size,
+				texture_sizes = frame_settings.texture_sizes,
 				frame_margins = {
-					-var_18_4 - 2,
-					-var_18_4 - 2
+					-frame_width - 2,
+					-frame_width - 2
 				},
 				color = {
 					255,
@@ -1404,7 +1411,7 @@ local function fn_5(arg_18_0, arg_18_1, arg_18_2)
 				},
 				color = Colors.get_color_table_with_alpha("white", 255),
 				offset = {
-					tbl_5[arg_18_0].size[1] - 57,
+					scenegraph_definition[scenegraph_id].size[1] - 57,
 					3,
 					8
 				}
@@ -1414,11 +1421,11 @@ local function fn_5(arg_18_0, arg_18_1, arg_18_2)
 					42,
 					42
 				},
-				texture_size = button_frame_02.texture_size,
-				texture_sizes = button_frame_02.texture_sizes,
+				texture_size = mute_button_frame_settings.texture_size,
+				texture_sizes = mute_button_frame_settings.texture_sizes,
 				color = Colors.get_color_table_with_alpha("white", 255),
 				offset = {
-					tbl_5[arg_18_0].size[1] - 57,
+					scenegraph_definition[scenegraph_id].size[1] - 57,
 					3,
 					8
 				}
@@ -1430,7 +1437,7 @@ local function fn_5(arg_18_0, arg_18_1, arg_18_2)
 				},
 				color = Colors.get_color_table_with_alpha("white", 200),
 				offset = {
-					tbl_5[arg_18_0].size[1] - 55,
+					scenegraph_definition[scenegraph_id].size[1] - 55,
 					5,
 					8
 				}
@@ -1442,7 +1449,7 @@ local function fn_5(arg_18_0, arg_18_1, arg_18_2)
 				},
 				color = Colors.get_color_table_with_alpha("white", 250),
 				offset = {
-					tbl_5[arg_18_0].size[1] - 55,
+					scenegraph_definition[scenegraph_id].size[1] - 55,
 					5,
 					9
 				}
@@ -1454,40 +1461,42 @@ local function fn_5(arg_18_0, arg_18_1, arg_18_2)
 				},
 				color = Colors.get_color_table_with_alpha("red", 250),
 				offset = {
-					tbl_5[arg_18_0].size[1] - 55,
+					scenegraph_definition[scenegraph_id].size[1] - 55,
 					5,
 					10
 				}
 			}
 		},
-		scenegraph_id = arg_18_0,
-		offset = flag_2
+		scenegraph_id = scenegraph_id,
+		offset = offset
 	}
+
+	return widget
 end
 
-local tbl_6 = {
+local box_size = {
 	480,
 	80
 }
 
-local function fn_6()
+local function create_player_name_box_widgets()
 	-- function 25
-	local tbl = {}
-	local num = 4
+	local name_box_widgets = {}
+	local num_players = 4
 
-	for i = 1, num do
-		local str = "player_name_box_" .. i
-		local var_25_3 = fn_5(str)
+	for i = 1, num_players do
+		local name = "player_name_box_" .. i
+		local widget_def = create_player_box_widget(name)
 
-		tbl[#tbl + 1] = var_25_3
+		name_box_widgets[#name_box_widgets + 1] = widget_def
 	end
 
-	return tbl
+	return name_box_widgets
 end
 
-local function fn_7(arg_26_0)
+local function create_your_turn_text_widget(scenegraph_id)
 	-- function 26
-	return {
+	local widget = {
 		element = {
 			passes = {
 				{
@@ -1499,9 +1508,9 @@ local function fn_7(arg_26_0)
 					style_id = "arrow_texture",
 					texture_id = "arrow_texture",
 					pass_type = "texture",
-					content_change_function = function (arg_27_0, arg_27_1)
+					content_change_function = function (content, style)
 						-- function 27
-						arg_27_1.color[1] = 165 + 95 * math.sin(Managers.time:time("ui") * 5) * 0.75
+						style.color[1] = 165 + 95 * math.sin(Managers.time:time("ui") * 5) * 0.75
 					end
 				}
 			}
@@ -1550,21 +1559,22 @@ local function fn_7(arg_26_0)
 			}
 		},
 		offset = {
-			tbl[1] * 0.5 - 50,
+			player_name_box_size[1] * 0.5 - 50,
 			30,
 			50
 		},
-		scenegraph_id = arg_26_0
+		scenegraph_id = scenegraph_id
 	}
+
+	return widget
 end
 
-local function fn_8(arg_28_0, arg_28_1, arg_28_2, arg_28_3)
+local function create_skill_info_widget(scenegraph_id, skill_type, skill_icon, skill_name)
 	-- function 28
-	local flag = arg_28_2 or "icons_placeholder"
-	local flag_2 = arg_28_1 or "n/a"
-	local flag_3 = arg_28_3 or "n/a"
-
-	return {
+	local skill_icon = not not skill_icon or not not "icons_placeholder"
+	local skill_type = not not skill_type or not not "n/a"
+	local skill_name = not not skill_name or not not "n/a"
+	local widget = {
 		element = {
 			passes = {
 				{
@@ -1591,9 +1601,9 @@ local function fn_8(arg_28_0, arg_28_1, arg_28_2, arg_28_3)
 		},
 		content = {
 			icon_frame = "icon_talent_frame",
-			skill_icon = flag,
-			skill_type = flag_2,
-			skill_name = flag_3
+			skill_icon = skill_icon,
+			skill_type = skill_type,
+			skill_name = skill_name
 		},
 		style = {
 			skill_icon = {
@@ -1674,8 +1684,10 @@ local function fn_8(arg_28_0, arg_28_1, arg_28_2, arg_28_3)
 			0,
 			10
 		},
-		scenegraph_id = arg_28_0
+		scenegraph_id = scenegraph_id
 	}
+
+	return widget
 end
 
 generic_input_actions = {
@@ -1706,23 +1718,23 @@ generic_input_actions = {
 	}
 }
 
-local tbl_7 = {
+local animation_definitions = {
 	on_enter = {
 		{
 			name = "fade_in",
 			start_progress = 0,
 			end_progress = 0.3,
-			init = function (arg_29_0, arg_29_1, arg_29_2, arg_29_3)
+			init = function (ui_scenegraph, scenegraph_definition, widgets, params)
 				-- function 29
-				arg_29_3.render_settings.alpha_multiplier = 0
+				params.render_settings.alpha_multiplier = 0
 			end,
-			update = function (arg_30_0, arg_30_1, arg_30_2, arg_30_3, arg_30_4)
+			update = function (ui_scenegraph, scenegraph_definition, widgets, progress, params)
 				-- function 30
-				local easeOutCubic = math.easeOutCubic(arg_30_3)
+				local anim_progress = math.easeOutCubic(progress)
 
-				arg_30_4.render_settings.alpha_multiplier = easeOutCubic
+				params.render_settings.alpha_multiplier = anim_progress
 			end,
-			on_complete = function (arg_31_0, arg_31_1, arg_31_2, arg_31_3)
+			on_complete = function (ui_scenegraph, scenegraph_definition, widgets, params)
 				-- function 31
 				return
 			end
@@ -1733,17 +1745,17 @@ local tbl_7 = {
 			name = "fade_out",
 			start_progress = 0,
 			end_progress = 1,
-			init = function (arg_32_0, arg_32_1, arg_32_2, arg_32_3)
+			init = function (ui_scenegraph, scenegraph_definition, widgets, params)
 				-- function 32
-				arg_32_3.render_settings.alpha_multiplier = 1
+				params.render_settings.alpha_multiplier = 1
 			end,
-			update = function (arg_33_0, arg_33_1, arg_33_2, arg_33_3, arg_33_4)
+			update = function (ui_scenegraph, scenegraph_definition, widgets, progress, params)
 				-- function 33
-				local easeOutCubic = math.easeOutCubic(arg_33_3)
+				local anim_progress = math.easeOutCubic(progress)
 
-				arg_33_4.render_settings.alpha_multiplier = 1 - easeOutCubic
+				params.render_settings.alpha_multiplier = 1 - anim_progress
 			end,
-			on_complete = function (arg_34_0, arg_34_1, arg_34_2, arg_34_3)
+			on_complete = function (ui_scenegraph, scenegraph_definition, widgets, params)
 				-- function 34
 				return
 			end
@@ -1754,21 +1766,25 @@ local tbl_7 = {
 			name = "fade_out_startup",
 			start_progress = 0,
 			end_progress = 0.4,
-			init = function (arg_35_0, arg_35_1, arg_35_2, arg_35_3)
+			init = function (ui_scenegraph, scenegraph_definition, widgets, params)
 				-- function 35
 				return
 			end,
-			update = function (arg_36_0, arg_36_1, arg_36_2, arg_36_3, arg_36_4)
+			update = function (ui_scenegraph, scenegraph_definition, widgets, progress, params)
 				-- function 36
-				local _widgets_by_name = arg_36_4.self._widgets_by_name
-				local countdown_timer = _widgets_by_name.countdown_timer
-				local your_turn_indicator_text = _widgets_by_name.your_turn_indicator_text
-				local easeOutCubic = math.easeOutCubic(arg_36_3)
+				local self = params.self
+				local widgets_by_name = self._widgets_by_name
+				local countdown_timer = widgets_by_name.countdown_timer
+				local your_turn_indicator = widgets_by_name.your_turn_indicator_text
+				local anim_progress = math.easeOutCubic(progress)
 
-				countdown_timer.alpha_multiplier = 1 - easeOutCubic
-				your_turn_indicator_text.style.text.text_color[1] = 255 * (1 - easeOutCubic)
+				countdown_timer.alpha_multiplier = 1 - anim_progress
+
+				local your_turn_indicator_style = your_turn_indicator.style
+
+				your_turn_indicator_style.text.text_color[1] = 255 * (1 - anim_progress)
 			end,
-			on_complete = function (arg_37_0, arg_37_1, arg_37_2, arg_37_3)
+			on_complete = function (ui_scenegraph, scenegraph_definition, widgets, params)
 				-- function 37
 				return
 			end
@@ -1777,20 +1793,21 @@ local tbl_7 = {
 			name = "fade_in_top_details",
 			start_progress = 0,
 			end_progress = 0.4,
-			init = function (arg_38_0, arg_38_1, arg_38_2, arg_38_3)
+			init = function (ui_scenegraph, scenegraph_definition, widgets, params)
 				-- function 38
 				return
 			end,
-			update = function (arg_39_0, arg_39_1, arg_39_2, arg_39_3, arg_39_4)
+			update = function (ui_scenegraph, scenegraph_definition, widgets, progress, params)
 				-- function 39
-				local _top_detail_widgets = arg_39_4.self._top_detail_widgets
-				local easeOutCubic = math.easeOutCubic(arg_39_3)
+				local self = params.self
+				local top_detail_widgets = self._top_detail_widgets
+				local anim_progress = math.easeOutCubic(progress)
 
-				for i, v in ipairs(_top_detail_widgets) do
-					v.alpha_multiplier = easeOutCubic
+				for _, widget in ipairs(top_detail_widgets) do
+					widget.alpha_multiplier = anim_progress
 				end
 			end,
-			on_complete = function (arg_40_0, arg_40_1, arg_40_2, arg_40_3)
+			on_complete = function (ui_scenegraph, scenegraph_definition, widgets, params)
 				-- function 40
 				return
 			end
@@ -1801,38 +1818,38 @@ local tbl_7 = {
 			name = "fade_out_hero_selection",
 			start_progress = 0,
 			end_progress = 0.4,
-			init = function (arg_41_0, arg_41_1, arg_41_2, arg_41_3)
+			init = function (ui_scenegraph, scenegraph_definition, widgets, params)
 				-- function 41
 				return
 			end,
-			update = function (arg_42_0, arg_42_1, arg_42_2, arg_42_3, arg_42_4)
+			update = function (ui_scenegraph, scenegraph_definition, widgets, progress, params)
 				-- function 42
-				local self = arg_42_4.self
-				local easeOutCubic = math.easeOutCubic(arg_42_3)
+				local self = params.self
+				local anim_progress = math.easeOutCubic(progress)
 
-				for i, v in ipairs(self._other_widgets) do
-					if v.alpha_multiplier ~= 0 then
-						v.alpha_multiplier = 1 - easeOutCubic
+				for _, widget in ipairs(self._other_widgets) do
+					if widget.alpha_multiplier ~= 0 then
+						widget.alpha_multiplier = 1 - anim_progress
 					end
 				end
 
-				for i_2, v_2 in ipairs(self._hero_group_widgets) do
-					v_2.alpha_multiplier = 1 - easeOutCubic
+				for _, widget in ipairs(self._hero_group_widgets) do
+					widget.alpha_multiplier = 1 - anim_progress
 				end
 
-				for i_3, v_3 in ipairs(self._hero_group_detail_widgets) do
-					v_3.alpha_multiplier = 1 - easeOutCubic
+				for _, widget in ipairs(self._hero_group_detail_widgets) do
+					widget.alpha_multiplier = 1 - anim_progress
 				end
 
-				for i_4, v_4 in ipairs(self._player_name_box_widgets) do
-					v_4.alpha_multiplier = 1 - easeOutCubic
+				for _, widget in ipairs(self._player_name_box_widgets) do
+					widget.alpha_multiplier = 1 - anim_progress
 				end
 
-				for i_5, v_5 in ipairs(self._top_detail_widgets) do
-					v_5.alpha_multiplier = 1 - easeOutCubic
+				for _, widget in ipairs(self._top_detail_widgets) do
+					widget.alpha_multiplier = 1 - anim_progress
 				end
 			end,
-			on_complete = function (arg_43_0, arg_43_1, arg_43_2, arg_43_3)
+			on_complete = function (ui_scenegraph, scenegraph_definition, widgets, params)
 				-- function 43
 				return
 			end
@@ -1843,22 +1860,24 @@ local tbl_7 = {
 			name = "fade_to_black",
 			start_progress = 0,
 			end_progress = 0.3,
-			init = function (arg_44_0, arg_44_1, arg_44_2, arg_44_3)
+			init = function (ui_scenegraph, scenegraph_definition, widget, params)
 				-- function 44
 				return
 			end,
-			update = function (arg_45_0, arg_45_1, arg_45_2, arg_45_3, arg_45_4)
+			update = function (ui_scenegraph, scenegraph_definition, widget, progress, params)
 				-- function 45
-				local num = 155 + 100 * (1 - math.easeOutCubic(arg_45_3))
+				local anim_progress = math.easeOutCubic(progress)
+				local new_value = 155 + 100 * (1 - anim_progress)
+				local style = widget.style.background
 
-				arg_45_2.style.background.color = {
+				style.color = {
 					255,
-					num,
-					num,
-					num
+					new_value,
+					new_value,
+					new_value
 				}
 			end,
-			on_complete = function (arg_46_0, arg_46_1, arg_46_2, arg_46_3)
+			on_complete = function (ui_scenegraph, scenegraph_definition, widget, params)
 				-- function 46
 				return
 			end
@@ -1869,29 +1888,31 @@ local tbl_7 = {
 			name = "fade_to_gray",
 			start_progress = 0,
 			end_progress = 0.3,
-			init = function (arg_47_0, arg_47_1, arg_47_2, arg_47_3)
+			init = function (ui_scenegraph, scenegraph_definition, widget, params)
 				-- function 47
 				return
 			end,
-			update = function (arg_48_0, arg_48_1, arg_48_2, arg_48_3, arg_48_4)
+			update = function (ui_scenegraph, scenegraph_definition, widget, progress, params)
 				-- function 48
-				local num = 255 * math.easeOutCubic(arg_48_3)
+				local anim_progress = math.easeOutCubic(progress)
+				local new_value = 255 * anim_progress
+				local style = widget.style.background
 
-				arg_48_2.style.background.color = {
+				style.color = {
 					255,
-					num,
-					num,
-					num
+					new_value,
+					new_value,
+					new_value
 				}
 			end,
-			on_complete = function (arg_49_0, arg_49_1, arg_49_2, arg_49_3)
+			on_complete = function (ui_scenegraph, scenegraph_definition, widget, params)
 				-- function 49
 				return
 			end
 		}
 	}
 }
-local tbl_8 = {
+local selected_career_title_style = {
 	word_wrap = true,
 	upper_case = true,
 	localize = false,
@@ -1918,7 +1939,7 @@ local tbl_8 = {
 		0
 	}
 }
-local tbl_9 = {
+local countdown_timer_style = {
 	word_wrap = true,
 	upper_case = true,
 	localize = false,
@@ -1939,7 +1960,7 @@ local tbl_9 = {
 		0
 	}
 }
-local tbl_10 = {
+local selected_hero_title_style = {
 	word_wrap = true,
 	font_size = 70,
 	localize = false,
@@ -1965,7 +1986,7 @@ local tbl_10 = {
 		0
 	}
 }
-local tbl_11 = {
+local team_text_style = {
 	word_wrap = true,
 	horizontal_alignment = "center",
 	localize = false,
@@ -1985,7 +2006,7 @@ local tbl_11 = {
 		0
 	}
 }
-local tbl_12 = {
+local objective_text_style = {
 	word_wrap = true,
 	horizontal_alignment = "center",
 	localize = false,
@@ -2010,7 +2031,7 @@ local tbl_12 = {
 		0
 	}
 }
-local tbl_13 = {
+local player_picking_text_style = {
 	word_wrap = false,
 	font_size = 20,
 	localize = false,
@@ -2039,7 +2060,7 @@ local tbl_13 = {
 		0
 	}
 }
-local tbl_14 = {
+local hero_career_name_text_style = {
 	word_wrap = false,
 	font_size = 48,
 	localize = false,
@@ -2068,8 +2089,8 @@ local tbl_14 = {
 		0
 	}
 }
-local tbl_15 = {
-	local_player_picking_frame = UIWidgets.create_frame("local_player_picking_frame", tbl_5.local_player_picking_frame.size, "frame_inner_glow_02", nil, nil, nil, true),
+local other_definitions = {
+	local_player_picking_frame = UIWidgets.create_frame("local_player_picking_frame", scenegraph_definition.local_player_picking_frame.size, "frame_inner_glow_02", nil, nil, nil, true),
 	local_player_picking_frame_write_mask = UIWidgets.create_simple_texture("mask_rect_edge_fade", "local_player_picking_frame"),
 	progress_bar_edge_top = UIWidgets.create_simple_texture("menu_frame_09_divider", "progress_bar_edge_top"),
 	progress_bar_edge_bottom = UIWidgets.create_simple_texture("menu_frame_09_divider", "progress_bar_edge_bottom"),
@@ -2090,12 +2111,12 @@ local tbl_15 = {
 		0,
 		0
 	}),
-	your_turn_indicator_text = fn_7("player_name_box_1"),
-	countdown_timer = UIWidgets.create_simple_text("", "countdown_timer", nil, nil, tbl_9)
+	your_turn_indicator_text = create_your_turn_text_widget("player_name_box_1"),
+	countdown_timer = UIWidgets.create_simple_text("", "countdown_timer", nil, nil, countdown_timer_style)
 }
-local tbl_16 = {
-	selected_career_title = UIWidgets.create_simple_text("", "selected_career_title", nil, nil, tbl_8),
-	selected_hero_title = UIWidgets.create_simple_text("", "selected_hero_title", nil, nil, tbl_10),
+local widget_definitions = {
+	selected_career_title = UIWidgets.create_simple_text("", "selected_career_title", nil, nil, selected_career_title_style),
+	selected_hero_title = UIWidgets.create_simple_text("", "selected_hero_title", nil, nil, selected_hero_title_style),
 	character_selection_bg = UIWidgets.create_simple_texture("versus_hero_selection_bottom_frame_background", "bottom_bar", nil, nil, {
 		255,
 		136,
@@ -2117,30 +2138,30 @@ local tbl_16 = {
 		1
 	})
 }
-local parading_info = tbl_4.parading_info
-local tbl_17 = {
-	parading_info[1] / 2 - 227,
-	parading_info[2] / 2 - 25,
+local parading_info_size = scenegraph_size.parading_info
+local detail_offset = {
+	parading_info_size[1] / 2 - 227,
+	parading_info_size[2] / 2 - 25,
 	1
 }
-local tbl_18 = {
-	player_picking_text = UIWidgets.create_simple_text(Localize("versus_hero_selection_view_local_player_picking"), "hero_name_text_anchor", nil, nil, tbl_13),
-	hero_career_name_text = UIWidgets.create_simple_text("", "hero_name_text_anchor", nil, nil, tbl_14),
-	passive_skill = fn_8("hero_name_text_anchor"),
-	career_skill = fn_8("hero_name_text_anchor")
+local top_detail_widgets_definitions = {
+	player_picking_text = UIWidgets.create_simple_text(Localize("versus_hero_selection_view_local_player_picking"), "hero_name_text_anchor", nil, nil, player_picking_text_style),
+	hero_career_name_text = UIWidgets.create_simple_text("", "hero_name_text_anchor", nil, nil, hero_career_name_text_style),
+	passive_skill = create_skill_info_widget("hero_name_text_anchor"),
+	career_skill = create_skill_info_widget("hero_name_text_anchor")
 }
 
 return {
-	scenegraph_definition = tbl_5,
-	widget_definitions = tbl_16,
-	retained_mode = flag,
-	create_player_name_box_widgets = fn_6,
-	create_hero_roster_widget_defitions = fn_4,
-	create_skill_info_widget = fn_8,
-	other_definitions = tbl_15,
-	animation_definitions = tbl_7,
-	create_progress_marker = fn,
+	scenegraph_definition = scenegraph_definition,
+	widget_definitions = widget_definitions,
+	retained_mode = RETAINED_MODE,
+	create_player_name_box_widgets = create_player_name_box_widgets,
+	create_hero_roster_widget_defitions = create_hero_roster_widget_defitions,
+	create_skill_info_widget = create_skill_info_widget,
+	other_definitions = other_definitions,
+	animation_definitions = animation_definitions,
+	create_progress_marker = create_progress_marker,
 	intro_view_settings = intro_view_settings,
-	top_detail_widgets_definitions = tbl_18,
+	top_detail_widgets_definitions = top_detail_widgets_definitions,
 	generic_input_actions = generic_input_actions
 }

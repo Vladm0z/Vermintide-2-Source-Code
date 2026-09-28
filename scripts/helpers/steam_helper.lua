@@ -2,10 +2,10 @@
 
 local SteamHelper = SteamHelper
 
-SteamHelper = SteamHelper or {}
+SteamHelper = not not SteamHelper or not not {}
 SteamHelper = SteamHelper
 
-local tbl = {
+local FRIEND_STATUS = {
 	[0] = "offline",
 	"online",
 	"busy",
@@ -17,11 +17,13 @@ local tbl = {
 
 SteamHelper.debug_friends = function ()
 	-- function 1
-	local num = 5
-	local tbl = {}
+	local number_of_friends = 5
+	local friends = {}
 
-	for i = 1, num do
-		tbl["id_" .. i] = {
+	for i = 1, number_of_friends do
+		local id = "id_" .. i
+
+		friends[id] = {
 			playing_this_game = false,
 			name = "debug_friend_" .. i,
 			playing_game = i % 2 == 1,
@@ -29,62 +31,64 @@ SteamHelper.debug_friends = function ()
 		}
 	end
 
-	return tbl
+	return friends
 end
 
 SteamHelper.friends = function ()
 	-- function 2
 	local num_friends = Friends.num_friends()
-	local tbl_2 = {}
+	local friends = {}
 	local app_id = Steam.app_id()
 
 	for i = 1, num_friends do
 		local id = Friends.id(i)
 		local playing_game = Friends.playing_game(id)
 
-		if not (not playing_game and playing_game.lobby or playing_game.ip) then
-			local presence = Presence.presence(id, "connect")
-			local count = #"+connect "
+		if playing_game and not playing_game.lobby and not playing_game.ip then
+			local connect_info = Presence.presence(id, "connect")
+			local prefix_len = #"+connect "
 
-			if not (not presence and not (count < #presence)) then
-				local sub = string.sub(presence, count + 1, #presence)
-				local split_ip_port, var_2_9 = NetworkUtils.split_ip_port(sub)
+			if connect_info and prefix_len < #connect_info then
+				local ip_port = string.sub(connect_info, prefix_len + 1, #connect_info)
+				local ip, port = NetworkUtils.split_ip_port(ip_port)
 
-				if not split_ip_port then
-					playing_game.ip = split_ip_port
-					playing_game.server_port = var_2_9
+				if ip then
+					playing_game.ip = ip
+					playing_game.server_port = port
 				end
 			end
 		end
 
-		local flag = not playing_game and playing_game.app_id == app_id
+		local playing_this_game = not not playing_game and playing_game.app_id == app_id
 
-		tbl_2[id] = {
+		friends[id] = {
 			name = Friends.name(id),
 			playing_game = playing_game,
-			playing_this_game = flag,
-			status = tbl[Friends.status(id)]
+			playing_this_game = playing_this_game,
+			status = FRIEND_STATUS[Friends.status(id)]
 		}
 	end
 
-	return tbl_2
+	return friends
 end
 
 SteamHelper.is_dev = function ()
 	-- function 3
-	if not rawget(_G, "Clans") then
+	if rawget(_G, "Clans") then
 		return SteamHelper.is_in_clan("170000000a021fa")
 	else
 		return false
 	end
 end
 
-SteamHelper.is_in_clan = function (arg_4_0)
+SteamHelper.is_in_clan = function (clan_id)
 	-- function 4
 	local clan_count = Clans.clan_count()
 
 	for i = 0, clan_count - 1 do
-		if Clans.clan_by_index(i) == arg_4_0 then
+		local id = Clans.clan_by_index(i)
+
+		if id == clan_id then
 			return true
 		end
 	end
@@ -94,17 +98,18 @@ end
 
 SteamHelper.clans_short = function ()
 	-- function 5
-	if not rawget(_G, "Clans") then
+	if rawget(_G, "Clans") then
 		local clan_count = Clans.clan_count()
-		local tbl = {}
+		local clan_names = {}
 
 		for i = 0, clan_count - 1 do
-			local clan_by_index = Clans.clan_by_index(i)
+			local id = Clans.clan_by_index(i)
+			local name = Clans.clan_tag(id)
 
-			tbl[clan_by_index] = Clans.clan_tag(clan_by_index)
+			clan_names[id] = name
 		end
 
-		return tbl
+		return clan_names
 	else
 		return {}
 	end
@@ -113,13 +118,14 @@ end
 SteamHelper.clans = function ()
 	-- function 6
 	local clan_count = Clans.clan_count()
-	local tbl = {}
+	local clan_names = {}
 
 	for i = 0, clan_count - 1 do
-		local clan_by_index = Clans.clan_by_index(i)
+		local id = Clans.clan_by_index(i)
+		local name = Clans.clan_name(id)
 
-		tbl[clan_by_index] = Clans.clan_name(clan_by_index)
+		clan_names[id] = name
 	end
 
-	return tbl
+	return clan_names
 end

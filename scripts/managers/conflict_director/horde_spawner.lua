@@ -2,7 +2,7 @@
 
 HordeSpawner = class(HordeSpawner)
 
-local tbl = {
+local horde_sectors = {
 	{},
 	{},
 	{},
@@ -12,7 +12,7 @@ local tbl = {
 	{},
 	{}
 }
-local tbl_2 = {
+local cover_sectors = {
 	{},
 	{},
 	{},
@@ -22,62 +22,62 @@ local tbl_2 = {
 	{},
 	{}
 }
-local count = #tbl
-local tbl_3 = {}
-local tbl_4 = {}
-local tbl_5 = {}
+local num_sectors = #horde_sectors
+local found_cover_points = {}
+local temp_horde_spawners = {}
+local temp_hidden_spawners = {}
 
-HordeSpawner.init = function (self, arg_1_1, arg_1_2)
+HordeSpawner.init = function (self, world, cover_points_broadphase)
 	-- function 1
-	self.cover_broadphase = arg_1_2
+	self.cover_broadphase = cover_points_broadphase
 	self.hordes = {}
 	self.lookup_horde = {}
 	self.conflict_director = Managers.state.conflict
 	self.spawner_system = Managers.state.entity:system("spawner_system")
 	self.num_paced_hordes = 0
-	self.world = arg_1_1
-	self.physics_world = World.physics_world(arg_1_1)
+	self.world = world
+	self.physics_world = World.physics_world(world)
 end
 
-local function fn(self, arg_2_1)
+local function remove_index_from_array(array, index)
 	-- function 2
-	local count = #self
+	local end_index = #array
 
-	self[arg_2_1] = self[count]
-	self[count] = nil
+	array[index] = array[end_index]
+	array[end_index] = nil
 end
 
-local function fn_2(self, arg_3_1)
+local function copy_array(a, b)
 	-- function 3
-	local count = #self
-	local count_2 = #arg_3_1
+	local source_size = #a
+	local dest_size = #b
 
-	for i = 1, count do
-		arg_3_1[i] = self[i]
+	for i = 1, source_size do
+		b[i] = a[i]
 	end
 
-	for j = count + 1, count_2 do
-		arg_3_1[j] = nil
+	for i = source_size + 1, dest_size do
+		b[i] = nil
 	end
 end
 
-HordeSpawner.horde = function (self, arg_4_1, arg_4_2, arg_4_3, arg_4_4, arg_4_5)
+HordeSpawner.horde = function (self, horde_type, extra_data, side_id, no_fallback, optional_data)
 	-- function 4
-	print("horde requested: ", arg_4_1)
+	print("horde requested: ", horde_type)
 
-	if arg_4_1 == "vector" then
-		self:execute_vector_horde(arg_4_2, arg_4_3, arg_4_4)
-	elseif arg_4_1 == "vector_blob" then
-		self:execute_vector_blob_horde(arg_4_2, arg_4_3, arg_4_4)
+	if horde_type == "vector" then
+		self:execute_vector_horde(extra_data, side_id, no_fallback)
+	elseif horde_type == "vector_blob" then
+		self:execute_vector_blob_horde(extra_data, side_id, no_fallback)
 	else
-		self:execute_ambush_horde(arg_4_2, arg_4_3, arg_4_4, nil, arg_4_5)
+		self:execute_ambush_horde(extra_data, side_id, no_fallback, nil, optional_data)
 	end
 end
 
-HordeSpawner.execute_fallback = function (self, arg_5_1, arg_5_2, arg_5_3, arg_5_4, arg_5_5)
+HordeSpawner.execute_fallback = function (self, horde_type, side_id, fallback, reason, extra_data)
 	-- function 5
-	if not arg_5_3 then
-		if not script_data.debug_player_intensity then
+	if fallback then
+		if script_data.debug_player_intensity then
 			self.conflict_director.pacing:annotate_graph("Failed horde fb", "red")
 		end
 
@@ -86,129 +86,141 @@ HordeSpawner.execute_fallback = function (self, arg_5_1, arg_5_2, arg_5_3, arg_5
 		return
 	end
 
-	print(arg_5_4)
+	print(reason)
 
-	if arg_5_1 == "ambush" then
-		self:execute_vector_horde(arg_5_5, arg_5_2, "fallback")
-	elseif arg_5_1 == "vector" then
-		self:execute_ambush_horde(arg_5_5, arg_5_2, "fallback")
+	if horde_type == "ambush" then
+		self:execute_vector_horde(extra_data, side_id, "fallback")
+	elseif horde_type == "vector" then
+		self:execute_ambush_horde(extra_data, side_id, "fallback")
 	end
 end
 
-HordeSpawner._add_horde = function (self, arg_6_1)
+HordeSpawner._add_horde = function (self, horde)
 	-- function 6
 	local hordes = self.hordes
+	local id = #hordes + 1
 
-	hordes[#hordes + 1] = arg_6_1
+	hordes[id] = horde
 
-	if not Managers.state.conflict:is_horde_alive() then
-		Managers.state.entity:system("dialogue_system"):queue_mission_giver_event("horde")
+	local horde_already_alive = Managers.state.conflict:is_horde_alive()
+
+	if not horde_already_alive then
+		local dialogue_system = Managers.state.entity:system("dialogue_system")
+
+		dialogue_system:queue_mission_giver_event("horde")
 	end
 end
 
-HordeSpawner.execute_event_horde = function (self, arg_7_1, arg_7_2, arg_7_3, arg_7_4, arg_7_5, arg_7_6, arg_7_7, arg_7_8, arg_7_9, arg_7_10, arg_7_11, arg_7_12)
+HordeSpawner.execute_event_horde = function (self, t, terror_event_type, side_id, composition_type, limit_spawners, silent, group_template, strictly_not_close_to_players, sound_settings, use_closest_spawners, source_unit, optional_data)
 	-- function 7
-	local _execute_event_horde = self:_execute_event_horde(arg_7_1, arg_7_3, arg_7_4, arg_7_5, arg_7_6, arg_7_7, arg_7_8, arg_7_9, arg_7_10, arg_7_11, arg_7_12)
+	local horde = self:_execute_event_horde(t, side_id, composition_type, limit_spawners, silent, group_template, strictly_not_close_to_players, sound_settings, use_closest_spawners, source_unit, optional_data)
 
-	if type(arg_7_2) == "string" then
-		_execute_event_horde.terror_event_ids = {
-			arg_7_2
+	if type(terror_event_type) == "string" then
+		horde.terror_event_ids = {
+			terror_event_type
 		}
-	elseif type(arg_7_2) == "table" then
-		_execute_event_horde.terror_event_ids = arg_7_2
+	elseif type(terror_event_type) == "table" then
+		horde.terror_event_ids = terror_event_type
 	end
 
-	self:_add_horde(_execute_event_horde)
+	self:_add_horde(horde)
 
-	return _execute_event_horde
+	return horde
 end
 
-HordeSpawner._execute_event_horde = function (arg_8_0, arg_8_1, arg_8_2, arg_8_3, arg_8_4, arg_8_5, arg_8_6, arg_8_7, arg_8_8, arg_8_9, arg_8_10, arg_8_11)
+HordeSpawner._execute_event_horde = function (self, t, side_id, composition_type, limit_spawners, silent, group_template, strictly_not_close_to_players, sound_settings, use_closest_spawners, source_unit, optional_data)
 	-- function 8
-	local var_8_0
+	local composition
 
-	fassert(arg_8_2, "Missing side id in event horde")
+	fassert(side_id, "Missing side id in event horde")
 
-	if not HordeCompositions[arg_8_3] then
-		local get_difficulty_rank, var_8_2 = Managers.state.difficulty:get_difficulty_rank()
-		local num = DifficultyTweak.converters.composition_rank(get_difficulty_rank, var_8_2) - 1
+	if HordeCompositions[composition_type] then
+		local current_difficulty_rank, difficulty_tweak = Managers.state.difficulty:get_difficulty_rank()
+		local composition_difficulty_rank = DifficultyTweak.converters.composition_rank(current_difficulty_rank, difficulty_tweak)
 
-		var_8_0 = CurrentHordeSettings.compositions[arg_8_3][num]
-	elseif not HordeCompositionsPacing[arg_8_3] then
-		var_8_0 = CurrentHordeSettings.compositions_pacing[arg_8_3]
+		composition_difficulty_rank = composition_difficulty_rank - 1
+		composition = CurrentHordeSettings.compositions[composition_type][composition_difficulty_rank]
+	elseif HordeCompositionsPacing[composition_type] then
+		composition = CurrentHordeSettings.compositions_pacing[composition_type]
 	end
 
-	local var_8_4 = var_8_0[LoadedDice.roll_easy(var_8_0.loaded_probs)]
-	local str = "event"
-	local flag = arg_8_8 or var_8_0.sound_settings
+	local index = LoadedDice.roll_easy(composition.loaded_probs)
+	local variant = composition[index]
+	local horde_type = "event"
+	local sound_settings = not not sound_settings or not not composition.sound_settings
 	local tbl = {
-		composition_type = arg_8_3,
-		limit_spawners = arg_8_4
+		composition_type = composition_type,
+		limit_spawners = limit_spawners
 	}
-	local start_time = var_8_0.start_time
+	local start_time = composition.start_time
 
-	start_time = start_time or 4
-	tbl.start_time = arg_8_1 + start_time
+	start_time = not not start_time or not not 4
+	tbl.start_time = t + start_time
 
-	local start_time_2 = var_8_0.start_time
+	local start_time_2 = composition.start_time
 
-	start_time_2 = start_time_2 or 4
+	start_time_2 = not not start_time_2 or not not 4
 
-	local num_2 = arg_8_1 + start_time_2
-	local end_time = var_8_0.end_time
+	local num = t + start_time_2
+	local end_time = composition.end_time
 
-	end_time = end_time or 20
-	tbl.end_time = num_2 + end_time
-	tbl.horde_type = str
-	tbl.silent = arg_8_5
-	tbl.group_template = arg_8_6
-	tbl.group_id = not arg_8_6 and arg_8_6.id
-	tbl.strictly = arg_8_7
-	tbl.use_closest_spawners = arg_8_9
-	tbl.variant = var_8_4
-	tbl.source_unit = arg_8_10
-	tbl.sound_settings = flag
-	tbl.side_id = arg_8_2
-	tbl.optional_data = arg_8_11
+	end_time = not not end_time or not not 20
+	tbl.end_time = num + end_time
+	tbl.horde_type = horde_type
+	tbl.silent = silent
+	tbl.group_template = group_template
+	tbl.group_id = not not group_template and not not group_template.id
+	tbl.strictly = strictly_not_close_to_players
+	tbl.use_closest_spawners = use_closest_spawners
+	tbl.variant = variant
+	tbl.source_unit = source_unit
+	tbl.sound_settings = sound_settings
+	tbl.side_id = side_id
+	tbl.optional_data = optional_data
 
-	return tbl
+	local horde = tbl
+
+	return horde
 end
 
-HordeSpawner.max_composition_size = function (arg_9_0, arg_9_1)
+HordeSpawner.max_composition_size = function (self, composition_name)
 	-- function 9
-	local num = 0
-	local var_9_1 = CurrentHordeSettings.compositions[arg_9_1]
+	local max_size = 0
+	local composition = CurrentHordeSettings.compositions[composition_name]
 
-	for i = 1, #var_9_1 do
-		local breeds = var_9_1[i].breeds
-		local num_2 = 0
+	for i = 1, #composition do
+		local variant = composition[i]
+		local breeds = variant.breeds
+		local max_variant_size = 0
 
 		for j = 1, #breeds, 2 do
-			local var_9_4 = breeds[i]
-			local var_9_5 = breeds[i + 1]
+			local breed_name = breeds[i]
+			local amount = breeds[i + 1]
 			local max
 
-			if type(var_9_5) == "table" then
-				max = math.max(var_9_5[1], var_9_5[2])
+			if type(amount) == "table" then
+				max = math.max(amount[1], amount[2])
 
 				if not max then
 					-- Nothing
 				end
 			end
 
-			max = var_9_5
+			max = amount
+
+			local n = max
 
 			::label_9_0::
 
-			num_2 = num_2 + max
+			max_variant_size = max_variant_size + n
 		end
 
-		if num < num_2 then
-			num = num_2
+		if max_size < max_variant_size then
+			max_size = max_variant_size
 		end
 	end
 
-	return num
+	return max_size
 end
 
 HordeSpawner.running_horde = function (self)
@@ -216,316 +228,325 @@ HordeSpawner.running_horde = function (self)
 	return self._running_horde_type, self._running_horde_sound_settings
 end
 
-function random_array_insert(self, arg_11_1, arg_11_2)
+function random_array_insert(array, size, data)
 	-- function 11
-	local random = math.random(1, arg_11_1)
+	local swap = math.random(1, size)
 
-	self[random], self[arg_11_1 + 1] = arg_11_2, self[random]
+	array[swap], array[size + 1] = data, array[swap]
 end
 
-local tbl_6 = {
+local ok_spawner_breeds = {
 	skaven_clan_rat = true,
 	skaven_slave = true
 }
-local tbl_7 = {}
-local tbl_8 = {}
+local spawn_list_a = {}
+local spawn_list_b = {}
 
-HordeSpawner.compose_horde_spawn_list = function (arg_12_0, arg_12_1)
+HordeSpawner.compose_horde_spawn_list = function (self, variant)
 	-- function 12
-	local num = 1
+	local i = 1
 
-	table.clear_array(tbl_7, #tbl_7)
-	table.clear_array(tbl_8, #tbl_8)
+	table.clear_array(spawn_list_a, #spawn_list_a)
+	table.clear_array(spawn_list_b, #spawn_list_b)
 
-	local breeds = arg_12_1.breeds
+	local breeds = variant.breeds
 
 	for i = 1, #breeds, 2 do
-		local var_12_2 = breeds[i]
-		local var_12_3 = breeds[i + 1]
-		local random_interval = ConflictUtils.random_interval(var_12_3)
+		local breed_name = breeds[i]
+		local amount = breeds[i + 1]
+		local num_to_spawn = ConflictUtils.random_interval(amount)
 
-		if not script_data.big_hordes then
+		if script_data.big_hordes then
 			local round = math.round
-			local var_12_6 = tonumber(script_data.big_hordes)
+			local var_12_1 = tonumber(script_data.big_hordes)
 
-			var_12_6 = var_12_6 or 1
-			random_interval = round(random_interval * var_12_6)
+			var_12_1 = not not var_12_1 or not not 1
+			num_to_spawn = round(num_to_spawn * var_12_1)
 		end
 
-		local var_12_7
+		local var_12_2
 
-		if not tbl_6[var_12_2] then
-			var_12_7 = tbl_7
+		if ok_spawner_breeds[breed_name] then
+			var_12_2 = spawn_list_a
 
-			if not var_12_7 then
+			if not var_12_2 then
 				-- Nothing
 			end
 		end
 
-		var_12_7 = tbl_8
+		var_12_2 = spawn_list_b
+
+		local spawn_list = var_12_2
 
 		::label_12_0::
 
-		local count = #var_12_7
+		local start = #spawn_list
 
-		for j = count + 1, count + random_interval do
-			var_12_7[j] = var_12_2
+		for j = start + 1, start + num_to_spawn do
+			spawn_list[j] = breed_name
 		end
 	end
 
-	table.shuffle(tbl_7)
-	table.shuffle(tbl_8)
+	table.shuffle(spawn_list_a)
+	table.shuffle(spawn_list_b)
 
-	local count_2 = #tbl_7
-	local count_3 = #tbl_8
+	local sum_a = #spawn_list_a
+	local sum_b = #spawn_list_b
+	local sum = sum_a + sum_b
 
-	return count_2 + count_3, count_2, count_3
+	return sum, sum_a, sum_b
 end
 
-HordeSpawner.compose_blob_horde_spawn_list = function (arg_13_0, arg_13_1)
+HordeSpawner.compose_blob_horde_spawn_list = function (self, composition_type)
 	-- function 13
-	local var_13_0 = CurrentHordeSettings.compositions_pacing[arg_13_1]
-	local var_13_1 = var_13_0[LoadedDice.roll_easy(var_13_0.loaded_probs)]
-	local num = 1
-	local var_13_3 = tbl_7
+	local composition = CurrentHordeSettings.compositions_pacing[composition_type]
+	local index = LoadedDice.roll_easy(composition.loaded_probs)
+	local variant = composition[index]
+	local i = 1
+	local spawn_list = spawn_list_a
 
-	table.clear_array(tbl_7, #tbl_7)
+	table.clear_array(spawn_list_a, #spawn_list_a)
 
-	local breeds = var_13_1.breeds
+	local breeds = variant.breeds
 
 	for i = 1, #breeds, 2 do
-		local var_13_5 = breeds[i]
-		local var_13_6 = breeds[i + 1]
-		local random_interval = ConflictUtils.random_interval(var_13_6)
+		local breed_name = breeds[i]
+		local amount = breeds[i + 1]
+		local num_to_spawn = ConflictUtils.random_interval(amount)
 
-		if not script_data.big_hordes then
+		if script_data.big_hordes then
 			local round = math.round
-			local var_13_9 = tonumber(script_data.big_hordes)
+			local var_13_1 = tonumber(script_data.big_hordes)
 
-			var_13_9 = var_13_9 or 1
-			random_interval = round(random_interval * var_13_9)
+			var_13_1 = not not var_13_1 or not not 1
+			num_to_spawn = round(num_to_spawn * var_13_1)
 		end
 
-		local num_2 = #var_13_3 + 1
+		local start = #spawn_list + 1
 
-		for j = num_2, num_2 + random_interval do
-			var_13_3[j] = var_13_5
+		for j = start, start + num_to_spawn do
+			spawn_list[j] = breed_name
 		end
 	end
 
-	table.shuffle(var_13_3)
+	table.shuffle(spawn_list)
 
-	return var_13_3, #var_13_3
+	return spawn_list, #spawn_list
 end
 
-local function fn_3(self)
+local function pop_array(array)
 	-- function 14
-	local count = #self
+	local size = #array
 
-	if count > 0 then
-		local var_14_1 = self[count]
+	if size > 0 then
+		local breed_name = array[size]
 
-		self[count] = nil
+		array[size] = nil
 
-		return var_14_1
+		return breed_name
 	end
 end
 
-local flag = false
+local use_horde = false
 
-HordeSpawner.pop_random_any_breed = function (arg_15_0)
+HordeSpawner.pop_random_any_breed = function (self)
 	-- function 15
-	flag = not flag
+	use_horde = not use_horde
 
-	local var_15_0
+	local breed
 
-	if not flag then
-		var_15_0 = fn_3(tbl_7) or fn_3(tbl_8)
+	if use_horde then
+		breed = not not pop_array(spawn_list_a) or not not pop_array(spawn_list_b)
 	else
-		var_15_0 = fn_3(tbl_8) or fn_3(tbl_7)
+		breed = not not pop_array(spawn_list_b) or not not pop_array(spawn_list_a)
 	end
 
-	return var_15_0
+	return breed
 end
 
-HordeSpawner.pop_random_horde_breed_only = function (arg_16_0)
+HordeSpawner.pop_random_horde_breed_only = function (self)
 	-- function 16
-	return (fn_3(tbl_7))
+	local breed = pop_array(spawn_list_a)
+
+	return breed
 end
 
-HordeSpawner.execute_ambush_horde = function (self, arg_17_1, arg_17_2, arg_17_3, arg_17_4, arg_17_5)
+HordeSpawner.execute_ambush_horde = function (self, extra_data, side_id, fallback, override_epicenter_pos, optional_data)
 	-- function 17
 	print("setting up ambush-horde")
 
-	local ambush = CurrentHordeSettings.ambush
-	local min_spawners = ambush.min_spawners
-	local max_spawners = ambush.max_spawners
-	local min_horde_spawner_dist = ambush.min_horde_spawner_dist
-	local max_horde_spawner_dist = ambush.max_horde_spawner_dist
-	local min_hidden_spawner_dist = ambush.min_hidden_spawner_dist
-	local max_hidden_spawner_dist = ambush.max_hidden_spawner_dist
-	local start_delay = ambush.start_delay
-	local var_17_8
-	local var_17_9
-	local flag = not arg_17_1 and arg_17_1.override_composition_type
-	local get_difficulty_rank, var_17_12 = Managers.state.difficulty:get_difficulty_rank()
+	local settings = CurrentHordeSettings.ambush
+	local min_spawners = settings.min_spawners
+	local max_spawners = settings.max_spawners
+	local min_dist = settings.min_horde_spawner_dist
+	local max_dist = settings.max_horde_spawner_dist
+	local hidden_min_dist = settings.min_hidden_spawner_dist
+	local hidden_max_dist = settings.max_hidden_spawner_dist
+	local start_delay = settings.start_delay
+	local composition_type, override_composition
+	local override_composition_type = not not extra_data and not not extra_data.override_composition_type
+	local current_difficulty_rank, difficulty_tweak = Managers.state.difficulty:get_difficulty_rank()
 
-	if not flag and not CurrentHordeSettings.compositions[flag] then
-		var_17_9 = CurrentHordeSettings.compositions[flag][DifficultyTweak.converters.composition_rank(get_difficulty_rank, var_17_12) - 1]
+	if override_composition_type and CurrentHordeSettings.compositions[override_composition_type] then
+		local override_composition_table = CurrentHordeSettings.compositions[override_composition_type]
+		local composition_difficulty_rank = DifficultyTweak.converters.composition_rank(current_difficulty_rank, difficulty_tweak)
 
-		fassert(var_17_9.loaded_probs, " Ambush horde %s is missing loaded probabilty table!", flag)
+		override_composition = override_composition_table[composition_difficulty_rank - 1]
 
-		var_17_8 = flag
+		fassert(override_composition.loaded_probs, " Ambush horde %s is missing loaded probabilty table!", override_composition_type)
+
+		composition_type = override_composition_type
 	else
-		local var_17_13
-		local flag_2 = not arg_17_1 and arg_17_1.optional_wave_composition
+		local wave_composition_type
+		local optional_wave_composition = not not extra_data and not not extra_data.optional_wave_composition
 
-		if not flag_2 then
-			local var_17_15 = HordeWaveCompositions[flag_2]
+		if optional_wave_composition then
+			local chosen_wave_composition = HordeWaveCompositions[optional_wave_composition]
 
-			var_17_13 = var_17_15[math.random(#var_17_15)]
+			wave_composition_type = chosen_wave_composition[math.random(#chosen_wave_composition)]
 		else
-			var_17_13 = CurrentHordeSettings.vector_composition or "medium"
+			wave_composition_type = not not CurrentHordeSettings.vector_composition or not not "medium"
 		end
 
-		var_17_8 = flag or var_17_13
+		composition_type = not not override_composition_type or not not wave_composition_type
 
-		fassert(var_17_8, "Ambush Horde missing composition_type")
+		fassert(composition_type, "Ambush Horde missing composition_type")
 	end
 
-	local flag_3 = var_17_9 or CurrentHordeSettings.compositions_pacing[var_17_8]
-	local var_17_17 = flag_3[LoadedDice.roll_easy(flag_3.loaded_probs)]
+	local composition = not not override_composition or not not CurrentHordeSettings.compositions_pacing[composition_type]
+	local index = LoadedDice.roll_easy(composition.loaded_probs)
+	local variant = composition[index]
 
-	print("Composing horde '" .. var_17_8 .. "' .. using variant '" .. var_17_17.name .. "'")
+	print("Composing horde '" .. composition_type .. "' .. using variant '" .. variant.name .. "'")
 
-	local ENEMY_PLAYER_AND_BOT_POSITIONS = Managers.state.side:get_side(arg_17_2).ENEMY_PLAYER_AND_BOT_POSITIONS
-	local var_17_19
-	local var_17_20
-	local var_17_21
-	local var_17_22
-	local var_17_23
+	local side = Managers.state.side:get_side(side_id)
+	local player_and_bot_positions = side.ENEMY_PLAYER_AND_BOT_POSITIONS
+	local clusters, clusters_sizes, biggest_cluster, epicenter_pos, main_target_pos
 
-	if not arg_17_4 then
-		var_17_23 = arg_17_4
-		var_17_22 = arg_17_4
+	if override_epicenter_pos then
+		main_target_pos = override_epicenter_pos
+		epicenter_pos = override_epicenter_pos
 	else
-		local cluster_positions, var_17_25 = ConflictUtils.cluster_positions(ENEMY_PLAYER_AND_BOT_POSITIONS, 7)
-		local var_17_26 = var_17_25
-
-		var_17_23 = cluster_positions[ConflictUtils.get_biggest_cluster(var_17_26)]
-		var_17_22 = var_17_23
+		clusters, clusters_sizes = ConflictUtils.cluster_positions(player_and_bot_positions, 7)
+		biggest_cluster = ConflictUtils.get_biggest_cluster(clusters_sizes)
+		main_target_pos = clusters[biggest_cluster]
+		epicenter_pos = main_target_pos
 	end
 
-	if not var_17_22 then
+	if not epicenter_pos then
 		print("Failed ambush horde, cant suitable epicenter position. ")
 
 		return
 	end
 
-	local enabled_spawners = self.spawner_system:enabled_spawners()
-	local hidden_spawners_lookup = self.spawner_system:hidden_spawners_lookup()
-	local filter_horde_spawners, var_17_30 = ConflictUtils.filter_horde_spawners(ENEMY_PLAYER_AND_BOT_POSITIONS, enabled_spawners, hidden_spawners_lookup, min_horde_spawner_dist, max_horde_spawner_dist)
+	local all_spawners = self.spawner_system:enabled_spawners()
+	local hidden_lookup = self.spawner_system:hidden_spawners_lookup()
+	local horde_spawners, horde_spawners_hidden = ConflictUtils.filter_horde_spawners(player_and_bot_positions, all_spawners, hidden_lookup, min_dist, max_dist)
 
-	self:reset_sectors(tbl)
-	self:calc_sectors(var_17_22, filter_horde_spawners, tbl)
+	self:reset_sectors(horde_sectors)
+	self:calc_sectors(epicenter_pos, horde_spawners, horde_sectors)
 
-	if not script_data.debug_hordes then
-		self:render_sectors(tbl)
+	if script_data.debug_hordes then
+		self:render_sectors(horde_sectors)
 	end
 
-	local count_2 = #filter_horde_spawners
-	local count_3 = #var_17_30
+	local n_horde_spawners = #horde_spawners
+	local n_horde_spawners_hidden = #horde_spawners_hidden
 
-	table.clear_array(tbl_3, #tbl_3)
-	self:hidden_cover_points(self.cover_broadphase, var_17_22, ENEMY_PLAYER_AND_BOT_POSITIONS, tbl_3, min_hidden_spawner_dist, max_hidden_spawner_dist)
-	self:reset_sectors(tbl_2)
-	self:calc_sectors(var_17_22, tbl_3, tbl_2)
+	table.clear_array(found_cover_points, #found_cover_points)
+	self:hidden_cover_points(self.cover_broadphase, epicenter_pos, player_and_bot_positions, found_cover_points, hidden_min_dist, hidden_max_dist)
+	self:reset_sectors(cover_sectors)
+	self:calc_sectors(epicenter_pos, found_cover_points, cover_sectors)
 
-	if not script_data.debug_hordes then
-		self:render_sectors(tbl_2)
+	if script_data.debug_hordes then
+		self:render_sectors(cover_sectors)
 	end
 
-	if min_spawners >= #tbl_3 + count_2 then
-		if not (count_3 <= 0) or not var_17_17.must_use_hidden_spawners then
-			self:execute_fallback("ambush", arg_17_2, arg_17_3, "ambush horde failed to find any kind of hidden spawners for their none-horde compatable units, starts a vector-horde instead", arg_17_1)
+	local n_cover_spawners = #found_cover_points
+
+	if min_spawners >= n_cover_spawners + n_horde_spawners then
+		if n_horde_spawners_hidden <= 0 and variant.must_use_hidden_spawners then
+			self:execute_fallback("ambush", side_id, fallback, "ambush horde failed to find any kind of hidden spawners for their none-horde compatable units, starts a vector-horde instead", extra_data)
 		else
-			self:execute_fallback("ambush", arg_17_2, arg_17_3, "ambush horde failed to find spawners, starts a vector-horde instead", arg_17_1)
+			self:execute_fallback("ambush", side_id, fallback, "ambush horde failed to find spawners, starts a vector-horde instead", extra_data)
 		end
 
 		return
 	end
 
-	local compose_horde_spawn_list = self:compose_horde_spawn_list(var_17_17)
+	local num_to_spawn = self:compose_horde_spawn_list(variant)
 
-	print("-> spawning:", compose_horde_spawn_list)
+	print("-> spawning:", num_to_spawn)
 
-	local generate_group_id = Managers.state.entity:system("ai_group_system"):generate_group_id()
-	local tbl_4 = {
+	local group_id = Managers.state.entity:system("ai_group_system"):generate_group_id()
+	local group_template = {
 		template = "horde",
-		id = generate_group_id,
-		size = compose_horde_spawn_list,
-		group_data = arg_17_1
+		id = group_id,
+		size = num_to_spawn,
+		group_data = extra_data
 	}
-	local time = Managers.time:time("game")
-	local sound_settings
+	local t = Managers.time:time("game")
+	local sound_settings_2
 
-	if not arg_17_1 then
-		sound_settings = arg_17_1.sound_settings
+	if extra_data then
+		sound_settings_2 = extra_data.sound_settings
 
-		if not sound_settings then
+		if not sound_settings_2 then
 			-- Nothing
 		end
 	end
 
-	sound_settings = flag_3.sound_settings
+	sound_settings_2 = composition.sound_settings
+
+	local sound_settings = sound_settings_2
 
 	::label_17_0::
 
-	local tbl_5 = {
+	local horde = {
 		horde_type = "ambush",
 		spawned = 0,
-		num_to_spawn = compose_horde_spawn_list,
-		main_target_pos = Vector3Box(var_17_23),
-		start_time = time + start_delay,
-		group_template = tbl_4,
+		num_to_spawn = num_to_spawn,
+		main_target_pos = Vector3Box(main_target_pos),
+		start_time = t + start_delay,
+		group_template = group_template,
 		sound_settings = sound_settings,
-		group_id = generate_group_id,
-		side_id = arg_17_2,
-		optional_data = arg_17_5
+		group_id = group_id,
+		side_id = side_id,
+		optional_data = optional_data
 	}
 
-	print("horde crated with id", generate_group_id, "of type ", tbl_5.horde_type)
+	print("horde crated with id", group_id, "of type ", horde.horde_type)
 
-	if #filter_horde_spawners > 0 then
-		tbl_5.horde_spawns = {}
+	if #horde_spawners > 0 then
+		horde.horde_spawns = {}
 	end
 
-	if #tbl_3 > 0 then
-		tbl_5.cover_spawns = {}
+	if #found_cover_points > 0 then
+		horde.cover_spawns = {}
 	end
 
-	if compose_horde_spawn_list < max_spawners then
-		local var_17_39 = compose_horde_spawn_list
+	if num_to_spawn < max_spawners then
+		max_spawners = num_to_spawn
 	end
 
-	local num = 0
-	local num_2 = -1
-	local num_3 = 1
-	local num_4 = 0
+	local spawner_count, last_spawner_count = 0, -1
+	local sector_index = 1
+	local test_count1 = 0
 
-	while not (num_2 == num or not (num < compose_horde_spawn_list)) do
-		num_2 = num
+	while last_spawner_count ~= spawner_count and spawner_count < num_to_spawn do
+		last_spawner_count = spawner_count
 
-		local num_5 = time - 0.05
+		local spawn_time = t - 0.05
 
-		for i = 1, count do
-			local var_17_45 = tbl[i][num_3]
+		for i = 1, num_sectors do
+			local horde_sector = horde_sectors[i]
+			local spawner = horde_sector[sector_index]
 
-			if not var_17_45 then
-				local var_17_46 = hidden_spawners_lookup[var_17_45]
+			if spawner then
+				local hidden = hidden_lookup[spawner]
 				local pop_random_any_breed
 
-				if not var_17_46 then
+				if hidden then
 					pop_random_any_breed = self:pop_random_any_breed()
 
 					if not pop_random_any_breed then
@@ -535,153 +556,161 @@ HordeSpawner.execute_ambush_horde = function (self, arg_17_1, arg_17_2, arg_17_3
 
 				pop_random_any_breed = self:pop_random_horde_breed_only()
 
+				local breed_name = pop_random_any_breed
+
 				::label_17_1::
 
-				if not pop_random_any_breed then
-					tbl_5.horde_spawns[#tbl_5.horde_spawns + 1] = {
+				if breed_name then
+					horde.horde_spawns[#horde.horde_spawns + 1] = {
 						num_to_spawn = 1,
-						spawner = var_17_45,
+						spawner = spawner,
 						spawn_list = {
-							pop_random_any_breed
+							breed_name
 						},
-						hidden = var_17_46
+						hidden = hidden
 					}
-					num = num + 1
+					spawner_count = spawner_count + 1
 				end
 			end
 
-			local var_17_48 = tbl_2[i][num_3]
+			local cover_sector = cover_sectors[i]
+			local cover_point_unit = cover_sector[sector_index]
 
-			if not var_17_48 then
-				local pop_random_any_breed_2 = self:pop_random_any_breed()
+			if cover_point_unit then
+				local breed_name = self:pop_random_any_breed()
 
-				if not pop_random_any_breed_2 then
-					tbl_5.cover_spawns[#tbl_5.cover_spawns + 1] = {
+				if breed_name then
+					horde.cover_spawns[#horde.cover_spawns + 1] = {
 						num_to_spawn = 1,
-						next_spawn_time = num_5,
-						cover_point_unit = var_17_48,
+						next_spawn_time = spawn_time,
+						cover_point_unit = cover_point_unit,
 						spawn_list = {
-							pop_random_any_breed_2
+							breed_name
 						}
 					}
-					num = num + 1
-					num_5 = num_5 + 0.1
+					spawner_count = spawner_count + 1
+					spawn_time = spawn_time + 0.1
 				end
 			end
 		end
 
-		num_3 = num_3 + 1
-		num_4 = num_4 + 1
+		sector_index = sector_index + 1
+		test_count1 = test_count1 + 1
 
-		if num_4 > 1000 then
-			self:execute_fallback("ambush", arg_17_3, "Ambush horde spawn failed A - no matching spawners found!", arg_17_1)
+		if test_count1 > 1000 then
+			self:execute_fallback("ambush", fallback, "Ambush horde spawn failed A - no matching spawners found!", extra_data)
 
 			return
 		end
 	end
 
-	if num < compose_horde_spawn_list then
-		local num_6 = compose_horde_spawn_list - num
-		local num_7 = 1
-		local count_4
+	if spawner_count < num_to_spawn then
+		local missing = num_to_spawn - spawner_count
+		local horde_spawner_index = 1
+		local count
 
-		if not tbl_5.horde_spawns then
-			count_4 = #tbl_5.horde_spawns
+		if horde.horde_spawns then
+			count = #horde.horde_spawns
 
-			if not count_4 then
+			if not count then
 				-- Nothing
 			end
 		end
 
-		count_4 = 0
+		count = 0
+
+		local num_horde_spawns = count
 
 		do
-			local count_5
+			local count_2
 		end
 
 		::label_17_2::
 
-		if not tbl_5.cover_spawns then
-			count_5 = #tbl_5.cover_spawns
+		if horde.cover_spawns then
+			count_2 = #horde.cover_spawns
 
-			if not count_5 then
+			if not count_2 then
 				-- Nothing
 			end
 		end
 
-		count_5 = 0
+		count_2 = 0
+
+		local num_cover_spawns = count_2
 
 		::label_17_3::
 
-		local num_8 = 1
-		local num_9 = 0
+		local hidden_spawner_index = 1
+		local test_count = 0
 
-		while num_6 > 0 do
-			local var_17_56
-			local var_17_57
+		while missing > 0 do
+			local spawner, breed_name
 
-			if count_4 > 0 then
-				local var_17_58 = tbl_5.horde_spawns[num_7]
-				local pop_random_any_breed_3
+			if num_horde_spawns > 0 then
+				spawner = horde.horde_spawns[horde_spawner_index]
 
-				if not var_17_58.hidden then
-					pop_random_any_breed_3 = self:pop_random_any_breed()
+				local pop_random_any_breed_2
 
-					if not pop_random_any_breed_3 then
+				if spawner.hidden then
+					pop_random_any_breed_2 = self:pop_random_any_breed()
+
+					if not pop_random_any_breed_2 then
 						-- Nothing
 					end
 				end
 
-				pop_random_any_breed_3 = self:pop_random_horde_breed_only()
+				pop_random_any_breed_2 = self:pop_random_horde_breed_only()
+
+				local breed_name = pop_random_any_breed_2
 
 				::label_17_4::
 
-				if not pop_random_any_breed_3 then
-					var_17_58.num_to_spawn = var_17_58.num_to_spawn + 1
-					var_17_58.spawn_list[#var_17_58.spawn_list + 1] = pop_random_any_breed_3
-					num_7 = num_7 % count_4 + 1
-					num_6 = num_6 - 1
+				if breed_name then
+					spawner.num_to_spawn = spawner.num_to_spawn + 1
+					spawner.spawn_list[#spawner.spawn_list + 1] = breed_name
+					horde_spawner_index = horde_spawner_index % num_horde_spawns + 1
+					missing = missing - 1
 
-					if num_6 <= 0 then
+					if missing <= 0 then
 						break
 					end
 				else
-					num_7 = num_7 % count_4 + 1
+					horde_spawner_index = horde_spawner_index % num_horde_spawns + 1
 				end
 			end
 
-			if count_5 > 0 then
-				local pop_random_any_breed_4 = self:pop_random_any_breed()
+			if num_cover_spawns > 0 then
+				breed_name = self:pop_random_any_breed()
 
-				if not pop_random_any_breed_4 then
-					local var_17_61 = tbl_5.cover_spawns[num_8]
+				if breed_name then
+					spawner = horde.cover_spawns[hidden_spawner_index]
+					hidden_spawner_index = hidden_spawner_index % num_cover_spawns + 1
+					spawner.num_to_spawn = spawner.num_to_spawn + 1
+					spawner.spawn_list[#spawner.spawn_list + 1] = breed_name
+					missing = missing - 1
 
-					num_8 = num_8 % count_5 + 1
-					var_17_61.num_to_spawn = var_17_61.num_to_spawn + 1
-					var_17_61.spawn_list[#var_17_61.spawn_list + 1] = pop_random_any_breed_4
-					num_6 = num_6 - 1
-
-					if num_6 <= 0 then
+					if missing <= 0 then
 						break
 					end
 				end
 			end
 
-			num_9 = num_9 + 1
+			test_count = test_count + 1
 
-			if num_9 > 1000 then
-				self:execute_fallback("ambush", arg_17_2, arg_17_3, "Ambush horde spawn failed B - no matching spawners found!", arg_17_1)
+			if test_count > 1000 then
+				self:execute_fallback("ambush", side_id, fallback, "Ambush horde spawn failed B - no matching spawners found!", extra_data)
 
 				return
 			end
 		end
 	end
 
-	if not script_data.debug_player_intensity then
-		self.conflict_director.pacing:annotate_graph("(A)Horde:" .. compose_horde_spawn_list, "lime")
+	if script_data.debug_player_intensity then
+		self.conflict_director.pacing:annotate_graph("(A)Horde:" .. num_to_spawn, "lime")
 	end
 
-	self:_add_horde(tbl_5)
+	self:_add_horde(horde)
 
 	self.last_paced_horde_type = "ambush"
 	self.num_paced_hordes = self.num_paced_hordes + 1
@@ -689,69 +718,73 @@ HordeSpawner.execute_ambush_horde = function (self, arg_17_1, arg_17_2, arg_17_3
 	print("ambush horde has started")
 end
 
-HordeSpawner.replace_hidden_spawners = function (self, arg_18_1, arg_18_2, arg_18_3)
+HordeSpawner.replace_hidden_spawners = function (self, hidden_spawners, spawner_in_sight, offending_player_pos)
 	-- function 18
-	if not arg_18_2.dont_move then
+	if spawner_in_sight.dont_move then
 		return
 	end
 
-	local local_position = Unit.local_position(arg_18_2.cover_point_unit, 0)
-	local num = 10
-	local num_2 = 20
-	local var_18_3 = arg_18_3
-	local var_18_4 = tbl_3
+	local epicenter_pos = Unit.local_position(spawner_in_sight.cover_point_unit, 0)
+	local hidden_min_dist = 10
+	local hidden_max_dist = 20
+	local main_target_pos = offending_player_pos
+	local found_cover_points = found_cover_points
 
-	table.clear_array(var_18_4, #var_18_4)
-	self:hidden_cover_points(self.cover_broadphase, local_position, {
-		local_position
-	}, var_18_4, num, num_2, var_18_3)
+	table.clear_array(found_cover_points, #found_cover_points)
+	self:hidden_cover_points(self.cover_broadphase, epicenter_pos, {
+		epicenter_pos
+	}, found_cover_points, hidden_min_dist, hidden_max_dist, main_target_pos)
 
-	local count = #var_18_4
+	local num_found = #found_cover_points
 
-	print("replace_hidden_spawners -> first try found:", count, "cover points")
+	print("replace_hidden_spawners -> first try found:", num_found, "cover points")
 
-	if count <= 0 then
-		local num_3 = 0
-		local num_4 = 30
-		local num_5 = 20
-		local get_point_on_main_path = self:get_point_on_main_path(var_18_3, num_5)
+	if num_found <= 0 then
+		hidden_min_dist = 0
+		hidden_max_dist = 30
 
-		if not get_point_on_main_path then
-			print("replace_hidden_spawners -> no alternate epicenter_pos found. failed! pos:", var_18_3)
+		local distance_ahead = 20
 
-			arg_18_2.dont_move = true
+		epicenter_pos = self:get_point_on_main_path(main_target_pos, distance_ahead)
+
+		if not epicenter_pos then
+			print("replace_hidden_spawners -> no alternate epicenter_pos found. failed! pos:", main_target_pos)
+
+			spawner_in_sight.dont_move = true
 
 			return
 		end
 
-		table.clear_array(var_18_4, #var_18_4)
-		self:hidden_cover_points(self.cover_broadphase, get_point_on_main_path, {
-			get_point_on_main_path
-		}, var_18_4, num_3, num_4, var_18_3)
+		table.clear_array(found_cover_points, #found_cover_points)
+		self:hidden_cover_points(self.cover_broadphase, epicenter_pos, {
+			epicenter_pos
+		}, found_cover_points, hidden_min_dist, hidden_max_dist, main_target_pos)
 
-		count = #var_18_4
+		num_found = #found_cover_points
 
-		print("replace_hidden_spawners -> second try try found:", count, "cover points")
+		print("replace_hidden_spawners -> second try try found:", num_found, "cover points")
 	end
 
-	if count <= 0 then
+	if num_found <= 0 then
 		print("replace_hidden_spawners -> no alternate cover found. failed!")
 
-		arg_18_2.dont_move = true
+		spawner_in_sight.dont_move = true
 
 		return
 	end
 
 	print("replace_hidden_spawners -> replacing hidden spawners!")
 
-	local num_6 = 1
+	local count = 1
 
-	for i = 1, #arg_18_1 do
-		local var_18_11 = arg_18_1[i]
+	for i = 1, #hidden_spawners do
+		local spawner = hidden_spawners[i]
 
-		if var_18_11.num_to_spawn > 0 then
-			var_18_11.cover_point_unit = var_18_4[(num_6 - 1) % count + 1]
-			num_6 = num_6 + 1
+		if spawner.num_to_spawn > 0 then
+			local index = (count - 1) % num_found + 1
+
+			spawner.cover_point_unit = found_cover_points[index]
+			count = count + 1
 
 			print("->moving spawner")
 		end
@@ -760,236 +793,236 @@ HordeSpawner.replace_hidden_spawners = function (self, arg_18_1, arg_18_2, arg_1
 	return true
 end
 
-HordeSpawner.find_vector_horde_spawners = function (self, arg_19_1, arg_19_2)
+HordeSpawner.find_vector_horde_spawners = function (self, epicenter_pos, main_target_pos)
 	-- function 19
-	local vector = CurrentHordeSettings.vector
-	local min_horde_spawner_dist = vector.min_horde_spawner_dist
-	local max_horde_spawner_dist = vector.max_horde_spawner_dist
-	local min_hidden_spawner_dist = vector.min_hidden_spawner_dist
-	local max_hidden_spawner_dist = vector.max_hidden_spawner_dist
+	local settings = CurrentHordeSettings.vector
+	local min_dist = settings.min_horde_spawner_dist
+	local max_dist = settings.max_horde_spawner_dist
+	local hidden_min_dist = settings.min_hidden_spawner_dist
+	local hidden_max_dist = settings.max_hidden_spawner_dist
 
-	if not script_data.debug_hordes then
-		QuickDrawerStay:sphere(arg_19_1, 4, Color(240, 208, 100, 240))
+	if script_data.debug_hordes then
+		QuickDrawerStay:sphere(epicenter_pos, 4, Color(240, 208, 100, 240))
 	end
 
-	local enabled_spawners = self.spawner_system:enabled_spawners()
-	local filter_positions = ConflictUtils.filter_positions(arg_19_1, arg_19_2, enabled_spawners, min_horde_spawner_dist, max_horde_spawner_dist)
+	local horde_spawners = self.spawner_system:enabled_spawners()
 
-	table.clear_array(tbl_3, #tbl_3)
-	self:hidden_cover_points(self.cover_broadphase, arg_19_1, {
-		arg_19_1
-	}, tbl_3, min_hidden_spawner_dist, max_hidden_spawner_dist, arg_19_2)
+	horde_spawners = ConflictUtils.filter_positions(epicenter_pos, main_target_pos, horde_spawners, min_dist, max_dist)
 
-	if not (not (#filter_positions <= 0) or not (#tbl_3 <= 0)) then
+	table.clear_array(found_cover_points, #found_cover_points)
+	self:hidden_cover_points(self.cover_broadphase, epicenter_pos, {
+		epicenter_pos
+	}, found_cover_points, hidden_min_dist, hidden_max_dist, main_target_pos)
+
+	if #horde_spawners <= 0 and #found_cover_points <= 0 then
 		return
 	end
 
-	return "success", filter_positions, tbl_3
+	return "success", horde_spawners, found_cover_points
 end
 
-HordeSpawner.find_good_vector_horde_pos = function (self, arg_20_1, arg_20_2, arg_20_3)
+HordeSpawner.find_good_vector_horde_pos = function (self, main_target_pos, distance, check_reachable)
 	-- function 20
-	local var_20_0
-	local var_20_1
-	local var_20_2
-	local get_point_on_main_path = self:get_point_on_main_path(arg_20_1, arg_20_2, arg_20_3)
+	local success, horde_spawners, found_cover_points
+	local epicenter_pos = self:get_point_on_main_path(main_target_pos, distance, check_reachable)
 
-	if not get_point_on_main_path then
-		var_20_0, var_20_1, var_20_2 = self:find_vector_horde_spawners(get_point_on_main_path, arg_20_1)
+	if epicenter_pos then
+		success, horde_spawners, found_cover_points = self:find_vector_horde_spawners(epicenter_pos, main_target_pos)
 
-		if not var_20_0 then
-			get_point_on_main_path = self:get_point_on_main_path(arg_20_1, arg_20_2 + 10, arg_20_3)
+		if not success then
+			epicenter_pos = self:get_point_on_main_path(main_target_pos, distance + 10, check_reachable)
 
-			if not get_point_on_main_path then
-				var_20_0, var_20_1, var_20_2 = self:find_vector_horde_spawners(get_point_on_main_path, arg_20_1)
+			if epicenter_pos then
+				success, horde_spawners, found_cover_points = self:find_vector_horde_spawners(epicenter_pos, main_target_pos)
 			end
 		end
 	else
-		get_point_on_main_path = self:get_point_on_main_path(arg_20_1, arg_20_2 + 10, arg_20_3)
+		epicenter_pos = self:get_point_on_main_path(main_target_pos, distance + 10, check_reachable)
 
-		if not get_point_on_main_path then
-			var_20_0, var_20_1, var_20_2 = self:find_vector_horde_spawners(get_point_on_main_path, arg_20_1)
+		if epicenter_pos then
+			success, horde_spawners, found_cover_points = self:find_vector_horde_spawners(epicenter_pos, main_target_pos)
 		end
 	end
 
-	return var_20_0, var_20_1, var_20_2, get_point_on_main_path
+	return success, horde_spawners, found_cover_points, epicenter_pos
 end
 
-HordeSpawner.execute_vector_horde = function (self, arg_21_1, arg_21_2, arg_21_3)
+HordeSpawner.execute_vector_horde = function (self, extra_data, side_id, fallback)
 	-- function 21
-	local vector = CurrentHordeSettings.vector
-	local max_spawners = vector.max_spawners
-	local start_delay
+	local settings = CurrentHordeSettings.vector
+	local max_spawners = settings.max_spawners
+	local start_delay_2
 
-	if not arg_21_1 then
-		start_delay = arg_21_1.start_delay
+	if extra_data then
+		start_delay_2 = extra_data.start_delay
 
-		if not start_delay then
+		if not start_delay_2 then
 			-- Nothing
 		end
 	end
 
-	start_delay = vector.start_delay
+	start_delay_2 = settings.start_delay
+
+	local start_delay = start_delay_2
 
 	::label_21_0::
 
-	local flag = not arg_21_1 and arg_21_1.only_behind
-	local flag_2 = not arg_21_1 and arg_21_1.silent
-	local ENEMY_PLAYER_AND_BOT_POSITIONS = Managers.state.side:get_side(arg_21_2).ENEMY_PLAYER_AND_BOT_POSITIONS
+	local only_behind = not not extra_data and not not extra_data.only_behind
+	local silent = not not extra_data and not not extra_data.silent
+	local side = Managers.state.side:get_side(side_id)
+	local player_and_bot_positions = side.ENEMY_PLAYER_AND_BOT_POSITIONS
 
 	print("setting up vector-horde")
 
-	local cluster_positions, var_21_7 = ConflictUtils.cluster_positions(ENEMY_PLAYER_AND_BOT_POSITIONS, 7)
-	local var_21_8 = cluster_positions[ConflictUtils.get_biggest_cluster(var_21_7)]
-	local var_21_9
-	local var_21_10
-	local var_21_11
-	local var_21_12
-	local var_21_13
-	local flag_3 = not arg_21_1 and arg_21_1.override_composition_type
-	local flag_4 = not arg_21_1 and arg_21_1.optional_wave_composition
+	local clusters, clusters_sizes = ConflictUtils.cluster_positions(player_and_bot_positions, 7)
+	local biggest_cluster = ConflictUtils.get_biggest_cluster(clusters_sizes)
+	local main_target_pos = clusters[biggest_cluster]
+	local success, horde_spawners, found_cover_points, composition_type, override_composition
+	local override_composition_type = not not extra_data and not not extra_data.override_composition_type
+	local optional_wave_composition = not not extra_data and not not extra_data.optional_wave_composition
 
-	if not flag_3 and not CurrentHordeSettings.compositions[flag_3] then
-		local var_21_16 = CurrentHordeSettings.compositions[flag_3]
-		local get_difficulty_rank, var_21_18 = Managers.state.difficulty:get_difficulty_rank()
+	if override_composition_type and CurrentHordeSettings.compositions[override_composition_type] then
+		local override_composition_table = CurrentHordeSettings.compositions[override_composition_type]
+		local current_difficulty_rank, difficulty_tweak = Managers.state.difficulty:get_difficulty_rank()
+		local composition_difficulty_rank = DifficultyTweak.converters.composition_rank(current_difficulty_rank, difficulty_tweak)
 
-		var_21_13 = var_21_16[DifficultyTweak.converters.composition_rank(get_difficulty_rank, var_21_18) - 1]
+		override_composition = override_composition_table[composition_difficulty_rank - 1]
 
-		fassert(var_21_13.loaded_probs, " Vector horde override type %s is missing loaded probabilty table!", flag_3)
+		fassert(override_composition.loaded_probs, " Vector horde override type %s is missing loaded probabilty table!", override_composition_type)
 
-		var_21_12 = flag_3
-	elseif not flag_4 then
-		local var_21_19 = HordeWaveCompositions[flag_4]
+		composition_type = override_composition_type
+	elseif optional_wave_composition then
+		local chosen_wave_composition = HordeWaveCompositions[optional_wave_composition]
 
-		var_21_12 = var_21_19[math.random(#var_21_19)]
+		composition_type = chosen_wave_composition[math.random(#chosen_wave_composition)]
 	else
-		var_21_12 = CurrentHordeSettings.vector_composition or "medium"
+		composition_type = not not CurrentHordeSettings.vector_composition or not not "medium"
 	end
 
-	assert(var_21_12, "Vector Horde missing composition_type")
+	assert(composition_type, "Vector Horde missing composition_type")
 
-	local flag_5 = var_21_13 or CurrentHordeSettings.compositions_pacing[var_21_12]
-	local var_21_21 = flag_5[LoadedDice.roll_easy(flag_5.loaded_probs)]
+	local composition = not not override_composition or not not CurrentHordeSettings.compositions_pacing[composition_type]
+	local index = LoadedDice.roll_easy(composition.loaded_probs)
+	local variant = composition[index]
 
-	print("Composing horde '" .. var_21_12 .. "' .. using variant '" .. var_21_21.name .. "'")
+	print("Composing horde '" .. composition_type .. "' .. using variant '" .. variant.name .. "'")
 
-	local var_21_22
+	local epicenter_pos
 
-	if not var_21_8 then
-		self:execute_fallback("vector", arg_21_2, arg_21_3, "WARNING: vector horde could not find an main_target_pos, use fallback instead", arg_21_1)
+	if not main_target_pos then
+		self:execute_fallback("vector", side_id, fallback, "WARNING: vector horde could not find an main_target_pos, use fallback instead", extra_data)
 
 		return
 	end
 
-	local random = math.random()
-	local flag_6 = not not flag or random <= vector.main_path_chance_spawning_ahead
-	local flag_7 = true
-	local main_path_dist_from_players = vector.main_path_dist_from_players
+	local roll = math.random()
+	local spawn_horde_ahead = not only_behind and roll <= settings.main_path_chance_spawning_ahead
+	local check_reachable = true
+	local distance_from_players = settings.main_path_dist_from_players
 
-	if not flag_6 then
-		main_path_dist_from_players = -main_path_dist_from_players
+	if not spawn_horde_ahead then
+		distance_from_players = -distance_from_players
 	end
 
 	local print = print
 	local str = "--> horde wants to "
-	local flag_8
+	local flag
 
-	flag_8 = not flag_6 and "spawn ahead of players" and "spawn behind players"
+	flag = (not spawn_horde_ahead or not "spawn ahead of players") and not not "spawn behind players"
 
-	print(str .. flag_8 .. " (" .. random .. "/" .. vector.main_path_chance_spawning_ahead)
+	print(str .. flag .. " (" .. roll .. "/" .. settings.main_path_chance_spawning_ahead)
 
-	local find_good_vector_horde_pos, var_21_31, var_21_32, var_21_33 = self:find_good_vector_horde_pos(var_21_8, main_path_dist_from_players, flag_7)
+	success, horde_spawners, found_cover_points, epicenter_pos = self:find_good_vector_horde_pos(main_target_pos, distance_from_players, check_reachable)
 
-	if not (find_good_vector_horde_pos or flag) then
-		flag_6 = not flag_6
+	if not success and not only_behind then
+		spawn_horde_ahead = not spawn_horde_ahead
 
 		local print_2 = print
 		local str_2 = "--> can't find spawners in this direction, switching to "
-		local flag_9
+		local flag_2
 
-		flag_9 = not flag_6 and "ahead" and "behind"
+		flag_2 = (not spawn_horde_ahead or not "ahead") and not not "behind"
 
-		print_2(str_2 .. flag_9)
+		print_2(str_2 .. flag_2)
 
-		find_good_vector_horde_pos, var_21_31, var_21_32, var_21_33 = self:find_good_vector_horde_pos(var_21_8, -main_path_dist_from_players, flag_7)
+		success, horde_spawners, found_cover_points, epicenter_pos = self:find_good_vector_horde_pos(main_target_pos, -distance_from_players, check_reachable)
 	end
 
-	if not find_good_vector_horde_pos then
-		self:execute_fallback("vector", arg_21_3, "vector horde could not find an epicenter or spawners, use fallback instead", arg_21_1)
+	if not success then
+		self:execute_fallback("vector", fallback, "vector horde could not find an epicenter or spawners, use fallback instead", extra_data)
 
 		return
 	end
 
-	local compose_horde_spawn_list, var_21_38, var_21_39 = self:compose_horde_spawn_list(var_21_21)
+	local num_to_spawn, num_horde_breed, num_hidden_breed = self:compose_horde_spawn_list(variant)
 
-	print("-> spawning:", compose_horde_spawn_list)
+	print("-> spawning:", num_to_spawn)
 
-	local generate_group_id = Managers.state.entity:system("ai_group_system"):generate_group_id()
-	local tbl = {
+	local group_id = Managers.state.entity:system("ai_group_system"):generate_group_id()
+	local group_template = {
 		template = "horde",
-		id = generate_group_id,
-		size = compose_horde_spawn_list,
-		sneaky = flag_6,
-		group_data = arg_21_1
+		id = group_id,
+		size = num_to_spawn,
+		sneaky = spawn_horde_ahead,
+		group_data = extra_data
 	}
-	local time = Managers.time:time("game")
-	local sound_settings = flag_5.sound_settings
-	local tbl_2 = {
+	local t = Managers.time:time("game")
+	local sound_settings = composition.sound_settings
+	local horde = {
 		horde_type = "vector",
 		spawned = 0,
-		num_to_spawn = compose_horde_spawn_list,
-		main_target_pos = Vector3Box(var_21_8),
-		epicenter_pos = Vector3Box(var_21_33),
-		start_time = time + start_delay,
-		group_template = tbl,
+		num_to_spawn = num_to_spawn,
+		main_target_pos = Vector3Box(main_target_pos),
+		epicenter_pos = Vector3Box(epicenter_pos),
+		start_time = t + start_delay,
+		group_template = group_template,
 		sound_settings = sound_settings,
-		group_id = generate_group_id,
-		side_id = arg_21_2,
-		silent = flag_2
+		group_id = group_id,
+		side_id = side_id,
+		silent = silent
 	}
 
-	print("horde crated with id", generate_group_id, "of type ", tbl_2.horde_type)
+	print("horde crated with id", group_id, "of type ", horde.horde_type)
 
-	local count = #var_21_31
-	local count_2 = #var_21_32
+	local n_horde_spawners = #horde_spawners
+	local n_cover_spawners = #found_cover_points
 
-	if count > 0 then
-		tbl_2.horde_spawns = {}
+	if n_horde_spawners > 0 then
+		horde.horde_spawns = {}
 
-		fn_2(var_21_31, tbl_4)
+		copy_array(horde_spawners, temp_horde_spawners)
 	end
 
-	if count_2 > 0 then
-		tbl_2.cover_spawns = {}
+	if n_cover_spawners > 0 then
+		horde.cover_spawns = {}
 
-		fn_2(var_21_32, tbl_5)
+		copy_array(found_cover_points, temp_hidden_spawners)
 	end
 
-	if compose_horde_spawn_list < max_spawners then
-		max_spawners = compose_horde_spawn_list
+	if num_to_spawn < max_spawners then
+		max_spawners = num_to_spawn
 	end
 
-	local num = count + count_2
+	local n_found_spawners = n_horde_spawners + n_cover_spawners
 
-	if num < max_spawners then
-		max_spawners = num
+	if n_found_spawners < max_spawners then
+		max_spawners = n_found_spawners
 	end
 
-	local hidden_spawners_lookup = self.spawner_system:hidden_spawners_lookup()
-	local num_2 = 0
-	local num_3 = compose_horde_spawn_list / max_spawners
-	local floor = math.floor(num_3)
-	local var_21_52 = num_3
-	local num_4 = 0
-	local var_21_54
-	local horde_spawns = tbl_2.horde_spawns
+	local hidden_lookup = self.spawner_system:hidden_spawners_lookup()
+	local spawner_count = 0
+	local f_amount_per_spawner = num_to_spawn / max_spawners
+	local amount_per_spawner = math.floor(f_amount_per_spawner)
+	local bucket = f_amount_per_spawner
+	local spawn_counter, last_spawn_counter = 0
+	local horde_spawns = horde.horde_spawns
 
-	for i = 1, count do
-		local var_21_56 = tbl_4[i]
-		local var_21_57 = hidden_spawners_lookup[var_21_56]
+	for i = 1, n_horde_spawners do
+		local spawner = temp_horde_spawners[i]
+		local hidden = hidden_lookup[spawner]
 		local pop_random_any_breed
 
-		if not var_21_57 then
+		if hidden then
 			pop_random_any_breed = self:pop_random_any_breed()
 
 			if not pop_random_any_breed then
@@ -999,90 +1032,94 @@ HordeSpawner.execute_vector_horde = function (self, arg_21_1, arg_21_2, arg_21_3
 
 		pop_random_any_breed = self:pop_random_horde_breed_only()
 
+		local breed_name = pop_random_any_breed
+
 		::label_21_1::
 
 		horde_spawns[#horde_spawns + 1] = {
 			num_to_spawn = 1,
-			spawner = var_21_56,
+			spawner = spawner,
 			spawn_list = {
-				pop_random_any_breed
+				breed_name
 			},
-			hidden = var_21_57
+			hidden = hidden
 		}
-		num_4 = num_4 + 1
+		spawn_counter = spawn_counter + 1
 	end
 
-	local num_5 = time - 0.05
-	local cover_spawns = tbl_2.cover_spawns
+	local spawn_time = t - 0.05
+	local cover_spawns = horde.cover_spawns
 
-	for j = 1, count_2 do
-		if compose_horde_spawn_list <= num_4 then
+	for i = 1, n_cover_spawners do
+		if num_to_spawn <= spawn_counter then
 			break
 		end
 
-		local var_21_61 = tbl_5[j]
-		local pop_random_any_breed_2 = self:pop_random_any_breed()
+		local spawner = temp_hidden_spawners[i]
+		local breed_name = self:pop_random_any_breed()
 
 		cover_spawns[#cover_spawns + 1] = {
 			num_to_spawn = 1,
-			next_spawn_time = num_5,
-			cover_point_unit = var_21_61,
+			next_spawn_time = spawn_time,
+			cover_point_unit = spawner,
 			spawn_list = {
-				pop_random_any_breed_2
+				breed_name
 			}
 		}
-		num_4 = num_4 + 1
-		num_5 = num_5 + 0.1
+		spawn_counter = spawn_counter + 1
+		spawn_time = spawn_time + 0.1
 	end
 
-	local num_6 = 0
+	local test_count = 0
 
-	while num_4 < compose_horde_spawn_list do
-		for k = 1, count do
-			local var_21_64 = horde_spawns[k]
-			local pop_random_any_breed_3
+	while spawn_counter < num_to_spawn do
+		for i = 1, n_horde_spawners do
+			local spawn = horde_spawns[i]
+			local pop_random_any_breed_2
 
-			if not var_21_64.hidden then
-				pop_random_any_breed_3 = self:pop_random_any_breed()
+			if spawn.hidden then
+				pop_random_any_breed_2 = self:pop_random_any_breed()
 
-				if not pop_random_any_breed_3 then
+				if not pop_random_any_breed_2 then
 					-- Nothing
 				end
 			end
 
-			pop_random_any_breed_3 = self:pop_random_horde_breed_only()
+			pop_random_any_breed_2 = self:pop_random_horde_breed_only()
+
+			local breed_name = pop_random_any_breed_2
 
 			::label_21_2::
 
-			if not pop_random_any_breed_3 then
+			if not breed_name then
 				break
 			end
 
-			local spawn_list = var_21_64.spawn_list
+			local list = spawn.spawn_list
 
-			var_21_64.num_to_spawn = var_21_64.num_to_spawn + 1
-			spawn_list[#spawn_list + 1] = pop_random_any_breed_3
-			num_4 = num_4 + 1
+			spawn.num_to_spawn = spawn.num_to_spawn + 1
+			list[#list + 1] = breed_name
+			spawn_counter = spawn_counter + 1
 		end
 
-		for l = 1, count_2 do
-			local pop_random_any_breed_4 = self:pop_random_any_breed()
+		for i = 1, n_cover_spawners do
+			local breed_name = self:pop_random_any_breed()
 
-			if not pop_random_any_breed_4 then
+			if not breed_name then
 				break
 			end
 
-			local var_21_68 = cover_spawns[l]
-			local spawn_list_2 = var_21_68.spawn_list
+			local spawn = cover_spawns[i]
+			local list = spawn.spawn_list
 
-			spawn_list_2[#spawn_list_2 + 1] = pop_random_any_breed_4
-			var_21_68.num_to_spawn = var_21_68.num_to_spawn + 1
-			num_4 = num_4 + 1
+			list[#list + 1] = breed_name
+			spawn.num_to_spawn = spawn.num_to_spawn + 1
+			spawn_counter = spawn_counter + 1
 		end
 
-		if num_4 == var_21_54 then
-			if num_4 == 0 then
-				self:execute_fallback("vector", arg_21_2, arg_21_3, "Vector horde spawn failed A - no matching spawners found!", arg_21_1)
+		if spawn_counter == last_spawn_counter then
+			if spawn_counter == 0 then
+				self:execute_fallback("vector", side_id, fallback, "Vector horde spawn failed A - no matching spawners found!", extra_data)
 
 				return
 			end
@@ -1090,11 +1127,11 @@ HordeSpawner.execute_vector_horde = function (self, arg_21_1, arg_21_2, arg_21_3
 			break
 		end
 
-		var_21_54 = num_4
-		num_6 = num_6 + 1
+		last_spawn_counter = spawn_counter
+		test_count = test_count + 1
 
-		if num_6 > 1000 then
-			self:execute_fallback("vector", arg_21_2, arg_21_3, "Vector horde spawn failed B - no matching spawners found!", arg_21_1)
+		if test_count > 1000 then
+			self:execute_fallback("vector", side_id, fallback, "Vector horde spawn failed B - no matching spawners found!", extra_data)
 
 			return
 		end
@@ -1102,96 +1139,101 @@ HordeSpawner.execute_vector_horde = function (self, arg_21_1, arg_21_2, arg_21_3
 
 	local conflict_director = self.conflict_director
 
-	if not script_data.debug_player_intensity then
-		conflict_director.pacing:annotate_graph("(V)Horde:" .. compose_horde_spawn_list, "lime")
+	if script_data.debug_player_intensity then
+		conflict_director.pacing:annotate_graph("(V)Horde:" .. num_to_spawn, "lime")
 	end
 
-	self:_add_horde(tbl_2)
+	self:_add_horde(horde)
 
-	local flag_10 = not arg_21_1 and arg_21_1.horde_wave
+	local horde_wave = not not extra_data and not not extra_data.horde_wave
 
-	if not (flag_2 or flag_10 == "multi_first_wave" or flag_10 ~= "single") then
+	if not silent and (horde_wave == "multi_first_wave" or horde_wave == "single") then
 		local stinger_sound_event = sound_settings.stinger_sound_event
 
-		stinger_sound_event = stinger_sound_event or "enemy_horde_stinger"
+		if not stinger_sound_event then
+			-- Nothing
+		end
 
-		self:play_sound(stinger_sound_event, tbl_2.epicenter_pos:unbox())
+		stinger_sound_event = "enemy_horde_stinger"
+
+		local stinger_name = stinger_sound_event
+
+		::label_21_3::
+
+		self:play_sound(stinger_name, horde.epicenter_pos:unbox())
 	end
 
 	self.last_paced_horde_type = "vector"
 	self.num_paced_hordes = self.num_paced_hordes + 1
-	tbl_2.is_done_spawning = false
+	horde.is_done_spawning = false
 
 	print("vector horde has started")
 end
 
-HordeSpawner.execute_custom_horde = function (self, arg_22_1, arg_22_2, arg_22_3)
+HordeSpawner.execute_custom_horde = function (self, spawn_list, only_ahead, side_id)
 	-- function 22
-	local vector_blob = CurrentHordeSettings.vector_blob
-	local random = math.random()
-	local flag = arg_22_2 or random <= vector_blob.main_path_chance_spawning_ahead
+	local settings = CurrentHordeSettings.vector_blob
+	local roll = math.random()
+	local spawn_horde_ahead = not not only_ahead or roll <= settings.main_path_chance_spawning_ahead
 	local print = print
 	local str = "wants to spawn "
-	local flag_2
+	local flag
 
-	flag_2 = not flag and "ahead" and "behind"
+	flag = (not spawn_horde_ahead or not "ahead") and not not "behind"
 
-	print(str .. flag_2 .. " within distance: ", vector_blob.main_path_dist_from_players)
+	print(str .. flag .. " within distance: ", settings.main_path_dist_from_players)
 
-	local get_pos_ahead_or_behind_players_on_mainpath, var_22_7, var_22_8 = self:get_pos_ahead_or_behind_players_on_mainpath(flag, vector_blob.main_path_dist_from_players, vector_blob.raw_dist_from_players, arg_22_3)
+	local success, blob_pos, to_player_dir = self:get_pos_ahead_or_behind_players_on_mainpath(spawn_horde_ahead, settings.main_path_dist_from_players, settings.raw_dist_from_players, side_id)
 
-	if not get_pos_ahead_or_behind_players_on_mainpath then
-		local get_pos_ahead_or_behind_players_on_mainpath_2, var_22_10, var_22_11 = self:get_pos_ahead_or_behind_players_on_mainpath(not flag, vector_blob.main_path_dist_from_players, vector_blob.raw_dist_from_players, arg_22_3)
+	if not success then
+		success, blob_pos, to_player_dir = self:get_pos_ahead_or_behind_players_on_mainpath(not spawn_horde_ahead, settings.main_path_dist_from_players, settings.raw_dist_from_players, side_id)
 
-		var_22_8 = var_22_11
-		var_22_7 = var_22_10
+		if not success then
+			local roll = math.random()
+			local spawn_horde_ahead = roll <= settings.main_path_chance_spawning_ahead
+			local distance_bonus = 20
 
-		if not get_pos_ahead_or_behind_players_on_mainpath_2 then
-			local flag_3 = math.random() <= vector_blob.main_path_chance_spawning_ahead
-			local num = 20
-			local get_pos_ahead_or_behind_players_on_mainpath_3
-
-			get_pos_ahead_or_behind_players_on_mainpath_3, var_22_7, var_22_8 = self:get_pos_ahead_or_behind_players_on_mainpath(flag_3, vector_blob.main_path_dist_from_players + num, vector_blob.raw_dist_from_players, arg_22_3)
+			success, blob_pos, to_player_dir = self:get_pos_ahead_or_behind_players_on_mainpath(spawn_horde_ahead, settings.main_path_dist_from_players + distance_bonus, settings.raw_dist_from_players, side_id)
 		end
 	end
 
-	if not var_22_7 then
+	if not blob_pos then
 		print("\no spawn position found at all, failing horde")
 
 		return
 	end
 
-	local count = #arg_22_1
-	local num_2 = 6
-	local num_3 = 0
-	local look = Quaternion.look(Vector3(var_22_8.x, var_22_8.y, 1))
-	local num_4 = 8
+	local num_to_spawn = #spawn_list
+	local num_columns = 6
+	local group_size = 0
+	local rot = Quaternion.look(Vector3(to_player_dir.x, to_player_dir.y, 1))
+	local max_attempts = 8
 	local conflict_director = self.conflict_director
 	local nav_world = conflict_director.nav_world
 
-	for i = 1, count do
-		local var_22_22
+	for i = 1, num_to_spawn do
+		local spawn_pos
 
-		for j = 1, num_4 do
-			local var_22_23
+		for j = 1, max_attempts do
+			local offset
 
 			if j == 1 then
-				var_22_23 = Vector3(-num_2 / 2 + i % num_2, -num_2 / 2 + math.floor(i / num_2), 0)
+				offset = Vector3(-num_columns / 2 + i % num_columns, -num_columns / 2 + math.floor(i / num_columns), 0)
 			else
-				var_22_23 = Vector3(4 * math.random() - 2, 4 * math.random() - 2, 0)
+				offset = Vector3(4 * math.random() - 2, 4 * math.random() - 2, 0)
 			end
 
-			local pos_on_mesh = LocomotionUtils.pos_on_mesh(nav_world, var_22_7 + var_22_23 * 2)
+			spawn_pos = LocomotionUtils.pos_on_mesh(nav_world, blob_pos + offset * 2)
 
-			if not pos_on_mesh then
-				local var_22_25 = Breeds[arg_22_1[i]]
-				local tbl = {
-					side_id = arg_22_3
+			if spawn_pos then
+				local breed = Breeds[spawn_list[i]]
+				local optional_data = {
+					side_id = side_id
 				}
 
-				conflict_director:spawn_queued_unit(var_22_25, Vector3Box(pos_on_mesh), QuaternionBox(look), "hidden_spawn", nil, "horde_hidden", tbl, nil)
+				conflict_director:spawn_queued_unit(breed, Vector3Box(spawn_pos), QuaternionBox(rot), "hidden_spawn", nil, "horde_hidden", optional_data, nil)
 
-				num_3 = num_3 + 1
+				group_size = group_size + 1
 
 				break
 			end
@@ -1201,13 +1243,13 @@ HordeSpawner.execute_custom_horde = function (self, arg_22_1, arg_22_2, arg_22_3
 	print("custom blob horde has started")
 end
 
-HordeSpawner.get_pos_ahead_or_behind_players_on_mainpath = function (arg_23_0, arg_23_1, arg_23_2, arg_23_3, arg_23_4)
+HordeSpawner.get_pos_ahead_or_behind_players_on_mainpath = function (self, check_ahead, dist, raw_dist, side_id)
 	-- function 23
-	local conflict = Managers.state.conflict
-	local main_path_info = conflict.main_path_info
+	local conflict_director = Managers.state.conflict
+	local main_path_info = conflict_director.main_path_info
 	local ahead_unit
 
-	if not arg_23_1 then
+	if check_ahead then
 		ahead_unit = main_path_info.ahead_unit
 
 		if not ahead_unit then
@@ -1217,40 +1259,47 @@ HordeSpawner.get_pos_ahead_or_behind_players_on_mainpath = function (arg_23_0, a
 
 	ahead_unit = main_path_info.behind_unit
 
+	local player_unit = ahead_unit
+
 	::label_23_0::
 
-	local var_23_3
-	local var_23_4
-	local flag = true
+	local wanted_pos, to_player_dir
+	local hidden = true
 
-	if not ahead_unit then
-		local travel_dist = conflict.main_path_player_info[ahead_unit].travel_dist
-		local flag_2
+	if player_unit then
+		local player_info = conflict_director.main_path_player_info[player_unit]
+		local travel_dist = player_info.travel_dist
+		local flag
 
-		flag_2 = not arg_23_1 and 1 and -1
+		flag = (not check_ahead or not 1) and not not -1
 
-		local num = travel_dist + arg_23_2 * flag_2
+		local dist = travel_dist + dist * flag
 
-		if num < 0 then
+		if dist < 0 then
 			return false
 		end
 
-		local point_on_mainpath, var_23_10 = MainPathUtils.point_on_mainpath(nil, num)
+		local path_pos, path_index = MainPathUtils.point_on_mainpath(nil, dist)
 
-		if not point_on_mainpath then
-			var_23_4, var_23_3 = POSITION_LOOKUP[ahead_unit] - point_on_mainpath, point_on_mainpath
+		if path_pos then
+			local dir = POSITION_LOOKUP[player_unit] - path_pos
+
+			wanted_pos = path_pos
+			to_player_dir = dir
 		end
 	end
 
-	if not var_23_3 then
-		local ENEMY_PLAYER_POSITIONS = Managers.state.side:get_side(arg_23_4).ENEMY_PLAYER_POSITIONS
-		local var_23_12 = Vector3(0, 0, 1)
+	if wanted_pos then
+		local side = Managers.state.side:get_side(side_id)
+		local player_positions = side.ENEMY_PLAYER_POSITIONS
+		local h = Vector3(0, 0, 1)
 
-		for i = 1, #ENEMY_PLAYER_POSITIONS do
-			local var_23_13 = ENEMY_PLAYER_POSITIONS[i]
+		for j = 1, #player_positions do
+			local avoid_pos = player_positions[j]
+			local los = PerceptionUtils.position_has_line_of_sight_to_any_player(wanted_pos + h)
 
-			if not PerceptionUtils.position_has_line_of_sight_to_any_player(var_23_3 + var_23_12) then
-				flag = false
+			if los then
+				hidden = false
 
 				print("Horde spawn position is within line of sight of players, aborting")
 
@@ -1259,168 +1308,177 @@ HordeSpawner.get_pos_ahead_or_behind_players_on_mainpath = function (arg_23_0, a
 		end
 	end
 
-	local flag_3 = false
+	local is_within_raw_distance = false
 
-	if not (not flag and not var_23_4 and not (arg_23_3 < Vector3.length(var_23_4))) then
-		flag_3 = true
+	if hidden and to_player_dir then
+		local distance = Vector3.length(to_player_dir)
+
+		if raw_dist < distance then
+			is_within_raw_distance = true
+		end
 	end
 
-	if not flag and not flag_3 then
-		return true, var_23_3, var_23_4
+	if hidden and is_within_raw_distance then
+		return true, wanted_pos, to_player_dir
 	else
 		return false
 	end
 end
 
-HordeSpawner.execute_vector_blob_horde = function (self, arg_24_1, arg_24_2, arg_24_3)
+HordeSpawner.execute_vector_blob_horde = function (self, extra_data, side_id, fallback)
 	-- function 24
-	local vector_blob = CurrentHordeSettings.vector_blob
-	local flag = math.random() <= vector_blob.main_path_chance_spawning_ahead
+	local settings = CurrentHordeSettings.vector_blob
+	local roll = math.random()
+	local spawn_horde_ahead = roll <= settings.main_path_chance_spawning_ahead
 	local print = print
 	local str = "wants to spawn "
-	local flag_2
+	local flag
 
-	flag_2 = not flag and "ahead" and "behind"
+	flag = (not spawn_horde_ahead or not "ahead") and not not "behind"
 
-	print(str .. flag_2 .. " within distance: ", vector_blob.main_path_dist_from_players)
+	print(str .. flag .. " within distance: ", settings.main_path_dist_from_players)
 
-	local get_pos_ahead_or_behind_players_on_mainpath, var_24_6, var_24_7 = self:get_pos_ahead_or_behind_players_on_mainpath(flag, vector_blob.main_path_dist_from_players, vector_blob.raw_dist_from_players, arg_24_2)
+	local success, blob_pos, to_player_dir = self:get_pos_ahead_or_behind_players_on_mainpath(spawn_horde_ahead, settings.main_path_dist_from_players, settings.raw_dist_from_players, side_id)
 
-	if not get_pos_ahead_or_behind_players_on_mainpath then
+	if not success then
 		local print_2 = print
 		local str_2 = "\tcould not, tries to spawn"
-		local flag_3
+		local flag_2
 
-		flag_3 = flag or not "ahead" or "behind"
+		flag_2 = (spawn_horde_ahead or not "ahead") and not not "behind"
 
-		print_2(str_2 .. flag_3)
+		print_2(str_2 .. flag_2)
 
-		local get_pos_ahead_or_behind_players_on_mainpath_2, var_24_12, var_24_13 = self:get_pos_ahead_or_behind_players_on_mainpath(not flag, vector_blob.main_path_dist_from_players, vector_blob.raw_dist_from_players, arg_24_2)
+		success, blob_pos, to_player_dir = self:get_pos_ahead_or_behind_players_on_mainpath(not spawn_horde_ahead, settings.main_path_dist_from_players, settings.raw_dist_from_players, side_id)
 
-		var_24_7 = var_24_13
-		var_24_6 = var_24_12
+		if not success then
+			local roll = math.random()
+			local spawn_horde_ahead = roll <= settings.main_path_chance_spawning_ahead
+			local distance_bonus = 20
 
-		if not get_pos_ahead_or_behind_players_on_mainpath_2 then
-			local flag_4 = math.random() <= vector_blob.main_path_chance_spawning_ahead
-			local num = 20
-			local get_pos_ahead_or_behind_players_on_mainpath_3
-
-			get_pos_ahead_or_behind_players_on_mainpath_3, var_24_6, var_24_7 = self:get_pos_ahead_or_behind_players_on_mainpath(flag_4, vector_blob.main_path_dist_from_players + num, vector_blob.raw_dist_from_players, arg_24_2)
+			success, blob_pos, to_player_dir = self:get_pos_ahead_or_behind_players_on_mainpath(spawn_horde_ahead, settings.main_path_dist_from_players + distance_bonus, settings.raw_dist_from_players, side_id)
 		end
 	end
 
-	if not var_24_6 then
+	if not blob_pos then
 		print("\no spawn position found at all, failing horde")
 
 		return
 	end
 
-	local var_24_17
-	local flag_5 = not arg_24_1 and arg_24_1.optional_wave_composition
+	local composition_type
+	local optional_wave_composition = not not extra_data and not not extra_data.optional_wave_composition
 
-	if not flag_5 then
-		local var_24_19 = HordeWaveCompositions[flag_5]
+	if optional_wave_composition then
+		local chosen_wave_composition = HordeWaveCompositions[optional_wave_composition]
 
-		var_24_17 = var_24_19[math.random(#var_24_19)]
+		composition_type = chosen_wave_composition[math.random(#chosen_wave_composition)]
 	else
-		var_24_17 = not arg_24_1 and arg_24_1.override_composition_type and CurrentHordeSettings.vector_composition or "medium"
+		composition_type = (not extra_data or not extra_data.override_composition_type) and not not CurrentHordeSettings.vector_composition or not not "medium"
 	end
 
-	assert(var_24_17, "Vector Blob Horde missing composition_type")
+	assert(composition_type, "Vector Blob Horde missing composition_type")
 
-	local var_24_20 = CurrentHordeSettings.compositions_pacing[var_24_17]
-	local var_24_21
-	local var_24_22
+	local composition = CurrentHordeSettings.compositions_pacing[composition_type]
+	local spawn_list, num_to_spawn
 
-	if not arg_24_1 and not arg_24_1.spawn_list then
-		var_24_22 = #arg_24_1.spawn_list
-		var_24_21 = arg_24_1.spawn_list
+	if extra_data and extra_data.spawn_list then
+		num_to_spawn = #extra_data.spawn_list
+		spawn_list = extra_data.spawn_list
 	else
-		var_24_21, var_24_22 = self:compose_blob_horde_spawn_list(var_24_17)
+		spawn_list, num_to_spawn = self:compose_blob_horde_spawn_list(composition_type)
 	end
 
-	local generate_group_id = Managers.state.entity:system("ai_group_system"):generate_group_id()
-	local tbl = {
+	local group_id = Managers.state.entity:system("ai_group_system"):generate_group_id()
+	local group_template = {
 		template = "horde",
-		id = generate_group_id,
-		size = var_24_22,
-		sneaky = flag,
-		group_data = arg_24_1
+		id = group_id,
+		size = num_to_spawn,
+		sneaky = spawn_horde_ahead,
+		group_data = extra_data
 	}
-	local time = Managers.time:time("game")
-	local sound_settings = var_24_20.sound_settings
-	local tbl_2 = {
+	local t = Managers.time:time("game")
+	local sound_settings = composition.sound_settings
+	local horde = {
 		horde_type = "vector_blob",
 		spawned = 0,
-		num_to_spawn = var_24_22,
-		epicenter_pos = Vector3Box(var_24_6),
-		start_time = time + vector_blob.start_delay,
-		group_template = tbl,
+		num_to_spawn = num_to_spawn,
+		epicenter_pos = Vector3Box(blob_pos),
+		start_time = t + settings.start_delay,
+		group_template = group_template,
 		sound_settings = sound_settings,
-		group_id = generate_group_id
+		group_id = group_id
 	}
 
-	print("horde crated with id", generate_group_id, "of type ", tbl_2.horde_type)
+	print("horde crated with id", group_id, "of type ", horde.horde_type)
 
-	local num_2 = 6
-	local num_3 = 0
-	local look = Quaternion.look(Vector3(var_24_7.x, var_24_7.y, 1))
-	local num_4 = 8
+	local num_columns = 6
+	local group_size = 0
+	local rot = Quaternion.look(Vector3(to_player_dir.x, to_player_dir.y, 1))
+	local max_attempts = 8
 	local conflict_director = self.conflict_director
 	local nav_world = conflict_director.nav_world
 
-	for i = 1, var_24_22 do
-		local var_24_34
+	for i = 1, num_to_spawn do
+		local spawn_pos
 
-		for j = 1, num_4 do
-			local var_24_35
+		for j = 1, max_attempts do
+			local offset
 
 			if j == 1 then
-				var_24_35 = Vector3(-num_2 / 2 + i % num_2, -num_2 / 2 + math.floor(i / num_2), 0)
+				offset = Vector3(-num_columns / 2 + i % num_columns, -num_columns / 2 + math.floor(i / num_columns), 0)
 			else
-				var_24_35 = Vector3(4 * math.random() - 2, 4 * math.random() - 2, 0)
+				offset = Vector3(4 * math.random() - 2, 4 * math.random() - 2, 0)
 			end
 
-			local pos_on_mesh = LocomotionUtils.pos_on_mesh(nav_world, var_24_6 + var_24_35 * 2)
+			spawn_pos = LocomotionUtils.pos_on_mesh(nav_world, blob_pos + offset * 2)
 
-			if not pos_on_mesh then
-				local var_24_37 = Breeds[var_24_21[i]]
-				local tbl_3 = {
-					side_id = arg_24_2
+			if spawn_pos then
+				local breed = Breeds[spawn_list[i]]
+				local optional_data = {
+					side_id = side_id
 				}
 
-				conflict_director:spawn_queued_unit(var_24_37, Vector3Box(pos_on_mesh), QuaternionBox(look), "hidden_spawn", nil, "horde_hidden", tbl_3, tbl)
+				conflict_director:spawn_queued_unit(breed, Vector3Box(spawn_pos), QuaternionBox(rot), "hidden_spawn", nil, "horde_hidden", optional_data, group_template)
 
-				num_3 = num_3 + 1
+				group_size = group_size + 1
 
 				break
 			end
 		end
 	end
 
-	conflict_director:add_horde(num_3)
+	conflict_director:add_horde(group_size)
 
-	tbl_2.spawned = num_3
+	horde.spawned = group_size
 
-	print("managed to spawn " .. tostring(num_3) .. "/" .. tostring(var_24_22) .. " horde enemies")
+	print("managed to spawn " .. tostring(group_size) .. "/" .. tostring(num_to_spawn) .. " horde enemies")
 
-	local conflict_director_2 = self.conflict_director
+	local conflict_director = self.conflict_director
 
-	if not script_data.debug_player_intensity then
-		conflict_director_2.pacing:annotate_graph("(B)Horde:" .. num_3 .. "/" .. var_24_22, "lime")
+	if script_data.debug_player_intensity then
+		conflict_director.pacing:annotate_graph("(B)Horde:" .. group_size .. "/" .. num_to_spawn, "lime")
 	end
 
-	local flag_6 = not arg_24_1 and arg_24_1.horde_wave
+	local horde_wave = not not extra_data and not not extra_data.horde_wave
 
-	if not (flag_6 == "multi_first_wave" or flag_6 ~= "single") then
+	if horde_wave == "multi_first_wave" or horde_wave == "single" then
 		local stinger_sound_event = sound_settings.stinger_sound_event
 
-		stinger_sound_event = stinger_sound_event or "enemy_horde_stinger"
+		if not stinger_sound_event then
+			-- Nothing
+		end
 
-		self:play_sound(stinger_sound_event, tbl_2.epicenter_pos:unbox())
+		stinger_sound_event = "enemy_horde_stinger"
+
+		local stinger_name = stinger_sound_event
+
+		::label_24_0::
+
+		self:play_sound(stinger_name, horde.epicenter_pos:unbox())
 	end
 
-	self:_add_horde(tbl_2)
+	self:_add_horde(horde)
 
 	self.last_paced_horde_type = "vector_blob"
 	self.num_paced_hordes = self.num_paced_hordes + 1
@@ -1428,126 +1486,142 @@ HordeSpawner.execute_vector_blob_horde = function (self, arg_24_1, arg_24_2, arg
 	print("vector blob horde has started")
 end
 
-HordeSpawner.spawn_unit = function (self, arg_25_1, arg_25_2, arg_25_3, arg_25_4)
+HordeSpawner.spawn_unit = function (self, hidden_spawn, breed_name, goal_pos, horde)
 	-- function 25
-	local cover_point_unit = arg_25_1.cover_point_unit
-	local local_position = Unit.local_position(cover_point_unit, 0)
-	local num = arg_25_3 - local_position
-	local look = Quaternion.look(Vector3(num.x, num.y, 1))
-	local str = "horde_hidden"
-	local str_2 = "hidden_spawn"
-	local var_25_6 = Breeds[arg_25_2]
-	local optional_data = arg_25_4.optional_data
+	local cover_point_unit = hidden_spawn.cover_point_unit
+	local pos = Unit.local_position(cover_point_unit, 0)
+	local dir = goal_pos - pos
+	local spawn_rot = Quaternion.look(Vector3(dir.x, dir.y, 1))
+	local spawn_type = "horde_hidden"
+	local spawn_category = "hidden_spawn"
+	local breed = Breeds[breed_name]
+	local optional_data_2 = horde.optional_data
 
-	optional_data = optional_data or {}
-	optional_data.side_id = arg_25_4.side_id
+	if not optional_data_2 then
+		-- Nothing
+	end
 
-	local var_25_8
+	optional_data_2 = {}
 
-	self.conflict_director:spawn_queued_unit(var_25_6, Vector3Box(local_position), QuaternionBox(look), str_2, var_25_8, str, optional_data, arg_25_4.group_template)
+	local optional_data = optional_data_2
+
+	::label_25_0::
+
+	optional_data.side_id = horde.side_id
+
+	local spawn_animation
+
+	self.conflict_director:spawn_queued_unit(breed, Vector3Box(pos), QuaternionBox(spawn_rot), spawn_category, spawn_animation, spawn_type, optional_data, horde.group_template)
 	self.conflict_director:add_horde(1)
 end
 
-HordeSpawner.play_sound = function (self, arg_26_1, arg_26_2)
+HordeSpawner.play_sound = function (self, stinger_name, pos)
 	-- function 26
 	local wwise_world = Managers.world:wwise_world(self.world)
-	local trigger_event, var_26_2 = WwiseWorld.trigger_event(wwise_world, arg_26_1, arg_26_2)
+	local wwise_playing_id, wwise_source_id = WwiseWorld.trigger_event(wwise_world, stinger_name, pos)
 
-	Managers.state.network.network_transmit:send_rpc_clients("rpc_server_audio_event_at_pos", NetworkLookup.sound_events[arg_26_1], arg_26_2)
+	Managers.state.network.network_transmit:send_rpc_clients("rpc_server_audio_event_at_pos", NetworkLookup.sound_events[stinger_name], pos)
 end
 
-HordeSpawner.create_event_horde_no_horde_spawners = function (arg_27_0, arg_27_1, arg_27_2, arg_27_3, arg_27_4)
+HordeSpawner.create_event_horde_no_horde_spawners = function (self, horde, variant, t, side_id)
 	-- function 27
-	local conflict = Managers.state.conflict
-	local behind_unit = conflict.main_path_info.behind_unit
+	local conflict_director = Managers.state.conflict
+	local main_path_info = conflict_director.main_path_info
+	local behind_unit = main_path_info.behind_unit
 
-	if not behind_unit then
-		local num = 0
-		local num_2 = conflict.main_path_player_info[behind_unit].travel_dist - 45
-		local point_on_mainpath, var_27_5 = MainPathUtils.point_on_mainpath(nil, num_2)
-		local ENEMY_PLAYER_POSITIONS = Managers.state.side:get_side(arg_27_4).ENEMY_PLAYER_POSITIONS
-		local hidden_cover_points, var_27_8 = ConflictUtils.hidden_cover_points(point_on_mainpath, ENEMY_PLAYER_POSITIONS, 0, 10)
+	if behind_unit then
+		local count = 0
+		local player_info = conflict_director.main_path_player_info[behind_unit]
+		local behind_dist = player_info.travel_dist - 45
+		local path_pos, path_index = MainPathUtils.point_on_mainpath(nil, behind_dist)
+		local side = Managers.state.side:get_side(side_id)
+		local player_positions = side.ENEMY_PLAYER_POSITIONS
+		local num_found, hidden_cover_units = ConflictUtils.hidden_cover_points(path_pos, player_positions, 0, 10)
 
-		if hidden_cover_points > 0 then
-			local var_27_9 = var_27_8[math.random(1, hidden_cover_points)]
-			local tbl = {}
+		if num_found > 0 then
+			local cover_point_unit = hidden_cover_units[math.random(1, num_found)]
+			local spawn_list = {}
 
-			arg_27_1.cover_spawns = {
+			horde.cover_spawns = {
 				num_to_spawn = 0,
-				next_spawn_time = arg_27_3,
-				cover_point_unit = var_27_9,
-				spawn_list = tbl
+				next_spawn_time = t,
+				cover_point_unit = cover_point_unit,
+				spawn_list = spawn_list
 			}
 
 			local difficulty = Managers.state.difficulty.difficulty
-			local difficulty_breeds = arg_27_2.difficulty_breeds
-			local var_27_13
+			local difficulty_breeds = variant.difficulty_breeds
+			local var_27_0
 
-			if not difficulty_breeds then
-				var_27_13 = difficulty_breeds[difficulty]
+			if difficulty_breeds then
+				var_27_0 = difficulty_breeds[difficulty]
 
-				if not var_27_13 then
+				if not var_27_0 then
 					-- Nothing
 				end
 			end
 
-			var_27_13 = arg_27_2.breeds
+			var_27_0 = variant.breeds
+
+			local breed_list = var_27_0
 
 			::label_27_0::
 
-			for i = 1, #var_27_13, 2 do
-				local var_27_14 = var_27_13[i]
-				local var_27_15 = var_27_13[i + 1]
+			for i = 1, #breed_list, 2 do
+				local breed_name = breed_list[i]
+				local amount = breed_list[i + 1]
 				local random
 
-				if type(var_27_15) == "table" then
-					random = Math.random(var_27_15[1], var_27_15[2])
+				if type(amount) == "table" then
+					random = Math.random(amount[1], amount[2])
 
 					if not random then
 						-- Nothing
 					end
 				end
 
-				random = var_27_15
+				random = amount
+
+				local num_to_spawn = random
 
 				::label_27_1::
 
-				if not script_data.big_hordes then
+				if script_data.big_hordes then
 					local round = math.round
-					local var_27_18 = tonumber(script_data.big_hordes)
+					local var_27_3 = tonumber(script_data.big_hordes)
 
-					var_27_18 = var_27_18 or 1
-					random = round(random * var_27_18)
+					var_27_3 = not not var_27_3 or not not 1
+					num_to_spawn = round(num_to_spawn * var_27_3)
 				end
 
-				for j = 1, random do
-					tbl[#tbl + 1] = var_27_14
+				for j = 1, num_to_spawn do
+					spawn_list[#spawn_list + 1] = breed_name
 				end
 
-				num = num + random
+				count = count + num_to_spawn
 			end
 
-			arg_27_1.num_to_spawn = num
-			arg_27_1.spawned = 0
+			horde.num_to_spawn = count
+			horde.spawned = 0
 
-			return true, num
+			return true, count
 		end
 	end
 
 	return false
 end
 
-HordeSpawner.update_event_horde_no_horde_spawners = function (self, arg_28_1, arg_28_2)
+HordeSpawner.update_event_horde_no_horde_spawners = function (self, horde, t)
 	-- function 28
-	if not arg_28_1.started then
-		if arg_28_2 > arg_28_1.start_time then
-			local create_event_horde_no_horde_spawners, var_28_1 = self:create_event_horde_no_horde_spawners(arg_28_1, arg_28_1.variant, arg_28_2, arg_28_1.side_id)
+	if not horde.started then
+		if t > horde.start_time then
+			local success, amount = self:create_event_horde_no_horde_spawners(horde, horde.variant, t, horde.side_id)
 
-			if not create_event_horde_no_horde_spawners then
-				arg_28_1.started = true
-				arg_28_1.amount = var_28_1
+			if success then
+				horde.started = true
+				horde.amount = amount
 			else
-				arg_28_1.failed = true
+				horde.failed = true
 
 				print("event horde failed")
 
@@ -1555,30 +1629,30 @@ HordeSpawner.update_event_horde_no_horde_spawners = function (self, arg_28_1, ar
 			end
 		end
 	else
-		return self:update_horde(arg_28_1, arg_28_2)
+		return self:update_horde(horde, t)
 	end
 
 	return false
 end
 
-HordeSpawner.update_event_horde = function (self, arg_29_1, arg_29_2)
+HordeSpawner.update_event_horde = function (self, horde, t)
 	-- function 29
-	if not arg_29_1.started then
-		if arg_29_2 > arg_29_1.start_time then
-			local spawn_horde_from_terror_event_ids, var_29_1 = self.spawner_system:spawn_horde_from_terror_event_ids(arg_29_1.terror_event_ids, arg_29_1.variant, arg_29_1.limit_spawners, arg_29_1.group_template, arg_29_1.strictly, arg_29_1.side_id, arg_29_1.use_closest_spawners, arg_29_1.source_unit, arg_29_1.optional_data)
+	if not horde.started then
+		if t > horde.start_time then
+			local success, amount = self.spawner_system:spawn_horde_from_terror_event_ids(horde.terror_event_ids, horde.variant, horde.limit_spawners, horde.group_template, horde.strictly, horde.side_id, horde.use_closest_spawners, horde.source_unit, horde.optional_data)
 
-			if not spawn_horde_from_terror_event_ids then
-				arg_29_1.started = true
-				arg_29_1.amount = var_29_1
+			if success then
+				horde.started = true
+				horde.amount = amount
 			else
-				arg_29_1.failed = true
+				horde.failed = true
 
 				print("event horde failed")
 
 				return true
 			end
 		end
-	elseif arg_29_2 > arg_29_1.end_time then
+	elseif t > horde.end_time then
 		print("event horde ends!")
 
 		return true
@@ -1587,243 +1661,257 @@ HordeSpawner.update_event_horde = function (self, arg_29_1, arg_29_2)
 	return false
 end
 
-HordeSpawner.spawner_in_view_of_players = function (self, arg_30_1, arg_30_2, arg_30_3)
+HordeSpawner.spawner_in_view_of_players = function (self, spawner, side_id, spawner_pos)
 	-- function 30
-	arg_30_3 = arg_30_3 or Unit.local_position(arg_30_1.cover_point_unit, 0) + Vector3(0, 0, 1)
+	spawner_pos = not not spawner_pos or not not (Unit.local_position(spawner.cover_point_unit, 0) + Vector3(0, 0, 1))
 
-	local ENEMY_PLAYER_AND_BOT_POSITIONS = Managers.state.side:get_side(arg_30_2).ENEMY_PLAYER_AND_BOT_POSITIONS
-	local up = Vector3.up()
+	local side = Managers.state.side:get_side(side_id)
+	local player_and_bot_positions = side.ENEMY_PLAYER_AND_BOT_POSITIONS
+	local up_vector = Vector3.up()
 
-	for i = 1, #ENEMY_PLAYER_AND_BOT_POSITIONS do
-		local num = ENEMY_PLAYER_AND_BOT_POSITIONS[i] + Vector3(0, 0, 1)
-		local num_2 = num - arg_30_3
-		local length = Vector3.length(num_2)
+	for i = 1, #player_and_bot_positions do
+		local player_pos = player_and_bot_positions[i] + Vector3(0, 0, 1)
+		local to_player = player_pos - spawner_pos
+		local distance = Vector3.length(to_player)
 
-		if length < 3 then
-			return num
+		if distance < 3 then
+			return player_pos
 		end
 
-		if length < 30 then
-			local normalize = Vector3.normalize(num_2)
-			local immediate_raycast, var_30_7, var_30_8, var_30_9, var_30_10 = PhysicsWorld.immediate_raycast(self.physics_world, arg_30_3 + up, normalize, length, "collision_filter", "filter_ai_line_of_sight_check")
+		if distance < 30 then
+			local direction = Vector3.normalize(to_player)
+			local hit, _, _, _, _ = PhysicsWorld.immediate_raycast(self.physics_world, spawner_pos + up_vector, direction, distance, "collision_filter", "filter_ai_line_of_sight_check")
 
-			if not immediate_raycast then
-				return num
+			if not hit then
+				return player_pos
 			end
 		end
 	end
 end
 
-HordeSpawner.update_horde = function (self, arg_31_1, arg_31_2)
+HordeSpawner.update_horde = function (self, horde, t)
 	-- function 31
-	if not arg_31_1.started then
-		if arg_31_2 > arg_31_1.start_time then
-			local horde_spawns = arg_31_1.horde_spawns
+	if not horde.started then
+		if t > horde.start_time then
+			local horde_spawns = horde.horde_spawns
 
-			if not horde_spawns then
-				local tbl = {}
+			if horde_spawns then
+				local lost_spawns_list = {}
 
 				for i = 1, #horde_spawns do
-					local var_31_2 = horde_spawns[i]
-					local spawner = var_31_2.spawner
-					local local_position = Unit.local_position(spawner, 0)
+					local horde_spawn = horde_spawns[i]
+					local spawner = horde_spawn.spawner
+					local spawner_pos = Unit.local_position(spawner, 0)
+					local seen_from_this_pos = self:spawner_in_view_of_players(nil, horde.side_id, spawner_pos)
 
-					if not self:spawner_in_view_of_players(nil, arg_31_1.side_id, local_position) then
-						table.append(tbl, var_31_2.spawn_list)
+					if seen_from_this_pos then
+						table.append(lost_spawns_list, horde_spawn.spawn_list)
 
 						horde_spawns[i] = nil
 					end
 				end
 
-				local tbl_2 = {}
+				local new_horde_spawns = {}
 
-				for j = 1, #horde_spawns do
-					local var_31_6 = horde_spawns[j]
+				for i = 1, #horde_spawns do
+					local horde_spawn = horde_spawns[i]
 
-					if not var_31_6 then
-						local spawner_2 = var_31_6.spawner
-						local spawn_list = var_31_6.spawn_list
+					if horde_spawn then
+						local spawner = horde_spawn.spawner
+						local spawn_list = horde_spawn.spawn_list
 
-						if #tbl > 0 then
-							table.append(spawn_list, tbl)
+						if #lost_spawns_list > 0 then
+							table.append(spawn_list, lost_spawns_list)
 
-							tbl = {}
-							var_31_6.num_to_spawn = #spawn_list
+							lost_spawns_list = {}
+							horde_spawn.num_to_spawn = #spawn_list
 						end
 
-						var_31_6.all_done_spawned_time = arg_31_2 + 1 / self.spawner_system:spawn_horde(spawner_2, spawn_list, arg_31_1.side_id, arg_31_1.group_template, arg_31_1.optional_data) * var_31_6.num_to_spawn
-						tbl_2[#tbl_2 + 1] = var_31_6
+						local spawn_rate = self.spawner_system:spawn_horde(spawner, spawn_list, horde.side_id, horde.group_template, horde.optional_data)
+
+						horde_spawn.all_done_spawned_time = t + 1 / spawn_rate * horde_spawn.num_to_spawn
+						new_horde_spawns[#new_horde_spawns + 1] = horde_spawn
 					end
 				end
 
-				arg_31_1.horde_spawns = tbl_2
+				horde.horde_spawns = new_horde_spawns
 			end
 
-			arg_31_1.started = true
+			horde.started = true
 		else
 			return
 		end
 	end
 
-	local flag = true
-	local horde_spawns_2 = arg_31_1.horde_spawns
+	local horde_completed = true
+	local horde_spawns = horde.horde_spawns
 
-	if not horde_spawns_2 then
-		for k = 1, #horde_spawns_2 do
-			local var_31_11 = horde_spawns_2[k]
+	if horde_spawns then
+		for j = 1, #horde_spawns do
+			local horde_spawn = horde_spawns[j]
 
-			if not var_31_11.done then
-				if arg_31_2 > var_31_11.all_done_spawned_time then
-					var_31_11.done = true
-					arg_31_1.spawned = arg_31_1.spawned + var_31_11.num_to_spawn
+			if not horde_spawn.done then
+				if t > horde_spawn.all_done_spawned_time then
+					horde_spawn.done = true
+					horde.spawned = horde.spawned + horde_spawn.num_to_spawn
 				end
 
-				flag = false
+				horde_completed = false
 			end
 		end
 	end
 
-	local cover_spawns = arg_31_1.cover_spawns
+	local cover_spawns = horde.cover_spawns
 
-	if not cover_spawns then
-		for l = 1, #cover_spawns do
-			local var_31_13 = cover_spawns[l]
+	if cover_spawns then
+		for j = 1, #cover_spawns do
+			local hidden_spawn = cover_spawns[j]
 
-			if var_31_13.num_to_spawn > 0 then
-				flag = false
+			if hidden_spawn.num_to_spawn > 0 then
+				horde_completed = false
 
-				if arg_31_2 > var_31_13.next_spawn_time then
-					local spawner_in_view_of_players = self:spawner_in_view_of_players(var_31_13, arg_31_1.side_id)
+				if t > hidden_spawn.next_spawn_time then
+					local seen_from_this_pos = self:spawner_in_view_of_players(hidden_spawn, horde.side_id)
 
-					if not spawner_in_view_of_players then
-						if not self:replace_hidden_spawners(cover_spawns, var_31_13, spawner_in_view_of_players) then
+					if seen_from_this_pos then
+						if self:replace_hidden_spawners(cover_spawns, hidden_spawn, seen_from_this_pos) then
 							break
 						else
-							local flag_2
+							local num
 
-							flag_2 = l ~= #cover_spawns or not 1 or l + 1
+							if j == #cover_spawns then
+								num = 1
 
-							local var_31_16 = cover_spawns[flag_2]
+								goto label_31_0
+							end
 
-							var_31_16.num_to_spawn = var_31_16.num_to_spawn + var_31_13.num_to_spawn
+							num = j + 1
 
-							table.append(var_31_16.spawn_list, var_31_13.spawn_list)
-							table.clear(var_31_13.spawn_list)
+							local next_index = num
 
-							var_31_13.num_to_spawn = 0
+							::label_31_0::
+
+							local next_hidden_spawn = cover_spawns[next_index]
+
+							next_hidden_spawn.num_to_spawn = next_hidden_spawn.num_to_spawn + hidden_spawn.num_to_spawn
+
+							table.append(next_hidden_spawn.spawn_list, hidden_spawn.spawn_list)
+							table.clear(hidden_spawn.spawn_list)
+
+							hidden_spawn.num_to_spawn = 0
 
 							print("Spawner visible and can't replace it. Using the next spawner in the list")
 						end
 					else
-						local var_31_17 = fn_3(var_31_13.spawn_list)
+						local breed_name = pop_array(hidden_spawn.spawn_list)
 
-						self:spawn_unit(var_31_13, var_31_17, arg_31_1.main_target_pos:unbox(), arg_31_1)
+						self:spawn_unit(hidden_spawn, breed_name, horde.main_target_pos:unbox(), horde)
 
-						arg_31_1.spawned = arg_31_1.spawned + 1
-						var_31_13.num_to_spawn = var_31_13.num_to_spawn - 1
-						var_31_13.next_spawn_time = var_31_13.next_spawn_time + 1
+						horde.spawned = horde.spawned + 1
+						hidden_spawn.num_to_spawn = hidden_spawn.num_to_spawn - 1
+						hidden_spawn.next_spawn_time = hidden_spawn.next_spawn_time + 1
 					end
 				end
 			end
 		end
 	end
 
-	local flag_3 = arg_31_1.spawned >= arg_31_1.num_to_spawn or flag
-	local is_done_spawning = arg_31_1.is_done_spawning
-	local flag_4 = arg_31_1.horde_type == "vector" or arg_31_1.horde_type == "ambush"
+	local has_spawned_enough = horde.spawned >= horde.num_to_spawn or not not horde_completed
+	local group_has_spawned = horde.is_done_spawning
+	local should_wait_for_spawning_done = horde.horde_type == "vector" or horde.horde_type == "ambush"
 
-	if not (flag_3 or flag_4 or is_done_spawning) then
+	if has_spawned_enough or not should_wait_for_spawning_done and not group_has_spawned then
 		return true
 	end
 end
 
-HordeSpawner.update = function (self, arg_32_1, arg_32_2)
+HordeSpawner.update = function (self, t, dt)
 	-- function 32
 	local hordes = self.hordes
-	local count = #hordes
+	local num_hordes = #hordes
 
 	self._running_horde_type = nil
 	self._running_horde_sound_settings = nil
 
-	local num = 1
+	local i = 1
 
-	while num <= count do
-		local var_32_3 = hordes[num]
-		local var_32_4
+	while i <= num_hordes do
+		local horde = hordes[i]
+		local done
 
-		if var_32_3.horde_type == "vector_blob" then
-			if not var_32_3.silent then
-				self._running_horde_type = var_32_3.horde_type
-				self._running_horde_sound_settings = var_32_3.sound_settings
+		if horde.horde_type == "vector_blob" then
+			if not horde.silent then
+				self._running_horde_type = horde.horde_type
+				self._running_horde_sound_settings = horde.sound_settings
 			end
 
-			var_32_4 = true
-		elseif not (var_32_3.horde_type == "vector" or var_32_3.horde_type ~= "ambush") then
-			if not var_32_3.silent then
-				self._running_horde_type = var_32_3.horde_type
-				self._running_horde_sound_settings = var_32_3.sound_settings
+			done = true
+		elseif horde.horde_type == "vector" or horde.horde_type == "ambush" then
+			if not horde.silent then
+				self._running_horde_type = horde.horde_type
+				self._running_horde_sound_settings = horde.sound_settings
 			end
 
-			var_32_4 = self:update_horde(var_32_3, arg_32_1)
-		elseif var_32_3.horde_type == "event" then
-			var_32_4 = self:update_event_horde(var_32_3, arg_32_1)
+			done = self:update_horde(horde, t)
+		elseif horde.horde_type == "event" then
+			done = self:update_event_horde(horde, t)
 
-			if not var_32_3.silent then
+			if not horde.silent then
 				self._running_horde_type = "event"
-				self._running_horde_sound_settings = var_32_3.sound_settings
+				self._running_horde_sound_settings = horde.sound_settings
 			end
 		else
-			var_32_4 = self:update_event_horde_no_horde_spawners(var_32_3, arg_32_1)
+			done = self:update_event_horde_no_horde_spawners(horde, t)
 
-			if not var_32_3.silent then
+			if not horde.silent then
 				self._running_horde_type = "event"
-				self._running_horde_sound_settings = var_32_3.sound_settings
+				self._running_horde_sound_settings = horde.sound_settings
 			end
 		end
 
-		if not var_32_4 then
-			hordes[num] = hordes[count]
-			hordes[count] = nil
-			count = count - 1
+		if done then
+			hordes[i] = hordes[num_hordes]
+			hordes[num_hordes] = nil
+			num_hordes = num_hordes - 1
 		else
-			num = num + 1
+			i = i + 1
 		end
 	end
 
-	if not script_data.debug_hordes then
-		self:debug_hordes(arg_32_1)
+	if script_data.debug_hordes then
+		self:debug_hordes(t)
 	end
 end
 
-HordeSpawner.set_horde_has_spawned = function (self, arg_33_1)
+HordeSpawner.set_horde_has_spawned = function (self, group_id)
 	-- function 33
 	local hordes = self.hordes
 
 	for i = 1, #hordes do
-		local var_33_1 = hordes[i]
-		local group_id = var_33_1.group_id
+		local horde = hordes[i]
+		local horde_group_id = horde.group_id
 
-		if not (not group_id and group_id ~= arg_33_1) then
-			var_33_1.is_done_spawning = true
+		if horde_group_id and horde_group_id == group_id then
+			horde.is_done_spawning = true
 		end
 	end
 end
 
-HordeSpawner.set_horde_is_done = function (self, arg_34_1)
+HordeSpawner.set_horde_is_done = function (self, group_id)
 	-- function 34
 	local hordes = self.hordes
 
 	for i = 1, #hordes do
-		local var_34_1 = hordes[i]
-		local group_id = var_34_1.group_id
+		local horde = hordes[i]
+		local horde_group_id = horde.group_id
 
-		if not (not group_id and group_id ~= arg_34_1) then
-			var_34_1.is_dead = true
+		if horde_group_id and horde_group_id == group_id then
+			horde.is_dead = true
 		end
 	end
 end
 
-HordeSpawner.debug_hordes = function (self, arg_35_1)
+HordeSpawner.debug_hordes = function (self, t)
 	-- function 35
 	local str = "Hordes - now: "
 	local horde_size = self.conflict_director:horde_size()
@@ -1831,72 +1919,88 @@ HordeSpawner.debug_hordes = function (self, arg_35_1)
 	local tostring = tostring
 	local _running_horde_type = self._running_horde_type
 
-	_running_horde_type = _running_horde_type or "none"
+	_running_horde_type = not not _running_horde_type or not not "none"
 
-	local str_3 = str .. horde_size .. str_2 .. tostring(_running_horde_type) .. ") "
+	local s = str .. horde_size .. str_2 .. tostring(_running_horde_type) .. ") "
 	local hordes = self.hordes
 
 	for i = 1, #hordes do
-		local var_35_7 = hordes[i]
-		local horde_type = var_35_7.horde_type
-		local silent = var_35_7.silent
-		local var_35_10 = str_3
-		local str_4 = "| "
-		local var_35_12 = horde_type
+		local horde = hordes[i]
+		local horde_type = horde.horde_type
+		local silent = horde.silent
+		local var_35_5 = s
+		local str_3 = "| "
+		local var_35_7 = horde_type
 		local flag
 
-		flag = not var_35_7.silent and "(silent), " and ""
-		str_3 = var_35_10 .. str_4 .. var_35_12 .. flag .. " |"
+		flag = (not horde.silent or not "(silent), ") and not not ""
+		s = var_35_5 .. str_3 .. var_35_7 .. flag .. " |"
 	end
 
-	Debug.text(str_3)
+	Debug.text(s)
 end
 
-local tbl_9 = {}
+local found_units = {}
 
-HordeSpawner.hidden_cover_points = function (arg_36_0, arg_36_1, arg_36_2, arg_36_3, arg_36_4, arg_36_5, arg_36_6, arg_36_7)
+HordeSpawner.hidden_cover_points = function (self, broadphase, epicenter_pos, player_pos_list, found_cover_points, min_rad, max_rad, main_target_pos)
 	-- function 36
 	local distance_squared = Vector3.distance_squared
-	local normalize = Vector3.normalize
-	local dot = Vector3.dot
-	local forward = Quaternion.forward
-	local local_position = Unit.local_position
-	local local_rotation = Unit.local_rotation
+	local vector3_normalize = Vector3.normalize
+	local vector3_dot = Vector3.dot
+	local quaternion_forward = Quaternion.forward
+	local unit_local_position = Unit.local_position
+	local unit_local_rotation = Unit.local_rotation
 
-	table.clear_array(tbl_9, #tbl_9)
+	table.clear_array(found_units, #found_units)
 
-	local count = #arg_36_3
-	local num = 0
-	local query = Broadphase.query(arg_36_1, arg_36_2, arg_36_6, tbl_9)
-	local flag = not arg_36_7 and distance_squared(arg_36_3[1], arg_36_7)
+	local num_source_pos = #player_pos_list
+	local num_found_points = 0
+	local num_cover_points = Broadphase.query(broadphase, epicenter_pos, max_rad, found_units)
+	local min_long_dist_squared = not not main_target_pos and not not distance_squared(player_pos_list[1], main_target_pos)
 
-	arg_36_5 = arg_36_5 * arg_36_5
-	arg_36_6 = arg_36_6 * arg_36_6
+	min_rad = min_rad * min_rad
+	max_rad = max_rad * max_rad
 
-	for i = 1, query do
-		local var_36_10 = tbl_9[i]
-		local var_36_11 = local_position(var_36_10, 0)
-		local flag_2 = true
+	for i = 1, num_cover_points do
+		local cover_unit = found_units[i]
+		local pos = unit_local_position(cover_unit, 0)
+		local long_dist_ok = true
 
-		if not (not arg_36_7 and not (flag > distance_squared(var_36_11, arg_36_7))) then
-			flag_2 = false
+		if main_target_pos then
+			local long_dist_squared = distance_squared(pos, main_target_pos)
+
+			if long_dist_squared < min_long_dist_squared then
+				long_dist_ok = false
+			end
 		end
 
-		if not flag_2 then
-			for j = 1, count do
-				local var_36_13 = arg_36_3[j]
-				local var_36_14 = distance_squared(var_36_11, var_36_13)
+		if long_dist_ok then
+			for j = 1, num_source_pos do
+				local h_pos = player_pos_list[j]
+				local dist_squared = distance_squared(pos, h_pos)
 
-				if not (not (arg_36_5 <= var_36_14) or not (var_36_14 <= arg_36_6)) then
-					local var_36_15 = local_rotation(var_36_10, 0)
-					local var_36_16 = normalize(var_36_11 - arg_36_2)
-					local flag_3
+				if min_rad <= dist_squared and dist_squared <= max_rad then
+					local rot = unit_local_rotation(cover_unit, 0)
+					local to_cover_point = vector3_normalize(pos - epicenter_pos)
+					local num
 
-					flag_3 = not (var_36_14 < 625) or not -0.9 or -0.6
+					if dist_squared < 625 then
+						num = -0.9
 
-					if not (flag_3 > dot(forward(var_36_15), var_36_16)) then
-						num = num + 1
-						arg_36_4[num] = var_36_10
+						goto label_36_0
+					end
+
+					num = -0.6
+
+					local dot = num
+
+					::label_36_0::
+
+					local valid = dot > vector3_dot(quaternion_forward(rot), to_cover_point)
+
+					if valid then
+						num_found_points = num_found_points + 1
+						found_cover_points[num_found_points] = cover_unit
 					end
 				end
 			end
@@ -1904,28 +2008,29 @@ HordeSpawner.hidden_cover_points = function (arg_36_0, arg_36_1, arg_36_2, arg_3
 	end
 end
 
-HordeSpawner.calc_sectors = function (arg_37_0, arg_37_1, arg_37_2, arg_37_3)
+HordeSpawner.calc_sectors = function (self, center_pos, list, sectors)
 	-- function 37
-	local local_position = Unit.local_position
-	local normalize = Vector3.normalize
-	local atan2 = math.atan2
+	local unit_local_position = Unit.local_position
+	local vector3_normalize = Vector3.normalize
+	local math_atan2 = math.atan2
 	local pi = math.pi
 
-	for i = 1, #arg_37_2 do
-		local var_37_4 = arg_37_2[i]
-		local var_37_5 = local_position(var_37_4, 0)
-		local var_37_6 = normalize(var_37_5 - arg_37_1)
-		local var_37_7 = atan2(var_37_6.y, var_37_6.x)
-		local var_37_8 = arg_37_3[math.max(1, math.ceil((var_37_7 + pi) / (2 * pi) * count))]
+	for i = 1, #list do
+		local unit = list[i]
+		local pos = unit_local_position(unit, 0)
+		local dir_to_center = vector3_normalize(pos - center_pos)
+		local angle = math_atan2(dir_to_center.y, dir_to_center.x)
+		local sector_index = math.max(1, math.ceil((angle + pi) / (2 * pi) * num_sectors))
+		local sector = sectors[sector_index]
 
-		var_37_8[#var_37_8 + 1] = var_37_4
+		sector[#sector + 1] = unit
 	end
 end
 
-HordeSpawner.render_sectors = function (arg_38_0, arg_38_1)
+HordeSpawner.render_sectors = function (self, sectors)
 	-- function 38
-	local local_position = Unit.local_position
-	local tbl = {
+	local unit_local_position = Unit.local_position
+	local sector_colors = {
 		Color(255, 255, 0, 0),
 		Color(255, 255, 128, 0),
 		Color(255, 0, 255, 0),
@@ -1936,39 +2041,40 @@ HordeSpawner.render_sectors = function (arg_38_0, arg_38_1)
 		Color(255, 255, 0, 255)
 	}
 
-	for i = 1, count do
-		local var_38_2 = arg_38_1[i]
-		local var_38_3 = tbl[i]
+	for i = 1, num_sectors do
+		local sector = sectors[i]
+		local sector_color = sector_colors[i]
 
-		print("Sector:", i, "size:", #var_38_2)
+		print("Sector:", i, "size:", #sector)
 
-		for j = 1, #var_38_2 do
-			local var_38_4 = var_38_2[j]
-			local var_38_5 = local_position(var_38_4, 0)
+		for j = 1, #sector do
+			local unit = sector[j]
+			local pos = unit_local_position(unit, 0)
 
-			QuickDrawerStay:sphere(var_38_5, 2, var_38_3)
+			QuickDrawerStay:sphere(pos, 2, sector_color)
 		end
 	end
 end
 
-HordeSpawner.reset_sectors = function (arg_39_0, arg_39_1)
+HordeSpawner.reset_sectors = function (self, sectors)
 	-- function 39
-	for i = 1, count do
-		local var_39_0 = arg_39_1[i]
+	for i = 1, num_sectors do
+		local sector = sectors[i]
 
-		for j = 1, #var_39_0 do
-			var_39_0[j] = nil
+		for j = 1, #sector do
+			sector[j] = nil
 		end
 	end
 end
 
 function test_sectors()
 	-- function 40
-	local local_position = Unit.local_position
-	local normalize = Vector3.normalize
-	local PLAYER_UNITS = Managers.state.side:get_side_from_name("heroes").PLAYER_UNITS
-	local var_40_3 = local_position(PLAYER_UNITS[1], 0)
-	local tbl = {
+	local unit_local_position = Unit.local_position
+	local vector3_normalize = Vector3.normalize
+	local hero_side = Managers.state.side:get_side_from_name("heroes")
+	local PLAYER_UNITS = hero_side.PLAYER_UNITS
+	local center_pos = unit_local_position(PLAYER_UNITS[1], 0)
+	local sector_colors = {
 		Color(255, 255, 0, 0),
 		Color(255, 255, 128, 0),
 		Color(255, 0, 255, 0),
@@ -1981,75 +2087,78 @@ function test_sectors()
 	local pi = math.pi
 
 	for i = 1, 300 do
-		local var_40_6 = Vector3(math.random(-30, 30), math.random(-30, 30), 1)
+		local p = Vector3(math.random(-30, 30), math.random(-30, 30), 1)
 
-		print("xapa:", i, var_40_6, var_40_3)
+		print("xapa:", i, p, center_pos)
 
-		local num = var_40_3 + var_40_6
-		local var_40_8 = normalize(num - var_40_3)
-		local atan2 = math.atan2(var_40_8.y, var_40_8.x)
-		local max = math.max(1, math.ceil((atan2 + pi) / (2 * pi) * count))
+		local pos = center_pos + p
+		local dir_to_center = vector3_normalize(pos - center_pos)
+		local angle = math.atan2(dir_to_center.y, dir_to_center.x)
+		local sector_index = math.max(1, math.ceil((angle + pi) / (2 * pi) * num_sectors))
 
-		if max <= count then
-			QuickDrawerStay:sphere(num, 1.2, tbl[max])
+		if sector_index <= num_sectors then
+			QuickDrawerStay:sphere(pos, 1.2, sector_colors[sector_index])
 		else
-			print("BAd sector index: ", max)
+			print("BAd sector index: ", sector_index)
 		end
 	end
 end
 
-HordeSpawner.filter_dist = function (arg_41_0, arg_41_1, arg_41_2, arg_41_3, arg_41_4)
+HordeSpawner.filter_dist = function (self, center_pos, list, min_rad_squared, max_rad_squared)
 	-- function 41
 	local distance_squared = Vector3.distance_squared
-	local count = #arg_41_2
-	local num = 1
+	local size = #list
+	local i = 1
 
-	while num <= count do
-		local var_41_3 = arg_41_2[num]
-		local var_41_4 = distance_squared(arg_41_1, var_41_3)
+	while i <= size do
+		local pos = list[i]
+		local dist_squared = distance_squared(center_pos, pos)
 
-		if not (not (arg_41_3 <= var_41_4) or not (var_41_4 <= arg_41_4)) then
-			num = num + 1
+		if min_rad_squared <= dist_squared and dist_squared <= max_rad_squared then
+			i = i + 1
 		else
-			arg_41_2[num] = arg_41_2[count]
-			count = count - 1
+			list[i] = list[size]
+			size = size - 1
 		end
 	end
 end
 
-HordeSpawner.filter_angle = function (arg_42_0, arg_42_1, arg_42_2, arg_42_3)
+HordeSpawner.filter_angle = function (self, center_pos, pos_list, dot_angle)
 	-- function 42
-	arg_42_3 = arg_42_3 or -0.9
+	dot_angle = not not dot_angle or not not -0.9
 
-	local normalize = Vector3.normalize
-	local dot = Vector3.dot
-	local forward = Quaternion.forward
-	local count = #arg_42_2
-	local num = 1
+	local vector3_normalize = Vector3.normalize
+	local vector3_dot = Vector3.dot
+	local quaternion_forward = Quaternion.forward
+	local size = #pos_list
+	local i = 1
 
-	while num <= count do
-		local var_42_5 = arg_42_2[num]
-		local local_rotation = Unit.local_rotation(var_42_5, 0)
-		local var_42_7 = normalize(pos - arg_42_1)
+	while i <= size do
+		local cover_unit = pos_list[i]
+		local rot = Unit.local_rotation(cover_unit, 0)
+		local to_cover_point = vector3_normalize(pos - center_pos)
 
-		if arg_42_3 > dot(forward(local_rotation), var_42_7) then
-			num = num + 1
+		if dot_angle > vector3_dot(quaternion_forward(rot), to_cover_point) then
+			i = i + 1
 		else
-			arg_42_2[num] = arg_42_2[count]
-			count = count - 1
+			pos_list[i] = pos_list[size]
+			size = size - 1
 		end
 	end
 end
 
-HordeSpawner.get_point_on_main_path = function (self, arg_43_1, arg_43_2, arg_43_3)
+HordeSpawner.get_point_on_main_path = function (self, pos, distance, confirm_with_far_astar)
 	-- function 43
-	local get_main_paths = self.conflict_director.level_analysis:get_main_paths()
-	local closest_pos_at_main_path, var_43_2 = MainPathUtils.closest_pos_at_main_path(get_main_paths, arg_43_1)
-	local point_on_mainpath = MainPathUtils.point_on_mainpath(get_main_paths, var_43_2 + arg_43_2)
+	local level_analysis = self.conflict_director.level_analysis
+	local main_paths = level_analysis:get_main_paths()
+	local path_pos, travel_dist = MainPathUtils.closest_pos_at_main_path(main_paths, pos)
+	local behind_pos = MainPathUtils.point_on_mainpath(main_paths, travel_dist + distance)
 
-	if true or not arg_43_3 then
-		return not Managers.state.conflict.navigation_group_manager:a_star_cached_between_positions(arg_43_1, point_on_mainpath) and point_on_mainpath
+	if false and confirm_with_far_astar then
+		local path_found = Managers.state.conflict.navigation_group_manager:a_star_cached_between_positions(pos, behind_pos)
+
+		return not not path_found and not not behind_pos
 	end
 
-	return point_on_mainpath
+	return behind_pos
 end

@@ -13,43 +13,43 @@ end
 
 BTSelector.name = "BTSelector"
 
-BTSelector.leave = function (self, arg_2_1, arg_2_2, arg_2_3, arg_2_4)
+BTSelector.leave = function (self, unit, blackboard, t, reason)
 	-- function 2
-	self:set_running_child(arg_2_1, arg_2_2, arg_2_3, nil, arg_2_4)
+	self:set_running_child(unit, blackboard, t, nil, reason)
 end
 
-BTSelector.run = function (self, arg_3_1, arg_3_2, arg_3_3, arg_3_4)
+BTSelector.run = function (self, unit, blackboard, t, dt)
 	-- function 3
-	local current_running_child = self:current_running_child(arg_3_2)
+	local child_running = self:current_running_child(blackboard)
 
-	for i, v in ipairs(self._children) do
-		if not v:condition(arg_3_2) then
-			self:set_running_child(arg_3_1, arg_3_2, arg_3_3, v, "aborted")
+	for index, node in ipairs(self._children) do
+		if node:condition(blackboard) then
+			self:set_running_child(unit, blackboard, t, node, "aborted")
 
-			local run, var_3_2 = v:run(arg_3_1, arg_3_2, arg_3_3, arg_3_4)
+			local result, evaluate = node:run(unit, blackboard, t, dt)
 
-			if run ~= "running" then
-				self:set_running_child(arg_3_1, arg_3_2, arg_3_3, nil, run)
+			if result ~= "running" then
+				self:set_running_child(unit, blackboard, t, nil, result)
 			end
 
-			if run ~= "failed" then
-				return run, var_3_2
+			if result ~= "failed" then
+				return result, evaluate
 			end
-		elseif v == current_running_child then
-			self:set_running_child(arg_3_1, arg_3_2, arg_3_3, nil, "failed")
+		elseif node == child_running then
+			self:set_running_child(unit, blackboard, t, nil, "failed")
 		end
 	end
 
-	if not (not script_data.debug_behaviour_trees and script_data.debug_unit ~= arg_3_1) then
+	if script_data.debug_behaviour_trees and script_data.debug_unit == unit then
 		print("BTSelector fail: ", self:id())
 	end
 
-	fassert(self:current_running_child(arg_3_2) == nil)
+	fassert(self:current_running_child(blackboard) == nil)
 
 	return "failed"
 end
 
-BTSelector.add_child = function (arg_4_0, arg_4_1)
+BTSelector.add_child = function (self, node)
 	-- function 4
-	arg_4_0._children[#arg_4_0._children + 1] = arg_4_1
+	self._children[#self._children + 1] = node
 end

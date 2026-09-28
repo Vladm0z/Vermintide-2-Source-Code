@@ -1,6 +1,6 @@
 -- chunkname: @scripts/settings/hit_effects/hit_effects_chaos_exalted_champion.lua
 
-local tbl = {
+local wounding_damage_types = {
 	"light_stab_fencer",
 	"light_stab_smiter",
 	"stab_fencer",
@@ -222,7 +222,7 @@ HitEffectsChaosExaltedChampion = {
 		extra_conditions = {
 			death = false,
 			damage = true,
-			damage_type = tbl
+			damage_type = wounding_damage_types
 		},
 		animations = {
 			"hit_reaction"

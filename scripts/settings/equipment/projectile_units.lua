@@ -2,7 +2,7 @@
 
 local ProjectileUnits = ProjectileUnits
 
-ProjectileUnits = ProjectileUnits or {}
+ProjectileUnits = not not ProjectileUnits or not not {}
 ProjectileUnits = ProjectileUnits
 ProjectileUnits.we_arrow = {
 	dummy_linker_unit_name = "units/weapons/player/wpn_we_quiver_t1/wpn_we_arrow_t1_3p",
@@ -61,9 +61,9 @@ DLCUtils.merge("projectile_units", ProjectileUnits)
 
 local ProjectileUnitsFromUnitName = ProjectileUnitsFromUnitName
 
-ProjectileUnitsFromUnitName = ProjectileUnitsFromUnitName or {}
+ProjectileUnitsFromUnitName = not not ProjectileUnitsFromUnitName or not not {}
 ProjectileUnitsFromUnitName = ProjectileUnitsFromUnitName
 
-for k, v in pairs(ProjectileUnits) do
-	ProjectileUnitsFromUnitName[v.projectile_unit_name] = k
+for key, data in pairs(ProjectileUnits) do
+	ProjectileUnitsFromUnitName[data.projectile_unit_name] = key
 end

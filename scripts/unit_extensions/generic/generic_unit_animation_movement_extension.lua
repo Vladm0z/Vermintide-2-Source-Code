@@ -4,17 +4,17 @@ require("scripts/unit_extensions/generic/animation_movement_templates")
 
 GenericUnitAnimationMovementExtension = class(GenericUnitAnimationMovementExtension)
 
-GenericUnitAnimationMovementExtension.init = function (self, arg_1_1, arg_1_2, arg_1_3)
+GenericUnitAnimationMovementExtension.init = function (self, extension_init_context, unit, extension_init_data)
 	-- function 1
-	self.unit = arg_1_2
+	self.unit = unit
 
-	local template = arg_1_3.template
+	local init_data_template_name = extension_init_data.template
 
-	self.template = AnimationMovementTemplates[template]
+	self.template = AnimationMovementTemplates[init_data_template_name]
 
 	local flag
 
-	flag = not arg_1_3.is_husk and "husk" and "owner"
+	flag = (not extension_init_data.is_husk or not "husk") and not not "owner"
 	self.network_type = flag
 	self.data = {}
 	self.enabled = false
@@ -22,42 +22,47 @@ end
 
 GenericUnitAnimationMovementExtension.extensions_ready = function (self)
 	-- function 2
-	self.template[self.network_type].init(self.unit, self.data)
+	local template = self.template
 
-	local get_data = Unit.get_data(self.unit, "breed")
+	template[self.network_type].init(self.unit, self.data)
+
+	local breed = Unit.get_data(self.unit, "breed")
 end
 
 GenericUnitAnimationMovementExtension.destroy = function (self)
 	-- function 3
-	self.template[self.network_type].leave(self.unit, self.data)
+	local template = self.template
+
+	template[self.network_type].leave(self.unit, self.data)
 
 	self.template = nil
 	self.data = nil
 end
 
-GenericUnitAnimationMovementExtension.reset = function (arg_4_0)
+GenericUnitAnimationMovementExtension.reset = function (self)
 	-- function 4
 	return
 end
 
-GenericUnitAnimationMovementExtension.set_enabled = function (self, arg_5_1)
+GenericUnitAnimationMovementExtension.set_enabled = function (self, enable)
 	-- function 5
-	self.enabled = arg_5_1
+	self.enabled = enable
 
-	if not arg_5_1 then
+	if not enable then
 		self.leave = true
 	end
 end
 
-GenericUnitAnimationMovementExtension.update = function (self, arg_6_1, arg_6_2, arg_6_3, arg_6_4, arg_6_5)
+GenericUnitAnimationMovementExtension.update = function (self, unit, input, dt, context, t)
 	-- function 6
 	local data = self.data
 	local template = self.template
+	local enabled = self.enabled
 
-	if not self.enabled then
-		template[self.network_type].update(arg_6_1, arg_6_5, arg_6_3, data)
-	elseif not self.leave then
-		template[self.network_type].leave(arg_6_1, data)
+	if enabled then
+		template[self.network_type].update(unit, t, dt, data)
+	elseif self.leave then
+		template[self.network_type].leave(unit, data)
 
 		self.leave = false
 	end

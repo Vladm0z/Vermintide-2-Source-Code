@@ -1,7 +1,7 @@
 -- chunkname: @scripts/settings/equipment/weapon_properties_morris.lua
 
-local tbl = {}
-local tbl_2 = {
+local morris_weapon_properties = {}
+local buff_tweak_data = {
 	stockpile = {
 		variable_multiplier = {
 			0.2,
@@ -22,7 +22,7 @@ local tbl_2 = {
 	}
 }
 
-tbl.buff_templates = {
+morris_weapon_properties.buff_templates = {
 	stockpile = {
 		buffs = {
 			{
@@ -50,7 +50,7 @@ tbl.buff_templates = {
 		}
 	}
 }
-tbl.properties = {
+morris_weapon_properties.properties = {
 	stockpile = {
 		display_name = "properties_stockpile",
 		advanced_description = "description_properties_stockpile",
@@ -59,7 +59,7 @@ tbl.properties = {
 		description_values = {
 			{
 				value_type = "percent",
-				value = tbl_2.stockpile.variable_multiplier
+				value = buff_tweak_data.stockpile.variable_multiplier
 			}
 		}
 	},
@@ -72,7 +72,7 @@ tbl.properties = {
 		description_values = {
 			{
 				value_type = "percent",
-				value = tbl_2.deus_coins_greed.variable_multiplier
+				value = buff_tweak_data.deus_coins_greed.variable_multiplier
 			}
 		}
 	},
@@ -84,17 +84,17 @@ tbl.properties = {
 		description_values = {
 			{
 				value_type = "percent",
-				value = tbl_2.deus_power_vs_chaos.variable_multiplier
+				value = buff_tweak_data.deus_power_vs_chaos.variable_multiplier
 			}
 		}
 	}
 }
 
-for k, v in pairs(tbl.properties) do
-	v.name = k
+for name, data in pairs(morris_weapon_properties.properties) do
+	data.name = name
 end
 
-tbl.combinations = {
+morris_weapon_properties.combinations = {
 	deus_melee = {
 		common = {
 			{
@@ -1468,30 +1468,32 @@ tbl.combinations = {
 	}
 }
 
-for k_2, v_2 in pairs(tbl.buff_templates) do
-	local buffs = v_2.buffs
+for name, data in pairs(morris_weapon_properties.buff_templates) do
+	local buffs = data.buffs
 
 	fassert(#buffs == 1, "property buff has more than one sub buff, add multiple buffs from the property instead")
 
-	buffs[1].name = k_2
+	local buff = buffs[1]
+
+	buff.name = name
 end
 
-BuffUtils.apply_buff_tweak_data(tbl.buff_templates, tbl_2)
+BuffUtils.apply_buff_tweak_data(morris_weapon_properties.buff_templates, buff_tweak_data)
 
-for k_3, v_3 in pairs(tbl.buff_templates) do
-	fassert(not WeaponProperties.buff_templates[k_3], "duplicate buff_template found between WeaponProperties.buff_templates and buff_templates added by morris dlc")
+for key, value in pairs(morris_weapon_properties.buff_templates) do
+	fassert(not WeaponProperties.buff_templates[key], "duplicate buff_template found between WeaponProperties.buff_templates and buff_templates added by morris dlc")
 
-	WeaponProperties.buff_templates[k_3] = v_3
+	WeaponProperties.buff_templates[key] = value
 end
 
-for k_4, v_4 in pairs(tbl.properties) do
-	fassert(not WeaponProperties.properties[k_4], "duplicate properties found between WeaponProperties.properties and properties added by morris dlc")
+for key, value in pairs(morris_weapon_properties.properties) do
+	fassert(not WeaponProperties.properties[key], "duplicate properties found between WeaponProperties.properties and properties added by morris dlc")
 
-	WeaponProperties.properties[k_4] = v_4
+	WeaponProperties.properties[key] = value
 end
 
-for k_5, v_5 in pairs(tbl.combinations) do
-	fassert(not WeaponProperties.combinations[k_5], "duplicate combinations found between WeaponProperties.combinations and combinations added by morris dlc")
+for key, value in pairs(morris_weapon_properties.combinations) do
+	fassert(not WeaponProperties.combinations[key], "duplicate combinations found between WeaponProperties.combinations and combinations added by morris dlc")
 
-	WeaponProperties.combinations[k_5] = v_5
+	WeaponProperties.combinations[key] = value
 end

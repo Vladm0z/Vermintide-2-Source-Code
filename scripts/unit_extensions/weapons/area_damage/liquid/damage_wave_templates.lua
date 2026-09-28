@@ -1,6 +1,6 @@
 -- chunkname: @scripts/unit_extensions/weapons/area_damage/liquid/damage_wave_templates.lua
 
-local scripts_utils_stagger_types = require("scripts/utils/stagger_types")
+local stagger_types = require("scripts/utils/stagger_types")
 
 DamageWaveTemplates = {}
 DamageWaveTemplates.templates = {
@@ -47,11 +47,11 @@ DamageWaveTemplates.templates = {
 			stagger_distance = 3,
 			push_along_wave_direction = true,
 			stagger_impact = {
-				scripts_utils_stagger_types.explosion,
-				scripts_utils_stagger_types.heavy,
-				scripts_utils_stagger_types.none,
-				scripts_utils_stagger_types.none,
-				scripts_utils_stagger_types.explosion
+				stagger_types.explosion,
+				stagger_types.heavy,
+				stagger_types.none,
+				stagger_types.none,
+				stagger_types.explosion
 			},
 			stagger_duration = {
 				2.5,
@@ -112,11 +112,11 @@ DamageWaveTemplates.templates = {
 			stagger_distance = 3,
 			push_along_wave_direction = true,
 			stagger_impact = {
-				scripts_utils_stagger_types.explosion,
-				scripts_utils_stagger_types.heavy,
-				scripts_utils_stagger_types.none,
-				scripts_utils_stagger_types.none,
-				scripts_utils_stagger_types.explosion
+				stagger_types.explosion,
+				stagger_types.heavy,
+				stagger_types.none,
+				stagger_types.none,
+				stagger_types.explosion
 			},
 			stagger_duration = {
 				2.5,
@@ -174,11 +174,11 @@ DamageWaveTemplates.templates = {
 			stagger_distance = 3,
 			push_along_wave_direction = true,
 			stagger_impact = {
-				scripts_utils_stagger_types.explosion,
-				scripts_utils_stagger_types.heavy,
-				scripts_utils_stagger_types.none,
-				scripts_utils_stagger_types.none,
-				scripts_utils_stagger_types.explosion
+				stagger_types.explosion,
+				stagger_types.heavy,
+				stagger_types.none,
+				stagger_types.none,
+				stagger_types.explosion
 			},
 			stagger_duration = {
 				2.5,
@@ -236,11 +236,11 @@ DamageWaveTemplates.templates = {
 			stagger_distance = 3,
 			push_along_wave_direction = true,
 			stagger_impact = {
-				scripts_utils_stagger_types.explosion,
-				scripts_utils_stagger_types.heavy,
-				scripts_utils_stagger_types.none,
-				scripts_utils_stagger_types.none,
-				scripts_utils_stagger_types.explosion
+				stagger_types.explosion,
+				stagger_types.heavy,
+				stagger_types.none,
+				stagger_types.none,
+				stagger_types.explosion
 			},
 			stagger_duration = {
 				2.5,
@@ -285,27 +285,30 @@ DamageWaveTemplates.templates.sienna_adept_ability_trail = {
 	apply_impact_buff_to_player = false,
 	fx_name_init = "fx/brw_adept_skill_02",
 	immune_breeds = {},
-	add_buff_func = function (arg_1_0, arg_1_1, arg_1_2, arg_1_3, arg_1_4)
+	add_buff_func = function (damage_wave_ext, target_unit, buff_template_name, attacker_unit, source_unit)
 		-- function 1
-		if not Unit.alive(arg_1_1) then
-			local system = Managers.state.entity:system("buff_system")
-			local alloc_table = FrameTable.alloc_table()
+		if Unit.alive(target_unit) then
+			local buff_system = Managers.state.entity:system("buff_system")
+			local params = FrameTable.alloc_table()
 
-			alloc_table.attacker_unit = arg_1_3
-			alloc_table.source_attacker_unit = arg_1_4
+			params.attacker_unit = attacker_unit
+			params.source_attacker_unit = source_unit
 
-			system:add_buff_synced(arg_1_1, arg_1_2, BuffSyncType.All, alloc_table)
+			buff_system:add_buff_synced(target_unit, buff_template_name, BuffSyncType.All, params)
 		end
 	end,
-	leave_area_func = function (arg_2_0)
+	leave_area_func = function (unit)
 		-- function 2
-		if not Unit.alive(arg_2_0) then
-			local get_stacking_buff = ScriptUnit.extension(arg_2_0, "buff_system"):get_stacking_buff("sienna_adept_ability_trail")
-			local flag = not get_stacking_buff and get_stacking_buff[1]
+		if Unit.alive(unit) then
+			local buff_extension = ScriptUnit.extension(unit, "buff_system")
+			local buff_stacks = buff_extension:get_stacking_buff("sienna_adept_ability_trail")
+			local buff = not not buff_stacks and not not buff_stacks[1]
 
-			if not flag then
-				flag.start_time = Managers.time:time("game")
-				flag.duration = flag.template.leave_linger_time
+			if buff then
+				local t = Managers.time:time("game")
+
+				buff.start_time = t
+				buff.duration = buff.template.leave_linger_time
 			end
 		end
 	end
@@ -351,12 +354,12 @@ DamageWaveTemplates.templates.thornsister_thorn_wall_push = {
 		push_along_wave_direction = true,
 		drag_along_wave = true,
 		stagger_impact = {
-			scripts_utils_stagger_types.heavy,
-			scripts_utils_stagger_types.heavy,
-			scripts_utils_stagger_types.heavy,
-			scripts_utils_stagger_types.none,
-			scripts_utils_stagger_types.heavy,
-			scripts_utils_stagger_types.medium
+			stagger_types.heavy,
+			stagger_types.heavy,
+			stagger_types.heavy,
+			stagger_types.none,
+			stagger_types.heavy,
+			stagger_types.medium
 		},
 		stagger_duration = {
 			0.5,
@@ -391,85 +394,88 @@ DamageWaveTemplates.templates.thornsister_thorn_wall_push = {
 			0
 		}
 	},
-	update_func = function (self, arg_3_1, arg_3_2, arg_3_3, arg_3_4)
+	update_func = function (damage_wave_ext, unit, position, t, dt)
 		-- function 3
-		local _update_data = self._update_data
+		local update_data = damage_wave_ext._update_data
 
-		if not _update_data then
-			_update_data = {
+		if not update_data then
+			update_data = {
 				next_spawn_t = 0
 			}
-			self._update_data = _update_data
+			damage_wave_ext._update_data = update_data
 		end
 
-		if not (arg_3_3 >= _update_data.next_spawn_t) or not self.wave_direction then
-			local str = "units/beings/player/way_watcher_thornsister/abilities/ww_thornsister_thorn_wave_01"
-			local num = 0.75
-			local num_2 = 1.25
-			local rad = math.rad(15)
-			local num_3 = 0.1
-			local num_4 = 0.1
-			local num_5 = 0.2
-			local num_6 = 1
-			local num_7 = 3
-			local look = Quaternion.look(self.wave_direction:unbox())
-			local ai_query_distance = self.template.ai_query_distance
-			local num_8 = Quaternion.right(look) * math.lerp(-ai_query_distance, ai_query_distance, math.random())
-			local var_3_13 = Vector3(0, 0, -num_3 * math.random())
-			local get_spawn_pos_on_circle, var_3_15, var_3_16, var_3_17 = ConflictUtils.get_spawn_pos_on_circle(self.nav_world, arg_3_2 + num_8, 0, num_6, num_7)
+		if t >= update_data.next_spawn_t and damage_wave_ext.wave_direction then
+			local unit_name = "units/beings/player/way_watcher_thornsister/abilities/ww_thornsister_thorn_wave_01"
+			local scale_min = 0.75
+			local scale_max = 1.25
+			local angle_variance = math.rad(15)
+			local max_depth = 0.1
+			local next_spawn_delay_min = 0.1
+			local next_spawn_delay_max = 0.2
+			local spread_diameter = 1
+			local num_tries = 3
+			local wave_rotation = Quaternion.look(damage_wave_ext.wave_direction:unbox())
+			local wave_half_width = damage_wave_ext.template.ai_query_distance
+			local wave_right = Quaternion.right(wave_rotation) * math.lerp(-wave_half_width, wave_half_width, math.random())
+			local depth_offset = Vector3(0, 0, -max_depth * math.random())
+			local spawn_pos, p1, p2, p3 = ConflictUtils.get_spawn_pos_on_circle(damage_wave_ext.nav_world, position + wave_right, 0, spread_diameter, num_tries)
 
-			if not get_spawn_pos_on_circle then
-				local lerp = math.lerp(-rad, rad, math.random())
-				local multiply = Quaternion.multiply(look, Quaternion.axis_angle(Vector3.up(), lerp))
-				local normalize = Vector3.normalize(Vector3.cross(var_3_16 - var_3_15, var_3_17 - var_3_15))
-				local forward = Quaternion.forward(multiply)
-				local cross = Vector3.cross(forward, normalize)
-				local cross_2 = Vector3.cross(normalize, cross)
-				local look_2 = Quaternion.look(cross_2, normalize)
-				local spawn_local_unit = Managers.state.unit_spawner:spawn_local_unit(str, get_spawn_pos_on_circle + var_3_13, look_2)
-				local lerp_2 = math.lerp(num, num_2, math.random())
+			if spawn_pos then
+				local random_rotation = math.lerp(-angle_variance, angle_variance, math.random())
+				local spawn_rotation = Quaternion.multiply(wave_rotation, Quaternion.axis_angle(Vector3.up(), random_rotation))
+				local floor_normal = Vector3.normalize(Vector3.cross(p2 - p1, p3 - p1))
+				local forward = Quaternion.forward(spawn_rotation)
+				local right = Vector3.cross(forward, floor_normal)
 
-				Unit.set_local_scale(spawn_local_unit, 0, Vector3(lerp_2, lerp_2, lerp_2))
+				forward = Vector3.cross(floor_normal, right)
+				spawn_rotation = Quaternion.look(forward, floor_normal)
+
+				local new_unit = Managers.state.unit_spawner:spawn_local_unit(unit_name, spawn_pos + depth_offset, spawn_rotation)
+				local random_scale = math.lerp(scale_min, scale_max, math.random())
+
+				Unit.set_local_scale(new_unit, 0, Vector3(random_scale, random_scale, random_scale))
 			end
 
-			_update_data.next_spawn_t = arg_3_3 + math.lerp(num_4, num_5, math.random())
+			update_data.next_spawn_t = t + math.lerp(next_spawn_delay_min, next_spawn_delay_max, math.random())
 		end
 	end,
-	on_arrive_func = function (self, arg_4_1, arg_4_2)
+	on_arrive_func = function (damage_wave_ext, position, rotation)
 		-- function 4
-		local optional_data = self.optional_data
+		local wall_data = damage_wave_ext.optional_data
 
-		if not optional_data then
-			local str = "we_thornsister_career_skill_wall_explosion"
-			local num = 1
-			local source_unit = self.source_unit
-			local power_level = optional_data.power_level
+		if wall_data then
+			local explosion_template = "we_thornsister_career_skill_wall_explosion"
+			local scale = 1
+			local source_unit = damage_wave_ext.source_unit
+			local power_level = wall_data.power_level
+			local area_damage_system = Managers.state.entity:system("area_damage_system")
 
-			Managers.state.entity:system("area_damage_system"):create_explosion(source_unit, arg_4_1, arg_4_2, str, num, "career_ability", power_level, false)
+			area_damage_system:create_explosion(source_unit, position, rotation, explosion_template, scale, "career_ability", power_level, false)
 
-			local wall_index = optional_data.wall_index
-			local boxed_wall_segments = optional_data.boxed_wall_segments
+			local wall_index = wall_data.wall_index
+			local segments = wall_data.boxed_wall_segments
 
-			for i = 1, #boxed_wall_segments do
-				local unbox = boxed_wall_segments[i]:unbox()
+			for i = 1, #segments do
+				local spawn_position = segments[i]:unbox()
 
-				Managers.state.unit_spawner:request_spawn_template_unit("thornsister_thorn_wall_unit", unbox, arg_4_2, source_unit, wall_index, i)
+				Managers.state.unit_spawner:request_spawn_template_unit("thornsister_thorn_wall_unit", spawn_position, rotation, source_unit, wall_index, i)
 			end
 		end
 	end
 }
 
-local function fn(arg_5_0, arg_5_1, arg_5_2, arg_5_3)
+local function necro_wave_try_direction(nav_world, from, velocity, d_angle)
 	-- function 5
-	local num = arg_5_1 + Quaternion.rotate(Quaternion.axis_angle(Vector3.up(), -arg_5_3), arg_5_2)
-	local raycast, var_5_2 = GwNavQueries.raycast(arg_5_0, arg_5_1, num)
-	local normalize = Vector3.normalize(var_5_2 - arg_5_1)
+	local next_to = from + Quaternion.rotate(Quaternion.axis_angle(Vector3.up(), -d_angle), velocity)
+	local next_success, next_pos = GwNavQueries.raycast(nav_world, from, next_to)
+	local dir = Vector3.normalize(next_pos - from)
 
-	if not raycast then
-		return true, var_5_2, normalize
+	if next_success then
+		return true, next_pos, dir
 	end
 
-	return false, var_5_2, normalize
+	return false, next_pos, dir
 end
 
 DamageWaveTemplates.templates.necromancer_curse_wave = {
@@ -516,20 +522,21 @@ DamageWaveTemplates.templates.necromancer_curse_wave = {
 				4,
 				0
 			},
-			on_spawn = function (arg_6_0, arg_6_1, arg_6_2, arg_6_3, arg_6_4)
+			on_spawn = function (damage_wave_extension, config, name, unit, world)
 				-- function 6
-				local var_6_0 = Vector3(5, 6, 5)
+				local scale = Vector3(5, 6, 5)
 
-				Unit.set_local_scale(arg_6_3, 0, var_6_0)
+				Unit.set_local_scale(unit, 0, scale)
 
-				local time = World.time(Application.main_world())
-				local start_speed = DamageWaveTemplates.templates.necromancer_curse_wave.start_speed
-				local num = time + var_6_0.y / start_speed
-				local var_6_4 = Vector2(0, 1)
+				local start_time = World.time(Application.main_world())
+				local speed = DamageWaveTemplates.templates.necromancer_curse_wave.start_speed
+				local fade_time = scale.y / speed
+				local end_time = start_time + fade_time
+				local fade_direction = Vector2(0, 1)
 
-				Unit.set_vector2_for_material(arg_6_3, "projector", "start_end_time", Vector2(time, num))
-				Unit.set_vector2_for_material(arg_6_3, "projector", "fade_direction", var_6_4)
-				Unit.set_scalar_for_material(arg_6_3, "projector", "trailing_fade_delay", 1.5)
+				Unit.set_vector2_for_material(unit, "projector", "start_end_time", Vector2(start_time, end_time))
+				Unit.set_vector2_for_material(unit, "projector", "fade_direction", fade_direction)
+				Unit.set_scalar_for_material(unit, "projector", "trailing_fade_delay", 1.5)
 			end
 		},
 		{
@@ -556,19 +563,19 @@ DamageWaveTemplates.templates.necromancer_curse_wave = {
 				4,
 				0
 			},
-			on_spawn = function (arg_7_0, arg_7_1, arg_7_2, arg_7_3, arg_7_4)
+			on_spawn = function (damage_wave_extension, config, name, unit, world)
 				-- function 7
-				local var_7_0 = Vector3(1, 1, 1)
+				local scale = Vector3(1, 1, 1)
 
-				Unit.set_local_scale(arg_7_3, 0, var_7_0)
+				Unit.set_local_scale(unit, 0, scale)
 
-				local time = World.time(Application.main_world())
-				local num = time + 3
-				local num_2 = 1.5
+				local start_time = World.time(Application.main_world())
+				local end_time = start_time + 3
+				local fade_time = 1.5
 
-				Unit.set_vector2_for_material(arg_7_3, "projector", "start_end_time", Vector2(time, num))
-				Unit.set_scalar_for_material(arg_7_3, "projector", "fade_time", num_2)
-				Unit.set_scalar_for_material(arg_7_3, "projector", "enable_fade", 1)
+				Unit.set_vector2_for_material(unit, "projector", "start_end_time", Vector2(start_time, end_time))
+				Unit.set_scalar_for_material(unit, "projector", "fade_time", fade_time)
+				Unit.set_scalar_for_material(unit, "projector", "enable_fade", 1)
 			end
 		},
 		{
@@ -595,19 +602,19 @@ DamageWaveTemplates.templates.necromancer_curse_wave = {
 				4,
 				0
 			},
-			on_spawn = function (arg_8_0, arg_8_1, arg_8_2, arg_8_3, arg_8_4)
+			on_spawn = function (damage_wave_extension, config, name, unit, world)
 				-- function 8
-				local var_8_0 = Vector3(1, 1, 1)
+				local scale = Vector3(1, 1, 1)
 
-				Unit.set_local_scale(arg_8_3, 0, var_8_0)
+				Unit.set_local_scale(unit, 0, scale)
 
-				local time = World.time(Application.main_world())
-				local num = time + 3
-				local num_2 = 1.5
+				local start_time = World.time(Application.main_world())
+				local end_time = start_time + 3
+				local fade_time = 1.5
 
-				Unit.set_vector2_for_material(arg_8_3, "projector", "start_end_time", Vector2(time, num))
-				Unit.set_scalar_for_material(arg_8_3, "projector", "fade_time", num_2)
-				Unit.set_scalar_for_material(arg_8_3, "projector", "enable_fade", 1)
+				Unit.set_vector2_for_material(unit, "projector", "start_end_time", Vector2(start_time, end_time))
+				Unit.set_scalar_for_material(unit, "projector", "fade_time", fade_time)
+				Unit.set_scalar_for_material(unit, "projector", "enable_fade", 1)
 			end
 		}
 	},
@@ -615,12 +622,12 @@ DamageWaveTemplates.templates.necromancer_curse_wave = {
 		push_along_wave_direction = true,
 		drag_along_wave = false,
 		stagger_impact = {
-			scripts_utils_stagger_types.heavy,
-			scripts_utils_stagger_types.heavy,
-			scripts_utils_stagger_types.heavy,
-			scripts_utils_stagger_types.none,
-			scripts_utils_stagger_types.heavy,
-			scripts_utils_stagger_types.heavy
+			stagger_types.heavy,
+			stagger_types.heavy,
+			stagger_types.heavy,
+			stagger_types.none,
+			stagger_types.heavy,
+			stagger_types.heavy
 		},
 		stagger_duration = {
 			0.7,
@@ -660,108 +667,99 @@ DamageWaveTemplates.templates.necromancer_curse_wave = {
 			1.5
 		}
 	},
-	update_func = function (self, arg_9_1, arg_9_2, arg_9_3, arg_9_4)
+	update_func = function (damage_wave_ext, unit, position, t, dt)
 		-- function 9
-		if not self.wave_direction then
+		if not damage_wave_ext.wave_direction then
 			return
 		end
 
-		local _update_data = self._update_data
+		local update_data = damage_wave_ext._update_data
 
-		if not _update_data then
-			local unbox = self.wave_direction:unbox()
+		if not update_data then
+			local wave_direction = damage_wave_ext.wave_direction:unbox()
 
-			_update_data = {
+			update_data = {
 				next_spawn_t = 0,
 				failed_attempts = 0,
 				next_direction_update_t = 0,
 				hand_units_by_player = {},
-				original_direction = Vector3Box(unbox),
-				last_pos = Vector3Box(arg_9_2 - unbox)
+				original_direction = Vector3Box(wave_direction),
+				last_pos = Vector3Box(position - wave_direction)
 			}
-			self._update_data = _update_data
+			damage_wave_ext._update_data = update_data
 		end
 
-		if not script_data.debug_necromancer_curse_wave then
-			QuickDrawer:sphere(arg_9_2, 0.5)
+		if script_data.debug_necromancer_curse_wave then
+			QuickDrawer:sphere(position, 0.5)
 		end
 
 		if not Managers.player.is_server then
 			return
 		end
 
-		if arg_9_3 >= _update_data.next_direction_update_t then
-			if not _update_data.next_direction then
-				self.wave_direction = _update_data.next_direction
-				_update_data.next_direction = nil
+		if t >= update_data.next_direction_update_t then
+			if update_data.next_direction then
+				damage_wave_ext.wave_direction = update_data.next_direction
+				update_data.next_direction = nil
 			end
 
-			local acceleration = self.acceleration
+			local acceleration = damage_wave_ext.acceleration
 
-			assert(not acceleration and acceleration == 0, "Calculations won't be accurate if wave has acceleration")
+			assert(not acceleration or acceleration == 0, "Calculations won't be accurate if wave has acceleration")
 
-			local ai_query_distance = DamageWaveTemplates.templates.necromancer_curse_wave.ai_query_distance
-			local wave_speed = self.wave_speed
-			local num = self.wave_direction:unbox() * wave_speed * ai_query_distance
-			local var_9_6 = arg_9_2
-			local num_2 = arg_9_2 + _update_data.original_direction:unbox() * wave_speed * ai_query_distance * 2
+			local radius = DamageWaveTemplates.templates.necromancer_curse_wave.ai_query_distance
+			local speed = damage_wave_ext.wave_speed
+			local velocity = damage_wave_ext.wave_direction:unbox() * speed * radius
+			local from = position
+			local to = position + update_data.original_direction:unbox() * speed * radius * 2
 			local nav_world = Managers.state.entity:system("ai_system"):nav_world()
-			local raycast, var_9_10 = GwNavQueries.raycast(nav_world, var_9_6, num_2)
-			local var_9_11
+			local success, pos = GwNavQueries.raycast(nav_world, from, to)
+			local next_pos
 
-			if not (raycast or not (Vector3.distance_squared(var_9_6, var_9_10) > ai_query_distance * ai_query_distance)) then
-				_update_data.next_direction = _update_data.original_direction
-				var_9_11 = var_9_10
+			if success or Vector3.distance_squared(from, pos) > radius * radius then
+				update_data.next_direction = update_data.original_direction
+				next_pos = pos
 			else
-				local num_3 = var_9_6 + num
-				local var_9_13
+				to = from + velocity
+				success, pos = GwNavQueries.raycast(nav_world, from, to)
 
-				raycast, var_9_13 = GwNavQueries.raycast(nav_world, var_9_6, num_3)
-
-				if not raycast then
-					_update_data.next_direction_update_t = arg_9_3 + 1
-				elseif _update_data.failed_attempts < 4 then
-					local num_4 = var_9_13 + Vector3.normalize(var_9_6 - var_9_13) * ai_query_distance
-					local num_5 = math.pi * 0.25
+				if success then
+					update_data.next_direction_update_t = t + 1
+				elseif update_data.failed_attempts < 4 then
+					local next_from = pos + Vector3.normalize(from - pos) * radius
+					local d_angle = math.pi * 0.25
 
 					repeat
-						local var_9_16
-						local var_9_17
+						local new_dir
 
-						raycast, var_9_11, var_9_17 = fn(nav_world, num_4, num, -num_5)
+						success, next_pos, new_dir = necro_wave_try_direction(nav_world, next_from, velocity, -d_angle)
 
-						if not raycast then
-							_update_data.next_direction = Vector3Box(var_9_17)
-
-							break
-						end
-
-						local var_9_18
-
-						raycast, var_9_11, var_9_18 = fn(nav_world, num_4, num, num_5)
-
-						if not raycast then
-							_update_data.next_direction = Vector3Box(var_9_18)
+						if success then
+							update_data.next_direction = Vector3Box(new_dir)
 
 							break
 						end
 
-						local var_9_19
+						success, next_pos, new_dir = necro_wave_try_direction(nav_world, next_from, velocity, d_angle)
 
-						raycast, var_9_11, var_9_19 = fn(nav_world, num_4, num, -2 * num_5)
-
-						if not raycast then
-							_update_data.next_direction = Vector3Box(var_9_19)
+						if success then
+							update_data.next_direction = Vector3Box(new_dir)
 
 							break
 						end
 
-						local var_9_20
+						success, next_pos, new_dir = necro_wave_try_direction(nav_world, next_from, velocity, -2 * d_angle)
 
-						raycast, var_9_11, var_9_20 = fn(nav_world, num_4, num, 2 * num_5)
+						if success then
+							update_data.next_direction = Vector3Box(new_dir)
 
-						if not raycast then
-							_update_data.next_direction = Vector3Box(var_9_20)
+							break
+						end
+
+						success, next_pos, new_dir = necro_wave_try_direction(nav_world, next_from, velocity, 2 * d_angle)
+
+						if success then
+							update_data.next_direction = Vector3Box(new_dir)
 						end
 
 						break
@@ -769,77 +767,83 @@ DamageWaveTemplates.templates.necromancer_curse_wave = {
 				end
 			end
 
-			if not raycast then
-				_update_data.next_direction_update_t = arg_9_3 + 1
-				_update_data.failed_attempts = 0
-			elseif not var_9_11 then
-				_update_data.next_direction_update_t = arg_9_3 + (Vector3.distance(var_9_11, var_9_6) - ai_query_distance) / wave_speed
-				_update_data.failed_attempts = _update_data.failed_attempts + 1
+			if success then
+				update_data.next_direction_update_t = t + 1
+				update_data.failed_attempts = 0
+			elseif next_pos then
+				local time_to_reach = (Vector3.distance(next_pos, from) - radius) / speed
+
+				update_data.next_direction_update_t = t + time_to_reach
+				update_data.failed_attempts = update_data.failed_attempts + 1
 			end
 		end
 	end,
-	on_arrive_func = function (arg_10_0, arg_10_1, arg_10_2)
+	on_arrive_func = function (damage_wave_ext, position, rotation)
 		-- function 10
 		return
 	end
 }
 
-local clone = table.clone(DamageWaveTemplates.templates.necromancer_curse_wave)
+local wave_linger = table.clone(DamageWaveTemplates.templates.necromancer_curse_wave)
 
-clone.fx_name_filled = "fx/necromancer_wave_linger"
-clone.fx_separation_dist = 1.5
-clone.blob_separation_dist = 1
-clone.apply_buff_to_owner = true
-clone.buff_template_name = "sienna_necromancer_empowered_overcharge"
-clone.buff_template_type = "sienna_necromancer_empowered_overcharge"
+wave_linger.fx_name_filled = "fx/necromancer_wave_linger"
+wave_linger.fx_separation_dist = 1.5
+wave_linger.blob_separation_dist = 1
+wave_linger.apply_buff_to_owner = true
+wave_linger.buff_template_name = "sienna_necromancer_empowered_overcharge"
+wave_linger.buff_template_type = "sienna_necromancer_empowered_overcharge"
 
-clone.add_buff_func = function (self, arg_11_1, arg_11_2, arg_11_3, arg_11_4)
+wave_linger.add_buff_func = function (damage_wave_ext, target_unit, buff_template_name, attacker_unit, source_unit)
 	-- function 11
-	if not (not ALIVE[arg_11_1] and Managers.state.network.is_server) then
+	if not ALIVE[target_unit] or not Managers.state.network.is_server then
 		return
 	end
 
-	if arg_11_1 ~= self.source_unit then
+	if target_unit ~= damage_wave_ext.source_unit then
 		return
 	end
 
-	local owner = Managers.player:owner(arg_11_1)
+	local player = Managers.player:owner(target_unit)
 
-	if not owner then
+	if not player then
 		return
 	end
 
-	local get_stacking_buff = ScriptUnit.extension(arg_11_1, "buff_system"):get_stacking_buff(arg_11_2)
+	local buff_extension = ScriptUnit.extension(target_unit, "buff_system")
+	local buff_stacks = buff_extension:get_stacking_buff(buff_template_name)
+	local buff = not not buff_stacks and not not buff_stacks[1]
 
-	if not (not get_stacking_buff and get_stacking_buff[1]) then
-		Managers.state.entity:system("buff_system"):add_buff_synced(arg_11_1, "sienna_necromancer_empowered_overcharge", BuffSyncType.ClientAndServer, nil, owner.peer_id)
+	if not buff then
+		local buff_system = Managers.state.entity:system("buff_system")
+
+		buff_system:add_buff_synced(target_unit, "sienna_necromancer_empowered_overcharge", BuffSyncType.ClientAndServer, nil, player.peer_id)
 	end
 end
 
-clone.leave_area_func = function (arg_12_0)
+wave_linger.leave_area_func = function (unit)
 	-- function 12
-	if not ALIVE[arg_12_0] then
-		local extension = ScriptUnit.extension(arg_12_0, "buff_system")
-		local get_stacking_buff = extension:get_stacking_buff("sienna_necromancer_empowered_overcharge")
-		local flag = not get_stacking_buff and get_stacking_buff[1]
+	if ALIVE[unit] then
+		local buff_extension = ScriptUnit.extension(unit, "buff_system")
+		local buff_stacks = buff_extension:get_stacking_buff("sienna_necromancer_empowered_overcharge")
+		local buff = not not buff_stacks and not not buff_stacks[1]
 
-		if not flag then
-			extension:remove_buff(flag.id)
+		if buff then
+			buff_extension:remove_buff(buff.id)
 		end
 	end
 end
 
-DamageWaveTemplates.templates.necromancer_curse_wave_linger = clone
+DamageWaveTemplates.templates.necromancer_curse_wave_linger = wave_linger
 
-for k, v in pairs(DamageWaveTemplates.templates) do
-	local ai_push_data = v.ai_push_data
-	local flag = not ai_push_data and ai_push_data.hit_half_extends
+for wave_name, wave_template in pairs(DamageWaveTemplates.templates) do
+	local ai_push_data = wave_template.ai_push_data
+	local hit_half_extends = not not ai_push_data and not not ai_push_data.hit_half_extends
 
-	if not flag then
-		fassert(not v.ai_query_distance, "[DamageWaveTemplates] 'ai_query_distance' will be overridden by 'hit_half_extends'. (%s)", k)
+	if hit_half_extends then
+		fassert(not wave_template.ai_query_distance, "[DamageWaveTemplates] 'ai_query_distance' will be overridden by 'hit_half_extends'. (%s)", wave_name)
 
-		local unbox = Vector3Aux.unbox(flag)
+		local extends = Vector3Aux.unbox(hit_half_extends)
 
-		v.ai_query_distance = Vector3.length(unbox)
+		wave_template.ai_query_distance = Vector3.length(extends)
 	end
 end

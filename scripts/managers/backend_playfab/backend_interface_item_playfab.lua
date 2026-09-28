@@ -4,12 +4,12 @@ BackendInterfaceItemPlayfab = class(BackendInterfaceItemPlayfab)
 
 local PlayFabClientApi = require("PlayFab.PlayFabClientApi")
 
-BackendInterfaceItemPlayfab.init = function (self, arg_1_1)
+BackendInterfaceItemPlayfab.init = function (self, backend_mirror)
 	-- function 1
 	self._loadouts = {}
 	self._items = {}
 	self._game_mode_specific_items = {}
-	self._backend_mirror = arg_1_1
+	self._backend_mirror = backend_mirror
 	self._career_loadouts = {}
 	self._default_loadouts = {}
 	self._default_loadout_overrides = {}
@@ -23,7 +23,7 @@ BackendInterfaceItemPlayfab.init = function (self, arg_1_1)
 	self:_refresh()
 end
 
-local tbl = {
+local loadout_slots = {
 	"slot_ranged",
 	"slot_melee",
 	"slot_skin",
@@ -57,35 +57,37 @@ end
 
 BackendInterfaceItemPlayfab._refresh_items = function (self)
 	-- function 3
-	local _backend_mirror = self._backend_mirror
-	local get_all_inventory_items = _backend_mirror:get_all_inventory_items()
-	local get_unlocked_weapon_skins = _backend_mirror:get_unlocked_weapon_skins()
-	local get_unlocked_cosmetics = _backend_mirror:get_unlocked_cosmetics()
+	local backend_mirror = self._backend_mirror
+	local items = backend_mirror:get_all_inventory_items()
+	local unlocked_weapon_skins = backend_mirror:get_unlocked_weapon_skins()
+	local unlocked_cosmetics = backend_mirror:get_unlocked_cosmetics()
 
-	for k, v in pairs(get_all_inventory_items) do
-		if not ((v.bypass_skin_ownership_check or not v.skin) and get_unlocked_weapon_skins[v.skin]) then
-			v.skin = nil
+	for _, item in pairs(items) do
+		if not item.bypass_skin_ownership_check and item.skin and not unlocked_weapon_skins[item.skin] then
+			item.skin = nil
 		end
 	end
 
-	if not self._active_game_mode_specific_items then
-		self._items = table.clone(get_all_inventory_items)
+	if self._active_game_mode_specific_items then
+		self._items = table.clone(items)
 
-		for k_2, v_2 in pairs(self._active_game_mode_specific_items) do
-			self._items[k_2] = v_2
+		for key, item in pairs(self._active_game_mode_specific_items) do
+			self._items[key] = item
 		end
 	else
-		self._items = get_all_inventory_items
+		self._items = items
 	end
 
-	self._fake_items = _backend_mirror:get_all_fake_inventory_items()
+	local fake_items = backend_mirror:get_all_fake_inventory_items()
 
-	local get_new_backend_ids = ItemHelper.get_new_backend_ids()
+	self._fake_items = fake_items
 
-	if not get_new_backend_ids then
-		for k_3, v_3 in pairs(get_new_backend_ids) do
-			if not get_all_inventory_items[k_3] then
-				ItemHelper.unmark_backend_id_as_new(k_3, true)
+	local new_backend_ids = ItemHelper.get_new_backend_ids()
+
+	if new_backend_ids then
+		for backend_id, _ in pairs(new_backend_ids) do
+			if not items[backend_id] then
+				ItemHelper.unmark_backend_id_as_new(backend_id, true)
 			end
 		end
 
@@ -95,14 +97,14 @@ end
 
 BackendInterfaceItemPlayfab._unmark_favorites = function (self)
 	-- function 4
-	local get_favorite_backend_ids = ItemHelper.get_favorite_backend_ids()
+	local favorite_backend_ids = ItemHelper.get_favorite_backend_ids()
 
-	if not get_favorite_backend_ids then
-		local _items = self._items
+	if favorite_backend_ids then
+		local items = self._items
 
-		for k, v in pairs(get_favorite_backend_ids) do
-			if not (_items[k] or self:get_backend_id_from_cosmetic_item(k)) then
-				ItemHelper.unmark_backend_id_as_favorite(k)
+		for backend_id, _ in pairs(favorite_backend_ids) do
+			if not items[backend_id] and not self:get_backend_id_from_cosmetic_item(backend_id) then
+				ItemHelper.unmark_backend_id_as_favorite(backend_id)
 			end
 		end
 	end
@@ -110,61 +112,77 @@ end
 
 BackendInterfaceItemPlayfab._refresh_loadouts = function (self)
 	-- function 5
-	local _loadouts = self._loadouts
-	local _backend_mirror = self._backend_mirror
+	local loadouts = self._loadouts
+	local backend_mirror = self._backend_mirror
 
-	for k, v in pairs(CareerSettings) do
-		if not v.playfab_name then
-			for k_2 = 1, #tbl do
-				local var_5_2 = tbl[k_2]
-				local get_character_data = _backend_mirror:get_character_data(k, var_5_2)
-				local var_5_4 = _loadouts[k]
+	for career_name, settings in pairs(CareerSettings) do
+		if settings.playfab_name then
+			for i = 1, #loadout_slots do
+				local slot_name = loadout_slots[i]
+				local item_id = backend_mirror:get_character_data(career_name, slot_name)
+				local var_5_0 = loadouts[career_name]
 
-				var_5_4 = var_5_4 or {}
-				_loadouts[k] = var_5_4
-				_loadouts[k][var_5_2] = get_character_data
+				var_5_0 = not not var_5_0 or not not {}
+				loadouts[career_name] = var_5_0
+				loadouts[career_name][slot_name] = item_id
 			end
 		end
 	end
 end
 
-local tbl_2 = {}
+local EMPTY_TABLE = {}
 
 BackendInterfaceItemPlayfab.refresh_bot_loadouts = function (self)
 	-- function 6
 	self._bot_loadouts = table.clone(self._loadouts)
 
-	local _bot_loadouts = self._bot_loadouts
-	local _backend_mirror = self._backend_mirror
-	local loadout_selection = PlayerData.loadout_selection
+	local loadouts = self._bot_loadouts
+	local backend_mirror = self._backend_mirror
+	local loadout_selection_2 = PlayerData.loadout_selection
 
-	loadout_selection = loadout_selection or tbl_2
+	if not loadout_selection_2 then
+		-- Nothing
+	end
 
-	local bot_equipment = loadout_selection.bot_equipment
+	loadout_selection_2 = EMPTY_TABLE
 
-	bot_equipment = bot_equipment or tbl_2
+	local loadout_selection = loadout_selection_2
 
-	local current_mechanism_name = Managers.mechanism:current_mechanism_name()
-	local var_6_5 = InventorySettings.bot_loadout_allowed_mechanisms[current_mechanism_name]
+	::label_6_0::
 
-	for k, v in pairs(CareerSettings) do
-		if not v.playfab_name then
-			local flag = not var_6_5 and bot_equipment[k]
+	local bot_equipment_2 = loadout_selection.bot_equipment
 
-			if not flag then
-				if not _backend_mirror:has_loadout(k, flag) then
-					bot_equipment[k] = nil
-					flag = nil
+	if not bot_equipment_2 then
+		-- Nothing
+	end
+
+	bot_equipment_2 = EMPTY_TABLE
+
+	local bot_equipment = bot_equipment_2
+
+	::label_6_1::
+
+	local mechanism_name = Managers.mechanism:current_mechanism_name()
+	local bot_loadout_allowed = InventorySettings.bot_loadout_allowed_mechanisms[mechanism_name]
+
+	for career_name, settings in pairs(CareerSettings) do
+		if settings.playfab_name then
+			local bot_loadout_index = not not bot_loadout_allowed and not not bot_equipment[career_name]
+
+			if bot_loadout_index then
+				if not backend_mirror:has_loadout(career_name, bot_loadout_index) then
+					bot_equipment[career_name] = nil
+					bot_loadout_index = nil
 				end
 
-				for k_2 = 1, #tbl do
-					local var_6_7 = tbl[k_2]
-					local get_character_data = _backend_mirror:get_character_data(k, var_6_7, flag)
-					local var_6_9 = _bot_loadouts[k]
+				for i = 1, #loadout_slots do
+					local slot_name = loadout_slots[i]
+					local item_id = backend_mirror:get_character_data(career_name, slot_name, bot_loadout_index)
+					local var_6_2 = loadouts[career_name]
 
-					var_6_9 = var_6_9 or {}
-					_bot_loadouts[k] = var_6_9
-					_bot_loadouts[k][var_6_7] = get_character_data
+					var_6_2 = not not var_6_2 or not not {}
+					loadouts[career_name] = var_6_2
+					loadouts[career_name][slot_name] = item_id
 				end
 			end
 		end
@@ -175,37 +193,38 @@ end
 
 BackendInterfaceItemPlayfab._refresh_career_loadouts = function (self)
 	-- function 7
-	local _career_loadouts = self._career_loadouts
-	local _backend_mirror = self._backend_mirror
+	local all_career_loadouts = self._career_loadouts
+	local backend_mirror = self._backend_mirror
 
-	table.clear(_career_loadouts)
+	table.clear(all_career_loadouts)
 
-	for k, v in pairs(CareerSettings) do
-		if not v.playfab_name then
-			local var_7_2 = _career_loadouts[k]
+	for career_name, settings in pairs(CareerSettings) do
+		if settings.playfab_name then
+			local var_7_0 = all_career_loadouts[career_name]
 
-			var_7_2 = var_7_2 or {}
-			_career_loadouts[k] = var_7_2
+			var_7_0 = not not var_7_0 or not not {}
+			all_career_loadouts[career_name] = var_7_0
 
-			local var_7_3 = _career_loadouts[k]
-			local get_career_loadouts, var_7_5 = _backend_mirror:get_career_loadouts(k)
+			local current_career_loadouts = all_career_loadouts[career_name]
+			local selected_loadout, career_loadouts = backend_mirror:get_career_loadouts(career_name)
 
-			self._selected_career_custom_loadouts[k] = get_career_loadouts
+			self._selected_career_custom_loadouts[career_name] = selected_loadout
 
-			if not var_7_5 then
-				for k_2 = 1, #var_7_5 do
-					local var_7_6 = var_7_3[k_2]
+			if career_loadouts then
+				for i = 1, #career_loadouts do
+					local var_7_1 = current_career_loadouts[i]
 
-					var_7_6 = var_7_6 or {}
-					var_7_3[k_2] = var_7_6
+					var_7_1 = not not var_7_1 or not not {}
+					current_career_loadouts[i] = var_7_1
 
-					local var_7_7 = var_7_3[k_2]
-					local var_7_8 = var_7_5[k_2]
+					local current_career_loadout = current_career_loadouts[i]
+					local career_loadout = career_loadouts[i]
 
-					for l = 1, #tbl do
-						local var_7_9 = tbl[l]
+					for j = 1, #loadout_slots do
+						local slot_name = loadout_slots[j]
+						local item_id = career_loadout[slot_name]
 
-						var_7_7[var_7_9] = var_7_8[var_7_9]
+						current_career_loadout[slot_name] = item_id
 					end
 				end
 			end
@@ -215,35 +234,36 @@ end
 
 BackendInterfaceItemPlayfab._refresh_default_loadouts = function (self)
 	-- function 8
-	local _default_loadouts = self._default_loadouts
-	local _backend_mirror = self._backend_mirror
+	local all_career_default_loadouts = self._default_loadouts
+	local backend_mirror = self._backend_mirror
 
-	table.clear(_default_loadouts)
+	table.clear(all_career_default_loadouts)
 
-	for k, v in pairs(CareerSettings) do
-		if not v.playfab_name then
-			local var_8_2 = _default_loadouts[k]
+	for career_name, settings in pairs(CareerSettings) do
+		if settings.playfab_name then
+			local var_8_0 = all_career_default_loadouts[career_name]
 
-			var_8_2 = var_8_2 or {}
-			_default_loadouts[k] = var_8_2
+			var_8_0 = not not var_8_0 or not not {}
+			all_career_default_loadouts[career_name] = var_8_0
 
-			local var_8_3 = _default_loadouts[k]
-			local get_default_loadouts = _backend_mirror:get_default_loadouts(k)
+			local current_career_loadouts = all_career_default_loadouts[career_name]
+			local career_loadouts = backend_mirror:get_default_loadouts(career_name)
 
-			if not get_default_loadouts then
-				for k_2 = 1, #get_default_loadouts do
-					local var_8_5 = var_8_3[k_2]
+			if career_loadouts then
+				for i = 1, #career_loadouts do
+					local var_8_1 = current_career_loadouts[i]
 
-					var_8_5 = var_8_5 or {}
-					var_8_3[k_2] = var_8_5
+					var_8_1 = not not var_8_1 or not not {}
+					current_career_loadouts[i] = var_8_1
 
-					local var_8_6 = var_8_3[k_2]
-					local var_8_7 = get_default_loadouts[k_2]
+					local current_career_loadout = current_career_loadouts[i]
+					local career_loadout = career_loadouts[i]
 
-					for l = 1, #tbl do
-						local var_8_8 = tbl[l]
+					for j = 1, #loadout_slots do
+						local slot_name = loadout_slots[j]
+						local item_id = career_loadout[slot_name]
 
-						var_8_6[var_8_8] = var_8_7[var_8_8]
+						current_career_loadout[slot_name] = item_id
 					end
 				end
 			end
@@ -253,235 +273,275 @@ end
 
 BackendInterfaceItemPlayfab._setup_default_overrides = function (self)
 	-- function 9
-	local current_mechanism_name = Managers.mechanism:current_mechanism_name()
-	local var_9_1
+	local mechanism_name = Managers.mechanism:current_mechanism_name()
+	local var_9_0
 
-	if not PlayerData.loadout_selection then
-		var_9_1 = PlayerData.loadout_selection[current_mechanism_name]
+	if PlayerData.loadout_selection then
+		var_9_0 = PlayerData.loadout_selection[mechanism_name]
 
-		if not var_9_1 then
+		if not var_9_0 then
 			-- Nothing
 		end
 	end
 
-	var_9_1 = {}
+	var_9_0 = {}
+
+	local loadout_selection = var_9_0
 
 	::label_9_0::
 
 	table.clear(self._default_loadout_overrides)
 
-	if not var_9_1 then
+	if not loadout_selection then
 		return
 	end
 
 	local game_mode = Managers.state.game_mode
 
-	game_mode = not game_mode and Managers.state.game_mode:game_mode_key()
+	if game_mode then
+		-- Nothing
+	end
 
-	if not (not game_mode and InventorySettings.default_loadout_allowed_game_modes[game_mode]) then
+	game_mode = Managers.state.game_mode:game_mode_key()
+
+	local game_mode_key = game_mode
+
+	::label_9_1::
+
+	if not game_mode_key or not InventorySettings.default_loadout_allowed_game_modes[game_mode_key] then
 		return
 	end
 
-	for k, v in pairs(CareerSettings) do
-		local var_9_3 = var_9_1[k]
+	for career_name, settings in pairs(CareerSettings) do
+		local var_9_2 = loadout_selection[career_name]
 
-		var_9_3 = var_9_3 or 1
+		if not var_9_2 then
+			-- Nothing
+		end
 
-		if not (not var_9_3 and InventorySettings.loadouts[var_9_3].loadout_type ~= "default") then
-			self:set_default_override(k, var_9_3)
+		var_9_2 = 1
+
+		local loadout_index = var_9_2
+
+		::label_9_2::
+
+		if loadout_index then
+			local loadout_settings = InventorySettings.loadouts[loadout_index]
+
+			if loadout_settings.loadout_type == "default" then
+				self:set_default_override(career_name, loadout_index)
+			end
 		end
 	end
 end
 
-BackendInterfaceItemPlayfab.set_loadout_index = function (self, arg_10_1, arg_10_2)
+BackendInterfaceItemPlayfab.set_loadout_index = function (self, career_name, loadout_index)
 	-- function 10
-	self._backend_mirror:set_loadout_index(arg_10_1, arg_10_2)
+	self._backend_mirror:set_loadout_index(career_name, loadout_index)
 	Managers.telemetry_events:loadout_equipped()
 end
 
-BackendInterfaceItemPlayfab.add_loadout = function (self, arg_11_1)
+BackendInterfaceItemPlayfab.add_loadout = function (self, career_name)
 	-- function 11
-	self._backend_mirror:add_loadout(arg_11_1)
+	self._backend_mirror:add_loadout(career_name)
 
-	local get_career_loadouts = self:get_career_loadouts(arg_11_1)
+	local career_loadouts = self:get_career_loadouts(career_name)
 
-	Managers.telemetry_events:loadout_created(#get_career_loadouts, InventorySettings.MAX_NUM_CUSTOM_LOADOUTS)
+	Managers.telemetry_events:loadout_created(#career_loadouts, InventorySettings.MAX_NUM_CUSTOM_LOADOUTS)
 end
 
-BackendInterfaceItemPlayfab.delete_loadout = function (self, arg_12_1, arg_12_2)
+BackendInterfaceItemPlayfab.delete_loadout = function (self, career_name, loadout_index)
 	-- function 12
-	self._backend_mirror:delete_loadout(arg_12_1, arg_12_2)
+	self._backend_mirror:delete_loadout(career_name, loadout_index)
 
-	local get_career_loadouts = self:get_career_loadouts(arg_12_1)
+	local career_loadouts = self:get_career_loadouts(career_name)
 
-	Managers.telemetry_events:loadout_deleted(#get_career_loadouts, InventorySettings.MAX_NUM_CUSTOM_LOADOUTS)
+	Managers.telemetry_events:loadout_deleted(#career_loadouts, InventorySettings.MAX_NUM_CUSTOM_LOADOUTS)
 end
 
-BackendInterfaceItemPlayfab.set_default_override = function (self, arg_13_1, arg_13_2)
+BackendInterfaceItemPlayfab.set_default_override = function (self, career_name, loadout_index)
 	-- function 13
-	local var_13_0 = self._default_loadouts[arg_13_1]
+	local default_career_default_loadouts = self._default_loadouts[career_name]
 
-	self._default_loadout_overrides[arg_13_1] = not var_13_0 and var_13_0[arg_13_2]
+	self._default_loadout_overrides[career_name] = not not default_career_default_loadouts and not not default_career_default_loadouts[loadout_index]
 end
 
-BackendInterfaceItemPlayfab.get_default_override = function (self, arg_14_1)
+BackendInterfaceItemPlayfab.get_default_override = function (self, career_name)
 	-- function 14
-	return self._default_loadout_overrides[arg_14_1]
+	return self._default_loadout_overrides[career_name]
 end
 
 BackendInterfaceItemPlayfab.ready = function (self)
 	-- function 15
-	if not self._items then
+	if self._items then
 		return true
 	end
 
 	return false
 end
 
-BackendInterfaceItemPlayfab.type = function (arg_16_0)
+BackendInterfaceItemPlayfab.type = function (self)
 	-- function 16
 	return "backend"
 end
 
-BackendInterfaceItemPlayfab.update = function (arg_17_0)
+BackendInterfaceItemPlayfab.update = function (self)
 	-- function 17
 	return
 end
 
-BackendInterfaceItemPlayfab.refresh_entities = function (arg_18_0)
+BackendInterfaceItemPlayfab.refresh_entities = function (self)
 	-- function 18
 	return
 end
 
-BackendInterfaceItemPlayfab.check_for_errors = function (arg_19_0)
+BackendInterfaceItemPlayfab.check_for_errors = function (self)
 	-- function 19
 	return
 end
 
-BackendInterfaceItemPlayfab.num_current_item_server_requests = function (arg_20_0)
+BackendInterfaceItemPlayfab.num_current_item_server_requests = function (self)
 	-- function 20
 	return 0
 end
 
-BackendInterfaceItemPlayfab.set_properties_serialized = function (arg_21_0, arg_21_1, arg_21_2)
+BackendInterfaceItemPlayfab.set_properties_serialized = function (self, backend_id, properties)
 	-- function 21
 	return
 end
 
-BackendInterfaceItemPlayfab.get_traits = function (self, arg_22_1)
+BackendInterfaceItemPlayfab.get_traits = function (self, backend_id)
 	-- function 22
-	local get_item_from_id = self:get_item_from_id(arg_22_1)
+	local item = self:get_item_from_id(backend_id)
 
-	if not get_item_from_id then
-		return get_item_from_id.traits
+	if item then
+		local traits = item.traits
+
+		return traits
 	end
 
 	return nil
 end
 
-BackendInterfaceItemPlayfab.set_runes = function (arg_23_0, arg_23_1, arg_23_2)
+BackendInterfaceItemPlayfab.set_runes = function (self, backend_id, runes)
 	-- function 23
 	return
 end
 
-BackendInterfaceItemPlayfab.get_runes = function (arg_24_0, arg_24_1)
+BackendInterfaceItemPlayfab.get_runes = function (self, backend_id)
 	-- function 24
 	return
 end
 
-BackendInterfaceItemPlayfab.socket_rune = function (arg_25_0, arg_25_1, arg_25_2, arg_25_3)
+BackendInterfaceItemPlayfab.socket_rune = function (self, backend_id, rune_to_insert, rune_index)
 	-- function 25
 	return
 end
 
-BackendInterfaceItemPlayfab.get_skin = function (self, arg_26_1)
+BackendInterfaceItemPlayfab.get_skin = function (self, backend_id)
 	-- function 26
-	return self:get_item_from_id(arg_26_1).skin
+	local item = self:get_item_from_id(backend_id)
+
+	return item.skin
 end
 
-BackendInterfaceItemPlayfab.get_item_masterlist_data = function (self, arg_27_1)
+BackendInterfaceItemPlayfab.get_item_masterlist_data = function (self, backend_id)
 	-- function 27
-	local get_item_from_id = self:get_item_from_id(arg_27_1)
+	local item = self:get_item_from_id(backend_id)
 
-	if not get_item_from_id then
-		return get_item_from_id.data
+	if item then
+		return item.data
 	end
 end
 
-BackendInterfaceItemPlayfab.get_item_amount = function (self, arg_28_1)
+BackendInterfaceItemPlayfab.get_item_amount = function (self, backend_id)
 	-- function 28
-	local RemainingUses = self:get_item_from_id(arg_28_1).RemainingUses
+	local item = self:get_item_from_id(backend_id)
+	local RemainingUses = item.RemainingUses
 
-	RemainingUses = RemainingUses or 1
+	RemainingUses = not not RemainingUses or not not 1
 
 	return RemainingUses
 end
 
-BackendInterfaceItemPlayfab.get_item_power_level = function (self, arg_29_1)
+BackendInterfaceItemPlayfab.get_item_power_level = function (self, backend_id)
 	-- function 29
-	return self:get_item_from_id(arg_29_1).power_level
+	local item = self:get_item_from_id(backend_id)
+	local power_level = item.power_level
+
+	return power_level
 end
 
-BackendInterfaceItemPlayfab.get_item_rarity = function (self, arg_30_1)
+BackendInterfaceItemPlayfab.get_item_rarity = function (self, backend_id)
 	-- function 30
-	return self:get_item_from_id(arg_30_1).rarity
+	local item = self:get_item_from_id(backend_id)
+	local rarity = item.rarity
+
+	return rarity
 end
 
-BackendInterfaceItemPlayfab.get_key = function (self, arg_31_1)
+BackendInterfaceItemPlayfab.get_key = function (self, backend_id)
 	-- function 31
-	return self:get_item_from_id(arg_31_1).key
+	local item = self:get_item_from_id(backend_id)
+
+	return item.key
 end
 
-BackendInterfaceItemPlayfab.get_item_from_id = function (self, arg_32_1)
+BackendInterfaceItemPlayfab.get_item_from_id = function (self, backend_id)
 	-- function 32
-	return self:get_all_backend_items()[arg_32_1]
+	local items = self:get_all_backend_items()
+	local item = items[backend_id]
+
+	return item
 end
 
-BackendInterfaceItemPlayfab.get_backend_id_from_cosmetic_item = function (self, arg_33_1)
+BackendInterfaceItemPlayfab.get_backend_id_from_cosmetic_item = function (self, item_name)
 	-- function 33
-	return self._backend_mirror:get_unlocked_cosmetics()[arg_33_1]
+	local unlocked_cosmetics = self._backend_mirror:get_unlocked_cosmetics()
+
+	return unlocked_cosmetics[item_name]
 end
 
-BackendInterfaceItemPlayfab.get_item_from_key = function (self, arg_34_1)
+BackendInterfaceItemPlayfab.get_item_from_key = function (self, item_key)
 	-- function 34
-	local get_all_backend_items = self:get_all_backend_items()
+	local items = self:get_all_backend_items()
 
-	for k, v in pairs(get_all_backend_items) do
-		if v.key == arg_34_1 then
-			return v
+	for _, item in pairs(items) do
+		if item.key == item_key then
+			return item
 		end
 	end
 end
 
-BackendInterfaceItemPlayfab.get_weapon_skin_from_skin_key = function (self, arg_35_1)
+BackendInterfaceItemPlayfab.get_weapon_skin_from_skin_key = function (self, skin_key)
 	-- function 35
-	local get_all_fake_backend_items = self:get_all_fake_backend_items()
+	local items = self:get_all_fake_backend_items()
 
-	for k, v in pairs(get_all_fake_backend_items) do
-		if v.skin == arg_35_1 then
-			return k, v
+	for id, item in pairs(items) do
+		if item.skin == skin_key then
+			return id, item
 		end
 	end
 end
 
 BackendInterfaceItemPlayfab.free_inventory_slots = function (self)
 	-- function 36
-	local get_all_backend_items = self:get_all_backend_items()
-	local num = 0
+	local items = self:get_all_backend_items()
+	local item_count = 0
 	local is_fake_item = ItemHelper.is_fake_item
 
-	for k, v in pairs(get_all_backend_items) do
-		if not is_fake_item(v.data.item_type) then
-			num = num + 1
+	for _, item in pairs(items) do
+		if not is_fake_item(item.data.item_type) then
+			item_count = item_count + 1
 		end
 	end
 
-	return UISettings.max_inventory_items - num
+	return UISettings.max_inventory_items - item_count
 end
 
 BackendInterfaceItemPlayfab.get_all_backend_items = function (self)
 	-- function 37
-	if not self._dirty then
+	if self._dirty then
 		self:_refresh()
 	end
 
@@ -490,7 +550,7 @@ end
 
 BackendInterfaceItemPlayfab.get_all_fake_backend_items = function (self)
 	-- function 38
-	if not self._dirty then
+	if self._dirty then
 		self:_refresh()
 	end
 
@@ -499,110 +559,134 @@ end
 
 BackendInterfaceItemPlayfab.get_loadout = function (self)
 	-- function 39
-	if not self._dirty then
+	if self._dirty then
 		self:_refresh()
 	end
 
-	local clone = table.clone(self._loadouts)
+	local loadouts = table.clone(self._loadouts)
 
-	for k, v in pairs(self._default_loadout_overrides) do
-		clone[k] = v
+	for career_name, career_loadout in pairs(self._default_loadout_overrides) do
+		loadouts[career_name] = career_loadout
 	end
 
-	return clone
+	return loadouts
 end
 
 BackendInterfaceItemPlayfab.get_bot_loadout = function (self)
 	-- function 40
-	if not self._dirty then
+	if self._dirty then
 		self:_refresh()
 	end
 
 	return self._bot_loadouts
 end
 
-BackendInterfaceItemPlayfab.get_career_loadouts = function (self, arg_41_1)
+BackendInterfaceItemPlayfab.get_career_loadouts = function (self, career_name)
 	-- function 41
-	if not self._dirty then
+	if self._dirty then
 		self:_refresh()
 	end
 
-	return self._career_loadouts[arg_41_1]
+	return self._career_loadouts[career_name]
 end
 
-BackendInterfaceItemPlayfab.get_selected_career_loadout = function (self, arg_42_1)
+BackendInterfaceItemPlayfab.get_selected_career_loadout = function (self, career_name)
 	-- function 42
-	if not self._dirty then
+	if self._dirty then
 		self:_refresh()
 	end
 
-	return self._selected_career_custom_loadouts[arg_42_1]
+	return self._selected_career_custom_loadouts[career_name]
 end
 
-BackendInterfaceItemPlayfab.get_default_loadouts = function (self, arg_43_1)
+BackendInterfaceItemPlayfab.get_default_loadouts = function (self, career_name)
 	-- function 43
-	if not self._dirty then
+	if self._dirty then
 		self:_refresh()
 	end
 
-	return self._default_loadouts[arg_43_1]
+	return self._default_loadouts[career_name]
 end
 
-BackendInterfaceItemPlayfab.get_loadout_by_career_name = function (self, arg_44_1, arg_44_2)
+BackendInterfaceItemPlayfab.get_loadout_by_career_name = function (self, career_name, is_bot)
 	-- function 44
-	if not self._dirty then
+	if self._dirty then
 		self:_refresh()
 	end
 
 	local game_mode = Managers.state.game_mode
 
-	game_mode = not game_mode and Managers.state.game_mode:game_mode_key()
+	if game_mode then
+		-- Nothing
+	end
 
-	local var_44_1 = InventorySettings.bot_loadout_allowed_game_modes[game_mode]
-	local var_44_2 = InventorySettings.default_loadout_allowed_game_modes[game_mode]
-	local flag = not var_44_1 and self:get_bot_loadout()
-	local flag_2 = not var_44_1 and flag[arg_44_1]
-	local flag_3 = not var_44_2 and self:get_default_loadouts(arg_44_1)
-	local flag_4 = not var_44_2 and not flag_3 and flag_3[1]
-	local var_44_7 = self:get_loadout()[arg_44_1]
+	game_mode = Managers.state.game_mode:game_mode_key()
 
-	return not var_44_1 and not arg_44_2 and flag_2 and not arg_44_2 or not var_44_2 and flag_4 and var_44_7
+	local game_mode_key = game_mode
+
+	::label_44_0::
+
+	local bot_loadout_allowed = InventorySettings.bot_loadout_allowed_game_modes[game_mode_key]
+	local default_loadouts_allowed = InventorySettings.default_loadout_allowed_game_modes[game_mode_key]
+	local bot_loadouts = not not bot_loadout_allowed and not not self:get_bot_loadout()
+	local bot_loadout = not not bot_loadout_allowed and not not bot_loadouts[career_name]
+	local default_loadouts = not not default_loadouts_allowed and not not self:get_default_loadouts(career_name)
+	local default_loadout = not not default_loadouts_allowed and not not default_loadouts and not not default_loadouts[1]
+	local base_loadouts = self:get_loadout()
+	local base_loadout = base_loadouts[career_name]
+	local loadout = (not bot_loadout_allowed or not is_bot or not bot_loadout) and (not is_bot or not default_loadouts_allowed or not default_loadout) and not not base_loadout
+
+	return loadout
 end
 
-BackendInterfaceItemPlayfab.get_loadout_item_id = function (self, arg_45_1, arg_45_2, arg_45_3)
+BackendInterfaceItemPlayfab.get_loadout_item_id = function (self, career_name, slot_name, is_bot)
 	-- function 45
 	local game_mode = Managers.state.game_mode
 
-	game_mode = not game_mode and Managers.state.game_mode:game_mode_key()
-
-	local var_45_1 = InventorySettings.bot_loadout_allowed_game_modes[game_mode]
-	local var_45_2 = InventorySettings.default_loadout_allowed_game_modes[game_mode]
-	local flag = not var_45_1 and self:get_bot_loadout()
-	local flag_2 = not var_45_1 and flag[arg_45_1]
-	local flag_3 = not var_45_2 and self:get_default_loadouts(arg_45_1)
-	local flag_4 = not var_45_2 and not flag_3 and flag_3[1]
-	local var_45_7 = self:get_loadout()[arg_45_1]
-	local flag_5 = not var_45_1 and not arg_45_3 and not table.is_empty(flag_2) and flag_2 and not arg_45_3 or not var_45_2 and flag_4 and var_45_7
-	local flag_6 = not flag_5 and flag_5[arg_45_2]
-
-	if not CosmeticUtils.is_cosmetic_slot(arg_45_2) and not flag_6 then
-		return self._backend_mirror:get_unlocked_cosmetics()[flag_6]
-	elseif arg_45_2 ~= "slot_pose" or not flag_6 then
-		local parent = ItemMasterList[flag_6].parent
-		local get_unlocked_weapon_poses = self:get_unlocked_weapon_poses()
-		local var_45_12 = get_unlocked_weapon_poses[parent]
-
-		var_45_12 = not var_45_12 and get_unlocked_weapon_poses[parent][flag_6]
-
-		return var_45_12
+	if game_mode then
+		-- Nothing
 	end
 
-	return not flag_5 and flag_5[arg_45_2]
+	game_mode = Managers.state.game_mode:game_mode_key()
+
+	local game_mode_key = game_mode
+
+	::label_45_0::
+
+	local bot_loadout_allowed = InventorySettings.bot_loadout_allowed_game_modes[game_mode_key]
+	local default_loadouts_allowed = InventorySettings.default_loadout_allowed_game_modes[game_mode_key]
+	local bot_loadouts = not not bot_loadout_allowed and not not self:get_bot_loadout()
+	local bot_loadout = not not bot_loadout_allowed and not not bot_loadouts[career_name]
+	local default_loadouts = not not default_loadouts_allowed and not not self:get_default_loadouts(career_name)
+	local default_loadout = not not default_loadouts_allowed and not not default_loadouts and not not default_loadouts[1]
+	local base_loadouts = self:get_loadout()
+	local base_loadout = base_loadouts[career_name]
+	local loadout = (not bot_loadout_allowed or not is_bot or table.is_empty(bot_loadout) or not bot_loadout) and (not is_bot or not default_loadouts_allowed or not default_loadout) and not not base_loadout
+	local item_id = not not loadout and not not loadout[slot_name]
+
+	if CosmeticUtils.is_cosmetic_slot(slot_name) and item_id then
+		local cosmetics = self._backend_mirror:get_unlocked_cosmetics()
+
+		return cosmetics[item_id]
+	elseif slot_name == "slot_pose" and item_id then
+		local item = ItemMasterList[item_id]
+		local parent = item.parent
+		local unlocked_weapon_poses = self:get_unlocked_weapon_poses()
+		local var_45_1 = unlocked_weapon_poses[parent]
+
+		var_45_1 = not not var_45_1 and not not unlocked_weapon_poses[parent][item_id]
+
+		return var_45_1
+	end
+
+	return not not loadout and not not loadout[slot_name]
 end
 
 BackendInterfaceItemPlayfab.get_unlocked_weapon_poses = function (self)
 	-- function 46
-	return self._backend_mirror:get_unlocked_weapon_poses()
+	local mirror = self._backend_mirror
+
+	return mirror:get_unlocked_weapon_poses()
 end
 
 BackendInterfaceItemPlayfab.get_dirty_weapon_pose_data = function (self)
@@ -619,125 +703,147 @@ end
 
 BackendInterfaceItemPlayfab.get_equipped_weapon_pose_skins = function (self)
 	-- function 49
-	return self._backend_mirror:get_equipped_weapon_pose_skins()
+	local mirror = self._backend_mirror
+
+	return mirror:get_equipped_weapon_pose_skins()
 end
 
-BackendInterfaceItemPlayfab.get_equipped_weapon_pose_skin = function (self, arg_50_1)
+BackendInterfaceItemPlayfab.get_equipped_weapon_pose_skin = function (self, parent_item_name)
 	-- function 50
-	return self._backend_mirror:get_equipped_weapon_pose_skin(arg_50_1)
+	local mirror = self._backend_mirror
+
+	return mirror:get_equipped_weapon_pose_skin(parent_item_name)
 end
 
-BackendInterfaceItemPlayfab.get_weapon_pose_from_pose_key = function (self, arg_51_1)
+BackendInterfaceItemPlayfab.get_weapon_pose_from_pose_key = function (self, pose_key)
 	-- function 51
-	local get_all_fake_backend_items = self:get_all_fake_backend_items()
+	local items = self:get_all_fake_backend_items()
 
-	for k, v in pairs(get_all_fake_backend_items) do
-		if v.item_type == "weapon_pose" then
-			return k, v
+	for id, item in pairs(items) do
+		if item.item_type == "weapon_pose" then
+			return id, item
 		end
 	end
 end
 
-BackendInterfaceItemPlayfab.get_backend_id_from_unlocked_weapon_poses = function (self, arg_52_1)
+BackendInterfaceItemPlayfab.get_backend_id_from_unlocked_weapon_poses = function (self, item_id)
 	-- function 52
-	local parent = ItemMasterList[arg_52_1].parent
-	local var_52_1 = self:get_unlocked_weapon_poses()[parent]
+	local base_item = ItemMasterList[item_id]
+	local parent_name = base_item.parent
+	local unlocked_weapon_poses = self:get_unlocked_weapon_poses()
+	local parent_unlocked_poses = unlocked_weapon_poses[parent_name]
 
-	return not var_52_1 and var_52_1[arg_52_1]
+	return not not parent_unlocked_poses and not not parent_unlocked_poses[item_id]
 end
 
-BackendInterfaceItemPlayfab.set_weapon_pose_skin = function (self, arg_53_1, arg_53_2, arg_53_3)
+BackendInterfaceItemPlayfab.set_weapon_pose_skin = function (self, parent_item_name, weapon_skin_backend_id, result_callback)
 	-- function 53
-	if not arg_53_2 then
-		local var_53_0 = self._backend_mirror:get_equipped_weapon_pose_skins()[arg_53_1]
+	if weapon_skin_backend_id then
+		local equipped_weapon_pose_skins = self._backend_mirror:get_equipped_weapon_pose_skins()
+		local current_weapon_pose_skin = equipped_weapon_pose_skins[parent_item_name]
+		local current_weapon_pose_skin_backend_id = self:get_weapon_skin_from_skin_key(current_weapon_pose_skin)
 
-		if self:get_weapon_skin_from_skin_key(var_53_0) ~= arg_53_2 then
-			local skin = self:get_item_from_id(arg_53_2).skin
+		if current_weapon_pose_skin_backend_id ~= weapon_skin_backend_id then
+			local weapon_skin_item = self:get_item_from_id(weapon_skin_backend_id)
+			local skin_key = weapon_skin_item.skin
 
-			self._dirty_weapon_pose_skins[arg_53_1] = skin
+			self._dirty_weapon_pose_skins[parent_item_name] = skin_key
 
-			self._backend_mirror:set_weapon_pose_skin(arg_53_1, skin)
+			self._backend_mirror:set_weapon_pose_skin(parent_item_name, skin_key)
 		end
 	end
 end
 
-BackendInterfaceItemPlayfab.get_cosmetic_loadout = function (self, arg_54_1, arg_54_2)
+BackendInterfaceItemPlayfab.get_cosmetic_loadout = function (self, career_name, is_bot)
 	-- function 54
 	local game_mode = Managers.state.game_mode
 
-	game_mode = not game_mode and Managers.state.game_mode:game_mode_key()
+	if game_mode then
+		-- Nothing
+	end
 
-	local var_54_1 = InventorySettings.bot_loadout_allowed_game_modes[game_mode]
-	local var_54_2 = InventorySettings.default_loadout_allowed_game_modes[game_mode]
-	local flag = not var_54_1 and self:get_bot_loadout()
-	local flag_2 = not var_54_1 and flag[arg_54_1]
-	local flag_3 = not var_54_2 and self:get_default_loadouts(arg_54_1)
-	local flag_4 = not var_54_2 and not flag_3 and flag_3[1]
-	local var_54_7 = self:get_loadout()[arg_54_1]
-	local flag_5 = not var_54_1 and not arg_54_2 and flag_2 and not arg_54_2 or not var_54_2 and flag_4 and var_54_7
+	game_mode = Managers.state.game_mode:game_mode_key()
 
-	return flag_5.slot_hat, flag_5.slot_skin, flag_5.slot_frame
+	local game_mode_key = game_mode
+
+	::label_54_0::
+
+	local bot_loadout_allowed = InventorySettings.bot_loadout_allowed_game_modes[game_mode_key]
+	local default_loadouts_allowed = InventorySettings.default_loadout_allowed_game_modes[game_mode_key]
+	local bot_loadouts = not not bot_loadout_allowed and not not self:get_bot_loadout()
+	local bot_loadout = not not bot_loadout_allowed and not not bot_loadouts[career_name]
+	local default_loadouts = not not default_loadouts_allowed and not not self:get_default_loadouts(career_name)
+	local default_loadout = not not default_loadouts_allowed and not not default_loadouts and not not default_loadouts[1]
+	local base_loadouts = self:get_loadout()
+	local base_loadout = base_loadouts[career_name]
+	local career_loadout = (not bot_loadout_allowed or not is_bot or not bot_loadout) and (not is_bot or not default_loadouts_allowed or not default_loadout) and not not base_loadout
+
+	return career_loadout.slot_hat, career_loadout.slot_skin, career_loadout.slot_frame
 end
 
-BackendInterfaceItemPlayfab.get_item_name = function (self, arg_55_1)
+BackendInterfaceItemPlayfab.get_item_name = function (self, item_id)
 	-- function 55
-	return self:get_all_backend_items()[arg_55_1].key
+	local items = self:get_all_backend_items()
+
+	return items[item_id].key
 end
 
-local tbl_3 = {}
+local empty_params = {}
 
-BackendInterfaceItemPlayfab.get_filtered_items = function (self, arg_56_1, arg_56_2)
+BackendInterfaceItemPlayfab.get_filtered_items = function (self, filter, params)
 	-- function 56
-	local get_all_backend_items = self:get_all_backend_items()
+	local all_items = self:get_all_backend_items()
+	local backend_common = Managers.backend:get_interface("common")
+	local items = backend_common:filter_items(all_items, filter, not not params or not not empty_params)
 
-	return (Managers.backend:get_interface("common"):filter_items(get_all_backend_items, arg_56_1, arg_56_2 or tbl_3))
+	return items
 end
 
-BackendInterfaceItemPlayfab.set_loadout_item = function (self, arg_57_1, arg_57_2, arg_57_3, arg_57_4)
+BackendInterfaceItemPlayfab.set_loadout_item = function (self, item_id, career_name, slot_name, optional_loadout_index)
 	-- function 57
-	local get_all_backend_items = self:get_all_backend_items()
-	local var_57_1
+	local all_items = self:get_all_backend_items()
+	local item
 
-	if not arg_57_1 then
-		var_57_1 = get_all_backend_items[arg_57_1]
+	if item_id then
+		item = all_items[item_id]
 
-		fassert(var_57_1, "Trying to equip item that doesn't exist %d", arg_57_1 or "nil")
+		fassert(item, "Trying to equip item that doesn't exist %d", not not item_id or not not "nil")
 	end
 
-	if not var_57_1 then
-		print("[BackendInterfaceItemPlayfab] Attempted to equip weapon that doesn't exist:", arg_57_1, arg_57_2, arg_57_3)
+	if not item then
+		print("[BackendInterfaceItemPlayfab] Attempted to equip weapon that doesn't exist:", item_id, career_name, slot_name)
 
 		return false
 	end
 
-	if var_57_1.rarity == "magic" then
-		print("[BackendInterfaceItemPlayfab] Attempted to equip magic weapon in adventure:", arg_57_1, arg_57_2, arg_57_3)
+	if item.rarity == "magic" then
+		print("[BackendInterfaceItemPlayfab] Attempted to equip magic weapon in adventure:", item_id, career_name, slot_name)
 
 		return false
 	end
 
-	if not CosmeticUtils.is_cosmetic_slot(arg_57_3) then
-		arg_57_1 = var_57_1.override_id or var_57_1.ItemId
+	if CosmeticUtils.is_cosmetic_slot(slot_name) then
+		item_id = not not item.override_id or not not item.ItemId
 	end
 
-	if arg_57_3 == "slot_pose" then
-		arg_57_1 = var_57_1.override_id or var_57_1.ItemId
+	if slot_name == "slot_pose" then
+		item_id = not not item.override_id or not not item.ItemId
 	end
 
-	self._backend_mirror:set_character_data(arg_57_2, arg_57_3, arg_57_1, nil, arg_57_4)
+	self._backend_mirror:set_character_data(career_name, slot_name, item_id, nil, optional_loadout_index)
 
 	self._dirty = true
 
 	return true
 end
 
-BackendInterfaceItemPlayfab.add_steam_items = function (self, arg_58_1)
+BackendInterfaceItemPlayfab.add_steam_items = function (self, item_list)
 	-- function 58
-	self._backend_mirror:add_steam_items(arg_58_1)
+	self._backend_mirror:add_steam_items(item_list)
 	self:_refresh_items()
 end
 
-local tbl_4 = {
+local unseen_item_reward_types = {
 	weapon_pose = true,
 	weapon_skin = true,
 	item = true,
@@ -747,142 +853,142 @@ local tbl_4 = {
 
 BackendInterfaceItemPlayfab.get_unseen_item_rewards = function (self)
 	-- function 59
-	local get_user_data = self._backend_mirror:get_user_data("unseen_rewards")
+	local unseen_rewards_json = self._backend_mirror:get_user_data("unseen_rewards")
 
-	if not get_user_data then
+	if not unseen_rewards_json then
 		return nil
 	end
 
-	local decode = cjson.decode(get_user_data)
-	local var_59_2
-	local num = 1
+	local unseen_rewards = cjson.decode(unseen_rewards_json)
+	local unseen_items
+	local index = 1
 
-	while num <= #decode do
-		local var_59_4 = decode[num]
-		local reward_type = var_59_4.reward_type
+	while index <= #unseen_rewards do
+		local reward = unseen_rewards[index]
+		local reward_type = reward.reward_type
 
-		if tbl_4[reward_type] or not CosmeticUtils.is_cosmetic_item(reward_type) then
-			var_59_2 = var_59_2 or {}
-			var_59_2[#var_59_2 + 1] = var_59_4
+		if unseen_item_reward_types[reward_type] or CosmeticUtils.is_cosmetic_item(reward_type) then
+			unseen_items = not not unseen_items or not not {}
+			unseen_items[#unseen_items + 1] = reward
 
-			table.remove(decode, num)
+			table.remove(unseen_rewards, index)
 		else
-			num = num + 1
+			index = index + 1
 		end
 	end
 
-	if not var_59_2 then
-		self._backend_mirror:set_user_data("unseen_rewards", cjson.encode(decode))
+	if unseen_items then
+		self._backend_mirror:set_user_data("unseen_rewards", cjson.encode(unseen_rewards))
 	end
 
-	return var_59_2
+	return unseen_items
 end
 
-BackendInterfaceItemPlayfab.remove_item = function (arg_60_0, arg_60_1, arg_60_2)
+BackendInterfaceItemPlayfab.remove_item = function (self, backend_id, ignore_equipped)
 	-- function 60
 	return
 end
 
-BackendInterfaceItemPlayfab.award_item = function (arg_61_0, arg_61_1)
+BackendInterfaceItemPlayfab.award_item = function (self, item_key)
 	-- function 61
 	return
 end
 
-BackendInterfaceItemPlayfab.data_server_script = function (arg_62_0, arg_62_1, ...)
+BackendInterfaceItemPlayfab.data_server_script = function (self, script_name, ...)
 	-- function 62
 	return
 end
 
-BackendInterfaceItemPlayfab.upgrades_failed_game = function (arg_63_0, arg_63_1, arg_63_2)
+BackendInterfaceItemPlayfab.upgrades_failed_game = function (self, level_start, level_end)
 	-- function 63
 	return
 end
 
-BackendInterfaceItemPlayfab.poll_upgrades_failed_game = function (arg_64_0)
+BackendInterfaceItemPlayfab.poll_upgrades_failed_game = function (self)
 	-- function 64
 	return
 end
 
-BackendInterfaceItemPlayfab.generate_item_server_loot = function (arg_65_0, arg_65_1, arg_65_2, arg_65_3, arg_65_4, arg_65_5, arg_65_6)
+BackendInterfaceItemPlayfab.generate_item_server_loot = function (self, dice, difficulty, start_level, end_level, hero_name, dlc_name)
 	-- function 65
 	return
 end
 
-BackendInterfaceItemPlayfab.check_for_loot = function (arg_66_0)
+BackendInterfaceItemPlayfab.check_for_loot = function (self)
 	-- function 66
 	return
 end
 
-BackendInterfaceItemPlayfab.equipped_by = function (self, arg_67_1)
+BackendInterfaceItemPlayfab.equipped_by = function (self, backend_id)
 	-- function 67
-	local get_loadout = self:get_loadout()
-	local tbl = {}
+	local loadouts = self:get_loadout()
+	local equipped_careers = {}
 
-	for k, v in pairs(get_loadout) do
-		for k_2, v_2 in pairs(v) do
-			if arg_67_1 == v_2 then
-				table.insert(tbl, k)
+	for career_name, items_by_slot in pairs(loadouts) do
+		for slot_name, item_id in pairs(items_by_slot) do
+			if backend_id == item_id then
+				table.insert(equipped_careers, career_name)
 			end
 		end
 	end
 
-	return tbl
+	return equipped_careers
 end
 
-local tbl_5 = {}
+local EQUIPPED_BY_LOADOUT = {}
 
-BackendInterfaceItemPlayfab.equipped_by_loadout = function (self, arg_68_1)
+BackendInterfaceItemPlayfab.equipped_by_loadout = function (self, backend_id)
 	-- function 68
-	local _career_loadouts = self._career_loadouts
+	local career_loadouts = self._career_loadouts
 
-	table.clear(tbl_5)
+	table.clear(EQUIPPED_BY_LOADOUT)
 
-	for k, v in pairs(_career_loadouts) do
-		for i, v_2 in ipairs(v) do
-			for k_2, v_3 in pairs(v_2) do
-				if arg_68_1 == v_3 then
-					local var_68_1 = tbl_5
-					local var_68_2 = tbl_5[k]
+	for career_name, loadouts in pairs(career_loadouts) do
+		for index, loadout in ipairs(loadouts) do
+			for slot_name, item_id in pairs(loadout) do
+				if backend_id == item_id then
+					local var_68_0 = EQUIPPED_BY_LOADOUT
+					local var_68_1 = EQUIPPED_BY_LOADOUT[career_name]
 
-					var_68_2 = var_68_2 or {}
-					var_68_1[k] = var_68_2
-					tbl_5[k][#tbl_5[k] + 1] = i
+					var_68_1 = not not var_68_1 or not not {}
+					var_68_0[career_name] = var_68_1
+					EQUIPPED_BY_LOADOUT[career_name][#EQUIPPED_BY_LOADOUT[career_name] + 1] = index
 				end
 			end
 		end
 
-		if not tbl_5[k] then
-			tbl_5[k].num_loadouts = #v
+		if EQUIPPED_BY_LOADOUT[career_name] then
+			EQUIPPED_BY_LOADOUT[career_name].num_loadouts = #loadouts
 		end
 	end
 
-	return tbl_5
+	return EQUIPPED_BY_LOADOUT
 end
 
-BackendInterfaceItemPlayfab.is_equipped_by_any_loadout = function (self, arg_69_1)
+BackendInterfaceItemPlayfab.is_equipped_by_any_loadout = function (self, backend_id)
 	-- function 69
-	local _career_loadouts = self._career_loadouts
-	local tbl = {}
+	local career_loadouts = self._career_loadouts
+	local equipped_loadouts = {}
 
-	for k, v in pairs(_career_loadouts) do
-		for i, v_2 in ipairs(v) do
-			for k_2, v_3 in pairs(v_2) do
-				if arg_69_1 == v_3 then
-					table.insert(tbl, k .. "_" .. i)
+	for career_name, loadouts in pairs(career_loadouts) do
+		for index, loadout in ipairs(loadouts) do
+			for slot_name, item_id in pairs(loadout) do
+				if backend_id == item_id then
+					table.insert(equipped_loadouts, career_name .. "_" .. index)
 				end
 			end
 		end
 	end
 
-	return tbl
+	return equipped_loadouts
 end
 
-BackendInterfaceItemPlayfab.is_equipped = function (arg_70_0, arg_70_1, arg_70_2)
+BackendInterfaceItemPlayfab.is_equipped = function (self, backend_id, profile_name)
 	-- function 70
 	return
 end
 
-BackendInterfaceItemPlayfab.set_data_server_queue = function (arg_71_0, arg_71_1)
+BackendInterfaceItemPlayfab.set_data_server_queue = function (self, queue)
 	-- function 71
 	return
 end
@@ -892,12 +998,12 @@ BackendInterfaceItemPlayfab.make_dirty = function (self)
 	self._dirty = true
 end
 
-BackendInterfaceItemPlayfab.has_item = function (self, arg_73_1)
+BackendInterfaceItemPlayfab.has_item = function (self, item_key)
 	-- function 73
-	local get_all_backend_items = self:get_all_backend_items()
+	local items = self:get_all_backend_items()
 
-	for k, v in pairs(get_all_backend_items) do
-		if arg_73_1 == v.key then
+	for backend_id, item in pairs(items) do
+		if item_key == item.key then
 			return true
 		end
 	end
@@ -905,12 +1011,12 @@ BackendInterfaceItemPlayfab.has_item = function (self, arg_73_1)
 	return false
 end
 
-BackendInterfaceItemPlayfab.has_weapon_illusion = function (self, arg_74_1)
+BackendInterfaceItemPlayfab.has_weapon_illusion = function (self, item_key)
 	-- function 74
-	local get_all_fake_backend_items = self:get_all_fake_backend_items()
+	local items = self:get_all_fake_backend_items()
 
-	for k, v in pairs(get_all_fake_backend_items) do
-		if arg_74_1 == v.skin then
+	for backend_id, item in pairs(items) do
+		if item_key == item.skin then
 			return true
 		end
 	end
@@ -918,81 +1024,94 @@ BackendInterfaceItemPlayfab.has_weapon_illusion = function (self, arg_74_1)
 	return false
 end
 
-BackendInterfaceItemPlayfab.has_bundle_contents = function (self, arg_75_1)
+BackendInterfaceItemPlayfab.has_bundle_contents = function (self, bundle_contains)
 	-- function 75
-	if not arg_75_1 then
+	if not bundle_contains then
 		return false, false, nil
 	end
 
-	local flag = true
-	local flag_2 = false
-	local tbl = {}
+	local all_owned = true
+	local any_owned = false
+	local required_dlcs = {}
 
-	for i = 1, #arg_75_1 do
-		local var_75_3 = arg_75_1[i]
-		local var_75_4 = SteamitemdefidToMasterList[var_75_3]
-		local required_dlc = ItemMasterList[var_75_4].required_dlc
+	for i = 1, #bundle_contains do
+		local steam_itemdefid = bundle_contains[i]
+		local item_key = SteamitemdefidToMasterList[steam_itemdefid]
+		local item_data = ItemMasterList[item_key]
+		local required_dlc = item_data.required_dlc
 
-		if not (not required_dlc and Managers.unlock:is_dlc_unlocked(required_dlc) or table.find(tbl, required_dlc)) then
-			tbl[#tbl + 1] = required_dlc
+		if required_dlc then
+			local owns_required_dlc = Managers.unlock:is_dlc_unlocked(required_dlc)
+
+			if not owns_required_dlc and not table.find(required_dlcs, required_dlc) then
+				required_dlcs[#required_dlcs + 1] = required_dlc
+			end
 		end
 
-		if self:has_item(var_75_4) or not self:has_weapon_illusion(var_75_4) then
-			flag_2 = true
+		if self:has_item(item_key) or self:has_weapon_illusion(item_key) then
+			any_owned = true
 		else
-			flag = false
+			all_owned = false
 		end
 	end
 
-	return flag, flag_2, tbl
+	return all_owned, any_owned, required_dlcs
 end
 
-BackendInterfaceItemPlayfab.get_item_template = function (arg_76_0, arg_76_1, arg_76_2)
+BackendInterfaceItemPlayfab.get_item_template = function (self, item_data, backend_id)
 	-- function 76
-	local temporary_template = arg_76_1.temporary_template
+	local temporary_template = item_data.temporary_template
 
-	temporary_template = temporary_template or arg_76_1.template
-
-	local get_weapon_template = WeaponUtils.get_weapon_template(temporary_template)
-
-	if not get_weapon_template then
-		return get_weapon_template
+	if not temporary_template then
+		-- Nothing
 	end
 
-	local var_76_2 = Attachments[temporary_template]
+	temporary_template = item_data.template
 
-	if not var_76_2 then
-		return var_76_2
+	local template_name = temporary_template
+
+	::label_76_0::
+
+	local item_template = WeaponUtils.get_weapon_template(template_name)
+
+	if item_template then
+		return item_template
 	end
 
-	local var_76_3 = Cosmetics[temporary_template]
+	item_template = Attachments[template_name]
 
-	if not var_76_3 then
-		return var_76_3
+	if item_template then
+		return item_template
 	end
 
-	fassert(false, "no item_template for item: " .. arg_76_1.key .. ", template name = " .. temporary_template)
+	item_template = Cosmetics[template_name]
+
+	if item_template then
+		return item_template
+	end
+
+	fassert(false, "no item_template for item: " .. item_data.key .. ", template name = " .. template_name)
 end
 
 BackendInterfaceItemPlayfab.sum_best_power_levels = function (self)
 	-- function 77
-	local sum_of_best_power_levels_override = script_data.sum_of_best_power_levels_override
+	local debug_value = script_data.sum_of_best_power_levels_override
 
-	if not sum_of_best_power_levels_override then
-		return sum_of_best_power_levels_override
+	if debug_value then
+		return debug_value
 	else
 		return self._backend_mirror.sum_best_power_levels
 	end
 end
 
-BackendInterfaceItemPlayfab.configure_game_mode_specific_items = function (arg_78_0, arg_78_1, arg_78_2)
+BackendInterfaceItemPlayfab.configure_game_mode_specific_items = function (self, game_mode, items)
 	-- function 78
-	arg_78_0._game_mode_specific_items[arg_78_1] = arg_78_2
+	self._game_mode_specific_items[game_mode] = items
 end
 
-BackendInterfaceItemPlayfab.set_game_mode_specific_items = function (self, arg_79_1)
+BackendInterfaceItemPlayfab.set_game_mode_specific_items = function (self, game_mode)
 	-- function 79
-	self._active_game_mode_specific_items = self._game_mode_specific_items[arg_79_1]
+	self._active_game_mode_specific_items = self._game_mode_specific_items[game_mode]
 
 	self:make_dirty()
 end
@@ -1002,81 +1121,85 @@ BackendInterfaceItemPlayfab.refresh_game_mode_specific_items = function (self)
 	self:make_dirty()
 end
 
-local num = 300
+local DEEDS_CHUNK_LIMIT = 300
 
-BackendInterfaceItemPlayfab.delete_marked_deeds = function (self, arg_81_1, arg_81_2, arg_81_3)
+BackendInterfaceItemPlayfab.delete_marked_deeds = function (self, deeds_list, start_index, end_index)
 	-- function 81
 	self._is_deleting_deeds = true
-	arg_81_2 = arg_81_2 or 1
-	arg_81_3 = arg_81_3 or num
+	start_index = not not start_index or not not 1
+	end_index = not not end_index or not not DEEDS_CHUNK_LIMIT
 
-	local _new_id = self:_new_id()
-	local var_81_1
-	local count = #arg_81_1
+	local id = self:_new_id()
+	local temp_deeds
+	local num_elements = #deeds_list
 
-	if arg_81_2 > 1 then
-		var_81_1 = table.slice(arg_81_1, arg_81_2, count)
+	if start_index > 1 then
+		temp_deeds = table.slice(deeds_list, start_index, num_elements)
 	else
-		var_81_1 = arg_81_1
+		temp_deeds = deeds_list
 	end
 
-	local map = table.map(var_81_1, function (self)
+	local reduced_deeds_list = table.map(temp_deeds, function (entry)
 		-- function 82
 		return {
-			ItemInstanceId = self.ItemInstanceId
+			ItemInstanceId = entry.ItemInstanceId
 		}
 	end)
 
-	if arg_81_3 < count then
-		for i = num + 1, count do
-			map[i] = nil
+	if end_index < num_elements then
+		for i = DEEDS_CHUNK_LIMIT + 1, num_elements do
+			reduced_deeds_list[i] = nil
 		end
 	end
 
-	local tbl = {
+	local delete_marked_deeds_request = {
 		FunctionName = "deleteMarkedDeeds",
 		FunctionParameter = {
-			marked_deeds_list = map
+			marked_deeds_list = reduced_deeds_list
 		}
 	}
-	local tbl_2 = {
-		marked_deeds_list = map,
-		id = _new_id
+	local data = {
+		marked_deeds_list = reduced_deeds_list,
+		id = id
 	}
-	local var_81_6 = callback(self, "delete_marked_deeds_request_cb", tbl_2, arg_81_3, arg_81_2, arg_81_1)
+	local success_callback = callback(self, "delete_marked_deeds_request_cb", data, end_index, start_index, deeds_list)
+	local request_queue = self._backend_mirror:request_queue()
 
-	self._backend_mirror:request_queue():enqueue(tbl, var_81_6, true)
+	request_queue:enqueue(delete_marked_deeds_request, success_callback, true)
 end
 
-BackendInterfaceItemPlayfab.delete_marked_deeds_request_cb = function (self, arg_83_1, arg_83_2, arg_83_3, arg_83_4, arg_83_5)
+BackendInterfaceItemPlayfab.delete_marked_deeds_request_cb = function (self, data, end_index, start_index, deeds_list, result)
 	-- function 83
-	local FunctionResult = arg_83_5.FunctionResult
-	local item_revokes = FunctionResult.item_revokes
-	local _backend_mirror = self._backend_mirror
+	local function_result = result.FunctionResult
+	local item_revokes = function_result.item_revokes
+	local backend_mirror = self._backend_mirror
 
-	if not FunctionResult then
-		Managers.backend:playfab_api_error(arg_83_5)
+	if not function_result then
+		Managers.backend:playfab_api_error(result)
 
 		return
-	elseif FunctionResult.error_message == "no_items_received" then
+	elseif function_result.error_message == "no_items_received" then
 		Managers.backend:playfab_error(BACKEND_PLAYFAB_ERRORS.ERR_REMOVE_DEEDS_NO_ITEMS_RECEIVED)
 
 		return
 	end
 
-	if not item_revokes then
+	if item_revokes then
 		for i = 1, #item_revokes do
-			local ItemInstanceId = item_revokes[i].ItemInstanceId
+			local revoke = item_revokes[i]
+			local item_instance_id = revoke.ItemInstanceId
 
-			_backend_mirror:remove_item(ItemInstanceId)
+			backend_mirror:remove_item(item_instance_id)
 		end
 	end
 
-	if arg_83_2 < #arg_83_4 then
-		local num_2 = arg_83_3 + num
-		local num_3 = arg_83_2 + num
+	local num_elements = #deeds_list
 
-		self:delete_marked_deeds(arg_83_4, num_2, num_3)
+	if end_index < num_elements then
+		local next_start_index = start_index + DEEDS_CHUNK_LIMIT
+		local next_end_index = end_index + DEEDS_CHUNK_LIMIT
+
+		self:delete_marked_deeds(deeds_list, next_start_index, next_end_index)
 	else
 		self._is_deleting_deeds = false
 
@@ -1096,28 +1219,29 @@ BackendInterfaceItemPlayfab._new_id = function (self)
 	return self._last_id
 end
 
-BackendInterfaceItemPlayfab.can_delete_deeds = function (arg_86_0, arg_86_1, arg_86_2)
+BackendInterfaceItemPlayfab.can_delete_deeds = function (self, current_deeds, marked_deeds)
 	-- function 86
-	if #arg_86_1 == #arg_86_2 then
-		return true, arg_86_1, arg_86_2
+	if #current_deeds == #marked_deeds then
+		return true, current_deeds, marked_deeds
 	end
 
-	local tbl = {}
-	local tbl_2 = {}
-	local var_86_2 = arg_86_1
+	local remaining_deeds = {}
+	local deletable_deeds = {}
 
-	for i, v in ipairs(arg_86_2) do
-		local index_of = table.index_of(var_86_2, v)
+	remaining_deeds = current_deeds
 
-		if index_of ~= -1 then
-			table.insert(tbl_2, v)
-			table.swap_delete(var_86_2, index_of)
+	for _, deed in ipairs(marked_deeds) do
+		local idx = table.index_of(remaining_deeds, deed)
+
+		if idx ~= -1 then
+			table.insert(deletable_deeds, deed)
+			table.swap_delete(remaining_deeds, idx)
 		end
 	end
 
-	if not table.is_empty(tbl_2) then
-		return false, var_86_2, nil
+	if table.is_empty(deletable_deeds) then
+		return false, remaining_deeds, nil
 	end
 
-	return true, var_86_2, tbl_2
+	return true, remaining_deeds, deletable_deeds
 end

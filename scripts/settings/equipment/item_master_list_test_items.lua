@@ -1,6 +1,6 @@
 -- chunkname: @scripts/settings/equipment/item_master_list_test_items.lua
 
-local flag = not Application and not Application.user_setting("show_test_item")
+local store_item_hidden = not Application or not not not Application.user_setting("show_test_item")
 
 ItemMasterList.test_item_1001 = {
 	description = "test_item_1001_desc",
@@ -20,7 +20,7 @@ ItemMasterList.test_item_1001 = {
 		"we_maidenguard",
 		"we_waywatcher"
 	},
-	steam_store_hidden = flag
+	steam_store_hidden = store_item_hidden
 }
 ItemMasterList.test_item_1002 = {
 	description = "test_item_1002_desc",
@@ -40,7 +40,7 @@ ItemMasterList.test_item_1002 = {
 		"we_maidenguard",
 		"we_waywatcher"
 	},
-	steam_store_hidden = flag
+	steam_store_hidden = store_item_hidden
 }
 ItemMasterList.test_item_1003 = {
 	description = "test_item_1003_desc",
@@ -60,7 +60,7 @@ ItemMasterList.test_item_1003 = {
 		"we_maidenguard",
 		"we_waywatcher"
 	},
-	steam_store_hidden = flag
+	steam_store_hidden = store_item_hidden
 }
 ItemMasterList.test_item_1004 = {
 	description = "test_item_1004_desc",
@@ -80,7 +80,7 @@ ItemMasterList.test_item_1004 = {
 		"we_maidenguard",
 		"we_waywatcher"
 	},
-	steam_store_hidden = flag
+	steam_store_hidden = store_item_hidden
 }
 ItemMasterList.test_item_1005 = {
 	description = "test_item_1005_desc",
@@ -100,7 +100,7 @@ ItemMasterList.test_item_1005 = {
 		"we_maidenguard",
 		"we_waywatcher"
 	},
-	steam_store_hidden = flag
+	steam_store_hidden = store_item_hidden
 }
 ItemMasterList.test_item_1006 = {
 	description = "test_item_1006_desc",
@@ -120,7 +120,7 @@ ItemMasterList.test_item_1006 = {
 		"we_maidenguard",
 		"we_waywatcher"
 	},
-	steam_store_hidden = flag
+	steam_store_hidden = store_item_hidden
 }
 ItemMasterList.test_item_1007 = {
 	description = "test_item_1007_desc",
@@ -140,7 +140,7 @@ ItemMasterList.test_item_1007 = {
 		"we_maidenguard",
 		"we_waywatcher"
 	},
-	steam_store_hidden = flag
+	steam_store_hidden = store_item_hidden
 }
 ItemMasterList.test_item_1008 = {
 	description = "test_item_1008_desc",
@@ -160,7 +160,7 @@ ItemMasterList.test_item_1008 = {
 		"we_maidenguard",
 		"we_waywatcher"
 	},
-	steam_store_hidden = flag
+	steam_store_hidden = store_item_hidden
 }
 ItemMasterList.test_item_1009 = {
 	description = "test_item_1009_desc",
@@ -180,7 +180,7 @@ ItemMasterList.test_item_1009 = {
 		"we_maidenguard",
 		"we_waywatcher"
 	},
-	steam_store_hidden = flag
+	steam_store_hidden = store_item_hidden
 }
 ItemMasterList.test_item_1010 = {
 	description = "test_item_1010_desc",
@@ -200,7 +200,7 @@ ItemMasterList.test_item_1010 = {
 		"we_maidenguard",
 		"we_waywatcher"
 	},
-	steam_store_hidden = flag
+	steam_store_hidden = store_item_hidden
 }
 ItemMasterList.test_item_1011 = {
 	description = "test_item_1011_desc",
@@ -220,7 +220,7 @@ ItemMasterList.test_item_1011 = {
 		"we_maidenguard",
 		"we_waywatcher"
 	},
-	steam_store_hidden = flag
+	steam_store_hidden = store_item_hidden
 }
 ItemMasterList.test_item_1012 = {
 	description = "test_item_1012_desc",
@@ -240,7 +240,7 @@ ItemMasterList.test_item_1012 = {
 		"we_maidenguard",
 		"we_waywatcher"
 	},
-	steam_store_hidden = flag
+	steam_store_hidden = store_item_hidden
 }
 ItemMasterList.test_item_1013 = {
 	description = "test_item_1013_desc",
@@ -260,7 +260,7 @@ ItemMasterList.test_item_1013 = {
 		"we_maidenguard",
 		"we_waywatcher"
 	},
-	steam_store_hidden = flag
+	steam_store_hidden = store_item_hidden
 }
 ItemMasterList.test_item_1014 = {
 	description = "test_item_1014_desc",
@@ -280,7 +280,7 @@ ItemMasterList.test_item_1014 = {
 		"we_maidenguard",
 		"we_waywatcher"
 	},
-	steam_store_hidden = flag
+	steam_store_hidden = store_item_hidden
 }
 ItemMasterList.test_item_1015 = {
 	description = "test_item_1015_desc",
@@ -300,7 +300,7 @@ ItemMasterList.test_item_1015 = {
 		"we_maidenguard",
 		"we_waywatcher"
 	},
-	steam_store_hidden = flag
+	steam_store_hidden = store_item_hidden
 }
 ItemMasterList.test_bundle_1016 = {
 	product_layout = "test_bundle_1016",
@@ -324,5 +324,5 @@ ItemMasterList.test_bundle_1016 = {
 		101,
 		102
 	},
-	steam_store_hidden = flag
+	steam_store_hidden = store_item_hidden
 }

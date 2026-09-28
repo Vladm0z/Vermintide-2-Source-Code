@@ -1,15 +1,15 @@
 -- chunkname: @scripts/ui/hud_ui/component_list_definitions/hud_component_list_inn_versus.lua
 
-local var_0_0 = local_require("scripts/ui/hud_ui/component_list_definitions/hud_component_list_adventure")
-local tbl = {}
+local adventure_settings = local_require("scripts/ui/hud_ui/component_list_definitions/hud_component_list_adventure")
+local components = {}
 
-table.append(tbl, var_0_0.components)
+table.append(components, adventure_settings.components)
 
-local tbl_2 = {}
+local visibility_groups = {}
 
-table.append(tbl_2, var_0_0.visibility_groups)
+table.append(visibility_groups, adventure_settings.visibility_groups)
 
 return {
-	components = tbl,
-	visibility_groups = tbl_2
+	components = components,
+	visibility_groups = visibility_groups
 }

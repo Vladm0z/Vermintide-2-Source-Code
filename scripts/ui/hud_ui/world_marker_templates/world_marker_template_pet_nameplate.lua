@@ -1,27 +1,36 @@
 -- chunkname: @scripts/ui/hud_ui/world_marker_templates/world_marker_template_pet_nameplate.lua
 
-local str = "pet_nameplate"
+local NAME = "pet_nameplate"
 local WorldMarkerTemplates = WorldMarkerTemplates
 
-WorldMarkerTemplates = WorldMarkerTemplates or {}
+WorldMarkerTemplates = not not WorldMarkerTemplates or not not {}
 WorldMarkerTemplates = WorldMarkerTemplates
 
-local var_0_2 = WorldMarkerTemplates[str]
+local var_0_1 = WorldMarkerTemplates[NAME]
 
-var_0_2 = var_0_2 or {}
-WorldMarkerTemplates[str] = var_0_2
-var_0_2.position_offset = {
+if not var_0_1 then
+	-- Nothing
+end
+
+var_0_1 = {}
+
+local template = var_0_1
+
+::label_0_0::
+
+WorldMarkerTemplates[NAME] = template
+template.position_offset = {
 	0,
 	0,
 	1.9
 }
-var_0_2.check_line_of_sight = true
-var_0_2.screen_clamp = false
+template.check_line_of_sight = true
+template.screen_clamp = false
 
-var_0_2.create_widget_definition = function (arg_1_0)
+template.create_widget_definition = function (scenegraph_id)
 	-- function 1
 	return {
-		scenegraph_id = arg_1_0,
+		scenegraph_id = scenegraph_id,
 		offset = {
 			0,
 			0,
@@ -36,27 +45,27 @@ var_0_2.create_widget_definition = function (arg_1_0)
 				{
 					style_id = "progress_foreground",
 					pass_type = "rect",
-					content_change_function = function (self, arg_2_1)
+					content_change_function = function (content, style)
 						-- function 2
-						arg_2_1.texture_size[1] = self.progress * arg_2_1.max_width
+						style.texture_size[1] = content.progress * style.max_width
 					end
 				},
 				{
 					pass_type = "texture",
 					style_id = "text_bg",
 					texture_id = "text_bg",
-					content_check_function = function (self)
+					content_check_function = function (content)
 						-- function 3
-						return self.text
+						return content.text
 					end
 				},
 				{
 					style_id = "text",
 					pass_type = "text",
 					text_id = "text",
-					content_check_function = function (self)
+					content_check_function = function (content)
 						-- function 4
-						return self.text
+						return content.text
 					end
 				}
 			}
@@ -147,7 +156,9 @@ var_0_2.create_widget_definition = function (arg_1_0)
 	}
 end
 
-var_0_2.on_enter = function (arg_5_0)
+template.on_enter = function (widget)
 	-- function 5
-	arg_5_0.content.progress = 1
+	local content = widget.content
+
+	content.progress = 1
 end

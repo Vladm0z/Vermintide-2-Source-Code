@@ -7,38 +7,38 @@ require("scripts/settings/terror_events/terror_event_utils")
 
 local UNIT_UNIQUE_IDS = UNIT_UNIQUE_IDS
 
-UNIT_UNIQUE_IDS = UNIT_UNIQUE_IDS or 0
+UNIT_UNIQUE_IDS = not not UNIT_UNIQUE_IDS or not not 0
 UNIT_UNIQUE_IDS = UNIT_UNIQUE_IDS
 
 local VISUAL_DEBUGGING_ENABLED = VISUAL_DEBUGGING_ENABLED
 
-VISUAL_DEBUGGING_ENABLED = VISUAL_DEBUGGING_ENABLED or false
+VISUAL_DEBUGGING_ENABLED = not not VISUAL_DEBUGGING_ENABLED or not not false
 VISUAL_DEBUGGING_ENABLED = VISUAL_DEBUGGING_ENABLED
 
 local GLOBAL_AI_NAVWORLD = GLOBAL_AI_NAVWORLD
 
-GLOBAL_AI_NAVWORLD = GLOBAL_AI_NAVWORLD or {}
+GLOBAL_AI_NAVWORLD = not not GLOBAL_AI_NAVWORLD or not not {}
 GLOBAL_AI_NAVWORLD = GLOBAL_AI_NAVWORLD
 AISystem = class(AISystem, ExtensionSystemBase)
 
 local script_data = script_data
 local POSITION_LOOKUP = POSITION_LOOKUP
-local distance = Vector3.distance
-local dot = Vector3.dot
-local normalize = Vector3.normalize
+local Vector3_distance = Vector3.distance
+local Vector3_dot = Vector3.dot
+local Vector3_normalize = Vector3.normalize
 local sqrt = math.sqrt
-local alive = Unit.alive
-local tbl = {}
+local unit_alive = Unit.alive
+local dummy_table = {}
 local disable_ai_perception = script_data.disable_ai_perception
 
-disable_ai_perception = disable_ai_perception or Development.parameter("disable_ai_perception")
+disable_ai_perception = not not disable_ai_perception or not not Development.parameter("disable_ai_perception")
 script_data.disable_ai_perception = disable_ai_perception
 
-local flag = false
-local num = 1024
-local num_2 = 128
-local num_3 = 0.5
-local tbl_2 = {
+local ai_trees_created = false
+local NAV_COST_MAP_MAX_VOLUMES = 1024
+local NAV_COST_MAP_MAX_COST_MAPS = 128
+local NAV_COST_MAP_RECOMPUTATION_INTERVAL = 0.5
+local RPCS = {
 	"rpc_alert_enemies_within_range",
 	"rpc_set_allowed_nav_layer",
 	"rpc_change_tentacle_state",
@@ -51,7 +51,7 @@ local tbl_2 = {
 	"rpc_set_attribute_int",
 	"rpc_remove_attribute"
 }
-local tbl_3 = {
+local extensions = {
 	"AISimpleExtension",
 	"AiHuskBaseExtension",
 	"PlayerBotBase"
@@ -59,59 +59,79 @@ local tbl_3 = {
 
 AttributeDefinition = {
 	grudge_marked = {
-		name_index = function (arg_1_0, arg_1_1)
+		name_index = function (unit, value)
 			-- function 1
-			if not arg_1_1 then
-				Unit.flow_event(arg_1_0, "enable_grudge")
+			if value then
+				Unit.flow_event(unit, "enable_grudge")
 				print("New enhanced breed spawned")
 			else
-				Unit.flow_event(arg_1_0, "disable_grudge")
+				Unit.flow_event(unit, "disable_grudge")
 			end
 		end
 	},
 	breed_enhancements = {},
 	training_dummy = {
-		armor = function (arg_2_0, arg_2_1)
+		armor = function (unit, value)
 			-- function 2
-			local var_2_0 = arg_2_1
+			local has_armor = value
 
-			Unit.set_visibility(arg_2_0, "vg_armor", var_2_0)
+			Unit.set_visibility(unit, "vg_armor", has_armor)
 
-			local flag
+			local num
 
-			flag = not var_2_0 and 2 and 1
+			if has_armor then
+				num = 2
 
-			Unit.set_data(arg_2_0, "armor", flag)
+				goto label_2_0
+			end
 
-			local flag_2
+			num = 1
 
-			flag_2 = not var_2_0 and "skaven" and "chaos"
+			local armor = num
 
-			Unit.set_data(arg_2_0, "race", flag_2)
+			::label_2_0::
+
+			Unit.set_data(unit, "armor", armor)
+
+			local str
+
+			if has_armor then
+				str = "skaven"
+
+				goto label_2_1
+			end
+
+			str = "chaos"
+
+			local race_name = str
+
+			::label_2_1::
+
+			Unit.set_data(unit, "race", race_name)
 		end
 	}
 }
 
-for k, v in pairs(BreedEnhancements) do
-	if not v.no_attribute then
-		AttributeDefinition.breed_enhancements[k] = false
+for name, data in pairs(BreedEnhancements) do
+	if not data.no_attribute then
+		AttributeDefinition.breed_enhancements[name] = false
 	end
 end
 
-AISystem.init = function (self, arg_3_1, arg_3_2)
+AISystem.init = function (self, context, name)
 	-- function 3
-	AISystem.super.init(self, arg_3_1, arg_3_2, tbl_3)
+	AISystem.super.init(self, context, name, extensions)
 
-	local tbl = {}
+	local all_categories = {}
 	local sides = Managers.state.side:sides()
 
 	for i = 1, #sides do
-		local var_3_2 = sides[i]
+		local side = sides[i]
 
-		tbl[#tbl + 1] = var_3_2:name()
+		all_categories[#all_categories + 1] = side:name()
 	end
 
-	self.broadphase = Broadphase(50, 128, tbl)
+	self.broadphase = Broadphase(50, 128, all_categories)
 	self._behavior_trees = {}
 	self.group_blackboard = {
 		rats_currently_moving_to_ip = 0,
@@ -124,71 +144,71 @@ AISystem.init = function (self, arg_3_1, arg_3_2)
 
 	self:create_all_trees()
 
-	local var_3_3 = GwNavWorld.create(Matrix4x4.identity())
+	local nav_world = GwNavWorld.create(Matrix4x4.identity())
 
-	self._nav_world = var_3_3
-	GLOBAL_AI_NAVWORLD = var_3_3
+	self._nav_world = nav_world
+	GLOBAL_AI_NAVWORLD = nav_world
 
 	if PLATFORM ~= Application.WIN32 then
-		GwNavWorld.set_pathfinder_budget(var_3_3, 0.0045)
+		GwNavWorld.set_pathfinder_budget(nav_world, 0.0045)
 	end
 
 	if not script_data.disable_crowd_dispersion then
-		GwNavWorld.enable_crowd_dispersion(var_3_3)
+		GwNavWorld.enable_crowd_dispersion(nav_world)
 	end
 
-	if not (not script_data.debug_enabled and not script_data.navigation_visual_debug_enabled and VISUAL_DEBUGGING_ENABLED) then
+	if script_data.debug_enabled and script_data.navigation_visual_debug_enabled and not VISUAL_DEBUGGING_ENABLED then
 		VISUAL_DEBUGGING_ENABLED = true
 
-		GwNavWorld.init_visual_debug_server(var_3_3, 4888)
+		GwNavWorld.init_visual_debug_server(nav_world, 4888)
 	end
 
 	if not script_data.navigation_thread_disabled then
-		GwNavWorld.init_async_update(var_3_3)
+		GwNavWorld.init_async_update(nav_world)
 	end
 
-	local current_level_settings = LevelHelper:current_level_settings()
-	local level_name = current_level_settings.level_name
-	local world = arg_3_1.world
+	local level_settings = LevelHelper:current_level_settings()
+	local level_name = level_settings.level_name
+	local world = context.world
 
-	if not LEVEL_EDITOR_TEST then
+	if LEVEL_EDITOR_TEST then
 		level_name = Application.get_data("LevelEditor", "level_resource_name")
 	end
 
-	if not current_level_settings.no_nav_mesh then
-		local nested_level_count = LevelResource.nested_level_count(level_name)
-		local tbl_4 = {}
+	if not level_settings.no_nav_mesh then
+		local num_nested_levels = LevelResource.nested_level_count(level_name)
+		local nav_data = {}
 
-		tbl_4[#tbl_4 + 1] = GwNavWorld.add_navdata(var_3_3, level_name)
+		nav_data[#nav_data + 1] = GwNavWorld.add_navdata(nav_world, level_name)
 
-		for j = 0, nested_level_count - 1 do
-			local nested_level_resource_name = LevelResource.nested_level_resource_name(level_name, j)
+		for i = 0, num_nested_levels - 1 do
+			local nested_level_name = LevelResource.nested_level_resource_name(level_name, i)
 
-			print("nested_level_name", nested_level_resource_name)
+			print("nested_level_name", nested_level_name)
 
-			tbl_4[#tbl_4 + 1] = GwNavWorld.add_navdata(var_3_3, nested_level_resource_name)
+			nav_data[#nav_data + 1] = GwNavWorld.add_navdata(nav_world, nested_level_name)
 		end
 
-		self._nav_data = tbl_4
+		self._nav_data = nav_data
 
-		if not script_data.debug_enabled then
-			self.ai_debugger = AIDebugger:new(world, var_3_3, self.group_blackboard, self.is_server, arg_3_1.free_flight_manager)
+		if script_data.debug_enabled then
+			self.ai_debugger = AIDebugger:new(world, nav_world, self.group_blackboard, self.is_server, context.free_flight_manager)
 		end
 	end
 
 	self._nav_cost_map_id_data = {
 		size = 0,
 		current_id = 1,
-		ids = Script.new_array(num_2),
-		max_size = num_2
+		ids = Script.new_array(NAV_COST_MAP_MAX_COST_MAPS),
+		max_size = NAV_COST_MAP_MAX_COST_MAPS
 	}
 	self._nav_cost_map_volume_id_data = {
 		size = 0,
 		current_id = 1,
-		ids = Script.new_array(num),
-		max_size = num
+		ids = Script.new_array(NAV_COST_MAP_MAX_VOLUMES),
+		max_size = NAV_COST_MAP_MAX_VOLUMES
 	}
-	self._nav_cost_maps_data = Script.new_array(num_2)
+	self._nav_cost_maps_data = Script.new_array(NAV_COST_MAP_MAX_COST_MAPS)
 	self._should_recompute_nav_cost_maps = false
 	self._previous_nav_cost_map_recomputation_t = 0
 	self.unit_extension_data = {}
@@ -203,272 +223,295 @@ AISystem.init = function (self, arg_3_1, arg_3_2)
 	self.ai_units_perception = {}
 	self.ai_units_perception_prioritized = {}
 	self.num_perception_units = 0
-	self.world = arg_3_1.world
+	self.world = context.world
 	self.number_ordinary_aggroed_enemies = 0
 	self.number_special_aggored_enemies = 0
 	self.start_prio_index = 1
 
-	local network_event_delegate = arg_3_1.network_event_delegate
+	local network_event_delegate = context.network_event_delegate
 
 	self._network_event_delegate = network_event_delegate
 
-	network_event_delegate:register(self, unpack(tbl_2))
+	network_event_delegate:register(self, unpack(RPCS))
 
 	if not self.is_server then
-		self:_initialize_client_traverse_logic(var_3_3)
+		self:_initialize_client_traverse_logic(nav_world)
 	end
 
 	self._hot_join_sync_units = {}
 
-	for k, v in pairs(NAV_TAG_VOLUME_LAYER_COST_AI) do
-		local var_3_11 = DEFAULT_NAV_TAG_VOLUME_LAYER_COST_AI[k]
+	for layer_name, _ in pairs(NAV_TAG_VOLUME_LAYER_COST_AI) do
+		local var_3_0 = DEFAULT_NAV_TAG_VOLUME_LAYER_COST_AI[layer_name]
 
-		var_3_11 = var_3_11 or 1
-		NAV_TAG_VOLUME_LAYER_COST_AI[k] = var_3_11
+		if not var_3_0 then
+			-- Nothing
+		end
+
+		var_3_0 = 1
+
+		local default_cost_ai = var_3_0
+
+		::label_3_0::
+
+		NAV_TAG_VOLUME_LAYER_COST_AI[layer_name] = default_cost_ai
 	end
 
-	for k_2, v_2 in pairs(NAV_TAG_VOLUME_LAYER_COST_BOTS) do
-		local var_3_12 = DEFAULT_NAV_TAG_VOLUME_LAYER_COST_BOTS[k_2]
+	for layer_name, _ in pairs(NAV_TAG_VOLUME_LAYER_COST_BOTS) do
+		local var_3_1 = DEFAULT_NAV_TAG_VOLUME_LAYER_COST_BOTS[layer_name]
 
-		var_3_12 = var_3_12 or 1
-		NAV_TAG_VOLUME_LAYER_COST_BOTS[k_2] = var_3_12
+		if not var_3_1 then
+			-- Nothing
+		end
+
+		var_3_1 = 1
+
+		local default_cost_bots = var_3_1
+
+		::label_3_1::
+
+		NAV_TAG_VOLUME_LAYER_COST_BOTS[layer_name] = default_cost_bots
 	end
 end
 
 AISystem.get_nav_cost_maps_data = function (self)
 	-- function 4
-	return self._nav_cost_maps_data, num_2
+	return self._nav_cost_maps_data, NAV_COST_MAP_MAX_COST_MAPS
 end
 
-AISystem.create_nav_cost_map = function (self, arg_5_1, arg_5_2)
+AISystem.create_nav_cost_map = function (self, cost_layer, num_volumes_guess)
 	-- function 5
-	local _nav_cost_map_id_data = self._nav_cost_map_id_data
-	local current_id = _nav_cost_map_id_data.current_id
-	local ids = _nav_cost_map_id_data.ids
-	local size = _nav_cost_map_id_data.size
-	local max_size = _nav_cost_map_id_data.max_size
-	local var_5_5 = NAV_COST_MAP_LAYER_ID_MAPPING[arg_5_1]
+	local cost_map_id_data = self._nav_cost_map_id_data
+	local cost_map_id = cost_map_id_data.current_id
+	local cost_map_ids = cost_map_id_data.ids
+	local cost_map_ids_size = cost_map_id_data.size
+	local cost_map_ids_max_size = cost_map_id_data.max_size
+	local cost_map_layer_id = NAV_COST_MAP_LAYER_ID_MAPPING[cost_layer]
 
-	fassert(size < max_size, "Error! Too many Nav Cost Maps!")
+	fassert(cost_map_ids_size < cost_map_ids_max_size, "Error! Too many Nav Cost Maps!")
 
-	while not ids[current_id] do
-		current_id = current_id % max_size + 1
+	while cost_map_ids[cost_map_id] do
+		cost_map_id = cost_map_id % cost_map_ids_max_size + 1
 	end
 
-	local _nav_world = self._nav_world
+	local nav_world = self._nav_world
 
-	self._nav_cost_maps_data[current_id] = {
+	self._nav_cost_maps_data[cost_map_id] = {
 		recompute = false,
-		cost_map = GwNavCostMap.create(_nav_world, var_5_5),
-		volumes = Script.new_map(arg_5_2)
+		cost_map = GwNavCostMap.create(nav_world, cost_map_layer_id),
+		volumes = Script.new_map(num_volumes_guess)
 	}
-	_nav_cost_map_id_data.size = size + 1
-	_nav_cost_map_id_data.current_id = current_id
-	ids[current_id] = true
+	cost_map_id_data.size = cost_map_ids_size + 1
+	cost_map_id_data.current_id = cost_map_id
+	cost_map_ids[cost_map_id] = true
 
-	return current_id
+	return cost_map_id
 end
 
-AISystem.destroy_nav_cost_map = function (self, arg_6_1)
+AISystem.destroy_nav_cost_map = function (self, cost_map_id)
 	-- function 6
-	local _nav_cost_map_id_data = self._nav_cost_map_id_data
-	local size = _nav_cost_map_id_data.size
-	local ids = _nav_cost_map_id_data.ids
-	local var_6_3 = self._nav_cost_maps_data[arg_6_1]
+	local cost_map_id_data = self._nav_cost_map_id_data
+	local cost_map_ids_size = cost_map_id_data.size
+	local cost_map_ids = cost_map_id_data.ids
+	local cost_map_data = self._nav_cost_maps_data[cost_map_id]
 
-	fassert(var_6_3, "Error! Trying to Destroy Unknown Nav Cost Map!")
+	fassert(cost_map_data, "Error! Trying to Destroy Unknown Nav Cost Map!")
 
-	local volumes = var_6_3.volumes
+	local volumes = cost_map_data.volumes
 
 	fassert(table.is_empty(volumes), "Error! You must remove associated Nav Cost Map Volumes before destroying the Nav Cost Map!")
-	GwNavCostMap.destroy(var_6_3.cost_map)
+	GwNavCostMap.destroy(cost_map_data.cost_map)
 
-	self._nav_cost_maps_data[arg_6_1] = nil
-	ids[arg_6_1] = false
-	_nav_cost_map_id_data.size = size - 1
+	self._nav_cost_maps_data[cost_map_id] = nil
+	cost_map_ids[cost_map_id] = false
+	cost_map_id_data.size = cost_map_ids_size - 1
 	self._should_recompute_nav_cost_maps = true
 end
 
-AISystem.add_nav_cost_map_box_volume = function (self, arg_7_1, arg_7_2, arg_7_3)
+AISystem.add_nav_cost_map_box_volume = function (self, transform, scale_vector, cost_map_id)
 	-- function 7
-	local _nav_cost_map_volume_id_data = self._nav_cost_map_volume_id_data
-	local current_id = _nav_cost_map_volume_id_data.current_id
-	local ids = _nav_cost_map_volume_id_data.ids
-	local size = _nav_cost_map_volume_id_data.size
-	local max_size = _nav_cost_map_volume_id_data.max_size
+	local volume_id_data = self._nav_cost_map_volume_id_data
+	local volume_id = volume_id_data.current_id
+	local volume_ids = volume_id_data.ids
+	local volume_ids_size = volume_id_data.size
+	local volume_ids_max_size = volume_id_data.max_size
 
-	fassert(size < max_size, "Error! Too many Nav Cost Map Volumes!")
+	fassert(volume_ids_size < volume_ids_max_size, "Error! Too many Nav Cost Map Volumes!")
 
-	while not ids[current_id] do
-		current_id = current_id % max_size + 1
+	while volume_ids[volume_id] do
+		volume_id = volume_id % volume_ids_max_size + 1
 	end
 
-	local var_7_5 = self._nav_cost_maps_data[arg_7_3]
+	local cost_map_data = self._nav_cost_maps_data[cost_map_id]
 
-	fassert(var_7_5 ~= nil, "Error! Trying to Add Volume to Unknown Nav Cost Map!")
+	fassert(cost_map_data ~= nil, "Error! Trying to Add Volume to Unknown Nav Cost Map!")
 
-	local cost_map = var_7_5.cost_map
-	local create_box_volume = GwNavCostMap.create_box_volume(arg_7_1, arg_7_2)
+	local cost_map = cost_map_data.cost_map
+	local volume = GwNavCostMap.create_box_volume(transform, scale_vector)
 
-	GwNavCostMap.add_volume(cost_map, create_box_volume)
+	GwNavCostMap.add_volume(cost_map, volume)
 
-	var_7_5.recompute = true
-	var_7_5.volumes[current_id] = create_box_volume
-	_nav_cost_map_volume_id_data.size = size + 1
-	_nav_cost_map_volume_id_data.current_id = current_id
-	ids[current_id] = true
+	cost_map_data.recompute = true
+	cost_map_data.volumes[volume_id] = volume
+	volume_id_data.size = volume_ids_size + 1
+	volume_id_data.current_id = volume_id
+	volume_ids[volume_id] = true
 	self._should_recompute_nav_cost_maps = true
 
-	return current_id
+	return volume_id
 end
 
-AISystem.add_nav_cost_map_sphere_volume = function (self, arg_8_1, arg_8_2, arg_8_3)
+AISystem.add_nav_cost_map_sphere_volume = function (self, position, radius, cost_map_id)
 	-- function 8
-	local _nav_cost_map_volume_id_data = self._nav_cost_map_volume_id_data
-	local current_id = _nav_cost_map_volume_id_data.current_id
-	local ids = _nav_cost_map_volume_id_data.ids
-	local size = _nav_cost_map_volume_id_data.size
-	local max_size = _nav_cost_map_volume_id_data.max_size
+	local volume_id_data = self._nav_cost_map_volume_id_data
+	local volume_id = volume_id_data.current_id
+	local volume_ids = volume_id_data.ids
+	local volume_ids_size = volume_id_data.size
+	local volume_ids_max_size = volume_id_data.max_size
 
-	fassert(size < max_size, "Error! Too many Nav Cost Map Volumes!")
+	fassert(volume_ids_size < volume_ids_max_size, "Error! Too many Nav Cost Map Volumes!")
 
-	while not ids[current_id] do
-		current_id = current_id % max_size + 1
+	while volume_ids[volume_id] do
+		volume_id = volume_id % volume_ids_max_size + 1
 	end
 
-	local var_8_5 = self._nav_cost_maps_data[arg_8_3]
+	local cost_map_data = self._nav_cost_maps_data[cost_map_id]
 
-	fassert(var_8_5 ~= nil, "Error! Trying to Add Volume to Unknown Nav Cost Map!")
+	fassert(cost_map_data ~= nil, "Error! Trying to Add Volume to Unknown Nav Cost Map!")
 
-	local cost_map = var_8_5.cost_map
-	local create_sphere_volume = GwNavCostMap.create_sphere_volume(arg_8_1, arg_8_2)
+	local cost_map = cost_map_data.cost_map
+	local volume = GwNavCostMap.create_sphere_volume(position, radius)
 
-	GwNavCostMap.add_volume(cost_map, create_sphere_volume)
+	GwNavCostMap.add_volume(cost_map, volume)
 
-	var_8_5.recompute = true
-	var_8_5.volumes[current_id] = create_sphere_volume
-	_nav_cost_map_volume_id_data.size = size + 1
-	_nav_cost_map_volume_id_data.current_id = current_id
-	ids[current_id] = true
+	cost_map_data.recompute = true
+	cost_map_data.volumes[volume_id] = volume
+	volume_id_data.size = volume_ids_size + 1
+	volume_id_data.current_id = volume_id
+	volume_ids[volume_id] = true
 	self._should_recompute_nav_cost_maps = true
 
-	return current_id
+	return volume_id
 end
 
-AISystem.set_nav_cost_map_volume_transform = function (self, arg_9_1, arg_9_2, arg_9_3)
+AISystem.set_nav_cost_map_volume_transform = function (self, volume_id, cost_map_id, transform)
 	-- function 9
-	local ids = self._nav_cost_map_volume_id_data.ids
+	local volume_id_data = self._nav_cost_map_volume_id_data
+	local volume_ids = volume_id_data.ids
 
-	fassert(ids[arg_9_1], "Error! Trying to Set Transform for Unknown Nav Cost Map Volume!")
+	fassert(volume_ids[volume_id], "Error! Trying to Set Transform for Unknown Nav Cost Map Volume!")
 
-	local var_9_1 = self._nav_cost_maps_data[arg_9_2]
+	local cost_map_data = self._nav_cost_maps_data[cost_map_id]
 
-	fassert(var_9_1 ~= nil, "Error! Trying to Set Transform for Volume from Unknown Nav Cost Map!")
+	fassert(cost_map_data ~= nil, "Error! Trying to Set Transform for Volume from Unknown Nav Cost Map!")
 
-	local var_9_2 = var_9_1.volumes[arg_9_1]
+	local volumes = cost_map_data.volumes
+	local volume = volumes[volume_id]
 
-	GwNavCostMap.set_volume_transform(var_9_2, arg_9_3)
+	GwNavCostMap.set_volume_transform(volume, transform)
 
-	local cost_map = var_9_1.cost_map
+	local cost_map = cost_map_data.cost_map
 
-	var_9_1.recompute = true
+	cost_map_data.recompute = true
 	self._should_recompute_nav_cost_maps = true
 end
 
-AISystem.set_nav_cost_map_volume_scale = function (self, arg_10_1, arg_10_2, arg_10_3)
+AISystem.set_nav_cost_map_volume_scale = function (self, volume_id, cost_map_id, scale)
 	-- function 10
-	local ids = self._nav_cost_map_volume_id_data.ids
+	local volume_id_data = self._nav_cost_map_volume_id_data
+	local volume_ids = volume_id_data.ids
 
-	fassert(ids[arg_10_1], "Error! Trying to Set Scale for Unknown Nav Cost Map Volume!")
+	fassert(volume_ids[volume_id], "Error! Trying to Set Scale for Unknown Nav Cost Map Volume!")
 
-	local var_10_1 = self._nav_cost_maps_data[arg_10_2]
+	local cost_map_data = self._nav_cost_maps_data[cost_map_id]
 
-	fassert(var_10_1 ~= nil, "Error! Trying to Set Scale for Volume from Unknown Nav Cost Map!")
+	fassert(cost_map_data ~= nil, "Error! Trying to Set Scale for Volume from Unknown Nav Cost Map!")
 
-	local var_10_2 = var_10_1.volumes[arg_10_1]
+	local volumes = cost_map_data.volumes
+	local volume = volumes[volume_id]
 
-	GwNavCostMap.set_volume_scale(var_10_2, arg_10_3)
+	GwNavCostMap.set_volume_scale(volume, scale)
 
-	local cost_map = var_10_1.cost_map
+	local cost_map = cost_map_data.cost_map
 
-	var_10_1.recompute = true
+	cost_map_data.recompute = true
 	self._should_recompute_nav_cost_maps = true
 end
 
-AISystem.remove_nav_cost_map_volume = function (self, arg_11_1, arg_11_2)
+AISystem.remove_nav_cost_map_volume = function (self, volume_id, cost_map_id)
 	-- function 11
-	local _nav_cost_map_volume_id_data = self._nav_cost_map_volume_id_data
-	local size = _nav_cost_map_volume_id_data.size
-	local ids = _nav_cost_map_volume_id_data.ids
+	local volume_id_data = self._nav_cost_map_volume_id_data
+	local volume_id_size = volume_id_data.size
+	local volume_ids = volume_id_data.ids
 
-	fassert(ids[arg_11_1], "Error! Trying to Remove Unknown Nav Cost Map Volume!")
+	fassert(volume_ids[volume_id], "Error! Trying to Remove Unknown Nav Cost Map Volume!")
 
-	local var_11_3 = self._nav_cost_maps_data[arg_11_2]
+	local cost_map_data = self._nav_cost_maps_data[cost_map_id]
 
-	fassert(var_11_3 ~= nil, "Error! Trying to Remove Volume from Unknown Nav Cost Map!")
+	fassert(cost_map_data ~= nil, "Error! Trying to Remove Volume from Unknown Nav Cost Map!")
 
-	local var_11_4 = var_11_3.volumes[arg_11_1]
-	local cost_map = var_11_3.cost_map
+	local volumes = cost_map_data.volumes
+	local volume = volumes[volume_id]
+	local cost_map = cost_map_data.cost_map
 
-	GwNavCostMap.remove_volume(cost_map, var_11_4)
-	GwNavCostMap.destroy_volume(var_11_4)
+	GwNavCostMap.remove_volume(cost_map, volume)
+	GwNavCostMap.destroy_volume(volume)
 
-	var_11_3.recompute = true
-	var_11_3.volumes[arg_11_1] = nil
-	ids[arg_11_1] = false
-	_nav_cost_map_volume_id_data.size = size - 1
+	cost_map_data.recompute = true
+	cost_map_data.volumes[volume_id] = nil
+	volume_ids[volume_id] = false
+	volume_id_data.size = volume_id_size - 1
 	self._should_recompute_nav_cost_maps = true
 end
 
 AISystem._recompute_nav_cost_maps = function (self)
 	-- function 12
-	local _nav_cost_maps_data = self._nav_cost_maps_data
+	local nav_cost_maps_data = self._nav_cost_maps_data
 
-	for i = 1, num_2 do
-		local var_12_1 = _nav_cost_maps_data[i]
+	for i = 1, NAV_COST_MAP_MAX_COST_MAPS do
+		local cost_map_data = nav_cost_maps_data[i]
 
-		if not var_12_1 and not var_12_1.recompute then
-			local cost_map = var_12_1.cost_map
+		if cost_map_data and cost_map_data.recompute then
+			local cost_map = cost_map_data.cost_map
 
 			GwNavCostMap.recompute(cost_map)
 
-			var_12_1.recompute = false
+			cost_map_data.recompute = false
 		end
 	end
 end
 
-AISystem._initialize_client_traverse_logic = function (self, arg_13_1)
+AISystem._initialize_client_traverse_logic = function (self, nav_world)
 	-- function 13
-	local tbl = {
+	local nav_tag_layer_costs = {
 		bot_poison_wind = 1,
 		bot_ratling_gun_fire = 1,
 		fire_grenade = 1
 	}
 
-	table.merge(tbl, NAV_TAG_VOLUME_LAYER_COST_AI)
+	table.merge(nav_tag_layer_costs, NAV_TAG_VOLUME_LAYER_COST_AI)
 
-	local var_13_1 = GwNavTagLayerCostTable.create()
+	local navtag_layer_cost_table = GwNavTagLayerCostTable.create()
 
-	self._navtag_layer_cost_table = var_13_1
+	self._navtag_layer_cost_table = navtag_layer_cost_table
 
-	AiUtils.initialize_cost_table(var_13_1, tbl)
+	AiUtils.initialize_cost_table(navtag_layer_cost_table, nav_tag_layer_costs)
 
-	local create_tag_cost_table = GwNavCostMap.create_tag_cost_table()
+	local nav_cost_map_cost_table = GwNavCostMap.create_tag_cost_table()
 
-	self._nav_cost_map_cost_table = create_tag_cost_table
+	self._nav_cost_map_cost_table = nav_cost_map_cost_table
 
-	AiUtils.initialize_nav_cost_map_cost_table(create_tag_cost_table, nil, 1)
+	AiUtils.initialize_nav_cost_map_cost_table(nav_cost_map_cost_table, nil, 1)
 
-	self._traverse_logic = GwNavTraverseLogic.create(arg_13_1, create_tag_cost_table)
+	self._traverse_logic = GwNavTraverseLogic.create(nav_world, nav_cost_map_cost_table)
 
-	GwNavTraverseLogic.set_navtag_layer_cost_table(self._traverse_logic, var_13_1)
+	GwNavTraverseLogic.set_navtag_layer_cost_table(self._traverse_logic, navtag_layer_cost_table)
 end
 
 AISystem.destroy = function (self)
 	-- function 14
 	AISystem.super.destroy(self)
 
-	if not self.ai_debugger then
+	if self.ai_debugger then
 		self.ai_debugger:destroy()
 	end
 
@@ -476,13 +519,13 @@ AISystem.destroy = function (self)
 
 	Managers.state.bot_nav_transition:clear_transitions()
 
-	local _nav_cost_maps_data = self._nav_cost_maps_data
+	local nav_cost_maps_data = self._nav_cost_maps_data
 
-	for i = 1, num_2 do
-		local var_14_1 = _nav_cost_maps_data[i]
+	for i = 1, NAV_COST_MAP_MAX_COST_MAPS do
+		local cost_map_data = nav_cost_maps_data[i]
 
-		if not var_14_1 then
-			local cost_map = var_14_1.cost_map
+		if cost_map_data then
+			local cost_map = cost_map_data.cost_map
 
 			GwNavCostMap.destroy(cost_map)
 		end
@@ -490,13 +533,13 @@ AISystem.destroy = function (self)
 
 	self._nav_cost_maps_data = nil
 
-	if not self._nav_data then
-		local _nav_data = self._nav_data
+	if self._nav_data then
+		local nav_data = self._nav_data
 
-		for j = 1, #_nav_data do
-			local var_14_4 = _nav_data[j]
+		for i = 1, #nav_data do
+			local data = nav_data[i]
 
-			GwNavWorld.remove_navdata(nil, var_14_4)
+			GwNavWorld.remove_navdata(nil, data)
 		end
 	end
 
@@ -505,502 +548,537 @@ AISystem.destroy = function (self)
 
 	self._network_event_delegate = nil
 
-	if not (self.is_server or self._traverse_logic == nil) then
+	if not self.is_server and self._traverse_logic ~= nil then
 		GwNavTagLayerCostTable.destroy(self._navtag_layer_cost_table)
 		GwNavCostMap.destroy_tag_cost_table(self._nav_cost_map_cost_table)
 		GwNavTraverseLogic.destroy(self._traverse_logic)
 	end
 end
 
-AISystem.on_add_extension = function (self, arg_15_1, arg_15_2, arg_15_3, arg_15_4)
+AISystem.on_add_extension = function (self, world, unit, extension_name, extension_init_data)
 	-- function 15
-	local on_add_extension = AISystem.super.on_add_extension(self, arg_15_1, arg_15_2, arg_15_3, arg_15_4)
+	local extension = AISystem.super.on_add_extension(self, world, unit, extension_name, extension_init_data)
 
-	self.unit_extension_data[arg_15_2] = on_add_extension
+	self.unit_extension_data[unit] = extension
 
-	if not on_add_extension.is_husk then
-		if not on_add_extension.is_bot then
-			self.ai_blackboard_updates[#self.ai_blackboard_updates + 1] = arg_15_2
+	if not extension.is_husk then
+		if not extension.is_bot then
+			self.ai_blackboard_updates[#self.ai_blackboard_updates + 1] = unit
 		end
 
-		local blackboard = on_add_extension:blackboard()
+		local blackboard = extension:blackboard()
 
-		self.blackboards[arg_15_2] = blackboard
+		self.blackboards[unit] = blackboard
 
-		self:set_default_blackboard_values(arg_15_2, blackboard)
+		self:set_default_blackboard_values(unit, blackboard)
 	end
 
-	if arg_15_3 == "AISimpleExtension" then
-		self.ai_units_alive[arg_15_2] = on_add_extension
+	if extension_name == "AISimpleExtension" then
+		self.ai_units_alive[unit] = extension
 
-		local _breed = on_add_extension._breed
+		local breed = extension._breed
 
-		if not _breed.perception_continuous then
-			self.ai_units_perception_continuous[arg_15_2] = on_add_extension
+		if breed.perception_continuous then
+			self.ai_units_perception_continuous[unit] = extension
 		else
-			self.ai_units_perception[arg_15_2] = on_add_extension
+			self.ai_units_perception[unit] = extension
 		end
 
-		if not _breed.immediate_threat then
-			AiUtils.activate_unit(on_add_extension._blackboard)
+		if breed.immediate_threat then
+			AiUtils.activate_unit(extension._blackboard)
 		end
 
-		local hot_join_sync = _breed.hot_join_sync
+		local sync_func = breed.hot_join_sync
 
-		if not hot_join_sync then
-			self._hot_join_sync_units[arg_15_2] = hot_join_sync
+		if sync_func then
+			self._hot_join_sync_units[unit] = sync_func
 		end
 
 		self.num_perception_units = self.num_perception_units + 1
 	end
 
-	return on_add_extension
+	return extension
 end
 
-AISystem.use_perception_continuous = function (self, arg_16_1, arg_16_2)
+AISystem.use_perception_continuous = function (self, unit, set)
 	-- function 16
-	local var_16_0 = self.ai_units_alive[arg_16_1]
+	local extension = self.ai_units_alive[unit]
 
-	if not arg_16_2 then
-		self.ai_units_perception_continuous[arg_16_1] = var_16_0
-		self.ai_units_perception[arg_16_1] = nil
+	if set then
+		self.ai_units_perception_continuous[unit] = extension
+		self.ai_units_perception[unit] = nil
 	else
-		self.ai_units_perception_continuous[arg_16_1] = nil
-		self.ai_units_perception[arg_16_1] = var_16_0
+		self.ai_units_perception_continuous[unit] = nil
+		self.ai_units_perception[unit] = extension
 	end
 end
 
-AISystem.set_default_blackboard_values = function (arg_17_0, arg_17_1, arg_17_2)
+AISystem.set_default_blackboard_values = function (self, unit, blackboard)
 	-- function 17
-	arg_17_2.destination_dist = 0
-	arg_17_2.current_health_percent = 1
-	arg_17_2.have_slot = 0
-	arg_17_2.wait_slot_distance = math.huge
-	arg_17_2.target_dist = math.huge
-	arg_17_2.target_dist_z_abs = math.huge
-	arg_17_2.target_dist_xy_sq = math.huge
-	arg_17_2.ally_distance = math.huge
-	arg_17_2.move_speed = 0
-	arg_17_2.total_slots_count = 0
-	arg_17_2.total_occupied_slots = 0
-	arg_17_2.target_num_occupied_slots = 0
-	arg_17_2.target_num_disabled_slots = 0
-	arg_17_2.target_speed_away = 0
-	arg_17_2.target_speed_away_small_sample = 0
-	arg_17_2.spawn = true
-	arg_17_2.about_to_be_destroyed = nil
+	blackboard.destination_dist = 0
+	blackboard.current_health_percent = 1
+	blackboard.have_slot = 0
+	blackboard.wait_slot_distance = math.huge
+	blackboard.target_dist = math.huge
+	blackboard.target_dist_z_abs = math.huge
+	blackboard.target_dist_xy_sq = math.huge
+	blackboard.ally_distance = math.huge
+	blackboard.move_speed = 0
+	blackboard.total_slots_count = 0
+	blackboard.total_occupied_slots = 0
+	blackboard.target_num_occupied_slots = 0
+	blackboard.target_num_disabled_slots = 0
+	blackboard.target_speed_away = 0
+	blackboard.target_speed_away_small_sample = 0
+	blackboard.spawn = true
+	blackboard.about_to_be_destroyed = nil
 	UNIT_UNIQUE_IDS = UNIT_UNIQUE_IDS + 1
-	arg_17_2.unique_id = UNIT_UNIQUE_IDS
+	blackboard.unique_id = UNIT_UNIQUE_IDS
 end
 
-AISystem.on_remove_extension = function (self, arg_18_1, arg_18_2)
+AISystem.on_remove_extension = function (self, unit, extension_name)
 	-- function 18
-	local var_18_0 = self.unit_extension_data[arg_18_1]
+	local var_18_0 = self.unit_extension_data[unit]
 
-	var_18_0 = var_18_0 or self.frozen_unit_extension_data[arg_18_1]
+	if not var_18_0 then
+		-- Nothing
+	end
 
-	var_18_0:unit_removed_from_game()
-	self:_cleanup_extension(arg_18_1, arg_18_2)
+	var_18_0 = self.frozen_unit_extension_data[unit]
 
-	self.blackboards[arg_18_1] = nil
+	local ext = var_18_0
 
-	AISystem.super.on_remove_extension(self, arg_18_1, arg_18_2)
+	::label_18_0::
+
+	ext:unit_removed_from_game()
+	self:_cleanup_extension(unit, extension_name)
+
+	self.blackboards[unit] = nil
+
+	AISystem.super.on_remove_extension(self, unit, extension_name)
 end
 
-AISystem.on_freeze_extension = function (self, arg_19_1, arg_19_2)
+AISystem.on_freeze_extension = function (self, unit, extension_name)
 	-- function 19
-	local var_19_0 = self.unit_extension_data[arg_19_1]
+	local extension = self.unit_extension_data[unit]
 
-	fassert(var_19_0, "Unit was already frozen.")
+	fassert(extension, "Unit was already frozen.")
 
-	self.frozen_unit_extension_data[arg_19_1] = var_19_0
+	self.frozen_unit_extension_data[unit] = extension
 
-	self:_cleanup_extension(arg_19_1, arg_19_2)
+	self:_cleanup_extension(unit, extension_name)
 end
 
-AISystem._cleanup_extension = function (self, arg_20_1, arg_20_2)
+AISystem._cleanup_extension = function (self, unit, extension_name)
 	-- function 20
-	if self.unit_extension_data[arg_20_1] == nil then
+	if self.unit_extension_data[unit] == nil then
 		return
 	end
 
-	local var_20_0 = self.unit_extension_data[arg_20_1]
+	local extension = self.unit_extension_data[unit]
 
-	if not var_20_0.broadphase_id then
-		Broadphase.remove(self.broadphase, var_20_0.broadphase_id)
+	if extension.broadphase_id then
+		Broadphase.remove(self.broadphase, extension.broadphase_id)
 
-		var_20_0.broadphase_id = nil
+		extension.broadphase_id = nil
 	end
 
-	self._hot_join_sync_units[arg_20_1] = nil
-	self.unit_extension_data[arg_20_1] = nil
+	self._hot_join_sync_units[unit] = nil
+	self.unit_extension_data[unit] = nil
 
-	if arg_20_2 == "AISimpleExtension" then
-		if not USE_ENGINE_SLOID_SYSTEM then
-			notify_attackers(arg_20_1, Managers.state.conflict.dogpiled_attackers_on_unit)
+	if extension_name == "AISimpleExtension" then
+		if USE_ENGINE_SLOID_SYSTEM then
+			notify_attackers(unit, Managers.state.conflict.dogpiled_attackers_on_unit)
 		else
-			Managers.state.conflict.gathering:notify_attackers(arg_20_1)
+			Managers.state.conflict.gathering:notify_attackers(unit)
 		end
 
-		local var_20_1 = self.blackboards[arg_20_1]
+		local blackboard = self.blackboards[unit]
 
-		if not var_20_1 then
-			var_20_1.activation_lock = true
+		if blackboard then
+			blackboard.activation_lock = true
 
-			AiUtils.deactivate_unit(var_20_1)
+			AiUtils.deactivate_unit(blackboard)
 		end
 
 		local ai_blackboard_updates = self.ai_blackboard_updates
-		local count = #ai_blackboard_updates
+		local ai_blackboard_updates_n = #ai_blackboard_updates
 		local ai_blackboard_prioritized_updates = self.ai_blackboard_prioritized_updates
-		local count_2 = #ai_blackboard_prioritized_updates
+		local ai_blackboard_prioritized_updates_n = #ai_blackboard_prioritized_updates
 
-		for i = 1, count do
-			if ai_blackboard_updates[i] == arg_20_1 then
-				ai_blackboard_updates[i] = ai_blackboard_updates[count]
-				ai_blackboard_updates[count] = nil
-
-				break
-			end
-		end
-
-		for j = 1, count_2 do
-			if ai_blackboard_prioritized_updates[j] == arg_20_1 then
-				ai_blackboard_prioritized_updates[j] = ai_blackboard_prioritized_updates[count_2]
-				ai_blackboard_prioritized_updates[count_2] = nil
+		for i = 1, ai_blackboard_updates_n do
+			if ai_blackboard_updates[i] == unit then
+				ai_blackboard_updates[i] = ai_blackboard_updates[ai_blackboard_updates_n]
+				ai_blackboard_updates[ai_blackboard_updates_n] = nil
 
 				break
 			end
 		end
 
-		self.ai_units_alive[arg_20_1] = nil
-		self.ai_units_perception[arg_20_1] = nil
-		self.ai_units_perception_continuous[arg_20_1] = nil
-		self.ai_units_perception_prioritized[arg_20_1] = nil
+		for i = 1, ai_blackboard_prioritized_updates_n do
+			if ai_blackboard_prioritized_updates[i] == unit then
+				ai_blackboard_prioritized_updates[i] = ai_blackboard_prioritized_updates[ai_blackboard_prioritized_updates_n]
+				ai_blackboard_prioritized_updates[ai_blackboard_prioritized_updates_n] = nil
+
+				break
+			end
+		end
+
+		self.ai_units_alive[unit] = nil
+		self.ai_units_perception[unit] = nil
+		self.ai_units_perception_continuous[unit] = nil
+		self.ai_units_perception_prioritized[unit] = nil
 		self.num_perception_units = self.num_perception_units - 1
 	end
 end
 
-AISystem.freeze = function (self, arg_21_1, arg_21_2, arg_21_3)
+AISystem.freeze = function (self, unit, extension_name, reason)
 	-- function 21
-	local frozen_unit_extension_data = self.frozen_unit_extension_data
-	local var_21_1 = frozen_unit_extension_data[arg_21_1]
+	local frozen_extensions = self.frozen_unit_extension_data
+	local frozen_extension = frozen_extensions[unit]
 
-	if not var_21_1 then
-		var_21_1:unit_removed_from_game()
+	if frozen_extension then
+		frozen_extension:unit_removed_from_game()
 
 		return
 	end
 
-	local get_attributes = self:get_attributes(arg_21_1)
+	local attributes = self:get_attributes(unit)
 
-	for k, v in pairs(get_attributes) do
-		for k_2 in pairs(v) do
-			self:set_attribute(arg_21_1, k_2, k, nil, true)
+	for category_id, attribute_ids in pairs(attributes) do
+		for attribute_id in pairs(attribute_ids) do
+			self:set_attribute(unit, attribute_id, category_id, nil, true)
 		end
 	end
 
-	local var_21_3 = self.unit_extension_data[arg_21_1]
+	local extension = self.unit_extension_data[unit]
 
-	frozen_unit_extension_data[arg_21_1] = var_21_3
+	frozen_extensions[unit] = extension
 
-	if not var_21_3.freeze then
-		var_21_3:freeze(arg_21_1)
+	if extension.freeze then
+		extension:freeze(unit)
 	end
 
-	self:_cleanup_extension(arg_21_1, arg_21_2)
-	var_21_3:unit_removed_from_game()
+	self:_cleanup_extension(unit, extension_name)
+	extension:unit_removed_from_game()
 end
 
-AISystem.unfreeze = function (self, arg_22_1, arg_22_2, arg_22_3)
+AISystem.unfreeze = function (self, unit, extension_name, data)
 	-- function 22
-	local var_22_0 = self.frozen_unit_extension_data[arg_22_1]
+	local extension = self.frozen_unit_extension_data[unit]
 
-	fassert(var_22_0, "Unit to unfreeze didn't have frozen extension")
+	fassert(extension, "Unit to unfreeze didn't have frozen extension")
 
-	self.frozen_unit_extension_data[arg_22_1] = nil
-	self.unit_extension_data[arg_22_1] = var_22_0
+	self.frozen_unit_extension_data[unit] = nil
+	self.unit_extension_data[unit] = extension
 
-	if not var_22_0.unfreeze then
-		var_22_0:unfreeze(arg_22_1, arg_22_3)
+	if extension.unfreeze then
+		extension:unfreeze(unit, data)
 	end
 
-	if arg_22_2 == "AISimpleExtension" then
-		fassert(not var_22_0.is_husk, "bot freeze?")
+	if extension_name == "AISimpleExtension" then
+		fassert(not extension.is_husk, "bot freeze?")
 
-		self.ai_units_alive[arg_22_1] = var_22_0
+		self.ai_units_alive[unit] = extension
 		self.num_perception_units = self.num_perception_units + 1
-		self.ai_blackboard_updates[#self.ai_blackboard_updates + 1] = arg_22_1
+		self.ai_blackboard_updates[#self.ai_blackboard_updates + 1] = unit
 
-		local _breed = var_22_0._breed
+		local breed = extension._breed
 
-		if not _breed.perception_continuous then
-			self.ai_units_perception_continuous[arg_22_1] = var_22_0
+		if breed.perception_continuous then
+			self.ai_units_perception_continuous[unit] = extension
 		else
-			self.ai_units_perception[arg_22_1] = var_22_0
+			self.ai_units_perception[unit] = extension
 		end
 
-		var_22_0._blackboard.activation_lock = nil
+		extension._blackboard.activation_lock = nil
 
-		if not _breed.immediate_threat then
-			AiUtils.activate_unit(var_22_0._blackboard)
+		if breed.immediate_threat then
+			AiUtils.activate_unit(extension._blackboard)
 		end
 
-		local hot_join_sync = _breed.hot_join_sync
+		local sync_func = breed.hot_join_sync
 
-		if not hot_join_sync then
-			self._hot_join_sync_units[arg_22_1] = hot_join_sync
+		if sync_func then
+			self._hot_join_sync_units[unit] = sync_func
 		end
 
-		self:set_default_blackboard_values(arg_22_1, var_22_0._blackboard)
+		self:set_default_blackboard_values(unit, extension._blackboard)
 
 		self.num_perception_units = self.num_perception_units + 1
 	end
 
-	if not var_22_0._health_extension then
-		local var_22_3 = Managers.state.side.side_by_unit[arg_22_1]
+	if extension._health_extension then
+		local side = Managers.state.side.side_by_unit[unit]
 
-		var_22_0.broadphase_id = Broadphase.add(self.broadphase, arg_22_1, POSITION_LOOKUP[arg_22_1], 1, var_22_3.broadphase_category)
+		extension.broadphase_id = Broadphase.add(self.broadphase, unit, POSITION_LOOKUP[unit], 1, side.broadphase_category)
 	end
 end
 
-AISystem.register_prioritized_perception_unit_update = function (arg_23_0, arg_23_1, arg_23_2)
+AISystem.register_prioritized_perception_unit_update = function (self, unit, ai_extension)
 	-- function 23
-	arg_23_0.ai_units_perception_prioritized[arg_23_1] = arg_23_2
+	self.ai_units_perception_prioritized[unit] = ai_extension
 end
 
-AISystem.update = function (self, arg_24_1, arg_24_2)
+AISystem.update = function (self, context, t)
 	-- function 24
-	local dt = arg_24_1.dt
+	local dt = context.dt
 
-	if not flag then
+	if not ai_trees_created then
 		self:create_all_trees()
 	end
 
-	self:update_extension("PlayerBotBase", dt, arg_24_1, arg_24_2)
-	self:update_extension("AiHuskBaseExtension", dt, arg_24_1, arg_24_2)
+	self:update_extension("PlayerBotBase", dt, context, t)
+	self:update_extension("AiHuskBaseExtension", dt, context, t)
 
-	if not (not self._should_recompute_nav_cost_maps and not (arg_24_2 > self._previous_nav_cost_map_recomputation_t + num_3)) then
+	if self._should_recompute_nav_cost_maps and t > self._previous_nav_cost_map_recomputation_t + NAV_COST_MAP_RECOMPUTATION_INTERVAL then
 		self:_recompute_nav_cost_maps()
 
 		self._should_recompute_nav_cost_maps = false
-		self._previous_nav_cost_map_recomputation_t = arg_24_2
+		self._previous_nav_cost_map_recomputation_t = t
 	end
 
 	self:update_alive()
-	self:update_perception(arg_24_2, dt)
-	self:update_brains(arg_24_2, dt)
+	self:update_perception(t, dt)
+	self:update_brains(t, dt)
 	self:update_game_objects()
 	self:update_broadphase()
 
-	if not script_data.debug_enabled then
-		self:update_debug_unit(arg_24_2)
-		self:update_debug_draw(arg_24_2)
+	if script_data.debug_enabled then
+		self:update_debug_unit(t)
+		self:update_debug_draw(t)
 	end
 
-	for k, v in pairs(self._units_to_destroy) do
-		local var_24_1 = self.ai_units_alive[v]
+	for id, unit in pairs(self._units_to_destroy) do
+		local extension = self.ai_units_alive[unit]
 
-		Managers.state.conflict:destroy_unit(v, var_24_1._blackboard, "intentionally_destroyed")
+		Managers.state.conflict:destroy_unit(unit, extension._blackboard, "intentionally_destroyed")
 
-		self._units_to_destroy[k] = nil
+		self._units_to_destroy[id] = nil
 	end
 end
 
-AISystem.physics_async_update = function (self, arg_25_1, arg_25_2)
+AISystem.physics_async_update = function (self, context, t)
 	-- function 25
-	local dt = arg_25_1.dt
+	local dt = context.dt
 
-	self:update_ai_blackboards_prioritized(arg_25_2, dt)
-	self:update_ai_blackboards(arg_25_2, dt)
+	self:update_ai_blackboards_prioritized(t, dt)
+	self:update_ai_blackboards(t, dt)
 end
 
 AISystem.update_alive = function (self)
 	-- function 26
-	for k, v in pairs(self.ai_units_alive) do
-		if not (v._health_extension == nil or HEALTH_ALIVE[k]) then
-			self.ai_units_alive[k] = nil
-			self.ai_units_perception[k] = nil
-			self.ai_units_perception_continuous[k] = nil
-			self.ai_units_perception_prioritized[k] = nil
+	for unit, extension in pairs(self.ai_units_alive) do
+		local is_alive = extension._health_extension == nil or not not HEALTH_ALIVE[unit]
+
+		if not is_alive then
+			self.ai_units_alive[unit] = nil
+			self.ai_units_perception[unit] = nil
+			self.ai_units_perception_continuous[unit] = nil
+			self.ai_units_perception_prioritized[unit] = nil
 		end
 	end
 end
 
-AISystem._update_taunt = function (arg_27_0, arg_27_1, arg_27_2)
+AISystem._update_taunt = function (self, t, blackboard)
 	-- function 27
-	local taunt_end_time = arg_27_2.taunt_end_time
-	local taunt_unit = arg_27_2.taunt_unit
+	local taunt_end_time = blackboard.taunt_end_time
+	local taunt_unit = blackboard.taunt_unit
 
-	if not (not taunt_end_time and taunt_end_time < arg_27_1 or Unit.alive(taunt_unit)) then
-		arg_27_2.taunt_unit = nil
-		arg_27_2.taunt_end_time = nil
-	elseif not taunt_end_time then
-		arg_27_2.target_unit = arg_27_2.taunt_unit
+	if taunt_end_time and (taunt_end_time < t or not Unit.alive(taunt_unit)) then
+		blackboard.taunt_unit = nil
+		blackboard.taunt_end_time = nil
+	elseif taunt_end_time then
+		blackboard.target_unit = blackboard.taunt_unit
 	end
 end
 
-AISystem.update_perception = function (self, arg_28_1, arg_28_2)
+AISystem.update_perception = function (self, t, dt)
 	-- function 28
 	local PerceptionUtils = PerceptionUtils
 	local ai_units_perception = self.ai_units_perception
 
-	for k, v in pairs(self.ai_units_perception_continuous) do
-		local _blackboard = v._blackboard
-		local _breed = v._breed
+	for unit, extension in pairs(self.ai_units_perception_continuous) do
+		local blackboard = extension._blackboard
+		local breed = extension._breed
+		local perception_continuous_name = breed.perception_continuous
+		local perception_function = PerceptionUtils[perception_continuous_name]
+		local needs_perception = perception_function(unit, blackboard, breed, t, dt)
 
-		ai_units_perception[k] = not PerceptionUtils[_breed.perception_continuous](k, _blackboard, _breed, arg_28_1, arg_28_2) and v and nil
+		ai_units_perception[unit] = (not needs_perception or not extension) and not not nil
 
-		self:_update_taunt(arg_28_1, _blackboard)
+		self:_update_taunt(t, blackboard)
 	end
 
 	local ai_units_perception_prioritized = self.ai_units_perception_prioritized
 
-	for k_2, v_2 in pairs(ai_units_perception_prioritized) do
-		local _blackboard_2 = v_2._blackboard
-		local _breed_2 = v_2._breed
-		local _target_selection_func_name = v_2._target_selection_func_name
-		local var_28_8 = PerceptionUtils[v_2._perception_func_name]
-		local var_28_9 = PerceptionUtils[_target_selection_func_name]
+	for unit, extension in pairs(ai_units_perception_prioritized) do
+		local blackboard = extension._blackboard
+		local breed = extension._breed
+		local target_selection_func_name = extension._target_selection_func_name
+		local perception_func_name = extension._perception_func_name
+		local perception_function = PerceptionUtils[perception_func_name]
+		local target_selection_function = PerceptionUtils[target_selection_func_name]
 
-		var_28_8(k_2, _blackboard_2, _breed_2, var_28_9, arg_28_1, arg_28_2)
-		self:_update_taunt(arg_28_1, _blackboard_2)
+		perception_function(unit, blackboard, breed, target_selection_function, t, dt)
+		self:_update_taunt(t, blackboard)
 
-		ai_units_perception_prioritized[k_2] = nil
+		ai_units_perception_prioritized[unit] = nil
 	end
 
 	local current_perception_unit = self.current_perception_unit
 
-	current_perception_unit = self.ai_units_perception[current_perception_unit] == nil or not current_perception_unit or nil
+	current_perception_unit = (self.ai_units_perception[current_perception_unit] == nil or not current_perception_unit) and not not nil
 
-	local num = 1
+	local TIME_BETWEEN_UPDATE = 1
 	local num_perception_units = self.num_perception_units
-	local ceil = math.ceil(num_perception_units * arg_28_2 / num)
+	local num_to_update = math.ceil(num_perception_units * dt / TIME_BETWEEN_UPDATE)
 
-	for i4 = 1, ceil do
+	for i = 1, num_to_update do
 		current_perception_unit = next(ai_units_perception, current_perception_unit)
 
 		if current_perception_unit == nil then
 			break
 		end
 
-		local var_28_14 = ai_units_perception[current_perception_unit]
-		local _blackboard_3 = var_28_14._blackboard
-		local _breed_3 = var_28_14._breed
-		local override_target_selection_name = _blackboard_3.override_target_selection_name
+		local extension = ai_units_perception[current_perception_unit]
+		local blackboard = extension._blackboard
+		local breed = extension._breed
+		local override_target_selection_name = blackboard.override_target_selection_name
 
-		override_target_selection_name = override_target_selection_name or var_28_14._target_selection_func_name
+		if not override_target_selection_name then
+			-- Nothing
+		end
 
-		local var_28_18 = PerceptionUtils[var_28_14._perception_func_name]
-		local var_28_19 = PerceptionUtils[override_target_selection_name]
+		override_target_selection_name = extension._target_selection_func_name
 
-		var_28_18(current_perception_unit, _blackboard_3, _breed_3, var_28_19, arg_28_1, arg_28_2)
-		self:_update_taunt(arg_28_1, _blackboard_3)
+		local target_selection_func_name = override_target_selection_name
+
+		::label_28_0::
+
+		local perception_func_name = extension._perception_func_name
+		local perception_function = PerceptionUtils[perception_func_name]
+		local target_selection_function = PerceptionUtils[target_selection_func_name]
+
+		perception_function(current_perception_unit, blackboard, breed, target_selection_function, t, dt)
+		self:_update_taunt(t, blackboard)
 	end
 
 	self.current_perception_unit = current_perception_unit
 end
 
-AISystem.update_brains = function (self, arg_29_1, arg_29_2)
+AISystem.update_brains = function (self, t, dt)
 	-- function 29
-	local num = 0
-	local num_2 = 0
+	local number_ordinary_aggroed_enemies = 0
+	local number_special_aggored_enemies = 0
 
-	for k, v in pairs(self.ai_units_alive) do
-		local _bt = v._brain._bt
-		local _blackboard = v._blackboard
+	for unit, extension in pairs(self.ai_units_alive) do
+		local bt = extension._brain._bt
+		local blackboard = extension._blackboard
 
-		if _blackboard.activated ~= nil then
-			if not _blackboard.activated then
-				AiUtils.enter_combat(k, _blackboard)
+		if blackboard.activated ~= nil then
+			if blackboard.activated then
+				AiUtils.enter_combat(unit, blackboard)
 			else
-				AiUtils.enter_passive(k, _blackboard)
+				AiUtils.enter_passive(unit, blackboard)
 			end
 
-			_blackboard.activated = nil
+			blackboard.activated = nil
 		end
 
-		local evaluate = _bt:root():evaluate(k, _blackboard, arg_29_1, arg_29_2)
-		local breed = _blackboard.breed
+		local result = bt:root():evaluate(unit, blackboard, t, dt)
+		local breed = blackboard.breed
 
-		if not breed.special then
-			if not _blackboard.target_unit then
-				num_2 = num_2 + 1
+		if breed.special then
+			if blackboard.target_unit then
+				number_special_aggored_enemies = number_special_aggored_enemies + 1
 			end
-		elseif not _blackboard.target_unit and not _blackboard.confirmed_player_sighting then
-			num = num + 1
+		elseif blackboard.target_unit and blackboard.confirmed_player_sighting then
+			number_ordinary_aggroed_enemies = number_ordinary_aggroed_enemies + 1
 		end
 
-		if not breed.run_on_game_update then
-			breed.run_on_game_update(k, _blackboard, arg_29_1, arg_29_2)
+		if breed.run_on_game_update then
+			breed.run_on_game_update(unit, blackboard, t, dt)
 		end
 	end
 
-	self.number_ordinary_aggroed_enemies = num
-	self.number_special_aggored_enemies = num_2
+	self.number_ordinary_aggroed_enemies = number_ordinary_aggroed_enemies
+	self.number_special_aggored_enemies = number_special_aggored_enemies
 end
 
 AISystem.update_game_objects = function (self)
 	-- function 30
 	local game = Managers.state.network:game()
-	local bt_action_names = NetworkLookup.bt_action_names
-	local set_game_object_field = GameSession.set_game_object_field
+	local NetworkLookup_bt_action_names = NetworkLookup.bt_action_names
+	local GameSession_set_game_object_field = GameSession.set_game_object_field
 	local unit_storage = Managers.state.unit_storage
 
-	for k, v in pairs(self.ai_units_alive) do
-		local go_id = unit_storage:go_id(k)
-		local var_30_5 = bt_action_names[v:current_action_name()]
+	for unit, extension in pairs(self.ai_units_alive) do
+		local game_object_id = unit_storage:go_id(unit)
+		local action_name = extension:current_action_name()
+		local action_id = NetworkLookup_bt_action_names[action_name]
 
-		set_game_object_field(game, go_id, "bt_action_name", var_30_5)
+		GameSession_set_game_object_field(game, game_object_id, "bt_action_name", action_id)
 
-		local target_unit = BLACKBOARDS[k].target_unit
-		local go_id_2 = unit_storage:go_id(target_unit)
+		local bb = BLACKBOARDS[unit]
+		local target_unit = bb.target_unit
+		local go_id = unit_storage:go_id(target_unit)
 
-		go_id_2 = go_id_2 or NetworkConstants.invalid_game_object_id
+		if not go_id then
+			-- Nothing
+		end
 
-		set_game_object_field(game, go_id, "target_unit_id", go_id_2)
+		go_id = NetworkConstants.invalid_game_object_id
+
+		local target_unit_id = go_id
+
+		::label_30_0::
+
+		GameSession_set_game_object_field(game, game_object_id, "target_unit_id", target_unit_id)
 	end
 end
 
 AISystem.update_broadphase = function (self)
 	-- function 31
-	local var_31_0 = POSITION_LOOKUP
+	local POSITION_LOOKUP = POSITION_LOOKUP
 	local broadphase = self.broadphase
 
-	for k, v in pairs(self.ai_units_alive) do
-		if not v.broadphase_id then
-			local var_31_2 = var_31_0[k]
+	for unit, extension in pairs(self.ai_units_alive) do
+		local broadphase_id = extension.broadphase_id
 
-			Broadphase.move(broadphase, v.broadphase_id, var_31_2)
+		if broadphase_id then
+			local position = POSITION_LOOKUP[unit]
+
+			Broadphase.move(broadphase, extension.broadphase_id, position)
 		end
 	end
 end
 
-AISystem.update_debug_unit = function (self, arg_32_1)
+AISystem.update_debug_unit = function (self, t)
 	-- function 32
-	local debug_unit = script_data.debug_unit
+	local unit = script_data.debug_unit
 
-	if not ALIVE[debug_unit] then
+	if not ALIVE[unit] then
 		return
 	end
 
-	local var_32_1 = self.ai_units_alive[debug_unit]
+	local extension = self.ai_units_alive[unit]
 
-	if var_32_1 == nil then
+	if extension == nil then
 		return
 	end
 
-	local _blackboard = var_32_1._blackboard
-	local root = var_32_1._brain._bt:root()
+	local blackboard = extension._blackboard
+	local leaf_node = extension._brain._bt:root()
 
-	while not root and not root:current_running_child(_blackboard) do
-		root = root:current_running_child(_blackboard)
+	while leaf_node and leaf_node:current_running_child(blackboard) do
+		leaf_node = leaf_node:current_running_child(blackboard)
 	end
 
 	local id
 
-	if not root then
-		id = root:id()
+	if leaf_node then
+		id = leaf_node:id()
 
 		if not id then
 			-- Nothing
@@ -1009,187 +1087,204 @@ AISystem.update_debug_unit = function (self, arg_32_1)
 
 	id = "unknown_node"
 
+	local btnode_name = id
+
 	::label_32_0::
 
-	_blackboard.btnode_name = id
+	blackboard.btnode_name = btnode_name
 
-	local _breed = var_32_1._breed
-	local debug_flag = _breed.debug_flag
+	local breed = extension._breed
+	local debug_flag = breed.debug_flag
 
 	if not script_data[debug_flag] then
-		if not debug_flag then
+		if debug_flag then
 			Debug.text("Enable debug setting %q for additional debugging of ai unit", debug_flag)
 		end
 
 		return
 	end
 
-	_breed.debug_class.update(debug_unit, _blackboard, arg_32_1)
+	local debug_class = breed.debug_class
+
+	debug_class.update(unit, blackboard, t)
 end
 
-AISystem.update_debug_draw = function (self, arg_33_1)
+AISystem.update_debug_draw = function (self, t)
 	-- function 33
-	if not script_data.debug_behaviour_trees then
-		for k, v in pairs(self.ai_units_alive) do
-			v._brain:debug_draw_behaviours()
+	if script_data.debug_behaviour_trees then
+		for _, extension in pairs(self.ai_units_alive) do
+			local brain = extension._brain
+
+			brain:debug_draw_behaviours()
 		end
 
 		if not self._debug_behaviour_trees then
 			self._debug_behaviour_trees = true
 		end
-	elseif not self._debug_behaviour_trees then
-		for k_2, v_2 in pairs(self.ai_units_alive) do
-			Managers.state.debug_text:clear_unit_text(k_2, "behavior_tree")
+	elseif self._debug_behaviour_trees then
+		for unit, _ in pairs(self.ai_units_alive) do
+			Managers.state.debug_text:clear_unit_text(unit, "behavior_tree")
 		end
 	end
 
-	for k_3, v_3 in pairs(self.ai_units_alive) do
-		if not script_data.debug_ai_targets then
-			local target_unit = v_3._blackboard.target_unit
+	for unit, extension in pairs(self.ai_units_alive) do
+		if script_data.debug_ai_targets then
+			local blackboard = extension._blackboard
+			local enemy = blackboard.target_unit
 
-			if not alive(target_unit) then
-				local num = Unit.local_position(k_3, 0) + Vector3.up() * 2
+			if unit_alive(enemy) then
+				local ai_pos = Unit.local_position(unit, 0) + Vector3.up() * 2
 
-				QuickDrawer:line(num, Unit.world_position(target_unit, 0) + Vector3(0, 0, 1.5), Color(125, 255, 0, 0))
-				QuickDrawer:box(Unit.world_pose(target_unit, 0), Vector3(0.5, 0.5, 1.5), Color(125, 255, 0, 0))
+				QuickDrawer:line(ai_pos, Unit.world_position(enemy, 0) + Vector3(0, 0, 1.5), Color(125, 255, 0, 0))
+				QuickDrawer:box(Unit.world_pose(enemy, 0), Vector3(0.5, 0.5, 1.5), Color(125, 255, 0, 0))
 			end
 		end
 
-		if not script_data.debug_ai_heights then
-			local var_33_2 = POSITION_LOOKUP[k_3]
-			local breed_height = AiUtils.breed_height(k_3)
+		if script_data.debug_ai_heights then
+			local from = POSITION_LOOKUP[unit]
+			local height = AiUtils.breed_height(unit)
 
-			if not breed_height then
-				local num_2 = POSITION_LOOKUP[k_3] + Vector3(0, 0, breed_height)
+			if height then
+				local to = POSITION_LOOKUP[unit] + Vector3(0, 0, height)
 
-				QuickDrawer:sphere(var_33_2, 0.5, Colors.get("yellow"))
-				QuickDrawer:line(var_33_2, num_2, Colors.get("yellow"))
-				QuickDrawer:sphere(num_2, 0.5, Colors.get("yellow"))
+				QuickDrawer:sphere(from, 0.5, Colors.get("yellow"))
+				QuickDrawer:line(from, to, Colors.get("yellow"))
+				QuickDrawer:sphere(to, 0.5, Colors.get("yellow"))
 			else
-				QuickDrawer:sphere(var_33_2 + Vector3(0, 0, 1), 1.5, Colors.get("red"))
+				QuickDrawer:sphere(from + Vector3(0, 0, 1), 1.5, Colors.get("red"))
 			end
 		end
 
-		if not script_data.debug_stagger then
-			local _blackboard = v_3._blackboard
-			local stagger_immunity = _blackboard.stagger_immunity
+		if script_data.debug_stagger then
+			local blackboard = extension._blackboard
+			local stagger_immunity = blackboard.stagger_immunity
 
-			if not stagger_immunity then
-				local color = Managers.state.debug:color(k_3)
-				local to_elements, var_33_9, var_33_10, var_33_11 = Quaternion.to_elements(color)
-				local var_33_12 = Vector3(var_33_9, var_33_10, var_33_11)
-				local str = "player_1"
-				local node = Unit.node(k_3, "c_head")
+			if stagger_immunity then
+				local color = Managers.state.debug:color(unit)
+				local _, y, z, w = Quaternion.to_elements(color)
+				local color_vector = Vector3(y, z, w)
+				local viewport_name = "player_1"
+				local head_node = Unit.node(unit, "c_head")
 
-				Managers.state.debug_text:clear_unit_text(k_3, "stagger_immunity")
+				Managers.state.debug_text:clear_unit_text(unit, "stagger_immunity")
 
-				local current_health_percent = _blackboard.current_health_percent
-				local str_2 = "health:" .. current_health_percent
+				local health_percent = blackboard.current_health_percent
+				local health = "health:" .. health_percent
 				local health_threshold = stagger_immunity.health_threshold
-				local num_3 = 1
+				local index = 1
 
-				Managers.state.debug_text:output_unit_text(str_2, 0.2, k_3, node, Vector3.up() * 0.2 * num_3, 0.1, "stagger_immunity", var_33_12, str)
+				Managers.state.debug_text:output_unit_text(health, 0.2, unit, head_node, Vector3.up() * 0.2 * index, 0.1, "stagger_immunity", color_vector, viewport_name)
 
-				local num_4 = num_3 + 1
+				index = index + 1
 
-				if health_threshold < current_health_percent then
-					Managers.state.debug_text:output_unit_text("damage left:" .. current_health_percent - health_threshold, 0.2, k_3, node, Vector3.up() * 0.2 * num_4, 0.1, "stagger_immunity", var_33_12, str)
+				if health_threshold < health_percent then
+					Managers.state.debug_text:output_unit_text("damage left:" .. health_percent - health_threshold, 0.2, unit, head_node, Vector3.up() * 0.2 * index, 0.1, "stagger_immunity", color_vector, viewport_name)
 
-					num_4 = num_4 + 1
+					index = index + 1
 
-					Managers.state.debug_text:output_unit_text("STAGGER_IMMUNE:HIGH_HEALTH", 0.2, k_3, node, Vector3.up() * 0.2 * num_4, 0.1, "stagger_immunity", var_33_12, str)
+					Managers.state.debug_text:output_unit_text("STAGGER_IMMUNE:HIGH_HEALTH", 0.2, unit, head_node, Vector3.up() * 0.2 * index, 0.1, "stagger_immunity", color_vector, viewport_name)
 				else
-					local action = _blackboard.action
-					local flag = not action and action.ignore_staggers
+					local action = blackboard.action
+					local ignore_staggers = not not action and not not action.ignore_staggers
 
-					if not flag then
-						local str_3 = action.name .. ": "
+					if ignore_staggers then
+						local ignore_stagger_info = action.name .. ": "
 
-						for i6 = 1, 7 do
-							local var_33_23
+						for i = 1, 7 do
+							local var_33_0
 
-							if type(flag[i6]) == "table" then
-								var_33_23 = tostring(not (current_health_percent > flag[i6].health.min) or current_health_percent <= flag[i6].health.max)
+							if type(ignore_staggers[i]) == "table" then
+								var_33_0 = tostring(health_percent > ignore_staggers[i].health.min and health_percent <= ignore_staggers[i].health.max)
 
-								if not var_33_23 then
+								if not var_33_0 then
 									-- Nothing
 								end
 							end
 
-							var_33_23 = tostring(flag[i6])
+							var_33_0 = tostring(ignore_staggers[i])
+
+							local ignore_stagger_value = var_33_0
 
 							::label_33_0::
 
-							str_3 = str_3 .. "[" .. var_33_23 .. "]"
+							ignore_stagger_info = ignore_stagger_info .. "[" .. ignore_stagger_value .. "]"
 						end
 
-						Managers.state.debug_text:output_unit_text(str_3, 0.2, k_3, node, Vector3.up() * 0.2 * num_4, 0.1, "stagger_immunity", var_33_12, str)
+						Managers.state.debug_text:output_unit_text(ignore_stagger_info, 0.2, unit, head_node, Vector3.up() * 0.2 * index, 0.1, "stagger_immunity", color_vector, viewport_name)
 
-						num_4 = num_4 + 1
+						index = index + 1
 					end
 
-					local flag_2 = false
+					local stagger_immune = false
 
-					if not stagger_immunity.stagger_immune_at then
-						flag_2 = not (arg_33_1 < stagger_immunity.stagger_immune_at + stagger_immunity.time) or stagger_immunity.debug_damage_left > 0
+					if stagger_immunity.stagger_immune_at then
+						stagger_immune = t < stagger_immunity.stagger_immune_at + stagger_immunity.time and stagger_immunity.debug_damage_left > 0
 
-						if not flag_2 then
-							local round_with_precision = math.round_with_precision(stagger_immunity.stagger_immune_at + stagger_immunity.time - arg_33_1, 2)
+						if stagger_immune then
+							local time_left = math.round_with_precision(stagger_immunity.stagger_immune_at + stagger_immunity.time - t, 2)
 
-							Managers.state.debug_text:output_unit_text("time left:" .. round_with_precision, 0.2, k_3, node, Vector3.up() * 0.2 * num_4, 0.1, "stagger_immunity", var_33_12, str)
+							Managers.state.debug_text:output_unit_text("time left:" .. time_left, 0.2, unit, head_node, Vector3.up() * 0.2 * index, 0.1, "stagger_immunity", color_vector, viewport_name)
 
-							num_4 = num_4 + 1
+							index = index + 1
 
-							Managers.state.debug_text:output_unit_text("damage left:" .. stagger_immunity.debug_damage_left, 0.2, k_3, node, Vector3.up() * 0.2 * num_4, 0.1, "stagger_immunity", var_33_12, str)
+							Managers.state.debug_text:output_unit_text("damage left:" .. stagger_immunity.debug_damage_left, 0.2, unit, head_node, Vector3.up() * 0.2 * index, 0.1, "stagger_immunity", color_vector, viewport_name)
 
-							num_4 = num_4 + 1
+							index = index + 1
 
-							Managers.state.debug_text:output_unit_text("STAGGER_IMMUNE:HITS", 0.2, k_3, node, Vector3.up() * 0.2 * num_4, 0.1, "stagger_immunity", var_33_12, str)
+							Managers.state.debug_text:output_unit_text("STAGGER_IMMUNE:HITS", 0.2, unit, head_node, Vector3.up() * 0.2 * index, 0.1, "stagger_immunity", color_vector, viewport_name)
 
-							num_4 = num_4 + 1
+							index = index + 1
 						end
 					end
 
-					if not flag_2 then
-						local str_4 = "hits_until_stagger_immunity:"
+					if not stagger_immune then
+						local str = "hits_until_stagger_immunity:"
 						local num_attacks = stagger_immunity.num_attacks
 						local num_hits = stagger_immunity.num_hits
 
-						num_hits = num_hits or 0
+						num_hits = not not num_hits or not not 0
 
-						local str_5 = str_4 .. num_attacks - num_hits
+						local hits_until_stagger_immunity = str .. num_attacks - num_hits
 
-						Managers.state.debug_text:output_unit_text(str_5, 0.2, k_3, node, Vector3.up() * 0.2 * num_4, 0.1, "stagger_immunity", var_33_12, str)
+						Managers.state.debug_text:output_unit_text(hits_until_stagger_immunity, 0.2, unit, head_node, Vector3.up() * 0.2 * index, 0.1, "stagger_immunity", color_vector, viewport_name)
 					end
 				end
 			end
 		end
 
-		if not script_data.debug_ai_attack_pattern then
-			local var_33_30 = BLACKBOARDS[k_3]
-			local has_node = Unit.has_node(k_3, "j_spine")
+		if script_data.debug_ai_attack_pattern then
+			local blackboard = BLACKBOARDS[unit]
+			local has_node = Unit.has_node(unit, "j_spine")
 
-			has_node = not has_node and Unit.node(k_3, "j_spine")
+			if has_node then
+				-- Nothing
+			end
 
-			if not has_node then
-				local world_position = Unit.world_position(k_3, has_node)
-				local have_slot = var_33_30.have_slot
-				local debug_text = Managers.state.debug_text
+			has_node = Unit.node(unit, "j_spine")
 
-				debug_text:clear_unit_text(k_3, "attack_type")
+			local spine_node = has_node
 
-				if var_33_30.stagger or not var_33_30.blocked then
-					QuickDrawer:sphere(world_position, 0.25, Colors.get("blue"))
+			::label_33_1::
+
+			if spine_node then
+				local position = Unit.world_position(unit, spine_node)
+				local have_slot = blackboard.have_slot
+				local debug_text_manager = Managers.state.debug_text
+
+				debug_text_manager:clear_unit_text(unit, "attack_type")
+
+				if blackboard.stagger or blackboard.blocked then
+					QuickDrawer:sphere(position, 0.25, Colors.get("blue"))
 				elseif have_slot > 0 then
-					local attack_cooldown_at = var_33_30.attack_cooldown_at
+					local attack_cooldown_at = blackboard.attack_cooldown_at
 
-					if not var_33_30.attack_token then
-						QuickDrawer:sphere(world_position, 0.35, Colors.get("red"))
+					if blackboard.attack_token then
+						QuickDrawer:sphere(position, 0.35, Colors.get("red"))
 
 						local attack_intensity_type
 
-						if not var_33_30.action.attack_intensity_type then
-							attack_intensity_type = var_33_30.action.attack_intensity_type
+						if blackboard.action.attack_intensity_type then
+							attack_intensity_type = blackboard.action.attack_intensity_type
 
 							if not attack_intensity_type then
 								-- Nothing
@@ -1198,287 +1293,310 @@ AISystem.update_debug_draw = function (self, arg_33_1)
 
 						attack_intensity_type = "normal"
 
-						::label_33_1::
+						local attack_type = attack_intensity_type
 
-						debug_text:output_unit_text(attack_intensity_type, 0.16, k_3, has_node, Vector3.zero(), nil, "attack_type", Vector3(255, 255, 255), "player_1")
-					elseif arg_33_1 < attack_cooldown_at then
-						QuickDrawer:sphere(world_position, 0.35, Colors.get("orange"))
+						::label_33_2::
+
+						debug_text_manager:output_unit_text(attack_type, 0.16, unit, spine_node, Vector3.zero(), nil, "attack_type", Vector3(255, 255, 255), "player_1")
+					elseif t < attack_cooldown_at then
+						QuickDrawer:sphere(position, 0.35, Colors.get("orange"))
 					else
-						QuickDrawer:sphere(world_position, 0.25, Colors.get("lime"))
+						QuickDrawer:sphere(position, 0.25, Colors.get("lime"))
 					end
 				else
-					QuickDrawer:sphere(world_position, 0.25, Colors.get("gray"))
+					QuickDrawer:sphere(position, 0.25, Colors.get("gray"))
 				end
 			end
 		end
 	end
 
-	if not script_data.debug_nav_tag_volume_layers then
+	if script_data.debug_nav_tag_volume_layers then
 		Debug.text("Nav Tag Volume Layers Status (20-39):")
 
-		for i7 = NavTagVolumeStartLayer, 39 do
-			local var_33_37 = LAYER_ID_MAPPING[i7]
-			local flag_3 = NAV_TAG_VOLUME_LAYER_COST_AI[var_33_37] > 0
+		for i = NavTagVolumeStartLayer, 39 do
+			local layer_name = LAYER_ID_MAPPING[i]
+			local allowed = NAV_TAG_VOLUME_LAYER_COST_AI[layer_name] > 0
 
-			Debug.text("%s=%s", var_33_37, flag_3)
+			Debug.text("%s=%s", layer_name, allowed)
 		end
 	end
 end
 
-local num_4 = 10
+local PRIORITIZED_DISTANCE = 10
 
-local function fn(arg_34_0, arg_34_1, arg_34_2, arg_34_3)
+local function update_blackboard(unit, blackboard, t, dt)
 	-- function 34
-	fassert(arg_34_1, "Tried to update a non-existing blackboard!")
+	fassert(blackboard, "Tried to update a non-existing blackboard!")
 
-	local var_34_0 = POSITION_LOOKUP
+	local POSITION_LOOKUP = POSITION_LOOKUP
 
-	for k, v in pairs(arg_34_1.utility_actions) do
-		v.time_since_last = arg_34_2 - v.last_time
-		v.time_since_last_done = arg_34_2 - v.last_done_time
+	for _, action_data in pairs(blackboard.utility_actions) do
+		action_data.time_since_last = t - action_data.last_time
+		action_data.time_since_last_done = t - action_data.last_done_time
 	end
 
-	if not arg_34_1.is_in_attack_cooldown then
-		arg_34_1.is_in_attack_cooldown = arg_34_2 < arg_34_1.attack_cooldown_at
+	if blackboard.is_in_attack_cooldown then
+		blackboard.is_in_attack_cooldown = t < blackboard.attack_cooldown_at
 	end
 
-	ScriptUnit.extension(arg_34_0, "ai_system"):update_stagger_count()
+	local ai_base_extension = ScriptUnit.extension(unit, "ai_system")
 
-	local has_extension = ScriptUnit.has_extension(arg_34_0, "health_system")
+	ai_base_extension:update_stagger_count()
 
-	if not has_extension then
-		arg_34_1.current_health_percent = has_extension:current_health_percent()
-		arg_34_1.current_health = has_extension:current_health()
+	local health_extension = ScriptUnit.has_extension(unit, "health_system")
+
+	if health_extension then
+		blackboard.current_health_percent = health_extension:current_health_percent()
+		blackboard.current_health = health_extension:current_health()
 	end
 
-	local var_34_2 = var_34_0[arg_34_0]
-	local navigation_extension = arg_34_1.navigation_extension
+	local current_position = POSITION_LOOKUP[unit]
+	local navigation_extension = blackboard.navigation_extension
 
-	if not navigation_extension then
-		arg_34_1.destination_dist = navigation_extension:distance_to_destination(var_34_2)
+	if navigation_extension then
+		blackboard.destination_dist = navigation_extension:distance_to_destination(current_position)
 	end
 
-	local system = Managers.state.entity:system("ai_slot_system")
+	local ai_slot_system = Managers.state.entity:system("ai_slot_system")
 	local flag
 
-	flag = not system:ai_unit_have_slot(arg_34_0) and 1 and 0
-	arg_34_1.have_slot = flag
-	arg_34_1.wait_slot_distance = system:ai_unit_wait_slot_distance(arg_34_0)
-	arg_34_1.total_slots_count = system.num_total_enemies
+	flag = (not ai_slot_system:ai_unit_have_slot(unit) or not 1) and not not 0
+	blackboard.have_slot = flag
+	blackboard.wait_slot_distance = ai_slot_system:ai_unit_wait_slot_distance(unit)
+	blackboard.total_slots_count = ai_slot_system.num_total_enemies
 
-	local target_unit = arg_34_1.target_unit
-	local var_34_7 = alive(target_unit)
-	local breed = arg_34_1.breed
+	local target_unit = blackboard.target_unit
+	local target_alive = unit_alive(target_unit)
+	local breed = blackboard.breed
 
-	if not (not breed.wake_up_push and not var_34_7 and not (arg_34_1.stagger > 0)) then
-		arg_34_1.wake_up_push = 0
+	if breed.wake_up_push and target_alive and blackboard.stagger > 0 then
+		blackboard.wake_up_push = 0
 	end
 
-	if not breed.using_combo then
-		if not var_34_7 then
-			local get_data = Unit.get_data(target_unit, "last_combo_t")
+	if breed.using_combo then
+		if target_alive then
+			local last_combo_t = Unit.get_data(target_unit, "last_combo_t")
 
-			if not get_data then
-				arg_34_1.time_since_last_combo = arg_34_2 - get_data
+			if last_combo_t then
+				blackboard.time_since_last_combo = t - last_combo_t
 			else
-				arg_34_1.time_since_last_combo = 9999
+				blackboard.time_since_last_combo = 9999
 			end
 		else
-			arg_34_1.time_since_last_combo = 9999
+			blackboard.time_since_last_combo = 9999
 		end
 	end
 
-	if not var_34_7 and not breed.has_running_attack then
-		local has_extension_2 = ScriptUnit.has_extension(target_unit, "locomotion_system")
+	if target_alive and breed.has_running_attack then
+		local target_locomotion = ScriptUnit.has_extension(target_unit, "locomotion_system")
 
-		if not has_extension_2 then
-			if not has_extension_2.average_velocity then
-				arg_34_1.target_speed_away = dot(has_extension_2:average_velocity(), normalize(var_34_0[target_unit] - var_34_2))
-			elseif not has_extension_2.current_velocity then
-				arg_34_1.target_speed_away = dot(has_extension_2:current_velocity(), normalize(var_34_0[target_unit] - var_34_2))
+		if target_locomotion then
+			if target_locomotion.average_velocity then
+				blackboard.target_speed_away = Vector3_dot(target_locomotion:average_velocity(), Vector3_normalize(POSITION_LOOKUP[target_unit] - current_position))
+			elseif target_locomotion.current_velocity then
+				blackboard.target_speed_away = Vector3_dot(target_locomotion:current_velocity(), Vector3_normalize(POSITION_LOOKUP[target_unit] - current_position))
 			else
-				arg_34_1.target_speed_away = 0
+				blackboard.target_speed_away = 0
 			end
 
-			if not has_extension_2.small_sample_size_average_velocity then
-				arg_34_1.target_speed_away_small_sample = dot(has_extension_2:small_sample_size_average_velocity(), normalize(var_34_0[target_unit] - var_34_2))
+			if target_locomotion.small_sample_size_average_velocity then
+				blackboard.target_speed_away_small_sample = Vector3_dot(target_locomotion:small_sample_size_average_velocity(), Vector3_normalize(POSITION_LOOKUP[target_unit] - current_position))
 			else
-				arg_34_1.target_speed_away_small_sample = 0
+				blackboard.target_speed_away_small_sample = 0
 			end
 		else
-			arg_34_1.target_speed_away = 0
-			arg_34_1.target_speed_away_small_sample = 0
+			blackboard.target_speed_away = 0
+			blackboard.target_speed_away_small_sample = 0
 		end
 
-		local has_extension_3 = ScriptUnit.has_extension(target_unit, "ai_slot_system")
+		local target_unit_slot_extension = ScriptUnit.has_extension(target_unit, "ai_slot_system")
 
-		if not has_extension_3 and not has_extension_3.has_slots_attached then
-			arg_34_1.total_occupied_slots = has_extension_3.num_occupied_slots
+		if target_unit_slot_extension and target_unit_slot_extension.has_slots_attached then
+			local num_occupied_slots = target_unit_slot_extension.num_occupied_slots
 
-			local disabled_slots_count = system:disabled_slots_count(target_unit)
+			blackboard.total_occupied_slots = num_occupied_slots
+
+			local disabled_slots_count = ai_slot_system:disabled_slots_count(target_unit)
 			local flag_2
 
-			flag_2 = not (arg_34_1.have_slot > 0) or not 0 or disabled_slots_count
-			arg_34_1.target_num_disabled_slots = flag_2
+			flag_2 = (not (blackboard.have_slot > 0) or not 0) and not not disabled_slots_count
+			blackboard.target_num_disabled_slots = flag_2
 		else
-			arg_34_1.total_occupied_slots = 0
-			arg_34_1.target_num_disabled_slots = 0
+			blackboard.total_occupied_slots = 0
+			blackboard.target_num_disabled_slots = 0
 		end
 	else
-		arg_34_1.target_speed_away = 0
-		arg_34_1.target_speed_away_small_sample = 0
+		blackboard.target_speed_away = 0
+		blackboard.target_speed_away_small_sample = 0
 	end
 
-	local active_node = arg_34_1.active_node
-	local flag_3 = not active_node and active_node.name
+	local active_node = blackboard.active_node
+	local active_node_name = not not active_node and not not active_node.name
 
-	arg_34_1.is_following_target = not flag_3 and flag_3 == "BTClanRatFollowAction"
+	blackboard.is_following_target = not not active_node_name and active_node_name == "BTClanRatFollowAction"
 
-	local locomotion_extension = arg_34_1.locomotion_extension
+	local locomotion_extension = blackboard.locomotion_extension
 
-	arg_34_1.is_falling = not locomotion_extension and locomotion_extension:is_falling()
-	arg_34_1.move_speed = not locomotion_extension and locomotion_extension.move_speed
+	blackboard.is_falling = not not locomotion_extension and not not locomotion_extension:is_falling()
+	blackboard.move_speed = not not locomotion_extension and not not locomotion_extension.move_speed
 
-	if not breed.run_on_update then
-		breed.run_on_update(arg_34_0, arg_34_1, arg_34_2, arg_34_3)
+	if breed.run_on_update then
+		breed.run_on_update(unit, blackboard, t, dt)
 	end
 
-	local attacking_target = arg_34_1.attacking_target
-	local var_34_18 = alive(attacking_target)
-	local var_34_19
+	local attacking_target = blackboard.attacking_target
+	local has_attacking_target = unit_alive(attacking_target)
+	local is_valid_attacking_target
 
-	if not var_34_18 then
-		local get_data_2 = Unit.get_data(attacking_target, "breed")
+	if has_attacking_target then
+		local target_breed = Unit.get_data(attacking_target, "breed")
 
-		if not get_data_2 and not get_data_2.is_player then
-			var_34_19 = arg_34_1.side.VALID_ENEMY_TARGETS_PLAYERS_AND_BOTS[attacking_target]
+		if target_breed and target_breed.is_player then
+			is_valid_attacking_target = blackboard.side.VALID_ENEMY_TARGETS_PLAYERS_AND_BOTS[attacking_target]
 		else
-			var_34_19 = HEALTH_ALIVE[attacking_target]
+			is_valid_attacking_target = HEALTH_ALIVE[attacking_target]
 		end
 	else
-		var_34_19 = true
+		is_valid_attacking_target = true
 	end
 
-	arg_34_1.target_num_occupied_slots = 0
+	blackboard.target_num_occupied_slots = 0
 
-	if not var_34_7 and not var_34_19 then
-		local var_34_21 = var_34_0[arg_34_0]
-		local num = var_34_0[target_unit] - var_34_21
-		local z = num.z
-		local x = num.x
-		local y = num.y
-		local num_2 = x * x + y * y
+	if target_alive and is_valid_attacking_target then
+		local unit_position = POSITION_LOOKUP[unit]
+		local target_position = POSITION_LOOKUP[target_unit]
+		local offset = target_position - unit_position
+		local z = offset.z
+		local x = offset.x
+		local y = offset.y
+		local flat_sq = x * x + y * y
 
-		arg_34_1.target_dist_z_abs = math.abs(z)
-		arg_34_1.target_dist_xy_sq = num_2
+		blackboard.target_dist_z_abs = math.abs(z)
+		blackboard.target_dist_xy_sq = flat_sq
 
-		local var_34_27 = sqrt(num_2 + z * z)
-		local flag_4 = var_34_27 < num_4
+		local target_dist = sqrt(flat_sq + z * z)
+		local inside_priority_distance = target_dist < PRIORITIZED_DISTANCE
 
-		arg_34_1.target_dist = var_34_27
+		blackboard.target_dist = target_dist
 
-		local has_extension_4 = ScriptUnit.has_extension(target_unit, "ai_slot_system")
+		local target_slot_extension = ScriptUnit.has_extension(target_unit, "ai_slot_system")
 
-		if not has_extension_4 then
-			arg_34_1.target_num_occupied_slots = has_extension_4.num_occupied_slots or 0
+		if target_slot_extension then
+			local slots_n = target_slot_extension.num_occupied_slots
+
+			blackboard.target_num_occupied_slots = not not slots_n or not not 0
 		else
-			arg_34_1.target_num_occupied_slots = 0
+			blackboard.target_num_occupied_slots = 0
 		end
 
-		return flag_4
-	elseif not (not var_34_7 and var_34_19) then
-		arg_34_1.target_unit = nil
-		arg_34_1.target_dist = math.huge
-		arg_34_1.target_dist_z_abs = math.huge
-		arg_34_1.target_dist_xy_sq = math.huge
+		return inside_priority_distance
+	elseif not target_alive or not is_valid_attacking_target then
+		blackboard.target_unit = nil
+		blackboard.target_dist = math.huge
+		blackboard.target_dist_z_abs = math.huge
+		blackboard.target_dist_xy_sq = math.huge
 
-		if not var_34_19 then
-			arg_34_1.attack_aborted = true
+		if not is_valid_attacking_target then
+			blackboard.attack_aborted = true
 		end
 	end
 end
 
-local flag_2
+local num
 
-flag_2 = not IS_WINDOWS and 40 and 20
+if IS_WINDOWS then
+	num = 40
 
-AISystem.update_ai_blackboards_prioritized = function (self, arg_35_1, arg_35_2)
+	goto label_0_0
+end
+
+num = 20
+
+local MAX_PRIO_UPDATES_PER_FRAME = num
+
+::label_0_0::
+
+AISystem.update_ai_blackboards_prioritized = function (self, t, dt)
 	-- function 35
 	local ai_blackboard_updates = self.ai_blackboard_updates
-	local count = #ai_blackboard_updates
-	local ai_blackboard_prioritized_updates = self.ai_blackboard_prioritized_updates
-	local count_2 = #ai_blackboard_prioritized_updates
+	local num_normal = #ai_blackboard_updates
+	local prio_updates = self.ai_blackboard_prioritized_updates
+	local num_prio = #prio_updates
 	local blackboards = self.blackboards
-	local start_prio_index = self.start_prio_index
-	local var_35_6 = flag_2
+	local index = self.start_prio_index
+	local loops = MAX_PRIO_UPDATES_PER_FRAME
 
-	if count_2 < var_35_6 then
-		var_35_6 = count_2
-		start_prio_index = 1
+	if num_prio < loops then
+		loops = num_prio
+		index = 1
 	end
 
-	local num = 1
+	local i = 1
 
-	while num <= var_35_6 do
-		if count_2 < start_prio_index then
-			start_prio_index = 1
+	while i <= loops do
+		if num_prio < index then
+			index = 1
 		end
 
-		local var_35_8 = ai_blackboard_prioritized_updates[start_prio_index]
-		local var_35_9 = blackboards[var_35_8]
+		local unit = prio_updates[index]
+		local blackboard = blackboards[unit]
+		local inside_priority_distance = update_blackboard(unit, blackboard, t, dt)
 
-		if not fn(var_35_8, var_35_9, arg_35_1, arg_35_2) then
-			ai_blackboard_prioritized_updates[start_prio_index] = ai_blackboard_prioritized_updates[count_2]
-			ai_blackboard_prioritized_updates[count_2] = nil
-			ai_blackboard_updates[count + 1] = var_35_8
-			count = count + 1
-			count_2 = count_2 - 1
+		if not inside_priority_distance then
+			prio_updates[index] = prio_updates[num_prio]
+			prio_updates[num_prio] = nil
+			ai_blackboard_updates[num_normal + 1] = unit
+			num_normal = num_normal + 1
+			num_prio = num_prio - 1
 		else
-			start_prio_index = start_prio_index + 1
+			index = index + 1
 		end
 
-		num = num + 1
+		i = i + 1
 	end
 
-	self.start_prio_index = start_prio_index
+	self.start_prio_index = index
 end
 
-local num_5 = 2
+local AI_UPDATES_PER_FRAME = 2
 
-AISystem.update_ai_blackboards = function (self, arg_36_1, arg_36_2)
+AISystem.update_ai_blackboards = function (self, t, dt)
 	-- function 36
 	local ai_blackboard_updates = self.ai_blackboard_updates
-	local count = #ai_blackboard_updates
+	local ai_blackboard_updates_n = #ai_blackboard_updates
 	local ai_blackboard_prioritized_updates = self.ai_blackboard_prioritized_updates
-	local count_2 = #ai_blackboard_prioritized_updates
+	local ai_blackboard_prioritized_updates_n = #ai_blackboard_prioritized_updates
 	local blackboards = self.blackboards
-	local num = 0
-	local ai_update_index = self.ai_update_index
+	local ai_updates_this_frame = 0
+	local index = self.ai_update_index
 
-	ai_update_index = not (count < ai_update_index) or not 1 or ai_update_index
+	if ai_blackboard_updates_n < index then
+		index = 1
+	end
 
-	while ai_update_index <= count do
-		local var_36_7 = ai_blackboard_updates[ai_update_index]
-		local var_36_8 = blackboards[var_36_7]
+	while index <= ai_blackboard_updates_n do
+		local unit = ai_blackboard_updates[index]
+		local blackboard = blackboards[unit]
+		local inside_priority_distance = update_blackboard(unit, blackboard, t, dt)
 
-		if not fn(var_36_7, var_36_8, arg_36_1, arg_36_2) then
-			ai_blackboard_updates[ai_update_index] = ai_blackboard_updates[count]
-			ai_blackboard_updates[count] = nil
-			ai_blackboard_prioritized_updates[count_2 + 1] = var_36_7
-			count = #ai_blackboard_updates
-			count_2 = #ai_blackboard_prioritized_updates
+		if inside_priority_distance then
+			ai_blackboard_updates[index] = ai_blackboard_updates[ai_blackboard_updates_n]
+			ai_blackboard_updates[ai_blackboard_updates_n] = nil
+			ai_blackboard_prioritized_updates[ai_blackboard_prioritized_updates_n + 1] = unit
+			ai_blackboard_updates_n = #ai_blackboard_updates
+			ai_blackboard_prioritized_updates_n = #ai_blackboard_prioritized_updates
 		else
-			ai_update_index = ai_update_index + 1
+			index = index + 1
 		end
 
-		num = num + 1
+		ai_updates_this_frame = ai_updates_this_frame + 1
 
-		if num >= num_5 then
+		if ai_updates_this_frame >= AI_UPDATES_PER_FRAME then
 			break
 		end
 	end
 
-	self.ai_update_index = ai_update_index
+	self.ai_update_index = index
 end
 
 AISystem.nav_world = function (self)
@@ -1491,362 +1609,369 @@ AISystem.client_traverse_logic = function (self)
 	return self._traverse_logic
 end
 
-AISystem.get_tri_on_navmesh = function (self, arg_39_1)
+AISystem.get_tri_on_navmesh = function (self, pos)
 	-- function 39
-	return GwNavQueries.triangle_from_position(self._nav_world, arg_39_1, 30, 30)
+	return GwNavQueries.triangle_from_position(self._nav_world, pos, 30, 30)
 end
 
-AISystem.set_allowed_layer = function (self, arg_40_1, arg_40_2)
+AISystem.set_allowed_layer = function (self, layer_name, allowed)
 	-- function 40
-	if not self.is_server then
-		local entity = Managers.state.entity
-		local _nav_world = self._nav_world
-		local var_40_2 = LAYER_ID_MAPPING[arg_40_1]
-		local conflict = Managers.state.conflict
+	if self.is_server then
+		local entity_manager = Managers.state.entity
+		local nav_world = self._nav_world
+		local layer_id = LAYER_ID_MAPPING[layer_name]
+		local conflict_director = Managers.state.conflict
 		local NAV_TAG_VOLUME_LAYER_COST_AI = NAV_TAG_VOLUME_LAYER_COST_AI
 		local flag
 
-		flag = not arg_40_2 and 1 and 0
-		NAV_TAG_VOLUME_LAYER_COST_AI[arg_40_1] = flag
+		flag = (not allowed or not 1) and not not 0
+		NAV_TAG_VOLUME_LAYER_COST_AI[layer_name] = flag
 
 		local NAV_TAG_VOLUME_LAYER_COST_BOTS = NAV_TAG_VOLUME_LAYER_COST_BOTS
 		local flag_2
 
-		flag_2 = not arg_40_2 and 1 and 0
-		NAV_TAG_VOLUME_LAYER_COST_BOTS[arg_40_1] = flag_2
+		flag_2 = (not allowed or not 1) and not not 0
+		NAV_TAG_VOLUME_LAYER_COST_BOTS[layer_name] = flag_2
 
-		local get_entities = entity:get_entities("AINavigationExtension")
+		local ai_extensions = entity_manager:get_entities("AINavigationExtension")
 
-		for k, v in pairs(get_entities) do
-			v:allow_layer(arg_40_1, arg_40_2)
+		for _, extension in pairs(ai_extensions) do
+			extension:allow_layer(layer_name, allowed)
 
-			if not arg_40_2 then
-				local _unit = v._unit
+			if not allowed then
+				local unit = extension._unit
 
-				if not ALIVE[_unit] then
-					local var_40_10 = POSITION_LOOKUP[_unit]
+				if ALIVE[unit] then
+					local unit_position = POSITION_LOOKUP[unit]
 
-					if not NavTagVolumeUtils.inside_nav_tag_layer(_nav_world, var_40_10, 0.5, 0.5, arg_40_1) then
-						if not ScriptUnit.has_extension(_unit, "health_system") then
-							AiUtils.kill_unit(_unit, nil, nil, "inside_forbidden_tag_volume", Vector3(0, 0, 0))
+					if NavTagVolumeUtils.inside_nav_tag_layer(nav_world, unit_position, 0.5, 0.5, layer_name) then
+						if ScriptUnit.has_extension(unit, "health_system") then
+							AiUtils.kill_unit(unit, nil, nil, "inside_forbidden_tag_volume", Vector3(0, 0, 0))
 						else
-							local var_40_11 = BLACKBOARDS[_unit]
+							local blackboard = BLACKBOARDS[unit]
 
-							conflict:destroy_unit(_unit, var_40_11, "inside_forbidden_tag_volume")
+							conflict_director:destroy_unit(unit, blackboard, "inside_forbidden_tag_volume")
 						end
 					else
-						local destination = v:destination()
+						local destination_position = extension:destination()
 
-						if not NavTagVolumeUtils.inside_nav_tag_layer(_nav_world, destination, 0.5, 0.5, arg_40_1) then
-							v:reset_destination()
+						if NavTagVolumeUtils.inside_nav_tag_layer(nav_world, destination_position, 0.5, 0.5, layer_name) then
+							extension:reset_destination()
 						end
 					end
 				end
 			end
 		end
 
-		Managers.state.bot_nav_transition:allow_layer(arg_40_1, arg_40_2)
-		Managers.state.entity:system("ai_slot_system"):set_allowed_layer(arg_40_1, arg_40_2)
-		Managers.state.entity:system("ai_group_system"):set_allowed_layer(arg_40_1, arg_40_2)
-		self.network_transmit:send_rpc_clients("rpc_set_allowed_nav_layer", var_40_2, arg_40_2)
+		local bot_nav_transition_manager = Managers.state.bot_nav_transition
+
+		bot_nav_transition_manager:allow_layer(layer_name, allowed)
+		Managers.state.entity:system("ai_slot_system"):set_allowed_layer(layer_name, allowed)
+		Managers.state.entity:system("ai_group_system"):set_allowed_layer(layer_name, allowed)
+		self.network_transmit:send_rpc_clients("rpc_set_allowed_nav_layer", layer_id, allowed)
 	end
 end
 
-AISystem.alert_enemies_within_range = function (self, arg_41_1, arg_41_2, arg_41_3)
+AISystem.alert_enemies_within_range = function (self, unit, position, radius)
 	-- function 41
-	if not NetworkUtils.network_safe_position(arg_41_2) then
+	if not NetworkUtils.network_safe_position(position) then
 		Application.warning("Trying to alert enemies outside of safe network position")
 
 		return
 	end
 
-	if not self.is_server then
-		PerceptionUtils.alert_enemies_within_range(self.world, arg_41_1, true, arg_41_2, arg_41_3)
+	if self.is_server then
+		PerceptionUtils.alert_enemies_within_range(self.world, unit, true, position, radius)
 	else
-		local go_id = Managers.state.unit_storage:go_id(arg_41_1)
+		local unit_id = Managers.state.unit_storage:go_id(unit)
 
-		self.network_transmit:send_rpc_server("rpc_alert_enemies_within_range", go_id, arg_41_2, arg_41_3)
+		self.network_transmit:send_rpc_server("rpc_alert_enemies_within_range", unit_id, position, radius)
 	end
 end
 
-AISystem.rpc_alert_enemies_within_range = function (self, arg_42_1, arg_42_2, arg_42_3, arg_42_4)
+AISystem.rpc_alert_enemies_within_range = function (self, channel_id, unit_id, position, radius)
 	-- function 42
-	local unit = Managers.state.unit_storage:unit(arg_42_2)
+	local unit = Managers.state.unit_storage:unit(unit_id)
 
-	self:alert_enemies_within_range(unit, arg_42_3, arg_42_4)
+	self:alert_enemies_within_range(unit, position, radius)
 end
 
-AISystem.rpc_set_ward_state = function (arg_43_0, arg_43_1, arg_43_2, arg_43_3)
+AISystem.rpc_set_ward_state = function (self, channel_id, unit_id, state)
 	-- function 43
-	local unit = Managers.state.unit_storage:unit(arg_43_2)
+	local unit = Managers.state.unit_storage:unit(unit_id)
 
-	AiUtils.stormvermin_champion_set_ward_state(unit, arg_43_3, false)
+	AiUtils.stormvermin_champion_set_ward_state(unit, state, false)
 end
 
-AISystem.rpc_set_hit_reaction_template = function (arg_44_0, arg_44_1, arg_44_2, arg_44_3)
+AISystem.rpc_set_hit_reaction_template = function (self, channel_id, unit_id, hit_effect_template)
 	-- function 44
-	local unit = Managers.state.unit_storage:unit(arg_44_2)
+	local unit = Managers.state.unit_storage:unit(unit_id)
+	local hit_reaction_extension = ScriptUnit.extension(unit, "hit_reaction_system")
 
-	ScriptUnit.extension(unit, "hit_reaction_system"):set_hit_effect_template_id(arg_44_3)
+	hit_reaction_extension:set_hit_effect_template_id(hit_effect_template)
 end
 
-AISystem.rpc_change_tentacle_state = function (arg_45_0, arg_45_1, arg_45_2, arg_45_3, arg_45_4, arg_45_5, arg_45_6)
+AISystem.rpc_change_tentacle_state = function (self, channel_id, tentacle_unit_id, target_unit_id, tentacle_template_id, tentacle_reach_dist, server_time)
 	-- function 45
-	local unit = Managers.state.unit_storage:unit(arg_45_2)
-	local unit_2 = Managers.state.unit_storage:unit(arg_45_3)
-	local var_45_2 = NetworkLookup.tentacle_template[arg_45_4]
-	local has_extension = ScriptUnit.has_extension(unit, "ai_supplementary_system")
+	local tentacle_unit = Managers.state.unit_storage:unit(tentacle_unit_id)
+	local target_unit = Managers.state.unit_storage:unit(target_unit_id)
+	local template_name = NetworkLookup.tentacle_template[tentacle_template_id]
+	local tentacle_extension = ScriptUnit.has_extension(tentacle_unit, "ai_supplementary_system")
 
-	if not has_extension then
-		has_extension:set_target(var_45_2, unit_2, arg_45_5)
-		has_extension:set_server_time(arg_45_6)
+	if tentacle_extension then
+		tentacle_extension:set_target(template_name, target_unit, tentacle_reach_dist)
+		tentacle_extension:set_server_time(server_time)
 	end
 end
 
-AISystem.rpc_sync_tentacle_path = function (arg_46_0, arg_46_1, arg_46_2, arg_46_3)
+AISystem.rpc_sync_tentacle_path = function (self, channel_id, tentacle_unit_id, point_array)
 	-- function 46
-	local unit = Managers.state.unit_storage:unit(arg_46_2)
-	local has_extension = ScriptUnit.has_extension(unit, "ai_supplementary_system")
+	local tentacle_unit = Managers.state.unit_storage:unit(tentacle_unit_id)
+	local tentacle_extension = ScriptUnit.has_extension(tentacle_unit, "ai_supplementary_system")
 
-	if not has_extension then
-		has_extension:set_astar_points(arg_46_3)
+	if tentacle_extension then
+		tentacle_extension:set_astar_points(point_array)
 	end
 end
 
-AISystem.rpc_set_corruptor_beam_state = function (arg_47_0, arg_47_1, arg_47_2, arg_47_3, arg_47_4)
+AISystem.rpc_set_corruptor_beam_state = function (self, channel_id, unit_id, state, target_unit_id)
 	-- function 47
-	local unit = Managers.state.unit_storage:unit(arg_47_2)
-	local unit_2 = Managers.state.unit_storage:unit(arg_47_4)
-	local has_extension = ScriptUnit.has_extension(unit, "ai_beam_effect_system")
+	local unit = Managers.state.unit_storage:unit(unit_id)
+	local target_unit = Managers.state.unit_storage:unit(target_unit_id)
+	local corruptor_beam_extension = ScriptUnit.has_extension(unit, "ai_beam_effect_system")
 
-	if not unit and not has_extension then
-		local var_47_3 = has_extension
-		local set_state = has_extension.set_state
-		local var_47_5 = arg_47_3
-		local is_player_unit = Managers.player:is_player_unit(unit_2)
+	if unit and corruptor_beam_extension then
+		local var_47_0 = corruptor_beam_extension
+		local set_state = corruptor_beam_extension.set_state
+		local var_47_2 = state
+		local is_player_unit = Managers.player:is_player_unit(target_unit)
 
-		is_player_unit = not is_player_unit and unit_2
+		is_player_unit = not not is_player_unit and not not target_unit
 
-		set_state(var_47_3, var_47_5, is_player_unit)
+		set_state(var_47_0, var_47_2, is_player_unit)
 	end
 end
 
-AISystem.rpc_set_allowed_nav_layer = function (self, arg_48_1, arg_48_2, arg_48_3)
+AISystem.rpc_set_allowed_nav_layer = function (self, channel_id, layer_id, allowed)
 	-- function 48
-	local var_48_0 = LAYER_ID_MAPPING[arg_48_2]
+	local layer_name = LAYER_ID_MAPPING[layer_id]
 	local NAV_TAG_VOLUME_LAYER_COST_AI = NAV_TAG_VOLUME_LAYER_COST_AI
 	local flag
 
-	flag = not arg_48_3 and 1 and 0
-	NAV_TAG_VOLUME_LAYER_COST_AI[var_48_0] = flag
+	flag = (not allowed or not 1) and not not 0
+	NAV_TAG_VOLUME_LAYER_COST_AI[layer_name] = flag
 
 	local NAV_TAG_VOLUME_LAYER_COST_BOTS = NAV_TAG_VOLUME_LAYER_COST_BOTS
 	local flag_2
 
-	flag_2 = not arg_48_3 and 1 and 0
-	NAV_TAG_VOLUME_LAYER_COST_BOTS[var_48_0] = flag_2
+	flag_2 = (not allowed or not 1) and not not 0
+	NAV_TAG_VOLUME_LAYER_COST_BOTS[layer_name] = flag_2
 
-	if not arg_48_3 then
-		GwNavTagLayerCostTable.allow_layer(self._navtag_layer_cost_table, arg_48_2)
+	if allowed then
+		GwNavTagLayerCostTable.allow_layer(self._navtag_layer_cost_table, layer_id)
 	else
-		GwNavTagLayerCostTable.forbid_layer(self._navtag_layer_cost_table, arg_48_2)
+		GwNavTagLayerCostTable.forbid_layer(self._navtag_layer_cost_table, layer_id)
 	end
 end
 
-AISystem.rpc_check_trigger_backstab_sfx = function (self, arg_49_1, arg_49_2)
+AISystem.rpc_check_trigger_backstab_sfx = function (self, channel_id, unit_id)
 	-- function 49
-	if not DEDICATED_SERVER then
+	if DEDICATED_SERVER then
 		return
 	end
 
-	local game_object_or_level_unit = Managers.state.network:game_object_or_level_unit(arg_49_2)
+	local network_manager = Managers.state.network
+	local unit = network_manager:game_object_or_level_unit(unit_id)
 	local local_player = Managers.player:local_player()
-	local flag = not local_player and local_player.player_unit
+	local player_unit = not not local_player and not not local_player.player_unit
 
-	if not ALIVE[flag] then
+	if not ALIVE[player_unit] then
 		return
 	end
 
-	local has_extension = ScriptUnit.has_extension(flag, "first_person_system")
+	local first_person_extension = ScriptUnit.has_extension(player_unit, "first_person_system")
 
-	if not has_extension then
-		local forward = Quaternion.forward(has_extension:current_rotation())
+	if first_person_extension then
+		local rotation = Quaternion.forward(first_person_extension:current_rotation())
+		local is_flanking = AiUtils.unit_is_flanking_player(unit, player_unit, rotation)
 
-		if not AiUtils.unit_is_flanking_player(game_object_or_level_unit, flag, forward) then
-			local extension = ScriptUnit.extension(game_object_or_level_unit, "dialogue_system")
-			local make_unit_auto_source, var_49_7 = WwiseUtils.make_unit_auto_source(self.world, game_object_or_level_unit, extension.voice_node)
-			local backstab_player_sound_event = Unit.get_data(game_object_or_level_unit, "breed").backstab_player_sound_event
+		if is_flanking then
+			local dialogue_extension = ScriptUnit.extension(unit, "dialogue_system")
+			local wwise_source, wwise_world = WwiseUtils.make_unit_auto_source(self.world, unit, dialogue_extension.voice_node)
+			local breed = Unit.get_data(unit, "breed")
+			local sound_event = breed.backstab_player_sound_event
+			local audio_system_extension = Managers.state.entity:system("audio_system")
 
-			Managers.state.entity:system("audio_system"):_play_event_with_source(var_49_7, backstab_player_sound_event, make_unit_auto_source)
+			audio_system_extension:_play_event_with_source(wwise_world, sound_event, wwise_source)
 		end
 	end
 end
 
-function write_attribute(self, arg_50_1, arg_50_2, arg_50_3, arg_50_4)
+function write_attribute(extension, unit, id, category_id, value)
 	-- function 50
-	local attributes = self.attributes
+	local attributes = extension.attributes
 
 	if not attributes then
 		attributes = {}
-		self.attributes = attributes
+		extension.attributes = attributes
 	end
 
-	local var_50_1 = attributes[arg_50_3]
+	local var_50_0 = attributes[category_id]
 
-	var_50_1 = var_50_1 or {}
-	attributes[arg_50_3] = var_50_1
-	attributes[arg_50_3][arg_50_2] = arg_50_4
+	var_50_0 = not not var_50_0 or not not {}
+	attributes[category_id] = var_50_0
+	attributes[category_id][id] = value
 
-	local var_50_2 = AttributeDefinition[arg_50_3][arg_50_2]
+	local func = AttributeDefinition[category_id][id]
 
-	if not var_50_2 then
-		var_50_2(arg_50_1, arg_50_4)
+	if func then
+		func(unit, value)
 	end
 end
 
-AISystem.set_attribute = function (self, arg_51_1, arg_51_2, arg_51_3, arg_51_4, arg_51_5)
+AISystem.set_attribute = function (self, unit, attribute_name, category_name, value, skip_sync)
 	-- function 51
-	local var_51_0 = self.unit_extension_data[arg_51_1]
+	local extension = self.unit_extension_data[unit]
 
-	write_attribute(var_51_0, arg_51_1, arg_51_2, arg_51_3, arg_51_4)
+	write_attribute(extension, unit, attribute_name, category_name, value)
 
-	if not arg_51_5 then
+	if skip_sync then
 		return
 	end
 
-	local unit_game_object_id = Managers.state.network:unit_game_object_id(arg_51_1)
-	local var_51_2 = NetworkLookup.attributes[arg_51_2]
-	local var_51_3 = NetworkLookup.attribute_categories[arg_51_3]
-	local var_51_4 = type(arg_51_4)
+	local unit_id = Managers.state.network:unit_game_object_id(unit)
+	local attribute_id = NetworkLookup.attributes[attribute_name]
+	local category_id = NetworkLookup.attribute_categories[category_name]
+	local val_type = type(value)
 
-	if var_51_4 == "boolean" then
-		self.network_transmit:send_rpc_clients("rpc_set_attribute_bool", unit_game_object_id, var_51_2, var_51_3, arg_51_4)
-	elseif var_51_4 == "number" then
-		self.network_transmit:send_rpc_clients("rpc_set_attribute_int", unit_game_object_id, var_51_2, var_51_3, arg_51_4)
+	if val_type == "boolean" then
+		self.network_transmit:send_rpc_clients("rpc_set_attribute_bool", unit_id, attribute_id, category_id, value)
+	elseif val_type == "number" then
+		self.network_transmit:send_rpc_clients("rpc_set_attribute_int", unit_id, attribute_id, category_id, value)
 	else
-		self.network_transmit:send_rpc_clients("rpc_remove_attribute", unit_game_object_id, var_51_2, var_51_3)
+		self.network_transmit:send_rpc_clients("rpc_remove_attribute", unit_id, attribute_id, category_id)
 	end
 end
 
-AISystem.get_attributes = function (self, arg_52_1)
+AISystem.get_attributes = function (self, unit)
 	-- function 52
-	local var_52_0 = self.unit_extension_data[arg_52_1]
+	local extension = self.unit_extension_data[unit]
 	local attributes
 
-	if not var_52_0 then
-		attributes = var_52_0.attributes
+	if extension then
+		attributes = extension.attributes
 
 		if not attributes then
 			-- Nothing
 		end
 	end
 
-	attributes = tbl
+	attributes = dummy_table
 
 	::label_52_0::
 
 	return attributes
 end
 
-AISystem.rpc_set_attribute_bool = function (self, arg_53_1, arg_53_2, arg_53_3, arg_53_4, arg_53_5)
+AISystem.rpc_set_attribute_bool = function (self, channel_id, unit_id, attribute_id, category_id, value)
 	-- function 53
-	print("rpc_set_attribute_bool", arg_53_2, arg_53_3, arg_53_4, arg_53_5)
+	print("rpc_set_attribute_bool", unit_id, attribute_id, category_id, value)
 
-	local unit = Managers.state.unit_storage:unit(arg_53_2)
-	local var_53_1 = self.unit_extension_data[unit]
-	local var_53_2 = NetworkLookup.attributes[arg_53_3]
-	local var_53_3 = NetworkLookup.attribute_categories[arg_53_4]
+	local unit = Managers.state.unit_storage:unit(unit_id)
+	local extension = self.unit_extension_data[unit]
+	local attribute_name = NetworkLookup.attributes[attribute_id]
+	local category_name = NetworkLookup.attribute_categories[category_id]
 
-	write_attribute(var_53_1, unit, var_53_2, var_53_3, arg_53_5)
+	write_attribute(extension, unit, attribute_name, category_name, value)
 end
 
-AISystem.rpc_set_attribute_int = function (self, arg_54_1, arg_54_2, arg_54_3, arg_54_4, arg_54_5)
+AISystem.rpc_set_attribute_int = function (self, channel_id, unit_id, attribute_id, category_id, value)
 	-- function 54
-	print("rpc_set_attribute_int", arg_54_2, arg_54_3, arg_54_4, arg_54_5)
+	print("rpc_set_attribute_int", unit_id, attribute_id, category_id, value)
 
-	local unit = Managers.state.unit_storage:unit(arg_54_2)
-	local var_54_1 = self.unit_extension_data[unit]
-	local var_54_2 = NetworkLookup.attributes[arg_54_3]
-	local var_54_3 = NetworkLookup.attribute_categories[arg_54_4]
+	local unit = Managers.state.unit_storage:unit(unit_id)
+	local extension = self.unit_extension_data[unit]
+	local attribute_name = NetworkLookup.attributes[attribute_id]
+	local category_name = NetworkLookup.attribute_categories[category_id]
 
-	write_attribute(var_54_1, unit, var_54_2, var_54_3, arg_54_5)
+	write_attribute(extension, unit, attribute_name, category_name, value)
 end
 
-AISystem.rpc_remove_attribute = function (self, arg_55_1, arg_55_2, arg_55_3, arg_55_4)
+AISystem.rpc_remove_attribute = function (self, channel_id, unit_id, attribute_id, category_id)
 	-- function 55
-	print("rpc_remove_attribute", arg_55_2, arg_55_3, arg_55_4, nil)
+	print("rpc_remove_attribute", unit_id, attribute_id, category_id, nil)
 
-	local unit = Managers.state.unit_storage:unit(arg_55_2)
-	local var_55_1 = self.unit_extension_data[unit]
-	local var_55_2 = NetworkLookup.attributes[arg_55_3]
-	local var_55_3 = NetworkLookup.attribute_categories[arg_55_4]
+	local unit = Managers.state.unit_storage:unit(unit_id)
+	local extension = self.unit_extension_data[unit]
+	local attribute_name = NetworkLookup.attributes[attribute_id]
+	local category_name = NetworkLookup.attribute_categories[category_id]
 
-	write_attribute(var_55_1, unit, var_55_2, var_55_3, nil)
+	write_attribute(extension, unit, attribute_name, category_name, nil)
 end
 
-AISystem.hot_join_sync = function (self, arg_56_1)
+AISystem.hot_join_sync = function (self, peer_id)
 	-- function 56
-	local count = #LAYER_ID_MAPPING
+	local size = #LAYER_ID_MAPPING
 
-	for i = NavTagVolumeStartLayer, count do
-		local var_56_1 = LAYER_ID_MAPPING[i]
+	for i = NavTagVolumeStartLayer, size do
+		local layer_name = LAYER_ID_MAPPING[i]
 
-		if NAV_TAG_VOLUME_LAYER_COST_AI[var_56_1] <= 0 then
-			self.network_transmit:send_rpc("rpc_set_allowed_nav_layer", arg_56_1, i, false)
+		if NAV_TAG_VOLUME_LAYER_COST_AI[layer_name] <= 0 then
+			self.network_transmit:send_rpc("rpc_set_allowed_nav_layer", peer_id, i, false)
 		end
 	end
 
-	for k, v in pairs(self.unit_extension_data) do
-		local attributes = v.attributes
+	for unit, extension in pairs(self.unit_extension_data) do
+		local attributes = extension.attributes
 
-		if not attributes and not next(attributes) then
-			local network = Managers.state.network
-			local unit_game_object_id = Managers.state.network:unit_game_object_id(k)
+		if attributes and next(attributes) then
+			local network_manager = Managers.state.network
+			local unit_id = Managers.state.network:unit_game_object_id(unit)
 
-			for k_2, v_2 in pairs(attributes) do
-				local var_56_5 = NetworkLookup.attribute_categories[k_2]
+			for category_name, category in pairs(attributes) do
+				local category_id = NetworkLookup.attribute_categories[category_name]
 
-				for k_3, v_3 in pairs(v_2) do
-					local var_56_6 = NetworkLookup.attributes[k_3]
+				for attribute_name, value in pairs(category) do
+					local attribute_id = NetworkLookup.attributes[attribute_name]
 
-					if type(v_3) == "boolean" then
-						self.network_transmit:send_rpc("rpc_set_attribute_bool", arg_56_1, unit_game_object_id, var_56_6, var_56_5, v_3)
+					if type(value) == "boolean" then
+						self.network_transmit:send_rpc("rpc_set_attribute_bool", peer_id, unit_id, attribute_id, category_id, value)
 					else
-						self.network_transmit:send_rpc("rpc_set_attribute_int", arg_56_1, unit_game_object_id, var_56_6, var_56_5, v_3)
+						self.network_transmit:send_rpc("rpc_set_attribute_int", peer_id, unit_id, attribute_id, category_id, value)
 					end
 				end
 			end
 		end
 	end
 
-	for k_4, v_4 in pairs(self._hot_join_sync_units) do
-		v_4(arg_56_1, k_4)
+	for unit, func in pairs(self._hot_join_sync_units) do
+		func(peer_id, unit)
 	end
 end
 
-AISystem.create_all_trees = function (arg_57_0)
+AISystem.create_all_trees = function (self)
 	-- function 57
-	flag = true
+	ai_trees_created = true
 
-	for k, v in pairs(BreedBehaviors) do
-		local var_57_0 = BehaviorTree:new(v, k)
+	for tree_name, root in pairs(BreedBehaviors) do
+		local tree = BehaviorTree:new(root, tree_name)
 
-		arg_57_0._behavior_trees[k] = var_57_0
+		self._behavior_trees[tree_name] = tree
 	end
 
-	for k_2, v_2 in pairs(BotBehaviors) do
-		local var_57_1 = BehaviorTree:new(v_2, k_2)
+	for tree_name, root in pairs(BotBehaviors) do
+		local tree = BehaviorTree:new(root, tree_name)
 
-		arg_57_0._behavior_trees[k_2] = var_57_1
+		self._behavior_trees[tree_name] = tree
 	end
 end
 
-AISystem.behavior_tree = function (self, arg_58_1)
+AISystem.behavior_tree = function (self, tree_name)
 	-- function 58
-	return self._behavior_trees[arg_58_1]
+	return self._behavior_trees[tree_name]
 end
 
-AISystem.register_unit_for_destruction = function (arg_59_0, arg_59_1)
+AISystem.register_unit_for_destruction = function (self, unit)
 	-- function 59
-	arg_59_0._units_to_destroy[arg_59_1] = arg_59_1
+	self._units_to_destroy[unit] = unit
 end

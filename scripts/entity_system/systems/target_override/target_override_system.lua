@@ -2,11 +2,11 @@
 
 TargetOverrideSystem = class(TargetOverrideSystem, ExtensionSystemBase)
 
-TargetOverrideSystem.init = function (self, arg_1_1, arg_1_2, arg_1_3)
+TargetOverrideSystem.init = function (self, entity_system_creation_context, system_name, extension_list)
 	-- function 1
-	TargetOverrideSystem.super.init(self, arg_1_1, arg_1_2, arg_1_3)
+	TargetOverrideSystem.super.init(self, entity_system_creation_context, system_name, extension_list)
 
-	local network_event_delegate = arg_1_1.network_event_delegate
+	local network_event_delegate = entity_system_creation_context.network_event_delegate
 
 	self._network_event_delegate = network_event_delegate
 
@@ -21,9 +21,9 @@ TargetOverrideSystem.destroy = function (self)
 	self._network_event_delegate = nil
 end
 
-TargetOverrideSystem.rpc_taunt = function (self, arg_3_1, arg_3_2, arg_3_3, arg_3_4, arg_3_5, arg_3_6)
+TargetOverrideSystem.rpc_taunt = function (self, channel_id, game_object_id, radius, duration, do_stagger, taunt_bosses)
 	-- function 3
-	local unit = self.unit_storage:unit(arg_3_2)
+	local unit = self.unit_storage:unit(game_object_id)
 
-	ScriptUnit.extension(unit, "target_override_system"):taunt(arg_3_3, arg_3_4, arg_3_5, arg_3_6)
+	ScriptUnit.extension(unit, "target_override_system"):taunt(radius, duration, do_stagger, taunt_bosses)
 end

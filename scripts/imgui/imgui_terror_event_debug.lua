@@ -2,26 +2,29 @@
 
 ImguiTerrorEventDebug = class(ImguiTerrorEventDebug)
 
-local tbl = {
+local difficulties = {
 	"normal",
 	"hard",
 	"harder",
 	"hardest",
 	"cataclysm"
 }
-local tbl_2 = {}
+local difficulty_tweaks = {}
 
 for i = -DifficultyTweak.range, DifficultyTweak.range do
-	tbl_2[#tbl_2 + 1] = i
+	difficulty_tweaks[#difficulty_tweaks + 1] = i
 end
 
-local function fn()
+local function get_current_level()
 	-- function 1
 	if not Managers.state.game_mode then
 		return
 	end
 
-	return (Managers.level_transition_handler:get_current_level_keys())
+	local level_transition_handler = Managers.level_transition_handler
+	local level_key = level_transition_handler:get_current_level_keys()
+
+	return level_key
 end
 
 ImguiTerrorEventDebug.init = function (self)
@@ -32,47 +35,47 @@ ImguiTerrorEventDebug.init = function (self)
 	self._difficulty_index = 1
 	self._generic_terror_events = {}
 
-	for k, v in pairs(GenericTerrorEvents) do
-		self._generic_terror_events[#self._generic_terror_events + 1] = k
+	for name, _ in pairs(GenericTerrorEvents) do
+		self._generic_terror_events[#self._generic_terror_events + 1] = name
 	end
 
 	table.sort(self._generic_terror_events)
 end
 
-ImguiTerrorEventDebug.update = function (arg_3_0)
+ImguiTerrorEventDebug.update = function (self)
 	-- function 3
 	return
 end
 
-ImguiTerrorEventDebug.is_persistent = function (arg_4_0)
+ImguiTerrorEventDebug.is_persistent = function (self)
 	-- function 4
 	return true
 end
 
-ImguiTerrorEventDebug.draw = function (self, arg_5_1)
+ImguiTerrorEventDebug.draw = function (self, is_open)
 	-- function 5
-	local begin_window = Imgui.begin_window("TerrorEventDebug", "always_auto_resize")
-	local var_5_1 = fn()
+	local do_close = Imgui.begin_window("TerrorEventDebug", "always_auto_resize")
+	local current_level = get_current_level()
 
-	if var_5_1 ~= self._current_level then
+	if current_level ~= self._current_level then
 		self._level_specific_terror_events = {}
 
-		local var_5_2 = TerrorEventBlueprints[var_5_1]
+		local blueprints = TerrorEventBlueprints[current_level]
 
-		if not var_5_2 then
-			for k, v in pairs(var_5_2) do
-				self._level_specific_terror_events[#self._level_specific_terror_events + 1] = k
+		if blueprints then
+			for name, _ in pairs(blueprints) do
+				self._level_specific_terror_events[#self._level_specific_terror_events + 1] = name
 			end
 		end
 
 		table.sort(self._level_specific_terror_events)
 
 		self._level_specific_index = 1
-		self._current_level = var_5_1
+		self._current_level = current_level
 
 		local get_level_seed = Managers.mechanism:get_level_seed()
 
-		get_level_seed = get_level_seed or 0
+		get_level_seed = not not get_level_seed or not not 0
 		self._seed = get_level_seed
 	end
 
@@ -83,8 +86,8 @@ ImguiTerrorEventDebug.draw = function (self, arg_5_1)
 	Imgui.spacing()
 	Imgui.spacing()
 
-	self._difficulty_index = Imgui.combo("Difficulty", self._difficulty_index, tbl)
-	self._difficulty_tweak_index = Imgui.combo("Difficulty Tweak", self._difficulty_tweak_index, tbl_2)
+	self._difficulty_index = Imgui.combo("Difficulty", self._difficulty_index, difficulties)
+	self._difficulty_tweak_index = Imgui.combo("Difficulty Tweak", self._difficulty_tweak_index, difficulty_tweaks)
 
 	Imgui.spacing()
 	Imgui.spacing()
@@ -93,9 +96,9 @@ ImguiTerrorEventDebug.draw = function (self, arg_5_1)
 
 	self._level_specific_index = Imgui.combo("Level Specific Terror Event", self._level_specific_index, self._level_specific_terror_events)
 
-	if not Imgui.button("Start Level Specific Terror Event") and not Managers.state.conflict then
-		script_data.terror_event_difficulty = tbl[self._difficulty_index]
-		script_data.terror_event_difficulty_tweak = tbl_2[self._difficulty_tweak_index]
+	if Imgui.button("Start Level Specific Terror Event") and Managers.state.conflict then
+		script_data.terror_event_difficulty = difficulties[self._difficulty_index]
+		script_data.terror_event_difficulty_tweak = difficulty_tweaks[self._difficulty_tweak_index]
 
 		Managers.state.conflict:start_terror_event(self._level_specific_terror_events[self._level_specific_index], self._seed)
 	end
@@ -107,9 +110,9 @@ ImguiTerrorEventDebug.draw = function (self, arg_5_1)
 
 	self._generic_index = Imgui.combo("Generic Terror Event", self._generic_index, self._generic_terror_events)
 
-	if not Imgui.button("Start Generic Terror Event") and not Managers.state.conflict then
-		script_data.terror_event_difficulty = tbl[self._difficulty_index]
-		script_data.terror_event_difficulty_tweak = tbl_2[self._difficulty_tweak_index]
+	if Imgui.button("Start Generic Terror Event") and Managers.state.conflict then
+		script_data.terror_event_difficulty = difficulties[self._difficulty_index]
+		script_data.terror_event_difficulty_tweak = difficulty_tweaks[self._difficulty_tweak_index]
 
 		Managers.state.conflict:start_terror_event(self._generic_terror_events[self._generic_index], self._seed)
 	end
@@ -124,34 +127,34 @@ ImguiTerrorEventDebug.draw = function (self, arg_5_1)
 	local str = "Terror Event Debugging On"
 	local debug_terror = script_data.debug_terror
 
-	debug_terror = debug_terror or false
+	debug_terror = not not debug_terror or not not false
 	script_data.debug_terror = checkbox(str, debug_terror)
 
-	local conflict = Managers.state.conflict
+	local conflict_director = Managers.state.conflict
 
-	if not conflict then
-		if conflict.pacing:get_state() ~= "pacing_frozen" then
-			if not Imgui.button("Disable Normal Spawning") then
-				conflict.pacing:disable()
+	if conflict_director then
+		if conflict_director.pacing:get_state() ~= "pacing_frozen" then
+			if Imgui.button("Disable Normal Spawning") then
+				conflict_director.pacing:disable()
 			end
-		elseif not Imgui.button("Enable Normal Spawning") then
-			conflict.pacing:enable()
+		elseif Imgui.button("Enable Normal Spawning") then
+			conflict_director.pacing:enable()
 		end
 
-		if not Imgui.button("Kill All Enemies") then
-			conflict:destroy_all_units(true)
+		if Imgui.button("Kill All Enemies") then
+			conflict_director:destroy_all_units(true)
 		end
 	end
 
-	if not Imgui.button("Stop active terror events") and Managers.player.is_server and not LEVEL_EDITOR_TEST then
-		local active_events = TerrorEventMixer.active_events
+	if Imgui.button("Stop active terror events") and (Managers.player.is_server or LEVEL_EDITOR_TEST) then
+		local events = TerrorEventMixer.active_events
 
-		for i, v_2 in ipairs(active_events) do
-			TerrorEventMixer.stop_event(v_2.name)
+		for _, event in ipairs(events) do
+			TerrorEventMixer.stop_event(event.name)
 		end
 	end
 
 	Imgui.end_window()
 
-	return begin_window
+	return do_close
 end

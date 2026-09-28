@@ -1,6 +1,6 @@
 -- chunkname: @scripts/settings/dlcs/wizards/wizards_extension_templates_part_2.lua
 
-return {
+local unit_extension_templates = {
 	ethereal_skull_unit = {
 		go_type = "shadow_skull_unit",
 		self_owned_extensions = {
@@ -34,3 +34,5 @@ return {
 		}
 	}
 }
+
+return unit_extension_templates

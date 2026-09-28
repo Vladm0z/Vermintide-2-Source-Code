@@ -2,20 +2,26 @@
 
 StormfiendBeamExtension = class(StormfiendBeamExtension)
 
-local POSITION_LOOKUP = POSITION_LOOKUP
-local tbl = {
+local position_lookup = POSITION_LOOKUP
+local arm_to_nodename = {
 	attack_right = "fx_right_muzzle",
 	attack_left = "fx_left_muzzle"
 }
-local mirror_array_inplace = table.mirror_array_inplace(tbl)
 
-StormfiendBeamExtension.init = function (self, arg_1_1, arg_1_2, arg_1_3)
+arm_to_nodename = table.mirror_array_inplace(arm_to_nodename)
+
+StormfiendBeamExtension.init = function (self, extension_init_context, unit, extension_init_data)
 	-- function 1
-	self.world = arg_1_1.world
-	self.unit = arg_1_2
+	local world = extension_init_context.world
+
+	self.world = world
+	self.unit = unit
 	self.is_server = Managers.player.is_server
 	self.state = "no_state"
-	self.particle_name = "fx/chr_warp_fire_flamethrower_01"
+
+	local particle_name = "fx/chr_warp_fire_flamethrower_01"
+
+	self.particle_name = particle_name
 	self.beam_forward_offset = 8
 	self.beam_up_offset = 8
 	self.muzzle_nodes = {}
@@ -24,114 +30,121 @@ end
 
 StormfiendBeamExtension.destroy = function (self)
 	-- function 2
-	for k, v in pairs(mirror_array_inplace) do
-		self:_remove_beam(v)
+	for _, node_name in pairs(arm_to_nodename) do
+		self:_remove_beam(node_name)
 	end
 end
 
-StormfiendBeamExtension._remove_beam = function (self, arg_3_1)
+StormfiendBeamExtension._remove_beam = function (self, node_name)
 	-- function 3
 	local world = self.world
 
-	if not self.particle_ids[arg_3_1] then
-		World.stop_spawning_particles(world, self.particle_ids[arg_3_1])
+	if self.particle_ids[node_name] then
+		World.stop_spawning_particles(world, self.particle_ids[node_name])
 
-		self.particle_ids[arg_3_1] = nil
-		self.muzzle_nodes[arg_3_1] = nil
+		self.particle_ids[node_name] = nil
+		self.muzzle_nodes[node_name] = nil
 	end
 end
 
-StormfiendBeamExtension.set_beam = function (self, arg_4_1, arg_4_2)
+StormfiendBeamExtension.set_beam = function (self, arm, active)
 	-- function 4
-	local var_4_0 = mirror_array_inplace[arg_4_1]
+	local node_name = arm_to_nodename[arm]
 
-	if arg_4_2 or not self.particle_ids[var_4_0] then
-		self:_remove_beam(var_4_0)
-	elseif not (not arg_4_2 and self.particle_ids[var_4_0]) then
-		self:_create_beam(var_4_0)
+	if not active and self.particle_ids[node_name] then
+		self:_remove_beam(node_name)
+	elseif active and not self.particle_ids[node_name] then
+		self:_create_beam(node_name)
 	end
 end
 
-StormfiendBeamExtension._create_beam = function (self, arg_5_1)
+StormfiendBeamExtension._create_beam = function (self, node_name)
 	-- function 5
 	local unit = self.unit
 
-	if not ALIVE[unit] then
-		local node = Unit.node(unit, arg_5_1)
+	if ALIVE[unit] then
+		local muzzle_node = Unit.node(unit, node_name)
 
-		self.muzzle_nodes[arg_5_1] = node
+		self.muzzle_nodes[node_name] = muzzle_node
 
 		local world = self.world
-		local create_particles = World.create_particles(world, self.particle_name, Vector3.zero(), Quaternion.identity())
-		local local_rotation = Unit.local_rotation(unit, node)
+		local particle_id = World.create_particles(world, self.particle_name, Vector3.zero(), Quaternion.identity())
+		local muzzle_rotation = Unit.local_rotation(unit, muzzle_node)
 		local look = Quaternion.look
 		local right = Vector3.right()
 		local num = Vector3.up() * 0.2
 		local flag
 
-		flag = arg_5_1 ~= "fx_left_muzzle" or not 1 or 0
+		flag = (node_name ~= "fx_left_muzzle" or not 1) and not not 0
 
-		local var_5_9 = look(right + num * flag)
-		local from_quaternion = Matrix4x4.from_quaternion(Quaternion.multiply(local_rotation, var_5_9))
+		local offset_rotation = look(right + num * flag)
+		local pose = Matrix4x4.from_quaternion(Quaternion.multiply(muzzle_rotation, offset_rotation))
 
-		World.link_particles(world, create_particles, unit, node, from_quaternion, "stop")
+		World.link_particles(world, particle_id, unit, muzzle_node, pose, "stop")
 
 		self.particle_life_time = Vector3Box(1, 0, 0)
-		self.particle_ids[arg_5_1] = create_particles
+		self.particle_ids[node_name] = particle_id
 	end
 end
 
-StormfiendBeamExtension.get_target_position = function (self, arg_6_1, arg_6_2)
+StormfiendBeamExtension.get_target_position = function (self, unit, muzzle_node)
 	-- function 6
 	local game = Managers.state.network:game()
-	local go_id = Managers.state.unit_storage:go_id(arg_6_1)
-	local game_object_field = GameSession.game_object_field(game, go_id, "aim_target")
+	local unit_storage = Managers.state.unit_storage
+	local go_id = unit_storage:go_id(unit)
+	local target_position = GameSession.game_object_field(game, go_id, "aim_target")
 
-	if not game_object_field then
-		local world_position = Unit.world_position(arg_6_1, arg_6_2)
+	if target_position then
+		local unit_position = Unit.world_position(unit, muzzle_node)
 
-		game_object_field[3] = world_position[3]
+		target_position[3] = unit_position[3]
 
-		return game_object_field + Vector3.normalize(game_object_field - world_position) * self.beam_forward_offset + Vector3.up() * self.beam_up_offset
+		local forward_offset = Vector3.normalize(target_position - unit_position)
+
+		target_position = target_position + forward_offset * self.beam_forward_offset
+
+		return target_position + Vector3.up() * self.beam_up_offset
 	end
 
 	return false
 end
 
-StormfiendBeamExtension.update = function (self, arg_7_1, arg_7_2, arg_7_3, arg_7_4, arg_7_5)
+StormfiendBeamExtension.update = function (self, unit, input, dt, context, t)
 	-- function 7
 	local world = self.world
 
-	if not ALIVE[arg_7_1] then
+	if not ALIVE[unit] then
 		return
 	end
 
-	for k, v in pairs(self.muzzle_nodes) do
-		local get_target_position = self:get_target_position(arg_7_1, v)
+	for node_name, muzzle_node in pairs(self.muzzle_nodes) do
+		local target_unit_pos = self:get_target_position(unit, muzzle_node)
 
-		if not get_target_position then
-			local world_position = Unit.world_position(arg_7_1, v)
-			local num = get_target_position - world_position
-			local length = Vector3.length(num)
-			local var_7_5 = Vector3(world_position.x, world_position.y, world_position.z + 0.1)
-			local normalize = Vector3.normalize(num)
-			local var_7_7 = self.particle_ids[k]
+		if target_unit_pos then
+			local muzzle_pos = Unit.world_position(unit, muzzle_node)
+			local muzzle_to_target = target_unit_pos - muzzle_pos
+			local length = Vector3.length(muzzle_to_target)
+			local firepoint_1_pos = Vector3(muzzle_pos.x, muzzle_pos.y, muzzle_pos.z + 0.1)
+			local dir_norm = Vector3.normalize(muzzle_to_target)
+			local particle_id = self.particle_ids[node_name]
 
-			if not var_7_7 then
-				local find_particles_variable = World.find_particles_variable(world, self.particle_name, "firepoint_1")
+			if particle_id then
+				local effect_variable_id = World.find_particles_variable(world, self.particle_name, "firepoint_1")
 
-				World.set_particles_variable(world, var_7_7, find_particles_variable, var_7_5 + normalize * 0.1)
+				World.set_particles_variable(world, particle_id, effect_variable_id, firepoint_1_pos + dir_norm * 0.1)
 
-				local find_particles_variable_2 = World.find_particles_variable(world, self.particle_name, "firepoint_2")
+				effect_variable_id = World.find_particles_variable(world, self.particle_name, "firepoint_2")
 
-				World.set_particles_variable(world, var_7_7, find_particles_variable_2, get_target_position)
+				World.set_particles_variable(world, particle_id, effect_variable_id, target_unit_pos)
 
-				local find_particles_variable_3 = World.find_particles_variable(world, self.particle_name, "firelife_1")
-				local unbox
+				effect_variable_id = World.find_particles_variable(world, self.particle_name, "firelife_1")
 
-				unbox.x, unbox = length / 4, self.particle_life_time:unbox()
+				local lifetime = length / 4
+				local particle_life_time_vector = self.particle_life_time:unbox()
 
-				World.set_particles_variable(world, var_7_7, find_particles_variable_3, unbox)
+				particle_life_time_vector.x = lifetime
+
+				World.set_particles_variable(world, particle_id, effect_variable_id, particle_life_time_vector)
 			end
 		end
 	end

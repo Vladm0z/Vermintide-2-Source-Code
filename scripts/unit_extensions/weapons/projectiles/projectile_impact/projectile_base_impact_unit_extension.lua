@@ -10,39 +10,39 @@ ProjectileImpactDataIndex = {
 	NORMAL = 4
 }
 
-ProjectileBaseImpactUnitExtension.init = function (self, arg_1_1, arg_1_2, arg_1_3)
+ProjectileBaseImpactUnitExtension.init = function (self, extension_init_context, unit, extension_init_data)
 	-- function 1
-	local world = arg_1_1.world
+	local world = extension_init_context.world
 
 	self.world = world
-	self.unit = arg_1_2
+	self.unit = unit
 	self.physics_world = World.get_data(world, "physics_world")
 	self.impact_buffer = pdArray.new()
 end
 
-ProjectileBaseImpactUnitExtension.update = function (self, arg_2_1, arg_2_2, arg_2_3, arg_2_4, arg_2_5)
+ProjectileBaseImpactUnitExtension.update = function (self, unit, input, dt, context, t)
 	-- function 2
 	pdArray.set_empty(self.impact_buffer)
 end
 
-local tbl = {}
+local temp_table = {}
 
-ProjectileBaseImpactUnitExtension.impact = function (self, arg_3_1, arg_3_2, arg_3_3, arg_3_4, arg_3_5)
+ProjectileBaseImpactUnitExtension.impact = function (self, hit_unit, hit_position, hit_direction, hit_normal, hit_actor_index)
 	-- function 3
 	local impact_buffer = self.impact_buffer
 
-	tbl[ProjectileImpactDataIndex.UNIT] = arg_3_1
-	tbl[ProjectileImpactDataIndex.POSITION] = Vector3Box(arg_3_2)
-	tbl[ProjectileImpactDataIndex.DIRECTION] = Vector3Box(arg_3_3)
-	tbl[ProjectileImpactDataIndex.NORMAL] = Vector3Box(arg_3_4)
-	tbl[ProjectileImpactDataIndex.ACTOR_INDEX] = arg_3_5
+	temp_table[ProjectileImpactDataIndex.UNIT] = hit_unit
+	temp_table[ProjectileImpactDataIndex.POSITION] = Vector3Box(hit_position)
+	temp_table[ProjectileImpactDataIndex.DIRECTION] = Vector3Box(hit_direction)
+	temp_table[ProjectileImpactDataIndex.NORMAL] = Vector3Box(hit_normal)
+	temp_table[ProjectileImpactDataIndex.ACTOR_INDEX] = hit_actor_index
 
-	pdArray.push_back5(impact_buffer, unpack(tbl))
+	pdArray.push_back5(impact_buffer, unpack(temp_table))
 
-	if Unit.actor(arg_3_1, arg_3_5) == nil then
+	if Unit.actor(hit_unit, hit_actor_index) == nil then
 		print("hitting pickup?")
-		print(arg_3_5)
-		print(Unit.find_actor(arg_3_1, "c_afro"))
+		print(hit_actor_index)
+		print(Unit.find_actor(hit_unit, "c_afro"))
 	end
 end
 

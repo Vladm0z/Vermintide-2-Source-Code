@@ -12,7 +12,7 @@ require("scripts/managers/game_mode/mutator_handler")
 require("scripts/managers/game_mode/horde_surge_handler")
 DLCUtils.require_list("game_mode_files")
 
-local tbl = {
+local RPCS = {
 	"rpc_is_ready_for_transition",
 	"rpc_apply_environment_variation",
 	"rpc_change_game_mode_state",
@@ -20,90 +20,99 @@ local tbl = {
 }
 local testify = script_data.testify
 
-testify = not testify and require("scripts/managers/game_mode/game_mode_manager_testify")
+if testify then
+	-- Nothing
+end
 
-local tbl_2 = {}
+testify = require("scripts/managers/game_mode/game_mode_manager_testify")
 
-for k, v in pairs(GameModeSettings) do
-	local tbl_3 = {}
+local game_mode_manager_testify = testify
 
-	for i, v_2 in ipairs(v.game_mode_states) do
-		tbl_3[i] = v_2
-		tbl_3[v_2] = i
+::label_0_0::
+
+local GAME_MODE_STATE_NETWORK_IDS = {}
+
+for game_mode_key, settings in pairs(GameModeSettings) do
+	local network_id_lookup = {}
+
+	for i, state_name in ipairs(settings.game_mode_states) do
+		network_id_lookup[i] = state_name
+		network_id_lookup[state_name] = i
 	end
 
-	tbl_2[k] = tbl_3
+	GAME_MODE_STATE_NETWORK_IDS[game_mode_key] = network_id_lookup
 end
 
 GameModeManager = class(GameModeManager)
 
-GameModeManager.init = function (self, arg_1_1, arg_1_2, arg_1_3, arg_1_4, arg_1_5, arg_1_6, arg_1_7, arg_1_8, arg_1_9)
+GameModeManager.init = function (self, world, lobby, network_event_delegate, statistics_db, game_mode_key, network_handler, network_transmit, profile_synchronizer, game_mode_settings)
 	-- function 1
-	local get_current_level_keys = Managers.level_transition_handler:get_current_level_keys()
-	local is_host = arg_1_2.is_host
+	local level_key = Managers.level_transition_handler:get_current_level_keys()
+	local is_host = lobby.is_host
 
-	self._lobby_host = not is_host and arg_1_2
-	self._lobby_client = not is_host and arg_1_2
+	self._lobby_host = not not is_host and not not lobby
+	self._lobby_client = not not is_host and not not lobby
 	self.is_server = is_host
-	self._world = arg_1_1
-	self._game_mode_key = arg_1_5
-	self._level_key = get_current_level_keys
+	self._world = world
+	self._game_mode_key = game_mode_key
+	self._level_key = level_key
 	self._end_conditions_met = false
 	self._gm_event_end_conditions_met = false
 	self._round_started = false
 	self._end_reason = nil
 	self._ready_for_transition = nil
-	self.statistics_db = arg_1_4
-	self._network_handler = arg_1_6
-	self._network_transmit = arg_1_7
-	self._profile_synchronizer = arg_1_8
+	self.statistics_db = statistics_db
+	self._network_handler = network_handler
+	self._network_transmit = network_transmit
+	self._profile_synchronizer = profile_synchronizer
 	self._have_signalled_ready_to_transition = false
 
-	self:_init_game_mode(arg_1_5, arg_1_9)
+	self:_init_game_mode(game_mode_key, game_mode_settings)
 
-	local event = Managers.state.event
+	local event_manager = Managers.state.event
 
-	event:register(self, "reload_application_settings", "event_reload_application_settings")
-	event:register(self, "gm_event_round_started", "gm_event_round_started")
-	event:register(self, "camera_teleported", "event_camera_teleported")
+	event_manager:register(self, "reload_application_settings", "event_reload_application_settings")
+	event_manager:register(self, "gm_event_round_started", "gm_event_round_started")
+	event_manager:register(self, "camera_teleported", "event_camera_teleported")
 
-	self.network_event_delegate = arg_1_3
+	self.network_event_delegate = network_event_delegate
 
-	arg_1_3:register(self, unpack(tbl))
-	self._game_mode:register_rpcs(arg_1_3, arg_1_7)
+	network_event_delegate:register(self, unpack(RPCS))
+	self._game_mode:register_rpcs(network_event_delegate, network_transmit)
 
 	self._object_sets = nil
 	self._object_set_names = nil
 
-	local num = 8192
+	local max_size = 8192
 
 	self._flow_set_data = {
 		units_per_frame = 150,
 		write_index = 1,
 		read_index = 1,
 		size = 0,
-		ring_buffer = Script.new_array(num),
-		max_size = num
+		ring_buffer = Script.new_array(max_size),
+		max_size = max_size
 	}
 
 	local mutators = self._game_mode:mutators()
-	local mutators_2 = LevelSettings[self._level_key].mutators
+	local level_settings = LevelSettings[self._level_key]
+	local level_mutators = level_settings.mutators
 
-	if not mutators_2 then
-		mutators = mutators or {}
+	if level_mutators then
+		mutators = not not mutators or not not {}
 
-		for i = 1, #mutators_2 do
-			mutators[#mutators + 1] = mutators_2[i]
+		for i = 1, #level_mutators do
+			mutators[#mutators + 1] = level_mutators[i]
 		end
 	end
 
-	local flag = not DEDICATED_SERVER
+	local has_local_client = not DEDICATED_SERVER
 
-	self._mutator_handler = MutatorHandler:new(mutators, self.is_server, arg_1_6, flag, arg_1_1, arg_1_3, arg_1_7)
+	self._mutator_handler = MutatorHandler:new(mutators, self.is_server, network_handler, has_local_client, world, network_event_delegate, network_transmit)
 	self._looping_event_timers = {}
 	self._disable_spawning_reasons = {}
 
-	if not self.is_server then
+	if self.is_server then
 		self._initial_peers_ready = false
 	end
 
@@ -131,9 +140,9 @@ GameModeManager.cleanup_game_mode_units = function (self)
 	self._game_mode:cleanup_game_mode_units()
 end
 
-GameModeManager.deactivate_mutators = function (self, arg_4_1)
+GameModeManager.deactivate_mutators = function (self, is_destroy)
 	-- function 4
-	self._mutator_handler:deactivate_mutators(arg_4_1)
+	self._mutator_handler:deactivate_mutators(is_destroy)
 end
 
 GameModeManager.conflict_director_updated_settings = function (self)
@@ -146,24 +155,24 @@ GameModeManager.settings = function (self)
 	return GameModeSettings[self._game_mode_key]
 end
 
-GameModeManager.setting = function (self, arg_7_1)
+GameModeManager.setting = function (self, setting_name)
 	-- function 7
-	return GameModeSettings[self._game_mode_key][arg_7_1]
+	return GameModeSettings[self._game_mode_key][setting_name]
 end
 
-GameModeManager.gm_event_end_conditions_met = function (self, arg_8_1, arg_8_2, arg_8_3)
+GameModeManager.gm_event_end_conditions_met = function (self, reason, checkpoint_available, percentages_completed)
 	-- function 8
 	self._gm_event_end_conditions_met = true
 
-	if arg_8_1 == "lost" then
-		local current_level = LevelHelper:current_level(self._world)
-		local str = self._game_mode_key .. "_round_lost"
+	if reason == "lost" then
+		local level = LevelHelper:current_level(self._world)
+		local round_lost_string = self._game_mode_key .. "_round_lost"
 
-		Level.trigger_event(current_level, str)
+		Level.trigger_event(level, round_lost_string)
 	end
 
-	self._game_mode:gm_event_end_conditions_met(arg_8_1, arg_8_2, arg_8_3)
-	self:_save_last_level_completed(arg_8_1)
+	self._game_mode:gm_event_end_conditions_met(reason, checkpoint_available, percentages_completed)
+	self:_save_last_level_completed(reason)
 end
 
 GameModeManager.is_game_mode_ended = function (self)
@@ -177,110 +186,110 @@ GameModeManager.setup_done = function (self)
 	self._mutator_handler:activate_mutators()
 end
 
-GameModeManager.deactivate_mutator = function (self, arg_11_1)
+GameModeManager.deactivate_mutator = function (self, mutator_name)
 	-- function 11
-	self._mutator_handler:deactivate_mutator(arg_11_1)
+	self._mutator_handler:deactivate_mutator(mutator_name)
 end
 
-GameModeManager.player_entered_game_session = function (self, arg_12_1, arg_12_2, arg_12_3)
+GameModeManager.player_entered_game_session = function (self, peer_id, local_player_id, requested_party_index)
 	-- function 12
-	self._game_mode:player_entered_game_session(arg_12_1, arg_12_2, arg_12_3)
+	self._game_mode:player_entered_game_session(peer_id, local_player_id, requested_party_index)
 end
 
-GameModeManager.remove_bot = function (self, arg_13_1, arg_13_2, arg_13_3, arg_13_4)
+GameModeManager.remove_bot = function (self, party_id, peer_id, local_player_id, update_safe)
 	-- function 13
-	return self._game_mode:remove_bot(arg_13_1, arg_13_2, arg_13_3, arg_13_4)
+	return self._game_mode:remove_bot(party_id, peer_id, local_player_id, update_safe)
 end
 
-GameModeManager.player_left_game_session = function (self, arg_14_1, arg_14_2)
+GameModeManager.player_left_game_session = function (self, peer_id, local_player_id)
 	-- function 14
-	self._game_mode:player_left_game_session(arg_14_1, arg_14_2)
+	self._game_mode:player_left_game_session(peer_id, local_player_id)
 end
 
-GameModeManager.player_joined_party = function (self, arg_15_1, arg_15_2, arg_15_3, arg_15_4, arg_15_5)
+GameModeManager.player_joined_party = function (self, peer_id, local_player_id, new_party_id, slot_id, old_party_id)
 	-- function 15
-	self._game_mode:player_joined_party(arg_15_1, arg_15_2, arg_15_3, arg_15_4, arg_15_5)
+	self._game_mode:player_joined_party(peer_id, local_player_id, new_party_id, slot_id, old_party_id)
 end
 
-GameModeManager.player_left_party = function (self, arg_16_1, arg_16_2, arg_16_3, arg_16_4, arg_16_5)
+GameModeManager.player_left_party = function (self, peer_id, local_player_id, party_id, slot_id, old_slot_data)
 	-- function 16
-	self._game_mode:player_left_party(arg_16_1, arg_16_2, arg_16_3, arg_16_4, arg_16_5)
+	self._game_mode:player_left_party(peer_id, local_player_id, party_id, slot_id, old_slot_data)
 end
 
-GameModeManager.ai_killed = function (self, arg_17_1, arg_17_2, arg_17_3, arg_17_4)
+GameModeManager.ai_killed = function (self, killed_unit, killer_unit, death_data, killing_blow)
 	-- function 17
-	self._mutator_handler:ai_killed(arg_17_1, arg_17_2, arg_17_3, arg_17_4)
+	self._mutator_handler:ai_killed(killed_unit, killer_unit, death_data, killing_blow)
 
-	local _game_mode = self._game_mode
+	local game_mode = self._game_mode
 
-	if not _game_mode.ai_killed then
-		_game_mode:ai_killed(arg_17_1, arg_17_2, arg_17_3, arg_17_4)
+	if game_mode.ai_killed then
+		game_mode:ai_killed(killed_unit, killer_unit, death_data, killing_blow)
 	end
 end
 
-GameModeManager.level_object_killed = function (self, arg_18_1, arg_18_2)
+GameModeManager.level_object_killed = function (self, killed_unit, killing_blow)
 	-- function 18
-	self._mutator_handler:level_object_killed(arg_18_1, arg_18_2)
+	self._mutator_handler:level_object_killed(killed_unit, killing_blow)
 end
 
-GameModeManager.ai_hit_by_player = function (self, arg_19_1, arg_19_2, arg_19_3)
+GameModeManager.ai_hit_by_player = function (self, hit_unit, attacking_unit, attack_data)
 	-- function 19
-	self._mutator_handler:ai_hit_by_player(arg_19_1, arg_19_2, arg_19_3)
+	self._mutator_handler:ai_hit_by_player(hit_unit, attacking_unit, attack_data)
 end
 
-GameModeManager.player_hit = function (self, arg_20_1, arg_20_2, arg_20_3)
+GameModeManager.player_hit = function (self, hit_unit, attacking_unit, attack_data)
 	-- function 20
-	self._mutator_handler:player_hit(arg_20_1, arg_20_2, arg_20_3)
+	self._mutator_handler:player_hit(hit_unit, attacking_unit, attack_data)
 end
 
-GameModeManager.modify_player_base_damage = function (self, arg_21_1, arg_21_2, arg_21_3, arg_21_4)
+GameModeManager.modify_player_base_damage = function (self, damaged_unit, attacker_unit, damage, damage_type)
 	-- function 21
-	return self._mutator_handler:modify_player_base_damage(arg_21_1, arg_21_2, arg_21_3, arg_21_4)
+	return self._mutator_handler:modify_player_base_damage(damaged_unit, attacker_unit, damage, damage_type)
 end
 
-GameModeManager.player_respawned = function (self, arg_22_1)
+GameModeManager.player_respawned = function (self, spawned_unit)
 	-- function 22
-	self._mutator_handler:player_respawned(arg_22_1)
+	self._mutator_handler:player_respawned(spawned_unit)
 end
 
-GameModeManager.damage_taken = function (self, arg_23_1, arg_23_2, arg_23_3, arg_23_4, arg_23_5)
+GameModeManager.damage_taken = function (self, attacked_unit, attacker_unit, damage, damage_source, damage_type)
 	-- function 23
-	self._mutator_handler:damage_taken(arg_23_1, arg_23_2, arg_23_3, arg_23_4, arg_23_5)
+	self._mutator_handler:damage_taken(attacked_unit, attacker_unit, damage, damage_source, damage_type)
 end
 
-GameModeManager.pre_ai_spawned = function (self, arg_24_1, arg_24_2)
+GameModeManager.pre_ai_spawned = function (self, breed, optional_data)
 	-- function 24
-	self._mutator_handler:pre_ai_spawned(arg_24_1, arg_24_2)
+	self._mutator_handler:pre_ai_spawned(breed, optional_data)
 end
 
-GameModeManager.ai_spawned = function (self, arg_25_1)
+GameModeManager.ai_spawned = function (self, spawned_unit)
 	-- function 25
-	self._mutator_handler:ai_spawned(arg_25_1)
+	self._mutator_handler:ai_spawned(spawned_unit)
 end
 
-GameModeManager.post_ai_spawned = function (self, arg_26_1, arg_26_2, arg_26_3)
+GameModeManager.post_ai_spawned = function (self, ai_unit, breed, optional_data)
 	-- function 26
-	self._mutator_handler:post_ai_spawned(arg_26_2, arg_26_3)
+	self._mutator_handler:post_ai_spawned(breed, optional_data)
 end
 
-GameModeManager.set_override_respawn_group = function (self, arg_27_1, arg_27_2)
+GameModeManager.set_override_respawn_group = function (self, respawn_group_name, active)
 	-- function 27
-	if not self._game_mode.set_override_respawn_group then
-		self._game_mode:set_override_respawn_group(arg_27_1, arg_27_2)
+	if self._game_mode.set_override_respawn_group then
+		self._game_mode:set_override_respawn_group(respawn_group_name, active)
 	end
 end
 
-GameModeManager.set_respawn_group_enabled = function (self, arg_28_1, arg_28_2)
+GameModeManager.set_respawn_group_enabled = function (self, respawn_group_name, enabled)
 	-- function 28
-	if not self._game_mode.set_respawn_group_enabled then
-		self._game_mode:set_respawn_group_enabled(arg_28_1, arg_28_2)
+	if self._game_mode.set_respawn_group_enabled then
+		self._game_mode:set_respawn_group_enabled(respawn_group_name, enabled)
 	end
 end
 
-GameModeManager.set_respawn_gate_enabled = function (self, arg_29_1, arg_29_2)
+GameModeManager.set_respawn_gate_enabled = function (self, respawn_gate_unit, enabled)
 	-- function 29
-	if not self._game_mode.set_respawn_gate_enabled then
-		self._game_mode:set_respawn_gate_enabled(arg_29_1, arg_29_2)
+	if self._game_mode.set_respawn_gate_enabled then
+		self._game_mode:set_respawn_gate_enabled(respawn_gate_unit, enabled)
 	end
 end
 
@@ -288,14 +297,14 @@ GameModeManager.players_left_safe_zone = function (self)
 	-- function 30
 	self._mutator_handler:players_left_safe_zone()
 
-	if not self._game_mode.players_left_safe_zone then
+	if self._game_mode.players_left_safe_zone then
 		self._game_mode:players_left_safe_zone()
 	end
 end
 
-GameModeManager.has_activated_mutator = function (self, arg_31_1)
+GameModeManager.has_activated_mutator = function (self, name)
 	-- function 31
-	return self._mutator_handler:has_activated_mutator(arg_31_1)
+	return self._mutator_handler:has_activated_mutator(name)
 end
 
 GameModeManager.activated_mutators = function (self)
@@ -303,9 +312,9 @@ GameModeManager.activated_mutators = function (self)
 	return self._mutator_handler:activated_mutators()
 end
 
-GameModeManager.has_mutator = function (self, arg_33_1)
+GameModeManager.has_mutator = function (self, mutator_name)
 	-- function 33
-	return self._mutator_handler:has_mutator(arg_33_1)
+	return self._mutator_handler:has_mutator(mutator_name)
 end
 
 GameModeManager.mutators = function (self)
@@ -323,99 +332,111 @@ GameModeManager.evaluate_end_zone_activation_conditions = function (self)
 	return self._mutator_handler:evaluate_end_zone_activation_conditions()
 end
 
-GameModeManager.post_process_terror_event = function (self, arg_37_1)
+GameModeManager.post_process_terror_event = function (self, elements)
 	-- function 37
-	self._mutator_handler:post_process_terror_event(arg_37_1)
+	self._mutator_handler:post_process_terror_event(elements)
 end
 
 GameModeManager.bots_disabled = function (self)
 	-- function 38
-	return self:settings().bots_disabled
+	local settings = self:settings()
+	local bots_disabled = settings.bots_disabled
+
+	return bots_disabled
 end
 
 GameModeManager.get_saved_game_mode_data = function (self)
 	-- function 39
-	if not self._game_mode.get_saved_game_mode_data then
+	if self._game_mode.get_saved_game_mode_data then
 		return self._game_mode:get_saved_game_mode_data()
 	end
 end
 
-GameModeManager.set_object_set_enabled = function (self, arg_40_1, arg_40_2)
+GameModeManager.set_object_set_enabled = function (self, set_name, enable)
 	-- function 40
-	local var_40_0 = self._object_sets[arg_40_1]
+	local set = self._object_sets[set_name]
 
-	if not var_40_0 then
+	if not set then
 		return
 	end
 
-	self:_set_flow_object_set_enabled(var_40_0, arg_40_2, arg_40_1)
+	self:_set_flow_object_set_enabled(set, enable, set_name)
 end
 
-GameModeManager._set_flow_object_set_enabled = function (self, arg_41_1, arg_41_2, arg_41_3)
+GameModeManager._set_flow_object_set_enabled = function (self, set, enable, set_name)
 	-- function 41
-	if arg_41_1.flow_set_enabled == arg_41_2 then
+	if set.flow_set_enabled == enable then
 		return
 	end
 
-	local current_level = LevelHelper:current_level(self._world)
+	local level = LevelHelper:current_level(self._world)
 
-	arg_41_1.flow_set_enabled = arg_41_2
+	set.flow_set_enabled = enable
 
-	local _flow_set_data = self._flow_set_data
-	local ring_buffer = _flow_set_data.ring_buffer
-	local write_index = _flow_set_data.write_index
-	local read_index = _flow_set_data.read_index
-	local size = _flow_set_data.size
-	local max_size = _flow_set_data.max_size
-	local units = arg_41_1.units
-	local count = #units
-	local num = size + count - max_size
+	local data = self._flow_set_data
+	local buffer = data.ring_buffer
+	local write_index = data.write_index
+	local read_index = data.read_index
+	local size = data.size
+	local max_size = data.max_size
+	local set_units = set.units
+	local new_units_size = #set_units
+	local new_size = size + new_units_size
+	local overflow = new_size - max_size
 
-	if num > 0 then
-		local min = math.min(num, size)
+	if overflow > 0 then
+		local amount_to_remove = math.min(overflow, size)
 
-		for i = 1, min do
-			local var_41_11 = ring_buffer[read_index]
+		for i = 1, amount_to_remove do
+			local unit_index = buffer[read_index]
 
-			self:_set_flow_object_set_unit_enabled(current_level, var_41_11)
+			self:_set_flow_object_set_unit_enabled(level, unit_index)
 
 			read_index = read_index % max_size + 1
 			size = size - 1
 		end
 
-		_flow_set_data.read_index = read_index
+		data.read_index = read_index
 	end
 
-	local num_2 = count - max_size
+	local object_set_size_overflow = new_units_size - max_size
 
-	for i_2, v in ipairs(units) do
-		local unit_by_index = Level.unit_by_index(current_level, v)
+	for i, unit_index in ipairs(set_units) do
+		local unit = Level.unit_by_index(level, unit_index)
 
-		if not unit_by_index then
-			local get_data = Unit.get_data(unit_by_index, "flow_object_set_references")
+		if unit then
+			local get_data = Unit.get_data(unit, "flow_object_set_references")
 
-			get_data = get_data or 1
-
-			if not arg_41_2 then
-				get_data = get_data + 1
-			else
-				get_data = math.max(get_data - 1, 0)
+			if not get_data then
+				-- Nothing
 			end
 
-			Unit.set_data(unit_by_index, "flow_object_set_references", get_data)
+			get_data = 1
 
-			if i_2 <= num_2 then
-				self:_set_flow_object_set_unit_enabled(current_level, v)
+			local refs = get_data
+
+			::label_41_0::
+
+			if enable then
+				refs = refs + 1
 			else
-				ring_buffer[write_index] = v
+				refs = math.max(refs - 1, 0)
+			end
+
+			Unit.set_data(unit, "flow_object_set_references", refs)
+
+			if i <= object_set_size_overflow then
+				self:_set_flow_object_set_unit_enabled(level, unit_index)
+			else
+				buffer[write_index] = unit_index
 				write_index = write_index % max_size + 1
 				size = size + 1
 			end
 		end
 	end
 
-	_flow_set_data.write_index = write_index
-	_flow_set_data.size = size
+	data.write_index = write_index
+	data.size = size
 end
 
 GameModeManager.event_camera_teleported = function (self)
@@ -423,23 +444,23 @@ GameModeManager.event_camera_teleported = function (self)
 	self._flush_object_set_enable = 3
 end
 
-GameModeManager.post_update = function (self, arg_43_1, arg_43_2)
+GameModeManager.post_update = function (self, dt, t)
 	-- function 43
-	if not self._game_mode.post_update then
-		self._game_mode:post_update(arg_43_1, arg_43_2)
+	if self._game_mode.post_update then
+		self._game_mode:post_update(dt, t)
 	end
 end
 
-GameModeManager.update_flow_object_set_enable = function (self, arg_44_1)
+GameModeManager.update_flow_object_set_enable = function (self, dt)
 	-- function 44
-	local _flow_set_data = self._flow_set_data
-	local size = _flow_set_data.size
-	local _flush_object_set_enable = self._flush_object_set_enable
+	local data = self._flow_set_data
+	local size = data.size
+	local flush = self._flush_object_set_enable
 
 	if size > 0 then
 		local huge
 
-		if not _flush_object_set_enable then
+		if flush then
 			huge = math.huge
 
 			if not huge then
@@ -447,240 +468,249 @@ GameModeManager.update_flow_object_set_enable = function (self, arg_44_1)
 			end
 		end
 
-		huge = _flow_set_data.units_per_frame
+		huge = data.units_per_frame
+
+		local units_per_frame = huge
 
 		::label_44_0::
 
-		local min = math.min(huge, size)
-		local read_index = _flow_set_data.read_index
-		local max_size = _flow_set_data.max_size
-		local ring_buffer = _flow_set_data.ring_buffer
-		local current_level = LevelHelper:current_level(self._world)
+		local num_units = math.min(units_per_frame, size)
+		local read_index = data.read_index
+		local max_size = data.max_size
+		local buffer = data.ring_buffer
+		local level = LevelHelper:current_level(self._world)
 
-		for i = 1, min do
-			local var_44_9 = ring_buffer[read_index]
+		for i = 1, num_units do
+			local unit_index = buffer[read_index]
 
-			self:_set_flow_object_set_unit_enabled(current_level, var_44_9)
+			self:_set_flow_object_set_unit_enabled(level, unit_index)
 
 			read_index = read_index % max_size + 1
 			size = size - 1
 		end
 
-		_flow_set_data.size = size
-		_flow_set_data.read_index = read_index
+		data.size = size
+		data.read_index = read_index
 	end
 
-	if not (not _flush_object_set_enable and _flush_object_set_enable ~= 1) then
+	if flush and flush == 1 then
 		self._flush_object_set_enable = false
-	elseif not _flush_object_set_enable then
-		self._flush_object_set_enable = _flush_object_set_enable - 1
+	elseif flush then
+		self._flush_object_set_enable = flush - 1
 	end
 end
 
-local get_data = Unit.get_data
-local flow_event = Unit.flow_event
+local Unit_get_data = Unit.get_data
+local Unit_flow_event = Unit.flow_event
 
-GameModeManager._set_flow_object_set_unit_enabled = function (self, arg_45_1, arg_45_2)
+GameModeManager._set_flow_object_set_unit_enabled = function (self, level, index)
 	-- function 45
-	local unit_by_index = Level.unit_by_index(arg_45_1, arg_45_2)
-	local var_45_1 = get_data(unit_by_index, "flow_object_set_references")
-	local var_45_2 = get_data(unit_by_index, "flow_object_set_enabled")
+	local unit = Level.unit_by_index(level, index)
+	local refs = Unit_get_data(unit, "flow_object_set_references")
+	local enabled = Unit_get_data(unit, "flow_object_set_enabled")
 
-	if var_45_2 == nil then
-		var_45_2 = true
+	if enabled == nil then
+		enabled = true
 	end
 
-	local flag = not not var_45_2 or var_45_1 > 0
-	local flag_2 = not var_45_2 and var_45_1 == 0
-	local var_45_5
+	local enable = not enabled and refs > 0
+	local disable = not not enabled and refs == 0
+	local new_state
 
-	if not flag then
-		var_45_5 = true
-	elseif not flag_2 then
-		var_45_5 = false
+	if enable then
+		new_state = true
+	elseif disable then
+		new_state = false
 	end
 
-	if var_45_5 ~= nil then
-		Unit.set_data(unit_by_index, "flow_object_set_enabled", var_45_5)
+	if new_state ~= nil then
+		Unit.set_data(unit, "flow_object_set_enabled", new_state)
 
-		if not Unit.has_data(unit_by_index, "LevelEditor", "is_gizmo_unit") then
-			local get_data_2 = Unit.get_data(unit_by_index, "LevelEditor", "is_gizmo_unit")
-			local is_a = Unit.is_a(unit_by_index, "core/stingray_renderer/helper_units/reflection_probe/reflection_probe")
+		if Unit.has_data(unit, "LevelEditor", "is_gizmo_unit") then
+			local is_gizmo = Unit.get_data(unit, "LevelEditor", "is_gizmo_unit")
+			local is_reflection_probe = Unit.is_a(unit, "core/stingray_renderer/helper_units/reflection_probe/reflection_probe")
 
-			if not (not get_data_2 and is_a) then
-				Unit.set_unit_visibility(unit_by_index, false)
+			if is_gizmo and not is_reflection_probe then
+				Unit.set_unit_visibility(unit, false)
 			else
-				Unit.set_unit_visibility(unit_by_index, var_45_5)
+				Unit.set_unit_visibility(unit, new_state)
 			end
 		else
-			Unit.set_unit_visibility(unit_by_index, var_45_5)
+			Unit.set_unit_visibility(unit, new_state)
 		end
 
-		if self._game_mode_key ~= "versus" or not Unit.is_a(unit_by_index, "core/volumetrics/units/fog_volume") then
-			if not var_45_5 then
-				local get_data_3 = Unit.get_data(unit_by_index, "FogProperties", "albedo", 0)
-				local get_data_4 = Unit.get_data(unit_by_index, "FogProperties", "albedo", 1)
-				local get_data_5 = Unit.get_data(unit_by_index, "FogProperties", "albedo", 2)
-				local get_data_6 = Unit.get_data(unit_by_index, "FogProperties", "falloff", 0)
-				local get_data_7 = Unit.get_data(unit_by_index, "FogProperties", "falloff", 1)
-				local get_data_8 = Unit.get_data(unit_by_index, "FogProperties", "falloff", 2)
-				local get_data_9 = Unit.get_data(unit_by_index, "FogProperties", "extinction")
-				local get_data_10 = Unit.get_data(unit_by_index, "FogProperties", "phase")
+		if self._game_mode_key == "versus" and Unit.is_a(unit, "core/volumetrics/units/fog_volume") then
+			if new_state then
+				local albedo_r = Unit.get_data(unit, "FogProperties", "albedo", 0)
+				local albedo_g = Unit.get_data(unit, "FogProperties", "albedo", 1)
+				local albedo_b = Unit.get_data(unit, "FogProperties", "albedo", 2)
+				local falloff_1 = Unit.get_data(unit, "FogProperties", "falloff", 0)
+				local falloff_2 = Unit.get_data(unit, "FogProperties", "falloff", 1)
+				local falloff_3 = Unit.get_data(unit, "FogProperties", "falloff", 2)
+				local extinction = Unit.get_data(unit, "FogProperties", "extinction")
+				local phase = Unit.get_data(unit, "FogProperties", "phase")
 
-				Volumetrics.register_volume(unit_by_index, Vector3(get_data_3, get_data_4, get_data_4), get_data_9, get_data_10, Vector3(get_data_6, get_data_7, get_data_8))
+				Volumetrics.register_volume(unit, Vector3(albedo_r, albedo_g, albedo_g), extinction, phase, Vector3(falloff_1, falloff_2, falloff_3))
 			else
-				Volumetrics.unregister_volume(unit_by_index)
+				Volumetrics.unregister_volume(unit)
 			end
 		end
 
-		if not Unit.has_visibility_group(unit_by_index, "gizmo") then
-			Unit.set_visibility(unit_by_index, "gizmo", false)
+		if Unit.has_visibility_group(unit, "gizmo") then
+			Unit.set_visibility(unit, "gizmo", false)
 		end
 
-		if not get_data(unit_by_index, "physics_ignores_object_set") then
-			if not var_45_5 then
-				flow_event(unit_by_index, "hide_helper_mesh")
-				flow_event(unit_by_index, "unit_object_set_enabled")
+		local ignore_physics = Unit_get_data(unit, "physics_ignores_object_set")
+
+		if ignore_physics then
+			if new_state then
+				Unit_flow_event(unit, "hide_helper_mesh")
+				Unit_flow_event(unit, "unit_object_set_enabled")
 			else
-				flow_event(unit_by_index, "unit_object_set_disabled")
+				Unit_flow_event(unit, "unit_object_set_disabled")
 			end
 		else
-			local var_45_16
+			local actor_list
 
-			if not var_45_5 then
-				var_45_16 = get_data(unit_by_index, "flow_object_set_actor_list")
+			if new_state then
+				actor_list = Unit_get_data(unit, "flow_object_set_actor_list")
 			else
-				var_45_16 = {}
+				actor_list = {}
 			end
 
-			for i = 0, Unit.num_actors(unit_by_index) - 1 do
-				if not var_45_5 and not var_45_16[i] then
-					Unit.create_actor(unit_by_index, i)
-				elseif var_45_5 or not Unit.actor(unit_by_index, i) then
-					Unit.destroy_actor(unit_by_index, i)
+			for i = 0, Unit.num_actors(unit) - 1 do
+				if new_state and actor_list[i] then
+					Unit.create_actor(unit, i)
+				elseif not new_state and Unit.actor(unit, i) then
+					Unit.destroy_actor(unit, i)
 
-					var_45_16[i] = true
+					actor_list[i] = true
 				end
 			end
 
-			if not var_45_5 then
-				Unit.set_data(unit_by_index, "flow_object_set_actor_list", nil)
-				flow_event(unit_by_index, "hide_helper_mesh")
-				flow_event(unit_by_index, "unit_object_set_enabled")
+			if new_state then
+				Unit.set_data(unit, "flow_object_set_actor_list", nil)
+				Unit_flow_event(unit, "hide_helper_mesh")
+				Unit_flow_event(unit, "unit_object_set_enabled")
 			else
-				Unit.set_data(unit_by_index, "flow_object_set_actor_list", var_45_16)
-				flow_event(unit_by_index, "unit_object_set_disabled")
+				Unit.set_data(unit, "flow_object_set_actor_list", actor_list)
+				Unit_flow_event(unit, "unit_object_set_disabled")
 			end
 		end
 	end
 end
 
-GameModeManager.get_end_screen_config = function (self, arg_46_1, arg_46_2, arg_46_3, arg_46_4)
+GameModeManager.get_end_screen_config = function (self, game_won, game_lost, player, reason)
 	-- function 46
-	local get_end_screen_config, var_46_1, var_46_2 = self._game_mode:get_end_screen_config(arg_46_1, arg_46_2, arg_46_3, arg_46_4)
+	local screen_name, screen_config, screen_params = self._game_mode:get_end_screen_config(game_won, game_lost, player, reason)
 
-	fassert(get_end_screen_config ~= nil, "No screen name returned")
-	fassert(var_46_1 ~= nil, "No screen config returned")
+	fassert(screen_name ~= nil, "No screen name returned")
+	fassert(screen_config ~= nil, "No screen config returned")
 
-	return get_end_screen_config, var_46_1, var_46_2
+	return screen_name, screen_config, screen_params
 end
 
 GameModeManager.get_end_of_round_screen_settings = function (self)
 	-- function 47
-	if not self._game_mode.get_end_of_round_screen_settings then
+	if self._game_mode.get_end_of_round_screen_settings then
 		return self._game_mode:get_end_of_round_screen_settings()
 	end
 
 	return "none", {}, {}
 end
 
-GameModeManager.get_player_wounds = function (self, arg_48_1)
+GameModeManager.get_player_wounds = function (self, profile)
 	-- function 48
-	return self._game_mode:get_player_wounds(arg_48_1)
+	return self._game_mode:get_player_wounds(profile)
 end
 
-GameModeManager.get_initial_inventory = function (self, arg_49_1, arg_49_2, arg_49_3, arg_49_4, arg_49_5)
+GameModeManager.get_initial_inventory = function (self, healthkit, potion, grenade, additional_items, profile)
 	-- function 49
-	return self._game_mode:get_initial_inventory(arg_49_1, arg_49_2, arg_49_3, arg_49_4, arg_49_5)
+	return self._game_mode:get_initial_inventory(healthkit, potion, grenade, additional_items, profile)
 end
 
-GameModeManager.flow_cb_set_flow_object_set_enabled = function (self, arg_50_1, arg_50_2)
+GameModeManager.flow_cb_set_flow_object_set_enabled = function (self, set_name, enabled)
 	-- function 50
-	local var_50_0 = self._object_sets["flow_" .. arg_50_1]
+	local set = self._object_sets["flow_" .. set_name]
 
-	fassert(var_50_0, "[GameModeManager:flow_cb_set_flow_object_set_enabled()] Object set %s does not exist.", arg_50_1)
-	self:_set_flow_object_set_enabled(var_50_0, arg_50_2, arg_50_1)
+	fassert(set, "[GameModeManager:flow_cb_set_flow_object_set_enabled()] Object set %s does not exist.", set_name)
+	self:_set_flow_object_set_enabled(set, enabled, set_name)
 end
 
-GameModeManager.register_object_sets = function (self, arg_51_1)
+GameModeManager.register_object_sets = function (self, object_sets)
 	-- function 51
 	self._object_sets = {}
 	self._object_set_names = {}
 
-	for k, v in pairs(arg_51_1) do
-		self._object_sets[k] = v
-		self._object_set_names[v.key] = k
+	for set_name, set in pairs(object_sets) do
+		self._object_sets[set_name] = set
+		self._object_set_names[set.key] = set_name
 
-		if v.type == "flow" then
-			self:_set_flow_object_set_enabled(v, false, k)
+		if set.type == "flow" then
+			self:_set_flow_object_set_enabled(set, false, set_name)
 		end
 	end
 end
 
 GameModeManager.event_reload_application_settings = function (self)
 	-- function 52
-	if not self._object_sets.shadow_lights then
+	local shadow_lights = self._object_sets.shadow_lights
+
+	if shadow_lights then
 		Managers.state.camera:set_shadow_lights(T(Application.user_setting("light_casts_shadows"), false), 1)
 	end
 end
 
-GameModeManager._init_game_mode = function (self, arg_53_1, arg_53_2)
+GameModeManager._init_game_mode = function (self, game_mode_key, game_mode_settings)
 	-- function 53
-	fassert(GameModeSettings[arg_53_1], "[GameModeManager] Tried to set unknown game mode %q", tostring(arg_53_1))
+	fassert(GameModeSettings[game_mode_key], "[GameModeManager] Tried to set unknown game mode %q", tostring(game_mode_key))
 
-	local var_53_0 = GameModeSettings[arg_53_1]
-	local var_53_1 = rawget(_G, var_53_0.class_name)
+	local settings = GameModeSettings[game_mode_key]
+	local class = rawget(_G, settings.class_name)
 
-	if not DEDICATED_SERVER then
-		cprintf("[GameModeManager] Changing game mode to: %s", arg_53_1)
+	if DEDICATED_SERVER then
+		cprintf("[GameModeManager] Changing game mode to: %s", game_mode_key)
 	end
 
-	self._game_mode = var_53_1:new(var_53_0, self._world, self._network_handler, self.is_server, self._profile_synchronizer, self._level_key, self.statistics_db, arg_53_2)
+	self._game_mode = class:new(settings, self._world, self._network_handler, self.is_server, self._profile_synchronizer, self._level_key, self.statistics_db, game_mode_settings)
 end
 
-GameModeManager.host_player_spawned = function (arg_54_0)
+GameModeManager.host_player_spawned = function (self)
 	-- function 54
 	Managers.state.entity:system("round_started_system"):player_spawned()
 end
 
 GameModeManager.round_started = function (self)
 	-- function 55
-	local num = 0
+	local time_since_round_started = 0
 
-	self:trigger_event("round_started", num)
+	self:trigger_event("round_started", time_since_round_started)
 end
 
-GameModeManager.gm_event_round_started = function (self, arg_56_1)
+GameModeManager.gm_event_round_started = function (self, time_since_round_started)
 	-- function 56
 	self._round_started = true
-	self._round_start_time = Managers.time:time("game") - arg_56_1
 
-	local current_level = LevelHelper:current_level(self._world)
-	local str = self._game_mode_key .. "_round_started"
+	local t = Managers.time:time("game")
 
-	Level.trigger_event(current_level, str)
+	self._round_start_time = t - time_since_round_started
+
+	local level = LevelHelper:current_level(self._world)
+	local round_started_string = self._game_mode_key .. "_round_started"
+
+	Level.trigger_event(level, round_started_string)
 	Managers.telemetry_events:round_started()
 
-	if not TelemetrySettings.collect_memory then
+	if TelemetrySettings.collect_memory then
 		local memory_tree = Profiler.memory_tree()
 		local memory_resources = Profiler.memory_resources("all")
 
 		Managers.telemetry_events:memory_statistics(memory_tree, memory_resources, "round_started")
 	end
 
-	Level.trigger_event(current_level, "coop_round_started")
+	Level.trigger_event(level, "coop_round_started")
 
-	if not self._game_mode.round_started then
+	if self._game_mode.round_started then
 		self._game_mode:round_started()
 	end
 end
@@ -689,7 +719,7 @@ GameModeManager.is_round_started = function (self)
 	-- function 57
 	local num
 
-	if not self._round_start_time then
+	if self._round_start_time then
 		num = Managers.time:time("game") - self._round_start_time
 
 		if not num then
@@ -699,9 +729,11 @@ GameModeManager.is_round_started = function (self)
 
 	num = nil
 
+	local time_since_round_started = num
+
 	::label_57_0::
 
-	return self._round_started, num
+	return self._round_started, time_since_round_started
 end
 
 GameModeManager.disable_lose_condition = function (self)
@@ -725,268 +757,279 @@ GameModeManager.fail_level = function (self)
 	self._game_mode:fail_level()
 end
 
-GameModeManager.retry_level = function (arg_62_0)
+GameModeManager.retry_level = function (self)
 	-- function 62
-	local generate_level_seed = Managers.mechanism:generate_level_seed()
+	local level_seed = Managers.mechanism:generate_level_seed()
 
-	Managers.level_transition_handler:reload_level(nil, generate_level_seed)
+	Managers.level_transition_handler:reload_level(nil, level_seed)
 	Managers.level_transition_handler:promote_next_level_data()
 end
 
-GameModeManager.disable_player_spawning = function (self, arg_63_1, arg_63_2, arg_63_3, arg_63_4)
+GameModeManager.disable_player_spawning = function (self, disable, reason, safe_position, safe_rotation)
 	-- function 63
-	local _disable_spawning_reasons = self._disable_spawning_reasons
+	local reasons = self._disable_spawning_reasons
 
-	if not arg_63_1 then
-		fassert(not _disable_spawning_reasons[arg_63_2], "Reason already disables player spawning")
+	if disable then
+		fassert(not reasons[reason], "Reason already disables player spawning")
 
-		if not table.is_empty(_disable_spawning_reasons) then
+		if table.is_empty(reasons) then
 			self._game_mode:disable_player_spawning()
 		end
 
-		_disable_spawning_reasons[arg_63_2] = true
+		reasons[reason] = true
 	else
-		fassert(_disable_spawning_reasons[arg_63_2], "Trying to enable spawning without disabling spawning first with reason")
+		fassert(reasons[reason], "Trying to enable spawning without disabling spawning first with reason")
 
-		_disable_spawning_reasons[arg_63_2] = nil
+		reasons[reason] = nil
 
-		if not table.is_empty(_disable_spawning_reasons) then
-			self._game_mode:enable_player_spawning(arg_63_3, arg_63_4)
+		if table.is_empty(reasons) then
+			self._game_mode:enable_player_spawning(safe_position, safe_rotation)
 		end
 	end
 end
 
-GameModeManager.start_specific_level = function (self, arg_64_1, arg_64_2)
+GameModeManager.start_specific_level = function (self, level_key, time_until_start)
 	-- function 64
-	if not arg_64_2 then
-		self.specific_level_to_start = arg_64_1
-		self.specific_level_start_timer = arg_64_2
+	if time_until_start then
+		self.specific_level_to_start = level_key
+		self.specific_level_start_timer = time_until_start
 	else
 		self.specific_level_to_start = nil
 		self.specific_level_start_timer = nil
 
 		local level_transition_handler = Managers.level_transition_handler
-		local get_environment_variation_id = LevelHelper:get_environment_variation_id(arg_64_1)
+		local environment_variation_id = LevelHelper:get_environment_variation_id(level_key)
 
-		level_transition_handler:set_next_level(arg_64_1, get_environment_variation_id)
+		level_transition_handler:set_next_level(level_key, environment_variation_id)
 		level_transition_handler:promote_next_level_data()
 	end
 end
 
-GameModeManager.update_timebased_level_start = function (self, arg_65_1)
+GameModeManager.update_timebased_level_start = function (self, dt)
 	-- function 65
-	local specific_level_start_timer = self.specific_level_start_timer
+	local time = self.specific_level_start_timer
 
-	if not specific_level_start_timer then
-		local num = specific_level_start_timer - arg_65_1
+	if time then
+		time = time - dt
 
-		if num <= 0 then
+		if time <= 0 then
 			self:start_specific_level(self.specific_level_to_start)
 		else
-			self.specific_level_start_timer = num
+			self.specific_level_start_timer = time
 		end
 	end
 end
 
-GameModeManager.pre_update = function (self, arg_66_1, arg_66_2)
+GameModeManager.pre_update = function (self, t, dt)
 	-- function 66
-	self._mutator_handler:pre_update(arg_66_2, arg_66_1)
-	self._game_mode:pre_update(arg_66_1, arg_66_2)
+	self._mutator_handler:pre_update(dt, t)
+	self._game_mode:pre_update(t, dt)
 end
 
-GameModeManager.register_looping_event_timer = function (arg_67_0, arg_67_1, arg_67_2, arg_67_3)
+GameModeManager.register_looping_event_timer = function (self, timer_name, delay, event_name)
 	-- function 67
-	local clock = os.clock()
+	local os_t = os.clock()
 
-	arg_67_0._looping_event_timers[arg_67_1] = {
-		delay = arg_67_2,
-		next_trigger_time = clock + arg_67_2,
-		event_name = arg_67_3
+	self._looping_event_timers[timer_name] = {
+		delay = delay,
+		next_trigger_time = os_t + delay,
+		event_name = event_name
 	}
 end
 
-GameModeManager.unregister_looping_event_timer = function (arg_68_0, arg_68_1)
+GameModeManager.unregister_looping_event_timer = function (self, timer_name)
 	-- function 68
-	arg_68_0._looping_event_timers[arg_68_1] = nil
+	self._looping_event_timers[timer_name] = nil
 end
 
-GameModeManager.local_player_ready_to_start = function (self, arg_69_1)
+GameModeManager.local_player_ready_to_start = function (self, player)
 	-- function 69
 	if not Managers.state.network:in_game_session() then
 		return false
 	end
 
-	return self._game_mode:local_player_ready_to_start(arg_69_1)
+	return self._game_mode:local_player_ready_to_start(player)
 end
 
-GameModeManager.local_player_game_starts = function (self, arg_70_1, arg_70_2)
+GameModeManager.local_player_game_starts = function (self, player, loading_context)
 	-- function 70
-	self._game_mode:local_player_game_starts(arg_70_1, arg_70_2)
+	self._game_mode:local_player_game_starts(player, loading_context)
 end
 
-GameModeManager.update = function (self, arg_71_1, arg_71_2)
+GameModeManager.update = function (self, dt, t)
 	-- function 71
-	self._mutator_handler:update(arg_71_1, arg_71_2)
+	self._mutator_handler:update(dt, t)
 
-	if not self._game_mode.update then
-		self._game_mode:update(arg_71_2, arg_71_1)
+	if self._game_mode.update then
+		self._game_mode:update(t, dt)
 	end
 
-	local clock = os.clock()
-	local current_level = LevelHelper:current_level(self._world)
+	local os_t = os.clock()
+	local level = LevelHelper:current_level(self._world)
 
-	for k, v in pairs(self._looping_event_timers) do
-		if clock > v.next_trigger_time then
-			Level.trigger_event(current_level, v.event_name)
+	for name, timer in pairs(self._looping_event_timers) do
+		if os_t > timer.next_trigger_time then
+			Level.trigger_event(level, timer.event_name)
 
-			v.next_trigger_time = v.next_trigger_time + v.delay
+			timer.next_trigger_time = timer.next_trigger_time + timer.delay
 		end
 	end
 
-	if not script_data.testify then
-		Testify:poll_requests_through_handler(testify, self)
+	if script_data.testify then
+		Testify:poll_requests_through_handler(game_mode_manager_testify, self)
 	end
 end
 
-GameModeManager._update_initial_join = function (self, arg_72_1, arg_72_2)
+GameModeManager._update_initial_join = function (self, t, dt)
 	-- function 72
-	if not self._network_handler:are_all_peers_ingame() then
+	if self._network_handler:are_all_peers_ingame() then
 		self._initial_peers_ready = true
 
 		self._game_mode:all_peers_ready()
 	end
 end
 
-GameModeManager.evaluate_end_condition_outcome = function (self, arg_73_1, arg_73_2)
+GameModeManager.evaluate_end_condition_outcome = function (self, reason, player)
 	-- function 73
-	if not self._game_mode.evaluate_end_condition_outcome then
-		return self._game_mode:evaluate_end_condition_outcome(arg_73_1, arg_73_2)
+	if self._game_mode.evaluate_end_condition_outcome then
+		return self._game_mode:evaluate_end_condition_outcome(reason, player)
 	end
 
-	local flag = not arg_73_1 and arg_73_1 == "won"
-	local flag_2 = not arg_73_1 and arg_73_1 == "lost"
+	local game_won = not not reason and reason == "won"
+	local game_lost = not not reason and reason == "lost"
 
-	return flag, flag_2
+	return game_won, game_lost
 end
 
-local tbl_4 = {
+local skip_progress_state = {
 	party_one_won_early = true,
 	reload = true,
 	party_two_won_early = true
 }
 
-GameModeManager.server_update = function (self, arg_74_1, arg_74_2)
+GameModeManager.server_update = function (self, dt, t)
 	-- function 74
 	if not self._initial_peers_ready then
-		self:_update_initial_join(arg_74_2, arg_74_1)
+		self:_update_initial_join(t, dt)
 	end
 
-	local _game_mode = self._game_mode
+	local game_mode = self._game_mode
 
-	_game_mode:server_update(arg_74_2, arg_74_1)
+	game_mode:server_update(t, dt)
 
 	if not self._have_signalled_game_mode_about_end_conditions then
-		if not (self._end_conditions_met or LEVEL_EDITOR_TEST) then
-			local _mutator_handler = self._mutator_handler
-			local _round_started = self._round_started
-			local evaluate_end_conditions, var_74_4, var_74_5 = self._game_mode:evaluate_end_conditions(_round_started, arg_74_1, arg_74_2, _mutator_handler)
+		if not self._end_conditions_met and not LEVEL_EDITOR_TEST then
+			local mutator_handler = self._mutator_handler
+			local round_started = self._round_started
+			local ended, reason, reason_data = self._game_mode:evaluate_end_conditions(round_started, dt, t, mutator_handler)
 
-			if not evaluate_end_conditions then
-				_game_mode:ended(var_74_4)
-				Managers.mechanism:game_round_ended(arg_74_2, arg_74_1, var_74_4, var_74_5)
+			if ended then
+				game_mode:ended(reason)
+				Managers.mechanism:game_round_ended(t, dt, reason, reason_data)
 
-				if not tbl_4[var_74_4] then
+				if not skip_progress_state[reason] then
 					Managers.mechanism:progress_state()
 				end
 
 				self._network_handler:enter_post_game()
 
 				self._end_conditions_met = true
-				self._end_reason = var_74_4
+				self._end_reason = reason
 
 				local flag
 
-				flag = var_74_4 ~= "lost" or Managers.state.spawn:checkpoint_data() or not true or false
+				if reason == "lost" and Managers.state.spawn:checkpoint_data() then
+					flag = true
 
-				local percentages_completed = Managers.state.entity:system("mission_system"):percentages_completed()
+					goto label_74_0
+				end
 
-				self:trigger_event("end_conditions_met", var_74_4, flag, percentages_completed)
+				flag = false
+
+				local checkpoint_available = flag
+
+				::label_74_0::
+
+				local mission_system = Managers.state.entity:system("mission_system")
+				local percentages_completed = mission_system:percentages_completed()
+
+				self:trigger_event("end_conditions_met", reason, checkpoint_available, percentages_completed)
 
 				self._gm_event_end_conditions_met = true
 
-				self:_save_last_level_completed(var_74_4)
+				self:_save_last_level_completed(reason)
 
 				self._ready_for_transition = {}
 
 				local human_players = Managers.player:human_players()
 
-				for k, v in pairs(human_players) do
-					local peer_id = v.peer_id
+				for _, player in pairs(human_players) do
+					local peer_id = player.peer_id
 
 					self._ready_for_transition[peer_id] = false
 				end
 			end
 		end
 
-		if LEVEL_EDITOR_TEST or not self._end_conditions_met then
-			local flag_2 = true
-			local human_players_2 = Managers.player:human_players()
+		if not LEVEL_EDITOR_TEST and self._end_conditions_met then
+			local everyone_ready = true
+			local human_players = Managers.player:human_players()
 
-			for k_2, v_2 in pairs(human_players_2) do
-				local peer_id_2 = v_2.peer_id
+			for _, player in pairs(human_players) do
+				local peer_id = player.peer_id
 
-				if self._ready_for_transition[peer_id_2] == false then
-					flag_2 = false
+				if self._ready_for_transition[peer_id] == false then
+					everyone_ready = false
 
 					break
 				end
 			end
 
-			if not (not flag_2 and self._have_signalled_ready_to_transition) then
-				_game_mode:ready_to_transition()
+			if everyone_ready and not self._have_signalled_ready_to_transition then
+				game_mode:ready_to_transition()
 
 				self._have_signalled_ready_to_transition = true
 			else
-				self:update_timebased_level_start(arg_74_1)
+				self:update_timebased_level_start(dt)
 			end
 		end
 	end
 end
 
-GameModeManager._save_last_level_completed = function (self, arg_75_1)
+GameModeManager._save_last_level_completed = function (self, reason)
 	-- function 75
 	local level_key = self:level_key()
 
 	SaveData.last_played_level = level_key
-	SaveData.last_played_level_result = arg_75_1
+	SaveData.last_played_level_result = reason
 
 	Managers.save:auto_save(SaveFileName, SaveData, nil)
 end
 
-GameModeManager.rpc_is_ready_for_transition = function (arg_76_0, arg_76_1)
+GameModeManager.rpc_is_ready_for_transition = function (self, channel_id)
 	-- function 76
-	local var_76_0 = CHANNEL_TO_PEER_ID[arg_76_1]
+	local peer_id = CHANNEL_TO_PEER_ID[channel_id]
 
-	arg_76_0._ready_for_transition[var_76_0] = true
+	self._ready_for_transition[peer_id] = true
 end
 
-GameModeManager.game_won = function (self, arg_77_1)
+GameModeManager.game_won = function (self, player)
 	-- function 77
-	local evaluate_end_condition_outcome, var_77_1 = self:evaluate_end_condition_outcome(self._end_reason, arg_77_1)
+	local game_won, _ = self:evaluate_end_condition_outcome(self._end_reason, player)
 
-	return evaluate_end_condition_outcome
+	return game_won
 end
 
-GameModeManager.game_lost = function (self, arg_78_1)
+GameModeManager.game_lost = function (self, player)
 	-- function 78
-	local evaluate_end_condition_outcome, var_78_1 = self:evaluate_end_condition_outcome(self._end_reason, arg_78_1)
+	local _, game_lost = self:evaluate_end_condition_outcome(self._end_reason, player)
 
-	return var_78_1
+	return game_lost
 end
 
-GameModeManager.set_end_reason = function (self, arg_79_1)
+GameModeManager.set_end_reason = function (self, end_reason)
 	-- function 79
-	self._end_reason = arg_79_1
+	self._end_reason = end_reason
 end
 
 GameModeManager.get_end_reason = function (self)
@@ -999,14 +1042,14 @@ GameModeManager.level_key = function (self)
 	return self._level_key
 end
 
-GameModeManager.trigger_event = function (self, arg_82_1, ...)
+GameModeManager.trigger_event = function (self, event, ...)
 	-- function 82
-	local str = "gm_event_" .. arg_82_1
+	local gm_event = "gm_event_" .. event
 
-	Managers.state.event:trigger(str, ...)
+	Managers.state.event:trigger(gm_event, ...)
 
-	if not self._lobby_host then
-		Managers.state.network[str](Managers.state.network, ...)
+	if self._lobby_host then
+		Managers.state.network[gm_event](Managers.state.network, ...)
 	end
 end
 
@@ -1020,118 +1063,130 @@ GameModeManager.game_mode_key = function (self)
 	return self._game_mode_key
 end
 
-GameModeManager.hot_join_sync = function (self, arg_85_1)
+GameModeManager.hot_join_sync = function (self, peer_id)
 	-- function 85
-	self._mutator_handler:hot_join_sync(arg_85_1)
+	self._mutator_handler:hot_join_sync(peer_id)
 
 	local game_mode_state = self._game_mode:game_mode_state()
 
 	if game_mode_state ~= "initial_state" then
-		local var_85_1 = tbl_2[self._game_mode_key][game_mode_state]
+		local network_lookup = GAME_MODE_STATE_NETWORK_IDS[self._game_mode_key]
+		local game_mode_state_id = network_lookup[game_mode_state]
 
-		self._network_transmit:send_rpc("rpc_change_game_mode_state", arg_85_1, var_85_1)
+		self._network_transmit:send_rpc("rpc_change_game_mode_state", peer_id, game_mode_state_id)
 	end
 
-	if not self._round_started then
-		local num = Managers.time:time("game") - self._round_start_time
+	if self._round_started then
+		local t = Managers.time:time("game")
+		local time_since_round_started = t - self._round_start_time
 
-		self._network_transmit:send_rpc("rpc_gm_event_round_started", arg_85_1, num)
+		self._network_transmit:send_rpc("rpc_gm_event_round_started", peer_id, time_since_round_started)
 	end
 
-	self._game_mode:hot_join_sync(arg_85_1)
+	self._game_mode:hot_join_sync(peer_id)
 
-	if not self:get_environment_variation_name() then
-		self._network_transmit:send_rpc("rpc_apply_environment_variation", arg_85_1)
+	local environment_variation_name = self:get_environment_variation_name()
+
+	if environment_variation_name then
+		self._network_transmit:send_rpc("rpc_apply_environment_variation", peer_id)
 	end
 end
 
-GameModeManager.activate_end_level_area = function (self, arg_86_1, arg_86_2, arg_86_3, arg_86_4)
+GameModeManager.activate_end_level_area = function (self, unit, object, from, to)
 	-- function 86
-	self._game_mode:activate_end_level_area(arg_86_1, arg_86_2, arg_86_3, arg_86_4)
+	local game_mode = self._game_mode
+
+	game_mode:activate_end_level_area(unit, object, from, to)
 end
 
-GameModeManager.debug_end_level_area = function (self, arg_87_1, arg_87_2, arg_87_3, arg_87_4)
+GameModeManager.debug_end_level_area = function (self, unit, object, from, to)
 	-- function 87
-	self._game_mode:debug_end_level_area(arg_87_1, arg_87_2, arg_87_3, arg_87_4)
+	local game_mode = self._game_mode
+
+	game_mode:debug_end_level_area(unit, object, from, to)
 end
 
-GameModeManager.disable_end_level_area = function (self, arg_88_1)
+GameModeManager.disable_end_level_area = function (self, unit)
 	-- function 88
-	self._game_mode:disable_end_level_area(arg_88_1)
+	local game_mode = self._game_mode
+
+	game_mode:disable_end_level_area(unit)
 end
 
-GameModeManager.teleport_despawned_players = function (self, arg_89_1)
+GameModeManager.teleport_despawned_players = function (self, position)
 	-- function 89
-	self._game_mode:teleport_despawned_players(arg_89_1)
+	self._game_mode:teleport_despawned_players(position)
 end
 
-GameModeManager.flow_callback_add_spawn_point = function (self, arg_90_1)
+GameModeManager.flow_callback_add_spawn_point = function (self, unit)
 	-- function 90
-	self._game_mode:flow_callback_add_spawn_point(arg_90_1)
+	self._game_mode:flow_callback_add_spawn_point(unit)
 end
 
-GameModeManager.flow_callback_add_game_mode_specific_spawn_point = function (self, arg_91_1)
+GameModeManager.flow_callback_add_game_mode_specific_spawn_point = function (self, unit)
 	-- function 91
-	local num = 0
-	local tbl = {}
+	local i = 0
+	local sides = {}
 
-	while not Unit.has_data(arg_91_1, "sides", num) do
-		local get_data = Unit.get_data(arg_91_1, "sides", num)
+	while Unit.has_data(unit, "sides", i) do
+		local side = Unit.get_data(unit, "sides", i)
 
-		if #get_data > 0 then
-			tbl[#tbl + 1] = get_data
+		if #side > 0 then
+			sides[#sides + 1] = side
 		end
 
-		num = num + 1
+		i = i + 1
 	end
 
-	local num_2 = 0
+	i = 0
 
-	while not Unit.has_data(arg_91_1, "game_modes", num_2) do
-		if Unit.get_data(arg_91_1, "game_modes", num_2) == self._game_mode_key then
-			if not self._game_mode.flow_callback_add_game_mode_specific_spawn_point then
-				self._game_mode:flow_callback_add_game_mode_specific_spawn_point(arg_91_1, tbl)
+	while Unit.has_data(unit, "game_modes", i) do
+		local game_mode = Unit.get_data(unit, "game_modes", i)
+
+		if game_mode == self._game_mode_key then
+			if self._game_mode.flow_callback_add_game_mode_specific_spawn_point then
+				self._game_mode:flow_callback_add_game_mode_specific_spawn_point(unit, sides)
 			end
 
 			break
 		end
 
-		num_2 = num_2 + 1
+		i = i + 1
 	end
 end
 
-GameModeManager.remove_respawn_units_due_to_crossroads = function (self, arg_92_1, arg_92_2)
+GameModeManager.remove_respawn_units_due_to_crossroads = function (self, removed_path_distances, total_main_path_length)
 	-- function 92
-	if not self._game_mode.remove_respawn_units_due_to_crossroads then
-		self._game_mode:remove_respawn_units_due_to_crossroads(arg_92_1, arg_92_2)
+	if self._game_mode.remove_respawn_units_due_to_crossroads then
+		self._game_mode:remove_respawn_units_due_to_crossroads(removed_path_distances, total_main_path_length)
 	end
 end
 
 GameModeManager.recalc_respawner_dist_due_to_crossroads = function (self)
 	-- function 93
-	if not self._game_mode.recalc_respawner_dist_due_to_crossroads then
+	if self._game_mode.recalc_respawner_dist_due_to_crossroads then
 		self._game_mode:recalc_respawner_dist_due_to_crossroads()
 	end
 end
 
-GameModeManager.respawn_unit_spawned = function (self, arg_94_1)
+GameModeManager.respawn_unit_spawned = function (self, unit)
 	-- function 94
-	self._game_mode:respawn_unit_spawned(arg_94_1)
+	self._game_mode:respawn_unit_spawned(unit)
 end
 
-GameModeManager.respawn_gate_unit_spawned = function (self, arg_95_1)
+GameModeManager.respawn_gate_unit_spawned = function (self, unit)
 	-- function 95
-	self._game_mode:respawn_gate_unit_spawned(arg_95_1)
+	self._game_mode:respawn_gate_unit_spawned(unit)
 end
 
-GameModeManager.profile_changed = function (self, arg_96_1, arg_96_2, arg_96_3, arg_96_4, arg_96_5)
+GameModeManager.profile_changed = function (self, peer_id, local_player_id, profile_index, career_index, is_bot)
 	-- function 96
-	self._game_mode:profile_changed(arg_96_1, arg_96_2, arg_96_3, arg_96_4, arg_96_5)
+	self._game_mode:profile_changed(peer_id, local_player_id, profile_index, career_index, is_bot)
 end
 
-GameModeManager.force_respawn = function (self, arg_97_1, arg_97_2)
+GameModeManager.force_respawn = function (self, peer_id, local_player_id)
 	-- function 97
-	self._game_mode:force_respawn(arg_97_1, arg_97_2)
+	self._game_mode:force_respawn(peer_id, local_player_id)
 end
 
 GameModeManager.force_respawn_dead_players = function (self)
@@ -1139,20 +1194,20 @@ GameModeManager.force_respawn_dead_players = function (self)
 	self._game_mode:force_respawn_dead_players()
 end
 
-GameModeManager.set_respawning_enabled = function (self, arg_99_1)
+GameModeManager.set_respawning_enabled = function (self, enabled)
 	-- function 99
-	if not self._game_mode.set_respawning_enabled then
-		self._game_mode:set_respawning_enabled(arg_99_1)
+	if self._game_mode.set_respawning_enabled then
+		self._game_mode:set_respawning_enabled(enabled)
 	end
 end
 
-GameModeManager.on_game_mode_data_created = function (self, arg_100_1, arg_100_2)
+GameModeManager.on_game_mode_data_created = function (self, game_session, game_object_id)
 	-- function 100
 	fassert(self._has_created_game_mode_data == false, "There has already been a game mode data go created.")
 
 	self._has_created_game_mode_data = true
 
-	self._game_mode:on_game_mode_data_created(arg_100_1, arg_100_2)
+	self._game_mode:on_game_mode_data_created(game_session, game_object_id)
 end
 
 GameModeManager.on_game_mode_data_destroyed = function (self)
@@ -1164,116 +1219,123 @@ end
 
 GameModeManager._update_end_level_areas = function (self)
 	-- function 102
-	for k, v in pairs(self._debug_end_level_areas) do
-		local node = Unit.node(k, v.object)
-		local world_rotation = Unit.world_rotation(k, node)
-		local right = Quaternion.right(world_rotation)
-		local forward = Quaternion.forward(world_rotation)
-		local up = Quaternion.up(world_rotation)
-		local world_position = Unit.world_position(k, node)
-		local unbox = v.offset:unbox()
-		local num = world_position + right * unbox.x + forward * unbox.y + up * unbox.z
-		local from_quaternion_position = Matrix4x4.from_quaternion_position(world_rotation, num)
-		local unbox_2 = v.extents:unbox()
+	for unit, data in pairs(self._debug_end_level_areas) do
+		local node = Unit.node(unit, data.object)
+		local rot = Unit.world_rotation(unit, node)
+		local right = Quaternion.right(rot)
+		local fwd = Quaternion.forward(rot)
+		local up = Quaternion.up(rot)
+		local object_pos = Unit.world_position(unit, node)
+		local offset = data.offset:unbox()
+		local pos = object_pos + right * offset.x + fwd * offset.y + up * offset.z
+		local pose = Matrix4x4.from_quaternion_position(rot, pos)
+		local extents = data.extents:unbox()
 
-		QuickDrawer:quaternion(world_position, world_rotation)
+		QuickDrawer:quaternion(object_pos, rot)
 
-		local var_102_10 = self._end_level_areas[k]
+		local enabled = self._end_level_areas[unit]
 		local QuickDrawer = QuickDrawer
-		local var_102_12 = QuickDrawer
+		local var_102_1 = QuickDrawer
 		local box = QuickDrawer.box
-		local var_102_14 = from_quaternion_position
-		local var_102_15 = unbox_2
-		local var_102_16
+		local var_102_3 = pose
+		local var_102_4 = extents
+		local var_102_5
 
-		if not var_102_10 then
-			var_102_16 = Color(0, 255, 0)
+		if enabled then
+			var_102_5 = Color(0, 255, 0)
 
-			if not var_102_16 then
+			if not var_102_5 then
 				-- Nothing
 			end
 		end
 
-		var_102_16 = Color(255, 0, 0)
+		var_102_5 = Color(255, 0, 0)
 
 		::label_102_0::
 
-		box(var_102_12, var_102_14, var_102_15, var_102_16)
+		box(var_102_1, var_102_3, var_102_4, var_102_5)
 	end
 
-	if not table.is_empty(self._end_level_areas) then
+	if table.is_empty(self._end_level_areas) then
 		return false
 	else
 		local dot = Vector3.dot
 		local abs = math.abs
-		local num_2 = 0
+		local num_non_disabled_players = 0
 
-		for k_2, v_2 in pairs(Managers.player:human_players()) do
-			local player_unit = v_2.player_unit
+		for _, player in pairs(Managers.player:human_players()) do
+			local player_unit = player.player_unit
 			local alive = Unit.alive(player_unit)
 
-			alive = not alive and not ScriptUnit.extension(player_unit, "status_system"):is_disabled()
+			if alive then
+				-- Nothing
+			end
 
-			if not alive then
-				num_2 = num_2 + 1
+			alive = not ScriptUnit.extension(player_unit, "status_system"):is_disabled()
 
-				local var_102_22 = POSITION_LOOKUP[player_unit]
-				local flag = false
+			local non_disabled = alive
 
-				for k_3, v_3 in pairs(self._end_level_areas) do
-					local node_2 = Unit.node(k_3, v_3.object)
-					local world_position_2 = Unit.world_position(k_3, node_2)
-					local world_rotation_2 = Unit.world_rotation(k_3, node_2)
-					local right_2 = Quaternion.right(world_rotation_2)
-					local forward_2 = Quaternion.forward(world_rotation_2)
-					local up_2 = Quaternion.up(world_rotation_2)
-					local unbox_3 = v_3.offset:unbox()
-					local num_3 = world_position_2 + right_2 * unbox_3.x + forward_2 * unbox_3.y + up_2 * unbox_3.z
-					local unbox_4 = v_3.extents:unbox()
-					local num_4 = var_102_22 - num_3
+			::label_102_1::
 
-					if not (not (abs(dot(num_4, right_2)) < abs(unbox_4.x)) or not (abs(dot(num_4, forward_2)) < abs(unbox_4.y)) or not (abs(dot(num_4, up_2)) < abs(unbox_4.z))) then
-						flag = true
+			if non_disabled then
+				num_non_disabled_players = num_non_disabled_players + 1
+
+				local pos = POSITION_LOOKUP[player_unit]
+				local in_end_area = false
+
+				for unit, data in pairs(self._end_level_areas) do
+					local node = Unit.node(unit, data.object)
+					local object_pos = Unit.world_position(unit, node)
+					local object_rot = Unit.world_rotation(unit, node)
+					local right, forward, up = Quaternion.right(object_rot), Quaternion.forward(object_rot), Quaternion.up(object_rot)
+					local offset = data.offset:unbox()
+					local center_pos = object_pos + right * offset.x + forward * offset.y + up * offset.z
+					local extents = data.extents:unbox()
+					local player_offset = pos - center_pos
+
+					if abs(dot(player_offset, right)) < abs(extents.x) and abs(dot(player_offset, forward)) < abs(extents.y) and abs(dot(player_offset, up)) < abs(extents.z) then
+						in_end_area = true
 
 						break
 					end
 				end
 
-				if not flag then
+				if not in_end_area then
 					return false
 				end
 			end
 		end
 
-		return num_2 > 0
+		return num_non_disabled_players > 0
 	end
 end
 
 GameModeManager.on_round_end = function (self)
 	-- function 103
-	local _game_mode = self._game_mode
+	local game_mode = self._game_mode
 
-	if not _game_mode and not _game_mode.on_round_end then
-		_game_mode:on_round_end()
+	if game_mode and game_mode.on_round_end then
+		game_mode:on_round_end()
 	end
 end
 
-GameModeManager.change_game_mode_state = function (self, arg_104_1)
+GameModeManager.change_game_mode_state = function (self, state_name)
 	-- function 104
 	fassert(self.is_server, "Should only be called on the server.")
 
-	local setting = self:setting("game_mode_states")
+	local game_mode_states = self:setting("game_mode_states")
 
-	fassert(table.contains(setting, arg_104_1), "state_name (%s) does not exist in GameModeSettings", arg_104_1)
+	fassert(table.contains(game_mode_states, state_name), "state_name (%s) does not exist in GameModeSettings", state_name)
 
-	local var_104_1 = tbl_2[self._game_mode_key][arg_104_1]
+	local network_lookup = GAME_MODE_STATE_NETWORK_IDS[self._game_mode_key]
+	local state_name_id = network_lookup[state_name]
 
-	self._network_transmit:send_rpc_clients("rpc_change_game_mode_state", var_104_1)
+	self._network_transmit:send_rpc_clients("rpc_change_game_mode_state", state_name_id)
 end
 
 GameModeManager.get_boss_loot_pickup = function (self)
 	-- function 105
-	if not self._game_mode.get_boss_loot_pickup then
+	if self._game_mode.get_boss_loot_pickup then
 		return self._game_mode:get_boss_loot_pickup()
 	end
 
@@ -1282,18 +1344,19 @@ end
 
 GameModeManager.get_environment_variation_name = function (self)
 	-- function 106
-	local get_current_environment_variation_name = Managers.level_transition_handler:get_current_environment_variation_name()
+	local level_transition_handler = Managers.level_transition_handler
+	local environment_variation_name = level_transition_handler:get_current_environment_variation_name()
 
-	if not get_current_environment_variation_name then
-		local mutators = self:mutators()
+	if environment_variation_name then
+		local active_mutators = self:mutators()
 
-		local function fn(arg_107_0, arg_107_1)
+		local function has_disabled_environment_variations(name, data)
 			-- function 107
-			return arg_107_1.template.disable_environment_variations
+			return data.template.disable_environment_variations
 		end
 
-		if not (not mutators and table.find_func(mutators, fn)) then
-			return get_current_environment_variation_name
+		if not active_mutators or not table.find_func(active_mutators, has_disabled_environment_variations) then
+			return environment_variation_name
 		end
 	end
 
@@ -1302,53 +1365,56 @@ end
 
 GameModeManager.lock_available_hero = function (self)
 	-- function 108
-	local human_and_bot_players = Managers.player:human_and_bot_players()
-	local tbl = {}
-	local heroes = PROFILES_BY_AFFILIATION.heroes
+	local players = Managers.player:human_and_bot_players()
+	local occupied_profiles = {}
+	local available_profiles = PROFILES_BY_AFFILIATION.heroes
 
-	for k, v in pairs(human_and_bot_players) do
-		local profile_index = v:profile_index()
+	for _, player in pairs(players) do
+		local profile_index = player:profile_index()
 
-		if not profile_index then
-			tbl[profile_index] = true
+		if profile_index then
+			occupied_profiles[profile_index] = true
 		end
 	end
 
-	for i, v_2 in ipairs(heroes) do
-		local var_108_4 = FindProfileIndex(v_2)
+	for _, profile_name in ipairs(available_profiles) do
+		local profile_index = FindProfileIndex(profile_name)
 
-		if not tbl[var_108_4] then
-			self._locked_profile_index = var_108_4
+		if not occupied_profiles[profile_index] then
+			self._locked_profile_index = profile_index
 
 			return self._locked_profile_index
 		end
 	end
 
 	if not self._locked_profile_index then
-		local party_id = Managers.party:parties_by_name().heroes.party_id
-		local get_last_added_bot_for_party = Managers.party:get_last_added_bot_for_party(party_id)
+		local parties = Managers.party:parties_by_name()
+		local party_id = parties.heroes.party_id
+		local last_bot_status = Managers.party:get_last_added_bot_for_party(party_id)
 
-		if not get_last_added_bot_for_party then
-			self._locked_profile_index = get_last_added_bot_for_party.profile_index
+		if last_bot_status then
+			self._locked_profile_index = last_bot_status.profile_index
 
 			return self._locked_profile_index
 		end
 	end
 
 	if not self._locked_profile_index then
-		table.clear(tbl)
+		table.clear(occupied_profiles)
 
 		local human_players = Managers.player:human_players()
 
-		for k_2, v_3 in pairs(human_players) do
-			tbl[v_3:profile_index()] = true
+		for _, player in pairs(human_players) do
+			local profile_index = player:profile_index()
+
+			occupied_profiles[profile_index] = true
 		end
 
-		for i_2, v_4 in ipairs(heroes) do
-			local var_108_8 = FindProfileIndex(v_4)
+		for _, profile_name in ipairs(available_profiles) do
+			local profile_index = FindProfileIndex(profile_name)
 
-			if not tbl[var_108_8] then
-				self._locked_profile_index = var_108_8
+			if not occupied_profiles[profile_index] then
+				self._locked_profile_index = profile_index
 
 				return self._locked_profile_index
 			end
@@ -1356,27 +1422,27 @@ GameModeManager.lock_available_hero = function (self)
 	end
 
 	if not self._locked_profile_index then
-		local var_108_9 = heroes[1]
+		local fallback_profile_name = available_profiles[1]
 
-		self._locked_profile_index = FindProfileIndex(var_108_9)
+		self._locked_profile_index = FindProfileIndex(fallback_profile_name)
 
 		return self._locked_profile_index
 	end
 end
 
-GameModeManager.hero_is_locked = function (self, arg_109_1)
+GameModeManager.hero_is_locked = function (self, profile_index)
 	-- function 109
-	return self._locked_profile_index == arg_109_1
+	return self._locked_profile_index == profile_index
 end
 
 GameModeManager.apply_environment_variation = function (self)
 	-- function 110
-	local get_environment_variation_name = self:get_environment_variation_name()
+	local environment_variation_name = self:get_environment_variation_name()
 
-	if not get_environment_variation_name then
-		LevelHelper:flow_event(self._world, get_environment_variation_name)
+	if environment_variation_name then
+		LevelHelper:flow_event(self._world, environment_variation_name)
 
-		if not self.is_server then
+		if self.is_server then
 			self._network_transmit:send_rpc_clients("rpc_apply_environment_variation")
 		end
 	end
@@ -1387,21 +1453,22 @@ GameModeManager.rpc_apply_environment_variation = function (self)
 	self:apply_environment_variation()
 end
 
-GameModeManager.rpc_change_game_mode_state = function (self, arg_112_1, arg_112_2)
+GameModeManager.rpc_change_game_mode_state = function (self, channel_id, state_name_id)
 	-- function 112
 	fassert(not self.is_server, "Should only appear on the clients.")
 
-	local var_112_0 = tbl_2[self._game_mode_key][arg_112_2]
+	local network_lookup = GAME_MODE_STATE_NETWORK_IDS[self._game_mode_key]
+	local state_name = network_lookup[state_name_id]
 
-	self._game_mode:change_game_mode_state(var_112_0)
+	self._game_mode:change_game_mode_state(state_name)
 end
 
-GameModeManager.rpc_trigger_level_event = function (self, arg_113_1, arg_113_2)
+GameModeManager.rpc_trigger_level_event = function (self, channel_id, event)
 	-- function 113
-	local current_level = LevelHelper:current_level(self._world)
+	local level = LevelHelper:current_level(self._world)
 
-	if not current_level then
-		Level.trigger_event(current_level, arg_113_2)
+	if level then
+		Level.trigger_event(level, event)
 	end
 end
 
@@ -1422,7 +1489,7 @@ end
 
 GameModeManager.level_start_objectives = function (self)
 	-- function 117
-	if not self._game_mode.level_start_objectives then
+	if self._game_mode.level_start_objectives then
 		return self._game_mode:level_start_objectives()
 	end
 end

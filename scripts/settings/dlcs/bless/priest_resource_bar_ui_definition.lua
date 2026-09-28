@@ -1,10 +1,10 @@
 -- chunkname: @scripts/settings/dlcs/bless/priest_resource_bar_ui_definition.lua
 
-local tbl = {
+local charge_bar_size = {
 	250,
 	16
 }
-local tbl_2 = {
+local scenegraph_definition = {
 	screen = {
 		scale = "fit",
 		position = {
@@ -45,7 +45,7 @@ local tbl_2 = {
 		vertical_alignment = "center",
 		parent = "screen_bottom_pivot",
 		horizontal_alignment = "center",
-		size = tbl,
+		size = charge_bar_size,
 		position = {
 			0,
 			-220,
@@ -53,8 +53,10 @@ local tbl_2 = {
 		}
 	}
 }
-local var_0_2 = UIFrameSettings.frame_outer_glow_01.texture_sizes.corner[1]
-local tbl_3 = {
+local frame_settings = UIFrameSettings.frame_outer_glow_01
+local frame_corner = frame_settings.texture_sizes.corner
+local frame_width = frame_corner[1]
+local widget_definitions = {
 	charge_bar = {
 		scenegraph_id = "charge_bar",
 		element = {
@@ -97,8 +99,8 @@ local tbl_3 = {
 			bar_detail = "overcharge_bar_warrior_priest_slim_bar",
 			bar_fg = "overcharge_frame_priest",
 			size = {
-				tbl[1] - 6,
-				tbl[2]
+				charge_bar_size[1] - 6,
+				charge_bar_size[2]
 			}
 		},
 		style = {
@@ -116,8 +118,8 @@ local tbl_3 = {
 					3
 				},
 				size = {
-					tbl[1] - 6,
-					tbl[2] - 6
+					charge_bar_size[1] - 6,
+					charge_bar_size[2] - 6
 				}
 			},
 			bar_fg = {
@@ -135,8 +137,8 @@ local tbl_3 = {
 			},
 			bar_bg = {
 				size = {
-					tbl[1] - 6,
-					tbl[2] - 6
+					charge_bar_size[1] - 6,
+					charge_bar_size[2] - 6
 				},
 				offset = {
 					3,
@@ -163,7 +165,7 @@ local tbl_3 = {
 				},
 				offset = {
 					0,
-					-37.5 + tbl[2] / 2,
+					-37.5 + charge_bar_size[2] / 2,
 					11
 				}
 			},
@@ -180,8 +182,8 @@ local tbl_3 = {
 					3
 				},
 				size = {
-					tbl[1] - 6,
-					tbl[2] - 6
+					charge_bar_size[1] - 6,
+					charge_bar_size[2] - 6
 				}
 			},
 			bar_active = {
@@ -195,11 +197,11 @@ local tbl_3 = {
 				},
 				offset = {
 					3,
-					-50 + tbl[2] / 2,
+					-50 + charge_bar_size[2] / 2,
 					10
 				},
 				size = {
-					tbl[1] - 6,
+					charge_bar_size[1] - 6,
 					100
 				}
 			}
@@ -213,6 +215,6 @@ local tbl_3 = {
 }
 
 return {
-	scenegraph_definition = tbl_2,
-	widget_definitions = tbl_3
+	scenegraph_definition = scenegraph_definition,
+	widget_definitions = widget_definitions
 }

@@ -2,33 +2,30 @@
 
 AsyncLevelSpawner = class(AsyncLevelSpawner)
 
-AsyncLevelSpawner.init = function (self, arg_1_1, arg_1_2, arg_1_3, arg_1_4)
+AsyncLevelSpawner.init = function (self, world_name, level_name, spawned_object_sets, frame_time_budget)
 	-- function 1
-	local _setup_world = self:_setup_world(arg_1_1)
+	local world = self:_setup_world(world_name)
 
-	self._world = _setup_world
-	self._level_name = arg_1_2
-	self._level_spawn_time_budget = arg_1_4
+	self._world = world
+	self._level_name = level_name
+	self._level_spawn_time_budget = frame_time_budget
 
-	local var_1_1
-	local var_1_2
-	local var_1_3
-	local var_1_4
-	local flag = true
-	local spawn_level, var_1_7 = ScriptWorld.spawn_level(_setup_world, arg_1_2, arg_1_3, var_1_1, var_1_2, var_1_4, var_1_3, flag)
+	local position, rotation, mood_setting, shading_callback
+	local time_sliced_spawn = true
+	local _, level = ScriptWorld.spawn_level(world, level_name, spawned_object_sets, position, rotation, shading_callback, mood_setting, time_sliced_spawn)
 
-	self._level = var_1_7
+	self._level = level
 end
 
 AsyncLevelSpawner.destroy = function (self)
 	-- function 2
-	if not self._level then
+	if self._level then
 		ScriptWorld.destroy_level(self._world, self._level_name)
 
 		self._level = nil
 	end
 
-	if not self._world then
+	if self._world then
 		Managers.world:destroy_world(self._world)
 
 		self._world = nil
@@ -37,52 +34,46 @@ end
 
 AsyncLevelSpawner.update = function (self)
 	-- function 3
-	local update_spawn_time_sliced = Level.update_spawn_time_sliced(self._level, self._level_spawn_time_budget)
+	local done = Level.update_spawn_time_sliced(self._level, self._level_spawn_time_budget)
 
-	if not update_spawn_time_sliced then
-		local var_3_1
-		local var_3_2
-		local _world
+	if done then
+		local world, level
 
-		_world, self._world = self._world, var_3_1
+		world, self._world = self._world, world
+		level, self._level = self._level, level
 
-		local _level
-
-		_level, self._level = self._level, var_3_2
-
-		return update_spawn_time_sliced, _world, _level
+		return done, world, level
 	end
 
-	return update_spawn_time_sliced
+	return done
 end
 
-AsyncLevelSpawner._setup_world = function (arg_4_0, arg_4_1)
+AsyncLevelSpawner._setup_world = function (self, world_name)
 	-- function 4
-	local num = 1
-	local tbl = {
+	local layer = 1
+	local flags = {
 		Application.ENABLE_UMBRA,
 		Application.ENABLE_VOLUMETRICS
 	}
 
-	if not Application.user_setting("disable_apex_cloth") then
-		table.insert(tbl, Application.DISABLE_APEX_CLOTH)
+	if Application.user_setting("disable_apex_cloth") then
+		table.insert(flags, Application.DISABLE_APEX_CLOTH)
 	else
-		table.insert(tbl, Application.APEX_LOD_RESOURCE_BUDGET)
+		table.insert(flags, Application.APEX_LOD_RESOURCE_BUDGET)
 
 		local insert = table.insert
-		local var_4_3 = tbl
+		local var_4_1 = flags
 		local user_setting = Application.user_setting("apex_lod_resource_budget")
 
-		user_setting = user_setting or ApexClothQuality.high.apex_lod_resource_budget
+		user_setting = not not user_setting or not not ApexClothQuality.high.apex_lod_resource_budget
 
-		insert(var_4_3, user_setting)
+		insert(var_4_1, user_setting)
 	end
 
-	local var_4_5
-	local var_4_6
-	local create_world = Managers.world:create_world(arg_4_1, var_4_5, var_4_6, num, unpack(tbl))
+	local shading_environment, shading_callback
+	local world = Managers.world:create_world(world_name, shading_environment, shading_callback, layer, unpack(flags))
 
-	ScriptWorld.deactivate(create_world)
+	ScriptWorld.deactivate(world)
 
-	return create_world
+	return world
 end

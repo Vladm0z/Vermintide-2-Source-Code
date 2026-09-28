@@ -1,6 +1,6 @@
 -- chunkname: @scripts/network/game_object_templates.lua
 
-local tbl = {
+local game_object_templates = {
 	player_unit = {
 		game_object_created_func_name = "game_object_created_player_unit",
 		syncs_position = true,
@@ -606,10 +606,10 @@ local tbl = {
 	}
 }
 
-DLCUtils.merge("game_object_templates", tbl)
+DLCUtils.merge("game_object_templates", game_object_templates)
 
-for k, v in pairs(tbl) do
-	v.go_type = k
+for go_template_name, go_template in pairs(game_object_templates) do
+	go_template.go_type = go_template_name
 end
 
-return tbl
+return game_object_templates

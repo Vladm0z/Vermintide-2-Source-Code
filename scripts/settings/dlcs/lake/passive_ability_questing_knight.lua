@@ -2,41 +2,42 @@
 
 PassiveAbilityQuestingKnight = class(PassiveAbilityQuestingKnight)
 
-local num = 2
-local str = "questing_knight"
+local NUM_CHALLENGES = 2
+local CHALLENGE_CATEGORY = "questing_knight"
 
-local function fn(arg_1_0)
+local function has_loot_objective(objective)
 	-- function 1
-	local get_current_level_keys = Managers.level_transition_handler:get_current_level_keys()
-	local flag = not get_current_level_keys and LevelSettings[get_current_level_keys]
-	local flag_2 = not flag and flag.loot_objectives
+	local level_transition_handler = Managers.level_transition_handler
+	local level_key = level_transition_handler:get_current_level_keys()
+	local level_settings = not not level_key and not not LevelSettings[level_key]
+	local loot_objectives = not not level_settings and not not level_settings.loot_objectives
 
-	if not flag_2 then
+	if loot_objectives then
 		-- Nothing
 	end
 
 	::label_1_0::
 
-	local var_1_3 = flag_2[arg_1_0]
+	local var_1_0 = loot_objectives[objective]
 
-	var_1_3 = not var_1_3 and flag_2[arg_1_0] > 0
+	var_1_0 = not not var_1_0 and loot_objectives[objective] > 0
 
 	::label_1_1::
 
-	return var_1_3
+	return var_1_0
 end
 
-local function fn_2()
+local function only_when_tomes_allowed_and_there_from_the_start()
 	-- function 2
-	return not not Managers.state.game_mode:is_round_started() or fn("tome")
+	return not Managers.state.game_mode:is_round_started() and not not has_loot_objective("tome")
 end
 
-local function fn_3()
+local function only_when_grims_allowed_and_there_from_the_start()
 	-- function 3
-	return not not Managers.state.game_mode:is_round_started() or fn("grimoire")
+	return not Managers.state.game_mode:is_round_started() and not not has_loot_objective("grimoire")
 end
 
-local tbl = {
+local challenge_settings = {
 	default = {
 		possible_challenges = {
 			{
@@ -98,7 +99,7 @@ local tbl = {
 					1,
 					1
 				},
-				condition = fn_3
+				condition = only_when_grims_allowed_and_there_from_the_start
 			},
 			{
 				reward = "markus_questing_knight_passive_damage_taken",
@@ -114,7 +115,7 @@ local tbl = {
 					1,
 					1
 				},
-				condition = fn_2
+				condition = only_when_tomes_allowed_and_there_from_the_start
 			}
 		},
 		side_quest_challenge = {
@@ -277,48 +278,49 @@ local tbl = {
 	}
 }
 
-for k, v in pairs(DLCSettings) do
-	if not v.questing_knight_challenges then
-		table.merge_recursive(tbl, v.questing_knight_challenges)
+for _, dlc in pairs(DLCSettings) do
+	if dlc.questing_knight_challenges then
+		table.merge_recursive(challenge_settings, dlc.questing_knight_challenges)
 	end
 end
 
-PassiveAbilityQuestingKnight.init = function (self, arg_4_1, arg_4_2, arg_4_3, arg_4_4)
+PassiveAbilityQuestingKnight.init = function (self, extension_init_context, unit, extension_init_data, ability_init_data)
 	-- function 4
-	self._owner_unit = arg_4_2
-	self._player = arg_4_3.player
-	self._is_server = arg_4_1.is_server
-	self._player_unique_id = arg_4_3.player:unique_id()
+	self._owner_unit = unit
+	self._player = extension_init_data.player
+	self._is_server = extension_init_context.is_server
+	self._player_unique_id = extension_init_data.player:unique_id()
 	self._quest_seed = Managers.mechanism:get_level_seed()
 
 	if Managers.mechanism:current_mechanism_name() == "versus" then
-		local get_current_set = Managers.mechanism:game_mechanism():get_current_set()
+		local current_set = Managers.mechanism:game_mechanism():get_current_set()
 
-		self._quest_seed = self._quest_seed + get_current_set
+		self._quest_seed = self._quest_seed + current_set
 	end
 end
 
-PassiveAbilityQuestingKnight.extensions_ready = function (self, arg_5_1, arg_5_2)
+PassiveAbilityQuestingKnight.extensions_ready = function (self, world, unit)
 	-- function 5
 	if not self._is_server then
 		return
 	end
 
-	local get_current_level_keys = Managers.level_transition_handler:get_current_level_keys()
-	local flag = not get_current_level_keys and LevelSettings[get_current_level_keys]
-	local flag_2 = not flag and flag.hub_level
+	local level_transition_handler = Managers.level_transition_handler
+	local level_key = level_transition_handler:get_current_level_keys()
+	local level_settings = not not level_key and not not LevelSettings[level_key]
+	local is_hub_level = not not level_settings and not not level_settings.hub_level
 
-	if not flag_2 then
+	if is_hub_level then
 		return
 	end
 
-	self._is_hub_level = flag_2
+	self._is_hub_level = is_hub_level
 
-	local get_difficulty = Managers.state.difficulty:get_difficulty()
+	local difficulty = Managers.state.difficulty:get_difficulty()
 
-	self._difficulty_rank = DifficultySettings[get_difficulty].rank
-	self._buff_extension = ScriptUnit.extension(arg_5_2, "buff_system")
-	self._talent_extension = ScriptUnit.extension(arg_5_2, "talent_system")
+	self._difficulty_rank = DifficultySettings[difficulty].rank
+	self._buff_extension = ScriptUnit.extension(unit, "buff_system")
+	self._talent_extension = ScriptUnit.extension(unit, "talent_system")
 
 	self:_create_quests()
 	self:_register_events()
@@ -332,134 +334,165 @@ PassiveAbilityQuestingKnight._create_quests = function (self)
 		return
 	end
 
-	local challenge = Managers.venture.challenge
-	local _player_unique_id = self._player_unique_id
+	local challenge_manager = Managers.venture.challenge
+	local player_unique_id = self._player_unique_id
+	local status = Managers.party:get_status_from_unique_id(player_unique_id)
+	local health_state = status.game_mode_data.health_state
+	local respawning = health_state == "respawning"
 
-	if Managers.party:get_status_from_unique_id(_player_unique_id).game_mode_data.health_state == "respawning" or not self:_always_reset_quest_pool() then
-		challenge:remove_filtered_challenges(str, _player_unique_id)
+	if not respawning and self:_always_reset_quest_pool() then
+		challenge_manager:remove_filtered_challenges(CHALLENGE_CATEGORY, player_unique_id)
 	end
 
-	local get_challenges_filtered = challenge:get_challenges_filtered({}, str, _player_unique_id)
-	local count = #get_challenges_filtered
+	local passive_challenges = challenge_manager:get_challenges_filtered({}, CHALLENGE_CATEGORY, player_unique_id)
+	local num_existing_challenges = #passive_challenges
 
-	if count > 0 then
-		for i = 1, count do
-			get_challenges_filtered[i]:set_paused(false)
+	if num_existing_challenges > 0 then
+		for i = 1, num_existing_challenges do
+			passive_challenges[i]:set_paused(false)
 		end
-	elseif #challenge:get_completed_challenges_filtered({}, str, _player_unique_id) == 0 then
-		local _generate_quest_pool = self:_generate_quest_pool()
+	else
+		local completed_challenges = challenge_manager:get_completed_challenges_filtered({}, CHALLENGE_CATEGORY, player_unique_id)
 
-		self:_start_quest_from_pool(_generate_quest_pool, num)
+		if #completed_challenges == 0 then
+			local challenge_list = self:_generate_quest_pool()
 
-		if not self._talent_extension:has_talent("markus_questing_knight_passive_additional_quest") then
-			self:_start_quest_from_pool(_generate_quest_pool, 1)
-		end
+			self:_start_quest_from_pool(challenge_list, NUM_CHALLENGES)
 
-		if not self._talent_extension:has_talent("markus_questing_knight_passive_side_quest") then
-			local _get_side_quest_challenge = self:_get_side_quest_challenge()
+			if self._talent_extension:has_talent("markus_questing_knight_passive_additional_quest") then
+				self:_start_quest_from_pool(challenge_list, 1)
+			end
 
-			challenge:add_challenge(_get_side_quest_challenge.type, true, str, _get_side_quest_challenge.reward, _player_unique_id, _get_side_quest_challenge.amount[self._difficulty_rank])
+			if self._talent_extension:has_talent("markus_questing_knight_passive_side_quest") then
+				local side_quest_challenge = self:_get_side_quest_challenge()
+
+				challenge_manager:add_challenge(side_quest_challenge.type, true, CHALLENGE_CATEGORY, side_quest_challenge.reward, player_unique_id, side_quest_challenge.amount[self._difficulty_rank])
+			end
 		end
 	end
 end
 
 PassiveAbilityQuestingKnight._generate_quest_pool = function (self)
 	-- function 7
-	local clone = table.clone(self:_get_possible_challenges())
+	local challenge_list = table.clone(self:_get_possible_challenges())
 
-	table.shuffle(clone, self._quest_seed)
+	table.shuffle(challenge_list, self._quest_seed)
 
-	return clone
+	return challenge_list
 end
 
-PassiveAbilityQuestingKnight._get_possible_challenges = function (arg_8_0)
+PassiveAbilityQuestingKnight._get_possible_challenges = function (self)
 	-- function 8
-	local game_mode_key = Managers.state.game_mode:game_mode_key()
-	local var_8_1 = tbl[game_mode_key]
+	local game_mode_name = Managers.state.game_mode:game_mode_key()
+	local var_8_0 = challenge_settings[game_mode_name]
 
-	var_8_1 = var_8_1 or tbl.default
+	if not var_8_0 then
+		-- Nothing
+	end
 
-	local possible_challenges = var_8_1.possible_challenges
+	var_8_0 = challenge_settings.default
+
+	local settings = var_8_0
+
+	::label_8_0::
+
+	local possible_challenges = settings.possible_challenges
 
 	fassert(possible_challenges, "[PassiveAbilityQuestingKnight] possible_challenges not defined for the current game mode")
 
-	local tbl_2 = {}
+	local filtered_challenges = {}
 
-	for i = 1, #possible_challenges do
-		local var_8_4 = possible_challenges[i]
+	for possible_challenges_index = 1, #possible_challenges do
+		local possible_challenge = possible_challenges[possible_challenges_index]
 
-		if not var_8_4.condition and not var_8_4.condition() then
-			tbl_2[#tbl_2 + 1] = var_8_4
+		if not possible_challenge.condition or possible_challenge.condition() then
+			filtered_challenges[#filtered_challenges + 1] = possible_challenge
 		end
 	end
 
-	return tbl_2
+	return filtered_challenges
 end
 
-PassiveAbilityQuestingKnight._get_side_quest_challenge = function (arg_9_0)
+PassiveAbilityQuestingKnight._get_side_quest_challenge = function (self)
 	-- function 9
-	local game_mode_key = Managers.state.game_mode:game_mode_key()
-	local var_9_1 = tbl[game_mode_key]
+	local game_mode_name = Managers.state.game_mode:game_mode_key()
+	local var_9_0 = challenge_settings[game_mode_name]
 
-	var_9_1 = var_9_1 or tbl.default
+	if not var_9_0 then
+		-- Nothing
+	end
 
-	local side_quest_challenge = var_9_1.side_quest_challenge
+	var_9_0 = challenge_settings.default
+
+	local settings = var_9_0
+
+	::label_9_0::
+
+	local side_quest_challenge = settings.side_quest_challenge
 
 	fassert(side_quest_challenge, "[PassiveAbilityQuestingKnight] side_quest_challenge not defined for the current game mode")
 
 	return side_quest_challenge
 end
 
-PassiveAbilityQuestingKnight._always_reset_quest_pool = function (arg_10_0)
+PassiveAbilityQuestingKnight._always_reset_quest_pool = function (self)
 	-- function 10
-	local game_mode_key = Managers.state.game_mode:game_mode_key()
-	local var_10_1 = tbl[game_mode_key]
+	local game_mode_name = Managers.state.game_mode:game_mode_key()
+	local var_10_0 = challenge_settings[game_mode_name]
 
-	var_10_1 = var_10_1 or tbl.default
+	if not var_10_0 then
+		-- Nothing
+	end
 
-	local always_reset_quest_pool = var_10_1.always_reset_quest_pool
+	var_10_0 = challenge_settings.default
 
-	always_reset_quest_pool = always_reset_quest_pool or false
+	local settings = var_10_0
+
+	::label_10_0::
+
+	local always_reset_quest_pool = settings.always_reset_quest_pool
+
+	always_reset_quest_pool = not not always_reset_quest_pool or not not false
 
 	return always_reset_quest_pool
 end
 
-PassiveAbilityQuestingKnight._start_quest_from_pool = function (self, arg_11_1, arg_11_2)
+PassiveAbilityQuestingKnight._start_quest_from_pool = function (self, quest_pool, num_to_start)
 	-- function 11
-	local challenge = Managers.venture.challenge
-	local _difficulty_rank = self._difficulty_rank
-	local count = #arg_11_1
+	local challenge_manager = Managers.venture.challenge
+	local difficulty_rank = self._difficulty_rank
+	local num_available_challenges = #quest_pool
 
-	for i = 1, arg_11_2 do
-		if count == 0 then
-			print("PassiveAbilityQuestingKnight: Not enought challenges, requested", arg_11_2)
+	for i = 1, num_to_start do
+		if num_available_challenges == 0 then
+			print("PassiveAbilityQuestingKnight: Not enought challenges, requested", num_to_start)
 
 			break
 		end
 
-		local var_11_3 = arg_11_1[count]
-		local reward = var_11_3.reward
+		local challenge_to_add = quest_pool[num_available_challenges]
+		local challenge_reward = challenge_to_add.reward
 
-		if not self._talent_extension:has_talent("markus_questing_knight_passive_improved_reward") then
-			reward = reward .. "_improved"
+		if self._talent_extension:has_talent("markus_questing_knight_passive_improved_reward") then
+			challenge_reward = challenge_reward .. "_improved"
 		end
 
-		challenge:add_challenge(var_11_3.type, false, "questing_knight", reward, self._player_unique_id, var_11_3.amount[_difficulty_rank])
-		table.remove(arg_11_1, count)
+		challenge_manager:add_challenge(challenge_to_add.type, false, "questing_knight", challenge_reward, self._player_unique_id, challenge_to_add.amount[difficulty_rank])
+		table.remove(quest_pool, num_available_challenges)
 
-		count = count - 1
+		num_available_challenges = num_available_challenges - 1
 	end
 end
 
-PassiveAbilityQuestingKnight._delay_quest_creation = function (arg_12_0)
+PassiveAbilityQuestingKnight._delay_quest_creation = function (self)
 	-- function 12
-	Managers.state.event:register(arg_12_0, "on_initial_talents_synced", "on_initial_talents_synced")
+	Managers.state.event:register(self, "on_initial_talents_synced", "on_initial_talents_synced")
 end
 
-PassiveAbilityQuestingKnight.on_initial_talents_synced = function (self, arg_13_1)
+PassiveAbilityQuestingKnight.on_initial_talents_synced = function (self, talent_extension)
 	-- function 13
-	if self._talent_extension == arg_13_1 then
-		if not self._is_server and not self._is_hub_level then
+	if self._talent_extension == talent_extension then
+		if not self._is_server or self._is_hub_level then
 			return
 		end
 
@@ -473,24 +506,26 @@ PassiveAbilityQuestingKnight.destroy = function (self)
 	self:_unregister_events()
 end
 
-PassiveAbilityQuestingKnight._register_events = function (arg_15_0)
+PassiveAbilityQuestingKnight._register_events = function (self)
 	-- function 15
 	if Managers.mechanism:current_mechanism_name() == "versus" then
-		Managers.state.event:register(arg_15_0, "on_talents_changed", "on_talents_changed")
+		Managers.state.event:register(self, "on_talents_changed", "on_talents_changed")
 	end
 end
 
-PassiveAbilityQuestingKnight.on_talents_changed = function (self, arg_16_1, arg_16_2)
+PassiveAbilityQuestingKnight.on_talents_changed = function (self, unit, talent_extension)
 	-- function 16
-	if self._talent_extension == arg_16_2 then
+	if self._talent_extension == talent_extension then
 		self:_create_quests()
 	end
 end
 
-PassiveAbilityQuestingKnight._unregister_events = function (arg_17_0)
+PassiveAbilityQuestingKnight._unregister_events = function (self)
 	-- function 17
-	if not Managers.state.event then
-		Managers.state.event:unregister("on_talents_changed", arg_17_0)
-		Managers.state.event:unregister("on_initial_talents_synced", arg_17_0)
+	local event_manager = Managers.state.event
+
+	if event_manager then
+		Managers.state.event:unregister("on_talents_changed", self)
+		Managers.state.event:unregister("on_initial_talents_synced", self)
 	end
 end

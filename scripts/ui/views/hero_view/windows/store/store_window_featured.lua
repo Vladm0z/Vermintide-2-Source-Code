@@ -1,23 +1,23 @@
 -- chunkname: @scripts/ui/views/hero_view/windows/store/store_window_featured.lua
 
-local var_0_0 = local_require("scripts/ui/views/hero_view/windows/store/definitions/store_window_featured_definitions")
-local widgets = var_0_0.widgets
-local content_widgets = var_0_0.content_widgets
-local scenegraph_definition = var_0_0.scenegraph_definition
-local animation_definitions = var_0_0.animation_definitions
-local max_slideshow_items = var_0_0.max_slideshow_items
-local generic_input_actions = var_0_0.generic_input_actions
-local num = 8
-local str = "gui/1080p/single_textures/generic/transparent_placeholder_texture"
+local definitions = local_require("scripts/ui/views/hero_view/windows/store/definitions/store_window_featured_definitions")
+local widget_definitions = definitions.widgets
+local content_widget_definitions = definitions.content_widgets
+local scenegraph_definition = definitions.scenegraph_definition
+local animation_definitions = definitions.animation_definitions
+local MAX_SLIDESHOW_ITEMS = definitions.max_slideshow_items
+local generic_input_actions = definitions.generic_input_actions
+local SLIDESHOW_WAIT_TIME = 8
+local PRODUCT_PLACEHOLDER_TEXTURE_PATH = "gui/1080p/single_textures/generic/transparent_placeholder_texture"
 
 StoreWindowFeatured = class(StoreWindowFeatured)
 StoreWindowFeatured.NAME = "StoreWindowFeatured"
 
-local tbl = {
+local GRID_SIZE = {
 	3,
 	3
 }
-local tbl_2 = {
+local GRID_SIZE_BY_TYPE = {
 	dlc = {
 		1,
 		3
@@ -55,13 +55,13 @@ local tbl_2 = {
 		1
 	}
 }
-local tbl_3 = {
+local BACKFILL_ITEM_ORDER = {
 	"dlc",
 	"bundles",
 	"items",
 	"shilling_items"
 }
-local tbl_4 = {
+local PRODUCT_SORT_ORDER = {
 	default = 15,
 	discounted_item = 7,
 	item = 11,
@@ -79,62 +79,81 @@ local tbl_4 = {
 	discounted_weapon_skin = 10
 }
 
-StoreWindowFeatured.on_enter = function (self, arg_1_1, arg_1_2)
+StoreWindowFeatured.on_enter = function (self, params, offset)
 	-- function 1
 	print("[HeroViewWindow] Enter Substate StoreWindowFeatured")
 
-	self._params = arg_1_1
-	self._offset = arg_1_2
-	self._parent = arg_1_1.parent
+	self._params = params
+	self._offset = offset
+	self._parent = params.parent
 
-	local get_renderers, var_1_1 = self._parent:get_renderers()
+	local ui_renderer, ui_top_renderer = self._parent:get_renderers()
 
-	self._ui_renderer = get_renderers
-	self._ui_top_renderer = var_1_1
+	self._ui_renderer = ui_renderer
+	self._ui_top_renderer = ui_top_renderer
 	self._render_settings = {
 		alpha_multiplier = 0,
 		content_alpha_multiplier = 0,
 		snap_pixel_positions = true
 	}
-	self._layout_settings = arg_1_1.layout_settings
+	self._layout_settings = params.layout_settings
 	self._animations = {}
 	self._ui_animations = {}
 
-	self:_create_ui_elements(arg_1_1, arg_1_2)
+	self:_create_ui_elements(params, offset)
 
 	self._cloned_materials_by_reference = {}
 	self._material_references_to_unload = {}
 	self._is_open = true
 	self._current_read_index = 1
 
-	local get_store_path = self._parent:get_store_path()
-	local var_1_3 = get_store_path[#get_store_path]
-	local structure = StoreLayoutConfig.structure
-	local var_1_5 = StoreLayoutConfig.pages[var_1_3]
-	local slideshow = var_1_5.slideshow
+	local parent = self._parent
+	local path = parent:get_store_path()
+	local page_name = path[#path]
+	local path_structure = StoreLayoutConfig.structure
+	local pages = StoreLayoutConfig.pages
+	local current_page = pages[page_name]
+	local slideshow = current_page.slideshow
 
-	slideshow = not slideshow and table.clone(var_1_5.slideshow)
-
-	local grid = var_1_5.grid
-
-	grid = not grid and table.clone(var_1_5.grid)
-	self._page_name = var_1_3
-
-	if not (not slideshow and #slideshow ~= 0) then
-		slideshow = self:_get_default_featured_slideshow_content()
+	if slideshow then
+		-- Nothing
 	end
 
-	self:_sort_slideshow(slideshow)
-	self:_trim_slideshow(slideshow)
+	slideshow = table.clone(current_page.slideshow)
 
-	if not (not grid and #grid ~= 0) then
-		grid = self:_get_default_featured_grid_content()
+	local slideshow_content = slideshow
+
+	::label_1_0::
+
+	local grid = current_page.grid
+
+	if grid then
+		-- Nothing
 	end
 
-	local _content_widgets_by_name = self._content_widgets_by_name
+	grid = table.clone(current_page.grid)
 
-	self:_setup_slideshow(_content_widgets_by_name.slideshow, slideshow)
-	self:_setup_grid_products(grid)
+	local grid_content = grid
+
+	::label_1_1::
+
+	self._page_name = page_name
+
+	if slideshow_content and #slideshow_content == 0 then
+		slideshow_content = self:_get_default_featured_slideshow_content()
+	end
+
+	self:_sort_slideshow(slideshow_content)
+	self:_trim_slideshow(slideshow_content)
+
+	if grid_content and #grid_content == 0 then
+		grid_content = self:_get_default_featured_grid_content()
+	end
+
+	local content_widgets_by_name = self._content_widgets_by_name
+
+	self:_setup_slideshow(content_widgets_by_name.slideshow, slideshow_content)
+	self:_setup_grid_products(grid_content)
 	self:_start_transition_animation("on_enter")
 	self._parent:set_list_details_visibility(false)
 	Managers.telemetry_events:store_breadcrumbs_changed({
@@ -149,32 +168,32 @@ StoreWindowFeatured.on_enter = function (self, arg_1_1, arg_1_2)
 	self:_initialize_time_until_rotation()
 end
 
-StoreWindowFeatured._start_transition_animation = function (self, arg_2_1)
+StoreWindowFeatured._start_transition_animation = function (self, animation_name)
 	-- function 2
-	local tbl = {
+	local params = {
 		render_settings = self._render_settings
 	}
-	local tbl_2 = {
+	local widgets = {
 		widgets_by_name = self._widgets_by_name,
 		grid_widgets = self._grid_widgets
 	}
-	local start_animation = self._ui_animator:start_animation(arg_2_1, tbl_2, scenegraph_definition, tbl)
+	local anim_id = self._ui_animator:start_animation(animation_name, widgets, scenegraph_definition, params)
 
-	self._animations[arg_2_1] = start_animation
+	self._animations[animation_name] = anim_id
 end
 
-StoreWindowFeatured._create_ui_elements = function (self, arg_3_1, arg_3_2)
+StoreWindowFeatured._create_ui_elements = function (self, params, offset)
 	-- function 3
 	self.ui_scenegraph = UISceneGraph.init_scenegraph(scenegraph_definition)
-	self._widgets, self._widgets_by_name = UIUtils.create_widgets(widgets)
-	self._content_widgets, self._content_widgets_by_name = UIUtils.create_widgets(content_widgets)
+	self._widgets, self._widgets_by_name = UIUtils.create_widgets(widget_definitions)
+	self._content_widgets, self._content_widgets_by_name = UIUtils.create_widgets(content_widget_definitions)
 
 	UIRenderer.clear_scenegraph_queue(self._ui_top_renderer)
 
 	self._ui_animator = UIAnimator:new(self.ui_scenegraph, animation_definitions)
 end
 
-StoreWindowFeatured.on_exit = function (self, arg_4_1, arg_4_2)
+StoreWindowFeatured.on_exit = function (self, params, force_unload)
 	-- function 4
 	print("[HeroViewWindow] Exit Substate StoreWindowFeatured")
 
@@ -182,116 +201,117 @@ StoreWindowFeatured.on_exit = function (self, arg_4_1, arg_4_2)
 	self._is_open = false
 
 	self:_reset_cloned_materials()
-	self:_destroy_product_widgets(arg_4_2)
+	self:_destroy_product_widgets(force_unload)
 end
 
-StoreWindowFeatured.update = function (self, arg_5_1, arg_5_2)
+StoreWindowFeatured.update = function (self, dt, t)
 	-- function 5
 	self:_handle_gamepad_activity()
 	self:_sync_login_rewards()
-	self:_update_rotation_timer(arg_5_1)
-	self:_update_animations(arg_5_1)
-	self:_draw(arg_5_1)
+	self:_update_rotation_timer(dt)
+	self:_update_animations(dt)
+	self:_draw(dt)
 end
 
-StoreWindowFeatured.post_update = function (self, arg_6_1, arg_6_2)
+StoreWindowFeatured.post_update = function (self, dt, t)
 	-- function 6
-	self:_handle_input(arg_6_1, arg_6_2)
+	self:_handle_input(dt, t)
 end
 
-StoreWindowFeatured._update_animations = function (self, arg_7_1)
+StoreWindowFeatured._update_animations = function (self, dt)
 	-- function 7
-	local _ui_animations = self._ui_animations
-	local _animations = self._animations
-	local _ui_animator = self._ui_animator
+	local ui_animations = self._ui_animations
+	local animations = self._animations
+	local ui_animator = self._ui_animator
 
-	for k, v in pairs(self._ui_animations) do
-		UIAnimation.update(v, arg_7_1)
+	for name, animation in pairs(self._ui_animations) do
+		UIAnimation.update(animation, dt)
 
-		if not UIAnimation.completed(v) then
-			self._ui_animations[k] = nil
+		if UIAnimation.completed(animation) then
+			self._ui_animations[name] = nil
 		end
 	end
 
-	_ui_animator:update(arg_7_1)
+	ui_animator:update(dt)
 
-	for k_2, v_2 in pairs(_animations) do
-		if not _ui_animator:is_animation_completed(v_2) then
-			_ui_animator:stop_animation(v_2)
+	for animation_name, animation_id in pairs(animations) do
+		if ui_animator:is_animation_completed(animation_id) then
+			ui_animator:stop_animation(animation_id)
 
-			_animations[k_2] = nil
+			animations[animation_name] = nil
 		end
 	end
 end
 
 StoreWindowFeatured._sync_login_rewards = function (self)
 	-- function 8
-	local content = self._widgets_by_name.login_rewards_button.content
-	local content_2 = self._widgets_by_name.gotwf_rewards_button.content
-	local get_login_rewards = Managers.backend:get_interface("peddler"):get_login_rewards()
-	local time = os.time(os.date("!*t"))
-	local num = os.time(os.date("!*t", get_login_rewards.next_claim_timestamp / 1000)) - time
-	local flag = num <= 0
-	local var_8_6
+	local login_rewards_content = self._widgets_by_name.login_rewards_button.content
+	local gotwf_rewards_content = self._widgets_by_name.gotwf_rewards_button.content
+	local backend_store = Managers.backend:get_interface("peddler")
+	local login_rewards = backend_store:get_login_rewards()
+	local now = os.time(os.date("!*t"))
+	local next_claim_timestamp = os.time(os.date("!*t", login_rewards.next_claim_timestamp / 1000))
+	local cooldown = next_claim_timestamp - now
+	local can_claim = cooldown <= 0
+	local active_content
 
-	if get_login_rewards.event_type == "calendar" then
-		var_8_6 = content_2
-		content.visible = false
+	if login_rewards.event_type == "calendar" then
+		active_content = gotwf_rewards_content
+		login_rewards_content.visible = false
 	else
-		var_8_6 = content
-		content_2.visible = false
+		active_content = login_rewards_content
+		gotwf_rewards_content.visible = false
 	end
 
-	if not flag then
-		var_8_6.is_claimable = true
-		var_8_6.subtitle = Localize("available_now")
+	if can_claim then
+		active_content.is_claimable = true
+		active_content.subtitle = Localize("available_now")
 
-		local title = get_login_rewards.title
+		local title = login_rewards.title
 
-		title = title or "store_login_claim_reward_title"
-		var_8_6.title = title
+		title = not not title or not not "store_login_claim_reward_title"
+		active_content.title = title
 	else
-		var_8_6.is_claimable = false
+		active_content.is_claimable = false
 
-		local format_duration = UIUtils.format_duration(num)
+		local timer = UIUtils.format_duration(cooldown)
 
-		var_8_6.subtitle = Localize("store_login_rewards_next_available_in") .. format_duration
+		active_content.subtitle = Localize("store_login_rewards_next_available_in") .. timer
 
-		local title_2 = get_login_rewards.title
+		local title_2 = login_rewards.title
 
-		title_2 = title_2 or "store_login_rewards_title"
-		var_8_6.title = title_2
+		title_2 = not not title_2 or not not "store_login_rewards_title"
+		active_content.title = title_2
 	end
 end
 
-StoreWindowFeatured._update_rotation_timer = function (self, arg_9_1)
+StoreWindowFeatured._update_rotation_timer = function (self, dt)
 	-- function 9
-	local _time_until_rotation = self._time_until_rotation
+	local time_until_rotation = self._time_until_rotation
 
-	if not _time_until_rotation then
-		local max = math.max(0, _time_until_rotation - arg_9_1)
+	if time_until_rotation then
+		time_until_rotation = math.max(0, time_until_rotation - dt)
+		self._time_until_rotation = time_until_rotation
 
-		self._time_until_rotation = max
+		local widget = self._widgets_by_name.discount_banner
+		local text = string.format("%s - %s: %s", Utf8.upper(Localize("menu_store_featured_page_banner_title_default")), Localize("timer_prefix_time_left"), UIUtils.format_duration(math.ceil(time_until_rotation)))
 
-		local discount_banner = self._widgets_by_name.discount_banner
-		local format = string.format("%s - %s: %s", Utf8.upper(Localize("menu_store_featured_page_banner_title_default")), Localize("timer_prefix_time_left"), UIUtils.format_duration(math.ceil(max)))
+		widget.content.text = "{#grad(true);color(255,205,70);color2(255,255,255)}" .. text
+		widget.content.text_shadow = text
 
-		discount_banner.content.text = "{#grad(true);color(255,205,70);color2(255,255,255)}" .. format
-		discount_banner.content.text_shadow = format
-
-		if not (max ~= 0 or self._refreshed_store_layout_once) then
+		if time_until_rotation == 0 and not self._refreshed_store_layout_once then
 			self._refreshed_store_layout_once = true
 			self._time_until_rotation = nil
 
-			local get_interface = Managers.backend:get_interface("peddler")
-			local var_9_5 = callback(self, "_refresh_cb")
+			local backend_store = Managers.backend:get_interface("peddler")
+			local cb = callback(self, "_refresh_cb")
 
 			self._refresh_counter = 4
 
-			get_interface:refresh_stock(var_9_5)
-			get_interface:refresh_app_prices(var_9_5)
-			get_interface:refresh_platform_item_prices(var_9_5)
-			get_interface:refresh_layout_override(false, var_9_5)
+			backend_store:refresh_stock(cb)
+			backend_store:refresh_app_prices(cb)
+			backend_store:refresh_platform_item_prices(cb)
+			backend_store:refresh_layout_override(false, cb)
 		end
 	end
 end
@@ -309,142 +329,162 @@ end
 
 StoreWindowFeatured._initialize_time_until_rotation = function (self)
 	-- function 11
-	local rotation_timestamp = StoreLayoutConfig.pages[self._page_name].rotation_timestamp
-	local flag = false
+	local current_page = StoreLayoutConfig.pages[self._page_name]
+	local rotation_timestamp = current_page.rotation_timestamp
+	local banner_visible = false
 
-	if not rotation_timestamp then
-		local num = rotation_timestamp - os.time()
+	if rotation_timestamp then
+		local time_until_rotation = rotation_timestamp - os.time()
 
-		if num > 0 then
-			self._time_until_rotation = num
-			flag = true
+		if time_until_rotation > 0 then
+			self._time_until_rotation = time_until_rotation
+			banner_visible = true
 		end
 	end
 
-	self._widgets_by_name.discount_banner.content.visible = flag
+	self._widgets_by_name.discount_banner.content.visible = banner_visible
 end
 
-StoreWindowFeatured._handle_input = function (self, arg_12_1, arg_12_2)
+StoreWindowFeatured._handle_input = function (self, dt, t)
 	-- function 12
-	local _parent = self._parent
-	local slideshow = self._content_widgets_by_name.slideshow
-	local window_input_service = _parent:window_input_service()
-	local _list_index_pressed = self:_list_index_pressed()
+	local parent = self._parent
+	local content_widgets_by_name = self._content_widgets_by_name
+	local slideshow_widget = content_widgets_by_name.slideshow
+	local input_service = parent:window_input_service()
+	local list_index = self:_list_index_pressed()
 
-	if not _list_index_pressed then
+	if list_index then
 		self:_play_sound("Play_hud_store_button_select")
-		self:_on_list_index_pressed(_list_index_pressed)
+		self:_on_list_index_pressed(list_index)
 	end
 
-	if not self._gamepad_active_last_frame then
-		local get = window_input_service:get("confirm_press")
+	if self._gamepad_active_last_frame then
+		local confirm_press = input_service:get("confirm_press")
 
-		if not self._slideshow_selected then
-			if not get then
-				self:_on_slideshow_pressed(slideshow)
-			elseif not (not window_input_service:get("move_right_hold_continuous") and not (#self._gamepad_navigation > 0)) then
+		if self._slideshow_selected then
+			if confirm_press then
+				self:_on_slideshow_pressed(slideshow_widget)
+			elseif input_service:get("move_right_hold_continuous") and #self._gamepad_navigation > 0 then
 				self:_select_slideshow_widget(false)
 				self:_on_list_index_selected(1)
 			end
-		elseif not get then
+		elseif confirm_press then
 			self:_on_list_index_pressed(self._selected_gamepad_grid_index)
 		else
-			self:_handle_gamepad_grid_selection(window_input_service)
+			self:_handle_gamepad_grid_selection(input_service)
 		end
 	end
 
 	local login_rewards_button = self._widgets_by_name.login_rewards_button
+	local disabled = login_rewards_button.content.visible == false
 
-	if not (login_rewards_button.content.visible == false) then
-		UIWidgetUtils.animate_default_button(login_rewards_button, arg_12_1)
+	if not disabled then
+		UIWidgetUtils.animate_default_button(login_rewards_button, dt)
 
-		if not UIUtils.is_button_hover_enter(login_rewards_button) then
+		if UIUtils.is_button_hover_enter(login_rewards_button) then
 			self:_play_sound("Play_hud_store_button_hover")
 		end
 
-		if UIUtils.is_button_pressed(login_rewards_button) or not window_input_service:get("special_1_press") then
-			_parent:open_login_rewards_popup()
+		if UIUtils.is_button_pressed(login_rewards_button) or input_service:get("special_1_press") then
+			parent:open_login_rewards_popup()
 		end
 	end
 
 	local gotwf_rewards_button = self._widgets_by_name.gotwf_rewards_button
+	local disabled = gotwf_rewards_button.content.visible == false
 
-	if not (gotwf_rewards_button.content.visible == false) then
-		UIWidgetUtils.animate_default_button(gotwf_rewards_button, arg_12_1)
+	if not disabled then
+		UIWidgetUtils.animate_default_button(gotwf_rewards_button, dt)
 
-		if not UIUtils.is_button_hover_enter(gotwf_rewards_button) then
+		if UIUtils.is_button_hover_enter(gotwf_rewards_button) then
 			self:_play_sound("Play_hud_store_button_hover")
 		end
 
-		if UIUtils.is_button_pressed(gotwf_rewards_button) or not window_input_service:get("special_1_press") then
-			_parent:open_gotwf_rewards()
+		if UIUtils.is_button_pressed(gotwf_rewards_button) or input_service:get("special_1_press") then
+			parent:open_gotwf_rewards()
 		end
 	end
 
-	self:_handle_slideshow_logic(slideshow, arg_12_1, window_input_service)
-	self:_animate_grid_entries(arg_12_1)
+	self:_handle_slideshow_logic(slideshow_widget, dt, input_service)
+	self:_animate_grid_entries(dt)
 end
 
-StoreWindowFeatured._draw = function (self, arg_13_1)
+StoreWindowFeatured._draw = function (self, dt)
 	-- function 13
-	local _parent = self._parent
-	local _ui_top_renderer = self._ui_top_renderer
-	local _ui_renderer = self._ui_renderer
+	local parent = self._parent
+	local ui_top_renderer = self._ui_top_renderer
+	local ui_renderer = self._ui_renderer
 	local ui_scenegraph = self.ui_scenegraph
-	local window_input_service = _parent:window_input_service()
-	local _render_settings = self._render_settings
-	local alpha_multiplier = _render_settings.alpha_multiplier
+	local input_service = parent:window_input_service()
+	local render_settings = self._render_settings
+	local alpha_multiplier_2 = render_settings.alpha_multiplier
 
-	alpha_multiplier = alpha_multiplier or 0
-
-	local content_alpha_multiplier = _render_settings.content_alpha_multiplier
-
-	content_alpha_multiplier = content_alpha_multiplier or 0
-
-	UIRenderer.begin_pass(_ui_top_renderer, ui_scenegraph, window_input_service, arg_13_1, nil, _render_settings)
-
-	_render_settings.alpha_multiplier = math.min(content_alpha_multiplier or alpha_multiplier)
-
-	for i, v in ipairs(self._content_widgets) do
-		UIRenderer.draw_widget(_ui_top_renderer, v)
+	if not alpha_multiplier_2 then
+		-- Nothing
 	end
 
-	local _grid_widgets = self._grid_widgets
+	alpha_multiplier_2 = 0
 
-	if not _grid_widgets then
-		for i_2, v_2 in ipairs(_grid_widgets) do
-			UIRenderer.draw_widget(_ui_top_renderer, v_2)
+	local alpha_multiplier = alpha_multiplier_2
+
+	::label_13_0::
+
+	local content_alpha_multiplier_2 = render_settings.content_alpha_multiplier
+
+	if not content_alpha_multiplier_2 then
+		-- Nothing
+	end
+
+	content_alpha_multiplier_2 = 0
+
+	local content_alpha_multiplier = content_alpha_multiplier_2
+
+	::label_13_1::
+
+	UIRenderer.begin_pass(ui_top_renderer, ui_scenegraph, input_service, dt, nil, render_settings)
+
+	render_settings.alpha_multiplier = math.min(not not content_alpha_multiplier or not not alpha_multiplier)
+
+	for _, widget in ipairs(self._content_widgets) do
+		UIRenderer.draw_widget(ui_top_renderer, widget)
+	end
+
+	local grid_widgets = self._grid_widgets
+
+	if grid_widgets then
+		for _, widget in ipairs(grid_widgets) do
+			UIRenderer.draw_widget(ui_top_renderer, widget)
 		end
 	end
 
-	_render_settings.alpha_multiplier = alpha_multiplier
+	render_settings.alpha_multiplier = alpha_multiplier
 
-	for i_3, v_3 in ipairs(self._widgets) do
-		UIRenderer.draw_widget(_ui_top_renderer, v_3)
+	for _, widget in ipairs(self._widgets) do
+		UIRenderer.draw_widget(ui_top_renderer, widget)
 	end
 
-	UIRenderer.end_pass(_ui_top_renderer)
+	UIRenderer.end_pass(ui_top_renderer)
 end
 
-StoreWindowFeatured._play_sound = function (self, arg_14_1)
+StoreWindowFeatured._play_sound = function (self, event)
 	-- function 14
-	self._parent:play_sound(arg_14_1)
+	self._parent:play_sound(event)
 end
 
 StoreWindowFeatured._handle_gamepad_activity = function (self)
 	-- function 15
-	local is_device_active = Managers.input:is_device_active("mouse")
-	local flag = self._gamepad_active_last_frame == nil
+	local mouse_active = Managers.input:is_device_active("mouse")
+	local force_update = self._gamepad_active_last_frame == nil
 
-	if not is_device_active then
-		if not self._gamepad_active_last_frame and not flag then
+	if not mouse_active then
+		if not self._gamepad_active_last_frame or force_update then
 			self._gamepad_active_last_frame = true
 
 			if not self._selected_gamepad_grid_index then
 				self:_select_slideshow_widget(true)
 			end
 		end
-	elseif self._gamepad_active_last_frame or not flag then
+	elseif self._gamepad_active_last_frame or force_update then
 		self._gamepad_active_last_frame = false
 
 		self:_select_slideshow_widget(false)
@@ -454,452 +494,516 @@ end
 
 StoreWindowFeatured._list_index_pressed = function (self)
 	-- function 16
-	local _grid_widgets = self._grid_widgets
+	local grid_widgets = self._grid_widgets
 
-	if not _grid_widgets then
-		for i, v in ipairs(_grid_widgets) do
-			local content = v.content
-			local hotspot = content.hotspot
+	if grid_widgets then
+		for index, widget in ipairs(grid_widgets) do
+			local content = widget.content
+			local hotspot_2 = content.hotspot
 
-			hotspot = hotspot or content.button_hotspot
+			if not hotspot_2 then
+				-- Nothing
+			end
 
-			if not hotspot and not hotspot.on_release then
+			hotspot_2 = content.button_hotspot
+
+			local hotspot = hotspot_2
+
+			::label_16_0::
+
+			if hotspot and hotspot.on_release then
 				hotspot.on_release = false
 
-				return i
+				return index
 			end
 		end
 	end
 end
 
-StoreWindowFeatured._animate_grid_entries = function (self, arg_17_1)
+StoreWindowFeatured._animate_grid_entries = function (self, dt)
 	-- function 17
-	local _parent = self._parent
-	local _grid_widgets = self._grid_widgets
+	local parent = self._parent
+	local grid_widgets = self._grid_widgets
 
-	for i, v in ipairs(_grid_widgets) do
-		local content = v.content
-		local style = v.style
+	for _, widget in ipairs(grid_widgets) do
+		local content = widget.content
+		local style = widget.style
 		local button_hotspot = content.button_hotspot
 
-		button_hotspot = button_hotspot or content.hotspot
-
-		if not button_hotspot.on_hover_enter then
-			self:_play_sound("Play_hud_store_button_hover")
-
-			button_hotspot.on_hover_enter = false
+		if not button_hotspot then
+			-- Nothing
 		end
 
-		_parent:animate_store_product(v, arg_17_1)
+		button_hotspot = content.hotspot
+
+		local hotspot = button_hotspot
+
+		::label_17_0::
+
+		if hotspot.on_hover_enter then
+			self:_play_sound("Play_hud_store_button_hover")
+
+			hotspot.on_hover_enter = false
+		end
+
+		parent:animate_store_product(widget, dt)
 	end
 end
 
-StoreWindowFeatured._create_product_widgets = function (self, arg_18_1)
+StoreWindowFeatured._create_product_widgets = function (self, layout)
 	-- function 18
-	local tbl = {}
-	local _parent = self._parent
-	local str = "item_root"
-	local flag = false
+	local widgets = {}
+	local parent = self._parent
+	local scenegraph_id = "item_root"
+	local masked = false
 
-	for i, v in ipairs(arg_18_1) do
-		local create_item_widget = _parent:create_item_widget(v, str, flag)
+	for i, entry in ipairs(layout) do
+		local widget = parent:create_item_widget(entry, scenegraph_id, masked)
 
-		_parent:populate_product_widget(create_item_widget, v)
+		parent:populate_product_widget(widget, entry)
 
-		tbl[i] = create_item_widget
+		widgets[i] = widget
 	end
 
-	self._grid_widgets = tbl
+	self._grid_widgets = widgets
 
 	self:_align_grid_widgets()
 end
 
-StoreWindowFeatured._destroy_product_widgets = function (self, arg_19_1)
+StoreWindowFeatured._destroy_product_widgets = function (self, force_unload)
 	-- function 19
-	local _parent = self._parent
-	local _layout = self._layout
-	local _grid_widgets = self._grid_widgets
+	local parent = self._parent
+	local layout = self._layout
+	local widgets = self._grid_widgets
 
-	for i, v in ipairs(_layout) do
-		local var_19_3 = _grid_widgets[i]
+	for i, entry in ipairs(layout) do
+		local widget = widgets[i]
 
-		_parent:destroy_product_widget(var_19_3, v, arg_19_1)
+		parent:destroy_product_widget(widget, entry, force_unload)
 	end
 end
 
 StoreWindowFeatured._align_grid_widgets = function (self)
 	-- function 20
-	local num = 800
-	local num_2 = 10
-	local num_3 = 0
-	local num_4 = 0
-	local num_5 = 0
-	local num_6 = 1
-	local num_7 = 1
-	local tbl = {}
-	local _grid_widgets = self._grid_widgets
-	local count = #_grid_widgets
+	local max_width = 800
+	local spacing = 10
+	local total_height = 0
+	local widget_position_x = 0
+	local widget_position_y = 0
+	local row = 1
+	local column = 1
+	local gamepad_navigation = {}
+	local widgets = self._grid_widgets
+	local num_widgets = #widgets
 
-	for i, v in ipairs(_grid_widgets) do
-		local offset = v.offset
-		local content = v.content
+	for index, widget in ipairs(widgets) do
+		local offset = widget.offset
+		local content = widget.content
 		local size = content.size
-		local var_20_13 = size[1]
-		local var_20_14 = size[2]
+		local width = size[1]
+		local height = size[2]
+		local change_row = max_width < widget_position_x + width
 
-		if not (num < num_4 + var_20_13) then
-			num_7 = 1
-			num_6 = num_6 + 1
-			num_4 = 0
-			num_5 = num_5 - (var_20_14 + num_2)
+		if change_row then
+			column = 1
+			row = row + 1
+			widget_position_x = 0
+			widget_position_y = widget_position_y - (height + spacing)
 		end
 
-		offset[1] = num_4
-		offset[2] = num_5
-		content.row = num_6
-		content.column = num_7
-		num_4 = num_4 + (var_20_13 + num_2)
+		offset[1] = widget_position_x
+		offset[2] = widget_position_y
+		content.row = row
+		content.column = column
+		widget_position_x = widget_position_x + (width + spacing)
 
-		if i == count then
-			num_3 = math.abs(num_5 - var_20_14)
+		if index == num_widgets then
+			total_height = math.abs(widget_position_y - height)
 		end
 
-		if not tbl[num_6] then
-			tbl[num_6] = {}
+		if not gamepad_navigation[row] then
+			gamepad_navigation[row] = {}
 		end
 
-		tbl[num_6][num_7] = i
-		num_7 = num_7 + 1
+		gamepad_navigation[row][column] = index
+		column = column + 1
 	end
 
-	self._gamepad_navigation = tbl
-	self._total_list_height = num_3
+	self._gamepad_navigation = gamepad_navigation
+	self._total_list_height = total_height
 end
 
-StoreWindowFeatured._sort_slideshow = function (arg_21_0, arg_21_1)
+StoreWindowFeatured._sort_slideshow = function (self, slideshow_content)
 	-- function 21
-	local count = #arg_21_1
+	local num_slides = #slideshow_content
 
-	for i, v in ipairs(arg_21_1) do
-		if not v.prio then
-			v.prio = count - i
+	for k, settings in ipairs(slideshow_content) do
+		if not settings.prio then
+			settings.prio = num_slides - k
 		end
 	end
 
-	local function fn(self, arg_22_1)
+	local function sort_func(a, b)
 		-- function 22
-		return self.prio > arg_22_1.prio
+		return a.prio > b.prio
 	end
 
-	table.sort(arg_21_1, fn)
+	table.sort(slideshow_content, sort_func)
 end
 
-StoreWindowFeatured._trim_slideshow = function (arg_23_0, arg_23_1)
+StoreWindowFeatured._trim_slideshow = function (self, slideshow_content)
 	-- function 23
-	for i = #arg_23_1, max_slideshow_items + 1, -1 do
-		arg_23_1[i] = nil
+	local num_slideshow_items = #slideshow_content
+
+	for i = num_slideshow_items, MAX_SLIDESHOW_ITEMS + 1, -1 do
+		slideshow_content[i] = nil
 	end
 end
 
-StoreWindowFeatured._append_filtered_slideshow_content = function (arg_24_0, arg_24_1, arg_24_2, arg_24_3, arg_24_4)
+StoreWindowFeatured._append_filtered_slideshow_content = function (self, slideshow_content, product_type, settings_table, check_function)
 	-- function 24
-	for i, v in ipairs(arg_24_3) do
-		if not v.show_in_slideshow and not arg_24_4(v) then
-			local num = #arg_24_1 + 1
+	for index, settings in ipairs(settings_table) do
+		if settings.show_in_slideshow and check_function(settings) then
+			local num = #slideshow_content + 1
 			local tbl = {
-				texture = v.slideshow_texture,
-				description = v.slideshow_text,
-				header = v.name
+				texture = settings.slideshow_texture,
+				description = settings.slideshow_text,
+				header = settings.name
 			}
-			local dlc_name = v.dlc_name
+			local dlc_name = settings.dlc_name
 
-			dlc_name = dlc_name or v.item_key
+			dlc_name = not not dlc_name or not not settings.item_key
 			tbl.product_id = dlc_name
-			tbl.product_type = arg_24_2
+			tbl.product_type = product_type
 
-			local prio = v.prio
+			local prio = settings.prio
 
-			prio = prio or 0
+			prio = not not prio or not not 0
 			tbl.prio = prio
-			arg_24_1[num] = tbl
+			slideshow_content[num] = tbl
 		end
 	end
 end
 
 StoreWindowFeatured._get_default_featured_slideshow_content = function (self)
 	-- function 25
-	local tbl = {}
-	local PLATFORM = PLATFORM
+	local slideshow_content = {}
+	local platform = PLATFORM
 
-	self:_append_filtered_slideshow_content(tbl, "dlc", StoreDlcSettings, function (self)
+	self:_append_filtered_slideshow_content(slideshow_content, "dlc", StoreDlcSettings, function (settings)
 		-- function 26
-		local available_platforms = self.available_platforms
+		local available_platforms = settings.available_platforms
 
-		return not available_platforms and table.find(available_platforms, PLATFORM)
+		return not available_platforms or not not table.find(available_platforms, platform)
 	end)
 
-	local get_interface = Managers.backend:get_interface("peddler")
+	local backend_store = Managers.backend:get_interface("peddler")
 
-	if not HAS_STEAM and not get_interface.is_purchaseable then
-		self:_append_filtered_slideshow_content(tbl, "item", StoreBundleFeaturedSettings, function (self)
+	if HAS_STEAM and backend_store.is_purchaseable then
+		self:_append_filtered_slideshow_content(slideshow_content, "item", StoreBundleFeaturedSettings, function (settings)
 			-- function 27
-			local item_key = self.item_key
-			local var_27_1 = ItemMasterList[item_key]
+			local item_key = settings.item_key
+			local item_data = ItemMasterList[item_key]
 
-			return get_interface:is_purchaseable(var_27_1.steam_itemdefid)
+			return backend_store:is_purchaseable(item_data.steam_itemdefid)
 		end)
 	end
 
-	return tbl
+	return slideshow_content
 end
 
-StoreWindowFeatured._get_default_featured_grid_content = function (self, arg_28_1, arg_28_2)
+StoreWindowFeatured._get_default_featured_grid_content = function (self, optional_num_items, optional_used_ids)
 	-- function 28
-	local tbl = {}
-	local get_peddler_stock = Managers.backend:get_interface("peddler"):get_peddler_stock()
-	local get_interface = Managers.backend:get_interface("common")
-	local get_interface_2 = Managers.backend:get_interface("items")
-	local str = "can_wield_by_current_hero and not owned and ( not is_event_item or is_active_event_item )"
-	local filter_items = get_interface:filter_items(get_peddler_stock, str)
-	local num = os.time() * 1000
-	local flag = arg_28_1 or 9
-	local flag_2 = arg_28_2 or {}
-	local currency_ui_settings = DLCSettings.store.currency_ui_settings
+	local default_grid_content = {}
+	local peddler_interface = Managers.backend:get_interface("peddler")
+	local peddler_items = peddler_interface:get_peddler_stock()
+	local backend_common = Managers.backend:get_interface("common")
+	local backend_items = Managers.backend:get_interface("items")
+	local hero_filter = "can_wield_by_current_hero and not owned and ( not is_event_item or is_active_event_item )"
+	local hero_items = backend_common:filter_items(peddler_items, hero_filter)
+	local os_time = os.time() * 1000
+	local num_items = not not optional_num_items or not not 9
+	local used_ids = not not optional_used_ids or not not {}
+	local item_currency_settings = DLCSettings.store.currency_ui_settings
 
-	local function fn(self, arg_29_1)
+	local function comparator(a, b)
 		-- function 29
-		if self.steam_itemdefid or not arg_29_1.steam_itemdefid then
+		if a.steam_itemdefid or b.steam_itemdefid then
 			return false
 		end
 
-		local var_29_0
-		local var_29_1
+		local sale_percentage_a, sale_percentage_b
 
-		for k, v in pairs(currency_ui_settings) do
-			if not self.current_prices[k] and not self.regular_prices[k] then
-				var_29_0 = self.current_prices[k] / self.regular_prices[k]
+		for currency, settings in pairs(item_currency_settings) do
+			if a.current_prices[currency] and a.regular_prices[currency] then
+				sale_percentage_a = a.current_prices[currency] / a.regular_prices[currency]
 			end
 
-			if not arg_29_1.current_prices[k] and not arg_29_1.regular_prices[k] then
-				var_29_1 = arg_29_1.current_prices[k] / arg_29_1.regular_prices[k]
+			if b.current_prices[currency] and b.regular_prices[currency] then
+				sale_percentage_b = b.current_prices[currency] / b.regular_prices[currency]
 			end
 		end
 
-		if var_29_0 ~= var_29_1 then
-			return var_29_0 < var_29_1
+		if sale_percentage_a ~= sale_percentage_b then
+			return sale_percentage_a < sale_percentage_b
 		end
 
-		local end_time = self.end_time
+		local end_time = a.end_time
 
-		end_time = end_time or math.huge
-
-		local end_time_2 = arg_29_1.end_time
-
-		end_time_2 = end_time_2 or math.huge
-
-		return end_time - num < end_time_2 - num
-	end
-
-	table.sort(filter_items, fn)
-
-	local num_2 = 0
-	local num_3 = 1
-
-	while not (not (num_3 <= #filter_items) or not (num_2 < flag)) do
-		local var_28_13 = filter_items[num_3]
-		local key = var_28_13.key
-		local has_item = get_interface_2:has_item(key)
-
-		has_item = has_item or get_interface_2:has_weapon_illusion(key)
-
-		local item_type = var_28_13.data.item_type
-
-		if not (flag_2[key] or has_item) then
-			tbl[#tbl + 1] = filter_items[num_3]
-			flag_2[key] = true
-			num_2 = num_2 + 1
+		if not end_time then
+			-- Nothing
 		end
 
-		num_3 = num_3 + 1
+		end_time = math.huge
+
+		local a_end_time = end_time
+
+		::label_29_0::
+
+		local end_time_2 = b.end_time
+
+		if not end_time_2 then
+			-- Nothing
+		end
+
+		end_time_2 = math.huge
+
+		local b_end_time = end_time_2
+
+		::label_29_1::
+
+		local a_time_left = a_end_time - os_time
+		local b_time_left = b_end_time - os_time
+
+		return a_time_left < b_time_left
 	end
 
-	ItemHelper.update_featured_unseen(tbl, self._parent.tab_cat)
+	table.sort(hero_items, comparator)
 
-	return tbl
+	local cnt = 0
+	local i = 1
+
+	while i <= #hero_items and cnt < num_items do
+		local item = hero_items[i]
+		local item_key = item.key
+		local has_item = backend_items:has_item(item_key)
+
+		if not has_item then
+			-- Nothing
+		end
+
+		has_item = backend_items:has_weapon_illusion(item_key)
+
+		local item_owned = has_item
+
+		::label_28_0::
+
+		local item_data = item.data
+		local item_type = item_data.item_type
+
+		if not used_ids[item_key] and not item_owned then
+			default_grid_content[#default_grid_content + 1] = hero_items[i]
+			used_ids[item_key] = true
+			cnt = cnt + 1
+		end
+
+		i = i + 1
+	end
+
+	ItemHelper.update_featured_unseen(default_grid_content, self._parent.tab_cat)
+
+	return default_grid_content
 end
 
-StoreWindowFeatured._setup_grid_products = function (self, arg_30_1)
+StoreWindowFeatured._setup_grid_products = function (self, grid_content)
 	-- function 30
-	local tbl = {}
-	local tbl_3 = {}
-	local num = 0
+	local layout = {}
+	local layout_ids = {}
+	local grid_occupied = 0
 
-	for i = 1, #arg_30_1 do
-		local var_30_3 = arg_30_1[i]
-		local _add_product, var_30_5 = self:_add_product(var_30_3)
-		local var_30_6 = tbl_2[var_30_5]
+	for i = 1, #grid_content do
+		local product_data = grid_content[i]
+		local product, product_type = self:_add_product(product_data)
+		local grid_size = GRID_SIZE_BY_TYPE[product_type]
 
-		num = num + var_30_6[1] * var_30_6[2]
+		grid_occupied = grid_occupied + grid_size[1] * grid_size[2]
 
-		if not _add_product then
-			tbl[#tbl + 1] = _add_product
-			tbl_3[_add_product.product_id] = #tbl
+		if product then
+			layout[#layout + 1] = product
+			layout_ids[product.product_id] = #layout
 		end
 	end
 
-	self._layout = tbl
+	self._layout = layout
 
-	self:_create_product_widgets(tbl)
+	self:_create_product_widgets(layout)
 end
 
-StoreWindowFeatured._add_product = function (self, arg_31_1)
+StoreWindowFeatured._add_product = function (self, product_data)
 	-- function 31
-	local id = arg_31_1.id
-	local type = arg_31_1.type
-	local var_31_2
-	local var_31_3
+	local product_id = product_data.id
+	local product_type = product_data.type
+	local product, item_type
 
-	if type == "dlc" then
-		local var_31_4 = StoreDlcSettingsByName[id]
+	if product_type == "dlc" then
+		local dlc_settings = StoreDlcSettingsByName[product_id]
 
-		if not var_31_4 then
-			var_31_2 = {
-				dlc_settings = var_31_4,
-				type = type,
-				product_id = id
+		if dlc_settings then
+			product = {
+				dlc_settings = dlc_settings,
+				type = product_type,
+				product_id = product_id
 			}
 		else
-			printf("[StoreWindowFeatured] Warning: dlc %q not found", id)
+			printf("[StoreWindowFeatured] Warning: dlc %q not found", product_id)
 		end
-	elseif type == "item" then
-		local get_item_by_key = self._parent:get_item_by_key(id)
+	elseif product_type == "item" then
+		local item = self._parent:get_item_by_key(product_id)
 
-		if not get_item_by_key then
-			var_31_2 = {
-				item = get_item_by_key,
-				type = type,
-				product_id = id,
+		if item then
+			product = {
+				item = item,
+				type = product_type,
+				product_id = product_id,
 				settings = {
 					mask_price_strike_through_hack = true
 				}
 			}
-			var_31_3 = get_item_by_key.data.item_type
+
+			local item_data = item.data
+
+			item_type = item_data.item_type
 		else
-			printf("[StoreWindowFeatured] Warning: item %q not found", id)
+			printf("[StoreWindowFeatured] Warning: item %q not found", product_id)
 		end
 	else
-		printf("[StoreWindowFeatured] Warning: %s %q not found", type, id)
+		printf("[StoreWindowFeatured] Warning: %s %q not found", product_type, product_id)
 	end
 
-	return var_31_2, var_31_3 or type
+	return product, not not item_type or not not product_type
 end
 
-StoreWindowFeatured._setup_slideshow = function (self, arg_32_1, arg_32_2)
+StoreWindowFeatured._setup_slideshow = function (self, widget, data)
 	-- function 32
-	local tbl = {}
-	local unlock = Managers.unlock
-	local get_interface = Managers.backend:get_interface("peddler")
+	local slideshow_content = {}
+	local unlock_manager = Managers.unlock
+	local backend_store = Managers.backend:get_interface("peddler")
 	local _reference_id = self._reference_id
 
-	_reference_id = _reference_id or 0
+	_reference_id = not not _reference_id or not not 0
 	self._reference_id = _reference_id + 1
 
-	for i, v in ipairs(arg_32_2) do
-		local flag = true
-		local flag_2 = false
-		local product_id = v.product_id
+	for index, slideshow in ipairs(data) do
+		local valid = true
+		local is_discounted = false
+		local product_id = slideshow.product_id
 
-		if not product_id then
-			local product_type = v.product_type
+		if product_id then
+			local product_type = slideshow.product_type
 
 			if product_type == "dlc" then
-				if not unlock:dlc_exists(product_id) and not StoreDlcSettingsByName[product_id] then
-					flag = true
+				if unlock_manager:dlc_exists(product_id) and StoreDlcSettingsByName[product_id] then
+					valid = true
 
-					local dlc_id = unlock:dlc_id(product_id)
-					local get_app_price = get_interface:get_app_price(not IS_WINDOWS and dlc_id and product_id)
+					local dlc_id = unlock_manager:dlc_id(product_id)
+					local price_data = backend_store:get_app_price((not IS_WINDOWS or not dlc_id) and not not product_id)
 
-					flag_2 = not get_app_price and get_app_price.current_price ~= get_app_price.regular_price
+					is_discounted = not not price_data and price_data.current_price ~= price_data.regular_price
 				end
 			elseif product_type == "item" then
-				local get_item_by_key = self._parent:get_item_by_key(product_id)
+				local item = self._parent:get_item_by_key(product_id)
 
-				if not get_item_by_key then
-					flag = true
-					flag_2 = not get_item_by_key.steam_data and get_item_by_key.steam_data.discount_is_active
+				if item then
+					valid = true
+					is_discounted = not not item.steam_data and not not item.steam_data.discount_is_active
 				end
 			end
 		else
-			flag = true
+			valid = true
 		end
 
-		if not flag then
-			local backend_texture = v.backend_texture
+		if valid then
+			local backend_texture_name = slideshow.backend_texture
 
-			if not backend_texture then
-				local str = "slideshow_" .. i .. "_" .. self._reference_id
+			if backend_texture_name then
+				local reference_name = "slideshow_" .. index .. "_" .. self._reference_id
+				local material_name = self:_setup_backend_image_material(reference_name, backend_texture_name)
 
-				v.texture, v.reference_name = self:_setup_backend_image_material(str, backend_texture), str
-			elseif not (not v.texture and Gui.material(self._ui_top_renderer.gui, v.texture)) then
-				v.texture = "icons_placeholder"
+				slideshow.reference_name = reference_name
+				slideshow.texture = material_name
+			elseif not slideshow.texture or not Gui.material(self._ui_top_renderer.gui, slideshow.texture) then
+				slideshow.texture = "icons_placeholder"
 			end
 
-			v.is_discounted = flag_2
-			tbl[#tbl + 1] = v
+			slideshow.is_discounted = is_discounted
+			slideshow_content[#slideshow_content + 1] = slideshow
 		end
 	end
 
-	local count = #tbl
-	local flag_3 = count > 0
-	local content = arg_32_1.content
+	local num_entries = #slideshow_content
+	local draw_slideshow = num_entries > 0
+	local content = widget.content
 
-	content.visible = flag_3
+	content.visible = draw_slideshow
 
-	if not flag_3 then
-		local list_style = arg_32_1.style.list_style
-		local var_32_17 = content.size[1]
+	if draw_slideshow then
+		local style = widget.style
+		local list_style = style.list_style
+		local default_size = content.size
+		local default_width = default_size[1]
 
-		list_style.num_draws = count
+		list_style.num_draws = num_entries
 
-		local num_2 = list_style.size[1] * count
+		local page_thumb_width = list_style.size[1]
+		local total_page_thumb_width = page_thumb_width * num_entries
 
-		list_style.offset[1] = var_32_17 / 2 - num_2 / 2
-		content.slideshow_content = tbl
-		content.wait_time = num
+		list_style.offset[1] = default_width / 2 - total_page_thumb_width / 2
+		content.slideshow_content = slideshow_content
+		content.wait_time = SLIDESHOW_WAIT_TIME
 
-		self:_set_slideshow_selected_read_index(arg_32_1, 1)
-		self:_set_slideshow_animation_progress(arg_32_1, 1)
+		self:_set_slideshow_selected_read_index(widget, 1)
+		self:_set_slideshow_animation_progress(widget, 1)
 
 		content.progress = 1
 		content.initialized = true
 	end
 end
 
-StoreWindowFeatured._setup_backend_image_material = function (self, arg_33_1, arg_33_2, arg_33_3)
+StoreWindowFeatured._setup_backend_image_material = function (self, reference_name, texture_name, masked)
 	-- function 33
-	local str = "StoreWindowFeatured_" .. arg_33_1
+	local material_name = "StoreWindowFeatured_" .. reference_name
 	local gui = self._ui_top_renderer.gui
-	local flag
+	local str
 
-	flag = not arg_33_3 and "template_store_diffuse_masked" and "template_store_diffuse"
+	if masked then
+		str = "template_store_diffuse_masked"
 
-	self:_create_material_instance(gui, str, flag, arg_33_1)
+		goto label_33_0
+	end
 
-	local get_interface = Managers.backend:get_interface("cdn")
-	local var_33_4 = callback(self, "_cb_on_backend_url_loaded", gui, arg_33_1, arg_33_2, str)
+	str = "template_store_diffuse"
 
-	get_interface:get_resource_urls({
-		arg_33_2
-	}, var_33_4)
+	local template_material_name = str
 
-	return str
+	::label_33_0::
+
+	self:_create_material_instance(gui, material_name, template_material_name, reference_name)
+
+	local cdn = Managers.backend:get_interface("cdn")
+	local cb = callback(self, "_cb_on_backend_url_loaded", gui, reference_name, texture_name, material_name)
+
+	cdn:get_resource_urls({
+		texture_name
+	}, cb)
+
+	return material_name
 end
 
-StoreWindowFeatured._cb_on_backend_url_loaded = function (self, arg_34_1, arg_34_2, arg_34_3, arg_34_4, arg_34_5)
+StoreWindowFeatured._cb_on_backend_url_loaded = function (self, gui, reference_name, texture_name, material_name, result)
 	-- function 34
-	local var_34_0 = arg_34_5[arg_34_3]
+	local texture_url = result[texture_name]
 
-	if not var_34_0 then
+	if not texture_url then
 		return
 	end
 
@@ -907,291 +1011,354 @@ StoreWindowFeatured._cb_on_backend_url_loaded = function (self, arg_34_1, arg_34
 		return
 	end
 
-	self._material_references_to_unload[arg_34_2] = true
+	self._material_references_to_unload[reference_name] = true
 
-	local var_34_1 = callback(self, "_cb_on_backend_image_loaded", arg_34_1, arg_34_2, arg_34_4)
+	local cb = callback(self, "_cb_on_backend_image_loaded", gui, reference_name, material_name)
 
-	Managers.url_loader:load_resource(arg_34_2, var_34_0, var_34_1, arg_34_3)
+	Managers.url_loader:load_resource(reference_name, texture_url, cb, texture_name)
 end
 
-StoreWindowFeatured._cb_on_backend_image_loaded = function (self, arg_35_1, arg_35_2, arg_35_3, arg_35_4)
+StoreWindowFeatured._cb_on_backend_image_loaded = function (self, gui, reference_name, material_name, texture_resource)
 	-- function 35
-	if not self._cloned_materials_by_reference[arg_35_2] then
+	if not self._cloned_materials_by_reference[reference_name] then
 		return
 	end
 
-	if not arg_35_4 then
-		local gui = self._ui_top_renderer.gui
+	if texture_resource then
+		local ui_top_renderer = self._ui_top_renderer
+		local gui = ui_top_renderer.gui
 
-		self:_set_material_diffuse_by_resource(gui, arg_35_3, arg_35_4)
+		self:_set_material_diffuse_by_resource(gui, material_name, texture_resource)
 	else
-		self._material_references_to_unload[arg_35_2] = nil
+		self._material_references_to_unload[reference_name] = nil
 
-		Application.warning(string.format("[StoreWindowFeatured] - Failed loading image for reference name: (%s)", arg_35_2))
+		Application.warning(string.format("[StoreWindowFeatured] - Failed loading image for reference name: (%s)", reference_name))
 	end
 end
 
-StoreWindowFeatured._create_material_instance = function (arg_36_0, arg_36_1, arg_36_2, arg_36_3, arg_36_4)
+StoreWindowFeatured._create_material_instance = function (self, gui, new_material_name, template_material_name, reference_name)
 	-- function 36
-	arg_36_0._cloned_materials_by_reference[arg_36_4] = arg_36_2
+	local cloned_materials_by_reference = self._cloned_materials_by_reference
 
-	return Gui.clone_material_from_template(arg_36_1, arg_36_2, arg_36_3)
+	cloned_materials_by_reference[reference_name] = new_material_name
+
+	return Gui.clone_material_from_template(gui, new_material_name, template_material_name)
 end
 
-StoreWindowFeatured._set_material_diffuse_by_resource = function (arg_37_0, arg_37_1, arg_37_2, arg_37_3)
+StoreWindowFeatured._set_material_diffuse_by_resource = function (self, gui, material_name, texture_resource)
 	-- function 37
-	local material = Gui.material(arg_37_1, arg_37_2)
+	local material = Gui.material(gui, material_name)
 
-	if not material then
-		Material.set_resource(material, "diffuse_map", arg_37_3)
+	if material then
+		Material.set_resource(material, "diffuse_map", texture_resource)
 	end
 end
 
-StoreWindowFeatured._set_material_diffuse_by_path = function (arg_38_0, arg_38_1, arg_38_2, arg_38_3)
+StoreWindowFeatured._set_material_diffuse_by_path = function (self, gui, material_name, texture_path)
 	-- function 38
-	local material = Gui.material(arg_38_1, arg_38_2)
+	local material = Gui.material(gui, material_name)
 
-	if not material then
-		Material.set_texture(material, "diffuse_map", arg_38_3)
+	if material then
+		Material.set_texture(material, "diffuse_map", texture_path)
 	end
 end
 
-StoreWindowFeatured._handle_slideshow_logic = function (self, arg_39_1, arg_39_2, arg_39_3)
+StoreWindowFeatured._handle_slideshow_logic = function (self, widget, dt, input_service)
 	-- function 39
-	local content = arg_39_1.content
-	local style = arg_39_1.style
+	local content = widget.content
+	local style = widget.style
 	local wait_time = content.wait_time
 
 	if not content.initialized then
 		return
 	end
 
-	self._parent:animate_store_product(arg_39_1, arg_39_2)
+	self._parent:animate_store_product(widget, dt)
 
-	local count = #content.slideshow_content
-	local item_styles = style.list_style.item_styles
+	local slideshow_content = content.slideshow_content
+	local num_slideshows = #slideshow_content
+	local list_style = style.list_style
+	local item_styles = list_style.item_styles
 	local list_content = content.list_content
-	local flag = false
+	local thumb_pressed = false
 
-	for i = 1, count do
-		local button_hotspot = list_content[i].button_hotspot
-		local var_39_8 = item_styles[i]
+	for i = 1, num_slideshows do
+		local page_thumb_hotspot = list_content[i].button_hotspot
+		local page_thumb_style = item_styles[i]
 
-		self:_update_hotspot_progress(button_hotspot, arg_39_2)
+		self:_update_hotspot_progress(page_thumb_hotspot, dt)
 
-		local hover_progress = button_hotspot.hover_progress
-		local selection_progress = button_hotspot.selection_progress
-		local max = math.max(hover_progress, selection_progress)
+		local hover_progress = page_thumb_hotspot.hover_progress
+		local selection_progress = page_thumb_hotspot.selection_progress
+		local combined_progress = math.max(hover_progress, selection_progress)
 
-		var_39_8.icon.color[1] = 255 * max
+		page_thumb_style.icon.color[1] = 255 * combined_progress
 
-		if not button_hotspot.on_hover_enter then
+		if page_thumb_hotspot.on_hover_enter then
 			self:_play_sound("Play_hud_store_button_hover")
 		end
 
-		if not button_hotspot.on_pressed then
-			self:_set_slideshow_selected_read_index(arg_39_1, i)
+		if page_thumb_hotspot.on_pressed then
+			self:_set_slideshow_selected_read_index(widget, i)
 
 			content.progress = 1
 
-			self:_set_slideshow_animation_progress(arg_39_1, 1)
+			self:_set_slideshow_animation_progress(widget, 1)
 			self:_play_sound("Play_hud_store_button_select")
 
-			flag = true
+			thumb_pressed = true
 		end
 
-		button_hotspot.is_selected = i == content.read_index
+		page_thumb_hotspot.is_selected = i == content.read_index
 	end
 
-	local _current_read_index = self._current_read_index
+	local read_index = self._current_read_index
 
-	if not arg_39_3:get("trigger_cycle_next") then
-		_current_read_index = math.min(_current_read_index + 1, count)
-	elseif not arg_39_3:get("trigger_cycle_previous") then
-		_current_read_index = math.max(_current_read_index - 1, 1)
+	if input_service:get("trigger_cycle_next") then
+		read_index = math.min(read_index + 1, num_slideshows)
+	elseif input_service:get("trigger_cycle_previous") then
+		read_index = math.max(read_index - 1, 1)
 	end
 
-	if not flag then
-		if self._current_read_index ~= _current_read_index then
-			self:_set_slideshow_selected_read_index(arg_39_1, _current_read_index)
+	if not thumb_pressed then
+		if self._current_read_index ~= read_index then
+			self:_set_slideshow_selected_read_index(widget, read_index)
 
 			content.progress = 1
 
-			self:_set_slideshow_animation_progress(arg_39_1, 1)
+			self:_set_slideshow_animation_progress(widget, 1)
 			self:_play_sound("Play_hud_store_button_select")
 		else
-			local button_hotspot_2 = arg_39_1.content.button_hotspot
+			local button_hotspot = widget.content.button_hotspot
 
-			button_hotspot_2 = button_hotspot_2 or arg_39_1.content.hotspot
+			if not button_hotspot then
+				-- Nothing
+			end
 
-			if not button_hotspot_2 and not button_hotspot_2.on_pressed then
-				button_hotspot_2.on_pressed = false
+			button_hotspot = widget.content.hotspot
 
-				self:_on_slideshow_pressed(arg_39_1)
+			local hotspot = button_hotspot
+
+			::label_39_0::
+
+			if hotspot and hotspot.on_pressed then
+				hotspot.on_pressed = false
+
+				self:_on_slideshow_pressed(widget)
 			end
 		end
 	end
 
 	local delay_timer = content.delay_timer
 
-	if not delay_timer then
-		local max_2 = math.max(delay_timer - arg_39_2, 0)
-		local num = 1 - max_2 / wait_time
-		local timer_bar = style.timer_bar
-		local texture_width = timer_bar.texture_width
-		local texture_size = timer_bar.texture_size
+	if delay_timer then
+		delay_timer = math.max(delay_timer - dt, 0)
 
-		if max_2 == 0 then
+		local delay_progress = 1 - delay_timer / wait_time
+		local timer_bar_style = style.timer_bar
+		local timer_bar_texture_width = timer_bar_style.texture_width
+		local timer_bar_size = timer_bar_style.texture_size
+
+		if delay_timer == 0 then
 			content.delay_timer = nil
-			texture_size[1] = 0
+			timer_bar_size[1] = 0
 		else
-			content.delay_timer = max_2
-			texture_size[1] = math.floor(num * texture_width)
+			content.delay_timer = delay_timer
+			timer_bar_size[1] = math.floor(delay_progress * timer_bar_texture_width)
 		end
 
 		return
 	end
 
-	local progress = content.progress
+	local progress_2 = content.progress
 
-	progress = progress or 1
-
-	local num_2 = progress - arg_39_2 * 0.3
-	local read_index = content.read_index
-
-	read_index = read_index or 1
-
-	local var_39_23 = read_index
-
-	if num_2 >= 1 then
-		var_39_23 = (var_39_23 - 1 - 1) % count + 1
-
-		self:_set_slideshow_selected_read_index(arg_39_1, var_39_23)
-	elseif num_2 <= 0 then
-		local num_3 = (var_39_23 + 1 - 1) % count + 1
-
-		self:_set_slideshow_selected_read_index(arg_39_1, num_3)
+	if not progress_2 then
+		-- Nothing
 	end
 
-	local num_4 = num_2 % 1
+	progress_2 = 1
 
-	content.progress = num_4
+	local progress = progress_2
 
-	local smoothstep = math.smoothstep(num_4, 0, 1)
+	::label_39_1::
 
-	self:_set_slideshow_animation_progress(arg_39_1, smoothstep)
+	progress = progress - dt * 0.3
+
+	local read_index_2 = content.read_index
+
+	if not read_index_2 then
+		-- Nothing
+	end
+
+	read_index_2 = 1
+
+	local current_read_index = read_index_2
+
+	::label_39_2::
+
+	local read_index = current_read_index
+
+	if progress >= 1 then
+		read_index = (read_index - 1 - 1) % num_slideshows + 1
+
+		self:_set_slideshow_selected_read_index(widget, read_index)
+	elseif progress <= 0 then
+		read_index = (read_index + 1 - 1) % num_slideshows + 1
+
+		self:_set_slideshow_selected_read_index(widget, read_index)
+	end
+
+	progress = progress % 1
+	content.progress = progress
+
+	local anim_progress = math.smoothstep(progress, 0, 1)
+
+	self:_set_slideshow_animation_progress(widget, anim_progress)
 end
 
-StoreWindowFeatured._set_slideshow_selected_read_index = function (self, arg_40_1, arg_40_2)
+StoreWindowFeatured._set_slideshow_selected_read_index = function (self, widget, index)
 	-- function 40
-	local content = arg_40_1.content
-	local var_40_1 = content.slideshow_content[arg_40_2]
+	local content = widget.content
+	local slideshow_content = content.slideshow_content
+	local slide_content = slideshow_content[index]
+	local wait_time = content.wait_time
 
-	content.delay_timer, content.read_index = content.wait_time, arg_40_2
-	content.show_hourglass = var_40_1.is_discounted
+	content.read_index = index
+	content.delay_timer = wait_time
+	content.show_hourglass = slide_content.is_discounted
 
-	local header = var_40_1.header
+	local header_2 = slide_content.header
 
-	if not header then
-		header = var_40_1.backend_header
-		header = header or "tutorial_no_text"
+	if not header_2 then
+		-- Nothing
 	end
+
+	header_2 = slide_content.backend_header
+
+	if not header_2 then
+		-- Nothing
+	end
+
+	header_2 = "tutorial_no_text"
+
+	local header = header_2
+
+	::label_40_0::
 
 	content.title_text = Localize(header)
 
-	local description = var_40_1.description
+	local description_2 = slide_content.description
 
-	if not description then
-		description = var_40_1.backend_description
-		description = description or "tutorial_no_text"
+	if not description_2 then
+		-- Nothing
 	end
 
-	local description_func = var_40_1.description_func
+	description_2 = slide_content.backend_description
 
-	if not description_func then
-		local var_40_5 = self[description_func]
+	if not description_2 then
+		-- Nothing
+	end
 
-		if not var_40_5 then
-			local var_40_6 = var_40_5(self, var_40_1.description_params)
+	description_2 = "tutorial_no_text"
 
-			var_40_6 = var_40_6 or ""
-			content.description_text = var_40_6
+	local description = description_2
+
+	::label_40_1::
+
+	local description_func_name = slide_content.description_func
+
+	if description_func_name then
+		local func = self[description_func_name]
+
+		if func then
+			local var_40_2 = func(self, slide_content.description_params)
+
+			var_40_2 = not not var_40_2 or not not ""
+			content.description_text = var_40_2
 		else
-			Application.warning(string.format("[StoreWindowFeatured] There is no description function called %q in StoreWindowFeatured", description_func))
+			Application.warning(string.format("[StoreWindowFeatured] There is no description function called %q in StoreWindowFeatured", description_func_name))
 		end
 	else
 		content.description_text = Localize(description)
 	end
 
-	self._current_read_index = arg_40_2
+	self._current_read_index = index
 end
 
-StoreWindowFeatured.gotwf_description = function (arg_41_0, arg_41_1)
+StoreWindowFeatured.gotwf_description = function (self, params)
 	-- function 41
-	local start_time = arg_41_1.start_time
+	local start_time = params.start_time
 
 	if not start_time then
 		return
 	end
 
-	local num_rewards = arg_41_1.num_rewards
+	local num_rewards_2 = params.num_rewards
 
-	num_rewards = num_rewards or 1
+	if not num_rewards_2 then
+		-- Nothing
+	end
 
-	local date = os.date("%x", start_time * 0.001)
-	local date_2 = os.date("%x", start_time * 0.001 + 86400 * (num_rewards - 1))
+	num_rewards_2 = 1
 
-	if date_2 ~= date then
-		return date .. " - " .. date_2
+	local num_rewards = num_rewards_2
+
+	::label_41_0::
+
+	local start_date = os.date("%x", start_time * 0.001)
+	local end_date = os.date("%x", start_time * 0.001 + 86400 * (num_rewards - 1))
+
+	if end_date ~= start_date then
+		return start_date .. " - " .. end_date
 	else
-		return date
+		return start_date
 	end
 end
 
-StoreWindowFeatured._on_slideshow_pressed = function (self, arg_42_1)
+StoreWindowFeatured._on_slideshow_pressed = function (self, widget)
 	-- function 42
-	local content = arg_42_1.content
+	local content = widget.content
 	local read_index = content.read_index
-	local var_42_2 = content.slideshow_content[read_index]
-	local path = var_42_2.path
-	local product_id = var_42_2.product_id
-	local steam_url = var_42_2.steam_url
-	local layout_name = var_42_2.layout_name
-	local _parent = self._parent
+	local slideshow_content = content.slideshow_content
+	local slide_content = slideshow_content[read_index]
+	local path = slide_content.path
+	local product_id = slide_content.product_id
+	local steam_url = slide_content.steam_url
+	local layout_name = slide_content.layout_name
+	local parent = self._parent
 
-	if not product_id then
-		if not (var_42_2.product_type ~= "dlc" or var_42_2.open_ingame_store_page) then
+	if product_id then
+		if slide_content.product_type == "dlc" and not slide_content.open_ingame_store_page then
 			Managers.unlock:open_dlc_page(product_id)
 		else
-			_parent:go_to_product(product_id, path)
+			parent:go_to_product(product_id, path)
 		end
-	elseif not path then
-		_parent:go_to_store_path(path)
-	elseif not HAS_STEAM and not steam_url then
+	elseif path then
+		parent:go_to_store_path(path)
+	elseif HAS_STEAM and steam_url then
 		Steam.open_url(steam_url)
-	elseif not layout_name then
-		_parent:play_sound("Play_hud_store_buy_window")
-		_parent:set_layout_by_name(layout_name)
+	elseif layout_name then
+		parent:play_sound("Play_hud_store_buy_window")
+		parent:set_layout_by_name(layout_name)
 	end
 end
 
-StoreWindowFeatured._on_list_index_selected = function (self, arg_43_1)
+StoreWindowFeatured._on_list_index_selected = function (self, index)
 	-- function 43
-	local var_43_0
-	local var_43_1
-	local _grid_widgets = self._grid_widgets
-	local count = #_grid_widgets
+	local row, column
+	local widgets = self._grid_widgets
+	local num_widgets = #widgets
 
-	for i, v in ipairs(_grid_widgets) do
-		local content = v.content
+	for widget_index, widget in ipairs(widgets) do
+		local content = widget.content
 		local hotspot = content.hotspot
-		local flag = i == arg_43_1
+		local is_selected = widget_index == index
 
-		hotspot.is_selected = flag
+		hotspot.is_selected = is_selected
 
-		if not flag then
-			var_43_0 = content.row
-			var_43_1 = content.column
+		if is_selected then
+			row = content.row
+			column = content.column
 			hotspot.on_hover_enter = true
 		end
 	end
@@ -1199,126 +1366,156 @@ StoreWindowFeatured._on_list_index_selected = function (self, arg_43_1)
 	self._previous_gamepad_grid_index = self._selected_gamepad_grid_index
 	self._previous_gamepad_grid_row = self._selected_gamepad_grid_row
 	self._previous_gamepad_grid_column = self._selected_gamepad_grid_column
-	self._selected_gamepad_grid_index = arg_43_1
-	self._selected_gamepad_grid_row = var_43_0
-	self._selected_gamepad_grid_column = var_43_1
+	self._selected_gamepad_grid_index = index
+	self._selected_gamepad_grid_row = row
+	self._selected_gamepad_grid_column = column
 end
 
-StoreWindowFeatured._on_list_index_pressed = function (self, arg_44_1)
+StoreWindowFeatured._on_list_index_pressed = function (self, index)
 	-- function 44
-	local var_44_0 = self._layout[arg_44_1]
-	local product_id = var_44_0.product_id
-	local type = var_44_0.type
-	local _parent = self._parent
+	local layout = self._layout
+	local entry = layout[index]
+	local product_id = entry.product_id
+	local featured_type = entry.type
+	local parent = self._parent
 
-	if type == "item" then
-		local data = var_44_0.item.data
+	if featured_type == "item" then
+		local item_data = entry.item.data
 
-		ItemHelper.set_shop_item_seen(product_id, data.item_type, self._parent.tab_cat, "featured")
+		ItemHelper.set_shop_item_seen(product_id, item_data.item_type, self._parent.tab_cat, "featured")
 	end
 
-	_parent:go_to_product(product_id)
+	parent:go_to_product(product_id)
 end
 
-StoreWindowFeatured._set_slideshow_animation_progress = function (arg_45_0, arg_45_1, arg_45_2)
+StoreWindowFeatured._set_slideshow_animation_progress = function (self, widget, progress)
 	-- function 45
-	local content = arg_45_1.content
-	local style = arg_45_1.style
+	local content = widget.content
+	local style = widget.style
 	local slideshow_content = content.slideshow_content
-	local count = #slideshow_content
-	local read_index = content.read_index
+	local num_slideshows = #slideshow_content
+	local read_index_2 = content.read_index
 
-	read_index = read_index or 1
+	if not read_index_2 then
+		-- Nothing
+	end
 
-	local var_45_5 = content.size[1]
+	read_index_2 = 1
+
+	local read_index = read_index_2
+
+	::label_45_0::
+
+	local default_size = content.size
+	local default_width = default_size[1]
 
 	for i = 1, 2 do
-		local str = "icon_" .. i
-		local var_45_7 = content[str]
-		local var_45_8 = style[str]
-		local uvs = var_45_7.uvs
-		local texture_size = var_45_8.texture_size
-		local offset = var_45_8.offset
-		local var_45_12 = read_index
+		local id = "icon_" .. i
+		local icon_content = content[id]
+		local icon_style = style[id]
+		local uvs = icon_content.uvs
+		local size = icon_style.texture_size
+		local offset = icon_style.offset
+		local local_read_index = read_index
 
 		if i == 1 then
-			uvs[1][1] = 1 - arg_45_2
-			texture_size[1] = math.floor(var_45_5 * arg_45_2)
+			uvs[1][1] = 1 - progress
+			size[1] = math.floor(default_width * progress)
 		else
-			uvs[2][1] = 1 - arg_45_2
-			texture_size[1] = math.floor(var_45_5 * (1 - arg_45_2))
-			offset[1] = math.floor(var_45_5 - texture_size[1])
-			var_45_12 = (read_index + 1 - 1) % count + 1
+			uvs[2][1] = 1 - progress
+			size[1] = math.floor(default_width * (1 - progress))
+			offset[1] = math.floor(default_width - size[1])
+			local_read_index = (read_index + 1 - 1) % num_slideshows + 1
 		end
 
-		var_45_7.texture_id = slideshow_content[var_45_12].texture
+		local slideshow = slideshow_content[local_read_index]
+		local texture = slideshow.texture
+
+		icon_content.texture_id = texture
 	end
 end
 
-StoreWindowFeatured._update_hotspot_progress = function (arg_46_0, arg_46_1, arg_46_2)
+StoreWindowFeatured._update_hotspot_progress = function (self, hotspot, dt)
 	-- function 46
-	local is_hover = arg_46_1.is_hover
-	local is_selected = arg_46_1.is_selected
+	local is_hover = hotspot.is_hover
+	local is_selected = hotspot.is_selected
+	local is_clicked
 
 	if not is_selected then
-		if not arg_46_1.is_clicked then
+		is_clicked = hotspot.is_clicked
+
+		if is_clicked then
 			-- Nothing
 		end
 
-		if arg_46_1.is_clicked ~= 0 then
+		if hotspot.is_clicked ~= 0 then
 			-- Nothing
 		end
 	end
 
-	do
-		local flag = false
+	is_clicked = false
 
-		goto label_46_1
-	end
+	goto label_46_1
 
 	::label_46_0::
 
-	do
-		local flag_2 = true
-	end
+	is_clicked = true
+
+	local input_pressed = is_clicked
 
 	::label_46_1::
 
-	local hover_progress = arg_46_1.hover_progress
+	local hover_progress_2 = hotspot.hover_progress
 
-	hover_progress = hover_progress or 0
-
-	local selection_progress = arg_46_1.selection_progress
-
-	selection_progress = selection_progress or 0
-
-	local num = 8
-
-	if not is_hover then
-		hover_progress = math.min(hover_progress + arg_46_2 * num, 1)
-	else
-		hover_progress = math.max(hover_progress - arg_46_2 * num, 0)
+	if not hover_progress_2 then
+		-- Nothing
 	end
 
-	if not is_selected then
-		selection_progress = math.min(selection_progress + arg_46_2 * num, 1)
-	else
-		selection_progress = math.max(selection_progress - arg_46_2 * num, 0)
+	hover_progress_2 = 0
+
+	local hover_progress = hover_progress_2
+
+	::label_46_2::
+
+	local selection_progress_2 = hotspot.selection_progress
+
+	if not selection_progress_2 then
+		-- Nothing
 	end
 
-	arg_46_1.hover_progress = hover_progress
-	arg_46_1.selection_progress = selection_progress
+	selection_progress_2 = 0
+
+	local selection_progress = selection_progress_2
+
+	::label_46_3::
+
+	local speed = 8
+
+	if is_hover then
+		hover_progress = math.min(hover_progress + dt * speed, 1)
+	else
+		hover_progress = math.max(hover_progress - dt * speed, 0)
+	end
+
+	if is_selected then
+		selection_progress = math.min(selection_progress + dt * speed, 1)
+	else
+		selection_progress = math.max(selection_progress - dt * speed, 0)
+	end
+
+	hotspot.hover_progress = hover_progress
+	hotspot.selection_progress = selection_progress
 end
 
-StoreWindowFeatured._is_unique_reference_to_material = function (self, arg_47_1)
+StoreWindowFeatured._is_unique_reference_to_material = function (self, reference_name)
 	-- function 47
-	local _cloned_materials_by_reference = self._cloned_materials_by_reference
-	local var_47_1 = _cloned_materials_by_reference[arg_47_1]
+	local cloned_materials_by_reference = self._cloned_materials_by_reference
+	local material_name = cloned_materials_by_reference[reference_name]
 
-	fassert(var_47_1, "[StoreWindowFeatured] - Could not find a used material for reference name: (%s)", arg_47_1)
+	fassert(material_name, "[StoreWindowFeatured] - Could not find a used material for reference name: (%s)", reference_name)
 
-	for k, v in pairs(_cloned_materials_by_reference) do
-		if not (var_47_1 ~= v or arg_47_1 == k) then
+	for key, value in pairs(cloned_materials_by_reference) do
+		if material_name == value and reference_name ~= key then
 			return false
 		end
 	end
@@ -1328,48 +1525,49 @@ end
 
 StoreWindowFeatured._reset_cloned_materials = function (self)
 	-- function 48
-	local gui = self._ui_top_renderer.gui
-	local _material_references_to_unload = self._material_references_to_unload
-	local _cloned_materials_by_reference = self._cloned_materials_by_reference
+	local ui_top_renderer = self._ui_top_renderer
+	local gui = ui_top_renderer.gui
+	local material_references_to_unload = self._material_references_to_unload
+	local cloned_materials_by_reference = self._cloned_materials_by_reference
 
-	for k, v in pairs(_cloned_materials_by_reference) do
-		if not _material_references_to_unload[k] then
-			_material_references_to_unload[k] = nil
+	for reference_name, material_name in pairs(cloned_materials_by_reference) do
+		if material_references_to_unload[reference_name] then
+			material_references_to_unload[reference_name] = nil
 
-			Managers.url_loader:unload_resource(k)
+			Managers.url_loader:unload_resource(reference_name)
 		end
 
-		if not self:_is_unique_reference_to_material(k) then
-			self:_set_material_diffuse_by_path(gui, v, str)
+		if self:_is_unique_reference_to_material(reference_name) then
+			self:_set_material_diffuse_by_path(gui, material_name, PRODUCT_PLACEHOLDER_TEXTURE_PATH)
 		end
 
-		_cloned_materials_by_reference[k] = nil
+		cloned_materials_by_reference[reference_name] = nil
 	end
 end
 
-StoreWindowFeatured._handle_gamepad_grid_selection = function (self, arg_49_1)
+StoreWindowFeatured._handle_gamepad_grid_selection = function (self, input_service)
 	-- function 49
-	local _selected_gamepad_grid_index = self._selected_gamepad_grid_index
+	local current_index = self._selected_gamepad_grid_index
 
-	if not _selected_gamepad_grid_index then
+	if not current_index then
 		return
 	end
 
-	local _selected_gamepad_grid_row = self._selected_gamepad_grid_row
-	local _selected_gamepad_grid_column = self._selected_gamepad_grid_column
-	local _previous_gamepad_grid_row = self._previous_gamepad_grid_row
-	local _previous_gamepad_grid_column = self._previous_gamepad_grid_column
-	local var_49_5
-	local _gamepad_navigation = self._gamepad_navigation
-	local count = #_gamepad_navigation
+	local current_selected_row = self._selected_gamepad_grid_row
+	local current_selected_column = self._selected_gamepad_grid_column
+	local previous_selected_row = self._previous_gamepad_grid_row
+	local previous_selected_column = self._previous_gamepad_grid_column
+	local new_index
+	local gamepad_navigation = self._gamepad_navigation
+	local num_rows = #gamepad_navigation
 
-	for i, v in ipairs(_gamepad_navigation) do
-		local count_2 = #v
+	for row, columns in ipairs(gamepad_navigation) do
+		local num_columns_on_row = #columns
 
-		for i_2, v_2 in ipairs(v) do
-			if v_2 == _selected_gamepad_grid_index then
-				if not arg_49_1:get("move_left_hold_continuous") then
-					if i_2 == 1 then
+		for column, index in ipairs(columns) do
+			if index == current_index then
+				if input_service:get("move_left_hold_continuous") then
+					if column == 1 then
 						self:_select_slideshow_widget(true)
 						self:_on_list_index_selected(nil)
 
@@ -1378,45 +1576,50 @@ StoreWindowFeatured._handle_gamepad_grid_selection = function (self, arg_49_1)
 						break
 					end
 
-					var_49_5 = v[i_2 - 1]
+					new_index = columns[column - 1]
 
 					break
 				end
 
-				if not arg_49_1:get("move_right_hold_continuous") then
-					var_49_5 = v[i_2 + 1]
+				if input_service:get("move_right_hold_continuous") then
+					new_index = columns[column + 1]
 
 					break
 				end
 
-				if not arg_49_1:get("move_up_hold_continuous") then
-					if i > 1 then
-						if (count_2 ~= 1 or not _previous_gamepad_grid_row) and not _previous_gamepad_grid_column then
-							var_49_5 = _gamepad_navigation[i - 1][_previous_gamepad_grid_column]
+				if input_service:get("move_up_hold_continuous") then
+					if row > 1 then
+						if num_columns_on_row == 1 and previous_selected_row and previous_selected_column then
+							new_index = gamepad_navigation[row - 1][previous_selected_column]
 
 							break
 						end
 
-						local var_49_9 = _gamepad_navigation[i - 1]
+						local next_row_columns = gamepad_navigation[row - 1]
+						local next_column = math.min(column, #next_row_columns)
 
-						var_49_5 = var_49_9[math.min(i_2, #var_49_9)]
+						new_index = next_row_columns[next_column]
 					end
 
 					break
 				end
 
-				if not (not arg_49_1:get("move_down_hold_continuous") and not (i < count)) then
-					if (count_2 ~= 1 or not _previous_gamepad_grid_row) and not _previous_gamepad_grid_column then
-						local var_49_10 = _gamepad_navigation[i + 1]
+				if input_service:get("move_down_hold_continuous") and row < num_rows then
+					if num_columns_on_row == 1 and previous_selected_row and previous_selected_column then
+						do
+							local next_row_columns = gamepad_navigation[row + 1]
+							local next_column = math.min(previous_selected_column, #next_row_columns)
 
-						var_49_5 = var_49_10[math.min(_previous_gamepad_grid_column, #var_49_10)]
+							new_index = next_row_columns[next_column]
+						end
 
 						break
 					end
 
-					local var_49_11 = _gamepad_navigation[i + 1]
+					local next_row_columns = gamepad_navigation[row + 1]
+					local next_column = math.min(column, #next_row_columns)
 
-					var_49_5 = var_49_11[math.min(i_2, #var_49_11)]
+					new_index = next_row_columns[next_column]
 				end
 
 				break
@@ -1424,16 +1627,17 @@ StoreWindowFeatured._handle_gamepad_grid_selection = function (self, arg_49_1)
 		end
 	end
 
-	if not (not var_49_5 and var_49_5 == _selected_gamepad_grid_index) then
-		self:_on_list_index_selected(var_49_5)
+	if new_index and new_index ~= current_index then
+		self:_on_list_index_selected(new_index)
 	end
 end
 
-StoreWindowFeatured._select_slideshow_widget = function (self, arg_50_1)
+StoreWindowFeatured._select_slideshow_widget = function (self, is_selected)
 	-- function 50
-	local slideshow = self._content_widgets_by_name.slideshow
+	local content_widgets_by_name = self._content_widgets_by_name
+	local slideshow = content_widgets_by_name.slideshow
 
-	slideshow.content.hotspot.is_selected = arg_50_1
-	slideshow.content.hotspot.on_hover_enter = arg_50_1
-	self._slideshow_selected = arg_50_1
+	slideshow.content.hotspot.is_selected = is_selected
+	slideshow.content.hotspot.on_hover_enter = is_selected
+	self._slideshow_selected = is_selected
 end

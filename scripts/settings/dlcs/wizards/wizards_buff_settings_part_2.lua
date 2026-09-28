@@ -1,9 +1,9 @@
 -- chunkname: @scripts/settings/dlcs/wizards/wizards_buff_settings_part_2.lua
 
-local wizards_part_2 = DLCSettings.wizards_part_2
-local scripts_unit_extensions_default_player_unit_buffs_settings_buff_perk_names = require("scripts/unit_extensions/default_player_unit/buffs/settings/buff_perk_names")
+local settings = DLCSettings.wizards_part_2
+local buff_perks = require("scripts/unit_extensions/default_player_unit/buffs/settings/buff_perk_names")
 
-wizards_part_2.buff_templates = {
+settings.buff_templates = {
 	wall_slow_debuff = {
 		buffs = {
 			{
@@ -154,7 +154,7 @@ wizards_part_2.buff_templates = {
 				priority_buff = true,
 				debuff = true,
 				perks = {
-					scripts_unit_extensions_default_player_unit_buffs_settings_buff_perk_names.invulnerable
+					buff_perks.invulnerable
 				}
 			},
 			{
@@ -162,14 +162,14 @@ wizards_part_2.buff_templates = {
 				name = "ethereal_skull_debuff_delayed_banish_stun",
 				duration = 3,
 				perks = {
-					scripts_unit_extensions_default_player_unit_buffs_settings_buff_perk_names.overpowered
+					buff_perks.overpowered
 				}
 			}
 		}
 	}
 }
-wizards_part_2.buff_function_templates = {}
-wizards_part_2.explosion_templates = {
+settings.buff_function_templates = {}
+settings.explosion_templates = {
 	ethereal_skull_explosion = {
 		explosion = {
 			allow_friendly_fire_override = true,
@@ -191,21 +191,22 @@ wizards_part_2.explosion_templates = {
 		}
 	},
 	ethereal_skull_impact = {
-		server_hit_func = function (arg_1_0, arg_1_1, arg_1_2, arg_1_3, arg_1_4, arg_1_5)
+		server_hit_func = function (projectile_unit, damage_source, owner_unit, hit_position, recent_impacts, explosion_template)
 			-- function 1
-			local local_position = Unit.local_position(arg_1_0, 0)
+			local explosion_position = Unit.local_position(projectile_unit, 0)
 			local world = Managers.world:world("level_world")
 
-			arg_1_5 = ExplosionUtils.get_template("ethereal_skull_explosion")
+			explosion_template = ExplosionUtils.get_template("ethereal_skull_explosion")
 
-			DamageUtils.create_explosion(world, arg_1_0, local_position, Quaternion.identity(), arg_1_5, 1, arg_1_1, true, false, arg_1_2, false)
+			DamageUtils.create_explosion(world, projectile_unit, explosion_position, Quaternion.identity(), explosion_template, 1, damage_source, true, false, owner_unit, false)
 
-			local game_object_or_level_id = Managers.state.network:game_object_or_level_id(arg_1_0)
-			local var_1_3 = NetworkLookup.explosion_templates[arg_1_5.name]
-			local var_1_4 = NetworkLookup.damage_sources[arg_1_1]
+			local network_manager = Managers.state.network
+			local attacker_unit_id = network_manager:game_object_or_level_id(projectile_unit)
+			local explosion_template_id = NetworkLookup.explosion_templates[explosion_template.name]
+			local damage_source_id = NetworkLookup.damage_sources[damage_source]
 
-			Managers.state.network.network_transmit:send_rpc_clients("rpc_create_explosion", game_object_or_level_id, false, local_position, Quaternion.identity(), var_1_3, 1, var_1_4, 0, false, game_object_or_level_id)
-			AiUtils.kill_unit(arg_1_0, nil, nil, "undefined", nil)
+			Managers.state.network.network_transmit:send_rpc_clients("rpc_create_explosion", attacker_unit_id, false, explosion_position, Quaternion.identity(), explosion_template_id, 1, damage_source_id, 0, false, attacker_unit_id)
+			AiUtils.kill_unit(projectile_unit, nil, nil, "undefined", nil)
 		end
 	}
 }

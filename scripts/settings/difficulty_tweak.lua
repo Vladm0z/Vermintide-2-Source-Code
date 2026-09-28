@@ -1,74 +1,76 @@
 -- chunkname: @scripts/settings/difficulty_tweak.lua
 
-local num = 10
+local tweak_range = 10
 
-local function fn(arg_1_0, arg_1_1)
+local function get_value_for_difficulty(difficulty, value_table)
 	-- function 1
-	for i = table.index_of(Difficulties, arg_1_0), 1, -1 do
-		local var_1_0 = arg_1_1[Difficulties[i]]
+	local index = table.index_of(Difficulties, difficulty)
 
-		if not var_1_0 then
-			return var_1_0
+	for i = index, 1, -1 do
+		local value = value_table[Difficulties[i]]
+
+		if value then
+			return value
 		end
 	end
 end
 
-local function fn_2(arg_2_0, arg_2_1, arg_2_2)
+local function offset_difficulty(difficulty, max_steps, tweak)
 	-- function 2
-	local index_of = table.index_of(Difficulties, arg_2_0)
+	local index = table.index_of(Difficulties, difficulty)
 
-	fassert(index_of ~= -1, "need an existing difficulty")
-	fassert(arg_2_1 > 0, "need at least one step")
-	fassert(not (arg_2_2 >= -num) or arg_2_2 <= num, "tweak needs to be an integer from -" .. num .. " to " .. num)
+	fassert(index ~= -1, "need an existing difficulty")
+	fassert(max_steps > 0, "need at least one step")
+	fassert(tweak >= -tweak_range and tweak <= tweak_range, "tweak needs to be an integer from -" .. tweak_range .. " to " .. tweak_range)
 
-	local round = math.round(math.lerp(-arg_2_1, arg_2_1, (arg_2_2 + num) / (num * 2)))
-	local clamp = math.clamp(index_of + round, 1, #Difficulties)
+	local index_offset = math.round(math.lerp(-max_steps, max_steps, (tweak + tweak_range) / (tweak_range * 2)))
+	local new_index = math.clamp(index + index_offset, 1, #Difficulties)
 
-	return Difficulties[clamp]
+	return Difficulties[new_index]
 end
 
-local function fn_3(arg_3_0, arg_3_1, arg_3_2)
+local function offset_difficulty_rank(difficulty_rank, max_steps, tweak)
 	-- function 3
-	fassert(arg_3_1 > 0, "need at least one step")
-	fassert(not (arg_3_2 >= -num) or arg_3_2 <= num, "tweak needs to be an integer from -" .. num .. " to " .. num)
+	fassert(max_steps > 0, "need at least one step")
+	fassert(tweak >= -tweak_range and tweak <= tweak_range, "tweak needs to be an integer from -" .. tweak_range .. " to " .. tweak_range)
 
-	local round = math.round(math.lerp(-arg_3_1, arg_3_1, (arg_3_2 + num) / (num * 2)))
+	local rank_offset = math.round(math.lerp(-max_steps, max_steps, (tweak + tweak_range) / (tweak_range * 2)))
 
-	return math.clamp(arg_3_0 + round, MinimumDifficultyRank, MaximumDifficultyRank)
+	return math.clamp(difficulty_rank + rank_offset, MinimumDifficultyRank, MaximumDifficultyRank)
 end
 
-local function fn_4(arg_4_0, arg_4_1, arg_4_2)
+local function nearest_lerp_table(difficulty, tweak, table)
 	-- function 4
-	local var_4_0 = fn(arg_4_0, arg_4_2)
+	local base_value = get_value_for_difficulty(difficulty, table)
 
-	fassert(var_4_0, "Value doesn't exist for difficulty " .. arg_4_0 .. " or for lower difficulties, config needs to be added.")
+	fassert(base_value, "Value doesn't exist for difficulty " .. difficulty .. " or for lower difficulties, config needs to be added.")
 
-	if arg_4_1 == 0 then
-		return var_4_0
+	if tweak == 0 then
+		return base_value
 	end
 
-	local var_4_1 = fn_2(arg_4_0, 1, arg_4_1)
-	local var_4_2 = fn(var_4_1, arg_4_2)
+	local next_difficulty = offset_difficulty(difficulty, 1, tweak)
+	local next_value = get_value_for_difficulty(next_difficulty, table)
 
-	fassert(var_4_2, "Value doesn't exist for difficulty " .. var_4_1 .. " or for lower difficulties, config needs to be added.")
+	fassert(next_value, "Value doesn't exist for difficulty " .. next_difficulty .. " or for lower difficulties, config needs to be added.")
 
-	local abs = math.abs(arg_4_1 / num)
+	local coeff = math.abs(tweak / tweak_range)
 
-	return math.lerp(var_4_0, var_4_2, abs)
+	return math.lerp(base_value, next_value, coeff)
 end
 
-local function fn_5(arg_5_0, arg_5_1, arg_5_2)
+local function nearest_table_value(difficulty, difficulty_tweak, table)
 	-- function 5
-	fassert(not (arg_5_1 >= -num) or arg_5_1 <= num, "tweak needs to be an integer from -" .. num .. " to " .. num)
+	fassert(difficulty_tweak >= -tweak_range and difficulty_tweak <= tweak_range, "tweak needs to be an integer from -" .. tweak_range .. " to " .. tweak_range)
 
-	local var_5_0 = arg_5_2[arg_5_0]
+	local difficulty_table = table[difficulty]
 
-	if not var_5_0 then
-		for i = arg_5_1, -num, -1 do
-			local var_5_1 = var_5_0[i]
+	if difficulty_table then
+		for i = difficulty_tweak, -tweak_range, -1 do
+			local val = difficulty_table[i]
 
-			if not var_5_1 then
-				return var_5_1
+			if val then
+				return val
 			end
 		end
 	end
@@ -78,32 +80,32 @@ end
 
 local DifficultyTweak = DifficultyTweak
 
-DifficultyTweak = DifficultyTweak or {
-	range = num,
+DifficultyTweak = not not DifficultyTweak or not not {
+	range = tweak_range,
 	converters = {
-		composition = function (arg_6_0, arg_6_1)
+		composition = function (difficulty, tweak)
 			-- function 6
-			return fn_2(arg_6_0, 2, arg_6_1)
+			return offset_difficulty(difficulty, 2, tweak)
 		end,
-		composition_rank = function (arg_7_0, arg_7_1)
+		composition_rank = function (difficulty_rank, tweak)
 			-- function 7
-			return fn_3(arg_7_0, 2, arg_7_1)
+			return offset_difficulty_rank(difficulty_rank, 2, tweak)
 		end,
-		pacing = function (arg_8_0, arg_8_1)
+		pacing = function (difficulty, tweak)
 			-- function 8
-			return fn_2(arg_8_0, 2, arg_8_1)
+			return offset_difficulty(difficulty, 2, tweak)
 		end,
-		intensity = function (arg_9_0, arg_9_1)
+		intensity = function (difficulty, tweak)
 			-- function 9
-			return fn_2(arg_9_0, 2, arg_9_1)
+			return offset_difficulty(difficulty, 2, tweak)
 		end,
-		tweaked_delay_threat_value = function (arg_10_0, arg_10_1, arg_10_2)
+		tweaked_delay_threat_value = function (difficulty, tweak, table)
 			-- function 10
-			return fn_4(arg_10_0, arg_10_1, arg_10_2)
+			return nearest_lerp_table(difficulty, tweak, table)
 		end,
-		closest_tweak_match = function (arg_11_0, arg_11_1, arg_11_2)
+		closest_tweak_match = function (difficulty, tweak, table)
 			-- function 11
-			return fn_5(arg_11_0, arg_11_1, arg_11_2)
+			return nearest_table_value(difficulty, tweak, table)
 		end
 	}
 }

@@ -2,9 +2,9 @@
 
 IrcUtils = {}
 
-IrcUtils.convert_steam_user_id_to_base_64 = function (arg_1_0)
+IrcUtils.convert_steam_user_id_to_base_64 = function (steam_user_id)
 	-- function 1
-	local tbl = {
+	local base_64_table = {
 		"0",
 		"1",
 		"2",
@@ -70,17 +70,17 @@ IrcUtils.convert_steam_user_id_to_base_64 = function (arg_1_0)
 		"[",
 		"]"
 	}
-	local hex64_to_dec = Application.hex64_to_dec(arg_1_0)
-	local base_10_to_base = Math.base_10_to_base(hex64_to_dec, 64)
+	local steam_user_id_base_10 = Application.hex64_to_dec(steam_user_id)
+	local values = Math.base_10_to_base(steam_user_id_base_10, 64)
 
-	table.reverse(base_10_to_base)
+	table.reverse(values)
 
 	local str = ""
 
-	for i, v in ipairs(base_10_to_base) do
-		local num = tonumber(v) + 1
+	for _, value in ipairs(values) do
+		local index = tonumber(value) + 1
 
-		str = str .. tbl[num]
+		str = str .. base_64_table[index]
 	end
 
 	return str

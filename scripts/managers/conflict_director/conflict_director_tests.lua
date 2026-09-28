@@ -2,63 +2,63 @@
 
 ConflictDirectorTests = {}
 
-local flag = false
+local utility_comparison = false
 
 ConflictDirectorTests.start_utility_comparison = function ()
 	-- function 1
-	flag = true
+	utility_comparison = true
 end
 
-local function fn()
+local function compare_utility()
 	-- function 2
-	local distance_to_target = UtilityConsiderations.storm_vermin_push_attack.distance_to_target
-	local num = 0.7
-	local utility_from_spline = EngineOptimized.utility_from_spline
-	local var_2_3
+	local consideration = UtilityConsiderations.storm_vermin_push_attack.distance_to_target
+	local blackboard_value = 0.7
+	local f1 = EngineOptimized.utility_from_spline
+	local utility
 
-	for i = 1, 1000 do
-		local var_2_4 = utility_from_spline(distance_to_target.engine_spline_index, num)
+	for ii = 1, 1000 do
+		utility = f1(consideration.engine_spline_index, blackboard_value)
 	end
 
-	local clamp = math.clamp(num / distance_to_target.max_value, 0, 1)
-	local GetUtilityValueFromSpline = Utility.GetUtilityValueFromSpline
+	local norm_value = math.clamp(blackboard_value / consideration.max_value, 0, 1)
+	local f2 = Utility.GetUtilityValueFromSpline
 
-	for j = 1, 1000 do
-		local var_2_7 = GetUtilityValueFromSpline(distance_to_target.spline, clamp)
+	for ii = 1, 1000 do
+		utility = f2(consideration.spline, norm_value)
 	end
 end
 
-local function fn_2(self, arg_3_1)
+local function test_pointx(nodes, p)
 	-- function 3
-	local var_3_0 = Vector3(0, 0, 0)
-	local huge = math.huge
-	local num = -1
-	local unbox = self[1]:unbox()
+	local best_point = Vector3(0, 0, 0)
+	local best_dist = math.huge
+	local best_sub_index = -1
+	local p1 = nodes[1]:unbox()
 
-	for i = 1, #self - 1 do
-		local unbox_2 = self[i + 1]:unbox()
-		local closest_point_on_line = Geometry.closest_point_on_line(arg_3_1, unbox, unbox_2)
-		local distance_squared = Vector3.distance_squared(arg_3_1, closest_point_on_line)
+	for j = 1, #nodes - 1 do
+		local p2 = nodes[j + 1]:unbox()
+		local closest_point = Geometry.closest_point_on_line(p, p1, p2)
+		local d = Vector3.distance_squared(p, closest_point)
 
-		if distance_squared < huge then
-			huge = distance_squared
-			num = i
+		if d < best_dist then
+			best_dist = d
+			best_sub_index = j
 
-			Vector3.set_xyz(var_3_0, Vector3.to_elements(closest_point_on_line))
+			Vector3.set_xyz(best_point, Vector3.to_elements(closest_point))
 		end
 
-		unbox = unbox_2
+		p1 = p2
 	end
 
-	Debug.text("SS: %.2f %d, %s", huge, num, tostring(var_3_0))
+	Debug.text("SS: %.2f %d, %s", best_dist, best_sub_index, tostring(best_point))
 
-	return var_3_0
+	return best_point
 end
 
-local flag_2 = false
-local flag_3 = false
+local test_points = false
+local last_data = false
 
-ConflictDirectorTests.test_main_path_optimization = function (self, arg_4_1, arg_4_2)
+ConflictDirectorTests.test_main_path_optimization = function (self, t, dt)
 	-- function 4
 	local main_paths = self.main_path_info.main_paths
 
@@ -66,81 +66,81 @@ ConflictDirectorTests.test_main_path_optimization = function (self, arg_4_1, arg
 		return
 	end
 
-	local num = 100
+	local num_points = 100
 
-	if not flag_2 then
-		local point_on_mainpath = MainPathUtils.point_on_mainpath(main_paths, 10)
-		local closest_pos_at_main_path, var_4_4, var_4_5, var_4_6, var_4_7 = MainPathUtils.closest_pos_at_main_path(main_paths, point_on_mainpath)
+	if not test_points then
+		local p = MainPathUtils.point_on_mainpath(main_paths, 10)
+		local pos, best_travel_dist, move_percent, best_main_path, best_sub_index = MainPathUtils.closest_pos_at_main_path(main_paths, p)
 		local total_path_dist = MainPathUtils.total_path_dist()
 
-		flag_2 = {
-			Vector3Box(point_on_mainpath)
+		test_points = {
+			Vector3Box(p)
 		}
 
-		for i = 2, num do
-			local num_2 = total_path_dist / num * i
-			local point_on_mainpath_2, var_4_11 = MainPathUtils.point_on_mainpath(main_paths, num_2)
+		for i = 2, num_points do
+			local wanted_distance = total_path_dist / num_points * i
+			local pos, main_index = MainPathUtils.point_on_mainpath(main_paths, wanted_distance)
 
-			if not point_on_mainpath_2 then
-				point_on_mainpath_2 = flag_2[1]:unbox()
-
-				local num_3 = 1
+			if not pos then
+				pos = test_points[1]:unbox()
+				main_index = 1
 			end
 
-			local num_4 = #flag_2 + 1
+			local index = #test_points + 1
 
-			flag_2[num_4] = Vector3Box(point_on_mainpath_2)
+			test_points[index] = Vector3Box(pos)
 		end
 	end
 
 	local main_path_info = self.main_path_info
-	local closest_pos_at_collapsed_main_path = MainPathUtils.closest_pos_at_collapsed_main_path
-	local point_on_mainpath_3 = MainPathUtils.point_on_mainpath
+	local closest_pos_at_main_path = MainPathUtils.closest_pos_at_collapsed_main_path
+	local pr1 = MainPathUtils.point_on_mainpath
 	local main_path_data = self.level_analysis.main_path_data
-	local count = #main_path_data.collapsed_path
-	local unbox = main_path_data.collapsed_path[count]:unbox()
+	local ti = #main_path_data.collapsed_path
+	local pos = main_path_data.collapsed_path[ti]:unbox()
 
-	QuickDrawer:sphere(unbox, 10 + math.sin(arg_4_1 * 5) * 5)
-	Debug.text("DISTANCE point: %d, distance %.1f", count, main_path_data.collapsed_travel_dists[count])
+	QuickDrawer:sphere(pos, 10 + math.sin(t * 5) * 5)
+	Debug.text("DISTANCE point: %d, distance %.1f", ti, main_path_data.collapsed_travel_dists[ti])
 
-	for j = 1, num do
-		closest_pos_at_collapsed_main_path(main_path_data.collapsed_path, main_path_data.collapsed_travel_dists, main_path_data.breaks_lookup, unbox, count)
+	for i = 1, num_points do
+		closest_pos_at_main_path(main_path_data.collapsed_path, main_path_data.collapsed_travel_dists, main_path_data.breaks_lookup, pos, ti)
 	end
 
-	local closest_pos_at_main_path_2 = EngineOptimized.closest_pos_at_main_path
-	local point_on_mainpath_4 = EngineOptimized.point_on_mainpath
+	local closest_pos_at_main_path_opt = EngineOptimized.closest_pos_at_main_path
+	local pr2 = EngineOptimized.point_on_mainpath
 
-	for k = 1, num do
-		closest_pos_at_main_path_2(unbox)
+	for i = 1, num_points do
+		closest_pos_at_main_path_opt(pos)
 	end
 
-	local var_4_22 = self.hero_player_positions[1]
-	local var_4_23 = Vector3(100, 20, 130)
-	local var_4_24 = Vector3(-100, -420, 30)
-	local var_4_25
-	local closest_point_on_line = EngineOptimized.closest_point_on_line
+	local p = self.hero_player_positions[1]
+	local p1 = Vector3(100, 20, 130)
+	local p2 = Vector3(-100, -420, 30)
+	local res
+	local EngineOptimized_closest_point_on_line = EngineOptimized.closest_point_on_line
 
-	for l = 1, 250 do
-		local var_4_27 = closest_point_on_line(var_4_22, var_4_23, var_4_24)
+	for i = 1, 250 do
+		res = EngineOptimized_closest_point_on_line(p, p1, p2)
 	end
 
-	local closest_point_on_line_2 = Geometry.closest_point_on_line
+	local Geometry_closest_point_on_line = Geometry.closest_point_on_line
 
-	for i4 = 1, 250 do
-		local var_4_29 = closest_point_on_line_2(var_4_22, var_4_23, var_4_24)
+	for i = 1, 250 do
+		res = Geometry_closest_point_on_line(p, p1, p2)
 	end
 
-	local collapsed_path = self.level_analysis.main_path_data.collapsed_path
-	local var_4_31 = fn_2(collapsed_path, var_4_22)
-	local closest_pos_at_main_path_3, var_4_33, var_4_34 = EngineOptimized.closest_pos_at_main_path(var_4_22)
-	local closest_pos_at_main_path_lua, var_4_36, var_4_37 = MainPathUtils.closest_pos_at_main_path_lua(main_paths, var_4_22)
+	local mpd = self.level_analysis.main_path_data
+	local nodes = mpd.collapsed_path
+	local pos2 = test_pointx(nodes, p)
+	local posE, best_dist, best_index = EngineOptimized.closest_pos_at_main_path(p)
+	local pos3, best_dist, best_index = MainPathUtils.closest_pos_at_main_path_lua(main_paths, p)
 
-	QuickDrawer:sphere(closest_pos_at_main_path_3, 1.05, Color(255, 0, 0))
-	QuickDrawer:sphere(var_4_31, 1.2, Color(255, 255, 0))
-	QuickDrawer:sphere(closest_pos_at_main_path_lua, 0.9, Color(155, 155, 255))
-	QuickDrawer:line(collapsed_path[1]:unbox(), collapsed_path[2]:unbox(), Color(100, 255, 0))
+	QuickDrawer:sphere(posE, 1.05, Color(255, 0, 0))
+	QuickDrawer:sphere(pos2, 1.2, Color(255, 255, 0))
+	QuickDrawer:sphere(pos3, 0.9, Color(155, 155, 255))
+	QuickDrawer:line(nodes[1]:unbox(), nodes[2]:unbox(), Color(100, 255, 0))
 
-	local random = math.random()
+	local lol = math.random()
 end
 
 function test_spawn_pos_ahead_half_sphere(self)
@@ -148,22 +148,22 @@ function test_spawn_pos_ahead_half_sphere(self)
 	local main_path_info = self.main_path_info
 	local ahead_unit = main_path_info.ahead_unit
 
-	if not ahead_unit then
-		local var_5_2 = POSITION_LOOKUP[ahead_unit]
-		local get_relative_main_path_pos = self.specials_pacing:get_relative_main_path_pos(main_path_info.main_paths, self.main_path_player_info[ahead_unit], 20)
+	if ahead_unit then
+		local player_pos = POSITION_LOOKUP[ahead_unit]
+		local epicenter = self.specials_pacing:get_relative_main_path_pos(main_path_info.main_paths, self.main_path_player_info[ahead_unit], 20)
 
-		QuickDrawer:cone(var_5_2, var_5_2 + Vector3(0, 0, 2.5), 1, Color(200, 200, 0), 8, 8)
+		QuickDrawer:cone(player_pos, player_pos + Vector3(0, 0, 2.5), 1, Color(200, 200, 0), 8, 8)
 
-		local num = get_relative_main_path_pos - var_5_2
-		local num_2 = 25
-		local current_level = LevelHelper:current_level(self._world)
+		local forward_path_dir = epicenter - player_pos
+		local avoid_dist_sqr = 25
+		local level = LevelHelper:current_level(self._world)
 		local nav_tag_volume_handler = self.nav_tag_volume_handler
 
 		for i = 1, 25 do
-			local get_hidden_pos = ConflictUtils.get_hidden_pos(self._world, self.nav_world, current_level, nav_tag_volume_handler, true, get_relative_main_path_pos, self.hero_player_and_bot_positions, 30, 10, num_2, 10, num, math.pi)
+			local p = ConflictUtils.get_hidden_pos(self._world, self.nav_world, level, nav_tag_volume_handler, true, epicenter, self.hero_player_and_bot_positions, 30, 10, avoid_dist_sqr, 10, forward_path_dir, math.pi)
 
-			if not get_hidden_pos then
-				QuickDrawer:sphere(get_hidden_pos, 1)
+			if p then
+				QuickDrawer:sphere(p, 1)
 			end
 		end
 	end
@@ -171,9 +171,9 @@ end
 
 function test_umbra_los(self)
 	-- function 6
-	local _world = self._world
+	local world = self._world
 
-	if not World.umbra_available(_world) then
+	if not World.umbra_available(world) then
 		return
 	end
 
@@ -181,137 +181,154 @@ function test_umbra_los(self)
 	local ahead_unit = main_path_info.ahead_unit
 	local behind_unit = main_path_info.behind_unit
 
-	if not ahead_unit and not behind_unit then
-		local var_6_4 = POSITION_LOOKUP[ahead_unit]
-		local var_6_5 = POSITION_LOOKUP[behind_unit]
-		local var_6_6 = Vector3(0, 0, 1)
+	if ahead_unit and behind_unit then
+		local player_pos = POSITION_LOOKUP[ahead_unit]
+		local behind_pos = POSITION_LOOKUP[behind_unit]
+		local h = Vector3(0, 0, 1)
+		local free_los = World.umbra_has_line_of_sight(world, player_pos + h, behind_pos + h)
 
-		if not World.umbra_has_line_of_sight(_world, var_6_4 + var_6_6, var_6_5 + var_6_6) then
-			QuickDrawer:line(var_6_4 + var_6_6, var_6_5 + var_6_6, Color(0, 90, 200))
+		if free_los then
+			QuickDrawer:line(player_pos + h, behind_pos + h, Color(0, 90, 200))
 		else
-			QuickDrawer:line(var_6_4 + var_6_6, var_6_5 + var_6_6, Color(255, 0, 0))
+			QuickDrawer:line(player_pos + h, behind_pos + h, Color(255, 0, 0))
 		end
 	end
 end
 
-function debug_bot_transitions(arg_7_0, arg_7_1)
+function debug_bot_transitions(self, t)
 	-- function 7
-	local system = Managers.state.entity:system("ai_system")
-	local ai_debugger = system.ai_debugger
+	local ai_system = Managers.state.entity:system("ai_system")
+	local ai_debugger = ai_system.ai_debugger
 
-	ai_debugger = not ai_debugger and system.ai_debugger.screen_gui
+	if ai_debugger then
+		-- Nothing
+	end
 
-	AiUtils.debug_bot_transitions(ai_debugger, arg_7_1, 0, 0)
+	ai_debugger = ai_system.ai_debugger.screen_gui
+
+	local gui = ai_debugger
+
+	::label_7_0::
+
+	AiUtils.debug_bot_transitions(gui, t, 0, 0)
 end
 
 function test_player_path_pos_and_50m_ahead(self)
 	-- function 8
-	local var_8_0 = self.hero_player_positions[1]
+	local pos = self.hero_player_positions[1]
 	local main_paths = self.level_analysis.main_paths
-	local closest_pos_at_main_path, var_8_3 = MainPathUtils.closest_pos_at_main_path(main_paths, var_8_0)
+	local path_pos, travel_dist = MainPathUtils.closest_pos_at_main_path(main_paths, pos)
 	local total_path_dist = MainPathUtils.total_path_dist()
-	local point_on_mainpath = MainPathUtils.point_on_mainpath(main_paths, var_8_3 + 10)
+	local ahead_pos = MainPathUtils.point_on_mainpath(main_paths, travel_dist + 10)
 
-	point_on_mainpath = point_on_mainpath or MainPathUtils.point_on_mainpath(main_paths, total_path_dist - 10)
+	ahead_pos = not not ahead_pos or not not MainPathUtils.point_on_mainpath(main_paths, total_path_dist - 10)
 
-	QuickDrawer:sphere(point_on_mainpath, 3)
+	QuickDrawer:sphere(ahead_pos, 3)
 
-	local point_on_mainpath_2 = MainPathUtils.point_on_mainpath(main_paths, total_path_dist - 50)
+	local end_pos = MainPathUtils.point_on_mainpath(main_paths, total_path_dist - 50)
 
-	if not point_on_mainpath_2 then
-		QuickDrawer:sphere(point_on_mainpath_2, 2.5, Color(255, 120, 0, 0))
+	if end_pos then
+		QuickDrawer:sphere(end_pos, 2.5, Color(255, 120, 0, 0))
 	end
 end
 
 function test_angled_trajectory(self)
 	-- function 9
-	local var_9_0 = Vector3(0, 0, 2)
-	local var_9_1 = Vector3(19, 16, 2)
-	local get_data = World.get_data(self._world, "physics_world")
-	local num = -9.82
-	local var_9_4
-	local degrees_to_radians = math.degrees_to_radians(45)
-	local test_angled_trajectory, var_9_7, var_9_8 = WeaponHelper.test_angled_trajectory(get_data, var_9_0, var_9_1, num, var_9_4, degrees_to_radians)
+	local p1 = Vector3(0, 0, 2)
+	local p2 = Vector3(19, 16, 2)
+	local physics_world = World.get_data(self._world, "physics_world")
+	local gravity = -9.82
+	local jump_speed
+	local angle = math.degrees_to_radians(45)
+	local success, velocity, tof = WeaponHelper.test_angled_trajectory(physics_world, p1, p2, gravity, jump_speed, angle)
 
-	QuickDrawer:sphere(var_9_0, 1)
-	QuickDrawer:sphere(var_9_1, 1)
-	Debug.text("Trajectory Success: " .. tostring(test_angled_trajectory))
+	QuickDrawer:sphere(p1, 1)
+	QuickDrawer:sphere(p2, 1)
+	Debug.text("Trajectory Success: " .. tostring(success))
 end
 
 ConflictDirectorTests.setup_reachable_coverpoints_test = function (self)
 	-- function 10
-	local tbl = {}
-	local hidden_cover_points, var_10_2 = ConflictUtils.hidden_cover_points(self.hero_player_positions[1], self.hero_player_positions, 2, 45, 1)
+	local point_list = {}
+	local num_found, cover_points = ConflictUtils.hidden_cover_points(self.hero_player_positions[1], self.hero_player_positions, 2, 45, 1)
 
-	for i = 1, hidden_cover_points do
-		tbl[i] = Vector3Box(Unit.local_position(var_10_2[i], 0))
+	for i = 1, num_found do
+		point_list[i] = Vector3Box(Unit.local_position(cover_points[i], 0))
 	end
 
-	self._reachable_processing = LevelAnalysis.setup_unreachable_processing(self.nav_world, self.main_path_info.main_paths, tbl, {
+	self._reachable_processing = LevelAnalysis.setup_unreachable_processing(self.nav_world, self.main_path_info.main_paths, point_list, {
 		max_concurrent_astars = 5,
 		line_object = QuickDrawerStay
 	})
 
-	print("Points to test:", hidden_cover_points)
+	print("Points to test:", num_found)
 end
 
 ConflictDirectorTests.process_reachable_coverpoints_test = function (self)
 	-- function 11
-	if not self._reachable_processing and not self.level_analysis.process_unreachable(self._reachable_processing) then
-		self._reachable_processing = nil
+	if self._reachable_processing then
+		local done = self.level_analysis.process_unreachable(self._reachable_processing)
 
-		print("astar connect complete")
+		if done then
+			self._reachable_processing = nil
+
+			print("astar connect complete")
+		end
 	end
 end
 
 function setup_reachable_navgraph_test(self)
 	-- function 12
-	local tbl = {}
+	local point_list = {}
 	local level_key = Managers.state.game_mode:level_key()
 	local level_name = LevelSettings[level_key].level_name
-	local unit_indices = LevelResource.unit_indices(level_name, "core/gwnav/units/seedpoint/seedpoint")
+	local unit_ind = LevelResource.unit_indices(level_name, "core/gwnav/units/seedpoint/seedpoint")
 
-	for i, v in ipairs(unit_indices) do
-		tbl[#tbl + 1] = Vector3Box(LevelResource.unit_position(level_name, v))
+	for _, id in ipairs(unit_ind) do
+		point_list[#point_list + 1] = Vector3Box(LevelResource.unit_position(level_name, id))
 	end
 
-	self._reachable_navgraph_processing = LevelAnalysis.setup_unreachable_processing(self.nav_world, self.main_path_info.main_paths, tbl, {
+	self._reachable_navgraph_processing = LevelAnalysis.setup_unreachable_processing(self.nav_world, self.main_path_info.main_paths, point_list, {
 		max_concurrent_astars = 5,
 		line_object = QuickDrawerStay,
 		fail_color = Color(212, 48, 0)
 	})
 
-	print("Points to test:", #tbl)
+	print("Points to test:", #point_list)
 end
 
 function process_reachable_navgraph_test(self)
 	-- function 13
-	if not self._reachable_navgraph_processing and not self.level_analysis.process_unreachable(self._reachable_navgraph_processing) then
-		self._reachable_navgraph_processing = nil
+	if self._reachable_navgraph_processing then
+		local done = self.level_analysis.process_unreachable(self._reachable_navgraph_processing)
 
-		print("astar connect complete")
+		if done then
+			self._reachable_navgraph_processing = nil
+
+			print("astar connect complete")
+		end
 	end
 end
 
-function print_point(self)
+function print_point(p)
 	-- function 14
-	print("(" .. self.x .. ", " .. self.y .. ")")
+	print("(" .. p.x .. ", " .. p.y .. ")")
 
 	return nil
 end
 
-function print_points(self, arg_15_1)
+function print_points(points, num)
 	-- function 15
 	print("[")
 
-	for i = 1, arg_15_1 do
-		local var_15_0 = self[i]
+	for i = 1, num do
+		local p = points[i]
 
 		if i > 1 then
 			print(", ")
 		end
 
-		print_point(var_15_0)
+		print_point(p)
 	end
 
 	print("]")
@@ -319,430 +336,442 @@ function print_points(self, arg_15_1)
 	return nil
 end
 
-function ccw(self, arg_16_1, arg_16_2)
+function ccw(a, b, c)
 	-- function 16
-	return (arg_16_1.x - self.x) * (arg_16_2.y - self.y) > (arg_16_1.y - self.y) * (arg_16_2.x - self.x)
+	return (b.x - a.x) * (c.y - a.y) > (b.y - a.y) * (c.x - a.x)
 end
 
-local function fn_3(self, arg_17_1)
+local function left_right(left, right)
 	-- function 17
-	return self.x < arg_17_1.x
+	return left.x < right.x
 end
 
-function convex_hull(self, arg_18_1)
+function convex_hull(points, h)
 	-- function 18
-	local count = #self
+	local num_points = #points
 
-	if count == 0 then
-		return arg_18_1, 0
+	if num_points == 0 then
+		return h, 0
 	end
 
-	table.sort(self, fn_3)
+	table.sort(points, left_right)
 
 	local num = 0
 
-	for i = 1, count do
-		local var_18_2 = self[i]
+	for i = 1, num_points do
+		local pt = points[i]
 
-		while not (not (num >= 2) or ccw(arg_18_1[num - 1], arg_18_1[num], var_18_2)) do
+		while num >= 2 and not ccw(h[num - 1], h[num], pt) do
 			num = num - 1
 		end
 
 		num = num + 1
-		arg_18_1[num] = var_18_2
+		h[num] = pt
 	end
 
-	local num_2 = num + 1
+	local t = num + 1
 
-	for j = count, 1, -1 do
-		local var_18_4 = self[j]
+	for i = num_points, 1, -1 do
+		local pt = points[i]
 
-		while not (not (num_2 <= num) or ccw(arg_18_1[num - 1], arg_18_1[num], var_18_4)) do
+		while t <= num and not ccw(h[num - 1], h[num], pt) do
 			num = num - 1
 		end
 
 		num = num + 1
-		arg_18_1[num] = var_18_4
+		h[num] = pt
 	end
 
-	local num_3 = num - 1
+	num = num - 1
 
-	return arg_18_1, num_3
+	return h, num
 end
 
 function make_points_for_hull_test()
 	-- function 19
-	local units_lookup = Managers.state.side:get_side(Managers.state.conflict.default_enemy_side_id).units_lookup
-	local clone = table.clone(units_lookup)
+	local side = Managers.state.side:get_side(Managers.state.conflict.default_enemy_side_id)
+	local units = side.units_lookup
+	local points = table.clone(units)
 
-	for k, v in pairs(units_lookup) do
-		if not HEALTH_ALIVE[k] then
-			clone[#clone + 1] = POSITION_LOOKUP[k]
+	for unit, _ in pairs(units) do
+		if HEALTH_ALIVE[unit] then
+			points[#points + 1] = POSITION_LOOKUP[unit]
 		end
 	end
 
-	return clone
+	return points
 end
 
-ConflictDirectorTests.update_jslots = function (arg_20_0, arg_20_1)
+ConflictDirectorTests.update_jslots = function (self, unit)
 	-- function 20
-	local tbl = {
+	local jslot = {
 		num = 0,
 		slots = {},
 		units = {},
 		adjusted_dirs = {}
 	}
-	local var_20_1 = POSITION_LOOKUP[arg_20_1]
+	local p = POSITION_LOOKUP[unit]
 
-	if not var_20_1 then
+	if not p then
 		return
 	end
 
-	local broadphase_query = AiUtils.broadphase_query(var_20_1, 7, RESULT_TABLE)
+	local num_ai_units = AiUtils.broadphase_query(p, 7, RESULT_TABLE)
 
-	for i = 1, broadphase_query do
-		local var_20_3 = RESULT_TABLE[i]
-		local units = tbl.units
+	for i = 1, num_ai_units do
+		local attacker_unit = RESULT_TABLE[i]
+		local units = jslot.units
 
-		if not units[var_20_3] then
-			local var_20_5 = POSITION_LOOKUP[var_20_3]
-			local slots = tbl.slots
-			local var_20_7 = slots[1]
-			local num = 2
-			local num_2 = 1
+		if not units[attacker_unit] then
+			local pa = POSITION_LOOKUP[attacker_unit]
+			local slots = jslot.slots
+			local first = slots[1]
+			local slot_dist = 2
+			local slot_wid = 1
 
-			if not var_20_7 then
-				local normalize = Vector3.normalize(var_20_5 - var_20_1)
-				local num_3 = tbl.num + 1
+			if first then
+				local slot_dir = Vector3.normalize(pa - p)
+				local num = jslot.num
 
-				slots[num_3] = normalize * num
-				tbl.num = num_3
-				units[var_20_3] = tbl.num
+				num = num + 1
+				slots[num] = slot_dir * slot_dist
+				jslot.num = num
+				units[attacker_unit] = jslot.num
 			else
-				local normalize_2 = Vector3.normalize(var_20_5 - var_20_1)
+				local first_slot_dir = Vector3.normalize(pa - p)
 
-				tbl.slots[1] = normalize_2 * num
-				tbl.num = 1
-				units[var_20_3] = 1
+				jslot.slots[1] = first_slot_dir * slot_dist
+				jslot.num = 1
+				units[attacker_unit] = 1
 			end
 		end
 	end
 
-	local slots_2 = tbl.slots
-	local adjusted_dirs = tbl.adjusted_dirs
+	local slots = jslot.slots
+	local adjusted_dirs = jslot.adjusted_dirs
 
-	for j = 1, #slots_2 do
-		QuickDrawer:line(var_20_1, var_20_1 + slots_2[j], Color(23, 223, 100))
+	for i = 1, #slots do
+		QuickDrawer:line(p, p + slots[i], Color(23, 223, 100))
 	end
 end
 
-local tbl = {}
-local num = 0.3
-local num_2 = 0.3
+local SPARSE_GRID = {}
+local cell_size_xy = 0.3
+local cell_size_z = 0.3
 
-ConflictDirectorTests.draw_sparse_grid = function (self)
+ConflictDirectorTests.draw_sparse_grid = function (pos)
 	-- function 21
-	if not self then
+	if not pos then
 		return
 	end
 
 	local floor = math.floor
-	local var_21_1 = floor(self.x / num + 0.5)
-	local var_21_2 = floor(self.y / num + 0.5)
-	local var_21_3 = floor(self.z / num_2 + 0.5)
-	local num_3 = var_21_1 * 0.0001 + var_21_2 + var_21_3 * 10000
+	local xp = floor(pos.x / cell_size_xy + 0.5)
+	local yp = floor(pos.y / cell_size_xy + 0.5)
+	local zp = floor(pos.z / cell_size_z + 0.5)
+	local hash = xp * 0.0001 + yp + zp * 10000
 
-	QuickDrawer:sphere(Vector3(floor(self.x / num) * num, floor(self.y / num) * num, floor(self.z / num_2) * num_2), num * 0.5 - 0.01, Color(0, 200, 200))
-	QuickDrawer:sphere(self, 0.1, Color(255, 200, 100))
+	QuickDrawer:sphere(Vector3(floor(pos.x / cell_size_xy) * cell_size_xy, floor(pos.y / cell_size_xy) * cell_size_xy, floor(pos.z / cell_size_z) * cell_size_z), cell_size_xy * 0.5 - 0.01, Color(0, 200, 200))
+	QuickDrawer:sphere(pos, 0.1, Color(255, 200, 100))
 
-	for k, v in pairs(tbl) do
-		QuickDrawer:sphere(Vector3(v.x, v.y, v.z), num * 0.5, Color(0, 0, 200))
+	for hash, cell in pairs(SPARSE_GRID) do
+		QuickDrawer:sphere(Vector3(cell.x, cell.y, cell.z), cell_size_xy * 0.5, Color(0, 0, 200))
 	end
 end
 
-ConflictDirectorTests.sparse_grid_test = function (self, arg_22_1)
+ConflictDirectorTests.sparse_grid_test = function (pos, unit)
 	-- function 22
 	local floor = math.floor
-	local var_22_1 = floor(self.x / num + 0.5)
-	local var_22_2 = floor(self.y / num + 0.5)
-	local var_22_3 = floor(self.z / num_2 + 0.5)
-	local num_3 = var_22_1 * 0.0001 + var_22_2 + var_22_3 * 10000
+	local xp = floor(pos.x / cell_size_xy + 0.5)
+	local yp = floor(pos.y / cell_size_xy + 0.5)
+	local zp = floor(pos.z / cell_size_z + 0.5)
+	local hash = xp * 0.0001 + yp + zp * 10000
 
-	if not tbl[num_3] then
+	if SPARSE_GRID[hash] then
 		Debug.text("SPARSE GRID: OCCUPIED")
 	else
-		tbl[num_3] = {
-			u = arg_22_1,
-			x = var_22_1 * num,
-			y = var_22_2 * num,
-			z = var_22_3 * num_2
+		SPARSE_GRID[hash] = {
+			u = unit,
+			x = xp * cell_size_xy,
+			y = yp * cell_size_xy,
+			z = zp * cell_size_z
 		}
 
-		print("SPARSE GRID:", num_3, self)
-		QuickDrawer:sphere(self, 0.7, Color(200, 0, 0))
+		print("SPARSE GRID:", hash, pos)
+		QuickDrawer:sphere(pos, 0.7, Color(200, 0, 0))
 	end
 end
 
 ConflictDirectorTests.lean_slot_test = function ()
 	-- function 23
-	local num = 10
-	local num_2 = 3
-	local num_3 = 2 * math.pi / num
+	local max_slots = 10
+	local dist = 3
+	local slot_angle = 2 * math.pi / max_slots
 	local lean_slots = ConflictDirectorTests.lean_slots
 	local get_side_from_name = Managers.state.side:get_side_from_name("heroes")
 
-	get_side_from_name = get_side_from_name or Managers.state.side:get_side(1)
+	if not get_side_from_name then
+		-- Nothing
+	end
 
-	local var_23_5 = get_side_from_name.PLAYER_POSITIONS[1]
+	get_side_from_name = Managers.state.side:get_side(1)
 
-	if not var_23_5 then
+	local side = get_side_from_name
+
+	::label_23_0::
+
+	local pos = side.PLAYER_POSITIONS[1]
+
+	if not pos then
 		return
 	end
 
-	if not lean_slots then
-		local num_4 = lean_slots.lean_dogpile + 1
+	if lean_slots then
+		local target_index = lean_slots.lean_dogpile + 1
 
-		if num < num_4 then
+		if max_slots < target_index then
 			ConflictDirectorTests.lean_slots = nil
 		else
-			lean_slots.lean_dogpile = num_4
+			lean_slots.lean_dogpile = target_index
 
-			local num_5 = lean_slots.center_angle + (num_4 - 1) * num_3
-			local num_6 = num_2 * 0.5
-			local num_7 = math.cos(num_5) * num_6
-			local num_8 = math.sin(num_5) * num_6
+			local angle = lean_slots.center_angle + (target_index - 1) * slot_angle
+			local slot_dist = dist * 0.5
+			local x = math.cos(angle) * slot_dist
+			local y = math.sin(angle) * slot_dist
 
-			lean_slots[num_4] = {
-				num_7,
-				num_8,
-				var_23_5.z
+			lean_slots[target_index] = {
+				x,
+				y,
+				pos.z
 			}
 		end
 	else
-		local num_9 = var_23_5.x + math.random(-5, 5)
-		local num_10 = var_23_5.y + math.random(-5, 5)
+		local x = pos.x + math.random(-5, 5)
+		local y = pos.y + math.random(-5, 5)
 
-		QuickDrawerStay:sphere(var_23_5, 0.44, Color(250, 0, 0))
-		QuickDrawerStay:sphere(Vector3(num_9, num_10, var_23_5.z), 0.75, Color(0, 0, 255))
+		QuickDrawerStay:sphere(pos, 0.44, Color(250, 0, 0))
+		QuickDrawerStay:sphere(Vector3(x, y, pos.z), 0.75, Color(0, 0, 255))
 
-		local atan2 = math.atan2(num_10 - var_23_5.y, num_9 - var_23_5.x)
-		local num_11 = num_2 * 0.5
-		local num_12 = math.cos(atan2) * num_11
-		local num_13 = math.sin(atan2) * num_11
-		local tbl = {
+		local center_angle = math.atan2(y - pos.y, x - pos.x)
+		local slot_dist = dist * 0.5
+
+		x = math.cos(center_angle) * slot_dist
+		y = math.sin(center_angle) * slot_dist
+		lean_slots = {
 			{
-				num_12,
-				num_13,
-				var_23_5.z
+				x,
+				y,
+				pos.z
 			},
 			lean_dogpile = 1,
-			center_angle = atan2
+			center_angle = center_angle
 		}
-
-		ConflictDirectorTests.lean_slots = tbl
+		ConflictDirectorTests.lean_slots = lean_slots
 	end
 end
 
-ConflictDirectorTests.lean_slot_test_update = function (self)
+ConflictDirectorTests.lean_slot_test_update = function (side)
 	-- function 24
 	local lean_slots = ConflictDirectorTests.lean_slots
 
-	if not lean_slots then
+	if lean_slots then
 		Debug.text("Slots %d", lean_slots.lean_dogpile)
 
-		local var_24_1 = self.PLAYER_POSITIONS[1]
+		local pos = side.PLAYER_POSITIONS[1]
 
 		for i = 1, #lean_slots do
-			local var_24_2 = lean_slots[i]
+			local slot_pos = lean_slots[i]
 
-			QuickDrawer:sphere(Vector3(var_24_1.x + var_24_2[1], var_24_1.y + var_24_2[2], var_24_2[3]), 0.5, Color(255, 255, 0))
+			QuickDrawer:sphere(Vector3(pos.x + slot_pos[1], pos.y + slot_pos[2], slot_pos[3]), 0.5, Color(255, 255, 0))
 		end
 	end
 end
 
-ConflictDirectorTests.drag_test_start = function (self)
+ConflictDirectorTests.drag_test_start = function (side)
 	-- function 25
-	if not ConflictDirectorTests.drag_test then
+	if ConflictDirectorTests.drag_test then
 		ConflictDirectorTests.drag_test = nil
 	else
-		local num = self.PLAYER_POSITIONS[1] + Vector3(0, 0, 1.8)
-		local num_2 = self.PLAYER_POSITIONS[1] + Vector3(2, 0, 1.8)
+		local start_pos = side.PLAYER_POSITIONS[1] + Vector3(0, 0, 1.8)
+		local target_pos = side.PLAYER_POSITIONS[1] + Vector3(2, 0, 1.8)
 
 		ConflictDirectorTests.drag_test = {
 			pole_length = 2,
-			apos = Vector3Box(num),
-			bpos = Vector3Box(num_2)
+			apos = Vector3Box(start_pos),
+			bpos = Vector3Box(target_pos)
 		}
 	end
 end
 
-ConflictDirectorTests.drag_test_update = function (self)
+ConflictDirectorTests.drag_test_update = function (side)
 	-- function 26
-	if not ConflictDirectorTests.drag_test then
+	if ConflictDirectorTests.drag_test then
 		local drag_test = ConflictDirectorTests.drag_test
-		local unbox = drag_test.apos:unbox()
-		local unbox_2 = drag_test.bpos:unbox()
-		local num = self.PLAYER_POSITIONS[1] + Vector3(0, 0, 1.8)
-		local num_2 = num + Vector3.normalize(unbox_2 - num) * drag_test.pole_length
+		local apos = drag_test.apos:unbox()
+		local bpos = drag_test.bpos:unbox()
+		local apos_new = side.PLAYER_POSITIONS[1] + Vector3(0, 0, 1.8)
+		local pole_vec = Vector3.normalize(bpos - apos_new) * drag_test.pole_length
+		local bpos_new = apos_new + pole_vec
 
-		drag_test.bpos:store(num_2)
-		drag_test.apos:store(num)
-		QuickDrawer:sphere(num_2, 0.3, Color(0, 200, 40))
-		QuickDrawer:line(num_2, num, Color(0, 200, 40))
+		drag_test.bpos:store(bpos_new)
+		drag_test.apos:store(apos_new)
+		QuickDrawer:sphere(bpos_new, 0.3, Color(0, 200, 40))
+		QuickDrawer:line(bpos_new, apos_new, Color(0, 200, 40))
 	end
 end
 
-ConflictDirectorTests.tentacle_test_start = function (self, arg_27_1, arg_27_2)
+ConflictDirectorTests.tentacle_test_start = function (side, t, dt)
 	-- function 27
-	if not ConflictDirectorTests.ik_tentacle then
+	if ConflictDirectorTests.ik_tentacle then
 		ConflictDirectorTests.ik_tentacle = nil
 	else
 		print("Creating tentacle")
 
-		local num = self.PLAYER_POSITIONS[1] + Vector3(1, 0, 0)
-		local num_2 = self.PLAYER_POSITIONS[1] + Vector3(0, 0, 1)
-		local tbl = {}
+		local start_pos = side.PLAYER_POSITIONS[1] + Vector3(1, 0, 0)
+		local target_pos = side.PLAYER_POSITIONS[1] + Vector3(0, 0, 1)
+		local joints = {}
 
 		for i = 1, 14 do
-			tbl[i] = Vector3(0, 0, i * 0.5)
+			joints[i] = Vector3(0, 0, i * 0.5)
 		end
 
-		ConflictDirectorTests.ik_tentacle = IkChain:new(tbl, num, num_2, 0.01, 0.8)
+		ConflictDirectorTests.ik_tentacle = IkChain:new(joints, start_pos, target_pos, 0.01, 0.8)
 
-		ConflictDirectorTests.ik_tentacle:solve(arg_27_1, arg_27_2)
+		ConflictDirectorTests.ik_tentacle:solve(t, dt)
 	end
 end
 
-ConflictDirectorTests.tentacle_test_update = function (self, arg_28_1, arg_28_2)
+ConflictDirectorTests.tentacle_test_update = function (side, t, dt)
 	-- function 28
-	local PLAYER_POSITIONS = self.PLAYER_POSITIONS
+	local PLAYER_POSITIONS = side.PLAYER_POSITIONS
 	local ik_tentacle = ConflictDirectorTests.ik_tentacle
 
-	if not ik_tentacle then
-		ik_tentacle:set_target_pos(self.PLAYER_POSITIONS[1] + Vector3(0, 0, 1), 20)
-		ik_tentacle:solve(arg_28_1, arg_28_2)
+	if ik_tentacle then
+		ik_tentacle:set_target_pos(side.PLAYER_POSITIONS[1] + Vector3(0, 0, 1), 20)
+		ik_tentacle:solve(t, dt)
 	end
 end
 
-local tbl_2 = {}
-local str = "spawn"
-local str_2 = "soft"
+local cylinder_obstacles = {}
+local cylinder_state = "spawn"
+local cut_type = "soft"
 
-ConflictDirectorTests.spawn_mesh_cut = function (self)
+ConflictDirectorTests.spawn_mesh_cut = function (conflict_director)
 	-- function 29
-	local _world = self._world
-	local nav_world = self.nav_world
-	local player_aim_raycast, var_29_3, var_29_4, var_29_5 = self:player_aim_raycast(_world, false, "filter_ray_horde_spawn")
+	local world = conflict_director._world
+	local nav_world = conflict_director.nav_world
+	local position, distance, normal, actor = conflict_director:player_aim_raycast(world, false, "filter_ray_horde_spawn")
 
-	if not player_aim_raycast then
+	if not position then
 		print("No spawn pos found")
 
 		return
 	end
 
-	for k, v in pairs(tbl_2) do
-		GwNavCylinderObstacle.set_does_trigger_tagvolume(k, false)
-		GwNavCylinderObstacle.remove_from_world(k)
-		GwNavCylinderObstacle.destroy(k)
+	for o, _ in pairs(cylinder_obstacles) do
+		GwNavCylinderObstacle.set_does_trigger_tagvolume(o, false)
+		GwNavCylinderObstacle.remove_from_world(o)
+		GwNavCylinderObstacle.destroy(o)
 	end
 
-	table.clear(tbl_2)
+	table.clear(cylinder_obstacles)
 
-	local pos_on_mesh = LocomotionUtils.pos_on_mesh(self.nav_world, player_aim_raycast)
+	local spawn_pos = LocomotionUtils.pos_on_mesh(conflict_director.nav_world, position)
 
-	if not pos_on_mesh then
+	if not spawn_pos then
 		print("No mesh found at spawn pos")
 
 		return
 	end
 
-	local num = 1
-	local num_2 = 2
-	local num_3 = 2
-	local num_4 = num_3 / 2 + 0.3
+	local xc = 1
+	local yc = 2
+	local cell_size = 2
+	local radius = cell_size / 2 + 0.3
 
-	for k_2 = -num, num do
-		for l = -num_2, num_2 do
-			local num_5 = pos_on_mesh + Vector3(k_2 * num_3, l * num_3, -1)
+	for i = -xc, xc do
+		for j = -yc, yc do
+			local pos = spawn_pos + Vector3(i * cell_size, j * cell_size, -1)
 
-			QuickDrawerStay:sphere(num_5, num_4)
+			QuickDrawerStay:sphere(pos, radius)
 
-			local var_29_12
+			local o
 
-			if str_2 == "soft" then
-				var_29_12 = GwNavCylinderObstacle.create(nav_world, num_5, 3, num_4, false, Color(255, 255, 0), LAYER_ID_MAPPING.fire_grenade)
+			if cut_type == "soft" then
+				o = GwNavCylinderObstacle.create(nav_world, pos, 3, radius, false, Color(255, 255, 0), LAYER_ID_MAPPING.fire_grenade)
 
-				GwNavCylinderObstacle.add_to_world(var_29_12)
-				GwNavCylinderObstacle.set_does_trigger_tagvolume(var_29_12, true)
-			elseif str_2 == "hard" then
-				var_29_12 = GwNavCylinderObstacle.create_exclusive(nav_world, num_5, 3, num_4)
+				GwNavCylinderObstacle.add_to_world(o)
+				GwNavCylinderObstacle.set_does_trigger_tagvolume(o, true)
+			elseif cut_type == "hard" then
+				o = GwNavCylinderObstacle.create_exclusive(nav_world, pos, 3, radius)
 
-				GwNavCylinderObstacle.add_to_world(var_29_12)
-				GwNavCylinderObstacle.set_does_trigger_tagvolume(var_29_12, true)
+				GwNavCylinderObstacle.add_to_world(o)
+				GwNavCylinderObstacle.set_does_trigger_tagvolume(o, true)
 			else
-				local get_seed_triangle = GwNavTraversal.get_seed_triangle(nav_world, num_5)
-				local get_triangle_vertices, var_29_15, var_29_16 = GwNavTraversal.get_triangle_vertices(nav_world, get_seed_triangle)
+				local t = GwNavTraversal.get_seed_triangle(nav_world, pos)
+				local p1, p2, p3 = GwNavTraversal.get_triangle_vertices(nav_world, t)
 
 				GwNavTraversal.get_neighboring_triangles(poly)
-				GwNavNavTagVolume.create(nav_world, poly_line, num_5.z - 2, num_5.z + 2, false, Color(0, 200, 45), LAYER_ID_MAPPING.fire_grenade)
+				GwNavNavTagVolume.create(nav_world, poly_line, pos.z - 2, pos.z + 2, false, Color(0, 200, 45), LAYER_ID_MAPPING.fire_grenade)
 			end
 
-			tbl_2[var_29_12] = true
+			cylinder_obstacles[o] = true
 		end
 	end
 end
 
-ConflictDirectorTests.spawn_liquid_blob = function (self, arg_30_1, arg_30_2)
+ConflictDirectorTests.spawn_liquid_blob = function (conflict_director, t, dt)
 	-- function 30
-	local player_aim_raycast, var_30_1, var_30_2, var_30_3 = self:player_aim_raycast(self._world, false, "filter_ray_horde_spawn")
+	local position, distance, normal, actor = conflict_director:player_aim_raycast(conflict_director._world, false, "filter_ray_horde_spawn")
 
-	if not player_aim_raycast then
+	if not position then
 		print("No spawn pos found")
 
 		return
 	end
 
-	local tbl = {
+	local extension_init_data = {
 		props_system = {
 			start_size = 0.3,
 			duration = 0.5,
 			end_size = 1
 		}
 	}
-	local str = "units/props/nurgle_liquid_blob/nurgle_liquid_blob_01"
-	local str_2 = "nurgle_liquid_blob"
-	local spawn_network_unit = Managers.state.unit_spawner:spawn_network_unit(str, "nurgle_liquid_blob", tbl, player_aim_raycast)
+	local spawn_unit_name = "units/props/nurgle_liquid_blob/nurgle_liquid_blob_01"
+	local network_template_name = "nurgle_liquid_blob"
+	local blob_unit = Managers.state.unit_spawner:spawn_network_unit(spawn_unit_name, "nurgle_liquid_blob", extension_init_data, position)
 end
 
-ConflictDirectorTests.test_cover_points = function (self, arg_31_1)
+ConflictDirectorTests.test_cover_points = function (self, side)
 	-- function 31
-	local PLAYER_POSITIONS = arg_31_1.PLAYER_POSITIONS
+	local player_positions = side.PLAYER_POSITIONS
 
-	if not PLAYER_POSITIONS[1] then
+	if not player_positions[1] then
 		return
 	end
 
-	local cover_points_broadphase = self.level_analysis.cover_points_broadphase
-	local var_31_2 = Color(255, 0, 240, 0)
-	local var_31_3 = Color(255, 240, 0, 0)
-	local tbl = {}
+	local bp = self.level_analysis.cover_points_broadphase
+	local green = Color(255, 0, 240, 0)
+	local red = Color(255, 240, 0, 0)
+	local found_units = {}
 
-	Broadphase.query(cover_points_broadphase, PLAYER_POSITIONS[1], 20, tbl)
+	Broadphase.query(bp, player_positions[1], 20, found_units)
 
-	local var_31_5 = PLAYER_POSITIONS[1]
+	local player_pos = player_positions[1]
 
-	for i = 1, #tbl do
-		local var_31_6 = tbl[i]
-		local local_position = Unit.local_position(var_31_6, 0)
-		local local_rotation = Unit.local_rotation(var_31_6, 0)
-		local normalize = Vector3.normalize(var_31_5 - local_position)
+	for i = 1, #found_units do
+		local unit = found_units[i]
+		local pos = Unit.local_position(unit, 0)
+		local rot = Unit.local_rotation(unit, 0)
+		local to_cover_point = Vector3.normalize(player_pos - pos)
+		local valid = Vector3.dot(Quaternion.forward(rot), to_cover_point) > 0.9
 
-		if not (Vector3.dot(Quaternion.forward(local_rotation), normalize) > 0.9) then
-			QuickDrawerStay:sphere(local_position, 1, var_31_2)
-			QuickDrawerStay:line(local_position + Vector3(0, 0, 1), local_position + Quaternion.forward(local_rotation) * 2 + Vector3(0, 0, 1), var_31_2)
+		if valid then
+			QuickDrawerStay:sphere(pos, 1, green)
+			QuickDrawerStay:line(pos + Vector3(0, 0, 1), pos + Quaternion.forward(rot) * 2 + Vector3(0, 0, 1), green)
 		else
-			QuickDrawerStay:sphere(local_position, 1, var_31_3)
-			QuickDrawerStay:line(local_position + Vector3(0, 0, 1), local_position + Quaternion.forward(local_rotation) * 2 + Vector3(0, 0, 1), var_31_3)
+			QuickDrawerStay:sphere(pos, 1, red)
+			QuickDrawerStay:line(pos + Vector3(0, 0, 1), pos + Quaternion.forward(rot) * 2 + Vector3(0, 0, 1), red)
 		end
 	end
 
@@ -755,7 +784,7 @@ ConflictDirectorTests.update_kill_tester = function (self)
 		return
 	end
 
-	local tbl = {
+	local breeds = {
 		"skaven_slave",
 		"skaven_slave",
 		"skaven_slave",
@@ -771,121 +800,122 @@ ConflictDirectorTests.update_kill_tester = function (self)
 		self._kill_spawn_index = 1
 	end
 
-	local num = self._kill_spawn_index % #tbl + 1
+	local kill_spawn_index = self._kill_spawn_index % #breeds + 1
 
-	self._kill_spawn_index = num
+	self._kill_spawn_index = kill_spawn_index
 
-	local _kill_list = self._kill_list
-	local var_32_3 = tbl[num]
-	local var_32_4 = Breeds[var_32_3]
-	local tbl_2 = {
+	local kill_list = self._kill_list
+	local breed_name = breeds[kill_spawn_index]
+	local breed = Breeds[breed_name]
+	local optional_data = {
 		ignore_breed_limits = true,
-		spawned_func = function (arg_33_0, arg_33_1, arg_33_2)
+		spawned_func = function (ai_unit, breed, optional_data)
 			-- function 33
-			table.insert(self._kill_list, 1, arg_33_0)
+			table.insert(self._kill_list, 1, ai_unit)
 		end
 	}
-	local var_32_6 = Vector3Box(Vector3(0, 0, 0) + Vector3(num * 1, 0, 0))
-	local var_32_7 = QuaternionBox()
+	local spawn_pos = Vector3Box(Vector3(0, 0, 0) + Vector3(kill_spawn_index * 1, 0, 0))
+	local spawn_rot = QuaternionBox()
 
-	self:spawn_queued_unit(var_32_4, var_32_6, var_32_7, "debug_spawn", nil, nil, tbl_2)
+	self:spawn_queued_unit(breed, spawn_pos, spawn_rot, "debug_spawn", nil, nil, optional_data)
 
-	local count = #_kill_list
+	local size = #kill_list
 
-	if count >= 3 then
-		local var_32_9 = _kill_list[count]
+	if size >= 3 then
+		local kill_unit = kill_list[size]
 
-		_kill_list[count] = nil
+		kill_list[size] = nil
 
-		local has_extension = ScriptUnit.has_extension(var_32_9, "health_system")
+		local health_extension = ScriptUnit.has_extension(kill_unit, "health_system")
 
-		if not has_extension and not has_extension:is_alive() then
-			local num_2 = 255
-			local str = "full"
-			local str_2 = "forced"
-			local var_32_14 = Vector3(0, 0, 1)
+		if health_extension and health_extension:is_alive() then
+			local damage_amount = 255
+			local hit_zone_name = "full"
+			local damage_type = "forced"
+			local damage_direction = Vector3(0, 0, 1)
 
-			DamageUtils.add_damage_network(var_32_9, var_32_9, num_2, str, str_2, nil, var_32_14, "debug", nil, nil, nil, nil, nil, nil, nil, nil, nil, nil, 1)
+			DamageUtils.add_damage_network(kill_unit, kill_unit, damage_amount, hit_zone_name, damage_type, nil, damage_direction, "debug", nil, nil, nil, nil, nil, nil, nil, nil, nil, nil, 1)
 		end
 	end
 end
 
-ConflictDirectorTests.nav_group_astar_test = function (self, arg_34_1)
+ConflictDirectorTests.nav_group_astar_test = function (self, side)
 	-- function 34
 	if not self.astar_path then
 		print("ASTAR")
 
-		local get_start_and_finish, var_34_1 = self.level_analysis:get_start_and_finish()
-		local get_seed_triangle = GwNavTraversal.get_seed_triangle(self.nav_world, arg_34_1.PLAYER_POSITIONS[1])
-		local get_seed_triangle_2 = GwNavTraversal.get_seed_triangle(self.nav_world, var_34_1:unbox())
+		local start, goal = self.level_analysis:get_start_and_finish()
+		local tri1 = GwNavTraversal.get_seed_triangle(self.nav_world, side.PLAYER_POSITIONS[1])
+		local tri2 = GwNavTraversal.get_seed_triangle(self.nav_world, goal:unbox())
 
-		if not (not get_seed_triangle and get_seed_triangle_2) then
+		if not tri1 or not tri2 then
 			return false
 		end
 
-		local get_polygon_group = self.navigation_group_manager:get_polygon_group(get_seed_triangle)
-		local get_polygon_group_2 = self.navigation_group_manager:get_polygon_group(get_seed_triangle_2)
-		local _navigation_groups = self.navigation_group_manager._navigation_groups
-		local a_star_plain, var_34_8 = LuaAStar.a_star_plain(_navigation_groups, get_polygon_group, get_polygon_group_2)
+		local group1 = self.navigation_group_manager:get_polygon_group(tri1)
+		local group2 = self.navigation_group_manager:get_polygon_group(tri2)
+		local nav_groups = self.navigation_group_manager._navigation_groups
+		local path, length = LuaAStar.a_star_plain(nav_groups, group1, group2)
 
-		self.astar_path = a_star_plain
+		self.astar_path = path
 
-		print("Generated path:", #a_star_plain, var_34_8)
+		print("Generated path:", #path, length)
 	end
 end
 
-ConflictDirectorTests.update_group_astar_test = function (self, arg_35_1)
+ConflictDirectorTests.update_group_astar_test = function (self, side)
 	-- function 35
-	if not self.astar_path then
-		local astar_path = self.astar_path
-		local var_35_1
+	if self.astar_path then
+		local path = self.astar_path
+		local old_pos
 
-		for i = 1, #astar_path do
-			local unbox = astar_path[i]:get_group_center():unbox()
+		for i = 1, #path do
+			local pos = path[i]:get_group_center():unbox()
 
-			QuickDrawer:sphere(unbox, 2)
+			QuickDrawer:sphere(pos, 2)
 
-			if not var_35_1 then
-				QuickDrawer:line(unbox + Vector3(0, 0, 1), var_35_1 + Vector3(0, 0, 1), Color(255, 244, 143, 7))
+			if old_pos then
+				QuickDrawer:line(pos + Vector3(0, 0, 1), old_pos + Vector3(0, 0, 1), Color(255, 244, 143, 7))
 			end
 
-			var_35_1 = unbox
+			old_pos = pos
 		end
 	end
 end
 
-local function fn_4(self, arg_36_1, arg_36_2)
+local function fake_broadphase(in_list, pos, rad)
 	-- function 36
 	out_list = {}
 
-	for i = 1, #self do
-		local var_36_0 = self[i]
-		local var_36_1 = Vector3(var_36_0.pos[1], var_36_0.pos[2], 0)
+	for i = 1, #in_list do
+		local u = in_list[i]
+		local p = Vector3(u.pos[1], u.pos[2], 0)
 
-		if arg_36_2 > Vector3.distance(arg_36_1, var_36_0) then
-			out_list[#out_list + 1] = var_36_0
+		if rad > Vector3.distance(pos, u) then
+			out_list[#out_list + 1] = u
 		end
 	end
 
 	return num
 end
 
-local function fn_5(self)
+local function get_lean_target(enemy_list)
 	-- function 37
-	local num = 99
-	local var_37_1
-	local var_37_2
+	local best_dogpile_value = 99
+	local target_blackboard, best_target_unit
 
-	for i = 1, #self do
-		local var_37_3 = self[i]
-		local var_37_4 = BLACKBOARDS[var_37_3]
-		local lean_dogpile = var_37_4.lean_dogpile
+	for i = 1, #enemy_list do
+		local target_unit = enemy_list[i]
 
-		if not ((var_37_4 == blackboard or not enemy_units_lookup[var_37_3]) and not (lean_dogpile < num)) then
-			num = lean_dogpile
-			var_37_2 = var_37_3
+		target_blackboard = BLACKBOARDS[target_unit]
 
-			if blackboard.lean_target_unit == var_37_3 then
+		local dogpile = target_blackboard.lean_dogpile
+
+		if target_blackboard ~= blackboard and enemy_units_lookup[target_unit] and dogpile < best_dogpile_value then
+			best_dogpile_value = dogpile
+			best_target_unit = target_unit
+
+			if blackboard.lean_target_unit == target_unit then
 				break
 			end
 
@@ -895,14 +925,14 @@ local function fn_5(self)
 		end
 	end
 
-	if not var_37_2 then
-		return var_37_2, true
+	if best_target_unit then
+		return best_target_unit, true
 	else
 		return nil, false
 	end
 end
 
-function slot_testing(arg_38_0)
+function slot_testing(self)
 	-- function 38
 	for i = 1, #a do
 		unit = a[i]
@@ -911,7 +941,7 @@ end
 
 function setup_slot_testing()
 	-- function 39
-	local tbl = {
+	local units_1 = {
 		{
 			lean_dogpile = 0,
 			pos = {
@@ -948,7 +978,7 @@ function setup_slot_testing()
 			}
 		}
 	}
-	local tbl_2 = {
+	local units_2 = {
 		{
 			lean_dogpile = 0,
 			pos = {
@@ -965,138 +995,156 @@ function setup_slot_testing()
 		}
 	}
 
-	slot_testing(tbl, tbl_2)
+	slot_testing(units_1, units_2)
 end
 
-ConflictDirectorTests.start_test = function (self, arg_40_1, arg_40_2, arg_40_3)
+ConflictDirectorTests.start_test = function (conflict_director, t, dt, test)
 	-- function 40
 	local get_side_from_name = Managers.state.side:get_side_from_name("heroes")
 
-	get_side_from_name = get_side_from_name or Managers.state.side:get_side(1)
-	arg_40_3 = arg_40_3 or "spawn_encampment"
-	self.conflict_director_tests_name = arg_40_3
+	if not get_side_from_name then
+		-- Nothing
+	end
 
-	print("starting test:", arg_40_3)
+	get_side_from_name = Managers.state.side:get_side(1)
 
-	if arg_40_3 == "sparse" then
+	local side = get_side_from_name
+
+	::label_40_0::
+
+	test = not not test or not not "spawn_encampment"
+	conflict_director.conflict_director_tests_name = test
+
+	print("starting test:", test)
+
+	if test == "sparse" then
 		for i = 1, 30 do
 			for j = 1, 30 do
-				local var_40_1 = get_side_from_name.PLAYER_POSITIONS[1]
-				local var_40_2 = Vector3(var_40_1[1] + i * 0.3, var_40_1[2] + j * 0.3, var_40_1[3])
+				local c = side.PLAYER_POSITIONS[1]
+				local pos = Vector3(c[1] + i * 0.3, c[2] + j * 0.3, c[3])
 
-				ConflictDirectorTests.sparse_grid_test(var_40_2, get_side_from_name.PLAYER_UNITS[1])
+				ConflictDirectorTests.sparse_grid_test(pos, side.PLAYER_UNITS[1])
 			end
 		end
 
 		return
-	elseif arg_40_3 == "lean_slot" then
+	elseif test == "lean_slot" then
 		ConflictDirectorTests.lean_slot_test()
-	elseif arg_40_3 == "drag_test" then
-		ConflictDirectorTests.drag_test_start(get_side_from_name)
-	elseif arg_40_3 == "tentacle" then
-		ConflictDirectorTests.tentacle_test_start(get_side_from_name, arg_40_1, arg_40_2)
-	elseif arg_40_3 == "mesh_cut" then
-		ConflictDirectorTests.spawn_mesh_cut(self)
-	elseif arg_40_3 == "liquid_blob" then
-		ConflictDirectorTests.spawn_liquid_blob(self)
-	elseif arg_40_3 == "reachable_coverpoints" then
-		ConflictDirectorTests.setup_reachable_coverpoints_test(self)
-	elseif arg_40_3 == "reachable_navgraph" then
-		ConflictDirectorTests.process_reachable_coverpoints_test(self)
-	elseif arg_40_3 == "test_cover_points" then
-		ConflictDirectorTests.test_cover_points(self, get_side_from_name)
-	elseif arg_40_3 == "kill_tester" then
+	elseif test == "drag_test" then
+		ConflictDirectorTests.drag_test_start(side)
+	elseif test == "tentacle" then
+		ConflictDirectorTests.tentacle_test_start(side, t, dt)
+	elseif test == "mesh_cut" then
+		ConflictDirectorTests.spawn_mesh_cut(conflict_director)
+	elseif test == "liquid_blob" then
+		ConflictDirectorTests.spawn_liquid_blob(conflict_director)
+	elseif test == "reachable_coverpoints" then
+		ConflictDirectorTests.setup_reachable_coverpoints_test(conflict_director)
+	elseif test == "reachable_navgraph" then
+		ConflictDirectorTests.process_reachable_coverpoints_test(conflict_director)
+	elseif test == "test_cover_points" then
+		ConflictDirectorTests.test_cover_points(conflict_director, side)
+	elseif test == "kill_tester" then
 		script_data.kill_test = not script_data.kill_test
-	elseif arg_40_3 == "nav_group_astar" then
-		ConflictDirectorTests.nav_group_astar_test(self, get_side_from_name)
-	elseif arg_40_3 == "spawn_encampment" then
+	elseif test == "nav_group_astar" then
+		ConflictDirectorTests.nav_group_astar_test(conflict_director, side)
+	elseif test == "spawn_encampment" then
 		if not GenericTerrorEvents.encampment then
 			print("Missing terror event: encampment")
 
 			return
 		end
 
-		local player_aim_raycast, var_40_4, var_40_5, var_40_6 = self:player_aim_raycast(self._world, false, "filter_ray_horde_spawn")
+		local position, distance, normal, actor = conflict_director:player_aim_raycast(conflict_director._world, false, "filter_ray_horde_spawn")
 
-		if not player_aim_raycast then
+		if not position then
 			print("No spawn pos found")
 
 			return
 		end
 
-		local tbl = {
-			side_id = self.debug_spawn_side_id,
-			debug_pos = player_aim_raycast,
+		local event_data = {
+			side_id = conflict_director.debug_spawn_side_id,
+			debug_pos = position,
 			debug_dir = {
 				0,
 				1
 			}
 		}
 
-		TerrorEventMixer.start_event("encampment4", tbl)
+		TerrorEventMixer.start_event("encampment4", event_data)
 
-		local tbl_2 = {
+		local event_data = {
 			side_id = 1,
-			debug_pos = player_aim_raycast + Vector3(0, 8, 0),
+			debug_pos = position + Vector3(0, 8, 0),
 			debug_dir = {
 				0,
 				-1
 			}
 		}
 
-		TerrorEventMixer.start_event("encampment4", tbl_2)
+		TerrorEventMixer.start_event("encampment4", event_data)
 
 		return
-	elseif arg_40_3 == "hull_test" then
-		local var_40_9 = make_points_for_hull_test()
-		local var_40_10, var_40_11 = convex_hull(var_40_9, {})
-		local num = 0.5
+	elseif test == "hull_test" then
+		local points = make_points_for_hull_test()
+		local hull, num = convex_hull(points, {})
+		local z = 0.5
 
-		for k = 1, var_40_11 do
-			local var_40_13 = var_40_10[k]
-			local var_40_14
+		for i = 1, num do
+			local a = hull[i]
+			local b
 
-			if k == var_40_11 then
-				var_40_14 = var_40_10[1]
+			if i == num then
+				b = hull[1]
 			else
-				var_40_14 = var_40_10[k + 1]
+				b = hull[i + 1]
 			end
 
-			local var_40_15 = Vector3(var_40_13.x, var_40_13.y, num)
-			local var_40_16 = Vector3(var_40_14.x, var_40_14.y, num)
+			local p1 = Vector3(a.x, a.y, z)
+			local p2 = Vector3(b.x, b.y, z)
 
-			QuickDrawerStay:line(var_40_15, var_40_16, Color(200, 100, 100))
+			QuickDrawerStay:line(p1, p2, Color(200, 100, 100))
 		end
 
 		print("Convex Hull: ")
-		print_points(var_40_10, var_40_11)
+		print_points(hull, num)
 		print()
 		print("Correct Output: Convex Hull: [(-9, -3), (-3, -9), (19, -8), (17, 5), (12, 17), (5, 19), (-3, 15)]")
 	end
 end
 
-ConflictDirectorTests.update = function (self, arg_41_1, arg_41_2)
+ConflictDirectorTests.update = function (conflict_director, t, dt)
 	-- function 41
-	local conflict_director_tests_name = self.conflict_director_tests_name
+	local test = conflict_director.conflict_director_tests_name
 	local get_side_from_name = Managers.state.side:get_side_from_name("heroes")
 
-	get_side_from_name = get_side_from_name or Managers.state.side:get_side(1)
-	self.hero_player_and_bot_positions = get_side_from_name.PLAYER_AND_BOT_POSITIONS
-	self.hero_player_positions = get_side_from_name.PLAYER_POSITIONS
+	if not get_side_from_name then
+		-- Nothing
+	end
 
-	if conflict_director_tests_name == "sparse" then
-		ConflictDirectorTests.draw_sparse_grid(get_side_from_name.PLAYER_POSITIONS[1])
-	elseif conflict_director_tests_name == "jslots" then
-		ConflictDirectorTests.update_jslots(get_side_from_name.PLAYER_UNITS[1])
-	elseif conflict_director_tests_name == "lean_slot" then
-		ConflictDirectorTests.lean_slot_test_update(get_side_from_name)
-	elseif conflict_director_tests_name == "drag_test" then
-		ConflictDirectorTests.drag_test_update(get_side_from_name)
-	elseif conflict_director_tests_name == "tentacle" then
-		ConflictDirectorTests.tentacle_test_update(get_side_from_name, arg_41_1, arg_41_2)
-	elseif conflict_director_tests_name == "kill_test" then
-		ConflictDirectorTests.update_kill_tester(self, get_side_from_name)
-	elseif conflict_director_tests_name == "nav_group_astar" then
-		ConflictDirectorTests.update_group_astar_test(self, get_side_from_name)
+	get_side_from_name = Managers.state.side:get_side(1)
+
+	local side = get_side_from_name
+
+	::label_41_0::
+
+	conflict_director.hero_player_and_bot_positions = side.PLAYER_AND_BOT_POSITIONS
+	conflict_director.hero_player_positions = side.PLAYER_POSITIONS
+
+	if test == "sparse" then
+		ConflictDirectorTests.draw_sparse_grid(side.PLAYER_POSITIONS[1])
+	elseif test == "jslots" then
+		ConflictDirectorTests.update_jslots(side.PLAYER_UNITS[1])
+	elseif test == "lean_slot" then
+		ConflictDirectorTests.lean_slot_test_update(side)
+	elseif test == "drag_test" then
+		ConflictDirectorTests.drag_test_update(side)
+	elseif test == "tentacle" then
+		ConflictDirectorTests.tentacle_test_update(side, t, dt)
+	elseif test == "kill_test" then
+		ConflictDirectorTests.update_kill_tester(conflict_director, side)
+	elseif test == "nav_group_astar" then
+		ConflictDirectorTests.update_group_astar_test(conflict_director, side)
 	end
 end

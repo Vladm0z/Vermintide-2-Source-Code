@@ -1,24 +1,24 @@
 -- chunkname: @scripts/ui/views/popup_profile_picker.lua
 
-local var_0_0 = local_require("scripts/ui/views/popup_profile_picker_definitions")
-local scenegraph_definition = var_0_0.scenegraph_definition
-local widget_definitions = var_0_0.widget_definitions
-local hero_widget_definition = var_0_0.hero_widget_definition
-local hero_icon_widget_definition = var_0_0.hero_icon_widget_definition
+local definitions = local_require("scripts/ui/views/popup_profile_picker_definitions")
+local scenegraph_definition = definitions.scenegraph_definition
+local widget_definitions = definitions.widget_definitions
+local hero_widget_definition = definitions.hero_widget_definition
+local hero_icon_widget_definition = definitions.hero_icon_widget_definition
 
 PopupProfilePicker = class(PopupProfilePicker)
 
-PopupProfilePicker.init = function (self, arg_1_1, ...)
+PopupProfilePicker.init = function (self, ingame_ui_context, ...)
 	-- function 1
-	self._ui_renderer = arg_1_1.ui_renderer
-	self._ui_top_renderer = arg_1_1.ui_top_renderer
-	self._ingame_ui = arg_1_1.ingame_ui
-	self._wwise_world = arg_1_1.wwise_world
+	self._ui_renderer = ingame_ui_context.ui_renderer
+	self._ui_top_renderer = ingame_ui_context.ui_top_renderer
+	self._ingame_ui = ingame_ui_context.ingame_ui
+	self._wwise_world = ingame_ui_context.wwise_world
 	self._render_settings = {
 		snap_pixel_positions = true
 	}
 
-	local input_manager = arg_1_1.input_manager
+	local input_manager = ingame_ui_context.input_manager
 
 	self._input_manager = input_manager
 
@@ -27,9 +27,9 @@ PopupProfilePicker.init = function (self, arg_1_1, ...)
 	input_manager:map_device_to_service("popup_profile_picker", "mouse")
 	input_manager:map_device_to_service("popup_profile_picker", "gamepad")
 
-	local get_service = input_manager:get_service("popup_profile_picker")
+	local input_service = input_manager:get_service("popup_profile_picker")
 
-	self._menu_input_desc = MenuInputDescriptionUI:new(nil, self._ui_top_renderer, get_service, 5, 900, var_0_0.generic_input_actions.default)
+	self._menu_input_desc = MenuInputDescriptionUI:new(nil, self._ui_top_renderer, input_service, 5, 900, definitions.generic_input_actions.default)
 
 	self._menu_input_desc:set_input_description(nil)
 	self:_create_ui_elements()
@@ -43,66 +43,80 @@ PopupProfilePicker._create_ui_elements = function (self)
 
 	UIRenderer.clear_scenegraph_queue(self._ui_top_renderer)
 
-	local get_interface = Managers.backend:get_interface("hero_attributes")
-	local tbl = {}
+	local hero_attributes = Managers.backend:get_interface("hero_attributes")
+	local hero_widgets = {}
 
-	self._hero_widgets = tbl
+	self._hero_widgets = hero_widgets
 
-	local tbl_2 = {}
+	local hero_icon_widgets = {}
 
-	self._hero_icon_widgets = tbl_2
+	self._hero_icon_widgets = hero_icon_widgets
 	self._num_max_hero_columns = #ProfilePriority
 	self._num_max_career_columns = 4
 
-	for i, v in ipairs(ProfilePriority) do
-		local var_2_3 = SPProfiles[v]
-		local display_name = var_2_3.display_name
-		local get = get_interface:get(display_name, "experience")
+	for i, profile_index in ipairs(ProfilePriority) do
+		local profile_settings = SPProfiles[profile_index]
+		local hero_name = profile_settings.display_name
+		local get = hero_attributes:get(hero_name, "experience")
 
-		get = get or 0
+		if not get then
+			-- Nothing
+		end
 
-		local get_level = ExperienceSettings.get_level(get)
-		local var_2_7 = UIWidget.init(hero_icon_widget_definition)
+		get = 0
 
-		tbl_2[#tbl_2 + 1] = var_2_7
-		var_2_7.offset[1] = (i - 1) * 124
+		local hero_experience = get
 
-		local hero_selection_image = var_2_3.hero_selection_image
+		::label_2_0::
 
-		var_2_7.content.icon = hero_selection_image
+		local hero_level = ExperienceSettings.get_level(hero_experience)
+		local icon_widget = UIWidget.init(hero_icon_widget_definition)
+
+		hero_icon_widgets[#hero_icon_widgets + 1] = icon_widget
+
+		local hero_icon_offset = icon_widget.offset
+
+		hero_icon_offset[1] = (i - 1) * 124
+
+		local hero_icon_texture = profile_settings.hero_selection_image
+
+		icon_widget.content.icon = hero_icon_texture
 	end
 
-	for k = 1, 4 do
-		local var_2_9 = UIWidget.init(hero_widget_definition)
+	for i = 1, 4 do
+		local widget = UIWidget.init(hero_widget_definition)
 
-		tbl[k] = var_2_9
-		var_2_9.offset[1] = (k - 1) * 124 + 62
+		hero_widgets[i] = widget
+
+		local offset = widget.offset
+
+		offset[1] = (i - 1) * 124 + 62
 	end
 end
 
-PopupProfilePicker.update = function (self, arg_3_1, arg_3_2)
+PopupProfilePicker.update = function (self, dt, t)
 	-- function 3
-	self:_update_occupied_profiles(arg_3_2)
+	self:_update_occupied_profiles(t)
 
-	local _ui_top_renderer = self._ui_top_renderer
+	local ui_top_renderer = self._ui_top_renderer
 	local input_service = self:input_service()
 
-	if not self._cancel_timer then
-		self._cancel_timer = math.max(self._cancel_timer - arg_3_1, 0)
+	if self._cancel_timer then
+		self._cancel_timer = math.max(self._cancel_timer - dt, 0)
 
-		local var_3_2 = tostring(math.ceil(self._cancel_timer))
+		local timer_text = tostring(math.ceil(self._cancel_timer))
 
-		self:_set_timer_text(var_3_2)
+		self:_set_timer_text(timer_text)
 
 		if self._cancel_timer <= 0 then
-			local flag = false
+			local accepted = false
 
-			self:set_result(flag)
+			self:set_result(accepted)
 		end
 	end
 
-	self:_handle_input(arg_3_1, arg_3_2)
-	self:draw(_ui_top_renderer, input_service, arg_3_1)
+	self:_handle_input(dt, t)
+	self:draw(ui_top_renderer, input_service, dt)
 end
 
 PopupProfilePicker._INPUT_DEVICES = {
@@ -111,39 +125,43 @@ PopupProfilePicker._INPUT_DEVICES = {
 	"mouse"
 }
 
-PopupProfilePicker.show = function (self, arg_4_1, arg_4_2, arg_4_3, arg_4_4, arg_4_5, arg_4_6, arg_4_7, arg_4_8)
+PopupProfilePicker.show = function (self, current_profile_index, current_career_index, time_until_cancel, join_by_lobby_browser, _difficulty, lobby_client, reserved_party_id, optional_locked_profile_index)
 	-- function 4
 	self._join_lobby_result = nil
 	self._makeshift_lobby_data = {}
-	self._lobby_client = arg_4_6
-	self._reserved_party_id = arg_4_7
+	self._lobby_client = lobby_client
+	self._reserved_party_id = reserved_party_id
 
 	local _ingame_ui = self._ingame_ui
 	local var_4_1 = _ingame_ui
 	local handle_transition = _ingame_ui.handle_transition
 	local flag
 
-	flag = not arg_4_4 and "exit_menu" and "close_active"
+	flag = (not join_by_lobby_browser or not "exit_menu") and not not "close_active"
 
 	handle_transition(var_4_1, flag)
 	ShowCursorStack.show("PopupProfilePicker")
 
-	local flag_2 = arg_4_1 or 1
-	local flag_3 = arg_4_2 or 1
-	local flag_4 = true
+	local profile_index = not not current_profile_index or not not 1
+	local career_index = not not current_career_index or not not 1
+	local ignore_sound = true
 
-	self:_select_hero(flag_2, flag_3, flag_4)
+	self:_select_hero(profile_index, career_index, ignore_sound)
 
-	self._cancel_timer = arg_4_3
-	self._optional_locked_profile_index = arg_4_8
+	self._cancel_timer = time_until_cancel
+	self._optional_locked_profile_index = optional_locked_profile_index
 
-	self._input_manager:capture_input(self._INPUT_DEVICES, 1, "popup_profile_picker", "PopupProfilePicker")
+	local input_manager = self._input_manager
+
+	input_manager:capture_input(self._INPUT_DEVICES, 1, "popup_profile_picker", "PopupProfilePicker")
 	self:_play_sound("hud_hot_join_hero_popup")
 end
 
 PopupProfilePicker.hide = function (self)
 	-- function 5
-	self._input_manager:release_input(self._INPUT_DEVICES, 1, "popup_profile_picker", "PopupProfilePicker")
+	local input_manager = self._input_manager
+
+	input_manager:release_input(self._INPUT_DEVICES, 1, "popup_profile_picker", "PopupProfilePicker")
 	ShowCursorStack.hide("PopupProfilePicker")
 
 	self._selected_hero_name = nil
@@ -158,47 +176,49 @@ PopupProfilePicker.input_service = function (self)
 	return self._input_manager:get_service("popup_profile_picker")
 end
 
-PopupProfilePicker.draw = function (self, arg_7_1, arg_7_2, arg_7_3)
+PopupProfilePicker.draw = function (self, ui_top_renderer, input_service, dt)
 	-- function 7
-	UIRenderer.begin_pass(arg_7_1, self._ui_scenegraph, arg_7_2, arg_7_3, nil, self._render_settings)
+	UIRenderer.begin_pass(ui_top_renderer, self._ui_scenegraph, input_service, dt, nil, self._render_settings)
 
-	local _widgets = self._widgets
+	local widgets = self._widgets
 
-	for i, v in ipairs(_widgets) do
-		UIRenderer.draw_widget(arg_7_1, v)
+	for _, widget in ipairs(widgets) do
+		UIRenderer.draw_widget(ui_top_renderer, widget)
 	end
 
-	for k, v_2 in pairs(self._hero_widgets) do
-		UIRenderer.draw_widget(arg_7_1, v_2)
+	for _, widget in pairs(self._hero_widgets) do
+		UIRenderer.draw_widget(ui_top_renderer, widget)
 	end
 
-	for i_2, v_3 in ipairs(self._hero_icon_widgets) do
-		UIRenderer.draw_widget(arg_7_1, v_3)
+	for _, widget in ipairs(self._hero_icon_widgets) do
+		UIRenderer.draw_widget(ui_top_renderer, widget)
 	end
 
-	UIRenderer.end_pass(arg_7_1)
+	UIRenderer.end_pass(ui_top_renderer)
 
-	if not Managers.input:is_device_active("gamepad") then
-		self._menu_input_desc:draw(arg_7_1, arg_7_3)
+	local gamepad_active = Managers.input:is_device_active("gamepad")
+
+	if gamepad_active then
+		self._menu_input_desc:draw(ui_top_renderer, dt)
 	end
 end
 
-PopupProfilePicker.set_result = function (self, arg_8_1, arg_8_2)
+PopupProfilePicker.set_result = function (self, accepted, reason)
 	-- function 8
-	local flag = not arg_8_1 and self._selected_hero_name
-	local flag_2 = not arg_8_1 and self._selected_career_name
+	local selected_hero_name = not not accepted and not not self._selected_hero_name
+	local selected_career_name = not not accepted and not not self._selected_career_name
 
-	if not arg_8_1 then
+	if accepted then
 		self:_play_sound("hud_hot_join_hero_popup_accept")
 	else
 		self:_play_sound("hud_hot_join_hero_popup_decline")
 	end
 
 	self._join_lobby_result = {
-		accepted = arg_8_1,
-		selected_hero_name = flag,
-		selected_career_name = flag_2,
-		reason = arg_8_2
+		accepted = accepted,
+		selected_hero_name = selected_hero_name,
+		selected_career_name = selected_career_name,
+		reason = reason
 	}
 end
 
@@ -207,33 +227,33 @@ PopupProfilePicker.query_result = function (self)
 	return self._join_lobby_result
 end
 
-PopupProfilePicker.destroy = function (arg_10_0)
+PopupProfilePicker.destroy = function (self)
 	-- function 10
 	return
 end
 
-PopupProfilePicker._handle_input = function (self, arg_11_1, arg_11_2)
+PopupProfilePicker._handle_input = function (self, dt, t)
 	-- function 11
-	local _widgets_by_name = self._widgets_by_name
-	local get_service = Managers.input:get_service("popup_profile_picker")
+	local widgets_by_name = self._widgets_by_name
+	local input_service = Managers.input:get_service("popup_profile_picker")
 
 	self:_handle_mouse_selection()
-	self:_handle_gamepad_selection(get_service)
+	self:_handle_gamepad_selection(input_service)
 
-	local select_button = _widgets_by_name.select_button
-	local cancel_button = _widgets_by_name.cancel_button
+	local select_button = widgets_by_name.select_button
+	local cancel_button = widgets_by_name.cancel_button
 
-	UIWidgetUtils.animate_default_button(select_button, arg_11_1)
-	UIWidgetUtils.animate_default_button(cancel_button, arg_11_1)
+	UIWidgetUtils.animate_default_button(select_button, dt)
+	UIWidgetUtils.animate_default_button(cancel_button, dt)
 
-	if UIUtils.is_button_hover_enter(select_button) or not UIUtils.is_button_hover_enter(cancel_button) then
+	if UIUtils.is_button_hover_enter(select_button) or UIUtils.is_button_hover_enter(cancel_button) then
 		self:_play_sound("play_gui_start_menu_button_hover")
 	end
 
-	if not self._selection_approved and UIUtils.is_button_pressed(_widgets_by_name.select_button) and not get_service:get("confirm", true) then
+	if self._selection_approved and (UIUtils.is_button_pressed(widgets_by_name.select_button) or input_service:get("confirm", true)) then
 		self:_play_sound("play_gui_start_menu_button_click")
 		self:set_result(true)
-	elseif UIUtils.is_button_pressed(_widgets_by_name.cancel_button) or not get_service:get("back_menu", true) then
+	elseif UIUtils.is_button_pressed(widgets_by_name.cancel_button) or input_service:get("back_menu", true) then
 		self:_play_sound("play_gui_start_menu_button_click")
 		self:set_result(false, "cancelled")
 	end
@@ -241,46 +261,48 @@ end
 
 PopupProfilePicker._handle_mouse_selection = function (self)
 	-- function 12
-	local _hero_icon_widgets = self._hero_icon_widgets
+	local hero_icon_widgets = self._hero_icon_widgets
 
-	for i = 1, #_hero_icon_widgets do
-		local content = _hero_icon_widgets[i].content
+	for i = 1, #hero_icon_widgets do
+		local widget = hero_icon_widgets[i]
+		local content = widget.content
 
 		if not content.taken then
 			local button_hotspot = content.button_hotspot
 
-			if not button_hotspot.on_hover_enter then
+			if button_hotspot.on_hover_enter then
 				self:_play_sound("play_gui_hero_select_hero_hover")
 			end
 
-			if not (not button_hotspot.on_pressed and i == self._selected_hero_column) then
-				local var_12_3 = ProfilePriority[i]
-				local min = math.min(self._selected_career_index, #SPProfiles[var_12_3].careers)
+			if button_hotspot.on_pressed and i ~= self._selected_hero_column then
+				local profile_index = ProfilePriority[i]
+				local career_index = math.min(self._selected_career_index, #SPProfiles[profile_index].careers)
 
-				self:_select_hero(var_12_3, min)
+				self:_select_hero(profile_index, career_index)
 
 				return
 			end
 		end
 	end
 
-	local _hero_widgets = self._hero_widgets
+	local hero_widgets = self._hero_widgets
 
-	for j = 1, #_hero_widgets do
-		local content_2 = _hero_widgets[j].content
+	for i = 1, #hero_widgets do
+		local widget = hero_widgets[i]
+		local content = widget.content
 
-		if not (not content_2.exists and content_2.taken or content_2.locked) then
-			local button_hotspot_2 = content_2.button_hotspot
+		if content.exists and not content.taken and not content.locked then
+			local button_hotspot = content.button_hotspot
 
-			if not button_hotspot_2.on_hover_enter then
+			if button_hotspot.on_hover_enter then
 				self:_play_sound("play_gui_hero_select_career_hover")
 			end
 
-			if not (not button_hotspot_2.on_pressed and j == self._selected_career_column) then
-				local _selected_profile_index = self._selected_profile_index
-				local var_12_9 = j
+			if button_hotspot.on_pressed and i ~= self._selected_career_column then
+				local profile_index = self._selected_profile_index
+				local career_index = i
 
-				self:_select_hero(_selected_profile_index, var_12_9)
+				self:_select_hero(profile_index, career_index)
 
 				return
 			end
@@ -288,100 +310,109 @@ PopupProfilePicker._handle_mouse_selection = function (self)
 	end
 end
 
-PopupProfilePicker._handle_gamepad_selection = function (self, arg_13_1)
+PopupProfilePicker._handle_gamepad_selection = function (self, input_service)
 	-- function 13
-	local _num_max_hero_columns = self._num_max_hero_columns
-	local _num_max_career_columns = self._num_max_career_columns
-	local _selected_hero_column = self._selected_hero_column
-	local _selected_career_column = self._selected_career_column
+	local num_max_hero_columns = self._num_max_hero_columns
+	local num_max_career_columns = self._num_max_career_columns
+	local selected_hero_column = self._selected_hero_column
+	local selected_career_column = self._selected_career_column
 
-	if not _selected_hero_column and not _selected_career_column then
-		local flag = false
+	if selected_hero_column and selected_career_column then
+		local modified = false
 
-		if not (_selected_hero_column > 1) or not arg_13_1:get("cycle_previous") then
-			_selected_hero_column = _selected_hero_column - 1
-			flag = true
-		elseif not (_selected_hero_column < _num_max_hero_columns) or not arg_13_1:get("cycle_next") then
-			_selected_hero_column = _selected_hero_column + 1
-			flag = true
+		if selected_hero_column > 1 and input_service:get("cycle_previous") then
+			selected_hero_column = selected_hero_column - 1
+			modified = true
+		elseif selected_hero_column < num_max_hero_columns and input_service:get("cycle_next") then
+			selected_hero_column = selected_hero_column + 1
+			modified = true
 		end
 
-		if not (_selected_career_column > 1) or not arg_13_1:get("move_left") then
-			_selected_career_column = _selected_career_column - 1
-			flag = true
-		elseif not (_selected_career_column < _num_max_career_columns) or not arg_13_1:get("move_right") then
-			_selected_career_column = _selected_career_column + 1
-			flag = true
+		if selected_career_column > 1 and input_service:get("move_left") then
+			selected_career_column = selected_career_column - 1
+			modified = true
+		elseif selected_career_column < num_max_career_columns and input_service:get("move_right") then
+			selected_career_column = selected_career_column + 1
+			modified = true
 		end
 
-		if not flag then
-			local var_13_5 = ProfilePriority[_selected_hero_column]
-			local var_13_6 = _selected_career_column
+		if modified then
+			local profile_index = ProfilePriority[selected_hero_column]
+			local career_index = selected_career_column
 
-			self:_select_hero(var_13_5, var_13_6)
+			self:_select_hero(profile_index, career_index)
 		end
 	end
 end
 
-PopupProfilePicker._select_hero = function (self, arg_14_1, arg_14_2, arg_14_3)
+PopupProfilePicker._select_hero = function (self, profile_index, career_index, ignore_sound)
 	-- function 14
-	local var_14_0 = SPProfiles[arg_14_1]
-	local var_14_1 = var_14_0.careers[arg_14_2]
-	local get_interface = Managers.backend:get_interface("dlcs")
+	local profile_settings = SPProfiles[profile_index]
+	local career_settings = profile_settings.careers[career_index]
+	local backend_dlcs = Managers.backend:get_interface("dlcs")
 
-	if not var_14_1 and not get_interface:is_unreleased_career(var_14_1.name) then
+	if not career_settings or backend_dlcs:is_unreleased_career(career_settings.name) then
 		return
 	end
 
-	local display_name = var_14_0.display_name
-	local character_name = var_14_0.character_name
-	local name = var_14_1.name
-	local display_name_2 = var_14_1.display_name
-	local var_14_7 = Localize(character_name)
-	local var_14_8 = Localize(display_name_2)
-	local get = Managers.backend:get_interface("hero_attributes"):get(display_name, "experience")
+	local hero_name = profile_settings.display_name
+	local character_name = profile_settings.character_name
+	local career_name = career_settings.name
+	local career_display_name = career_settings.display_name
+	local hero_display_text = Localize(character_name)
+	local career_display_text = Localize(career_display_name)
+	local hero_attributes = Managers.backend:get_interface("hero_attributes")
+	local get = hero_attributes:get(hero_name, "experience")
 
-	get = get or 0
+	if not get then
+		-- Nothing
+	end
 
-	local get_level = ExperienceSettings.get_level(get)
+	get = 0
 
-	self:_set_hero_info(var_14_7, var_14_8, get_level)
+	local hero_experience = get
 
-	local _hero_widgets = self._hero_widgets
-	local _num_max_hero_rows = self._num_max_hero_rows
-	local _num_max_hero_columns = self._num_max_hero_columns
+	::label_14_0::
 
-	self._selected_career_index = arg_14_2
-	self._selected_profile_index = arg_14_1
-	self._selected_hero_name = display_name
-	self._selected_career_name = name
-	self._selected_hero_column = ProfileIndexToPriorityIndex[arg_14_1]
-	self._selected_career_column = arg_14_2
+	local level = ExperienceSettings.get_level(hero_experience)
+
+	self:_set_hero_info(hero_display_text, career_display_text, level)
+
+	local hero_widgets = self._hero_widgets
+	local num_max_rows = self._num_max_hero_rows
+	local num_max_columns = self._num_max_hero_columns
+
+	self._selected_career_index = career_index
+	self._selected_profile_index = profile_index
+	self._selected_hero_name = hero_name
+	self._selected_career_name = career_name
+	self._selected_hero_column = ProfileIndexToPriorityIndex[profile_index]
+	self._selected_career_column = career_index
 
 	self:_set_hero_icon_selected(self._selected_hero_column)
 
-	local get_interface_2 = Managers.backend:get_interface("dlcs")
+	local backend_dlcs = Managers.backend:get_interface("dlcs")
 
-	for i, v in ipairs(self._hero_widgets) do
-		local var_14_15 = var_14_0.careers[i]
-		local content = v.content
-		local flag = not var_14_15 and not get_interface_2:is_unreleased_career(var_14_15.name)
+	for i, widget in ipairs(self._hero_widgets) do
+		local career = profile_settings.careers[i]
+		local content = widget.content
+		local available = not not career and not not not backend_dlcs:is_unreleased_career(career.name)
 
-		content.exists = flag
+		content.exists = available
 
-		if not flag then
-			content.career_settings = var_14_15
+		if available then
+			content.career_settings = career
 
-			local picking_image = var_14_15.picking_image
+			local picking_image = career.picking_image
 
-			picking_image = picking_image or "medium_" .. var_14_15.portrait_image
+			picking_image = not not picking_image or not not ("medium_" .. career.portrait_image)
 			content.portrait = picking_image
 
-			local is_unlocked_function, var_14_20, var_14_21 = var_14_15:is_unlocked_function(display_name, get_level)
+			local is_career_unlocked, _, dlc_name = career:is_unlocked_function(hero_name, level)
 
-			content.locked = not is_unlocked_function
+			content.locked = not is_career_unlocked
 
-			if not var_14_21 then
+			if dlc_name then
 				content.lock_texture = "hero_icon_locked_gold"
 				content.frame = "menu_frame_12_gold"
 			else
@@ -393,125 +424,134 @@ PopupProfilePicker._select_hero = function (self, arg_14_1, arg_14_2, arg_14_3)
 		end
 	end
 
-	if not arg_14_3 then
+	if not ignore_sound then
 		self:_play_sound("play_gui_hero_select_hero_click")
 	end
 end
 
-PopupProfilePicker._set_hero_icon_selected = function (self, arg_15_1)
+PopupProfilePicker._set_hero_icon_selected = function (self, index)
 	-- function 15
-	for i, v in ipairs(self._hero_icon_widgets) do
-		v.content.button_hotspot.is_selected = i == arg_15_1
+	for icon_index, widget in ipairs(self._hero_icon_widgets) do
+		widget.content.button_hotspot.is_selected = icon_index == index
 	end
 end
 
-PopupProfilePicker._set_hero_info = function (self, arg_16_1, arg_16_2, arg_16_3)
+PopupProfilePicker._set_hero_info = function (self, hero_name, career_name, level)
 	-- function 16
-	local _widgets_by_name = self._widgets_by_name
+	local widgets_by_name = self._widgets_by_name
 
-	_widgets_by_name.info_hero_name.content.text = arg_16_1
-	_widgets_by_name.info_career_name.content.text = arg_16_2
-	_widgets_by_name.info_hero_level.content.text = arg_16_3
+	widgets_by_name.info_hero_name.content.text = hero_name
+	widgets_by_name.info_career_name.content.text = career_name
+	widgets_by_name.info_hero_level.content.text = level
 end
 
-PopupProfilePicker._set_timer_text = function (arg_17_0, arg_17_1)
+PopupProfilePicker._set_timer_text = function (self, timer_text)
 	-- function 17
-	arg_17_0._widgets_by_name.timer_text.content.text = arg_17_1
+	local widgets_by_name = self._widgets_by_name
+
+	widgets_by_name.timer_text.content.text = timer_text
 end
 
-PopupProfilePicker.set_difficulty = function (self, arg_18_1)
+PopupProfilePicker.set_difficulty = function (self, difficulty)
 	-- function 18
-	self._difficulty = arg_18_1
+	self._difficulty = difficulty
 end
 
-local num = 2
+local REQUEST_DATA_DELAY = 2
 
-PopupProfilePicker._update_occupied_profiles = function (self, arg_19_1)
+PopupProfilePicker._update_occupied_profiles = function (self, t)
 	-- function 19
-	if not self._lobby_client.request_data then
+	if self._lobby_client.request_data then
 		local _request_timer = self._request_timer
 
-		_request_timer = _request_timer or 0
+		_request_timer = not not _request_timer or not not 0
 
-		if _request_timer < arg_19_1 then
+		if _request_timer < t then
 			self._lobby_client:request_data()
 
-			self._request_timer = arg_19_1 + num
+			self._request_timer = t + REQUEST_DATA_DELAY
 		end
 	end
 
-	local _makeshift_lobby_data = self._makeshift_lobby_data
+	local lobby_data = self._makeshift_lobby_data
 
-	_makeshift_lobby_data.reserved_profiles = self._lobby_client:lobby_data("reserved_profiles")
+	lobby_data.reserved_profiles = self._lobby_client:lobby_data("reserved_profiles")
 
-	local _hero_widgets = self._hero_widgets
-	local _hero_icon_widgets = self._hero_icon_widgets
-	local flag = false
+	local hero_widgets = self._hero_widgets
+	local hero_icon_widgets = self._hero_icon_widgets
+	local is_button_enabled = false
 
-	for i = 1, #_hero_icon_widgets do
-		local var_19_5
-		local var_19_6 = ProfilePriority[i]
-		local flag_2 = not ProfileSynchronizer.is_free_in_lobby(var_19_6, _makeshift_lobby_data, self._reserved_party_id)
+	for i = 1, #hero_icon_widgets do
+		local occupied
+		local profile_index = ProfilePriority[i]
 
-		flag_2 = self._optional_locked_profile_index == var_19_6 or flag_2
+		occupied = not ProfileSynchronizer.is_free_in_lobby(profile_index, lobby_data, self._reserved_party_id)
+		occupied = self._optional_locked_profile_index == profile_index or not not occupied
 
-		local content = _hero_icon_widgets[i].content
+		local widget = hero_icon_widgets[i]
+		local content = widget.content
 		local button_hotspot = content.button_hotspot
 
-		content.taken = flag_2
+		content.taken = occupied
 	end
 
-	local flag_3 = not ProfileSynchronizer.is_free_in_lobby(self._selected_profile_index, _makeshift_lobby_data, self._reserved_party_id)
+	local taken = not ProfileSynchronizer.is_free_in_lobby(self._selected_profile_index, lobby_data, self._reserved_party_id)
 
-	flag_3 = self._optional_locked_profile_index == self._selected_profile_index or flag_3
+	taken = self._optional_locked_profile_index == self._selected_profile_index or not not taken
 
-	for j = 1, #_hero_widgets do
-		_hero_widgets[j].content.taken = flag_3
+	for i = 1, #hero_widgets do
+		local widget = hero_widgets[i]
+		local content = widget.content
+
+		content.taken = taken
 	end
 
-	local content_2 = _hero_widgets[self._selected_career_column].content
+	local widget = hero_widgets[self._selected_career_column]
+	local content = widget.content
 
-	if not (not content_2.button_hotspot.is_selected and content_2.taken or content_2.locked) then
-		flag = true
+	if content.button_hotspot.is_selected and not content.taken and not content.locked then
+		is_button_enabled = true
 	end
 
-	self:set_select_button_enable_state(flag)
+	self:set_select_button_enable_state(is_button_enabled)
 end
 
-PopupProfilePicker._animate_element_by_time = function (arg_20_0, arg_20_1, arg_20_2, arg_20_3, arg_20_4, arg_20_5)
+PopupProfilePicker._animate_element_by_time = function (self, target, target_index, from, to, time)
 	-- function 20
-	return (UIAnimation.init(UIAnimation.function_by_time, arg_20_1, arg_20_2, arg_20_3, arg_20_4, arg_20_5, math.ease_out_quad))
+	local new_animation = UIAnimation.init(UIAnimation.function_by_time, target, target_index, from, to, time, math.ease_out_quad)
+
+	return new_animation
 end
 
-PopupProfilePicker.set_select_button_enable_state = function (self, arg_21_1)
+PopupProfilePicker.set_select_button_enable_state = function (self, enabled)
 	-- function 21
-	local content = self._widgets_by_name.select_button.content
-	local var_21_1
+	local button_content = self._widgets_by_name.select_button.content
+	local var_21_0
 
-	if not arg_21_1 then
-		var_21_1 = Localize("input_description_confirm")
+	if enabled then
+		var_21_0 = Localize("input_description_confirm")
 
-		if not var_21_1 then
+		if not var_21_0 then
 			-- Nothing
 		end
 	end
 
-	var_21_1 = Localize("dlc1_2_difficulty_unavailable")
+	var_21_0 = Localize("dlc1_2_difficulty_unavailable")
 
 	::label_21_0::
 
-	content.title_text = var_21_1
-	content.button_hotspot.disable_button = not arg_21_1
-	self._selection_approved = arg_21_1
+	button_content.title_text = var_21_0
+	button_content.button_hotspot.disable_button = not enabled
+	self._selection_approved = enabled
 
-	if not arg_21_1 then
-		self._menu_input_desc:set_input_description(var_0_0.generic_input_actions.confirm_available)
+	if enabled then
+		self._menu_input_desc:set_input_description(definitions.generic_input_actions.confirm_available)
 	else
 		self._menu_input_desc:set_input_description(nil)
 	end
 end
 
-PopupProfilePicker._play_sound = function (self, arg_22_1)
+PopupProfilePicker._play_sound = function (self, event)
 	-- function 22
-	WwiseWorld.trigger_event(self._wwise_world, arg_22_1)
+	WwiseWorld.trigger_event(self._wwise_world, event)
 end

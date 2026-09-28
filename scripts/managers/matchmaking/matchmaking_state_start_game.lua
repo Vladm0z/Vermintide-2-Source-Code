@@ -3,23 +3,23 @@
 MatchmakingStateStartGame = class(MatchmakingStateStartGame)
 MatchmakingStateStartGame.NAME = "MatchmakingStateStartGame"
 
-MatchmakingStateStartGame.init = function (self, arg_1_1)
+MatchmakingStateStartGame.init = function (self, params)
 	-- function 1
-	self._lobby = arg_1_1.lobby
-	self._network_server = arg_1_1.network_server
-	self._statistics_db = arg_1_1.statistics_db
-	self._matchmaking_manager = arg_1_1.matchmaking_manager
-	self._network_transmit = arg_1_1.network_transmit
+	self._lobby = params.lobby
+	self._network_server = params.network_server
+	self._statistics_db = params.statistics_db
+	self._matchmaking_manager = params.matchmaking_manager
+	self._network_transmit = params.network_transmit
 end
 
-MatchmakingStateStartGame.on_enter = function (self, arg_2_1)
+MatchmakingStateStartGame.on_enter = function (self, state_context)
 	-- function 2
-	self.state_context = arg_2_1
-	self.search_config = arg_2_1.search_config
+	self.state_context = state_context
+	self.search_config = state_context.search_config
 
 	self:_verify_requirements()
 
-	if self._verifying_dlcs or not self._matchmaking_manager:is_game_matchmaking() then
+	if not self._verifying_dlcs and self._matchmaking_manager:is_game_matchmaking() then
 		self:_initiate_start_game()
 	end
 end
@@ -27,36 +27,36 @@ end
 DLCS_TO_CHECK = {}
 ADDED_DLCS = {}
 
-local tbl = {}
+local host_human_players = {}
 
 MatchmakingStateStartGame._verify_requirements = function (self)
 	-- function 3
 	table.clear(DLCS_TO_CHECK)
 	table.clear(ADDED_DLCS)
 
-	local var_3_0
+	local votes_require_type
 	local search_config = self.search_config
 	local human_players = Managers.player:human_players()
 	local matchmaking_type = search_config.matchmaking_type
 	local mechanism = search_config.mechanism
-	local tbl_2 = {}
+	local mechanism_settings = {}
 
-	if matchmaking_type or not mechanism then
-		tbl_2 = MechanismSettings[mechanism] or tbl_2
+	if matchmaking_type or mechanism then
+		mechanism_settings = not not MechanismSettings[mechanism] or not not mechanism_settings
 
-		if not (not tbl_2.required_dlc and ADDED_DLCS[tbl_2.required_dlc]) then
-			DLCS_TO_CHECK[#DLCS_TO_CHECK + 1] = NetworkLookup.dlcs[tbl_2.required_dlc]
-			ADDED_DLCS[tbl_2.required_dlc] = true
-			var_3_0 = "all"
+		if mechanism_settings.required_dlc and not ADDED_DLCS[mechanism_settings.required_dlc] then
+			DLCS_TO_CHECK[#DLCS_TO_CHECK + 1] = NetworkLookup.dlcs[mechanism_settings.required_dlc]
+			ADDED_DLCS[mechanism_settings.required_dlc] = true
+			votes_require_type = "all"
 		end
 
-		if not tbl_2.extra_requirements_function then
+		if mechanism_settings.extra_requirements_function then
 			local statistics_db = Managers.player:statistics_db()
 
-			for k, v in pairs(human_players) do
-				local stats_id = v:stats_id()
+			for _, player in pairs(human_players) do
+				local stats_id = player:stats_id()
 
-				if not tbl_2.extra_requirements_function(statistics_db, stats_id) then
+				if not mechanism_settings.extra_requirements_function(statistics_db, stats_id) then
 					self._matchmaking_manager:cancel_matchmaking()
 					self._matchmaking_manager:send_system_chat_message("matchmaking_status_game_mode_requirements_failed")
 
@@ -68,26 +68,32 @@ MatchmakingStateStartGame._verify_requirements = function (self)
 
 	local difficulty = search_config.difficulty
 
-	if not difficulty then
-		local var_3_9 = DifficultySettings[difficulty]
+	if difficulty then
+		local difficulty_settings = DifficultySettings[difficulty]
 
-		if not (tbl_2.disable_difficulty_check or Development.parameter("unlock_all_difficulties")) then
-			if not (search_config.private_game or not (#DifficultyManager.players_below_required_power_level(difficulty, human_players) > 0)) then
-				self._matchmaking_manager:cancel_matchmaking()
-				self._matchmaking_manager:send_system_chat_message("matchmaking_status_difficulty_requirements_failed")
+		if not mechanism_settings.disable_difficulty_check and not Development.parameter("unlock_all_difficulties") then
+			if not search_config.private_game then
+				local players_below_difficulty = DifficultyManager.players_below_required_power_level(difficulty, human_players)
 
-				return
+				if #players_below_difficulty > 0 then
+					self._matchmaking_manager:cancel_matchmaking()
+					self._matchmaking_manager:send_system_chat_message("matchmaking_status_difficulty_requirements_failed")
+
+					return
+				end
 			end
 
-			if not var_3_9.extra_requirement_name then
-				local var_3_10 = human_players
+			if difficulty_settings.extra_requirement_name then
+				local players = human_players
 
-				if not Managers.state.network.is_server then
-					tbl[1] = Managers.player:local_player()
-					var_3_10 = tbl
+				if Managers.state.network.is_server then
+					host_human_players[1] = Managers.player:local_player()
+					players = host_human_players
 				end
 
-				if #DifficultyManager.players_locked_difficulty_rank(difficulty, var_3_10) > 0 then
+				local players_not_meeting_requirements = DifficultyManager.players_locked_difficulty_rank(difficulty, players)
+
+				if #players_not_meeting_requirements > 0 then
 					self._matchmaking_manager:cancel_matchmaking()
 					self._matchmaking_manager:send_system_chat_message("matchmaking_status_difficulty_requirements_failed")
 
@@ -96,10 +102,10 @@ MatchmakingStateStartGame._verify_requirements = function (self)
 			end
 		end
 
-		if not (not var_3_9.dlc_requirement and ADDED_DLCS[var_3_9.dlc_requirement]) then
-			DLCS_TO_CHECK[#DLCS_TO_CHECK + 1] = NetworkLookup.dlcs[var_3_9.dlc_requirement]
-			ADDED_DLCS[var_3_9.dlc_requirement] = true
-			var_3_0 = var_3_0 ~= "all" or not "all" or "any"
+		if difficulty_settings.dlc_requirement and not ADDED_DLCS[difficulty_settings.dlc_requirement] then
+			DLCS_TO_CHECK[#DLCS_TO_CHECK + 1] = NetworkLookup.dlcs[difficulty_settings.dlc_requirement]
+			ADDED_DLCS[difficulty_settings.dlc_requirement] = true
+			votes_require_type = (votes_require_type ~= "all" or not "all") and not not "any"
 		end
 	end
 
@@ -108,7 +114,7 @@ MatchmakingStateStartGame._verify_requirements = function (self)
 		self._verify_dlc_data = {
 			voters = self:_active_peers(),
 			results = {},
-			votes_require_type = var_3_0
+			votes_require_type = votes_require_type
 		}
 
 		Managers.state.network.network_transmit:send_rpc_all("rpc_matchmaking_verify_dlc", DLCS_TO_CHECK)
@@ -122,9 +128,9 @@ MatchmakingStateStartGame._initiate_start_game = function (self)
 	self:_start_game()
 end
 
-MatchmakingStateStartGame.update = function (self, arg_5_1, arg_5_2)
+MatchmakingStateStartGame.update = function (self, dt, t)
 	-- function 5
-	if not self._verifying_dlcs then
+	if self._verifying_dlcs then
 		return self:_handle_verify_dlcs()
 	end
 
@@ -133,144 +139,153 @@ end
 
 MatchmakingStateStartGame._setup_lobby_data = function (self)
 	-- function 6
-	local var_6_0
-	local var_6_1
-	local var_6_2
-	local var_6_3
-	local var_6_4
-	local var_6_5
-	local var_6_6
-	local var_6_7
-	local var_6_8
+	local mission_id, difficulty, difficulty_tweak, act_key, quick_game, private_game, excluded_level_keys, weave_name, conflict_settings
 	local search_config = self.search_config
 	local matchmaking_type = search_config.matchmaking_type
 	local mechanism = search_config.mechanism
 
-	if not self.state_context.join_by_lobby_browser then
-		var_6_0 = Managers.mechanism:default_level_key()
-
-		local var_6_12
-
-		var_6_1, var_6_12 = Managers.state.difficulty:get_difficulty()
-		var_6_3 = nil
-		var_6_4 = false
-		var_6_5 = false
-		var_6_6 = {}
+	if self.state_context.join_by_lobby_browser then
+		mission_id = Managers.mechanism:default_level_key()
+		difficulty, difficulty_tweak = Managers.state.difficulty:get_difficulty()
+		act_key = nil
+		quick_game = false
+		private_game = false
+		excluded_level_keys = {}
 	else
-		var_6_0 = search_config.mission_id
-		var_6_1 = search_config.difficulty
-
-		local num = 0
-
-		var_6_3 = search_config.act_key
-		var_6_4 = search_config.quick_game
-		var_6_5 = search_config.private_game
-		var_6_6 = search_config.excluded_level_keys
+		mission_id = search_config.mission_id
+		difficulty = search_config.difficulty
+		difficulty_tweak = 0
+		act_key = search_config.act_key
+		quick_game = search_config.quick_game
+		private_game = search_config.private_game
+		excluded_level_keys = search_config.excluded_level_keys
 	end
 
-	if not (var_6_4 or var_6_0 == nil or var_6_0 ~= "any") then
-		local flag = false
+	if quick_game or mission_id == nil or mission_id == "any" then
+		local ignore_dlc_check = false
 
-		if not Managers.account:offline_mode() then
-			flag = false
+		if Managers.account:offline_mode() then
+			ignore_dlc_check = false
 		end
 
 		if mechanism == "weave" then
-			local shallow_copy = table.shallow_copy(WeaveSettings.templates_ordered)
+			local templates = table.shallow_copy(WeaveSettings.templates_ordered)
 
-			table.array_remove_if(shallow_copy, function (self)
+			table.array_remove_if(templates, function (v)
 				-- function 7
-				return LevelUnlockUtils.weave_disabled(self.name)
+				return LevelUnlockUtils.weave_disabled(v.name)
 			end)
 
-			local name = table.random(shallow_copy).name
+			local weave_template = table.random(templates)
 
-			var_6_0 = name
+			weave_name = weave_template.name
+			mission_id = weave_name
 
-			Managers.weave:set_next_weave(name)
+			Managers.weave:set_next_weave(weave_name)
 			Managers.weave:set_next_objective(1)
 		elseif mechanism == "deus" then
-			local gather_party_unlocked_journeys = self._matchmaking_manager:gather_party_unlocked_journeys()
-			local journey_data = Managers.backend:get_interface("deus"):get_journey_cycle().journey_data
-			local shallow_copy_2 = table.shallow_copy(gather_party_unlocked_journeys)
+			local unlocked_journeys = self._matchmaking_manager:gather_party_unlocked_journeys()
+			local backend_deus = Managers.backend:get_interface("deus")
+			local journey_cycle = backend_deus:get_journey_cycle()
+			local journey_data = journey_cycle.journey_data
+			local filtered_journeys = table.shallow_copy(unlocked_journeys)
 
-			table.array_remove_if(shallow_copy_2, function (arg_8_0)
+			table.array_remove_if(filtered_journeys, function (v)
 				-- function 8
-				return LevelUnlockUtils.is_chaos_waste_god_disabled(journey_data[arg_8_0].dominant_god)
+				return LevelUnlockUtils.is_chaos_waste_god_disabled(journey_data[v].dominant_god)
 			end)
 
-			var_6_0 = shallow_copy_2[Math.random(1, #shallow_copy_2)]
+			mission_id = filtered_journeys[Math.random(1, #filtered_journeys)]
 
-			local dominant_god = journey_data[var_6_0].dominant_god
-			local tbl = {
+			local journey_settings = journey_data[mission_id]
+			local dominant_god = journey_settings.dominant_god
+			local vote_data = {
 				private_game = false,
 				quick_game = true,
 				strict_matchmaking = false,
-				mission_id = var_6_0,
-				difficulty = var_6_1,
+				mission_id = mission_id,
+				difficulty = difficulty,
 				dominant_god = dominant_god,
 				matchmaking_type = matchmaking_type
 			}
 
-			Managers.mechanism:set_vote_data(tbl)
+			Managers.mechanism:set_vote_data(vote_data)
 		elseif mechanism == "versus" then
 			local versus_map_pool = script_data.versus_map_pool
 
-			versus_map_pool = versus_map_pool or Managers.mechanism:mechanism_setting_for_title("map_pool")
-			var_6_0 = versus_map_pool[Math.random(#versus_map_pool)]
+			if not versus_map_pool then
+				-- Nothing
+			end
 
-			local get_level_override_key = Managers.mechanism:game_mechanism():get_level_override_key()
+			versus_map_pool = Managers.mechanism:mechanism_setting_for_title("map_pool")
 
-			if not get_level_override_key then
-				var_6_0 = get_level_override_key
+			local map_pool = versus_map_pool
+
+			::label_6_0::
+
+			mission_id = map_pool[Math.random(#map_pool)]
+
+			local override_level_key = Managers.mechanism:game_mechanism():get_level_override_key()
+
+			if override_level_key then
+				mission_id = override_level_key
 			end
 		else
 			local preferred_level_keys = search_config.preferred_level_keys
 
 			print("MatchmakingStateStartGame preferred_level_keys", preferred_level_keys)
 
-			if not preferred_level_keys then
-				local shallow_copy_3 = table.shallow_copy(preferred_level_keys)
+			if preferred_level_keys then
+				local filtered_level_keys = table.shallow_copy(preferred_level_keys)
 
-				table.array_remove_if(shallow_copy_3, function (self)
+				table.array_remove_if(filtered_level_keys, function (v)
 					-- function 9
-					return LevelUnlockUtils.is_level_disabled(self.name)
+					return LevelUnlockUtils.is_level_disabled(v.name)
 				end)
-				table.dump(shallow_copy_3, "filtered_level_keys")
+				table.dump(filtered_level_keys, "filtered_level_keys")
 
-				var_6_0 = shallow_copy_3[Math.random(1, #shallow_copy_3)]
+				mission_id = filtered_level_keys[Math.random(1, #filtered_level_keys)]
 			else
-				var_6_0 = self._matchmaking_manager:get_weighed_random_unlocked_level(flag, false, var_6_6)
+				mission_id = self._matchmaking_manager:get_weighed_random_unlocked_level(ignore_dlc_check, false, excluded_level_keys)
 			end
 		end
 	elseif mechanism == "weave" then
-		var_6_0 = search_config.mission_id
+		mission_id = search_config.mission_id
 
-		if not var_6_4 then
-			if not Managers.account:offline_mode() then
-				var_6_5 = search_config.private_game
+		if not quick_game then
+			if Managers.account:offline_mode() then
+				private_game = search_config.private_game
 			else
-				var_6_5 = true
+				private_game = true
 			end
 		end
-	elseif not (mechanism ~= "versus" or search_config.player_hosted) then
+	elseif mechanism == "versus" and not search_config.player_hosted then
 		local versus_map_pool_2 = script_data.versus_map_pool
 
-		versus_map_pool_2 = versus_map_pool_2 or Managers.mechanism:mechanism_setting_for_title("map_pool")
-		var_6_0 = versus_map_pool_2[Math.random(#versus_map_pool_2)]
+		if not versus_map_pool_2 then
+			-- Nothing
+		end
 
-		local get_level_override_key_2 = Managers.mechanism:game_mechanism():get_level_override_key()
+		versus_map_pool_2 = Managers.mechanism:mechanism_setting_for_title("map_pool")
 
-		if not get_level_override_key_2 then
-			var_6_0 = get_level_override_key_2
+		local map_pool = versus_map_pool_2
+
+		::label_6_1::
+
+		mission_id = map_pool[Math.random(#map_pool)]
+
+		local override_level_key = Managers.mechanism:game_mechanism():get_level_override_key()
+
+		if override_level_key then
+			mission_id = override_level_key
 		end
 	end
 
-	local is_trusted = Managers.eac:is_trusted()
+	local eac_authorized = Managers.eac:is_trusted()
 
-	if not IS_XB1 then
-		local HOPPER_NAME = LobbyInternal.HOPPER_NAME
-		local tbl_2 = {
+	if IS_XB1 then
+		local hopper_name = LobbyInternal.HOPPER_NAME
+		local DIFFICULTY_LUT = {
 			"easy",
 			"normal",
 			"hard",
@@ -280,133 +295,139 @@ MatchmakingStateStartGame._setup_lobby_data = function (self)
 			"cataclysm_2",
 			"cataclysm_3"
 		}
-		local var_6_31 = var_6_0
-		local var_6_32
+		local ticket_mission_id = mission_id
+		local matchmaking_types
 
 		if matchmaking_type == "event" then
-			var_6_32 = {
+			matchmaking_types = {
 				"event"
 			}
 		elseif mechanism == "weave" then
-			if not var_6_4 then
-				var_6_31 = "weave_any"
-				var_6_32 = {
+			if quick_game then
+				ticket_mission_id = "weave_any"
+				matchmaking_types = {
 					"weave_quick_game"
 				}
 			else
-				HOPPER_NAME = LobbyInternal.WEAVE_HOPPER_NAME
-				var_6_32 = {
+				hopper_name = LobbyInternal.WEAVE_HOPPER_NAME
+				matchmaking_types = {
 					"weave",
-					var_6_0
+					mission_id
 				}
 			end
 		elseif mechanism == "deus" then
-			var_6_32 = {
+			matchmaking_types = {
 				"deus_quick_game",
 				"deus_custom_game"
 			}
 		else
-			var_6_32 = {
+			matchmaking_types = {
 				"quick_game",
 				"custom_game"
 			}
 		end
 
-		local get_members = self._lobby:members():get_members()
-		local tbl_3 = {}
+		local lobby_members_class = self._lobby:members()
+		local lobby_members = lobby_members_class:get_members()
+		local profiles = {}
 
-		for i, v in ipairs(get_members) do
-			local player_from_peer_id = Managers.player:player_from_peer_id(v)
+		for _, peer_id in ipairs(lobby_members) do
+			local player = Managers.player:player_from_peer_id(peer_id)
 
-			if not player_from_peer_id then
-				tbl_3[#tbl_3 + 1] = player_from_peer_id:profile_index()
+			if player then
+				profiles[#profiles + 1] = player:profile_index()
 			end
 		end
 
-		local find = table.find(tbl_2, var_6_1)
-		local get_average_power_level = self._matchmaking_manager:get_average_power_level()
-		local num_2 = 0
-		local get_network_hash = self._lobby:get_network_hash()
-		local var_6_40 = WeaveSettings.templates[var_6_0]
-		local flag_2 = not var_6_40 and table.find(WeaveSettings.templates_ordered, var_6_40)
-		local tbl_4 = {
+		local difficulty_id = table.find(DIFFICULTY_LUT, difficulty)
+		local powerlevel = self._matchmaking_manager:get_average_power_level()
+		local strict_matchmaking = 0
+		local network_hash = self._lobby:get_network_hash()
+		local weave_template = WeaveSettings.templates[mission_id]
+		local weave_index = not not weave_template and not not table.find(WeaveSettings.templates_ordered, weave_template)
+		local ticket_params = {
 			level = {
-				var_6_31
+				ticket_mission_id
 			},
-			matchmaking_types = var_6_32,
-			difficulty = find,
-			powerlevel = get_average_power_level,
-			strict_matchmaking = num_2,
-			profiles = tbl_3,
-			network_hash = get_network_hash,
-			weave_index = flag_2
+			matchmaking_types = matchmaking_types,
+			difficulty = difficulty_id,
+			powerlevel = powerlevel,
+			strict_matchmaking = strict_matchmaking,
+			profiles = profiles,
+			network_hash = network_hash,
+			weave_index = weave_index
 		}
 
-		self._lobby:enable_matchmaking(not var_6_5, tbl_4, 600, HOPPER_NAME)
+		self._lobby:enable_matchmaking(not private_game, ticket_params, 600, hopper_name)
 	end
 
-	local var_6_43 = matchmaking_type
+	local lobby_matchmaking_type = matchmaking_type
 
-	if var_6_43 == "standard" then
-		var_6_43 = "custom"
+	if lobby_matchmaking_type == "standard" then
+		lobby_matchmaking_type = "custom"
 	end
 
-	local get_environment_variation_id = LevelHelper:get_environment_variation_id(var_6_0)
+	local environment_variation_id = LevelHelper:get_environment_variation_id(mission_id)
 
-	self._matchmaking_manager:set_matchmaking_data(var_6_0, var_6_1, var_6_3, var_6_43, var_6_5, var_6_4, is_trusted, get_environment_variation_id, mechanism)
+	self._matchmaking_manager:set_matchmaking_data(mission_id, difficulty, act_key, lobby_matchmaking_type, private_game, quick_game, eac_authorized, environment_variation_id, mechanism)
 
 	local level_transition_handler = Managers.level_transition_handler
-	local generate_level_seed = Managers.mechanism:generate_level_seed()
-	local var_6_47 = var_6_0
+	local level_seed = Managers.mechanism:generate_level_seed()
+	local level_key = mission_id
 
 	if mechanism == "weave" then
-		local var_6_48 = WeaveSettings.templates[var_6_0]
+		local weave_template = WeaveSettings.templates[mission_id]
 
-		if not var_6_48 then
-			local get_next_objective = Managers.weave:get_next_objective()
-			local var_6_50 = var_6_48.objectives[get_next_objective]
+		if weave_template then
+			local objective_index = Managers.weave:get_next_objective()
+			local objective = weave_template.objectives[objective_index]
 
-			var_6_47 = var_6_50.level_id
-			var_6_8 = var_6_50.conflict_settings
+			level_key = objective.level_id
+			conflict_settings = objective.conflict_settings
 		end
 	end
 
-	local generate_locked_director_functions = Managers.mechanism:generate_locked_director_functions(var_6_47)
+	local locked_director_functions = Managers.mechanism:generate_locked_director_functions(level_key)
 
-	level_transition_handler:set_next_level(var_6_47, get_environment_variation_id, generate_level_seed, nil, nil, var_6_8, generate_locked_director_functions, var_6_1, nil)
+	level_transition_handler:set_next_level(level_key, environment_variation_id, level_seed, nil, nil, conflict_settings, locked_director_functions, difficulty, nil)
 end
 
 MatchmakingStateStartGame.get_transition = function (self)
 	-- function 10
-	if not self.next_transition_state and not self.start_lobby_data then
+	if self.next_transition_state and self.start_lobby_data then
 		return self.next_transition_state, self.start_lobby_data
 	end
 end
 
-MatchmakingStateStartGame._send_rpc_clients = function (self, arg_11_1, ...)
+MatchmakingStateStartGame._send_rpc_clients = function (self, rpc_name, ...)
 	-- function 11
-	if not self.state_context.clients_not_in_game_session then
-		local peer_id = Network.peer_id()
-		local get_members = self._lobby:members():get_members()
+	if self.state_context.clients_not_in_game_session then
+		local my_peer_id = Network.peer_id()
+		local lobby_members = self._lobby:members()
+		local members = lobby_members:get_members()
 
-		for k, v in pairs(get_members) do
-			if v ~= peer_id then
-				self._network_transmit:send_rpc(arg_11_1, v, ...)
+		for _, peer_id in pairs(members) do
+			if peer_id ~= my_peer_id then
+				self._network_transmit:send_rpc(rpc_name, peer_id, ...)
 			end
 		end
 	else
-		self._network_transmit:send_rpc_clients(arg_11_1, ...)
+		self._network_transmit:send_rpc_clients(rpc_name, ...)
 	end
 end
 
 MatchmakingStateStartGame._start_game = function (self)
 	-- function 12
 	self:_capture_telemetry()
-	Managers.mechanism:network_handler():get_match_handler():send_rpc_down("rpc_matchmaking_join_game")
+
+	local network_handler = Managers.mechanism:network_handler()
+	local match_handler = network_handler:get_match_handler()
+
+	match_handler:send_rpc_down("rpc_matchmaking_join_game")
 
 	local game_server_lobby_client = self.state_context.game_server_lobby_client
 
-	if not game_server_lobby_client then
+	if game_server_lobby_client then
 		self.next_transition_state = "start_lobby"
 		self.start_lobby_data = {
 			lobby_client = game_server_lobby_client
@@ -422,33 +443,38 @@ end
 
 MatchmakingStateStartGame._capture_telemetry = function (self)
 	-- function 13
-	local get_members = self._lobby:members():get_members()
-	local num = 0
+	local lobby_members = self._lobby:members()
+	local members = lobby_members:get_members()
+	local nr_friends = 0
 
-	for k, v in pairs(get_members) do
-		if not rawget(_G, "Steam") and not rawget(_G, "Friends") and not Friends.in_category(v, Friends.FRIEND_FLAG) then
-			num = num + 1
+	for _, peer_id in pairs(members) do
+		if rawget(_G, "Steam") and rawget(_G, "Friends") then
+			local is_friend = Friends.in_category(peer_id, Friends.FRIEND_FLAG)
+
+			if is_friend then
+				nr_friends = nr_friends + 1
+			end
 		end
 	end
 
-	local local_player = Managers.player:local_player(1)
-	local num_2 = Managers.time:time("main") - self.state_context.started_matchmaking_t
-	local strict_matchmaking = self.search_config.strict_matchmaking
+	local player = Managers.player:local_player(1)
+	local time_taken = Managers.time:time("main") - self.state_context.started_matchmaking_t
+	local using_strict_matchmaking = self.search_config.strict_matchmaking
 
-	Managers.telemetry_events:matchmaking_starting_game(local_player, num_2, self.search_config)
+	Managers.telemetry_events:matchmaking_starting_game(player, time_taken, self.search_config)
 end
 
-MatchmakingStateStartGame._handle_verify_dlcs = function (self, arg_14_1, arg_14_2)
+MatchmakingStateStartGame._handle_verify_dlcs = function (self, dt, t)
 	-- function 14
-	local _verify_dlc_data = self._verify_dlc_data
-	local _active_peers = self:_active_peers()
+	local verify_dlc_data = self._verify_dlc_data
+	local active_peers = self:_active_peers()
 
-	self:_update_voter_list_by_active_peers(_active_peers, _verify_dlc_data.voters, _verify_dlc_data.results)
+	self:_update_voter_list_by_active_peers(active_peers, verify_dlc_data.voters, verify_dlc_data.results)
 
-	local _handle_results, var_14_3 = self:_handle_results(_verify_dlc_data)
+	local is_done, success = self:_handle_results(verify_dlc_data)
 
-	if not _handle_results then
-		if not var_14_3 then
+	if is_done then
+		if success then
 			self:_initiate_start_game()
 		else
 			self._matchmaking_manager:cancel_matchmaking()
@@ -462,80 +488,81 @@ MatchmakingStateStartGame._handle_verify_dlcs = function (self, arg_14_1, arg_14
 	end
 end
 
-MatchmakingStateStartGame._handle_results = function (arg_15_0, arg_15_1)
+MatchmakingStateStartGame._handle_results = function (self, verify_dlc_data)
 	-- function 15
-	local flag = true
-	local flag_2 = true
-	local votes_require_type = arg_15_1.votes_require_type
+	local is_done = true
+	local success = true
+	local votes_require_type = verify_dlc_data.votes_require_type
 
-	for k, v in pairs(arg_15_1.voters) do
-		if arg_15_1.results[k] == nil then
-			flag = false
-		elseif not (votes_require_type ~= "all" or arg_15_1.results[k]) then
-			flag_2 = false
-		elseif votes_require_type ~= "any" or not arg_15_1.results[k] then
-			flag_2 = true
+	for peer_id, _ in pairs(verify_dlc_data.voters) do
+		if verify_dlc_data.results[peer_id] == nil then
+			is_done = false
+		elseif votes_require_type == "all" and not verify_dlc_data.results[peer_id] then
+			success = false
+		elseif votes_require_type == "any" and verify_dlc_data.results[peer_id] then
+			success = true
 		end
 	end
 
-	return flag, flag_2
+	return is_done, success
 end
 
-MatchmakingStateStartGame.rpc_matchmaking_verify_dlc_reply = function (arg_16_0, arg_16_1, arg_16_2)
+MatchmakingStateStartGame.rpc_matchmaking_verify_dlc_reply = function (self, channel_id, success)
 	-- function 16
-	local var_16_0 = CHANNEL_TO_PEER_ID[arg_16_1]
+	local peer_id = CHANNEL_TO_PEER_ID[channel_id]
 
-	arg_16_0._verify_dlc_data.results[var_16_0] = arg_16_2
+	self._verify_dlc_data.results[peer_id] = success
 end
 
-local tbl_2 = {}
+local removed_peers = {}
 
-MatchmakingStateStartGame._update_voter_list_by_active_peers = function (arg_17_0, arg_17_1, arg_17_2, arg_17_3)
+MatchmakingStateStartGame._update_voter_list_by_active_peers = function (self, active_peers, voter_list, results)
 	-- function 17
-	table.clear(tbl_2)
+	table.clear(removed_peers)
 
 	local human_players = Managers.player:human_players()
 
-	for k, v in pairs(human_players) do
-		arg_17_1[v.peer_id] = true
+	for _, player in pairs(human_players) do
+		local peer_id = player.peer_id
+
+		active_peers[peer_id] = true
 	end
 
-	local flag = false
+	local changed = false
 
-	for k_2 = #arg_17_2, 1, -1 do
-		local var_17_2 = arg_17_2[k_2]
+	for i = #voter_list, 1, -1 do
+		local voter_peer_id = voter_list[i]
 
-		if not arg_17_1[var_17_2] then
-			table.remove(arg_17_2, k_2)
+		if not active_peers[voter_peer_id] then
+			table.remove(voter_list, i)
 
-			tbl_2[#tbl_2 + 1] = var_17_2
-
-			local flag_2 = true
+			removed_peers[#removed_peers + 1] = voter_peer_id
+			changed = true
 		end
 	end
 
-	for l = 1, #tbl_2 do
-		local var_17_4 = tbl_2[l]
+	for i = 1, #removed_peers do
+		local peer_id = removed_peers[i]
 
-		if arg_17_3[var_17_4] ~= nil then
-			arg_17_3[var_17_4] = nil
+		if results[peer_id] ~= nil then
+			results[peer_id] = nil
 		end
 	end
 end
 
-local tbl_3 = {}
+local peers_local = {}
 
-MatchmakingStateStartGame._active_peers = function (arg_18_0)
+MatchmakingStateStartGame._active_peers = function (self)
 	-- function 18
-	table.clear(tbl_3)
+	table.clear(peers_local)
 
 	local human_players = Managers.player:human_players()
 
-	for k, v in pairs(human_players) do
-		local peer_id = v.peer_id
+	for _, player in pairs(human_players) do
+		local peer_id = player.peer_id
 
-		tbl_3[peer_id] = true
+		peers_local[peer_id] = true
 	end
 
-	return tbl_3
+	return peers_local
 end

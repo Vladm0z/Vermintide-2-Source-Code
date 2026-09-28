@@ -1,19 +1,19 @@
 -- chunkname: @scripts/ui/views/hero_view/windows/definitions/hero_window_gotwf_item_preview_definitions.lua
 
 local console_menu_scenegraphs = UISettings.console_menu_scenegraphs
-local tbl = {
+local list_size = {
 	800,
 	600
 }
-local tbl_2 = {
+local list_entry_size = {
 	800,
 	220
 }
-local tbl_3 = {
+local list_scrollbar_size = {
 	16,
-	tbl[2] + 100
+	list_size[2] + 100
 }
-local tbl_4 = {
+local scenegraph_definition = {
 	screen = console_menu_scenegraphs.screen,
 	background = {
 		scale = "fit_height",
@@ -285,7 +285,7 @@ local tbl_4 = {
 		}
 	}
 }
-local tbl_5 = {
+local title_text_style = {
 	word_wrap = false,
 	upper_case = false,
 	localize = false,
@@ -302,7 +302,7 @@ local tbl_5 = {
 		2
 	}
 }
-local tbl_6 = {
+local sub_title_text_style = {
 	word_wrap = false,
 	upper_case = false,
 	localize = false,
@@ -319,7 +319,7 @@ local tbl_6 = {
 		2
 	}
 }
-local tbl_7 = {
+local description_text_style = {
 	word_wrap = true,
 	upper_case = false,
 	localize = false,
@@ -336,7 +336,7 @@ local tbl_7 = {
 		2
 	}
 }
-local tbl_8 = {
+local type_title_text_style = {
 	word_wrap = false,
 	upper_case = false,
 	localize = false,
@@ -353,7 +353,7 @@ local tbl_8 = {
 		2
 	}
 }
-local tbl_9 = {
+local career_title_text_style = {
 	word_wrap = false,
 	upper_case = false,
 	localize = false,
@@ -375,7 +375,7 @@ local tbl_9 = {
 		2
 	}
 }
-local tbl_10 = {
+local disclaimer_text_style = {
 	word_wrap = false,
 	upper_case = false,
 	localize = false,
@@ -397,7 +397,7 @@ local tbl_10 = {
 		2
 	}
 }
-local tbl_11 = {
+local amount_text_style = {
 	word_wrap = false,
 	upper_case = false,
 	localize = false,
@@ -419,7 +419,7 @@ local tbl_11 = {
 		2
 	}
 }
-local tbl_12 = {
+local loading_widgets = {
 	loading_icon = {
 		scenegraph_id = "loading_icon",
 		element = {
@@ -428,16 +428,26 @@ local tbl_12 = {
 					style_id = "texture_id",
 					pass_type = "rotated_texture",
 					texture_id = "texture_id",
-					content_change_function = function (arg_1_0, arg_1_1, arg_1_2, arg_1_3)
+					content_change_function = function (content, style, _, dt)
 						-- function 1
-						local progress = arg_1_1.progress
+						local progress_2 = style.progress
 
-						progress = progress or 0
+						if not progress_2 then
+							-- Nothing
+						end
 
-						local num = (progress + arg_1_3) % 1
+						progress_2 = 0
 
-						arg_1_1.angle = math.pow(2, math.smoothstep(num, 0, 1)) * (math.pi * 2)
-						arg_1_1.progress = num
+						local progress = progress_2
+
+						::label_1_0::
+
+						progress = (progress + dt) % 1
+
+						local angle = math.pow(2, math.smoothstep(progress, 0, 1)) * (math.pi * 2)
+
+						style.angle = angle
+						style.progress = progress
 					end
 				}
 			}
@@ -473,38 +483,38 @@ local tbl_12 = {
 	}
 }
 
-local function fn(arg_2_0)
+local function create_painting_widget(scenegraph_id)
 	-- function 2
-	local str = "menu_frame_08"
-	local var_2_1 = UIFrameSettings[str]
-	local var_2_2 = var_2_1.texture_sizes.horizontal[2]
-	local tbl = {
+	local painting_frame_name = "menu_frame_08"
+	local painting_frame_settings = UIFrameSettings[painting_frame_name]
+	local painting_frame_spacing = painting_frame_settings.texture_sizes.horizontal[2]
+	local widget = {
 		element = {}
 	}
-	local tbl_2 = {
+	local passes = {
 		{
 			style_id = "painting",
 			pass_type = "texture_uv",
 			content_id = "painting",
-			content_check_function = function (self)
+			content_check_function = function (content)
 				-- function 3
-				return self.texture_id
+				return content.texture_id
 			end
 		},
 		{
 			pass_type = "texture_frame",
 			style_id = "painting_frame",
 			texture_id = "painting_frame",
-			content_check_function = function (self)
+			content_check_function = function (content)
 				-- function 4
-				return self.painting
+				return content.painting
 			end
 		}
 	}
-	local tbl_3 = {
-		painting_frame = var_2_1.texture
+	local content = {
+		painting_frame = painting_frame_settings.texture
 	}
-	local tbl_4 = {
+	local style = {
 		painting = {
 			vertical_alignment = "center",
 			horizontal_alignment = "center",
@@ -523,11 +533,11 @@ local function fn(arg_2_0)
 		painting_frame = {
 			vertical_alignment = "center",
 			horizontal_alignment = "center",
-			texture_size = var_2_1.texture_size,
-			texture_sizes = var_2_1.texture_sizes,
+			texture_size = painting_frame_settings.texture_size,
+			texture_sizes = painting_frame_settings.texture_sizes,
 			frame_margins = {
-				-var_2_2,
-				-var_2_2
+				-painting_frame_spacing,
+				-painting_frame_spacing
 			},
 			color = {
 				255,
@@ -543,23 +553,24 @@ local function fn(arg_2_0)
 		}
 	}
 
-	tbl.element.passes = tbl_2
-	tbl.content = tbl_3
-	tbl.style = tbl_4
-	tbl.offset = {
+	widget.element.passes = passes
+	widget.content = content
+	widget.style = style
+	widget.offset = {
 		0,
 		0,
 		5
 	}
-	tbl.scenegraph_id = "item_texture"
+	widget.scenegraph_id = "item_texture"
 
-	return tbl
+	return widget
 end
 
-local function fn_2(arg_5_0, arg_5_1, arg_5_2, arg_5_3)
+local function create_list_mask(scenegraph_id, list_scenegraph_id, size, entry_size)
 	-- function 5
-	local var_5_0 = UIFrameSettings.frame_outer_glow_04_big.texture_sizes.horizontal[2]
-	local tbl = {
+	local entry_hover_frame_settings = UIFrameSettings.frame_outer_glow_04_big
+	local entry_hover_frame_spacing = entry_hover_frame_settings.texture_sizes.horizontal[2]
+	local element = {
 		passes = {
 			{
 				style_id = "hotspot",
@@ -588,7 +599,7 @@ local function fn_2(arg_5_0, arg_5_1, arg_5_2, arg_5_3)
 			}
 		}
 	}
-	local tbl_2 = {
+	local content = {
 		mask_edge = "mask_rect_edge_fade",
 		mask_texture = "mask_rect",
 		list_hotspot = {},
@@ -599,11 +610,11 @@ local function fn_2(arg_5_0, arg_5_1, arg_5_2, arg_5_3)
 			scroll_value = 1
 		}
 	}
-	local tbl_3 = {
+	local style = {
 		hotspot = {
 			size = {
-				arg_5_2[1],
-				arg_5_2[2]
+				size[1],
+				size[2]
 			},
 			offset = {
 				0,
@@ -613,8 +624,8 @@ local function fn_2(arg_5_0, arg_5_1, arg_5_2, arg_5_3)
 		},
 		list_hotspot = {
 			size = {
-				arg_5_2[1] + var_5_0 * 2,
-				arg_5_2[2] + var_5_0 * 2
+				size[1] + entry_hover_frame_spacing * 2,
+				size[2] + entry_hover_frame_spacing * 2
 			},
 			color = {
 				255,
@@ -623,15 +634,15 @@ local function fn_2(arg_5_0, arg_5_1, arg_5_2, arg_5_3)
 				255
 			},
 			offset = {
-				-var_5_0,
-				-var_5_0,
+				-entry_hover_frame_spacing,
+				-entry_hover_frame_spacing,
 				0
 			}
 		},
 		mask = {
 			size = {
-				arg_5_2[1] + var_5_0 * 2,
-				arg_5_2[2]
+				size[1] + entry_hover_frame_spacing * 2,
+				size[2]
 			},
 			color = {
 				255,
@@ -640,15 +651,15 @@ local function fn_2(arg_5_0, arg_5_1, arg_5_2, arg_5_3)
 				255
 			},
 			offset = {
-				-var_5_0,
+				-entry_hover_frame_spacing,
 				0,
 				0
 			}
 		},
 		mask_top = {
 			size = {
-				arg_5_2[1] + var_5_0 * 2,
-				var_5_0
+				size[1] + entry_hover_frame_spacing * 2,
+				entry_hover_frame_spacing
 			},
 			color = {
 				255,
@@ -657,15 +668,15 @@ local function fn_2(arg_5_0, arg_5_1, arg_5_2, arg_5_3)
 				255
 			},
 			offset = {
-				-var_5_0,
-				arg_5_2[2],
+				-entry_hover_frame_spacing,
+				size[2],
 				0
 			}
 		},
 		mask_bottom = {
 			size = {
-				arg_5_2[1] + var_5_0 * 2,
-				var_5_0
+				size[1] + entry_hover_frame_spacing * 2,
+				entry_hover_frame_spacing
 			},
 			color = {
 				255,
@@ -674,47 +685,49 @@ local function fn_2(arg_5_0, arg_5_1, arg_5_2, arg_5_3)
 				255
 			},
 			offset = {
-				-var_5_0,
-				-var_5_0,
+				-entry_hover_frame_spacing,
+				-entry_hover_frame_spacing,
 				0
 			},
 			angle = math.pi,
 			pivot = {
-				(arg_5_2[1] + var_5_0 * 2) / 2,
-				var_5_0 / 2
+				(size[1] + entry_hover_frame_spacing * 2) / 2,
+				entry_hover_frame_spacing / 2
 			}
 		}
 	}
+	local widget = {}
 
-	return {
-		element = tbl,
-		content = tbl_2,
-		style = tbl_3,
+	widget.element = element
+	widget.content = content
+	widget.style = style
+	widget.offset = {
+		0,
+		0,
+		0
+	}
+	widget.scenegraph_id = scenegraph_id
+
+	return widget
+end
+
+local function create_texture_widget(texture, scenegraph_id, masked, retained, color, offset, texture_size, disable_with_gamepad, viewport_mask)
+	-- function 6
+	if type(offset) ~= "table" then
 		offset = {
 			0,
 			0,
-			0
-		},
-		scenegraph_id = arg_5_0
-	}
-end
-
-local function fn_3(arg_6_0, arg_6_1, arg_6_2, arg_6_3, arg_6_4, arg_6_5, arg_6_6, arg_6_7, arg_6_8)
-	-- function 6
-	if type(arg_6_5) ~= "table" then
-		arg_6_5 = {
-			0,
-			0,
-			arg_6_5 or 0
+			not not offset or not not 0
 		}
 	end
 
-	if arg_6_6 == "native" then
-		local size = UIAtlasHelper.get_atlas_settings_by_texture_name(arg_6_0).size
+	if texture_size == "native" then
+		local texture_settings = UIAtlasHelper.get_atlas_settings_by_texture_name(texture)
+		local settings_size = texture_settings.size
 
-		arg_6_6 = {
-			size[1],
-			size[2]
+		texture_size = {
+			settings_size[1],
+			settings_size[2]
 		}
 	end
 
@@ -725,23 +738,23 @@ local function fn_3(arg_6_0, arg_6_1, arg_6_2, arg_6_3, arg_6_4, arg_6_5, arg_6_
 					texture_id = "texture_id",
 					style_id = "texture_id",
 					pass_type = "texture",
-					retained_mode = arg_6_3,
-					content_check_function = function (self)
+					retained_mode = retained,
+					content_check_function = function (content)
 						-- function 7
-						return self.texture_id
+						return content.texture_id
 					end
 				}
 			}
 		},
 		content = {
-			texture_id = arg_6_0,
-			disable_with_gamepad = arg_6_7
+			texture_id = texture,
+			disable_with_gamepad = disable_with_gamepad
 		},
 		style = {
 			texture_id = {
 				vertical_alignment = "center",
 				horizontal_alignment = "center",
-				color = arg_6_4 or {
+				color = not not color or not not {
 					255,
 					255,
 					255,
@@ -752,17 +765,17 @@ local function fn_3(arg_6_0, arg_6_1, arg_6_2, arg_6_3, arg_6_4, arg_6_5, arg_6_
 					0,
 					0
 				},
-				masked = arg_6_2,
-				texture_size = arg_6_6,
-				viewport_mask = arg_6_8
+				masked = masked,
+				texture_size = texture_size,
+				viewport_mask = viewport_mask
 			}
 		},
-		offset = arg_6_5,
-		scenegraph_id = arg_6_1
+		offset = offset,
+		scenegraph_id = scenegraph_id
 	}
 end
 
-local tbl_13 = {
+local claimed_text_style = {
 	word_wrap = false,
 	upper_case = false,
 	localize = false,
@@ -783,7 +796,7 @@ local tbl_13 = {
 		1
 	}
 }
-local tbl_14 = {
+local claimed_text_shadow_style = {
 	word_wrap = false,
 	upper_case = false,
 	localize = false,
@@ -805,115 +818,124 @@ local tbl_14 = {
 	}
 }
 
-local function fn_4(arg_8_0, arg_8_1, arg_8_2)
+local function create_base_portrait_frame(scenegraph_id, frame_settings_name, scale)
 	-- function 8
-	arg_8_2 = arg_8_2 or 1
+	scale = not not scale or not not 1
 
-	local flag = arg_8_1 or "default"
-	local var_8_1 = UIPlayerPortraitFrameSettings[flag]
-	local tbl = {
+	local frame_settings_name = not not frame_settings_name or not not "default"
+	local frame_settings = UIPlayerPortraitFrameSettings[frame_settings_name]
+	local default_color = {
 		255,
 		255,
 		255,
 		255
 	}
-	local tbl_2 = {
+	local default_offset = {
 		0,
 		0,
 		0
 	}
-	local tbl_3 = {
+	local widget = {
 		element = {}
 	}
-	local tbl_4 = {}
-	local tbl_5 = {
-		scale = arg_8_2,
-		frame_settings_name = flag
+	local passes = {}
+	local content = {
+		scale = scale,
+		frame_settings_name = frame_settings_name
 	}
-	local tbl_6 = {}
+	local style = {}
 
-	for i, v in ipairs(var_8_1) do
-		local str = "texture_" .. i
-		local texture = v.texture
+	for index, data in ipairs(frame_settings) do
+		local name = "texture_" .. index
+		local texture = data.texture
 
-		texture = texture or "icons_placeholder"
-
-		local size = v.size
-
-		if not UIAtlasHelper.has_atlas_settings_by_texture_name(texture) then
-			size = UIAtlasHelper.get_atlas_settings_by_texture_name(texture).size
-		else
-			size = v.size
+		if not texture then
+			-- Nothing
 		end
 
-		local flag_2
+		texture = "icons_placeholder"
 
-		flag_2 = not size and table.clone(size) and {
+		local texture_name = texture
+
+		::label_8_0::
+
+		local size = data.size
+
+		if UIAtlasHelper.has_atlas_settings_by_texture_name(texture_name) then
+			local texture_settings = UIAtlasHelper.get_atlas_settings_by_texture_name(texture_name)
+
+			size = texture_settings.size
+		else
+			size = data.size
+		end
+
+		size = (not size or not table.clone(size)) and not not {
 			0,
 			0
 		}
-		flag_2[1] = flag_2[1] * arg_8_2
-		flag_2[2] = flag_2[2] * arg_8_2
+		size[1] = size[1] * scale
+		size[2] = size[2] * scale
 
 		local clone = table.clone
-		local offset = v.offset
+		local offset_2 = data.offset
 
-		offset = offset or tbl_2
+		offset_2 = not not offset_2 or not not default_offset
 
-		local var_8_14 = clone(offset)
+		local offset = clone(offset_2)
 
-		var_8_14[1] = var_8_14[1] * arg_8_2
-		var_8_14[2] = var_8_14[2] * arg_8_2
+		offset[1] = offset[1] * scale
+		offset[2] = offset[2] * scale
 
-		local layer = v.layer
+		local layer = data.layer
 
-		layer = layer or 0
-		var_8_14[3] = layer
-		tbl_4[#tbl_4 + 1] = {
+		layer = not not layer or not not 0
+		offset[3] = layer
+		passes[#passes + 1] = {
 			pass_type = "texture",
-			texture_id = str,
-			style_id = str
+			texture_id = name,
+			style_id = name
 		}
-		tbl_5[str] = texture
+		content[name] = texture_name
 
-		local tbl_7 = {
+		local tbl = {
 			vertical_alignment = "center",
 			horizontal_alignment = "center"
 		}
-		local color = v.color
+		local color = data.color
 
-		color = color or tbl
-		tbl_7.color = color
-		tbl_7.offset = var_8_14
-		tbl_7.texture_size = flag_2
-		tbl_6[str] = tbl_7
+		color = not not color or not not default_color
+		tbl.color = color
+		tbl.offset = offset
+		tbl.texture_size = size
+		style[name] = tbl
 	end
 
-	tbl_3.element.passes = tbl_4
-	tbl_3.content = tbl_5
-	tbl_3.style = tbl_6
-	tbl_3.offset = {
+	widget.element.passes = passes
+	widget.content = content
+	widget.style = style
+	widget.offset = {
 		0,
 		0,
 		0
 	}
-	tbl_3.scenegraph_id = arg_8_0
+	widget.scenegraph_id = scenegraph_id
 
-	return tbl_3
+	return widget
 end
 
-local function fn_5(arg_9_0)
+local function create_claimed_widget(ui_renderer)
 	-- function 9
-	local gsub = string.gsub(Localize("search_filter_claimed"), "^%l", string.upper)
-	local num = 32
-	local str = "hell_shark_header"
-	local var_9_3, var_9_4 = UIFontByResolution(tbl_13)
-	local text_size, var_9_6, var_9_7 = UIRenderer.text_size(arg_9_0, gsub, var_9_3[1], var_9_4)
-	local var_9_8 = Localize("event_gotwf_already_owned")
-	local text_size_2, var_9_10, var_9_11 = UIRenderer.text_size(arg_9_0, var_9_8, var_9_3[1], var_9_4)
-	local var_9_12 = tbl_4.claimed.size[1]
-	local min = math.min(text_size, var_9_12)
-	local min_2 = math.min(text_size_2, var_9_12)
+	local text = string.gsub(Localize("search_filter_claimed"), "^%l", string.upper)
+	local font_size = 32
+	local font_type = "hell_shark_header"
+	local font, scaled_font_size = UIFontByResolution(claimed_text_style)
+	local width, height, min = UIRenderer.text_size(ui_renderer, text, font[1], scaled_font_size)
+	local owned_text = Localize("event_gotwf_already_owned")
+	local owned_width, _, _ = UIRenderer.text_size(ui_renderer, owned_text, font[1], scaled_font_size)
+	local max_width = scenegraph_definition.claimed.size[1]
+
+	width = math.min(width, max_width)
+	owned_width = math.min(owned_width, max_width)
 
 	return {
 		scenegraph_id = "claimed",
@@ -923,70 +945,70 @@ local function fn_5(arg_9_0)
 					style_id = "text",
 					pass_type = "text",
 					text_id = "text",
-					content_check_function = function (self)
+					content_check_function = function (content)
 						-- function 10
-						return not self.already_owned
+						return not content.already_owned
 					end
 				},
 				{
 					style_id = "text_shadow",
 					pass_type = "text",
 					text_id = "text",
-					content_check_function = function (self)
+					content_check_function = function (content)
 						-- function 11
-						return not self.already_owned
+						return not content.already_owned
 					end
 				},
 				{
 					style_id = "background",
 					pass_type = "rect",
-					content_check_function = function (self)
+					content_check_function = function (content)
 						-- function 12
-						return not self.already_owned
+						return not content.already_owned
 					end
 				},
 				{
 					texture_id = "sigil",
 					style_id = "sigil",
 					pass_type = "texture",
-					content_check_function = function (self)
+					content_check_function = function (content)
 						-- function 13
-						return not self.already_owned
+						return not content.already_owned
 					end
 				},
 				{
 					style_id = "text",
 					pass_type = "text",
 					text_id = "owned_text",
-					content_check_function = function (self)
+					content_check_function = function (content)
 						-- function 14
-						return self.already_owned
+						return content.already_owned
 					end
 				},
 				{
 					style_id = "text_shadow",
 					pass_type = "text",
 					text_id = "owned_text",
-					content_check_function = function (self)
+					content_check_function = function (content)
 						-- function 15
-						return self.already_owned
+						return content.already_owned
 					end
 				},
 				{
 					style_id = "background_owned",
 					pass_type = "rect",
-					content_check_function = function (self)
+					content_check_function = function (content)
 						-- function 16
-						return self.already_owned
+						return content.already_owned
 					end
 				},
 				{
 					pass_type = "texture",
 					style_id = "sigil_owned",
 					texture_id = "sigil",
-					content_check_function = function (self)
+					content_check_function = function (content)
 						-- function 17
-						return self.already_owned
+						return content.already_owned
 					end
 				}
 			}
@@ -994,17 +1016,17 @@ local function fn_5(arg_9_0)
 		content = {
 			already_owned = true,
 			sigil = "store_owned_sigil",
-			text = gsub,
-			owned_text = var_9_8
+			text = text,
+			owned_text = owned_text
 		},
 		style = {
-			text = tbl_13,
-			text_shadow = tbl_14,
+			text = claimed_text_style,
+			text_shadow = claimed_text_shadow_style,
 			background = {
 				vertical_alignment = "center",
 				horizontal_alignment = "right",
 				texture_size = {
-					min + 35,
+					width + 35,
 					35
 				},
 				color = {
@@ -1033,7 +1055,7 @@ local function fn_5(arg_9_0)
 					255
 				},
 				offset = {
-					-min,
+					-width,
 					0,
 					5
 				}
@@ -1042,7 +1064,7 @@ local function fn_5(arg_9_0)
 				vertical_alignment = "center",
 				horizontal_alignment = "right",
 				texture_size = {
-					min_2 + 35,
+					owned_width + 35,
 					35
 				},
 				color = {
@@ -1071,7 +1093,7 @@ local function fn_5(arg_9_0)
 					255
 				},
 				offset = {
-					-min_2,
+					-owned_width,
 					0,
 					5
 				}
@@ -1085,33 +1107,33 @@ local function fn_5(arg_9_0)
 	}
 end
 
-local flag = false
-local tbl_15 = {
+local disable_with_gamepad = false
+local top_widgets = {
 	disclaimer_divider = UIWidgets.create_simple_texture("tooltip_marker_gold", "disclaimer_divider"),
-	disclaimer_text = UIWidgets.create_simple_text(Localize("menu_store_product_hero_skin_disclaimer_desc"), "disclaimer_text", nil, nil, tbl_10),
-	amount_text = UIWidgets.create_simple_text("", "amount_text", nil, nil, tbl_11),
-	title_text = UIWidgets.create_simple_text("", "title_text", nil, nil, tbl_5),
-	type_title_text = UIWidgets.create_simple_text("", "sub_title_text", nil, nil, tbl_8),
-	sub_title_text = UIWidgets.create_simple_text("", "profile_title_text", nil, nil, tbl_6),
-	description_text = UIWidgets.create_simple_text("", "profile_title_text", nil, nil, tbl_7),
-	career_title_text = UIWidgets.create_simple_text("", "career_title_text", nil, nil, tbl_9),
+	disclaimer_text = UIWidgets.create_simple_text(Localize("menu_store_product_hero_skin_disclaimer_desc"), "disclaimer_text", nil, nil, disclaimer_text_style),
+	amount_text = UIWidgets.create_simple_text("", "amount_text", nil, nil, amount_text_style),
+	title_text = UIWidgets.create_simple_text("", "title_text", nil, nil, title_text_style),
+	type_title_text = UIWidgets.create_simple_text("", "sub_title_text", nil, nil, type_title_text_style),
+	sub_title_text = UIWidgets.create_simple_text("", "profile_title_text", nil, nil, sub_title_text_style),
+	description_text = UIWidgets.create_simple_text("", "profile_title_text", nil, nil, description_text_style),
+	career_title_text = UIWidgets.create_simple_text("", "career_title_text", nil, nil, career_title_text_style),
 	viewport_button = UIWidgets.create_simple_hotspot("viewport")
 }
-local tbl_16 = {
+local animation_definitions = {
 	on_enter = {
 		{
 			name = "delay",
 			start_progress = 0,
 			end_progress = 0.3,
-			init = function (arg_18_0, arg_18_1, arg_18_2, arg_18_3)
+			init = function (ui_scenegraph, scenegraph_definition, widgets, params)
 				-- function 18
 				return
 			end,
-			update = function (arg_19_0, arg_19_1, arg_19_2, arg_19_3, arg_19_4)
+			update = function (ui_scenegraph, scenegraph_definition, widgets, progress, params)
 				-- function 19
 				return
 			end,
-			on_complete = function (arg_20_0, arg_20_1, arg_20_2, arg_20_3)
+			on_complete = function (ui_scenegraph, scenegraph_definition, widgets, params)
 				-- function 20
 				return
 			end
@@ -1120,17 +1142,17 @@ local tbl_16 = {
 			name = "fade_in",
 			start_progress = 0.3,
 			end_progress = 0.6,
-			init = function (arg_21_0, arg_21_1, arg_21_2, arg_21_3)
+			init = function (ui_scenegraph, scenegraph_definition, widgets, params)
 				-- function 21
-				arg_21_3.render_settings.alpha_multiplier = 0
+				params.render_settings.alpha_multiplier = 0
 			end,
-			update = function (arg_22_0, arg_22_1, arg_22_2, arg_22_3, arg_22_4)
+			update = function (ui_scenegraph, scenegraph_definition, widgets, progress, params)
 				-- function 22
-				local easeOutCubic = math.easeOutCubic(arg_22_3)
+				local anim_progress = math.easeOutCubic(progress)
 
-				arg_22_4.render_settings.alpha_multiplier = easeOutCubic
+				params.render_settings.alpha_multiplier = anim_progress
 			end,
-			on_complete = function (arg_23_0, arg_23_1, arg_23_2, arg_23_3)
+			on_complete = function (ui_scenegraph, scenegraph_definition, widgets, params)
 				-- function 23
 				return
 			end
@@ -1141,29 +1163,29 @@ local tbl_16 = {
 			name = "animate_in",
 			start_progress = 0.3,
 			end_progress = 0.8,
-			init = function (arg_24_0, arg_24_1, arg_24_2, arg_24_3)
+			init = function (ui_scenegraph, scenegraph_definition, widgets, params)
 				-- function 24
-				arg_24_2.claimed.alpha_multiplier = 0
-				arg_24_2.title_text.alpha_multiplier = 0
-				arg_24_2.type_title_text.alpha_multiplier = 0
-				arg_24_2.sub_title_text.alpha_multiplier = 0
-				arg_24_2.career_title_text.alpha_multiplier = 0
-				arg_24_2.description_text.alpha_multiplier = 0
-				arg_24_0.info_anchor.local_position[1] = arg_24_1.info_anchor.position[1] + 50
+				widgets.claimed.alpha_multiplier = 0
+				widgets.title_text.alpha_multiplier = 0
+				widgets.type_title_text.alpha_multiplier = 0
+				widgets.sub_title_text.alpha_multiplier = 0
+				widgets.career_title_text.alpha_multiplier = 0
+				widgets.description_text.alpha_multiplier = 0
+				ui_scenegraph.info_anchor.local_position[1] = scenegraph_definition.info_anchor.position[1] + 50
 			end,
-			update = function (arg_25_0, arg_25_1, arg_25_2, arg_25_3, arg_25_4)
+			update = function (ui_scenegraph, scenegraph_definition, widgets, progress, params)
 				-- function 25
-				local easeOutCubic = math.easeOutCubic(arg_25_3)
+				local anim_progress = math.easeOutCubic(progress)
 
-				arg_25_0.info_anchor.local_position[1] = math.lerp(arg_25_1.info_anchor.position[1] + 50, arg_25_1.info_anchor.position[1], easeOutCubic)
-				arg_25_2.claimed.alpha_multiplier = easeOutCubic
-				arg_25_2.title_text.alpha_multiplier = easeOutCubic
-				arg_25_2.type_title_text.alpha_multiplier = easeOutCubic
-				arg_25_2.sub_title_text.alpha_multiplier = easeOutCubic
-				arg_25_2.career_title_text.alpha_multiplier = easeOutCubic
-				arg_25_2.description_text.alpha_multiplier = easeOutCubic
+				ui_scenegraph.info_anchor.local_position[1] = math.lerp(scenegraph_definition.info_anchor.position[1] + 50, scenegraph_definition.info_anchor.position[1], anim_progress)
+				widgets.claimed.alpha_multiplier = anim_progress
+				widgets.title_text.alpha_multiplier = anim_progress
+				widgets.type_title_text.alpha_multiplier = anim_progress
+				widgets.sub_title_text.alpha_multiplier = anim_progress
+				widgets.career_title_text.alpha_multiplier = anim_progress
+				widgets.description_text.alpha_multiplier = anim_progress
 			end,
-			on_complete = function (arg_26_0, arg_26_1, arg_26_2, arg_26_3)
+			on_complete = function (ui_scenegraph, scenegraph_definition, widgets, params)
 				-- function 26
 				return
 			end
@@ -1172,12 +1194,12 @@ local tbl_16 = {
 }
 
 return {
-	top_widgets = tbl_15,
-	loading_widgets = tbl_12,
-	create_claimed_widget = fn_5,
-	create_painting_widget = fn,
-	create_texture_widget = fn_3,
+	top_widgets = top_widgets,
+	loading_widgets = loading_widgets,
+	create_claimed_widget = create_claimed_widget,
+	create_painting_widget = create_painting_widget,
+	create_texture_widget = create_texture_widget,
 	generic_input_actions = generic_input_actions,
-	scenegraph_definition = tbl_4,
-	animation_definitions = tbl_16
+	scenegraph_definition = scenegraph_definition,
+	animation_definitions = animation_definitions
 }

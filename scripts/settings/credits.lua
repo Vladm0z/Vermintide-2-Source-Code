@@ -1,6 +1,6 @@
 -- chunkname: @scripts/settings/credits.lua
 
-return {
+local Credits = {
 	settings = {
 		speed = 100
 	},
@@ -3462,3 +3462,5 @@ return {
 		}
 	}
 }
+
+return Credits

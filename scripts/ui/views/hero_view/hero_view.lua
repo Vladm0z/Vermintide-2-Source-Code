@@ -10,49 +10,49 @@ require("scripts/ui/views/hero_view/states/hero_view_state_keep_decorations")
 require("scripts/ui/views/hero_view/states/hero_view_state_weave_forge")
 require("scripts/ui/views/hero_view/states/hero_view_state_handbook")
 require("scripts/settings/news_feed_templates")
-DLCUtils.map_list("hero_view", function (self)
+DLCUtils.map_list("hero_view", function (hero_view_ui_data)
 	-- function 1
-	require(self.filename)
+	require(hero_view_ui_data.filename)
 end)
 
-local var_0_0 = local_require("scripts/ui/views/hero_view/hero_view_definitions")
-local widgets_definitions = var_0_0.widgets_definitions
-local scenegraph_definition = var_0_0.scenegraph_definition
-local settings_by_screen = var_0_0.settings_by_screen
-local attachments = var_0_0.attachments
-local flow_events = var_0_0.flow_events
+local definitions = local_require("scripts/ui/views/hero_view/hero_view_definitions")
+local widget_definitions = definitions.widgets_definitions
+local scenegraph_definition = definitions.scenegraph_definition
+local settings_by_screen = definitions.settings_by_screen
+local attachments = definitions.attachments
+local flow_events = definitions.flow_events
 
-local function fn(...)
+local function dprint(...)
 	-- function 2
 	print("[HeroView]", ...)
 end
 
-local flag = true
-local flag_2 = false
-local flag_3 = true
+local DO_RELOAD = true
+local debug_draw_scenegraph = false
+local debug_menu = true
 
 HeroView = class(HeroView)
 
-HeroView.init = function (self, arg_3_1)
+HeroView.init = function (self, ingame_ui_context)
 	-- function 3
-	self.world = arg_3_1.world
-	self.player_manager = arg_3_1.player_manager
-	self.ui_renderer = arg_3_1.ui_renderer
-	self.ui_top_renderer = arg_3_1.ui_top_renderer
-	self.ingame_ui = arg_3_1.ingame_ui
-	self.voting_manager = arg_3_1.voting_manager
-	self.profile_synchronizer = arg_3_1.profile_synchronizer
-	self.peer_id = arg_3_1.peer_id
-	self.local_player_id = arg_3_1.local_player_id
-	self.is_server = arg_3_1.is_server
-	self.is_in_inn = arg_3_1.is_in_inn
-	self.world_manager = arg_3_1.world_manager
+	self.world = ingame_ui_context.world
+	self.player_manager = ingame_ui_context.player_manager
+	self.ui_renderer = ingame_ui_context.ui_renderer
+	self.ui_top_renderer = ingame_ui_context.ui_top_renderer
+	self.ingame_ui = ingame_ui_context.ingame_ui
+	self.voting_manager = ingame_ui_context.voting_manager
+	self.profile_synchronizer = ingame_ui_context.profile_synchronizer
+	self.peer_id = ingame_ui_context.peer_id
+	self.local_player_id = ingame_ui_context.local_player_id
+	self.is_server = ingame_ui_context.is_server
+	self.is_in_inn = ingame_ui_context.is_in_inn
+	self.world_manager = ingame_ui_context.world_manager
 
 	local world = self.world_manager:world("level_world")
 
 	self.wwise_world = Managers.world:wwise_world(world)
 
-	local input_manager = arg_3_1.input_manager
+	local input_manager = ingame_ui_context.input_manager
 
 	self.input_manager = input_manager
 
@@ -61,19 +61,21 @@ HeroView.init = function (self, arg_3_1)
 	input_manager:map_device_to_service("hero_view", "mouse")
 	input_manager:map_device_to_service("hero_view", "gamepad")
 
-	self._state_machine_params = {
+	local state_machine_params = {
 		wwise_world = self.wwise_world,
-		ingame_ui_context = arg_3_1,
+		ingame_ui_context = ingame_ui_context,
 		parent = self,
 		settings_by_screen = settings_by_screen,
 		input_service = FAKE_INPUT_SERVICE
 	}
+
+	self._state_machine_params = state_machine_params
 	self.units = {}
 	self.attachment_units = {}
 	self.unit_states = {}
 	self.ui_animations = {}
-	self.ingame_ui_context = arg_3_1
-	flag = false
+	self.ingame_ui_context = ingame_ui_context
+	DO_RELOAD = false
 end
 
 HeroView.initial_profile_view = function (self)
@@ -81,22 +83,22 @@ HeroView.initial_profile_view = function (self)
 	return self.ingame_ui.initial_profile_view
 end
 
-HeroView._setup_state_machine = function (self, arg_5_1, arg_5_2, arg_5_3, arg_5_4)
+HeroView._setup_state_machine = function (self, state_machine_params, optional_start_state, optional_start_sub_state, optional_params)
 	-- function 5
-	if not self._machine then
+	if self._machine then
 		self._machine:destroy()
 
 		self._machine = nil
 	end
 
-	local flag = arg_5_2 or HeroViewStateOverview
-	local flag_2 = false
+	local start_state = not not optional_start_state or not not HeroViewStateOverview
+	local profiling_debugging_enabled = false
 
-	arg_5_1.start_state = arg_5_3
-	arg_5_1.state_params = arg_5_4
-	self._machine = GameStateMachine:new(self, flag, arg_5_1, flag_2)
-	self._state_machine_params = arg_5_1
-	arg_5_1.state_params = nil
+	state_machine_params.start_state = optional_start_sub_state
+	state_machine_params.state_params = optional_params
+	self._machine = GameStateMachine:new(self, start_state, state_machine_params, profiling_debugging_enabled)
+	self._state_machine_params = state_machine_params
+	state_machine_params.state_params = nil
 end
 
 HeroView.wanted_state = function (self)
@@ -113,7 +115,7 @@ HeroView.input_service = function (self)
 	-- function 8
 	local FAKE_INPUT_SERVICE
 
-	if not self._draw_loading then
+	if self._draw_loading then
 		FAKE_INPUT_SERVICE = FAKE_INPUT_SERVICE
 
 		if not FAKE_INPUT_SERVICE then
@@ -128,9 +130,9 @@ HeroView.input_service = function (self)
 	return FAKE_INPUT_SERVICE
 end
 
-HeroView.set_input_blocked = function (self, arg_9_1)
+HeroView.set_input_blocked = function (self, blocked)
 	-- function 9
-	self._input_blocked = arg_9_1
+	self._input_blocked = blocked
 end
 
 HeroView.input_blocked = function (self)
@@ -138,9 +140,9 @@ HeroView.input_blocked = function (self)
 	return self._input_blocked
 end
 
-HeroView.play_sound = function (self, arg_11_1)
+HeroView.play_sound = function (self, event)
 	-- function 11
-	WwiseWorld.trigger_event(self.wwise_world, arg_11_1)
+	WwiseWorld.trigger_event(self.wwise_world, event)
 end
 
 HeroView.create_ui_elements = function (self)
@@ -148,95 +150,103 @@ HeroView.create_ui_elements = function (self)
 	self.ui_scenegraph = UISceneGraph.init_scenegraph(scenegraph_definition)
 	self._static_widgets = {}
 	self._loading_widgets = {
-		background = UIWidget.init(widgets_definitions.loading_bg),
-		text = UIWidget.init(widgets_definitions.loading_text)
+		background = UIWidget.init(widget_definitions.loading_bg),
+		text = UIWidget.init(widget_definitions.loading_text)
 	}
 
 	UIRenderer.clear_scenegraph_queue(self.ui_renderer)
 
-	self.ui_animator = UIAnimator:new(self.ui_scenegraph, var_0_0.animations)
+	self.ui_animator = UIAnimator:new(self.ui_scenegraph, definitions.animations)
 end
 
 HeroView._setup_hdr_gui = function (self)
 	-- function 13
-	if not self.is_in_inn then
-		local tbl = {}
-		local str = "hero_view_hdr"
+	if self.is_in_inn then
+		local hdr_gui_data = {}
+		local default_hdr_name = "hero_view_hdr"
 
-		if not str then
-			local _setup_hdr_renderer, var_13_3, var_13_4 = self:_setup_hdr_renderer(str, 600)
+		if default_hdr_name then
+			local renderer, world, viewport_name = self:_setup_hdr_renderer(default_hdr_name, 600)
 
-			tbl.bottom = {
-				renderer = _setup_hdr_renderer,
-				world = var_13_3,
-				viewport_name = var_13_4
+			hdr_gui_data.bottom = {
+				renderer = renderer,
+				world = world,
+				viewport_name = viewport_name
 			}
 		end
 
-		local str_2 = "hero_view_hdr_top"
+		local top_hdr_name = "hero_view_hdr_top"
 
-		if not str_2 then
-			local _setup_hdr_renderer_2, var_13_7, var_13_8 = self:_setup_hdr_renderer(str_2, 850)
+		if top_hdr_name then
+			local renderer, world, viewport_name = self:_setup_hdr_renderer(top_hdr_name, 850)
 
-			tbl.top = {
-				renderer = _setup_hdr_renderer_2,
-				world = var_13_7,
-				viewport_name = var_13_8
+			hdr_gui_data.top = {
+				renderer = renderer,
+				world = world,
+				viewport_name = viewport_name
 			}
 		end
 
-		self._hdr_gui_data = tbl
+		self._hdr_gui_data = hdr_gui_data
 	end
 end
 
-HeroView._setup_hdr_renderer = function (self, arg_14_1, arg_14_2)
+HeroView._setup_hdr_renderer = function (self, name, layer)
 	-- function 14
-	local tbl = {
+	local world_flags = {
 		Application.DISABLE_SOUND,
 		Application.DISABLE_ESRAM
 	}
-	local var_14_1 = arg_14_1
-	local var_14_2 = arg_14_1
-	local str = "environment/ui_hdr"
-	local create_world = Managers.world:create_world(var_14_1, str, nil, arg_14_2, unpack(tbl))
-	local str_2 = "overlay"
-	local create_viewport = ScriptWorld.create_viewport(create_world, var_14_2, str_2, 999)
+	local world_name = name
+	local viewport_name = name
+	local shading_environment = "environment/ui_hdr"
+	local world = Managers.world:create_world(world_name, shading_environment, nil, layer, unpack(world_flags))
+	local viewport_type = "overlay"
+	local viewport = ScriptWorld.create_viewport(world, viewport_name, viewport_type, 999)
+	local renderer = self.ingame_ui:create_ui_renderer(world, false, self.is_in_inn)
 
-	return self.ingame_ui:create_ui_renderer(create_world, false, self.is_in_inn), create_world, var_14_2
+	return renderer, world, viewport_name
 end
 
 HeroView.hdr_renderer = function (self)
 	-- function 15
-	return self._hdr_gui_data.bottom.renderer
+	local hdr_gui_data = self._hdr_gui_data
+	local hdr_data = hdr_gui_data.bottom
+
+	return hdr_data.renderer
 end
 
 HeroView.hdr_top_renderer = function (self)
 	-- function 16
-	return self._hdr_gui_data.top.renderer
+	local hdr_gui_data = self._hdr_gui_data
+	local hdr_data = hdr_gui_data.top
+
+	return hdr_data.renderer
 end
 
-HeroView.draw = function (self, arg_17_1, arg_17_2)
+HeroView.draw = function (self, dt, input_service)
 	-- function 17
 	local ui_renderer = self.ui_renderer
 	local ui_top_renderer = self.ui_top_renderer
 	local ui_scenegraph = self.ui_scenegraph
-	local is_device_active = self.input_manager:is_device_active("gamepad")
+	local input_manager = self.input_manager
+	local gamepad_active = input_manager:is_device_active("gamepad")
 
-	UIRenderer.begin_pass(ui_renderer, ui_scenegraph, arg_17_2, arg_17_1)
+	UIRenderer.begin_pass(ui_renderer, ui_scenegraph, input_service, dt)
 
-	if not flag_2 then
+	if debug_draw_scenegraph then
 		UISceneGraph.debug_render_scenegraph(ui_renderer, ui_scenegraph)
 	end
 
-	for i, v in ipairs(self._static_widgets) do
-		UIRenderer.draw_widget(ui_renderer, v)
+	for _, widget in ipairs(self._static_widgets) do
+		UIRenderer.draw_widget(ui_renderer, widget)
 	end
 
-	if not self._draw_loading then
-		UIRenderer.begin_pass(ui_top_renderer, ui_scenegraph, arg_17_2, arg_17_1)
+	if self._draw_loading then
+		UIRenderer.begin_pass(ui_top_renderer, ui_scenegraph, input_service, dt)
 
-		for k, v_2 in pairs(self._loading_widgets) do
-			UIRenderer.draw_widget(ui_top_renderer, v_2)
+		for _, widget in pairs(self._loading_widgets) do
+			UIRenderer.draw_widget(ui_top_renderer, widget)
 		end
 
 		UIRenderer.end_pass(ui_top_renderer)
@@ -245,33 +255,35 @@ HeroView.draw = function (self, arg_17_1, arg_17_2)
 	UIRenderer.end_pass(ui_renderer)
 end
 
-HeroView.post_update = function (self, arg_18_1, arg_18_2)
+HeroView.post_update = function (self, dt, t)
 	-- function 18
-	self._machine:post_update(arg_18_1, arg_18_2)
+	self._machine:post_update(dt, t)
 end
 
-HeroView.update = function (self, arg_19_1, arg_19_2)
+HeroView.update = function (self, dt, t)
 	-- function 19
-	if self.suspended or not self.waiting_for_post_update_enter then
+	if self.suspended or self.waiting_for_post_update_enter then
 		return
 	end
 
-	local _requested_screen_change_data = self._requested_screen_change_data
+	local requested_screen_change_data = self._requested_screen_change_data
 
-	if not _requested_screen_change_data then
-		local screen_name = _requested_screen_change_data.screen_name
-		local sub_screen_name = _requested_screen_change_data.sub_screen_name
+	if requested_screen_change_data then
+		local screen_name = requested_screen_change_data.screen_name
+		local sub_screen_name = requested_screen_change_data.sub_screen_name
 
 		self:_change_screen_by_name(screen_name, sub_screen_name)
 
 		self._requested_screen_change_data = nil
 	end
 
-	local flag = true
-	local is_device_active = self.input_manager:is_device_active("gamepad")
+	local is_sub_menu = true
+	local input_manager = self.input_manager
+	local gamepad_active = input_manager:is_device_active("gamepad")
+	local input_blocked = self:input_blocked()
 	local FAKE_INPUT_SERVICE
 
-	if not self:input_blocked() then
+	if input_blocked then
 		FAKE_INPUT_SERVICE = FAKE_INPUT_SERVICE
 
 		if not FAKE_INPUT_SERVICE then
@@ -281,33 +293,35 @@ HeroView.update = function (self, arg_19_1, arg_19_2)
 
 	FAKE_INPUT_SERVICE = self:input_service()
 
+	local input_service = FAKE_INPUT_SERVICE
+
 	::label_19_0::
 
-	self._state_machine_params.input_service = FAKE_INPUT_SERVICE
+	self._state_machine_params.input_service = input_service
 
 	local transitioning = self:transitioning()
 
-	self.ui_animator:update(arg_19_1)
+	self.ui_animator:update(dt)
 
-	for k, v in pairs(self.ui_animations) do
-		UIAnimation.update(v, arg_19_1)
+	for name, ui_animation in pairs(self.ui_animations) do
+		UIAnimation.update(ui_animation, dt)
 
-		if not UIAnimation.completed(v) then
-			self.ui_animations[k] = nil
+		if UIAnimation.completed(ui_animation) then
+			self.ui_animations[name] = nil
 		end
 	end
 
 	if not transitioning then
-		self:_handle_mouse_input(arg_19_1, arg_19_2, FAKE_INPUT_SERVICE)
+		self:_handle_mouse_input(dt, t, input_service)
 	end
 
-	self._machine:update(arg_19_1, arg_19_2)
-	self:draw(arg_19_1, FAKE_INPUT_SERVICE)
+	self._machine:update(dt, t)
+	self:draw(dt, input_service)
 end
 
-HeroView.on_enter = function (self, arg_20_1)
+HeroView.on_enter = function (self, params)
 	-- function 20
-	self._force_ingame_menu = arg_20_1.force_ingame_menu
+	self._force_ingame_menu = params.force_ingame_menu
 
 	if not self._force_ingame_menu then
 		self:_setup_hdr_gui()
@@ -321,35 +335,45 @@ HeroView.on_enter = function (self, arg_20_1)
 	input_manager:block_device_except_service("hero_view", "mouse", 1)
 	input_manager:block_device_except_service("hero_view", "gamepad", 1)
 
-	self._state_machine_params.initial_state = true
+	local state_machine_params = self._state_machine_params
+
+	state_machine_params.initial_state = true
 
 	self:create_ui_elements()
 
 	local profile_by_peer = self.profile_synchronizer:profile_by_peer(self.peer_id, self.local_player_id)
 
-	profile_by_peer = profile_by_peer or 1
+	if not profile_by_peer then
+		-- Nothing
+	end
 
-	self:set_current_hero(profile_by_peer)
+	profile_by_peer = 1
+
+	local profile_index = profile_by_peer
+
+	::label_20_0::
+
+	self:set_current_hero(profile_index)
 
 	self.waiting_for_post_update_enter = true
 	self._loadout_dirty = false
-	self._on_enter_transition_params = arg_20_1
+	self._on_enter_transition_params = params
 
 	Managers.music:duck_sounds()
 
 	self._draw_loading = false
 
 	self:_handle_new_ui_disclaimer()
-	self:_fetch_initial_loadout_index(arg_20_1)
+	self:_fetch_initial_loadout_index(params)
 end
 
-HeroView._fetch_initial_loadout_index = function (self, arg_21_1)
+HeroView._fetch_initial_loadout_index = function (self, params)
 	-- function 21
 	local ingame_ui_context = self._state_machine_params.ingame_ui_context
 
 	self._is_in_tutorial = ingame_ui_context.is_in_tutorial
 
-	if not self._is_in_tutorial then
+	if self._is_in_tutorial then
 		return
 	end
 
@@ -364,23 +388,36 @@ HeroView._fetch_initial_loadout_index = function (self, arg_21_1)
 
 	local network_server = ingame_ui_context.network_server
 
-	network_server = network_server or ingame_ui_context.network_client
-	self._profile_requester = network_server:profile_requester()
+	if not network_server then
+		-- Nothing
+	end
+
+	network_server = ingame_ui_context.network_client
+
+	local network_handler = network_server
+
+	::label_21_0::
+
+	self._profile_requester = network_handler:profile_requester()
 	self._profile_synchronizer = ingame_ui_context.profile_synchronizer
 
-	local profile_by_peer, var_21_4 = self._profile_synchronizer:profile_by_peer(self._peer_id, self._local_player_id)
-	local var_21_5 = SPProfiles[profile_by_peer]
-	local name = var_21_5.careers[var_21_4].name
+	local profile_index, career_index = self._profile_synchronizer:profile_by_peer(self._peer_id, self._local_player_id)
+	local profile = SPProfiles[profile_index]
+	local career_data = profile.careers[career_index]
+	local career_name = career_data.name
 
-	self._profile_name = var_21_5.display_name
-	self._career_name = name
-	self._initial_loadout_index = Managers.backend:get_interface("items"):get_selected_career_loadout(name)
+	self._profile_name = profile.display_name
+	self._career_name = career_name
+
+	local item_interface = Managers.backend:get_interface("items")
+
+	self._initial_loadout_index = item_interface:get_selected_career_loadout(career_name)
 end
 
 HeroView._handle_new_ui_disclaimer = function (self)
 	-- function 22
-	local current_mechanism_name = Managers.mechanism:current_mechanism_name()
-	local tbl = {
+	local mechanism_name = Managers.mechanism:current_mechanism_name()
+	local global_disclaimer_states = {
 		deus = {
 			store = false,
 			default = true,
@@ -406,106 +443,132 @@ HeroView._handle_new_ui_disclaimer = function (self)
 			keep_decorations = false
 		}
 	}
-	local var_22_2 = tbl[current_mechanism_name]
+	local var_22_0 = global_disclaimer_states[mechanism_name]
 
-	var_22_2 = var_22_2 or tbl.default
+	if not var_22_0 then
+		-- Nothing
+	end
 
-	local _on_enter_transition_params = self._on_enter_transition_params
-	local menu_state_name
+	var_22_0 = global_disclaimer_states.default
 
-	if not _on_enter_transition_params then
-		menu_state_name = _on_enter_transition_params.menu_state_name
+	local disclaimer_states = var_22_0
 
-		if not menu_state_name then
+	::label_22_0::
+
+	local on_enter_transition_params = self._on_enter_transition_params
+	local menu_state_name_2
+
+	if on_enter_transition_params then
+		menu_state_name_2 = on_enter_transition_params.menu_state_name
+
+		if not menu_state_name_2 then
 			-- Nothing
 		end
 	end
 
-	menu_state_name = "default"
+	menu_state_name_2 = "default"
 
-	::label_22_0::
+	local menu_state_name = menu_state_name_2
 
-	local flag = not _on_enter_transition_params and _on_enter_transition_params.menu_sub_state_name
+	::label_22_1::
 
-	menu_state_name = var_22_2[flag] == nil or not flag or menu_state_name
+	local menu_sub_state_name = not not on_enter_transition_params and not not on_enter_transition_params.menu_sub_state_name
 
-	Managers.ui:handle_new_ui_disclaimer(var_22_2, menu_state_name)
+	if disclaimer_states[menu_sub_state_name] ~= nil and not menu_sub_state_name then
+		-- Nothing
+	end
+
+	Managers.ui:handle_new_ui_disclaimer(disclaimer_states, menu_state_name)
 end
 
-HeroView.set_current_hero = function (self, arg_23_1)
+HeroView.set_current_hero = function (self, profile_index)
 	-- function 23
-	local var_23_0 = SPProfiles[arg_23_1]
-	local display_name = var_23_0.display_name
-	local character_name = var_23_0.character_name
+	local profile_settings = SPProfiles[profile_index]
+	local display_name = profile_settings.display_name
+	local character_name = profile_settings.character_name
 
 	self._hero_name = display_name
-	self._state_machine_params.hero_name = display_name
+
+	local state_machine_params = self._state_machine_params
+
+	state_machine_params.hero_name = display_name
 end
 
 HeroView._get_sorted_players = function (self)
 	-- function 24
 	local human_players = self.player_manager:human_players()
-	local tbl = {}
+	local player_order = {}
 
-	for k, v in pairs(human_players) do
-		tbl[#tbl + 1] = v
+	for _, player in pairs(human_players) do
+		player_order[#player_order + 1] = player
 	end
 
-	table.sort(tbl, function (self, arg_25_1)
+	table.sort(player_order, function (a, b)
 		-- function 25
-		local local_player = self.local_player
+		local local_player = a.local_player
 
-		local_player = not local_player and not arg_25_1.local_player
+		local_player = not not local_player and not not not b.local_player
 
 		return local_player
 	end)
 
-	return tbl
+	return player_order
 end
 
-HeroView._handle_mouse_input = function (arg_26_0, arg_26_1, arg_26_2, arg_26_3)
+HeroView._handle_mouse_input = function (self, dt, t, input_service)
 	-- function 26
 	return
 end
 
-HeroView._is_selection_widget_pressed = function (arg_27_0, arg_27_1)
+HeroView._is_selection_widget_pressed = function (self, widget)
 	-- function 27
-	local content = arg_27_1.content
+	local content = widget.content
 	local steps = content.steps
 
 	for i = 1, steps do
-		if not content["hotspot_" .. i].on_release then
+		local hotspot_name = "hotspot_" .. i
+		local hotspot = content[hotspot_name]
+
+		if hotspot.on_release then
 			return true, i
 		end
 	end
 end
 
-HeroView.hotkey_allowed = function (self, arg_28_1, arg_28_2)
+HeroView.hotkey_allowed = function (self, input, mapping_data)
 	-- function 28
-	if not self:input_blocked() then
+	if self:input_blocked() then
 		return false
 	end
 
-	local transition_state = arg_28_2.transition_state
-	local transition_sub_state = arg_28_2.transition_sub_state
-	local _machine = self._machine
+	local transition_state = mapping_data.transition_state
+	local transition_sub_state = mapping_data.transition_sub_state
+	local state_machine = self._machine
 
-	if not _machine then
-		local state = _machine:state()
-		local NAME = state.NAME
-		local _get_screen_settings_by_state_name = self:_get_screen_settings_by_state_name(NAME)
-		local name = _get_screen_settings_by_state_name.name
+	if state_machine then
+		local current_state = state_machine:state()
+		local current_state_name = current_state.NAME
+		local current_screen_settings = self:_get_screen_settings_by_state_name(current_state_name)
+		local name = current_screen_settings.name
 
-		if not _get_screen_settings_by_state_name.hotkey_disabled then
+		if current_screen_settings.hotkey_disabled then
 			return false
 		end
 
 		if name == transition_state then
-			local get_selected_layout_name = state.get_selected_layout_name
+			local get_selected_layout_name = current_state.get_selected_layout_name
 
-			get_selected_layout_name = not get_selected_layout_name and state:get_selected_layout_name()
+			if get_selected_layout_name then
+				-- Nothing
+			end
 
-			if not (not transition_sub_state and transition_sub_state ~= get_selected_layout_name) then
+			get_selected_layout_name = current_state:get_selected_layout_name()
+
+			local active_sub_settings_name = get_selected_layout_name
+
+			::label_28_0::
+
+			if not transition_sub_state or transition_sub_state == active_sub_settings_name then
 				return true
 			end
 		end
@@ -514,57 +577,58 @@ HeroView.hotkey_allowed = function (self, arg_28_1, arg_28_2)
 	return false
 end
 
-HeroView._get_screen_settings_by_state_name = function (arg_29_0, arg_29_1)
+HeroView._get_screen_settings_by_state_name = function (self, state_name)
 	-- function 29
-	for i, v in ipairs(settings_by_screen) do
-		if v.state_name == arg_29_1 then
-			return v
+	for index, screen_settings in ipairs(settings_by_screen) do
+		if screen_settings.state_name == state_name then
+			return screen_settings
 		end
 	end
 end
 
-HeroView.requested_screen_change_by_name = function (self, arg_30_1, arg_30_2)
+HeroView.requested_screen_change_by_name = function (self, screen_name, sub_screen_name)
 	-- function 30
 	self._requested_screen_change_data = {
-		screen_name = arg_30_1,
-		sub_screen_name = arg_30_2
+		screen_name = screen_name,
+		sub_screen_name = sub_screen_name
 	}
 end
 
-HeroView._change_screen_by_name = function (self, arg_31_1, arg_31_2, arg_31_3)
+HeroView._change_screen_by_name = function (self, screen_name, sub_screen_name, optional_params)
 	-- function 31
-	local find_by_key, var_31_1 = table.find_by_key(settings_by_screen, "name", arg_31_1)
+	local settings_index, settings = table.find_by_key(settings_by_screen, "name", screen_name)
 
-	assert(find_by_key, "[HeroView] - Could not find state by name: %s", arg_31_1)
+	assert(settings_index, "[HeroView] - Could not find state by name: %s", screen_name)
 
-	local state_name = var_31_1.state_name
-	local var_31_3 = rawget(_G, state_name)
+	local state_name = settings.state_name
+	local state = rawget(_G, state_name)
 
-	if not (not self._machine and arg_31_2) then
-		self._wanted_state = var_31_3
+	if self._machine and not sub_screen_name then
+		self._wanted_state = state
 	else
-		self:_setup_state_machine(self._state_machine_params, var_31_3, arg_31_2, arg_31_3)
+		self:_setup_state_machine(self._state_machine_params, state, sub_screen_name, optional_params)
 	end
 end
 
-HeroView._change_screen_by_index = function (self, arg_32_1)
+HeroView._change_screen_by_index = function (self, index)
 	-- function 32
-	local name = settings_by_screen[arg_32_1].name
+	local screen_settings = settings_by_screen[index]
+	local settings_name = screen_settings.name
 
-	self:_change_screen_by_name(name)
+	self:_change_screen_by_name(settings_name)
 end
 
 HeroView.post_update_on_enter = function (self)
 	-- function 33
 	self.waiting_for_post_update_enter = nil
 
-	local _on_enter_transition_params = self._on_enter_transition_params
+	local on_enter_transition_params = self._on_enter_transition_params
 
-	if not _on_enter_transition_params and not _on_enter_transition_params.menu_state_name then
-		local menu_state_name = _on_enter_transition_params.menu_state_name
-		local menu_sub_state_name = _on_enter_transition_params.menu_sub_state_name
+	if on_enter_transition_params and on_enter_transition_params.menu_state_name then
+		local menu_state_name = on_enter_transition_params.menu_state_name
+		local menu_sub_state_name = on_enter_transition_params.menu_sub_state_name
 
-		self:_change_screen_by_name(menu_state_name, menu_sub_state_name, _on_enter_transition_params)
+		self:_change_screen_by_name(menu_state_name, menu_sub_state_name, on_enter_transition_params)
 
 		self._on_enter_transition_params = nil
 	else
@@ -572,9 +636,9 @@ HeroView.post_update_on_enter = function (self)
 	end
 end
 
-HeroView.post_update_on_exit = function (self, arg_34_1, arg_34_2)
+HeroView.post_update_on_exit = function (self, transition_params, view_in_use)
 	-- function 34
-	if not self._machine then
+	if self._machine then
 		self._machine:destroy()
 
 		self._machine = nil
@@ -582,7 +646,7 @@ HeroView.post_update_on_exit = function (self, arg_34_1, arg_34_2)
 
 	Managers.backend:commit()
 
-	if not arg_34_2 then
+	if not view_in_use then
 		self:destroy_hdr_gui()
 	end
 end
@@ -601,13 +665,13 @@ HeroView.on_exit = function (self)
 
 	self._draw_loading = false
 
-	if self._is_in_tutorial or not self._loadout_dirty then
-		local flag = true
+	if not self._is_in_tutorial and self._loadout_dirty then
+		local force_respawn = true
 
 		self._loadout_dirty = false
 
-		if not Managers.state.network:game() then
-			self._profile_requester:request_profile(self._peer_id, self._local_player_id, self._profile_name, self._career_name, flag)
+		if Managers.state.network:game() then
+			self._profile_requester:request_profile(self._peer_id, self._local_player_id, self._profile_name, self._career_name, force_respawn)
 		end
 	end
 end
@@ -626,44 +690,44 @@ HeroView._handle_view_popups = function (self)
 	-- function 38
 	local console_friends_view = self.ingame_ui.views.console_friends_view
 
-	if not console_friends_view then
+	if console_friends_view then
 		console_friends_view:cleanup_popups()
 	end
 
 	local options_view = self.ingame_ui.views.options_view
 
-	if not options_view then
+	if options_view then
 		options_view:cleanup_popups()
 	end
 end
 
-HeroView.exit = function (self, arg_39_1, arg_39_2, arg_39_3)
+HeroView.exit = function (self, return_to_game, ignore_sound, no_fade)
 	-- function 39
-	local str = "exit_menu"
+	local exit_transition = "exit_menu"
 
 	self.exiting = true
 
-	if not ((arg_39_3 or not self.is_in_inn) and self._force_ingame_menu) then
-		self.ingame_ui:transition_with_fade(str)
+	if not no_fade and self.is_in_inn and not self._force_ingame_menu then
+		self.ingame_ui:transition_with_fade(exit_transition)
 	else
-		self.ingame_ui:handle_transition(str)
+		self.ingame_ui:handle_transition(exit_transition)
 	end
 
-	if not arg_39_2 then
+	if not ignore_sound then
 		self:play_sound("Play_hud_button_close")
 	end
 end
 
 HeroView.transitioning = function (self)
 	-- function 40
-	if not self.exiting then
+	if self.exiting then
 		return true
 	else
 		return false
 	end
 end
 
-HeroView._handle_exit = function (arg_41_0, arg_41_1)
+HeroView._handle_exit = function (self, input_service)
 	-- function 41
 	return
 end
@@ -686,11 +750,11 @@ HeroView.unsuspend = function (self)
 	self.suspended = nil
 end
 
-HeroView.close_menu = function (self, arg_44_1, arg_44_2, arg_44_3)
+HeroView.close_menu = function (self, return_to_main_screen, ignore_sound, no_fade)
 	-- function 44
-	local flag = not arg_44_1
+	local return_to_game = not return_to_main_screen
 
-	self:exit(flag, arg_44_2, arg_44_3)
+	self:exit(return_to_game, ignore_sound, no_fade)
 end
 
 HeroView.destroy = function (self)
@@ -698,7 +762,7 @@ HeroView.destroy = function (self)
 	self.ingame_ui_context = nil
 	self.ui_animator = nil
 
-	if not self._machine then
+	if self._machine then
 		self._machine:destroy()
 
 		self._machine = nil
@@ -709,13 +773,13 @@ end
 
 HeroView.destroy_hdr_gui = function (self)
 	-- function 46
-	local _hdr_gui_data = self._hdr_gui_data
+	local hdr_gui_data = self._hdr_gui_data
 
-	if not _hdr_gui_data then
-		for k, v in pairs(_hdr_gui_data) do
-			local renderer = v.renderer
-			local world = v.world
-			local viewport_name = v.viewport_name
+	if hdr_gui_data then
+		for _, data in pairs(hdr_gui_data) do
+			local renderer = data.renderer
+			local world = data.world
+			local viewport_name = data.viewport_name
 
 			UIRenderer.destroy(renderer, world)
 			ScriptWorld.destroy_viewport(world, viewport_name)
@@ -726,29 +790,40 @@ HeroView.destroy_hdr_gui = function (self)
 	end
 end
 
-HeroView._is_button_pressed = function (arg_47_0, arg_47_1)
+HeroView._is_button_pressed = function (self, widget)
 	-- function 47
-	local button_hotspot = arg_47_1.content.button_hotspot
+	local button_hotspot = widget.content.button_hotspot
 
-	if not button_hotspot.on_release then
+	if button_hotspot.on_release then
 		button_hotspot.on_release = false
 
 		return true
 	end
 end
 
-HeroView._set_loading_overlay_enabled = function (self, arg_48_1, arg_48_2)
+HeroView._set_loading_overlay_enabled = function (self, enabled, message)
 	-- function 48
-	local _loading_widgets = self._loading_widgets
-	local text = _loading_widgets.text
-	local background = _loading_widgets.background
-	local flag
+	local loading_widgets = self._loading_widgets
+	local loading_text_widget = loading_widgets.text
+	local loading_bg_widget = loading_widgets.background
+	local num
 
-	flag = not arg_48_1 and 255 and 0
-	background.style.color[1] = flag
-	text.style.text.text_color[1] = flag
-	text.content.text = arg_48_2 or ""
-	self._draw_loading = arg_48_1
+	if enabled then
+		num = 255
+
+		goto label_48_0
+	end
+
+	num = 0
+
+	local alpha = num
+
+	::label_48_0::
+
+	loading_bg_widget.style.color[1] = alpha
+	loading_text_widget.style.text.text_color[1] = alpha
+	loading_text_widget.content.text = not not message or not not ""
+	self._draw_loading = enabled
 end
 
 HeroView.current_state = function (self)

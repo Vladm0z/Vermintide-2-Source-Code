@@ -7,7 +7,7 @@ require("scripts/settings/equipment/attachments")
 require("scripts/settings/profiles/base_units")
 require("scripts/settings/equipment/cosmetics")
 
-if not script_data.honduras_demo then
+if script_data.honduras_demo then
 	ProfilePriority = {
 		3,
 		5,
@@ -35,8 +35,8 @@ end
 
 ProfileIndexToPriorityIndex = {}
 
-for i, v in ipairs(ProfilePriority) do
-	ProfileIndexToPriorityIndex[v] = i
+for priority_index, profile_index in ipairs(ProfilePriority) do
+	ProfileIndexToPriorityIndex[profile_index] = priority_index
 end
 
 SPProfilesAbbreviation = {
@@ -47,7 +47,7 @@ SPProfilesAbbreviation = {
 	"es"
 }
 
-local tbl = {
+local base_character_states = {
 	"PlayerCharacterStateDead",
 	"PlayerCharacterStateInteracting",
 	"PlayerCharacterStateInspecting",
@@ -81,7 +81,7 @@ local tbl = {
 	"PlayerCharacterStateInHangingCage",
 	"PlayerCharacterStateGrabbedByCorruptor"
 }
-local tbl_2 = {
+local base_camera_states = {
 	"CameraStateIdle",
 	"CameraStateFollow",
 	"CameraStateFollowThirdPerson",
@@ -94,7 +94,7 @@ local tbl_2 = {
 	"CameraStateObserver",
 	"CameraStateInteraction"
 }
-local tbl_3 = {
+local hud_components = {
 	"LootObjectiveUI",
 	"WaitForRescueUI",
 	"ItemReceivedFeedbackUI",
@@ -117,14 +117,14 @@ local tbl_3 = {
 	"WorldMarkerUI",
 	"ChallengeTrackerUI"
 }
-local str = "units/beings/player/first_person_base/state_machines/common"
+local default_state_machine = "units/beings/player/first_person_base/state_machines/common"
 
-for k, v_2 in pairs(DLCSettings) do
-	local hero_hud_components = v_2.hero_hud_components
+for _, dlc in pairs(DLCSettings) do
+	local dlc_hud_components = dlc.hero_hud_components
 
-	if not hero_hud_components then
-		for i_2, v_3 in ipairs(hero_hud_components) do
-			tbl_3[#tbl_3 + 1] = v_3
+	if dlc_hud_components then
+		for _, dlc_hud_component in ipairs(dlc_hud_components) do
+			hud_components[#hud_components + 1] = dlc_hud_component
 		end
 	end
 end
@@ -151,7 +151,7 @@ SPProfiles = {
 		},
 		room_profile = RoomProfiles.witch_hunter,
 		base_units = BaseUnits.witch_hunter,
-		default_state_machine = str,
+		default_state_machine = default_state_machine,
 		first_person_attachment = FirstPersonAttachments.witch_hunter,
 		first_person_heights = {
 			charged = 1,
@@ -165,8 +165,8 @@ SPProfiles = {
 			CareerSettings.wh_bountyhunter,
 			CareerSettings.wh_zealot
 		},
-		base_character_states = tbl,
-		base_camera_states = tbl_2
+		base_character_states = base_character_states,
+		base_camera_states = base_camera_states
 	},
 	{
 		career_voice_parameter = "sienna_career_voice_effect",
@@ -189,7 +189,7 @@ SPProfiles = {
 		},
 		room_profile = RoomProfiles.bright_wizard,
 		base_units = BaseUnits.bright_wizard,
-		default_state_machine = str,
+		default_state_machine = default_state_machine,
 		first_person_attachment = FirstPersonAttachments.bright_wizard,
 		first_person_heights = {
 			charged = 0.9,
@@ -203,8 +203,8 @@ SPProfiles = {
 			CareerSettings.bw_scholar,
 			CareerSettings.bw_unchained
 		},
-		base_character_states = tbl,
-		base_camera_states = tbl_2
+		base_character_states = base_character_states,
+		base_camera_states = base_camera_states
 	},
 	{
 		career_voice_parameter = "dwarf_career_voice_effect",
@@ -227,7 +227,7 @@ SPProfiles = {
 		},
 		room_profile = RoomProfiles.dwarf_ranger,
 		base_units = BaseUnits.dwarf_ranger,
-		default_state_machine = str,
+		default_state_machine = default_state_machine,
 		first_person_attachment = FirstPersonAttachments.dwarf_ranger,
 		first_person_heights = {
 			charged = 0.75,
@@ -241,8 +241,8 @@ SPProfiles = {
 			CareerSettings.dr_ironbreaker,
 			CareerSettings.dr_slayer
 		},
-		base_character_states = tbl,
-		base_camera_states = tbl_2
+		base_character_states = base_character_states,
+		base_camera_states = base_camera_states
 	},
 	{
 		career_voice_parameter = "kerillian_career_voice_effect",
@@ -265,7 +265,7 @@ SPProfiles = {
 		},
 		room_profile = RoomProfiles.wood_elf,
 		base_units = BaseUnits.wood_elf,
-		default_state_machine = str,
+		default_state_machine = default_state_machine,
 		first_person_attachment = FirstPersonAttachments.wood_elf,
 		first_person_heights = {
 			charged = 0.85,
@@ -279,8 +279,8 @@ SPProfiles = {
 			CareerSettings.we_maidenguard,
 			CareerSettings.we_shade
 		},
-		base_character_states = tbl,
-		base_camera_states = tbl_2
+		base_character_states = base_character_states,
+		base_camera_states = base_camera_states
 	},
 	{
 		career_voice_parameter = "markus_career_voice_effect",
@@ -303,7 +303,7 @@ SPProfiles = {
 		},
 		room_profile = RoomProfiles.empire_soldier,
 		base_units = BaseUnits.empire_soldier,
-		default_state_machine = str,
+		default_state_machine = default_state_machine,
 		first_person_attachment = FirstPersonAttachments.empire_soldier,
 		first_person_heights = {
 			charged = 1,
@@ -317,8 +317,8 @@ SPProfiles = {
 			CareerSettings.es_huntsman,
 			CareerSettings.es_knight
 		},
-		base_character_states = tbl,
-		base_camera_states = tbl_2
+		base_character_states = base_character_states,
+		base_camera_states = base_camera_states
 	},
 	{
 		career_voice_parameter = "markus_career_voice_effect",
@@ -343,7 +343,7 @@ SPProfiles = {
 		},
 		room_profile = RoomProfiles.empire_soldier,
 		base_units = BaseUnits.empire_soldier,
-		default_state_machine = str,
+		default_state_machine = default_state_machine,
 		first_person_attachment = FirstPersonAttachments.empire_soldier,
 		first_person_heights = {
 			grabbed_by_tentacle = 1.9,
@@ -356,145 +356,162 @@ SPProfiles = {
 			CareerSettings.empire_soldier_tutorial,
 			CareerSettings.empire_soldier_tutorial
 		},
-		base_character_states = tbl,
-		base_camera_states = tbl_2
+		base_character_states = base_character_states,
+		base_camera_states = base_camera_states
 	}
 }
 TUTORIAL_PROFILE_INDEX = nil
 
-for k_2, v_4 in pairs(SPProfiles) do
-	if not v_4.tutorial_profile then
-		TUTORIAL_PROFILE_INDEX = k_2
+for profile_index, profile in pairs(SPProfiles) do
+	if profile.tutorial_profile then
+		TUTORIAL_PROFILE_INDEX = profile_index
 	end
 end
 
-local function fn()
+local function process_profiles()
 	-- function 1
 	for i = 1, #SPProfiles do
-		local var_1_0 = SPProfiles[i]
-		local display_name = var_1_0.display_name
+		local profile = SPProfiles[i]
+		local profile_name = profile.display_name
 
-		if not PROFILES_BY_NAME[display_name] then
-			var_1_0.index = i
-			PROFILES_BY_NAME[display_name] = var_1_0
+		if not PROFILES_BY_NAME[profile_name] then
+			profile.index = i
+			PROFILES_BY_NAME[profile_name] = profile
 
-			local affiliation = var_1_0.affiliation
+			local affiliation_2 = profile.affiliation
 
-			affiliation = affiliation or "unfinished"
+			if not affiliation_2 then
+				-- Nothing
+			end
+
+			affiliation_2 = "unfinished"
+
+			local affiliation = affiliation_2
+
+			::label_1_0::
 
 			if not PROFILES_BY_AFFILIATION[affiliation] then
 				PROFILES_BY_AFFILIATION[affiliation] = {}
 			end
 
-			local var_1_3 = PROFILES_BY_AFFILIATION[affiliation]
+			local affiliation_profiles = PROFILES_BY_AFFILIATION[affiliation]
 
-			var_1_3[#var_1_3 + 1] = display_name
-			var_1_3[display_name] = true
+			affiliation_profiles[#affiliation_profiles + 1] = profile_name
+			affiliation_profiles[profile_name] = true
 		end
 	end
 end
 
-function FindProfileIndex(arg_2_0)
+function FindProfileIndex(profile_name)
 	-- function 2
-	local var_2_0 = PROFILES_BY_NAME[arg_2_0]
+	local profile_settings = PROFILES_BY_NAME[profile_name]
 
-	return not var_2_0 and var_2_0.index
+	return not not profile_settings and not not profile_settings.index
 end
 
-function GetHeroAffiliationIndex(arg_3_0)
+function GetHeroAffiliationIndex(profile_index)
 	-- function 3
-	local var_3_0 = SPProfiles[arg_3_0]
-	local heroes = PROFILES_BY_AFFILIATION.heroes
+	local profile = SPProfiles[profile_index]
+	local hero_profiles = PROFILES_BY_AFFILIATION.heroes
 
-	for i = 1, #heroes do
-		local var_3_2 = heroes[i]
+	for i = 1, #hero_profiles do
+		local hero_profile = hero_profiles[i]
 
-		if var_3_0.display_name == var_3_2 then
+		if profile.display_name == hero_profile then
 			return i
 		end
 	end
 end
 
-function add_career_to_profile(arg_4_0, arg_4_1)
+function add_career_to_profile(profile_name, career)
 	-- function 4
-	local var_4_0 = FindProfileIndex(arg_4_0)
-	local careers = SPProfiles[var_4_0].careers
+	local profile_idx = FindProfileIndex(profile_name)
+	local profile = SPProfiles[profile_idx]
+	local careers = profile.careers
 
-	table.insert(careers, arg_4_1)
+	table.insert(careers, career)
 end
 
 PROFILES_BY_NAME = {}
 PROFILES_BY_AFFILIATION = {}
 
-fn()
+process_profiles()
 
-for k_3, v_5 in pairs(DLCSettings) do
-	local profile_files = v_5.profile_files
+for _, dlc in pairs(DLCSettings) do
+	local profile_files = dlc.profile_files
 
-	if not profile_files then
-		for i_3, v_6 in ipairs(profile_files) do
-			local var_0_7 = dofile(v_6)
+	if profile_files then
+		for _, profile_file in ipairs(profile_files) do
+			local additional_profiles = dofile(profile_file)
 
-			if not var_0_7 then
-				table.append(SPProfiles, var_0_7)
+			if additional_profiles then
+				table.append(SPProfiles, additional_profiles)
 			end
 		end
 	end
 end
 
-fn()
+process_profiles()
 
 PROFILES_BY_NAME = {}
 PROFILES_BY_CAREER_NAMES = {}
 PROFILES_BY_AFFILIATION = {}
 
-for i12 = 1, #SPProfiles do
-	local var_0_8 = SPProfiles[i12]
+for i = 1, #SPProfiles do
+	local profile = SPProfiles[i]
 
-	var_0_8.index = i12
-	PROFILES_BY_NAME[var_0_8.display_name] = var_0_8
+	profile.index = i
+	PROFILES_BY_NAME[profile.display_name] = profile
 
-	local affiliation = var_0_8.affiliation
+	local affiliation_2 = profile.affiliation
 
-	affiliation = affiliation or "unfinished"
+	if not affiliation_2 then
+		-- Nothing
+	end
+
+	affiliation_2 = "unfinished"
+
+	local affiliation = affiliation_2
+
+	::label_0_0::
 
 	if not PROFILES_BY_AFFILIATION[affiliation] then
 		PROFILES_BY_AFFILIATION[affiliation] = {}
 	end
 
-	local var_0_10 = PROFILES_BY_AFFILIATION[affiliation]
+	local affiliation_profiles = PROFILES_BY_AFFILIATION[affiliation]
 
-	var_0_10[#var_0_10 + 1] = var_0_8.display_name
-	var_0_10[var_0_8.display_name] = true
+	affiliation_profiles[#affiliation_profiles + 1] = profile.display_name
+	affiliation_profiles[profile.display_name] = true
 
-	local careers = var_0_8.careers
+	local careers = profile.careers
 
-	for i_4, v_7 in ipairs(careers) do
-		PROFILES_BY_CAREER_NAMES[v_7.name] = var_0_8
+	for career_index, career in ipairs(careers) do
+		PROFILES_BY_CAREER_NAMES[career.name] = profile
 	end
 end
 
-function career_index_from_name(arg_5_0, arg_5_1)
+function career_index_from_name(profile_index, career_name)
 	-- function 5
-	local careers = SPProfiles[arg_5_0].careers
+	local careers = SPProfiles[profile_index].careers
 
-	for i, v in ipairs(careers) do
-		if v.name == arg_5_1 then
-			return i
+	for career_index, career in ipairs(careers) do
+		if career.name == career_name then
+			return career_index
 		end
 	end
 
 	return nil
 end
 
-function hero_and_career_name_from_index(arg_6_0, arg_6_1)
+function hero_and_career_name_from_index(profile_index, career_index)
 	-- function 6
-	local var_6_0 = SPProfiles[arg_6_0]
-	local var_6_1 = var_6_0.careers[arg_6_1]
-	local display_name = var_6_0.display_name
-	local name = var_6_1.name
+	local profile = SPProfiles[profile_index]
+	local career = profile.careers[career_index]
+	local profile_name = profile.display_name
+	local career_name = career.name
 
-	return display_name, name
+	return profile_name, career_name
 end
 
 DefaultUnits = {
@@ -504,45 +521,45 @@ DefaultUnits = {
 	}
 }
 
-local tbl_4 = {}
-local tbl_5 = {}
+local character_state_names = {}
+local camera_state_names = {}
 
-for i_5, v_8 in ipairs(SPProfiles) do
-	for i_6, v_9 in ipairs(v_8.careers) do
-		local clone = table.clone(v_8.base_character_states)
-		local clone_2 = table.clone(v_8.base_camera_states)
-		local additional_character_states_list = v_9.additional_character_states_list
+for index, profile in ipairs(SPProfiles) do
+	for i, career_settings in ipairs(profile.careers) do
+		local character_state_list = table.clone(profile.base_character_states)
+		local camera_state_list = table.clone(profile.base_camera_states)
+		local additional_character_states_list = career_settings.additional_character_states_list
 
-		if not additional_character_states_list then
-			for i_7, v_10 in ipairs(additional_character_states_list) do
-				clone[#clone + 1] = v_10
+		if additional_character_states_list then
+			for _, character_state_name in ipairs(additional_character_states_list) do
+				character_state_list[#character_state_list + 1] = character_state_name
 			end
 		end
 
-		local additional_camera_states_list = v_9.additional_camera_states_list
+		local additional_camera_states_list = career_settings.additional_camera_states_list
 
-		if not additional_camera_states_list then
-			for i_8, v_11 in ipairs(additional_camera_states_list) do
-				clone_2[#clone_2 + 1] = v_11
+		if additional_camera_states_list then
+			for _, camera_state_name in ipairs(additional_camera_states_list) do
+				camera_state_list[#camera_state_list + 1] = camera_state_name
 			end
 		end
 
-		for i_9, v_12 in ipairs(clone) do
-			fassert(tbl_4[v_12] == nil, "Character state '%s' referenced more than once in career - %s profile - %s", v_12, v_9.display_name, v_8.display_name)
+		for _, character_state_name in ipairs(character_state_list) do
+			fassert(character_state_names[character_state_name] == nil, "Character state '%s' referenced more than once in career - %s profile - %s", character_state_name, career_settings.display_name, profile.display_name)
 
-			tbl_4[v_12] = true
+			character_state_names[character_state_name] = true
 		end
 
-		for i_10, v_13 in ipairs(clone_2) do
-			fassert(tbl_5[v_13] == nil, "Camera state '%s' referenced more than once in career - %s profile - %s", v_13, v_9.display_name, v_8.display_name)
+		for _, camera_state_name in ipairs(camera_state_list) do
+			fassert(camera_state_names[camera_state_name] == nil, "Camera state '%s' referenced more than once in career - %s profile - %s", camera_state_name, career_settings.display_name, profile.display_name)
 
-			tbl_5[v_13] = true
+			camera_state_names[camera_state_name] = true
 		end
 
-		v_9.character_state_list = clone
-		v_9.camera_state_list = clone_2
+		career_settings.character_state_list = character_state_list
+		career_settings.camera_state_list = camera_state_list
 
-		table.clear(tbl_4)
-		table.clear(tbl_5)
+		table.clear(character_state_names)
+		table.clear(camera_state_names)
 	end
 end

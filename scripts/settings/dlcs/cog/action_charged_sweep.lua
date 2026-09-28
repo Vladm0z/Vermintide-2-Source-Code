@@ -2,194 +2,206 @@
 
 ActionChargedSweep = class(ActionChargedSweep, ActionSweep)
 
-ActionChargedSweep.init = function (self, arg_1_1, arg_1_2, arg_1_3, arg_1_4, arg_1_5, arg_1_6, arg_1_7, arg_1_8)
+ActionChargedSweep.init = function (self, world, item_name, is_server, owner_unit, damage_unit, first_person_unit, weapon_unit, weapon_system)
 	-- function 1
-	ActionChargedSweep.super.init(self, arg_1_1, arg_1_2, arg_1_3, arg_1_4, arg_1_5, arg_1_6, arg_1_7, arg_1_8)
+	ActionChargedSweep.super.init(self, world, item_name, is_server, owner_unit, damage_unit, first_person_unit, weapon_unit, weapon_system)
 
-	local extension = ScriptUnit.extension(arg_1_4, "overcharge_system")
+	local overcharge_extension = ScriptUnit.extension(owner_unit, "overcharge_system")
 
 	self.overcharge_level_map = {
-		extension.overcharge_threshold,
-		extension.overcharge_limit,
-		extension.overcharge_critical_limit
+		overcharge_extension.overcharge_threshold,
+		overcharge_extension.overcharge_limit,
+		overcharge_extension.overcharge_critical_limit
 	}
 	self.overcharge_map_size = #self.overcharge_level_map
-	self.overcharge_extension = extension
+	self.overcharge_extension = overcharge_extension
 end
 
-ActionChargedSweep.client_owner_start_action = function (self, arg_2_1, arg_2_2, arg_2_3, arg_2_4, arg_2_5)
+ActionChargedSweep.client_owner_start_action = function (self, new_action, t, chain_action_data, power_level, action_init_data)
 	-- function 2
-	arg_2_5 = arg_2_5 or {}
+	action_init_data = not not action_init_data or not not {}
 	self._overcharge_type = nil
 	self._consume_overcharge = false
 
-	local var_2_0
+	local discharge_effect
 	local overcharge_extension = self.overcharge_extension
 
-	if not arg_2_1.discharge_attack then
-		local get_overcharge_value = overcharge_extension:get_overcharge_value()
-		local get_overcharge_level = self:get_overcharge_level(get_overcharge_value)
+	if new_action.discharge_attack then
+		local value = overcharge_extension:get_overcharge_value()
+		local overcharge_level = self:get_overcharge_level(value)
 
-		var_2_0 = self:get_discharge_effect(arg_2_1, get_overcharge_level)
+		discharge_effect = self:get_discharge_effect(new_action, overcharge_level)
 
-		if not var_2_0 then
-			local overcharge_power_mult = var_2_0.overcharge_power_mult
+		if discharge_effect then
+			local overcharge_power_mult = discharge_effect.overcharge_power_mult
 
-			overcharge_power_mult = overcharge_power_mult or 1
-			arg_2_4 = arg_2_4 * overcharge_power_mult
-			self._overcharge_type = var_2_0.consume_overcharge_type
+			overcharge_power_mult = not not overcharge_power_mult or not not 1
+			power_level = power_level * overcharge_power_mult
+			self._overcharge_type = discharge_effect.consume_overcharge_type
 			self._consume_overcharge = true
 		end
 	else
-		self._overcharge_type = arg_2_1.overcharge_type
+		self._overcharge_type = new_action.overcharge_type
 	end
 
-	self._discharge_effect = var_2_0
-	self._overcharge_on_swing = arg_2_1.overcharge_on_swing
+	self._discharge_effect = discharge_effect
+	self._overcharge_on_swing = new_action.overcharge_on_swing
 
-	if not arg_2_1.overcharge_on_swing then
+	if new_action.overcharge_on_swing then
 		self:_apply_overcharge(self._overcharge_type, self._consume_overcharge)
 	end
 
-	ActionChargedSweep.super.client_owner_start_action(self, arg_2_1, arg_2_2, arg_2_3, arg_2_4, arg_2_5)
+	ActionChargedSweep.super.client_owner_start_action(self, new_action, t, chain_action_data, power_level, action_init_data)
 end
 
-ActionChargedSweep.client_owner_post_update = function (arg_3_0, arg_3_1, arg_3_2, arg_3_3, arg_3_4, arg_3_5)
+ActionChargedSweep.client_owner_post_update = function (self, dt, t, world, can_damage, current_time_in_action)
 	-- function 3
-	ActionChargedSweep.super.client_owner_post_update(arg_3_0, arg_3_1, arg_3_2, arg_3_3, arg_3_4, arg_3_5)
+	ActionChargedSweep.super.client_owner_post_update(self, dt, t, world, can_damage, current_time_in_action)
 end
 
-ActionChargedSweep.finish = function (arg_4_0, arg_4_1)
+ActionChargedSweep.finish = function (self, reason)
 	-- function 4
-	ActionChargedSweep.super.finish(arg_4_0, arg_4_1)
+	ActionChargedSweep.super.finish(self, reason)
 end
 
-ActionChargedSweep.get_overcharge_level = function (self, arg_5_1)
+ActionChargedSweep.get_overcharge_level = function (self, value)
 	-- function 5
-	local num = 1
-	local overcharge_level_map = self.overcharge_level_map
+	local level = 1
+	local overcharge_map = self.overcharge_level_map
 
 	for i = self.overcharge_map_size, 1, -1 do
-		if arg_5_1 >= overcharge_level_map[i] then
+		if value >= overcharge_map[i] then
 			return i + 1
 		end
 	end
 
-	return num
+	return level
 end
 
-ActionChargedSweep.get_discharge_effect = function (self, arg_6_1, arg_6_2)
+ActionChargedSweep.get_discharge_effect = function (self, action, overcharge_level)
 	-- function 6
-	local min = math.min(arg_6_2, self.overcharge_map_size)
-	local discharge_effects = arg_6_1.discharge_effects
+	local overcharge_level_start = math.min(overcharge_level, self.overcharge_map_size)
+	local discharge_effects = action.discharge_effects
 
-	for i = min, 1, -1 do
-		local var_6_2 = discharge_effects[arg_6_2]
+	for i = overcharge_level_start, 1, -1 do
+		local effect = discharge_effects[overcharge_level]
 
-		if not var_6_2 then
-			return var_6_2
+		if effect then
+			return effect
 		end
 	end
 
 	return nil
 end
 
-ActionChargedSweep.apply_overcharge = function (self, arg_7_1, arg_7_2)
+ActionChargedSweep.apply_overcharge = function (self, overcharge_type, consume)
 	-- function 7
-	if not arg_7_1 then
+	if overcharge_type then
 		local overcharge_extension = self.overcharge_extension
-		local var_7_1 = PlayerUnitStatusSettings.overcharge_values[arg_7_1]
+		local overcharge_amount = PlayerUnitStatusSettings.overcharge_values[overcharge_type]
 
-		if not arg_7_2 then
-			overcharge_extension:remove_charge(var_7_1)
+		if consume then
+			overcharge_extension:remove_charge(overcharge_amount)
 		else
-			overcharge_extension:add_charge(var_7_1)
+			overcharge_extension:add_charge(overcharge_amount)
 		end
 	end
 end
 
-ActionChargedSweep._send_attack_hit = function (self, arg_8_1, arg_8_2, arg_8_3, arg_8_4, arg_8_5, arg_8_6, arg_8_7, arg_8_8, ...)
+ActionChargedSweep._send_attack_hit = function (self, t, damage_source_id, attacker_unit_id, hit_unit_id, hit_zone_id, hit_position, attack_direction, damage_profile_id, ...)
 	-- function 8
-	local flag = false
-	local var_8_1
+	local first_alive_hit = false
+	local hit_unit
 
-	if not (not (arg_8_1 > self._time_to_hit) or self._number_of_hit_enemies ~= 1) then
-		var_8_1 = self._network_manager:game_object_or_level_unit(arg_8_4)
+	if t > self._time_to_hit and self._number_of_hit_enemies == 1 then
+		hit_unit = self._network_manager:game_object_or_level_unit(hit_unit_id)
 
-		local has_extension = ScriptUnit.has_extension(var_8_1, "health_system")
+		local target_health_extension = ScriptUnit.has_extension(hit_unit, "health_system")
 
-		flag = not has_extension and has_extension:client_predicted_is_alive()
+		first_alive_hit = not not target_health_extension and not not target_health_extension:client_predicted_is_alive()
 	end
 
-	ActionChargedSweep.super._send_attack_hit(self, arg_8_1, arg_8_2, arg_8_3, arg_8_4, arg_8_5, arg_8_6, arg_8_7, arg_8_8, ...)
+	ActionChargedSweep.super._send_attack_hit(self, t, damage_source_id, attacker_unit_id, hit_unit_id, hit_zone_id, hit_position, attack_direction, damage_profile_id, ...)
 
-	if not flag then
+	if first_alive_hit then
 		if not self._overcharge_on_swing then
 			self:apply_overcharge(self._overcharge_type, self._consume_overcharge)
 		end
 
-		self:_apply_discharge_effect(self._discharge_effect, arg_8_2, var_8_1, arg_8_6)
+		self:_apply_discharge_effect(self._discharge_effect, damage_source_id, hit_unit, hit_position)
 	end
 end
 
-ActionChargedSweep._apply_discharge_effect = function (self, arg_9_1, arg_9_2, arg_9_3, arg_9_4)
+ActionChargedSweep._apply_discharge_effect = function (self, discharge_effect, damage_source_id, hit_unit, hit_position)
 	-- function 9
-	if not arg_9_1 then
-		local explosion_template_name = arg_9_1.explosion_template_name
+	if discharge_effect then
+		local impact_explosion_template_name = discharge_effect.explosion_template_name
 
-		if not explosion_template_name then
-			local has_node = Unit.has_node(arg_9_3, "c_spine")
+		if impact_explosion_template_name then
+			local has_node = Unit.has_node(hit_unit, "c_spine")
 
-			has_node = not has_node and Unit.node(arg_9_3, "c_spine")
+			if has_node then
+				-- Nothing
+			end
 
-			local world_position
+			has_node = Unit.node(hit_unit, "c_spine")
 
-			if not has_node then
-				world_position = Unit.world_position(arg_9_3, has_node)
+			local spine_node = has_node
+
+			do
+				local world_position
+			end
+
+			::label_9_0::
+
+			if spine_node then
+				world_position = Unit.world_position(hit_unit, spine_node)
 
 				if not world_position then
 					-- Nothing
 				end
 			end
 
-			world_position = arg_9_4
+			world_position = hit_position
 
-			::label_9_0::
+			local explosion_position = world_position
+
+			::label_9_1::
 
 			local world = self.world
 			local owner_unit = self.owner_unit
-			local unbox = self._stored_rotation:unbox()
-			local num = 1
+			local rotation = self._stored_rotation:unbox()
+			local scale = 1
 			local item_name = self.item_name
-			local _power_level = self._power_level
+			local power_level = self._power_level
 			local is_server = self.is_server
-			local flag = false
-			local flag_2 = false
+			local is_husk = false
+			local is_critical_strike = false
 			local weapon_unit = self.weapon_unit
-			local network = Managers.state.network
-			local network_transmit = network.network_transmit
-			local get_template = ExplosionUtils.get_template(explosion_template_name)
-			local unit_game_object_id = network:unit_game_object_id(owner_unit)
-			local var_9_17 = NetworkLookup.explosion_templates[explosion_template_name]
+			local network_manager = Managers.state.network
+			local network_transmit = network_manager.network_transmit
+			local impact_explosion_template = ExplosionUtils.get_template(impact_explosion_template_name)
+			local owner_unit_go_id = network_manager:unit_game_object_id(owner_unit)
+			local impact_explosion_template_id = NetworkLookup.explosion_templates[impact_explosion_template_name]
 
-			if not is_server then
-				network_transmit:send_rpc_clients("rpc_create_explosion", unit_game_object_id, false, world_position, unbox, var_9_17, num, arg_9_2, _power_level, flag_2, unit_game_object_id)
+			if is_server then
+				network_transmit:send_rpc_clients("rpc_create_explosion", owner_unit_go_id, false, explosion_position, rotation, impact_explosion_template_id, scale, damage_source_id, power_level, is_critical_strike, owner_unit_go_id)
 			else
-				network_transmit:send_rpc_server("rpc_create_explosion", unit_game_object_id, false, world_position, unbox, var_9_17, num, arg_9_2, _power_level, flag_2, unit_game_object_id)
+				network_transmit:send_rpc_server("rpc_create_explosion", owner_unit_go_id, false, explosion_position, rotation, impact_explosion_template_id, scale, damage_source_id, power_level, is_critical_strike, owner_unit_go_id)
 			end
 
-			DamageUtils.create_explosion(world, owner_unit, world_position, unbox, get_template, num, item_name, is_server, flag, weapon_unit, _power_level, flag_2)
+			DamageUtils.create_explosion(world, owner_unit, explosion_position, rotation, impact_explosion_template, scale, item_name, is_server, is_husk, weapon_unit, power_level, is_critical_strike)
 		end
 	end
 end
 
-ActionChargedSweep._get_damage_profile_name = function (self, arg_10_1, arg_10_2)
+ActionChargedSweep._get_damage_profile_name = function (self, action_hand, action)
 	-- function 10
-	local _discharge_effect = self._discharge_effect
+	local discharge_effect = self._discharge_effect
 
-	if not _discharge_effect and not _discharge_effect.damage_profile_name then
-		return _discharge_effect.damage_profile_name
+	if discharge_effect and discharge_effect.damage_profile_name then
+		return discharge_effect.damage_profile_name
 	end
 
-	return ActionChargedSweep.super._get_damage_profile_name(self, arg_10_1, arg_10_2)
+	return ActionChargedSweep.super._get_damage_profile_name(self, action_hand, action)
 end

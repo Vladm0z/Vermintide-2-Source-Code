@@ -241,7 +241,7 @@ QuestSettings.allowed_difficulties = {
 	}
 }
 
-local tbl = {
+local level_challenge_name_lookup = {
 	catacombs_added_souls = "achv_catacombs_stay_inside_ritual_pool_name",
 	elven_ruins_speed_event_cata = "achv_elven_ruins_align_leylines_timed_cata_name",
 	elven_ruins_speed_event = "achv_elven_ruins_align_leylines_timed_name",
@@ -269,492 +269,559 @@ local tbl = {
 	catacombs_added_souls_cata = "achv_catacombs_stay_inside_ritual_pool_cata_name",
 	bell_speed_event_cata = "achv_bell_destroy_bell_flee_timed_cata_name"
 }
-local tbl_2 = {}
+local stat_mappings = {}
 
-for k, v in pairs(QuestSettings.rules) do
-	local format = string.format("%s_quest", k)
+for quest_type, data in pairs(QuestSettings.rules) do
+	local quest_prefix = string.format("%s_quest", quest_type)
 
-	for k_2 = 1, v.max_quests do
-		local format_2 = string.format("%s_%d", format, k_2)
-		local tbl_3 = {}
+	for i = 1, data.max_quests do
+		local quest_name = string.format("%s_%d", quest_prefix, i)
+		local stat_map = {}
 
-		for l = 1, v.num_criterias do
-			tbl_3[#tbl_3 + 1] = string.format("%s_stat_%d", format_2, l)
+		for j = 1, data.num_criterias do
+			stat_map[#stat_map + 1] = string.format("%s_stat_%d", quest_name, j)
 		end
 
-		tbl_2[format_2] = tbl_3
+		stat_mappings[quest_name] = stat_map
 	end
 end
 
-QuestSettings.stat_mappings = tbl_2
+QuestSettings.stat_mappings = stat_mappings
 
-QuestSettings.send_completed_message = function (arg_1_0)
+QuestSettings.send_completed_message = function (challenge_stat_id)
 	-- function 1
-	local flag = false
+	local has_not_completed_challenge = false
 	local human_players = Managers.player:human_players()
 	local statistics_db = Managers.player:statistics_db()
 
-	for k, v in pairs(human_players) do
-		local get_persistent_stat = statistics_db:get_persistent_stat(v:stats_id(), arg_1_0)
+	for _, player in pairs(human_players) do
+		local saved_stat = statistics_db:get_persistent_stat(player:stats_id(), challenge_stat_id)
 
-		if not (not get_persistent_stat and get_persistent_stat ~= 0) then
-			flag = true
+		if not saved_stat or saved_stat == 0 then
+			has_not_completed_challenge = true
 
 			break
 		end
 	end
 
-	if not flag then
-		local var_1_4 = tbl[arg_1_0]
+	if has_not_completed_challenge then
+		local challenge_name = level_challenge_name_lookup[challenge_stat_id]
 
-		if not var_1_4 then
-			local var_1_5 = var_1_4
-			local flag_2 = false
+		if challenge_name then
+			local message = challenge_name
+			local localize_parameters = false
 
-			Managers.chat:send_system_chat_message(1, var_1_5, 1, flag_2, true)
+			Managers.chat:send_system_chat_message(1, message, 1, localize_parameters, true)
 		end
 	end
 end
 
-local function fn(arg_2_0, arg_2_1)
+local function increment_stat(unit, stat_name)
 	-- function 2
-	local unit_owner = Managers.player:unit_owner(arg_2_0)
+	local player = Managers.player:unit_owner(unit)
 
-	if not (not unit_owner and unit_owner.bot_player) then
-		local network_id = unit_owner:network_id()
-		local network = Managers.state.network
-		local var_2_3 = NetworkLookup.statistics[arg_2_1]
+	if player and not player.bot_player then
+		local peer_id = player:network_id()
+		local network_manager = Managers.state.network
+		local stat_id = NetworkLookup.statistics[stat_name]
 
-		network.network_transmit:send_rpc("rpc_increment_stat", network_id, var_2_3)
+		network_manager.network_transmit:send_rpc("rpc_increment_stat", peer_id, stat_id)
 	end
 end
 
-local function fn_2(arg_3_0)
+local function increment_stat_on_all(stat_name)
 	-- function 3
-	Managers.player:statistics_db():increment_stat_and_sync_to_clients(arg_3_0)
+	local statistics_db = Managers.player:statistics_db()
+
+	statistics_db:increment_stat_and_sync_to_clients(stat_name)
 end
 
-QuestSettings.check_globadier_kill_before_throwing = function (self, arg_4_1)
+QuestSettings.check_globadier_kill_before_throwing = function (blackboard, killer_unit)
 	-- function 4
-	if not self.has_thrown_first_globe then
-		local str = "globadier_kill_before_throwing"
+	if not blackboard.has_thrown_first_globe then
+		local stat_name = "globadier_kill_before_throwing"
 
-		fn(arg_4_1, str)
+		increment_stat(killer_unit, stat_name)
 
-		self.has_thrown_first_globe = nil
+		blackboard.has_thrown_first_globe = nil
 	end
 end
 
-QuestSettings.check_globadier_kill_during_suicide = function (self, arg_5_1, arg_5_2)
+QuestSettings.check_globadier_kill_during_suicide = function (blackboard, unit, killer_unit)
 	-- function 5
-	if not ((arg_5_1 == arg_5_2 or not self.action or not self.action.name) and self.action.name ~= "suicide_run") then
-		local str = "globadier_kill_during_suicide"
+	if unit ~= killer_unit and blackboard.action and blackboard.action.name and blackboard.action.name == "suicide_run" then
+		local stat_name = "globadier_kill_during_suicide"
 
-		fn(arg_5_2, str)
+		increment_stat(killer_unit, stat_name)
 	end
 end
 
-QuestSettings.check_num_enemies_killed_by_poison = function (arg_6_0, arg_6_1)
+QuestSettings.check_num_enemies_killed_by_poison = function (unit, extension_unit)
 	-- function 6
-	local get_actual_attacker_unit = AiUtils.get_actual_attacker_unit(arg_6_1)
-	local var_6_1 = BLACKBOARDS[get_actual_attacker_unit]
+	local globadier_unit = AiUtils.get_actual_attacker_unit(extension_unit)
+	local blackboard = BLACKBOARDS[globadier_unit]
 
-	if not var_6_1 then
-		local num_killed_by_poison = var_6_1.num_killed_by_poison
+	if blackboard then
+		local num_killed_by_poison = blackboard.num_killed_by_poison
 
-		num_killed_by_poison = num_killed_by_poison or 0
-		var_6_1.num_killed_by_poison = num_killed_by_poison + 1
+		num_killed_by_poison = not not num_killed_by_poison or not not 0
+		blackboard.num_killed_by_poison = num_killed_by_poison + 1
 
-		if var_6_1.num_killed_by_poison >= QuestSettings.num_enemies_killed_by_poison then
-			local str = "globadier_enemies_killed_by_poison"
+		if blackboard.num_killed_by_poison >= QuestSettings.num_enemies_killed_by_poison then
+			local stat_name = "globadier_enemies_killed_by_poison"
 
-			fn_2(str)
+			increment_stat_on_all(stat_name)
 
-			var_6_1.num_killed_by_poison = 0
+			blackboard.num_killed_by_poison = 0
 		end
 	end
 end
 
-QuestSettings.check_warpfire_kill_before_shooting = function (self, arg_7_1)
+QuestSettings.check_warpfire_kill_before_shooting = function (blackboard, killer_unit)
 	-- function 7
-	if not self.has_fired then
-		local str = "warpfire_kill_before_shooting"
+	if not blackboard.has_fired then
+		local stat_name = "warpfire_kill_before_shooting"
 
-		fn(arg_7_1, str)
+		increment_stat(killer_unit, stat_name)
 	end
 end
 
-QuestSettings.check_warpfire_kill_on_power_cell = function (arg_8_0, arg_8_1)
+QuestSettings.check_warpfire_kill_on_power_cell = function (death_hit_zone, killer_unit)
 	-- function 8
-	if arg_8_0 == "aux" then
-		local str = "warpfire_kill_on_power_cell"
+	if death_hit_zone == "aux" then
+		local stat_name = "warpfire_kill_on_power_cell"
 
-		fn(arg_8_1, str)
+		increment_stat(killer_unit, stat_name)
 	end
 end
 
-QuestSettings.check_num_enemies_killed_by_warpfire = function (arg_9_0, arg_9_1)
+QuestSettings.check_num_enemies_killed_by_warpfire = function (unit, attacker_unit)
 	-- function 9
-	local var_9_0 = BLACKBOARDS[arg_9_1]
-	local hit_units_warpfire_challenge = var_9_0.hit_units_warpfire_challenge
+	local blackboard = BLACKBOARDS[attacker_unit]
+	local hit_units_warpfire_challenge = blackboard.hit_units_warpfire_challenge
 
-	hit_units_warpfire_challenge = hit_units_warpfire_challenge or {}
-	var_9_0.hit_units_warpfire_challenge = hit_units_warpfire_challenge
+	hit_units_warpfire_challenge = not not hit_units_warpfire_challenge or not not {}
+	blackboard.hit_units_warpfire_challenge = hit_units_warpfire_challenge
 
-	if not var_9_0.hit_units_warpfire_challenge[arg_9_0] then
-		local num_ai_killed_by_warpfire = var_9_0.num_ai_killed_by_warpfire
+	if not blackboard.hit_units_warpfire_challenge[unit] then
+		local num_ai_killed_by_warpfire_2 = blackboard.num_ai_killed_by_warpfire
 
-		num_ai_killed_by_warpfire = num_ai_killed_by_warpfire or 0
-		var_9_0.num_ai_killed_by_warpfire = num_ai_killed_by_warpfire + 1
-		var_9_0.hit_units_warpfire_challenge[arg_9_0] = true
+		if not num_ai_killed_by_warpfire_2 then
+			-- Nothing
+		end
 
-		if var_9_0.num_ai_killed_by_warpfire >= QuestSettings.num_enemies_killed_by_warpfire then
-			var_9_0.num_ai_killed_by_warpfire = nil
-			var_9_0.hit_units_warpfire_challenge = nil
+		num_ai_killed_by_warpfire_2 = 0
 
-			local str = "warpfire_enemies_killed_by_warpfire"
+		local num_ai_killed_by_warpfire = num_ai_killed_by_warpfire_2
 
-			fn_2(str)
+		::label_9_0::
+
+		blackboard.num_ai_killed_by_warpfire = num_ai_killed_by_warpfire + 1
+		blackboard.hit_units_warpfire_challenge[unit] = true
+
+		if blackboard.num_ai_killed_by_warpfire >= QuestSettings.num_enemies_killed_by_warpfire then
+			blackboard.num_ai_killed_by_warpfire = nil
+			blackboard.hit_units_warpfire_challenge = nil
+
+			local stat_name = "warpfire_enemies_killed_by_warpfire"
+
+			increment_stat_on_all(stat_name)
 		end
 	end
 end
 
-QuestSettings.check_pack_master_dodge = function (arg_10_0)
+QuestSettings.check_pack_master_dodge = function (target_unit)
 	-- function 10
-	local str = "pack_master_dodged_attack"
+	local stat_name = "pack_master_dodged_attack"
 
-	fn(arg_10_0, str)
+	increment_stat(target_unit, stat_name)
 end
 
-QuestSettings.check_pack_master_kill_abducting_ally = function (self, arg_11_1)
+QuestSettings.check_pack_master_kill_abducting_ally = function (blackboard, killer_unit)
 	-- function 11
-	if not (not self.action and self.action.name == "drag" or self.action.name ~= "initial_pull") then
-		local str = "pack_master_kill_abducting_ally"
+	if blackboard.action and (blackboard.action.name == "drag" or blackboard.action.name == "initial_pull") then
+		local stat_name = "pack_master_kill_abducting_ally"
 
-		fn(arg_11_1, str)
+		increment_stat(killer_unit, stat_name)
 	end
 end
 
-QuestSettings.check_pack_master_rescue_hoisted_ally = function (arg_12_0)
+QuestSettings.check_pack_master_rescue_hoisted_ally = function (unit)
 	-- function 12
-	local str = "pack_master_rescue_hoisted_ally"
+	local stat_name = "pack_master_rescue_hoisted_ally"
 
-	fn(arg_12_0, str)
+	increment_stat(unit, stat_name)
 end
 
-QuestSettings.check_gutter_killed_while_pouncing = function (self, arg_13_1, arg_13_2)
+QuestSettings.check_gutter_killed_while_pouncing = function (blackboard, killer_unit, damage_source)
 	-- function 13
-	local var_13_0 = rawget(ItemMasterList, arg_13_2)
+	local master_list_item = rawget(ItemMasterList, damage_source)
 
-	if not var_13_0 and not self.action then
-		local slot_type = var_13_0.slot_type
+	if master_list_item and blackboard.action then
+		local slot_type = master_list_item.slot_type
 
-		if not (not slot_type and slot_type ~= "ranged" or self.action.name ~= "jump") then
-			local str = "gutter_runner_killed_on_pounce"
+		if slot_type and slot_type == "ranged" and blackboard.action.name == "jump" then
+			local stat_name = "gutter_runner_killed_on_pounce"
 
-			fn(arg_13_1, str)
+			increment_stat(killer_unit, stat_name)
 		end
 	end
 end
 
-QuestSettings.check_gutter_runner_push_on_pounce = function (self, arg_14_1)
+QuestSettings.check_gutter_runner_push_on_pounce = function (blackboard, pushing_unit)
 	-- function 14
-	local unit = self.unit
+	local unit = blackboard.unit
+	local ai_extension = ScriptUnit.extension(unit, "ai_system")
+	local bt_node_name = ai_extension:current_action_name()
 
-	if ScriptUnit.extension(unit, "ai_system"):current_action_name() ~= "jump" or not Unit.alive(arg_14_1) then
-		local str = "gutter_runner_push_on_pounce"
+	if bt_node_name == "jump" and Unit.alive(pushing_unit) then
+		local stat_name = "gutter_runner_push_on_pounce"
 
-		fn(arg_14_1, str)
+		increment_stat(pushing_unit, stat_name)
 	end
 end
 
-QuestSettings.check_gutter_runner_push_on_target_pounced = function (self, arg_15_1)
+QuestSettings.check_gutter_runner_push_on_target_pounced = function (blackboard, pushing_unit)
 	-- function 15
-	local unit = self.unit
+	local unit = blackboard.unit
+	local ai_extension = ScriptUnit.extension(unit, "ai_system")
+	local bt_node_name = ai_extension:current_action_name()
 
-	if ScriptUnit.extension(unit, "ai_system"):current_action_name() ~= "target_pounced" or not Unit.alive(arg_15_1) then
-		local str = "gutter_runner_push_on_target_pounced"
+	if bt_node_name == "target_pounced" and Unit.alive(pushing_unit) then
+		local stat_name = "gutter_runner_push_on_target_pounced"
 
-		fn(arg_15_1, str)
+		increment_stat(pushing_unit, stat_name)
 	end
 end
 
-QuestSettings.check_corruptor_killed_at_teleport_time = function (self, arg_16_1, arg_16_2, arg_16_3)
+QuestSettings.check_corruptor_killed_at_teleport_time = function (blackboard, teleport_at_t, t, killer_unit)
 	-- function 16
-	if arg_16_2 - arg_16_1 <= QuestSettings.corruptor_killed_at_teleport_time then
-		local str = "corruptor_killed_at_teleport_time"
+	local time_diff = t - teleport_at_t
 
-		fn(arg_16_3, str)
+	if time_diff <= QuestSettings.corruptor_killed_at_teleport_time then
+		local stat_name = "corruptor_killed_at_teleport_time"
 
-		self.teleport_at_t = nil
+		increment_stat(killer_unit, stat_name)
+
+		blackboard.teleport_at_t = nil
 	end
 end
 
-QuestSettings.check_corruptor_dodge = function (arg_17_0)
+QuestSettings.check_corruptor_dodge = function (target_unit)
 	-- function 17
-	local str = "corruptor_dodged_attack"
+	local stat_name = "corruptor_dodged_attack"
 
-	fn(arg_17_0, str)
+	increment_stat(target_unit, stat_name)
 end
 
-QuestSettings.check_corruptor_killed_while_grabbing = function (self, arg_18_1)
+QuestSettings.check_corruptor_killed_while_grabbing = function (blackboard, killer_unit)
 	-- function 18
-	if not self.grabbed_unit and self.has_dealed_damage or not Unit.alive(arg_18_1) then
-		local str = "corruptor_killed_while_grabbing"
+	if blackboard.grabbed_unit and not blackboard.has_dealed_damage and Unit.alive(killer_unit) then
+		local stat_name = "corruptor_killed_while_grabbing"
 
-		fn(arg_18_1, str)
+		increment_stat(killer_unit, stat_name)
 	end
 end
 
-QuestSettings.check_vortex_sorcerer_killed_while_summoning = function (self, arg_19_1)
+QuestSettings.check_vortex_sorcerer_killed_while_summoning = function (blackboard, killer_unit)
 	-- function 19
-	local unit = self.unit
+	local unit = blackboard.unit
+	local ai_extension = ScriptUnit.extension(unit, "ai_system")
+	local bt_node_name = ai_extension:current_action_name()
 
-	if ScriptUnit.extension(unit, "ai_system"):current_action_name() ~= "spawn_vortex" or not Unit.alive(arg_19_1) then
-		local str = "vortex_sorcerer_killed_while_summoning"
+	if bt_node_name == "spawn_vortex" and Unit.alive(killer_unit) then
+		local stat_name = "vortex_sorcerer_killed_while_summoning"
 
-		fn(arg_19_1, str)
+		increment_stat(killer_unit, stat_name)
 	end
 end
 
-QuestSettings.check_vortex_sorcerer_killed_while_ally_in_vortex = function (arg_20_0, arg_20_1)
+QuestSettings.check_vortex_sorcerer_killed_while_ally_in_vortex = function (blackboard, killer_unit)
 	-- function 20
 	local players = Managers.player:players()
 
-	for k, v in pairs(players) do
-		local player_unit = v.player_unit
-		local flag = not player_unit and ScriptUnit.extension(player_unit, "status_system")
+	for _, player in pairs(players) do
+		local player_unit = player.player_unit
+		local status_extension = not not player_unit and not not ScriptUnit.extension(player_unit, "status_system")
 
-		if (player_unit == arg_20_1 or not flag) and not flag:is_in_vortex() then
-			local str = "vortex_sorcerer_killed_while_ally_in_vortex"
+		if player_unit ~= killer_unit and status_extension and status_extension:is_in_vortex() then
+			local stat_name = "vortex_sorcerer_killed_while_ally_in_vortex"
 
-			fn(arg_20_1, str)
+			increment_stat(killer_unit, stat_name)
 
 			break
 		end
 	end
 end
 
-QuestSettings.check_vortex_sorcerer_killed_by_melee = function (arg_21_0, arg_21_1)
+QuestSettings.check_vortex_sorcerer_killed_by_melee = function (killer_unit, damage_source)
 	-- function 21
-	local var_21_0 = rawget(ItemMasterList, arg_21_1)
+	local master_list_item = rawget(ItemMasterList, damage_source)
 
-	if not (not var_21_0 and var_21_0.slot_type ~= "melee") then
-		local str = "vortex_sorcerer_killed_by_melee"
+	if master_list_item then
+		local slot_type = master_list_item.slot_type
 
-		fn(arg_21_0, str)
+		if slot_type == "melee" then
+			local stat_name = "vortex_sorcerer_killed_by_melee"
+
+			increment_stat(killer_unit, stat_name)
+		end
 	end
 end
 
-QuestSettings.check_ratling_gunner_killed_by_melee = function (arg_22_0, arg_22_1)
+QuestSettings.check_ratling_gunner_killed_by_melee = function (killer_unit, damage_source)
 	-- function 22
-	local var_22_0 = rawget(ItemMasterList, arg_22_1)
+	local master_list_item = rawget(ItemMasterList, damage_source)
 
-	if not (not var_22_0 and var_22_0.slot_type ~= "melee") then
-		local str = "ratling_gunner_killed_by_melee"
+	if master_list_item then
+		local slot_type = master_list_item.slot_type
 
-		fn(arg_22_0, str)
+		if slot_type == "melee" then
+			local stat_name = "ratling_gunner_killed_by_melee"
+
+			increment_stat(killer_unit, stat_name)
+		end
 	end
 end
 
-QuestSettings.check_ratling_gunner_killed_while_shooting = function (self, arg_23_1)
+QuestSettings.check_ratling_gunner_killed_while_shooting = function (blackboard, killer_unit)
 	-- function 23
-	local unit = self.unit
-	local current_action_name = ScriptUnit.extension(unit, "ai_system"):current_action_name()
-	local attack_pattern_data = self.attack_pattern_data
+	local unit = blackboard.unit
+	local ai_extension = ScriptUnit.extension(unit, "ai_system")
+	local bt_node_name = ai_extension:current_action_name()
+	local attack_pattern_data = blackboard.attack_pattern_data
 
-	attack_pattern_data = not attack_pattern_data and self.attack_pattern_data.target_unit
+	if attack_pattern_data then
+		-- Nothing
+	end
 
-	if not (attack_pattern_data == arg_23_1 or current_action_name ~= "shoot_ratling_gun") then
-		local str = "ratling_gunner_killed_while_shooting"
+	attack_pattern_data = blackboard.attack_pattern_data.target_unit
 
-		fn(arg_23_1, str)
+	local target_unit = attack_pattern_data
+
+	::label_23_0::
+
+	if target_unit ~= killer_unit and bt_node_name == "shoot_ratling_gun" then
+		local stat_name = "ratling_gunner_killed_while_shooting"
+
+		increment_stat(killer_unit, stat_name)
 	end
 end
 
-QuestSettings.check_chaos_spawn_killed_while_grabbing = function (self, arg_24_1)
+QuestSettings.check_chaos_spawn_killed_while_grabbing = function (blackboard, killer_unit)
 	-- function 24
-	local unit = self.unit
-	local current_action_name = ScriptUnit.extension(unit, "ai_system"):current_action_name()
+	local unit = blackboard.unit
+	local ai_extension = ScriptUnit.extension(unit, "ai_system")
+	local bt_node_name = ai_extension:current_action_name()
 
-	if not (current_action_name == "attack_grabbed_chew" or current_action_name == "attack_grabbed_smash" or current_action_name ~= "attack_grabbed_throw") then
-		local str = "chaos_spawn_killed_while_grabbing"
+	if bt_node_name == "attack_grabbed_chew" or bt_node_name == "attack_grabbed_smash" or bt_node_name == "attack_grabbed_throw" then
+		local stat_name = "chaos_spawn_killed_while_grabbing"
 
-		fn(arg_24_1, str)
+		increment_stat(killer_unit, stat_name)
 	end
 end
 
-QuestSettings.check_chaos_spawn_killed_without_having_grabbed = function (self, arg_25_1)
+QuestSettings.check_chaos_spawn_killed_without_having_grabbed = function (blackboard, killer_unit)
 	-- function 25
-	if not self.has_grabbed then
-		local str = "chaos_spawn_killed_without_having_grabbed"
+	local has_grabbed = blackboard.has_grabbed
 
-		fn_2(str)
+	if not has_grabbed then
+		local stat_name = "chaos_spawn_killed_without_having_grabbed"
 
-		self.has_grabbed = nil
+		increment_stat_on_all(stat_name)
+
+		blackboard.has_grabbed = nil
 	end
 end
 
-QuestSettings.check_chaos_troll_killed_without_regen = function (self, arg_26_1)
+QuestSettings.check_chaos_troll_killed_without_regen = function (blackboard, killer_unit)
 	-- function 26
-	if not (self.num_regen == 1) then
-		local str = "chaos_troll_killed_without_regen"
+	local has_not_regenerated = blackboard.num_regen == 1
 
-		fn_2(str)
+	if has_not_regenerated then
+		local stat_name = "chaos_troll_killed_without_regen"
+
+		increment_stat_on_all(stat_name)
 	end
 end
 
-QuestSettings.check_chaos_troll_killed_without_bile_damage = function (self, arg_27_1)
+QuestSettings.check_chaos_troll_killed_without_bile_damage = function (blackboard, killer_unit)
 	-- function 27
-	if not self.has_done_bile_damage then
-		local str = "chaos_troll_killed_without_bile_damage"
+	local has_damaged_any_player = blackboard.has_done_bile_damage
 
-		fn_2(str)
+	if not has_damaged_any_player then
+		local stat_name = "chaos_troll_killed_without_bile_damage"
+
+		increment_stat_on_all(stat_name)
 	end
 end
 
-QuestSettings.check_rat_ogre_killed_mid_leap = function (self, arg_28_1)
+QuestSettings.check_rat_ogre_killed_mid_leap = function (blackboard, killer_unit)
 	-- function 28
-	local unit = self.unit
+	local unit = blackboard.unit
+	local ai_extension = ScriptUnit.extension(unit, "ai_system")
+	local bt_node_name = ai_extension:current_action_name()
 
-	if ScriptUnit.extension(unit, "ai_system"):current_action_name() == "jump_slam" then
-		local str = "rat_ogre_killed_mid_leap"
+	if bt_node_name == "jump_slam" then
+		local stat_name = "rat_ogre_killed_mid_leap"
 
-		fn(arg_28_1, str)
+		increment_stat(killer_unit, stat_name)
 	end
 end
 
-QuestSettings.check_rat_ogre_killed_without_dealing_damage = function (self, arg_29_1)
+QuestSettings.check_rat_ogre_killed_without_dealing_damage = function (blackboard, killer_unit)
 	-- function 29
-	if not self.has_dealt_damage then
-		local str = "rat_ogre_killed_without_dealing_damage"
+	local has_dealt_damage = blackboard.has_dealt_damage
 
-		fn_2(str)
+	if not has_dealt_damage then
+		local stat_name = "rat_ogre_killed_without_dealing_damage"
+
+		increment_stat_on_all(stat_name)
 	end
 end
 
-QuestSettings.check_stormfiend_killed_without_burn_damage = function (self, arg_30_1)
+QuestSettings.check_stormfiend_killed_without_burn_damage = function (blackboard, killer_unit)
 	-- function 30
-	if not self.has_dealt_burn_damage then
-		local str = "stormfiend_killed_without_burn_damage"
+	local has_dealt_burn_damage = blackboard.has_dealt_burn_damage
 
-		fn_2(str)
+	if not has_dealt_burn_damage then
+		local stat_name = "stormfiend_killed_without_burn_damage"
+
+		increment_stat_on_all(stat_name)
 	end
 end
 
-QuestSettings.check_stormfiend_killed_on_controller = function (arg_31_0, arg_31_1)
+QuestSettings.check_stormfiend_killed_on_controller = function (death_hit_zone, killer_unit)
 	-- function 31
-	if arg_31_0 == "weakspot" then
-		local str = "stormfiend_killed_on_controller"
+	if death_hit_zone == "weakspot" then
+		local stat_name = "stormfiend_killed_on_controller"
 
-		fn(arg_31_1, str)
+		increment_stat(killer_unit, stat_name)
 	end
 end
 
-QuestSettings.check_killed_lord_as_last_player_standing = function (arg_32_0)
+QuestSettings.check_killed_lord_as_last_player_standing = function (killer_unit)
 	-- function 32
-	local unit_owner = Managers.player:unit_owner(arg_32_0)
+	local player = Managers.player:unit_owner(killer_unit)
+	local num_alive_allies = Managers.player:num_alive_allies(player)
+	local last_man_standing = num_alive_allies == 0
 
-	if not (Managers.player:num_alive_allies(unit_owner) == 0) then
-		local str = "killed_lord_as_last_player_standing"
+	if last_man_standing then
+		local stat_name = "killed_lord_as_last_player_standing"
 
-		fn(arg_32_0, str)
+		increment_stat(killer_unit, stat_name)
 	end
 end
 
 QuestSettings.track_bastard_block_breeds = {}
 
-QuestSettings.handle_bastard_block = function (arg_33_0, arg_33_1, arg_33_2)
+QuestSettings.handle_bastard_block = function (target_unit, attacker_unit, blocked)
 	-- function 33
-	local get_data = Unit.get_data(arg_33_0, "breed")
+	local player_breed = Unit.get_data(target_unit, "breed")
 
-	if not (not get_data and QuestSettings.track_bastard_block_breeds[get_data.name]) then
+	if not player_breed or not QuestSettings.track_bastard_block_breeds[player_breed.name] then
 		return false
 	end
 
-	local var_33_1 = BLACKBOARDS[arg_33_1]
+	local boss_bb = BLACKBOARDS[attacker_unit]
 
-	if not var_33_1 then
+	if not boss_bb then
 		return false
 	end
 
-	if not var_33_1.failed_boss then
+	if boss_bb.failed_boss then
 		return false
 	end
 
-	if not arg_33_2 then
-		var_33_1.bastard_block = 0
-		var_33_1.failed_boss = true
+	if not blocked then
+		boss_bb.bastard_block = 0
+		boss_bb.failed_boss = true
 
 		return false
 	end
 
-	if not ScriptUnit.has_extension(arg_33_0, "status_system").charge_blocking then
-		local bastard_block = var_33_1.bastard_block
+	local status_extension = ScriptUnit.has_extension(target_unit, "status_system")
+	local charge_blocking = status_extension.charge_blocking
 
-		bastard_block = bastard_block or 0
-		var_33_1.bastard_block = bastard_block + 1
+	if charge_blocking then
+		local bastard_block = boss_bb.bastard_block
+
+		if not bastard_block then
+			-- Nothing
+		end
+
+		bastard_block = 0
+
+		local bastard_block_count = bastard_block
+
+		::label_33_0::
+
+		boss_bb.bastard_block = bastard_block_count + 1
 	end
 end
 
-QuestSettings.handle_bastard_block_on_death = function (self, arg_34_1, arg_34_2, arg_34_3)
+QuestSettings.handle_bastard_block_on_death = function (attacker_breed, attacker_unit, killing_blow, statistics_db)
 	-- function 34
-	if not self.boss then
-		local var_34_0 = arg_34_2[3]
-		local var_34_1 = BLACKBOARDS[arg_34_1]
+	if attacker_breed.boss then
+		local player_unit = killing_blow[3]
+		local boss_bb = BLACKBOARDS[attacker_unit]
 
-		if not (not var_34_1 and var_34_1.bastard_block) then
+		if not boss_bb or not boss_bb.bastard_block then
 			return false
 		end
 
-		if not var_34_0 then
+		if not player_unit then
 			return false
 		end
 
-		local get_data = Unit.get_data(var_34_0, "breed")
+		local player_breed = Unit.get_data(player_unit, "breed")
 
-		if not (not get_data and QuestSettings.track_bastard_block_breeds[get_data.name]) then
+		if not player_breed or not QuestSettings.track_bastard_block_breeds[player_breed.name] then
 			return false
 		end
 
-		if var_34_1.bastard_block >= 3 then
-			local str = "lake_bastard_block"
+		if boss_bb.bastard_block >= 3 then
+			local stat_name = "lake_bastard_block"
 
-			fn(var_34_0, str)
+			increment_stat(player_unit, stat_name)
 		end
 
-		var_34_1.failed_boss = nil
-		var_34_1.bastard_block = nil
+		boss_bb.failed_boss = nil
+		boss_bb.bastard_block = nil
 	end
 end
 
 QuestSettings.track_charge_stagger_breeds = {}
 
-QuestSettings.handle_charge_stagger = function (arg_35_0, arg_35_1, arg_35_2)
+QuestSettings.handle_charge_stagger = function (unit, blackboard, attacker_unit)
 	-- function 35
-	local has_extension = ScriptUnit.has_extension(arg_35_2, "career_system")
+	local career_extension = ScriptUnit.has_extension(attacker_unit, "career_system")
 
-	if not has_extension then
+	if not career_extension then
 		return
 	end
 
-	local career_name = has_extension:career_name()
+	local career_name = career_extension:career_name()
 
 	if not QuestSettings.track_charge_stagger_breeds[career_name] then
 		return
 	end
 
-	if ScriptUnit.has_extension(arg_35_0, "health_system"):recent_damage_source() == has_extension:career_skill_weapon_name(nil) then
-		local action = arg_35_1.action
+	local health_extension = ScriptUnit.has_extension(unit, "health_system")
+	local recent_damage_type = health_extension:recent_damage_source()
+	local damage_type = career_extension:career_skill_weapon_name(nil)
 
-		if not (not action and action.name ~= "charge") then
-			local time = Managers.time:time("game")
-			local attack_started_at_t = arg_35_1.attack_started_at_t
+	if recent_damage_type == damage_type then
+		local current_action = blackboard.action
 
-			if not (not attack_started_at_t and not (time - attack_started_at_t > 2)) then
-				local str = "lake_charge_stagger"
+		if current_action and current_action.name == "charge" then
+			local t = Managers.time:time("game")
+			local attack_started_t = blackboard.attack_started_at_t
 
-				fn(arg_35_2, str)
+			if attack_started_t and t - attack_started_t > 2 then
+				local stat_name = "lake_charge_stagger"
+
+				increment_stat(attacker_unit, stat_name)
 			end
 		end
 	end

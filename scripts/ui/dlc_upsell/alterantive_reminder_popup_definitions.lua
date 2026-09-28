@@ -1,12 +1,11 @@
 -- chunkname: @scripts/ui/dlc_upsell/alterantive_reminder_popup_definitions.lua
 
-local num = 1920
-local num_2 = 1080
-local num_3 = 50
-local num_4 = 455
-local num_5 = 636
-local num_6 = num_4 - num_3 * 2
-local tbl = {
+local SIZE_X, SIZE_Y = 1920, 1080
+local content_margin = 50
+local window_w = 455
+local window_h = 636
+local content_w = window_w - content_margin * 2
+local scenegraph_definition = {
 	screen = {
 		scale = "fit",
 		position = {
@@ -15,8 +14,8 @@ local tbl = {
 			UILayer.item_display_popup
 		},
 		size = {
-			num,
-			num_2
+			SIZE_X,
+			SIZE_Y
 		}
 	},
 	background = {
@@ -43,8 +42,8 @@ local tbl = {
 			2
 		},
 		size = {
-			num_4,
-			num_5
+			window_w,
+			window_h
 		}
 	},
 	window_top_detail = {
@@ -71,7 +70,7 @@ local tbl = {
 			0
 		},
 		size = {
-			num_6,
+			content_w,
 			380
 		}
 	},
@@ -90,7 +89,7 @@ local tbl = {
 		}
 	}
 }
-local tbl_2 = {
+local body_text_style = {
 	word_wrap = true,
 	upper_case = false,
 	localize = true,
@@ -106,35 +105,35 @@ local tbl_2 = {
 		2
 	}
 }
-local flag = true
-local tbl_3 = {
+local disable_with_gamepad = true
+local widget_definitions = {
 	window_background = UIWidgets.create_simple_texture("wom_upsell_popup_bg", "window"),
 	window_top_detail = UIWidgets.create_simple_texture("tab_selection_01_bottom", "window_top_detail"),
-	window_frame = UIWidgets.create_frame("window", tbl.window.size, "upsell_image_keyart_frame", 5),
+	window_frame = UIWidgets.create_frame("window", scenegraph_definition.window.size, "upsell_image_keyart_frame", 5),
 	screen_background = UIWidgets.create_simple_rect("screen", {
 		150,
 		0,
 		0,
 		0
 	}),
-	body_text = UIWidgets.create_simple_text("not_assigned", "body", nil, nil, tbl_2),
-	ok_button = UIWidgets.create_default_button("ok_button", tbl.ok_button.size, "upsell_image_button_frame", "button_bg_01", "", nil, nil, nil, nil, flag, true)
+	body_text = UIWidgets.create_simple_text("not_assigned", "body", nil, nil, body_text_style),
+	ok_button = UIWidgets.create_default_button("ok_button", scenegraph_definition.ok_button.size, "upsell_image_button_frame", "button_bg_01", "", nil, nil, nil, nil, disable_with_gamepad, true)
 }
-local tbl_4 = {
+local animation_definitions = {
 	on_enter = {
 		{
 			name = "fade_in",
 			start_progress = 0,
 			end_progress = 0.5,
-			init = function (arg_1_0, arg_1_1, arg_1_2, arg_1_3)
+			init = function (ui_scenegraph, scenegraph_definition, widgets, params)
 				-- function 1
-				arg_1_3.render_settings.alpha_multiplier = 0
+				params.render_settings.alpha_multiplier = 0
 			end,
-			update = function (arg_2_0, arg_2_1, arg_2_2, arg_2_3, arg_2_4)
+			update = function (ui_scenegraph, scenegraph_definition, widgets, progress, params)
 				-- function 2
-				arg_2_4.render_settings.alpha_multiplier = math.easeOutCubic(arg_2_3)
+				params.render_settings.alpha_multiplier = math.easeOutCubic(progress)
 			end,
-			on_complete = function (arg_3_0, arg_3_1, arg_3_2, arg_3_3)
+			on_complete = function (ui_scenegraph, scenegraph_definition, widgets, params)
 				-- function 3
 				return
 			end
@@ -145,26 +144,26 @@ local tbl_4 = {
 			name = "fade_out",
 			start_progress = 0,
 			end_progress = 0.5,
-			init = function (arg_4_0, arg_4_1, arg_4_2, arg_4_3)
+			init = function (ui_scenegraph, scenegraph_definition, widgets, params)
 				-- function 4
 				return
 			end,
-			update = function (arg_5_0, arg_5_1, arg_5_2, arg_5_3, arg_5_4)
+			update = function (ui_scenegraph, scenegraph_definition, widgets, progress, params)
 				-- function 5
-				arg_5_4.render_settings.alpha_multiplier = 1 - math.easeOutCubic(arg_5_3)
+				params.render_settings.alpha_multiplier = 1 - math.easeOutCubic(progress)
 			end,
-			on_complete = function (arg_6_0, arg_6_1, arg_6_2, arg_6_3)
+			on_complete = function (ui_scenegraph, scenegraph_definition, widgets, params)
 				-- function 6
 				return
 			end
 		}
 	}
 }
-local tbl_5 = {}
+local generic_input_actions = {}
 
 return {
-	scenegraph_definition = tbl,
-	widget_definitions = tbl_3,
-	animation_definitions = tbl_4,
-	generic_input_actions = tbl_5
+	scenegraph_definition = scenegraph_definition,
+	widget_definitions = widget_definitions,
+	animation_definitions = animation_definitions,
+	generic_input_actions = generic_input_actions
 }

@@ -4,385 +4,502 @@ require("scripts/entity_system/systems/behaviour/nodes/bt_node")
 
 BTHesitateAction = class(BTHesitateAction, BTNode)
 
-BTHesitateAction.init = function (arg_1_0, ...)
+BTHesitateAction.init = function (self, ...)
 	-- function 1
-	BTHesitateAction.super.init(arg_1_0, ...)
+	BTHesitateAction.super.init(self, ...)
 end
 
 BTHesitateAction.name = "BTHesitateAction"
 
-local num = 5
+local HESITATION_TIMER = 5
 
-if not script_data.ai_hesitation_debug then
-	num = 26
+if script_data.ai_hesitation_debug then
+	HESITATION_TIMER = 26
 end
 
-local num_2 = 4
-local num_3 = 4
-local num_4 = 10
-local num_5 = 0.3
-local num_6 = 1.4
-local sin = math.sin(math.pi / 3)
-local flag = false
-local num_7 = 1
+local HESITATION_PROXIMITY_SCALING = 4
+local HESITATION_SCALING_MINIMUM_RANGE_SQ = 4
+local BROADPHASE_QUERY_RADIUS = 10
+local HESITATION_EXIT_LOWER_BOUND = 0.3
+local HESITATION_EXIT_UPPER_BOUND = 1.4
+local RE_RAYCAST_DOT = math.sin(math.pi / 3)
+local DO_DOT_CHECK_FOR_RE_RAYCAST = false
+local WALL_ROTATION_FACTOR = 1
 
-BTHesitateAction.enter = function (self, arg_2_1, arg_2_2, arg_2_3)
+BTHesitateAction.enter = function (self, unit, blackboard, t)
 	-- function 2
-	local action_data = self._tree_node.action_data
+	local action = self._tree_node.action_data
 
-	arg_2_2.action = action_data
+	blackboard.action = action
 
-	arg_2_2.navigation_extension:set_enabled(false)
-	Managers.state.entity:system("ai_slot_system"):do_slot_search(arg_2_1, true)
+	blackboard.navigation_extension:set_enabled(false)
 
-	arg_2_2.hesitation = 0
+	local ai_slot_system = Managers.state.entity:system("ai_slot_system")
 
-	arg_2_2.locomotion_extension:use_lerp_rotation(true)
-	LocomotionUtils.set_animation_driven_movement(arg_2_1, true, false, true)
-	LocomotionUtils.set_animation_rotation_scale(arg_2_1, 1)
-	AiUtils.enter_combat(arg_2_1, arg_2_2)
-	self:_select_new_hesitate_anim(arg_2_1, arg_2_2)
+	ai_slot_system:do_slot_search(unit, true)
 
-	arg_2_2.hesitate_wall = false
-	arg_2_2.outnumber_multiplier = 1
-	arg_2_2.outnumber_timer = arg_2_3 + 0.2 + Math.random() * 0.2
-	arg_2_2.hesitating = true
-	arg_2_2.hesitate_timer = nil
-	arg_2_2.do_wall_check = action_data.do_wall_check
-	arg_2_2.anim_cb_rotation_start = false
-	arg_2_2.move_animation_name = nil
+	blackboard.hesitation = 0
 
-	if not (not (Math.random() > 0.5) or arg_2_2.taunt_unit) then
-		arg_2_2.oh_shit_proximity_panic_override = true
+	blackboard.locomotion_extension:use_lerp_rotation(true)
+	LocomotionUtils.set_animation_driven_movement(unit, true, false, true)
+	LocomotionUtils.set_animation_rotation_scale(unit, 1)
+	AiUtils.enter_combat(unit, blackboard)
+	self:_select_new_hesitate_anim(unit, blackboard)
+
+	blackboard.hesitate_wall = false
+	blackboard.outnumber_multiplier = 1
+	blackboard.outnumber_timer = t + 0.2 + Math.random() * 0.2
+	blackboard.hesitating = true
+	blackboard.hesitate_timer = nil
+	blackboard.do_wall_check = action.do_wall_check
+	blackboard.anim_cb_rotation_start = false
+	blackboard.move_animation_name = nil
+
+	if Math.random() > 0.5 and not blackboard.taunt_unit then
+		blackboard.oh_shit_proximity_panic_override = true
 	else
-		arg_2_2.oh_shit_proximity_panic_override = false
+		blackboard.oh_shit_proximity_panic_override = false
 	end
 
-	arg_2_2.active_node = self
-	arg_2_2.move_state = "idle"
-	arg_2_2.spawn_to_running = nil
+	blackboard.active_node = self
+	blackboard.move_state = "idle"
+	blackboard.spawn_to_running = nil
 end
 
-BTHesitateAction.leave = function (arg_3_0, arg_3_1, arg_3_2, arg_3_3, arg_3_4, arg_3_5)
+BTHesitateAction.leave = function (self, unit, blackboard, t, reason, destroy)
 	-- function 3
-	if not arg_3_5 then
-		arg_3_2.locomotion_extension:use_lerp_rotation(true)
-		LocomotionUtils.set_animation_driven_movement(arg_3_1, false)
-		LocomotionUtils.set_animation_rotation_scale(arg_3_1, 1)
+	if not destroy then
+		blackboard.locomotion_extension:use_lerp_rotation(true)
+		LocomotionUtils.set_animation_driven_movement(unit, false)
+		LocomotionUtils.set_animation_rotation_scale(unit, 1)
 	end
 
-	AiUtils.activate_unit(arg_3_2)
-	arg_3_2.navigation_extension:set_enabled(true)
+	AiUtils.activate_unit(blackboard)
+	blackboard.navigation_extension:set_enabled(true)
 
-	arg_3_2.do_wall_check = nil
-	arg_3_2.hesitate_wall = nil
-	arg_3_2.hesitate_wall_rotation = nil
-	arg_3_2.hesitate_wall_position = nil
-	arg_3_2.last_hesitate_anim = nil
-	arg_3_2.active_node = nil
-	arg_3_2.outnumber_multiplier = nil
-	arg_3_2.outnumber_timer = nil
-	arg_3_2.oh_shit_proximity_panic_override = false
-	arg_3_2.move_animation_name = nil
-	arg_3_2.hesitating = false
-	arg_3_2.hesitate_finished = nil
-	arg_3_2.hesitate_fwd = nil
+	blackboard.do_wall_check = nil
+	blackboard.hesitate_wall = nil
+	blackboard.hesitate_wall_rotation = nil
+	blackboard.hesitate_wall_position = nil
+	blackboard.last_hesitate_anim = nil
+	blackboard.active_node = nil
+	blackboard.outnumber_multiplier = nil
+	blackboard.outnumber_timer = nil
+	blackboard.oh_shit_proximity_panic_override = false
+	blackboard.move_animation_name = nil
+	blackboard.hesitating = false
+	blackboard.hesitate_finished = nil
+	blackboard.hesitate_fwd = nil
 
-	if not arg_3_2.taunt_unit then
-		arg_3_2.taunt_hesitate_finished = true
-		arg_3_2.no_taunt_hesitate = nil
+	if blackboard.taunt_unit then
+		blackboard.taunt_hesitate_finished = true
+		blackboard.no_taunt_hesitate = nil
 	end
 end
 
-local tbl = {}
+local BROADPHASE_QUERY_RESULT = {}
 
-BTHesitateAction.anim_cb_hesitate_finished = function (arg_4_0, arg_4_1, arg_4_2)
+BTHesitateAction.anim_cb_hesitate_finished = function (self, unit, blackboard)
 	-- function 4
-	arg_4_2.hesitate_finished = true
+	blackboard.hesitate_finished = true
 end
 
-BTHesitateAction.set_unit_wall_hesitation = function (arg_5_0, arg_5_1, arg_5_2, arg_5_3)
+BTHesitateAction.set_unit_wall_hesitation = function (self, unit, blackboard, current_pos)
 	-- function 5
-	local hesitate_wall_position = arg_5_2.hesitate_wall_position
+	local hesitate_wall_position = blackboard.hesitate_wall_position
 
-	hesitate_wall_position = not hesitate_wall_position and arg_5_2.hesitate_wall_position:unbox()
+	if hesitate_wall_position then
+		-- Nothing
+	end
 
-	if not hesitate_wall_position and not hesitate_wall_rotation then
-		local flat = Vector3.flat(hesitate_wall_position - arg_5_3)
+	hesitate_wall_position = blackboard.hesitate_wall_position:unbox()
 
-		if Vector3.dot(flat, Quaternion.forward(hesitate_wall_rotation)) >= 0.05 then
-			locomotion_extension:set_wanted_velocity_flat(flat * 2)
+	local pos = hesitate_wall_position
+
+	::label_5_0::
+
+	if pos and hesitate_wall_rotation then
+		local diff = Vector3.flat(pos - current_pos)
+
+		if Vector3.dot(diff, Quaternion.forward(hesitate_wall_rotation)) >= 0.05 then
+			locomotion_extension:set_wanted_velocity_flat(diff * 2)
 		else
-			arg_5_2.hesitate_wall_position = nil
+			blackboard.hesitate_wall_position = nil
 
-			LocomotionUtils.set_animation_driven_movement(arg_5_1, true, false, true)
+			LocomotionUtils.set_animation_driven_movement(unit, true, false, true)
 		end
 	end
 end
 
-BTHesitateAction.wall_check = function (self, arg_6_1, arg_6_2, arg_6_3, arg_6_4)
+BTHesitateAction.wall_check = function (self, unit, blackboard, current_pos, direction)
 	-- function 6
-	local get_data = World.get_data(arg_6_2.world, "physics_world")
-	local num = arg_6_3 + Vector3(0, 0, 1)
-	local num_2 = 1.5
-	local immediate_raycast, var_6_4, var_6_5, var_6_6 = PhysicsWorld.immediate_raycast(get_data, num, arg_6_4, num_2, "closest", "types", "statics", "collision_filter", "filter_ai_line_of_sight_check")
+	local physics_world = World.get_data(blackboard.world, "physics_world")
+	local raycast_pos = current_pos + Vector3(0, 0, 1)
+	local distance = 1.5
+	local result, hit_pos, hit_distance, normal = PhysicsWorld.immediate_raycast(physics_world, raycast_pos, direction, distance, "closest", "types", "statics", "collision_filter", "filter_ai_line_of_sight_check")
 
-	arg_6_2.do_wall_check = false
+	blackboard.do_wall_check = false
 
-	if not (not immediate_raycast and not flag and not (Vector3.dot(var_6_6, -arg_6_4) < sin)) then
-		local immediate_raycast_2, var_6_8, var_6_9, var_6_10 = PhysicsWorld.immediate_raycast(get_data, num, -var_6_6, num_2, "closest", "types", "statics", "collision_filter", "filter_ai_line_of_sight_check")
+	if result and (not DO_DOT_CHECK_FOR_RE_RAYCAST or Vector3.dot(normal, -direction) < RE_RAYCAST_DOT) then
+		local result2, hit_pos2, hit_distance2, normal2 = PhysicsWorld.immediate_raycast(physics_world, raycast_pos, -normal, distance, "closest", "types", "statics", "collision_filter", "filter_ai_line_of_sight_check")
 
-		if not immediate_raycast_2 then
-			immediate_raycast = immediate_raycast_2
-			var_6_4 = var_6_8
-			var_6_5 = var_6_9
-			var_6_6 = var_6_10
+		if result2 then
+			result = result2
+			hit_pos = hit_pos2
+			hit_distance = hit_distance2
+			normal = normal2
 		end
 	end
 
-	if not immediate_raycast then
-		Managers.state.network:anim_event(arg_6_1, "hesitate_wall")
+	if result then
+		local network_manager = Managers.state.network
 
-		arg_6_2.hesitate_wall = true
-		arg_6_2.hesitate_wall_rotation = QuaternionBox(Quaternion.look(Vector3.flat(var_6_6), Vector3.up()))
+		network_manager:anim_event(unit, "hesitate_wall")
 
-		local num_3 = 1.2
+		blackboard.hesitate_wall = true
+		blackboard.hesitate_wall_rotation = QuaternionBox(Quaternion.look(Vector3.flat(normal), Vector3.up()))
 
-		if var_6_5 < num_3 then
-			arg_6_2.hesitate_wall_position = Vector3Box(var_6_4 + var_6_6 * num_3)
+		local OPTIMAL_DISTANCE = 1.2
 
-			LocomotionUtils.set_animation_driven_movement(arg_6_1, false)
+		if hit_distance < OPTIMAL_DISTANCE then
+			blackboard.hesitate_wall_position = Vector3Box(hit_pos + normal * OPTIMAL_DISTANCE)
+
+			LocomotionUtils.set_animation_driven_movement(unit, false)
 		end
-	elseif arg_6_2.last_hesitate_anim == "hesitate_bwd" then
-		self:_select_new_hesitate_anim(arg_6_1, arg_6_2)
+	elseif blackboard.last_hesitate_anim == "hesitate_bwd" then
+		self:_select_new_hesitate_anim(unit, blackboard)
 	end
 end
 
-BTHesitateAction.calculate_outnumber_multiplier = function (arg_7_0, arg_7_1, arg_7_2, arg_7_3, arg_7_4, arg_7_5, arg_7_6)
+BTHesitateAction.calculate_outnumber_multiplier = function (self, unit, blackboard, t, dt, current_pos, target_pos)
 	-- function 7
-	local distance_squared = Vector3.distance_squared(arg_7_6, arg_7_5)
-	local num = num_2 / math.max(distance_squared - num_3, 1) * arg_7_4 + arg_7_4
-	local var_7_2
+	local target_dist_sq = Vector3.distance_squared(target_pos, current_pos)
+	local hesitation_delta = HESITATION_PROXIMITY_SCALING / math.max(target_dist_sq - HESITATION_SCALING_MINIMUM_RANGE_SQ, 1) * dt + dt
+	local outnumber_multiplier
 
-	if not arg_7_2.taunt_unit then
-		var_7_2 = 1
-	elseif arg_7_3 < arg_7_2.outnumber_timer then
-		arg_7_2.outnumber_timer = arg_7_3 + 0.2 + Math.random() * 0.2
+	if blackboard.taunt_unit then
+		outnumber_multiplier = 1
+	elseif t < blackboard.outnumber_timer then
+		blackboard.outnumber_timer = t + 0.2 + Math.random() * 0.2
 
-		local broadphase = arg_7_2.group_blackboard.broadphase
+		local broadphase = blackboard.group_blackboard.broadphase
 
-		table.clear(tbl)
-		Broadphase.query(broadphase, arg_7_5, num_4, tbl)
+		table.clear(BROADPHASE_QUERY_RESULT)
+		Broadphase.query(broadphase, current_pos, BROADPHASE_QUERY_RADIUS, BROADPHASE_QUERY_RESULT)
 
-		local num_5 = 0
+		local allies_nearby = 0
 
-		for i = 1, #tbl do
-			local var_7_5 = tbl[i]
-			local blackboard = ScriptUnit.extension(var_7_5, "ai_system"):blackboard()
+		for i = 1, #BROADPHASE_QUERY_RESULT do
+			local bf_unit = BROADPHASE_QUERY_RESULT[i]
+			local bb = ScriptUnit.extension(bf_unit, "ai_system"):blackboard()
 
-			if blackboard.confirmed_player_sighting or not blackboard.hesitating then
-				num_5 = num_5 + 1
+			if bb.confirmed_player_sighting or bb.hesitating then
+				allies_nearby = allies_nearby + 1
 			end
 		end
 
-		local num_6 = 0
-		local ENEMY_PLAYER_AND_BOT_POSITIONS = arg_7_2.side.ENEMY_PLAYER_AND_BOT_POSITIONS
+		local enemies_nearby = 0
+		local side = blackboard.side
+		local positions = side.ENEMY_PLAYER_AND_BOT_POSITIONS
 
-		for j = 1, #ENEMY_PLAYER_AND_BOT_POSITIONS do
-			if Vector3.distance_squared(arg_7_6, arg_7_5) < 36 then
-				arg_7_2.oh_shit_proximity_panic_override = true
-				arg_7_2.is_within_proximity = true
+		for i = 1, #positions do
+			local proximity = Vector3.distance_squared(target_pos, current_pos)
+
+			if proximity < 36 then
+				blackboard.oh_shit_proximity_panic_override = true
+				blackboard.is_within_proximity = true
 			end
 
-			local distance = Vector3.distance(arg_7_6, ENEMY_PLAYER_AND_BOT_POSITIONS[j])
+			local distance = Vector3.distance(target_pos, positions[i])
 
 			if distance < 100 then
-				num_6 = num_6 + 1
+				enemies_nearby = enemies_nearby + 1
 			elseif distance < 225 then
-				num_6 = num_6 + math.auto_lerp(10, 15, 1, 0, distance)^2
+				enemies_nearby = enemies_nearby + math.auto_lerp(10, 15, 1, 0, distance)^2
 			end
 		end
 
-		var_7_2 = 1.25 * (num_5 / math.max(num_6, 1))
-		arg_7_2.outnumber_multiplier = var_7_2
+		outnumber_multiplier = 1.25 * (allies_nearby / math.max(enemies_nearby, 1))
+		blackboard.outnumber_multiplier = outnumber_multiplier
 
-		if num_6 < num_5 then
-			arg_7_2.oh_shit_proximity_panic_override = true
+		if enemies_nearby < allies_nearby then
+			blackboard.oh_shit_proximity_panic_override = true
 		end
 	else
-		var_7_2 = arg_7_2.outnumber_multiplier
+		outnumber_multiplier = blackboard.outnumber_multiplier
 	end
 
-	return var_7_2, num
+	return outnumber_multiplier, hesitation_delta
 end
 
-BTHesitateAction.start_move_animation = function (arg_8_0, arg_8_1, arg_8_2, arg_8_3)
+BTHesitateAction.start_move_animation = function (self, unit, blackboard, target_pos)
 	-- function 8
-	local action = arg_8_2.action
-	local target_unit = arg_8_2.target_unit
+	local action = blackboard.action
+	local target_unit = blackboard.target_unit
+	local ai_slot_system = Managers.state.entity:system("ai_slot_system")
 
-	Managers.state.entity:system("ai_slot_system"):do_slot_search(arg_8_1, true)
-	arg_8_2.locomotion_extension:use_lerp_rotation(false)
-	LocomotionUtils.set_animation_driven_movement(arg_8_1, true, false, false)
+	ai_slot_system:do_slot_search(unit, true)
 
-	local get_start_move_animation = AiAnimUtils.get_start_move_animation(arg_8_1, arg_8_3, arg_8_2.action.start_anims_name)
+	local locomotion_extension = blackboard.locomotion_extension
 
-	assert(get_start_move_animation, "Move animation was nil!  Have you added start_anims_name entry to breeds?")
-	Managers.state.network:anim_event(arg_8_1, get_start_move_animation)
+	locomotion_extension:use_lerp_rotation(false)
+	LocomotionUtils.set_animation_driven_movement(unit, true, false, false)
 
-	arg_8_2.move_animation_name = get_start_move_animation
-	arg_8_2.anim_locked = 0
-	arg_8_2.spawn_to_running = true
+	local animation_name = AiAnimUtils.get_start_move_animation(unit, target_pos, blackboard.action.start_anims_name)
 
-	local fwd = action.start_anims_name.fwd
-	local flag = false
+	assert(animation_name, "Move animation was nil!  Have you added start_anims_name entry to breeds?")
+	Managers.state.network:anim_event(unit, animation_name)
 
-	if type(fwd) == "table" then
-		for k, v in pairs(fwd) do
-			if v == get_start_move_animation then
-				flag = true
+	blackboard.move_animation_name = animation_name
+	blackboard.anim_locked = 0
+	blackboard.spawn_to_running = true
+
+	local fwd_start_anim = action.start_anims_name.fwd
+	local is_fwd_animation = false
+
+	if type(fwd_start_anim) == "table" then
+		for _, anim in pairs(fwd_start_anim) do
+			if anim == animation_name then
+				is_fwd_animation = true
 			end
 		end
 	else
-		flag = get_start_move_animation == fwd
+		is_fwd_animation = animation_name == fwd_start_anim
 	end
 
-	arg_8_2.navigation_extension:set_enabled(true)
+	blackboard.navigation_extension:set_enabled(true)
 
-	arg_8_2.hesitate_fwd = flag
+	blackboard.hesitate_fwd = is_fwd_animation
 end
 
-BTHesitateAction.run = function (self, arg_9_1, arg_9_2, arg_9_3, arg_9_4)
+BTHesitateAction.run = function (self, unit, blackboard, t, dt)
 	-- function 9
-	local ai_hesitation_debug = script_data.ai_hesitation_debug
-	local action = arg_9_2.action
+	local debug = script_data.ai_hesitation_debug
+	local action = blackboard.action
 
-	arg_9_2.target_unit = nil
+	blackboard.target_unit = nil
 
-	local target_unit = arg_9_2.target_unit
+	local target_unit = blackboard.target_unit
 
-	target_unit = not target_unit and Unit.alive(arg_9_2.target_unit)
+	if target_unit then
+		-- Nothing
+	end
 
-	local is_within_proximity = arg_9_2.is_within_proximity
+	target_unit = Unit.alive(blackboard.target_unit)
+
+	local target_alive = target_unit
+
+	::label_9_0::
+
+	local is_within_proximity = blackboard.is_within_proximity
 
 	if not is_within_proximity then
-		is_within_proximity = arg_9_2.hesitate_finished
-		is_within_proximity = is_within_proximity or not arg_9_2.previous_attacker or not not arg_9_2.taunt_unit or not target_unit
+		-- Nothing
 	end
 
-	local confirmed_player_sighting = arg_9_2.confirmed_player_sighting
+	is_within_proximity = blackboard.hesitate_finished
 
-	if not confirmed_player_sighting then
-		confirmed_player_sighting = arg_9_2.no_hesitation
-		confirmed_player_sighting = confirmed_player_sighting or is_within_proximity
+	if not is_within_proximity then
+		-- Nothing
 	end
 
+	if not blackboard.previous_attacker or blackboard.taunt_unit then
+		is_within_proximity = not target_alive
+
+		if false then
+			is_within_proximity = false
+		end
+
+		goto label_9_1
+	end
+
+	is_within_proximity = true
+
+	local exit_override = is_within_proximity
+
+	::label_9_1::
+
+	local confirmed_player_sighting = blackboard.confirmed_player_sighting
+
 	if not confirmed_player_sighting then
-		local hesitate_timer = arg_9_2.hesitate_timer
+		-- Nothing
+	end
 
-		hesitate_timer = not hesitate_timer and arg_9_3 > arg_9_2.hesitate_timer
+	confirmed_player_sighting = blackboard.no_hesitation
 
-		local anim_cb_move
+	if not confirmed_player_sighting then
+		-- Nothing
+	end
 
-		if not hesitate_timer then
-			anim_cb_move = arg_9_2.anim_cb_move
+	confirmed_player_sighting = exit_override
+
+	local finished_hesitating = confirmed_player_sighting
+
+	::label_9_2::
+
+	if finished_hesitating then
+		local hesitate_timer = blackboard.hesitate_timer
+
+		if hesitate_timer then
+			-- Nothing
+		end
+
+		if not (t > blackboard.hesitate_timer) then
+			hesitate_timer = false
+
+			goto label_9_3
+		end
+
+		hesitate_timer = true
+
+		local deadline_reached = hesitate_timer
+
+		do
+			local anim_cb_move
+		end
+
+		::label_9_3::
+
+		if deadline_reached then
+			anim_cb_move = blackboard.anim_cb_move
 
 			if not anim_cb_move then
 				-- Nothing
 			end
 		end
 
-		anim_cb_move = is_within_proximity
+		anim_cb_move = exit_override
 
-		::label_9_0::
+		local exit_hesitate = anim_cb_move
 
-		if not anim_cb_move then
-			arg_9_2.spawn_to_running = arg_9_2.anim_cb_move
+		::label_9_4::
+
+		if exit_hesitate then
+			blackboard.spawn_to_running = blackboard.anim_cb_move
 
 			return "done"
-		elseif not arg_9_2.hesitate_timer then
-			arg_9_2.hesitate_timer = arg_9_3 + math.lerp(num_5, num_6, Math.random())
+		elseif not blackboard.hesitate_timer then
+			blackboard.hesitate_timer = t + math.lerp(HESITATION_EXIT_LOWER_BOUND, HESITATION_EXIT_UPPER_BOUND, Math.random())
 
 			return "running"
 		end
 	end
 
-	local var_9_7 = POSITION_LOOKUP[arg_9_1]
-	local breed = arg_9_2.breed
-	local locomotion_extension = arg_9_2.locomotion_extension
-	local rotation_towards_unit_flat = LocomotionUtils.rotation_towards_unit_flat(arg_9_1, arg_9_2.target_unit)
-	local hesitate_wall_rotation = arg_9_2.hesitate_wall_rotation
+	local current_pos = POSITION_LOOKUP[unit]
+	local breed = blackboard.breed
+	local locomotion_extension = blackboard.locomotion_extension
+	local rot = LocomotionUtils.rotation_towards_unit_flat(unit, blackboard.target_unit)
+	local hesitate_wall_rotation_2 = blackboard.hesitate_wall_rotation
 
-	hesitate_wall_rotation = not hesitate_wall_rotation and arg_9_2.hesitate_wall_rotation:unbox()
-
-	if not hesitate_wall_rotation then
-		rotation_towards_unit_flat = Quaternion.lerp(rotation_towards_unit_flat, hesitate_wall_rotation, num_7)
+	if hesitate_wall_rotation_2 then
+		-- Nothing
 	end
 
-	locomotion_extension:set_wanted_rotation(rotation_towards_unit_flat)
+	hesitate_wall_rotation_2 = blackboard.hesitate_wall_rotation:unbox()
 
-	if not arg_9_2.do_wall_check then
-		self:set_unit_wall_hesitation(arg_9_1, arg_9_2, var_9_7)
+	local hesitate_wall_rotation = hesitate_wall_rotation_2
+
+	::label_9_5::
+
+	if hesitate_wall_rotation then
+		rot = Quaternion.lerp(rot, hesitate_wall_rotation, WALL_ROTATION_FACTOR)
 	end
 
-	local var_9_12 = POSITION_LOOKUP[arg_9_2.target_unit]
-	local calculate_outnumber_multiplier, var_9_14 = self:calculate_outnumber_multiplier(arg_9_1, arg_9_2, arg_9_3, arg_9_4, var_9_7, var_9_12)
-	local num_2 = arg_9_2.hesitation + var_9_14 * arg_9_2.outnumber_multiplier
-	local oh_shit_proximity_panic_override = arg_9_2.oh_shit_proximity_panic_override
+	locomotion_extension:set_wanted_rotation(rot)
 
-	oh_shit_proximity_panic_override = oh_shit_proximity_panic_override or arg_9_2.taunt_unit
+	if blackboard.do_wall_check then
+		self:set_unit_wall_hesitation(unit, blackboard, current_pos)
+	end
+
+	local target_pos = POSITION_LOOKUP[blackboard.target_unit]
+	local outnumber_multiplier, hesitation_delta = self:calculate_outnumber_multiplier(unit, blackboard, t, dt, current_pos, target_pos)
+	local hesitation = blackboard.hesitation + hesitation_delta * blackboard.outnumber_multiplier
+	local oh_shit_proximity_panic_override = blackboard.oh_shit_proximity_panic_override
+
+	if not oh_shit_proximity_panic_override then
+		-- Nothing
+	end
+
+	oh_shit_proximity_panic_override = blackboard.taunt_unit
+
+	local panic_override = oh_shit_proximity_panic_override
+
+	::label_9_6::
 
 	local hesitation_timer = breed.hesitation_timer
 
-	hesitation_timer = hesitation_timer or num
+	hesitation_timer = not not hesitation_timer or not not HESITATION_TIMER
 
-	if not (hesitation_timer < num_2 or oh_shit_proximity_panic_override) then
-		local move_animation_name = arg_9_2.move_animation_name
+	local should_start_move_animation = hesitation_timer < hesitation or not not panic_override
 
-		move_animation_name = not move_animation_name and true
+	if should_start_move_animation then
+		local move_animation_name = blackboard.move_animation_name
 
-		if not move_animation_name then
-			local broadphase = arg_9_2.group_blackboard.broadphase
+		if move_animation_name then
+			-- Nothing
+		end
 
-			AiUtils.alert_nearby_friends_of_enemy(arg_9_1, broadphase, arg_9_2.target_unit)
-			self:start_move_animation(arg_9_1, arg_9_2, var_9_12)
-		elseif not oh_shit_proximity_panic_override then
-			Managers.state.network:anim_event(arg_9_1, "move_fwd")
+		move_animation_name = true
 
-			arg_9_2.move_state = "moving"
+		local have_started_animation = move_animation_name
+
+		::label_9_7::
+
+		if not have_started_animation then
+			local broadphase = blackboard.group_blackboard.broadphase
+
+			AiUtils.alert_nearby_friends_of_enemy(unit, broadphase, blackboard.target_unit)
+			self:start_move_animation(unit, blackboard, target_pos)
+		elseif not panic_override then
+			local network_manager = Managers.state.network
+
+			network_manager:anim_event(unit, "move_fwd")
+
+			blackboard.move_state = "moving"
 
 			return "done"
 		end
 
-		if not arg_9_2.anim_cb_rotation_start then
-			if not arg_9_2.hesitate_fwd then
-				local locomotion_extension_2 = arg_9_2.locomotion_extension
+		if blackboard.anim_cb_rotation_start then
+			if blackboard.hesitate_fwd then
+				local locomotion_extension = blackboard.locomotion_extension
 
-				locomotion_extension_2:use_lerp_rotation(true)
-				LocomotionUtils.set_animation_driven_movement(arg_9_1, false)
+				locomotion_extension:use_lerp_rotation(true)
+				LocomotionUtils.set_animation_driven_movement(unit, false)
 
-				local rotation_towards_unit_flat_2 = LocomotionUtils.rotation_towards_unit_flat(arg_9_1, arg_9_2.target_unit)
+				local rot = LocomotionUtils.rotation_towards_unit_flat(unit, blackboard.target_unit)
 
-				locomotion_extension_2:set_wanted_rotation(rotation_towards_unit_flat_2)
-			elseif not arg_9_2.move_animation_name then
-				arg_9_2.anim_cb_rotation_start = false
+				locomotion_extension:set_wanted_rotation(rot)
+			elseif blackboard.move_animation_name then
+				blackboard.anim_cb_rotation_start = false
 
-				local get_animation_rotation_scale = AiAnimUtils.get_animation_rotation_scale(arg_9_1, var_9_12, arg_9_2.move_animation_name, action.start_anims_data)
+				local rot_scale = AiAnimUtils.get_animation_rotation_scale(unit, target_pos, blackboard.move_animation_name, action.start_anims_data)
 
-				LocomotionUtils.set_animation_rotation_scale(arg_9_1, get_animation_rotation_scale)
+				LocomotionUtils.set_animation_rotation_scale(unit, rot_scale)
 			end
 		end
 
-		local anim_cb_move_2 = arg_9_2.anim_cb_move
+		local anim_cb_move_2 = blackboard.anim_cb_move
 
 		if not anim_cb_move_2 then
-			anim_cb_move_2 = arg_9_2.hesitate_finished
-			anim_cb_move_2 = not anim_cb_move_2 and not oh_shit_proximity_panic_override
+			-- Nothing
 		end
 
-		if not anim_cb_move_2 then
-			if not arg_9_2.anim_cb_move then
-				arg_9_2.move_state = "moving"
+		anim_cb_move_2 = blackboard.hesitate_finished
+
+		if anim_cb_move_2 then
+			-- Nothing
+		end
+
+		anim_cb_move_2 = not panic_override
+
+		local can_exit = anim_cb_move_2
+
+		::label_9_8::
+
+		if can_exit then
+			if blackboard.anim_cb_move then
+				blackboard.move_state = "moving"
 			end
 
 			return "done"
@@ -390,13 +507,13 @@ BTHesitateAction.run = function (self, arg_9_1, arg_9_2, arg_9_3, arg_9_4)
 			return "running"
 		end
 	else
-		arg_9_2.hesitation = num_2
+		blackboard.hesitation = hesitation
 
-		local nav_world = arg_9_2.nav_world
-		local num_3 = -Quaternion.forward(rotation_towards_unit_flat)
+		local nav_world = blackboard.nav_world
+		local direction = -Quaternion.forward(rot)
 
-		if not (not arg_9_2.do_wall_check and GwNavQueries.raycango(nav_world, var_9_7, var_9_7 + 0.5 * num_3)) then
-			self:wall_check(arg_9_1, arg_9_2, var_9_7, num_3)
+		if blackboard.do_wall_check and not GwNavQueries.raycango(nav_world, current_pos, current_pos + 0.5 * direction) then
+			self:wall_check(unit, blackboard, current_pos, direction)
 		end
 
 		return "running"
@@ -417,26 +534,35 @@ BTHesitationVariations = {
 	}
 }
 
-BTHesitateAction._select_new_hesitate_anim = function (arg_10_0, arg_10_1, arg_10_2)
+BTHesitateAction._select_new_hesitate_anim = function (self, unit, blackboard)
 	-- function 10
-	local var_10_0
+	local anim
 
-	if not arg_10_2.do_wall_check then
-		var_10_0 = "hesitate"
-	elseif arg_10_2.last_hesitate_anim == "hesitate_bwd" then
-		var_10_0 = not (Math.random() > 0.3333333333333333) or not "hesitate" or "hesitate_bwd"
+	if not blackboard.do_wall_check then
+		anim = "hesitate"
+	elseif blackboard.last_hesitate_anim == "hesitate_bwd" then
+		anim = (not (Math.random() > 0.3333333333333333) or not "hesitate") and not not "hesitate_bwd"
 	else
-		var_10_0 = not (Math.random() > 0.3333333333333333) or not "hesitate_bwd" or "hesitate"
+		anim = (not (Math.random() > 0.3333333333333333) or not "hesitate_bwd") and not not "hesitate"
 	end
 
-	local BTHesitationVariations = arg_10_2.breed.BTHesitationVariations
+	local breed = blackboard.breed
+	local BTHesitationVariations = breed.BTHesitationVariations
 
-	BTHesitationVariations = BTHesitationVariations or BTHesitationVariations
+	if not BTHesitationVariations then
+		-- Nothing
+	end
 
-	local var_10_2 = BTHesitationVariations[var_10_0]
-	local var_10_3 = var_10_2[Math.random(1, #var_10_2)]
+	BTHesitationVariations = BTHesitationVariations
 
-	Managers.state.network:anim_event(arg_10_1, var_10_3)
+	local root_variation_table = BTHesitationVariations
 
-	arg_10_2.last_hesitate_anim = var_10_0
+	::label_10_0::
+
+	local variation_table = root_variation_table[anim]
+	local hestitate_anim = variation_table[Math.random(1, #variation_table)]
+
+	Managers.state.network:anim_event(unit, hestitate_anim)
+
+	blackboard.last_hesitate_anim = anim
 end

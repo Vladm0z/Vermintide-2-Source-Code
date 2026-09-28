@@ -2,45 +2,47 @@
 
 require("scripts/settings/profiles/sp_profiles")
 
-local var_0_0 = local_require("scripts/ui/views/start_menu_view/states/definitions/start_menu_state_overview_definitions")
-local widgets = var_0_0.widgets
-local generic_input_actions = var_0_0.generic_input_actions
-local animation_definitions = var_0_0.animation_definitions
-local scenegraph_definition = var_0_0.scenegraph_definition
-local console_cursor_definition = var_0_0.console_cursor_definition
-local flag = false
-local tbl = {
-	function (self)
+local definitions = local_require("scripts/ui/views/start_menu_view/states/definitions/start_menu_state_overview_definitions")
+local widget_definitions = definitions.widgets
+local generic_input_actions = definitions.generic_input_actions
+local animation_definitions = definitions.animation_definitions
+local scenegraph_definition = definitions.scenegraph_definition
+local console_cursor_definition = definitions.console_cursor_definition
+local DO_RELOAD = false
+local menu_functions = {
+	function (this)
 		-- function 1
-		Managers.input:block_device_except_service("options_menu", "gamepad")
-		self:_activate_view("options_view")
+		local input_manager = Managers.input
+
+		input_manager:block_device_except_service("options_menu", "gamepad")
+		this:_activate_view("options_view")
 	end,
-	function (arg_2_0)
+	function (this)
 		-- function 2
 		Managers.state.difficulty:set_difficulty("normal", 0)
 		Managers.state.game_mode:start_specific_level("prologue")
 	end,
-	function (self)
+	function (this)
 		-- function 3
-		self:_activate_view("credits_view")
+		this:_activate_view("credits_view")
 	end,
-	function (self)
+	function (this)
 		-- function 4
-		self:_activate_view("cinematics_view")
+		this:_activate_view("cinematics_view")
 	end
 }
 
 StartMenuStateOverview = class(StartMenuStateOverview)
 StartMenuStateOverview.NAME = "StartMenuStateOverview"
 
-StartMenuStateOverview.on_enter = function (self, arg_5_1)
+StartMenuStateOverview.on_enter = function (self, params)
 	-- function 5
 	self.parent:clear_wanted_state()
 	print("[HeroViewState] Enter Substate StartMenuStateOverview")
 
-	self._hero_name = arg_5_1.hero_name
+	self._hero_name = params.hero_name
 
-	local ingame_ui_context = arg_5_1.ingame_ui_context
+	local ingame_ui_context = params.ingame_ui_context
 
 	self.ingame_ui_context = ingame_ui_context
 	self.ui_renderer = ingame_ui_context.ui_renderer
@@ -52,15 +54,15 @@ StartMenuStateOverview.on_enter = function (self, arg_5_1)
 	}
 	self.profile_synchronizer = ingame_ui_context.profile_synchronizer
 	self.is_server = ingame_ui_context.is_server
-	self.world_previewer = arg_5_1.world_previewer
-	self.wwise_world = arg_5_1.wwise_world
+	self.world_previewer = params.world_previewer
+	self.wwise_world = params.wwise_world
 	self.platform = PLATFORM
 
-	local player = Managers.player
-	local local_player = player:local_player()
+	local player_manager = Managers.player
+	local local_player = player_manager:local_player()
 
 	self._stats_id = local_player:stats_id()
-	self.player_manager = player
+	self.player_manager = player_manager
 	self.peer_id = ingame_ui_context.peer_id
 	self.local_player_id = ingame_ui_context.local_player_id
 	self.local_player = local_player
@@ -72,50 +74,62 @@ StartMenuStateOverview.on_enter = function (self, arg_5_1)
 
 	local parent = self.parent
 	local input_service = self:input_service(true)
-	local num = UILayer.default + 30
+	local gui_layer = UILayer.default + 30
 
-	self.menu_input_description = MenuInputDescriptionUI:new(ingame_ui_context, self.ui_top_renderer, input_service, 3, num, generic_input_actions.default)
+	self.menu_input_description = MenuInputDescriptionUI:new(ingame_ui_context, self.ui_top_renderer, input_service, 3, gui_layer, generic_input_actions.default)
 
 	self.menu_input_description:set_input_description(nil)
-	self:create_ui_elements(arg_5_1)
+	self:create_ui_elements(params)
 	self:_start_transition_animation("on_enter", "on_enter")
 
 	self._hero_preview_skin = nil
 	self.use_user_skins = true
 
-	local profile_by_peer = self.profile_synchronizer:profile_by_peer(self.peer_id, self.local_player_id)
-	local _hero_name = self._hero_name
+	local profile_index = self.profile_synchronizer:profile_by_peer(self.peer_id, self.local_player_id)
+	local hero_name = self._hero_name
 
-	if not _hero_name then
-		local get = Managers.backend:get_interface("hero_attributes"):get(_hero_name, "career")
+	if hero_name then
+		local hero_attributes = Managers.backend:get_interface("hero_attributes")
+		local get = hero_attributes:get(hero_name, "career")
 
-		get = get or 1
+		if not get then
+			-- Nothing
+		end
 
-		self:_populate_career_page(_hero_name, get)
+		get = 1
+
+		local career_index = get
+
+		::label_5_0::
+
+		self:_populate_career_page(hero_name, career_index)
 	end
 
 	Managers.input:enable_gamepad_cursor()
 end
 
-StartMenuStateOverview.create_ui_elements = function (self, arg_6_1)
+StartMenuStateOverview.create_ui_elements = function (self, params)
 	-- function 6
 	self.ui_scenegraph = UISceneGraph.init_scenegraph(scenegraph_definition)
 
-	local tbl = {}
-	local tbl_2 = {}
+	local widgets = {}
+	local widgets_by_name = {}
 
-	for k, v in pairs(widgets) do
-		local var_6_2 = UIWidget.init(v)
+	for name, widget_definition in pairs(widget_definitions) do
+		local widget = UIWidget.init(widget_definition)
 
-		tbl[#tbl + 1] = var_6_2
-		tbl_2[k] = var_6_2
+		widgets[#widgets + 1] = widget
+		widgets_by_name[name] = widget
 	end
 
-	self._widgets = tbl
-	self._widgets_by_name = tbl_2
+	self._widgets = widgets
+	self._widgets_by_name = widgets_by_name
 
-	if not script_data.settings.use_beta_mode and not IS_XB1 then
-		tbl_2.tutorial_button.content.button_hotspot.disable_button = true
+	if script_data.settings.use_beta_mode and IS_XB1 then
+		local tutorial_button = widgets_by_name.tutorial_button
+		local tutorial_button_content = tutorial_button.content
+
+		tutorial_button_content.button_hotspot.disable_button = true
 	end
 
 	self._console_cursor = UIWidget.init(console_cursor_definition)
@@ -125,27 +139,30 @@ StartMenuStateOverview.create_ui_elements = function (self, arg_6_1)
 	self.ui_animator = UIAnimator:new(self.ui_scenegraph, animation_definitions)
 end
 
-StartMenuStateOverview._get_skin_item_data = function (arg_7_0, arg_7_1, arg_7_2)
+StartMenuStateOverview._get_skin_item_data = function (self, index, career_index)
 	-- function 7
-	local base_skin = SPProfiles[arg_7_1].careers[arg_7_2].base_skin
+	local profile_settings = SPProfiles[index]
+	local skin_name = profile_settings.careers[career_index].base_skin
 
-	return Cosmetics[base_skin]
+	return Cosmetics[skin_name]
 end
 
 StartMenuStateOverview._wanted_state = function (self)
 	-- function 8
-	return (self.parent:wanted_state())
+	local new_state = self.parent:wanted_state()
+
+	return new_state
 end
 
-StartMenuStateOverview.on_exit = function (self, arg_9_1)
+StartMenuStateOverview.on_exit = function (self, params)
 	-- function 9
 	Managers.input:disable_gamepad_cursor()
 
-	if not self._active_view then
+	if self._active_view then
 		self:exit_current_view()
 	end
 
-	if not self.menu_input_description then
+	if self.menu_input_description then
 		self.menu_input_description:destroy()
 
 		self.menu_input_description = nil
@@ -156,7 +173,7 @@ StartMenuStateOverview.on_exit = function (self, arg_9_1)
 	print("[HeroViewState] Exit Substate StartMenuStateOverview")
 end
 
-StartMenuStateOverview._update_transition_timer = function (self, arg_10_1)
+StartMenuStateOverview._update_transition_timer = function (self, dt)
 	-- function 10
 	if not self._transition_timer then
 		return
@@ -165,71 +182,81 @@ StartMenuStateOverview._update_transition_timer = function (self, arg_10_1)
 	if self._transition_timer == 0 then
 		self._transition_timer = nil
 	else
-		self._transition_timer = math.max(self._transition_timer - arg_10_1, 0)
+		self._transition_timer = math.max(self._transition_timer - dt, 0)
 	end
 end
 
-StartMenuStateOverview.update = function (self, arg_11_1, arg_11_2)
+StartMenuStateOverview.update = function (self, dt, t)
 	-- function 11
-	if not flag then
-		flag = false
+	if DO_RELOAD then
+		DO_RELOAD = false
 
 		self:create_ui_elements()
 	end
 
-	for k, v in pairs(self._ui_animations) do
-		UIAnimation.update(v, arg_11_1)
+	for name, animation in pairs(self._ui_animations) do
+		UIAnimation.update(animation, dt)
 
-		if not UIAnimation.completed(v) then
-			self._ui_animations[k] = nil
+		if UIAnimation.completed(animation) then
+			self._ui_animations[name] = nil
 		end
 	end
 
-	local _active_view = self._active_view
+	local active_view = self._active_view
 
-	if not _active_view then
-		self._views[_active_view]:update(arg_11_1, arg_11_2)
+	if active_view then
+		self._views[active_view]:update(dt, t)
 	elseif not self._prepare_exit then
-		self:_handle_input(arg_11_1, arg_11_2)
-		self:_handle_keyboard_input(arg_11_1, arg_11_2)
+		self:_handle_input(dt, t)
+		self:_handle_keyboard_input(dt, t)
 	end
 
-	local _wanted_state = self:_wanted_state()
+	local wanted_state = self:_wanted_state()
 
-	if self._transition_timer or _wanted_state or not self._new_state then
-		if not self.world_previewer:has_units_spawned() then
+	if not self._transition_timer and (wanted_state or self._new_state) then
+		if self.world_previewer:has_units_spawned() then
 			self._prepare_exit = true
 		elseif not self._prepare_exit then
-			return _wanted_state or self._new_state
+			return not not wanted_state or not not self._new_state
 		end
 	end
 
-	self:draw(arg_11_1)
+	self:draw(dt)
 end
 
-StartMenuStateOverview.post_update = function (self, arg_12_1, arg_12_2)
+StartMenuStateOverview.post_update = function (self, dt, t)
 	-- function 12
-	self.ui_animator:update(arg_12_1)
-	self:_update_animations(arg_12_1)
+	self.ui_animator:update(dt)
+	self:_update_animations(dt)
 
-	if not (self.parent:transitioning() or self._transition_timer) then
-		if not self._prepare_exit then
+	local transitioning = self.parent:transitioning()
+
+	if not transitioning and not self._transition_timer then
+		if self._prepare_exit then
 			self._prepare_exit = false
 
 			self.world_previewer:prepare_exit()
-		elseif not self._spawn_hero then
+		elseif self._spawn_hero then
 			self._spawn_hero = nil
 
 			local _selected_hero_name = self._selected_hero_name
 
-			_selected_hero_name = _selected_hero_name or self._hero_name
+			if not _selected_hero_name then
+				-- Nothing
+			end
 
-			self:_spawn_hero_unit(_selected_hero_name)
+			_selected_hero_name = self._hero_name
+
+			local hero_name = _selected_hero_name
+
+			::label_12_0::
+
+			self:_spawn_hero_unit(hero_name)
 		end
 	end
 end
 
-StartMenuStateOverview.draw = function (self, arg_13_1)
+StartMenuStateOverview.draw = function (self, dt)
 	-- function 13
 	local ui_renderer = self.ui_renderer
 	local ui_top_renderer = self.ui_top_renderer
@@ -240,13 +267,13 @@ StartMenuStateOverview.draw = function (self, arg_13_1)
 	local render_settings = self.render_settings
 	local snap_pixel_positions = render_settings.snap_pixel_positions
 
-	UIRenderer.begin_pass(ui_top_renderer, ui_scenegraph, input_service, arg_13_1, nil, render_settings)
+	UIRenderer.begin_pass(ui_top_renderer, ui_scenegraph, input_service, dt, nil, render_settings)
 
-	for i, v in ipairs(self._widgets) do
-		UIRenderer.draw_widget(ui_top_renderer, v)
+	for _, widget in ipairs(self._widgets) do
+		UIRenderer.draw_widget(ui_top_renderer, widget)
 	end
 
-	if not self._player_portrait_widget then
+	if self._player_portrait_widget then
 		UIRenderer.draw_widget(ui_top_renderer, self._player_portrait_widget)
 	end
 
@@ -257,132 +284,156 @@ StartMenuStateOverview.draw = function (self, arg_13_1)
 	UIRenderer.end_pass(ui_top_renderer)
 end
 
-StartMenuStateOverview._update_animations = function (self, arg_14_1)
+StartMenuStateOverview._update_animations = function (self, dt)
 	-- function 14
-	local _animations = self._animations
+	local animations = self._animations
 	local ui_animator = self.ui_animator
 
-	for k, v in pairs(_animations) do
-		if not ui_animator:is_animation_completed(v) then
-			ui_animator:stop_animation(v)
+	for animation_name, animation_id in pairs(animations) do
+		if ui_animator:is_animation_completed(animation_id) then
+			ui_animator:stop_animation(animation_id)
 
-			_animations[k] = nil
+			animations[animation_name] = nil
 		end
 	end
 end
 
-StartMenuStateOverview._spawn_hero_unit = function (self, arg_15_1)
+StartMenuStateOverview._spawn_hero_unit = function (self, hero_name)
 	-- function 15
 	local world_previewer = self.world_previewer
 	local career_index = self.career_index
-	local var_15_2 = callback(self, "cb_hero_unit_spawned", arg_15_1)
+	local callback = callback(self, "cb_hero_unit_spawned", hero_name)
 
-	world_previewer:request_spawn_hero_unit(arg_15_1, self.career_index, not self.use_user_skins, var_15_2)
+	world_previewer:request_spawn_hero_unit(hero_name, self.career_index, not self.use_user_skins, callback)
 end
 
-StartMenuStateOverview.cb_hero_unit_spawned = function (self, arg_16_1)
+StartMenuStateOverview.cb_hero_unit_spawned = function (self, hero_name)
 	-- function 16
 	local world_previewer = self.world_previewer
 	local career_index = self.career_index
-	local var_16_2 = FindProfileIndex(arg_16_1)
-	local var_16_3 = SPProfiles[var_16_2].careers[career_index]
-	local preview_idle_animation = var_16_3.preview_idle_animation
-	local preview_wield_slot = var_16_3.preview_wield_slot
-	local preview_items = var_16_3.preview_items
+	local profile_index = FindProfileIndex(hero_name)
+	local profile = SPProfiles[profile_index]
+	local careers = profile.careers
+	local career_settings = careers[career_index]
+	local preview_idle_animation = career_settings.preview_idle_animation
+	local preview_wield_slot = career_settings.preview_wield_slot
+	local preview_items = career_settings.preview_items
 
-	if not preview_items then
-		for i, v in ipairs(preview_items) do
-			local item_name = v.item_name
-			local slot_type = ItemMasterList[item_name].slot_type
-			local var_16_9 = InventorySettings.slot_names_by_type[slot_type][1]
-			local var_16_10 = InventorySettings.slots_by_name[var_16_9]
+	if preview_items then
+		for _, item_data in ipairs(preview_items) do
+			local item_name = item_data.item_name
+			local item_template = ItemMasterList[item_name]
+			local slot_type = item_template.slot_type
+			local slot_names = InventorySettings.slot_names_by_type[slot_type]
+			local slot_name = slot_names[1]
+			local slot = InventorySettings.slots_by_name[slot_name]
 
-			world_previewer:equip_item(item_name, var_16_10)
+			world_previewer:equip_item(item_name, slot)
 		end
 
-		if not preview_wield_slot then
+		if preview_wield_slot then
 			world_previewer:wield_weapon_slot(preview_wield_slot)
 		end
 	end
 
-	if not self.use_user_skins then
-		local name = var_16_3.name
-		local get_loadout_item = BackendUtils.get_loadout_item(name, "slot_hat")
+	if self.use_user_skins then
+		local career_name = career_settings.name
+		local item = BackendUtils.get_loadout_item(career_name, "slot_hat")
 
-		if not get_loadout_item then
-			local name_2 = get_loadout_item.data.name
-			local backend_id = get_loadout_item.backend_id
-			local slot_hat = InventorySettings.slots_by_name.slot_hat
+		if item then
+			local item_data = item.data
+			local item_name = item_data.name
+			local backend_id = item.backend_id
+			local slot = InventorySettings.slots_by_name.slot_hat
 
-			world_previewer:equip_item(name_2, slot_hat, backend_id)
+			world_previewer:equip_item(item_name, slot, backend_id)
 		end
 	end
 
-	if not preview_idle_animation then
+	if preview_idle_animation then
 		self.world_previewer:play_character_animation(preview_idle_animation)
 	end
 end
 
-StartMenuStateOverview._populate_career_page = function (self, arg_17_1, arg_17_2)
+StartMenuStateOverview._populate_career_page = function (self, hero_name, career_index)
 	-- function 17
-	local var_17_0 = FindProfileIndex(arg_17_1)
-	local var_17_1 = SPProfiles[var_17_0]
-	local character_name = var_17_1.character_name
-	local var_17_3 = var_17_1.careers[arg_17_2]
-	local name = var_17_3.name
-	local portrait_image = var_17_3.portrait_image
-	local display_name = var_17_3.display_name
-	local icon = var_17_3.icon
+	local profile_index = FindProfileIndex(hero_name)
+	local profile_settings = SPProfiles[profile_index]
+	local character_name = profile_settings.character_name
+	local careers = profile_settings.careers
+	local career_settings = careers[career_index]
+	local name = career_settings.name
+	local portrait_image = career_settings.portrait_image
+	local display_name = career_settings.display_name
+	local icon = career_settings.icon
+	local widgets_by_name = self._widgets_by_name
 
-	self._widgets_by_name.info_career_name.content.text = Localize(display_name)
+	widgets_by_name.info_career_name.content.text = Localize(display_name)
 	self._spawn_hero = true
-	self.career_index = arg_17_2
+	self.career_index = career_index
 
-	local var_17_8
+	local level
 
 	if Managers.mechanism:current_mechanism_name() == "versus" then
-		local get_versus_experience = ExperienceSettings.get_versus_experience()
+		local experience = ExperienceSettings.get_versus_experience()
 
-		var_17_8 = ExperienceSettings.get_versus_profile_level_from_experience(get_versus_experience)
+		level = ExperienceSettings.get_versus_profile_level_from_experience(experience)
 	else
-		local get = Managers.backend:get_interface("hero_attributes"):get(arg_17_1, "experience")
+		local hero_attributes = Managers.backend:get_interface("hero_attributes")
+		local get = hero_attributes:get(hero_name, "experience")
 
-		get = get or 0
-		var_17_8 = ExperienceSettings.get_level(get)
+		if not get then
+			-- Nothing
+		end
+
+		get = 0
+
+		local exp = get
+
+		::label_17_0::
+
+		level = ExperienceSettings.get_level(exp)
 	end
 
-	self:_set_hero_info(Localize(character_name), var_17_8)
+	self:_set_hero_info(Localize(character_name), level)
 
-	local _get_portrait_frame = self:_get_portrait_frame(var_17_0, arg_17_2)
+	local player_portrait_frame = self:_get_portrait_frame(profile_index, career_index)
 
-	self:_create_player_portrait(portrait_image, var_17_8, _get_portrait_frame)
+	self:_create_player_portrait(portrait_image, level, player_portrait_frame)
 end
 
-StartMenuStateOverview._get_portrait_frame = function (arg_18_0, arg_18_1, arg_18_2)
+StartMenuStateOverview._get_portrait_frame = function (self, profile_index, career_index)
 	-- function 18
-	local name = SPProfiles[arg_18_1].careers[arg_18_2].name
-	local str = "default"
-	local get_loadout_item = BackendUtils.get_loadout_item(name, "slot_frame")
+	local profile = SPProfiles[profile_index]
+	local career_data = profile.careers[career_index]
+	local career_name = career_data.name
+	local player_portrait_frame = "default"
+	local item = BackendUtils.get_loadout_item(career_name, "slot_frame")
 
-	str = not get_loadout_item and get_loadout_item.data.temporary_template and str
+	if item then
+		local item_data = item.data
+		local frame_name = item_data.temporary_template
 
-	return str
+		player_portrait_frame = not not frame_name or not not player_portrait_frame
+	end
+
+	return player_portrait_frame
 end
 
-StartMenuStateOverview._set_hero_info = function (self, arg_19_1, arg_19_2)
+StartMenuStateOverview._set_hero_info = function (self, name, level)
 	-- function 19
-	local _widgets_by_name = self._widgets_by_name
+	local widgets_by_name = self._widgets_by_name
 
-	_widgets_by_name.info_hero_name.content.text = arg_19_1
-	_widgets_by_name.info_hero_level.content.text = Localize("level") .. ": " .. arg_19_2
+	widgets_by_name.info_hero_name.content.text = name
+	widgets_by_name.info_hero_level.content.text = Localize("level") .. ": " .. level
 end
 
-StartMenuStateOverview._create_player_portrait = function (self, arg_20_1, arg_20_2, arg_20_3)
+StartMenuStateOverview._create_player_portrait = function (self, portrait_image, level, player_portrait_frame)
 	-- function 20
 	local var_20_0
 
-	if not arg_20_2 then
-		var_20_0 = tostring(arg_20_2)
+	if level then
+		var_20_0 = tostring(level)
 
 		if not var_20_0 then
 			-- Nothing
@@ -391,27 +442,32 @@ StartMenuStateOverview._create_player_portrait = function (self, arg_20_1, arg_2
 
 	var_20_0 = "-"
 
+	local level_text = var_20_0
+
 	::label_20_0::
 
-	local num = 1
-	local flag = false
-	local create_portrait_frame = UIWidgets.create_portrait_frame("portrait_root", arg_20_3, var_20_0, num, flag, arg_20_1)
+	local scale = 1
+	local retained_mode = false
+	local definition = UIWidgets.create_portrait_frame("portrait_root", player_portrait_frame, level_text, scale, retained_mode, portrait_image)
+	local widget = UIWidget.init(definition, self.ui_top_renderer)
 
-	self._player_portrait_widget = UIWidget.init(create_portrait_frame, self.ui_top_renderer)
+	self._player_portrait_widget = widget
 end
 
-StartMenuStateOverview._set_select_button_enabled = function (arg_21_0, arg_21_1)
+StartMenuStateOverview._set_select_button_enabled = function (self, enabled)
 	-- function 21
-	arg_21_0._widgets_by_name.select_button.content.button_hotspot.disable_button = not arg_21_1
+	self._widgets_by_name.select_button.content.button_hotspot.disable_button = not enabled
 end
 
-StartMenuStateOverview._clear_keyboard_selection = function (self, arg_22_1)
+StartMenuStateOverview._clear_keyboard_selection = function (self, button_grid)
 	-- function 22
-	local _widgets_by_name = self._widgets_by_name
+	local widgets_by_name = self._widgets_by_name
 
-	for i, v in ipairs(arg_22_1) do
-		for i_2, v_2 in ipairs(v) do
-			_widgets_by_name[v_2].content.button_hotspot.is_selected = false
+	for i, data in ipairs(button_grid) do
+		for j, button_name in ipairs(data) do
+			local widget = widgets_by_name[button_name]
+
+			widget.content.button_hotspot.is_selected = false
 		end
 	end
 
@@ -420,9 +476,9 @@ end
 
 StartMenuStateOverview._handle_keyboard_input = function (self)
 	-- function 23
-	local is_device_active = Managers.input:is_device_active("gamepad")
-	local is_device_active_2 = Managers.input:is_device_active("mouse")
-	local tbl_2 = {
+	local gamepad_active = Managers.input:is_device_active("gamepad")
+	local mouse_active = Managers.input:is_device_active("mouse")
+	local button_grid = {
 		{
 			"play_button",
 			"options_button",
@@ -436,32 +492,32 @@ StartMenuStateOverview._handle_keyboard_input = function (self)
 		}
 	}
 
-	if is_device_active_2 or not is_device_active then
-		self:_clear_keyboard_selection(tbl_2)
+	if mouse_active or gamepad_active then
+		self:_clear_keyboard_selection(button_grid)
 
 		return
 	end
 
-	local tbl_3 = {
+	local button_funcs = {
 		play_button = function ()
 			-- function 24
 			self.parent:close_menu()
 		end,
 		options_button = function ()
 			-- function 25
-			tbl[1](self)
+			menu_functions[1](self)
 		end,
 		tutorial_button = function ()
 			-- function 26
-			tbl[2](self)
+			menu_functions[2](self)
 		end,
 		cinematics_button = function ()
 			-- function 27
-			tbl[4](self)
+			menu_functions[4](self)
 		end,
 		credits_button = function ()
 			-- function 28
-			tbl[3](self)
+			menu_functions[3](self)
 		end,
 		quit_button = function ()
 			-- function 29
@@ -474,121 +530,151 @@ StartMenuStateOverview._handle_keyboard_input = function (self)
 	}
 	local _keyboard_grid_selection = self._keyboard_grid_selection
 
-	_keyboard_grid_selection = _keyboard_grid_selection or {}
+	if not _keyboard_grid_selection then
+		-- Nothing
+	end
 
-	local var_23_5 = _keyboard_grid_selection[1]
+	_keyboard_grid_selection = {}
 
-	var_23_5 = var_23_5 or 1
+	local keyboard_grid_selection = _keyboard_grid_selection
 
-	local var_23_6 = _keyboard_grid_selection[2]
+	::label_23_0::
 
-	var_23_6 = var_23_6 or 1
+	local var_23_1 = keyboard_grid_selection[1]
+
+	if not var_23_1 then
+		-- Nothing
+	end
+
+	var_23_1 = 1
+
+	local index_x = var_23_1
+
+	::label_23_1::
+
+	local var_23_2 = keyboard_grid_selection[2]
+
+	if not var_23_2 then
+		-- Nothing
+	end
+
+	var_23_2 = 1
+
+	local index_y = var_23_2
+
+	::label_23_2::
 
 	local input_service = self:input_service(true)
 
-	if not input_service:get("move_down_hold_continuous") then
-		var_23_6 = var_23_6 + 1
-	elseif not input_service:get("move_up_hold_continuous") then
-		var_23_6 = var_23_6 - 1
-	elseif not input_service:get("move_right_hold_continuous") then
-		var_23_5 = var_23_5 + 1
-	elseif not input_service:get("move_left_hold_continuous") then
-		var_23_5 = var_23_5 - 1
-	elseif not input_service:get("confirm_press") then
-		local var_23_8 = tbl_3[tbl_2[var_23_5][var_23_6]]
+	if input_service:get("move_down_hold_continuous") then
+		index_y = index_y + 1
+	elseif input_service:get("move_up_hold_continuous") then
+		index_y = index_y - 1
+	elseif input_service:get("move_right_hold_continuous") then
+		index_x = index_x + 1
+	elseif input_service:get("move_left_hold_continuous") then
+		index_x = index_x - 1
+	elseif input_service:get("confirm_press") then
+		local button_name = button_grid[index_x][index_y]
+		local func = button_funcs[button_name]
 
-		if not var_23_8 then
-			var_23_8()
+		if func then
+			func()
 			self:_play_sound("play_gui_start_menu_button_click")
 		end
 	end
 
-	local clamp = math.clamp(var_23_5, 1, #tbl_2)
-	local clamp_2 = math.clamp(var_23_6, 1, #tbl_2[clamp])
-	local _widgets_by_name = self._widgets_by_name
+	index_x = math.clamp(index_x, 1, #button_grid)
+	index_y = math.clamp(index_y, 1, #button_grid[index_x])
 
-	if not (clamp ~= _keyboard_grid_selection[1] or clamp_2 == _keyboard_grid_selection[2]) then
-		for i, v in ipairs(tbl_2) do
-			for i_2, v_2 in ipairs(v) do
-				_widgets_by_name[v_2].content.button_hotspot.is_selected = i ~= clamp or i_2 == clamp_2
+	local widgets_by_name = self._widgets_by_name
+
+	if index_x ~= keyboard_grid_selection[1] or index_y ~= keyboard_grid_selection[2] then
+		for grid_index_x, data in ipairs(button_grid) do
+			for grid_index_y, button_name in ipairs(data) do
+				local widget = widgets_by_name[button_name]
+				local button_hotspot = widget.content.button_hotspot
+
+				button_hotspot.is_selected = grid_index_x == index_x and grid_index_y == index_y
 			end
 		end
 
-		_keyboard_grid_selection[1] = clamp
-		_keyboard_grid_selection[2] = clamp_2
-		self._keyboard_grid_selection = _keyboard_grid_selection
+		keyboard_grid_selection[1] = index_x
+		keyboard_grid_selection[2] = index_y
+		self._keyboard_grid_selection = keyboard_grid_selection
 
 		self:_play_sound("play_gui_start_menu_button_hover")
 	end
 end
 
-StartMenuStateOverview._handle_input = function (self, arg_31_1, arg_31_2)
+StartMenuStateOverview._handle_input = function (self, dt, t)
 	-- function 31
 	local input_service = self:input_service(true)
-	local _widgets_by_name = self._widgets_by_name
-	local play_button = _widgets_by_name.play_button
-	local hero_button = _widgets_by_name.hero_button
-	local quit_button = _widgets_by_name.quit_button
-	local credits_button = _widgets_by_name.credits_button
-	local options_button = _widgets_by_name.options_button
-	local tutorial_button = _widgets_by_name.tutorial_button
-	local cinematics_button = _widgets_by_name.cinematics_button
+	local widgets_by_name = self._widgets_by_name
+	local play_button = widgets_by_name.play_button
+	local hero_button = widgets_by_name.hero_button
+	local quit_button = widgets_by_name.quit_button
+	local credits_button = widgets_by_name.credits_button
+	local options_button = widgets_by_name.options_button
+	local tutorial_button = widgets_by_name.tutorial_button
+	local cinematics_button = widgets_by_name.cinematics_button
 
-	UIWidgetUtils.animate_default_button(play_button, arg_31_1)
-	UIWidgetUtils.animate_default_button(hero_button, arg_31_1)
-	UIWidgetUtils.animate_default_button(quit_button, arg_31_1)
-	UIWidgetUtils.animate_default_button(credits_button, arg_31_1)
-	UIWidgetUtils.animate_default_button(cinematics_button, arg_31_1)
-	UIWidgetUtils.animate_default_button(options_button, arg_31_1)
-	UIWidgetUtils.animate_default_button(tutorial_button, arg_31_1)
+	UIWidgetUtils.animate_default_button(play_button, dt)
+	UIWidgetUtils.animate_default_button(hero_button, dt)
+	UIWidgetUtils.animate_default_button(quit_button, dt)
+	UIWidgetUtils.animate_default_button(credits_button, dt)
+	UIWidgetUtils.animate_default_button(cinematics_button, dt)
+	UIWidgetUtils.animate_default_button(options_button, dt)
+	UIWidgetUtils.animate_default_button(tutorial_button, dt)
 
-	if self:_is_button_hover_enter(play_button) or self:_is_button_hover_enter(hero_button) or self:_is_button_hover_enter(quit_button) or self:_is_button_hover_enter(credits_button) or self:_is_button_hover_enter(options_button) or not self:_is_button_hover_enter(tutorial_button) then
+	if self:_is_button_hover_enter(play_button) or self:_is_button_hover_enter(hero_button) or self:_is_button_hover_enter(quit_button) or self:_is_button_hover_enter(credits_button) or self:_is_button_hover_enter(options_button) or self:_is_button_hover_enter(tutorial_button) then
 		self:_play_sound("play_gui_start_menu_button_hover")
-	elseif not self:_is_button_hover_enter(cinematics_button) then
+	elseif self:_is_button_hover_enter(cinematics_button) then
 		self:_play_sound("play_gui_start_menu_button_hover")
 	end
 
-	if not self:_is_button_pressed(hero_button) then
+	if self:_is_button_pressed(hero_button) then
 		self:_play_sound("play_gui_start_menu_button_click")
 		self.parent:requested_screen_change_by_name("character")
-	elseif not self:_is_button_pressed(play_button) then
+	elseif self:_is_button_pressed(play_button) then
 		self:_play_sound("play_gui_start_menu_button_click")
 		self.parent:close_menu()
-	elseif not self:_is_button_pressed(options_button) then
+	elseif self:_is_button_pressed(options_button) then
 		self:_play_sound("play_gui_start_menu_button_click")
-		tbl[1](self)
+		menu_functions[1](self)
 		self:_play_sound("play_gui_start_menu_button_click")
-	elseif not self:_is_button_pressed(tutorial_button) then
-		tbl[2](self)
+	elseif self:_is_button_pressed(tutorial_button) then
+		menu_functions[2](self)
 		self:_play_sound("play_gui_start_menu_button_click")
-	elseif not self:_is_button_pressed(cinematics_button) then
-		tbl[4](self)
+	elseif self:_is_button_pressed(cinematics_button) then
+		menu_functions[4](self)
 		self:_play_sound("play_gui_start_menu_button_click")
-	elseif not self:_is_button_pressed(credits_button) then
-		tbl[3](self)
-	elseif not self:_is_button_pressed(quit_button) then
+	elseif self:_is_button_pressed(credits_button) then
+		menu_functions[3](self)
+	elseif self:_is_button_pressed(quit_button) then
 		self:_play_sound("play_gui_start_menu_button_click")
 
 		Boot.quit_game = true
 	end
 
-	if not Development.parameter("tobii_button") then
-		self:_handle_tobii_button(arg_31_1)
+	if Development.parameter("tobii_button") then
+		self:_handle_tobii_button(dt)
 	end
 end
 
-StartMenuStateOverview._handle_tobii_button = function (self, arg_32_1)
+StartMenuStateOverview._handle_tobii_button = function (self, dt)
 	-- function 32
-	local tobii_button = self._widgets_by_name.tobii_button
+	local widgets_by_name = self._widgets_by_name
+	local tobii_button = widgets_by_name.tobii_button
 
-	UIWidgetUtils.animate_default_button(tobii_button, arg_32_1)
+	UIWidgetUtils.animate_default_button(tobii_button, dt)
 
-	if not self:_is_button_pressed(tobii_button) then
+	if self:_is_button_pressed(tobii_button) then
 		self:_play_sound("play_gui_start_menu_button_click")
 
-		local str = "https://vermintide2beta.com/?utm_medium=referral&utm_campaign=vermintide2beta&utm_source=ingame#challenge"
+		local tobii_contest_url = "https://vermintide2beta.com/?utm_medium=referral&utm_campaign=vermintide2beta&utm_source=ingame#challenge"
 
-		Application.open_url_in_browser(str)
+		Application.open_url_in_browser(tobii_contest_url)
 	end
 end
 
@@ -597,118 +683,131 @@ StartMenuStateOverview.game_popup_active = function (self)
 	return self._show_play_popup
 end
 
-StartMenuStateOverview._is_button_pressed = function (arg_34_0, arg_34_1)
+StartMenuStateOverview._is_button_pressed = function (self, widget)
 	-- function 34
-	local button_hotspot = arg_34_1.content.button_hotspot
+	local content = widget.content
+	local hotspot = content.button_hotspot
 
-	if not button_hotspot.on_release then
-		button_hotspot.on_release = false
+	if hotspot.on_release then
+		hotspot.on_release = false
 
 		return true
 	end
 end
 
-StartMenuStateOverview._is_button_hover_enter = function (arg_35_0, arg_35_1)
+StartMenuStateOverview._is_button_hover_enter = function (self, widget)
 	-- function 35
-	return arg_35_1.content.button_hotspot.on_hover_enter
+	local content = widget.content
+	local hotspot = content.button_hotspot
+
+	return hotspot.on_hover_enter
 end
 
-StartMenuStateOverview._is_button_hover_exit = function (arg_36_0, arg_36_1)
+StartMenuStateOverview._is_button_hover_exit = function (self, widget)
 	-- function 36
-	return arg_36_1.content.button_hotspot.on_hover_exit
+	local content = widget.content
+	local hotspot = content.button_hotspot
+
+	return hotspot.on_hover_exit
 end
 
-StartMenuStateOverview._play_sound = function (self, arg_37_1)
+StartMenuStateOverview._play_sound = function (self, event)
 	-- function 37
-	self.parent:play_sound(arg_37_1)
+	self.parent:play_sound(event)
 end
 
 StartMenuStateOverview.get_camera_position = function (self)
 	-- function 38
-	local get_background_world, var_38_1 = self.parent:get_background_world()
-	local camera = ScriptViewport.camera(var_38_1)
+	local world, viewport = self.parent:get_background_world()
+	local camera = ScriptViewport.camera(viewport)
 
 	return ScriptCamera.position(camera)
 end
 
 StartMenuStateOverview.get_camera_rotation = function (self)
 	-- function 39
-	local get_background_world, var_39_1 = self.parent:get_background_world()
-	local camera = ScriptViewport.camera(var_39_1)
+	local world, viewport = self.parent:get_background_world()
+	local camera = ScriptViewport.camera(viewport)
 
 	return ScriptCamera.rotation(camera)
 end
 
-StartMenuStateOverview.trigger_unit_flow_event = function (arg_40_0, arg_40_1, arg_40_2)
+StartMenuStateOverview.trigger_unit_flow_event = function (self, unit, event_name)
 	-- function 40
-	if not arg_40_1 and not Unit.alive(arg_40_1) then
-		Unit.flow_event(arg_40_1, arg_40_2)
+	if unit and Unit.alive(unit) then
+		Unit.flow_event(unit, event_name)
 	end
 end
 
-StartMenuStateOverview._start_transition_animation = function (self, arg_41_1, arg_41_2)
+StartMenuStateOverview._start_transition_animation = function (self, key, animation_name)
 	-- function 41
-	local tbl = {
+	local params = {
 		wwise_world = self.wwise_world,
 		render_settings = self.render_settings
 	}
-	local tbl_2 = {}
-	local start_animation = self.ui_animator:start_animation(arg_41_2, tbl_2, scenegraph_definition, tbl)
+	local widgets = {}
+	local anim_id = self.ui_animator:start_animation(animation_name, widgets, scenegraph_definition, params)
 
-	self._animations[arg_41_1] = start_animation
+	self._animations[key] = anim_id
 end
 
-StartMenuStateOverview._on_option_button_hover = function (self, arg_42_1, arg_42_2)
+StartMenuStateOverview._on_option_button_hover = function (self, widget, style_id)
 	-- function 42
-	local _ui_animations = self._ui_animations
-	local str = "option_button_" .. arg_42_2
-	local var_42_2 = arg_42_1.style[arg_42_2]
-	local var_42_3 = var_42_2.color[2]
-	local num = 255
-	local topic_hover_duration = UISettings.scoreboard.topic_hover_duration
-	local num_2 = (1 - var_42_3 / num) * topic_hover_duration
+	local ui_animations = self._ui_animations
+	local animation_name = "option_button_" .. style_id
+	local widget_style = widget.style
+	local pass_style = widget_style[style_id]
+	local current_color_value = pass_style.color[2]
+	local target_color_value = 255
+	local total_time = UISettings.scoreboard.topic_hover_duration
+	local animation_duration = (1 - current_color_value / target_color_value) * total_time
 
 	for i = 2, 4 do
-		if num_2 > 0 then
-			_ui_animations[str .. "_hover_" .. i] = self:_animate_element_by_time(var_42_2.color, i, var_42_3, num, num_2)
+		if animation_duration > 0 then
+			ui_animations[animation_name .. "_hover_" .. i] = self:_animate_element_by_time(pass_style.color, i, current_color_value, target_color_value, animation_duration)
 		else
-			var_42_2.color[i] = num
+			pass_style.color[i] = target_color_value
 		end
 	end
 end
 
-StartMenuStateOverview._on_option_button_dehover = function (self, arg_43_1, arg_43_2)
+StartMenuStateOverview._on_option_button_dehover = function (self, widget, style_id)
 	-- function 43
-	local _ui_animations = self._ui_animations
-	local str = "option_button_" .. arg_43_2
-	local var_43_2 = arg_43_1.style[arg_43_2]
-	local var_43_3 = var_43_2.color[1]
-	local num = 100
-	local topic_hover_duration = UISettings.scoreboard.topic_hover_duration
-	local num_2 = var_43_3 / 255 * topic_hover_duration
+	local ui_animations = self._ui_animations
+	local animation_name = "option_button_" .. style_id
+	local widget_style = widget.style
+	local pass_style = widget_style[style_id]
+	local current_color_value = pass_style.color[1]
+	local target_color_value = 100
+	local total_time = UISettings.scoreboard.topic_hover_duration
+	local animation_duration = current_color_value / 255 * total_time
 
 	for i = 2, 4 do
-		if num_2 > 0 then
-			_ui_animations[str .. "_hover_" .. i] = self:_animate_element_by_time(var_43_2.color, i, var_43_3, num, num_2)
+		if animation_duration > 0 then
+			ui_animations[animation_name .. "_hover_" .. i] = self:_animate_element_by_time(pass_style.color, i, current_color_value, target_color_value, animation_duration)
 		else
-			var_43_2.color[1] = num
+			pass_style.color[1] = target_color_value
 		end
 	end
 end
 
-StartMenuStateOverview.play_sound = function (arg_44_0, arg_44_1)
+StartMenuStateOverview.play_sound = function (self, event)
 	-- function 44
 	return
 end
 
-StartMenuStateOverview._animate_element_by_time = function (arg_45_0, arg_45_1, arg_45_2, arg_45_3, arg_45_4, arg_45_5)
+StartMenuStateOverview._animate_element_by_time = function (self, target, target_index, from, to, time)
 	-- function 45
-	return (UIAnimation.init(UIAnimation.function_by_time, arg_45_1, arg_45_2, arg_45_3, arg_45_4, arg_45_5, math.ease_out_quad))
+	local new_animation = UIAnimation.init(UIAnimation.function_by_time, target, target_index, from, to, time, math.ease_out_quad)
+
+	return new_animation
 end
 
-StartMenuStateOverview._animate_element_by_catmullrom = function (arg_46_0, arg_46_1, arg_46_2, arg_46_3, arg_46_4, arg_46_5, arg_46_6, arg_46_7, arg_46_8)
+StartMenuStateOverview._animate_element_by_catmullrom = function (self, target, target_index, target_value, p0, p1, p2, p3, time)
 	-- function 46
-	return (UIAnimation.init(UIAnimation.catmullrom, arg_46_1, arg_46_2, arg_46_3, arg_46_4, arg_46_5, arg_46_6, arg_46_7, arg_46_8))
+	local new_animation = UIAnimation.init(UIAnimation.catmullrom, target, target_index, target_value, p0, p1, p2, p3, time)
+
+	return new_animation
 end
 
 StartMenuStateOverview._init_menu_views = function (self)
@@ -721,58 +820,60 @@ StartMenuStateOverview._init_menu_views = function (self)
 		cinematics_view = CinematicsView:new(ingame_ui_context)
 	}
 
-	for k, v in pairs(self._views) do
-		v.exit = function ()
+	for name, view in pairs(self._views) do
+		view.exit = function ()
 			-- function 48
 			self:exit_current_view()
 		end
 	end
 end
 
-StartMenuStateOverview._activate_view = function (self, arg_49_1)
+StartMenuStateOverview._activate_view = function (self, new_view)
 	-- function 49
-	self._active_view = arg_49_1
+	self._active_view = new_view
 
-	local _views = self._views
+	local views = self._views
 
-	assert(_views[arg_49_1])
+	assert(views[new_view])
 
-	if not arg_49_1 and not _views[arg_49_1] and not _views[arg_49_1].on_enter then
+	if new_view and views[new_view] and views[new_view].on_enter then
 		Managers.input:disable_gamepad_cursor()
-		_views[arg_49_1]:on_enter()
+		views[new_view]:on_enter()
 	end
 end
 
 StartMenuStateOverview.exit_current_view = function (self)
 	-- function 50
-	local _active_view = self._active_view
-	local _views = self._views
+	local active_view = self._active_view
+	local views = self._views
 
-	assert(_active_view)
+	assert(active_view)
 
-	if not _views[_active_view] and not _views[_active_view].on_exit then
-		_views[_active_view]:on_exit()
+	if views[active_view] and views[active_view].on_exit then
+		views[active_view]:on_exit()
 	end
 
 	self._active_view = nil
 
-	local name = self:input_service(true).name
-	local input = Managers.input
+	local input_service = self:input_service(true)
+	local input_service_name = input_service.name
+	local input_manager = Managers.input
 
-	input:block_device_except_service(name, "keyboard")
-	input:block_device_except_service(name, "mouse")
-	input:block_device_except_service(name, "gamepad")
+	input_manager:block_device_except_service(input_service_name, "keyboard")
+	input_manager:block_device_except_service(input_service_name, "mouse")
+	input_manager:block_device_except_service(input_service_name, "gamepad")
 	Managers.input:enable_gamepad_cursor()
 end
 
-StartMenuStateOverview.input_service = function (self, arg_51_1)
+StartMenuStateOverview.input_service = function (self, ignore_view_input)
 	-- function 51
-	if not arg_51_1 then
-		local _active_view = self._active_view
-		local var_51_1 = self._views[_active_view]
+	if not ignore_view_input then
+		local active_view = self._active_view
+		local views = self._views
+		local view = views[active_view]
 
-		if not var_51_1 then
-			return var_51_1:input_service()
+		if view then
+			return view:input_service()
 		end
 	end
 

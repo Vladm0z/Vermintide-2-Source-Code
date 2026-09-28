@@ -1,35 +1,35 @@
 -- chunkname: @scripts/ui/dlc_versus/views/start_game_view/windows/definitions/start_game_window_versus_quickplay_definitions.lua
 
-local game_start_windows = UISettings.game_start_windows
-local frame = game_start_windows.frame
-local size = game_start_windows.size
-local var_0_3 = UIFrameSettings[frame].texture_sizes.horizontal[2]
-local tbl = {
-	size[1],
+local window_default_settings = UISettings.game_start_windows
+local window_frame = window_default_settings.frame
+local window_size = window_default_settings.size
+local window_frame_height = UIFrameSettings[window_frame].texture_sizes.horizontal[2]
+local game_option_size = {
+	window_size[1],
 	194
 }
-local var_0_5 = size[1]
-local tbl_2 = {
+local window_text_width = window_size[1]
+local min_difficulty_info_size = {
 	500,
 	200
 }
-local tbl_3 = {
+local animation_definitions = {
 	on_enter = {
 		{
 			name = "fade_in",
 			start_progress = 0,
 			end_progress = 0.3,
-			init = function (arg_1_0, arg_1_1, arg_1_2, arg_1_3)
+			init = function (ui_scenegraph, scenegraph_definition, widgets, params)
 				-- function 1
-				arg_1_3.render_settings.alpha_multiplier = 0
+				params.render_settings.alpha_multiplier = 0
 			end,
-			update = function (arg_2_0, arg_2_1, arg_2_2, arg_2_3, arg_2_4)
+			update = function (ui_scenegraph, scenegraph_definition, widgets, progress, params)
 				-- function 2
-				local easeOutCubic = math.easeOutCubic(arg_2_3)
+				local anim_progress = math.easeOutCubic(progress)
 
-				arg_2_4.render_settings.alpha_multiplier = easeOutCubic
+				params.render_settings.alpha_multiplier = anim_progress
 			end,
-			on_complete = function (arg_3_0, arg_3_1, arg_3_2, arg_3_3)
+			on_complete = function (ui_scenegraph, scenegraph_definition, widgets, params)
 				-- function 3
 				return
 			end
@@ -40,15 +40,15 @@ local tbl_3 = {
 			name = "fade_out",
 			start_progress = 0,
 			end_progress = 0.3,
-			init = function (arg_4_0, arg_4_1, arg_4_2, arg_4_3)
+			init = function (ui_scenegraph, scenegraph_definition, widgets, params)
 				-- function 4
-				arg_4_3.render_settings.alpha_multiplier = 1
+				params.render_settings.alpha_multiplier = 1
 			end,
-			update = function (arg_5_0, arg_5_1, arg_5_2, arg_5_3, arg_5_4)
+			update = function (ui_scenegraph, scenegraph_definition, widgets, progress, params)
 				-- function 5
-				arg_5_4.render_settings.alpha_multiplier = 1
+				params.render_settings.alpha_multiplier = 1
 			end,
-			on_complete = function (arg_6_0, arg_6_1, arg_6_2, arg_6_3)
+			on_complete = function (ui_scenegraph, scenegraph_definition, widgets, params)
 				-- function 6
 				return
 			end
@@ -59,22 +59,22 @@ local tbl_3 = {
 			name = "gamemode_swap_text_fade_out",
 			start_progress = 0,
 			end_progress = 0.2,
-			init = function (arg_7_0, arg_7_1, arg_7_2, arg_7_3)
+			init = function (ui_scenegraph, scenegraph_definition, widgets, params)
 				-- function 7
 				return
 			end,
-			update = function (arg_8_0, arg_8_1, arg_8_2, arg_8_3, arg_8_4)
+			update = function (ui_scenegraph, scenegraph_definition, widgets, progress, params)
 				-- function 8
-				local easeOutCubic = math.easeOutCubic(arg_8_3)
+				local anim_progress = math.easeOutCubic(progress)
 
-				arg_8_2.style.game_mode_text.text_color[1] = 255 * (1 - easeOutCubic)
-				arg_8_2.style.press_key_text.text_color[1] = 255 * (1 - easeOutCubic)
+				widgets.style.game_mode_text.text_color[1] = 255 * (1 - anim_progress)
+				widgets.style.press_key_text.text_color[1] = 255 * (1 - anim_progress)
 
-				if not arg_8_2.content.show_note then
-					arg_8_2.style.note_text.text_color[1] = 255 * (1 - easeOutCubic)
+				if widgets.content.show_note then
+					widgets.style.note_text.text_color[1] = 255 * (1 - anim_progress)
 				end
 			end,
-			on_complete = function (arg_9_0, arg_9_1, arg_9_2, arg_9_3)
+			on_complete = function (ui_scenegraph, scenegraph_definition, widgets, params)
 				-- function 9
 				return
 			end
@@ -83,28 +83,28 @@ local tbl_3 = {
 			name = "gamemode_swap_text_fade_in",
 			start_progress = 0.2,
 			end_progress = 0.4,
-			init = function (arg_10_0, arg_10_1, arg_10_2, arg_10_3)
+			init = function (ui_scenegraph, scenegraph_definition, widgets, params)
 				-- function 10
 				return
 			end,
-			update = function (arg_11_0, arg_11_1, arg_11_2, arg_11_3, arg_11_4)
+			update = function (ui_scenegraph, scenegraph_definition, widgets, progress, params)
 				-- function 11
-				if not arg_11_2.content.is_showing_info then
-					arg_11_2.content.game_mode_text = Localize("expedition_info")
-					arg_11_2.content.show_note = true
+				if widgets.content.is_showing_info then
+					widgets.content.game_mode_text = Localize("expedition_info")
+					widgets.content.show_note = true
 				else
-					arg_11_2.content.game_mode_text = string.gsub(Localize("start_game_window_deus_quickplay_desc"), Localize("expedition_highlight_text"), "{#color(255,168,0)}" .. Localize("expedition_highlight_text") .. "{#reset()}")
-					arg_11_2.content.show_note = false
+					widgets.content.game_mode_text = string.gsub(Localize("start_game_window_deus_quickplay_desc"), Localize("expedition_highlight_text"), "{#color(255,168,0)}" .. Localize("expedition_highlight_text") .. "{#reset()}")
+					widgets.content.show_note = false
 				end
 
-				arg_11_2.style.game_mode_text.text_color[1] = 255 * math.easeOutCubic(arg_11_3)
-				arg_11_2.style.press_key_text.text_color[1] = 255 * math.easeOutCubic(arg_11_3)
+				widgets.style.game_mode_text.text_color[1] = 255 * math.easeOutCubic(progress)
+				widgets.style.press_key_text.text_color[1] = 255 * math.easeOutCubic(progress)
 
-				if not arg_11_2.content.show_note then
-					arg_11_2.style.note_text.text_color[1] = 255 * math.easeOutCubic(arg_11_3)
+				if widgets.content.show_note then
+					widgets.style.note_text.text_color[1] = 255 * math.easeOutCubic(progress)
 				end
 			end,
-			on_complete = function (arg_12_0, arg_12_1, arg_12_2, arg_12_3)
+			on_complete = function (ui_scenegraph, scenegraph_definition, widgets, params)
 				-- function 12
 				return
 			end
@@ -115,17 +115,17 @@ local tbl_3 = {
 			name = "right_arrow_flick",
 			start_progress = 0,
 			end_progress = 0.6,
-			init = function (arg_13_0, arg_13_1, arg_13_2, arg_13_3)
+			init = function (ui_scenegraph, scenegraph_definition, widgets, params)
 				-- function 13
 				return
 			end,
-			update = function (arg_14_0, arg_14_1, arg_14_2, arg_14_3, arg_14_4)
+			update = function (ui_scenegraph, scenegraph_definition, widgets, progress, params)
 				-- function 14
-				arg_14_4.right_key.color[1] = 255 * (1 - math.easeOutCubic(arg_14_3))
+				params.right_key.color[1] = 255 * (1 - math.easeOutCubic(progress))
 			end,
-			on_complete = function (arg_15_0, arg_15_1, arg_15_2, arg_15_3)
+			on_complete = function (ui_scenegraph, scenegraph_definition, widgets, params)
 				-- function 15
-				arg_15_2.content.right_arrow_pressed = false
+				widgets.content.right_arrow_pressed = false
 			end
 		}
 	},
@@ -134,17 +134,17 @@ local tbl_3 = {
 			name = "left_arrow_flick",
 			start_progress = 0,
 			end_progress = 0.6,
-			init = function (arg_16_0, arg_16_1, arg_16_2, arg_16_3)
+			init = function (ui_scenegraph, scenegraph_definition, widgets, params)
 				-- function 16
 				return
 			end,
-			update = function (arg_17_0, arg_17_1, arg_17_2, arg_17_3, arg_17_4)
+			update = function (ui_scenegraph, scenegraph_definition, widgets, progress, params)
 				-- function 17
-				arg_17_4.left_key.color[1] = 255 * (1 - math.easeOutCubic(arg_17_3))
+				params.left_key.color[1] = 255 * (1 - math.easeOutCubic(progress))
 			end,
-			on_complete = function (arg_18_0, arg_18_1, arg_18_2, arg_18_3)
+			on_complete = function (ui_scenegraph, scenegraph_definition, widgets, params)
 				-- function 18
-				arg_18_2.content.left_arrow_pressed = false
+				widgets.content.left_arrow_pressed = false
 			end
 		}
 	},
@@ -153,55 +153,53 @@ local tbl_3 = {
 			name = "difficulty_info_enter",
 			start_progress = 0,
 			end_progress = 0.6,
-			init = function (arg_19_0, arg_19_1, arg_19_2, arg_19_3)
+			init = function (ui_scenegraph, scenegraph_definition, widgets, params)
 				-- function 19
-				arg_19_2.difficulty_info.content.visible = true
+				widgets.difficulty_info.content.visible = true
 
-				local style = arg_19_2.difficulty_info.style
+				local diff_info_style = widgets.difficulty_info.style
 
-				style.background.color[1] = 0
-				style.border.color[1] = 0
-				style.difficulty_description.text_color[1] = 0
-				style.highest_obtainable_level.text_color[1] = 0
-				style.difficulty_separator.color[1] = 0
+				diff_info_style.background.color[1] = 0
+				diff_info_style.border.color[1] = 0
+				diff_info_style.difficulty_description.text_color[1] = 0
+				diff_info_style.highest_obtainable_level.text_color[1] = 0
+				diff_info_style.difficulty_separator.color[1] = 0
 			end,
-			update = function (arg_20_0, arg_20_1, arg_20_2, arg_20_3, arg_20_4)
+			update = function (ui_scenegraph, scenegraph_definition, widgets, progress, params)
 				-- function 20
-				local easeOutCubic = math.easeOutCubic(arg_20_3)
-				local difficulty_info = arg_20_2.difficulty_info
-				local style = arg_20_2.difficulty_info.style
-				local content = arg_20_2.difficulty_info.content
+				local anim_progress = math.easeOutCubic(progress)
+				local diff_info = widgets.difficulty_info
+				local diff_info_style = widgets.difficulty_info.style
+				local diff_info_content = widgets.difficulty_info.content
 
-				difficulty_info.offset[1] = 50 * easeOutCubic
-				arg_20_2.upsell_button.offset[1] = 50 * easeOutCubic
+				diff_info.offset[1] = 50 * anim_progress
+				widgets.upsell_button.offset[1] = 50 * anim_progress
 
-				local num = 200 * easeOutCubic
+				local alpha = 200 * anim_progress
 
-				style.background.color[1] = num
-				style.border.color[1] = num
+				diff_info_style.background.color[1] = alpha
+				diff_info_style.border.color[1] = alpha
+				alpha = 255 * anim_progress
+				diff_info_style.difficulty_description.text_color[1] = alpha
+				diff_info_style.highest_obtainable_level.text_color[1] = alpha
+				diff_info_style.difficulty_separator.color[1] = alpha
 
-				local num_2 = 255 * easeOutCubic
-
-				style.difficulty_description.text_color[1] = num_2
-				style.highest_obtainable_level.text_color[1] = num_2
-				style.difficulty_separator.color[1] = num_2
-
-				if not content.should_show_diff_lock_text then
-					style.difficulty_lock_text.text_color[1] = num_2
+				if diff_info_content.should_show_diff_lock_text then
+					diff_info_style.difficulty_lock_text.text_color[1] = alpha
 				end
 
-				if not content.should_show_dlc_lock then
-					style.dlc_lock_text.text_color[1] = num_2
+				if diff_info_content.should_show_dlc_lock then
+					diff_info_style.dlc_lock_text.text_color[1] = alpha
 				end
 			end,
-			on_complete = function (arg_21_0, arg_21_1, arg_21_2, arg_21_3)
+			on_complete = function (ui_scenegraph, scenegraph_definition, widgets, params)
 				-- function 21
 				return
 			end
 		}
 	}
 }
-local tbl_4 = {
+local scenegraph_definition = {
 	root = {
 		is_root = true,
 		size = {
@@ -244,7 +242,7 @@ local tbl_4 = {
 		vertical_alignment = "center",
 		parent = "menu_root",
 		horizontal_alignment = "left",
-		size = size,
+		size = window_size,
 		position = {
 			220,
 			0,
@@ -256,12 +254,12 @@ local tbl_4 = {
 		parent = "window",
 		horizontal_alignment = "center",
 		size = {
-			size[1],
-			var_0_3
+			window_size[1],
+			window_frame_height
 		},
 		position = {
 			0,
-			-var_0_3,
+			-window_frame_height,
 			1
 		}
 	},
@@ -270,7 +268,7 @@ local tbl_4 = {
 		parent = "window",
 		horizontal_alignment = "center",
 		size = {
-			size[1] + 70,
+			window_size[1] + 70,
 			460
 		},
 		position = {
@@ -284,7 +282,7 @@ local tbl_4 = {
 		parent = "quickplay_background",
 		horizontal_alignment = "center",
 		size = {
-			var_0_5,
+			window_text_width,
 			50
 		},
 		position = {
@@ -298,7 +296,7 @@ local tbl_4 = {
 		parent = "quickplay_background",
 		horizontal_alignment = "center",
 		size = {
-			var_0_5,
+			window_text_width,
 			50
 		},
 		position = {
@@ -326,7 +324,7 @@ local tbl_4 = {
 		parent = "quickplay_divider",
 		horizontal_alignment = "center",
 		size = {
-			var_0_5,
+			window_text_width,
 			200
 		},
 		position = {
@@ -340,8 +338,8 @@ local tbl_4 = {
 		parent = "window",
 		horizontal_alignment = "center",
 		size = {
-			tbl[1],
-			tbl[2]
+			game_option_size[1],
+			game_option_size[2]
 		},
 		position = {
 			-15,
@@ -354,12 +352,12 @@ local tbl_4 = {
 		parent = "window",
 		horizontal_alignment = "center",
 		size = {
-			tbl[1],
-			tbl[2]
+			game_option_size[1],
+			game_option_size[2]
 		},
 		position = {
 			-15,
-			-15 + tbl[2],
+			-15 + game_option_size[2],
 			1
 		}
 	},
@@ -368,12 +366,12 @@ local tbl_4 = {
 		parent = "window",
 		horizontal_alignment = "center",
 		size = {
-			tbl[1],
-			tbl[2]
+			game_option_size[1],
+			game_option_size[2]
 		},
 		position = {
 			-15,
-			-105 + tbl[2] * 2,
+			-105 + game_option_size[2] * 2,
 			1
 		}
 	},
@@ -382,8 +380,8 @@ local tbl_4 = {
 		parent = "window",
 		horizontal_alignment = "center",
 		size = {
-			tbl[1],
-			tbl[2]
+			game_option_size[1],
+			game_option_size[2]
 		},
 		position = {
 			0,
@@ -406,7 +404,7 @@ local tbl_4 = {
 		}
 	}
 }
-local tbl_5 = {
+local quickplay_title_style = {
 	font_size = 50,
 	upper_case = true,
 	localize = false,
@@ -423,7 +421,7 @@ local tbl_5 = {
 		2
 	}
 }
-local tbl_6 = {
+local quickplay_sub_title_style = {
 	font_size = 34,
 	upper_case = false,
 	localize = false,
@@ -439,7 +437,7 @@ local tbl_6 = {
 		2
 	}
 }
-local tbl_7 = {
+local quickplay_description_style = {
 	font_size = 28,
 	upper_case = false,
 	localize = false,
@@ -455,7 +453,7 @@ local tbl_7 = {
 		2
 	}
 }
-local tbl_8 = {
+local quickplay_disabled_disclaimer_text_style = {
 	font_size = 28,
 	upper_case = false,
 	localize = false,
@@ -479,43 +477,51 @@ local tbl_8 = {
 		30
 	}
 }
-local flag = true
-local tbl_9 = {
-	quickplay_description_background = UIWidgets.create_rect_with_outer_frame("quickplay_background", tbl_4.quickplay_background.size, "frame_outer_fade_02", nil, UISettings.console_start_game_menu_rect_color),
-	quickplay_title = UIWidgets.create_simple_text(Localize("menu_store_panel_title_versus"), "quickplay_title", nil, nil, tbl_5),
-	quickplay_sub_title = UIWidgets.create_simple_text(Localize("versus_start_game_window_dedicated_server"), "quickplay_sub_title", nil, nil, tbl_6),
-	quickplay_description = UIWidgets.create_simple_text(Localize("vs_quick_play_description"), "quickplay_description", nil, nil, tbl_7),
+local disable_with_gamepad = true
+local widget_definitions = {
+	quickplay_description_background = UIWidgets.create_rect_with_outer_frame("quickplay_background", scenegraph_definition.quickplay_background.size, "frame_outer_fade_02", nil, UISettings.console_start_game_menu_rect_color),
+	quickplay_title = UIWidgets.create_simple_text(Localize("menu_store_panel_title_versus"), "quickplay_title", nil, nil, quickplay_title_style),
+	quickplay_sub_title = UIWidgets.create_simple_text(Localize("versus_start_game_window_dedicated_server"), "quickplay_sub_title", nil, nil, quickplay_sub_title_style),
+	quickplay_description = UIWidgets.create_simple_text(Localize("vs_quick_play_description"), "quickplay_description", nil, nil, quickplay_description_style),
 	quickplay_divider = UIWidgets.create_simple_texture("divider_01_top", "quickplay_divider"),
 	play_button = UIWidgets.create_icon_and_name_button("play_button", "options_button_icon_quickplay", Localize("versus_start_game_button_queue_up")),
-	quickplay_disabled_disclaimer = UIWidgets.create_simple_text("", "play_button", nil, nil, tbl_8)
+	quickplay_disabled_disclaimer = UIWidgets.create_simple_text("", "play_button", nil, nil, quickplay_disabled_disclaimer_text_style)
 }
-local tbl_10 = {
+local selector_input_definitions = {
 	{
 		widget_name = "play_button",
 		enter_requirements = function (self)
 			-- function 22
-			return not Managers.input:is_device_active("gamepad") and not self.gamepad_active_last_frame
+			local gamepad_active = Managers.input:is_device_active("gamepad")
+
+			return not not gamepad_active and not not not self.gamepad_active_last_frame
 		end,
-		on_enter = function (arg_23_0, arg_23_1, arg_23_2)
+		on_enter = function (self, dt, t)
 			-- function 23
-			arg_23_0._widgets_by_name.play_button.content.is_selected = true
+			local selection_widgets_by_name = self._widgets_by_name
+			local difficulty_setting_widget = selection_widgets_by_name.play_button
+
+			difficulty_setting_widget.content.is_selected = true
 		end,
-		update = function (self, arg_24_1, arg_24_2, arg_24_3, arg_24_4)
+		update = function (self, input_service, can_play, dt, t)
 			-- function 24
-			if not arg_24_1:get("confirm_press") and arg_24_2 and not arg_24_1:get("skip_press") then
-				self:_option_selected("play_button", nil, arg_24_4)
+			if (not input_service:get("confirm_press") or not can_play) and input_service:get("skip_press") then
+				self:_option_selected("play_button", nil, t)
 			end
 		end,
-		on_exit = function (arg_25_0, arg_25_1, arg_25_2)
+		on_exit = function (self, dt, t)
 			-- function 25
-			arg_25_0._widgets_by_name.play_button.content.is_selected = false
+			local selection_widgets_by_name = self._widgets_by_name
+			local difficulty_setting_widget = selection_widgets_by_name.play_button
+
+			difficulty_setting_widget.content.is_selected = false
 		end
 	}
 }
 
 return {
-	scenegraph_definition = tbl_4,
-	widget_definitions = tbl_9,
-	animation_definitions = tbl_3,
-	selector_input_definitions = tbl_10
+	scenegraph_definition = scenegraph_definition,
+	widget_definitions = widget_definitions,
+	animation_definitions = animation_definitions,
+	selector_input_definitions = selector_input_definitions
 }

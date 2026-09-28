@@ -1,11 +1,19 @@
 -- chunkname: @scripts/settings/breeds/breed_skaven_stormfiend.lua
 
-local scripts_utils_stagger_types = require("scripts/utils/stagger_types")
+local stagger_types = require("scripts/utils/stagger_types")
 local BotConstants = BotConstants
 
-BotConstants = not BotConstants and BotConstants.default.DEFAULT_BOT_THREAT_DIFFICULTY_DATA
+if BotConstants then
+	-- Nothing
+end
 
-local tbl = {
+BotConstants = BotConstants.default.DEFAULT_BOT_THREAT_DIFFICULTY_DATA
+
+local default_bot_threat_difficulty_data = BotConstants
+
+::label_0_0::
+
+local breed_data = {
 	detection_radius = 9999999,
 	race = "skaven",
 	walk_speed = 5,
@@ -290,22 +298,22 @@ local tbl = {
 		stormfiend_warpfire = 1,
 		vortex_danger_zone = 1
 	},
-	custom_death_enter_function = function (arg_1_0, arg_1_1, arg_1_2, arg_1_3, arg_1_4, arg_1_5)
+	custom_death_enter_function = function (unit, killer_unit, damage_type, death_hit_zone, t, damage_source)
 		-- function 1
-		local var_1_0 = BLACKBOARDS[arg_1_0]
+		local blackboard = BLACKBOARDS[unit]
 
-		if not Unit.alive(arg_1_1) then
+		if not Unit.alive(killer_unit) then
 			return
 		end
 
-		QuestSettings.check_stormfiend_killed_without_burn_damage(var_1_0, arg_1_1)
-		QuestSettings.check_stormfiend_killed_on_controller(arg_1_3, arg_1_1)
+		QuestSettings.check_stormfiend_killed_without_burn_damage(blackboard, killer_unit)
+		QuestSettings.check_stormfiend_killed_on_controller(death_hit_zone, killer_unit)
 	end
 }
 
-Breeds.skaven_stormfiend = table.create_copy(Breeds.skaven_stormfiend, tbl)
+Breeds.skaven_stormfiend = table.create_copy(Breeds.skaven_stormfiend, breed_data)
 
-local tbl_2 = {
+local AttackIntensityPerDifficulty = {
 	shove = {
 		easy = {
 			normal = 1
@@ -374,7 +382,7 @@ local tbl_2 = {
 		}
 	}
 }
-local tbl_3 = {
+local action_data = {
 	climb = {
 		catapult_players = {
 			speed = 7,
@@ -636,7 +644,7 @@ local tbl_3 = {
 		action_weight = 1,
 		ignore_ai_damage = true,
 		damage_type = "cutting",
-		difficulty_attack_intensity = tbl_2,
+		difficulty_attack_intensity = AttackIntensityPerDifficulty,
 		considerations = UtilityConsiderations.melee_shove,
 		attacks = {
 			{
@@ -710,10 +718,10 @@ local tbl_3 = {
 				push_ai = {
 					stagger_distance = 3,
 					stagger_impact = {
-						scripts_utils_stagger_types.explosion,
-						scripts_utils_stagger_types.heavy,
-						scripts_utils_stagger_types.none,
-						scripts_utils_stagger_types.none
+						stagger_types.explosion,
+						stagger_types.heavy,
+						stagger_types.none,
+						stagger_types.none
 					},
 					stagger_duration = {
 						4.5,
@@ -722,7 +730,7 @@ local tbl_3 = {
 						0
 					}
 				},
-				bot_threat_difficulty_data = BotConstants,
+				bot_threat_difficulty_data = default_bot_threat_difficulty_data,
 				bot_threats = {
 					attack_melee_fwd = {
 						{
@@ -786,7 +794,7 @@ local tbl_3 = {
 		blocked_damage = 5,
 		ignore_ai_damage = true,
 		damage_type = "cutting",
-		difficulty_attack_intensity = tbl_2,
+		difficulty_attack_intensity = AttackIntensityPerDifficulty,
 		considerations = UtilityConsiderations.stormfiend_charge,
 		attacks = {
 			{
@@ -821,11 +829,11 @@ local tbl_3 = {
 				push_ai = {
 					stagger_distance = 3,
 					stagger_impact = {
-						scripts_utils_stagger_types.explosion,
-						scripts_utils_stagger_types.explosion,
-						scripts_utils_stagger_types.none,
-						scripts_utils_stagger_types.none,
-						scripts_utils_stagger_types.explosion
+						stagger_types.explosion,
+						stagger_types.explosion,
+						stagger_types.none,
+						stagger_types.none,
+						stagger_types.explosion
 					},
 					stagger_duration = {
 						4.5,
@@ -950,16 +958,16 @@ local tbl_3 = {
 				right = {}
 			}
 		},
-		custom_weakspot_function = function (arg_2_0, arg_2_1, arg_2_2, arg_2_3)
+		custom_weakspot_function = function (unit, blackboard, t, action)
 			-- function 2
-			if not arg_2_1.weakspot_hits then
-				arg_2_1.weakspot_hits = arg_2_1.weakspot_hits + 1
+			if blackboard.weakspot_hits then
+				blackboard.weakspot_hits = blackboard.weakspot_hits + 1
 			else
-				arg_2_1.weakspot_hits = 1
+				blackboard.weakspot_hits = 1
 			end
 
-			if arg_2_1.weakspot_hits >= 4 then
-				arg_2_1.weakspot_rage = true
+			if blackboard.weakspot_hits >= 4 then
+				blackboard.weakspot_rage = true
 			end
 		end
 	},
@@ -994,5 +1002,5 @@ local tbl_3 = {
 	}
 }
 
-tbl_3.fling_skaven = table.clone(tbl_3.melee_shove)
-BreedActions.skaven_stormfiend = table.create_copy(BreedActions.skaven_stormfiend, tbl_3)
+action_data.fling_skaven = table.clone(action_data.melee_shove)
+BreedActions.skaven_stormfiend = table.create_copy(BreedActions.skaven_stormfiend, action_data)

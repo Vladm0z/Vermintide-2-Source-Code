@@ -2,10 +2,9 @@
 
 require("scripts/ui/views/versus_menu/ui_widgets_vs")
 
-local num = 1920
-local num_2 = 1080
-local flag = false
-local tbl = {
+local SIZE_X, SIZE_Y = 1920, 1080
+local RETAINED_MODE_ENABLED = false
+local scenegraph_definition = {
 	screen = {
 		scale = "hud_scale_fit",
 		position = {
@@ -14,8 +13,8 @@ local tbl = {
 			UILayer.hud
 		},
 		size = {
-			num,
-			num_2
+			SIZE_X,
+			SIZE_Y
 		}
 	},
 	side_pivot_dark_pact = {
@@ -47,32 +46,33 @@ local tbl = {
 		}
 	}
 }
-local tbl_2 = {}
-local tbl_3 = {
+local widgets = {}
+local animations_definitions = {
 	enter = {
 		{
 			name = "slide_and_fade_in",
 			start_progress = 0,
 			end_progress = 0.75,
-			init = function (arg_1_0, arg_1_1, arg_1_2, arg_1_3)
+			init = function (ui_scenegraph, scenegraph_definition, widget, params)
 				-- function 1
-				local self = arg_1_3.self
+				local self = params.self
 
 				self._render_settings.alpha_multiplier = 0
 				self._should_draw = true
 			end,
-			update = function (arg_2_0, arg_2_1, arg_2_2, arg_2_3, arg_2_4)
+			update = function (ui_scenegraph, scenegraph_definition, widget, progress, params)
 				-- function 2
-				if not arg_2_2 then
+				if not widget then
 					return
 				end
 
-				local easeOutCubic = math.easeOutCubic(arg_2_3)
+				local anim_progress = math.easeOutCubic(progress)
+				local self = params.self
 
-				arg_2_4.self._render_settings.alpha_multiplier = arg_2_3
-				arg_2_2.offset[1] = 400 * (1 - easeOutCubic)
+				self._render_settings.alpha_multiplier = progress
+				widget.offset[1] = 400 * (1 - anim_progress)
 			end,
-			on_complete = function (arg_3_0, arg_3_1, arg_3_2, arg_3_3)
+			on_complete = function (ui_scenegraph, scenegraph_definition, widget, params)
 				-- function 3
 				return
 			end
@@ -83,32 +83,35 @@ local tbl_3 = {
 			name = "slide_and_fade_out",
 			start_progress = 0,
 			end_progress = 0.5,
-			init = function (arg_4_0, arg_4_1, arg_4_2, arg_4_3)
+			init = function (ui_scenegraph, scenegraph_definition, widget, params)
 				-- function 4
 				return
 			end,
-			update = function (arg_5_0, arg_5_1, arg_5_2, arg_5_3, arg_5_4)
+			update = function (ui_scenegraph, scenegraph_definition, widget, progress, params)
 				-- function 5
-				if not arg_5_2 then
+				if not widget then
 					return
 				end
 
-				local easeOutCubic = math.easeOutCubic(arg_5_3)
+				local anim_progress = math.easeOutCubic(progress)
+				local self = params.self
 
-				arg_5_4.self._render_settings.alpha_multiplier = 1 - arg_5_3
-				arg_5_2.offset[1] = 400 * easeOutCubic
-				arg_5_2.element.dirty = true
+				self._render_settings.alpha_multiplier = 1 - progress
+				widget.offset[1] = 400 * anim_progress
+				widget.element.dirty = true
 			end,
-			on_complete = function (arg_6_0, arg_6_1, arg_6_2, arg_6_3)
+			on_complete = function (ui_scenegraph, scenegraph_definition, widget, params)
 				-- function 6
-				arg_6_3.self._should_draw = false
+				local self = params.self
+
+				self._should_draw = false
 			end
 		}
 	}
 }
 
 return {
-	animations_definitions = tbl_3,
-	scenegraph = tbl,
-	widgets = tbl_2
+	animations_definitions = animations_definitions,
+	scenegraph = scenegraph_definition,
+	widgets = widgets
 }

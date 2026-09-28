@@ -2,7 +2,7 @@
 
 local OutlineSettings = OutlineSettings
 
-OutlineSettings = OutlineSettings or {}
+OutlineSettings = not not OutlineSettings or not not {}
 OutlineSettings = OutlineSettings
 OutlineSettings.colors = {
 	ally = {
@@ -140,6 +140,6 @@ OutlineSettings.templates = {
 
 DLCUtils.require_list("outline_settings")
 
-for k, v in pairs(OutlineSettings.colors) do
-	v.name = k
+for name, settings in pairs(OutlineSettings.colors) do
+	settings.name = name
 end

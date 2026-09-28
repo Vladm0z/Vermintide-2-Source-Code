@@ -1,28 +1,28 @@
 -- chunkname: @scripts/game_state/loading_sub_states/win32/state_loading_migrate_host.lua
 
-local function fn(arg_1_0, ...)
+local function network_printf(format, ...)
 	-- function 1
-	if not script_data.network_debug_connections then
-		printf("[StateLoadingMigrateHost] " .. arg_1_0, ...)
+	if script_data.network_debug_connections then
+		printf("[StateLoadingMigrateHost] " .. format, ...)
 	end
 end
 
 StateLoadingMigrateHost = class(StateLoadingMigrateHost)
 StateLoadingMigrateHost.NAME = "StateLoadingMigrateHost"
 
-local num = 5
+local XB1_WAIT_TIME = 5
 
-StateLoadingMigrateHost.on_enter = function (self, arg_2_1)
+StateLoadingMigrateHost.on_enter = function (self, params)
 	-- function 2
 	print("[Gamestate] Enter Substate StateLoadingMigrateHost")
-	self:_init_params(arg_2_1)
+	self:_init_params(params)
 	self:_init_network()
 end
 
-StateLoadingMigrateHost._init_params = function (self, arg_3_1)
+StateLoadingMigrateHost._init_params = function (self, params)
 	-- function 3
-	self._loading_view = arg_3_1.loading_view
-	self._lobby_client = arg_3_1.lobby_client
+	self._loading_view = params.loading_view
+	self._lobby_client = params.lobby_client
 	self._lobby_joined = false
 	self._server_created = false
 end
@@ -35,26 +35,27 @@ StateLoadingMigrateHost._init_network = function (self)
 		self.parent:register_rpcs()
 	end
 
-	if not Managers.voice_chat then
+	if Managers.voice_chat then
 		Managers.voice_chat:reset()
 	end
 
-	local host_migration_info = self.parent.parent.loading_context.host_migration_info
+	local loading_context = self.parent.parent.loading_context
+	local host_migration_info = loading_context.host_migration_info
 	local host_to_migrate_to = host_migration_info.host_to_migrate_to
-	local flag = not host_to_migrate_to and host_to_migrate_to.peer_id
+	local host_peer_id = not not host_to_migrate_to and not not host_to_migrate_to.peer_id
 
-	if flag == Network.peer_id() then
-		fn("creating host for people to migrate to")
+	if host_peer_id == Network.peer_id() then
+		network_printf("creating host for people to migrate to")
 
 		local level_transition_handler = Managers.level_transition_handler
 
-		if not host_migration_info.level_data then
+		if host_migration_info.level_data then
 			local level_data = host_migration_info.level_data
 
 			host_migration_info.level_data = nil
 
 			level_transition_handler:set_next_level(level_data.level_key, level_data.environment_variation_id, level_data.level_seed, level_data.mechanism, level_data.game_mode_key, level_data.conflict_settings, level_data.locked_director_functions, level_data.difficulty, level_data.difficulty_tweak, level_data.extra_packages)
-		elseif not host_migration_info.level_to_load then
+		elseif host_migration_info.level_to_load then
 			local level_to_load = host_migration_info.level_to_load
 
 			level_transition_handler:set_next_level(level_to_load)
@@ -62,7 +63,7 @@ StateLoadingMigrateHost._init_network = function (self)
 			host_migration_info.level_to_load = nil
 		end
 
-		if not IS_XB1 then
+		if IS_XB1 then
 			print("#########################################")
 			print("#### SETTING UP HOST MIGRATION LOBBY ####")
 			print("#########################################")
@@ -72,7 +73,7 @@ StateLoadingMigrateHost._init_network = function (self)
 			self.parent:setup_lobby_host(callback(self, "cb_server_created"))
 			self.parent:start_matchmaking()
 		end
-	elseif not IS_XB1 then
+	elseif IS_XB1 then
 		print("#################################")
 		print("#### JOINING MIGRATION LOBBY ####")
 		print("#################################")
@@ -83,45 +84,45 @@ StateLoadingMigrateHost._init_network = function (self)
 			session_template_name = host_to_migrate_to.session_template_name
 		}
 
-		self.parent:setup_join_lobby(num)
+		self.parent:setup_join_lobby(XB1_WAIT_TIME)
 	else
-		fn("Migrating to host %s, trying to find its lobby...", host_to_migrate_to)
+		network_printf("Migrating to host %s, trying to find its lobby...", host_to_migrate_to)
 
-		local setup_lobby_finder = self.parent:setup_lobby_finder(callback(self, "cb_lobby_joined"), nil, host_to_migrate_to)
-		local tbl = {
+		local lobby_finder = self.parent:setup_lobby_finder(callback(self, "cb_lobby_joined"), nil, host_to_migrate_to)
+		local requirements = {
 			free_slots = 1,
 			distance_filter = "world",
 			filters = {
 				host = {
 					comparison = "equal",
-					value = flag
+					value = host_peer_id
 				}
 			},
 			near_filters = {}
 		}
-		local get_lobby_browser = setup_lobby_finder:get_lobby_browser()
+		local lobby_browser = lobby_finder:get_lobby_browser()
 
-		LobbyInternal.add_filter_requirements(tbl, get_lobby_browser)
+		LobbyInternal.add_filter_requirements(requirements, lobby_browser)
 	end
 end
 
-StateLoadingMigrateHost.update = function (self, arg_5_1, arg_5_2)
+StateLoadingMigrateHost.update = function (self, dt, t)
 	-- function 5
-	if self._server_created or not self._lobby_joined then
+	if self._server_created or self._lobby_joined then
 		return StateLoadingRunning
-	elseif not IS_XB1 and not self.parent:lobby_verified() then
+	elseif IS_XB1 and self.parent:lobby_verified() then
 		return StateLoadingRunning
 	end
 end
 
-StateLoadingMigrateHost.on_exit = function (self, arg_6_1)
+StateLoadingMigrateHost.on_exit = function (self, application_shutdown)
 	-- function 6
 	local host_migration_info = self.parent.parent.loading_context.host_migration_info
-	local flag = not host_migration_info and host_migration_info.game_mode_event_data
+	local game_mode_event_data = not not host_migration_info and not not host_migration_info.game_mode_event_data
 
-	if not flag then
+	if game_mode_event_data then
 		self.parent.parent.loading_context.host_migration_info = {
-			game_mode_event_data = flag
+			game_mode_event_data = game_mode_event_data
 		}
 	else
 		self.parent.parent.loading_context.host_migration_info = nil
@@ -130,31 +131,39 @@ end
 
 StateLoadingMigrateHost.cb_server_created = function (self)
 	-- function 7
-	fn("cb_server_created")
+	network_printf("cb_server_created")
 
-	if not IS_XB1 then
+	if IS_XB1 then
 		self.parent:start_matchmaking()
 	end
 
-	local get_lobby = self.parent:get_lobby()
-	local get_stored_lobby_data = get_lobby:get_stored_lobby_data()
+	local lobby_host = self.parent:get_lobby()
+	local get_stored_lobby_data = lobby_host:get_stored_lobby_data()
 
-	get_stored_lobby_data = get_stored_lobby_data or {}
+	if not get_stored_lobby_data then
+		-- Nothing
+	end
+
+	get_stored_lobby_data = {}
+
+	local stored_lobby_data = get_stored_lobby_data
+
+	::label_7_0::
 
 	local lobby_data = self.parent.parent.loading_context.host_migration_info.lobby_data
 
-	for k, v in pairs(lobby_data) do
-		get_stored_lobby_data[k] = v
+	for key, value in pairs(lobby_data) do
+		stored_lobby_data[key] = value
 	end
 
-	get_lobby:set_lobby_data(get_stored_lobby_data)
+	lobby_host:set_lobby_data(stored_lobby_data)
 
 	self._server_created = true
 end
 
 StateLoadingMigrateHost.cb_lobby_joined = function (self)
 	-- function 8
-	fn("cb_lobby_joined")
+	network_printf("cb_lobby_joined")
 
 	self._lobby_joined = true
 end

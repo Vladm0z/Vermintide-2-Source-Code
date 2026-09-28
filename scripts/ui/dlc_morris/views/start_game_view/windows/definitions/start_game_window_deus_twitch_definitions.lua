@@ -1,23 +1,23 @@
 -- chunkname: @scripts/ui/dlc_morris/views/start_game_view/windows/definitions/start_game_window_deus_twitch_definitions.lua
 
-local game_start_windows = UISettings.game_start_windows
-local frame = game_start_windows.frame
-local size = game_start_windows.size
-local var_0_3 = UIFrameSettings[frame].texture_sizes.horizontal[2]
-local tbl = {
-	size[1],
+local window_default_settings = UISettings.game_start_windows
+local window_frame = window_default_settings.frame
+local window_size = window_default_settings.size
+local window_frame_height = UIFrameSettings[window_frame].texture_sizes.horizontal[2]
+local game_option_size = {
+	window_size[1],
 	194
 }
-local var_0_5 = size[1]
-local tbl_2 = {
-	var_0_5 - 20 - 160,
+local window_text_width = window_size[1]
+local login_text_area_size = {
+	window_text_width - 20 - 160,
 	50
 }
-local tbl_3 = {
+local journey_widget_settings = {
 	width = 72,
 	spacing_x = 40
 }
-local tbl_4 = {
+local scenegraph_definition = {
 	root = {
 		is_root = true,
 		size = {
@@ -61,8 +61,8 @@ local tbl_4 = {
 		parent = "menu_root",
 		horizontal_alignment = "left",
 		size = {
-			size[1],
-			size[2] + 100
+			window_size[1],
+			window_size[2] + 100
 		},
 		position = {
 			220,
@@ -103,12 +103,12 @@ local tbl_4 = {
 		parent = "window",
 		horizontal_alignment = "center",
 		size = {
-			size[1],
-			var_0_3
+			window_size[1],
+			window_frame_height
 		},
 		position = {
 			0,
-			-var_0_3,
+			-window_frame_height,
 			1
 		}
 	},
@@ -117,7 +117,7 @@ local tbl_4 = {
 		parent = "twitch_background",
 		horizontal_alignment = "center",
 		size = {
-			var_0_5,
+			window_text_width,
 			50
 		},
 		position = {
@@ -130,7 +130,7 @@ local tbl_4 = {
 		vertical_alignment = "center",
 		parent = "login_text_area",
 		horizontal_alignment = "left",
-		size = tbl_2,
+		size = login_text_area_size,
 		position = {
 			10,
 			0,
@@ -156,7 +156,7 @@ local tbl_4 = {
 		parent = "window",
 		horizontal_alignment = "center",
 		size = {
-			size[1] + 70,
+			window_size[1] + 70,
 			280
 		},
 		position = {
@@ -184,7 +184,7 @@ local tbl_4 = {
 		parent = "window",
 		horizontal_alignment = "center",
 		size = {
-			size[1] + 70,
+			window_size[1] + 70,
 			150
 		},
 		position = {
@@ -198,7 +198,7 @@ local tbl_4 = {
 		parent = "client_disclaimer_background",
 		horizontal_alignment = "center",
 		size = {
-			var_0_5,
+			window_text_width,
 			100
 		},
 		position = {
@@ -212,8 +212,8 @@ local tbl_4 = {
 		parent = "window",
 		horizontal_alignment = "center",
 		size = {
-			tbl[1],
-			tbl[2]
+			game_option_size[1],
+			game_option_size[2]
 		},
 		position = {
 			-15,
@@ -226,12 +226,12 @@ local tbl_4 = {
 		parent = "window",
 		horizontal_alignment = "center",
 		size = {
-			tbl[1],
-			tbl[2]
+			game_option_size[1],
+			game_option_size[2]
 		},
 		position = {
 			-15,
-			-15 + tbl[2],
+			-15 + game_option_size[2],
 			1
 		}
 	},
@@ -240,12 +240,12 @@ local tbl_4 = {
 		parent = "window",
 		horizontal_alignment = "center",
 		size = {
-			tbl[1],
-			tbl[2]
+			game_option_size[1],
+			game_option_size[2]
 		},
 		position = {
 			-15,
-			-15 + tbl[2] * 2,
+			-15 + game_option_size[2] * 2,
 			1
 		}
 	},
@@ -254,7 +254,7 @@ local tbl_4 = {
 		parent = "window",
 		horizontal_alignment = "center",
 		size = {
-			tbl[1],
+			game_option_size[1],
 			72
 		},
 		position = {
@@ -268,8 +268,8 @@ local tbl_4 = {
 		parent = "window",
 		horizontal_alignment = "center",
 		size = {
-			tbl[1],
-			tbl[2] + 22
+			game_option_size[1],
+			game_option_size[2] + 22
 		},
 		position = {
 			0,
@@ -309,7 +309,7 @@ local tbl_4 = {
 		vertical_alignment = "center",
 		parent = "login_text_area",
 		horizontal_alignment = "center",
-		size = tbl_2,
+		size = login_text_area_size,
 		position = {
 			0,
 			0,
@@ -349,7 +349,7 @@ local tbl_4 = {
 		parent = "login_text_area",
 		horizontal_alignment = "center",
 		size = {
-			size[1] - 20,
+			window_size[1] - 20,
 			45
 		},
 		position = {
@@ -363,7 +363,7 @@ local tbl_4 = {
 		parent = "disconnect_button",
 		horizontal_alignment = "center",
 		size = {
-			size[1] - 20,
+			window_size[1] - 20,
 			50
 		},
 		position = {
@@ -378,7 +378,7 @@ local tbl_4 = {
 		horizontal_alignment = "right",
 		size = {
 			600,
-			size[2] - 220
+			window_size[2] - 220
 		},
 		position = {
 			0,
@@ -392,7 +392,7 @@ local tbl_4 = {
 		horizontal_alignment = "right",
 		size = {
 			600,
-			size[2] - 220
+			window_size[2] - 220
 		},
 		position = {
 			10,
@@ -406,13 +406,13 @@ local tbl_4 = {
 		horizontal_alignment = "right",
 		size = {
 			600,
-			size[2] - 220
+			window_size[2] - 220
 		}
 	}
 }
 
-if not IS_XB1 then
-	tbl_4.connect_button = {
+if IS_XB1 then
+	scenegraph_definition.connect_button = {
 		vertical_alignment = "center",
 		parent = "login_text_area",
 		horizontal_alignment = "center",
@@ -426,7 +426,7 @@ if not IS_XB1 then
 			1
 		}
 	}
-	tbl_4.connect_button_frame = {
+	scenegraph_definition.connect_button_frame = {
 		vertical_alignment = "center",
 		parent = "connect_button",
 		horizontal_alignment = "center",
@@ -442,46 +442,46 @@ if not IS_XB1 then
 	}
 end
 
-function create_button(arg_1_0, arg_1_1, arg_1_2, arg_1_3, arg_1_4)
+function create_button(scenegraph_id, size, text, font_size, content_check_function)
 	-- function 1
-	local str = "button_bg_01"
-	local get_atlas_settings_by_texture_name = UIAtlasHelper.get_atlas_settings_by_texture_name(str)
-	local tbl = {
+	local background_texture = "button_bg_01"
+	local background_texture_settings = UIAtlasHelper.get_atlas_settings_by_texture_name(background_texture)
+	local widget = {
 		element = {}
 	}
-	local tbl_2 = {}
-	local tbl_3 = {}
-	local tbl_4 = {}
-	local tbl_5 = {
+	local passes = {}
+	local content = {}
+	local style = {}
+	local offset = {
 		0,
 		0,
 		0
 	}
-	local str_2 = "button_hotspot"
+	local hotspot_name = "button_hotspot"
 
-	tbl_2[#tbl_2 + 1] = {
+	passes[#passes + 1] = {
 		pass_type = "hotspot",
-		content_id = str_2,
-		style_id = str_2,
-		content_check_function = arg_1_4
+		content_id = hotspot_name,
+		style_id = hotspot_name,
+		content_check_function = content_check_function
 	}
-	tbl_4[str_2] = {
-		size = arg_1_1,
-		offset = tbl_5
+	style[hotspot_name] = {
+		size = size,
+		offset = offset
 	}
-	tbl_3[str_2] = {}
+	content[hotspot_name] = {}
 
-	local var_1_8 = tbl_3[str_2]
-	local str_3 = "background"
+	local hotspot_content = content[hotspot_name]
+	local background_name = "background"
 
-	tbl_2[#tbl_2 + 1] = {
+	passes[#passes + 1] = {
 		pass_type = "texture_uv",
-		content_id = str_3,
-		style_id = str_3,
-		content_check_function = arg_1_4
+		content_id = background_name,
+		style_id = background_name,
+		content_check_function = content_check_function
 	}
-	tbl_4[str_3] = {
-		size = arg_1_1,
+	style[background_name] = {
+		size = size,
 		color = {
 			255,
 			255,
@@ -489,38 +489,38 @@ function create_button(arg_1_0, arg_1_1, arg_1_2, arg_1_3, arg_1_4)
 			255
 		},
 		offset = {
-			tbl_5[1],
-			tbl_5[2],
+			offset[1],
+			offset[2],
 			0
 		}
 	}
-	tbl_3[str_3] = {
+	content[background_name] = {
 		uvs = {
 			{
 				0,
-				1 - math.min(arg_1_1[2] / get_atlas_settings_by_texture_name.size[2], 1)
+				1 - math.min(size[2] / background_texture_settings.size[2], 1)
 			},
 			{
-				math.min(arg_1_1[1] / get_atlas_settings_by_texture_name.size[1], 1),
+				math.min(size[1] / background_texture_settings.size[1], 1),
 				1
 			}
 		},
-		texture_id = str
+		texture_id = background_texture
 	}
 
-	local str_4 = "background_fade"
+	local background_fade_name = "background_fade"
 
-	tbl_2[#tbl_2 + 1] = {
+	passes[#passes + 1] = {
 		pass_type = "texture",
-		content_id = str_2,
-		texture_id = str_4,
-		style_id = str_4,
-		content_check_function = arg_1_4
+		content_id = hotspot_name,
+		texture_id = background_fade_name,
+		style_id = background_fade_name,
+		content_check_function = content_check_function
 	}
-	tbl_4[str_4] = {
+	style[background_fade_name] = {
 		size = {
-			arg_1_1[1],
-			arg_1_1[2]
+			size[1],
+			size[2]
 		},
 		color = {
 			255,
@@ -529,26 +529,26 @@ function create_button(arg_1_0, arg_1_1, arg_1_2, arg_1_3, arg_1_4)
 			255
 		},
 		offset = {
-			tbl_5[1],
-			tbl_5[2],
+			offset[1],
+			offset[2],
 			1
 		}
 	}
-	var_1_8[str_4] = "button_bg_fade"
+	hotspot_content[background_fade_name] = "button_bg_fade"
 
-	local str_5 = "hover_glow"
+	local hover_glow_name = "hover_glow"
 
-	tbl_2[#tbl_2 + 1] = {
+	passes[#passes + 1] = {
 		pass_type = "texture",
-		content_id = str_2,
-		texture_id = str_5,
-		style_id = str_5,
-		content_check_function = arg_1_4
+		content_id = hotspot_name,
+		texture_id = hover_glow_name,
+		style_id = hover_glow_name,
+		content_check_function = content_check_function
 	}
-	tbl_4[str_5] = {
+	style[hover_glow_name] = {
 		size = {
-			arg_1_1[1],
-			math.min(arg_1_1[2] - 5, 80)
+			size[1],
+			math.min(size[2] - 5, 80)
 		},
 		color = {
 			255,
@@ -557,23 +557,23 @@ function create_button(arg_1_0, arg_1_1, arg_1_2, arg_1_3, arg_1_4)
 			255
 		},
 		offset = {
-			tbl_5[1],
-			tbl_5[2] + 5,
+			offset[1],
+			offset[2] + 5,
 			2
 		}
 	}
-	var_1_8[str_5] = "button_state_default"
+	hotspot_content[hover_glow_name] = "button_state_default"
 
-	local str_6 = "clicked_rect"
+	local clicked_rect_name = "clicked_rect"
 
-	tbl_2[#tbl_2 + 1] = {
+	passes[#passes + 1] = {
 		pass_type = "rect",
-		content_id = str_2,
-		style_id = str_6,
-		content_check_function = arg_1_4
+		content_id = hotspot_name,
+		style_id = clicked_rect_name,
+		content_check_function = content_check_function
 	}
-	tbl_4[str_6] = {
-		size = arg_1_1,
+	style[clicked_rect_name] = {
+		size = size,
 		color = {
 			100,
 			0,
@@ -581,24 +581,24 @@ function create_button(arg_1_0, arg_1_1, arg_1_2, arg_1_3, arg_1_4)
 			0
 		},
 		offset = {
-			tbl_5[1],
-			tbl_5[2],
+			offset[1],
+			offset[2],
 			6
 		}
 	}
 
-	local str_7 = "glass_top"
+	local glass_top_name = "glass_top"
 
-	tbl_2[#tbl_2 + 1] = {
+	passes[#passes + 1] = {
 		pass_type = "texture",
-		content_id = str_2,
-		texture_id = str_7,
-		style_id = str_7,
-		content_check_function = arg_1_4
+		content_id = hotspot_name,
+		texture_id = glass_top_name,
+		style_id = glass_top_name,
+		content_check_function = content_check_function
 	}
-	tbl_4[str_7] = {
+	style[glass_top_name] = {
 		size = {
-			arg_1_1[1],
+			size[1],
 			11
 		},
 		color = {
@@ -608,25 +608,25 @@ function create_button(arg_1_0, arg_1_1, arg_1_2, arg_1_3, arg_1_4)
 			255
 		},
 		offset = {
-			tbl_5[1],
-			tbl_5[2] + arg_1_1[2] - 11,
+			offset[1],
+			offset[2] + size[2] - 11,
 			5
 		}
 	}
-	var_1_8[str_7] = "button_glass_02"
+	hotspot_content[glass_top_name] = "button_glass_02"
 
-	local str_8 = "glass_bottom"
+	local glass_bottom_name = "glass_bottom"
 
-	tbl_2[#tbl_2 + 1] = {
+	passes[#passes + 1] = {
 		pass_type = "texture",
-		content_id = str_2,
-		texture_id = str_8,
-		style_id = str_8,
-		content_check_function = arg_1_4
+		content_id = hotspot_name,
+		texture_id = glass_bottom_name,
+		style_id = glass_bottom_name,
+		content_check_function = content_check_function
 	}
-	tbl_4[str_8] = {
+	style[glass_bottom_name] = {
 		size = {
-			arg_1_1[1],
+			size[1],
 			11
 		},
 		color = {
@@ -636,23 +636,23 @@ function create_button(arg_1_0, arg_1_1, arg_1_2, arg_1_3, arg_1_4)
 			255
 		},
 		offset = {
-			tbl_5[1],
-			tbl_5[2] - 3,
+			offset[1],
+			offset[2] - 3,
 			5
 		}
 	}
-	var_1_8[str_8] = "button_glass_02"
+	hotspot_content[glass_bottom_name] = "button_glass_02"
 
-	local str_9 = "text"
+	local text_name = "text"
 
-	tbl_2[#tbl_2 + 1] = {
+	passes[#passes + 1] = {
 		pass_type = "text",
-		content_id = str_2,
-		text_id = str_9,
-		style_id = str_9,
-		content_check_function = arg_1_4
+		content_id = hotspot_name,
+		text_id = text_name,
+		style_id = text_name,
+		content_check_function = content_check_function
 	}
-	tbl_4[str_9] = {
+	style[text_name] = {
 		word_wrap = true,
 		upper_case = true,
 		localize = false,
@@ -660,32 +660,32 @@ function create_button(arg_1_0, arg_1_1, arg_1_2, arg_1_3, arg_1_4)
 		vertical_alignment = "center",
 		dynamic_font_size = true,
 		font_type = "hell_shark",
-		font_size = arg_1_3,
+		font_size = font_size,
 		text_color = Colors.get_color_table_with_alpha("font_button_normal", 255),
 		default_text_color = Colors.get_color_table_with_alpha("font_button_normal", 255),
 		select_text_color = Colors.get_color_table_with_alpha("white", 255),
 		offset = {
-			10 + tbl_5[1],
-			tbl_5[2] + 3,
+			10 + offset[1],
+			offset[2] + 3,
 			4
 		},
 		size = {
-			arg_1_1[1] - 20,
-			arg_1_1[2]
+			size[1] - 20,
+			size[2]
 		}
 	}
-	var_1_8[str_9] = arg_1_2
+	hotspot_content[text_name] = text
 
-	local str_10 = "text_shadow"
+	local text_shadow_name = "text_shadow"
 
-	tbl_2[#tbl_2 + 1] = {
+	passes[#passes + 1] = {
 		pass_type = "text",
-		content_id = str_2,
-		text_id = str_9,
-		style_id = str_10,
-		content_check_function = arg_1_4
+		content_id = hotspot_name,
+		text_id = text_name,
+		style_id = text_shadow_name,
+		content_check_function = content_check_function
 	}
-	tbl_4[str_10] = {
+	style[text_shadow_name] = {
 		word_wrap = true,
 		upper_case = true,
 		localize = false,
@@ -693,32 +693,32 @@ function create_button(arg_1_0, arg_1_1, arg_1_2, arg_1_3, arg_1_4)
 		vertical_alignment = "center",
 		dynamic_font_size = true,
 		font_type = "hell_shark",
-		font_size = arg_1_3,
+		font_size = font_size,
 		text_color = Colors.get_color_table_with_alpha("black", 255),
 		offset = {
-			10 + tbl_5[1] + 2,
-			tbl_5[2] + 2,
+			10 + offset[1] + 2,
+			offset[2] + 2,
 			3
 		},
 		size = {
-			arg_1_1[1] - 20,
-			arg_1_1[2]
+			size[1] - 20,
+			size[2]
 		}
 	}
-	tbl.element.passes = tbl_2
-	tbl.content = tbl_3
-	tbl.style = tbl_4
-	tbl.offset = {
+	widget.element.passes = passes
+	widget.content = content
+	widget.style = style
+	widget.offset = {
 		0,
 		0,
 		0
 	}
-	tbl.scenegraph_id = arg_1_0
+	widget.scenegraph_id = scenegraph_id
 
-	return tbl
+	return widget
 end
 
-local tbl_5 = {
+local chat_output_widget = {
 	scenegraph_id = "chat_feed_area",
 	element = {
 		passes = {
@@ -726,7 +726,7 @@ local tbl_5 = {
 				style_id = "chat_text_box",
 				pass_type = "text_area_chat",
 				text_id = "text_field",
-				content_check_function = function (arg_2_0)
+				content_check_function = function (content)
 					-- function 2
 					return Managers.twitch:is_connected()
 				end
@@ -765,12 +765,12 @@ local tbl_5 = {
 	}
 }
 
-local function fn(arg_3_0, arg_3_1)
+local function create_window(scenegraph_id, size)
 	-- function 3
-	local tbl = {
+	local widget = {
 		element = {}
 	}
-	local tbl_3 = {
+	local passes = {
 		{
 			scenegraph_id = "login_text_box",
 			pass_type = "hotspot",
@@ -789,26 +789,28 @@ local function fn(arg_3_0, arg_3_1)
 		{
 			style_id = "login_rect_bg",
 			pass_type = "rect",
-			content_check_function = function (arg_4_0, arg_4_1)
+			content_check_function = function (content, style)
 				-- function 4
-				return not not Managers.twitch:is_connected() or not Managers.twitch:is_connecting()
+				return not Managers.twitch:is_connected() and not not not Managers.twitch:is_connecting()
 			end
 		},
 		{
 			style_id = "login_hint",
 			pass_type = "text",
 			text_id = "login_hint",
-			content_check_function = function (self, arg_5_1)
+			content_check_function = function (content, style)
 				-- function 5
-				if not self.text_input_hotspot.is_hover then
-					arg_5_1.text_color = {
+				local hotspot = content.text_input_hotspot
+
+				if hotspot.is_hover then
+					style.text_color = {
 						128,
 						255,
 						255,
 						255
 					}
 				else
-					arg_5_1.text_color = {
+					style.text_color = {
 						60,
 						255,
 						255,
@@ -816,44 +818,44 @@ local function fn(arg_3_0, arg_3_1)
 					}
 				end
 
-				return self.twitch_name ~= "" or not not Managers.twitch:is_connected() or not not self.text_field_active or not Managers.twitch:is_connecting()
+				return content.twitch_name == "" and not Managers.twitch:is_connected() and not content.text_field_active and not not not Managers.twitch:is_connecting()
 			end
 		},
 		{
 			style_id = "twitch_name",
 			pass_type = "text",
 			text_id = "twitch_name",
-			content_check_function = function (self, arg_6_1)
+			content_check_function = function (content, style)
 				-- function 6
-				if not self.text_field_active then
-					arg_6_1.caret_color[1] = 0
+				if not content.text_field_active then
+					style.caret_color[1] = 0
 				else
-					arg_6_1.caret_color[1] = 128 + math.sin(Managers.time:time("ui") * 5) * 128
+					style.caret_color[1] = 128 + math.sin(Managers.time:time("ui") * 5) * 128
 				end
 
-				return not not Managers.twitch:is_connected() or not Managers.twitch:is_connecting()
+				return not Managers.twitch:is_connected() and not not not Managers.twitch:is_connecting()
 			end
 		},
 		{
 			style_id = "connecting",
 			pass_type = "text",
 			text_id = "connecting_id",
-			content_check_function = function (self, arg_7_1)
+			content_check_function = function (content, style)
 				-- function 7
 				if not Managers.twitch:is_connecting() then
 					return
 				end
 
-				local num = 10 * Managers.time:time("ui")
-				local rep = string.rep(".", num % 5)
+				local timer = 10 * Managers.time:time("ui")
+				local dot_str = string.rep(".", timer % 5)
 
-				self.connecting_id = Localize("start_game_window_twitch_connecting") .. rep
+				content.connecting_id = Localize("start_game_window_twitch_connecting") .. dot_str
 
 				return true
 			end
 		}
 	}
-	local tbl_4 = {
+	local content = {
 		text_start_offset = 0,
 		text_field_active = false,
 		connecting_id = "Connecting",
@@ -870,7 +872,7 @@ local function fn(arg_3_0, arg_3_1)
 			allow_multi_hover = true
 		}
 	}
-	local tbl_5 = {
+	local style = {
 		login_rect_bg = {
 			scenegraph_id = "login_text_frame",
 			color = {
@@ -884,7 +886,7 @@ local function fn(arg_3_0, arg_3_1)
 				0,
 				-1
 			},
-			size = tbl_2
+			size = login_text_area_size
 		},
 		login_hint = {
 			word_wrap = true,
@@ -961,22 +963,22 @@ local function fn(arg_3_0, arg_3_1)
 		}
 	}
 
-	tbl.element.passes = tbl_3
-	tbl.content = tbl_4
-	tbl.style = tbl_5
-	tbl.offset = {
+	widget.element.passes = passes
+	widget.content = content
+	widget.style = style
+	widget.offset = {
 		0,
 		0,
 		0
 	}
-	tbl.scenegraph_id = arg_3_0
+	widget.scenegraph_id = scenegraph_id
 
-	return tbl
+	return widget
 end
 
-function create_twitch_rect_with_outer_frame(arg_8_0, arg_8_1, arg_8_2, arg_8_3, arg_8_4, arg_8_5)
+function create_twitch_rect_with_outer_frame(scenegraph_id, size, frame_style, layer, color, frame_color)
 	-- function 8
-	arg_8_4 = arg_8_4 or {
+	color = not not color or not not {
 		255,
 		255,
 		255,
@@ -985,8 +987,8 @@ function create_twitch_rect_with_outer_frame(arg_8_0, arg_8_1, arg_8_2, arg_8_3,
 
 	local var_8_0
 
-	if not arg_8_2 then
-		var_8_0 = UIFrameSettings[arg_8_2]
+	if frame_style then
+		var_8_0 = UIFrameSettings[frame_style]
 
 		if not var_8_0 then
 			-- Nothing
@@ -995,22 +997,24 @@ function create_twitch_rect_with_outer_frame(arg_8_0, arg_8_1, arg_8_2, arg_8_3,
 
 	var_8_0 = UIFrameSettings.frame_outer_fade_02
 
+	local frame_settings = var_8_0
+
 	::label_8_0::
 
-	local var_8_1 = var_8_0.texture_sizes.horizontal[2]
-	local tbl = {
-		arg_8_1[1] + var_8_1 * 2,
-		arg_8_1[2] + var_8_1 * 2
+	local edge_height = frame_settings.texture_sizes.horizontal[2]
+	local frame_size = {
+		size[1] + edge_height * 2,
+		size[2] + edge_height * 2
 	}
-	local tbl_2 = {
+	local widget = {
 		element = {}
 	}
-	local tbl_3 = {
+	local passes = {
 		{
 			pass_type = "texture_frame",
 			style_id = "frame",
 			texture_id = "frame",
-			content_check_function = function (arg_9_0, arg_9_1)
+			content_check_function = function (content, style)
 				-- function 9
 				return Managers.twitch:is_connected()
 			end
@@ -1018,51 +1022,51 @@ function create_twitch_rect_with_outer_frame(arg_8_0, arg_8_1, arg_8_2, arg_8_3,
 		{
 			style_id = "rect",
 			pass_type = "rect",
-			content_check_function = function (arg_10_0, arg_10_1)
+			content_check_function = function (content, style)
 				-- function 10
 				return Managers.twitch:is_connected()
 			end
 		}
 	}
-	local tbl_4 = {
-		frame = var_8_0.texture
+	local content = {
+		frame = frame_settings.texture
 	}
-	local tbl_5 = {
+	local style = {
 		frame = {
-			color = arg_8_5 or arg_8_4,
-			size = tbl,
-			texture_size = var_8_0.texture_size,
-			texture_sizes = var_8_0.texture_sizes,
+			color = not not frame_color or not not color,
+			size = frame_size,
+			texture_size = frame_settings.texture_size,
+			texture_sizes = frame_settings.texture_sizes,
 			offset = {
-				-var_8_1,
-				-var_8_1,
-				arg_8_3 or 0
+				-edge_height,
+				-edge_height,
+				not not layer or not not 0
 			}
 		},
 		rect = {
-			color = arg_8_4,
+			color = color,
 			offset = {
 				0,
 				0,
-				arg_8_3 or 0
+				not not layer or not not 0
 			}
 		}
 	}
 
-	tbl_2.element.passes = tbl_3
-	tbl_2.content = tbl_4
-	tbl_2.style = tbl_5
-	tbl_2.offset = {
+	widget.element.passes = passes
+	widget.content = content
+	widget.style = style
+	widget.offset = {
 		0,
 		0,
 		0
 	}
-	tbl_2.scenegraph_id = arg_8_0
+	widget.scenegraph_id = scenegraph_id
 
-	return tbl_2
+	return widget
 end
 
-local tbl_6 = {
+local client_disclaimer_description_style = {
 	font_size = 28,
 	upper_case = false,
 	localize = false,
@@ -1079,19 +1083,19 @@ local tbl_6 = {
 	}
 }
 
-local function fn_2(arg_11_0)
+local function connected_content_check_function(content)
 	-- function 11
-	return not not Managers.twitch:is_connecting() or not not Managers.twitch:is_connected() or not Managers.input:is_device_active("gamepad")
+	return not Managers.twitch:is_connecting() and not Managers.twitch:is_connected() and not not not Managers.input:is_device_active("gamepad")
 end
 
-local function fn_3(arg_12_0)
+local function disconnected_content_check_function(content)
 	-- function 12
 	local is_connected
 
 	if not Managers.twitch:is_connecting() then
 		is_connected = Managers.twitch:is_connected()
 
-		if not is_connected then
+		if is_connected then
 			is_connected = not Managers.input:is_device_active("gamepad")
 		end
 	else
@@ -1105,116 +1109,135 @@ local function fn_3(arg_12_0)
 	return is_connected
 end
 
-local gsub = string.gsub(Localize("start_game_window_deus_twitch_desc"), Localize("expedition_highlight_text"), "{#color(255,168,0)}" .. Localize("expedition_highlight_text") .. "{#reset()}")
-local str = "start_game_window_twitch_client_disclaimer_description"
-local flag = true
-local tbl_7 = {
+local streaming_desc_str = string.gsub(Localize("start_game_window_deus_twitch_desc"), Localize("expedition_highlight_text"), "{#color(255,168,0)}" .. Localize("expedition_highlight_text") .. "{#reset()}")
+local client_disclaimer_desc_str = "start_game_window_twitch_client_disclaimer_description"
+local disable_with_gamepad = true
+local selection_widgets = {
 	difficulty_stepper = UIWidgets.create_start_game_difficulty_stepper("difficulty_stepper", Localize("start_game_window_difficulty"), "difficulty_option_1"),
-	play_button = UIWidgets.create_start_game_deus_play_button("play_button", tbl_4.play_button.size, Localize("start_game_window_play"), 34, flag)
+	play_button = UIWidgets.create_start_game_deus_play_button("play_button", scenegraph_definition.play_button.size, Localize("start_game_window_play"), 34, disable_with_gamepad)
 }
-local tbl_8 = {
-	client_disclaimer_background = UIWidgets.create_rect_with_outer_frame("client_disclaimer_background", tbl_4.client_disclaimer_background.size, "frame_outer_fade_02", nil, UISettings.console_start_game_menu_rect_color),
-	client_disclaimer_description = UIWidgets.create_simple_text(Localize(str), "client_disclaimer_description", nil, nil, tbl_6)
+local client_widgets = {
+	client_disclaimer_background = UIWidgets.create_rect_with_outer_frame("client_disclaimer_background", scenegraph_definition.client_disclaimer_background.size, "frame_outer_fade_02", nil, UISettings.console_start_game_menu_rect_color),
+	client_disclaimer_description = UIWidgets.create_simple_text(Localize(client_disclaimer_desc_str), "client_disclaimer_description", nil, nil, client_disclaimer_description_style)
 }
-local tbl_9 = {
+local server_widgets = {
 	brush_stroke = UIWidgets.create_simple_texture("brush_stroke", "brush_stroke")
 }
-local tbl_10 = {
+local widgets = {
 	twitch_texture = UIWidgets.create_simple_texture("twitch_logo_new", "twitch_texture"),
-	twitch_gamemode_info_box = UIWidgets.create_start_game_deus_gamemode_info_box("twitch_background", tbl_4.twitch_background.size, nil, gsub, true),
-	button_1 = create_button("connect_button", tbl_4.connect_button.size, Localize("start_game_window_twitch_connect"), 24, fn_2),
-	button_2 = create_button("disconnect_button", tbl_4.disconnect_button.size, string.format(Localize("start_game_window_twitch_disconnect"), "N/A"), 24, fn_3),
-	connect_button_frame = UIWidgets.create_frame("connect_button_frame", tbl_4.connect_button_frame.size, frame, 1),
-	disconnect_button_frame = UIWidgets.create_frame("disconnect_button_frame", tbl_4.disconnect_button_frame.size, frame, 1),
+	twitch_gamemode_info_box = UIWidgets.create_start_game_deus_gamemode_info_box("twitch_background", scenegraph_definition.twitch_background.size, nil, streaming_desc_str, true),
+	button_1 = create_button("connect_button", scenegraph_definition.connect_button.size, Localize("start_game_window_twitch_connect"), 24, connected_content_check_function),
+	button_2 = create_button("disconnect_button", scenegraph_definition.disconnect_button.size, string.format(Localize("start_game_window_twitch_disconnect"), "N/A"), 24, disconnected_content_check_function),
+	connect_button_frame = UIWidgets.create_frame("connect_button_frame", scenegraph_definition.connect_button_frame.size, window_frame, 1),
+	disconnect_button_frame = UIWidgets.create_frame("disconnect_button_frame", scenegraph_definition.disconnect_button_frame.size, window_frame, 1),
 	login_text_frame = UIWidgets.create_frame("login_text_frame", {
-		var_0_5,
+		window_text_width,
 		50
 	}, "menu_frame_09", 1),
-	frame_widget = fn("twitch_background", tbl_4.twitch_background.size),
-	difficulty_info = UIWidgets.create_start_game_deus_difficulty_info_box("difficulty_info", tbl_4.difficulty_info.size),
+	frame_widget = create_window("twitch_background", scenegraph_definition.twitch_background.size),
+	difficulty_info = UIWidgets.create_start_game_deus_difficulty_info_box("difficulty_info", scenegraph_definition.difficulty_info.size),
 	upsell_button = UIWidgets.create_simple_two_state_button("upsell_button", "icon_redirect", "icon_redirect_hover"),
-	chat_output_widget = tbl_5,
+	chat_output_widget = chat_output_widget,
 	chat_mask = UIWidgets.create_simple_texture("mask_rect", "chat_feed_area_mask"),
-	chat_output_background = create_twitch_rect_with_outer_frame("chat_feed_area_mask", tbl_4.chat_feed_area_mask.size, "frame_outer_fade_02", nil, UISettings.console_start_game_menu_rect_color)
+	chat_output_background = create_twitch_rect_with_outer_frame("chat_feed_area_mask", scenegraph_definition.chat_feed_area_mask.size, "frame_outer_fade_02", nil, UISettings.console_start_game_menu_rect_color)
 }
 
-tbl_10.login_text_frame.element.passes[1].content_check_function = fn_2
-tbl_10.connect_button_frame.element.passes[1].content_check_function = fn_2
-tbl_10.disconnect_button_frame.element.passes[1].content_check_function = fn_3
+widgets.login_text_frame.element.passes[1].content_check_function = connected_content_check_function
+widgets.connect_button_frame.element.passes[1].content_check_function = connected_content_check_function
+widgets.disconnect_button_frame.element.passes[1].content_check_function = disconnected_content_check_function
 
-local tbl_11 = {}
-local tbl_12 = {
+local additional_settings_widgets = {}
+local selector_input_definition = {
 	{
 		enter_requirements = function (self)
 			-- function 13
 			return self._is_server
 		end,
-		on_enter = function (self, arg_14_1, arg_14_2)
+		on_enter = function (self, dt, t)
 			-- function 14
 			self._expedition_level_index = 1
 
-			local _expedition_widgets = self._expedition_widgets
+			local expedition_widgets = self._expedition_widgets
 
-			for i = 1, #_expedition_widgets do
-				_expedition_widgets[i].content.gamepad_selected = false
+			for i = 1, #expedition_widgets do
+				local widget = expedition_widgets[i]
+
+				widget.content.gamepad_selected = false
 			end
 
-			_expedition_widgets[self._expedition_level_index].content.gamepad_selected = true
-		end,
-		update = function (self, arg_15_1, arg_15_2, arg_15_3)
-			-- function 15
-			local _expedition_widgets = self._expedition_widgets
-			local _expedition_level_index = self._expedition_level_index
+			local widget = expedition_widgets[self._expedition_level_index]
 
-			if not arg_15_1:get("move_left") then
-				_expedition_level_index = math.max(_expedition_level_index - 1, 1)
-			elseif not arg_15_1:get("move_right") then
-				_expedition_level_index = math.min(_expedition_level_index + 1, #_expedition_widgets)
-			elseif not arg_15_1:get("confirm_press") then
-				if not self._expeditions_selection_index then
-					self._expedition_widgets[self._expeditions_selection_index].content.button_hotspot.is_selected = nil
+			widget.content.gamepad_selected = true
+		end,
+		update = function (self, input_service, dt, t)
+			-- function 15
+			local expedition_widgets = self._expedition_widgets
+			local expedition_level_index = self._expedition_level_index
+
+			if input_service:get("move_left") then
+				expedition_level_index = math.max(expedition_level_index - 1, 1)
+			elseif input_service:get("move_right") then
+				expedition_level_index = math.min(expedition_level_index + 1, #expedition_widgets)
+			elseif input_service:get("confirm_press") then
+				if self._expeditions_selection_index then
+					local old_widget = self._expedition_widgets[self._expeditions_selection_index]
+
+					old_widget.content.button_hotspot.is_selected = nil
 				end
 
-				local var_15_2 = self._expedition_widgets[_expedition_level_index]
+				local new_widget = self._expedition_widgets[expedition_level_index]
 
-				var_15_2.content.button_hotspot.is_selected = true
+				new_widget.content.button_hotspot.is_selected = true
 
-				local journey_name = var_15_2.content.journey_name
+				local journey_name = new_widget.content.journey_name
 
 				self._parent:set_selected_level_id(journey_name)
 
-				self._expeditions_selection_index = _expedition_level_index
+				self._expeditions_selection_index = expedition_level_index
 
 				self:_play_sound("play_gui_lobby_button_01_difficulty_select_normal")
 			end
 
-			if _expedition_level_index ~= self._expedition_level_index then
-				local var_15_4 = _expedition_widgets[_expedition_level_index]
+			if expedition_level_index ~= self._expedition_level_index then
+				local new_widget = expedition_widgets[expedition_level_index]
 
-				if not var_15_4.content.locked then
-					var_15_4.content.gamepad_selected = true
-					_expedition_widgets[self._expedition_level_index].content.gamepad_selected = false
-					self._expedition_level_index = _expedition_level_index
+				if not new_widget.content.locked then
+					new_widget.content.gamepad_selected = true
+
+					local old_widget = expedition_widgets[self._expedition_level_index]
+
+					old_widget.content.gamepad_selected = false
+					self._expedition_level_index = expedition_level_index
 
 					self._parent:play_sound("play_gui_lobby_button_02_mission_act_click")
 				end
 			end
 		end,
-		on_exit = function (self, arg_16_1, arg_16_2)
+		on_exit = function (self, dt, t)
 			-- function 16
 			local _expedition_level_index = self._expedition_level_index
 
-			_expedition_level_index = _expedition_level_index or 1
-
-			local _expedition_widgets = self._expedition_widgets
-			local var_16_2 = _expedition_widgets[_expedition_level_index]
-
-			if not var_16_2 then
-				var_16_2.content.gamepad_selected = false
+			if not _expedition_level_index then
+				-- Nothing
 			end
 
-			if not self._expeditions_selection_index then
-				_expedition_widgets[self._expeditions_selection_index].content.gamepad_selected = true
+			_expedition_level_index = 1
+
+			local expedition_level_index = _expedition_level_index
+
+			::label_16_0::
+
+			local expedition_widgets = self._expedition_widgets
+			local widget = expedition_widgets[expedition_level_index]
+
+			if widget then
+				widget.content.gamepad_selected = false
+			end
+
+			if self._expeditions_selection_index then
+				local widget = expedition_widgets[self._expeditions_selection_index]
+
+				widget.content.gamepad_selected = true
 			end
 		end
 	},
@@ -1223,67 +1246,78 @@ local tbl_12 = {
 			-- function 17
 			return self._is_server
 		end,
-		on_enter = function (arg_18_0, arg_18_1, arg_18_2)
+		on_enter = function (self, dt, t)
 			-- function 18
-			arg_18_0._selection_widgets_by_name.difficulty_stepper.content.is_selected = true
+			local selection_widgets_by_name = self._selection_widgets_by_name
+			local difficulty_setting_widget = selection_widgets_by_name.difficulty_stepper
+
+			difficulty_setting_widget.content.is_selected = true
 		end,
-		update = function (self, arg_19_1, arg_19_2, arg_19_3)
+		update = function (self, input_service, dt, t)
 			-- function 19
-			local difficulty_stepper = self._selection_widgets_by_name.difficulty_stepper
-			local tbl = {
+			local selection_widgets_by_name = self._selection_widgets_by_name
+			local difficulty_stepper = selection_widgets_by_name.difficulty_stepper
+			local widgets = {
 				difficulty_info = self._widgets_by_name.difficulty_info,
 				upsell_button = self._widgets_by_name.upsell_button
 			}
 
 			if not self.diff_info_anim_played then
-				self._diff_anim_id = self._ui_animator:start_animation("difficulty_info_enter", tbl, tbl_4)
+				self._diff_anim_id = self._ui_animator:start_animation("difficulty_info_enter", widgets, scenegraph_definition)
 				self.diff_info_anim_played = true
 			end
 
-			local tbl_2 = {}
+			local anim_params = {}
 
-			if not arg_19_1:get("move_left") then
-				self:_option_selected("difficulty_stepper", "left_arrow", arg_19_3)
+			if input_service:get("move_left") then
+				self:_option_selected("difficulty_stepper", "left_arrow", t)
 
 				difficulty_stepper.content.left_arrow_pressed = true
-				tbl_2.left_key = difficulty_stepper.style.left_arrow_gamepad_highlight
+				anim_params.left_key = difficulty_stepper.style.left_arrow_gamepad_highlight
 
-				if not self._arrow_anim_id then
+				if self._arrow_anim_id then
 					self._ui_animator:stop_animation(self._arrow_anim_id)
 
 					difficulty_stepper.style.right_arrow_gamepad_highlight.color[1] = 0
 				end
 
-				self._arrow_anim_id = self._ui_animator:start_animation("left_arrow_flick", difficulty_stepper, tbl_4, tbl_2)
-			elseif not arg_19_1:get("move_right") then
-				self:_option_selected("difficulty_stepper", "right_arrow", arg_19_3)
+				local anim_id = self._ui_animator:start_animation("left_arrow_flick", difficulty_stepper, scenegraph_definition, anim_params)
+
+				self._arrow_anim_id = anim_id
+			elseif input_service:get("move_right") then
+				self:_option_selected("difficulty_stepper", "right_arrow", t)
 
 				difficulty_stepper.content.right_arrow_pressed = true
-				tbl_2.right_key = difficulty_stepper.style.right_arrow_gamepad_highlight
+				anim_params.right_key = difficulty_stepper.style.right_arrow_gamepad_highlight
 
-				if not self._arrow_anim_id then
+				if self._arrow_anim_id then
 					self._ui_animator:stop_animation(self._arrow_anim_id)
 
 					difficulty_stepper.style.left_arrow_gamepad_highlight.color[1] = 0
 				end
 
-				self._arrow_anim_id = self._ui_animator:start_animation("right_arrow_flick", difficulty_stepper, tbl_4, tbl_2)
+				local anim_id = self._ui_animator:start_animation("right_arrow_flick", difficulty_stepper, scenegraph_definition, anim_params)
+
+				self._arrow_anim_id = anim_id
 			end
 
-			if not arg_19_1:get("confirm_press", true) and not self._dlc_locked then
+			if input_service:get("confirm_press", true) and self._dlc_locked then
 				Managers.unlock:open_dlc_page(self._dlc_name)
 			end
 
 			self:_update_difficulty_lock()
 		end,
-		on_exit = function (self, arg_20_1, arg_20_2)
+		on_exit = function (self, dt, t)
 			-- function 20
-			self._selection_widgets_by_name.difficulty_stepper.content.is_selected = false
+			local selection_widgets_by_name = self._selection_widgets_by_name
+			local difficulty_setting_widget = selection_widgets_by_name.difficulty_stepper
+
+			difficulty_setting_widget.content.is_selected = false
 
 			local upsell_button = self._widgets_by_name.upsell_button
 			local difficulty_info = self._widgets_by_name.difficulty_info
 
-			if not self._diff_anim_id then
+			if self._diff_anim_id then
 				self._ui_animator:stop_animation(self._diff_anim_id)
 			end
 
@@ -1295,12 +1329,13 @@ local tbl_12 = {
 	{
 		enter_requirements = function (self)
 			-- function 21
+			local gamepad_active = Managers.input:is_device_active("gamepad")
 			local _is_server
 
-			if not Managers.input:is_device_active("gamepad") then
+			if not gamepad_active then
 				_is_server = self._is_server
 
-				if not _is_server then
+				if _is_server then
 					_is_server = Managers.twitch:is_connected()
 				end
 			else
@@ -1313,39 +1348,45 @@ local tbl_12 = {
 
 			return _is_server
 		end,
-		on_enter = function (arg_22_0, arg_22_1, arg_22_2)
+		on_enter = function (self, dt, t)
 			-- function 22
-			arg_22_0._selection_widgets_by_name.play_button.content.is_selected = true
+			local selection_widgets_by_name = self._selection_widgets_by_name
+			local difficulty_setting_widget = selection_widgets_by_name.play_button
+
+			difficulty_setting_widget.content.is_selected = true
 		end,
-		update = function (self, arg_23_1, arg_23_2, arg_23_3)
+		update = function (self, input_service, dt, t)
 			-- function 23
-			if not arg_23_1:get("confirm_press") and not Managers.twitch:is_connected() then
-				self:_option_selected("play_button", nil, arg_23_3)
+			if input_service:get("confirm_press") and Managers.twitch:is_connected() then
+				self:_option_selected("play_button", nil, t)
 			end
 		end,
-		on_exit = function (arg_24_0, arg_24_1, arg_24_2)
+		on_exit = function (self, dt, t)
 			-- function 24
-			arg_24_0._selection_widgets_by_name.play_button.content.is_selected = false
+			local selection_widgets_by_name = self._selection_widgets_by_name
+			local difficulty_setting_widget = selection_widgets_by_name.play_button
+
+			difficulty_setting_widget.content.is_selected = false
 		end
 	}
 }
-local tbl_13 = {
+local animation_definitions = {
 	on_enter = {
 		{
 			name = "fade_in",
 			start_progress = 0,
 			end_progress = 0.3,
-			init = function (arg_25_0, arg_25_1, arg_25_2, arg_25_3)
+			init = function (ui_scenegraph, scenegraph_definition, widgets, params)
 				-- function 25
-				arg_25_3.render_settings.alpha_multiplier = 0
+				params.render_settings.alpha_multiplier = 0
 			end,
-			update = function (arg_26_0, arg_26_1, arg_26_2, arg_26_3, arg_26_4)
+			update = function (ui_scenegraph, scenegraph_definition, widgets, progress, params)
 				-- function 26
-				local easeOutCubic = math.easeOutCubic(arg_26_3)
+				local anim_progress = math.easeOutCubic(progress)
 
-				arg_26_4.render_settings.alpha_multiplier = easeOutCubic
+				params.render_settings.alpha_multiplier = anim_progress
 			end,
-			on_complete = function (arg_27_0, arg_27_1, arg_27_2, arg_27_3)
+			on_complete = function (ui_scenegraph, scenegraph_definition, widgets, params)
 				-- function 27
 				return
 			end
@@ -1356,15 +1397,15 @@ local tbl_13 = {
 			name = "fade_out",
 			start_progress = 0,
 			end_progress = 0.3,
-			init = function (arg_28_0, arg_28_1, arg_28_2, arg_28_3)
+			init = function (ui_scenegraph, scenegraph_definition, widgets, params)
 				-- function 28
-				arg_28_3.render_settings.alpha_multiplier = 1
+				params.render_settings.alpha_multiplier = 1
 			end,
-			update = function (arg_29_0, arg_29_1, arg_29_2, arg_29_3, arg_29_4)
+			update = function (ui_scenegraph, scenegraph_definition, widgets, progress, params)
 				-- function 29
-				arg_29_4.render_settings.alpha_multiplier = 1
+				params.render_settings.alpha_multiplier = 1
 			end,
-			on_complete = function (arg_30_0, arg_30_1, arg_30_2, arg_30_3)
+			on_complete = function (ui_scenegraph, scenegraph_definition, widgets, params)
 				-- function 30
 				return
 			end
@@ -1375,17 +1416,17 @@ local tbl_13 = {
 			name = "right_arrow_flick",
 			start_progress = 0,
 			end_progress = 0.6,
-			init = function (arg_31_0, arg_31_1, arg_31_2, arg_31_3)
+			init = function (ui_scenegraph, scenegraph_definition, widgets, params)
 				-- function 31
 				return
 			end,
-			update = function (arg_32_0, arg_32_1, arg_32_2, arg_32_3, arg_32_4)
+			update = function (ui_scenegraph, scenegraph_definition, widgets, progress, params)
 				-- function 32
-				arg_32_4.right_key.color[1] = 255 * (1 - math.easeOutCubic(arg_32_3))
+				params.right_key.color[1] = 255 * (1 - math.easeOutCubic(progress))
 			end,
-			on_complete = function (arg_33_0, arg_33_1, arg_33_2, arg_33_3)
+			on_complete = function (ui_scenegraph, scenegraph_definition, widgets, params)
 				-- function 33
-				arg_33_2.content.right_arrow_pressed = false
+				widgets.content.right_arrow_pressed = false
 			end
 		}
 	},
@@ -1394,17 +1435,17 @@ local tbl_13 = {
 			name = "left_arrow_flick",
 			start_progress = 0,
 			end_progress = 0.6,
-			init = function (arg_34_0, arg_34_1, arg_34_2, arg_34_3)
+			init = function (ui_scenegraph, scenegraph_definition, widgets, params)
 				-- function 34
 				return
 			end,
-			update = function (arg_35_0, arg_35_1, arg_35_2, arg_35_3, arg_35_4)
+			update = function (ui_scenegraph, scenegraph_definition, widgets, progress, params)
 				-- function 35
-				arg_35_4.left_key.color[1] = 255 * (1 - math.easeOutCubic(arg_35_3))
+				params.left_key.color[1] = 255 * (1 - math.easeOutCubic(progress))
 			end,
-			on_complete = function (arg_36_0, arg_36_1, arg_36_2, arg_36_3)
+			on_complete = function (ui_scenegraph, scenegraph_definition, widgets, params)
 				-- function 36
-				arg_36_2.content.left_arrow_pressed = false
+				widgets.content.left_arrow_pressed = false
 			end
 		}
 	},
@@ -1413,22 +1454,22 @@ local tbl_13 = {
 			name = "gamemode_swap_text_fade_out",
 			start_progress = 0,
 			end_progress = 0.2,
-			init = function (arg_37_0, arg_37_1, arg_37_2, arg_37_3)
+			init = function (ui_scenegraph, scenegraph_definition, widgets, params)
 				-- function 37
 				return
 			end,
-			update = function (arg_38_0, arg_38_1, arg_38_2, arg_38_3, arg_38_4)
+			update = function (ui_scenegraph, scenegraph_definition, widgets, progress, params)
 				-- function 38
-				local easeOutCubic = math.easeOutCubic(arg_38_3)
+				local anim_progress = math.easeOutCubic(progress)
 
-				arg_38_2.style.game_mode_text.text_color[1] = 255 * (1 - easeOutCubic)
-				arg_38_2.style.press_key_text.text_color[1] = 255 * (1 - easeOutCubic)
+				widgets.style.game_mode_text.text_color[1] = 255 * (1 - anim_progress)
+				widgets.style.press_key_text.text_color[1] = 255 * (1 - anim_progress)
 
-				if not arg_38_2.content.show_note then
-					arg_38_2.style.note_text.text_color[1] = 255 * (1 - easeOutCubic)
+				if widgets.content.show_note then
+					widgets.style.note_text.text_color[1] = 255 * (1 - anim_progress)
 				end
 			end,
-			on_complete = function (arg_39_0, arg_39_1, arg_39_2, arg_39_3)
+			on_complete = function (ui_scenegraph, scenegraph_definition, widgets, params)
 				-- function 39
 				return
 			end
@@ -1437,28 +1478,28 @@ local tbl_13 = {
 			name = "gamemode_swap_text_fade_in",
 			start_progress = 0.2,
 			end_progress = 0.4,
-			init = function (arg_40_0, arg_40_1, arg_40_2, arg_40_3)
+			init = function (ui_scenegraph, scenegraph_definition, widgets, params)
 				-- function 40
 				return
 			end,
-			update = function (arg_41_0, arg_41_1, arg_41_2, arg_41_3, arg_41_4)
+			update = function (ui_scenegraph, scenegraph_definition, widgets, progress, params)
 				-- function 41
-				if not arg_41_2.content.is_showing_info then
-					arg_41_2.content.game_mode_text = Localize("expedition_info")
-					arg_41_2.content.show_note = true
+				if widgets.content.is_showing_info then
+					widgets.content.game_mode_text = Localize("expedition_info")
+					widgets.content.show_note = true
 				else
-					arg_41_2.content.game_mode_text = string.gsub(Localize("start_game_window_deus_twitch_desc"), Localize("expedition_highlight_text"), "{#color(255,168,0)}" .. Localize("expedition_highlight_text") .. "{#reset()}")
-					arg_41_2.content.show_note = false
+					widgets.content.game_mode_text = string.gsub(Localize("start_game_window_deus_twitch_desc"), Localize("expedition_highlight_text"), "{#color(255,168,0)}" .. Localize("expedition_highlight_text") .. "{#reset()}")
+					widgets.content.show_note = false
 				end
 
-				arg_41_2.style.game_mode_text.text_color[1] = 255 * math.easeOutCubic(arg_41_3)
-				arg_41_2.style.press_key_text.text_color[1] = 255 * math.easeOutCubic(arg_41_3)
+				widgets.style.game_mode_text.text_color[1] = 255 * math.easeOutCubic(progress)
+				widgets.style.press_key_text.text_color[1] = 255 * math.easeOutCubic(progress)
 
-				if not arg_41_2.content.show_note then
-					arg_41_2.style.note_text.text_color[1] = 255 * math.easeOutCubic(arg_41_3)
+				if widgets.content.show_note then
+					widgets.style.note_text.text_color[1] = 255 * math.easeOutCubic(progress)
 				end
 			end,
-			on_complete = function (arg_42_0, arg_42_1, arg_42_2, arg_42_3)
+			on_complete = function (ui_scenegraph, scenegraph_definition, widgets, params)
 				-- function 42
 				return
 			end
@@ -1469,48 +1510,46 @@ local tbl_13 = {
 			name = "difficulty_info_enter",
 			start_progress = 0,
 			end_progress = 0.6,
-			init = function (arg_43_0, arg_43_1, arg_43_2, arg_43_3)
+			init = function (ui_scenegraph, scenegraph_definition, widgets, params)
 				-- function 43
-				arg_43_2.difficulty_info.content.visible = true
+				widgets.difficulty_info.content.visible = true
 
-				local style = arg_43_2.difficulty_info.style
+				local diff_info_style = widgets.difficulty_info.style
 
-				style.background.color[1] = 0
-				style.border.color[1] = 0
-				style.difficulty_description.text_color[1] = 0
-				style.highest_obtainable_level.text_color[1] = 0
-				style.difficulty_separator.color[1] = 0
+				diff_info_style.background.color[1] = 0
+				diff_info_style.border.color[1] = 0
+				diff_info_style.difficulty_description.text_color[1] = 0
+				diff_info_style.highest_obtainable_level.text_color[1] = 0
+				diff_info_style.difficulty_separator.color[1] = 0
 			end,
-			update = function (arg_44_0, arg_44_1, arg_44_2, arg_44_3, arg_44_4)
+			update = function (ui_scenegraph, scenegraph_definition, widgets, progress, params)
 				-- function 44
-				local easeOutCubic = math.easeOutCubic(arg_44_3)
-				local difficulty_info = arg_44_2.difficulty_info
-				local style = arg_44_2.difficulty_info.style
-				local content = arg_44_2.difficulty_info.content
+				local anim_progress = math.easeOutCubic(progress)
+				local diff_info = widgets.difficulty_info
+				local diff_info_style = widgets.difficulty_info.style
+				local diff_info_content = widgets.difficulty_info.content
 
-				difficulty_info.offset[1] = 50 * easeOutCubic
-				arg_44_2.upsell_button.offset[1] = 50 * easeOutCubic
+				diff_info.offset[1] = 50 * anim_progress
+				widgets.upsell_button.offset[1] = 50 * anim_progress
 
-				local num = 200 * easeOutCubic
+				local alpha = 200 * anim_progress
 
-				style.background.color[1] = num
-				style.border.color[1] = num
+				diff_info_style.background.color[1] = alpha
+				diff_info_style.border.color[1] = alpha
+				alpha = 255 * anim_progress
+				diff_info_style.difficulty_description.text_color[1] = alpha
+				diff_info_style.highest_obtainable_level.text_color[1] = alpha
+				diff_info_style.difficulty_separator.color[1] = alpha
 
-				local num_2 = 255 * easeOutCubic
-
-				style.difficulty_description.text_color[1] = num_2
-				style.highest_obtainable_level.text_color[1] = num_2
-				style.difficulty_separator.color[1] = num_2
-
-				if not content.should_show_diff_lock_text then
-					style.difficulty_lock_text.text_color[1] = num_2
+				if diff_info_content.should_show_diff_lock_text then
+					diff_info_style.difficulty_lock_text.text_color[1] = alpha
 				end
 
-				if not content.should_show_dlc_lock then
-					style.dlc_lock_text.text_color[1] = num_2
+				if diff_info_content.should_show_dlc_lock then
+					diff_info_style.dlc_lock_text.text_color[1] = alpha
 				end
 			end,
-			on_complete = function (arg_45_0, arg_45_1, arg_45_2, arg_45_3)
+			on_complete = function (ui_scenegraph, scenegraph_definition, widgets, params)
 				-- function 45
 				return
 			end
@@ -1519,15 +1558,15 @@ local tbl_13 = {
 }
 
 return {
-	scenegraph_definition = tbl_4,
-	widgets = tbl_10,
-	selection_widgets = tbl_7,
-	client_widgets = tbl_8,
-	server_widgets = tbl_9,
-	additional_settings_widgets = tbl_11,
-	animation_definitions = tbl_13,
-	selector_input_definition = tbl_12,
-	journey_widget_settings = tbl_3,
+	scenegraph_definition = scenegraph_definition,
+	widgets = widgets,
+	selection_widgets = selection_widgets,
+	client_widgets = client_widgets,
+	server_widgets = server_widgets,
+	additional_settings_widgets = additional_settings_widgets,
+	animation_definitions = animation_definitions,
+	selector_input_definition = selector_input_definition,
+	journey_widget_settings = journey_widget_settings,
 	twitch_keyboard_anchor_point = {
 		230,
 		350

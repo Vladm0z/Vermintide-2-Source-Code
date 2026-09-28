@@ -1,8 +1,8 @@
 -- chunkname: @scripts/settings/dlcs/steak/steak_achievements_settings.lua
 
-local steak = DLCSettings.steak
+local settings = DLCSettings.steak
 
-steak.achievement_outline = {
+settings.achievement_outline = {
 	levels = {
 		entries = {},
 		categories = {
@@ -60,6 +60,6 @@ steak.achievement_outline = {
 		}
 	}
 }
-steak.achievement_template_file_names = {
+settings.achievement_template_file_names = {
 	"scripts/managers/achievements/achievement_templates_steak"
 }

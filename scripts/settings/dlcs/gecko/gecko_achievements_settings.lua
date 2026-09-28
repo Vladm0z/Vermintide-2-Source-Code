@@ -1,8 +1,8 @@
 -- chunkname: @scripts/settings/dlcs/gecko/gecko_achievements_settings.lua
 
-local gecko = DLCSettings.gecko
+local settings = DLCSettings.gecko
 
-gecko.achievement_outline = {
+settings.achievement_outline = {
 	levels = {
 		entries = {},
 		categories = {
@@ -55,6 +55,6 @@ gecko.achievement_outline = {
 		}
 	}
 }
-gecko.achievement_template_file_names = {
+settings.achievement_template_file_names = {
 	"scripts/managers/achievements/achievement_templates_gecko"
 }

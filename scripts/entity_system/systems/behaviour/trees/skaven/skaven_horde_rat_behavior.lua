@@ -1,6 +1,6 @@
 -- chunkname: @scripts/entity_system/systems/behaviour/trees/skaven/skaven_horde_rat_behavior.lua
 
-local skaven_clan_rat = BreedActions.skaven_clan_rat
+local ACTIONS = BreedActions.skaven_clan_rat
 
 BreedBehaviors.horde_rat = {
 	"BTSelector",
@@ -23,13 +23,13 @@ BreedBehaviors.horde_rat = {
 		"BTStaggerAction",
 		name = "stagger",
 		condition = "stagger",
-		action_data = skaven_clan_rat.stagger
+		action_data = ACTIONS.stagger
 	},
 	{
 		"BTBlockedAction",
 		name = "blocked",
 		condition = "blocked",
-		action_data = skaven_clan_rat.blocked
+		action_data = ACTIONS.blocked
 	},
 	{
 		"BTSelector",
@@ -52,7 +52,7 @@ BreedBehaviors.horde_rat = {
 			"BTSmashDoorAction",
 			name = "smash_door",
 			condition = "at_door_smartobject",
-			action_data = skaven_clan_rat.smash_door
+			action_data = ACTIONS.smash_door
 		},
 		condition = "at_smartobject",
 		name = "smartobject"
@@ -62,24 +62,24 @@ BreedBehaviors.horde_rat = {
 		{
 			"BTClanRatFollowAction",
 			name = "follow",
-			action_data = skaven_clan_rat.follow
+			action_data = ACTIONS.follow
 		},
 		{
 			"BTAttackAction",
 			name = "running_attack",
 			condition = "ask_target_before_attacking",
-			action_data = skaven_clan_rat.running_attack
+			action_data = ACTIONS.running_attack
 		},
 		{
 			"BTAttackAction",
 			name = "normal_attack",
 			condition = "ask_target_before_attacking",
-			action_data = skaven_clan_rat.normal_attack
+			action_data = ACTIONS.normal_attack
 		},
 		{
 			"BTCombatShoutAction",
 			name = "combat_shout",
-			action_data = skaven_clan_rat.combat_shout
+			action_data = ACTIONS.combat_shout
 		},
 		condition = "can_see_player",
 		name = "in_combat"
@@ -88,7 +88,7 @@ BreedBehaviors.horde_rat = {
 		"BTMoveToGoalAction",
 		name = "move_to_goal",
 		condition = "has_goal_destination",
-		action_data = skaven_clan_rat.follow
+		action_data = ACTIONS.follow
 	},
 	{
 		"BTIdleAction",

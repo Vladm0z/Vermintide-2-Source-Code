@@ -2,7 +2,7 @@
 
 local DeusMapVisibilitySettings = DeusMapVisibilitySettings
 
-DeusMapVisibilitySettings = DeusMapVisibilitySettings or {
+DeusMapVisibilitySettings = not not DeusMapVisibilitySettings or not not {
 	WEAK_FOG_LEVEL = 0,
 	STRONG_FOG_LEVEL = 3
 }

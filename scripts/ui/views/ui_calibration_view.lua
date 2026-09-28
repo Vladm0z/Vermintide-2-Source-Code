@@ -1,8 +1,8 @@
 -- chunkname: @scripts/ui/views/ui_calibration_view.lua
 
-local num = 48
-local num_2 = 4
-local tbl = {
+local RETICULE_SIZE = 48
+local RETICULE_THICKNESS = 4
+local scenegraph_definition = {
 	root = {
 		is_root = true,
 		position = {
@@ -32,13 +32,13 @@ local tbl = {
 		parent = "root",
 		horizontal_alignment = "left",
 		position = {
-			-num / 2,
-			num / 2,
+			-RETICULE_SIZE / 2,
+			RETICULE_SIZE / 2,
 			1
 		},
 		size = {
-			num,
-			num
+			RETICULE_SIZE,
+			RETICULE_SIZE
 		}
 	},
 	bottom_right_reticule = {
@@ -46,13 +46,13 @@ local tbl = {
 		parent = "root",
 		horizontal_alignment = "right",
 		position = {
-			num / 2,
-			-num / 2,
+			RETICULE_SIZE / 2,
+			-RETICULE_SIZE / 2,
 			1
 		},
 		size = {
-			num,
-			num
+			RETICULE_SIZE,
+			RETICULE_SIZE
 		}
 	},
 	reset_button = {
@@ -70,7 +70,7 @@ local tbl = {
 		}
 	}
 }
-local tbl_2 = {
+local widget_definitions = {
 	top_left_reticule = {
 		scenegraph_id = "top_left_reticule",
 		element = {
@@ -98,12 +98,12 @@ local tbl_2 = {
 					0
 				},
 				size = {
-					num,
-					num_2
+					RETICULE_SIZE,
+					RETICULE_THICKNESS
 				},
 				offset = {
 					0,
-					num / 2 - num_2 / 2
+					RETICULE_SIZE / 2 - RETICULE_THICKNESS / 2
 				}
 			},
 			vertical = {
@@ -114,11 +114,11 @@ local tbl_2 = {
 					0
 				},
 				size = {
-					num_2,
-					num
+					RETICULE_THICKNESS,
+					RETICULE_SIZE
 				},
 				offset = {
-					num / 2 - num_2 / 2,
+					RETICULE_SIZE / 2 - RETICULE_THICKNESS / 2,
 					0
 				}
 			}
@@ -151,12 +151,12 @@ local tbl_2 = {
 					0
 				},
 				size = {
-					num,
-					num_2
+					RETICULE_SIZE,
+					RETICULE_THICKNESS
 				},
 				offset = {
 					0,
-					num / 2 - num_2 / 2
+					RETICULE_SIZE / 2 - RETICULE_THICKNESS / 2
 				}
 			},
 			vertical = {
@@ -167,11 +167,11 @@ local tbl_2 = {
 					0
 				},
 				size = {
-					num_2,
-					num
+					RETICULE_THICKNESS,
+					RETICULE_SIZE
 				},
 				offset = {
-					num / 2 - num_2 / 2,
+					RETICULE_SIZE / 2 - RETICULE_THICKNESS / 2,
 					0
 				}
 			}
@@ -197,10 +197,10 @@ local tbl_2 = {
 		}
 	}
 }
-local tbl_3 = {
+local button_navigation = {
 	"reset"
 }
-local tbl_4 = {
+local button_definitions = {
 	{
 		scenegraph_id = "reset_button",
 		element = UIElements.Button3States,
@@ -232,67 +232,71 @@ UICalibrationView = class(UICalibrationView)
 
 UICalibrationView.init = function (self)
 	-- function 1
-	self.ui_scenegraph = UISceneGraph.init_scenegraph(tbl)
-	self.background = UIWidget.init(tbl_2.background)
-	self.top_left_reticule = UIWidget.init(tbl_2.top_left_reticule)
-	self.bottom_right_reticule = UIWidget.init(tbl_2.bottom_right_reticule)
+	self.ui_scenegraph = UISceneGraph.init_scenegraph(scenegraph_definition)
+	self.background = UIWidget.init(widget_definitions.background)
+	self.top_left_reticule = UIWidget.init(widget_definitions.top_left_reticule)
+	self.bottom_right_reticule = UIWidget.init(widget_definitions.bottom_right_reticule)
 
-	local tbl_3 = {}
+	local buttons = {}
 
-	for i = 1, #tbl_4 do
-		tbl_3[i] = UIWidget.init(tbl_4[i])
+	for i = 1, #button_definitions do
+		buttons[i] = UIWidget.init(button_definitions[i])
 	end
 
-	self.buttons = tbl_3
+	self.buttons = buttons
 end
 
-UICalibrationView.destroy = function (arg_2_0)
+UICalibrationView.destroy = function (self)
 	-- function 2
 	return
 end
 
-UICalibrationView.update = function (self, arg_3_1, arg_3_2, arg_3_3)
+UICalibrationView.update = function (self, ui_renderer, input_service, dt)
 	-- function 3
 	local ui_scenegraph = self.ui_scenegraph
 	local top_left_reticule = self.top_left_reticule
 	local bottom_right_reticule = self.bottom_right_reticule
 
-	UIRenderer.begin_pass(arg_3_1, ui_scenegraph, arg_3_2, arg_3_3)
-	UIRenderer.draw_widget(arg_3_1, self.background)
-	UIRenderer.draw_widget(arg_3_1, top_left_reticule)
-	UIRenderer.draw_widget(arg_3_1, bottom_right_reticule)
+	UIRenderer.begin_pass(ui_renderer, ui_scenegraph, input_service, dt)
+	UIRenderer.draw_widget(ui_renderer, self.background)
+	UIRenderer.draw_widget(ui_renderer, top_left_reticule)
+	UIRenderer.draw_widget(ui_renderer, bottom_right_reticule)
 
-	for i, v in ipairs(self.buttons) do
-		v.content.button_hotspot.disable_button = self.cursor_start_pos ~= nil
+	for i, button in ipairs(self.buttons) do
+		button.content.button_hotspot.disable_button = self.cursor_start_pos ~= nil
 
-		UIRenderer.draw_widget(arg_3_1, v)
+		UIRenderer.draw_widget(ui_renderer, button)
 	end
 
-	UIRenderer.end_pass(arg_3_1)
+	UIRenderer.end_pass(ui_renderer)
 
-	if not top_left_reticule.content.on_pressed then
-		local get = arg_3_2:get("cursor")
+	local top_left_reticule_content = top_left_reticule.content
+
+	if top_left_reticule_content.on_pressed then
+		local cursor = input_service:get("cursor")
 
 		self.cursor_start_pos = {
-			get.x,
-			get.y
+			cursor.x,
+			cursor.y
 		}
 		self.start_root = table.clone(UISettings.root_scale)
 		self.modifying_retucile = "top_left"
 	end
 
-	if not bottom_right_reticule.content.on_pressed then
-		local get_2 = arg_3_2:get("cursor")
+	local bottom_right_reticule_content = bottom_right_reticule.content
+
+	if bottom_right_reticule_content.on_pressed then
+		local cursor = input_service:get("cursor")
 
 		self.cursor_start_pos = {
-			get_2.x,
-			get_2.y
+			cursor.x,
+			cursor.y
 		}
 		self.start_root = table.clone(UISettings.root_scale)
 		self.modifying_retucile = "bottom_right"
 	end
 
-	if not (not self.cursor_start_pos and arg_3_2:get("left_hold")) then
+	if self.cursor_start_pos and not input_service:get("left_hold") then
 		self:evaluate_new_root_scale(UISettings.root_scale)
 		self:save_new_root_scale(UISettings.root_scale)
 
@@ -301,31 +305,33 @@ UICalibrationView.update = function (self, arg_3_1, arg_3_2, arg_3_3)
 		self.modifying_retucile = nil
 	end
 
-	if not self.cursor_start_pos then
-		local cursor_start_pos = self.cursor_start_pos
-		local get_3 = arg_3_2:get("cursor")
-		local var_3_7 = cursor_start_pos[1]
-		local var_3_8 = get_3[1]
-		local res_w = RESOLUTION_LOOKUP.res_w
-		local res_h = RESOLUTION_LOOKUP.res_h
-		local num = (var_3_8 - var_3_7) / 1920 * 2
-		local var_3_12 = cursor_start_pos[2]
-		local num_2 = (get_3[2] - var_3_12) / res_h * 2
+	if self.cursor_start_pos then
+		local cursor_start = self.cursor_start_pos
+		local cursor = input_service:get("cursor")
+		local start_x = cursor_start[1]
+		local cursor_x = cursor[1]
+		local w, h = RESOLUTION_LOOKUP.res_w, RESOLUTION_LOOKUP.res_h
+		local diff_x = cursor_x - start_x
+		local norm_x = diff_x / 1920 * 2
+		local start_y = cursor_start[2]
+		local cursor_y = cursor[2]
+		local diff_y = cursor_y - start_y
+		local norm_y = diff_y / h * 2
 
 		if self.modifying_retucile == "bottom_right" then
-			num = -1 * num
-			num_2 = -1 * num_2
+			norm_x = -1 * norm_x
+			norm_y = -1 * norm_y
 		end
 
-		local num_3 = self.start_root[1] - num
-		local num_4 = self.start_root[2] + num_2
+		local new_scale_x = self.start_root[1] - norm_x
+		local new_scale_y = self.start_root[2] + norm_y
 
-		UISettings.root_scale[1] = self.start_root[1] - num
-		UISettings.root_scale[2] = self.start_root[2] + num_2
+		UISettings.root_scale[1] = self.start_root[1] - norm_x
+		UISettings.root_scale[2] = self.start_root[2] + norm_y
 	end
 
-	for i_2, v_2 in ipairs(self.buttons) do
-		if not (not v_2.content.button_hotspot.on_release and tbl_3[i_2] ~= "reset") then
+	for i, button in ipairs(self.buttons) do
+		if button.content.button_hotspot.on_release and button_navigation[i] == "reset" then
 			self:reset_root_scale()
 		end
 	end
@@ -339,36 +345,38 @@ UICalibrationView.reset_root_scale = function (self)
 	self:save_new_root_scale(UISettings.root_scale)
 end
 
-UICalibrationView.evaluate_new_root_scale = function (arg_5_0, arg_5_1)
+UICalibrationView.evaluate_new_root_scale = function (self, root_scale)
 	-- function 5
-	local resolution, var_5_1 = Application.resolution()
-	local var_5_2 = arg_5_1[1]
+	local w, h = Application.resolution()
+	local scale_x = root_scale[1]
 
-	if var_5_2 > 1 then
-		local num = 1920 * var_5_2
+	if scale_x > 1 then
+		local new_root_screen_x = 1920 * scale_x
 
-		if resolution < num then
-			var_5_2 = var_5_2 - (num - resolution) / resolution
+		if w < new_root_screen_x then
+			local diff = (new_root_screen_x - w) / w
+
+			scale_x = scale_x - diff
 		end
-	elseif var_5_2 < 0.2 then
-		var_5_2 = 0.2
+	elseif scale_x < 0.2 then
+		scale_x = 0.2
 	end
 
-	local var_5_4 = arg_5_1[2]
+	local scale_y = root_scale[2]
 
-	if var_5_4 > 1 then
-		var_5_4 = 1
-	elseif var_5_4 < 0.2 then
-		var_5_4 = 0.2
+	if scale_y > 1 then
+		scale_y = 1
+	elseif scale_y < 0.2 then
+		scale_y = 0.2
 	end
 
-	arg_5_1[1] = var_5_2
-	arg_5_1[2] = var_5_4
+	root_scale[1] = scale_x
+	root_scale[2] = scale_y
 end
 
-UICalibrationView.save_new_root_scale = function (arg_6_0, arg_6_1)
+UICalibrationView.save_new_root_scale = function (self, root_scale)
 	-- function 6
-	Application.set_user_setting("root_scale_x", arg_6_1[1])
-	Application.set_user_setting("root_scale_y", arg_6_1[2])
+	Application.set_user_setting("root_scale_x", root_scale[1])
+	Application.set_user_setting("root_scale_y", root_scale[2])
 	Application.save_user_settings()
 end

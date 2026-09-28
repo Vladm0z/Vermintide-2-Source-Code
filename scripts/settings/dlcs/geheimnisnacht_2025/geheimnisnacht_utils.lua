@@ -2,9 +2,9 @@
 
 require("scripts/utils/hash_utils")
 
-local scripts_settings_dlcs_geheimnisnacht_2025_geheimnisnacht_map_settings = require("scripts/settings/dlcs/geheimnisnacht_2025/geheimnisnacht_map_settings")
-local tbl = {}
-local tbl_2 = {
+local map_settings = require("scripts/settings/dlcs/geheimnisnacht_2025/geheimnisnacht_map_settings")
+local GeheimnisnachtUtils = {}
+local maps_by_year = {
 	[2021] = {
 		"dlc_portals",
 		"bell",
@@ -49,71 +49,70 @@ local tbl_2 = {
 	}
 }
 
-tbl._cached_maps_by_event = {}
+GeheimnisnachtUtils._cached_maps_by_event = {}
 
-for k, v in pairs(tbl_2) do
-	tbl._cached_maps_by_event["geheimnisnacht_" .. k] = v
+for year, maps in pairs(maps_by_year) do
+	GeheimnisnachtUtils._cached_maps_by_event["geheimnisnacht_" .. year] = maps
 end
 
-tbl.event_by_year = function (arg_1_0)
+GeheimnisnachtUtils.event_by_year = function (year)
 	-- function 1
-	return "geheimnisnacht_" .. arg_1_0
+	return "geheimnisnacht_" .. year
 end
 
-tbl.maps_by_year = function (arg_2_0, arg_2_1)
+GeheimnisnachtUtils.maps_by_year = function (year, allow_fallback)
 	-- function 2
-	local event_by_year = tbl.event_by_year(arg_2_0)
+	local event = GeheimnisnachtUtils.event_by_year(year)
 
-	return tbl.maps_by_event(event_by_year, arg_2_1)
+	return GeheimnisnachtUtils.maps_by_event(event, allow_fallback)
 end
 
-tbl.maps_by_event = function (arg_3_0, arg_3_1)
+GeheimnisnachtUtils.maps_by_event = function (event_name, allow_fallback)
 	-- function 3
-	if not tbl._cached_maps_by_event[arg_3_0] then
-		return tbl._cached_maps_by_event[arg_3_0]
+	if GeheimnisnachtUtils._cached_maps_by_event[event_name] then
+		return GeheimnisnachtUtils._cached_maps_by_event[event_name]
 	end
 
-	if not arg_3_1 then
+	if not allow_fallback then
 		return
 	end
 
-	local fnv32_hash = HashUtils.fnv32_hash(arg_3_0)
-	local keys = table.keys(scripts_settings_dlcs_geheimnisnacht_2025_geheimnisnacht_map_settings)
-	local tbl_2 = {}
+	local seed = HashUtils.fnv32_hash(event_name)
+	local level_names = table.keys(map_settings)
+	local random_maps = {}
 
 	for i = 1, 5 do
-		local var_3_3
-		local var_3_4
+		local map_idx
 
-		fnv32_hash, var_3_4 = Math.next_random(fnv32_hash, 1, #keys)
-		tbl_2[i] = keys[var_3_4]
+		seed, map_idx = Math.next_random(seed, 1, #level_names)
+		random_maps[i] = level_names[map_idx]
 
-		table.remove(keys, var_3_4)
+		table.remove(level_names, map_idx)
 	end
 
-	tbl._cached_maps_by_event[arg_3_0] = tbl_2
+	GeheimnisnachtUtils._cached_maps_by_event[event_name] = random_maps
 
-	return tbl_2
+	return random_maps
 end
 
-tbl.maps_by_live_event = function (arg_4_0)
+GeheimnisnachtUtils.maps_by_live_event = function (allow_fallback)
 	-- function 4
-	local get_interface = Managers.backend:get_interface("live_events")
-	local flag = not get_interface and get_interface:get_active_events()
+	local live_events_interface = Managers.backend:get_interface("live_events")
+	local live_events = not not live_events_interface and not not live_events_interface:get_active_events()
 
-	if not flag then
-		for i = 1, #flag do
-			local var_4_2 = flag[i]
+	if live_events then
+		for i = 1, #live_events do
+			local live_event = live_events[i]
 
-			if not string.find(var_4_2, "geheimnisnacht_%d+") then
-				return tbl.maps_by_event(var_4_2, arg_4_0)
+			if string.find(live_event, "geheimnisnacht_%d+") then
+				return GeheimnisnachtUtils.maps_by_event(live_event, allow_fallback)
 			end
 		end
 	end
 
-	if not arg_4_0 then
+	if allow_fallback then
 		return {}
 	end
 end
 
-return tbl
+return GeheimnisnachtUtils

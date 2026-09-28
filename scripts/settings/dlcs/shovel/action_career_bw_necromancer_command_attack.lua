@@ -2,118 +2,129 @@
 
 ActionCareerBWNecromancerCommandAttack = class(ActionCareerBWNecromancerCommandAttack, ActionBase)
 
-local tbl = {
+local IGNORED_BREEDS = {
 	critter_rat = true
 }
-local tbl_2 = {}
-local tbl_3 = {}
-local tbl_4 = {}
-local tbl_5 = {}
+local CALCULATED_TARGET_BY_OWNER = {}
+local HIT_AI_UNITS = {}
+local HIT_PLAYER_UNITS = {}
+local ALL_HIT_UNITS = {}
 
-ActionCareerBWNecromancerCommandAttack.pre_calculate_target = function (arg_1_0)
+ActionCareerBWNecromancerCommandAttack.pre_calculate_target = function (owner_unit)
 	-- function 1
-	local extension = ScriptUnit.extension(arg_1_0, "ai_commander_system")
-	local extension_2 = ScriptUnit.extension(arg_1_0, "first_person_system")
-	local get_controlled_units = extension:get_controlled_units()
+	local commander_extension = ScriptUnit.extension(owner_unit, "ai_commander_system")
+	local fp_extension = ScriptUnit.extension(owner_unit, "first_person_system")
+	local pets = commander_extension:get_controlled_units()
 
-	if not table.is_empty(get_controlled_units) then
+	if table.is_empty(pets) then
 		return nil
 	end
 
-	local current_position = extension_2:current_position()
-	local forward = Quaternion.forward(extension_2:current_rotation())
-	local enemy_broadphase_categories = Managers.state.side.side_by_unit[arg_1_0].enemy_broadphase_categories
+	local own_position = fp_extension:current_position()
+	local look_direction = Quaternion.forward(fp_extension:current_rotation())
+	local broadphase_categories = Managers.state.side.side_by_unit[owner_unit].enemy_broadphase_categories
 
-	table.clear(tbl_5)
+	table.clear(ALL_HIT_UNITS)
 
-	local num = 50
-	local broadphase_query = AiUtils.broadphase_query(current_position, num, tbl_3, enemy_broadphase_categories)
+	local range = 50
+	local num_hit_ai_units = AiUtils.broadphase_query(own_position, range, HIT_AI_UNITS, broadphase_categories)
 
-	for i = 1, broadphase_query do
-		tbl_5[i] = tbl_3[i]
+	for i = 1, num_hit_ai_units do
+		ALL_HIT_UNITS[i] = HIT_AI_UNITS[i]
 	end
 
-	local broadphase_query_2 = PlayerUtils.broadphase_query(current_position, num, tbl_4, enemy_broadphase_categories)
+	local num_hit_player_units = PlayerUtils.broadphase_query(own_position, range, HIT_PLAYER_UNITS, broadphase_categories)
 
-	for j = 1, broadphase_query_2 do
-		local has_extension = ScriptUnit.has_extension(tbl_4[j], "status_system")
+	for i = 1, num_hit_player_units do
+		local status_extension = ScriptUnit.has_extension(HIT_PLAYER_UNITS[i], "status_system")
+		local is_invisible = not not status_extension and not not status_extension:is_invisible()
 
-		if not (not has_extension and has_extension:is_invisible()) then
-			tbl_5[#tbl_5 + 1] = tbl_4[j]
+		if not is_invisible then
+			ALL_HIT_UNITS[#ALL_HIT_UNITS + 1] = HIT_PLAYER_UNITS[i]
 		end
 	end
 
-	local num_2 = 1
-	local num_3 = 1
-	local num_4 = 1
-	local num_5 = 1.5
-	local sort = TrueFlightUtility.sort(tbl_5, current_position, forward, num_2, num_3, num_4, num, 0.7, 1.8, num_5)
+	local boss_weight = 1
+	local special_weight = 1
+	local elite_weight = 1
+	local player_weight = 1.5
+	local scores = TrueFlightUtility.sort(ALL_HIT_UNITS, own_position, look_direction, boss_weight, special_weight, elite_weight, range, 0.7, 1.8, player_weight)
 
-	for k = 1, broadphase_query + broadphase_query_2 do
+	for i = 1, num_hit_ai_units + num_hit_player_units do
 		repeat
-			local var_1_15 = tbl_5[k]
-			local var_1_16 = BLACKBOARDS[var_1_15]
-			local flag = not var_1_16 and var_1_16.breed.name
+			local hit_unit = ALL_HIT_UNITS[i]
+			local blackboard = BLACKBOARDS[hit_unit]
+			local breed_name = not not blackboard and not not blackboard.breed.name
 
-			if sort[var_1_15] == 0 then
+			if scores[hit_unit] == 0 then
 				return false
 			end
 
-			if not (tbl[flag] or HEALTH_ALIVE[var_1_15]) then
+			if IGNORED_BREEDS[breed_name] or not HEALTH_ALIVE[hit_unit] then
 				break
 			end
 
-			if not AiUtils.line_of_sight_from_random_point(current_position, var_1_15, math.huge) then
+			local los = AiUtils.line_of_sight_from_random_point(own_position, hit_unit, math.huge)
+
+			if not los then
 				break
 			end
 
-			tbl_2[arg_1_0] = var_1_15
+			CALCULATED_TARGET_BY_OWNER[owner_unit] = hit_unit
 
 			return true
 		until true
 	end
 end
 
-ActionCareerBWNecromancerCommandAttack.init = function (self, arg_2_1, arg_2_2, arg_2_3, arg_2_4, arg_2_5, arg_2_6, arg_2_7, arg_2_8)
+ActionCareerBWNecromancerCommandAttack.init = function (self, world, item_name, is_server, owner_unit, damage_unit, first_person_unit, weapon_unit, weapon_system)
 	-- function 2
-	ActionCareerBWNecromancerCommandAttack.super.init(self, arg_2_1, arg_2_2, arg_2_3, arg_2_4, arg_2_5, arg_2_6, arg_2_7, arg_2_8)
+	ActionCareerBWNecromancerCommandAttack.super.init(self, world, item_name, is_server, owner_unit, damage_unit, first_person_unit, weapon_unit, weapon_system)
 
-	self._buff_extension = ScriptUnit.extension(arg_2_4, "buff_system")
-	self._commander_extension = ScriptUnit.extension(arg_2_4, "ai_commander_system")
-	self._first_person_extension = ScriptUnit.has_extension(arg_2_4, "first_person_system")
-	self._career_extension = ScriptUnit.has_extension(arg_2_4, "career_system")
+	self._buff_extension = ScriptUnit.extension(owner_unit, "buff_system")
+	self._commander_extension = ScriptUnit.extension(owner_unit, "ai_commander_system")
+	self._first_person_extension = ScriptUnit.has_extension(owner_unit, "first_person_system")
+	self._career_extension = ScriptUnit.has_extension(owner_unit, "career_system")
 	self._command_ability = self._career_extension:get_passive_ability_by_name("bw_necromancer_command")
-	self._owner_unit = arg_2_4
+	self._owner_unit = owner_unit
 end
 
-ActionCareerBWNecromancerCommandAttack.client_owner_start_action = function (self, arg_3_1, arg_3_2, arg_3_3, arg_3_4)
+ActionCareerBWNecromancerCommandAttack.client_owner_start_action = function (self, new_action, t, chain_action_data, power_level)
 	-- function 3
-	ActionCareerBWNecromancerCommandAttack.super.client_owner_start_action(self, arg_3_1, arg_3_2, arg_3_3, arg_3_4)
+	ActionCareerBWNecromancerCommandAttack.super.client_owner_start_action(self, new_action, t, chain_action_data, power_level)
 
-	local var_3_0 = tbl_2[self._owner_unit]
+	local target_unit = CALCULATED_TARGET_BY_OWNER[self._owner_unit]
 
-	tbl_2[self._owner_unit] = nil
+	CALCULATED_TARGET_BY_OWNER[self._owner_unit] = nil
 
-	if not ALIVE[var_3_0] then
+	if ALIVE[target_unit] then
 		local _is_charge_off_cooldown = self:_is_charge_off_cooldown()
 
-		_is_charge_off_cooldown = not _is_charge_off_cooldown and self:_has_armored_pet()
+		if _is_charge_off_cooldown then
+			-- Nothing
+		end
 
-		self._command_ability:command_attack_enemy(var_3_0, _is_charge_off_cooldown, arg_3_2)
+		_is_charge_off_cooldown = self:_has_armored_pet()
+
+		local should_charge = _is_charge_off_cooldown
+
+		::label_3_0::
+
+		self._command_ability:command_attack_enemy(target_unit, should_charge, t)
 	end
 end
 
-ActionCareerBWNecromancerCommandAttack.client_owner_post_update = function (arg_4_0, arg_4_1, arg_4_2, arg_4_3, arg_4_4)
+ActionCareerBWNecromancerCommandAttack.client_owner_post_update = function (self, dt, t, world, can_damage)
 	-- function 4
 	return
 end
 
-ActionCareerBWNecromancerCommandAttack.destroy = function (arg_5_0)
+ActionCareerBWNecromancerCommandAttack.destroy = function (self)
 	-- function 5
 	return
 end
 
-ActionCareerBWNecromancerCommandAttack._select_target = function (arg_6_0)
+ActionCareerBWNecromancerCommandAttack._select_target = function (self)
 	-- function 6
 	return
 end
@@ -125,8 +136,10 @@ end
 
 ActionCareerBWNecromancerCommandAttack._has_armored_pet = function (self)
 	-- function 8
-	for k, v in pairs(self._commander_extension:get_controlled_units()) do
-		if Unit.get_data(k, "breed").name == "pet_skeleton_armored" then
+	for pet_unit, controlled_unit_data in pairs(self._commander_extension:get_controlled_units()) do
+		local breed = Unit.get_data(pet_unit, "breed")
+
+		if breed.name == "pet_skeleton_armored" then
 			return true
 		end
 	end

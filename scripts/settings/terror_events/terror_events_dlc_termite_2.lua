@@ -1,25 +1,34 @@
 -- chunkname: @scripts/settings/terror_events/terror_events_dlc_termite_2.lua
 
-local scripts_settings_terror_events_terror_event_utils = require("scripts/settings/terror_events/terror_event_utils")
-local count_event_breed = scripts_settings_terror_events_terror_event_utils.count_event_breed
-local num_spawned_enemies = scripts_settings_terror_events_terror_event_utils.num_spawned_enemies
-local HARD = scripts_settings_terror_events_terror_event_utils.HARD
-local HARDER = scripts_settings_terror_events_terror_event_utils.HARDER
-local HARDEST = scripts_settings_terror_events_terror_event_utils.HARDEST
+local TerrorEventUtils = require("scripts/settings/terror_events/terror_event_utils")
+local count_event_breed = TerrorEventUtils.count_event_breed
+local num_spawned_enemies = TerrorEventUtils.num_spawned_enemies
+local HARD = TerrorEventUtils.HARD
+local HARDER = TerrorEventUtils.HARDER
+local HARDEST = TerrorEventUtils.HARDEST
 
-local function fn(self, arg_1_1, arg_1_2, arg_1_3, arg_1_4, arg_1_5)
+local function setup_grudgemarked_stormfiend(optional_data, difficulty, breed_name, event, difficulty_tweak, enhancement_list)
 	-- function 1
-	local str = "termite_base"
-	local enhancements = self.enhancements
+	local base_grudgemark_name = "termite_base"
+	local enhancements = optional_data.enhancements
 
-	enhancements = enhancements or {}
-	enhancements[#enhancements + 1] = BreedEnhancements[str]
-	self.enhancements = enhancements
+	if not enhancements then
+		-- Nothing
+	end
 
-	return self
+	enhancements = {}
+
+	local list = enhancements
+
+	::label_1_0::
+
+	list[#list + 1] = BreedEnhancements[base_grudgemark_name]
+	optional_data.enhancements = list
+
+	return optional_data
 end
 
-local tbl = {
+local terror_event_blueprints = {
 	termite_lvl2_disable_pacing = {
 		{
 			"control_pacing",
@@ -202,7 +211,7 @@ local tbl = {
 			},
 			breed_name = "skaven_rat_ogre",
 			spawner_id = "stormfiend_fight_spawn",
-			pre_spawn_func = fn,
+			pre_spawn_func = setup_grudgemarked_stormfiend,
 			optional_data = {
 				spawn_chance = 1,
 				spawned_func = AiUtils.magic_entrance_optional_spawned_func
@@ -229,7 +238,7 @@ local tbl = {
 		},
 		{
 			"continue_when",
-			condition = function (arg_2_0)
+			condition = function (t)
 				-- function 2
 				return count_event_breed("skaven_slave") < 5
 			end
@@ -259,7 +268,7 @@ local tbl = {
 		},
 		{
 			"continue_when",
-			condition = function (arg_3_0)
+			condition = function (t)
 				-- function 3
 				return count_event_breed("skaven_slave") < 5
 			end
@@ -289,7 +298,7 @@ local tbl = {
 		},
 		{
 			"continue_when",
-			condition = function (arg_4_0)
+			condition = function (t)
 				-- function 4
 				return count_event_breed("skaven_slave") < 5
 			end
@@ -319,7 +328,7 @@ local tbl = {
 		},
 		{
 			"continue_when",
-			condition = function (arg_5_0)
+			condition = function (t)
 				-- function 5
 				return count_event_breed("skaven_slave") < 5
 			end
@@ -349,7 +358,7 @@ local tbl = {
 		},
 		{
 			"continue_when",
-			condition = function (arg_6_0)
+			condition = function (t)
 				-- function 6
 				return count_event_breed("skaven_slave") < 5
 			end
@@ -521,7 +530,7 @@ local tbl = {
 		{
 			"continue_when",
 			duration = 10,
-			condition = function (arg_7_0)
+			condition = function (t)
 				-- function 7
 				return num_spawned_enemies() < 5
 			end
@@ -593,7 +602,7 @@ local tbl = {
 		{
 			"continue_when",
 			duration = 10,
-			condition = function (arg_8_0)
+			condition = function (t)
 				-- function 8
 				return num_spawned_enemies() < 5
 			end
@@ -632,7 +641,7 @@ local tbl = {
 		{
 			"continue_when",
 			duration = 10,
-			condition = function (arg_9_0)
+			condition = function (t)
 				-- function 9
 				return num_spawned_enemies() < 5
 			end
@@ -655,7 +664,7 @@ local tbl = {
 		{
 			"continue_when",
 			duration = 10,
-			condition = function (arg_10_0)
+			condition = function (t)
 				-- function 10
 				return num_spawned_enemies() < 5
 			end
@@ -690,7 +699,7 @@ local tbl = {
 		{
 			"continue_when",
 			duration = 10,
-			condition = function (arg_11_0)
+			condition = function (t)
 				-- function 11
 				return num_spawned_enemies() < 5
 			end
@@ -755,7 +764,7 @@ local tbl = {
 		{
 			"continue_when",
 			duration = 10,
-			condition = function (arg_12_0)
+			condition = function (t)
 				-- function 12
 				return num_spawned_enemies() < 5
 			end
@@ -782,7 +791,7 @@ local tbl = {
 		{
 			"continue_when",
 			duration = 10,
-			condition = function (arg_13_0)
+			condition = function (t)
 				-- function 13
 				return num_spawned_enemies() < 5
 			end
@@ -885,7 +894,7 @@ local tbl = {
 		{
 			"continue_when",
 			duration = 10,
-			condition = function (arg_14_0)
+			condition = function (t)
 				-- function 14
 				return num_spawned_enemies() < 5
 			end
@@ -996,7 +1005,7 @@ local tbl = {
 		{
 			"continue_when",
 			duration = 10,
-			condition = function (arg_15_0)
+			condition = function (t)
 				-- function 15
 				return num_spawned_enemies() < 5
 			end
@@ -1013,7 +1022,7 @@ local tbl = {
 		{
 			"continue_when",
 			duration = 10,
-			condition = function (arg_16_0)
+			condition = function (t)
 				-- function 16
 				return num_spawned_enemies() < 5
 			end
@@ -1063,7 +1072,7 @@ local tbl = {
 		{
 			"continue_when",
 			duration = 10,
-			condition = function (arg_17_0)
+			condition = function (t)
 				-- function 17
 				return num_spawned_enemies() < 5
 			end
@@ -1117,7 +1126,7 @@ local tbl = {
 		{
 			"continue_when",
 			duration = 10,
-			condition = function (arg_18_0)
+			condition = function (t)
 				-- function 18
 				return num_spawned_enemies() < 8
 			end
@@ -1143,7 +1152,7 @@ local tbl = {
 		{
 			"continue_when",
 			duration = 10,
-			condition = function (arg_19_0)
+			condition = function (t)
 				-- function 19
 				return num_spawned_enemies() < 5
 			end
@@ -1209,7 +1218,7 @@ local tbl = {
 		{
 			"continue_when",
 			duration = 10,
-			condition = function (arg_20_0)
+			condition = function (t)
 				-- function 20
 				return num_spawned_enemies() < 5
 			end
@@ -1258,7 +1267,7 @@ local tbl = {
 		{
 			"continue_when",
 			duration = 10,
-			condition = function (arg_21_0)
+			condition = function (t)
 				-- function 21
 				return num_spawned_enemies() < 5
 			end
@@ -1311,7 +1320,7 @@ local tbl = {
 		{
 			"continue_when",
 			duration = 10,
-			condition = function (arg_22_0)
+			condition = function (t)
 				-- function 22
 				return num_spawned_enemies() < 5
 			end
@@ -1365,7 +1374,7 @@ local tbl = {
 		{
 			"continue_when",
 			duration = 20,
-			condition = function (arg_23_0)
+			condition = function (t)
 				-- function 23
 				return num_spawned_enemies() < 5
 			end
@@ -1438,7 +1447,7 @@ local tbl = {
 		{
 			"continue_when",
 			duration = 10,
-			condition = function (arg_24_0)
+			condition = function (t)
 				-- function 24
 				return num_spawned_enemies() < 5
 			end
@@ -1456,7 +1465,7 @@ local tbl = {
 		{
 			"continue_when",
 			duration = 10,
-			condition = function (arg_25_0)
+			condition = function (t)
 				-- function 25
 				return num_spawned_enemies() < 5
 			end
@@ -1489,7 +1498,7 @@ local tbl = {
 		{
 			"continue_when",
 			duration = 10,
-			condition = function (arg_26_0)
+			condition = function (t)
 				-- function 26
 				return num_spawned_enemies() < 5
 			end
@@ -1502,7 +1511,7 @@ local tbl = {
 		{
 			"continue_when",
 			duration = 10,
-			condition = function (arg_27_0)
+			condition = function (t)
 				-- function 27
 				return num_spawned_enemies() < 5
 			end
@@ -1537,7 +1546,7 @@ local tbl = {
 		{
 			"continue_when",
 			duration = 10,
-			condition = function (arg_28_0)
+			condition = function (t)
 				-- function 28
 				return num_spawned_enemies() < 5
 			end
@@ -1559,7 +1568,7 @@ local tbl = {
 		{
 			"continue_when",
 			duration = 20,
-			condition = function (arg_29_0)
+			condition = function (t)
 				-- function 29
 				return num_spawned_enemies() < 5
 			end
@@ -1599,7 +1608,7 @@ local tbl = {
 		{
 			"continue_when",
 			duration = 10,
-			condition = function (arg_30_0)
+			condition = function (t)
 				-- function 30
 				return num_spawned_enemies() < 5
 			end
@@ -1632,7 +1641,7 @@ local tbl = {
 		{
 			"continue_when",
 			duration = 10,
-			condition = function (arg_31_0)
+			condition = function (t)
 				-- function 31
 				return num_spawned_enemies() < 5
 			end
@@ -1679,7 +1688,7 @@ local tbl = {
 		{
 			"continue_when",
 			duration = 10,
-			condition = function (arg_32_0)
+			condition = function (t)
 				-- function 32
 				return num_spawned_enemies() < 5
 			end
@@ -1723,7 +1732,7 @@ local tbl = {
 		{
 			"continue_when",
 			duration = 10,
-			condition = function (arg_33_0)
+			condition = function (t)
 				-- function 33
 				return num_spawned_enemies() < 5
 			end
@@ -1740,7 +1749,7 @@ local tbl = {
 		{
 			"continue_when",
 			duration = 20,
-			condition = function (arg_34_0)
+			condition = function (t)
 				-- function 34
 				return num_spawned_enemies() < 5
 			end
@@ -1804,7 +1813,7 @@ local tbl = {
 		{
 			"continue_when",
 			duration = 10,
-			condition = function (arg_35_0)
+			condition = function (t)
 				-- function 35
 				return num_spawned_enemies() < 5
 			end
@@ -1826,7 +1835,7 @@ local tbl = {
 		{
 			"continue_when",
 			duration = 10,
-			condition = function (arg_36_0)
+			condition = function (t)
 				-- function 36
 				return num_spawned_enemies() < 5
 			end
@@ -1843,7 +1852,7 @@ local tbl = {
 		{
 			"continue_when",
 			duration = 10,
-			condition = function (arg_37_0)
+			condition = function (t)
 				-- function 37
 				return num_spawned_enemies() < 5
 			end
@@ -1887,7 +1896,7 @@ local tbl = {
 		{
 			"continue_when",
 			duration = 10,
-			condition = function (arg_38_0)
+			condition = function (t)
 				-- function 38
 				return num_spawned_enemies() < 5
 			end
@@ -1904,7 +1913,7 @@ local tbl = {
 		{
 			"continue_when",
 			duration = 20,
-			condition = function (arg_39_0)
+			condition = function (t)
 				-- function 39
 				return num_spawned_enemies() < 5
 			end
@@ -1939,7 +1948,7 @@ local tbl = {
 		{
 			"continue_when",
 			duration = 10,
-			condition = function (arg_40_0)
+			condition = function (t)
 				-- function 40
 				return num_spawned_enemies() < 5
 			end
@@ -1985,7 +1994,7 @@ local tbl = {
 		{
 			"continue_when",
 			duration = 10,
-			condition = function (arg_41_0)
+			condition = function (t)
 				-- function 41
 				return num_spawned_enemies() < 5
 			end
@@ -2027,7 +2036,7 @@ local tbl = {
 		{
 			"continue_when",
 			duration = 10,
-			condition = function (arg_42_0)
+			condition = function (t)
 				-- function 42
 				return num_spawned_enemies() < 5
 			end
@@ -2075,7 +2084,7 @@ local tbl = {
 		{
 			"continue_when",
 			duration = 10,
-			condition = function (arg_43_0)
+			condition = function (t)
 				-- function 43
 				return num_spawned_enemies() < 5
 			end
@@ -2137,7 +2146,7 @@ local tbl = {
 		{
 			"continue_when",
 			duration = 10,
-			condition = function (arg_44_0)
+			condition = function (t)
 				-- function 44
 				return num_spawned_enemies() < 5
 			end
@@ -2193,7 +2202,7 @@ local tbl = {
 		{
 			"continue_when",
 			duration = 10,
-			condition = function (arg_45_0)
+			condition = function (t)
 				-- function 45
 				return num_spawned_enemies() < 5
 			end
@@ -2264,7 +2273,7 @@ local tbl = {
 		{
 			"continue_when",
 			duration = 10,
-			condition = function (arg_46_0)
+			condition = function (t)
 				-- function 46
 				return num_spawned_enemies() < 5
 			end
@@ -2281,7 +2290,7 @@ local tbl = {
 		{
 			"continue_when",
 			duration = 10,
-			condition = function (arg_47_0)
+			condition = function (t)
 				-- function 47
 				return num_spawned_enemies() < 5
 			end
@@ -2298,7 +2307,7 @@ local tbl = {
 		{
 			"continue_when",
 			duration = 20,
-			condition = function (arg_48_0)
+			condition = function (t)
 				-- function 48
 				return num_spawned_enemies() < 5
 			end
@@ -2357,5 +2366,5 @@ local tbl = {
 }
 
 return {
-	tbl
+	terror_event_blueprints
 }

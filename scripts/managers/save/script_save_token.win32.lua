@@ -2,10 +2,10 @@
 
 ScriptSaveToken = class(ScriptSaveToken)
 
-ScriptSaveToken.init = function (self, arg_1_1, arg_1_2)
+ScriptSaveToken.init = function (self, adapter, token)
 	-- function 1
-	self._adapter = arg_1_1
-	self._token = arg_1_2
+	self._adapter = adapter
+	self._token = token
 	self._info = {}
 end
 

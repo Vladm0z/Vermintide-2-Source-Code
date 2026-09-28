@@ -1,38 +1,37 @@
 -- chunkname: @scripts/settings/dlcs/shovel/action_career_bw_necromancer_command_stand.lua
 
-local num = 11
-local num_2 = -10
+local raycast_speed = 11
+local raycast_gravity = -10
 
 ActionCareerBwNecromancerCommandStand = class(ActionCareerBwNecromancerCommandStand, ActionBase)
 
-ActionCareerBwNecromancerCommandStand.init = function (self, arg_1_1, arg_1_2, arg_1_3, arg_1_4, arg_1_5, arg_1_6, arg_1_7, arg_1_8)
+ActionCareerBwNecromancerCommandStand.init = function (self, world, item_name, is_server, owner_unit, damage_unit, first_person_unit, weapon_unit, weapon_system)
 	-- function 1
-	ActionCareerBwNecromancerCommandStand.super.init(self, arg_1_1, arg_1_2, arg_1_3, arg_1_4, arg_1_5, arg_1_6, arg_1_7, arg_1_8)
+	ActionCareerBwNecromancerCommandStand.super.init(self, world, item_name, is_server, owner_unit, damage_unit, first_person_unit, weapon_unit, weapon_system)
 
-	self._career_extension = ScriptUnit.extension(arg_1_4, "career_system")
+	self._career_extension = ScriptUnit.extension(owner_unit, "career_system")
 	self._command_ability = self._career_extension:get_passive_ability_by_name("bw_necromancer_command")
 end
 
-ActionCareerBwNecromancerCommandStand.client_owner_start_action = function (self, arg_2_1, arg_2_2, arg_2_3, arg_2_4, arg_2_5)
+ActionCareerBwNecromancerCommandStand.client_owner_start_action = function (self, new_action, t, chain_action_data, power_level, action_init_data)
 	-- function 2
-	arg_2_5 = arg_2_5 or {}
+	action_init_data = not not action_init_data or not not {}
 
-	ActionCareerBwNecromancerCommandStand.super.client_owner_start_action(self, arg_2_1, arg_2_2, arg_2_3, arg_2_4, arg_2_5)
+	ActionCareerBwNecromancerCommandStand.super.client_owner_start_action(self, new_action, t, chain_action_data, power_level, action_init_data)
 
-	local var_2_0
-	local var_2_1
+	local target_center, fp_rotation
 
-	if not arg_2_3 then
-		var_2_0 = arg_2_3.target_center:unbox()
-		var_2_1 = arg_2_3.fp_rotation:unbox()
+	if chain_action_data then
+		target_center = chain_action_data.target_center:unbox()
+		fp_rotation = chain_action_data.fp_rotation:unbox()
 	end
 
-	if not var_2_0 then
-		self._command_ability:command_stand_ground(var_2_0, var_2_1)
+	if target_center then
+		self._command_ability:command_stand_ground(target_center, fp_rotation)
 	end
 end
 
-ActionCareerBwNecromancerCommandStand.client_owner_post_update = function (arg_3_0, arg_3_1, arg_3_2, arg_3_3, arg_3_4, arg_3_5)
+ActionCareerBwNecromancerCommandStand.client_owner_post_update = function (self, dt, t, world, can_damage, current_time_in_action)
 	-- function 3
 	return
 end

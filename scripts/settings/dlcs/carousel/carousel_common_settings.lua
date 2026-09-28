@@ -1,10 +1,10 @@
 -- chunkname: @scripts/settings/dlcs/carousel/carousel_common_settings.lua
 
-local carousel = DLCSettings.carousel
+local settings = DLCSettings.carousel
 
 require("scripts/unit_extensions/weapons/area_damage/area_damage_templates_vs")
 
-carousel.mechanism_settings = {
+settings.mechanism_settings = {
 	versus = {
 		num_bosses_to_spawn = 2,
 		display_name = "area_selection_carousel_name",
@@ -118,7 +118,7 @@ carousel.mechanism_settings = {
 		}
 	}
 }
-carousel.network_lookups = {
+settings.network_lookups = {
 	objective_names = "GameModeSettings.versus.objective_names",
 	versus = "GameModeVersus",
 	inn_vs = "GameModeInnVs",
@@ -129,26 +129,26 @@ carousel.network_lookups = {
 		}
 	}
 }
-carousel.flow_callbacks = "scripts/flow/flow_callbacks_vs"
-carousel.damage_profile_template_files_names = {
+settings.flow_callbacks = "scripts/flow/flow_callbacks_vs"
+settings.damage_profile_template_files_names = {
 	"scripts/settings/equipment/damage_profile_templates_dlc_vs"
 }
-carousel.game_mode_files = {
+settings.game_mode_files = {
 	"scripts/managers/game_mode/game_modes/game_mode_versus",
 	"scripts/managers/game_mode/game_modes/game_mode_inn_vs"
 }
-carousel.game_modes = {
+settings.game_modes = {
 	"inn_vs",
 	"versus"
 }
-carousel.matchmaking_types = {
+settings.matchmaking_types = {
 	"inn_vs",
 	"versus"
 }
-carousel.mechanisms = {
+settings.mechanisms = {
 	"versus"
 }
-carousel.matchmaking_state_files = {
+settings.matchmaking_state_files = {
 	"scripts/managers/matchmaking/matchmaking_state_party_joins",
 	"scripts/managers/matchmaking/matchmaking_state_reserve_lobby",
 	"scripts/managers/matchmaking/matchmaking_state_search_player_hosted_lobby",
@@ -157,49 +157,49 @@ carousel.matchmaking_state_files = {
 	"scripts/managers/matchmaking/matchmaking_state_player_hosted_game",
 	"scripts/managers/matchmaking/matchmaking_state_flexmatch_host"
 }
-carousel.career_setting_files = {
+settings.career_setting_files = {
 	"scripts/settings/profiles/career_settings_vs"
 }
-carousel.profile_files = {
+settings.profile_files = {
 	"scripts/settings/profiles/vs_profiles"
 }
-carousel.career_ability_settings = {
+settings.career_ability_settings = {
 	"scripts/unit_extensions/default_player_unit/careers/career_ability_settings_vs"
 }
-carousel.attachment_node_linking = {
+settings.attachment_node_linking = {
 	"scripts/settings/dlcs/carousel/attachment_node_linking_vs"
 }
-carousel.outline_settings = {
+settings.outline_settings = {
 	"scripts/settings/outline_settings_vs"
 }
-carousel.statistics_definitions = {
+settings.statistics_definitions = {
 	"scripts/managers/backend/statistics_definitions_vs"
 }
-carousel.talent_settings = {
+settings.talent_settings = {
 	"scripts/managers/talents/talent_settings_empty"
 }
-carousel.unit_extension_templates = {
+settings.unit_extension_templates = {
 	"scripts/network/unit_extension_templates_vs"
 }
-carousel.end_view = {
+settings.end_view = {
 	"scripts/ui/views/level_end/level_end_view_versus"
 }
-carousel.end_view_state = {
+settings.end_view_state = {
 	"scripts/ui/views/level_end/states/end_view_state_summary_vs",
 	"scripts/ui/views/level_end/states/end_view_state_parading_vs",
 	"scripts/ui/views/level_end/states/end_view_state_score_vs"
 }
-carousel.status_extensions = {
+settings.status_extensions = {
 	"scripts/unit_extensions/generic/dark_pact_status_extension"
 }
-carousel.systems = {
+settings.systems = {
 	"scripts/entity_system/systems/ghost_mode/ghost_mode_system",
 	"scripts/entity_system/systems/versus/versus_horde_ability_system"
 }
-carousel.vote_template_filenames = {
+settings.vote_template_filenames = {
 	"scripts/settings/dlcs/carousel/carousel_vote_templates"
 }
-carousel.entity_extensions = {
+settings.entity_extensions = {
 	"scripts/unit_extensions/objectives/base_objective_extension",
 	"scripts/unit_extensions/objectives/versus_volume_objective_extension",
 	"scripts/unit_extensions/objectives/versus_capture_point_objective_extension",
@@ -210,29 +210,29 @@ carousel.entity_extensions = {
 	"scripts/unit_extensions/objectives/versus_mission_objective_extension",
 	"scripts/unit_extensions/objectives/versus_survive_event_objective_extension"
 }
-carousel.player_breeds = {
+settings.player_breeds = {
 	"scripts/settings/breeds/breed_players_vs"
 }
-carousel.career_help_ui = {
+settings.career_help_ui = {
 	"scripts/ui/hud_ui/career_help_ui_vs_definitions"
 }
-carousel.weapon_template_file_names = {
+settings.weapon_template_file_names = {
 	"scripts/settings/equipment/weapon_templates/vs_packmaster_claw"
 }
-carousel.attack_template_files_names = {
+settings.attack_template_files_names = {
 	"scripts/settings/equipment/attack_templates_dlc_vs"
 }
-carousel.animation_callback_template_files = {
+settings.animation_callback_template_files = {
 	"scripts/entity_system/systems/animation/animation_callback_templates_vs"
 }
-carousel.game_mode = "scripts/settings/game_mode_settings_vs"
-carousel.script_backend_playfab_files = {
+settings.game_mode = "scripts/settings/game_mode_settings_vs"
+settings.script_backend_playfab_files = {
 	"scripts/managers/backend_playfab/script_backend_playfab_dedicated"
 }
-carousel.player_movement_settings = "scripts/settings/player_movement_settings_vs"
-carousel.single_weapon_templates = "scripts/unit_extensions/weapons/single_weapon_unit_templates_vs"
-carousel.spawn_unit_templates = "scripts/settings/spawn_unit_templates_vs"
-carousel.anim_lookup = {
+settings.player_movement_settings = "scripts/settings/player_movement_settings_vs"
+settings.single_weapon_templates = "scripts/unit_extensions/weapons/single_weapon_unit_templates_vs"
+settings.spawn_unit_templates = "scripts/settings/spawn_unit_templates_vs"
+settings.anim_lookup = {
 	"globe_charge",
 	"globe_charge_hold",
 	"globe_charge_cancel",
@@ -250,7 +250,7 @@ carousel.anim_lookup = {
 	"attack_jump_air",
 	"cancel_priming"
 }
-carousel.inventory_package_list = {
+settings.inventory_package_list = {
 	"units/beings/player/dark_pact_first_person_base/chaos_troll/chr_first_person_base",
 	"units/beings/player/dark_pact_first_person_base/chaos_troll/chr_first_person_bot_base",
 	"units/beings/player/dark_pact_first_person_base/skaven_common/chr_first_person_base",
@@ -300,7 +300,7 @@ carousel.inventory_package_list = {
 	"units/weapons/player/dark_pact/wpn_chaos_troll/wpn_chaos_troll_01",
 	"units/weapons/player/dark_pact/wpn_chaos_troll/wpn_chaos_troll_01_3p"
 }
-carousel.husk_lookup = {
+settings.husk_lookup = {
 	"units/beings/player/dark_pact_third_person_base/skaven_gutter_runner/chr_third_person_base_husk",
 	"units/beings/player/dark_pact_third_person_base/skaven_pack_master/chr_third_person_base_husk",
 	"units/beings/player/dark_pact_third_person_base/skaven_wind_globadier/chr_third_person_base_husk",
@@ -313,30 +313,30 @@ carousel.husk_lookup = {
 	"units/gameplay/versus_mission_objective",
 	"units/test_unit/jump_marker_ground_pactsworn"
 }
-carousel.interactions = {
+settings.interactions = {
 	"carousel_dark_pact_climb",
 	"carousel_start_versus",
 	"carousel_dark_pact_tunnel",
 	"carousel_dark_pact_spawner",
 	"versus_map_access"
 }
-carousel.interactions_filenames = {
+settings.interactions_filenames = {
 	"scripts/settings/dlcs/carousel/carousel_interactions"
 }
-carousel.network_go_types = {
+settings.network_go_types = {
 	"versus_volume_objective_unit",
 	"versus_capture_point_objective_unit",
 	"versus_mission_objective_unit"
 }
-carousel.material_effect_mappings_file_names = {
+settings.material_effect_mappings_file_names = {
 	"scripts/settings/material_effect_mappings_player_enemies"
 }
-carousel.unlock_settings = {
+settings.unlock_settings = {
 	carousel = {
 		class = "AlwaysUnlocked"
 	}
 }
-carousel.dialogue_events = {
+settings.dialogue_events = {
 	"taunting_witch_hunter",
 	"taunting_bright_wizard",
 	"taunting_dwarf_ranger",
@@ -360,7 +360,7 @@ carousel.dialogue_events = {
 	"hook_fail",
 	"vs_ratling_hitting_shield"
 }
-carousel.social_wheel_sfx_events = {
+settings.social_wheel_sfx_events = {
 	dark_pact = {
 		CLOSE = "versus_com_wheel_close",
 		HOVER = "versus_com_wheel_hover",

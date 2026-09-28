@@ -1,7 +1,7 @@
 -- chunkname: @scripts/settings/breeds/breed_chaos_dummy_sorcerer.lua
 
-local scripts_utils_stagger_types = require("scripts/utils/stagger_types")
-local tbl = {
+local stagger_types = require("scripts/utils/stagger_types")
+local breed_data = {
 	boss_staggers = true,
 	perception = "perception_no_seeing",
 	has_inventory = true,
@@ -51,9 +51,9 @@ local tbl = {
 		12,
 		15
 	},
-	stagger_modifier_function = function (arg_1_0, arg_1_1, arg_1_2, arg_1_3, arg_1_4, arg_1_5)
+	stagger_modifier_function = function (stagger_type, duration, length, hit_zone_name, blackboard, breed)
 		-- function 1
-		return scripts_utils_stagger_types.none, 0, 0
+		return stagger_types.none, 0, 0
 	end,
 	debug_color = {
 		255,
@@ -160,9 +160,9 @@ local tbl = {
 	run_on_spawn = AiBreedSnippets.on_dummy_sorcerer_spawn
 }
 
-Breeds.chaos_dummy_sorcerer = table.create_copy(Breeds.chaos_dummy_sorcerer, tbl)
+Breeds.chaos_dummy_sorcerer = table.create_copy(Breeds.chaos_dummy_sorcerer, breed_data)
 
-local tbl_2 = {
+local action_data = {
 	idle = {
 		idle_animation = {
 			"attack_cast_spell_loop"
@@ -170,4 +170,4 @@ local tbl_2 = {
 	}
 }
 
-BreedActions.chaos_dummy_sorcerer = table.create_copy(BreedActions.chaos_dummy_sorcerer, tbl_2)
+BreedActions.chaos_dummy_sorcerer = table.create_copy(BreedActions.chaos_dummy_sorcerer, action_data)

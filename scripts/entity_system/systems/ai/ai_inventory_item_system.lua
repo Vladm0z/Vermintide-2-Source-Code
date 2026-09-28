@@ -1,28 +1,28 @@
 -- chunkname: @scripts/entity_system/systems/ai/ai_inventory_item_system.lua
 
-local tbl = {}
-local tbl_2 = {
+local RPCS = {}
+local extensions = {
 	"AIInventoryItemExtension"
 }
 
 AIInventoryItemSystem = class(AIInventoryItemSystem, ExtensionSystemBase)
 
-AIInventoryItemSystem.init = function (self, arg_1_1, arg_1_2)
+AIInventoryItemSystem.init = function (self, context, system_name)
 	-- function 1
-	local entity_manager = arg_1_1.entity_manager
+	local entity_manager = context.entity_manager
 
-	entity_manager:register_system(self, arg_1_2, tbl_2)
+	entity_manager:register_system(self, system_name, extensions)
 
 	self.entity_manager = entity_manager
-	self.is_server = arg_1_1.is_server
-	self.world = arg_1_1.world
-	self.unit_storage = arg_1_1.unit_storage
+	self.is_server = context.is_server
+	self.world = context.world
+	self.unit_storage = context.unit_storage
 
-	local network_event_delegate = arg_1_1.network_event_delegate
+	local network_event_delegate = context.network_event_delegate
 
 	self.network_event_delegate = network_event_delegate
 
-	network_event_delegate:register(self, unpack(tbl))
+	network_event_delegate:register(self, unpack(RPCS))
 
 	self.entities = {}
 end
@@ -32,35 +32,35 @@ AIInventoryItemSystem.destroy = function (self)
 	self.network_event_delegate:unregister(self)
 end
 
-local tbl_3 = {}
+local dummy_input = {}
 
-AIInventoryItemSystem.on_add_extension = function (arg_3_0, arg_3_1, arg_3_2, arg_3_3, arg_3_4)
+AIInventoryItemSystem.on_add_extension = function (self, world, unit, extension_name, extension_init_data)
 	-- function 3
-	local tbl = {}
+	local extension = {}
 
-	ScriptUnit.set_extension(arg_3_2, "ai_inventory_item_system", tbl, tbl_3)
+	ScriptUnit.set_extension(unit, "ai_inventory_item_system", extension, dummy_input)
 
-	if arg_3_3 == "AIInventoryItemExtension" then
-		arg_3_0.entities[arg_3_2] = tbl
-		tbl.wielding_unit = arg_3_4.wielding_unit
+	if extension_name == "AIInventoryItemExtension" then
+		self.entities[unit] = extension
+		extension.wielding_unit = extension_init_data.wielding_unit
 	end
 
-	return tbl
+	return extension
 end
 
-AIInventoryItemSystem.on_remove_extension = function (self, arg_4_1, arg_4_2)
+AIInventoryItemSystem.on_remove_extension = function (self, unit, extension_name)
 	-- function 4
-	self.entities[arg_4_1] = nil
+	self.entities[unit] = nil
 
-	ScriptUnit.remove_extension(arg_4_1, self.NAME)
+	ScriptUnit.remove_extension(unit, self.NAME)
 end
 
-AIInventoryItemSystem.hot_join_sync = function (arg_5_0, arg_5_1)
+AIInventoryItemSystem.hot_join_sync = function (self, peer_id)
 	-- function 5
 	return
 end
 
-AIInventoryItemSystem.update = function (arg_6_0, arg_6_1, arg_6_2, arg_6_3)
+AIInventoryItemSystem.update = function (self, context, t, dt)
 	-- function 6
 	return
 end

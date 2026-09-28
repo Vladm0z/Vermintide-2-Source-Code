@@ -6,20 +6,20 @@ return {
 	display_name = DeusBlessingSettings.blessing_of_ranald.display_name,
 	description = DeusBlessingSettings.blessing_of_ranald.description,
 	icon = DeusBlessingSettings.blessing_of_ranald.icon,
-	server_update_function = function (arg_1_0, arg_1_1, arg_1_2, arg_1_3)
+	server_update_function = function (context, data, dt, t)
 		-- function 1
-		MutatorUtils.apply_buff_to_alive_player_units(arg_1_0, arg_1_1, "blessing_of_ranald_damage_taken")
+		MutatorUtils.apply_buff_to_alive_player_units(context, data, "blessing_of_ranald_damage_taken")
 	end,
-	client_update_function = function (arg_2_0, arg_2_1, arg_2_2, arg_2_3)
+	client_update_function = function (context, data, dt, t)
 		-- function 2
 		local local_player = Managers.player:local_player()
-		local flag = not local_player and local_player.player_unit
+		local player_unit = not not local_player and not not local_player.player_unit
 
-		if not local_player and not ALIVE[flag] then
-			local has_extension = ScriptUnit.has_extension(flag, "buff_system")
+		if local_player and ALIVE[player_unit] then
+			local buff_extension = ScriptUnit.has_extension(player_unit, "buff_system")
 
-			if not (not has_extension and has_extension:has_buff_type("blessing_of_ranald_coins_greed")) then
-				has_extension:add_buff("blessing_of_ranald_coins_greed")
+			if buff_extension and not buff_extension:has_buff_type("blessing_of_ranald_coins_greed") then
+				buff_extension:add_buff("blessing_of_ranald_coins_greed")
 			end
 		end
 	end

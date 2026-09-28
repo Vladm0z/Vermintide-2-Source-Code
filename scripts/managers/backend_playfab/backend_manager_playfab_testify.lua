@@ -1,38 +1,42 @@
 -- chunkname: @scripts/managers/backend_playfab/backend_manager_playfab_testify.lua
 
-return {
-	clear_backend_inventory = function (self)
+local BackendManagerPlayFabTestify = {
+	clear_backend_inventory = function (backend_manager_playfab)
 		-- function 1
-		self:get_backend_mirror():snippet_clear_inventory()
+		local backend_mirror = backend_manager_playfab:get_backend_mirror()
+
+		backend_mirror:snippet_clear_inventory()
 	end,
-	request_magic_weapons_for_career = function (self, arg_2_1)
+	request_magic_weapons_for_career = function (backend_manager_playfab, career_name)
 		-- function 2
-		local get_all_backend_items = self:get_interface("items"):get_all_backend_items()
+		local items = backend_manager_playfab:get_interface("items"):get_all_backend_items()
 
-		return table.filter(get_all_backend_items, function (self)
+		return table.filter(items, function (item)
 			-- function 3
-			local flag = self.data.slot_type == "melee" or self.data.slot_type == "ranged"
-			local flag_2 = self.data.rarity == "magic"
-			local contains = table.contains(self.data.can_wield, arg_2_1)
+			local is_weapon = item.data.slot_type == "melee" or item.data.slot_type == "ranged"
+			local is_magic = item.data.rarity == "magic"
+			local can_wield = table.contains(item.data.can_wield, career_name)
 
-			return not flag and not contains and flag_2
+			return not not is_weapon and not not can_wield and not not is_magic
 		end)
 	end,
-	request_non_magic_weapons_for_career = function (self, arg_4_1)
+	request_non_magic_weapons_for_career = function (backend_manager_playfab, career_name)
 		-- function 4
-		local get_all_backend_items = self:get_interface("items"):get_all_backend_items()
+		local items = backend_manager_playfab:get_interface("items"):get_all_backend_items()
 
-		return table.filter(get_all_backend_items, function (self)
+		return table.filter(items, function (item)
 			-- function 5
-			local flag = self.data.slot_type == "melee" or self.data.slot_type == "ranged"
-			local flag_2 = self.data.rarity == "magic"
-			local contains = table.contains(self.data.can_wield, arg_4_1)
+			local is_weapon = item.data.slot_type == "melee" or item.data.slot_type == "ranged"
+			local is_magic = item.data.rarity == "magic"
+			local can_wield = table.contains(item.data.can_wield, career_name)
 
-			return not flag and not contains and not flag_2
+			return not not is_weapon and not not can_wield and not not not is_magic
 		end)
 	end,
-	wait_for_playfab_response = function (arg_6_0, arg_6_1)
+	wait_for_playfab_response = function (backend_manager_playfab, cloudscript_function)
 		-- function 6
 		return Testify.RETRY
 	end
 }
+
+return BackendManagerPlayFabTestify

@@ -4,61 +4,65 @@ require("scripts/network/shared_state")
 
 DeusChestPreloadSystem = class(DeusChestPreloadSystem, ExtensionSystemBase)
 
-local function fn(self, arg_1_1)
+local function is_preload_list_equal(t1, t2)
 	-- function 1
-	local num = 0
+	local t1_size = 0
 
-	for k, v in pairs(self) do
-		if arg_1_1[k] ~= v then
+	for k1, v1 in pairs(t1) do
+		if t2[k1] ~= v1 then
 			return false
 		end
 
-		num = num + 1
+		t1_size = t1_size + 1
 	end
 
-	local num_2 = 0
+	local t2_size = 0
 
-	for k_2, v_2 in pairs(arg_1_1) do
-		if self[k_2] ~= v_2 then
+	for k2, v2 in pairs(t2) do
+		if t1[k2] ~= v2 then
 			return false
 		end
 
-		num_2 = num_2 + 1
+		t2_size = t2_size + 1
 	end
 
-	return num == num_2
+	return t1_size == t2_size
 end
 
-local function fn_2(arg_2_0)
+local function encode_preload_packages(preload_packages)
 	-- function 2
-	local tbl = {}
-	local inventory_packages = NetworkLookup.inventory_packages
+	local encoded_preload_packages = {}
+	local inventory_packages_lut = NetworkLookup.inventory_packages
 
-	for k, v in pairs(arg_2_0) do
-		local var_2_2 = inventory_packages[k]
+	for package_name, _ in pairs(preload_packages) do
+		local network_package_id = inventory_packages_lut[package_name]
 
-		assert(var_2_2, "No existing inventory package for attempted name %q", k)
+		assert(network_package_id, "No existing inventory package for attempted name %q", package_name)
 
-		tbl[#tbl + 1] = var_2_2
+		encoded_preload_packages[#encoded_preload_packages + 1] = network_package_id
 	end
 
-	return (cjson.encode(tbl))
+	local json = cjson.encode(encoded_preload_packages)
+
+	return json
 end
 
-local function fn_3(arg_3_0)
+local function decode_encode_preload_packages(json)
 	-- function 3
-	local decode = cjson.decode(arg_3_0)
-	local tbl = {}
-	local inventory_packages = NetworkLookup.inventory_packages
+	local encoded_preload_packages = cjson.decode(json)
+	local preload_packages = {}
+	local inventory_packages_lut = NetworkLookup.inventory_packages
 
-	for i, v in ipairs(decode) do
-		tbl[inventory_packages[v]] = true
+	for _, network_package_id in ipairs(encoded_preload_packages) do
+		local package_name = inventory_packages_lut[network_package_id]
+
+		preload_packages[package_name] = true
 	end
 
-	return tbl
+	return preload_packages
 end
 
-local tbl = {
+local shared_state_spec = {
 	server = {},
 	peer = {
 		preload_packages = {
@@ -67,23 +71,23 @@ local tbl = {
 			composite_keys = {
 				local_player_id = true
 			},
-			encode = fn_2,
-			decode = fn_3
+			encode = encode_preload_packages,
+			decode = decode_encode_preload_packages
 		}
 	}
 }
 
-SharedState.validate_spec(tbl)
+SharedState.validate_spec(shared_state_spec)
 
-local str = "DeusChestPreloadSystem"
-local num = 1
-local num_2 = 50
-local num_3 = 5
-local tbl_2 = {}
+local PACKAGE_MANAGER_REFERENCE_NAME = "DeusChestPreloadSystem"
+local DEUS_CHEST_PRELOAD_AMOUNT = 1
+local DEUS_CHEST_CHECK_RANGE = 50
+local UPDATE_FREQUENCY = 5
+local DEUS_CHEST_FETCH_RESULTS = {}
 
-DeusChestPreloadSystem.init = function (self, arg_4_1, arg_4_2, arg_4_3)
+DeusChestPreloadSystem.init = function (self, context, system_name, extensions)
 	-- function 4
-	DeusChestPreloadSystem.super.init(self, arg_4_1, arg_4_2, arg_4_3)
+	DeusChestPreloadSystem.super.init(self, context, system_name, extensions)
 
 	self._deus_chest_to_extension = {}
 	self._broadphase = Broadphase(255, 30)
@@ -92,14 +96,14 @@ DeusChestPreloadSystem.init = function (self, arg_4_1, arg_4_2, arg_4_3)
 	self._player_manager = Managers.player
 	self._package_manager = Managers.package
 
-	local is_server = arg_4_1.is_server
-	local network_handler = Managers.mechanism:network_handler()
-	local server_peer_id = network_handler.server_peer_id
-	local peer_id = Network.peer_id()
+	local is_server = context.is_server
+	local network_server = Managers.mechanism:network_handler()
+	local server_peer_id = network_server.server_peer_id
+	local own_peer_id = Network.peer_id()
 
-	self._shared_state = SharedState:new("deus_chest_preload", tbl, is_server, network_handler, server_peer_id, peer_id)
+	self._shared_state = SharedState:new("deus_chest_preload", shared_state_spec, is_server, network_server, server_peer_id, own_peer_id)
 
-	local network_event_delegate = arg_4_1.network_event_delegate
+	local network_event_delegate = context.network_event_delegate
 
 	self._shared_state:register_rpcs(network_event_delegate)
 	self:_setup_weapon_preload_settings()
@@ -107,80 +111,81 @@ end
 
 DeusChestPreloadSystem._setup_weapon_preload_settings = function (self)
 	-- function 5
-	local flag = false
-	local var_5_1
-	local get_deus_weapon_preload_settings = Managers.backend:get_deus_weapon_preload_settings()
+	local success = false
+	local platform_type
+	local deus_weapon_preload_settings = Managers.backend:get_deus_weapon_preload_settings()
 
-	if not IS_XB1 then
-		local console_type_string = XboxOne.console_type_string()
-		local var_5_4 = get_deus_weapon_preload_settings[console_type_string]
-		local default = get_deus_weapon_preload_settings.default
+	if IS_XB1 then
+		platform_type = XboxOne.console_type_string()
 
-		if not var_5_4 then
-			print(string.format("[DeusChestPreloadSystem] Loading weapon preload settings for platform: %q", console_type_string))
-			table.dump(var_5_4, "WEAPON_PRELOAD_SETTINGS", 2)
+		local settings = deus_weapon_preload_settings[platform_type]
+		local default_settings = deus_weapon_preload_settings.default
 
-			self._deus_chest_preload_amount = var_5_4.deus_chest_preload_amount
-			self._deus_chest_check_range = var_5_4.deus_chest_check_range
-			self._deus_chest_update_frequency = var_5_4.deus_chest_update_frequency
-			flag = true
-		elseif not default then
-			print(string.format("[DeusChestPreloadSystem] Failed getting weapon preload settings for platform: %q --> using default settings for %q", console_type_string, PLATFORM))
-			table.dump(default, "WEAPON_PRELOAD_SETTINGS", 2)
+		if settings then
+			print(string.format("[DeusChestPreloadSystem] Loading weapon preload settings for platform: %q", platform_type))
+			table.dump(settings, "WEAPON_PRELOAD_SETTINGS", 2)
 
-			self._deus_chest_preload_amount = default.deus_chest_preload_amount
-			self._deus_chest_check_range = default.deus_chest_check_range
-			self._deus_chest_update_frequency = default.deus_chest_update_frequency
-			flag = true
+			self._deus_chest_preload_amount = settings.deus_chest_preload_amount
+			self._deus_chest_check_range = settings.deus_chest_check_range
+			self._deus_chest_update_frequency = settings.deus_chest_update_frequency
+			success = true
+		elseif default_settings then
+			print(string.format("[DeusChestPreloadSystem] Failed getting weapon preload settings for platform: %q --> using default settings for %q", platform_type, PLATFORM))
+			table.dump(default_settings, "WEAPON_PRELOAD_SETTINGS", 2)
+
+			self._deus_chest_preload_amount = default_settings.deus_chest_preload_amount
+			self._deus_chest_check_range = default_settings.deus_chest_check_range
+			self._deus_chest_update_frequency = default_settings.deus_chest_update_frequency
+			success = true
 		end
-	elseif not IS_PS4 then
-		local str = "ps4"
+	elseif IS_PS4 then
+		local platform_type = "ps4"
 
-		if not PS4.is_ps5() then
-			str = "ps5"
-		elseif not PS4.is_pro() then
-			str = "ps4_pro"
+		if PS4.is_ps5() then
+			platform_type = "ps5"
+		elseif PS4.is_pro() then
+			platform_type = "ps4_pro"
 		end
 
-		local var_5_7 = get_deus_weapon_preload_settings[str]
-		local default_2 = get_deus_weapon_preload_settings.default
+		local settings = deus_weapon_preload_settings[platform_type]
+		local default_settings = deus_weapon_preload_settings.default
 
-		if not var_5_7 then
-			print(string.format("[DeusChestPreloadSystem] Loading weapon preload settings for platform: %q", str))
-			table.dump(var_5_7, "WEAPON_PRELOAD_SETTINGS", 2)
+		if settings then
+			print(string.format("[DeusChestPreloadSystem] Loading weapon preload settings for platform: %q", platform_type))
+			table.dump(settings, "WEAPON_PRELOAD_SETTINGS", 2)
 
-			self._deus_chest_preload_amount = var_5_7.deus_chest_preload_amount
-			self._deus_chest_check_range = var_5_7.deus_chest_check_range
-			self._deus_chest_update_frequency = var_5_7.deus_chest_update_frequency
-			flag = true
-		elseif not default_2 then
-			print(string.format("[DeusChestPreloadSystem] Failed getting weapon preload settings for platform: %q --> using default settings for %q", str, PLATFORM))
-			table.dump(default_2, "WEAPON_PRELOAD_SETTINGS", 2)
+			self._deus_chest_preload_amount = settings.deus_chest_preload_amount
+			self._deus_chest_check_range = settings.deus_chest_check_range
+			self._deus_chest_update_frequency = settings.deus_chest_update_frequency
+			success = true
+		elseif default_settings then
+			print(string.format("[DeusChestPreloadSystem] Failed getting weapon preload settings for platform: %q --> using default settings for %q", platform_type, PLATFORM))
+			table.dump(default_settings, "WEAPON_PRELOAD_SETTINGS", 2)
 
-			self._deus_chest_preload_amount = default_2.deus_chest_preload_amount
-			self._deus_chest_check_range = default_2.deus_chest_check_range
-			self._deus_chest_update_frequency = default_2.deus_chest_update_frequency
-			flag = true
+			self._deus_chest_preload_amount = default_settings.deus_chest_preload_amount
+			self._deus_chest_check_range = default_settings.deus_chest_check_range
+			self._deus_chest_update_frequency = default_settings.deus_chest_update_frequency
+			success = true
 		end
-	elseif not get_deus_weapon_preload_settings then
-		local default_3 = get_deus_weapon_preload_settings.default
+	elseif deus_weapon_preload_settings then
+		local settings = deus_weapon_preload_settings.default
 
-		if not default_3 then
+		if settings then
 			print(string.format("[DeusChestPreloadSystem] Loading weapon preload settings for platform: %q", PLATFORM))
-			table.dump(default_3, "WEAPON_PRELOAD_SETTINGS", 2)
+			table.dump(settings, "WEAPON_PRELOAD_SETTINGS", 2)
 
-			self._deus_chest_preload_amount = default_3.deus_chest_preload_amount
-			self._deus_chest_check_range = default_3.deus_chest_check_range
-			self._deus_chest_update_frequency = default_3.deus_chest_update_frequency
+			self._deus_chest_preload_amount = settings.deus_chest_preload_amount
+			self._deus_chest_check_range = settings.deus_chest_check_range
+			self._deus_chest_update_frequency = settings.deus_chest_update_frequency
 		end
 	end
 
-	if not flag then
+	if not success then
 		print(string.format("[DeusChestPreloadSystem] Couldn't find settings for platform: %q --> Using fallback settings", PLATFORM))
 
-		self._deus_chest_preload_amount = num
-		self._deus_chest_check_range = num_2
-		self._deus_chest_update_frequency = num_3
+		self._deus_chest_preload_amount = DEUS_CHEST_PRELOAD_AMOUNT
+		self._deus_chest_check_range = DEUS_CHEST_CHECK_RANGE
+		self._deus_chest_update_frequency = UPDATE_FREQUENCY
 	end
 
 	fassert(self._deus_chest_preload_amount, "[DeusChestPreloadSystem] Missing weapon preload settings for chest_preload_amount")
@@ -192,19 +197,19 @@ DeusChestPreloadSystem.destroy = function (self)
 	-- function 6
 	self._shared_state:unregister_rpcs()
 
-	local _loaded_or_loading_packages = self._loaded_or_loading_packages
-	local _package_manager = self._package_manager
+	local loaded_or_loading_packages = self._loaded_or_loading_packages
+	local package_manager = self._package_manager
 
-	for k, v in pairs(_loaded_or_loading_packages) do
-		_package_manager:unload(k, str)
+	for package_name, _ in pairs(loaded_or_loading_packages) do
+		package_manager:unload(package_name, PACKAGE_MANAGER_REFERENCE_NAME)
 	end
 end
 
-local tbl_3 = {}
-local tbl_4 = {}
-local tbl_5 = {}
+local missing_packages = {}
+local all_needed_packages = {}
+local packages_to_remove = {}
 
-DeusChestPreloadSystem.update = function (self, arg_7_1, arg_7_2)
+DeusChestPreloadSystem.update = function (self, context, t)
 	-- function 7
 	if self._deus_chest_preload_amount == 0 then
 		return
@@ -212,142 +217,148 @@ DeusChestPreloadSystem.update = function (self, arg_7_1, arg_7_2)
 
 	local _timer = self._timer
 
-	_timer = _timer or arg_7_2 + self._deus_chest_update_frequency
+	_timer = not not _timer or not not (t + self._deus_chest_update_frequency)
 	self._timer = _timer
 
-	if arg_7_2 <= self._timer then
+	if t <= self._timer then
 		return
 	end
 
 	local local_player = Managers.player:local_player()
-	local flag = not local_player and local_player.player_unit
+	local local_player_unit = not not local_player and not not local_player.player_unit
 
-	if not ALIVE[flag] then
+	if not ALIVE[local_player_unit] then
 		return
 	end
 
-	local get_player_preload_packages = self:get_player_preload_packages(local_player)
+	local own_preload_packages = self:get_player_preload_packages(local_player)
 
-	if not get_player_preload_packages then
+	if not own_preload_packages then
 		return
 	end
 
-	DeusChestPreloadSystem.super.update(self, arg_7_1, arg_7_2)
-	table.clear(tbl_4)
+	DeusChestPreloadSystem.super.update(self, context, t)
+	table.clear(all_needed_packages)
 
-	local var_7_4 = POSITION_LOOKUP[flag]
-	local query = Broadphase.query(self._broadphase, var_7_4, self._deus_chest_check_range, tbl_2)
-	local min = math.min(query, self._deus_chest_preload_amount)
-	local _deus_chest_to_extension = self._deus_chest_to_extension
+	local local_player_position = POSITION_LOOKUP[local_player_unit]
+	local num_deus_chests = Broadphase.query(self._broadphase, local_player_position, self._deus_chest_check_range, DEUS_CHEST_FETCH_RESULTS)
 
-	for i = 1, min do
-		local get_weapon_preload_packages = _deus_chest_to_extension[tbl_2[i]]:get_weapon_preload_packages()
+	num_deus_chests = math.min(num_deus_chests, self._deus_chest_preload_amount)
 
-		for i_2, v in ipairs(get_weapon_preload_packages) do
-			tbl_4[v] = true
+	local deus_chest_to_extension = self._deus_chest_to_extension
+
+	for i = 1, num_deus_chests do
+		local deus_chest_unit = DEUS_CHEST_FETCH_RESULTS[i]
+		local preload_extension = deus_chest_to_extension[deus_chest_unit]
+		local preload_packages = preload_extension:get_weapon_preload_packages()
+
+		for _, needed_package in ipairs(preload_packages) do
+			all_needed_packages[needed_package] = true
 		end
 	end
 
-	if not not fn(tbl_4, get_player_preload_packages) then
-		self:set_player_preload_packages(local_player, tbl_4)
+	local own_preload_packages_changed = not is_preload_list_equal(all_needed_packages, own_preload_packages)
+
+	if own_preload_packages_changed then
+		self:set_player_preload_packages(local_player, all_needed_packages)
 	end
 
-	table.clear(tbl_4)
-	table.clear(tbl_3)
-	table.clear(tbl_5)
+	table.clear(all_needed_packages)
+	table.clear(missing_packages)
+	table.clear(packages_to_remove)
 
-	local _package_manager = self._package_manager
+	local package_manager = self._package_manager
 	local human_players = self._player_manager:human_players()
 
-	for k, v_2 in pairs(human_players) do
-		local get_player_preload_packages_2 = self:get_player_preload_packages(v_2)
+	for _, player in pairs(human_players) do
+		local preload_packages = self:get_player_preload_packages(player)
 
-		for k_2, v_3 in pairs(get_player_preload_packages_2) do
-			tbl_4[k_2] = true
+		for needed_package, _ in pairs(preload_packages) do
+			all_needed_packages[needed_package] = true
 		end
 
-		for k_3, v_4 in pairs(get_player_preload_packages_2) do
-			if not _package_manager:has_loaded(k_3, str) then
-				tbl_3[k_3] = true
+		for needed_package, _ in pairs(preload_packages) do
+			if not package_manager:has_loaded(needed_package, PACKAGE_MANAGER_REFERENCE_NAME) then
+				missing_packages[needed_package] = true
 			end
 		end
 	end
 
-	local _loaded_or_loading_packages = self._loaded_or_loading_packages
+	local loaded_or_loading_packages = self._loaded_or_loading_packages
 
-	for k_4, v_5 in pairs(tbl_3) do
-		if not _package_manager:is_loading(k_4) then
-			local flag_2 = true
+	for missing_package, _ in pairs(missing_packages) do
+		if not package_manager:is_loading(missing_package) then
+			local async = true
 
-			_loaded_or_loading_packages[k_4] = true
+			loaded_or_loading_packages[missing_package] = true
 
-			_package_manager:load(k_4, str, nil, flag_2)
+			package_manager:load(missing_package, PACKAGE_MANAGER_REFERENCE_NAME, nil, async)
 		end
 	end
 
-	for k_5, v_6 in pairs(_loaded_or_loading_packages) do
-		tbl_5[k_5] = true
+	for package, _ in pairs(loaded_or_loading_packages) do
+		packages_to_remove[package] = true
 	end
 
-	for k_6, v_7 in pairs(tbl_4) do
-		tbl_5[k_6] = nil
+	for needed_package, _ in pairs(all_needed_packages) do
+		packages_to_remove[needed_package] = nil
 	end
 
-	for k_7, v_8 in pairs(tbl_5) do
-		if not _package_manager:can_unload(k_7) then
-			_package_manager:unload(k_7, str)
+	for package_to_remove, _ in pairs(packages_to_remove) do
+		if package_manager:can_unload(package_to_remove) then
+			package_manager:unload(package_to_remove, PACKAGE_MANAGER_REFERENCE_NAME)
 
-			_loaded_or_loading_packages[k_7] = nil
+			loaded_or_loading_packages[package_to_remove] = nil
 		end
 	end
 
-	self._timer = arg_7_2 + self._deus_chest_update_frequency
+	self._timer = t + self._deus_chest_update_frequency
 end
 
-DeusChestPreloadSystem.on_add_extension = function (self, arg_8_1, arg_8_2, arg_8_3, arg_8_4, ...)
+DeusChestPreloadSystem.on_add_extension = function (self, world, unit, extension_name, extension_init_data, ...)
 	-- function 8
-	local on_add_extension = DeusChestPreloadSystem.super.on_add_extension(self, arg_8_1, arg_8_2, arg_8_3, arg_8_4)
-	local var_8_1 = POSITION_LOOKUP[arg_8_2]
-	local add = Broadphase.add(self._broadphase, arg_8_2, var_8_1, 0.1)
+	local extension = DeusChestPreloadSystem.super.on_add_extension(self, world, unit, extension_name, extension_init_data)
+	local position = POSITION_LOOKUP[unit]
+	local id = Broadphase.add(self._broadphase, unit, position, 0.1)
 
-	self._broadphase_ids[arg_8_2] = add
-	self._deus_chest_to_extension[arg_8_2] = on_add_extension
+	self._broadphase_ids[unit] = id
+	self._deus_chest_to_extension[unit] = extension
 
-	return on_add_extension
+	return extension
 end
 
-DeusChestPreloadSystem.on_remove_extension = function (self, arg_9_1, arg_9_2, ...)
+DeusChestPreloadSystem.on_remove_extension = function (self, unit, extension_name, ...)
 	-- function 9
-	local _broadphase_ids = self._broadphase_ids
-	local var_9_1 = _broadphase_ids[arg_9_1]
+	local ids = self._broadphase_ids
+	local id = ids[unit]
 
-	Broadphase.remove(self._broadphase, var_9_1)
+	Broadphase.remove(self._broadphase, id)
 
-	_broadphase_ids[arg_9_1] = nil
-	self._deus_chest_to_extension[arg_9_1] = nil
+	ids[unit] = nil
+	self._deus_chest_to_extension[unit] = nil
 
-	return DeusChestPreloadSystem.super.on_remove_extension(self, arg_9_1, arg_9_2, ...)
+	return DeusChestPreloadSystem.super.on_remove_extension(self, unit, extension_name, ...)
 end
 
-DeusChestPreloadSystem.get_player_preload_packages = function (self, arg_10_1)
+DeusChestPreloadSystem.get_player_preload_packages = function (self, player)
 	-- function 10
-	local peer_id = arg_10_1.peer_id
-	local local_player_id = arg_10_1:local_player_id()
+	local peer_id = player.peer_id
+	local local_player_id = player:local_player_id()
 
-	if not peer_id and not local_player_id then
-		local get_key = self._shared_state:get_key("preload_packages", nil, local_player_id)
+	if peer_id and local_player_id then
+		local key = self._shared_state:get_key("preload_packages", nil, local_player_id)
 
-		return self._shared_state:get_peer(peer_id, get_key)
+		return self._shared_state:get_peer(peer_id, key)
 	else
 		return nil
 	end
 end
 
-DeusChestPreloadSystem.set_player_preload_packages = function (self, arg_11_1, arg_11_2)
+DeusChestPreloadSystem.set_player_preload_packages = function (self, player, preload_packages)
 	-- function 11
-	local peer_id = arg_11_1.peer_id
-	local local_player_id = arg_11_1:local_player_id()
-	local get_key = self._shared_state:get_key("preload_packages", nil, local_player_id)
+	local peer_id = player.peer_id
+	local local_player_id = player:local_player_id()
+	local key = self._shared_state:get_key("preload_packages", nil, local_player_id)
 
-	self._shared_state:set_peer(peer_id, get_key, table.clone(arg_11_2))
+	self._shared_state:set_peer(peer_id, key, table.clone(preload_packages))
 end

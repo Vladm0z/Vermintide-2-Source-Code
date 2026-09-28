@@ -1,8 +1,8 @@
 -- chunkname: @scripts/ui/cutscene_overlay_templates/cutscene_template_bless_intro.lua
 
-local scripts_ui_cutscene_overlay_templates_cutscene_utils = require("scripts/ui/cutscene_overlay_templates/cutscene_utils")
-local num = 700
-local tbl = {
+local utils = require("scripts/ui/cutscene_overlay_templates/cutscene_utils")
+local start_layer = 700
+local template_settings = {
 	template_1 = {
 		{
 			fade_out_duration = 0.3,
@@ -21,7 +21,7 @@ local tbl = {
 			offset = {
 				0,
 				20,
-				num
+				start_layer
 			}
 		},
 		{
@@ -41,7 +41,7 @@ local tbl = {
 			offset = {
 				0,
 				20,
-				num
+				start_layer
 			}
 		},
 		{
@@ -61,7 +61,7 @@ local tbl = {
 			offset = {
 				0,
 				20,
-				num
+				start_layer
 			}
 		},
 		{
@@ -81,7 +81,7 @@ local tbl = {
 			offset = {
 				0,
 				20,
-				num
+				start_layer
 			}
 		},
 		{
@@ -101,7 +101,7 @@ local tbl = {
 			offset = {
 				0,
 				20,
-				num
+				start_layer
 			}
 		},
 		{
@@ -121,7 +121,7 @@ local tbl = {
 			offset = {
 				0,
 				20,
-				num
+				start_layer
 			}
 		},
 		{
@@ -141,7 +141,7 @@ local tbl = {
 			offset = {
 				0,
 				20,
-				num
+				start_layer
 			}
 		},
 		{
@@ -161,7 +161,7 @@ local tbl = {
 			offset = {
 				0,
 				20,
-				num
+				start_layer
 			}
 		},
 		{
@@ -181,14 +181,14 @@ local tbl = {
 			offset = {
 				0,
 				20,
-				num
+				start_layer
 			}
 		}
 	}
 }
 
-scripts_ui_cutscene_overlay_templates_cutscene_utils.convert_string_timestamps_to_seconds(tbl)
+utils.convert_string_timestamps_to_seconds(template_settings)
 
 return {
-	templates = tbl
+	templates = template_settings
 }

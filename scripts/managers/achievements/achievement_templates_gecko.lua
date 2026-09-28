@@ -1,34 +1,34 @@
 -- chunkname: @scripts/managers/achievements/achievement_templates_gecko.lua
 
-local var_0_0 = rawget(_G, "LevelSettings")
+local LevelSettings = rawget(_G, "LevelSettings")
 
-for k, v in pairs(var_0_0) do
-	if not table.contains(UnlockableLevels, k) then
-		local count = #QuestSettings.scrap_count_level
+for level_name, _ in pairs(LevelSettings) do
+	if table.contains(UnlockableLevels, level_name) then
+		local scrap_count_level_num = #QuestSettings.scrap_count_level
 
-		for k_2 = 1, count do
-			local str = "gecko_scraps_" .. k .. "_" .. k_2
-			local str_2 = "collected_painting_scraps"
+		for j = 1, scrap_count_level_num do
+			local id = "gecko_scraps_" .. level_name .. "_" .. j
+			local statistics_id = "collected_painting_scraps"
 
-			AchievementTemplates.achievements[str] = {
-				name = "achv_" .. str .. "_name",
-				icon = "achievement_trophy_gecko_scraps_" .. k,
+			AchievementTemplates.achievements[id] = {
+				name = "achv_" .. id .. "_name",
+				icon = "achievement_trophy_gecko_scraps_" .. level_name,
 				desc = function ()
 					-- function 1
-					return string.format(Localize("achv_" .. str .. "_desc"), QuestSettings.scrap_count_level[k_2])
+					return string.format(Localize("achv_" .. id .. "_desc"), QuestSettings.scrap_count_level[j])
 				end,
-				completed = function (self, arg_2_1)
+				completed = function (statistics_db, stats_id)
 					-- function 2
-					return self:get_persistent_stat(arg_2_1, str_2, k) >= QuestSettings.scrap_count_level[k_2]
+					return statistics_db:get_persistent_stat(stats_id, statistics_id, level_name) >= QuestSettings.scrap_count_level[j]
 				end,
-				progress = function (self, arg_3_1)
+				progress = function (statistics_db, stats_id)
 					-- function 3
-					local get_persistent_stat = self:get_persistent_stat(arg_3_1, str_2, k)
-					local min = math.min(get_persistent_stat, QuestSettings.scrap_count_level[k_2])
+					local scrap_progression = statistics_db:get_persistent_stat(stats_id, statistics_id, level_name)
+					local progression_comparison = math.min(scrap_progression, QuestSettings.scrap_count_level[j])
 
 					return {
-						min,
-						QuestSettings.scrap_count_level[k_2]
+						progression_comparison,
+						QuestSettings.scrap_count_level[j]
 					}
 				end
 			}
@@ -36,36 +36,39 @@ for k, v in pairs(var_0_0) do
 	end
 end
 
-local count_2 = #QuestSettings.scrap_count_generic
+local scrap_count_generic_num = #QuestSettings.scrap_count_generic
 
-for l = 1, count_2 do
-	local str_3 = "gecko_scraps_generic_" .. l
+for i = 1, scrap_count_generic_num do
+	local id = "gecko_scraps_generic_" .. i
 
-	AchievementTemplates.achievements[str_3] = {
+	AchievementTemplates.achievements[id] = {
 		icon = "achievement_trophy_gecko_scraps_generic",
-		name = "achv_" .. str_3 .. "_name",
+		name = "achv_" .. id .. "_name",
 		desc = function ()
 			-- function 4
-			return string.format(Localize("achv_" .. str_3 .. "_desc"), QuestSettings.scrap_count_generic[l])
+			return string.format(Localize("achv_" .. id .. "_desc"), QuestSettings.scrap_count_generic[i])
 		end,
-		completed = function (self, arg_5_1)
+		completed = function (statistics_db, stats_id)
 			-- function 5
-			local var_5_0
-			local str = "collected_painting_scraps_generic"
-			local get_persistent_stat = self:get_persistent_stat(arg_5_1, str)
+			local total_scrap_amount
+			local statistics_id = "collected_painting_scraps_generic"
 
-			return not get_persistent_stat and get_persistent_stat >= QuestSettings.scrap_count_generic[l]
+			total_scrap_amount = statistics_db:get_persistent_stat(stats_id, statistics_id)
+
+			return not not total_scrap_amount and total_scrap_amount >= QuestSettings.scrap_count_generic[i]
 		end,
-		progress = function (self, arg_6_1)
+		progress = function (statistics_db, stats_id)
 			-- function 6
-			local var_6_0
-			local str = "collected_painting_scraps_generic"
-			local get_persistent_stat = self:get_persistent_stat(arg_6_1, str)
-			local min = math.min(get_persistent_stat, QuestSettings.scrap_count_generic[l])
+			local total_scrap_amount
+			local statistics_id = "collected_painting_scraps_generic"
+
+			total_scrap_amount = statistics_db:get_persistent_stat(stats_id, statistics_id)
+
+			local progression_comparison = math.min(total_scrap_amount, QuestSettings.scrap_count_generic[i])
 
 			return {
-				min,
-				QuestSettings.scrap_count_generic[l]
+				progression_comparison,
+				QuestSettings.scrap_count_generic[i]
 			}
 		end
 	}

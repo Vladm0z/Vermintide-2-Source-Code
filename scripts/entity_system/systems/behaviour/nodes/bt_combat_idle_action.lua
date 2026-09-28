@@ -4,104 +4,105 @@ require("scripts/entity_system/systems/behaviour/nodes/bt_node")
 
 BTCombatIdleAction = class(BTCombatIdleAction, BTNode)
 
-BTCombatIdleAction.init = function (arg_1_0, ...)
+BTCombatIdleAction.init = function (self, ...)
 	-- function 1
-	BTCombatIdleAction.super.init(arg_1_0, ...)
+	BTCombatIdleAction.super.init(self, ...)
 end
 
 BTCombatIdleAction.name = "BTCombatIdleAction"
 
-local function fn(self)
+local function randomize(event)
 	-- function 2
-	if type(self) == "table" then
-		return self[Math.random(1, #self)]
+	if type(event) == "table" then
+		return event[Math.random(1, #event)]
 	else
-		return self
+		return event
 	end
 end
 
-BTCombatIdleAction.enter = function (self, arg_3_1, arg_3_2, arg_3_3)
+BTCombatIdleAction.enter = function (self, unit, blackboard, t)
 	-- function 3
-	self:_check_if_should_idle(arg_3_1, arg_3_2)
-	arg_3_2.navigation_extension:set_enabled(true)
+	self:_check_if_should_idle(unit, blackboard)
+	blackboard.navigation_extension:set_enabled(true)
 end
 
-BTCombatIdleAction.leave = function (arg_4_0, arg_4_1, arg_4_2, arg_4_3, arg_4_4, arg_4_5)
+BTCombatIdleAction.leave = function (self, unit, blackboard, t, reason, destroy)
 	-- function 4
-	arg_4_2.combat_idling = nil
+	blackboard.combat_idling = nil
 end
 
-local num = 0.0001
+local EPSILON_SQ = 0.0001
 
-BTCombatIdleAction._check_if_should_idle = function (self, arg_5_1, arg_5_2)
+BTCombatIdleAction._check_if_should_idle = function (self, unit, blackboard)
 	-- function 5
-	if not arg_5_2.combat_idling then
-		local locomotion_extension = arg_5_2.locomotion_extension
+	if not blackboard.combat_idling then
+		local locomotion_ext = blackboard.locomotion_extension
+		local speed_sq = Vector3.length_squared(locomotion_ext:current_velocity())
 
-		if Vector3.length_squared(locomotion_extension:current_velocity()) < num then
-			arg_5_2.combat_idling = true
+		if speed_sq < EPSILON_SQ then
+			blackboard.combat_idling = true
 
-			self:_init_idle_anim(arg_5_1, arg_5_2)
+			self:_init_idle_anim(unit, blackboard)
 		end
 	end
 end
 
-BTCombatIdleAction._init_idle_anim = function (self, arg_6_1, arg_6_2)
+BTCombatIdleAction._init_idle_anim = function (self, unit, blackboard)
 	-- function 6
-	local network = Managers.state.network
-	local str = "idle"
-	local action_data = self._tree_node.action_data
+	local network_manager = Managers.state.network
+	local animation = "idle"
+	local action = self._tree_node.action_data
 
-	arg_6_2.action = action_data
+	blackboard.action = action
 
-	if not action_data and not action_data.alerted_anims and not arg_6_2.confirmed_player_sighting then
-		str = action_data.alerted_anims[math.random(1, #action_data.alerted_anims)]
-	elseif not action_data and not action_data.idle_animation then
-		str = fn(action_data.idle_animation)
-	elseif not (not arg_6_2.is_passive and arg_6_2.spawn_type == "horde" or arg_6_2.spawn_type == "horde_hidden") then
-		if not action_data and not action_data.animations then
-			local animations = action_data.animations
-			local num = action_data.anim_cycle_index % #animations + 1
+	if action and action.alerted_anims and blackboard.confirmed_player_sighting then
+		animation = action.alerted_anims[math.random(1, #action.alerted_anims)]
+	elseif action and action.idle_animation then
+		animation = randomize(action.idle_animation)
+	elseif blackboard.is_passive and blackboard.spawn_type ~= "horde" and blackboard.spawn_type ~= "horde_hidden" then
+		if action and action.animations then
+			local anims = action.animations
+			local index = action.anim_cycle_index % #anims + 1
 
-			str = animations[num]
-			action_data.anim_cycle_index = num
+			animation = anims[index]
+			action.anim_cycle_index = index
 		end
-	elseif not action_data and not action_data.combat_animations then
-		local combat_animations = action_data.combat_animations
-		local num_2 = action_data.anim_cycle_index % #combat_animations + 1
+	elseif action and action.combat_animations then
+		local anims = action.combat_animations
+		local index = action.anim_cycle_index % #anims + 1
 
-		str = combat_animations[num_2]
-		action_data.anim_cycle_index = num_2
+		animation = anims[index]
+		action.anim_cycle_index = index
 	end
 
-	local optional_spawn_data = arg_6_2.optional_spawn_data
-	local flag = not optional_spawn_data and optional_spawn_data.idle_animation
+	local optional_spawn_data = blackboard.optional_spawn_data
+	local idle_animation = not not optional_spawn_data and not not optional_spawn_data.idle_animation
 
-	if not (not flag and flag == "") then
-		str = flag
+	if idle_animation and idle_animation ~= "" then
+		animation = idle_animation
 	end
 
-	if arg_6_2.move_state ~= "idle" or not action_data or not action_data.force_idle_animation then
-		network:anim_event(arg_6_1, str)
+	if blackboard.move_state ~= "idle" or action and action.force_idle_animation then
+		network_manager:anim_event(unit, animation)
 
-		arg_6_2.move_state = "idle"
+		blackboard.move_state = "idle"
 	end
 
-	arg_6_2.locomotion_extension:set_wanted_velocity(Vector3.zero())
+	blackboard.locomotion_extension:set_wanted_velocity(Vector3.zero())
 end
 
-local alive = Unit.alive
+local Unit_alive = Unit.alive
 
-BTCombatIdleAction.run = function (self, arg_7_1, arg_7_2, arg_7_3, arg_7_4)
+BTCombatIdleAction.run = function (self, unit, blackboard, t, dt)
 	-- function 7
-	self:_check_if_should_idle(arg_7_1, arg_7_2)
+	self:_check_if_should_idle(unit, blackboard)
 
-	local target_unit = arg_7_2.target_unit
+	local target_unit = blackboard.target_unit
 
-	if not alive(target_unit) then
-		local rotation_towards_unit_flat = LocomotionUtils.rotation_towards_unit_flat(arg_7_1, target_unit)
+	if Unit_alive(target_unit) then
+		local rot = LocomotionUtils.rotation_towards_unit_flat(unit, target_unit)
 
-		arg_7_2.locomotion_extension:set_wanted_rotation(rotation_towards_unit_flat)
+		blackboard.locomotion_extension:set_wanted_rotation(rot)
 	end
 
 	return "running"

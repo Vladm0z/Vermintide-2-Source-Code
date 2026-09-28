@@ -5,7 +5,7 @@ require("scripts/managers/challenges/pickup_spawn_type")
 
 local InGameChallengeRewards = InGameChallengeRewards
 
-InGameChallengeRewards = InGameChallengeRewards or {}
+InGameChallengeRewards = not not InGameChallengeRewards or not not {}
 InGameChallengeRewards = InGameChallengeRewards
 InGameChallengeRewards.test_buff = {
 	target = "party",
@@ -375,119 +375,124 @@ InGameChallengeRewards.markus_questing_knight_passive_health_regen_vs = {
 
 DLCUtils.merge("ingame_challenge_rewards", InGameChallengeRewards)
 
-local function fn(arg_1_0, arg_1_1, arg_1_2)
-	-- function 1
-	if not BuffUtils.get_buff_template(arg_1_1, "adventure") then
-		InGameChallengeRewards[arg_1_0].description_values = {
-			{
-				value_type = "percent",
-				value_fmt = "%+d%%",
-				value = BuffUtils.get_buff_template(arg_1_1, "adventure").buffs[1].multiplier
-			}
-		}
-	else
-		InGameChallengeRewards[arg_1_0].description_values = {}
-	end
-
-	local str = arg_1_0 .. "_improved"
-	local str_2 = arg_1_1 .. "_improved"
-
-	if not InGameChallengeRewards[str] then
-		if not BuffUtils.get_buff_template(str_2, "adventure") then
-			InGameChallengeRewards[str].description_values = {
+do
+	local function copy_buff_values(reward_name, buff_name, value_type)
+		-- function 1
+		if BuffUtils.get_buff_template(buff_name, "adventure") then
+			InGameChallengeRewards[reward_name].description_values = {
 				{
 					value_type = "percent",
 					value_fmt = "%+d%%",
-					value = BuffUtils.get_buff_template(str_2, "adventure").buffs[1].multiplier
+					value = BuffUtils.get_buff_template(buff_name, "adventure").buffs[1].multiplier
 				}
 			}
 		else
-			InGameChallengeRewards[str].description_values = {}
+			InGameChallengeRewards[reward_name].description_values = {}
+		end
+
+		local reward_name_improved = reward_name .. "_improved"
+		local buff_name_improved = buff_name .. "_improved"
+
+		if InGameChallengeRewards[reward_name_improved] then
+			if BuffUtils.get_buff_template(buff_name_improved, "adventure") then
+				InGameChallengeRewards[reward_name_improved].description_values = {
+					{
+						value_type = "percent",
+						value_fmt = "%+d%%",
+						value = BuffUtils.get_buff_template(buff_name_improved, "adventure").buffs[1].multiplier
+					}
+				}
+			else
+				InGameChallengeRewards[reward_name_improved].description_values = {}
+			end
 		end
 	end
-end
 
-fn("markus_questing_knight_passive_cooldown_reduction", "markus_questing_knight_passive_cooldown_reduction")
-fn("markus_questing_knight_passive_attack_speed", "markus_questing_knight_passive_attack_speed")
-fn("markus_questing_knight_passive_power_level", "markus_questing_knight_passive_power_level")
-fn("markus_questing_knight_passive_damage_taken", "markus_questing_knight_passive_damage_taken")
+	copy_buff_values("markus_questing_knight_passive_cooldown_reduction", "markus_questing_knight_passive_cooldown_reduction")
+	copy_buff_values("markus_questing_knight_passive_attack_speed", "markus_questing_knight_passive_attack_speed")
+	copy_buff_values("markus_questing_knight_passive_power_level", "markus_questing_knight_passive_power_level")
+	copy_buff_values("markus_questing_knight_passive_damage_taken", "markus_questing_knight_passive_damage_taken")
 
-for k, v in pairs(DLCSettings) do
-	local ingame_challenge_rewards_description = v.ingame_challenge_rewards_description
+	for _, dlc in pairs(DLCSettings) do
+		local ingame_challenge_rewards_description = dlc.ingame_challenge_rewards_description
 
-	if not ingame_challenge_rewards_description then
-		for k_2, v_2 in pairs(ingame_challenge_rewards_description) do
-			fn(k_2, v_2)
+		if ingame_challenge_rewards_description then
+			for reward_name, buff_name in pairs(ingame_challenge_rewards_description) do
+				copy_buff_values(reward_name, buff_name)
+			end
 		end
 	end
 end
 
 InGameChallengeRewardTypes = {
-	buff = function (self, arg_2_1, arg_2_2)
+	buff = function (reward_data, target_units, reward_instigator)
 		-- function 2
-		local system = Managers.state.entity:system("buff_system")
-		local buffs = self.buffs
-		local server_controlled = self.server_controlled
-		local tbl = {}
+		local buff_system = Managers.state.entity:system("buff_system")
+		local buffs = reward_data.buffs
+		local server_controlled = reward_data.server_controlled
+		local return_data = {}
 
-		for i = 1, #arg_2_1 do
-			local var_2_4 = arg_2_1[i]
+		for i = 1, #target_units do
+			local unit = target_units[i]
 
-			if not var_2_4 and not Unit.alive(var_2_4) then
-				local tbl_2 = {}
+			if unit and Unit.alive(unit) then
+				local server_buff_ids = {}
 
-				for j = 1, #buffs do
-					tbl_2[j] = system:add_buff(var_2_4, buffs[j], var_2_4, server_controlled)
+				for buff_id = 1, #buffs do
+					server_buff_ids[buff_id] = buff_system:add_buff(unit, buffs[buff_id], unit, server_controlled)
 				end
 
-				tbl[var_2_4] = tbl_2
+				return_data[unit] = server_buff_ids
 			end
 		end
 
-		return tbl
+		return return_data
 	end,
-	pickup = function (self, arg_3_1, arg_3_2)
+	pickup = function (reward_data, target_units, reward_instigator)
 		-- function 3
-		local pickup_type = self.pickup_type
+		local pickup_type = reward_data.pickup_type
 		local network_transmit = Managers.state.network.network_transmit
-		local system = Managers.state.entity:system("pickup_system")
+		local pickup_system = Managers.state.entity:system("pickup_system")
 
-		for i = 1, #arg_3_1 do
-			local var_3_3 = arg_3_1[i]
+		for i = 1, #target_units do
+			local unit = target_units[i]
 
-			if not var_3_3 and not Unit.alive(var_3_3) then
-				local extension = ScriptUnit.extension(var_3_3, "inventory_system")
-				local var_3_5 = AllPickups[pickup_type]
-				local slot_name = var_3_5.slot_name
-				local item_name = var_3_5.item_name
-				local get_slot_data = extension:get_slot_data(slot_name)
+			if unit and Unit.alive(unit) then
+				local inventory_extension = ScriptUnit.extension(unit, "inventory_system")
+				local pickup_settings = AllPickups[pickup_type]
+				local slot_name = pickup_settings.slot_name
+				local item_name = pickup_settings.item_name
+				local slot_data = inventory_extension:get_slot_data(slot_name)
 
-				if not (self.pickup_spawn_type == PickupSpawnType.Replace or get_slot_data or self.pickup_spawn_type ~= PickupSpawnType.AlwaysDrop) then
-					if self.pickup_spawn_type ~= PickupSpawnType.NeverDrop then
-						local var_3_9 = POSITION_LOOKUP[var_3_3]
+				if reward_data.pickup_spawn_type ~= PickupSpawnType.Replace and (slot_data or reward_data.pickup_spawn_type == PickupSpawnType.AlwaysDrop) then
+					if reward_data.pickup_spawn_type ~= PickupSpawnType.NeverDrop then
+						local position = POSITION_LOOKUP[unit]
 
-						system:buff_spawn_pickup(pickup_type, var_3_9, true)
+						pickup_system:buff_spawn_pickup(pickup_type, position, true)
 					end
 				else
-					local go_id = Managers.state.unit_storage:go_id(var_3_3)
-					local var_3_11 = NetworkLookup.equipment_slots[slot_name]
-					local var_3_12 = NetworkLookup.item_names[item_name]
-					local var_3_13 = NetworkLookup.weapon_skins["n/a"]
-					local owner = Managers.player:owner(var_3_3)
+					local go_id = Managers.state.unit_storage:go_id(unit)
+					local slot_id = NetworkLookup.equipment_slots[slot_name]
+					local item_id = NetworkLookup.item_names[item_name]
+					local weapon_skin_id = NetworkLookup.weapon_skins["n/a"]
+					local player = Managers.player:owner(unit)
+					local is_remote = not not player and not not player.remote
 
-					if not (not owner and owner.remote) then
-						network_transmit:send_rpc("rpc_add_inventory_slot_item", owner.peer_id, go_id, var_3_11, var_3_12, var_3_13)
+					if is_remote then
+						network_transmit:send_rpc("rpc_add_inventory_slot_item", player.peer_id, go_id, slot_id, item_id, weapon_skin_id)
 					else
-						network_transmit:queue_local_rpc("rpc_add_inventory_slot_item", go_id, var_3_11, var_3_12, var_3_13)
+						network_transmit:queue_local_rpc("rpc_add_inventory_slot_item", go_id, slot_id, item_id, weapon_skin_id)
 					end
 				end
 			end
 		end
 	end,
-	boon = function (self, arg_4_1, arg_4_2)
+	boon = function (reward_data, target_units, reward_instigator)
 		-- function 4
-		if not Managers.player:player_from_unique_id(arg_4_2) then
-			Managers.boon:add_boon(arg_4_2, self.reward_id, self.consume_type, self.consume_value, self.reactivation_rule)
+		local owner = Managers.player:player_from_unique_id(reward_instigator)
+
+		if owner then
+			Managers.boon:add_boon(reward_instigator, reward_data.reward_id, reward_data.consume_type, reward_data.consume_value, reward_data.reactivation_rule)
 		end
 	end
 }
@@ -495,21 +500,21 @@ InGameChallengeRewardTypes = {
 DLCUtils.merge("ingame_challenge_reward_types", InGameChallengeRewardTypes)
 
 InGameChallengeRewardRevokeTypes = {
-	buff = function (self, arg_5_1, arg_5_2, arg_5_3)
+	buff = function (reward_data, target_units, reward_instigator, additional_data)
 		-- function 5
-		if not self.server_controlled then
+		if not reward_data.server_controlled then
 			return
 		end
 
-		local system = Managers.state.entity:system("buff_system")
+		local buff_system = Managers.state.entity:system("buff_system")
 
-		for i = 1, #arg_5_1 do
-			local var_5_1 = arg_5_1[i]
-			local var_5_2 = arg_5_3[var_5_1]
+		for i = 1, #target_units do
+			local unit = target_units[i]
+			local server_buff_ids = additional_data[unit]
 
-			if not var_5_1 and not Unit.alive(var_5_1) and not var_5_2 then
-				for j = 1, #var_5_2 do
-					system:remove_server_controlled_buff(var_5_1, var_5_2[j])
+			if unit and Unit.alive(unit) and server_buff_ids then
+				for buff_idx = 1, #server_buff_ids do
+					buff_system:remove_server_controlled_buff(unit, server_buff_ids[buff_idx])
 				end
 			end
 		end
@@ -518,45 +523,45 @@ InGameChallengeRewardRevokeTypes = {
 
 DLCUtils.merge("ingame_challenge_revoke_types", InGameChallengeRewardRevokeTypes)
 
-local tbl = {}
+local empty_table = {}
 
 InGameChallengeRewardTargets = {
-	owner = function (arg_6_0)
+	owner = function (owner_unique_id)
 		-- function 6
-		local player_from_unique_id = Managers.player:player_from_unique_id(arg_6_0)
+		local owner = Managers.player:player_from_unique_id(owner_unique_id)
 
-		if not player_from_unique_id then
+		if owner then
 			return {
-				player_from_unique_id.player_unit
+				owner.player_unit
 			}
 		end
 
-		return tbl
+		return empty_table
 	end,
-	party = function (arg_7_0)
+	party = function (owner_unique_id)
 		-- function 7
-		local party = Managers.party
-		local get_status_from_unique_id = party:get_status_from_unique_id(arg_7_0)
-		local flag = not get_status_from_unique_id and party:get_players_in_party(get_status_from_unique_id.party_id)
+		local party_manager = Managers.party
+		local status = party_manager:get_status_from_unique_id(owner_unique_id)
+		local party_members = not not status and not not party_manager:get_players_in_party(status.party_id)
 
-		if not flag then
-			local tbl_2 = {}
-			local num = 0
+		if party_members then
+			local targets = {}
+			local target_idx = 0
 
-			for i = 1, #flag do
-				local player = flag[i].player
-				local flag_2 = not player and player.player_unit
+			for i = 1, #party_members do
+				local player = party_members[i].player
+				local unit = not not player and not not player.player_unit
 
-				if not flag_2 then
-					num = num + 1
-					tbl_2[num] = flag_2
+				if unit then
+					target_idx = target_idx + 1
+					targets[target_idx] = unit
 				end
 			end
 
-			return tbl_2
+			return targets
 		end
 
-		return tbl
+		return empty_table
 	end
 }
 

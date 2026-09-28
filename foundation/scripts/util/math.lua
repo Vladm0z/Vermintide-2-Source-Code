@@ -1,256 +1,257 @@
 -- chunkname: @foundation/scripts/util/math.lua
 
 local math = math
-local sqrt = math.sqrt
-local cos = math.cos
-local sin = math.sin
-local random = math.random
-local max = math.max
-local abs = math.abs
-local acos = math.acos
+local math_sqrt, math_cos, math_sin, math_random = math.sqrt, math.cos, math.sin, math.random
+local math_max, math_abs, math_acos = math.max, math.abs, math.acos
 local pi = math.pi
 
 math.epsilon = 0.001
 math.tau = 2 * pi
 math.half_pi = 0.5 * pi
-math.inverse_sqrt_2 = 1 / sqrt(2)
+math.inverse_sqrt_2 = 1 / math_sqrt(2)
 math.degrees_to_radians = math.rad
 math.radians_to_degrees = math.deg
 
-math.sign = function (arg_1_0)
+math.sign = function (x)
 	-- function 1
-	if arg_1_0 > 0 then
+	if x > 0 then
 		return 1
-	elseif arg_1_0 < 0 then
+	elseif x < 0 then
 		return -1
 	else
 		return 0
 	end
 end
 
-math.clamp = function (arg_2_0, arg_2_1, arg_2_2)
+math.clamp = function (value, min, max)
 	-- function 2
-	if arg_2_2 < arg_2_0 then
-		return arg_2_2
-	elseif arg_2_0 < arg_2_1 then
-		return arg_2_1
+	if max < value then
+		return max
+	elseif value < min then
+		return min
 	else
-		return arg_2_0
+		return value
 	end
 end
 
-math.clamp01 = function (arg_3_0)
+math.clamp01 = function (value)
 	-- function 3
-	if arg_3_0 > 1 then
+	if value > 1 then
 		return 1
-	elseif arg_3_0 < 0 then
+	elseif value < 0 then
 		return 0
 	else
-		return arg_3_0
+		return value
 	end
 end
 
-local clamp = math.clamp
+local math_clamp = math.clamp
 
-math.normalize = function (arg_4_0, arg_4_1, arg_4_2)
+math.normalize = function (val, min, max)
 	-- function 4
-	return (arg_4_0 - arg_4_1) / (arg_4_2 - arg_4_1)
+	return (val - min) / (max - min)
 end
 
-math.lerp = function (arg_5_0, arg_5_1, arg_5_2)
+math.lerp = function (a, b, p)
 	-- function 5
-	return arg_5_0 * (1 - arg_5_2) + arg_5_1 * arg_5_2
+	return a * (1 - p) + b * p
 end
 
-local lerp = math.lerp
+local math_lerp = math.lerp
 
-math.lerp_clamped = function (arg_6_0, arg_6_1, arg_6_2)
+math.lerp_clamped = function (a, b, v)
 	-- function 6
-	return lerp(arg_6_0, arg_6_1, math.clamp01(arg_6_2))
+	return math_lerp(a, b, math.clamp01(v))
 end
 
-math.inv_lerp = function (arg_7_0, arg_7_1, arg_7_2)
+math.inv_lerp = function (a, b, v)
 	-- function 7
-	return (arg_7_2 - arg_7_0) / (arg_7_1 - arg_7_0)
+	return (v - a) / (b - a)
 end
 
-math.inv_lerp_clamped = function (arg_8_0, arg_8_1, arg_8_2)
+math.inv_lerp_clamped = function (a, b, v)
 	-- function 8
-	arg_8_2 = not (arg_8_0 < arg_8_1) or not math.clamp(arg_8_2, arg_8_0, arg_8_1) or math.clamp(arg_8_2, arg_8_1, arg_8_0)
+	v = (not (a < b) or not math.clamp(v, a, b)) and not not math.clamp(v, b, a)
 
-	return math.inv_lerp(arg_8_0, arg_8_1, arg_8_2)
+	return math.inv_lerp(a, b, v)
 end
 
-math.remap = function (arg_9_0, arg_9_1, arg_9_2, arg_9_3, arg_9_4)
+math.remap = function (imin, imax, omin, omax, v)
 	-- function 9
-	return (arg_9_4 - arg_9_0) / (arg_9_1 - arg_9_0) * (arg_9_3 - arg_9_2) + arg_9_2
+	return (v - imin) / (imax - imin) * (omax - omin) + omin
 end
 
-math.remap_clamped = function (arg_10_0, arg_10_1, arg_10_2, arg_10_3, arg_10_4)
+math.remap_clamped = function (imin, imax, omin, omax, v)
 	-- function 10
-	return math.clamp01((arg_10_4 - arg_10_0) / (arg_10_1 - arg_10_0)) * (arg_10_3 - arg_10_2) + arg_10_2
+	return math.clamp01((v - imin) / (imax - imin)) * (omax - omin) + omin
 end
 
-math.radian_lerp = function (arg_11_0, arg_11_1, arg_11_2)
+math.radian_lerp = function (a, b, p)
 	-- function 11
-	local num = pi * 2
+	local two_pi = pi * 2
 
-	return arg_11_0 + arg_11_2 * (((arg_11_1 - arg_11_0) % num + pi) % num - pi)
+	return a + p * (((b - a) % two_pi + pi) % two_pi - pi)
 end
 
-math.angle_lerp = function (arg_12_0, arg_12_1, arg_12_2)
+math.angle_lerp = function (a, b, p)
 	-- function 12
-	return arg_12_0 + (((arg_12_1 - arg_12_0) % 360 + 540) % 360 - 180) * arg_12_2
+	return a + (((b - a) % 360 + 540) % 360 - 180) * p
 end
 
-math.sirp = function (arg_13_0, arg_13_1, arg_13_2)
+math.sirp = function (a, b, t)
 	-- function 13
-	local num = 0.5 + 0.5 * cos((1 + arg_13_2) * pi)
+	local p = 0.5 + 0.5 * math_cos((1 + t) * pi)
 
-	return lerp(arg_13_0, arg_13_1, num)
+	return math_lerp(a, b, p)
 end
 
-math.auto_lerp = function (arg_14_0, arg_14_1, arg_14_2, arg_14_3, arg_14_4)
+math.auto_lerp = function (index_1, index_2, val_1, val_2, val)
 	-- function 14
-	local num = (arg_14_4 - arg_14_0) / (arg_14_1 - arg_14_0)
+	local t = (val - index_1) / (index_2 - index_1)
 
-	return math.clamp(lerp(arg_14_2, arg_14_3, num), arg_14_2, arg_14_3)
+	return math.clamp(math_lerp(val_1, val_2, t), val_1, val_2)
 end
 
-math.round_with_precision = function (arg_15_0, arg_15_1)
+math.round_with_precision = function (value, precision)
 	-- function 15
-	local num = 10^(arg_15_1 or 0)
+	local mul = 10^(not not precision or not not 0)
 
-	return math.floor(arg_15_0 * num + 0.5) / num
+	return math.floor(value * mul + 0.5) / mul
 end
 
-math.round = function (arg_16_0)
+math.round = function (value)
 	-- function 16
-	return math.floor(arg_16_0 + 0.5)
+	return math.floor(value + 0.5)
 end
 
-math.round_to_closest_multiple = function (arg_17_0, arg_17_1)
+math.round_to_closest_multiple = function (value, multiple)
 	-- function 17
-	arg_17_1 = arg_17_1 or 1
+	multiple = not not multiple or not not 1
 
-	local num = arg_17_0 % arg_17_1
+	local modulo = value % multiple
+	local middle_point = multiple / 2
 
-	if num <= arg_17_1 / 2 then
-		return arg_17_0 - num
+	if modulo <= middle_point then
+		return value - modulo
 	end
 
-	return arg_17_0 + arg_17_1 - num
+	return value + multiple - modulo
 end
 
-math.smoothstep = function (arg_18_0, arg_18_1, arg_18_2)
+math.smoothstep = function (value, min, max)
 	-- function 18
-	fassert(arg_18_1 ~= arg_18_2, "Division by zero.")
+	fassert(min ~= max, "Division by zero.")
 
-	local var_18_0 = clamp((arg_18_0 - arg_18_1) / (arg_18_2 - arg_18_1), 0, 1)
+	local x = math_clamp((value - min) / (max - min), 0, 1)
 
-	return var_18_0 * var_18_0 * var_18_0 * (var_18_0 * (var_18_0 * 6 - 15) + 10)
+	return x * x * x * (x * (x * 6 - 15) + 10)
 end
 
-Math.random_range = function (arg_19_0, arg_19_1)
+Math.random_range = function (min, max)
 	-- function 19
-	return arg_19_0 + random() * (arg_19_1 - arg_19_0)
+	return min + math_random() * (max - min)
 end
 
-math.next_random_range = function (arg_20_0, arg_20_1, arg_20_2)
+math.next_random_range = function (seed, min, max)
 	-- function 20
-	local next_random, var_20_1 = Math.next_random(arg_20_0)
+	local next_seed, value = Math.next_random(seed)
 
-	return next_random, arg_20_1 + var_20_1 * (arg_20_2 - arg_20_1)
+	return next_seed, min + value * (max - min)
 end
 
-math.point_is_inside_2d_box = function (self, arg_21_1, arg_21_2)
+math.point_is_inside_2d_box = function (pos, lower_left_corner, size)
 	-- function 21
-	return not (self[1] > arg_21_1[1]) or not (self[1] < arg_21_1[1] + arg_21_2[1]) or not (self[2] > arg_21_1[2]) or self[2] < arg_21_1[2] + arg_21_2[2]
+	return pos[1] > lower_left_corner[1] and pos[1] < lower_left_corner[1] + size[1] and pos[2] > lower_left_corner[2] and pos[2] < lower_left_corner[2] + size[2]
 end
 
-math.box_overlap_box = function (self, arg_22_1, arg_22_2, arg_22_3)
+math.box_overlap_box = function (a_pos, a_size, b_pos, b_size)
 	-- function 22
-	return not (self[1] + arg_22_1[1] >= arg_22_2[1]) or not (arg_22_2[1] + arg_22_3[1] >= self[1]) or not (self[2] + arg_22_1[2] >= arg_22_2[2]) or arg_22_2[2] + arg_22_3[2] >= self[2]
+	return a_pos[1] + a_size[1] >= b_pos[1] and b_pos[1] + b_size[1] >= a_pos[1] and a_pos[2] + a_size[2] >= b_pos[2] and b_pos[2] + b_size[2] >= a_pos[2]
 end
 
-math.point_is_inside_aabb = function (self, arg_23_1, arg_23_2)
+math.point_is_inside_aabb = function (pos, aabb_pos, aabb_half_extents)
 	-- function 23
-	return self[1] < arg_23_1[1] - arg_23_2[1] or self[1] > arg_23_1[1] + arg_23_2[1] or self[2] < arg_23_1[2] - arg_23_2[2] or self[2] > arg_23_1[2] + arg_23_2[2] or self[3] < arg_23_1[3] - arg_23_2[3] or not (self[3] > arg_23_1[3] + arg_23_2[3])
+	return not (pos[1] < aabb_pos[1] - aabb_half_extents[1]) and not (pos[1] > aabb_pos[1] + aabb_half_extents[1]) and not (pos[2] < aabb_pos[2] - aabb_half_extents[2]) and not (pos[2] > aabb_pos[2] + aabb_half_extents[2]) and not (pos[3] < aabb_pos[3] - aabb_half_extents[3]) and not (pos[3] > aabb_pos[3] + aabb_half_extents[3])
 end
 
-math.point_is_inside_box = function (arg_24_0, arg_24_1, arg_24_2)
+math.point_is_inside_box = function (pos, box_pose, box_half_extents)
 	-- function 24
-	local inverse = Matrix4x4.inverse(arg_24_1)
-	local transform = Matrix4x4.transform(inverse, arg_24_0)
+	local to_local_matrix = Matrix4x4.inverse(box_pose)
+	local local_pos = Matrix4x4.transform(to_local_matrix, pos)
 
-	return math.point_is_inside_aabb(transform, Vector3.zero(), arg_24_2)
+	return math.point_is_inside_aabb(local_pos, Vector3.zero(), box_half_extents)
 end
 
-math.point_is_inside_oobb = function (arg_25_0, arg_25_1, arg_25_2)
+math.point_is_inside_oobb = function (pos, oobb_pose, oobb_radius)
 	-- function 25
-	local inverse = Matrix4x4.inverse(arg_25_1)
-	local transform = Matrix4x4.transform(inverse, arg_25_0)
+	local to_local_matrix = Matrix4x4.inverse(oobb_pose)
+	local local_pos = Matrix4x4.transform(to_local_matrix, pos)
 
-	if not (not (transform.x > -arg_25_2[1]) or not (transform.x < arg_25_2[1]) or not (transform.y > -arg_25_2[2]) or not (transform.y < arg_25_2[2]) or not (transform.z > -arg_25_2[3]) or not (transform.z < arg_25_2[3])) then
+	if local_pos.x > -oobb_radius[1] and local_pos.x < oobb_radius[1] and local_pos.y > -oobb_radius[2] and local_pos.y < oobb_radius[2] and local_pos.z > -oobb_radius[3] and local_pos.z < oobb_radius[3] then
 		return true
 	else
 		return false
 	end
 end
 
-math.point_is_inside_2d_triangle = function (arg_26_0, arg_26_1, arg_26_2, arg_26_3)
+math.point_is_inside_2d_triangle = function (pos, p1, p2, p3)
 	-- function 26
-	local num = arg_26_1 - arg_26_0
-	local num_2 = arg_26_2 - arg_26_0
-	local num_3 = arg_26_3 - arg_26_0
-	local cross = Vector3.cross(num, num_2)
-	local cross_2 = Vector3.cross(num_2, num_3)
+	local pa = p1 - pos
+	local pb = p2 - pos
+	local pc = p3 - pos
+	local pab_n = Vector3.cross(pa, pb)
+	local pbc_n = Vector3.cross(pb, pc)
 
-	if Vector3.dot(cross, cross_2) < 0 then
+	if Vector3.dot(pab_n, pbc_n) < 0 then
 		return false
 	end
 
-	local cross_3 = Vector3.cross(num_3, num)
-	local flag = not (Vector3.dot(cross, cross) > Vector3.dot(cross_2, cross_2)) or not cross or cross_2
-	local dot = Vector3.dot(flag, cross_3)
+	local pca_n = Vector3.cross(pc, pa)
+	local best_normal = (not (Vector3.dot(pab_n, pab_n) > Vector3.dot(pbc_n, pbc_n)) or not pab_n) and not not pbc_n
+	local dot_product = Vector3.dot(best_normal, pca_n)
 
-	if dot < 0 then
+	if dot_product < 0 then
 		return false
-	elseif dot > 0 then
+	elseif dot_product > 0 then
 		return true
 	else
-		local min = Vector3.min(num, Vector3.min(num_2, num_3))
-		local max = Vector3.max(num, Vector3.max(num_2, num_3))
+		local min_p = Vector3.min(pa, Vector3.min(pb, pc))
+		local max_p = Vector3.max(pa, Vector3.max(pb, pc))
 
-		return not (min.x <= 0) or not (min.y <= 0) or not (max.x >= 0) or max.y >= 0
+		return min_p.x <= 0 and min_p.y <= 0 and max_p.x >= 0 and max_p.y >= 0
 	end
 end
 
-math.point_is_inside_view = function (arg_27_0, arg_27_1, arg_27_2, arg_27_3, arg_27_4)
+math.point_is_inside_view = function (pos, view_position, view_rotation, vertical_fov_rad, horizontal_fov_rad)
 	-- function 27
-	local forward = Quaternion.forward(arg_27_2)
-	local normalize = Vector3.normalize(arg_27_0 - arg_27_1)
-	local dot = Vector3.dot(normalize, forward)
+	local camera_forward = Quaternion.forward(view_rotation)
+	local to_pos_dir = Vector3.normalize(pos - view_position)
+	local dot = Vector3.dot(to_pos_dir, camera_forward)
+	local is_infront = dot > 0
 
-	if not (dot > 0) then
-		local right = Quaternion.right(arg_27_2)
-		local up = Quaternion.up(arg_27_2)
-		local dot_2 = Vector3.dot(normalize, right)
-		local var_27_6 = dot
-		local dot_3 = Vector3.dot(normalize, up)
-		local var_27_8 = var_27_6
-		local var_27_9 = sqrt(dot_2 * dot_2 + var_27_6 * var_27_6)
+	if is_infront then
+		local camera_right = Quaternion.right(view_rotation)
+		local camera_up = Quaternion.up(view_rotation)
+		local c_x = Vector3.dot(to_pos_dir, camera_right)
+		local c_y = dot
+		local c_z = Vector3.dot(to_pos_dir, camera_up)
+		local dot_xy = c_y
+		local c_to_pos_dir_length_xy = math_sqrt(c_x * c_x + c_y * c_y)
 
-		if var_27_9 == 0 then
+		if c_to_pos_dir_length_xy == 0 then
 			return false
 		end
 
-		local num = var_27_8 / var_27_9
+		local cos_xy = dot_xy / c_to_pos_dir_length_xy
+		local yaw = math.acos(cos_xy)
 
-		if math.acos(num) <= arg_27_4 / 2 then
-			local num_2 = var_27_9 / sqrt(var_27_9 * var_27_9 + dot_3 * dot_3)
+		if yaw <= horizontal_fov_rad / 2 then
+			local dot_uz = c_to_pos_dir_length_xy
+			local to_pos_dir_length_uz = math_sqrt(c_to_pos_dir_length_xy * c_to_pos_dir_length_xy + c_z * c_z)
+			local cos_uz = dot_uz / to_pos_dir_length_uz
+			local pitch = math.acos(cos_uz)
 
-			if math.acos(num_2) <= arg_27_3 / 2 then
+			if pitch <= vertical_fov_rad / 2 then
 				return true
 			end
 
@@ -261,717 +262,716 @@ math.point_is_inside_view = function (arg_27_0, arg_27_1, arg_27_2, arg_27_3, ar
 	return false
 end
 
-math.point_is_inside_cylinder = function (self, arg_28_1, arg_28_2, arg_28_3, arg_28_4)
+math.point_is_inside_cylinder = function (point, cylinder_pos, min_radius, radius, half_height)
 	-- function 28
-	local var_28_0 = self[3]
-	local var_28_1 = arg_28_1[3]
+	local pz = point[3]
+	local cz = cylinder_pos[3]
 
-	if not (var_28_0 > var_28_1 + arg_28_4 or not (var_28_0 < var_28_1 - arg_28_4)) then
+	if pz > cz + half_height or pz < cz - half_height then
 		return false
 	end
 
-	local var_28_2 = self[1]
-	local var_28_3 = self[2]
-	local var_28_4 = arg_28_1[1]
-	local var_28_5 = arg_28_1[2]
-	local num = (var_28_2 - var_28_4)^2 + (var_28_3 - var_28_5)^2
+	local px, py = point[1], point[2]
+	local cx, cy = cylinder_pos[1], cylinder_pos[2]
+	local dist = (px - cx)^2 + (py - cy)^2
 
-	return not (arg_28_2 < num) or num < arg_28_3^2
+	return min_radius < dist and dist < radius^2
 end
 
-math.cartesian_to_polar = function (arg_29_0, arg_29_1)
+math.cartesian_to_polar = function (x, y)
 	-- function 29
-	fassert(arg_29_0 == 0 or arg_29_1 ~= 0, "Can't convert a zero vector to polar coordinates")
+	fassert(x ~= 0 and y ~= 0, "Can't convert a zero vector to polar coordinates")
 
-	local var_29_0 = sqrt(arg_29_0 * arg_29_0 + arg_29_1 * arg_29_1)
-	local num = math.atan(arg_29_1 / arg_29_0) * (180 / math.pi)
+	local radius = math_sqrt(x * x + y * y)
+	local theta = math.atan(y / x) * (180 / math.pi)
 
-	if arg_29_0 < 0 then
-		num = num + 180
-	elseif arg_29_1 < 0 then
-		num = num + 360
+	if x < 0 then
+		theta = theta + 180
+	elseif y < 0 then
+		theta = theta + 360
 	end
 
-	return var_29_0, num
+	return radius, theta
 end
 
-math.circular_to_square_coordinates = function (self)
+math.circular_to_square_coordinates = function (pos)
 	-- function 30
-	local x = self.x
-	local y = self.y
-	local num = x * x - y * y
-	local num_2 = 4 * math.inverse_sqrt_2
-	local num_3 = x * num_2
-	local num_4 = y * num_2
+	local x, y = pos.x, pos.y
+	local w = x * x - y * y
+	local k = 4 * math.inverse_sqrt_2
+	local u, v = x * k, y * k
 
-	return Vector2(0.5 * (sqrt(max(2 + num_3 + num, 0)) - sqrt(max(2 - num_3 + num, 0))), 0.5 * (sqrt(max(2 + num_4 - num, 0)) - sqrt(max(2 - num_4 - num, 0))))
+	return Vector2(0.5 * (math_sqrt(math_max(2 + u + w, 0)) - math_sqrt(math_max(2 - u + w, 0))), 0.5 * (math_sqrt(math_max(2 + v - w, 0)) - math_sqrt(math_max(2 - v - w, 0))))
 end
 
-math.polar_to_cartesian = function (arg_31_0, arg_31_1)
+math.polar_to_cartesian = function (radius, theta_degrees)
 	-- function 31
-	local num = arg_31_1 * (pi / 180)
+	local theta = theta_degrees * (pi / 180)
 
-	return arg_31_0 * cos(num), arg_31_0 * sin(num)
+	return radius * math_cos(theta), radius * math_sin(theta)
 end
 
-math.catmullrom = function (arg_32_0, arg_32_1, arg_32_2, arg_32_3, arg_32_4)
+math.catmullrom = function (t, p0, p1, p2, p3)
 	-- function 32
-	return 0.5 * (2 * arg_32_2 + (-arg_32_1 + arg_32_3) * arg_32_0 + (2 * arg_32_1 - 5 * arg_32_2 + 4 * arg_32_3 - arg_32_4) * arg_32_0 * arg_32_0 + (-arg_32_1 + 3 * arg_32_2 - 3 * arg_32_3 + arg_32_4) * arg_32_0 * arg_32_0 * arg_32_0)
+	return 0.5 * (2 * p1 + (-p0 + p2) * t + (2 * p0 - 5 * p1 + 4 * p2 - p3) * t * t + (-p0 + 3 * p1 - 3 * p2 + p3) * t * t * t)
 end
 
-math.closest_position = function (arg_33_0, arg_33_1, arg_33_2)
+math.closest_position = function (p0, p1, p2)
 	-- function 33
-	if Vector3.distance_squared(arg_33_0, arg_33_1) <= Vector3.distance_squared(arg_33_0, arg_33_2) then
-		return arg_33_1
+	local p0_p1_dist_sq = Vector3.distance_squared(p0, p1)
+	local p0_p2_dist_sq = Vector3.distance_squared(p0, p2)
+
+	if p0_p1_dist_sq <= p0_p2_dist_sq then
+		return p1
 	else
-		return arg_33_2
+		return p2
 	end
 end
 
-math.dot2D = function (self, arg_34_1)
+math.dot2D = function (v1, v2)
 	-- function 34
-	return self.x * arg_34_1.x + self.y * arg_34_1.y
+	return v1.x * v2.x + v1.y * v2.y
 end
 
 local Geometry = Geometry
 
-Geometry = Geometry or {}
+Geometry = not not Geometry or not not {}
 Geometry = Geometry
 
-Geometry.ccw = function (self, arg_35_1, arg_35_2)
+Geometry.ccw = function (a, b, c)
 	-- function 35
-	return (arg_35_1.x - self.x) * (arg_35_2.y - self.y) > (arg_35_1.y - self.y) * (arg_35_2.x - self.x)
+	return (b.x - a.x) * (c.y - a.y) > (b.y - a.y) * (c.x - a.x)
 end
 
-local function fn(self, arg_36_1)
+local function left_to_right(left, right)
 	-- function 36
-	return self.x < arg_36_1.x
+	return left.x < right.x
 end
 
 local ccw = Geometry.ccw
 local dot2D = math.dot2D
 
-Geometry.convex_hull = function (self, arg_37_1)
+Geometry.convex_hull = function (points, hull)
 	-- function 37
-	local count = #self
+	local num_points = #points
 
-	if count == 0 then
-		return arg_37_1, 0
+	if num_points == 0 then
+		return hull, 0
 	end
 
-	table.sort(self, fn)
+	table.sort(points, left_to_right)
 
 	local num = 0
 
-	for i = 1, count do
-		local var_37_2 = self[i]
+	for i = 1, num_points do
+		local pt = points[i]
 
-		while not (not (num >= 2) or ccw(arg_37_1[num - 1], arg_37_1[num], var_37_2)) do
+		while num >= 2 and not ccw(hull[num - 1], hull[num], pt) do
 			num = num - 1
 		end
 
 		num = num + 1
-		arg_37_1[num] = var_37_2
+		hull[num] = pt
 	end
 
-	local num_2 = num + 1
+	local t = num + 1
 
-	for j = count, 1, -1 do
-		local var_37_4 = self[j]
+	for i = num_points, 1, -1 do
+		local pt = points[i]
 
-		while not (not (num_2 <= num) or ccw(arg_37_1[num - 1], arg_37_1[num], var_37_4)) do
+		while t <= num and not ccw(hull[num - 1], hull[num], pt) do
 			num = num - 1
 		end
 
 		num = num + 1
-		arg_37_1[num] = var_37_4
+		hull[num] = pt
 	end
 
-	local num_3 = num - 1
+	num = num - 1
 
-	return arg_37_1, num_3
+	return hull, num
 end
 
-Geometry.convex_hull_tracking = function (self, arg_38_1, arg_38_2)
+Geometry.convex_hull_tracking = function (points, hull, hull_indexes)
 	-- function 38
-	local count = #self
+	local num_points = #points
 
-	if count == 0 then
-		return arg_38_1, 0
+	if num_points == 0 then
+		return hull, 0
 	end
 
-	table.sort(self, fn)
+	table.sort(points, left_to_right)
 
 	local num = 0
 
-	for i = 1, count do
-		local var_38_2 = self[i]
+	for i = 1, num_points do
+		local pt = points[i]
 
-		while not (not (num >= 2) or ccw(arg_38_1[num - 1], arg_38_1[num], var_38_2)) do
+		while num >= 2 and not ccw(hull[num - 1], hull[num], pt) do
 			num = num - 1
 		end
 
 		num = num + 1
-		arg_38_1[num] = var_38_2
-		arg_38_2[num] = i
+		hull[num] = pt
+		hull_indexes[num] = i
 	end
 
-	local num_2 = num + 1
+	local t = num + 1
 
-	for j = count, 1, -1 do
-		local var_38_4 = self[j]
+	for i = num_points, 1, -1 do
+		local pt = points[i]
 
-		while not (not (num_2 <= num) or ccw(arg_38_1[num - 1], arg_38_1[num], var_38_4)) do
+		while t <= num and not ccw(hull[num - 1], hull[num], pt) do
 			num = num - 1
 		end
 
 		num = num + 1
-		arg_38_1[num] = var_38_4
-		arg_38_2[num] = j
+		hull[num] = pt
+		hull_indexes[num] = i
 	end
 
-	local num_3 = num - 1
+	num = num - 1
 
-	return arg_38_1, num_3, arg_38_2
+	return hull, num, hull_indexes
 end
 
-Geometry.concave_hull = function (self, arg_39_1)
+Geometry.concave_hull = function (points, hull)
 	-- function 39
-	local count = #self
+	local num_points = #points
 
-	if count == 0 then
-		return arg_39_1, 0
+	if num_points == 0 then
+		return hull, 0
 	end
 
-	table.sort(self, fn)
+	table.sort(points, left_to_right)
 
 	local num = 0
 
-	for i = 1, count do
-		local var_39_2 = self[i]
+	for i = 1, num_points do
+		local pt = points[i]
 
-		while not (not (num >= 2) or ccw(arg_39_1[num - 1], arg_39_1[num], var_39_2) or dot2D(arg_39_1[num] - arg_39_1[num - 1], var_39_2 - arg_39_1[num]) > 0.1) do
+		while num >= 2 and not ccw(hull[num - 1], hull[num], pt) and not (dot2D(hull[num] - hull[num - 1], pt - hull[num]) > 0.1) do
 			num = num - 1
 		end
 
 		num = num + 1
-		arg_39_1[num] = var_39_2
+		hull[num] = pt
 	end
 
-	local var_39_3 = num
-	local num_2 = num + 1
+	local upper_starts_num = num
+	local t = num + 1
 
-	for j = count, 1, -1 do
-		local var_39_5 = self[j]
+	for i = num_points, 1, -1 do
+		local pt = points[i]
 
-		while not (not (num_2 <= num) or ccw(arg_39_1[num - 1], arg_39_1[num], var_39_5) or dot2D(arg_39_1[num] - arg_39_1[num - 1], var_39_5 - arg_39_1[num]) > 0.1) do
+		while t <= num and not ccw(hull[num - 1], hull[num], pt) and not (dot2D(hull[num] - hull[num - 1], pt - hull[num]) > 0.1) do
 			num = num - 1
 		end
 
 		num = num + 1
-		arg_39_1[num] = var_39_5
+		hull[num] = pt
 	end
 
-	local num_3 = num - 1
+	num = num - 1
 
-	return arg_39_1, num_3, var_39_3
+	return hull, num, upper_starts_num
 end
 
-Geometry.is_point_inside_triangle = function (arg_40_0, arg_40_1, arg_40_2, arg_40_3)
+Geometry.is_point_inside_triangle = function (point_on_plane, tri_a, tri_b, tri_c)
 	-- function 40
-	local num = arg_40_1 - arg_40_0
-	local num_2 = arg_40_2 - arg_40_0
-	local num_3 = arg_40_3 - arg_40_0
-	local cross = Vector3.cross(num, num_2)
-	local cross_2 = Vector3.cross(num_2, num_3)
+	local pa = tri_a - point_on_plane
+	local pb = tri_b - point_on_plane
+	local pc = tri_c - point_on_plane
+	local pab_n = Vector3.cross(pa, pb)
+	local pbc_n = Vector3.cross(pb, pc)
 
-	if Vector3.dot(cross, cross_2) < 0 then
+	if Vector3.dot(pab_n, pbc_n) < 0 then
 		return false
 	end
 
-	local cross_3 = Vector3.cross(num_3, num)
-	local flag = not (Vector3.dot(cross, cross) > Vector3.dot(cross_2, cross_2)) or not cross or cross_2
-	local dot = Vector3.dot(flag, cross_3)
+	local pca_n = Vector3.cross(pc, pa)
+	local best_normal = (not (Vector3.dot(pab_n, pab_n) > Vector3.dot(pbc_n, pbc_n)) or not pab_n) and not not pbc_n
+	local dot_product = Vector3.dot(best_normal, pca_n)
 
-	if dot < 0 then
+	if dot_product < 0 then
 		return false
-	elseif dot > 0 then
+	elseif dot_product > 0 then
 		return true
 	else
-		local min = Vector3.min(num, Vector3.min(num_2, num_3))
-		local max = Vector3.max(num, Vector3.max(num_2, num_3))
+		local min_p = Vector3.min(pa, Vector3.min(pb, pc))
+		local max_p = Vector3.max(pa, Vector3.max(pb, pc))
 
-		return not (min.x <= 0) or not (min.y <= 0) or not (min.z <= 0) or not (max.x >= 0) or not (max.y >= 0) or max.z >= 0
+		return min_p.x <= 0 and min_p.y <= 0 and min_p.z <= 0 and max_p.x >= 0 and max_p.y >= 0 and max_p.z >= 0
 	end
 end
 
 local Vector3 = Vector3
 
-Vector3 = not Vector3 and Vector3.dot
+if Vector3 then
+	-- Nothing
+end
 
-Geometry.closest_point_on_line = function (arg_41_0, arg_41_1, arg_41_2)
+Vector3 = Vector3.dot
+
+local Vector3_dot = Vector3
+
+::label_0_0::
+
+Geometry.closest_point_on_line = function (p, p1, p2)
 	-- function 41
-	local num = arg_41_0 - arg_41_1
-	local num_2 = arg_41_2 - arg_41_1
-	local var_41_2 = Vector3(num, num_2)
+	local diff = p - p1
+	local dir = p2 - p1
+	local dot1 = Vector3_dot(diff, dir)
 
-	if var_41_2 <= 0 then
-		return arg_41_1
+	if dot1 <= 0 then
+		return p1
 	end
 
-	local var_41_3 = Vector3(num_2, num_2)
+	local dot2 = Vector3_dot(dir, dir)
 
-	if var_41_3 <= var_41_2 then
-		return arg_41_2
+	if dot2 <= dot1 then
+		return p2
 	end
 
-	return arg_41_1 + var_41_2 / var_41_3 * num_2
+	local t = dot1 / dot2
+
+	return p1 + t * dir
 end
 
 Geometry.closest_point_on_line = EngineOptimized.closest_point_on_line
 
-Geometry.closest_point_on_polyline = function (arg_42_0, arg_42_1, arg_42_2, arg_42_3)
+Geometry.closest_point_on_polyline = function (point, points, start_index, end_index)
 	-- function 42
-	local distance_squared = Vector3.distance_squared
+	local vector3_distance_squared = Vector3.distance_squared
 	local closest_point_on_line = Geometry.closest_point_on_line
 
-	arg_42_2 = arg_42_2 or 1
-	arg_42_3 = arg_42_3 or #arg_42_1
+	start_index = not not start_index or not not 1
+	end_index = not not end_index or not not #points
 
-	local huge = math.huge
-	local var_42_3
-	local var_42_4
+	local shortest_distance = math.huge
+	local result_position, result_index
 
-	for i = arg_42_2, arg_42_3 - 1 do
-		local var_42_5 = arg_42_1[i]
-		local var_42_6 = arg_42_1[i + 1]
-		local var_42_7 = closest_point_on_line(arg_42_0, var_42_5, var_42_6)
-		local var_42_8 = distance_squared(var_42_7, arg_42_0)
+	for i = start_index, end_index - 1 do
+		local p1 = points[i]
+		local p2 = points[i + 1]
+		local projected_point = closest_point_on_line(point, p1, p2)
+		local distance = vector3_distance_squared(projected_point, point)
 
-		if var_42_8 < huge then
-			huge = var_42_8
-			var_42_3 = var_42_7
-			var_42_4 = i
+		if distance < shortest_distance then
+			shortest_distance = distance
+			result_position = projected_point
+			result_index = i
 		end
 	end
 
-	return var_42_3, var_42_4
+	return result_position, result_index
 end
 
 local Intersect = Intersect
 
-Intersect = Intersect or {}
+Intersect = not not Intersect or not not {}
 Intersect = Intersect
 
-Intersect.ray_line = function (arg_43_0, arg_43_1, arg_43_2, arg_43_3)
+Intersect.ray_line = function (ray_from, ray_direction, line_point_a, line_point_b)
 	-- function 43
-	local line_line, var_43_1 = Intersect.line_line(arg_43_0, arg_43_0 + arg_43_1, arg_43_2, arg_43_3)
+	local distance_along_ray, normalized_distance_along_line = Intersect.line_line(ray_from, ray_from + ray_direction, line_point_a, line_point_b)
 
-	if line_line == nil then
+	if distance_along_ray == nil then
 		return nil, nil
-	elseif line_line < 0 then
+	elseif distance_along_ray < 0 then
 		return nil, nil
 	else
-		return line_line, var_43_1
+		return distance_along_ray, normalized_distance_along_line
 	end
 end
 
-Intersect.ray_box = function (arg_44_0, arg_44_1, arg_44_2, arg_44_3)
+Intersect.ray_box = function (from, direction, pose, radius)
 	-- function 44
-	if not Math.point_in_box(arg_44_0, arg_44_2, arg_44_3) then
+	local is_ray_origin_inside_box = Math.point_in_box(from, pose, radius)
+
+	if is_ray_origin_inside_box then
 		return 0
 	end
 
-	local ray_box_intersection = Math.ray_box_intersection(arg_44_0, arg_44_1, arg_44_2, arg_44_3)
+	local distance_along_ray = Math.ray_box_intersection(from, direction, pose, radius)
+	local is_box_missed_by_ray = distance_along_ray < 0
 
-	if not (ray_box_intersection < 0) then
+	if is_box_missed_by_ray then
 		return nil
 	end
 
-	return ray_box_intersection
+	return distance_along_ray
 end
 
-Intersect.line_line = function (arg_45_0, arg_45_1, arg_45_2, arg_45_3)
+Intersect.line_line = function (line_a_pt1, line_a_pt2, line_b_pt1, line_b_pt2)
 	-- function 45
-	local num = arg_45_1 - arg_45_0
-	local num_2 = arg_45_3 - arg_45_2
-	local dot = Vector3.dot(num, num)
-	local dot_2 = Vector3.dot(num_2, num_2)
-	local dot_3 = Vector3.dot(num, num_2)
-	local num_3 = dot * dot_2 - dot_3 * dot_3
+	local line_a_vector = line_a_pt2 - line_a_pt1
+	local line_b_vector = line_b_pt2 - line_b_pt1
+	local a = Vector3.dot(line_a_vector, line_a_vector)
+	local e = Vector3.dot(line_b_vector, line_b_vector)
+	local b = Vector3.dot(line_a_vector, line_b_vector)
+	local d = a * e - b * b
 
-	if num_3 < 0.001 then
+	if d < 0.001 then
 		return nil, nil
 	end
 
-	local num_4 = arg_45_0 - arg_45_2
-	local dot_4 = Vector3.dot(num, num_4)
-	local dot_5 = Vector3.dot(num_2, num_4)
-	local num_5 = (dot_3 * dot_5 - dot_4 * dot_2) / num_3
-	local num_6 = (dot * dot_5 - dot_3 * dot_4) / num_3
+	local r = line_a_pt1 - line_b_pt1
+	local c = Vector3.dot(line_a_vector, r)
+	local f = Vector3.dot(line_b_vector, r)
+	local normalized_distance_along_line_a = (b * f - c * e) / d
+	local normalized_distance_along_line_b = (a * f - b * c) / d
 
-	return num_5, num_6
+	return normalized_distance_along_line_a, normalized_distance_along_line_b
 end
 
-Intersect.ray_segment = function (arg_46_0, arg_46_1, arg_46_2, arg_46_3)
+Intersect.ray_segment = function (ray_from, ray_direction, segment_start, segment_end)
 	-- function 46
-	local ray_line, var_46_1 = Intersect.ray_line(arg_46_0, arg_46_1, arg_46_2, arg_46_3)
+	local distance_along_ray, normalized_distance_along_line = Intersect.ray_line(ray_from, ray_direction, segment_start, segment_end)
+	local is_line_parallel_to_or_behind_ray = distance_along_ray == nil
 
-	if not (ray_line == nil) then
+	if is_line_parallel_to_or_behind_ray then
 		return nil
 	end
 
-	if not (not (var_46_1 >= 0) or var_46_1 <= 1) then
-		return ray_line, var_46_1
+	local is_intersection_inside_segment = normalized_distance_along_line >= 0 and normalized_distance_along_line <= 1
+
+	if is_intersection_inside_segment then
+		return distance_along_ray, normalized_distance_along_line
 	else
 		return nil, nil
 	end
 end
 
-Intersect.ray_circle = function (arg_47_0, arg_47_1, arg_47_2, arg_47_3)
+Intersect.ray_circle = function (ray_from, ray_direction, circle_position, circle_radius)
 	-- function 47
-	local num = arg_47_0 - arg_47_2
-	local to_elements, var_47_2 = Vector3.to_elements(num)
-	local to_elements_2, var_47_4 = Vector3.to_elements(arg_47_1)
-	local num_2 = (to_elements_2 * to_elements_2 + var_47_4 * var_47_4) * 2
-	local num_3 = 2 * (to_elements_2 * to_elements + var_47_4 * var_47_2)
-	local num_4 = to_elements * to_elements + var_47_2 * var_47_2 - arg_47_3 * arg_47_3
-	local num_5 = num_3 * num_3 - 2 * num_2 * num_4
+	local ray_coord = ray_from - circle_position
+	local rx, ry = Vector3.to_elements(ray_coord)
+	local dx, dy = Vector3.to_elements(ray_direction)
+	local a = dx * dx + dy * dy
+	local a2 = a * 2
+	local b = 2 * (dx * rx + dy * ry)
+	local c = rx * rx + ry * ry - circle_radius * circle_radius
+	local discriminant = b * b - 2 * a2 * c
 
-	if num_5 < 0 then
+	if discriminant < 0 then
 		return nil
 	end
 
-	local sqrt = math.sqrt(num_5)
-	local num_6 = (-num_3 + sqrt) / num_2
-	local var_47_11 = Vector3(to_elements_2 * num_6, var_47_4 * num_6, 0)
-	local num_7 = arg_47_0 + var_47_11
+	local sqrt_discriminant = math.sqrt(discriminant)
+	local t1 = (-b + sqrt_discriminant) / a2
+	local pos1_diff = Vector3(dx * t1, dy * t1, 0)
+	local pos1 = ray_from + pos1_diff
 
-	if sqrt < math.epsilon then
-		return num_7, num_7, var_47_11, var_47_11
+	if sqrt_discriminant < math.epsilon then
+		return pos1, pos1, pos1_diff, pos1_diff
 	end
 
-	local num_8 = (-num_3 - sqrt) / num_2
-	local var_47_14 = Vector3(to_elements_2 * num_8, var_47_4 * num_8, 0)
-	local num_9 = arg_47_0 + var_47_14
+	local t2 = (-b - sqrt_discriminant) / a2
+	local pos2_diff = Vector3(dx * t2, dy * t2, 0)
+	local pos2 = ray_from + pos2_diff
 
-	return num_7, num_9, var_47_11, var_47_14
+	return pos1, pos2, pos1_diff, pos2_diff
 end
 
-math.ease_exp = function (arg_48_0)
+math.ease_exp = function (t)
 	-- function 48
-	if arg_48_0 < 0.5 then
-		return 0.5 * 2^(20 * (arg_48_0 - 0.5))
+	if t < 0.5 then
+		return 0.5 * 2^(20 * (t - 0.5))
 	end
 
-	return 1 - 0.5 * 2^(20 * (0.5 - arg_48_0))
+	return 1 - 0.5 * 2^(20 * (0.5 - t))
 end
 
-math.ease_in_exp = function (arg_49_0)
+math.ease_in_exp = function (t)
 	-- function 49
-	return 2^(10 * (arg_49_0 - 1))
+	return 2^(10 * (t - 1))
 end
 
-math.ease_out_exp = function (arg_50_0)
+math.ease_out_exp = function (t)
 	-- function 50
-	return 1 - 2^(-10 * arg_50_0)
+	return 1 - 2^(-10 * t)
 end
 
-math.ease_out_sine = function (arg_51_0)
+math.ease_out_sine = function (t)
 	-- function 51
-	return math.sin(arg_51_0 * math.half_pi)
+	return math.sin(t * math.half_pi)
 end
 
-math.easeCubic = function (arg_52_0)
+math.easeCubic = function (t)
 	-- function 52
-	arg_52_0 = arg_52_0 * 2
+	t = t * 2
 
-	if arg_52_0 < 1 then
-		return 0.5 * arg_52_0 * arg_52_0 * arg_52_0
+	if t < 1 then
+		return 0.5 * t * t * t
 	end
 
-	arg_52_0 = arg_52_0 - 2
+	t = t - 2
 
-	return 0.5 * arg_52_0 * arg_52_0 * arg_52_0 + 1
+	return 0.5 * t * t * t + 1
 end
 
-math.linear = function (arg_53_0)
+math.linear = function (t)
 	-- function 53
-	return arg_53_0
+	return t
 end
 
-math.linear_inv = function (arg_54_0)
+math.linear_inv = function (t)
 	-- function 54
-	return arg_54_0
+	return t
 end
 
-math.easeInCubic = function (arg_55_0)
+math.easeInCubic = function (t)
 	-- function 55
-	return arg_55_0 * arg_55_0 * arg_55_0
+	return t * t * t
 end
 
-math.easeOutCubic = function (arg_56_0)
+math.easeOutCubic = function (t)
 	-- function 56
-	arg_56_0 = arg_56_0 - 1
+	t = t - 1
 
-	return arg_56_0 * arg_56_0 * arg_56_0 + 1
+	return t * t * t + 1
 end
 
-math.easeOutCubicInv = function (arg_57_0)
+math.easeOutCubicInv = function (t)
 	-- function 57
-	return 1 - math.pow(1 - arg_57_0, 0.3333333333333333)
+	return 1 - math.pow(1 - t, 0.3333333333333333)
 end
 
-math.ease_out_quad = function (arg_58_0)
+math.ease_out_quad = function (t)
 	-- function 58
-	return -1 * arg_58_0 * (arg_58_0 - 2)
+	return -1 * t * (t - 2)
 end
 
-math.ease_in_quart = function (arg_59_0)
+math.ease_in_quart = function (t)
 	-- function 59
-	return arg_59_0 * arg_59_0 * arg_59_0 * arg_59_0
+	return t * t * t * t
 end
 
-math.ease_out_quart = function (arg_60_0)
+math.ease_out_quart = function (t)
 	-- function 60
-	return 1 - math.pow(1 - arg_60_0, 4)
+	return 1 - math.pow(1 - t, 4)
 end
 
-math.ease_out_quart_inv = function (arg_61_0)
+math.ease_out_quart_inv = function (t)
 	-- function 61
-	return math.pow(-arg_61_0 + 1, 0.25) + 1
+	return math.pow(-t + 1, 0.25) + 1
 end
 
-math.ease_in_out_quart = function (arg_62_0)
+math.ease_in_out_quart = function (t)
 	-- function 62
 	local num
 
-	if arg_62_0 < 0.5 then
-		num = 8 * arg_62_0 * arg_62_0 * arg_62_0 * arg_62_0
+	if t < 0.5 then
+		num = 8 * t * t * t * t
 
 		if not num then
 			-- Nothing
 		end
 	end
 
-	num = 1 - (-2 * arg_62_0 + 2)^4 / 2
+	num = 1 - (-2 * t + 2)^4 / 2
 
 	::label_62_0::
 
 	return num
 end
 
-local easeCubic = math.easeCubic
+local math_ease_cubic = math.easeCubic
 
-math.ease_pulse = function (arg_63_0)
+math.ease_pulse = function (t)
 	-- function 63
-	if arg_63_0 < 0.5 then
-		return easeCubic(2 * arg_63_0)
+	if t < 0.5 then
+		return math_ease_cubic(2 * t)
 	else
-		return easeCubic(2 - 2 * arg_63_0)
+		return math_ease_cubic(2 - 2 * t)
 	end
 end
 
-math.ease_in_circ = function (arg_64_0)
+math.ease_in_circ = function (t)
 	-- function 64
-	return 1 - math.sqrt(1 - arg_64_0^2)
+	return 1 - math.sqrt(1 - t^2)
 end
 
-math.ease_out_circ = function (arg_65_0)
+math.ease_out_circ = function (t)
 	-- function 65
-	return math.sqrt(1 - (arg_65_0 - 1)^2)
+	return math.sqrt(1 - (t - 1)^2)
 end
 
-math.ease_in_back = function (arg_66_0)
+math.ease_in_back = function (t)
 	-- function 66
-	local num = 1.70158
+	local c1 = 1.70158
+	local c3 = c1 + 1
 
-	return (num + 1) * arg_66_0 * arg_66_0 * arg_66_0 - num * arg_66_0 * arg_66_0
+	return c3 * t * t * t - c1 * t * t
 end
 
-math.ease_out_back = function (arg_67_0)
+math.ease_out_back = function (t)
 	-- function 67
 	c1 = 1.70158
 	c3 = c1 + 1
 
-	return 1 + c3 * (arg_67_0 - 1)^3 + c1 * (arg_67_0 - 1)^2
+	return 1 + c3 * (t - 1)^3 + c1 * (t - 1)^2
 end
 
-math.ease_in_out_back = function (arg_68_0)
+math.ease_in_out_back = function (t)
 	-- function 68
-	local num = 1.70158
-	local num_2 = num * 1.525
-	local num_3
-
-	if arg_68_0 < 0.5 then
-		num_3 = (2 * arg_68_0)^2 * ((num_2 + 1) * 2 * arg_68_0 - num_2) / 2
-
-		if not num_3 then
-			-- Nothing
-		end
-	end
-
-	num_3 = ((2 * arg_68_0 - 2)^2 * ((num_2 + 1) * (arg_68_0 * 2 - 2) + num_2) + 2) / 2
-
-	::label_68_0::
-
-	return num_3
-end
-
-math.easeOutQuint = function (arg_69_0)
-	-- function 69
-	return 1 - (1 - arg_69_0)^5
-end
-
-math.easeInQuint = function (arg_70_0)
-	-- function 70
-	return arg_70_0 * arg_70_0 * arg_70_0 * arg_70_0 * arg_70_0
-end
-
-math.bounce = function (arg_71_0)
-	-- function 71
-	return math.abs(sin(math.tau * (arg_71_0 + 1) * (arg_71_0 + 1)) * (1 - arg_71_0))
-end
-
-math.ease_out_elastic = function (arg_72_0)
-	-- function 72
-	local num = 0
-	local num_2 = 1
-
-	if arg_72_0 == 0 then
-		return 0
-	end
-
-	if arg_72_0 == 1 then
-		return 1
-	end
-
-	if num == 0 then
-		num = 0.3
-	end
-
-	local var_72_2
-
-	if num_2 < 1 then
-		num_2 = 1
-		var_72_2 = num / 4
-	else
-		var_72_2 = num / (2 * math.pi) * math.asin(1 / num_2)
-	end
-
-	return num_2 * 2^(-10 * arg_72_0) * sin((arg_72_0 * 1 - var_72_2) * (2 * math.pi) / num) + 1
-end
-
-math.easeInOutCubic = function (arg_73_0)
-	-- function 73
+	local c1 = 1.70158
+	local c2 = c1 * 1.525
 	local num
 
-	if arg_73_0 < 0.5 then
-		num = 4 * arg_73_0 * arg_73_0 * arg_73_0
+	if t < 0.5 then
+		num = (2 * t)^2 * ((c2 + 1) * 2 * t - c2) / 2
 
 		if not num then
 			-- Nothing
 		end
 	end
 
-	num = 1 - math.pow(-2 * arg_73_0 + 2, 3) / 2
+	num = ((2 * t - 2)^2 * ((c2 + 1) * (t * 2 - 2) + c2) + 2) / 2
+
+	::label_68_0::
+
+	return num
+end
+
+math.easeOutQuint = function (t)
+	-- function 69
+	return 1 - (1 - t)^5
+end
+
+math.easeInQuint = function (t)
+	-- function 70
+	return t * t * t * t * t
+end
+
+math.bounce = function (t)
+	-- function 71
+	return math.abs(math_sin(math.tau * (t + 1) * (t + 1)) * (1 - t))
+end
+
+math.ease_out_elastic = function (t)
+	-- function 72
+	local p = 0
+	local a = 1
+
+	if t == 0 then
+		return 0
+	end
+
+	if t == 1 then
+		return 1
+	end
+
+	if p == 0 then
+		p = 0.3
+	end
+
+	local s
+
+	if a < 1 then
+		a = 1
+		s = p / 4
+	else
+		s = p / (2 * math.pi) * math.asin(1 / a)
+	end
+
+	return a * 2^(-10 * t) * math_sin((t * 1 - s) * (2 * math.pi) / p) + 1
+end
+
+math.easeInOutCubic = function (t)
+	-- function 73
+	local num
+
+	if t < 0.5 then
+		num = 4 * t * t * t
+
+		if not num then
+			-- Nothing
+		end
+	end
+
+	num = 1 - math.pow(-2 * t + 2, 3) / 2
 
 	::label_73_0::
 
 	return num
 end
 
-math.rand_utf8_string = function (arg_74_0, arg_74_1)
+math.rand_utf8_string = function (string_length, ignore_chars)
 	-- function 74
-	fassert(arg_74_0 > 0, "String length passed to math.rand_string has to be greater than 0")
+	fassert(string_length > 0, "String length passed to math.rand_string has to be greater than 0")
 
-	arg_74_1 = arg_74_1 or {
+	ignore_chars = not not ignore_chars or not not {
 		"\"",
 		"'",
 		"\\",
 		" "
 	}
 
-	local tbl = {}
+	local array = {}
 
-	for i = 1, arg_74_0 do
-		local var_74_1
+	for i = 1, string_length do
+		local char
 
-		while not var_74_1 and not table.contains(arg_74_1, var_74_1) do
-			var_74_1 = string.char(random(32, 126))
+		while not char or table.contains(ignore_chars, char) do
+			char = string.char(math_random(32, 126))
 		end
 
-		tbl[i] = var_74_1
+		array[i] = char
 	end
 
-	return table.concat(tbl)
+	return table.concat(array)
 end
 
 math.uuid = function ()
 	-- function 75
-	local var_75_0 = random
+	local random = math_random
 
-	return string.format("%08x-%04x-4%03x-%x%03x-%012x", var_75_0(0, 4294967295), var_75_0(0, 65535), var_75_0(0, 4095), var_75_0(0, 11), var_75_0(0, 4095), var_75_0(0, 281474976710655))
+	return string.format("%08x-%04x-4%03x-%x%03x-%012x", random(0, 4294967295), random(0, 65535), random(0, 4095), random(0, 11), random(0, 4095), random(0, 281474976710655))
 end
 
-math.get_uniformly_random_point_inside_sector = function (arg_76_0, arg_76_1, arg_76_2, arg_76_3)
+math.get_uniformly_random_point_inside_sector = function (radius1, radius2, angle1, angle2)
 	-- function 76
-	local num = arg_76_0 * arg_76_0
-	local num_2 = arg_76_1 * arg_76_1
-	local num_3 = arg_76_2 + (arg_76_3 - arg_76_2) * random()
-	local var_76_3 = sqrt(num + (num_2 - num) * random())
+	local radius1_squared = radius1 * radius1
+	local radius2_squared = radius2 * radius2
+	local angle = angle1 + (angle2 - angle1) * math_random()
+	local r = math_sqrt(radius1_squared + (radius2_squared - radius1_squared) * math_random())
 
-	return var_76_3 * sin(num_3), var_76_3 * cos(num_3)
+	return r * math_sin(angle), r * math_cos(angle)
 end
 
-math.get_uniformly_random_point_inside_sector_seeded = function (arg_77_0, arg_77_1, arg_77_2, arg_77_3, arg_77_4)
+math.get_uniformly_random_point_inside_sector_seeded = function (seed, radius1, radius2, angle1, angle2)
 	-- function 77
-	local num = arg_77_1 * arg_77_1
-	local num_2 = arg_77_2 * arg_77_2
-	local var_77_2
-	local var_77_3
-	local var_77_4
+	local radius1_squared = radius1 * radius1
+	local radius2_squared = radius2 * radius2
+	local rnd1, rnd2
 
-	arg_77_0, var_77_4 = Math.next_random(arg_77_0)
+	seed, rnd1 = Math.next_random(seed)
+	seed, rnd2 = Math.next_random(seed)
 
-	local var_77_5
+	local angle = angle1 + (angle2 - angle1) * rnd1
+	local r = math.sqrt(radius1_squared + (radius2_squared - radius1_squared) * rnd2)
+	local dx = r * math.sin(angle)
+	local dy = r * math.cos(angle)
 
-	arg_77_0, var_77_5 = Math.next_random(arg_77_0)
-
-	local num_3 = arg_77_3 + (arg_77_4 - arg_77_3) * var_77_4
-	local sqrt = math.sqrt(num + (num_2 - num) * var_77_5)
-	local num_4 = sqrt * math.sin(num_3)
-	local num_5 = sqrt * math.cos(num_3)
-
-	return arg_77_0, num_4, num_5
+	return seed, dx, dy
 end
 
-math.get_random_point_inside_box_seeded = function (arg_78_0, arg_78_1, arg_78_2)
+math.get_random_point_inside_box_seeded = function (seed, box_pose, bounds)
 	-- function 78
-	local var_78_0
-	local var_78_1
-	local var_78_2
-	local var_78_3
-	local var_78_4
-	local var_78_5
-	local var_78_6
+	local rnd_x, rnd_y, rnd_z, x, y, z
 
-	arg_78_0, var_78_6 = Math.next_random(arg_78_0)
+	seed, rnd_x = Math.next_random(seed)
+	seed, rnd_y = Math.next_random(seed)
+	seed, rnd_z = Math.next_random(seed)
+	x = math.lerp(-bounds[1], bounds[1], rnd_x)
+	y = math.lerp(-bounds[2], bounds[2], rnd_y)
+	z = math.lerp(-bounds[3], bounds[3], rnd_z)
 
-	local var_78_7
+	local local_pos = Matrix4x4.transform(box_pose, Vector3(x, y, z))
 
-	arg_78_0, var_78_7 = Math.next_random(arg_78_0)
-
-	local var_78_8
-
-	arg_78_0, var_78_8 = Math.next_random(arg_78_0)
-
-	local lerp = math.lerp(-arg_78_2[1], arg_78_2[1], var_78_6)
-	local lerp_2 = math.lerp(-arg_78_2[2], arg_78_2[2], var_78_7)
-	local lerp_3 = math.lerp(-arg_78_2[3], arg_78_2[3], var_78_8)
-	local transform = Matrix4x4.transform(arg_78_1, Vector3(lerp, lerp_2, lerp_3))
-
-	return arg_78_0, transform
+	return seed, local_pos
 end
 
 math.random_seed = function ()
@@ -979,219 +979,220 @@ math.random_seed = function ()
 	return Math.random(2147483647)
 end
 
-math.distance_2d = function (arg_80_0, arg_80_1, arg_80_2, arg_80_3)
+math.distance_2d = function (x1, y1, x2, y2)
 	-- function 80
-	return ((arg_80_2 - arg_80_0)^2 + (arg_80_3 - arg_80_1)^2)^0.5
+	return ((x2 - x1)^2 + (y2 - y1)^2)^0.5
 end
 
-math.diststance_3d = function (arg_81_0, arg_81_1, arg_81_2, arg_81_3, arg_81_4, arg_81_5)
+math.diststance_3d = function (x1, y1, z1, x2, y2, z2)
 	-- function 81
-	return ((arg_81_3 - arg_81_0)^2 + (arg_81_4 - arg_81_1)^2 + (arg_81_5 - arg_81_2)^2)^0.5
+	return ((x2 - x1)^2 + (y2 - y1)^2 + (z2 - z1)^2)^0.5
 end
 
-math.angle = function (arg_82_0, arg_82_1, arg_82_2, arg_82_3)
+math.angle = function (x1, y1, x2, y2)
 	-- function 82
-	return math.atan2(arg_82_3 - arg_82_1, arg_82_2 - arg_82_0)
+	return math.atan2(y2 - y1, x2 - x1)
 end
 
-math.index_wrapper = function (arg_83_0, arg_83_1)
+math.index_wrapper = function (index, max_index)
 	-- function 83
-	return (arg_83_0 - 1) % arg_83_1 + 1
+	return (index - 1) % max_index + 1
 end
 
-math.wrap_index_between = function (arg_84_0, arg_84_1, arg_84_2)
+math.wrap_index_between = function (index, from, to)
 	-- function 84
-	if arg_84_2 < arg_84_1 then
-		arg_84_1, arg_84_2 = arg_84_2, arg_84_1
+	if to < from then
+		from, to = to, from
 	end
 
-	local num = arg_84_2 - arg_84_1
+	local d_max = to - from
+	local d_idx = index - from
 
-	return arg_84_1 + (arg_84_0 - arg_84_1) % (num + 1)
+	return from + d_idx % (d_max + 1)
 end
 
-math.stride_index = function (arg_85_0, arg_85_1, arg_85_2)
+math.stride_index = function (index, stride, optional_in_stride_offset)
 	-- function 85
-	arg_85_2 = arg_85_2 or 1
+	optional_in_stride_offset = not not optional_in_stride_offset or not not 1
 
-	return (arg_85_0 - 1) * arg_85_1 + 1 + (arg_85_2 - 1)
+	return (index - 1) * stride + 1 + (optional_in_stride_offset - 1)
 end
 
-math.value_inside_range = function (arg_86_0, arg_86_1, arg_86_2)
+math.value_inside_range = function (value, min, max)
 	-- function 86
-	return not (arg_86_1 <= arg_86_0) or arg_86_0 <= arg_86_2
+	return min <= value and value <= max
 end
 
-math.quat_angle = function (arg_87_0, arg_87_1)
+math.quat_angle = function (from, to)
 	-- function 87
-	local var_87_0 = abs(Quaternion.dot(arg_87_0, arg_87_1))
-	local num = 0
+	local dot = math_abs(Quaternion.dot(from, to))
+	local target_angle = 0
 
-	if var_87_0 < 1 then
-		num = 2 * acos(var_87_0)
+	if dot < 1 then
+		target_angle = 2 * math_acos(dot)
 	end
 
-	return num
+	return target_angle
 end
 
-local function fn_2(self, arg_88_1, arg_88_2, arg_88_3, arg_88_4, arg_88_5, arg_88_6, arg_88_7)
+local function _calculate_distributed_point_ranks(positions, n, forward, right, center, out_ranks, out_rank_lookup, out_forward_distance_lookup)
 	-- function 88
-	local num = 0.8
+	local rank_precision = 0.8
 
-	for i = 1, arg_88_1 do
-		local var_88_1 = self[i]
-		local flat = Vector3.flat(var_88_1 - arg_88_4)
-		local dot = Vector3.dot(flat, arg_88_3)
-		local num_2 = math.floor(dot / num + 0.5) * num
-		local var_88_5 = arg_88_5[num_2]
+	for i = 1, n do
+		local position = positions[i]
+		local delta_pos = Vector3.flat(position - center)
+		local projected_right_distance = Vector3.dot(delta_pos, right)
+		local rank_key = math.floor(projected_right_distance / rank_precision + 0.5) * rank_precision
+		local rank = out_ranks[rank_key]
 
-		if not var_88_5 then
-			var_88_5 = FrameTable.alloc_table()
-			arg_88_5[num_2] = var_88_5
-			arg_88_6[#arg_88_6 + 1] = num_2
+		if not rank then
+			rank = FrameTable.alloc_table()
+			out_ranks[rank_key] = rank
+			out_rank_lookup[#out_rank_lookup + 1] = rank_key
 		end
 
-		arg_88_7[i] = Vector3.dot(flat, arg_88_2)
-		var_88_5[#var_88_5 + 1] = i
+		out_forward_distance_lookup[i] = Vector3.dot(delta_pos, forward)
+		rank[#rank + 1] = i
 	end
 end
 
-local function fn_3(self, arg_89_1, arg_89_2, arg_89_3, arg_89_4, arg_89_5)
+local function _match_rank_counts(left_rank_array, left_rank_lookup, left_sort_lookup, right_rank_array, right_rank_lookup, right_sort_lookup)
 	-- function 89
-	local count = #arg_89_1
-	local count_2 = #arg_89_4
-	local flag = not (count <= count_2) or not count or count_2
+	local left_rank_n = #left_rank_lookup
+	local right_rank_n = #right_rank_lookup
+	local min_rank_n = (not (left_rank_n <= right_rank_n) or not left_rank_n) and not not right_rank_n
 
-	for i = 1, flag do
-		local var_89_3 = self[arg_89_1[i]]
-		local var_89_4 = arg_89_3[arg_89_4[i]]
+	for rank_i = 1, min_rank_n do
+		local left_rank = left_rank_array[left_rank_lookup[rank_i]]
+		local right_rank = right_rank_array[right_rank_lookup[rank_i]]
 
-		if not (not var_89_3 and var_89_4) then
-			local flag_2 = not var_89_3 and self and arg_89_3
-			local flag_3 = not var_89_3 and arg_89_1 and arg_89_4
-			local flag_4 = not var_89_3 and arg_89_2 and arg_89_5
+		if not left_rank or not right_rank then
+			local rank_array = (not left_rank or not left_rank_array) and not not right_rank_array
+			local rank_lookup = (not left_rank or not left_rank_lookup) and not not right_rank_lookup
+			local sort_lookup = (not left_rank or not left_sort_lookup) and not not right_sort_lookup
 
-			for j = i, #flag_3 do
-				local var_89_8 = flag_2[flag_3[j]]
+			for remaining_i = rank_i, #rank_lookup do
+				local other_rank = rank_array[rank_lookup[remaining_i]]
 
-				table.sort(var_89_8, function (arg_90_0, arg_90_1)
+				table.sort(other_rank, function (a, b)
 					-- function 90
-					return flag_4[arg_90_0] > flag_4[arg_90_1]
+					return sort_lookup[a] > sort_lookup[b]
 				end)
 			end
 
 			break
 		end
 
-		local count_3 = #var_89_3
-		local count_4 = #var_89_4
-		local var_89_11 = count_3
-		local var_89_12 = count_4
-		local var_89_13
-		local var_89_14
-		local var_89_15
-		local var_89_16
+		local left_n = #left_rank
+		local right_n = #right_rank
+		local smaller_n, larger_n = left_n, right_n
+		local smaller_rank, smaller_rank_array, smaller_rank_lookup, smaller_sort_lookup
 
-		if count_3 <= count_4 then
-			var_89_13 = var_89_3
-			var_89_14 = self
-			var_89_15 = arg_89_1
-			var_89_16 = arg_89_2
+		if left_n <= right_n then
+			smaller_rank = left_rank
+			smaller_rank_array = left_rank_array
+			smaller_rank_lookup = left_rank_lookup
+			smaller_sort_lookup = left_sort_lookup
 		else
-			var_89_11, var_89_12 = var_89_12, var_89_11
-			var_89_13 = var_89_4
-			var_89_14 = arg_89_3
-			var_89_15 = arg_89_4
-			var_89_16 = arg_89_5
+			smaller_n, larger_n = larger_n, smaller_n
+			smaller_rank = right_rank
+			smaller_rank_array = right_rank_array
+			smaller_rank_lookup = right_rank_lookup
+			smaller_sort_lookup = right_sort_lookup
 		end
 
-		while var_89_11 < var_89_12 do
-			local var_89_17 = var_89_14[var_89_15[i + 1]]
-			local count_5 = #var_89_17
+		while smaller_n < larger_n do
+			local next_rank = smaller_rank_array[smaller_rank_lookup[rank_i + 1]]
+			local next_rank_n = #next_rank
 
-			if var_89_12 >= var_89_11 + count_5 then
-				for k = 1, count_5 do
-					var_89_11 = var_89_11 + 1
-					var_89_13[var_89_11] = var_89_17[k]
+			if larger_n >= smaller_n + next_rank_n then
+				for i = 1, next_rank_n do
+					smaller_n = smaller_n + 1
+					smaller_rank[smaller_n] = next_rank[i]
 				end
 
-				table.remove(var_89_15, i + 1)
+				table.remove(smaller_rank_lookup, rank_i + 1)
 			else
-				table.sort(var_89_17, function (arg_91_0, arg_91_1)
+				table.sort(next_rank, function (a, b)
 					-- function 91
-					return var_89_16[arg_91_0] > var_89_16[arg_91_1]
+					return smaller_sort_lookup[a] > smaller_sort_lookup[b]
 				end)
 
-				for l = count_5, count_5 - (var_89_12 - var_89_11) + 1, -1 do
-					var_89_11 = var_89_11 + 1
-					var_89_13[var_89_11] = var_89_17[l]
-					var_89_17[l] = nil
+				for i = next_rank_n, next_rank_n - (larger_n - smaller_n) + 1, -1 do
+					smaller_n = smaller_n + 1
+					smaller_rank[smaller_n] = next_rank[i]
+					next_rank[i] = nil
 				end
 			end
 		end
 
-		table.sort(var_89_3, function (arg_92_0, arg_92_1)
+		table.sort(left_rank, function (a, b)
 			-- function 92
-			return arg_89_2[arg_92_0] > arg_89_2[arg_92_1]
+			return left_sort_lookup[a] > left_sort_lookup[b]
 		end)
-		table.sort(var_89_4, function (arg_93_0, arg_93_1)
+		table.sort(right_rank, function (a, b)
 			-- function 93
-			return arg_89_5[arg_93_0] > arg_89_5[arg_93_1]
+			return right_sort_lookup[a] > right_sort_lookup[b]
 		end)
 	end
 end
 
-math.distributed_point_matching = function (self, arg_94_1, arg_94_2, arg_94_3)
+math.distributed_point_matching = function (source_positions, target_positions, out_indices, use_rows)
 	-- function 94
-	local min = math.min(#self, #arg_94_1)
+	local num_points = math.min(#source_positions, #target_positions)
 
-	if min <= 0 then
+	if num_points <= 0 then
 		return
 	end
 
-	local zero = Vector3.zero()
-	local zero_2 = Vector3.zero()
+	local source_center = Vector3.zero()
+	local target_center = Vector3.zero()
 
-	for i = 1, min do
-		zero = zero + self[i]
-		zero_2 = zero_2 + arg_94_1[i]
+	for i = 1, num_points do
+		source_center = source_center + source_positions[i]
+		target_center = target_center + target_positions[i]
 	end
 
-	local num = zero / min
-	local num_2 = zero_2 / min
-	local normalize = Vector3.normalize(Vector3.flat(num_2 - num))
-	local cross = Vector3.cross(normalize, Vector3.up())
+	source_center = source_center / num_points
+	target_center = target_center / num_points
 
-	if not arg_94_3 then
-		normalize, cross = cross, normalize
+	local forward = Vector3.normalize(Vector3.flat(target_center - source_center))
+	local right = Vector3.cross(forward, Vector3.up())
+
+	if use_rows then
+		forward, right = right, forward
 	end
 
-	local alloc_table = FrameTable.alloc_table()
-	local alloc_table_2 = FrameTable.alloc_table()
-	local alloc_table_3 = FrameTable.alloc_table()
+	local out_source_ranks = FrameTable.alloc_table()
+	local out_source_rank_lookup = FrameTable.alloc_table()
+	local out_source_forward_distance_lookup = FrameTable.alloc_table()
 
-	fn_2(self, min, normalize, cross, num, alloc_table, alloc_table_2, alloc_table_3)
-	table.sort(alloc_table_2)
+	_calculate_distributed_point_ranks(source_positions, num_points, forward, right, source_center, out_source_ranks, out_source_rank_lookup, out_source_forward_distance_lookup)
+	table.sort(out_source_rank_lookup)
 
-	local alloc_table_4 = FrameTable.alloc_table()
-	local alloc_table_5 = FrameTable.alloc_table()
-	local alloc_table_6 = FrameTable.alloc_table()
+	local out_target_ranks = FrameTable.alloc_table()
+	local out_target_rank_lookup = FrameTable.alloc_table()
+	local out_target_forward_distance_lookup = FrameTable.alloc_table()
 
-	fn_2(arg_94_1, min, normalize, cross, num_2, alloc_table_4, alloc_table_5, alloc_table_6)
-	table.sort(alloc_table_5)
-	fn_3(alloc_table, alloc_table_2, alloc_table_3, alloc_table_4, alloc_table_5, alloc_table_6)
+	_calculate_distributed_point_ranks(target_positions, num_points, forward, right, target_center, out_target_ranks, out_target_rank_lookup, out_target_forward_distance_lookup)
+	table.sort(out_target_rank_lookup)
+	_match_rank_counts(out_source_ranks, out_source_rank_lookup, out_source_forward_distance_lookup, out_target_ranks, out_target_rank_lookup, out_target_forward_distance_lookup)
 
-	local count = #alloc_table_2
+	local num_ranks = #out_source_rank_lookup
 
-	for j = 1, count do
-		local var_94_14 = alloc_table[alloc_table_2[j]]
-		local var_94_15 = alloc_table_4[alloc_table_5[j]]
-		local count_2 = #var_94_14
+	for rank_i = 1, num_ranks do
+		local source_rank = out_source_ranks[out_source_rank_lookup[rank_i]]
+		local target_rank = out_target_ranks[out_target_rank_lookup[rank_i]]
+		local rank_n = #source_rank
 
-		for k = 1, count_2 do
-			arg_94_2[var_94_14[k]] = var_94_15[k]
+		for inline_i = 1, rank_n do
+			local source_index = source_rank[inline_i]
+			local target_index = target_rank[inline_i]
+
+			out_indices[source_index] = target_index
 		end
 	end
 
-	return min
+	return num_points
 end

@@ -2,22 +2,22 @@
 
 require("scripts/utils/keystroke_helper")
 
-local var_0_0 = local_require("scripts/ui/views/twitch_view_definitions")
+local definitions = local_require("scripts/ui/views/twitch_view_definitions")
 
 TwitchView = class(TwitchView)
 
-TwitchView.init = function (self, arg_1_1)
+TwitchView.init = function (self, ingame_ui_context)
 	-- function 1
-	self._ui_renderer = arg_1_1.ui_renderer
-	self._ingame_ui = arg_1_1.ingame_ui
-	self._network_lobby = arg_1_1.network_lobby
-	self._matchmaking_manager = arg_1_1.matchmaking_manager
+	self._ui_renderer = ingame_ui_context.ui_renderer
+	self._ingame_ui = ingame_ui_context.ingame_ui
+	self._network_lobby = ingame_ui_context.network_lobby
+	self._matchmaking_manager = ingame_ui_context.matchmaking_manager
 	self._render_settings = {
 		snap_pixel_positions = true
 	}
-	self._network_server = arg_1_1.network_server
+	self._network_server = ingame_ui_context.network_server
 
-	local input_manager = arg_1_1.input_manager
+	local input_manager = ingame_ui_context.input_manager
 
 	input_manager:create_input_service("twitch_view", "TwitchControllerSettings", "TwitchControllerFilters")
 	input_manager:map_device_to_service("twitch_view", "keyboard")
@@ -26,7 +26,8 @@ TwitchView.init = function (self, arg_1_1)
 
 	self._input_manager = input_manager
 
-	local world = arg_1_1.world_manager:world("level_world")
+	local world_manager = ingame_ui_context.world_manager
+	local world = world_manager:world("level_world")
 
 	self._wwise_world = Managers.world:wwise_world(world)
 
@@ -35,27 +36,27 @@ end
 
 TwitchView._create_ui_elements = function (self)
 	-- function 2
-	self._ui_scenegraph = UISceneGraph.init_scenegraph(var_0_0.scenegraph_definition)
+	self._ui_scenegraph = UISceneGraph.init_scenegraph(definitions.scenegraph_definition)
 	self._widgets = {}
 
-	local widget_definitions = var_0_0.widget_definitions
+	local widget_definitions = definitions.widget_definitions
 
-	for k, v in pairs(widget_definitions.widgets) do
-		self._widgets[k] = UIWidget.init(v)
+	for name, widget in pairs(widget_definitions.widgets) do
+		self._widgets[name] = UIWidget.init(widget)
 	end
 
-	self._connect_button_widget = UIWidget.init(var_0_0.widget_definitions.connect_button)
+	self._connect_button_widget = UIWidget.init(definitions.widget_definitions.connect_button)
 
-	local title_text = self._connect_button_widget.style.title_text
+	local button_text_style = self._connect_button_widget.style.title_text
 
-	title_text.text_color = Colors.get_color_table_with_alpha("twitch", 255)
-	title_text.text_color_enabled = Colors.get_color_table_with_alpha("twitch", 255)
-	self._disconnect_button_widget = UIWidget.init(var_0_0.widget_definitions.disconnect_button)
+	button_text_style.text_color = Colors.get_color_table_with_alpha("twitch", 255)
+	button_text_style.text_color_enabled = Colors.get_color_table_with_alpha("twitch", 255)
+	self._disconnect_button_widget = UIWidget.init(definitions.widget_definitions.disconnect_button)
 
-	local title_text_2 = self._disconnect_button_widget.style.title_text
+	local button_text_style = self._disconnect_button_widget.style.title_text
 
-	title_text_2.text_color = Colors.get_color_table_with_alpha("red", 255)
-	title_text_2.text_color_enabled = Colors.get_color_table_with_alpha("red", 255)
+	button_text_style.text_color = Colors.get_color_table_with_alpha("red", 255)
+	button_text_style.text_color_enabled = Colors.get_color_table_with_alpha("red", 255)
 
 	UIRenderer.clear_scenegraph_queue(self._ui_renderer)
 
@@ -68,57 +69,59 @@ TwitchView.on_enter = function (self)
 	self:set_active(true)
 end
 
-local flag = true
+local DO_RELOAD = true
 
-TwitchView.update = function (self, arg_4_1, arg_4_2, arg_4_3)
+TwitchView.update = function (self, dt, t, is_sub_menu)
 	-- function 4
-	if not flag then
-		flag = false
+	if DO_RELOAD then
+		DO_RELOAD = false
 
 		self:_create_ui_elements()
 	end
 
-	if not (self._suspended or self._active) then
+	if self._suspended or not self._active then
 		return
 	end
 
-	self:_draw(arg_4_1, arg_4_2)
-	self:_update_input(arg_4_1, arg_4_2)
-	self:_update_error(arg_4_1, arg_4_2)
+	self:_draw(dt, t)
+	self:_update_input(dt, t)
+	self:_update_error(dt, t)
 end
 
-TwitchView.cb_on_message_received = function (self, arg_5_1, arg_5_2, arg_5_3, arg_5_4, arg_5_5)
+TwitchView.cb_on_message_received = function (self, key, message_type, user_name, message, parameter)
 	-- function 5
-	local content = self._widgets.chat_output_widget.content
-	local message_tables = content.message_tables
-	local tbl = {}
+	local chat_output_widget = self._widgets.chat_output_widget
+	local chat_output_content = chat_output_widget.content
+	local message_tables = chat_output_content.message_tables
+	local new_message_table = {}
 
-	tbl.is_dev = false
-	tbl.is_system = false
-	tbl.sender = string.format("%s: ", arg_5_3)
-	tbl.message = arg_5_4
-	message_tables[#message_tables + 1] = tbl
+	new_message_table.is_dev = false
+	new_message_table.is_system = false
+	new_message_table.sender = string.format("%s: ", user_name)
+	new_message_table.message = message
+	message_tables[#message_tables + 1] = new_message_table
 
 	if #message_tables > 20 then
 		table.remove(message_tables, 1)
 	else
-		content.text_start_offset = content.text_start_offset + 1
+		chat_output_content.text_start_offset = chat_output_content.text_start_offset + 1
 	end
 end
 
-TwitchView._play_sound = function (self, arg_6_1)
+TwitchView._play_sound = function (self, event)
 	-- function 6
-	WwiseWorld.trigger_event(self._wwise_world, arg_6_1)
+	WwiseWorld.trigger_event(self._wwise_world, event)
 end
 
-TwitchView._update_input = function (self, arg_7_1, arg_7_2)
+TwitchView._update_input = function (self, dt, t)
 	-- function 7
-	local content = self._widgets.frame_widget.content
-	local get_service = self._input_manager:get_service("twitch_view")
+	local frame_widget = self._widgets.frame_widget
+	local frame_widget_content = frame_widget.content
+	local input_service = self._input_manager:get_service("twitch_view")
 
-	if not get_service:get("back", true) then
-		if not content.text_field_active then
-			content.text_field_active = false
+	if input_service:get("back", true) then
+		if frame_widget_content.text_field_active then
+			frame_widget_content.text_field_active = false
 		else
 			self:set_active(false)
 
@@ -129,64 +132,81 @@ TwitchView._update_input = function (self, arg_7_1, arg_7_2)
 	local is_connecting = Managers.twitch:is_connecting()
 	local is_connected = Managers.twitch:is_connected()
 
-	if not is_connecting then
-		self._connect_button_widget.content.button_hotspot.on_pressed = false
-		self._disconnect_button_widget.content.button_hotspot.on_pressed = false
-	else
-		local text_input_hotspot = content.text_input_hotspot
-		local screen_hotspot = content.screen_hotspot
-		local frame_hotspot = content.frame_hotspot
+	if is_connecting then
+		local connect_button_content = self._connect_button_widget.content
+		local connect_button_hotspot = connect_button_content.button_hotspot
 
-		if not (not text_input_hotspot.on_pressed and is_connected) then
-			content.text_field_active = true
-		elseif screen_hotspot.on_pressed or not is_connected then
-			if not (not screen_hotspot.on_pressed and content.text_field_active or frame_hotspot.on_pressed) then
+		connect_button_hotspot.on_pressed = false
+
+		local disconnect_button_content = self._disconnect_button_widget.content
+		local disconnect_button_hotspot = disconnect_button_content.button_hotspot
+
+		disconnect_button_hotspot.on_pressed = false
+	else
+		local input_hotspot = frame_widget_content.text_input_hotspot
+		local screen_hotspot = frame_widget_content.screen_hotspot
+		local frame_hotspot = frame_widget_content.frame_hotspot
+
+		if input_hotspot.on_pressed and not is_connected then
+			frame_widget_content.text_field_active = true
+		elseif screen_hotspot.on_pressed or is_connected then
+			if screen_hotspot.on_pressed and not frame_widget_content.text_field_active and not frame_hotspot.on_pressed then
 				self:set_active(false)
 
 				return
 			end
 
-			content.text_field_active = false
+			frame_widget_content.text_field_active = false
 		end
 
-		if not content.text_field_active then
+		if frame_widget_content.text_field_active then
 			local keystrokes = Keyboard.keystrokes()
 
-			content.twitch_name, content.caret_index = KeystrokeHelper.parse_strokes(content.twitch_name, content.caret_index, "insert", keystrokes)
+			frame_widget_content.twitch_name, frame_widget_content.caret_index = KeystrokeHelper.parse_strokes(frame_widget_content.twitch_name, frame_widget_content.caret_index, "insert", keystrokes)
 
-			if not get_service:get("execute_login") then
-				content.text_field_active = false
+			if input_service:get("execute_login") then
+				frame_widget_content.text_field_active = false
 
-				local gsub = string.gsub(content.twitch_name, " ", "")
+				local user_name = string.gsub(frame_widget_content.twitch_name, " ", "")
 
-				Managers.twitch:connect(gsub, callback(self, "cb_connection_callback"))
+				Managers.twitch:connect(user_name, callback(self, "cb_connection_callback"))
 			end
 		end
 
-		if not self._widgets.exit_button.content.button_hotspot.on_pressed then
+		local close_widget = self._widgets.exit_button
+		local close_widget_content = close_widget.content
+
+		if close_widget_content.button_hotspot.on_pressed then
 			self:set_active(false)
 
 			return
 		end
 
-		if not (not self._connect_button_widget.content.button_hotspot.on_pressed and is_connected) then
-			local gsub_2 = string.gsub(content.twitch_name, " ", "")
+		local connect_button_content = self._connect_button_widget.content
+		local connect_button_hotspot = connect_button_content.button_hotspot
 
-			Managers.twitch:connect(gsub_2, callback(self, "cb_connection_callback"))
+		if connect_button_hotspot.on_pressed and not is_connected then
+			local user_name = string.gsub(frame_widget_content.twitch_name, " ", "")
+
+			Managers.twitch:connect(user_name, callback(self, "cb_connection_callback"))
 		end
 
-		if not self._disconnect_button_widget.content.button_hotspot.on_pressed and not is_connected then
+		local disconnect_button_content = self._disconnect_button_widget.content
+		local disconnect_button_hotspot = disconnect_button_content.button_hotspot
+
+		if disconnect_button_hotspot.on_pressed and is_connected then
 			Managers.twitch:disconnect()
 
-			local content_2 = self._widgets.chat_output_widget.content
+			local chat_output_widget = self._widgets.chat_output_widget
+			local chat_output_content = chat_output_widget.content
 
-			content_2.message_tables = {}
-			content_2.text_start_offset = 0
+			chat_output_content.message_tables = {}
+			chat_output_content.text_start_offset = 0
 		end
 	end
 end
 
-TwitchView._update_error = function (self, arg_8_1, arg_8_2)
+TwitchView._update_error = function (self, dt, t)
 	-- function 8
 	if not self._error_timer then
 		return
@@ -194,11 +214,11 @@ TwitchView._update_error = function (self, arg_8_1, arg_8_2)
 
 	local style = self._widgets.frame_widget.style
 
-	self._error_timer = self._error_timer - arg_8_1
+	self._error_timer = self._error_timer - dt
 
-	local lerp = math.lerp(0, 255, math.min(self._error_timer, 1))
+	local alpha = math.lerp(0, 255, math.min(self._error_timer, 1))
 
-	style.error_field.text_color[1] = lerp
+	style.error_field.text_color[1] = alpha
 
 	if self._error_timer <= 0 then
 		style.error_field.text_color[1] = 0
@@ -206,21 +226,21 @@ TwitchView._update_error = function (self, arg_8_1, arg_8_2)
 	end
 end
 
-TwitchView.cb_connection_callback = function (self, arg_9_1)
+TwitchView.cb_connection_callback = function (self, message)
 	-- function 9
 	local content = self._widgets.frame_widget.content
 	local style = self._widgets.frame_widget.style
 
-	content.error_id = arg_9_1
+	content.error_id = message
 	style.error_field.text_color[1] = 255
 	self._error_timer = 5
 end
 
-TwitchView.set_active = function (self, arg_10_1)
+TwitchView.set_active = function (self, active)
 	-- function 10
-	self._active = arg_10_1
+	self._active = active
 
-	if not self._active then
+	if self._active then
 		self._input_manager:block_device_except_service("twitch_view", "keyboard", 1, "twitch")
 		self._input_manager:block_device_except_service("twitch_view", "mouse", 1, "twitch")
 		self._input_manager:block_device_except_service("twitch_view", "gamepad", 1, "twitch")
@@ -259,30 +279,30 @@ TwitchView.unsuspend = function (self)
 	self._suspended = nil
 end
 
-TwitchView._draw = function (self, arg_14_1, arg_14_2)
+TwitchView._draw = function (self, dt, t)
 	-- function 14
-	local _ui_renderer = self._ui_renderer
-	local _ui_scenegraph = self._ui_scenegraph
-	local get_service = self._input_manager:get_service("twitch_view")
-	local _render_settings = self._render_settings
+	local ui_renderer = self._ui_renderer
+	local ui_scenegraph = self._ui_scenegraph
+	local input_service = self._input_manager:get_service("twitch_view")
+	local render_settings = self._render_settings
 	local is_connected = Managers.twitch:is_connected()
 	local is_connecting = Managers.twitch:is_connecting()
 
-	UIRenderer.begin_pass(_ui_renderer, _ui_scenegraph, get_service, arg_14_1, nil, _render_settings)
+	UIRenderer.begin_pass(ui_renderer, ui_scenegraph, input_service, dt, nil, render_settings)
 
-	for k, v in pairs(self._widgets) do
-		UIRenderer.draw_widget(_ui_renderer, v)
+	for name, widget in pairs(self._widgets) do
+		UIRenderer.draw_widget(ui_renderer, widget)
 	end
 
 	if not is_connecting then
-		if not is_connected then
-			UIRenderer.draw_widget(_ui_renderer, self._disconnect_button_widget)
+		if is_connected then
+			UIRenderer.draw_widget(ui_renderer, self._disconnect_button_widget)
 		else
-			UIRenderer.draw_widget(_ui_renderer, self._connect_button_widget)
+			UIRenderer.draw_widget(ui_renderer, self._connect_button_widget)
 		end
 	end
 
-	UIRenderer.end_pass(_ui_renderer)
+	UIRenderer.end_pass(ui_renderer)
 end
 
 TwitchView.on_exit = function (self)
@@ -291,18 +311,28 @@ TwitchView.on_exit = function (self)
 	self:set_active(false)
 end
 
-TwitchView.destroy = function (arg_16_0)
+TwitchView.destroy = function (self)
 	-- function 16
 	return
 end
 
-TwitchView._exit = function (self, arg_17_1)
+TwitchView._exit = function (self, return_to_game)
 	-- function 17
-	local flag
+	local str
 
-	flag = not arg_17_1 and "exit_menu" and "ingame_menu"
+	if return_to_game then
+		str = "exit_menu"
 
-	self._ingame_ui:handle_transition(flag)
+		goto label_17_0
+	end
+
+	str = "ingame_menu"
+
+	local exit_transition = str
+
+	::label_17_0::
+
+	self._ingame_ui:handle_transition(exit_transition)
 end
 
 TwitchView.input_service = function (self)

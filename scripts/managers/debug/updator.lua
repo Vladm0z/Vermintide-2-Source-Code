@@ -8,53 +8,53 @@ Updator.init = function (self)
 	self._updators = {}
 end
 
-local function fn(arg_2_0)
+local function error_handler(err)
 	-- function 2
-	return string.format("[Updator] Error: %s\n%s", arg_2_0, Script.callstack())
+	return string.format("[Updator] Error: %s\n%s", err, Script.callstack())
 end
 
-Updator.update = function (self, arg_3_1)
+Updator.update = function (self, dt)
 	-- function 3
-	for k, v in pairs(self._updators) do
-		local var_3_0, var_3_1 = xpcall(v, fn, arg_3_1)
+	for id, func in pairs(self._updators) do
+		local ok, err_str = xpcall(func, error_handler, dt)
 
-		if not var_3_0 then
-			self._updators[k] = nil
+		if not ok then
+			self._updators[id] = nil
 
-			print_error(var_3_1)
-			printf("[Updator] Warning: updator %q threw an error and has been detached", k)
+			print_error(err_str)
+			printf("[Updator] Warning: updator %q threw an error and has been detached", id)
 		end
 	end
 end
 
-Updator.add = function (self, arg_4_1, arg_4_2)
+Updator.add = function (self, func, id)
 	-- function 4
-	if not arg_4_2 then
-		arg_4_2 = self._updator_index
-		self._updator_index = arg_4_2 + 1
+	if not id then
+		id = self._updator_index
+		self._updator_index = id + 1
 	end
 
-	if not self._updators[arg_4_2] then
-		printf("[Updator] Warning: replaced updator at index %q", arg_4_2)
+	if not self._updators[id] then
+		printf("[Updator] Warning: replaced updator at index %q", id)
 	end
 
-	self._updators[arg_4_2] = arg_4_1
+	self._updators[id] = func
 
-	return arg_4_2
+	return id
 end
 
-Updator.remove = function (self, arg_5_1)
+Updator.remove = function (self, id)
 	-- function 5
-	if not self._updators[arg_5_1] then
-		printf("[Updator] Warning: tried to remove updator at index %q, but there was none", arg_5_1)
+	if not self._updators[id] then
+		printf("[Updator] Warning: tried to remove updator at index %q, but there was none", id)
 	end
 
-	self._updators[arg_5_1] = nil
+	self._updators[id] = nil
 end
 
-Updator.has = function (self, arg_6_1)
+Updator.has = function (self, id)
 	-- function 6
-	return not not self._updators[arg_6_1]
+	return not not self._updators[id]
 end
 
 Updator.clear = function (self)

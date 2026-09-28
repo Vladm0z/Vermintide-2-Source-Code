@@ -2,32 +2,37 @@
 
 RatOgreStateWalking = class(RatOgreStateWalking, EnemyCharacterStateWalking)
 
-RatOgreStateWalking.init = function (self, arg_1_1)
+RatOgreStateWalking.init = function (self, character_state_init_context)
 	-- function 1
-	RatOgreStateWalking.super.init(self, arg_1_1)
+	RatOgreStateWalking.super.init(self, character_state_init_context)
 
 	self._ogre_jump_ability_id = self._career_extension:ability_id("ogre_jump")
 end
 
-RatOgreStateWalking.on_enter = function (arg_2_0, arg_2_1, arg_2_2, arg_2_3, arg_2_4, arg_2_5, arg_2_6, arg_2_7)
+RatOgreStateWalking.on_enter = function (self, unit, input, dt, context, t, previous_state, params)
 	-- function 2
-	RatOgreStateWalking.super.on_enter(arg_2_0, arg_2_1, arg_2_2, arg_2_3, arg_2_4, arg_2_5, arg_2_6, arg_2_7)
+	RatOgreStateWalking.super.on_enter(self, unit, input, dt, context, t, previous_state, params)
 end
 
-RatOgreStateWalking.update = function (self, arg_3_1, arg_3_2, arg_3_3, arg_3_4, arg_3_5)
+RatOgreStateWalking.update = function (self, unit, input, dt, context, t)
 	-- function 3
-	if not self:common_state_changes() then
+	local handled = self:common_state_changes()
+
+	if handled then
 		return
 	end
 
-	local _csm = self._csm
-	local _status_extension = self._status_extension
-	local _career_extension = self._career_extension
-	local is_in_ghost_mode = self._ghost_mode_extension:is_in_ghost_mode()
+	local csm = self._csm
+	local status_extension = self._status_extension
+	local career_extension = self._career_extension
+	local ghost_mode_extension = self._ghost_mode_extension
+	local in_ghost_mode = ghost_mode_extension:is_in_ghost_mode()
 
-	self:_update_taunt_dialogue(arg_3_5)
+	self:_update_taunt_dialogue(t)
 
-	if not self:common_movement(is_in_ghost_mode, arg_3_3) then
-		CharacterStateHelper.update_weapon_actions(arg_3_5, arg_3_1, self._input_extension, self._inventory_extension, self._health_extension)
+	handled = self:common_movement(in_ghost_mode, dt)
+
+	if not handled then
+		CharacterStateHelper.update_weapon_actions(t, unit, self._input_extension, self._inventory_extension, self._health_extension)
 	end
 end

@@ -2,9 +2,9 @@
 
 PlayerHuskWeaveLoadoutExtension = class(PlayerHuskWeaveLoadoutExtension)
 
-PlayerHuskWeaveLoadoutExtension.init = function (self, arg_1_1, arg_1_2, arg_1_3)
+PlayerHuskWeaveLoadoutExtension.init = function (self, extension_init_context, unit, extension_init_data)
 	-- function 1
-	self._unit = arg_1_2
+	self._unit = unit
 	self._synced_buff_params = nil
 end
 
@@ -14,47 +14,49 @@ PlayerHuskWeaveLoadoutExtension.destroy = function (self)
 	self._synced_buff_params = nil
 end
 
-PlayerHuskWeaveLoadoutExtension.add_buffs = function (self, arg_3_1, arg_3_2, arg_3_3, arg_3_4)
+PlayerHuskWeaveLoadoutExtension.add_buffs = function (self, num_buffs, buff_ids, buff_data_type_ids, buff_values)
 	-- function 3
 	self._synced_buff_params = {
-		arg_3_1,
-		arg_3_2,
-		arg_3_3,
-		arg_3_4
+		num_buffs,
+		buff_ids,
+		buff_data_type_ids,
+		buff_values
 	}
 
-	local buffs_from_rpc_params = BuffUtils.buffs_from_rpc_params(arg_3_1, arg_3_2, arg_3_3, arg_3_4)
+	local buffs = BuffUtils.buffs_from_rpc_params(num_buffs, buff_ids, buff_data_type_ids, buff_values)
 
-	self:_apply_buffs(buffs_from_rpc_params)
+	self:_apply_buffs(buffs)
 end
 
-PlayerHuskWeaveLoadoutExtension._apply_buffs = function (self, arg_4_1)
+PlayerHuskWeaveLoadoutExtension._apply_buffs = function (self, buffs)
 	-- function 4
-	local extension = ScriptUnit.extension(self._unit, "buff_system")
+	local buff_extension = ScriptUnit.extension(self._unit, "buff_system")
 
-	for k, v in pairs(arg_4_1) do
-		local tbl = {}
+	for buff_name, variable_data in pairs(buffs) do
+		local params = {}
 
-		for k_2, v_2 in pairs(v) do
-			tbl[k_2] = v_2
+		for data_type, data_value in pairs(variable_data) do
+			params[data_type] = data_value
 		end
 
-		extension:add_buff(k, tbl)
+		buff_extension:add_buff(buff_name, params)
 	end
 end
 
-PlayerHuskWeaveLoadoutExtension.hot_join_sync = function (self, arg_5_1)
+PlayerHuskWeaveLoadoutExtension.hot_join_sync = function (self, sender)
 	-- function 5
-	if not Managers.state.unit_spawner:is_marked_for_deletion(self._unit) then
+	local is_marked_for_deletion = Managers.state.unit_spawner:is_marked_for_deletion(self._unit)
+
+	if is_marked_for_deletion then
 		return
 	end
 
-	local _synced_buff_params = self._synced_buff_params
+	local rpc_params = self._synced_buff_params
 
-	if not _synced_buff_params then
-		local go_id = Managers.state.unit_storage:go_id(self._unit)
-		local var_5_2 = PEER_ID_TO_CHANNEL[arg_5_1]
+	if rpc_params then
+		local unit_go_id = Managers.state.unit_storage:go_id(self._unit)
+		local channel_id = PEER_ID_TO_CHANNEL[sender]
 
-		RPC.rpc_add_weave_buffs(var_5_2, go_id, unpack(_synced_buff_params))
+		RPC.rpc_add_weave_buffs(channel_id, unit_go_id, unpack(rpc_params))
 	end
 end

@@ -2,29 +2,29 @@
 
 CameraStateIdle = class(CameraStateIdle, CameraState)
 
-CameraStateIdle.init = function (arg_1_0, arg_1_1)
+CameraStateIdle.init = function (self, camera_state_init_context)
 	-- function 1
-	CameraState.init(arg_1_0, arg_1_1, "idle")
+	CameraState.init(self, camera_state_init_context, "idle")
 end
 
-CameraStateIdle.on_enter = function (arg_2_0, arg_2_1, arg_2_2, arg_2_3, arg_2_4, arg_2_5, arg_2_6, arg_2_7)
+CameraStateIdle.on_enter = function (self, unit, input, dt, context, t, previous_state, params)
 	-- function 2
 	return
 end
 
-CameraStateIdle.on_exit = function (arg_3_0, arg_3_1, arg_3_2, arg_3_3, arg_3_4, arg_3_5, arg_3_6)
+CameraStateIdle.on_exit = function (self, unit, input, dt, context, t, next_state)
 	-- function 3
 	return
 end
 
-CameraStateIdle.update = function (self, arg_4_1, arg_4_2, arg_4_3, arg_4_4, arg_4_5)
+CameraStateIdle.update = function (self, unit, input, dt, context, t)
 	-- function 4
 	local csm = self.csm
 	local unit = self.unit
 	local camera_extension = self.camera_extension
-	local get_follow_data, var_4_4 = camera_extension:get_follow_data()
+	local follow_unit, _ = camera_extension:get_follow_data()
 
-	if not get_follow_data then
+	if follow_unit then
 		csm:change_state("follow")
 
 		return
@@ -33,7 +33,7 @@ CameraStateIdle.update = function (self, arg_4_1, arg_4_2, arg_4_3, arg_4_4, arg
 	local external_state_change = camera_extension.external_state_change
 	local external_state_change_params = camera_extension.external_state_change_params
 
-	if not (not external_state_change and external_state_change == self.name) then
+	if external_state_change and external_state_change ~= self.name then
 		csm:change_state(external_state_change, external_state_change_params)
 		camera_extension:set_external_state_change(nil)
 
@@ -41,18 +41,19 @@ CameraStateIdle.update = function (self, arg_4_1, arg_4_2, arg_4_3, arg_4_4, arg
 	end
 
 	local unique_id = self.camera_extension.player:unique_id()
-	local get_side_from_player_unique_id = Managers.state.side:get_side_from_player_unique_id(unique_id)
+	local side = Managers.state.side:get_side_from_player_unique_id(unique_id)
+	local side_name = not not side and not not side:name()
 
-	if (not get_side_from_player_unique_id and get_side_from_player_unique_id:name()) == "spectators" then
+	if side_name == "spectators" then
 		csm:change_state("observer")
 
 		return
 	end
 
-	local get_idle_position = camera_extension:get_idle_position()
-	local get_idle_rotation = camera_extension:get_idle_rotation()
+	local position = camera_extension:get_idle_position()
+	local rotation = camera_extension:get_idle_rotation()
 
-	assert(Vector3.is_valid(get_idle_position), "Camera position invalid.")
-	Unit.set_local_position(unit, 0, get_idle_position)
-	Unit.set_local_rotation(unit, 0, get_idle_rotation)
+	assert(Vector3.is_valid(position), "Camera position invalid.")
+	Unit.set_local_position(unit, 0, position)
+	Unit.set_local_rotation(unit, 0, rotation)
 end

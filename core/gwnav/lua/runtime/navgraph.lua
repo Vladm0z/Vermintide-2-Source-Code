@@ -2,30 +2,33 @@
 
 require("core/gwnav/lua/safe_require")
 
-local var_0_0 = safe_require_guard()
-local var_0_1 = safe_require("core/gwnav/lua/runtime/navclass")(var_0_0)
+local NavGraph = safe_require_guard()
+local NavClass = safe_require("core/gwnav/lua/runtime/navclass")
+
+NavGraph = NavClass(NavGraph)
+
 local GwNavGraph = stingray.GwNavGraph
 
-var_0_1.init = function (self, arg_1_1, arg_1_2, arg_1_3, arg_1_4, arg_1_5, arg_1_6, arg_1_7)
+NavGraph.init = function (self, world, bidirectional_edges, point_table, color, layer_id, smartobject_id, user_data_id)
 	-- function 1
-	self.nav_navgraph = GwNavGraph.create(arg_1_1, arg_1_2, arg_1_3, arg_1_4, arg_1_5, arg_1_6, arg_1_7)
+	self.nav_navgraph = GwNavGraph.create(world, bidirectional_edges, point_table, color, layer_id, smartobject_id, user_data_id)
 end
 
-var_0_1.shutdown = function (self)
+NavGraph.shutdown = function (self)
 	-- function 2
 	GwNavGraph.destroy(self.nav_navgraph)
 
 	self.nav_navgraph = nil
 end
 
-var_0_1.add_to_database = function (self)
+NavGraph.add_to_database = function (self)
 	-- function 3
 	GwNavGraph.add_to_database(self.nav_navgraph)
 end
 
-var_0_1.remove_from_database = function (self)
+NavGraph.remove_from_database = function (self)
 	-- function 4
 	GwNavGraph.remove_from_database(self.nav_navgraph)
 end
 
-return var_0_1
+return NavGraph

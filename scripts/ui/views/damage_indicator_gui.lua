@@ -1,9 +1,8 @@
 -- chunkname: @scripts/ui/views/damage_indicator_gui.lua
 
-local num = 1920
-local num_2 = 1080
-local num_3 = 10
-local tbl = {
+local SIZE_X, SIZE_Y = 1920, 1080
+local MAX_INDICATOR_WIDGETS = 10
+local scenegraph_definition = {
 	root = {
 		is_root = true,
 		position = {
@@ -12,8 +11,8 @@ local tbl = {
 			UILayer.hud
 		},
 		size = {
-			num,
-			num_2
+			SIZE_X,
+			SIZE_Y
 		}
 	},
 	indicator_centre = {
@@ -31,7 +30,7 @@ local tbl = {
 		}
 	}
 }
-local tbl_2 = {
+local ignored_damage_types = {
 	temporary_health_degen = true,
 	vomit_face = true,
 	buff_shared_medpack = true,
@@ -48,7 +47,7 @@ local tbl_2 = {
 	knockdown_bleed = true,
 	life_drain = true
 }
-local tbl_3 = {
+local damage_indicator_widget_definition = {
 	scenegraph_id = "indicator_centre",
 	element = UIElements.RotatedTexture,
 	content = {
@@ -79,7 +78,7 @@ local tbl_3 = {
 		}
 	}
 }
-local tbl_4 = {
+local colors_by_type = {
 	enemy = {
 		255,
 		205,
@@ -96,141 +95,156 @@ local tbl_4 = {
 
 DamageIndicatorGui = class(DamageIndicatorGui)
 
-DamageIndicatorGui.init = function (self, arg_1_1, arg_1_2)
+DamageIndicatorGui.init = function (self, parent, ingame_ui_context)
 	-- function 1
-	self._parent = arg_1_1
-	self.ui_renderer = arg_1_2.ui_renderer
-	self.input_manager = arg_1_2.input_manager
+	self._parent = parent
+	self.ui_renderer = ingame_ui_context.ui_renderer
+	self.input_manager = ingame_ui_context.input_manager
 
 	self:create_ui_elements()
 
-	self.player_manager = arg_1_2.player_manager
-	self.peer_id = arg_1_2.peer_id
+	self.player_manager = ingame_ui_context.player_manager
+	self.peer_id = ingame_ui_context.peer_id
 end
 
 DamageIndicatorGui.create_ui_elements = function (self)
 	-- function 2
-	self.ui_scenegraph = UISceneGraph.init_scenegraph(tbl)
+	self.ui_scenegraph = UISceneGraph.init_scenegraph(scenegraph_definition)
 	self.indicator_widgets = {}
 	self.indicator_positions = {}
 
-	for i = 1, num_3 do
-		self.indicator_widgets[i] = UIWidget.init(tbl_3)
+	for i = 1, MAX_INDICATOR_WIDGETS do
+		self.indicator_widgets[i] = UIWidget.init(damage_indicator_widget_definition)
 		self.indicator_positions[i] = {}
 	end
 
 	self.num_active_indicators = 0
 end
 
-DamageIndicatorGui.destroy = function (arg_3_0)
+DamageIndicatorGui.destroy = function (self)
 	-- function 3
 	return
 end
 
-DamageIndicatorGui.update = function (self, arg_4_1)
+DamageIndicatorGui.update = function (self, dt)
 	-- function 4
 	if Development.parameter("screen_space_player_camera_reactions") == false then
 		return
 	end
 
-	local get_service = self.input_manager:get_service("ingame_menu")
+	local input_manager = self.input_manager
+	local input_service = input_manager:get_service("ingame_menu")
 	local ui_renderer = self.ui_renderer
 	local ui_scenegraph = self.ui_scenegraph
 	local indicator_widgets = self.indicator_widgets
 	local peer_id = self.peer_id
-	local player_unit = self.player_manager:player_from_peer_id(peer_id).player_unit
+	local my_player = self.player_manager:player_from_peer_id(peer_id)
+	local player_unit = my_player.player_unit
 
 	if not player_unit then
 		return
 	end
 
-	UIRenderer.begin_pass(ui_renderer, ui_scenegraph, get_service, arg_4_1)
+	UIRenderer.begin_pass(ui_renderer, ui_scenegraph, input_service, dt)
 
-	local recent_damages, var_4_7 = ScriptUnit.extension(player_unit, "health_system"):recent_damages()
+	local health_extension = ScriptUnit.extension(player_unit, "health_system")
+	local strided_array, array_length = health_extension:recent_damages()
 	local indicator_positions = self.indicator_positions
 
-	if var_4_7 > 0 then
-		for i = 1, var_4_7 / DamageDataIndex.STRIDE do
-			local num = (i - 1) * DamageDataIndex.STRIDE
-			local var_4_10 = recent_damages[num + DamageDataIndex.ATTACKER]
-			local var_4_11 = recent_damages[num + DamageDataIndex.DAMAGE_TYPE]
-			local flag = var_4_10 == player_unit
-			local flag_2 = not not tbl_2[var_4_11] or not flag
+	if array_length > 0 then
+		for i = 1, array_length / DamageDataIndex.STRIDE do
+			do
+				local index = (i - 1) * DamageDataIndex.STRIDE
+				local attacker = strided_array[index + DamageDataIndex.ATTACKER]
+				local damage_type = strided_array[index + DamageDataIndex.DAMAGE_TYPE]
+				local self_damage = attacker == player_unit
+				local show_direction = not ignored_damage_types[damage_type] and not not not self_damage
 
-			if not var_4_10 and not Unit.alive(var_4_10) and not flag_2 then
-				local num_2 = self.num_active_indicators + 1
+				if attacker and Unit.alive(attacker) and show_direction then
+					local next_active_indicator = self.num_active_indicators + 1
 
-				if num_2 <= num_3 then
-					self.num_active_indicators = num_2
-				else
-					num_2 = 1
+					if next_active_indicator <= MAX_INDICATOR_WIDGETS then
+						self.num_active_indicators = next_active_indicator
+					else
+						next_active_indicator = 1
+					end
+
+					local widget = indicator_widgets[next_active_indicator]
+					local indicator_position = indicator_positions[next_active_indicator]
+					local var_4_0 = POSITION_LOOKUP[attacker]
+
+					if not var_4_0 then
+						-- Nothing
+					end
+
+					var_4_0 = Unit.world_position(attacker, 0)
+
+					local attacker_position = var_4_0
+
+					::label_4_0::
+
+					Vector3Aux.box(indicator_position, attacker_position)
+
+					indicator_position[3] = 0
+
+					local rotating_texture_color = widget.style.rotating_texture.color
+					local is_friendly_fire = Managers.state.side:is_player_friendly_fire(attacker, player_unit)
+					local target_color
+
+					if is_friendly_fire and not Application.user_setting("friendly_fire_hit_marker") then
+						goto label_4_1
+					elseif is_friendly_fire then
+						target_color = colors_by_type.friendly_fire
+					else
+						target_color = colors_by_type.enemy
+					end
+
+					rotating_texture_color[2] = target_color[2]
+					rotating_texture_color[3] = target_color[3]
+					rotating_texture_color[4] = target_color[4]
+
+					UIWidget.animate(widget, UIAnimation.init(UIAnimation.function_by_time, rotating_texture_color, 1, 255, 0, 1, math.easeInCubic))
 				end
-
-				local var_4_15 = indicator_widgets[num_2]
-				local var_4_16 = indicator_positions[num_2]
-				local var_4_17 = POSITION_LOOKUP[var_4_10]
-
-				var_4_17 = var_4_17 or Unit.world_position(var_4_10, 0)
-
-				Vector3Aux.box(var_4_16, var_4_17)
-
-				var_4_16[3] = 0
-
-				local color = var_4_15.style.rotating_texture.color
-				local is_player_friendly_fire = Managers.state.side:is_player_friendly_fire(var_4_10, player_unit)
-				local var_4_20
-
-				if not (not is_player_friendly_fire and Application.user_setting("friendly_fire_hit_marker")) then
-					goto label_4_0
-				elseif not is_player_friendly_fire then
-					var_4_20 = tbl_4.friendly_fire
-				else
-					var_4_20 = tbl_4.enemy
-				end
-
-				color[2] = var_4_20[2]
-				color[3] = var_4_20[3]
-				color[4] = var_4_20[4]
-
-				UIWidget.animate(var_4_15, UIAnimation.init(UIAnimation.function_by_time, color, 1, 255, 0, 1, math.easeInCubic))
 			end
 
-			::label_4_0::
+			::label_4_1::
 		end
 	end
 
-	local extension = ScriptUnit.extension(player_unit, "first_person_system")
-	local copy = Vector3.copy(POSITION_LOOKUP[player_unit])
-	local current_rotation = extension:current_rotation()
-	local forward = Quaternion.forward(current_rotation)
+	local first_person_extension = ScriptUnit.extension(player_unit, "first_person_system")
+	local my_pos = Vector3.copy(POSITION_LOOKUP[player_unit])
+	local my_rotation = first_person_extension:current_rotation()
+	local my_direction = Quaternion.forward(my_rotation)
 
-	forward.z = 0
+	my_direction.z = 0
+	my_direction = Vector3.normalize(my_direction)
 
-	local normalize = Vector3.normalize(forward)
-	local cross = Vector3.cross(normalize, Vector3.up())
+	local my_left = Vector3.cross(my_direction, Vector3.up())
 
-	copy.z = 0
+	my_pos.z = 0
 
-	local num_4 = 1
+	local i = 1
 	local num_active_indicators = self.num_active_indicators
 
-	while num_4 <= num_active_indicators do
-		local var_4_29 = indicator_widgets[num_4]
+	while i <= num_active_indicators do
+		local widget = indicator_widgets[i]
 
-		if not UIWidget.has_animation(var_4_29) then
-			indicator_widgets[num_4] = indicator_widgets[num_active_indicators]
-			indicator_widgets[num_active_indicators] = var_4_29
+		if not UIWidget.has_animation(widget) then
+			local swap = indicator_widgets[num_active_indicators]
+
+			indicator_widgets[i] = swap
+			indicator_widgets[num_active_indicators] = widget
 			num_active_indicators = num_active_indicators - 1
 		else
-			local normalize_2 = Vector3.normalize(Vector3Aux.unbox(indicator_positions[num_4]) - copy)
-			local dot = Vector3.dot(normalize, normalize_2)
-			local dot_2 = Vector3.dot(cross, normalize_2)
-			local atan2 = math.atan2(dot_2, dot)
+			local direction = Vector3.normalize(Vector3Aux.unbox(indicator_positions[i]) - my_pos)
+			local forward_dot_dir = Vector3.dot(my_direction, direction)
+			local left_dot_dir = Vector3.dot(my_left, direction)
+			local angle = math.atan2(left_dot_dir, forward_dot_dir)
 
-			var_4_29.style.rotating_texture.angle = atan2
-			num_4 = num_4 + 1
+			widget.style.rotating_texture.angle = angle
+			i = i + 1
 
-			UIRenderer.draw_widget(ui_renderer, var_4_29)
+			UIRenderer.draw_widget(ui_renderer, widget)
 		end
 	end
 

@@ -2,22 +2,22 @@
 
 local TagQuery = TagQuery
 
-TagQuery = TagQuery or {}
+TagQuery = not not TagQuery or not not {}
 TagQuery = TagQuery
 TagQuery.__index = TagQuery
 
 TagQuery.add = function (self, ...)
 	-- function 1
-	local var_1_0 = select("#", ...)
+	local n_args = select("#", ...)
 
-	fassert(var_1_0 == math.floor(var_1_0 / 2) * 2, "Uneven amount of args, number of arguments: %d", var_1_0)
+	fassert(n_args == math.floor(n_args / 2) * 2, "Uneven amount of args, number of arguments: %d", n_args)
 
 	local query_context = self.query_context
 
-	for i = 1, var_1_0, 2 do
-		local var_1_2, var_1_3 = select(i, ...)
+	for i = 1, n_args, 2 do
+		local key, value = select(i, ...)
 
-		query_context[var_1_2] = var_1_3
+		query_context[key] = value
 	end
 
 	fassert(not self.finalized, "Tried to add query after finalized.")
@@ -38,7 +38,7 @@ end
 local TagQuery_2 = TagQuery
 local OP = TagQuery.OP
 
-OP = OP or {
+OP = not not OP or not not {
 	EQ = setmetatable({}, {
 		__tostring = function ()
 			-- function 4
@@ -123,7 +123,7 @@ TagQuery_2.OP = OP
 local TagQuery_3 = TagQuery
 local CombiningOP = TagQuery.CombiningOP
 
-CombiningOP = CombiningOP or {
+CombiningOP = not not CombiningOP or not not {
 	AND_NEXT = setmetatable({}, {
 		__tostring = function ()
 			-- function 17
@@ -142,30 +142,30 @@ TagQuery_3.CombiningOP = CombiningOP
 local TagQuery_4 = TagQuery
 local FilterOP = TagQuery.FilterOP
 
-FilterOP = FilterOP or {
-	EQ = function (arg_19_0, arg_19_1)
+FilterOP = not not FilterOP or not not {
+	EQ = function (a, b)
 		-- function 19
-		return arg_19_0 == arg_19_1
+		return a == b
 	end,
-	NEQ = function (arg_20_0, arg_20_1)
+	NEQ = function (a, b)
 		-- function 20
-		return arg_20_0 ~= arg_20_1
+		return a ~= b
 	end,
-	LT = function (arg_21_0, arg_21_1)
+	LT = function (a, b)
 		-- function 21
-		return arg_21_0 < arg_21_1
+		return a < b
 	end,
-	GT = function (arg_22_0, arg_22_1)
+	GT = function (a, b)
 		-- function 22
-		return arg_22_1 < arg_22_0
+		return b < a
 	end,
-	LTEQ = function (arg_23_0, arg_23_1)
+	LTEQ = function (a, b)
 		-- function 23
-		return arg_23_0 <= arg_23_1
+		return a <= b
 	end,
-	GTEQ = function (arg_24_0, arg_24_1)
+	GTEQ = function (a, b)
 		-- function 24
-		return arg_24_1 <= arg_24_0
+		return b <= a
 	end
 }
 TagQuery_4.FilterOP = FilterOP

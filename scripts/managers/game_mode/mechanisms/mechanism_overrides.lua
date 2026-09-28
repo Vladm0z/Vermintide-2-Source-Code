@@ -2,166 +2,165 @@
 
 local MechanismOverrides = MechanismOverrides
 
-MechanismOverrides = MechanismOverrides or {}
+MechanismOverrides = not not MechanismOverrides or not not {}
 MechanismOverrides = MechanismOverrides
 
 local MechanismOverrides_2 = MechanismOverrides
 local NIL = MechanismOverrides.NIL
 
-NIL = NIL or {}
+NIL = not not NIL or not not {}
 MechanismOverrides_2.NIL = NIL
 
 local MechanismOverrides_3 = MechanismOverrides
-local CACHE = MechanismOverrides.CACHE
+local CACHE_2 = MechanismOverrides.CACHE
 
-CACHE = CACHE or {}
-MechanismOverrides_3.CACHE = CACHE
+CACHE_2 = not not CACHE_2 or not not {}
+MechanismOverrides_3.CACHE = CACHE_2
 
 local MechanismOverrides_4 = MechanismOverrides
-local TEMP_CACHE = MechanismOverrides.TEMP_CACHE
-
-TEMP_CACHE = TEMP_CACHE or {}
-MechanismOverrides_4.TEMP_CACHE = TEMP_CACHE
-
-local MechanismOverrides_5 = MechanismOverrides
-local CACHED_MECHANISM = MechanismOverrides.CACHED_MECHANISM
-
-CACHED_MECHANISM = CACHED_MECHANISM or {}
-MechanismOverrides_5.CACHED_MECHANISM = CACHED_MECHANISM
-
-local CACHE_2 = MechanismOverrides.CACHE
-local CACHED_MECHANISM_2 = MechanismOverrides.CACHED_MECHANISM
 local TEMP_CACHE_2 = MechanismOverrides.TEMP_CACHE
 
-MechanismOverrides.get = function (arg_1_0, arg_1_1)
+TEMP_CACHE_2 = not not TEMP_CACHE_2 or not not {}
+MechanismOverrides_4.TEMP_CACHE = TEMP_CACHE_2
+
+local MechanismOverrides_5 = MechanismOverrides
+local CACHED_MECHANISM_2 = MechanismOverrides.CACHED_MECHANISM
+
+CACHED_MECHANISM_2 = not not CACHED_MECHANISM_2 or not not {}
+MechanismOverrides_5.CACHED_MECHANISM = CACHED_MECHANISM_2
+
+local CACHE = MechanismOverrides.CACHE
+local CACHED_MECHANISM = MechanismOverrides.CACHED_MECHANISM
+local TEMP_CACHE = MechanismOverrides.TEMP_CACHE
+
+MechanismOverrides.get = function (t, optional_mechanism_name)
 	-- function 1
-	if arg_1_0 == nil then
+	if t == nil then
 		return nil
 	end
 
-	local flag = arg_1_1 or Managers.mechanism:current_mechanism_name()
+	local mechanism_name = not not optional_mechanism_name or not not Managers.mechanism:current_mechanism_name()
 
-	return MechanismOverrides.recursive_override(arg_1_0, flag, 1)
+	return MechanismOverrides.recursive_override(t, mechanism_name, 1)
 end
 
 MechanismOverrides.mechanism_switched = function ()
 	-- function 2
-	CACHE_2 = {}
-	CACHED_MECHANISM_2 = {}
-	MechanismOverrides.CACHE = CACHE_2
-	MechanismOverrides.CACHED_MECHANISM = CACHED_MECHANISM_2
+	CACHE = {}
+	CACHED_MECHANISM = {}
+	MechanismOverrides.CACHE = CACHE
+	MechanismOverrides.CACHED_MECHANISM = CACHED_MECHANISM
 end
 
-local function fn(self, arg_3_1)
+local function _recursive_override(t, override_table)
 	-- function 3
-	for k, v in pairs(arg_3_1) do
-		if v == MechanismOverrides.NIL then
-			self[k] = nil
-		elseif not (type(self[k]) ~= "table" or type(arg_3_1[k]) ~= "table") then
-			self[k] = table.shallow_copy(self[k])
+	for key, value in pairs(override_table) do
+		if value == MechanismOverrides.NIL then
+			t[key] = nil
+		elseif type(t[key]) == "table" and type(override_table[key]) == "table" then
+			t[key] = table.shallow_copy(t[key])
 
-			fn(self[k], arg_3_1[k])
+			_recursive_override(t[key], override_table[key])
 		else
-			self[k] = v
+			t[key] = value
 		end
 	end
 end
 
-MechanismOverrides.recursive_override = function (self, arg_4_1, arg_4_2, arg_4_3)
+MechanismOverrides.recursive_override = function (t, mechanism_name, depth, temp_cache)
 	-- function 4
-	if not TEMP_CACHE_2[self] then
-		return TEMP_CACHE_2[self]
+	if TEMP_CACHE[t] then
+		return TEMP_CACHE[t]
 	end
 
-	local var_4_0 = CACHE_2[self]
+	local cached_t = CACHE[t]
 
-	if not var_4_0 then
-		if CACHED_MECHANISM_2[self] == arg_4_1 then
-			return var_4_0, true
+	if cached_t then
+		if CACHED_MECHANISM[t] == mechanism_name then
+			return cached_t, true
 		else
-			MechanismOverrides.recursive_cleanup(self, arg_4_1)
+			MechanismOverrides.recursive_cleanup(t, mechanism_name)
 		end
 	end
 
-	arg_4_2 = arg_4_2 or 1
+	depth = not not depth or not not 1
 
-	if arg_4_2 == 1 then
-		table.clear(TEMP_CACHE_2)
+	if depth == 1 then
+		table.clear(TEMP_CACHE)
 	end
 
-	local var_4_1
+	local overridden
 
-	if not self.mechanism_overrides then
-		var_4_1 = table.shallow_copy(self)
+	if t.mechanism_overrides then
+		overridden = table.shallow_copy(t)
 
-		local var_4_2 = self.mechanism_overrides[arg_4_1]
+		local overrides = t.mechanism_overrides[mechanism_name]
 
-		if not var_4_2 then
-			fn(var_4_1, var_4_2)
+		if overrides then
+			_recursive_override(overridden, overrides)
 		end
 
-		CACHE_2[var_4_1] = self
-		CACHE_2[self] = var_4_1
-		CACHED_MECHANISM_2[self] = arg_4_1
-		TEMP_CACHE_2[self] = nil
+		CACHE[overridden] = t
+		CACHE[t] = overridden
+		CACHED_MECHANISM[t] = mechanism_name
+		TEMP_CACHE[t] = nil
 	else
-		TEMP_CACHE_2[self] = self
+		TEMP_CACHE[t] = t
 	end
 
-	local alloc_table = FrameTable.alloc_table()
-	local flag = not not var_4_1
+	local temp, has_overrides = FrameTable.alloc_table(), not not overridden
 
-	for k, v in pairs(var_4_1 or self) do
-		if not (k == "mechanism_overrides" or type(v) ~= "table") then
-			local recursive_override, var_4_6 = MechanismOverrides.recursive_override(v, arg_4_1, arg_4_2 + 1)
+	for key, value in pairs(not not overridden or not not t) do
+		if key ~= "mechanism_overrides" and type(value) == "table" then
+			local overridden_value, child_has_overrides = MechanismOverrides.recursive_override(value, mechanism_name, depth + 1)
 
-			alloc_table[k] = recursive_override
-			flag = flag or var_4_6
+			temp[key] = overridden_value
+			has_overrides = not not has_overrides or not not child_has_overrides
 		end
 	end
 
-	if not flag then
-		var_4_1 = var_4_1 or table.shallow_copy(self)
+	if has_overrides then
+		overridden = not not overridden or not not table.shallow_copy(t)
 
-		for k_2, v_2 in pairs(alloc_table) do
-			var_4_1[k_2] = v_2
+		for key, value in pairs(temp) do
+			overridden[key] = value
 		end
 
-		var_4_1.mechanism_overrides = nil
-		CACHE_2[self] = var_4_1
-		CACHED_MECHANISM_2[self] = arg_4_1
-		TEMP_CACHE_2[self] = nil
+		overridden.mechanism_overrides = nil
+		CACHE[t] = overridden
+		CACHED_MECHANISM[t] = mechanism_name
+		TEMP_CACHE[t] = nil
 	end
 
-	if arg_4_2 == 1 then
-		local flag_2 = var_4_1 or self
+	if depth == 1 then
+		local to_cache = not not overridden or not not t
 
-		CACHE_2[flag_2] = self
-		CACHE_2[self] = flag_2
-		CACHED_MECHANISM_2[self] = arg_4_1
+		CACHE[to_cache] = t
+		CACHE[t] = to_cache
+		CACHED_MECHANISM[t] = mechanism_name
 	end
 
-	local var_4_8 = CACHE_2[self]
+	local var_4_0 = CACHE[t]
 
-	var_4_8 = var_4_8 or TEMP_CACHE_2[self]
+	var_4_0 = not not var_4_0 or not not TEMP_CACHE[t]
 
-	return var_4_8, flag
+	return var_4_0, has_overrides
 end
 
-MechanismOverrides.recursive_cleanup = function (arg_5_0, arg_5_1)
+MechanismOverrides.recursive_cleanup = function (t, new_mechanism_name)
 	-- function 5
-	local var_5_0 = CACHE_2[arg_5_0]
+	local original = CACHE[t]
 
-	if not var_5_0 then
-		CACHE_2[arg_5_0] = nil
+	if original then
+		CACHE[t] = nil
 
-		if not (not var_5_0 and var_5_0.mechanism_name == arg_5_1) then
-			CACHE_2[var_5_0] = nil
+		if original and original.mechanism_name ~= new_mechanism_name then
+			CACHE[original] = nil
 		end
 
-		for k, v in pairs(arg_5_0) do
-			if not (k == "mechanism_overrides" or type(v) ~= "table") then
-				MechanismOverrides.recursive_cleanup(v, arg_5_1)
+		for key, value in pairs(t) do
+			if key ~= "mechanism_overrides" and type(value) == "table" then
+				MechanismOverrides.recursive_cleanup(value, new_mechanism_name)
 			end
 		end
 	end

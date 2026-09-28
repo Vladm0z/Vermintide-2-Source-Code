@@ -1,8 +1,8 @@
 -- chunkname: @scripts/settings/dlcs/eight_ball/eight_ball_common_settings.lua
 
-local eight_ball = DLCSettings.eight_ball
+local settings = DLCSettings.eight_ball
 
-eight_ball.unlock_settings = {
+settings.unlock_settings = {
 	bi_1001 = {
 		id = "1196784",
 		cosmetic = true,
@@ -84,7 +84,7 @@ eight_ball.unlock_settings = {
 		class = "UnlockDlc"
 	}
 }
-eight_ball.unlock_settings_xb1 = {
+settings.unlock_settings_xb1 = {
 	bi_1001 = {
 		id = "4A504E39-4D5A-3034-C042-333133522700",
 		cosmetic = true,
@@ -161,7 +161,7 @@ eight_ball.unlock_settings_xb1 = {
 		class = "UnlockDlc"
 	}
 }
-eight_ball.unlock_settings_ps4 = {
+settings.unlock_settings_ps4 = {
 	CUSA13595_00 = {
 		bi_1001 = {
 			id = "866c901640d645b6bf1e8db0fb32c000",

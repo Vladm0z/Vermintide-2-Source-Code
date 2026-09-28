@@ -2,14 +2,14 @@
 
 local WeaveLoadoutSettings = WeaveLoadoutSettings
 
-WeaveLoadoutSettings = WeaveLoadoutSettings or {}
+WeaveLoadoutSettings = not not WeaveLoadoutSettings or not not {}
 WeaveLoadoutSettings = WeaveLoadoutSettings
 
-local str = "witch_hunter"
-local talent_tree_index = CareerSettings.wh_bountyhunter.talent_tree_index
+local profile_name = "witch_hunter"
+local talent_index = CareerSettings.wh_bountyhunter.talent_tree_index
 
 WeaveLoadoutSettings.wh_bountyhunter = {
-	talent_tree = TalentTrees[str][talent_tree_index],
+	talent_tree = TalentTrees[profile_name][talent_index],
 	properties = {},
 	traits = {}
 }

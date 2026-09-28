@@ -7,141 +7,143 @@ BTSuicideRunAction.StateInit = class(BTSuicideRunAction.StateInit)
 BTSuicideRunAction.StateMove = class(BTSuicideRunAction.StateMove)
 BTSuicideRunAction.StateExplode = class(BTSuicideRunAction.StateExplode)
 
-BTSuicideRunAction.init = function (arg_1_0, ...)
+BTSuicideRunAction.init = function (self, ...)
 	-- function 1
-	BTSuicideRunAction.super.init(arg_1_0, ...)
+	BTSuicideRunAction.super.init(self, ...)
 end
 
 BTSuicideRunAction.name = "BTSuicideRunAction"
 
-local POSITION_LOOKUP = POSITION_LOOKUP
-local num = 0.25
+local position_lookup = POSITION_LOOKUP
+local UPDATE_MOVE_INTERVAL = 0.25
 
-BTSuicideRunAction.enter = function (self, arg_2_1, arg_2_2, arg_2_3)
+BTSuicideRunAction.enter = function (self, unit, blackboard, t)
 	-- function 2
-	local suicide_run = arg_2_2.suicide_run
+	local suicide_run_2 = blackboard.suicide_run
 
-	suicide_run = suicide_run or {}
-	arg_2_2.suicide_run = suicide_run
+	suicide_run_2 = not not suicide_run_2 or not not {}
+	blackboard.suicide_run = suicide_run_2
 
-	local action_data = self._tree_node.action_data
-	local suicide_run_2 = arg_2_2.suicide_run
+	local action = self._tree_node.action_data
+	local suicide_run = blackboard.suicide_run
 
-	suicide_run_2.action = action_data
-	suicide_run_2.update_move_timer = 0
+	suicide_run.action = action
+	suicide_run.update_move_timer = 0
 
-	local target = suicide_run_2.target
+	local target = suicide_run.target
 
 	if not target then
-		target = arg_2_2.previous_attacker
-		target = target or arg_2_2.target_unit
+		target = blackboard.previous_attacker
+		target = not not target or not not blackboard.target_unit
 	end
 
-	suicide_run_2.target = target
-	arg_2_2.target_unit = suicide_run_2.target
+	suicide_run.target = target
+	blackboard.target_unit = suicide_run.target
 
-	local tbl = {
-		unit = arg_2_1,
-		blackboard = arg_2_2,
-		action = action_data
+	local params = {
+		unit = unit,
+		blackboard = blackboard,
+		action = action
 	}
 
-	arg_2_2.suicide_run.state_machine = StateMachine:new(self, BTSuicideRunAction.StateInit, tbl)
-	arg_2_2.action = action_data
+	blackboard.suicide_run.state_machine = StateMachine:new(self, BTSuicideRunAction.StateInit, params)
+	blackboard.action = action
 
 	aiprint("BTSuicideRunAction: StateMachine created")
 
-	if not suicide_run_2.target then
+	if not suicide_run.target then
 		aiprint("BTSuicideRunAction: suicide_run.instant_explode")
 
-		suicide_run_2.instant_explode = true
+		suicide_run.instant_explode = true
 
 		return
 	end
 
-	local extension_input = ScriptUnit.extension_input(arg_2_1, "dialogue_system")
-	local alloc_table = FrameTable.alloc_table()
+	local dialogue_input = ScriptUnit.extension_input(unit, "dialogue_system")
+	local event_data = FrameTable.alloc_table()
 
-	alloc_table.attack_tag = "pwg_suicide_run"
+	event_data.attack_tag = "pwg_suicide_run"
 
-	extension_input:trigger_networked_dialogue_event("enemy_attack", alloc_table)
-	Managers.state.entity:system("surrounding_aware_system"):add_system_event(arg_2_1, "enemy_attack", DialogueSettings.suicide_run_broadcast_range, "attack_tag", "pwg_suicide_run")
+	dialogue_input:trigger_networked_dialogue_event("enemy_attack", event_data)
+	Managers.state.entity:system("surrounding_aware_system"):add_system_event(unit, "enemy_attack", DialogueSettings.suicide_run_broadcast_range, "attack_tag", "pwg_suicide_run")
 end
 
-BTSuicideRunAction.leave = function (arg_3_0, arg_3_1, arg_3_2, arg_3_3, arg_3_4, arg_3_5)
+BTSuicideRunAction.leave = function (self, unit, blackboard, t, reason, destroy)
 	-- function 3
-	local get_default_breed_move_speed = AiUtils.get_default_breed_move_speed(arg_3_1, arg_3_2)
+	local default_move_speed = AiUtils.get_default_breed_move_speed(unit, blackboard)
+	local navigation_extension = blackboard.navigation_extension
 
-	arg_3_2.navigation_extension:set_max_speed(get_default_breed_move_speed)
+	navigation_extension:set_max_speed(default_move_speed)
 
-	arg_3_2.anim_cb_move = nil
-	arg_3_2.attack_finished = nil
+	blackboard.anim_cb_move = nil
+	blackboard.attack_finished = nil
 end
 
-BTSuicideRunAction.update_target_position = function (arg_4_0, arg_4_1, arg_4_2, arg_4_3, arg_4_4)
+BTSuicideRunAction.update_target_position = function (self, unit, blackboard, ai_navigation, stop)
 	-- function 4
-	local target_unit = arg_4_2.target_unit
+	local target_unit = blackboard.target_unit
 
-	if not (not ALIVE[target_unit] and arg_4_4) then
-		local has_extension = ScriptUnit.has_extension(target_unit, "whereabouts_system")
+	if ALIVE[target_unit] and not stop then
+		local whereabouts_extension = ScriptUnit.has_extension(target_unit, "whereabouts_system")
 
-		if not has_extension then
-			local last_position_on_navmesh = has_extension:last_position_on_navmesh()
+		if whereabouts_extension then
+			local last_position_on_navmesh = whereabouts_extension:last_position_on_navmesh()
 
-			if not last_position_on_navmesh then
-				arg_4_3:move_to(last_position_on_navmesh)
+			if last_position_on_navmesh then
+				ai_navigation:move_to(last_position_on_navmesh)
 
 				return
 			end
 		else
-			local var_4_3 = POSITION_LOOKUP[target_unit]
-			local triangle_from_position, var_4_5 = GwNavQueries.triangle_from_position(arg_4_3:nav_world(), var_4_3, 5, 5)
+			local pos = POSITION_LOOKUP[target_unit]
+			local success, z = GwNavQueries.triangle_from_position(ai_navigation:nav_world(), pos, 5, 5)
 
-			if not triangle_from_position then
-				arg_4_3:move_to(Vector3(var_4_3[1], var_4_3[2], var_4_5))
+			if success then
+				ai_navigation:move_to(Vector3(pos[1], pos[2], z))
 
 				return
 			end
 		end
 	end
 
-	arg_4_3:stop()
+	ai_navigation:stop()
 end
 
-BTSuicideRunAction.play_unit_audio = function (arg_5_0, arg_5_1, arg_5_2, arg_5_3)
+BTSuicideRunAction.play_unit_audio = function (self, unit, blackboard, sound_name)
 	-- function 5
-	Managers.state.entity:system("audio_system"):play_audio_unit_event(arg_5_3, arg_5_1)
+	Managers.state.entity:system("audio_system"):play_audio_unit_event(sound_name, unit)
 end
 
-BTSuicideRunAction.run = function (arg_6_0, arg_6_1, arg_6_2, arg_6_3, arg_6_4)
+BTSuicideRunAction.run = function (self, unit, blackboard, t, dt)
 	-- function 6
-	local suicide_run = arg_6_2.suicide_run
+	local suicide_run = blackboard.suicide_run
 
 	if not suicide_run.state_machine then
 		aiprint("BTSuicideRunAction: StateMachine lost?!?")
 	end
 
-	suicide_run.state_machine:update(arg_6_4, arg_6_3)
+	suicide_run.state_machine:update(dt, t)
 
-	if not suicide_run.done then
+	if suicide_run.done then
 		return "done"
 	else
 		return "running"
 	end
 end
 
-BTSuicideRunAction.StateInit.on_enter = function (self, arg_7_1)
+BTSuicideRunAction.StateInit.on_enter = function (self, params)
 	-- function 7
-	local unit = arg_7_1.unit
-	local blackboard = arg_7_1.blackboard
-	local action = arg_7_1.action
+	local unit = params.unit
+	local blackboard = params.blackboard
+	local action = params.action
+	local locomotion_extension = blackboard.locomotion_extension
 
-	blackboard.locomotion_extension:set_rotation_speed(5)
+	locomotion_extension:set_rotation_speed(5)
 
-	local navigation_extension = blackboard.navigation_extension
-	local var_7_4 = POSITION_LOOKUP[unit]
+	local ai_navigation_extension = blackboard.navigation_extension
+	local position = position_lookup[unit]
 
-	navigation_extension:move_to(var_7_4)
+	ai_navigation_extension:move_to(position)
 
 	if not blackboard.explode_timer_started then
 		Managers.state.network:anim_event(unit, "suicide_run_start")
@@ -151,52 +153,71 @@ BTSuicideRunAction.StateInit.on_enter = function (self, arg_7_1)
 	self.blackboard = blackboard
 end
 
-BTSuicideRunAction.StateInit.update = function (self, arg_8_1, arg_8_2)
+BTSuicideRunAction.StateInit.update = function (self, dt, t)
 	-- function 8
 	local unit = self.unit
 	local blackboard = self.blackboard
 	local suicide_run = blackboard.suicide_run
-	local flag = false
+	local no_target = false
 
-	if not Unit.alive(blackboard.target_unit) then
-		local rotation_towards_unit_flat = LocomotionUtils.rotation_towards_unit_flat(unit, blackboard.target_unit)
+	if Unit.alive(blackboard.target_unit) then
+		local rotation = LocomotionUtils.rotation_towards_unit_flat(unit, blackboard.target_unit)
+		local locomotion_extension = blackboard.locomotion_extension
 
-		blackboard.locomotion_extension:set_wanted_rotation(rotation_towards_unit_flat)
+		locomotion_extension:set_wanted_rotation(rotation)
 	else
-		flag = true
+		no_target = true
 	end
 
 	local anim_cb_move = blackboard.anim_cb_move
 
-	anim_cb_move = anim_cb_move or blackboard.explode_timer_started
-
 	if not anim_cb_move then
+		-- Nothing
+	end
+
+	anim_cb_move = blackboard.explode_timer_started
+
+	local init_done = anim_cb_move
+
+	::label_8_0::
+
+	if init_done then
 		return BTSuicideRunAction.StateMove
 	end
 
-	local instant_explode = suicide_run.instant_explode
+	local instant_explode_2 = suicide_run.instant_explode
 
-	instant_explode = instant_explode or flag
+	if not instant_explode_2 then
+		-- Nothing
+	end
 
-	if not instant_explode then
+	instant_explode_2 = no_target
+
+	local instant_explode = instant_explode_2
+
+	::label_8_1::
+
+	if instant_explode then
 		return BTSuicideRunAction.StateExplode
 	end
 end
 
-BTSuicideRunAction.StateMove.on_enter = function (self, arg_9_1)
+BTSuicideRunAction.StateMove.on_enter = function (self, params)
 	-- function 9
-	local unit = arg_9_1.unit
-	local blackboard = arg_9_1.blackboard
-	local str = "Play_enemy_globadier_suicide_start"
+	local unit = params.unit
+	local blackboard = params.blackboard
+	local sound_name = "Play_enemy_globadier_suicide_start"
 
-	self.parent:play_unit_audio(unit, blackboard, str)
+	self.parent:play_unit_audio(unit, blackboard, sound_name)
 	Managers.state.network:anim_event(unit, "move_fwd_run")
 
 	blackboard.move_state = "moving"
 
-	local run_speed = blackboard.breed.run_speed
+	local breed = blackboard.breed
+	local run_speed = breed.run_speed
+	local ai_navigation_extension = blackboard.navigation_extension
 
-	blackboard.navigation_extension:set_max_speed(run_speed)
+	ai_navigation_extension:set_max_speed(run_speed)
 
 	blackboard.explode_timer_started = true
 	self.unit = unit
@@ -204,57 +225,73 @@ BTSuicideRunAction.StateMove.on_enter = function (self, arg_9_1)
 	self.explode_timer = blackboard.suicide_run.action.suicide_explosion_timer
 end
 
-BTSuicideRunAction.StateMove.update = function (self, arg_10_1, arg_10_2)
+BTSuicideRunAction.StateMove.update = function (self, dt, t)
 	-- function 10
 	local unit = self.unit
 	local blackboard = self.blackboard
 	local suicide_run = blackboard.suicide_run
-	local navigation_extension = blackboard.navigation_extension
+	local ai_navigation = blackboard.navigation_extension
 
-	suicide_run.update_move_timer = suicide_run.update_move_timer - arg_10_1
+	suicide_run.update_move_timer = suicide_run.update_move_timer - dt
 
 	if suicide_run.update_move_timer <= 0 then
-		self.parent:update_target_position(unit, blackboard, navigation_extension)
+		self.parent:update_target_position(unit, blackboard, ai_navigation)
 
-		suicide_run.update_move_timer = num
+		suicide_run.update_move_timer = UPDATE_MOVE_INTERVAL
 	end
 
-	self.explode_timer = self.explode_timer - arg_10_1
+	self.explode_timer = self.explode_timer - dt
 
-	local has_reached_destination = navigation_extension:has_reached_destination(suicide_run.action.distance_to_explode)
+	local has_reached_destination = ai_navigation:has_reached_destination(suicide_run.action.distance_to_explode)
 
-	has_reached_destination = has_reached_destination or self.explode_timer < 0
+	if not has_reached_destination then
+		-- Nothing
+	end
 
-	local pick_closest_target, var_10_6 = PerceptionUtils.pick_closest_target(unit, blackboard, blackboard.breed)
+	if not (self.explode_timer < 0) then
+		has_reached_destination = false
 
-	if has_reached_destination or var_10_6 < 2 or not blackboard.no_path_found then
+		goto label_10_0
+	end
+
+	has_reached_destination = true
+
+	local move_done = has_reached_destination
+
+	::label_10_0::
+
+	local proximity_target, proximity = PerceptionUtils.pick_closest_target(unit, blackboard, blackboard.breed)
+
+	if move_done or proximity < 2 or blackboard.no_path_found then
 		return BTSuicideRunAction.StateExplode
 	end
 end
 
-BTSuicideRunAction.StateExplode.on_enter = function (self, arg_11_1)
+BTSuicideRunAction.StateExplode.on_enter = function (self, params)
 	-- function 11
-	local unit = arg_11_1.unit
-	local blackboard = arg_11_1.blackboard
+	local unit = params.unit
+	local blackboard = params.blackboard
+	local suicide_run = blackboard.suicide_run
 
-	blackboard.suicide_run.explosion_started = true
+	suicide_run.explosion_started = true
 
-	local navigation_extension = blackboard.navigation_extension
+	local ai_navigation_extension = blackboard.navigation_extension
 
-	self.parent:update_target_position(unit, blackboard, navigation_extension, true)
+	self.parent:update_target_position(unit, blackboard, ai_navigation_extension, true)
 	Managers.state.network:anim_event(unit, "attack_foff_self")
 
 	self.unit = unit
 	self.blackboard = blackboard
 end
 
-BTSuicideRunAction.StateExplode.update = function (self, arg_12_1, arg_12_2)
+BTSuicideRunAction.StateExplode.update = function (self, dt, t)
 	-- function 12
 	local unit = self.unit
 	local blackboard = self.blackboard
 	local suicide_run = blackboard.suicide_run
+	local ready_to_explode = blackboard.attack_finished
 
-	if not blackboard.attack_finished then
+	if not ready_to_explode then
 		return
 	end
 

@@ -2,109 +2,113 @@
 
 local flow_return_table = Boot.flow_return_table
 
-function flow_callback_activate_ai_spawner(self)
+function flow_callback_activate_ai_spawner(params)
 	-- function 1
-	local spawner_unit = self.spawner_unit
+	local spawner_unit = params.spawner_unit
 
 	Managers.state.event:trigger("activate_ai_spawner", spawner_unit)
 end
 
-function flow_callback_deactivate_ai_spawner(self)
+function flow_callback_deactivate_ai_spawner(params)
 	-- function 2
-	local spawner_unit = self.spawner_unit
+	local spawner_unit = params.spawner_unit
 
 	Managers.state.event:trigger("deactivate_ai_spawner", spawner_unit)
 end
 
-function flow_callback_hibernate_spawner(self)
+function flow_callback_hibernate_spawner(params)
 	-- function 3
-	local spawner_unit = self.spawner_unit
-	local hibernate = self.hibernate
+	local spawner_unit = params.spawner_unit
+	local hibernate = params.hibernate
+	local spawner_system = Managers.state.entity:system("spawner_system")
 
-	Managers.state.entity:system("spawner_system"):hibernate_spawner(spawner_unit, hibernate)
+	spawner_system:hibernate_spawner(spawner_unit, hibernate)
 end
 
-function flow_callback_ai_move_group_command(arg_4_0)
+function flow_callback_ai_move_group_command(params)
 	-- function 4
 	error("'flow_callback_ai_move_group_command' is not deprecated")
 end
 
-function flow_callback_ai_move_single_command(self)
+function flow_callback_ai_move_single_command(params)
 	-- function 5
-	local move_unit = self.move_unit
-	local target_unit = self.target_unit
+	local move_unit = params.move_unit
+	local target_unit = params.target_unit
 
 	BLACKBOARDS[move_unit].goal_destination = Vector3Box(Unit.local_position(target_unit, 0))
 end
 
-function flow_callback_ai_override_breed_in_roamer_spawn_pool(self)
+function flow_callback_ai_override_breed_in_roamer_spawn_pool(params)
 	-- function 6
 	if not Managers.player.is_server then
 		return
 	end
 
-	local tbl = {
-		self.override_breed1,
-		self.override_breed2,
-		self.override_breed3
+	local override_breeds = {
+		params.override_breed1,
+		params.override_breed2,
+		params.override_breed3
 	}
 
-	Managers.state.conflict.enemy_recycler:patch_override_breed(self.breed_name, tbl)
+	Managers.state.conflict.enemy_recycler:patch_override_breed(params.breed_name, override_breeds)
 end
 
-function flow_callback_ai_despawn(self)
+function flow_callback_ai_despawn(params)
 	-- function 7
-	local spawner_unit = self.spawner_unit
+	local spawner_unit = params.spawner_unit
+	local spawner = ScriptUnit.extension(spawner_unit, "spawner_system")
 
-	ScriptUnit.extension(spawner_unit, "spawner_system"):despawn()
+	spawner:despawn()
 end
 
-function flow_callback_ai_kill(self)
+function flow_callback_ai_kill(params)
 	-- function 8
-	local hit_unit = self.hit_unit
-	local get_data = Unit.get_data(hit_unit, "breed")
+	local hit_unit = params.hit_unit
+	local breed = Unit.get_data(hit_unit, "breed")
 
-	if not get_data then
+	if not breed then
 		return
 	end
 
-	local hit_actor = self.hit_actor
+	local hit_actor = params.hit_actor
 	local node = Actor.node(hit_actor)
-	local name = get_data.hit_zones_lookup[node].name
-	local damage_type = self.damage_type
-	local num = -self.hit_normal
+	local hit_zone = breed.hit_zones_lookup[node]
+	local hit_zone_name = hit_zone.name
+	local damage_type = params.damage_type
+	local attack_direction = -params.hit_normal
 
-	AiUtils.kill_unit(hit_unit, hit_unit, name, damage_type, num)
+	AiUtils.kill_unit(hit_unit, hit_unit, hit_zone_name, damage_type, attack_direction)
 end
 
-function flow_callback_ai_load_breed_package(self)
+function flow_callback_ai_load_breed_package(params)
 	-- function 9
 	if not Managers.player.is_server then
 		return
 	end
 
-	local breed_name = self.breed_name
+	local breed_name = params.breed_name
 	local enemy_package_loader = Managers.level_transition_handler.enemy_package_loader
 
 	if not enemy_package_loader:is_breed_processed(breed_name) then
-		local flag = true
+		local ignore_breed_limits = true
 
-		enemy_package_loader:request_breed(breed_name, flag)
+		enemy_package_loader:request_breed(breed_name, ignore_breed_limits)
 	end
 end
 
-function flow_callback_ai_lock_breed_package(self)
+function flow_callback_ai_lock_breed_package(params)
 	-- function 10
 	if not Managers.player.is_server then
 		return
 	end
 
-	local breed_name = self.breed_name
+	local breed_name = params.breed_name
+	local enemy_package_loader = Managers.level_transition_handler.enemy_package_loader
 
-	Managers.level_transition_handler.enemy_package_loader:lock_breed_package(breed_name)
+	enemy_package_loader:lock_breed_package(breed_name)
 end
 
-function flow_callback_ai_unlock_breed_package(self)
+function flow_callback_ai_unlock_breed_package(params)
 	-- function 11
 	print("Trying to unlock package")
 
@@ -112,518 +116,572 @@ function flow_callback_ai_unlock_breed_package(self)
 		return
 	end
 
-	local breed_name = self.breed_name
+	local breed_name = params.breed_name
+	local enemy_package_loader = Managers.level_transition_handler.enemy_package_loader
 
-	Managers.level_transition_handler.enemy_package_loader:unlock_breed_package(breed_name)
+	enemy_package_loader:unlock_breed_package(breed_name)
 end
 
-function flow_callback_spawn_ai_and_move_to_unit(self)
+function flow_callback_spawn_ai_and_move_to_unit(params)
 	-- function 12
 	if not Managers.player.is_server then
 		return
 	end
 
-	local breed_name = self.breed_name
-	local spawn_unit = self.spawn_unit
-	local move_to_unit1 = self.move_to_unit1
-	local move_to_unit2 = self.move_to_unit2
-	local move_to_unit3 = self.move_to_unit3
-	local tbl = {}
+	local breed_name = params.breed_name
+	local spawn_unit = params.spawn_unit
+	local move_to_unit_1 = params.move_to_unit1
+	local move_to_unit_2 = params.move_to_unit2
+	local move_to_unit_3 = params.move_to_unit3
+	local move_to_table = {}
 
-	tbl[#tbl + 1] = move_to_unit1
+	move_to_table[#move_to_table + 1] = move_to_unit_1
 
-	if not move_to_unit2 then
-		tbl[#tbl + 1] = move_to_unit2
+	if move_to_unit_2 then
+		move_to_table[#move_to_table + 1] = move_to_unit_2
 	end
 
-	if not move_to_unit3 then
-		tbl[#tbl + 1] = move_to_unit3
+	if move_to_unit_3 then
+		move_to_table[#move_to_table + 1] = move_to_unit_3
 	end
 
-	local var_12_6 = tbl[math.random(1, #tbl)]
-	local var_12_7 = Vector3Box(Unit.world_position(spawn_unit, 0))
-	local var_12_8 = Vector3Box(Unit.world_position(var_12_6, 0))
-	local var_12_9 = Breeds[breed_name]
-	local tbl_2 = {
-		move_to_position = var_12_8,
-		spawned_func = function (arg_13_0, arg_13_1, arg_13_2)
+	local move_to_unit = move_to_table[math.random(1, #move_to_table)]
+	local spawn_position = Vector3Box(Unit.world_position(spawn_unit, 0))
+	local move_to_position = Vector3Box(Unit.world_position(move_to_unit, 0))
+	local breed = Breeds[breed_name]
+	local optional_data = {
+		move_to_position = move_to_position,
+		spawned_func = function (unit, breed, optional_data)
 			-- function 13
-			local var_13_0 = BLACKBOARDS[arg_13_0]
+			local blackboard = BLACKBOARDS[unit]
 
-			var_13_0.goal_destination = arg_13_2.move_to_position
-			var_13_0.move_and_place_standard = true
-			var_13_0.ignore_standard_pickup = true
+			blackboard.goal_destination = optional_data.move_to_position
+			blackboard.move_and_place_standard = true
+			blackboard.ignore_standard_pickup = true
 		end
 	}
 
-	Managers.state.conflict:spawn_queued_unit(var_12_9, var_12_7, QuaternionBox(Quaternion.identity()), "terror_event", nil, "terror_event", tbl_2)
+	Managers.state.conflict:spawn_queued_unit(breed, spawn_position, QuaternionBox(Quaternion.identity()), "terror_event", nil, "terror_event", optional_data)
 end
 
-function flow_callback_spawn_ai_with_animation_and_move_to_unit(self)
+function flow_callback_spawn_ai_with_animation_and_move_to_unit(params)
 	-- function 14
 	if not Managers.player.is_server then
 		return
 	end
 
-	local breed_name = self.breed_name
-	local spawn_unit = self.spawn_unit
-	local move_to_unit1 = self.move_to_unit1
-	local move_to_unit2 = self.move_to_unit2
-	local move_to_unit3 = self.move_to_unit3
-	local on_spawn_event_name = self.on_spawn_event_name
+	local breed_name = params.breed_name
+	local spawn_unit = params.spawn_unit
+	local move_to_unit_1 = params.move_to_unit1
+	local move_to_unit_2 = params.move_to_unit2
+	local move_to_unit_3 = params.move_to_unit3
+	local level_event_name = params.on_spawn_event_name
 
-	if on_spawn_event_name == "" then
-		on_spawn_event_name = nil
+	if level_event_name == "" then
+		level_event_name = nil
 	end
 
-	local tbl = {}
+	local move_to_table = {}
 
-	tbl[#tbl + 1] = move_to_unit1
+	move_to_table[#move_to_table + 1] = move_to_unit_1
 
-	if not move_to_unit2 then
-		tbl[#tbl + 1] = move_to_unit2
+	if move_to_unit_2 then
+		move_to_table[#move_to_table + 1] = move_to_unit_2
 	end
 
-	if not move_to_unit3 then
-		tbl[#tbl + 1] = move_to_unit3
+	if move_to_unit_3 then
+		move_to_table[#move_to_table + 1] = move_to_unit_3
 	end
 
-	local var_14_7 = tbl[math.random(1, #tbl)]
-	local var_14_8 = Vector3Box(Unit.world_position(spawn_unit, 0))
-	local var_14_9 = Vector3Box(Unit.world_position(var_14_7, 0))
-	local var_14_10 = Breeds[breed_name]
-	local spawn_anim = self.spawn_anim
-	local flag = not spawn_anim and Vector3.flat(Vector3.normalize(var_14_9:unbox() - var_14_8:unbox()))
-	local flag_2 = not spawn_anim and QuaternionBox(Quaternion.look(flag, Vector3.up()))
-	local go_to_combat = self.go_to_combat
-	local optional_spawn_exit_time = self.optional_spawn_exit_time
+	local move_to_unit = move_to_table[math.random(1, #move_to_table)]
+	local spawn_position = Vector3Box(Unit.world_position(spawn_unit, 0))
+	local move_to_position = Vector3Box(Unit.world_position(move_to_unit, 0))
+	local breed = Breeds[breed_name]
+	local spawn_anim = params.spawn_anim
+	local look_dir = not not spawn_anim and not not Vector3.flat(Vector3.normalize(move_to_position:unbox() - spawn_position:unbox()))
+	local spawn_rot = not not spawn_anim and not not QuaternionBox(Quaternion.look(look_dir, Vector3.up()))
+	local ignore_passive_on_patrol = params.go_to_combat
+	local optional_spawn_exit_time = params.optional_spawn_exit_time
 
-	optional_spawn_exit_time = not optional_spawn_exit_time and self.optional_spawn_exit_time + Managers.time:time("game")
+	if optional_spawn_exit_time then
+		-- Nothing
+	end
 
-	local tbl_2 = {
-		move_to_position = var_14_9,
-		ignore_passive_on_patrol = go_to_combat,
+	optional_spawn_exit_time = params.optional_spawn_exit_time + Managers.time:time("game")
+
+	local spawn_exit_time = optional_spawn_exit_time
+
+	::label_14_0::
+
+	local optional_data = {
+		move_to_position = move_to_position,
+		ignore_passive_on_patrol = ignore_passive_on_patrol,
 		spawn_anim = spawn_anim,
-		spawn_rot = flag_2,
-		spawn_exit_time = optional_spawn_exit_time,
-		spawned_func = function (arg_15_0, arg_15_1, arg_15_2)
+		spawn_rot = spawn_rot,
+		spawn_exit_time = spawn_exit_time,
+		spawned_func = function (unit, breed, optional_data)
 			-- function 15
-			local var_15_0 = BLACKBOARDS[arg_15_0]
+			local blackboard = BLACKBOARDS[unit]
 
-			var_15_0.goal_destination = arg_15_2.move_to_position
-			var_15_0.move_and_place_standard = true
-			var_15_0.ignore_standard_pickup = true
-			var_15_0.ignore_passive_on_patrol = arg_15_2.ignore_passive_on_patrol
-			var_15_0.spawn_exit_time = optional_spawn_exit_time
+			blackboard.goal_destination = optional_data.move_to_position
+			blackboard.move_and_place_standard = true
+			blackboard.ignore_standard_pickup = true
+			blackboard.ignore_passive_on_patrol = optional_data.ignore_passive_on_patrol
+			blackboard.spawn_exit_time = spawn_exit_time
 
-			if not arg_15_2.spawn_anim then
-				var_15_0.spawn_animation_override = true
-				var_15_0.spawn_animation = arg_15_2.spawn_anim
+			if optional_data.spawn_anim then
+				blackboard.spawn_animation_override = true
+				blackboard.spawn_animation = optional_data.spawn_anim
 
-				local unbox = arg_15_2.spawn_rot:unbox()
+				local rot = optional_data.spawn_rot:unbox()
 
-				Unit.set_local_rotation(arg_15_0, 0, unbox)
+				Unit.set_local_rotation(unit, 0, rot)
 			end
 
-			if not on_spawn_event_name then
+			if level_event_name then
 				local world = Managers.state.conflict:world()
-				local current_level = LevelHelper:current_level(world)
+				local level = LevelHelper:current_level(world)
 
-				Level.trigger_event(current_level, on_spawn_event_name)
+				Level.trigger_event(level, level_event_name)
 			end
 		end
 	}
-	local spawn_queued_unit = Managers.state.conflict:spawn_queued_unit(var_14_10, var_14_8, QuaternionBox(Quaternion.identity()), "terror_event", nil, "terror_event", tbl_2)
+	local spawn_id = Managers.state.conflict:spawn_queued_unit(breed, spawn_position, QuaternionBox(Quaternion.identity()), "terror_event", nil, "terror_event", optional_data)
 
-	flow_return_table.spawn_handle = spawn_queued_unit
+	flow_return_table.spawn_handle = spawn_id
 
 	return flow_return_table
 end
 
-function flow_callback_get_spawned_unit(self)
+function flow_callback_get_spawned_unit(params)
 	-- function 16
-	local spawn_handle = self.spawn_handle
-	local get_spawned_unit = Managers.state.conflict:get_spawned_unit(spawn_handle)
+	local spawn_handle = params.spawn_handle
+	local unit = Managers.state.conflict:get_spawned_unit(spawn_handle)
 
-	flow_return_table.unit = get_spawned_unit
+	flow_return_table.unit = unit
 
 	return flow_return_table
 end
 
-function trigger_ai_equipment_flow_event(self)
+function trigger_ai_equipment_flow_event(params)
 	-- function 17
-	local unit = self.unit
-	local has_extension = ScriptUnit.has_extension(unit, "ai_inventory_system")
+	local ai_unit = params.unit
+	local inv_ext = ScriptUnit.has_extension(ai_unit, "ai_inventory_system")
 
-	if not has_extension then
-		local inventory_item_units = has_extension.inventory_item_units
-		local flow_event = Unit.flow_event
+	if inv_ext then
+		local inventory_item_units = inv_ext.inventory_item_units
+		local unit_flow = Unit.flow_event
 
-		for i = 1, has_extension.inventory_items_n do
-			flow_event(inventory_item_units[i], self.event)
+		for i = 1, inv_ext.inventory_items_n do
+			unit_flow(inventory_item_units[i], params.event)
 		end
 	end
 end
 
-function flow_callback_ai_follow_path(self)
+function flow_callback_ai_follow_path(params)
 	-- function 18
 	error("'flow_callback_ai_follow_path' is deprecated")
 
-	local ai_entity = self.ai_entity
-	local spline_name = self.spline_name
-	local finish_event = self.finish_event
+	local ai_entity = params.ai_entity
+	local spline_name = params.spline_name
+	local finish_event = params.finish_event
 
-	if not ScriptUnit.has_extension(ai_entity, "spawner_system") then
-		local extension = ScriptUnit.extension(ai_entity, "spawner_system")
-		local conflict = Managers.state.conflict
+	if ScriptUnit.has_extension(ai_entity, "spawner_system") then
+		local spawner = ScriptUnit.extension(ai_entity, "spawner_system")
+		local conflict_director = Managers.state.conflict
 
-		for k, v in pairs(extension:spawned_units()) do
+		for _, ai_unit_handle in pairs(spawner:spawned_units()) do
 			-- Nothing
 		end
 	end
 end
 
-function flow_callback_ai_patrol_path(self)
+function flow_callback_ai_patrol_path(params)
 	-- function 19
 	error("'flow_callback_ai_patrol_path' is deprecated")
 
-	local ai_entity = self.ai_entity
-	local spline_name = self.spline_name
+	local ai_entity = params.ai_entity
+	local spline_name = params.spline_name
 
-	if not ScriptUnit.has_extension(ai_entity, "spawner_system") then
-		local extension = ScriptUnit.extension(ai_entity, "spawner_system")
-		local conflict = Managers.state.conflict
+	if ScriptUnit.has_extension(ai_entity, "spawner_system") then
+		local spawner = ScriptUnit.extension(ai_entity, "spawner_system")
+		local conflict_director = Managers.state.conflict
 
-		for k, v in pairs(extension:spawned_units()) do
+		for _, ai_unit_handle in pairs(spawner:spawned_units()) do
 			-- Nothing
 		end
 	end
 end
 
-function flow_callback_ai_move_to_command(self)
+function flow_callback_ai_move_to_command(params)
 	-- function 20
-	local ai_entity = self.ai_entity
-	local waypoint_unit = self.waypoint_unit
-	local finish_event = self.finish_event
+	local ai_entity = params.ai_entity
+	local waypoint_unit = params.waypoint_unit
+	local finish_event = params.finish_event
 
-	if not ScriptUnit.has_extension(ai_entity, "spawner_system") then
-		local extension = ScriptUnit.extension(ai_entity, "spawner_system")
-		local conflict = Managers.state.conflict
+	if ScriptUnit.has_extension(ai_entity, "spawner_system") then
+		local spawner = ScriptUnit.extension(ai_entity, "spawner_system")
+		local conflict_director = Managers.state.conflict
 
-		for k, v in pairs(extension:spawned_units()) do
-			local get_spawned_unit = conflict:get_spawned_unit(v)
+		for _, ai_unit_handle in pairs(spawner:spawned_units()) do
+			local ai_unit = conflict_director:get_spawned_unit(ai_unit_handle)
 
-			BLACKBOARDS[get_spawned_unit].goal_destination = Vector3Box(Unit.local_position(waypoint_unit, 0))
+			BLACKBOARDS[ai_unit].goal_destination = Vector3Box(Unit.local_position(waypoint_unit, 0))
 		end
 	else
 		BLACKBOARDS[ai_entity].goal_destination = Vector3Box(Unit.local_position(waypoint_unit, 0))
 	end
 end
 
-function flow_callback_ai_detect_player(self)
+function flow_callback_ai_detect_player(params)
 	-- function 21
-	local ai_entity = self.ai_entity
+	local ai_entity = params.ai_entity
 	local player_unit = Managers.player:player_from_peer_id(Network.peer_id()).player_unit
 
-	if not ScriptUnit.has_extension(ai_entity, "spawner_system") then
-		local extension = ScriptUnit.extension(ai_entity, "spawner_system")
-		local conflict = Managers.state.conflict
+	if ScriptUnit.has_extension(ai_entity, "spawner_system") then
+		local spawner = ScriptUnit.extension(ai_entity, "spawner_system")
+		local conflict_director = Managers.state.conflict
 
-		for k, v in pairs(extension:spawned_units()) do
-			local get_spawned_unit = conflict:get_spawned_unit(v)
+		for _, ai_unit_handle in pairs(spawner:spawned_units()) do
+			local ai_unit = conflict_director:get_spawned_unit(ai_unit_handle)
+			local ai_base = ScriptUnit.extension(ai_unit, "ai_system")
 
-			ScriptUnit.extension(get_spawned_unit, "ai_system"):blackboard().players[player_unit] = true
+			ai_base:blackboard().players[player_unit] = true
 		end
 	else
-		ScriptUnit.extension(ai_entity, "ai_system"):blackboard().players[player_unit] = true
+		local ai_base = ScriptUnit.extension(ai_entity, "ai_system")
+
+		ai_base:blackboard().players[player_unit] = true
 	end
 end
 
-function flow_callback_ai_hold_position(self)
+function flow_callback_ai_hold_position(params)
 	-- function 22
-	local ai_entity = self.ai_entity
+	local ai_entity = params.ai_entity
 
-	if not ScriptUnit.has_extension(ai_entity, "spawner_system") then
-		local extension = ScriptUnit.extension(ai_entity, "spawner_system")
-		local conflict = Managers.state.conflict
+	if ScriptUnit.has_extension(ai_entity, "spawner_system") then
+		local spawner = ScriptUnit.extension(ai_entity, "spawner_system")
+		local conflict_director = Managers.state.conflict
 
-		for k, v in pairs(extension:spawned_units()) do
-			local get_spawned_unit = conflict:get_spawned_unit(v)
-			local extension_2 = ScriptUnit.extension(get_spawned_unit, "ai_system")
+		for _, ai_unit_handle in pairs(spawner:spawned_units()) do
+			local ai_unit = conflict_director:get_spawned_unit(ai_unit_handle)
+			local ai_base = ScriptUnit.extension(ai_unit, "ai_system")
 
-			extension_2:steering():reset()
+			ai_base:steering():reset()
 
-			local brain = extension_2:brain()
+			local brain = ai_base:brain()
 
 			brain:change_behaviour("avoidance", "nil_tree")
 			brain:change_behaviour("pathing", "nil_tree")
 		end
 	else
-		local extension_3 = ScriptUnit.extension(ai_entity, "ai_system")
+		local ai_base = ScriptUnit.extension(ai_entity, "ai_system")
 
-		extension_3:steering():reset()
+		ai_base:steering():reset()
 
-		local brain_2 = extension_3:brain()
+		local brain = ai_base:brain()
 
-		brain_2:change_behaviour("avoidance", "nil_tree")
-		brain_2:change_behaviour("pathing", "nil_tree")
+		brain:change_behaviour("avoidance", "nil_tree")
+		brain:change_behaviour("pathing", "nil_tree")
 	end
 end
 
-function flow_callback_set_ai_properties(self)
+function flow_callback_set_ai_properties(params)
 	-- function 23
-	local ai_entity = self.ai_entity
+	local ai_entity = params.ai_entity
 
-	self.ai_entity = nil
+	params.ai_entity = nil
 
-	if not ScriptUnit.has_extension(ai_entity, "spawner_system") then
-		local extension = ScriptUnit.extension(ai_entity, "spawner_system")
-		local conflict = Managers.state.conflict
+	if ScriptUnit.has_extension(ai_entity, "spawner_system") then
+		local spawner = ScriptUnit.extension(ai_entity, "spawner_system")
+		local conflict_director = Managers.state.conflict
 
-		for k, v in pairs(extension:spawned_units()) do
-			local get_spawned_unit = conflict:get_spawned_unit(v)
+		for _, ai_unit_handle in pairs(spawner:spawned_units()) do
+			local ai_unit = conflict_director:get_spawned_unit(ai_unit_handle)
+			local ai_base = ScriptUnit.extension(ai_unit, "ai_system")
 
-			ScriptUnit.extension(get_spawned_unit, "ai_system"):set_properties(self)
+			ai_base:set_properties(params)
 		end
 	else
-		ScriptUnit.extension(ai_entity, "ai_system"):set_properties(self)
+		local ai_base = ScriptUnit.extension(ai_entity, "ai_system")
+
+		ai_base:set_properties(params)
 	end
 end
 
-function flow_callback_set_ai_perception(self)
+function flow_callback_set_ai_perception(params)
 	-- function 24
-	local ai_entity = self.ai_entity
+	local ai_entity = params.ai_entity
 
-	if not ScriptUnit.has_extension(ai_entity, "spawner_system") then
-		local extension = ScriptUnit.extension(ai_entity, "spawner_system")
-		local conflict = Managers.state.conflict
+	if ScriptUnit.has_extension(ai_entity, "spawner_system") then
+		local spawner = ScriptUnit.extension(ai_entity, "spawner_system")
+		local conflict_director = Managers.state.conflict
 
-		for k, v in pairs(extension:spawned_units()) do
-			local get_spawned_unit = conflict:get_spawned_unit(v)
+		for _, ai_unit_handle in pairs(spawner:spawned_units()) do
+			local ai_unit = conflict_director:get_spawned_unit(ai_unit_handle)
+			local ai_base = ScriptUnit.extension(ai_unit, "ai_system")
 
-			ScriptUnit.extension(get_spawned_unit, "ai_system"):perception():set_config(self)
+			ai_base:perception():set_config(params)
 		end
 	else
-		ScriptUnit.extension(ai_entity, "ai_system"):perception():set_config(self)
+		local ai_base = ScriptUnit.extension(ai_entity, "ai_system")
+
+		ai_base:perception():set_config(params)
 	end
 end
 
-function flow_callback_ai_set_waypoint(self)
+function flow_callback_ai_set_waypoint(params)
 	-- function 25
-	local waypoint_name = self.waypoint_name
-	local waypoint_unit = self.waypoint_unit
+	local waypoint_name = params.waypoint_name
+	local waypoint_unit = params.waypoint_unit
 	local world = Managers.world:world("level_world")
-	local current_level = LevelHelper:current_level(world)
+	local level = LevelHelper:current_level(world)
 
-	Level.set_flow_variable(current_level, waypoint_name, waypoint_unit)
+	Level.set_flow_variable(level, waypoint_name, waypoint_unit)
 end
 
-function flow_callback_ai_set_areas(arg_26_0)
+function flow_callback_ai_set_areas(params)
 	-- function 26
-	flow_callback_set_ai_properties(arg_26_0)
+	flow_callback_set_ai_properties(params)
 end
 
-function flow_callback_set_ai_spawner_mode(self)
+function flow_callback_set_ai_spawner_mode(params)
 	-- function 27
-	Managers.state.entity:system("spawner_system"):set_deterministic(self.deterministic)
+	Managers.state.entity:system("spawner_system"):set_deterministic(params.deterministic)
 end
 
-function flow_callback_force_terror_event(self)
+function flow_callback_force_terror_event(params)
 	-- function 28
-	if Managers.player.is_server or not LEVEL_EDITOR_TEST then
-		Managers.state.conflict:start_terror_event(self.event_type, self.seed, self.origin_unit)
+	if Managers.player.is_server or LEVEL_EDITOR_TEST then
+		Managers.state.conflict:start_terror_event(params.event_type, params.seed, params.origin_unit)
 	end
 
 	local next_random = Math.next_random
-	local seed = self.seed
+	local seed = params.seed
 
-	seed = seed or 0
+	seed = not not seed or not not 0
 
-	local var_28_2 = next_random(seed)
+	local new_seed = next_random(seed)
 
-	flow_return_table.new_seed = var_28_2
+	flow_return_table.new_seed = new_seed
 
 	return flow_return_table
 end
 
-function flow_callback_override_player_respawning(self)
+function flow_callback_override_player_respawning(params)
 	-- function 29
-	if Managers.player.is_server or not LEVEL_EDITOR_TEST then
-		Managers.state.game_mode:set_override_respawn_group(self.respawn_group_name, self.active)
+	if Managers.player.is_server or LEVEL_EDITOR_TEST then
+		Managers.state.game_mode:set_override_respawn_group(params.respawn_group_name, params.active)
 	end
 end
 
-function flow_callback_disable_player_respawning(self)
+function flow_callback_disable_player_respawning(params)
 	-- function 30
-	if Managers.player.is_server or not LEVEL_EDITOR_TEST then
-		Managers.state.game_mode:set_respawn_group_enabled(self.respawn_group_name, not self.active)
+	if Managers.player.is_server or LEVEL_EDITOR_TEST then
+		Managers.state.game_mode:set_respawn_group_enabled(params.respawn_group_name, not params.active)
 	end
 end
 
-function flow_callback_disable_player_respawning_gate(self)
+function flow_callback_disable_player_respawning_gate(params)
 	-- function 31
-	if Managers.player.is_server or not LEVEL_EDITOR_TEST then
-		Managers.state.game_mode:set_respawn_gate_enabled(self.unit, not self.active)
+	if Managers.player.is_server or LEVEL_EDITOR_TEST then
+		Managers.state.game_mode:set_respawn_gate_enabled(params.unit, not params.active)
 	end
 end
 
-function flow_callback_change_spawner_id(self)
+function flow_callback_change_spawner_id(params)
 	-- function 32
-	Managers.state.entity:system("spawner_system"):change_spawner_id(self.unit, self.spawner_id, self.new_spawner_id)
+	Managers.state.entity:system("spawner_system"):change_spawner_id(params.unit, params.spawner_id, params.new_spawner_id)
 end
 
-function flow_callback_stop_terror_event(self)
+function flow_callback_stop_terror_event(params)
 	-- function 33
-	if Managers.player.is_server or not LEVEL_EDITOR_TEST then
-		local event_type = self.event_type
+	if Managers.player.is_server or LEVEL_EDITOR_TEST then
+		local event_name = params.event_type
 
-		TerrorEventMixer.stop_event(event_type)
+		TerrorEventMixer.stop_event(event_name)
 	end
 end
 
-function flow_callback_force_random_terror_event(self)
+function flow_callback_force_random_terror_event(params)
 	-- function 34
-	if Managers.player.is_server or not LEVEL_EDITOR_TEST then
-		TerrorEventMixer.start_random_event(self.event_chunk)
+	if Managers.player.is_server or LEVEL_EDITOR_TEST then
+		TerrorEventMixer.start_random_event(params.event_chunk)
 	end
 end
 
-function flow_callback_bot_nav_transition_entered(self)
+function flow_callback_bot_nav_transition_entered(params)
 	-- function 35
-	local bot_unit = self.bot_unit
-	local transition_unit = self.transition_unit
-	local bot_actor = self.bot_actor
+	local bot_unit = params.bot_unit
+	local transition_unit = params.transition_unit
+	local actor = params.bot_actor
 	local has_extension = ScriptUnit.has_extension(bot_unit, "ai_navigation_system")
 
-	has_extension = not has_extension and ScriptUnit.extension(bot_unit, "ai_navigation_system")
+	if has_extension then
+		-- Nothing
+	end
 
-	if not has_extension then
-		if not has_extension.flow_cb_entered_nav_transition then
-			has_extension:flow_cb_entered_nav_transition(transition_unit, bot_actor)
+	has_extension = ScriptUnit.extension(bot_unit, "ai_navigation_system")
+
+	local nav_ext = has_extension
+
+	::label_35_0::
+
+	if nav_ext then
+		if nav_ext.flow_cb_entered_nav_transition then
+			nav_ext:flow_cb_entered_nav_transition(transition_unit, actor)
 		end
 	else
 		Application.warning(string.format("[flow_callback_bot_nav_transition_left] Unit: %s missing extension \"ai_navigation_system\"", tostring(bot_unit)))
 	end
 end
 
-function flow_callback_bot_nav_transition_left(self)
+function flow_callback_bot_nav_transition_left(params)
 	-- function 36
-	local bot_unit = self.bot_unit
-	local transition_unit = self.transition_unit
-	local bot_actor = self.bot_actor
+	local bot_unit = params.bot_unit
+	local transition_unit = params.transition_unit
+	local actor = params.bot_actor
 	local has_extension = ScriptUnit.has_extension(bot_unit, "ai_navigation_system")
 
-	has_extension = not has_extension and ScriptUnit.extension(bot_unit, "ai_navigation_system")
+	if has_extension then
+		-- Nothing
+	end
 
-	if not has_extension then
-		if not has_extension.flow_cb_left_nav_transition then
-			has_extension:flow_cb_left_nav_transition(transition_unit, bot_actor)
+	has_extension = ScriptUnit.extension(bot_unit, "ai_navigation_system")
+
+	local nav_ext = has_extension
+
+	::label_36_0::
+
+	if nav_ext then
+		if nav_ext.flow_cb_left_nav_transition then
+			nav_ext:flow_cb_left_nav_transition(transition_unit, actor)
 		end
 	else
 		Application.warning(string.format("[flow_callback_bot_nav_transition_left] Unit: %s missing extension \"ai_navigation_system\"", tostring(bot_unit)))
 	end
 end
 
-function flow_callback_player_bot_hold_position(self)
+function flow_callback_player_bot_hold_position(params)
 	-- function 37
 	if not Managers.player.is_server then
 		return
 	end
 
-	local player_unit = self.player_unit
-	local has_extension = ScriptUnit.has_extension(player_unit, "ai_bot_group_system")
+	local player_unit = params.player_unit
+	local ai_bot_group_extension = ScriptUnit.has_extension(player_unit, "ai_bot_group_system")
 
-	if not has_extension then
-		if not self.should_hold_position then
-			local nav_world = Managers.state.entity:system("ai_system"):nav_world()
-			local position = self.position
+	if ai_bot_group_extension then
+		local should_hold_position = params.should_hold_position
 
-			position = position or Unit.local_position(player_unit, 0)
+		if should_hold_position then
+			local ai_system = Managers.state.entity:system("ai_system")
+			local nav_world = ai_system:nav_world()
+			local position = params.position
 
-			local num = 0.5
-			local num_2 = 2
-			local triangle_from_position, var_37_7 = GwNavQueries.triangle_from_position(nav_world, position, num, num_2)
+			if not position then
+				-- Nothing
+			end
 
-			if not triangle_from_position then
-				local max_allowed_distance_from_position = self.max_allowed_distance_from_position
+			position = Unit.local_position(player_unit, 0)
 
-				max_allowed_distance_from_position = max_allowed_distance_from_position or 0
-				position = Vector3(position.x, position.y, var_37_7)
+			local hold_position = position
 
-				has_extension:set_hold_position(position, max_allowed_distance_from_position)
+			::label_37_0::
+
+			local above, below = 0.5, 2
+			local success, altitude = GwNavQueries.triangle_from_position(nav_world, hold_position, above, below)
+
+			if success then
+				local max_allowed_distance_from_position = params.max_allowed_distance_from_position
+
+				if not max_allowed_distance_from_position then
+					-- Nothing
+				end
+
+				max_allowed_distance_from_position = 0
+
+				local max_distance = max_allowed_distance_from_position
+
+				::label_37_1::
+
+				hold_position = Vector3(hold_position.x, hold_position.y, altitude)
+
+				ai_bot_group_extension:set_hold_position(hold_position, max_distance)
 			else
-				Application.warning(string.format("[flow_callback_player_bot_hold_position] %s could not hold position %s since it is not near navmesh!", tostring(player_unit), tostring(position)))
+				Application.warning(string.format("[flow_callback_player_bot_hold_position] %s could not hold position %s since it is not near navmesh!", tostring(player_unit), tostring(hold_position)))
 			end
 		else
-			has_extension:set_hold_position(nil)
+			ai_bot_group_extension:set_hold_position(nil)
 		end
 	else
 		Application.warning(string.format("[flow_callback_player_bot_hold_position] Unit: %s is missing ai_bot_group_extension", tostring(player_unit)))
 	end
 end
 
-function flow_callback_overcharge_explode_player_bot(self)
+function flow_callback_overcharge_explode_player_bot(params)
 	-- function 38
 	if not Managers.player.is_server then
 		return
 	end
 
-	local player_unit = self.player_unit
+	local player_unit = params.player_unit
 
-	if not Unit.alive(player_unit) then
-		local has_extension = ScriptUnit.has_extension(player_unit, "overcharge_system")
+	if Unit.alive(player_unit) then
+		local overcharge_extension = ScriptUnit.has_extension(player_unit, "overcharge_system")
 
-		fassert(has_extension, "Tried to overcharge explode unit %s from flow but the unit has no overcharge extension", player_unit)
+		fassert(overcharge_extension, "Tried to overcharge explode unit %s from flow but the unit has no overcharge extension", player_unit)
 
-		local get_max_value = has_extension:get_max_value()
+		local max_overcharge = overcharge_extension:get_max_value()
 
-		has_extension:add_charge(get_max_value)
-		has_extension:add_charge(get_max_value)
+		overcharge_extension:add_charge(max_overcharge)
+		overcharge_extension:add_charge(max_overcharge)
 	end
 end
 
-function flow_callback_broadphase_ai_set_goal_destination(self)
+function flow_callback_broadphase_ai_set_goal_destination(params)
 	-- function 39
 	if not Managers.player.is_server then
 		return
 	end
 
-	local goal_unit = self.goal_unit
-	local local_position = Unit.local_position(goal_unit, 0)
-	local var_39_2
-	local num = 1
-	local num_2 = 5
-	local system = Managers.state.entity:system("ai_system")
-	local nav_world = system:nav_world()
-	local triangle_from_position, var_39_8 = GwNavQueries.triangle_from_position(nav_world, local_position, num, num_2)
+	local goal_unit = params.goal_unit
+	local goal_position = Unit.local_position(goal_unit, 0)
+	local goal_destination
+	local above = 1
+	local below = 5
+	local ai_system = Managers.state.entity:system("ai_system")
+	local nav_world = ai_system:nav_world()
+	local success, altitude = GwNavQueries.triangle_from_position(nav_world, goal_position, above, below)
 
-	if not triangle_from_position then
-		var_39_2 = Vector3(local_position.x, local_position.y, var_39_8)
+	if success then
+		goal_destination = Vector3(goal_position.x, goal_position.y, altitude)
 	else
-		local num_3 = 5
-		local num_4 = 0.1
+		local horizontal = 5
+		local distance_from_obstacle = 0.1
 
-		var_39_2 = GwNavQueries.inside_position_from_outside_position(nav_world, local_position, num, num_2, num_3, num_4)
+		goal_destination = GwNavQueries.inside_position_from_outside_position(nav_world, goal_position, above, below, horizontal, distance_from_obstacle)
 	end
 
-	if not var_39_2 then
-		local broadphase_radius = self.broadphase_radius
-		local broadphase_start_unit = self.broadphase_start_unit
-		local local_position_2 = Unit.local_position(broadphase_start_unit, 0)
+	if goal_destination then
+		local broadphase_radius = params.broadphase_radius
+		local broadphase_start_unit = params.broadphase_start_unit
+		local broadphase_position = Unit.local_position(broadphase_start_unit, 0)
 		local BLACKBOARDS = BLACKBOARDS
-		local affected_breed = self.affected_breed
-		local alloc_table = FrameTable.alloc_table()
-		local query = Broadphase.query(system.broadphase, local_position_2, broadphase_radius, alloc_table)
+		local affected_breed_name = params.affected_breed
+		local broadphase_result = FrameTable.alloc_table()
+		local num_result = Broadphase.query(ai_system.broadphase, broadphase_position, broadphase_radius, broadphase_result)
 
-		for i = 1, query do
-			local var_39_18 = alloc_table[i]
-			local var_39_19 = BLACKBOARDS[var_39_18]
+		for i = 1, num_result do
+			local ai_unit = broadphase_result[i]
+			local blackboard = BLACKBOARDS[ai_unit]
+			local breed = blackboard.breed
 
-			if var_39_19.breed.name ~= affected_breed or not HEALTH_ALIVE[var_39_18] then
-				if var_39_19.goal_destination == nil then
-					var_39_19.goal_destination = Vector3Box(var_39_2)
+			if breed.name == affected_breed_name and HEALTH_ALIVE[ai_unit] then
+				if blackboard.goal_destination == nil then
+					blackboard.goal_destination = Vector3Box(goal_destination)
 				else
-					Application.warning(string.format("[flow_callback_broadphase_ai_set_goal_destination] Unit: %s already have a goal destination!", tostring(var_39_18)))
+					Application.warning(string.format("[flow_callback_broadphase_ai_set_goal_destination] Unit: %s already have a goal destination!", tostring(ai_unit)))
 				end
 			end
 		end
@@ -632,12 +690,14 @@ function flow_callback_broadphase_ai_set_goal_destination(self)
 	end
 end
 
-function flow_callback_get_crossroad_path_id(self)
+function flow_callback_get_crossroad_path_id(params)
 	-- function 40
-	local crossroad_id = self.crossroad_id
-	local var_40_1 = Managers.state.conflict.level_analysis.chosen_crossroads[crossroad_id]
+	local crossroad_id = params.crossroad_id
+	local level_analysis = Managers.state.conflict.level_analysis
+	local chosen_crossroads = level_analysis.chosen_crossroads
+	local chosen_road_id = chosen_crossroads[crossroad_id]
 
-	flow_return_table.path_id = var_40_1
+	flow_return_table.path_id = chosen_road_id
 
 	return flow_return_table
 end

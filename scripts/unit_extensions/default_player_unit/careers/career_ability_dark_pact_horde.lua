@@ -4,8 +4,10 @@ CareerAbilityDarkPactHorde = class(CareerAbilityDarkPactHorde, CareerAbilityDark
 
 CareerAbilityDarkPactHorde._ability_available = function (self)
 	-- function 1
-	local _status_extension = self._status_extension
-	local is_in_ghost_mode = self._ghost_mode_extension:is_in_ghost_mode()
+	local status_extension = self._status_extension
+	local ghost_mode_extension = self._ghost_mode_extension
+	local in_ghost_mode = ghost_mode_extension:is_in_ghost_mode()
+	local ability_available = not status_extension:is_disabled() and not not not in_ghost_mode
 
-	return not not _status_extension:is_disabled() or not is_in_ghost_mode
+	return ability_available
 end

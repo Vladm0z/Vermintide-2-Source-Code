@@ -1,16 +1,16 @@
 -- chunkname: @scripts/ui/cutscene_overlay_templates/cutscene_template_shovel_intro.lua
 
-local scripts_ui_cutscene_overlay_templates_cutscene_utils = require("scripts/ui/cutscene_overlay_templates/cutscene_utils")
-local num = 700
-local str = "sofia_necromancer"
-local var_0_3 = DialogueSettings.speaker_color_lookup[str]
-local var_0_4 = Localize("subtitle_name_sofia_fuegonasus_01")
-local format = string.format("{#color(%d,%d,%d, %%d)}[%s] {#reset()}", var_0_3[2], var_0_3[3], var_0_3[4], var_0_4)
-local str_2 = "bright_wizard"
-local var_0_7 = DialogueSettings.speaker_color_lookup[str_2]
-local var_0_8 = Localize("subtitle_name_" .. str_2)
-local format_2 = string.format("{#color(%d,%d,%d, %%d)}[%s] {#reset()}", var_0_7[2], var_0_7[3], var_0_7[4], var_0_8)
-local tbl = {
+local utils = require("scripts/ui/cutscene_overlay_templates/cutscene_utils")
+local start_layer = 700
+local speaker_name = "sofia_necromancer"
+local color = DialogueSettings.speaker_color_lookup[speaker_name]
+local localized_sofia_name = Localize("subtitle_name_sofia_fuegonasus_01")
+local sofia_header = string.format("{#color(%d,%d,%d, %%d)}[%s] {#reset()}", color[2], color[3], color[4], localized_sofia_name)
+local speaker_name = "bright_wizard"
+local color = DialogueSettings.speaker_color_lookup[speaker_name]
+local localized_sienna_name = Localize("subtitle_name_" .. speaker_name)
+local sienna_header = string.format("{#color(%d,%d,%d, %%d)}[%s] {#reset()}", color[2], color[3], color[4], localized_sienna_name)
+local template_settings = {
 	template_1 = {
 		{
 			fade_out_duration = 0.3,
@@ -26,12 +26,12 @@ local tbl = {
 			fade_in_duration = 0.3,
 			end_timestamp = "00:20:80",
 			font_type = "hell_shark",
-			text = format .. Localize("shovel_intro_subtitle_01"),
+			text = sofia_header .. Localize("shovel_intro_subtitle_01"),
 			color = Colors.get_color_table_with_alpha("white", 255),
 			offset = {
 				0,
 				20,
-				num
+				start_layer
 			}
 		},
 		{
@@ -51,7 +51,7 @@ local tbl = {
 			offset = {
 				0,
 				20,
-				num
+				start_layer
 			}
 		},
 		{
@@ -71,7 +71,7 @@ local tbl = {
 			offset = {
 				0,
 				20,
-				num
+				start_layer
 			}
 		},
 		{
@@ -91,7 +91,7 @@ local tbl = {
 			offset = {
 				0,
 				20,
-				num
+				start_layer
 			}
 		},
 		{
@@ -111,7 +111,7 @@ local tbl = {
 			offset = {
 				0,
 				20,
-				num
+				start_layer
 			}
 		},
 		{
@@ -127,12 +127,12 @@ local tbl = {
 			fade_in_duration = 0.3,
 			end_timestamp = "01:02:90",
 			font_type = "hell_shark",
-			text = format_2 .. Localize("shovel_intro_subtitle_06"),
+			text = sienna_header .. Localize("shovel_intro_subtitle_06"),
 			color = Colors.get_color_table_with_alpha("white", 255),
 			offset = {
 				0,
 				20,
-				num
+				start_layer
 			}
 		},
 		{
@@ -148,12 +148,12 @@ local tbl = {
 			fade_in_duration = 0.3,
 			end_timestamp = "01:21:90",
 			font_type = "hell_shark",
-			text = format .. Localize("shovel_intro_subtitle_07"),
+			text = sofia_header .. Localize("shovel_intro_subtitle_07"),
 			color = Colors.get_color_table_with_alpha("white", 255),
 			offset = {
 				0,
 				20,
-				num
+				start_layer
 			}
 		},
 		{
@@ -169,12 +169,12 @@ local tbl = {
 			fade_in_duration = 0.3,
 			end_timestamp = "01:35:40",
 			font_type = "hell_shark",
-			text = format_2 .. Localize("shovel_intro_subtitle_08"),
+			text = sienna_header .. Localize("shovel_intro_subtitle_08"),
 			color = Colors.get_color_table_with_alpha("white", 255),
 			offset = {
 				0,
 				20,
-				num
+				start_layer
 			}
 		},
 		{
@@ -190,12 +190,12 @@ local tbl = {
 			fade_in_duration = 0.3,
 			end_timestamp = "01:38:85",
 			font_type = "hell_shark",
-			text = format .. Localize("shovel_intro_subtitle_09"),
+			text = sofia_header .. Localize("shovel_intro_subtitle_09"),
 			color = Colors.get_color_table_with_alpha("white", 255),
 			offset = {
 				0,
 				20,
-				num
+				start_layer
 			}
 		},
 		{
@@ -211,12 +211,12 @@ local tbl = {
 			fade_in_duration = 0.3,
 			end_timestamp = "01:39:85",
 			font_type = "hell_shark",
-			text = format_2 .. Localize("shovel_intro_subtitle_10"),
+			text = sienna_header .. Localize("shovel_intro_subtitle_10"),
 			color = Colors.get_color_table_with_alpha("white", 255),
 			offset = {
 				0,
 				20,
-				num
+				start_layer
 			}
 		},
 		{
@@ -232,12 +232,12 @@ local tbl = {
 			fade_in_duration = 0.3,
 			end_timestamp = "01:53:70",
 			font_type = "hell_shark",
-			text = format_2 .. Localize("shovel_intro_subtitle_11"),
+			text = sienna_header .. Localize("shovel_intro_subtitle_11"),
 			color = Colors.get_color_table_with_alpha("white", 255),
 			offset = {
 				0,
 				20,
-				num
+				start_layer
 			}
 		},
 		{
@@ -257,14 +257,14 @@ local tbl = {
 			offset = {
 				0,
 				20,
-				num
+				start_layer
 			}
 		}
 	}
 }
 
-scripts_ui_cutscene_overlay_templates_cutscene_utils.convert_string_timestamps_to_seconds(tbl)
+utils.convert_string_timestamps_to_seconds(template_settings)
 
 return {
-	templates = tbl
+	templates = template_settings
 }

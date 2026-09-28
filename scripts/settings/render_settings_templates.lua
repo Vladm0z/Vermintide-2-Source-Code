@@ -219,12 +219,12 @@ VolumetricFogQuality = {
 local tbl = {}
 local default_characters_texture_quality = script_data.settings.default_characters_texture_quality
 
-default_characters_texture_quality = default_characters_texture_quality or "high"
+default_characters_texture_quality = not not default_characters_texture_quality or not not "high"
 tbl.default_characters = default_characters_texture_quality
 
 local default_environment_texture_quality = script_data.settings.default_environment_texture_quality
 
-default_environment_texture_quality = default_environment_texture_quality or "high"
+default_environment_texture_quality = not not default_environment_texture_quality or not not "high"
 tbl.default_environment = default_environment_texture_quality
 tbl.characters = {
 	low = {

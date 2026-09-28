@@ -4,221 +4,233 @@ require("scripts/entity_system/systems/behaviour/nodes/bt_node")
 
 BTFollowCommanderAction = class(BTFollowCommanderAction, BTNode)
 
-BTFollowCommanderAction.init = function (arg_1_0, ...)
+BTFollowCommanderAction.init = function (self, ...)
 	-- function 1
-	BTFollowCommanderAction.super.init(arg_1_0, ...)
+	BTFollowCommanderAction.super.init(self, ...)
 end
 
 BTFollowCommanderAction.name = "BTFollowCommanderAction"
 
-BTFollowCommanderAction.enter = function (self, arg_2_1, arg_2_2, arg_2_3)
+BTFollowCommanderAction.enter = function (self, unit, blackboard, t)
 	-- function 2
-	arg_2_2.action = self._tree_node.action_data
-	arg_2_2.time_to_next_evaluate = arg_2_3 + 0.5
-	arg_2_2.time_to_next_friend_alert = arg_2_3 + 0.3
+	blackboard.action = self._tree_node.action_data
+	blackboard.time_to_next_evaluate = t + 0.5
+	blackboard.time_to_next_friend_alert = t + 0.3
 
-	local commander_extension = arg_2_2.commander_extension
+	local commander_extension = blackboard.commander_extension
 
-	commander_extension:register_follow_node_update(arg_2_1)
+	commander_extension:register_follow_node_update(unit)
 
-	arg_2_2.follow_node_position, arg_2_2.commander_extension = commander_extension:follow_node_position(arg_2_1), commander_extension
-	arg_2_2.new_follow_node_pos = true
+	local follow_node_position = commander_extension:follow_node_position(unit)
 
-	local network = Managers.state.network
-	local breed = arg_2_2.breed
-	local passive_in_patrol
+	blackboard.commander_extension = commander_extension
+	blackboard.follow_node_position = follow_node_position
+	blackboard.new_follow_node_pos = true
+
+	local network_manager = Managers.state.network
+	local breed = blackboard.breed
+	local passive_in_patrol_2
 
 	if breed.passive_in_patrol ~= nil then
-		passive_in_patrol = breed.passive_in_patrol
+		passive_in_patrol_2 = breed.passive_in_patrol
 
-		if not passive_in_patrol then
-			passive_in_patrol = not arg_2_2.ignore_passive_on_patrol
+		if passive_in_patrol_2 then
+			passive_in_patrol_2 = not blackboard.ignore_passive_on_patrol
 		end
 
 		if false then
-			passive_in_patrol = false
+			passive_in_patrol_2 = false
 		end
+
+		goto label_2_0
+	end
+
+	passive_in_patrol_2 = true
+
+	local passive_in_patrol = passive_in_patrol_2
+
+	::label_2_0::
+
+	if passive_in_patrol then
+		AiUtils.enter_passive(unit, blackboard)
 	else
-		passive_in_patrol = true
+		AiUtils.enter_combat(unit, blackboard)
 	end
 
-	if not passive_in_patrol then
-		AiUtils.enter_passive(arg_2_1, arg_2_2)
-	else
-		AiUtils.enter_combat(arg_2_1, arg_2_2)
+	local wield_weapon = not breed.dont_wield_weapon_on_patrol
+
+	if wield_weapon and ScriptUnit.has_extension(unit, "ai_inventory_system") then
+		local unit_id = network_manager:unit_game_object_id(unit)
+
+		network_manager.network_transmit:send_rpc_all("rpc_ai_inventory_wield", unit_id, 1)
 	end
 
-	if not not breed.dont_wield_weapon_on_patrol and not ScriptUnit.has_extension(arg_2_1, "ai_inventory_system") then
-		local unit_game_object_id = network:unit_game_object_id(arg_2_1)
-
-		network.network_transmit:send_rpc_all("rpc_ai_inventory_wield", unit_game_object_id, 1)
-	end
-
-	local speed_animation_variable = arg_2_2.speed_animation_variable
+	local speed_animation_variable = blackboard.speed_animation_variable
 
 	if not speed_animation_variable then
-		speed_animation_variable = Unit.animation_has_variable(arg_2_1, "move_speed")
-		speed_animation_variable = not speed_animation_variable and Unit.animation_find_variable(arg_2_1, "move_speed")
+		speed_animation_variable = Unit.animation_has_variable(unit, "move_speed")
+		speed_animation_variable = not not speed_animation_variable and not not Unit.animation_find_variable(unit, "move_speed")
 	end
 
-	arg_2_2.speed_animation_variable = speed_animation_variable
+	blackboard.speed_animation_variable = speed_animation_variable
 end
 
-BTFollowCommanderAction.leave = function (self, arg_3_1, arg_3_2, arg_3_3, arg_3_4, arg_3_5)
+BTFollowCommanderAction.leave = function (self, unit, blackboard, t, reason, destroy)
 	-- function 3
-	if not arg_3_5 then
-		self:toggle_start_move_animation_lock(arg_3_1, false, arg_3_2)
+	if not destroy then
+		self:toggle_start_move_animation_lock(unit, false, blackboard)
 	end
 
-	if not arg_3_2.commander_extension then
-		arg_3_2.commander_extension:unregister_follow_node_update(arg_3_1)
+	if blackboard.commander_extension then
+		blackboard.commander_extension:unregister_follow_node_update(unit)
 	end
 
-	arg_3_2.start_anim_locked = nil
-	arg_3_2.anim_cb_rotation_start = nil
-	arg_3_2.anim_cb_move = nil
-	arg_3_2.start_anim_done = nil
-	arg_3_2.skip_move_rotation = nil
+	blackboard.start_anim_locked = nil
+	blackboard.anim_cb_rotation_start = nil
+	blackboard.anim_cb_move = nil
+	blackboard.start_anim_done = nil
+	blackboard.skip_move_rotation = nil
 
-	local get_default_breed_move_speed = AiUtils.get_default_breed_move_speed(arg_3_1, arg_3_2)
+	local default_move_speed = AiUtils.get_default_breed_move_speed(unit, blackboard)
+	local navigation_extension = blackboard.navigation_extension
 
-	arg_3_2.navigation_extension:set_max_speed(get_default_breed_move_speed)
+	navigation_extension:set_max_speed(default_move_speed)
 
-	if not arg_3_2.speed_animation_variable then
-		Unit.animation_set_variable(arg_3_1, arg_3_2.speed_animation_variable, get_default_breed_move_speed)
+	if blackboard.speed_animation_variable then
+		Unit.animation_set_variable(unit, blackboard.speed_animation_variable, default_move_speed)
 
-		arg_3_2.speed_animation_variable = nil
+		blackboard.speed_animation_variable = nil
 	end
 end
 
-BTFollowCommanderAction.run = function (self, arg_4_1, arg_4_2, arg_4_3, arg_4_4)
+BTFollowCommanderAction.run = function (self, unit, blackboard, t, dt)
 	-- function 4
-	local navigation_extension = arg_4_2.navigation_extension
+	local navigation_extension = blackboard.navigation_extension
 
-	if not arg_4_2.commander_extension:follow_node_pending(arg_4_2) then
+	if blackboard.commander_extension:follow_node_pending(blackboard) then
 		return "running"
 	end
 
-	if not arg_4_2.start_anim_done then
-		if not arg_4_2.start_anim_locked then
-			self:start_move_animation(arg_4_1, arg_4_2)
+	if not blackboard.start_anim_done then
+		if not blackboard.start_anim_locked then
+			self:start_move_animation(unit, blackboard)
 		end
 
-		if not arg_4_2.anim_cb_rotation_start then
-			self:start_move_rotation(arg_4_1, arg_4_2, arg_4_3, arg_4_4)
+		if blackboard.anim_cb_rotation_start then
+			self:start_move_rotation(unit, blackboard, t, dt)
 		end
 
-		if not arg_4_2.anim_cb_move then
-			arg_4_2.anim_cb_move = false
-			arg_4_2.move_state = "moving"
+		if blackboard.anim_cb_move then
+			blackboard.anim_cb_move = false
+			blackboard.move_state = "moving"
 
-			self:toggle_start_move_animation_lock(arg_4_1, false, arg_4_2)
+			self:toggle_start_move_animation_lock(unit, false, blackboard)
 
-			arg_4_2.start_anim_locked = nil
-			arg_4_2.start_anim_done = true
+			blackboard.start_anim_locked = nil
+			blackboard.start_anim_done = true
 		end
 	else
-		local unbox = arg_4_2.follow_node_position:unbox()
-		local var_4_2 = POSITION_LOOKUP[arg_4_1]
+		local goal_destination = blackboard.follow_node_position:unbox()
+		local unit_position = POSITION_LOOKUP[unit]
 
-		if not arg_4_2.new_follow_node_pos then
-			navigation_extension:move_to(unbox)
+		if blackboard.new_follow_node_pos then
+			navigation_extension:move_to(goal_destination)
 
-			arg_4_2.new_follow_node_pos = nil
-			arg_4_2.finalized_new_follow_node_pos = nil
+			blackboard.new_follow_node_pos = nil
+			blackboard.finalized_new_follow_node_pos = nil
 		end
 
-		if not navigation_extension:has_reached_destination() then
-			arg_4_2.follow_node_position = nil
+		if navigation_extension:has_reached_destination() then
+			blackboard.follow_node_position = nil
 
 			return "done"
 		end
 
-		local num = 0
-		local has_extension = ScriptUnit.has_extension(arg_4_2.commander_unit, "locomotion_system")
+		local commander_speed = 0
+		local commander_locomotion = ScriptUnit.has_extension(blackboard.commander_unit, "locomotion_system")
 
-		if not has_extension then
-			num = Vector3.length(has_extension:current_velocity())
+		if commander_locomotion then
+			commander_speed = Vector3.length(commander_locomotion:current_velocity())
 		end
 
-		local distance = Vector3.distance(var_4_2, unbox)
-		local max = math.max(arg_4_2.breed.run_speed, num)
-		local max_2 = math.max(arg_4_2.breed.min_run_speed, num)
-		local run_max_speed_distance = arg_4_2.breed.run_max_speed_distance
-		local run_min_speed_distance = arg_4_2.breed.run_min_speed_distance
-		local lerp = math.lerp(max_2, max, math.clamp01((distance - run_min_speed_distance) / run_max_speed_distance))
+		local distance_to_goal = Vector3.distance(unit_position, goal_destination)
+		local max_speed = math.max(blackboard.breed.run_speed, commander_speed)
+		local min_speed = math.max(blackboard.breed.min_run_speed, commander_speed)
+		local max_speed_dist = blackboard.breed.run_max_speed_distance
+		local min_speed_dist = blackboard.breed.run_min_speed_distance
+		local speed = math.lerp(min_speed, max_speed, math.clamp01((distance_to_goal - min_speed_dist) / max_speed_dist))
 
-		navigation_extension:set_max_speed(lerp)
+		navigation_extension:set_max_speed(speed)
 
-		if not arg_4_2.speed_animation_variable then
-			Unit.animation_set_variable(arg_4_1, arg_4_2.speed_animation_variable, lerp)
+		if blackboard.speed_animation_variable then
+			Unit.animation_set_variable(unit, blackboard.speed_animation_variable, speed)
 		end
 	end
 
-	local var_4_11
+	local should_evaluate
 
-	if arg_4_3 > arg_4_2.time_to_next_evaluate or arg_4_2.new_follow_node_pos or not navigation_extension:has_reached_destination() then
-		var_4_11 = "evaluate"
-		arg_4_2.time_to_next_evaluate = arg_4_3 + 0.5
+	if t > blackboard.time_to_next_evaluate or not blackboard.new_follow_node_pos and navigation_extension:has_reached_destination() then
+		should_evaluate = "evaluate"
+		blackboard.time_to_next_evaluate = t + 0.5
 	end
 
-	return "running", var_4_11
+	return "running", should_evaluate
 end
 
-BTFollowCommanderAction.start_move_animation = function (self, arg_5_1, arg_5_2)
+BTFollowCommanderAction.start_move_animation = function (self, unit, blackboard)
 	-- function 5
-	self:toggle_start_move_animation_lock(arg_5_1, true, arg_5_2)
+	self:toggle_start_move_animation_lock(unit, true, blackboard)
 
-	local breed = arg_5_2.breed
-	local flag = breed.passive_in_patrol == nil or breed.passive_in_patrol
-	local str = "move_start_fwd"
+	local breed = blackboard.breed
+	local passive_in_patrol = breed.passive_in_patrol == nil or not not breed.passive_in_patrol
+	local animation_name = "move_start_fwd"
 	local passive_in_patrol_start_anim = breed.passive_in_patrol_start_anim
 
-	if not flag and not passive_in_patrol_start_anim then
-		arg_5_2.anim_cb_move = true
-		str = type(passive_in_patrol_start_anim) ~= "table" or not passive_in_patrol_start_anim[math.random(1, #passive_in_patrol_start_anim)] or passive_in_patrol_start_anim
-		arg_5_2.skip_move_rotation = true
+	if passive_in_patrol and passive_in_patrol_start_anim then
+		blackboard.anim_cb_move = true
+		animation_name = (type(passive_in_patrol_start_anim) ~= "table" or not passive_in_patrol_start_anim[math.random(1, #passive_in_patrol_start_anim)]) and not not passive_in_patrol_start_anim
+		blackboard.skip_move_rotation = true
 	end
 
-	Managers.state.network:anim_event(arg_5_1, str)
+	Managers.state.network:anim_event(unit, animation_name)
 
-	arg_5_2.move_animation_name = str
-	arg_5_2.start_anim_locked = true
+	blackboard.move_animation_name = animation_name
+	blackboard.start_anim_locked = true
 end
 
-BTFollowCommanderAction.start_move_rotation = function (self, arg_6_1, arg_6_2, arg_6_3, arg_6_4)
+BTFollowCommanderAction.start_move_rotation = function (self, unit, blackboard, t, dt)
 	-- function 6
-	if arg_6_2.move_animation_name == "move_start_fwd" or not arg_6_2.skip_move_rotation then
-		self:toggle_start_move_animation_lock(arg_6_1, false, arg_6_2)
+	if blackboard.move_animation_name == "move_start_fwd" or blackboard.skip_move_rotation then
+		self:toggle_start_move_animation_lock(unit, false, blackboard)
 	else
-		arg_6_2.anim_cb_rotation_start = false
+		blackboard.anim_cb_rotation_start = false
 
-		local var_6_0 = POSITION_LOOKUP[arg_6_2.target_unit]
+		local target_pos = POSITION_LOOKUP[blackboard.target_unit]
 
-		if var_6_0 or not arg_6_2.goal_destination then
-			var_6_0 = arg_6_2.goal_destination:unbox()
+		if not target_pos and blackboard.goal_destination then
+			target_pos = blackboard.goal_destination:unbox()
 		end
 
-		local get_animation_rotation_scale = AiAnimUtils.get_animation_rotation_scale(arg_6_1, var_6_0, arg_6_2.move_animation_name, arg_6_2.action.start_anims_data)
+		local rot_scale = AiAnimUtils.get_animation_rotation_scale(unit, target_pos, blackboard.move_animation_name, blackboard.action.start_anims_data)
 
-		LocomotionUtils.set_animation_rotation_scale(arg_6_1, get_animation_rotation_scale)
+		LocomotionUtils.set_animation_rotation_scale(unit, rot_scale)
 	end
 end
 
-BTFollowCommanderAction.toggle_start_move_animation_lock = function (arg_7_0, arg_7_1, arg_7_2, arg_7_3)
+BTFollowCommanderAction.toggle_start_move_animation_lock = function (self, unit, should_lock_ani, blackboard)
 	-- function 7
-	local locomotion_extension = arg_7_3.locomotion_extension
+	local locomotion_extension = blackboard.locomotion_extension
 
 	if not locomotion_extension._engine_extension_id then
 		return
 	end
 
-	if not arg_7_2 then
+	if should_lock_ani then
 		locomotion_extension:use_lerp_rotation(false)
-		LocomotionUtils.set_animation_driven_movement(arg_7_1, true, false, false)
+		LocomotionUtils.set_animation_driven_movement(unit, true, false, false)
 	else
 		locomotion_extension:use_lerp_rotation(true)
-		LocomotionUtils.set_animation_driven_movement(arg_7_1, false)
-		LocomotionUtils.set_animation_rotation_scale(arg_7_1, 1)
+		LocomotionUtils.set_animation_driven_movement(unit, false)
+		LocomotionUtils.set_animation_rotation_scale(unit, 1)
 	end
 end

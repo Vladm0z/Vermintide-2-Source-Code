@@ -84,7 +84,7 @@ local tbl = {
 }
 local setting = Development.setting("disable_pack_master")
 
-setting = setting or false
+setting = not not setting or not not false
 tbl.disabled = setting
 tbl.status_effect_settings = {
 	category = "small",
@@ -227,16 +227,18 @@ tbl.allowed_layers = {
 	fire_grenade = 15
 }
 
-tbl.custom_death_enter_function = function (arg_1_0, arg_1_1, arg_1_2, arg_1_3)
+tbl.custom_death_enter_function = function (unit, killer_unit, damage_type, death_hit_zone)
 	-- function 1
-	local var_1_0 = BLACKBOARDS[arg_1_0]
+	local blackboard = BLACKBOARDS[unit]
 
-	QuestSettings.check_pack_master_kill_abducting_ally(var_1_0, arg_1_1)
+	QuestSettings.check_pack_master_kill_abducting_ally(blackboard, killer_unit)
 end
 
-Breeds.skaven_pack_master = table.create_copy(Breeds.skaven_pack_master, tbl)
+local breed_data = tbl
 
-local tbl_2 = {
+Breeds.skaven_pack_master = table.create_copy(Breeds.skaven_pack_master, breed_data)
+
+local action_data = {
 	skulk = {
 		skulk_time = 1,
 		skulk_time_force_attack = 10,
@@ -454,4 +456,4 @@ local tbl_2 = {
 	}
 }
 
-BreedActions.skaven_pack_master = table.create_copy(BreedActions.skaven_pack_master, tbl_2)
+BreedActions.skaven_pack_master = table.create_copy(BreedActions.skaven_pack_master, action_data)

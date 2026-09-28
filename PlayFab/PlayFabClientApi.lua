@@ -2,1383 +2,1416 @@
 
 local IPlayFabHttps = require("PlayFab.IPlayFabHttps")
 local PlayFabSettings = require("PlayFab.PlayFabSettings")
-local tbl = {
-	settings = PlayFabSettings.settings,
-	IsClientLoggedIn = function ()
-		-- function 1
-		return PlayFabSettings._internalSettings.sessionTicket ~= nil
-	end
+local PlayFabClientApi = {
+	settings = PlayFabSettings.settings
 }
 
-tbl._MultiStepClientLogin = function (arg_2_0)
+PlayFabClientApi.IsClientLoggedIn = function ()
+	-- function 1
+	return PlayFabSettings._internalSettings.sessionTicket ~= nil
+end
+
+PlayFabClientApi._MultiStepClientLogin = function (needsAttribution)
 	-- function 2
-	if not arg_2_0 and (PlayFabSettings.settings.disableAdvertising or not PlayFabSettings.settings.advertisingIdType) and not PlayFabSettings.settings.advertisingIdValue then
-		local tbl_2 = {}
+	if needsAttribution and not PlayFabSettings.settings.disableAdvertising and PlayFabSettings.settings.advertisingIdType and PlayFabSettings.settings.advertisingIdValue then
+		local request = {}
 
 		if PlayFabSettings.settings.advertisingIdType == PlayFabSettings.settings.AD_TYPE_IDFA then
-			tbl_2.Idfa = PlayFabSettings.settings.advertisingIdValue
+			request.Idfa = PlayFabSettings.settings.advertisingIdValue
 		elseif PlayFabSettings.settings.advertisingIdType == PlayFabSettings.settings.AD_TYPE_ANDROID_ID then
-			tbl_2.Adid = PlayFabSettings.settings.advertisingIdValue
+			request.Adid = PlayFabSettings.settings.advertisingIdValue
 		else
 			return
 		end
 
-		tbl.AttributeInstall(tbl_2, nil, nil)
+		PlayFabClientApi.AttributeInstall(request, nil, nil)
 	end
 end
 
-tbl.GetPhotonAuthenticationToken = function (arg_3_0, arg_3_1, arg_3_2)
+PlayFabClientApi.GetPhotonAuthenticationToken = function (request, onSuccess, onError)
 	-- function 3
-	if not tbl.IsClientLoggedIn() then
+	if not PlayFabClientApi.IsClientLoggedIn() then
 		error("Must be logged in to call this method")
 	end
 
-	IPlayFabHttps.MakePlayFabApiCall("/Client/GetPhotonAuthenticationToken", arg_3_0, "X-Authorization", PlayFabSettings._internalSettings.sessionTicket, arg_3_1, arg_3_2)
+	IPlayFabHttps.MakePlayFabApiCall("/Client/GetPhotonAuthenticationToken", request, "X-Authorization", PlayFabSettings._internalSettings.sessionTicket, onSuccess, onError)
 end
 
-tbl.GetTitlePublicKey = function (arg_4_0, arg_4_1, arg_4_2)
+PlayFabClientApi.GetTitlePublicKey = function (request, onSuccess, onError)
 	-- function 4
-	IPlayFabHttps.MakePlayFabApiCall("/Client/GetTitlePublicKey", arg_4_0, nil, nil, arg_4_1, arg_4_2)
+	IPlayFabHttps.MakePlayFabApiCall("/Client/GetTitlePublicKey", request, nil, nil, onSuccess, onError)
 end
 
-tbl.GetWindowsHelloChallenge = function (arg_5_0, arg_5_1, arg_5_2)
+PlayFabClientApi.GetWindowsHelloChallenge = function (request, onSuccess, onError)
 	-- function 5
-	IPlayFabHttps.MakePlayFabApiCall("/Client/GetWindowsHelloChallenge", arg_5_0, nil, nil, arg_5_1, arg_5_2)
+	IPlayFabHttps.MakePlayFabApiCall("/Client/GetWindowsHelloChallenge", request, nil, nil, onSuccess, onError)
 end
 
-tbl.LoginWithAndroidDeviceID = function (self, arg_6_1, arg_6_2)
+PlayFabClientApi.LoginWithAndroidDeviceID = function (request, onSuccess, onError)
 	-- function 6
-	self.TitleId = PlayFabSettings.settings.titleId
+	request.TitleId = PlayFabSettings.settings.titleId
 
-	local var_6_0 = arg_6_1
+	local externalOnSuccess = onSuccess
 
-	function arg_6_1(self)
+	local function wrappedOnSuccess(result)
 		-- function 7
-		PlayFabSettings._internalSettings.sessionTicket = self.SessionTicket
+		PlayFabSettings._internalSettings.sessionTicket = result.SessionTicket
 
-		if not var_6_0 then
-			var_6_0(self)
+		if externalOnSuccess then
+			externalOnSuccess(result)
 		end
 
-		tbl._MultiStepClientLogin(self.SettingsForUser.NeedsAttribution)
+		PlayFabClientApi._MultiStepClientLogin(result.SettingsForUser.NeedsAttribution)
 	end
 
-	IPlayFabHttps.MakePlayFabApiCall("/Client/LoginWithAndroidDeviceID", self, nil, nil, arg_6_1, arg_6_2)
+	onSuccess = wrappedOnSuccess
+
+	IPlayFabHttps.MakePlayFabApiCall("/Client/LoginWithAndroidDeviceID", request, nil, nil, onSuccess, onError)
 end
 
-tbl.LoginWithCustomID = function (self, arg_8_1, arg_8_2)
+PlayFabClientApi.LoginWithCustomID = function (request, onSuccess, onError)
 	-- function 8
-	self.TitleId = PlayFabSettings.settings.titleId
+	request.TitleId = PlayFabSettings.settings.titleId
 
-	local var_8_0 = arg_8_1
+	local externalOnSuccess = onSuccess
 
-	function arg_8_1(self)
+	local function wrappedOnSuccess(result)
 		-- function 9
-		PlayFabSettings._internalSettings.sessionTicket = self.SessionTicket
+		PlayFabSettings._internalSettings.sessionTicket = result.SessionTicket
 
-		if not var_8_0 then
-			var_8_0(self)
+		if externalOnSuccess then
+			externalOnSuccess(result)
 		end
 
-		tbl._MultiStepClientLogin(self.SettingsForUser.NeedsAttribution)
+		PlayFabClientApi._MultiStepClientLogin(result.SettingsForUser.NeedsAttribution)
 	end
 
-	IPlayFabHttps.MakePlayFabApiCall("/Client/LoginWithCustomID", self, nil, nil, arg_8_1, arg_8_2)
+	onSuccess = wrappedOnSuccess
+
+	IPlayFabHttps.MakePlayFabApiCall("/Client/LoginWithCustomID", request, nil, nil, onSuccess, onError)
 end
 
-tbl.LoginWithEmailAddress = function (self, arg_10_1, arg_10_2)
+PlayFabClientApi.LoginWithEmailAddress = function (request, onSuccess, onError)
 	-- function 10
-	self.TitleId = PlayFabSettings.settings.titleId
+	request.TitleId = PlayFabSettings.settings.titleId
 
-	local var_10_0 = arg_10_1
+	local externalOnSuccess = onSuccess
 
-	function arg_10_1(self)
+	local function wrappedOnSuccess(result)
 		-- function 11
-		PlayFabSettings._internalSettings.sessionTicket = self.SessionTicket
+		PlayFabSettings._internalSettings.sessionTicket = result.SessionTicket
 
-		if not var_10_0 then
-			var_10_0(self)
+		if externalOnSuccess then
+			externalOnSuccess(result)
 		end
 
-		tbl._MultiStepClientLogin(self.SettingsForUser.NeedsAttribution)
+		PlayFabClientApi._MultiStepClientLogin(result.SettingsForUser.NeedsAttribution)
 	end
 
-	IPlayFabHttps.MakePlayFabApiCall("/Client/LoginWithEmailAddress", self, nil, nil, arg_10_1, arg_10_2)
+	onSuccess = wrappedOnSuccess
+
+	IPlayFabHttps.MakePlayFabApiCall("/Client/LoginWithEmailAddress", request, nil, nil, onSuccess, onError)
 end
 
-tbl.LoginWithFacebook = function (self, arg_12_1, arg_12_2)
+PlayFabClientApi.LoginWithFacebook = function (request, onSuccess, onError)
 	-- function 12
-	self.TitleId = PlayFabSettings.settings.titleId
+	request.TitleId = PlayFabSettings.settings.titleId
 
-	local var_12_0 = arg_12_1
+	local externalOnSuccess = onSuccess
 
-	function arg_12_1(self)
+	local function wrappedOnSuccess(result)
 		-- function 13
-		PlayFabSettings._internalSettings.sessionTicket = self.SessionTicket
+		PlayFabSettings._internalSettings.sessionTicket = result.SessionTicket
 
-		if not var_12_0 then
-			var_12_0(self)
+		if externalOnSuccess then
+			externalOnSuccess(result)
 		end
 
-		tbl._MultiStepClientLogin(self.SettingsForUser.NeedsAttribution)
+		PlayFabClientApi._MultiStepClientLogin(result.SettingsForUser.NeedsAttribution)
 	end
 
-	IPlayFabHttps.MakePlayFabApiCall("/Client/LoginWithFacebook", self, nil, nil, arg_12_1, arg_12_2)
+	onSuccess = wrappedOnSuccess
+
+	IPlayFabHttps.MakePlayFabApiCall("/Client/LoginWithFacebook", request, nil, nil, onSuccess, onError)
 end
 
-tbl.LoginWithGameCenter = function (self, arg_14_1, arg_14_2)
+PlayFabClientApi.LoginWithGameCenter = function (request, onSuccess, onError)
 	-- function 14
-	self.TitleId = PlayFabSettings.settings.titleId
+	request.TitleId = PlayFabSettings.settings.titleId
 
-	local var_14_0 = arg_14_1
+	local externalOnSuccess = onSuccess
 
-	function arg_14_1(self)
+	local function wrappedOnSuccess(result)
 		-- function 15
-		PlayFabSettings._internalSettings.sessionTicket = self.SessionTicket
+		PlayFabSettings._internalSettings.sessionTicket = result.SessionTicket
 
-		if not var_14_0 then
-			var_14_0(self)
+		if externalOnSuccess then
+			externalOnSuccess(result)
 		end
 
-		tbl._MultiStepClientLogin(self.SettingsForUser.NeedsAttribution)
+		PlayFabClientApi._MultiStepClientLogin(result.SettingsForUser.NeedsAttribution)
 	end
 
-	IPlayFabHttps.MakePlayFabApiCall("/Client/LoginWithGameCenter", self, nil, nil, arg_14_1, arg_14_2)
+	onSuccess = wrappedOnSuccess
+
+	IPlayFabHttps.MakePlayFabApiCall("/Client/LoginWithGameCenter", request, nil, nil, onSuccess, onError)
 end
 
-tbl.LoginWithGoogleAccount = function (self, arg_16_1, arg_16_2)
+PlayFabClientApi.LoginWithGoogleAccount = function (request, onSuccess, onError)
 	-- function 16
-	self.TitleId = PlayFabSettings.settings.titleId
+	request.TitleId = PlayFabSettings.settings.titleId
 
-	local var_16_0 = arg_16_1
+	local externalOnSuccess = onSuccess
 
-	function arg_16_1(self)
+	local function wrappedOnSuccess(result)
 		-- function 17
-		PlayFabSettings._internalSettings.sessionTicket = self.SessionTicket
+		PlayFabSettings._internalSettings.sessionTicket = result.SessionTicket
 
-		if not var_16_0 then
-			var_16_0(self)
+		if externalOnSuccess then
+			externalOnSuccess(result)
 		end
 
-		tbl._MultiStepClientLogin(self.SettingsForUser.NeedsAttribution)
+		PlayFabClientApi._MultiStepClientLogin(result.SettingsForUser.NeedsAttribution)
 	end
 
-	IPlayFabHttps.MakePlayFabApiCall("/Client/LoginWithGoogleAccount", self, nil, nil, arg_16_1, arg_16_2)
+	onSuccess = wrappedOnSuccess
+
+	IPlayFabHttps.MakePlayFabApiCall("/Client/LoginWithGoogleAccount", request, nil, nil, onSuccess, onError)
 end
 
-tbl.LoginWithIOSDeviceID = function (self, arg_18_1, arg_18_2)
+PlayFabClientApi.LoginWithIOSDeviceID = function (request, onSuccess, onError)
 	-- function 18
-	self.TitleId = PlayFabSettings.settings.titleId
+	request.TitleId = PlayFabSettings.settings.titleId
 
-	local var_18_0 = arg_18_1
+	local externalOnSuccess = onSuccess
 
-	function arg_18_1(self)
+	local function wrappedOnSuccess(result)
 		-- function 19
-		PlayFabSettings._internalSettings.sessionTicket = self.SessionTicket
+		PlayFabSettings._internalSettings.sessionTicket = result.SessionTicket
 
-		if not var_18_0 then
-			var_18_0(self)
+		if externalOnSuccess then
+			externalOnSuccess(result)
 		end
 
-		tbl._MultiStepClientLogin(self.SettingsForUser.NeedsAttribution)
+		PlayFabClientApi._MultiStepClientLogin(result.SettingsForUser.NeedsAttribution)
 	end
 
-	IPlayFabHttps.MakePlayFabApiCall("/Client/LoginWithIOSDeviceID", self, nil, nil, arg_18_1, arg_18_2)
+	onSuccess = wrappedOnSuccess
+
+	IPlayFabHttps.MakePlayFabApiCall("/Client/LoginWithIOSDeviceID", request, nil, nil, onSuccess, onError)
 end
 
-tbl.LoginWithKongregate = function (self, arg_20_1, arg_20_2)
+PlayFabClientApi.LoginWithKongregate = function (request, onSuccess, onError)
 	-- function 20
-	self.TitleId = PlayFabSettings.settings.titleId
+	request.TitleId = PlayFabSettings.settings.titleId
 
-	local var_20_0 = arg_20_1
+	local externalOnSuccess = onSuccess
 
-	function arg_20_1(self)
+	local function wrappedOnSuccess(result)
 		-- function 21
-		PlayFabSettings._internalSettings.sessionTicket = self.SessionTicket
+		PlayFabSettings._internalSettings.sessionTicket = result.SessionTicket
 
-		if not var_20_0 then
-			var_20_0(self)
+		if externalOnSuccess then
+			externalOnSuccess(result)
 		end
 
-		tbl._MultiStepClientLogin(self.SettingsForUser.NeedsAttribution)
+		PlayFabClientApi._MultiStepClientLogin(result.SettingsForUser.NeedsAttribution)
 	end
 
-	IPlayFabHttps.MakePlayFabApiCall("/Client/LoginWithKongregate", self, nil, nil, arg_20_1, arg_20_2)
+	onSuccess = wrappedOnSuccess
+
+	IPlayFabHttps.MakePlayFabApiCall("/Client/LoginWithKongregate", request, nil, nil, onSuccess, onError)
 end
 
-tbl.LoginWithPlayFab = function (self, arg_22_1, arg_22_2)
+PlayFabClientApi.LoginWithPlayFab = function (request, onSuccess, onError)
 	-- function 22
-	self.TitleId = PlayFabSettings.settings.titleId
+	request.TitleId = PlayFabSettings.settings.titleId
 
-	local var_22_0 = arg_22_1
+	local externalOnSuccess = onSuccess
 
-	function arg_22_1(self)
+	local function wrappedOnSuccess(result)
 		-- function 23
-		PlayFabSettings._internalSettings.sessionTicket = self.SessionTicket
+		PlayFabSettings._internalSettings.sessionTicket = result.SessionTicket
 
-		if not var_22_0 then
-			var_22_0(self)
+		if externalOnSuccess then
+			externalOnSuccess(result)
 		end
 
-		tbl._MultiStepClientLogin(self.SettingsForUser.NeedsAttribution)
+		PlayFabClientApi._MultiStepClientLogin(result.SettingsForUser.NeedsAttribution)
 	end
 
-	IPlayFabHttps.MakePlayFabApiCall("/Client/LoginWithPlayFab", self, nil, nil, arg_22_1, arg_22_2)
+	onSuccess = wrappedOnSuccess
+
+	IPlayFabHttps.MakePlayFabApiCall("/Client/LoginWithPlayFab", request, nil, nil, onSuccess, onError)
 end
 
-tbl.LoginWithSteam = function (self, arg_24_1, arg_24_2)
+PlayFabClientApi.LoginWithSteam = function (request, onSuccess, onError)
 	-- function 24
-	self.TitleId = PlayFabSettings.settings.titleId
+	request.TitleId = PlayFabSettings.settings.titleId
 
-	local var_24_0 = arg_24_1
+	local externalOnSuccess = onSuccess
 
-	function arg_24_1(self)
+	local function wrappedOnSuccess(result)
 		-- function 25
-		PlayFabSettings._internalSettings.sessionTicket = self.SessionTicket
+		PlayFabSettings._internalSettings.sessionTicket = result.SessionTicket
 
-		if not var_24_0 then
-			var_24_0(self)
+		if externalOnSuccess then
+			externalOnSuccess(result)
 		end
 
-		tbl._MultiStepClientLogin(self.SettingsForUser.NeedsAttribution)
+		PlayFabClientApi._MultiStepClientLogin(result.SettingsForUser.NeedsAttribution)
 	end
 
-	IPlayFabHttps.MakePlayFabApiCall("/Client/LoginWithSteam", self, nil, nil, arg_24_1, arg_24_2)
+	onSuccess = wrappedOnSuccess
+
+	IPlayFabHttps.MakePlayFabApiCall("/Client/LoginWithSteam", request, nil, nil, onSuccess, onError)
 end
 
-tbl.LoginWithXbox = function (self, arg_26_1, arg_26_2)
+PlayFabClientApi.LoginWithXbox = function (request, onSuccess, onError)
 	-- function 26
-	self.TitleId = PlayFabSettings.settings.titleId
+	request.TitleId = PlayFabSettings.settings.titleId
 
-	local var_26_0 = arg_26_1
+	local externalOnSuccess = onSuccess
 
-	function arg_26_1(self)
+	local function wrappedOnSuccess(result)
 		-- function 27
-		PlayFabSettings._internalSettings.sessionTicket = self.SessionTicket
+		PlayFabSettings._internalSettings.sessionTicket = result.SessionTicket
 
-		if not var_26_0 then
-			var_26_0(self)
+		if externalOnSuccess then
+			externalOnSuccess(result)
 		end
 
-		tbl._MultiStepClientLogin(self.SettingsForUser.NeedsAttribution)
+		PlayFabClientApi._MultiStepClientLogin(result.SettingsForUser.NeedsAttribution)
 	end
 
-	IPlayFabHttps.MakePlayFabApiCall("/Client/LoginWithXbox", self, nil, nil, arg_26_1, arg_26_2)
+	onSuccess = wrappedOnSuccess
+
+	IPlayFabHttps.MakePlayFabApiCall("/Client/LoginWithXbox", request, nil, nil, onSuccess, onError)
 end
 
-tbl.LoginWithPSN = function (self, arg_28_1, arg_28_2)
+PlayFabClientApi.LoginWithPSN = function (request, onSuccess, onError)
 	-- function 28
-	self.TitleId = PlayFabSettings.settings.titleId
+	request.TitleId = PlayFabSettings.settings.titleId
 
-	local var_28_0 = arg_28_1
+	local externalOnSuccess = onSuccess
 
-	function arg_28_1(self)
+	local function wrappedOnSuccess(result)
 		-- function 29
-		PlayFabSettings._internalSettings.sessionTicket = self.SessionTicket
+		PlayFabSettings._internalSettings.sessionTicket = result.SessionTicket
 
-		if not var_28_0 then
-			var_28_0(self)
+		if externalOnSuccess then
+			externalOnSuccess(result)
 		end
 
-		tbl._MultiStepClientLogin(self.SettingsForUser.NeedsAttribution)
+		PlayFabClientApi._MultiStepClientLogin(result.SettingsForUser.NeedsAttribution)
 	end
 
-	IPlayFabHttps.MakePlayFabApiCall("/Client/LoginWithPSN", self, nil, nil, arg_28_1, arg_28_2)
+	onSuccess = wrappedOnSuccess
+
+	IPlayFabHttps.MakePlayFabApiCall("/Client/LoginWithPSN", request, nil, nil, onSuccess, onError)
 end
 
-tbl.LoginWithTwitch = function (self, arg_30_1, arg_30_2)
+PlayFabClientApi.LoginWithTwitch = function (request, onSuccess, onError)
 	-- function 30
-	self.TitleId = PlayFabSettings.settings.titleId
+	request.TitleId = PlayFabSettings.settings.titleId
 
-	local var_30_0 = arg_30_1
+	local externalOnSuccess = onSuccess
 
-	function arg_30_1(self)
+	local function wrappedOnSuccess(result)
 		-- function 31
-		PlayFabSettings._internalSettings.sessionTicket = self.SessionTicket
+		PlayFabSettings._internalSettings.sessionTicket = result.SessionTicket
 
-		if not var_30_0 then
-			var_30_0(self)
+		if externalOnSuccess then
+			externalOnSuccess(result)
 		end
 
-		tbl._MultiStepClientLogin(self.SettingsForUser.NeedsAttribution)
+		PlayFabClientApi._MultiStepClientLogin(result.SettingsForUser.NeedsAttribution)
 	end
 
-	IPlayFabHttps.MakePlayFabApiCall("/Client/LoginWithTwitch", self, nil, nil, arg_30_1, arg_30_2)
+	onSuccess = wrappedOnSuccess
+
+	IPlayFabHttps.MakePlayFabApiCall("/Client/LoginWithTwitch", request, nil, nil, onSuccess, onError)
 end
 
-tbl.LoginWithWindowsHello = function (self, arg_32_1, arg_32_2)
+PlayFabClientApi.LoginWithWindowsHello = function (request, onSuccess, onError)
 	-- function 32
-	self.TitleId = PlayFabSettings.settings.titleId
+	request.TitleId = PlayFabSettings.settings.titleId
 
-	local var_32_0 = arg_32_1
+	local externalOnSuccess = onSuccess
 
-	function arg_32_1(self)
+	local function wrappedOnSuccess(result)
 		-- function 33
-		PlayFabSettings._internalSettings.sessionTicket = self.SessionTicket
+		PlayFabSettings._internalSettings.sessionTicket = result.SessionTicket
 
-		if not var_32_0 then
-			var_32_0(self)
+		if externalOnSuccess then
+			externalOnSuccess(result)
 		end
 
-		tbl._MultiStepClientLogin(self.SettingsForUser.NeedsAttribution)
+		PlayFabClientApi._MultiStepClientLogin(result.SettingsForUser.NeedsAttribution)
 	end
 
-	IPlayFabHttps.MakePlayFabApiCall("/Client/LoginWithWindowsHello", self, nil, nil, arg_32_1, arg_32_2)
+	onSuccess = wrappedOnSuccess
+
+	IPlayFabHttps.MakePlayFabApiCall("/Client/LoginWithWindowsHello", request, nil, nil, onSuccess, onError)
 end
 
-tbl.RegisterPlayFabUser = function (self, arg_34_1, arg_34_2)
+PlayFabClientApi.RegisterPlayFabUser = function (request, onSuccess, onError)
 	-- function 34
-	self.TitleId = PlayFabSettings.settings.titleId
+	request.TitleId = PlayFabSettings.settings.titleId
 
-	local var_34_0 = arg_34_1
+	local externalOnSuccess = onSuccess
 
-	function arg_34_1(self)
+	local function wrappedOnSuccess(result)
 		-- function 35
-		PlayFabSettings._internalSettings.sessionTicket = self.SessionTicket
+		PlayFabSettings._internalSettings.sessionTicket = result.SessionTicket
 
-		if not var_34_0 then
-			var_34_0(self)
+		if externalOnSuccess then
+			externalOnSuccess(result)
 		end
 
-		tbl._MultiStepClientLogin(self.SettingsForUser.NeedsAttribution)
+		PlayFabClientApi._MultiStepClientLogin(result.SettingsForUser.NeedsAttribution)
 	end
 
-	IPlayFabHttps.MakePlayFabApiCall("/Client/RegisterPlayFabUser", self, nil, nil, arg_34_1, arg_34_2)
+	onSuccess = wrappedOnSuccess
+
+	IPlayFabHttps.MakePlayFabApiCall("/Client/RegisterPlayFabUser", request, nil, nil, onSuccess, onError)
 end
 
-tbl.RegisterWithWindowsHello = function (self, arg_36_1, arg_36_2)
+PlayFabClientApi.RegisterWithWindowsHello = function (request, onSuccess, onError)
 	-- function 36
-	self.TitleId = PlayFabSettings.settings.titleId
+	request.TitleId = PlayFabSettings.settings.titleId
 
-	local var_36_0 = arg_36_1
+	local externalOnSuccess = onSuccess
 
-	function arg_36_1(self)
+	local function wrappedOnSuccess(result)
 		-- function 37
-		PlayFabSettings._internalSettings.sessionTicket = self.SessionTicket
+		PlayFabSettings._internalSettings.sessionTicket = result.SessionTicket
 
-		if not var_36_0 then
-			var_36_0(self)
+		if externalOnSuccess then
+			externalOnSuccess(result)
 		end
 
-		tbl._MultiStepClientLogin(self.SettingsForUser.NeedsAttribution)
+		PlayFabClientApi._MultiStepClientLogin(result.SettingsForUser.NeedsAttribution)
 	end
 
-	IPlayFabHttps.MakePlayFabApiCall("/Client/RegisterWithWindowsHello", self, nil, nil, arg_36_1, arg_36_2)
+	onSuccess = wrappedOnSuccess
+
+	IPlayFabHttps.MakePlayFabApiCall("/Client/RegisterWithWindowsHello", request, nil, nil, onSuccess, onError)
 end
 
-tbl.SetPlayerSecret = function (arg_38_0, arg_38_1, arg_38_2)
+PlayFabClientApi.SetPlayerSecret = function (request, onSuccess, onError)
 	-- function 38
-	if not tbl.IsClientLoggedIn() then
+	if not PlayFabClientApi.IsClientLoggedIn() then
 		error("Must be logged in to call this method")
 	end
 
-	IPlayFabHttps.MakePlayFabApiCall("/Client/SetPlayerSecret", arg_38_0, "X-Authorization", PlayFabSettings._internalSettings.sessionTicket, arg_38_1, arg_38_2)
+	IPlayFabHttps.MakePlayFabApiCall("/Client/SetPlayerSecret", request, "X-Authorization", PlayFabSettings._internalSettings.sessionTicket, onSuccess, onError)
 end
 
-tbl.AddGenericID = function (arg_39_0, arg_39_1, arg_39_2)
+PlayFabClientApi.AddGenericID = function (request, onSuccess, onError)
 	-- function 39
-	if not tbl.IsClientLoggedIn() then
+	if not PlayFabClientApi.IsClientLoggedIn() then
 		error("Must be logged in to call this method")
 	end
 
-	IPlayFabHttps.MakePlayFabApiCall("/Client/AddGenericID", arg_39_0, "X-Authorization", PlayFabSettings._internalSettings.sessionTicket, arg_39_1, arg_39_2)
+	IPlayFabHttps.MakePlayFabApiCall("/Client/AddGenericID", request, "X-Authorization", PlayFabSettings._internalSettings.sessionTicket, onSuccess, onError)
 end
 
-tbl.AddUsernamePassword = function (arg_40_0, arg_40_1, arg_40_2)
+PlayFabClientApi.AddUsernamePassword = function (request, onSuccess, onError)
 	-- function 40
-	if not tbl.IsClientLoggedIn() then
+	if not PlayFabClientApi.IsClientLoggedIn() then
 		error("Must be logged in to call this method")
 	end
 
-	IPlayFabHttps.MakePlayFabApiCall("/Client/AddUsernamePassword", arg_40_0, "X-Authorization", PlayFabSettings._internalSettings.sessionTicket, arg_40_1, arg_40_2)
+	IPlayFabHttps.MakePlayFabApiCall("/Client/AddUsernamePassword", request, "X-Authorization", PlayFabSettings._internalSettings.sessionTicket, onSuccess, onError)
 end
 
-tbl.GetAccountInfo = function (arg_41_0, arg_41_1, arg_41_2)
+PlayFabClientApi.GetAccountInfo = function (request, onSuccess, onError)
 	-- function 41
-	if not tbl.IsClientLoggedIn() then
+	if not PlayFabClientApi.IsClientLoggedIn() then
 		error("Must be logged in to call this method")
 	end
 
-	IPlayFabHttps.MakePlayFabApiCall("/Client/GetAccountInfo", arg_41_0, "X-Authorization", PlayFabSettings._internalSettings.sessionTicket, arg_41_1, arg_41_2)
+	IPlayFabHttps.MakePlayFabApiCall("/Client/GetAccountInfo", request, "X-Authorization", PlayFabSettings._internalSettings.sessionTicket, onSuccess, onError)
 end
 
-tbl.GetPlayerCombinedInfo = function (arg_42_0, arg_42_1, arg_42_2)
+PlayFabClientApi.GetPlayerCombinedInfo = function (request, onSuccess, onError)
 	-- function 42
-	if not tbl.IsClientLoggedIn() then
+	if not PlayFabClientApi.IsClientLoggedIn() then
 		error("Must be logged in to call this method")
 	end
 
-	IPlayFabHttps.MakePlayFabApiCall("/Client/GetPlayerCombinedInfo", arg_42_0, "X-Authorization", PlayFabSettings._internalSettings.sessionTicket, arg_42_1, arg_42_2)
+	IPlayFabHttps.MakePlayFabApiCall("/Client/GetPlayerCombinedInfo", request, "X-Authorization", PlayFabSettings._internalSettings.sessionTicket, onSuccess, onError)
 end
 
-tbl.GetPlayerProfile = function (arg_43_0, arg_43_1, arg_43_2)
+PlayFabClientApi.GetPlayerProfile = function (request, onSuccess, onError)
 	-- function 43
-	if not tbl.IsClientLoggedIn() then
+	if not PlayFabClientApi.IsClientLoggedIn() then
 		error("Must be logged in to call this method")
 	end
 
-	IPlayFabHttps.MakePlayFabApiCall("/Client/GetPlayerProfile", arg_43_0, "X-Authorization", PlayFabSettings._internalSettings.sessionTicket, arg_43_1, arg_43_2)
+	IPlayFabHttps.MakePlayFabApiCall("/Client/GetPlayerProfile", request, "X-Authorization", PlayFabSettings._internalSettings.sessionTicket, onSuccess, onError)
 end
 
-tbl.GetPlayFabIDsFromFacebookIDs = function (arg_44_0, arg_44_1, arg_44_2)
+PlayFabClientApi.GetPlayFabIDsFromFacebookIDs = function (request, onSuccess, onError)
 	-- function 44
-	if not tbl.IsClientLoggedIn() then
+	if not PlayFabClientApi.IsClientLoggedIn() then
 		error("Must be logged in to call this method")
 	end
 
-	IPlayFabHttps.MakePlayFabApiCall("/Client/GetPlayFabIDsFromFacebookIDs", arg_44_0, "X-Authorization", PlayFabSettings._internalSettings.sessionTicket, arg_44_1, arg_44_2)
+	IPlayFabHttps.MakePlayFabApiCall("/Client/GetPlayFabIDsFromFacebookIDs", request, "X-Authorization", PlayFabSettings._internalSettings.sessionTicket, onSuccess, onError)
 end
 
-tbl.GetPlayFabIDsFromGameCenterIDs = function (arg_45_0, arg_45_1, arg_45_2)
+PlayFabClientApi.GetPlayFabIDsFromGameCenterIDs = function (request, onSuccess, onError)
 	-- function 45
-	if not tbl.IsClientLoggedIn() then
+	if not PlayFabClientApi.IsClientLoggedIn() then
 		error("Must be logged in to call this method")
 	end
 
-	IPlayFabHttps.MakePlayFabApiCall("/Client/GetPlayFabIDsFromGameCenterIDs", arg_45_0, "X-Authorization", PlayFabSettings._internalSettings.sessionTicket, arg_45_1, arg_45_2)
+	IPlayFabHttps.MakePlayFabApiCall("/Client/GetPlayFabIDsFromGameCenterIDs", request, "X-Authorization", PlayFabSettings._internalSettings.sessionTicket, onSuccess, onError)
 end
 
-tbl.GetPlayFabIDsFromGenericIDs = function (arg_46_0, arg_46_1, arg_46_2)
+PlayFabClientApi.GetPlayFabIDsFromGenericIDs = function (request, onSuccess, onError)
 	-- function 46
-	if not tbl.IsClientLoggedIn() then
+	if not PlayFabClientApi.IsClientLoggedIn() then
 		error("Must be logged in to call this method")
 	end
 
-	IPlayFabHttps.MakePlayFabApiCall("/Client/GetPlayFabIDsFromGenericIDs", arg_46_0, "X-Authorization", PlayFabSettings._internalSettings.sessionTicket, arg_46_1, arg_46_2)
+	IPlayFabHttps.MakePlayFabApiCall("/Client/GetPlayFabIDsFromGenericIDs", request, "X-Authorization", PlayFabSettings._internalSettings.sessionTicket, onSuccess, onError)
 end
 
-tbl.GetPlayFabIDsFromGoogleIDs = function (arg_47_0, arg_47_1, arg_47_2)
+PlayFabClientApi.GetPlayFabIDsFromGoogleIDs = function (request, onSuccess, onError)
 	-- function 47
-	if not tbl.IsClientLoggedIn() then
+	if not PlayFabClientApi.IsClientLoggedIn() then
 		error("Must be logged in to call this method")
 	end
 
-	IPlayFabHttps.MakePlayFabApiCall("/Client/GetPlayFabIDsFromGoogleIDs", arg_47_0, "X-Authorization", PlayFabSettings._internalSettings.sessionTicket, arg_47_1, arg_47_2)
+	IPlayFabHttps.MakePlayFabApiCall("/Client/GetPlayFabIDsFromGoogleIDs", request, "X-Authorization", PlayFabSettings._internalSettings.sessionTicket, onSuccess, onError)
 end
 
-tbl.GetPlayFabIDsFromKongregateIDs = function (arg_48_0, arg_48_1, arg_48_2)
+PlayFabClientApi.GetPlayFabIDsFromKongregateIDs = function (request, onSuccess, onError)
 	-- function 48
-	if not tbl.IsClientLoggedIn() then
+	if not PlayFabClientApi.IsClientLoggedIn() then
 		error("Must be logged in to call this method")
 	end
 
-	IPlayFabHttps.MakePlayFabApiCall("/Client/GetPlayFabIDsFromKongregateIDs", arg_48_0, "X-Authorization", PlayFabSettings._internalSettings.sessionTicket, arg_48_1, arg_48_2)
+	IPlayFabHttps.MakePlayFabApiCall("/Client/GetPlayFabIDsFromKongregateIDs", request, "X-Authorization", PlayFabSettings._internalSettings.sessionTicket, onSuccess, onError)
 end
 
-tbl.GetPlayFabIDsFromSteamIDs = function (arg_49_0, arg_49_1, arg_49_2)
+PlayFabClientApi.GetPlayFabIDsFromSteamIDs = function (request, onSuccess, onError)
 	-- function 49
-	if not tbl.IsClientLoggedIn() then
+	if not PlayFabClientApi.IsClientLoggedIn() then
 		error("Must be logged in to call this method")
 	end
 
-	IPlayFabHttps.MakePlayFabApiCall("/Client/GetPlayFabIDsFromSteamIDs", arg_49_0, "X-Authorization", PlayFabSettings._internalSettings.sessionTicket, arg_49_1, arg_49_2)
+	IPlayFabHttps.MakePlayFabApiCall("/Client/GetPlayFabIDsFromSteamIDs", request, "X-Authorization", PlayFabSettings._internalSettings.sessionTicket, onSuccess, onError)
 end
 
-tbl.GetPlayFabIDsFromTwitchIDs = function (arg_50_0, arg_50_1, arg_50_2)
+PlayFabClientApi.GetPlayFabIDsFromTwitchIDs = function (request, onSuccess, onError)
 	-- function 50
-	if not tbl.IsClientLoggedIn() then
+	if not PlayFabClientApi.IsClientLoggedIn() then
 		error("Must be logged in to call this method")
 	end
 
-	IPlayFabHttps.MakePlayFabApiCall("/Client/GetPlayFabIDsFromTwitchIDs", arg_50_0, "X-Authorization", PlayFabSettings._internalSettings.sessionTicket, arg_50_1, arg_50_2)
+	IPlayFabHttps.MakePlayFabApiCall("/Client/GetPlayFabIDsFromTwitchIDs", request, "X-Authorization", PlayFabSettings._internalSettings.sessionTicket, onSuccess, onError)
 end
 
-tbl.LinkAndroidDeviceID = function (arg_51_0, arg_51_1, arg_51_2)
+PlayFabClientApi.LinkAndroidDeviceID = function (request, onSuccess, onError)
 	-- function 51
-	if not tbl.IsClientLoggedIn() then
+	if not PlayFabClientApi.IsClientLoggedIn() then
 		error("Must be logged in to call this method")
 	end
 
-	IPlayFabHttps.MakePlayFabApiCall("/Client/LinkAndroidDeviceID", arg_51_0, "X-Authorization", PlayFabSettings._internalSettings.sessionTicket, arg_51_1, arg_51_2)
+	IPlayFabHttps.MakePlayFabApiCall("/Client/LinkAndroidDeviceID", request, "X-Authorization", PlayFabSettings._internalSettings.sessionTicket, onSuccess, onError)
 end
 
-tbl.LinkCustomID = function (arg_52_0, arg_52_1, arg_52_2)
+PlayFabClientApi.LinkCustomID = function (request, onSuccess, onError)
 	-- function 52
-	if not tbl.IsClientLoggedIn() then
+	if not PlayFabClientApi.IsClientLoggedIn() then
 		error("Must be logged in to call this method")
 	end
 
-	IPlayFabHttps.MakePlayFabApiCall("/Client/LinkCustomID", arg_52_0, "X-Authorization", PlayFabSettings._internalSettings.sessionTicket, arg_52_1, arg_52_2)
+	IPlayFabHttps.MakePlayFabApiCall("/Client/LinkCustomID", request, "X-Authorization", PlayFabSettings._internalSettings.sessionTicket, onSuccess, onError)
 end
 
-tbl.LinkFacebookAccount = function (arg_53_0, arg_53_1, arg_53_2)
+PlayFabClientApi.LinkFacebookAccount = function (request, onSuccess, onError)
 	-- function 53
-	if not tbl.IsClientLoggedIn() then
+	if not PlayFabClientApi.IsClientLoggedIn() then
 		error("Must be logged in to call this method")
 	end
 
-	IPlayFabHttps.MakePlayFabApiCall("/Client/LinkFacebookAccount", arg_53_0, "X-Authorization", PlayFabSettings._internalSettings.sessionTicket, arg_53_1, arg_53_2)
+	IPlayFabHttps.MakePlayFabApiCall("/Client/LinkFacebookAccount", request, "X-Authorization", PlayFabSettings._internalSettings.sessionTicket, onSuccess, onError)
 end
 
-tbl.LinkGameCenterAccount = function (arg_54_0, arg_54_1, arg_54_2)
+PlayFabClientApi.LinkGameCenterAccount = function (request, onSuccess, onError)
 	-- function 54
-	if not tbl.IsClientLoggedIn() then
+	if not PlayFabClientApi.IsClientLoggedIn() then
 		error("Must be logged in to call this method")
 	end
 
-	IPlayFabHttps.MakePlayFabApiCall("/Client/LinkGameCenterAccount", arg_54_0, "X-Authorization", PlayFabSettings._internalSettings.sessionTicket, arg_54_1, arg_54_2)
+	IPlayFabHttps.MakePlayFabApiCall("/Client/LinkGameCenterAccount", request, "X-Authorization", PlayFabSettings._internalSettings.sessionTicket, onSuccess, onError)
 end
 
-tbl.LinkGoogleAccount = function (arg_55_0, arg_55_1, arg_55_2)
+PlayFabClientApi.LinkGoogleAccount = function (request, onSuccess, onError)
 	-- function 55
-	if not tbl.IsClientLoggedIn() then
+	if not PlayFabClientApi.IsClientLoggedIn() then
 		error("Must be logged in to call this method")
 	end
 
-	IPlayFabHttps.MakePlayFabApiCall("/Client/LinkGoogleAccount", arg_55_0, "X-Authorization", PlayFabSettings._internalSettings.sessionTicket, arg_55_1, arg_55_2)
+	IPlayFabHttps.MakePlayFabApiCall("/Client/LinkGoogleAccount", request, "X-Authorization", PlayFabSettings._internalSettings.sessionTicket, onSuccess, onError)
 end
 
-tbl.LinkIOSDeviceID = function (arg_56_0, arg_56_1, arg_56_2)
+PlayFabClientApi.LinkIOSDeviceID = function (request, onSuccess, onError)
 	-- function 56
-	if not tbl.IsClientLoggedIn() then
+	if not PlayFabClientApi.IsClientLoggedIn() then
 		error("Must be logged in to call this method")
 	end
 
-	IPlayFabHttps.MakePlayFabApiCall("/Client/LinkIOSDeviceID", arg_56_0, "X-Authorization", PlayFabSettings._internalSettings.sessionTicket, arg_56_1, arg_56_2)
+	IPlayFabHttps.MakePlayFabApiCall("/Client/LinkIOSDeviceID", request, "X-Authorization", PlayFabSettings._internalSettings.sessionTicket, onSuccess, onError)
 end
 
-tbl.LinkKongregate = function (arg_57_0, arg_57_1, arg_57_2)
+PlayFabClientApi.LinkKongregate = function (request, onSuccess, onError)
 	-- function 57
-	if not tbl.IsClientLoggedIn() then
+	if not PlayFabClientApi.IsClientLoggedIn() then
 		error("Must be logged in to call this method")
 	end
 
-	IPlayFabHttps.MakePlayFabApiCall("/Client/LinkKongregate", arg_57_0, "X-Authorization", PlayFabSettings._internalSettings.sessionTicket, arg_57_1, arg_57_2)
+	IPlayFabHttps.MakePlayFabApiCall("/Client/LinkKongregate", request, "X-Authorization", PlayFabSettings._internalSettings.sessionTicket, onSuccess, onError)
 end
 
-tbl.LinkSteamAccount = function (arg_58_0, arg_58_1, arg_58_2)
+PlayFabClientApi.LinkSteamAccount = function (request, onSuccess, onError)
 	-- function 58
-	if not tbl.IsClientLoggedIn() then
+	if not PlayFabClientApi.IsClientLoggedIn() then
 		error("Must be logged in to call this method")
 	end
 
-	IPlayFabHttps.MakePlayFabApiCall("/Client/LinkSteamAccount", arg_58_0, "X-Authorization", PlayFabSettings._internalSettings.sessionTicket, arg_58_1, arg_58_2)
+	IPlayFabHttps.MakePlayFabApiCall("/Client/LinkSteamAccount", request, "X-Authorization", PlayFabSettings._internalSettings.sessionTicket, onSuccess, onError)
 end
 
-tbl.LinkTwitch = function (arg_59_0, arg_59_1, arg_59_2)
+PlayFabClientApi.LinkTwitch = function (request, onSuccess, onError)
 	-- function 59
-	if not tbl.IsClientLoggedIn() then
+	if not PlayFabClientApi.IsClientLoggedIn() then
 		error("Must be logged in to call this method")
 	end
 
-	IPlayFabHttps.MakePlayFabApiCall("/Client/LinkTwitch", arg_59_0, "X-Authorization", PlayFabSettings._internalSettings.sessionTicket, arg_59_1, arg_59_2)
+	IPlayFabHttps.MakePlayFabApiCall("/Client/LinkTwitch", request, "X-Authorization", PlayFabSettings._internalSettings.sessionTicket, onSuccess, onError)
 end
 
-tbl.LinkWindowsHello = function (arg_60_0, arg_60_1, arg_60_2)
+PlayFabClientApi.LinkWindowsHello = function (request, onSuccess, onError)
 	-- function 60
-	if not tbl.IsClientLoggedIn() then
+	if not PlayFabClientApi.IsClientLoggedIn() then
 		error("Must be logged in to call this method")
 	end
 
-	IPlayFabHttps.MakePlayFabApiCall("/Client/LinkWindowsHello", arg_60_0, "X-Authorization", PlayFabSettings._internalSettings.sessionTicket, arg_60_1, arg_60_2)
+	IPlayFabHttps.MakePlayFabApiCall("/Client/LinkWindowsHello", request, "X-Authorization", PlayFabSettings._internalSettings.sessionTicket, onSuccess, onError)
 end
 
-tbl.RemoveGenericID = function (arg_61_0, arg_61_1, arg_61_2)
+PlayFabClientApi.RemoveGenericID = function (request, onSuccess, onError)
 	-- function 61
-	if not tbl.IsClientLoggedIn() then
+	if not PlayFabClientApi.IsClientLoggedIn() then
 		error("Must be logged in to call this method")
 	end
 
-	IPlayFabHttps.MakePlayFabApiCall("/Client/RemoveGenericID", arg_61_0, "X-Authorization", PlayFabSettings._internalSettings.sessionTicket, arg_61_1, arg_61_2)
+	IPlayFabHttps.MakePlayFabApiCall("/Client/RemoveGenericID", request, "X-Authorization", PlayFabSettings._internalSettings.sessionTicket, onSuccess, onError)
 end
 
-tbl.ReportPlayer = function (arg_62_0, arg_62_1, arg_62_2)
+PlayFabClientApi.ReportPlayer = function (request, onSuccess, onError)
 	-- function 62
-	if not tbl.IsClientLoggedIn() then
+	if not PlayFabClientApi.IsClientLoggedIn() then
 		error("Must be logged in to call this method")
 	end
 
-	IPlayFabHttps.MakePlayFabApiCall("/Client/ReportPlayer", arg_62_0, "X-Authorization", PlayFabSettings._internalSettings.sessionTicket, arg_62_1, arg_62_2)
+	IPlayFabHttps.MakePlayFabApiCall("/Client/ReportPlayer", request, "X-Authorization", PlayFabSettings._internalSettings.sessionTicket, onSuccess, onError)
 end
 
-tbl.SendAccountRecoveryEmail = function (arg_63_0, arg_63_1, arg_63_2)
+PlayFabClientApi.SendAccountRecoveryEmail = function (request, onSuccess, onError)
 	-- function 63
-	IPlayFabHttps.MakePlayFabApiCall("/Client/SendAccountRecoveryEmail", arg_63_0, nil, nil, arg_63_1, arg_63_2)
+	IPlayFabHttps.MakePlayFabApiCall("/Client/SendAccountRecoveryEmail", request, nil, nil, onSuccess, onError)
 end
 
-tbl.UnlinkAndroidDeviceID = function (arg_64_0, arg_64_1, arg_64_2)
+PlayFabClientApi.UnlinkAndroidDeviceID = function (request, onSuccess, onError)
 	-- function 64
-	if not tbl.IsClientLoggedIn() then
+	if not PlayFabClientApi.IsClientLoggedIn() then
 		error("Must be logged in to call this method")
 	end
 
-	IPlayFabHttps.MakePlayFabApiCall("/Client/UnlinkAndroidDeviceID", arg_64_0, "X-Authorization", PlayFabSettings._internalSettings.sessionTicket, arg_64_1, arg_64_2)
+	IPlayFabHttps.MakePlayFabApiCall("/Client/UnlinkAndroidDeviceID", request, "X-Authorization", PlayFabSettings._internalSettings.sessionTicket, onSuccess, onError)
 end
 
-tbl.UnlinkCustomID = function (arg_65_0, arg_65_1, arg_65_2)
+PlayFabClientApi.UnlinkCustomID = function (request, onSuccess, onError)
 	-- function 65
-	if not tbl.IsClientLoggedIn() then
+	if not PlayFabClientApi.IsClientLoggedIn() then
 		error("Must be logged in to call this method")
 	end
 
-	IPlayFabHttps.MakePlayFabApiCall("/Client/UnlinkCustomID", arg_65_0, "X-Authorization", PlayFabSettings._internalSettings.sessionTicket, arg_65_1, arg_65_2)
+	IPlayFabHttps.MakePlayFabApiCall("/Client/UnlinkCustomID", request, "X-Authorization", PlayFabSettings._internalSettings.sessionTicket, onSuccess, onError)
 end
 
-tbl.UnlinkFacebookAccount = function (arg_66_0, arg_66_1, arg_66_2)
+PlayFabClientApi.UnlinkFacebookAccount = function (request, onSuccess, onError)
 	-- function 66
-	if not tbl.IsClientLoggedIn() then
+	if not PlayFabClientApi.IsClientLoggedIn() then
 		error("Must be logged in to call this method")
 	end
 
-	IPlayFabHttps.MakePlayFabApiCall("/Client/UnlinkFacebookAccount", arg_66_0, "X-Authorization", PlayFabSettings._internalSettings.sessionTicket, arg_66_1, arg_66_2)
+	IPlayFabHttps.MakePlayFabApiCall("/Client/UnlinkFacebookAccount", request, "X-Authorization", PlayFabSettings._internalSettings.sessionTicket, onSuccess, onError)
 end
 
-tbl.UnlinkGameCenterAccount = function (arg_67_0, arg_67_1, arg_67_2)
+PlayFabClientApi.UnlinkGameCenterAccount = function (request, onSuccess, onError)
 	-- function 67
-	if not tbl.IsClientLoggedIn() then
+	if not PlayFabClientApi.IsClientLoggedIn() then
 		error("Must be logged in to call this method")
 	end
 
-	IPlayFabHttps.MakePlayFabApiCall("/Client/UnlinkGameCenterAccount", arg_67_0, "X-Authorization", PlayFabSettings._internalSettings.sessionTicket, arg_67_1, arg_67_2)
+	IPlayFabHttps.MakePlayFabApiCall("/Client/UnlinkGameCenterAccount", request, "X-Authorization", PlayFabSettings._internalSettings.sessionTicket, onSuccess, onError)
 end
 
-tbl.UnlinkGoogleAccount = function (arg_68_0, arg_68_1, arg_68_2)
+PlayFabClientApi.UnlinkGoogleAccount = function (request, onSuccess, onError)
 	-- function 68
-	if not tbl.IsClientLoggedIn() then
+	if not PlayFabClientApi.IsClientLoggedIn() then
 		error("Must be logged in to call this method")
 	end
 
-	IPlayFabHttps.MakePlayFabApiCall("/Client/UnlinkGoogleAccount", arg_68_0, "X-Authorization", PlayFabSettings._internalSettings.sessionTicket, arg_68_1, arg_68_2)
+	IPlayFabHttps.MakePlayFabApiCall("/Client/UnlinkGoogleAccount", request, "X-Authorization", PlayFabSettings._internalSettings.sessionTicket, onSuccess, onError)
 end
 
-tbl.UnlinkIOSDeviceID = function (arg_69_0, arg_69_1, arg_69_2)
+PlayFabClientApi.UnlinkIOSDeviceID = function (request, onSuccess, onError)
 	-- function 69
-	if not tbl.IsClientLoggedIn() then
+	if not PlayFabClientApi.IsClientLoggedIn() then
 		error("Must be logged in to call this method")
 	end
 
-	IPlayFabHttps.MakePlayFabApiCall("/Client/UnlinkIOSDeviceID", arg_69_0, "X-Authorization", PlayFabSettings._internalSettings.sessionTicket, arg_69_1, arg_69_2)
+	IPlayFabHttps.MakePlayFabApiCall("/Client/UnlinkIOSDeviceID", request, "X-Authorization", PlayFabSettings._internalSettings.sessionTicket, onSuccess, onError)
 end
 
-tbl.UnlinkKongregate = function (arg_70_0, arg_70_1, arg_70_2)
+PlayFabClientApi.UnlinkKongregate = function (request, onSuccess, onError)
 	-- function 70
-	if not tbl.IsClientLoggedIn() then
+	if not PlayFabClientApi.IsClientLoggedIn() then
 		error("Must be logged in to call this method")
 	end
 
-	IPlayFabHttps.MakePlayFabApiCall("/Client/UnlinkKongregate", arg_70_0, "X-Authorization", PlayFabSettings._internalSettings.sessionTicket, arg_70_1, arg_70_2)
+	IPlayFabHttps.MakePlayFabApiCall("/Client/UnlinkKongregate", request, "X-Authorization", PlayFabSettings._internalSettings.sessionTicket, onSuccess, onError)
 end
 
-tbl.UnlinkSteamAccount = function (arg_71_0, arg_71_1, arg_71_2)
+PlayFabClientApi.UnlinkSteamAccount = function (request, onSuccess, onError)
 	-- function 71
-	if not tbl.IsClientLoggedIn() then
+	if not PlayFabClientApi.IsClientLoggedIn() then
 		error("Must be logged in to call this method")
 	end
 
-	IPlayFabHttps.MakePlayFabApiCall("/Client/UnlinkSteamAccount", arg_71_0, "X-Authorization", PlayFabSettings._internalSettings.sessionTicket, arg_71_1, arg_71_2)
+	IPlayFabHttps.MakePlayFabApiCall("/Client/UnlinkSteamAccount", request, "X-Authorization", PlayFabSettings._internalSettings.sessionTicket, onSuccess, onError)
 end
 
-tbl.UnlinkTwitch = function (arg_72_0, arg_72_1, arg_72_2)
+PlayFabClientApi.UnlinkTwitch = function (request, onSuccess, onError)
 	-- function 72
-	if not tbl.IsClientLoggedIn() then
+	if not PlayFabClientApi.IsClientLoggedIn() then
 		error("Must be logged in to call this method")
 	end
 
-	IPlayFabHttps.MakePlayFabApiCall("/Client/UnlinkTwitch", arg_72_0, "X-Authorization", PlayFabSettings._internalSettings.sessionTicket, arg_72_1, arg_72_2)
+	IPlayFabHttps.MakePlayFabApiCall("/Client/UnlinkTwitch", request, "X-Authorization", PlayFabSettings._internalSettings.sessionTicket, onSuccess, onError)
 end
 
-tbl.UnlinkWindowsHello = function (arg_73_0, arg_73_1, arg_73_2)
+PlayFabClientApi.UnlinkWindowsHello = function (request, onSuccess, onError)
 	-- function 73
-	if not tbl.IsClientLoggedIn() then
+	if not PlayFabClientApi.IsClientLoggedIn() then
 		error("Must be logged in to call this method")
 	end
 
-	IPlayFabHttps.MakePlayFabApiCall("/Client/UnlinkWindowsHello", arg_73_0, "X-Authorization", PlayFabSettings._internalSettings.sessionTicket, arg_73_1, arg_73_2)
+	IPlayFabHttps.MakePlayFabApiCall("/Client/UnlinkWindowsHello", request, "X-Authorization", PlayFabSettings._internalSettings.sessionTicket, onSuccess, onError)
 end
 
-tbl.UpdateAvatarUrl = function (arg_74_0, arg_74_1, arg_74_2)
+PlayFabClientApi.UpdateAvatarUrl = function (request, onSuccess, onError)
 	-- function 74
-	if not tbl.IsClientLoggedIn() then
+	if not PlayFabClientApi.IsClientLoggedIn() then
 		error("Must be logged in to call this method")
 	end
 
-	IPlayFabHttps.MakePlayFabApiCall("/Client/UpdateAvatarUrl", arg_74_0, "X-Authorization", PlayFabSettings._internalSettings.sessionTicket, arg_74_1, arg_74_2)
+	IPlayFabHttps.MakePlayFabApiCall("/Client/UpdateAvatarUrl", request, "X-Authorization", PlayFabSettings._internalSettings.sessionTicket, onSuccess, onError)
 end
 
-tbl.UpdateUserTitleDisplayName = function (arg_75_0, arg_75_1, arg_75_2)
+PlayFabClientApi.UpdateUserTitleDisplayName = function (request, onSuccess, onError)
 	-- function 75
-	if not tbl.IsClientLoggedIn() then
+	if not PlayFabClientApi.IsClientLoggedIn() then
 		error("Must be logged in to call this method")
 	end
 
-	IPlayFabHttps.MakePlayFabApiCall("/Client/UpdateUserTitleDisplayName", arg_75_0, "X-Authorization", PlayFabSettings._internalSettings.sessionTicket, arg_75_1, arg_75_2)
+	IPlayFabHttps.MakePlayFabApiCall("/Client/UpdateUserTitleDisplayName", request, "X-Authorization", PlayFabSettings._internalSettings.sessionTicket, onSuccess, onError)
 end
 
-tbl.GetFriendLeaderboard = function (arg_76_0, arg_76_1, arg_76_2)
+PlayFabClientApi.GetFriendLeaderboard = function (request, onSuccess, onError)
 	-- function 76
-	if not tbl.IsClientLoggedIn() then
+	if not PlayFabClientApi.IsClientLoggedIn() then
 		error("Must be logged in to call this method")
 	end
 
-	IPlayFabHttps.MakePlayFabApiCall("/Client/GetFriendLeaderboard", arg_76_0, "X-Authorization", PlayFabSettings._internalSettings.sessionTicket, arg_76_1, arg_76_2)
+	IPlayFabHttps.MakePlayFabApiCall("/Client/GetFriendLeaderboard", request, "X-Authorization", PlayFabSettings._internalSettings.sessionTicket, onSuccess, onError)
 end
 
-tbl.GetFriendLeaderboardAroundPlayer = function (arg_77_0, arg_77_1, arg_77_2)
+PlayFabClientApi.GetFriendLeaderboardAroundPlayer = function (request, onSuccess, onError)
 	-- function 77
-	if not tbl.IsClientLoggedIn() then
+	if not PlayFabClientApi.IsClientLoggedIn() then
 		error("Must be logged in to call this method")
 	end
 
-	IPlayFabHttps.MakePlayFabApiCall("/Client/GetFriendLeaderboardAroundPlayer", arg_77_0, "X-Authorization", PlayFabSettings._internalSettings.sessionTicket, arg_77_1, arg_77_2)
+	IPlayFabHttps.MakePlayFabApiCall("/Client/GetFriendLeaderboardAroundPlayer", request, "X-Authorization", PlayFabSettings._internalSettings.sessionTicket, onSuccess, onError)
 end
 
-tbl.GetLeaderboard = function (arg_78_0, arg_78_1, arg_78_2)
+PlayFabClientApi.GetLeaderboard = function (request, onSuccess, onError)
 	-- function 78
-	if not tbl.IsClientLoggedIn() then
+	if not PlayFabClientApi.IsClientLoggedIn() then
 		error("Must be logged in to call this method")
 	end
 
-	IPlayFabHttps.MakePlayFabApiCall("/Client/GetLeaderboard", arg_78_0, "X-Authorization", PlayFabSettings._internalSettings.sessionTicket, arg_78_1, arg_78_2)
+	IPlayFabHttps.MakePlayFabApiCall("/Client/GetLeaderboard", request, "X-Authorization", PlayFabSettings._internalSettings.sessionTicket, onSuccess, onError)
 end
 
-tbl.GetLeaderboardAroundPlayer = function (arg_79_0, arg_79_1, arg_79_2)
+PlayFabClientApi.GetLeaderboardAroundPlayer = function (request, onSuccess, onError)
 	-- function 79
-	if not tbl.IsClientLoggedIn() then
+	if not PlayFabClientApi.IsClientLoggedIn() then
 		error("Must be logged in to call this method")
 	end
 
-	IPlayFabHttps.MakePlayFabApiCall("/Client/GetLeaderboardAroundPlayer", arg_79_0, "X-Authorization", PlayFabSettings._internalSettings.sessionTicket, arg_79_1, arg_79_2)
+	IPlayFabHttps.MakePlayFabApiCall("/Client/GetLeaderboardAroundPlayer", request, "X-Authorization", PlayFabSettings._internalSettings.sessionTicket, onSuccess, onError)
 end
 
-tbl.GetPlayerStatistics = function (arg_80_0, arg_80_1, arg_80_2)
+PlayFabClientApi.GetPlayerStatistics = function (request, onSuccess, onError)
 	-- function 80
-	if not tbl.IsClientLoggedIn() then
+	if not PlayFabClientApi.IsClientLoggedIn() then
 		error("Must be logged in to call this method")
 	end
 
-	IPlayFabHttps.MakePlayFabApiCall("/Client/GetPlayerStatistics", arg_80_0, "X-Authorization", PlayFabSettings._internalSettings.sessionTicket, arg_80_1, arg_80_2)
+	IPlayFabHttps.MakePlayFabApiCall("/Client/GetPlayerStatistics", request, "X-Authorization", PlayFabSettings._internalSettings.sessionTicket, onSuccess, onError)
 end
 
-tbl.GetPlayerStatisticVersions = function (arg_81_0, arg_81_1, arg_81_2)
+PlayFabClientApi.GetPlayerStatisticVersions = function (request, onSuccess, onError)
 	-- function 81
-	if not tbl.IsClientLoggedIn() then
+	if not PlayFabClientApi.IsClientLoggedIn() then
 		error("Must be logged in to call this method")
 	end
 
-	IPlayFabHttps.MakePlayFabApiCall("/Client/GetPlayerStatisticVersions", arg_81_0, "X-Authorization", PlayFabSettings._internalSettings.sessionTicket, arg_81_1, arg_81_2)
+	IPlayFabHttps.MakePlayFabApiCall("/Client/GetPlayerStatisticVersions", request, "X-Authorization", PlayFabSettings._internalSettings.sessionTicket, onSuccess, onError)
 end
 
-tbl.GetUserData = function (arg_82_0, arg_82_1, arg_82_2)
+PlayFabClientApi.GetUserData = function (request, onSuccess, onError)
 	-- function 82
-	if not tbl.IsClientLoggedIn() then
+	if not PlayFabClientApi.IsClientLoggedIn() then
 		error("Must be logged in to call this method")
 	end
 
-	IPlayFabHttps.MakePlayFabApiCall("/Client/GetUserData", arg_82_0, "X-Authorization", PlayFabSettings._internalSettings.sessionTicket, arg_82_1, arg_82_2)
+	IPlayFabHttps.MakePlayFabApiCall("/Client/GetUserData", request, "X-Authorization", PlayFabSettings._internalSettings.sessionTicket, onSuccess, onError)
 end
 
-tbl.GetUserPublisherData = function (arg_83_0, arg_83_1, arg_83_2)
+PlayFabClientApi.GetUserPublisherData = function (request, onSuccess, onError)
 	-- function 83
-	if not tbl.IsClientLoggedIn() then
+	if not PlayFabClientApi.IsClientLoggedIn() then
 		error("Must be logged in to call this method")
 	end
 
-	IPlayFabHttps.MakePlayFabApiCall("/Client/GetUserPublisherData", arg_83_0, "X-Authorization", PlayFabSettings._internalSettings.sessionTicket, arg_83_1, arg_83_2)
+	IPlayFabHttps.MakePlayFabApiCall("/Client/GetUserPublisherData", request, "X-Authorization", PlayFabSettings._internalSettings.sessionTicket, onSuccess, onError)
 end
 
-tbl.GetUserPublisherReadOnlyData = function (arg_84_0, arg_84_1, arg_84_2)
+PlayFabClientApi.GetUserPublisherReadOnlyData = function (request, onSuccess, onError)
 	-- function 84
-	if not tbl.IsClientLoggedIn() then
+	if not PlayFabClientApi.IsClientLoggedIn() then
 		error("Must be logged in to call this method")
 	end
 
-	IPlayFabHttps.MakePlayFabApiCall("/Client/GetUserPublisherReadOnlyData", arg_84_0, "X-Authorization", PlayFabSettings._internalSettings.sessionTicket, arg_84_1, arg_84_2)
+	IPlayFabHttps.MakePlayFabApiCall("/Client/GetUserPublisherReadOnlyData", request, "X-Authorization", PlayFabSettings._internalSettings.sessionTicket, onSuccess, onError)
 end
 
-tbl.GetUserReadOnlyData = function (arg_85_0, arg_85_1, arg_85_2)
+PlayFabClientApi.GetUserReadOnlyData = function (request, onSuccess, onError)
 	-- function 85
-	if not tbl.IsClientLoggedIn() then
+	if not PlayFabClientApi.IsClientLoggedIn() then
 		error("Must be logged in to call this method")
 	end
 
-	IPlayFabHttps.MakePlayFabApiCall("/Client/GetUserReadOnlyData", arg_85_0, "X-Authorization", PlayFabSettings._internalSettings.sessionTicket, arg_85_1, arg_85_2)
+	IPlayFabHttps.MakePlayFabApiCall("/Client/GetUserReadOnlyData", request, "X-Authorization", PlayFabSettings._internalSettings.sessionTicket, onSuccess, onError)
 end
 
-tbl.UpdatePlayerStatistics = function (arg_86_0, arg_86_1, arg_86_2)
+PlayFabClientApi.UpdatePlayerStatistics = function (request, onSuccess, onError)
 	-- function 86
-	if not tbl.IsClientLoggedIn() then
+	if not PlayFabClientApi.IsClientLoggedIn() then
 		error("Must be logged in to call this method")
 	end
 
-	IPlayFabHttps.MakePlayFabApiCall("/Client/UpdatePlayerStatistics", arg_86_0, "X-Authorization", PlayFabSettings._internalSettings.sessionTicket, arg_86_1, arg_86_2)
+	IPlayFabHttps.MakePlayFabApiCall("/Client/UpdatePlayerStatistics", request, "X-Authorization", PlayFabSettings._internalSettings.sessionTicket, onSuccess, onError)
 end
 
-tbl.UpdateUserData = function (arg_87_0, arg_87_1, arg_87_2)
+PlayFabClientApi.UpdateUserData = function (request, onSuccess, onError)
 	-- function 87
-	if not tbl.IsClientLoggedIn() then
+	if not PlayFabClientApi.IsClientLoggedIn() then
 		error("Must be logged in to call this method")
 	end
 
-	IPlayFabHttps.MakePlayFabApiCall("/Client/UpdateUserData", arg_87_0, "X-Authorization", PlayFabSettings._internalSettings.sessionTicket, arg_87_1, arg_87_2)
+	IPlayFabHttps.MakePlayFabApiCall("/Client/UpdateUserData", request, "X-Authorization", PlayFabSettings._internalSettings.sessionTicket, onSuccess, onError)
 end
 
-tbl.UpdateUserPublisherData = function (arg_88_0, arg_88_1, arg_88_2)
+PlayFabClientApi.UpdateUserPublisherData = function (request, onSuccess, onError)
 	-- function 88
-	if not tbl.IsClientLoggedIn() then
+	if not PlayFabClientApi.IsClientLoggedIn() then
 		error("Must be logged in to call this method")
 	end
 
-	IPlayFabHttps.MakePlayFabApiCall("/Client/UpdateUserPublisherData", arg_88_0, "X-Authorization", PlayFabSettings._internalSettings.sessionTicket, arg_88_1, arg_88_2)
+	IPlayFabHttps.MakePlayFabApiCall("/Client/UpdateUserPublisherData", request, "X-Authorization", PlayFabSettings._internalSettings.sessionTicket, onSuccess, onError)
 end
 
-tbl.GetCatalogItems = function (arg_89_0, arg_89_1, arg_89_2)
+PlayFabClientApi.GetCatalogItems = function (request, onSuccess, onError)
 	-- function 89
-	if not tbl.IsClientLoggedIn() then
+	if not PlayFabClientApi.IsClientLoggedIn() then
 		error("Must be logged in to call this method")
 	end
 
-	IPlayFabHttps.MakePlayFabApiCall("/Client/GetCatalogItems", arg_89_0, "X-Authorization", PlayFabSettings._internalSettings.sessionTicket, arg_89_1, arg_89_2)
+	IPlayFabHttps.MakePlayFabApiCall("/Client/GetCatalogItems", request, "X-Authorization", PlayFabSettings._internalSettings.sessionTicket, onSuccess, onError)
 end
 
-tbl.GetPublisherData = function (arg_90_0, arg_90_1, arg_90_2)
+PlayFabClientApi.GetPublisherData = function (request, onSuccess, onError)
 	-- function 90
-	if not tbl.IsClientLoggedIn() then
+	if not PlayFabClientApi.IsClientLoggedIn() then
 		error("Must be logged in to call this method")
 	end
 
-	IPlayFabHttps.MakePlayFabApiCall("/Client/GetPublisherData", arg_90_0, "X-Authorization", PlayFabSettings._internalSettings.sessionTicket, arg_90_1, arg_90_2)
+	IPlayFabHttps.MakePlayFabApiCall("/Client/GetPublisherData", request, "X-Authorization", PlayFabSettings._internalSettings.sessionTicket, onSuccess, onError)
 end
 
-tbl.GetStoreItems = function (arg_91_0, arg_91_1, arg_91_2)
+PlayFabClientApi.GetStoreItems = function (request, onSuccess, onError)
 	-- function 91
-	if not tbl.IsClientLoggedIn() then
+	if not PlayFabClientApi.IsClientLoggedIn() then
 		error("Must be logged in to call this method")
 	end
 
-	IPlayFabHttps.MakePlayFabApiCall("/Client/GetStoreItems", arg_91_0, "X-Authorization", PlayFabSettings._internalSettings.sessionTicket, arg_91_1, arg_91_2)
+	IPlayFabHttps.MakePlayFabApiCall("/Client/GetStoreItems", request, "X-Authorization", PlayFabSettings._internalSettings.sessionTicket, onSuccess, onError)
 end
 
-tbl.GetTime = function (arg_92_0, arg_92_1, arg_92_2)
+PlayFabClientApi.GetTime = function (request, onSuccess, onError)
 	-- function 92
-	if not tbl.IsClientLoggedIn() then
+	if not PlayFabClientApi.IsClientLoggedIn() then
 		error("Must be logged in to call this method")
 	end
 
-	IPlayFabHttps.MakePlayFabApiCall("/Client/GetTime", arg_92_0, "X-Authorization", PlayFabSettings._internalSettings.sessionTicket, arg_92_1, arg_92_2)
+	IPlayFabHttps.MakePlayFabApiCall("/Client/GetTime", request, "X-Authorization", PlayFabSettings._internalSettings.sessionTicket, onSuccess, onError)
 end
 
-tbl.GetTitleData = function (arg_93_0, arg_93_1, arg_93_2)
+PlayFabClientApi.GetTitleData = function (request, onSuccess, onError)
 	-- function 93
-	if not tbl.IsClientLoggedIn() then
+	if not PlayFabClientApi.IsClientLoggedIn() then
 		error("Must be logged in to call this method")
 	end
 
-	IPlayFabHttps.MakePlayFabApiCall("/Client/GetTitleData", arg_93_0, "X-Authorization", PlayFabSettings._internalSettings.sessionTicket, arg_93_1, arg_93_2)
+	IPlayFabHttps.MakePlayFabApiCall("/Client/GetTitleData", request, "X-Authorization", PlayFabSettings._internalSettings.sessionTicket, onSuccess, onError)
 end
 
-tbl.GetTitleNews = function (arg_94_0, arg_94_1, arg_94_2)
+PlayFabClientApi.GetTitleNews = function (request, onSuccess, onError)
 	-- function 94
-	if not tbl.IsClientLoggedIn() then
+	if not PlayFabClientApi.IsClientLoggedIn() then
 		error("Must be logged in to call this method")
 	end
 
-	IPlayFabHttps.MakePlayFabApiCall("/Client/GetTitleNews", arg_94_0, "X-Authorization", PlayFabSettings._internalSettings.sessionTicket, arg_94_1, arg_94_2)
+	IPlayFabHttps.MakePlayFabApiCall("/Client/GetTitleNews", request, "X-Authorization", PlayFabSettings._internalSettings.sessionTicket, onSuccess, onError)
 end
 
-tbl.AddUserVirtualCurrency = function (arg_95_0, arg_95_1, arg_95_2)
+PlayFabClientApi.AddUserVirtualCurrency = function (request, onSuccess, onError)
 	-- function 95
-	if not tbl.IsClientLoggedIn() then
+	if not PlayFabClientApi.IsClientLoggedIn() then
 		error("Must be logged in to call this method")
 	end
 
-	IPlayFabHttps.MakePlayFabApiCall("/Client/AddUserVirtualCurrency", arg_95_0, "X-Authorization", PlayFabSettings._internalSettings.sessionTicket, arg_95_1, arg_95_2)
+	IPlayFabHttps.MakePlayFabApiCall("/Client/AddUserVirtualCurrency", request, "X-Authorization", PlayFabSettings._internalSettings.sessionTicket, onSuccess, onError)
 end
 
-tbl.ConfirmPurchase = function (arg_96_0, arg_96_1, arg_96_2)
+PlayFabClientApi.ConfirmPurchase = function (request, onSuccess, onError)
 	-- function 96
-	if not tbl.IsClientLoggedIn() then
+	if not PlayFabClientApi.IsClientLoggedIn() then
 		error("Must be logged in to call this method")
 	end
 
-	IPlayFabHttps.MakePlayFabApiCall("/Client/ConfirmPurchase", arg_96_0, "X-Authorization", PlayFabSettings._internalSettings.sessionTicket, arg_96_1, arg_96_2)
+	IPlayFabHttps.MakePlayFabApiCall("/Client/ConfirmPurchase", request, "X-Authorization", PlayFabSettings._internalSettings.sessionTicket, onSuccess, onError)
 end
 
-tbl.ConsumeItem = function (arg_97_0, arg_97_1, arg_97_2)
+PlayFabClientApi.ConsumeItem = function (request, onSuccess, onError)
 	-- function 97
-	if not tbl.IsClientLoggedIn() then
+	if not PlayFabClientApi.IsClientLoggedIn() then
 		error("Must be logged in to call this method")
 	end
 
-	IPlayFabHttps.MakePlayFabApiCall("/Client/ConsumeItem", arg_97_0, "X-Authorization", PlayFabSettings._internalSettings.sessionTicket, arg_97_1, arg_97_2)
+	IPlayFabHttps.MakePlayFabApiCall("/Client/ConsumeItem", request, "X-Authorization", PlayFabSettings._internalSettings.sessionTicket, onSuccess, onError)
 end
 
-tbl.GetCharacterInventory = function (arg_98_0, arg_98_1, arg_98_2)
+PlayFabClientApi.GetCharacterInventory = function (request, onSuccess, onError)
 	-- function 98
-	if not tbl.IsClientLoggedIn() then
+	if not PlayFabClientApi.IsClientLoggedIn() then
 		error("Must be logged in to call this method")
 	end
 
-	IPlayFabHttps.MakePlayFabApiCall("/Client/GetCharacterInventory", arg_98_0, "X-Authorization", PlayFabSettings._internalSettings.sessionTicket, arg_98_1, arg_98_2)
+	IPlayFabHttps.MakePlayFabApiCall("/Client/GetCharacterInventory", request, "X-Authorization", PlayFabSettings._internalSettings.sessionTicket, onSuccess, onError)
 end
 
-tbl.GetPurchase = function (arg_99_0, arg_99_1, arg_99_2)
+PlayFabClientApi.GetPurchase = function (request, onSuccess, onError)
 	-- function 99
-	if not tbl.IsClientLoggedIn() then
+	if not PlayFabClientApi.IsClientLoggedIn() then
 		error("Must be logged in to call this method")
 	end
 
-	IPlayFabHttps.MakePlayFabApiCall("/Client/GetPurchase", arg_99_0, "X-Authorization", PlayFabSettings._internalSettings.sessionTicket, arg_99_1, arg_99_2)
+	IPlayFabHttps.MakePlayFabApiCall("/Client/GetPurchase", request, "X-Authorization", PlayFabSettings._internalSettings.sessionTicket, onSuccess, onError)
 end
 
-tbl.GetUserInventory = function (arg_100_0, arg_100_1, arg_100_2)
+PlayFabClientApi.GetUserInventory = function (request, onSuccess, onError)
 	-- function 100
-	if not tbl.IsClientLoggedIn() then
+	if not PlayFabClientApi.IsClientLoggedIn() then
 		error("Must be logged in to call this method")
 	end
 
-	IPlayFabHttps.MakePlayFabApiCall("/Client/GetUserInventory", arg_100_0, "X-Authorization", PlayFabSettings._internalSettings.sessionTicket, arg_100_1, arg_100_2)
+	IPlayFabHttps.MakePlayFabApiCall("/Client/GetUserInventory", request, "X-Authorization", PlayFabSettings._internalSettings.sessionTicket, onSuccess, onError)
 end
 
-tbl.PayForPurchase = function (arg_101_0, arg_101_1, arg_101_2)
+PlayFabClientApi.PayForPurchase = function (request, onSuccess, onError)
 	-- function 101
-	if not tbl.IsClientLoggedIn() then
+	if not PlayFabClientApi.IsClientLoggedIn() then
 		error("Must be logged in to call this method")
 	end
 
-	IPlayFabHttps.MakePlayFabApiCall("/Client/PayForPurchase", arg_101_0, "X-Authorization", PlayFabSettings._internalSettings.sessionTicket, arg_101_1, arg_101_2)
+	IPlayFabHttps.MakePlayFabApiCall("/Client/PayForPurchase", request, "X-Authorization", PlayFabSettings._internalSettings.sessionTicket, onSuccess, onError)
 end
 
-tbl.PurchaseItem = function (arg_102_0, arg_102_1, arg_102_2)
+PlayFabClientApi.PurchaseItem = function (request, onSuccess, onError)
 	-- function 102
-	if not tbl.IsClientLoggedIn() then
+	if not PlayFabClientApi.IsClientLoggedIn() then
 		error("Must be logged in to call this method")
 	end
 
-	IPlayFabHttps.MakePlayFabApiCall("/Client/PurchaseItem", arg_102_0, "X-Authorization", PlayFabSettings._internalSettings.sessionTicket, arg_102_1, arg_102_2)
+	IPlayFabHttps.MakePlayFabApiCall("/Client/PurchaseItem", request, "X-Authorization", PlayFabSettings._internalSettings.sessionTicket, onSuccess, onError)
 end
 
-tbl.RedeemCoupon = function (arg_103_0, arg_103_1, arg_103_2)
+PlayFabClientApi.RedeemCoupon = function (request, onSuccess, onError)
 	-- function 103
-	if not tbl.IsClientLoggedIn() then
+	if not PlayFabClientApi.IsClientLoggedIn() then
 		error("Must be logged in to call this method")
 	end
 
-	IPlayFabHttps.MakePlayFabApiCall("/Client/RedeemCoupon", arg_103_0, "X-Authorization", PlayFabSettings._internalSettings.sessionTicket, arg_103_1, arg_103_2)
+	IPlayFabHttps.MakePlayFabApiCall("/Client/RedeemCoupon", request, "X-Authorization", PlayFabSettings._internalSettings.sessionTicket, onSuccess, onError)
 end
 
-tbl.StartPurchase = function (arg_104_0, arg_104_1, arg_104_2)
+PlayFabClientApi.StartPurchase = function (request, onSuccess, onError)
 	-- function 104
-	if not tbl.IsClientLoggedIn() then
+	if not PlayFabClientApi.IsClientLoggedIn() then
 		error("Must be logged in to call this method")
 	end
 
-	IPlayFabHttps.MakePlayFabApiCall("/Client/StartPurchase", arg_104_0, "X-Authorization", PlayFabSettings._internalSettings.sessionTicket, arg_104_1, arg_104_2)
+	IPlayFabHttps.MakePlayFabApiCall("/Client/StartPurchase", request, "X-Authorization", PlayFabSettings._internalSettings.sessionTicket, onSuccess, onError)
 end
 
-tbl.SubtractUserVirtualCurrency = function (arg_105_0, arg_105_1, arg_105_2)
+PlayFabClientApi.SubtractUserVirtualCurrency = function (request, onSuccess, onError)
 	-- function 105
-	if not tbl.IsClientLoggedIn() then
+	if not PlayFabClientApi.IsClientLoggedIn() then
 		error("Must be logged in to call this method")
 	end
 
-	IPlayFabHttps.MakePlayFabApiCall("/Client/SubtractUserVirtualCurrency", arg_105_0, "X-Authorization", PlayFabSettings._internalSettings.sessionTicket, arg_105_1, arg_105_2)
+	IPlayFabHttps.MakePlayFabApiCall("/Client/SubtractUserVirtualCurrency", request, "X-Authorization", PlayFabSettings._internalSettings.sessionTicket, onSuccess, onError)
 end
 
-tbl.UnlockContainerInstance = function (arg_106_0, arg_106_1, arg_106_2)
+PlayFabClientApi.UnlockContainerInstance = function (request, onSuccess, onError)
 	-- function 106
-	if not tbl.IsClientLoggedIn() then
+	if not PlayFabClientApi.IsClientLoggedIn() then
 		error("Must be logged in to call this method")
 	end
 
-	IPlayFabHttps.MakePlayFabApiCall("/Client/UnlockContainerInstance", arg_106_0, "X-Authorization", PlayFabSettings._internalSettings.sessionTicket, arg_106_1, arg_106_2)
+	IPlayFabHttps.MakePlayFabApiCall("/Client/UnlockContainerInstance", request, "X-Authorization", PlayFabSettings._internalSettings.sessionTicket, onSuccess, onError)
 end
 
-tbl.UnlockContainerItem = function (arg_107_0, arg_107_1, arg_107_2)
+PlayFabClientApi.UnlockContainerItem = function (request, onSuccess, onError)
 	-- function 107
-	if not tbl.IsClientLoggedIn() then
+	if not PlayFabClientApi.IsClientLoggedIn() then
 		error("Must be logged in to call this method")
 	end
 
-	IPlayFabHttps.MakePlayFabApiCall("/Client/UnlockContainerItem", arg_107_0, "X-Authorization", PlayFabSettings._internalSettings.sessionTicket, arg_107_1, arg_107_2)
+	IPlayFabHttps.MakePlayFabApiCall("/Client/UnlockContainerItem", request, "X-Authorization", PlayFabSettings._internalSettings.sessionTicket, onSuccess, onError)
 end
 
-tbl.AddFriend = function (arg_108_0, arg_108_1, arg_108_2)
+PlayFabClientApi.AddFriend = function (request, onSuccess, onError)
 	-- function 108
-	if not tbl.IsClientLoggedIn() then
+	if not PlayFabClientApi.IsClientLoggedIn() then
 		error("Must be logged in to call this method")
 	end
 
-	IPlayFabHttps.MakePlayFabApiCall("/Client/AddFriend", arg_108_0, "X-Authorization", PlayFabSettings._internalSettings.sessionTicket, arg_108_1, arg_108_2)
+	IPlayFabHttps.MakePlayFabApiCall("/Client/AddFriend", request, "X-Authorization", PlayFabSettings._internalSettings.sessionTicket, onSuccess, onError)
 end
 
-tbl.GetFriendsList = function (arg_109_0, arg_109_1, arg_109_2)
+PlayFabClientApi.GetFriendsList = function (request, onSuccess, onError)
 	-- function 109
-	if not tbl.IsClientLoggedIn() then
+	if not PlayFabClientApi.IsClientLoggedIn() then
 		error("Must be logged in to call this method")
 	end
 
-	IPlayFabHttps.MakePlayFabApiCall("/Client/GetFriendsList", arg_109_0, "X-Authorization", PlayFabSettings._internalSettings.sessionTicket, arg_109_1, arg_109_2)
+	IPlayFabHttps.MakePlayFabApiCall("/Client/GetFriendsList", request, "X-Authorization", PlayFabSettings._internalSettings.sessionTicket, onSuccess, onError)
 end
 
-tbl.RemoveFriend = function (arg_110_0, arg_110_1, arg_110_2)
+PlayFabClientApi.RemoveFriend = function (request, onSuccess, onError)
 	-- function 110
-	if not tbl.IsClientLoggedIn() then
+	if not PlayFabClientApi.IsClientLoggedIn() then
 		error("Must be logged in to call this method")
 	end
 
-	IPlayFabHttps.MakePlayFabApiCall("/Client/RemoveFriend", arg_110_0, "X-Authorization", PlayFabSettings._internalSettings.sessionTicket, arg_110_1, arg_110_2)
+	IPlayFabHttps.MakePlayFabApiCall("/Client/RemoveFriend", request, "X-Authorization", PlayFabSettings._internalSettings.sessionTicket, onSuccess, onError)
 end
 
-tbl.SetFriendTags = function (arg_111_0, arg_111_1, arg_111_2)
+PlayFabClientApi.SetFriendTags = function (request, onSuccess, onError)
 	-- function 111
-	if not tbl.IsClientLoggedIn() then
+	if not PlayFabClientApi.IsClientLoggedIn() then
 		error("Must be logged in to call this method")
 	end
 
-	IPlayFabHttps.MakePlayFabApiCall("/Client/SetFriendTags", arg_111_0, "X-Authorization", PlayFabSettings._internalSettings.sessionTicket, arg_111_1, arg_111_2)
+	IPlayFabHttps.MakePlayFabApiCall("/Client/SetFriendTags", request, "X-Authorization", PlayFabSettings._internalSettings.sessionTicket, onSuccess, onError)
 end
 
-tbl.GetCurrentGames = function (arg_112_0, arg_112_1, arg_112_2)
+PlayFabClientApi.GetCurrentGames = function (request, onSuccess, onError)
 	-- function 112
-	if not tbl.IsClientLoggedIn() then
+	if not PlayFabClientApi.IsClientLoggedIn() then
 		error("Must be logged in to call this method")
 	end
 
-	IPlayFabHttps.MakePlayFabApiCall("/Client/GetCurrentGames", arg_112_0, "X-Authorization", PlayFabSettings._internalSettings.sessionTicket, arg_112_1, arg_112_2)
+	IPlayFabHttps.MakePlayFabApiCall("/Client/GetCurrentGames", request, "X-Authorization", PlayFabSettings._internalSettings.sessionTicket, onSuccess, onError)
 end
 
-tbl.GetGameServerRegions = function (arg_113_0, arg_113_1, arg_113_2)
+PlayFabClientApi.GetGameServerRegions = function (request, onSuccess, onError)
 	-- function 113
-	if not tbl.IsClientLoggedIn() then
+	if not PlayFabClientApi.IsClientLoggedIn() then
 		error("Must be logged in to call this method")
 	end
 
-	IPlayFabHttps.MakePlayFabApiCall("/Client/GetGameServerRegions", arg_113_0, "X-Authorization", PlayFabSettings._internalSettings.sessionTicket, arg_113_1, arg_113_2)
+	IPlayFabHttps.MakePlayFabApiCall("/Client/GetGameServerRegions", request, "X-Authorization", PlayFabSettings._internalSettings.sessionTicket, onSuccess, onError)
 end
 
-tbl.Matchmake = function (arg_114_0, arg_114_1, arg_114_2)
+PlayFabClientApi.Matchmake = function (request, onSuccess, onError)
 	-- function 114
-	if not tbl.IsClientLoggedIn() then
+	if not PlayFabClientApi.IsClientLoggedIn() then
 		error("Must be logged in to call this method")
 	end
 
-	IPlayFabHttps.MakePlayFabApiCall("/Client/Matchmake", arg_114_0, "X-Authorization", PlayFabSettings._internalSettings.sessionTicket, arg_114_1, arg_114_2)
+	IPlayFabHttps.MakePlayFabApiCall("/Client/Matchmake", request, "X-Authorization", PlayFabSettings._internalSettings.sessionTicket, onSuccess, onError)
 end
 
-tbl.StartGame = function (arg_115_0, arg_115_1, arg_115_2)
+PlayFabClientApi.StartGame = function (request, onSuccess, onError)
 	-- function 115
-	if not tbl.IsClientLoggedIn() then
+	if not PlayFabClientApi.IsClientLoggedIn() then
 		error("Must be logged in to call this method")
 	end
 
-	IPlayFabHttps.MakePlayFabApiCall("/Client/StartGame", arg_115_0, "X-Authorization", PlayFabSettings._internalSettings.sessionTicket, arg_115_1, arg_115_2)
+	IPlayFabHttps.MakePlayFabApiCall("/Client/StartGame", request, "X-Authorization", PlayFabSettings._internalSettings.sessionTicket, onSuccess, onError)
 end
 
-tbl.WriteCharacterEvent = function (arg_116_0, arg_116_1, arg_116_2)
+PlayFabClientApi.WriteCharacterEvent = function (request, onSuccess, onError)
 	-- function 116
-	if not tbl.IsClientLoggedIn() then
+	if not PlayFabClientApi.IsClientLoggedIn() then
 		error("Must be logged in to call this method")
 	end
 
-	IPlayFabHttps.MakePlayFabApiCall("/Client/WriteCharacterEvent", arg_116_0, "X-Authorization", PlayFabSettings._internalSettings.sessionTicket, arg_116_1, arg_116_2)
+	IPlayFabHttps.MakePlayFabApiCall("/Client/WriteCharacterEvent", request, "X-Authorization", PlayFabSettings._internalSettings.sessionTicket, onSuccess, onError)
 end
 
-tbl.WritePlayerEvent = function (arg_117_0, arg_117_1, arg_117_2)
+PlayFabClientApi.WritePlayerEvent = function (request, onSuccess, onError)
 	-- function 117
-	if not tbl.IsClientLoggedIn() then
+	if not PlayFabClientApi.IsClientLoggedIn() then
 		error("Must be logged in to call this method")
 	end
 
-	IPlayFabHttps.MakePlayFabApiCall("/Client/WritePlayerEvent", arg_117_0, "X-Authorization", PlayFabSettings._internalSettings.sessionTicket, arg_117_1, arg_117_2)
+	IPlayFabHttps.MakePlayFabApiCall("/Client/WritePlayerEvent", request, "X-Authorization", PlayFabSettings._internalSettings.sessionTicket, onSuccess, onError)
 end
 
-tbl.WriteTitleEvent = function (arg_118_0, arg_118_1, arg_118_2)
+PlayFabClientApi.WriteTitleEvent = function (request, onSuccess, onError)
 	-- function 118
-	if not tbl.IsClientLoggedIn() then
+	if not PlayFabClientApi.IsClientLoggedIn() then
 		error("Must be logged in to call this method")
 	end
 
-	IPlayFabHttps.MakePlayFabApiCall("/Client/WriteTitleEvent", arg_118_0, "X-Authorization", PlayFabSettings._internalSettings.sessionTicket, arg_118_1, arg_118_2)
+	IPlayFabHttps.MakePlayFabApiCall("/Client/WriteTitleEvent", request, "X-Authorization", PlayFabSettings._internalSettings.sessionTicket, onSuccess, onError)
 end
 
-tbl.AddSharedGroupMembers = function (arg_119_0, arg_119_1, arg_119_2)
+PlayFabClientApi.AddSharedGroupMembers = function (request, onSuccess, onError)
 	-- function 119
-	if not tbl.IsClientLoggedIn() then
+	if not PlayFabClientApi.IsClientLoggedIn() then
 		error("Must be logged in to call this method")
 	end
 
-	IPlayFabHttps.MakePlayFabApiCall("/Client/AddSharedGroupMembers", arg_119_0, "X-Authorization", PlayFabSettings._internalSettings.sessionTicket, arg_119_1, arg_119_2)
+	IPlayFabHttps.MakePlayFabApiCall("/Client/AddSharedGroupMembers", request, "X-Authorization", PlayFabSettings._internalSettings.sessionTicket, onSuccess, onError)
 end
 
-tbl.CreateSharedGroup = function (arg_120_0, arg_120_1, arg_120_2)
+PlayFabClientApi.CreateSharedGroup = function (request, onSuccess, onError)
 	-- function 120
-	if not tbl.IsClientLoggedIn() then
+	if not PlayFabClientApi.IsClientLoggedIn() then
 		error("Must be logged in to call this method")
 	end
 
-	IPlayFabHttps.MakePlayFabApiCall("/Client/CreateSharedGroup", arg_120_0, "X-Authorization", PlayFabSettings._internalSettings.sessionTicket, arg_120_1, arg_120_2)
+	IPlayFabHttps.MakePlayFabApiCall("/Client/CreateSharedGroup", request, "X-Authorization", PlayFabSettings._internalSettings.sessionTicket, onSuccess, onError)
 end
 
-tbl.GetSharedGroupData = function (arg_121_0, arg_121_1, arg_121_2)
+PlayFabClientApi.GetSharedGroupData = function (request, onSuccess, onError)
 	-- function 121
-	if not tbl.IsClientLoggedIn() then
+	if not PlayFabClientApi.IsClientLoggedIn() then
 		error("Must be logged in to call this method")
 	end
 
-	IPlayFabHttps.MakePlayFabApiCall("/Client/GetSharedGroupData", arg_121_0, "X-Authorization", PlayFabSettings._internalSettings.sessionTicket, arg_121_1, arg_121_2)
+	IPlayFabHttps.MakePlayFabApiCall("/Client/GetSharedGroupData", request, "X-Authorization", PlayFabSettings._internalSettings.sessionTicket, onSuccess, onError)
 end
 
-tbl.RemoveSharedGroupMembers = function (arg_122_0, arg_122_1, arg_122_2)
+PlayFabClientApi.RemoveSharedGroupMembers = function (request, onSuccess, onError)
 	-- function 122
-	if not tbl.IsClientLoggedIn() then
+	if not PlayFabClientApi.IsClientLoggedIn() then
 		error("Must be logged in to call this method")
 	end
 
-	IPlayFabHttps.MakePlayFabApiCall("/Client/RemoveSharedGroupMembers", arg_122_0, "X-Authorization", PlayFabSettings._internalSettings.sessionTicket, arg_122_1, arg_122_2)
+	IPlayFabHttps.MakePlayFabApiCall("/Client/RemoveSharedGroupMembers", request, "X-Authorization", PlayFabSettings._internalSettings.sessionTicket, onSuccess, onError)
 end
 
-tbl.UpdateSharedGroupData = function (arg_123_0, arg_123_1, arg_123_2)
+PlayFabClientApi.UpdateSharedGroupData = function (request, onSuccess, onError)
 	-- function 123
-	if not tbl.IsClientLoggedIn() then
+	if not PlayFabClientApi.IsClientLoggedIn() then
 		error("Must be logged in to call this method")
 	end
 
-	IPlayFabHttps.MakePlayFabApiCall("/Client/UpdateSharedGroupData", arg_123_0, "X-Authorization", PlayFabSettings._internalSettings.sessionTicket, arg_123_1, arg_123_2)
+	IPlayFabHttps.MakePlayFabApiCall("/Client/UpdateSharedGroupData", request, "X-Authorization", PlayFabSettings._internalSettings.sessionTicket, onSuccess, onError)
 end
 
-tbl.ExecuteCloudScript = function (arg_124_0, arg_124_1, arg_124_2)
+PlayFabClientApi.ExecuteCloudScript = function (request, onSuccess, onError)
 	-- function 124
-	if not tbl.IsClientLoggedIn() then
+	if not PlayFabClientApi.IsClientLoggedIn() then
 		error("Must be logged in to call this method")
 	end
 
-	IPlayFabHttps.MakePlayFabApiCall("/Client/ExecuteCloudScript", arg_124_0, "X-Authorization", PlayFabSettings._internalSettings.sessionTicket, arg_124_1, arg_124_2)
+	IPlayFabHttps.MakePlayFabApiCall("/Client/ExecuteCloudScript", request, "X-Authorization", PlayFabSettings._internalSettings.sessionTicket, onSuccess, onError)
 end
 
-tbl.GetContentDownloadUrl = function (arg_125_0, arg_125_1, arg_125_2)
+PlayFabClientApi.GetContentDownloadUrl = function (request, onSuccess, onError)
 	-- function 125
-	if not tbl.IsClientLoggedIn() then
+	if not PlayFabClientApi.IsClientLoggedIn() then
 		error("Must be logged in to call this method")
 	end
 
-	IPlayFabHttps.MakePlayFabApiCall("/Client/GetContentDownloadUrl", arg_125_0, "X-Authorization", PlayFabSettings._internalSettings.sessionTicket, arg_125_1, arg_125_2)
+	IPlayFabHttps.MakePlayFabApiCall("/Client/GetContentDownloadUrl", request, "X-Authorization", PlayFabSettings._internalSettings.sessionTicket, onSuccess, onError)
 end
 
-tbl.GetAllUsersCharacters = function (arg_126_0, arg_126_1, arg_126_2)
+PlayFabClientApi.GetAllUsersCharacters = function (request, onSuccess, onError)
 	-- function 126
-	if not tbl.IsClientLoggedIn() then
+	if not PlayFabClientApi.IsClientLoggedIn() then
 		error("Must be logged in to call this method")
 	end
 
-	IPlayFabHttps.MakePlayFabApiCall("/Client/GetAllUsersCharacters", arg_126_0, "X-Authorization", PlayFabSettings._internalSettings.sessionTicket, arg_126_1, arg_126_2)
+	IPlayFabHttps.MakePlayFabApiCall("/Client/GetAllUsersCharacters", request, "X-Authorization", PlayFabSettings._internalSettings.sessionTicket, onSuccess, onError)
 end
 
-tbl.GetCharacterLeaderboard = function (arg_127_0, arg_127_1, arg_127_2)
+PlayFabClientApi.GetCharacterLeaderboard = function (request, onSuccess, onError)
 	-- function 127
-	if not tbl.IsClientLoggedIn() then
+	if not PlayFabClientApi.IsClientLoggedIn() then
 		error("Must be logged in to call this method")
 	end
 
-	IPlayFabHttps.MakePlayFabApiCall("/Client/GetCharacterLeaderboard", arg_127_0, "X-Authorization", PlayFabSettings._internalSettings.sessionTicket, arg_127_1, arg_127_2)
+	IPlayFabHttps.MakePlayFabApiCall("/Client/GetCharacterLeaderboard", request, "X-Authorization", PlayFabSettings._internalSettings.sessionTicket, onSuccess, onError)
 end
 
-tbl.GetCharacterStatistics = function (arg_128_0, arg_128_1, arg_128_2)
+PlayFabClientApi.GetCharacterStatistics = function (request, onSuccess, onError)
 	-- function 128
-	if not tbl.IsClientLoggedIn() then
+	if not PlayFabClientApi.IsClientLoggedIn() then
 		error("Must be logged in to call this method")
 	end
 
-	IPlayFabHttps.MakePlayFabApiCall("/Client/GetCharacterStatistics", arg_128_0, "X-Authorization", PlayFabSettings._internalSettings.sessionTicket, arg_128_1, arg_128_2)
+	IPlayFabHttps.MakePlayFabApiCall("/Client/GetCharacterStatistics", request, "X-Authorization", PlayFabSettings._internalSettings.sessionTicket, onSuccess, onError)
 end
 
-tbl.GetLeaderboardAroundCharacter = function (arg_129_0, arg_129_1, arg_129_2)
+PlayFabClientApi.GetLeaderboardAroundCharacter = function (request, onSuccess, onError)
 	-- function 129
-	if not tbl.IsClientLoggedIn() then
+	if not PlayFabClientApi.IsClientLoggedIn() then
 		error("Must be logged in to call this method")
 	end
 
-	IPlayFabHttps.MakePlayFabApiCall("/Client/GetLeaderboardAroundCharacter", arg_129_0, "X-Authorization", PlayFabSettings._internalSettings.sessionTicket, arg_129_1, arg_129_2)
+	IPlayFabHttps.MakePlayFabApiCall("/Client/GetLeaderboardAroundCharacter", request, "X-Authorization", PlayFabSettings._internalSettings.sessionTicket, onSuccess, onError)
 end
 
-tbl.GetLeaderboardForUserCharacters = function (arg_130_0, arg_130_1, arg_130_2)
+PlayFabClientApi.GetLeaderboardForUserCharacters = function (request, onSuccess, onError)
 	-- function 130
-	if not tbl.IsClientLoggedIn() then
+	if not PlayFabClientApi.IsClientLoggedIn() then
 		error("Must be logged in to call this method")
 	end
 
-	IPlayFabHttps.MakePlayFabApiCall("/Client/GetLeaderboardForUserCharacters", arg_130_0, "X-Authorization", PlayFabSettings._internalSettings.sessionTicket, arg_130_1, arg_130_2)
+	IPlayFabHttps.MakePlayFabApiCall("/Client/GetLeaderboardForUserCharacters", request, "X-Authorization", PlayFabSettings._internalSettings.sessionTicket, onSuccess, onError)
 end
 
-tbl.GrantCharacterToUser = function (arg_131_0, arg_131_1, arg_131_2)
+PlayFabClientApi.GrantCharacterToUser = function (request, onSuccess, onError)
 	-- function 131
-	if not tbl.IsClientLoggedIn() then
+	if not PlayFabClientApi.IsClientLoggedIn() then
 		error("Must be logged in to call this method")
 	end
 
-	IPlayFabHttps.MakePlayFabApiCall("/Client/GrantCharacterToUser", arg_131_0, "X-Authorization", PlayFabSettings._internalSettings.sessionTicket, arg_131_1, arg_131_2)
+	IPlayFabHttps.MakePlayFabApiCall("/Client/GrantCharacterToUser", request, "X-Authorization", PlayFabSettings._internalSettings.sessionTicket, onSuccess, onError)
 end
 
-tbl.UpdateCharacterStatistics = function (arg_132_0, arg_132_1, arg_132_2)
+PlayFabClientApi.UpdateCharacterStatistics = function (request, onSuccess, onError)
 	-- function 132
-	if not tbl.IsClientLoggedIn() then
+	if not PlayFabClientApi.IsClientLoggedIn() then
 		error("Must be logged in to call this method")
 	end
 
-	IPlayFabHttps.MakePlayFabApiCall("/Client/UpdateCharacterStatistics", arg_132_0, "X-Authorization", PlayFabSettings._internalSettings.sessionTicket, arg_132_1, arg_132_2)
+	IPlayFabHttps.MakePlayFabApiCall("/Client/UpdateCharacterStatistics", request, "X-Authorization", PlayFabSettings._internalSettings.sessionTicket, onSuccess, onError)
 end
 
-tbl.GetCharacterData = function (arg_133_0, arg_133_1, arg_133_2)
+PlayFabClientApi.GetCharacterData = function (request, onSuccess, onError)
 	-- function 133
-	if not tbl.IsClientLoggedIn() then
+	if not PlayFabClientApi.IsClientLoggedIn() then
 		error("Must be logged in to call this method")
 	end
 
-	IPlayFabHttps.MakePlayFabApiCall("/Client/GetCharacterData", arg_133_0, "X-Authorization", PlayFabSettings._internalSettings.sessionTicket, arg_133_1, arg_133_2)
+	IPlayFabHttps.MakePlayFabApiCall("/Client/GetCharacterData", request, "X-Authorization", PlayFabSettings._internalSettings.sessionTicket, onSuccess, onError)
 end
 
-tbl.GetCharacterReadOnlyData = function (arg_134_0, arg_134_1, arg_134_2)
+PlayFabClientApi.GetCharacterReadOnlyData = function (request, onSuccess, onError)
 	-- function 134
-	if not tbl.IsClientLoggedIn() then
+	if not PlayFabClientApi.IsClientLoggedIn() then
 		error("Must be logged in to call this method")
 	end
 
-	IPlayFabHttps.MakePlayFabApiCall("/Client/GetCharacterReadOnlyData", arg_134_0, "X-Authorization", PlayFabSettings._internalSettings.sessionTicket, arg_134_1, arg_134_2)
+	IPlayFabHttps.MakePlayFabApiCall("/Client/GetCharacterReadOnlyData", request, "X-Authorization", PlayFabSettings._internalSettings.sessionTicket, onSuccess, onError)
 end
 
-tbl.UpdateCharacterData = function (arg_135_0, arg_135_1, arg_135_2)
+PlayFabClientApi.UpdateCharacterData = function (request, onSuccess, onError)
 	-- function 135
-	if not tbl.IsClientLoggedIn() then
+	if not PlayFabClientApi.IsClientLoggedIn() then
 		error("Must be logged in to call this method")
 	end
 
-	IPlayFabHttps.MakePlayFabApiCall("/Client/UpdateCharacterData", arg_135_0, "X-Authorization", PlayFabSettings._internalSettings.sessionTicket, arg_135_1, arg_135_2)
+	IPlayFabHttps.MakePlayFabApiCall("/Client/UpdateCharacterData", request, "X-Authorization", PlayFabSettings._internalSettings.sessionTicket, onSuccess, onError)
 end
 
-tbl.AcceptTrade = function (arg_136_0, arg_136_1, arg_136_2)
+PlayFabClientApi.AcceptTrade = function (request, onSuccess, onError)
 	-- function 136
-	if not tbl.IsClientLoggedIn() then
+	if not PlayFabClientApi.IsClientLoggedIn() then
 		error("Must be logged in to call this method")
 	end
 
-	IPlayFabHttps.MakePlayFabApiCall("/Client/AcceptTrade", arg_136_0, "X-Authorization", PlayFabSettings._internalSettings.sessionTicket, arg_136_1, arg_136_2)
+	IPlayFabHttps.MakePlayFabApiCall("/Client/AcceptTrade", request, "X-Authorization", PlayFabSettings._internalSettings.sessionTicket, onSuccess, onError)
 end
 
-tbl.CancelTrade = function (arg_137_0, arg_137_1, arg_137_2)
+PlayFabClientApi.CancelTrade = function (request, onSuccess, onError)
 	-- function 137
-	if not tbl.IsClientLoggedIn() then
+	if not PlayFabClientApi.IsClientLoggedIn() then
 		error("Must be logged in to call this method")
 	end
 
-	IPlayFabHttps.MakePlayFabApiCall("/Client/CancelTrade", arg_137_0, "X-Authorization", PlayFabSettings._internalSettings.sessionTicket, arg_137_1, arg_137_2)
+	IPlayFabHttps.MakePlayFabApiCall("/Client/CancelTrade", request, "X-Authorization", PlayFabSettings._internalSettings.sessionTicket, onSuccess, onError)
 end
 
-tbl.GetPlayerTrades = function (arg_138_0, arg_138_1, arg_138_2)
+PlayFabClientApi.GetPlayerTrades = function (request, onSuccess, onError)
 	-- function 138
-	if not tbl.IsClientLoggedIn() then
+	if not PlayFabClientApi.IsClientLoggedIn() then
 		error("Must be logged in to call this method")
 	end
 
-	IPlayFabHttps.MakePlayFabApiCall("/Client/GetPlayerTrades", arg_138_0, "X-Authorization", PlayFabSettings._internalSettings.sessionTicket, arg_138_1, arg_138_2)
+	IPlayFabHttps.MakePlayFabApiCall("/Client/GetPlayerTrades", request, "X-Authorization", PlayFabSettings._internalSettings.sessionTicket, onSuccess, onError)
 end
 
-tbl.GetTradeStatus = function (arg_139_0, arg_139_1, arg_139_2)
+PlayFabClientApi.GetTradeStatus = function (request, onSuccess, onError)
 	-- function 139
-	if not tbl.IsClientLoggedIn() then
+	if not PlayFabClientApi.IsClientLoggedIn() then
 		error("Must be logged in to call this method")
 	end
 
-	IPlayFabHttps.MakePlayFabApiCall("/Client/GetTradeStatus", arg_139_0, "X-Authorization", PlayFabSettings._internalSettings.sessionTicket, arg_139_1, arg_139_2)
+	IPlayFabHttps.MakePlayFabApiCall("/Client/GetTradeStatus", request, "X-Authorization", PlayFabSettings._internalSettings.sessionTicket, onSuccess, onError)
 end
 
-tbl.OpenTrade = function (arg_140_0, arg_140_1, arg_140_2)
+PlayFabClientApi.OpenTrade = function (request, onSuccess, onError)
 	-- function 140
-	if not tbl.IsClientLoggedIn() then
+	if not PlayFabClientApi.IsClientLoggedIn() then
 		error("Must be logged in to call this method")
 	end
 
-	IPlayFabHttps.MakePlayFabApiCall("/Client/OpenTrade", arg_140_0, "X-Authorization", PlayFabSettings._internalSettings.sessionTicket, arg_140_1, arg_140_2)
+	IPlayFabHttps.MakePlayFabApiCall("/Client/OpenTrade", request, "X-Authorization", PlayFabSettings._internalSettings.sessionTicket, onSuccess, onError)
 end
 
-tbl.AttributeInstall = function (arg_141_0, arg_141_1, arg_141_2)
+PlayFabClientApi.AttributeInstall = function (request, onSuccess, onError)
 	-- function 141
-	if not tbl.IsClientLoggedIn() then
+	if not PlayFabClientApi.IsClientLoggedIn() then
 		error("Must be logged in to call this method")
 	end
 
 	PlayFabSettings.settings.advertisingIdType = PlayFabSettings.settings.advertisingIdType .. "_Successful"
 
-	IPlayFabHttps.MakePlayFabApiCall("/Client/AttributeInstall", arg_141_0, "X-Authorization", PlayFabSettings._internalSettings.sessionTicket, arg_141_1, arg_141_2)
+	IPlayFabHttps.MakePlayFabApiCall("/Client/AttributeInstall", request, "X-Authorization", PlayFabSettings._internalSettings.sessionTicket, onSuccess, onError)
 end
 
-tbl.GetPlayerSegments = function (arg_142_0, arg_142_1, arg_142_2)
+PlayFabClientApi.GetPlayerSegments = function (request, onSuccess, onError)
 	-- function 142
-	if not tbl.IsClientLoggedIn() then
+	if not PlayFabClientApi.IsClientLoggedIn() then
 		error("Must be logged in to call this method")
 	end
 
-	IPlayFabHttps.MakePlayFabApiCall("/Client/GetPlayerSegments", arg_142_0, "X-Authorization", PlayFabSettings._internalSettings.sessionTicket, arg_142_1, arg_142_2)
+	IPlayFabHttps.MakePlayFabApiCall("/Client/GetPlayerSegments", request, "X-Authorization", PlayFabSettings._internalSettings.sessionTicket, onSuccess, onError)
 end
 
-tbl.GetPlayerTags = function (arg_143_0, arg_143_1, arg_143_2)
+PlayFabClientApi.GetPlayerTags = function (request, onSuccess, onError)
 	-- function 143
-	if not tbl.IsClientLoggedIn() then
+	if not PlayFabClientApi.IsClientLoggedIn() then
 		error("Must be logged in to call this method")
 	end
 
-	IPlayFabHttps.MakePlayFabApiCall("/Client/GetPlayerTags", arg_143_0, "X-Authorization", PlayFabSettings._internalSettings.sessionTicket, arg_143_1, arg_143_2)
+	IPlayFabHttps.MakePlayFabApiCall("/Client/GetPlayerTags", request, "X-Authorization", PlayFabSettings._internalSettings.sessionTicket, onSuccess, onError)
 end
 
-tbl.AndroidDevicePushNotificationRegistration = function (arg_144_0, arg_144_1, arg_144_2)
+PlayFabClientApi.AndroidDevicePushNotificationRegistration = function (request, onSuccess, onError)
 	-- function 144
-	if not tbl.IsClientLoggedIn() then
+	if not PlayFabClientApi.IsClientLoggedIn() then
 		error("Must be logged in to call this method")
 	end
 
-	IPlayFabHttps.MakePlayFabApiCall("/Client/AndroidDevicePushNotificationRegistration", arg_144_0, "X-Authorization", PlayFabSettings._internalSettings.sessionTicket, arg_144_1, arg_144_2)
+	IPlayFabHttps.MakePlayFabApiCall("/Client/AndroidDevicePushNotificationRegistration", request, "X-Authorization", PlayFabSettings._internalSettings.sessionTicket, onSuccess, onError)
 end
 
-tbl.RegisterForIOSPushNotification = function (arg_145_0, arg_145_1, arg_145_2)
+PlayFabClientApi.RegisterForIOSPushNotification = function (request, onSuccess, onError)
 	-- function 145
-	if not tbl.IsClientLoggedIn() then
+	if not PlayFabClientApi.IsClientLoggedIn() then
 		error("Must be logged in to call this method")
 	end
 
-	IPlayFabHttps.MakePlayFabApiCall("/Client/RegisterForIOSPushNotification", arg_145_0, "X-Authorization", PlayFabSettings._internalSettings.sessionTicket, arg_145_1, arg_145_2)
+	IPlayFabHttps.MakePlayFabApiCall("/Client/RegisterForIOSPushNotification", request, "X-Authorization", PlayFabSettings._internalSettings.sessionTicket, onSuccess, onError)
 end
 
-tbl.RestoreIOSPurchases = function (arg_146_0, arg_146_1, arg_146_2)
+PlayFabClientApi.RestoreIOSPurchases = function (request, onSuccess, onError)
 	-- function 146
-	if not tbl.IsClientLoggedIn() then
+	if not PlayFabClientApi.IsClientLoggedIn() then
 		error("Must be logged in to call this method")
 	end
 
-	IPlayFabHttps.MakePlayFabApiCall("/Client/RestoreIOSPurchases", arg_146_0, "X-Authorization", PlayFabSettings._internalSettings.sessionTicket, arg_146_1, arg_146_2)
+	IPlayFabHttps.MakePlayFabApiCall("/Client/RestoreIOSPurchases", request, "X-Authorization", PlayFabSettings._internalSettings.sessionTicket, onSuccess, onError)
 end
 
-tbl.ValidateAmazonIAPReceipt = function (arg_147_0, arg_147_1, arg_147_2)
+PlayFabClientApi.ValidateAmazonIAPReceipt = function (request, onSuccess, onError)
 	-- function 147
-	if not tbl.IsClientLoggedIn() then
+	if not PlayFabClientApi.IsClientLoggedIn() then
 		error("Must be logged in to call this method")
 	end
 
-	IPlayFabHttps.MakePlayFabApiCall("/Client/ValidateAmazonIAPReceipt", arg_147_0, "X-Authorization", PlayFabSettings._internalSettings.sessionTicket, arg_147_1, arg_147_2)
+	IPlayFabHttps.MakePlayFabApiCall("/Client/ValidateAmazonIAPReceipt", request, "X-Authorization", PlayFabSettings._internalSettings.sessionTicket, onSuccess, onError)
 end
 
-tbl.ValidateGooglePlayPurchase = function (arg_148_0, arg_148_1, arg_148_2)
+PlayFabClientApi.ValidateGooglePlayPurchase = function (request, onSuccess, onError)
 	-- function 148
-	if not tbl.IsClientLoggedIn() then
+	if not PlayFabClientApi.IsClientLoggedIn() then
 		error("Must be logged in to call this method")
 	end
 
-	IPlayFabHttps.MakePlayFabApiCall("/Client/ValidateGooglePlayPurchase", arg_148_0, "X-Authorization", PlayFabSettings._internalSettings.sessionTicket, arg_148_1, arg_148_2)
+	IPlayFabHttps.MakePlayFabApiCall("/Client/ValidateGooglePlayPurchase", request, "X-Authorization", PlayFabSettings._internalSettings.sessionTicket, onSuccess, onError)
 end
 
-tbl.ValidateIOSReceipt = function (arg_149_0, arg_149_1, arg_149_2)
+PlayFabClientApi.ValidateIOSReceipt = function (request, onSuccess, onError)
 	-- function 149
-	if not tbl.IsClientLoggedIn() then
+	if not PlayFabClientApi.IsClientLoggedIn() then
 		error("Must be logged in to call this method")
 	end
 
-	IPlayFabHttps.MakePlayFabApiCall("/Client/ValidateIOSReceipt", arg_149_0, "X-Authorization", PlayFabSettings._internalSettings.sessionTicket, arg_149_1, arg_149_2)
+	IPlayFabHttps.MakePlayFabApiCall("/Client/ValidateIOSReceipt", request, "X-Authorization", PlayFabSettings._internalSettings.sessionTicket, onSuccess, onError)
 end
 
-tbl.ValidateWindowsStoreReceipt = function (arg_150_0, arg_150_1, arg_150_2)
+PlayFabClientApi.ValidateWindowsStoreReceipt = function (request, onSuccess, onError)
 	-- function 150
-	if not tbl.IsClientLoggedIn() then
+	if not PlayFabClientApi.IsClientLoggedIn() then
 		error("Must be logged in to call this method")
 	end
 
-	IPlayFabHttps.MakePlayFabApiCall("/Client/ValidateWindowsStoreReceipt", arg_150_0, "X-Authorization", PlayFabSettings._internalSettings.sessionTicket, arg_150_1, arg_150_2)
+	IPlayFabHttps.MakePlayFabApiCall("/Client/ValidateWindowsStoreReceipt", request, "X-Authorization", PlayFabSettings._internalSettings.sessionTicket, onSuccess, onError)
 end
 
-return tbl
+return PlayFabClientApi

@@ -2,8 +2,8 @@
 
 ImguiTeleportTool = class(ImguiTeleportTool)
 
-local flag = true
-local tbl = {}
+local SHOULD_RELOAD = true
+local EMPTY_LIST = {}
 
 ImguiTeleportTool.init = function (self)
 	-- function 1
@@ -46,17 +46,17 @@ end
 
 ImguiTeleportTool.update = function (self)
 	-- function 2
-	if not flag then
+	if SHOULD_RELOAD then
 		self:init()
 
-		flag = false
+		SHOULD_RELOAD = false
 	end
 
-	local game_mode = Managers.state.game_mode
-	local flag_2 = not game_mode and game_mode:level_key()
+	local game_mode_manager = Managers.state.game_mode
+	local level_key = not not game_mode_manager and not not game_mode_manager:level_key()
 
-	if not (self._current_level ~= nil or not flag_2 or flag_2 == self._current_level) then
-		self._current_level = flag_2
+	if (self._current_level ~= nil or not level_key) and level_key ~= self._current_level then
+		self._current_level = level_key
 
 		self:_refresh_filter()
 	end
@@ -67,22 +67,22 @@ ImguiTeleportTool.is_persistent = function (self)
 	return self._is_persistent
 end
 
-ImguiTeleportTool.draw = function (self, arg_4_1)
+ImguiTeleportTool.draw = function (self, is_open)
 	-- function 4
-	local flag = false
-	local begin_window = Imgui.begin_window("Teleport Tool", "menu_bar")
+	local config_keybinds_popup = false
+	local do_close = Imgui.begin_window("Teleport Tool", "menu_bar")
 
 	Imgui.set_window_size(300, 0, "once")
 
-	if not Imgui.begin_menu_bar() then
-		if not Imgui.menu_item("Configure keybinds") then
-			flag = true
+	if Imgui.begin_menu_bar() then
+		if Imgui.menu_item("Configure keybinds") then
+			config_keybinds_popup = true
 		end
 
 		Imgui.end_menu_bar()
 	end
 
-	if not flag then
+	if config_keybinds_popup then
 		Imgui.open_popup("config_keybinds_popup")
 	end
 
@@ -93,68 +93,68 @@ ImguiTeleportTool.draw = function (self, arg_4_1)
 	Imgui.same_line()
 	Imgui.text(tostring(self._current_level))
 
-	local _filter_text = self._filter_text
+	local old_filter = self._filter_text
 
 	self._filter_text = Imgui.input_text("Search", self._filter_text)
 
-	if self._filter_text ~= _filter_text then
+	if self._filter_text ~= old_filter then
 		self:_refresh_filter()
 	end
 
 	self._selected_teleport = Imgui.list_box("", self._selected_teleport, self._filtered_teleport_names)
 
-	if Imgui.button("Register Point") or not self._key_states.register_new then
+	if Imgui.button("Register Point") or self._key_states.register_new then
 		Imgui.open_popup("register_point_popup")
 	end
 
 	Imgui.same_line()
 
-	if not ((Imgui.button("Teleport") or not self._key_states.teleport) and Imgui.is_popup_open("register_point_popup")) then
+	if Imgui.button("Teleport") or self._key_states.teleport and not Imgui.is_popup_open("register_point_popup") then
 		local local_player = Managers.player:local_player()
-		local flag_2 = not local_player and local_player.player_unit
+		local player_unit = not not local_player and not not local_player.player_unit
 
-		self:_teleport_to_selected(flag_2)
+		self:_teleport_to_selected(player_unit)
 	end
 
 	Imgui.same_line()
 
-	if Imgui.button("Save to Clipboard") or not self._key_states.save_to_clipboatd then
-		local local_player_2 = Managers.player:local_player()
-		local flag_3 = not local_player_2 and local_player_2.player_unit
-		local _get_unit_location = self:_get_unit_location(flag_3)
+	if Imgui.button("Save to Clipboard") or self._key_states.save_to_clipboatd then
+		local local_player = Managers.player:local_player()
+		local unit = not not local_player and not not local_player.player_unit
+		local data_point = self:_get_unit_location(unit)
 
-		self:_save_point_to_clipboard(_get_unit_location)
+		self:_save_point_to_clipboard(data_point)
 	end
 
 	Imgui.same_line()
 
-	if Imgui.button("Teleport from Clipboard") or not self._key_states.teleport_from_clipboard then
-		local local_player_3 = Managers.player:local_player()
-		local flag_4 = not local_player_3 and local_player_3.player_unit
-		local _get_point_from_clipboard = self:_get_point_from_clipboard()
+	if Imgui.button("Teleport from Clipboard") or self._key_states.teleport_from_clipboard then
+		local local_player = Managers.player:local_player()
+		local unit = not not local_player and not not local_player.player_unit
+		local data_point = self:_get_point_from_clipboard()
 
-		self:_teleport_to_point(flag_4, _get_point_from_clipboard)
+		self:_teleport_to_point(unit, data_point)
 	end
 
 	Imgui.dummy(0, 5)
 	Imgui.separator()
 	Imgui.dummy(0, 5)
 
-	local _custom_target_point = self._custom_target_point
+	local ctp = self._custom_target_point
 
-	_custom_target_point[1], _custom_target_point[2], _custom_target_point[3] = Imgui.input_float_3("Point position", _custom_target_point[1], _custom_target_point[2], _custom_target_point[3])
+	ctp[1], ctp[2], ctp[3] = Imgui.input_float_3("Point position", ctp[1], ctp[2], ctp[3])
 
-	if not Imgui.button("Teleport to position") then
-		local local_player_4 = Managers.player:local_player()
-		local flag_5 = not local_player_4 and local_player_4.player_unit
+	if Imgui.button("Teleport to position") then
+		local local_player = Managers.player:local_player()
+		local unit = not not local_player and not not local_player.player_unit
 
-		self:_teleport_to_point(flag_5, _custom_target_point)
+		self:_teleport_to_point(unit, ctp)
 	end
 
-	if not Imgui.begin_popup("register_point_popup") then
+	if Imgui.begin_popup("register_point_popup") then
 		self._register_point_name = Imgui.input_text("Name", self._register_point_name)
 
-		if Imgui.button("Confirm") or not self._key_states.confirm then
+		if Imgui.button("Confirm") or self._key_states.confirm then
 			self:_register_point(self._register_point_name)
 			self:_refresh_filter()
 			Imgui.close_current_popup()
@@ -162,7 +162,7 @@ ImguiTeleportTool.draw = function (self, arg_4_1)
 
 		Imgui.same_line()
 
-		if not Imgui.button("Cancel") then
+		if Imgui.button("Cancel") then
 			Imgui.close_current_popup()
 		end
 
@@ -171,34 +171,45 @@ ImguiTeleportTool.draw = function (self, arg_4_1)
 		self._register_point_name = ""
 	end
 
-	if not Imgui.begin_popup("config_keybinds_popup") then
-		for k, v in pairs(self._key_bindings) do
-			Imgui.tree_push(k)
+	if Imgui.begin_popup("config_keybinds_popup") then
+		for name, val in pairs(self._key_bindings) do
+			Imgui.tree_push(name)
 
-			local flag_6
+			local selected_for_rebind = self._rebind_action == name
+			local str
 
-			flag_6 = not (self._rebind_action == k) and "<?>" and v
+			if selected_for_rebind then
+				str = "<?>"
 
-			if not Imgui.button(flag_6, 100, 20) then
-				self._rebind_action = k
+				goto label_4_0
+			end
+
+			str = val
+
+			local button_name = str
+
+			::label_4_0::
+
+			if Imgui.button(button_name, 100, 20) then
+				self._rebind_action = name
 			end
 
 			Imgui.same_line()
-			Imgui.text(k)
+			Imgui.text(name)
 			Imgui.tree_pop()
 		end
 
-		if not self._rebind_action then
-			local any_pressed = Keyboard.any_pressed()
+		if self._rebind_action then
+			local input = Keyboard.any_pressed()
 
-			if not any_pressed then
-				local button_name = Keyboard.button_name(any_pressed)
+			if input then
+				local input_name = Keyboard.button_name(input)
 				local _key_bindings = self._key_bindings
 				local _rebind_action = self._rebind_action
-				local flag_7
+				local flag
 
-				flag_7 = button_name ~= "esc" or not "" or button_name
-				_key_bindings[_rebind_action] = flag_7
+				flag = (input_name ~= "esc" or not "") and not not input_name
+				_key_bindings[_rebind_action] = flag
 				self._rebind_action = nil
 
 				self:_save_points()
@@ -210,133 +221,135 @@ ImguiTeleportTool.draw = function (self, arg_4_1)
 		self._rebind_action = nil
 	end
 
-	local is_popup_open = Imgui.is_popup_open("config_keybinds_popup")
+	config_keybinds_popup = Imgui.is_popup_open("config_keybinds_popup")
 
 	Imgui.end_window()
 
-	if not is_popup_open then
+	if not config_keybinds_popup then
 		self:_update_input()
 		self:_handle_input()
 	end
 
-	return begin_window
+	return do_close
 end
 
 ImguiTeleportTool._update_input = function (self)
 	-- function 5
-	for k, v in pairs(self._key_bindings) do
-		local button_index = Keyboard.button_index(v)
+	for name, val in pairs(self._key_bindings) do
+		local key_index = Keyboard.button_index(val)
 
-		self._key_states[k] = not button_index and Keyboard.pressed(button_index)
+		self._key_states[name] = not not key_index and not not Keyboard.pressed(key_index)
 	end
 end
 
 ImguiTeleportTool._handle_input = function (self)
 	-- function 6
-	if not self._key_states.delete then
-		local _get_selected_teleport_id = self:_get_selected_teleport_id()
-		local _current_level = self._current_level
-		local var_6_2 = self._teleport_name_map[_current_level]
-		local var_6_3 = self._teleport_point_map[_current_level]
-		local count = #var_6_2
-		local count_2 = #var_6_3
+	if self._key_states.delete then
+		local id = self:_get_selected_teleport_id()
+		local level_key = self._current_level
+		local names = self._teleport_name_map[level_key]
+		local points = self._teleport_point_map[level_key]
+		local num_names = #names
+		local num_points = #points
 
-		if _get_selected_teleport_id <= count then
-			fassert(count == count_2, "Missaligned num names and points")
-			table.remove(var_6_2, _get_selected_teleport_id)
-			table.remove(var_6_3, _get_selected_teleport_id)
+		if id <= num_names then
+			fassert(num_names == num_points, "Missaligned num names and points")
+			table.remove(names, id)
+			table.remove(points, id)
 			self:_refresh_filter()
 			self:_save_points()
 		end
 	end
 
-	if not self._key_states.select_up then
+	if self._key_states.select_up then
 		self._selected_teleport = math.max(math.min(self._selected_teleport - 1, #self._filtered_teleport_names - 1), 0)
 	end
 
-	if not self._key_states.select_down then
+	if self._key_states.select_down then
 		self._selected_teleport = math.max(math.min(self._selected_teleport + 1, #self._filtered_teleport_names - 1), 0)
 	end
 
-	if not self._key_states.quick_teleport then
+	if self._key_states.quick_teleport then
 		local local_player = Managers.player:local_player()
-		local flag = not local_player and local_player.player_unit
+		local player_unit = not not local_player and not not local_player.player_unit
 
-		self:_teleport_to_selected(flag)
+		self:_teleport_to_selected(player_unit)
 	end
 end
 
 ImguiTeleportTool._refresh_filter = function (self)
 	-- function 7
-	local _get_teleport_names = self:_get_teleport_names(self._current_level)
+	local teleport_names = self:_get_teleport_names(self._current_level)
 
-	self._filtered_teleport_names, self._filtered_teleport_ids = self:_apply_filter(self._filter_text, _get_teleport_names)
+	self._filtered_teleport_names, self._filtered_teleport_ids = self:_apply_filter(self._filter_text, teleport_names)
 	self._selected_teleport = math.max(math.min(self._selected_teleport, #self._filtered_teleport_names) - 1, 0)
 end
 
-ImguiTeleportTool._apply_filter = function (arg_8_0, arg_8_1, arg_8_2)
+ImguiTeleportTool._apply_filter = function (self, filter_text, names)
 	-- function 8
-	if arg_8_1 == "" then
-		return arg_8_2
+	if filter_text == "" then
+		return names
 	end
 
-	local tbl = {}
-	local tbl_2 = {}
-	local gsub = string.gsub(arg_8_1, "[_ ]", "")
+	local filtered_list = {}
+	local filtered_map = {}
+	local search_string = string.gsub(filter_text, "[_ ]", "")
 
-	for i = 1, #arg_8_2 do
-		local var_8_3 = arg_8_2[i]
+	for i = 1, #names do
+		local name = names[i]
+		local search_buff_name = string.gsub(name, "[_ ]", "")
 
-		if not string.gsub(var_8_3, "[_ ]", ""):find(gsub, 1, true) then
-			table.insert(tbl, var_8_3)
-			table.insert(tbl_2, i)
+		if search_buff_name:find(search_string, 1, true) then
+			table.insert(filtered_list, name)
+			table.insert(filtered_map, i)
 		end
 	end
 
-	return tbl, tbl_2
+	return filtered_list, filtered_map
 end
 
-ImguiTeleportTool._register_point = function (self, arg_9_1)
+ImguiTeleportTool._register_point = function (self, name)
 	-- function 9
-	local _current_level = self._current_level
+	local level_key = self._current_level
 
-	if not _current_level then
+	if not level_key then
 		return
 	end
 
 	local local_player = Managers.player:local_player()
-	local flag = not local_player and local_player.player_unit
-	local _get_unit_location = self:_get_unit_location(flag)
+	local unit = not not local_player and not not local_player.player_unit
+	local data_point = self:_get_unit_location(unit)
 
-	if not _get_unit_location then
-		if not self._teleport_name_map[_current_level] then
-			self._teleport_name_map[_current_level] = {}
-			self._teleport_point_map[_current_level] = {}
+	if data_point then
+		if not self._teleport_name_map[level_key] then
+			self._teleport_name_map[level_key] = {}
+			self._teleport_point_map[level_key] = {}
 		end
 
-		table.insert(self._teleport_name_map[_current_level], arg_9_1)
-		table.insert(self._teleport_point_map[_current_level], _get_unit_location)
+		table.insert(self._teleport_name_map[level_key], name)
+		table.insert(self._teleport_point_map[level_key], data_point)
 		self:_save_points()
 	end
 end
 
-ImguiTeleportTool._get_unit_location = function (arg_10_0, arg_10_1)
+ImguiTeleportTool._get_unit_location = function (self, unit)
 	-- function 10
-	if not Unit.alive(arg_10_1) then
-		local world_position = Unit.world_position(arg_10_1, 0)
-		local world_rotation = Unit.world_rotation(arg_10_1, 0)
-		local to_elements, var_10_3, var_10_4 = Vector3.to_elements(world_position)
-		local to_elements_2, var_10_6, var_10_7, var_10_8 = Quaternion.to_elements(world_rotation)
-
-		return {
-			to_elements,
-			var_10_3,
-			var_10_4,
-			to_elements_2,
-			var_10_6,
-			var_10_7,
-			var_10_8
+	if Unit.alive(unit) then
+		local pos = Unit.world_position(unit, 0)
+		local rot = Unit.world_rotation(unit, 0)
+		local pos_x, pos_y, pos_z = Vector3.to_elements(pos)
+		local rot_x, rot_y, rot_z, rot_w = Quaternion.to_elements(rot)
+		local data_point = {
+			pos_x,
+			pos_y,
+			pos_z,
+			rot_x,
+			rot_y,
+			rot_z,
+			rot_w
 		}
+
+		return data_point
 	end
 
 	return nil
@@ -344,54 +357,55 @@ end
 
 ImguiTeleportTool._get_selected_teleport_coords = function (self)
 	-- function 11
-	local _current_level = self._current_level
-	local _get_selected_teleport_id = self:_get_selected_teleport_id()
+	local level_key = self._current_level
+	local teleport_id = self:_get_selected_teleport_id()
 
-	if not _current_level and not _get_selected_teleport_id then
-		local var_11_2 = self._teleport_point_map[_current_level]
+	if level_key and teleport_id then
+		local point_map = self._teleport_point_map[level_key]
+		local point = not not point_map and not not point_map[teleport_id]
 
-		return not var_11_2 and var_11_2[_get_selected_teleport_id]
+		return point
 	end
 
 	return nil
 end
 
-ImguiTeleportTool._teleport_to_selected = function (self, arg_12_1)
+ImguiTeleportTool._teleport_to_selected = function (self, unit)
 	-- function 12
-	local _get_selected_teleport_coords = self:_get_selected_teleport_coords()
+	local coords = self:_get_selected_teleport_coords()
 
-	self:_teleport_to_point(arg_12_1, _get_selected_teleport_coords)
+	self:_teleport_to_point(unit, coords)
 end
 
-ImguiTeleportTool._teleport_to_point = function (self, arg_13_1, arg_13_2)
+ImguiTeleportTool._teleport_to_point = function (self, unit, point)
 	-- function 13
-	if not arg_13_2 and not Unit.alive(arg_13_1) then
-		local var_13_0 = Vector3(arg_13_2[1], arg_13_2[2], arg_13_2[3])
-		local from_elements = Quaternion.from_elements(arg_13_2[4], arg_13_2[5], arg_13_2[6], arg_13_2[7])
-		local extension = ScriptUnit.extension(arg_13_1, "locomotion_system")
-		local _custom_target_point = self._custom_target_point
+	if point and Unit.alive(unit) then
+		local pos = Vector3(point[1], point[2], point[3])
+		local rot = Quaternion.from_elements(point[4], point[5], point[6], point[7])
+		local locomotion = ScriptUnit.extension(unit, "locomotion_system")
+		local ctp = self._custom_target_point
 
-		_custom_target_point[1], _custom_target_point[2], _custom_target_point[3] = arg_13_2[1], arg_13_2[2], arg_13_2[3]
+		ctp[1], ctp[2], ctp[3] = point[1], point[2], point[3]
 
-		if not extension then
-			extension:teleport_to(var_13_0, from_elements)
+		if locomotion then
+			locomotion:teleport_to(pos, rot)
 		end
 	end
 end
 
-ImguiTeleportTool._get_teleport_names = function (self, arg_14_1)
+ImguiTeleportTool._get_teleport_names = function (self, level_key)
 	-- function 14
 	local var_14_0
 
-	if not arg_14_1 then
-		var_14_0 = self._teleport_name_map[arg_14_1]
+	if level_key then
+		var_14_0 = self._teleport_name_map[level_key]
 
 		if not var_14_0 then
 			-- Nothing
 		end
 	end
 
-	var_14_0 = tbl
+	var_14_0 = EMPTY_LIST
 
 	::label_14_0::
 
@@ -400,14 +414,16 @@ end
 
 ImguiTeleportTool._get_selected_teleport_id = function (self)
 	-- function 15
-	local _selected_teleport = self._selected_teleport
-	local _filtered_teleport_ids = self._filtered_teleport_ids
+	local selected_num = self._selected_teleport
+	local filtered_ids = self._filtered_teleport_ids
 
-	if not _selected_teleport and not (_selected_teleport > 0) or not _filtered_teleport_ids then
-		return _filtered_teleport_ids[_selected_teleport]
+	if selected_num and selected_num > 0 and filtered_ids then
+		local id = filtered_ids[selected_num]
+
+		return id
 	end
 
-	return _selected_teleport
+	return selected_num
 end
 
 ImguiTeleportTool._save_points = function (self)
@@ -422,48 +438,48 @@ ImguiTeleportTool._load_points = function (self)
 	-- function 17
 	local setting = Development.setting("ImguiTeleportTool_names")
 
-	setting = setting or self._teleport_name_map
+	setting = not not setting or not not self._teleport_name_map
 	self._teleport_name_map = setting
 
 	local setting_2 = Development.setting("ImguiTeleportTool_points")
 
-	setting_2 = setting_2 or self._teleport_point_map
+	setting_2 = not not setting_2 or not not self._teleport_point_map
 	self._teleport_point_map = setting_2
 
 	local setting_3 = Development.setting("ImguiTeleportTool_keybinds")
 
-	setting_3 = setting_3 or self._key_bindings
+	setting_3 = not not setting_3 or not not self._key_bindings
 	self._key_bindings = setting_3
 end
 
-ImguiTeleportTool._save_point_to_clipboard = function (self, arg_18_1)
+ImguiTeleportTool._save_point_to_clipboard = function (self, data_point)
 	-- function 18
-	if not arg_18_1 then
-		local str = "ITT##" .. tostring(self._current_level) .. "##" .. cjson.encode(arg_18_1) .. "##END"
+	if data_point then
+		local output = "ITT##" .. tostring(self._current_level) .. "##" .. cjson.encode(data_point) .. "##END"
 
-		Clipboard.put(str)
+		Clipboard.put(output)
 	end
 end
 
 ImguiTeleportTool._get_point_from_clipboard = function (self)
 	-- function 19
-	local get = Clipboard.get()
-	local split_deprecated = string.split_deprecated(get, "##")
-	local flag = true
+	local input = Clipboard.get()
+	local data = string.split_deprecated(input, "##")
+	local is_valid = true
 
-	flag = not flag and #split_deprecated == 4
-	flag = not flag and split_deprecated[1] == "ITT"
-	flag = not flag and split_deprecated[2] == self._current_level
-	flag = not flag and string.sub(split_deprecated[4], 1, 3) == "END"
+	is_valid = not not is_valid and #data == 4
+	is_valid = not not is_valid and data[1] == "ITT"
+	is_valid = not not is_valid and data[2] == self._current_level
+	is_valid = not not is_valid and string.sub(data[4], 1, 3) == "END"
 
-	if not flag then
-		local decode = cjson.decode(split_deprecated[3])
+	if is_valid then
+		local point = cjson.decode(data[3])
 
-		if not decode then
+		if point then
 			local local_player = Managers.player:local_player()
-			local flag_2 = not local_player and local_player.player_unit
+			local unit = not not local_player and not not local_player.player_unit
 
-			self:_teleport_to_point(flag_2, decode)
+			self:_teleport_to_point(unit, point)
 		end
 	end
 end

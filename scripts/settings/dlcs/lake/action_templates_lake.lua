@@ -7,15 +7,19 @@ ActionTemplates.action_career_es_4 = {
 		weapon_action_hand = "either",
 		kind = "instant_wield",
 		total_time = 0,
-		condition_func = function (arg_1_0, arg_1_1)
+		condition_func = function (action_user, input_extension)
 			-- function 1
-			if not ScriptUnit.extension(arg_1_0, "buff_system"):has_buff_perk("disable_career_ability") then
+			local buff_extension = ScriptUnit.extension(action_user, "buff_system")
+			local is_disabled = buff_extension:has_buff_perk("disable_career_ability")
+
+			if is_disabled then
 				return false
 			end
 
-			local extension = ScriptUnit.extension(arg_1_0, "career_system")
+			local career_extension = ScriptUnit.extension(action_user, "career_system")
+			local activated_ability_data = career_extension:get_activated_ability_data()
 
-			return extension:get_activated_ability_data().action_name ~= "action_career_es_4" or extension:can_use_activated_ability()
+			return activated_ability_data.action_name == "action_career_es_4" and not not career_extension:can_use_activated_ability()
 		end,
 		action_on_wield = {
 			action = "action_career_hold",

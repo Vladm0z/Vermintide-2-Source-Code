@@ -2,22 +2,22 @@
 
 ActionCancel = class(ActionCancel, ActionBase)
 
-ActionCancel.init = function (arg_1_0, arg_1_1, arg_1_2, arg_1_3, arg_1_4, arg_1_5, arg_1_6, arg_1_7, arg_1_8)
+ActionCancel.init = function (self, world, item_name, is_server, owner_unit, damage_unit, first_person_unit, weapon_unit, weapon_system)
 	-- function 1
-	ActionCancel.super.init(arg_1_0, arg_1_1, arg_1_2, arg_1_3, arg_1_4, arg_1_5, arg_1_6, arg_1_7, arg_1_8)
+	ActionCancel.super.init(self, world, item_name, is_server, owner_unit, damage_unit, first_person_unit, weapon_unit, weapon_system)
 end
 
-ActionCancel.client_owner_start_action = function (arg_2_0, arg_2_1, arg_2_2)
+ActionCancel.client_owner_start_action = function (self, new_action, t)
 	-- function 2
-	ActionCancel.super.client_owner_start_action(arg_2_0, arg_2_1, arg_2_2)
+	ActionCancel.super.client_owner_start_action(self, new_action, t)
 end
 
-ActionCancel.client_owner_post_update = function (arg_3_0, arg_3_1, arg_3_2, arg_3_3, arg_3_4)
+ActionCancel.client_owner_post_update = function (self, dt, t, world, can_damage)
 	-- function 3
 	return
 end
 
-ActionCancel.finish = function (arg_4_0, arg_4_1)
+ActionCancel.finish = function (self, reason)
 	-- function 4
 	return
 end

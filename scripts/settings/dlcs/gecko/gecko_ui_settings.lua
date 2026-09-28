@@ -1,8 +1,8 @@
 -- chunkname: @scripts/settings/dlcs/gecko/gecko_ui_settings.lua
 
-local gecko = DLCSettings.gecko
+local settings = DLCSettings.gecko
 
-gecko.start_game_windows = {
+settings.start_game_windows = {
 	"scripts/ui/views/start_game_view/windows/start_game_window_event",
 	"scripts/ui/views/start_game_view/windows/definitions/start_game_window_event_definitions",
 	"scripts/ui/views/start_game_view/windows/start_game_window_event_settings",
@@ -12,7 +12,7 @@ gecko.start_game_windows = {
 	"scripts/ui/views/start_game_view/windows/start_game_window_event_summary_console",
 	"scripts/ui/views/start_game_view/windows/definitions/start_game_window_event_summary_console_definitions"
 }
-gecko.start_game_window_layout = {
+settings.start_game_window_layout = {
 	windows = {
 		event = {
 			class_name = "StartGameWindowEvent",
@@ -39,11 +39,11 @@ gecko.start_game_window_layout = {
 				game_mode = 1,
 				event_settings = 3
 			},
-			can_add_function = function (self)
+			can_add_function = function (overview)
 				-- function 1
-				local is_in_mechanism = self:is_in_mechanism("adventure")
+				local is_in_mechanism = overview:is_in_mechanism("adventure")
 
-				is_in_mechanism = not is_in_mechanism and self:is_weekly_event_active()
+				is_in_mechanism = not not is_in_mechanism and not not overview:is_weekly_event_active()
 
 				return is_in_mechanism
 			end
@@ -59,7 +59,7 @@ gecko.start_game_window_layout = {
 		}
 	}
 }
-gecko.start_game_window_layout_console = {
+settings.start_game_window_layout_console = {
 	windows = {
 		event_overview = {
 			ignore_alignment = true,
@@ -91,11 +91,11 @@ gecko.start_game_window_layout_console = {
 				background = 2,
 				event_summary = 4
 			},
-			can_add_function = function (self)
+			can_add_function = function (overview)
 				-- function 2
-				local is_in_mechanism = self:is_in_mechanism("adventure")
+				local is_in_mechanism = overview:is_in_mechanism("adventure")
 
-				is_in_mechanism = not is_in_mechanism and self:is_weekly_event_active()
+				is_in_mechanism = not not is_in_mechanism and not not overview:is_weekly_event_active()
 
 				return is_in_mechanism
 			end

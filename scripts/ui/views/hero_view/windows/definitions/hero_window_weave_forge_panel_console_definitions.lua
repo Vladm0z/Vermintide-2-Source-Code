@@ -1,27 +1,30 @@
 -- chunkname: @scripts/ui/views/hero_view/windows/definitions/hero_window_weave_forge_panel_console_definitions.lua
 
-local game_start_windows = UISettings.game_start_windows
-local size = game_start_windows.size
-local spacing = game_start_windows.spacing
-local large_window_frame = game_start_windows.large_window_frame
-local var_0_4 = UIFrameSettings[large_window_frame].texture_sizes.vertical[1]
-local tbl = {
-	size[1] * 3 + spacing * 2 + var_0_4 * 2,
-	size[2] + 80
+local window_default_settings = UISettings.game_start_windows
+local small_window_size = window_default_settings.size
+local small_window_spacing = window_default_settings.spacing
+local large_window_frame = window_default_settings.large_window_frame
+local large_window_frame_width = UIFrameSettings[large_window_frame].texture_sizes.vertical[1]
+local inner_window_size = {
+	small_window_size[1] * 3 + small_window_spacing * 2 + large_window_frame_width * 2,
+	small_window_size[2] + 80
 }
-local tbl_2 = {
-	tbl[1] + 50,
-	tbl[2]
+local window_size = {
+	inner_window_size[1] + 50,
+	inner_window_size[2]
 }
-local str = "menu_frame_11"
-local var_0_8 = UIFrameSettings[str].texture_sizes.vertical[1]
-local num = 0
-local tbl_3 = {
+local window_frame_name = "menu_frame_11"
+local window_frame = UIFrameSettings[window_frame_name]
+local window_frame_width = window_frame.texture_sizes.vertical[1]
+
+window_frame_width = 0
+window_size = {
 	1920,
 	1080
 }
-local num_2 = 1.5
-local tbl_4 = {
+
+local wheel_scale = 1.5
+local scenegraph_definition = {
 	root = {
 		is_root = true,
 		size = {
@@ -64,7 +67,7 @@ local tbl_4 = {
 		vertical_alignment = "center",
 		parent = "screen_center",
 		horizontal_alignment = "center",
-		size = tbl_3,
+		size = window_size,
 		position = {
 			0,
 			0,
@@ -80,8 +83,8 @@ local tbl_4 = {
 			48
 		},
 		position = {
-			num,
-			-num,
+			window_frame_width,
+			-window_frame_width,
 			8
 		}
 	},
@@ -122,8 +125,8 @@ local tbl_4 = {
 			110
 		},
 		position = {
-			num,
-			-num,
+			window_frame_width,
+			-window_frame_width,
 			12
 		}
 	},
@@ -136,8 +139,8 @@ local tbl_4 = {
 			110
 		},
 		position = {
-			-num,
-			-num,
+			-window_frame_width,
+			-window_frame_width,
 			12
 		}
 	},
@@ -150,8 +153,8 @@ local tbl_4 = {
 			110
 		},
 		position = {
-			num,
-			num,
+			window_frame_width,
+			window_frame_width,
 			12
 		}
 	},
@@ -164,8 +167,8 @@ local tbl_4 = {
 			110
 		},
 		position = {
-			-num,
-			num,
+			-window_frame_width,
+			window_frame_width,
 			12
 		}
 	},
@@ -179,7 +182,7 @@ local tbl_4 = {
 		},
 		position = {
 			0,
-			num + 33,
+			window_frame_width + 33,
 			12
 		}
 	},
@@ -207,7 +210,7 @@ local tbl_4 = {
 		},
 		position = {
 			-317,
-			num,
+			window_frame_width,
 			9
 		}
 	},
@@ -221,7 +224,7 @@ local tbl_4 = {
 		},
 		position = {
 			317,
-			num,
+			window_frame_width,
 			9
 		}
 	},
@@ -234,8 +237,8 @@ local tbl_4 = {
 			126
 		},
 		position = {
-			-num,
-			-num,
+			-window_frame_width,
+			-window_frame_width,
 			4
 		}
 	},
@@ -272,8 +275,8 @@ local tbl_4 = {
 		parent = "window",
 		horizontal_alignment = "center",
 		size = {
-			math.floor(1022 * num_2),
-			math.floor(1022 * num_2)
+			math.floor(1022 * wheel_scale),
+			math.floor(1022 * wheel_scale)
 		},
 		position = {
 			0,
@@ -286,8 +289,8 @@ local tbl_4 = {
 		parent = "window",
 		horizontal_alignment = "center",
 		size = {
-			math.floor(188 * num_2),
-			math.floor(188 * num_2)
+			math.floor(188 * wheel_scale),
+			math.floor(188 * wheel_scale)
 		},
 		position = {
 			0,
@@ -300,8 +303,8 @@ local tbl_4 = {
 		parent = "window",
 		horizontal_alignment = "center",
 		size = {
-			math.floor(461 * num_2),
-			math.floor(461 * num_2)
+			math.floor(461 * wheel_scale),
+			math.floor(461 * wheel_scale)
 		},
 		position = {
 			0,
@@ -314,8 +317,8 @@ local tbl_4 = {
 		parent = "window",
 		horizontal_alignment = "center",
 		size = {
-			math.floor(1074 * num_2),
-			math.floor(1074 * num_2)
+			math.floor(1074 * wheel_scale),
+			math.floor(1074 * wheel_scale)
 		},
 		position = {
 			0,
@@ -328,17 +331,17 @@ local tbl_4 = {
 		parent = "window",
 		horizontal_alignment = "center",
 		size = {
-			tbl_3[1],
+			window_size[1],
 			500
 		},
 		position = {
 			0,
-			-(num - 1),
+			-(window_frame_width - 1),
 			0
 		}
 	}
 }
-local tbl_5 = {
+local title_text_style = {
 	font_size = 36,
 	upper_case = true,
 	localize = false,
@@ -354,7 +357,7 @@ local tbl_5 = {
 		2
 	}
 }
-local tbl_6 = {
+local essence_text_style = {
 	font_size = 26,
 	upper_case = true,
 	localize = false,
@@ -370,7 +373,7 @@ local tbl_6 = {
 		2
 	}
 }
-local tbl_7 = {
+local panel_title_text_style = {
 	font_size = 18,
 	upper_case = true,
 	localize = false,
@@ -391,7 +394,7 @@ local tbl_7 = {
 		2
 	}
 }
-local tbl_8 = {
+local panel_value_text_style = {
 	font_size = 32,
 	upper_case = true,
 	localize = false,
@@ -407,7 +410,7 @@ local tbl_8 = {
 		2
 	}
 }
-local tbl_9 = {
+local mastery_text_style = {
 	font_size = 62,
 	upper_case = true,
 	localize = false,
@@ -423,7 +426,7 @@ local tbl_9 = {
 		2
 	}
 }
-local tbl_10 = {
+local level_text_style = {
 	font_size = 20,
 	upper_case = true,
 	localize = false,
@@ -439,7 +442,7 @@ local tbl_10 = {
 		2
 	}
 }
-local tbl_11 = {
+local power_text_style = {
 	font_size = 20,
 	upper_case = true,
 	localize = false,
@@ -455,77 +458,77 @@ local tbl_11 = {
 		2
 	}
 }
-local tbl_12 = {
+local top_glow_back_smoke_color = {
 	200,
 	138,
 	0,
 	147
 }
-local tbl_13 = {
+local wheel_color = {
 	255,
 	138,
 	0,
 	147
 }
-local flag = true
-local tbl_14 = {
+local masked = true
+local bottom_hdr_widgets = {
 	hdr_background_write_mask = UIWidgets.create_simple_texture("ui_write_mask", "window"),
-	hdr_background_wheel_1 = UIWidgets.create_simple_texture("athanor_skilltree_background_effect", "background_wheel", nil, nil, tbl_13, 5),
+	hdr_background_wheel_1 = UIWidgets.create_simple_texture("athanor_skilltree_background_effect", "background_wheel", nil, nil, wheel_color, 5),
 	hdr_wheel_ring_1_1 = UIWidgets.create_simple_rotated_texture("athanor_skilltree_ring_effect_1", 0, {
-		math.floor(188 * num_2) / 2,
-		math.floor(188 * num_2) / 2
-	}, "wheel_ring_1", nil, nil, tbl_13),
+		math.floor(188 * wheel_scale) / 2,
+		math.floor(188 * wheel_scale) / 2
+	}, "wheel_ring_1", nil, nil, wheel_color),
 	hdr_wheel_ring_1_2 = UIWidgets.create_simple_rotated_texture("athanor_skilltree_ring_effect_2", 0, {
-		math.floor(461 * num_2) / 2,
-		math.floor(461 * num_2) / 2
-	}, "wheel_ring_2", nil, nil, tbl_13),
+		math.floor(461 * wheel_scale) / 2,
+		math.floor(461 * wheel_scale) / 2
+	}, "wheel_ring_2", nil, nil, wheel_color),
 	hdr_wheel_ring_1_3 = UIWidgets.create_simple_rotated_texture("athanor_skilltree_ring_effect_3", 0, {
-		math.floor(1074 * num_2) / 2,
-		math.floor(1074 * num_2) / 2
-	}, "wheel_ring_3", nil, nil, tbl_13),
+		math.floor(1074 * wheel_scale) / 2,
+		math.floor(1074 * wheel_scale) / 2
+	}, "wheel_ring_3", nil, nil, wheel_color),
 	hdr_wheel_ring_2_1 = UIWidgets.create_simple_rotated_texture("athanor_skilltree_ring_effect_1", 0, {
-		math.floor(188 * num_2) / 2,
-		math.floor(188 * num_2) / 2
-	}, "wheel_ring_1", nil, nil, tbl_13),
+		math.floor(188 * wheel_scale) / 2,
+		math.floor(188 * wheel_scale) / 2
+	}, "wheel_ring_1", nil, nil, wheel_color),
 	hdr_wheel_ring_2_2 = UIWidgets.create_simple_rotated_texture("athanor_skilltree_ring_effect_2", 0, {
-		math.floor(461 * num_2) / 2,
-		math.floor(461 * num_2) / 2
-	}, "wheel_ring_2", nil, nil, tbl_13),
+		math.floor(461 * wheel_scale) / 2,
+		math.floor(461 * wheel_scale) / 2
+	}, "wheel_ring_2", nil, nil, wheel_color),
 	hdr_wheel_ring_2_3 = UIWidgets.create_simple_rotated_texture("athanor_skilltree_ring_effect_3", 0, {
-		math.floor(1074 * num_2) / 2,
-		math.floor(1074 * num_2) / 2
-	}, "wheel_ring_3", nil, nil, tbl_13)
+		math.floor(1074 * wheel_scale) / 2,
+		math.floor(1074 * wheel_scale) / 2
+	}, "wheel_ring_3", nil, nil, wheel_color)
 }
-local tbl_15 = {
+local bottom_widgets = {
 	background_write_mask = UIWidgets.create_simple_texture("athanor_background_write_mask", "window"),
 	background_wheel_1 = UIWidgets.create_simple_rotated_texture("athanor_skilltree_background", 0, {
-		math.floor(1022 * num_2) / 2,
-		math.floor(1022 * num_2) / 2
-	}, "background_wheel", nil, nil, tbl_13),
+		math.floor(1022 * wheel_scale) / 2,
+		math.floor(1022 * wheel_scale) / 2
+	}, "background_wheel", nil, nil, wheel_color),
 	wheel_ring_1_1 = UIWidgets.create_simple_rotated_texture("athanor_skilltree_ring_1", 0, {
-		math.floor(188 * num_2) / 2,
-		math.floor(188 * num_2) / 2
-	}, "wheel_ring_1", nil, nil, tbl_13),
+		math.floor(188 * wheel_scale) / 2,
+		math.floor(188 * wheel_scale) / 2
+	}, "wheel_ring_1", nil, nil, wheel_color),
 	wheel_ring_1_2 = UIWidgets.create_simple_rotated_texture("athanor_skilltree_ring_2", 0, {
-		math.floor(461 * num_2) / 2,
-		math.floor(461 * num_2) / 2
-	}, "wheel_ring_2", nil, nil, tbl_13),
+		math.floor(461 * wheel_scale) / 2,
+		math.floor(461 * wheel_scale) / 2
+	}, "wheel_ring_2", nil, nil, wheel_color),
 	wheel_ring_1_3 = UIWidgets.create_simple_rotated_texture("athanor_skilltree_ring_3", 0, {
-		math.floor(1074 * num_2) / 2,
-		math.floor(1074 * num_2) / 2
-	}, "wheel_ring_3", nil, nil, tbl_13),
+		math.floor(1074 * wheel_scale) / 2,
+		math.floor(1074 * wheel_scale) / 2
+	}, "wheel_ring_3", nil, nil, wheel_color),
 	wheel_ring_2_1 = UIWidgets.create_simple_rotated_texture("athanor_skilltree_ring_1", 0, {
-		math.floor(188 * num_2) / 2,
-		math.floor(188 * num_2) / 2
-	}, "wheel_ring_1", nil, nil, tbl_13),
+		math.floor(188 * wheel_scale) / 2,
+		math.floor(188 * wheel_scale) / 2
+	}, "wheel_ring_1", nil, nil, wheel_color),
 	wheel_ring_2_2 = UIWidgets.create_simple_rotated_texture("athanor_skilltree_ring_2", 0, {
-		math.floor(461 * num_2) / 2,
-		math.floor(461 * num_2) / 2
-	}, "wheel_ring_2", nil, nil, tbl_13),
+		math.floor(461 * wheel_scale) / 2,
+		math.floor(461 * wheel_scale) / 2
+	}, "wheel_ring_2", nil, nil, wheel_color),
 	wheel_ring_2_3 = UIWidgets.create_simple_rotated_texture("athanor_skilltree_ring_3", 0, {
-		math.floor(1074 * num_2) / 2,
-		math.floor(1074 * num_2) / 2
-	}, "wheel_ring_3", nil, nil, tbl_13),
+		math.floor(1074 * wheel_scale) / 2,
+		math.floor(1074 * wheel_scale) / 2
+	}, "wheel_ring_3", nil, nil, wheel_color),
 	top_glow_smoke_1 = UIWidgets.create_simple_uv_texture("forge_overview_top_glow_effect_smoke_1", {
 		{
 			0,
@@ -535,9 +538,9 @@ local tbl_15 = {
 			1,
 			1
 		}
-	}, "top_glow", nil, nil, tbl_12, 0)
+	}, "top_glow", nil, nil, top_glow_back_smoke_color, 0)
 }
-local tbl_16 = {
+local top_widgets = {
 	bottom_panel_left = UIWidgets.create_simple_texture("athanor_power_bg", "bottom_panel_left"),
 	bottom_panel_right = UIWidgets.create_simple_uv_texture("athanor_power_bg", {
 		{
@@ -582,10 +585,10 @@ local tbl_16 = {
 	}, "bottom_corner_right"),
 	essence_icon = UIWidgets.create_simple_texture("icon_crafting_essence_small", "essence_icon"),
 	essence_panel = UIWidgets.create_simple_texture("athanor_panel_front", "essence_panel"),
-	essence_text = UIWidgets.create_simple_text("", "essence_text", nil, nil, tbl_6),
-	loadout_power_title = UIWidgets.create_simple_text(Localize("menu_weave_forge_power_level_title"), "loadout_power_title", nil, nil, tbl_7),
-	loadout_power_text = UIWidgets.create_simple_text("0", "loadout_power_text", nil, nil, tbl_8),
-	loadout_power_tooltip = UIWidgets.create_additional_option_tooltip("loadout_power_text", tbl_4.loadout_power_text.size, {
+	essence_text = UIWidgets.create_simple_text("", "essence_text", nil, nil, essence_text_style),
+	loadout_power_title = UIWidgets.create_simple_text(Localize("menu_weave_forge_power_level_title"), "loadout_power_title", nil, nil, panel_title_text_style),
+	loadout_power_text = UIWidgets.create_simple_text("0", "loadout_power_text", nil, nil, panel_value_text_style),
+	loadout_power_tooltip = UIWidgets.create_additional_option_tooltip("loadout_power_text", scenegraph_definition.loadout_power_text.size, {
 		"additional_option_info",
 		"hero_power_perks"
 	}, {
@@ -597,38 +600,40 @@ local tbl_16 = {
 		0
 	})
 }
-local tbl_17 = {
+local animation_definitions = {
 	on_enter = {
 		{
 			name = "top panel fade in",
 			start_progress = 0,
 			end_progress = 0.3,
-			init = function (arg_1_0, arg_1_1, arg_1_2, arg_1_3)
+			init = function (ui_scenegraph, scenegraph_definition, widgets, params)
 				-- function 1
-				arg_1_3.render_settings.alpha_multiplier = 1
+				params.render_settings.alpha_multiplier = 1
 			end,
-			update = function (arg_2_0, arg_2_1, arg_2_2, arg_2_3, arg_2_4)
+			update = function (ui_scenegraph, scenegraph_definition, widgets, progress, params)
 				-- function 2
-				local easeOutCubic = math.easeOutCubic(arg_2_3)
-				local top_glow_smoke_1 = arg_2_2.top_glow_smoke_1
+				local anim_progress = math.easeOutCubic(progress)
+				local top_glow_smoke_1 = widgets.top_glow_smoke_1
 
-				if not top_glow_smoke_1 then
+				if top_glow_smoke_1 then
 					local scenegraph_id = top_glow_smoke_1.scenegraph_id
+					local uvs = top_glow_smoke_1.content.texture_id.uvs
 
-					top_glow_smoke_1.content.texture_id.uvs[1][2] = 1 - easeOutCubic
-					arg_2_0[scenegraph_id].size[2] = arg_2_1[scenegraph_id].size[2] * easeOutCubic
+					uvs[1][2] = 1 - anim_progress
+					ui_scenegraph[scenegraph_id].size[2] = scenegraph_definition[scenegraph_id].size[2] * anim_progress
 				end
 
-				local top_glow_smoke_2 = arg_2_2.top_glow_smoke_2
+				local top_glow_smoke_2 = widgets.top_glow_smoke_2
 
-				if not top_glow_smoke_2 then
-					local scenegraph_id_2 = top_glow_smoke_2.scenegraph_id
+				if top_glow_smoke_2 then
+					local scenegraph_id = top_glow_smoke_2.scenegraph_id
+					local uvs = top_glow_smoke_2.content.texture_id.uvs
 
-					top_glow_smoke_2.content.texture_id.uvs[1][2] = 1 - easeOutCubic
-					arg_2_0[scenegraph_id_2].size[2] = arg_2_1[scenegraph_id_2].size[2] * easeOutCubic
+					uvs[1][2] = 1 - anim_progress
+					ui_scenegraph[scenegraph_id].size[2] = scenegraph_definition[scenegraph_id].size[2] * anim_progress
 				end
 			end,
-			on_complete = function (arg_3_0, arg_3_1, arg_3_2, arg_3_3)
+			on_complete = function (ui_scenegraph, scenegraph_definition, widgets, params)
 				-- function 3
 				return
 			end
@@ -637,22 +642,22 @@ local tbl_17 = {
 			name = "upgrade_button_fade_in",
 			start_progress = 0.2,
 			end_progress = 0.4,
-			init = function (arg_4_0, arg_4_1, arg_4_2, arg_4_3)
+			init = function (ui_scenegraph, scenegraph_definition, widgets, params)
 				-- function 4
 				return
 			end,
-			update = function (arg_5_0, arg_5_1, arg_5_2, arg_5_3, arg_5_4)
+			update = function (ui_scenegraph, scenegraph_definition, widgets, progress, params)
 				-- function 5
-				local easeOutCubic = math.easeOutCubic(arg_5_3)
-				local upgrade_button = arg_5_2.upgrade_button
+				local anim_progress = math.easeOutCubic(progress)
+				local upgrade_button = widgets.upgrade_button
 
-				if not upgrade_button then
+				if upgrade_button then
 					local scenegraph_id = upgrade_button.scenegraph_id
 
-					arg_5_0[scenegraph_id].local_position[2] = arg_5_1[scenegraph_id].position[2] + 0 * easeOutCubic
+					ui_scenegraph[scenegraph_id].local_position[2] = scenegraph_definition[scenegraph_id].position[2] + 0 * anim_progress
 				end
 			end,
-			on_complete = function (arg_6_0, arg_6_1, arg_6_2, arg_6_3)
+			on_complete = function (ui_scenegraph, scenegraph_definition, widgets, params)
 				-- function 6
 				return
 			end
@@ -663,32 +668,34 @@ local tbl_17 = {
 			name = "top panel fade in",
 			start_progress = 0,
 			end_progress = 0.3,
-			init = function (arg_7_0, arg_7_1, arg_7_2, arg_7_3)
+			init = function (ui_scenegraph, scenegraph_definition, widgets, params)
 				-- function 7
-				arg_7_3.render_settings.alpha_multiplier = 1
+				params.render_settings.alpha_multiplier = 1
 			end,
-			update = function (arg_8_0, arg_8_1, arg_8_2, arg_8_3, arg_8_4)
+			update = function (ui_scenegraph, scenegraph_definition, widgets, progress, params)
 				-- function 8
-				local easeOutCubic = math.easeOutCubic(arg_8_3)
-				local top_glow_smoke_1 = arg_8_2.top_glow_smoke_1
+				local anim_progress = math.easeOutCubic(progress)
+				local top_glow_smoke_1 = widgets.top_glow_smoke_1
 
-				if not top_glow_smoke_1 then
+				if top_glow_smoke_1 then
 					local scenegraph_id = top_glow_smoke_1.scenegraph_id
+					local uvs = top_glow_smoke_1.content.texture_id.uvs
 
-					top_glow_smoke_1.content.texture_id.uvs[1][2] = 1 - easeOutCubic
-					arg_8_0[scenegraph_id].size[2] = arg_8_1[scenegraph_id].size[2] * easeOutCubic
+					uvs[1][2] = 1 - anim_progress
+					ui_scenegraph[scenegraph_id].size[2] = scenegraph_definition[scenegraph_id].size[2] * anim_progress
 				end
 
-				local top_glow_smoke_2 = arg_8_2.top_glow_smoke_2
+				local top_glow_smoke_2 = widgets.top_glow_smoke_2
 
-				if not top_glow_smoke_2 then
-					local scenegraph_id_2 = top_glow_smoke_2.scenegraph_id
+				if top_glow_smoke_2 then
+					local scenegraph_id = top_glow_smoke_2.scenegraph_id
+					local uvs = top_glow_smoke_2.content.texture_id.uvs
 
-					top_glow_smoke_2.content.texture_id.uvs[1][2] = 1 - easeOutCubic
-					arg_8_0[scenegraph_id_2].size[2] = arg_8_1[scenegraph_id_2].size[2] * easeOutCubic
+					uvs[1][2] = 1 - anim_progress
+					ui_scenegraph[scenegraph_id].size[2] = scenegraph_definition[scenegraph_id].size[2] * anim_progress
 				end
 			end,
-			on_complete = function (arg_9_0, arg_9_1, arg_9_2, arg_9_3)
+			on_complete = function (ui_scenegraph, scenegraph_definition, widgets, params)
 				-- function 9
 				return
 			end
@@ -697,25 +704,25 @@ local tbl_17 = {
 			name = "upgrade_button_fade_in",
 			start_progress = 0.2,
 			end_progress = 0.4,
-			init = function (arg_10_0, arg_10_1, arg_10_2, arg_10_3)
+			init = function (ui_scenegraph, scenegraph_definition, widgets, params)
 				-- function 10
-				arg_10_2.upgrade_button.alpha_multiplier = 0
-				arg_10_2.forge_level_title.alpha_multiplier = 0
-				arg_10_2.forge_level_text.alpha_multiplier = 0
-				arg_10_2.loadout_power_title.alpha_multiplier = 0
-				arg_10_2.loadout_power_text.alpha_multiplier = 0
+				widgets.upgrade_button.alpha_multiplier = 0
+				widgets.forge_level_title.alpha_multiplier = 0
+				widgets.forge_level_text.alpha_multiplier = 0
+				widgets.loadout_power_title.alpha_multiplier = 0
+				widgets.loadout_power_text.alpha_multiplier = 0
 			end,
-			update = function (arg_11_0, arg_11_1, arg_11_2, arg_11_3, arg_11_4)
+			update = function (ui_scenegraph, scenegraph_definition, widgets, progress, params)
 				-- function 11
-				local easeOutCubic = math.easeOutCubic(arg_11_3)
+				local anim_progress = math.easeOutCubic(progress)
 
-				arg_11_2.upgrade_button.alpha_multiplier = math.max(arg_11_2.upgrade_button.alpha_multiplier, easeOutCubic)
-				arg_11_2.forge_level_title.alpha_multiplier = math.max(arg_11_2.forge_level_title.alpha_multiplier, easeOutCubic)
-				arg_11_2.forge_level_text.alpha_multiplier = math.max(arg_11_2.forge_level_text.alpha_multiplier, easeOutCubic)
-				arg_11_2.loadout_power_title.alpha_multiplier = math.max(arg_11_2.loadout_power_title.alpha_multiplier, easeOutCubic)
-				arg_11_2.loadout_power_text.alpha_multiplier = math.max(arg_11_2.loadout_power_text.alpha_multiplier, easeOutCubic)
+				widgets.upgrade_button.alpha_multiplier = math.max(widgets.upgrade_button.alpha_multiplier, anim_progress)
+				widgets.forge_level_title.alpha_multiplier = math.max(widgets.forge_level_title.alpha_multiplier, anim_progress)
+				widgets.forge_level_text.alpha_multiplier = math.max(widgets.forge_level_text.alpha_multiplier, anim_progress)
+				widgets.loadout_power_title.alpha_multiplier = math.max(widgets.loadout_power_title.alpha_multiplier, anim_progress)
+				widgets.loadout_power_text.alpha_multiplier = math.max(widgets.loadout_power_text.alpha_multiplier, anim_progress)
 			end,
-			on_complete = function (arg_12_0, arg_12_1, arg_12_2, arg_12_3)
+			on_complete = function (ui_scenegraph, scenegraph_definition, widgets, params)
 				-- function 12
 				return
 			end
@@ -726,32 +733,34 @@ local tbl_17 = {
 			name = "top panel fade in",
 			start_progress = 0,
 			end_progress = 0.3,
-			init = function (arg_13_0, arg_13_1, arg_13_2, arg_13_3)
+			init = function (ui_scenegraph, scenegraph_definition, widgets, params)
 				-- function 13
-				arg_13_3.render_settings.alpha_multiplier = 1
+				params.render_settings.alpha_multiplier = 1
 			end,
-			update = function (arg_14_0, arg_14_1, arg_14_2, arg_14_3, arg_14_4)
+			update = function (ui_scenegraph, scenegraph_definition, widgets, progress, params)
 				-- function 14
-				local easeOutCubic = math.easeOutCubic(1 - arg_14_3)
-				local top_glow_smoke_1 = arg_14_2.top_glow_smoke_1
+				local anim_progress = math.easeOutCubic(1 - progress)
+				local top_glow_smoke_1 = widgets.top_glow_smoke_1
 
-				if not top_glow_smoke_1 then
+				if top_glow_smoke_1 then
 					local scenegraph_id = top_glow_smoke_1.scenegraph_id
+					local uvs = top_glow_smoke_1.content.texture_id.uvs
 
-					top_glow_smoke_1.content.texture_id.uvs[1][2] = 1 - easeOutCubic
-					arg_14_0[scenegraph_id].size[2] = arg_14_1[scenegraph_id].size[2] * easeOutCubic
+					uvs[1][2] = 1 - anim_progress
+					ui_scenegraph[scenegraph_id].size[2] = scenegraph_definition[scenegraph_id].size[2] * anim_progress
 				end
 
-				local top_glow_smoke_2 = arg_14_2.top_glow_smoke_2
+				local top_glow_smoke_2 = widgets.top_glow_smoke_2
 
-				if not top_glow_smoke_2 then
-					local scenegraph_id_2 = top_glow_smoke_2.scenegraph_id
+				if top_glow_smoke_2 then
+					local scenegraph_id = top_glow_smoke_2.scenegraph_id
+					local uvs = top_glow_smoke_2.content.texture_id.uvs
 
-					top_glow_smoke_2.content.texture_id.uvs[1][2] = 1 - easeOutCubic
-					arg_14_0[scenegraph_id_2].size[2] = arg_14_1[scenegraph_id_2].size[2] * easeOutCubic
+					uvs[1][2] = 1 - anim_progress
+					ui_scenegraph[scenegraph_id].size[2] = scenegraph_definition[scenegraph_id].size[2] * anim_progress
 				end
 			end,
-			on_complete = function (arg_15_0, arg_15_1, arg_15_2, arg_15_3)
+			on_complete = function (ui_scenegraph, scenegraph_definition, widgets, params)
 				-- function 15
 				return
 			end
@@ -760,17 +769,17 @@ local tbl_17 = {
 			name = "upgrade_button_fade_in",
 			start_progress = 0.2,
 			end_progress = 0.4,
-			init = function (arg_16_0, arg_16_1, arg_16_2, arg_16_3)
+			init = function (ui_scenegraph, scenegraph_definition, widgets, params)
 				-- function 16
-				arg_16_2.upgrade_button.alpha_multiplier = 0
+				widgets.upgrade_button.alpha_multiplier = 0
 			end,
-			update = function (arg_17_0, arg_17_1, arg_17_2, arg_17_3, arg_17_4)
+			update = function (ui_scenegraph, scenegraph_definition, widgets, progress, params)
 				-- function 17
-				local easeOutCubic = math.easeOutCubic(1 - arg_17_3)
+				local anim_progress = math.easeOutCubic(1 - progress)
 
-				arg_17_2.upgrade_button.alpha_multiplier = math.min(arg_17_2.upgrade_button.alpha_multiplier, easeOutCubic)
+				widgets.upgrade_button.alpha_multiplier = math.min(widgets.upgrade_button.alpha_multiplier, anim_progress)
 			end,
-			on_complete = function (arg_18_0, arg_18_1, arg_18_2, arg_18_3)
+			on_complete = function (ui_scenegraph, scenegraph_definition, widgets, params)
 				-- function 18
 				return
 			end
@@ -781,17 +790,17 @@ local tbl_17 = {
 			name = "fade_out",
 			start_progress = 0,
 			end_progress = 0.3,
-			init = function (arg_19_0, arg_19_1, arg_19_2, arg_19_3)
+			init = function (ui_scenegraph, scenegraph_definition, widgets, params)
 				-- function 19
-				arg_19_3.render_settings.alpha_multiplier = 1
+				params.render_settings.alpha_multiplier = 1
 			end,
-			update = function (arg_20_0, arg_20_1, arg_20_2, arg_20_3, arg_20_4)
+			update = function (ui_scenegraph, scenegraph_definition, widgets, progress, params)
 				-- function 20
-				local easeOutCubic = math.easeOutCubic(arg_20_3)
+				local anim_progress = math.easeOutCubic(progress)
 
-				arg_20_4.render_settings.alpha_multiplier = 1 - easeOutCubic
+				params.render_settings.alpha_multiplier = 1 - anim_progress
 			end,
-			on_complete = function (arg_21_0, arg_21_1, arg_21_2, arg_21_3)
+			on_complete = function (ui_scenegraph, scenegraph_definition, widgets, params)
 				-- function 21
 				return
 			end
@@ -800,9 +809,9 @@ local tbl_17 = {
 }
 
 return {
-	top_widgets = tbl_16,
-	bottom_widgets = tbl_15,
-	bottom_hdr_widgets = tbl_14,
-	scenegraph_definition = tbl_4,
-	animation_definitions = tbl_17
+	top_widgets = top_widgets,
+	bottom_widgets = bottom_widgets,
+	bottom_hdr_widgets = bottom_hdr_widgets,
+	scenegraph_definition = scenegraph_definition,
+	animation_definitions = animation_definitions
 }

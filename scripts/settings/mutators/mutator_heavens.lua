@@ -4,217 +4,241 @@ return {
 	description = "weaves_heavens_mutator_desc",
 	display_name = "weaves_heavens_mutator_name",
 	icon = "mutator_icon_heavens_lightning",
-	spawn_lightning_strike_unit = function (self)
+	spawn_lightning_strike_unit = function (data)
 		-- function 1
-		table.clear(self.units)
+		table.clear(data.units)
 
-		for k, v in pairs(Managers.player:players()) do
-			local player_unit = v.player_unit
+		for _, player in pairs(Managers.player:players()) do
+			local player_unit = player.player_unit
 
-			if not Unit.alive(player_unit) then
-				self.extension_init_data.area_damage_system.follow_unit = player_unit
+			if Unit.alive(player_unit) then
+				data.extension_init_data.area_damage_system.follow_unit = player_unit
 
-				local spawn_network_unit = Managers.state.unit_spawner:spawn_network_unit(self.decal_unit_name, "timed_explosion_unit", self.extension_init_data, Unit.local_position(player_unit, 0))
-				local side = Managers.state.side
-				local side_id = side:get_side_from_name("neutral").side_id
+				local unit = Managers.state.unit_spawner:spawn_network_unit(data.decal_unit_name, "timed_explosion_unit", data.extension_init_data, Unit.local_position(player_unit, 0))
+				local side_manager = Managers.state.side
+				local neutral_side = side_manager:get_side_from_name("neutral")
+				local side_id = neutral_side.side_id
 
-				side:add_unit_to_side(spawn_network_unit, side_id)
-				self.audio_system:play_audio_unit_event("Play_winds_heavens_gameplay_spawn", spawn_network_unit)
+				side_manager:add_unit_to_side(unit, side_id)
+				data.audio_system:play_audio_unit_event("Play_winds_heavens_gameplay_spawn", unit)
 
-				self.units[#self.units + 1] = spawn_network_unit
+				data.units[#data.units + 1] = unit
 			end
 
-			self.lock_played = false
-			self.charge_played = false
-			self.hit_played = false
-			self.bots_alerted = false
+			data.lock_played = false
+			data.charge_played = false
+			data.hit_played = false
+			data.bots_alerted = false
 		end
 	end,
-	server_start_function = function (arg_2_0, arg_2_1)
+	server_start_function = function (context, data)
 		-- function 2
 		local get_wind_strength = Managers.weave:get_wind_strength()
 
-		get_wind_strength = get_wind_strength or 1
+		if not get_wind_strength then
+			-- Nothing
+		end
 
-		local get_active_wind_settings = Managers.weave:get_active_wind_settings()
-		local get_difficulty = Managers.state.difficulty:get_difficulty()
+		get_wind_strength = 1
 
-		arg_2_1.follow_time = get_active_wind_settings.timed_explosion_extension_settings.follow_time[get_difficulty][get_wind_strength]
-		arg_2_1.time_to_explode = get_active_wind_settings.timed_explosion_extension_settings.time_to_explode[get_difficulty][get_wind_strength]
-		arg_2_1.spawn_rate = get_active_wind_settings.spawn_rate[get_difficulty][get_wind_strength]
-		arg_2_1.last_spawn_time = nil
-		arg_2_1.initial_spawn_delay = 5
-		arg_2_1.units = {}
-		arg_2_1.decal_unit_name = "units/decals/decal_heavens_01"
-		arg_2_1.audio_system = Managers.state.entity:system("audio_system")
-		arg_2_1.extension_init_data = {
+		local wind_strength = get_wind_strength
+
+		::label_2_0::
+
+		local mutator_settings = Managers.weave:get_active_wind_settings()
+		local difficulty_name = Managers.state.difficulty:get_difficulty()
+
+		data.follow_time = mutator_settings.timed_explosion_extension_settings.follow_time[difficulty_name][wind_strength]
+		data.time_to_explode = mutator_settings.timed_explosion_extension_settings.time_to_explode[difficulty_name][wind_strength]
+		data.spawn_rate = mutator_settings.spawn_rate[difficulty_name][wind_strength]
+		data.last_spawn_time = nil
+		data.initial_spawn_delay = 5
+		data.units = {}
+		data.decal_unit_name = "units/decals/decal_heavens_01"
+		data.audio_system = Managers.state.entity:system("audio_system")
+		data.extension_init_data = {
 			area_damage_system = {
 				explosion_template_name = "lightning_strike"
 			}
 		}
-		arg_2_1.boss_lightning_challenge = {}
-		arg_2_1.boss_lightning_challenge_counter = 0
+		data.boss_lightning_challenge = {}
+		data.boss_lightning_challenge_counter = 0
 
-		local system = Managers.state.entity:system("ai_system")
+		local ai_system = Managers.state.entity:system("ai_system")
 
-		arg_2_1.ai_system = system
+		data.ai_system = ai_system
 
-		local _nav_cost_map_id = arg_2_1._nav_cost_map_id
+		local _nav_cost_map_id = data._nav_cost_map_id
 
-		_nav_cost_map_id = _nav_cost_map_id or system:create_nav_cost_map("mutator_heavens_zone", 4)
-		arg_2_1._nav_cost_map_id = _nav_cost_map_id
-		arg_2_1._nav_cost_volume_ids = {}
-		arg_2_1._nav_cost_radius = get_active_wind_settings.radius[get_difficulty][get_wind_strength]
+		_nav_cost_map_id = not not _nav_cost_map_id or not not ai_system:create_nav_cost_map("mutator_heavens_zone", 4)
+		data._nav_cost_map_id = _nav_cost_map_id
+		data._nav_cost_volume_ids = {}
+		data._nav_cost_radius = mutator_settings.radius[difficulty_name][wind_strength]
 	end,
-	server_stop_function = function (arg_3_0, arg_3_1, arg_3_2)
+	server_stop_function = function (context, data, is_destroy)
 		-- function 3
-		arg_3_1._nav_cost_map_id = nil
+		data._nav_cost_map_id = nil
 	end,
-	server_ai_killed_function = function (arg_4_0, arg_4_1, arg_4_2, arg_4_3, arg_4_4, arg_4_5)
+	server_ai_killed_function = function (context, data, killed_unit, killer_unit, death_data, killing_blow_data)
 		-- function 4
 		if ScorpionSeasonalSettings.current_season_id == 1 then
-			if not (arg_4_1.boss_lightning_challenge_counter > 0) or not arg_4_1.boss_lightning_challenge[arg_4_2] then
-				local str = "season_1"
-				local str_2 = "scorpion_weaves_heavens_season_1"
-				local var_4_2 = NetworkLookup.statistics_group_name[str]
-				local var_4_3 = NetworkLookup.statistics[str_2]
-				local statistics_db = Managers.player:statistics_db()
-				local stats_id = Managers.player:local_player():stats_id()
+			if data.boss_lightning_challenge_counter > 0 then
+				local boss_killed_only_by_lightning = data.boss_lightning_challenge[killed_unit]
 
-				statistics_db:increment_stat(stats_id, str, str_2)
+				if boss_killed_only_by_lightning then
+					local stat_group_name = "season_1"
+					local stat_name = "scorpion_weaves_heavens_season_1"
+					local stat_group_index = NetworkLookup.statistics_group_name[stat_group_name]
+					local stat_name_index = NetworkLookup.statistics[stat_name]
+					local statistics_db = Managers.player:statistics_db()
+					local local_player = Managers.player:local_player()
+					local stats_id = local_player:stats_id()
 
-				arg_4_1.boss_lightning_challenge_counter = 0
+					statistics_db:increment_stat(stats_id, stat_group_name, stat_name)
 
-				Managers.state.network.network_transmit:send_rpc_clients("rpc_increment_stat_group", var_4_2, var_4_3)
+					data.boss_lightning_challenge_counter = 0
+
+					Managers.state.network.network_transmit:send_rpc_clients("rpc_increment_stat_group", stat_group_index, stat_name_index)
+				end
 			end
 		else
-			arg_4_1.boss_lightning_challenge_counter = 0
+			data.boss_lightning_challenge_counter = 0
 		end
 	end,
-	server_ai_hit_by_player_function = function (arg_5_0, arg_5_1, arg_5_2, arg_5_3, arg_5_4)
+	server_ai_hit_by_player_function = function (context, data, hit_unit, attacker_unit, hit_data)
 		-- function 5
-		if not (arg_5_1.boss_lightning_challenge_counter > 0) or not arg_5_1.boss_lightning_challenge[arg_5_2] then
-			local is_player_unit = Managers.player:is_player_unit(arg_5_3)
-			local var_5_1 = arg_5_4[DamageDataIndex.DAMAGE_AMOUNT]
+		if data.boss_lightning_challenge_counter > 0 then
+			local is_boss = data.boss_lightning_challenge[hit_unit]
 
-			if not (not is_player_unit and not (var_5_1 > 0)) then
-				arg_5_1.boss_lightning_challenge[arg_5_2] = nil
-				arg_5_1.boss_lightning_challenge_counter = arg_5_1.boss_lightning_challenge_counter - 1
+			if is_boss then
+				local player_unit = Managers.player:is_player_unit(attacker_unit)
+				local hit_score = hit_data[DamageDataIndex.DAMAGE_AMOUNT]
+
+				if player_unit and hit_score > 0 then
+					data.boss_lightning_challenge[hit_unit] = nil
+					data.boss_lightning_challenge_counter = data.boss_lightning_challenge_counter - 1
+				end
 			end
 		end
 	end,
-	server_ai_spawned_function = function (arg_6_0, arg_6_1, arg_6_2)
+	server_ai_spawned_function = function (context, data, spawned_unit)
 		-- function 6
 		local alive_bosses = Managers.state.conflict:alive_bosses()
 
-		if not alive_bosses and not (#alive_bosses > arg_6_1.boss_lightning_challenge_counter) or not BLACKBOARDS[arg_6_2].breed.boss then
-			arg_6_1.boss_lightning_challenge[arg_6_2] = true
-			arg_6_1.boss_lightning_challenge_counter = arg_6_1.boss_lightning_challenge_counter + 1
+		if alive_bosses and #alive_bosses > data.boss_lightning_challenge_counter then
+			local blackboard = BLACKBOARDS[spawned_unit]
+			local breed = blackboard.breed
+			local is_boss = breed.boss
+
+			if is_boss then
+				data.boss_lightning_challenge[spawned_unit] = true
+				data.boss_lightning_challenge_counter = data.boss_lightning_challenge_counter + 1
+			end
 		end
 	end,
-	server_players_left_safe_zone = function (arg_7_0, arg_7_1)
+	server_players_left_safe_zone = function (context, data)
 		-- function 7
-		arg_7_1.has_left_safe_zone = true
+		data.has_left_safe_zone = true
 	end,
-	server_update_function = function (arg_8_0, arg_8_1, arg_8_2, arg_8_3)
+	server_update_function = function (context, data, dt, t)
 		-- function 8
-		if not (not Managers.state.network and Managers.state.network:game()) then
+		if not Managers.state.network or not Managers.state.network:game() then
 			return
 		end
 
-		if not arg_8_1.has_left_safe_zone then
+		if not data.has_left_safe_zone then
 			return
 		end
 
-		local template = arg_8_1.template
-		local last_spawn_time = arg_8_1.last_spawn_time
-		local spawn_rate = arg_8_1.spawn_rate
+		local template = data.template
+		local last_spawn_time = data.last_spawn_time
+		local spawn_rate = data.spawn_rate
 
-		if #arg_8_1.units > 0 then
-			if not arg_8_1.lock_played then
-				if arg_8_3 > last_spawn_time + arg_8_1.follow_time then
-					arg_8_1.lock_played = true
+		if #data.units > 0 then
+			if not data.lock_played then
+				if t > last_spawn_time + data.follow_time then
+					data.lock_played = true
 
-					for i = 1, #arg_8_1.units do
-						local var_8_3 = arg_8_1.units[i]
+					for i = 1, #data.units do
+						local unit = data.units[i]
 
-						if not Unit.alive(var_8_3) then
-							arg_8_1.audio_system:play_audio_unit_event("Play_winds_heavens_gameplay_lock", var_8_3)
+						if Unit.alive(unit) then
+							data.audio_system:play_audio_unit_event("Play_winds_heavens_gameplay_lock", unit)
 
-							if not arg_8_1._nav_cost_map_id then
-								local var_8_4 = POSITION_LOOKUP[var_8_3]
-								local add_nav_cost_map_sphere_volume = arg_8_1.ai_system:add_nav_cost_map_sphere_volume(var_8_4, arg_8_1._nav_cost_radius, arg_8_1._nav_cost_map_id)
+							if data._nav_cost_map_id then
+								local position = POSITION_LOOKUP[unit]
+								local nav_cost_map_volume_id = data.ai_system:add_nav_cost_map_sphere_volume(position, data._nav_cost_radius, data._nav_cost_map_id)
 
-								table.insert(arg_8_1._nav_cost_volume_ids, add_nav_cost_map_sphere_volume)
+								table.insert(data._nav_cost_volume_ids, nav_cost_map_volume_id)
 							end
 						end
 					end
 				end
-			elseif arg_8_3 < last_spawn_time + arg_8_1.follow_time + arg_8_1.time_to_explode then
-				if not (not (arg_8_3 > last_spawn_time + arg_8_1.follow_time + arg_8_1.time_to_explode - 3) or arg_8_1.bots_alerted) then
-					local var_8_6 = Vector3(0, arg_8_1._nav_cost_radius, arg_8_1._nav_cost_radius * 0.5)
-					local system = Managers.state.entity:system("ai_bot_group_system")
+			elseif t < last_spawn_time + data.follow_time + data.time_to_explode then
+				if t > last_spawn_time + data.follow_time + data.time_to_explode - 3 and not data.bots_alerted then
+					local aoe_thread_size = Vector3(0, data._nav_cost_radius, data._nav_cost_radius * 0.5)
+					local bot_group_system = Managers.state.entity:system("ai_bot_group_system")
 
-					for j = 1, #arg_8_1.units do
-						local var_8_8 = arg_8_1.units[j]
+					for i = 1, #data.units do
+						local unit = data.units[i]
 
-						if not Unit.alive(var_8_8) then
-							local var_8_9 = POSITION_LOOKUP[var_8_8]
+						if Unit.alive(unit) then
+							local position = POSITION_LOOKUP[unit]
 
-							system:aoe_threat_created(var_8_9, "cylinder", var_8_6, nil, 3, "Heavens")
+							bot_group_system:aoe_threat_created(position, "cylinder", aoe_thread_size, nil, 3, "Heavens")
 						end
 					end
 
-					arg_8_1.bots_alerted = true
+					data.bots_alerted = true
 				end
 
-				if arg_8_3 > last_spawn_time + arg_8_1.follow_time + arg_8_1.time_to_explode - 1.5 then
-					if not arg_8_1.charge_played then
-						arg_8_1.charge_played = true
+				if t > last_spawn_time + data.follow_time + data.time_to_explode - 1.5 then
+					if not data.charge_played then
+						data.charge_played = true
 
-						for k = 1, #arg_8_1.units do
-							local var_8_10 = arg_8_1.units[k]
+						for i = 1, #data.units do
+							local unit = data.units[i]
 
-							if not Unit.alive(var_8_10) then
-								arg_8_1.audio_system:play_audio_unit_event("Play_winds_heavens_gamepay_charge", var_8_10)
+							if Unit.alive(unit) then
+								data.audio_system:play_audio_unit_event("Play_winds_heavens_gamepay_charge", unit)
 							end
 						end
 					end
 
-					local num = 100 - math.abs(last_spawn_time + arg_8_1.follow_time + arg_8_1.time_to_explode - arg_8_3) / 1.5 * 100
+					local parameter = 100 - math.abs(last_spawn_time + data.follow_time + data.time_to_explode - t) / 1.5 * 100
 					local players = Managers.player:players()
 
-					for k_2, v in pairs(players) do
-						Managers.state.network.network_transmit:send_rpc("rpc_client_audio_set_global_parameter", v.peer_id, 6, num)
+					for _, player in pairs(players) do
+						Managers.state.network.network_transmit:send_rpc("rpc_client_audio_set_global_parameter", player.peer_id, 6, parameter)
 					end
 				end
-			elseif not (arg_8_1.hit_played or not (arg_8_3 > last_spawn_time + arg_8_1.follow_time + arg_8_1.time_to_explode)) then
-				arg_8_1.hit_played = true
+			elseif not data.hit_played and t > last_spawn_time + data.follow_time + data.time_to_explode then
+				data.hit_played = true
 
-				for i5 = 1, #arg_8_1.units do
-					local var_8_13 = arg_8_1.units[i5]
+				for i = 1, #data.units do
+					local unit = data.units[i]
 
-					if not Unit.alive(var_8_13) then
-						arg_8_1.audio_system:play_audio_unit_event("Play_winds_heavens_gameplay_hit", var_8_13)
+					if Unit.alive(unit) then
+						data.audio_system:play_audio_unit_event("Play_winds_heavens_gameplay_hit", unit)
 					end
 				end
 
-				for i6 = 1, #arg_8_1._nav_cost_volume_ids do
-					local var_8_14 = arg_8_1._nav_cost_volume_ids[i6]
+				for i = 1, #data._nav_cost_volume_ids do
+					local volume_id = data._nav_cost_volume_ids[i]
 
-					arg_8_1.ai_system:remove_nav_cost_map_volume(var_8_14, arg_8_1._nav_cost_map_id)
+					data.ai_system:remove_nav_cost_map_volume(volume_id, data._nav_cost_map_id)
 				end
 
-				table.clear(arg_8_1._nav_cost_volume_ids)
+				table.clear(data._nav_cost_volume_ids)
 			end
 		end
 
-		if not (not last_spawn_time and not (arg_8_3 > last_spawn_time + spawn_rate)) then
-			template.spawn_lightning_strike_unit(arg_8_1)
+		if last_spawn_time and t > last_spawn_time + spawn_rate then
+			template.spawn_lightning_strike_unit(data)
 
-			arg_8_1.last_spawn_time = arg_8_3
+			data.last_spawn_time = t
 		elseif last_spawn_time == nil then
-			arg_8_1.last_spawn_time = arg_8_3 + arg_8_1.initial_spawn_delay - spawn_rate
+			data.last_spawn_time = t + data.initial_spawn_delay - spawn_rate
 		end
 	end
 }

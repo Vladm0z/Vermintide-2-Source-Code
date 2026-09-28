@@ -1,6 +1,6 @@
 -- chunkname: @scripts/utils/stagger_types.lua
 
-return {
+local STAGGER_TYPES = {
 	ranged_medium = 5,
 	heavy = 3,
 	weak = 1,
@@ -11,3 +11,5 @@ return {
 	ranged_weak = 4,
 	weakspot = 8
 }
+
+return STAGGER_TYPES

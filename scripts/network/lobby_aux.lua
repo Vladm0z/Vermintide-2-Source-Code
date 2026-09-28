@@ -2,112 +2,152 @@
 
 local LobbyAux = LobbyAux
 
-LobbyAux = LobbyAux or {}
+LobbyAux = not not LobbyAux or not not {}
 LobbyAux = LobbyAux
 
-local function fn()
+local function concatenate_dlcs()
 	-- function 1
-	local var_1_0
+	local concatenate_dlcs_str
 
-	for k, v in pairs(DLCSettings) do
-		var_1_0 = not var_1_0 and var_1_0 .. "__" and ""
-		var_1_0 = var_1_0 .. k
+	for name, _ in pairs(DLCSettings) do
+		concatenate_dlcs_str = (not concatenate_dlcs_str or not (concatenate_dlcs_str .. "__")) and not not ""
+		concatenate_dlcs_str = concatenate_dlcs_str .. name
 	end
 
-	return var_1_0
+	return concatenate_dlcs_str
 end
 
-LobbyAux.create_network_hash = function (arg_2_0, arg_2_1, arg_2_2)
+LobbyAux.create_network_hash = function (config_file_name, project_hash, disable_print)
 	-- function 2
-	local config_hash = Network.config_hash(arg_2_0)
+	local network_hash = Network.config_hash(config_file_name)
 	local settings = Application.settings()
-	local flag = not settings and settings.content_revision
+	local trunk_revision = not not settings and not not settings.content_revision
 	local parameter = Development.parameter("ignore_engine_revision_in_network_hash")
 
-	parameter = parameter or Managers.mechanism:setting("ignore_engine_revision_in_network_hash")
-
-	local flag_2
-
-	flag_2 = not parameter and 0 and Application.build_identifier()
-
-	local var_2_5
-	local network_revision_check_enabled = GameSettingsDevelopment.network_revision_check_enabled
-
-	network_revision_check_enabled = network_revision_check_enabled or flag == nil or flag ~= ""
-
-	local var_2_7
-
-	if not GameSettingsDevelopment.network_concatenated_dlc_check_enabled then
-		var_2_7 = fn()
-
-		if not var_2_7 then
-			-- Nothing
-		end
+	if not parameter then
+		-- Nothing
 	end
 
-	var_2_7 = ""
+	parameter = Managers.mechanism:setting("ignore_engine_revision_in_network_hash")
+
+	local ignore_engine_revision = parameter
 
 	do
-		local lobby_data_version
+		local num
 	end
 
 	::label_2_0::
 
-	if not DEDICATED_SERVER then
-		lobby_data_version = GameServerInternal.lobby_data_version
+	if ignore_engine_revision then
+		num = 0
 
-		if not lobby_data_version then
+		goto label_2_1
+	end
+
+	num = Application.build_identifier()
+
+	local engine_revision = num
+
+	::label_2_1::
+
+	local combined_hash
+	local network_revision_check_enabled = GameSettingsDevelopment.network_revision_check_enabled
+
+	if not network_revision_check_enabled then
+		-- Nothing
+	end
+
+	if trunk_revision == nil or trunk_revision == "" then
+		network_revision_check_enabled = false
+
+		goto label_2_2
+	end
+
+	network_revision_check_enabled = true
+
+	local use_trunk_revision = network_revision_check_enabled
+
+	do
+		local var_2_3
+	end
+
+	::label_2_2::
+
+	if GameSettingsDevelopment.network_concatenated_dlc_check_enabled then
+		var_2_3 = concatenate_dlcs()
+
+		if not var_2_3 then
 			-- Nothing
 		end
 	end
 
-	lobby_data_version = LobbyInternal.lobby_data_version
+	var_2_3 = ""
 
-	::label_2_1::
+	local concatenated_dlc_string = var_2_3
 
-	local count = #NetworkLookup.level_keys
+	do
+		local lobby_data_version_2
+	end
 
-	if not network_revision_check_enabled then
-		fassert(flag, "No trunk_revision even though it needs to exist!")
+	::label_2_3::
 
-		var_2_5 = Application.make_hash(config_hash, flag, flag_2, arg_2_1, var_2_7, lobby_data_version, count)
+	if DEDICATED_SERVER then
+		lobby_data_version_2 = GameServerInternal.lobby_data_version
 
-		if not arg_2_2 then
-			printf("[LobbyAux] Making combined_hash: %s from network_hash=%s, trunk_revision=%s, engine_revision=%s, project_hash=%s, lobby_data_version=%s, num_levels=%s", tostring(var_2_5), tostring(config_hash), tostring(flag), tostring(flag_2), tostring(arg_2_1), tostring(lobby_data_version), tostring(count))
+		if not lobby_data_version_2 then
+			-- Nothing
+		end
+	end
+
+	lobby_data_version_2 = LobbyInternal.lobby_data_version
+
+	local lobby_data_version = lobby_data_version_2
+
+	::label_2_4::
+
+	local num_levels = #NetworkLookup.level_keys
+
+	if use_trunk_revision then
+		fassert(trunk_revision, "No trunk_revision even though it needs to exist!")
+
+		combined_hash = Application.make_hash(network_hash, trunk_revision, engine_revision, project_hash, concatenated_dlc_string, lobby_data_version, num_levels)
+
+		if not disable_print then
+			printf("[LobbyAux] Making combined_hash: %s from network_hash=%s, trunk_revision=%s, engine_revision=%s, project_hash=%s, lobby_data_version=%s, num_levels=%s", tostring(combined_hash), tostring(network_hash), tostring(trunk_revision), tostring(engine_revision), tostring(project_hash), tostring(lobby_data_version), tostring(num_levels))
 		end
 	else
-		var_2_5 = Application.make_hash(config_hash, flag_2, arg_2_1, var_2_7, lobby_data_version, count)
+		combined_hash = Application.make_hash(network_hash, engine_revision, project_hash, concatenated_dlc_string, lobby_data_version, num_levels)
 
-		if not arg_2_2 then
-			printf("[LobbyAux] Making combined_hash: %s from network_hash=%s, engine_revision=%s, project_hash=%s, lobby_data_version=%s, num_levels=%s", tostring(var_2_5), tostring(config_hash), tostring(flag_2), tostring(arg_2_1), tostring(lobby_data_version), tostring(count))
+		if not disable_print then
+			printf("[LobbyAux] Making combined_hash: %s from network_hash=%s, engine_revision=%s, project_hash=%s, lobby_data_version=%s, num_levels=%s", tostring(combined_hash), tostring(network_hash), tostring(engine_revision), tostring(project_hash), tostring(lobby_data_version), tostring(num_levels))
 		end
 	end
 
-	if not (arg_2_2 or IS_CONSOLE) then
-		printf("GameServerAux.create_network_hash network_hash: %s, trunk_revision/content_revision: %s, ignore_engine_revision: %s, engine_revision: %s, , concatenated_dlc_string %s, use_trunk_revision %s, combined_hash %s, lobby_data_version=%s", config_hash, flag, parameter, flag_2, var_2_7, network_revision_check_enabled, var_2_5, tostring(lobby_data_version))
+	if not disable_print and not IS_CONSOLE then
+		printf("GameServerAux.create_network_hash network_hash: %s, trunk_revision/content_revision: %s, ignore_engine_revision: %s, engine_revision: %s, , concatenated_dlc_string %s, use_trunk_revision %s, combined_hash %s, lobby_data_version=%s", network_hash, trunk_revision, ignore_engine_revision, engine_revision, concatenated_dlc_string, use_trunk_revision, combined_hash, tostring(lobby_data_version))
 	end
 
-	return var_2_5
+	return combined_hash
 end
 
 local LobbyFinderState = LobbyFinderState
 
-LobbyFinderState = LobbyFinderState or {}
+LobbyFinderState = not not LobbyFinderState or not not {}
 LobbyFinderState = LobbyFinderState
 LobbyFinderState.SEARCHING = "searching"
 LobbyFinderState.IDLE = "idle"
 
 local LobbyState = LobbyState
 
-LobbyState = LobbyState or {}
+LobbyState = not not LobbyState or not not {}
 LobbyState = LobbyState
 
-if not IS_XB1 then
+if IS_XB1 then
 	LobbyState.WORKING = "working"
 	LobbyState.JOINED = "joined"
 	LobbyState.FAILED = "failed"
 	LobbyState.SHUTDOWN = "shutdown"
-elseif not IS_PS4 then
+elseif IS_PS4 then
 	LobbyState.WAITING_TO_CREATE = "waiting_to_create"
 	LobbyState.CREATING = "creating"
 	LobbyState.JOINING = "joining"
@@ -131,31 +171,31 @@ LobbyGameModes = {
 	"twitch"
 }
 
-local tbl = {}
+local lookup = {}
 
-for k, v in pairs(LobbyGameModes) do
-	tbl[k] = v
-	tbl[v] = k
+for idx, game_mode in pairs(LobbyGameModes) do
+	lookup[idx] = game_mode
+	lookup[game_mode] = idx
 end
 
-LobbyGameModes = tbl
+LobbyGameModes = lookup
 
 local LobbyAux_2 = LobbyAux
-local tbl_2
+local tbl
 
-if not IS_PS4 then
-	tbl_2 = {
+if IS_PS4 then
+	tbl = {
 		"close",
 		"medium",
 		"world"
 	}
 
-	if not tbl_2 then
+	if not tbl then
 		-- Nothing
 	end
 end
 
-tbl_2 = {
+tbl = {
 	"close",
 	"far",
 	"world"
@@ -163,178 +203,201 @@ tbl_2 = {
 
 ::label_0_0::
 
-LobbyAux_2.map_lobby_distance_filter = tbl_2
+LobbyAux_2.map_lobby_distance_filter = tbl
 
-local tbl_3 = {}
+do
+	local next_distance = {}
 
-for k_2 = 1, #LobbyAux.map_lobby_distance_filter do
-	tbl_3[LobbyAux.map_lobby_distance_filter[k_2]] = LobbyAux.map_lobby_distance_filter[k_2 + 1]
+	for i = 1, #LobbyAux.map_lobby_distance_filter do
+		local filter_name = LobbyAux.map_lobby_distance_filter[i]
+
+		next_distance[filter_name] = LobbyAux.map_lobby_distance_filter[i + 1]
+	end
+
+	LobbyAux.next_distance_filter = next_distance
 end
 
-LobbyAux.next_distance_filter = tbl_3
-
-LobbyAux.get_next_lobby_distance_filter = function (arg_3_0, arg_3_1)
+LobbyAux.get_next_lobby_distance_filter = function (current_filter, max_filter)
 	-- function 3
-	if arg_3_0 == arg_3_1 then
+	if current_filter == max_filter then
 		return
 	end
 
-	return LobbyAux.next_distance_filter[arg_3_0]
+	local next_filter_name = LobbyAux.next_distance_filter[current_filter]
+
+	return next_filter_name
 end
 
 LobbyAux.get_unique_server_name = function ()
 	-- function 4
-	local parameter = Development.parameter("unique_server_name")
+	local unique_name = Development.parameter("unique_server_name")
 
-	if not (not parameter and parameter ~= "") then
-		if not rawget(_G, "Steam") then
-			parameter = Steam.user_name()
-		elseif not IS_XB1 then
-			parameter = LobbyInternal.SESSION_NAME
+	if not unique_name or unique_name == "" then
+		if rawget(_G, "Steam") then
+			unique_name = Steam.user_name()
+		elseif IS_XB1 then
+			unique_name = LobbyInternal.SESSION_NAME
 		else
-			parameter = Network.peer_id()
+			unique_name = Network.peer_id()
 		end
 	end
 
-	return parameter
+	return unique_name
 end
 
 LobbyAux.MAX_CUSTOM_SERVER_NAME_LENGTH = 32
 
-local function fn_2(self)
+local function level_exists_locally(lobby)
 	-- function 5
-	local selected_mission_id = self.selected_mission_id
+	local selected_mission_id = lobby.selected_mission_id
 
-	selected_mission_id = selected_mission_id or self.mission_id
+	if not selected_mission_id then
+		-- Nothing
+	end
 
-	local flag = not selected_mission_id and rawget(NetworkLookup.mission_ids, selected_mission_id)
+	selected_mission_id = lobby.mission_id
 
-	flag = flag or not WeaveSettings.templates[selected_mission_id] or true
+	local mission_id = selected_mission_id
 
-	return flag
+	::label_5_0::
+
+	local level_exists_locally = not not mission_id and not not rawget(NetworkLookup.mission_ids, mission_id)
+
+	level_exists_locally = (not not level_exists_locally or not not WeaveSettings.templates[mission_id]) and not not true
+
+	return level_exists_locally
 end
 
-local function fn_3(self)
+local function difficulty_exists_locally(lobby)
 	-- function 6
-	local difficulty = self.difficulty
+	local difficulty = lobby.difficulty
 
-	if not (not difficulty and DifficultySettings[difficulty]) then
+	if not difficulty or not DifficultySettings[difficulty] then
 		return false
 	end
 
 	return true
 end
 
-local function fn_4(self)
+local function matchmaking_type_exists_locally(lobby)
 	-- function 7
-	local var_7_0 = tonumber(self.matchmaking_type)
+	local matchmaking_type = tonumber(lobby.matchmaking_type)
 
-	if not (not var_7_0 and NetworkLookup.matchmaking_types[var_7_0]) then
+	if not matchmaking_type or not NetworkLookup.matchmaking_types[matchmaking_type] then
 		return false
 	end
 
 	return true
 end
 
-local function fn_5(self)
+local function mechanism_exists_locally(lobby)
 	-- function 8
-	local mechanism = self.mechanism
+	local mechanism = lobby.mechanism
 
-	if not (not mechanism and MechanismSettings[mechanism]) then
+	if not mechanism or not MechanismSettings[mechanism] then
 		return false
 	end
 
 	return true
 end
 
-LobbyAux.verify_lobby_data = function (arg_9_0)
+LobbyAux.verify_lobby_data = function (lobby)
 	-- function 9
-	if not fn_2(arg_9_0) then
+	if not level_exists_locally(lobby) then
 		return false
 	end
 
-	if not fn_3(arg_9_0) then
+	if not difficulty_exists_locally(lobby) then
 		return false
 	end
 
-	if not fn_4(arg_9_0) then
+	if not matchmaking_type_exists_locally(lobby) then
 		return false
 	end
 
-	if not fn_5(arg_9_0) then
+	if not mechanism_exists_locally(lobby) then
 		return false
 	end
 
 	return true
 end
 
-local str = ";"
-local str_2 = ","
-local str_3 = "="
-local num = 1
-local num_2 = 2
+local LOBBY_SLOT_PARTY_SEPARATOR = ";"
+local LOBBY_SLOT_PEER_SEPARATOR = ","
+local LOBBY_SLOT_PEER_DATA_SEPARATOR = "="
+local PEER_DATA_PEER_ID_INDEX = 1
+local PEER_DATA_PROFILE_ID_INDEX = 2
 
-LobbyAux.serialize_lobby_reservation_data = function (self)
+LobbyAux.serialize_lobby_reservation_data = function (peer_data_by_party)
 	-- function 10
-	local tbl = {}
+	local parties = {}
 
-	for i = 1, #self do
-		local var_10_1 = self[i]
+	for party_id = 1, #peer_data_by_party do
+		local peer_datas = peer_data_by_party[party_id]
 
-		for j = 1, #var_10_1 do
-			local var_10_2 = var_10_1[j]
-			local peer_id = var_10_2.peer_id
-			local profile_index = var_10_2.profile_index
+		for i = 1, #peer_datas do
+			local peer_data = peer_datas[i]
+			local peer_id = peer_data.peer_id
+			local profile_index_2 = peer_data.profile_index
 
-			profile_index = profile_index or -1
-			var_10_1[j] = string.format("%s%s%d", peer_id, str_3, profile_index)
-		end
-
-		tbl[i] = table.concat(var_10_1, str_2)
-	end
-
-	local concat = table.concat(tbl, str)
-
-	if concat == "" then
-		concat = not rawget(_G, "LobbyInternal") and not LobbyInternal.default_lobby_data and LobbyInternal.default_lobby_data.reserved_profiles and ""
-	end
-
-	return concat
-end
-
-LobbyAux.deserialize_lobby_reservation_data = function (self, arg_11_1)
-	-- function 11
-	local tbl = {}
-	local reserved_profiles = self.reserved_profiles
-
-	reserved_profiles = (reserved_profiles == "" or not reserved_profiles or not rawget(_G, "LobbyInternal")) and (not LobbyInternal.default_lobby_data or LobbyInternal.default_lobby_data.reserved_profiles or "")
-
-	local split = string.split(reserved_profiles, str)
-
-	for i = 1, #split do
-		local tbl_2 = {}
-
-		tbl[i] = tbl_2
-
-		local split_2 = string.split(split[i], str_2)
-
-		for j = 1, #split_2 do
-			local split_3 = string.split(split_2[j], str_3)
-			local var_11_6 = split_3[num]
-			local var_11_7 = tonumber(split_3[num_2])
-
-			if var_11_7 == -1 then
-				var_11_7 = nil
+			if not profile_index_2 then
+				-- Nothing
 			end
 
-			if var_11_7 or not arg_11_1 then
-				tbl_2[j] = {
-					peer_id = var_11_6,
-					profile_index = var_11_7
+			profile_index_2 = -1
+
+			local profile_index = profile_index_2
+
+			::label_10_0::
+
+			peer_datas[i] = string.format("%s%s%d", peer_id, LOBBY_SLOT_PEER_DATA_SEPARATOR, profile_index)
+		end
+
+		parties[party_id] = table.concat(peer_datas, LOBBY_SLOT_PEER_SEPARATOR)
+	end
+
+	local packed_reservation_data = table.concat(parties, LOBBY_SLOT_PARTY_SEPARATOR)
+
+	if packed_reservation_data == "" then
+		packed_reservation_data = (not rawget(_G, "LobbyInternal") or not LobbyInternal.default_lobby_data or not LobbyInternal.default_lobby_data.reserved_profiles) and not not ""
+	end
+
+	return packed_reservation_data
+end
+
+LobbyAux.deserialize_lobby_reservation_data = function (lobby_data, include_unreserved_peers)
+	-- function 11
+	local reservation_data = {}
+	local reserved_profiles = lobby_data.reserved_profiles
+
+	reserved_profiles = (reserved_profiles == "" or not reserved_profiles) and (not rawget(_G, "LobbyInternal") or not LobbyInternal.default_lobby_data or not LobbyInternal.default_lobby_data.reserved_profiles) and not not ""
+
+	local by_party = string.split(reserved_profiles, LOBBY_SLOT_PARTY_SEPARATOR)
+
+	for party_id = 1, #by_party do
+		local peer_datas = {}
+
+		reservation_data[party_id] = peer_datas
+
+		local by_peer = string.split(by_party[party_id], LOBBY_SLOT_PEER_SEPARATOR)
+
+		for peer_i = 1, #by_peer do
+			local peer_data = string.split(by_peer[peer_i], LOBBY_SLOT_PEER_DATA_SEPARATOR)
+			local peer_id = peer_data[PEER_DATA_PEER_ID_INDEX]
+			local profile_index = tonumber(peer_data[PEER_DATA_PROFILE_ID_INDEX])
+
+			if profile_index == -1 then
+				profile_index = nil
+			end
+
+			if profile_index or include_unreserved_peers then
+				peer_datas[peer_i] = {
+					peer_id = peer_id,
+					profile_index = profile_index
 				}
 			end
 		end
 	end
 
-	return tbl
+	return reservation_data
 end

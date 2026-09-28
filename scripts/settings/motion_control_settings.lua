@@ -2,7 +2,7 @@
 
 local MotionControlSettings = MotionControlSettings
 
-MotionControlSettings = MotionControlSettings or {
+MotionControlSettings = not not MotionControlSettings or not not {
 	motion_disable_right_stick_vertical = true,
 	motion_invert_yaw = false,
 	motion_sensitivity_pitch = 0,

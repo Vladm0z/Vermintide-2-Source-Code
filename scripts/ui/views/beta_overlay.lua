@@ -3,43 +3,44 @@
 local script_data = script_data
 local text_watermark = script_data.text_watermark
 
-text_watermark = text_watermark or script_data.settings.text_watermark
+text_watermark = not not text_watermark or not not script_data.settings.text_watermark
 script_data.text_watermark = text_watermark
 
 local script_data_2 = script_data
 local qr_watermark = script_data.qr_watermark
 
-qr_watermark = qr_watermark or script_data.settings.qr_watermark
+qr_watermark = not not qr_watermark or not not script_data.settings.qr_watermark
 script_data_2.qr_watermark = qr_watermark
 
-local Vector3 = Vector3
-local Gui = Gui
+local Vector3, Gui = Vector3, Gui
 
 BetaOverlay = class(BetaOverlay)
 
-local flag = true
+local DO_RELOAD = true
 
-BetaOverlay.init = function (self, arg_1_1)
+BetaOverlay.init = function (self, world)
 	-- function 1
-	flag = true
+	DO_RELOAD = true
 
-	local world = Managers.world:world("top_ingame_view")
+	local top_world = Managers.world:world("top_ingame_view")
+	local label = script_data.text_watermark
 
-	self._label, self._world = script_data.text_watermark, arg_1_1
+	self._world = world
+	self._label = label
 	self._watermark = script_data.watermark
 	self._watermark_condition = script_data.watermark_condition
 
-	if not script_data.qr_watermark then
+	if script_data.qr_watermark then
 		self._data = self:_generate_qr()
 	end
 
 	self._mechanism_key = Managers.mechanism:current_mechanism_name()
 
-	local text_watermark_disclaimer = script_data.text_watermark_disclaimer
-	local flag_2
+	local disclaimer = script_data.text_watermark_disclaimer
+	local flag
 
-	flag_2 = type(text_watermark_disclaimer) == "string" or not "May not be representative of final product." or text_watermark_disclaimer
-	self._disclaimer = flag_2
+	flag = (type(disclaimer) == "string" or not "May not be representative of final product.") and not not disclaimer
+	self._disclaimer = flag
 
 	print("beta overlay got watermark:", self._watermark, self._label, self._disclaimer)
 end
@@ -60,79 +61,76 @@ BetaOverlay.destroy = function (self)
 	return self:_destroy_gui()
 end
 
-BetaOverlay._render_qr = function (self, arg_4_1, arg_4_2, arg_4_3, arg_4_4, arg_4_5, arg_4_6, arg_4_7)
+BetaOverlay._render_qr = function (self, screen, scale, pos_x, pos_y, base_box_size, white, black)
 	-- function 4
-	local _gui = self._gui
-	local _data = self._data
-	local count = #_data
-	local count_2 = #_data[1]
+	local gui = self._gui
+	local data = self._data
+	local rows, cols = #data, #data[1]
 
-	arg_4_6 = arg_4_6 or Color(255, 255, 255)
-	arg_4_7 = arg_4_7 or Color(0, 0, 0)
+	white = not not white or not not Color(255, 255, 255)
+	black = not not black or not not Color(0, 0, 0)
 
-	local num = arg_4_2 * (arg_4_5 or 10)
-	local var_4_5 = Vector2(num, num)
-	local var_4_6 = Vector3(0, 0, 1000)
-	local num_2 = (arg_4_1[1] - (count_2 + 2) * num) * arg_4_3
-	local num_3 = (arg_4_1[2] - (count + 2) * num) * arg_4_4
+	local box_size = scale * (not not base_box_size or not not 10)
+	local size = Vector2(box_size, box_size)
+	local pos = Vector3(0, 0, 1000)
+	local offset_x = (screen[1] - (cols + 2) * box_size) * pos_x
+	local offset_y = (screen[2] - (rows + 2) * box_size) * pos_y
 
-	for i = 1, count do
-		local var_4_9 = _data[i]
+	for y = 1, rows do
+		local row = data[y]
 
-		Vector3.set_y(var_4_6, num_3 + i * num)
+		Vector3.set_y(pos, offset_y + y * box_size)
 
-		for j = 1, count do
-			local var_4_10 = arg_4_7
+		for x = 1, rows do
+			local color = black
 
-			if var_4_9[j] < 0 then
-				var_4_10 = arg_4_6
+			if row[x] < 0 then
+				color = white
 			end
 
-			Vector3.set_x(var_4_6, num_2 + j * num)
-			Gui.rect(_gui, var_4_6, var_4_5, var_4_10)
+			Vector3.set_x(pos, offset_x + x * box_size)
+			Gui.rect(gui, pos, size, color)
 		end
 	end
 end
 
-BetaOverlay._render_watermark = function (self, arg_5_1, arg_5_2)
+BetaOverlay._render_watermark = function (self, screen, scale)
 	-- function 5
-	local _gui = self._gui
-	local _label = self._label
-	local str = "materials/fonts/gw_head"
-	local num = 65 * arg_5_2
-	local text_extents, var_5_5, var_5_6 = Gui.text_extents(_gui, _label, str, num)
-	local var_5_7 = Vector3(arg_5_1[1] - var_5_6.x - arg_5_2 * 35, arg_5_1[2] - arg_5_2 * 116, 1000)
+	local gui = self._gui
+	local label = self._label
+	local font, font_size = "materials/fonts/gw_head", 65 * scale
+	local _, _, car = Gui.text_extents(gui, label, font, font_size)
+	local pos = Vector3(screen[1] - car.x - scale * 35, screen[2] - scale * 116, 1000)
 
-	if not self._label_id then
-		Gui.update_text(_gui, self._label_id, _label)
+	if self._label_id then
+		Gui.update_text(gui, self._label_id, label)
 	else
-		self._label_id = Gui.text(_gui, _label, str, num, nil, var_5_7, Color(100, 255, 255, 255))
+		self._label_id = Gui.text(gui, label, font, font_size, nil, pos, Color(100, 255, 255, 255))
 	end
 end
 
-BetaOverlay._render_disclaimer = function (self, arg_6_1, arg_6_2)
+BetaOverlay._render_disclaimer = function (self, screen, scale)
 	-- function 6
-	local _gui = self._gui
-	local _disclaimer = self._disclaimer
-	local str = "materials/fonts/gw_head"
-	local num = 35 * arg_6_2
-	local text_extents, var_6_5, var_6_6 = Gui.text_extents(_gui, _disclaimer, str, num)
-	local var_6_7 = Vector3(arg_6_1[1] - var_6_6.x - arg_6_2 * 35, arg_6_1[2] - arg_6_2 * 150, 1000)
+	local gui = self._gui
+	local label = self._disclaimer
+	local font, font_size = "materials/fonts/gw_head", 35 * scale
+	local _, _, car = Gui.text_extents(gui, label, font, font_size)
+	local pos = Vector3(screen[1] - car.x - scale * 35, screen[2] - scale * 150, 1000)
 
-	if not self._disclaimer_id then
-		Gui.update_text(_gui, self._disclaimer_id, _disclaimer)
+	if self._disclaimer_id then
+		Gui.update_text(gui, self._disclaimer_id, label)
 	else
-		self._disclaimer_id = Gui.text(_gui, _disclaimer, str, num, nil, var_6_7, Color(100, 255, 255, 255))
+		self._disclaimer_id = Gui.text(gui, label, font, font_size, nil, pos, Color(100, 255, 255, 255))
 	end
 end
 
-BetaOverlay._generate_qr = function (arg_7_0)
+BetaOverlay._generate_qr = function (self)
 	-- function 7
 	local format = string.format
 	local str = "%16s:%8s:%12s:%08x"
 	local user_id
 
-	if not HAS_STEAM then
+	if HAS_STEAM then
 		user_id = Steam.user_id()
 
 		if not user_id then
@@ -146,31 +144,32 @@ BetaOverlay._generate_qr = function (arg_7_0)
 
 	local content_revision = script_data.settings.content_revision
 
-	content_revision = content_revision or ""
+	content_revision = not not content_revision or not not ""
 
 	local build_identifier = script_data.build_identifier
 
-	build_identifier = build_identifier or ""
+	build_identifier = not not build_identifier or not not ""
 
-	local gsub = format(str, user_id, content_revision, build_identifier, os.time()):gsub(" ", "0")
-	local qrcode, var_7_7 = dofile("scripts/ui/qr/qrencode").qrcode(gsub)
+	local message = format(str, user_id, content_revision, build_identifier, os.time()):gsub(" ", "0")
+	local QR = dofile("scripts/ui/qr/qrencode")
+	local ok, data_or_err = QR.qrcode(message)
 
-	if not qrcode then
-		return var_7_7
+	if ok then
+		return data_or_err
 	end
 
-	error(var_7_7)
+	error(data_or_err)
 end
 
-local tbl = {
-	default = function (self)
+local watermarks = {
+	default = function (parent)
 		-- function 8
-		self:_create_gui()
+		parent:_create_gui()
 	end,
-	mechanism = function (self)
+	mechanism = function (parent)
 		-- function 9
-		if self._mechanism_key == self._watermark_condition then
-			self:_create_gui()
+		if parent._mechanism_key == parent._watermark_condition then
+			parent:_create_gui()
 		end
 	end
 }
@@ -179,27 +178,26 @@ BetaOverlay._create_gui = function (self)
 	-- function 10
 	self._gui = World.create_screen_gui(self._world)
 
-	local _screen_width = self._screen_width
-	local _screen_height = self._screen_height
-	local min = math.min(_screen_width / 1920, _screen_height / 1080, 1)
-	local var_10_3 = Vector2(_screen_width, _screen_height)
+	local screen_width, screen_height = self._screen_width, self._screen_height
+	local scale = math.min(screen_width / 1920, screen_height / 1080, 1)
+	local screen = Vector2(screen_width, screen_height)
 
-	if not self._label then
-		self:_render_watermark(var_10_3, min)
+	if self._label then
+		self:_render_watermark(screen, scale)
 	end
 
-	if not self._disclaimer then
-		self:_render_disclaimer(var_10_3, min)
+	if self._disclaimer then
+		self:_render_disclaimer(screen, scale)
 	end
 
-	if not script_data.qr_watermark then
-		local num = 5
+	if script_data.qr_watermark then
+		local ALPHA = 5
 
-		self:_render_qr(var_10_3, min, 0, 0, 10, Color(num, 255, 255, 0), Color(num, 0, 0, 255))
-		self:_render_qr(var_10_3, min, 0, 1, 10, Color(num, 255, 0, 255), Color(num, 0, 255, 0))
-		self:_render_qr(var_10_3, min, 1, 1, 10, Color(num, 0, 255, 255), Color(num, 255, 0, 0))
-		self:_render_qr(var_10_3, min, 1, 0, 10, Color(num, 255, 0, 0), Color(num, 0, 255, 0))
-		self:_render_qr(var_10_3, min, 0.5, 0.5, 10, Color(num, 0, 0, 0), Color(num, 255, 255, 255))
+		self:_render_qr(screen, scale, 0, 0, 10, Color(ALPHA, 255, 255, 0), Color(ALPHA, 0, 0, 255))
+		self:_render_qr(screen, scale, 0, 1, 10, Color(ALPHA, 255, 0, 255), Color(ALPHA, 0, 255, 0))
+		self:_render_qr(screen, scale, 1, 1, 10, Color(ALPHA, 0, 255, 255), Color(ALPHA, 255, 0, 0))
+		self:_render_qr(screen, scale, 1, 0, 10, Color(ALPHA, 255, 0, 0), Color(ALPHA, 0, 255, 0))
+		self:_render_qr(screen, scale, 0.5, 0.5, 10, Color(ALPHA, 0, 0, 0), Color(ALPHA, 255, 255, 255))
 	end
 end
 
@@ -214,13 +212,21 @@ BetaOverlay._reload = function (self)
 
 	local _watermark = self._watermark
 
-	_watermark = _watermark or script_data.watermark
-
 	if not _watermark then
-		local var_11_1 = tbl[_watermark]
+		-- Nothing
+	end
 
-		if not var_11_1 then
-			var_11_1(self)
+	_watermark = script_data.watermark
+
+	local watermark = _watermark
+
+	::label_11_0::
+
+	if watermark then
+		local watermark_func = watermarks[watermark]
+
+		if watermark_func then
+			watermark_func(self)
 		end
 	end
 end
@@ -232,13 +238,13 @@ end
 
 BetaOverlay.update = function (self)
 	-- function 13
-	local flag_2 = self._mechanism_key ~= Managers.mechanism:current_mechanism_name()
-	local resolution, var_13_2 = Gui.resolution()
+	local mechanism_switch = self._mechanism_key ~= Managers.mechanism:current_mechanism_name()
+	local width, height = Gui.resolution()
 
-	if resolution ~= self._screen_width or var_13_2 ~= self._screen_height or flag or not flag_2 then
-		self._screen_width = resolution
-		self._screen_height = var_13_2
-		flag = false
+	if width ~= self._screen_width or height ~= self._screen_height or DO_RELOAD or mechanism_switch then
+		self._screen_width = width
+		self._screen_height = height
+		DO_RELOAD = false
 
 		self:_reload()
 	end

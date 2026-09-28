@@ -2,14 +2,14 @@
 
 MutatorItemSpawnerExtension = class(MutatorItemSpawnerExtension)
 
-MutatorItemSpawnerExtension.init = function (self, arg_1_1, arg_1_2, arg_1_3, arg_1_4)
+MutatorItemSpawnerExtension.init = function (self, extension_init_context, unit, extension_init_data, is_server)
 	-- function 1
-	self.world = arg_1_1.world
-	self.unit = arg_1_2
-	self.is_server = arg_1_4
+	self.world = extension_init_context.world
+	self.unit = unit
+	self.is_server = is_server
 end
 
-MutatorItemSpawnerExtension.destroy = function (arg_2_0)
+MutatorItemSpawnerExtension.destroy = function (self)
 	-- function 2
 	return
 end

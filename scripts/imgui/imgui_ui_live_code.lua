@@ -4,8 +4,8 @@ require("scripts/utils/hash_utils")
 
 ImguiUILiveCode = class(ImguiUILiveCode)
 
-local num = -1
-local tbl = {
+local HASH_ERROR = -1
+local FILE_NAME_NEEDLES = {
 	"definitions"
 }
 
@@ -18,92 +18,92 @@ ImguiUILiveCode.init = function (self)
 	self._target_fps = 60
 end
 
-local flag = true
+local DO_RELOAD = true
 
-ImguiUILiveCode.update = function (self, arg_2_1, arg_2_2)
+ImguiUILiveCode.update = function (self, t, dt)
 	-- function 2
-	if not flag then
+	if DO_RELOAD then
 		self:init()
 
-		flag = false
+		DO_RELOAD = false
 	end
 
 	self:_clear_cache_if_dirty()
-	self:_process_packages(arg_2_2)
+	self:_process_packages(dt)
 	self:_safeguard_dirty_packages()
 end
 
 ImguiUILiveCode._safeguard_dirty_packages = function (self)
 	-- function 3
-	if not table.is_empty(self._dirty_packages) then
+	if table.is_empty(self._dirty_packages) then
 		return
 	end
 
-	local update = update
+	local orig_update = update
 
 	function update(...)
 		-- function 4
-		local var_4_0, var_4_1 = pcall(update, ...)
+		local valid, err = pcall(orig_update, ...)
 
-		if not var_4_0 then
-			self:_revert_dirty_packages(var_4_1)
+		if not valid then
+			self:_revert_dirty_packages(err)
 		end
 
 		table.clear(self._dirty_packages)
 
-		update = update
+		update = orig_update
 	end
 end
 
-ImguiUILiveCode.on_show = function (arg_5_0)
+ImguiUILiveCode.on_show = function (self)
 	-- function 5
 	return
 end
 
-local format = string.format("\n-------------------------------------------------\n\nFor a file to support live coding it must contain\none of the following words in thier filenames:\n\n[\n\t%s\n]\n\nand return a table, or specify 'live_code = true'\nin their return table.\n\n-------------------------------------------------\n\nIt's now running on a fairly naive solution of\nopening every relevant file in packages.loaded,\nreads it all, and diffs its content. This limits\nhow many files we can process each frame. If you\nhave the time, please implement a file watcher\ninstead.\n\n-------------------------------------------------\n\n", table.concat(tbl, ",\n\t"))
+local msg = string.format("\n-------------------------------------------------\n\nFor a file to support live coding it must contain\none of the following words in thier filenames:\n\n[\n\t%s\n]\n\nand return a table, or specify 'live_code = true'\nin their return table.\n\n-------------------------------------------------\n\nIt's now running on a fairly naive solution of\nopening every relevant file in packages.loaded,\nreads it all, and diffs its content. This limits\nhow many files we can process each frame. If you\nhave the time, please implement a file watcher\ninstead.\n\n-------------------------------------------------\n\n", table.concat(FILE_NAME_NEEDLES, ",\n\t"))
 
 ImguiUILiveCode.draw = function (self)
 	-- function 6
-	local begin_window, var_6_1 = Imgui.begin_window("UI Live Code", "always_auto_resize")
+	local do_close, is_open = Imgui.begin_window("UI Live Code", "always_auto_resize")
 
-	if not var_6_1 then
-		return begin_window
+	if not is_open then
+		return do_close
 	end
 
 	Imgui.text("UI Live Coding is now active.")
 
 	local text = Imgui.text
-	local format_2 = string.format
+	local format = string.format
 	local str = "Files processed last frame: %s out of %s"
 	local round = math.round
 	local _last_printed_package_count = self._last_printed_package_count
 
-	_last_printed_package_count = _last_printed_package_count or 0
+	_last_printed_package_count = not not _last_printed_package_count or not not 0
 
-	text(format_2(str, round(_last_printed_package_count), self:_num_processable_packages()))
+	text(format(str, round(_last_printed_package_count), self:_num_processable_packages()))
 
 	self._target_fps = Imgui.slider_int("FPS Throttle Limit", self._target_fps, 1, 120)
 
-	Imgui.text(format)
+	Imgui.text(msg)
 
-	local num = 1
-	local time = Managers.time:time("main")
+	local num_package_update_delay = 1
+	local t = Managers.time:time("main")
 	local _next_package_count_update_t = self._next_package_count_update_t
 
-	_next_package_count_update_t = _next_package_count_update_t or 0
+	_next_package_count_update_t = not not _next_package_count_update_t or not not 0
 
-	if _next_package_count_update_t < time then
-		self._next_package_count_update_t = time + num
+	if _next_package_count_update_t < t then
+		self._next_package_count_update_t = t + num_package_update_delay
 		self._last_printed_package_count = self._last_num_packages
 	end
 
 	Imgui.text("Happy coding.")
 	Imgui.end_window()
 
-	return begin_window
+	return do_close
 end
 
-ImguiUILiveCode.is_persistent = function (arg_7_0)
+ImguiUILiveCode.is_persistent = function (self)
 	-- function 7
 	return true
 end
@@ -112,7 +112,7 @@ ImguiUILiveCode._next_package = function (self)
 	-- function 8
 	local var_8_0 = next(package.loaded, self._next_package_name)
 
-	var_8_0 = var_8_0 or next(package.loaded)
+	var_8_0 = not not var_8_0 or not not next(package.loaded)
 	self._next_package_name = var_8_0
 
 	return self._next_package_name
@@ -123,7 +123,7 @@ ImguiUILiveCode._num_packages = function (self)
 	local _cache = self._cache
 	local num_packages = self._cache.num_packages
 
-	num_packages = num_packages or table.size(package.loaded)
+	num_packages = not not num_packages or not not table.size(package.loaded)
 	_cache.num_packages = num_packages
 
 	return self._cache.num_packages
@@ -132,15 +132,15 @@ end
 ImguiUILiveCode._num_processable_packages = function (self)
 	-- function 10
 	if not self._cache.num_processable_packages then
-		local num = 0
+		local count = 0
 
-		for k, v in pairs(package.loaded) do
-			if not self:_is_live_code_file(k, v) then
-				num = num + 1
+		for package_name, data in pairs(package.loaded) do
+			if self:_is_live_code_file(package_name, data) then
+				count = count + 1
 			end
 		end
 
-		self._cache.num_processable_packages = num
+		self._cache.num_processable_packages = count
 	end
 
 	return self._cache.num_processable_packages
@@ -153,71 +153,72 @@ ImguiUILiveCode._clear_cache_if_dirty = function (self)
 	end
 end
 
-ImguiUILiveCode._process_packages = function (self, arg_12_1)
+ImguiUILiveCode._process_packages = function (self, dt)
 	-- function 12
-	local _calculate_num_frame_packages = self:_calculate_num_frame_packages(arg_12_1)
-	local num = 0
-	local _num_packages = self:_num_packages()
+	local packages_per_frame = self:_calculate_num_frame_packages(dt)
+	local num_processed_packages = 0
+	local num_packages = self:_num_packages()
 
-	for i = 1, _num_packages do
-		local _next_package = self:_next_package()
+	for i = 1, num_packages do
+		local next_package = self:_next_package()
+		local processed = self:_update_package(next_package)
 
-		if not self:_update_package(_next_package) then
-			num = num + 1
+		if processed then
+			num_processed_packages = num_processed_packages + 1
 
-			if _calculate_num_frame_packages <= num then
+			if packages_per_frame <= num_processed_packages then
 				break
 			end
 		end
 	end
 end
 
-ImguiUILiveCode._update_package = function (self, arg_13_1)
+ImguiUILiveCode._update_package = function (self, package_name)
 	-- function 13
-	local var_13_0 = package.loaded[arg_13_1]
-	local flag = false
+	local data = package.loaded[package_name]
+	local processed = false
 
-	if not self:_is_live_code_file(arg_13_1, var_13_0) then
-		local _hash_file, var_13_3 = self:_hash_file(arg_13_1)
+	if self:_is_live_code_file(package_name, data) then
+		local hash, file_str = self:_hash_file(package_name)
 
-		if not ((_hash_file == num or not self._file_hashes[arg_13_1]) and self._file_hashes[arg_13_1] == _hash_file) then
-			self:_merge_changes(arg_13_1, var_13_3)
+		if hash ~= HASH_ERROR and self._file_hashes[package_name] and self._file_hashes[package_name] ~= hash then
+			self:_merge_changes(package_name, file_str)
 		end
 
-		self._file_hashes[arg_13_1] = _hash_file
-		self._require_datas[arg_13_1] = var_13_0
-		flag = true
+		self._file_hashes[package_name] = hash
+		self._require_datas[package_name] = data
+		processed = true
 	end
 
-	return flag
+	return processed
 end
 
-ImguiUILiveCode._file_name = function (self, arg_14_1)
+ImguiUILiveCode._file_name = function (self, package_name)
 	-- function 14
 	local _src_dir = self._src_dir
 
-	_src_dir = _src_dir or string.gsub(Application.source_directory(), "\\", "/") .. "/"
+	_src_dir = not not _src_dir or not not (string.gsub(Application.source_directory(), "\\", "/") .. "/")
 	self._src_dir = _src_dir
 
-	return self._src_dir .. arg_14_1 .. ".lua"
+	return self._src_dir .. package_name .. ".lua"
 end
 
-ImguiUILiveCode._is_live_code_file = function (self, arg_15_1, arg_15_2)
+ImguiUILiveCode._is_live_code_file = function (self, package_name, data)
 	-- function 15
 	if not self._cache.is_live_code_file then
 		self._cache.is_live_code_file = {}
 	end
 
-	if not self._cache.is_live_code_file[arg_15_1] then
-		self._cache.is_live_code_file[arg_15_1] = false
+	if not self._cache.is_live_code_file[package_name] then
+		self._cache.is_live_code_file[package_name] = false
 
-		if type(arg_15_2) == "table" then
-			if not rawget(arg_15_2, "live_code") then
-				self._cache.is_live_code_file[arg_15_1] = true
+		if type(data) == "table" then
+			if rawget(data, "live_code") then
+				self._cache.is_live_code_file[package_name] = true
 			else
-				for k, v in pairs(tbl) do
-					if not string.find(arg_15_1, v) then
-						self._cache.is_live_code_file[arg_15_1] = true
+				for _, needle in pairs(FILE_NAME_NEEDLES) do
+					if string.find(package_name, needle) then
+						self._cache.is_live_code_file[package_name] = true
 
 						break
 					end
@@ -226,97 +227,101 @@ ImguiUILiveCode._is_live_code_file = function (self, arg_15_1, arg_15_2)
 		end
 	end
 
-	return self._cache.is_live_code_file[arg_15_1]
+	return self._cache.is_live_code_file[package_name]
 end
 
-ImguiUILiveCode._hash_file = function (self, arg_16_1)
+ImguiUILiveCode._hash_file = function (self, package_name)
 	-- function 16
-	local open = io.open(self:_file_name(arg_16_1))
+	local f = io.open(self:_file_name(package_name))
 
-	if not open then
-		local read = open:read("*all")
+	if f then
+		local file_str = f:read("*all")
 
-		open:close()
+		f:close()
 
-		return read, read
+		local hash = file_str
+
+		return hash, file_str
 	end
 
-	return num, ""
+	return HASH_ERROR, ""
 end
 
-ImguiUILiveCode._mark_package_dirty = function (arg_17_0, arg_17_1, arg_17_2)
+ImguiUILiveCode._mark_package_dirty = function (self, package_name, backup_data)
 	-- function 17
-	arg_17_0._dirty_packages[arg_17_1] = arg_17_2
+	self._dirty_packages[package_name] = backup_data
 end
 
-ImguiUILiveCode._merge_changes = function (self, arg_18_1, arg_18_2)
+ImguiUILiveCode._merge_changes = function (self, package_name, file_str)
 	-- function 18
-	local var_18_0 = loadstring(arg_18_2)
-	local var_18_1, var_18_2 = pcall(var_18_0)
+	local as_func = loadstring(file_str)
+	local compiles, new_data = pcall(as_func)
 
-	if not var_18_1 and not var_18_2 then
-		local clone = table.clone(self._require_datas[arg_18_1])
+	if compiles and new_data then
+		local old_data = table.clone(self._require_datas[package_name])
 
-		self:_mark_package_dirty(arg_18_1, clone)
-		table.merge_recursive(self._require_datas[arg_18_1], var_18_2)
-		self:_handle_nil_recursive(clone, var_18_2, self._require_datas[arg_18_1])
+		self:_mark_package_dirty(package_name, old_data)
+		table.merge_recursive(self._require_datas[package_name], new_data)
+		self:_handle_nil_recursive(old_data, new_data, self._require_datas[package_name])
 		Managers.ui:reload_ingame_ui()
 	end
 end
 
-ImguiUILiveCode._handle_nil_recursive = function (self, arg_19_1, arg_19_2, arg_19_3)
+ImguiUILiveCode._handle_nil_recursive = function (self, old, new, package_tbl)
 	-- function 19
-	for k, v in pairs(arg_19_1) do
-		if not arg_19_2[k] then
-			arg_19_3[k] = nil
+	for k, v in pairs(old) do
+		if not new[k] then
+			package_tbl[k] = nil
 		end
 
-		if not (type(v) ~= "table" or type(arg_19_2[k]) ~= "table") then
-			self:_handle_nil_recursive(arg_19_1[k], arg_19_2[k], arg_19_3[k])
+		if type(v) == "table" and type(new[k]) == "table" then
+			self:_handle_nil_recursive(old[k], new[k], package_tbl[k])
 		end
 	end
 end
 
-ImguiUILiveCode._revert_dirty_packages = function (self, arg_20_1)
+ImguiUILiveCode._revert_dirty_packages = function (self, err)
 	-- function 20
-	for k, v in pairs(self._dirty_packages) do
-		local clone = table.clone(self._require_datas[k])
+	for package_name, backup_data in pairs(self._dirty_packages) do
+		local faulty_data = table.clone(self._require_datas[package_name])
 
-		table.merge_recursive(self._require_datas[k], v)
-		self:_handle_nil_recursive(clone, v, self._require_datas[k])
-		printf("[ImguiUILiveCode] ERROR: %s", arg_20_1)
-		Debug.sticky_text("Error detected last frame. Reverted changes in %s. See error in console.", k, "delay", 6)
+		table.merge_recursive(self._require_datas[package_name], backup_data)
+		self:_handle_nil_recursive(faulty_data, backup_data, self._require_datas[package_name])
+		printf("[ImguiUILiveCode] ERROR: %s", err)
+		Debug.sticky_text("Error detected last frame. Reverted changes in %s. See error in console.", package_name, "delay", 6)
 	end
 
 	table.clear(self._dirty_packages)
 end
 
-ImguiUILiveCode._calculate_num_frame_packages = function (self, arg_21_1)
+ImguiUILiveCode._calculate_num_frame_packages = function (self, dt)
 	-- function 21
 	local _last_num_packages = self._last_num_packages
 
-	_last_num_packages = _last_num_packages or 0
+	_last_num_packages = not not _last_num_packages or not not 0
 	self._last_num_packages = _last_num_packages
 
-	local num = 1 / self._target_fps
-	local num_2
+	local target_dt = 1 / self._target_fps
+	local num
 
-	if arg_21_1 > 0 then
-		num_2 = num / arg_21_1
+	if dt > 0 then
+		num = target_dt / dt
 
-		if not num_2 then
+		if not num then
 			-- Nothing
 		end
 	end
 
-	num_2 = 0
+	num = 0
+
+	local diff = num
 
 	::label_21_0::
 
-	if num < arg_21_1 then
-		num_2 = num_2^3
-		self._last_num_packages = self._last_num_packages - 1 / num_2
-	elseif num_2 > 0 then
+	if target_dt < dt then
+		diff = diff^3
+		self._last_num_packages = self._last_num_packages - 1 / diff
+	elseif diff > 0 then
 		self._last_num_packages = self._last_num_packages + 1
 	end
 

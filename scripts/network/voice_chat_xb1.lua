@@ -1,18 +1,18 @@
 -- chunkname: @scripts/network/voice_chat_xb1.lua
 
-local flag = true
+local debug_xbox_voice = true
 
-local function fn(...)
+local function debug_print(...)
 	-- function 1
 	print("[VoiceChatXboxOneManager]", string.format(...))
 end
 
-local var_0_2
+local dprintf
 
-if not flag then
-	local var_0_3 = fn
+if debug_xbox_voice then
+	dprintf = debug_print
 else
-	local function fn_2()
+	function dprintf()
 		-- function 2
 		return
 	end
@@ -41,7 +41,7 @@ VoiceChatXboxOneManager.reset = function (self)
 	self._has_local_user = false
 end
 
-VoiceChatXboxOneManager.clear_dangling_remote_users = function (arg_5_0)
+VoiceChatXboxOneManager.clear_dangling_remote_users = function (self)
 	-- function 5
 	VoiceChat.clear_dangling_remote_users()
 end
@@ -53,7 +53,7 @@ end
 
 VoiceChatXboxOneManager.add_local_user = function (self)
 	-- function 7
-	if self._bandwidth_disabled or self._has_local_user or not Managers.account:has_privilege(UserPrivilege.COMMUNICATION_VOICE_INGAME) then
+	if not self._bandwidth_disabled and not self._has_local_user and Managers.account:has_privilege(UserPrivilege.COMMUNICATION_VOICE_INGAME) then
 		local user_id = Managers.account:user_id()
 
 		self._has_local_user = true
@@ -64,11 +64,11 @@ end
 
 VoiceChatXboxOneManager.remove_local_user = function (self)
 	-- function 8
-	if not Managers.account:user_detached() then
+	if Managers.account:user_detached() then
 		return
 	end
 
-	if not self._has_local_user then
+	if self._has_local_user then
 		local user_id = Managers.account:user_id()
 
 		VoiceChat.remove_user(user_id)
@@ -81,41 +81,41 @@ VoiceChatXboxOneManager._remove_all_users = function (self)
 	-- function 9
 	self:remove_local_user()
 
-	for k, v in pairs(self._remote_users) do
-		self:remove_remote_user(k)
+	for xuid, _ in pairs(self._remote_users) do
+		self:remove_remote_user(xuid)
 	end
 
 	table.clear(self._remote_users)
 end
 
-VoiceChatXboxOneManager.add_remote_user = function (self, arg_10_1, arg_10_2)
+VoiceChatXboxOneManager.add_remote_user = function (self, xuid, peer_id)
 	-- function 10
 	if not self._bandwidth_disabled then
-		self._remote_users[arg_10_1] = arg_10_2
+		self._remote_users[xuid] = peer_id
 
-		VoiceChat.add_remote_user(arg_10_1, arg_10_2)
-		Application.warning(string.format("[VoiceChatXboxOneManager] Adding remote user - Xuid: %q Peer_id: %q", arg_10_1, arg_10_2))
+		VoiceChat.add_remote_user(xuid, peer_id)
+		Application.warning(string.format("[VoiceChatXboxOneManager] Adding remote user - Xuid: %q Peer_id: %q", xuid, peer_id))
 	end
 end
 
-VoiceChatXboxOneManager.remove_remote_user = function (self, arg_11_1)
+VoiceChatXboxOneManager.remove_remote_user = function (self, xuid)
 	-- function 11
-	VoiceChat.remove_user_from_channel_with_xuid(arg_11_1)
+	VoiceChat.remove_user_from_channel_with_xuid(xuid)
 
-	local var_11_0 = self._remote_users[arg_11_1]
+	local peer_id = self._remote_users[xuid]
 
-	Application.warning(string.format("[VoiceChatXboxOneManager] Removing remote user - Xuid: %q Peer_id: %q", arg_11_1, var_11_0))
+	Application.warning(string.format("[VoiceChatXboxOneManager] Removing remote user - Xuid: %q Peer_id: %q", xuid, peer_id))
 
-	self._remote_users[arg_11_1] = nil
+	self._remote_users[xuid] = nil
 end
 
-VoiceChatXboxOneManager.set_enabled = function (self, arg_12_1)
+VoiceChatXboxOneManager.set_enabled = function (self, enabled)
 	-- function 12
 	print("[VoiceChatXboxOneManager] Temporarily turned off ability to turn voice chat ON/OFF")
 
 	do return end
 
-	if not arg_12_1 then
+	if enabled then
 		self:add_local_user()
 	else
 		self:_remove_all_users()
@@ -136,52 +136,52 @@ VoiceChatXboxOneManager.bandwidth_disabled = function (self)
 	return self._bandwidth_disabled
 end
 
-VoiceChatXboxOneManager.is_peer_muted = function (self, arg_15_1)
+VoiceChatXboxOneManager.is_peer_muted = function (self, peer_id)
 	-- function 15
 	if not self._has_local_user then
 		return true
 	end
 
-	return self._muted_users[arg_15_1] ~= nil
+	return self._muted_users[peer_id] ~= nil
 end
 
-VoiceChatXboxOneManager.mute_peer = function (self, arg_16_1)
+VoiceChatXboxOneManager.mute_peer = function (self, peer_id)
 	-- function 16
-	local xuid = Managers.state.network:lobby():xuid(arg_16_1)
+	local xuid = Managers.state.network:lobby():xuid(peer_id)
 
-	if not xuid and not self._remote_users[xuid] then
+	if xuid and self._remote_users[xuid] then
 		VoiceChat.mute_user(xuid)
 
-		self._muted_users[arg_16_1] = xuid
+		self._muted_users[peer_id] = xuid
 
 		return true
 	end
 end
 
-VoiceChatXboxOneManager.unmute_peer = function (self, arg_17_1)
+VoiceChatXboxOneManager.unmute_peer = function (self, peer_id)
 	-- function 17
-	local var_17_0 = self._muted_users[arg_17_1]
+	local xuid = self._muted_users[peer_id]
 
-	if not var_17_0 and not self._remote_users[var_17_0] then
-		VoiceChat.unmute_user(var_17_0)
+	if xuid and self._remote_users[xuid] then
+		VoiceChat.unmute_user(xuid)
 
 		return true
 	end
 
-	self._muted_users[arg_17_1] = nil
+	self._muted_users[peer_id] = nil
 end
 
-VoiceChatXboxOneManager.set_chat_volume = function (arg_18_0, arg_18_1)
+VoiceChatXboxOneManager.set_chat_volume = function (self, volume)
 	-- function 18
-	VoiceChat.set_chat_volume(arg_18_1)
+	VoiceChat.set_chat_volume(volume)
 end
 
-VoiceChatXboxOneManager.set_user_chat_volume = function (self, arg_19_1, arg_19_2)
+VoiceChatXboxOneManager.set_user_chat_volume = function (self, xuid, volume)
 	-- function 19
 	local xuid = Managers.state.network:lobby():xuid(peer_id)
 
-	if not xuid and not self._remote_users[xuid] then
-		VoiceChat.set_user_chat_volume(xuid, arg_19_2)
+	if xuid and self._remote_users[xuid] then
+		VoiceChat.set_user_chat_volume(xuid, volume)
 	end
 end
 
@@ -190,8 +190,8 @@ VoiceChatXboxOneManager.mute_all_users = function (self)
 	VoiceChat.mute_all_users()
 	table.clear(self._muted_users)
 
-	for k, v in pairs(self._remote_users) do
-		self._muted_users[k] = true
+	for xuid, _ in pairs(self._remote_users) do
+		self._muted_users[xuid] = true
 	end
 end
 
@@ -201,7 +201,7 @@ VoiceChatXboxOneManager.unmute_all_users = function (self)
 	table.clear(self._muted_users)
 end
 
-VoiceChatXboxOneManager.update = function (self, arg_22_1, arg_22_2)
+VoiceChatXboxOneManager.update = function (self, dt, t)
 	-- function 22
 	self:_handle_popups()
 	self:_update_members()
@@ -209,8 +209,12 @@ end
 
 VoiceChatXboxOneManager._handle_popups = function (self)
 	-- function 23
-	if not self._popup_id and not Managers.popup:query_result(self._popup_id) then
-		self._popup_id = nil
+	if self._popup_id then
+		local result = Managers.popup:query_result(self._popup_id)
+
+		if result then
+			self._popup_id = nil
+		end
 	end
 end
 
@@ -220,10 +224,12 @@ VoiceChatXboxOneManager._update_members = function (self)
 		return
 	end
 
-	if not Managers.state.network then
+	local network_manager = Managers.state.network
+
+	if network_manager then
 		local lobby = Managers.state.network:lobby()
 
-		if not lobby then
+		if lobby then
 			self:_update_members_changed(lobby)
 		end
 	end
@@ -232,62 +238,65 @@ end
 XUIDS_TO_REMOVE = {}
 REMOTE_XUIDS = {}
 
-VoiceChatXboxOneManager._update_members_changed = function (self, arg_25_1)
+VoiceChatXboxOneManager._update_members_changed = function (self, lobby)
 	-- function 25
-	if not Managers.account:user_detached() then
+	if Managers.account:user_detached() then
 		return
 	end
 
-	if arg_25_1:get_state() ~= LobbyState.JOINED then
+	local lobby_state = lobby:get_state()
+
+	if lobby_state ~= LobbyState.JOINED then
 		return
 	end
 
-	if not arg_25_1:is_joined() then
+	if not lobby:is_joined() then
 		return
 	end
 
 	table.clear(REMOTE_XUIDS)
 	table.clear(XUIDS_TO_REMOVE)
 
-	local xbox_user_id = Managers.account:xbox_user_id()
+	local my_xuid = Managers.account:xbox_user_id()
 
-	for k, v in pairs(PEER_ID_TO_CHANNEL) do
-		local xuid = arg_25_1:xuid(k)
+	for peer_id, channel_id in pairs(PEER_ID_TO_CHANNEL) do
+		local xuid = lobby:xuid(peer_id)
 
-		if not xuid then
-			if not (xuid == xbox_user_id or self._remote_users[xuid]) then
-				self:add_remote_user(xuid, k)
+		if xuid then
+			if xuid ~= my_xuid and not self._remote_users[xuid] then
+				self:add_remote_user(xuid, peer_id)
 			end
 
 			REMOTE_XUIDS[xuid] = true
 		end
 	end
 
-	local lobby_host = arg_25_1:lobby_host()
-	local get_members = arg_25_1:members():get_members()
+	local lobby_host = lobby:lobby_host()
+	local lobby_members = lobby:members()
+	local members = lobby_members:get_members()
 
 	if lobby_host ~= Network.peer_id() then
-		for k_2, v_2 in pairs(get_members) do
-			if v_2 ~= lobby_host then
-				local xuid_2 = arg_25_1:xuid(v_2)
+		for _, peer_id in pairs(members) do
+			if peer_id ~= lobby_host then
+				local xuid = lobby:xuid(peer_id)
 
-				if not (xuid_2 == xbox_user_id or self._remote_users[xuid_2]) then
-					self:add_remote_user(xuid_2, v_2)
+				if xuid ~= my_xuid and not self._remote_users[xuid] then
+					self:add_remote_user(xuid, peer_id)
 				end
 
-				REMOTE_XUIDS[xuid_2] = true
+				REMOTE_XUIDS[xuid] = true
 			end
 		end
 	end
 
-	for k_3, v_3 in pairs(self._remote_users) do
-		if not REMOTE_XUIDS[k_3] then
-			XUIDS_TO_REMOVE[k_3] = true
+	for xuid, peer_id in pairs(self._remote_users) do
+		if not REMOTE_XUIDS[xuid] then
+			XUIDS_TO_REMOVE[xuid] = true
 		end
 	end
 
-	for k_4, v_4 in pairs(XUIDS_TO_REMOVE) do
-		self:remove_remote_user(k_4)
+	for xuid, _ in pairs(XUIDS_TO_REMOVE) do
+		self:remove_remote_user(xuid)
 	end
 end
 
@@ -296,7 +305,7 @@ VoiceChatXboxOneManager.destroy = function (self)
 	VoiceChat.clear_remote_users()
 	VoiceChat.clear_local_users()
 
-	if not self._popup_id then
+	if self._popup_id then
 		Managers.popup:cancel_popup(self._popup_id)
 
 		self._popup_id = nil

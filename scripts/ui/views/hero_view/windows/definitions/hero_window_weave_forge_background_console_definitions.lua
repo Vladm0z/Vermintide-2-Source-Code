@@ -1,27 +1,30 @@
 -- chunkname: @scripts/ui/views/hero_view/windows/definitions/hero_window_weave_forge_background_console_definitions.lua
 
-local game_start_windows = UISettings.game_start_windows
-local size = game_start_windows.size
-local spacing = game_start_windows.spacing
-local large_window_frame = game_start_windows.large_window_frame
-local var_0_4 = UIFrameSettings[large_window_frame].texture_sizes.vertical[1]
-local tbl = {
-	size[1] * 3 + spacing * 2 + var_0_4 * 2,
-	size[2] + 80
+local window_default_settings = UISettings.game_start_windows
+local small_window_size = window_default_settings.size
+local small_window_spacing = window_default_settings.spacing
+local large_window_frame = window_default_settings.large_window_frame
+local large_window_frame_width = UIFrameSettings[large_window_frame].texture_sizes.vertical[1]
+local inner_window_size = {
+	small_window_size[1] * 3 + small_window_spacing * 2 + large_window_frame_width * 2,
+	small_window_size[2] + 80
 }
-local tbl_2 = {
-	tbl[1] + 50,
-	tbl[2]
+local window_size = {
+	inner_window_size[1] + 50,
+	inner_window_size[2]
 }
-local str = "menu_frame_11"
-local var_0_8 = UIFrameSettings[str].texture_sizes.vertical[1]
-local game_start_windows_2 = UISettings.game_start_windows
-local num = 0
-local tbl_3 = {
+local window_frame_name = "menu_frame_11"
+local window_frame = UIFrameSettings[window_frame_name]
+local window_frame_width = window_frame.texture_sizes.vertical[1]
+local window_default_settings = UISettings.game_start_windows
+
+window_frame_width = 0
+window_size = {
 	1920,
 	1080
 }
-local tbl_4 = {
+
+local scenegraph_definition = {
 	root = {
 		is_root = true,
 		size = {
@@ -64,7 +67,7 @@ local tbl_4 = {
 		vertical_alignment = "center",
 		parent = "screen_center",
 		horizontal_alignment = "center",
-		size = tbl_3,
+		size = window_size,
 		position = {
 			0,
 			0,
@@ -76,12 +79,12 @@ local tbl_4 = {
 		parent = "window",
 		horizontal_alignment = "center",
 		size = {
-			tbl_3[1] - num * 2,
+			window_size[1] - window_frame_width * 2,
 			1000
 		},
 		position = {
 			0,
-			num,
+			window_frame_width,
 			3
 		}
 	},
@@ -90,12 +93,12 @@ local tbl_4 = {
 		parent = "window",
 		horizontal_alignment = "center",
 		size = {
-			tbl_3[1] - num * 2,
+			window_size[1] - window_frame_width * 2,
 			500
 		},
 		position = {
 			0,
-			num,
+			window_frame_width,
 			4
 		}
 	},
@@ -104,20 +107,20 @@ local tbl_4 = {
 		parent = "window",
 		horizontal_alignment = "center",
 		size = {
-			tbl_3[1] - num * 2,
+			window_size[1] - window_frame_width * 2,
 			200
 		},
 		position = {
 			0,
-			num,
+			window_frame_width,
 			5
 		}
 	}
 }
 
-tbl_4.window.scale = "fit"
+scenegraph_definition.window.scale = "fit"
 
-local tbl_5 = {
+local title_text_style = {
 	font_size = 36,
 	upper_case = true,
 	localize = false,
@@ -133,7 +136,7 @@ local tbl_5 = {
 		2
 	}
 }
-local tbl_6 = {
+local essence_text_style = {
 	font_size = 36,
 	upper_case = true,
 	localize = false,
@@ -149,7 +152,7 @@ local tbl_6 = {
 		2
 	}
 }
-local tbl_7 = {
+local loadout_title_text_style = {
 	font_size = 28,
 	upper_case = true,
 	localize = false,
@@ -165,7 +168,7 @@ local tbl_7 = {
 		2
 	}
 }
-local tbl_8 = {
+local forge_level_text_style = {
 	font_size = 62,
 	upper_case = true,
 	localize = false,
@@ -181,7 +184,7 @@ local tbl_8 = {
 		2
 	}
 }
-local tbl_9 = {
+local mastery_text_style = {
 	font_size = 62,
 	upper_case = true,
 	localize = false,
@@ -197,7 +200,7 @@ local tbl_9 = {
 		2
 	}
 }
-local tbl_10 = {
+local level_text_style = {
 	font_size = 20,
 	upper_case = true,
 	localize = false,
@@ -213,7 +216,7 @@ local tbl_10 = {
 		2
 	}
 }
-local tbl_11 = {
+local power_text_style = {
 	font_size = 20,
 	upper_case = true,
 	localize = false,
@@ -229,37 +232,37 @@ local tbl_11 = {
 		2
 	}
 }
-local tbl_12 = {
+local background_color = {
 	255,
 	0,
 	0,
 	0
 }
-local tbl_13 = {
+local bottom_glow_back_smoke_color = {
 	200,
 	138,
 	0,
 	147
 }
-local tbl_14 = {
+local bottom_glow_front_smoke_color = {
 	255,
 	138,
 	0,
 	187
 }
-local tbl_15 = {
+local bottom_glow_front_2_smoke_color = {
 	200,
 	128,
 	0,
 	217
 }
-local tbl_16 = {
+local bottom_glow_back_ember_color = {
 	130,
 	255,
 	255,
 	255
 }
-local tbl_17 = {
+local widgets = {
 	bottom_glow_smoke_1 = UIWidgets.create_simple_uv_texture("forge_overview_bottom_glow_effect_smoke_1", {
 		{
 			0,
@@ -269,7 +272,7 @@ local tbl_17 = {
 			1,
 			0
 		}
-	}, "bottom_glow", nil, nil, tbl_13),
+	}, "bottom_glow", nil, nil, bottom_glow_back_smoke_color),
 	bottom_glow_smoke_2 = UIWidgets.create_simple_uv_texture("forge_overview_bottom_glow_effect_smoke_2", {
 		{
 			0,
@@ -279,7 +282,7 @@ local tbl_17 = {
 			1,
 			0
 		}
-	}, "bottom_glow_short", nil, nil, tbl_14),
+	}, "bottom_glow_short", nil, nil, bottom_glow_front_smoke_color),
 	bottom_glow_smoke_3 = UIWidgets.create_simple_uv_texture("forge_overview_bottom_glow_effect_embers_2", {
 		{
 			0,
@@ -289,7 +292,7 @@ local tbl_17 = {
 			1,
 			0
 		}
-	}, "bottom_glow_shortest", nil, nil, tbl_15),
+	}, "bottom_glow_shortest", nil, nil, bottom_glow_front_2_smoke_color),
 	bottom_glow_embers_1 = UIWidgets.create_simple_uv_texture("forge_overview_bottom_glow_effect_embers_1", {
 		{
 			0,
@@ -299,7 +302,7 @@ local tbl_17 = {
 			1,
 			0
 		}
-	}, "bottom_glow", nil, nil, tbl_16, 1),
+	}, "bottom_glow", nil, nil, bottom_glow_back_ember_color, 1),
 	bottom_glow_embers_3 = UIWidgets.create_simple_uv_texture("forge_overview_bottom_glow_effect_embers_3", {
 		{
 			0,
@@ -309,27 +312,27 @@ local tbl_17 = {
 			1,
 			0
 		}
-	}, "bottom_glow_short", nil, nil, tbl_16, 1),
-	window_background = UIWidgets.create_simple_rect("window", tbl_12),
-	screen_background = UIWidgets.create_simple_rect("screen", tbl_12)
+	}, "bottom_glow_short", nil, nil, bottom_glow_back_ember_color, 1),
+	window_background = UIWidgets.create_simple_rect("window", background_color),
+	screen_background = UIWidgets.create_simple_rect("screen", background_color)
 }
-local tbl_18 = {
+local animation_definitions = {
 	on_enter = {
 		{
 			name = "fade_in",
 			start_progress = 0,
 			end_progress = 0.3,
-			init = function (arg_1_0, arg_1_1, arg_1_2, arg_1_3)
+			init = function (ui_scenegraph, scenegraph_definition, widgets, params)
 				-- function 1
-				arg_1_3.render_settings.alpha_multiplier = 0
+				params.render_settings.alpha_multiplier = 0
 			end,
-			update = function (arg_2_0, arg_2_1, arg_2_2, arg_2_3, arg_2_4)
+			update = function (ui_scenegraph, scenegraph_definition, widgets, progress, params)
 				-- function 2
-				local easeOutCubic = math.easeOutCubic(arg_2_3)
+				local anim_progress = math.easeOutCubic(progress)
 
-				arg_2_4.render_settings.alpha_multiplier = easeOutCubic
+				params.render_settings.alpha_multiplier = anim_progress
 			end,
-			on_complete = function (arg_3_0, arg_3_1, arg_3_2, arg_3_3)
+			on_complete = function (ui_scenegraph, scenegraph_definition, widgets, params)
 				-- function 3
 				return
 			end
@@ -340,17 +343,17 @@ local tbl_18 = {
 			name = "fade_out",
 			start_progress = 0,
 			end_progress = 0.3,
-			init = function (arg_4_0, arg_4_1, arg_4_2, arg_4_3)
+			init = function (ui_scenegraph, scenegraph_definition, widgets, params)
 				-- function 4
-				arg_4_3.render_settings.alpha_multiplier = 1
+				params.render_settings.alpha_multiplier = 1
 			end,
-			update = function (arg_5_0, arg_5_1, arg_5_2, arg_5_3, arg_5_4)
+			update = function (ui_scenegraph, scenegraph_definition, widgets, progress, params)
 				-- function 5
-				local easeOutCubic = math.easeOutCubic(arg_5_3)
+				local anim_progress = math.easeOutCubic(progress)
 
-				arg_5_4.render_settings.alpha_multiplier = 1 - easeOutCubic
+				params.render_settings.alpha_multiplier = 1 - anim_progress
 			end,
-			on_complete = function (arg_6_0, arg_6_1, arg_6_2, arg_6_3)
+			on_complete = function (ui_scenegraph, scenegraph_definition, widgets, params)
 				-- function 6
 				return
 			end
@@ -359,7 +362,7 @@ local tbl_18 = {
 }
 
 return {
-	widgets = tbl_17,
-	scenegraph_definition = tbl_4,
-	animation_definitions = tbl_18
+	widgets = widgets,
+	scenegraph_definition = scenegraph_definition,
+	animation_definitions = animation_definitions
 }

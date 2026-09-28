@@ -1,172 +1,171 @@
 -- chunkname: @scripts/settings/equipment/weapon_templates/blunderbusses.lua
 
-local num = 0.8
-local tbl = {
-	actions = {
-		action_one = {
-			default = {
-				damage_window_start = 0.1,
-				play_reload_animation = true,
-				fire_at_gaze_setting = "tobii_fire_at_gaze_blunderbuss",
-				kind = "shotgun",
-				damage_profile = "shot_shotgun",
-				num_layers_spread = 2,
-				total_time_secondary = 1,
-				charge_value = "light_attack",
-				alert_sound_range_fire = 12,
-				alert_sound_range_hit = 5,
-				reload_when_out_of_ammo = true,
-				hit_effect = "shotgun_bullet_impact",
-				anim_event_last_ammo = "attack_shoot_last",
-				bullseye = false,
-				shot_count = 12,
-				damage_window_end = 0,
-				range = 100,
-				ammo_usage = 1,
-				fire_time = 0,
-				apply_recoil = true,
-				anim_event_secondary = "reload",
-				active_reload_time = 0.35,
-				anim_event = "attack_shoot",
-				total_time = 1,
-				allowed_chain_actions = {
-					{
-						sub_action = "default",
-						start_time = 0.4,
-						action = "action_wield",
-						input = "action_wield"
-					},
-					{
-						sub_action = "default",
-						start_time = 0.75,
-						action = "action_one",
-						input = "action_one"
-					},
-					{
-						sub_action = "default",
-						start_time = 0.4,
-						action = "action_two",
-						input = "action_two"
-					},
-					{
-						sub_action = "default",
-						start_time = 0.6,
-						action = "weapon_reload",
-						input = "weapon_reload"
-					},
-					{
-						sub_action = "default",
-						start_time = 0.75,
-						action = "weapon_reload",
-						auto_chain = true
-					}
-				},
-				hit_mass_count = LINESMAN_HIT_MASS_COUNT,
-				recoil_settings = {
-					horizontal_climb = -3,
-					restore_duration = 0.45,
-					vertical_climb = 15,
-					climb_duration = 0.15,
-					climb_function = math.easeInCubic,
-					restore_function = math.ease_out_quad
-				}
-			}
-		},
-		action_two = {
-			default = {
-				damage_window_start = 0.2,
-				forward_offset = 0.75,
-				anim_end_event = "attack_finished",
-				kind = "shield_slam",
-				damage_profile_target = "shield_slam_shotgun",
-				reload_when_out_of_ammo = true,
-				no_damage_impact_sound_event = "blunt_hit_armour",
-				damage_profile = "shield_slam_shotgun",
-				push_radius = 2.5,
-				hit_time = 0.25,
-				hit_effect = "melee_hit_slashing",
-				push_dot = 0.75,
-				damage_window_end = 0.3,
-				impact_sound_event = "blunt_hit",
-				charge_value = "heavy_attack",
-				damage_profile_aoe = "shield_slam_shotgun_aoe",
-				dedicated_target_range = 3.5,
-				anim_event = "attack_push",
-				total_time = 1,
-				anim_end_event_condition_func = function (arg_1_0, arg_1_1)
-					-- function 1
-					return arg_1_1 == "new_interupting_action" or arg_1_1 ~= "action_complete"
-				end,
-				anim_time_scale = num * 1.15,
-				allowed_chain_actions = {
-					{
-						sub_action = "default",
-						start_time = 0,
-						action = "action_wield",
-						end_time = 0.2,
-						input = "action_wield"
-					},
-					{
-						sub_action = "default",
-						start_time = 0.5,
-						action = "action_wield",
-						input = "action_wield"
-					},
-					{
-						sub_action = "default",
-						start_time = 0.3,
-						action = "action_one",
-						input = "action_one"
-					},
-					{
-						sub_action = "default",
-						start_time = 0.75,
-						action = "action_two",
-						input = "action_two"
-					},
-					{
-						sub_action = "default",
-						start_time = 0.5,
-						action = "weapon_reload",
-						input = "weapon_reload"
-					}
-				},
-				enter_function = function (arg_2_0, arg_2_1)
-					-- function 2
-					arg_2_1:clear_input_buffer()
-				end
-			}
-		},
-		weapon_reload = ActionTemplates.reload,
-		action_inspect = ActionTemplates.action_inspect,
-		action_wield = ActionTemplates.wield
-	},
-	ammo_data = {
-		ammo_hand = "right",
-		ammo_per_reload = 1,
-		max_ammo = 16,
-		ammo_per_clip = 1,
-		play_reload_anim_on_wield_reload = true,
-		reload_time = 1.5,
-		reload_on_ammo_pickup = true,
-		should_update_anim_ammo = true
-	}
-}
+local time_mod = 0.8
+local weapon_template = {}
 
-tbl.default_spread_template = "blunderbuss"
-tbl.right_hand_unit = ""
-tbl.right_hand_attachment_node_linking = AttachmentNodeLinking.rifles
-tbl.display_unit = "units/weapons/weapon_display/display_blunderbusses"
-tbl.wield_anim = "to_blunderbuss"
-tbl.wield_anim_no_ammo = "to_blunderbuss_noammo"
-tbl.state_machine = "units/beings/player/first_person_base/state_machines/ranged/blunderbuss"
-tbl.crosshair_style = "shotgun"
-tbl.fire_at_gaze_setting = "tobii_fire_at_gaze_blunderbuss"
-tbl.reload_event = "reload"
-tbl.buff_type = "RANGED"
-tbl.weapon_type = "SHOTGUN"
-tbl.dodge_count = 3
-tbl.buffs = {
+weapon_template.actions = {
+	action_one = {
+		default = {
+			damage_window_start = 0.1,
+			play_reload_animation = true,
+			fire_at_gaze_setting = "tobii_fire_at_gaze_blunderbuss",
+			kind = "shotgun",
+			damage_profile = "shot_shotgun",
+			num_layers_spread = 2,
+			total_time_secondary = 1,
+			charge_value = "light_attack",
+			alert_sound_range_fire = 12,
+			alert_sound_range_hit = 5,
+			reload_when_out_of_ammo = true,
+			hit_effect = "shotgun_bullet_impact",
+			anim_event_last_ammo = "attack_shoot_last",
+			bullseye = false,
+			shot_count = 12,
+			damage_window_end = 0,
+			range = 100,
+			ammo_usage = 1,
+			fire_time = 0,
+			apply_recoil = true,
+			anim_event_secondary = "reload",
+			active_reload_time = 0.35,
+			anim_event = "attack_shoot",
+			total_time = 1,
+			allowed_chain_actions = {
+				{
+					sub_action = "default",
+					start_time = 0.4,
+					action = "action_wield",
+					input = "action_wield"
+				},
+				{
+					sub_action = "default",
+					start_time = 0.75,
+					action = "action_one",
+					input = "action_one"
+				},
+				{
+					sub_action = "default",
+					start_time = 0.4,
+					action = "action_two",
+					input = "action_two"
+				},
+				{
+					sub_action = "default",
+					start_time = 0.6,
+					action = "weapon_reload",
+					input = "weapon_reload"
+				},
+				{
+					sub_action = "default",
+					start_time = 0.75,
+					action = "weapon_reload",
+					auto_chain = true
+				}
+			},
+			hit_mass_count = LINESMAN_HIT_MASS_COUNT,
+			recoil_settings = {
+				horizontal_climb = -3,
+				restore_duration = 0.45,
+				vertical_climb = 15,
+				climb_duration = 0.15,
+				climb_function = math.easeInCubic,
+				restore_function = math.ease_out_quad
+			}
+		}
+	},
+	action_two = {
+		default = {
+			damage_window_start = 0.2,
+			forward_offset = 0.75,
+			anim_end_event = "attack_finished",
+			kind = "shield_slam",
+			damage_profile_target = "shield_slam_shotgun",
+			reload_when_out_of_ammo = true,
+			no_damage_impact_sound_event = "blunt_hit_armour",
+			damage_profile = "shield_slam_shotgun",
+			push_radius = 2.5,
+			hit_time = 0.25,
+			hit_effect = "melee_hit_slashing",
+			push_dot = 0.75,
+			damage_window_end = 0.3,
+			impact_sound_event = "blunt_hit",
+			charge_value = "heavy_attack",
+			damage_profile_aoe = "shield_slam_shotgun_aoe",
+			dedicated_target_range = 3.5,
+			anim_event = "attack_push",
+			total_time = 1,
+			anim_end_event_condition_func = function (unit, end_reason)
+				-- function 1
+				return end_reason ~= "new_interupting_action" and end_reason ~= "action_complete"
+			end,
+			anim_time_scale = time_mod * 1.15,
+			allowed_chain_actions = {
+				{
+					sub_action = "default",
+					start_time = 0,
+					action = "action_wield",
+					end_time = 0.2,
+					input = "action_wield"
+				},
+				{
+					sub_action = "default",
+					start_time = 0.5,
+					action = "action_wield",
+					input = "action_wield"
+				},
+				{
+					sub_action = "default",
+					start_time = 0.3,
+					action = "action_one",
+					input = "action_one"
+				},
+				{
+					sub_action = "default",
+					start_time = 0.75,
+					action = "action_two",
+					input = "action_two"
+				},
+				{
+					sub_action = "default",
+					start_time = 0.5,
+					action = "weapon_reload",
+					input = "weapon_reload"
+				}
+			},
+			enter_function = function (attacker_unit, input_extension)
+				-- function 2
+				input_extension:clear_input_buffer()
+			end
+		}
+	},
+	weapon_reload = ActionTemplates.reload,
+	action_inspect = ActionTemplates.action_inspect,
+	action_wield = ActionTemplates.wield
+}
+weapon_template.ammo_data = {
+	ammo_hand = "right",
+	ammo_per_reload = 1,
+	max_ammo = 16,
+	ammo_per_clip = 1,
+	play_reload_anim_on_wield_reload = true,
+	reload_time = 1.5,
+	reload_on_ammo_pickup = true,
+	should_update_anim_ammo = true
+}
+weapon_template.default_spread_template = "blunderbuss"
+weapon_template.right_hand_unit = ""
+weapon_template.right_hand_attachment_node_linking = AttachmentNodeLinking.rifles
+weapon_template.display_unit = "units/weapons/weapon_display/display_blunderbusses"
+weapon_template.wield_anim = "to_blunderbuss"
+weapon_template.wield_anim_no_ammo = "to_blunderbuss_noammo"
+weapon_template.state_machine = "units/beings/player/first_person_base/state_machines/ranged/blunderbuss"
+weapon_template.crosshair_style = "shotgun"
+weapon_template.fire_at_gaze_setting = "tobii_fire_at_gaze_blunderbuss"
+weapon_template.reload_event = "reload"
+weapon_template.buff_type = "RANGED"
+weapon_template.weapon_type = "SHOTGUN"
+weapon_template.dodge_count = 3
+weapon_template.buffs = {
 	change_dodge_distance = {
 		external_optional_multiplier = 1
 	},
@@ -174,18 +173,18 @@ tbl.buffs = {
 		external_optional_multiplier = 1
 	}
 }
-tbl.attack_meta_data = {
+weapon_template.attack_meta_data = {
 	max_range = 15,
 	aim_at_node = "j_spine",
 	ignore_enemies_for_obstruction = true,
 	effective_against = bit.bor(BreedCategory.Infantry, BreedCategory.Berserker, BreedCategory.Special, BreedCategory.Armored)
 }
-tbl.tooltip_keywords = {
+weapon_template.tooltip_keywords = {
 	"weapon_keyword_high_damage",
 	"weapon_keyword_crowd_control",
 	"weapon_keyword_close_range"
 }
-tbl.tooltip_compare = {
+weapon_template.tooltip_compare = {
 	light = {
 		action_name = "action_one",
 		sub_action_name = "default"
@@ -195,7 +194,7 @@ tbl.tooltip_compare = {
 		sub_action_name = "default"
 	}
 }
-tbl.weapon_diagram = {
+weapon_template.weapon_diagram = {
 	light_attack = {
 		[DamageTypes.ARMOR_PIERCING] = 4,
 		[DamageTypes.CLEAVE] = 7,
@@ -211,7 +210,7 @@ tbl.weapon_diagram = {
 		[DamageTypes.DAMAGE] = 2
 	}
 }
-tbl.tooltip_detail = {
+weapon_template.tooltip_detail = {
 	light = {
 		action_name = "action_one",
 		sub_action_name = "default"
@@ -221,17 +220,17 @@ tbl.tooltip_detail = {
 		sub_action_name = "default"
 	}
 }
-tbl.wwise_dep_right_hand = {
+weapon_template.wwise_dep_right_hand = {
 	"wwise/blunderbuss"
 }
 
-local clone = table.clone(tbl)
+local blunderbuss_vs = table.clone(weapon_template)
 
-clone.actions.action_one.default.damage_profile = "shot_shotgun_vs"
-clone.actions.action_one.default.bullseye = true
-clone.actions.action_one.default.shot_count = 14
+blunderbuss_vs.actions.action_one.default.damage_profile = "shot_shotgun_vs"
+blunderbuss_vs.actions.action_one.default.bullseye = true
+blunderbuss_vs.actions.action_one.default.shot_count = 14
 
 return {
-	blunderbuss_template_1 = table.clone(tbl),
-	blunderbuss_template_1_vs = table.clone(clone)
+	blunderbuss_template_1 = table.clone(weapon_template),
+	blunderbuss_template_1_vs = table.clone(blunderbuss_vs)
 }

@@ -1,8 +1,8 @@
 -- chunkname: @scripts/settings/dlcs/penny/penny_sound_settings_part_1.lua
 
-local penny_part_1 = DLCSettings.penny_part_1
+local settings = DLCSettings.penny_part_1
 
-penny_part_1.dialogue_lookup = {
+settings.dialogue_lookup = {
 	"dialogues/generated/lookup_wood_elf_dlc_drachenfels_portals",
 	"dialogues/generated/lookup_empire_soldier_dlc_drachenfels_portals",
 	"dialogues/generated/lookup_bright_wizard_dlc_drachenfels_portals",
@@ -11,7 +11,7 @@ penny_part_1.dialogue_lookup = {
 	"dialogues/generated/lookup_hero_conversations_dlc_drachenfels_portals",
 	"dialogues/generated/lookup_npc_dlc_drachenfels_portals"
 }
-penny_part_1.dialogue_settings = {
+settings.dialogue_settings = {
 	dlc_portals = {
 		"dialogues/generated/wood_elf_dlc_drachenfels_portals",
 		"dialogues/generated/empire_soldier_dlc_drachenfels_portals",

@@ -9,120 +9,121 @@ end
 
 TestifyExpect.update = function (self)
 	-- function 2
-	local _expects = self._expects
+	local expects = self._expects
 
-	for k, v in pairs(_expects) do
-		self:_handle_expect(v)
+	for index, expect in pairs(expects) do
+		self:_handle_expect(expect)
 
-		_expects[k] = nil
+		expects[index] = nil
 	end
 end
 
-TestifyExpect.fail = function (self, arg_3_1, arg_3_2)
+TestifyExpect.fail = function (self, expect, message)
 	-- function 3
-	self:_expect(arg_3_1, false, arg_3_2)
+	self:_expect(expect, false, message)
 end
 
-TestifyExpect.is_true = function (self, arg_4_1, arg_4_2, arg_4_3)
+TestifyExpect.is_true = function (self, expect, condition, message)
 	-- function 4
-	arg_4_2 = arg_4_2 == true
+	condition = condition == true
 
-	self:_expect(arg_4_1, arg_4_2, arg_4_3)
+	self:_expect(expect, condition, message)
 end
 
-TestifyExpect.is_false = function (self, arg_5_1, arg_5_2, arg_5_3)
+TestifyExpect.is_false = function (self, expect, condition, message)
 	-- function 5
-	arg_5_2 = arg_5_2 == false
+	condition = condition == false
 
-	self:_expect(arg_5_1, arg_5_2, arg_5_3)
+	self:_expect(expect, condition, message)
 end
 
-TestifyExpect.is_not_nil = function (self, arg_6_1, arg_6_2, arg_6_3)
+TestifyExpect.is_not_nil = function (self, expect, var, message)
 	-- function 6
-	local flag = arg_6_2 ~= nil
+	local condition = var ~= nil
 
-	self:_expect(arg_6_1, flag, arg_6_3)
+	self:_expect(expect, condition, message)
 end
 
-TestifyExpect.is_nil = function (self, arg_7_1, arg_7_2, arg_7_3)
+TestifyExpect.is_nil = function (self, expect, var, message)
 	-- function 7
-	local flag = arg_7_2 == nil
+	local condition = var == nil
 
-	self:_expect(arg_7_1, flag, arg_7_3)
+	self:_expect(expect, condition, message)
 end
 
-TestifyExpect.are_equal = function (self, arg_8_1, arg_8_2, arg_8_3, arg_8_4)
+TestifyExpect.are_equal = function (self, expect, var1, var2, message)
 	-- function 8
-	local _are_equal = self:_are_equal(arg_8_2, arg_8_3)
+	local condition = self:_are_equal(var1, var2)
 
-	self:_expect(arg_8_1, _are_equal, arg_8_4)
+	self:_expect(expect, condition, message)
 end
 
-TestifyExpect.are_not_equal = function (self, arg_9_1, arg_9_2, arg_9_3, arg_9_4)
+TestifyExpect.are_not_equal = function (self, expect, var1, var2, message)
 	-- function 9
-	local flag = not self:_are_equal(arg_9_2, arg_9_3)
+	local condition = not self:_are_equal(var1, var2)
 
-	self:_expect(arg_9_1, flag, arg_9_4)
+	self:_expect(expect, condition, message)
 end
 
-TestifyExpect._expect = function (self, arg_10_1, arg_10_2, arg_10_3)
+TestifyExpect._expect = function (self, expect, condition, message)
 	-- function 10
-	local tbl = {
-		expect = arg_10_1,
-		condition = arg_10_2,
-		message = arg_10_3
+	local expect_data = {
+		expect = expect,
+		condition = condition,
+		message = message
 	}
-	local _expects = self._expects
+	local expects = self._expects
 
-	_expects[#_expects + 1] = tbl
+	expects[#expects + 1] = expect_data
 end
 
-TestifyExpect._handle_expect = function (arg_11_0, arg_11_1)
+TestifyExpect._handle_expect = function (self, expect_data)
 	-- function 11
-	if not string.is_snake_case(arg_11_1.expect) then
-		ferror("expect parameter must be in snake case format (eg: this_is_snake_case): " .. arg_11_1.expect)
+	if not string.is_snake_case(expect_data.expect) then
+		ferror("expect parameter must be in snake case format (eg: this_is_snake_case): " .. expect_data.expect)
 	end
 
-	local tbl = {
-		[arg_11_1.expect] = fassert,
-		expect_data = arg_11_1
+	local context = {
+		[expect_data.expect] = fassert,
+		expect_data = expect_data
 	}
-	local var_11_1 = loadstring(string.format("%s(expect_data.condition, expect_data.message)", arg_11_1.expect))
+	local func = loadstring(string.format("%s(expect_data.condition, expect_data.message)", expect_data.expect))
 
-	setfenv(var_11_1, tbl)
-	var_11_1(arg_11_1)
+	setfenv(func, context)
+	func(expect_data)
 end
 
-TestifyExpect._are_equal = function (self, arg_12_1, arg_12_2)
+TestifyExpect._are_equal = function (self, o1, o2)
 	-- function 12
-	if arg_12_1 == arg_12_2 then
+	if o1 == o2 then
 		return true
 	end
 
-	local var_12_0 = type(arg_12_1)
+	local o1_type = type(o1)
+	local o2_type = type(o2)
 
-	if var_12_0 ~= type(arg_12_2) then
+	if o1_type ~= o2_type then
 		return false
 	end
 
-	if var_12_0 ~= "table" then
+	if o1_type ~= "table" then
 		return false
 	end
 
-	local tbl = {}
+	local key_set = {}
 
-	for k, v in pairs(arg_12_1) do
-		local var_12_2 = arg_12_2[k]
+	for key1, value1 in pairs(o1) do
+		local value2 = o2[key1]
 
-		if not (var_12_2 == nil or self:_are_equal(v, var_12_2) ~= false) then
+		if value2 == nil or self:_are_equal(value1, value2) == false then
 			return false
 		end
 
-		tbl[k] = true
+		key_set[key1] = true
 	end
 
-	for k_2, v_2 in pairs(arg_12_2) do
-		if not tbl[k_2] then
+	for key2, _ in pairs(o2) do
+		if not key_set[key2] then
 			return false
 		end
 	end

@@ -1,92 +1,91 @@
 -- chunkname: @scripts/managers/game_mode/mechanisms/deus_gen_engine.lua
 
-local function fn(self)
+local function find_next_action(action_list)
 	-- function 1
-	for i = #self, 1, -1 do
-		local var_1_0 = self[i]
+	for i = #action_list, 1, -1 do
+		local action = action_list[i]
 
-		if not var_1_0._next_action_generators then
-			for k, v in pairs(var_1_0._next_actions) do
-				if not v then
-					local var_1_1 = var_1_0._next_action_generators[k]()
+		if action._next_action_generators then
+			for index, next_action in pairs(action._next_actions) do
+				if not next_action then
+					local new_action = action._next_action_generators[index]()
 
-					var_1_1._parent = var_1_0
-					var_1_0._next_actions[k] = var_1_1
+					new_action._parent = action
+					action._next_actions[index] = new_action
 
-					return var_1_1
+					return new_action
 				end
 			end
 		end
 	end
 end
 
-local function fn_2(self)
+local function cancel_action(action)
 	-- function 2
-	if not self._parent then
+	if not action._parent then
 		return
 	end
 
-	for k, v in pairs(self._parent._next_actions) do
-		if v == self then
-			self._parent._next_actions[k] = false
+	for index, next_action in pairs(action._parent._next_actions) do
+		if next_action == action then
+			action._parent._next_actions[index] = false
 		end
 	end
 end
 
-local function fn_3(self, arg_3_1)
+local function handle_success(action, next_action_generators)
 	-- function 3
-	self._next_action_generators = arg_3_1
+	action._next_action_generators = next_action_generators
 
-	if not arg_3_1 then
-		self._next_actions = {}
+	if next_action_generators then
+		action._next_actions = {}
 
-		for i, v in ipairs(arg_3_1) do
-			self._next_actions[i] = false
+		for index, _ in ipairs(next_action_generators) do
+			action._next_actions[index] = false
 		end
 	end
 end
 
 DeusGenEngine = {
-	get_generator = function (arg_4_0, arg_4_1)
+	get_generator = function (action_list, per_action_callback)
 		-- function 4
-		local flag = false
+		local retrying = false
 
 		return function ()
 			-- function 5
-			if #arg_4_0 > 0 then
-				local var_5_0 = arg_4_0[#arg_4_0]
+			if #action_list > 0 then
+				local action = action_list[#action_list]
 
-				if not arg_4_1 then
-					arg_4_1(arg_4_0, var_5_0)
+				if per_action_callback then
+					per_action_callback(action_list, action)
 				end
 
-				local var_5_1
-				local var_5_2
+				local result, next_action_generators
 
-				if not flag then
-					var_5_1, var_5_2 = var_5_0.run()
+				if not retrying then
+					result, next_action_generators = action.run()
 				else
-					var_5_1, var_5_2 = var_5_0.retry()
+					result, next_action_generators = action.retry()
 				end
 
-				if not var_5_1 then
-					flag = false
+				if result then
+					retrying = false
 
-					fn_3(var_5_0, var_5_2)
+					handle_success(action, next_action_generators)
 
-					local var_5_3 = fn(arg_4_0)
+					local next_action = find_next_action(action_list)
 
-					if not var_5_3 then
-						arg_4_0[#arg_4_0 + 1] = var_5_3
+					if next_action then
+						action_list[#action_list + 1] = next_action
 					else
 						return true
 					end
 				else
-					flag = true
+					retrying = true
 
-					fn_2(var_5_0)
+					cancel_action(action)
 
-					arg_4_0[#arg_4_0] = nil
+					action_list[#action_list] = nil
 				end
 
 				return false

@@ -2,29 +2,30 @@
 
 ActionBowEnergy = class(ActionBowEnergy, ActionBow)
 
-ActionBowEnergy.init = function (self, arg_1_1, arg_1_2, arg_1_3, arg_1_4, arg_1_5, arg_1_6, arg_1_7, arg_1_8)
+ActionBowEnergy.init = function (self, world, item_name, is_server, owner_unit, damage_unit, first_person_unit, weapon_unit, weapon_system)
 	-- function 1
-	ActionBowEnergy.super.init(self, arg_1_1, arg_1_2, arg_1_3, arg_1_4, arg_1_5, arg_1_6, arg_1_7, arg_1_8)
+	ActionBowEnergy.super.init(self, world, item_name, is_server, owner_unit, damage_unit, first_person_unit, weapon_unit, weapon_system)
 
-	self._energy_extension = ScriptUnit.extension(arg_1_4, "energy_system")
+	self._energy_extension = ScriptUnit.extension(owner_unit, "energy_system")
 end
 
-ActionBowEnergy.fire = function (self, arg_2_1, arg_2_2)
+ActionBowEnergy.fire = function (self, current_action, add_spread)
 	-- function 2
-	ActionBowEnergy.super.fire(self, arg_2_1, arg_2_2)
+	ActionBowEnergy.super.fire(self, current_action, add_spread)
 	self:_drain_energy()
 end
 
 ActionBowEnergy._drain_energy = function (self)
 	-- function 3
-	local drain_amount = self.current_action.drain_amount
+	local current_action = self.current_action
+	local drain_amount = current_action.drain_amount
 
 	if not self.extra_buff_shot then
 		self._energy_extension:drain(drain_amount)
 	end
 end
 
-ActionBowEnergy.destroy = function (arg_4_0)
+ActionBowEnergy.destroy = function (self)
 	-- function 4
 	return
 end

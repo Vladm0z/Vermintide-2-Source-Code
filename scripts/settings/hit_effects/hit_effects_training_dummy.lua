@@ -1,6 +1,6 @@
 -- chunkname: @scripts/settings/hit_effects/hit_effects_training_dummy.lua
 
-local tbl = {
+local wounding_damage_types = {
 	"light_stab_fencer",
 	"light_stab_smiter",
 	"stab_fencer",
@@ -17,7 +17,7 @@ local tbl = {
 	"slashing_linesman",
 	"heavy_slashing_linesman"
 }
-local tbl_2 = {
+local dismembering_damage_types = {
 	"heavy_stab_smiter",
 	"light_slashing_smiter",
 	"slashing_smiter",

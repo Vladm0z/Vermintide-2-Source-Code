@@ -2,45 +2,49 @@
 
 PackmasterStateWalking = class(PackmasterStateWalking, EnemyCharacterStateWalking)
 
-PackmasterStateWalking.init = function (self, arg_1_1)
+PackmasterStateWalking.init = function (self, character_state_init_context)
 	-- function 1
-	PackmasterStateWalking.super.init(self, arg_1_1)
+	PackmasterStateWalking.super.init(self, character_state_init_context)
 
 	self._grab_ability_id = self._career_extension:ability_id("grab")
 	self._equip_ability_id = self._career_extension:ability_id("equip")
 end
 
-PackmasterStateWalking.on_enter = function (self, arg_2_1, arg_2_2, arg_2_3, arg_2_4, arg_2_5, arg_2_6, arg_2_7)
+PackmasterStateWalking.on_enter = function (self, unit, input, dt, context, t, previous_state, params)
 	-- function 2
-	PackmasterStateWalking.super.on_enter(self, arg_2_1, arg_2_2, arg_2_3, arg_2_4, arg_2_5, arg_2_6, arg_2_7)
+	PackmasterStateWalking.super.on_enter(self, unit, input, dt, context, t, previous_state, params)
 
 	self._right_wpn_particle_node_name = "g_skaven_packmaster_claw"
 	self._right_wpn_particle_name = "fx/wpnfx_packmaster_enemy_in_range_1p"
 end
 
-PackmasterStateWalking.update = function (self, arg_3_1, arg_3_2, arg_3_3, arg_3_4, arg_3_5)
+PackmasterStateWalking.update = function (self, unit, input, dt, context, t)
 	-- function 3
-	if not self:common_state_changes() then
+	local handled = self:common_state_changes()
+
+	if handled then
 		return
 	end
 
-	local _csm = self._csm
-	local _career_extension = self._career_extension
+	local csm = self._csm
+	local career_extension = self._career_extension
 
-	if not _career_extension:ability_was_triggered(self._grab_ability_id) then
-		_csm:change_state("packmaster_grabbing")
-
-		return
-	end
-
-	if not _career_extension:ability_was_triggered(self._equip_ability_id) then
-		_csm:change_state("packmaster_equipping")
+	if career_extension:ability_was_triggered(self._grab_ability_id) then
+		csm:change_state("packmaster_grabbing")
 
 		return
 	end
 
-	self:_update_taunt_dialogue(arg_3_5)
+	if career_extension:ability_was_triggered(self._equip_ability_id) then
+		csm:change_state("packmaster_equipping")
 
-	local is_in_ghost_mode = self._ghost_mode_extension:is_in_ghost_mode()
-	local common_movement = self:common_movement(is_in_ghost_mode, arg_3_3)
+		return
+	end
+
+	self:_update_taunt_dialogue(t)
+
+	local ghost_mode_extension = self._ghost_mode_extension
+	local in_ghost_mode = ghost_mode_extension:is_in_ghost_mode()
+
+	handled = self:common_movement(in_ghost_mode, dt)
 end

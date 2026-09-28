@@ -1,7 +1,6 @@
 -- chunkname: @scripts/ui/diorama/hero_diorama_ui_definitions.lua
 
-local num = 1920
-local num_2 = 1080
+local SIZE_X, SIZE_Y = 1920, 1080
 local tbl = {}
 local tbl_2 = {
 	position = {
@@ -10,13 +9,13 @@ local tbl_2 = {
 		UILayer.hud
 	},
 	size = {
-		num,
-		num_2
+		SIZE_X,
+		SIZE_Y
 	}
 }
 local flag
 
-flag = IS_WINDOWS or not "hud_fit" or "fit"
+flag = (IS_WINDOWS or not "hud_fit") and not not "fit"
 tbl_2.scale = flag
 tbl.screen = tbl_2
 tbl.background = {
@@ -174,7 +173,8 @@ tbl.player_text_box = {
 	}
 }
 
-local tbl_3 = {
+local scenegraph_definition = tbl
+local career_text_style = {
 	word_wrap = true,
 	upper_case = false,
 	localize = false,
@@ -191,7 +191,7 @@ local tbl_3 = {
 		2
 	}
 }
-local tbl_4 = {
+local player_text_style = {
 	word_wrap = true,
 	upper_case = false,
 	localize = false,
@@ -214,22 +214,22 @@ local tbl_4 = {
 	}
 }
 
-local function fn(arg_1_0, arg_1_1, arg_1_2, arg_1_3)
+local function create_panel_background(scenegraph_id, size, background_texture, optional_color)
 	-- function 1
-	arg_1_2 = arg_1_2 or "menu_frame_bg_01"
+	background_texture = not not background_texture or not not "menu_frame_bg_01"
 
-	local get_atlas_settings_by_texture_name = UIAtlasHelper.get_atlas_settings_by_texture_name(arg_1_2)
-	local tbl = {
+	local background_texture_settings = UIAtlasHelper.get_atlas_settings_by_texture_name(background_texture)
+	local widget = {
 		element = {}
 	}
-	local tbl_2 = {
+	local passes = {
 		{
 			style_id = "background",
 			pass_type = "texture_uv",
 			content_id = "background"
 		}
 	}
-	local tbl_3 = {
+	local content = {
 		background = {
 			uvs = {
 				{
@@ -237,16 +237,16 @@ local function fn(arg_1_0, arg_1_1, arg_1_2, arg_1_3)
 					1
 				},
 				{
-					0.5 - math.min(arg_1_1[1] / get_atlas_settings_by_texture_name.size[1], 1),
-					1 - math.min(arg_1_1[2] / get_atlas_settings_by_texture_name.size[2], 1)
+					0.5 - math.min(size[1] / background_texture_settings.size[1], 1),
+					1 - math.min(size[2] / background_texture_settings.size[2], 1)
 				}
 			},
-			texture_id = arg_1_2
+			texture_id = background_texture
 		}
 	}
-	local tbl_4 = {
+	local style = {
 		background = {
-			color = arg_1_3 or {
+			color = not not optional_color or not not {
 				255,
 				255,
 				255,
@@ -260,20 +260,20 @@ local function fn(arg_1_0, arg_1_1, arg_1_2, arg_1_3)
 		}
 	}
 
-	tbl.element.passes = tbl_2
-	tbl.content = tbl_3
-	tbl.style = tbl_4
-	tbl.offset = {
+	widget.element.passes = passes
+	widget.content = content
+	widget.style = style
+	widget.offset = {
 		0,
 		0,
 		0
 	}
-	tbl.scenegraph_id = arg_1_0
+	widget.scenegraph_id = scenegraph_id
 
-	return tbl
+	return widget
 end
 
-local tbl_5 = {
+local widget_definitions = {
 	overlay = UIWidgets.create_simple_rect("viewport", {
 		255,
 		0,
@@ -312,8 +312,8 @@ local tbl_5 = {
 			0
 		}
 	}, "corner_bottom_right"),
-	frame = UIWidgets.create_frame("background", tbl.background.size, "menu_frame_12", 11),
-	viewport_frame = UIWidgets.create_frame("viewport", tbl.background.size, "frame_inner_glow_01", 1, {
+	frame = UIWidgets.create_frame("background", scenegraph_definition.background.size, "menu_frame_12", 11),
+	viewport_frame = UIWidgets.create_frame("viewport", scenegraph_definition.background.size, "frame_inner_glow_01", 1, {
 		255,
 		0,
 		0,
@@ -323,14 +323,14 @@ local tbl_5 = {
 		5
 	}),
 	bottom_panel_edge = UIWidgets.create_simple_texture("menu_frame_09_divider", "bottom_panel_edge"),
-	career_name = UIWidgets.create_simple_text("", "hero_text_box", nil, nil, tbl_3),
-	player_name = UIWidgets.create_simple_text("", "hero_text_box", nil, nil, tbl_4)
+	career_name = UIWidgets.create_simple_text("", "hero_text_box", nil, nil, career_text_style),
+	player_name = UIWidgets.create_simple_text("", "hero_text_box", nil, nil, player_text_style)
 }
-local tbl_6 = {}
+local animation_definitions = {}
 
 return {
-	animation_definitions = tbl_6,
-	scenegraph_definition = tbl,
-	widget_definitions = tbl_5,
-	create_panel_background = fn
+	animation_definitions = animation_definitions,
+	scenegraph_definition = scenegraph_definition,
+	widget_definitions = widget_definitions,
+	create_panel_background = create_panel_background
 }

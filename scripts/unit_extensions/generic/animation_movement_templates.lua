@@ -2,111 +2,124 @@
 
 local AnimationMovementTemplates = AnimationMovementTemplates
 
-AnimationMovementTemplates = AnimationMovementTemplates or {}
+AnimationMovementTemplates = not not AnimationMovementTemplates or not not {}
 AnimationMovementTemplates = AnimationMovementTemplates
 
 local BLACKBOARDS = BLACKBOARDS
 local animation_set_variable = Unit.animation_set_variable
 
-local function fn(arg_1_0, arg_1_1, arg_1_2, arg_1_3, arg_1_4, arg_1_5)
+local function lean_towards_position(unit, dt, data, target_position, lerp_speed, lean_amount)
 	-- function 1
-	local local_position = Unit.local_position(arg_1_0, 0)
-	local normalize = Vector3.normalize(arg_1_3 - local_position)
-	local world_rotation = Unit.world_rotation(arg_1_0, 0)
-	local forward = Quaternion.forward(world_rotation)
-	local right = Quaternion.right(world_rotation)
-	local dot = Vector3.dot(right, normalize)
-	local dot_2 = Vector3.dot(forward, normalize)
-	local abs = math.abs(dot)
-	local abs_2 = math.abs(dot_2)
-	local flag = dot < 0
-	local num = (1 - abs_2) * arg_1_5
+	local unit_position = Unit.local_position(unit, 0)
+	local lean_direction = Vector3.normalize(target_position - unit_position)
+	local rotation = Unit.world_rotation(unit, 0)
+	local forward = Quaternion.forward(rotation)
+	local right = Quaternion.right(rotation)
+	local right_dot = Vector3.dot(right, lean_direction)
+	local fwd_dot = Vector3.dot(forward, lean_direction)
+	local abs_right_dot = math.abs(right_dot)
+	local abs_fwd_dot = math.abs(fwd_dot)
+	local leaning_left = right_dot < 0
+	local target_lean = (1 - abs_fwd_dot) * lean_amount
 
-	num = not flag and -num and num
+	if leaning_left and not -target_lean then
+		-- Nothing
+	end
 
-	local clamp = math.clamp(num, -1, 1)
-	local current_lean = arg_1_2.current_lean
+	target_lean = math.clamp(target_lean, -1, 1)
 
-	current_lean = current_lean or 0
+	local current_lean_2 = data.current_lean
 
-	local max = math.max(math.lerp(current_lean, clamp, arg_1_4 * arg_1_1), 1e-05)
-	local animation_variable_lean = arg_1_2.animation_variable_lean
+	if not current_lean_2 then
+		-- Nothing
+	end
 
-	animation_set_variable(arg_1_0, animation_variable_lean, max)
+	current_lean_2 = 0
 
-	arg_1_2.current_lean = max
+	local current_lean = current_lean_2
+
+	::label_1_0::
+
+	local lean = math.max(math.lerp(current_lean, target_lean, lerp_speed * dt), 1e-05)
+	local animation_variable_lean = data.animation_variable_lean
+
+	animation_set_variable(unit, animation_variable_lean, lean)
+
+	data.current_lean = lean
 end
 
 AnimationMovementTemplates.chaos_troll = {
 	owner = {
-		init = function (arg_2_0, arg_2_1)
+		init = function (unit, data)
 			-- function 2
-			arg_2_1.blackboard = BLACKBOARDS[arg_2_0]
-			arg_2_1.ai_extension = ScriptUnit.extension(arg_2_0, "ai_system")
-			arg_2_1.animation_variable_lean = Unit.animation_find_variable(arg_2_0, "lean")
-			arg_2_1.lean_lerp_speed = 5
-			arg_2_1.lean_amount = 25
+			local blackboard = BLACKBOARDS[unit]
+
+			data.blackboard = blackboard
+			data.ai_extension = ScriptUnit.extension(unit, "ai_system")
+			data.animation_variable_lean = Unit.animation_find_variable(unit, "lean")
+			data.lean_lerp_speed = 5
+			data.lean_amount = 25
 		end,
-		update = function (arg_3_0, arg_3_1, arg_3_2, arg_3_3)
+		update = function (unit, t, dt, data)
 			-- function 3
-			local blackboard = arg_3_3.blackboard
+			local blackboard = data.blackboard
 
-			if not blackboard.lean_target_position_boxed then
-				local unbox = blackboard.lean_target_position_boxed:unbox()
-				local lean_lerp_speed = arg_3_3.lean_lerp_speed
-				local lean_amount = arg_3_3.lean_amount
+			if blackboard.lean_target_position_boxed then
+				local lean_target_position = blackboard.lean_target_position_boxed:unbox()
+				local lerp_speed = data.lean_lerp_speed
+				local lean_amount = data.lean_amount
 
-				fn(arg_3_0, arg_3_2, arg_3_3, unbox, lean_lerp_speed, lean_amount)
+				lean_towards_position(unit, dt, data, lean_target_position, lerp_speed, lean_amount)
 
 				local game = Managers.state.network:game()
-				local go_id = Managers.state.unit_storage:go_id(arg_3_0)
+				local go_id = Managers.state.unit_storage:go_id(unit)
 
-				if not game and not go_id then
-					GameSession.set_game_object_field(game, go_id, "lean_target", unbox)
+				if game and go_id then
+					GameSession.set_game_object_field(game, go_id, "lean_target", lean_target_position)
 				end
 			end
 		end,
-		leave = function (arg_4_0, arg_4_1)
+		leave = function (unit, data)
 			-- function 4
-			local animation_variable_lean = arg_4_1.animation_variable_lean
+			local animation_variable_lean = data.animation_variable_lean
 
-			if not animation_variable_lean then
-				animation_set_variable(arg_4_0, animation_variable_lean, 0)
+			if animation_variable_lean then
+				animation_set_variable(unit, animation_variable_lean, 0)
 			end
 		end
 	},
 	husk = {
-		init = function (arg_5_0, arg_5_1)
+		init = function (unit, data)
 			-- function 5
-			arg_5_1.animation_variable_lean = Unit.animation_find_variable(arg_5_0, "lean")
-			arg_5_1.old_lean_target_position_boxed = Vector3Box(Vector3.zero())
-			arg_5_1.lean_lerp_speed = 5
-			arg_5_1.lean_amount = 25
+			data.animation_variable_lean = Unit.animation_find_variable(unit, "lean")
+			data.old_lean_target_position_boxed = Vector3Box(Vector3.zero())
+			data.lean_lerp_speed = 5
+			data.lean_amount = 25
 		end,
-		update = function (arg_6_0, arg_6_1, arg_6_2, arg_6_3)
+		update = function (unit, t, dt, data)
 			-- function 6
 			local game = Managers.state.network:game()
-			local go_id = Managers.state.unit_storage:go_id(arg_6_0)
+			local go_id = Managers.state.unit_storage:go_id(unit)
 
-			if not game and not go_id then
-				local game_object_field = GameSession.game_object_field(game, go_id, "lean_target")
-				local unbox = arg_6_3.old_lean_target_position_boxed:unbox()
+			if game and go_id then
+				local lean_target_position = GameSession.game_object_field(game, go_id, "lean_target")
+				local old_lean_target_position = data.old_lean_target_position_boxed:unbox()
 
-				if not (not game_object_field and game_object_field == unbox) then
-					local lean_lerp_speed = arg_6_3.lean_lerp_speed
-					local lean_amount = arg_6_3.lean_amount
+				if lean_target_position and lean_target_position ~= old_lean_target_position then
+					local lerp_speed = data.lean_lerp_speed
+					local lean_amount = data.lean_amount
 
-					fn(arg_6_0, arg_6_2, arg_6_3, game_object_field, lean_lerp_speed, lean_amount)
-					arg_6_3.old_lean_target_position_boxed:store(game_object_field)
+					lean_towards_position(unit, dt, data, lean_target_position, lerp_speed, lean_amount)
+					data.old_lean_target_position_boxed:store(lean_target_position)
 				end
 			end
 		end,
-		leave = function (arg_7_0, arg_7_1)
+		leave = function (unit, data)
 			-- function 7
-			local animation_variable_lean = arg_7_1.animation_variable_lean
+			local animation_variable_lean = data.animation_variable_lean
 
-			if not animation_variable_lean then
-				animation_set_variable(arg_7_0, animation_variable_lean, 0)
+			if animation_variable_lean then
+				animation_set_variable(unit, animation_variable_lean, 0)
 			end
 		end
 	}

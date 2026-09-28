@@ -4,49 +4,49 @@ require("scripts/entity_system/systems/behaviour/nodes/bt_node")
 
 BTDummyIdleAction = class(BTDummyIdleAction, BTNode)
 
-BTDummyIdleAction.init = function (arg_1_0, ...)
+BTDummyIdleAction.init = function (self, ...)
 	-- function 1
-	BTDummyIdleAction.super.init(arg_1_0, ...)
+	BTDummyIdleAction.super.init(self, ...)
 end
 
 BTDummyIdleAction.name = "BTDummyIdleAction"
 
-local function fn(self)
+local function randomize(event)
 	-- function 2
-	if type(self) == "table" then
-		return self[Math.random(1, #self)]
+	if type(event) == "table" then
+		return event[Math.random(1, #event)]
 	else
-		return self
+		return event
 	end
 end
 
-BTDummyIdleAction.enter = function (self, arg_3_1, arg_3_2, arg_3_3)
+BTDummyIdleAction.enter = function (self, unit, blackboard, t)
 	-- function 3
-	local network = Managers.state.network
-	local str = "idle"
-	local action_data = self._tree_node.action_data
+	local network_manager = Managers.state.network
+	local animation = "idle"
+	local action = self._tree_node.action_data
 
-	arg_3_2.action = action_data
+	blackboard.action = action
 
-	if not action_data and not action_data.idle_animation then
-		str = fn(action_data.idle_animation)
+	if action and action.idle_animation then
+		animation = randomize(action.idle_animation)
 	end
 
-	if not (arg_3_2.move_state == "idle" or action_data.no_anim) then
-		network:anim_event(arg_3_1, str)
+	if blackboard.move_state ~= "idle" and not action.no_anim then
+		network_manager:anim_event(unit, animation)
 
-		arg_3_2.move_state = "idle"
+		blackboard.move_state = "idle"
 	end
 end
 
-BTDummyIdleAction.leave = function (arg_4_0, arg_4_1, arg_4_2, arg_4_3, arg_4_4, arg_4_5)
+BTDummyIdleAction.leave = function (self, unit, blackboard, t, reason, destroy)
 	-- function 4
 	return
 end
 
-local alive = Unit.alive
+local Unit_alive = Unit.alive
 
-BTDummyIdleAction.run = function (arg_5_0, arg_5_1, arg_5_2, arg_5_3, arg_5_4)
+BTDummyIdleAction.run = function (self, unit, blackboard, t, dt)
 	-- function 5
 	return "running"
 end

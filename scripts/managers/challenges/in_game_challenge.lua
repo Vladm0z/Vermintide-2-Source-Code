@@ -4,34 +4,34 @@ InGameChallenge = class(InGameChallenge)
 
 local InGameChallengeStatus = InGameChallengeStatus
 
-InGameChallengeStatus = InGameChallengeStatus or CreateStrictEnumTable("Uninitialized", "InProgress", "Paused", "Finished")
+InGameChallengeStatus = not not InGameChallengeStatus or not not CreateStrictEnumTable("Uninitialized", "InProgress", "Paused", "Finished")
 InGameChallengeStatus = InGameChallengeStatus
 
 local InGameChallengeResult = InGameChallengeResult
 
-InGameChallengeResult = InGameChallengeResult or CreateStrictEnumTable("Uninitialized", "Completed", "Canceled")
+InGameChallengeResult = not not InGameChallengeResult or not not CreateStrictEnumTable("Uninitialized", "Completed", "Canceled")
 InGameChallengeResult = InGameChallengeResult
 
-InGameChallenge.init = function (self, arg_1_1, arg_1_2, arg_1_3, arg_1_4, arg_1_5, arg_1_6, arg_1_7, arg_1_8, arg_1_9)
+InGameChallenge.init = function (self, challenge_template, is_repeatable, category, reward, owner_unique_id, is_server, custom_amount, unique_id, auto_resume)
 	-- function 1
-	self._challenge_template_name = arg_1_1
-	self._challenge_template = InGameChallengeTemplates[arg_1_1]
-	self._is_repeatable = arg_1_2
-	self._category = arg_1_3
-	self._reward_name = arg_1_4
-	self._reward = MechanismOverrides.get(InGameChallengeRewards[arg_1_4])
-	self._owner_unique_id = arg_1_5
-	self._is_server = arg_1_6
-	self._unique_id = arg_1_8
-	self._auto_resume = arg_1_9
-	self._required_progress = arg_1_7 or self._challenge_template.default_target
+	self._challenge_template_name = challenge_template
+	self._challenge_template = InGameChallengeTemplates[challenge_template]
+	self._is_repeatable = is_repeatable
+	self._category = category
+	self._reward_name = reward
+	self._reward = MechanismOverrides.get(InGameChallengeRewards[reward])
+	self._owner_unique_id = owner_unique_id
+	self._is_server = is_server
+	self._unique_id = unique_id
+	self._auto_resume = auto_resume
+	self._required_progress = not not custom_amount or not not self._challenge_template.default_target
 	self._events_registered = false
 	self._callback_table = nil
 
 	self:reset(false)
 end
 
-InGameChallenge.reset = function (self, arg_2_1)
+InGameChallenge.reset = function (self, start_challenge)
 	-- function 2
 	self:_unregister_events()
 
@@ -42,7 +42,7 @@ InGameChallenge.reset = function (self, arg_2_1)
 	self._status = InGameChallengeStatus.Uninitialized
 	self._result = InGameChallengeResult.Uninitialized
 
-	if not arg_2_1 then
+	if start_challenge then
 		self:start()
 	end
 end
@@ -70,9 +70,9 @@ InGameChallenge.start = function (self)
 	end
 end
 
-InGameChallenge.set_paused = function (self, arg_6_1)
+InGameChallenge.set_paused = function (self, paused)
 	-- function 6
-	if not arg_6_1 then
+	if paused then
 		if self._status == InGameChallengeStatus.InProgress then
 			self._status = InGameChallengeStatus.Paused
 
@@ -166,9 +166,9 @@ InGameChallenge.get_reward_name = function (self)
 	return self._reward_name
 end
 
-InGameChallenge.belongs_to = function (self, arg_22_1)
+InGameChallenge.belongs_to = function (self, player_unique_id)
 	-- function 22
-	return self._owner_unique_id == arg_22_1
+	return self._owner_unique_id == player_unique_id
 end
 
 InGameChallenge._register_events = function (self)
@@ -177,35 +177,43 @@ InGameChallenge._register_events = function (self)
 		return
 	end
 
-	local event = Managers.state.event
+	local event_manager = Managers.state.event
 
-	if not (not event and self._events_registered) then
+	if event_manager and not self._events_registered then
 		self._events_registered = true
 
-		local events = self._challenge_template.events
+		local events_to_register = self._challenge_template.events
 
-		if not events then
-			local tbl = {}
+		if events_to_register then
+			local callback_table = {}
 
-			for k, v in pairs(events) do
-				tbl[k] = function (arg_24_0, ...)
+			for event_name, event_function in pairs(events_to_register) do
+				callback_table[event_name] = function (_, ...)
 					-- function 24
-					local time = Managers.time:time("main")
-					local var_24_1 = v(time, self._challenge_data, ...)
+					local t = Managers.time:time("main")
+					local var_24_0 = event_function(t, self._challenge_data, ...)
 
-					var_24_1 = var_24_1 or 0
+					if not var_24_0 then
+						-- Nothing
+					end
 
-					if var_24_1 ~= 0 then
-						self._progress = math.clamp(self._progress + var_24_1, 0, self._required_progress)
+					var_24_0 = 0
+
+					local progress_by = var_24_0
+
+					::label_24_0::
+
+					if progress_by ~= 0 then
+						self._progress = math.clamp(self._progress + progress_by, 0, self._required_progress)
 
 						self:_on_progress_updated()
 					end
 				end
 
-				event:register(tbl, k, k)
+				event_manager:register(callback_table, event_name, event_name)
 			end
 
-			self._callback_table = tbl
+			self._callback_table = callback_table
 		end
 	end
 end
@@ -216,15 +224,15 @@ InGameChallenge._unregister_events = function (self)
 		return
 	end
 
-	if not self._events_registered then
-		local event = Managers.state.event
+	if self._events_registered then
+		local event_manager = Managers.state.event
 
-		if not event then
-			local _callback_table = self._callback_table
+		if event_manager then
+			local callback_table = self._callback_table
 
-			if not _callback_table then
-				for k, v in pairs(_callback_table) do
-					event:unregister(k, _callback_table)
+			if callback_table then
+				for event_name, _ in pairs(callback_table) do
+					event_manager:unregister(event_name, callback_table)
 				end
 			end
 		end
@@ -243,13 +251,13 @@ InGameChallenge._on_progress_updated = function (self)
 	end
 end
 
-InGameChallenge._complete = function (self, arg_27_1)
+InGameChallenge._complete = function (self, result)
 	-- function 27
-	if not (self._result ~= InGameChallengeResult.Uninitialized or self._status == InGameChallengeStatus.Uninitialized) then
+	if self._result == InGameChallengeResult.Uninitialized and self._status ~= InGameChallengeStatus.Uninitialized then
 		self._status = InGameChallengeStatus.Finished
-		self._result = arg_27_1
+		self._result = result
 
-		if arg_27_1 == InGameChallengeResult.Completed then
+		if result == InGameChallengeResult.Completed then
 			self:_award_reward()
 		end
 
@@ -265,12 +273,12 @@ InGameChallenge._award_reward = function (self)
 		return
 	end
 
-	local _reward = self._reward
+	local reward = self._reward
 
-	if not _reward then
-		local var_28_1 = InGameChallengeRewardTargets[_reward.target](self._owner_unique_id)
+	if reward then
+		local targets = InGameChallengeRewardTargets[reward.target](self._owner_unique_id)
 
-		InGameChallengeRewardTypes[_reward.type](_reward, var_28_1, self._owner_unique_id)
+		InGameChallengeRewardTypes[reward.type](reward, targets, self._owner_unique_id)
 	end
 end
 
@@ -284,20 +292,20 @@ InGameChallenge.pending_cleanup = function (self)
 	return self._marked_for_cleanup
 end
 
-InGameChallenge.needs_sync = function (self, arg_31_1)
+InGameChallenge.needs_sync = function (self, consume)
 	-- function 31
-	local _needs_sync = self._needs_sync
+	local sync = self._needs_sync
 
-	if not arg_31_1 then
+	if consume then
 		self._needs_sync = false
 	end
 
-	return _needs_sync
+	return sync
 end
 
-InGameChallenge.client_update = function (self, arg_32_1, arg_32_2, arg_32_3)
+InGameChallenge.client_update = function (self, progress, status_id, result_id)
 	-- function 32
-	self._progress = arg_32_1
-	self._status = InGameChallengeStatus[arg_32_2]
-	self._result = InGameChallengeResult[arg_32_3]
+	self._progress = progress
+	self._status = InGameChallengeStatus[status_id]
+	self._result = InGameChallengeResult[result_id]
 end

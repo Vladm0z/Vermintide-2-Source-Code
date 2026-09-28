@@ -2,18 +2,20 @@
 
 local AiBreedSnippets = AiBreedSnippets
 
-AiBreedSnippets = AiBreedSnippets or {}
+AiBreedSnippets = not not AiBreedSnippets or not not {}
 AiBreedSnippets = AiBreedSnippets
 
-AiBreedSnippets.on_beastmen_minotaur_spawn = function (arg_1_0, arg_1_1)
+AiBreedSnippets.on_beastmen_minotaur_spawn = function (unit, blackboard)
 	-- function 1
-	arg_1_1.charge_astar_timer = Managers.time:time("game")
-	arg_1_1.num_charges_targeting_target = 0
-	arg_1_1.target_is_charged = false
-	arg_1_1.aggro_list = {}
+	local t = Managers.time:time("game")
 
-	local breed = arg_1_1.breed
-	local tbl = {
+	blackboard.charge_astar_timer = t
+	blackboard.num_charges_targeting_target = 0
+	blackboard.target_is_charged = false
+	blackboard.aggro_list = {}
+
+	local breed = blackboard.breed
+	local allowed_layers = {
 		planks = 1,
 		bot_ratling_gun_fire = 1,
 		doors = 1,
@@ -22,116 +24,124 @@ AiBreedSnippets.on_beastmen_minotaur_spawn = function (arg_1_0, arg_1_1)
 		temporary_wall = 0,
 		fire_grenade = 1
 	}
-	local navigation_extension = arg_1_1.navigation_extension
-	local get_navtag_layer_cost_table = navigation_extension:get_navtag_layer_cost_table("charge")
+	local navigation_extension = blackboard.navigation_extension
+	local navtag_layer_cost_table = navigation_extension:get_navtag_layer_cost_table("charge")
 
-	table.merge(tbl, NAV_TAG_VOLUME_LAYER_COST_AI)
-	AiUtils.initialize_cost_table(get_navtag_layer_cost_table, tbl)
+	table.merge(allowed_layers, NAV_TAG_VOLUME_LAYER_COST_AI)
+	AiUtils.initialize_cost_table(navtag_layer_cost_table, allowed_layers)
 
 	local nav_cost_map_cost_table = navigation_extension:nav_cost_map_cost_table("charge")
 
 	AiUtils.initialize_nav_cost_map_cost_table(nav_cost_map_cost_table)
 
-	local get_reusable_traverse_logic = navigation_extension:get_reusable_traverse_logic("charge", nav_cost_map_cost_table)
+	local charge_traverse_logic = navigation_extension:get_reusable_traverse_logic("charge", nav_cost_map_cost_table)
 
-	GwNavTraverseLogic.set_navtag_layer_cost_table(get_reusable_traverse_logic, get_navtag_layer_cost_table)
+	GwNavTraverseLogic.set_navtag_layer_cost_table(charge_traverse_logic, navtag_layer_cost_table)
 
-	arg_1_1.aggro_list = {}
-	arg_1_1.fling_skaven_timer = 0
-	arg_1_1.next_move_check = 0
-	arg_1_1.is_valid_target_func = GenericStatusExtension.is_ogre_target
+	blackboard.aggro_list = {}
+	blackboard.fling_skaven_timer = 0
+	blackboard.next_move_check = 0
+	blackboard.is_valid_target_func = GenericStatusExtension.is_ogre_target
 
-	local conflict = Managers.state.conflict
+	local conflict_director = Managers.state.conflict
+	local ai_simple = ScriptUnit.extension(unit, "ai_system")
 
-	ScriptUnit.extension(arg_1_0, "ai_system"):set_perception(breed.perception, breed.target_selection_angry)
-	conflict:add_angry_boss(1, arg_1_1)
+	ai_simple:set_perception(breed.perception, breed.target_selection_angry)
+	conflict_director:add_angry_boss(1, blackboard)
 
-	arg_1_1.is_angry = true
+	blackboard.is_angry = true
 
-	local ENEMY_PLAYER_AND_BOT_UNITS = Managers.state.side.side_by_unit[arg_1_0].ENEMY_PLAYER_AND_BOT_UNITS
-	local perception_weights = breed.perception_weights
-	local num = 0
-	local var_1_10
+	local side = Managers.state.side.side_by_unit[unit]
+	local enemy_player_and_bot_units = side.ENEMY_PLAYER_AND_BOT_UNITS
+	local weights = breed.perception_weights
+	local best_score = 0
+	local best_enemy
 
-	for i = 1, #ENEMY_PLAYER_AND_BOT_UNITS do
-		local var_1_11 = ENEMY_PLAYER_AND_BOT_UNITS[i]
-		local var_1_12 = POSITION_LOOKUP[var_1_11]
-		local var_1_13 = POSITION_LOOKUP[arg_1_0]
-		local distance = Vector3.distance(var_1_13, var_1_12)
+	for i = 1, #enemy_player_and_bot_units do
+		local enemy_unit = enemy_player_and_bot_units[i]
+		local enemy_pos = POSITION_LOOKUP[enemy_unit]
+		local pos = POSITION_LOOKUP[unit]
+		local dist = Vector3.distance(pos, enemy_pos)
 
-		if distance < breed.detection_radius then
-			local clamp = math.clamp(1 - distance / perception_weights.max_distance, 0, 1)
-			local num_2 = clamp * clamp * perception_weights.distance_weight
+		if dist < breed.detection_radius then
+			local inv_radius = math.clamp(1 - dist / weights.max_distance, 0, 1)
+			local score = inv_radius * inv_radius * weights.distance_weight
 
-			if num < num_2 then
-				num = num_2
-				var_1_10 = var_1_11
+			if best_score < score then
+				best_score = score
+				best_enemy = enemy_unit
 			end
 		end
 	end
 
-	if not var_1_10 then
-		arg_1_1.aggro_list[var_1_10] = 50
+	if best_enemy then
+		local aggro_list = blackboard.aggro_list
+
+		aggro_list[best_enemy] = 50
 	end
 
-	conflict:freeze_intensity_decay(10)
-	conflict:add_unit_to_bosses(arg_1_0)
+	conflict_director:freeze_intensity_decay(10)
+	conflict_director:add_unit_to_bosses(unit)
 end
 
-AiBreedSnippets.on_beastmen_minotaur_update = function (arg_2_0, arg_2_1, arg_2_2)
+AiBreedSnippets.on_beastmen_minotaur_update = function (unit, blackboard, t)
 	-- function 2
-	local nav_cost_map_cost_table = arg_2_1.navigation_extension:nav_cost_map_cost_table("charge")
-	local get_reusable_traverse_logic = arg_2_1.navigation_extension:get_reusable_traverse_logic("charge", nav_cost_map_cost_table)
+	local nav_cost_map_cost_table = blackboard.navigation_extension:nav_cost_map_cost_table("charge")
+	local traverse_logic = blackboard.navigation_extension:get_reusable_traverse_logic("charge", nav_cost_map_cost_table)
 
-	if not get_reusable_traverse_logic and not arg_2_1.charge_astar_timer and arg_2_1.charge_state or not Unit.alive(arg_2_1.target_unit) then
-		local get_reusable_astar = arg_2_1.navigation_extension:get_reusable_astar("charge", true)
+	if traverse_logic and blackboard.charge_astar_timer and not blackboard.charge_state and Unit.alive(blackboard.target_unit) then
+		local astar = blackboard.navigation_extension:get_reusable_astar("charge", true)
 
-		if not get_reusable_astar then
-			if not GwNavAStar.processing_finished(get_reusable_astar) then
-				if not GwNavAStar.path_found(get_reusable_astar) then
-					arg_2_1.has_valid_astar_path = true
+		if astar then
+			local done = GwNavAStar.processing_finished(astar)
+
+			if done then
+				local path_found = GwNavAStar.path_found(astar)
+
+				if path_found then
+					blackboard.has_valid_astar_path = true
 				else
-					arg_2_1.has_valid_astar_path = false
+					blackboard.has_valid_astar_path = false
 				end
 
-				arg_2_1.navigation_extension:destroy_reusable_astar("charge")
+				blackboard.navigation_extension:destroy_reusable_astar("charge")
 
-				arg_2_1.charge_astar_timer = arg_2_2 + 1
+				blackboard.charge_astar_timer = t + 1
 			end
-		elseif arg_2_2 > arg_2_1.charge_astar_timer then
-			local nav_world = arg_2_1.nav_world
-			local local_position = Unit.local_position(arg_2_1.target_unit, 0)
-			local triangle_from_position, var_2_6 = GwNavQueries.triangle_from_position(nav_world, local_position, 1, 1)
+		elseif t > blackboard.charge_astar_timer then
+			local nav_world = blackboard.nav_world
+			local target_position = Unit.local_position(blackboard.target_unit, 0)
+			local success, z = GwNavQueries.triangle_from_position(nav_world, target_position, 1, 1)
 
-			if not triangle_from_position then
-				local var_2_7 = Vector3(local_position[1], local_position[2], var_2_6)
-				local num = 7
-				local get_reusable_astar_2 = arg_2_1.navigation_extension:get_reusable_astar("charge")
+			if success then
+				local wanted_position = Vector3(target_position[1], target_position[2], z)
+				local width = 7
+				local new_astar = blackboard.navigation_extension:get_reusable_astar("charge")
 
-				GwNavAStar.start_with_propagation_box(get_reusable_astar_2, nav_world, Unit.local_position(arg_2_0, 0), var_2_7, num, get_reusable_traverse_logic)
+				GwNavAStar.start_with_propagation_box(new_astar, nav_world, Unit.local_position(unit, 0), wanted_position, width, traverse_logic)
 
-				arg_2_1.charge_astar_timer = arg_2_2 + 1
+				blackboard.charge_astar_timer = t + 1
 			else
-				arg_2_1.charge_astar_timer = arg_2_2 + 0.1
+				blackboard.charge_astar_timer = t + 0.1
 			end
 		end
 	end
 end
 
-AiBreedSnippets.on_beastmen_minotaur_death = function (arg_3_0, arg_3_1, arg_3_2)
+AiBreedSnippets.on_beastmen_minotaur_death = function (unit, blackboard, t)
 	-- function 3
 	print("minotaur died!")
 
-	if not arg_3_1.rewarded_boss_loot then
-		AiBreedSnippets.reward_boss_kill_loot(arg_3_0, arg_3_1)
+	if not blackboard.rewarded_boss_loot then
+		AiBreedSnippets.reward_boss_kill_loot(unit, blackboard)
 	end
 
-	local conflict = Managers.state.conflict
+	local conflict_director = Managers.state.conflict
 
-	if not arg_3_1.is_angry then
-		conflict:add_angry_boss(-1)
+	if blackboard.is_angry then
+		conflict_director:add_angry_boss(-1)
 	end
 
-	conflict:freeze_intensity_decay(1)
-	conflict:remove_unit_from_bosses(arg_3_0)
+	conflict_director:freeze_intensity_decay(1)
+	conflict_director:remove_unit_from_bosses(unit)
 end

@@ -2,14 +2,14 @@
 
 BeastmenStandardHealthExtension = class(BeastmenStandardHealthExtension, GenericHealthExtension)
 
-BeastmenStandardHealthExtension.init = function (self, arg_1_1, arg_1_2, arg_1_3)
+BeastmenStandardHealthExtension.init = function (self, extension_init_context, unit, extension_init_data)
 	-- function 1
-	BeastmenStandardHealthExtension.super.init(self, arg_1_1, arg_1_2, arg_1_3)
+	BeastmenStandardHealthExtension.super.init(self, extension_init_context, unit, extension_init_data)
 
-	self._unit = arg_1_2
+	self._unit = unit
 end
 
-BeastmenStandardHealthExtension.extensions_ready = function (arg_2_0, arg_2_1, arg_2_2, arg_2_3)
+BeastmenStandardHealthExtension.extensions_ready = function (self, world, unit, extension_name)
 	-- function 2
 	return
 end
@@ -21,12 +21,12 @@ BeastmenStandardHealthExtension.destroy = function (self)
 	self.blackboard = nil
 end
 
-BeastmenStandardHealthExtension.apply_client_predicted_damage = function (arg_4_0, arg_4_1)
+BeastmenStandardHealthExtension.apply_client_predicted_damage = function (self, predicted_damage)
 	-- function 4
 	return
 end
 
-local tbl = {
+local white_listed_damage_sources = {
 	grenade_frag_02 = true,
 	torch = true,
 	grenade_fire_01 = true,
@@ -39,23 +39,25 @@ local tbl = {
 	shadow_torch = true
 }
 
-BeastmenStandardHealthExtension.add_damage = function (self, arg_5_1, arg_5_2, arg_5_3, arg_5_4, arg_5_5, arg_5_6, arg_5_7, arg_5_8, arg_5_9, arg_5_10, arg_5_11, arg_5_12, arg_5_13, arg_5_14, arg_5_15, arg_5_16, arg_5_17)
+BeastmenStandardHealthExtension.add_damage = function (self, attacker_unit, damage_amount, hit_zone_name, damage_type, hit_position, damage_direction, damage_source_name, hit_ragdoll_actor, damaging_unit, hit_react_type, is_critical_strike, added_dot, first_hit, total_hits, attack_type, backstab_multiplier, target_index)
 	-- function 5
-	if arg_5_7 == "suicide" then
-		BeastmenStandardHealthExtension.super.add_damage(self, arg_5_1, arg_5_2, arg_5_3, arg_5_4, arg_5_5, arg_5_6, arg_5_7, arg_5_8, arg_5_9, arg_5_10, arg_5_11, arg_5_12, arg_5_13, arg_5_14, arg_5_15, arg_5_16, arg_5_17)
+	if damage_source_name == "suicide" then
+		BeastmenStandardHealthExtension.super.add_damage(self, attacker_unit, damage_amount, hit_zone_name, damage_type, hit_position, damage_direction, damage_source_name, hit_ragdoll_actor, damaging_unit, hit_react_type, is_critical_strike, added_dot, first_hit, total_hits, attack_type, backstab_multiplier, target_index)
 	else
-		local flag = false
+		local can_damage_banner = false
 
-		if not (not arg_5_15 and arg_5_15 == "heavy_attack" and arg_5_15 == "light_attack" or tbl[arg_5_7]) then
-			BeastmenStandardHealthExtension.super.add_damage(self, arg_5_1, arg_5_2, arg_5_3, arg_5_4, arg_5_5, arg_5_6, arg_5_7, arg_5_8, arg_5_9, arg_5_10, arg_5_11, arg_5_12, arg_5_13, arg_5_14, arg_5_15, arg_5_16, arg_5_17)
+		can_damage_banner = (not attack_type or attack_type == "heavy_attack" or attack_type ~= "light_attack") and not not white_listed_damage_sources[damage_source_name]
 
-			local has_extension = ScriptUnit.has_extension(self._unit, "ai_supplementary_system")
-			local standard_template = has_extension.standard_template
+		if can_damage_banner then
+			BeastmenStandardHealthExtension.super.add_damage(self, attacker_unit, damage_amount, hit_zone_name, damage_type, hit_position, damage_direction, damage_source_name, hit_ragdoll_actor, damaging_unit, hit_react_type, is_critical_strike, added_dot, first_hit, total_hits, attack_type, backstab_multiplier, target_index)
 
-			if not standard_template then
+			local standard_extension = ScriptUnit.has_extension(self._unit, "ai_supplementary_system")
+			local standard_template = standard_extension.standard_template
+
+			if standard_template then
 				local sfx_taking_damage = standard_template.sfx_taking_damage
 
-				WwiseUtils.trigger_unit_event(has_extension.world, sfx_taking_damage, self._unit, 0)
+				WwiseUtils.trigger_unit_event(standard_extension.world, sfx_taking_damage, self._unit, 0)
 			end
 		end
 	end

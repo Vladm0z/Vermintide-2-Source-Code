@@ -1,6 +1,6 @@
 -- chunkname: @scripts/entity_system/systems/behaviour/trees/skaven/skaven_horde_shield_rat_behavior.lua
 
-local skaven_clan_rat_with_shield = BreedActions.skaven_clan_rat_with_shield
+local ACTIONS = BreedActions.skaven_clan_rat_with_shield
 
 BreedBehaviors.horde_shield_rat = {
 	"BTSelector",
@@ -23,13 +23,13 @@ BreedBehaviors.horde_shield_rat = {
 		"BTStaggerAction",
 		name = "stagger",
 		condition = "stagger",
-		action_data = skaven_clan_rat_with_shield.stagger
+		action_data = ACTIONS.stagger
 	},
 	{
 		"BTBlockedAction",
 		name = "blocked",
 		condition = "blocked",
-		action_data = skaven_clan_rat_with_shield.blocked
+		action_data = ACTIONS.blocked
 	},
 	{
 		"BTSelector",
@@ -52,35 +52,35 @@ BreedBehaviors.horde_shield_rat = {
 			"BTSmashDoorAction",
 			name = "smash_door",
 			condition = "at_door_smartobject",
-			action_data = skaven_clan_rat_with_shield.smash_door
+			action_data = ACTIONS.smash_door
 		},
 		condition = "at_smartobject",
 		name = "smartobject"
 	},
 	{
 		"BTUtilityNode",
-		action_data = skaven_clan_rat_with_shield.utility_action,
+		action_data = ACTIONS.utility_action,
 		{
 			"BTClanRatFollowAction",
 			name = "follow",
-			action_data = skaven_clan_rat_with_shield.follow
+			action_data = ACTIONS.follow
 		},
 		{
 			"BTAttackAction",
 			name = "running_attack",
 			condition = "ask_target_before_attacking",
-			action_data = skaven_clan_rat_with_shield.running_attack
+			action_data = ACTIONS.running_attack
 		},
 		{
 			"BTAttackAction",
 			name = "normal_attack",
 			condition = "ask_target_before_attacking",
-			action_data = skaven_clan_rat_with_shield.normal_attack
+			action_data = ACTIONS.normal_attack
 		},
 		{
 			"BTCombatShoutAction",
 			name = "combat_shout",
-			action_data = skaven_clan_rat_with_shield.combat_shout
+			action_data = ACTIONS.combat_shout
 		},
 		name = "in_combat",
 		condition = "confirmed_player_sighting"
@@ -89,7 +89,7 @@ BreedBehaviors.horde_shield_rat = {
 		"BTMoveToGoalAction",
 		name = "move_to_goal",
 		condition = "has_goal_destination",
-		action_data = skaven_clan_rat_with_shield.follow
+		action_data = ACTIONS.follow
 	},
 	{
 		"BTIdleAction",

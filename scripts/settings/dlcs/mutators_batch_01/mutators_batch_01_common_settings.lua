@@ -1,6 +1,8 @@
 -- chunkname: @scripts/settings/dlcs/mutators_batch_01/mutators_batch_01_common_settings.lua
 
-DLCSettings.mutators_batch_01.mutators = {
+local settings = DLCSettings.mutators_batch_01
+
+settings.mutators = {
 	"splitting_enemies",
 	"darkness",
 	"ticking_bomb",

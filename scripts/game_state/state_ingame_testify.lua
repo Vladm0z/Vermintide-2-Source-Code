@@ -2,60 +2,70 @@
 
 require("scripts/settings/dlcs/morris/deus_power_up_testify")
 
-local function fn(arg_1_0)
+local function is_unit_in_incapacitated_state(unit)
 	-- function 1
-	local name = ScriptUnit.extension(arg_1_0, "character_state_machine_system").state_machine.state_current.name
+	local player_state = ScriptUnit.extension(unit, "character_state_machine_system").state_machine.state_current.name
 
-	return name == "knocked_down" or name == "pounced_down" or name == "grabbed_by_pack_master" or name == "grabbed_by_tentacle"
+	return player_state == "knocked_down" or player_state == "pounced_down" or player_state == "grabbed_by_pack_master" or player_state == "grabbed_by_tentacle"
 end
 
-local function fn_2(arg_2_0, arg_2_1)
+local function teleport_unit_to_position(unit, position)
 	-- function 2
-	if not arg_2_0 then
+	if not unit then
 		return false
 	end
 
-	if not Unit.alive(arg_2_0) then
-		Testify:_print("Unit %s not alive, teleportation cancelled", Unit.debug_name(arg_2_0))
-
-		return false
-	end
-
-	if DEDICATED_SERVER or not fn(arg_2_0) then
-		Testify:_print("Unit %s in blocking state, teleportation cancelled", Unit.debug_name(arg_2_0))
+	if not Unit.alive(unit) then
+		Testify:_print("Unit %s not alive, teleportation cancelled", Unit.debug_name(unit))
 
 		return false
 	end
 
-	Testify:_print("Teleporting player to %s", tostring(arg_2_1))
-	Mover.set_position(Unit.mover(arg_2_0), arg_2_1)
+	if not DEDICATED_SERVER and is_unit_in_incapacitated_state(unit) then
+		Testify:_print("Unit %s in blocking state, teleportation cancelled", Unit.debug_name(unit))
+
+		return false
+	end
+
+	Testify:_print("Teleporting player to %s", tostring(position))
+	Mover.set_position(Unit.mover(unit), position)
 
 	return true
 end
 
-local function fn_3(arg_3_0)
+local function make_invincible(unit)
 	-- function 3
-	if arg_3_0 == nil then
+	if unit == nil then
 		return false
 	end
 
-	ScriptUnit.extension(arg_3_0, "health_system").is_invincible = true
+	local health = ScriptUnit.extension(unit, "health_system")
+
+	health.is_invincible = true
 
 	return true
 end
 
-local function fn_4()
+local function timer()
 	-- function 4
 	return os.time()
 end
 
-return {
-	load_level = function (arg_5_0, arg_5_1)
+local StateInGameTestify = {
+	load_level = function (_, level_settings)
 		-- function 5
-		local level_key = arg_5_1.level_key
-		local environment_variation_id = arg_5_1.environment_variation_id
+		local level_key = level_settings.level_key
+		local environment_variation_id_2 = level_settings.environment_variation_id
 
-		environment_variation_id = environment_variation_id or 0
+		if not environment_variation_id_2 then
+			-- Nothing
+		end
+
+		environment_variation_id_2 = 0
+
+		local environment_variation_id = environment_variation_id_2
+
+		::label_5_0::
 
 		Managers.mechanism:debug_load_level(level_key, environment_variation_id)
 	end,
@@ -63,62 +73,62 @@ return {
 		-- function 6
 		return
 	end,
-	get_level_weather_variations = function (arg_7_0, arg_7_1)
+	get_level_weather_variations = function (_, level_key)
 		-- function 7
-		return LevelSettings[arg_7_1].environment_variations
+		return LevelSettings[level_key].environment_variations
 	end,
 	wait_for_player_to_spawn = function ()
 		-- function 8
-		local local_player = Managers.player:local_player()
+		local player = Managers.player:local_player()
 
-		if not Unit.alive(local_player.player_unit) then
+		if not Unit.alive(player.player_unit) then
 			return Testify.RETRY
 		end
 	end,
 	wait_for_bots_to_spawn = function ()
 		-- function 9
-		for k, v in pairs(Managers.player:bots()) do
-			if not Unit.alive(v.player_unit) then
+		for _, bot in pairs(Managers.player:bots()) do
+			if not Unit.alive(bot.player_unit) then
 				return Testify.RETRY
 			end
 		end
 	end,
-	request_profiles = function (arg_10_0, arg_10_1)
+	request_profiles = function (_, affiliation)
 		-- function 10
-		local tbl = {}
+		local profiles = {}
 
-		for k, v in pairs(SPProfiles) do
-			if v.affiliation == arg_10_1 then
-				local tbl_2 = {}
+		for _, profile in pairs(SPProfiles) do
+			if profile.affiliation == affiliation then
+				local careers = {}
 
-				for i, v_2 in ipairs(v.careers) do
-					tbl_2[i] = v_2.display_name
+				for i, career in ipairs(profile.careers) do
+					careers[i] = career.display_name
 				end
 
-				tbl[#tbl + 1] = {
-					name = v.display_name,
-					careers = tbl_2
+				profiles[#profiles + 1] = {
+					name = profile.display_name,
+					careers = careers
 				}
 			end
 		end
 
-		return tbl
+		return profiles
 	end,
-	set_player_profile = function (arg_11_0, arg_11_1)
+	set_player_profile = function (_, profile)
 		-- function 11
-		Managers.state.network:request_profile(1, arg_11_1.profile_name, arg_11_1.career_name, true)
+		Managers.state.network:request_profile(1, profile.profile_name, profile.career_name, true)
 
 		return Testify.RETRY
 	end,
-	set_bot_profile = function (arg_12_0, arg_12_1)
+	set_bot_profile = function (_, profile)
 		-- function 12
 		script_data.allow_same_bots = true
-		script_data.wanted_bot_profile = arg_12_1.profile_name
+		script_data.wanted_bot_profile = profile.profile_name
 
-		local var_12_0 = FindProfileIndex(arg_12_1.profile_name)
-		local var_12_1 = career_index_from_name(var_12_0, arg_12_1.career_name)
+		local profile_index = FindProfileIndex(profile.profile_name)
+		local career_index = career_index_from_name(profile_index, profile.career_name)
 
-		script_data.wanted_bot_career_index = var_12_1
+		script_data.wanted_bot_career_index = career_index
 	end,
 	enable_bots = function ()
 		-- function 13
@@ -130,9 +140,9 @@ return {
 	end,
 	add_all_hats = function ()
 		-- function 15
-		for i, v in ipairs(DebugScreen.console_settings) do
-			if v.title == "Add All Hat Items" then
-				v.func()
+		for _, entry in ipairs(DebugScreen.console_settings) do
+			if entry.title == "Add All Hat Items" then
+				entry.func()
 
 				return
 			end
@@ -140,9 +150,9 @@ return {
 	end,
 	add_all_weapon_skins = function ()
 		-- function 16
-		for i, v in ipairs(DebugScreen.console_settings) do
-			if v.title == "Add All Weapon Skins" then
-				v.func()
+		for _, entry in ipairs(DebugScreen.console_settings) do
+			if entry.title == "Add All Weapon Skins" then
+				entry.func()
 
 				return
 			end
@@ -150,144 +160,172 @@ return {
 	end,
 	get_available_deus_talent_power_up_tests = function ()
 		-- function 17
-		local tbl = {}
+		local power_up_tests = {}
 
-		for k, v in pairs(DeusPowerUps) do
-			for k_2, v_2 in pairs(v) do
-				local var_17_1 = DeusPowerUpTests[k_2]
+		for rarity, power_ups_for_rarity in pairs(DeusPowerUps) do
+			for power_up_name, power_up in pairs(power_ups_for_rarity) do
+				local var_17_0 = DeusPowerUpTests[power_up_name]
 
-				var_17_1 = var_17_1 or DeusPowerUpTests.default
+				if not var_17_0 then
+					-- Nothing
+				end
 
-				if not v_2.talent then
-					local var_17_2 = tbl[k]
+				var_17_0 = DeusPowerUpTests.default
 
-					var_17_2 = var_17_2 or {}
-					tbl[k] = var_17_2
-					tbl[k][k_2] = var_17_1
+				local test = var_17_0
+
+				::label_17_0::
+
+				if power_up.talent then
+					local var_17_1 = power_up_tests[rarity]
+
+					var_17_1 = not not var_17_1 or not not {}
+					power_up_tests[rarity] = var_17_1
+					power_up_tests[rarity][power_up_name] = test
 				end
 			end
 		end
 
-		return tbl
+		return power_up_tests
 	end,
 	get_available_deus_generic_power_up_tests = function ()
 		-- function 18
-		local tbl = {}
+		local power_up_tests = {}
 
-		for k, v in pairs(DeusPowerUps) do
-			for k_2, v_2 in pairs(v) do
-				local var_18_1 = DeusPowerUpTests[k_2]
+		for rarity, power_ups_for_rarity in pairs(DeusPowerUps) do
+			for power_up_name, power_up in pairs(power_ups_for_rarity) do
+				local var_18_0 = DeusPowerUpTests[power_up_name]
 
-				var_18_1 = var_18_1 or DeusPowerUpTests.default
+				if not var_18_0 then
+					-- Nothing
+				end
 
-				if not v_2.talent then
-					local var_18_2 = tbl[k]
+				var_18_0 = DeusPowerUpTests.default
 
-					var_18_2 = var_18_2 or {}
-					tbl[k] = var_18_2
-					tbl[k][k_2] = var_18_1
+				local test = var_18_0
+
+				::label_18_0::
+
+				if not power_up.talent then
+					local var_18_1 = power_up_tests[rarity]
+
+					var_18_1 = not not var_18_1 or not not {}
+					power_up_tests[rarity] = var_18_1
+					power_up_tests[rarity][power_up_name] = test
 				end
 			end
 		end
 
-		return tbl
+		return power_up_tests
 	end,
-	activate_bots_deus_power_up = function (arg_19_0, arg_19_1)
+	activate_bots_deus_power_up = function (_, request_parameter)
 		-- function 19
-		local power_up_name = arg_19_1.power_up_name
-		local rarity = arg_19_1.rarity
-		local generate_specific_power_up = DeusPowerUpUtils.generate_specific_power_up(power_up_name, rarity)
-		local get_deus_run_controller = Managers.mechanism:game_mechanism():get_deus_run_controller()
-		local system = Managers.state.entity:system("buff_system")
-		local get_talents_interface = Managers.backend:get_talents_interface()
-		local get_interface = Managers.backend:get_interface("deus")
+		local power_up_name = request_parameter.power_up_name
+		local rarity = request_parameter.rarity
+		local power_up = DeusPowerUpUtils.generate_specific_power_up(power_up_name, rarity)
+		local mechanism = Managers.mechanism:game_mechanism()
+		local deus_run_controller = mechanism:get_deus_run_controller()
+		local buff_system = Managers.state.entity:system("buff_system")
+		local talent_interface = Managers.backend:get_talents_interface()
+		local deus_backend = Managers.backend:get_interface("deus")
 
-		for k, v in pairs(Managers.player:bots()) do
-			local local_player_id = v:local_player_id()
+		for _, bot in pairs(Managers.player:bots()) do
+			local local_player_id = bot:local_player_id()
 
-			get_deus_run_controller:add_power_ups({
-				generate_specific_power_up
+			deus_run_controller:add_power_ups({
+				power_up
 			}, local_player_id, false)
 		end
 	end,
-	activate_player_deus_power_up = function (arg_20_0, arg_20_1)
+	activate_player_deus_power_up = function (_, request_parameter)
 		-- function 20
-		local power_up_name = arg_20_1.power_up_name
-		local rarity = arg_20_1.rarity
-		local generate_specific_power_up = DeusPowerUpUtils.generate_specific_power_up(power_up_name, rarity)
-		local get_deus_run_controller = Managers.mechanism:game_mechanism():get_deus_run_controller()
-		local local_player_id = Managers.player:local_player():local_player_id()
+		local power_up_name = request_parameter.power_up_name
+		local rarity = request_parameter.rarity
+		local power_up = DeusPowerUpUtils.generate_specific_power_up(power_up_name, rarity)
+		local mechanism = Managers.mechanism:game_mechanism()
+		local deus_run_controller = mechanism:get_deus_run_controller()
+		local local_player = Managers.player:local_player()
+		local local_player_id = local_player:local_player_id()
 
-		get_deus_run_controller:add_power_ups({
-			generate_specific_power_up
+		deus_run_controller:add_power_ups({
+			power_up
 		}, local_player_id, false)
 	end,
 	reset_deus_power_ups = function ()
 		-- function 21
-		local get_deus_run_controller = Managers.mechanism:game_mechanism():get_deus_run_controller()
-		local get_own_peer_id = get_deus_run_controller:get_own_peer_id()
-		local human_and_bot_players = Managers.player:human_and_bot_players()
+		local mechanism = Managers.mechanism:game_mechanism()
+		local deus_run_controller = mechanism:get_deus_run_controller()
+		local own_peer_id = deus_run_controller:get_own_peer_id()
+		local players = Managers.player:human_and_bot_players()
 
-		for k, v in pairs(human_and_bot_players) do
-			local local_player_id = v:local_player_id()
-			local profile_index = v:profile_index()
-			local career_index = v:career_index()
+		for _, player in pairs(players) do
+			local local_player_id = player:local_player_id()
+			local profile_index = player:profile_index()
+			local career_index = player:career_index()
 
-			get_deus_run_controller:reset_power_ups(get_own_peer_id, local_player_id, profile_index, career_index)
+			deus_run_controller:reset_power_ups(own_peer_id, local_player_id, profile_index, career_index)
 		end
 	end,
-	set_script_data = function (arg_22_0, arg_22_1)
+	set_script_data = function (_, options)
 		-- function 22
-		table.merge(script_data, arg_22_1)
+		table.merge(script_data, options)
 	end,
 	wait_for_inventory_to_be_loaded = function ()
 		-- function 23
-		local local_player = Managers.player:local_player()
+		local player = Managers.player:local_player()
+		local inventory_extension = ScriptUnit.extension(player.player_unit, "inventory_system")
 
-		if not ScriptUnit.extension(local_player.player_unit, "inventory_system"):resyncing_loadout() then
+		if inventory_extension:resyncing_loadout() then
 			return Testify.RETRY
 		end
 	end,
 	wait_for_players_inventory_ready = function ()
 		-- function 24
-		for k, v in pairs(Managers.player:players()) do
-			local extension = ScriptUnit.extension(v.player_unit, "inventory_system")
+		for _, player in pairs(Managers.player:players()) do
+			local inventory = ScriptUnit.extension(player.player_unit, "inventory_system")
 
-			if not (not extension and extension:can_wield()) then
+			if not inventory or not inventory:can_wield() then
 				return Testify.RETRY
 			end
 		end
 	end,
-	player_wield_weapon = function (arg_25_0, arg_25_1)
+	player_wield_weapon = function (_, weapon)
 		-- function 25
-		local local_player = Managers.player:local_player()
+		local player = Managers.player:local_player()
+		local inventory = ScriptUnit.extension(player.player_unit, "inventory_system")
 
-		ScriptUnit.extension(local_player.player_unit, "inventory_system"):testify_wield_weapon(arg_25_1)
+		inventory:testify_wield_weapon(weapon)
 	end,
-	bot_wield_weapon = function (arg_26_0, arg_26_1)
+	bot_wield_weapon = function (_, weapon)
 		-- function 26
-		for k, v in pairs(Managers.player:bots()) do
-			ScriptUnit.extension(v.player_unit, "inventory_system"):testify_wield_weapon(arg_26_1)
+		for _, bot in pairs(Managers.player:bots()) do
+			local inventory = ScriptUnit.extension(bot.player_unit, "inventory_system")
+
+			inventory:testify_wield_weapon(weapon)
 		end
 	end,
-	set_game_mode_to_weave = function (arg_27_0)
+	set_game_mode_to_weave = function (state_ingame)
 		-- function 27
-		if Managers.state.game_mode:game_mode_key() ~= "weave" then
+		local game_mode_key = Managers.state.game_mode:game_mode_key()
+
+		if game_mode_key ~= "weave" then
 			Managers.mechanism:choose_next_state("weave")
 			Managers.mechanism:progress_state()
 		end
 	end,
-	load_weave = function (arg_28_0, arg_28_1)
+	load_weave = function (state_ingame, weave_name)
 		-- function 28
-		local level_id = WeaveSettings.templates[arg_28_1].objectives[1].level_id
+		local weave_template = WeaveSettings.templates[weave_name]
+		local objective = weave_template.objectives[1]
+		local level_key = objective.level_id
 		local level_transition_handler = Managers.level_transition_handler
 
-		level_transition_handler:set_next_level(level_id)
+		level_transition_handler:set_next_level(level_key)
 		level_transition_handler:promote_next_level_data()
 	end,
-	make_game_ready_for_next_weave = function (self)
+	make_game_ready_for_next_weave = function (state_ingame)
 		-- function 29
-		if not self.is_in_inn then
+		if not state_ingame.is_in_inn then
 			return Testify.RETRY
 		end
 	end,
@@ -295,61 +333,62 @@ return {
 		-- function 30
 		local bots = Managers.player:bots()
 
-		if not Unit.alive(bots[1].player_unit) then
-			local local_player = Managers.player:local_player()
+		if Unit.alive(bots[1].player_unit) then
+			local player = Managers.player:local_player()
 
-			CharacterStateHelper.change_camera_state(local_player, "observer")
+			CharacterStateHelper.change_camera_state(player, "observer")
 		end
 
 		return Testify.RETRY
 	end,
 	update_camera_to_follow_first_bot_rotation = function ()
 		-- function 31
-		local camera_follow_unit = Managers.player:local_player().camera_follow_unit
-		local player_unit = Managers.player:bots()[1].player_unit
+		local camera_unit = Managers.player:local_player().camera_follow_unit
+		local bots = Managers.player:bots()
+		local first_bot_unit = bots[1].player_unit
 
-		if not player_unit then
-			local local_rotation = Unit.local_rotation(player_unit, 0)
+		if first_bot_unit then
+			local rotation = Unit.local_rotation(first_bot_unit, 0)
 
-			Unit.set_local_rotation(camera_follow_unit, 0, local_rotation)
+			Unit.set_local_rotation(camera_unit, 0, rotation)
 		end
 	end,
-	teleport_player_to_main_path_point = function (arg_32_0, arg_32_1)
+	teleport_player_to_main_path_point = function (_, main_path_point)
 		-- function 32
 		local player_unit = Managers.player:local_player().player_unit
-		local point_on_mainpath = MainPathUtils.point_on_mainpath(nil, arg_32_1)
+		local position = MainPathUtils.point_on_mainpath(nil, main_path_point)
 
-		fn_2(player_unit, point_on_mainpath + Vector3(0, 0, 1))
+		teleport_unit_to_position(player_unit, position + Vector3(0, 0, 1))
 	end,
 	closest_travel_distance_to_player = function ()
 		-- function 33
 		local player_unit = Managers.player:local_player().player_unit
-		local closest_pos_at_main_path, var_33_2 = MainPathUtils.closest_pos_at_main_path(nil, POSITION_LOOKUP[player_unit])
+		local _, travel_distance = MainPathUtils.closest_pos_at_main_path(nil, POSITION_LOOKUP[player_unit])
 
-		return var_33_2
+		return travel_distance
 	end,
-	teleport_player_to_position = function (arg_34_0, arg_34_1)
+	teleport_player_to_position = function (_, position)
 		-- function 34
 		local player_unit = Managers.player:local_player().player_unit
 
-		fn_2(player_unit, arg_34_1:unbox() + Vector3(0, 0, 1))
+		teleport_unit_to_position(player_unit, position:unbox() + Vector3(0, 0, 1))
 	end,
-	teleport_all_players_to_position = function (arg_35_0, arg_35_1)
+	teleport_all_players_to_position = function (_, position)
 		-- function 35
-		local network = Managers.state.network
+		local network_manager = Managers.state.network
 
-		for k, v in pairs(Managers.player:players()) do
-			if not v.player_unit then
-				local extension = ScriptUnit.extension(v.player_unit, "locomotion_system")
-				local current_rotation = extension:current_rotation()
+		for _, player in pairs(Managers.player:players()) do
+			if player.player_unit then
+				local locomotion = ScriptUnit.extension(player.player_unit, "locomotion_system")
+				local rot = locomotion:current_rotation()
 
-				if not v.remote then
-					local unit_game_object_id = network:unit_game_object_id(v.player_unit)
-					local yaw = Quaternion.yaw(current_rotation)
+				if player.remote then
+					local unit_id = network_manager:unit_game_object_id(player.player_unit)
+					local yaw = Quaternion.yaw(rot)
 
-					network.network_transmit:send_rpc_clients("rpc_teleport_unit_with_yaw_rotation", unit_game_object_id, arg_35_1:unbox() + Vector3(0, 0, 1), yaw)
+					network_manager.network_transmit:send_rpc_clients("rpc_teleport_unit_with_yaw_rotation", unit_id, position:unbox() + Vector3(0, 0, 1), yaw)
 				else
-					extension:teleport_to(arg_35_1:unbox() + Vector3(0, 0, 1), current_rotation)
+					locomotion:teleport_to(position:unbox() + Vector3(0, 0, 1), rot)
 				end
 			end
 		end
@@ -357,89 +396,114 @@ return {
 	teleport_player_randomly_on_main_path = function ()
 		-- function 36
 		local player_unit = Managers.player:local_player().player_unit
-		local random = math.random(1, EngineOptimized.main_path_total_length())
-		local point_on_mainpath = MainPathUtils.point_on_mainpath(nil, random)
+		local random_point = math.random(1, EngineOptimized.main_path_total_length())
+		local position = MainPathUtils.point_on_mainpath(nil, random_point)
 
-		fn_2(player_unit, point_on_mainpath + Vector3(0, 0, 1))
+		teleport_unit_to_position(player_unit, position + Vector3(0, 0, 1))
 	end,
 	set_player_unit_not_visible = function ()
 		-- function 37
-		local local_player = Managers.player:local_player()
+		local player = Managers.player:local_player()
 
-		if not Unit.alive(local_player.player_unit) then
+		if Unit.alive(player.player_unit) then
 			return Testify.RETRY
 		end
 	end,
-	teleport_bots_forward_on_main_path_if_blocked = function (arg_38_0, arg_38_1)
+	teleport_bots_forward_on_main_path_if_blocked = function (_, bots_data)
 		-- function 38
-		local bots_stuck_data = arg_38_1.bots_stuck_data
-		local main_path_point = arg_38_1.main_path_point
-		local bots_blocked_time_before_teleportation = arg_38_1.bots_blocked_time_before_teleportation
+		local bots_stuck_data = bots_data.bots_stuck_data
+		local main_path_point = bots_data.main_path_point
+		local bots_blocked_time_before_teleportation_2 = bots_data.bots_blocked_time_before_teleportation
 
-		bots_blocked_time_before_teleportation = bots_blocked_time_before_teleportation or 6
+		if not bots_blocked_time_before_teleportation_2 then
+			-- Nothing
+		end
 
-		for k, v in pairs(Managers.player:bots()) do
-			local player_unit = v.player_unit
+		bots_blocked_time_before_teleportation_2 = 6
 
-			if not Unit.alive(player_unit) and not fn(player_unit) then
+		local bots_blocked_time_before_teleportation = bots_blocked_time_before_teleportation_2
+
+		::label_38_0::
+
+		for bot_id, bot in pairs(Managers.player:bots()) do
+			local bot_unit = bot.player_unit
+
+			if not Unit.alive(bot_unit) or is_unit_in_incapacitated_state(bot_unit) then
 				Testify:_print("Bot unit has been removed or is in a blocking state. Cannot teleport it.")
 			else
-				local var_38_4 = bots_stuck_data[k]
-				local var_38_5 = POSITION_LOOKUP[player_unit]
-				local unbox = var_38_4[1]:unbox()
-				local distance_squared = Vector3.distance_squared(unbox, var_38_5)
-				local bots_blocked_distance = arg_38_1.bots_blocked_distance
+				local bot_stuck_data = bots_stuck_data[bot_id]
+				local bot_pos = POSITION_LOOKUP[bot_unit]
+				local stored_bot_position = bot_stuck_data[1]:unbox()
+				local bot_distance_from_stored_position = Vector3.distance_squared(stored_bot_position, bot_pos)
+				local bots_blocked_distance_2 = bots_data.bots_blocked_distance
 
-				bots_blocked_distance = bots_blocked_distance or 2
+				if not bots_blocked_distance_2 then
+					-- Nothing
+				end
 
-				if distance_squared < bots_blocked_distance then
-					local var_38_9 = var_38_4[2]
+				bots_blocked_distance_2 = 2
 
-					if bots_blocked_time_before_teleportation < fn_4() - var_38_9 then
-						local point_on_mainpath = MainPathUtils.point_on_mainpath(nil, main_path_point)
+				local bots_blocked_distance = bots_blocked_distance_2
 
-						if not point_on_mainpath then
-							point_on_mainpath.z = point_on_mainpath.z + 1
+				::label_38_1::
 
-							Testify:_print("The bot %s has almost not moved since %ss. Teleporting bot to x:%s, y:%s, z:%s", k, bots_blocked_time_before_teleportation, point_on_mainpath.x, point_on_mainpath.y, point_on_mainpath.z)
-							fn_2(player_unit, point_on_mainpath)
-							Mover.set_position(Unit.mover(player_unit), point_on_mainpath)
+				if bot_distance_from_stored_position < bots_blocked_distance then
+					local stored_time = bot_stuck_data[2]
+					local delta_time = timer() - stored_time
+
+					if bots_blocked_time_before_teleportation < delta_time then
+						local tp_pos = MainPathUtils.point_on_mainpath(nil, main_path_point)
+
+						if tp_pos then
+							tp_pos.z = tp_pos.z + 1
+
+							Testify:_print("The bot %s has almost not moved since %ss. Teleporting bot to x:%s, y:%s, z:%s", bot_id, bots_blocked_time_before_teleportation, tp_pos.x, tp_pos.y, tp_pos.z)
+							teleport_unit_to_position(bot_unit, tp_pos)
+							Mover.set_position(Unit.mover(bot_unit), tp_pos)
 						end
 					end
 				else
-					var_38_4[1]:store(var_38_5)
+					bot_stuck_data[1]:store(bot_pos)
 
-					var_38_4[2] = fn_4()
+					bot_stuck_data[2] = timer()
 				end
 			end
 		end
 	end,
-	are_bots_blocked = function (arg_39_0, arg_39_1)
+	are_bots_blocked = function (_, bots_data)
 		-- function 39
-		local bots_stuck_data = arg_39_1.bots_stuck_data
-		local bots_blocked_time_before_teleportation = arg_39_1.bots_blocked_time_before_teleportation
+		local bots_stuck_data = bots_data.bots_stuck_data
+		local bots_blocked_time_before_teleportation_2 = bots_data.bots_blocked_time_before_teleportation
 
-		bots_blocked_time_before_teleportation = bots_blocked_time_before_teleportation or 6
+		if not bots_blocked_time_before_teleportation_2 then
+			-- Nothing
+		end
 
-		for k, v in pairs(Managers.player:bots()) do
-			local player_unit = v.player_unit
+		bots_blocked_time_before_teleportation_2 = 6
 
-			if not player_unit then
-				local var_39_3 = bots_stuck_data[k]
-				local position = Mover.position(Unit.mover(player_unit))
+		local bots_blocked_time_before_teleportation = bots_blocked_time_before_teleportation_2
 
-				if Vector3.distance_squared(var_39_3[1]:unbox(), position) < 2 then
-					if bots_blocked_time_before_teleportation < fn_4() - var_39_3[2] then
-						var_39_3[1]:store(Vector3(-999, -999, -999))
+		::label_39_0::
 
-						var_39_3[2] = fn_4()
+		for i, bot in pairs(Managers.player:bots()) do
+			local unit = bot.player_unit
+
+			if unit then
+				local bot_stuck_data = bots_stuck_data[i]
+				local bot_pos = Mover.position(Unit.mover(unit))
+
+				if Vector3.distance_squared(bot_stuck_data[1]:unbox(), bot_pos) < 2 then
+					if bots_blocked_time_before_teleportation < timer() - bot_stuck_data[2] then
+						bot_stuck_data[1]:store(Vector3(-999, -999, -999))
+
+						bot_stuck_data[2] = timer()
 
 						return true
 					end
 				else
-					var_39_3[1]:store(position)
+					bot_stuck_data[1]:store(bot_pos)
 
-					var_39_3[2] = fn_4()
+					bot_stuck_data[2] = timer()
 				end
 			end
 		end
@@ -448,86 +512,91 @@ return {
 	end,
 	make_players_invicible = function ()
 		-- function 40
-		for k, v in pairs(Managers.player:players()) do
-			fn_3(v.player_unit)
+		for _, player in pairs(Managers.player:players()) do
+			make_invincible(player.player_unit)
 		end
 	end,
 	make_player_and_two_bots_invicible = function ()
 		-- function 41
 		local bots = Managers.player:bots()
 
-		fn_3(bots[1].player_unit)
-		fn_3(bots[2].player_unit)
-		fn_3(Managers.player:local_player().player_unit)
+		make_invincible(bots[1].player_unit)
+		make_invincible(bots[2].player_unit)
+		make_invincible(Managers.player:local_player().player_unit)
 	end,
 	post_telemetry_events = function ()
 		-- function 42
 		Managers.telemetry:post_batch()
 	end,
-	get_main_path_points = function (arg_43_0, arg_43_1)
+	get_main_path_points = function (_, nb_points)
 		-- function 43
 		local main_path_total_length = EngineOptimized.main_path_total_length()
-		local tbl = {}
+		local main_path_points = {}
 
-		for i = 1, arg_43_1 do
-			tbl[i] = math.floor(main_path_total_length * i / arg_43_1)
+		for i = 1, nb_points do
+			main_path_points[i] = math.floor(main_path_total_length * i / nb_points)
 		end
 
-		return tbl
+		return main_path_points
 	end,
-	set_difficulty = function (arg_44_0, arg_44_1)
+	set_difficulty = function (_, difficulty)
 		-- function 44
-		local num = 0
+		local difficulty_tweak = 0
 
-		Managers.state.difficulty:set_difficulty(arg_44_1, num)
+		Managers.state.difficulty:set_difficulty(difficulty, difficulty_tweak)
 	end,
 	get_player_current_position = function ()
 		-- function 45
-		local var_45_0, var_45_1 = next(Managers.player._human_players)
+		local _, player = next(Managers.player._human_players)
+		local player_current_position = POSITION_LOOKUP[player.player_unit]
 
-		return POSITION_LOOKUP[var_45_1.player_unit]
+		return player_current_position
 	end,
-	is_unit_alive = function (arg_46_0, arg_46_1)
+	is_unit_alive = function (_, unit)
 		-- function 46
-		local var_46_0 = HEALTH_ALIVE[arg_46_1]
+		local var_46_0 = HEALTH_ALIVE[unit]
 
-		var_46_0 = var_46_0 or false
+		var_46_0 = not not var_46_0 or not not false
 
 		return var_46_0
 	end,
-	get_unit_health_values = function (arg_47_0, arg_47_1)
+	get_unit_health_values = function (_, unit)
 		-- function 47
-		local var_47_0
-		local has_extension = ScriptUnit.has_extension(arg_47_1, "health_system")
+		local health_values
+		local health_extension = ScriptUnit.has_extension(unit, "health_system")
 
-		if not has_extension then
-			var_47_0 = {
-				current_health = has_extension:current_health(),
-				max_health = has_extension:get_max_health()
+		if health_extension then
+			health_values = {
+				current_health = health_extension:current_health(),
+				max_health = health_extension:get_max_health()
 			}
 		end
 
-		return var_47_0
+		return health_values
 	end,
-	kill_unit = function (arg_48_0, arg_48_1)
+	kill_unit = function (_, unit)
 		-- function 48
-		local str = "forced"
-		local var_48_1 = Vector3(0, 0, -1)
+		local damage_type = "forced"
+		local damage_direction = Vector3(0, 0, -1)
 
-		AiUtils.kill_unit(arg_48_1, nil, nil, str, var_48_1)
+		AiUtils.kill_unit(unit, nil, nil, damage_type, damage_direction)
 	end,
-	add_buffs_to_heroes = function (arg_49_0, arg_49_1)
+	add_buffs_to_heroes = function (_, buffs)
 		-- function 49
-		local get_side_from_name = Managers.state.side:get_side_from_name("heroes")
+		local side = Managers.state.side:get_side_from_name("heroes")
 
-		for k, v in pairs(get_side_from_name.PLAYER_AND_BOT_UNITS) do
-			for i, v_2 in ipairs(arg_49_1) do
-				ScriptUnit.extension(v, "buff_system"):add_buff(v_2)
+		for _, unit in pairs(side.PLAYER_AND_BOT_UNITS) do
+			for _, buff_name in ipairs(buffs) do
+				local buff_extension = ScriptUnit.extension(unit, "buff_system")
+
+				buff_extension:add_buff(buff_name)
 			end
 		end
 	end,
-	fail_test = function (arg_50_0, arg_50_1)
+	fail_test = function (_, message)
 		-- function 50
-		assert(false, arg_50_1)
+		assert(false, message)
 	end
 }
+
+return StateInGameTestify

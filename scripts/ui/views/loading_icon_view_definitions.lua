@@ -1,6 +1,6 @@
 -- chunkname: @scripts/ui/views/loading_icon_view_definitions.lua
 
-local tbl = {
+local scenegraph_definition = {
 	screen = {
 		vertical_alignment = "center",
 		horizontal_alignment = "center",
@@ -31,7 +31,7 @@ local tbl = {
 	}
 }
 
-local function fn(arg_1_0, arg_1_1)
+local function create_loading_icon_widget(texture, scenegraph_id)
 	-- function 1
 	return {
 		element = {
@@ -49,7 +49,7 @@ local function fn(arg_1_0, arg_1_1)
 		},
 		content = {
 			current_index = 0,
-			loading_icon_id = arg_1_0
+			loading_icon_id = texture
 		},
 		style = {
 			background_rect = {
@@ -84,11 +84,13 @@ local function fn(arg_1_0, arg_1_1)
 			0,
 			0
 		},
-		scenegraph_id = arg_1_1
+		scenegraph_id = scenegraph_id
 	}
 end
 
-return {
-	scenegraph_definition = tbl,
-	loading_icon = fn("default", "loading_icon")
+local definitions = {
+	scenegraph_definition = scenegraph_definition,
+	loading_icon = create_loading_icon_widget("default", "loading_icon")
 }
+
+return definitions

@@ -1,10 +1,10 @@
 -- chunkname: @scripts/settings/terror_events/terror_events_dlc_celebrate_crawl.lua
 
-local scripts_settings_terror_events_terror_event_utils = require("scripts/settings/terror_events/terror_event_utils")
-local count_event_breed = scripts_settings_terror_events_terror_event_utils.count_event_breed
-local HARDER = scripts_settings_terror_events_terror_event_utils.HARDER
-local HARDEST = scripts_settings_terror_events_terror_event_utils.HARDEST
-local tbl = {
+local TerrorEventUtils = require("scripts/settings/terror_events/terror_event_utils")
+local count_event_breed = TerrorEventUtils.count_event_breed
+local HARDER = TerrorEventUtils.HARDER
+local HARDEST = TerrorEventUtils.HARDEST
+local weighted_random_terror_events = {
 	crawl_gauntlet = {
 		"crawl_gauntlet_01",
 		1,
@@ -26,7 +26,7 @@ local tbl = {
 		1
 	}
 }
-local tbl_2 = {
+local terror_event_blueprints = {
 	crawl_pub_collapse_01 = {
 		{
 			"set_master_event_running",
@@ -67,9 +67,9 @@ local tbl_2 = {
 		{
 			"continue_when",
 			duration = 80,
-			condition = function (arg_1_0)
+			condition = function (t)
 				-- function 1
-				return not (count_event_breed("skaven_clan_rat") < 3) or not (count_event_breed("skaven_slave") < 3) or not (count_event_breed("skaven_storm_vermin_commander") < 2) or not (count_event_breed("skaven_storm_vermin_with_shield") < 2) or count_event_breed("skaven_plague_monk") < 1
+				return count_event_breed("skaven_clan_rat") < 3 and count_event_breed("skaven_slave") < 3 and count_event_breed("skaven_storm_vermin_commander") < 2 and count_event_breed("skaven_storm_vermin_with_shield") < 2 and count_event_breed("skaven_plague_monk") < 1
 			end
 		},
 		{
@@ -122,9 +122,9 @@ local tbl_2 = {
 		{
 			"continue_when",
 			duration = 90,
-			condition = function (arg_2_0)
+			condition = function (t)
 				-- function 2
-				return not (count_event_breed("chaos_marauder") < 2) or not (count_event_breed("chaos_marauder_with_shield") < 2) or not (count_event_breed("chaos_fanatic") < 2) or not (count_event_breed("chaos_warrior") < 1) or count_event_breed("chaos_berzerker") < 1
+				return count_event_breed("chaos_marauder") < 2 and count_event_breed("chaos_marauder_with_shield") < 2 and count_event_breed("chaos_fanatic") < 2 and count_event_breed("chaos_warrior") < 1 and count_event_breed("chaos_berzerker") < 1
 			end
 		},
 		{
@@ -185,9 +185,9 @@ local tbl_2 = {
 		{
 			"continue_when",
 			duration = 80,
-			condition = function (arg_3_0)
+			condition = function (t)
 				-- function 3
-				return not (count_event_breed("skaven_clan_rat") < 4) or not (count_event_breed("skaven_slave") < 4) or count_event_breed("skaven_storm_vermin_commander") < 2
+				return count_event_breed("skaven_clan_rat") < 4 and count_event_breed("skaven_slave") < 4 and count_event_breed("skaven_storm_vermin_commander") < 2
 			end
 		},
 		{
@@ -207,9 +207,9 @@ local tbl_2 = {
 		{
 			"continue_when",
 			duration = 80,
-			condition = function (arg_4_0)
+			condition = function (t)
 				-- function 4
-				return not (count_event_breed("chaos_marauder") < 2) or not (count_event_breed("chaos_marauder_with_shield") < 1) or count_event_breed("chaos_fanatic") < 3
+				return count_event_breed("chaos_marauder") < 2 and count_event_breed("chaos_marauder_with_shield") < 1 and count_event_breed("chaos_fanatic") < 3
 			end
 		},
 		{
@@ -263,9 +263,9 @@ local tbl_2 = {
 		{
 			"continue_when",
 			duration = 80,
-			condition = function (arg_5_0)
+			condition = function (t)
 				-- function 5
-				return not (count_event_breed("skaven_clan_rat") < 3) or count_event_breed("skaven_slave") < 3
+				return count_event_breed("skaven_clan_rat") < 3 and count_event_breed("skaven_slave") < 3
 			end
 		},
 		{
@@ -285,9 +285,9 @@ local tbl_2 = {
 		{
 			"continue_when",
 			duration = 80,
-			condition = function (arg_6_0)
+			condition = function (t)
 				-- function 6
-				return not (count_event_breed("skaven_storm_vermin_commander") < 1) or not (count_event_breed("chaos_marauder") < 2) or not (count_event_breed("chaos_marauder_with_shield") < 1) or count_event_breed("chaos_fanatic") < 2
+				return count_event_breed("skaven_storm_vermin_commander") < 1 and count_event_breed("chaos_marauder") < 2 and count_event_breed("chaos_marauder_with_shield") < 1 and count_event_breed("chaos_fanatic") < 2
 			end
 		},
 		{
@@ -302,9 +302,9 @@ local tbl_2 = {
 		{
 			"continue_when",
 			duration = 80,
-			condition = function (arg_7_0)
+			condition = function (t)
 				-- function 7
-				return not (count_event_breed("skaven_clan_rat") < 2) or not (count_event_breed("skaven_slave") < 2) or not (count_event_breed("skaven_storm_vermin_with_shield") < 1) or count_event_breed("skaven_clan_rat_with_shield") < 1
+				return count_event_breed("skaven_clan_rat") < 2 and count_event_breed("skaven_slave") < 2 and count_event_breed("skaven_storm_vermin_with_shield") < 1 and count_event_breed("skaven_clan_rat_with_shield") < 1
 			end
 		},
 		{
@@ -319,9 +319,9 @@ local tbl_2 = {
 		{
 			"continue_when",
 			duration = 80,
-			condition = function (arg_8_0)
+			condition = function (t)
 				-- function 8
-				return not (count_event_breed("chaos_marauder") < 2) or not (count_event_breed("chaos_marauder_with_shield") < 1) or not (count_event_breed("chaos_fanatic") < 2) or count_event_breed("chaos_berzerker") < 1
+				return count_event_breed("chaos_marauder") < 2 and count_event_breed("chaos_marauder_with_shield") < 1 and count_event_breed("chaos_fanatic") < 2 and count_event_breed("chaos_berzerker") < 1
 			end
 		},
 		{
@@ -355,9 +355,9 @@ local tbl_2 = {
 		{
 			"continue_when",
 			duration = 80,
-			condition = function (arg_9_0)
+			condition = function (t)
 				-- function 9
-				return not (count_event_breed("skaven_clan_rat") < 2) or not (count_event_breed("skaven_slave") < 2) or not (count_event_breed("chaos_marauder") < 1) or not (count_event_breed("chaos_marauder_with_shield") < 1) or count_event_breed("chaos_fanatic") < 2
+				return count_event_breed("skaven_clan_rat") < 2 and count_event_breed("skaven_slave") < 2 and count_event_breed("chaos_marauder") < 1 and count_event_breed("chaos_marauder_with_shield") < 1 and count_event_breed("chaos_fanatic") < 2
 			end
 		},
 		{
@@ -377,9 +377,9 @@ local tbl_2 = {
 		{
 			"continue_when",
 			duration = 80,
-			condition = function (arg_10_0)
+			condition = function (t)
 				-- function 10
-				return not (count_event_breed("skaven_clan_rat") < 2) or not (count_event_breed("skaven_slave") < 2) or count_event_breed("skaven_storm_vermin_commander") < 1
+				return count_event_breed("skaven_clan_rat") < 2 and count_event_breed("skaven_slave") < 2 and count_event_breed("skaven_storm_vermin_commander") < 1
 			end
 		},
 		{
@@ -394,9 +394,9 @@ local tbl_2 = {
 		{
 			"continue_when",
 			duration = 80,
-			condition = function (arg_11_0)
+			condition = function (t)
 				-- function 11
-				return not (count_event_breed("chaos_marauder") < 2) or not (count_event_breed("chaos_marauder_with_shield") < 1) or not (count_event_breed("chaos_fanatic") < 2) or count_event_breed("chaos_berzerker") < 1
+				return count_event_breed("chaos_marauder") < 2 and count_event_breed("chaos_marauder_with_shield") < 1 and count_event_breed("chaos_fanatic") < 2 and count_event_breed("chaos_berzerker") < 1
 			end
 		},
 		{
@@ -421,9 +421,9 @@ local tbl_2 = {
 		{
 			"continue_when",
 			duration = 80,
-			condition = function (arg_12_0)
+			condition = function (t)
 				-- function 12
-				return not (count_event_breed("skaven_clan_rat") < 2) or not (count_event_breed("skaven_slave") < 2) or not (count_event_breed("skaven_storm_vermin_commander") < 1) or not (count_event_breed("chaos_marauder") < 1) or not (count_event_breed("chaos_marauder_with_shield") < 1) or count_event_breed("chaos_fanatic") < 2
+				return count_event_breed("skaven_clan_rat") < 2 and count_event_breed("skaven_slave") < 2 and count_event_breed("skaven_storm_vermin_commander") < 1 and count_event_breed("chaos_marauder") < 1 and count_event_breed("chaos_marauder_with_shield") < 1 and count_event_breed("chaos_fanatic") < 2
 			end
 		},
 		{
@@ -449,9 +449,9 @@ local tbl_2 = {
 		{
 			"continue_when",
 			duration = 80,
-			condition = function (arg_13_0)
+			condition = function (t)
 				-- function 13
-				return not (count_event_breed("skaven_clan_rat") < 2) or not (count_event_breed("chaos_raider") < 2) or not (count_event_breed("chaos_marauder") < 1) or not (count_event_breed("chaos_marauder_with_shield") < 1) or not (count_event_breed("chaos_fanatic") < 2) or count_event_breed("skaven_rat_ogre") < 1
+				return count_event_breed("skaven_clan_rat") < 2 and count_event_breed("chaos_raider") < 2 and count_event_breed("chaos_marauder") < 1 and count_event_breed("chaos_marauder_with_shield") < 1 and count_event_breed("chaos_fanatic") < 2 and count_event_breed("skaven_rat_ogre") < 1
 			end
 		},
 		{
@@ -475,9 +475,9 @@ local tbl_2 = {
 		{
 			"continue_when",
 			duration = 80,
-			condition = function (arg_14_0)
+			condition = function (t)
 				-- function 14
-				return not (count_event_breed("skaven_clan_rat") < 1) or not (count_event_breed("skaven_slave") < 1) or not (count_event_breed("skaven_plague_monk") < 1) or not (count_event_breed("skaven_storm_vermin_commander") < 1) or not (count_event_breed("chaos_fanatic") < 1) or not (count_event_breed("chaos_marauder") < 1) or count_event_breed("chaos_marauder_with_shield") < 1
+				return count_event_breed("skaven_clan_rat") < 1 and count_event_breed("skaven_slave") < 1 and count_event_breed("skaven_plague_monk") < 1 and count_event_breed("skaven_storm_vermin_commander") < 1 and count_event_breed("chaos_fanatic") < 1 and count_event_breed("chaos_marauder") < 1 and count_event_breed("chaos_marauder_with_shield") < 1
 			end
 		},
 		{
@@ -508,7 +508,7 @@ local tbl_2 = {
 		{
 			"continue_when",
 			duration = 80,
-			condition = function (arg_15_0)
+			condition = function (t)
 				-- function 15
 				return count_event_breed("skaven_poison_wind_globadier") < 1
 			end
@@ -541,7 +541,7 @@ local tbl_2 = {
 		{
 			"continue_when",
 			duration = 80,
-			condition = function (arg_16_0)
+			condition = function (t)
 				-- function 16
 				return count_event_breed("skaven_warpfire_thrower") < 1
 			end
@@ -574,9 +574,9 @@ local tbl_2 = {
 		{
 			"continue_when",
 			duration = 80,
-			condition = function (arg_17_0)
+			condition = function (t)
 				-- function 17
-				return not (count_event_breed("skaven_pack_master") < 1) or count_event_breed("skaven_ratling_gunner") < 1
+				return count_event_breed("skaven_pack_master") < 1 and count_event_breed("skaven_ratling_gunner") < 1
 			end
 		},
 		{
@@ -607,7 +607,7 @@ local tbl_2 = {
 		{
 			"continue_when",
 			duration = 80,
-			condition = function (arg_18_0)
+			condition = function (t)
 				-- function 18
 				return count_event_breed("skaven_ratling_gunner") < 1
 			end
@@ -640,7 +640,7 @@ local tbl_2 = {
 		{
 			"continue_when",
 			duration = 80,
-			condition = function (arg_19_0)
+			condition = function (t)
 				-- function 19
 				return count_event_breed("skaven_gutter_runner") < 1
 			end
@@ -684,9 +684,9 @@ local tbl_2 = {
 		{
 			"continue_when",
 			duration = 80,
-			condition = function (arg_20_0)
+			condition = function (t)
 				-- function 20
-				return not (count_event_breed("skaven_pack_master") < 1) or not (count_event_breed("skaven_poison_wind_globadier") < 1) or not (count_event_breed("skaven_gutter_runner") < 1) or count_event_breed("skaven_ratling_gunner") < 1
+				return count_event_breed("skaven_pack_master") < 1 and count_event_breed("skaven_poison_wind_globadier") < 1 and count_event_breed("skaven_gutter_runner") < 1 and count_event_breed("skaven_ratling_gunner") < 1
 			end
 		},
 		{
@@ -717,9 +717,9 @@ local tbl_2 = {
 		{
 			"continue_when",
 			duration = 80,
-			condition = function (arg_21_0)
+			condition = function (t)
 				-- function 21
-				return not (count_event_breed("skaven_ratling_gunner") < 1) or count_event_breed("skaven_poison_wind_globadier") < 1
+				return count_event_breed("skaven_ratling_gunner") < 1 and count_event_breed("skaven_poison_wind_globadier") < 1
 			end
 		},
 		{
@@ -754,7 +754,7 @@ local tbl_2 = {
 		{
 			"continue_when",
 			duration = 80,
-			condition = function (arg_22_0)
+			condition = function (t)
 				-- function 22
 				return count_event_breed("chaos_warrior") < 1
 			end
@@ -796,9 +796,9 @@ local tbl_2 = {
 		{
 			"continue_when",
 			duration = 80,
-			condition = function (arg_23_0)
+			condition = function (t)
 				-- function 23
-				return not (count_event_breed("chaos_marauder") < 2) or not (count_event_breed("chaos_marauder_with_shield") < 1) or count_event_breed("chaos_fanatic") < 2
+				return count_event_breed("chaos_marauder") < 2 and count_event_breed("chaos_marauder_with_shield") < 1 and count_event_breed("chaos_fanatic") < 2
 			end
 		},
 		{
@@ -831,9 +831,9 @@ local tbl_2 = {
 		{
 			"continue_when",
 			duration = 80,
-			condition = function (arg_24_0)
+			condition = function (t)
 				-- function 24
-				return not (count_event_breed("skaven_clan_rat") < 2) or not (count_event_breed("skaven_slave") < 2) or count_event_breed("skaven_storm_vermin_commander") < 1
+				return count_event_breed("skaven_clan_rat") < 2 and count_event_breed("skaven_slave") < 2 and count_event_breed("skaven_storm_vermin_commander") < 1
 			end
 		},
 		{
@@ -903,6 +903,6 @@ local tbl_2 = {
 }
 
 return {
-	tbl_2,
-	tbl
+	terror_event_blueprints,
+	weighted_random_terror_events
 }

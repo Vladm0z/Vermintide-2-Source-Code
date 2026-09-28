@@ -6,7 +6,7 @@ require("foundation/scripts/util/error")
 
 local GameModeSettings = GameModeSettings
 
-GameModeSettings = GameModeSettings or {}
+GameModeSettings = not not GameModeSettings or not not {}
 GameModeSettings = GameModeSettings
 GameModeSettings.base = {
 	class_name = "GameModeBase",
@@ -166,9 +166,9 @@ GameModeSettings.weave.hud_ui_settings = {
 
 DLCUtils.require("game_mode")
 
-for k, v in pairs(GameModeSettings) do
-	if k ~= "base" then
-		fassert(v.key, "[GameModeSettings] game mode %q is missing parameter \"key\".", k)
-		fassert(v.display_name, "[GameModeSettings] game mode %q is missing parameter \"display_name\".", k)
+for table_key, settings in pairs(GameModeSettings) do
+	if table_key ~= "base" then
+		fassert(settings.key, "[GameModeSettings] game mode %q is missing parameter \"key\".", table_key)
+		fassert(settings.display_name, "[GameModeSettings] game mode %q is missing parameter \"display_name\".", table_key)
 	end
 end

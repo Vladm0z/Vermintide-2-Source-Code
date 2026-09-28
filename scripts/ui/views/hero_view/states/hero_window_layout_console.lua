@@ -1,6 +1,6 @@
 -- chunkname: @scripts/ui/views/hero_view/states/hero_window_layout_console.lua
 
-local tbl = {
+local windows = {
 	panel = {
 		ignore_alignment = true,
 		name = "panel",
@@ -97,7 +97,7 @@ local tbl = {
 		class_name = "HeroWindowDarkPactCharacterSelectionConsole"
 	}
 }
-local tbl_2 = {
+local window_layouts = {
 	{
 		sound_event_enter = "play_gui_equipment_button",
 		name = "equipment",
@@ -136,9 +136,9 @@ local tbl_2 = {
 			background = 2,
 			crafting_list = 3
 		},
-		can_add_function = function (arg_1_0)
+		can_add_function = function (mechanism_name)
 			-- function 1
-			return arg_1_0 == "versus" or arg_1_0 ~= "inn_vs"
+			return mechanism_name ~= "versus" and mechanism_name ~= "inn_vs"
 		end
 	},
 	{
@@ -278,78 +278,94 @@ local tbl_2 = {
 			panel = 1,
 			background = 2
 		},
-		can_add_function = function (arg_2_0)
+		can_add_function = function (mechanism_name)
 			-- function 2
-			return arg_2_0 == "versus"
+			return mechanism_name == "versus"
 		end,
-		on_exit = function (self)
+		on_exit = function (parent)
 			-- function 3
 			local local_player = Managers.player:local_player()
 			local profile_index = local_player:profile_index()
 			local career_index = local_player:career_index()
 
-			self:change_profile(profile_index, career_index)
+			parent:change_profile(profile_index, career_index)
 
-			local var_3_3 = SPProfiles[profile_index]
+			local profile = SPProfiles[profile_index]
 
 			Managers.state.event:trigger("respawn_hero", {
-				hero_name = var_3_3.display_name,
+				hero_name = profile.display_name,
 				career_index = career_index
 			})
 
 			local carousel = DLCSettings.carousel
 
-			carousel = not carousel and DLCSettings.carousel.hero_window_mood_settings
+			if carousel then
+				-- Nothing
+			end
 
-			local default = carousel.default
+			carousel = DLCSettings.carousel.hero_window_mood_settings
 
-			default = default or "default"
+			local mood_settings = carousel
 
-			self:set_background_mood(default)
+			::label_3_0::
+
+			local default = mood_settings.default
+
+			if not default then
+				-- Nothing
+			end
+
+			default = "default"
+
+			local mood_setting = default
+
+			::label_3_1::
+
+			parent:set_background_mood(mood_setting)
 		end
 	}
 }
-local num = 6
+local MAX_ACTIVE_WINDOWS = 6
 
-DLCUtils.map("hero_view_window_layout_console", function (self)
+DLCUtils.map("hero_view_window_layout_console", function (hero_view_window_layout_console)
 	-- function 4
-	local windows = self.windows
+	local new_windows = hero_view_window_layout_console.windows
 
-	if not windows then
-		for k, v in pairs(windows) do
-			tbl[k] = v
+	if new_windows then
+		for name, window in pairs(new_windows) do
+			windows[name] = window
 		end
 	end
 
-	local window_layouts = self.window_layouts
+	local new_window_layouts = hero_view_window_layout_console.window_layouts
 
-	if not window_layouts then
-		for k_2 = 1, #window_layouts do
-			tbl_2[#tbl_2 + 1] = window_layouts[k_2]
+	if new_window_layouts then
+		for i = 1, #new_window_layouts do
+			window_layouts[#window_layouts + 1] = new_window_layouts[i]
 		end
 	end
 end)
-DLCUtils.map("hero_view_window_layout_console", function (self)
+DLCUtils.map("hero_view_window_layout_console", function (hero_view_window_layout_console)
 	-- function 5
-	local windows = self.windows
+	local new_windows = hero_view_window_layout_console.windows
 
-	if not windows then
-		for k, v in pairs(windows) do
-			tbl[k] = v
+	if new_windows then
+		for name, window in pairs(new_windows) do
+			windows[name] = window
 		end
 	end
 
-	local window_layouts = self.window_layouts
+	local new_window_layouts = hero_view_window_layout_console.window_layouts
 
-	if not window_layouts then
-		for k_2 = 1, #window_layouts do
-			tbl_2[#tbl_2 + 1] = window_layouts[k_2]
+	if new_window_layouts then
+		for i = 1, #new_window_layouts do
+			window_layouts[#window_layouts + 1] = new_window_layouts[i]
 		end
 	end
 end)
 
 return {
-	max_active_windows = num,
-	windows = tbl,
-	window_layouts = tbl_2
+	max_active_windows = MAX_ACTIVE_WINDOWS,
+	windows = windows,
+	window_layouts = window_layouts
 }

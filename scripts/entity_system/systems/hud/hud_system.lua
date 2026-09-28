@@ -4,22 +4,22 @@ require("scripts/unit_extensions/default_player_unit/player_hud")
 
 HUDSystem = class(HUDSystem, ExtensionSystemBase)
 
-local tbl = {
+local extensions = {
 	"PlayerHud"
 }
-local tbl_2 = {
+local RPCS = {
 	"rpc_set_current_location"
 }
 
-HUDSystem.init = function (self, arg_1_1, arg_1_2)
+HUDSystem.init = function (self, entity_system_creation_context, system_name)
 	-- function 1
-	HUDSystem.super.init(self, arg_1_1, arg_1_2, tbl)
+	HUDSystem.super.init(self, entity_system_creation_context, system_name, extensions)
 
-	local network_event_delegate = arg_1_1.network_event_delegate
+	local network_event_delegate = entity_system_creation_context.network_event_delegate
 
 	self.network_event_delegate = network_event_delegate
 
-	network_event_delegate:register(self, unpack(tbl_2))
+	network_event_delegate:register(self, unpack(RPCS))
 
 	self.network_transmit = Managers.state.network.network_transmit
 end
@@ -32,25 +32,26 @@ HUDSystem.destroy = function (self)
 	self.network_transmit = nil
 end
 
-HUDSystem.rpc_set_current_location = function (self, arg_3_1, arg_3_2, arg_3_3)
+HUDSystem.rpc_set_current_location = function (self, channel_id, unit_id, location_id)
 	-- function 3
-	local unit = self.unit_storage:unit(arg_3_2)
+	local unit = self.unit_storage:unit(unit_id)
 
 	if not Unit.alive(unit) then
 		return
 	end
 
-	local var_3_1 = NetworkLookup.locations[arg_3_3]
+	local location = NetworkLookup.locations[location_id]
+	local hud_extension = ScriptUnit.extension(unit, "hud_system")
 
-	ScriptUnit.extension(unit, "hud_system"):set_current_location(var_3_1)
+	hud_extension:set_current_location(location)
 end
 
-HUDSystem.add_subtitle = function (arg_4_0, arg_4_1, arg_4_2)
+HUDSystem.add_subtitle = function (self, speaker, subtitle)
 	-- function 4
-	Managers.state.event:trigger("ui_event_start_subtitle", arg_4_1, arg_4_2)
+	Managers.state.event:trigger("ui_event_start_subtitle", speaker, subtitle)
 end
 
-HUDSystem.remove_subtitle = function (arg_5_0, arg_5_1)
+HUDSystem.remove_subtitle = function (self, speaker)
 	-- function 5
-	Managers.state.event:trigger("ui_event_stop_subtitle", arg_5_1)
+	Managers.state.event:trigger("ui_event_stop_subtitle", speaker)
 end

@@ -5,24 +5,24 @@ require("scripts/settings/ui_player_portrait_frame_settings")
 
 local UIWidgets = UIWidgets
 
-UIWidgets = UIWidgets or {}
+UIWidgets = not not UIWidgets or not not {}
 UIWidgets = UIWidgets
 
-UIWidgets.create_store_category_entry_definition = function (arg_1_0, arg_1_1, arg_1_2)
+UIWidgets.create_store_category_entry_definition = function (scenegraph_id, size, masked)
 	-- function 1
-	local str = "button_frame_02_gold"
-	local var_1_1 = UIFrameSettings[str]
-	local var_1_2 = var_1_1.texture_sizes.horizontal[2]
-	local str_2 = "frame_outer_glow_04"
-	local var_1_4 = UIFrameSettings[str_2]
-	local var_1_5 = var_1_4.texture_sizes.horizontal[2]
-	local str_3 = "frame_outer_glow_04_big"
-	local var_1_7 = UIFrameSettings[str_3]
-	local var_1_8 = var_1_7.texture_sizes.horizontal[2]
-	local tbl = {
+	local frame_name = "button_frame_02_gold"
+	local frame_settings = UIFrameSettings[frame_name]
+	local frame_spacing = frame_settings.texture_sizes.horizontal[2]
+	local hover_frame_name = "frame_outer_glow_04"
+	local hover_frame_settings = UIFrameSettings[hover_frame_name]
+	local hover_frame_spacing = hover_frame_settings.texture_sizes.horizontal[2]
+	local pulse_frame_name = "frame_outer_glow_04_big"
+	local pulse_frame_settings = UIFrameSettings[pulse_frame_name]
+	local pulse_frame_spacing = pulse_frame_settings.texture_sizes.horizontal[2]
+	local widget = {
 		element = {}
 	}
-	local tbl_2 = {
+	local passes = {
 		{
 			style_id = "hotspot",
 			pass_type = "hotspot",
@@ -67,26 +67,26 @@ UIWidgets.create_store_category_entry_definition = function (arg_1_0, arg_1_1, a
 			pass_type = "texture",
 			style_id = "category_texture",
 			texture_id = "category_texture",
-			content_check_function = function (self)
+			content_check_function = function (content)
 				-- function 2
-				return self.category_texture
+				return content.category_texture
 			end
 		}
 	}
-	local tbl_3 = {
+	local content = {
 		title = "n/a",
 		background_fade = "options_window_fade_01",
 		background = "menu_frame_bg_03",
 		category_texture = "store_category_icon_hats",
 		hotspot = {},
-		hover_frame = var_1_4.texture,
-		pulse_frame = var_1_7.texture,
-		frame = var_1_1.texture,
-		size = arg_1_1
+		hover_frame = hover_frame_settings.texture,
+		pulse_frame = pulse_frame_settings.texture,
+		frame = frame_settings.texture,
+		size = size
 	}
-	local tbl_4 = {
+	local tbl = {
 		hotspot = {
-			size = arg_1_1,
+			size = size,
 			offset = {
 				0,
 				0,
@@ -96,7 +96,7 @@ UIWidgets.create_store_category_entry_definition = function (arg_1_0, arg_1_1, a
 		background = {
 			vertical_alignment = "bottom",
 			horizontal_alignment = "left",
-			masked = arg_1_2,
+			masked = masked,
 			color = {
 				255,
 				100,
@@ -107,7 +107,7 @@ UIWidgets.create_store_category_entry_definition = function (arg_1_0, arg_1_1, a
 				256,
 				256
 			},
-			texture_size = arg_1_1,
+			texture_size = size,
 			offset = {
 				0,
 				0,
@@ -117,10 +117,10 @@ UIWidgets.create_store_category_entry_definition = function (arg_1_0, arg_1_1, a
 		background_fade = {
 			vertical_alignment = "bottom",
 			horizontal_alignment = "left",
-			masked = arg_1_2,
+			masked = masked,
 			texture_size = {
-				arg_1_1[1] - var_1_2 * 2,
-				arg_1_1[2] - var_1_2 * 2
+				size[1] - frame_spacing * 2,
+				size[2] - frame_spacing * 2
 			},
 			color = {
 				255,
@@ -129,18 +129,18 @@ UIWidgets.create_store_category_entry_definition = function (arg_1_0, arg_1_1, a
 				255
 			},
 			offset = {
-				var_1_2,
-				var_1_2,
+				frame_spacing,
+				frame_spacing,
 				1
 			}
 		},
 		frame = {
 			horizontal_alignment = "left",
 			vertical_alignment = "bottom",
-			masked = arg_1_2,
-			area_size = arg_1_1,
-			texture_size = var_1_1.texture_size,
-			texture_sizes = var_1_1.texture_sizes,
+			masked = masked,
+			area_size = size,
+			texture_size = frame_settings.texture_size,
+			texture_sizes = frame_settings.texture_sizes,
 			frame_margins = {
 				0,
 				0
@@ -160,13 +160,13 @@ UIWidgets.create_store_category_entry_definition = function (arg_1_0, arg_1_1, a
 		hover_frame = {
 			horizontal_alignment = "left",
 			vertical_alignment = "bottom",
-			masked = arg_1_2,
-			area_size = arg_1_1,
-			texture_size = var_1_4.texture_size,
-			texture_sizes = var_1_4.texture_sizes,
+			masked = masked,
+			area_size = size,
+			texture_size = hover_frame_settings.texture_size,
+			texture_sizes = hover_frame_settings.texture_sizes,
 			frame_margins = {
-				-var_1_5,
-				-var_1_5
+				-hover_frame_spacing,
+				-hover_frame_spacing
 			},
 			color = {
 				0,
@@ -183,13 +183,13 @@ UIWidgets.create_store_category_entry_definition = function (arg_1_0, arg_1_1, a
 		pulse_frame = {
 			horizontal_alignment = "left",
 			vertical_alignment = "bottom",
-			masked = arg_1_2,
-			area_size = arg_1_1,
-			texture_size = var_1_7.texture_size,
-			texture_sizes = var_1_7.texture_sizes,
+			masked = masked,
+			area_size = size,
+			texture_size = pulse_frame_settings.texture_size,
+			texture_sizes = pulse_frame_settings.texture_sizes,
 			frame_margins = {
-				-var_1_8,
-				-var_1_8
+				-pulse_frame_spacing,
+				-pulse_frame_spacing
 			},
 			color = {
 				0,
@@ -206,10 +206,10 @@ UIWidgets.create_store_category_entry_definition = function (arg_1_0, arg_1_1, a
 		category_texture = {
 			vertical_alignment = "bottom",
 			horizontal_alignment = "right",
-			masked = arg_1_2,
+			masked = masked,
 			size = {
-				arg_1_1[1],
-				arg_1_1[2]
+				size[1],
+				size[2]
 			},
 			texture_size = {
 				258,
@@ -223,7 +223,7 @@ UIWidgets.create_store_category_entry_definition = function (arg_1_0, arg_1_1, a
 			}
 		}
 	}
-	local tbl_5 = {
+	local tbl_2 = {
 		word_wrap = true,
 		upper_case = false,
 		localize = false,
@@ -234,23 +234,23 @@ UIWidgets.create_store_category_entry_definition = function (arg_1_0, arg_1_1, a
 	}
 	local flag
 
-	flag = not arg_1_2 and "hell_shark_header_masked" and "hell_shark_header"
-	tbl_5.font_type = flag
-	tbl_5.text_color = Colors.get_color_table_with_alpha("font_button_normal", 255)
-	tbl_5.default_text_color = Colors.get_color_table_with_alpha("font_button_normal", 255)
-	tbl_5.select_text_color = Colors.get_color_table_with_alpha("white", 255)
-	tbl_5.offset = {
+	flag = (not masked or not "hell_shark_header_masked") and not not "hell_shark_header"
+	tbl_2.font_type = flag
+	tbl_2.text_color = Colors.get_color_table_with_alpha("font_button_normal", 255)
+	tbl_2.default_text_color = Colors.get_color_table_with_alpha("font_button_normal", 255)
+	tbl_2.select_text_color = Colors.get_color_table_with_alpha("white", 255)
+	tbl_2.offset = {
 		30,
 		0,
 		5
 	}
-	tbl_5.size = {
-		arg_1_1[1] - 40,
-		arg_1_1[2]
+	tbl_2.size = {
+		size[1] - 40,
+		size[2]
 	}
-	tbl_4.title = tbl_5
+	tbl.title = tbl_2
 
-	local tbl_6 = {
+	local tbl_3 = {
 		word_wrap = true,
 		upper_case = false,
 		localize = false,
@@ -261,48 +261,51 @@ UIWidgets.create_store_category_entry_definition = function (arg_1_0, arg_1_1, a
 	}
 	local flag_2
 
-	flag_2 = not arg_1_2 and "hell_shark_header_masked" and "hell_shark_header"
-	tbl_6.font_type = flag_2
-	tbl_6.text_color = Colors.get_color_table_with_alpha("black", 255)
-	tbl_6.normal_color = Colors.get_color_table_with_alpha("black", 255)
-	tbl_6.offset = {
+	flag_2 = (not masked or not "hell_shark_header_masked") and not not "hell_shark_header"
+	tbl_3.font_type = flag_2
+	tbl_3.text_color = Colors.get_color_table_with_alpha("black", 255)
+	tbl_3.normal_color = Colors.get_color_table_with_alpha("black", 255)
+	tbl_3.offset = {
 		32,
 		-2,
 		4
 	}
-	tbl_6.size = {
-		arg_1_1[1] - 40,
-		arg_1_1[2]
+	tbl_3.size = {
+		size[1] - 40,
+		size[2]
 	}
-	tbl_4.title_shadow = tbl_6
-	tbl.element.passes = tbl_2
-	tbl.content = tbl_3
-	tbl.style = tbl_4
-	tbl.offset = {
+	tbl.title_shadow = tbl_3
+
+	local style = tbl
+
+	widget.element.passes = passes
+	widget.content = content
+	widget.style = style
+	widget.offset = {
 		0,
 		0,
 		0
 	}
-	tbl.scenegraph_id = arg_1_0
+	widget.scenegraph_id = scenegraph_id
 
-	return tbl
+	return widget
 end
 
-UIWidgets.create_store_collection_entry_definition = function (arg_3_0, arg_3_1, arg_3_2)
+UIWidgets.create_store_collection_entry_definition = function (scenegraph_id, size, masked)
 	-- function 3
-	local str = "button_frame_02_gold"
-	local var_3_1 = UIFrameSettings[str]
-	local var_3_2 = var_3_1.texture_sizes.horizontal[2]
-	local str_2 = "frame_outer_glow_04"
-	local var_3_4 = UIFrameSettings[str_2]
-	local var_3_5 = var_3_4.texture_sizes.horizontal[2]
-	local str_3 = "frame_outer_glow_04_big"
-	local var_3_7 = UIFrameSettings[str_3]
-	local var_3_8 = var_3_7.texture_sizes.horizontal[2]
-	local tbl = {
+	local frame_name = "button_frame_02_gold"
+	local frame_settings = UIFrameSettings[frame_name]
+	local frame_spacing = frame_settings.texture_sizes.horizontal[2]
+	local hover_frame_name = "frame_outer_glow_04"
+	local hover_frame_settings = UIFrameSettings[hover_frame_name]
+	local hover_frame_spacing = hover_frame_settings.texture_sizes.horizontal[2]
+	local pulse_frame_name = "frame_outer_glow_04_big"
+	local pulse_frame_settings = UIFrameSettings[pulse_frame_name]
+	local pulse_frame_spacing = pulse_frame_settings.texture_sizes.horizontal[2]
+	local widget = {
 		element = {}
 	}
-	local tbl_2 = {
+	local passes = {
 		{
 			style_id = "hotspot",
 			pass_type = "hotspot",
@@ -347,58 +350,58 @@ UIWidgets.create_store_collection_entry_definition = function (arg_3_0, arg_3_1,
 			style_id = "category_texture",
 			pass_type = "texture_uv",
 			content_id = "category_texture",
-			content_check_function = function (self)
+			content_check_function = function (content)
 				-- function 4
-				return self.texture_id
+				return content.texture_id
 			end
 		},
 		{
 			pass_type = "texture",
 			style_id = "owned_icon",
 			texture_id = "owned_icon",
-			content_check_function = function (self)
+			content_check_function = function (content)
 				-- function 5
-				return self.owned
+				return content.owned
 			end
 		},
 		{
 			pass_type = "texture",
 			style_id = "owned_icon_bg",
 			texture_id = "owned_icon_bg",
-			content_check_function = function (self)
+			content_check_function = function (content)
 				-- function 6
-				return self.owned
+				return content.owned
 			end
 		}
 	}
-	local tbl_3 = {
+	local content = {
 		owned_icon_bg = "store_owned_ribbon",
 		owned_icon = "store_owned_sigil",
 		title = "n/a",
 		background_fade = "options_window_fade_01",
 		background = "menu_frame_bg_03",
 		hotspot = {},
-		hover_frame = var_3_4.texture,
-		pulse_frame = var_3_7.texture,
-		frame = var_3_1.texture,
+		hover_frame = hover_frame_settings.texture,
+		pulse_frame = pulse_frame_settings.texture,
+		frame = frame_settings.texture,
 		category_texture = {
 			texture_id = "icons_placeholder",
 			uvs = {
 				{
 					0,
-					arg_3_1[2] / 220 * 0.5
+					size[2] / 220 * 0.5
 				},
 				{
 					1,
-					1 - arg_3_1[2] / 220 * 0.5
+					1 - size[2] / 220 * 0.5
 				}
 			}
 		},
-		size = arg_3_1
+		size = size
 	}
-	local tbl_4 = {
+	local tbl = {
 		hotspot = {
-			size = arg_3_1,
+			size = size,
 			offset = {
 				0,
 				0,
@@ -408,7 +411,7 @@ UIWidgets.create_store_collection_entry_definition = function (arg_3_0, arg_3_1,
 		background = {
 			vertical_alignment = "bottom",
 			horizontal_alignment = "left",
-			masked = arg_3_2,
+			masked = masked,
 			color = {
 				255,
 				100,
@@ -419,7 +422,7 @@ UIWidgets.create_store_collection_entry_definition = function (arg_3_0, arg_3_1,
 				256,
 				256
 			},
-			texture_size = arg_3_1,
+			texture_size = size,
 			offset = {
 				0,
 				0,
@@ -429,10 +432,10 @@ UIWidgets.create_store_collection_entry_definition = function (arg_3_0, arg_3_1,
 		background_fade = {
 			vertical_alignment = "bottom",
 			horizontal_alignment = "left",
-			masked = arg_3_2,
+			masked = masked,
 			texture_size = {
-				arg_3_1[1] - var_3_2 * 2,
-				arg_3_1[2] - var_3_2 * 2
+				size[1] - frame_spacing * 2,
+				size[2] - frame_spacing * 2
 			},
 			color = {
 				255,
@@ -441,18 +444,18 @@ UIWidgets.create_store_collection_entry_definition = function (arg_3_0, arg_3_1,
 				255
 			},
 			offset = {
-				var_3_2,
-				var_3_2,
+				frame_spacing,
+				frame_spacing,
 				1
 			}
 		},
 		frame = {
 			horizontal_alignment = "left",
 			vertical_alignment = "bottom",
-			masked = arg_3_2,
-			area_size = arg_3_1,
-			texture_size = var_3_1.texture_size,
-			texture_sizes = var_3_1.texture_sizes,
+			masked = masked,
+			area_size = size,
+			texture_size = frame_settings.texture_size,
+			texture_sizes = frame_settings.texture_sizes,
 			frame_margins = {
 				0,
 				0
@@ -472,13 +475,13 @@ UIWidgets.create_store_collection_entry_definition = function (arg_3_0, arg_3_1,
 		hover_frame = {
 			horizontal_alignment = "left",
 			vertical_alignment = "bottom",
-			masked = arg_3_2,
-			area_size = arg_3_1,
-			texture_size = var_3_4.texture_size,
-			texture_sizes = var_3_4.texture_sizes,
+			masked = masked,
+			area_size = size,
+			texture_size = hover_frame_settings.texture_size,
+			texture_sizes = hover_frame_settings.texture_sizes,
 			frame_margins = {
-				-var_3_5,
-				-var_3_5
+				-hover_frame_spacing,
+				-hover_frame_spacing
 			},
 			color = {
 				0,
@@ -495,13 +498,13 @@ UIWidgets.create_store_collection_entry_definition = function (arg_3_0, arg_3_1,
 		pulse_frame = {
 			horizontal_alignment = "left",
 			vertical_alignment = "bottom",
-			masked = arg_3_2,
-			area_size = arg_3_1,
-			texture_size = var_3_7.texture_size,
-			texture_sizes = var_3_7.texture_sizes,
+			masked = masked,
+			area_size = size,
+			texture_size = pulse_frame_settings.texture_size,
+			texture_sizes = pulse_frame_settings.texture_sizes,
 			frame_margins = {
-				-var_3_8,
-				-var_3_8
+				-pulse_frame_spacing,
+				-pulse_frame_spacing
 			},
 			color = {
 				0,
@@ -518,10 +521,10 @@ UIWidgets.create_store_collection_entry_definition = function (arg_3_0, arg_3_1,
 		category_texture = {
 			vertical_alignment = "bottom",
 			horizontal_alignment = "right",
-			masked = arg_3_2,
+			masked = masked,
 			size = {
-				arg_3_1[1],
-				arg_3_1[2]
+				size[1],
+				size[2]
 			},
 			texture_size = {
 				130,
@@ -535,7 +538,7 @@ UIWidgets.create_store_collection_entry_definition = function (arg_3_0, arg_3_1,
 			}
 		}
 	}
-	local tbl_5 = {
+	local tbl_2 = {
 		word_wrap = false,
 		upper_case = false,
 		localize = false,
@@ -546,23 +549,23 @@ UIWidgets.create_store_collection_entry_definition = function (arg_3_0, arg_3_1,
 	}
 	local flag
 
-	flag = not arg_3_2 and "hell_shark_header_masked" and "hell_shark_header"
-	tbl_5.font_type = flag
-	tbl_5.text_color = Colors.get_color_table_with_alpha("font_button_normal", 255)
-	tbl_5.default_text_color = Colors.get_color_table_with_alpha("font_button_normal", 255)
-	tbl_5.select_text_color = Colors.get_color_table_with_alpha("white", 255)
-	tbl_5.offset = {
+	flag = (not masked or not "hell_shark_header_masked") and not not "hell_shark_header"
+	tbl_2.font_type = flag
+	tbl_2.text_color = Colors.get_color_table_with_alpha("font_button_normal", 255)
+	tbl_2.default_text_color = Colors.get_color_table_with_alpha("font_button_normal", 255)
+	tbl_2.select_text_color = Colors.get_color_table_with_alpha("white", 255)
+	tbl_2.offset = {
 		30,
 		0,
 		5
 	}
-	tbl_5.size = {
-		arg_3_1[1] - 170,
-		arg_3_1[2]
+	tbl_2.size = {
+		size[1] - 170,
+		size[2]
 	}
-	tbl_4.title = tbl_5
+	tbl.title = tbl_2
 
-	local tbl_6 = {
+	local tbl_3 = {
 		word_wrap = false,
 		upper_case = false,
 		localize = false,
@@ -573,24 +576,24 @@ UIWidgets.create_store_collection_entry_definition = function (arg_3_0, arg_3_1,
 	}
 	local flag_2
 
-	flag_2 = not arg_3_2 and "hell_shark_header_masked" and "hell_shark_header"
-	tbl_6.font_type = flag_2
-	tbl_6.text_color = Colors.get_color_table_with_alpha("black", 255)
-	tbl_6.normal_color = Colors.get_color_table_with_alpha("black", 255)
-	tbl_6.offset = {
+	flag_2 = (not masked or not "hell_shark_header_masked") and not not "hell_shark_header"
+	tbl_3.font_type = flag_2
+	tbl_3.text_color = Colors.get_color_table_with_alpha("black", 255)
+	tbl_3.normal_color = Colors.get_color_table_with_alpha("black", 255)
+	tbl_3.offset = {
 		32,
 		-2,
 		4
 	}
-	tbl_6.size = {
-		arg_3_1[1] - 170,
-		arg_3_1[2]
+	tbl_3.size = {
+		size[1] - 170,
+		size[2]
 	}
-	tbl_4.title_shadow = tbl_6
-	tbl_4.owned_icon = {
+	tbl.title_shadow = tbl_3
+	tbl.owned_icon = {
 		vertical_alignment = "bottom",
 		horizontal_alignment = "left",
-		masked = arg_3_2,
+		masked = masked,
 		texture_size = {
 			53,
 			53
@@ -606,15 +609,15 @@ UIWidgets.create_store_collection_entry_definition = function (arg_3_0, arg_3_1,
 			255
 		},
 		offset = {
-			arg_3_1[1] - 45,
+			size[1] - 45,
 			0,
 			12
 		}
 	}
-	tbl_4.owned_icon_bg = {
+	tbl.owned_icon_bg = {
 		vertical_alignment = "bottom",
 		horizontal_alignment = "left",
-		masked = arg_3_2,
+		masked = masked,
 		texture_size = {
 			34,
 			50
@@ -630,61 +633,81 @@ UIWidgets.create_store_collection_entry_definition = function (arg_3_0, arg_3_1,
 			255
 		},
 		offset = {
-			arg_3_1[1] - 35,
+			size[1] - 35,
 			-15,
 			11
 		}
 	}
-	tbl.element.passes = tbl_2
-	tbl.content = tbl_3
-	tbl.style = tbl_4
-	tbl.offset = {
+
+	local style = tbl
+
+	widget.element.passes = passes
+	widget.content = content
+	widget.style = style
+	widget.offset = {
 		0,
 		0,
 		0
 	}
-	tbl.scenegraph_id = arg_3_0
+	widget.scenegraph_id = scenegraph_id
 
-	return tbl
+	return widget
 end
 
-local tbl = {}
+local dummy_table = {}
 
-UIWidgets.create_store_item_definition = function (arg_7_0, arg_7_1, arg_7_2, arg_7_3, arg_7_4)
+UIWidgets.create_store_item_definition = function (scenegraph_id, size, masked, product, settings)
 	-- function 7
-	local str = "menu_frame_16"
-	local var_7_1 = UIFrameSettings[str]
-	local str_2 = "frame_outer_glow_04"
-	local var_7_3 = UIFrameSettings[str_2]
-	local var_7_4 = var_7_3.texture_sizes.horizontal[2]
-	local str_3 = "frame_outer_glow_04_big"
-	local var_7_6 = UIFrameSettings[str_3]
-	local var_7_7 = var_7_6.texture_sizes.horizontal[2]
+	local frame_name = "menu_frame_16"
+	local frame_settings = UIFrameSettings[frame_name]
+	local hover_frame_name = "frame_outer_glow_04"
+	local hover_frame_settings = UIFrameSettings[hover_frame_name]
+	local hover_frame_spacing = hover_frame_settings.texture_sizes.horizontal[2]
+	local pulse_frame_name = "frame_outer_glow_04_big"
+	local pulse_frame_settings = UIFrameSettings[pulse_frame_name]
+	local pulse_frame_spacing = pulse_frame_settings.texture_sizes.horizontal[2]
 
-	if not arg_7_4 then
+	if not settings then
 		-- Nothing
 	end
 
 	::label_7_0::
 
-	local parent_settings = arg_7_3.parent_settings
+	local parent_settings = product.parent_settings
 
 	if not parent_settings then
-		parent_settings = arg_7_3.settings
-		parent_settings = parent_settings or tbl
+		-- Nothing
 	end
+
+	parent_settings = product.settings
+
+	if not parent_settings then
+		-- Nothing
+	end
+
+	parent_settings = dummy_table
+
+	local settings = parent_settings
 
 	::label_7_1::
 
-	local dlc_settings = arg_7_3.dlc_settings
+	local dlc_settings_2 = product.dlc_settings
 
-	dlc_settings = dlc_settings or tbl
+	if not dlc_settings_2 then
+		-- Nothing
+	end
 
-	local icon_size = parent_settings.icon_size
-	local tbl_2 = {
+	dlc_settings_2 = dummy_table
+
+	local dlc_settings = dlc_settings_2
+
+	::label_7_2::
+
+	local icon_size = settings.icon_size
+	local widget = {
 		element = {}
 	}
-	local tbl_3 = {
+	local passes = {
 		{
 			style_id = "hotspot",
 			pass_type = "hotspot",
@@ -704,69 +727,69 @@ UIWidgets.create_store_item_definition = function (arg_7_0, arg_7_1, arg_7_2, ar
 			pass_type = "texture",
 			style_id = "background",
 			texture_id = "background",
-			content_check_function = function (self)
+			content_check_function = function (content)
 				-- function 8
-				return self.background
+				return content.background
 			end
 		},
 		{
 			pass_type = "texture",
 			style_id = "expire_time_icon",
 			texture_id = "expire_time_icon",
-			content_check_function = function (self)
+			content_check_function = function (content)
 				-- function 9
-				return self.discount
+				return content.discount
 			end
 		},
 		{
 			pass_type = "texture",
 			style_id = "background_price",
 			texture_id = "background_price",
-			content_check_function = function (self)
+			content_check_function = function (content)
 				-- function 10
-				return (not not self.owned or IS_WINDOWS or not self.real_currency) and not not self.hide_price or not self.old_price
+				return not content.owned and (IS_WINDOWS or not content.real_currency) and not content.hide_price and not not not content.old_price
 			end
 		},
 		{
 			pass_type = "tiled_texture",
 			style_id = "background_price_center",
 			texture_id = "background_price_center",
-			content_check_function = function (self)
+			content_check_function = function (content)
 				-- function 11
-				return (not not self.owned or IS_WINDOWS or not self.real_currency) and not not self.hide_price or not self.old_price
+				return not content.owned and (IS_WINDOWS or not content.real_currency) and not content.hide_price and not not not content.old_price
 			end
 		},
 		{
 			pass_type = "texture",
 			style_id = "background_price_right",
 			texture_id = "background_price_right",
-			content_check_function = function (self)
+			content_check_function = function (content)
 				-- function 12
-				return (not not self.owned or IS_WINDOWS or not self.real_currency) and not not self.hide_price or not self.old_price
+				return not content.owned and (IS_WINDOWS or not content.real_currency) and not content.hide_price and not not not content.old_price
 			end
 		},
 		{
 			pass_type = "texture",
 			style_id = "price_gradient",
 			texture_id = "price_gradient",
-			content_check_function = function (self)
+			content_check_function = function (content)
 				-- function 13
-				return (not not self.owned or IS_WINDOWS or not self.real_currency) and not not self.hide_price or self.old_price
+				return not content.owned and (IS_WINDOWS or not content.real_currency) and not content.hide_price and not not content.old_price
 			end
 		},
 		{
 			texture_id = "price_strike_through",
 			style_id = "price_strike_through",
 			pass_type = "rotated_texture",
-			content_check_function = function (self)
+			content_check_function = function (content)
 				-- function 14
 				local old_price
 
-				if not ((self.owned or IS_WINDOWS or not self.real_currency) and self.hide_price) then
-					old_price = self.old_price
+				if not content.owned and (IS_WINDOWS or not content.real_currency) and not content.hide_price then
+					old_price = content.old_price
 
-					if not old_price then
-						old_price = self.discount
+					if old_price then
+						old_price = content.discount
 					end
 				else
 					old_price = false
@@ -783,60 +806,60 @@ UIWidgets.create_store_item_definition = function (arg_7_0, arg_7_1, arg_7_2, ar
 			pass_type = "texture",
 			style_id = "price_icon",
 			texture_id = "price_icon",
-			content_check_function = function (self)
+			content_check_function = function (content)
 				-- function 15
-				return not not self.owned or self.draw_price_icon
+				return not content.owned and not not content.draw_price_icon
 			end
 		},
 		{
 			style_id = "optional_item_name",
 			pass_type = "text",
 			text_id = "optional_item_name",
-			content_check_function = function (self)
+			content_check_function = function (content)
 				-- function 16
-				return self.optional_item_name ~= ""
+				return content.optional_item_name ~= ""
 			end
 		},
 		{
 			style_id = "optional_subtitle",
 			pass_type = "text",
 			text_id = "optional_subtitle",
-			content_check_function = function (self)
+			content_check_function = function (content)
 				-- function 17
-				return self.optional_item_name ~= ""
+				return content.optional_item_name ~= ""
 			end
 		},
 		{
 			style_id = "price_text",
 			pass_type = "text",
 			text_id = "price_text",
-			content_check_function = function (self)
+			content_check_function = function (content)
 				-- function 18
-				return (not not self.owned or IS_WINDOWS or not self.real_currency) and not not self.hide_price or not self.old_price
+				return not content.owned and (IS_WINDOWS or not content.real_currency) and not content.hide_price and not not not content.old_price
 			end
 		},
 		{
 			style_id = "price_text_now",
 			pass_type = "text",
 			text_id = "price_text_now",
-			content_check_function = function (self)
+			content_check_function = function (content)
 				-- function 19
-				return (not not self.owned or IS_WINDOWS or not self.real_currency) and not not self.hide_price or self.old_price
+				return not content.owned and (IS_WINDOWS or not content.real_currency) and not content.hide_price and not not content.old_price
 			end
 		},
 		{
 			style_id = "price_text_before",
 			pass_type = "text",
 			text_id = "price_text_before",
-			content_check_function = function (self)
+			content_check_function = function (content)
 				-- function 20
 				local old_price
 
-				if not ((self.owned or IS_WINDOWS or not self.real_currency) and self.hide_price) then
-					old_price = self.old_price
+				if not content.owned and (IS_WINDOWS or not content.real_currency) and not content.hide_price then
+					old_price = content.old_price
 
-					if not old_price then
-						old_price = self.discount
+					if old_price then
+						old_price = content.discount
 					end
 				else
 					old_price = false
@@ -853,29 +876,29 @@ UIWidgets.create_store_item_definition = function (arg_7_0, arg_7_1, arg_7_2, ar
 			pass_type = "texture",
 			style_id = "owned_icon",
 			texture_id = "owned_icon",
-			content_check_function = function (self)
+			content_check_function = function (content)
 				-- function 21
-				return self.owned
+				return content.owned
 			end
 		},
 		{
 			pass_type = "texture",
 			style_id = "owned_icon_bg",
 			texture_id = "owned_icon_bg",
-			content_check_function = function (self)
+			content_check_function = function (content)
 				-- function 22
-				return self.owned
+				return content.owned
 			end
 		},
 		{
 			pass_type = "texture",
 			style_id = "discount_bg",
 			texture_id = "discount_bg",
-			content_check_function = function (self)
+			content_check_function = function (content)
 				-- function 23
-				local discount = self.discount
+				local discount = content.discount
 
-				discount = not discount and not self.hide_price
+				discount = not not discount and not not not content.hide_price
 
 				return discount
 			end
@@ -884,11 +907,11 @@ UIWidgets.create_store_item_definition = function (arg_7_0, arg_7_1, arg_7_2, ar
 			pass_type = "multi_texture",
 			style_id = "discont_number_icons",
 			texture_id = "discont_number_icons",
-			content_check_function = function (self)
+			content_check_function = function (content)
 				-- function 24
-				local discount = self.discount
+				local discount = content.discount
 
-				discount = not discount and not self.hide_price
+				discount = not not discount and not not not content.hide_price
 
 				return discount
 			end
@@ -912,31 +935,41 @@ UIWidgets.create_store_item_definition = function (arg_7_0, arg_7_1, arg_7_2, ar
 			style_id = "loading_icon",
 			pass_type = "rotated_texture",
 			texture_id = "loading_icon",
-			content_check_function = function (self)
+			content_check_function = function (content)
 				-- function 25
-				return not self.icon
+				return not content.icon
 			end,
-			content_change_function = function (arg_26_0, arg_26_1, arg_26_2, arg_26_3)
+			content_change_function = function (content, style, _, dt)
 				-- function 26
-				local progress = arg_26_1.progress
+				local progress_2 = style.progress
 
-				progress = progress or 0
+				if not progress_2 then
+					-- Nothing
+				end
 
-				local num = (progress + arg_26_3) % 1
+				progress_2 = 0
 
-				arg_26_1.angle = math.pow(2, math.smoothstep(num, 0, 1)) * (math.pi * 2)
-				arg_26_1.progress = num
+				local progress = progress_2
+
+				::label_26_0::
+
+				progress = (progress + dt) % 1
+
+				local angle = math.pow(2, math.smoothstep(progress, 0, 1)) * (math.pi * 2)
+
+				style.angle = angle
+				style.progress = progress
 			end
 		},
 		{
 			pass_type = "texture",
 			style_id = "icon",
 			texture_id = "icon",
-			content_check_function = function (self)
+			content_check_function = function (content)
 				-- function 27
-				local icon = self.icon
+				local icon = content.icon
 
-				icon = not icon and not self.rendering_loading_icon
+				icon = not not icon and not not not content.rendering_loading_icon
 
 				return icon
 			end
@@ -950,22 +983,22 @@ UIWidgets.create_store_item_definition = function (arg_7_0, arg_7_1, arg_7_2, ar
 			pass_type = "texture",
 			style_id = "type_tag_icon",
 			texture_id = "type_tag_icon",
-			content_check_function = function (self, arg_28_1)
+			content_check_function = function (content, style)
 				-- function 28
-				return self.type_tag_icon
+				return content.type_tag_icon
 			end
 		},
 		{
 			pass_type = "texture",
 			style_id = "psplus_icon",
 			texture_id = "psplus_icon",
-			content_check_function = function (self)
+			content_check_function = function (content)
 				-- function 29
-				local show_ps4_plus = self.show_ps4_plus
+				local show_ps4_plus = content.show_ps4_plus
 
-				if not show_ps4_plus then
+				if show_ps4_plus then
 					show_ps4_plus = IS_PS4
-					show_ps4_plus = not show_ps4_plus and self.real_currency
+					show_ps4_plus = not not show_ps4_plus and not not content.real_currency
 				end
 
 				return show_ps4_plus
@@ -975,27 +1008,27 @@ UIWidgets.create_store_item_definition = function (arg_7_0, arg_7_1, arg_7_2, ar
 			pass_type = "texture",
 			style_id = "console_background_rect_bottom",
 			texture_id = "console_background_rect",
-			content_check_function = function (self)
+			content_check_function = function (content)
 				-- function 30
-				return not not IS_WINDOWS or self.real_currency
+				return not IS_WINDOWS and not not content.real_currency
 			end
 		},
 		{
 			pass_type = "texture",
 			style_id = "console_background_rect_top",
 			texture_id = "console_background_rect",
-			content_check_function = function (self)
+			content_check_function = function (content)
 				-- function 31
 				local real_currency
 
 				if not IS_WINDOWS then
-					real_currency = self.real_currency
+					real_currency = content.real_currency
 
-					if not real_currency then
+					if real_currency then
 						-- Nothing
 					end
 
-					if self.console_secondary_price_text == "" then
+					if content.console_secondary_price_text == "" then
 						-- Nothing
 					end
 				end
@@ -1017,11 +1050,11 @@ UIWidgets.create_store_item_definition = function (arg_7_0, arg_7_1, arg_7_2, ar
 			texture_id = "console_secondary_price_stroke",
 			style_id = "console_secondary_price_stroke",
 			pass_type = "texture",
-			content_check_function = function (self)
+			content_check_function = function (content)
 				-- function 32
-				local show_secondary_stroke = self.show_secondary_stroke
+				local show_secondary_stroke = content.show_secondary_stroke
 
-				show_secondary_stroke = not show_secondary_stroke and not not IS_WINDOWS or self.real_currency
+				show_secondary_stroke = not not show_secondary_stroke and not IS_WINDOWS and not not content.real_currency
 
 				return show_secondary_stroke
 			end
@@ -1030,13 +1063,13 @@ UIWidgets.create_store_item_definition = function (arg_7_0, arg_7_1, arg_7_2, ar
 			texture_id = "console_third_price_stroke",
 			style_id = "console_third_price_stroke",
 			pass_type = "texture",
-			content_check_function = function (self)
+			content_check_function = function (content)
 				-- function 33
-				local show_third_stroke = self.show_third_stroke
+				local show_third_stroke = content.show_third_stroke
 
-				if not show_third_stroke then
+				if show_third_stroke then
 					show_third_stroke = IS_PS4
-					show_third_stroke = not show_third_stroke and self.real_currency
+					show_third_stroke = not not show_third_stroke and not not content.real_currency
 				end
 
 				return show_third_stroke
@@ -1046,51 +1079,51 @@ UIWidgets.create_store_item_definition = function (arg_7_0, arg_7_1, arg_7_2, ar
 			style_id = "console_first_price_text",
 			pass_type = "text",
 			text_id = "console_first_price_text",
-			content_check_function = function (self)
+			content_check_function = function (content)
 				-- function 34
-				return not not IS_WINDOWS or self.real_currency
+				return not IS_WINDOWS and not not content.real_currency
 			end,
-			content_change_function = function (self, arg_35_1)
+			content_change_function = function (content, style)
 				-- function 35
 				local ps_plus_color
 
-				if not self.show_ps4_plus then
-					ps_plus_color = arg_35_1.ps_plus_color
+				if content.show_ps4_plus then
+					ps_plus_color = style.ps_plus_color
 
 					if not ps_plus_color then
 						-- Nothing
 					end
 				end
 
-				ps_plus_color = arg_35_1.base_color
+				ps_plus_color = style.base_color
 
 				::label_35_0::
 
-				arg_35_1.text_color = ps_plus_color
+				style.text_color = ps_plus_color
 			end
 		},
 		{
 			style_id = "console_secondary_price_text",
 			pass_type = "text",
 			text_id = "console_secondary_price_text",
-			content_check_function = function (self)
+			content_check_function = function (content)
 				-- function 36
-				return self.console_secondary_price_text == "" or not not IS_WINDOWS or self.real_currency
+				return content.console_secondary_price_text ~= "" and not IS_WINDOWS and not not content.real_currency
 			end
 		},
 		{
 			style_id = "console_third_price_text",
 			pass_type = "text",
 			text_id = "console_third_price_text",
-			content_check_function = function (self)
+			content_check_function = function (content)
 				-- function 37
 				local IS_PS4
 
-				if self.console_third_price_text ~= "" then
+				if content.console_third_price_text ~= "" then
 					IS_PS4 = IS_PS4
 
-					if not IS_PS4 then
-						IS_PS4 = self.real_currency
+					if IS_PS4 then
+						IS_PS4 = content.real_currency
 					end
 				else
 					IS_PS4 = false
@@ -1107,20 +1140,20 @@ UIWidgets.create_store_item_definition = function (arg_7_0, arg_7_1, arg_7_2, ar
 			style_id = "new_marker",
 			pass_type = "texture",
 			texture_id = "new_marker",
-			content_check_function = function (self)
+			content_check_function = function (content)
 				-- function 38
-				if not self.discount then
+				if content.discount then
 					return false
 				end
 
-				return not not PlayerData.seen_shop_items[self.item_key] or not self.hide_new
+				return not PlayerData.seen_shop_items[content.item_key] and not not not content.hide_new
 			end,
-			content_change_function = function (self, arg_39_1)
+			content_change_function = function (content, style)
 				-- function 39
-				if not PlayerData.seen_shop_items[self.item_key] then
-					local num = 0.5 + math.sin(Managers.time:time("ui") * 5) * 0.5
+				if not PlayerData.seen_shop_items[content.item_key] then
+					local new_marker_progress = 0.5 + math.sin(Managers.time:time("ui") * 5) * 0.5
 
-					arg_39_1.color[1] = 100 + 155 * num
+					style.color[1] = 100 + 155 * new_marker_progress
 				end
 			end
 		},
@@ -1128,38 +1161,38 @@ UIWidgets.create_store_item_definition = function (arg_7_0, arg_7_1, arg_7_2, ar
 			style_id = "additional_content_added",
 			pass_type = "text",
 			text_id = "additional_content_added",
-			content_check_function = function (self)
+			content_check_function = function (content)
 				-- function 40
 				local IS_CONSOLE = IS_CONSOLE
 
-				if not IS_CONSOLE then
+				if IS_CONSOLE then
 					IS_CONSOLE = dlc_settings.additional_content_added
-					IS_CONSOLE = not IS_CONSOLE and not self.owned
+					IS_CONSOLE = not not IS_CONSOLE and not not not content.owned
 				end
 
 				return IS_CONSOLE
 			end,
-			content_change_function = function (arg_41_0, arg_41_1)
+			content_change_function = function (content, style)
 				-- function 41
-				local time_since_launch = Application.time_since_launch()
-				local num = 0.5 + math.sin(time_since_launch * 3) * 0.5
+				local time = Application.time_since_launch()
+				local progress = 0.5 + math.sin(time * 3) * 0.5
 
-				arg_41_1.text_color[2] = math.lerp(arg_41_1.base_text_color[2], 225, num)
-				arg_41_1.text_color[3] = math.lerp(arg_41_1.base_text_color[3], 225, num)
-				arg_41_1.text_color[4] = math.lerp(arg_41_1.base_text_color[4], 225, num)
+				style.text_color[2] = math.lerp(style.base_text_color[2], 225, progress)
+				style.text_color[3] = math.lerp(style.base_text_color[3], 225, progress)
+				style.text_color[4] = math.lerp(style.base_text_color[4], 225, progress)
 			end
 		},
 		{
 			style_id = "additional_content_added_shadow",
 			pass_type = "text",
 			text_id = "additional_content_added",
-			content_check_function = function (self)
+			content_check_function = function (content)
 				-- function 42
 				local IS_CONSOLE = IS_CONSOLE
 
-				if not IS_CONSOLE then
+				if IS_CONSOLE then
 					IS_CONSOLE = dlc_settings.additional_content_added
-					IS_CONSOLE = not IS_CONSOLE and not self.owned
+					IS_CONSOLE = not not IS_CONSOLE and not not not content.owned
 				end
 
 				return IS_CONSOLE
@@ -1169,22 +1202,22 @@ UIWidgets.create_store_item_definition = function (arg_7_0, arg_7_1, arg_7_2, ar
 			style_id = "additional_disclaimer",
 			pass_type = "text",
 			text_id = "additional_disclaimer",
-			content_check_function = function (self, arg_43_1)
+			content_check_function = function (content, style)
 				-- function 43
-				return self.has_disclamer
+				return content.has_disclamer
 			end
 		},
 		{
 			pass_type = "texture",
 			style_id = "disclaimer_marker",
 			texture_id = "disclaimer_marker",
-			content_check_function = function (self, arg_44_1)
+			content_check_function = function (content, style)
 				-- function 44
-				return self.has_disclamer
+				return content.has_disclamer
 			end
 		}
 	}
-	local tbl_4 = {
+	local tbl = {
 		expire_time_icon = "icon_store_timer",
 		old_price = false,
 		price_strike_through = "shop_bundle_line",
@@ -1217,45 +1250,46 @@ UIWidgets.create_store_item_definition = function (arg_7_0, arg_7_1, arg_7_2, ar
 		background_price_right = "store_thumbnail_pricetag_right",
 		discount_bg = "store_thumbnail_sale",
 		console_first_price_text = "",
-		hide_new = parent_settings.hide_new,
-		item_key = arg_7_3.product_id,
+		hide_new = settings.hide_new,
+		item_key = product.product_id,
 		hotspot = {},
-		hide_price = parent_settings.hide_price,
-		masked_price_strike_through = not parent_settings.mask_price_strike_through_hack,
-		draw_price_icon = not parent_settings.hide_price,
+		hide_price = settings.hide_price,
+		masked_price_strike_through = not settings.mask_price_strike_through_hack,
+		draw_price_icon = not settings.hide_price,
 		discont_number_icons = {}
 	}
 	local flag
 
-	flag = not arg_7_2 and "rect_masked" and "simple_rect_texture"
-	tbl_4.rect = flag
-	tbl_4.frame = var_7_1.texture
-	tbl_4.hover_frame = var_7_3.texture
-	tbl_4.pulse_frame = var_7_6.texture
-	tbl_4.size = arg_7_1
+	flag = (not masked or not "rect_masked") and not not "simple_rect_texture"
+	tbl.rect = flag
+	tbl.frame = frame_settings.texture
+	tbl.hover_frame = hover_frame_settings.texture
+	tbl.pulse_frame = pulse_frame_settings.texture
+	tbl.size = size
 
 	local flag_2
 
-	flag_2 = not arg_7_2 and "rect_masked" and "simple_rect_texture"
-	tbl_4.console_background_rect = flag_2
+	flag_2 = (not masked or not "rect_masked") and not not "simple_rect_texture"
+	tbl.console_background_rect = flag_2
 
 	local flag_3
 
-	flag_3 = not arg_7_2 and "rect_masked" and "simple_rect_texture"
-	tbl_4.console_secondary_price_stroke = flag_3
+	flag_3 = (not masked or not "rect_masked") and not not "simple_rect_texture"
+	tbl.console_secondary_price_stroke = flag_3
 
 	local flag_4
 
-	flag_4 = not arg_7_2 and "rect_masked" and "simple_rect_texture"
-	tbl_4.console_third_price_stroke = flag_4
-	tbl_4.additional_content_added = Localize("title_screen_store_new_additional_content")
+	flag_4 = (not masked or not "rect_masked") and not not "simple_rect_texture"
+	tbl.console_third_price_stroke = flag_4
+	tbl.additional_content_added = Localize("title_screen_store_new_additional_content")
 
-	local tbl_5 = {
+	local content = tbl
+	local tbl_2 = {
 		hotspot = {
-			size = arg_7_1,
+			size = size,
 			offset = {
 				0,
-				-arg_7_1[2],
+				-size[2],
 				0
 			}
 		},
@@ -1275,7 +1309,7 @@ UIWidgets.create_store_item_definition = function (arg_7_0, arg_7_1, arg_7_2, ar
 				255
 			},
 			offset = {
-				arg_7_1[1] * 0.5 - 50,
+				size[1] * 0.5 - 50,
 				-50,
 				6
 			},
@@ -1285,7 +1319,7 @@ UIWidgets.create_store_item_definition = function (arg_7_0, arg_7_1, arg_7_2, ar
 			}
 		}
 	}
-	local tbl_6 = {
+	local tbl_3 = {
 		upper_case = false,
 		localize = false,
 		font_size = 28,
@@ -1299,17 +1333,17 @@ UIWidgets.create_store_item_definition = function (arg_7_0, arg_7_1, arg_7_2, ar
 	}
 	local flag_5
 
-	flag_5 = not arg_7_2 and "hell_shark_header_masked" and "hell_shark_header"
-	tbl_6.font_type = flag_5
-	tbl_6.text_color = Colors.get_color_table_with_alpha("black", 255)
-	tbl_6.offset = {
+	flag_5 = (not masked or not "hell_shark_header_masked") and not not "hell_shark_header"
+	tbl_3.font_type = flag_5
+	tbl_3.text_color = Colors.get_color_table_with_alpha("black", 255)
+	tbl_3.offset = {
 		50,
-		-(arg_7_1[2] + 4),
+		-(size[2] + 4),
 		12
 	}
-	tbl_5.price_text = tbl_6
+	tbl_2.price_text = tbl_3
 
-	local tbl_7 = {
+	local tbl_4 = {
 		upper_case = false,
 		localize = false,
 		font_size = 40,
@@ -1323,17 +1357,17 @@ UIWidgets.create_store_item_definition = function (arg_7_0, arg_7_1, arg_7_2, ar
 	}
 	local flag_6
 
-	flag_6 = not arg_7_2 and "hell_shark_header_masked" and "hell_shark_header"
-	tbl_7.font_type = flag_6
-	tbl_7.text_color = Colors.get_color_table_with_alpha("white", 255)
-	tbl_7.offset = {
+	flag_6 = (not masked or not "hell_shark_header_masked") and not not "hell_shark_header"
+	tbl_4.font_type = flag_6
+	tbl_4.text_color = Colors.get_color_table_with_alpha("white", 255)
+	tbl_4.offset = {
 		40,
 		-100,
 		12
 	}
-	tbl_5.optional_item_name = tbl_7
+	tbl_2.optional_item_name = tbl_4
 
-	local tbl_8 = {
+	local tbl_5 = {
 		upper_case = false,
 		localize = false,
 		font_size = 28,
@@ -1347,17 +1381,17 @@ UIWidgets.create_store_item_definition = function (arg_7_0, arg_7_1, arg_7_2, ar
 	}
 	local flag_7
 
-	flag_7 = not arg_7_2 and "hell_shark_header_masked" and "hell_shark_header"
-	tbl_8.font_type = flag_7
-	tbl_8.text_color = Colors.get_color_table_with_alpha("white", 255)
-	tbl_8.offset = {
+	flag_7 = (not masked or not "hell_shark_header_masked") and not not "hell_shark_header"
+	tbl_5.font_type = flag_7
+	tbl_5.text_color = Colors.get_color_table_with_alpha("white", 255)
+	tbl_5.offset = {
 		40,
 		-150,
 		12
 	}
-	tbl_5.optional_subtitle = tbl_8
+	tbl_2.optional_subtitle = tbl_5
 
-	local tbl_9 = {
+	local tbl_6 = {
 		upper_case = false,
 		localize = false,
 		font_size = 28,
@@ -1371,17 +1405,17 @@ UIWidgets.create_store_item_definition = function (arg_7_0, arg_7_1, arg_7_2, ar
 	}
 	local flag_8
 
-	flag_8 = not arg_7_2 and "hell_shark_header_masked" and "hell_shark_header"
-	tbl_9.font_type = flag_8
-	tbl_9.text_color = Colors.get_color_table_with_alpha("white", 255)
-	tbl_9.offset = {
+	flag_8 = (not masked or not "hell_shark_header_masked") and not not "hell_shark_header"
+	tbl_6.font_type = flag_8
+	tbl_6.text_color = Colors.get_color_table_with_alpha("white", 255)
+	tbl_6.offset = {
 		50,
-		-(arg_7_1[2] + 0),
+		-(size[2] + 0),
 		12
 	}
-	tbl_5.price_text_now = tbl_9
+	tbl_2.price_text_now = tbl_6
 
-	local tbl_10 = {
+	local tbl_7 = {
 		upper_case = false,
 		localize = false,
 		font_size = 24,
@@ -1395,20 +1429,20 @@ UIWidgets.create_store_item_definition = function (arg_7_0, arg_7_1, arg_7_2, ar
 	}
 	local flag_9
 
-	flag_9 = not arg_7_2 and "hell_shark_header_masked" and "hell_shark_header"
-	tbl_10.font_type = flag_9
-	tbl_10.text_color = Colors.get_color_table_with_alpha("slate_gray", 255)
-	tbl_10.offset = {
+	flag_9 = (not masked or not "hell_shark_header_masked") and not not "hell_shark_header"
+	tbl_7.font_type = flag_9
+	tbl_7.text_color = Colors.get_color_table_with_alpha("slate_gray", 255)
+	tbl_7.offset = {
 		50,
-		-(arg_7_1[2] - 1),
+		-(size[2] - 1),
 		12
 	}
-	tbl_5.price_text_before = tbl_10
-	tbl_5.price_strike_through = {
+	tbl_2.price_text_before = tbl_7
+	tbl_2.price_strike_through = {
 		vertical_alignment = "top",
 		horizontal_alignment = "left",
 		angle = -0.17,
-		masked = tbl_4.masked_price_strike_through,
+		masked = content.masked_price_strike_through,
 		pivot = {
 			0,
 			0
@@ -1421,7 +1455,7 @@ UIWidgets.create_store_item_definition = function (arg_7_0, arg_7_1, arg_7_2, ar
 		},
 		offset = {
 			50,
-			-(arg_7_1[2] - 12),
+			-(size[2] - 12),
 			13
 		},
 		texture_size = {
@@ -1429,11 +1463,11 @@ UIWidgets.create_store_item_definition = function (arg_7_0, arg_7_1, arg_7_2, ar
 			3
 		}
 	}
-	tbl_5.background_rect = {
+	tbl_2.background_rect = {
 		vertical_alignment = "top",
 		horizontal_alignment = "left",
-		masked = arg_7_2,
-		texture_size = arg_7_1,
+		masked = masked,
+		texture_size = size,
 		color = {
 			200,
 			0,
@@ -1446,11 +1480,11 @@ UIWidgets.create_store_item_definition = function (arg_7_0, arg_7_1, arg_7_2, ar
 			0
 		}
 	}
-	tbl_5.background = {
+	tbl_2.background = {
 		vertical_alignment = "top",
 		horizontal_alignment = "left",
-		masked = arg_7_2,
-		texture_size = arg_7_1,
+		masked = masked,
+		texture_size = size,
 		color = {
 			255,
 			255,
@@ -1463,10 +1497,10 @@ UIWidgets.create_store_item_definition = function (arg_7_0, arg_7_1, arg_7_2, ar
 			1
 		}
 	}
-	tbl_5.expire_time_icon = {
+	tbl_2.expire_time_icon = {
 		vertical_alignment = "top",
 		horizontal_alignment = "left",
-		masked = arg_7_2,
+		masked = masked,
 		texture_size = {
 			49.5,
 			58.5
@@ -1483,11 +1517,11 @@ UIWidgets.create_store_item_definition = function (arg_7_0, arg_7_1, arg_7_2, ar
 			10
 		}
 	}
-	tbl_5.overlay = {
+	tbl_2.overlay = {
 		vertical_alignment = "top",
 		horizontal_alignment = "left",
-		masked = arg_7_2,
-		texture_size = arg_7_1,
+		masked = masked,
+		texture_size = size,
 		color = {
 			0,
 			5,
@@ -1501,7 +1535,7 @@ UIWidgets.create_store_item_definition = function (arg_7_0, arg_7_1, arg_7_2, ar
 		}
 	}
 
-	local tbl_11 = {
+	local tbl_8 = {
 		upper_case = false,
 		localize = false,
 		font_size = 28,
@@ -1516,24 +1550,24 @@ UIWidgets.create_store_item_definition = function (arg_7_0, arg_7_1, arg_7_2, ar
 	}
 	local flag_10
 
-	flag_10 = not arg_7_2 and "hell_shark_header_masked" and "hell_shark_header"
-	tbl_11.font_type = flag_10
-	tbl_11.text_color = {
+	flag_10 = (not masked or not "hell_shark_header_masked") and not not "hell_shark_header"
+	tbl_8.font_type = flag_10
+	tbl_8.text_color = {
 		255,
 		255,
 		116,
 		246
 	}
-	tbl_11.offset = {
-		arg_7_1[1] - 80,
+	tbl_8.offset = {
+		size[1] - 80,
 		-44,
 		12
 	}
-	tbl_5.bundle_content_amount_text = tbl_11
-	tbl_5.type_tag_icon = {
+	tbl_2.bundle_content_amount_text = tbl_8
+	tbl_2.type_tag_icon = {
 		vertical_alignment = "top",
 		horizontal_alignment = "left",
-		masked = arg_7_2,
+		masked = masked,
 		texture_size = {
 			56,
 			56
@@ -1545,15 +1579,15 @@ UIWidgets.create_store_item_definition = function (arg_7_0, arg_7_1, arg_7_2, ar
 			255
 		},
 		offset = {
-			arg_7_1[1] - 56,
+			size[1] - 56,
 			0,
 			9
 		}
 	}
-	tbl_5.background_price = {
+	tbl_2.background_price = {
 		vertical_alignment = "top",
 		horizontal_alignment = "left",
-		masked = arg_7_2,
+		masked = masked,
 		texture_size = {
 			64,
 			92
@@ -1566,14 +1600,14 @@ UIWidgets.create_store_item_definition = function (arg_7_0, arg_7_1, arg_7_2, ar
 		},
 		offset = {
 			-6,
-			-(arg_7_1[2] - 90),
+			-(size[2] - 90),
 			11
 		}
 	}
-	tbl_5.background_price_center = {
+	tbl_2.background_price_center = {
 		vertical_alignment = "top",
 		horizontal_alignment = "left",
-		masked = arg_7_2,
+		masked = masked,
 		texture_size = {
 			0,
 			36
@@ -1590,14 +1624,14 @@ UIWidgets.create_store_item_definition = function (arg_7_0, arg_7_1, arg_7_2, ar
 		},
 		offset = {
 			58,
-			-(arg_7_1[2] - 34),
+			-(size[2] - 34),
 			11
 		}
 	}
-	tbl_5.background_price_right = {
+	tbl_2.background_price_right = {
 		vertical_alignment = "top",
 		horizontal_alignment = "left",
-		masked = arg_7_2,
+		masked = masked,
 		texture_size = {
 			32,
 			40
@@ -1614,19 +1648,19 @@ UIWidgets.create_store_item_definition = function (arg_7_0, arg_7_1, arg_7_2, ar
 		},
 		offset = {
 			58,
-			-(arg_7_1[2] - 38),
+			-(size[2] - 38),
 			11
 		},
 		default_offset = {
 			58,
-			-(arg_7_1[2] - 38),
+			-(size[2] - 38),
 			11
 		}
 	}
-	tbl_5.price_gradient = {
+	tbl_2.price_gradient = {
 		vertical_alignment = "top",
 		horizontal_alignment = "left",
-		masked = arg_7_2,
+		masked = masked,
 		texture_size = {
 			313,
 			34
@@ -1639,14 +1673,14 @@ UIWidgets.create_store_item_definition = function (arg_7_0, arg_7_1, arg_7_2, ar
 		},
 		offset = {
 			6,
-			-(arg_7_1[2] - 40),
+			-(size[2] - 40),
 			10
 		}
 	}
-	tbl_5.price_icon = {
+	tbl_2.price_icon = {
 		vertical_alignment = "top",
 		horizontal_alignment = "left",
-		masked = arg_7_2,
+		masked = masked,
 		texture_size = {
 			58,
 			58
@@ -1659,14 +1693,14 @@ UIWidgets.create_store_item_definition = function (arg_7_0, arg_7_1, arg_7_2, ar
 		},
 		offset = {
 			3,
-			-(arg_7_1[2] - 47),
+			-(size[2] - 47),
 			11
 		}
 	}
-	tbl_5.owned_icon = {
+	tbl_2.owned_icon = {
 		vertical_alignment = "bottom",
 		horizontal_alignment = "left",
-		masked = arg_7_2,
+		masked = masked,
 		texture_size = {
 			53,
 			53
@@ -1683,19 +1717,19 @@ UIWidgets.create_store_item_definition = function (arg_7_0, arg_7_1, arg_7_2, ar
 		},
 		offset = {
 			5,
-			-(arg_7_1[2] - 5),
+			-(size[2] - 5),
 			12
 		},
 		default_offset = {
 			5,
-			-(arg_7_1[2] - 5),
+			-(size[2] - 5),
 			12
 		}
 	}
-	tbl_5.owned_icon_bg = {
+	tbl_2.owned_icon_bg = {
 		vertical_alignment = "bottom",
 		horizontal_alignment = "left",
-		masked = arg_7_2,
+		masked = masked,
 		texture_size = {
 			34,
 			50
@@ -1712,19 +1746,19 @@ UIWidgets.create_store_item_definition = function (arg_7_0, arg_7_1, arg_7_2, ar
 		},
 		offset = {
 			15,
-			-(arg_7_1[2] + 8),
+			-(size[2] + 8),
 			11
 		},
 		default_offset = {
 			15,
-			-(arg_7_1[2] + 8),
+			-(size[2] + 8),
 			11
 		}
 	}
-	tbl_5.discount_bg = {
+	tbl_2.discount_bg = {
 		vertical_alignment = "top",
 		horizontal_alignment = "left",
-		masked = arg_7_2,
+		masked = masked,
 		texture_size = {
 			124,
 			112
@@ -1741,10 +1775,10 @@ UIWidgets.create_store_item_definition = function (arg_7_0, arg_7_1, arg_7_2, ar
 			11
 		}
 	}
-	tbl_5.discont_number_icons = {
+	tbl_2.discont_number_icons = {
 		axis = 1,
 		direction = 1,
-		masked = arg_7_2,
+		masked = masked,
 		texture_sizes = {},
 		texture_offsets = {},
 		spacing = {
@@ -1770,11 +1804,11 @@ UIWidgets.create_store_item_definition = function (arg_7_0, arg_7_1, arg_7_2, ar
 		}
 	}
 
-	local tbl_12 = {
+	local tbl_9 = {
 		vertical_alignment = "top",
 		horizontal_alignment = "left",
-		masked = arg_7_2,
-		texture_size = icon_size or arg_7_1,
+		masked = masked,
+		texture_size = not not icon_size or not not size,
 		color = {
 			255,
 			255,
@@ -1782,15 +1816,15 @@ UIWidgets.create_store_item_definition = function (arg_7_0, arg_7_1, arg_7_2, ar
 			255
 		}
 	}
-	local tbl_13 = {
+	local tbl_10 = {
 		nil,
 		nil,
 		7
 	}
 	local num
 
-	if not icon_size then
-		num = (arg_7_1[1] - icon_size[1]) * 0.5
+	if icon_size then
+		num = (size[1] - icon_size[1]) * 0.5
 
 		if not num then
 			-- Nothing
@@ -1799,14 +1833,14 @@ UIWidgets.create_store_item_definition = function (arg_7_0, arg_7_1, arg_7_2, ar
 
 	num = 0
 
-	::label_7_2::
+	::label_7_3::
 
-	tbl_13[1] = num
+	tbl_10[1] = num
 
 	local num_2
 
-	if not icon_size then
-		num_2 = -(arg_7_1[2] - icon_size[2]) * 0.5
+	if icon_size then
+		num_2 = -(size[2] - icon_size[2]) * 0.5
 
 		if not num_2 then
 			-- Nothing
@@ -1815,18 +1849,18 @@ UIWidgets.create_store_item_definition = function (arg_7_0, arg_7_1, arg_7_2, ar
 
 	num_2 = 0
 
-	::label_7_3::
+	::label_7_4::
 
-	tbl_13[2] = num_2
-	tbl_12.offset = tbl_13
-	tbl_5.icon = tbl_12
-	tbl_5.frame = {
+	tbl_10[2] = num_2
+	tbl_9.offset = tbl_10
+	tbl_2.icon = tbl_9
+	tbl_2.frame = {
 		horizontal_alignment = "left",
 		vertical_alignment = "top",
-		masked = arg_7_2,
-		area_size = arg_7_1,
-		texture_size = var_7_1.texture_size,
-		texture_sizes = var_7_1.texture_sizes,
+		masked = masked,
+		area_size = size,
+		texture_size = frame_settings.texture_size,
+		texture_sizes = frame_settings.texture_sizes,
 		frame_margins = {
 			0,
 			0
@@ -1843,16 +1877,16 @@ UIWidgets.create_store_item_definition = function (arg_7_0, arg_7_1, arg_7_2, ar
 			10
 		}
 	}
-	tbl_5.hover_frame = {
+	tbl_2.hover_frame = {
 		horizontal_alignment = "left",
 		vertical_alignment = "top",
-		masked = arg_7_2,
-		area_size = arg_7_1,
-		texture_size = var_7_3.texture_size,
-		texture_sizes = var_7_3.texture_sizes,
+		masked = masked,
+		area_size = size,
+		texture_size = hover_frame_settings.texture_size,
+		texture_sizes = hover_frame_settings.texture_sizes,
 		frame_margins = {
-			-var_7_4,
-			-var_7_4
+			-hover_frame_spacing,
+			-hover_frame_spacing
 		},
 		color = {
 			0,
@@ -1866,16 +1900,16 @@ UIWidgets.create_store_item_definition = function (arg_7_0, arg_7_1, arg_7_2, ar
 			6
 		}
 	}
-	tbl_5.pulse_frame = {
+	tbl_2.pulse_frame = {
 		horizontal_alignment = "left",
 		vertical_alignment = "top",
-		masked = arg_7_2,
-		area_size = arg_7_1,
-		texture_size = var_7_6.texture_size,
-		texture_sizes = var_7_6.texture_sizes,
+		masked = masked,
+		area_size = size,
+		texture_size = pulse_frame_settings.texture_size,
+		texture_sizes = pulse_frame_settings.texture_sizes,
 		frame_margins = {
-			-var_7_7,
-			-var_7_7
+			-pulse_frame_spacing,
+			-pulse_frame_spacing
 		},
 		color = {
 			0,
@@ -1890,12 +1924,12 @@ UIWidgets.create_store_item_definition = function (arg_7_0, arg_7_1, arg_7_2, ar
 		}
 	}
 
-	local tbl_14 = {
+	local tbl_11 = {
 		vertical_alignment = "top",
 		horizontal_alignment = "left",
-		masked = arg_7_2,
+		masked = masked,
 		texture_size = {
-			arg_7_1[1],
+			size[1],
 			-42.5
 		},
 		color = {
@@ -1906,19 +1940,19 @@ UIWidgets.create_store_item_definition = function (arg_7_0, arg_7_1, arg_7_2, ar
 		},
 		offset = {
 			0,
-			-arg_7_1[2],
+			-size[2],
 			9
 		}
 	}
 
-	tbl_5.console_background_rect_bottom = tbl_14
+	tbl_2.console_background_rect_bottom = tbl_11
 
-	local tbl_15 = {
+	local tbl_12 = {
 		vertical_alignment = "top",
 		horizontal_alignment = "left",
-		masked = arg_7_2,
+		masked = masked,
 		texture_size = {
-			arg_7_1[1],
+			size[1],
 			-32.5
 		},
 		color = {
@@ -1929,14 +1963,14 @@ UIWidgets.create_store_item_definition = function (arg_7_0, arg_7_1, arg_7_2, ar
 		},
 		offset = {
 			0,
-			-arg_7_1[2] + 42.5,
+			-size[2] + 42.5,
 			9
 		}
 	}
 
-	tbl_5.console_background_rect_top = tbl_15
+	tbl_2.console_background_rect_top = tbl_12
 
-	local tbl_16 = {
+	local tbl_13 = {
 		upper_case = false,
 		localize = false,
 		font_size = 28,
@@ -1950,30 +1984,30 @@ UIWidgets.create_store_item_definition = function (arg_7_0, arg_7_1, arg_7_2, ar
 	}
 	local flag_11
 
-	flag_11 = not arg_7_2 and "hell_shark_header_masked" and "hell_shark_header"
-	tbl_16.font_type = flag_11
-	tbl_16.text_color = Colors.get_color_table_with_alpha("white", 255)
+	flag_11 = (not masked or not "hell_shark_header_masked") and not not "hell_shark_header"
+	tbl_13.font_type = flag_11
+	tbl_13.text_color = Colors.get_color_table_with_alpha("white", 255)
 
 	local get_color_table_with_alpha = Colors.get_color_table_with_alpha("white", 255)
 
-	tbl_16.base_color = get_color_table_with_alpha
+	tbl_13.base_color = get_color_table_with_alpha
 
-	local tbl_17 = {
+	local tbl_14 = {
 		255,
 		255,
 		205,
 		0
 	}
 
-	tbl_16.ps_plus_color = tbl_17
-	tbl_16.offset = {
-		arg_7_1[1],
-		-(arg_7_1[2] - 4),
+	tbl_13.ps_plus_color = tbl_14
+	tbl_13.offset = {
+		size[1],
+		-(size[2] - 4),
 		12
 	}
-	tbl_5.console_first_price_text = tbl_16
+	tbl_2.console_first_price_text = tbl_13
 
-	local tbl_18 = {
+	local tbl_15 = {
 		upper_case = false,
 		localize = false,
 		font_size = 28,
@@ -1987,17 +2021,17 @@ UIWidgets.create_store_item_definition = function (arg_7_0, arg_7_1, arg_7_2, ar
 	}
 	local flag_12
 
-	flag_12 = not arg_7_2 and "hell_shark_header_masked" and "hell_shark_header"
-	tbl_18.font_type = flag_12
-	tbl_18.text_color = Colors.get_color_table_with_alpha("white", 255)
-	tbl_18.offset = {
-		arg_7_1[1],
-		-(arg_7_1[2] - 4 - 30),
+	flag_12 = (not masked or not "hell_shark_header_masked") and not not "hell_shark_header"
+	tbl_15.font_type = flag_12
+	tbl_15.text_color = Colors.get_color_table_with_alpha("white", 255)
+	tbl_15.offset = {
+		size[1],
+		-(size[2] - 4 - 30),
 		12
 	}
-	tbl_5.console_secondary_price_text = tbl_18
+	tbl_2.console_secondary_price_text = tbl_15
 
-	local tbl_19 = {
+	local tbl_16 = {
 		upper_case = false,
 		localize = false,
 		font_size = 20,
@@ -2011,50 +2045,50 @@ UIWidgets.create_store_item_definition = function (arg_7_0, arg_7_1, arg_7_2, ar
 	}
 	local flag_13
 
-	flag_13 = not arg_7_2 and "hell_shark_header_masked" and "hell_shark_header"
-	tbl_19.font_type = flag_13
-	tbl_19.text_color = Colors.get_color_table_with_alpha("white", 255)
-	tbl_19.offset = {
-		arg_7_1[1],
-		-(arg_7_1[2] - 4 - 30),
+	flag_13 = (not masked or not "hell_shark_header_masked") and not not "hell_shark_header"
+	tbl_16.font_type = flag_13
+	tbl_16.text_color = Colors.get_color_table_with_alpha("white", 255)
+	tbl_16.offset = {
+		size[1],
+		-(size[2] - 4 - 30),
 		12
 	}
-	tbl_5.console_third_price_text = tbl_19
-	tbl_5.console_secondary_price_stroke = {
+	tbl_2.console_third_price_text = tbl_16
+	tbl_2.console_secondary_price_stroke = {
 		vertical_alignment = "top",
 		horizontal_alignment = "left",
-		masked = arg_7_2,
+		masked = masked,
 		texture_size = {
 			0,
 			2
 		},
 		color = Colors.get_color_table_with_alpha("white", 255),
 		offset = {
-			arg_7_1[1],
-			-(arg_7_1[2] - 4 - 50),
+			size[1],
+			-(size[2] - 4 - 50),
 			13
 		}
 	}
-	tbl_5.console_third_price_stroke = {
+	tbl_2.console_third_price_stroke = {
 		vertical_alignment = "top",
 		horizontal_alignment = "left",
-		masked = arg_7_2,
+		masked = masked,
 		texture_size = {
 			0,
 			2
 		},
 		color = Colors.get_color_table_with_alpha("white", 255),
 		offset = {
-			arg_7_1[1],
-			-(arg_7_1[2] - 4 - 50),
+			size[1],
+			-(size[2] - 4 - 50),
 			13
 		}
 	}
 
-	local tbl_20 = {
+	local tbl_17 = {
 		vertical_alignment = "center",
 		horizontal_alignment = "left",
-		masked = arg_7_2,
+		masked = masked,
 		texture_size = {
 			20,
 			20
@@ -2066,18 +2100,18 @@ UIWidgets.create_store_item_definition = function (arg_7_0, arg_7_1, arg_7_2, ar
 			255
 		},
 		offset = {
-			arg_7_1[1],
-			-arg_7_1[2] + 25,
+			size[1],
+			-size[2] + 25,
 			10
 		}
 	}
 
-	tbl_5.psplus_icon = tbl_20
+	tbl_2.psplus_icon = tbl_17
 
-	local tbl_21 = {
+	local tbl_18 = {
 		vertical_alignment = "top",
 		horizontal_alignment = "left",
-		masked = arg_7_2,
+		masked = masked,
 		texture_size = {
 			math.floor(88.19999999999999),
 			math.floor(35.699999999999996)
@@ -2085,15 +2119,15 @@ UIWidgets.create_store_item_definition = function (arg_7_0, arg_7_1, arg_7_2, ar
 		color = Colors.get_color_table_with_alpha("white", 255),
 		offset = {
 			-35,
-			-arg_7_1[2] - 5,
+			-size[2] - 5,
 			10
 		},
-		size = arg_7_1
+		size = size
 	}
 
-	tbl_5.new_marker = tbl_21
+	tbl_2.new_marker = tbl_18
 
-	local tbl_22 = {
+	local tbl_19 = {
 		font_size = 24,
 		upper_case = true,
 		localize = false,
@@ -2103,31 +2137,31 @@ UIWidgets.create_store_item_definition = function (arg_7_0, arg_7_1, arg_7_2, ar
 	}
 	local flag_14
 
-	flag_14 = not arg_7_2 and "hell_shark_header_masked" and "hell_shark_header"
-	tbl_22.font_type = flag_14
-	tbl_22.text_color = {
+	flag_14 = (not masked or not "hell_shark_header_masked") and not not "hell_shark_header"
+	tbl_19.font_type = flag_14
+	tbl_19.text_color = {
 		255,
 		159,
 		144,
 		101
 	}
 
-	local tbl_23 = {
+	local tbl_20 = {
 		255,
 		159,
 		144,
 		101
 	}
 
-	tbl_22.base_text_color = tbl_23
-	tbl_22.offset = {
+	tbl_19.base_text_color = tbl_20
+	tbl_19.offset = {
 		20,
 		-180,
 		12
 	}
-	tbl_5.additional_content_added = tbl_22
+	tbl_2.additional_content_added = tbl_19
 
-	local tbl_24 = {
+	local tbl_21 = {
 		font_size = 24,
 		upper_case = true,
 		localize = false,
@@ -2137,22 +2171,22 @@ UIWidgets.create_store_item_definition = function (arg_7_0, arg_7_1, arg_7_2, ar
 	}
 	local flag_15
 
-	flag_15 = not arg_7_2 and "hell_shark_header_masked" and "hell_shark_header"
-	tbl_24.font_type = flag_15
-	tbl_24.text_color = {
+	flag_15 = (not masked or not "hell_shark_header_masked") and not not "hell_shark_header"
+	tbl_21.font_type = flag_15
+	tbl_21.text_color = {
 		255,
 		0,
 		0,
 		0
 	}
-	tbl_24.offset = {
+	tbl_21.offset = {
 		22,
 		-182,
 		11
 	}
-	tbl_5.additional_content_added_shadow = tbl_24
+	tbl_2.additional_content_added_shadow = tbl_21
 
-	local tbl_25 = {
+	local tbl_22 = {
 		masked = true,
 		texture_size = {
 			20,
@@ -2166,9 +2200,9 @@ UIWidgets.create_store_item_definition = function (arg_7_0, arg_7_1, arg_7_2, ar
 		color = Colors.get_color_table_with_alpha("white", 255)
 	}
 
-	tbl_5.disclaimer_marker = tbl_25
+	tbl_2.disclaimer_marker = tbl_22
 
-	local tbl_26 = {
+	local tbl_23 = {
 		upper_case = false,
 		localize = false,
 		use_shadow = true,
@@ -2176,53 +2210,56 @@ UIWidgets.create_store_item_definition = function (arg_7_0, arg_7_1, arg_7_2, ar
 		horizontal_alignment = "left",
 		vertical_alignment = "center",
 		size = {
-			arg_7_1[1] - 80,
+			size[1] - 80,
 			30
 		},
 		area_size = {
-			arg_7_1[1] - 80,
+			size[1] - 80,
 			30
 		}
 	}
 	local flag_16
 
-	flag_16 = not arg_7_2 and "hell_shark_header_masked" and "hell_shark_header"
-	tbl_26.font_type = flag_16
-	tbl_26.text_color = Colors.get_color_table_with_alpha("white", 180)
-	tbl_26.offset = {
+	flag_16 = (not masked or not "hell_shark_header_masked") and not not "hell_shark_header"
+	tbl_23.font_type = flag_16
+	tbl_23.text_color = Colors.get_color_table_with_alpha("white", 180)
+	tbl_23.offset = {
 		62,
 		70,
 		15
 	}
-	tbl_5.additional_disclaimer = tbl_26
-	tbl_2.element.passes = tbl_3
-	tbl_2.content = tbl_4
-	tbl_2.style = tbl_5
-	tbl_2.offset = {
+	tbl_2.additional_disclaimer = tbl_23
+
+	local style = tbl_2
+
+	widget.element.passes = passes
+	widget.content = content
+	widget.style = style
+	widget.offset = {
 		0,
 		0,
 		5
 	}
-	tbl_2.scenegraph_id = arg_7_0
+	widget.scenegraph_id = scenegraph_id
 
-	return tbl_2
+	return widget
 end
 
-UIWidgets.create_store_pose_item_definition = function (arg_45_0, arg_45_1, arg_45_2, arg_45_3)
+UIWidgets.create_store_pose_item_definition = function (scenegraph_id, size, masked, product)
 	-- function 45
-	local settings = arg_45_3.settings
+	local settings = product.settings
 
-	return UIWidgets.create_store_item_definition(arg_45_0, arg_45_1, arg_45_2, arg_45_3, settings)
+	return UIWidgets.create_store_item_definition(scenegraph_id, size, masked, product, settings)
 end
 
-UIWidgets.create_store_header_text_definition = function (arg_46_0, arg_46_1, arg_46_2)
+UIWidgets.create_store_header_text_definition = function (scenegraph_id, size, masked)
 	-- function 46
-	local num = -arg_46_1[2]
-	local num_2 = 25
-	local tbl = {
+	local default_height_offset = -size[2]
+	local edge_spacing = 25
+	local widget = {
 		element = {}
 	}
-	local tbl_2 = {
+	local passes = {
 		{
 			style_id = "text",
 			pass_type = "text",
@@ -2234,12 +2271,12 @@ UIWidgets.create_store_header_text_definition = function (arg_46_0, arg_46_1, ar
 			text_id = "text"
 		}
 	}
-	local tbl_3 = {
+	local content = {
 		text = "n/a",
-		size = arg_46_1
+		size = size
 	}
-	local tbl_4 = {}
-	local tbl_5 = {
+	local tbl = {}
+	local tbl_2 = {
 		font_size = 32,
 		upper_case = false,
 		localize = false,
@@ -2248,23 +2285,23 @@ UIWidgets.create_store_header_text_definition = function (arg_46_0, arg_46_1, ar
 		vertical_alignment = "top",
 		dynamic_font_size = false,
 		size = {
-			arg_46_1[1] - num_2 * 2,
-			arg_46_1[2]
+			size[1] - edge_spacing * 2,
+			size[2]
 		}
 	}
 	local flag
 
-	flag = not arg_46_2 and "hell_shark_header_masked" and "hell_shark_header"
-	tbl_5.font_type = flag
-	tbl_5.text_color = Colors.get_color_table_with_alpha("font_title", 255)
-	tbl_5.offset = {
-		num_2,
-		num,
+	flag = (not masked or not "hell_shark_header_masked") and not not "hell_shark_header"
+	tbl_2.font_type = flag
+	tbl_2.text_color = Colors.get_color_table_with_alpha("font_title", 255)
+	tbl_2.offset = {
+		edge_spacing,
+		default_height_offset,
 		9
 	}
-	tbl_4.text = tbl_5
+	tbl.text = tbl_2
 
-	local tbl_6 = {
+	local tbl_3 = {
 		font_size = 32,
 		upper_case = false,
 		localize = false,
@@ -2273,42 +2310,45 @@ UIWidgets.create_store_header_text_definition = function (arg_46_0, arg_46_1, ar
 		vertical_alignment = "top",
 		dynamic_font_size = false,
 		size = {
-			arg_46_1[1] - num_2 * 2,
-			arg_46_1[2]
+			size[1] - edge_spacing * 2,
+			size[2]
 		}
 	}
 	local flag_2
 
-	flag_2 = not arg_46_2 and "hell_shark_header_masked" and "hell_shark_header"
-	tbl_6.font_type = flag_2
-	tbl_6.text_color = Colors.get_color_table_with_alpha("black", 255)
-	tbl_6.offset = {
-		num_2 + 2,
-		num - 2,
+	flag_2 = (not masked or not "hell_shark_header_masked") and not not "hell_shark_header"
+	tbl_3.font_type = flag_2
+	tbl_3.text_color = Colors.get_color_table_with_alpha("black", 255)
+	tbl_3.offset = {
+		edge_spacing + 2,
+		default_height_offset - 2,
 		8
 	}
-	tbl_4.text_shadow = tbl_6
-	tbl.element.passes = tbl_2
-	tbl.content = tbl_3
-	tbl.style = tbl_4
-	tbl.offset = {
+	tbl.text_shadow = tbl_3
+
+	local style = tbl
+
+	widget.element.passes = passes
+	widget.content = content
+	widget.style = style
+	widget.offset = {
 		0,
 		0,
 		0
 	}
-	tbl.scenegraph_id = arg_46_0
+	widget.scenegraph_id = scenegraph_id
 
-	return tbl
+	return widget
 end
 
-UIWidgets.create_store_body_text_definition = function (arg_47_0, arg_47_1, arg_47_2)
+UIWidgets.create_store_body_text_definition = function (scenegraph_id, size, masked)
 	-- function 47
-	local num = -arg_47_1[2]
-	local num_2 = 25
-	local tbl = {
+	local default_height_offset = -size[2]
+	local edge_spacing = 25
+	local widget = {
 		element = {}
 	}
-	local tbl_2 = {
+	local passes = {
 		{
 			style_id = "text",
 			pass_type = "text",
@@ -2320,12 +2360,12 @@ UIWidgets.create_store_body_text_definition = function (arg_47_0, arg_47_1, arg_
 			text_id = "text"
 		}
 	}
-	local tbl_3 = {
+	local content = {
 		text = "n/a",
-		size = arg_47_1
+		size = size
 	}
-	local tbl_4 = {}
-	local tbl_5 = {
+	local tbl = {}
+	local tbl_2 = {
 		font_size = 20,
 		upper_case = false,
 		localize = false,
@@ -2334,23 +2374,23 @@ UIWidgets.create_store_body_text_definition = function (arg_47_0, arg_47_1, arg_
 		vertical_alignment = "top",
 		dynamic_font_size = false,
 		size = {
-			arg_47_1[1] - num_2 * 2,
-			arg_47_1[2]
+			size[1] - edge_spacing * 2,
+			size[2]
 		}
 	}
 	local flag
 
-	flag = not arg_47_2 and "hell_shark_masked" and "hell_shark"
-	tbl_5.font_type = flag
-	tbl_5.text_color = Colors.get_color_table_with_alpha("font_default", 255)
-	tbl_5.offset = {
-		num_2,
-		num,
+	flag = (not masked or not "hell_shark_masked") and not not "hell_shark"
+	tbl_2.font_type = flag
+	tbl_2.text_color = Colors.get_color_table_with_alpha("font_default", 255)
+	tbl_2.offset = {
+		edge_spacing,
+		default_height_offset,
 		9
 	}
-	tbl_4.text = tbl_5
+	tbl.text = tbl_2
 
-	local tbl_6 = {
+	local tbl_3 = {
 		font_size = 20,
 		upper_case = false,
 		localize = false,
@@ -2359,48 +2399,51 @@ UIWidgets.create_store_body_text_definition = function (arg_47_0, arg_47_1, arg_
 		vertical_alignment = "top",
 		dynamic_font_size = false,
 		size = {
-			arg_47_1[1] - num_2 * 2,
-			arg_47_1[2]
+			size[1] - edge_spacing * 2,
+			size[2]
 		}
 	}
 	local flag_2
 
-	flag_2 = not arg_47_2 and "hell_shark_masked" and "hell_shark"
-	tbl_6.font_type = flag_2
-	tbl_6.text_color = Colors.get_color_table_with_alpha("black", 255)
-	tbl_6.offset = {
-		num_2 + 2,
-		num - 2,
+	flag_2 = (not masked or not "hell_shark_masked") and not not "hell_shark"
+	tbl_3.font_type = flag_2
+	tbl_3.text_color = Colors.get_color_table_with_alpha("black", 255)
+	tbl_3.offset = {
+		edge_spacing + 2,
+		default_height_offset - 2,
 		8
 	}
-	tbl_4.text_shadow = tbl_6
-	tbl.element.passes = tbl_2
-	tbl.content = tbl_3
-	tbl.style = tbl_4
-	tbl.offset = {
+	tbl.text_shadow = tbl_3
+
+	local style = tbl
+
+	widget.element.passes = passes
+	widget.content = content
+	widget.style = style
+	widget.offset = {
 		0,
 		0,
 		0
 	}
-	tbl.scenegraph_id = arg_47_0
+	widget.scenegraph_id = scenegraph_id
 
-	return tbl
+	return widget
 end
 
-UIWidgets.create_store_currency_summary_title_definition = function (arg_48_0, arg_48_1, arg_48_2)
+UIWidgets.create_store_currency_summary_title_definition = function (scenegraph_id, size, masked)
 	-- function 48
-	local num = -arg_48_1[2]
-	local num_2 = 25
-	local tbl = {
+	local default_height_offset = -size[2]
+	local edge_spacing = 25
+	local color = {
 		255,
 		120,
 		120,
 		120
 	}
-	local tbl_2 = {
+	local widget = {
 		element = {}
 	}
-	local tbl_3 = {
+	local passes = {
 		{
 			style_id = "text",
 			pass_type = "text",
@@ -2432,137 +2475,138 @@ UIWidgets.create_store_currency_summary_title_definition = function (arg_48_0, a
 			texture_id = "rect"
 		}
 	}
-	local tbl_4 = {
+	local tbl = {
 		text = "n/a",
 		text2 = "n/a",
-		size = arg_48_1
+		size = size
 	}
 	local flag
 
-	flag = not arg_48_2 and "rect_masked" and "simple_rect_texture"
-	tbl_4.rect = flag
+	flag = (not masked or not "rect_masked") and not not "simple_rect_texture"
+	tbl.rect = flag
 
-	local tbl_5 = {}
+	local content = tbl
+	local tbl_2 = {}
+	local tbl_3 = {
+		font_size = 16,
+		upper_case = true,
+		localize = false,
+		word_wrap = true,
+		horizontal_alignment = "left",
+		vertical_alignment = "top",
+		dynamic_font_size = false,
+		size = {
+			size[1] - edge_spacing * 2,
+			size[2]
+		}
+	}
+	local flag_2
+
+	flag_2 = (not masked or not "hell_shark_masked") and not not "hell_shark"
+	tbl_3.font_type = flag_2
+	tbl_3.text_color = color
+	tbl_3.offset = {
+		edge_spacing,
+		default_height_offset,
+		9
+	}
+	tbl_2.text = tbl_3
+
+	local tbl_4 = {
+		font_size = 16,
+		upper_case = true,
+		localize = false,
+		word_wrap = true,
+		horizontal_alignment = "left",
+		vertical_alignment = "top",
+		dynamic_font_size = false,
+		size = {
+			size[1] - edge_spacing * 2,
+			size[2]
+		}
+	}
+	local flag_3
+
+	flag_3 = (not masked or not "hell_shark_masked") and not not "hell_shark"
+	tbl_4.font_type = flag_3
+	tbl_4.text_color = Colors.get_color_table_with_alpha("black", 255)
+	tbl_4.offset = {
+		edge_spacing + 2,
+		default_height_offset - 2,
+		8
+	}
+	tbl_2.text_shadow = tbl_4
+
+	local tbl_5 = {
+		font_size = 16,
+		upper_case = true,
+		localize = false,
+		word_wrap = true,
+		horizontal_alignment = "right",
+		vertical_alignment = "top",
+		dynamic_font_size = false,
+		size = {
+			size[1] - edge_spacing * 2,
+			size[2]
+		}
+	}
+	local flag_4
+
+	flag_4 = (not masked or not "hell_shark_masked") and not not "hell_shark"
+	tbl_5.font_type = flag_4
+	tbl_5.text_color = color
+	tbl_5.offset = {
+		edge_spacing,
+		default_height_offset,
+		9
+	}
+	tbl_2.text2 = tbl_5
+
 	local tbl_6 = {
 		font_size = 16,
 		upper_case = true,
 		localize = false,
 		word_wrap = true,
-		horizontal_alignment = "left",
-		vertical_alignment = "top",
-		dynamic_font_size = false,
-		size = {
-			arg_48_1[1] - num_2 * 2,
-			arg_48_1[2]
-		}
-	}
-	local flag_2
-
-	flag_2 = not arg_48_2 and "hell_shark_masked" and "hell_shark"
-	tbl_6.font_type = flag_2
-	tbl_6.text_color = tbl
-	tbl_6.offset = {
-		num_2,
-		num,
-		9
-	}
-	tbl_5.text = tbl_6
-
-	local tbl_7 = {
-		font_size = 16,
-		upper_case = true,
-		localize = false,
-		word_wrap = true,
-		horizontal_alignment = "left",
-		vertical_alignment = "top",
-		dynamic_font_size = false,
-		size = {
-			arg_48_1[1] - num_2 * 2,
-			arg_48_1[2]
-		}
-	}
-	local flag_3
-
-	flag_3 = not arg_48_2 and "hell_shark_masked" and "hell_shark"
-	tbl_7.font_type = flag_3
-	tbl_7.text_color = Colors.get_color_table_with_alpha("black", 255)
-	tbl_7.offset = {
-		num_2 + 2,
-		num - 2,
-		8
-	}
-	tbl_5.text_shadow = tbl_7
-
-	local tbl_8 = {
-		font_size = 16,
-		upper_case = true,
-		localize = false,
-		word_wrap = true,
 		horizontal_alignment = "right",
 		vertical_alignment = "top",
 		dynamic_font_size = false,
 		size = {
-			arg_48_1[1] - num_2 * 2,
-			arg_48_1[2]
-		}
-	}
-	local flag_4
-
-	flag_4 = not arg_48_2 and "hell_shark_masked" and "hell_shark"
-	tbl_8.font_type = flag_4
-	tbl_8.text_color = tbl
-	tbl_8.offset = {
-		num_2,
-		num,
-		9
-	}
-	tbl_5.text2 = tbl_8
-
-	local tbl_9 = {
-		font_size = 16,
-		upper_case = true,
-		localize = false,
-		word_wrap = true,
-		horizontal_alignment = "right",
-		vertical_alignment = "top",
-		dynamic_font_size = false,
-		size = {
-			arg_48_1[1] - num_2 * 2,
-			arg_48_1[2]
+			size[1] - edge_spacing * 2,
+			size[2]
 		}
 	}
 	local flag_5
 
-	flag_5 = not arg_48_2 and "hell_shark_masked" and "hell_shark"
-	tbl_9.font_type = flag_5
-	tbl_9.text_color = Colors.get_color_table_with_alpha("black", 255)
-	tbl_9.offset = {
-		num_2 + 2,
-		num - 2,
+	flag_5 = (not masked or not "hell_shark_masked") and not not "hell_shark"
+	tbl_6.font_type = flag_5
+	tbl_6.text_color = Colors.get_color_table_with_alpha("black", 255)
+	tbl_6.offset = {
+		edge_spacing + 2,
+		default_height_offset - 2,
 		8
 	}
-	tbl_5.text2_shadow = tbl_9
-	tbl_5.divider = {
+	tbl_2.text2_shadow = tbl_6
+	tbl_2.divider = {
 		vertical_alignment = "bottom",
 		horizontal_alignment = "left",
-		masked = arg_48_2,
+		masked = masked,
 		texture_size = {
-			arg_48_1[1] - num_2 * 2,
+			size[1] - edge_spacing * 2,
 			2
 		},
-		color = tbl,
+		color = color,
 		offset = {
-			num_2,
+			edge_spacing,
 			0,
 			8
 		}
 	}
-	tbl_5.divider_shadow = {
+	tbl_2.divider_shadow = {
 		vertical_alignment = "bottom",
 		horizontal_alignment = "left",
-		masked = arg_48_2,
+		masked = masked,
 		texture_size = {
-			arg_48_1[1] - num_2 * 2,
+			size[1] - edge_spacing * 2,
 			2
 		},
 		color = {
@@ -2572,38 +2616,41 @@ UIWidgets.create_store_currency_summary_title_definition = function (arg_48_0, a
 			0
 		},
 		offset = {
-			num_2 + 2,
+			edge_spacing + 2,
 			0,
 			7
 		}
 	}
-	tbl_2.element.passes = tbl_3
-	tbl_2.content = tbl_4
-	tbl_2.style = tbl_5
-	tbl_2.offset = {
+
+	local style = tbl_2
+
+	widget.element.passes = passes
+	widget.content = content
+	widget.style = style
+	widget.offset = {
 		0,
 		0,
 		0
 	}
-	tbl_2.scenegraph_id = arg_48_0
+	widget.scenegraph_id = scenegraph_id
 
-	return tbl_2
+	return widget
 end
 
-UIWidgets.create_store_currency_summary_entry_definition = function (arg_49_0, arg_49_1, arg_49_2)
+UIWidgets.create_store_currency_summary_entry_definition = function (scenegraph_id, size, masked)
 	-- function 49
-	local num = -arg_49_1[2]
-	local num_2 = 25
-	local tbl = {
+	local default_height_offset = -size[2]
+	local edge_spacing = 25
+	local color = {
 		255,
 		120,
 		120,
 		120
 	}
-	local tbl_2 = {
+	local widget = {
 		element = {}
 	}
-	local tbl_3 = {
+	local passes = {
 		{
 			style_id = "text",
 			pass_type = "text",
@@ -2625,13 +2672,13 @@ UIWidgets.create_store_currency_summary_entry_definition = function (arg_49_0, a
 			text_id = "text2"
 		}
 	}
-	local tbl_4 = {
+	local content = {
 		text = "n/a",
 		text2 = "n/a",
-		size = arg_49_1
+		size = size
 	}
-	local tbl_5 = {}
-	local tbl_6 = {
+	local tbl = {}
+	local tbl_2 = {
 		font_size = 20,
 		upper_case = false,
 		localize = false,
@@ -2640,23 +2687,23 @@ UIWidgets.create_store_currency_summary_entry_definition = function (arg_49_0, a
 		vertical_alignment = "top",
 		dynamic_font_size = false,
 		size = {
-			arg_49_1[1] - num_2 * 2,
-			arg_49_1[2]
+			size[1] - edge_spacing * 2,
+			size[2]
 		}
 	}
 	local flag
 
-	flag = not arg_49_2 and "hell_shark_masked" and "hell_shark"
-	tbl_6.font_type = flag
-	tbl_6.text_color = tbl
-	tbl_6.offset = {
-		num_2,
-		num,
+	flag = (not masked or not "hell_shark_masked") and not not "hell_shark"
+	tbl_2.font_type = flag
+	tbl_2.text_color = color
+	tbl_2.offset = {
+		edge_spacing,
+		default_height_offset,
 		9
 	}
-	tbl_5.text = tbl_6
+	tbl.text = tbl_2
 
-	local tbl_7 = {
+	local tbl_3 = {
 		font_size = 20,
 		upper_case = false,
 		localize = false,
@@ -2665,23 +2712,23 @@ UIWidgets.create_store_currency_summary_entry_definition = function (arg_49_0, a
 		vertical_alignment = "top",
 		dynamic_font_size = false,
 		size = {
-			arg_49_1[1] - num_2 * 2,
-			arg_49_1[2]
+			size[1] - edge_spacing * 2,
+			size[2]
 		}
 	}
 	local flag_2
 
-	flag_2 = not arg_49_2 and "hell_shark_masked" and "hell_shark"
-	tbl_7.font_type = flag_2
-	tbl_7.text_color = Colors.get_color_table_with_alpha("black", 255)
-	tbl_7.offset = {
-		num_2 + 2,
-		num - 2,
+	flag_2 = (not masked or not "hell_shark_masked") and not not "hell_shark"
+	tbl_3.font_type = flag_2
+	tbl_3.text_color = Colors.get_color_table_with_alpha("black", 255)
+	tbl_3.offset = {
+		edge_spacing + 2,
+		default_height_offset - 2,
 		8
 	}
-	tbl_5.text_shadow = tbl_7
+	tbl.text_shadow = tbl_3
 
-	local tbl_8 = {
+	local tbl_4 = {
 		font_size = 20,
 		upper_case = false,
 		localize = false,
@@ -2690,23 +2737,23 @@ UIWidgets.create_store_currency_summary_entry_definition = function (arg_49_0, a
 		vertical_alignment = "top",
 		dynamic_font_size = false,
 		size = {
-			arg_49_1[1] - num_2 * 2,
-			arg_49_1[2]
+			size[1] - edge_spacing * 2,
+			size[2]
 		}
 	}
 	local flag_3
 
-	flag_3 = not arg_49_2 and "hell_shark_masked" and "hell_shark"
-	tbl_8.font_type = flag_3
-	tbl_8.text_color = tbl
-	tbl_8.offset = {
-		num_2,
-		num,
+	flag_3 = (not masked or not "hell_shark_masked") and not not "hell_shark"
+	tbl_4.font_type = flag_3
+	tbl_4.text_color = color
+	tbl_4.offset = {
+		edge_spacing,
+		default_height_offset,
 		9
 	}
-	tbl_5.text2 = tbl_8
+	tbl.text2 = tbl_4
 
-	local tbl_9 = {
+	local tbl_5 = {
 		font_size = 20,
 		upper_case = false,
 		localize = false,
@@ -2715,53 +2762,64 @@ UIWidgets.create_store_currency_summary_entry_definition = function (arg_49_0, a
 		vertical_alignment = "top",
 		dynamic_font_size = false,
 		size = {
-			arg_49_1[1] - num_2 * 2,
-			arg_49_1[2]
+			size[1] - edge_spacing * 2,
+			size[2]
 		}
 	}
 	local flag_4
 
-	flag_4 = not arg_49_2 and "hell_shark_masked" and "hell_shark"
-	tbl_9.font_type = flag_4
-	tbl_9.text_color = Colors.get_color_table_with_alpha("black", 255)
-	tbl_9.offset = {
-		num_2 + 2,
-		num - 2,
+	flag_4 = (not masked or not "hell_shark_masked") and not not "hell_shark"
+	tbl_5.font_type = flag_4
+	tbl_5.text_color = Colors.get_color_table_with_alpha("black", 255)
+	tbl_5.offset = {
+		edge_spacing + 2,
+		default_height_offset - 2,
 		8
 	}
-	tbl_5.text2_shadow = tbl_9
-	tbl_2.element.passes = tbl_3
-	tbl_2.content = tbl_4
-	tbl_2.style = tbl_5
-	tbl_2.offset = {
+	tbl.text2_shadow = tbl_5
+
+	local style = tbl
+
+	widget.element.passes = passes
+	widget.content = content
+	widget.style = style
+	widget.offset = {
 		0,
 		0,
 		0
 	}
-	tbl_2.scenegraph_id = arg_49_0
+	widget.scenegraph_id = scenegraph_id
 
-	return tbl_2
+	return widget
 end
 
-UIWidgets.create_store_dlc_feature_vertical_definition = function (arg_50_0, arg_50_1, arg_50_2, arg_50_3)
+UIWidgets.create_store_dlc_feature_vertical_definition = function (scenegraph_id, size, masked, product)
 	-- function 50
-	local str = "menu_frame_16"
-	local var_50_1 = UIFrameSettings[str]
-	local tbl_2 = {
-		arg_50_1[1],
+	local frame_name = "menu_frame_16"
+	local frame_settings = UIFrameSettings[frame_name]
+	local image_size = {
+		size[1],
 		220
 	}
-	local num = -arg_50_1[2]
-	local num_2 = 5
-	local settings = arg_50_3.settings
+	local default_height_offset = -size[2]
+	local edge_spacing = 5
+	local settings_2 = product.settings
 
-	settings = settings or tbl
+	if not settings_2 then
+		-- Nothing
+	end
+
+	settings_2 = dummy_table
+
+	local settings = settings_2
+
+	::label_50_0::
 
 	local add_frame = settings.add_frame
-	local tbl_3 = {
+	local widget = {
 		element = {}
 	}
-	local tbl_4 = {
+	local passes = {
 		{
 			pass_type = "texture",
 			style_id = "image",
@@ -2781,35 +2839,36 @@ UIWidgets.create_store_dlc_feature_vertical_definition = function (arg_50_0, arg
 			pass_type = "texture",
 			style_id = "background",
 			texture_id = "background",
-			content_check_function = function (self)
+			content_check_function = function (content)
 				-- function 51
-				return self.add_frame
+				return content.add_frame
 			end
 		},
 		{
 			pass_type = "texture_frame",
 			style_id = "frame",
 			texture_id = "frame",
-			content_check_function = function (self)
+			content_check_function = function (content)
 				-- function 52
-				return self.add_frame
+				return content.add_frame
 			end
 		}
 	}
-	local tbl_5 = {
+	local tbl = {
 		text = "n/a",
 		background = "store_thumbnail_bg_promo"
 	}
 	local flag
 
-	flag = not arg_50_2 and "rect_masked" and "simple_rect_texture"
-	tbl_5.image = flag
-	tbl_5.size = arg_50_1
-	tbl_5.frame = var_50_1.texture
-	tbl_5.add_frame = add_frame
+	flag = (not masked or not "rect_masked") and not not "simple_rect_texture"
+	tbl.image = flag
+	tbl.size = size
+	tbl.frame = frame_settings.texture
+	tbl.add_frame = add_frame
 
-	local tbl_6 = {}
-	local tbl_7 = {
+	local content = tbl
+	local tbl_2 = {}
+	local tbl_3 = {
 		upper_case = false,
 		localize = false,
 		dynamic_font_size_word_wrap = true,
@@ -2818,27 +2877,27 @@ UIWidgets.create_store_dlc_feature_vertical_definition = function (arg_50_0, arg
 		horizontal_alignment = "left",
 		vertical_alignment = "top",
 		size = {
-			tbl_2[1] - num_2,
-			arg_50_1[2] - tbl_2[2]
+			image_size[1] - edge_spacing,
+			size[2] - image_size[2]
 		},
 		area_size = {
-			tbl_2[1] - num_2,
-			arg_50_1[2] - tbl_2[2]
+			image_size[1] - edge_spacing,
+			size[2] - image_size[2]
 		}
 	}
 	local flag_2
 
-	flag_2 = not arg_50_2 and "hell_shark_masked" and "hell_shark"
-	tbl_7.font_type = flag_2
-	tbl_7.text_color = Colors.get_color_table_with_alpha("font_default", 255)
-	tbl_7.offset = {
-		num_2,
-		num - 0,
+	flag_2 = (not masked or not "hell_shark_masked") and not not "hell_shark"
+	tbl_3.font_type = flag_2
+	tbl_3.text_color = Colors.get_color_table_with_alpha("font_default", 255)
+	tbl_3.offset = {
+		edge_spacing,
+		default_height_offset - 0,
 		9
 	}
-	tbl_6.text = tbl_7
+	tbl_2.text = tbl_3
 
-	local tbl_8 = {
+	local tbl_4 = {
 		upper_case = false,
 		localize = false,
 		dynamic_font_size_word_wrap = true,
@@ -2847,30 +2906,30 @@ UIWidgets.create_store_dlc_feature_vertical_definition = function (arg_50_0, arg
 		horizontal_alignment = "left",
 		vertical_alignment = "top",
 		size = {
-			tbl_2[1] - num_2,
-			arg_50_1[2] - tbl_2[2]
+			image_size[1] - edge_spacing,
+			size[2] - image_size[2]
 		},
 		area_size = {
-			tbl_2[1] - num_2,
-			arg_50_1[2] - tbl_2[2]
+			image_size[1] - edge_spacing,
+			size[2] - image_size[2]
 		}
 	}
 	local flag_3
 
-	flag_3 = not arg_50_2 and "hell_shark_masked" and "hell_shark"
-	tbl_8.font_type = flag_3
-	tbl_8.text_color = Colors.get_color_table_with_alpha("black", 255)
-	tbl_8.offset = {
-		num_2 + 2,
-		num - 0 - 2,
+	flag_3 = (not masked or not "hell_shark_masked") and not not "hell_shark"
+	tbl_4.font_type = flag_3
+	tbl_4.text_color = Colors.get_color_table_with_alpha("black", 255)
+	tbl_4.offset = {
+		edge_spacing + 2,
+		default_height_offset - 0 - 2,
 		8
 	}
-	tbl_6.text_shadow = tbl_8
-	tbl_6.image = {
+	tbl_2.text_shadow = tbl_4
+	tbl_2.image = {
 		vertical_alignment = "top",
 		horizontal_alignment = "left",
-		masked = arg_50_2,
-		texture_size = tbl_2,
+		masked = masked,
+		texture_size = image_size,
 		color = {
 			255,
 			255,
@@ -2883,11 +2942,11 @@ UIWidgets.create_store_dlc_feature_vertical_definition = function (arg_50_0, arg
 			8
 		}
 	}
-	tbl_6.background = {
+	tbl_2.background = {
 		vertical_alignment = "top",
 		horizontal_alignment = "left",
-		masked = arg_50_2,
-		texture_size = tbl_2,
+		masked = masked,
+		texture_size = image_size,
 		color = {
 			255,
 			255,
@@ -2900,13 +2959,13 @@ UIWidgets.create_store_dlc_feature_vertical_definition = function (arg_50_0, arg
 			1
 		}
 	}
-	tbl_6.frame = {
+	tbl_2.frame = {
 		horizontal_alignment = "left",
 		vertical_alignment = "top",
-		masked = arg_50_2,
-		area_size = tbl_2,
-		texture_size = var_50_1.texture_size,
-		texture_sizes = var_50_1.texture_sizes,
+		masked = masked,
+		area_size = image_size,
+		texture_size = frame_settings.texture_size,
+		texture_sizes = frame_settings.texture_sizes,
 		frame_margins = {
 			0,
 			0
@@ -2923,43 +2982,45 @@ UIWidgets.create_store_dlc_feature_vertical_definition = function (arg_50_0, arg
 			9
 		}
 	}
-	tbl_3.element.passes = tbl_4
-	tbl_3.content = tbl_5
-	tbl_3.style = tbl_6
-	tbl_3.offset = {
+
+	local style = tbl_2
+
+	widget.element.passes = passes
+	widget.content = content
+	widget.style = style
+	widget.offset = {
 		0,
 		0,
 		0
 	}
-	tbl_3.scenegraph_id = arg_50_0
+	widget.scenegraph_id = scenegraph_id
 
-	return tbl_3
+	return widget
 end
 
-UIWidgets.create_store_dlc_feature_horizontal_definition = function (arg_53_0, arg_53_1, arg_53_2, arg_53_3)
+UIWidgets.create_store_dlc_feature_horizontal_definition = function (scenegraph_id, size, masked, product)
 	-- function 53
-	local var_53_0
-	local var_53_1
-	local settings = arg_53_3.settings
+	local image_size, frame_name
+	local settings = product.settings
 
-	if not settings then
-		var_53_0 = settings.image_size
-		var_53_1 = settings.frame_name
+	if settings then
+		image_size = settings.image_size
+		frame_name = settings.frame_name
 	end
 
-	var_53_0 = var_53_0 or {
+	image_size = not not image_size or not not {
 		260,
-		arg_53_1[2]
+		size[2]
 	}
 
-	local flag = var_53_1 or "menu_frame_16"
-	local flag_2 = not flag and UIFrameSettings[flag]
-	local num = -arg_53_1[2]
-	local num_2 = 20
-	local tbl = {
+	local frame_name = not not frame_name or not not "menu_frame_16"
+	local frame_settings = not not frame_name and not not UIFrameSettings[frame_name]
+	local default_height_offset = -size[2]
+	local edge_spacing = 20
+	local widget = {
 		element = {}
 	}
-	local tbl_2 = {
+	local passes = {
 		{
 			pass_type = "texture",
 			style_id = "image",
@@ -2979,78 +3040,79 @@ UIWidgets.create_store_dlc_feature_horizontal_definition = function (arg_53_0, a
 			texture_id = "frame",
 			style_id = "frame",
 			pass_type = "texture_frame",
-			content_check_function = function (self)
+			content_check_function = function (content)
 				-- function 54
-				return self.show_frame
+				return content.show_frame
 			end
 		}
 	}
-	local tbl_3 = {
+	local tbl = {
 		text = "n/a"
+	}
+	local flag
+
+	flag = (not masked or not "rect_masked") and not not "simple_rect_texture"
+	tbl.image = flag
+	tbl.size = size
+	tbl.show_frame = settings.show_frame
+	tbl.frame = frame_settings.texture
+
+	local content = tbl
+	local tbl_2 = {}
+	local tbl_3 = {
+		font_size = 20,
+		upper_case = false,
+		localize = false,
+		dynamic_font_size_word_wrap = false,
+		word_wrap = true,
+		horizontal_alignment = "left",
+		vertical_alignment = "top",
+		size = {
+			size[1] - image_size[1] - edge_spacing,
+			size[2]
+		}
+	}
+	local flag_2
+
+	flag_2 = (not masked or not "hell_shark_masked") and not not "hell_shark"
+	tbl_3.font_type = flag_2
+	tbl_3.text_color = Colors.get_color_table_with_alpha("font_default", 255)
+	tbl_3.offset = {
+		image_size[1] + edge_spacing,
+		default_height_offset - 0,
+		9
+	}
+	tbl_2.text = tbl_3
+
+	local tbl_4 = {
+		font_size = 20,
+		upper_case = false,
+		localize = false,
+		dynamic_font_size_word_wrap = false,
+		word_wrap = true,
+		horizontal_alignment = "left",
+		vertical_alignment = "top",
+		size = {
+			size[1] - image_size[1] - edge_spacing,
+			size[2]
+		}
 	}
 	local flag_3
 
-	flag_3 = not arg_53_2 and "rect_masked" and "simple_rect_texture"
-	tbl_3.image = flag_3
-	tbl_3.size = arg_53_1
-	tbl_3.show_frame = settings.show_frame
-	tbl_3.frame = flag_2.texture
-
-	local tbl_4 = {}
-	local tbl_5 = {
-		font_size = 20,
-		upper_case = false,
-		localize = false,
-		dynamic_font_size_word_wrap = false,
-		word_wrap = true,
-		horizontal_alignment = "left",
-		vertical_alignment = "top",
-		size = {
-			arg_53_1[1] - var_53_0[1] - num_2,
-			arg_53_1[2]
-		}
-	}
-	local flag_4
-
-	flag_4 = not arg_53_2 and "hell_shark_masked" and "hell_shark"
-	tbl_5.font_type = flag_4
-	tbl_5.text_color = Colors.get_color_table_with_alpha("font_default", 255)
-	tbl_5.offset = {
-		var_53_0[1] + num_2,
-		num - 0,
-		9
-	}
-	tbl_4.text = tbl_5
-
-	local tbl_6 = {
-		font_size = 20,
-		upper_case = false,
-		localize = false,
-		dynamic_font_size_word_wrap = false,
-		word_wrap = true,
-		horizontal_alignment = "left",
-		vertical_alignment = "top",
-		size = {
-			arg_53_1[1] - var_53_0[1] - num_2,
-			arg_53_1[2]
-		}
-	}
-	local flag_5
-
-	flag_5 = not arg_53_2 and "hell_shark_masked" and "hell_shark"
-	tbl_6.font_type = flag_5
-	tbl_6.text_color = Colors.get_color_table_with_alpha("black", 255)
-	tbl_6.offset = {
-		var_53_0[1] + num_2 + 2,
-		num - 0 - 2,
+	flag_3 = (not masked or not "hell_shark_masked") and not not "hell_shark"
+	tbl_4.font_type = flag_3
+	tbl_4.text_color = Colors.get_color_table_with_alpha("black", 255)
+	tbl_4.offset = {
+		image_size[1] + edge_spacing + 2,
+		default_height_offset - 0 - 2,
 		8
 	}
-	tbl_4.text_shadow = tbl_6
-	tbl_4.image = {
+	tbl_2.text_shadow = tbl_4
+	tbl_2.image = {
 		vertical_alignment = "top",
 		horizontal_alignment = "left",
-		masked = arg_53_2,
-		texture_size = var_53_0,
+		masked = masked,
+		texture_size = image_size,
 		color = {
 			255,
 			255,
@@ -3063,50 +3125,53 @@ UIWidgets.create_store_dlc_feature_horizontal_definition = function (arg_53_0, a
 			8
 		}
 	}
-	tbl_4.frame = {
+	tbl_2.frame = {
 		vertical_alignment = "top",
 		horizontal_alignment = "left",
-		masked = arg_53_2,
-		texture_size = flag_2.texture_size,
-		texture_sizes = flag_2.texture_sizes,
+		masked = masked,
+		texture_size = frame_settings.texture_size,
+		texture_sizes = frame_settings.texture_sizes,
 		color = {
 			255,
 			255,
 			255,
 			255
 		},
-		size = var_53_0,
+		size = image_size,
 		offset = {
 			0,
-			-var_53_0[2],
+			-image_size[2],
 			9
 		}
 	}
-	tbl.element.passes = tbl_2
-	tbl.content = tbl_3
-	tbl.style = tbl_4
-	tbl.offset = {
+
+	local style = tbl_2
+
+	widget.element.passes = passes
+	widget.content = content
+	widget.style = style
+	widget.offset = {
 		0,
 		0,
 		0
 	}
-	tbl.scenegraph_id = arg_53_0
+	widget.scenegraph_id = scenegraph_id
 
-	return tbl
+	return widget
 end
 
-UIWidgets.create_store_dlc_feature_pullet_point_definition = function (arg_55_0, arg_55_1, arg_55_2)
+UIWidgets.create_store_dlc_feature_pullet_point_definition = function (scenegraph_id, size, masked)
 	-- function 55
-	local tbl = {
+	local image_size = {
 		26,
 		28
 	}
-	local num = -arg_55_1[2]
-	local num_2 = 50
-	local tbl_2 = {
+	local default_height_offset = -size[2]
+	local edge_spacing = 50
+	local widget = {
 		element = {}
 	}
-	local tbl_3 = {
+	local passes = {
 		{
 			pass_type = "texture",
 			style_id = "image",
@@ -3123,13 +3188,13 @@ UIWidgets.create_store_dlc_feature_pullet_point_definition = function (arg_55_0,
 			text_id = "text"
 		}
 	}
-	local tbl_4 = {
+	local content = {
 		text = "n/a",
 		image = "chain_link_horizontal_01_end",
-		size = arg_55_1
+		size = size
 	}
-	local tbl_5 = {}
-	local tbl_6 = {
+	local tbl = {}
+	local tbl_2 = {
 		font_size = 20,
 		upper_case = false,
 		localize = false,
@@ -3138,23 +3203,23 @@ UIWidgets.create_store_dlc_feature_pullet_point_definition = function (arg_55_0,
 		horizontal_alignment = "left",
 		vertical_alignment = "top",
 		size = {
-			arg_55_1[1] - tbl[1] - num_2,
-			arg_55_1[2]
+			size[1] - image_size[1] - edge_spacing,
+			size[2]
 		}
 	}
 	local flag
 
-	flag = not arg_55_2 and "hell_shark_masked" and "hell_shark"
-	tbl_6.font_type = flag
-	tbl_6.text_color = Colors.get_color_table_with_alpha("font_default", 255)
-	tbl_6.offset = {
-		tbl[1] + num_2,
-		num - 0,
+	flag = (not masked or not "hell_shark_masked") and not not "hell_shark"
+	tbl_2.font_type = flag
+	tbl_2.text_color = Colors.get_color_table_with_alpha("font_default", 255)
+	tbl_2.offset = {
+		image_size[1] + edge_spacing,
+		default_height_offset - 0,
 		9
 	}
-	tbl_5.text = tbl_6
+	tbl.text = tbl_2
 
-	local tbl_7 = {
+	local tbl_3 = {
 		font_size = 20,
 		upper_case = false,
 		localize = false,
@@ -3163,26 +3228,26 @@ UIWidgets.create_store_dlc_feature_pullet_point_definition = function (arg_55_0,
 		horizontal_alignment = "left",
 		vertical_alignment = "top",
 		size = {
-			arg_55_1[1] - tbl[1] - num_2,
-			arg_55_1[2]
+			size[1] - image_size[1] - edge_spacing,
+			size[2]
 		}
 	}
 	local flag_2
 
-	flag_2 = not arg_55_2 and "hell_shark_masked" and "hell_shark"
-	tbl_7.font_type = flag_2
-	tbl_7.text_color = Colors.get_color_table_with_alpha("black", 255)
-	tbl_7.offset = {
-		tbl[1] + num_2 + 2,
-		num - 0 - 2,
+	flag_2 = (not masked or not "hell_shark_masked") and not not "hell_shark"
+	tbl_3.font_type = flag_2
+	tbl_3.text_color = Colors.get_color_table_with_alpha("black", 255)
+	tbl_3.offset = {
+		image_size[1] + edge_spacing + 2,
+		default_height_offset - 0 - 2,
 		8
 	}
-	tbl_5.text_shadow = tbl_7
-	tbl_5.image = {
+	tbl.text_shadow = tbl_3
+	tbl.image = {
 		vertical_alignment = "top",
 		horizontal_alignment = "left",
-		masked = arg_55_2,
-		texture_size = tbl,
+		masked = masked,
+		texture_size = image_size,
 		color = {
 			255,
 			255,
@@ -3190,78 +3255,82 @@ UIWidgets.create_store_dlc_feature_pullet_point_definition = function (arg_55_0,
 			255
 		},
 		offset = {
-			num_2 / 2,
+			edge_spacing / 2,
 			0,
 			8
 		}
 	}
-	tbl_2.element.passes = tbl_3
-	tbl_2.content = tbl_4
-	tbl_2.style = tbl_5
-	tbl_2.offset = {
+
+	local style = tbl
+
+	widget.element.passes = passes
+	widget.content = content
+	widget.style = style
+	widget.offset = {
 		0,
 		0,
 		0
 	}
-	tbl_2.scenegraph_id = arg_55_0
+	widget.scenegraph_id = scenegraph_id
 
-	return tbl_2
+	return widget
 end
 
-UIWidgets.create_store_list_spacing_definition = function (arg_56_0, arg_56_1, arg_56_2, arg_56_3)
+UIWidgets.create_store_list_spacing_definition = function (scenegraph_id, size, masked, product)
 	-- function 56
-	local tbl = {
+	local widget = {
 		element = {}
 	}
-	local tbl_2 = {}
-	local tbl_3 = {
-		size = arg_56_1
+	local passes = {}
+	local content = {
+		size = size
 	}
-	local tbl_4 = {}
+	local style = {}
 
-	tbl.element.passes = tbl_2
-	tbl.content = tbl_3
-	tbl.style = tbl_4
-	tbl.offset = {
+	widget.element.passes = passes
+	widget.content = content
+	widget.style = style
+	widget.offset = {
 		0,
 		0,
 		0
 	}
-	tbl.scenegraph_id = arg_56_0
+	widget.scenegraph_id = scenegraph_id
 
-	return tbl
+	return widget
 end
 
-UIWidgets.create_store_dlc_logo_definition = function (arg_57_0, arg_57_1, arg_57_2)
+UIWidgets.create_store_dlc_logo_definition = function (scenegraph_id, size, masked)
 	-- function 57
-	local tbl = {
+	local image_size = {
 		440,
 		64
 	}
-	local num = -arg_57_1[2]
-	local tbl_2 = {
+	local default_height_offset = -size[2]
+	local widget = {
 		element = {}
 	}
-	local tbl_3 = {
+	local passes = {
 		{
 			pass_type = "texture",
 			style_id = "image",
 			texture_id = "image"
 		}
 	}
-	local tbl_4 = {}
+	local tbl = {}
 	local flag
 
-	flag = not arg_57_2 and "rect_masked" and "simple_rect_texture"
-	tbl_4.image = flag
-	tbl_4.size = arg_57_1
+	flag = (not masked or not "rect_masked") and not not "simple_rect_texture"
+	tbl.image = flag
+	tbl.size = size
 
-	local tbl_5 = {
+	local content = tbl
+	local style = {
 		image = {
 			vertical_alignment = "top",
 			horizontal_alignment = "left",
-			masked = arg_57_2,
-			texture_size = tbl,
+			masked = masked,
+			texture_size = image_size,
 			color = {
 				255,
 				255,
@@ -3269,53 +3338,53 @@ UIWidgets.create_store_dlc_logo_definition = function (arg_57_0, arg_57_1, arg_5
 				255
 			},
 			offset = {
-				arg_57_1[1] / 2 - tbl[1] / 2,
-				tbl[2],
+				size[1] / 2 - image_size[1] / 2,
+				image_size[2],
 				8
 			}
 		}
 	}
 
-	tbl_2.element.passes = tbl_3
-	tbl_2.content = tbl_4
-	tbl_2.style = tbl_5
-	tbl_2.offset = {
+	widget.element.passes = passes
+	widget.content = content
+	widget.style = style
+	widget.offset = {
 		0,
 		0,
 		0
 	}
-	tbl_2.scenegraph_id = arg_57_0
+	widget.scenegraph_id = scenegraph_id
 
-	return tbl_2
+	return widget
 end
 
-UIWidgets.create_store_list_divider_definition = function (arg_58_0, arg_58_1, arg_58_2)
+UIWidgets.create_store_list_divider_definition = function (scenegraph_id, size, masked)
 	-- function 58
-	local tbl = {
+	local image_size = {
 		618,
 		32
 	}
-	local num = -arg_58_1[2]
-	local tbl_2 = {
+	local default_height_offset = -size[2]
+	local widget = {
 		element = {}
 	}
-	local tbl_3 = {
+	local passes = {
 		{
 			pass_type = "texture",
 			style_id = "image",
 			texture_id = "image"
 		}
 	}
-	local tbl_4 = {
+	local content = {
 		image = "store_divider",
-		size = arg_58_1
+		size = size
 	}
-	local tbl_5 = {
+	local style = {
 		image = {
 			vertical_alignment = "top",
 			horizontal_alignment = "left",
-			masked = arg_58_2,
-			texture_size = tbl,
+			masked = masked,
+			texture_size = image_size,
 			color = {
 				255,
 				255,
@@ -3323,36 +3392,36 @@ UIWidgets.create_store_list_divider_definition = function (arg_58_0, arg_58_1, a
 				255
 			},
 			offset = {
-				arg_58_1[1] / 2 - tbl[1] / 2,
-				-(arg_58_1[2] / 2 - tbl[2] / 2),
+				size[1] / 2 - image_size[1] / 2,
+				-(size[2] / 2 - image_size[2] / 2),
 				8
 			}
 		}
 	}
 
-	tbl_2.element.passes = tbl_3
-	tbl_2.content = tbl_4
-	tbl_2.style = tbl_5
-	tbl_2.offset = {
+	widget.element.passes = passes
+	widget.content = content
+	widget.style = style
+	widget.offset = {
 		0,
 		0,
 		0
 	}
-	tbl_2.scenegraph_id = arg_58_0
+	widget.scenegraph_id = scenegraph_id
 
-	return tbl_2
+	return widget
 end
 
-UIWidgets.create_store_header_video_definition = function (arg_59_0, arg_59_1, arg_59_2)
+UIWidgets.create_store_header_video_definition = function (scenegraph_id, size, masked)
 	-- function 59
-	local num = 0.6
-	local num_2 = 0.2
-	local num_3 = -(arg_59_1[2] * 0.6)
-	local num_4 = -arg_59_1[2]
-	local tbl = {
+	local fade_multiplier = 0.6
+	local edge_multiplier = 0.2
+	local background_height_offset = -(size[2] * 0.6)
+	local default_height_offset = -size[2]
+	local widget = {
 		element = {}
 	}
-	local tbl_2 = {
+	local passes = {
 		{
 			style_id = "button_hotspot",
 			pass_type = "hotspot",
@@ -3389,7 +3458,7 @@ UIWidgets.create_store_header_video_definition = function (arg_59_0, arg_59_1, a
 			texture_id = "top_fade"
 		}
 	}
-	local tbl_3 = {
+	local tbl = {
 		top_fade = "edge_fade_small",
 		icon = "expand_video_icon",
 		button_hotspot = {},
@@ -3412,21 +3481,22 @@ UIWidgets.create_store_header_video_definition = function (arg_59_0, arg_59_1, a
 	}
 	local flag
 
-	flag = not arg_59_2 and "rect_masked" and "simple_rect_texture"
-	tbl_3.rect = flag
-	tbl_3.size = arg_59_1
+	flag = (not masked or not "rect_masked") and not not "simple_rect_texture"
+	tbl.rect = flag
+	tbl.size = size
 
-	local tbl_4 = {
+	local content = tbl
+	local style = {
 		button_hotspot = {
-			size = arg_59_1,
+			size = size,
 			offset = {
 				0,
-				num_4,
+				default_height_offset,
 				0
 			}
 		},
 		video_style = {
-			size = arg_59_1,
+			size = size,
 			color = {
 				255,
 				255,
@@ -3435,14 +3505,14 @@ UIWidgets.create_store_header_video_definition = function (arg_59_0, arg_59_1, a
 			},
 			offset = {
 				0,
-				num_4,
+				default_height_offset,
 				1
 			}
 		},
 		icon = {
 			vertical_alignment = "center",
 			horizontal_alignment = "center",
-			masked = arg_59_2,
+			masked = masked,
 			texture_size = {
 				85,
 				84
@@ -3454,16 +3524,16 @@ UIWidgets.create_store_header_video_definition = function (arg_59_0, arg_59_1, a
 				255
 			},
 			offset = {
-				arg_59_1[1] / 2,
-				num_4 + arg_59_1[2] / 2 + arg_59_1[2] * num / 2 + num_3 * 0.5,
+				size[1] / 2,
+				default_height_offset + size[2] / 2 + size[2] * fade_multiplier / 2 + background_height_offset * 0.5,
 				5
 			}
 		},
 		background = {
 			vertical_alignment = "top",
 			horizontal_alignment = "left",
-			masked = arg_59_2,
-			texture_size = arg_59_1,
+			masked = masked,
+			texture_size = size,
 			color = {
 				255,
 				0,
@@ -3479,10 +3549,10 @@ UIWidgets.create_store_header_video_definition = function (arg_59_0, arg_59_1, a
 		bottom_rect = {
 			vertical_alignment = "top",
 			horizontal_alignment = "left",
-			masked = arg_59_2,
+			masked = masked,
 			texture_size = {
-				arg_59_1[1],
-				arg_59_1[2] * num
+				size[1],
+				size[2] * fade_multiplier
 			},
 			color = {
 				255,
@@ -3492,17 +3562,17 @@ UIWidgets.create_store_header_video_definition = function (arg_59_0, arg_59_1, a
 			},
 			offset = {
 				0,
-				num_4 + arg_59_1[2] * num - 1 + num_3,
+				default_height_offset + size[2] * fade_multiplier - 1 + background_height_offset,
 				3
 			}
 		},
 		bottom_fade = {
 			vertical_alignment = "top",
 			horizontal_alignment = "left",
-			masked = arg_59_2,
+			masked = masked,
 			texture_size = {
-				arg_59_1[1],
-				arg_59_1[2] * num_2
+				size[1],
+				size[2] * edge_multiplier
 			},
 			color = {
 				255,
@@ -3512,7 +3582,7 @@ UIWidgets.create_store_header_video_definition = function (arg_59_0, arg_59_1, a
 			},
 			offset = {
 				0,
-				num_4 + num_3,
+				default_height_offset + background_height_offset,
 				3
 			}
 		},
@@ -3521,8 +3591,8 @@ UIWidgets.create_store_header_video_definition = function (arg_59_0, arg_59_1, a
 			masked = false,
 			horizontal_alignment = "left",
 			texture_size = {
-				arg_59_1[1],
-				arg_59_1[2] * num_2
+				size[1],
+				size[2] * edge_multiplier
 			},
 			color = {
 				255,
@@ -3532,62 +3602,65 @@ UIWidgets.create_store_header_video_definition = function (arg_59_0, arg_59_1, a
 			},
 			offset = {
 				0,
-				num_4 + (arg_59_1[2] * num + arg_59_1[2] * num_2 - 2) + num_3,
+				default_height_offset + (size[2] * fade_multiplier + size[2] * edge_multiplier - 2) + background_height_offset,
 				3
 			}
 		}
 	}
 
-	tbl.element.passes = tbl_2
-	tbl.content = tbl_3
-	tbl.style = tbl_4
-	tbl.offset = {
+	widget.element.passes = passes
+	widget.content = content
+	widget.style = style
+	widget.offset = {
 		0,
 		0,
 		0
 	}
-	tbl.scenegraph_id = arg_59_0
+	widget.scenegraph_id = scenegraph_id
 
-	return tbl
+	return widget
 end
 
-UIWidgets.create_store_purchase_button = function (arg_60_0, arg_60_1, arg_60_2, arg_60_3, arg_60_4)
+UIWidgets.create_store_purchase_button = function (scenegraph_id, size, text, font_size, disable_with_gamepad)
 	-- function 60
-	local str = "menu_frame_bg_07"
-	local var_60_1
+	local background_texture = "menu_frame_bg_07"
+	local background_size
 
-	if not UIAtlasHelper.has_atlas_settings_by_texture_name(str) then
-		local get_atlas_settings_by_texture_name = UIAtlasHelper.get_atlas_settings_by_texture_name(str)
+	if UIAtlasHelper.has_atlas_settings_by_texture_name(background_texture) then
+		local background_texture_settings = UIAtlasHelper.get_atlas_settings_by_texture_name(background_texture)
 
-		var_60_1 = {
-			get_atlas_settings_by_texture_name.size[1],
-			get_atlas_settings_by_texture_name.size[2]
+		background_size = {
+			background_texture_settings.size[1],
+			background_texture_settings.size[2]
 		}
 	else
-		var_60_1 = {
+		background_size = {
 			512,
 			256
 		}
 	end
 
-	local str_2 = "button_frame_01_gold"
-	local var_60_4
+	local frame_name = "button_frame_01_gold"
+	local var_60_0
 
-	if not str_2 then
-		var_60_4 = UIFrameSettings[str_2]
+	if frame_name then
+		var_60_0 = UIFrameSettings[frame_name]
 
-		if not var_60_4 then
+		if not var_60_0 then
 			-- Nothing
 		end
 	end
 
-	var_60_4 = UIFrameSettings.button_frame_01
+	var_60_0 = UIFrameSettings.button_frame_01
+
+	local frame_settings = var_60_0
 
 	::label_60_0::
 
-	local var_60_5 = var_60_4.texture_sizes.corner[1]
-	local str_3 = "button_detail_09_gold"
-	local size = UIAtlasHelper.get_atlas_settings_by_texture_name(str_3).size
+	local frame_width = frame_settings.texture_sizes.corner[1]
+	local side_detail_texture = "button_detail_09_gold"
+	local side_detail_texture_settings = UIAtlasHelper.get_atlas_settings_by_texture_name(side_detail_texture)
+	local side_detail_texture_size = side_detail_texture_settings.size
 
 	return {
 		element = {
@@ -3624,11 +3697,12 @@ UIWidgets.create_store_purchase_button = function (arg_60_0, arg_60_1, arg_60_2,
 				{
 					style_id = "disabled_overlay",
 					pass_type = "rect",
-					content_check_function = function (self)
+					content_check_function = function (content)
 						-- function 61
-						local disable_button = self.button_hotspot.disable_button
+						local button_hotspot = content.button_hotspot
+						local disable_button = button_hotspot.disable_button
 
-						disable_button = not disable_button and not self.owned
+						disable_button = not not disable_button and not not not content.owned
 
 						return disable_button
 					end
@@ -3637,45 +3711,45 @@ UIWidgets.create_store_purchase_button = function (arg_60_0, arg_60_1, arg_60_2,
 					style_id = "owned_overlay",
 					pass_type = "texture_uv",
 					content_id = "owned_overlay",
-					content_check_function = function (self)
+					content_check_function = function (content)
 						-- function 62
-						return self.parent.owned
+						return content.parent.owned
 					end
 				},
 				{
 					style_id = "owned_text_write_mask",
 					pass_type = "text",
 					text_id = "owned_text",
-					content_check_function = function (self)
+					content_check_function = function (content)
 						-- function 63
-						return self.owned
+						return content.owned
 					end
 				},
 				{
 					texture_id = "owned_text_gradient",
 					style_id = "owned_text_gradient",
 					pass_type = "texture",
-					content_check_function = function (self)
+					content_check_function = function (content)
 						-- function 64
-						return self.owned
+						return content.owned
 					end
 				},
 				{
 					pass_type = "texture",
 					style_id = "owned_icon",
 					texture_id = "owned_icon",
-					content_check_function = function (self)
+					content_check_function = function (content)
 						-- function 65
-						return self.owned
+						return content.owned
 					end
 				},
 				{
 					pass_type = "texture",
 					style_id = "owned_icon_bg",
 					texture_id = "owned_icon_bg",
-					content_check_function = function (self)
+					content_check_function = function (content)
 						-- function 66
-						return self.owned
+						return content.owned
 					end
 				},
 				{
@@ -3693,24 +3767,26 @@ UIWidgets.create_store_purchase_button = function (arg_60_0, arg_60_1, arg_60_2,
 					style_id = "currency_text",
 					pass_type = "text",
 					text_id = "currency_text",
-					content_check_function = function (self)
+					content_check_function = function (content)
 						-- function 67
-						return not not self.button_hotspot.disable_button or not not self.owned or self.present_currency
+						local button_hotspot = content.button_hotspot
+
+						return not button_hotspot.disable_button and not content.owned and not not content.present_currency
 					end
 				},
 				{
 					style_id = "currency_text_disabled",
 					pass_type = "text",
 					text_id = "currency_text",
-					content_check_function = function (self)
+					content_check_function = function (content)
 						-- function 68
-						local button_hotspot = self.button_hotspot
+						local button_hotspot = content.button_hotspot
 						local present_currency
 
-						if not self.owned then
-							present_currency = self.present_currency
+						if not content.owned then
+							present_currency = content.present_currency
 
-							if not present_currency then
+							if present_currency then
 								present_currency = button_hotspot.disable_button
 							end
 						else
@@ -3728,27 +3804,28 @@ UIWidgets.create_store_purchase_button = function (arg_60_0, arg_60_1, arg_60_2,
 					style_id = "currency_text_shadow",
 					pass_type = "text",
 					text_id = "currency_text",
-					content_check_function = function (self)
+					content_check_function = function (content)
 						-- function 69
-						return not not self.owned or self.present_currency
+						return not content.owned and not not content.present_currency
 					end
 				},
 				{
 					style_id = "title_text",
 					pass_type = "text",
 					text_id = "title_text",
-					content_check_function = function (self)
+					content_check_function = function (content)
 						-- function 70
+						local button_hotspot = content.button_hotspot
 						local title_text
 
-						if not self.button_hotspot.disable_button then
-							title_text = self.title_text
+						if not button_hotspot.disable_button then
+							title_text = content.title_text
 
-							if not title_text then
+							if title_text then
 								title_text = IS_WINDOWS
 
 								if not title_text then
-									title_text = not self.real_currency
+									title_text = not content.real_currency
 								end
 							end
 						else
@@ -3766,19 +3843,20 @@ UIWidgets.create_store_purchase_button = function (arg_60_0, arg_60_1, arg_60_2,
 					style_id = "title_text_disabled",
 					pass_type = "text",
 					text_id = "title_text",
-					content_check_function = function (self)
+					content_check_function = function (content)
 						-- function 71
-						local disable_button = self.button_hotspot.disable_button
+						local button_hotspot = content.button_hotspot
+						local disable_button = button_hotspot.disable_button
 
-						if not disable_button then
-							if not self.owned then
-								disable_button = self.title_text
+						if disable_button then
+							if not content.owned then
+								disable_button = content.title_text
 
-								if not disable_button then
+								if disable_button then
 									disable_button = IS_WINDOWS
 
 									if not disable_button then
-										disable_button = not self.real_currency
+										disable_button = not content.real_currency
 									end
 								end
 							else
@@ -3797,18 +3875,18 @@ UIWidgets.create_store_purchase_button = function (arg_60_0, arg_60_1, arg_60_2,
 					style_id = "title_text_shadow",
 					pass_type = "text",
 					text_id = "title_text",
-					content_check_function = function (self)
+					content_check_function = function (content)
 						-- function 72
 						local title_text
 
-						if not self.owned then
-							title_text = self.title_text
+						if not content.owned then
+							title_text = content.title_text
 
-							if not title_text then
+							if title_text then
 								title_text = IS_WINDOWS
 
 								if not title_text then
-									title_text = not self.real_currency
+									title_text = not content.real_currency
 								end
 							end
 						else
@@ -3826,18 +3904,19 @@ UIWidgets.create_store_purchase_button = function (arg_60_0, arg_60_1, arg_60_2,
 					style_id = "title_text_write_mask",
 					pass_type = "text",
 					text_id = "title_text",
-					content_check_function = function (self)
+					content_check_function = function (content)
 						-- function 73
+						local button_hotspot = content.button_hotspot
 						local title_text
 
-						if not self.button_hotspot.disable_button then
-							title_text = self.title_text
+						if not button_hotspot.disable_button then
+							title_text = content.title_text
 
-							if not title_text then
+							if title_text then
 								title_text = IS_WINDOWS
 
 								if not title_text then
-									title_text = not self.real_currency
+									title_text = not content.real_currency
 								end
 							end
 						else
@@ -3855,15 +3934,16 @@ UIWidgets.create_store_purchase_button = function (arg_60_0, arg_60_1, arg_60_2,
 					texture_id = "title_text_gradient",
 					style_id = "title_text_gradient",
 					pass_type = "texture",
-					content_check_function = function (self)
+					content_check_function = function (content)
 						-- function 74
+						local button_hotspot = content.button_hotspot
 						local IS_WINDOWS
 
-						if not self.button_hotspot.disable_button then
+						if not button_hotspot.disable_button then
 							IS_WINDOWS = IS_WINDOWS
 
 							if not IS_WINDOWS then
-								IS_WINDOWS = not self.real_currency
+								IS_WINDOWS = not content.real_currency
 							end
 						else
 							IS_WINDOWS = false
@@ -3880,44 +3960,44 @@ UIWidgets.create_store_purchase_button = function (arg_60_0, arg_60_1, arg_60_2,
 					texture_id = "glass",
 					style_id = "glass",
 					pass_type = "texture",
-					content_check_function = function (self)
+					content_check_function = function (content)
 						-- function 75
-						return not self.owned
+						return not content.owned
 					end
 				},
 				{
 					texture_id = "glass_top",
 					style_id = "glass_top",
 					pass_type = "texture",
-					content_check_function = function (self)
+					content_check_function = function (content)
 						-- function 76
-						return not self.owned
+						return not content.owned
 					end
 				},
 				{
 					texture_id = "currency_icon",
 					style_id = "currency_icon",
 					pass_type = "texture",
-					content_check_function = function (self)
+					content_check_function = function (content)
 						-- function 77
-						local button_hotspot = self.button_hotspot
+						local button_hotspot = content.button_hotspot
 
-						return not not self.owned or not not button_hotspot.disable_button or self.present_currency
+						return not content.owned and not button_hotspot.disable_button and not not content.present_currency
 					end
 				},
 				{
 					texture_id = "currency_icon",
 					style_id = "currency_icon_disabled",
 					pass_type = "texture",
-					content_check_function = function (self)
+					content_check_function = function (content)
 						-- function 78
-						local button_hotspot = self.button_hotspot
+						local button_hotspot = content.button_hotspot
 						local present_currency
 
-						if not self.owned then
-							present_currency = self.present_currency
+						if not content.owned then
+							present_currency = content.present_currency
 
-							if not present_currency then
+							if present_currency then
 								present_currency = button_hotspot.disable_button
 							end
 						else
@@ -3935,13 +4015,13 @@ UIWidgets.create_store_purchase_button = function (arg_60_0, arg_60_1, arg_60_2,
 					pass_type = "texture",
 					style_id = "psplus_icon",
 					texture_id = "psplus_icon",
-					content_check_function = function (self)
+					content_check_function = function (content)
 						-- function 79
-						local show_ps4_plus = self.show_ps4_plus
+						local show_ps4_plus = content.show_ps4_plus
 
-						if not show_ps4_plus then
+						if show_ps4_plus then
 							show_ps4_plus = IS_PS4
-							show_ps4_plus = not show_ps4_plus and self.real_currency
+							show_ps4_plus = not not show_ps4_plus and not not content.real_currency
 						end
 
 						return show_ps4_plus
@@ -3951,20 +4031,20 @@ UIWidgets.create_store_purchase_button = function (arg_60_0, arg_60_1, arg_60_2,
 					pass_type = "texture",
 					style_id = "console_background_rect",
 					texture_id = "console_background_rect",
-					content_check_function = function (self)
+					content_check_function = function (content)
 						-- function 80
-						return not not IS_WINDOWS or self.real_currency
+						return not IS_WINDOWS and not not content.real_currency
 					end
 				},
 				{
 					texture_id = "console_secondary_price_stroke",
 					style_id = "console_secondary_price_stroke",
 					pass_type = "texture",
-					content_check_function = function (self)
+					content_check_function = function (content)
 						-- function 81
-						local show_secondary_stroke = self.show_secondary_stroke
+						local show_secondary_stroke = content.show_secondary_stroke
 
-						show_secondary_stroke = not show_secondary_stroke and not not IS_WINDOWS or self.real_currency
+						show_secondary_stroke = not not show_secondary_stroke and not IS_WINDOWS and not not content.real_currency
 
 						return show_secondary_stroke
 					end
@@ -3973,13 +4053,13 @@ UIWidgets.create_store_purchase_button = function (arg_60_0, arg_60_1, arg_60_2,
 					texture_id = "console_third_price_stroke",
 					style_id = "console_third_price_stroke",
 					pass_type = "texture",
-					content_check_function = function (self)
+					content_check_function = function (content)
 						-- function 82
-						local show_third_stroke = self.show_third_stroke
+						local show_third_stroke = content.show_third_stroke
 
-						if not show_third_stroke then
+						if show_third_stroke then
 							show_third_stroke = IS_PS4
-							show_third_stroke = not show_third_stroke and self.real_currency
+							show_third_stroke = not not show_third_stroke and not not content.real_currency
 						end
 
 						return show_third_stroke
@@ -3989,51 +4069,51 @@ UIWidgets.create_store_purchase_button = function (arg_60_0, arg_60_1, arg_60_2,
 					style_id = "console_first_price_text",
 					pass_type = "text",
 					text_id = "console_first_price_text",
-					content_check_function = function (self)
+					content_check_function = function (content)
 						-- function 83
-						return not not IS_WINDOWS or self.real_currency
+						return not IS_WINDOWS and not not content.real_currency
 					end,
-					content_change_function = function (self, arg_84_1)
+					content_change_function = function (content, style)
 						-- function 84
 						local ps_plus_color
 
-						if not self.show_ps4_plus then
-							ps_plus_color = arg_84_1.ps_plus_color
+						if content.show_ps4_plus then
+							ps_plus_color = style.ps_plus_color
 
 							if not ps_plus_color then
 								-- Nothing
 							end
 						end
 
-						ps_plus_color = arg_84_1.base_color
+						ps_plus_color = style.base_color
 
 						::label_84_0::
 
-						arg_84_1.text_color = ps_plus_color
+						style.text_color = ps_plus_color
 					end
 				},
 				{
 					style_id = "console_secondary_price_text",
 					pass_type = "text",
 					text_id = "console_secondary_price_text",
-					content_check_function = function (self)
+					content_check_function = function (content)
 						-- function 85
-						return self.console_secondary_price_text == "" or not not IS_WINDOWS or self.real_currency
+						return content.console_secondary_price_text ~= "" and not IS_WINDOWS and not not content.real_currency
 					end
 				},
 				{
 					style_id = "console_third_price_text",
 					pass_type = "text",
 					text_id = "console_third_price_text",
-					content_check_function = function (self)
+					content_check_function = function (content)
 						-- function 86
 						local IS_PS4
 
-						if self.console_third_price_text ~= "" then
+						if content.console_third_price_text ~= "" then
 							IS_PS4 = IS_PS4
 
-							if not IS_PS4 then
-								IS_PS4 = self.real_currency
+							if IS_PS4 then
+								IS_PS4 = content.real_currency
 							end
 						else
 							IS_PS4 = false
@@ -4050,9 +4130,9 @@ UIWidgets.create_store_purchase_button = function (arg_60_0, arg_60_1, arg_60_2,
 					texture_id = "lock",
 					style_id = "lock",
 					pass_type = "texture",
-					content_check_function = function (self)
+					content_check_function = function (content)
 						-- function 87
-						return not self.owns_required_dlc
+						return not content.owns_required_dlc
 					end
 				}
 			}
@@ -4111,26 +4191,26 @@ UIWidgets.create_store_purchase_button = function (arg_60_0, arg_60_1, arg_60_2,
 						1
 					}
 				},
-				texture_id = str_3
+				texture_id = side_detail_texture
 			},
-			title_text = arg_60_2,
-			frame = var_60_4.texture,
+			title_text = text,
+			frame = frame_settings.texture,
 			background = {
 				uvs = {
 					{
 						0,
-						1 - arg_60_1[2] / var_60_1[2]
+						1 - size[2] / background_size[2]
 					},
 					{
-						arg_60_1[1] / var_60_1[1],
+						size[1] / background_size[1],
 						1
 					}
 				},
-				texture_id = str
+				texture_id = background_texture
 			},
-			disable_with_gamepad = arg_60_4,
-			frame_width = var_60_5,
-			size = arg_60_1
+			disable_with_gamepad = disable_with_gamepad,
+			frame_width = frame_width,
+			size = size
 		},
 		style = {
 			background = {
@@ -4154,13 +4234,13 @@ UIWidgets.create_store_purchase_button = function (arg_60_0, arg_60_1, arg_60_2,
 					255
 				},
 				offset = {
-					var_60_5,
-					var_60_5 - 2,
+					frame_width,
+					frame_width - 2,
 					2
 				},
 				size = {
-					arg_60_1[1] - var_60_5 * 2,
-					arg_60_1[2] - var_60_5 * 2
+					size[1] - frame_width * 2,
+					size[2] - frame_width * 2
 				}
 			},
 			hover_glow = {
@@ -4172,12 +4252,12 @@ UIWidgets.create_store_purchase_button = function (arg_60_0, arg_60_1, arg_60_2,
 				},
 				offset = {
 					0,
-					var_60_5 - 2,
+					frame_width - 2,
 					3
 				},
 				size = {
-					arg_60_1[1],
-					math.min(arg_60_1[2] - 5, 80)
+					size[1],
+					math.min(size[2] - 5, 80)
 				}
 			},
 			clicked_rect = {
@@ -4251,7 +4331,7 @@ UIWidgets.create_store_purchase_button = function (arg_60_0, arg_60_1, arg_60_2,
 				vertical_alignment = "center",
 				dynamic_font_size = true,
 				font_type = "hell_shark",
-				font_size = arg_60_3 or 24,
+				font_size = not not font_size or not not 24,
 				text_color = Colors.get_color_table_with_alpha("font_default", 255),
 				default_text_color = Colors.get_color_table_with_alpha("font_button_normal", 255),
 				select_text_color = Colors.get_color_table_with_alpha("white", 255),
@@ -4268,7 +4348,7 @@ UIWidgets.create_store_purchase_button = function (arg_60_0, arg_60_1, arg_60_2,
 				vertical_alignment = "center",
 				dynamic_font_size = true,
 				font_type = "hell_shark",
-				font_size = arg_60_3 or 24,
+				font_size = not not font_size or not not 24,
 				text_color = {
 					255,
 					100,
@@ -4294,7 +4374,7 @@ UIWidgets.create_store_purchase_button = function (arg_60_0, arg_60_1, arg_60_2,
 				vertical_alignment = "center",
 				dynamic_font_size = true,
 				font_type = "hell_shark",
-				font_size = arg_60_3 or 24,
+				font_size = not not font_size or not not 24,
 				text_color = Colors.get_color_table_with_alpha("black", 255),
 				default_text_color = Colors.get_color_table_with_alpha("black", 255),
 				offset = {
@@ -4310,7 +4390,7 @@ UIWidgets.create_store_purchase_button = function (arg_60_0, arg_60_1, arg_60_2,
 				vertical_alignment = "center",
 				dynamic_font_size = true,
 				font_type = "hell_shark_header",
-				font_size = arg_60_3 or 24,
+				font_size = not not font_size or not not 24,
 				text_color = Colors.get_color_table_with_alpha("font_button_normal", 255),
 				default_text_color = Colors.get_color_table_with_alpha("font_button_normal", 255),
 				select_text_color = Colors.get_color_table_with_alpha("white", 255),
@@ -4327,7 +4407,7 @@ UIWidgets.create_store_purchase_button = function (arg_60_0, arg_60_1, arg_60_2,
 				vertical_alignment = "center",
 				dynamic_font_size = true,
 				font_type = "hell_shark_header",
-				font_size = arg_60_3 or 24,
+				font_size = not not font_size or not not 24,
 				text_color = Colors.get_color_table_with_alpha("gray", 255),
 				default_text_color = Colors.get_color_table_with_alpha("gray", 255),
 				offset = {
@@ -4343,7 +4423,7 @@ UIWidgets.create_store_purchase_button = function (arg_60_0, arg_60_1, arg_60_2,
 				vertical_alignment = "center",
 				dynamic_font_size = true,
 				font_type = "hell_shark_header",
-				font_size = arg_60_3 or 24,
+				font_size = not not font_size or not not 24,
 				text_color = Colors.get_color_table_with_alpha("black", 255),
 				default_text_color = Colors.get_color_table_with_alpha("black", 255),
 				offset = {
@@ -4359,7 +4439,7 @@ UIWidgets.create_store_purchase_button = function (arg_60_0, arg_60_1, arg_60_2,
 				vertical_alignment = "center",
 				dynamic_font_size = true,
 				font_type = "hell_shark_header_write_mask",
-				font_size = arg_60_3 or 24,
+				font_size = not not font_size or not not 24,
 				text_color = Colors.get_color_table_with_alpha("font_button_normal", 255),
 				offset = {
 					20,
@@ -4375,7 +4455,7 @@ UIWidgets.create_store_purchase_button = function (arg_60_0, arg_60_1, arg_60_2,
 				vertical_alignment = "center",
 				dynamic_font_size = true,
 				font_type = "hell_shark_header_write_mask",
-				font_size = arg_60_3 or 24,
+				font_size = not not font_size or not not 24,
 				text_color = Colors.get_color_table_with_alpha("font_button_normal", 255),
 				offset = {
 					0,
@@ -4399,8 +4479,8 @@ UIWidgets.create_store_purchase_button = function (arg_60_0, arg_60_1, arg_60_2,
 					5
 				},
 				texture_size = {
-					arg_60_1[1],
-					arg_60_1[2] * 0.5
+					size[1],
+					size[2] * 0.5
 				}
 			},
 			owned_text_gradient = {
@@ -4419,7 +4499,7 @@ UIWidgets.create_store_purchase_button = function (arg_60_0, arg_60_1, arg_60_2,
 					8
 				},
 				texture_size = {
-					arg_60_1[1],
+					size[1],
 					62
 				}
 			},
@@ -4462,8 +4542,8 @@ UIWidgets.create_store_purchase_button = function (arg_60_0, arg_60_1, arg_60_2,
 				}
 			},
 			frame = {
-				texture_size = var_60_4.texture_size,
-				texture_sizes = var_60_4.texture_sizes,
+				texture_size = frame_settings.texture_size,
+				texture_sizes = frame_settings.texture_sizes,
 				color = {
 					255,
 					255,
@@ -4485,11 +4565,11 @@ UIWidgets.create_store_purchase_button = function (arg_60_0, arg_60_1, arg_60_2,
 				},
 				offset = {
 					0,
-					arg_60_1[2] - (var_60_5 + 11),
+					size[2] - (frame_width + 11),
 					4
 				},
 				size = {
-					arg_60_1[1],
+					size[1],
 					11
 				}
 			},
@@ -4521,7 +4601,7 @@ UIWidgets.create_store_purchase_button = function (arg_60_0, arg_60_1, arg_60_2,
 					7
 				},
 				texture_size = {
-					arg_60_1[1],
+					size[1],
 					62
 				}
 			},
@@ -4540,8 +4620,8 @@ UIWidgets.create_store_purchase_button = function (arg_60_0, arg_60_1, arg_60_2,
 					9
 				},
 				texture_size = {
-					size[1],
-					size[2]
+					side_detail_texture_size[1],
+					side_detail_texture_size[2]
 				}
 			},
 			side_detail_right = {
@@ -4559,8 +4639,8 @@ UIWidgets.create_store_purchase_button = function (arg_60_0, arg_60_1, arg_60_2,
 					9
 				},
 				texture_size = {
-					size[1],
-					size[2]
+					side_detail_texture_size[1],
+					side_detail_texture_size[2]
 				}
 			},
 			console_background_rect = {
@@ -4695,7 +4775,7 @@ UIWidgets.create_store_purchase_button = function (arg_60_0, arg_60_1, arg_60_2,
 				}
 			}
 		},
-		scenegraph_id = arg_60_0,
+		scenegraph_id = scenegraph_id,
 		offset = {
 			0,
 			0,
@@ -4704,24 +4784,24 @@ UIWidgets.create_store_purchase_button = function (arg_60_0, arg_60_1, arg_60_2,
 	}
 end
 
-UIWidgets.create_store_panel_button = function (arg_88_0, arg_88_1, arg_88_2, arg_88_3, arg_88_4, arg_88_5)
+UIWidgets.create_store_panel_button = function (scenegraph_id, size, text, font_size, optional_offset, optional_horizontal_alignment)
 	-- function 88
-	local tbl = {
+	local new_marker_offset = {
 		-55,
 		2,
 		10
 	}
-	local tbl_2 = {
+	local selection_offset = {
 		0,
 		-8,
 		0
 	}
-	local tbl_3 = {
+	local shadow_offset = {
 		2,
 		3,
 		3
 	}
-	local tbl_4 = {
+	local marker_offset = {
 		0,
 		0,
 		2
@@ -4744,15 +4824,15 @@ UIWidgets.create_store_panel_button = function (arg_88_0, arg_88_1, arg_88_2, ar
 					style_id = "text_hover",
 					pass_type = "text",
 					text_id = "text_field",
-					content_check_function = function (self)
+					content_check_function = function (content)
 						-- function 89
 						local is_hover
 
-						if not self.button_hotspot.disable_button then
-							is_hover = self.button_hotspot.is_hover
+						if not content.button_hotspot.disable_button then
+							is_hover = content.button_hotspot.is_hover
 
 							if not is_hover then
-								is_hover = self.button_hotspot.is_selected
+								is_hover = content.button_hotspot.is_selected
 							end
 						else
 							is_hover = false
@@ -4769,29 +4849,29 @@ UIWidgets.create_store_panel_button = function (arg_88_0, arg_88_1, arg_88_2, ar
 					style_id = "text",
 					pass_type = "text",
 					text_id = "text_field",
-					content_check_function = function (self)
+					content_check_function = function (content)
 						-- function 90
-						return not not self.button_hotspot.disable_button or not not self.button_hotspot.is_hover or not self.button_hotspot.is_selected
+						return not content.button_hotspot.disable_button and not content.button_hotspot.is_hover and not not not content.button_hotspot.is_selected
 					end
 				},
 				{
 					style_id = "text_disabled",
 					pass_type = "text",
 					text_id = "text_field",
-					content_check_function = function (self)
+					content_check_function = function (content)
 						-- function 91
-						return self.button_hotspot.disable_button
+						return content.button_hotspot.disable_button
 					end
 				},
 				{
 					texture_id = "new_marker",
 					style_id = "new_marker",
 					pass_type = "texture",
-					content_check_function = function (self)
+					content_check_function = function (content)
 						-- function 92
-						local new = self.new
+						local new = content.new
 
-						new = not new and not self.timer
+						new = not not new and not not not content.timer
 
 						return new
 					end
@@ -4800,15 +4880,15 @@ UIWidgets.create_store_panel_button = function (arg_88_0, arg_88_1, arg_88_2, ar
 					style_id = "timer_marker",
 					pass_type = "texture",
 					texture_id = "timer_marker",
-					content_check_function = function (self)
+					content_check_function = function (content)
 						-- function 93
-						return self.timer
+						return content.timer
 					end,
-					content_change_function = function (arg_94_0, arg_94_1)
+					content_change_function = function (content, style)
 						-- function 94
-						local num = 0.5 + math.sin(Managers.time:time("ui") * 5) * 0.5
+						local s = 0.5 + math.sin(Managers.time:time("ui") * 5) * 0.5
 
-						arg_94_1.color[1] = 100 + 155 * num
+						style.color[1] = 100 + 155 * s
 					end
 				}
 			}
@@ -4818,13 +4898,13 @@ UIWidgets.create_store_panel_button = function (arg_88_0, arg_88_1, arg_88_2, ar
 			timer = false,
 			new_marker = "list_item_tag_new",
 			button_hotspot = {},
-			text_field = arg_88_2,
-			default_font_size = arg_88_3,
-			size = arg_88_1
+			text_field = text,
+			default_font_size = font_size,
+			size = size
 		},
 		style = {
 			button_hotspot = {
-				size = arg_88_1
+				size = size
 			},
 			text = {
 				word_wrap = false,
@@ -4833,8 +4913,8 @@ UIWidgets.create_store_panel_button = function (arg_88_0, arg_88_1, arg_88_2, ar
 				vertical_alignment = "center",
 				dynamic_font_size = true,
 				font_type = "hell_shark_header",
-				font_size = arg_88_3,
-				horizontal_alignment = arg_88_5 or "left",
+				font_size = font_size,
+				horizontal_alignment = not not optional_horizontal_alignment or not not "left",
 				text_color = Colors.get_color_table_with_alpha("font_button_normal", 255),
 				default_offset = {
 					0,
@@ -4846,7 +4926,7 @@ UIWidgets.create_store_panel_button = function (arg_88_0, arg_88_1, arg_88_2, ar
 					5,
 					4
 				},
-				size = arg_88_1
+				size = size
 			},
 			text_shadow = {
 				word_wrap = false,
@@ -4855,12 +4935,12 @@ UIWidgets.create_store_panel_button = function (arg_88_0, arg_88_1, arg_88_2, ar
 				vertical_alignment = "center",
 				dynamic_font_size = true,
 				font_type = "hell_shark_header",
-				font_size = arg_88_3,
-				horizontal_alignment = arg_88_5 or "left",
+				font_size = font_size,
+				horizontal_alignment = not not optional_horizontal_alignment or not not "left",
 				text_color = Colors.get_color_table_with_alpha("black", 255),
-				default_offset = tbl_3,
-				offset = tbl_3,
-				size = arg_88_1
+				default_offset = shadow_offset,
+				offset = shadow_offset,
+				size = size
 			},
 			text_hover = {
 				word_wrap = false,
@@ -4869,8 +4949,8 @@ UIWidgets.create_store_panel_button = function (arg_88_0, arg_88_1, arg_88_2, ar
 				vertical_alignment = "center",
 				dynamic_font_size = true,
 				font_type = "hell_shark_header",
-				font_size = arg_88_3,
-				horizontal_alignment = arg_88_5 or "left",
+				font_size = font_size,
+				horizontal_alignment = not not optional_horizontal_alignment or not not "left",
 				text_color = Colors.get_color_table_with_alpha("white", 255),
 				default_offset = {
 					0,
@@ -4882,7 +4962,7 @@ UIWidgets.create_store_panel_button = function (arg_88_0, arg_88_1, arg_88_2, ar
 					5,
 					4
 				},
-				size = arg_88_1
+				size = size
 			},
 			text_disabled = {
 				word_wrap = false,
@@ -4891,8 +4971,8 @@ UIWidgets.create_store_panel_button = function (arg_88_0, arg_88_1, arg_88_2, ar
 				vertical_alignment = "center",
 				dynamic_font_size = true,
 				font_type = "hell_shark_header",
-				font_size = arg_88_3,
-				horizontal_alignment = arg_88_5 or "left",
+				font_size = font_size,
+				horizontal_alignment = not not optional_horizontal_alignment or not not "left",
 				text_color = Colors.get_color_table_with_alpha("gray", 50),
 				default_offset = {
 					0,
@@ -4904,7 +4984,7 @@ UIWidgets.create_store_panel_button = function (arg_88_0, arg_88_1, arg_88_2, ar
 					5,
 					4
 				},
-				size = arg_88_1
+				size = size
 			},
 			new_marker = {
 				vertical_alignment = "center",
@@ -4915,11 +4995,11 @@ UIWidgets.create_store_panel_button = function (arg_88_0, arg_88_1, arg_88_2, ar
 				},
 				color = Colors.get_color_table_with_alpha("white", 255),
 				offset = {
-					tbl[1],
-					tbl[2],
-					tbl[3]
+					new_marker_offset[1],
+					new_marker_offset[2],
+					new_marker_offset[3]
 				},
-				size = arg_88_1
+				size = size
 			},
 			timer_marker = {
 				vertical_alignment = "center",
@@ -4930,28 +5010,28 @@ UIWidgets.create_store_panel_button = function (arg_88_0, arg_88_1, arg_88_2, ar
 				},
 				color = Colors.get_color_table_with_alpha("white", 255),
 				offset = {
-					tbl[1] + 42,
-					tbl[2] - 2,
-					tbl[3]
+					new_marker_offset[1] + 42,
+					new_marker_offset[2] - 2,
+					new_marker_offset[3]
 				},
-				size = arg_88_1
+				size = size
 			}
 		},
-		offset = arg_88_4 or {
+		offset = not not optional_offset or not not {
 			0,
 			0,
 			0
 		},
-		scenegraph_id = arg_88_0
+		scenegraph_id = scenegraph_id
 	}
 end
 
-UIWidgets.create_store_panel_currency_widget = function (arg_95_0, arg_95_1, arg_95_2, arg_95_3, arg_95_4)
+UIWidgets.create_store_panel_currency_widget = function (scenegraph_id, frame_texture, currency_icon, background_texture, background_tile_size)
 	-- function 95
 	local var_95_0
 
-	if not arg_95_1 then
-		var_95_0 = UIFrameSettings[arg_95_1]
+	if frame_texture then
+		var_95_0 = UIFrameSettings[frame_texture]
 
 		if not var_95_0 then
 			-- Nothing
@@ -4959,6 +5039,8 @@ UIWidgets.create_store_panel_currency_widget = function (arg_95_0, arg_95_1, arg
 	end
 
 	var_95_0 = UIFrameSettings.button_frame_01_gold
+
+	local unit_frame_settings = var_95_0
 
 	::label_95_0::
 
@@ -4989,14 +5071,14 @@ UIWidgets.create_store_panel_currency_widget = function (arg_95_0, arg_95_1, arg
 		},
 		content = {
 			currency_text = "-",
-			frame = var_95_0.texture,
-			background_texture = arg_95_3 or "menu_frame_bg_07",
-			currency_icon = arg_95_2 or "store_icon_currency_ingame_big"
+			frame = unit_frame_settings.texture,
+			background_texture = not not background_texture or not not "menu_frame_bg_07",
+			currency_icon = not not currency_icon or not not "store_icon_currency_ingame_big"
 		},
 		style = {
 			frame = {
-				texture_size = var_95_0.texture_size,
-				texture_sizes = var_95_0.texture_sizes,
+				texture_size = unit_frame_settings.texture_size,
+				texture_sizes = unit_frame_settings.texture_sizes,
 				color = {
 					255,
 					255,
@@ -5015,7 +5097,7 @@ UIWidgets.create_store_panel_currency_widget = function (arg_95_0, arg_95_1, arg
 					0,
 					0
 				},
-				texture_tiling_size = arg_95_4 or {
+				texture_tiling_size = not not background_tile_size or not not {
 					512,
 					256
 				},
@@ -5063,7 +5145,7 @@ UIWidgets.create_store_panel_currency_widget = function (arg_95_0, arg_95_1, arg
 				}
 			}
 		},
-		scenegraph_id = arg_95_0,
+		scenegraph_id = scenegraph_id,
 		offset = {
 			0,
 			0,

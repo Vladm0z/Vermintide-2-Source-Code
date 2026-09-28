@@ -2,7 +2,7 @@
 
 BanListManager = class(BanListManager)
 
-local str = "ban_list"
+local SAVE_FILE = "ban_list"
 
 BanListManager.init = function (self)
 	-- function 1
@@ -11,133 +11,133 @@ BanListManager.init = function (self)
 	self:_load_bans()
 end
 
-BanListManager.ban = function (arg_2_0, arg_2_1, arg_2_2, arg_2_3)
+BanListManager.ban = function (self, peer_id, name, until_time_stamp)
 	-- function 2
-	arg_2_0._bans[arg_2_1] = {
-		name = arg_2_2,
-		ban_end = arg_2_3
+	self._bans[peer_id] = {
+		name = name,
+		ban_end = until_time_stamp
 	}
 end
 
-BanListManager.unban = function (arg_3_0, arg_3_1)
+BanListManager.unban = function (self, peer_id)
 	-- function 3
-	arg_3_0._bans[arg_3_1] = nil
+	self._bans[peer_id] = nil
 end
 
-BanListManager.save = function (self, arg_4_1)
+BanListManager.save = function (self, callback)
 	-- function 4
-	local function fn(arg_5_0)
+	local function cb(result)
 		-- function 5
-		self:_save_done_callback(arg_5_0, arg_4_1)
+		self:_save_done_callback(result, callback)
 	end
 
-	local flag = true
+	local force_local_save = true
 
-	Managers.save:auto_save(str, self._bans, fn, flag)
+	Managers.save:auto_save(SAVE_FILE, self._bans, cb, force_local_save)
 end
 
-local function fn(self)
+local function in_ban_range(ban_info)
 	-- function 6
-	local ban_end = self.ban_end
-	local time = os.time()
+	local ban_end = ban_info.ban_end
+	local now = os.time()
 
-	return ban_end == nil or time < ban_end
+	return ban_end == nil or now < ban_end
 end
 
-BanListManager.is_banned = function (self, arg_7_1)
+BanListManager.is_banned = function (self, peer_id)
 	-- function 7
-	local var_7_0 = self._bans[arg_7_1]
+	local ban_info = self._bans[peer_id]
 
-	if var_7_0 == nil then
+	if ban_info == nil then
 		return false
 	end
 
-	return fn(var_7_0)
+	return in_ban_range(ban_info)
 end
 
 BanListManager.ban_list = function (self)
 	-- function 8
-	local tbl = {}
+	local result = {}
 
-	local function fn(self, arg_9_1, arg_9_2)
+	local function order_func(t, a, b)
 		-- function 9
-		local name = self[arg_9_1].name
-		local name_2 = self[arg_9_2].name
+		local left_name = t[a].name
+		local right_name = t[b].name
 
-		if name ~= name_2 then
-			return name < name_2
+		if left_name ~= right_name then
+			return left_name < right_name
 		end
 
-		return arg_9_1 < arg_9_2
+		return a < b
 	end
 
-	for iter_8_0, iter_8_1 in table.sorted(self._bans, fn) do
-		tbl[#tbl + 1] = {
-			name = iter_8_1.name,
-			peer_id = iter_8_0,
-			ban_end = iter_8_1.ban_end
+	for peer_id, ban_info in table.sorted(self._bans, order_func) do
+		result[#result + 1] = {
+			name = ban_info.name,
+			peer_id = peer_id,
+			ban_end = ban_info.ban_end
 		}
 	end
 
-	return tbl
+	return result
 end
 
 BanListManager.banned_peers = function (self)
 	-- function 10
-	local tbl = {}
+	local result = {}
 
-	for k, v in pairs(self._bans) do
-		tbl[#tbl + 1] = k
+	for peer, _ in pairs(self._bans) do
+		result[#result + 1] = peer
 	end
 
-	return tbl
+	return result
 end
 
-BanListManager._load_bans = function (arg_11_0)
+BanListManager._load_bans = function (self)
 	-- function 11
-	local function fn(arg_12_0)
+	local function callback(result)
 		-- function 12
-		arg_11_0:_load_done_callback(arg_12_0)
+		self:_load_done_callback(result)
 	end
 
-	local flag = true
+	local force_local_load = true
 
-	Managers.save:auto_load(str, fn, flag)
+	Managers.save:auto_load(SAVE_FILE, callback, force_local_load)
 end
 
-BanListManager._load_done_callback = function (self, arg_13_1)
+BanListManager._load_done_callback = function (self, result)
 	-- function 13
-	if arg_13_1.error ~= nil then
-		print(string.format("Failed to load the ban list (%s). It will be empty.", arg_13_1.error))
+	if result.error ~= nil then
+		print(string.format("Failed to load the ban list (%s). It will be empty.", result.error))
 
 		return
 	end
 
-	table.merge(self._bans, arg_13_1.data)
+	table.merge(self._bans, result.data)
 	self:_remove_old_bans()
 end
 
-BanListManager._save_done_callback = function (arg_14_0, arg_14_1, arg_14_2)
+BanListManager._save_done_callback = function (self, result, callback)
 	-- function 14
-	if arg_14_1.error ~= nil then
-		print(string.format("Failed to save the ban list (%s).", arg_14_1.error))
-		arg_14_2(arg_14_1.error)
+	if result.error ~= nil then
+		print(string.format("Failed to save the ban list (%s).", result.error))
+		callback(result.error)
 
 		return
 	end
 
-	arg_14_2()
+	callback()
 end
 
 BanListManager._remove_old_bans = function (self)
 	-- function 15
-	local tbl = {}
+	local new_bans = {}
 
-	for k, v in pairs(self._bans) do
-		if not fn(v) then
-			tbl[k] = v
+	for peer_id, ban_info in pairs(self._bans) do
+		if in_ban_range(ban_info) then
+			new_bans[peer_id] = ban_info
 		end
 	end
 
-	self._bans = tbl
+	self._bans = new_bans
 end

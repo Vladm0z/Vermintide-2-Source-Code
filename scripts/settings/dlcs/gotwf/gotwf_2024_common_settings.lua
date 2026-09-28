@@ -1,14 +1,14 @@
 -- chunkname: @scripts/settings/dlcs/gotwf/gotwf_2024_common_settings.lua
 
-local gotwf_2024 = DLCSettings.gotwf_2024
+local settings = DLCSettings.gotwf_2024
 
-gotwf_2024.item_master_list_file_names = {
+settings.item_master_list_file_names = {
 	"scripts/settings/dlcs/gotwf/item_master_list_gotwf_2024"
 }
-gotwf_2024.weapon_skins_file_names = {
+settings.weapon_skins_file_names = {
 	"scripts/settings/dlcs/gotwf/weapon_skins_gotwf_2024"
 }
-gotwf_2024.ui_portrait_frame_settings = {
+settings.ui_portrait_frame_settings = {
 	frame_gotwf_2024 = {
 		{
 			texture = "portrait_frame_gotwf_2024",

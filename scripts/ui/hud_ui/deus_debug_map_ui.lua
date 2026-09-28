@@ -9,10 +9,10 @@ DeusDebugMapUI = class(DeusDebugMapUI)
 
 local DeusDebugDrawMapSettings = DeusDebugDrawMapSettings
 
-DeusDebugDrawMapSettings = DeusDebugDrawMapSettings or {}
+DeusDebugDrawMapSettings = not not DeusDebugDrawMapSettings or not not {}
 DeusDebugDrawMapSettings = DeusDebugDrawMapSettings
 
-local tbl = {
+local color_map_for_label = {
 	[0] = ColorBox(Colors.get("black")),
 	ColorBox(Colors.get("red")),
 	ColorBox(Colors.get("green")),
@@ -21,14 +21,14 @@ local tbl = {
 	ColorBox(Colors.get("purple")),
 	(ColorBox(Colors.get("orange")))
 }
-local num = 0.2
-local num_2 = 0.2
-local num_3 = 0.7
-local num_4 = 0.7
+local start_x = 0.2
+local start_y = 0.2
+local total_width = 0.7
+local total_height = 0.7
 
-DeusDebugMapUI.init = function (self, arg_1_1, arg_1_2)
+DeusDebugMapUI.init = function (self, parent, ingame_ui_context)
 	-- function 1
-	self._world = arg_1_2.world_manager:world("level_world")
+	self._world = ingame_ui_context.world_manager:world("level_world")
 	self._gui = World.create_screen_gui(self._world, "immediate", "material", "materials/fonts/gw_fonts")
 end
 
@@ -39,7 +39,7 @@ DeusDebugMapUI.destroy = function (self)
 	self._gui = nil
 end
 
-DeusDebugMapUI.update = function (self, arg_3_1, arg_3_2)
+DeusDebugMapUI.update = function (self, dt, t)
 	-- function 3
 	if not script_data.deus_debug_draw_map then
 		self._current_seed = nil
@@ -47,280 +47,292 @@ DeusDebugMapUI.update = function (self, arg_3_1, arg_3_2)
 		return
 	end
 
-	local resolution, var_3_1 = Gui.resolution()
+	local width, height = Gui.resolution()
 
-	Gui.rect(self._gui, Vector2(0, 0), Vector2(resolution, var_3_1), Color(255, 255, 255, 255))
+	Gui.rect(self._gui, Vector2(0, 0), Vector2(width, height), Color(255, 255, 255, 255))
 
-	local game_mechanism = Managers.mechanism:game_mechanism()
-	local flag = not game_mechanism and game_mechanism:get_deus_run_controller()
+	local mechanism = Managers.mechanism:game_mechanism()
+	local deus_run_controller = not not mechanism and not not mechanism:get_deus_run_controller()
 
-	if not flag then
-		self:_draw_final_graph(flag:get_graph_data())
-	elseif not DeusDebugDrawMapSettings.base_graph then
+	if deus_run_controller then
+		self:_draw_final_graph(deus_run_controller:get_graph_data())
+	elseif DeusDebugDrawMapSettings.base_graph then
 		self:_draw_base_graph(DeusDebugDrawMapSettings.base_graph)
-	elseif not DeusDebugDrawMapSettings.final_graph then
+	elseif DeusDebugDrawMapSettings.final_graph then
 		self:_draw_final_graph(DeusDebugDrawMapSettings.final_graph)
 	end
 end
 
-DeusDebugMapUI._draw_base_graph = function (self, arg_4_1, arg_4_2, arg_4_3)
+DeusDebugMapUI._draw_base_graph = function (self, graph, dt, t)
 	-- function 4
-	local str = "materials/fonts/arial"
-	local str_2 = "arial"
-	local num_5 = 10
-	local resolution, var_4_4 = Gui.resolution()
-	local num_6 = resolution * num
-	local num_7 = var_4_4 * num_2
-	local num_8 = resolution * num_3
-	local num_9 = var_4_4 * num_4
-	local _gui = self._gui
+	local font = "materials/fonts/arial"
+	local font_material = "arial"
+	local font_size = 10
+	local width, height = Gui.resolution()
+	local min_x = width * start_x
+	local min_y = height * start_y
+	local layout_width = width * total_width
+	local layout_height = height * total_height
+	local gui = self._gui
 
-	self:_draw_edges(arg_4_1)
+	self:_draw_edges(graph)
 
-	for k, v in pairs(arg_4_1) do
-		local num_10 = num_6 + num_8 * arg_4_1[k].layout_x
-		local num_11 = num_7 + num_9 * arg_4_1[k].layout_y
+	for key, node in pairs(graph) do
+		local pos_x = min_x + layout_width * graph[key].layout_x
+		local pos_y = min_y + layout_height * graph[key].layout_y
 
-		if v.type == "SIGNATURE" then
+		if node.type == "SIGNATURE" then
 			local rect = Gui.rect
-			local var_4_13 = _gui
-			local var_4_14 = Vector2(num_10 - 10, num_11 - 10)
-			local var_4_15 = Vector2(20, 20)
-			local var_4_16 = tbl
-			local label = v.label
+			local var_4_1 = gui
+			local var_4_2 = Vector2(pos_x - 10, pos_y - 10)
+			local var_4_3 = Vector2(20, 20)
+			local var_4_4 = color_map_for_label
+			local label = node.label
 
-			label = label or 0
+			label = not not label or not not 0
 
-			rect(var_4_13, var_4_14, var_4_15, var_4_16[label]:unbox())
-		elseif v.type == "TRAVEL" then
-			local var_4_18 = Vector3(num_10 + 10, 0, num_11 - 10)
-			local var_4_19 = Vector3(num_10 - 10, 0, num_11 - 10)
-			local var_4_20 = Vector3(num_10, 0, num_11 + 10)
+			rect(var_4_1, var_4_2, var_4_3, var_4_4[label]:unbox())
+		elseif node.type == "TRAVEL" then
+			local axis_y_p1 = Vector3(pos_x + 10, 0, pos_y - 10)
+			local axis_y_p2 = Vector3(pos_x - 10, 0, pos_y - 10)
+			local axis_y_p3 = Vector3(pos_x, 0, pos_y + 10)
 			local triangle = Gui.triangle
-			local var_4_22 = _gui
-			local var_4_23 = var_4_18
-			local var_4_24 = var_4_19
-			local var_4_25 = var_4_20
-			local num_12 = 1
-			local var_4_27 = tbl
-			local label_2 = v.label
+			local var_4_7 = gui
+			local var_4_8 = axis_y_p1
+			local var_4_9 = axis_y_p2
+			local var_4_10 = axis_y_p3
+			local num = 1
+			local var_4_12 = color_map_for_label
+			local label_2 = node.label
 
-			label_2 = label_2 or 0
+			label_2 = not not label_2 or not not 0
 
-			triangle(var_4_22, var_4_23, var_4_24, var_4_25, num_12, var_4_27[label_2]:unbox())
+			triangle(var_4_7, var_4_8, var_4_9, var_4_10, num, var_4_12[label_2]:unbox())
 		else
 			local rect_2 = Gui.rect
-			local var_4_30 = _gui
-			local var_4_31 = Vector2(num_10 - 10, num_11 - 10)
-			local var_4_32 = Vector2(15, 15)
-			local var_4_33 = tbl
-			local label_3 = v.label
+			local var_4_15 = gui
+			local var_4_16 = Vector2(pos_x - 10, pos_y - 10)
+			local var_4_17 = Vector2(15, 15)
+			local var_4_18 = color_map_for_label
+			local label_3 = node.label
 
-			label_3 = label_3 or 0
+			label_3 = not not label_3 or not not 0
 
-			rect_2(var_4_30, var_4_31, var_4_32, var_4_33[label_3]:unbox())
+			rect_2(var_4_15, var_4_16, var_4_17, var_4_18[label_3]:unbox())
 		end
 
 		local text_extents = Gui.text_extents
-		local var_4_36 = _gui
-		local type = v.type
+		local var_4_21 = gui
+		local type = node.type
 
-		type = type or ""
+		type = not not type or not not ""
 
-		local var_4_38, var_4_39 = text_extents(var_4_36, type, str, num_5)
-		local num_13 = var_4_39.x - var_4_38.x
+		local min, max = text_extents(var_4_21, type, font, font_size)
+		local text_width = max.x - min.x
 		local text = Gui.text
-		local var_4_42 = _gui
-		local type_2 = v.type
+		local var_4_24 = gui
+		local type_2 = node.type
 
-		type_2 = type_2 or ""
+		type_2 = not not type_2 or not not ""
 
-		text(var_4_42, type_2, str, num_5, str_2, Vector3(num_10 - num_13 * 0.5, num_11 - 20, 0), Color(255, 0, 0, 0))
+		text(var_4_24, type_2, font, font_size, font_material, Vector3(pos_x - text_width * 0.5, pos_y - 20, 0), Color(255, 0, 0, 0))
 
-		local str_3 = "connected_to:"
-		local connected_to = v.connected_to
+		local str = "connected_to:"
+		local connected_to = node.connected_to
 
-		connected_to = connected_to or 0
+		connected_to = not not connected_to or not not 0
 
-		local str_4 = str_3 .. connected_to
-		local text_extents_2, var_4_48 = Gui.text_extents(_gui, str_4, str, num_5)
-		local num_14 = var_4_48.x - text_extents_2.x
+		local connected_to_text = str .. connected_to
 
-		Gui.text(_gui, str_4, str, num_5, str_2, Vector3(num_10 - num_14 * 0.5, num_11 - 40, 0), Color(255, 0, 0, 0))
+		min, max = Gui.text_extents(gui, connected_to_text, font, font_size)
+		text_width = max.x - min.x
 
-		local str_5 = "label:"
-		local label_4 = v.label
+		Gui.text(gui, connected_to_text, font, font_size, font_material, Vector3(pos_x - text_width * 0.5, pos_y - 40, 0), Color(255, 0, 0, 0))
 
-		label_4 = label_4 or 0
+		local str_2 = "label:"
+		local label_4 = node.label
 
-		local str_6 = str_5 .. label_4
-		local text_extents_3, var_4_54 = Gui.text_extents(_gui, str_6, str, num_5)
-		local num_15 = var_4_54.x - text_extents_3.x
+		label_4 = not not label_4 or not not 0
+
+		local label_text = str_2 .. label_4
+
+		min, max = Gui.text_extents(gui, label_text, font, font_size)
+		text_width = max.x - min.x
+
 		local text_2 = Gui.text
-		local var_4_57 = _gui
-		local var_4_58 = str_6
-		local var_4_59 = str
-		local var_4_60 = num_5
-		local var_4_61 = str_2
-		local var_4_62 = Vector3(num_10 - num_15 * 0.5, num_11 - 50, 0)
-		local var_4_63 = tbl
-		local label_5 = v.label
+		local var_4_31 = gui
+		local var_4_32 = label_text
+		local var_4_33 = font
+		local var_4_34 = font_size
+		local var_4_35 = font_material
+		local var_4_36 = Vector3(pos_x - text_width * 0.5, pos_y - 50, 0)
+		local var_4_37 = color_map_for_label
+		local label_5 = node.label
 
-		label_5 = label_5 or 0
+		label_5 = not not label_5 or not not 0
 
-		text_2(var_4_57, var_4_58, var_4_59, var_4_60, var_4_61, var_4_62, var_4_63[label_5]:unbox())
+		text_2(var_4_31, var_4_32, var_4_33, var_4_34, var_4_35, var_4_36, var_4_37[label_5]:unbox())
 
-		local text_extents_4, var_4_66 = Gui.text_extents(_gui, k, str, num_5)
-		local num_16 = var_4_66.x - text_extents_4.x
+		min, max = Gui.text_extents(gui, key, font, font_size)
+		text_width = max.x - min.x
 
-		Gui.text(_gui, k, str, num_5, str_2, Vector3(num_10 - num_16 * 0.5, num_11 + 20, 0), Color(255, 0, 0, 0))
+		Gui.text(gui, key, font, font_size, font_material, Vector3(pos_x - text_width * 0.5, pos_y + 20, 0), Color(255, 0, 0, 0))
 	end
 end
 
-DeusDebugMapUI._draw_final_graph = function (self, arg_5_1, arg_5_2, arg_5_3)
+DeusDebugMapUI._draw_final_graph = function (self, graph, dt, t)
 	-- function 5
-	local str = "materials/fonts/arial"
-	local str_2 = "arial"
-	local num_5 = 10
-	local resolution, var_5_4 = Gui.resolution()
-	local num_6 = resolution * num
-	local num_7 = var_5_4 * num_2
-	local num_8 = resolution * num_3
-	local num_9 = var_5_4 * num_4
-	local _gui = self._gui
+	local font = "materials/fonts/arial"
+	local font_material = "arial"
+	local font_size = 10
+	local width, height = Gui.resolution()
+	local min_x = width * start_x
+	local min_y = height * start_y
+	local layout_width = width * total_width
+	local layout_height = height * total_height
+	local gui = self._gui
 
-	self:_draw_edges(arg_5_1)
+	self:_draw_edges(graph)
 
-	for k, v in pairs(arg_5_1) do
-		local num_10 = num_6 + num_8 * arg_5_1[k].layout_x
-		local num_11 = num_7 + num_9 * arg_5_1[k].layout_y
-		local num_12 = 10
+	for key, node in pairs(graph) do
+		local pos_x = min_x + layout_width * graph[key].layout_x
+		local pos_y = min_y + layout_height * graph[key].layout_y
+		local y_delta = 10
 
-		Gui.rect(_gui, Vector2(num_10 - 10, num_11 - 10), Vector2(20, 20), Color(255, 0, 0, 0))
+		Gui.rect(gui, Vector2(pos_x - 10, pos_y - 10), Vector2(20, 20), Color(255, 0, 0, 0))
 
-		local level = v.level
-		local text_extents, var_5_15 = Gui.text_extents(_gui, level, str, num_5)
-		local num_13 = var_5_15.x - text_extents.x
-		local num_14 = num_12 + 10
+		local level_text = node.level
+		local min, max = Gui.text_extents(gui, level_text, font, font_size)
+		local text_width = max.x - min.x
 
-		Gui.text(_gui, level, str, num_5, str_2, Vector3(num_10 - num_13 * 0.5, num_11 - num_14, 0), Color(255, 0, 0, 0))
+		y_delta = y_delta + 10
 
-		local conflict_settings = v.conflict_settings
-		local flag = conflict_settings or ""
-		local text_extents_2, var_5_21 = Gui.text_extents(_gui, flag, str, num_5)
-		local num_15 = var_5_21.x - text_extents_2.x
-		local num_16 = num_14 + 10
+		Gui.text(gui, level_text, font, font_size, font_material, Vector3(pos_x - text_width * 0.5, pos_y - y_delta, 0), Color(255, 0, 0, 0))
 
-		Gui.text(_gui, flag, str, num_5, str_2, Vector3(num_10 - num_15 * 0.5, num_11 - num_16, 0), Color(255, 0, 0, 0))
+		local director_name = node.conflict_settings
+		local conflict_text = not not director_name or not not ""
 
-		local var_5_24 = ConflictDirectors[conflict_settings]
+		min, max = Gui.text_extents(gui, conflict_text, font, font_size)
+		text_width = max.x - min.x
+		y_delta = y_delta + 10
 
-		if not var_5_24 and not var_5_24.description then
-			local str_3 = "breed: " .. Localize(var_5_24.description)
+		Gui.text(gui, conflict_text, font, font_size, font_material, Vector3(pos_x - text_width * 0.5, pos_y - y_delta, 0), Color(255, 0, 0, 0))
 
-			str_3 = str_3 or ""
+		local director = ConflictDirectors[director_name]
 
-			local text_extents_3, var_5_27 = Gui.text_extents(_gui, str_3, str, num_5)
-			local num_17 = var_5_27.x - text_extents_3.x
+		if director and director.description then
+			local str = "breed: " .. Localize(director.description)
 
-			num_16 = num_16 + 10
+			if not str then
+				-- Nothing
+			end
 
-			Gui.text(_gui, str_3, str, num_5, str_2, Vector3(num_10 - num_17 * 0.5, num_11 - num_16, 0), Color(255, 0, 0, 0))
+			str = ""
+
+			local conflict_description_text = str
+
+			::label_5_0::
+
+			min, max = Gui.text_extents(gui, conflict_description_text, font, font_size)
+			text_width = max.x - min.x
+			y_delta = y_delta + 10
+
+			Gui.text(gui, conflict_description_text, font, font_size, font_material, Vector3(pos_x - text_width * 0.5, pos_y - y_delta, 0), Color(255, 0, 0, 0))
 		end
 
-		if not v.curse then
-			local str_4 = "curse: " .. v.curse
-			local text_extents_4, var_5_31 = Gui.text_extents(_gui, str_4, str, num_5)
-			local num_18 = var_5_31.x - text_extents_4.x
+		if node.curse then
+			local curse_text = "curse: " .. node.curse
 
-			num_16 = num_16 + 10
+			min, max = Gui.text_extents(gui, curse_text, font, font_size)
+			text_width = max.x - min.x
+			y_delta = y_delta + 10
 
-			Gui.text(_gui, str_4, str, num_5, str_2, Vector3(num_10 - num_18 * 0.5, num_11 - num_16, 0), Color(255, 0, 0, 0))
+			Gui.text(gui, curse_text, font, font_size, font_material, Vector3(pos_x - text_width * 0.5, pos_y - y_delta, 0), Color(255, 0, 0, 0))
 		end
 
-		if not v.minor_modifier_group then
-			local str_5 = "modifiers: " .. table.concat(v.minor_modifier_group, ", ")
-			local text_extents_5, var_5_35 = Gui.text_extents(_gui, str_5, str, num_5)
-			local num_19 = var_5_35.x - text_extents_5.x
+		if node.minor_modifier_group then
+			local minor_modifier_text = "modifiers: " .. table.concat(node.minor_modifier_group, ", ")
 
-			num_16 = num_16 + 10
+			min, max = Gui.text_extents(gui, minor_modifier_text, font, font_size)
+			text_width = max.x - min.x
+			y_delta = y_delta + 10
 
-			Gui.text(_gui, str_5, str, num_5, str_2, Vector3(num_10 - num_19 * 0.5, num_11 - num_16, 0), Color(255, 0, 0, 0))
+			Gui.text(gui, minor_modifier_text, font, font_size, font_material, Vector3(pos_x - text_width * 0.5, pos_y - y_delta, 0), Color(255, 0, 0, 0))
 		end
 
-		if not v.terror_event_power_up then
-			local str_6 = "power_up: " .. v.terror_event_power_up .. "(" .. v.terror_event_power_up_rarity .. ")"
-			local text_extents_6, var_5_39 = Gui.text_extents(_gui, str_6, str, num_5)
-			local num_20 = var_5_39.x - text_extents_6.x
+		if node.terror_event_power_up then
+			local terror_event_power_up_text = "power_up: " .. node.terror_event_power_up .. "(" .. node.terror_event_power_up_rarity .. ")"
 
-			num_16 = num_16 + 10
+			min, max = Gui.text_extents(gui, terror_event_power_up_text, font, font_size)
+			text_width = max.x - min.x
+			y_delta = y_delta + 10
 
-			Gui.text(_gui, str_6, str, num_5, str_2, Vector3(num_10 - num_20 * 0.5, num_11 - num_16, 0), Color(255, 0, 0, 0))
+			Gui.text(gui, terror_event_power_up_text, font, font_size, font_material, Vector3(pos_x - text_width * 0.5, pos_y - y_delta, 0), Color(255, 0, 0, 0))
 		end
 
-		local str_7 = k .. " (" .. math.floor(v.run_progress * 100) / 100 .. ")"
-		local text_extents_7, var_5_43 = Gui.text_extents(_gui, str_7, str, num_5)
-		local num_21 = var_5_43.x - text_extents_7.x
+		local key_text = key .. " (" .. math.floor(node.run_progress * 100) / 100 .. ")"
 
-		Gui.text(_gui, str_7, str, num_5, str_2, Vector3(num_10 - num_21 * 0.5, num_11 + 20, 0), Color(255, 0, 0, 0))
+		min, max = Gui.text_extents(gui, key_text, font, font_size)
+		text_width = max.x - min.x
 
-		local str_8 = "level_seed :" .. v.level_seed
-		local text_extents_8, var_5_47 = Gui.text_extents(_gui, str_8, str, num_5)
-		local num_22 = var_5_47.x - text_extents_8.x
-		local num_23 = num_16 + 10
+		Gui.text(gui, key_text, font, font_size, font_material, Vector3(pos_x - text_width * 0.5, pos_y + 20, 0), Color(255, 0, 0, 0))
 
-		Gui.text(_gui, str_8, str, num_5, str_2, Vector3(num_10 - num_22 * 0.5, num_11 - num_23, 0), Color(255, 0, 0, 0))
+		local level_seed_text = "level_seed :" .. node.level_seed
 
-		if not v.possible_arena_belakor_nodes then
-			local str_9 = "arena_belakor_nodes: " .. table.concat(v.possible_arena_belakor_nodes, ", ")
-			local text_extents_9, var_5_52 = Gui.text_extents(_gui, str_9, str, num_5)
-			local num_24 = var_5_52.x - text_extents_9.x
-			local num_25 = num_23 + 10
+		min, max = Gui.text_extents(gui, level_seed_text, font, font_size)
+		text_width = max.x - min.x
+		y_delta = y_delta + 10
 
-			Gui.text(_gui, str_9, str, num_5, str_2, Vector3(num_10 - num_24 * 0.5, num_11 - num_25, 0), Color(255, 0, 0, 0))
+		Gui.text(gui, level_seed_text, font, font_size, font_material, Vector3(pos_x - text_width * 0.5, pos_y - y_delta, 0), Color(255, 0, 0, 0))
+
+		if node.possible_arena_belakor_nodes then
+			local possible_arena_belakor_nodes_text = "arena_belakor_nodes: " .. table.concat(node.possible_arena_belakor_nodes, ", ")
+
+			min, max = Gui.text_extents(gui, possible_arena_belakor_nodes_text, font, font_size)
+			text_width = max.x - min.x
+			y_delta = y_delta + 10
+
+			Gui.text(gui, possible_arena_belakor_nodes_text, font, font_size, font_material, Vector3(pos_x - text_width * 0.5, pos_y - y_delta, 0), Color(255, 0, 0, 0))
 		end
 	end
 end
 
-DeusDebugMapUI._draw_edges = function (self, arg_6_1)
+DeusDebugMapUI._draw_edges = function (self, graph)
 	-- function 6
-	local resolution, var_6_1 = Gui.resolution()
-	local num_5 = resolution * num
-	local num_6 = var_6_1 * num_2
-	local num_7 = resolution * num_3
-	local num_8 = var_6_1 * num_4
+	local width, height = Gui.resolution()
+	local min_x = width * start_x
+	local min_y = height * start_y
+	local layout_width = width * total_width
+	local layout_height = height * total_height
 
-	for k, v in pairs(arg_6_1) do
-		local num_9 = num_5 + num_7 * arg_6_1[k].layout_x
-		local num_10 = num_6 + num_8 * arg_6_1[k].layout_y
+	for key, node in pairs(graph) do
+		local pos_x = min_x + layout_width * graph[key].layout_x
+		local pos_y = min_y + layout_height * graph[key].layout_y
 
-		for i, v_2 in ipairs(v.next) do
-			local num_11 = num_5 + num_7 * arg_6_1[v_2].layout_x
-			local num_12 = num_6 + num_8 * arg_6_1[v_2].layout_y
+		for _, next in ipairs(node.next) do
+			local target_x = min_x + layout_width * graph[next].layout_x
+			local target_y = min_y + layout_height * graph[next].layout_y
 
-			self:_draw_edge(num_9, num_10, num_11, num_12)
+			self:_draw_edge(pos_x, pos_y, target_x, target_y)
 		end
 	end
 end
 
-DeusDebugMapUI._draw_edge = function (self, arg_7_1, arg_7_2, arg_7_3, arg_7_4)
+DeusDebugMapUI._draw_edge = function (self, from_x, from_y, to_x, to_y)
 	-- function 7
-	local num = arg_7_3 - arg_7_1
-	local num_2 = arg_7_4 - arg_7_2
+	local dx, dy = to_x - from_x, to_y - from_y
 
-	if not (num ~= 0 or num_2 == 0) then
-		local sqrt = math.sqrt(num * num + num_2 * num_2)
-		local floor = math.floor(sqrt / 10)
-		local num_3 = num / floor
-		local num_4 = num_2 / floor
-		local var_7_6 = arg_7_1
-		local var_7_7 = arg_7_2
+	if dx ~= 0 or dy ~= 0 then
+		local distance = math.sqrt(dx * dx + dy * dy)
+		local dot_count = math.floor(distance / 10)
+		local dot_delta_x, dot_delta_y = dx / dot_count, dy / dot_count
+		local current_dot_x, current_dot_y = from_x, from_y
 
-		for i = 1, floor do
-			Gui.rect(self._gui, Vector2(var_7_6, var_7_7), Vector2(2 + 5 * (i / floor), 2 + 5 * (i / floor)), Color(128, 0, 0, 0))
+		for i = 1, dot_count do
+			Gui.rect(self._gui, Vector2(current_dot_x, current_dot_y), Vector2(2 + 5 * (i / dot_count), 2 + 5 * (i / dot_count)), Color(128, 0, 0, 0))
 
-			var_7_6 = var_7_6 + num_3
-			var_7_7 = var_7_7 + num_4
+			current_dot_x = current_dot_x + dot_delta_x
+			current_dot_y = current_dot_y + dot_delta_y
 		end
 	end
 end

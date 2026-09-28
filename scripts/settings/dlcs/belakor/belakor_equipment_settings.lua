@@ -1,10 +1,10 @@
 -- chunkname: @scripts/settings/dlcs/belakor/belakor_equipment_settings.lua
 
-local belakor = DLCSettings.belakor
+local settings = DLCSettings.belakor
 
-belakor.item_master_list_file_names = {
+settings.item_master_list_file_names = {
 	"scripts/settings/equipment/item_master_list_belakor"
 }
-belakor.weapon_template_file_names = {
+settings.weapon_template_file_names = {
 	"scripts/settings/equipment/weapon_templates/belakor_crystal"
 }

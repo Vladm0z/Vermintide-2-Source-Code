@@ -2,42 +2,51 @@
 
 require("scripts/settings/dlcs/morris/deus_terror_event_tags")
 
-local scripts_utils_stagger_types = require("scripts/utils/stagger_types")
-local num = 2
-local num_2 = 3
-local num_3 = 4
-local num_4 = 5
-local num_5 = 6
-local num_6 = 8
-local num_7 = 16
-local var_0_8
-local add_enhancements_for_difficulty = TerrorEventUtils.add_enhancements_for_difficulty
+local stagger_types = require("scripts/utils/stagger_types")
+local RECRUIT = 2
+local VETERAN = 3
+local CHAMPION = 4
+local LEGENDARY = 5
+local CATACLYSM = 6
+local SHORT = 8
+local LONG = 16
+local cursed_chest_enemy_pre_spawn_func
 
-local function fn(arg_1_0, arg_1_1, arg_1_2)
+cursed_chest_enemy_pre_spawn_func = TerrorEventUtils.add_enhancements_for_difficulty
+
+local function cursed_chest_enemy_spawned_func(unit, breed, optional_data)
 	-- function 1
-	if not (arg_1_1.special or arg_1_1.boss or arg_1_1.cannot_be_aggroed) then
-		local get_random_alive_hero = PlayerUtils.get_random_alive_hero()
+	if not breed.special and not breed.boss and not breed.cannot_be_aggroed then
+		local player_unit = PlayerUtils.get_random_alive_hero()
 
-		AiUtils.aggro_unit_of_enemy(arg_1_0, get_random_alive_hero)
+		AiUtils.aggro_unit_of_enemy(unit, player_unit)
 	end
 
-	Managers.state.entity:system("buff_system"):add_buff(arg_1_0, "cursed_chest_objective_unit", arg_1_0)
+	local buff_system = Managers.state.entity:system("buff_system")
 
-	if not BLACKBOARDS[arg_1_0] then
-		local str = "Play_normal_spawn_stinger"
+	buff_system:add_buff(unit, "cursed_chest_objective_unit", unit)
 
-		if arg_1_1.special or not arg_1_1.boss then
-			str = "Play_special_spawn_stinger"
+	local blackboard = BLACKBOARDS[unit]
+
+	if blackboard then
+		local sound_event = "Play_normal_spawn_stinger"
+
+		if breed.special or breed.boss then
+			sound_event = "Play_special_spawn_stinger"
 		end
 
-		Managers.state.entity:system("audio_system"):play_audio_unit_event(str, arg_1_0)
+		local audio_system = Managers.state.entity:system("audio_system")
+
+		audio_system:play_audio_unit_event(sound_event, unit)
 	end
 end
 
-local function fn_2(arg_2_0, arg_2_1, arg_2_2)
+local function cursed_chest_boss_spawn_function(unit, breed, optional_data)
 	-- function 2
-	Managers.state.entity:system("buff_system"):add_buff(arg_2_0, "objective_unit", arg_2_0)
-	fn(arg_2_0, arg_2_1, arg_2_2)
+	local buff_system = Managers.state.entity:system("buff_system")
+
+	buff_system:add_buff(unit, "objective_unit", unit)
+	cursed_chest_enemy_spawned_func(unit, breed, optional_data)
 end
 
 GenericTerrorEvents.cursed_chest_prototype = {
@@ -82,82 +91,89 @@ GenericTerrorEvents.cursed_chest_prototype = {
 	}
 }
 
-local num_8 = 2
-local num_9 = 4
-local num_10 = 4
-local num_11 = 8
-local num_12 = 15
-local num_13 = 20
-local num_14 = 5
-local num_15 = 7
-local num_16 = 9
-local tbl = {
+local CURSED_CHEST_DELAY_WAVE_1 = 2
+local CURSED_CHEST_DELAY_WAVE_2 = 4
+local CURSED_CHEST_DELAY_SPAWN = 4
+local CURSED_CHEST_SPAWN_DISTANCE_SHORT = 8
+local CURSED_CHEST_SPAWN_SPAWN_DISTANCE_MED = 15
+local CURSED_CHEST_SPAWN_DISTANCE_LONG = 20
+local CURSED_CHEST_SPREAD_TIGHT = 5
+local CURSED_CHEST_SPREAD_MED = 7
+local CURSED_CHEST_SPREAD_WIDE = 9
+local DECAL_RADIUS_MAP = {
 	default = 1,
 	special = 1.2,
 	elite = 1.2,
 	boss = 2
 }
-local str = "units/decals/deus_decal_aoe_cursedchest_01"
+local SPAWN_DECAL_UNIT_NAME = "units/decals/deus_decal_aoe_cursedchest_01"
 
-local function fn_3(self, arg_3_1, arg_3_2, arg_3_3)
+local function cursed_chest_enemy_spawn_decal_func(event, element, boxed_spawn_pos, breed_name)
 	-- function 3
-	local decal_map = self.decal_map
+	local decal_map_2 = event.decal_map
 
-	decal_map = decal_map or {}
-	self.decal_map = decal_map
+	if not decal_map_2 then
+		-- Nothing
+	end
 
-	local var_3_1 = Breeds[arg_3_3]
-	local var_3_2
+	decal_map_2 = {}
 
-	if not var_3_1.boss then
-		var_3_2 = tbl.boss
-	elseif not var_3_1.special then
-		var_3_2 = tbl.special
-	elseif not var_3_1.elite then
-		var_3_2 = tbl.elite
+	local decal_map = decal_map_2
+
+	::label_3_0::
+
+	event.decal_map = decal_map
+
+	local breed = Breeds[breed_name]
+	local spawn_radius
+
+	if breed.boss then
+		spawn_radius = DECAL_RADIUS_MAP.boss
+	elseif breed.special then
+		spawn_radius = DECAL_RADIUS_MAP.special
+	elseif breed.elite then
+		spawn_radius = DECAL_RADIUS_MAP.elite
 	else
-		var_3_2 = tbl.default
+		spawn_radius = DECAL_RADIUS_MAP.default
 	end
 
-	local unbox = arg_3_2:unbox()
-	local var_3_4
-	local var_3_5
-	local from_quaternion_position = Matrix4x4.from_quaternion_position(Quaternion.identity(), unbox)
-	local var_3_7 = var_3_2
+	local spawn_pos = boxed_spawn_pos:unbox()
+	local decal_unit, decal_unit_go_id
+	local decal_spawn_pose = Matrix4x4.from_quaternion_position(Quaternion.identity(), spawn_pos)
+	local decal_radius = spawn_radius
 
-	Matrix4x4.set_scale(from_quaternion_position, Vector3(var_3_7, var_3_7, var_3_7))
+	Matrix4x4.set_scale(decal_spawn_pose, Vector3(decal_radius, decal_radius, decal_radius))
 
-	local var_3_8
-
-	decal_map[arg_3_2], var_3_8 = Managers.state.unit_spawner:spawn_network_unit(str, "network_synched_dummy_unit", nil, from_quaternion_position)
+	decal_unit, decal_unit_go_id = Managers.state.unit_spawner:spawn_network_unit(SPAWN_DECAL_UNIT_NAME, "network_synched_dummy_unit", nil, decal_spawn_pose)
+	decal_map[boxed_spawn_pos] = decal_unit
 end
 
-local function fn_4(self, arg_4_1, arg_4_2)
+local function cursed_chest_enemy_despawn_decal_func(event, element, boxed_spawn_pos)
 	-- function 4
-	local decal_map = self.decal_map
-	local flag = not decal_map and decal_map[arg_4_2]
+	local decal_map = event.decal_map
+	local unit = not not decal_map and not not decal_map[boxed_spawn_pos]
 
-	if not flag then
-		Unit.flow_event(flag, "despawned")
+	if unit then
+		Unit.flow_event(unit, "despawned")
 
-		local go_id = Managers.state.unit_storage:go_id(flag)
+		local unit_go_id = Managers.state.unit_storage:go_id(unit)
 
-		Managers.state.network.network_transmit:send_rpc_clients("rpc_flow_event", go_id, NetworkLookup.flow_events.despawned)
+		Managers.state.network.network_transmit:send_rpc_clients("rpc_flow_event", unit_go_id, NetworkLookup.flow_events.despawned)
 
-		decal_map[arg_4_2] = nil
+		decal_map[boxed_spawn_pos] = nil
 	end
 end
 
-local num_17 = 2.5
-local num_18 = 3.5
-local num_19 = 1
-local num_20 = 1
-local num_21 = 1
-local num_22 = 0.5
-local num_23 = 8
-local num_24 = 64
-local num_25 = 192
-local tbl_2 = {
+local BELAKOR_ALTAR_MIN_DISTANCE_CULTIST_SPAWN = 2.5
+local BELAKOR_ALTAR_MAX_DISTANCE_CULTIST_SPAWN = 3.5
+local BELAKOR_ALTAR_MAX_ABOVE_CULTIST_SPAWN = 1
+local BELAKOR_ALTAR_MAX_BELOW_CULTIST_SPAWN = 1
+local BELAKOR_ALTAR_CULTIST_DISTANCE = 1
+local BELAKOR_ALTAR_ROW_DISTANCE = 0.5
+local BELAKOR_ALTAR_CIRCLE_SUBDIVISION = 8
+local BELAKOR_CHAMPION_CIRCLE_SUBDIVISION = 64
+local BELAKOR_CHAMPION_CIRCLE_TRIES = 192
+local BELAKOR_CULTIST_IDLE_ANIMATIONS = {
 	"idle_pray_01",
 	"idle_pray_02",
 	"idle_pray_03",
@@ -280,7 +296,7 @@ GenericTerrorEvents.cursed_chest_challenge_stormvermin = {
 	},
 	{
 		"delay",
-		duration = num_8
+		duration = CURSED_CHEST_DELAY_WAVE_1
 	},
 	{
 		"play_stinger",
@@ -299,17 +315,17 @@ GenericTerrorEvents.cursed_chest_challenge_stormvermin = {
 		},
 		optional_data = {
 			prevent_killed_enemy_dialogue = true,
-			spawned_func = fn
+			spawned_func = cursed_chest_enemy_spawned_func
 		},
-		min_distance = num_11 - num_14 * 0.5,
-		max_distance = num_11 + num_14 * 0.5,
-		pre_spawn_unit_func = fn_3,
-		post_spawn_unit_func = fn_4,
-		spawn_delay = num_10
+		min_distance = CURSED_CHEST_SPAWN_DISTANCE_SHORT - CURSED_CHEST_SPREAD_TIGHT * 0.5,
+		max_distance = CURSED_CHEST_SPAWN_DISTANCE_SHORT + CURSED_CHEST_SPREAD_TIGHT * 0.5,
+		pre_spawn_unit_func = cursed_chest_enemy_spawn_decal_func,
+		post_spawn_unit_func = cursed_chest_enemy_despawn_decal_func,
+		spawn_delay = CURSED_CHEST_DELAY_SPAWN
 	},
 	{
 		"delay",
-		duration = num_9
+		duration = CURSED_CHEST_DELAY_WAVE_2
 	},
 	{
 		"play_stinger",
@@ -318,9 +334,9 @@ GenericTerrorEvents.cursed_chest_challenge_stormvermin = {
 	{
 		"continue_when_spawned_count",
 		duration = 20,
-		condition = function (self)
+		condition = function (counter)
 			-- function 5
-			return self.cursed_chest_enemies <= 4
+			return counter.cursed_chest_enemies <= 4
 		end
 	},
 	{
@@ -336,17 +352,17 @@ GenericTerrorEvents.cursed_chest_challenge_stormvermin = {
 		},
 		optional_data = {
 			prevent_killed_enemy_dialogue = true,
-			spawned_func = fn
+			spawned_func = cursed_chest_enemy_spawned_func
 		},
-		min_distance = num_11 - num_14 * 0.5,
-		max_distance = num_11 + num_14 * 0.5,
-		pre_spawn_unit_func = fn_3,
-		post_spawn_unit_func = fn_4,
-		spawn_delay = num_10
+		min_distance = CURSED_CHEST_SPAWN_DISTANCE_SHORT - CURSED_CHEST_SPREAD_TIGHT * 0.5,
+		max_distance = CURSED_CHEST_SPAWN_DISTANCE_SHORT + CURSED_CHEST_SPREAD_TIGHT * 0.5,
+		pre_spawn_unit_func = cursed_chest_enemy_spawn_decal_func,
+		post_spawn_unit_func = cursed_chest_enemy_despawn_decal_func,
+		spawn_delay = CURSED_CHEST_DELAY_SPAWN
 	},
 	{
 		"delay",
-		duration = num_9
+		duration = CURSED_CHEST_DELAY_WAVE_2
 	},
 	{
 		"play_stinger",
@@ -355,9 +371,9 @@ GenericTerrorEvents.cursed_chest_challenge_stormvermin = {
 	{
 		"continue_when_spawned_count",
 		duration = 20,
-		condition = function (self)
+		condition = function (counter)
 			-- function 6
-			return self.cursed_chest_enemies <= 4
+			return counter.cursed_chest_enemies <= 4
 		end
 	},
 	{
@@ -373,13 +389,13 @@ GenericTerrorEvents.cursed_chest_challenge_stormvermin = {
 		},
 		optional_data = {
 			prevent_killed_enemy_dialogue = true,
-			spawned_func = fn
+			spawned_func = cursed_chest_enemy_spawned_func
 		},
-		min_distance = num_11 - num_14 * 0.5,
-		max_distance = num_11 + num_14 * 0.5,
-		pre_spawn_unit_func = fn_3,
-		post_spawn_unit_func = fn_4,
-		spawn_delay = num_10
+		min_distance = CURSED_CHEST_SPAWN_DISTANCE_SHORT - CURSED_CHEST_SPREAD_TIGHT * 0.5,
+		max_distance = CURSED_CHEST_SPAWN_DISTANCE_SHORT + CURSED_CHEST_SPREAD_TIGHT * 0.5,
+		pre_spawn_unit_func = cursed_chest_enemy_spawn_decal_func,
+		post_spawn_unit_func = cursed_chest_enemy_despawn_decal_func,
+		spawn_delay = CURSED_CHEST_DELAY_SPAWN
 	},
 	{
 		"delay",
@@ -388,17 +404,17 @@ GenericTerrorEvents.cursed_chest_challenge_stormvermin = {
 	{
 		"continue_when_spawned_count",
 		duration = 20,
-		condition = function (self)
+		condition = function (counter)
 			-- function 7
-			return self.cursed_chest_enemies > 0
+			return counter.cursed_chest_enemies > 0
 		end
 	},
 	{
 		"continue_when_spawned_count",
 		duration = 120,
-		condition = function (self)
+		condition = function (counter)
 			-- function 8
-			return self.cursed_chest_enemies <= 0
+			return counter.cursed_chest_enemies <= 0
 		end
 	},
 	{
@@ -413,7 +429,7 @@ GenericTerrorEvents.cursed_chest_challenge_vermin_shielded = {
 	},
 	{
 		"delay",
-		duration = num_8
+		duration = CURSED_CHEST_DELAY_WAVE_1
 	},
 	{
 		"play_stinger",
@@ -432,13 +448,13 @@ GenericTerrorEvents.cursed_chest_challenge_vermin_shielded = {
 		},
 		optional_data = {
 			prevent_killed_enemy_dialogue = true,
-			spawned_func = fn
+			spawned_func = cursed_chest_enemy_spawned_func
 		},
-		min_distance = num_11 - num_14 * 0.5,
-		max_distance = num_11 + num_14 * 0.5,
-		pre_spawn_unit_func = fn_3,
-		post_spawn_unit_func = fn_4,
-		spawn_delay = num_10
+		min_distance = CURSED_CHEST_SPAWN_DISTANCE_SHORT - CURSED_CHEST_SPREAD_TIGHT * 0.5,
+		max_distance = CURSED_CHEST_SPAWN_DISTANCE_SHORT + CURSED_CHEST_SPREAD_TIGHT * 0.5,
+		pre_spawn_unit_func = cursed_chest_enemy_spawn_decal_func,
+		post_spawn_unit_func = cursed_chest_enemy_despawn_decal_func,
+		spawn_delay = CURSED_CHEST_DELAY_SPAWN
 	},
 	{
 		"spawn_around_origin_unit",
@@ -453,17 +469,17 @@ GenericTerrorEvents.cursed_chest_challenge_vermin_shielded = {
 		},
 		optional_data = {
 			prevent_killed_enemy_dialogue = true,
-			spawned_func = fn
+			spawned_func = cursed_chest_enemy_spawned_func
 		},
-		min_distance = num_11 - num_14 * 0.5,
-		max_distance = num_11 + num_14 * 0.5,
-		pre_spawn_unit_func = fn_3,
-		post_spawn_unit_func = fn_4,
-		spawn_delay = num_10
+		min_distance = CURSED_CHEST_SPAWN_DISTANCE_SHORT - CURSED_CHEST_SPREAD_TIGHT * 0.5,
+		max_distance = CURSED_CHEST_SPAWN_DISTANCE_SHORT + CURSED_CHEST_SPREAD_TIGHT * 0.5,
+		pre_spawn_unit_func = cursed_chest_enemy_spawn_decal_func,
+		post_spawn_unit_func = cursed_chest_enemy_despawn_decal_func,
+		spawn_delay = CURSED_CHEST_DELAY_SPAWN
 	},
 	{
 		"delay",
-		duration = num_9
+		duration = CURSED_CHEST_DELAY_WAVE_2
 	},
 	{
 		"play_stinger",
@@ -472,9 +488,9 @@ GenericTerrorEvents.cursed_chest_challenge_vermin_shielded = {
 	{
 		"continue_when_spawned_count",
 		duration = 20,
-		condition = function (self)
+		condition = function (counter)
 			-- function 9
-			return self.cursed_chest_enemies <= 5
+			return counter.cursed_chest_enemies <= 5
 		end
 	},
 	{
@@ -490,13 +506,13 @@ GenericTerrorEvents.cursed_chest_challenge_vermin_shielded = {
 		},
 		optional_data = {
 			prevent_killed_enemy_dialogue = true,
-			spawned_func = fn
+			spawned_func = cursed_chest_enemy_spawned_func
 		},
-		min_distance = num_11 - num_14 * 0.5,
-		max_distance = num_11 + num_14 * 0.5,
-		pre_spawn_unit_func = fn_3,
-		post_spawn_unit_func = fn_4,
-		spawn_delay = num_10
+		min_distance = CURSED_CHEST_SPAWN_DISTANCE_SHORT - CURSED_CHEST_SPREAD_TIGHT * 0.5,
+		max_distance = CURSED_CHEST_SPAWN_DISTANCE_SHORT + CURSED_CHEST_SPREAD_TIGHT * 0.5,
+		pre_spawn_unit_func = cursed_chest_enemy_spawn_decal_func,
+		post_spawn_unit_func = cursed_chest_enemy_despawn_decal_func,
+		spawn_delay = CURSED_CHEST_DELAY_SPAWN
 	},
 	{
 		"spawn_around_origin_unit",
@@ -511,13 +527,13 @@ GenericTerrorEvents.cursed_chest_challenge_vermin_shielded = {
 		},
 		optional_data = {
 			prevent_killed_enemy_dialogue = true,
-			spawned_func = fn
+			spawned_func = cursed_chest_enemy_spawned_func
 		},
-		min_distance = num_11 - num_14 * 0.5,
-		max_distance = num_11 + num_14 * 0.5,
-		pre_spawn_unit_func = fn_3,
-		post_spawn_unit_func = fn_4,
-		spawn_delay = num_10
+		min_distance = CURSED_CHEST_SPAWN_DISTANCE_SHORT - CURSED_CHEST_SPREAD_TIGHT * 0.5,
+		max_distance = CURSED_CHEST_SPAWN_DISTANCE_SHORT + CURSED_CHEST_SPREAD_TIGHT * 0.5,
+		pre_spawn_unit_func = cursed_chest_enemy_spawn_decal_func,
+		post_spawn_unit_func = cursed_chest_enemy_despawn_decal_func,
+		spawn_delay = CURSED_CHEST_DELAY_SPAWN
 	},
 	{
 		"delay",
@@ -526,17 +542,17 @@ GenericTerrorEvents.cursed_chest_challenge_vermin_shielded = {
 	{
 		"continue_when_spawned_count",
 		duration = 20,
-		condition = function (self)
+		condition = function (counter)
 			-- function 10
-			return self.cursed_chest_enemies > 0
+			return counter.cursed_chest_enemies > 0
 		end
 	},
 	{
 		"continue_when_spawned_count",
 		duration = 120,
-		condition = function (self)
+		condition = function (counter)
 			-- function 11
-			return self.cursed_chest_enemies <= 0
+			return counter.cursed_chest_enemies <= 0
 		end
 	},
 	{
@@ -551,7 +567,7 @@ GenericTerrorEvents.cursed_chest_challenge_plague_monks = {
 	},
 	{
 		"delay",
-		duration = num_8
+		duration = CURSED_CHEST_DELAY_WAVE_1
 	},
 	{
 		"play_stinger",
@@ -570,13 +586,13 @@ GenericTerrorEvents.cursed_chest_challenge_plague_monks = {
 		},
 		optional_data = {
 			prevent_killed_enemy_dialogue = true,
-			spawned_func = fn
+			spawned_func = cursed_chest_enemy_spawned_func
 		},
-		min_distance = num_11 - num_15 * 0.5,
-		max_distance = num_11 + num_15 * 0.5,
-		pre_spawn_unit_func = fn_3,
-		post_spawn_unit_func = fn_4,
-		spawn_delay = num_10
+		min_distance = CURSED_CHEST_SPAWN_DISTANCE_SHORT - CURSED_CHEST_SPREAD_MED * 0.5,
+		max_distance = CURSED_CHEST_SPAWN_DISTANCE_SHORT + CURSED_CHEST_SPREAD_MED * 0.5,
+		pre_spawn_unit_func = cursed_chest_enemy_spawn_decal_func,
+		post_spawn_unit_func = cursed_chest_enemy_despawn_decal_func,
+		spawn_delay = CURSED_CHEST_DELAY_SPAWN
 	},
 	{
 		"spawn_around_origin_unit",
@@ -591,17 +607,17 @@ GenericTerrorEvents.cursed_chest_challenge_plague_monks = {
 		},
 		optional_data = {
 			prevent_killed_enemy_dialogue = true,
-			spawned_func = fn
+			spawned_func = cursed_chest_enemy_spawned_func
 		},
-		min_distance = num_11 - num_15 * 0.5,
-		max_distance = num_11 + num_15 * 0.5,
-		pre_spawn_unit_func = fn_3,
-		post_spawn_unit_func = fn_4,
-		spawn_delay = num_10
+		min_distance = CURSED_CHEST_SPAWN_DISTANCE_SHORT - CURSED_CHEST_SPREAD_MED * 0.5,
+		max_distance = CURSED_CHEST_SPAWN_DISTANCE_SHORT + CURSED_CHEST_SPREAD_MED * 0.5,
+		pre_spawn_unit_func = cursed_chest_enemy_spawn_decal_func,
+		post_spawn_unit_func = cursed_chest_enemy_despawn_decal_func,
+		spawn_delay = CURSED_CHEST_DELAY_SPAWN
 	},
 	{
 		"delay",
-		duration = num_9
+		duration = CURSED_CHEST_DELAY_WAVE_2
 	},
 	{
 		"play_stinger",
@@ -610,9 +626,9 @@ GenericTerrorEvents.cursed_chest_challenge_plague_monks = {
 	{
 		"continue_when_spawned_count",
 		duration = 20,
-		condition = function (self)
+		condition = function (counter)
 			-- function 12
-			return self.cursed_chest_enemies <= 5
+			return counter.cursed_chest_enemies <= 5
 		end
 	},
 	{
@@ -629,13 +645,13 @@ GenericTerrorEvents.cursed_chest_challenge_plague_monks = {
 		},
 		optional_data = {
 			prevent_killed_enemy_dialogue = true,
-			spawned_func = fn
+			spawned_func = cursed_chest_enemy_spawned_func
 		},
-		min_distance = num_11 - num_15 * 0.5,
-		max_distance = num_11 + num_15 * 0.5,
-		pre_spawn_unit_func = fn_3,
-		post_spawn_unit_func = fn_4,
-		spawn_delay = num_10
+		min_distance = CURSED_CHEST_SPAWN_DISTANCE_SHORT - CURSED_CHEST_SPREAD_MED * 0.5,
+		max_distance = CURSED_CHEST_SPAWN_DISTANCE_SHORT + CURSED_CHEST_SPREAD_MED * 0.5,
+		pre_spawn_unit_func = cursed_chest_enemy_spawn_decal_func,
+		post_spawn_unit_func = cursed_chest_enemy_despawn_decal_func,
+		spawn_delay = CURSED_CHEST_DELAY_SPAWN
 	},
 	{
 		"spawn_around_origin_unit",
@@ -650,17 +666,17 @@ GenericTerrorEvents.cursed_chest_challenge_plague_monks = {
 		},
 		optional_data = {
 			prevent_killed_enemy_dialogue = true,
-			spawned_func = fn
+			spawned_func = cursed_chest_enemy_spawned_func
 		},
-		min_distance = num_11 - num_15 * 0.5,
-		max_distance = num_11 + num_15 * 0.5,
-		pre_spawn_unit_func = fn_3,
-		post_spawn_unit_func = fn_4,
-		spawn_delay = num_10
+		min_distance = CURSED_CHEST_SPAWN_DISTANCE_SHORT - CURSED_CHEST_SPREAD_MED * 0.5,
+		max_distance = CURSED_CHEST_SPAWN_DISTANCE_SHORT + CURSED_CHEST_SPREAD_MED * 0.5,
+		pre_spawn_unit_func = cursed_chest_enemy_spawn_decal_func,
+		post_spawn_unit_func = cursed_chest_enemy_despawn_decal_func,
+		spawn_delay = CURSED_CHEST_DELAY_SPAWN
 	},
 	{
 		"delay",
-		duration = num_9
+		duration = CURSED_CHEST_DELAY_WAVE_2
 	},
 	{
 		"play_stinger",
@@ -669,9 +685,9 @@ GenericTerrorEvents.cursed_chest_challenge_plague_monks = {
 	{
 		"continue_when_spawned_count",
 		duration = 20,
-		condition = function (self)
+		condition = function (counter)
 			-- function 13
-			return self.cursed_chest_enemies <= 5
+			return counter.cursed_chest_enemies <= 5
 		end
 	},
 	{
@@ -687,13 +703,13 @@ GenericTerrorEvents.cursed_chest_challenge_plague_monks = {
 		},
 		optional_data = {
 			prevent_killed_enemy_dialogue = true,
-			spawned_func = fn
+			spawned_func = cursed_chest_enemy_spawned_func
 		},
-		min_distance = num_11 - num_15 * 0.5,
-		max_distance = num_11 + num_15 * 0.5,
-		pre_spawn_unit_func = fn_3,
-		post_spawn_unit_func = fn_4,
-		spawn_delay = num_10
+		min_distance = CURSED_CHEST_SPAWN_DISTANCE_SHORT - CURSED_CHEST_SPREAD_MED * 0.5,
+		max_distance = CURSED_CHEST_SPAWN_DISTANCE_SHORT + CURSED_CHEST_SPREAD_MED * 0.5,
+		pre_spawn_unit_func = cursed_chest_enemy_spawn_decal_func,
+		post_spawn_unit_func = cursed_chest_enemy_despawn_decal_func,
+		spawn_delay = CURSED_CHEST_DELAY_SPAWN
 	},
 	{
 		"spawn_around_origin_unit",
@@ -708,13 +724,13 @@ GenericTerrorEvents.cursed_chest_challenge_plague_monks = {
 		},
 		optional_data = {
 			prevent_killed_enemy_dialogue = true,
-			spawned_func = fn
+			spawned_func = cursed_chest_enemy_spawned_func
 		},
-		min_distance = num_11 - num_15 * 0.5,
-		max_distance = num_11 + num_15 * 0.5,
-		pre_spawn_unit_func = fn_3,
-		post_spawn_unit_func = fn_4,
-		spawn_delay = num_10
+		min_distance = CURSED_CHEST_SPAWN_DISTANCE_SHORT - CURSED_CHEST_SPREAD_MED * 0.5,
+		max_distance = CURSED_CHEST_SPAWN_DISTANCE_SHORT + CURSED_CHEST_SPREAD_MED * 0.5,
+		pre_spawn_unit_func = cursed_chest_enemy_spawn_decal_func,
+		post_spawn_unit_func = cursed_chest_enemy_despawn_decal_func,
+		spawn_delay = CURSED_CHEST_DELAY_SPAWN
 	},
 	{
 		"delay",
@@ -723,17 +739,17 @@ GenericTerrorEvents.cursed_chest_challenge_plague_monks = {
 	{
 		"continue_when_spawned_count",
 		duration = 20,
-		condition = function (self)
+		condition = function (counter)
 			-- function 14
-			return self.cursed_chest_enemies > 0
+			return counter.cursed_chest_enemies > 0
 		end
 	},
 	{
 		"continue_when_spawned_count",
 		duration = 120,
-		condition = function (self)
+		condition = function (counter)
 			-- function 15
-			return self.cursed_chest_enemies <= 0
+			return counter.cursed_chest_enemies <= 0
 		end
 	},
 	{
@@ -748,7 +764,7 @@ GenericTerrorEvents.cursed_chest_challenge_skaven_warpfire_thrower = {
 	},
 	{
 		"delay",
-		duration = num_8
+		duration = CURSED_CHEST_DELAY_WAVE_1
 	},
 	{
 		"play_stinger",
@@ -767,13 +783,13 @@ GenericTerrorEvents.cursed_chest_challenge_skaven_warpfire_thrower = {
 		},
 		optional_data = {
 			prevent_killed_enemy_dialogue = true,
-			spawned_func = fn
+			spawned_func = cursed_chest_enemy_spawned_func
 		},
-		min_distance = num_11 - num_15 * 0.5,
-		max_distance = num_11 + num_15 * 0.5,
-		pre_spawn_unit_func = fn_3,
-		post_spawn_unit_func = fn_4,
-		spawn_delay = num_10
+		min_distance = CURSED_CHEST_SPAWN_DISTANCE_SHORT - CURSED_CHEST_SPREAD_MED * 0.5,
+		max_distance = CURSED_CHEST_SPAWN_DISTANCE_SHORT + CURSED_CHEST_SPREAD_MED * 0.5,
+		pre_spawn_unit_func = cursed_chest_enemy_spawn_decal_func,
+		post_spawn_unit_func = cursed_chest_enemy_despawn_decal_func,
+		spawn_delay = CURSED_CHEST_DELAY_SPAWN
 	},
 	{
 		"spawn_around_origin_unit",
@@ -788,32 +804,32 @@ GenericTerrorEvents.cursed_chest_challenge_skaven_warpfire_thrower = {
 		},
 		optional_data = {
 			prevent_killed_enemy_dialogue = true,
-			spawned_func = fn
+			spawned_func = cursed_chest_enemy_spawned_func
 		},
-		min_distance = num_11 - num_15 * 0.5,
-		max_distance = num_11 + num_15 * 0.5,
-		pre_spawn_unit_func = fn_3,
-		post_spawn_unit_func = fn_4,
-		spawn_delay = num_10
+		min_distance = CURSED_CHEST_SPAWN_DISTANCE_SHORT - CURSED_CHEST_SPREAD_MED * 0.5,
+		max_distance = CURSED_CHEST_SPAWN_DISTANCE_SHORT + CURSED_CHEST_SPREAD_MED * 0.5,
+		pre_spawn_unit_func = cursed_chest_enemy_spawn_decal_func,
+		post_spawn_unit_func = cursed_chest_enemy_despawn_decal_func,
+		spawn_delay = CURSED_CHEST_DELAY_SPAWN
 	},
 	{
 		"delay",
-		duration = num_9
+		duration = CURSED_CHEST_DELAY_WAVE_2
 	},
 	{
 		"continue_when_spawned_count",
 		duration = 20,
-		condition = function (self)
+		condition = function (counter)
 			-- function 16
-			return self.cursed_chest_elites <= 2
+			return counter.cursed_chest_elites <= 2
 		end
 	},
 	{
 		"continue_when_spawned_count",
 		duration = 20,
-		condition = function (self)
+		condition = function (counter)
 			-- function 17
-			return self.cursed_chest_enemies <= 5
+			return counter.cursed_chest_enemies <= 5
 		end
 	},
 	{
@@ -833,13 +849,13 @@ GenericTerrorEvents.cursed_chest_challenge_skaven_warpfire_thrower = {
 		},
 		optional_data = {
 			prevent_killed_enemy_dialogue = true,
-			spawned_func = fn
+			spawned_func = cursed_chest_enemy_spawned_func
 		},
-		min_distance = num_11 - num_15 * 0.5,
-		max_distance = num_11 + num_15 * 0.5,
-		pre_spawn_unit_func = fn_3,
-		post_spawn_unit_func = fn_4,
-		spawn_delay = num_10
+		min_distance = CURSED_CHEST_SPAWN_DISTANCE_SHORT - CURSED_CHEST_SPREAD_MED * 0.5,
+		max_distance = CURSED_CHEST_SPAWN_DISTANCE_SHORT + CURSED_CHEST_SPREAD_MED * 0.5,
+		pre_spawn_unit_func = cursed_chest_enemy_spawn_decal_func,
+		post_spawn_unit_func = cursed_chest_enemy_despawn_decal_func,
+		spawn_delay = CURSED_CHEST_DELAY_SPAWN
 	},
 	{
 		"spawn_around_origin_unit",
@@ -854,32 +870,32 @@ GenericTerrorEvents.cursed_chest_challenge_skaven_warpfire_thrower = {
 		},
 		optional_data = {
 			prevent_killed_enemy_dialogue = true,
-			spawned_func = fn
+			spawned_func = cursed_chest_enemy_spawned_func
 		},
-		min_distance = num_11 - num_15 * 0.5,
-		max_distance = num_11 + num_15 * 0.5,
-		pre_spawn_unit_func = fn_3,
-		post_spawn_unit_func = fn_4,
-		spawn_delay = num_10
+		min_distance = CURSED_CHEST_SPAWN_DISTANCE_SHORT - CURSED_CHEST_SPREAD_MED * 0.5,
+		max_distance = CURSED_CHEST_SPAWN_DISTANCE_SHORT + CURSED_CHEST_SPREAD_MED * 0.5,
+		pre_spawn_unit_func = cursed_chest_enemy_spawn_decal_func,
+		post_spawn_unit_func = cursed_chest_enemy_despawn_decal_func,
+		spawn_delay = CURSED_CHEST_DELAY_SPAWN
 	},
 	{
 		"delay",
-		duration = num_9
+		duration = CURSED_CHEST_DELAY_WAVE_2
 	},
 	{
 		"continue_when_spawned_count",
 		duration = 20,
-		condition = function (self)
+		condition = function (counter)
 			-- function 18
-			return self.cursed_chest_elites <= 2
+			return counter.cursed_chest_elites <= 2
 		end
 	},
 	{
 		"continue_when_spawned_count",
 		duration = 20,
-		condition = function (self)
+		condition = function (counter)
 			-- function 19
-			return self.cursed_chest_enemies <= 5
+			return counter.cursed_chest_enemies <= 5
 		end
 	},
 	{
@@ -899,13 +915,13 @@ GenericTerrorEvents.cursed_chest_challenge_skaven_warpfire_thrower = {
 		},
 		optional_data = {
 			prevent_killed_enemy_dialogue = true,
-			spawned_func = fn
+			spawned_func = cursed_chest_enemy_spawned_func
 		},
-		min_distance = num_11 - num_15 * 0.5,
-		max_distance = num_11 + num_15 * 0.5,
-		pre_spawn_unit_func = fn_3,
-		post_spawn_unit_func = fn_4,
-		spawn_delay = num_10
+		min_distance = CURSED_CHEST_SPAWN_DISTANCE_SHORT - CURSED_CHEST_SPREAD_MED * 0.5,
+		max_distance = CURSED_CHEST_SPAWN_DISTANCE_SHORT + CURSED_CHEST_SPREAD_MED * 0.5,
+		pre_spawn_unit_func = cursed_chest_enemy_spawn_decal_func,
+		post_spawn_unit_func = cursed_chest_enemy_despawn_decal_func,
+		spawn_delay = CURSED_CHEST_DELAY_SPAWN
 	},
 	{
 		"spawn_around_origin_unit",
@@ -920,13 +936,13 @@ GenericTerrorEvents.cursed_chest_challenge_skaven_warpfire_thrower = {
 		},
 		optional_data = {
 			prevent_killed_enemy_dialogue = true,
-			spawned_func = fn
+			spawned_func = cursed_chest_enemy_spawned_func
 		},
-		min_distance = num_11 - num_15 * 0.5,
-		max_distance = num_11 + num_15 * 0.5,
-		pre_spawn_unit_func = fn_3,
-		post_spawn_unit_func = fn_4,
-		spawn_delay = num_10
+		min_distance = CURSED_CHEST_SPAWN_DISTANCE_SHORT - CURSED_CHEST_SPREAD_MED * 0.5,
+		max_distance = CURSED_CHEST_SPAWN_DISTANCE_SHORT + CURSED_CHEST_SPREAD_MED * 0.5,
+		pre_spawn_unit_func = cursed_chest_enemy_spawn_decal_func,
+		post_spawn_unit_func = cursed_chest_enemy_despawn_decal_func,
+		spawn_delay = CURSED_CHEST_DELAY_SPAWN
 	},
 	{
 		"delay",
@@ -935,25 +951,25 @@ GenericTerrorEvents.cursed_chest_challenge_skaven_warpfire_thrower = {
 	{
 		"continue_when_spawned_count",
 		duration = 20,
-		condition = function (self)
+		condition = function (counter)
 			-- function 20
-			return self.cursed_chest_enemies > 0
+			return counter.cursed_chest_enemies > 0
 		end
 	},
 	{
 		"continue_when_spawned_count",
 		duration = 20,
-		condition = function (self)
+		condition = function (counter)
 			-- function 21
-			return self.cursed_chest_elites <= 2
+			return counter.cursed_chest_elites <= 2
 		end
 	},
 	{
 		"continue_when_spawned_count",
 		duration = 120,
-		condition = function (self)
+		condition = function (counter)
 			-- function 22
-			return self.cursed_chest_enemies <= 0
+			return counter.cursed_chest_enemies <= 0
 		end
 	},
 	{
@@ -968,7 +984,7 @@ GenericTerrorEvents.cursed_chest_challenge_skaven_ratling_gunner = {
 	},
 	{
 		"delay",
-		duration = num_8
+		duration = CURSED_CHEST_DELAY_WAVE_1
 	},
 	{
 		"play_stinger",
@@ -987,13 +1003,13 @@ GenericTerrorEvents.cursed_chest_challenge_skaven_ratling_gunner = {
 		},
 		optional_data = {
 			prevent_killed_enemy_dialogue = true,
-			spawned_func = fn
+			spawned_func = cursed_chest_enemy_spawned_func
 		},
-		min_distance = num_12 - num_15 * 0.5,
-		max_distance = num_12 + num_15 * 0.5,
-		pre_spawn_unit_func = fn_3,
-		post_spawn_unit_func = fn_4,
-		spawn_delay = num_10
+		min_distance = CURSED_CHEST_SPAWN_SPAWN_DISTANCE_MED - CURSED_CHEST_SPREAD_MED * 0.5,
+		max_distance = CURSED_CHEST_SPAWN_SPAWN_DISTANCE_MED + CURSED_CHEST_SPREAD_MED * 0.5,
+		pre_spawn_unit_func = cursed_chest_enemy_spawn_decal_func,
+		post_spawn_unit_func = cursed_chest_enemy_despawn_decal_func,
+		spawn_delay = CURSED_CHEST_DELAY_SPAWN
 	},
 	{
 		"spawn_around_origin_unit",
@@ -1008,32 +1024,32 @@ GenericTerrorEvents.cursed_chest_challenge_skaven_ratling_gunner = {
 		},
 		optional_data = {
 			prevent_killed_enemy_dialogue = true,
-			spawned_func = fn
+			spawned_func = cursed_chest_enemy_spawned_func
 		},
-		min_distance = num_11 - num_15 * 0.5,
-		max_distance = num_11 + num_15 * 0.5,
-		pre_spawn_unit_func = fn_3,
-		post_spawn_unit_func = fn_4,
-		spawn_delay = num_10
+		min_distance = CURSED_CHEST_SPAWN_DISTANCE_SHORT - CURSED_CHEST_SPREAD_MED * 0.5,
+		max_distance = CURSED_CHEST_SPAWN_DISTANCE_SHORT + CURSED_CHEST_SPREAD_MED * 0.5,
+		pre_spawn_unit_func = cursed_chest_enemy_spawn_decal_func,
+		post_spawn_unit_func = cursed_chest_enemy_despawn_decal_func,
+		spawn_delay = CURSED_CHEST_DELAY_SPAWN
 	},
 	{
 		"delay",
-		duration = num_9
+		duration = CURSED_CHEST_DELAY_WAVE_2
 	},
 	{
 		"continue_when_spawned_count",
 		duration = 20,
-		condition = function (self)
+		condition = function (counter)
 			-- function 23
-			return self.cursed_chest_elites <= 2
+			return counter.cursed_chest_elites <= 2
 		end
 	},
 	{
 		"continue_when_spawned_count",
 		duration = 20,
-		condition = function (self)
+		condition = function (counter)
 			-- function 24
-			return self.cursed_chest_enemies <= 5
+			return counter.cursed_chest_enemies <= 5
 		end
 	},
 	{
@@ -1053,13 +1069,13 @@ GenericTerrorEvents.cursed_chest_challenge_skaven_ratling_gunner = {
 		},
 		optional_data = {
 			prevent_killed_enemy_dialogue = true,
-			spawned_func = fn
+			spawned_func = cursed_chest_enemy_spawned_func
 		},
-		min_distance = num_12 - num_15 * 0.5,
-		max_distance = num_12 + num_15 * 0.5,
-		pre_spawn_unit_func = fn_3,
-		post_spawn_unit_func = fn_4,
-		spawn_delay = num_10
+		min_distance = CURSED_CHEST_SPAWN_SPAWN_DISTANCE_MED - CURSED_CHEST_SPREAD_MED * 0.5,
+		max_distance = CURSED_CHEST_SPAWN_SPAWN_DISTANCE_MED + CURSED_CHEST_SPREAD_MED * 0.5,
+		pre_spawn_unit_func = cursed_chest_enemy_spawn_decal_func,
+		post_spawn_unit_func = cursed_chest_enemy_despawn_decal_func,
+		spawn_delay = CURSED_CHEST_DELAY_SPAWN
 	},
 	{
 		"spawn_around_origin_unit",
@@ -1074,32 +1090,32 @@ GenericTerrorEvents.cursed_chest_challenge_skaven_ratling_gunner = {
 		},
 		optional_data = {
 			prevent_killed_enemy_dialogue = true,
-			spawned_func = fn
+			spawned_func = cursed_chest_enemy_spawned_func
 		},
-		min_distance = num_11 - num_15 * 0.5,
-		max_distance = num_11 + num_15 * 0.5,
-		pre_spawn_unit_func = fn_3,
-		post_spawn_unit_func = fn_4,
-		spawn_delay = num_10
+		min_distance = CURSED_CHEST_SPAWN_DISTANCE_SHORT - CURSED_CHEST_SPREAD_MED * 0.5,
+		max_distance = CURSED_CHEST_SPAWN_DISTANCE_SHORT + CURSED_CHEST_SPREAD_MED * 0.5,
+		pre_spawn_unit_func = cursed_chest_enemy_spawn_decal_func,
+		post_spawn_unit_func = cursed_chest_enemy_despawn_decal_func,
+		spawn_delay = CURSED_CHEST_DELAY_SPAWN
 	},
 	{
 		"delay",
-		duration = num_9
+		duration = CURSED_CHEST_DELAY_WAVE_2
 	},
 	{
 		"continue_when_spawned_count",
 		duration = 20,
-		condition = function (self)
+		condition = function (counter)
 			-- function 25
-			return self.cursed_chest_elites <= 2
+			return counter.cursed_chest_elites <= 2
 		end
 	},
 	{
 		"continue_when_spawned_count",
 		duration = 20,
-		condition = function (self)
+		condition = function (counter)
 			-- function 26
-			return self.cursed_chest_enemies <= 5
+			return counter.cursed_chest_enemies <= 5
 		end
 	},
 	{
@@ -1119,13 +1135,13 @@ GenericTerrorEvents.cursed_chest_challenge_skaven_ratling_gunner = {
 		},
 		optional_data = {
 			prevent_killed_enemy_dialogue = true,
-			spawned_func = fn
+			spawned_func = cursed_chest_enemy_spawned_func
 		},
-		min_distance = num_12 - num_15 * 0.5,
-		max_distance = num_12 + num_15 * 0.5,
-		pre_spawn_unit_func = fn_3,
-		post_spawn_unit_func = fn_4,
-		spawn_delay = num_10
+		min_distance = CURSED_CHEST_SPAWN_SPAWN_DISTANCE_MED - CURSED_CHEST_SPREAD_MED * 0.5,
+		max_distance = CURSED_CHEST_SPAWN_SPAWN_DISTANCE_MED + CURSED_CHEST_SPREAD_MED * 0.5,
+		pre_spawn_unit_func = cursed_chest_enemy_spawn_decal_func,
+		post_spawn_unit_func = cursed_chest_enemy_despawn_decal_func,
+		spawn_delay = CURSED_CHEST_DELAY_SPAWN
 	},
 	{
 		"spawn_around_origin_unit",
@@ -1140,13 +1156,13 @@ GenericTerrorEvents.cursed_chest_challenge_skaven_ratling_gunner = {
 		},
 		optional_data = {
 			prevent_killed_enemy_dialogue = true,
-			spawned_func = fn
+			spawned_func = cursed_chest_enemy_spawned_func
 		},
-		min_distance = num_11 - num_15 * 0.5,
-		max_distance = num_11 + num_15 * 0.5,
-		pre_spawn_unit_func = fn_3,
-		post_spawn_unit_func = fn_4,
-		spawn_delay = num_10
+		min_distance = CURSED_CHEST_SPAWN_DISTANCE_SHORT - CURSED_CHEST_SPREAD_MED * 0.5,
+		max_distance = CURSED_CHEST_SPAWN_DISTANCE_SHORT + CURSED_CHEST_SPREAD_MED * 0.5,
+		pre_spawn_unit_func = cursed_chest_enemy_spawn_decal_func,
+		post_spawn_unit_func = cursed_chest_enemy_despawn_decal_func,
+		spawn_delay = CURSED_CHEST_DELAY_SPAWN
 	},
 	{
 		"delay",
@@ -1155,25 +1171,25 @@ GenericTerrorEvents.cursed_chest_challenge_skaven_ratling_gunner = {
 	{
 		"continue_when_spawned_count",
 		duration = 20,
-		condition = function (self)
+		condition = function (counter)
 			-- function 27
-			return self.cursed_chest_enemies > 0
+			return counter.cursed_chest_enemies > 0
 		end
 	},
 	{
 		"continue_when_spawned_count",
 		duration = 20,
-		condition = function (self)
+		condition = function (counter)
 			-- function 28
-			return self.cursed_chest_elites <= 2
+			return counter.cursed_chest_elites <= 2
 		end
 	},
 	{
 		"continue_when_spawned_count",
 		duration = 120,
-		condition = function (self)
+		condition = function (counter)
 			-- function 29
-			return self.cursed_chest_enemies <= 0
+			return counter.cursed_chest_enemies <= 0
 		end
 	},
 	{
@@ -1188,7 +1204,7 @@ GenericTerrorEvents.cursed_chest_challenge_skaven_poison_wind_globadier = {
 	},
 	{
 		"delay",
-		duration = num_8
+		duration = CURSED_CHEST_DELAY_WAVE_1
 	},
 	{
 		"play_stinger",
@@ -1207,13 +1223,13 @@ GenericTerrorEvents.cursed_chest_challenge_skaven_poison_wind_globadier = {
 		},
 		optional_data = {
 			prevent_killed_enemy_dialogue = true,
-			spawned_func = fn
+			spawned_func = cursed_chest_enemy_spawned_func
 		},
-		min_distance = num_12 - num_15 * 0.5,
-		max_distance = num_12 + num_15 * 0.5,
-		pre_spawn_unit_func = fn_3,
-		post_spawn_unit_func = fn_4,
-		spawn_delay = num_10
+		min_distance = CURSED_CHEST_SPAWN_SPAWN_DISTANCE_MED - CURSED_CHEST_SPREAD_MED * 0.5,
+		max_distance = CURSED_CHEST_SPAWN_SPAWN_DISTANCE_MED + CURSED_CHEST_SPREAD_MED * 0.5,
+		pre_spawn_unit_func = cursed_chest_enemy_spawn_decal_func,
+		post_spawn_unit_func = cursed_chest_enemy_despawn_decal_func,
+		spawn_delay = CURSED_CHEST_DELAY_SPAWN
 	},
 	{
 		"spawn_around_origin_unit",
@@ -1228,32 +1244,32 @@ GenericTerrorEvents.cursed_chest_challenge_skaven_poison_wind_globadier = {
 		},
 		optional_data = {
 			prevent_killed_enemy_dialogue = true,
-			spawned_func = fn
+			spawned_func = cursed_chest_enemy_spawned_func
 		},
-		min_distance = num_11 - num_15 * 0.5,
-		max_distance = num_11 + num_15 * 0.5,
-		pre_spawn_unit_func = fn_3,
-		post_spawn_unit_func = fn_4,
-		spawn_delay = num_10
+		min_distance = CURSED_CHEST_SPAWN_DISTANCE_SHORT - CURSED_CHEST_SPREAD_MED * 0.5,
+		max_distance = CURSED_CHEST_SPAWN_DISTANCE_SHORT + CURSED_CHEST_SPREAD_MED * 0.5,
+		pre_spawn_unit_func = cursed_chest_enemy_spawn_decal_func,
+		post_spawn_unit_func = cursed_chest_enemy_despawn_decal_func,
+		spawn_delay = CURSED_CHEST_DELAY_SPAWN
 	},
 	{
 		"delay",
-		duration = num_9
+		duration = CURSED_CHEST_DELAY_WAVE_2
 	},
 	{
 		"continue_when_spawned_count",
 		duration = 20,
-		condition = function (self)
+		condition = function (counter)
 			-- function 30
-			return self.cursed_chest_elites <= 2
+			return counter.cursed_chest_elites <= 2
 		end
 	},
 	{
 		"continue_when_spawned_count",
 		duration = 20,
-		condition = function (self)
+		condition = function (counter)
 			-- function 31
-			return self.cursed_chest_enemies <= 5
+			return counter.cursed_chest_enemies <= 5
 		end
 	},
 	{
@@ -1273,13 +1289,13 @@ GenericTerrorEvents.cursed_chest_challenge_skaven_poison_wind_globadier = {
 		},
 		optional_data = {
 			prevent_killed_enemy_dialogue = true,
-			spawned_func = fn
+			spawned_func = cursed_chest_enemy_spawned_func
 		},
-		min_distance = num_12 - num_15 * 0.5,
-		max_distance = num_12 + num_15 * 0.5,
-		pre_spawn_unit_func = fn_3,
-		post_spawn_unit_func = fn_4,
-		spawn_delay = num_10
+		min_distance = CURSED_CHEST_SPAWN_SPAWN_DISTANCE_MED - CURSED_CHEST_SPREAD_MED * 0.5,
+		max_distance = CURSED_CHEST_SPAWN_SPAWN_DISTANCE_MED + CURSED_CHEST_SPREAD_MED * 0.5,
+		pre_spawn_unit_func = cursed_chest_enemy_spawn_decal_func,
+		post_spawn_unit_func = cursed_chest_enemy_despawn_decal_func,
+		spawn_delay = CURSED_CHEST_DELAY_SPAWN
 	},
 	{
 		"spawn_around_origin_unit",
@@ -1294,32 +1310,32 @@ GenericTerrorEvents.cursed_chest_challenge_skaven_poison_wind_globadier = {
 		},
 		optional_data = {
 			prevent_killed_enemy_dialogue = true,
-			spawned_func = fn
+			spawned_func = cursed_chest_enemy_spawned_func
 		},
-		min_distance = num_11 - num_15 * 0.5,
-		max_distance = num_11 + num_15 * 0.5,
-		pre_spawn_unit_func = fn_3,
-		post_spawn_unit_func = fn_4,
-		spawn_delay = num_10
+		min_distance = CURSED_CHEST_SPAWN_DISTANCE_SHORT - CURSED_CHEST_SPREAD_MED * 0.5,
+		max_distance = CURSED_CHEST_SPAWN_DISTANCE_SHORT + CURSED_CHEST_SPREAD_MED * 0.5,
+		pre_spawn_unit_func = cursed_chest_enemy_spawn_decal_func,
+		post_spawn_unit_func = cursed_chest_enemy_despawn_decal_func,
+		spawn_delay = CURSED_CHEST_DELAY_SPAWN
 	},
 	{
 		"delay",
-		duration = num_9
+		duration = CURSED_CHEST_DELAY_WAVE_2
 	},
 	{
 		"continue_when_spawned_count",
 		duration = 20,
-		condition = function (self)
+		condition = function (counter)
 			-- function 32
-			return self.cursed_chest_elites <= 2
+			return counter.cursed_chest_elites <= 2
 		end
 	},
 	{
 		"continue_when_spawned_count",
 		duration = 20,
-		condition = function (self)
+		condition = function (counter)
 			-- function 33
-			return self.cursed_chest_enemies <= 5
+			return counter.cursed_chest_enemies <= 5
 		end
 	},
 	{
@@ -1339,13 +1355,13 @@ GenericTerrorEvents.cursed_chest_challenge_skaven_poison_wind_globadier = {
 		},
 		optional_data = {
 			prevent_killed_enemy_dialogue = true,
-			spawned_func = fn
+			spawned_func = cursed_chest_enemy_spawned_func
 		},
-		min_distance = num_12 - num_15 * 0.5,
-		max_distance = num_12 + num_15 * 0.5,
-		pre_spawn_unit_func = fn_3,
-		post_spawn_unit_func = fn_4,
-		spawn_delay = num_10
+		min_distance = CURSED_CHEST_SPAWN_SPAWN_DISTANCE_MED - CURSED_CHEST_SPREAD_MED * 0.5,
+		max_distance = CURSED_CHEST_SPAWN_SPAWN_DISTANCE_MED + CURSED_CHEST_SPREAD_MED * 0.5,
+		pre_spawn_unit_func = cursed_chest_enemy_spawn_decal_func,
+		post_spawn_unit_func = cursed_chest_enemy_despawn_decal_func,
+		spawn_delay = CURSED_CHEST_DELAY_SPAWN
 	},
 	{
 		"spawn_around_origin_unit",
@@ -1360,13 +1376,13 @@ GenericTerrorEvents.cursed_chest_challenge_skaven_poison_wind_globadier = {
 		},
 		optional_data = {
 			prevent_killed_enemy_dialogue = true,
-			spawned_func = fn
+			spawned_func = cursed_chest_enemy_spawned_func
 		},
-		min_distance = num_11 - num_15 * 0.5,
-		max_distance = num_11 + num_15 * 0.5,
-		pre_spawn_unit_func = fn_3,
-		post_spawn_unit_func = fn_4,
-		spawn_delay = num_10
+		min_distance = CURSED_CHEST_SPAWN_DISTANCE_SHORT - CURSED_CHEST_SPREAD_MED * 0.5,
+		max_distance = CURSED_CHEST_SPAWN_DISTANCE_SHORT + CURSED_CHEST_SPREAD_MED * 0.5,
+		pre_spawn_unit_func = cursed_chest_enemy_spawn_decal_func,
+		post_spawn_unit_func = cursed_chest_enemy_despawn_decal_func,
+		spawn_delay = CURSED_CHEST_DELAY_SPAWN
 	},
 	{
 		"delay",
@@ -1375,25 +1391,25 @@ GenericTerrorEvents.cursed_chest_challenge_skaven_poison_wind_globadier = {
 	{
 		"continue_when_spawned_count",
 		duration = 20,
-		condition = function (self)
+		condition = function (counter)
 			-- function 34
-			return self.cursed_chest_enemies > 0
+			return counter.cursed_chest_enemies > 0
 		end
 	},
 	{
 		"continue_when_spawned_count",
 		duration = 20,
-		condition = function (self)
+		condition = function (counter)
 			-- function 35
-			return self.cursed_chest_elites <= 2
+			return counter.cursed_chest_elites <= 2
 		end
 	},
 	{
 		"continue_when_spawned_count",
 		duration = 120,
-		condition = function (self)
+		condition = function (counter)
 			-- function 36
-			return self.cursed_chest_enemies <= 0
+			return counter.cursed_chest_enemies <= 0
 		end
 	},
 	{
@@ -1408,7 +1424,7 @@ GenericTerrorEvents.cursed_chest_challenge_skaven_rat_ogre = {
 	},
 	{
 		"delay",
-		duration = num_8
+		duration = CURSED_CHEST_DELAY_WAVE_1
 	},
 	{
 		"play_stinger",
@@ -1420,14 +1436,14 @@ GenericTerrorEvents.cursed_chest_challenge_skaven_rat_ogre = {
 		spawn_counter_category = "cursed_chest_enemies",
 		optional_data = {
 			prevent_killed_enemy_dialogue = true,
-			spawned_func = fn
+			spawned_func = cursed_chest_enemy_spawned_func
 		},
-		min_distance = num_13 - num_15 * 0.5,
-		max_distance = num_13 + num_15 * 0.5,
-		pre_spawn_unit_func = fn_3,
-		post_spawn_unit_func = fn_4,
-		spawn_delay = num_10,
-		pre_spawn_func = add_enhancements_for_difficulty
+		min_distance = CURSED_CHEST_SPAWN_DISTANCE_LONG - CURSED_CHEST_SPREAD_MED * 0.5,
+		max_distance = CURSED_CHEST_SPAWN_DISTANCE_LONG + CURSED_CHEST_SPREAD_MED * 0.5,
+		pre_spawn_unit_func = cursed_chest_enemy_spawn_decal_func,
+		post_spawn_unit_func = cursed_chest_enemy_despawn_decal_func,
+		spawn_delay = CURSED_CHEST_DELAY_SPAWN,
+		pre_spawn_func = cursed_chest_enemy_pre_spawn_func
 	},
 	{
 		"spawn_around_origin_unit",
@@ -1442,13 +1458,13 @@ GenericTerrorEvents.cursed_chest_challenge_skaven_rat_ogre = {
 		},
 		optional_data = {
 			prevent_killed_enemy_dialogue = true,
-			spawned_func = fn
+			spawned_func = cursed_chest_enemy_spawned_func
 		},
-		min_distance = num_11 - num_15 * 0.5,
-		max_distance = num_11 + num_15 * 0.5,
-		pre_spawn_unit_func = fn_3,
-		post_spawn_unit_func = fn_4,
-		spawn_delay = num_10
+		min_distance = CURSED_CHEST_SPAWN_DISTANCE_SHORT - CURSED_CHEST_SPREAD_MED * 0.5,
+		max_distance = CURSED_CHEST_SPAWN_DISTANCE_SHORT + CURSED_CHEST_SPREAD_MED * 0.5,
+		pre_spawn_unit_func = cursed_chest_enemy_spawn_decal_func,
+		post_spawn_unit_func = cursed_chest_enemy_despawn_decal_func,
+		spawn_delay = CURSED_CHEST_DELAY_SPAWN
 	},
 	{
 		"delay",
@@ -1457,17 +1473,17 @@ GenericTerrorEvents.cursed_chest_challenge_skaven_rat_ogre = {
 	{
 		"continue_when_spawned_count",
 		duration = 20,
-		condition = function (self)
+		condition = function (counter)
 			-- function 37
-			return self.cursed_chest_enemies > 0
+			return counter.cursed_chest_enemies > 0
 		end
 	},
 	{
 		"continue_when_spawned_count",
 		duration = 120,
-		condition = function (self)
+		condition = function (counter)
 			-- function 38
-			return self.cursed_chest_enemies <= 0
+			return counter.cursed_chest_enemies <= 0
 		end
 	},
 	{
@@ -1482,7 +1498,7 @@ GenericTerrorEvents.cursed_chest_challenge_skaven_stormfiend = {
 	},
 	{
 		"delay",
-		duration = num_8
+		duration = CURSED_CHEST_DELAY_WAVE_1
 	},
 	{
 		"play_stinger",
@@ -1494,14 +1510,14 @@ GenericTerrorEvents.cursed_chest_challenge_skaven_stormfiend = {
 		spawn_counter_category = "cursed_chest_enemies",
 		optional_data = {
 			prevent_killed_enemy_dialogue = true,
-			spawned_func = fn
+			spawned_func = cursed_chest_enemy_spawned_func
 		},
-		min_distance = num_13 - num_15 * 0.5,
-		max_distance = num_13 + num_15 * 0.5,
-		pre_spawn_unit_func = fn_3,
-		post_spawn_unit_func = fn_4,
-		spawn_delay = num_10,
-		pre_spawn_func = add_enhancements_for_difficulty
+		min_distance = CURSED_CHEST_SPAWN_DISTANCE_LONG - CURSED_CHEST_SPREAD_MED * 0.5,
+		max_distance = CURSED_CHEST_SPAWN_DISTANCE_LONG + CURSED_CHEST_SPREAD_MED * 0.5,
+		pre_spawn_unit_func = cursed_chest_enemy_spawn_decal_func,
+		post_spawn_unit_func = cursed_chest_enemy_despawn_decal_func,
+		spawn_delay = CURSED_CHEST_DELAY_SPAWN,
+		pre_spawn_func = cursed_chest_enemy_pre_spawn_func
 	},
 	{
 		"spawn_around_origin_unit",
@@ -1516,13 +1532,13 @@ GenericTerrorEvents.cursed_chest_challenge_skaven_stormfiend = {
 		},
 		optional_data = {
 			prevent_killed_enemy_dialogue = true,
-			spawned_func = fn
+			spawned_func = cursed_chest_enemy_spawned_func
 		},
-		min_distance = num_11 - num_15 * 0.5,
-		max_distance = num_11 + num_15 * 0.5,
-		pre_spawn_unit_func = fn_3,
-		post_spawn_unit_func = fn_4,
-		spawn_delay = num_10
+		min_distance = CURSED_CHEST_SPAWN_DISTANCE_SHORT - CURSED_CHEST_SPREAD_MED * 0.5,
+		max_distance = CURSED_CHEST_SPAWN_DISTANCE_SHORT + CURSED_CHEST_SPREAD_MED * 0.5,
+		pre_spawn_unit_func = cursed_chest_enemy_spawn_decal_func,
+		post_spawn_unit_func = cursed_chest_enemy_despawn_decal_func,
+		spawn_delay = CURSED_CHEST_DELAY_SPAWN
 	},
 	{
 		"delay",
@@ -1531,17 +1547,17 @@ GenericTerrorEvents.cursed_chest_challenge_skaven_stormfiend = {
 	{
 		"continue_when_spawned_count",
 		duration = 20,
-		condition = function (self)
+		condition = function (counter)
 			-- function 39
-			return self.cursed_chest_enemies > 0
+			return counter.cursed_chest_enemies > 0
 		end
 	},
 	{
 		"continue_when_spawned_count",
 		duration = 120,
-		condition = function (self)
+		condition = function (counter)
 			-- function 40
-			return self.cursed_chest_enemies <= 0
+			return counter.cursed_chest_enemies <= 0
 		end
 	},
 	{
@@ -1556,7 +1572,7 @@ GenericTerrorEvents.cursed_chest_challenge_double_monster = {
 	},
 	{
 		"delay",
-		duration = num_8
+		duration = CURSED_CHEST_DELAY_WAVE_1
 	},
 	{
 		"play_stinger",
@@ -1574,14 +1590,14 @@ GenericTerrorEvents.cursed_chest_challenge_double_monster = {
 		optional_data = {
 			max_health_modifier = 0.5,
 			prevent_killed_enemy_dialogue = true,
-			spawned_func = fn
+			spawned_func = cursed_chest_enemy_spawned_func
 		},
-		min_distance = num_11 - num_15 * 0.5,
-		max_distance = num_11 + num_15 * 0.5,
-		pre_spawn_unit_func = fn_3,
-		post_spawn_unit_func = fn_4,
-		spawn_delay = num_10,
-		pre_spawn_func = add_enhancements_for_difficulty
+		min_distance = CURSED_CHEST_SPAWN_DISTANCE_SHORT - CURSED_CHEST_SPREAD_MED * 0.5,
+		max_distance = CURSED_CHEST_SPAWN_DISTANCE_SHORT + CURSED_CHEST_SPREAD_MED * 0.5,
+		pre_spawn_unit_func = cursed_chest_enemy_spawn_decal_func,
+		post_spawn_unit_func = cursed_chest_enemy_despawn_decal_func,
+		spawn_delay = CURSED_CHEST_DELAY_SPAWN,
+		pre_spawn_func = cursed_chest_enemy_pre_spawn_func
 	},
 	{
 		"delay",
@@ -1599,14 +1615,14 @@ GenericTerrorEvents.cursed_chest_challenge_double_monster = {
 		optional_data = {
 			max_health_modifier = 0.5,
 			prevent_killed_enemy_dialogue = true,
-			spawned_func = fn
+			spawned_func = cursed_chest_enemy_spawned_func
 		},
-		min_distance = num_12 - num_15 * 0.5,
-		max_distance = num_12 + num_15 * 0.5,
-		pre_spawn_unit_func = fn_3,
-		post_spawn_unit_func = fn_4,
-		spawn_delay = num_10,
-		pre_spawn_func = add_enhancements_for_difficulty
+		min_distance = CURSED_CHEST_SPAWN_SPAWN_DISTANCE_MED - CURSED_CHEST_SPREAD_MED * 0.5,
+		max_distance = CURSED_CHEST_SPAWN_SPAWN_DISTANCE_MED + CURSED_CHEST_SPREAD_MED * 0.5,
+		pre_spawn_unit_func = cursed_chest_enemy_spawn_decal_func,
+		post_spawn_unit_func = cursed_chest_enemy_despawn_decal_func,
+		spawn_delay = CURSED_CHEST_DELAY_SPAWN,
+		pre_spawn_func = cursed_chest_enemy_pre_spawn_func
 	},
 	{
 		"delay",
@@ -1615,17 +1631,17 @@ GenericTerrorEvents.cursed_chest_challenge_double_monster = {
 	{
 		"continue_when_spawned_count",
 		duration = 20,
-		condition = function (self)
+		condition = function (counter)
 			-- function 41
-			return self.cursed_chest_enemies > 0
+			return counter.cursed_chest_enemies > 0
 		end
 	},
 	{
 		"continue_when_spawned_count",
 		duration = 120,
-		condition = function (self)
+		condition = function (counter)
 			-- function 42
-			return self.cursed_chest_enemies <= 0
+			return counter.cursed_chest_enemies <= 0
 		end
 	},
 	{
@@ -1805,7 +1821,7 @@ GenericTerrorEvents.cursed_chest_challenge_chaos_raider = {
 	},
 	{
 		"delay",
-		duration = num_8
+		duration = CURSED_CHEST_DELAY_WAVE_1
 	},
 	{
 		"play_stinger",
@@ -1825,12 +1841,12 @@ GenericTerrorEvents.cursed_chest_challenge_chaos_raider = {
 		},
 		optional_data = {
 			prevent_killed_enemy_dialogue = true,
-			spawned_func = fn
+			spawned_func = cursed_chest_enemy_spawned_func
 		},
-		min_distance = num_11 - num_15 * 0.5,
-		max_distance = num_11 + num_15 * 0.5,
-		pre_spawn_unit_func = fn_3,
-		post_spawn_unit_func = fn_4
+		min_distance = CURSED_CHEST_SPAWN_DISTANCE_SHORT - CURSED_CHEST_SPREAD_MED * 0.5,
+		max_distance = CURSED_CHEST_SPAWN_DISTANCE_SHORT + CURSED_CHEST_SPREAD_MED * 0.5,
+		pre_spawn_unit_func = cursed_chest_enemy_spawn_decal_func,
+		post_spawn_unit_func = cursed_chest_enemy_despawn_decal_func
 	},
 	{
 		"spawn_around_origin_unit",
@@ -1846,23 +1862,23 @@ GenericTerrorEvents.cursed_chest_challenge_chaos_raider = {
 		},
 		optional_data = {
 			prevent_killed_enemy_dialogue = true,
-			spawned_func = fn
+			spawned_func = cursed_chest_enemy_spawned_func
 		},
-		min_distance = num_11 - num_15 * 0.5,
-		max_distance = num_11 + num_15 * 0.5,
-		pre_spawn_unit_func = fn_3,
-		post_spawn_unit_func = fn_4
+		min_distance = CURSED_CHEST_SPAWN_DISTANCE_SHORT - CURSED_CHEST_SPREAD_MED * 0.5,
+		max_distance = CURSED_CHEST_SPAWN_DISTANCE_SHORT + CURSED_CHEST_SPREAD_MED * 0.5,
+		pre_spawn_unit_func = cursed_chest_enemy_spawn_decal_func,
+		post_spawn_unit_func = cursed_chest_enemy_despawn_decal_func
 	},
 	{
 		"delay",
-		duration = num_9
+		duration = CURSED_CHEST_DELAY_WAVE_2
 	},
 	{
 		"continue_when_spawned_count",
 		duration = 120,
-		condition = function (self)
+		condition = function (counter)
 			-- function 43
-			return self.cursed_chest_enemies <= 5
+			return counter.cursed_chest_enemies <= 5
 		end
 	},
 	{
@@ -1882,13 +1898,13 @@ GenericTerrorEvents.cursed_chest_challenge_chaos_raider = {
 		},
 		optional_data = {
 			prevent_killed_enemy_dialogue = true,
-			spawned_func = fn
+			spawned_func = cursed_chest_enemy_spawned_func
 		},
-		min_distance = num_11 - num_15 * 0.5,
-		max_distance = num_11 + num_15 * 0.5,
-		pre_spawn_unit_func = fn_3,
-		post_spawn_unit_func = fn_4,
-		spawn_delay = num_10
+		min_distance = CURSED_CHEST_SPAWN_DISTANCE_SHORT - CURSED_CHEST_SPREAD_MED * 0.5,
+		max_distance = CURSED_CHEST_SPAWN_DISTANCE_SHORT + CURSED_CHEST_SPREAD_MED * 0.5,
+		pre_spawn_unit_func = cursed_chest_enemy_spawn_decal_func,
+		post_spawn_unit_func = cursed_chest_enemy_despawn_decal_func,
+		spawn_delay = CURSED_CHEST_DELAY_SPAWN
 	},
 	{
 		"spawn_around_origin_unit",
@@ -1903,24 +1919,24 @@ GenericTerrorEvents.cursed_chest_challenge_chaos_raider = {
 		},
 		optional_data = {
 			prevent_killed_enemy_dialogue = true,
-			spawned_func = fn
+			spawned_func = cursed_chest_enemy_spawned_func
 		},
-		min_distance = num_11 - num_15 * 0.5,
-		max_distance = num_11 + num_15 * 0.5,
-		pre_spawn_unit_func = fn_3,
-		post_spawn_unit_func = fn_4,
-		spawn_delay = num_10
+		min_distance = CURSED_CHEST_SPAWN_DISTANCE_SHORT - CURSED_CHEST_SPREAD_MED * 0.5,
+		max_distance = CURSED_CHEST_SPAWN_DISTANCE_SHORT + CURSED_CHEST_SPREAD_MED * 0.5,
+		pre_spawn_unit_func = cursed_chest_enemy_spawn_decal_func,
+		post_spawn_unit_func = cursed_chest_enemy_despawn_decal_func,
+		spawn_delay = CURSED_CHEST_DELAY_SPAWN
 	},
 	{
 		"delay",
-		duration = num_9
+		duration = CURSED_CHEST_DELAY_WAVE_2
 	},
 	{
 		"continue_when_spawned_count",
 		duration = 120,
-		condition = function (self)
+		condition = function (counter)
 			-- function 44
-			return self.cursed_chest_enemies <= 5
+			return counter.cursed_chest_enemies <= 5
 		end
 	},
 	{
@@ -1940,13 +1956,13 @@ GenericTerrorEvents.cursed_chest_challenge_chaos_raider = {
 		},
 		optional_data = {
 			prevent_killed_enemy_dialogue = true,
-			spawned_func = fn
+			spawned_func = cursed_chest_enemy_spawned_func
 		},
-		min_distance = num_11 - num_15 * 0.5,
-		max_distance = num_11 + num_15 * 0.5,
-		pre_spawn_unit_func = fn_3,
-		post_spawn_unit_func = fn_4,
-		spawn_delay = num_10
+		min_distance = CURSED_CHEST_SPAWN_DISTANCE_SHORT - CURSED_CHEST_SPREAD_MED * 0.5,
+		max_distance = CURSED_CHEST_SPAWN_DISTANCE_SHORT + CURSED_CHEST_SPREAD_MED * 0.5,
+		pre_spawn_unit_func = cursed_chest_enemy_spawn_decal_func,
+		post_spawn_unit_func = cursed_chest_enemy_despawn_decal_func,
+		spawn_delay = CURSED_CHEST_DELAY_SPAWN
 	},
 	{
 		"spawn_around_origin_unit",
@@ -1961,13 +1977,13 @@ GenericTerrorEvents.cursed_chest_challenge_chaos_raider = {
 		},
 		optional_data = {
 			prevent_killed_enemy_dialogue = true,
-			spawned_func = fn
+			spawned_func = cursed_chest_enemy_spawned_func
 		},
-		min_distance = num_11 - num_15 * 0.5,
-		max_distance = num_11 + num_15 * 0.5,
-		pre_spawn_unit_func = fn_3,
-		post_spawn_unit_func = fn_4,
-		spawn_delay = num_10
+		min_distance = CURSED_CHEST_SPAWN_DISTANCE_SHORT - CURSED_CHEST_SPREAD_MED * 0.5,
+		max_distance = CURSED_CHEST_SPAWN_DISTANCE_SHORT + CURSED_CHEST_SPREAD_MED * 0.5,
+		pre_spawn_unit_func = cursed_chest_enemy_spawn_decal_func,
+		post_spawn_unit_func = cursed_chest_enemy_despawn_decal_func,
+		spawn_delay = CURSED_CHEST_DELAY_SPAWN
 	},
 	{
 		"delay",
@@ -1976,17 +1992,17 @@ GenericTerrorEvents.cursed_chest_challenge_chaos_raider = {
 	{
 		"continue_when_spawned_count",
 		duration = 20,
-		condition = function (self)
+		condition = function (counter)
 			-- function 45
-			return self.cursed_chest_enemies > 0
+			return counter.cursed_chest_enemies > 0
 		end
 	},
 	{
 		"continue_when_spawned_count",
 		duration = 120,
-		condition = function (self)
+		condition = function (counter)
 			-- function 46
-			return self.cursed_chest_enemies <= 0
+			return counter.cursed_chest_enemies <= 0
 		end
 	},
 	{
@@ -2001,7 +2017,7 @@ GenericTerrorEvents.cursed_chest_challenge_chaos_berzerker = {
 	},
 	{
 		"delay",
-		duration = num_8
+		duration = CURSED_CHEST_DELAY_WAVE_1
 	},
 	{
 		"play_stinger",
@@ -2020,13 +2036,13 @@ GenericTerrorEvents.cursed_chest_challenge_chaos_berzerker = {
 		},
 		optional_data = {
 			prevent_killed_enemy_dialogue = true,
-			spawned_func = fn
+			spawned_func = cursed_chest_enemy_spawned_func
 		},
-		min_distance = num_11 - num_15 * 0.5,
-		max_distance = num_11 + num_15 * 0.5,
-		pre_spawn_unit_func = fn_3,
-		post_spawn_unit_func = fn_4,
-		spawn_delay = num_10
+		min_distance = CURSED_CHEST_SPAWN_DISTANCE_SHORT - CURSED_CHEST_SPREAD_MED * 0.5,
+		max_distance = CURSED_CHEST_SPAWN_DISTANCE_SHORT + CURSED_CHEST_SPREAD_MED * 0.5,
+		pre_spawn_unit_func = cursed_chest_enemy_spawn_decal_func,
+		post_spawn_unit_func = cursed_chest_enemy_despawn_decal_func,
+		spawn_delay = CURSED_CHEST_DELAY_SPAWN
 	},
 	{
 		"spawn_around_origin_unit",
@@ -2041,24 +2057,24 @@ GenericTerrorEvents.cursed_chest_challenge_chaos_berzerker = {
 		},
 		optional_data = {
 			prevent_killed_enemy_dialogue = true,
-			spawned_func = fn
+			spawned_func = cursed_chest_enemy_spawned_func
 		},
-		min_distance = num_11 - num_15 * 0.5,
-		max_distance = num_11 + num_15 * 0.5,
-		pre_spawn_unit_func = fn_3,
-		post_spawn_unit_func = fn_4,
-		spawn_delay = num_10
+		min_distance = CURSED_CHEST_SPAWN_DISTANCE_SHORT - CURSED_CHEST_SPREAD_MED * 0.5,
+		max_distance = CURSED_CHEST_SPAWN_DISTANCE_SHORT + CURSED_CHEST_SPREAD_MED * 0.5,
+		pre_spawn_unit_func = cursed_chest_enemy_spawn_decal_func,
+		post_spawn_unit_func = cursed_chest_enemy_despawn_decal_func,
+		spawn_delay = CURSED_CHEST_DELAY_SPAWN
 	},
 	{
 		"delay",
-		duration = num_9
+		duration = CURSED_CHEST_DELAY_WAVE_2
 	},
 	{
 		"continue_when_spawned_count",
 		duration = 120,
-		condition = function (self)
+		condition = function (counter)
 			-- function 47
-			return self.cursed_chest_enemies <= 5
+			return counter.cursed_chest_enemies <= 5
 		end
 	},
 	{
@@ -2078,13 +2094,13 @@ GenericTerrorEvents.cursed_chest_challenge_chaos_berzerker = {
 		},
 		optional_data = {
 			prevent_killed_enemy_dialogue = true,
-			spawned_func = fn
+			spawned_func = cursed_chest_enemy_spawned_func
 		},
-		min_distance = num_11 - num_15 * 0.5,
-		max_distance = num_11 + num_15 * 0.5,
-		pre_spawn_unit_func = fn_3,
-		post_spawn_unit_func = fn_4,
-		spawn_delay = num_10
+		min_distance = CURSED_CHEST_SPAWN_DISTANCE_SHORT - CURSED_CHEST_SPREAD_MED * 0.5,
+		max_distance = CURSED_CHEST_SPAWN_DISTANCE_SHORT + CURSED_CHEST_SPREAD_MED * 0.5,
+		pre_spawn_unit_func = cursed_chest_enemy_spawn_decal_func,
+		post_spawn_unit_func = cursed_chest_enemy_despawn_decal_func,
+		spawn_delay = CURSED_CHEST_DELAY_SPAWN
 	},
 	{
 		"spawn_around_origin_unit",
@@ -2099,24 +2115,24 @@ GenericTerrorEvents.cursed_chest_challenge_chaos_berzerker = {
 		},
 		optional_data = {
 			prevent_killed_enemy_dialogue = true,
-			spawned_func = fn
+			spawned_func = cursed_chest_enemy_spawned_func
 		},
-		min_distance = num_11 - num_15 * 0.5,
-		max_distance = num_11 + num_15 * 0.5,
-		pre_spawn_unit_func = fn_3,
-		post_spawn_unit_func = fn_4,
-		spawn_delay = num_10
+		min_distance = CURSED_CHEST_SPAWN_DISTANCE_SHORT - CURSED_CHEST_SPREAD_MED * 0.5,
+		max_distance = CURSED_CHEST_SPAWN_DISTANCE_SHORT + CURSED_CHEST_SPREAD_MED * 0.5,
+		pre_spawn_unit_func = cursed_chest_enemy_spawn_decal_func,
+		post_spawn_unit_func = cursed_chest_enemy_despawn_decal_func,
+		spawn_delay = CURSED_CHEST_DELAY_SPAWN
 	},
 	{
 		"delay",
-		duration = num_9
+		duration = CURSED_CHEST_DELAY_WAVE_2
 	},
 	{
 		"continue_when_spawned_count",
 		duration = 120,
-		condition = function (self)
+		condition = function (counter)
 			-- function 48
-			return self.cursed_chest_enemies <= 5
+			return counter.cursed_chest_enemies <= 5
 		end
 	},
 	{
@@ -2136,13 +2152,13 @@ GenericTerrorEvents.cursed_chest_challenge_chaos_berzerker = {
 		},
 		optional_data = {
 			prevent_killed_enemy_dialogue = true,
-			spawned_func = fn
+			spawned_func = cursed_chest_enemy_spawned_func
 		},
-		min_distance = num_11 - num_15 * 0.5,
-		max_distance = num_11 + num_15 * 0.5,
-		pre_spawn_unit_func = fn_3,
-		post_spawn_unit_func = fn_4,
-		spawn_delay = num_10
+		min_distance = CURSED_CHEST_SPAWN_DISTANCE_SHORT - CURSED_CHEST_SPREAD_MED * 0.5,
+		max_distance = CURSED_CHEST_SPAWN_DISTANCE_SHORT + CURSED_CHEST_SPREAD_MED * 0.5,
+		pre_spawn_unit_func = cursed_chest_enemy_spawn_decal_func,
+		post_spawn_unit_func = cursed_chest_enemy_despawn_decal_func,
+		spawn_delay = CURSED_CHEST_DELAY_SPAWN
 	},
 	{
 		"spawn_around_origin_unit",
@@ -2157,13 +2173,13 @@ GenericTerrorEvents.cursed_chest_challenge_chaos_berzerker = {
 		},
 		optional_data = {
 			prevent_killed_enemy_dialogue = true,
-			spawned_func = fn
+			spawned_func = cursed_chest_enemy_spawned_func
 		},
-		min_distance = num_11 - num_15 * 0.5,
-		max_distance = num_11 + num_15 * 0.5,
-		pre_spawn_unit_func = fn_3,
-		post_spawn_unit_func = fn_4,
-		spawn_delay = num_10
+		min_distance = CURSED_CHEST_SPAWN_DISTANCE_SHORT - CURSED_CHEST_SPREAD_MED * 0.5,
+		max_distance = CURSED_CHEST_SPAWN_DISTANCE_SHORT + CURSED_CHEST_SPREAD_MED * 0.5,
+		pre_spawn_unit_func = cursed_chest_enemy_spawn_decal_func,
+		post_spawn_unit_func = cursed_chest_enemy_despawn_decal_func,
+		spawn_delay = CURSED_CHEST_DELAY_SPAWN
 	},
 	{
 		"delay",
@@ -2172,17 +2188,17 @@ GenericTerrorEvents.cursed_chest_challenge_chaos_berzerker = {
 	{
 		"continue_when_spawned_count",
 		duration = 20,
-		condition = function (self)
+		condition = function (counter)
 			-- function 49
-			return self.cursed_chest_enemies > 0
+			return counter.cursed_chest_enemies > 0
 		end
 	},
 	{
 		"continue_when_spawned_count",
 		duration = 120,
-		condition = function (self)
+		condition = function (counter)
 			-- function 50
-			return self.cursed_chest_enemies <= 0
+			return counter.cursed_chest_enemies <= 0
 		end
 	},
 	{
@@ -2197,7 +2213,7 @@ GenericTerrorEvents.cursed_chest_challenge_chaos_warrior = {
 	},
 	{
 		"delay",
-		duration = num_8
+		duration = CURSED_CHEST_DELAY_WAVE_1
 	},
 	{
 		"play_stinger",
@@ -2216,13 +2232,13 @@ GenericTerrorEvents.cursed_chest_challenge_chaos_warrior = {
 		},
 		optional_data = {
 			prevent_killed_enemy_dialogue = true,
-			spawned_func = fn
+			spawned_func = cursed_chest_enemy_spawned_func
 		},
-		min_distance = num_11 - num_15 * 0.5,
-		max_distance = num_11 + num_15 * 0.5,
-		pre_spawn_unit_func = fn_3,
-		post_spawn_unit_func = fn_4,
-		spawn_delay = num_10
+		min_distance = CURSED_CHEST_SPAWN_DISTANCE_SHORT - CURSED_CHEST_SPREAD_MED * 0.5,
+		max_distance = CURSED_CHEST_SPAWN_DISTANCE_SHORT + CURSED_CHEST_SPREAD_MED * 0.5,
+		pre_spawn_unit_func = cursed_chest_enemy_spawn_decal_func,
+		post_spawn_unit_func = cursed_chest_enemy_despawn_decal_func,
+		spawn_delay = CURSED_CHEST_DELAY_SPAWN
 	},
 	{
 		"spawn_around_origin_unit",
@@ -2237,24 +2253,24 @@ GenericTerrorEvents.cursed_chest_challenge_chaos_warrior = {
 		},
 		optional_data = {
 			prevent_killed_enemy_dialogue = true,
-			spawned_func = fn
+			spawned_func = cursed_chest_enemy_spawned_func
 		},
-		min_distance = num_11 - num_15 * 0.5,
-		max_distance = num_11 + num_15 * 0.5,
-		pre_spawn_unit_func = fn_3,
-		post_spawn_unit_func = fn_4,
-		spawn_delay = num_10
+		min_distance = CURSED_CHEST_SPAWN_DISTANCE_SHORT - CURSED_CHEST_SPREAD_MED * 0.5,
+		max_distance = CURSED_CHEST_SPAWN_DISTANCE_SHORT + CURSED_CHEST_SPREAD_MED * 0.5,
+		pre_spawn_unit_func = cursed_chest_enemy_spawn_decal_func,
+		post_spawn_unit_func = cursed_chest_enemy_despawn_decal_func,
+		spawn_delay = CURSED_CHEST_DELAY_SPAWN
 	},
 	{
 		"delay",
-		duration = num_9
+		duration = CURSED_CHEST_DELAY_WAVE_2
 	},
 	{
 		"continue_when_spawned_count",
 		duration = 120,
-		condition = function (self)
+		condition = function (counter)
 			-- function 51
-			return self.cursed_chest_enemies <= 4
+			return counter.cursed_chest_enemies <= 4
 		end
 	},
 	{
@@ -2274,13 +2290,13 @@ GenericTerrorEvents.cursed_chest_challenge_chaos_warrior = {
 		},
 		optional_data = {
 			prevent_killed_enemy_dialogue = true,
-			spawned_func = fn
+			spawned_func = cursed_chest_enemy_spawned_func
 		},
-		min_distance = num_11 - num_15 * 0.5,
-		max_distance = num_11 + num_15 * 0.5,
-		pre_spawn_unit_func = fn_3,
-		post_spawn_unit_func = fn_4,
-		spawn_delay = num_10
+		min_distance = CURSED_CHEST_SPAWN_DISTANCE_SHORT - CURSED_CHEST_SPREAD_MED * 0.5,
+		max_distance = CURSED_CHEST_SPAWN_DISTANCE_SHORT + CURSED_CHEST_SPREAD_MED * 0.5,
+		pre_spawn_unit_func = cursed_chest_enemy_spawn_decal_func,
+		post_spawn_unit_func = cursed_chest_enemy_despawn_decal_func,
+		spawn_delay = CURSED_CHEST_DELAY_SPAWN
 	},
 	{
 		"spawn_around_origin_unit",
@@ -2295,24 +2311,24 @@ GenericTerrorEvents.cursed_chest_challenge_chaos_warrior = {
 		},
 		optional_data = {
 			prevent_killed_enemy_dialogue = true,
-			spawned_func = fn
+			spawned_func = cursed_chest_enemy_spawned_func
 		},
-		min_distance = num_11 - num_15 * 0.5,
-		max_distance = num_11 + num_15 * 0.5,
-		pre_spawn_unit_func = fn_3,
-		post_spawn_unit_func = fn_4,
-		spawn_delay = num_10
+		min_distance = CURSED_CHEST_SPAWN_DISTANCE_SHORT - CURSED_CHEST_SPREAD_MED * 0.5,
+		max_distance = CURSED_CHEST_SPAWN_DISTANCE_SHORT + CURSED_CHEST_SPREAD_MED * 0.5,
+		pre_spawn_unit_func = cursed_chest_enemy_spawn_decal_func,
+		post_spawn_unit_func = cursed_chest_enemy_despawn_decal_func,
+		spawn_delay = CURSED_CHEST_DELAY_SPAWN
 	},
 	{
 		"delay",
-		duration = num_9
+		duration = CURSED_CHEST_DELAY_WAVE_2
 	},
 	{
 		"continue_when_spawned_count",
 		duration = 120,
-		condition = function (self)
+		condition = function (counter)
 			-- function 52
-			return self.cursed_chest_enemies <= 4
+			return counter.cursed_chest_enemies <= 4
 		end
 	},
 	{
@@ -2332,13 +2348,13 @@ GenericTerrorEvents.cursed_chest_challenge_chaos_warrior = {
 		},
 		optional_data = {
 			prevent_killed_enemy_dialogue = true,
-			spawned_func = fn
+			spawned_func = cursed_chest_enemy_spawned_func
 		},
-		min_distance = num_11 - num_15 * 0.5,
-		max_distance = num_11 + num_15 * 0.5,
-		pre_spawn_unit_func = fn_3,
-		post_spawn_unit_func = fn_4,
-		spawn_delay = num_10
+		min_distance = CURSED_CHEST_SPAWN_DISTANCE_SHORT - CURSED_CHEST_SPREAD_MED * 0.5,
+		max_distance = CURSED_CHEST_SPAWN_DISTANCE_SHORT + CURSED_CHEST_SPREAD_MED * 0.5,
+		pre_spawn_unit_func = cursed_chest_enemy_spawn_decal_func,
+		post_spawn_unit_func = cursed_chest_enemy_despawn_decal_func,
+		spawn_delay = CURSED_CHEST_DELAY_SPAWN
 	},
 	{
 		"spawn_around_origin_unit",
@@ -2353,13 +2369,13 @@ GenericTerrorEvents.cursed_chest_challenge_chaos_warrior = {
 		},
 		optional_data = {
 			prevent_killed_enemy_dialogue = true,
-			spawned_func = fn
+			spawned_func = cursed_chest_enemy_spawned_func
 		},
-		min_distance = num_11 - num_15 * 0.5,
-		max_distance = num_11 + num_15 * 0.5,
-		pre_spawn_unit_func = fn_3,
-		post_spawn_unit_func = fn_4,
-		spawn_delay = num_10
+		min_distance = CURSED_CHEST_SPAWN_DISTANCE_SHORT - CURSED_CHEST_SPREAD_MED * 0.5,
+		max_distance = CURSED_CHEST_SPAWN_DISTANCE_SHORT + CURSED_CHEST_SPREAD_MED * 0.5,
+		pre_spawn_unit_func = cursed_chest_enemy_spawn_decal_func,
+		post_spawn_unit_func = cursed_chest_enemy_despawn_decal_func,
+		spawn_delay = CURSED_CHEST_DELAY_SPAWN
 	},
 	{
 		"delay",
@@ -2368,17 +2384,17 @@ GenericTerrorEvents.cursed_chest_challenge_chaos_warrior = {
 	{
 		"continue_when_spawned_count",
 		duration = 20,
-		condition = function (self)
+		condition = function (counter)
 			-- function 53
-			return self.cursed_chest_enemies > 0
+			return counter.cursed_chest_enemies > 0
 		end
 	},
 	{
 		"continue_when_spawned_count",
 		duration = 120,
-		condition = function (self)
+		condition = function (counter)
 			-- function 54
-			return self.cursed_chest_enemies <= 0
+			return counter.cursed_chest_enemies <= 0
 		end
 	},
 	{
@@ -2393,7 +2409,7 @@ GenericTerrorEvents.cursed_chest_challenge_chaos_bulwark = {
 	},
 	{
 		"delay",
-		duration = num_8
+		duration = CURSED_CHEST_DELAY_WAVE_1
 	},
 	{
 		"play_stinger",
@@ -2412,13 +2428,13 @@ GenericTerrorEvents.cursed_chest_challenge_chaos_bulwark = {
 		},
 		optional_data = {
 			prevent_killed_enemy_dialogue = true,
-			spawned_func = fn
+			spawned_func = cursed_chest_enemy_spawned_func
 		},
-		min_distance = num_11 - num_15 * 0.5,
-		max_distance = num_11 + num_15 * 0.5,
-		pre_spawn_unit_func = fn_3,
-		post_spawn_unit_func = fn_4,
-		spawn_delay = num_10
+		min_distance = CURSED_CHEST_SPAWN_DISTANCE_SHORT - CURSED_CHEST_SPREAD_MED * 0.5,
+		max_distance = CURSED_CHEST_SPAWN_DISTANCE_SHORT + CURSED_CHEST_SPREAD_MED * 0.5,
+		pre_spawn_unit_func = cursed_chest_enemy_spawn_decal_func,
+		post_spawn_unit_func = cursed_chest_enemy_despawn_decal_func,
+		spawn_delay = CURSED_CHEST_DELAY_SPAWN
 	},
 	{
 		"spawn_around_origin_unit",
@@ -2433,24 +2449,24 @@ GenericTerrorEvents.cursed_chest_challenge_chaos_bulwark = {
 		},
 		optional_data = {
 			prevent_killed_enemy_dialogue = true,
-			spawned_func = fn
+			spawned_func = cursed_chest_enemy_spawned_func
 		},
-		min_distance = num_11 - num_15 * 0.5,
-		max_distance = num_11 + num_15 * 0.5,
-		pre_spawn_unit_func = fn_3,
-		post_spawn_unit_func = fn_4,
-		spawn_delay = num_10
+		min_distance = CURSED_CHEST_SPAWN_DISTANCE_SHORT - CURSED_CHEST_SPREAD_MED * 0.5,
+		max_distance = CURSED_CHEST_SPAWN_DISTANCE_SHORT + CURSED_CHEST_SPREAD_MED * 0.5,
+		pre_spawn_unit_func = cursed_chest_enemy_spawn_decal_func,
+		post_spawn_unit_func = cursed_chest_enemy_despawn_decal_func,
+		spawn_delay = CURSED_CHEST_DELAY_SPAWN
 	},
 	{
 		"delay",
-		duration = num_9
+		duration = CURSED_CHEST_DELAY_WAVE_2
 	},
 	{
 		"continue_when_spawned_count",
 		duration = 120,
-		condition = function (self)
+		condition = function (counter)
 			-- function 55
-			return self.cursed_chest_enemies <= 4
+			return counter.cursed_chest_enemies <= 4
 		end
 	},
 	{
@@ -2470,13 +2486,13 @@ GenericTerrorEvents.cursed_chest_challenge_chaos_bulwark = {
 		},
 		optional_data = {
 			prevent_killed_enemy_dialogue = true,
-			spawned_func = fn
+			spawned_func = cursed_chest_enemy_spawned_func
 		},
-		min_distance = num_11 - num_15 * 0.5,
-		max_distance = num_11 + num_15 * 0.5,
-		pre_spawn_unit_func = fn_3,
-		post_spawn_unit_func = fn_4,
-		spawn_delay = num_10
+		min_distance = CURSED_CHEST_SPAWN_DISTANCE_SHORT - CURSED_CHEST_SPREAD_MED * 0.5,
+		max_distance = CURSED_CHEST_SPAWN_DISTANCE_SHORT + CURSED_CHEST_SPREAD_MED * 0.5,
+		pre_spawn_unit_func = cursed_chest_enemy_spawn_decal_func,
+		post_spawn_unit_func = cursed_chest_enemy_despawn_decal_func,
+		spawn_delay = CURSED_CHEST_DELAY_SPAWN
 	},
 	{
 		"spawn_around_origin_unit",
@@ -2491,24 +2507,24 @@ GenericTerrorEvents.cursed_chest_challenge_chaos_bulwark = {
 		},
 		optional_data = {
 			prevent_killed_enemy_dialogue = true,
-			spawned_func = fn
+			spawned_func = cursed_chest_enemy_spawned_func
 		},
-		min_distance = num_11 - num_15 * 0.5,
-		max_distance = num_11 + num_15 * 0.5,
-		pre_spawn_unit_func = fn_3,
-		post_spawn_unit_func = fn_4,
-		spawn_delay = num_10
+		min_distance = CURSED_CHEST_SPAWN_DISTANCE_SHORT - CURSED_CHEST_SPREAD_MED * 0.5,
+		max_distance = CURSED_CHEST_SPAWN_DISTANCE_SHORT + CURSED_CHEST_SPREAD_MED * 0.5,
+		pre_spawn_unit_func = cursed_chest_enemy_spawn_decal_func,
+		post_spawn_unit_func = cursed_chest_enemy_despawn_decal_func,
+		spawn_delay = CURSED_CHEST_DELAY_SPAWN
 	},
 	{
 		"delay",
-		duration = num_9
+		duration = CURSED_CHEST_DELAY_WAVE_2
 	},
 	{
 		"continue_when_spawned_count",
 		duration = 120,
-		condition = function (self)
+		condition = function (counter)
 			-- function 56
-			return self.cursed_chest_enemies <= 4
+			return counter.cursed_chest_enemies <= 4
 		end
 	},
 	{
@@ -2528,13 +2544,13 @@ GenericTerrorEvents.cursed_chest_challenge_chaos_bulwark = {
 		},
 		optional_data = {
 			prevent_killed_enemy_dialogue = true,
-			spawned_func = fn
+			spawned_func = cursed_chest_enemy_spawned_func
 		},
-		min_distance = num_11 - num_15 * 0.5,
-		max_distance = num_11 + num_15 * 0.5,
-		pre_spawn_unit_func = fn_3,
-		post_spawn_unit_func = fn_4,
-		spawn_delay = num_10
+		min_distance = CURSED_CHEST_SPAWN_DISTANCE_SHORT - CURSED_CHEST_SPREAD_MED * 0.5,
+		max_distance = CURSED_CHEST_SPAWN_DISTANCE_SHORT + CURSED_CHEST_SPREAD_MED * 0.5,
+		pre_spawn_unit_func = cursed_chest_enemy_spawn_decal_func,
+		post_spawn_unit_func = cursed_chest_enemy_despawn_decal_func,
+		spawn_delay = CURSED_CHEST_DELAY_SPAWN
 	},
 	{
 		"spawn_around_origin_unit",
@@ -2549,13 +2565,13 @@ GenericTerrorEvents.cursed_chest_challenge_chaos_bulwark = {
 		},
 		optional_data = {
 			prevent_killed_enemy_dialogue = true,
-			spawned_func = fn
+			spawned_func = cursed_chest_enemy_spawned_func
 		},
-		min_distance = num_11 - num_15 * 0.5,
-		max_distance = num_11 + num_15 * 0.5,
-		pre_spawn_unit_func = fn_3,
-		post_spawn_unit_func = fn_4,
-		spawn_delay = num_10
+		min_distance = CURSED_CHEST_SPAWN_DISTANCE_SHORT - CURSED_CHEST_SPREAD_MED * 0.5,
+		max_distance = CURSED_CHEST_SPAWN_DISTANCE_SHORT + CURSED_CHEST_SPREAD_MED * 0.5,
+		pre_spawn_unit_func = cursed_chest_enemy_spawn_decal_func,
+		post_spawn_unit_func = cursed_chest_enemy_despawn_decal_func,
+		spawn_delay = CURSED_CHEST_DELAY_SPAWN
 	},
 	{
 		"delay",
@@ -2564,17 +2580,17 @@ GenericTerrorEvents.cursed_chest_challenge_chaos_bulwark = {
 	{
 		"continue_when_spawned_count",
 		duration = 20,
-		condition = function (self)
+		condition = function (counter)
 			-- function 57
-			return self.cursed_chest_enemies > 0
+			return counter.cursed_chest_enemies > 0
 		end
 	},
 	{
 		"continue_when_spawned_count",
 		duration = 120,
-		condition = function (self)
+		condition = function (counter)
 			-- function 58
-			return self.cursed_chest_enemies <= 0
+			return counter.cursed_chest_enemies <= 0
 		end
 	},
 	{
@@ -2589,7 +2605,7 @@ GenericTerrorEvents.cursed_chest_challenge_chaos_vortex_sorcerer = {
 	},
 	{
 		"delay",
-		duration = num_8
+		duration = CURSED_CHEST_DELAY_WAVE_1
 	},
 	{
 		"play_stinger",
@@ -2608,13 +2624,13 @@ GenericTerrorEvents.cursed_chest_challenge_chaos_vortex_sorcerer = {
 		},
 		optional_data = {
 			prevent_killed_enemy_dialogue = true,
-			spawned_func = fn
+			spawned_func = cursed_chest_enemy_spawned_func
 		},
-		min_distance = num_11 - num_15 * 0.5,
-		max_distance = num_11 + num_15 * 0.5,
-		pre_spawn_unit_func = fn_3,
-		post_spawn_unit_func = fn_4,
-		spawn_delay = num_10
+		min_distance = CURSED_CHEST_SPAWN_DISTANCE_SHORT - CURSED_CHEST_SPREAD_MED * 0.5,
+		max_distance = CURSED_CHEST_SPAWN_DISTANCE_SHORT + CURSED_CHEST_SPREAD_MED * 0.5,
+		pre_spawn_unit_func = cursed_chest_enemy_spawn_decal_func,
+		post_spawn_unit_func = cursed_chest_enemy_despawn_decal_func,
+		spawn_delay = CURSED_CHEST_DELAY_SPAWN
 	},
 	{
 		"spawn_around_origin_unit",
@@ -2629,32 +2645,32 @@ GenericTerrorEvents.cursed_chest_challenge_chaos_vortex_sorcerer = {
 		},
 		optional_data = {
 			prevent_killed_enemy_dialogue = true,
-			spawned_func = fn
+			spawned_func = cursed_chest_enemy_spawned_func
 		},
-		min_distance = num_13 - num_15 * 0.5,
-		max_distance = num_13 + num_15 * 0.5,
-		pre_spawn_unit_func = fn_3,
-		post_spawn_unit_func = fn_4,
-		spawn_delay = num_10
+		min_distance = CURSED_CHEST_SPAWN_DISTANCE_LONG - CURSED_CHEST_SPREAD_MED * 0.5,
+		max_distance = CURSED_CHEST_SPAWN_DISTANCE_LONG + CURSED_CHEST_SPREAD_MED * 0.5,
+		pre_spawn_unit_func = cursed_chest_enemy_spawn_decal_func,
+		post_spawn_unit_func = cursed_chest_enemy_despawn_decal_func,
+		spawn_delay = CURSED_CHEST_DELAY_SPAWN
 	},
 	{
 		"delay",
-		duration = num_9
+		duration = CURSED_CHEST_DELAY_WAVE_2
 	},
 	{
 		"continue_when_spawned_count",
 		duration = 120,
-		condition = function (self)
+		condition = function (counter)
 			-- function 59
-			return self.cursed_chest_enemies <= 6
+			return counter.cursed_chest_enemies <= 6
 		end
 	},
 	{
 		"continue_when_spawned_count",
 		duration = 10,
-		condition = function (self)
+		condition = function (counter)
 			-- function 60
-			return self.cursed_chest_elites <= 2
+			return counter.cursed_chest_elites <= 2
 		end
 	},
 	{
@@ -2674,13 +2690,13 @@ GenericTerrorEvents.cursed_chest_challenge_chaos_vortex_sorcerer = {
 		},
 		optional_data = {
 			prevent_killed_enemy_dialogue = true,
-			spawned_func = fn
+			spawned_func = cursed_chest_enemy_spawned_func
 		},
-		min_distance = num_11 - num_15 * 0.5,
-		max_distance = num_11 + num_15 * 0.5,
-		pre_spawn_unit_func = fn_3,
-		post_spawn_unit_func = fn_4,
-		spawn_delay = num_10
+		min_distance = CURSED_CHEST_SPAWN_DISTANCE_SHORT - CURSED_CHEST_SPREAD_MED * 0.5,
+		max_distance = CURSED_CHEST_SPAWN_DISTANCE_SHORT + CURSED_CHEST_SPREAD_MED * 0.5,
+		pre_spawn_unit_func = cursed_chest_enemy_spawn_decal_func,
+		post_spawn_unit_func = cursed_chest_enemy_despawn_decal_func,
+		spawn_delay = CURSED_CHEST_DELAY_SPAWN
 	},
 	{
 		"spawn_around_origin_unit",
@@ -2695,32 +2711,32 @@ GenericTerrorEvents.cursed_chest_challenge_chaos_vortex_sorcerer = {
 		},
 		optional_data = {
 			prevent_killed_enemy_dialogue = true,
-			spawned_func = fn
+			spawned_func = cursed_chest_enemy_spawned_func
 		},
-		min_distance = num_13 - num_15 * 0.5,
-		max_distance = num_13 + num_15 * 0.5,
-		pre_spawn_unit_func = fn_3,
-		post_spawn_unit_func = fn_4,
-		spawn_delay = num_10
+		min_distance = CURSED_CHEST_SPAWN_DISTANCE_LONG - CURSED_CHEST_SPREAD_MED * 0.5,
+		max_distance = CURSED_CHEST_SPAWN_DISTANCE_LONG + CURSED_CHEST_SPREAD_MED * 0.5,
+		pre_spawn_unit_func = cursed_chest_enemy_spawn_decal_func,
+		post_spawn_unit_func = cursed_chest_enemy_despawn_decal_func,
+		spawn_delay = CURSED_CHEST_DELAY_SPAWN
 	},
 	{
 		"delay",
-		duration = num_9
+		duration = CURSED_CHEST_DELAY_WAVE_2
 	},
 	{
 		"continue_when_spawned_count",
 		duration = 120,
-		condition = function (self)
+		condition = function (counter)
 			-- function 61
-			return self.cursed_chest_enemies <= 6
+			return counter.cursed_chest_enemies <= 6
 		end
 	},
 	{
 		"continue_when_spawned_count",
 		duration = 10,
-		condition = function (self)
+		condition = function (counter)
 			-- function 62
-			return self.cursed_chest_elites <= 2
+			return counter.cursed_chest_elites <= 2
 		end
 	},
 	{
@@ -2740,13 +2756,13 @@ GenericTerrorEvents.cursed_chest_challenge_chaos_vortex_sorcerer = {
 		},
 		optional_data = {
 			prevent_killed_enemy_dialogue = true,
-			spawned_func = fn
+			spawned_func = cursed_chest_enemy_spawned_func
 		},
-		min_distance = num_11 - num_15 * 0.5,
-		max_distance = num_11 + num_15 * 0.5,
-		pre_spawn_unit_func = fn_3,
-		post_spawn_unit_func = fn_4,
-		spawn_delay = num_10
+		min_distance = CURSED_CHEST_SPAWN_DISTANCE_SHORT - CURSED_CHEST_SPREAD_MED * 0.5,
+		max_distance = CURSED_CHEST_SPAWN_DISTANCE_SHORT + CURSED_CHEST_SPREAD_MED * 0.5,
+		pre_spawn_unit_func = cursed_chest_enemy_spawn_decal_func,
+		post_spawn_unit_func = cursed_chest_enemy_despawn_decal_func,
+		spawn_delay = CURSED_CHEST_DELAY_SPAWN
 	},
 	{
 		"spawn_around_origin_unit",
@@ -2761,28 +2777,28 @@ GenericTerrorEvents.cursed_chest_challenge_chaos_vortex_sorcerer = {
 		},
 		optional_data = {
 			prevent_killed_enemy_dialogue = true,
-			spawned_func = fn
+			spawned_func = cursed_chest_enemy_spawned_func
 		},
-		min_distance = num_13 - num_15 * 0.5,
-		max_distance = num_13 + num_15 * 0.5,
-		pre_spawn_unit_func = fn_3,
-		post_spawn_unit_func = fn_4,
-		spawn_delay = num_10
+		min_distance = CURSED_CHEST_SPAWN_DISTANCE_LONG - CURSED_CHEST_SPREAD_MED * 0.5,
+		max_distance = CURSED_CHEST_SPAWN_DISTANCE_LONG + CURSED_CHEST_SPREAD_MED * 0.5,
+		pre_spawn_unit_func = cursed_chest_enemy_spawn_decal_func,
+		post_spawn_unit_func = cursed_chest_enemy_despawn_decal_func,
+		spawn_delay = CURSED_CHEST_DELAY_SPAWN
 	},
 	{
 		"continue_when_spawned_count",
 		duration = 20,
-		condition = function (self)
+		condition = function (counter)
 			-- function 63
-			return self.cursed_chest_enemies > 0
+			return counter.cursed_chest_enemies > 0
 		end
 	},
 	{
 		"continue_when_spawned_count",
 		duration = 120,
-		condition = function (self)
+		condition = function (counter)
 			-- function 64
-			return self.cursed_chest_enemies <= 0
+			return counter.cursed_chest_enemies <= 0
 		end
 	},
 	{
@@ -2797,7 +2813,7 @@ GenericTerrorEvents.cursed_chest_challenge_chaos_corruptor_sorcerer = {
 	},
 	{
 		"delay",
-		duration = num_8
+		duration = CURSED_CHEST_DELAY_WAVE_1
 	},
 	{
 		"play_stinger",
@@ -2816,13 +2832,13 @@ GenericTerrorEvents.cursed_chest_challenge_chaos_corruptor_sorcerer = {
 		},
 		optional_data = {
 			prevent_killed_enemy_dialogue = true,
-			spawned_func = fn
+			spawned_func = cursed_chest_enemy_spawned_func
 		},
-		min_distance = num_11 - num_15 * 0.5,
-		max_distance = num_11 + num_15 * 0.5,
-		pre_spawn_unit_func = fn_3,
-		post_spawn_unit_func = fn_4,
-		spawn_delay = num_10
+		min_distance = CURSED_CHEST_SPAWN_DISTANCE_SHORT - CURSED_CHEST_SPREAD_MED * 0.5,
+		max_distance = CURSED_CHEST_SPAWN_DISTANCE_SHORT + CURSED_CHEST_SPREAD_MED * 0.5,
+		pre_spawn_unit_func = cursed_chest_enemy_spawn_decal_func,
+		post_spawn_unit_func = cursed_chest_enemy_despawn_decal_func,
+		spawn_delay = CURSED_CHEST_DELAY_SPAWN
 	},
 	{
 		"spawn_around_origin_unit",
@@ -2837,32 +2853,32 @@ GenericTerrorEvents.cursed_chest_challenge_chaos_corruptor_sorcerer = {
 		},
 		optional_data = {
 			prevent_killed_enemy_dialogue = true,
-			spawned_func = fn
+			spawned_func = cursed_chest_enemy_spawned_func
 		},
-		min_distance = num_13 - num_15 * 0.5,
-		max_distance = num_13 + num_15 * 0.5,
-		pre_spawn_unit_func = fn_3,
-		post_spawn_unit_func = fn_4,
-		spawn_delay = num_10
+		min_distance = CURSED_CHEST_SPAWN_DISTANCE_LONG - CURSED_CHEST_SPREAD_MED * 0.5,
+		max_distance = CURSED_CHEST_SPAWN_DISTANCE_LONG + CURSED_CHEST_SPREAD_MED * 0.5,
+		pre_spawn_unit_func = cursed_chest_enemy_spawn_decal_func,
+		post_spawn_unit_func = cursed_chest_enemy_despawn_decal_func,
+		spawn_delay = CURSED_CHEST_DELAY_SPAWN
 	},
 	{
 		"delay",
-		duration = num_9
+		duration = CURSED_CHEST_DELAY_WAVE_2
 	},
 	{
 		"continue_when_spawned_count",
 		duration = 120,
-		condition = function (self)
+		condition = function (counter)
 			-- function 65
-			return self.cursed_chest_enemies <= 6
+			return counter.cursed_chest_enemies <= 6
 		end
 	},
 	{
 		"continue_when_spawned_count",
 		duration = 10,
-		condition = function (self)
+		condition = function (counter)
 			-- function 66
-			return self.cursed_chest_elites <= 2
+			return counter.cursed_chest_elites <= 2
 		end
 	},
 	{
@@ -2882,13 +2898,13 @@ GenericTerrorEvents.cursed_chest_challenge_chaos_corruptor_sorcerer = {
 		},
 		optional_data = {
 			prevent_killed_enemy_dialogue = true,
-			spawned_func = fn
+			spawned_func = cursed_chest_enemy_spawned_func
 		},
-		min_distance = num_11 - num_15 * 0.5,
-		max_distance = num_11 + num_15 * 0.5,
-		pre_spawn_unit_func = fn_3,
-		post_spawn_unit_func = fn_4,
-		spawn_delay = num_10
+		min_distance = CURSED_CHEST_SPAWN_DISTANCE_SHORT - CURSED_CHEST_SPREAD_MED * 0.5,
+		max_distance = CURSED_CHEST_SPAWN_DISTANCE_SHORT + CURSED_CHEST_SPREAD_MED * 0.5,
+		pre_spawn_unit_func = cursed_chest_enemy_spawn_decal_func,
+		post_spawn_unit_func = cursed_chest_enemy_despawn_decal_func,
+		spawn_delay = CURSED_CHEST_DELAY_SPAWN
 	},
 	{
 		"spawn_around_origin_unit",
@@ -2903,32 +2919,32 @@ GenericTerrorEvents.cursed_chest_challenge_chaos_corruptor_sorcerer = {
 		},
 		optional_data = {
 			prevent_killed_enemy_dialogue = true,
-			spawned_func = fn
+			spawned_func = cursed_chest_enemy_spawned_func
 		},
-		min_distance = num_13 - num_15 * 0.5,
-		max_distance = num_13 + num_15 * 0.5,
-		pre_spawn_unit_func = fn_3,
-		post_spawn_unit_func = fn_4,
-		spawn_delay = num_10
+		min_distance = CURSED_CHEST_SPAWN_DISTANCE_LONG - CURSED_CHEST_SPREAD_MED * 0.5,
+		max_distance = CURSED_CHEST_SPAWN_DISTANCE_LONG + CURSED_CHEST_SPREAD_MED * 0.5,
+		pre_spawn_unit_func = cursed_chest_enemy_spawn_decal_func,
+		post_spawn_unit_func = cursed_chest_enemy_despawn_decal_func,
+		spawn_delay = CURSED_CHEST_DELAY_SPAWN
 	},
 	{
 		"delay",
-		duration = num_9
+		duration = CURSED_CHEST_DELAY_WAVE_2
 	},
 	{
 		"continue_when_spawned_count",
 		duration = 120,
-		condition = function (self)
+		condition = function (counter)
 			-- function 67
-			return self.cursed_chest_enemies <= 6
+			return counter.cursed_chest_enemies <= 6
 		end
 	},
 	{
 		"continue_when_spawned_count",
 		duration = 10,
-		condition = function (self)
+		condition = function (counter)
 			-- function 68
-			return self.cursed_chest_elites <= 2
+			return counter.cursed_chest_elites <= 2
 		end
 	},
 	{
@@ -2948,13 +2964,13 @@ GenericTerrorEvents.cursed_chest_challenge_chaos_corruptor_sorcerer = {
 		},
 		optional_data = {
 			prevent_killed_enemy_dialogue = true,
-			spawned_func = fn
+			spawned_func = cursed_chest_enemy_spawned_func
 		},
-		min_distance = num_11 - num_15 * 0.5,
-		max_distance = num_11 + num_15 * 0.5,
-		pre_spawn_unit_func = fn_3,
-		post_spawn_unit_func = fn_4,
-		spawn_delay = num_10
+		min_distance = CURSED_CHEST_SPAWN_DISTANCE_SHORT - CURSED_CHEST_SPREAD_MED * 0.5,
+		max_distance = CURSED_CHEST_SPAWN_DISTANCE_SHORT + CURSED_CHEST_SPREAD_MED * 0.5,
+		pre_spawn_unit_func = cursed_chest_enemy_spawn_decal_func,
+		post_spawn_unit_func = cursed_chest_enemy_despawn_decal_func,
+		spawn_delay = CURSED_CHEST_DELAY_SPAWN
 	},
 	{
 		"spawn_around_origin_unit",
@@ -2969,28 +2985,28 @@ GenericTerrorEvents.cursed_chest_challenge_chaos_corruptor_sorcerer = {
 		},
 		optional_data = {
 			prevent_killed_enemy_dialogue = true,
-			spawned_func = fn
+			spawned_func = cursed_chest_enemy_spawned_func
 		},
-		min_distance = num_13 - num_15 * 0.5,
-		max_distance = num_13 + num_15 * 0.5,
-		pre_spawn_unit_func = fn_3,
-		post_spawn_unit_func = fn_4,
-		spawn_delay = num_10
+		min_distance = CURSED_CHEST_SPAWN_DISTANCE_LONG - CURSED_CHEST_SPREAD_MED * 0.5,
+		max_distance = CURSED_CHEST_SPAWN_DISTANCE_LONG + CURSED_CHEST_SPREAD_MED * 0.5,
+		pre_spawn_unit_func = cursed_chest_enemy_spawn_decal_func,
+		post_spawn_unit_func = cursed_chest_enemy_despawn_decal_func,
+		spawn_delay = CURSED_CHEST_DELAY_SPAWN
 	},
 	{
 		"continue_when_spawned_count",
 		duration = 20,
-		condition = function (self)
+		condition = function (counter)
 			-- function 69
-			return self.cursed_chest_enemies > 0
+			return counter.cursed_chest_enemies > 0
 		end
 	},
 	{
 		"continue_when_spawned_count",
 		duration = 120,
-		condition = function (self)
+		condition = function (counter)
 			-- function 70
-			return self.cursed_chest_enemies <= 0
+			return counter.cursed_chest_enemies <= 0
 		end
 	},
 	{
@@ -3005,7 +3021,7 @@ GenericTerrorEvents.cursed_chest_challenge_chaos_troll = {
 	},
 	{
 		"delay",
-		duration = num_8
+		duration = CURSED_CHEST_DELAY_WAVE_1
 	},
 	{
 		"play_stinger",
@@ -3017,14 +3033,14 @@ GenericTerrorEvents.cursed_chest_challenge_chaos_troll = {
 		spawn_counter_category = "cursed_chest_enemies",
 		optional_data = {
 			prevent_killed_enemy_dialogue = true,
-			spawned_func = fn
+			spawned_func = cursed_chest_enemy_spawned_func
 		},
-		min_distance = num_13 - num_15 * 0.5,
-		max_distance = num_13 + num_15 * 0.5,
-		pre_spawn_unit_func = fn_3,
-		post_spawn_unit_func = fn_4,
-		spawn_delay = num_10,
-		pre_spawn_func = add_enhancements_for_difficulty
+		min_distance = CURSED_CHEST_SPAWN_DISTANCE_LONG - CURSED_CHEST_SPREAD_MED * 0.5,
+		max_distance = CURSED_CHEST_SPAWN_DISTANCE_LONG + CURSED_CHEST_SPREAD_MED * 0.5,
+		pre_spawn_unit_func = cursed_chest_enemy_spawn_decal_func,
+		post_spawn_unit_func = cursed_chest_enemy_despawn_decal_func,
+		spawn_delay = CURSED_CHEST_DELAY_SPAWN,
+		pre_spawn_func = cursed_chest_enemy_pre_spawn_func
 	},
 	{
 		"spawn_around_origin_unit",
@@ -3039,13 +3055,13 @@ GenericTerrorEvents.cursed_chest_challenge_chaos_troll = {
 		},
 		optional_data = {
 			prevent_killed_enemy_dialogue = true,
-			spawned_func = fn
+			spawned_func = cursed_chest_enemy_spawned_func
 		},
-		min_distance = num_11 - num_15 * 0.5,
-		max_distance = num_11 + num_15 * 0.5,
-		pre_spawn_unit_func = fn_3,
-		post_spawn_unit_func = fn_4,
-		spawn_delay = num_10
+		min_distance = CURSED_CHEST_SPAWN_DISTANCE_SHORT - CURSED_CHEST_SPREAD_MED * 0.5,
+		max_distance = CURSED_CHEST_SPAWN_DISTANCE_SHORT + CURSED_CHEST_SPREAD_MED * 0.5,
+		pre_spawn_unit_func = cursed_chest_enemy_spawn_decal_func,
+		post_spawn_unit_func = cursed_chest_enemy_despawn_decal_func,
+		spawn_delay = CURSED_CHEST_DELAY_SPAWN
 	},
 	{
 		"delay",
@@ -3068,13 +3084,13 @@ GenericTerrorEvents.cursed_chest_challenge_chaos_troll = {
 		},
 		optional_data = {
 			prevent_killed_enemy_dialogue = true,
-			spawned_func = fn
+			spawned_func = cursed_chest_enemy_spawned_func
 		},
-		min_distance = num_11 - num_15 * 0.5,
-		max_distance = num_11 + num_15 * 0.5,
-		pre_spawn_unit_func = fn_3,
-		post_spawn_unit_func = fn_4,
-		spawn_delay = num_10
+		min_distance = CURSED_CHEST_SPAWN_DISTANCE_SHORT - CURSED_CHEST_SPREAD_MED * 0.5,
+		max_distance = CURSED_CHEST_SPAWN_DISTANCE_SHORT + CURSED_CHEST_SPREAD_MED * 0.5,
+		pre_spawn_unit_func = cursed_chest_enemy_spawn_decal_func,
+		post_spawn_unit_func = cursed_chest_enemy_despawn_decal_func,
+		spawn_delay = CURSED_CHEST_DELAY_SPAWN
 	},
 	{
 		"delay",
@@ -3083,17 +3099,17 @@ GenericTerrorEvents.cursed_chest_challenge_chaos_troll = {
 	{
 		"continue_when_spawned_count",
 		duration = 20,
-		condition = function (self)
+		condition = function (counter)
 			-- function 71
-			return self.cursed_chest_enemies > 0
+			return counter.cursed_chest_enemies > 0
 		end
 	},
 	{
 		"continue_when_spawned_count",
 		duration = 120,
-		condition = function (self)
+		condition = function (counter)
 			-- function 72
-			return self.cursed_chest_enemies <= 0
+			return counter.cursed_chest_enemies <= 0
 		end
 	},
 	{
@@ -3108,7 +3124,7 @@ GenericTerrorEvents.cursed_chest_challenge_chaos_spawn = {
 	},
 	{
 		"delay",
-		duration = num_8
+		duration = CURSED_CHEST_DELAY_WAVE_1
 	},
 	{
 		"play_stinger",
@@ -3120,14 +3136,14 @@ GenericTerrorEvents.cursed_chest_challenge_chaos_spawn = {
 		spawn_counter_category = "cursed_chest_enemies",
 		optional_data = {
 			prevent_killed_enemy_dialogue = true,
-			spawned_func = fn
+			spawned_func = cursed_chest_enemy_spawned_func
 		},
-		min_distance = num_13 - num_15 * 0.5,
-		max_distance = num_13 + num_15 * 0.5,
-		pre_spawn_unit_func = fn_3,
-		post_spawn_unit_func = fn_4,
-		spawn_delay = num_10,
-		pre_spawn_func = add_enhancements_for_difficulty
+		min_distance = CURSED_CHEST_SPAWN_DISTANCE_LONG - CURSED_CHEST_SPREAD_MED * 0.5,
+		max_distance = CURSED_CHEST_SPAWN_DISTANCE_LONG + CURSED_CHEST_SPREAD_MED * 0.5,
+		pre_spawn_unit_func = cursed_chest_enemy_spawn_decal_func,
+		post_spawn_unit_func = cursed_chest_enemy_despawn_decal_func,
+		spawn_delay = CURSED_CHEST_DELAY_SPAWN,
+		pre_spawn_func = cursed_chest_enemy_pre_spawn_func
 	},
 	{
 		"spawn_around_origin_unit",
@@ -3142,13 +3158,13 @@ GenericTerrorEvents.cursed_chest_challenge_chaos_spawn = {
 		},
 		optional_data = {
 			prevent_killed_enemy_dialogue = true,
-			spawned_func = fn
+			spawned_func = cursed_chest_enemy_spawned_func
 		},
-		min_distance = num_11 - num_15 * 0.5,
-		max_distance = num_11 + num_15 * 0.5,
-		pre_spawn_unit_func = fn_3,
-		post_spawn_unit_func = fn_4,
-		spawn_delay = num_10
+		min_distance = CURSED_CHEST_SPAWN_DISTANCE_SHORT - CURSED_CHEST_SPREAD_MED * 0.5,
+		max_distance = CURSED_CHEST_SPAWN_DISTANCE_SHORT + CURSED_CHEST_SPREAD_MED * 0.5,
+		pre_spawn_unit_func = cursed_chest_enemy_spawn_decal_func,
+		post_spawn_unit_func = cursed_chest_enemy_despawn_decal_func,
+		spawn_delay = CURSED_CHEST_DELAY_SPAWN
 	},
 	{
 		"delay",
@@ -3157,17 +3173,17 @@ GenericTerrorEvents.cursed_chest_challenge_chaos_spawn = {
 	{
 		"continue_when_spawned_count",
 		duration = 20,
-		condition = function (self)
+		condition = function (counter)
 			-- function 73
-			return self.cursed_chest_enemies > 0
+			return counter.cursed_chest_enemies > 0
 		end
 	},
 	{
 		"continue_when_spawned_count",
 		duration = 120,
-		condition = function (self)
+		condition = function (counter)
 			-- function 74
-			return self.cursed_chest_enemies <= 0
+			return counter.cursed_chest_enemies <= 0
 		end
 	},
 	{
@@ -3258,7 +3274,7 @@ GenericTerrorEvents.cursed_chest_challenge_beastmen_bestigor_bearer = {
 	},
 	{
 		"delay",
-		duration = num_8
+		duration = CURSED_CHEST_DELAY_WAVE_1
 	},
 	{
 		"play_stinger",
@@ -3277,13 +3293,13 @@ GenericTerrorEvents.cursed_chest_challenge_beastmen_bestigor_bearer = {
 		},
 		optional_data = {
 			prevent_killed_enemy_dialogue = true,
-			spawned_func = fn
+			spawned_func = cursed_chest_enemy_spawned_func
 		},
-		min_distance = num_11 - num_15 * 0.5,
-		max_distance = num_11 + num_15 * 0.5,
-		pre_spawn_unit_func = fn_3,
-		post_spawn_unit_func = fn_4,
-		spawn_delay = num_10
+		min_distance = CURSED_CHEST_SPAWN_DISTANCE_SHORT - CURSED_CHEST_SPREAD_MED * 0.5,
+		max_distance = CURSED_CHEST_SPAWN_DISTANCE_SHORT + CURSED_CHEST_SPREAD_MED * 0.5,
+		pre_spawn_unit_func = cursed_chest_enemy_spawn_decal_func,
+		post_spawn_unit_func = cursed_chest_enemy_despawn_decal_func,
+		spawn_delay = CURSED_CHEST_DELAY_SPAWN
 	},
 	{
 		"spawn_around_origin_unit",
@@ -3298,24 +3314,24 @@ GenericTerrorEvents.cursed_chest_challenge_beastmen_bestigor_bearer = {
 		},
 		optional_data = {
 			prevent_killed_enemy_dialogue = true,
-			spawned_func = fn
+			spawned_func = cursed_chest_enemy_spawned_func
 		},
-		min_distance = num_11 - num_15 * 0.5,
-		max_distance = num_11 + num_15 * 0.5,
-		pre_spawn_unit_func = fn_3,
-		post_spawn_unit_func = fn_4,
-		spawn_delay = num_10
+		min_distance = CURSED_CHEST_SPAWN_DISTANCE_SHORT - CURSED_CHEST_SPREAD_MED * 0.5,
+		max_distance = CURSED_CHEST_SPAWN_DISTANCE_SHORT + CURSED_CHEST_SPREAD_MED * 0.5,
+		pre_spawn_unit_func = cursed_chest_enemy_spawn_decal_func,
+		post_spawn_unit_func = cursed_chest_enemy_despawn_decal_func,
+		spawn_delay = CURSED_CHEST_DELAY_SPAWN
 	},
 	{
 		"delay",
-		duration = num_9
+		duration = CURSED_CHEST_DELAY_WAVE_2
 	},
 	{
 		"continue_when_spawned_count",
 		duration = 120,
-		condition = function (self)
+		condition = function (counter)
 			-- function 75
-			return self.cursed_chest_enemies <= 2
+			return counter.cursed_chest_enemies <= 2
 		end
 	},
 	{
@@ -3335,13 +3351,13 @@ GenericTerrorEvents.cursed_chest_challenge_beastmen_bestigor_bearer = {
 		},
 		optional_data = {
 			prevent_killed_enemy_dialogue = true,
-			spawned_func = fn
+			spawned_func = cursed_chest_enemy_spawned_func
 		},
-		min_distance = num_11 - num_15 * 0.5,
-		max_distance = num_11 + num_15 * 0.5,
-		pre_spawn_unit_func = fn_3,
-		post_spawn_unit_func = fn_4,
-		spawn_delay = num_10
+		min_distance = CURSED_CHEST_SPAWN_DISTANCE_SHORT - CURSED_CHEST_SPREAD_MED * 0.5,
+		max_distance = CURSED_CHEST_SPAWN_DISTANCE_SHORT + CURSED_CHEST_SPREAD_MED * 0.5,
+		pre_spawn_unit_func = cursed_chest_enemy_spawn_decal_func,
+		post_spawn_unit_func = cursed_chest_enemy_despawn_decal_func,
+		spawn_delay = CURSED_CHEST_DELAY_SPAWN
 	},
 	{
 		"spawn_around_origin_unit",
@@ -3356,13 +3372,13 @@ GenericTerrorEvents.cursed_chest_challenge_beastmen_bestigor_bearer = {
 		},
 		optional_data = {
 			prevent_killed_enemy_dialogue = true,
-			spawned_func = fn
+			spawned_func = cursed_chest_enemy_spawned_func
 		},
-		min_distance = num_11 - num_15 * 0.5,
-		max_distance = num_11 + num_15 * 0.5,
-		pre_spawn_unit_func = fn_3,
-		post_spawn_unit_func = fn_4,
-		spawn_delay = num_10
+		min_distance = CURSED_CHEST_SPAWN_DISTANCE_SHORT - CURSED_CHEST_SPREAD_MED * 0.5,
+		max_distance = CURSED_CHEST_SPAWN_DISTANCE_SHORT + CURSED_CHEST_SPREAD_MED * 0.5,
+		pre_spawn_unit_func = cursed_chest_enemy_spawn_decal_func,
+		post_spawn_unit_func = cursed_chest_enemy_despawn_decal_func,
+		spawn_delay = CURSED_CHEST_DELAY_SPAWN
 	},
 	{
 		"delay",
@@ -3371,17 +3387,17 @@ GenericTerrorEvents.cursed_chest_challenge_beastmen_bestigor_bearer = {
 	{
 		"continue_when_spawned_count",
 		duration = 20,
-		condition = function (self)
+		condition = function (counter)
 			-- function 76
-			return self.cursed_chest_enemies > 0
+			return counter.cursed_chest_enemies > 0
 		end
 	},
 	{
 		"continue_when_spawned_count",
 		duration = 120,
-		condition = function (self)
+		condition = function (counter)
 			-- function 77
-			return self.cursed_chest_enemies <= 0
+			return counter.cursed_chest_enemies <= 0
 		end
 	},
 	{
@@ -3396,7 +3412,7 @@ GenericTerrorEvents.cursed_chest_challenge_beastmen_horde_bearer = {
 	},
 	{
 		"delay",
-		duration = num_8
+		duration = CURSED_CHEST_DELAY_WAVE_1
 	},
 	{
 		"play_stinger",
@@ -3415,13 +3431,13 @@ GenericTerrorEvents.cursed_chest_challenge_beastmen_horde_bearer = {
 		},
 		optional_data = {
 			prevent_killed_enemy_dialogue = true,
-			spawned_func = fn
+			spawned_func = cursed_chest_enemy_spawned_func
 		},
-		min_distance = num_11 - num_15 * 0.5,
-		max_distance = num_11 + num_15 * 0.5,
-		pre_spawn_unit_func = fn_3,
-		post_spawn_unit_func = fn_4,
-		spawn_delay = num_10
+		min_distance = CURSED_CHEST_SPAWN_DISTANCE_SHORT - CURSED_CHEST_SPREAD_MED * 0.5,
+		max_distance = CURSED_CHEST_SPAWN_DISTANCE_SHORT + CURSED_CHEST_SPREAD_MED * 0.5,
+		pre_spawn_unit_func = cursed_chest_enemy_spawn_decal_func,
+		post_spawn_unit_func = cursed_chest_enemy_despawn_decal_func,
+		spawn_delay = CURSED_CHEST_DELAY_SPAWN
 	},
 	{
 		"spawn_around_origin_unit",
@@ -3436,32 +3452,32 @@ GenericTerrorEvents.cursed_chest_challenge_beastmen_horde_bearer = {
 		},
 		optional_data = {
 			prevent_killed_enemy_dialogue = true,
-			spawned_func = fn
+			spawned_func = cursed_chest_enemy_spawned_func
 		},
-		min_distance = num_11 - num_15 * 0.5,
-		max_distance = num_11 + num_15 * 0.5,
-		pre_spawn_unit_func = fn_3,
-		post_spawn_unit_func = fn_4,
-		spawn_delay = num_10
+		min_distance = CURSED_CHEST_SPAWN_DISTANCE_SHORT - CURSED_CHEST_SPREAD_MED * 0.5,
+		max_distance = CURSED_CHEST_SPAWN_DISTANCE_SHORT + CURSED_CHEST_SPREAD_MED * 0.5,
+		pre_spawn_unit_func = cursed_chest_enemy_spawn_decal_func,
+		post_spawn_unit_func = cursed_chest_enemy_despawn_decal_func,
+		spawn_delay = CURSED_CHEST_DELAY_SPAWN
 	},
 	{
 		"delay",
-		duration = num_9
+		duration = CURSED_CHEST_DELAY_WAVE_2
 	},
 	{
 		"continue_when_spawned_count",
 		duration = 20,
-		condition = function (self)
+		condition = function (counter)
 			-- function 78
-			return self.cursed_chest_elites <= 2
+			return counter.cursed_chest_elites <= 2
 		end
 	},
 	{
 		"continue_when_spawned_count",
 		duration = 20,
-		condition = function (self)
+		condition = function (counter)
 			-- function 79
-			return self.cursed_chest_enemies <= 10
+			return counter.cursed_chest_enemies <= 10
 		end
 	},
 	{
@@ -3481,13 +3497,13 @@ GenericTerrorEvents.cursed_chest_challenge_beastmen_horde_bearer = {
 		},
 		optional_data = {
 			prevent_killed_enemy_dialogue = true,
-			spawned_func = fn
+			spawned_func = cursed_chest_enemy_spawned_func
 		},
-		min_distance = num_11 - num_15 * 0.5,
-		max_distance = num_11 + num_15 * 0.5,
-		pre_spawn_unit_func = fn_3,
-		post_spawn_unit_func = fn_4,
-		spawn_delay = num_10
+		min_distance = CURSED_CHEST_SPAWN_DISTANCE_SHORT - CURSED_CHEST_SPREAD_MED * 0.5,
+		max_distance = CURSED_CHEST_SPAWN_DISTANCE_SHORT + CURSED_CHEST_SPREAD_MED * 0.5,
+		pre_spawn_unit_func = cursed_chest_enemy_spawn_decal_func,
+		post_spawn_unit_func = cursed_chest_enemy_despawn_decal_func,
+		spawn_delay = CURSED_CHEST_DELAY_SPAWN
 	},
 	{
 		"spawn_around_origin_unit",
@@ -3502,32 +3518,32 @@ GenericTerrorEvents.cursed_chest_challenge_beastmen_horde_bearer = {
 		},
 		optional_data = {
 			prevent_killed_enemy_dialogue = true,
-			spawned_func = fn
+			spawned_func = cursed_chest_enemy_spawned_func
 		},
-		min_distance = num_11 - num_15 * 0.5,
-		max_distance = num_11 + num_15 * 0.5,
-		pre_spawn_unit_func = fn_3,
-		post_spawn_unit_func = fn_4,
-		spawn_delay = num_10
+		min_distance = CURSED_CHEST_SPAWN_DISTANCE_SHORT - CURSED_CHEST_SPREAD_MED * 0.5,
+		max_distance = CURSED_CHEST_SPAWN_DISTANCE_SHORT + CURSED_CHEST_SPREAD_MED * 0.5,
+		pre_spawn_unit_func = cursed_chest_enemy_spawn_decal_func,
+		post_spawn_unit_func = cursed_chest_enemy_despawn_decal_func,
+		spawn_delay = CURSED_CHEST_DELAY_SPAWN
 	},
 	{
 		"delay",
-		duration = num_9
+		duration = CURSED_CHEST_DELAY_WAVE_2
 	},
 	{
 		"continue_when_spawned_count",
 		duration = 20,
-		condition = function (self)
+		condition = function (counter)
 			-- function 80
-			return self.cursed_chest_elites <= 2
+			return counter.cursed_chest_elites <= 2
 		end
 	},
 	{
 		"continue_when_spawned_count",
 		duration = 20,
-		condition = function (self)
+		condition = function (counter)
 			-- function 81
-			return self.cursed_chest_enemies <= 10
+			return counter.cursed_chest_enemies <= 10
 		end
 	},
 	{
@@ -3547,13 +3563,13 @@ GenericTerrorEvents.cursed_chest_challenge_beastmen_horde_bearer = {
 		},
 		optional_data = {
 			prevent_killed_enemy_dialogue = true,
-			spawned_func = fn
+			spawned_func = cursed_chest_enemy_spawned_func
 		},
-		min_distance = num_11 - num_15 * 0.5,
-		max_distance = num_11 + num_15 * 0.5,
-		pre_spawn_unit_func = fn_3,
-		post_spawn_unit_func = fn_4,
-		spawn_delay = num_10
+		min_distance = CURSED_CHEST_SPAWN_DISTANCE_SHORT - CURSED_CHEST_SPREAD_MED * 0.5,
+		max_distance = CURSED_CHEST_SPAWN_DISTANCE_SHORT + CURSED_CHEST_SPREAD_MED * 0.5,
+		pre_spawn_unit_func = cursed_chest_enemy_spawn_decal_func,
+		post_spawn_unit_func = cursed_chest_enemy_despawn_decal_func,
+		spawn_delay = CURSED_CHEST_DELAY_SPAWN
 	},
 	{
 		"spawn_around_origin_unit",
@@ -3568,40 +3584,40 @@ GenericTerrorEvents.cursed_chest_challenge_beastmen_horde_bearer = {
 		},
 		optional_data = {
 			prevent_killed_enemy_dialogue = true,
-			spawned_func = fn
+			spawned_func = cursed_chest_enemy_spawned_func
 		},
-		min_distance = num_11 - num_15 * 0.5,
-		max_distance = num_11 + num_15 * 0.5,
-		pre_spawn_unit_func = fn_3,
-		post_spawn_unit_func = fn_4,
-		spawn_delay = num_10
+		min_distance = CURSED_CHEST_SPAWN_DISTANCE_SHORT - CURSED_CHEST_SPREAD_MED * 0.5,
+		max_distance = CURSED_CHEST_SPAWN_DISTANCE_SHORT + CURSED_CHEST_SPREAD_MED * 0.5,
+		pre_spawn_unit_func = cursed_chest_enemy_spawn_decal_func,
+		post_spawn_unit_func = cursed_chest_enemy_despawn_decal_func,
+		spawn_delay = CURSED_CHEST_DELAY_SPAWN
 	},
 	{
 		"delay",
-		duration = num_9
+		duration = CURSED_CHEST_DELAY_WAVE_2
 	},
 	{
 		"continue_when_spawned_count",
 		duration = 20,
-		condition = function (self)
+		condition = function (counter)
 			-- function 82
-			return self.cursed_chest_enemies > 0
+			return counter.cursed_chest_enemies > 0
 		end
 	},
 	{
 		"continue_when_spawned_count",
 		duration = 120,
-		condition = function (self)
+		condition = function (counter)
 			-- function 83
-			return self.cursed_chest_elites <= 0
+			return counter.cursed_chest_elites <= 0
 		end
 	},
 	{
 		"continue_when_spawned_count",
 		duration = 120,
-		condition = function (self)
+		condition = function (counter)
 			-- function 84
-			return self.cursed_chest_enemies <= 0
+			return counter.cursed_chest_enemies <= 0
 		end
 	},
 	{
@@ -3616,7 +3632,7 @@ GenericTerrorEvents.cursed_chest_challenge_beastmen_ungor_archer = {
 	},
 	{
 		"delay",
-		duration = num_8
+		duration = CURSED_CHEST_DELAY_WAVE_1
 	},
 	{
 		"play_stinger",
@@ -3635,13 +3651,13 @@ GenericTerrorEvents.cursed_chest_challenge_beastmen_ungor_archer = {
 		},
 		optional_data = {
 			prevent_killed_enemy_dialogue = true,
-			spawned_func = fn
+			spawned_func = cursed_chest_enemy_spawned_func
 		},
-		min_distance = num_12 - num_15 * 0.5,
-		max_distance = num_12 + num_15 * 0.5,
-		pre_spawn_unit_func = fn_3,
-		post_spawn_unit_func = fn_4,
-		spawn_delay = num_10
+		min_distance = CURSED_CHEST_SPAWN_SPAWN_DISTANCE_MED - CURSED_CHEST_SPREAD_MED * 0.5,
+		max_distance = CURSED_CHEST_SPAWN_SPAWN_DISTANCE_MED + CURSED_CHEST_SPREAD_MED * 0.5,
+		pre_spawn_unit_func = cursed_chest_enemy_spawn_decal_func,
+		post_spawn_unit_func = cursed_chest_enemy_despawn_decal_func,
+		spawn_delay = CURSED_CHEST_DELAY_SPAWN
 	},
 	{
 		"spawn_around_origin_unit",
@@ -3656,24 +3672,24 @@ GenericTerrorEvents.cursed_chest_challenge_beastmen_ungor_archer = {
 		},
 		optional_data = {
 			prevent_killed_enemy_dialogue = true,
-			spawned_func = fn
+			spawned_func = cursed_chest_enemy_spawned_func
 		},
-		min_distance = num_11 - num_15 * 0.5,
-		max_distance = num_11 + num_15 * 0.5,
-		pre_spawn_unit_func = fn_3,
-		post_spawn_unit_func = fn_4,
-		spawn_delay = num_10
+		min_distance = CURSED_CHEST_SPAWN_DISTANCE_SHORT - CURSED_CHEST_SPREAD_MED * 0.5,
+		max_distance = CURSED_CHEST_SPAWN_DISTANCE_SHORT + CURSED_CHEST_SPREAD_MED * 0.5,
+		pre_spawn_unit_func = cursed_chest_enemy_spawn_decal_func,
+		post_spawn_unit_func = cursed_chest_enemy_despawn_decal_func,
+		spawn_delay = CURSED_CHEST_DELAY_SPAWN
 	},
 	{
 		"delay",
-		duration = num_9
+		duration = CURSED_CHEST_DELAY_WAVE_2
 	},
 	{
 		"continue_when_spawned_count",
 		duration = 10,
-		condition = function (self)
+		condition = function (counter)
 			-- function 85
-			return self.cursed_chest_enemies <= 0
+			return counter.cursed_chest_enemies <= 0
 		end
 	},
 	{
@@ -3693,13 +3709,13 @@ GenericTerrorEvents.cursed_chest_challenge_beastmen_ungor_archer = {
 		},
 		optional_data = {
 			prevent_killed_enemy_dialogue = true,
-			spawned_func = fn
+			spawned_func = cursed_chest_enemy_spawned_func
 		},
-		min_distance = num_12 - num_15 * 0.5,
-		max_distance = num_12 + num_15 * 0.5,
-		pre_spawn_unit_func = fn_3,
-		post_spawn_unit_func = fn_4,
-		spawn_delay = num_10
+		min_distance = CURSED_CHEST_SPAWN_SPAWN_DISTANCE_MED - CURSED_CHEST_SPREAD_MED * 0.5,
+		max_distance = CURSED_CHEST_SPAWN_SPAWN_DISTANCE_MED + CURSED_CHEST_SPREAD_MED * 0.5,
+		pre_spawn_unit_func = cursed_chest_enemy_spawn_decal_func,
+		post_spawn_unit_func = cursed_chest_enemy_despawn_decal_func,
+		spawn_delay = CURSED_CHEST_DELAY_SPAWN
 	},
 	{
 		"spawn_around_origin_unit",
@@ -3714,24 +3730,24 @@ GenericTerrorEvents.cursed_chest_challenge_beastmen_ungor_archer = {
 		},
 		optional_data = {
 			prevent_killed_enemy_dialogue = true,
-			spawned_func = fn
+			spawned_func = cursed_chest_enemy_spawned_func
 		},
-		min_distance = num_11 - num_15 * 0.5,
-		max_distance = num_11 + num_15 * 0.5,
-		pre_spawn_unit_func = fn_3,
-		post_spawn_unit_func = fn_4,
-		spawn_delay = num_10
+		min_distance = CURSED_CHEST_SPAWN_DISTANCE_SHORT - CURSED_CHEST_SPREAD_MED * 0.5,
+		max_distance = CURSED_CHEST_SPAWN_DISTANCE_SHORT + CURSED_CHEST_SPREAD_MED * 0.5,
+		pre_spawn_unit_func = cursed_chest_enemy_spawn_decal_func,
+		post_spawn_unit_func = cursed_chest_enemy_despawn_decal_func,
+		spawn_delay = CURSED_CHEST_DELAY_SPAWN
 	},
 	{
 		"delay",
-		duration = num_9
+		duration = CURSED_CHEST_DELAY_WAVE_2
 	},
 	{
 		"continue_when_spawned_count",
 		duration = 10,
-		condition = function (self)
+		condition = function (counter)
 			-- function 86
-			return self.cursed_chest_enemies <= 0
+			return counter.cursed_chest_enemies <= 0
 		end
 	},
 	{
@@ -3751,13 +3767,13 @@ GenericTerrorEvents.cursed_chest_challenge_beastmen_ungor_archer = {
 		},
 		optional_data = {
 			prevent_killed_enemy_dialogue = true,
-			spawned_func = fn
+			spawned_func = cursed_chest_enemy_spawned_func
 		},
-		min_distance = num_12 - num_15 * 0.5,
-		max_distance = num_12 + num_15 * 0.5,
-		pre_spawn_unit_func = fn_3,
-		post_spawn_unit_func = fn_4,
-		spawn_delay = num_10
+		min_distance = CURSED_CHEST_SPAWN_SPAWN_DISTANCE_MED - CURSED_CHEST_SPREAD_MED * 0.5,
+		max_distance = CURSED_CHEST_SPAWN_SPAWN_DISTANCE_MED + CURSED_CHEST_SPREAD_MED * 0.5,
+		pre_spawn_unit_func = cursed_chest_enemy_spawn_decal_func,
+		post_spawn_unit_func = cursed_chest_enemy_despawn_decal_func,
+		spawn_delay = CURSED_CHEST_DELAY_SPAWN
 	},
 	{
 		"spawn_around_origin_unit",
@@ -3772,13 +3788,13 @@ GenericTerrorEvents.cursed_chest_challenge_beastmen_ungor_archer = {
 		},
 		optional_data = {
 			prevent_killed_enemy_dialogue = true,
-			spawned_func = fn
+			spawned_func = cursed_chest_enemy_spawned_func
 		},
-		min_distance = num_11 - num_15 * 0.5,
-		max_distance = num_11 + num_15 * 0.5,
-		pre_spawn_unit_func = fn_3,
-		post_spawn_unit_func = fn_4,
-		spawn_delay = num_10
+		min_distance = CURSED_CHEST_SPAWN_DISTANCE_SHORT - CURSED_CHEST_SPREAD_MED * 0.5,
+		max_distance = CURSED_CHEST_SPAWN_DISTANCE_SHORT + CURSED_CHEST_SPREAD_MED * 0.5,
+		pre_spawn_unit_func = cursed_chest_enemy_spawn_decal_func,
+		post_spawn_unit_func = cursed_chest_enemy_despawn_decal_func,
+		spawn_delay = CURSED_CHEST_DELAY_SPAWN
 	},
 	{
 		"delay",
@@ -3787,17 +3803,17 @@ GenericTerrorEvents.cursed_chest_challenge_beastmen_ungor_archer = {
 	{
 		"continue_when_spawned_count",
 		duration = 20,
-		condition = function (self)
+		condition = function (counter)
 			-- function 87
-			return self.cursed_chest_enemies > 0
+			return counter.cursed_chest_enemies > 0
 		end
 	},
 	{
 		"continue_when_spawned_count",
 		duration = 120,
-		condition = function (self)
+		condition = function (counter)
 			-- function 88
-			return self.cursed_chest_enemies <= 0
+			return counter.cursed_chest_enemies <= 0
 		end
 	},
 	{
@@ -3812,7 +3828,7 @@ GenericTerrorEvents.cursed_chest_challenge_beastmen_bestigor = {
 	},
 	{
 		"delay",
-		duration = num_8
+		duration = CURSED_CHEST_DELAY_WAVE_1
 	},
 	{
 		"play_stinger",
@@ -3831,13 +3847,13 @@ GenericTerrorEvents.cursed_chest_challenge_beastmen_bestigor = {
 		},
 		optional_data = {
 			prevent_killed_enemy_dialogue = true,
-			spawned_func = fn
+			spawned_func = cursed_chest_enemy_spawned_func
 		},
-		min_distance = num_11 - num_15 * 0.5,
-		max_distance = num_11 + num_15 * 0.5,
-		pre_spawn_unit_func = fn_3,
-		post_spawn_unit_func = fn_4,
-		spawn_delay = num_10
+		min_distance = CURSED_CHEST_SPAWN_DISTANCE_SHORT - CURSED_CHEST_SPREAD_MED * 0.5,
+		max_distance = CURSED_CHEST_SPAWN_DISTANCE_SHORT + CURSED_CHEST_SPREAD_MED * 0.5,
+		pre_spawn_unit_func = cursed_chest_enemy_spawn_decal_func,
+		post_spawn_unit_func = cursed_chest_enemy_despawn_decal_func,
+		spawn_delay = CURSED_CHEST_DELAY_SPAWN
 	},
 	{
 		"spawn_around_origin_unit",
@@ -3852,24 +3868,24 @@ GenericTerrorEvents.cursed_chest_challenge_beastmen_bestigor = {
 		},
 		optional_data = {
 			prevent_killed_enemy_dialogue = true,
-			spawned_func = fn
+			spawned_func = cursed_chest_enemy_spawned_func
 		},
-		min_distance = num_11 - num_15 * 0.5,
-		max_distance = num_11 + num_15 * 0.5,
-		pre_spawn_unit_func = fn_3,
-		post_spawn_unit_func = fn_4,
-		spawn_delay = num_10
+		min_distance = CURSED_CHEST_SPAWN_DISTANCE_SHORT - CURSED_CHEST_SPREAD_MED * 0.5,
+		max_distance = CURSED_CHEST_SPAWN_DISTANCE_SHORT + CURSED_CHEST_SPREAD_MED * 0.5,
+		pre_spawn_unit_func = cursed_chest_enemy_spawn_decal_func,
+		post_spawn_unit_func = cursed_chest_enemy_despawn_decal_func,
+		spawn_delay = CURSED_CHEST_DELAY_SPAWN
 	},
 	{
 		"delay",
-		duration = num_9
+		duration = CURSED_CHEST_DELAY_WAVE_2
 	},
 	{
 		"continue_when_spawned_count",
 		duration = 120,
-		condition = function (self)
+		condition = function (counter)
 			-- function 89
-			return self.cursed_chest_enemies <= 2
+			return counter.cursed_chest_enemies <= 2
 		end
 	},
 	{
@@ -3889,13 +3905,13 @@ GenericTerrorEvents.cursed_chest_challenge_beastmen_bestigor = {
 		},
 		optional_data = {
 			prevent_killed_enemy_dialogue = true,
-			spawned_func = fn
+			spawned_func = cursed_chest_enemy_spawned_func
 		},
-		min_distance = num_11 - num_15 * 0.5,
-		max_distance = num_11 + num_15 * 0.5,
-		pre_spawn_unit_func = fn_3,
-		post_spawn_unit_func = fn_4,
-		spawn_delay = num_10
+		min_distance = CURSED_CHEST_SPAWN_DISTANCE_SHORT - CURSED_CHEST_SPREAD_MED * 0.5,
+		max_distance = CURSED_CHEST_SPAWN_DISTANCE_SHORT + CURSED_CHEST_SPREAD_MED * 0.5,
+		pre_spawn_unit_func = cursed_chest_enemy_spawn_decal_func,
+		post_spawn_unit_func = cursed_chest_enemy_despawn_decal_func,
+		spawn_delay = CURSED_CHEST_DELAY_SPAWN
 	},
 	{
 		"spawn_around_origin_unit",
@@ -3910,24 +3926,24 @@ GenericTerrorEvents.cursed_chest_challenge_beastmen_bestigor = {
 		},
 		optional_data = {
 			prevent_killed_enemy_dialogue = true,
-			spawned_func = fn
+			spawned_func = cursed_chest_enemy_spawned_func
 		},
-		min_distance = num_11 - num_15 * 0.5,
-		max_distance = num_11 + num_15 * 0.5,
-		pre_spawn_unit_func = fn_3,
-		post_spawn_unit_func = fn_4,
-		spawn_delay = num_10
+		min_distance = CURSED_CHEST_SPAWN_DISTANCE_SHORT - CURSED_CHEST_SPREAD_MED * 0.5,
+		max_distance = CURSED_CHEST_SPAWN_DISTANCE_SHORT + CURSED_CHEST_SPREAD_MED * 0.5,
+		pre_spawn_unit_func = cursed_chest_enemy_spawn_decal_func,
+		post_spawn_unit_func = cursed_chest_enemy_despawn_decal_func,
+		spawn_delay = CURSED_CHEST_DELAY_SPAWN
 	},
 	{
 		"delay",
-		duration = num_9
+		duration = CURSED_CHEST_DELAY_WAVE_2
 	},
 	{
 		"continue_when_spawned_count",
 		duration = 120,
-		condition = function (self)
+		condition = function (counter)
 			-- function 90
-			return self.cursed_chest_enemies <= 2
+			return counter.cursed_chest_enemies <= 2
 		end
 	},
 	{
@@ -3947,13 +3963,13 @@ GenericTerrorEvents.cursed_chest_challenge_beastmen_bestigor = {
 		},
 		optional_data = {
 			prevent_killed_enemy_dialogue = true,
-			spawned_func = fn
+			spawned_func = cursed_chest_enemy_spawned_func
 		},
-		min_distance = num_11 - num_15 * 0.5,
-		max_distance = num_11 + num_15 * 0.5,
-		pre_spawn_unit_func = fn_3,
-		post_spawn_unit_func = fn_4,
-		spawn_delay = num_10
+		min_distance = CURSED_CHEST_SPAWN_DISTANCE_SHORT - CURSED_CHEST_SPREAD_MED * 0.5,
+		max_distance = CURSED_CHEST_SPAWN_DISTANCE_SHORT + CURSED_CHEST_SPREAD_MED * 0.5,
+		pre_spawn_unit_func = cursed_chest_enemy_spawn_decal_func,
+		post_spawn_unit_func = cursed_chest_enemy_despawn_decal_func,
+		spawn_delay = CURSED_CHEST_DELAY_SPAWN
 	},
 	{
 		"spawn_around_origin_unit",
@@ -3968,13 +3984,13 @@ GenericTerrorEvents.cursed_chest_challenge_beastmen_bestigor = {
 		},
 		optional_data = {
 			prevent_killed_enemy_dialogue = true,
-			spawned_func = fn
+			spawned_func = cursed_chest_enemy_spawned_func
 		},
-		min_distance = num_11 - num_15 * 0.5,
-		max_distance = num_11 + num_15 * 0.5,
-		pre_spawn_unit_func = fn_3,
-		post_spawn_unit_func = fn_4,
-		spawn_delay = num_10
+		min_distance = CURSED_CHEST_SPAWN_DISTANCE_SHORT - CURSED_CHEST_SPREAD_MED * 0.5,
+		max_distance = CURSED_CHEST_SPAWN_DISTANCE_SHORT + CURSED_CHEST_SPREAD_MED * 0.5,
+		pre_spawn_unit_func = cursed_chest_enemy_spawn_decal_func,
+		post_spawn_unit_func = cursed_chest_enemy_despawn_decal_func,
+		spawn_delay = CURSED_CHEST_DELAY_SPAWN
 	},
 	{
 		"delay",
@@ -3983,17 +3999,17 @@ GenericTerrorEvents.cursed_chest_challenge_beastmen_bestigor = {
 	{
 		"continue_when_spawned_count",
 		duration = 20,
-		condition = function (self)
+		condition = function (counter)
 			-- function 91
-			return self.cursed_chest_enemies > 0
+			return counter.cursed_chest_enemies > 0
 		end
 	},
 	{
 		"continue_when_spawned_count",
 		duration = 120,
-		condition = function (self)
+		condition = function (counter)
 			-- function 92
-			return self.cursed_chest_enemies <= 0
+			return counter.cursed_chest_enemies <= 0
 		end
 	},
 	{
@@ -4008,7 +4024,7 @@ GenericTerrorEvents.cursed_chest_challenge_beastmen_minotaur = {
 	},
 	{
 		"delay",
-		duration = num_8
+		duration = CURSED_CHEST_DELAY_WAVE_1
 	},
 	{
 		"play_stinger",
@@ -4020,14 +4036,14 @@ GenericTerrorEvents.cursed_chest_challenge_beastmen_minotaur = {
 		spawn_counter_category = "cursed_chest_enemies",
 		optional_data = {
 			prevent_killed_enemy_dialogue = true,
-			spawned_func = fn
+			spawned_func = cursed_chest_enemy_spawned_func
 		},
-		min_distance = num_13 - num_15 * 0.5,
-		max_distance = num_13 + num_15 * 0.5,
-		pre_spawn_unit_func = fn_3,
-		post_spawn_unit_func = fn_4,
-		spawn_delay = num_10,
-		pre_spawn_func = add_enhancements_for_difficulty
+		min_distance = CURSED_CHEST_SPAWN_DISTANCE_LONG - CURSED_CHEST_SPREAD_MED * 0.5,
+		max_distance = CURSED_CHEST_SPAWN_DISTANCE_LONG + CURSED_CHEST_SPREAD_MED * 0.5,
+		pre_spawn_unit_func = cursed_chest_enemy_spawn_decal_func,
+		post_spawn_unit_func = cursed_chest_enemy_despawn_decal_func,
+		spawn_delay = CURSED_CHEST_DELAY_SPAWN,
+		pre_spawn_func = cursed_chest_enemy_pre_spawn_func
 	},
 	{
 		"spawn_around_origin_unit",
@@ -4042,13 +4058,13 @@ GenericTerrorEvents.cursed_chest_challenge_beastmen_minotaur = {
 		},
 		optional_data = {
 			prevent_killed_enemy_dialogue = true,
-			spawned_func = fn
+			spawned_func = cursed_chest_enemy_spawned_func
 		},
-		min_distance = num_11 - num_15 * 0.5,
-		max_distance = num_11 + num_15 * 0.5,
-		pre_spawn_unit_func = fn_3,
-		post_spawn_unit_func = fn_4,
-		spawn_delay = num_10
+		min_distance = CURSED_CHEST_SPAWN_DISTANCE_SHORT - CURSED_CHEST_SPREAD_MED * 0.5,
+		max_distance = CURSED_CHEST_SPAWN_DISTANCE_SHORT + CURSED_CHEST_SPREAD_MED * 0.5,
+		pre_spawn_unit_func = cursed_chest_enemy_spawn_decal_func,
+		post_spawn_unit_func = cursed_chest_enemy_despawn_decal_func,
+		spawn_delay = CURSED_CHEST_DELAY_SPAWN
 	},
 	{
 		"delay",
@@ -4057,17 +4073,17 @@ GenericTerrorEvents.cursed_chest_challenge_beastmen_minotaur = {
 	{
 		"continue_when_spawned_count",
 		duration = 20,
-		condition = function (self)
+		condition = function (counter)
 			-- function 93
-			return self.cursed_chest_enemies > 0
+			return counter.cursed_chest_enemies > 0
 		end
 	},
 	{
 		"continue_when_spawned_count",
 		duration = 120,
-		condition = function (self)
+		condition = function (counter)
 			-- function 94
-			return self.cursed_chest_enemies <= 0
+			return counter.cursed_chest_enemies <= 0
 		end
 	},
 	{
@@ -4085,9 +4101,11 @@ GenericTerrorEvents.cursed_chest_challenge_test = {
 		spawn_counter_category = "cursed_chest_enemies",
 		composition_type = "cursed_chest_challenge_test",
 		optional_data = {
-			spawned_func = function (arg_95_0, arg_95_1, arg_95_2)
+			spawned_func = function (unit, breed, optional_data)
 				-- function 95
-				Managers.state.entity:system("buff_system"):add_buff(arg_95_0, "objective_unit", arg_95_0)
+				local buff_system = Managers.state.entity:system("buff_system")
+
+				buff_system:add_buff(unit, "objective_unit", unit)
 			end
 		}
 	},
@@ -4098,22 +4116,22 @@ GenericTerrorEvents.cursed_chest_challenge_test = {
 	{
 		"continue_when_spawned_count",
 		duration = 20,
-		condition = function (self)
+		condition = function (counter)
 			-- function 96
-			return self.cursed_chest_enemies > 0
+			return counter.cursed_chest_enemies > 0
 		end
 	},
 	{
 		"continue_when_spawned_count",
 		duration = 60,
-		condition = function (self)
+		condition = function (counter)
 			-- function 97
-			return self.cursed_chest_enemies <= 0
+			return counter.cursed_chest_enemies <= 0
 		end
 	}
 }
 
-local tbl_3 = {
+local POSSIBLE_SHADOW_LIEUTENANT_GRUDGE_MARK_NAMES = {
 	{
 		crippling = true,
 		intangible = true,
@@ -4130,13 +4148,13 @@ local tbl_3 = {
 		vampiric = true
 	}
 }
-local tbl_4 = {
+local shadow_lieutenant_vo_table = {
 	"shadow_curse_sc1_spawn",
 	"shadow_curse_sc2_spawn",
 	"shadow_curse_sc3_spawn"
 }
 
-local function fn_5(arg_98_0, arg_98_1)
+local function belakor_shadow_lieutenant_spawn(locus_type_id, add_base_enhancement)
 	-- function 98
 	return {
 		{
@@ -4155,9 +4173,9 @@ local function fn_5(arg_98_0, arg_98_1)
 		{
 			"continue_when_spawned_count",
 			duration = 4,
-			condition = function (self)
+			condition = function (counter)
 				-- function 99
-				return self.belakor_totem_enemies < 1
+				return counter.belakor_totem_enemies < 1
 			end
 		},
 		{
@@ -4172,9 +4190,9 @@ local function fn_5(arg_98_0, arg_98_1)
 		{
 			"continue_when_spawned_count",
 			duration = 4,
-			condition = function (self)
+			condition = function (counter)
 				-- function 100
-				return self.belakor_totem_enemies < 1
+				return counter.belakor_totem_enemies < 1
 			end
 		},
 		{
@@ -4192,82 +4210,85 @@ local function fn_5(arg_98_0, arg_98_1)
 			},
 			optional_data = {
 				prevent_killed_enemy_dialogue = true,
-				spawned_func = function (arg_101_0, arg_101_1, arg_101_2)
+				spawned_func = function (unit, breed, optional_data)
 					-- function 101
-					if not (arg_101_1.special or arg_101_1.boss or arg_101_1.cannot_be_aggroed) then
-						local get_random_alive_hero = PlayerUtils.get_random_alive_hero()
+					if not breed.special and not breed.boss and not breed.cannot_be_aggroed then
+						local player_unit = PlayerUtils.get_random_alive_hero()
 
-						AiUtils.aggro_unit_of_enemy(arg_101_0, get_random_alive_hero)
+						AiUtils.aggro_unit_of_enemy(unit, player_unit)
 					end
 
-					Managers.state.entity:system("buff_system"):add_buff(arg_101_0, "belakor_shadow_lieutenant", arg_101_0)
+					local buff_system = Managers.state.entity:system("buff_system")
 
-					local var_101_1 = BLACKBOARDS[arg_101_0]
+					buff_system:add_buff(unit, "belakor_shadow_lieutenant", unit)
 
-					if not var_101_1 then
-						local world = var_101_1.world
-						local str = "shadow_lieutenant_spawn"
+					local blackboard = BLACKBOARDS[unit]
 
-						WwiseUtils.trigger_unit_event(world, str, arg_101_0, 0)
+					if blackboard then
+						local world = blackboard.world
+						local sound_event = "shadow_lieutenant_spawn"
+
+						WwiseUtils.trigger_unit_event(world, sound_event, unit, 0)
 					end
 
-					local var_101_4 = tbl_4[arg_98_0]
+					local dialogue_event = shadow_lieutenant_vo_table[locus_type_id]
 
-					if not var_101_4 then
-						local extension_input = ScriptUnit.extension_input(arg_101_0, "dialogue_system")
-						local alloc_table = FrameTable.alloc_table()
+					if dialogue_event then
+						local dialogue_input = ScriptUnit.extension_input(unit, "dialogue_system")
+						local event_data = FrameTable.alloc_table()
 
-						extension_input:trigger_dialogue_event(var_101_4, alloc_table)
+						dialogue_input:trigger_dialogue_event(dialogue_event, event_data)
 					end
 				end
 			},
-			spawn_failed_func = function (arg_102_0)
+			spawn_failed_func = function (position)
 				-- function 102
-				BelakorBalancing.spawn_crystal_func(arg_102_0)
+				BelakorBalancing.spawn_crystal_func(position)
 			end,
-			min_distance = num_17,
-			max_distance = num_18,
-			row_distance = num_22,
-			above_max = num_19,
-			below_max = num_20,
-			distance_to_enemies = num_21,
-			circle_subdivision = num_24,
-			tries = num_25,
-			pre_spawn_unit_func = fn_3,
-			post_spawn_unit_func = fn_4,
-			spawn_delay = num_10,
-			pre_spawn_func = function (self, arg_103_1, arg_103_2, arg_103_3, arg_103_4)
+			min_distance = BELAKOR_ALTAR_MIN_DISTANCE_CULTIST_SPAWN,
+			max_distance = BELAKOR_ALTAR_MAX_DISTANCE_CULTIST_SPAWN,
+			row_distance = BELAKOR_ALTAR_ROW_DISTANCE,
+			above_max = BELAKOR_ALTAR_MAX_ABOVE_CULTIST_SPAWN,
+			below_max = BELAKOR_ALTAR_MAX_BELOW_CULTIST_SPAWN,
+			distance_to_enemies = BELAKOR_ALTAR_CULTIST_DISTANCE,
+			circle_subdivision = BELAKOR_CHAMPION_CIRCLE_SUBDIVISION,
+			tries = BELAKOR_CHAMPION_CIRCLE_TRIES,
+			pre_spawn_unit_func = cursed_chest_enemy_spawn_decal_func,
+			post_spawn_unit_func = cursed_chest_enemy_despawn_decal_func,
+			spawn_delay = CURSED_CHEST_DELAY_SPAWN,
+			pre_spawn_func = function (optional_data, difficulty, breed_name, event, difficulty_tweak)
 				-- function 103
-				self = self or {}
+				optional_data = not not optional_data or not not {}
 
-				if not arg_98_1 then
-					self.enhancements = {
+				if add_base_enhancement then
+					optional_data.enhancements = {
 						BreedEnhancements.base
 					}
 				end
 
-				local var_103_0 = tbl_3[arg_98_0]
-				local num = 2
+				local possible_grudge_mark_names = POSSIBLE_SHADOW_LIEUTENANT_GRUDGE_MARK_NAMES[locus_type_id]
+				local number_of_grudgemarks = 2
 
-				for i = 1, num do
-					if not (not var_103_0 and table.is_empty(var_103_0)) then
-						local tbl = {}
+				for i = 1, number_of_grudgemarks do
+					if possible_grudge_mark_names and not table.is_empty(possible_grudge_mark_names) then
+						local available_enhancements = {}
 
-						for k, v in pairs(BreedEnhancements) do
-							if not var_103_0[k] then
-								table.insert(tbl, v)
+						for name, data in pairs(BreedEnhancements) do
+							if possible_grudge_mark_names[name] then
+								table.insert(available_enhancements, data)
 							end
 						end
 
-						if #tbl > 0 then
-							local var_103_3 = tbl[Math.random(1, #tbl)]
+						if #available_enhancements > 0 then
+							local random_index = Math.random(1, #available_enhancements)
+							local random_enhancement = available_enhancements[random_index]
 
-							table.insert(self.enhancements, var_103_3)
+							table.insert(optional_data.enhancements, random_enhancement)
 						end
 					end
 				end
 
-				return self
+				return optional_data
 			end
 		},
 		{
@@ -4277,26 +4298,26 @@ local function fn_5(arg_98_0, arg_98_1)
 		{
 			"continue_when_spawned_count",
 			duration = 20,
-			condition = function (self)
+			condition = function (counter)
 				-- function 104
-				return self.belakor_altar_enemies > 0
+				return counter.belakor_altar_enemies > 0
 			end
 		},
 		{
 			"continue_when_spawned_count",
 			duration = 60,
-			condition = function (self)
+			condition = function (counter)
 				-- function 105
-				return self.belakor_altar_enemies <= 0
+				return counter.belakor_altar_enemies <= 0
 			end
 		}
 	}
 end
 
-GenericTerrorEvents.belakor_shadow_lieutenant_spawn = fn_5(-1, true)
-GenericTerrorEvents.belakor_altar_shadow_lieutenant_spawn_01 = fn_5(1, true)
-GenericTerrorEvents.belakor_altar_shadow_lieutenant_spawn_02 = fn_5(2, true)
-GenericTerrorEvents.belakor_altar_shadow_lieutenant_spawn_03 = fn_5(3, true)
+GenericTerrorEvents.belakor_shadow_lieutenant_spawn = belakor_shadow_lieutenant_spawn(-1, true)
+GenericTerrorEvents.belakor_altar_shadow_lieutenant_spawn_01 = belakor_shadow_lieutenant_spawn(1, true)
+GenericTerrorEvents.belakor_altar_shadow_lieutenant_spawn_02 = belakor_shadow_lieutenant_spawn(2, true)
+GenericTerrorEvents.belakor_altar_shadow_lieutenant_spawn_03 = belakor_shadow_lieutenant_spawn(3, true)
 GenericTerrorEvents.belakor_altar_cultists_spawn = {
 	{
 		"spawn_around_origin_unit",
@@ -4318,35 +4339,41 @@ GenericTerrorEvents.belakor_altar_cultists_spawn = {
 			far_off_despawn_immunity = true,
 			prevent_killed_enemy_dialogue = true,
 			ignore_breed_limits = true,
-			spawned_func = function (arg_106_0, arg_106_1, arg_106_2)
+			spawned_func = function (unit, breed, optional_data)
 				-- function 106
-				ScriptUnit.extension(arg_106_0, "ai_system"):set_perception("perception_regular", "pick_closest_target_with_spillover_wakeup_group")
+				local ai_extension = ScriptUnit.extension(unit, "ai_system")
 
-				local var_106_0 = BLACKBOARDS[arg_106_0]
+				ai_extension:set_perception("perception_regular", "pick_closest_target_with_spillover_wakeup_group")
 
-				if not var_106_0 then
-					var_106_0.ignore_interest_points = true
-					var_106_0.only_trust_your_own_eyes = true
+				local blackboard = BLACKBOARDS[unit]
 
-					Managers.state.entity:system("audio_system"):play_audio_unit_event("Play_normal_spawn_stinger", arg_106_0)
+				if blackboard then
+					blackboard.ignore_interest_points = true
+					blackboard.only_trust_your_own_eyes = true
+
+					local audio_system = Managers.state.entity:system("audio_system")
+
+					audio_system:play_audio_unit_event("Play_normal_spawn_stinger", unit)
 				end
 
-				Managers.state.entity:system("buff_system"):add_buff(arg_106_0, "belakor_cultists_buff", arg_106_0)
+				local buff_system = Managers.state.entity:system("buff_system")
+
+				buff_system:add_buff(unit, "belakor_cultists_buff", unit)
 			end
 		},
-		min_distance = num_17,
-		max_distance = num_18,
-		row_distance = num_22,
-		circle_subdivision = num_23,
-		distance_to_enemies = num_21,
-		above_max = num_19,
-		below_max = num_20,
-		pre_spawn_func = function (self, arg_107_1, arg_107_2, arg_107_3, arg_107_4)
+		min_distance = BELAKOR_ALTAR_MIN_DISTANCE_CULTIST_SPAWN,
+		max_distance = BELAKOR_ALTAR_MAX_DISTANCE_CULTIST_SPAWN,
+		row_distance = BELAKOR_ALTAR_ROW_DISTANCE,
+		circle_subdivision = BELAKOR_ALTAR_CIRCLE_SUBDIVISION,
+		distance_to_enemies = BELAKOR_ALTAR_CULTIST_DISTANCE,
+		above_max = BELAKOR_ALTAR_MAX_ABOVE_CULTIST_SPAWN,
+		below_max = BELAKOR_ALTAR_MAX_BELOW_CULTIST_SPAWN,
+		pre_spawn_func = function (optional_data, difficulty, breed_name, event, difficulty_tweak)
 			-- function 107
-			self = self or {}
-			self.idle_animation = tbl_2[math.random(#tbl_2)]
+			optional_data = not not optional_data or not not {}
+			optional_data.idle_animation = BELAKOR_CULTIST_IDLE_ANIMATIONS[math.random(#BELAKOR_CULTIST_IDLE_ANIMATIONS)]
 
-			return self
+			return optional_data
 		end
 	},
 	{
@@ -4356,21 +4383,21 @@ GenericTerrorEvents.belakor_altar_cultists_spawn = {
 	{
 		"continue_when_spawned_count",
 		duration = 20,
-		condition = function (self)
+		condition = function (counter)
 			-- function 108
-			return self.belakor_altar_enemies > 0
+			return counter.belakor_altar_enemies > 0
 		end
 	},
 	{
 		"continue_when_spawned_count",
-		condition = function (self)
+		condition = function (counter)
 			-- function 109
-			return self.belakor_altar_enemies <= 0
+			return counter.belakor_altar_enemies <= 0
 		end
 	}
 }
 
-local function fn_6(arg_110_0)
+local function belakor_totem_around_origin_line(spawn_table)
 	-- function 110
 	return {
 		"spawn_around_origin_unit",
@@ -4381,26 +4408,30 @@ local function fn_6(arg_110_0)
 		row_distance = 0.5,
 		spawn_delay = 1.7,
 		spawn_counter_category = "belakor_totem_enemies",
-		breed_spawn_table_per_difficulty = arg_110_0,
+		breed_spawn_table_per_difficulty = spawn_table,
 		optional_data = {
 			prevent_killed_enemy_dialogue = true,
-			spawned_func = function (arg_111_0, arg_111_1, arg_111_2)
+			spawned_func = function (unit, breed, optional_data)
 				-- function 111
-				if not (arg_111_1.special or arg_111_1.boss or arg_111_1.cannot_be_aggroed) then
-					local get_random_alive_hero = PlayerUtils.get_random_alive_hero()
+				if not breed.special and not breed.boss and not breed.cannot_be_aggroed then
+					local player_unit = PlayerUtils.get_random_alive_hero()
 
-					AiUtils.aggro_unit_of_enemy(arg_111_0, get_random_alive_hero)
+					AiUtils.aggro_unit_of_enemy(unit, player_unit)
 
-					if not BLACKBOARDS[arg_111_0] then
-						Managers.state.entity:system("audio_system"):play_audio_unit_event("Play_normal_spawn_stinger", arg_111_0)
+					local blackboard = BLACKBOARDS[unit]
+
+					if blackboard then
+						local audio_system = Managers.state.entity:system("audio_system")
+
+						audio_system:play_audio_unit_event("Play_normal_spawn_stinger", unit)
 					end
 				end
 			end
 		},
-		pre_spawn_unit_func = fn_3,
-		post_spawn_unit_func = fn_4,
-		above_max = num_19,
-		below_max = num_20
+		pre_spawn_unit_func = cursed_chest_enemy_spawn_decal_func,
+		post_spawn_unit_func = cursed_chest_enemy_despawn_decal_func,
+		above_max = BELAKOR_ALTAR_MAX_ABOVE_CULTIST_SPAWN,
+		below_max = BELAKOR_ALTAR_MAX_BELOW_CULTIST_SPAWN
 	}
 end
 
@@ -4544,9 +4575,9 @@ GenericTerrorEvents.belakor_arena_totem_spawns = {
 	{
 		"continue_when_spawned_count",
 		duration = 20,
-		condition = function (self)
+		condition = function (counter)
 			-- function 112
-			return self.belakor_totem_enemies < 1
+			return counter.belakor_totem_enemies < 1
 		end
 	}
 }
@@ -4556,7 +4587,7 @@ GenericTerrorEvents.belakor_totem_plague_monk = {
 		stinger_name = "Play_wave_start_spawn_stinger_small",
 		use_origin_unit_position = true
 	},
-	fn_6({
+	belakor_totem_around_origin_line({
 		default = {
 			"skaven_plague_monk",
 			"skaven_clan_rat_with_shield"
@@ -4573,7 +4604,7 @@ GenericTerrorEvents.belakor_totem_stormvermin = {
 		stinger_name = "Play_wave_start_spawn_stinger_small",
 		use_origin_unit_position = true
 	},
-	fn_6({
+	belakor_totem_around_origin_line({
 		default = {
 			"skaven_storm_vermin_commander",
 			"skaven_slave",
@@ -4592,7 +4623,7 @@ GenericTerrorEvents.belakor_totem_stormvermin_shield = {
 		stinger_name = "Play_wave_start_spawn_stinger_small",
 		use_origin_unit_position = true
 	},
-	fn_6({
+	belakor_totem_around_origin_line({
 		default = {
 			"skaven_storm_vermin_with_shield",
 			"skaven_clan_rat_with_shield",
@@ -4610,7 +4641,7 @@ GenericTerrorEvents.belakor_totem_clan_rat_with_shield = {
 		stinger_name = "Play_wave_start_spawn_stinger_small",
 		use_origin_unit_position = true
 	},
-	fn_6({
+	belakor_totem_around_origin_line({
 		default = {
 			"skaven_clan_rat_with_shield",
 			"skaven_clan_rat_with_shield"
@@ -4627,7 +4658,7 @@ GenericTerrorEvents.belakor_totem_clan_rats = {
 		stinger_name = "Play_wave_start_spawn_stinger_small",
 		use_origin_unit_position = true
 	},
-	fn_6({
+	belakor_totem_around_origin_line({
 		default = {
 			"skaven_clan_rat",
 			"skaven_clan_rat",
@@ -4645,7 +4676,7 @@ GenericTerrorEvents.belakor_totem_skaven_slaves = {
 		stinger_name = "Play_wave_start_spawn_stinger_small",
 		use_origin_unit_position = true
 	},
-	fn_6({
+	belakor_totem_around_origin_line({
 		default = {
 			"skaven_slave",
 			"skaven_slave",
@@ -4665,7 +4696,7 @@ GenericTerrorEvents.belakor_totem_skaven_panic_storm_vermin = {
 		stinger_name = "Play_wave_start_spawn_stinger_small",
 		use_origin_unit_position = true
 	},
-	fn_6({
+	belakor_totem_around_origin_line({
 		default = {
 			"skaven_storm_vermin_commander",
 			"skaven_storm_vermin_commander",
@@ -4684,7 +4715,7 @@ GenericTerrorEvents.belakor_totem_skaven_panic_plague_monk = {
 		stinger_name = "Play_wave_start_spawn_stinger_small",
 		use_origin_unit_position = true
 	},
-	fn_6({
+	belakor_totem_around_origin_line({
 		default = {
 			"skaven_plague_monk",
 			"skaven_storm_vermin_commander",
@@ -4703,7 +4734,7 @@ GenericTerrorEvents.belakor_totem_skaven_shield = {
 		stinger_name = "Play_wave_start_spawn_stinger_small",
 		use_origin_unit_position = true
 	},
-	fn_6({
+	belakor_totem_around_origin_line({
 		default = {
 			"skaven_clan_rat_with_shield",
 			"skaven_clan_rat_with_shield",
@@ -4723,7 +4754,7 @@ GenericTerrorEvents.belakor_totem_chaos_fanatics = {
 		stinger_name = "Play_wave_start_spawn_stinger_small",
 		use_origin_unit_position = true
 	},
-	fn_6({
+	belakor_totem_around_origin_line({
 		default = {
 			"chaos_fanatic",
 			"chaos_fanatic",
@@ -4743,7 +4774,7 @@ GenericTerrorEvents.belakor_totem_chaos_marauders = {
 		stinger_name = "Play_wave_start_spawn_stinger_small",
 		use_origin_unit_position = true
 	},
-	fn_6({
+	belakor_totem_around_origin_line({
 		default = {
 			"chaos_marauder",
 			"chaos_marauder",
@@ -4761,7 +4792,7 @@ GenericTerrorEvents.belakor_totem_chaos_raider = {
 		stinger_name = "Play_wave_start_spawn_stinger_small",
 		use_origin_unit_position = true
 	},
-	fn_6({
+	belakor_totem_around_origin_line({
 		default = {
 			"chaos_raider",
 			"chaos_raider"
@@ -4778,7 +4809,7 @@ GenericTerrorEvents.belakor_totem_chaos_warriors = {
 		stinger_name = "Play_wave_start_spawn_stinger_small",
 		use_origin_unit_position = true
 	},
-	fn_6({
+	belakor_totem_around_origin_line({
 		default = {
 			"chaos_warrior",
 			"chaos_marauder",
@@ -4796,7 +4827,7 @@ GenericTerrorEvents.belakor_totem_chaos_berzerkers = {
 		stinger_name = "Play_wave_start_spawn_stinger_small",
 		use_origin_unit_position = true
 	},
-	fn_6({
+	belakor_totem_around_origin_line({
 		default = {
 			"chaos_berzerker",
 			"chaos_fanatic",
@@ -4816,7 +4847,7 @@ GenericTerrorEvents.belakor_totem_chaos_panic_berzerkers = {
 		stinger_name = "Play_wave_start_spawn_stinger_small",
 		use_origin_unit_position = true
 	},
-	fn_6({
+	belakor_totem_around_origin_line({
 		default = {
 			"chaos_berzerker",
 			"chaos_berzerker",
@@ -4835,7 +4866,7 @@ GenericTerrorEvents.belakor_totem_chaos_panic_raiders = {
 		stinger_name = "Play_wave_start_spawn_stinger_small",
 		use_origin_unit_position = true
 	},
-	fn_6({
+	belakor_totem_around_origin_line({
 		default = {
 			"chaos_raider",
 			"chaos_raider",
@@ -4854,7 +4885,7 @@ GenericTerrorEvents.belakor_totem_chaos_panic_chaos_warrior = {
 		stinger_name = "Play_wave_start_spawn_stinger_small",
 		use_origin_unit_position = true
 	},
-	fn_6({
+	belakor_totem_around_origin_line({
 		default = {
 			"chaos_warrior",
 			"chaos_marauder",
@@ -4872,7 +4903,7 @@ GenericTerrorEvents.belakor_locus_wave_one_one = {
 		stinger_name = "Play_wave_start_spawn_stinger_small",
 		use_origin_unit_position = true
 	},
-	fn_6({
+	belakor_totem_around_origin_line({
 		default = {
 			"chaos_raider",
 			"chaos_raider",
@@ -4892,7 +4923,7 @@ GenericTerrorEvents.belakor_locus_wave_one_two = {
 		stinger_name = "Play_wave_start_spawn_stinger_small",
 		use_origin_unit_position = true
 	},
-	fn_6({
+	belakor_totem_around_origin_line({
 		default = {
 			"skaven_storm_vermin_commander",
 			"skaven_storm_vermin_commander",
@@ -4913,7 +4944,7 @@ GenericTerrorEvents.belakor_locus_wave_one_three = {
 		stinger_name = "Play_wave_start_spawn_stinger_small",
 		use_origin_unit_position = true
 	},
-	fn_6({
+	belakor_totem_around_origin_line({
 		default = {
 			"chaos_raider",
 			"skaven_storm_vermin_with_shield",
@@ -4933,7 +4964,7 @@ GenericTerrorEvents.belakor_locus_wave_two_one = {
 		stinger_name = "Play_wave_start_spawn_stinger_small",
 		use_origin_unit_position = true
 	},
-	fn_6({
+	belakor_totem_around_origin_line({
 		default = {
 			"chaos_berzerker",
 			"chaos_fanatic",
@@ -4953,7 +4984,7 @@ GenericTerrorEvents.belakor_locus_wave_two_two = {
 		stinger_name = "Play_wave_start_spawn_stinger_small",
 		use_origin_unit_position = true
 	},
-	fn_6({
+	belakor_totem_around_origin_line({
 		default = {
 			"skaven_plague_monk",
 			"skaven_slave",
@@ -4974,7 +5005,7 @@ GenericTerrorEvents.belakor_locus_wave_two_three = {
 		stinger_name = "Play_wave_start_spawn_stinger_small",
 		use_origin_unit_position = true
 	},
-	fn_6({
+	belakor_totem_around_origin_line({
 		default = {
 			"skaven_plague_monk",
 			"skaven_clan_rat_with_shield",
@@ -4993,7 +5024,7 @@ GenericTerrorEvents.belakor_locus_wave_two_three = {
 		stinger_name = "Play_wave_start_spawn_stinger_small",
 		use_origin_unit_position = true
 	},
-	fn_6({
+	belakor_totem_around_origin_line({
 		default = {
 			"skaven_plague_monk",
 			"skaven_plague_monk"
@@ -5010,7 +5041,7 @@ GenericTerrorEvents.belakor_totem_beastmen_ungor = {
 		stinger_name = "Play_wave_start_spawn_stinger_small",
 		use_origin_unit_position = true
 	},
-	fn_6({
+	belakor_totem_around_origin_line({
 		default = {
 			"beastmen_ungor",
 			"beastmen_ungor",
@@ -5030,7 +5061,7 @@ GenericTerrorEvents.belakor_totem_beastmen_gor = {
 		stinger_name = "Play_wave_start_spawn_stinger_small",
 		use_origin_unit_position = true
 	},
-	fn_6({
+	belakor_totem_around_origin_line({
 		default = {
 			"beastmen_gor",
 			"beastmen_gor",
@@ -5048,7 +5079,7 @@ GenericTerrorEvents.belakor_totem_beastmen_archers = {
 		stinger_name = "Play_wave_start_spawn_stinger_small",
 		use_origin_unit_position = true
 	},
-	fn_6({
+	belakor_totem_around_origin_line({
 		default = {
 			"beastmen_ungor_archer",
 			"beastmen_ungor_archer",
@@ -5066,7 +5097,7 @@ GenericTerrorEvents.belakor_totem_beastmen_bestigor = {
 		stinger_name = "Play_wave_start_spawn_stinger_small",
 		use_origin_unit_position = true
 	},
-	fn_6({
+	belakor_totem_around_origin_line({
 		default = {
 			"beastmen_bestigor",
 			"beastmen_gor",
@@ -5084,7 +5115,7 @@ GenericTerrorEvents.belakor_totem_beastmen_panic_bestigor = {
 		stinger_name = "Play_wave_start_spawn_stinger_small",
 		use_origin_unit_position = true
 	},
-	fn_6({
+	belakor_totem_around_origin_line({
 		default = {
 			"beastmen_bestigor",
 			"beastmen_bestigor"
@@ -5101,7 +5132,7 @@ GenericTerrorEvents.belakor_totem_beastmen_panic_ungors = {
 		stinger_name = "Play_wave_start_spawn_stinger_small",
 		use_origin_unit_position = true
 	},
-	fn_6({
+	belakor_totem_around_origin_line({
 		default = {
 			"beastmen_ungor",
 			"beastmen_ungor",
@@ -5121,7 +5152,7 @@ GenericTerrorEvents.belakor_totem_beastmen_panic_archers = {
 		stinger_name = "Play_wave_start_spawn_stinger_small",
 		use_origin_unit_position = true
 	},
-	fn_6({
+	belakor_totem_around_origin_line({
 		default = {
 			"beastmen_ungor_archer",
 			"beastmen_ungor_archer",
@@ -5135,7 +5166,7 @@ GenericTerrorEvents.belakor_totem_beastmen_panic_archers = {
 	}
 }
 
-local function fn_7(arg_113_0)
+local function grey_wings_spawn(spawn_table)
 	-- function 113
 	return {
 		"spawn_around_origin_unit",
@@ -5145,34 +5176,37 @@ local function fn_7(arg_113_0)
 		circle_subdivision = 3,
 		spawn_delay = 0.25,
 		spawn_counter_category = "grey_wings_enemies",
-		breed_spawn_table_per_difficulty = arg_113_0,
+		breed_spawn_table_per_difficulty = spawn_table,
 		optional_data = {
 			prevent_killed_enemy_dialogue = true,
-			spawned_func = function (arg_114_0, arg_114_1, arg_114_2)
+			spawned_func = function (unit, breed, optional_data)
 				-- function 114
-				Managers.state.entity:system("buff_system"):add_buff(arg_114_0, "belakor_grey_wings", arg_114_0)
+				local buff_system = Managers.state.entity:system("buff_system")
 
-				local get_random_alive_hero = PlayerUtils.get_random_alive_hero()
+				buff_system:add_buff(unit, "belakor_grey_wings", unit)
 
-				if not arg_114_1.cannot_be_aggroed then
-					AiUtils.aggro_unit_of_enemy(arg_114_0, get_random_alive_hero)
+				local player_unit = PlayerUtils.get_random_alive_hero()
+
+				if not breed.cannot_be_aggroed then
+					AiUtils.aggro_unit_of_enemy(unit, player_unit)
 				end
 			end
 		},
-		pre_spawn_unit_func = function (arg_115_0, arg_115_1, arg_115_2, arg_115_3)
+		pre_spawn_unit_func = function (event, element, boxed_spawn_pos, breed_name)
 			-- function 115
-			local str = "fx/blk_grey_wings_spawn_01"
-			local var_115_1 = NetworkLookup.effects[str]
-			local num = 0
-			local identity = Quaternion.identity()
+			local teleport_effect = "fx/blk_grey_wings_spawn_01"
+			local effect_name_id = NetworkLookup.effects[teleport_effect]
+			local node_id = 0
+			local rotation_offset = Quaternion.identity()
+			local network_manager = Managers.state.network
 
-			Managers.state.network:rpc_play_particle_effect(nil, var_115_1, NetworkConstants.invalid_game_object_id, num, arg_115_2:unbox(), identity, false)
+			network_manager:rpc_play_particle_effect(nil, effect_name_id, NetworkConstants.invalid_game_object_id, node_id, boxed_spawn_pos:unbox(), rotation_offset, false)
 		end
 	}
 end
 
 GenericTerrorEvents.grey_wings_plague_monks = {
-	fn_7({
+	grey_wings_spawn({
 		default = {
 			"skaven_plague_monk",
 			"skaven_plague_monk",
@@ -5182,22 +5216,22 @@ GenericTerrorEvents.grey_wings_plague_monks = {
 	{
 		"continue_when_spawned_count",
 		duration = 20,
-		condition = function (self)
+		condition = function (counter)
 			-- function 116
-			return self.grey_wings_enemies > 0
+			return counter.grey_wings_enemies > 0
 		end
 	},
 	{
 		"continue_when_spawned_count",
 		duration = 60,
-		condition = function (self)
+		condition = function (counter)
 			-- function 117
-			return self.grey_wings_enemies <= 0
+			return counter.grey_wings_enemies <= 0
 		end
 	}
 }
 GenericTerrorEvents.grey_wings_berserkers = {
-	fn_7({
+	grey_wings_spawn({
 		default = {
 			"chaos_berzerker",
 			"chaos_berzerker",
@@ -5207,22 +5241,22 @@ GenericTerrorEvents.grey_wings_berserkers = {
 	{
 		"continue_when_spawned_count",
 		duration = 20,
-		condition = function (self)
+		condition = function (counter)
 			-- function 118
-			return self.grey_wings_enemies > 0
+			return counter.grey_wings_enemies > 0
 		end
 	},
 	{
 		"continue_when_spawned_count",
 		duration = 60,
-		condition = function (self)
+		condition = function (counter)
 			-- function 119
-			return self.grey_wings_enemies <= 0
+			return counter.grey_wings_enemies <= 0
 		end
 	}
 }
 GenericTerrorEvents.grey_wings_bestigors = {
-	fn_7({
+	grey_wings_spawn({
 		default = {
 			"beastmen_bestigor",
 			"beastmen_bestigor",
@@ -5232,17 +5266,17 @@ GenericTerrorEvents.grey_wings_bestigors = {
 	{
 		"continue_when_spawned_count",
 		duration = 20,
-		condition = function (self)
+		condition = function (counter)
 			-- function 120
-			return self.grey_wings_enemies > 0
+			return counter.grey_wings_enemies > 0
 		end
 	},
 	{
 		"continue_when_spawned_count",
 		duration = 60,
-		condition = function (self)
+		condition = function (counter)
 			-- function 121
-			return self.grey_wings_enemies <= 0
+			return counter.grey_wings_enemies <= 0
 		end
 	}
 }
@@ -5269,43 +5303,46 @@ GenericTerrorEvents.grey_wings_spawns = {
 	}
 }
 
-local function fn_8(arg_122_0, arg_122_1, arg_122_2)
+local function grudge_mark_commander_enemy_spawned_func(unit, breed, optional_data)
 	-- function 122
-	if not (arg_122_1.special or arg_122_1.boss or arg_122_1.cannot_be_aggroed) then
-		local get_random_alive_hero = PlayerUtils.get_random_alive_hero()
+	if not breed.special and not breed.boss and not breed.cannot_be_aggroed then
+		local player_unit = PlayerUtils.get_random_alive_hero()
 
-		AiUtils.aggro_unit_of_enemy(arg_122_0, get_random_alive_hero)
+		AiUtils.aggro_unit_of_enemy(unit, player_unit)
 	end
 
-	local str = "fx/grudge_marks_shadow_step"
-	local var_122_2 = NetworkLookup.effects[str]
-	local num = 0
+	local teleport_effect = "fx/grudge_marks_shadow_step"
+	local effect_name_id = NetworkLookup.effects[teleport_effect]
+	local node_id = 0
+	local network_manager = Managers.state.network
 
-	Managers.state.network:rpc_play_particle_effect_no_rotation(nil, var_122_2, NetworkConstants.invalid_game_object_id, num, POSITION_LOOKUP[arg_122_0], false)
+	network_manager:rpc_play_particle_effect_no_rotation(nil, effect_name_id, NetworkConstants.invalid_game_object_id, node_id, POSITION_LOOKUP[unit], false)
 
-	local var_122_4 = BLACKBOARDS[arg_122_0]
+	local blackboard = BLACKBOARDS[unit]
 
-	if not var_122_4 then
-		Managers.state.entity:system("audio_system"):play_audio_unit_event("Play_normal_spawn_stinger", arg_122_0)
+	if blackboard then
+		local audio_system = Managers.state.entity:system("audio_system")
 
-		local forward = Quaternion.forward(Quaternion.axis_angle(Vector3.up(), math.pi * 2 * math.random()))
-		local num_2 = 0.5
-		local medium = scripts_utils_stagger_types.medium
-		local num_3 = 0.5
-		local time = Managers.time:time("game")
+		audio_system:play_audio_unit_event("Play_normal_spawn_stinger", unit)
 
-		AiUtils.stagger(arg_122_0, var_122_4, arg_122_0, forward, num_2, medium, num_3, nil, time)
+		local direction = Quaternion.forward(Quaternion.axis_angle(Vector3.up(), math.pi * 2 * math.random()))
+		local distance = 0.5
+		local stagger_type = stagger_types.medium
+		local stun_duration = 0.5
+		local t = Managers.time:time("game")
+
+		AiUtils.stagger(unit, blackboard, unit, direction, distance, stagger_type, stun_duration, nil, t)
 	end
 end
 
-local tbl_5 = {
+local GRUDGE_MARK_COMMANDER_SPAWN_COMMON = {
 	"spawn_around_origin_unit_staggered",
 	max_distance = 5,
 	spawn_counter_category = "grudge_mark_commander_enemies",
 	min_distance = 2,
 	optional_data = {
 		prevent_killed_enemy_dialogue = true,
-		spawned_func = fn_8
+		spawned_func = grudge_mark_commander_enemy_spawned_func
 	},
 	staggered_spawn_batch_size = {
 		1,
@@ -5327,7 +5364,7 @@ GenericTerrorEvents.grudge_mark_commander_terror_event_skaven_storm = {
 			cataclysm = 3,
 			normal = 2
 		}
-	}, tbl_5),
+	}, GRUDGE_MARK_COMMANDER_SPAWN_COMMON),
 	table.merge({
 		breed_name = "skaven_clan_rat",
 		difficulty_amount = {
@@ -5337,7 +5374,7 @@ GenericTerrorEvents.grudge_mark_commander_terror_event_skaven_storm = {
 			cataclysm = 3,
 			normal = 2
 		}
-	}, tbl_5)
+	}, GRUDGE_MARK_COMMANDER_SPAWN_COMMON)
 }
 GenericTerrorEvents.grudge_mark_commander_terror_event_skaven_storm_shield = {
 	table.merge({
@@ -5349,7 +5386,7 @@ GenericTerrorEvents.grudge_mark_commander_terror_event_skaven_storm_shield = {
 			cataclysm = 2,
 			normal = 1
 		}
-	}, tbl_5),
+	}, GRUDGE_MARK_COMMANDER_SPAWN_COMMON),
 	table.merge({
 		breed_name = "skaven_clan_rat_with_shield",
 		difficulty_amount = {
@@ -5359,7 +5396,7 @@ GenericTerrorEvents.grudge_mark_commander_terror_event_skaven_storm_shield = {
 			cataclysm = 3,
 			normal = 2
 		}
-	}, tbl_5)
+	}, GRUDGE_MARK_COMMANDER_SPAWN_COMMON)
 }
 GenericTerrorEvents.grudge_mark_commander_terror_event_skaven = {
 	{
@@ -5386,7 +5423,7 @@ GenericTerrorEvents.grudge_mark_commander_terror_event_chaos_raiders = {
 			cataclysm = 3,
 			normal = 1
 		}
-	}, tbl_5),
+	}, GRUDGE_MARK_COMMANDER_SPAWN_COMMON),
 	table.merge({
 		breed_name = "chaos_marauder",
 		difficulty_amount = {
@@ -5396,7 +5433,7 @@ GenericTerrorEvents.grudge_mark_commander_terror_event_chaos_raiders = {
 			cataclysm = 3,
 			normal = 2
 		}
-	}, tbl_5)
+	}, GRUDGE_MARK_COMMANDER_SPAWN_COMMON)
 }
 GenericTerrorEvents.grudge_mark_commander_terror_event_chaos_warriors = {
 	table.merge({
@@ -5408,7 +5445,7 @@ GenericTerrorEvents.grudge_mark_commander_terror_event_chaos_warriors = {
 			cataclysm = 1,
 			normal = 1
 		}
-	}, tbl_5),
+	}, GRUDGE_MARK_COMMANDER_SPAWN_COMMON),
 	table.merge({
 		breed_name = "chaos_marauder",
 		difficulty_amount = {
@@ -5418,7 +5455,7 @@ GenericTerrorEvents.grudge_mark_commander_terror_event_chaos_warriors = {
 			cataclysm = 4,
 			normal = 2
 		}
-	}, tbl_5)
+	}, GRUDGE_MARK_COMMANDER_SPAWN_COMMON)
 }
 GenericTerrorEvents.grudge_mark_commander_terror_event_chaos = {
 	{
@@ -5445,7 +5482,7 @@ GenericTerrorEvents.grudge_mark_commander_terror_event_beastmen_bestigors = {
 			cataclysm = 3,
 			normal = 1
 		}
-	}, tbl_5)
+	}, GRUDGE_MARK_COMMANDER_SPAWN_COMMON)
 }
 GenericTerrorEvents.grudge_mark_commander_terror_event_beastmen_double_action = {
 	table.merge({
@@ -5457,7 +5494,7 @@ GenericTerrorEvents.grudge_mark_commander_terror_event_beastmen_double_action = 
 			cataclysm = 2,
 			normal = 1
 		}
-	}, tbl_5),
+	}, GRUDGE_MARK_COMMANDER_SPAWN_COMMON),
 	table.merge({
 		breed_name = "beastmen_gor",
 		difficulty_amount = {
@@ -5467,7 +5504,7 @@ GenericTerrorEvents.grudge_mark_commander_terror_event_beastmen_double_action = 
 			cataclysm = 4,
 			normal = 2
 		}
-	}, tbl_5)
+	}, GRUDGE_MARK_COMMANDER_SPAWN_COMMON)
 }
 GenericTerrorEvents.grudge_mark_commander_terror_event_beastmen = {
 	{
@@ -5816,9 +5853,9 @@ GenericTerrorEvents.deus_generic_terror_event_end = {
 	{
 		"continue_when_spawned_count",
 		duration = 60,
-		condition = function (self)
+		condition = function (counter)
 			-- function 123
-			return not (self.boss <= 0) or not (self.main <= 0) or self.elite <= 0
+			return counter.boss <= 0 and counter.main <= 0 and counter.elite <= 0
 		end
 	},
 	{
@@ -6729,15 +6766,15 @@ GenericTerrorEvents.deus_skaven_wave_1a = {
 	},
 	{
 		"delay",
-		duration = num_6
+		duration = SHORT
 	},
 	{
 		"continue_when_spawned_count",
-		condition = function (self)
+		condition = function (counter)
 			-- function 124
-			return self.boss <= 0
+			return counter.boss <= 0
 		end,
-		duration = num_6
+		duration = SHORT
 	},
 	{
 		"event_horde",
@@ -6753,16 +6790,16 @@ GenericTerrorEvents.deus_skaven_wave_1a = {
 	{
 		"delay",
 		minimum_difficulty_tweak = -5,
-		duration = num_6
+		duration = SHORT
 	},
 	{
 		"continue_when_spawned_count",
 		minimum_difficulty_tweak = -5,
-		condition = function (self)
+		condition = function (counter)
 			-- function 125
-			return self.boss <= 0
+			return counter.boss <= 0
 		end,
-		duration = num_6
+		duration = SHORT
 	},
 	{
 		"event_horde",
@@ -6778,16 +6815,16 @@ GenericTerrorEvents.deus_skaven_wave_1a = {
 	{
 		"delay",
 		minimum_difficulty_tweak = 5,
-		duration = num_6
+		duration = SHORT
 	},
 	{
 		"continue_when_spawned_count",
 		minimum_difficulty_tweak = 5,
-		condition = function (self)
+		condition = function (counter)
 			-- function 126
-			return self.boss <= 0
+			return counter.boss <= 0
 		end,
-		duration = num_6
+		duration = SHORT
 	},
 	{
 		"event_horde",
@@ -6801,22 +6838,22 @@ GenericTerrorEvents.deus_skaven_wave_1a = {
 	},
 	{
 		"delay",
-		duration = num_6
+		duration = SHORT
 	},
 	{
 		"continue_when_spawned_count",
-		condition = function (self)
+		condition = function (counter)
 			-- function 127
-			return self.boss <= 0
+			return counter.boss <= 0
 		end,
-		duration = num_6
+		duration = SHORT
 	},
 	{
 		"continue_when_spawned_count",
 		duration = 60,
-		condition = function (self)
+		condition = function (counter)
 			-- function 128
-			return self.main < 15
+			return counter.main < 15
 		end
 	},
 	{
@@ -6838,7 +6875,7 @@ GenericTerrorEvents.deus_skaven_wave_1a = {
 	},
 	{
 		"delay",
-		duration = num_6
+		duration = SHORT
 	},
 	{
 		"event_horde",
@@ -6852,15 +6889,15 @@ GenericTerrorEvents.deus_skaven_wave_1a = {
 	},
 	{
 		"delay",
-		duration = num_6
+		duration = SHORT
 	},
 	{
 		"continue_when_spawned_count",
-		condition = function (self)
+		condition = function (counter)
 			-- function 129
-			return self.boss <= 0
+			return counter.boss <= 0
 		end,
-		duration = num_6
+		duration = SHORT
 	},
 	{
 		"event_horde",
@@ -6874,15 +6911,15 @@ GenericTerrorEvents.deus_skaven_wave_1a = {
 	},
 	{
 		"delay",
-		duration = num_6
+		duration = SHORT
 	},
 	{
 		"continue_when_spawned_count",
-		condition = function (self)
+		condition = function (counter)
 			-- function 130
-			return self.boss <= 0
+			return counter.boss <= 0
 		end,
-		duration = num_6
+		duration = SHORT
 	},
 	{
 		"event_horde",
@@ -6898,7 +6935,7 @@ GenericTerrorEvents.deus_skaven_wave_1a = {
 	{
 		"delay",
 		minimum_difficulty_tweak = 0,
-		duration = num_6
+		duration = SHORT
 	},
 	{
 		"spawn_at_raw",
@@ -6919,18 +6956,18 @@ GenericTerrorEvents.deus_skaven_wave_1a = {
 	},
 	{
 		"continue_when_spawned_count",
-		condition = function (self)
+		condition = function (counter)
 			-- function 131
-			return self.boss <= 0
+			return counter.boss <= 0
 		end,
-		duration = num_6
+		duration = SHORT
 	},
 	{
 		"continue_when_spawned_count",
 		duration = 60,
-		condition = function (self)
+		condition = function (counter)
 			-- function 132
-			return self.main < 10
+			return counter.main < 10
 		end
 	}
 }
@@ -6947,15 +6984,15 @@ GenericTerrorEvents.deus_skaven_wave_1b = {
 	},
 	{
 		"delay",
-		duration = num_6
+		duration = SHORT
 	},
 	{
 		"continue_when_spawned_count",
-		condition = function (self)
+		condition = function (counter)
 			-- function 133
-			return self.boss <= 0
+			return counter.boss <= 0
 		end,
-		duration = num_6
+		duration = SHORT
 	},
 	{
 		"event_horde",
@@ -6971,16 +7008,16 @@ GenericTerrorEvents.deus_skaven_wave_1b = {
 	{
 		"delay",
 		minimum_difficulty_tweak = -5,
-		duration = num_6
+		duration = SHORT
 	},
 	{
 		"continue_when_spawned_count",
 		minimum_difficulty_tweak = -5,
-		condition = function (self)
+		condition = function (counter)
 			-- function 134
-			return self.boss <= 0
+			return counter.boss <= 0
 		end,
-		duration = num_6
+		duration = SHORT
 	},
 	{
 		"event_horde",
@@ -6996,16 +7033,16 @@ GenericTerrorEvents.deus_skaven_wave_1b = {
 	{
 		"delay",
 		minimum_difficulty_tweak = 5,
-		duration = num_6
+		duration = SHORT
 	},
 	{
 		"continue_when_spawned_count",
 		minimum_difficulty_tweak = 5,
-		condition = function (self)
+		condition = function (counter)
 			-- function 135
-			return self.boss <= 0
+			return counter.boss <= 0
 		end,
-		duration = num_6
+		duration = SHORT
 	},
 	{
 		"event_horde",
@@ -7019,15 +7056,15 @@ GenericTerrorEvents.deus_skaven_wave_1b = {
 	},
 	{
 		"delay",
-		duration = num_6
+		duration = SHORT
 	},
 	{
 		"continue_when_spawned_count",
-		condition = function (self)
+		condition = function (counter)
 			-- function 136
-			return self.boss <= 0
+			return counter.boss <= 0
 		end,
-		duration = num_6
+		duration = SHORT
 	},
 	{
 		"event_horde",
@@ -7041,22 +7078,22 @@ GenericTerrorEvents.deus_skaven_wave_1b = {
 	},
 	{
 		"delay",
-		duration = num_6
+		duration = SHORT
 	},
 	{
 		"continue_when_spawned_count",
-		condition = function (self)
+		condition = function (counter)
 			-- function 137
-			return self.boss <= 0
+			return counter.boss <= 0
 		end,
-		duration = num_6
+		duration = SHORT
 	},
 	{
 		"continue_when_spawned_count",
 		duration = 100,
-		condition = function (self)
+		condition = function (counter)
 			-- function 138
-			return self.main < 30
+			return counter.main < 30
 		end
 	},
 	{
@@ -7082,7 +7119,7 @@ GenericTerrorEvents.deus_skaven_wave_1b = {
 	},
 	{
 		"delay",
-		duration = num_6
+		duration = SHORT
 	},
 	{
 		"event_horde",
@@ -7096,22 +7133,22 @@ GenericTerrorEvents.deus_skaven_wave_1b = {
 	},
 	{
 		"delay",
-		duration = num_6
+		duration = SHORT
 	},
 	{
 		"continue_when_spawned_count",
-		condition = function (self)
+		condition = function (counter)
 			-- function 139
-			return self.boss <= 0
+			return counter.boss <= 0
 		end,
-		duration = num_6
+		duration = SHORT
 	},
 	{
 		"continue_when_spawned_count",
 		duration = 100,
-		condition = function (self)
+		condition = function (counter)
 			-- function 140
-			return self.main < 10
+			return counter.main < 10
 		end
 	}
 }
@@ -7128,15 +7165,15 @@ GenericTerrorEvents.deus_skaven_wave_1c = {
 	},
 	{
 		"delay",
-		duration = num_6
+		duration = SHORT
 	},
 	{
 		"continue_when_spawned_count",
-		condition = function (self)
+		condition = function (counter)
 			-- function 141
-			return self.boss <= 0
+			return counter.boss <= 0
 		end,
-		duration = num_6
+		duration = SHORT
 	},
 	{
 		"event_horde",
@@ -7152,16 +7189,16 @@ GenericTerrorEvents.deus_skaven_wave_1c = {
 	{
 		"delay",
 		minimum_difficulty_tweak = -5,
-		duration = num_6
+		duration = SHORT
 	},
 	{
 		"continue_when_spawned_count",
 		minimum_difficulty_tweak = -5,
-		condition = function (self)
+		condition = function (counter)
 			-- function 142
-			return self.boss <= 0
+			return counter.boss <= 0
 		end,
-		duration = num_6
+		duration = SHORT
 	},
 	{
 		"event_horde",
@@ -7177,16 +7214,16 @@ GenericTerrorEvents.deus_skaven_wave_1c = {
 	{
 		"delay",
 		minimum_difficulty_tweak = 5,
-		duration = num_6
+		duration = SHORT
 	},
 	{
 		"continue_when_spawned_count",
 		minimum_difficulty_tweak = 5,
-		condition = function (self)
+		condition = function (counter)
 			-- function 143
-			return self.boss <= 0
+			return counter.boss <= 0
 		end,
-		duration = num_6
+		duration = SHORT
 	},
 	{
 		"event_horde",
@@ -7200,22 +7237,22 @@ GenericTerrorEvents.deus_skaven_wave_1c = {
 	},
 	{
 		"delay",
-		duration = num_6
+		duration = SHORT
 	},
 	{
 		"continue_when_spawned_count",
-		condition = function (self)
+		condition = function (counter)
 			-- function 144
-			return self.boss <= 0
+			return counter.boss <= 0
 		end,
-		duration = num_6
+		duration = SHORT
 	},
 	{
 		"continue_when_spawned_count",
 		duration = 60,
-		condition = function (self)
+		condition = function (counter)
 			-- function 145
-			return self.main < 10
+			return counter.main < 10
 		end
 	},
 	{
@@ -7240,15 +7277,15 @@ GenericTerrorEvents.deus_skaven_wave_1c = {
 	},
 	{
 		"delay",
-		duration = num_6
+		duration = SHORT
 	},
 	{
 		"continue_when_spawned_count",
-		condition = function (self)
+		condition = function (counter)
 			-- function 146
-			return self.boss <= 0
+			return counter.boss <= 0
 		end,
-		duration = num_6
+		duration = SHORT
 	},
 	{
 		"spawn_at_raw",
@@ -7278,15 +7315,15 @@ GenericTerrorEvents.deus_skaven_wave_1c = {
 	},
 	{
 		"delay",
-		duration = num_6
+		duration = SHORT
 	},
 	{
 		"continue_when_spawned_count",
-		condition = function (self)
+		condition = function (counter)
 			-- function 147
-			return self.boss <= 0
+			return counter.boss <= 0
 		end,
-		duration = num_6
+		duration = SHORT
 	},
 	{
 		"event_horde",
@@ -7310,14 +7347,14 @@ GenericTerrorEvents.deus_skaven_wave_1c = {
 	},
 	{
 		"delay",
-		duration = num_6
+		duration = SHORT
 	},
 	{
 		"continue_when_spawned_count",
 		duration = 60,
-		condition = function (self)
+		condition = function (counter)
 			-- function 148
-			return self.main < 10
+			return counter.main < 10
 		end
 	}
 }
@@ -7334,15 +7371,15 @@ GenericTerrorEvents.deus_skaven_wave_1d = {
 	},
 	{
 		"delay",
-		duration = num_6
+		duration = SHORT
 	},
 	{
 		"continue_when_spawned_count",
-		condition = function (self)
+		condition = function (counter)
 			-- function 149
-			return self.boss <= 0
+			return counter.boss <= 0
 		end,
-		duration = num_6
+		duration = SHORT
 	},
 	{
 		"event_horde",
@@ -7358,16 +7395,16 @@ GenericTerrorEvents.deus_skaven_wave_1d = {
 	{
 		"delay",
 		minimum_difficulty_tweak = -5,
-		duration = num_6
+		duration = SHORT
 	},
 	{
 		"continue_when_spawned_count",
 		minimum_difficulty_tweak = -5,
-		condition = function (self)
+		condition = function (counter)
 			-- function 150
-			return self.boss <= 0
+			return counter.boss <= 0
 		end,
-		duration = num_6
+		duration = SHORT
 	},
 	{
 		"event_horde",
@@ -7383,16 +7420,16 @@ GenericTerrorEvents.deus_skaven_wave_1d = {
 	{
 		"delay",
 		minimum_difficulty_tweak = 5,
-		duration = num_6
+		duration = SHORT
 	},
 	{
 		"continue_when_spawned_count",
 		minimum_difficulty_tweak = 5,
-		condition = function (self)
+		condition = function (counter)
 			-- function 151
-			return self.boss <= 0
+			return counter.boss <= 0
 		end,
-		duration = num_6
+		duration = SHORT
 	},
 	{
 		"event_horde",
@@ -7406,22 +7443,22 @@ GenericTerrorEvents.deus_skaven_wave_1d = {
 	},
 	{
 		"delay",
-		duration = num_6
+		duration = SHORT
 	},
 	{
 		"continue_when_spawned_count",
-		condition = function (self)
+		condition = function (counter)
 			-- function 152
-			return self.boss <= 0
+			return counter.boss <= 0
 		end,
-		duration = num_6
+		duration = SHORT
 	},
 	{
 		"continue_when_spawned_count",
 		duration = 60,
-		condition = function (self)
+		condition = function (counter)
 			-- function 153
-			return self.main < 15
+			return counter.main < 15
 		end
 	},
 	{
@@ -7432,14 +7469,14 @@ GenericTerrorEvents.deus_skaven_wave_1d = {
 	},
 	{
 		"delay",
-		duration = num_7
+		duration = LONG
 	},
 	{
 		"continue_when_spawned_count",
 		duration = 60,
-		condition = function (self)
+		condition = function (counter)
 			-- function 154
-			return self.main < 10
+			return counter.main < 10
 		end
 	}
 }
@@ -7456,15 +7493,15 @@ GenericTerrorEvents.deus_chaos_wave_1a = {
 	},
 	{
 		"delay",
-		duration = num_6
+		duration = SHORT
 	},
 	{
 		"continue_when_spawned_count",
-		condition = function (self)
+		condition = function (counter)
 			-- function 155
-			return self.boss <= 0
+			return counter.boss <= 0
 		end,
-		duration = num_6
+		duration = SHORT
 	},
 	{
 		"event_horde",
@@ -7480,16 +7517,16 @@ GenericTerrorEvents.deus_chaos_wave_1a = {
 	{
 		"delay",
 		minimum_difficulty_tweak = -5,
-		duration = num_6
+		duration = SHORT
 	},
 	{
 		"continue_when_spawned_count",
 		minimum_difficulty_tweak = -5,
-		condition = function (self)
+		condition = function (counter)
 			-- function 156
-			return self.boss <= 0
+			return counter.boss <= 0
 		end,
-		duration = num_6
+		duration = SHORT
 	},
 	{
 		"event_horde",
@@ -7505,16 +7542,16 @@ GenericTerrorEvents.deus_chaos_wave_1a = {
 	{
 		"delay",
 		minimum_difficulty_tweak = 5,
-		duration = num_6
+		duration = SHORT
 	},
 	{
 		"continue_when_spawned_count",
 		minimum_difficulty_tweak = 5,
-		condition = function (self)
+		condition = function (counter)
 			-- function 157
-			return self.boss <= 0
+			return counter.boss <= 0
 		end,
-		duration = num_6
+		duration = SHORT
 	},
 	{
 		"event_horde",
@@ -7528,22 +7565,22 @@ GenericTerrorEvents.deus_chaos_wave_1a = {
 	},
 	{
 		"delay",
-		duration = num_6
+		duration = SHORT
 	},
 	{
 		"continue_when_spawned_count",
-		condition = function (self)
+		condition = function (counter)
 			-- function 158
-			return self.boss <= 0
+			return counter.boss <= 0
 		end,
-		duration = num_6
+		duration = SHORT
 	},
 	{
 		"continue_when_spawned_count",
 		duration = 60,
-		condition = function (self)
+		condition = function (counter)
 			-- function 159
-			return self.main < 10
+			return counter.main < 10
 		end
 	},
 	{
@@ -7557,15 +7594,15 @@ GenericTerrorEvents.deus_chaos_wave_1a = {
 	},
 	{
 		"delay",
-		duration = num_6
+		duration = SHORT
 	},
 	{
 		"continue_when_spawned_count",
-		condition = function (self)
+		condition = function (counter)
 			-- function 160
-			return self.boss <= 0
+			return counter.boss <= 0
 		end,
-		duration = num_6
+		duration = SHORT
 	},
 	{
 		"spawn_at_raw",
@@ -7584,7 +7621,7 @@ GenericTerrorEvents.deus_chaos_wave_1a = {
 	},
 	{
 		"delay",
-		duration = num_6
+		duration = SHORT
 	},
 	{
 		"spawn_at_raw",
@@ -7603,8 +7640,8 @@ GenericTerrorEvents.deus_chaos_wave_1a = {
 	},
 	{
 		"delay",
-		duration = num_6,
-		difficulty_requirement = num_3
+		duration = SHORT,
+		difficulty_requirement = CHAMPION
 	},
 	{
 		"event_horde",
@@ -7618,22 +7655,22 @@ GenericTerrorEvents.deus_chaos_wave_1a = {
 	},
 	{
 		"delay",
-		duration = num_6
+		duration = SHORT
 	},
 	{
 		"continue_when_spawned_count",
-		condition = function (self)
+		condition = function (counter)
 			-- function 161
-			return self.boss <= 0
+			return counter.boss <= 0
 		end,
-		duration = num_6
+		duration = SHORT
 	},
 	{
 		"continue_when_spawned_count",
 		duration = 60,
-		condition = function (self)
+		condition = function (counter)
 			-- function 162
-			return self.main < 10
+			return counter.main < 10
 		end
 	}
 }
@@ -7650,15 +7687,15 @@ GenericTerrorEvents.deus_chaos_wave_1b = {
 	},
 	{
 		"delay",
-		duration = num_6
+		duration = SHORT
 	},
 	{
 		"continue_when_spawned_count",
-		condition = function (self)
+		condition = function (counter)
 			-- function 163
-			return self.boss <= 0
+			return counter.boss <= 0
 		end,
-		duration = num_6
+		duration = SHORT
 	},
 	{
 		"event_horde",
@@ -7674,16 +7711,16 @@ GenericTerrorEvents.deus_chaos_wave_1b = {
 	{
 		"delay",
 		minimum_difficulty_tweak = -5,
-		duration = num_6
+		duration = SHORT
 	},
 	{
 		"continue_when_spawned_count",
 		minimum_difficulty_tweak = -5,
-		condition = function (self)
+		condition = function (counter)
 			-- function 164
-			return self.boss <= 0
+			return counter.boss <= 0
 		end,
-		duration = num_6
+		duration = SHORT
 	},
 	{
 		"event_horde",
@@ -7699,16 +7736,16 @@ GenericTerrorEvents.deus_chaos_wave_1b = {
 	{
 		"delay",
 		minimum_difficulty_tweak = 5,
-		duration = num_6
+		duration = SHORT
 	},
 	{
 		"continue_when_spawned_count",
 		minimum_difficulty_tweak = 5,
-		condition = function (self)
+		condition = function (counter)
 			-- function 165
-			return self.boss <= 0
+			return counter.boss <= 0
 		end,
-		duration = num_6
+		duration = SHORT
 	},
 	{
 		"event_horde",
@@ -7722,22 +7759,22 @@ GenericTerrorEvents.deus_chaos_wave_1b = {
 	},
 	{
 		"delay",
-		duration = num_6
+		duration = SHORT
 	},
 	{
 		"continue_when_spawned_count",
-		condition = function (self)
+		condition = function (counter)
 			-- function 166
-			return self.boss <= 0
+			return counter.boss <= 0
 		end,
-		duration = num_6
+		duration = SHORT
 	},
 	{
 		"continue_when_spawned_count",
 		duration = 60,
-		condition = function (self)
+		condition = function (counter)
 			-- function 167
-			return self.main < 10
+			return counter.main < 10
 		end
 	},
 	{
@@ -7751,15 +7788,15 @@ GenericTerrorEvents.deus_chaos_wave_1b = {
 	},
 	{
 		"delay",
-		duration = num_6
+		duration = SHORT
 	},
 	{
 		"continue_when_spawned_count",
-		condition = function (self)
+		condition = function (counter)
 			-- function 168
-			return self.boss <= 0
+			return counter.boss <= 0
 		end,
-		duration = num_6
+		duration = SHORT
 	},
 	{
 		"event_horde",
@@ -7772,15 +7809,15 @@ GenericTerrorEvents.deus_chaos_wave_1b = {
 	},
 	{
 		"delay",
-		duration = num_7
+		duration = LONG
 	},
 	{
 		"continue_when_spawned_count",
-		condition = function (self)
+		condition = function (counter)
 			-- function 169
-			return self.boss <= 0
+			return counter.boss <= 0
 		end,
-		duration = num_6
+		duration = SHORT
 	},
 	{
 		"spawn_at_raw",
@@ -7792,7 +7829,7 @@ GenericTerrorEvents.deus_chaos_wave_1b = {
 	},
 	{
 		"delay",
-		duration = num_6
+		duration = SHORT
 	},
 	{
 		"spawn_at_raw",
@@ -7801,12 +7838,12 @@ GenericTerrorEvents.deus_chaos_wave_1b = {
 			"chaos_vortex_sorcerer",
 			"chaos_corruptor_sorcerer"
 		},
-		difficulty_requirement = num_3
+		difficulty_requirement = CHAMPION
 	},
 	{
 		"delay",
-		duration = num_6,
-		difficulty_requirement = num_3
+		duration = SHORT,
+		difficulty_requirement = CHAMPION
 	},
 	{
 		"event_horde",
@@ -7820,22 +7857,22 @@ GenericTerrorEvents.deus_chaos_wave_1b = {
 	},
 	{
 		"delay",
-		duration = num_6
+		duration = SHORT
 	},
 	{
 		"continue_when_spawned_count",
-		condition = function (self)
+		condition = function (counter)
 			-- function 170
-			return self.boss <= 0
+			return counter.boss <= 0
 		end,
-		duration = num_6
+		duration = SHORT
 	},
 	{
 		"continue_when_spawned_count",
 		duration = 60,
-		condition = function (self)
+		condition = function (counter)
 			-- function 171
-			return self.main < 10
+			return counter.main < 10
 		end
 	}
 }
@@ -7852,15 +7889,15 @@ GenericTerrorEvents.deus_chaos_wave_1c = {
 	},
 	{
 		"delay",
-		duration = num_6
+		duration = SHORT
 	},
 	{
 		"continue_when_spawned_count",
-		condition = function (self)
+		condition = function (counter)
 			-- function 172
-			return self.boss <= 0
+			return counter.boss <= 0
 		end,
-		duration = num_6
+		duration = SHORT
 	},
 	{
 		"event_horde",
@@ -7876,16 +7913,16 @@ GenericTerrorEvents.deus_chaos_wave_1c = {
 	{
 		"delay",
 		minimum_difficulty_tweak = -5,
-		duration = num_6
+		duration = SHORT
 	},
 	{
 		"continue_when_spawned_count",
 		minimum_difficulty_tweak = -5,
-		condition = function (self)
+		condition = function (counter)
 			-- function 173
-			return self.boss <= 0
+			return counter.boss <= 0
 		end,
-		duration = num_6
+		duration = SHORT
 	},
 	{
 		"event_horde",
@@ -7901,16 +7938,16 @@ GenericTerrorEvents.deus_chaos_wave_1c = {
 	{
 		"delay",
 		minimum_difficulty_tweak = 5,
-		duration = num_6
+		duration = SHORT
 	},
 	{
 		"continue_when_spawned_count",
 		minimum_difficulty_tweak = 5,
-		condition = function (self)
+		condition = function (counter)
 			-- function 174
-			return self.boss <= 0
+			return counter.boss <= 0
 		end,
-		duration = num_6
+		duration = SHORT
 	},
 	{
 		"event_horde",
@@ -7924,22 +7961,22 @@ GenericTerrorEvents.deus_chaos_wave_1c = {
 	},
 	{
 		"delay",
-		duration = num_6
+		duration = SHORT
 	},
 	{
 		"continue_when_spawned_count",
-		condition = function (self)
+		condition = function (counter)
 			-- function 175
-			return self.boss <= 0
+			return counter.boss <= 0
 		end,
-		duration = num_6
+		duration = SHORT
 	},
 	{
 		"continue_when_spawned_count",
 		duration = 60,
-		condition = function (self)
+		condition = function (counter)
 			-- function 176
-			return self.main < 10
+			return counter.main < 10
 		end
 	},
 	{
@@ -7962,15 +7999,15 @@ GenericTerrorEvents.deus_chaos_wave_1c = {
 	},
 	{
 		"delay",
-		duration = num_7
+		duration = LONG
 	},
 	{
 		"continue_when_spawned_count",
-		condition = function (self)
+		condition = function (counter)
 			-- function 177
-			return self.boss <= 0
+			return counter.boss <= 0
 		end,
-		duration = num_7
+		duration = LONG
 	},
 	{
 		"event_horde",
@@ -7992,15 +8029,15 @@ GenericTerrorEvents.deus_chaos_wave_1c = {
 	},
 	{
 		"delay",
-		duration = num_7
+		duration = LONG
 	},
 	{
 		"continue_when_spawned_count",
-		condition = function (self)
+		condition = function (counter)
 			-- function 178
-			return self.boss <= 0
+			return counter.boss <= 0
 		end,
-		duration = num_7
+		duration = LONG
 	},
 	{
 		"event_horde",
@@ -8022,15 +8059,15 @@ GenericTerrorEvents.deus_chaos_wave_1c = {
 	},
 	{
 		"delay",
-		duration = num_7
+		duration = LONG
 	},
 	{
 		"continue_when_spawned_count",
-		condition = function (self)
+		condition = function (counter)
 			-- function 179
-			return self.boss <= 0
+			return counter.boss <= 0
 		end,
-		duration = num_7
+		duration = LONG
 	},
 	{
 		"event_horde",
@@ -8052,22 +8089,22 @@ GenericTerrorEvents.deus_chaos_wave_1c = {
 	},
 	{
 		"delay",
-		duration = num_6
+		duration = SHORT
 	},
 	{
 		"continue_when_spawned_count",
-		condition = function (self)
+		condition = function (counter)
 			-- function 180
-			return self.boss <= 0
+			return counter.boss <= 0
 		end,
-		duration = num_7
+		duration = LONG
 	},
 	{
 		"continue_when_spawned_count",
 		duration = 60,
-		condition = function (self)
+		condition = function (counter)
 			-- function 181
-			return self.main < 10
+			return counter.main < 10
 		end
 	}
 }
@@ -8084,15 +8121,15 @@ GenericTerrorEvents.deus_chaos_wave_1d = {
 	},
 	{
 		"delay",
-		duration = num_6
+		duration = SHORT
 	},
 	{
 		"continue_when_spawned_count",
-		condition = function (self)
+		condition = function (counter)
 			-- function 182
-			return self.boss <= 0
+			return counter.boss <= 0
 		end,
-		duration = num_6
+		duration = SHORT
 	},
 	{
 		"event_horde",
@@ -8108,16 +8145,16 @@ GenericTerrorEvents.deus_chaos_wave_1d = {
 	{
 		"delay",
 		minimum_difficulty_tweak = -5,
-		duration = num_6
+		duration = SHORT
 	},
 	{
 		"continue_when_spawned_count",
 		minimum_difficulty_tweak = -5,
-		condition = function (self)
+		condition = function (counter)
 			-- function 183
-			return self.boss <= 0
+			return counter.boss <= 0
 		end,
-		duration = num_6
+		duration = SHORT
 	},
 	{
 		"event_horde",
@@ -8133,16 +8170,16 @@ GenericTerrorEvents.deus_chaos_wave_1d = {
 	{
 		"delay",
 		minimum_difficulty_tweak = 5,
-		duration = num_6
+		duration = SHORT
 	},
 	{
 		"continue_when_spawned_count",
 		minimum_difficulty_tweak = 5,
-		condition = function (self)
+		condition = function (counter)
 			-- function 184
-			return self.boss <= 0
+			return counter.boss <= 0
 		end,
-		duration = num_6
+		duration = SHORT
 	},
 	{
 		"event_horde",
@@ -8156,22 +8193,22 @@ GenericTerrorEvents.deus_chaos_wave_1d = {
 	},
 	{
 		"delay",
-		duration = num_6
+		duration = SHORT
 	},
 	{
 		"continue_when_spawned_count",
-		condition = function (self)
+		condition = function (counter)
 			-- function 185
-			return self.boss <= 0
+			return counter.boss <= 0
 		end,
-		duration = num_6
+		duration = SHORT
 	},
 	{
 		"continue_when_spawned_count",
 		duration = 60,
-		condition = function (self)
+		condition = function (counter)
 			-- function 186
-			return self.main < 15
+			return counter.main < 15
 		end
 	},
 	{
@@ -8186,15 +8223,15 @@ GenericTerrorEvents.deus_chaos_wave_1d = {
 	},
 	{
 		"delay",
-		duration = num_6
+		duration = SHORT
 	},
 	{
 		"continue_when_spawned_count",
-		condition = function (self)
+		condition = function (counter)
 			-- function 187
-			return self.boss <= 0
+			return counter.boss <= 0
 		end,
-		duration = num_6
+		duration = SHORT
 	},
 	{
 		"event_horde",
@@ -8210,16 +8247,16 @@ GenericTerrorEvents.deus_chaos_wave_1d = {
 	{
 		"delay",
 		minimum_difficulty_tweak = -5,
-		duration = num_6
+		duration = SHORT
 	},
 	{
 		"continue_when_spawned_count",
 		minimum_difficulty_tweak = -5,
-		condition = function (self)
+		condition = function (counter)
 			-- function 188
-			return self.boss <= 0
+			return counter.boss <= 0
 		end,
-		duration = num_6
+		duration = SHORT
 	},
 	{
 		"event_horde",
@@ -8235,16 +8272,16 @@ GenericTerrorEvents.deus_chaos_wave_1d = {
 	{
 		"delay",
 		minimum_difficulty_tweak = 5,
-		duration = num_6
+		duration = SHORT
 	},
 	{
 		"continue_when_spawned_count",
 		minimum_difficulty_tweak = 5,
-		condition = function (self)
+		condition = function (counter)
 			-- function 189
-			return self.boss <= 0
+			return counter.boss <= 0
 		end,
-		duration = num_6
+		duration = SHORT
 	},
 	{
 		"event_horde",
@@ -8258,22 +8295,22 @@ GenericTerrorEvents.deus_chaos_wave_1d = {
 	},
 	{
 		"delay",
-		duration = num_6
+		duration = SHORT
 	},
 	{
 		"continue_when_spawned_count",
-		condition = function (self)
+		condition = function (counter)
 			-- function 190
-			return self.boss <= 0
+			return counter.boss <= 0
 		end,
-		duration = num_6
+		duration = SHORT
 	},
 	{
 		"continue_when_spawned_count",
 		duration = 60,
-		condition = function (self)
+		condition = function (counter)
 			-- function 191
-			return self.main < 10
+			return counter.main < 10
 		end
 	}
 }
@@ -8290,15 +8327,15 @@ GenericTerrorEvents.deus_beastmen_wave_1a = {
 	},
 	{
 		"delay",
-		duration = num_6
+		duration = SHORT
 	},
 	{
 		"continue_when_spawned_count",
-		condition = function (self)
+		condition = function (counter)
 			-- function 192
-			return self.boss <= 0
+			return counter.boss <= 0
 		end,
-		duration = num_6
+		duration = SHORT
 	},
 	{
 		"event_horde",
@@ -8314,16 +8351,16 @@ GenericTerrorEvents.deus_beastmen_wave_1a = {
 	{
 		"delay",
 		minimum_difficulty_tweak = -5,
-		duration = num_6
+		duration = SHORT
 	},
 	{
 		"continue_when_spawned_count",
 		minimum_difficulty_tweak = -5,
-		condition = function (self)
+		condition = function (counter)
 			-- function 193
-			return self.boss <= 0
+			return counter.boss <= 0
 		end,
-		duration = num_6
+		duration = SHORT
 	},
 	{
 		"event_horde",
@@ -8339,16 +8376,16 @@ GenericTerrorEvents.deus_beastmen_wave_1a = {
 	{
 		"delay",
 		minimum_difficulty_tweak = 5,
-		duration = num_6
+		duration = SHORT
 	},
 	{
 		"continue_when_spawned_count",
 		minimum_difficulty_tweak = 5,
-		condition = function (self)
+		condition = function (counter)
 			-- function 194
-			return self.boss <= 0
+			return counter.boss <= 0
 		end,
-		duration = num_6
+		duration = SHORT
 	},
 	{
 		"event_horde",
@@ -8362,22 +8399,22 @@ GenericTerrorEvents.deus_beastmen_wave_1a = {
 	},
 	{
 		"delay",
-		duration = num_6
+		duration = SHORT
 	},
 	{
 		"continue_when_spawned_count",
-		condition = function (self)
+		condition = function (counter)
 			-- function 195
-			return self.boss <= 0
+			return counter.boss <= 0
 		end,
-		duration = num_6
+		duration = SHORT
 	},
 	{
 		"continue_when_spawned_count",
 		duration = 60,
-		condition = function (self)
+		condition = function (counter)
 			-- function 196
-			return self.main < 10
+			return counter.main < 10
 		end
 	},
 	{
@@ -8393,16 +8430,16 @@ GenericTerrorEvents.deus_beastmen_wave_1a = {
 	{
 		"delay",
 		minimum_difficulty_tweak = 0,
-		duration = num_6
+		duration = SHORT
 	},
 	{
 		"continue_when_spawned_count",
 		minimum_difficulty_tweak = 0,
-		condition = function (self)
+		condition = function (counter)
 			-- function 197
-			return self.boss <= 0
+			return counter.boss <= 0
 		end,
-		duration = num_6
+		duration = SHORT
 	},
 	{
 		"event_horde",
@@ -8427,15 +8464,15 @@ GenericTerrorEvents.deus_beastmen_wave_1a = {
 	},
 	{
 		"delay",
-		duration = num_6
+		duration = SHORT
 	},
 	{
 		"continue_when_spawned_count",
-		condition = function (self)
+		condition = function (counter)
 			-- function 198
-			return self.boss <= 0
+			return counter.boss <= 0
 		end,
-		duration = num_6
+		duration = SHORT
 	},
 	{
 		"event_horde",
@@ -8446,28 +8483,28 @@ GenericTerrorEvents.deus_beastmen_wave_1a = {
 			"terror_event_a",
 			"terror_event_b"
 		},
-		difficulty_requirement = num_3
+		difficulty_requirement = CHAMPION
 	},
 	{
 		"delay",
-		duration = num_6,
-		difficulty_requirement = num_3
+		duration = SHORT,
+		difficulty_requirement = CHAMPION
 	},
 	{
 		"continue_when_spawned_count",
-		condition = function (self)
+		condition = function (counter)
 			-- function 199
-			return self.boss <= 0
+			return counter.boss <= 0
 		end,
-		duration = num_6,
-		difficulty_requirement = num_3
+		duration = SHORT,
+		difficulty_requirement = CHAMPION
 	},
 	{
 		"continue_when_spawned_count",
 		duration = 60,
-		condition = function (self)
+		condition = function (counter)
 			-- function 200
-			return self.main < 10
+			return counter.main < 10
 		end
 	}
 }
@@ -8484,15 +8521,15 @@ GenericTerrorEvents.deus_beastmen_wave_1b = {
 	},
 	{
 		"delay",
-		duration = num_6
+		duration = SHORT
 	},
 	{
 		"continue_when_spawned_count",
-		condition = function (self)
+		condition = function (counter)
 			-- function 201
-			return self.boss <= 0
+			return counter.boss <= 0
 		end,
-		duration = num_6
+		duration = SHORT
 	},
 	{
 		"event_horde",
@@ -8508,16 +8545,16 @@ GenericTerrorEvents.deus_beastmen_wave_1b = {
 	{
 		"delay",
 		minimum_difficulty_tweak = -5,
-		duration = num_6
+		duration = SHORT
 	},
 	{
 		"continue_when_spawned_count",
 		minimum_difficulty_tweak = -5,
-		condition = function (self)
+		condition = function (counter)
 			-- function 202
-			return self.boss <= 0
+			return counter.boss <= 0
 		end,
-		duration = num_6
+		duration = SHORT
 	},
 	{
 		"event_horde",
@@ -8533,16 +8570,16 @@ GenericTerrorEvents.deus_beastmen_wave_1b = {
 	{
 		"delay",
 		minimum_difficulty_tweak = 5,
-		duration = num_6
+		duration = SHORT
 	},
 	{
 		"continue_when_spawned_count",
 		minimum_difficulty_tweak = 5,
-		condition = function (self)
+		condition = function (counter)
 			-- function 203
-			return self.boss <= 0
+			return counter.boss <= 0
 		end,
-		duration = num_6
+		duration = SHORT
 	},
 	{
 		"event_horde",
@@ -8556,22 +8593,22 @@ GenericTerrorEvents.deus_beastmen_wave_1b = {
 	},
 	{
 		"delay",
-		duration = num_6
+		duration = SHORT
 	},
 	{
 		"continue_when_spawned_count",
-		condition = function (self)
+		condition = function (counter)
 			-- function 204
-			return self.boss <= 0
+			return counter.boss <= 0
 		end,
-		duration = num_6
+		duration = SHORT
 	},
 	{
 		"continue_when_spawned_count",
 		duration = 60,
-		condition = function (self)
+		condition = function (counter)
 			-- function 205
-			return self.main < 10
+			return counter.main < 10
 		end
 	},
 	{
@@ -8587,16 +8624,16 @@ GenericTerrorEvents.deus_beastmen_wave_1b = {
 	{
 		"delay",
 		minimum_difficulty_tweak = 0,
-		duration = num_6
+		duration = SHORT
 	},
 	{
 		"continue_when_spawned_count",
 		minimum_difficulty_tweak = 0,
-		condition = function (self)
+		condition = function (counter)
 			-- function 206
-			return self.boss <= 0
+			return counter.boss <= 0
 		end,
-		duration = num_6
+		duration = SHORT
 	},
 	{
 		"event_horde",
@@ -8621,15 +8658,15 @@ GenericTerrorEvents.deus_beastmen_wave_1b = {
 	},
 	{
 		"delay",
-		duration = num_6
+		duration = SHORT
 	},
 	{
 		"continue_when_spawned_count",
-		condition = function (self)
+		condition = function (counter)
 			-- function 207
-			return self.boss <= 0
+			return counter.boss <= 0
 		end,
-		duration = num_6
+		duration = SHORT
 	},
 	{
 		"event_horde",
@@ -8640,28 +8677,28 @@ GenericTerrorEvents.deus_beastmen_wave_1b = {
 			"terror_event_a",
 			"terror_event_b"
 		},
-		difficulty_requirement = num_3
+		difficulty_requirement = CHAMPION
 	},
 	{
 		"delay",
-		duration = num_6,
-		difficulty_requirement = num_3
+		duration = SHORT,
+		difficulty_requirement = CHAMPION
 	},
 	{
 		"continue_when_spawned_count",
-		condition = function (self)
+		condition = function (counter)
 			-- function 208
-			return self.boss <= 0
+			return counter.boss <= 0
 		end,
-		duration = num_6,
-		difficulty_requirement = num_3
+		duration = SHORT,
+		difficulty_requirement = CHAMPION
 	},
 	{
 		"continue_when_spawned_count",
 		duration = 60,
-		condition = function (self)
+		condition = function (counter)
 			-- function 209
-			return self.main < 10
+			return counter.main < 10
 		end
 	}
 }
@@ -8678,15 +8715,15 @@ GenericTerrorEvents.deus_beastmen_wave_1c = {
 	},
 	{
 		"delay",
-		duration = num_6
+		duration = SHORT
 	},
 	{
 		"continue_when_spawned_count",
-		condition = function (self)
+		condition = function (counter)
 			-- function 210
-			return self.boss <= 0
+			return counter.boss <= 0
 		end,
-		duration = num_6
+		duration = SHORT
 	},
 	{
 		"event_horde",
@@ -8702,16 +8739,16 @@ GenericTerrorEvents.deus_beastmen_wave_1c = {
 	{
 		"delay",
 		minimum_difficulty_tweak = -5,
-		duration = num_6
+		duration = SHORT
 	},
 	{
 		"continue_when_spawned_count",
 		minimum_difficulty_tweak = -5,
-		condition = function (self)
+		condition = function (counter)
 			-- function 211
-			return self.boss <= 0
+			return counter.boss <= 0
 		end,
-		duration = num_6
+		duration = SHORT
 	},
 	{
 		"event_horde",
@@ -8727,16 +8764,16 @@ GenericTerrorEvents.deus_beastmen_wave_1c = {
 	{
 		"delay",
 		minimum_difficulty_tweak = 5,
-		duration = num_6
+		duration = SHORT
 	},
 	{
 		"continue_when_spawned_count",
 		minimum_difficulty_tweak = 5,
-		condition = function (self)
+		condition = function (counter)
 			-- function 212
-			return self.boss <= 0
+			return counter.boss <= 0
 		end,
-		duration = num_6
+		duration = SHORT
 	},
 	{
 		"event_horde",
@@ -8750,22 +8787,22 @@ GenericTerrorEvents.deus_beastmen_wave_1c = {
 	},
 	{
 		"delay",
-		duration = num_6
+		duration = SHORT
 	},
 	{
 		"continue_when_spawned_count",
-		condition = function (self)
+		condition = function (counter)
 			-- function 213
-			return self.boss <= 0
+			return counter.boss <= 0
 		end,
-		duration = num_6
+		duration = SHORT
 	},
 	{
 		"continue_when_spawned_count",
 		duration = 60,
-		condition = function (self)
+		condition = function (counter)
 			-- function 214
-			return self.main < 10
+			return counter.main < 10
 		end
 	},
 	{
@@ -8781,16 +8818,16 @@ GenericTerrorEvents.deus_beastmen_wave_1c = {
 	{
 		"delay",
 		minimum_difficulty_tweak = 0,
-		duration = num_6
+		duration = SHORT
 	},
 	{
 		"continue_when_spawned_count",
 		minimum_difficulty_tweak = 0,
-		condition = function (self)
+		condition = function (counter)
 			-- function 215
-			return self.boss <= 0
+			return counter.boss <= 0
 		end,
-		duration = num_6
+		duration = SHORT
 	},
 	{
 		"event_horde",
@@ -8810,15 +8847,15 @@ GenericTerrorEvents.deus_beastmen_wave_1c = {
 	},
 	{
 		"delay",
-		duration = num_6
+		duration = SHORT
 	},
 	{
 		"continue_when_spawned_count",
-		condition = function (self)
+		condition = function (counter)
 			-- function 216
-			return self.boss <= 0
+			return counter.boss <= 0
 		end,
-		duration = num_6
+		duration = SHORT
 	},
 	{
 		"spawn_at_raw",
@@ -8837,15 +8874,15 @@ GenericTerrorEvents.deus_beastmen_wave_1c = {
 	},
 	{
 		"delay",
-		duration = num_6
+		duration = SHORT
 	},
 	{
 		"continue_when_spawned_count",
-		condition = function (self)
+		condition = function (counter)
 			-- function 217
-			return self.boss <= 0
+			return counter.boss <= 0
 		end,
-		duration = num_6
+		duration = SHORT
 	},
 	{
 		"event_horde",
@@ -8859,22 +8896,22 @@ GenericTerrorEvents.deus_beastmen_wave_1c = {
 	},
 	{
 		"delay",
-		duration = num_6
+		duration = SHORT
 	},
 	{
 		"continue_when_spawned_count",
-		condition = function (self)
+		condition = function (counter)
 			-- function 218
-			return self.boss <= 0
+			return counter.boss <= 0
 		end,
-		duration = num_6
+		duration = SHORT
 	},
 	{
 		"continue_when_spawned_count",
 		duration = 60,
-		condition = function (self)
+		condition = function (counter)
 			-- function 219
-			return self.main < 10
+			return counter.main < 10
 		end
 	}
 }
@@ -8891,15 +8928,15 @@ GenericTerrorEvents.deus_beastmen_wave_1d = {
 	},
 	{
 		"delay",
-		duration = num_6
+		duration = SHORT
 	},
 	{
 		"continue_when_spawned_count",
-		condition = function (self)
+		condition = function (counter)
 			-- function 220
-			return self.boss <= 0
+			return counter.boss <= 0
 		end,
-		duration = num_6
+		duration = SHORT
 	},
 	{
 		"event_horde",
@@ -8915,16 +8952,16 @@ GenericTerrorEvents.deus_beastmen_wave_1d = {
 	{
 		"delay",
 		minimum_difficulty_tweak = -5,
-		duration = num_6
+		duration = SHORT
 	},
 	{
 		"continue_when_spawned_count",
 		minimum_difficulty_tweak = -5,
-		condition = function (self)
+		condition = function (counter)
 			-- function 221
-			return self.boss <= 0
+			return counter.boss <= 0
 		end,
-		duration = num_6
+		duration = SHORT
 	},
 	{
 		"event_horde",
@@ -8940,16 +8977,16 @@ GenericTerrorEvents.deus_beastmen_wave_1d = {
 	{
 		"delay",
 		minimum_difficulty_tweak = 5,
-		duration = num_6
+		duration = SHORT
 	},
 	{
 		"continue_when_spawned_count",
 		minimum_difficulty_tweak = 5,
-		condition = function (self)
+		condition = function (counter)
 			-- function 222
-			return self.boss <= 0
+			return counter.boss <= 0
 		end,
-		duration = num_6
+		duration = SHORT
 	},
 	{
 		"event_horde",
@@ -8963,22 +9000,22 @@ GenericTerrorEvents.deus_beastmen_wave_1d = {
 	},
 	{
 		"delay",
-		duration = num_6
+		duration = SHORT
 	},
 	{
 		"continue_when_spawned_count",
-		condition = function (self)
+		condition = function (counter)
 			-- function 223
-			return self.boss <= 0
+			return counter.boss <= 0
 		end,
-		duration = num_6
+		duration = SHORT
 	},
 	{
 		"continue_when_spawned_count",
 		duration = 60,
-		condition = function (self)
+		condition = function (counter)
 			-- function 224
-			return self.main < 15
+			return counter.main < 15
 		end
 	},
 	{
@@ -8993,15 +9030,15 @@ GenericTerrorEvents.deus_beastmen_wave_1d = {
 	},
 	{
 		"delay",
-		duration = num_6
+		duration = SHORT
 	},
 	{
 		"continue_when_spawned_count",
-		condition = function (self)
+		condition = function (counter)
 			-- function 225
-			return self.boss <= 0
+			return counter.boss <= 0
 		end,
-		duration = num_6
+		duration = SHORT
 	},
 	{
 		"event_horde",
@@ -9017,16 +9054,16 @@ GenericTerrorEvents.deus_beastmen_wave_1d = {
 	{
 		"delay",
 		minimum_difficulty_tweak = -5,
-		duration = num_6
+		duration = SHORT
 	},
 	{
 		"continue_when_spawned_count",
 		minimum_difficulty_tweak = -5,
-		condition = function (self)
+		condition = function (counter)
 			-- function 226
-			return self.boss <= 0
+			return counter.boss <= 0
 		end,
-		duration = num_6
+		duration = SHORT
 	},
 	{
 		"event_horde",
@@ -9042,16 +9079,16 @@ GenericTerrorEvents.deus_beastmen_wave_1d = {
 	{
 		"delay",
 		minimum_difficulty_tweak = 5,
-		duration = num_6
+		duration = SHORT
 	},
 	{
 		"continue_when_spawned_count",
 		minimum_difficulty_tweak = 5,
-		condition = function (self)
+		condition = function (counter)
 			-- function 227
-			return self.boss <= 0
+			return counter.boss <= 0
 		end,
-		duration = num_6
+		duration = SHORT
 	},
 	{
 		"event_horde",
@@ -9065,22 +9102,22 @@ GenericTerrorEvents.deus_beastmen_wave_1d = {
 	},
 	{
 		"delay",
-		duration = num_6
+		duration = SHORT
 	},
 	{
 		"continue_when_spawned_count",
-		condition = function (self)
+		condition = function (counter)
 			-- function 228
-			return self.boss <= 0
+			return counter.boss <= 0
 		end,
-		duration = num_6
+		duration = SHORT
 	},
 	{
 		"continue_when_spawned_count",
 		duration = 60,
-		condition = function (self)
+		condition = function (counter)
 			-- function 229
-			return self.main < 10
+			return counter.main < 10
 		end
 	}
 }
@@ -9097,7 +9134,7 @@ GenericTerrorEvents.deus_skaven_wave_2a = {
 	},
 	{
 		"delay",
-		duration = num_6
+		duration = SHORT
 	},
 	{
 		"event_horde",
@@ -9113,7 +9150,7 @@ GenericTerrorEvents.deus_skaven_wave_2a = {
 	{
 		"delay",
 		minimum_difficulty_tweak = -5,
-		duration = num_6
+		duration = SHORT
 	},
 	{
 		"event_horde",
@@ -9129,14 +9166,14 @@ GenericTerrorEvents.deus_skaven_wave_2a = {
 	{
 		"delay",
 		minimum_difficulty_tweak = 5,
-		duration = num_6
+		duration = SHORT
 	},
 	{
 		"continue_when_spawned_count",
 		duration = 60,
-		condition = function (self)
+		condition = function (counter)
 			-- function 230
-			return self.main < 10
+			return counter.main < 10
 		end
 	},
 	{
@@ -9148,9 +9185,9 @@ GenericTerrorEvents.deus_skaven_wave_2a = {
 	{
 		"continue_when_spawned_count",
 		duration = 120,
-		condition = function (self)
+		condition = function (counter)
 			-- function 231
-			return self.boss > 0
+			return counter.boss > 0
 		end
 	},
 	{
@@ -9165,15 +9202,15 @@ GenericTerrorEvents.deus_skaven_wave_2a = {
 	},
 	{
 		"delay",
-		duration = num_6
+		duration = SHORT
 	},
 	{
 		"continue_when_spawned_count",
-		condition = function (self)
+		condition = function (counter)
 			-- function 232
-			return self.boss <= 0
+			return counter.boss <= 0
 		end,
-		duration = num_6
+		duration = SHORT
 	},
 	{
 		"event_horde",
@@ -9188,15 +9225,15 @@ GenericTerrorEvents.deus_skaven_wave_2a = {
 	},
 	{
 		"delay",
-		duration = num_6
+		duration = SHORT
 	},
 	{
 		"continue_when_spawned_count",
-		condition = function (self)
+		condition = function (counter)
 			-- function 233
-			return self.boss <= 0
+			return counter.boss <= 0
 		end,
-		duration = num_6
+		duration = SHORT
 	},
 	{
 		"spawn_at_raw",
@@ -9218,15 +9255,15 @@ GenericTerrorEvents.deus_skaven_wave_2a = {
 	},
 	{
 		"delay",
-		duration = num_6
+		duration = SHORT
 	},
 	{
 		"continue_when_spawned_count",
-		condition = function (self)
+		condition = function (counter)
 			-- function 234
-			return self.boss <= 0
+			return counter.boss <= 0
 		end,
-		duration = num_6
+		duration = SHORT
 	},
 	{
 		"event_horde",
@@ -9240,15 +9277,15 @@ GenericTerrorEvents.deus_skaven_wave_2a = {
 	},
 	{
 		"delay",
-		duration = num_6
+		duration = SHORT
 	},
 	{
 		"continue_when_spawned_count",
-		condition = function (self)
+		condition = function (counter)
 			-- function 235
-			return self.boss <= 0
+			return counter.boss <= 0
 		end,
-		duration = num_6
+		duration = SHORT
 	},
 	{
 		"event_horde",
@@ -9264,23 +9301,23 @@ GenericTerrorEvents.deus_skaven_wave_2a = {
 	{
 		"delay",
 		minimum_difficulty_tweak = 0,
-		duration = num_6
+		duration = SHORT
 	},
 	{
 		"continue_when_spawned_count",
 		minimum_difficulty_tweak = 0,
-		condition = function (self)
+		condition = function (counter)
 			-- function 236
-			return self.boss <= 0
+			return counter.boss <= 0
 		end,
-		duration = num_6
+		duration = SHORT
 	},
 	{
 		"continue_when_spawned_count",
 		duration = 60,
-		condition = function (self)
+		condition = function (counter)
 			-- function 237
-			return self.main < 10
+			return counter.main < 10
 		end
 	}
 }
@@ -9297,7 +9334,7 @@ GenericTerrorEvents.deus_skaven_wave_2b = {
 	},
 	{
 		"delay",
-		duration = num_6
+		duration = SHORT
 	},
 	{
 		"event_horde",
@@ -9313,7 +9350,7 @@ GenericTerrorEvents.deus_skaven_wave_2b = {
 	{
 		"delay",
 		minimum_difficulty_tweak = -5,
-		duration = num_6
+		duration = SHORT
 	},
 	{
 		"event_horde",
@@ -9329,14 +9366,14 @@ GenericTerrorEvents.deus_skaven_wave_2b = {
 	{
 		"delay",
 		minimum_difficulty_tweak = 5,
-		duration = num_6
+		duration = SHORT
 	},
 	{
 		"continue_when_spawned_count",
 		duration = 60,
-		condition = function (self)
+		condition = function (counter)
 			-- function 238
-			return self.main < 4
+			return counter.main < 4
 		end
 	},
 	{
@@ -9348,9 +9385,9 @@ GenericTerrorEvents.deus_skaven_wave_2b = {
 	{
 		"continue_when_spawned_count",
 		duration = 120,
-		condition = function (self)
+		condition = function (counter)
 			-- function 239
-			return self.boss > 0
+			return counter.boss > 0
 		end
 	},
 	{
@@ -9365,15 +9402,15 @@ GenericTerrorEvents.deus_skaven_wave_2b = {
 	},
 	{
 		"delay",
-		duration = num_6
+		duration = SHORT
 	},
 	{
 		"continue_when_spawned_count",
-		condition = function (self)
+		condition = function (counter)
 			-- function 240
-			return self.boss <= 0
+			return counter.boss <= 0
 		end,
-		duration = num_6
+		duration = SHORT
 	},
 	{
 		"spawn_at_raw",
@@ -9396,15 +9433,15 @@ GenericTerrorEvents.deus_skaven_wave_2b = {
 	},
 	{
 		"delay",
-		duration = num_6
+		duration = SHORT
 	},
 	{
 		"continue_when_spawned_count",
-		condition = function (self)
+		condition = function (counter)
 			-- function 241
-			return self.boss <= 0
+			return counter.boss <= 0
 		end,
-		duration = num_6
+		duration = SHORT
 	},
 	{
 		"event_horde",
@@ -9420,16 +9457,16 @@ GenericTerrorEvents.deus_skaven_wave_2b = {
 	{
 		"delay",
 		minimum_difficulty_tweak = 0,
-		duration = num_6
+		duration = SHORT
 	},
 	{
 		"continue_when_spawned_count",
 		minimum_difficulty_tweak = 0,
-		condition = function (self)
+		condition = function (counter)
 			-- function 242
-			return self.boss <= 0
+			return counter.boss <= 0
 		end,
-		duration = num_6
+		duration = SHORT
 	},
 	{
 		"spawn_at_raw",
@@ -9452,18 +9489,18 @@ GenericTerrorEvents.deus_skaven_wave_2b = {
 	},
 	{
 		"continue_when_spawned_count",
-		condition = function (self)
+		condition = function (counter)
 			-- function 243
-			return self.boss <= 0
+			return counter.boss <= 0
 		end,
-		duration = num_6
+		duration = SHORT
 	},
 	{
 		"continue_when_spawned_count",
 		duration = 60,
-		condition = function (self)
+		condition = function (counter)
 			-- function 244
-			return self.main < 10
+			return counter.main < 10
 		end
 	}
 }
@@ -9480,7 +9517,7 @@ GenericTerrorEvents.deus_skaven_wave_2c = {
 	},
 	{
 		"delay",
-		duration = num_6
+		duration = SHORT
 	},
 	{
 		"event_horde",
@@ -9496,7 +9533,7 @@ GenericTerrorEvents.deus_skaven_wave_2c = {
 	{
 		"delay",
 		minimum_difficulty_tweak = -5,
-		duration = num_6
+		duration = SHORT
 	},
 	{
 		"event_horde",
@@ -9512,14 +9549,14 @@ GenericTerrorEvents.deus_skaven_wave_2c = {
 	{
 		"delay",
 		minimum_difficulty_tweak = 5,
-		duration = num_6
+		duration = SHORT
 	},
 	{
 		"continue_when_spawned_count",
 		duration = 60,
-		condition = function (self)
+		condition = function (counter)
 			-- function 245
-			return self.main < 10
+			return counter.main < 10
 		end
 	},
 	{
@@ -9534,7 +9571,7 @@ GenericTerrorEvents.deus_skaven_wave_2c = {
 	},
 	{
 		"delay",
-		duration = num_6
+		duration = SHORT
 	},
 	{
 		"spawn_at_raw",
@@ -9556,14 +9593,14 @@ GenericTerrorEvents.deus_skaven_wave_2c = {
 	},
 	{
 		"delay",
-		duration = num_6
+		duration = SHORT
 	},
 	{
 		"continue_when_spawned_count",
 		duration = 60,
-		condition = function (self)
+		condition = function (counter)
 			-- function 246
-			return self.elite < 5
+			return counter.elite < 5
 		end
 	},
 	{
@@ -9578,14 +9615,14 @@ GenericTerrorEvents.deus_skaven_wave_2c = {
 	},
 	{
 		"delay",
-		duration = num_7
+		duration = LONG
 	},
 	{
 		"continue_when_spawned_count",
 		duration = 60,
-		condition = function (self)
+		condition = function (counter)
 			-- function 247
-			return self.main < 10
+			return counter.main < 10
 		end
 	}
 }
@@ -9602,7 +9639,7 @@ GenericTerrorEvents.deus_skaven_wave_2d = {
 	},
 	{
 		"delay",
-		duration = num_6
+		duration = SHORT
 	},
 	{
 		"event_horde",
@@ -9618,7 +9655,7 @@ GenericTerrorEvents.deus_skaven_wave_2d = {
 	{
 		"delay",
 		minimum_difficulty_tweak = -5,
-		duration = num_6
+		duration = SHORT
 	},
 	{
 		"event_horde",
@@ -9634,7 +9671,7 @@ GenericTerrorEvents.deus_skaven_wave_2d = {
 	{
 		"delay",
 		minimum_difficulty_tweak = 5,
-		duration = num_6
+		duration = SHORT
 	},
 	{
 		"spawn_at_raw",
@@ -9653,22 +9690,22 @@ GenericTerrorEvents.deus_skaven_wave_2d = {
 	},
 	{
 		"delay",
-		duration = num_6
+		duration = SHORT
 	},
 	{
 		"continue_when_spawned_count",
 		duration = 60,
-		condition = function (self)
+		condition = function (counter)
 			-- function 248
-			return self.special < 2
+			return counter.special < 2
 		end
 	},
 	{
 		"continue_when_spawned_count",
 		duration = 60,
-		condition = function (self)
+		condition = function (counter)
 			-- function 249
-			return self.main < 10
+			return counter.main < 10
 		end
 	},
 	{
@@ -9683,7 +9720,7 @@ GenericTerrorEvents.deus_skaven_wave_2d = {
 	},
 	{
 		"delay",
-		duration = num_6
+		duration = SHORT
 	},
 	{
 		"spawn_at_raw",
@@ -9706,14 +9743,14 @@ GenericTerrorEvents.deus_skaven_wave_2d = {
 	},
 	{
 		"delay",
-		duration = num_6
+		duration = SHORT
 	},
 	{
 		"continue_when_spawned_count",
 		duration = 60,
-		condition = function (self)
+		condition = function (counter)
 			-- function 250
-			return self.main < 10
+			return counter.main < 10
 		end
 	}
 }
@@ -9730,7 +9767,7 @@ GenericTerrorEvents.deus_skaven_wave_2e = {
 	},
 	{
 		"delay",
-		duration = num_6
+		duration = SHORT
 	},
 	{
 		"event_horde",
@@ -9746,7 +9783,7 @@ GenericTerrorEvents.deus_skaven_wave_2e = {
 	{
 		"delay",
 		minimum_difficulty_tweak = -5,
-		duration = num_6
+		duration = SHORT
 	},
 	{
 		"event_horde",
@@ -9762,14 +9799,14 @@ GenericTerrorEvents.deus_skaven_wave_2e = {
 	{
 		"delay",
 		minimum_difficulty_tweak = 5,
-		duration = num_6
+		duration = SHORT
 	},
 	{
 		"continue_when_spawned_count",
 		duration = 60,
-		condition = function (self)
+		condition = function (counter)
 			-- function 251
-			return self.main < 10
+			return counter.main < 10
 		end
 	},
 	{
@@ -9781,9 +9818,9 @@ GenericTerrorEvents.deus_skaven_wave_2e = {
 	{
 		"continue_when_spawned_count",
 		duration = 120,
-		condition = function (self)
+		condition = function (counter)
 			-- function 252
-			return self.boss > 0
+			return counter.boss > 0
 		end
 	},
 	{
@@ -9798,15 +9835,15 @@ GenericTerrorEvents.deus_skaven_wave_2e = {
 	},
 	{
 		"delay",
-		duration = num_6
+		duration = SHORT
 	},
 	{
 		"continue_when_spawned_count",
-		condition = function (self)
+		condition = function (counter)
 			-- function 253
-			return self.boss <= 0
+			return counter.boss <= 0
 		end,
-		duration = num_6
+		duration = SHORT
 	},
 	{
 		"event_horde",
@@ -9817,15 +9854,15 @@ GenericTerrorEvents.deus_skaven_wave_2e = {
 	},
 	{
 		"delay",
-		duration = num_6
+		duration = SHORT
 	},
 	{
 		"continue_when_spawned_count",
-		condition = function (self)
+		condition = function (counter)
 			-- function 254
-			return self.boss <= 0
+			return counter.boss <= 0
 		end,
-		duration = num_6
+		duration = SHORT
 	},
 	{
 		"event_horde",
@@ -9841,23 +9878,23 @@ GenericTerrorEvents.deus_skaven_wave_2e = {
 	{
 		"delay",
 		minimum_difficulty_tweak = 0,
-		duration = num_6
+		duration = SHORT
 	},
 	{
 		"continue_when_spawned_count",
 		minimum_difficulty_tweak = 0,
-		condition = function (self)
+		condition = function (counter)
 			-- function 255
-			return self.boss <= 0
+			return counter.boss <= 0
 		end,
-		duration = num_6
+		duration = SHORT
 	},
 	{
 		"continue_when_spawned_count",
 		duration = 60,
-		condition = function (self)
+		condition = function (counter)
 			-- function 256
-			return self.main < 10
+			return counter.main < 10
 		end
 	}
 }
@@ -9874,7 +9911,7 @@ GenericTerrorEvents.deus_skaven_wave_2f = {
 	},
 	{
 		"delay",
-		duration = num_6
+		duration = SHORT
 	},
 	{
 		"event_horde",
@@ -9890,7 +9927,7 @@ GenericTerrorEvents.deus_skaven_wave_2f = {
 	{
 		"delay",
 		minimum_difficulty_tweak = -5,
-		duration = num_6
+		duration = SHORT
 	},
 	{
 		"event_horde",
@@ -9906,14 +9943,14 @@ GenericTerrorEvents.deus_skaven_wave_2f = {
 	{
 		"delay",
 		minimum_difficulty_tweak = 5,
-		duration = num_6
+		duration = SHORT
 	},
 	{
 		"continue_when_spawned_count",
 		duration = 60,
-		condition = function (self)
+		condition = function (counter)
 			-- function 257
-			return self.main < 10
+			return counter.main < 10
 		end
 	},
 	{
@@ -9928,14 +9965,14 @@ GenericTerrorEvents.deus_skaven_wave_2f = {
 	},
 	{
 		"delay",
-		duration = num_6
+		duration = SHORT
 	},
 	{
 		"continue_when_spawned_count",
 		duration = 60,
-		condition = function (self)
+		condition = function (counter)
 			-- function 258
-			return self.main < 10
+			return counter.main < 10
 		end
 	},
 	{
@@ -9952,14 +9989,14 @@ GenericTerrorEvents.deus_skaven_wave_2f = {
 	{
 		"delay",
 		minimum_difficulty_tweak = 0,
-		duration = num_6
+		duration = SHORT
 	},
 	{
 		"continue_when_spawned_count",
 		duration = 60,
-		condition = function (self)
+		condition = function (counter)
 			-- function 259
-			return self.main < 10
+			return counter.main < 10
 		end
 	},
 	{
@@ -9970,7 +10007,7 @@ GenericTerrorEvents.deus_skaven_wave_2f = {
 	},
 	{
 		"delay",
-		duration = num_6
+		duration = SHORT
 	},
 	{
 		"spawn_at_raw",
@@ -9992,14 +10029,14 @@ GenericTerrorEvents.deus_skaven_wave_2f = {
 	},
 	{
 		"delay",
-		duration = num_6
+		duration = SHORT
 	},
 	{
 		"continue_when_spawned_count",
 		duration = 60,
-		condition = function (self)
+		condition = function (counter)
 			-- function 260
-			return not (self.main < 10) or self.elite < 5
+			return counter.main < 10 and counter.elite < 5
 		end
 	},
 	{
@@ -10012,7 +10049,7 @@ GenericTerrorEvents.deus_skaven_wave_2f = {
 	{
 		"delay",
 		minimum_difficulty_tweak = 0,
-		duration = num_6
+		duration = SHORT
 	},
 	{
 		"spawn_at_raw",
@@ -10036,14 +10073,14 @@ GenericTerrorEvents.deus_skaven_wave_2f = {
 	{
 		"delay",
 		minimum_difficulty_tweak = 0,
-		duration = num_6
+		duration = SHORT
 	},
 	{
 		"continue_when_spawned_count",
 		duration = 60,
-		condition = function (self)
+		condition = function (counter)
 			-- function 261
-			return not (self.main < 10) or self.elite < 5
+			return counter.main < 10 and counter.elite < 5
 		end
 	}
 }
@@ -10060,7 +10097,7 @@ GenericTerrorEvents.deus_chaos_wave_2a = {
 	},
 	{
 		"delay",
-		duration = num_6
+		duration = SHORT
 	},
 	{
 		"event_horde",
@@ -10076,7 +10113,7 @@ GenericTerrorEvents.deus_chaos_wave_2a = {
 	{
 		"delay",
 		minimum_difficulty_tweak = -5,
-		duration = num_6
+		duration = SHORT
 	},
 	{
 		"event_horde",
@@ -10092,14 +10129,14 @@ GenericTerrorEvents.deus_chaos_wave_2a = {
 	{
 		"delay",
 		minimum_difficulty_tweak = 5,
-		duration = num_6
+		duration = SHORT
 	},
 	{
 		"continue_when_spawned_count",
 		duration = 60,
-		condition = function (self)
+		condition = function (counter)
 			-- function 262
-			return self.main < 10
+			return counter.main < 10
 		end
 	},
 	{
@@ -10114,14 +10151,14 @@ GenericTerrorEvents.deus_chaos_wave_2a = {
 	{
 		"continue_when_spawned_count",
 		duration = 120,
-		condition = function (self)
+		condition = function (counter)
 			-- function 263
-			return self.boss > 0
+			return counter.boss > 0
 		end
 	},
 	{
 		"delay",
-		duration = num_6
+		duration = SHORT
 	},
 	{
 		"event_horde",
@@ -10135,15 +10172,15 @@ GenericTerrorEvents.deus_chaos_wave_2a = {
 	},
 	{
 		"delay",
-		duration = num_6
+		duration = SHORT
 	},
 	{
 		"continue_when_spawned_count",
-		condition = function (self)
+		condition = function (counter)
 			-- function 264
-			return self.boss <= 0
+			return counter.boss <= 0
 		end,
-		duration = num_6
+		duration = SHORT
 	},
 	{
 		"event_horde",
@@ -10159,16 +10196,16 @@ GenericTerrorEvents.deus_chaos_wave_2a = {
 	{
 		"delay",
 		minimum_difficulty_tweak = 0,
-		duration = num_6
+		duration = SHORT
 	},
 	{
 		"continue_when_spawned_count",
 		minimum_difficulty_tweak = 0,
-		condition = function (self)
+		condition = function (counter)
 			-- function 265
-			return self.boss <= 0
+			return counter.boss <= 0
 		end,
-		duration = num_6
+		duration = SHORT
 	},
 	{
 		"event_horde",
@@ -10184,23 +10221,23 @@ GenericTerrorEvents.deus_chaos_wave_2a = {
 	{
 		"delay",
 		minimum_difficulty_tweak = 0,
-		duration = num_6
+		duration = SHORT
 	},
 	{
 		"continue_when_spawned_count",
 		minimum_difficulty_tweak = 0,
-		condition = function (self)
+		condition = function (counter)
 			-- function 266
-			return self.boss <= 0
+			return counter.boss <= 0
 		end,
-		duration = num_6
+		duration = SHORT
 	},
 	{
 		"continue_when_spawned_count",
 		duration = 60,
-		condition = function (self)
+		condition = function (counter)
 			-- function 267
-			return self.main < 10
+			return counter.main < 10
 		end
 	}
 }
@@ -10217,7 +10254,7 @@ GenericTerrorEvents.deus_chaos_wave_2b = {
 	},
 	{
 		"delay",
-		duration = num_6
+		duration = SHORT
 	},
 	{
 		"event_horde",
@@ -10233,7 +10270,7 @@ GenericTerrorEvents.deus_chaos_wave_2b = {
 	{
 		"delay",
 		minimum_difficulty_tweak = -5,
-		duration = num_6
+		duration = SHORT
 	},
 	{
 		"event_horde",
@@ -10249,14 +10286,14 @@ GenericTerrorEvents.deus_chaos_wave_2b = {
 	{
 		"delay",
 		minimum_difficulty_tweak = 5,
-		duration = num_6
+		duration = SHORT
 	},
 	{
 		"continue_when_spawned_count",
 		duration = 60,
-		condition = function (self)
+		condition = function (counter)
 			-- function 268
-			return self.main < 10
+			return counter.main < 10
 		end
 	},
 	{
@@ -10271,7 +10308,7 @@ GenericTerrorEvents.deus_chaos_wave_2b = {
 	},
 	{
 		"delay",
-		duration = num_6
+		duration = SHORT
 	},
 	{
 		"event_horde",
@@ -10285,14 +10322,14 @@ GenericTerrorEvents.deus_chaos_wave_2b = {
 	},
 	{
 		"delay",
-		duration = num_6
+		duration = SHORT
 	},
 	{
 		"continue_when_spawned_count",
 		duration = 60,
-		condition = function (self)
+		condition = function (counter)
 			-- function 269
-			return self.main < 10
+			return counter.main < 10
 		end
 	},
 	{
@@ -10312,7 +10349,7 @@ GenericTerrorEvents.deus_chaos_wave_2b = {
 	},
 	{
 		"delay",
-		duration = num_6
+		duration = SHORT
 	},
 	{
 		"event_horde",
@@ -10324,14 +10361,14 @@ GenericTerrorEvents.deus_chaos_wave_2b = {
 	{
 		"delay",
 		minimum_difficulty_tweak = 0,
-		duration = num_6
+		duration = SHORT
 	},
 	{
 		"continue_when_spawned_count",
 		duration = 60,
-		condition = function (self)
+		condition = function (counter)
 			-- function 270
-			return self.main < 10
+			return counter.main < 10
 		end
 	},
 	{
@@ -10345,7 +10382,7 @@ GenericTerrorEvents.deus_chaos_wave_2b = {
 	},
 	{
 		"delay",
-		duration = num_6
+		duration = SHORT
 	},
 	{
 		"event_horde",
@@ -10358,7 +10395,7 @@ GenericTerrorEvents.deus_chaos_wave_2b = {
 	},
 	{
 		"delay",
-		duration = num_6
+		duration = SHORT
 	},
 	{
 		"event_horde",
@@ -10373,14 +10410,14 @@ GenericTerrorEvents.deus_chaos_wave_2b = {
 	{
 		"delay",
 		minimum_difficulty_tweak = 0,
-		duration = num_6
+		duration = SHORT
 	},
 	{
 		"continue_when_spawned_count",
 		duration = 60,
-		condition = function (self)
+		condition = function (counter)
 			-- function 271
-			return self.main < 10
+			return counter.main < 10
 		end
 	}
 }
@@ -10397,7 +10434,7 @@ GenericTerrorEvents.deus_chaos_wave_2c = {
 	},
 	{
 		"delay",
-		duration = num_6
+		duration = SHORT
 	},
 	{
 		"event_horde",
@@ -10413,7 +10450,7 @@ GenericTerrorEvents.deus_chaos_wave_2c = {
 	{
 		"delay",
 		minimum_difficulty_tweak = -5,
-		duration = num_6
+		duration = SHORT
 	},
 	{
 		"event_horde",
@@ -10429,14 +10466,14 @@ GenericTerrorEvents.deus_chaos_wave_2c = {
 	{
 		"delay",
 		minimum_difficulty_tweak = 5,
-		duration = num_6
+		duration = SHORT
 	},
 	{
 		"continue_when_spawned_count",
 		duration = 60,
-		condition = function (self)
+		condition = function (counter)
 			-- function 272
-			return self.main < 10
+			return counter.main < 10
 		end
 	},
 	{
@@ -10451,14 +10488,14 @@ GenericTerrorEvents.deus_chaos_wave_2c = {
 	{
 		"continue_when_spawned_count",
 		duration = 120,
-		condition = function (self)
+		condition = function (counter)
 			-- function 273
-			return self.boss > 0
+			return counter.boss > 0
 		end
 	},
 	{
 		"delay",
-		duration = num_6
+		duration = SHORT
 	},
 	{
 		"event_horde",
@@ -10472,15 +10509,15 @@ GenericTerrorEvents.deus_chaos_wave_2c = {
 	},
 	{
 		"delay",
-		duration = num_6
+		duration = SHORT
 	},
 	{
 		"continue_when_spawned_count",
-		condition = function (self)
+		condition = function (counter)
 			-- function 274
-			return self.boss <= 0
+			return counter.boss <= 0
 		end,
-		duration = num_6
+		duration = SHORT
 	},
 	{
 		"event_horde",
@@ -10496,16 +10533,16 @@ GenericTerrorEvents.deus_chaos_wave_2c = {
 	{
 		"delay",
 		minimum_difficulty_tweak = 0,
-		duration = num_6
+		duration = SHORT
 	},
 	{
 		"continue_when_spawned_count",
 		minimum_difficulty_tweak = 0,
-		condition = function (self)
+		condition = function (counter)
 			-- function 275
-			return self.boss <= 0
+			return counter.boss <= 0
 		end,
-		duration = num_6
+		duration = SHORT
 	},
 	{
 		"spawn_at_raw",
@@ -10524,8 +10561,8 @@ GenericTerrorEvents.deus_chaos_wave_2c = {
 	},
 	{
 		"delay",
-		duration = num_6,
-		difficulty_requirement = num_3
+		duration = SHORT,
+		difficulty_requirement = CHAMPION
 	},
 	{
 		"spawn_at_raw",
@@ -10541,19 +10578,19 @@ GenericTerrorEvents.deus_chaos_wave_2c = {
 			cataclysm = 2,
 			normal = 1
 		},
-		difficulty_requirement = num_3
+		difficulty_requirement = CHAMPION
 	},
 	{
 		"delay",
-		duration = num_6
+		duration = SHORT
 	},
 	{
 		"continue_when_spawned_count",
-		condition = function (self)
+		condition = function (counter)
 			-- function 276
-			return self.boss <= 0
+			return counter.boss <= 0
 		end,
-		duration = num_6
+		duration = SHORT
 	},
 	{
 		"event_horde",
@@ -10567,15 +10604,15 @@ GenericTerrorEvents.deus_chaos_wave_2c = {
 	},
 	{
 		"delay",
-		duration = num_6
+		duration = SHORT
 	},
 	{
 		"continue_when_spawned_count",
-		condition = function (self)
+		condition = function (counter)
 			-- function 277
-			return self.boss <= 0
+			return counter.boss <= 0
 		end,
-		duration = num_6
+		duration = SHORT
 	},
 	{
 		"event_horde",
@@ -10591,16 +10628,16 @@ GenericTerrorEvents.deus_chaos_wave_2c = {
 	{
 		"delay",
 		minimum_difficulty_tweak = 0,
-		duration = num_6
+		duration = SHORT
 	},
 	{
 		"continue_when_spawned_count",
 		minimum_difficulty_tweak = 0,
-		condition = function (self)
+		condition = function (counter)
 			-- function 278
-			return self.boss <= 0
+			return counter.boss <= 0
 		end,
-		duration = num_6
+		duration = SHORT
 	},
 	{
 		"spawn_at_raw",
@@ -10619,8 +10656,8 @@ GenericTerrorEvents.deus_chaos_wave_2c = {
 	},
 	{
 		"delay",
-		duration = num_6,
-		difficulty_requirement = num_3
+		duration = SHORT,
+		difficulty_requirement = CHAMPION
 	},
 	{
 		"spawn_at_raw",
@@ -10636,26 +10673,26 @@ GenericTerrorEvents.deus_chaos_wave_2c = {
 			cataclysm = 2,
 			normal = 1
 		},
-		difficulty_requirement = num_3
+		difficulty_requirement = CHAMPION
 	},
 	{
 		"delay",
-		duration = num_7
+		duration = LONG
 	},
 	{
 		"continue_when_spawned_count",
-		condition = function (self)
+		condition = function (counter)
 			-- function 279
-			return self.boss <= 0
+			return counter.boss <= 0
 		end,
-		duration = num_6
+		duration = SHORT
 	},
 	{
 		"continue_when_spawned_count",
 		duration = 60,
-		condition = function (self)
+		condition = function (counter)
 			-- function 280
-			return self.main < 10
+			return counter.main < 10
 		end
 	}
 }
@@ -10672,7 +10709,7 @@ GenericTerrorEvents.deus_chaos_wave_2d = {
 	},
 	{
 		"delay",
-		duration = num_6
+		duration = SHORT
 	},
 	{
 		"event_horde",
@@ -10688,7 +10725,7 @@ GenericTerrorEvents.deus_chaos_wave_2d = {
 	{
 		"delay",
 		minimum_difficulty_tweak = -5,
-		duration = num_6
+		duration = SHORT
 	},
 	{
 		"event_horde",
@@ -10704,14 +10741,14 @@ GenericTerrorEvents.deus_chaos_wave_2d = {
 	{
 		"delay",
 		minimum_difficulty_tweak = 5,
-		duration = num_6
+		duration = SHORT
 	},
 	{
 		"continue_when_spawned_count",
 		duration = 60,
-		condition = function (self)
+		condition = function (counter)
 			-- function 281
-			return self.main < 10
+			return counter.main < 10
 		end
 	},
 	{
@@ -10730,7 +10767,7 @@ GenericTerrorEvents.deus_chaos_wave_2d = {
 	},
 	{
 		"delay",
-		duration = num_6
+		duration = SHORT
 	},
 	{
 		"event_horde",
@@ -10741,14 +10778,14 @@ GenericTerrorEvents.deus_chaos_wave_2d = {
 	},
 	{
 		"delay",
-		duration = num_6
+		duration = SHORT
 	},
 	{
 		"continue_when_spawned_count",
 		duration = 60,
-		condition = function (self)
+		condition = function (counter)
 			-- function 282
-			return self.elite < 3
+			return counter.elite < 3
 		end
 	},
 	{
@@ -10770,7 +10807,7 @@ GenericTerrorEvents.deus_chaos_wave_2d = {
 	{
 		"delay",
 		minimum_difficulty_tweak = 0,
-		duration = num_6
+		duration = SHORT
 	},
 	{
 		"spawn_at_raw",
@@ -10789,8 +10826,8 @@ GenericTerrorEvents.deus_chaos_wave_2d = {
 	},
 	{
 		"delay",
-		duration = num_6,
-		difficulty_requirement = num_3
+		duration = SHORT,
+		difficulty_requirement = CHAMPION
 	},
 	{
 		"spawn_at_raw",
@@ -10806,18 +10843,18 @@ GenericTerrorEvents.deus_chaos_wave_2d = {
 			cataclysm = 2,
 			normal = 1
 		},
-		difficulty_requirement = num_3
+		difficulty_requirement = CHAMPION
 	},
 	{
 		"delay",
-		duration = num_7
+		duration = LONG
 	},
 	{
 		"continue_when_spawned_count",
 		duration = 60,
-		condition = function (self)
+		condition = function (counter)
 			-- function 283
-			return self.main < 10
+			return counter.main < 10
 		end
 	},
 	{
@@ -10831,7 +10868,7 @@ GenericTerrorEvents.deus_chaos_wave_2d = {
 	},
 	{
 		"delay",
-		duration = num_6
+		duration = SHORT
 	},
 	{
 		"event_horde",
@@ -10846,14 +10883,14 @@ GenericTerrorEvents.deus_chaos_wave_2d = {
 	{
 		"delay",
 		minimum_difficulty_tweak = 0,
-		duration = num_6
+		duration = SHORT
 	},
 	{
 		"continue_when_spawned_count",
 		duration = 120,
-		condition = function (self)
+		condition = function (counter)
 			-- function 284
-			return self.elite <= 2
+			return counter.elite <= 2
 		end
 	},
 	{
@@ -10867,7 +10904,7 @@ GenericTerrorEvents.deus_chaos_wave_2d = {
 	},
 	{
 		"delay",
-		duration = num_6
+		duration = SHORT
 	},
 	{
 		"spawn_at_raw",
@@ -10886,8 +10923,8 @@ GenericTerrorEvents.deus_chaos_wave_2d = {
 	},
 	{
 		"delay",
-		duration = num_6,
-		difficulty_requirement = num_3
+		duration = SHORT,
+		difficulty_requirement = CHAMPION
 	},
 	{
 		"spawn_at_raw",
@@ -10903,26 +10940,26 @@ GenericTerrorEvents.deus_chaos_wave_2d = {
 			cataclysm = 2,
 			normal = 1
 		},
-		difficulty_requirement = num_3
+		difficulty_requirement = CHAMPION
 	},
 	{
 		"delay",
-		duration = num_7
+		duration = LONG
 	},
 	{
 		"continue_when_spawned_count",
 		duration = 20,
-		condition = function (self)
+		condition = function (counter)
 			-- function 285
-			return self.elite <= 2
+			return counter.elite <= 2
 		end
 	},
 	{
 		"continue_when_spawned_count",
 		duration = 60,
-		condition = function (self)
+		condition = function (counter)
 			-- function 286
-			return self.main < 10
+			return counter.main < 10
 		end
 	}
 }
@@ -10939,7 +10976,7 @@ GenericTerrorEvents.deus_beastmen_wave_2a = {
 	},
 	{
 		"delay",
-		duration = num_6
+		duration = SHORT
 	},
 	{
 		"event_horde",
@@ -10955,7 +10992,7 @@ GenericTerrorEvents.deus_beastmen_wave_2a = {
 	{
 		"delay",
 		minimum_difficulty_tweak = -5,
-		duration = num_6
+		duration = SHORT
 	},
 	{
 		"event_horde",
@@ -10971,14 +11008,14 @@ GenericTerrorEvents.deus_beastmen_wave_2a = {
 	{
 		"delay",
 		minimum_difficulty_tweak = 5,
-		duration = num_6
+		duration = SHORT
 	},
 	{
 		"continue_when_spawned_count",
 		duration = 60,
-		condition = function (self)
+		condition = function (counter)
 			-- function 287
-			return self.main < 10
+			return counter.main < 10
 		end
 	},
 	{
@@ -10989,7 +11026,7 @@ GenericTerrorEvents.deus_beastmen_wave_2a = {
 	},
 	{
 		"delay",
-		duration = num_6
+		duration = SHORT
 	},
 	{
 		"event_horde",
@@ -11003,15 +11040,15 @@ GenericTerrorEvents.deus_beastmen_wave_2a = {
 	},
 	{
 		"delay",
-		duration = num_6
+		duration = SHORT
 	},
 	{
 		"continue_when_spawned_count",
-		condition = function (self)
+		condition = function (counter)
 			-- function 288
-			return self.boss <= 0
+			return counter.boss <= 0
 		end,
-		duration = num_6
+		duration = SHORT
 	},
 	{
 		"event_horde",
@@ -11027,16 +11064,16 @@ GenericTerrorEvents.deus_beastmen_wave_2a = {
 	{
 		"delay",
 		minimum_difficulty_tweak = 0,
-		duration = num_6
+		duration = SHORT
 	},
 	{
 		"continue_when_spawned_count",
 		minimum_difficulty_tweak = 0,
-		condition = function (self)
+		condition = function (counter)
 			-- function 289
-			return self.boss <= 0
+			return counter.boss <= 0
 		end,
-		duration = num_6
+		duration = SHORT
 	},
 	{
 		"spawn_at_raw",
@@ -11052,18 +11089,18 @@ GenericTerrorEvents.deus_beastmen_wave_2a = {
 	},
 	{
 		"continue_when_spawned_count",
-		condition = function (self)
+		condition = function (counter)
 			-- function 290
-			return self.boss <= 0
+			return counter.boss <= 0
 		end,
-		duration = num_6
+		duration = SHORT
 	},
 	{
 		"continue_when_spawned_count",
 		duration = 60,
-		condition = function (self)
+		condition = function (counter)
 			-- function 291
-			return self.main < 10
+			return counter.main < 10
 		end
 	}
 }
@@ -11080,7 +11117,7 @@ GenericTerrorEvents.deus_beastmen_wave_2b = {
 	},
 	{
 		"delay",
-		duration = num_6
+		duration = SHORT
 	},
 	{
 		"spawn_at_raw",
@@ -11091,14 +11128,14 @@ GenericTerrorEvents.deus_beastmen_wave_2b = {
 	{
 		"continue_when_spawned_count",
 		duration = 120,
-		condition = function (self)
+		condition = function (counter)
 			-- function 292
-			return self.boss > 0
+			return counter.boss > 0
 		end
 	},
 	{
 		"delay",
-		duration = num_6
+		duration = SHORT
 	},
 	{
 		"event_horde",
@@ -11114,16 +11151,16 @@ GenericTerrorEvents.deus_beastmen_wave_2b = {
 	{
 		"delay",
 		minimum_difficulty_tweak = -5,
-		duration = num_6
+		duration = SHORT
 	},
 	{
 		"continue_when_spawned_count",
 		minimum_difficulty_tweak = -5,
-		condition = function (self)
+		condition = function (counter)
 			-- function 293
-			return self.boss <= 0
+			return counter.boss <= 0
 		end,
-		duration = num_6
+		duration = SHORT
 	},
 	{
 		"event_horde",
@@ -11139,23 +11176,23 @@ GenericTerrorEvents.deus_beastmen_wave_2b = {
 	{
 		"delay",
 		minimum_difficulty_tweak = 5,
-		duration = num_6
+		duration = SHORT
 	},
 	{
 		"continue_when_spawned_count",
 		minimum_difficulty_tweak = 5,
-		condition = function (self)
+		condition = function (counter)
 			-- function 294
-			return self.boss <= 0
+			return counter.boss <= 0
 		end,
-		duration = num_6
+		duration = SHORT
 	},
 	{
 		"continue_when_spawned_count",
 		duration = 60,
-		condition = function (self)
+		condition = function (counter)
 			-- function 295
-			return self.main < 10
+			return counter.main < 10
 		end
 	},
 	{
@@ -11170,15 +11207,15 @@ GenericTerrorEvents.deus_beastmen_wave_2b = {
 	},
 	{
 		"delay",
-		duration = num_6
+		duration = SHORT
 	},
 	{
 		"continue_when_spawned_count",
-		condition = function (self)
+		condition = function (counter)
 			-- function 296
-			return self.boss <= 0
+			return counter.boss <= 0
 		end,
-		duration = num_6
+		duration = SHORT
 	},
 	{
 		"event_horde",
@@ -11194,16 +11231,16 @@ GenericTerrorEvents.deus_beastmen_wave_2b = {
 	{
 		"delay",
 		minimum_difficulty_tweak = -5,
-		duration = num_6
+		duration = SHORT
 	},
 	{
 		"continue_when_spawned_count",
 		minimum_difficulty_tweak = -5,
-		condition = function (self)
+		condition = function (counter)
 			-- function 297
-			return self.boss <= 0
+			return counter.boss <= 0
 		end,
-		duration = num_6
+		duration = SHORT
 	},
 	{
 		"event_horde",
@@ -11219,16 +11256,16 @@ GenericTerrorEvents.deus_beastmen_wave_2b = {
 	{
 		"delay",
 		minimum_difficulty_tweak = 5,
-		duration = num_6
+		duration = SHORT
 	},
 	{
 		"continue_when_spawned_count",
 		minimum_difficulty_tweak = 5,
-		condition = function (self)
+		condition = function (counter)
 			-- function 298
-			return self.boss <= 0
+			return counter.boss <= 0
 		end,
-		duration = num_6
+		duration = SHORT
 	},
 	{
 		"event_horde",
@@ -11238,22 +11275,22 @@ GenericTerrorEvents.deus_beastmen_wave_2b = {
 	},
 	{
 		"delay",
-		duration = num_6
+		duration = SHORT
 	},
 	{
 		"continue_when_spawned_count",
-		condition = function (self)
+		condition = function (counter)
 			-- function 299
-			return self.boss <= 0
+			return counter.boss <= 0
 		end,
-		duration = num_6
+		duration = SHORT
 	},
 	{
 		"continue_when_spawned_count",
 		duration = 60,
-		condition = function (self)
+		condition = function (counter)
 			-- function 300
-			return self.main < 10
+			return counter.main < 10
 		end
 	}
 }
@@ -11270,7 +11307,7 @@ GenericTerrorEvents.deus_beastmen_wave_2c = {
 	},
 	{
 		"delay",
-		duration = num_6
+		duration = SHORT
 	},
 	{
 		"event_horde",
@@ -11286,7 +11323,7 @@ GenericTerrorEvents.deus_beastmen_wave_2c = {
 	{
 		"delay",
 		minimum_difficulty_tweak = -5,
-		duration = num_6
+		duration = SHORT
 	},
 	{
 		"event_horde",
@@ -11302,23 +11339,23 @@ GenericTerrorEvents.deus_beastmen_wave_2c = {
 	{
 		"delay",
 		minimum_difficulty_tweak = 5,
-		duration = num_6
+		duration = SHORT
 	},
 	{
 		"continue_when_spawned_count",
 		duration = 60,
-		condition = function (self)
+		condition = function (counter)
 			-- function 301
-			return self.main < 10
+			return counter.main < 10
 		end
 	},
 	{
 		"continue_when_spawned_count",
-		condition = function (self)
+		condition = function (counter)
 			-- function 302
-			return self.boss <= 0
+			return counter.boss <= 0
 		end,
-		duration = num_6
+		duration = SHORT
 	},
 	{
 		"event_horde",
@@ -11339,7 +11376,7 @@ GenericTerrorEvents.deus_beastmen_wave_2c = {
 	{
 		"delay",
 		minimum_difficulty_tweak = 0,
-		duration = num_6
+		duration = SHORT
 	},
 	{
 		"event_horde",
@@ -11362,27 +11399,27 @@ GenericTerrorEvents.deus_beastmen_wave_2c = {
 		"continue_when_spawned_count",
 		s,
 		duration = 120,
-		condition = function (self)
+		condition = function (counter)
 			-- function 303
-			return self.elite > 0
+			return counter.elite > 0
 		end
 	},
 	{
 		"continue_when_spawned_count",
 		s,
 		duration = 120,
-		condition = function (self)
+		condition = function (counter)
 			-- function 304
-			return self.elite <= 1
+			return counter.elite <= 1
 		end
 	},
 	{
 		"continue_when_spawned_count",
-		condition = function (self)
+		condition = function (counter)
 			-- function 305
-			return self.boss <= 0
+			return counter.boss <= 0
 		end,
-		duration = num_6
+		duration = SHORT
 	},
 	{
 		"event_horde",
@@ -11396,7 +11433,7 @@ GenericTerrorEvents.deus_beastmen_wave_2c = {
 	},
 	{
 		"delay",
-		duration = num_6
+		duration = SHORT
 	},
 	{
 		"event_horde",
@@ -11412,16 +11449,16 @@ GenericTerrorEvents.deus_beastmen_wave_2c = {
 	{
 		"delay",
 		minimum_difficulty_tweak = 0,
-		duration = num_6
+		duration = SHORT
 	},
 	{
 		"continue_when_spawned_count",
 		minimum_difficulty_tweak = 0,
-		condition = function (self)
+		condition = function (counter)
 			-- function 306
-			return self.boss <= 0
+			return counter.boss <= 0
 		end,
-		duration = num_6
+		duration = SHORT
 	},
 	{
 		"spawn_at_raw",
@@ -11430,7 +11467,7 @@ GenericTerrorEvents.deus_beastmen_wave_2c = {
 	},
 	{
 		"delay",
-		duration = num_6
+		duration = SHORT
 	},
 	{
 		"event_horde",
@@ -11440,7 +11477,7 @@ GenericTerrorEvents.deus_beastmen_wave_2c = {
 	},
 	{
 		"delay",
-		duration = num_6
+		duration = SHORT
 	},
 	{
 		"spawn_at_raw",
@@ -11451,7 +11488,7 @@ GenericTerrorEvents.deus_beastmen_wave_2c = {
 	{
 		"delay",
 		minimum_difficulty_tweak = 0,
-		duration = num_6
+		duration = SHORT
 	},
 	{
 		"event_horde",
@@ -11462,14 +11499,14 @@ GenericTerrorEvents.deus_beastmen_wave_2c = {
 	},
 	{
 		"delay",
-		duration = num_6
+		duration = SHORT
 	},
 	{
 		"continue_when_spawned_count",
 		duration = 60,
-		condition = function (self)
+		condition = function (counter)
 			-- function 307
-			return self.main < 10
+			return counter.main < 10
 		end
 	}
 }
@@ -11485,7 +11522,7 @@ GenericTerrorEvents.deus_skaven_interception_wave_a = {
 	},
 	{
 		"delay",
-		duration = num_6
+		duration = SHORT
 	}
 }
 GenericTerrorEvents.deus_skaven_interception_wave_b = {
@@ -11505,7 +11542,7 @@ GenericTerrorEvents.deus_skaven_interception_wave_b = {
 	},
 	{
 		"delay",
-		duration = num_6
+		duration = SHORT
 	}
 }
 GenericTerrorEvents.deus_skaven_interception_wave_c = {
@@ -11520,7 +11557,7 @@ GenericTerrorEvents.deus_skaven_interception_wave_c = {
 	},
 	{
 		"delay",
-		duration = num_6
+		duration = SHORT
 	}
 }
 GenericTerrorEvents.deus_chaos_interception_wave_a = {
@@ -11535,7 +11572,7 @@ GenericTerrorEvents.deus_chaos_interception_wave_a = {
 	},
 	{
 		"delay",
-		duration = num_6
+		duration = SHORT
 	}
 }
 GenericTerrorEvents.deus_chaos_interception_wave_b = {
@@ -11555,7 +11592,7 @@ GenericTerrorEvents.deus_chaos_interception_wave_b = {
 	},
 	{
 		"delay",
-		duration = num_6
+		duration = SHORT
 	}
 }
 GenericTerrorEvents.deus_chaos_interception_wave_c = {
@@ -11575,7 +11612,7 @@ GenericTerrorEvents.deus_chaos_interception_wave_c = {
 	},
 	{
 		"delay",
-		duration = num_6
+		duration = SHORT
 	}
 }
 GenericTerrorEvents.deus_beastmen_interception_wave_a = {
@@ -11590,7 +11627,7 @@ GenericTerrorEvents.deus_beastmen_interception_wave_a = {
 	},
 	{
 		"delay",
-		duration = num_6
+		duration = SHORT
 	}
 }
 GenericTerrorEvents.deus_beastmen_interception_wave_b = {
@@ -11610,7 +11647,7 @@ GenericTerrorEvents.deus_beastmen_interception_wave_b = {
 	},
 	{
 		"delay",
-		duration = num_6
+		duration = SHORT
 	}
 }
 GenericTerrorEvents.deus_beastmen_interception_wave_c = {
@@ -11633,7 +11670,7 @@ GenericTerrorEvents.deus_beastmen_interception_wave_c = {
 	},
 	{
 		"delay",
-		duration = num_6
+		duration = SHORT
 	}
 }
 GenericTerrorEvents.deus_TEST_ALL_BREED = {
@@ -11742,13 +11779,13 @@ GenericTerrorEvents.deus_TEST_small_skaven_encounter = {
 	},
 	{
 		"delay",
-		duration = num_7
+		duration = LONG
 	},
 	{
 		"continue_when_spawned_count",
-		condition = function (self)
+		condition = function (counter)
 			-- function 308
-			return self.skaven_slave <= 0
+			return counter.skaven_slave <= 0
 		end
 	}
 }
@@ -11764,13 +11801,13 @@ GenericTerrorEvents.deus_TEST_skaven = {
 	},
 	{
 		"delay",
-		duration = num_7
+		duration = LONG
 	},
 	{
 		"continue_when_spawned_count",
-		condition = function (self)
+		condition = function (counter)
 			-- function 309
-			return self.skaven_slave <= 0
+			return counter.skaven_slave <= 0
 		end
 	},
 	{
@@ -11784,13 +11821,13 @@ GenericTerrorEvents.deus_TEST_skaven = {
 	},
 	{
 		"delay",
-		duration = num_7
+		duration = LONG
 	},
 	{
 		"continue_when_spawned_count",
-		condition = function (self)
+		condition = function (counter)
 			-- function 310
-			return self.skaven_clan_rat <= 0
+			return counter.skaven_clan_rat <= 0
 		end
 	},
 	{
@@ -11804,13 +11841,13 @@ GenericTerrorEvents.deus_TEST_skaven = {
 	},
 	{
 		"delay",
-		duration = num_7
+		duration = LONG
 	},
 	{
 		"continue_when_spawned_count",
-		condition = function (self)
+		condition = function (counter)
 			-- function 311
-			return self.skaven_clan_rat_with_shield <= 0
+			return counter.skaven_clan_rat_with_shield <= 0
 		end
 	},
 	{
@@ -11824,13 +11861,13 @@ GenericTerrorEvents.deus_TEST_skaven = {
 	},
 	{
 		"delay",
-		duration = num_7
+		duration = LONG
 	},
 	{
 		"continue_when_spawned_count",
-		condition = function (self)
+		condition = function (counter)
 			-- function 312
-			return self.skaven_plague_monk <= 0
+			return counter.skaven_plague_monk <= 0
 		end
 	},
 	{
@@ -11844,13 +11881,13 @@ GenericTerrorEvents.deus_TEST_skaven = {
 	},
 	{
 		"delay",
-		duration = num_7
+		duration = LONG
 	},
 	{
 		"continue_when_spawned_count",
-		condition = function (self)
+		condition = function (counter)
 			-- function 313
-			return self.skaven_storm_vermin <= 0
+			return counter.skaven_storm_vermin <= 0
 		end
 	},
 	{
@@ -11864,13 +11901,13 @@ GenericTerrorEvents.deus_TEST_skaven = {
 	},
 	{
 		"delay",
-		duration = num_7
+		duration = LONG
 	},
 	{
 		"continue_when_spawned_count",
-		condition = function (self)
+		condition = function (counter)
 			-- function 314
-			return self.skaven_storm_vermin_commander <= 0
+			return counter.skaven_storm_vermin_commander <= 0
 		end
 	},
 	{
@@ -11884,13 +11921,13 @@ GenericTerrorEvents.deus_TEST_skaven = {
 	},
 	{
 		"delay",
-		duration = num_7
+		duration = LONG
 	},
 	{
 		"continue_when_spawned_count",
-		condition = function (self)
+		condition = function (counter)
 			-- function 315
-			return self.skaven_storm_vermin_with_shield <= 0
+			return counter.skaven_storm_vermin_with_shield <= 0
 		end
 	},
 	{
@@ -11904,13 +11941,13 @@ GenericTerrorEvents.deus_TEST_skaven = {
 	},
 	{
 		"delay",
-		duration = num_7
+		duration = LONG
 	},
 	{
 		"continue_when_spawned_count",
-		condition = function (self)
+		condition = function (counter)
 			-- function 316
-			return self.skaven_explosive_loot_rat <= 0
+			return counter.skaven_explosive_loot_rat <= 0
 		end
 	}
 }
@@ -11926,13 +11963,13 @@ GenericTerrorEvents.deus_TEST_chaos = {
 	},
 	{
 		"delay",
-		duration = num_7
+		duration = LONG
 	},
 	{
 		"continue_when_spawned_count",
-		condition = function (self)
+		condition = function (counter)
 			-- function 317
-			return self.chaos_fanatic <= 0
+			return counter.chaos_fanatic <= 0
 		end
 	},
 	{
@@ -11946,13 +11983,13 @@ GenericTerrorEvents.deus_TEST_chaos = {
 	},
 	{
 		"delay",
-		duration = num_7
+		duration = LONG
 	},
 	{
 		"continue_when_spawned_count",
-		condition = function (self)
+		condition = function (counter)
 			-- function 318
-			return self.chaos_marauder <= 0
+			return counter.chaos_marauder <= 0
 		end
 	},
 	{
@@ -11966,13 +12003,13 @@ GenericTerrorEvents.deus_TEST_chaos = {
 	},
 	{
 		"delay",
-		duration = num_7
+		duration = LONG
 	},
 	{
 		"continue_when_spawned_count",
-		condition = function (self)
+		condition = function (counter)
 			-- function 319
-			return self.chaos_marauder_with_shield <= 0
+			return counter.chaos_marauder_with_shield <= 0
 		end
 	},
 	{
@@ -11986,13 +12023,13 @@ GenericTerrorEvents.deus_TEST_chaos = {
 	},
 	{
 		"delay",
-		duration = num_7
+		duration = LONG
 	},
 	{
 		"continue_when_spawned_count",
-		condition = function (self)
+		condition = function (counter)
 			-- function 320
-			return self.chaos_berzerker <= 0
+			return counter.chaos_berzerker <= 0
 		end
 	},
 	{
@@ -12006,13 +12043,13 @@ GenericTerrorEvents.deus_TEST_chaos = {
 	},
 	{
 		"delay",
-		duration = num_7
+		duration = LONG
 	},
 	{
 		"continue_when_spawned_count",
-		condition = function (self)
+		condition = function (counter)
 			-- function 321
-			return self.chaos_raider <= 0
+			return counter.chaos_raider <= 0
 		end
 	},
 	{
@@ -12026,13 +12063,13 @@ GenericTerrorEvents.deus_TEST_chaos = {
 	},
 	{
 		"delay",
-		duration = num_7
+		duration = LONG
 	},
 	{
 		"continue_when_spawned_count",
-		condition = function (self)
+		condition = function (counter)
 			-- function 322
-			return self.chaos_warrior <= 0
+			return counter.chaos_warrior <= 0
 		end
 	}
 }
@@ -12048,13 +12085,13 @@ GenericTerrorEvents.deus_TEST_beastmen = {
 	},
 	{
 		"delay",
-		duration = num_7
+		duration = LONG
 	},
 	{
 		"continue_when_spawned_count",
-		condition = function (self)
+		condition = function (counter)
 			-- function 323
-			return self.beastmen_ungor <= 0
+			return counter.beastmen_ungor <= 0
 		end
 	},
 	{
@@ -12068,13 +12105,13 @@ GenericTerrorEvents.deus_TEST_beastmen = {
 	},
 	{
 		"delay",
-		duration = num_7
+		duration = LONG
 	},
 	{
 		"continue_when_spawned_count",
-		condition = function (self)
+		condition = function (counter)
 			-- function 324
-			return self.beastmen_gor <= 0
+			return counter.beastmen_gor <= 0
 		end
 	},
 	{
@@ -12088,13 +12125,13 @@ GenericTerrorEvents.deus_TEST_beastmen = {
 	},
 	{
 		"delay",
-		duration = num_7
+		duration = LONG
 	},
 	{
 		"continue_when_spawned_count",
-		condition = function (self)
+		condition = function (counter)
 			-- function 325
-			return self.beastmen_bestigor <= 0
+			return counter.beastmen_bestigor <= 0
 		end
 	}
 }
@@ -12117,16 +12154,16 @@ GenericTerrorEvents.deus_TEST_special = {
 	},
 	{
 		"continue_when_spawned_count",
-		condition = function (self)
+		condition = function (counter)
 			-- function 326
-			return self.skaven_gutter_runner > 0
+			return counter.skaven_gutter_runner > 0
 		end
 	},
 	{
 		"continue_when_spawned_count",
-		condition = function (self)
+		condition = function (counter)
 			-- function 327
-			return self.skaven_gutter_runner <= 0
+			return counter.skaven_gutter_runner <= 0
 		end
 	},
 	{
@@ -12147,16 +12184,16 @@ GenericTerrorEvents.deus_TEST_special = {
 	},
 	{
 		"continue_when_spawned_count",
-		condition = function (self)
+		condition = function (counter)
 			-- function 328
-			return self.skaven_gutter_runner > 0
+			return counter.skaven_gutter_runner > 0
 		end
 	},
 	{
 		"continue_when_spawned_count",
-		condition = function (self)
+		condition = function (counter)
 			-- function 329
-			return self.skaven_gutter_runner <= 0
+			return counter.skaven_gutter_runner <= 0
 		end
 	},
 	{
@@ -12177,16 +12214,16 @@ GenericTerrorEvents.deus_TEST_special = {
 	},
 	{
 		"continue_when_spawned_count",
-		condition = function (self)
+		condition = function (counter)
 			-- function 330
-			return self.skaven_gutter_runner > 0
+			return counter.skaven_gutter_runner > 0
 		end
 	},
 	{
 		"continue_when_spawned_count",
-		condition = function (self)
+		condition = function (counter)
 			-- function 331
-			return self.skaven_gutter_runner <= 0
+			return counter.skaven_gutter_runner <= 0
 		end
 	},
 	{
@@ -12207,16 +12244,16 @@ GenericTerrorEvents.deus_TEST_special = {
 	},
 	{
 		"continue_when_spawned_count",
-		condition = function (self)
+		condition = function (counter)
 			-- function 332
-			return self.skaven_gutter_runner > 0
+			return counter.skaven_gutter_runner > 0
 		end
 	},
 	{
 		"continue_when_spawned_count",
-		condition = function (self)
+		condition = function (counter)
 			-- function 333
-			return self.skaven_gutter_runner <= 0
+			return counter.skaven_gutter_runner <= 0
 		end
 	},
 	{
@@ -12237,16 +12274,16 @@ GenericTerrorEvents.deus_TEST_special = {
 	},
 	{
 		"continue_when_spawned_count",
-		condition = function (self)
+		condition = function (counter)
 			-- function 334
-			return self.skaven_gutter_runner > 0
+			return counter.skaven_gutter_runner > 0
 		end
 	},
 	{
 		"continue_when_spawned_count",
-		condition = function (self)
+		condition = function (counter)
 			-- function 335
-			return self.skaven_gutter_runner <= 0
+			return counter.skaven_gutter_runner <= 0
 		end
 	},
 	{
@@ -12267,16 +12304,16 @@ GenericTerrorEvents.deus_TEST_special = {
 	},
 	{
 		"continue_when_spawned_count",
-		condition = function (self)
+		condition = function (counter)
 			-- function 336
-			return self.skaven_warpfire_thrower > 0
+			return counter.skaven_warpfire_thrower > 0
 		end
 	},
 	{
 		"continue_when_spawned_count",
-		condition = function (self)
+		condition = function (counter)
 			-- function 337
-			return self.skaven_warpfire_thrower <= 0
+			return counter.skaven_warpfire_thrower <= 0
 		end
 	},
 	{
@@ -12297,16 +12334,16 @@ GenericTerrorEvents.deus_TEST_special = {
 	},
 	{
 		"continue_when_spawned_count",
-		condition = function (self)
+		condition = function (counter)
 			-- function 338
-			return self.skaven_poison_wind_globadier > 0
+			return counter.skaven_poison_wind_globadier > 0
 		end
 	},
 	{
 		"continue_when_spawned_count",
-		condition = function (self)
+		condition = function (counter)
 			-- function 339
-			return self.skaven_poison_wind_globadier <= 0
+			return counter.skaven_poison_wind_globadier <= 0
 		end
 	},
 	{
@@ -12327,16 +12364,16 @@ GenericTerrorEvents.deus_TEST_special = {
 	},
 	{
 		"continue_when_spawned_count",
-		condition = function (self)
+		condition = function (counter)
 			-- function 340
-			return self.skaven_ratling_gunner > 0
+			return counter.skaven_ratling_gunner > 0
 		end
 	},
 	{
 		"continue_when_spawned_count",
-		condition = function (self)
+		condition = function (counter)
 			-- function 341
-			return self.skaven_ratling_gunner <= 0
+			return counter.skaven_ratling_gunner <= 0
 		end
 	},
 	{
@@ -12357,16 +12394,16 @@ GenericTerrorEvents.deus_TEST_special = {
 	},
 	{
 		"continue_when_spawned_count",
-		condition = function (self)
+		condition = function (counter)
 			-- function 342
-			return self.chaos_corruptor_sorcerer > 0
+			return counter.chaos_corruptor_sorcerer > 0
 		end
 	},
 	{
 		"continue_when_spawned_count",
-		condition = function (self)
+		condition = function (counter)
 			-- function 343
-			return self.chaos_corruptor_sorcerer <= 0
+			return counter.chaos_corruptor_sorcerer <= 0
 		end
 	},
 	{
@@ -12387,16 +12424,16 @@ GenericTerrorEvents.deus_TEST_special = {
 	},
 	{
 		"continue_when_spawned_count",
-		condition = function (self)
+		condition = function (counter)
 			-- function 344
-			return self.chaos_corruptor_sorcerer > 0
+			return counter.chaos_corruptor_sorcerer > 0
 		end
 	},
 	{
 		"continue_when_spawned_count",
-		condition = function (self)
+		condition = function (counter)
 			-- function 345
-			return self.chaos_corruptor_sorcerer <= 0
+			return counter.chaos_corruptor_sorcerer <= 0
 		end
 	},
 	{
@@ -12417,16 +12454,16 @@ GenericTerrorEvents.deus_TEST_special = {
 	},
 	{
 		"continue_when_spawned_count",
-		condition = function (self)
+		condition = function (counter)
 			-- function 346
-			return self.chaos_corruptor_sorcerer > 0
+			return counter.chaos_corruptor_sorcerer > 0
 		end
 	},
 	{
 		"continue_when_spawned_count",
-		condition = function (self)
+		condition = function (counter)
 			-- function 347
-			return self.chaos_corruptor_sorcerer <= 0
+			return counter.chaos_corruptor_sorcerer <= 0
 		end
 	},
 	{
@@ -12447,16 +12484,16 @@ GenericTerrorEvents.deus_TEST_special = {
 	},
 	{
 		"continue_when_spawned_count",
-		condition = function (self)
+		condition = function (counter)
 			-- function 348
-			return self.chaos_corruptor_sorcerer > 0
+			return counter.chaos_corruptor_sorcerer > 0
 		end
 	},
 	{
 		"continue_when_spawned_count",
-		condition = function (self)
+		condition = function (counter)
 			-- function 349
-			return self.chaos_corruptor_sorcerer <= 0
+			return counter.chaos_corruptor_sorcerer <= 0
 		end
 	},
 	{
@@ -12477,16 +12514,16 @@ GenericTerrorEvents.deus_TEST_special = {
 	},
 	{
 		"continue_when_spawned_count",
-		condition = function (self)
+		condition = function (counter)
 			-- function 350
-			return self.chaos_corruptor_sorcerer > 0
+			return counter.chaos_corruptor_sorcerer > 0
 		end
 	},
 	{
 		"continue_when_spawned_count",
-		condition = function (self)
+		condition = function (counter)
 			-- function 351
-			return self.chaos_corruptor_sorcerer <= 0
+			return counter.chaos_corruptor_sorcerer <= 0
 		end
 	},
 	{
@@ -12507,16 +12544,16 @@ GenericTerrorEvents.deus_TEST_special = {
 	},
 	{
 		"continue_when_spawned_count",
-		condition = function (self)
+		condition = function (counter)
 			-- function 352
-			return self.chaos_vortex_sorcerer > 0
+			return counter.chaos_vortex_sorcerer > 0
 		end
 	},
 	{
 		"continue_when_spawned_count",
-		condition = function (self)
+		condition = function (counter)
 			-- function 353
-			return self.chaos_vortex_sorcerer <= 0
+			return counter.chaos_vortex_sorcerer <= 0
 		end
 	},
 	{
@@ -12537,16 +12574,16 @@ GenericTerrorEvents.deus_TEST_special = {
 	},
 	{
 		"continue_when_spawned_count",
-		condition = function (self)
+		condition = function (counter)
 			-- function 354
-			return self.beastmen_standard_bearer > 0
+			return counter.beastmen_standard_bearer > 0
 		end
 	},
 	{
 		"continue_when_spawned_count",
-		condition = function (self)
+		condition = function (counter)
 			-- function 355
-			return self.beastmen_standard_bearer <= 0
+			return counter.beastmen_standard_bearer <= 0
 		end
 	}
 }
@@ -12559,16 +12596,16 @@ GenericTerrorEvents.deus_TEST_monster = {
 	},
 	{
 		"continue_when_spawned_count",
-		condition = function (self)
+		condition = function (counter)
 			-- function 356
-			return self.skaven_rat_ogre > 0
+			return counter.skaven_rat_ogre > 0
 		end
 	},
 	{
 		"continue_when_spawned_count",
-		condition = function (self)
+		condition = function (counter)
 			-- function 357
-			return self.skaven_rat_ogre <= 0
+			return counter.skaven_rat_ogre <= 0
 		end
 	},
 	{
@@ -12579,16 +12616,16 @@ GenericTerrorEvents.deus_TEST_monster = {
 	},
 	{
 		"continue_when_spawned_count",
-		condition = function (self)
+		condition = function (counter)
 			-- function 358
-			return self.skaven_rat_ogre > 0
+			return counter.skaven_rat_ogre > 0
 		end
 	},
 	{
 		"continue_when_spawned_count",
-		condition = function (self)
+		condition = function (counter)
 			-- function 359
-			return self.skaven_rat_ogre <= 0
+			return counter.skaven_rat_ogre <= 0
 		end
 	},
 	{
@@ -12599,16 +12636,16 @@ GenericTerrorEvents.deus_TEST_monster = {
 	},
 	{
 		"continue_when_spawned_count",
-		condition = function (self)
+		condition = function (counter)
 			-- function 360
-			return self.skaven_rat_ogre > 0
+			return counter.skaven_rat_ogre > 0
 		end
 	},
 	{
 		"continue_when_spawned_count",
-		condition = function (self)
+		condition = function (counter)
 			-- function 361
-			return self.skaven_rat_ogre <= 0
+			return counter.skaven_rat_ogre <= 0
 		end
 	},
 	{
@@ -12619,16 +12656,16 @@ GenericTerrorEvents.deus_TEST_monster = {
 	},
 	{
 		"continue_when_spawned_count",
-		condition = function (self)
+		condition = function (counter)
 			-- function 362
-			return self.skaven_rat_ogre > 0
+			return counter.skaven_rat_ogre > 0
 		end
 	},
 	{
 		"continue_when_spawned_count",
-		condition = function (self)
+		condition = function (counter)
 			-- function 363
-			return self.skaven_rat_ogre <= 0
+			return counter.skaven_rat_ogre <= 0
 		end
 	},
 	{
@@ -12639,16 +12676,16 @@ GenericTerrorEvents.deus_TEST_monster = {
 	},
 	{
 		"continue_when_spawned_count",
-		condition = function (self)
+		condition = function (counter)
 			-- function 364
-			return self.skaven_rat_ogre > 0
+			return counter.skaven_rat_ogre > 0
 		end
 	},
 	{
 		"continue_when_spawned_count",
-		condition = function (self)
+		condition = function (counter)
 			-- function 365
-			return self.skaven_rat_ogre <= 0
+			return counter.skaven_rat_ogre <= 0
 		end
 	},
 	{
@@ -12659,16 +12696,16 @@ GenericTerrorEvents.deus_TEST_monster = {
 	},
 	{
 		"continue_when_spawned_count",
-		condition = function (self)
+		condition = function (counter)
 			-- function 366
-			return self.skaven_rat_ogre > 0
+			return counter.skaven_rat_ogre > 0
 		end
 	},
 	{
 		"continue_when_spawned_count",
-		condition = function (self)
+		condition = function (counter)
 			-- function 367
-			return self.skaven_rat_ogre <= 0
+			return counter.skaven_rat_ogre <= 0
 		end
 	},
 	{
@@ -12679,16 +12716,16 @@ GenericTerrorEvents.deus_TEST_monster = {
 	},
 	{
 		"continue_when_spawned_count",
-		condition = function (self)
+		condition = function (counter)
 			-- function 368
-			return self.skaven_rat_ogre > 0
+			return counter.skaven_rat_ogre > 0
 		end
 	},
 	{
 		"continue_when_spawned_count",
-		condition = function (self)
+		condition = function (counter)
 			-- function 369
-			return self.skaven_rat_ogre <= 0
+			return counter.skaven_rat_ogre <= 0
 		end
 	},
 	{
@@ -12699,16 +12736,16 @@ GenericTerrorEvents.deus_TEST_monster = {
 	},
 	{
 		"continue_when_spawned_count",
-		condition = function (self)
+		condition = function (counter)
 			-- function 370
-			return self.skaven_rat_ogre > 0
+			return counter.skaven_rat_ogre > 0
 		end
 	},
 	{
 		"continue_when_spawned_count",
-		condition = function (self)
+		condition = function (counter)
 			-- function 371
-			return self.skaven_rat_ogre <= 0
+			return counter.skaven_rat_ogre <= 0
 		end
 	},
 	{
@@ -12719,16 +12756,16 @@ GenericTerrorEvents.deus_TEST_monster = {
 	},
 	{
 		"continue_when_spawned_count",
-		condition = function (self)
+		condition = function (counter)
 			-- function 372
-			return self.skaven_rat_ogre > 0
+			return counter.skaven_rat_ogre > 0
 		end
 	},
 	{
 		"continue_when_spawned_count",
-		condition = function (self)
+		condition = function (counter)
 			-- function 373
-			return self.skaven_rat_ogre <= 0
+			return counter.skaven_rat_ogre <= 0
 		end
 	},
 	{
@@ -12739,16 +12776,16 @@ GenericTerrorEvents.deus_TEST_monster = {
 	},
 	{
 		"continue_when_spawned_count",
-		condition = function (self)
+		condition = function (counter)
 			-- function 374
-			return self.skaven_rat_ogre > 0
+			return counter.skaven_rat_ogre > 0
 		end
 	},
 	{
 		"continue_when_spawned_count",
-		condition = function (self)
+		condition = function (counter)
 			-- function 375
-			return self.skaven_rat_ogre <= 0
+			return counter.skaven_rat_ogre <= 0
 		end
 	},
 	{
@@ -12759,16 +12796,16 @@ GenericTerrorEvents.deus_TEST_monster = {
 	},
 	{
 		"continue_when_spawned_count",
-		condition = function (self)
+		condition = function (counter)
 			-- function 376
-			return self.skaven_stormfiend > 0
+			return counter.skaven_stormfiend > 0
 		end
 	},
 	{
 		"continue_when_spawned_count",
-		condition = function (self)
+		condition = function (counter)
 			-- function 377
-			return self.skaven_stormfiend <= 0
+			return counter.skaven_stormfiend <= 0
 		end
 	},
 	{
@@ -12779,16 +12816,16 @@ GenericTerrorEvents.deus_TEST_monster = {
 	},
 	{
 		"continue_when_spawned_count",
-		condition = function (self)
+		condition = function (counter)
 			-- function 378
-			return self.skaven_stormfiend > 0
+			return counter.skaven_stormfiend > 0
 		end
 	},
 	{
 		"continue_when_spawned_count",
-		condition = function (self)
+		condition = function (counter)
 			-- function 379
-			return self.skaven_stormfiend <= 0
+			return counter.skaven_stormfiend <= 0
 		end
 	},
 	{
@@ -12799,16 +12836,16 @@ GenericTerrorEvents.deus_TEST_monster = {
 	},
 	{
 		"continue_when_spawned_count",
-		condition = function (self)
+		condition = function (counter)
 			-- function 380
-			return self.skaven_stormfiend > 0
+			return counter.skaven_stormfiend > 0
 		end
 	},
 	{
 		"continue_when_spawned_count",
-		condition = function (self)
+		condition = function (counter)
 			-- function 381
-			return self.skaven_stormfiend <= 0
+			return counter.skaven_stormfiend <= 0
 		end
 	},
 	{
@@ -12819,16 +12856,16 @@ GenericTerrorEvents.deus_TEST_monster = {
 	},
 	{
 		"continue_when_spawned_count",
-		condition = function (self)
+		condition = function (counter)
 			-- function 382
-			return self.skaven_stormfiend > 0
+			return counter.skaven_stormfiend > 0
 		end
 	},
 	{
 		"continue_when_spawned_count",
-		condition = function (self)
+		condition = function (counter)
 			-- function 383
-			return self.skaven_stormfiend <= 0
+			return counter.skaven_stormfiend <= 0
 		end
 	},
 	{
@@ -12839,16 +12876,16 @@ GenericTerrorEvents.deus_TEST_monster = {
 	},
 	{
 		"continue_when_spawned_count",
-		condition = function (self)
+		condition = function (counter)
 			-- function 384
-			return self.skaven_stormfiend > 0
+			return counter.skaven_stormfiend > 0
 		end
 	},
 	{
 		"continue_when_spawned_count",
-		condition = function (self)
+		condition = function (counter)
 			-- function 385
-			return self.skaven_stormfiend <= 0
+			return counter.skaven_stormfiend <= 0
 		end
 	},
 	{
@@ -12859,16 +12896,16 @@ GenericTerrorEvents.deus_TEST_monster = {
 	},
 	{
 		"continue_when_spawned_count",
-		condition = function (self)
+		condition = function (counter)
 			-- function 386
-			return self.skaven_stormfiend > 0
+			return counter.skaven_stormfiend > 0
 		end
 	},
 	{
 		"continue_when_spawned_count",
-		condition = function (self)
+		condition = function (counter)
 			-- function 387
-			return self.skaven_stormfiend <= 0
+			return counter.skaven_stormfiend <= 0
 		end
 	},
 	{
@@ -12879,16 +12916,16 @@ GenericTerrorEvents.deus_TEST_monster = {
 	},
 	{
 		"continue_when_spawned_count",
-		condition = function (self)
+		condition = function (counter)
 			-- function 388
-			return self.skaven_stormfiend > 0
+			return counter.skaven_stormfiend > 0
 		end
 	},
 	{
 		"continue_when_spawned_count",
-		condition = function (self)
+		condition = function (counter)
 			-- function 389
-			return self.skaven_stormfiend <= 0
+			return counter.skaven_stormfiend <= 0
 		end
 	},
 	{
@@ -12899,16 +12936,16 @@ GenericTerrorEvents.deus_TEST_monster = {
 	},
 	{
 		"continue_when_spawned_count",
-		condition = function (self)
+		condition = function (counter)
 			-- function 390
-			return self.skaven_stormfiend > 0
+			return counter.skaven_stormfiend > 0
 		end
 	},
 	{
 		"continue_when_spawned_count",
-		condition = function (self)
+		condition = function (counter)
 			-- function 391
-			return self.skaven_stormfiend <= 0
+			return counter.skaven_stormfiend <= 0
 		end
 	},
 	{
@@ -12919,16 +12956,16 @@ GenericTerrorEvents.deus_TEST_monster = {
 	},
 	{
 		"continue_when_spawned_count",
-		condition = function (self)
+		condition = function (counter)
 			-- function 392
-			return self.skaven_stormfiend > 0
+			return counter.skaven_stormfiend > 0
 		end
 	},
 	{
 		"continue_when_spawned_count",
-		condition = function (self)
+		condition = function (counter)
 			-- function 393
-			return self.skaven_stormfiend <= 0
+			return counter.skaven_stormfiend <= 0
 		end
 	},
 	{
@@ -12939,16 +12976,16 @@ GenericTerrorEvents.deus_TEST_monster = {
 	},
 	{
 		"continue_when_spawned_count",
-		condition = function (self)
+		condition = function (counter)
 			-- function 394
-			return self.skaven_stormfiend > 0
+			return counter.skaven_stormfiend > 0
 		end
 	},
 	{
 		"continue_when_spawned_count",
-		condition = function (self)
+		condition = function (counter)
 			-- function 395
-			return self.skaven_stormfiend <= 0
+			return counter.skaven_stormfiend <= 0
 		end
 	},
 	{
@@ -12959,16 +12996,16 @@ GenericTerrorEvents.deus_TEST_monster = {
 	},
 	{
 		"continue_when_spawned_count",
-		condition = function (self)
+		condition = function (counter)
 			-- function 396
-			return self.chaos_troll > 0
+			return counter.chaos_troll > 0
 		end
 	},
 	{
 		"continue_when_spawned_count",
-		condition = function (self)
+		condition = function (counter)
 			-- function 397
-			return self.chaos_troll <= 0
+			return counter.chaos_troll <= 0
 		end
 	},
 	{
@@ -12979,16 +13016,16 @@ GenericTerrorEvents.deus_TEST_monster = {
 	},
 	{
 		"continue_when_spawned_count",
-		condition = function (self)
+		condition = function (counter)
 			-- function 398
-			return self.chaos_troll > 0
+			return counter.chaos_troll > 0
 		end
 	},
 	{
 		"continue_when_spawned_count",
-		condition = function (self)
+		condition = function (counter)
 			-- function 399
-			return self.chaos_troll <= 0
+			return counter.chaos_troll <= 0
 		end
 	},
 	{
@@ -12999,16 +13036,16 @@ GenericTerrorEvents.deus_TEST_monster = {
 	},
 	{
 		"continue_when_spawned_count",
-		condition = function (self)
+		condition = function (counter)
 			-- function 400
-			return self.chaos_troll > 0
+			return counter.chaos_troll > 0
 		end
 	},
 	{
 		"continue_when_spawned_count",
-		condition = function (self)
+		condition = function (counter)
 			-- function 401
-			return self.chaos_troll <= 0
+			return counter.chaos_troll <= 0
 		end
 	},
 	{
@@ -13019,16 +13056,16 @@ GenericTerrorEvents.deus_TEST_monster = {
 	},
 	{
 		"continue_when_spawned_count",
-		condition = function (self)
+		condition = function (counter)
 			-- function 402
-			return self.chaos_troll > 0
+			return counter.chaos_troll > 0
 		end
 	},
 	{
 		"continue_when_spawned_count",
-		condition = function (self)
+		condition = function (counter)
 			-- function 403
-			return self.chaos_troll <= 0
+			return counter.chaos_troll <= 0
 		end
 	},
 	{
@@ -13039,16 +13076,16 @@ GenericTerrorEvents.deus_TEST_monster = {
 	},
 	{
 		"continue_when_spawned_count",
-		condition = function (self)
+		condition = function (counter)
 			-- function 404
-			return self.chaos_troll > 0
+			return counter.chaos_troll > 0
 		end
 	},
 	{
 		"continue_when_spawned_count",
-		condition = function (self)
+		condition = function (counter)
 			-- function 405
-			return self.chaos_troll <= 0
+			return counter.chaos_troll <= 0
 		end
 	},
 	{
@@ -13059,16 +13096,16 @@ GenericTerrorEvents.deus_TEST_monster = {
 	},
 	{
 		"continue_when_spawned_count",
-		condition = function (self)
+		condition = function (counter)
 			-- function 406
-			return self.chaos_troll > 0
+			return counter.chaos_troll > 0
 		end
 	},
 	{
 		"continue_when_spawned_count",
-		condition = function (self)
+		condition = function (counter)
 			-- function 407
-			return self.chaos_troll <= 0
+			return counter.chaos_troll <= 0
 		end
 	},
 	{
@@ -13079,16 +13116,16 @@ GenericTerrorEvents.deus_TEST_monster = {
 	},
 	{
 		"continue_when_spawned_count",
-		condition = function (self)
+		condition = function (counter)
 			-- function 408
-			return self.chaos_troll > 0
+			return counter.chaos_troll > 0
 		end
 	},
 	{
 		"continue_when_spawned_count",
-		condition = function (self)
+		condition = function (counter)
 			-- function 409
-			return self.chaos_troll <= 0
+			return counter.chaos_troll <= 0
 		end
 	},
 	{
@@ -13099,16 +13136,16 @@ GenericTerrorEvents.deus_TEST_monster = {
 	},
 	{
 		"continue_when_spawned_count",
-		condition = function (self)
+		condition = function (counter)
 			-- function 410
-			return self.chaos_troll > 0
+			return counter.chaos_troll > 0
 		end
 	},
 	{
 		"continue_when_spawned_count",
-		condition = function (self)
+		condition = function (counter)
 			-- function 411
-			return self.chaos_troll <= 0
+			return counter.chaos_troll <= 0
 		end
 	},
 	{
@@ -13119,16 +13156,16 @@ GenericTerrorEvents.deus_TEST_monster = {
 	},
 	{
 		"continue_when_spawned_count",
-		condition = function (self)
+		condition = function (counter)
 			-- function 412
-			return self.chaos_troll > 0
+			return counter.chaos_troll > 0
 		end
 	},
 	{
 		"continue_when_spawned_count",
-		condition = function (self)
+		condition = function (counter)
 			-- function 413
-			return self.chaos_troll <= 0
+			return counter.chaos_troll <= 0
 		end
 	},
 	{
@@ -13139,16 +13176,16 @@ GenericTerrorEvents.deus_TEST_monster = {
 	},
 	{
 		"continue_when_spawned_count",
-		condition = function (self)
+		condition = function (counter)
 			-- function 414
-			return self.chaos_troll > 0
+			return counter.chaos_troll > 0
 		end
 	},
 	{
 		"continue_when_spawned_count",
-		condition = function (self)
+		condition = function (counter)
 			-- function 415
-			return self.chaos_troll <= 0
+			return counter.chaos_troll <= 0
 		end
 	},
 	{
@@ -13159,16 +13196,16 @@ GenericTerrorEvents.deus_TEST_monster = {
 	},
 	{
 		"continue_when_spawned_count",
-		condition = function (self)
+		condition = function (counter)
 			-- function 416
-			return self.chaos_spawn > 0
+			return counter.chaos_spawn > 0
 		end
 	},
 	{
 		"continue_when_spawned_count",
-		condition = function (self)
+		condition = function (counter)
 			-- function 417
-			return self.chaos_spawn <= 0
+			return counter.chaos_spawn <= 0
 		end
 	},
 	{
@@ -13179,16 +13216,16 @@ GenericTerrorEvents.deus_TEST_monster = {
 	},
 	{
 		"continue_when_spawned_count",
-		condition = function (self)
+		condition = function (counter)
 			-- function 418
-			return self.chaos_spawn > 0
+			return counter.chaos_spawn > 0
 		end
 	},
 	{
 		"continue_when_spawned_count",
-		condition = function (self)
+		condition = function (counter)
 			-- function 419
-			return self.chaos_spawn <= 0
+			return counter.chaos_spawn <= 0
 		end
 	},
 	{
@@ -13199,16 +13236,16 @@ GenericTerrorEvents.deus_TEST_monster = {
 	},
 	{
 		"continue_when_spawned_count",
-		condition = function (self)
+		condition = function (counter)
 			-- function 420
-			return self.chaos_spawn > 0
+			return counter.chaos_spawn > 0
 		end
 	},
 	{
 		"continue_when_spawned_count",
-		condition = function (self)
+		condition = function (counter)
 			-- function 421
-			return self.chaos_spawn <= 0
+			return counter.chaos_spawn <= 0
 		end
 	},
 	{
@@ -13219,16 +13256,16 @@ GenericTerrorEvents.deus_TEST_monster = {
 	},
 	{
 		"continue_when_spawned_count",
-		condition = function (self)
+		condition = function (counter)
 			-- function 422
-			return self.chaos_spawn > 0
+			return counter.chaos_spawn > 0
 		end
 	},
 	{
 		"continue_when_spawned_count",
-		condition = function (self)
+		condition = function (counter)
 			-- function 423
-			return self.chaos_spawn <= 0
+			return counter.chaos_spawn <= 0
 		end
 	},
 	{
@@ -13239,16 +13276,16 @@ GenericTerrorEvents.deus_TEST_monster = {
 	},
 	{
 		"continue_when_spawned_count",
-		condition = function (self)
+		condition = function (counter)
 			-- function 424
-			return self.chaos_spawn > 0
+			return counter.chaos_spawn > 0
 		end
 	},
 	{
 		"continue_when_spawned_count",
-		condition = function (self)
+		condition = function (counter)
 			-- function 425
-			return self.chaos_spawn <= 0
+			return counter.chaos_spawn <= 0
 		end
 	},
 	{
@@ -13259,16 +13296,16 @@ GenericTerrorEvents.deus_TEST_monster = {
 	},
 	{
 		"continue_when_spawned_count",
-		condition = function (self)
+		condition = function (counter)
 			-- function 426
-			return self.chaos_spawn > 0
+			return counter.chaos_spawn > 0
 		end
 	},
 	{
 		"continue_when_spawned_count",
-		condition = function (self)
+		condition = function (counter)
 			-- function 427
-			return self.chaos_spawn <= 0
+			return counter.chaos_spawn <= 0
 		end
 	},
 	{
@@ -13279,16 +13316,16 @@ GenericTerrorEvents.deus_TEST_monster = {
 	},
 	{
 		"continue_when_spawned_count",
-		condition = function (self)
+		condition = function (counter)
 			-- function 428
-			return self.chaos_spawn > 0
+			return counter.chaos_spawn > 0
 		end
 	},
 	{
 		"continue_when_spawned_count",
-		condition = function (self)
+		condition = function (counter)
 			-- function 429
-			return self.chaos_spawn <= 0
+			return counter.chaos_spawn <= 0
 		end
 	},
 	{
@@ -13299,16 +13336,16 @@ GenericTerrorEvents.deus_TEST_monster = {
 	},
 	{
 		"continue_when_spawned_count",
-		condition = function (self)
+		condition = function (counter)
 			-- function 430
-			return self.chaos_spawn > 0
+			return counter.chaos_spawn > 0
 		end
 	},
 	{
 		"continue_when_spawned_count",
-		condition = function (self)
+		condition = function (counter)
 			-- function 431
-			return self.chaos_spawn <= 0
+			return counter.chaos_spawn <= 0
 		end
 	},
 	{
@@ -13319,16 +13356,16 @@ GenericTerrorEvents.deus_TEST_monster = {
 	},
 	{
 		"continue_when_spawned_count",
-		condition = function (self)
+		condition = function (counter)
 			-- function 432
-			return self.chaos_spawn > 0
+			return counter.chaos_spawn > 0
 		end
 	},
 	{
 		"continue_when_spawned_count",
-		condition = function (self)
+		condition = function (counter)
 			-- function 433
-			return self.chaos_spawn <= 0
+			return counter.chaos_spawn <= 0
 		end
 	},
 	{
@@ -13339,16 +13376,16 @@ GenericTerrorEvents.deus_TEST_monster = {
 	},
 	{
 		"continue_when_spawned_count",
-		condition = function (self)
+		condition = function (counter)
 			-- function 434
-			return self.chaos_spawn > 0
+			return counter.chaos_spawn > 0
 		end
 	},
 	{
 		"continue_when_spawned_count",
-		condition = function (self)
+		condition = function (counter)
 			-- function 435
-			return self.chaos_spawn <= 0
+			return counter.chaos_spawn <= 0
 		end
 	}
 }

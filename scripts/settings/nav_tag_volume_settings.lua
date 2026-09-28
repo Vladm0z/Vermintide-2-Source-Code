@@ -50,15 +50,15 @@ LevelVolumesOnly = {
 	NO_BOTS_NO_SPAWN = true
 }
 
-local tbl = {}
+local added_layers = {}
 
-for k, v in pairs(VolumeSystemSettings.nav_tag_layer_costs) do
-	for k_2, v_2 in pairs(v) do
-		local str = k .. "_" .. k_2
+for volume_type, volume_sub_types in pairs(VolumeSystemSettings.nav_tag_layer_costs) do
+	for volume_sub_type, extensions in pairs(volume_sub_types) do
+		local layer_name = volume_type .. "_" .. volume_sub_type
 
-		if not tbl[str] then
-			NavTagVolumeLayers[#NavTagVolumeLayers + 1] = str
-			tbl[str] = true
+		if not added_layers[layer_name] then
+			NavTagVolumeLayers[#NavTagVolumeLayers + 1] = layer_name
+			added_layers[layer_name] = true
 		end
 	end
 end

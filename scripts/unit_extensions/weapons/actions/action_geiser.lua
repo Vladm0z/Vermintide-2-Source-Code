@@ -2,44 +2,46 @@
 
 ActionGeiser = class(ActionGeiser, ActionBase)
 
-ActionGeiser.init = function (self, arg_1_1, arg_1_2, arg_1_3, arg_1_4, arg_1_5, arg_1_6, arg_1_7, arg_1_8)
+ActionGeiser.init = function (self, world, item_name, is_server, owner_unit, damage_unit, first_person_unit, weapon_unit, weapon_system)
 	-- function 1
-	ActionGeiser.super.init(self, arg_1_1, arg_1_2, arg_1_3, arg_1_4, arg_1_5, arg_1_6, arg_1_7, arg_1_8)
+	ActionGeiser.super.init(self, world, item_name, is_server, owner_unit, damage_unit, first_person_unit, weapon_unit, weapon_system)
 
-	self.overcharge_extension = ScriptUnit.extension(arg_1_4, "overcharge_system")
+	self.overcharge_extension = ScriptUnit.extension(owner_unit, "overcharge_system")
 	self._damage_buffer = {}
 	self._damage_buffer_index = 1
 	self._check_buffs = false
 end
 
-ActionGeiser.client_owner_start_action = function (self, arg_2_1, arg_2_2, arg_2_3, arg_2_4)
+ActionGeiser.client_owner_start_action = function (self, new_action, t, chain_action_data, power_level)
 	-- function 2
-	ActionGeiser.super.client_owner_start_action(self, arg_2_1, arg_2_2, arg_2_3, arg_2_4)
+	ActionGeiser.super.client_owner_start_action(self, new_action, t, chain_action_data, power_level)
 
-	self.current_action = arg_2_1
+	self.current_action = new_action
 
 	local owner_unit = self.owner_unit
-	local is_critical_strike = ActionUtils.is_critical_strike(owner_unit, arg_2_1)
-	local extension = ScriptUnit.extension(owner_unit, "buff_system")
-	local charge_value = arg_2_3.charge_value
+	local is_critical_strike = ActionUtils.is_critical_strike(owner_unit, new_action)
+	local buff_extension = ScriptUnit.extension(owner_unit, "buff_system")
+	local charge_value = chain_action_data.charge_value
 
 	self.charge_value = charge_value
-	self.power_level = ActionUtils.scale_geiser_power_level(arg_2_4, charge_value)
+	self.power_level = ActionUtils.scale_geiser_power_level(power_level, charge_value)
 
-	if not (not extension:has_buff_perk("full_charge_boost") and not (self.charge_value >= 1)) then
-		self.power_level = extension:apply_buffs_to_value(self.power_level, "full_charge_boost")
+	local full_charge_boost = buff_extension:has_buff_perk("full_charge_boost")
+
+	if full_charge_boost and self.charge_value >= 1 then
+		self.power_level = buff_extension:apply_buffs_to_value(self.power_level, "full_charge_boost")
 	end
 
-	self.owner_buff_extension = extension
+	self.owner_buff_extension = buff_extension
 	self.state = "waiting_to_shoot"
 
-	local fire_time = arg_2_1.fire_time
+	local fire_time = new_action.fire_time
 
-	fire_time = fire_time or 0
-	self.time_to_shoot = arg_2_2 + fire_time
-	self.radius = arg_2_3.radius
-	self.height = arg_2_3.height
-	self.position = arg_2_3.position
+	fire_time = not not fire_time or not not 0
+	self.time_to_shoot = t + fire_time
+	self.radius = chain_action_data.radius
+	self.height = chain_action_data.height
+	self.position = chain_action_data.position
 
 	table.clear(self._damage_buffer)
 
@@ -47,16 +49,16 @@ ActionGeiser.client_owner_start_action = function (self, arg_2_1, arg_2_2, arg_2
 	self._check_buffs = true
 	self._is_critical_strike = is_critical_strike
 
-	if not (not self.charge_value and not (self.charge_value >= 1)) then
-		extension:trigger_procs("on_full_charge_action", arg_2_1, arg_2_2, arg_2_3)
+	if self.charge_value and self.charge_value >= 1 then
+		buff_extension:trigger_procs("on_full_charge_action", new_action, t, chain_action_data)
 	end
 end
 
-ActionGeiser.client_owner_post_update = function (self, arg_3_1, arg_3_2, arg_3_3, arg_3_4)
+ActionGeiser.client_owner_post_update = function (self, dt, t, world, can_damage)
 	-- function 3
 	local current_action = self.current_action
 
-	if not (self.state ~= "waiting_to_shoot" or not (arg_3_2 >= self.time_to_shoot)) then
+	if self.state == "waiting_to_shoot" and t >= self.time_to_shoot then
 		self.state = "shooting"
 	end
 
@@ -66,264 +68,340 @@ ActionGeiser.client_owner_post_update = function (self, arg_3_1, arg_3_2, arg_3_
 		self.state = "doing_damage"
 	end
 
-	if self.state ~= "doing_damage" or not self:_update_damage(current_action) then
-		self:_proc_spell_used(self.owner_buff_extension)
+	if self.state == "doing_damage" then
+		local done = self:_update_damage(current_action)
 
-		self.state = "shot"
+		if done then
+			self:_proc_spell_used(self.owner_buff_extension)
+
+			self.state = "shot"
+		end
 	end
 end
 
-ActionGeiser.finish = function (self, arg_4_1)
+ActionGeiser.finish = function (self, reason)
 	-- function 4
-	if not (self.state == "waiting_to_shoot" or self.state == "shot") then
+	if self.state ~= "waiting_to_shoot" and self.state ~= "shot" then
 		self:_proc_spell_used(self.owner_buff_extension)
 	end
 
 	self.position = nil
 
-	local has_extension = ScriptUnit.has_extension(self.owner_unit, "hud_system")
+	local hud_extension = ScriptUnit.has_extension(self.owner_unit, "hud_system")
 
-	if not has_extension then
-		has_extension.show_critical_indication = false
+	if hud_extension then
+		hud_extension.show_critical_indication = false
 	end
 end
 
-ActionGeiser.fire = function (self, arg_5_1)
+ActionGeiser.fire = function (self, reason)
 	-- function 5
 	local current_action = self.current_action
 	local owner_unit = self.owner_unit
 	local owner_player = self.owner_player
 	local radius = self.radius
-	local num = self.height * 0.5
-	local unbox = self.position:unbox()
-	local get_data = World.get_data(self.world, "physics_world")
-	local network = Managers.state.network
-	local num_2 = unbox + Vector3(0, 0, num)
-	local var_5_9 = unbox
-	local num_3 = num + radius
-	local flag
+	local half_height = self.height * 0.5
+	local position = self.position:unbox()
+	local physics_world = World.get_data(self.world, "physics_world")
+	local network_manager = Managers.state.network
+	local start_pos = position + Vector3(0, 0, half_height)
+	local source_pos = position
+	local capsule_half_height = half_height + radius
+	local str
 
-	flag = not (num_3 - radius > 0) or not "capsule" or "sphere"
+	if capsule_half_height - radius > 0 then
+		str = "capsule"
 
-	local immediate_overlap, var_5_13 = PhysicsWorld.immediate_overlap(get_data, "shape", flag, "position", num_2, "size", Vector3(radius, num_3, radius), "rotation", Quaternion.look(Vector3.up(), Vector3.up()), "collision_filter", "filter_character_trigger")
+		goto label_5_0
+	end
+
+	str = "sphere"
+
+	local shape = str
+
+	::label_5_0::
+
+	local hit_actors, num_actors = PhysicsWorld.immediate_overlap(physics_world, "shape", shape, "position", start_pos, "size", Vector3(radius, capsule_half_height, radius), "rotation", Quaternion.look(Vector3.up(), Vector3.up()), "collision_filter", "filter_character_trigger")
 	local charge_value = self.charge_value
-	local particle_effect = current_action.particle_effect
-	local overcharge_type = current_action.overcharge_type
-	local get_difficulty_settings = Managers.state.difficulty:get_difficulty_settings()
-	local flag_2 = not DamageUtils.allow_friendly_fire_ranged(get_difficulty_settings, owner_player)
-	local small_charge_value = current_action.small_charge_value
+	local effect_name = current_action.particle_effect
+	local overcharge = current_action.overcharge_type
+	local difficulty_settings = Managers.state.difficulty:get_difficulty_settings()
+	local ignore_hitting_allies = not DamageUtils.allow_friendly_fire_ranged(difficulty_settings, owner_player)
+	local small_charge_value_2 = current_action.small_charge_value
 
-	small_charge_value = small_charge_value or 0.33
+	if not small_charge_value_2 then
+		-- Nothing
+	end
 
-	local medium_charge_value = current_action.medium_charge_value
+	small_charge_value_2 = 0.33
 
-	medium_charge_value = medium_charge_value or 0.66
+	local small_charge_value = small_charge_value_2
 
-	local large_charge_value = current_action.large_charge_value
+	::label_5_1::
 
-	large_charge_value = large_charge_value or 1
+	local medium_charge_value_2 = current_action.medium_charge_value
 
-	local flag_3 = not global_is_inside_inn and current_action.can_proc_in_inn
-	local str = "_large"
+	if not medium_charge_value_2 then
+		-- Nothing
+	end
+
+	medium_charge_value_2 = 0.66
+
+	local medium_charge_value = medium_charge_value_2
+
+	::label_5_2::
+
+	local large_charge_value_2 = current_action.large_charge_value
+
+	if not large_charge_value_2 then
+		-- Nothing
+	end
+
+	large_charge_value_2 = 1
+
+	local large_charge_value = large_charge_value_2
+
+	::label_5_3::
+
+	local can_create_aoe = not global_is_inside_inn or not not current_action.can_proc_in_inn
+	local size = "_large"
 
 	if charge_value < small_charge_value then
-		str = "_small"
+		size = "_small"
 	elseif charge_value < medium_charge_value then
-		str = "_medium"
-	elseif not (large_charge_value <= charge_value) or not flag_3 then
-		str = "_large"
+		size = "_medium"
+	elseif large_charge_value <= charge_value and can_create_aoe then
+		size = "_large"
 
-		local unit_game_object_id = network:unit_game_object_id(owner_unit)
-		local var_5_25 = NetworkLookup.damage_sources[self.item_name]
-		local aoe_name = current_action.aoe_name
-		local var_5_27 = NetworkLookup.explosion_templates[aoe_name]
+		local owner_unit_id = network_manager:unit_game_object_id(owner_unit)
+		local damage_source_id = NetworkLookup.damage_sources[self.item_name]
+		local explosion_template_name = current_action.aoe_name
+		local explosion_template_id = NetworkLookup.explosion_templates[explosion_template_name]
 
-		overcharge_type = current_action.overcharge_type_heavy
+		overcharge = current_action.overcharge_type_heavy
 
-		self.network_transmit:send_rpc_server("rpc_client_create_aoe", unit_game_object_id, var_5_9, var_5_25, var_5_27, radius)
+		self.network_transmit:send_rpc_server("rpc_client_create_aoe", owner_unit_id, source_pos, damage_source_id, explosion_template_id, radius)
 	end
 
-	if not particle_effect then
-		local str_2 = particle_effect .. str
-		local particle_radius_variable = current_action.particle_radius_variable
-		local var_5_30 = NetworkLookup.effects[str_2]
-		local var_5_31 = NetworkLookup.effects[particle_radius_variable]
-		local var_5_32 = Vector3(radius, 1, 1)
+	if effect_name then
+		effect_name = effect_name .. size
 
-		self.network_transmit:send_rpc_server("rpc_play_simple_particle_with_vector_variable", var_5_30, unbox, var_5_31, var_5_32)
+		local variable_name = current_action.particle_radius_variable
+		local effect_id = NetworkLookup.effects[effect_name]
+		local variable_id = NetworkLookup.effects[variable_name]
+		local radius_variable = Vector3(radius, 1, 1)
+
+		self.network_transmit:send_rpc_server("rpc_play_simple_particle_with_vector_variable", effect_id, position, variable_id, radius_variable)
 	end
 
-	if not overcharge_type then
-		local var_5_33 = PlayerUnitStatusSettings.overcharge_values[overcharge_type]
-		local extension = ScriptUnit.extension(owner_unit, "buff_system")
+	if overcharge then
+		local overcharge_amount = PlayerUnitStatusSettings.overcharge_values[overcharge]
+		local buff_extension = ScriptUnit.extension(owner_unit, "buff_system")
 
-		if not self._is_critical_strike and not extension:has_buff_perk("no_overcharge_crit") then
-			var_5_33 = 0
+		if self._is_critical_strike and buff_extension:has_buff_perk("no_overcharge_crit") then
+			overcharge_amount = 0
 		end
 
-		self.overcharge_extension:add_charge(var_5_33, charge_value, overcharge_type)
+		self.overcharge_extension:add_charge(overcharge_amount, charge_value, overcharge)
 	end
 
 	local fire_sound_event = self.current_action.fire_sound_event
 
-	if not fire_sound_event then
-		local fire_sound_on_husk = self.current_action.fire_sound_on_husk
+	if fire_sound_event then
+		local play_on_husk = self.current_action.fire_sound_on_husk
+		local first_person_extension = ScriptUnit.extension(owner_unit, "first_person_system")
 
-		ScriptUnit.extension(owner_unit, "first_person_system"):play_hud_sound_event(fire_sound_event, nil, fire_sound_on_husk)
+		first_person_extension:play_hud_sound_event(fire_sound_event, nil, play_on_husk)
 	end
 
-	local _damage_buffer = self._damage_buffer
-	local tbl = {}
-	local damage_profile = current_action.damage_profile
+	local damage_buffer = self._damage_buffer
+	local hit_units = {}
+	local damage_profile_2 = current_action.damage_profile
 
-	damage_profile = damage_profile or "default"
+	if not damage_profile_2 then
+		-- Nothing
+	end
 
-	local var_5_40 = DamageProfileTemplates[damage_profile]
-	local side = Managers.state.side
-	local var_5_42 = side.side_by_unit[owner_unit]
-	local flag_4 = not owner_player and owner_player.player_unit
+	damage_profile_2 = "default"
 
-	if var_5_13 > 0 then
-		local num_4 = 0
+	local damage_profile_name = damage_profile_2
 
-		for i = 1, var_5_13 do
-			local var_5_45 = immediate_overlap[i]
-			local unit = Actor.unit(var_5_45)
-			local var_5_47 = POSITION_LOOKUP[unit]
+	::label_5_4::
 
-			var_5_47 = var_5_47 or Unit.local_position(unit, 0)
+	local damage_profile = DamageProfileTemplates[damage_profile_name]
+	local side_manager = Managers.state.side
+	local side = side_manager.side_by_unit[owner_unit]
+	local attacker_is_player = not not owner_player and not not owner_player.player_unit
 
-			local get_data_2 = Unit.get_data(unit, "breed")
+	if num_actors > 0 then
+		local hit_index = 0
 
-			if not tbl[unit] then
-				local is_enemy = side:is_enemy(owner_unit, unit)
-				local flag_5 = not (var_5_42 == side.side_by_unit[unit]) and not flag_2
-				local flag_6 = is_enemy or flag_5
+		for i = 1, num_actors do
+			local hit_actor = hit_actors[i]
+			local hit_unit = Actor.unit(hit_actor)
+			local var_5_5 = POSITION_LOOKUP[hit_unit]
+
+			if not var_5_5 then
+				-- Nothing
+			end
+
+			var_5_5 = Unit.local_position(hit_unit, 0)
+
+			local hit_position = var_5_5
+
+			::label_5_5::
+
+			local breed = Unit.get_data(hit_unit, "breed")
+
+			if not hit_units[hit_unit] then
+				local is_enemy = side_manager:is_enemy(owner_unit, hit_unit)
+				local hit_unit_side = side_manager.side_by_unit[hit_unit]
+				local is_friend = side == hit_unit_side
+				local friendly_fire = not not is_friend and not not not ignore_hitting_allies
+				local should_hit = not not is_enemy or not not friendly_fire
 
 				if not is_enemy then
-					local flag_7 = not get_data_2 and get_data_2.is_player
-					local flag_8 = not get_data_2 and not flag_7
-					local flag_9 = not not is_enemy or side:is_ally(owner_unit, unit)
+					local is_player = not not breed and not not breed.is_player
+					local is_ai = not not breed and not not not is_player
+					local is_ally = not is_enemy and not not side_manager:is_ally(owner_unit, hit_unit)
 
-					if not flag_4 and not flag_8 and not flag_9 then
-						flag_6 = false
+					if attacker_is_player and is_ai and is_ally then
+						should_hit = false
 					end
 				end
 
-				if not flag_6 then
-					local num_5 = var_5_47 - var_5_9
-					local length = Vector3.length(num_5)
-					local var_5_57
+				if should_hit then
+					local attack_vector = hit_position - source_pos
+					local attack_distance = Vector3.length(attack_vector)
+					local target_index
 
-					if not var_5_40.target_radius and not var_5_40.targets then
-						local num_6 = length / radius
+					if damage_profile.target_radius and damage_profile.targets then
+						local proximity_factor = attack_distance / radius
+						local shield_blocked = AiUtils.attack_is_shield_blocked(hit_unit, owner_unit)
 
-						if not AiUtils.attack_is_shield_blocked(unit, owner_unit) then
-							num_6 = math.lerp(num_6, 1, 0.5)
+						if shield_blocked then
+							proximity_factor = math.lerp(proximity_factor, 1, 0.5)
 						end
 
-						for k, v in pairs(var_5_40.target_radius) do
-							if num_6 <= v then
-								var_5_57 = k
+						for index, target_radius in pairs(damage_profile.target_radius) do
+							if proximity_factor <= target_radius then
+								target_index = index
 
 								break
 							end
 						end
 					end
 
-					tbl[unit] = true
+					hit_units[hit_unit] = true
 
-					if not HEALTH_ALIVE[unit] then
-						num_4 = num_4 + 1
+					if HEALTH_ALIVE[hit_unit] then
+						hit_index = hit_index + 1
 					end
 
-					local tbl_2 = {
+					local damage_data = {
 						hit_zone_name = "torso",
-						hit_unit = unit,
-						damage_profile_name = damage_profile,
-						target_index = var_5_57,
-						allow_critical_proc = var_5_57 == 1,
-						hit_index = num_4
+						hit_unit = hit_unit,
+						damage_profile_name = damage_profile_name,
+						target_index = target_index,
+						allow_critical_proc = target_index == 1,
+						hit_index = hit_index
 					}
 
-					_damage_buffer[#_damage_buffer + 1] = tbl_2
+					damage_buffer[#damage_buffer + 1] = damage_data
 				end
 			end
 		end
 	end
 
-	if not current_action.alert_enemies then
-		Managers.state.entity:system("ai_system"):alert_enemies_within_range(owner_unit, var_5_9, current_action.alert_sound_range_fire)
+	if current_action.alert_enemies then
+		Managers.state.entity:system("ai_system"):alert_enemies_within_range(owner_unit, source_pos, current_action.alert_sound_range_fire)
 	end
 
-	local has_extension = ScriptUnit.has_extension(owner_unit, "hud_system")
+	local hud_extension = ScriptUnit.has_extension(owner_unit, "hud_system")
 
-	self:_handle_critical_strike(self._is_critical_strike, self.owner_buff_extension, has_extension, nil, "on_critical_shot", nil)
+	self:_handle_critical_strike(self._is_critical_strike, self.owner_buff_extension, hud_extension, nil, "on_critical_shot", nil)
 end
 
-local num = 1
+local UNITS_PER_FRAME = 1
 
-ActionGeiser._update_damage = function (self, arg_6_1)
+ActionGeiser._update_damage = function (self, current_action)
 	-- function 6
-	local _damage_buffer = self._damage_buffer
-	local _damage_buffer_index = self._damage_buffer_index
-	local num_2 = _damage_buffer_index + num - 1
-	local network = Managers.state.network
+	local damage_buffer = self._damage_buffer
+	local damage_buffer_index = self._damage_buffer_index
+	local num_units = damage_buffer_index + UNITS_PER_FRAME - 1
+	local network_manager = Managers.state.network
 	local owner_unit = self.owner_unit
-	local item_name = self.item_name
-	local var_6_6 = NetworkLookup.damage_sources[item_name]
-	local unit_game_object_id = network:unit_game_object_id(owner_unit)
-	local unbox = self.position:unbox()
+	local damage_source = self.item_name
+	local damage_source_id = NetworkLookup.damage_sources[damage_source]
+	local attacker_unit_id = network_manager:unit_game_object_id(owner_unit)
+	local attacker_position = self.position:unbox()
 
-	for i = _damage_buffer_index, num_2 do
+	for i = damage_buffer_index, num_units do
 		repeat
-			local var_6_9 = _damage_buffer[i]
+			local damage_data = damage_buffer[i]
 
-			if not var_6_9 then
+			if not damage_data then
 				return true
 			end
 
-			local hit_unit = var_6_9.hit_unit
-			local damage_profile_name = var_6_9.damage_profile_name
-			local target_index = var_6_9.target_index
-			local hit_zone_name = var_6_9.hit_zone_name
-			local allow_critical_proc = var_6_9.allow_critical_proc
-			local hit_index = var_6_9.hit_index
+			local hit_unit = damage_data.hit_unit
+			local damage_profile_name = damage_data.damage_profile_name
+			local target_index = damage_data.target_index
+			local hit_zone_name = damage_data.hit_zone_name
+			local allow_critical_proc = damage_data.allow_critical_proc
+			local hit_index = damage_data.hit_index
 
 			if not Unit.alive(hit_unit) then
 				break
 			end
 
-			local get_ranged_boost, var_6_17 = ActionUtils.get_ranged_boost(owner_unit)
+			local has_ranged_boost, ranged_boost_curve_multiplier = ActionUtils.get_ranged_boost(owner_unit)
 			local _is_critical_strike = self._is_critical_strike
 
-			_is_critical_strike = _is_critical_strike or get_ranged_boost
+			if not _is_critical_strike then
+				-- Nothing
+			end
 
-			local flag = true
-			local get_item_buff_type = DamageUtils.get_item_buff_type(self.item_name)
+			_is_critical_strike = has_ranged_boost
 
-			DamageUtils.buff_on_attack(owner_unit, hit_unit, "aoe", not _is_critical_strike and allow_critical_proc, hit_zone_name, hit_index, flag, get_item_buff_type, nil, self.item_name)
+			local is_critical_strike = _is_critical_strike
 
-			local unit_game_object_id_2 = network:unit_game_object_id(hit_unit)
+			::label_6_0::
 
-			if not unit_game_object_id_2 then
+			local send_to_server = true
+			local buff_type = DamageUtils.get_item_buff_type(self.item_name)
+
+			DamageUtils.buff_on_attack(owner_unit, hit_unit, "aoe", not not is_critical_strike and not not allow_critical_proc, hit_zone_name, hit_index, send_to_server, buff_type, nil, self.item_name)
+
+			local hit_unit_id = network_manager:unit_game_object_id(hit_unit)
+
+			if not hit_unit_id then
 				break
 			end
 
-			local var_6_22 = NetworkLookup.hit_zones[hit_zone_name]
-			local var_6_23 = NetworkLookup.damage_profiles[damage_profile_name]
-			local var_6_24 = POSITION_LOOKUP[hit_unit]
+			local hit_zone_id = NetworkLookup.hit_zones[hit_zone_name]
+			local damage_profile_id = NetworkLookup.damage_profiles[damage_profile_name]
+			local var_6_1 = POSITION_LOOKUP[hit_unit]
 
-			var_6_24 = var_6_24 or Unit.local_position(hit_unit, 0)
+			if not var_6_1 then
+				-- Nothing
+			end
 
-			local normalize = Vector3.normalize(var_6_24 - unbox)
+			var_6_1 = Unit.local_position(hit_unit, 0)
+
+			local hit_position = var_6_1
+
+			::label_6_1::
+
+			local attack_direction = Vector3.normalize(hit_position - attacker_position)
 			local power_level = self.power_level
-			local flag_2 = false
-			local flag_3 = false
+			local shield_blocked = false
+			local shield_break_procc = false
+			local weapon_system = Managers.state.entity:system("weapon_system")
 
-			Managers.state.entity:system("weapon_system"):send_rpc_attack_hit(var_6_6, unit_game_object_id, unit_game_object_id_2, var_6_22, var_6_24, normalize, var_6_23, "power_level", power_level, "hit_target_index", target_index, "blocking", flag_2, "shield_break_procced", flag_3, "boost_curve_multiplier", var_6_17, "is_critical_strike", _is_critical_strike)
+			weapon_system:send_rpc_attack_hit(damage_source_id, attacker_unit_id, hit_unit_id, hit_zone_id, hit_position, attack_direction, damage_profile_id, "power_level", power_level, "hit_target_index", target_index, "blocking", shield_blocked, "shield_break_procced", shield_break_procc, "boost_curve_multiplier", ranged_boost_curve_multiplier, "is_critical_strike", is_critical_strike)
 		until true
 	end
 
-	self._damage_buffer_index = num_2 + 1
+	self._damage_buffer_index = num_units + 1
 end

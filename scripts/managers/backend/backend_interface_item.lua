@@ -1,31 +1,31 @@
 -- chunkname: @scripts/managers/backend/backend_interface_item.lua
 
-local var_0_0 = class(Items)
+local Items = class(Items)
 
-var_0_0.init = function (self)
+Items.init = function (self)
 	-- function 1
 	self._dirty = true
 	self._debug_end_of_round_timeout = false
 end
 
-local tbl = {
+local CLEARABLE_SLOTS = {
 	slot_trinket_2 = true,
 	slot_trinket_3 = true,
 	slot_trinket_1 = true
 }
-local tbl_2 = {
+local MUST_HAVE_SLOTS = {
 	slot_hat = true,
 	slot_skin = true,
 	slot_frame = true,
 	slot_melee = true,
 	slot_ranged = true
 }
-local tbl_3 = {
+local COSMETIC_ITEMS = {
 	frame = true,
 	skin = true,
 	hat = true
 }
-local tbl_4 = {
+local STARTING_ITEMS = {
 	dr_shield_axe_0001 = true,
 	dr_crossbow_0001 = true,
 	we_shortbow_0001 = true,
@@ -43,170 +43,179 @@ local tbl_4 = {
 	wh_fencing_sword_0001 = true
 }
 
-local function fn(arg_2_0, arg_2_1, arg_2_2)
+local function find_item_for_slot(items, profile_name, slot)
 	-- function 2
-	for k, v in pairs(arg_2_0) do
-		local var_2_0 = ItemMasterList[v.key]
-		local can_wield = var_2_0.can_wield
+	for backend_id, item_data in pairs(items) do
+		local item_config = ItemMasterList[item_data.key]
+		local can_wield = item_config.can_wield
 
-		for i, v_2 in ipairs(can_wield) do
-			if not (v_2 ~= arg_2_1 or var_2_0.slot_type ~= InventorySettings.slots_by_name[arg_2_2].type) then
-				return k
+		for _, profile in ipairs(can_wield) do
+			if profile == profile_name then
+				local slot_type = item_config.slot_type
+				local wanted_type = InventorySettings.slots_by_name[slot].type
+
+				if slot_type == wanted_type then
+					return backend_id
+				end
 			end
 		end
 	end
 end
 
-local function fn_2(self, arg_3_1, arg_3_2)
+local function clean_inventory(items, loadout, whitelist)
 	-- function 3
-	if not arg_3_2 then
-		local tbl = {}
+	if whitelist then
+		local items_not_in_whitelist = {}
 
-		for k, v in pairs(self) do
-			if not arg_3_2[v.key] then
-				tbl[k] = v.key
+		for backend_id, item in pairs(items) do
+			if not whitelist[item.key] then
+				items_not_in_whitelist[backend_id] = item.key
 			end
 		end
 
-		for k_2, v_2 in pairs(tbl) do
-			print(string.format("[BackendInterfaceItem] Item %q not found in white list, removing it.", v_2))
+		for backend_id, item_key in pairs(items_not_in_whitelist) do
+			print(string.format("[BackendInterfaceItem] Item %q not found in white list, removing it.", item_key))
 
-			self[k_2] = nil
+			items[backend_id] = nil
 		end
 	end
 
-	local var_3_1
+	local missing_items
 
-	for k_3, v_3 in pairs(self) do
-		if not rawget(ItemMasterList, v_3.key) then
-			var_3_1 = var_3_1 or {}
-			var_3_1[k_3] = v_3.key
+	for backend_id, item in pairs(items) do
+		if not rawget(ItemMasterList, item.key) then
+			missing_items = not not missing_items or not not {}
+			missing_items[backend_id] = item.key
 		end
 	end
 
-	local tbl_3 = {}
+	local empty_must_have_slots = {}
 
-	for k_4, v_4 in pairs(arg_3_1) do
-		for k_5, v_5 in pairs(v_4) do
-			if k_5 == "backend_id" then
+	for profile_name, slots in pairs(loadout) do
+		for slot, backend_id in pairs(slots) do
+			if slot == "backend_id" then
 				-- Nothing
-			elseif not self[v_5] then
-				Crashify.print_exception("BackendInterfaceItem", "Tried to equip item not found in items list, clearing slot. Profile: %q, Backend id: %d, Slot: %q", k_4, v_5, k_5)
-				BackendItem.set_loadout_item(nil, arg_3_1[k_4].backend_id, k_5)
+			elseif not items[backend_id] then
+				Crashify.print_exception("BackendInterfaceItem", "Tried to equip item not found in items list, clearing slot. Profile: %q, Backend id: %d, Slot: %q", profile_name, backend_id, slot)
+				BackendItem.set_loadout_item(nil, loadout[profile_name].backend_id, slot)
 
-				v_4[k_5] = nil
+				slots[slot] = nil
 
-				if not tbl_2[k_5] then
-					tbl_3[#tbl_3 + 1] = {
-						slot = k_5,
-						profile_name = k_4
+				if MUST_HAVE_SLOTS[slot] then
+					empty_must_have_slots[#empty_must_have_slots + 1] = {
+						slot = slot,
+						profile_name = profile_name
 					}
 				end
-			elseif not var_3_1 and not var_3_1[v_5] then
-				Crashify.print_exception("BackendInterfaceItem", "Tried to equip item not found in ItemMasterList, clearing slot. Profile: %q, Item: %q, Backend id: %d, Slot: %q", k_4, var_3_1[v_5], v_5, k_5)
-				BackendItem.set_loadout_item(nil, arg_3_1[k_4].backend_id, k_5)
+			elseif missing_items and missing_items[backend_id] then
+				Crashify.print_exception("BackendInterfaceItem", "Tried to equip item not found in ItemMasterList, clearing slot. Profile: %q, Item: %q, Backend id: %d, Slot: %q", profile_name, missing_items[backend_id], backend_id, slot)
+				BackendItem.set_loadout_item(nil, loadout[profile_name].backend_id, slot)
 
-				v_4[k_5] = nil
+				slots[slot] = nil
 
-				if not tbl_2[k_5] then
-					tbl_3[#tbl_3 + 1] = {
-						slot = k_5,
-						profile_name = k_4
+				if MUST_HAVE_SLOTS[slot] then
+					empty_must_have_slots[#empty_must_have_slots + 1] = {
+						slot = slot,
+						profile_name = profile_name
 					}
 				end
 			end
 		end
 	end
 
-	if not var_3_1 then
-		for k_6, v_6 in pairs(var_3_1) do
-			Crashify.print_exception("BackendInterfaceItem", "Missing item %q in backend, removing it. Backend id: %q", v_6, k_6)
+	if missing_items then
+		for backend_id, key in pairs(missing_items) do
+			Crashify.print_exception("BackendInterfaceItem", "Missing item %q in backend, removing it. Backend id: %q", key, backend_id)
 
-			self[k_6] = nil
+			items[backend_id] = nil
 		end
 	end
 
-	for i, v_7 in ipairs(tbl_3) do
-		local profile_name = v_7.profile_name
-		local slot = v_7.slot
-		local var_3_5 = fn(self, profile_name, slot)
+	for index, slot_data in ipairs(empty_must_have_slots) do
+		local profile_name = slot_data.profile_name
+		local slot = slot_data.slot
+		local backend_id = find_item_for_slot(items, profile_name, slot)
 
-		if not var_3_5 then
-			Crashify.print_exception("BackendInterfaceItem", "Slot %q was empty, putting item %d in it", slot, var_3_5)
-			BackendItem.set_loadout_item(var_3_5, arg_3_1[profile_name].backend_id, slot)
+		if backend_id then
+			Crashify.print_exception("BackendInterfaceItem", "Slot %q was empty, putting item %d in it", slot, backend_id)
+			BackendItem.set_loadout_item(backend_id, loadout[profile_name].backend_id, slot)
 
-			tbl_3[i] = nil
-			arg_3_1[profile_name][slot] = var_3_5
+			empty_must_have_slots[index] = nil
+			loadout[profile_name][slot] = backend_id
 		end
 	end
 
-	fassert(table.is_empty(tbl_3), "[BackendInterfaceItem] Your backend save is broken, ask for help resetting it")
+	fassert(table.is_empty(empty_must_have_slots), "[BackendInterfaceItem] Your backend save is broken, ask for help resetting it")
 end
 
-var_0_0.set_item_whitelist = function (self, arg_4_1)
+Items.set_item_whitelist = function (self, item_keys)
 	-- function 4
-	local tbl = {}
+	local whitelist = {}
 
-	for i = 1, #arg_4_1 do
-		tbl[arg_4_1[i]] = true
+	for i = 1, #item_keys do
+		local key = item_keys[i]
+
+		whitelist[key] = true
 	end
 
-	self._item_whitelist = tbl
+	self._item_whitelist = whitelist
 	self._dirty = true
 end
 
-var_0_0._refresh_entities_if_needed = function (self)
+Items._refresh_entities_if_needed = function (self)
 	-- function 5
-	if not self._dirty then
-		local get_items, var_5_1 = BackendItem.get_items()
+	if self._dirty then
+		local items, loadout = BackendItem.get_items()
 
-		fn_2(get_items, var_5_1, self._item_whitelist)
+		clean_inventory(items, loadout, self._item_whitelist)
 
-		self._items = get_items
-		self._loadout = var_5_1
+		self._items = items
+		self._loadout = loadout
 		self._profile_cache = {}
 		self._dirty = false
 	end
 end
 
-var_0_0.get_all_backend_items = function (self)
+Items.get_all_backend_items = function (self)
 	-- function 6
 	self:_refresh_entities_if_needed()
 
 	return self._items
 end
 
-local tbl_5 = {}
+local empty_params = {}
 
-var_0_0.get_filtered_items = function (self, arg_7_1, arg_7_2)
+Items.get_filtered_items = function (self, filter, params)
 	-- function 7
-	local get_all_backend_items = self:get_all_backend_items()
+	local all_items = self:get_all_backend_items()
+	local backend_common = Managers.backend:get_interface("common")
+	local items = backend_common:filter_items(all_items, filter, not not params or not not empty_params)
 
-	return (Managers.backend:get_interface("common"):filter_items(get_all_backend_items, arg_7_1, arg_7_2 or tbl_5))
+	return items
 end
 
-var_0_0.set_error = function (self, arg_8_1)
+Items.set_error = function (self, error_data)
 	-- function 8
-	self._error_data = arg_8_1
+	self._error_data = error_data
 end
 
-var_0_0.check_for_errors = function (self)
+Items.check_for_errors = function (self)
 	-- function 9
-	local _error_data = self._error_data
+	local error_data = self._error_data
 
 	self._error_data = nil
 
-	return _error_data
+	return error_data
 end
 
-var_0_0.update = function (self, arg_10_1)
+Items.update = function (self, dt)
 	-- function 10
-	if not self._dice_game_data then
-		local get_interface = Managers.backend:get_interface("session")
-		local flag = not not self._debug_end_of_round_timeout or get_interface:get_state() == "END_OF_ROUND"
-		local flag_2 = not GameSettingsDevelopment.backend_settings.enable_sessions
+	if self._dice_game_data then
+		local backend_session = Managers.backend:get_interface("session")
+		local session_ready = not self._debug_end_of_round_timeout and backend_session:get_state() == "END_OF_ROUND"
+		local sessions_disabled = not GameSettingsDevelopment.backend_settings.enable_sessions
 
-		if flag or not flag_2 then
+		if session_ready or sessions_disabled then
 			local parameters = self._dice_game_data.parameters
 			local dice_script = GameSettingsDevelopment.backend_settings.dice_script
 
@@ -224,12 +233,12 @@ var_0_0.update = function (self, arg_10_1)
 				reason = BACKEND_LUA_ERRORS.ERR_DICE_TIMEOUT1
 			})
 		end
-	elseif not self._upgrades_failed_game_data then
-		local get_interface_2 = Managers.backend:get_interface("session")
-		local flag_3 = not not self._debug_end_of_round_timeout or get_interface_2:get_state() == "END_OF_ROUND"
-		local flag_4 = not GameSettingsDevelopment.backend_settings.enable_sessions
+	elseif self._upgrades_failed_game_data then
+		local backend_session = Managers.backend:get_interface("session")
+		local session_ready = not self._debug_end_of_round_timeout and backend_session:get_state() == "END_OF_ROUND"
+		local sessions_disabled = not GameSettingsDevelopment.backend_settings.enable_sessions
 
-		if flag_3 or not flag_4 then
+		if session_ready or sessions_disabled then
 			local start_level = self._upgrades_failed_game_data.start_level
 			local end_level = self._upgrades_failed_game_data.end_level
 			local upgrades_failed_script = GameSettingsDevelopment.backend_settings.upgrades_failed_script
@@ -251,117 +260,117 @@ var_0_0.update = function (self, arg_10_1)
 	end
 end
 
-var_0_0.reset_dice_game_item = function (self)
+Items.reset_dice_game_item = function (self)
 	-- function 11
 	self._dice_item = nil
 end
 
-var_0_0.dice_game_item = function (self)
+Items.dice_game_item = function (self)
 	-- function 12
 	return self._dice_item
 end
 
-var_0_0.poll_upgrades = function (self)
+Items.poll_upgrades = function (self)
 	-- function 13
-	local _upgrades_item = self._upgrades_item
+	local upgrades_item = self._upgrades_item
 
-	if not _upgrades_item and not _upgrades_item:is_done() then
+	if upgrades_item and upgrades_item:is_done() then
 		self._upgrades_item = nil
 
-		return _upgrades_item:items()
+		return upgrades_item:items()
 	end
 end
 
-var_0_0.get_loadout = function (self)
+Items.get_loadout = function (self)
 	-- function 14
 	self:_refresh_entities_if_needed()
 
 	return self._loadout
 end
 
-var_0_0.generate_item_server_loot = function (self, arg_15_1, arg_15_2, arg_15_3, arg_15_4, arg_15_5, arg_15_6)
+Items.generate_item_server_loot = function (self, dice, difficulty, start_level, end_level, hero_name, dlc_name)
 	-- function 15
 	local fassert = fassert
-	local flag = not not self._dice_game_data or not self._upgrades_failed_game_data
+	local flag = not self._dice_game_data and not not not self._upgrades_failed_game_data
 	local str = "Trying to do two item server scripts at once. DiceGame: %s, UpgradesFailedGame: %s"
 	local _dice_game_data = self._dice_game_data
 
-	_dice_game_data = not _dice_game_data and "true"
+	_dice_game_data = not not _dice_game_data and not not "true"
 
 	local _upgrades_failed_game_data = self._upgrades_failed_game_data
 
-	_upgrades_failed_game_data = not _upgrades_failed_game_data and "true"
+	_upgrades_failed_game_data = not not _upgrades_failed_game_data and not not "true"
 
 	fassert(flag, str, _dice_game_data, _upgrades_failed_game_data)
 
-	local num = Managers.time:time("main") + 20
-	local tbl = {
+	local time_out = Managers.time:time("main") + 20
+	local parameters = {
 		"param_dice",
-		tostring(arg_15_1),
+		tostring(dice),
 		"param_difficulty",
-		arg_15_2,
+		difficulty,
 		"param_start_level",
-		arg_15_3,
+		start_level,
 		"param_end_level",
-		arg_15_4
+		end_level
 	}
 
-	if not arg_15_5 then
-		tbl[#tbl + 1] = "param_hero_name"
-		tbl[#tbl + 1] = arg_15_5
+	if hero_name then
+		parameters[#parameters + 1] = "param_hero_name"
+		parameters[#parameters + 1] = hero_name
 	end
 
-	if not arg_15_6 then
-		tbl[#tbl + 1] = "param_dlc_name"
-		tbl[#tbl + 1] = arg_15_6
+	if dlc_name then
+		parameters[#parameters + 1] = "param_dlc_name"
+		parameters[#parameters + 1] = dlc_name
 	end
 
 	self._dice_game_data = {
-		time_out = num,
-		parameters = tbl
+		time_out = time_out,
+		parameters = parameters
 	}
 end
 
-var_0_0.upgrades_failed_game = function (self, arg_16_1, arg_16_2)
+Items.upgrades_failed_game = function (self, start_level, end_level)
 	-- function 16
 	local fassert = fassert
-	local flag = not not self._dice_game_data or not self._upgrades_failed_game_data
+	local flag = not self._dice_game_data and not not not self._upgrades_failed_game_data
 	local str = "Trying to do two item server scripts at once. DiceGame: %s, UpgradesFailedGame: %s"
 	local _dice_game_data = self._dice_game_data
 
-	_dice_game_data = not _dice_game_data and "true"
+	_dice_game_data = not not _dice_game_data and not not "true"
 
 	local _upgrades_failed_game_data = self._upgrades_failed_game_data
 
-	_upgrades_failed_game_data = not _upgrades_failed_game_data and "true"
+	_upgrades_failed_game_data = not not _upgrades_failed_game_data and not not "true"
 
 	fassert(flag, str, _dice_game_data, _upgrades_failed_game_data)
 
-	local num = Managers.time:time("main") + 20
+	local time_out = Managers.time:time("main") + 20
 
 	self._upgrades_failed_game_data = {
-		time_out = num,
-		start_level = arg_16_1,
-		end_level = arg_16_2
+		time_out = time_out,
+		start_level = start_level,
+		end_level = end_level
 	}
 end
 
-var_0_0.num_current_item_server_requests = function (self)
+Items.num_current_item_server_requests = function (self)
 	-- function 17
 	return self._queue:num_current_requests()
 end
 
-var_0_0.make_dirty = function (self)
+Items.make_dirty = function (self)
 	-- function 18
 	self._dirty = true
 end
 
-var_0_0.set_data_server_queue = function (self, arg_19_1)
+Items.set_data_server_queue = function (self, queue)
 	-- function 19
-	self._queue = arg_19_1
+	self._queue = queue
 end
 
-var_0_0.data_server_queue = function (self)
+Items.data_server_queue = function (self)
 	-- function 20
 	return self._queue
 end
@@ -370,10 +379,10 @@ BackendInterfaceItem = class(BackendInterfaceItem)
 
 BackendInterfaceItem.init = function (self)
 	-- function 21
-	self._backend_items = var_0_0:new()
+	self._backend_items = Items:new()
 end
 
-BackendInterfaceItem.type = function (arg_22_0)
+BackendInterfaceItem.type = function (self)
 	-- function 22
 	return "backend"
 end
@@ -399,52 +408,58 @@ BackendInterfaceItem.num_current_item_server_requests = function (self)
 	return self._backend_items:num_current_item_server_requests()
 end
 
-BackendInterfaceItem.set_properties_serialized = function (arg_27_0, arg_27_1, arg_27_2)
+BackendInterfaceItem.set_properties_serialized = function (self, backend_id, properties)
 	-- function 27
-	local set_traits = BackendItem.set_traits(arg_27_1, arg_27_2)
+	local error_code = BackendItem.set_traits(backend_id, properties)
 end
 
-BackendInterfaceItem.get_traits = function (self, arg_28_1)
+BackendInterfaceItem.get_traits = function (self, backend_id)
 	-- function 28
-	local get_item_from_id = self:get_item_from_id(arg_28_1)
+	local item = self:get_item_from_id(backend_id)
 
-	if not get_item_from_id then
-		return get_item_from_id.traits
+	if item then
+		return item.traits
 	end
 
 	return nil
 end
 
-BackendInterfaceItem.set_runes = function (arg_29_0, arg_29_1, arg_29_2)
+BackendInterfaceItem.set_runes = function (self, backend_id, runes)
 	-- function 29
-	local get_interface = Managers.backend:get_interface("runes")
+	local rune_interface = Managers.backend:get_interface("runes")
 
-	for k, v in pairs(arg_29_2) do
-		get_interface:set(arg_29_1, v)
+	for _, rune in pairs(runes) do
+		rune_interface:set(backend_id, rune)
 	end
 end
 
-BackendInterfaceItem.get_runes = function (arg_30_0, arg_30_1)
+BackendInterfaceItem.get_runes = function (self, backend_id)
 	-- function 30
-	return (Managers.backend:get_interface("runes"):get(arg_30_1))
+	local rune_interface = Managers.backend:get_interface("runes")
+	local runes = rune_interface:get(backend_id)
+
+	return runes
 end
 
-BackendInterfaceItem.get_key = function (self, arg_31_1)
+BackendInterfaceItem.get_key = function (self, backend_id)
 	-- function 31
-	local var_31_0 = self._backend_items:get_all_backend_items()[arg_31_1]
+	local items = self._backend_items:get_all_backend_items()
+	local item = items[backend_id]
 
-	if not var_31_0 then
-		return var_31_0.key
+	if item then
+		return item.key
 	end
 end
 
-BackendInterfaceItem.get_item_from_id = function (self, arg_32_1)
+BackendInterfaceItem.get_item_from_id = function (self, backend_id)
 	-- function 32
-	if arg_32_1 == 0 then
+	if backend_id == 0 then
 		Crashify.print_exception("BackendInterfaceItem", "Tried to get item from backend_id 0")
 	end
 
-	return self._backend_items:get_all_backend_items()[arg_32_1]
+	local items = self._backend_items:get_all_backend_items()
+
+	return items[backend_id]
 end
 
 BackendInterfaceItem.get_all_backend_items = function (self)
@@ -457,153 +472,166 @@ BackendInterfaceItem.get_loadout = function (self)
 	return self._backend_items:get_loadout()
 end
 
-BackendInterfaceItem.get_loadout_item_id = function (self, arg_35_1, arg_35_2)
+BackendInterfaceItem.get_loadout_item_id = function (self, career_name, slot)
 	-- function 35
-	return self._backend_items:get_loadout()[arg_35_1][arg_35_2]
+	local loadout = self._backend_items:get_loadout()
+	local backend_id = loadout[career_name][slot]
+
+	return backend_id
 end
 
-BackendInterfaceItem.get_filtered_items = function (self, arg_36_1)
+BackendInterfaceItem.get_filtered_items = function (self, filter)
 	-- function 36
-	return (self._backend_items:get_filtered_items(arg_36_1))
+	local items = self._backend_items:get_filtered_items(filter)
+
+	return items
 end
 
-BackendInterfaceItem.set_loadout_item = function (self, arg_37_1, arg_37_2, arg_37_3)
+BackendInterfaceItem.set_loadout_item = function (self, item_id, profile, slot)
 	-- function 37
-	local get_all_backend_items = self._backend_items:get_all_backend_items()
+	local items = self._backend_items:get_all_backend_items()
 
-	if not arg_37_1 then
-		fassert(get_all_backend_items[arg_37_1], "Trying to equip item that doesn't exist %d", arg_37_1 or "nil")
+	if item_id then
+		fassert(items[item_id], "Trying to equip item that doesn't exist %d", not not item_id or not not "nil")
 	end
 
-	local backend_id = self._backend_items:get_loadout()[arg_37_2].backend_id
+	local loadout = self._backend_items:get_loadout()
+	local profile_id = loadout[profile].backend_id
+	local success = BackendItem.set_loadout_item(item_id, profile_id, slot)
 
-	if not BackendItem.set_loadout_item(arg_37_1, backend_id, arg_37_3) then
+	if success then
 		self._backend_items:make_dirty()
 	end
 end
 
-BackendInterfaceItem.remove_item = function (self, arg_38_1, arg_38_2)
+BackendInterfaceItem.remove_item = function (self, backend_id, ignore_equipped)
 	-- function 38
-	if not arg_38_2 then
-		local get_loadout = self._backend_items:get_loadout()
+	if not ignore_equipped then
+		local loadout = self._backend_items:get_loadout()
 
-		for k, v in pairs(get_loadout) do
-			for k_2, v_2 in pairs(v) do
-				if not tbl_2[k_2] then
-					fassert(arg_38_1 ~= v_2, "Trying to destroy equipped item: %s:%s:%d", k, k_2, arg_38_1)
+		for hero, slots in pairs(loadout) do
+			for slot, id in pairs(slots) do
+				if MUST_HAVE_SLOTS[slot] then
+					fassert(backend_id ~= id, "Trying to destroy equipped item: %s:%s:%d", hero, slot, backend_id)
 				end
 			end
 		end
 	end
 
-	local destroy_entity = BackendItem.destroy_entity(arg_38_1)
+	local result = BackendItem.destroy_entity(backend_id)
 
 	self._backend_items:make_dirty()
 
-	return destroy_entity
+	return result
 end
 
-BackendInterfaceItem.award_item = function (self, arg_39_1)
+BackendInterfaceItem.award_item = function (self, item_key)
 	-- function 39
-	BackendItem.award_item(arg_39_1)
+	BackendItem.award_item(item_key)
 	self._backend_items:make_dirty()
 end
 
-BackendInterfaceItem.data_server_script = function (self, arg_40_1, ...)
+BackendInterfaceItem.data_server_script = function (self, script_name, ...)
 	-- function 40
-	return (self._backend_items:data_server_queue():add_item(arg_40_1, ...))
+	local queue = self._backend_items:data_server_queue()
+	local request = queue:add_item(script_name, ...)
+
+	return request
 end
 
-BackendInterfaceItem.upgrades_failed_game = function (self, arg_41_1, arg_41_2)
+BackendInterfaceItem.upgrades_failed_game = function (self, level_start, level_end)
 	-- function 41
-	self._backend_items:upgrades_failed_game(arg_41_1, arg_41_2)
+	self._backend_items:upgrades_failed_game(level_start, level_end)
 end
 
-BackendInterfaceItem.generate_item_server_loot = function (self, arg_42_1, arg_42_2, arg_42_3, arg_42_4, arg_42_5, arg_42_6)
+BackendInterfaceItem.generate_item_server_loot = function (self, dice, difficulty, start_level, end_level, hero_name, dlc_name)
 	-- function 42
-	local str = ""
+	local dice_string = ""
 
-	for k, v in pairs(arg_42_1) do
-		str = str .. k .. "," .. tostring(v) .. ";"
+	for type, amount in pairs(dice) do
+		dice_string = dice_string .. type .. "," .. tostring(amount) .. ";"
 	end
 
-	self._backend_items:generate_item_server_loot(str, arg_42_2, arg_42_3, arg_42_4, arg_42_5, arg_42_6)
+	self._backend_items:generate_item_server_loot(dice_string, difficulty, start_level, end_level, hero_name, dlc_name)
 end
 
 BackendInterfaceItem.check_for_loot = function (self)
 	-- function 43
-	local dice_game_item = self._backend_items:dice_game_item()
+	local dice_item = self._backend_items:dice_game_item()
 
-	if not dice_game_item and not dice_game_item:is_done() then
-		local error_message = dice_game_item:error_message()
+	if dice_item and dice_item:is_done() then
+		local error_message = dice_item:error_message()
 
-		if not error_message then
+		if error_message then
 			self._backend_items:set_error(error_message)
-		elseif not dice_game_item:items() then
-			local parameters = dice_game_item:parameters()
-			local items = dice_game_item:items()
-			local tbl = {}
-			local num = 1
-			local successes = parameters.successes
+		elseif dice_item:items() then
+			local parameters = dice_item:parameters()
+			local items = dice_item:items()
+			local successes = {}
+			local total_successes = 1
+			local successes_string = parameters.successes
 
-			for iter_43_0, iter_43_1 in string.gmatch(successes, "([%w_]+),(%w+);") do
-				tbl[iter_43_0] = tonumber(iter_43_1)
-				num = num + iter_43_1
+			for type, num_successes in string.gmatch(successes_string, "([%w_]+),(%w+);") do
+				successes[type] = tonumber(num_successes)
+				total_successes = total_successes + num_successes
 			end
 
-			local win_list = parameters.win_list
-			local tbl_2 = {}
+			local win_list_string = parameters.win_list
+			local win_list = {}
 
-			for iter_43_2 in string.gmatch(win_list, "([%w_]+),") do
-				tbl_2[#tbl_2 + 1] = iter_43_2
+			for item in string.gmatch(win_list_string, "([%w_]+),") do
+				win_list[#win_list + 1] = item
 			end
 
-			local var_43_9 = tbl_2[num]
-			local var_43_10
-			local tbl_3 = {}
+			local item_key = win_list[total_successes]
+			local dice_win_id
+			local level_rewards = {}
 
-			for k, v in pairs(items) do
-				if var_43_9 == v then
-					var_43_10 = k
+			for id, key in pairs(items) do
+				if item_key == key then
+					dice_win_id = id
 				else
-					tbl_3[k] = v
+					level_rewards[id] = key
 				end
 			end
 
-			fassert(var_43_10, "Broken dice game winnings")
-			Managers.backend:get_interface("session"):received_dice_game_loot()
+			fassert(dice_win_id, "Broken dice game winnings")
+
+			local backend_session = Managers.backend:get_interface("session")
+
+			backend_session:received_dice_game_loot()
 			self._backend_items:reset_dice_game_item()
 			self._backend_items:make_dirty()
 
-			return tbl, tbl_2, var_43_10, tbl_3
+			return successes, win_list, dice_win_id, level_rewards
 		end
 	end
 end
 
-BackendInterfaceItem.equipped_by = function (self, arg_44_1)
+BackendInterfaceItem.equipped_by = function (self, backend_id)
 	-- function 44
-	local tbl = {}
-	local get_loadout = self._backend_items:get_loadout()
+	local equipped_heroes = {}
+	local loadout = self._backend_items:get_loadout()
 
-	for k, v in pairs(get_loadout) do
-		for k_2, v_2 in pairs(v) do
-			if arg_44_1 == v_2 then
-				table.insert(tbl, k)
+	for hero, slots in pairs(loadout) do
+		for slot, id in pairs(slots) do
+			if backend_id == id then
+				table.insert(equipped_heroes, hero)
 			end
 		end
 	end
 
-	return tbl
+	return equipped_heroes
 end
 
-BackendInterfaceItem.is_equipped = function (self, arg_45_1, arg_45_2)
+BackendInterfaceItem.is_equipped = function (self, backend_id, profile_name)
 	-- function 45
-	local get_loadout = self._backend_items:get_loadout()
+	local loadout = self._backend_items:get_loadout()
 
-	for k, v in pairs(get_loadout) do
-		if not (not arg_45_2 and k ~= arg_45_2) then
-			for k_2, v_2 in pairs(v) do
-				if not ((tbl_2[k_2] or not tbl[k_2]) and arg_45_1 ~= v_2) then
+	for hero, slots in pairs(loadout) do
+		if not profile_name or hero == profile_name then
+			for slot, id in pairs(slots) do
+				if (MUST_HAVE_SLOTS[slot] or CLEARABLE_SLOTS[slot]) and backend_id == id then
 					return true
 				end
 			end
@@ -613,13 +641,13 @@ BackendInterfaceItem.is_equipped = function (self, arg_45_1, arg_45_2)
 	return false
 end
 
-local tbl_6 = {
+local SalvageableSlotTypes = {
 	ranged = true,
 	melee = true,
 	hat = true,
 	trinket = true
 }
-local tbl_7 = {
+local SalvageableRarities = {
 	common = true,
 	plentiful = true,
 	exotic = true,
@@ -627,47 +655,49 @@ local tbl_7 = {
 	unique = true
 }
 
-BackendInterfaceItem.is_salvageable = function (self, arg_46_1)
+BackendInterfaceItem.is_salvageable = function (self, backend_id)
 	-- function 46
-	local flag = not self:is_equipped(arg_46_1)
-	local var_46_1 = self._backend_items:get_all_backend_items()[arg_46_1]
-	local var_46_2 = ItemMasterList[var_46_1.key]
-	local var_46_3 = tbl_6[var_46_2.slot_type]
-	local var_46_4 = tbl_7[var_46_2.rarity]
+	local unequipped = not self:is_equipped(backend_id)
+	local items = self._backend_items:get_all_backend_items()
+	local item = items[backend_id]
+	local item_config = ItemMasterList[item.key]
+	local salvageable_slot_type = SalvageableSlotTypes[item_config.slot_type]
+	local salvageable_rarity = SalvageableRarities[item_config.rarity]
 
-	return not flag and not var_46_3 and var_46_4
+	return not not unequipped and not not salvageable_slot_type and not not salvageable_rarity
 end
 
-local tbl_8 = {
+local FuseableSlotTypes = {
 	melee = true,
 	ranged = true
 }
-local tbl_9 = {
+local FuseableRarities = {
 	common = true,
 	plentiful = true,
 	rare = true
 }
 
-BackendInterfaceItem.is_fuseable = function (self, arg_47_1)
+BackendInterfaceItem.is_fuseable = function (self, backend_id)
 	-- function 47
-	local flag = not self:is_equipped(arg_47_1)
-	local var_47_1 = self._backend_items:get_all_backend_items()[arg_47_1]
-	local var_47_2 = ItemMasterList[var_47_1.key]
-	local var_47_3 = tbl_8[var_47_2.slot_type]
-	local var_47_4 = tbl_9[var_47_2.rarity]
+	local unequipped = not self:is_equipped(backend_id)
+	local items = self._backend_items:get_all_backend_items()
+	local item = items[backend_id]
+	local item_config = ItemMasterList[item.key]
+	local fuseable_slot_type = FuseableSlotTypes[item_config.slot_type]
+	local fuseable_rarity = FuseableRarities[item_config.rarity]
 
-	return not flag and not var_47_3 and var_47_4
+	return not not unequipped and not not fuseable_slot_type and not not fuseable_rarity
 end
 
-BackendInterfaceItem.set_data_server_queue = function (self, arg_48_1)
+BackendInterfaceItem.set_data_server_queue = function (self, queue)
 	-- function 48
-	self._backend_items:set_data_server_queue(arg_48_1)
+	self._backend_items:set_data_server_queue(queue)
 
-	local item_whitelist = GameSettingsDevelopment.backend_settings.item_whitelist
+	local item_whitelist_script = GameSettingsDevelopment.backend_settings.item_whitelist
 
-	if not item_whitelist then
-		arg_48_1:register_executor("item_whitelist", callback(self, "_command_item_whitelist"))
-		arg_48_1:add_item(item_whitelist)
+	if item_whitelist_script then
+		queue:register_executor("item_whitelist", callback(self, "_command_item_whitelist"))
+		queue:add_item(item_whitelist_script)
 	end
 end
 
@@ -676,12 +706,12 @@ BackendInterfaceItem.__dirtify = function (self)
 	self._backend_items:make_dirty()
 end
 
-BackendInterfaceItem.has_item = function (arg_50_0, arg_50_1)
+BackendInterfaceItem.has_item = function (self, item_key)
 	-- function 50
-	local get_items, var_50_1 = BackendItem.get_items()
+	local items, loadout = BackendItem.get_items()
 
-	for k, v in pairs(get_items) do
-		if v.key == arg_50_1 then
+	for backend_id, item in pairs(items) do
+		if item.key == item_key then
 			return true
 		end
 	end
@@ -689,156 +719,184 @@ BackendInterfaceItem.has_item = function (arg_50_0, arg_50_1)
 	return false
 end
 
-BackendInterfaceItem.clean_inventory_for_prestige = function (self, arg_51_1, arg_51_2)
+BackendInterfaceItem.clean_inventory_for_prestige = function (self, profile_index, unit)
 	-- function 51
-	local get_items, var_51_1 = BackendItem.get_items()
-	local var_51_2
-	local tbl = {}
+	local items, loadout = BackendItem.get_items()
+	local missing_items
+	local items_to_remove = {}
 
-	for k, v in pairs(get_items) do
-		local var_51_4 = ItemMasterList[v.key]
-		local flag = false
+	for backend_id, item in pairs(items) do
+		local item_data = ItemMasterList[item.key]
+		local can_wield = false
 
-		for k_2, v_2 in pairs(var_51_4.can_wield) do
-			if not (FindProfileIndex(v_2) == arg_51_1) then
-				flag = true
+		for _, profile in pairs(item_data.can_wield) do
+			local profile_can_wield = FindProfileIndex(profile) == profile_index
+
+			if profile_can_wield then
+				can_wield = true
 			end
 		end
 
-		if not (not flag and tbl_3[var_51_4.item_type] or tbl_4[var_51_4.name]) then
-			get_items[k] = nil
-			tbl[#tbl + 1] = k
+		if can_wield and not COSMETIC_ITEMS[item_data.item_type] and not STARTING_ITEMS[item_data.name] then
+			items[backend_id] = nil
+			items_to_remove[#items_to_remove + 1] = backend_id
 		end
 	end
 
-	local tbl_5 = {}
+	local empty_must_have_slots = {}
 
-	for k_3, v_3 in pairs(var_51_1) do
-		for k_4, v_4 in pairs(v_3) do
-			if k_4 == "backend_id" then
+	for profile_name, slots in pairs(loadout) do
+		for slot, backend_id in pairs(slots) do
+			if slot == "backend_id" then
 				-- Nothing
-			elseif not get_items[v_4] then
-				BackendItem.set_loadout_item(nil, var_51_1[k_3].backend_id, k_4)
+			elseif not items[backend_id] then
+				BackendItem.set_loadout_item(nil, loadout[profile_name].backend_id, slot)
 
-				v_3[k_4] = nil
+				slots[slot] = nil
 
-				if not tbl_2[k_4] then
-					tbl_5[#tbl_5 + 1] = {
-						slot = k_4,
-						profile_name = k_3
+				if MUST_HAVE_SLOTS[slot] then
+					empty_must_have_slots[#empty_must_have_slots + 1] = {
+						slot = slot,
+						profile_name = profile_name
 					}
 				end
-			elseif not var_51_2 and not var_51_2[v_4] then
-				BackendItem.set_loadout_item(nil, var_51_1[k_3].backend_id, k_4)
+			elseif missing_items and missing_items[backend_id] then
+				BackendItem.set_loadout_item(nil, loadout[profile_name].backend_id, slot)
 
-				v_3[k_4] = nil
+				slots[slot] = nil
 
-				if not tbl_2[k_4] then
-					tbl_5[#tbl_5 + 1] = {
-						slot = k_4,
-						profile_name = k_3
+				if MUST_HAVE_SLOTS[slot] then
+					empty_must_have_slots[#empty_must_have_slots + 1] = {
+						slot = slot,
+						profile_name = profile_name
 					}
 				end
 			end
 		end
 	end
 
-	local extension = ScriptUnit.extension(arg_51_2, "inventory_system")
+	local inventory_extension = ScriptUnit.extension(unit, "inventory_system")
 
-	for i, v_5 in ipairs(tbl_5) do
-		local profile_name = v_5.profile_name
-		local slot = v_5.slot
-		local var_51_10 = fn(get_items, profile_name, slot)
+	for index, slot_data in ipairs(empty_must_have_slots) do
+		local profile_name = slot_data.profile_name
+		local slot = slot_data.slot
+		local backend_id = find_item_for_slot(items, profile_name, slot)
 
-		if not var_51_10 then
-			local type = InventorySettings.slots_by_name[slot].type
+		if backend_id then
+			local slot_type = InventorySettings.slots_by_name[slot].type
 
-			if not (type == "melee" or type ~= "ranged") then
-				local flag_2
+			if slot_type == "melee" or slot_type == "ranged" then
+				local str
 
-				flag_2 = type ~= "melee" or not "slot_melee" or "slot_ranged"
+				if slot_type == "melee" then
+					str = "slot_melee"
 
-				extension:create_equipment_in_slot(flag_2, var_51_10)
-				extension:wield(flag_2)
-			elseif type == "hat" then
-				ScriptUnit.extension(arg_51_2, "attachment_system"):create_attachment_in_slot(slot, var_51_10)
-			elseif type == "trinket" then
-				ScriptUnit.extension(arg_51_2, "attachment_system"):create_attachment_in_slot(slot, var_51_10)
+					goto label_51_0
+				end
+
+				str = "slot_ranged"
+
+				local slot = str
+
+				::label_51_0::
+
+				inventory_extension:create_equipment_in_slot(slot, backend_id)
+				inventory_extension:wield(slot)
+			elseif slot_type == "hat" then
+				local attachment_extension = ScriptUnit.extension(unit, "attachment_system")
+
+				attachment_extension:create_attachment_in_slot(slot, backend_id)
+			elseif slot_type == "trinket" then
+				local attachment_extension = ScriptUnit.extension(unit, "attachment_system")
+
+				attachment_extension:create_attachment_in_slot(slot, backend_id)
 			end
 
-			Crashify.print_exception("BackendInterfaceItem", "Slot %q was empty, putting item %d in it", slot, var_51_10)
-			BackendItem.set_loadout_item(var_51_10, var_51_1[profile_name].backend_id, slot)
+			Crashify.print_exception("BackendInterfaceItem", "Slot %q was empty, putting item %d in it", slot, backend_id)
+			BackendItem.set_loadout_item(backend_id, loadout[profile_name].backend_id, slot)
 
-			tbl_5[i] = nil
-			var_51_1[profile_name][slot] = var_51_10
+			empty_must_have_slots[index] = nil
+			loadout[profile_name][slot] = backend_id
 		end
 	end
 
-	fassert(table.is_empty(tbl_5), "[BackendInterfaceItem] Your backend save is broken, ask for help resetting it")
+	fassert(table.is_empty(empty_must_have_slots), "[BackendInterfaceItem] Your backend save is broken, ask for help resetting it")
 
-	self._items = get_items
-	self._loadout = var_51_1
+	self._items = items
+	self._loadout = loadout
 	self._profile_cache = {}
 
 	self._backend_items:make_dirty()
 
 	self._dirty = true
 
-	for i_2, v_6 in ipairs(tbl) do
-		self:remove_item(v_6)
+	for _, backend_id in ipairs(items_to_remove) do
+		self:remove_item(backend_id)
 	end
 end
 
-BackendInterfaceItem.get_runes = function (self, arg_52_1)
+BackendInterfaceItem.get_runes = function (self, item_id)
 	-- function 52
-	local get_item_from_id = self:get_item_from_id(arg_52_1)
+	local item = self:get_item_from_id(item_id)
 
-	if not get_item_from_id then
-		return get_item_from_id.runes
+	if item then
+		local runes = item.runes
+
+		return runes
 	end
 
 	return nil
 end
 
-BackendInterfaceItem._slot_item_rune = function (arg_53_0, arg_53_1, arg_53_2)
+BackendInterfaceItem._slot_item_rune = function (self, item_data, rune_to_insert)
 	-- function 53
 	return
 end
 
-BackendInterfaceItem.get_item_template = function (arg_54_0, arg_54_1, arg_54_2)
+BackendInterfaceItem.get_item_template = function (self, item_data, backend_id)
 	-- function 54
-	local temporary_template = arg_54_1.temporary_template
+	local temporary_template = item_data.temporary_template
 
-	temporary_template = temporary_template or arg_54_1.template
-
-	local get_weapon_template = WeaponUtils.get_weapon_template(temporary_template)
-
-	if not get_weapon_template then
-		return get_weapon_template
+	if not temporary_template then
+		-- Nothing
 	end
 
-	local var_54_2 = Attachments[temporary_template]
+	temporary_template = item_data.template
 
-	if not var_54_2 then
-		return var_54_2
+	local template_name = temporary_template
+
+	::label_54_0::
+
+	local item_template = WeaponUtils.get_weapon_template(template_name)
+
+	if item_template then
+		return item_template
 	end
 
-	local var_54_3 = Cosmetics[temporary_template]
+	item_template = Attachments[template_name]
 
-	if not var_54_3 then
-		return var_54_3
+	if item_template then
+		return item_template
 	end
 
-	fassert(false, "no item_template for item: " .. arg_54_1.key .. ", template name = " .. temporary_template)
+	item_template = Cosmetics[template_name]
+
+	if item_template then
+		return item_template
+	end
+
+	fassert(false, "no item_template for item: " .. item_data.key .. ", template name = " .. template_name)
 end
 
-BackendInterfaceItem._command_item_whitelist = function (self, arg_55_1)
+BackendInterfaceItem._command_item_whitelist = function (self, data)
 	-- function 55
-	local _backend_items = self._backend_items
+	local backend_items = self._backend_items
 
-	if not arg_55_1.enabled then
-		_backend_items:set_item_whitelist(arg_55_1.items)
+	if data.enabled then
+		backend_items:set_item_whitelist(data.items)
 	end
 
-	_backend_items:data_server_queue():unregister_executor("item_whitelist")
+	local queue = backend_items:data_server_queue()
+
+	queue:unregister_executor("item_whitelist")
 end

@@ -5,71 +5,81 @@ require("scripts/entity_system/systems/behaviour/nodes/bt_node")
 BTSkulkIdleAction = class(BTSkulkIdleAction, BTNode)
 BTSkulkIdleAction.name = "BTSkulkIdleAction"
 
-BTSkulkIdleAction.init = function (arg_1_0, ...)
+BTSkulkIdleAction.init = function (self, ...)
 	-- function 1
-	BTSkulkIdleAction.super.init(arg_1_0, ...)
+	BTSkulkIdleAction.super.init(self, ...)
 end
 
-BTSkulkIdleAction.enter = function (self, arg_2_1, arg_2_2, arg_2_3)
+BTSkulkIdleAction.enter = function (self, unit, blackboard, t)
 	-- function 2
-	arg_2_2.action = self._tree_node.action_data
+	local action = self._tree_node.action_data
 
-	local skulk_data = arg_2_2.skulk_data
+	blackboard.action = action
 
-	skulk_data.skulk_idle_timer = arg_2_3 + math.random(5, 10)
+	local skulk_data = blackboard.skulk_data
 
-	Managers.state.network:anim_event(arg_2_1, "to_crouch")
-	Managers.state.network:anim_event(arg_2_1, "idle")
-	arg_2_2.navigation_extension:set_enabled(false)
-	arg_2_2.locomotion_extension:set_wanted_velocity(Vector3.zero())
-	ScriptUnit.extension(arg_2_1, "ai_system"):set_perception("perception_all_seeing_re_evaluate", "pick_ninja_skulking_target")
+	skulk_data.skulk_idle_timer = t + math.random(5, 10)
 
-	if not (not skulk_data.attack_timer and not (arg_2_3 > skulk_data.attack_timer)) then
-		skulk_data.attack_timer = arg_2_3 + math.random(25, 30)
+	Managers.state.network:anim_event(unit, "to_crouch")
+	Managers.state.network:anim_event(unit, "idle")
+	blackboard.navigation_extension:set_enabled(false)
+	blackboard.locomotion_extension:set_wanted_velocity(Vector3.zero())
+
+	local ai_simple_extension = ScriptUnit.extension(unit, "ai_system")
+
+	ai_simple_extension:set_perception("perception_all_seeing_re_evaluate", "pick_ninja_skulking_target")
+
+	if not skulk_data.attack_timer or t > skulk_data.attack_timer then
+		skulk_data.attack_timer = t + math.random(25, 30)
 	end
 end
 
-BTSkulkIdleAction.leave = function (arg_3_0, arg_3_1, arg_3_2, arg_3_3, arg_3_4, arg_3_5)
+BTSkulkIdleAction.leave = function (self, unit, blackboard, t, reason, destroy)
 	-- function 3
-	Managers.state.network:anim_event(arg_3_1, "to_upright")
+	Managers.state.network:anim_event(unit, "to_upright")
 
-	if not arg_3_2.approach_target then
-		arg_3_2.skulk_data.attack_timer = nil
+	if blackboard.approach_target then
+		local skulk_data = blackboard.skulk_data
+
+		skulk_data.attack_timer = nil
 	end
 
-	arg_3_2.navigation_extension:set_enabled(true)
+	blackboard.navigation_extension:set_enabled(true)
 end
 
-local tbl = {}
-local num = 400
+local found_units = {}
+local move_distance_squared = 400
 
-BTSkulkIdleAction.run = function (arg_4_0, arg_4_1, arg_4_2, arg_4_3, arg_4_4)
+BTSkulkIdleAction.run = function (self, unit, blackboard, t, dt)
 	-- function 4
-	local skulk_data = arg_4_2.skulk_data
+	local skulk_data = blackboard.skulk_data
 
-	if arg_4_3 > skulk_data.attack_timer then
-		arg_4_2.approach_target = true
-
-		return "failed"
-	end
-
-	if PerceptionUtils.special_opportunity(arg_4_1, arg_4_2) > 0 then
-		arg_4_2.approach_target = true
+	if t > skulk_data.attack_timer then
+		blackboard.approach_target = true
 
 		return "failed"
 	end
 
-	if arg_4_3 > skulk_data.skulk_idle_timer then
+	local urgency_to_engage = PerceptionUtils.special_opportunity(unit, blackboard)
+
+	if urgency_to_engage > 0 then
+		blackboard.approach_target = true
+
+		return "failed"
+	end
+
+	if t > skulk_data.skulk_idle_timer then
 		return "done"
 	end
 
-	local var_4_1 = POSITION_LOOKUP[arg_4_1]
-	local ENEMY_PLAYER_AND_BOT_POSITIONS = arg_4_2.side.ENEMY_PLAYER_AND_BOT_POSITIONS
+	local pos = POSITION_LOOKUP[unit]
+	local side = blackboard.side
+	local enemy_player_and_bot_positions = side.ENEMY_PLAYER_AND_BOT_POSITIONS
 
-	for i = 1, #ENEMY_PLAYER_AND_BOT_POSITIONS do
-		local var_4_3 = ENEMY_PLAYER_AND_BOT_POSITIONS[i]
+	for i = 1, #enemy_player_and_bot_positions do
+		local enemy_pos = enemy_player_and_bot_positions[i]
 
-		if Vector3.distance_squared(var_4_1, var_4_3) < num then
+		if Vector3.distance_squared(pos, enemy_pos) < move_distance_squared then
 			return "done"
 		end
 	end
@@ -77,7 +87,7 @@ BTSkulkIdleAction.run = function (arg_4_0, arg_4_1, arg_4_2, arg_4_3, arg_4_4)
 	return "running"
 end
 
-BTSkulkIdleAction.pick_new_hiding_place = function (arg_5_0, arg_5_1, arg_5_2, arg_5_3, arg_5_4)
+BTSkulkIdleAction.pick_new_hiding_place = function (self, unit, blackboard, t, dt)
 	-- function 5
 	return
 end

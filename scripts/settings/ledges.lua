@@ -1,6 +1,6 @@
 -- chunkname: @scripts/settings/ledges.lua
 
-return {
+local ledges = {
 	["9ff0c0fd-2b2e-491f-b77e-df2acdeab34e"] = {
 		{
 			ground_pos = {
@@ -26042,3 +26042,5 @@ return {
 		}
 	}
 }
+
+return ledges

@@ -2,29 +2,29 @@
 
 DoorExtension = class(DoorExtension)
 
-local num = 30
-local num_2 = 3
-local alive = Unit.alive
+local SIMPLE_ANIMATION_FPS = 30
+local NAVMESH_UPDATE_DELAY = 3
+local unit_alive = Unit.alive
 
-DoorExtension.init = function (self, arg_1_1, arg_1_2, arg_1_3)
+DoorExtension.init = function (self, extension_init_context, unit, extension_init_data)
 	-- function 1
-	local world = arg_1_1.world
+	local world = extension_init_context.world
 
-	self.unit = arg_1_2
+	self.unit = unit
 	self.world = world
 	self.is_server = Managers.player.is_server
 	self.ignore_umbra = not World.umbra_available(world)
-	self.is_umbra_gate = Unit.get_data(arg_1_2, "umbra_gate")
+	self.is_umbra_gate = Unit.get_data(unit, "umbra_gate")
 
-	local get_data = Unit.get_data(arg_1_2, "move_to_exit_when_opened")
+	local move_to_exit_when_opened = Unit.get_data(unit, "move_to_exit_when_opened")
 
-	self.move_to_exit_when_opened = get_data == nil or get_data
-	self.ai_attack_re_eval_time = Unit.get_data(arg_1_2, "ai_attack_re_eval_time")
+	self.move_to_exit_when_opened = move_to_exit_when_opened == nil or not not move_to_exit_when_opened
+	self.ai_attack_re_eval_time = Unit.get_data(unit, "ai_attack_re_eval_time")
 
-	local get_data_2 = Unit.get_data(arg_1_2, "door_state")
+	local door_state = Unit.get_data(unit, "door_state")
 	local flag
 
-	flag = (get_data_2 ~= 0 or not "open_forward" or get_data_2 ~= 1) and (not "closed" or get_data_2 ~= 2 or "open_backward")
+	flag = (door_state ~= 0 or not "open_forward") and (door_state ~= 1 or not "closed") and door_state == 2 and not not "open_backward"
 	self.current_state = flag
 	self.animation_flow_events = {
 		closed = {
@@ -56,97 +56,106 @@ end
 DoorExtension.update_nav_graphs = function (self)
 	-- function 3
 	local unit = self.unit
-	local system = Managers.state.entity:system("nav_graph_system")
+	local nav_graph_system = Managers.state.entity:system("nav_graph_system")
 
-	if self:is_open() or not self.dead then
-		system:remove_nav_graph(unit)
+	if self:is_open() or self.dead then
+		nav_graph_system:remove_nav_graph(unit)
 	else
-		system:add_nav_graph(unit)
+		nav_graph_system:add_nav_graph(unit)
 	end
 end
 
-DoorExtension.animation_played = function (self, arg_4_1, arg_4_2)
+DoorExtension.animation_played = function (self, frames, speed)
 	-- function 4
-	local num_2 = arg_4_1 / num / arg_4_2
+	local animation_length = frames / SIMPLE_ANIMATION_FPS / speed
+	local t = Managers.time:time("game")
 
-	self.animation_stop_time = Managers.time:time("game") + num_2
+	self.animation_stop_time = t + animation_length
 end
 
 DoorExtension.update_nav_obstacles = function (self)
 	-- function 5
 	local unit = self.unit
 	local current_state = self.current_state
-	local state_to_nav_obstacle_map = self.state_to_nav_obstacle_map
-	local get_data = Unit.get_data(unit, "navtag_volume", "clip_navmesh")
+	local obstacles = self.state_to_nav_obstacle_map
+	local clip_nav = Unit.get_data(unit, "navtag_volume", "clip_navmesh")
+	local clip_nav_check = Unit.has_data(unit, "navtag_volume", "clip_navmesh")
 
-	if Unit.has_data(unit, "navtag_volume", "clip_navmesh") == false then
-		get_data = true
+	if clip_nav_check == false then
+		clip_nav = true
 	end
 
-	if not (state_to_nav_obstacle_map[current_state] or get_data == false or Unit.get_data(unit, "navtag_volume", "no_obstacle")) then
-		local unit_2 = self.unit
-		local GLOBAL_AI_NAVWORLD = GLOBAL_AI_NAVWORLD
-		local create_exclusive_box_obstacle_from_unit_data, var_5_7 = NavigationUtils.create_exclusive_box_obstacle_from_unit_data(GLOBAL_AI_NAVWORLD, unit_2)
+	if not obstacles[current_state] and clip_nav ~= false then
+		local no_obstacle = Unit.get_data(unit, "navtag_volume", "no_obstacle")
 
-		if not create_exclusive_box_obstacle_from_unit_data then
-			GwNavBoxObstacle.add_to_world(create_exclusive_box_obstacle_from_unit_data)
-			GwNavBoxObstacle.set_transform(create_exclusive_box_obstacle_from_unit_data, var_5_7)
+		if not no_obstacle then
+			local unit = self.unit
+			local nav_world = GLOBAL_AI_NAVWORLD
+			local obstacle, transform = NavigationUtils.create_exclusive_box_obstacle_from_unit_data(nav_world, unit)
 
-			state_to_nav_obstacle_map[current_state] = create_exclusive_box_obstacle_from_unit_data
+			if obstacle then
+				GwNavBoxObstacle.add_to_world(obstacle)
+				GwNavBoxObstacle.set_transform(obstacle, transform)
+
+				obstacles[current_state] = obstacle
+			end
 		end
 	end
 
-	for k, v in pairs(state_to_nav_obstacle_map) do
-		local flag = k == current_state
+	for obstacle_state, obstacle in pairs(obstacles) do
+		local does_trigger = obstacle_state == current_state
 
-		GwNavBoxObstacle.set_does_trigger_tagvolume(v, flag)
+		GwNavBoxObstacle.set_does_trigger_tagvolume(obstacle, does_trigger)
 	end
 
 	self.frames_since_obstacle_update = 0
 end
 
-DoorExtension.interacted_with = function (self, arg_6_1)
+DoorExtension.interacted_with = function (self, interacting_unit)
 	-- function 6
 	local unit = self.unit
 	local current_state = self.current_state
-	local var_6_2
+	local new_state
 
-	if not (current_state == "open_backward" or current_state ~= "open_forward") then
-		var_6_2 = "closed"
+	if current_state == "open_backward" or current_state == "open_forward" then
+		new_state = "closed"
 	elseif current_state == "closed" then
-		local world_position = Unit.world_position(unit, 0)
-		local world_rotation = Unit.world_rotation(unit, 0)
-		local num = world_position - POSITION_LOOKUP[arg_6_1]
-		local normalize = Vector3.normalize(Vector3.flat(num))
-		local forward = Quaternion.forward(world_rotation)
-		local normalize_2 = Vector3.normalize(Vector3.flat(forward))
+		local door_position = Unit.world_position(unit, 0)
+		local door_rotation = Unit.world_rotation(unit, 0)
+		local interactor_position = POSITION_LOOKUP[interacting_unit]
+		local difference = door_position - interactor_position
+		local direction = Vector3.normalize(Vector3.flat(difference))
+		local door_forward = Quaternion.forward(door_rotation)
+		local door_direction = Vector3.normalize(Vector3.flat(door_forward))
+		local dot = Vector3.dot(direction, door_direction)
+		local infront = dot >= 0
 
-		var_6_2 = not (Vector3.dot(normalize, normalize_2) >= 0) and "open_backward" and "open_forward"
+		new_state = (not infront or not "open_backward") and not not "open_forward"
 	end
 
-	self:set_door_state(var_6_2)
+	self:set_door_state(new_state)
 end
 
-DoorExtension.set_door_state = function (self, arg_7_1)
+DoorExtension.set_door_state = function (self, new_state)
 	-- function 7
 	local current_state = self.current_state
 
-	if current_state == arg_7_1 then
+	if current_state == new_state then
 		return
 	end
 
 	local unit = self.unit
-	local _get_animation_flow_event = self:_get_animation_flow_event(current_state, arg_7_1)
+	local animation_flow_event = self:_get_animation_flow_event(current_state, new_state)
 
-	Unit.flow_event(unit, _get_animation_flow_event)
+	Unit.flow_event(unit, animation_flow_event)
 
-	local flag = arg_7_1 == "closed"
+	local closed = new_state == "closed"
 
-	if flag or self.ignore_umbra or not self.is_umbra_gate then
-		World.umbra_set_gate_closed(self.world, unit, flag)
+	if not closed and not self.ignore_umbra and self.is_umbra_gate then
+		World.umbra_set_gate_closed(self.world, unit, closed)
 	end
 
-	self.current_state = arg_7_1
+	self.current_state = new_state
 end
 
 DoorExtension.get_current_state = function (self)
@@ -154,64 +163,64 @@ DoorExtension.get_current_state = function (self)
 	return self.current_state
 end
 
-DoorExtension._get_animation_flow_event = function (self, arg_9_1, arg_9_2)
+DoorExtension._get_animation_flow_event = function (self, current_state, new_state)
 	-- function 9
-	local var_9_0 = self.animation_flow_events[arg_9_1][arg_9_2]
+	local event = self.animation_flow_events[current_state][new_state]
 
-	fassert(var_9_0, "Door animation event from %s to %s unavailable", arg_9_1, arg_9_2)
+	fassert(event, "Door animation event from %s to %s unavailable", current_state, new_state)
 
-	return var_9_0
+	return event
 end
 
-DoorExtension.update = function (self, arg_10_1, arg_10_2, arg_10_3, arg_10_4, arg_10_5)
+DoorExtension.update = function (self, unit, input, dt, context, t)
 	-- function 10
 	local frames_since_obstacle_update = self.frames_since_obstacle_update
 
-	if not frames_since_obstacle_update then
-		local num = frames_since_obstacle_update + 1
+	if frames_since_obstacle_update then
+		frames_since_obstacle_update = frames_since_obstacle_update + 1
 
-		if num == num_2 then
+		if frames_since_obstacle_update == NAVMESH_UPDATE_DELAY then
 			self:update_nav_graphs()
 			self:handle_breeds_failed_leaving_smart_object()
 
 			self.frames_since_obstacle_update = nil
 		else
-			self.frames_since_obstacle_update = num
+			self.frames_since_obstacle_update = frames_since_obstacle_update
 		end
 	end
 
-	if not self.dead then
+	if self.dead then
 		return
 	end
 
 	local animation_stop_time = self.animation_stop_time
 
-	if not (not animation_stop_time and not (animation_stop_time <= arg_10_5)) then
+	if animation_stop_time and animation_stop_time <= t then
 		self:update_nav_obstacles()
 
 		self.animation_stop_time = nil
 
-		local flag = self.current_state == "closed"
+		local closed = self.current_state == "closed"
 
-		if not flag and self.ignore_umbra or not self.is_umbra_gate then
-			World.umbra_set_gate_closed(self.world, arg_10_1, flag)
+		if closed and not self.ignore_umbra and self.is_umbra_gate then
+			World.umbra_set_gate_closed(self.world, unit, closed)
 		end
 	end
 
-	if not HEALTH_ALIVE[arg_10_1] then
+	if not HEALTH_ALIVE[unit] then
 		self.dead = true
 
 		self:destroy_box_obstacles()
 	end
 end
 
-DoorExtension.register_breed_failed_leaving_smart_object = function (self, arg_11_1)
+DoorExtension.register_breed_failed_leaving_smart_object = function (self, unit)
 	-- function 11
 	if self.breeds_failed_leaving_smart_object == nil then
 		return
 	end
 
-	self.breeds_failed_leaving_smart_object[arg_11_1] = true
+	self.breeds_failed_leaving_smart_object[unit] = true
 end
 
 DoorExtension.handle_breeds_failed_leaving_smart_object = function (self)
@@ -220,12 +229,12 @@ DoorExtension.handle_breeds_failed_leaving_smart_object = function (self)
 		return
 	end
 
-	for k, v in pairs(self.breeds_failed_leaving_smart_object) do
-		if not alive(k) then
-			local has_extension = ScriptUnit.has_extension(k, "ai_navigation_system")
+	for unit, _ in pairs(self.breeds_failed_leaving_smart_object) do
+		if unit_alive(unit) then
+			local navigation_extension = ScriptUnit.has_extension(unit, "ai_navigation_system")
 
-			if not has_extension then
-				has_extension:reset_destination()
+			if navigation_extension then
+				navigation_extension:reset_destination()
 			end
 		end
 	end
@@ -233,17 +242,17 @@ DoorExtension.handle_breeds_failed_leaving_smart_object = function (self)
 	self.breeds_failed_leaving_smart_object = {}
 end
 
-DoorExtension.hot_join_sync = function (self, arg_13_1)
+DoorExtension.hot_join_sync = function (self, sender)
 	-- function 13
-	local current_level = LevelHelper:current_level(self.world)
-	local unit_index = Level.unit_index(current_level, self.unit)
+	local level = LevelHelper:current_level(self.world)
+	local level_index = Level.unit_index(level, self.unit)
 
-	if not unit_index then
-		local current_state = self.current_state
-		local var_13_3 = NetworkLookup.door_states[current_state]
-		local var_13_4 = PEER_ID_TO_CHANNEL[arg_13_1]
+	if level_index then
+		local door_state = self.current_state
+		local door_state_id = NetworkLookup.door_states[door_state]
+		local channel_id = PEER_ID_TO_CHANNEL[sender]
 
-		RPC.rpc_sync_door_state(var_13_4, unit_index, var_13_3)
+		RPC.rpc_sync_door_state(channel_id, level_index, door_state_id)
 	end
 end
 
@@ -259,9 +268,9 @@ end
 
 DoorExtension.destroy_box_obstacles = function (self)
 	-- function 15
-	if not self.state_to_nav_obstacle_map then
-		for k, v in pairs(self.state_to_nav_obstacle_map) do
-			GwNavBoxObstacle.destroy(v)
+	if self.state_to_nav_obstacle_map then
+		for _, obstacle in pairs(self.state_to_nav_obstacle_map) do
+			GwNavBoxObstacle.destroy(obstacle)
 		end
 
 		self.state_to_nav_obstacle_map = nil

@@ -1,239 +1,238 @@
 -- chunkname: @scripts/settings/equipment/weapon_templates/we_thornsister_career_skill.lua
 
-local num = -9.82
-local num_2 = 15
-local num_3 = 4
-local num_4 = 1
-local tbl = {
-	actions = {
-		action_career_hold = {
-			default = {
-				anim_end_event = "thorn_ability_cancel",
-				kind = "career_we_thornsister_target_wall",
-				weapon_action_hand = "left",
-				uninterruptible = true,
-				anim_event = "thorn_ability_start",
-				anim_end_event_condition_func = function (arg_1_0, arg_1_1)
-					-- function 1
-					return arg_1_1 ~= "new_interupting_action"
-				end,
-				total_time = math.huge,
-				target_sim_gravity = num,
-				target_sim_speed = num_2,
-				target_width = num_3,
-				target_thickness = num_4,
-				allowed_chain_actions = {
-					{
-						sub_action = "default",
-						start_time = 0,
-						action = "action_two",
-						force_release_input = "action_two_hold",
-						input = "action_two"
-					},
-					{
-						sub_action = "default",
-						start_time = 0,
-						action = "action_career_release",
-						input = "action_career_not_hold"
-					},
-					{
-						sub_action = "default",
-						start_time = 0,
-						action = "action_career_release",
-						input = "action_career_release"
-					},
-					{
-						sub_action = "thorn_wall_target_flip",
-						start_time = 0.1,
-						action = "action_career_hold",
-						input = "action_one"
-					}
-				},
-				enter_function = function (arg_2_0, arg_2_1, arg_2_2, arg_2_3)
-					-- function 2
-					arg_2_1:clear_input_buffer()
-					arg_2_1:reset_release_input()
-					arg_2_3:change_synced_state("targeting", true)
-				end
-			},
-			thorn_wall_target_flip = {
-				vertical_rotation = true,
-				anim_end_event = "ability_finished",
-				kind = "career_we_thornsister_target_wall",
-				weapon_action_hand = "left",
-				uninterruptible = true,
-				anim_event = "thorn_ability_flip",
-				anim_end_event_condition_func = function (arg_3_0, arg_3_1)
-					-- function 3
-					return arg_3_1 ~= "new_interupting_action"
-				end,
-				total_time = math.huge,
-				target_sim_gravity = num,
-				target_sim_speed = num_2,
-				target_width = num_3,
-				target_thickness = num_4,
-				target_bend_angle = wall_bend_angle,
-				allowed_chain_actions = {
-					{
-						sub_action = "default",
-						start_time = 0,
-						action = "action_two",
-						force_release_input = "action_two_hold",
-						input = "action_two"
-					},
-					{
-						sub_action = "default",
-						start_time = 0,
-						action = "action_career_release",
-						input = "action_career_not_hold"
-					},
-					{
-						sub_action = "default",
-						start_time = 0,
-						action = "action_career_release",
-						input = "action_career_release"
-					},
-					{
-						sub_action = "thorn_wall_target_flip_back",
-						start_time = 0.1,
-						action = "action_career_hold",
-						input = "action_one"
-					}
-				},
-				enter_function = function (arg_4_0, arg_4_1)
-					-- function 4
-					arg_4_1:clear_input_buffer()
+local wall_sim_gravity = -9.82
+local wall_sim_speed = 15
+local wall_width = 4
+local wall_thickness = 1
+local weapon_template = {}
 
-					return arg_4_1:reset_release_input()
-				end
-			},
-			thorn_wall_target_flip_back = {
-				anim_end_event = "thorn_ability_cancel",
-				kind = "career_we_thornsister_target_wall",
-				weapon_action_hand = "left",
-				uninterruptible = true,
-				anim_event = "thorn_ability_flip_back",
-				anim_end_event_condition_func = function (arg_5_0, arg_5_1)
-					-- function 5
-					return arg_5_1 ~= "new_interupting_action"
-				end,
-				total_time = math.huge,
-				target_sim_gravity = num,
-				target_sim_speed = num_2,
-				target_width = num_3,
-				target_thickness = num_4,
-				target_bend_angle = wall_bend_angle,
-				allowed_chain_actions = {
-					{
-						sub_action = "default",
-						start_time = 0,
-						action = "action_two",
-						force_release_input = "action_two_hold",
-						input = "action_two"
-					},
-					{
-						sub_action = "default",
-						start_time = 0,
-						action = "action_career_release",
-						input = "action_career_not_hold"
-					},
-					{
-						sub_action = "default",
-						start_time = 0,
-						action = "action_career_release",
-						input = "action_career_release"
-					},
-					{
-						sub_action = "thorn_wall_target_flip",
-						start_time = 0.1,
-						action = "action_career_hold",
-						input = "action_one"
-					}
-				},
-				enter_function = function (arg_6_0, arg_6_1)
-					-- function 6
-					arg_6_1:clear_input_buffer()
-
-					return arg_6_1:reset_release_input()
-				end
-			}
-		},
-		action_two = {
-			default = {
-				kind = "career_dummy",
-				anim_end_event = "ability_finished",
-				anim_event = "thorn_ability_cancel",
-				weapon_action_hand = "left",
-				total_time = 0.21,
-				anim_end_event_condition_func = function (arg_7_0, arg_7_1)
-					-- function 7
-					return arg_7_1 ~= "new_interupting_action"
-				end,
-				allowed_chain_actions = {},
-				enter_function = function (arg_8_0, arg_8_1, arg_8_2, arg_8_3)
-					-- function 8
-					arg_8_1:clear_input_buffer()
-					arg_8_1:reset_release_input()
-					arg_8_3:change_synced_state(nil, true)
-				end
-			}
-		},
-		action_career_release = {
-			default = {
-				kind = "action_selector",
-				weapon_action_hand = "left",
-				conditional_actions = {
-					{
-						sub_action = "thorn_wall",
-						action = "spells",
-						condition = function (arg_9_0, arg_9_1, arg_9_2)
-							-- function 9
-							return not arg_9_2 and arg_9_2:get_mode()
-						end
-					}
-				},
-				default_action = {
+weapon_template.actions = {
+	action_career_hold = {
+		default = {
+			anim_end_event = "thorn_ability_cancel",
+			kind = "career_we_thornsister_target_wall",
+			weapon_action_hand = "left",
+			uninterruptible = true,
+			anim_event = "thorn_ability_start",
+			anim_end_event_condition_func = function (unit, end_reason)
+				-- function 1
+				return end_reason ~= "new_interupting_action"
+			end,
+			total_time = math.huge,
+			target_sim_gravity = wall_sim_gravity,
+			target_sim_speed = wall_sim_speed,
+			target_width = wall_width,
+			target_thickness = wall_thickness,
+			allowed_chain_actions = {
+				{
+					sub_action = "default",
+					start_time = 0,
 					action = "action_two",
-					sub_action = "default"
+					force_release_input = "action_two_hold",
+					input = "action_two"
+				},
+				{
+					sub_action = "default",
+					start_time = 0,
+					action = "action_career_release",
+					input = "action_career_not_hold"
+				},
+				{
+					sub_action = "default",
+					start_time = 0,
+					action = "action_career_release",
+					input = "action_career_release"
+				},
+				{
+					sub_action = "thorn_wall_target_flip",
+					start_time = 0.1,
+					action = "action_career_hold",
+					input = "action_one"
 				}
-			}
+			},
+			enter_function = function (attacker_unit, input_extension, _, weapon_extension)
+				-- function 2
+				input_extension:clear_input_buffer()
+				input_extension:reset_release_input()
+				weapon_extension:change_synced_state("targeting", true)
+			end
 		},
-		spells = {
-			thorn_wall = {
-				anim_end_event = "ability_finished",
-				weapon_action_hand = "left",
-				kind = "career_we_thornsister_wall",
-				uninterruptible = true,
-				anim_event = "thorn_ability_cast",
-				total_time = 0.75,
-				anim_end_event_condition_func = function (arg_10_0, arg_10_1)
-					-- function 10
-					return arg_10_1 ~= "new_interupting_action"
-				end,
-				allowed_chain_actions = {},
-				enter_function = function (arg_11_0, arg_11_1, arg_11_2, arg_11_3)
-					-- function 11
-					arg_11_1:clear_input_buffer()
-					arg_11_1:reset_release_input()
-					arg_11_3:change_synced_state(nil, true)
-				end
-			}
-		},
-		action_inspect = ActionTemplates.action_inspect
-	}
-}
+		thorn_wall_target_flip = {
+			vertical_rotation = true,
+			anim_end_event = "ability_finished",
+			kind = "career_we_thornsister_target_wall",
+			weapon_action_hand = "left",
+			uninterruptible = true,
+			anim_event = "thorn_ability_flip",
+			anim_end_event_condition_func = function (unit, end_reason)
+				-- function 3
+				return end_reason ~= "new_interupting_action"
+			end,
+			total_time = math.huge,
+			target_sim_gravity = wall_sim_gravity,
+			target_sim_speed = wall_sim_speed,
+			target_width = wall_width,
+			target_thickness = wall_thickness,
+			target_bend_angle = wall_bend_angle,
+			allowed_chain_actions = {
+				{
+					sub_action = "default",
+					start_time = 0,
+					action = "action_two",
+					force_release_input = "action_two_hold",
+					input = "action_two"
+				},
+				{
+					sub_action = "default",
+					start_time = 0,
+					action = "action_career_release",
+					input = "action_career_not_hold"
+				},
+				{
+					sub_action = "default",
+					start_time = 0,
+					action = "action_career_release",
+					input = "action_career_release"
+				},
+				{
+					sub_action = "thorn_wall_target_flip_back",
+					start_time = 0.1,
+					action = "action_career_hold",
+					input = "action_one"
+				}
+			},
+			enter_function = function (attacker_unit, input_extension)
+				-- function 4
+				input_extension:clear_input_buffer()
 
-tbl.left_hand_unit = ""
-tbl.left_hand_attachment_node_linking = AttachmentNodeLinking.one_handed_melee_weapon.left
-tbl.wield_anim = "thorn_ability_start"
-tbl.state_machine = "units/beings/player/first_person_base/state_machines/career/skill_thornsister"
-tbl.load_state_machine = false
-tbl.display_unit = "units/weapons/weapon_display/display_2h_swords_executioner"
-tbl.crosshair_style = "default"
-tbl.buff_type = "RANGED_ABILITY"
-tbl.weapon_type = "RANGED_ABILITY"
-tbl.dodge_count = 2
-tbl.buffs = {
+				return input_extension:reset_release_input()
+			end
+		},
+		thorn_wall_target_flip_back = {
+			anim_end_event = "thorn_ability_cancel",
+			kind = "career_we_thornsister_target_wall",
+			weapon_action_hand = "left",
+			uninterruptible = true,
+			anim_event = "thorn_ability_flip_back",
+			anim_end_event_condition_func = function (unit, end_reason)
+				-- function 5
+				return end_reason ~= "new_interupting_action"
+			end,
+			total_time = math.huge,
+			target_sim_gravity = wall_sim_gravity,
+			target_sim_speed = wall_sim_speed,
+			target_width = wall_width,
+			target_thickness = wall_thickness,
+			target_bend_angle = wall_bend_angle,
+			allowed_chain_actions = {
+				{
+					sub_action = "default",
+					start_time = 0,
+					action = "action_two",
+					force_release_input = "action_two_hold",
+					input = "action_two"
+				},
+				{
+					sub_action = "default",
+					start_time = 0,
+					action = "action_career_release",
+					input = "action_career_not_hold"
+				},
+				{
+					sub_action = "default",
+					start_time = 0,
+					action = "action_career_release",
+					input = "action_career_release"
+				},
+				{
+					sub_action = "thorn_wall_target_flip",
+					start_time = 0.1,
+					action = "action_career_hold",
+					input = "action_one"
+				}
+			},
+			enter_function = function (attacker_unit, input_extension)
+				-- function 6
+				input_extension:clear_input_buffer()
+
+				return input_extension:reset_release_input()
+			end
+		}
+	},
+	action_two = {
+		default = {
+			kind = "career_dummy",
+			anim_end_event = "ability_finished",
+			anim_event = "thorn_ability_cancel",
+			weapon_action_hand = "left",
+			total_time = 0.21,
+			anim_end_event_condition_func = function (unit, end_reason)
+				-- function 7
+				return end_reason ~= "new_interupting_action"
+			end,
+			allowed_chain_actions = {},
+			enter_function = function (attacker_unit, input_extension, _, weapon_extension)
+				-- function 8
+				input_extension:clear_input_buffer()
+				input_extension:reset_release_input()
+				weapon_extension:change_synced_state(nil, true)
+			end
+		}
+	},
+	action_career_release = {
+		default = {
+			kind = "action_selector",
+			weapon_action_hand = "left",
+			conditional_actions = {
+				{
+					sub_action = "thorn_wall",
+					action = "spells",
+					condition = function (talent_extension, buff_extension, weapon_extension)
+						-- function 9
+						return not not weapon_extension and not not weapon_extension:get_mode()
+					end
+				}
+			},
+			default_action = {
+				action = "action_two",
+				sub_action = "default"
+			}
+		}
+	},
+	spells = {
+		thorn_wall = {
+			anim_end_event = "ability_finished",
+			weapon_action_hand = "left",
+			kind = "career_we_thornsister_wall",
+			uninterruptible = true,
+			anim_event = "thorn_ability_cast",
+			total_time = 0.75,
+			anim_end_event_condition_func = function (unit, end_reason)
+				-- function 10
+				return end_reason ~= "new_interupting_action"
+			end,
+			allowed_chain_actions = {},
+			enter_function = function (attacker_unit, input_extension, _, weapon_extension)
+				-- function 11
+				input_extension:clear_input_buffer()
+				input_extension:reset_release_input()
+				weapon_extension:change_synced_state(nil, true)
+			end
+		}
+	},
+	action_inspect = ActionTemplates.action_inspect
+}
+weapon_template.left_hand_unit = ""
+weapon_template.left_hand_attachment_node_linking = AttachmentNodeLinking.one_handed_melee_weapon.left
+weapon_template.wield_anim = "thorn_ability_start"
+weapon_template.state_machine = "units/beings/player/first_person_base/state_machines/career/skill_thornsister"
+weapon_template.load_state_machine = false
+weapon_template.display_unit = "units/weapons/weapon_display/display_2h_swords_executioner"
+weapon_template.crosshair_style = "default"
+weapon_template.buff_type = "RANGED_ABILITY"
+weapon_template.weapon_type = "RANGED_ABILITY"
+weapon_template.dodge_count = 2
+weapon_template.buffs = {
 	change_dodge_distance = {
 		external_optional_multiplier = 1
 	},
@@ -242,14 +241,14 @@ tbl.buffs = {
 	}
 }
 
-local tbl_2 = {
+local fingers_r_1p = {
 	"ep_r_index",
 	"ep_r_middle",
 	"ep_r_ring",
 	"ep_r_pinky",
 	"ep_r_thumb"
 }
-local tbl_3 = {
+local fingers_l_1p = {
 	"ep_l_index",
 	"ep_l_middle",
 	"ep_l_ring",
@@ -257,93 +256,94 @@ local tbl_3 = {
 	"ep_l_thumb"
 }
 
-local function fn(self, arg_12_1)
+local function init_state_data(state_data, tp_unit)
 	-- function 12
-	if not self.particle_ids then
-		table.clear(self.particle_ids)
+	if state_data.particle_ids then
+		table.clear(state_data.particle_ids)
 	else
-		self.particle_ids = {}
+		state_data.particle_ids = {}
 	end
 
-	if not self.nodes then
-		self.nodes = {}
+	if not state_data.nodes then
+		state_data.nodes = {}
 
-		local get_first_person_mesh_unit = ScriptUnit.has_extension(arg_12_1, "first_person_system"):get_first_person_mesh_unit()
+		local fp_extension = ScriptUnit.has_extension(tp_unit, "first_person_system")
+		local mesh_unit = fp_extension:get_first_person_mesh_unit()
 
-		for i = 1, #tbl_3 do
-			local var_12_1 = tbl_3[i]
+		for i = 1, #fingers_l_1p do
+			local finger = fingers_l_1p[i]
 
-			self.nodes[var_12_1] = Unit.node(get_first_person_mesh_unit, var_12_1)
+			state_data.nodes[finger] = Unit.node(mesh_unit, finger)
 		end
 
-		for j = 1, #tbl_2 do
-			local var_12_2 = tbl_2[j]
+		for i = 1, #fingers_r_1p do
+			local finger = fingers_r_1p[i]
 
-			self.nodes[var_12_2] = Unit.node(get_first_person_mesh_unit, var_12_2)
+			state_data.nodes[finger] = Unit.node(mesh_unit, finger)
 		end
 	end
 end
 
-tbl.synced_states = {
+weapon_template.synced_states = {
 	targeting = {
-		enter = function (arg_13_0, arg_13_1, arg_13_2, arg_13_3, arg_13_4, arg_13_5)
+		enter = function (self, owner_unit, weapon_unit, state_data, is_local_player, world)
 			-- function 13
-			if not arg_13_4 then
+			if not is_local_player then
 				return
 			end
 
-			fn(arg_13_3, arg_13_1)
+			init_state_data(state_data, owner_unit)
 
-			arg_13_3.delay = 0.1
-			arg_13_3.spawned = false
+			state_data.delay = 0.1
+			state_data.spawned = false
 		end,
-		update = function (arg_14_0, arg_14_1, arg_14_2, arg_14_3, arg_14_4, arg_14_5, arg_14_6)
+		update = function (self, owner_unit, weapon_unit, state_data, is_local_player, world, dt)
 			-- function 14
-			if not arg_14_4 then
+			if not is_local_player then
 				return
 			end
 
-			if not arg_14_3.spawned then
+			if state_data.spawned then
 				return
 			end
 
-			arg_14_3.delay = arg_14_3.delay - arg_14_6
+			state_data.delay = state_data.delay - dt
 
-			if arg_14_3.delay > 0 then
+			if state_data.delay > 0 then
 				return
 			end
 
-			arg_14_3.spawned = true
+			state_data.spawned = true
 
-			local get_first_person_mesh_unit = ScriptUnit.extension(arg_14_1, "first_person_system"):get_first_person_mesh_unit()
+			local mesh_unit = ScriptUnit.extension(owner_unit, "first_person_system"):get_first_person_mesh_unit()
 
-			for i = 1, #tbl_2 do
-				local var_14_1 = arg_14_3.nodes[tbl_2[i]]
+			for i = 1, #fingers_r_1p do
+				local node = state_data.nodes[fingers_r_1p[i]]
 
-				arg_14_3.particle_ids[var_14_1] = ScriptWorld.create_particles_linked(arg_14_5, "fx/magic_thorn_sister_finger_trail", get_first_person_mesh_unit, var_14_1, "destroy")
+				state_data.particle_ids[node] = ScriptWorld.create_particles_linked(world, "fx/magic_thorn_sister_finger_trail", mesh_unit, node, "destroy")
 			end
 
-			for j = 1, #tbl_3 do
-				local var_14_2 = arg_14_3.nodes[tbl_3[j]]
+			for i = 1, #fingers_l_1p do
+				local node = state_data.nodes[fingers_l_1p[i]]
 
-				arg_14_3.particle_ids[var_14_2] = ScriptWorld.create_particles_linked(arg_14_5, "fx/magic_thorn_sister_finger_trail", get_first_person_mesh_unit, var_14_2, "destroy")
+				state_data.particle_ids[node] = ScriptWorld.create_particles_linked(world, "fx/magic_thorn_sister_finger_trail", mesh_unit, node, "destroy")
 			end
 		end,
-		leave = function (arg_15_0, arg_15_1, arg_15_2, arg_15_3, arg_15_4, arg_15_5, arg_15_6, arg_15_7)
+		leave = function (self, owner_unit, weapon_unit, state_data, is_local_player, world, next_state, is_destroy)
 			-- function 15
-			if not arg_15_4 then
+			if not is_local_player then
 				return
 			end
 
-			for k in pairs(arg_15_3.particle_ids) do
-				local var_15_0 = arg_15_3.particle_ids[k]
+			for node in pairs(state_data.particle_ids) do
+				local particle_id = state_data.particle_ids[node]
 
-				World.stop_spawning_particles(arg_15_5, var_15_0)
+				World.stop_spawning_particles(world, particle_id)
 			end
 		end
 	}
 }
 
 return {
-	we_thornsister_career_skill_weapon = table.clone(tbl)
+	we_thornsister_career_skill_weapon = table.clone(weapon_template)
 }

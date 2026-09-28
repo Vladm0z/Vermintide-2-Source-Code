@@ -5,44 +5,44 @@ require("scripts/ui/views/character_selection_view/states/character_selection_st
 require("scripts/ui/views/character_selection_view/states/character_selection_state_versus_loadouts")
 require("scripts/ui/views/menu_world_previewer")
 
-local var_0_0 = local_require("scripts/ui/views/character_selection_view/character_selection_view_definitions")
-local widgets_definitions = var_0_0.widgets_definitions
-local scenegraph_definition = var_0_0.scenegraph_definition
-local settings_by_screen = var_0_0.settings_by_screen
-local attachments = var_0_0.attachments
-local flow_events = var_0_0.flow_events
+local definitions = local_require("scripts/ui/views/character_selection_view/character_selection_view_definitions")
+local widget_definitions = definitions.widgets_definitions
+local scenegraph_definition = definitions.scenegraph_definition
+local settings_by_screen = definitions.settings_by_screen
+local attachments = definitions.attachments
+local flow_events = definitions.flow_events
 
-local function fn(...)
+local function dprint(...)
 	-- function 1
 	print("[CharacterSelectionView]", ...)
 end
 
-local flag = true
-local flag_2 = false
-local flag_3 = true
+local DO_RELOAD = true
+local debug_draw_scenegraph = false
+local debug_menu = true
 
 CharacterSelectionView = class(CharacterSelectionView)
 
-CharacterSelectionView.init = function (self, arg_2_1)
+CharacterSelectionView.init = function (self, ingame_ui_context)
 	-- function 2
-	self.world = arg_2_1.world
-	self.player_manager = arg_2_1.player_manager
-	self.ui_renderer = arg_2_1.ui_renderer
-	self.ui_top_renderer = arg_2_1.ui_top_renderer
-	self.ingame_ui = arg_2_1.ingame_ui
-	self.profile_synchronizer = arg_2_1.profile_synchronizer
-	self.peer_id = arg_2_1.peer_id
-	self.local_player_id = arg_2_1.local_player_id
-	self.is_server = arg_2_1.is_server
-	self.is_in_inn = arg_2_1.is_in_inn
-	self.voting_manager = arg_2_1.voting_manager
-	self.world_manager = arg_2_1.world_manager
+	self.world = ingame_ui_context.world
+	self.player_manager = ingame_ui_context.player_manager
+	self.ui_renderer = ingame_ui_context.ui_renderer
+	self.ui_top_renderer = ingame_ui_context.ui_top_renderer
+	self.ingame_ui = ingame_ui_context.ingame_ui
+	self.profile_synchronizer = ingame_ui_context.profile_synchronizer
+	self.peer_id = ingame_ui_context.peer_id
+	self.local_player_id = ingame_ui_context.local_player_id
+	self.is_server = ingame_ui_context.is_server
+	self.is_in_inn = ingame_ui_context.is_in_inn
+	self.voting_manager = ingame_ui_context.voting_manager
+	self.world_manager = ingame_ui_context.world_manager
 
 	local world = self.world_manager:world("level_world")
 
 	self.wwise_world = Managers.world:wwise_world(world)
 
-	local input_manager = arg_2_1.input_manager
+	local input_manager = ingame_ui_context.input_manager
 
 	self.input_manager = input_manager
 
@@ -51,24 +51,26 @@ CharacterSelectionView.init = function (self, arg_2_1)
 	input_manager:map_device_to_service("character_selection_view", "mouse")
 	input_manager:map_device_to_service("character_selection_view", "gamepad")
 
-	self.world_previewer = MenuWorldPreviewer:new(arg_2_1, UISettings.hero_selection_camera_position_by_character, "CharacterSelectionView")
+	self.world_previewer = MenuWorldPreviewer:new(ingame_ui_context, UISettings.hero_selection_camera_position_by_character, "CharacterSelectionView")
 
 	self.world_previewer:force_stream_highest_mip_levels()
 
-	self._state_machine_params = {
+	local state_machine_params = {
 		wwise_world = self.wwise_world,
-		ingame_ui_context = arg_2_1,
+		ingame_ui_context = ingame_ui_context,
 		parent = self,
 		world_previewer = self.world_previewer,
 		settings_by_screen = settings_by_screen,
 		input_service = FAKE_INPUT_SERVICE
 	}
+
+	self._state_machine_params = state_machine_params
 	self.units = {}
 	self.attachment_units = {}
 	self.unit_states = {}
 	self.ui_animations = {}
-	self.ingame_ui_context = arg_2_1
-	flag = false
+	self.ingame_ui_context = ingame_ui_context
+	DO_RELOAD = false
 
 	self:show_hero_panel()
 end
@@ -78,33 +80,33 @@ CharacterSelectionView.initial_profile_view = function (self)
 	return self.ingame_ui.initial_profile_view
 end
 
-CharacterSelectionView._setup_state_machine = function (self, arg_4_1, arg_4_2, arg_4_3, arg_4_4)
+CharacterSelectionView._setup_state_machine = function (self, state_machine_params, optional_start_state, optional_start_sub_state, optional_params)
 	-- function 4
-	if not self._machine then
+	if self._machine then
 		self._machine:destroy()
 
 		self._machine = nil
 	end
 
-	local flag = arg_4_2 or CharacterSelectionStateCharacter
-	local flag_2 = false
+	local start_state = not not optional_start_state or not not CharacterSelectionStateCharacter
+	local profiling_debugging_enabled = false
 
-	arg_4_1.allow_back_button = not self:initial_profile_view()
-	arg_4_1.start_state = arg_4_3
-	arg_4_1.state_params = arg_4_4
+	state_machine_params.allow_back_button = not self:initial_profile_view()
+	state_machine_params.start_state = optional_start_sub_state
+	state_machine_params.state_params = optional_params
 
-	if not self._pick_time then
-		arg_4_1.pick_time = self._pick_time
+	if self._pick_time then
+		state_machine_params.pick_time = self._pick_time
 	end
 
-	if not self._profile_id then
-		arg_4_1.profile_id = self._profile_id
-		arg_4_1.career_id = self._career_id
+	if self._profile_id then
+		state_machine_params.profile_id = self._profile_id
+		state_machine_params.career_id = self._career_id
 	end
 
-	self._machine = GameStateMachine:new(self, flag, arg_4_1, flag_2)
-	self._state_machine_params = arg_4_1
-	arg_4_1.state_params = nil
+	self._machine = GameStateMachine:new(self, start_state, state_machine_params, profiling_debugging_enabled)
+	self._state_machine_params = state_machine_params
+	state_machine_params.state_params = nil
 end
 
 CharacterSelectionView.wanted_state = function (self)
@@ -117,14 +119,14 @@ CharacterSelectionView.clear_wanted_state = function (self)
 	self._wanted_state = nil
 end
 
-CharacterSelectionView.input_service = function (self, arg_7_1)
+CharacterSelectionView.input_service = function (self, ignore_input_blocked)
 	-- function 7
-	if not arg_7_1 then
+	if ignore_input_blocked then
 		return self.input_manager:get_service("character_selection_view")
 	else
 		local FAKE_INPUT_SERVICE
 
-		if not self._input_blocked then
+		if self._input_blocked then
 			FAKE_INPUT_SERVICE = FAKE_INPUT_SERVICE
 
 			if not FAKE_INPUT_SERVICE then
@@ -140,9 +142,9 @@ CharacterSelectionView.input_service = function (self, arg_7_1)
 	end
 end
 
-CharacterSelectionView.set_input_blocked = function (self, arg_8_1)
+CharacterSelectionView.set_input_blocked = function (self, blocked)
 	-- function 8
-	self._input_blocked = arg_8_1
+	self._input_blocked = blocked
 end
 
 CharacterSelectionView.input_blocked = function (self)
@@ -150,33 +152,34 @@ CharacterSelectionView.input_blocked = function (self)
 	return self._input_blocked
 end
 
-CharacterSelectionView.play_sound = function (self, arg_10_1)
+CharacterSelectionView.play_sound = function (self, event)
 	-- function 10
-	WwiseWorld.trigger_event(self.wwise_world, arg_10_1)
+	WwiseWorld.trigger_event(self.wwise_world, event)
 end
 
 CharacterSelectionView.create_ui_elements = function (self)
 	-- function 11
 	self.ui_scenegraph = UISceneGraph.init_scenegraph(scenegraph_definition)
 	self._static_widgets = {}
-	self._title_widget = UIWidget.init(widgets_definitions.title_text)
-	self._hero_name_text_widget = UIWidget.init(widgets_definitions.hero_name_text)
-	self._hero_level_text_widget = UIWidget.init(widgets_definitions.hero_level_text)
-	self._hero_prestige_level_text_widget = UIWidget.init(widgets_definitions.hero_prestige_level_text)
-	self._title_description_widget = UIWidget.init(widgets_definitions.title_description_text)
-	self._exit_button_widget = UIWidget.init(widgets_definitions.exit_button)
+	self._title_widget = UIWidget.init(widget_definitions.title_text)
+	self._hero_name_text_widget = UIWidget.init(widget_definitions.hero_name_text)
+	self._hero_level_text_widget = UIWidget.init(widget_definitions.hero_level_text)
+	self._hero_prestige_level_text_widget = UIWidget.init(widget_definitions.hero_prestige_level_text)
+	self._title_description_widget = UIWidget.init(widget_definitions.title_description_text)
+	self._exit_button_widget = UIWidget.init(widget_definitions.exit_button)
 
 	UIRenderer.clear_scenegraph_queue(self.ui_top_renderer)
 
-	self.ui_animator = UIAnimator:new(self.ui_scenegraph, var_0_0.animations)
+	self.ui_animator = UIAnimator:new(self.ui_scenegraph, definitions.animations)
 end
 
 CharacterSelectionView.get_background_world = function (self)
 	-- function 12
-	local var_12_0 = self.viewport_widget.element.pass_data[1]
-	local viewport = var_12_0.viewport
+	local previewer_pass_data = self.viewport_widget.element.pass_data[1]
+	local viewport = previewer_pass_data.viewport
+	local world = previewer_pass_data.world
 
-	return var_12_0.world, viewport
+	return world, viewport
 end
 
 CharacterSelectionView.show_hero_world = function (self)
@@ -184,9 +187,9 @@ CharacterSelectionView.show_hero_world = function (self)
 	if not self._draw_menu_world then
 		self._draw_menu_world = true
 
-		local str = "player_1"
+		local viewport_name = "player_1"
 		local world = Managers.world:world("level_world")
-		local viewport = ScriptWorld.viewport(world, str)
+		local viewport = ScriptWorld.viewport(world, viewport_name)
 
 		ScriptWorld.deactivate_viewport(world, viewport)
 	end
@@ -194,12 +197,12 @@ end
 
 CharacterSelectionView.hide_hero_world = function (self)
 	-- function 14
-	if not self._draw_menu_world then
+	if self._draw_menu_world then
 		self._draw_menu_world = false
 
-		local str = "player_1"
+		local viewport_name = "player_1"
 		local world = Managers.world:world("level_world")
-		local viewport = ScriptWorld.viewport(world, str)
+		local viewport = ScriptWorld.viewport(world, viewport_name)
 
 		ScriptWorld.activate_viewport(world, viewport)
 	end
@@ -219,63 +222,65 @@ CharacterSelectionView.hide_hero_panel = function (self)
 	self:set_input_blocked(true)
 end
 
-CharacterSelectionView.draw = function (self, arg_17_1, arg_17_2)
+CharacterSelectionView.draw = function (self, dt, input_service)
 	-- function 17
 	local ui_renderer = self.ui_renderer
 	local ui_top_renderer = self.ui_top_renderer
 	local ui_scenegraph = self.ui_scenegraph
-	local is_device_active = self.input_manager:is_device_active("gamepad")
+	local input_manager = self.input_manager
+	local gamepad_active = input_manager:is_device_active("gamepad")
 
-	UIRenderer.begin_pass(ui_top_renderer, ui_scenegraph, arg_17_2, arg_17_1)
+	UIRenderer.begin_pass(ui_top_renderer, ui_scenegraph, input_service, dt)
 
-	if not flag_2 then
+	if debug_draw_scenegraph then
 		UISceneGraph.debug_render_scenegraph(ui_top_renderer, ui_scenegraph)
 	end
 
-	if not self._draw_menu_panel then
+	if self._draw_menu_panel then
 		UIRenderer.draw_widget(ui_top_renderer, self._exit_button_widget)
 
-		for i, v in ipairs(self._static_widgets) do
-			UIRenderer.draw_widget(ui_top_renderer, v)
+		for _, widget in ipairs(self._static_widgets) do
+			UIRenderer.draw_widget(ui_top_renderer, widget)
 		end
 	end
 
-	if not self.viewport_widget and not self._draw_menu_world then
+	if self.viewport_widget and self._draw_menu_world then
 		UIRenderer.draw_widget(ui_top_renderer, self.viewport_widget)
 	end
 
 	UIRenderer.end_pass(ui_top_renderer)
 end
 
-CharacterSelectionView.post_update = function (self, arg_18_1, arg_18_2)
+CharacterSelectionView.post_update = function (self, dt, t)
 	-- function 18
-	self._machine:post_update(arg_18_1, arg_18_2)
-	self.world_previewer:post_update(arg_18_1, arg_18_2)
+	self._machine:post_update(dt, t)
+	self.world_previewer:post_update(dt, t)
 end
 
-CharacterSelectionView.update = function (self, arg_19_1, arg_19_2)
+CharacterSelectionView.update = function (self, dt, t)
 	-- function 19
-	if self.suspended or not self.waiting_for_post_update_enter then
+	if self.suspended or self.waiting_for_post_update_enter then
 		return
 	end
 
-	local _requested_screen_change_data = self._requested_screen_change_data
+	local requested_screen_change_data = self._requested_screen_change_data
 
-	if not _requested_screen_change_data then
-		local screen_name = _requested_screen_change_data.screen_name
-		local sub_screen_name = _requested_screen_change_data.sub_screen_name
+	if requested_screen_change_data then
+		local screen_name = requested_screen_change_data.screen_name
+		local sub_screen_name = requested_screen_change_data.sub_screen_name
 
 		self:_change_screen_by_name(screen_name, sub_screen_name)
 
 		self._requested_screen_change_data = nil
 	end
 
-	local flag = true
+	local is_sub_menu = true
 	local input_manager = self.input_manager
-	local is_device_active = input_manager:is_device_active("gamepad")
+	local gamepad_active = input_manager:is_device_active("gamepad")
+	local input_blocked = self:input_blocked()
 	local FAKE_INPUT_SERVICE
 
-	if not (not self:input_blocked() and is_device_active) then
+	if input_blocked and not gamepad_active then
 		FAKE_INPUT_SERVICE = FAKE_INPUT_SERVICE
 
 		if not FAKE_INPUT_SERVICE then
@@ -285,36 +290,38 @@ CharacterSelectionView.update = function (self, arg_19_1, arg_19_2)
 
 	FAKE_INPUT_SERVICE = input_manager:get_service("character_selection_view")
 
+	local input_service = FAKE_INPUT_SERVICE
+
 	::label_19_0::
 
-	self._state_machine_params.input_service = FAKE_INPUT_SERVICE
+	self._state_machine_params.input_service = input_service
 
 	local transitioning = self:transitioning()
 
-	self.ui_animator:update(arg_19_1)
-	self.world_previewer:update(arg_19_1, arg_19_2)
+	self.ui_animator:update(dt)
+	self.world_previewer:update(dt, t)
 
-	for k, v in pairs(self.ui_animations) do
-		UIAnimation.update(v, arg_19_1)
+	for name, ui_animation in pairs(self.ui_animations) do
+		UIAnimation.update(ui_animation, dt)
 
-		if not UIAnimation.completed(v) then
-			self.ui_animations[k] = nil
+		if UIAnimation.completed(ui_animation) then
+			self.ui_animations[name] = nil
 		end
 	end
 
-	self._machine:update(arg_19_1, arg_19_2)
+	self._machine:update(dt, t)
 
 	if not transitioning then
-		if not self:_has_active_level_vote() then
+		if self:_has_active_level_vote() then
 			self:play_sound("play_gui_start_menu_button_click")
 			self:close_menu()
 		else
-			self:_handle_mouse_input(arg_19_1, arg_19_2, FAKE_INPUT_SERVICE)
-			self:_handle_exit(arg_19_1, FAKE_INPUT_SERVICE)
+			self:_handle_mouse_input(dt, t, input_service)
+			self:_handle_exit(dt, input_service)
 		end
 	end
 
-	self:draw(arg_19_1, FAKE_INPUT_SERVICE)
+	self:draw(dt, input_service)
 end
 
 CharacterSelectionView._has_active_level_vote = function (self)
@@ -322,12 +329,20 @@ CharacterSelectionView._has_active_level_vote = function (self)
 	local voting_manager = self.voting_manager
 	local vote_in_progress = voting_manager:vote_in_progress()
 
-	vote_in_progress = not vote_in_progress and voting_manager:is_mission_vote()
+	if vote_in_progress then
+		-- Nothing
+	end
 
-	return not vote_in_progress and not voting_manager:has_voted(Network.peer_id())
+	vote_in_progress = voting_manager:is_mission_vote()
+
+	local is_mission_vote = vote_in_progress
+
+	::label_20_0::
+
+	return not not is_mission_vote and not not not voting_manager:has_voted(Network.peer_id())
 end
 
-CharacterSelectionView.on_enter = function (self, arg_21_1)
+CharacterSelectionView.on_enter = function (self, params)
 	-- function 21
 	ShowCursorStack.show("CharacterSelectionView")
 
@@ -337,35 +352,37 @@ CharacterSelectionView.on_enter = function (self, arg_21_1)
 	input_manager:block_device_except_service("character_selection_view", "mouse", 1)
 	input_manager:block_device_except_service("character_selection_view", "gamepad", 1)
 
-	self._state_machine_params.initial_state = true
+	local state_machine_params = self._state_machine_params
+
+	state_machine_params.initial_state = true
 
 	self:create_ui_elements()
 
-	local pick_time = arg_21_1.pick_time
+	local pick_time = params.pick_time
 
-	if not pick_time then
+	if pick_time then
 		self._pick_time = pick_time
 	end
 
-	local profile_id = arg_21_1.profile_id
+	local profile_id = params.profile_id
 
-	if not (not profile_id and not (profile_id > 0)) then
+	if profile_id and profile_id > 0 then
 		self._profile_id = profile_id
-		self._career_id = arg_21_1.career_id
+		self._career_id = params.career_id
 
 		self:set_current_hero(profile_id)
 	else
-		local profile_by_peer = self.profile_synchronizer:profile_by_peer(self.peer_id, self.local_player_id)
+		local profile_index = self.profile_synchronizer:profile_by_peer(self.peer_id, self.local_player_id)
 
-		if not profile_by_peer then
-			self:set_current_hero(profile_by_peer)
+		if profile_index then
+			self:set_current_hero(profile_index)
 		end
 	end
 
 	self.waiting_for_post_update_enter = true
-	self._on_enter_transition_params = arg_21_1
+	self._on_enter_transition_params = params
 
-	if not self:initial_profile_view() then
+	if self:initial_profile_view() then
 		self:hide_hero_panel()
 	else
 		self:show_hero_panel()
@@ -374,113 +391,131 @@ CharacterSelectionView.on_enter = function (self, arg_21_1)
 	Managers.music:duck_sounds()
 	self:play_sound("play_gui_amb_hero_screen_loop_begin")
 
-	local local_player = Managers.player:local_player()
-	local flag = not local_player and local_player.player_unit
+	local player_manager = Managers.player
+	local local_player = player_manager:local_player()
+	local player_unit = not not local_player and not not local_player.player_unit
 
-	if not flag then
-		local has_extension = ScriptUnit.has_extension(flag, "inventory_system")
+	if player_unit then
+		local inventory_extension = ScriptUnit.has_extension(player_unit, "inventory_system")
 
-		if not has_extension then
-			has_extension:check_and_drop_pickups("enter_inventory")
+		if inventory_extension then
+			inventory_extension:check_and_drop_pickups("enter_inventory")
 		end
 	end
 
 	UISettings.hero_fullscreen_menu_on_enter()
 
-	self._exit_transition = arg_21_1.exit_transition
-	self._exit_transition_params = arg_21_1.exit_transition_params
+	self._exit_transition = params.exit_transition
+	self._exit_transition_params = params.exit_transition_params
 end
 
-CharacterSelectionView.set_current_hero = function (self, arg_22_1)
+CharacterSelectionView.set_current_hero = function (self, profile_index)
 	-- function 22
-	local var_22_0 = SPProfiles[arg_22_1]
-	local display_name = var_22_0.display_name
-	local character_name = var_22_0.character_name
+	local profile_settings = SPProfiles[profile_index]
+	local display_name = profile_settings.display_name
+	local character_name = profile_settings.character_name
 
 	self._hero_name = display_name
-	self._state_machine_params.hero_name = display_name
+
+	local state_machine_params = self._state_machine_params
+
+	state_machine_params.hero_name = display_name
 	self._hero_name_text_widget.content.text = Localize(character_name)
 	self._hero_level_text_widget.content.text = Localize(display_name)
 
-	local get = Managers.backend:get_interface("hero_attributes"):get(display_name, "prestige")
+	local hero_attributes = Managers.backend:get_interface("hero_attributes")
+	local prestige = hero_attributes:get(display_name, "prestige")
 
-	if not get then
-		self:set_prestige_level(get)
+	if prestige then
+		self:set_prestige_level(prestige)
 	end
 end
 
 CharacterSelectionView._get_sorted_players = function (self)
 	-- function 23
 	local human_players = self.player_manager:human_players()
-	local tbl = {}
+	local player_order = {}
 
-	for k, v in pairs(human_players) do
-		tbl[#tbl + 1] = v
+	for _, player in pairs(human_players) do
+		player_order[#player_order + 1] = player
 	end
 
-	table.sort(tbl, function (self, arg_24_1)
+	table.sort(player_order, function (a, b)
 		-- function 24
-		local local_player = self.local_player
+		local local_player = a.local_player
 
-		local_player = not local_player and not arg_24_1.local_player
+		local_player = not not local_player and not not not b.local_player
 
 		return local_player
 	end)
 
-	return tbl
+	return player_order
 end
 
-CharacterSelectionView.set_prestige_level = function (arg_25_0, arg_25_1)
+CharacterSelectionView.set_prestige_level = function (self, prestige)
 	-- function 25
-	if arg_25_1 > 0 then
-		arg_25_0._hero_prestige_level_text_widget.content.text = "Prestige level: " .. arg_25_1
+	if prestige > 0 then
+		self._hero_prestige_level_text_widget.content.text = "Prestige level: " .. prestige
 	else
-		arg_25_0._hero_prestige_level_text_widget.content.text = ""
+		self._hero_prestige_level_text_widget.content.text = ""
 	end
 end
 
-CharacterSelectionView._handle_mouse_input = function (arg_26_0, arg_26_1, arg_26_2, arg_26_3)
+CharacterSelectionView._handle_mouse_input = function (self, dt, t, input_service)
 	-- function 26
 	return
 end
 
-CharacterSelectionView._is_selection_widget_pressed = function (arg_27_0, arg_27_1)
+CharacterSelectionView._is_selection_widget_pressed = function (self, widget)
 	-- function 27
-	local content = arg_27_1.content
+	local content = widget.content
 	local steps = content.steps
 
 	for i = 1, steps do
-		if not content["hotspot_" .. i].on_release then
+		local hotspot_name = "hotspot_" .. i
+		local hotspot = content[hotspot_name]
+
+		if hotspot.on_release then
 			return true, i
 		end
 	end
 end
 
-CharacterSelectionView.hotkey_allowed = function (self, arg_28_1, arg_28_2)
+CharacterSelectionView.hotkey_allowed = function (self, input, mapping_data)
 	-- function 28
-	if not self:input_blocked() then
+	if self:input_blocked() then
 		return false
 	end
 
-	local transition_state = arg_28_2.transition_state
-	local transition_sub_state = arg_28_2.transition_sub_state
-	local _machine = self._machine
+	local transition_state = mapping_data.transition_state
+	local transition_sub_state = mapping_data.transition_sub_state
+	local state_machine = self._machine
 
-	if not _machine then
-		local state = _machine:state()
-		local NAME = state.NAME
+	if state_machine then
+		local current_state = state_machine:state()
+		local current_state_name = current_state.NAME
+		local current_screen_settings = self:_get_screen_settings_by_state_name(current_state_name)
+		local name = current_screen_settings.name
 
-		if self:_get_screen_settings_by_state_name(NAME).name == transition_state then
-			local get_selected_layout_name = state.get_selected_layout_name
+		if name == transition_state then
+			local get_selected_layout_name = current_state.get_selected_layout_name
 
-			get_selected_layout_name = not get_selected_layout_name and state:get_selected_layout_name()
-
-			if not (not transition_sub_state and transition_sub_state ~= get_selected_layout_name) then
-				return true
-			elseif not transition_sub_state then
-				state:requested_screen_change_by_name(transition_sub_state)
+			if get_selected_layout_name then
+				-- Nothing
 			end
-		elseif not transition_state then
+
+			get_selected_layout_name = current_state:get_selected_layout_name()
+
+			local active_sub_settings_name = get_selected_layout_name
+
+			::label_28_0::
+
+			if not transition_sub_state or transition_sub_state == active_sub_settings_name then
+				return true
+			elseif transition_sub_state then
+				current_state:requested_screen_change_by_name(transition_sub_state)
+			end
+		elseif transition_state then
 			self:requested_screen_change_by_name(transition_state, transition_sub_state)
 		else
 			return true
@@ -490,97 +525,97 @@ CharacterSelectionView.hotkey_allowed = function (self, arg_28_1, arg_28_2)
 	return false
 end
 
-CharacterSelectionView._get_screen_settings_by_state_name = function (arg_29_0, arg_29_1)
+CharacterSelectionView._get_screen_settings_by_state_name = function (self, state_name)
 	-- function 29
-	for i, v in ipairs(settings_by_screen) do
-		if v.state_name == arg_29_1 then
-			return v
+	for index, screen_settings in ipairs(settings_by_screen) do
+		if screen_settings.state_name == state_name then
+			return screen_settings
 		end
 	end
 end
 
-CharacterSelectionView.requested_screen_change_by_name = function (self, arg_30_1, arg_30_2)
+CharacterSelectionView.requested_screen_change_by_name = function (self, screen_name, sub_screen_name)
 	-- function 30
 	self._requested_screen_change_data = {
-		screen_name = arg_30_1,
-		sub_screen_name = arg_30_2
+		screen_name = screen_name,
+		sub_screen_name = sub_screen_name
 	}
 end
 
-CharacterSelectionView._change_screen_by_name = function (self, arg_31_1, arg_31_2, arg_31_3)
+CharacterSelectionView._change_screen_by_name = function (self, screen_name, sub_screen_name, optional_params)
 	-- function 31
-	local var_31_0
-	local var_31_1
+	local settings, settings_index
 
-	for i, v in ipairs(settings_by_screen) do
-		if v.name == arg_31_1 then
-			var_31_0 = v
-			var_31_1 = i
+	for index, screen_settings in ipairs(settings_by_screen) do
+		if screen_settings.name == screen_name then
+			settings = screen_settings
+			settings_index = index
 
 			break
 		end
 	end
 
-	fassert(var_31_1, "[CharacterSelectionView] - Could not find state by name %s", arg_31_1)
+	fassert(settings_index, "[CharacterSelectionView] - Could not find state by name %s", screen_name)
 
-	self._title_widget.content.text = var_31_0.display_name
-	self._title_description_widget.content.text = var_31_0.description
+	self._title_widget.content.text = settings.display_name
+	self._title_description_widget.content.text = settings.description
 
-	local state_name = var_31_0.state_name
-	local var_31_3 = rawget(_G, state_name)
+	local state_name = settings.state_name
+	local state = rawget(_G, state_name)
 
-	if not (not self._machine and arg_31_2) then
-		self._wanted_state = var_31_3
+	if self._machine and not sub_screen_name then
+		self._wanted_state = state
 	else
-		self:_setup_state_machine(self._state_machine_params, var_31_3, arg_31_2, arg_31_3)
+		self:_setup_state_machine(self._state_machine_params, state, sub_screen_name, optional_params)
 	end
 
-	if not var_31_0.draw_background_world then
+	if settings.draw_background_world then
 		self:show_hero_world()
 	else
 		self:hide_hero_world()
 	end
 
-	local camera_position = var_31_0.camera_position
+	local camera_position = settings.camera_position
 
-	if not camera_position then
+	if camera_position then
 		self.world_previewer:set_camera_axis_offset("x", camera_position[1], 0.5, math.easeOutCubic)
 		self.world_previewer:set_camera_axis_offset("y", camera_position[2], 0.5, math.easeOutCubic)
 		self.world_previewer:set_camera_axis_offset("z", camera_position[3], 0.5, math.easeOutCubic)
 	end
 
-	local camera_rotation = var_31_0.camera_rotation
+	local camera_rotation = settings.camera_rotation
 
-	if not camera_rotation then
+	if camera_rotation then
 		self.world_previewer:set_camera_rotation_axis_offset("x", camera_rotation[1], 0.5, math.easeOutCubic)
 		self.world_previewer:set_camera_rotation_axis_offset("y", camera_rotation[2], 0.5, math.easeOutCubic)
 		self.world_previewer:set_camera_rotation_axis_offset("z", camera_rotation[3], 0.5, math.easeOutCubic)
 	end
 end
 
-CharacterSelectionView._change_screen_by_index = function (self, arg_32_1)
+CharacterSelectionView._change_screen_by_index = function (self, index)
 	-- function 32
-	local name = settings_by_screen[arg_32_1].name
+	local screen_settings = settings_by_screen[index]
+	local settings_name = screen_settings.name
 
-	self:_change_screen_by_name(name)
+	self:_change_screen_by_name(settings_name)
 end
 
 CharacterSelectionView.post_update_on_enter = function (self)
 	-- function 33
 	fassert(self.viewport_widget == nil, "[CharacterSelectionView:post_update_on_enter] viewport already created")
 
-	self.viewport_widget = UIWidget.init(widgets_definitions.viewport)
+	self.viewport_widget = UIWidget.init(widget_definitions.viewport)
 	self.waiting_for_post_update_enter = nil
 
 	self.world_previewer:on_enter(self.viewport_widget, self._hero_name)
 
-	local _on_enter_transition_params = self._on_enter_transition_params
+	local on_enter_transition_params = self._on_enter_transition_params
 
-	if not _on_enter_transition_params and not _on_enter_transition_params.menu_state_name then
-		local menu_state_name = _on_enter_transition_params.menu_state_name
-		local menu_sub_state_name = _on_enter_transition_params.menu_sub_state_name
+	if on_enter_transition_params and on_enter_transition_params.menu_state_name then
+		local menu_state_name = on_enter_transition_params.menu_state_name
+		local menu_sub_state_name = on_enter_transition_params.menu_sub_state_name
 
-		self:_change_screen_by_name(menu_state_name, menu_sub_state_name, _on_enter_transition_params)
+		self:_change_screen_by_name(menu_state_name, menu_sub_state_name, on_enter_transition_params)
 
 		self._on_enter_transition_params = nil
 	else
@@ -593,14 +628,14 @@ CharacterSelectionView.post_update_on_exit = function (self)
 	self.world_previewer:prepare_exit()
 	self.world_previewer:on_exit()
 
-	if not self.viewport_widget then
+	if self.viewport_widget then
 		UIWidget.destroy(self.ui_top_renderer, self.viewport_widget)
 
 		self.viewport_widget = nil
 	end
 end
 
-CharacterSelectionView.on_exit = function (self, arg_35_1)
+CharacterSelectionView.on_exit = function (self, params)
 	-- function 35
 	self.input_manager:device_unblock_all_services("keyboard", 1)
 	self.input_manager:device_unblock_all_services("mouse", 1)
@@ -609,7 +644,7 @@ CharacterSelectionView.on_exit = function (self, arg_35_1)
 
 	self.exiting = nil
 
-	if not self._machine then
+	if self._machine then
 		self._machine:destroy()
 
 		self._machine = nil
@@ -621,15 +656,29 @@ CharacterSelectionView.on_exit = function (self, arg_35_1)
 	UISettings.hero_fullscreen_menu_on_exit()
 end
 
-CharacterSelectionView.exit = function (self, arg_36_1)
+CharacterSelectionView.exit = function (self, return_to_game)
 	-- function 36
 	local _exit_transition = self._exit_transition
 
-	_exit_transition = _exit_transition or not self:initial_profile_view() or "exit_initial_character_selection" or "exit_menu"
+	if not _exit_transition then
+		-- Nothing
+	end
 
-	self.ingame_ui:transition_with_fade(_exit_transition, self._exit_transition_params)
+	if self:initial_profile_view() then
+		_exit_transition = "exit_initial_character_selection"
 
-	if not IS_WINDOWS and not self:initial_profile_view() then
+		goto label_36_0
+	end
+
+	_exit_transition = "exit_menu"
+
+	local exit_transition = _exit_transition
+
+	::label_36_0::
+
+	self.ingame_ui:transition_with_fade(exit_transition, self._exit_transition_params)
+
+	if IS_WINDOWS and self:initial_profile_view() then
 		self:play_sound("Play_hero_selected_game_start")
 	else
 		self:play_sound("Play_hud_button_close")
@@ -643,7 +692,7 @@ end
 
 CharacterSelectionView.transitioning = function (self)
 	-- function 37
-	if not self.exiting then
+	if self.exiting then
 		return true
 	else
 		return false
@@ -658,17 +707,17 @@ CharacterSelectionView.suspend = function (self)
 
 	self.suspended = true
 
-	local str = "player_1"
+	local viewport_name = "player_1"
 	local world = Managers.world:world("level_world")
-	local viewport = ScriptWorld.viewport(world, str)
+	local viewport = ScriptWorld.viewport(world, viewport_name)
 
 	ScriptWorld.activate_viewport(world, viewport)
 
-	local var_38_3 = self.viewport_widget.element.pass_data[1]
-	local viewport_2 = var_38_3.viewport
-	local world_2 = var_38_3.world
+	local previewer_pass_data = self.viewport_widget.element.pass_data[1]
+	local viewport = previewer_pass_data.viewport
+	local world = previewer_pass_data.world
 
-	ScriptWorld.deactivate_viewport(world_2, viewport_2)
+	ScriptWorld.deactivate_viewport(world, viewport)
 end
 
 CharacterSelectionView.unsuspend = function (self)
@@ -679,34 +728,34 @@ CharacterSelectionView.unsuspend = function (self)
 
 	self.suspended = nil
 
-	if not self.viewport_widget then
-		local str = "player_1"
+	if self.viewport_widget then
+		local viewport_name = "player_1"
 		local world = Managers.world:world("level_world")
-		local viewport = ScriptWorld.viewport(world, str)
+		local viewport = ScriptWorld.viewport(world, viewport_name)
 
 		ScriptWorld.deactivate_viewport(world, viewport)
 
-		local var_39_3 = self.viewport_widget.element.pass_data[1]
-		local viewport_2 = var_39_3.viewport
-		local world_2 = var_39_3.world
+		local previewer_pass_data = self.viewport_widget.element.pass_data[1]
+		local viewport = previewer_pass_data.viewport
+		local world = previewer_pass_data.world
 
-		ScriptWorld.activate_viewport(world_2, viewport_2)
+		ScriptWorld.activate_viewport(world, viewport)
 	end
 end
 
-CharacterSelectionView._handle_exit = function (self, arg_40_1, arg_40_2)
+CharacterSelectionView._handle_exit = function (self, dt, input_service)
 	-- function 40
 	local initial_profile_view = self:initial_profile_view()
-	local _exit_button_widget = self._exit_button_widget
+	local exit_button_widget = self._exit_button_widget
 
-	UIWidgetUtils.animate_default_button(_exit_button_widget, arg_40_1)
+	UIWidgetUtils.animate_default_button(exit_button_widget, dt)
 
 	if not initial_profile_view then
-		if not _exit_button_widget.content.button_hotspot.on_hover_enter then
+		if exit_button_widget.content.button_hotspot.on_hover_enter then
 			self:play_sound("play_gui_start_menu_button_hover")
 		end
 
-		if _exit_button_widget.content.button_hotspot.on_release or not arg_40_2:get("toggle_menu") then
+		if exit_button_widget.content.button_hotspot.on_release or input_service:get("toggle_menu") then
 			self:play_sound("play_gui_start_menu_button_click")
 			self:close_menu(not self.exit_to_game)
 		end
@@ -718,16 +767,16 @@ CharacterSelectionView.get_exit_button_widget = function (self)
 	return self._exit_button_widget
 end
 
-CharacterSelectionView.close_menu = function (self, arg_42_1)
+CharacterSelectionView.close_menu = function (self, return_to_main_screen)
 	-- function 42
-	local flag = not arg_42_1
+	local return_to_game = not return_to_main_screen
 
-	self:exit(flag)
+	self:exit(return_to_game)
 end
 
 CharacterSelectionView.destroy = function (self)
 	-- function 43
-	if not self.viewport_widget then
+	if self.viewport_widget then
 		UIWidget.destroy(self.ui_top_renderer, self.viewport_widget)
 
 		self.viewport_widget = nil
@@ -736,24 +785,24 @@ CharacterSelectionView.destroy = function (self)
 	self.ingame_ui_context = nil
 	self.ui_animator = nil
 
-	local str = "player_1"
+	local viewport_name = "player_1"
 	local world = Managers.world:world("level_world")
-	local viewport = ScriptWorld.viewport(world, str)
+	local viewport = ScriptWorld.viewport(world, viewport_name)
 
 	ScriptWorld.activate_viewport(world, viewport)
 
-	if not self._machine then
+	if self._machine then
 		self._machine:destroy()
 
 		self._machine = nil
 	end
 end
 
-CharacterSelectionView._is_button_pressed = function (arg_44_0, arg_44_1)
+CharacterSelectionView._is_button_pressed = function (self, widget)
 	-- function 44
-	local button_hotspot = arg_44_1.content.button_hotspot
+	local button_hotspot = widget.content.button_hotspot
 
-	if not button_hotspot.on_release then
+	if button_hotspot.on_release then
 		button_hotspot.on_release = false
 
 		return true

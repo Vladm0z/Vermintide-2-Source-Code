@@ -2,13 +2,13 @@
 
 ControllerFeaturesImplementation = class(ControllerFeaturesImplementation)
 
-ControllerFeaturesImplementation.init = function (self, arg_1_1)
+ControllerFeaturesImplementation.init = function (self, is_in_inn)
 	-- function 1
 	self:_reset()
 
-	self._is_in_inn = arg_1_1
+	self._is_in_inn = is_in_inn
 
-	if not Managers.state.event then
+	if Managers.state.event then
 		Managers.state.event:register(self, "gm_event_end_conditions_met", "event_end_conditions_met")
 	end
 end
@@ -26,64 +26,64 @@ ControllerFeaturesImplementation.event_end_conditions_met = function (self)
 	self._game_mode_ended = true
 end
 
-local tbl = {}
+local EFFECTS_TO_REMOVE = {}
 
-ControllerFeaturesImplementation.update = function (self, arg_4_1, arg_4_2)
+ControllerFeaturesImplementation.update = function (self, dt, t)
 	-- function 4
-	for k, v in pairs(self._effects) do
-		table.clear(tbl)
+	for user, effects in pairs(self._effects) do
+		table.clear(EFFECTS_TO_REMOVE)
 
-		for k_2, v_2 in pairs(v) do
-			if self._game_mode_ended or not v_2.effect.update(v_2.state_data, arg_4_1, arg_4_2) then
-				v_2.effect.destroy(v_2.state_data)
+		for id, effect_data in pairs(effects) do
+			if self._game_mode_ended or effect_data.effect.update(effect_data.state_data, dt, t) then
+				effect_data.effect.destroy(effect_data.state_data)
 
-				tbl[#tbl + 1] = k_2
+				EFFECTS_TO_REMOVE[#EFFECTS_TO_REMOVE + 1] = id
 			end
 		end
 
-		for i, v_3 in ipairs(tbl) do
-			v[v_3] = nil
+		for _, id in ipairs(EFFECTS_TO_REMOVE) do
+			effects[id] = nil
 		end
 	end
 end
 
-ControllerFeaturesImplementation.add_effect = function (self, arg_5_1, arg_5_2, arg_5_3)
+ControllerFeaturesImplementation.add_effect = function (self, effect_name, params, user_id)
 	-- function 5
-	if not (self._game_mode_ended or not Application.user_setting("gamepad_rumble_enabled") or (arg_5_1 ~= "camera_shake" or not self._is_in_inn or script_data.honduras_demo) and Managers.input:is_device_active("gamepad")) then
+	if (self._game_mode_ended or not Application.user_setting("gamepad_rumble_enabled") or effect_name ~= "camera_shake" or not self._is_in_inn) and script_data.honduras_demo or not Managers.input:is_device_active("gamepad") then
 		return
 	end
 
-	local flag = arg_5_3 or Managers.account:user_id()
+	local user_id = not not user_id or not not Managers.account:user_id()
 
-	if not flag then
+	if not user_id then
 		return
 	end
 
-	local active_controller = Managers.account:active_controller(flag)
+	local controller = Managers.account:active_controller(user_id)
 
-	if not active_controller then
+	if not controller then
 		return
 	end
 
-	local tbl = {}
+	local state_data = {}
 
-	if not ControllerFeaturesSettings[arg_5_1] then
-		local var_5_3 = ControllerFeaturesSettings[arg_5_1]
+	if ControllerFeaturesSettings[effect_name] then
+		local effect = ControllerFeaturesSettings[effect_name]
 
-		tbl.controller = active_controller
+		state_data.controller = controller
 
-		var_5_3.init(tbl, arg_5_2)
+		effect.init(state_data, params)
 
-		tbl.effect_id = self._current_effect_id
+		state_data.effect_id = self._current_effect_id
 
 		local _effects = self._effects
-		local var_5_5 = self._effects[flag]
+		local var_5_1 = self._effects[user_id]
 
-		var_5_5 = var_5_5 or {}
-		_effects[flag] = var_5_5
-		self._effects[flag][self._current_effect_id] = {
-			state_data = tbl,
-			effect = var_5_3
+		var_5_1 = not not var_5_1 or not not {}
+		_effects[user_id] = var_5_1
+		self._effects[user_id][self._current_effect_id] = {
+			state_data = state_data,
+			effect = effect
 		}
 		self._current_effect_id = self._current_effect_id + 1
 
@@ -91,7 +91,7 @@ ControllerFeaturesImplementation.add_effect = function (self, arg_5_1, arg_5_2, 
 	end
 end
 
-ControllerFeaturesImplementation.stop_effect = function (self, arg_6_1)
+ControllerFeaturesImplementation.stop_effect = function (self, effect_id)
 	-- function 6
 	local user_id = Managers.account:user_id()
 
@@ -99,20 +99,20 @@ ControllerFeaturesImplementation.stop_effect = function (self, arg_6_1)
 		return
 	end
 
-	local var_6_1 = self._effects[user_id][arg_6_1]
+	local effect_data = self._effects[user_id][effect_id]
 
-	if not var_6_1 then
-		var_6_1.effect.destroy(var_6_1.state_data)
+	if effect_data then
+		effect_data.effect.destroy(effect_data.state_data)
 
-		self._effects[user_id][arg_6_1] = nil
+		self._effects[user_id][effect_id] = nil
 	end
 end
 
 ControllerFeaturesImplementation.destroy = function (self)
 	-- function 7
-	for k, v in pairs(self._effects) do
-		for k_2, v_2 in pairs(v) do
-			v_2.effect.destroy(v_2.state_data)
+	for user, effects in pairs(self._effects) do
+		for id, effect_data in pairs(effects) do
+			effect_data.effect.destroy(effect_data.state_data)
 		end
 	end
 

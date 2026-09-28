@@ -4,14 +4,14 @@ require("foundation/scripts/util/error")
 
 local ApiVerification = ApiVerification
 
-ApiVerification = ApiVerification or {}
+ApiVerification = not not ApiVerification or not not {}
 ApiVerification = ApiVerification
 
-ApiVerification.ensure_public_api = function (arg_1_0, arg_1_1)
+ApiVerification.ensure_public_api = function (interface_class, implementation_class)
 	-- function 1
-	for k, v in pairs(arg_1_0) do
-		if not (type(v) ~= "function" or string.sub(tostring(k), 1, 1) == "_") then
-			fassert(arg_1_1[k] ~= nil, "Missing function %q in API", k)
+	for name, value in pairs(interface_class) do
+		if type(value) == "function" and string.sub(tostring(name), 1, 1) ~= "_" then
+			fassert(implementation_class[name] ~= nil, "Missing function %q in API", name)
 		end
 	end
 end

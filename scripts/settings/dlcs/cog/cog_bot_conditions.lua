@@ -3,13 +3,13 @@
 local BTConditions = BTConditions
 local can_activate = BTConditions.can_activate
 
-can_activate = can_activate or {}
+can_activate = not not can_activate or not not {}
 BTConditions.can_activate = can_activate
 
 local BTConditions_2 = BTConditions
 local can_activate_non_combat = BTConditions.can_activate_non_combat
 
-can_activate_non_combat = can_activate_non_combat or {}
+can_activate_non_combat = not not can_activate_non_combat or not not {}
 BTConditions_2.can_activate_non_combat = can_activate_non_combat
 
 table.merge_recursive(BTConditions.ability_check_categories, {
@@ -18,73 +18,91 @@ table.merge_recursive(BTConditions.ability_check_categories, {
 	}
 })
 
-local distance_squared = Vector3.distance_squared
-local num = 400
+local vector3_distance_squared = Vector3.distance_squared
+local ENGINEER_MAX_DISTANCE_SQ = 400
 
-BTConditions.can_activate.dr_engineer = function (self)
+BTConditions.can_activate.dr_engineer = function (blackboard)
 	-- function 1
-	local target_unit = self.target_unit
+	local target_unit = blackboard.target_unit
 
-	if not (not ALIVE[target_unit] and Unit.get_data(target_unit, "breed") ~= nil) then
+	if not ALIVE[target_unit] or Unit.get_data(target_unit, "breed") == nil then
 		return false
 	end
 
-	local has_extension = ScriptUnit.has_extension(target_unit, "buff_system")
+	local target_buff_extension = ScriptUnit.has_extension(target_unit, "buff_system")
 
-	if not has_extension and not has_extension:has_buff_perk("invulnerable_ranged") then
+	if target_buff_extension and target_buff_extension:has_buff_perk("invulnerable_ranged") then
 		return false
 	end
 
-	local ranged_obstruction_by_static = self.ranged_obstruction_by_static
+	local obstruction = blackboard.ranged_obstruction_by_static
 
-	if not ranged_obstruction_by_static and ranged_obstruction_by_static.unit ~= target_unit or not (Managers.time:time("game") <= ranged_obstruction_by_static.timer + 1) then
+	if obstruction and obstruction.unit == target_unit then
+		local t = Managers.time:time("game")
+		local obstructed = t <= obstruction.timer + 1
+
+		if obstructed then
+			return false
+		end
+	end
+
+	local career_extension = blackboard.career_extension
+	local inventory_extension = blackboard.inventory_extension
+	local career_weapon_active = not not inventory_extension and inventory_extension:get_wielded_slot_name() == "career_skill_weapon"
+	local num
+
+	if career_weapon_active then
+		num = 0.6
+
+		goto label_1_0
+	end
+
+	num = 0.95
+
+	local min_charge = num
+
+	::label_1_0::
+
+	if not career_extension or min_charge < career_extension:current_ability_cooldown_percentage() then
 		return false
 	end
 
-	local career_extension = self.career_extension
-	local inventory_extension = self.inventory_extension
-	local flag
+	local self_unit = blackboard.unit
+	local self_position = POSITION_LOOKUP[self_unit]
 
-	flag = not (not inventory_extension and inventory_extension:get_wielded_slot_name() == "career_skill_weapon") and 0.6 and 0.95
-
-	if not (not career_extension and not (flag < career_extension:current_ability_cooldown_percentage())) then
+	if vector3_distance_squared(self_position, POSITION_LOOKUP[target_unit]) > ENGINEER_MAX_DISTANCE_SQ then
 		return false
 	end
 
-	local unit = self.unit
-	local var_1_7 = POSITION_LOOKUP[unit]
+	local proximite_enemies = blackboard.proximite_enemies
+	local num_proximite_enemies = #proximite_enemies
+	local max_distance_sq = 9
 
-	if distance_squared(var_1_7, POSITION_LOOKUP[target_unit]) > num then
-		return false
-	end
+	for i = 1, num_proximite_enemies do
+		local enemy_unit = proximite_enemies[i]
 
-	local proximite_enemies = self.proximite_enemies
-	local count = #proximite_enemies
-	local num_2 = 9
+		if ALIVE[enemy_unit] then
+			local enemy_position = POSITION_LOOKUP[enemy_unit]
 
-	for i = 1, count do
-		local var_1_11 = proximite_enemies[i]
-
-		if not ALIVE[var_1_11] then
-			local var_1_12 = POSITION_LOOKUP[var_1_11]
-
-			if num_2 >= distance_squared(var_1_7, var_1_12) then
+			if max_distance_sq >= vector3_distance_squared(self_position, enemy_position) then
 				return false
 			end
 		end
 	end
 
-	return Managers.state.conflict:get_threat_value() > 10
+	local threat = Managers.state.conflict:get_threat_value()
+
+	return threat > 10
 end
 
-BTConditions.reload_ability_weapon.dr_engineer = function (self, arg_2_1)
+BTConditions.reload_ability_weapon.dr_engineer = function (blackboard, args)
 	-- function 2
-	local career_extension = self.career_extension
+	local career_extension = blackboard.career_extension
 
-	if not career_extension then
-		local proximite_enemies = self.proximite_enemies
+	if career_extension then
+		local proximite_enemies = blackboard.proximite_enemies
 
-		return not (career_extension:current_ability_cooldown() > arg_2_1.ability_cooldown_theshold) or #proximite_enemies == 0
+		return career_extension:current_ability_cooldown() > args.ability_cooldown_theshold and #proximite_enemies == 0
 	end
 
 	return false

@@ -2,100 +2,99 @@
 
 LobbyMembers = class(LobbyMembers)
 
-LobbyMembers.init = function (self, arg_1_1)
+LobbyMembers.init = function (self, lobby)
 	-- function 1
-	self.lobby = arg_1_1
+	self.lobby = lobby
 	self.members_joined = {}
 	self.members_left = {}
 
-	local members, var_1_1 = arg_1_1:members()
+	local current_members, member_count = lobby:members()
 
-	var_1_1 = var_1_1 or #members
-	self._member_buffer = members
-	self.member_count = var_1_1
+	member_count = not not member_count or not not #current_members
+	self._member_buffer = current_members
+	self.member_count = member_count
 
-	local tbl = {}
+	local member_map = {}
 
-	for i = 1, var_1_1 do
-		local var_1_3 = members[i]
+	for i = 1, member_count do
+		local peer_id = current_members[i]
 
-		tbl[var_1_3] = true
-		self.members_joined[i] = var_1_3
+		member_map[peer_id] = true
+		self.members_joined[i] = peer_id
 	end
 
-	self.members = tbl
+	self.members = member_map
 	self._members_changed = true
 
-	if not (not IS_CONSOLE and Managers.account:offline_mode()) then
+	if IS_CONSOLE and not Managers.account:offline_mode() then
 		self.lobby:update_user_names()
 	end
 end
 
-LobbyMembers.clear = function (arg_2_0)
+LobbyMembers.clear = function (self)
 	-- function 2
 	return
 end
 
 LobbyMembers.update = function (self)
 	-- function 3
-	local members_joined = self.members_joined
-	local members_left = self.members_left
+	local members_joined, members_left = self.members_joined, self.members_left
 
 	table.clear(members_joined)
 	table.clear(members_left)
 
-	local _member_buffer = self._member_buffer
+	local member_buffer = self._member_buffer
 
-	table.clear(_member_buffer)
+	table.clear(member_buffer)
 
-	local members, var_3_4 = self.lobby:members(_member_buffer)
+	local current_members, member_count = self.lobby:members(member_buffer)
 
-	if not var_3_4 then
-		self._member_buffer = members
-		var_3_4 = #members
+	if not member_count then
+		self._member_buffer = current_members
+		member_count = #current_members
 	end
 
-	self.member_count = var_3_4
+	self.member_count = member_count
 
-	local members_2 = self.members
+	local members = self.members
 
-	for i = 1, var_3_4 do
-		local var_3_6 = members[i]
+	for i = 1, member_count do
+		local peer_id = current_members[i]
 
-		if members_2[var_3_6] == nil then
-			members_joined[#members_joined + 1] = var_3_6
+		if members[peer_id] == nil then
+			members_joined[#members_joined + 1] = peer_id
 
-			printf("[LobbyMembers] Member joined %s", tostring(var_3_6))
+			printf("[LobbyMembers] Member joined %s", tostring(peer_id))
 
-			if not IS_CONSOLE then
-				local account = Managers.account
+			if IS_CONSOLE then
+				local account_manager = Managers.account
 
-				if not IS_XB1 then
-					account:query_bandwidth()
+				if IS_XB1 then
+					account_manager:query_bandwidth()
 
 					self._members_changed = true
 				end
 
-				if not account:offline_mode() then
+				if not account_manager:offline_mode() then
 					self.lobby:update_user_names()
 				end
 			end
 		end
 
-		members_2[var_3_6] = false
+		members[peer_id] = false
 	end
 
-	for k, v in pairs(members_2) do
-		if v == false then
-			members_2[k] = true
+	for peer_id, value in pairs(members) do
+		if value == false then
+			members[peer_id] = true
 		else
-			printf("[LobbyMembers] Member left %s", tostring(k))
+			printf("[LobbyMembers] Member left %s", tostring(peer_id))
 
-			members_left[#members_left + 1] = k
-			members_2[k] = nil
+			members_left[#members_left + 1] = peer_id
+			members[peer_id] = nil
 
-			if not IS_XB1 then
-				if table.size(members_2) <= 1 then
+			if IS_XB1 then
+				if table.size(members) <= 1 then
 					Managers.account:reset_bandwidth_query()
 				end
 
@@ -130,13 +129,13 @@ LobbyMembers.members_map = function (self)
 	return self.members
 end
 
-if not IS_XB1 then
+if IS_XB1 then
 	LobbyMembers.check_members_changed = function (self)
 		-- function 9
-		local _members_changed = self._members_changed
+		local members_changed = self._members_changed
 
 		self._members_changed = nil
 
-		return _members_changed
+		return members_changed
 	end
 end

@@ -1,21 +1,21 @@
 -- chunkname: @scripts/settings/dlcs/anvil/anvil_equipment_settings.lua
 
-local anvil = DLCSettings.anvil
+local settings = DLCSettings.anvil
 
-anvil.item_master_list_file_names = {
+settings.item_master_list_file_names = {
 	"scripts/settings/equipment/item_master_list_anvil"
 }
-anvil.weapon_skins_file_names = {
+settings.weapon_skins_file_names = {
 	"scripts/settings/equipment/weapon_skins_anvil"
 }
-anvil.weapon_template_file_names = {
+settings.weapon_template_file_names = {
 	"scripts/settings/equipment/weapon_templates/1h_flails_flaming",
 	"scripts/settings/equipment/weapon_templates/1h_spears_shield",
 	"scripts/settings/equipment/weapon_templates/1h_throwing_axes",
 	"scripts/settings/equipment/weapon_templates/2h_billhooks",
 	"scripts/settings/equipment/weapon_templates/2h_heavy_spears"
 }
-anvil.default_items = {
+settings.default_items = {
 	bw_1h_flail_flaming = {
 		inventory_icon = "icon_brw_flaming_flail_01",
 		description = "description_default_witch_hunter_wh_1h_falchions",
@@ -42,7 +42,7 @@ anvil.default_items = {
 		display_name = "wh_2h_billhook_blacksmith_name"
 	}
 }
-anvil.inventory_package_list = {
+settings.inventory_package_list = {
 	"units/weapons/player/wpn_brw_flaming_flail_01/wpn_brw_flaming_flail_01",
 	"units/weapons/player/wpn_brw_flaming_flail_01/wpn_brw_flaming_flail_01_3p",
 	"units/weapons/player/wpn_brw_flaming_flail_01/wpn_brw_flaming_flail_01_runed_01",
@@ -80,27 +80,27 @@ anvil.inventory_package_list = {
 	"units/weapons/player/wpn_wh_billhook_02/wpn_wh_billhook_02",
 	"units/weapons/player/wpn_wh_billhook_02/wpn_wh_billhook_02_3p"
 }
-anvil.damage_profile_template_files_names = {
+settings.damage_profile_template_files_names = {
 	"scripts/settings/equipment/damage_profile_templates_dlc_anvil"
 }
-anvil.power_level_template_files_names = {
+settings.power_level_template_files_names = {
 	"scripts/settings/equipment/power_level_templates_dlc_anvil"
 }
-anvil.attack_template_files_names = {
+settings.attack_template_files_names = {
 	"scripts/settings/equipment/attack_templates_dlc_anvil"
 }
-anvil.action_template_file_names = {
+settings.action_template_file_names = {
 	"scripts/unit_extensions/weapons/actions/action_thrown_projectile",
 	"scripts/unit_extensions/weapons/actions/action_catch"
 }
-anvil.action_classes_lookup = {
+settings.action_classes_lookup = {
 	thrown_projectile = "ActionThrownProjectile",
 	catch = "ActionCatch"
 }
-anvil.projectile_gravity_settings = {
+settings.projectile_gravity_settings = {
 	throwing_axes = -9.82
 }
-anvil.projectile_units = {
+settings.projectile_units = {
 	throwing_axe_01_t1 = {
 		dummy_linker_unit_name = "units/weapons/player/wpn_dw_thrown_axe_01_t1/prj_dw_thrown_axe_01_t1_3ps",
 		projectile_unit_name = "units/weapons/player/wpn_dw_thrown_axe_01_t1/prj_dw_thrown_axe_01_t1_3ps"
@@ -114,7 +114,7 @@ anvil.projectile_units = {
 		projectile_unit_name = "units/weapons/player/wpn_dw_thrown_axe_01_t2/prj_dw_thrown_axe_01_t2_3ps"
 	}
 }
-anvil.projectiles = {
+settings.projectiles = {
 	throwing_axe = {
 		use_weapon_skin = true,
 		static_impact_type = "raycast",
@@ -134,7 +134,7 @@ anvil.projectiles = {
 		}
 	}
 }
-anvil.spread_templates = {
+settings.spread_templates = {
 	throwing_axe = {
 		continuous = {
 			still = {

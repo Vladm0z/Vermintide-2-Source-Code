@@ -1,28 +1,31 @@
 -- chunkname: @scripts/ui/views/hero_view/windows/definitions/hero_window_weave_forge_overview_console_definitions.lua
 
-local game_start_windows = UISettings.game_start_windows
-local size = game_start_windows.size
-local spacing = game_start_windows.spacing
-local large_window_frame = game_start_windows.large_window_frame
-local var_0_4 = UIFrameSettings[large_window_frame].texture_sizes.vertical[1]
-local tbl = {
-	size[1] * 3 + spacing * 2 + var_0_4 * 2,
-	size[2] + 80
+local window_default_settings = UISettings.game_start_windows
+local small_window_size = window_default_settings.size
+local small_window_spacing = window_default_settings.spacing
+local large_window_frame = window_default_settings.large_window_frame
+local large_window_frame_width = UIFrameSettings[large_window_frame].texture_sizes.vertical[1]
+local inner_window_size = {
+	small_window_size[1] * 3 + small_window_spacing * 2 + large_window_frame_width * 2,
+	small_window_size[2] + 80
 }
-local tbl_2 = {
-	tbl[1] + 50,
-	tbl[2]
+local window_size = {
+	inner_window_size[1] + 50,
+	inner_window_size[2]
 }
-local str = "menu_frame_11"
-local var_0_8 = UIFrameSettings[str].texture_sizes.vertical[1]
-local game_start_windows_2 = UISettings.game_start_windows
-local num = 30
-local num_2 = 0
-local tbl_3 = {
+local window_frame_name = "menu_frame_11"
+local window_frame = UIFrameSettings[window_frame_name]
+local window_frame_width = window_frame.texture_sizes.vertical[1]
+local window_default_settings = UISettings.game_start_windows
+local gamepad_offset = 30
+
+window_frame_width = 0
+window_size = {
 	1920,
 	1080
 }
-local tbl_4 = {
+
+local scenegraph_definition = {
 	root = {
 		is_root = true,
 		size = {
@@ -65,7 +68,7 @@ local tbl_4 = {
 		vertical_alignment = "center",
 		parent = "screen_center",
 		horizontal_alignment = "center",
-		size = tbl_3,
+		size = window_size,
 		position = {
 			0,
 			0,
@@ -77,12 +80,12 @@ local tbl_4 = {
 		parent = "window",
 		horizontal_alignment = "center",
 		size = {
-			tbl_3[1] - num_2 * 2,
-			tbl_3[2] - num_2 * 2
+			window_size[1] - window_frame_width * 2,
+			window_size[2] - window_frame_width * 2
 		},
 		position = {
 			0,
-			num_2,
+			window_frame_width,
 			3
 		}
 	},
@@ -91,12 +94,12 @@ local tbl_4 = {
 		parent = "window",
 		horizontal_alignment = "center",
 		size = {
-			tbl_3[1] - num_2 * 2,
-			tbl_3[2] - num_2 * 2
+			window_size[1] - window_frame_width * 2,
+			window_size[2] - window_frame_width * 2
 		},
 		position = {
 			0,
-			num_2,
+			window_frame_width,
 			3
 		}
 	},
@@ -105,12 +108,12 @@ local tbl_4 = {
 		parent = "window",
 		horizontal_alignment = "center",
 		size = {
-			tbl_3[1] - num_2 * 2,
-			tbl_3[2] - num_2 * 2
+			window_size[1] - window_frame_width * 2,
+			window_size[2] - window_frame_width * 2
 		},
 		position = {
 			0,
-			num_2,
+			window_frame_width,
 			3
 		}
 	},
@@ -204,11 +207,11 @@ local tbl_4 = {
 		horizontal_alignment = "center",
 		size = {
 			545,
-			tbl_3[2] - num_2 * 2
+			window_size[2] - window_frame_width * 2
 		},
 		position = {
 			-545,
-			num_2,
+			window_frame_width,
 			1
 		}
 	},
@@ -218,11 +221,11 @@ local tbl_4 = {
 		horizontal_alignment = "center",
 		size = {
 			545,
-			tbl_3[2] - num_2 * 2
+			window_size[2] - window_frame_width * 2
 		},
 		position = {
 			0,
-			num_2,
+			window_frame_width,
 			1
 		}
 	},
@@ -232,11 +235,11 @@ local tbl_4 = {
 		horizontal_alignment = "center",
 		size = {
 			545,
-			tbl_3[2] - num_2 * 2
+			window_size[2] - window_frame_width * 2
 		},
 		position = {
 			545,
-			num_2,
+			window_frame_width,
 			1
 		}
 	},
@@ -250,7 +253,7 @@ local tbl_4 = {
 		},
 		position = {
 			0,
-			num,
+			gamepad_offset,
 			1
 		}
 	},
@@ -264,7 +267,7 @@ local tbl_4 = {
 		},
 		position = {
 			0,
-			num,
+			gamepad_offset,
 			1
 		}
 	},
@@ -278,7 +281,7 @@ local tbl_4 = {
 		},
 		position = {
 			0,
-			num,
+			gamepad_offset,
 			1
 		}
 	},
@@ -376,7 +379,7 @@ local tbl_4 = {
 		},
 		position = {
 			-90,
-			0 + num,
+			0 + gamepad_offset,
 			2
 		}
 	},
@@ -390,7 +393,7 @@ local tbl_4 = {
 		},
 		position = {
 			-90,
-			-30 + num,
+			-30 + gamepad_offset,
 			2
 		}
 	},
@@ -404,7 +407,7 @@ local tbl_4 = {
 		},
 		position = {
 			90,
-			0 + num,
+			0 + gamepad_offset,
 			2
 		}
 	},
@@ -418,7 +421,7 @@ local tbl_4 = {
 		},
 		position = {
 			90,
-			-30 + num,
+			-30 + gamepad_offset,
 			2
 		}
 	},
@@ -432,7 +435,7 @@ local tbl_4 = {
 		},
 		position = {
 			-90,
-			0 + num,
+			0 + gamepad_offset,
 			2
 		}
 	},
@@ -446,7 +449,7 @@ local tbl_4 = {
 		},
 		position = {
 			-90,
-			-30 + num,
+			-30 + gamepad_offset,
 			2
 		}
 	},
@@ -460,7 +463,7 @@ local tbl_4 = {
 		},
 		position = {
 			90,
-			0 + num,
+			0 + gamepad_offset,
 			2
 		}
 	},
@@ -474,7 +477,7 @@ local tbl_4 = {
 		},
 		position = {
 			90,
-			-30 + num,
+			-30 + gamepad_offset,
 			2
 		}
 	},
@@ -488,7 +491,7 @@ local tbl_4 = {
 		},
 		position = {
 			-90,
-			0 + num,
+			0 + gamepad_offset,
 			2
 		}
 	},
@@ -502,7 +505,7 @@ local tbl_4 = {
 		},
 		position = {
 			-90,
-			-30 + num,
+			-30 + gamepad_offset,
 			2
 		}
 	},
@@ -516,7 +519,7 @@ local tbl_4 = {
 		},
 		position = {
 			90,
-			0 + num,
+			0 + gamepad_offset,
 			2
 		}
 	},
@@ -530,7 +533,7 @@ local tbl_4 = {
 		},
 		position = {
 			90,
-			-30 + num,
+			-30 + gamepad_offset,
 			2
 		}
 	},
@@ -628,7 +631,7 @@ local tbl_4 = {
 		},
 		position = {
 			0,
-			70 + num,
+			70 + gamepad_offset,
 			3
 		}
 	},
@@ -642,7 +645,7 @@ local tbl_4 = {
 		},
 		position = {
 			0,
-			70 + num,
+			70 + gamepad_offset,
 			3
 		}
 	},
@@ -656,7 +659,7 @@ local tbl_4 = {
 		},
 		position = {
 			0,
-			70 + num,
+			70 + gamepad_offset,
 			3
 		}
 	},
@@ -670,7 +673,7 @@ local tbl_4 = {
 		},
 		position = {
 			0,
-			40 + num,
+			40 + gamepad_offset,
 			3
 		}
 	},
@@ -684,7 +687,7 @@ local tbl_4 = {
 		},
 		position = {
 			0,
-			40 + num,
+			40 + gamepad_offset,
 			3
 		}
 	},
@@ -698,7 +701,7 @@ local tbl_4 = {
 		},
 		position = {
 			0,
-			40 + num,
+			40 + gamepad_offset,
 			3
 		}
 	},
@@ -712,7 +715,7 @@ local tbl_4 = {
 		},
 		position = {
 			0,
-			0 + num,
+			0 + gamepad_offset,
 			1
 		}
 	},
@@ -726,7 +729,7 @@ local tbl_4 = {
 		},
 		position = {
 			0,
-			0 + num,
+			0 + gamepad_offset,
 			1
 		}
 	},
@@ -740,7 +743,7 @@ local tbl_4 = {
 		},
 		position = {
 			0,
-			0 + num,
+			0 + gamepad_offset,
 			1
 		}
 	},
@@ -753,8 +756,8 @@ local tbl_4 = {
 			126
 		},
 		position = {
-			-num_2,
-			-num_2,
+			-window_frame_width,
+			-window_frame_width,
 			4
 		}
 	},
@@ -871,7 +874,7 @@ local tbl_4 = {
 		}
 	}
 }
-local tbl_5 = {
+local upgrade_title_style = {
 	word_wrap = true,
 	upper_case = true,
 	localize = false,
@@ -893,7 +896,7 @@ local tbl_5 = {
 		2
 	}
 }
-local tbl_6 = {
+local title_text_style = {
 	font_size = 36,
 	upper_case = true,
 	localize = false,
@@ -909,7 +912,7 @@ local tbl_6 = {
 		2
 	}
 }
-local tbl_7 = {
+local viewport_title_text_style = {
 	word_wrap = true,
 	upper_case = true,
 	localize = false,
@@ -926,7 +929,7 @@ local tbl_7 = {
 		2
 	}
 }
-local tbl_8 = {
+local viewport_sub_title_text_style = {
 	word_wrap = true,
 	upper_case = true,
 	localize = false,
@@ -943,7 +946,7 @@ local tbl_8 = {
 		2
 	}
 }
-local tbl_9 = {
+local mastery_text_style = {
 	font_size = 62,
 	upper_case = true,
 	localize = false,
@@ -959,7 +962,7 @@ local tbl_9 = {
 		2
 	}
 }
-local tbl_10 = {
+local panel_value_title_style = {
 	word_wrap = true,
 	upper_case = true,
 	localize = false,
@@ -981,7 +984,7 @@ local tbl_10 = {
 		2
 	}
 }
-local tbl_11 = {
+local panel_value_text_style = {
 	word_wrap = true,
 	upper_case = true,
 	localize = false,
@@ -998,7 +1001,7 @@ local tbl_11 = {
 		2
 	}
 }
-local tbl_12 = {
+local forge_level_text_style = {
 	font_size = 22,
 	upper_case = true,
 	localize = false,
@@ -1014,7 +1017,7 @@ local tbl_12 = {
 		2
 	}
 }
-local tbl_13 = {
+local forge_value_text_style = {
 	font_size = 36,
 	upper_case = true,
 	localize = false,
@@ -1030,7 +1033,7 @@ local tbl_13 = {
 		2
 	}
 }
-local tbl_14 = {
+local tutorial_title_text_style = {
 	word_wrap = false,
 	upper_case = true,
 	localize = true,
@@ -1047,7 +1050,7 @@ local tbl_14 = {
 		2
 	}
 }
-local tbl_15 = {
+local tutorial_body_text_style = {
 	word_wrap = true,
 	upper_case = true,
 	localize = true,
@@ -1065,7 +1068,7 @@ local tbl_15 = {
 	}
 }
 
-local function fn(arg_1_0)
+local function create_viewport_highlight(scenegraph_id)
 	-- function 1
 	return {
 		element = {
@@ -1261,11 +1264,11 @@ local function fn(arg_1_0)
 			0,
 			0
 		},
-		scenegraph_id = arg_1_0
+		scenegraph_id = scenegraph_id
 	}
 end
 
-local function fn_2(arg_2_0)
+local function create_viewport_highlight_text(scenegraph_id)
 	-- function 2
 	return {
 		element = {
@@ -1446,16 +1449,18 @@ local function fn_2(arg_2_0)
 			50,
 			3
 		},
-		scenegraph_id = arg_2_0
+		scenegraph_id = scenegraph_id
 	}
 end
 
-local function fn_3(arg_3_0, arg_3_1, arg_3_2, arg_3_3)
+local function create_upgrade_button(scenegraph_id, size, text, font_size)
 	-- function 3
-	local str = "athanor_icon_upgrade"
-	local size = UIAtlasHelper.get_atlas_settings_by_texture_name(str).size
-	local str_2 = "athanor_icon_loading"
-	local size_2 = UIAtlasHelper.get_atlas_settings_by_texture_name(str_2).size
+	local icon = "athanor_icon_upgrade"
+	local icon_settings = UIAtlasHelper.get_atlas_settings_by_texture_name(icon)
+	local icon_size = icon_settings.size
+	local loading_icon = "athanor_icon_loading"
+	local loading_icon_settings = UIAtlasHelper.get_atlas_settings_by_texture_name(loading_icon)
+	local loading_icon_size = loading_icon_settings.size
 
 	return {
 		element = {
@@ -1478,11 +1483,11 @@ local function fn_3(arg_3_0, arg_3_1, arg_3_2, arg_3_3)
 						"weave_progression_slot_titles",
 						"athanor_upgrade_tooltip"
 					},
-					content_check_function = function (self)
+					content_check_function = function (content)
 						-- function 4
-						local tooltip = self.tooltip
+						local tooltip = content.tooltip
 
-						tooltip = not tooltip and self.tooltip_hotspot.is_hover
+						tooltip = not not tooltip and not not content.tooltip_hotspot.is_hover
 
 						return tooltip
 					end
@@ -1491,58 +1496,75 @@ local function fn_3(arg_3_0, arg_3_1, arg_3_2, arg_3_3)
 					pass_type = "texture",
 					style_id = "price_icon",
 					texture_id = "price_icon",
-					content_check_function = function (self)
+					content_check_function = function (content)
 						-- function 5
-						return not self.button_hotspot.disable_button
+						local button_hotspot = content.button_hotspot
+
+						return not button_hotspot.disable_button
 					end
 				},
 				{
 					pass_type = "texture",
 					style_id = "price_icon_disabled",
 					texture_id = "price_icon",
-					content_check_function = function (self)
+					content_check_function = function (content)
 						-- function 6
-						return self.button_hotspot.disable_button
+						local button_hotspot = content.button_hotspot
+
+						return button_hotspot.disable_button
 					end
 				},
 				{
 					style_id = "loading_icon",
 					texture_id = "loading_icon",
 					pass_type = "rotated_texture",
-					content_check_function = function (self)
+					content_check_function = function (content)
 						-- function 7
-						return self.upgrading
+						return content.upgrading
 					end,
-					content_change_function = function (arg_8_0, arg_8_1, arg_8_2, arg_8_3)
+					content_change_function = function (content, style, _, dt)
 						-- function 8
-						local progress = arg_8_1.progress
+						local progress_2 = style.progress
 
-						progress = progress or 0
+						if not progress_2 then
+							-- Nothing
+						end
 
-						local num = (progress + arg_8_3) % 1
+						progress_2 = 0
 
-						arg_8_1.angle = math.pow(2, math.smoothstep(num, 0, 1)) * (math.pi * 2)
-						arg_8_1.progress = num
+						local progress = progress_2
+
+						::label_8_0::
+
+						progress = (progress + dt) % 1
+
+						local angle = math.pow(2, math.smoothstep(progress, 0, 1)) * (math.pi * 2)
+
+						style.angle = angle
+						style.progress = progress
 					end
 				},
 				{
 					pass_type = "texture",
 					style_id = "icon",
 					texture_id = "icon",
-					content_check_function = function (self)
+					content_check_function = function (content)
 						-- function 9
-						return not not self.button_hotspot.disable_button or not self.upgrading
+						local button_hotspot = content.button_hotspot
+
+						return not button_hotspot.disable_button and not not not content.upgrading
 					end
 				},
 				{
 					pass_type = "texture",
 					style_id = "icon_disabled",
 					texture_id = "icon",
-					content_check_function = function (self)
+					content_check_function = function (content)
 						-- function 10
-						local disable_button = self.button_hotspot.disable_button
+						local button_hotspot = content.button_hotspot
+						local disable_button = button_hotspot.disable_button
 
-						disable_button = not disable_button and not self.upgrading
+						disable_button = not not disable_button and not not not content.upgrading
 
 						return disable_button
 					end
@@ -1561,9 +1583,9 @@ local function fn_3(arg_3_0, arg_3_1, arg_3_2, arg_3_3)
 					pass_type = "texture",
 					style_id = "texture_highlight",
 					texture_id = "texture_highlight",
-					content_check_function = function (self)
+					content_check_function = function (content)
 						-- function 11
-						return self.highlighted
+						return content.highlighted
 					end
 				},
 				{
@@ -1575,27 +1597,33 @@ local function fn_3(arg_3_0, arg_3_1, arg_3_2, arg_3_3)
 					pass_type = "texture",
 					style_id = "disabled_rect",
 					texture_id = "overlay",
-					content_check_function = function (self)
+					content_check_function = function (content)
 						-- function 12
-						return self.button_hotspot.disable_button
+						local button_hotspot = content.button_hotspot
+
+						return button_hotspot.disable_button
 					end
 				},
 				{
 					style_id = "title_text",
 					pass_type = "text",
 					text_id = "title_text",
-					content_check_function = function (self)
+					content_check_function = function (content)
 						-- function 13
-						return not self.button_hotspot.disable_button
+						local button_hotspot = content.button_hotspot
+
+						return not button_hotspot.disable_button
 					end
 				},
 				{
 					style_id = "title_text_disabled",
 					pass_type = "text",
 					text_id = "title_text",
-					content_check_function = function (self)
+					content_check_function = function (content)
 						-- function 14
-						return self.button_hotspot.disable_button
+						local button_hotspot = content.button_hotspot
+
+						return button_hotspot.disable_button
 					end
 				},
 				{
@@ -1607,18 +1635,22 @@ local function fn_3(arg_3_0, arg_3_1, arg_3_2, arg_3_3)
 					pass_type = "texture",
 					style_id = "button_icon",
 					texture_id = "button_icon",
-					content_check_function = function (self)
+					content_check_function = function (content)
 						-- function 15
-						return self.button_hotspot.disable_button
+						local button_hotspot = content.button_hotspot
+
+						return button_hotspot.disable_button
 					end
 				},
 				{
 					pass_type = "texture",
 					style_id = "button_icon_glow",
 					texture_id = "button_icon_glow",
-					content_check_function = function (self)
+					content_check_function = function (content)
 						-- function 16
-						return not self.button_hotspot.disable_button
+						local button_hotspot = content.button_hotspot
+
+						return not button_hotspot.disable_button
 					end
 				}
 			}
@@ -1633,14 +1665,14 @@ local function fn_3(arg_3_0, arg_3_1, arg_3_2, arg_3_3)
 			background = "athanor_upgrade_bg",
 			highlighted = false,
 			texture_highlight = "tutorial_overlay_round",
-			size = arg_3_1,
+			size = size,
 			button_hotspot = {
 				allow_multi_hover = true
 			},
 			tooltip_hotspot = {},
-			icon = str,
-			loading_icon = str_2,
-			title_text = arg_3_2 or "n/a"
+			icon = icon,
+			loading_icon = loading_icon,
+			title_text = not not text or not not "n/a"
 		},
 		style = {
 			tooltip = {
@@ -1656,8 +1688,8 @@ local function fn_3(arg_3_0, arg_3_1, arg_3_2, arg_3_3)
 			},
 			button_hotspot = {
 				size = {
-					arg_3_1[1] - 160,
-					arg_3_1[2] - 30
+					size[1] - 160,
+					size[2] - 30
 				},
 				color = {
 					100,
@@ -1676,12 +1708,12 @@ local function fn_3(arg_3_0, arg_3_1, arg_3_2, arg_3_3)
 				horizontal_alignment = "left",
 				angle = 0,
 				pivot = {
-					size_2[1] / 2,
-					size_2[2] / 2
+					loading_icon_size[1] / 2,
+					loading_icon_size[2] / 2
 				},
 				texture_size = {
-					size_2[1],
-					size_2[2]
+					loading_icon_size[1],
+					loading_icon_size[2]
 				},
 				color = {
 					255,
@@ -1699,8 +1731,8 @@ local function fn_3(arg_3_0, arg_3_1, arg_3_2, arg_3_3)
 				vertical_alignment = "center",
 				horizontal_alignment = "left",
 				texture_size = {
-					size[1],
-					size[2]
+					icon_size[1],
+					icon_size[2]
 				},
 				color = Colors.get_color_table_with_alpha("font_button_normal", 255),
 				default_color = Colors.get_color_table_with_alpha("font_button_normal", 255),
@@ -1715,8 +1747,8 @@ local function fn_3(arg_3_0, arg_3_1, arg_3_2, arg_3_3)
 				vertical_alignment = "center",
 				horizontal_alignment = "left",
 				texture_size = {
-					size[1],
-					size[2]
+					icon_size[1],
+					icon_size[2]
 				},
 				color = {
 					255,
@@ -1885,13 +1917,13 @@ local function fn_3(arg_3_0, arg_3_1, arg_3_2, arg_3_3)
 				vertical_alignment = "center",
 				dynamic_font_size = true,
 				font_type = "hell_shark",
-				font_size = arg_3_3 or 24,
+				font_size = not not font_size or not not 24,
 				text_color = Colors.get_color_table_with_alpha("font_button_normal", 255),
 				default_text_color = Colors.get_color_table_with_alpha("font_button_normal", 255),
 				select_text_color = Colors.get_color_table_with_alpha("white", 255),
 				size = {
-					arg_3_1[1] - 40,
-					arg_3_1[2]
+					size[1] - 40,
+					size[2]
 				},
 				default_offset = {
 					40,
@@ -1911,12 +1943,12 @@ local function fn_3(arg_3_0, arg_3_1, arg_3_2, arg_3_3)
 				vertical_alignment = "center",
 				dynamic_font_size = true,
 				font_type = "hell_shark",
-				font_size = arg_3_3 or 24,
+				font_size = not not font_size or not not 24,
 				text_color = Colors.get_color_table_with_alpha("gray", 255),
 				default_text_color = Colors.get_color_table_with_alpha("gray", 255),
 				size = {
-					arg_3_1[1] - 40,
-					arg_3_1[2]
+					size[1] - 40,
+					size[2]
 				},
 				default_offset = {
 					40,
@@ -1936,12 +1968,12 @@ local function fn_3(arg_3_0, arg_3_1, arg_3_2, arg_3_3)
 				vertical_alignment = "center",
 				dynamic_font_size = true,
 				font_type = "hell_shark",
-				font_size = arg_3_3 or 24,
+				font_size = not not font_size or not not 24,
 				text_color = Colors.get_color_table_with_alpha("black", 255),
 				default_text_color = Colors.get_color_table_with_alpha("black", 255),
 				size = {
-					arg_3_1[1] - 40,
-					arg_3_1[2]
+					size[1] - 40,
+					size[2]
 				},
 				default_offset = {
 					42,
@@ -1955,7 +1987,7 @@ local function fn_3(arg_3_0, arg_3_1, arg_3_2, arg_3_3)
 				}
 			}
 		},
-		scenegraph_id = arg_3_0,
+		scenegraph_id = scenegraph_id,
 		offset = {
 			0,
 			0,
@@ -1964,24 +1996,24 @@ local function fn_3(arg_3_0, arg_3_1, arg_3_2, arg_3_3)
 	}
 end
 
-local tbl_16 = {
-	viewport_button_highlight_1 = fn("viewport_button_highlight_1"),
-	viewport_button_highlight_2 = fn("viewport_button_highlight_2"),
-	viewport_button_highlight_3 = fn("viewport_button_highlight_3")
+local bottom_widgets = {
+	viewport_button_highlight_1 = create_viewport_highlight("viewport_button_highlight_1"),
+	viewport_button_highlight_2 = create_viewport_highlight("viewport_button_highlight_2"),
+	viewport_button_highlight_3 = create_viewport_highlight("viewport_button_highlight_3")
 }
-local tbl_17 = {
+local top_hdr_widgets = {
 	top_hdr_background_write_mask = UIWidgets.create_simple_texture("ui_write_mask", "window"),
 	upgrade_bg = UIWidgets.create_simple_texture("weave_menu_athanor_upgrade_bg", "upgrade_bg")
 }
-local tbl_18 = {
+local bottom_hdr_widgets = {
 	skull_circle = UIWidgets.create_simple_texture("weave_menu_upgrade_skull_circle", "skull_circle"),
 	skull_circle_shade = UIWidgets.create_simple_texture("weave_menu_upgrade_skull_circle_shade", "skull_circle_shade")
 }
-local tbl_19 = {
-	upgrade_text = UIWidgets.create_simple_text(Localize("menu_weave_forge_upgraded_effect_title"), "upgrade_text", nil, nil, tbl_5),
-	viewport_button_text_highlight_1 = fn_2("viewport_button_highlight_1"),
-	viewport_button_text_highlight_2 = fn_2("viewport_button_highlight_2"),
-	viewport_button_text_highlight_3 = fn_2("viewport_button_highlight_3"),
+local top_widgets = {
+	upgrade_text = UIWidgets.create_simple_text(Localize("menu_weave_forge_upgraded_effect_title"), "upgrade_text", nil, nil, upgrade_title_style),
+	viewport_button_text_highlight_1 = create_viewport_highlight_text("viewport_button_highlight_1"),
+	viewport_button_text_highlight_2 = create_viewport_highlight_text("viewport_button_highlight_2"),
+	viewport_button_text_highlight_3 = create_viewport_highlight_text("viewport_button_highlight_3"),
 	viewport_button_1 = UIWidgets.create_simple_hotspot("viewport_button_1"),
 	viewport_button_2 = UIWidgets.create_simple_hotspot("viewport_button_2"),
 	viewport_button_3 = UIWidgets.create_simple_hotspot("viewport_button_3"),
@@ -2021,27 +2053,27 @@ local tbl_19 = {
 		}
 	}, "viewport_panel_divider_left_3"),
 	viewport_panel_divider_right_3 = UIWidgets.create_simple_texture("athanor_item_divider_edge", "viewport_panel_divider_right_3"),
-	viewport_level_title_1 = UIWidgets.create_simple_text(Localize("menu_weave_forge_magic_level_title"), "panel_level_title_1", nil, nil, tbl_10),
-	viewport_level_value_1 = UIWidgets.create_simple_text("0", "panel_level_value_1", nil, nil, tbl_11),
-	viewport_power_title_1 = UIWidgets.create_simple_text(Localize("menu_weave_forge_loadout_power_title"), "panel_power_title_1", nil, nil, tbl_10),
-	viewport_power_value_1 = UIWidgets.create_simple_text("0", "panel_power_value_1", nil, nil, tbl_11),
-	viewport_level_title_2 = UIWidgets.create_simple_text(Localize("menu_weave_forge_magic_level_title"), "panel_level_title_2", nil, nil, tbl_10),
-	viewport_level_value_2 = UIWidgets.create_simple_text("0", "panel_level_value_2", nil, nil, tbl_11),
-	viewport_power_title_2 = UIWidgets.create_simple_text(Localize("menu_weave_forge_loadout_power_title"), "panel_power_title_2", nil, nil, tbl_10),
-	viewport_power_value_2 = UIWidgets.create_simple_text("0", "panel_power_value_2", nil, nil, tbl_11),
-	viewport_level_title_3 = UIWidgets.create_simple_text(Localize("menu_weave_forge_magic_level_title"), "panel_level_title_3", nil, nil, tbl_10),
-	viewport_level_value_3 = UIWidgets.create_simple_text("0", "panel_level_value_3", nil, nil, tbl_11),
-	viewport_power_title_3 = UIWidgets.create_simple_text(Localize("menu_weave_forge_loadout_power_title"), "panel_power_title_3", nil, nil, tbl_10),
-	viewport_power_value_3 = UIWidgets.create_simple_text("0", "panel_power_value_3", nil, nil, tbl_11),
-	viewport_title_1 = UIWidgets.create_simple_text("", "viewport_title_1", nil, nil, tbl_7),
-	viewport_title_2 = UIWidgets.create_simple_text("", "viewport_title_2", nil, nil, tbl_7),
-	viewport_title_3 = UIWidgets.create_simple_text("", "viewport_title_3", nil, nil, tbl_7),
-	viewport_sub_title_1 = UIWidgets.create_simple_text("", "viewport_sub_title_1", nil, nil, tbl_8),
-	viewport_sub_title_2 = UIWidgets.create_simple_text("", "viewport_sub_title_2", nil, nil, tbl_8),
-	viewport_sub_title_3 = UIWidgets.create_simple_text("", "viewport_sub_title_3", nil, nil, tbl_8),
+	viewport_level_title_1 = UIWidgets.create_simple_text(Localize("menu_weave_forge_magic_level_title"), "panel_level_title_1", nil, nil, panel_value_title_style),
+	viewport_level_value_1 = UIWidgets.create_simple_text("0", "panel_level_value_1", nil, nil, panel_value_text_style),
+	viewport_power_title_1 = UIWidgets.create_simple_text(Localize("menu_weave_forge_loadout_power_title"), "panel_power_title_1", nil, nil, panel_value_title_style),
+	viewport_power_value_1 = UIWidgets.create_simple_text("0", "panel_power_value_1", nil, nil, panel_value_text_style),
+	viewport_level_title_2 = UIWidgets.create_simple_text(Localize("menu_weave_forge_magic_level_title"), "panel_level_title_2", nil, nil, panel_value_title_style),
+	viewport_level_value_2 = UIWidgets.create_simple_text("0", "panel_level_value_2", nil, nil, panel_value_text_style),
+	viewport_power_title_2 = UIWidgets.create_simple_text(Localize("menu_weave_forge_loadout_power_title"), "panel_power_title_2", nil, nil, panel_value_title_style),
+	viewport_power_value_2 = UIWidgets.create_simple_text("0", "panel_power_value_2", nil, nil, panel_value_text_style),
+	viewport_level_title_3 = UIWidgets.create_simple_text(Localize("menu_weave_forge_magic_level_title"), "panel_level_title_3", nil, nil, panel_value_title_style),
+	viewport_level_value_3 = UIWidgets.create_simple_text("0", "panel_level_value_3", nil, nil, panel_value_text_style),
+	viewport_power_title_3 = UIWidgets.create_simple_text(Localize("menu_weave_forge_loadout_power_title"), "panel_power_title_3", nil, nil, panel_value_title_style),
+	viewport_power_value_3 = UIWidgets.create_simple_text("0", "panel_power_value_3", nil, nil, panel_value_text_style),
+	viewport_title_1 = UIWidgets.create_simple_text("", "viewport_title_1", nil, nil, viewport_title_text_style),
+	viewport_title_2 = UIWidgets.create_simple_text("", "viewport_title_2", nil, nil, viewport_title_text_style),
+	viewport_title_3 = UIWidgets.create_simple_text("", "viewport_title_3", nil, nil, viewport_title_text_style),
+	viewport_sub_title_1 = UIWidgets.create_simple_text("", "viewport_sub_title_1", nil, nil, viewport_sub_title_text_style),
+	viewport_sub_title_2 = UIWidgets.create_simple_text("", "viewport_sub_title_2", nil, nil, viewport_sub_title_text_style),
+	viewport_sub_title_3 = UIWidgets.create_simple_text("", "viewport_sub_title_3", nil, nil, viewport_sub_title_text_style),
 	change_button_1 = UIWidgets.create_weave_equipment_button("change_button_1"),
 	change_button_3 = UIWidgets.create_weave_equipment_button("change_button_3"),
-	change_button_1_tooltip = UIWidgets.create_additional_option_tooltip("change_button_1", tbl_4.change_button_1.size, nil, {
+	change_button_1_tooltip = UIWidgets.create_additional_option_tooltip("change_button_1", scenegraph_definition.change_button_1.size, nil, {
 		title = Localize("menu_weave_forge_tooltip_choose_weapon_title"),
 		description = Localize("menu_weave_forge_tooltip_choose_weapon_description")
 	}, nil, nil, "top", nil, {
@@ -2049,7 +2081,7 @@ local tbl_19 = {
 		7,
 		0
 	}),
-	change_button_3_tooltip = UIWidgets.create_additional_option_tooltip("change_button_3", tbl_4.change_button_3.size, nil, {
+	change_button_3_tooltip = UIWidgets.create_additional_option_tooltip("change_button_3", scenegraph_definition.change_button_3.size, nil, {
 		title = Localize("menu_weave_forge_tooltip_choose_weapon_title"),
 		description = Localize("menu_weave_forge_tooltip_choose_weapon_description")
 	}, nil, nil, "top", nil, {
@@ -2057,46 +2089,46 @@ local tbl_19 = {
 		7,
 		0
 	}),
-	upgrade_button = fn_3("upgrade_button", tbl_4.upgrade_button.size, Localize("menu_weave_forge_upgrade_button"), 20),
-	forge_level_title = UIWidgets.create_simple_text(Localize("menu_weave_forge_level_title"), "forge_level_title", nil, nil, tbl_12),
-	forge_level_text = UIWidgets.create_simple_text("0", "forge_level_text", nil, nil, tbl_13)
+	upgrade_button = create_upgrade_button("upgrade_button", scenegraph_definition.upgrade_button.size, Localize("menu_weave_forge_upgrade_button"), 20),
+	forge_level_title = UIWidgets.create_simple_text(Localize("menu_weave_forge_level_title"), "forge_level_title", nil, nil, forge_level_text_style),
+	forge_level_text = UIWidgets.create_simple_text("0", "forge_level_text", nil, nil, forge_value_text_style)
 }
-local tbl_20 = {
-	tutorial_title = UIWidgets.create_simple_text("menu_weave_tutorial_athanor_01_empty_state_info_title", "tutorial_text_title", nil, nil, tbl_14),
-	tutorial_body = UIWidgets.create_simple_text("menu_weave_tutorial_athanor_01_empty_state_info_body", "tutorial_text_body", nil, nil, tbl_15)
+local weapon_crafting_tutorial_definitions = {
+	tutorial_title = UIWidgets.create_simple_text("menu_weave_tutorial_athanor_01_empty_state_info_title", "tutorial_text_title", nil, nil, tutorial_title_text_style),
+	tutorial_body = UIWidgets.create_simple_text("menu_weave_tutorial_athanor_01_empty_state_info_body", "tutorial_text_body", nil, nil, tutorial_body_text_style)
 }
-local tbl_21 = {
+local animation_definitions = {
 	upgrade = {
 		{
 			name = "fade_in",
 			start_progress = 0,
 			end_progress = 1,
-			init = function (arg_17_0, arg_17_1, arg_17_2, arg_17_3)
+			init = function (ui_scenegraph, scenegraph_definition, widgets, params)
 				-- function 17
-				local upgrade_bg = arg_17_2.upgrade_bg
-				local skull_circle = arg_17_2.skull_circle
-				local upgrade_text = arg_17_2.upgrade_text
-				local skull_circle_shade = arg_17_2.skull_circle_shade
+				local upgrade_bg = widgets.upgrade_bg
+				local skull_circle = widgets.skull_circle
+				local upgrade_text = widgets.upgrade_text
+				local skull_circle_shade = widgets.skull_circle_shade
 
 				upgrade_bg.alpha_multiplier = 0
 				skull_circle.alpha_multiplier = 0
 				upgrade_text.alpha_multiplier = 0
 				skull_circle_shade.alpha_multiplier = 0
 			end,
-			update = function (arg_18_0, arg_18_1, arg_18_2, arg_18_3, arg_18_4)
+			update = function (ui_scenegraph, scenegraph_definition, widgets, progress, params)
 				-- function 18
-				local easeOutCubic = math.easeOutCubic(arg_18_3)
-				local upgrade_bg = arg_18_2.upgrade_bg
-				local skull_circle = arg_18_2.skull_circle
-				local skull_circle_shade = arg_18_2.skull_circle_shade
-				local upgrade_text = arg_18_2.upgrade_text
+				local anim_progress = math.easeOutCubic(progress)
+				local upgrade_bg = widgets.upgrade_bg
+				local skull_circle = widgets.skull_circle
+				local skull_circle_shade = widgets.skull_circle_shade
+				local upgrade_text = widgets.upgrade_text
 
-				upgrade_bg.alpha_multiplier = easeOutCubic
-				skull_circle.alpha_multiplier = easeOutCubic
-				upgrade_text.alpha_multiplier = easeOutCubic
-				skull_circle_shade.alpha_multiplier = 0.02 * easeOutCubic
+				upgrade_bg.alpha_multiplier = anim_progress
+				skull_circle.alpha_multiplier = anim_progress
+				upgrade_text.alpha_multiplier = anim_progress
+				skull_circle_shade.alpha_multiplier = 0.02 * anim_progress
 			end,
-			on_complete = function (arg_19_0, arg_19_1, arg_19_2, arg_19_3)
+			on_complete = function (ui_scenegraph, scenegraph_definition, widgets, params)
 				-- function 19
 				return
 			end
@@ -2105,21 +2137,21 @@ local tbl_21 = {
 			name = "fade_out",
 			start_progress = 1,
 			end_progress = 2,
-			init = function (arg_20_0, arg_20_1, arg_20_2, arg_20_3)
+			init = function (ui_scenegraph, scenegraph_definition, widgets, params)
 				-- function 20
 				return
 			end,
-			update = function (arg_21_0, arg_21_1, arg_21_2, arg_21_3, arg_21_4)
+			update = function (ui_scenegraph, scenegraph_definition, widgets, progress, params)
 				-- function 21
-				local easeInCubic = math.easeInCubic(1 - arg_21_3)
-				local upgrade_bg = arg_21_2.upgrade_bg
-				local skull_circle = arg_21_2.skull_circle
-				local upgrade_text = arg_21_2.upgrade_text
+				local anim_progress = math.easeInCubic(1 - progress)
+				local upgrade_bg = widgets.upgrade_bg
+				local skull_circle = widgets.skull_circle
+				local upgrade_text = widgets.upgrade_text
 
-				upgrade_bg.alpha_multiplier = easeInCubic
-				upgrade_text.alpha_multiplier = easeInCubic
+				upgrade_bg.alpha_multiplier = anim_progress
+				upgrade_text.alpha_multiplier = anim_progress
 			end,
-			on_complete = function (arg_22_0, arg_22_1, arg_22_2, arg_22_3)
+			on_complete = function (ui_scenegraph, scenegraph_definition, widgets, params)
 				-- function 22
 				return
 			end
@@ -2128,17 +2160,18 @@ local tbl_21 = {
 			name = "font_size_increase",
 			start_progress = 0,
 			end_progress = 2,
-			init = function (arg_23_0, arg_23_1, arg_23_2, arg_23_3)
+			init = function (ui_scenegraph, scenegraph_definition, widgets, params)
 				-- function 23
 				return
 			end,
-			update = function (arg_24_0, arg_24_1, arg_24_2, arg_24_3, arg_24_4)
+			update = function (ui_scenegraph, scenegraph_definition, widgets, progress, params)
 				-- function 24
-				local easeOutCubic = math.easeOutCubic(arg_24_3)
+				local anim_progress = math.easeOutCubic(progress)
+				local upgrade_text = widgets.upgrade_text
 
-				arg_24_2.upgrade_text.offset[2] = -40 + 50 * easeOutCubic
+				upgrade_text.offset[2] = -40 + 50 * anim_progress
 			end,
-			on_complete = function (arg_25_0, arg_25_1, arg_25_2, arg_25_3)
+			on_complete = function (ui_scenegraph, scenegraph_definition, widgets, params)
 				-- function 25
 				return
 			end
@@ -2147,38 +2180,42 @@ local tbl_21 = {
 			name = "dissolve_in",
 			start_progress = 0,
 			end_progress = 0.5,
-			init = function (arg_26_0, arg_26_1, arg_26_2, arg_26_3)
+			init = function (ui_scenegraph, scenegraph_definition, widgets, params)
 				-- function 26
-				local gui = arg_26_3.parent:hdr_renderer().gui
-				local skull_circle_shade = arg_26_2.skull_circle_shade
-				local skull_circle = arg_26_2.skull_circle
-				local texture_id = skull_circle_shade.content.texture_id
-				local texture_id_2 = skull_circle.content.texture_id
-				local material = Gui.material(gui, texture_id)
-				local material_2 = Gui.material(gui, texture_id_2)
-				local num = 0
+				local parent = params.parent
+				local hdr_renderer = parent:hdr_renderer()
+				local gui = hdr_renderer.gui
+				local skull_circle_shade = widgets.skull_circle_shade
+				local skull_circle = widgets.skull_circle
+				local texture_skull_circle_shade = skull_circle_shade.content.texture_id
+				local texture_skull_circle = skull_circle.content.texture_id
+				local gui_material_skull_circle_shade = Gui.material(gui, texture_skull_circle_shade)
+				local gui_material_skull_circle = Gui.material(gui, texture_skull_circle)
+				local start_value = 0
 
-				Material.set_scalar(material, "progress", num)
-				Material.set_scalar(material_2, "progress", num)
+				Material.set_scalar(gui_material_skull_circle_shade, "progress", start_value)
+				Material.set_scalar(gui_material_skull_circle, "progress", start_value)
 			end,
-			update = function (arg_27_0, arg_27_1, arg_27_2, arg_27_3, arg_27_4)
+			update = function (ui_scenegraph, scenegraph_definition, widgets, progress, params)
 				-- function 27
-				local easeInCubic = math.easeInCubic(arg_27_3)
-				local gui = arg_27_4.parent:hdr_renderer().gui
-				local upgrade_bg = arg_27_2.upgrade_bg
-				local skull_circle = arg_27_2.skull_circle
-				local skull_circle_shade = arg_27_2.skull_circle_shade
-				local texture_id = upgrade_bg.content.texture_id
-				local texture_id_2 = skull_circle.content.texture_id
-				local texture_id_3 = skull_circle_shade.content.texture_id
-				local material = Gui.material(gui, texture_id)
-				local material_2 = Gui.material(gui, texture_id_2)
-				local material_3 = Gui.material(gui, texture_id_3)
+				local anim_progress = math.easeInCubic(progress)
+				local parent = params.parent
+				local hdr_renderer = parent:hdr_renderer()
+				local gui = hdr_renderer.gui
+				local upgrade_bg = widgets.upgrade_bg
+				local skull_circle = widgets.skull_circle
+				local skull_circle_shade = widgets.skull_circle_shade
+				local texture_upgrade_bg = upgrade_bg.content.texture_id
+				local texture_skull_circle = skull_circle.content.texture_id
+				local texture_skull_circle_shade = skull_circle_shade.content.texture_id
+				local gui_material_upgrade_bg = Gui.material(gui, texture_upgrade_bg)
+				local gui_material_skull_circle = Gui.material(gui, texture_skull_circle)
+				local gui_material_skull_circle_shade = Gui.material(gui, texture_skull_circle_shade)
 
-				Material.set_scalar(material_2, "progress", arg_27_3)
-				Material.set_scalar(material_3, "progress", arg_27_3)
+				Material.set_scalar(gui_material_skull_circle, "progress", progress)
+				Material.set_scalar(gui_material_skull_circle_shade, "progress", progress)
 			end,
-			on_complete = function (arg_28_0, arg_28_1, arg_28_2, arg_28_3)
+			on_complete = function (ui_scenegraph, scenegraph_definition, widgets, params)
 				-- function 28
 				return
 			end
@@ -2187,28 +2224,34 @@ local tbl_21 = {
 			name = "intensity",
 			start_progress = 0.5,
 			end_progress = 2,
-			init = function (arg_29_0, arg_29_1, arg_29_2, arg_29_3)
+			init = function (ui_scenegraph, scenegraph_definition, widgets, params)
 				-- function 29
-				local gui = arg_29_3.parent:hdr_renderer().gui
-				local texture_id = arg_29_2.skull_circle.content.texture_id
-				local material = Gui.material(gui, texture_id)
-				local num = 2
+				local parent = params.parent
+				local hdr_renderer = parent:hdr_renderer()
+				local gui = hdr_renderer.gui
+				local skull_circle = widgets.skull_circle
+				local texture_skull_circle = skull_circle.content.texture_id
+				local gui_material_skull_circle = Gui.material(gui, texture_skull_circle)
+				local start_value = 2
 
-				Material.set_scalar(material, "intensity", num)
+				Material.set_scalar(gui_material_skull_circle, "intensity", start_value)
 			end,
-			update = function (arg_30_0, arg_30_1, arg_30_2, arg_30_3, arg_30_4)
+			update = function (ui_scenegraph, scenegraph_definition, widgets, progress, params)
 				-- function 30
-				local easeInCubic = math.easeInCubic(arg_30_3)
-				local gui = arg_30_4.parent:hdr_renderer().gui
-				local texture_id = arg_30_2.skull_circle.content.texture_id
-				local material = Gui.material(gui, texture_id)
-				local num = 2
-				local num_2 = 10
-				local num_3 = num + math.clamp(arg_30_3, 0, 1) * num_2
+				local anim_progress = math.easeInCubic(progress)
+				local parent = params.parent
+				local hdr_renderer = parent:hdr_renderer()
+				local gui = hdr_renderer.gui
+				local skull_circle = widgets.skull_circle
+				local texture_skull_circle = skull_circle.content.texture_id
+				local gui_material_skull_circle = Gui.material(gui, texture_skull_circle)
+				local min = 2
+				local max = 10
+				local value = min + math.clamp(progress, 0, 1) * max
 
-				Material.set_scalar(material, "intensity", num_3)
+				Material.set_scalar(gui_material_skull_circle, "intensity", value)
 			end,
-			on_complete = function (arg_31_0, arg_31_1, arg_31_2, arg_31_3)
+			on_complete = function (ui_scenegraph, scenegraph_definition, widgets, params)
 				-- function 31
 				return
 			end
@@ -2217,27 +2260,29 @@ local tbl_21 = {
 			name = "dissolve_out",
 			start_progress = 1,
 			end_progress = 2.5,
-			init = function (arg_32_0, arg_32_1, arg_32_2, arg_32_3)
+			init = function (ui_scenegraph, scenegraph_definition, widgets, params)
 				-- function 32
 				return
 			end,
-			update = function (arg_33_0, arg_33_1, arg_33_2, arg_33_3, arg_33_4)
+			update = function (ui_scenegraph, scenegraph_definition, widgets, progress, params)
 				-- function 33
-				local easeInCubic = math.easeInCubic(1 - arg_33_3)
-				local gui = arg_33_4.parent:hdr_renderer().gui
-				local skull_circle_shade = arg_33_2.skull_circle_shade
-				local skull_circle = arg_33_2.skull_circle
-				local texture_id = skull_circle_shade.content.texture_id
-				local texture_id_2 = skull_circle.content.texture_id
-				local material = Gui.material(gui, texture_id)
-				local material_2 = Gui.material(gui, texture_id_2)
+				local anim_progress = math.easeInCubic(1 - progress)
+				local parent = params.parent
+				local hdr_renderer = parent:hdr_renderer()
+				local gui = hdr_renderer.gui
+				local skull_circle_shade = widgets.skull_circle_shade
+				local skull_circle = widgets.skull_circle
+				local texture_skull_circle_shade = skull_circle_shade.content.texture_id
+				local texture_skull_circle = skull_circle.content.texture_id
+				local gui_material_skull_circle_shade = Gui.material(gui, texture_skull_circle_shade)
+				local gui_material_skull_circle = Gui.material(gui, texture_skull_circle)
 
-				Material.set_scalar(material_2, "progress", easeInCubic)
-				Material.set_scalar(material, "progress", easeInCubic)
+				Material.set_scalar(gui_material_skull_circle, "progress", anim_progress)
+				Material.set_scalar(gui_material_skull_circle_shade, "progress", anim_progress)
 
-				skull_circle_shade.alpha_multiplier = 0.02 * easeInCubic
+				skull_circle_shade.alpha_multiplier = 0.02 * anim_progress
 			end,
-			on_complete = function (arg_34_0, arg_34_1, arg_34_2, arg_34_3)
+			on_complete = function (ui_scenegraph, scenegraph_definition, widgets, params)
 				-- function 34
 				return
 			end
@@ -2246,66 +2291,66 @@ local tbl_21 = {
 			name = "size_increase",
 			start_progress = 0,
 			end_progress = 4,
-			init = function (self, arg_35_1, arg_35_2, arg_35_3)
+			init = function (ui_scenegraph, scenegraph_definition, widgets, params)
 				-- function 35
-				local upgrade_bg = arg_35_2.upgrade_bg
-				local skull_circle = arg_35_2.skull_circle
-				local skull_circle_shade = arg_35_2.skull_circle_shade
-				local scenegraph_id = upgrade_bg.scenegraph_id
-				local scenegraph_id_2 = skull_circle.scenegraph_id
-				local scenegraph_id_3 = skull_circle_shade.scenegraph_id
-				local var_35_6 = arg_35_1[scenegraph_id]
-				local var_35_7 = arg_35_1[scenegraph_id_2]
-				local var_35_8 = arg_35_1[scenegraph_id_3]
-				local size = var_35_6.size
-				local size_2 = var_35_7.size
-				local size_3 = var_35_8.size
-				local var_35_12 = self[scenegraph_id]
-				local var_35_13 = self[scenegraph_id_2]
-				local var_35_14 = self[scenegraph_id_3]
-				local size_4 = var_35_12.size
-				local size_5 = var_35_13.size
-				local size_6 = var_35_14.size
+				local upgrade_bg = widgets.upgrade_bg
+				local skull_circle = widgets.skull_circle
+				local skull_circle_shade = widgets.skull_circle_shade
+				local upgrade_bg_scenegraph_id = upgrade_bg.scenegraph_id
+				local skull_circle_scenegraph_id = skull_circle.scenegraph_id
+				local skull_circle_shade_scenegraph_id = skull_circle_shade.scenegraph_id
+				local upgrade_bg_definition = scenegraph_definition[upgrade_bg_scenegraph_id]
+				local skull_circle_definition = scenegraph_definition[skull_circle_scenegraph_id]
+				local skull_circle_shade_definition = scenegraph_definition[skull_circle_shade_scenegraph_id]
+				local upgrade_bg_default_size = upgrade_bg_definition.size
+				local skull_circle_default_size = skull_circle_definition.size
+				local skull_circle_shade_default_size = skull_circle_shade_definition.size
+				local upgrade_bg_scenegraph = ui_scenegraph[upgrade_bg_scenegraph_id]
+				local skull_circle_scenegraph = ui_scenegraph[skull_circle_scenegraph_id]
+				local skull_circle_shade_scenegraph = ui_scenegraph[skull_circle_shade_scenegraph_id]
+				local upgrade_bg_size = upgrade_bg_scenegraph.size
+				local skull_circle_size = skull_circle_scenegraph.size
+				local skull_circle_shade_size = skull_circle_shade_scenegraph.size
 
-				size_5[1] = size_2[1]
-				size_5[2] = size_2[2]
-				size_6[1] = size_3[1]
-				size_6[2] = size_3[2]
-				size_4[1] = size[1]
-				size_4[2] = size[2]
+				skull_circle_size[1] = skull_circle_default_size[1]
+				skull_circle_size[2] = skull_circle_default_size[2]
+				skull_circle_shade_size[1] = skull_circle_shade_default_size[1]
+				skull_circle_shade_size[2] = skull_circle_shade_default_size[2]
+				upgrade_bg_size[1] = upgrade_bg_default_size[1]
+				upgrade_bg_size[2] = upgrade_bg_default_size[2]
 			end,
-			update = function (self, arg_36_1, arg_36_2, arg_36_3, arg_36_4)
+			update = function (ui_scenegraph, scenegraph_definition, widgets, progress, params)
 				-- function 36
-				local easeOutCubic = math.easeOutCubic(arg_36_3)
-				local upgrade_bg = arg_36_2.upgrade_bg
-				local skull_circle = arg_36_2.skull_circle
-				local skull_circle_shade = arg_36_2.skull_circle_shade
-				local scenegraph_id = upgrade_bg.scenegraph_id
-				local scenegraph_id_2 = skull_circle.scenegraph_id
-				local scenegraph_id_3 = skull_circle_shade.scenegraph_id
-				local var_36_7 = arg_36_1[scenegraph_id]
-				local var_36_8 = arg_36_1[scenegraph_id_2]
-				local var_36_9 = arg_36_1[scenegraph_id_3]
-				local size = var_36_7.size
-				local size_2 = var_36_8.size
-				local size_3 = var_36_9.size
-				local var_36_13 = self[scenegraph_id]
-				local var_36_14 = self[scenegraph_id_2]
-				local var_36_15 = self[scenegraph_id_3]
-				local size_4 = var_36_13.size
-				local size_5 = var_36_14.size
-				local size_6 = var_36_15.size
-				local num = 600
-				local num_2 = 2200
+				local anim_progress = math.easeOutCubic(progress)
+				local upgrade_bg = widgets.upgrade_bg
+				local skull_circle = widgets.skull_circle
+				local skull_circle_shade = widgets.skull_circle_shade
+				local upgrade_bg_scenegraph_id = upgrade_bg.scenegraph_id
+				local skull_circle_scenegraph_id = skull_circle.scenegraph_id
+				local skull_circle_shade_scenegraph_id = skull_circle_shade.scenegraph_id
+				local upgrade_bg_definition = scenegraph_definition[upgrade_bg_scenegraph_id]
+				local skull_circle_definition = scenegraph_definition[skull_circle_scenegraph_id]
+				local skull_circle_shade_definition = scenegraph_definition[skull_circle_shade_scenegraph_id]
+				local upgrade_bg_default_size = upgrade_bg_definition.size
+				local skull_circle_default_size = skull_circle_definition.size
+				local skull_circle_shade_default_size = skull_circle_shade_definition.size
+				local upgrade_bg_scenegraph = ui_scenegraph[upgrade_bg_scenegraph_id]
+				local skull_circle_scenegraph = ui_scenegraph[skull_circle_scenegraph_id]
+				local skull_circle_shade_scenegraph = ui_scenegraph[skull_circle_shade_scenegraph_id]
+				local upgrade_bg_size = upgrade_bg_scenegraph.size
+				local skull_circle_size = skull_circle_scenegraph.size
+				local skull_circle_shade_size = skull_circle_shade_scenegraph.size
+				local size_increase = 600
+				local shade_size_increase = 2200
 
-				size_5[1] = size_2[1] + num * easeOutCubic
-				size_5[2] = size_2[2] + num * easeOutCubic
-				size_6[1] = size_3[1] + num_2 * easeOutCubic
-				size_6[2] = size_3[2] + num_2 * easeOutCubic
-				size_4[1] = size[1] + 200 * (1 - easeOutCubic)
-				size_4[2] = size[2] + 200 * (1 - easeOutCubic)
+				skull_circle_size[1] = skull_circle_default_size[1] + size_increase * anim_progress
+				skull_circle_size[2] = skull_circle_default_size[2] + size_increase * anim_progress
+				skull_circle_shade_size[1] = skull_circle_shade_default_size[1] + shade_size_increase * anim_progress
+				skull_circle_shade_size[2] = skull_circle_shade_default_size[2] + shade_size_increase * anim_progress
+				upgrade_bg_size[1] = upgrade_bg_default_size[1] + 200 * (1 - anim_progress)
+				upgrade_bg_size[2] = upgrade_bg_default_size[2] + 200 * (1 - anim_progress)
 			end,
-			on_complete = function (arg_37_0, arg_37_1, arg_37_2, arg_37_3)
+			on_complete = function (ui_scenegraph, scenegraph_definition, widgets, params)
 				-- function 37
 				return
 			end
@@ -2316,17 +2361,17 @@ local tbl_21 = {
 			name = "fade_in",
 			start_progress = 0,
 			end_progress = 0.3,
-			init = function (arg_38_0, arg_38_1, arg_38_2, arg_38_3)
+			init = function (ui_scenegraph, scenegraph_definition, widgets, params)
 				-- function 38
-				arg_38_3.render_settings.alpha_multiplier = 0
+				params.render_settings.alpha_multiplier = 0
 			end,
-			update = function (arg_39_0, arg_39_1, arg_39_2, arg_39_3, arg_39_4)
+			update = function (ui_scenegraph, scenegraph_definition, widgets, progress, params)
 				-- function 39
-				local easeOutCubic = math.easeOutCubic(arg_39_3)
+				local anim_progress = math.easeOutCubic(progress)
 
-				arg_39_4.render_settings.alpha_multiplier = easeOutCubic
+				params.render_settings.alpha_multiplier = anim_progress
 			end,
-			on_complete = function (arg_40_0, arg_40_1, arg_40_2, arg_40_3)
+			on_complete = function (ui_scenegraph, scenegraph_definition, widgets, params)
 				-- function 40
 				return
 			end
@@ -2337,17 +2382,17 @@ local tbl_21 = {
 			name = "fade_out",
 			start_progress = 0,
 			end_progress = 0.3,
-			init = function (arg_41_0, arg_41_1, arg_41_2, arg_41_3)
+			init = function (ui_scenegraph, scenegraph_definition, widgets, params)
 				-- function 41
-				arg_41_3.render_settings.alpha_multiplier = 1
+				params.render_settings.alpha_multiplier = 1
 			end,
-			update = function (arg_42_0, arg_42_1, arg_42_2, arg_42_3, arg_42_4)
+			update = function (ui_scenegraph, scenegraph_definition, widgets, progress, params)
 				-- function 42
-				local easeOutCubic = math.easeOutCubic(arg_42_3)
+				local anim_progress = math.easeOutCubic(progress)
 
-				arg_42_4.render_settings.alpha_multiplier = 1 - easeOutCubic
+				params.render_settings.alpha_multiplier = 1 - anim_progress
 			end,
-			on_complete = function (arg_43_0, arg_43_1, arg_43_2, arg_43_3)
+			on_complete = function (ui_scenegraph, scenegraph_definition, widgets, params)
 				-- function 43
 				return
 			end
@@ -2356,11 +2401,11 @@ local tbl_21 = {
 }
 
 return {
-	top_widgets = tbl_19,
-	bottom_widgets = tbl_16,
-	top_hdr_widgets = tbl_17,
-	bottom_hdr_widgets = tbl_18,
-	scenegraph_definition = tbl_4,
-	animation_definitions = tbl_21,
-	weapon_crafting_tutorial_definitions = tbl_20
+	top_widgets = top_widgets,
+	bottom_widgets = bottom_widgets,
+	top_hdr_widgets = top_hdr_widgets,
+	bottom_hdr_widgets = bottom_hdr_widgets,
+	scenegraph_definition = scenegraph_definition,
+	animation_definitions = animation_definitions,
+	weapon_crafting_tutorial_definitions = weapon_crafting_tutorial_definitions
 }

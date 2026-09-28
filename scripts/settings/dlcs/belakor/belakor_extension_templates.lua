@@ -1,6 +1,6 @@
 -- chunkname: @scripts/settings/dlcs/belakor/belakor_extension_templates.lua
 
-return {
+local unit_extension_templates = {
 	orb_pickup_unit = {
 		go_type = "orb_pickup_unit",
 		self_owned_extensions = {
@@ -187,3 +187,5 @@ return {
 		}
 	}
 }
+
+return unit_extension_templates

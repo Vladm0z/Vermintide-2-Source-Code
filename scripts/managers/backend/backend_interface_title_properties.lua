@@ -2,7 +2,7 @@
 
 BackendInterfaceTitleProperties = class(BackendInterfaceTitleProperties)
 
-BackendInterfaceTitleProperties.init = function (arg_1_0)
+BackendInterfaceTitleProperties.init = function (self)
 	-- function 1
 	return
 end
@@ -10,14 +10,14 @@ end
 BackendInterfaceTitleProperties._refresh_if_needed = function (self)
 	-- function 2
 	if not self._properties then
-		local get_title_properties = Backend.get_title_properties()
-		local tbl = {}
+		local data = Backend.get_title_properties()
+		local properties = {}
 
-		for k, v in pairs(get_title_properties) do
-			tbl[k] = cjson.decode(v)
+		for key, value in pairs(data) do
+			properties[key] = cjson.decode(value)
 		end
 
-		self._properties = tbl
+		self._properties = properties
 	end
 end
 
@@ -28,13 +28,15 @@ BackendInterfaceTitleProperties.get = function (self)
 	return self._properties
 end
 
-BackendInterfaceTitleProperties.get_value = function (self, arg_4_1)
+BackendInterfaceTitleProperties.get_value = function (self, key)
 	-- function 4
 	self:_refresh_if_needed()
 
-	local var_4_0 = self._properties[arg_4_1]
+	local value = self._properties[key]
 
-	fassert(var_4_0 ~= nil, "No such key '%s'", arg_4_1)
+	fassert(value ~= nil, "No such key '%s'", key)
 
-	return (cjson.decode(var_4_0))
+	local decoded = cjson.decode(value)
+
+	return decoded
 end

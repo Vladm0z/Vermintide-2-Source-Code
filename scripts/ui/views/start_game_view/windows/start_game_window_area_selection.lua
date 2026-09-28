@@ -1,22 +1,22 @@
 -- chunkname: @scripts/ui/views/start_game_view/windows/start_game_window_area_selection.lua
 
-local var_0_0 = local_require("scripts/ui/views/start_game_view/windows/definitions/start_game_window_area_selection_definitions")
-local widgets = var_0_0.widgets
-local area_widgets = var_0_0.area_widgets
-local scenegraph_definition = var_0_0.scenegraph_definition
-local animation_definitions = var_0_0.animation_definitions
-local str = "StartGameWindowAreaSelection"
+local definitions = local_require("scripts/ui/views/start_game_view/windows/definitions/start_game_window_area_selection_definitions")
+local widget_definitions = definitions.widgets
+local area_widget_definitions = definitions.area_widgets
+local scenegraph_definition = definitions.scenegraph_definition
+local animation_definitions = definitions.animation_definitions
+local VIDEO_REFERENCE_NAME = "StartGameWindowAreaSelection"
 
 StartGameWindowAreaSelection = class(StartGameWindowAreaSelection)
 StartGameWindowAreaSelection.NAME = "StartGameWindowAreaSelection"
 
-StartGameWindowAreaSelection.on_enter = function (self, arg_1_1, arg_1_2)
+StartGameWindowAreaSelection.on_enter = function (self, params, offset)
 	-- function 1
 	print("[StartGameWindow] Enter Substate StartGameWindowAreaSelection")
 
-	self.parent = arg_1_1.parent
+	self.parent = params.parent
 
-	local ingame_ui_context = arg_1_1.ingame_ui_context
+	local ingame_ui_context = params.ingame_ui_context
 
 	self.ui_renderer = ingame_ui_context.ui_renderer
 	self.input_manager = ingame_ui_context.input_manager
@@ -27,16 +27,17 @@ StartGameWindowAreaSelection.on_enter = function (self, arg_1_1, arg_1_2)
 	}
 	self._has_exited = false
 
-	local player = Managers.player
+	local player_manager = Managers.player
+	local local_player = player_manager:local_player()
 
-	self._stats_id = player:local_player():stats_id()
-	self.player_manager = player
+	self._stats_id = local_player:stats_id()
+	self.player_manager = player_manager
 	self.peer_id = ingame_ui_context.peer_id
 	self._animations = {}
 
-	self:create_ui_elements(arg_1_1, arg_1_2)
+	self:create_ui_elements(params, offset)
 
-	arg_1_1.return_layout_name = self.parent:get_selected_game_mode_layout_name()
+	params.return_layout_name = self.parent:get_selected_game_mode_layout_name()
 	self._widgets_by_name.select_button.content.button_hotspot.disable_button = true
 
 	self:_setup_area_widgets()
@@ -44,202 +45,216 @@ StartGameWindowAreaSelection.on_enter = function (self, arg_1_1, arg_1_2)
 	self.parent:set_input_description("select_mission")
 end
 
-StartGameWindowAreaSelection.create_ui_elements = function (self, arg_2_1, arg_2_2)
+StartGameWindowAreaSelection.create_ui_elements = function (self, params, offset)
 	-- function 2
-	local init_scenegraph = UISceneGraph.init_scenegraph(scenegraph_definition)
+	local ui_scenegraph = UISceneGraph.init_scenegraph(scenegraph_definition)
 
-	self.ui_scenegraph = init_scenegraph
+	self.ui_scenegraph = ui_scenegraph
 
-	local tbl = {}
-	local tbl_2 = {}
+	local widgets = {}
+	local widgets_by_name = {}
 
-	for k, v in pairs(widgets) do
-		local var_2_3 = UIWidget.init(v)
+	for name, widget_definition in pairs(widget_definitions) do
+		local widget = UIWidget.init(widget_definition)
 
-		tbl[#tbl + 1] = var_2_3
-		tbl_2[k] = var_2_3
+		widgets[#widgets + 1] = widget
+		widgets_by_name[name] = widget
 	end
 
-	self._widgets = tbl
-	self._widgets_by_name = tbl_2
+	self._widgets = widgets
+	self._widgets_by_name = widgets_by_name
 
-	local tbl_3 = {}
-	local tbl_4 = {}
+	local area_widgets = {}
+	local area_widgets_by_name = {}
 
-	for k_2, v_2 in pairs(area_widgets) do
-		local var_2_6 = UIWidget.init(v_2)
+	for name, widget_definition in pairs(area_widget_definitions) do
+		local widget = UIWidget.init(widget_definition)
 
-		tbl_3[#tbl_3 + 1] = var_2_6
-		tbl_4[k_2] = var_2_6
+		area_widgets[#area_widgets + 1] = widget
+		area_widgets_by_name[name] = widget
 	end
 
-	self._area_widgets = tbl_3
-	self._area_widgets_by_name = tbl_4
+	self._area_widgets = area_widgets
+	self._area_widgets_by_name = area_widgets_by_name
 
 	UIRenderer.clear_scenegraph_queue(self.ui_renderer)
 
-	self.ui_animator = UIAnimator:new(init_scenegraph, animation_definitions)
+	self.ui_animator = UIAnimator:new(ui_scenegraph, animation_definitions)
 
-	if not arg_2_2 then
-		local local_position = init_scenegraph.window.local_position
+	if offset then
+		local window_position = ui_scenegraph.window.local_position
 
-		local_position[1] = local_position[1] + arg_2_2[1]
-		local_position[2] = local_position[2] + arg_2_2[2]
-		local_position[3] = local_position[3] + arg_2_2[3]
+		window_position[1] = window_position[1] + offset[1]
+		window_position[2] = window_position[2] + offset[2]
+		window_position[3] = window_position[3] + offset[3]
 	end
 end
 
 StartGameWindowAreaSelection._setup_area_widgets = function (self)
 	-- function 3
-	local tbl = {}
+	local sorted_area_settings = {}
 
-	for k, v in pairs(AreaSettings) do
-		if not v.exclude_from_area_selection then
-			tbl[#tbl + 1] = v
+	for _, settings in pairs(AreaSettings) do
+		if not settings.exclude_from_area_selection then
+			sorted_area_settings[#sorted_area_settings + 1] = settings
 		end
 	end
 
-	local function fn(self, arg_4_1)
+	local function sort_func(a, b)
 		-- function 4
-		return self.sort_order < arg_4_1.sort_order
+		return a.sort_order < b.sort_order
 	end
 
-	table.sort(tbl, fn)
+	table.sort(sorted_area_settings, sort_func)
 
-	local count = #tbl
-	local var_3_3 = scenegraph_definition.area_root.size[1]
-	local num = 25
-	local num_2 = -((var_3_3 * count + num * (count - 1)) / 2) + var_3_3 / 2
-	local tbl_2 = {}
+	local num_areas = #sorted_area_settings
+	local widget_size = scenegraph_definition.area_root.size
+	local widget_width = widget_size[1]
+	local spacing = 25
+	local total_width = widget_width * num_areas + spacing * (num_areas - 1)
+	local width_offset = -(total_width / 2) + widget_width / 2
+	local assigned_widgets = {}
 	local statistics_db = self.statistics_db
-	local _stats_id = self._stats_id
+	local stats_id = self._stats_id
 
-	for k_2 = 1, count do
-		local var_3_9 = tbl[k_2]
-		local var_3_10 = self._area_widgets[k_2]
+	for i = 1, num_areas do
+		local settings = sorted_area_settings[i]
+		local widget = self._area_widgets[i]
 
-		tbl_2[k_2] = var_3_10
+		assigned_widgets[i] = widget
 
-		local content
+		local level_image = settings.level_image
+		local content = widget.content
 
-		content.icon, content = var_3_9.level_image, var_3_10.content
+		content.icon = level_image
 
-		local flag = true
-		local dlc_name = var_3_9.dlc_name
+		local unlocked = true
+		local dlc_name = settings.dlc_name
 
-		if not dlc_name then
-			flag = Managers.unlock:is_dlc_unlocked(dlc_name)
+		if dlc_name then
+			unlocked = Managers.unlock:is_dlc_unlocked(dlc_name)
 		end
 
-		content.area_name, content.locked = var_3_9.name, not flag
+		local name = settings.name
 
-		local huge = math.huge
-		local acts = var_3_9.acts
-		local count_2 = #acts
+		content.locked = not unlocked
+		content.area_name = name
 
-		for l = 1, count_2 do
-			local var_3_17 = acts[l]
-			local highest_completed_difficulty_index_by_act = LevelUnlockUtils.highest_completed_difficulty_index_by_act(statistics_db, _stats_id, var_3_17)
+		local highest_completed_difficulty_index = math.huge
+		local acts = settings.acts
+		local num_acts = #acts
 
-			if highest_completed_difficulty_index_by_act < huge then
-				huge = highest_completed_difficulty_index_by_act
+		for j = 1, num_acts do
+			local act_name = acts[j]
+			local difficulty_index = LevelUnlockUtils.highest_completed_difficulty_index_by_act(statistics_db, stats_id, act_name)
+
+			if difficulty_index < highest_completed_difficulty_index then
+				highest_completed_difficulty_index = difficulty_index
 			end
 		end
 
-		content.frame = UIWidgetUtils.get_level_frame_by_difficulty_index(huge)
-		var_3_10.offset[1] = num_2
-		num_2 = num_2 + var_3_3 + num
+		local frame_texture = UIWidgetUtils.get_level_frame_by_difficulty_index(highest_completed_difficulty_index)
+
+		content.frame = frame_texture
+
+		local offset = widget.offset
+
+		offset[1] = width_offset
+		width_offset = width_offset + widget_width + spacing
 	end
 
-	self._active_area_widgets = tbl_2
+	self._active_area_widgets = assigned_widgets
 end
 
-StartGameWindowAreaSelection._select_area_by_name = function (self, arg_5_1)
+StartGameWindowAreaSelection._select_area_by_name = function (self, area_name)
 	-- function 5
-	local _active_area_widgets = self._active_area_widgets
+	local active_area_widgets = self._active_area_widgets
 
-	if not _active_area_widgets then
-		for i = 1, #_active_area_widgets do
-			local var_5_1 = _active_area_widgets[i]
-			local flag = var_5_1.content.area_name == arg_5_1
+	if active_area_widgets then
+		for i = 1, #active_area_widgets do
+			local widget = active_area_widgets[i]
+			local content = widget.content
+			local is_selected = content.area_name == area_name
+			local button_hotspot = widget.content.button_hotspot
 
-			var_5_1.content.button_hotspot.is_selected = flag
+			button_hotspot.is_selected = is_selected
 		end
 	end
 
-	self._selected_area_name = arg_5_1
+	self._selected_area_name = area_name
 
-	self:_set_area_presentation_info(arg_5_1)
+	self:_set_area_presentation_info(area_name)
 
-	self._widgets_by_name.select_button.content.button_hotspot.disable_button = arg_5_1 == nil
+	self._widgets_by_name.select_button.content.button_hotspot.disable_button = area_name == nil
 end
 
-StartGameWindowAreaSelection._set_area_presentation_info = function (self, arg_6_1)
+StartGameWindowAreaSelection._set_area_presentation_info = function (self, area_name)
 	-- function 6
-	local str = ""
-	local str_2 = ""
-	local flag = true
-	local var_6_3 = AreaSettings[arg_6_1]
+	local title_text = ""
+	local description_text = ""
+	local unlocked = true
+	local settings = AreaSettings[area_name]
 
-	if not var_6_3 then
-		local dlc_name = var_6_3.dlc_name
+	if settings then
+		local dlc_name = settings.dlc_name
 
-		if not dlc_name then
-			flag = Managers.unlock:is_dlc_unlocked(dlc_name)
+		if dlc_name then
+			unlocked = Managers.unlock:is_dlc_unlocked(dlc_name)
 		end
 
-		str = Localize(var_6_3.display_name)
-		str_2 = Localize(var_6_3.description_text)
+		title_text = Localize(settings.display_name)
+		description_text = Localize(settings.description_text)
 	end
 
-	local _widgets_by_name = self._widgets_by_name
+	local widgets_by_name = self._widgets_by_name
 
-	_widgets_by_name.area_title.content.text = str
-	_widgets_by_name.description_text.content.text = str_2
+	widgets_by_name.area_title.content.text = title_text
+	widgets_by_name.description_text.content.text = description_text
 
-	if not flag then
-		_widgets_by_name.not_owned_text.content.visible = true
-		_widgets_by_name.select_button.content.visible = true
-		_widgets_by_name.requirements_not_met_text.content.visible = false
-		_widgets_by_name.select_button.content.title_text = Localize("area_selection_visit_store")
+	if not unlocked then
+		widgets_by_name.not_owned_text.content.visible = true
+		widgets_by_name.select_button.content.visible = true
+		widgets_by_name.requirements_not_met_text.content.visible = false
+		widgets_by_name.select_button.content.title_text = Localize("area_selection_visit_store")
 	else
-		local flag_2 = true
+		local requirements_fulfilled = true
 
-		if not var_6_3.unlock_requirement_function then
-			local stats_id = Managers.player:local_player():stats_id()
+		if settings.unlock_requirement_function then
+			local local_player = Managers.player:local_player()
+			local stats_id = local_player:stats_id()
 			local statistics_db = Managers.player:statistics_db()
 
-			flag_2 = var_6_3.unlock_requirement_function(statistics_db, stats_id)
+			requirements_fulfilled = settings.unlock_requirement_function(statistics_db, stats_id)
 		end
 
-		if not flag_2 then
-			_widgets_by_name.select_button.content.visible = true
-			_widgets_by_name.requirements_not_met_text.content.visible = false
-			_widgets_by_name.select_button.content.title_text = Localize("menu_select")
+		if requirements_fulfilled then
+			widgets_by_name.select_button.content.visible = true
+			widgets_by_name.requirements_not_met_text.content.visible = false
+			widgets_by_name.select_button.content.title_text = Localize("menu_select")
 		else
-			_widgets_by_name.select_button.content.visible = false
-			_widgets_by_name.requirements_not_met_text.content.visible = true
-			_widgets_by_name.requirements_not_met_text.content.text = var_6_3.unlock_requirement_description
+			widgets_by_name.select_button.content.visible = false
+			widgets_by_name.requirements_not_met_text.content.visible = true
+			widgets_by_name.requirements_not_met_text.content.text = settings.unlock_requirement_description
 		end
 
-		_widgets_by_name.not_owned_text.content.visible = false
+		widgets_by_name.not_owned_text.content.visible = false
 	end
 
-	local video_settings = var_6_3.video_settings
+	local video_settings = settings.video_settings
 
-	if not video_settings then
+	if video_settings then
 		local material_name = video_settings.material_name
 		local resource = video_settings.resource
 
 		self:_setup_video_player(material_name, resource)
 	end
 
-	local menu_sound_event = var_6_3.menu_sound_event
+	local menu_sound_event = settings.menu_sound_event
 
 	self:_play_sound(menu_sound_event)
 end
 
-StartGameWindowAreaSelection.on_exit = function (self, arg_7_1)
+StartGameWindowAreaSelection.on_exit = function (self, params)
 	-- function 7
 	print("[StartGameWindow] Exit Substate StartGameWindowAreaSelection")
 
@@ -251,91 +266,96 @@ StartGameWindowAreaSelection.on_exit = function (self, arg_7_1)
 
 	self:_destroy_video_player()
 
-	arg_7_1.return_layout_name = nil
+	params.return_layout_name = nil
 
 	self:_play_sound("Stop_hud_menu_area_music")
 end
 
-StartGameWindowAreaSelection.update = function (self, arg_8_1, arg_8_2)
+StartGameWindowAreaSelection.update = function (self, dt, t)
 	-- function 8
-	self:_update_animations(arg_8_1)
-	self:_handle_input(arg_8_1, arg_8_2)
-	self:draw(arg_8_1)
+	self:_update_animations(dt)
+	self:_handle_input(dt, t)
+	self:draw(dt)
 end
 
-StartGameWindowAreaSelection.post_update = function (self, arg_9_1, arg_9_2)
+StartGameWindowAreaSelection.post_update = function (self, dt, t)
 	-- function 9
-	self:draw_video(arg_9_1)
+	self:draw_video(dt)
 end
 
-StartGameWindowAreaSelection._update_animations = function (self, arg_10_1)
+StartGameWindowAreaSelection._update_animations = function (self, dt)
 	-- function 10
 	local ui_animator = self.ui_animator
 
-	ui_animator:update(arg_10_1)
+	ui_animator:update(dt)
 
-	local _animations = self._animations
+	local animations = self._animations
 
-	for k, v in pairs(_animations) do
-		if not ui_animator:is_animation_completed(v) then
-			ui_animator:stop_animation(v)
+	for animation_name, animation_id in pairs(animations) do
+		if ui_animator:is_animation_completed(animation_id) then
+			ui_animator:stop_animation(animation_id)
 
-			_animations[k] = nil
+			animations[animation_name] = nil
 		end
 	end
 
-	local _active_area_widgets = self._active_area_widgets
+	local active_area_widgets = self._active_area_widgets
 
-	if not _active_area_widgets then
-		for k_2 = 1, #_active_area_widgets do
-			local var_10_3 = _active_area_widgets[k_2]
+	if active_area_widgets then
+		for i = 1, #active_area_widgets do
+			local widget = active_area_widgets[i]
 
-			self:_animate_area_widget(var_10_3, arg_10_1)
+			self:_animate_area_widget(widget, dt)
 		end
 	end
 end
 
-StartGameWindowAreaSelection._is_button_pressed = function (arg_11_0, arg_11_1)
+StartGameWindowAreaSelection._is_button_pressed = function (self, widget)
 	-- function 11
-	local button_hotspot = arg_11_1.content.button_hotspot
+	local content = widget.content
+	local hotspot = content.button_hotspot
 
-	if not button_hotspot.on_release then
-		button_hotspot.on_release = false
+	if hotspot.on_release then
+		hotspot.on_release = false
 
 		return true
 	end
 end
 
-StartGameWindowAreaSelection._is_button_hovered = function (arg_12_0, arg_12_1)
+StartGameWindowAreaSelection._is_button_hovered = function (self, widget)
 	-- function 12
-	if not arg_12_1.content.button_hotspot.on_hover_enter then
+	local content = widget.content
+	local hotspot = content.button_hotspot
+
+	if hotspot.on_hover_enter then
 		return true
 	end
 end
 
 StartGameWindowAreaSelection._update_area_option = function (self)
 	-- function 13
-	local get_selected_area_name = self.parent:get_selected_area_name()
+	local area_name = self.parent:get_selected_area_name()
 
-	if get_selected_area_name ~= self._selected_area_name then
-		self:_select_area_by_name(get_selected_area_name)
+	if area_name ~= self._selected_area_name then
+		self:_select_area_by_name(area_name)
 	end
 end
 
-StartGameWindowAreaSelection._handle_input = function (self, arg_14_1, arg_14_2)
+StartGameWindowAreaSelection._handle_input = function (self, dt, t)
 	-- function 14
-	local _active_area_widgets = self._active_area_widgets
+	local active_area_widgets = self._active_area_widgets
 
-	if not _active_area_widgets then
-		for i = 1, #_active_area_widgets do
-			local var_14_1 = _active_area_widgets[i]
+	if active_area_widgets then
+		for i = 1, #active_area_widgets do
+			local widget = active_area_widgets[i]
 
-			if not self:_is_button_hovered(var_14_1) then
+			if self:_is_button_hovered(widget) then
 				self:_play_sound("play_gui_lobby_button_02_mission_act_hover")
 			end
 
-			if not self:_is_button_pressed(var_14_1) then
-				local area_name = var_14_1.content.area_name
+			if self:_is_button_pressed(widget) then
+				local content = widget.content
+				local area_name = content.area_name
 
 				if self._selected_area_name ~= area_name then
 					self:_select_area_by_name(area_name)
@@ -346,48 +366,49 @@ StartGameWindowAreaSelection._handle_input = function (self, arg_14_1, arg_14_2)
 		end
 	end
 
-	local select_button = self._widgets_by_name.select_button
+	local widgets_by_name = self._widgets_by_name
+	local select_button = widgets_by_name.select_button
 
-	UIWidgetUtils.animate_default_button(select_button, arg_14_1)
+	UIWidgetUtils.animate_default_button(select_button, dt)
 
-	if not self:_is_button_hovered(select_button) then
+	if self:_is_button_hovered(select_button) then
 		self:_play_sound("play_gui_lobby_button_01_difficulty_confirm_hover")
 	end
 
-	if not self:_is_button_pressed(select_button) then
+	if self:_is_button_pressed(select_button) then
 		self:_on_select_button_pressed()
 	end
 end
 
 StartGameWindowAreaSelection._on_select_button_pressed = function (self)
 	-- function 15
-	local _selected_area_name = self._selected_area_name
-	local var_15_1 = AreaSettings[_selected_area_name]
-	local flag = true
-	local dlc_name = var_15_1.dlc_name
+	local area_name = self._selected_area_name
+	local settings = AreaSettings[area_name]
+	local unlocked = true
+	local dlc_name = settings.dlc_name
 
-	if not dlc_name then
-		flag = Managers.unlock:is_dlc_unlocked(dlc_name)
+	if dlc_name then
+		unlocked = Managers.unlock:is_dlc_unlocked(dlc_name)
 	end
 
-	if not flag then
+	if unlocked then
 		local parent = self.parent
-		local get_selected_layout_name = parent:get_selected_layout_name()
-		local var_15_6
+		local selected_layout_name = parent:get_selected_layout_name()
+		local new_layout_name
 
-		if get_selected_layout_name == "area_selection_custom" then
-			var_15_6 = "mission_selection_custom"
-		elseif get_selected_layout_name == "area_selection_twitch" then
-			var_15_6 = "mission_selection_twitch"
+		if selected_layout_name == "area_selection_custom" then
+			new_layout_name = "mission_selection_custom"
+		elseif selected_layout_name == "area_selection_twitch" then
+			new_layout_name = "mission_selection_twitch"
 		end
 
-		parent:set_selected_area_name(_selected_area_name)
-		parent:set_layout_by_name(var_15_6)
+		parent:set_selected_area_name(area_name)
+		parent:set_layout_by_name(new_layout_name)
 	else
-		local store_page_url = var_15_1.store_page_url
+		local store_page_url = settings.store_page_url
 
-		if not store_page_url then
-			print("store_page_url", _selected_area_name, store_page_url)
+		if store_page_url then
+			print("store_page_url", area_name, store_page_url)
 			self:_show_storepage(store_page_url)
 		end
 	end
@@ -395,79 +416,80 @@ StartGameWindowAreaSelection._on_select_button_pressed = function (self)
 	self:_play_sound("Play_hud_menu_area_start")
 end
 
-StartGameWindowAreaSelection.draw = function (self, arg_16_1)
+StartGameWindowAreaSelection.draw = function (self, dt)
 	-- function 16
 	local ui_renderer = self.ui_renderer
 	local ui_scenegraph = self.ui_scenegraph
-	local window_input_service = self.parent:window_input_service()
+	local input_service = self.parent:window_input_service()
 
-	UIRenderer.begin_pass(ui_renderer, ui_scenegraph, window_input_service, arg_16_1, nil, self.render_settings)
+	UIRenderer.begin_pass(ui_renderer, ui_scenegraph, input_service, dt, nil, self.render_settings)
 
-	local _widgets = self._widgets
+	local widgets = self._widgets
 
-	for i = 1, #_widgets do
-		local var_16_4 = _widgets[i]
+	for i = 1, #widgets do
+		local widget = widgets[i]
 
-		UIRenderer.draw_widget(ui_renderer, var_16_4)
+		UIRenderer.draw_widget(ui_renderer, widget)
 	end
 
-	local _active_area_widgets = self._active_area_widgets
+	local active_area_widgets = self._active_area_widgets
 
-	if not _active_area_widgets then
-		for j = 1, #_active_area_widgets do
-			local var_16_6 = _active_area_widgets[j]
+	if active_area_widgets then
+		for i = 1, #active_area_widgets do
+			local widget = active_area_widgets[i]
 
-			UIRenderer.draw_widget(ui_renderer, var_16_6)
+			UIRenderer.draw_widget(ui_renderer, widget)
 		end
 	end
 
 	UIRenderer.end_pass(ui_renderer)
 end
 
-StartGameWindowAreaSelection.draw_video = function (self, arg_17_1)
+StartGameWindowAreaSelection.draw_video = function (self, dt)
 	-- function 17
 	local ui_renderer = self.ui_renderer
 	local ui_scenegraph = self.ui_scenegraph
-	local window_input_service = self.parent:window_input_service()
+	local input_service = self.parent:window_input_service()
 
-	UIRenderer.begin_pass(ui_renderer, ui_scenegraph, window_input_service, arg_17_1, nil, self.render_settings)
+	UIRenderer.begin_pass(ui_renderer, ui_scenegraph, input_service, dt, nil, self.render_settings)
 
 	if not self._draw_video_next_frame then
-		if not (not self._video_widget and self._has_exited) then
+		if self._video_widget and not self._has_exited then
 			if not self._video_created then
 				UIRenderer.draw_widget(ui_renderer, self._video_widget)
 			else
 				self._video_created = nil
 			end
 		end
-	elseif not self._draw_video_next_frame then
+	elseif self._draw_video_next_frame then
 		self._draw_video_next_frame = nil
 	end
 
 	UIRenderer.end_pass(ui_renderer)
 end
 
-StartGameWindowAreaSelection._play_sound = function (self, arg_18_1)
+StartGameWindowAreaSelection._play_sound = function (self, event)
 	-- function 18
-	self.parent:play_sound(arg_18_1)
+	self.parent:play_sound(event)
 end
 
-StartGameWindowAreaSelection._setup_video_player = function (self, arg_19_1, arg_19_2)
+StartGameWindowAreaSelection._setup_video_player = function (self, material_name, resource)
 	-- function 19
 	self:_destroy_video_player()
 
 	local ui_renderer = self.ui_renderer
 
-	if not ui_renderer.video_players[str] then
-		local flag = true
+	if not ui_renderer.video_players[VIDEO_REFERENCE_NAME] then
+		local set_loop = true
 
-		UIRenderer.create_video_player(ui_renderer, str, ui_renderer.world, arg_19_2, flag)
+		UIRenderer.create_video_player(ui_renderer, VIDEO_REFERENCE_NAME, ui_renderer.world, resource, set_loop)
 	end
 
-	local str_2 = "video"
-	local create_video = UIWidgets.create_video(str_2, arg_19_1, str)
+	local scenegraph_id = "video"
+	local widget_definition = UIWidgets.create_video(scenegraph_id, material_name, VIDEO_REFERENCE_NAME)
+	local widget = UIWidget.init(widget_definition)
 
-	self._video_widget = UIWidget.init(create_video)
+	self._video_widget = widget
 	self._video_created = true
 	self._draw_video_next_frame = true
 end
@@ -475,98 +497,129 @@ end
 StartGameWindowAreaSelection._destroy_video_player = function (self)
 	-- function 20
 	local ui_renderer = self.ui_renderer
-	local _video_widget = self._video_widget
+	local widget = self._video_widget
 
-	if not _video_widget then
-		UIWidget.destroy(ui_renderer, _video_widget)
+	if widget then
+		UIWidget.destroy(ui_renderer, widget)
 
 		self._video_widget = nil
 	end
 
-	if not ui_renderer and not ui_renderer.video_players[str] then
+	if ui_renderer and ui_renderer.video_players[VIDEO_REFERENCE_NAME] then
 		local world = ui_renderer.world
 
-		UIRenderer.destroy_video_player(ui_renderer, str, world)
+		UIRenderer.destroy_video_player(ui_renderer, VIDEO_REFERENCE_NAME, world)
 	end
 
 	self._video_created = nil
 end
 
-StartGameWindowAreaSelection._animate_area_widget = function (arg_21_0, arg_21_1, arg_21_2)
+StartGameWindowAreaSelection._animate_area_widget = function (self, widget, dt)
 	-- function 21
-	local content = arg_21_1.content
-	local style = arg_21_1.style
-	local button_hotspot = content.button_hotspot
-	local is_selected = button_hotspot.is_selected
-	local num = 20
-	local input_progress = button_hotspot.input_progress
+	local content = widget.content
+	local style = widget.style
+	local hotspot = content.button_hotspot
+	local is_selected = hotspot.is_selected
+	local input_speed = 20
+	local input_progress_2 = hotspot.input_progress
 
-	input_progress = input_progress or 0
+	if not input_progress_2 then
+		-- Nothing
+	end
 
-	local is_clicked
+	input_progress_2 = 0
+
+	local input_progress = input_progress_2
+
+	do
+		local is_clicked
+	end
+
+	::label_21_0::
 
 	if not is_selected then
-		is_clicked = button_hotspot.is_clicked
+		is_clicked = hotspot.is_clicked
 
-		if not is_clicked then
+		if is_clicked then
 			-- Nothing
 		end
 
-		if button_hotspot.is_clicked ~= 0 then
+		if hotspot.is_clicked ~= 0 then
 			-- Nothing
 		end
 	end
 
 	is_clicked = false
 
-	goto label_21_1
-
-	::label_21_0::
-
-	is_clicked = true
+	goto label_21_2
 
 	::label_21_1::
 
-	if not is_clicked then
-		input_progress = math.min(input_progress + arg_21_2 * num, 1)
+	is_clicked = true
+
+	local input_pressed = is_clicked
+
+	::label_21_2::
+
+	if input_pressed then
+		input_progress = math.min(input_progress + dt * input_speed, 1)
 	else
-		input_progress = math.max(input_progress - arg_21_2 * num, 0)
+		input_progress = math.max(input_progress - dt * input_speed, 0)
 	end
 
-	local num_2 = 8
-	local hover_progress = button_hotspot.hover_progress
+	local speed = 8
+	local hover_progress_2 = hotspot.hover_progress
 
-	hover_progress = hover_progress or 0
-
-	if not button_hotspot.is_hover then
-		hover_progress = math.min(hover_progress + arg_21_2 * num_2, 1)
-	else
-		hover_progress = math.max(hover_progress - arg_21_2 * num_2, 0)
+	if not hover_progress_2 then
+		-- Nothing
 	end
 
-	local selection_progress = button_hotspot.selection_progress
+	hover_progress_2 = 0
 
-	selection_progress = selection_progress or 0
+	local hover_progress = hover_progress_2
 
-	if not is_selected then
-		selection_progress = math.min(selection_progress + arg_21_2 * num_2, 1)
+	::label_21_3::
+
+	local is_hover = hotspot.is_hover
+
+	if is_hover then
+		hover_progress = math.min(hover_progress + dt * speed, 1)
 	else
-		selection_progress = math.max(selection_progress - arg_21_2 * num_2, 0)
+		hover_progress = math.max(hover_progress - dt * speed, 0)
 	end
 
-	local num_3 = 255 * math.max(hover_progress, selection_progress)
+	local selection_progress_2 = hotspot.selection_progress
 
-	style.icon_glow.color[1] = num_3
-	button_hotspot.hover_progress = hover_progress
-	button_hotspot.input_progress = input_progress
-	button_hotspot.selection_progress = selection_progress
+	if not selection_progress_2 then
+		-- Nothing
+	end
+
+	selection_progress_2 = 0
+
+	local selection_progress = selection_progress_2
+
+	::label_21_4::
+
+	if is_selected then
+		selection_progress = math.min(selection_progress + dt * speed, 1)
+	else
+		selection_progress = math.max(selection_progress - dt * speed, 0)
+	end
+
+	local combined_progress = math.max(hover_progress, selection_progress)
+	local hover_alpha = 255 * combined_progress
+
+	style.icon_glow.color[1] = hover_alpha
+	hotspot.hover_progress = hover_progress
+	hotspot.input_progress = input_progress
+	hotspot.selection_progress = selection_progress
 end
 
-StartGameWindowAreaSelection._show_storepage = function (arg_22_0, arg_22_1)
+StartGameWindowAreaSelection._show_storepage = function (self, url)
 	-- function 22
-	local PLATFORM = PLATFORM
+	local platform = PLATFORM
 
-	if not IS_WINDOWS and not rawget(_G, "Steam") then
-		Steam.open_url(arg_22_1)
+	if IS_WINDOWS and rawget(_G, "Steam") then
+		Steam.open_url(url)
 	end
 end

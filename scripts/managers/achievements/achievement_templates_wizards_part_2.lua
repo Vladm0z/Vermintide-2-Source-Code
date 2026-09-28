@@ -6,29 +6,29 @@ local add_meta_challenge = AchievementTemplateHelper.add_meta_challenge
 local PLACEHOLDER_ICON = AchievementTemplateHelper.PLACEHOLDER_ICON
 local achievements = AchievementTemplates.achievements
 local add_console_achievements = AchievementTemplateHelper.add_console_achievements
-local tbl = {
+local XB1_ACHIEVEMENT_ID = {
 	tower_hardest = 111,
 	tower_wall_illusions = 108,
 	tower_note_puzzle = 110,
 	tower_skulls = 107,
 	tower_created_all_potions = 109
 }
-local tbl_2 = {
+local PS4_ACHIEVEMENT_ID = {
 	tower_skulls = "088",
 	tower_wall_illusions = "089"
 }
-local tbl_3 = {}
-local tbl_4 = {
+local all_difficulties = {}
+local bastion = {
 	LevelSettings.dlc_wizards_tower
 }
-local tbl_5 = {
+local difficulties = {
 	"normal",
 	"hard",
 	"harder",
 	"hardest",
 	"cataclysm"
 }
-local tbl_6 = {
+local player_facing_diff_names = {
 	hardest = "legend",
 	hard = "veteran",
 	harder = "champion",
@@ -36,14 +36,14 @@ local tbl_6 = {
 	normal = "recruit"
 }
 
-for i = 1, #tbl_5 do
-	local var_0_12 = Difficulties[i]
-	local str = "tower_" .. var_0_12
-	local str_2 = "achievement_wizards_tower_" .. tbl_6[var_0_12]
+for i = 1, #difficulties do
+	local difficulty_name = Difficulties[i]
+	local name = "tower_" .. difficulty_name
+	local icon = "achievement_wizards_tower_" .. player_facing_diff_names[difficulty_name]
 
-	tbl_3[i] = str
+	all_difficulties[i] = name
 
-	add_levels_complete_challenge(achievements, str, tbl_4, DifficultySettings[var_0_12].rank, str_2, nil, tbl[str], tbl_2[str])
+	add_levels_complete_challenge(achievements, name, bastion, DifficultySettings[difficulty_name].rank, icon, nil, XB1_ACHIEVEMENT_ID[name], PS4_ACHIEVEMENT_ID[name])
 end
 
 achievements.tower_skulls = {
@@ -54,20 +54,20 @@ achievements.tower_skulls = {
 	events = {
 		"on_tower_skull_found"
 	},
-	completed = function (self, arg_1_1, arg_1_2)
+	completed = function (statistics_db, stats_id, template_data)
 		-- function 1
-		return self:get_persistent_stat(arg_1_1, "tower_skulls") >= 1
+		return statistics_db:get_persistent_stat(stats_id, "tower_skulls") >= 1
 	end,
-	on_event = function (self, arg_2_1, arg_2_2, arg_2_3, arg_2_4)
+	on_event = function (statistics_db, stats_id, template_data, event_name, event_data)
 		-- function 2
-		if not arg_2_2.num_skulls then
-			arg_2_2.num_skulls = arg_2_2.num_skulls + 1
+		if template_data.num_skulls then
+			template_data.num_skulls = template_data.num_skulls + 1
 		else
-			arg_2_2.num_skulls = 1
+			template_data.num_skulls = 1
 		end
 
-		if arg_2_2.num_skulls == 10 then
-			self:increment_stat(arg_2_1, "tower_skulls")
+		if template_data.num_skulls == 10 then
+			statistics_db:increment_stat(stats_id, "tower_skulls")
 		end
 	end
 }
@@ -79,31 +79,31 @@ achievements.tower_wall_illusions = {
 	events = {
 		"tower_wall_illusion_found"
 	},
-	completed = function (self, arg_3_1, arg_3_2)
+	completed = function (statistics_db, stats_id, template_data)
 		-- function 3
-		return self:get_persistent_stat(arg_3_1, "tower_wall_illusions") >= 1
+		return statistics_db:get_persistent_stat(stats_id, "tower_wall_illusions") >= 1
 	end,
-	on_event = function (self, arg_4_1, arg_4_2, arg_4_3, arg_4_4)
+	on_event = function (statistics_db, stats_id, template_data, event_name, event_data)
 		-- function 4
-		local var_4_0 = arg_4_4[1]
+		local index = event_data[1]
 
-		if not arg_4_2[var_4_0] then
+		if template_data[index] then
 			return
 		end
 
-		arg_4_2[var_4_0] = true
+		template_data[index] = true
 
-		if not arg_4_2.num_illusions_found then
-			arg_4_2.num_illusions_found = 1
+		if not template_data.num_illusions_found then
+			template_data.num_illusions_found = 1
 		else
-			arg_4_2.num_illusions_found = arg_4_2.num_illusions_found + 1
+			template_data.num_illusions_found = template_data.num_illusions_found + 1
 		end
 
-		if arg_4_2.num_illusions_found == 4 then
-			self:increment_stat(arg_4_1, "tower_wall_illusions")
+		if template_data.num_illusions_found == 4 then
+			statistics_db:increment_stat(stats_id, "tower_wall_illusions")
 		end
 
-		print("wall illusion found " .. var_4_0)
+		print("wall illusion found " .. index)
 	end
 }
 achievements.tower_invisible_bridge = {
@@ -114,21 +114,23 @@ achievements.tower_invisible_bridge = {
 	events = {
 		"update_tower_invisible_bridge_challenge"
 	},
-	completed = function (self, arg_5_1, arg_5_2)
+	completed = function (statistics_db, stats_id, template_data)
 		-- function 5
-		return self:get_persistent_stat(arg_5_1, "tower_invisible_bridge") >= 1
+		return statistics_db:get_persistent_stat(stats_id, "tower_invisible_bridge") >= 1
 	end,
-	on_event = function (self, arg_6_1, arg_6_2, arg_6_3, arg_6_4)
+	on_event = function (statistics_db, stats_id, template_data, event_name, event_data)
 		-- function 6
-		if not arg_6_2.done then
+		if template_data.done then
 			return
 		end
 
-		if arg_6_4[1] == true then
-			self:increment_stat(arg_6_1, "tower_invisible_bridge")
+		local succeeded = event_data[1]
+
+		if succeeded == true then
+			statistics_db:increment_stat(stats_id, "tower_invisible_bridge")
 		end
 
-		arg_6_2.done = true
+		template_data.done = true
 	end
 }
 achievements.tower_enable_guardian_of_lustria = {
@@ -139,13 +141,13 @@ achievements.tower_enable_guardian_of_lustria = {
 	events = {
 		"tower_enable_guardian_of_lustria"
 	},
-	completed = function (self, arg_7_1, arg_7_2)
+	completed = function (statistics_db, stats_id, template_data)
 		-- function 7
-		return self:get_persistent_stat(arg_7_1, "tower_enable_guardian_of_lustria") >= 1
+		return statistics_db:get_persistent_stat(stats_id, "tower_enable_guardian_of_lustria") >= 1
 	end,
-	on_event = function (self, arg_8_1, arg_8_2, arg_8_3, arg_8_4)
+	on_event = function (statistics_db, stats_id, template_data, event_name, event_data)
 		-- function 8
-		self:increment_stat(arg_8_1, "tower_enable_guardian_of_lustria")
+		statistics_db:increment_stat(stats_id, "tower_enable_guardian_of_lustria")
 	end
 }
 achievements.tower_note_puzzle = {
@@ -156,13 +158,13 @@ achievements.tower_note_puzzle = {
 	events = {
 		"tower_note_puzzle"
 	},
-	completed = function (self, arg_9_1, arg_9_2)
+	completed = function (statistics_db, stats_id, template_data)
 		-- function 9
-		return self:get_persistent_stat(arg_9_1, "tower_note_puzzle") >= 1
+		return statistics_db:get_persistent_stat(stats_id, "tower_note_puzzle") >= 1
 	end,
-	on_event = function (self, arg_10_1, arg_10_2, arg_10_3, arg_10_4)
+	on_event = function (statistics_db, stats_id, template_data, event_name, event_data)
 		-- function 10
-		self:increment_stat(arg_10_1, "tower_note_puzzle")
+		statistics_db:increment_stat(stats_id, "tower_note_puzzle")
 	end
 }
 achievements.tower_created_all_potions = {
@@ -173,71 +175,90 @@ achievements.tower_created_all_potions = {
 	events = {
 		"tower_potion_created"
 	},
-	completed = function (self, arg_11_1, arg_11_2)
+	completed = function (statistics_db, stats_id, template_data)
 		-- function 11
-		return self:get_persistent_stat(arg_11_1, "tower_created_all_potions") >= 1
+		return statistics_db:get_persistent_stat(stats_id, "tower_created_all_potions") >= 1
 	end,
-	on_event = function (self, arg_12_1, arg_12_2, arg_12_3, arg_12_4)
+	on_event = function (statistics_db, stats_id, template_data, event_name, event_data)
 		-- function 12
-		if not arg_12_2.done then
+		if template_data.done then
 			return
 		end
 
-		arg_12_2[arg_12_4[1]] = true
+		local potion_type = event_data[1]
 
-		if not arg_12_2.hp and not arg_12_2.sp and not arg_12_2.cr and not arg_12_2.db then
-			self:increment_stat(arg_12_1, "tower_created_all_potions")
+		template_data[potion_type] = true
 
-			arg_12_2.done = true
+		if template_data.hp and template_data.sp and template_data.cr and template_data.db then
+			statistics_db:increment_stat(stats_id, "tower_created_all_potions")
+
+			template_data.done = true
 		end
 	end
 }
 
-local flag
+local num
 
-flag = not IS_WINDOWS and 12 and 13
+if IS_WINDOWS then
+	num = 12
+
+	goto label_0_0
+end
+
+num = 13
+
+local TOWER_TIME_CHALLENGE_LIMIT_IN_MINUTES = num
+
+::label_0_0::
+
 achievements.tower_time_challenge = {
 	name = "achv_tower_time_challenge_name",
 	display_completion_ui = true,
 	icon = "achievement_wizards_tower_time_challenge",
 	desc = function ()
 		-- function 13
-		return string.format(Localize("achv_tower_time_challenge_desc"), flag)
+		return string.format(Localize("achv_tower_time_challenge_desc"), TOWER_TIME_CHALLENGE_LIMIT_IN_MINUTES)
 	end,
 	events = {
 		"gameplay_start",
 		"register_completed_level"
 	},
-	completed = function (self, arg_14_1, arg_14_2)
+	completed = function (statistics_db, stats_id, template_data)
 		-- function 14
-		return self:get_persistent_stat(arg_14_1, "tower_time_challenge") >= 1
+		return statistics_db:get_persistent_stat(stats_id, "tower_time_challenge") >= 1
 	end,
-	on_event = function (self, arg_15_1, arg_15_2, arg_15_3, arg_15_4)
+	on_event = function (statistics_db, stats_id, template_data, event_name, event_data)
 		-- function 15
-		local time = Managers.time:time("game")
+		local t = Managers.time:time("game")
 
-		if arg_15_3 == "gameplay_start" then
-			arg_15_2.start_t = time
+		if event_name == "gameplay_start" then
+			template_data.start_t = t
 
 			return
 		end
 
-		local start_t = arg_15_2.start_t
+		local start_time = template_data.start_t
 
-		if not start_t then
+		if not start_time then
 			print("[Challenge] Speedrun invalidated. Likely due to hot-join.")
 
 			return
 		end
 
-		local var_15_2, var_15_3, var_15_4, var_15_5 = unpack(arg_15_4)
+		local difficulty_name, level_id, career_name, local_player = unpack(event_data)
 
-		if not (var_15_3 ~= "dlc_wizards_tower" or not (flag * 60 > time - start_t)) then
-			self:increment_stat(arg_15_1, "tower_time_challenge")
+		if level_id == "dlc_wizards_tower" then
+			local time_limit = TOWER_TIME_CHALLENGE_LIMIT_IN_MINUTES * 60
+			local game_time = t
+			local elapsed_time = game_time - start_time
+
+			if elapsed_time < time_limit then
+				statistics_db:increment_stat(stats_id, "tower_time_challenge")
+			end
 		end
 	end
 }
-all_wizards_challenges = table.clone(tbl_3)
+all_wizards_challenges = table.clone(all_difficulties)
 
 table.remove(all_wizards_challenges, #all_wizards_challenges)
 
@@ -249,5 +270,5 @@ all_wizards_challenges[#all_wizards_challenges + 1] = "tower_note_puzzle"
 all_wizards_challenges[#all_wizards_challenges + 1] = "tower_created_all_potions"
 all_wizards_challenges[#all_wizards_challenges + 1] = "tower_time_challenge"
 
-add_meta_challenge(achievements, "tower_all_challenges", all_wizards_challenges, "achievement_wizards_tower_all_challenges", nil, tbl[name], tbl_2[name])
-add_console_achievements(tbl, tbl_2)
+add_meta_challenge(achievements, "tower_all_challenges", all_wizards_challenges, "achievement_wizards_tower_all_challenges", nil, XB1_ACHIEVEMENT_ID[name], PS4_ACHIEVEMENT_ID[name])
+add_console_achievements(XB1_ACHIEVEMENT_ID, PS4_ACHIEVEMENT_ID)

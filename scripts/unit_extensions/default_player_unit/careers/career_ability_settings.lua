@@ -614,23 +614,23 @@ PassiveAbilitySettings = {
 
 DLCUtils.require_list("career_ability_settings")
 
-for k, v in pairs(ActivatedAbilitySettings) do
-	for k_2 = 1, #v do
-		local var_0_0 = v[k_2]
+for career, ability_list in pairs(ActivatedAbilitySettings) do
+	for i = 1, #ability_list do
+		local data = ability_list[i]
 
-		if not var_0_0.action_name then
-			fassert(not var_0_0.ability_class, "Activated ability for \"%s\" cannot have an ability class if it is a weapon action", k)
+		if data.action_name then
+			fassert(not data.ability_class, "Activated ability for \"%s\" cannot have an ability class if it is a weapon action", career)
 		end
 
-		if not var_0_0.ability_class then
-			fassert(not var_0_0.action_name, "Activated ability for \"%s\" cannot have a weapon action if it uses an ability class", k)
+		if data.ability_class then
+			fassert(not data.action_name, "Activated ability for \"%s\" cannot have a weapon action if it uses an ability class", career)
 		end
 
 		local fassert = fassert
-		local action_name = var_0_0.action_name
+		local action_name = data.action_name
 
-		action_name = action_name or var_0_0.ability_class
+		action_name = not not action_name or not not data.ability_class
 
-		fassert(action_name, "Activated ability for \"%s\" must have either a weapon action or an ability class", k)
+		fassert(action_name, "Activated ability for \"%s\" must have either a weapon action or an ability class", career)
 	end
 end

@@ -3,80 +3,82 @@
 TalentUtils = {}
 TalentUtils.NIL = {}
 
-TalentUtils.get_talent = function (arg_1_0, arg_1_1)
+TalentUtils.get_talent = function (profile_name, talent_name)
 	-- function 1
-	local var_1_0 = TalentIDLookup[arg_1_1]
+	local talent = TalentIDLookup[talent_name]
 
-	return TalentUtils.get_talent_by_id(arg_1_0, var_1_0.talent_id)
+	return TalentUtils.get_talent_by_id(profile_name, talent.talent_id)
 end
 
-TalentUtils.get_talent_by_id = function (arg_2_0, arg_2_1)
+TalentUtils.get_talent_by_id = function (profile_name, talent_id)
 	-- function 2
-	local var_2_0 = Talents[arg_2_0]
+	local talents = Talents[profile_name]
 
-	if not var_2_0 then
+	if not talents then
 		return nil
 	end
 
-	local var_2_1 = var_2_0[arg_2_1]
+	local talent = talents[talent_id]
 
-	if not var_2_1 then
+	if not talent then
 		return nil
 	end
 
-	if not var_2_1.mechanism_overrides then
-		local current_mechanism_name = Managers.mechanism:current_mechanism_name()
-		local var_2_3 = var_2_1.mechanism_overrides[current_mechanism_name]
+	if talent.mechanism_overrides then
+		local mechanism_name = Managers.mechanism:current_mechanism_name()
+		local mechanism_override = talent.mechanism_overrides[mechanism_name]
 
-		if not var_2_3 then
-			var_2_1 = table.shallow_copy(var_2_1)
+		if mechanism_override then
+			talent = table.shallow_copy(talent)
 
-			for k, v in pairs(var_2_3) do
-				if v == TalentUtils.NIL then
-					var_2_1[k] = nil
+			for key, value in pairs(mechanism_override) do
+				if value == TalentUtils.NIL then
+					talent[key] = nil
 				else
-					var_2_1[k] = v
+					talent[key] = value
 				end
 			end
 		end
 	end
 
-	return var_2_1
+	return talent
 end
 
-TalentUtils.get_talent_attribute = function (arg_3_0, arg_3_1)
+TalentUtils.get_talent_attribute = function (talent_name, attribute_name)
 	-- function 3
-	local var_3_0 = TalentIDLookup[arg_3_0]
+	local talent_info = TalentIDLookup[talent_name]
 
-	if not var_3_0 then
+	if not talent_info then
 		return
 	end
 
-	local hero_name = var_3_0.hero_name
-	local talent_id = var_3_0.talent_id
-	local var_3_3 = Talents[hero_name][talent_id]
+	local hero_name = talent_info.hero_name
+	local talent_id = talent_info.talent_id
+	local talent = Talents[hero_name][talent_id]
 
-	if not var_3_3 then
+	if not talent then
 		return nil
 	end
 
-	local mechanism_overrides = var_3_3.mechanism_overrides
+	local mechanism_overrides = talent.mechanism_overrides
 
-	if not mechanism_overrides then
-		local var_3_5 = mechanism_overrides[Managers.mechanism:current_mechanism_name()]
+	if mechanism_overrides then
+		local mechanism_name = Managers.mechanism:current_mechanism_name()
 
-		if not var_3_5 then
-			local attributes = var_3_5.attributes
+		mechanism_overrides = mechanism_overrides[mechanism_name]
 
-			if not attributes then
-				return attributes[arg_3_1]
+		if mechanism_overrides then
+			local attribute_overrides = mechanism_overrides.attributes
+
+			if attribute_overrides then
+				return attribute_overrides[attribute_name]
 			end
 		end
 	end
 
-	local attributes_2 = var_3_3.attributes
+	local attributes = talent.attributes
 
-	if not attributes_2 then
-		return attributes_2[arg_3_1]
+	if attributes then
+		return attributes[attribute_name]
 	end
 end

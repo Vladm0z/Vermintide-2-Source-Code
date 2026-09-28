@@ -1,8 +1,8 @@
 -- chunkname: @scripts/settings/dlcs/cog/cog_achievements_settings.lua
 
-local cog = DLCSettings.cog
+local settings = DLCSettings.cog
 
-cog.achievement_outline = {
+settings.achievement_outline = {
 	heroes = {
 		categories = {
 			{
@@ -44,7 +44,7 @@ cog.achievement_outline = {
 		}
 	}
 }
-cog.achievement_template_file_names = {
+settings.achievement_template_file_names = {
 	"scripts/managers/achievements/achievement_templates_cog"
 }
-cog.achievement_events = {}
+settings.achievement_events = {}

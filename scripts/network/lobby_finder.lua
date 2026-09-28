@@ -4,13 +4,27 @@ require("scripts/network/lobby_aux")
 
 LobbyFinder = class(LobbyFinder)
 
-if not (not script_data.verbose_lobby_finder and print) then
-	local NOP = NOP
+local print
+
+if script_data.verbose_lobby_finder then
+	print = print
+
+	if not print then
+		-- Nothing
+	end
 end
 
-local printf
+print = NOP
 
-if not script_data.verbose_lobby_finder then
+local lf_print = print
+
+do
+	local printf
+end
+
+::label_0_0::
+
+if script_data.verbose_lobby_finder then
 	printf = printf
 
 	if not printf then
@@ -20,23 +34,25 @@ end
 
 printf = NOP
 
-::label_0_0::
+local lf_printf = printf
 
-LobbyFinder.init = function (self, arg_1_1, arg_1_2)
+::label_0_1::
+
+LobbyFinder.init = function (self, network_options, max_num_lobbies)
 	-- function 1
-	local config_file_name = arg_1_1.config_file_name
-	local project_hash = arg_1_1.project_hash
+	local config_file_name = network_options.config_file_name
+	local project_hash = network_options.project_hash
 
 	self._network_hash = LobbyAux.create_network_hash(config_file_name, project_hash)
-	self._server_port = arg_1_1.server_port
+	self._server_port = network_options.server_port
 
 	assert(self._server_port, "Must specify port to LobbyFinder.")
 
 	self._cached_lobbies = {}
-	self._max_num_lobbies = arg_1_2
+	self._max_num_lobbies = max_num_lobbies
 	self._refreshing = false
 
-	if not IS_XB1 then
+	if IS_XB1 then
 		self._browser = LobbyInternal.lobby_browser()
 	else
 		self._browser = LobbyInternal.client:create_lobby_browser()
@@ -58,12 +74,12 @@ LobbyFinder.destroy = function (self)
 	end
 end
 
-LobbyFinder.add_filter_requirements = function (self, arg_4_1, arg_4_2)
+LobbyFinder.add_filter_requirements = function (self, requirements, force_refresh)
 	-- function 4
-	LobbyInternal.add_filter_requirements(arg_4_1, self._browser)
+	LobbyInternal.add_filter_requirements(requirements, self._browser)
 
-	if not arg_4_2 then
-		printf("===========LobbyFinder:add_filter_requirements force refresh")
+	if force_refresh then
+		lf_printf("===========LobbyFinder:add_filter_requirements force refresh")
 		self:refresh()
 	end
 
@@ -80,14 +96,14 @@ LobbyFinder.lobbies = function (self)
 	return self._cached_lobbies
 end
 
-LobbyFinder.latest_filter_lobbies = function (arg_7_0)
+LobbyFinder.latest_filter_lobbies = function (self)
 	-- function 7
 	print("[LobbyFinder]:latest_filter_lobbies is deprecated")
 end
 
 LobbyFinder.refresh = function (self)
 	-- function 8
-	printf("===========LobbyFinder:refresh() _refresing=%s", self._refreshing)
+	lf_printf("===========LobbyFinder:refresh() _refresing=%s", self._refreshing)
 
 	if not self._refreshing then
 		self._browser:refresh(self._server_port)
@@ -101,37 +117,38 @@ LobbyFinder.is_refreshing = function (self)
 	return self._refreshing
 end
 
-LobbyFinder.update = function (self, arg_10_1)
+LobbyFinder.update = function (self, dt)
 	-- function 10
-	if not self._refreshing then
-		local _browser = self._browser
+	if self._refreshing then
+		local lobby_browser = self._browser
+		local is_refreshing = lobby_browser:is_refreshing()
 
-		if not _browser:is_refreshing() then
-			local _cached_lobbies = self._cached_lobbies
+		if not is_refreshing then
+			local engine_lobbies = self._cached_lobbies
 
-			table.clear_array(_cached_lobbies)
+			table.clear_array(engine_lobbies)
 
-			local num_lobbies = _browser:num_lobbies()
-			local _max_num_lobbies = self._max_num_lobbies
+			local num_lobbies = lobby_browser:num_lobbies()
+			local max_num_lobbies = self._max_num_lobbies
 
-			if not _max_num_lobbies then
-				num_lobbies = math.min(_max_num_lobbies, num_lobbies)
+			if max_num_lobbies then
+				num_lobbies = math.min(max_num_lobbies, num_lobbies)
 			end
 
-			printf("===========Lobbyfinder REFRESHING num_lobbies: %s", num_lobbies)
+			lf_printf("===========Lobbyfinder REFRESHING num_lobbies: %s", num_lobbies)
 
 			for i = 0, num_lobbies - 1 do
-				local get_lobby = LobbyInternal.get_lobby(_browser, i)
+				local engine_lobby_data = LobbyInternal.get_lobby(lobby_browser, i)
 
-				if get_lobby.network_hash ~= self._network_hash or not LobbyAux.verify_lobby_data(get_lobby) then
-					_cached_lobbies[#_cached_lobbies + 1] = get_lobby
-					get_lobby.valid = true
+				if engine_lobby_data.network_hash == self._network_hash and LobbyAux.verify_lobby_data(engine_lobby_data) then
+					engine_lobbies[#engine_lobbies + 1] = engine_lobby_data
+					engine_lobby_data.valid = true
 
-					printf("=======================Found valid lobby!")
+					lf_printf("=======================Found valid lobby!")
 				end
 			end
 
-			self._cached_lobbies = _cached_lobbies
+			self._cached_lobbies = engine_lobbies
 			self._refreshing = false
 		end
 	end

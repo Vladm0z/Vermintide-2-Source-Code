@@ -2,15 +2,15 @@
 
 CareerAbilityDarkPactBase = class(CareerAbilityDarkPactBase)
 
-CareerAbilityDarkPactBase.init = function (self, arg_1_1, arg_1_2, arg_1_3, arg_1_4)
+CareerAbilityDarkPactBase.init = function (self, extension_init_context, unit, extension_init_data, ability_data)
 	-- function 1
-	self._unit = arg_1_2
-	self._world = arg_1_1.world
+	self._unit = unit
+	self._world = extension_init_context.world
 	self._wwise_world = Managers.world:wwise_world(self._world)
 	self._physics_world = World.physics_world(self._world)
-	self._ability_data = arg_1_4
+	self._ability_data = ability_data
 
-	local player = arg_1_3.player
+	local player = extension_init_data.player
 
 	self._player = player
 	self._is_server = player.is_server
@@ -20,42 +20,42 @@ CareerAbilityDarkPactBase.init = function (self, arg_1_1, arg_1_2, arg_1_3, arg_
 	self._input_manager = Managers.input
 end
 
-CareerAbilityDarkPactBase.destroy = function (arg_2_0)
+CareerAbilityDarkPactBase.destroy = function (self)
 	-- function 2
 	return
 end
 
-CareerAbilityDarkPactBase.extensions_ready = function (self, arg_3_1, arg_3_2)
+CareerAbilityDarkPactBase.extensions_ready = function (self, world, unit)
 	-- function 3
-	self._first_person_extension = ScriptUnit.has_extension(arg_3_2, "first_person_system")
-	self._status_extension = ScriptUnit.extension(arg_3_2, "status_system")
-	self._career_extension = ScriptUnit.extension(arg_3_2, "career_system")
-	self._locomotion_extension = ScriptUnit.extension(arg_3_2, "locomotion_system")
-	self._input_extension = ScriptUnit.has_extension(arg_3_2, "input_system")
-	self._ghost_mode_extension = ScriptUnit.has_extension(arg_3_2, "ghost_mode_system")
-	self._inventory_extension = ScriptUnit.extension(arg_3_2, "inventory_system")
+	self._first_person_extension = ScriptUnit.has_extension(unit, "first_person_system")
+	self._status_extension = ScriptUnit.extension(unit, "status_system")
+	self._career_extension = ScriptUnit.extension(unit, "career_system")
+	self._locomotion_extension = ScriptUnit.extension(unit, "locomotion_system")
+	self._input_extension = ScriptUnit.has_extension(unit, "input_system")
+	self._ghost_mode_extension = ScriptUnit.has_extension(unit, "ghost_mode_system")
+	self._inventory_extension = ScriptUnit.extension(unit, "inventory_system")
 	self._is_server = Managers.player.is_server
 	self._ability_input = self._ability_data.input_action
 
-	if not self._first_person_extension then
+	if self._first_person_extension then
 		self._first_person_unit = self._first_person_extension:get_first_person_unit()
 	end
 end
 
-CareerAbilityDarkPactBase.update = function (arg_4_0, arg_4_1, arg_4_2, arg_4_3, arg_4_4, arg_4_5)
+CareerAbilityDarkPactBase.update = function (self, unit, input, dt, context, t)
 	-- function 4
 	return
 end
 
 CareerAbilityDarkPactBase.was_triggered = function (self)
 	-- function 5
-	local _input_extension = self._input_extension
+	local input_extension = self._input_extension
 
-	if not _input_extension then
+	if not input_extension then
 		return false
 	end
 
-	if not _input_extension:get(self._ability_input) then
+	if input_extension:get(self._ability_input) then
 		if not self:_ability_available() then
 			self:_play_sound("versus_hud_ability_not_ready")
 
@@ -70,22 +70,22 @@ CareerAbilityDarkPactBase.was_triggered = function (self)
 	return false
 end
 
-CareerAbilityDarkPactBase.finish = function (arg_6_0, arg_6_1)
+CareerAbilityDarkPactBase.finish = function (self, reason)
 	-- function 6
 	return
 end
 
-CareerAbilityDarkPactBase.stop = function (arg_7_0, arg_7_1)
+CareerAbilityDarkPactBase.stop = function (self, reason)
 	-- function 7
 	return
 end
 
 CareerAbilityDarkPactBase.ability_ready = function (self)
 	-- function 8
-	local _first_person_extension = self._first_person_extension
+	local first_person_extension = self._first_person_extension
 
-	if not _first_person_extension then
-		_first_person_extension:play_hud_sound_event("Play_hud_ability_ready")
+	if first_person_extension then
+		first_person_extension:play_hud_sound_event("Play_hud_ability_ready")
 	end
 
 	self:_cooldown_ready()
@@ -94,13 +94,22 @@ end
 
 CareerAbilityDarkPactBase._cooldown_ready = function (self)
 	-- function 9
-	local equipment = self._inventory_extension:equipment()
+	local inventory_extension = self._inventory_extension
+	local equipment = inventory_extension:equipment()
 	local right_hand_wielded_unit = equipment.right_hand_wielded_unit
 
-	right_hand_wielded_unit = right_hand_wielded_unit or equipment.left_hand_wielded_unit
-
 	if not right_hand_wielded_unit then
-		Unit.flow_event(right_hand_wielded_unit, "cooldown_ready")
+		-- Nothing
+	end
+
+	right_hand_wielded_unit = equipment.left_hand_wielded_unit
+
+	local weapon_unit = right_hand_wielded_unit
+
+	::label_9_0::
+
+	if weapon_unit then
+		Unit.flow_event(weapon_unit, "cooldown_ready")
 	end
 end
 
@@ -111,12 +120,14 @@ end
 
 CareerAbilityDarkPactBase._ability_available = function (self)
 	-- function 11
-	local _career_extension = self._career_extension
-	local _status_extension = self._status_extension
-	local _locomotion_extension = self._locomotion_extension
-	local is_in_ghost_mode = self._ghost_mode_extension:is_in_ghost_mode()
+	local career_extension = self._career_extension
+	local status_extension = self._status_extension
+	local locomotion_extension = self._locomotion_extension
+	local ghost_mode_extension = self._ghost_mode_extension
+	local in_ghost_mode = ghost_mode_extension:is_in_ghost_mode()
+	local ability_available = not status_extension:is_disabled() and not not not in_ghost_mode
 
-	return not (not not _status_extension:is_disabled() or not is_in_ghost_mode) and _career_extension:can_use_activated_ability(self._ability_data.ability_id)
+	return not not ability_available and not not career_extension:can_use_activated_ability(self._ability_data.ability_id)
 end
 
 CareerAbilityDarkPactBase._start = function (self)
@@ -126,14 +137,14 @@ end
 
 CareerAbilityDarkPactBase._play_vo = function (self)
 	-- function 13
-	local _unit = self._unit
-	local extension_input = ScriptUnit.extension_input(_unit, "dialogue_system")
-	local alloc_table = FrameTable.alloc_table()
+	local owner_unit = self._unit
+	local dialogue_input = ScriptUnit.extension_input(owner_unit, "dialogue_system")
+	local event_data = FrameTable.alloc_table()
 
-	extension_input:trigger_networked_dialogue_event("activate_ability", alloc_table)
+	dialogue_input:trigger_networked_dialogue_event("activate_ability", event_data)
 end
 
-CareerAbilityDarkPactBase._play_sound = function (self, arg_14_1)
+CareerAbilityDarkPactBase._play_sound = function (self, sound_event)
 	-- function 14
-	WwiseWorld.trigger_event(self._wwise_world, arg_14_1)
+	WwiseWorld.trigger_event(self._wwise_world, sound_event)
 end

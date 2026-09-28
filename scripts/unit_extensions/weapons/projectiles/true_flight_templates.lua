@@ -2,7 +2,7 @@
 
 local TrueFlightTemplates = TrueFlightTemplates
 
-TrueFlightTemplates = TrueFlightTemplates or {}
+TrueFlightTemplates = not not TrueFlightTemplates or not not {}
 TrueFlightTemplates = TrueFlightTemplates
 TrueFlightTemplates.active_ability_kerillian_way_watcher = {
 	retarget_on_miss = true,
@@ -77,11 +77,11 @@ TrueFlightTemplates.sorcerer_magic_missile = {
 	target_players = true,
 	time_between_raycasts = 0.1,
 	lerp_constant = 50,
-	lerp_modifier_func = function (arg_1_0)
+	lerp_modifier_func = function (distance)
 		-- function 1
 		local flag
 
-		flag = not (arg_1_0 < 7) or not 0.01 or 5 / arg_1_0
+		flag = (not (distance < 7) or not 0.01) and not not (5 / distance)
 
 		return flag
 	end
@@ -101,20 +101,20 @@ TrueFlightTemplates.sorcerer_strike_missile = {
 	target_players = true,
 	time_between_raycasts = 0.1,
 	lerp_constant = 50,
-	lerp_modifier_func = function (arg_2_0)
+	lerp_modifier_func = function (distance)
 		-- function 2
 		local flag
 
-		flag = not (arg_2_0 < 7) or not 0.01 or 3 / arg_2_0
+		flag = (not (distance < 7) or not 0.01) and not not (3 / distance)
 
 		return flag
 	end,
-	template_state_func = function (arg_3_0, arg_3_1, arg_3_2, arg_3_3)
+	template_state_func = function (parent, projectile_unit, state_id, is_server)
 		-- function 3
-		if arg_3_2 == 1 then
-			Unit.flow_event(arg_3_1, "lua_projectile_triggered")
-		elseif arg_3_2 == 2 then
-			Unit.flow_event(arg_3_1, "lua_projectile_striking")
+		if state_id == 1 then
+			Unit.flow_event(projectile_unit, "lua_projectile_triggered")
+		elseif state_id == 2 then
+			Unit.flow_event(projectile_unit, "lua_projectile_striking")
 		end
 	end
 }
@@ -127,11 +127,11 @@ TrueFlightTemplates.sorcerer_magic_missile_ground = {
 	target_players = true,
 	time_between_raycasts = 0.1,
 	lerp_constant = 50,
-	lerp_modifier_func = function (arg_4_0)
+	lerp_modifier_func = function (distance)
 		-- function 4
 		local flag
 
-		flag = not (arg_4_0 < 7) or not 0.01 or 5 / arg_4_0
+		flag = (not (distance < 7) or not 0.01) and not not (5 / distance)
 
 		return flag
 	end
@@ -164,33 +164,35 @@ TrueFlightTemplates.sorcerer_slow_bomb_missile = {
 		1,
 		1
 	},
-	lerp_modifier_func = function (arg_5_0)
+	lerp_modifier_func = function (distance)
 		-- function 5
 		local flag
 
-		flag = not (arg_5_0 < 5) or not 1 or 5 / arg_5_0
+		flag = (not (distance < 5) or not 1) and not not (5 / distance)
 
 		return flag
 	end,
-	template_state_func = function (arg_6_0, arg_6_1, arg_6_2, arg_6_3, arg_6_4)
+	template_state_func = function (parent, projectile_unit, state_id, is_server, hit_unit)
 		-- function 6
-		if arg_6_2 == 1 then
-			Unit.flow_event(arg_6_1, "lua_projectile_triggered")
-		elseif arg_6_2 == 2 then
-			if not arg_6_4 then
+		if state_id == 1 then
+			Unit.flow_event(projectile_unit, "lua_projectile_triggered")
+		elseif state_id == 2 then
+			local parent_unit = hit_unit
+
+			if not parent_unit then
 				return
 			end
 
-			if not arg_6_3 then
+			if is_server then
 				-- Nothing
 			end
 		end
 	end,
-	init_func = function (arg_7_0, arg_7_1)
+	init_func = function (unit, world)
 		-- function 7
-		local actor = Unit.actor(arg_7_0, "c_large")
+		local large_actor = Unit.actor(unit, "c_large")
 
-		Actor.set_collision_enabled(actor, false)
+		Actor.set_collision_enabled(large_actor, false)
 	end
 }
 TrueFlightTemplates.sorcerer_vortex_dummy_missile = {
@@ -199,11 +201,13 @@ TrueFlightTemplates.sorcerer_vortex_dummy_missile = {
 	target_tracking_check_func = "update_towards_position_target",
 	target_players = true,
 	broadphase_radius = 7.5,
-	lerp_modifier_func = function (arg_8_0, arg_8_1, arg_8_2)
+	lerp_modifier_func = function (distance, height, t)
 		-- function 8
-		local clamp = math.clamp(112.5 / (arg_8_1 + 0.01)^2, 0.25, 40)
+		local max_radius = math.clamp(112.5 / (height + 0.01)^2, 0.25, 40)
+		local denominator = max_radius - 0.5 * max_radius * math.abs(math.sin(0.5 * t))
+		local final_value = distance / denominator
 
-		return arg_8_0 / (clamp - 0.5 * clamp * math.abs(math.sin(0.5 * arg_8_2)))
+		return final_value
 	end
 }
 TrueFlightTemplates.necromancer_trapped_soul = {
@@ -221,33 +225,43 @@ TrueFlightTemplates.necromancer_trapped_soul = {
 	broadphase_radius = 7.5,
 	ignore_dead = true,
 	max_on_target_time = math.huge,
-	lerp_modifier_func = function (arg_9_0, arg_9_1, arg_9_2)
+	lerp_modifier_func = function (distance, height, t)
 		-- function 9
 		return 0.75
 	end,
-	init_func = function (arg_10_0, arg_10_1, arg_10_2, arg_10_3)
+	init_func = function (unit, world, seed, custom_data)
 		-- function 10
-		arg_10_3.seed = arg_10_2
-		arg_10_3.spin_dir = 1 - bit.band(arg_10_2, 128) / 64
-		arg_10_2, arg_10_3.wobble_min = math.next_random_range(arg_10_2, 0.3, 0.3)
-		arg_10_2, arg_10_3.wobble_max = math.next_random_range(arg_10_2, 0.3, 0.4)
-		arg_10_2, arg_10_3.wobble_speed = math.next_random_range(arg_10_2, 2.5, 5)
-		arg_10_2, arg_10_3.wobble_vertical_mult = math.next_random_range(arg_10_2, 0.7, 1)
-		arg_10_2, arg_10_3.wobble_horizontal_mult = math.next_random_range(arg_10_2, 1, 1.2)
-		arg_10_2, arg_10_3.wobble_stabiliztion_speed = math.next_random_range(arg_10_2, 0.3, 0.5)
+		custom_data.seed = seed
+		custom_data.spin_dir = 1 - bit.band(seed, 128) / 64
+		seed, custom_data.wobble_min = math.next_random_range(seed, 0.3, 0.3)
+		seed, custom_data.wobble_max = math.next_random_range(seed, 0.3, 0.4)
+		seed, custom_data.wobble_speed = math.next_random_range(seed, 2.5, 5)
+		seed, custom_data.wobble_vertical_mult = math.next_random_range(seed, 0.7, 1)
+		seed, custom_data.wobble_horizontal_mult = math.next_random_range(seed, 1, 1.2)
+		seed, custom_data.wobble_stabiliztion_speed = math.next_random_range(seed, 0.3, 0.5)
 	end,
-	update_unit_position = function (arg_11_0, arg_11_1, arg_11_2, arg_11_3, arg_11_4)
+	update_unit_position = function (unit, position, rotation, custom_data, locomotion_ext)
 		-- function 11
-		local unbox = Vector3Box.unbox(arg_11_4.target_vector_boxed)
-		local num = arg_11_4.t - arg_11_4.spawn_time
-		local lerped_wobble_scale = arg_11_3.lerped_wobble_scale
+		local target_vector = Vector3Box.unbox(locomotion_ext.target_vector_boxed)
+		local time_lived = locomotion_ext.t - locomotion_ext.spawn_time
+		local lerped_wobble_scale = custom_data.lerped_wobble_scale
 
-		lerped_wobble_scale = lerped_wobble_scale or 1
+		if not lerped_wobble_scale then
+			-- Nothing
+		end
 
-		local distance
+		lerped_wobble_scale = 1
 
-		if not ALIVE[arg_11_4.target_unit] then
-			distance = Vector3.distance(POSITION_LOOKUP[arg_11_4.target_unit], arg_11_1)
+		local current_wobble_scale = lerped_wobble_scale
+
+		do
+			local distance
+		end
+
+		::label_11_0::
+
+		if ALIVE[locomotion_ext.target_unit] then
+			distance = Vector3.distance(POSITION_LOOKUP[locomotion_ext.target_unit], position)
 
 			if not distance then
 				-- Nothing
@@ -256,45 +270,58 @@ TrueFlightTemplates.necromancer_trapped_soul = {
 
 		distance = 0
 
-		::label_11_0::
+		local dist_from_target = distance
 
-		local remap = math.remap(1, 5, 0, 1, math.clamp(distance, 1, 5))
-		local dt = arg_11_4.dt
-		local clamp01 = math.clamp01(lerped_wobble_scale + dt * math.sign(remap - lerped_wobble_scale))
+		::label_11_1::
 
-		arg_11_3.lerped_wobble_scale = clamp01
+		local wanted_wobble_scale = math.remap(1, 5, 0, 1, math.clamp(dist_from_target, 1, 5))
+		local dt = locomotion_ext.dt
+		local dist_from_enemy_scale = math.clamp01(current_wobble_scale + dt * math.sign(wanted_wobble_scale - current_wobble_scale))
 
-		local speed = arg_11_4.speed
-		local easeCubic = math.easeCubic(math.clamp(num * arg_11_3.wobble_stabiliztion_speed * speed, 0, 1))
-		local clamp = math.clamp(easeCubic * 100, 0, 1)
-		local num_2 = math.lerp(arg_11_3.wobble_max, arg_11_3.wobble_min, easeCubic) * clamp * clamp01
-		local num_3 = num_2 * arg_11_3.wobble_vertical_mult
-		local num_4 = num_2 * arg_11_3.wobble_horizontal_mult
-		local num_5 = arg_11_3.wobble_speed * arg_11_3.spin_dir
-		local num_6 = 2.007128639793479
-		local var_11_15 = Vector3(math.sin(num * num_5 - num_6) * num_4, 0, math.cos(num * num_5 - num_6) * num_3)
-		local rotate = Quaternion.rotate(Quaternion.look(unbox), var_11_15)
-		local flag
+		custom_data.lerped_wobble_scale = dist_from_enemy_scale
 
-		flag = not (num_4 < math.epsilon) or not 0 or Vector3.dot(Vector3.right(), var_11_15) / num_4
+		local projectile_speed_scaler = locomotion_ext.speed
+		local amount_t = math.easeCubic(math.clamp(time_lived * custom_data.wobble_stabiliztion_speed * projectile_speed_scaler, 0, 1))
+		local transition_scale = math.clamp(amount_t * 100, 0, 1)
+		local amount_mult = math.lerp(custom_data.wobble_max, custom_data.wobble_min, amount_t) * transition_scale * dist_from_enemy_scale
+		local vertical_wobble_amount = amount_mult * custom_data.wobble_vertical_mult
+		local horizontal_wobble_amount = amount_mult * custom_data.wobble_horizontal_mult
+		local wobble_speed = custom_data.wobble_speed * custom_data.spin_dir
+		local phase_offset = 2.007128639793479
+		local local_wobble_offset = Vector3(math.sin(time_lived * wobble_speed - phase_offset) * horizontal_wobble_amount, 0, math.cos(time_lived * wobble_speed - phase_offset) * vertical_wobble_amount)
+		local wobble_offset = Quaternion.rotate(Quaternion.look(target_vector), local_wobble_offset)
+		local num
 
-		local axis_angle = Quaternion.axis_angle(Vector3.forward(), -flag * math.pi * 0.1)
-		local look = Quaternion.look(unbox)
-		local multiply = Quaternion.multiply(look, axis_angle)
+		if horizontal_wobble_amount < math.epsilon then
+			num = 0
 
-		Unit.set_local_rotation(arg_11_0, 0, multiply)
-		Unit.set_local_position(arg_11_0, 0, arg_11_1 + rotate)
+			goto label_11_2
+		end
+
+		num = Vector3.dot(Vector3.right(), local_wobble_offset) / horizontal_wobble_amount
+
+		local wobble_dist = num
+
+		::label_11_2::
+
+		local rot_offset = Quaternion.axis_angle(Vector3.forward(), -wobble_dist * math.pi * 0.1)
+		local fwd_rot = Quaternion.look(target_vector)
+
+		rot_offset = Quaternion.multiply(fwd_rot, rot_offset)
+
+		Unit.set_local_rotation(unit, 0, rot_offset)
+		Unit.set_local_position(unit, 0, position + wobble_offset)
 	end
 }
 
-local num = 0
+local template_index = 0
 local TrueFlightTemplatesLookup = TrueFlightTemplatesLookup
 
-TrueFlightTemplatesLookup = TrueFlightTemplatesLookup or {}
+TrueFlightTemplatesLookup = not not TrueFlightTemplatesLookup or not not {}
 TrueFlightTemplatesLookup = TrueFlightTemplatesLookup
 
-for k, v in pairs(TrueFlightTemplates) do
-	num = num + 1
-	v.lookup_id = num
-	TrueFlightTemplatesLookup[num] = k
+for name, template in pairs(TrueFlightTemplates) do
+	template_index = template_index + 1
+	template.lookup_id = template_index
+	TrueFlightTemplatesLookup[template_index] = name
 end

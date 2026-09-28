@@ -1,7 +1,7 @@
 -- chunkname: @scripts/managers/backend/statistics_definitions_lake.lua
 
 local player = StatisticsDefinitions.player
-local tbl = {
+local database_names = {
 	"complete_all_helmgart_levels_recruit_es_questingknight",
 	"complete_all_helmgart_levels_veteran_es_questingknight",
 	"complete_all_helmgart_levels_champion_es_questingknight",
@@ -18,40 +18,40 @@ local tbl = {
 
 player.weapon_kills_per_breed.markus_questingknight_career_skill_weapon = {}
 
-for k, v in pairs(Breeds) do
-	player.weapon_kills_per_breed.markus_questingknight_career_skill_weapon[k] = {
+for breed_name, breed in pairs(Breeds) do
+	player.weapon_kills_per_breed.markus_questingknight_career_skill_weapon[breed_name] = {
 		value = 0,
 		source = "player_data",
-		database_name = k
+		database_name = breed_name
 	}
 end
 
-for k_2 = 1, #tbl do
-	local var_0_2 = tbl[k_2]
+for i = 1, #database_names do
+	local name = database_names[i]
 
-	player[var_0_2] = {
+	player[name] = {
 		value = 0,
 		source = "player_data",
-		database_name = var_0_2
+		database_name = name
 	}
 end
 
-local tbl_2 = {
+local relevant_careers = {
 	es_questingknight = true
 }
 
-for k_3, v_2 in pairs(CareerSettings) do
-	if not tbl_2[k_3] then
-		player.mission_streak[k_3] = {}
+for career, _ in pairs(CareerSettings) do
+	if relevant_careers[career] then
+		player.mission_streak[career] = {}
 
-		for k_4, v_3 in pairs(LevelSettings) do
-			if not table.contains(UnlockableLevels, k_4) then
-				local str = "mission_streak_" .. k_3 .. "_" .. k_4
+		for level_key, _ in pairs(LevelSettings) do
+			if table.contains(UnlockableLevels, level_key) then
+				local database_name = "mission_streak_" .. career .. "_" .. level_key
 
-				player.mission_streak[k_3][k_4] = {
+				player.mission_streak[career][level_key] = {
 					value = 0,
 					source = "player_data",
-					database_name = str
+					database_name = database_name
 				}
 			end
 		end

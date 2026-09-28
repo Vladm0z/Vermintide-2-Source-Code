@@ -1,8 +1,7 @@
 -- chunkname: @scripts/ui/views/chat_gui_definitions.lua
 
-local num = 500
-local num_2 = 200
-local num_3 = num - 10
+local CHAT_WIDTH, CHAT_HEIGHT = 500, 200
+local CHAT_INPUT_TEXT_WIDTH = CHAT_WIDTH - 10
 
 if not rawget(_G, "Irc") then
 	Irc = {
@@ -28,7 +27,7 @@ IRC_CHANNEL_COLORS = {
 	[Irc.ALL_MSG] = Colors.get_table("khaki")
 }
 
-local tbl = {
+local scenegraph_definition = {
 	root_parent = {
 		is_root = true,
 		position = {
@@ -61,8 +60,8 @@ local tbl = {
 			0
 		},
 		size = {
-			num,
-			num_2
+			CHAT_WIDTH,
+			CHAT_HEIGHT
 		}
 	},
 	screen = {
@@ -97,19 +96,19 @@ local tbl = {
 			1
 		},
 		size = {
-			num,
-			num_2
+			CHAT_WIDTH,
+			CHAT_HEIGHT
 		}
 	},
 	chat_window_frame_top = {
 		parent = "chat_window_root",
 		position = {
 			0,
-			num_2,
+			CHAT_HEIGHT,
 			2
 		},
 		size = {
-			num,
+			CHAT_WIDTH,
 			4
 		}
 	},
@@ -158,7 +157,7 @@ local tbl = {
 			2
 		},
 		size = {
-			num,
+			CHAT_WIDTH,
 			4
 		}
 	},
@@ -193,7 +192,7 @@ local tbl = {
 	chat_scrollbar_root = {
 		parent = "chat_window_root",
 		position = {
-			num - 7,
+			CHAT_WIDTH - 7,
 			6,
 			2
 		},
@@ -211,7 +210,7 @@ local tbl = {
 		},
 		size = {
 			2,
-			num_2 - 14
+			CHAT_HEIGHT - 14
 		}
 	},
 	chat_scrollbar_background_hotspot = {
@@ -223,14 +222,14 @@ local tbl = {
 		},
 		size = {
 			24,
-			num_2 - 14
+			CHAT_HEIGHT - 14
 		}
 	},
 	chat_background_stroke_top = {
 		parent = "chat_scrollbar_root",
 		position = {
 			0,
-			num_2 - 13,
+			CHAT_HEIGHT - 13,
 			2
 		},
 		size = {
@@ -259,7 +258,7 @@ local tbl = {
 		},
 		size = {
 			1,
-			num_2 - 14
+			CHAT_HEIGHT - 14
 		}
 	},
 	chat_background_stroke_right = {
@@ -271,7 +270,7 @@ local tbl = {
 		},
 		size = {
 			1,
-			num_2 - 14
+			CHAT_HEIGHT - 14
 		}
 	},
 	chat_scrollbar = {
@@ -330,8 +329,8 @@ local tbl = {
 			2
 		},
 		size = {
-			num - 15,
-			num_2 - 26
+			CHAT_WIDTH - 15,
+			CHAT_HEIGHT - 26
 		}
 	},
 	chat_input_box = {
@@ -340,11 +339,11 @@ local tbl = {
 		horizontal_alignment = "left",
 		position = {
 			0,
-			-num_2,
+			-CHAT_HEIGHT,
 			5
 		},
 		size = {
-			num,
+			CHAT_WIDTH,
 			20
 		}
 	},
@@ -358,7 +357,7 @@ local tbl = {
 			1
 		},
 		size = {
-			num,
+			CHAT_WIDTH,
 			20
 		}
 	},
@@ -370,12 +369,12 @@ local tbl = {
 			0
 		},
 		size = {
-			num,
-			num_2
+			CHAT_WIDTH,
+			CHAT_HEIGHT
 		}
 	}
 }
-local tbl_2 = {
+local chat_window_widget = {
 	scenegraph_id = "chat_window_background",
 	element = {
 		passes = {
@@ -398,7 +397,7 @@ local tbl_2 = {
 		}
 	}
 }
-local tbl_3 = {
+local chat_input_widget = {
 	scenegraph_id = "chat_input_box",
 	element = {
 		passes = {
@@ -410,33 +409,33 @@ local tbl_3 = {
 			{
 				style_id = "info_hotspot",
 				pass_type = "rect",
-				content_check_function = function (arg_1_0)
+				content_check_function = function (content)
 					-- function 1
 					return GameSettingsDevelopment.use_global_chat
 				end,
-				content_change_function = function (self, arg_2_1)
+				content_change_function = function (content, style)
 					-- function 2
 					local selected_color
 
-					if not self.info_hotspot.is_hover then
-						selected_color = arg_2_1.selected_color
+					if content.info_hotspot.is_hover then
+						selected_color = style.selected_color
 
 						if not selected_color then
 							-- Nothing
 						end
 					end
 
-					selected_color = arg_2_1.base_color
+					selected_color = style.base_color
 
 					::label_2_0::
 
-					arg_2_1.color = selected_color
+					style.color = selected_color
 				end
 			},
 			{
 				style_id = "info_icon",
 				pass_type = "rect",
-				content_check_function = function (arg_3_0)
+				content_check_function = function (content)
 					-- function 3
 					return GameSettingsDevelopment.use_global_chat
 				end
@@ -445,27 +444,27 @@ local tbl_3 = {
 				style_id = "info_icon_text",
 				pass_type = "text",
 				text_id = "info_icon_text",
-				content_check_function = function (arg_4_0)
+				content_check_function = function (content)
 					-- function 4
 					return GameSettingsDevelopment.use_global_chat
 				end,
-				content_change_function = function (self, arg_5_1)
+				content_change_function = function (content, style)
 					-- function 5
 					local selected_color
 
-					if not self.info_hotspot.is_hover then
-						selected_color = arg_5_1.selected_color
+					if content.info_hotspot.is_hover then
+						selected_color = style.selected_color
 
 						if not selected_color then
 							-- Nothing
 						end
 					end
 
-					selected_color = arg_5_1.base_color
+					selected_color = style.base_color
 
 					::label_5_0::
 
-					arg_5_1.text_color = selected_color
+					style.text_color = selected_color
 				end
 			},
 			{
@@ -476,33 +475,33 @@ local tbl_3 = {
 			{
 				style_id = "enlarge_hotspot",
 				pass_type = "rect",
-				content_check_function = function (arg_6_0)
+				content_check_function = function (content)
 					-- function 6
 					return GameSettingsDevelopment.use_global_chat
 				end,
-				content_change_function = function (self, arg_7_1)
+				content_change_function = function (content, style)
 					-- function 7
 					local selected_color
 
-					if not self.enlarge_hotspot.is_hover then
-						selected_color = arg_7_1.selected_color
+					if content.enlarge_hotspot.is_hover then
+						selected_color = style.selected_color
 
 						if not selected_color then
 							-- Nothing
 						end
 					end
 
-					selected_color = arg_7_1.base_color
+					selected_color = style.base_color
 
 					::label_7_0::
 
-					arg_7_1.color = selected_color
+					style.color = selected_color
 				end
 			},
 			{
 				style_id = "enlarge_icon",
 				pass_type = "rect",
-				content_check_function = function (arg_8_0)
+				content_check_function = function (content)
 					-- function 8
 					return GameSettingsDevelopment.use_global_chat
 				end
@@ -515,33 +514,33 @@ local tbl_3 = {
 			{
 				style_id = "filter_hotspot",
 				pass_type = "rect",
-				content_check_function = function (arg_9_0)
+				content_check_function = function (content)
 					-- function 9
 					return GameSettingsDevelopment.use_global_chat
 				end,
-				content_change_function = function (self, arg_10_1)
+				content_change_function = function (content, style)
 					-- function 10
 					local selected_color
 
-					if not self.filter_hotspot.is_hover then
-						selected_color = arg_10_1.selected_color
+					if content.filter_hotspot.is_hover then
+						selected_color = style.selected_color
 
 						if not selected_color then
 							-- Nothing
 						end
 					end
 
-					selected_color = arg_10_1.base_color
+					selected_color = style.base_color
 
 					::label_10_0::
 
-					arg_10_1.color = selected_color
+					style.color = selected_color
 				end
 			},
 			{
 				style_id = "filter_icon",
 				pass_type = "triangle",
-				content_check_function = function (arg_11_0)
+				content_check_function = function (content)
 					-- function 11
 					return GameSettingsDevelopment.use_global_chat
 				end
@@ -554,33 +553,33 @@ local tbl_3 = {
 			{
 				style_id = "target_hotspot",
 				pass_type = "rect",
-				content_check_function = function (arg_12_0)
+				content_check_function = function (content)
 					-- function 12
 					return GameSettingsDevelopment.use_global_chat
 				end,
-				content_change_function = function (self, arg_13_1)
+				content_change_function = function (content, style)
 					-- function 13
 					local selected_color
 
-					if not self.target_hotspot.is_hover then
-						selected_color = arg_13_1.selected_color
+					if content.target_hotspot.is_hover then
+						selected_color = style.selected_color
 
 						if not selected_color then
 							-- Nothing
 						end
 					end
 
-					selected_color = arg_13_1.base_color
+					selected_color = style.base_color
 
 					::label_13_0::
 
-					arg_13_1.color = selected_color
+					style.color = selected_color
 				end
 			},
 			{
 				style_id = "target_icon",
 				pass_type = "triangle",
-				content_check_function = function (arg_14_0)
+				content_check_function = function (content)
 					-- function 14
 					return GameSettingsDevelopment.use_global_chat
 				end
@@ -592,7 +591,7 @@ local tbl_3 = {
 			{
 				style_id = "background_header",
 				pass_type = "rect",
-				content_check_function = function (arg_15_0, arg_15_1)
+				content_check_function = function (content, style)
 					-- function 15
 					return GameSettingsDevelopment.use_global_chat
 				end
@@ -600,7 +599,7 @@ local tbl_3 = {
 			{
 				style_id = "background_header_front",
 				pass_type = "rect",
-				content_check_function = function (arg_16_0, arg_16_1)
+				content_check_function = function (content, style)
 					-- function 16
 					return GameSettingsDevelopment.use_global_chat
 				end
@@ -619,7 +618,7 @@ local tbl_3 = {
 				style_id = "header_text",
 				pass_type = "text",
 				text_id = "header_field",
-				content_check_function = function (arg_17_0, arg_17_1)
+				content_check_function = function (content, style)
 					-- function 17
 					return GameSettingsDevelopment.use_global_chat
 				end
@@ -888,7 +887,7 @@ local tbl_3 = {
 			scenegraph_id = "chat_window_frame_top",
 			color = Colors.get_table("very_dark_gray"),
 			size = {
-				num,
+				CHAT_WIDTH,
 				24
 			}
 		},
@@ -896,7 +895,7 @@ local tbl_3 = {
 			scenegraph_id = "chat_window_frame_top",
 			color = Colors.get_table("black"),
 			size = {
-				num - 2,
+				CHAT_WIDTH - 2,
 				22
 			},
 			offset = {
@@ -959,7 +958,7 @@ local tbl_3 = {
 		}
 	}
 }
-local tbl_4 = {
+local chat_output_widget = {
 	scenegraph_id = "chat_output_root",
 	element = UIElements.TextAreaChat,
 	content = {
@@ -992,7 +991,7 @@ local tbl_4 = {
 		}
 	}
 }
-local tbl_5 = {
+local chat_scrollbar_widget = {
 	scenegraph_id = "chat_scrollbar_root",
 	element = {
 		passes = {
@@ -1024,17 +1023,17 @@ local tbl_5 = {
 			{
 				style_id = "scrollbar",
 				pass_type = "local_offset",
-				offset_function = function (arg_18_0, arg_18_1, arg_18_2)
+				offset_function = function (ui_scenegraph, ui_style, ui_content)
 					-- function 18
-					local get_local_position = UISceneGraph.get_local_position(arg_18_0, arg_18_1.scenegraph_id)
-					local scroll_bar_height = arg_18_2.scroll_bar_height
-					local num = scroll_bar_height / 2
-					local scroll_offset_min = arg_18_2.scroll_offset_min
-					local scroll_offset_max = arg_18_2.scroll_offset_max
-					local min = math.min(scroll_offset_min + (scroll_offset_max - scroll_offset_min) * arg_18_2.internal_scroll_value, scroll_offset_max - scroll_bar_height)
+					local local_position = UISceneGraph.get_local_position(ui_scenegraph, ui_style.scenegraph_id)
+					local bar_height = ui_content.scroll_bar_height
+					local half_bar_height = bar_height / 2
+					local min = ui_content.scroll_offset_min
+					local max = ui_content.scroll_offset_max
+					local y_pos = math.min(min + (max - min) * ui_content.internal_scroll_value, max - bar_height)
 
-					get_local_position[2] = min
-					arg_18_2.scroll_value = (min - scroll_offset_min) / (scroll_offset_max - scroll_bar_height - scroll_offset_min)
+					local_position[2] = y_pos
+					ui_content.scroll_value = (y_pos - min) / (max - bar_height - min)
 				end
 			},
 			{
@@ -1059,22 +1058,25 @@ local tbl_5 = {
 			{
 				style_id = "background_hotspot",
 				pass_type = "held",
-				held_function = function (arg_19_0, arg_19_1, arg_19_2, arg_19_3)
+				held_function = function (ui_scenegraph, ui_style, ui_content, input_service)
 					-- function 19
-					local var_19_0 = UIInverseScaleVectorToResolution(arg_19_3:get("cursor"))
-					local scenegraph_id = arg_19_1.scenegraph_id
-					local get_world_position = UISceneGraph.get_world_position(arg_19_0, scenegraph_id)
-					local num = arg_19_2.scroll_bar_height / 2
-					local var_19_4 = num
-					local num_2 = var_19_0[2] - var_19_4
-					local get_size = UISceneGraph.get_size(arg_19_0, scenegraph_id)
-					local num_3 = num_2 - get_world_position[2]
-					local num_4 = get_world_position[2] + num
-					local scroll_offset_max = arg_19_2.scroll_offset_max
-					local num_5 = get_world_position[2] + scroll_offset_max - num - arg_19_2.scroll_offset_min
-					local clamp = math.clamp(num_3, 0, get_size[2])
+					local cursor = UIInverseScaleVectorToResolution(input_service:get("cursor"))
+					local scenegraph_id = ui_style.scenegraph_id
+					local world_position = UISceneGraph.get_world_position(ui_scenegraph, scenegraph_id)
+					local bar_height = ui_content.scroll_bar_height
+					local half_bar_size = bar_height / 2
+					local start_delta_cursor = half_bar_size
+					local y_pos = cursor[2] - start_delta_cursor
+					local size = UISceneGraph.get_size(ui_scenegraph, scenegraph_id)
+					local current_offset_from_bottom = y_pos - world_position[2]
+					local current_offset_center_bar = current_offset_from_bottom
+					local min_world_pos = world_position[2] + half_bar_size
+					local scroll_offset_max = ui_content.scroll_offset_max
+					local max_world_pos = world_position[2] + scroll_offset_max - half_bar_size - ui_content.scroll_offset_min
+					local current_position = math.clamp(current_offset_center_bar, 0, size[2])
+					local delta_value = math.min(current_position / size[2], 1)
 
-					arg_19_2.internal_scroll_value = math.min(clamp / get_size[2], 1)
+					ui_content.internal_scroll_value = delta_value
 				end
 			}
 		}
@@ -1084,7 +1086,7 @@ local tbl_5 = {
 		scroll_offset_min = 2,
 		internal_scroll_value = 0,
 		scroll_value = 0,
-		scroll_offset_max = num_2 - 14
+		scroll_offset_max = CHAT_HEIGHT - 14
 	},
 	style = {
 		background_hotspot = {
@@ -1131,10 +1133,10 @@ local tbl_5 = {
 	}
 }
 
-local function fn(arg_20_0, arg_20_1)
+local function create_chat_button(scenegraph_id, size)
 	-- function 20
-	local menu_frame_12 = UIFrameSettings.menu_frame_12
-	local tbl = {
+	local frame_settings = UIFrameSettings.menu_frame_12
+	local element = {
 		passes = {
 			{
 				style_id = "button",
@@ -1154,27 +1156,27 @@ local function fn(arg_20_0, arg_20_1)
 				pass_type = "texture",
 				style_id = "icon",
 				texture_id = "icon",
-				content_check_function = function (self)
+				content_check_function = function (content)
 					-- function 21
-					return not self.button_hotspot.is_hover
+					return not content.button_hotspot.is_hover
 				end
 			},
 			{
 				pass_type = "texture",
 				style_id = "icon_hover",
 				texture_id = "icon",
-				content_check_function = function (self)
+				content_check_function = function (content)
 					-- function 22
-					return self.button_hotspot.is_hover
+					return content.button_hotspot.is_hover
 				end
 			},
 			{
 				pass_type = "texture",
 				style_id = "hover",
 				texture_id = "hover",
-				content_check_function = function (self)
+				content_check_function = function (content)
 					-- function 23
-					return self.button_hotspot.is_hover
+					return content.button_hotspot.is_hover
 				end
 			},
 			{
@@ -1184,14 +1186,14 @@ local function fn(arg_20_0, arg_20_1)
 			}
 		}
 	}
-	local tbl_2 = {
+	local content = {
 		button_notification = "chat_icon_glow",
 		hover = "button_state_default_2",
 		icon = "chat_icon_01",
 		button_hotspot = {},
-		frame = menu_frame_12.texture
+		frame = frame_settings.texture
 	}
-	local tbl_3 = {
+	local style = {
 		button = {
 			color = Colors.get_color_table_with_alpha("black", 200),
 			offset = {
@@ -1217,8 +1219,8 @@ local function fn(arg_20_0, arg_20_1)
 			}
 		},
 		frame = {
-			texture_size = menu_frame_12.texture_size,
-			texture_sizes = menu_frame_12.texture_sizes,
+			texture_size = frame_settings.texture_size,
+			texture_sizes = frame_settings.texture_sizes,
 			color = {
 				255,
 				255,
@@ -1258,21 +1260,22 @@ local function fn(arg_20_0, arg_20_1)
 			}
 		}
 	}
+	local widget = {}
 
-	return {
-		element = tbl,
-		content = tbl_2,
-		style = tbl_3,
-		offset = {
-			0,
-			0,
-			0
-		},
-		scenegraph_id = arg_20_0
+	widget.element = element
+	widget.content = content
+	widget.style = style
+	widget.offset = {
+		0,
+		0,
+		0
 	}
+	widget.scenegraph_id = scenegraph_id
+
+	return widget
 end
 
-function create_additional_chat_tooltip(arg_24_0, arg_24_1, arg_24_2, arg_24_3, arg_24_4, arg_24_5, arg_24_6, arg_24_7, arg_24_8)
+function create_additional_chat_tooltip(scenegraph_id, size, content_passes, tooltip_data, max_width, horizontal_alignment, vertical_alignment, grow_downwards, offset)
 	-- function 24
 	return {
 		element = {
@@ -1285,16 +1288,16 @@ function create_additional_chat_tooltip(arg_24_0, arg_24_1, arg_24_2, arg_24_3, 
 					style_id = "tooltip",
 					additional_option_id = "tooltip",
 					pass_type = "additional_option_tooltip",
-					content_passes = arg_24_2 or {
+					content_passes = not not content_passes or not not {
 						"additional_option_info"
 					},
-					content_check_function = function (self)
+					content_check_function = function (content)
 						-- function 25
-						local tooltip = self.tooltip
+						local tooltip = content.tooltip
 
-						if not tooltip then
-							tooltip = self.button_hotspot.is_hover
-							tooltip = not tooltip and GameSettingsDevelopment.use_global_chat
+						if tooltip then
+							tooltip = content.button_hotspot.is_hover
+							tooltip = not not tooltip and not not GameSettingsDevelopment.use_global_chat
 						end
 
 						return tooltip
@@ -1303,18 +1306,18 @@ function create_additional_chat_tooltip(arg_24_0, arg_24_1, arg_24_2, arg_24_3, 
 			}
 		},
 		content = {
-			tooltip = arg_24_3 or nil,
+			tooltip = not not tooltip_data or not not nil,
 			button_hotspot = {
 				allow_multi_hover = true
 			}
 		},
 		style = {
 			tooltip = {
-				grow_downwards = arg_24_7,
-				max_width = arg_24_4 or 300,
-				horizontal_alignment = arg_24_5 or "center",
-				vertical_alignment = arg_24_6 or "bottom",
-				offset = arg_24_8 or {
+				grow_downwards = grow_downwards,
+				max_width = not not max_width or not not 300,
+				horizontal_alignment = not not horizontal_alignment or not not "center",
+				vertical_alignment = not not vertical_alignment or not not "bottom",
+				offset = not not offset or not not {
 					0,
 					0,
 					0
@@ -1326,38 +1329,38 @@ function create_additional_chat_tooltip(arg_24_0, arg_24_1, arg_24_2, arg_24_3, 
 			0,
 			0
 		},
-		scenegraph_id = arg_24_0
+		scenegraph_id = scenegraph_id
 	}
 end
 
-local tbl_6 = {
-	chat_target_tooltip = create_additional_chat_tooltip("chat_window_frame_top_target", tbl.chat_window_frame_top_filter.size, nil, {
+local widgets = {
+	chat_target_tooltip = create_additional_chat_tooltip("chat_window_frame_top_target", scenegraph_definition.chat_window_frame_top_filter.size, nil, {
 		title = Localize("chat_menu_tooltip_target_title"),
 		description = Localize("menu_chat_tooltip_target_description")
 	}, nil, nil, "top", nil),
-	chat_filter_tooltip = create_additional_chat_tooltip("chat_window_frame_top_filter", tbl.chat_window_frame_top_filter.size, nil, {
+	chat_filter_tooltip = create_additional_chat_tooltip("chat_window_frame_top_filter", scenegraph_definition.chat_window_frame_top_filter.size, nil, {
 		title = Localize("chat_menu_tooltip_filter_title"),
 		description = Localize("menu_chat_tooltip_filter_description")
 	}, nil, nil, "top", nil),
-	chat_enlarge_tooltip = create_additional_chat_tooltip("chat_window_frame_top_enlarge", tbl.chat_window_frame_top_enlarge.size, nil, {
+	chat_enlarge_tooltip = create_additional_chat_tooltip("chat_window_frame_top_enlarge", scenegraph_definition.chat_window_frame_top_enlarge.size, nil, {
 		title = Localize("chat_menu_tooltip_enlarge_title"),
 		description = Localize("menu_chat_tooltip_enlarge_description")
 	}, nil, nil, "top", nil),
-	chat_info_tooltip = create_additional_chat_tooltip("chat_window_frame_top_info", tbl.chat_window_frame_top_info.size, nil, {
+	chat_info_tooltip = create_additional_chat_tooltip("chat_window_frame_top_info", scenegraph_definition.chat_window_frame_top_info.size, nil, {
 		title = Localize("chat_menu_tooltip_info_title"),
 		description = Localize("menu_chat_tooltip_info_description")
 	}, nil, nil, "top", nil)
 }
 
 return {
-	CHAT_WIDTH = num,
-	CHAT_HEIGHT = num_2,
-	CHAT_INPUT_TEXT_WIDTH = num_3,
-	scenegraph_definition = tbl,
-	chat_window_widget = tbl_2,
-	chat_output_widget = tbl_4,
-	chat_input_widget = tbl_3,
-	chat_scrollbar_widget = tbl_5,
-	chat_tab_widget = fn("chat_tab_root", tbl.chat_tab_root.size),
-	widgets = tbl_6
+	CHAT_WIDTH = CHAT_WIDTH,
+	CHAT_HEIGHT = CHAT_HEIGHT,
+	CHAT_INPUT_TEXT_WIDTH = CHAT_INPUT_TEXT_WIDTH,
+	scenegraph_definition = scenegraph_definition,
+	chat_window_widget = chat_window_widget,
+	chat_output_widget = chat_output_widget,
+	chat_input_widget = chat_input_widget,
+	chat_scrollbar_widget = chat_scrollbar_widget,
+	chat_tab_widget = create_chat_button("chat_tab_root", scenegraph_definition.chat_tab_root.size),
+	widgets = widgets
 }

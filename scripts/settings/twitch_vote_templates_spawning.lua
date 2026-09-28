@@ -1,63 +1,66 @@
 -- chunkname: @scripts/settings/twitch_vote_templates_spawning.lua
 
-local TwitchSettings = TwitchSettings
+local twitch_settings = TwitchSettings
 
-local function fn(arg_1_0, ...)
+local function debug_print(message, ...)
 	-- function 1
-	if not DEBUG_TWITCH then
-		print("[Twitch] " .. string.format(arg_1_0, ...))
+	if DEBUG_TWITCH then
+		print("[Twitch] " .. string.format(message, ...))
 	end
 end
 
-local function fn_2(arg_2_0, arg_2_1)
+local function spawn_custom_horde(breed_name, difficulty_amounts)
 	-- function 2
-	local var_2_0 = arg_2_1[Managers.state.difficulty:get_difficulty()]
+	local difficulty = Managers.state.difficulty:get_difficulty()
+	local num_enemies_range = difficulty_amounts[difficulty]
 
-	var_2_0 = var_2_0 or arg_2_1.hardest
+	num_enemies_range = not not num_enemies_range or not not difficulty_amounts.hardest
 
-	local ceil = math.ceil(math.random(var_2_0[1], var_2_0[2]) * TwitchSettings.spawn_amount_multiplier)
-	local side_id = Managers.state.side:get_side_from_name("dark_pact").side_id
-	local tbl = {}
+	local amount_of_enemies = math.ceil(math.random(num_enemies_range[1], num_enemies_range[2]) * twitch_settings.spawn_amount_multiplier)
+	local side = Managers.state.side:get_side_from_name("dark_pact")
+	local side_id = side.side_id
+	local spawn_list = {}
 
-	for i = 1, ceil do
-		tbl[#tbl + 1] = arg_2_0
+	for i = 1, amount_of_enemies do
+		spawn_list[#spawn_list + 1] = breed_name
 	end
 
-	local conflict = Managers.state.conflict
-	local flag = false
-	local main_path_info = conflict.main_path_info
+	local conflict_director = Managers.state.conflict
+	local only_ahead = false
+	local main_path_info = conflict_director.main_path_info
 
-	if main_path_info.ahead_unit or not main_path_info.behind_unit then
-		conflict.horde_spawner:execute_custom_horde(tbl, flag, side_id)
+	if main_path_info.ahead_unit or main_path_info.behind_unit then
+		conflict_director.horde_spawner:execute_custom_horde(spawn_list, only_ahead, side_id)
 	end
 end
 
-local function fn_3(arg_3_0, arg_3_1)
+local function spawn_hidden(breed_name, difficulty_amounts)
 	-- function 3
-	local var_3_0 = arg_3_1[Managers.state.difficulty:get_difficulty()]
+	local difficulty = Managers.state.difficulty:get_difficulty()
+	local num_enemies = difficulty_amounts[difficulty]
 
-	var_3_0 = var_3_0 or arg_3_1.hardest
+	num_enemies = not not num_enemies or not not difficulty_amounts.hardest
 
-	local var_3_1
+	local amount_of_enemies
 
-	if type(var_3_0) == "table" then
-		var_3_1 = math.ceil(math.random(var_3_0[1], var_3_0[2]) * TwitchSettings.spawn_amount_multiplier)
+	if type(num_enemies) == "table" then
+		amount_of_enemies = math.ceil(math.random(num_enemies[1], num_enemies[2]) * twitch_settings.spawn_amount_multiplier)
 	else
-		var_3_1 = math.ceil(var_3_0 * TwitchSettings.spawn_amount_multiplier)
+		amount_of_enemies = math.ceil(num_enemies * twitch_settings.spawn_amount_multiplier)
 	end
 
-	local conflict = Managers.state.conflict
+	local conflict_director = Managers.state.conflict
 
-	for i = 1, var_3_1 do
-		local get_special_spawn_pos = conflict.specials_pacing:get_special_spawn_pos()
+	for i = 1, amount_of_enemies do
+		local hidden_pos = conflict_director.specials_pacing:get_special_spawn_pos()
 
-		conflict:spawn_one(Breeds[arg_3_0], get_special_spawn_pos)
+		conflict_director:spawn_one(Breeds[breed_name], hidden_pos)
 	end
 end
 
 local TwitchVoteTemplates = TwitchVoteTemplates
 
-TwitchVoteTemplates = TwitchVoteTemplates or {}
+TwitchVoteTemplates = not not TwitchVoteTemplates or not not {}
 TwitchVoteTemplates = TwitchVoteTemplates
 TwitchVoteTemplates.twitch_spawn_rat_ogre = {
 	text = "twitch_vote_spawn_rat_ogre",
@@ -68,16 +71,16 @@ TwitchVoteTemplates.twitch_spawn_rat_ogre = {
 		60,
 		70
 	},
-	on_success = function (arg_4_0)
+	on_success = function (is_server)
 		-- function 4
-		if not arg_4_0 then
-			fn("[TWITCH VOTE] Spawning rat ogre")
+		if is_server then
+			debug_print("[TWITCH VOTE] Spawning rat ogre")
 
-			local skaven_rat_ogre = Breeds.skaven_rat_ogre
-			local floor = math.floor(1 * TwitchSettings.spawn_amount_multiplier)
+			local breed = Breeds.skaven_rat_ogre
+			local spawn_amount = math.floor(1 * twitch_settings.spawn_amount_multiplier)
 
-			for i = 1, floor do
-				Managers.state.conflict:spawn_one(skaven_rat_ogre, nil, nil, {
+			for i = 1, spawn_amount do
+				Managers.state.conflict:spawn_one(breed, nil, nil, {
 					max_health_modifier = 0.85
 				})
 			end
@@ -93,16 +96,16 @@ TwitchVoteTemplates.twitch_spawn_stormfiend = {
 		60,
 		70
 	},
-	on_success = function (arg_5_0)
+	on_success = function (is_server)
 		-- function 5
-		if not arg_5_0 then
-			fn("[TWITCH VOTE] Spawning stormfiend")
+		if is_server then
+			debug_print("[TWITCH VOTE] Spawning stormfiend")
 
-			local skaven_stormfiend = Breeds.skaven_stormfiend
-			local floor = math.floor(1 * TwitchSettings.spawn_amount_multiplier)
+			local breed = Breeds.skaven_stormfiend
+			local spawn_amount = math.floor(1 * twitch_settings.spawn_amount_multiplier)
 
-			for i = 1, floor do
-				Managers.state.conflict:spawn_one(skaven_stormfiend, nil, nil, {
+			for i = 1, spawn_amount do
+				Managers.state.conflict:spawn_one(breed, nil, nil, {
 					max_health_modifier = 0.85
 				})
 			end
@@ -118,16 +121,16 @@ TwitchVoteTemplates.twitch_spawn_chaos_troll = {
 		60,
 		70
 	},
-	on_success = function (arg_6_0)
+	on_success = function (is_server)
 		-- function 6
-		if not arg_6_0 then
-			fn("[TWITCH VOTE] Spawning chaos troll")
+		if is_server then
+			debug_print("[TWITCH VOTE] Spawning chaos troll")
 
-			local chaos_troll = Breeds.chaos_troll
-			local floor = math.floor(1 * TwitchSettings.spawn_amount_multiplier)
+			local breed = Breeds.chaos_troll
+			local spawn_amount = math.floor(1 * twitch_settings.spawn_amount_multiplier)
 
-			for i = 1, floor do
-				Managers.state.conflict:spawn_one(chaos_troll, nil, nil, {
+			for i = 1, spawn_amount do
+				Managers.state.conflict:spawn_one(breed, nil, nil, {
 					max_health_modifier = 0.85
 				})
 			end
@@ -143,16 +146,16 @@ TwitchVoteTemplates.twitch_spawn_chaos_spawn = {
 		60,
 		70
 	},
-	on_success = function (arg_7_0)
+	on_success = function (is_server)
 		-- function 7
-		if not arg_7_0 then
-			fn("[TWITCH VOTE] Spawning chaos spawn")
+		if is_server then
+			debug_print("[TWITCH VOTE] Spawning chaos spawn")
 
-			local chaos_spawn = Breeds.chaos_spawn
-			local floor = math.floor(1 * TwitchSettings.spawn_amount_multiplier)
+			local breed = Breeds.chaos_spawn
+			local spawn_amount = math.floor(1 * twitch_settings.spawn_amount_multiplier)
 
-			for i = 1, floor do
-				Managers.state.conflict:spawn_one(chaos_spawn, nil, nil, {
+			for i = 1, spawn_amount do
+				Managers.state.conflict:spawn_one(breed, nil, nil, {
 					max_health_modifier = 0.85
 				})
 			end
@@ -168,20 +171,20 @@ TwitchVoteTemplates.twitch_spawn_minotaur = {
 		60,
 		70
 	},
-	condition_func = function (arg_8_0)
+	condition_func = function (current_vote)
 		-- function 8
 		return Managers.unlock:is_dlc_unlocked("scorpion")
 	end,
-	on_success = function (arg_9_0)
+	on_success = function (is_server)
 		-- function 9
-		if not arg_9_0 then
-			fn("[TWITCH VOTE] Spawning chaos spawn")
+		if is_server then
+			debug_print("[TWITCH VOTE] Spawning chaos spawn")
 
-			local beastmen_minotaur = Breeds.beastmen_minotaur
-			local floor = math.floor(1 * TwitchSettings.spawn_amount_multiplier)
+			local breed = Breeds.beastmen_minotaur
+			local spawn_amount = math.floor(1 * twitch_settings.spawn_amount_multiplier)
 
-			for i = 1, floor do
-				Managers.state.conflict:spawn_one(beastmen_minotaur, nil, nil, {
+			for i = 1, spawn_amount do
+				Managers.state.conflict:spawn_one(breed, nil, nil, {
 					max_health_modifier = 0.85
 				})
 			end
@@ -197,19 +200,19 @@ TwitchVoteTemplates.twitch_spawn_corruptor_sorcerer = {
 		60,
 		70
 	},
-	on_success = function (arg_10_0)
+	on_success = function (is_server)
 		-- function 10
-		if not arg_10_0 then
-			fn("[TWITCH VOTE] Spawning group of corruptor sorcerers")
+		if is_server then
+			debug_print("[TWITCH VOTE] Spawning group of corruptor sorcerers")
 
-			local tbl = {
+			local amount_per_difficulty = {
 				harder = 3,
 				hard = 2,
 				hardest = 3,
 				normal = 2
 			}
 
-			fn_3("chaos_corruptor_sorcerer", tbl)
+			spawn_hidden("chaos_corruptor_sorcerer", amount_per_difficulty)
 		end
 	end
 }
@@ -222,19 +225,19 @@ TwitchVoteTemplates.twitch_spawn_vortex_sorcerer = {
 		60,
 		70
 	},
-	on_success = function (arg_11_0)
+	on_success = function (is_server)
 		-- function 11
-		if not arg_11_0 then
-			fn("[TWITCH VOTE] Spawning group of vortex sorceres")
+		if is_server then
+			debug_print("[TWITCH VOTE] Spawning group of vortex sorceres")
 
-			local tbl = {
+			local amount_per_difficulty = {
 				harder = 4,
 				hard = 3,
 				hardest = 4,
 				normal = 3
 			}
 
-			fn_3("chaos_vortex_sorcerer", tbl)
+			spawn_hidden("chaos_vortex_sorcerer", amount_per_difficulty)
 		end
 	end
 }
@@ -247,19 +250,19 @@ TwitchVoteTemplates.twitch_spawn_gutter_runner = {
 		60,
 		70
 	},
-	on_success = function (arg_12_0)
+	on_success = function (is_server)
 		-- function 12
-		if not arg_12_0 then
-			fn("[TWITCH VOTE] Spawning group of gutter runners")
+		if is_server then
+			debug_print("[TWITCH VOTE] Spawning group of gutter runners")
 
-			local tbl = {
+			local amount_per_difficulty = {
 				harder = 3,
 				hard = 2,
 				hardest = 4,
 				normal = 2
 			}
 
-			fn_3("skaven_gutter_runner", tbl)
+			spawn_hidden("skaven_gutter_runner", amount_per_difficulty)
 		end
 	end
 }
@@ -272,19 +275,19 @@ TwitchVoteTemplates.twitch_spawn_pack_master = {
 		60,
 		70
 	},
-	on_success = function (arg_13_0)
+	on_success = function (is_server)
 		-- function 13
-		if not arg_13_0 then
-			fn("[TWITCH VOTE] Spawning group of packmasters")
+		if is_server then
+			debug_print("[TWITCH VOTE] Spawning group of packmasters")
 
-			local tbl = {
+			local amount_per_difficulty = {
 				harder = 3,
 				hard = 3,
 				hardest = 4,
 				normal = 3
 			}
 
-			fn_3("skaven_pack_master", tbl)
+			spawn_hidden("skaven_pack_master", amount_per_difficulty)
 		end
 	end
 }
@@ -297,19 +300,19 @@ TwitchVoteTemplates.twitch_spawn_poison_wind_globadier = {
 		60,
 		70
 	},
-	on_success = function (arg_14_0)
+	on_success = function (is_server)
 		-- function 14
-		if not arg_14_0 then
-			fn("[TWITCH VOTE] Spawning group of poison wind globadiers")
+		if is_server then
+			debug_print("[TWITCH VOTE] Spawning group of poison wind globadiers")
 
-			local tbl = {
+			local amount_per_difficulty = {
 				harder = 3,
 				hard = 3,
 				hardest = 4,
 				normal = 3
 			}
 
-			fn_3("skaven_poison_wind_globadier", tbl)
+			spawn_hidden("skaven_poison_wind_globadier", amount_per_difficulty)
 		end
 	end
 }
@@ -322,19 +325,19 @@ TwitchVoteTemplates.twitch_spawn_ratling_gunner = {
 		60,
 		70
 	},
-	on_success = function (arg_15_0)
+	on_success = function (is_server)
 		-- function 15
-		if not arg_15_0 then
-			fn("[TWITCH VOTE] Spawning group of ratling gunners")
+		if is_server then
+			debug_print("[TWITCH VOTE] Spawning group of ratling gunners")
 
-			local tbl = {
+			local amount_per_difficulty = {
 				harder = 4,
 				hard = 3,
 				hardest = 4,
 				normal = 3
 			}
 
-			fn_3("skaven_ratling_gunner", tbl)
+			spawn_hidden("skaven_ratling_gunner", amount_per_difficulty)
 		end
 	end
 }
@@ -347,19 +350,19 @@ TwitchVoteTemplates.twitch_spawn_warpfire_thrower = {
 		60,
 		70
 	},
-	on_success = function (arg_16_0)
+	on_success = function (is_server)
 		-- function 16
-		if not arg_16_0 then
-			fn("[TWITCH VOTE] Spawning group of warpfire throwers")
+		if is_server then
+			debug_print("[TWITCH VOTE] Spawning group of warpfire throwers")
 
-			local tbl = {
+			local amount_per_difficulty = {
 				harder = 4,
 				hard = 4,
 				hardest = 5,
 				normal = 4
 			}
 
-			fn_3("skaven_warpfire_thrower", tbl)
+			spawn_hidden("skaven_warpfire_thrower", amount_per_difficulty)
 		end
 	end
 }
@@ -371,12 +374,12 @@ TwitchVoteTemplates.twitch_spawn_horde_vector_blob = {
 		60,
 		70
 	},
-	on_success = function (arg_17_0)
+	on_success = function (is_server)
 		-- function 17
-		if not arg_17_0 then
-			fn("[TWITCH VOTE] Spawning horde")
+		if is_server then
+			debug_print("[TWITCH VOTE] Spawning horde")
 
-			local tbl = {
+			local amount_of_enemies_per_difficulty = {
 				normal = {
 					16,
 					22
@@ -394,13 +397,13 @@ TwitchVoteTemplates.twitch_spawn_horde_vector_blob = {
 					42
 				}
 			}
-			local tbl_2 = {
+			local possible_breeds = {
 				"skaven_slave",
 				"chaos_fanatic"
 			}
-			local var_17_2 = tbl_2[Math.random(1, #tbl_2)]
+			local chosen_breed = possible_breeds[Math.random(1, #possible_breeds)]
 
-			fn_2(var_17_2, tbl)
+			spawn_custom_horde(chosen_breed, amount_of_enemies_per_difficulty)
 		end
 	end
 }
@@ -412,12 +415,12 @@ TwitchVoteTemplates.twitch_spawn_explosive_loot_rats = {
 		60,
 		70
 	},
-	on_success = function (arg_18_0)
+	on_success = function (is_server)
 		-- function 18
-		if not arg_18_0 then
-			fn("[TWITCH VOTE] Spawning explosive loot rats")
+		if is_server then
+			debug_print("[TWITCH VOTE] Spawning explosive loot rats")
 
-			local tbl = {
+			local amount_of_enemies_per_difficulty = {
 				normal = {
 					3,
 					4
@@ -436,7 +439,7 @@ TwitchVoteTemplates.twitch_spawn_explosive_loot_rats = {
 				}
 			}
 
-			fn_2("skaven_explosive_loot_rat", tbl)
+			spawn_custom_horde("skaven_explosive_loot_rat", amount_of_enemies_per_difficulty)
 		end
 	end
 }
@@ -448,12 +451,12 @@ TwitchVoteTemplates.twitch_spawn_plague_monks = {
 		60,
 		70
 	},
-	on_success = function (arg_19_0)
+	on_success = function (is_server)
 		-- function 19
-		if not arg_19_0 then
-			fn("[TWITCH VOTE] Spawning plague_monks")
+		if is_server then
+			debug_print("[TWITCH VOTE] Spawning plague_monks")
 
-			local tbl = {
+			local amount_of_enemies_per_difficulty = {
 				normal = {
 					3,
 					4
@@ -472,7 +475,7 @@ TwitchVoteTemplates.twitch_spawn_plague_monks = {
 				}
 			}
 
-			fn_2("skaven_plague_monk", tbl)
+			spawn_custom_horde("skaven_plague_monk", amount_of_enemies_per_difficulty)
 		end
 	end
 }
@@ -484,12 +487,12 @@ TwitchVoteTemplates.twitch_spawn_berzerkers = {
 		60,
 		70
 	},
-	on_success = function (arg_20_0)
+	on_success = function (is_server)
 		-- function 20
-		if not arg_20_0 then
-			fn("[TWITCH VOTE] Spawning chaos_berzerker")
+		if is_server then
+			debug_print("[TWITCH VOTE] Spawning chaos_berzerker")
 
-			local tbl = {
+			local amount_of_enemies_per_difficulty = {
 				normal = {
 					3,
 					4
@@ -508,7 +511,7 @@ TwitchVoteTemplates.twitch_spawn_berzerkers = {
 				}
 			}
 
-			fn_2("chaos_berzerker", tbl)
+			spawn_custom_horde("chaos_berzerker", amount_of_enemies_per_difficulty)
 		end
 	end
 }
@@ -521,12 +524,12 @@ TwitchVoteTemplates.twitch_spawn_death_squad_storm_vermin = {
 		60,
 		70
 	},
-	on_success = function (arg_21_0)
+	on_success = function (is_server)
 		-- function 21
-		if not arg_21_0 then
-			fn("[TWITCH VOTE] Spawning storm vermin patrol")
+		if is_server then
+			debug_print("[TWITCH VOTE] Spawning storm vermin patrol")
 
-			local tbl = {
+			local amount_of_enemies_per_difficulty = {
 				normal = {
 					6,
 					8
@@ -545,7 +548,7 @@ TwitchVoteTemplates.twitch_spawn_death_squad_storm_vermin = {
 				}
 			}
 
-			fn_2("skaven_storm_vermin", tbl)
+			spawn_custom_horde("skaven_storm_vermin", amount_of_enemies_per_difficulty)
 		end
 	end
 }
@@ -558,12 +561,12 @@ TwitchVoteTemplates.twitch_spawn_death_squad_chaos_warrior = {
 		60,
 		70
 	},
-	on_success = function (arg_22_0)
+	on_success = function (is_server)
 		-- function 22
-		if not arg_22_0 then
-			fn("[TWITCH VOTE] Spawning chaos warriors death squad")
+		if is_server then
+			debug_print("[TWITCH VOTE] Spawning chaos warriors death squad")
 
-			local tbl = {
+			local amount_of_enemies_per_difficulty = {
 				normal = {
 					4,
 					5
@@ -582,7 +585,7 @@ TwitchVoteTemplates.twitch_spawn_death_squad_chaos_warrior = {
 				}
 			}
 
-			fn_2("chaos_warrior", tbl)
+			spawn_custom_horde("chaos_warrior", amount_of_enemies_per_difficulty)
 		end
 	end
 }
@@ -594,17 +597,17 @@ TwitchVoteTemplates.twitch_spawn_loot_rat_fiesta = {
 		60,
 		70
 	},
-	on_success = function (arg_23_0)
+	on_success = function (is_server)
 		-- function 23
-		if not arg_23_0 then
-			fn("[TWITCH VOTE] Spawning loot rat fiesta")
+		if is_server then
+			debug_print("[TWITCH VOTE] Spawning loot rat fiesta")
 
-			local num = 10 * TwitchSettings.spawn_amount_multiplier
+			local amount = 10 * twitch_settings.spawn_amount_multiplier
 
-			for i = 1, num do
-				local skaven_loot_rat = Breeds.skaven_loot_rat
+			for i = 1, amount do
+				local breed = Breeds.skaven_loot_rat
 
-				Managers.state.conflict:spawn_one(skaven_loot_rat)
+				Managers.state.conflict:spawn_one(breed)
 			end
 		end
 	end

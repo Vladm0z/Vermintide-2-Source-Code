@@ -1,6 +1,6 @@
 -- chunkname: @scripts/imgui/imgui_versus_character_picking_debug.lua
 
-local flag = true
+local SHOULD_RELOAD = true
 
 ImguiVersusCharacterPickingDebug = class(ImguiVersusCharacterPickingDebug)
 
@@ -11,44 +11,44 @@ end
 
 ImguiVersusCharacterPickingDebug._initialize = function (self)
 	-- function 2
-	local game_mechanism = Managers.mechanism:game_mechanism()
+	local mechanism = Managers.mechanism:game_mechanism()
 
-	if game_mechanism.name ~= "Versus" then
+	if mechanism.name ~= "Versus" then
 		return
 	end
 
-	self._mechanism = game_mechanism
+	self._mechanism = mechanism
 
 	local game_mode = Managers.state.game_mode:game_mode()
 	local party_selection_logic = game_mode.party_selection_logic
 
-	party_selection_logic = not party_selection_logic and game_mode:party_selection_logic()
+	party_selection_logic = not not party_selection_logic and not not game_mode:party_selection_logic()
 	self._party_selection_logic = party_selection_logic
 
 	if not self._party_selection_logic then
 		return
 	end
 
-	local versus = GameModeSettings.versus
+	local settings = GameModeSettings.versus
 
 	self._timer = 0
 	self._timer_paused = false
-	self._startup_time = versus.character_picking_settings.startup_time
-	self._player_pick_time = versus.character_picking_settings.player_pick_time
-	self._closing_time = versus.character_picking_settings.closing_time
+	self._startup_time = settings.character_picking_settings.startup_time
+	self._player_pick_time = settings.character_picking_settings.player_pick_time
+	self._closing_time = settings.character_picking_settings.closing_time
 	self._is_server = Managers.mechanism:is_server()
 	self._pick_data_per_party = {}
-	self._same_hero_allowed = not not versus.duplicate_hero_profiles_allowed
-	self._same_career_allowed = not not versus.duplicate_hero_careers_allowed
+	self._same_hero_allowed = not not settings.duplicate_hero_profiles_allowed
+	self._same_career_allowed = not not settings.duplicate_hero_careers_allowed
 	self._initialized = true
 end
 
 ImguiVersusCharacterPickingDebug.update = function (self)
 	-- function 3
-	if not flag then
+	if SHOULD_RELOAD then
 		self:init()
 
-		flag = false
+		SHOULD_RELOAD = false
 	end
 
 	if not self._initialized then
@@ -61,27 +61,27 @@ ImguiVersusCharacterPickingDebug.update = function (self)
 	self._pick_data_per_party = self._party_selection_logic._pick_data_per_party
 end
 
-ImguiVersusCharacterPickingDebug.is_persistent = function (arg_4_0)
+ImguiVersusCharacterPickingDebug.is_persistent = function (self)
 	-- function 4
 	return true
 end
 
-ImguiVersusCharacterPickingDebug._same_line_dummy = function (arg_5_0, arg_5_1, arg_5_2)
+ImguiVersusCharacterPickingDebug._same_line_dummy = function (self, x, y)
 	-- function 5
 	Imgui.same_line()
-	Imgui.dummy(arg_5_1, arg_5_2)
+	Imgui.dummy(x, y)
 	Imgui.same_line()
 end
 
-ImguiVersusCharacterPickingDebug.draw = function (self, arg_6_1)
+ImguiVersusCharacterPickingDebug.draw = function (self, is_open)
 	-- function 6
-	local begin_window = Imgui.begin_window("Versus Character Picking Debug", "always_auto_resize")
+	local do_close = Imgui.begin_window("Versus Character Picking Debug", "always_auto_resize")
 
 	self:_draw_settings()
 	Imgui.separator()
 	self:_draw_timer()
 
-	if not self._party_selection_logic._picking_started then
+	if self._party_selection_logic._picking_started then
 		Imgui.separator()
 		self:_draw_party_data()
 		Imgui.separator()
@@ -90,7 +90,7 @@ ImguiVersusCharacterPickingDebug.draw = function (self, arg_6_1)
 
 	Imgui.end_window()
 
-	return begin_window
+	return do_close
 end
 
 ImguiVersusCharacterPickingDebug._draw_settings = function (self)
@@ -105,36 +105,36 @@ end
 
 ImguiVersusCharacterPickingDebug._draw_time_settings = function (self)
 	-- function 8
-	local slider_float = Imgui.slider_float("Startup Time", self._startup_time, 0, 60)
+	local startup_time = Imgui.slider_float("Startup Time", self._startup_time, 0, 60)
 
-	if not (not self._is_server and slider_float == self._startup_time) then
-		self._startup_time = slider_float
-		GameModeSettings.versus.character_picking_settings.startup_time = slider_float
+	if self._is_server and startup_time ~= self._startup_time then
+		self._startup_time = startup_time
+		GameModeSettings.versus.character_picking_settings.startup_time = startup_time
 
-		if not self._party_selection_logic._picking_started then
-			self._party_selection_logic._picking_settings.startup_time = slider_float
+		if self._party_selection_logic._picking_started then
+			self._party_selection_logic._picking_settings.startup_time = startup_time
 		end
 	end
 
-	local slider_float_2 = Imgui.slider_float("Player Picking Time", self._player_pick_time, 0, 60)
+	local player_pick_time = Imgui.slider_float("Player Picking Time", self._player_pick_time, 0, 60)
 
-	if not (not self._is_server and slider_float_2 == self._player_pick_time) then
-		self._player_pick_time = slider_float_2
-		GameModeSettings.versus.character_picking_settings.player_pick_time = slider_float_2
+	if self._is_server and player_pick_time ~= self._player_pick_time then
+		self._player_pick_time = player_pick_time
+		GameModeSettings.versus.character_picking_settings.player_pick_time = player_pick_time
 
-		if not self._party_selection_logic._picking_started then
-			self._party_selection_logic._picking_settings.player_pick_time = slider_float_2
+		if self._party_selection_logic._picking_started then
+			self._party_selection_logic._picking_settings.player_pick_time = player_pick_time
 		end
 	end
 
-	local slider_float_3 = Imgui.slider_float("Closing Time", self._closing_time, 0, 60)
+	local closing_time = Imgui.slider_float("Closing Time", self._closing_time, 0, 60)
 
-	if not (not self._is_server and slider_float_3 == self._closing_time) then
-		self._closing_time = slider_float_3
-		GameModeSettings.versus.character_picking_settings.closing_time = slider_float_3
+	if self._is_server and closing_time ~= self._closing_time then
+		self._closing_time = closing_time
+		GameModeSettings.versus.character_picking_settings.closing_time = closing_time
 
-		if not self._party_selection_logic._picking_started then
-			self._party_selection_logic._picking_settings.closing_time = slider_float_3
+		if self._party_selection_logic._picking_started then
+			self._party_selection_logic._picking_settings.closing_time = closing_time
 		end
 	end
 end
@@ -144,20 +144,20 @@ ImguiVersusCharacterPickingDebug._draw_timer = function (self)
 	Imgui.text("Timer")
 	Imgui.indent()
 
-	local slider_float = Imgui.slider_float("Timer", self._timer, 0, 60)
+	local timer = Imgui.slider_float("Timer", self._timer, 0, 60)
 
-	if not (not self._is_server and slider_float == self._timer) then
-		self._timer = slider_float
-		self._party_selection_logic._timer = slider_float
+	if self._is_server and timer ~= self._timer then
+		self._timer = timer
+		self._party_selection_logic._timer = timer
 	end
 
 	Imgui.same_line()
 
-	local checkbox = Imgui.checkbox("Pause", self._timer_paused)
+	local paused = Imgui.checkbox("Pause", self._timer_paused)
 
-	if not (not self._is_server and checkbox == self._timer_paused) then
-		self._timer_paused = checkbox
-		self._party_selection_logic._timer_paused = checkbox
+	if self._is_server and paused ~= self._timer_paused then
+		self._timer_paused = paused
+		self._party_selection_logic._timer_paused = paused
 	end
 
 	Imgui.unindent()
@@ -165,57 +165,57 @@ end
 
 ImguiVersusCharacterPickingDebug._draw_selection_settings = function (self)
 	-- function 10
-	local checkbox = Imgui.checkbox("Same Hero Allowed", self._same_hero_allowed)
+	local same_hero_allowed = Imgui.checkbox("Same Hero Allowed", self._same_hero_allowed)
 
-	if not (not self._is_server and checkbox == self._same_hero_allowed) then
-		self._same_hero_allowed = checkbox
-		GameModeSettings.versus.duplicate_hero_profiles_allowed = checkbox
+	if self._is_server and same_hero_allowed ~= self._same_hero_allowed then
+		self._same_hero_allowed = same_hero_allowed
+		GameModeSettings.versus.duplicate_hero_profiles_allowed = same_hero_allowed
 	end
 
-	local checkbox_2 = Imgui.checkbox("Same Career Allowed", self._same_career_allowed)
+	local same_career_allowed = Imgui.checkbox("Same Career Allowed", self._same_career_allowed)
 
-	if not (not self._is_server and checkbox_2 == self._same_career_allowed) then
-		self._same_career_allowed = checkbox_2
-		GameModeSettings.versus.duplicate_hero_careers_allowed = checkbox_2
+	if self._is_server and same_career_allowed ~= self._same_career_allowed then
+		self._same_career_allowed = same_career_allowed
+		GameModeSettings.versus.duplicate_hero_careers_allowed = same_career_allowed
 	end
 end
 
 ImguiVersusCharacterPickingDebug._draw_party_data = function (self)
 	-- function 11
-	local _pick_data_per_party = self._pick_data_per_party
+	local pick_data_per_party = self._pick_data_per_party
 
 	Imgui.text("Party Data")
 
-	for i, v in ipairs(_pick_data_per_party) do
-		Imgui.tree_push(i)
+	for party_id, party_data in ipairs(pick_data_per_party) do
+		Imgui.tree_push(party_id)
 
-		local get_party = Managers.party:get_party(i)
+		local party = Managers.party:get_party(party_id)
 
-		if not Imgui.tree_node(string.format("Party %d", i)) then
+		if Imgui.tree_node(string.format("Party %d", party_id)) then
 			Imgui.indent()
-			Imgui.text(string.format("State: %s", v.state))
-			Imgui.text(string.format("Slider Timer: %s", v.slider_timer))
-			Imgui.text(string.format("Timer Finish: %s", v.time_finished))
-			Imgui.text(string.format("Current Picker Index: %d", v.current_picker_index))
-			Imgui.text(string.format("Prev Picker Index: %s", v.prev_picker_index))
-			Imgui.text(string.format("Party Size: %d", get_party.num_slots))
-			Imgui.text(string.format("Number of Players: %d", get_party.num_used_slots))
+			Imgui.text(string.format("State: %s", party_data.state))
+			Imgui.text(string.format("Slider Timer: %s", party_data.slider_timer))
+			Imgui.text(string.format("Timer Finish: %s", party_data.time_finished))
+			Imgui.text(string.format("Current Picker Index: %d", party_data.current_picker_index))
+			Imgui.text(string.format("Prev Picker Index: %s", party_data.prev_picker_index))
+			Imgui.text(string.format("Party Size: %d", party.num_slots))
+			Imgui.text(string.format("Number of Players: %d", party.num_used_slots))
 
-			if not Imgui.tree_node("Available Characters") then
+			if Imgui.tree_node("Available Characters") then
 				Imgui.indent()
 
-				local available_characters = v.available_characters
+				local available_characters = party_data.available_characters
 
-				for k, v_2 in pairs(available_characters) do
-					local var_11_3 = SPProfiles[k]
+				for profile_id, available_careers in pairs(available_characters) do
+					local profile = SPProfiles[profile_id]
 
-					if not Imgui.tree_node(var_11_3.display_name) then
+					if Imgui.tree_node(profile.display_name) then
 						Imgui.indent()
 
-						for k_2, v_3 in pairs(v_2) do
-							local var_11_4 = var_11_3.careers[v_3]
+						for _, career_id in pairs(available_careers) do
+							local career = profile.careers[career_id]
 
-							Imgui.text(var_11_4.display_name)
+							Imgui.text(career.display_name)
 						end
 
 						Imgui.unindent()
@@ -237,29 +237,41 @@ end
 
 ImguiVersusCharacterPickingDebug._draw_player_data = function (self)
 	-- function 12
-	local _pick_data_per_party = self._pick_data_per_party
+	local pick_data_per_party = self._pick_data_per_party
 
 	Imgui.text("Player Data")
 
-	for i, v in ipairs(_pick_data_per_party) do
-		Imgui.tree_push(i .. "1")
+	for party_id, party_data in ipairs(pick_data_per_party) do
+		Imgui.tree_push(party_id .. "1")
 
-		if not Imgui.tree_node(string.format("Party %d", i)) then
+		if Imgui.tree_node(string.format("Party %d", party_id)) then
 			Imgui.indent()
 
-			local picker_list = v.picker_list
+			local picker_list = party_data.picker_list
 
-			for k, v_2 in pairs(picker_list) do
-				local status = v_2.status
+			for picker_id, picker_data in pairs(picker_list) do
+				local status = picker_data.status
 				local player = status.player
 				local is_player = status.is_player
-				local flag
+				local str
 
-				flag = not is_player and "True" and "False"
+				if is_player then
+					str = "True"
 
-				local name
+					goto label_12_0
+				end
 
-				if not is_player then
+				str = "False"
+
+				local is_player_string = str
+
+				do
+					local name
+				end
+
+				::label_12_0::
+
+				if is_player then
 					name = player:name()
 
 					if not name then
@@ -267,34 +279,35 @@ ImguiVersusCharacterPickingDebug._draw_player_data = function (self)
 					end
 				end
 
-				name = string.format("Bot #%d", k)
+				name = string.format("Bot #%d", picker_id)
 
-				::label_12_0::
+				local player_name = name
 
-				if not Imgui.tree_node(name) then
+				::label_12_1::
+
+				if Imgui.tree_node(player_name) then
 					Imgui.indent()
 
-					local selected_profile_index = status.selected_profile_index
-					local selected_career_index = status.selected_career_index
-					local var_12_9
-					local var_12_10
+					local profile_index = status.selected_profile_index
+					local career_index = status.selected_career_index
+					local profile_string, career_string
 
-					if not (not selected_profile_index and not (selected_profile_index > 0)) then
-						local var_12_11 = SPProfiles[selected_profile_index]
-						local var_12_12 = var_12_11.careers[selected_career_index]
+					if profile_index and profile_index > 0 then
+						local profile = SPProfiles[profile_index]
+						local career = profile.careers[career_index]
 
-						var_12_9 = string.format("%s (%d)", var_12_11.display_name, selected_profile_index)
-						var_12_10 = string.format("%s (%d)", var_12_12.display_name, selected_career_index)
+						profile_string = string.format("%s (%d)", profile.display_name, profile_index)
+						career_string = string.format("%s (%d)", career.display_name, career_index)
 					else
-						var_12_9 = "nil"
-						var_12_10 = "nil"
+						profile_string = "nil"
+						career_string = "nil"
 					end
 
-					Imgui.text(string.format("State: %s", v_2.state))
-					Imgui.text(string.format("Picker Index: %d", v_2.picker_index))
-					Imgui.text(string.format("Slot Index: %d", v_2.slot_id))
-					Imgui.text(string.format("Profile Index: %s", var_12_9))
-					Imgui.text(string.format("Career Index: %s", var_12_10))
+					Imgui.text(string.format("State: %s", picker_data.state))
+					Imgui.text(string.format("Picker Index: %d", picker_data.picker_index))
+					Imgui.text(string.format("Slot Index: %d", picker_data.slot_id))
+					Imgui.text(string.format("Profile Index: %s", profile_string))
+					Imgui.text(string.format("Career Index: %s", career_string))
 					Imgui.unindent()
 					Imgui.tree_pop()
 				end
@@ -310,34 +323,35 @@ end
 
 ImguiVersusCharacterPickingDebug._draw_pick_data = function (self)
 	-- function 13
-	local _pick_data_per_party = self._pick_data_per_party
+	local pick_data_per_party = self._pick_data_per_party
 
 	Imgui.unindent()
 
-	for i, v in ipairs(_pick_data_per_party) do
-		Imgui.tree_push(i)
+	for party_id, data in ipairs(pick_data_per_party) do
+		Imgui.tree_push(party_id)
 		Imgui.dummy(360, 8)
 
-		local slots_data = Managers.party:get_party(v.party_id).slots_data
+		local party = Managers.party:get_party(data.party_id)
+		local slots_data = party.slots_data
 
-		Imgui.text("Party " .. v.party_id)
-		Imgui.text("State: " .. v.state)
-		Imgui.text("Current Picker Index: " .. v.current_picker_index)
+		Imgui.text("Party " .. data.party_id)
+		Imgui.text("State: " .. data.state)
+		Imgui.text("Current Picker Index: " .. data.current_picker_index)
 
-		if not Imgui.tree_node("Available Characters") then
+		if Imgui.tree_node("Available Characters") then
 			Imgui.unindent()
 
-			local available_characters = v.available_characters
+			local available_characters = data.available_characters
 
-			for k, v_2 in pairs(available_characters) do
-				Imgui.tree_push(k)
+			for profile_id, available_careers in pairs(available_characters) do
+				Imgui.tree_push(profile_id)
 
-				local var_13_3 = SPProfiles[k]
-				local display_name = var_13_3.display_name
+				local profile = SPProfiles[profile_id]
+				local profile_name = profile.display_name
 
-				if not Imgui.tree_node(display_name) then
-					for k_2, v_3 in pairs(v_2) do
-						Imgui.text(var_13_3.careers[k_2].display_name)
+				if Imgui.tree_node(profile_name) then
+					for career_index, career in pairs(available_careers) do
+						Imgui.text(profile.careers[career_index].display_name)
 					end
 
 					Imgui.tree_pop()
@@ -346,7 +360,7 @@ ImguiVersusCharacterPickingDebug._draw_pick_data = function (self)
 				Imgui.tree_pop()
 			end
 
-			for i_2, v_4 in ipairs(available_characters) do
+			for profile_id, careers in ipairs(available_characters) do
 				-- Nothing
 			end
 
@@ -354,20 +368,32 @@ ImguiVersusCharacterPickingDebug._draw_pick_data = function (self)
 			Imgui.indent()
 		end
 
-		if not Imgui.tree_node("Picker List") then
-			for i_3, v_5 in ipairs(v.picker_list) do
-				Imgui.tree_push(i_3)
+		if Imgui.tree_node("Picker List") then
+			for picker_id, picker_data in ipairs(data.picker_list) do
+				Imgui.tree_push(picker_id)
 
-				local status = v_5.status
-				local var_13_6 = slots_data[v_5.slot_id]
+				local status = picker_data.status
+				local slot_data = slots_data[picker_data.slot_id]
 				local is_player = status.is_player
-				local flag
+				local str
 
-				flag = not status.is_player and "True" and "False"
+				if status.is_player then
+					str = "True"
 
-				local name
+					goto label_13_0
+				end
 
-				if not is_player then
+				str = "False"
+
+				local is_player_string = str
+
+				do
+					local name
+				end
+
+				::label_13_0::
+
+				if is_player then
 					name = status.player:name()
 
 					if not name then
@@ -375,25 +401,27 @@ ImguiVersusCharacterPickingDebug._draw_pick_data = function (self)
 					end
 				end
 
-				name = "Bot #" .. tostring(v_5.picker_index)
+				name = "Bot #" .. tostring(picker_data.picker_index)
 
-				::label_13_0::
+				local player_name = name
 
-				local str = "State: "
-				local state = v_5.state
-				local flag_2
+				::label_13_1::
 
-				flag_2 = not self._is_server and " (server)" and " (client)"
+				local str_2 = "State: "
+				local state_2 = picker_data.state
+				local flag
 
-				local str_2 = str .. state .. flag_2
+				flag = (not self._is_server or not " (server)") and not not " (client)"
 
-				Imgui.text(name)
-				Imgui.text("Is Player: " .. flag)
-				Imgui.text("State: " .. str_2)
-				Imgui.text("Picker Index: " .. tostring(v_5.picker_index))
-				Imgui.text("Slot Id: " .. tostring(v_5.slot_id))
+				local state = str_2 .. state_2 .. flag
 
-				if not Imgui.tree_node("Status Data") then
+				Imgui.text(player_name)
+				Imgui.text("Is Player: " .. is_player_string)
+				Imgui.text("State: " .. state)
+				Imgui.text("Picker Index: " .. tostring(picker_data.picker_index))
+				Imgui.text("Slot Id: " .. tostring(picker_data.slot_id))
+
+				if Imgui.tree_node("Status Data") then
 					Imgui.text("Selected Profile Index: " .. tostring(status.selected_profile_index))
 					Imgui.text("Selected Career Index: " .. tostring(status.selected_career_index))
 					Imgui.text("Profile Index: " .. tostring(status.profile_index))
@@ -401,11 +429,11 @@ ImguiVersusCharacterPickingDebug._draw_pick_data = function (self)
 					Imgui.tree_pop()
 				end
 
-				if not Imgui.tree_node("Slot Data") then
-					Imgui.text("Slot Melee: " .. tostring(var_13_6.slot_melee))
-					Imgui.text("Slot Ranged: " .. tostring(var_13_6.slot_ranged))
-					Imgui.text("Slot Skin: " .. tostring(var_13_6.slot_skin))
-					Imgui.text("Slot Hat: " .. tostring(var_13_6.slot_hat))
+				if Imgui.tree_node("Slot Data") then
+					Imgui.text("Slot Melee: " .. tostring(slot_data.slot_melee))
+					Imgui.text("Slot Ranged: " .. tostring(slot_data.slot_ranged))
+					Imgui.text("Slot Skin: " .. tostring(slot_data.slot_skin))
+					Imgui.text("Slot Hat: " .. tostring(slot_data.slot_hat))
 					Imgui.tree_pop()
 				end
 

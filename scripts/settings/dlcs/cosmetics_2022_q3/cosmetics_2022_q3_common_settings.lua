@@ -1,9 +1,9 @@
 -- chunkname: @scripts/settings/dlcs/cosmetics_2022_q3/cosmetics_2022_q3_common_settings.lua
 
-local cosmetics_2022_q3 = DLCSettings.cosmetics_2022_q3
+local settings = DLCSettings.cosmetics_2022_q3
 
-cosmetics_2022_q3.unlock_settings = {}
-cosmetics_2022_q3.unlock_settings_xb1 = {
+settings.unlock_settings = {}
+settings.unlock_settings_xb1 = {
 	ranger_bundle_0002 = {
 		id = "37445039-5835-3053-C053-3137354B1F00",
 		backend_reward_id = "ranger_bundle_0002",
@@ -35,7 +35,7 @@ cosmetics_2022_q3.unlock_settings_xb1 = {
 		class = "UnlockDlc"
 	}
 }
-cosmetics_2022_q3.unlock_settings_ps4 = {
+settings.unlock_settings_ps4 = {
 	CUSA13595_00 = {
 		ranger_bundle_0002 = {
 			id = "d282279f811e484dab1b126e081949f5",

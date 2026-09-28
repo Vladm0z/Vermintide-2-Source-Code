@@ -1,18 +1,18 @@
 -- chunkname: @scripts/settings/breeds/breed_chaos_troll_chief.lua
 
-local scripts_utils_stagger_types = require("scripts/utils/stagger_types")
-local num = 1.5
-local tbl = {
+local stagger_types = require("scripts/utils/stagger_types")
+local size_multiplier = 1.5
+local pushed_data = {
 	ahead_dist = 1.5,
 	push_width = 1.25,
 	push_forward_offset = 1.5,
 	push_stagger_distance = 1,
 	player_pushed_speed = 7,
 	push_stagger_impact = {
-		scripts_utils_stagger_types.medium,
-		scripts_utils_stagger_types.medium,
-		scripts_utils_stagger_types.none,
-		scripts_utils_stagger_types.none
+		stagger_types.medium,
+		stagger_types.medium,
+		stagger_types.none,
+		stagger_types.none
 	},
 	push_stagger_duration = {
 		1.5,
@@ -21,17 +21,17 @@ local tbl = {
 		0
 	}
 }
-local tbl_2 = {
+local running_pushed_data = {
 	ahead_dist = 2.5,
 	push_width = 1.25,
 	push_forward_offset = 1.5,
 	push_stagger_distance = 1,
 	player_pushed_speed = 9,
 	push_stagger_impact = {
-		scripts_utils_stagger_types.medium,
-		scripts_utils_stagger_types.medium,
-		scripts_utils_stagger_types.none,
-		scripts_utils_stagger_types.none
+		stagger_types.medium,
+		stagger_types.medium,
+		stagger_types.none,
+		stagger_types.none
 	},
 	push_stagger_duration = {
 		1.5,
@@ -42,9 +42,17 @@ local tbl_2 = {
 }
 local BotConstants = BotConstants
 
-BotConstants = not BotConstants and BotConstants.default.DEFAULT_BOT_THREAT_DIFFICULTY_DATA
+if BotConstants then
+	-- Nothing
+end
 
-local tbl_3 = {
+BotConstants = BotConstants.default.DEFAULT_BOT_THREAT_DIFFICULTY_DATA
+
+local default_bot_threat_difficulty_data = BotConstants
+
+::label_0_0::
+
+local breed_data = {
 	detection_radius = 9999999,
 	target_selection = "pick_rat_ogre_target_idle",
 	walk_speed = 4,
@@ -139,7 +147,7 @@ local tbl_3 = {
 	patrol_passive_perception = "perception_rat_ogre",
 	base_unit = "units/beings/enemies/chaos_troll_chief/chr_chaos_troll_chief",
 	aoe_height = 2.4,
-	displace_players_data = tbl,
+	displace_players_data = pushed_data,
 	infighting = InfightingSettings.boss,
 	perception_weights = {
 		target_catapulted_mul = 2,
@@ -159,8 +167,8 @@ local tbl_3 = {
 		target_disabled_mul = 0
 	},
 	size_variation_range = {
-		1 * num,
-		1 * num
+		1 * size_multiplier,
+		1 * size_multiplier
 	},
 	max_health = BreedTweaks.max_health.chaos_troll_chief,
 	bloodlust_health = BreedTweaks.bloodlust_health.monster,
@@ -206,39 +214,43 @@ local tbl_3 = {
 			StatusEffectNames.burning_warpfire
 		})
 	},
-	boss_health_ui_boss_phase_func = function (arg_1_0)
+	boss_health_ui_boss_phase_func = function (unit)
 		-- function 1
-		local has_extension = ScriptUnit.has_extension(arg_1_0, "health_system")
+		local health_extension = ScriptUnit.has_extension(unit, "health_system")
 
-		if not has_extension then
+		if not health_extension then
 			return
 		end
 
-		local extension = ScriptUnit.extension(arg_1_0, "buff_system")
-		local time = Managers.time:time("game")
-		local get_buff_type = extension:get_buff_type("troll_chief_downed_regen")
+		local buff_extension = ScriptUnit.extension(unit, "buff_system")
+		local current_time = Managers.time:time("game")
+		local downed_buff = buff_extension:get_buff_type("troll_chief_downed_regen")
 
-		if not (not get_buff_type and has_extension.state ~= "down") then
-			local num = time - get_buff_type.start_time
-			local num_2 = AiUtils.downed_duration(BreedActions.chaos_troll_chief.downed) - num
+		if downed_buff and health_extension.state == "down" then
+			local time_since_downed = current_time - downed_buff.start_time
+			local total_time = AiUtils.downed_duration(BreedActions.chaos_troll_chief.downed)
+			local time_left = total_time - time_since_downed
 
-			if num_2 > 0 then
-				return "chaos_troll_chief_regenerating", num_2
+			if time_left > 0 then
+				return "chaos_troll_chief_regenerating", time_left
 			end
 		end
 
-		local get_buff_type_2 = extension:get_buff_type("troll_chief_on_downed_wounded")
+		local rage_buff = buff_extension:get_buff_type("troll_chief_on_downed_wounded")
 
-		if not get_buff_type_2 then
-			local num_3 = time - get_buff_type_2.start_time
-			local num_4 = get_buff_type_2.duration - num_3
+		if rage_buff then
+			local time_since_buff = current_time - rage_buff.start_time
+			local total_time = rage_buff.duration
+			local time_left = total_time - time_since_buff
 
-			if num_4 > 0 then
-				return "chaos_troll_chief_raging", num_4
+			if time_left > 0 then
+				return "chaos_troll_chief_raging", time_left
 			end
 		end
 
-		if extension:num_buff_stacks("sorcerer_tether_buff_invulnerability") > 0 then
+		local num_protection_buff = buff_extension:num_buff_stacks("sorcerer_tether_buff_invulnerability")
+
+		if num_protection_buff > 0 then
 			return "chaos_troll_chief_protected", nil
 		end
 	end,
@@ -378,22 +390,22 @@ local tbl_3 = {
 		stormfiend_warpfire = 1,
 		vortex_danger_zone = 1
 	},
-	custom_death_enter_function = function (arg_2_0, arg_2_1, arg_2_2, arg_2_3, arg_2_4, arg_2_5)
+	custom_death_enter_function = function (unit, killer_unit, damage_type, death_hit_zone, t, damage_source)
 		-- function 2
-		local var_2_0 = BLACKBOARDS[arg_2_0]
+		local blackboard = BLACKBOARDS[unit]
 
-		if not Unit.alive(arg_2_1) then
+		if not Unit.alive(killer_unit) then
 			return
 		end
 
-		QuestSettings.check_chaos_troll_killed_without_regen(var_2_0, arg_2_1)
-		QuestSettings.check_chaos_troll_killed_without_bile_damage(var_2_0, arg_2_1)
+		QuestSettings.check_chaos_troll_killed_without_regen(blackboard, killer_unit)
+		QuestSettings.check_chaos_troll_killed_without_bile_damage(blackboard, killer_unit)
 	end
 }
 
-Breeds.chaos_troll_chief = table.create_copy(Breeds.chaos_troll_chief, tbl_3)
+Breeds.chaos_troll_chief = table.create_copy(Breeds.chaos_troll_chief, breed_data)
 
-local tbl_4 = {
+local AttackIntensityPerDifficulty = {
 	cleave = {
 		easy = {
 			running = 2,
@@ -538,7 +550,7 @@ local tbl_4 = {
 		}
 	}
 }
-local tbl_5 = {
+local action_data = {
 	follow = {
 		follow_target_function_name = "_follow_target_rat_ogre",
 		override_move_speed = 4.25,
@@ -621,7 +633,7 @@ local tbl_5 = {
 		action_weight = 1,
 		damage_type = "cutting",
 		target_running_distance_threshold = 4.5,
-		difficulty_attack_intensity = tbl_4,
+		difficulty_attack_intensity = AttackIntensityPerDifficulty,
 		considerations = UtilityConsiderations.troll_chief_cleave,
 		attacks = {
 			{
@@ -655,9 +667,9 @@ local tbl_5 = {
 				attack_anim = {
 					"attack_cleave"
 				},
-				range = 2.75 * num,
-				height = 2.5 * num,
-				push_units_in_the_way = tbl,
+				range = 2.75 * size_multiplier,
+				height = 2.5 * size_multiplier,
+				push_units_in_the_way = pushed_data,
 				bot_threats = {
 					{
 						duration = 0.6666666666666666,
@@ -683,9 +695,9 @@ local tbl_5 = {
 				attack_anim = {
 					"attack_move_cleave"
 				},
-				range = 2.75 * num,
-				height = 2.5 * num,
-				push_units_in_the_way = tbl_2,
+				range = 2.75 * size_multiplier,
+				height = 2.5 * size_multiplier,
+				push_units_in_the_way = running_pushed_data,
 				bot_threats = {
 					{
 						duration = 0.6666666666666666,
@@ -713,7 +725,7 @@ local tbl_5 = {
 		allow_friendly_fire = true,
 		attack_intensity_type = "sweep",
 		action_weight = 1,
-		difficulty_attack_intensity = tbl_4,
+		difficulty_attack_intensity = AttackIntensityPerDifficulty,
 		considerations = UtilityConsiderations.attack_crouch_sweep,
 		attacks = {
 			{
@@ -755,10 +767,10 @@ local tbl_5 = {
 				push_ai = {
 					stagger_distance = 3,
 					stagger_impact = {
-						scripts_utils_stagger_types.explosion,
-						scripts_utils_stagger_types.heavy,
-						scripts_utils_stagger_types.none,
-						scripts_utils_stagger_types.none
+						stagger_types.explosion,
+						stagger_types.heavy,
+						stagger_types.none,
+						stagger_types.none
 					},
 					stagger_duration = {
 						4.5,
@@ -767,7 +779,7 @@ local tbl_5 = {
 						0
 					}
 				},
-				bot_threat_difficulty_data = BotConstants,
+				bot_threat_difficulty_data = default_bot_threat_difficulty_data,
 				bot_threats = {
 					{
 						collision_type = "cylinder",
@@ -803,7 +815,7 @@ local tbl_5 = {
 		ignore_ai_damage = true,
 		self_running_speed_threshold = 2,
 		target_running_distance_threshold = 4,
-		difficulty_attack_intensity = tbl_4,
+		difficulty_attack_intensity = AttackIntensityPerDifficulty,
 		considerations = UtilityConsiderations.troll_chief_melee_shove,
 		attacks = {
 			{
@@ -829,9 +841,9 @@ local tbl_5 = {
 				damage_done_time = {
 					attack_shove = 0.9
 				},
-				range = 0.7 * num,
-				height = 0.8 * num * 2,
-				width = 0.8 * num,
+				range = 0.7 * size_multiplier,
+				height = 0.8 * size_multiplier * 2,
+				width = 0.8 * size_multiplier,
 				continious_overlap = {
 					attack_shove = {
 						base_node_name = "j_rightforearm",
@@ -842,10 +854,10 @@ local tbl_5 = {
 				push_ai = {
 					stagger_distance = 3,
 					stagger_impact = {
-						scripts_utils_stagger_types.explosion,
-						scripts_utils_stagger_types.heavy,
-						scripts_utils_stagger_types.none,
-						scripts_utils_stagger_types.none
+						stagger_types.explosion,
+						stagger_types.heavy,
+						stagger_types.none,
+						stagger_types.none
 					},
 					stagger_duration = {
 						4.5,
@@ -854,7 +866,7 @@ local tbl_5 = {
 						0
 					}
 				},
-				bot_threat_difficulty_data = BotConstants,
+				bot_threat_difficulty_data = default_bot_threat_difficulty_data,
 				bot_threats = {
 					{
 						collision_type = "cylinder",
@@ -893,9 +905,9 @@ local tbl_5 = {
 				damage_done_time = {
 					attack_pounce = 1.0333333333333334
 				},
-				range = 0.7 * num,
-				height = 0.9 * num * 2,
-				width = 1.1 * num,
+				range = 0.7 * size_multiplier,
+				height = 0.9 * size_multiplier * 2,
+				width = 1.1 * size_multiplier,
 				continious_overlap = {
 					attack_pounce = {
 						base_node_name = "j_rightforearm",
@@ -906,10 +918,10 @@ local tbl_5 = {
 				push_ai = {
 					stagger_distance = 3,
 					stagger_impact = {
-						scripts_utils_stagger_types.explosion,
-						scripts_utils_stagger_types.heavy,
-						scripts_utils_stagger_types.none,
-						scripts_utils_stagger_types.none
+						stagger_types.explosion,
+						stagger_types.heavy,
+						stagger_types.none,
+						stagger_types.none
 					},
 					stagger_duration = {
 						4.5,
@@ -918,7 +930,7 @@ local tbl_5 = {
 						0
 					}
 				},
-				bot_threat_difficulty_data = BotConstants,
+				bot_threat_difficulty_data = default_bot_threat_difficulty_data,
 				bot_threats = {
 					{
 						collision_type = "cylinder",
@@ -947,7 +959,7 @@ local tbl_5 = {
 		blocked_damage = 2,
 		ignore_ai_damage = true,
 		self_running_speed_threshold = 2,
-		difficulty_attack_intensity = tbl_4,
+		difficulty_attack_intensity = AttackIntensityPerDifficulty,
 		considerations = UtilityConsiderations.troll_chief_melee_sweep,
 		attacks = {
 			{
@@ -973,9 +985,9 @@ local tbl_5 = {
 				damage_done_time = {
 					attack_sweep = 1
 				},
-				range = 0.8 * num,
-				height = 0.8 * num * 2,
-				width = 1.1 * num,
+				range = 0.8 * size_multiplier,
+				height = 0.8 * size_multiplier * 2,
+				width = 1.1 * size_multiplier,
 				continious_overlap = {
 					attack_sweep = {
 						base_node_name = "j_leftforearm",
@@ -986,10 +998,10 @@ local tbl_5 = {
 				push_ai = {
 					stagger_distance = 3,
 					stagger_impact = {
-						scripts_utils_stagger_types.explosion,
-						scripts_utils_stagger_types.heavy,
-						scripts_utils_stagger_types.none,
-						scripts_utils_stagger_types.none
+						stagger_types.explosion,
+						stagger_types.heavy,
+						stagger_types.none,
+						stagger_types.none
 					},
 					stagger_duration = {
 						4.5,
@@ -998,7 +1010,7 @@ local tbl_5 = {
 						0
 					}
 				},
-				bot_threat_difficulty_data = BotConstants,
+				bot_threat_difficulty_data = default_bot_threat_difficulty_data,
 				bot_threats = {
 					{
 						collision_type = "cylinder",
@@ -1037,9 +1049,9 @@ local tbl_5 = {
 				damage_done_time = {
 					attack_move_sweep = 1
 				},
-				range = 1 * num,
-				height = 0.9 * num * 2,
-				width = 1.4 * num,
+				range = 1 * size_multiplier,
+				height = 0.9 * size_multiplier * 2,
+				width = 1.4 * size_multiplier,
 				continious_overlap = {
 					attack_move_sweep = {
 						base_node_name = "j_leftforearm",
@@ -1050,10 +1062,10 @@ local tbl_5 = {
 				push_ai = {
 					stagger_distance = 3,
 					stagger_impact = {
-						scripts_utils_stagger_types.explosion,
-						scripts_utils_stagger_types.heavy,
-						scripts_utils_stagger_types.none,
-						scripts_utils_stagger_types.none
+						stagger_types.explosion,
+						stagger_types.heavy,
+						stagger_types.none,
+						stagger_types.none
 					},
 					stagger_duration = {
 						4.5,
@@ -1062,7 +1074,7 @@ local tbl_5 = {
 						0
 					}
 				},
-				bot_threat_difficulty_data = BotConstants,
+				bot_threat_difficulty_data = default_bot_threat_difficulty_data,
 				bot_threats = {
 					{
 						collision_type = "cylinder",
@@ -1087,13 +1099,13 @@ local tbl_5 = {
 		action_weight = 1,
 		near_vomit_distance = 25,
 		attack_time = 2.5,
-		difficulty_attack_intensity = tbl_4,
+		difficulty_attack_intensity = AttackIntensityPerDifficulty,
 		considerations = UtilityConsiderations.troll_chief_vomit,
 		attack_anims = {
 			ranged_vomit = "attack_vomit_high",
 			near_vomit = "attack_vomit"
 		},
-		bot_threat_difficulty_data = BotConstants,
+		bot_threat_difficulty_data = default_bot_threat_difficulty_data,
 		bot_threats = {
 			{
 				height = 3,
@@ -1174,21 +1186,21 @@ local tbl_5 = {
 				1,
 				2
 			}] = {
-				start = function (arg_3_0, arg_3_1, arg_3_2)
+				start = function (unit, blackboard, phase)
 					-- function 3
-					local tbl = {}
+					local unit_handles = {}
 
-					arg_3_1.chunk_event_socket_handles = tbl
-					arg_3_1.chunk_event_socket_units = {}
-					arg_3_1.chunk_event_fused_units = {}
+					blackboard.chunk_event_socket_handles = unit_handles
+					blackboard.chunk_event_socket_units = {}
+					blackboard.chunk_event_fused_units = {}
 
-					local phase_one_buffs = arg_3_1.phase_one_buffs
+					local phase_one_buffs = blackboard.phase_one_buffs
 
-					phase_one_buffs = phase_one_buffs or {}
-					arg_3_1.phase_one_buffs = phase_one_buffs
+					phase_one_buffs = not not phase_one_buffs or not not {}
+					blackboard.phase_one_buffs = phase_one_buffs
 
-					local get_difficulty = Managers.state.difficulty:get_difficulty()
-					local tbl_2 = {
+					local difficulty = Managers.state.difficulty:get_difficulty()
+					local num_sockets_per_difficulty = {
 						hardest = 4,
 						hard = 3,
 						harder = 3,
@@ -1196,315 +1208,353 @@ local tbl_5 = {
 						cataclysm = 4,
 						normal = 2
 					}
-					local var_3_4 = tbl_2[get_difficulty]
+					local var_3_1 = num_sockets_per_difficulty[difficulty]
 
-					var_3_4 = var_3_4 or tbl_2.default
-
-					local num = 1.75
-					local num_2 = 2
-					local str = "units/gameplay/explosive_oil_jug_socket_01"
-					local local_position = Unit.local_position(arg_3_0, 0)
-					local local_rotation = Unit.local_rotation(arg_3_0, 0)
-					local right = Quaternion.right(local_rotation)
-					local forward = Quaternion.forward(local_rotation)
-					local num_3 = local_position - right * num
-					local num_4 = local_position + right * num
-					local num_5 = local_position + forward * num
-					local num_6 = local_position - forward * num
-					local tbl_3 = {}
-					local nav_world = Managers.state.entity:system("ai_system"):nav_world()
-					local ceil = math.ceil(var_3_4 * 0.5)
-
-					for i = 1, ceil do
-						local num_7
-
-						if ceil > 1 then
-							num_7 = num_2 / ((ceil - 1) * 0.5)
-
-							if not num_7 then
-								-- Nothing
-							end
-						end
-
-						num_7 = 0
-
-						::label_3_0::
-
-						local num_8 = (i - 1 - (ceil - 1) * 0.5) * num_7 * 0.5
-						local pos_on_mesh = LocomotionUtils.pos_on_mesh(nav_world, num_3 + forward * num_8, 1, 1)
-
-						if not pos_on_mesh then
-							tbl[#tbl + 1] = Managers.state.unit_spawner:queue_spawn_network_unit(str, "explosive_barrel_socket", tbl_3, pos_on_mesh)
-						else
-							var_3_4 = var_3_4 + 1
-						end
+					if not var_3_1 then
+						-- Nothing
 					end
 
-					local num_9 = var_3_4 - ceil
+					var_3_1 = num_sockets_per_difficulty.default
 
-					for j = 1, num_9 do
-						local num_10
+					local num_sockets = var_3_1
 
-						if num_9 > 1 then
-							num_10 = num_2 / ((num_9 - 1) * 0.5)
+					::label_3_0::
 
-							if not num_10 then
+					local socket_offset = 1.75
+					local socket_space = 2
+					local socket_unit = "units/gameplay/explosive_oil_jug_socket_01"
+					local unit_pos = Unit.local_position(unit, 0)
+					local unit_rot = Unit.local_rotation(unit, 0)
+					local unit_right = Quaternion.right(unit_rot)
+					local unit_forward = Quaternion.forward(unit_rot)
+					local left_reference = unit_pos - unit_right * socket_offset
+					local right_reference = unit_pos + unit_right * socket_offset
+					local forward_reference = unit_pos + unit_forward * socket_offset
+					local back_reference = unit_pos - unit_forward * socket_offset
+					local extension_init_data = {}
+					local nav_world = Managers.state.entity:system("ai_system"):nav_world()
+					local num_on_left = math.ceil(num_sockets * 0.5)
+
+					for i = 1, num_on_left do
+						local num
+
+						if num_on_left > 1 then
+							num = socket_space / ((num_on_left - 1) * 0.5)
+
+							if not num then
 								-- Nothing
 							end
 						end
 
-						num_10 = 0
+						num = 0
+
+						local fit_space = num
 
 						::label_3_1::
 
-						local num_11 = (j - 1 - (num_9 - 1) * 0.5) * num_10 * 0.5
-						local pos_on_mesh_2 = LocomotionUtils.pos_on_mesh(nav_world, num_4 + forward * num_11, 1, 1)
+						local slot = (i - 1 - (num_on_left - 1) * 0.5) * fit_space * 0.5
+						local pos = LocomotionUtils.pos_on_mesh(nav_world, left_reference + unit_forward * slot, 1, 1)
 
-						if not pos_on_mesh_2 then
-							tbl[#tbl + 1] = Managers.state.unit_spawner:queue_spawn_network_unit(str, "explosive_barrel_socket", tbl_3, pos_on_mesh_2)
+						if pos then
+							unit_handles[#unit_handles + 1] = Managers.state.unit_spawner:queue_spawn_network_unit(socket_unit, "explosive_barrel_socket", extension_init_data, pos)
 						else
-							var_3_4 = var_3_4 + 1
+							num_sockets = num_sockets + 1
 						end
 					end
 
-					local num_12 = var_3_4 - ceil - num_9
+					local num_on_right = num_sockets - num_on_left
 
-					for k = 1, num_12 do
-						local num_13
+					for i = 1, num_on_right do
+						local num_2
 
-						if num_12 > 1 then
-							num_13 = num_2 / ((num_12 - 1) * 0.5)
+						if num_on_right > 1 then
+							num_2 = socket_space / ((num_on_right - 1) * 0.5)
 
-							if not num_13 then
+							if not num_2 then
 								-- Nothing
 							end
 						end
 
-						num_13 = 0
+						num_2 = 0
+
+						local fit_space = num_2
 
 						::label_3_2::
 
-						local num_14 = (k - 1 - (num_12 - 1) * 0.5) * num_13 * 0.5
-						local pos_on_mesh_3 = LocomotionUtils.pos_on_mesh(nav_world, num_5 + right * num_14, 1, 1)
+						local slot = (i - 1 - (num_on_right - 1) * 0.5) * fit_space * 0.5
+						local pos = LocomotionUtils.pos_on_mesh(nav_world, right_reference + unit_forward * slot, 1, 1)
 
-						if not pos_on_mesh_3 then
-							tbl[#tbl + 1] = Managers.state.unit_spawner:queue_spawn_network_unit(str, "explosive_barrel_socket", tbl_3, pos_on_mesh_3)
+						if pos then
+							unit_handles[#unit_handles + 1] = Managers.state.unit_spawner:queue_spawn_network_unit(socket_unit, "explosive_barrel_socket", extension_init_data, pos)
 						else
-							var_3_4 = var_3_4 + 1
+							num_sockets = num_sockets + 1
 						end
 					end
 
-					local num_15 = var_3_4 - ceil - num_9 - num_12
+					local num_forward = num_sockets - num_on_left - num_on_right
 
-					for l = 1, num_15 do
-						local num_16
+					for i = 1, num_forward do
+						local num_3
 
-						if num_15 > 1 then
-							num_16 = num_2 / ((num_15 - 1) * 0.5)
+						if num_forward > 1 then
+							num_3 = socket_space / ((num_forward - 1) * 0.5)
 
-							if not num_16 then
+							if not num_3 then
 								-- Nothing
 							end
 						end
 
-						num_16 = 0
+						num_3 = 0
+
+						local fit_space = num_3
 
 						::label_3_3::
 
-						local num_17 = (l - 1 - (num_15 - 1) * 0.5) * num_16 * 0.5
-						local pos_on_mesh_4 = LocomotionUtils.pos_on_mesh(nav_world, num_6 + right * num_17, 1, 1)
+						local slot = (i - 1 - (num_forward - 1) * 0.5) * fit_space * 0.5
+						local pos = LocomotionUtils.pos_on_mesh(nav_world, forward_reference + unit_right * slot, 1, 1)
 
-						if not pos_on_mesh_4 then
-							tbl[#tbl + 1] = Managers.state.unit_spawner:queue_spawn_network_unit(str, "explosive_barrel_socket", tbl_3, pos_on_mesh_4)
+						if pos then
+							unit_handles[#unit_handles + 1] = Managers.state.unit_spawner:queue_spawn_network_unit(socket_unit, "explosive_barrel_socket", extension_init_data, pos)
+						else
+							num_sockets = num_sockets + 1
 						end
 					end
 
-					local count = #tbl
+					local num_back = num_sockets - num_on_left - num_on_right - num_forward
 
-					local function fn()
+					for i = 1, num_back do
+						local num_4
+
+						if num_back > 1 then
+							num_4 = socket_space / ((num_back - 1) * 0.5)
+
+							if not num_4 then
+								-- Nothing
+							end
+						end
+
+						num_4 = 0
+
+						local fit_space = num_4
+
+						::label_3_4::
+
+						local slot = (i - 1 - (num_back - 1) * 0.5) * fit_space * 0.5
+						local pos = LocomotionUtils.pos_on_mesh(nav_world, back_reference + unit_right * slot, 1, 1)
+
+						if pos then
+							unit_handles[#unit_handles + 1] = Managers.state.unit_spawner:queue_spawn_network_unit(socket_unit, "explosive_barrel_socket", extension_init_data, pos)
+						end
+					end
+
+					local num_barrels = #unit_handles
+
+					local function safe_navigation_callback()
 						-- function 4
-						local tbl = {
+						local barrel_extension_init_data = {
 							tutorial_system = {
 								always_show = true
 							}
 						}
-						local system = Managers.state.entity:system("pickup_system")
-						local boss_barrel_spawn = system.triggered_pickup_spawners.boss_barrel_spawn
+						local pickup_system = Managers.state.entity:system("pickup_system")
+						local barrel_spawners = pickup_system.triggered_pickup_spawners.boss_barrel_spawn
 
-						if not boss_barrel_spawn then
-							boss_barrel_spawn = table.shallow_copy(boss_barrel_spawn)
+						if barrel_spawners then
+							barrel_spawners = table.shallow_copy(barrel_spawners)
 
-							table.shuffle(boss_barrel_spawn)
+							table.shuffle(barrel_spawners)
 						end
 
-						local flag = not boss_barrel_spawn and #boss_barrel_spawn
+						local num_spawners = not not barrel_spawners and not not #barrel_spawners
 
-						for i = 1, count do
+						for i = 1, num_barrels do
 							local local_position
 
-							if not boss_barrel_spawn then
-								local_position = Unit.local_position(boss_barrel_spawn[math.index_wrapper(i, flag)], 0)
+							if barrel_spawners then
+								local_position = Unit.local_position(barrel_spawners[math.index_wrapper(i, num_spawners)], 0)
 
 								if not local_position then
 									-- Nothing
 								end
 							end
 
-							local_position = Unit.local_position(arg_3_0, 0)
+							local_position = Unit.local_position(unit, 0)
+
+							local barrel_pos = local_position
 
 							::label_4_0::
 
-							if not local_position then
-								local axis_angle = Quaternion.axis_angle(Vector3.up(), math.random() * math.tau)
-								local multiply = Quaternion.multiply(Quaternion.axis_angle(Vector3.right(), math.random() * math.tau), axis_angle)
-								local multiply_2 = Quaternion.multiply(Quaternion.axis_angle(Vector3.forward(), math.random() * math.tau), multiply)
-								local spawn_pickup = system:spawn_pickup("lamp_oil", local_position, multiply_2, false, "triggered", nil, "explosive_pickup_projectile_unit", tbl)
+							if barrel_pos then
+								local rot = Quaternion.axis_angle(Vector3.up(), math.random() * math.tau)
 
-								ScriptUnit.extension(spawn_pickup, "tutorial_system"):set_active(true)
+								rot = Quaternion.multiply(Quaternion.axis_angle(Vector3.right(), math.random() * math.tau), rot)
+								rot = Quaternion.multiply(Quaternion.axis_angle(Vector3.forward(), math.random() * math.tau), rot)
+
+								local pickup_unit = pickup_system:spawn_pickup("lamp_oil", barrel_pos, rot, false, "triggered", nil, "explosive_pickup_projectile_unit", barrel_extension_init_data)
+								local tutorial_extension = ScriptUnit.extension(pickup_unit, "tutorial_system")
+
+								tutorial_extension:set_active(true)
 							end
 						end
 					end
 
-					Managers.state.entity:system("ai_navigation_system"):add_safe_navigation_callback(fn)
+					local ai_navigation_system = Managers.state.entity:system("ai_navigation_system")
+
+					ai_navigation_system:add_safe_navigation_callback(safe_navigation_callback)
 				end,
-				update = function (arg_5_0, arg_5_1, arg_5_2)
+				update = function (unit, blackboard, t)
 					-- function 5
-					local num = 2
-					local chunk_size = ScriptUnit.extension(arg_5_0, "health_system"):chunk_size()
-					local total_part_of_chunk = BuffTemplates.troll_chief_barrel_exploded.buffs[1].total_part_of_chunk
-					local count = #arg_5_1.chunk_event_socket_units
-					local num_2 = chunk_size / count * total_part_of_chunk
-					local chunk_event_socket_handles = arg_5_1.chunk_event_socket_handles
-					local chunk_event_socket_units = arg_5_1.chunk_event_socket_units
+					local time_to_explode = 2
+					local health_extension = ScriptUnit.extension(unit, "health_system")
+					local chunk_size = health_extension:chunk_size()
+					local total_of_chunk = BuffTemplates.troll_chief_barrel_exploded.buffs[1].total_part_of_chunk
+					local num_socket_units = #blackboard.chunk_event_socket_units
+					local damage_to_deal = chunk_size / num_socket_units * total_of_chunk
+					local unit_handles = blackboard.chunk_event_socket_handles
+					local socket_units = blackboard.chunk_event_socket_units
 
-					for i = #chunk_event_socket_handles, 1, -1 do
-						local try_claim_async_unit = Managers.state.unit_spawner:try_claim_async_unit(chunk_event_socket_handles[i])
+					for i = #unit_handles, 1, -1 do
+						local spawned_unit = Managers.state.unit_spawner:try_claim_async_unit(unit_handles[i])
 
-						if not try_claim_async_unit then
-							chunk_event_socket_units[#chunk_event_socket_units + 1] = try_claim_async_unit
+						if spawned_unit then
+							socket_units[#socket_units + 1] = spawned_unit
 
-							table.swap_delete(chunk_event_socket_handles, i)
+							table.swap_delete(unit_handles, i)
 
-							local num_3 = #chunk_event_socket_units + #chunk_event_socket_handles
-							local num_4 = BuffTemplates.troll_chief_phase_one_damage_reduction.buffs[1].total_multiplier / num_3
-							local system = Managers.state.entity:system("buff_system")
+							local num_sockets = #socket_units + #unit_handles
+							local total_damage_reduction = BuffTemplates.troll_chief_phase_one_damage_reduction.buffs[1].total_multiplier
+							local multiplier = total_damage_reduction / num_sockets
+							local buff_system = Managers.state.entity:system("buff_system")
 
-							arg_5_1.phase_one_buffs[try_claim_async_unit] = system:add_buff_synced(arg_5_0, "troll_chief_phase_one_damage_reduction", BuffSyncType.All, {
-								external_optional_multiplier = num_4
+							blackboard.phase_one_buffs[spawned_unit] = buff_system:add_buff_synced(unit, "troll_chief_phase_one_damage_reduction", BuffSyncType.All, {
+								external_optional_multiplier = multiplier
 							})
 						end
 					end
 
-					local chunk_event_fused_units = arg_5_1.chunk_event_fused_units
+					local fused_units = blackboard.chunk_event_fused_units
 
-					for j = 1, #chunk_event_socket_units do
-						local var_5_12 = chunk_event_socket_units[j]
-						local extension = ScriptUnit.extension(var_5_12, "objective_socket_system")
+					for i = 1, #socket_units do
+						local socket_unit = socket_units[i]
+						local socket_extension = ScriptUnit.extension(socket_unit, "objective_socket_system")
 
-						if not chunk_event_fused_units[var_5_12] then
-							if extension:socket_from_id(1).open == false then
-								Unit.flow_event(chunk_event_socket_units[j], "fuse_light")
+						if not fused_units[socket_unit] then
+							local socket = socket_extension:socket_from_id(1)
 
-								chunk_event_fused_units[var_5_12] = arg_5_2 + num
+							if socket.open == false then
+								Unit.flow_event(socket_units[i], "fuse_light")
+
+								fused_units[socket_unit] = t + time_to_explode
 							end
-						elseif arg_5_2 > chunk_event_fused_units[var_5_12] then
-							local function fn()
+						elseif t > fused_units[socket_unit] then
+							local function safe_navigation_callback()
 								-- function 6
-								if not chunk_event_fused_units[var_5_12] and not HEALTH_ALIVE[arg_5_0] then
-									Unit.flow_event(chunk_event_socket_units[j], "force_explode")
+								if fused_units[socket_unit] and HEALTH_ALIVE[unit] then
+									Unit.flow_event(socket_units[i], "force_explode")
 
-									local extension = ScriptUnit.extension(arg_5_0, "buff_system")
-									local var_6_1 = arg_5_1.phase_one_buffs[var_5_12]
+									local buff_extension = ScriptUnit.extension(unit, "buff_system")
+									local damage_reduction_id = blackboard.phase_one_buffs[socket_unit]
 
-									extension:remove_buff(var_6_1)
+									buff_extension:remove_buff(damage_reduction_id)
 
-									arg_5_1.phase_one_buffs[var_5_12] = nil
+									blackboard.phase_one_buffs[socket_unit] = nil
 
-									DamageUtils.add_damage_network(arg_5_0, arg_5_0, num_2, "torso", "forced", nil, Vector3(0, 0, 1), "life_tap", nil, nil, nil, nil, nil, nil, nil, nil, nil, nil, 1)
-									Managers.state.entity:system("buff_system"):add_buff_synced(arg_5_0, "troll_chief_barrel_exploded", BuffSyncType.All, {
-										external_optional_multiplier = -1 / count
+									DamageUtils.add_damage_network(unit, unit, damage_to_deal, "torso", "forced", nil, Vector3(0, 0, 1), "life_tap", nil, nil, nil, nil, nil, nil, nil, nil, nil, nil, 1)
+
+									local buff_system = Managers.state.entity:system("buff_system")
+
+									buff_system:add_buff_synced(unit, "troll_chief_barrel_exploded", BuffSyncType.All, {
+										external_optional_multiplier = -1 / num_socket_units
 									})
 								end
 							end
 
-							Managers.state.entity:system("ai_navigation_system"):add_safe_navigation_callback(fn)
+							local ai_navigation_system = Managers.state.entity:system("ai_navigation_system")
 
-							chunk_event_fused_units[var_5_12] = math.huge
+							ai_navigation_system:add_safe_navigation_callback(safe_navigation_callback)
+
+							fused_units[socket_unit] = math.huge
 						end
 					end
 				end,
-				before_down_end = function (arg_7_0, arg_7_1)
+				before_down_end = function (unit, blackboard)
 					-- function 7
-					local chunk_size = ScriptUnit.extension(arg_7_0, "health_system"):chunk_size()
-					local total_part_of_chunk = BuffTemplates.troll_chief_barrel_exploded.buffs[1].total_part_of_chunk
-					local count = #arg_7_1.chunk_event_socket_units
-					local num = chunk_size / count * total_part_of_chunk
-					local extension = ScriptUnit.extension(arg_7_0, "buff_system")
+					local health_extension = ScriptUnit.extension(unit, "health_system")
+					local chunk_size = health_extension:chunk_size()
+					local total_of_chunk = BuffTemplates.troll_chief_barrel_exploded.buffs[1].total_part_of_chunk
+					local num_socket_units = #blackboard.chunk_event_socket_units
+					local damage_to_deal = chunk_size / num_socket_units * total_of_chunk
+					local buff_extension = ScriptUnit.extension(unit, "buff_system")
 
-					for k, v in pairs(arg_7_1.phase_one_buffs) do
-						extension:remove_buff(v)
+					for socket_unit, id in pairs(blackboard.phase_one_buffs) do
+						buff_extension:remove_buff(id)
 
-						arg_7_1.phase_one_buffs[k] = nil
+						blackboard.phase_one_buffs[socket_unit] = nil
 					end
 
-					local chunk_event_fused_units = arg_7_1.chunk_event_fused_units
+					local fused_units = blackboard.chunk_event_fused_units
 
-					for k_2, v_2 in pairs(chunk_event_fused_units) do
-						if v_2 ~= math.huge then
-							Unit.flow_event(k_2, "force_explode")
-							DamageUtils.add_damage_network(arg_7_0, arg_7_0, num, "torso", "life_tap", nil, Vector3(0, 0, 1), "debug", nil, nil, nil, nil, nil, nil, nil, nil, nil, nil, 1)
-							Managers.state.entity:system("buff_system"):add_buff_synced(arg_7_0, "troll_chief_barrel_exploded", BuffSyncType.All, {
-								external_optional_multiplier = -1 / count
+					for fused_unit, t in pairs(fused_units) do
+						if t ~= math.huge then
+							Unit.flow_event(fused_unit, "force_explode")
+							DamageUtils.add_damage_network(unit, unit, damage_to_deal, "torso", "life_tap", nil, Vector3(0, 0, 1), "debug", nil, nil, nil, nil, nil, nil, nil, nil, nil, nil, 1)
+
+							local buff_system = Managers.state.entity:system("buff_system")
+
+							buff_system:add_buff_synced(unit, "troll_chief_barrel_exploded", BuffSyncType.All, {
+								external_optional_multiplier = -1 / num_socket_units
 							})
 						end
 					end
 				end,
-				finish = function (arg_8_0, arg_8_1, arg_8_2)
+				finish = function (unit, blackboard, phase)
 					-- function 8
-					local chunk_event_socket_handles = arg_8_1.chunk_event_socket_handles
+					local unit_handles = blackboard.chunk_event_socket_handles
 
-					for i = 1, #chunk_event_socket_handles do
-						Managers.state.unit_spawner:remove_queued_network_unit(chunk_event_socket_handles[i])
+					for i = 1, #unit_handles do
+						Managers.state.unit_spawner:remove_queued_network_unit(unit_handles[i])
 
-						chunk_event_socket_handles[i] = nil
+						unit_handles[i] = nil
 					end
 
-					local chunk_event_socket_units = arg_8_1.chunk_event_socket_units
+					local socket_units = blackboard.chunk_event_socket_units
 
-					for j = 1, #chunk_event_socket_units do
-						Managers.state.unit_spawner:mark_for_deletion(chunk_event_socket_units[j])
+					for i = 1, #socket_units do
+						Managers.state.unit_spawner:mark_for_deletion(socket_units[i])
 
-						chunk_event_socket_units[j] = nil
+						socket_units[i] = nil
 					end
 
-					local get_entities = Managers.state.entity:get_entities("ObjectiveUnitExtension")
+					local objectives = Managers.state.entity:get_entities("ObjectiveUnitExtension")
 
-					for k, v in pairs(get_entities) do
-						if AiUtils.unit_breed(k) or not v.active then
-							v:set_active(false)
+					for objective_unit, extension in pairs(objectives) do
+						if not AiUtils.unit_breed(objective_unit) and extension.active then
+							extension:set_active(false)
 
-							v.proxy_active = false
+							extension.proxy_active = false
 						end
 					end
 
-					local respawn_thresholds, var_8_4, var_8_5, var_8_6, var_8_7 = ScriptUnit.extension(arg_8_0, "health_system"):respawn_thresholds()
+					local health_extension = ScriptUnit.extension(unit, "health_system")
+					local _, _, _, _, new_phase = health_extension:respawn_thresholds()
 
-					if var_8_7 ~= arg_8_2 then
-						local system = Managers.state.entity:system("buff_system")
-						local get_stacking_buff = ScriptUnit.extension(arg_8_0, "buff_system"):get_stacking_buff("troll_chief_barrel_exploded")
+					if new_phase ~= phase then
+						local buff_system = Managers.state.entity:system("buff_system")
+						local buff_extension = ScriptUnit.extension(unit, "buff_system")
+						local healing_reduction_buffs = buff_extension:get_stacking_buff("troll_chief_barrel_exploded")
 
-						if not get_stacking_buff then
-							for i4 = #get_stacking_buff, 1, -1 do
-								system:remove_buff_synced(arg_8_0, get_stacking_buff[i4].id)
+						if healing_reduction_buffs then
+							for i = #healing_reduction_buffs, 1, -1 do
+								buff_system:remove_buff_synced(unit, healing_reduction_buffs[i].id)
 							end
 						end
 
-						local str = "boss_arena_alcove_" .. string.pad_left(tostring(arg_8_2), 2, "0") .. "_open"
+						local open_alcove_event = "boss_arena_alcove_" .. string.pad_left(tostring(phase), 2, "0") .. "_open"
 
-						LevelHelper:flow_event(arg_8_1.world, str)
+						LevelHelper:flow_event(blackboard.world, open_alcove_event)
 					end
 
-					table.clear(arg_8_1.chunk_event_fused_units)
+					table.clear(blackboard.chunk_event_fused_units)
 				end
 			}
 		},
@@ -1513,29 +1563,31 @@ local tbl_5 = {
 				2,
 				3
 			}] = {
-				condition_func = function (arg_9_0, arg_9_1, arg_9_2, arg_9_3, arg_9_4)
+				condition_func = function (unit, blackboard, phase, t, dt)
 					-- function 9
-					if not ScriptUnit.extension(arg_9_0, "buff_system"):get_buff_type("troll_chief_on_downed_wounded") then
-						arg_9_1.wizards_delay = nil
+					local buff_extension = ScriptUnit.extension(unit, "buff_system")
+
+					if buff_extension:get_buff_type("troll_chief_on_downed_wounded") then
+						blackboard.wizards_delay = nil
 
 						return false
 					end
 
-					local wizards_delay = arg_9_1.wizards_delay
+					local wizards_delay = blackboard.wizards_delay
 
-					wizards_delay = wizards_delay or arg_9_3 + 1.5
-					arg_9_1.wizards_delay = wizards_delay
+					wizards_delay = not not wizards_delay or not not (t + 1.5)
+					blackboard.wizards_delay = wizards_delay
 
-					if arg_9_3 > arg_9_1.wizards_delay then
+					if t > blackboard.wizards_delay then
 						return true
 					end
 
 					return false
 				end,
-				start = function (arg_10_0, arg_10_1, arg_10_2, arg_10_3, arg_10_4)
+				start = function (unit, blackboard, phase, t, dt)
 					-- function 10
-					local get_difficulty = Managers.state.difficulty:get_difficulty()
-					local tbl = {
+					local difficulty = Managers.state.difficulty:get_difficulty()
+					local num_sorcerers_per_difficulty = {
 						hardest = 4,
 						hard = 2,
 						harder = 3,
@@ -1543,61 +1595,72 @@ local tbl_5 = {
 						cataclysm = 4,
 						normal = 1
 					}
-					local var_10_2 = tbl[get_difficulty]
+					local var_10_0 = num_sorcerers_per_difficulty[difficulty]
 
-					var_10_2 = var_10_2 or tbl.default
-
-					local get_raw_spawner_units = Managers.state.entity:system("spawner_system"):get_raw_spawner_units("boss_sorcerer")
-
-					if not get_raw_spawner_units then
-						get_raw_spawner_units = table.shallow_copy(get_raw_spawner_units)
-
-						table.shuffle(get_raw_spawner_units)
+					if not var_10_0 then
+						-- Nothing
 					end
 
-					local flag = not get_raw_spawner_units and #get_raw_spawner_units
-					local system = Managers.state.entity:system("buff_system")
-					local tbl_2 = {
+					var_10_0 = num_sorcerers_per_difficulty.default
+
+					local num_sorcerers = var_10_0
+
+					::label_10_0::
+
+					local spawner_system = Managers.state.entity:system("spawner_system")
+					local spawners = spawner_system:get_raw_spawner_units("boss_sorcerer")
+
+					if spawners then
+						spawners = table.shallow_copy(spawners)
+
+						table.shuffle(spawners)
+					end
+
+					local num_spawners = not not spawners and not not #spawners
+					local buff_system = Managers.state.entity:system("buff_system")
+					local optional_data = {
 						far_off_despawn_immunity = true,
-						spawned_func = function (arg_11_0, arg_11_1, arg_11_2)
+						spawned_func = function (ai_unit, breed, optional_data)
 							-- function 11
-							local tbl = {
-								attacker_unit = arg_11_0
+							local buff_params = {
+								attacker_unit = ai_unit
 							}
 
-							system:add_buff_synced(arg_10_0, "sorcerer_tether_buff_invulnerability", BuffSyncType.All, tbl)
+							buff_system:add_buff_synced(unit, "sorcerer_tether_buff_invulnerability", BuffSyncType.All, buff_params)
 
-							local extension = ScriptUnit.extension(arg_11_0, "tutorial_system")
+							local tutorial_extension = ScriptUnit.extension(ai_unit, "tutorial_system")
 
-							extension:set_active(true)
-							extension:set_always_show(true)
+							tutorial_extension:set_active(true)
+							tutorial_extension:set_always_show(true)
 						end
 					}
-					local chaos_tether_sorcerer = Breeds.chaos_tether_sorcerer
+					local breed = Breeds.chaos_tether_sorcerer
 
-					for i = 1, var_10_2 do
+					for i = 1, num_sorcerers do
 						local local_position
 
-						if not get_raw_spawner_units then
-							local_position = Unit.local_position(get_raw_spawner_units[math.index_wrapper(i, flag)], 0)
+						if spawners then
+							local_position = Unit.local_position(spawners[math.index_wrapper(i, num_spawners)], 0)
 
 							if not local_position then
 								-- Nothing
 							end
 						end
 
-						local_position = Unit.local_position(arg_10_0, 0)
+						local_position = Unit.local_position(unit, 0)
 
-						::label_10_0::
+						local spawn_pos = local_position
 
-						Managers.state.conflict:spawn_queued_unit(chaos_tether_sorcerer, Vector3Box(local_position), QuaternionBox(Quaternion.identity()), nil, nil, "terror_event", tbl_2)
+						::label_10_1::
+
+						Managers.state.conflict:spawn_queued_unit(breed, Vector3Box(spawn_pos), QuaternionBox(Quaternion.identity()), nil, nil, "terror_event", optional_data)
 					end
 
 					Managers.state.entity:system("audio_system"):play_2d_audio_event("Play_dwarf_fest_boss_sorcerer_shield_spawn")
 				end,
-				finish = function (arg_12_0, arg_12_1)
+				finish = function (unit, blackboard)
 					-- function 12
-					arg_12_1.wizards_delay = nil
+					blackboard.wizards_delay = nil
 				end
 			}
 		}
@@ -1697,4 +1760,4 @@ local tbl_5 = {
 	}
 }
 
-BreedActions.chaos_troll_chief = table.create_copy(BreedActions.chaos_troll_chief, tbl_5)
+BreedActions.chaos_troll_chief = table.create_copy(BreedActions.chaos_troll_chief, action_data)

@@ -2,751 +2,807 @@
 
 LocomotionUtils = {}
 
-local local_position = Unit.local_position
-local set_local_rotation = Unit.set_local_rotation
-local look = Quaternion.look
+local unit_local_position = Unit.local_position
+local unit_set_local_rotation = Unit.set_local_rotation
+local quaternion_look = Quaternion.look
 
-LocomotionUtils.follow_target = function (arg_1_0, arg_1_1, arg_1_2, arg_1_3)
+LocomotionUtils.follow_target = function (unit, blackboard, t, dt)
 	-- function 1
-	if not Unit.alive(arg_1_1.target_unit) then
+	if not Unit.alive(blackboard.target_unit) then
 		return
 	end
 
-	local breed = arg_1_1.breed
-	local var_1_1 = local_position(arg_1_0, 0)
-	local var_1_2 = local_position(arg_1_1.target_unit, 0)
-	local var_1_3
+	local breed = blackboard.breed
+	local pos = unit_local_position(unit, 0)
+	local threat_position = unit_local_position(blackboard.target_unit, 0)
+	local goal_has_moved
 
-	if not arg_1_1.remembered_threat_pos then
-		var_1_3 = Vector3.distance(Vector3Box.unbox(arg_1_1.remembered_threat_pos), var_1_2) > 1
+	if blackboard.remembered_threat_pos then
+		goal_has_moved = Vector3.distance(Vector3Box.unbox(blackboard.remembered_threat_pos), threat_position) > 1
 	else
-		arg_1_1.remembered_threat_pos = Vector3Box()
-		var_1_3 = true
+		blackboard.remembered_threat_pos = Vector3Box()
+		goal_has_moved = true
 	end
 
-	if not var_1_3 then
-		Vector3Box.store(arg_1_1.remembered_threat_pos, var_1_2)
+	if goal_has_moved then
+		Vector3Box.store(blackboard.remembered_threat_pos, threat_position)
 
-		local num = Unit.local_position(arg_1_1.target_unit, 0) - Vector3.normalize(var_1_2 - var_1_1) * breed.radius
-		local triangle_from_position, var_1_6 = GwNavQueries.triangle_from_position(arg_1_1.nav_world, num)
+		local goal_pos = Unit.local_position(blackboard.target_unit, 0) - Vector3.normalize(threat_position - pos) * breed.radius
+		local is_position_on_navmesh, altitude = GwNavQueries.triangle_from_position(blackboard.nav_world, goal_pos)
 
-		if not triangle_from_position then
-			num.z = var_1_6
+		if is_position_on_navmesh then
+			goal_pos.z = altitude
 
-			ScriptUnit.extension(arg_1_0, "ai_system"):navigation():move_to(num)
+			local ai_extension = ScriptUnit.extension(unit, "ai_system")
+			local navigation = ai_extension:navigation()
 
-			arg_1_1.target_outside_navmesh = false
+			navigation:move_to(goal_pos)
+
+			blackboard.target_outside_navmesh = false
 		else
-			arg_1_1.target_outside_navmesh = true
+			blackboard.target_outside_navmesh = true
 		end
 	end
 end
 
-LocomotionUtils.follow_target_ogre = function (arg_2_0, arg_2_1, arg_2_2, arg_2_3)
+LocomotionUtils.follow_target_ogre = function (unit, blackboard, t, dt)
 	-- function 2
-	local target_unit = arg_2_1.target_unit
+	local target_unit = blackboard.target_unit
 
 	if not Unit.alive(target_unit) then
 		return
 	end
 
-	local var_2_1 = POSITION_LOOKUP[arg_2_0]
-	local has_extension = ScriptUnit.has_extension(target_unit, "status_system")
-	local var_2_3
-	local var_2_4
+	local pos = POSITION_LOOKUP[unit]
+	local status_extension = ScriptUnit.has_extension(target_unit, "status_system")
+	local is_on_ladder, ladder_unit
 
-	if not has_extension then
-		var_2_3, var_2_4 = has_extension:get_is_on_ladder()
+	if status_extension then
+		is_on_ladder, ladder_unit = status_extension:get_is_on_ladder()
 	end
 
-	local var_2_5
-	local var_2_6
+	local threat_position, goal_pos
 
-	if not var_2_3 then
-		local get_ladder_coordinates, var_2_8 = Managers.state.bot_nav_transition:get_ladder_coordinates(var_2_4)
+	if is_on_ladder then
+		local foot, top = Managers.state.bot_nav_transition:get_ladder_coordinates(ladder_unit)
 
-		var_2_5 = get_ladder_coordinates
-		var_2_6 = get_ladder_coordinates
+		threat_position = foot
+		goal_pos = foot
 	else
-		var_2_5 = POSITION_LOOKUP[target_unit]
+		threat_position = POSITION_LOOKUP[target_unit]
 	end
 
-	local var_2_9
+	local goal_has_moved
 
-	if not arg_2_1.remembered_threat_pos then
-		var_2_9 = Vector3.distance(Vector3Box.unbox(arg_2_1.remembered_threat_pos), var_2_5) > 1
+	if blackboard.remembered_threat_pos then
+		goal_has_moved = Vector3.distance(Vector3Box.unbox(blackboard.remembered_threat_pos), threat_position) > 1
 
-		if not (var_2_9 or not (arg_2_2 > arg_2_1.next_move_check)) then
-			arg_2_1.next_move_check = arg_2_2 + 2
+		if not goal_has_moved and t > blackboard.next_move_check then
+			blackboard.next_move_check = t + 2
 
-			local nav_world = arg_2_1.nav_world
-			local triangle_from_position, var_2_12 = GwNavQueries.triangle_from_position(nav_world, var_2_5, 2, 2)
+			local nav_world = blackboard.nav_world
+			local is_position_on_navmesh, altitude = GwNavQueries.triangle_from_position(nav_world, threat_position, 2, 2)
 
-			if not triangle_from_position then
-				var_2_9 = true
+			if not is_position_on_navmesh then
+				goal_has_moved = true
 			end
 		end
 	else
-		arg_2_1.remembered_threat_pos = Vector3Box(var_2_5)
-		var_2_9 = true
+		blackboard.remembered_threat_pos = Vector3Box(threat_position)
+		goal_has_moved = true
 	end
 
-	if not var_2_9 then
-		Vector3Box.store(arg_2_1.remembered_threat_pos, var_2_5)
+	if goal_has_moved then
+		Vector3Box.store(blackboard.remembered_threat_pos, threat_position)
 
-		local num = var_2_5 - var_2_1
-		local breed = arg_2_1.breed
-		local nav_world_2 = arg_2_1.nav_world
+		local to_target = threat_position - pos
+		local breed = blackboard.breed
+		local nav_world = blackboard.nav_world
 
-		var_2_6 = var_2_6 or Unit.local_position(arg_2_1.target_unit, 0) - Vector3.normalize(num) * breed.radius
+		goal_pos = not not goal_pos or not not (Unit.local_position(blackboard.target_unit, 0) - Vector3.normalize(to_target) * breed.radius)
 
-		local var_2_16
-		local var_2_17
-		local var_2_18
-		local triangle_from_position_2, var_2_20 = GwNavQueries.triangle_from_position(nav_world_2, var_2_6, 30, 30)
+		local diff_height, is_position_on_navmesh, z_height
 
-		if not (not triangle_from_position_2 and not (math.abs(var_2_6[3] - var_2_20) <= 2)) then
-			var_2_6.z = var_2_20
+		is_position_on_navmesh, z_height = GwNavQueries.triangle_from_position(nav_world, goal_pos, 30, 30)
 
-			arg_2_1.navigation_extension:move_to(var_2_6)
+		if is_position_on_navmesh then
+			diff_height = math.abs(goal_pos[3] - z_height)
 
-			arg_2_1.target_outside_navmesh = false
+			if diff_height <= 2 then
+				goal_pos.z = z_height
 
-			return var_2_6
-		end
+				blackboard.navigation_extension:move_to(goal_pos)
 
-		local num_2 = 2
-		local num_3 = 2
-		local num_4 = 3
-		local num_5 = 3
-		local inside_position_from_outside_position = GwNavQueries.inside_position_from_outside_position(nav_world_2, var_2_6, num_2, num_3, num_4, num_5)
+				blackboard.target_outside_navmesh = false
 
-		if not inside_position_from_outside_position then
-			arg_2_1.navigation_extension:move_to(inside_position_from_outside_position)
-
-			arg_2_1.target_outside_navmesh = false
-
-			return inside_position_from_outside_position
-		end
-
-		if not triangle_from_position_2 then
-			var_2_6.z = var_2_20
-
-			arg_2_1.navigation_extension:move_to(var_2_6)
-
-			arg_2_1.target_outside_navmesh = false
-
-			return var_2_6
-		end
-
-		if Vector3.length(num) > 5 then
-			local triangle_from_position_3, var_2_27 = GwNavQueries.triangle_from_position(nav_world_2, var_2_5, 2, 2)
-
-			if not triangle_from_position_3 then
-				local var_2_28 = Vector3(var_2_5.x, var_2_5.y, var_2_27)
-
-				arg_2_1.navigation_extension:move_to(var_2_28)
-
-				arg_2_1.target_outside_navmesh = false
-
-				return var_2_28
+				return goal_pos
 			end
 		end
 
-		arg_2_1.target_outside_navmesh = true
+		local above, below, horizontal, distance_from_obstacel = 2, 2, 3, 3
+		local snap_pos = GwNavQueries.inside_position_from_outside_position(nav_world, goal_pos, above, below, horizontal, distance_from_obstacel)
+
+		if snap_pos then
+			blackboard.navigation_extension:move_to(snap_pos)
+
+			blackboard.target_outside_navmesh = false
+
+			return snap_pos
+		end
+
+		if is_position_on_navmesh then
+			goal_pos.z = z_height
+
+			blackboard.navigation_extension:move_to(goal_pos)
+
+			blackboard.target_outside_navmesh = false
+
+			return goal_pos
+		end
+
+		local dist = Vector3.length(to_target)
+
+		if dist > 5 then
+			local is_position_on_navmesh, altitude = GwNavQueries.triangle_from_position(nav_world, threat_position, 2, 2)
+
+			if is_position_on_navmesh then
+				threat_position = Vector3(threat_position.x, threat_position.y, altitude)
+
+				blackboard.navigation_extension:move_to(threat_position)
+
+				blackboard.target_outside_navmesh = false
+
+				return threat_position
+			end
+		end
+
+		blackboard.target_outside_navmesh = true
 	end
 end
 
-local tbl = {
+local SteeringTweakData = {
 	ROTATION_LERP_LOOK_AT = 20
 }
 
-LocomotionUtils.update_combat_rotation = function (arg_3_0, arg_3_1, arg_3_2, arg_3_3)
+LocomotionUtils.update_combat_rotation = function (unit, blackboard, t, dt)
 	-- function 3
-	local var_3_0 = local_position(arg_3_0, 0)
-	local local_rotation = Unit.local_rotation(arg_3_0, 0)
-	local local_position_2 = Unit.local_position(arg_3_1.target_unit, 0)
-	local var_3_3 = look(local_position_2 - var_3_0, Vector3.up())
-	local smoothstep = math.smoothstep(arg_3_3 * tbl.ROTATION_LERP_LOOK_AT, 0, 1)
-	local lerp = Quaternion.lerp(local_rotation, var_3_3, smoothstep)
+	local pos = unit_local_position(unit, 0)
+	local current_rot = Unit.local_rotation(unit, 0)
+	local look_at = Unit.local_position(blackboard.target_unit, 0)
+	local wanted_rot = quaternion_look(look_at - pos, Vector3.up())
+	local lerp_value = math.smoothstep(dt * SteeringTweakData.ROTATION_LERP_LOOK_AT, 0, 1)
+	local new_rot = Quaternion.lerp(current_rot, wanted_rot, lerp_value)
 
-	set_local_rotation(arg_3_0, 0, lerp)
+	unit_set_local_rotation(unit, 0, new_rot)
 end
 
-LocomotionUtils.look_at_target_rotation = function (arg_4_0, arg_4_1, arg_4_2, arg_4_3)
+LocomotionUtils.look_at_target_rotation = function (unit, blackboard, t, dt)
 	-- function 4
-	local var_4_0 = local_position(arg_4_0, 0)
-	local local_rotation = Unit.local_rotation(arg_4_0, 0)
-	local local_position_2 = Unit.local_position(arg_4_1.target_unit, 0)
-	local var_4_3 = look(local_position_2 - var_4_0, Vector3.up())
-	local smoothstep = math.smoothstep(arg_4_3 * tbl.ROTATION_LERP_LOOK_AT, 0, 1)
+	local pos = unit_local_position(unit, 0)
+	local current_rot = Unit.local_rotation(unit, 0)
+	local look_at = Unit.local_position(blackboard.target_unit, 0)
+	local wanted_rot = quaternion_look(look_at - pos, Vector3.up())
+	local lerp_value = math.smoothstep(dt * SteeringTweakData.ROTATION_LERP_LOOK_AT, 0, 1)
+	local new_rot = Quaternion.lerp(current_rot, wanted_rot, lerp_value)
 
-	return (Quaternion.lerp(local_rotation, var_4_3, smoothstep))
+	return new_rot
 end
 
-LocomotionUtils.look_at_target_rotation_flat = function (arg_5_0, arg_5_1, arg_5_2, arg_5_3)
+LocomotionUtils.look_at_target_rotation_flat = function (unit, blackboard, t, dt)
 	-- function 5
-	local var_5_0 = local_position(arg_5_0, 0)
-	local local_rotation = Unit.local_rotation(arg_5_0, 0)
-	local num = Unit.local_position(arg_5_1.target_unit, 0) - var_5_0
+	local pos = unit_local_position(unit, 0)
+	local current_rot = Unit.local_rotation(unit, 0)
+	local look_at = Unit.local_position(blackboard.target_unit, 0)
+	local to_dir = look_at - pos
 
-	Vector3.set_z(num, 0)
+	Vector3.set_z(to_dir, 0)
 
-	local var_5_3 = look(num, Vector3.up())
-	local smoothstep = math.smoothstep(arg_5_3 * tbl.ROTATION_LERP_LOOK_AT, 0, 1)
+	local wanted_rot = quaternion_look(to_dir, Vector3.up())
+	local lerp_value = math.smoothstep(dt * SteeringTweakData.ROTATION_LERP_LOOK_AT, 0, 1)
+	local new_rot = Quaternion.lerp(current_rot, wanted_rot, lerp_value)
 
-	return (Quaternion.lerp(local_rotation, var_5_3, smoothstep))
+	return new_rot
 end
 
-LocomotionUtils.rotation_towards_unit = function (arg_6_0, arg_6_1)
+LocomotionUtils.rotation_towards_unit = function (unit, target_unit)
 	-- function 6
-	local var_6_0 = local_position(arg_6_0, 0)
-	local var_6_1 = local_position(arg_6_1, 0)
-	local normalize = Vector3.normalize(var_6_1 - var_6_0)
+	local pos_unit = unit_local_position(unit, 0)
+	local pos_target_unit = unit_local_position(target_unit, 0)
+	local direction = Vector3.normalize(pos_target_unit - pos_unit)
+	local rotation = quaternion_look(direction)
 
-	return (look(normalize))
+	return rotation
 end
 
-LocomotionUtils.rotation_towards_unit_flat = function (arg_7_0, arg_7_1)
+LocomotionUtils.rotation_towards_unit_flat = function (unit, target_unit)
 	-- function 7
-	local var_7_0 = local_position(arg_7_0, 0)
-	local num = local_position(arg_7_1, 0) - var_7_0
+	local pos_unit = unit_local_position(unit, 0)
+	local pos_target_unit = unit_local_position(target_unit, 0)
+	local to_dir = pos_target_unit - pos_unit
 
-	num.z = 0
+	to_dir.z = 0
 
-	local normalize = Vector3.normalize(num)
+	local direction = Vector3.normalize(to_dir)
+	local flat_rotation = quaternion_look(direction)
 
-	return (look(normalize))
+	return flat_rotation
 end
 
-LocomotionUtils.look_at_position = function (arg_8_0, arg_8_1)
+LocomotionUtils.look_at_position = function (unit, position)
 	-- function 8
-	local var_8_0 = local_position(arg_8_0, 0)
-	local normalize = Vector3.normalize(arg_8_1 - var_8_0)
+	local unit_position = unit_local_position(unit, 0)
+	local look_at_direction = Vector3.normalize(position - unit_position)
+	local wanted_rot = quaternion_look(look_at_direction, Vector3.up())
 
-	return (look(normalize, Vector3.up()))
+	return wanted_rot
 end
 
-LocomotionUtils.look_at_position_flat = function (arg_9_0, arg_9_1)
+LocomotionUtils.look_at_position_flat = function (unit, position)
 	-- function 9
-	local var_9_0 = local_position(arg_9_0, 0)
-	local flat = Vector3.flat(arg_9_1 - var_9_0)
-	local normalize = Vector3.normalize(flat)
+	local unit_position = unit_local_position(unit, 0)
+	local look_at_direction_flat = Vector3.flat(position - unit_position)
+	local look_at_direction_flat_normalized = Vector3.normalize(look_at_direction_flat)
+	local wanted_rot = quaternion_look(look_at_direction_flat_normalized, Vector3.up())
 
-	return (look(normalize, Vector3.up()))
+	return wanted_rot
 end
 
-LocomotionUtils.get_attack_anim = function (arg_10_0, arg_10_1, arg_10_2)
+LocomotionUtils.get_attack_anim = function (unit, blackboard, attack_anims)
 	-- function 10
-	if not arg_10_2 then
-		local target_unit = arg_10_1.target_unit
-		local local_position = Unit.local_position(target_unit, 0)
-		local local_position_2 = Unit.local_position(arg_10_0, 0)
-		local normalize = Vector3.normalize(local_position_2 - local_position)
-		local forward = Quaternion.forward(Unit.local_rotation(arg_10_0, 0))
-		local dot = Vector3.dot(forward, normalize)
-		local clamp = math.clamp(dot, -1, 1)
-		local acos = math.acos(clamp)
+	if attack_anims then
+		local target_unit = blackboard.target_unit
+		local target_pos = Unit.local_position(target_unit, 0)
+		local pos = Unit.local_position(unit, 0)
+		local to_enemy = Vector3.normalize(pos - target_pos)
+		local my_fwd = Quaternion.forward(Unit.local_rotation(unit, 0))
+		local dot = Vector3.dot(my_fwd, to_enemy)
 
-		if acos > math.pi * 0.95 then
-			return arg_10_2.directly_fwd[1], arg_10_2.directly_fwd[2]
-		elseif acos > math.pi * 0.75 then
-			return arg_10_2.fwd[1], arg_10_2.fwd[2]
-		elseif acos < math.pi * 0.25 then
-			return arg_10_2.bwd[1], arg_10_2.bwd[2]
-		elseif Vector3.cross(forward, normalize).z > 0 then
-			return arg_10_2.right[1], arg_10_2.right[2]
+		dot = math.clamp(dot, -1, 1)
+
+		local angle = math.acos(dot)
+
+		if angle > math.pi * 0.95 then
+			return attack_anims.directly_fwd[1], attack_anims.directly_fwd[2]
+		elseif angle > math.pi * 0.75 then
+			return attack_anims.fwd[1], attack_anims.fwd[2]
+		elseif angle < math.pi * 0.25 then
+			return attack_anims.bwd[1], attack_anims.bwd[2]
+		elseif Vector3.cross(my_fwd, to_enemy).z > 0 then
+			return attack_anims.right[1], attack_anims.right[2]
 		else
-			return arg_10_2.left[1], arg_10_2.left[2]
+			return attack_anims.left[1], attack_anims.left[2]
 		end
 	end
 
 	return nil, false
 end
 
-LocomotionUtils.get_start_anim = function (arg_11_0, arg_11_1, arg_11_2)
+LocomotionUtils.get_start_anim = function (unit, blackboard, start_anims)
 	-- function 11
-	if not arg_11_2 then
-		local target_unit = arg_11_1.target_unit
-		local local_position = Unit.local_position(target_unit, 0)
-		local local_position_2 = Unit.local_position(arg_11_0, 0)
-		local normalize = Vector3.normalize(local_position_2 - local_position)
-		local forward = Quaternion.forward(Unit.local_rotation(arg_11_0, 0))
-		local dot = Vector3.dot(forward, normalize)
-		local clamp = math.clamp(dot, -1, 1)
-		local acos = math.acos(clamp)
+	if start_anims then
+		local target_unit = blackboard.target_unit
+		local target_pos = Unit.local_position(target_unit, 0)
+		local pos = Unit.local_position(unit, 0)
+		local to_enemy = Vector3.normalize(pos - target_pos)
+		local my_fwd = Quaternion.forward(Unit.local_rotation(unit, 0))
+		local dot = Vector3.dot(my_fwd, to_enemy)
 
-		if acos > math.pi * 0.75 then
-			return arg_11_2.fwd
-		elseif acos < math.pi * 0.25 then
-			return arg_11_2.bwd, true
-		elseif Vector3.cross(forward, normalize).z > 0 then
-			return arg_11_2.right
+		dot = math.clamp(dot, -1, 1)
+
+		local angle = math.acos(dot)
+
+		if angle > math.pi * 0.75 then
+			return start_anims.fwd
+		elseif angle < math.pi * 0.25 then
+			return start_anims.bwd, true
+		elseif Vector3.cross(my_fwd, to_enemy).z > 0 then
+			return start_anims.right
 		else
-			return arg_11_2.left
+			return start_anims.left
 		end
 	end
 end
 
-LocomotionUtils.constrain_on_clients = function (arg_12_0, arg_12_1, arg_12_2, arg_12_3)
+LocomotionUtils.constrain_on_clients = function (unit, constrain, min, max)
 	-- function 12
-	local network = Managers.state.network
+	local network_manager = Managers.state.network
 
-	if not network:game() then
-		local alloc_table = FrameTable.alloc_table()
+	if network_manager:game() then
+		local position_array = FrameTable.alloc_table()
 
-		if not arg_12_1 then
-			alloc_table[1] = Vector3(math.min(arg_12_2.x, arg_12_3.x), math.min(arg_12_2.y, arg_12_3.y), math.min(arg_12_2.z, arg_12_3.z))
-			alloc_table[2] = Vector3(math.max(arg_12_2.x, arg_12_3.x), math.max(arg_12_2.y, arg_12_3.y), math.max(arg_12_2.z, arg_12_3.z))
+		if constrain then
+			position_array[1] = Vector3(math.min(min.x, max.x), math.min(min.y, max.y), math.min(min.z, max.z))
+			position_array[2] = Vector3(math.max(min.x, max.x), math.max(min.y, max.y), math.max(min.z, max.z))
 		end
 
-		local go_id = Managers.state.unit_storage:go_id(arg_12_0)
+		local go_id = Managers.state.unit_storage:go_id(unit)
 
-		network.network_transmit:send_rpc_clients("rpc_constrain_ai", go_id, arg_12_1, alloc_table)
+		network_manager.network_transmit:send_rpc_clients("rpc_constrain_ai", go_id, constrain, position_array)
 	end
 end
 
-LocomotionUtils.set_animation_driven_movement = function (arg_13_0, arg_13_1, arg_13_2, arg_13_3, arg_13_4)
+LocomotionUtils.set_animation_driven_movement = function (unit, animation_driven, is_affected_by_gravity, script_driven_rotation, is_on_transport)
 	-- function 13
-	ScriptUnit.extension(arg_13_0, "locomotion_system"):set_animation_driven(arg_13_1, arg_13_2, arg_13_3, arg_13_4)
+	local locomotion_extension = ScriptUnit.extension(unit, "locomotion_system")
+
+	locomotion_extension:set_animation_driven(animation_driven, is_affected_by_gravity, script_driven_rotation, is_on_transport)
 end
 
-LocomotionUtils.set_animation_translation_scale = function (arg_14_0, arg_14_1)
+LocomotionUtils.set_animation_translation_scale = function (unit, animation_translation_scale)
 	-- function 14
-	local extension = ScriptUnit.extension(arg_14_0, "locomotion_system")
-	local get_animation_translation_scale = extension:get_animation_translation_scale()
+	local locomotion_extension = ScriptUnit.extension(unit, "locomotion_system")
+	local current_scale = locomotion_extension:get_animation_translation_scale()
 
-	if not Vector3.equal(get_animation_translation_scale, arg_14_1) then
-		extension:set_animation_translation_scale(arg_14_1)
+	if not Vector3.equal(current_scale, animation_translation_scale) then
+		locomotion_extension:set_animation_translation_scale(animation_translation_scale)
 
-		local network = Managers.state.network
+		local network_manager = Managers.state.network
 
-		if not network:game() then
-			local go_id = Managers.state.unit_storage:go_id(arg_14_0)
+		if network_manager:game() then
+			local go_id = Managers.state.unit_storage:go_id(unit)
 
-			if not network.is_server then
-				network.network_transmit:send_rpc_clients("rpc_set_animation_translation_scale", go_id, arg_14_1)
+			if network_manager.is_server then
+				network_manager.network_transmit:send_rpc_clients("rpc_set_animation_translation_scale", go_id, animation_translation_scale)
 			else
-				network.network_transmit:send_rpc_server("rpc_set_animation_translation_scale", go_id, arg_14_1)
+				network_manager.network_transmit:send_rpc_server("rpc_set_animation_translation_scale", go_id, animation_translation_scale)
 			end
 		end
 	end
 end
 
-LocomotionUtils.set_animation_rotation_scale = function (arg_15_0, arg_15_1)
+LocomotionUtils.set_animation_rotation_scale = function (unit, animation_rotation_scale)
 	-- function 15
-	local extension = ScriptUnit.extension(arg_15_0, "locomotion_system")
+	local locomotion_extension = ScriptUnit.extension(unit, "locomotion_system")
+	local current_scale = locomotion_extension:get_animation_rotation_scale()
 
-	if extension:get_animation_rotation_scale() ~= arg_15_1 then
-		extension:set_animation_rotation_scale(arg_15_1)
+	if current_scale ~= animation_rotation_scale then
+		locomotion_extension:set_animation_rotation_scale(animation_rotation_scale)
 
-		local network = Managers.state.network
+		local network_manager = Managers.state.network
 
-		if not network:game() then
-			local go_id = Managers.state.unit_storage:go_id(arg_15_0)
+		if network_manager:game() then
+			local go_id = Managers.state.unit_storage:go_id(unit)
 
-			network.network_transmit:send_rpc_clients("rpc_set_animation_rotation_scale", go_id, arg_15_1)
+			network_manager.network_transmit:send_rpc_clients("rpc_set_animation_rotation_scale", go_id, animation_rotation_scale)
 		end
 	end
 end
 
-LocomotionUtils.update_local_animation_driven_movement = function (arg_16_0, arg_16_1)
+LocomotionUtils.update_local_animation_driven_movement = function (unit, dt)
 	-- function 16
-	local animation_wanted_root_pose = Unit.animation_wanted_root_pose(arg_16_0)
-	local translation = Matrix4x4.translation(animation_wanted_root_pose)
+	local wanted_pose = Unit.animation_wanted_root_pose(unit)
+	local wanted_position = Matrix4x4.translation(wanted_pose)
 
-	Unit.set_local_position(arg_16_0, 0, translation)
+	Unit.set_local_position(unit, 0, wanted_position)
 
-	local rotation = Matrix4x4.rotation(animation_wanted_root_pose)
+	local wanted_rotation = Matrix4x4.rotation(wanted_pose)
 
-	Unit.set_local_rotation(arg_16_0, 0, rotation)
+	Unit.set_local_rotation(unit, 0, wanted_rotation)
 end
 
-LocomotionUtils.update_local_animation_driven_movement_with_parent = function (arg_17_0, arg_17_1, arg_17_2)
+LocomotionUtils.update_local_animation_driven_movement_with_parent = function (unit, dt, parent)
 	-- function 17
-	local master_unit = arg_17_2.master_unit
+	local master_unit = parent.master_unit
 
-	if not (not master_unit and Unit.alive(master_unit)) then
+	if not master_unit or not Unit.alive(master_unit) then
 		return
 	end
 
-	local local_position = Unit.local_position(master_unit, 0)
-	local animation_wanted_root_pose = Unit.animation_wanted_root_pose(arg_17_0)
+	local master_pos = Unit.local_position(master_unit, 0)
+	local wanted_pose = Unit.animation_wanted_root_pose(unit)
 
-	Unit.set_local_position(arg_17_0, 0, local_position)
+	Unit.set_local_position(unit, 0, master_pos)
 
-	local rotation = Matrix4x4.rotation(animation_wanted_root_pose)
+	local wanted_rotation = Matrix4x4.rotation(wanted_pose)
 
-	Unit.set_local_rotation(arg_17_0, 0, rotation)
+	Unit.set_local_rotation(unit, 0, wanted_rotation)
 end
 
-LocomotionUtils.update_local_animation_driven_movement_with_mover = function (arg_18_0, arg_18_1)
+LocomotionUtils.update_local_animation_driven_movement_with_mover = function (unit, dt)
 	-- function 18
-	local animation_wanted_root_pose = Unit.animation_wanted_root_pose(arg_18_0)
-	local num = Matrix4x4.translation(animation_wanted_root_pose) - POSITION_LOOKUP[arg_18_0]
-	local mover = Unit.mover(arg_18_0)
+	local wanted_pose = Unit.animation_wanted_root_pose(unit)
+	local wanted_position = Matrix4x4.translation(wanted_pose)
+	local current_position = POSITION_LOOKUP[unit]
+	local delta_anim = wanted_position - current_position
+	local mover = Unit.mover(unit)
 
-	Mover.move(mover, num, arg_18_1)
+	Mover.move(mover, delta_anim, dt)
 
-	local position = Mover.position(mover)
+	local mover_position = Mover.position(mover)
 
-	Unit.set_local_position(arg_18_0, 0, position)
+	Unit.set_local_position(unit, 0, mover_position)
 
-	local rotation = Matrix4x4.rotation(animation_wanted_root_pose)
+	local wanted_rotation = Matrix4x4.rotation(wanted_pose)
 
-	Unit.set_local_rotation(arg_18_0, 0, rotation)
+	Unit.set_local_rotation(unit, 0, wanted_rotation)
 end
 
-LocomotionUtils.update_local_animation_driven_movement_plus_mover = function (arg_19_0, arg_19_1)
+LocomotionUtils.update_local_animation_driven_movement_plus_mover = function (unit, dt)
 	-- function 19
-	local mover = Unit.mover(arg_19_0)
-	local animation_wanted_root_pose = Unit.animation_wanted_root_pose(arg_19_0)
-	local translation = Matrix4x4.translation(animation_wanted_root_pose)
-	local num = translation - Mover.position(mover)
+	local mover = Unit.mover(unit)
+	local wanted_pose = Unit.animation_wanted_root_pose(unit)
+	local wanted_position = Matrix4x4.translation(wanted_pose)
+	local current_position = Mover.position(mover)
+	local delta_anim = wanted_position - current_position
 
-	Mover.move(mover, num, arg_19_1)
-	Unit.set_local_position(arg_19_0, 0, translation)
+	Mover.move(mover, delta_anim, dt)
+	Unit.set_local_position(unit, 0, wanted_position)
 
-	local rotation = Matrix4x4.rotation(animation_wanted_root_pose)
+	local wanted_rotation = Matrix4x4.rotation(wanted_pose)
 
-	Unit.set_local_rotation(arg_19_0, 0, rotation)
+	Unit.set_local_rotation(unit, 0, wanted_rotation)
 end
 
-LocomotionUtils.update_local_animation_driven_movement_with_min_z = function (arg_20_0, arg_20_1, arg_20_2)
+LocomotionUtils.update_local_animation_driven_movement_with_min_z = function (unit, dt, min_z)
 	-- function 20
-	local animation_wanted_root_pose = Unit.animation_wanted_root_pose(arg_20_0)
-	local translation = Matrix4x4.translation(animation_wanted_root_pose)
+	local wanted_pose = Unit.animation_wanted_root_pose(unit)
+	local wanted_position = Matrix4x4.translation(wanted_pose)
 
-	if arg_20_2 > translation.z then
-		Vector3.set_z(translation, arg_20_2)
+	if min_z > wanted_position.z then
+		Vector3.set_z(wanted_position, min_z)
 	end
 
-	Unit.set_local_position(arg_20_0, 0, translation)
+	Unit.set_local_position(unit, 0, wanted_position)
 
-	local rotation = Matrix4x4.rotation(animation_wanted_root_pose)
+	local wanted_rotation = Matrix4x4.rotation(wanted_pose)
 
-	Unit.set_local_rotation(arg_20_0, 0, rotation)
+	Unit.set_local_rotation(unit, 0, wanted_rotation)
 end
 
-LocomotionUtils.new_random_goal = function (arg_21_0, arg_21_1, arg_21_2, arg_21_3, arg_21_4, arg_21_5, arg_21_6, arg_21_7, arg_21_8)
+LocomotionUtils.new_random_goal = function (nav_world, blackboard, start_pos, min_dist, max_dist, max_tries, test_points, above, below)
 	-- function 21
-	local flag = arg_21_7 or 30
-	local flag_2 = arg_21_8 or 30
-	local num = 0
+	local above = not not above or not not 30
+	local below = not not below or not not 30
+	local tries = 0
 
-	while num < arg_21_5 do
-		local num_2 = arg_21_3 + math.random() * (arg_21_4 - arg_21_3)
-		local var_21_4 = Vector3(num_2, 0, 1.5)
-		local num_3 = arg_21_2 + Quaternion.rotate(Quaternion(Vector3.up(), math.degrees_to_radians(Math.random(1, 360))), var_21_4)
+	while tries < max_tries do
+		local dist = min_dist + math.random() * (max_dist - min_dist)
+		local add_vec = Vector3(dist, 0, 1.5)
+		local pos = start_pos + Quaternion.rotate(Quaternion(Vector3.up(), math.degrees_to_radians(Math.random(1, 360))), add_vec)
 
-		if not arg_21_6 then
-			arg_21_6[#arg_21_6 + 1] = Vector3Box(num_3)
+		if test_points then
+			test_points[#test_points + 1] = Vector3Box(pos)
 		end
 
-		local triangle_from_position, var_21_7 = GwNavQueries.triangle_from_position(arg_21_0, num_3, flag, flag_2)
+		local success, altitude = GwNavQueries.triangle_from_position(nav_world, pos, above, below)
 
-		if not triangle_from_position then
-			num_3.z = var_21_7
+		if success then
+			pos.z = altitude
 
-			return num_3
+			return pos
 		end
 
-		num = num + 1
+		tries = tries + 1
 	end
 end
 
-LocomotionUtils.new_random_goal_uniformly_distributed = function (arg_22_0, arg_22_1, arg_22_2, arg_22_3, arg_22_4, arg_22_5, arg_22_6, arg_22_7, arg_22_8)
+LocomotionUtils.new_random_goal_uniformly_distributed = function (nav_world, _, start_pos, min_dist, max_dist, max_tries, test_points, above, below)
 	-- function 22
-	arg_22_7 = arg_22_7 or 30
-	arg_22_8 = arg_22_8 or 30
+	above = not not above or not not 30
+	below = not not below or not not 30
 
-	local num = 0
+	local tries = 0
 
-	while num < arg_22_5 do
-		local num_2 = (arg_22_3 / arg_22_4)^2
-		local num_3 = num_2 + Math.random() * (1 - num_2)
-		local num_4 = math.sqrt(num_3) * arg_22_4
-		local var_22_4 = Vector3(num_4, 0, 1.5)
-		local num_5 = arg_22_2 + Quaternion.rotate(Quaternion(Vector3.up(), Math.random() * math.pi * 2), var_22_4)
+	while tries < max_tries do
+		local min_dist_proportion = (min_dist / max_dist)^2
+		local random_value = Math.random()
+		local normalized_dist = min_dist_proportion + random_value * (1 - min_dist_proportion)
+		local uniformly_scaled_dist = math.sqrt(normalized_dist)
+		local dist = uniformly_scaled_dist * max_dist
+		local add_vec = Vector3(dist, 0, 1.5)
+		local pos = start_pos + Quaternion.rotate(Quaternion(Vector3.up(), Math.random() * math.pi * 2), add_vec)
 
-		if not arg_22_6 then
-			arg_22_6[#arg_22_6 + 1] = Vector3Box(num_5)
+		if test_points then
+			test_points[#test_points + 1] = Vector3Box(pos)
 		end
 
-		local triangle_from_position, var_22_7 = GwNavQueries.triangle_from_position(arg_22_0, num_5, arg_22_7, arg_22_8)
+		local success, altitude = GwNavQueries.triangle_from_position(nav_world, pos, above, below)
 
-		if not triangle_from_position then
-			num_5.z = var_22_7
+		if success then
+			pos.z = altitude
 
-			return num_5
+			return pos
 		end
 
-		num = num + 1
+		tries = tries + 1
 	end
 end
 
-LocomotionUtils.new_random_goal_uniformly_distributed_with_inside_from_outside_on_last = function (arg_23_0, arg_23_1, arg_23_2, arg_23_3, arg_23_4, arg_23_5, arg_23_6, arg_23_7, arg_23_8, arg_23_9)
+LocomotionUtils.new_random_goal_uniformly_distributed_with_inside_from_outside_on_last = function (nav_world, blackboard, start_pos, min_dist, max_dist, max_tries, test_points, above, below, horizontal)
 	-- function 23
-	local flag = arg_23_7 or 30
-	local flag_2 = arg_23_8 or 30
-	local flag_3 = arg_23_9 or 3
-	local num = 0.1
-	local num_2 = 0
+	local above = not not above or not not 30
+	local below = not not below or not not 30
+	local horizontal = not not horizontal or not not 3
+	local distance_from_obstacle = 0.1
+	local tries = 0
 
-	while num_2 < arg_23_5 do
-		local num_3 = (arg_23_3 / arg_23_4)^2
-		local num_4 = num_3 + Math.random() * (1 - num_3)
-		local num_5 = math.sqrt(num_4) * arg_23_4
-		local var_23_8 = Vector3(num_5, 0, 1.5)
-		local num_6 = arg_23_2 + Quaternion.rotate(Quaternion(Vector3.up(), Math.random() * math.pi * 2), var_23_8)
+	while tries < max_tries do
+		local min_dist_proportion = (min_dist / max_dist)^2
+		local random_value = Math.random()
+		local normalized_dist = min_dist_proportion + random_value * (1 - min_dist_proportion)
+		local uniformly_scaled_dist = math.sqrt(normalized_dist)
+		local dist = uniformly_scaled_dist * max_dist
+		local add_vec = Vector3(dist, 0, 1.5)
+		local pos = start_pos + Quaternion.rotate(Quaternion(Vector3.up(), Math.random() * math.pi * 2), add_vec)
 
-		if not arg_23_6 then
-			arg_23_6[#arg_23_6 + 1] = Vector3Box(num_6)
+		if test_points then
+			test_points[#test_points + 1] = Vector3Box(pos)
 		end
 
-		local triangle_from_position, var_23_11 = GwNavQueries.triangle_from_position(arg_23_0, num_6, flag, flag_2)
+		local success, altitude = GwNavQueries.triangle_from_position(nav_world, pos, above, below)
 
-		if not triangle_from_position then
-			num_6.z = var_23_11
+		if success then
+			pos.z = altitude
 
-			return num_6
+			return pos
 		end
 
-		if num_2 == arg_23_5 - 1 then
-			local inside_position_from_outside_position = GwNavQueries.inside_position_from_outside_position(arg_23_0, num_6, flag, flag_2, flag_3, num)
+		if tries == max_tries - 1 then
+			local clamped_position = GwNavQueries.inside_position_from_outside_position(nav_world, pos, above, below, horizontal, distance_from_obstacle)
 
-			if not inside_position_from_outside_position then
-				return inside_position_from_outside_position
+			if clamped_position then
+				return clamped_position
 			end
 		end
 
-		num_2 = num_2 + 1
+		tries = tries + 1
 	end
 end
 
-LocomotionUtils.new_random_goal_in_front_of_unit = function (arg_24_0, arg_24_1, arg_24_2, arg_24_3, arg_24_4, arg_24_5, arg_24_6, arg_24_7, arg_24_8, arg_24_9)
+LocomotionUtils.new_random_goal_in_front_of_unit = function (nav_world, unit, min_dist, max_dist, max_tries, test_points, min_width, max_width, above, below)
 	-- function 24
-	local flag
+	local above = not not above or not not 30
+	local below = not not below or not not 30
+	local tries = 0
+	local start_pos = Unit.local_position(unit, 0)
 
-	flag = arg_24_8 or 30
+	while tries < max_tries do
+		local locomotion_ext = ScriptUnit.has_extension(unit, "locomotion_system")
+		local direction, speed
 
-	local flag_2
+		if locomotion_ext and locomotion_ext.average_velocity then
+			local average_velocity = Vector3.flat(locomotion_ext:average_velocity())
 
-	flag_2 = arg_24_9 or 30
+			speed = Vector3.length(average_velocity)
 
-	local num = 0
-	local local_position = Unit.local_position(arg_24_1, 0)
-
-	while num < arg_24_4 do
-		local has_extension = ScriptUnit.has_extension(arg_24_1, "locomotion_system")
-		local var_24_5
-		local var_24_6
-
-		if not has_extension and not has_extension.average_velocity then
-			local flat = Vector3.flat(has_extension:average_velocity())
-
-			var_24_6 = Vector3.length(flat)
-
-			if var_24_6 > 0.1 then
-				var_24_5 = flat
+			if speed > 0.1 then
+				direction = average_velocity
 			else
-				var_24_5 = Quaternion.forward(Unit.local_rotation(arg_24_1, 0))
+				direction = Quaternion.forward(Unit.local_rotation(unit, 0))
 			end
 		else
-			var_24_5 = Quaternion.forward(Unit.local_rotation(arg_24_1, 0))
-			var_24_6 = 0
+			direction = Quaternion.forward(Unit.local_rotation(unit, 0))
+			speed = 0
 		end
 
-		local num_2 = 0
-		local num_3 = 4
-		local auto_lerp = math.auto_lerp(num_2, num_3, arg_24_2, arg_24_3, var_24_6)
-		local lerp = math.lerp(arg_24_6, arg_24_7, Math.random())
+		local min_speed = 0
+		local max_speed = 4
+		local distance = math.auto_lerp(min_speed, max_speed, min_dist, max_dist, speed)
+		local random_width = math.lerp(min_width, max_width, Math.random())
 
 		if Math.random() < 0.5 then
-			lerp = -lerp
+			random_width = -random_width
 		end
 
-		local normalize = Vector3.normalize(var_24_5)
-		local cross = Vector3.cross(normalize, Vector3.up())
-		local num_4 = local_position + normalize * auto_lerp + cross * lerp
+		local direction_vector = Vector3.normalize(direction)
+		local right_vector = Vector3.cross(direction_vector, Vector3.up())
+		local pos = start_pos + direction_vector * distance + right_vector * random_width
 
-		if not arg_24_5 then
-			arg_24_5[#arg_24_5 + 1] = Vector3Box(num_4)
+		if test_points then
+			test_points[#test_points + 1] = Vector3Box(pos)
 		end
 
-		local triangle_from_position, var_24_16 = GwNavQueries.triangle_from_position(arg_24_0, num_4, 30, 30)
+		local success, altitude = GwNavQueries.triangle_from_position(nav_world, pos, 30, 30)
 
-		if not triangle_from_position then
-			num_4.z = var_24_16
+		if success then
+			pos.z = altitude
 
-			return num_4
+			return pos
 		end
 
-		num = num + 1
+		tries = tries + 1
 	end
 
 	return nil
 end
 
-LocomotionUtils.new_goal_in_transport = function (arg_25_0, arg_25_1, arg_25_2)
+LocomotionUtils.new_goal_in_transport = function (nav_world, unit, ally_unit)
 	-- function 25
-	local num = 0
-	local get_inside_transport_unit = ScriptUnit.extension(arg_25_2, "status_system"):get_inside_transport_unit()
+	local tries = 0
+	local status_extension = ScriptUnit.extension(ally_unit, "status_system")
+	local transport_unit = status_extension:get_inside_transport_unit()
 
-	if not Unit.alive(get_inside_transport_unit) then
-		local assign_position_to_bot = ScriptUnit.extension(get_inside_transport_unit, "transportation_system"):assign_position_to_bot()
-		local triangle_from_position, var_25_4 = GwNavQueries.triangle_from_position(arg_25_0, assign_position_to_bot, 30, 30)
+	if Unit.alive(transport_unit) then
+		local transport_extension = ScriptUnit.extension(transport_unit, "transportation_system")
+		local pos = transport_extension:assign_position_to_bot()
+		local success, altitude = GwNavQueries.triangle_from_position(nav_world, pos, 30, 30)
 
-		if not triangle_from_position then
-			assign_position_to_bot.z = var_25_4
+		if success then
+			pos.z = altitude
 
-			return assign_position_to_bot
+			return pos
 		end
 	end
 
 	return nil
 end
 
-LocomotionUtils.outside_goal = function (arg_26_0, arg_26_1, arg_26_2, arg_26_3, arg_26_4, arg_26_5, arg_26_6, arg_26_7, arg_26_8)
+LocomotionUtils.outside_goal = function (nav_world, from_position, target_position, min_distance, max_distance, angle, max_tries, above, below)
 	-- function 26
-	local num = 0
-	local flat = Vector3.flat(arg_26_1 - arg_26_2)
+	local tries = 0
+	local to_vec = Vector3.flat(from_position - target_position)
 
-	if Vector3.length_squared(flat) < 0.001 then
+	if Vector3.length_squared(to_vec) < 0.001 then
 		return
 	end
 
-	local num_2 = arg_26_4 - arg_26_3
-	local num_3 = (arg_26_3 + arg_26_4) * 0.5
-	local num_4 = num_2 / arg_26_6
-	local normalize = Vector3.normalize(flat)
-	local degrees_to_radians = math.degrees_to_radians(arg_26_5)
+	local span = max_distance - min_distance
+	local median = (min_distance + max_distance) * 0.5
+	local increment = span / max_tries
+	local to_dir = Vector3.normalize(to_vec)
+	local angle_rad = math.degrees_to_radians(angle)
 
-	while num < arg_26_6 do
-		local num_5 = (num % 2 - 0.5) * 2
-		local num_6 = num_3 + (math.floor(num * 0.5) + Math.random()) * num_5 * num_4
-		local num_7 = normalize * num_6
-		local num_8 = arg_26_2 + Quaternion.rotate(Quaternion(Vector3.up(), degrees_to_radians), num_7)
-		local triangle_from_position, var_26_12 = GwNavQueries.triangle_from_position(arg_26_0, num_8, arg_26_7 or 30, arg_26_8 or 30)
+	while tries < max_tries do
+		local dir = (tries % 2 - 0.5) * 2
+		local wanted_dist = median + (math.floor(tries * 0.5) + Math.random()) * dir * increment
+		local rotate_vec = to_dir * wanted_dist
+		local new_pos = target_position + Quaternion.rotate(Quaternion(Vector3.up(), angle_rad), rotate_vec)
+		local success, altitude = GwNavQueries.triangle_from_position(nav_world, new_pos, not not above or not not 30, not not below or not not 30)
 
-		if not triangle_from_position then
-			num_8.z = var_26_12
+		if success then
+			new_pos.z = altitude
 
-			return num_8, num_6
+			return new_pos, wanted_dist
 		end
 
-		num = num + 1
+		tries = tries + 1
 	end
 end
 
-local num = 10
-local num_2 = 0
-local num_3 = 4
-local num_4 = 8
-local num_5 = 3
+local MAX_TRIES = 10
+local MIN_ANGLE = 0
+local MIN_ANGLE_STEP = 4
+local MAX_ANGLE_STEP = 8
+local OUTSIDE_GOAL_TRIES = 3
 
-LocomotionUtils.pick_visible_outside_goal = function (self)
+LocomotionUtils.pick_visible_outside_goal = function (params)
 	-- function 27
-	local max_tries = self.max_tries
+	local max_tries_2 = params.max_tries
 
-	max_tries = max_tries or num
+	if not max_tries_2 then
+		-- Nothing
+	end
 
-	local min_angle = self.min_angle
+	max_tries_2 = MAX_TRIES
 
-	min_angle = min_angle or num_2
+	local max_tries = max_tries_2
 
-	local min_angle_step = self.min_angle_step
+	::label_27_0::
 
-	min_angle_step = min_angle_step or num_3
+	local min_angle_2 = params.min_angle
 
-	local max_angle_step = self.max_angle_step
+	if not min_angle_2 then
+		-- Nothing
+	end
 
-	max_angle_step = max_angle_step or num_4
+	min_angle_2 = MIN_ANGLE
 
-	local outside_goal_tries = self.outside_goal_tries
+	local min_angle = min_angle_2
 
-	outside_goal_tries = outside_goal_tries or num_5
+	::label_27_1::
 
-	local nav_world = self.nav_world
-	local physics_world = self.physics_world
-	local from_unit = self.from_unit
-	local to_unit = self.to_unit
-	local from_node_name = self.from_node_name
-	local to_node_name = self.to_node_name
-	local min_distance = self.min_distance
-	local max_distance = self.max_distance
-	local above = self.above
-	local below = self.below
-	local node = Unit.node(from_unit, from_node_name)
-	local world_position = Unit.world_position(from_unit, node)
-	local node_2 = Unit.node(to_unit, to_node_name)
-	local world_position_2 = Unit.world_position(to_unit, node_2)
-	local var_27_19
-	local min_wanted_radius = self.min_wanted_radius
-	local flag = not min_wanted_radius and min_wanted_radius^2
-	local radius_check_directions = self.radius_check_directions
-	local flag_2 = not radius_check_directions and #radius_check_directions
-	local traverse_logic = self.traverse_logic
-	local var_27_25 = POSITION_LOOKUP[from_unit]
-	local var_27_26 = POSITION_LOOKUP[to_unit]
-	local direction = self.direction
+	local min_angle_step_2 = params.min_angle_step
 
-	direction = direction or 1 - math.random(0, 1) * 2
+	if not min_angle_step_2 then
+		-- Nothing
+	end
 
-	local num_6 = Vector3.up() * 0.05
-	local var_27_29
+	min_angle_step_2 = MIN_ANGLE_STEP
 
-	for i = 1, 2 do
-		for j = 1, max_tries do
-			local num_7 = min_angle + math.random(min_angle_step * j, max_angle_step * j) * direction
-			local outside_goal, var_27_32 = LocomotionUtils.outside_goal(nav_world, var_27_25, var_27_26, min_distance, max_distance, num_7, outside_goal_tries, above, below)
+	local min_angle_step = min_angle_step_2
 
-			if not outside_goal then
-				local is_position_in_line_of_sight, var_27_34 = PerceptionUtils.is_position_in_line_of_sight(from_unit, world_position, outside_goal + num_6, physics_world)
-				local var_27_35
-				local var_27_36
+	::label_27_2::
 
-				if not is_position_in_line_of_sight then
-					local var_27_37
+	local max_angle_step_2 = params.max_angle_step
 
-					var_27_35, var_27_37 = PerceptionUtils.is_position_in_line_of_sight(to_unit, world_position_2, outside_goal + num_6, physics_world)
-					var_27_29 = var_27_35
+	if not max_angle_step_2 then
+		-- Nothing
+	end
+
+	max_angle_step_2 = MAX_ANGLE_STEP
+
+	local max_angle_step = max_angle_step_2
+
+	::label_27_3::
+
+	local outside_goal_tries_2 = params.outside_goal_tries
+
+	if not outside_goal_tries_2 then
+		-- Nothing
+	end
+
+	outside_goal_tries_2 = OUTSIDE_GOAL_TRIES
+
+	local outside_goal_tries = outside_goal_tries_2
+
+	::label_27_4::
+
+	local nav_world, physics_world = params.nav_world, params.physics_world
+	local from_unit, to_unit = params.from_unit, params.to_unit
+	local from_node_name, to_node_name = params.from_node_name, params.to_node_name
+	local min_distance, max_distance = params.min_distance, params.max_distance
+	local above, below = params.above, params.below
+	local from_node = Unit.node(from_unit, from_node_name)
+	local from_node_position = Unit.world_position(from_unit, from_node)
+	local to_node = Unit.node(to_unit, to_node_name)
+	local to_node_position = Unit.world_position(to_unit, to_node)
+	local min_found_radius_sq
+	local min_wanted_radius = params.min_wanted_radius
+	local min_wanted_radius_sq = not not min_wanted_radius and not not min_wanted_radius^2
+	local radius_check_directions = params.radius_check_directions
+	local num_directions = not not radius_check_directions and not not #radius_check_directions
+	local traverse_logic = params.traverse_logic
+	local from_position = POSITION_LOOKUP[from_unit]
+	local to_position = POSITION_LOOKUP[to_unit]
+	local direction_2 = params.direction
+
+	if not direction_2 then
+		-- Nothing
+	end
+
+	direction_2 = 1 - math.random(0, 1) * 2
+
+	local direction = direction_2
+
+	::label_27_5::
+
+	local delta_up = Vector3.up() * 0.05
+	local result
+
+	for j = 1, 2 do
+		for i = 1, max_tries do
+			local angle = min_angle + math.random(min_angle_step * i, max_angle_step * i) * direction
+			local position, wanted_distance = LocomotionUtils.outside_goal(nav_world, from_position, to_position, min_distance, max_distance, angle, outside_goal_tries, above, below)
+
+			if position then
+				local from_unit_line_of_sight, hit_pos1 = PerceptionUtils.is_position_in_line_of_sight(from_unit, from_node_position, position + delta_up, physics_world)
+				local to_unit_line_of_sight, hit_pos2
+
+				if from_unit_line_of_sight then
+					to_unit_line_of_sight, hit_pos2 = PerceptionUtils.is_position_in_line_of_sight(to_unit, to_node_position, position + delta_up, physics_world)
+					result = to_unit_line_of_sight
 				end
 
-				if not var_27_35 and not radius_check_directions then
-					var_27_19 = math.huge
+				if to_unit_line_of_sight and radius_check_directions then
+					min_found_radius_sq = math.huge
 
-					for k = 1, flag_2 do
-						local num_8 = outside_goal + radius_check_directions[k]:unbox()
-						local var_27_39
-						local var_27_40
+					for i = 1, num_directions do
+						local check_direction = radius_check_directions[i]:unbox()
+						local check_end_position = position + check_direction
+						local hit, hit_position
 
-						if not traverse_logic then
-							local raycast
-
-							raycast, var_27_40 = GwNavQueries.raycast(nav_world, outside_goal, num_8, traverse_logic)
+						if traverse_logic then
+							hit, hit_position = GwNavQueries.raycast(nav_world, position, check_end_position, traverse_logic)
 						else
-							local raycast_2
-
-							raycast_2, var_27_40 = GwNavQueries.raycast(nav_world, outside_goal, num_8)
+							hit, hit_position = GwNavQueries.raycast(nav_world, position, check_end_position)
 						end
 
-						local distance_squared = Vector3.distance_squared(outside_goal, var_27_40)
+						local hit_distance_sq = Vector3.distance_squared(position, hit_position)
 
-						if distance_squared < flag then
-							var_27_29 = false
+						if hit_distance_sq < min_wanted_radius_sq then
+							result = false
 
 							break
-						elseif distance_squared < var_27_19 then
-							var_27_19 = distance_squared
+						elseif hit_distance_sq < min_found_radius_sq then
+							min_found_radius_sq = hit_distance_sq
 						end
 					end
 				end
 
-				if not var_27_29 then
-					local flag_3 = not var_27_19 and math.sqrt(var_27_19)
+				if result then
+					local min_found_radius = not not min_found_radius_sq and not not math.sqrt(min_found_radius_sq)
 
-					return outside_goal, flag_3, var_27_32, direction
+					return position, min_found_radius, wanted_distance, direction
 				end
 			end
 		end
@@ -755,105 +811,109 @@ LocomotionUtils.pick_visible_outside_goal = function (self)
 	end
 end
 
-LocomotionUtils.test_pos = function (arg_28_0, arg_28_1)
+LocomotionUtils.test_pos = function (nav_world, pos)
 	-- function 28
-	local num = 0
-	local num_2 = 0
+	local fail = 0
+	local success = 0
 
 	for i = -10, 10 do
 		for j = -10, 10 do
-			local num_3 = arg_28_1 + Vector3(i, j, 0)
-			local pos_on_mesh = LocomotionUtils.pos_on_mesh(arg_28_0, num_3)
+			local test_pos = pos + Vector3(i, j, 0)
+			local mesh_pos = LocomotionUtils.pos_on_mesh(nav_world, test_pos)
 
-			if not pos_on_mesh then
-				QuickDrawer:sphere(pos_on_mesh, 0.2, Color(255, 144, 43, 207))
+			if mesh_pos then
+				QuickDrawer:sphere(mesh_pos, 0.2, Color(255, 144, 43, 207))
 
-				num_2 = num_2 + 1
+				success = success + 1
 			else
-				num = num + 1
+				fail = fail + 1
 			end
 		end
 	end
 
-	Debug.text("Points ok %.2f fail: %d", num_2 / (num_2 + num), num)
+	Debug.text("Points ok %.2f fail: %d", success / (success + fail), fail)
 end
 
-LocomotionUtils.get_close_pos_on_mesh = function (arg_29_0, arg_29_1, arg_29_2)
+LocomotionUtils.get_close_pos_on_mesh = function (nav_world, pos, searches)
 	-- function 29
-	local tbl = {}
-	local triangle_from_position, var_29_2, var_29_3, var_29_4, var_29_5 = GwNavQueries.triangle_from_position(arg_29_0, arg_29_1, 30, 30)
+	local failed_points = {}
+	local success, altitude, p1, p2, p3 = GwNavQueries.triangle_from_position(nav_world, pos, 30, 30)
 
-	if not triangle_from_position then
-		local var_29_6 = Vector3(arg_29_1.x, arg_29_1.y, var_29_2)
+	if success then
+		local projected_pos = Vector3(pos.x, pos.y, altitude)
 
 		print("BOSS POINT FOUND AT FIRST POINT OK!")
 
-		return var_29_6
+		return projected_pos
 	end
 
-	tbl[#tbl + 1] = Vector3Box(arg_29_1)
-	arg_29_2 = arg_29_2 or 4
+	failed_points[#failed_points + 1] = Vector3Box(pos)
+	searches = not not searches or not not 4
 
-	for i = 1, 4 do
-		for j = -1, 1 do
-			for k = -1, 1 do
-				if not (j ~= 0 or k == 0) then
-					local num = arg_29_1 + Vector3(j * i, k * i, 0)
-					local triangle_from_position_2, var_29_9, var_29_10, var_29_11, var_29_12 = GwNavQueries.triangle_from_position(arg_29_0, num, 30, 30)
+	for k = 1, 4 do
+		for x = -1, 1 do
+			for y = -1, 1 do
+				if x ~= 0 or y ~= 0 then
+					local new_pos = pos + Vector3(x * k, y * k, 0)
+					local success, altitude, p1, p2, p3 = GwNavQueries.triangle_from_position(nav_world, new_pos, 30, 30)
 
-					if not triangle_from_position_2 then
-						local var_29_13 = Vector3(num.x, num.y, var_29_9)
+					if success then
+						local projected_pos = Vector3(new_pos.x, new_pos.y, altitude)
 
-						print("BOSS POINT FOUND AFTER", #tbl, "TRIES")
+						print("BOSS POINT FOUND AFTER", #failed_points, "TRIES")
 
-						return var_29_13, tbl
+						return projected_pos, failed_points
 					end
 
-					tbl[#tbl + 1] = Vector3Box(num)
+					failed_points[#failed_points + 1] = Vector3Box(new_pos)
 				end
 			end
 		end
 	end
 
-	return nil, tbl
+	return nil, failed_points
 end
 
-LocomotionUtils.get_close_pos_below_on_mesh = function (arg_30_0, arg_30_1, arg_30_2, arg_30_3, arg_30_4)
+LocomotionUtils.get_close_pos_below_on_mesh = function (nav_world, pos, searches, above, below)
 	-- function 30
-	arg_30_3 = arg_30_3 or 1
-	arg_30_4 = arg_30_4 or 8
+	above = not not above or not not 1
+	below = not not below or not not 8
 
-	local tbl = {}
-	local triangle_from_position, var_30_2, var_30_3, var_30_4, var_30_5 = GwNavQueries.triangle_from_position(arg_30_0, arg_30_1, arg_30_3, arg_30_4)
+	local failed_points = {}
+	local success, altitude, p1, p2, p3 = GwNavQueries.triangle_from_position(nav_world, pos, above, below)
 
-	if not triangle_from_position then
-		return (Vector3(arg_30_1.x, arg_30_1.y, var_30_2))
+	if success then
+		local projected_pos = Vector3(pos.x, pos.y, altitude)
+
+		return projected_pos
 	end
 
-	tbl[#tbl + 1] = Vector3Box(arg_30_1)
-	arg_30_2 = arg_30_2 or 4
+	failed_points[#failed_points + 1] = Vector3Box(pos)
+	searches = not not searches or not not 4
 
-	for i = 1, 4 do
-		for j = -1, 1 do
-			for k = -1, 1 do
-				if not (j ~= 0 or k == 0) then
-					local num = arg_30_1 + Vector3(j * i, k * i, 0)
-					local triangle_from_position_2, var_30_8, var_30_9, var_30_10, var_30_11 = GwNavQueries.triangle_from_position(arg_30_0, num, arg_30_3, arg_30_4)
+	for k = 1, 4 do
+		for x = -1, 1 do
+			for y = -1, 1 do
+				if x ~= 0 or y ~= 0 then
+					local new_pos = pos + Vector3(x * k, y * k, 0)
+					local success, altitude, p1, p2, p3 = GwNavQueries.triangle_from_position(nav_world, new_pos, above, below)
 
-					if not triangle_from_position_2 then
-						return Vector3(num.x, num.y, var_30_8), tbl
+					if success then
+						local projected_pos = Vector3(new_pos.x, new_pos.y, altitude)
+
+						return projected_pos, failed_points
 					end
 
-					tbl[#tbl + 1] = Vector3Box(num)
+					failed_points[#failed_points + 1] = Vector3Box(new_pos)
 				end
 			end
 		end
 	end
 
-	return nil, tbl
+	return nil, failed_points
 end
 
-local tbl_2 = {
+local circle_points = {
 	1,
 	0,
 	0.707,
@@ -872,38 +932,38 @@ local tbl_2 = {
 	-0.707
 }
 
-LocomotionUtils.mesh_positions_closest_to_outside_pos = function (arg_31_0, arg_31_1, arg_31_2, arg_31_3)
+LocomotionUtils.mesh_positions_closest_to_outside_pos = function (nav_world, outside_pos, radius, point_list)
 	-- function 31
-	local count = #tbl_2
+	local num_points = #circle_points
 
-	for i = 1, count, 2 do
-		local num = arg_31_1 + Vector3(tbl_2[i] * arg_31_2, tbl_2[i + 1] * arg_31_2, 0)
-		local triangle_from_position, var_31_3, var_31_4, var_31_5, var_31_6 = GwNavQueries.triangle_from_position(arg_31_0, num, 30, 30)
+	for i = 1, num_points, 2 do
+		local test_pos = outside_pos + Vector3(circle_points[i] * radius, circle_points[i + 1] * radius, 0)
+		local success, altitude, p1, p2, p3 = GwNavQueries.triangle_from_position(nav_world, test_pos, 30, 30)
 
-		if not triangle_from_position then
-			arg_31_3[#arg_31_3 + 1] = Vector3Box(num.x, num.y, var_31_3)
+		if success then
+			point_list[#point_list + 1] = Vector3Box(test_pos.x, test_pos.y, altitude)
 		end
 	end
 
-	return #arg_31_3 > 0
+	return #point_list > 0
 end
 
-LocomotionUtils.closest_mesh_positions_outward = function (arg_32_0, arg_32_1, arg_32_2, arg_32_3)
+LocomotionUtils.closest_mesh_positions_outward = function (nav_world, outside_pos, radius, point_list)
 	-- function 32
-	local num = 3
-	local ceil = math.ceil(arg_32_2 / num)
-	local count = #tbl_2
+	local step_dist = 3
+	local steps = math.ceil(radius / step_dist)
+	local num_points = #circle_points
 
-	for i = 1, count, 2 do
-		local var_32_3 = tbl_2[i]
-		local var_32_4 = tbl_2[i + 1]
+	for i = 1, num_points, 2 do
+		local x = circle_points[i]
+		local y = circle_points[i + 1]
 
-		for j = 1, ceil do
-			local num_2 = arg_32_1 + Vector3(var_32_3 * j * num, var_32_4 * j * num, 0)
-			local inside_position_from_outside_position = GwNavQueries.inside_position_from_outside_position(arg_32_0, num_2, 30, 30)
+		for r = 1, steps do
+			local test_pos = outside_pos + Vector3(x * r * step_dist, y * r * step_dist, 0)
+			local p = GwNavQueries.inside_position_from_outside_position(nav_world, test_pos, 30, 30)
 
-			if not inside_position_from_outside_position then
-				arg_32_3[#arg_32_3 + 1] = Vector3Box(inside_position_from_outside_position)
+			if p then
+				point_list[#point_list + 1] = Vector3Box(p)
 
 				break
 			end
@@ -911,80 +971,83 @@ LocomotionUtils.closest_mesh_positions_outward = function (arg_32_0, arg_32_1, a
 	end
 end
 
-LocomotionUtils.pos_on_mesh = function (arg_33_0, arg_33_1, arg_33_2, arg_33_3)
+LocomotionUtils.pos_on_mesh = function (nav_world, pos, above, below)
 	-- function 33
-	arg_33_2 = arg_33_2 or 30
-	arg_33_3 = arg_33_3 or 30
+	above = not not above or not not 30
+	below = not not below or not not 30
 
-	local triangle_from_position, var_33_1 = GwNavQueries.triangle_from_position(arg_33_0, arg_33_1, arg_33_2, arg_33_3)
+	local success, altitude = GwNavQueries.triangle_from_position(nav_world, pos, above, below)
 
-	if not triangle_from_position then
-		return (Vector3(arg_33_1.x, arg_33_1.y, var_33_1))
+	if success then
+		local projected_pos = Vector3(pos.x, pos.y, altitude)
+
+		return projected_pos
 	end
 end
 
-LocomotionUtils.ray_can_go_on_mesh = function (arg_34_0, arg_34_1, arg_34_2, arg_34_3, arg_34_4, arg_34_5)
+LocomotionUtils.ray_can_go_on_mesh = function (nav_world, position_start, position_end, traverse_logic, above, below)
 	-- function 34
-	local pos_on_mesh = LocomotionUtils.pos_on_mesh(arg_34_0, arg_34_1, arg_34_4, arg_34_5)
-	local flag = not pos_on_mesh and LocomotionUtils.pos_on_mesh(arg_34_0, arg_34_2, arg_34_4, arg_34_5)
-	local var_34_2
+	local projected_start_pos = LocomotionUtils.pos_on_mesh(nav_world, position_start, above, below)
+	local projected_end_pos = not not projected_start_pos and not not LocomotionUtils.pos_on_mesh(nav_world, position_end, above, below)
+	local raycango
 
-	if not arg_34_3 then
-		var_34_2 = not flag and GwNavQueries.raycango(arg_34_0, pos_on_mesh, flag, arg_34_3)
+	if traverse_logic then
+		raycango = not not projected_end_pos and not not GwNavQueries.raycango(nav_world, projected_start_pos, projected_end_pos, traverse_logic)
 	else
-		var_34_2 = not flag and GwNavQueries.raycango(arg_34_0, pos_on_mesh, flag)
+		raycango = not not projected_end_pos and not not GwNavQueries.raycango(nav_world, projected_start_pos, projected_end_pos)
 	end
 
-	return var_34_2, pos_on_mesh, flag
+	return raycango, projected_start_pos, projected_end_pos
 end
 
-LocomotionUtils.raycast_on_navmesh = function (arg_35_0, arg_35_1, arg_35_2, arg_35_3, arg_35_4, arg_35_5, arg_35_6)
+LocomotionUtils.raycast_on_navmesh = function (nav_world, position_start, position_end, traverse_logic, above, below, end_pos_nav_projection)
 	-- function 35
-	local pos_on_mesh = LocomotionUtils.pos_on_mesh(arg_35_0, arg_35_1, arg_35_4, arg_35_5)
-	local flag = not pos_on_mesh and arg_35_6 and not arg_35_2 and LocomotionUtils.pos_on_mesh(arg_35_0, arg_35_2, arg_35_4, arg_35_5)
-	local var_35_2
-	local var_35_3
+	local projected_start_pos = LocomotionUtils.pos_on_mesh(nav_world, position_start, above, below)
+	local projected_end_pos = (not not projected_start_pos and end_pos_nav_projection or not position_end) and not not LocomotionUtils.pos_on_mesh(nav_world, position_end, above, below)
+	local success, hit_position
 
-	if not flag then
-		if not arg_35_3 then
-			var_35_2, var_35_3 = GwNavQueries.raycast(arg_35_0, pos_on_mesh, flag, arg_35_3)
+	if projected_end_pos then
+		if traverse_logic then
+			success, hit_position = GwNavQueries.raycast(nav_world, projected_start_pos, projected_end_pos, traverse_logic)
 		else
-			var_35_2, var_35_3 = GwNavQueries.raycast(arg_35_0, pos_on_mesh, flag)
+			success, hit_position = GwNavQueries.raycast(nav_world, projected_start_pos, projected_end_pos)
 		end
 	end
 
-	return var_35_2, pos_on_mesh, flag, var_35_3
+	return success, projected_start_pos, projected_end_pos, hit_position
 end
 
-local num_6 = 0.9
+local FLAT_GROUND_UP_DOT_THRESHOLD = 0.9
 
-LocomotionUtils.is_on_flat_ground_raycast = function (arg_36_0, arg_36_1)
+LocomotionUtils.is_on_flat_ground_raycast = function (physics_world, unit_position)
 	-- function 36
-	local num = arg_36_1 + Vector3.up() * 0.1
-	local immediate_raycast, var_36_2, var_36_3, var_36_4 = PhysicsWorld.immediate_raycast(arg_36_0, num, Vector3.down(), 0.15, "closest", "collision_filter", "filter_ai_mover")
-	local var_36_5
+	local ray_source = unit_position + Vector3.up() * 0.1
+	local hit_ground, _, _, ground_normal = PhysicsWorld.immediate_raycast(physics_world, ray_source, Vector3.down(), 0.15, "closest", "collision_filter", "filter_ai_mover")
+	local is_standing_on_flat_ground
 
-	if not immediate_raycast then
-		var_36_5 = Vector3.dot(var_36_4, Vector3.up()) > num_6
+	if hit_ground then
+		local up_dot = Vector3.dot(ground_normal, Vector3.up())
+
+		is_standing_on_flat_ground = up_dot > FLAT_GROUND_UP_DOT_THRESHOLD
 	end
 
-	return var_36_5
+	return is_standing_on_flat_ground
 end
 
-local num_7 = 0.0001
-local num_8 = 0.25
-local num_9 = 0.25
-local num_10 = 0.3
-local num_11 = 1.3
-local num_12 = 0.4
+local EPSILON_SQ = 0.0001
+local NAV_CHECK_ABOVE = 0.25
+local NAV_CHECK_BELOW = 0.25
+local NAV_CHECK_DISTANCE = 0.3
+local WALL_CHECK_RAYCAST_LENGTH = 1.3
+local WALL_CHECK_RAYCAST_LOW_HEIGHT = 0.4
 
-LocomotionUtils.navmesh_movement_check = function (arg_37_0, arg_37_1, arg_37_2, arg_37_3, arg_37_4)
+LocomotionUtils.navmesh_movement_check = function (unit_position, unit_velocity, nav_world, physics_world, traverse_logic)
 	-- function 37
-	local flag = Vector3.length_squared(arg_37_1) > num_7
+	local is_moving = Vector3.length_squared(unit_velocity) > EPSILON_SQ
 	local normalize
 
-	if not flag then
-		normalize = Vector3.normalize(arg_37_1)
+	if is_moving then
+		normalize = Vector3.normalize(unit_velocity)
 
 		if not normalize then
 			-- Nothing
@@ -993,48 +1056,48 @@ LocomotionUtils.navmesh_movement_check = function (arg_37_0, arg_37_1, arg_37_2,
 
 	normalize = Vector3.zero()
 
+	local direction = normalize
+
 	::label_37_0::
 
-	local num = arg_37_0 + normalize * num_10
-	local ray_can_go_on_mesh, var_37_4, var_37_5 = LocomotionUtils.ray_can_go_on_mesh(arg_37_2, arg_37_0, num, arg_37_4, num_8, num_9)
-	local str = "navmesh_ok"
+	local target_position = unit_position + direction * NAV_CHECK_DISTANCE
+	local raycango, projected_unit_pos, projected_target_pos = LocomotionUtils.ray_can_go_on_mesh(nav_world, unit_position, target_position, traverse_logic, NAV_CHECK_ABOVE, NAV_CHECK_BELOW)
+	local result = "navmesh_ok"
 
-	if ray_can_go_on_mesh or not flag then
-		local is_on_flat_ground_raycast = LocomotionUtils.is_on_flat_ground_raycast(arg_37_3, arg_37_0)
-		local var_37_8
-		local var_37_9
-		local var_37_10
+	if not raycango and is_moving then
+		local allowed_to_do_wall_check = LocomotionUtils.is_on_flat_ground_raycast(physics_world, unit_position)
+		local hit_wall, ray_source, hit_position
 
-		if not is_on_flat_ground_raycast then
-			local num_2 = arg_37_0 + Vector3.up() * num_12
-			local var_37_12
-
-			var_37_8, var_37_12 = PhysicsWorld.immediate_raycast(arg_37_3, num_2, normalize, num_11, "closest", "collision_filter", "filter_ai_mover")
+		if allowed_to_do_wall_check then
+			ray_source = unit_position + Vector3.up() * WALL_CHECK_RAYCAST_LOW_HEIGHT
+			hit_wall, hit_position = PhysicsWorld.immediate_raycast(physics_world, ray_source, direction, WALL_CHECK_RAYCAST_LENGTH, "closest", "collision_filter", "filter_ai_mover")
 		end
 
-		str = not var_37_8 and "navmesh_hit_wall" and "navmesh_use_mover"
+		result = (not hit_wall or not "navmesh_hit_wall") and not not "navmesh_use_mover"
 	end
 
-	return str
+	return result
 end
 
-local num_13 = 1
-local num_14 = 2
-local num_15 = 3
-local num_16 = 4
+local INDEX_POSITION = 1
+local INDEX_DISTANCE = 2
+local INDEX_NORMAL = 3
+local INDEX_ACTOR = 4
 
-LocomotionUtils.clear_los = function (arg_38_0, arg_38_1, arg_38_2, arg_38_3, arg_38_4)
+LocomotionUtils.clear_los = function (physics_world, p1, p2, ignore_unit1, ignore_unit2)
 	-- function 38
-	local num = arg_38_2 - arg_38_1
-	local length = Vector3.length(num)
-	local immediate_raycast, var_38_3 = PhysicsWorld.immediate_raycast(arg_38_0, arg_38_1, num, length, "all", "collision_filter", "filter_ai_mover")
+	local to_vec = p2 - p1
+	local dist = Vector3.length(to_vec)
+	local result, num_hits = PhysicsWorld.immediate_raycast(physics_world, p1, to_vec, dist, "all", "collision_filter", "filter_ai_mover")
 
-	if not immediate_raycast then
-		for i = 1, var_38_3 do
-			local var_38_4 = immediate_raycast[i][num_16]
-			local unit = Actor.unit(var_38_4)
+	if result then
+		for i = 1, num_hits do
+			local hit = result[i]
+			local hit_actor = hit[INDEX_ACTOR]
+			local hit_unit = Actor.unit(hit_actor)
+			local attack_hit_self = hit_unit == ignore_unit1
 
-			if not (unit == arg_38_3 or unit == arg_38_4) then
+			if not attack_hit_self and hit_unit ~= ignore_unit2 then
 				return false
 			end
 		end
@@ -1043,29 +1106,31 @@ LocomotionUtils.clear_los = function (arg_38_0, arg_38_1, arg_38_2, arg_38_3, ar
 	return true
 end
 
-LocomotionUtils.target_in_los = function (arg_39_0, arg_39_1)
+LocomotionUtils.target_in_los = function (unit, blackboard)
 	-- function 39
-	if not Unit.alive(arg_39_1.target_unit) then
+	if not Unit.alive(blackboard.target_unit) then
 		return
 	end
 
-	local node = Unit.node(arg_39_1.target_unit, "j_neck")
-	local world_position = Unit.world_position(arg_39_1.target_unit, node)
-	local node_2 = Unit.node(arg_39_0, "j_neck")
-	local world_position_2 = Unit.world_position(arg_39_0, node_2)
-	local num = world_position - world_position_2
-	local length = Vector3.length(num)
-	local get_data = World.get_data(arg_39_1.world, "physics_world")
-	local immediate_raycast = PhysicsWorld.immediate_raycast(get_data, world_position_2, num, length, "all", "collision_filter", "filter_ray_projectile")
+	local target_node = Unit.node(blackboard.target_unit, "j_neck")
+	local target_pos = Unit.world_position(blackboard.target_unit, target_node)
+	local start_node = Unit.node(unit, "j_neck")
+	local start_pos = Unit.world_position(unit, start_node)
+	local to_vec = target_pos - start_pos
+	local dist = Vector3.length(to_vec)
+	local physics_world = World.get_data(blackboard.world, "physics_world")
+	local result = PhysicsWorld.immediate_raycast(physics_world, start_pos, to_vec, dist, "all", "collision_filter", "filter_ray_projectile")
 
-	if not immediate_raycast then
-		local count = #immediate_raycast
+	if result then
+		local num_hits = #result
 
-		for i = 1, count do
-			local var_39_9 = immediate_raycast[i][num_16]
-			local unit = Actor.unit(var_39_9)
+		for i = 1, num_hits do
+			local hit = result[i]
+			local hit_actor = hit[INDEX_ACTOR]
+			local hit_unit = Actor.unit(hit_actor)
+			local attack_hit_self = hit_unit == unit
 
-			if not (unit == arg_39_0 or unit == arg_39_1.target_unit) then
+			if not attack_hit_self and hit_unit ~= blackboard.target_unit then
 				return false
 			end
 		end
@@ -1074,314 +1139,356 @@ LocomotionUtils.target_in_los = function (arg_39_0, arg_39_1)
 	return true
 end
 
-LocomotionUtils.enable_linked_movement = function (arg_40_0, arg_40_1, arg_40_2, arg_40_3, arg_40_4)
+LocomotionUtils.enable_linked_movement = function (world, child_unit, parent_unit, parent_node_index, offset)
 	-- function 40
-	if not Managers.player:owner(arg_40_1).remote then
-		local unit_storage = Managers.state.unit_storage
-		local go_id = unit_storage:go_id(arg_40_1)
-		local owner = unit_storage:owner(go_id)
-		local current_level = LevelHelper:current_level(arg_40_0)
-		local unit_index = Level.unit_index(current_level, arg_40_2)
-		local network = Managers.state.network
+	local player_manager = Managers.player
+	local player = player_manager:owner(child_unit)
 
-		if not network:game() then
-			network.network_transmit:send_rpc("rpc_enable_linked_movement", owner, go_id, unit_index, arg_40_3, arg_40_4)
+	if player.remote then
+		local unit_storage = Managers.state.unit_storage
+		local go_id = unit_storage:go_id(child_unit)
+		local owner_id = unit_storage:owner(go_id)
+		local level = LevelHelper:current_level(world)
+		local parent_level_unit_index = Level.unit_index(level, parent_unit)
+		local network_manager = Managers.state.network
+
+		if network_manager:game() then
+			network_manager.network_transmit:send_rpc("rpc_enable_linked_movement", owner_id, go_id, parent_level_unit_index, parent_node_index, offset)
 		end
 	else
-		ScriptUnit.extension(arg_40_1, "locomotion_system"):enable_linked_movement(arg_40_2, arg_40_3, arg_40_4)
+		local locomotion_extension = ScriptUnit.extension(child_unit, "locomotion_system")
+
+		locomotion_extension:enable_linked_movement(parent_unit, parent_node_index, offset)
 	end
 end
 
-LocomotionUtils.disable_linked_movement = function (arg_41_0)
+LocomotionUtils.disable_linked_movement = function (unit)
 	-- function 41
-	local owner = Managers.player:owner(arg_41_0)
+	local player_manager = Managers.player
+	local player = player_manager:owner(unit)
 
-	if not owner and not owner.remote then
+	if player and player.remote then
 		local unit_storage = Managers.state.unit_storage
-		local go_id = unit_storage:go_id(arg_41_0)
-		local owner_2 = unit_storage:owner(go_id)
-		local network = Managers.state.network
+		local go_id = unit_storage:go_id(unit)
+		local owner_id = unit_storage:owner(go_id)
+		local network_manager = Managers.state.network
 
-		if not network:game() then
-			network.network_transmit:send_rpc("rpc_disable_linked_movement", owner_2, go_id)
+		if network_manager:game() then
+			network_manager.network_transmit:send_rpc("rpc_disable_linked_movement", owner_id, go_id)
 		end
 	else
-		ScriptUnit.extension(arg_41_0, "locomotion_system"):disable_linked_movement()
+		local locomotion_extension = ScriptUnit.extension(unit, "locomotion_system")
+
+		locomotion_extension:disable_linked_movement()
 	end
 end
 
-LocomotionUtils.calculate_wanted_lerp_velocity = function (arg_42_0, arg_42_1, arg_42_2, arg_42_3, arg_42_4, arg_42_5, arg_42_6)
+LocomotionUtils.calculate_wanted_lerp_velocity = function (position_current, position_start, position_end, start_time, end_time, dt, t)
 	-- function 42
-	local min = math.min(1, (arg_42_6 - arg_42_3) / (arg_42_4 - arg_42_3))
-	local lerp = Vector3.lerp(arg_42_1, arg_42_2, min)
-	local num = Vector3.distance(arg_42_0, lerp) / arg_42_5
+	local lerp_t = math.min(1, (t - start_time) / (end_time - start_time))
+	local position = Vector3.lerp(position_start, position_end, lerp_t)
+	local distance = Vector3.distance(position_current, position)
+	local wanted_velocity = distance / dt
 end
 
-LocomotionUtils.in_crosshairs_dodge = function (arg_43_0, arg_43_1, arg_43_2, arg_43_3, arg_43_4, arg_43_5, arg_43_6)
+LocomotionUtils.in_crosshairs_dodge = function (unit, blackboard, t, radius, in_crosshairs_time, min_distance, max_distance)
 	-- function 43
-	arg_43_5 = arg_43_5 or 0
-	arg_43_6 = arg_43_6 or math.huge
+	min_distance = not not min_distance or not not 0
+	max_distance = not not max_distance or not not math.huge
 
-	local ENEMY_PLAYER_AND_BOT_UNITS = Managers.state.side.side_by_unit[arg_43_0].ENEMY_PLAYER_AND_BOT_UNITS
-	local aim_times = arg_43_1.aim_times
+	local side = Managers.state.side.side_by_unit[unit]
+	local units = side.ENEMY_PLAYER_AND_BOT_UNITS
+	local aim_times_2 = blackboard.aim_times
 
-	aim_times = aim_times or {}
-	arg_43_1.aim_times = aim_times
+	aim_times_2 = not not aim_times_2 or not not {}
+	blackboard.aim_times = aim_times_2
 
-	local aim_times_2 = arg_43_1.aim_times
+	local aim_times = blackboard.aim_times
 	local debug_ai_movement = script_data.debug_ai_movement
 
-	for i = 1, #ENEMY_PLAYER_AND_BOT_UNITS do
-		local var_43_4 = ENEMY_PLAYER_AND_BOT_UNITS[i]
-		local extension = ScriptUnit.extension(var_43_4, "inventory_system")
-		local flag = extension:get_wielded_slot_name() == "slot_ranged"
-		local get_wielded_slot_item_template = extension:get_wielded_slot_item_template()
+	for i = 1, #units do
+		local player_unit = units[i]
+		local player_inventory = ScriptUnit.extension(player_unit, "inventory_system")
+		local using_ranged_weapon = player_inventory:get_wielded_slot_name() == "slot_ranged"
+		local weapon_template = player_inventory:get_wielded_slot_item_template()
 
-		if not get_wielded_slot_item_template and not get_wielded_slot_item_template.no_dodge then
-			flag = false
+		if weapon_template and weapon_template.no_dodge then
+			using_ranged_weapon = false
 		end
 
-		if not flag then
-			local world_position = Unit.world_position(arg_43_0, Unit.node(arg_43_0, "j_neck"))
-			local num = world_position - Unit.world_position(var_43_4, Unit.node(var_43_4, "camera_attach"))
-			local current_rotation = ScriptUnit.extension(var_43_4, "locomotion_system"):current_rotation()
-			local forward = Quaternion.forward(current_rotation)
-			local length = Vector3.length(num)
-			local num_2 = num - forward * length
-			local length_2 = Vector3.length(num_2)
-			local var_43_15
+		if using_ranged_weapon then
+			local pos = Unit.world_position(unit, Unit.node(unit, "j_neck"))
+			local player_pos = Unit.world_position(player_unit, Unit.node(player_unit, "camera_attach"))
+			local to_rat = pos - player_pos
+			local player_locomotion = ScriptUnit.extension(player_unit, "locomotion_system")
+			local rotation = player_locomotion:current_rotation()
+			local aim_direction = Quaternion.forward(rotation)
+			local dist = Vector3.length(to_rat)
+			local miss_vec = to_rat - aim_direction * dist
+			local aim_distance = Vector3.length(miss_vec)
+			local bulls_eye
 
-			if not (not (length_2 < arg_43_3) or not (arg_43_5 < length) or not (length < arg_43_6)) then
-				local local_rotation = Unit.local_rotation(arg_43_0, 0)
-				local forward_2 = Quaternion.forward(local_rotation)
-				local normalize = Vector3.normalize(num)
+			if aim_distance < radius and min_distance < dist and dist < max_distance then
+				local rot = Unit.local_rotation(unit, 0)
+				local rat_forward = Quaternion.forward(rot)
+				local to_rat_normalized = Vector3.normalize(to_rat)
+				local dot = Vector3.dot(to_rat_normalized, rat_forward)
 
-				if Vector3.dot(normalize, forward_2) < -0.3 then
-					if not arg_43_4 then
-						local var_43_19 = aim_times_2[var_43_4]
+				if dot < -0.3 then
+					if in_crosshairs_time then
+						local aim_time = aim_times[player_unit]
 
-						if not var_43_19 then
-							var_43_19 = arg_43_2 + arg_43_4
-							aim_times_2[var_43_4] = var_43_19
-						elseif var_43_19 < arg_43_2 then
-							return num_2, forward
+						if not aim_time then
+							aim_time = t + in_crosshairs_time
+							aim_times[player_unit] = aim_time
+						elseif aim_time < t then
+							return miss_vec, aim_direction
 						end
 
-						if not debug_ai_movement then
-							QuickDrawer:sphere(world_position, arg_43_3, Color(0, 255, 0))
-							QuickDrawer:cylinder(world_position, world_position + Vector3(0, 0, var_43_19 - arg_43_2), 0.2, Color(0, 255, 0))
+						if debug_ai_movement then
+							QuickDrawer:sphere(pos, radius, Color(0, 255, 0))
+							QuickDrawer:cylinder(pos, pos + Vector3(0, 0, aim_time - t), 0.2, Color(0, 255, 0))
 						end
 
-						var_43_15 = true
+						bulls_eye = true
 					else
-						return num_2, forward
+						return miss_vec, aim_direction
 					end
-				elseif not debug_ai_movement then
-					QuickDrawer:sphere(world_position, arg_43_3)
+				elseif debug_ai_movement then
+					QuickDrawer:sphere(pos, radius)
 				end
 			end
 
-			if not var_43_15 then
-				aim_times_2[var_43_4] = nil
+			if not bulls_eye then
+				aim_times[player_unit] = nil
 			end
 		end
 	end
 end
 
-LocomotionUtils.separate_mover_fallbacks = function (arg_44_0, arg_44_1)
+LocomotionUtils.separate_mover_fallbacks = function (mover, seprarate_dist)
 	-- function 44
-	local separate, var_44_1, var_44_2, var_44_3 = Mover.separate(arg_44_0, arg_44_1)
+	local is_colliding, colliding_actor, move_vector, new_position = Mover.separate(mover, seprarate_dist)
 
-	if not separate and not var_44_3 then
-		Mover.set_position(arg_44_0, var_44_3)
+	if is_colliding and new_position then
+		Mover.set_position(mover, new_position)
 	end
 
-	return not separate and var_44_3 and not separate
+	local success = (not is_colliding or not new_position) and not not not is_colliding
+
+	return success
 end
 
-LocomotionUtils.on_alerted_dodge = function (arg_45_0, arg_45_1, arg_45_2, arg_45_3)
+LocomotionUtils.on_alerted_dodge = function (unit, blackboard, alerting_unit, enemy_unit)
 	-- function 45
-	local world_position = Unit.world_position(arg_45_0, Unit.node(arg_45_0, "j_neck"))
-	local var_45_1
-	local var_45_2
-	local get_actual_attacker_unit = AiUtils.get_actual_attacker_unit(arg_45_3)
+	local pos = Unit.world_position(unit, Unit.node(unit, "j_neck"))
+	local enemy_pos, rotation
+	local real_attacker_unit = AiUtils.get_actual_attacker_unit(enemy_unit)
 
-	if not DamageUtils.is_player_unit(get_actual_attacker_unit) then
-		local has_extension = ScriptUnit.has_extension(get_actual_attacker_unit, "locomotion_system")
-		local has_node = Unit.has_node(get_actual_attacker_unit, "camera_attach")
+	if DamageUtils.is_player_unit(real_attacker_unit) then
+		local locomotion_extension = ScriptUnit.has_extension(real_attacker_unit, "locomotion_system")
+		local has_node = Unit.has_node(real_attacker_unit, "camera_attach")
 
-		has_node = not has_node and Unit.node(get_actual_attacker_unit, "camera_attach")
-		var_45_2 = has_extension:current_rotation()
-		var_45_1 = Unit.world_position(get_actual_attacker_unit, has_node)
+		if has_node then
+			-- Nothing
+		end
+
+		has_node = Unit.node(real_attacker_unit, "camera_attach")
+
+		local node = has_node
+
+		::label_45_0::
+
+		rotation = locomotion_extension:current_rotation()
+		enemy_pos = Unit.world_position(real_attacker_unit, node)
 	else
-		var_45_2 = Unit.world_rotation(get_actual_attacker_unit, 0)
-		var_45_1 = Unit.world_position(get_actual_attacker_unit, 0)
+		rotation = Unit.world_rotation(real_attacker_unit, 0)
+		enemy_pos = Unit.world_position(real_attacker_unit, 0)
 	end
 
-	local num = world_position - var_45_1
-	local forward = Quaternion.forward(var_45_2)
+	local to_rat = pos - enemy_pos
+	local aim_direction = Quaternion.forward(rotation)
+	local dist = Vector3.length(to_rat)
+	local miss_vec = to_rat - aim_direction * dist
 
-	return num - forward * Vector3.length(num), forward
+	return miss_vec, aim_direction
 end
 
-LocomotionUtils.get_vortex_spin_velocity = function (arg_46_0, arg_46_1, arg_46_2, arg_46_3, arg_46_4, arg_46_5, arg_46_6, arg_46_7)
+LocomotionUtils.get_vortex_spin_velocity = function (unit_position, center_pos, wanted_radius, up_direction, rotation_speed, radius_change_speed, ascension_speed, dt)
 	-- function 46
-	local num = 0.0001
-	local num_2 = arg_46_0 - arg_46_1
-	local flat = Vector3.flat(num_2)
-	local normalize = Vector3.normalize(flat)
-	local length = Vector3.length(flat)
-	local num_3 = arg_46_4 / math.max(length, num) * arg_46_7
-	local axis_angle = Quaternion.axis_angle(arg_46_3, num_3)
-	local var_46_7
+	local epsilon = 0.0001
+	local to_unit = unit_position - center_pos
+	local flat_to_unit = Vector3.flat(to_unit)
+	local flat_to_unit_dir = Vector3.normalize(flat_to_unit)
+	local current_radius = Vector3.length(flat_to_unit)
+	local angular_speed = rotation_speed / math.max(current_radius, epsilon)
+	local delta_rotation = angular_speed * dt
+	local new_rotation = Quaternion.axis_angle(up_direction, delta_rotation)
+	local new_radius
 
-	if arg_46_2 < length then
-		var_46_7 = math.max(length - arg_46_5 * arg_46_7, arg_46_2)
+	if wanted_radius < current_radius then
+		new_radius = math.max(current_radius - radius_change_speed * dt, wanted_radius)
 	else
-		var_46_7 = math.min(length + arg_46_5 * arg_46_7, arg_46_2)
+		new_radius = math.min(current_radius + radius_change_speed * dt, wanted_radius)
 	end
 
-	local num_4 = num_2.z + arg_46_6 * arg_46_7
-	local num_5 = (arg_46_1 + Quaternion.rotate(axis_angle, normalize) * var_46_7 + num_4 * arg_46_3 - arg_46_0) / math.max(arg_46_7, num)
-	local cross = Vector3.cross(normalize, Vector3.up())
+	local current_height = to_unit.z
+	local new_height = current_height + ascension_speed * dt
+	local new_direction = Quaternion.rotate(new_rotation, flat_to_unit_dir)
+	local wanted_position = center_pos + new_direction * new_radius + new_height * up_direction
+	local velocity = (wanted_position - unit_position) / math.max(dt, epsilon)
+	local perpenticular_dir = Vector3.cross(flat_to_unit_dir, Vector3.up())
 
-	return num_5, var_46_7, num_4, cross
+	return velocity, new_radius, new_height, perpenticular_dir
 end
 
-local function fn(...)
+local function debug_sticky_text(...)
 	-- function 47
-	if not script_data.debug_big_boy_turning then
+	if script_data.debug_big_boy_turning then
 		Debug.sticky_text(...)
 	end
 end
 
-LocomotionUtils.check_start_turning = function (arg_48_0, arg_48_1, arg_48_2, arg_48_3)
+LocomotionUtils.check_start_turning = function (unit, t, dt, blackboard)
 	-- function 48
-	local start_anims_name = arg_48_3.action.start_anims_name
-	local breed = arg_48_3.breed
+	local action = blackboard.action
+	local start_anims = action.start_anims_name
+	local breed = blackboard.breed
 
-	fassert(start_anims_name, "Breed %s is using big boy turning without having start_anims defined in follow action", breed.name)
+	fassert(start_anims, "Breed %s is using big boy turning without having start_anims defined in follow action", breed.name)
 
-	local locomotion_extension = arg_48_3.locomotion_extension
-	local navigation_extension = arg_48_3.navigation_extension
-	local var_48_4 = POSITION_LOOKUP[arg_48_0]
-	local wanted_destination = arg_48_3.wanted_destination
+	local locomotion_extension = blackboard.locomotion_extension
+	local navigation_extension = blackboard.navigation_extension
+	local position = POSITION_LOOKUP[unit]
+	local wanted_destination_2 = blackboard.wanted_destination
 
-	wanted_destination = not wanted_destination and arg_48_3.wanted_destination:unbox()
+	if wanted_destination_2 then
+		-- Nothing
+	end
+
+	wanted_destination_2 = blackboard.wanted_destination:unbox()
+
+	local wanted_destination = wanted_destination_2
+
+	::label_48_0::
 
 	if not wanted_destination then
 		return
 	end
 
-	local is_computing_path = navigation_extension:is_computing_path()
+	local is_computing = navigation_extension:is_computing_path()
 	local is_following_path = navigation_extension:is_following_path()
 
-	if not (is_computing_path or is_following_path) then
+	if is_computing or not is_following_path then
 		return
 	end
 
-	local get_current_and_next_node_positions_in_nav_path, var_48_9, var_48_10 = navigation_extension:get_current_and_next_node_positions_in_nav_path()
+	local current_node_position, next_node_1_position, next_node_2_position = navigation_extension:get_current_and_next_node_positions_in_nav_path()
 
-	if not (get_current_and_next_node_positions_in_nav_path == nil or var_48_9 ~= nil) then
+	if current_node_position == nil or next_node_1_position == nil then
 		return
 	end
 
-	local flag = not var_48_10 and var_48_10 and var_48_9
-	local normalize = Vector3.normalize(flag - get_current_and_next_node_positions_in_nav_path)
-	local world_rotation = Unit.world_rotation(arg_48_0, 0)
-	local forward = Quaternion.forward(world_rotation)
-	local right = Quaternion.right(world_rotation)
-	local normalize_2 = Vector3.normalize(navigation_extension:desired_velocity())
+	local nav_path_node_position = (not next_node_2_position or not next_node_2_position) and not not next_node_1_position
+	local nav_path_direction = Vector3.normalize(nav_path_node_position - current_node_position)
+	local rotation = Unit.world_rotation(unit, 0)
+	local forward = Quaternion.forward(rotation)
+	local right = Quaternion.right(rotation)
+	local navigation_velocity = Vector3.normalize(navigation_extension:desired_velocity())
 
-	LocomotionUtils.update_leaning(arg_48_0, arg_48_3, flag)
+	LocomotionUtils.update_leaning(unit, blackboard, nav_path_node_position)
 
-	local dot = Vector3.dot(right, normalize)
-	local dot_2 = Vector3.dot(forward, normalize)
-	local abs = math.abs(dot)
-	local abs_2 = math.abs(dot_2)
+	local right_dot = Vector3.dot(right, nav_path_direction)
+	local fwd_dot = Vector3.dot(forward, nav_path_direction)
+	local abs_right_dot = math.abs(right_dot)
+	local abs_fwd_dot = math.abs(fwd_dot)
+	local big_boy_turning_dot = breed.big_boy_turning_dot
+	local dont_need_to_turn = big_boy_turning_dot < fwd_dot
 
-	if not (dot_2 > breed.big_boy_turning_dot) then
+	if dont_need_to_turn then
 		return
 	end
 
-	local var_48_21
+	local start_anim
 
-	if abs_2 < abs then
-		if dot > 0 then
-			var_48_21 = start_anims_name.right
+	if abs_fwd_dot < abs_right_dot then
+		if right_dot > 0 then
+			start_anim = start_anims.right
 		else
-			var_48_21 = start_anims_name.left
+			start_anim = start_anims.left
 		end
 	else
-		var_48_21 = start_anims_name.bwd
+		start_anim = start_anims.bwd
 	end
 
-	Managers.state.network:anim_event(arg_48_0, var_48_21)
+	local network_manager = Managers.state.network
 
-	arg_48_3.move_animation_name = var_48_21
-	arg_48_3.rotate_towards_position = Vector3Box(var_48_9)
-	arg_48_3.is_turning = true
-	arg_48_3.anim_cb_rotation_start = nil
-	arg_48_3.anim_cb_move = nil
+	network_manager:anim_event(unit, start_anim)
+
+	blackboard.move_animation_name = start_anim
+	blackboard.rotate_towards_position = Vector3Box(next_node_1_position)
+	blackboard.is_turning = true
+	blackboard.anim_cb_rotation_start = nil
+	blackboard.anim_cb_move = nil
 end
 
-LocomotionUtils.update_leaning = function (arg_49_0, arg_49_1, arg_49_2)
+LocomotionUtils.update_leaning = function (unit, blackboard, target_lean_position)
 	-- function 49
-	if not arg_49_1.enabled_animation_movement_system then
-		local go_id = Managers.state.unit_storage:go_id(arg_49_0)
+	if not blackboard.enabled_animation_movement_system then
+		local go_id = Managers.state.unit_storage:go_id(unit)
 
 		Managers.state.network.network_transmit:send_rpc_all("rpc_enable_animation_movement_system", go_id, true)
 
-		arg_49_1.enabled_animation_movement_system = true
+		blackboard.enabled_animation_movement_system = true
 	end
 
-	local lean_target_position_boxed = arg_49_1.lean_target_position_boxed
+	local lean_target_position_boxed = blackboard.lean_target_position_boxed
 
-	lean_target_position_boxed = lean_target_position_boxed or Vector3Box()
-	arg_49_1.lean_target_position_boxed = lean_target_position_boxed
+	lean_target_position_boxed = not not lean_target_position_boxed or not not Vector3Box()
+	blackboard.lean_target_position_boxed = lean_target_position_boxed
 
-	arg_49_1.lean_target_position_boxed:store(arg_49_2)
+	blackboard.lean_target_position_boxed:store(target_lean_position)
 end
 
-LocomotionUtils.update_turning = function (arg_50_0, arg_50_1, arg_50_2, arg_50_3)
+LocomotionUtils.update_turning = function (unit, t, dt, blackboard)
 	-- function 50
-	local locomotion_extension = arg_50_3.locomotion_extension
-	local navigation_extension = arg_50_3.navigation_extension
-	local var_50_2 = POSITION_LOOKUP[arg_50_0]
+	local locomotion_extension = blackboard.locomotion_extension
+	local navigation_extension = blackboard.navigation_extension
+	local position = POSITION_LOOKUP[unit]
 
-	if not arg_50_3.anim_cb_rotation_start then
-		arg_50_3.anim_cb_rotation_start = nil
+	if blackboard.anim_cb_rotation_start then
+		blackboard.anim_cb_rotation_start = nil
 
-		if not arg_50_3.is_turning then
-			local unbox = arg_50_3.rotate_towards_position:unbox()
-			local get_animation_rotation_scale = AiAnimUtils.get_animation_rotation_scale(arg_50_0, unbox, arg_50_3.move_animation_name, arg_50_3.action.start_anims_data)
+		if blackboard.is_turning then
+			local rotate_towards_position = blackboard.rotate_towards_position:unbox()
+			local rot_scale = AiAnimUtils.get_animation_rotation_scale(unit, rotate_towards_position, blackboard.move_animation_name, blackboard.action.start_anims_data)
 
 			locomotion_extension:use_lerp_rotation(false)
-			LocomotionUtils.set_animation_driven_movement(arg_50_0, true, false, false)
-			LocomotionUtils.set_animation_rotation_scale(arg_50_0, get_animation_rotation_scale)
+			LocomotionUtils.set_animation_driven_movement(unit, true, false, false)
+			LocomotionUtils.set_animation_rotation_scale(unit, rot_scale)
 
-			arg_50_3.animation_rotation_lock = true
+			blackboard.animation_rotation_lock = true
 		end
 	end
 
-	if not arg_50_3.anim_cb_move then
-		arg_50_3.anim_cb_move = nil
+	if blackboard.anim_cb_move then
+		blackboard.anim_cb_move = nil
 
-		LocomotionUtils.reset_turning(arg_50_0, arg_50_3)
+		LocomotionUtils.reset_turning(unit, blackboard)
 	end
 end
 
-LocomotionUtils.reset_turning = function (arg_51_0, arg_51_1)
+LocomotionUtils.reset_turning = function (unit, blackboard)
 	-- function 51
-	arg_51_1.is_turning = false
+	blackboard.is_turning = false
 
-	LocomotionUtils.set_animation_driven_movement(arg_51_0, false)
-	LocomotionUtils.set_animation_rotation_scale(arg_51_0, 1)
+	LocomotionUtils.set_animation_driven_movement(unit, false)
+	LocomotionUtils.set_animation_rotation_scale(unit, 1)
 
-	local go_id = Managers.state.unit_storage:go_id(arg_51_0)
+	local go_id = Managers.state.unit_storage:go_id(unit)
 
 	Managers.state.network.network_transmit:send_rpc_all("rpc_enable_animation_movement_system", go_id, false)
 
-	arg_51_1.lean_target_position_boxed = nil
-	arg_51_1.enabled_animation_movement_system = nil
+	blackboard.lean_target_position_boxed = nil
+	blackboard.enabled_animation_movement_system = nil
 end

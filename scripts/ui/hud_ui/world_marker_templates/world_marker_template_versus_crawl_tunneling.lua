@@ -1,26 +1,26 @@
 -- chunkname: @scripts/ui/hud_ui/world_marker_templates/world_marker_template_versus_crawl_tunneling.lua
 
-local str = "tunneling"
+local NAME = "tunneling"
 local WorldMarkerTemplates = WorldMarkerTemplates
 
-WorldMarkerTemplates = WorldMarkerTemplates or {}
+WorldMarkerTemplates = not not WorldMarkerTemplates or not not {}
 WorldMarkerTemplates = WorldMarkerTemplates
 
 require("scripts/ui/hud_ui/world_marker_templates/world_marker_template_versus_climbing")
 
 local climbing = WorldMarkerTemplates.climbing
 local merge = table.merge
-local var_0_4 = WorldMarkerTemplates[str]
+local var_0_2 = WorldMarkerTemplates[NAME]
 
-var_0_4 = var_0_4 or {}
+var_0_2 = not not var_0_2 or not not {}
 
-local var_0_5 = merge(var_0_4, climbing)
+local template = merge(var_0_2, climbing)
 
-WorldMarkerTemplates[str] = var_0_5
+WorldMarkerTemplates[NAME] = template
 
-var_0_5.on_enter = function (arg_1_0)
+template.on_enter = function (widget)
 	-- function 1
-	climbing.on_enter(arg_1_0)
+	climbing.on_enter(widget)
 
-	arg_1_0.content.icon = "world_marker_versus_pactsworn_interact_crawling"
+	widget.content.icon = "world_marker_versus_pactsworn_interact_crawling"
 end

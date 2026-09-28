@@ -1,6 +1,8 @@
 -- chunkname: @scripts/settings/dlcs/mutators_batch_02/mutators_batch_02_pickups_settings.lua
 
-DLCSettings.mutators_batch_02.pickups = {
+local settings = DLCSettings.mutators_batch_02
+
+settings.pickups = {
 	level_events = {
 		mutator_statue_01 = {
 			only_once = true,

@@ -5,73 +5,81 @@ require("scripts/entity_system/systems/behaviour/nodes/bt_node")
 BTChaosSorcererTeleportAction = class(BTChaosSorcererTeleportAction, BTNode)
 BTChaosSorcererTeleportAction.name = "BTChaosSorcererTeleportAction"
 
-BTChaosSorcererTeleportAction.init = function (arg_1_0, ...)
+BTChaosSorcererTeleportAction.init = function (self, ...)
 	-- function 1
-	BTChaosSorcererTeleportAction.super.init(arg_1_0, ...)
+	BTChaosSorcererTeleportAction.super.init(self, ...)
 end
 
-BTChaosSorcererTeleportAction.enter = function (arg_2_0, arg_2_1, arg_2_2, arg_2_3)
+BTChaosSorcererTeleportAction.enter = function (self, unit, blackboard, t)
 	-- function 2
-	local next_smart_object_data = arg_2_2.next_smart_object_data
-	local unbox = next_smart_object_data.entrance_pos:unbox()
-	local unbox_2 = next_smart_object_data.exit_pos:unbox()
+	local next_smart_object_data = blackboard.next_smart_object_data
+	local entrance_pos = next_smart_object_data.entrance_pos:unbox()
+	local exit_pos = next_smart_object_data.exit_pos:unbox()
 
-	arg_2_2.active_node = BTChaosSorcererTeleportAction
-	arg_2_2.smart_object_data = next_smart_object_data.smart_object_data
-	arg_2_2.teleport_position = Vector3Box(unbox_2)
-	arg_2_2.entrance_position = Vector3Box(unbox)
+	blackboard.active_node = BTChaosSorcererTeleportAction
 
-	arg_2_2.locomotion_extension:set_wanted_velocity(Vector3.zero())
-	arg_2_2.navigation_extension:set_enabled(false)
-	Managers.state.network:anim_event(arg_2_1, "teleport_start")
+	local smart_object_data = next_smart_object_data.smart_object_data
+
+	blackboard.smart_object_data = smart_object_data
+	blackboard.teleport_position = Vector3Box(exit_pos)
+	blackboard.entrance_position = Vector3Box(entrance_pos)
+
+	local locomotion_extension = blackboard.locomotion_extension
+
+	locomotion_extension:set_wanted_velocity(Vector3.zero())
+
+	local navigation_extension = blackboard.navigation_extension
+
+	navigation_extension:set_enabled(false)
+	Managers.state.network:anim_event(unit, "teleport_start")
 end
 
-BTChaosSorcererTeleportAction.leave = function (arg_3_0, arg_3_1, arg_3_2, arg_3_3, arg_3_4, arg_3_5)
+BTChaosSorcererTeleportAction.leave = function (self, unit, blackboard, t, reason, destroy)
 	-- function 3
-	arg_3_2.teleport_position = nil
-	arg_3_2.entrance_position = nil
-	arg_3_2.teleport_timeout = nil
-	arg_3_2.anim_cb_teleport_finished = nil
-	arg_3_2.active_node = nil
+	blackboard.teleport_position = nil
+	blackboard.entrance_position = nil
+	blackboard.teleport_timeout = nil
+	blackboard.anim_cb_teleport_finished = nil
+	blackboard.active_node = nil
 
-	local navigation_extension = arg_3_2.navigation_extension
+	local navigation_extension = blackboard.navigation_extension
 
 	navigation_extension:set_enabled(true)
 
-	if not navigation_extension:is_using_smart_object() then
-		local use_smart_object = navigation_extension:use_smart_object(false)
+	if navigation_extension:is_using_smart_object() then
+		local success = navigation_extension:use_smart_object(false)
 	end
 end
 
-BTChaosSorcererTeleportAction.run = function (self, arg_4_1, arg_4_2, arg_4_3, arg_4_4)
+BTChaosSorcererTeleportAction.run = function (self, unit, blackboard, t, dt)
 	-- function 4
-	if arg_4_2.smart_object_data ~= arg_4_2.next_smart_object_data.smart_object_data then
+	if blackboard.smart_object_data ~= blackboard.next_smart_object_data.smart_object_data then
 		return "failed"
 	end
 
-	local navigation_extension = arg_4_2.navigation_extension
-	local var_4_1 = POSITION_LOOKUP[arg_4_1]
-	local unbox = arg_4_2.entrance_position:unbox()
-	local num = unbox - var_4_1
-	local normalize = Vector3.normalize(navigation_extension:desired_velocity())
-	local flat = Vector3.flat(normalize)
+	local navigation_extension = blackboard.navigation_extension
+	local unit_position = POSITION_LOOKUP[unit]
+	local entrance_position = blackboard.entrance_position:unbox()
+	local target_offset = entrance_position - unit_position
+	local target_dir = Vector3.normalize(navigation_extension:desired_velocity())
+	local flat_target_dir = Vector3.flat(target_dir)
 
-	if not (not (Vector3.length(flat) < 0.05) or not (Vector3.dot(normalize, Vector3.normalize(num)) > 0.99)) then
-		local teleport_timeout = arg_4_2.teleport_timeout
+	if Vector3.length(flat_target_dir) < 0.05 and Vector3.dot(target_dir, Vector3.normalize(target_offset)) > 0.99 then
+		local teleport_timeout = blackboard.teleport_timeout
 
-		teleport_timeout = teleport_timeout or arg_4_3 + 0.3
-		arg_4_2.teleport_timeout = teleport_timeout
+		teleport_timeout = not not teleport_timeout or not not (t + 0.3)
+		blackboard.teleport_timeout = teleport_timeout
 	else
-		arg_4_2.teleport_timeout = nil
+		blackboard.teleport_timeout = nil
 	end
 
-	if arg_4_2.teleport_timeout == nil or arg_4_3 > arg_4_2.teleport_timeout or not arg_4_2.anim_cb_teleport_finished then
-		local locomotion_extension = arg_4_2.locomotion_extension
-		local unbox_2 = arg_4_2.teleport_position:unbox()
+	if (blackboard.teleport_timeout == nil or t > blackboard.teleport_timeout) and blackboard.anim_cb_teleport_finished then
+		local locomotion_extension = blackboard.locomotion_extension
+		local teleport_position = blackboard.teleport_position:unbox()
 
-		navigation_extension:set_navbot_position(unbox_2)
-		locomotion_extension:teleport_to(unbox_2)
-		self:play_teleport_effect(arg_4_1, unbox, unbox_2)
+		navigation_extension:set_navbot_position(teleport_position)
+		locomotion_extension:teleport_to(teleport_position)
+		self:play_teleport_effect(unit, entrance_position, teleport_position)
 
 		return "done"
 	else
@@ -79,12 +87,12 @@ BTChaosSorcererTeleportAction.run = function (self, arg_4_1, arg_4_2, arg_4_3, a
 	end
 end
 
-BTChaosSorcererTeleportAction.play_teleport_effect = function (self, arg_5_1, arg_5_2, arg_5_3)
+BTChaosSorcererTeleportAction.play_teleport_effect = function (self, unit, start_position, end_position)
 	-- function 5
 	local action_data = self._tree_node.action_data
 	local teleport_effect
 
-	if not action_data then
+	if action_data then
 		teleport_effect = action_data.teleport_effect
 
 		if not teleport_effect then
@@ -94,19 +102,21 @@ BTChaosSorcererTeleportAction.play_teleport_effect = function (self, arg_5_1, ar
 
 	teleport_effect = "fx/chr_chaos_sorcerer_teleport"
 
+	local effect_name = teleport_effect
+
 	::label_5_0::
 
-	local var_5_2 = NetworkLookup.effects[teleport_effect]
-	local network = Managers.state.network
-	local unit_game_object_id = network:unit_game_object_id(arg_5_1)
-	local num = 0
-	local identity = Quaternion.identity()
+	local effect_name_id = NetworkLookup.effects[effect_name]
+	local network_manager = Managers.state.network
+	local owner_unit_id = network_manager:unit_game_object_id(unit)
+	local node_id = 0
+	local rotation_offset = Quaternion.identity()
 
-	network:rpc_play_particle_effect(nil, var_5_2, NetworkConstants.invalid_game_object_id, num, arg_5_2, identity, false)
-	network:rpc_play_particle_effect(nil, var_5_2, NetworkConstants.invalid_game_object_id, num, arg_5_3, identity, false)
+	network_manager:rpc_play_particle_effect(nil, effect_name_id, NetworkConstants.invalid_game_object_id, node_id, start_position, rotation_offset, false)
+	network_manager:rpc_play_particle_effect(nil, effect_name_id, NetworkConstants.invalid_game_object_id, node_id, end_position, rotation_offset, false)
 end
 
-BTChaosSorcererTeleportAction.anim_cb_teleport_start_finished = function (arg_6_0, arg_6_1, arg_6_2)
+BTChaosSorcererTeleportAction.anim_cb_teleport_start_finished = function (self, unit, blackboard)
 	-- function 6
-	arg_6_2.anim_cb_teleport_finished = true
+	blackboard.anim_cb_teleport_finished = true
 end

@@ -1,6 +1,6 @@
 -- chunkname: @scripts/settings/dlcs/versus_rewards/weapon_skins_versus_rewards.lua
 
-local tbl = {
+local skins = {
 	{
 		name = "es_2h_sword_exe_skin_03_magic_02",
 		data = {
@@ -1261,7 +1261,7 @@ local tbl = {
 		}
 	}
 }
-local tbl_2 = {
+local skin_combinations = {
 	wh_deus_01_skins = {
 		unique = {
 			"wh_deus_skin_02_magic_02"
@@ -1679,22 +1679,22 @@ local tbl_2 = {
 	}
 }
 
-for i, v in ipairs(tbl) do
-	WeaponSkins.skins[v.name] = v.data
+for _, skin in ipairs(skins) do
+	WeaponSkins.skins[skin.name] = skin.data
 end
 
-for k, v_2 in pairs(tbl_2) do
-	if not WeaponSkins.skin_combinations[k] then
-		WeaponSkins.skin_combinations[k] = {}
+for weapon_name, skin_data in pairs(skin_combinations) do
+	if not WeaponSkins.skin_combinations[weapon_name] then
+		WeaponSkins.skin_combinations[weapon_name] = {}
 	end
 
-	for k_2, v_3 in pairs(v_2) do
-		if not WeaponSkins.skin_combinations[k][k_2] then
-			WeaponSkins.skin_combinations[k][k_2] = {}
+	for weapon_rarity, skin_names in pairs(skin_data) do
+		if not WeaponSkins.skin_combinations[weapon_name][weapon_rarity] then
+			WeaponSkins.skin_combinations[weapon_name][weapon_rarity] = {}
 		end
 
-		for i_2, v_4 in ipairs(v_3) do
-			WeaponSkins.skin_combinations[k][k_2][#WeaponSkins.skin_combinations[k][k_2] + 1] = v_4
+		for _, skin_name in ipairs(skin_names) do
+			WeaponSkins.skin_combinations[weapon_name][weapon_rarity][#WeaponSkins.skin_combinations[weapon_name][weapon_rarity] + 1] = skin_name
 		end
 	end
 end

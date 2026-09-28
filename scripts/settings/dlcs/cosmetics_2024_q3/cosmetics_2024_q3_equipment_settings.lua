@@ -1,14 +1,14 @@
 -- chunkname: @scripts/settings/dlcs/cosmetics_2024_q3/cosmetics_2024_q3_equipment_settings.lua
 
-local cosmetics_2024_q3 = DLCSettings.cosmetics_2024_q3
+local settings = DLCSettings.cosmetics_2024_q3
 
-cosmetics_2024_q3.cosmetics_files = {
+settings.cosmetics_files = {
 	"scripts/settings/dlcs/cosmetics_2024_q3/cosmetics_cosmetics_2024_q3"
 }
-cosmetics_2024_q3.item_master_list_file_names = {
+settings.item_master_list_file_names = {
 	"scripts/settings/equipment/item_master_list_cosmetics_2024_q3"
 }
-cosmetics_2024_q3.inventory_package_list = {
+settings.inventory_package_list = {
 	"units/beings/player/bright_wizard_scholar_skin_03/first_person_base/chr_first_person_mesh",
 	"units/beings/player/bright_wizard_scholar_skin_03/third_person_base/chr_third_person_mesh",
 	"units/beings/player/dwarf_ranger_slayer_skin_03/first_person_base/chr_first_person_mesh",

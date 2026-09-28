@@ -10,8 +10,8 @@ end
 local BUILD = BUILD
 local PLATFORM = PLATFORM
 
-if not IS_XB1 then
-	local tbl = {
+if IS_XB1 then
+	local XB1_TYPE_LOOKUP = {
 		[XboxOne.CONSOLE_TYPE_UNKNOWN] = "unknown",
 		[XboxOne.CONSOLE_TYPE_XBOX_ONE] = "xb1",
 		[XboxOne.CONSOLE_TYPE_XBOX_ONE_S] = "xb1s",
@@ -24,43 +24,43 @@ if not IS_XB1 then
 
 	XboxOne.console_type_string = function ()
 		-- function 1
-		return tbl[XboxOne.console_type()]
+		return XB1_TYPE_LOOKUP[XboxOne.console_type()]
 	end
 end
 
-local function fn(arg_2_0, ...)
+local function base_require(path, ...)
 	-- function 2
-	for i, v in ipairs({
+	for _, s in ipairs({
 		...
 	}) do
-		require(string.format("foundation/scripts/%s/%s", arg_2_0, v))
+		require(string.format("foundation/scripts/%s/%s", path, s))
 	end
 end
 
-local function fn_2(arg_3_0, ...)
+local function core_require(path, ...)
 	-- function 3
-	for i, v in ipairs({
+	for _, s in ipairs({
 		...
 	}) do
-		require("core/" .. arg_3_0 .. "/" .. v)
+		require("core/" .. path .. "/" .. s)
 	end
 end
 
-local function fn_3(arg_4_0, ...)
+local function game_require(path, ...)
 	-- function 4
-	for i, v in ipairs({
+	for _, s in ipairs({
 		...
 	}) do
-		require("scripts/" .. arg_4_0 .. "/" .. v)
+		require("scripts/" .. path .. "/" .. s)
 	end
 end
 
-local function fn_4(arg_5_0, ...)
+local function foundation_require(path, ...)
 	-- function 5
-	for i, v in ipairs({
+	for _, s in ipairs({
 		...
 	}) do
-		require("foundation/scripts/" .. arg_5_0 .. "/" .. v)
+		require("foundation/scripts/" .. path .. "/" .. s)
 	end
 end
 
@@ -72,65 +72,66 @@ require("scripts/helpers/dlc_utils")
 
 local Boot = Boot
 
-Boot = Boot or {}
+Boot = not not Boot or not not {}
 Boot = Boot
 Boot.flow_return_table = Script.new_map(32)
 Boot.is_controlled_exit = false
 
-local function fn_5(arg_6_0)
+local function profile_start(title)
 	-- function 6
-	return {
-		title = arg_6_0,
+	local t = {
+		title = title,
 		start_time = os.clock()
 	}
+
+	return t
 end
 
-local function fn_6(self, arg_7_1)
+local function profile(t, alias)
 	-- function 7
-	local count = #self
-	local var_7_1 = self[count]
+	local num = #t
+	local scope = t[num]
 
-	if not (not var_7_1 and var_7_1.alias ~= arg_7_1) then
-		var_7_1.end_time = os.clock()
+	if scope and scope.alias == alias then
+		scope.end_time = os.clock()
 	else
-		local tbl = {
-			alias = arg_7_1
+		scope = {
+			alias = alias
 		}
-
-		self[count + 1] = tbl
-		tbl.start_time = os.clock()
+		t[num + 1] = scope
+		scope.start_time = os.clock()
 	end
 end
 
-local function fn_7(self)
+local function profile_end(t)
 	-- function 8
-	local num = os.clock() - self.start_time
+	local total = os.clock() - t.start_time
 
-	print(self.title .. " total time: " .. num)
+	print(t.title .. " total time: " .. total)
 
-	local num_2 = 0
+	local acc = 0
 
-	for i, v in ipairs(self) do
-		local end_time = v.end_time
+	for _, scope in ipairs(t) do
+		local end_time = scope.end_time
 
-		end_time = end_time or math.huge
+		end_time = not not end_time or not not math.huge
 
-		local num_3 = end_time - v.start_time
+		local duration = end_time - scope.start_time
 
-		print("\t" .. v.alias .. ": ", num_3)
+		print("\t" .. scope.alias .. ": ", duration)
 
-		num_2 = num_2 + num_3
+		acc = acc + duration
 	end
 
 	print("")
-	print("\t unaccounted: ", num - num_2)
+	print("\t unaccounted: ", total - acc)
 end
 
 Boot.setup = function (self)
 	-- function 9
 	_G.Crashify = require("foundation/scripts/util/crashify")
 
-	if DEDICATED_SERVER or not IS_WINDOWS then
+	if not DEDICATED_SERVER and IS_WINDOWS then
 		Application.set_time_step_policy("throttle", 30)
 	end
 
@@ -140,7 +141,7 @@ Boot.setup = function (self)
 	Boot.startup_timer = 0
 	Boot.startup_state = "loading"
 
-	if not IS_WINDOWS then
+	if IS_WINDOWS then
 		Window.set_focus()
 		Window.set_mouse_focus(true)
 	end
@@ -162,37 +163,37 @@ Boot.setup = function (self)
 		"resource_packages/dialogues/dialogues_generated_lookup"
 	}
 
-	local tbl = {}
+	local handles = {}
 
-	for i, v in ipairs(Boot.startup_packages) do
-		local resource_package = Application.resource_package(v)
+	for _, package_name in ipairs(Boot.startup_packages) do
+		local resource_handle = Application.resource_package(package_name)
 
-		ResourcePackage.load(resource_package)
+		ResourcePackage.load(resource_handle)
 
-		tbl[v] = resource_package
+		handles[package_name] = resource_handle
 	end
 
-	Boot.startup_package_handles = tbl
+	Boot.startup_package_handles = handles
 
-	local tbl_2 = {}
+	local temp_handles = {}
 
-	for i_2, v_2 in ipairs(Boot.temporary_network_lookup_packages) do
-		local resource_package_2 = Application.resource_package(v_2)
+	for _, package_name in ipairs(Boot.temporary_network_lookup_packages) do
+		local resource_handle = Application.resource_package(package_name)
 
-		ResourcePackage.load(resource_package_2)
+		ResourcePackage.load(resource_handle)
 
-		tbl_2[v_2] = resource_package_2
+		temp_handles[package_name] = resource_handle
 	end
 
-	Boot.temp_network_lookup_package_handles = tbl_2
+	Boot.temp_network_lookup_package_handles = temp_handles
 	Boot.render = Boot.booting_render
 
 	create_startup_world()
 end
 
-local function fn_8(arg_10_0)
+local function xb1_format_locale(language_id)
 	-- function 10
-	local var_10_0 = ({
+	local supported_languages = {
 		["zh-hk"] = "zh",
 		["fr-ch"] = "fr",
 		["ru-ru"] = "ru",
@@ -240,40 +241,41 @@ local function fn_8(arg_10_0)
 		["fi-fi"] = "fi",
 		["en-ie"] = "en",
 		["en-za"] = "en"
-	})[string.lower(arg_10_0)]
+	}
+	local var_10_0 = supported_languages[string.lower(language_id)]
 
-	var_10_0 = var_10_0 or "en"
+	var_10_0 = not not var_10_0 or not not "en"
 
 	return var_10_0
 end
 
-Boot._init_localizer = function (arg_11_0)
+Boot._init_localizer = function (self)
 	-- function 11
-	local str = "en"
-	local var_11_1
+	local default_language = "en"
+	local language
 
-	if not IS_WINDOWS then
-		var_11_1 = Application.user_setting("language_id") or not rawget(_G, "Steam") or Steam:language() or str
-	elseif not IS_PS4 then
-		var_11_1 = PS4.locale() or str
-	elseif not IS_XB1 then
-		local var_11_2 = fn_8
+	if IS_WINDOWS then
+		language = (not not Application.user_setting("language_id") or not rawget(_G, "Steam") or not Steam:language()) and not not default_language
+	elseif IS_PS4 then
+		language = not not PS4.locale() or not not default_language
+	elseif IS_XB1 then
+		local var_11_0 = xb1_format_locale
 		local locale = XboxLive.locale()
 
-		locale = locale or str
-		var_11_1 = var_11_2(locale)
-	elseif not IS_LINUX then
-		var_11_1 = "en"
+		locale = not not locale or not not default_language
+		language = var_11_0(locale)
+	elseif IS_LINUX then
+		language = "en"
 	end
 
-	if var_11_1 == str then
-		Application.set_resource_property_preference_order(str)
+	if language == default_language then
+		Application.set_resource_property_preference_order(default_language)
 	else
-		Application.set_resource_property_preference_order(var_11_1, str)
+		Application.set_resource_property_preference_order(language, default_language)
 	end
 end
 
-local function fn_9()
+local function init_development_parameters()
 	-- function 12
 	require("foundation/scripts/util/user_setting")
 	Development.init_user_settings()
@@ -284,42 +286,41 @@ local function fn_9()
 	require("foundation/scripts/util/development_parameter")
 	Development.init_parameters()
 
-	local num = 0
+	local max_param_string_length = 0
 
-	for k, v in pairs(script_data) do
-		num = math.max(num, #k)
+	for param, value in pairs(script_data) do
+		max_param_string_length = math.max(max_param_string_length, #param)
 	end
 
-	local tbl = {}
+	local sorted_params = {}
 
-	for k_2, v_2 in pairs(script_data) do
-		if type(v_2) == "table" then
-			local format = string.format("script_data.%%-%ds = {", num)
-			local format_2 = string.format(format, k_2)
+	for param, value in pairs(script_data) do
+		if type(value) == "table" then
+			local formatted_string = string.format("script_data.%%-%ds = {", max_param_string_length)
+			local output = string.format(formatted_string, param)
 
-			for i4 = 1, #v_2 do
-				format_2 = format_2 .. ", " .. tostring(v_2[i4])
+			for i = 1, #value do
+				output = output .. ", " .. tostring(value[i])
 			end
 
-			local str = format_2 .. " }"
-
-			tbl[#tbl + 1] = str
+			output = output .. " }"
+			sorted_params[#sorted_params + 1] = output
 		else
-			local format_3 = string.format("script_data.%%-%ds = %%s", num)
+			local formatted_string = string.format("script_data.%%-%ds = %%s", max_param_string_length)
 
-			tbl[#tbl + 1] = string.format(format_3, k_2, tostring(v_2))
+			sorted_params[#sorted_params + 1] = string.format(formatted_string, param, tostring(value))
 		end
 	end
 
-	table.sort(tbl, function (arg_13_0, arg_13_1)
+	table.sort(sorted_params, function (a, b)
 		-- function 13
-		return arg_13_0 < arg_13_1
+		return a < b
 	end)
 	print("*****************************************************************")
 	print("**                Initial contents of script_data              **")
 
-	for i5 = 1, #tbl do
-		print(tbl[i5])
+	for i = 1, #sorted_params do
+		print(sorted_params[i])
 	end
 
 	print("*****************************************************************")
@@ -327,98 +328,100 @@ local function fn_9()
 	local script_data = script_data
 	local honduras_demo = script_data.settings.honduras_demo
 
-	honduras_demo = honduras_demo or script_data["honduras-demo"]
+	honduras_demo = not not honduras_demo or not not script_data["honduras-demo"]
 	script_data.honduras_demo = honduras_demo
 
 	local settings = script_data.settings
 	local use_beta_overlay = script_data.settings.use_beta_overlay
 
-	use_beta_overlay = use_beta_overlay or script_data.use_beta_overlay
+	use_beta_overlay = not not use_beta_overlay or not not script_data.use_beta_overlay
 	settings.use_beta_overlay = use_beta_overlay
 
 	local settings_2 = script_data.settings
 	local use_beta_mode = script_data.settings.use_beta_mode
 
-	use_beta_mode = use_beta_mode or script_data.use_beta_mode
+	use_beta_mode = not not use_beta_mode or not not script_data.use_beta_mode
 	settings_2.use_beta_mode = use_beta_mode
 	script_data.use_optimized_breed_units = IS_CONSOLE
 
 	print("[Boot] use baked enemy meshes:", script_data.use_optimized_breed_units)
 end
 
-Boot.booting_update = function (self, arg_14_1)
+Boot.booting_update = function (self, dt)
 	-- function 14
-	local startup_timer = Boot.startup_timer
+	local old_time = Boot.startup_timer
 
-	Boot.startup_timer = startup_timer + arg_14_1
+	Boot.startup_timer = old_time + dt
 
-	local flag = true
+	local has_loaded_packages = true
 
-	for k, v in pairs(Boot.startup_package_handles) do
-		if not ResourcePackage.has_loaded(v) then
-			flag = false
-
-			break
-		end
-	end
-
-	for k_2, v_2 in pairs(Boot.temp_network_lookup_package_handles) do
-		if not ResourcePackage.has_loaded(v_2) then
-			flag = false
+	for package_name, handle in pairs(Boot.startup_package_handles) do
+		if not ResourcePackage.has_loaded(handle) then
+			has_loaded_packages = false
 
 			break
 		end
 	end
 
-	if not (not flag and Boot.startup_state ~= "loading") then
-		local clock = os.clock()
+	for package_name, handle in pairs(Boot.temp_network_lookup_package_handles) do
+		if not ResourcePackage.has_loaded(handle) then
+			has_loaded_packages = false
 
-		print("Boot:booting_update() reports boot packages loaded, initializing scripts. time: ", Boot.startup_timer, "os-clock: ", clock)
+			break
+		end
+	end
 
-		local startup_package_handles = Boot.startup_package_handles
+	if has_loaded_packages and Boot.startup_state == "loading" then
+		local script_init_start_time = os.clock()
 
-		for i, v_3 in ipairs(Boot.startup_packages) do
-			local var_14_4 = startup_package_handles[v_3]
+		print("Boot:booting_update() reports boot packages loaded, initializing scripts. time: ", Boot.startup_timer, "os-clock: ", script_init_start_time)
 
-			ResourcePackage.flush(var_14_4)
-			print("Flushing:", v_3, var_14_4)
+		local handles = Boot.startup_package_handles
+
+		for _, package_name in ipairs(Boot.startup_packages) do
+			local handle = handles[package_name]
+
+			ResourcePackage.flush(handle)
+			print("Flushing:", package_name, handle)
 		end
 
-		for i_2, v_4 in ipairs(Boot.temp_network_lookup_package_handles) do
-			ResourcePackage.flush(v_4)
-			print("Flushing:", i_2, v_4)
+		for package_name, handle in ipairs(Boot.temp_network_lookup_package_handles) do
+			ResourcePackage.flush(handle)
+			print("Flushing:", package_name, handle)
 		end
 
-		fn("managers", "managers", "package/package_manager")
+		base_require("managers", "managers", "package/package_manager")
 
 		Managers.package = PackageManager
 
 		Managers.package:init()
-		fn_9()
+		init_development_parameters()
 
-		for k_3, v_5 in pairs(DLCSettings) do
-			local package_name = v_5.package_name
+		for dlc_name, dlc in pairs(DLCSettings) do
+			local package_name = dlc.package_name
 
-			if not package_name then
+			if package_name then
 				Managers.package:load(package_name, "boot", nil, true)
 			end
 
-			local platform_specific = v_5.platform_specific
+			local platform_specific_package_name = dlc.platform_specific
 
-			if not platform_specific then
-				Managers.package:load(platform_specific, "boot", nil, true)
+			if platform_specific_package_name then
+				Managers.package:load(platform_specific_package_name, "boot", nil, true)
 			end
 		end
 
-		local clock_2 = os.clock()
+		local require_start = os.clock()
 
 		self:_require_foundation_scripts()
 
 		Boot.startup_state = "loading_dlcs"
 	elseif Boot.startup_state == "loading_dlcs" then
-		fn_4("util", "local_require")
+		foundation_require("util", "local_require")
 
-		if not Managers.package:update(arg_14_1) then
+		local done = Managers.package:update(dt)
+
+		if done then
 			Boot.startup_state = "done_loading_dlcs"
 			Boot.disable_loading_bar = true
 		end
@@ -427,9 +430,9 @@ Boot.booting_update = function (self, arg_14_1)
 		DLCUtils.merge("script_data", script_data)
 		Game:require_game_scripts()
 
-		if not (not IS_WINDOWS and LAUNCH_MODE == "attract_benchmark") then
+		if IS_WINDOWS and LAUNCH_MODE ~= "attract_benchmark" then
 			Boot.startup_state = "init_mods"
-		elseif not IS_LINUX then
+		elseif IS_LINUX then
 			Managers.mod = MockClass:new()
 			Boot.startup_state = "ready"
 		else
@@ -438,24 +441,24 @@ Boot.booting_update = function (self, arg_14_1)
 	elseif Boot.startup_state == "init_mods" then
 		Managers.curl = CurlManager:new()
 
-		fn_3("managers", "mod/mod_manager")
+		game_require("managers", "mod/mod_manager")
 
 		Managers.mod = ModManager:new(Boot.gui)
 		Boot.startup_state = "loading_mods"
 	elseif Boot.startup_state == "loading_mods" then
 		Managers.curl:update(true)
-		Managers.mod:update(arg_14_1)
+		Managers.mod:update(dt)
 
-		if not Managers.mod:all_mods_loaded() then
+		if Managers.mod:all_mods_loaded() then
 			Managers.mod:remove_gui()
 
 			Boot.startup_state = "ready"
 		end
 	elseif Boot.startup_state == "ready" then
-		local scripts_settings_crashify_settings = require("scripts/settings/crashify_settings")
+		local crashify_settings = require("scripts/settings/crashify_settings")
 
-		Crashify.print_property("project", scripts_settings_crashify_settings.project)
-		Crashify.print_property("project_branch", scripts_settings_crashify_settings.branch)
+		Crashify.print_property("project", crashify_settings.project)
+		Crashify.print_property("project_branch", crashify_settings.branch)
 		Crashify.print_property("build", BUILD)
 		Crashify.print_property("platform", PLATFORM)
 		Crashify.print_property("dedicated_server", DEDICATED_SERVER)
@@ -483,78 +486,80 @@ Boot.booting_update = function (self, arg_14_1)
 		local str_2 = "engine_revision"
 		local build_identifier = script_data.build_identifier
 
-		build_identifier = build_identifier or Development.parameter("engine_revision")
+		build_identifier = not not build_identifier or not not Development.parameter("engine_revision")
 
 		print_property_2(str_2, build_identifier)
 		Crashify.print_property("release_version", VersionSettings.version)
 		Crashify.print_property("rendering_backend", Renderer.render_device_string())
 		Crashify.print_property("teamcity_build_id", script_data.settings.teamcity_build_id)
 
-		if not script_data.testify then
+		if script_data.testify then
 			Crashify.print_property("testify", true)
 		end
 
-		if IS_WINDOWS or not IS_LINUX then
-			if not rawget(_G, "Steam") then
+		if IS_WINDOWS or IS_LINUX then
+			if rawget(_G, "Steam") then
 				Crashify.print_property("steam_id", Steam.user_id())
 				Crashify.print_property("steam_profile_name", Steam.user_name())
 				Crashify.print_property("steam_app_id", Steam.app_id())
 
-				if not Application.user_setting("write_network_debug_output_to_log") then
+				local write_network_debug_output_to_log = Application.user_setting("write_network_debug_output_to_log")
+
+				if write_network_debug_output_to_log then
 					print("Network.write_debug_output_to_log(true)")
 
-					local num = 17
-					local num_2 = 7
+					local k_ESteamNetworkingConfig_LogLevel_P2PRendezvous = 17
+					local k_ESteamNetworkingSocketsDebugOutputType_Debug = 7
 
-					Network.set_config_value(num, num_2)
+					Network.set_config_value(k_ESteamNetworkingConfig_LogLevel_P2PRendezvous, k_ESteamNetworkingSocketsDebugOutputType_Debug)
 					Network.write_debug_output_to_log(true)
 				end
 			end
 
 			Crashify.print_property("machine_id", Application.machine_id())
-		elseif not IS_PS4 then
+		elseif IS_PS4 then
 			Crashify.print_property("machine_id", Application.machine_id())
 
-			local str_3 = "ps4"
+			local console_type = "ps4"
 
-			if not PS4.is_ps5() then
-				str_3 = "ps5"
-			elseif not PS4.is_pro() then
-				str_3 = "ps4_pro"
+			if PS4.is_ps5() then
+				console_type = "ps5"
+			elseif PS4.is_pro() then
+				console_type = "ps4_pro"
 			end
 
-			Crashify.print_property("console_type", str_3)
-		elseif not IS_XB1 then
+			Crashify.print_property("console_type", console_type)
+		elseif IS_XB1 then
 			Crashify.print_property("console_type", XboxOne.console_type_string())
 		end
 
-		local clock_3 = os.clock()
+		local frame_table_start = os.clock()
 
 		FrameTable.init()
 
-		local clock_4 = os.clock()
-		local clock_5 = os.clock()
+		local frame_table_end = os.clock()
+		local managers_start = os.clock()
 
 		self:_init_managers()
 
-		local clock_6 = os.clock()
-		local clock_7 = os.clock()
+		local managers_end = os.clock()
+		local project_setup_start = os.clock()
 
 		Game:setup()
 
-		local select_starting_state, var_14_24 = Game:select_starting_state()
+		local start_state, params = Game:select_starting_state()
 		local IS_WINDOWS = IS_WINDOWS
 
-		IS_WINDOWS = not IS_WINDOWS and LAUNCH_MODE ~= "attract_benchmark"
-		var_14_24.notify_mod_manager = IS_WINDOWS
+		IS_WINDOWS = not not IS_WINDOWS and LAUNCH_MODE ~= "attract_benchmark"
+		params.notify_mod_manager = IS_WINDOWS
 
-		local clock_8 = os.clock()
-		local clock_9 = os.clock()
+		local project_setup_end = os.clock()
+		local state_machine_start = os.clock()
 
-		self:_setup_statemachine(select_starting_state, var_14_24)
+		self:_setup_statemachine(start_state, params)
 
-		local clock_10 = os.clock()
-		local clock_11 = os.clock()
+		local state_machine_end = os.clock()
+		local script_init_end_time = os.clock()
 
 		Testify:ready()
 
@@ -566,25 +571,25 @@ Boot.booting_update = function (self, arg_14_1)
 		return true
 	end
 
-	update_startup_world(arg_14_1)
+	update_startup_world(dt)
 
 	return false
 end
 
-Boot.booting_render = function (arg_15_0)
+Boot.booting_render = function (self)
 	-- function 15
 	render_startup_world()
 end
 
-Boot._require_foundation_scripts = function (arg_16_0)
+Boot._require_foundation_scripts = function (self)
 	-- function 16
-	fn("util", "verify_plugins", "error", "patches", "class", "callback", "rectangle", "state_machine", "visual_state_machine", "misc_util", "stack", "circular_queue", "grow_queue", "table", "testify", "math", "vector3", "quaternion", "script_world", "script_viewport", "script_camera", "script_unit", "frame_table", "path", "string", "reportify")
-	fn("debug", "table_trap")
-	fn("managers", "world/world_manager", "player/player", "free_flight/free_flight_manager", "state/state_machine_manager", "time/time_manager", "token/token_manager")
-	fn("managers", "localization/localization_manager", "event/event_manager")
+	base_require("util", "verify_plugins", "error", "patches", "class", "callback", "rectangle", "state_machine", "visual_state_machine", "misc_util", "stack", "circular_queue", "grow_queue", "table", "testify", "math", "vector3", "quaternion", "script_world", "script_viewport", "script_camera", "script_unit", "frame_table", "path", "string", "reportify")
+	base_require("debug", "table_trap")
+	base_require("managers", "world/world_manager", "player/player", "free_flight/free_flight_manager", "state/state_machine_manager", "time/time_manager", "token/token_manager")
+	base_require("managers", "localization/localization_manager", "event/event_manager")
 end
 
-Boot._init_managers = function (arg_17_0)
+Boot._init_managers = function (self)
 	-- function 17
 	Managers.time = TimeManager:new()
 	Managers.world = WorldManager:new()
@@ -595,30 +600,30 @@ end
 
 Boot.game_render = function (self)
 	-- function 18
-	if not self._machine.pre_render then
+	if self._machine.pre_render then
 		self._machine:pre_render()
 	end
 
 	Managers.world:render()
 	self._machine:render()
 
-	if not self._machine.post_render then
+	if self._machine.post_render then
 		self._machine:post_render()
 	end
 
 	Managers.url_loader:post_render()
 end
 
-Boot._setup_statemachine = function (self, arg_19_1, arg_19_2)
+Boot._setup_statemachine = function (self, start_state, params)
 	-- function 19
-	self._machine = GameStateMachine:new(self, arg_19_1, arg_19_2, true)
+	self._machine = GameStateMachine:new(self, start_state, params, true)
 end
 
 Boot.on_close = function (self)
 	-- function 20
 	print("[Boot] on_close")
 
-	if not self._machine and not self._machine.on_close then
+	if self._machine and self._machine.on_close then
 		return self._machine:on_close()
 	end
 
@@ -630,12 +635,16 @@ function init()
 	Boot:setup()
 end
 
-function update(arg_22_0)
+function update(dt)
 	-- function 22
-	if not Boot.has_booted then
-		Boot:game_update(arg_22_0)
-	elseif not Boot:booting_update(arg_22_0) then
-		Boot:game_update(arg_22_0)
+	if Boot.has_booted then
+		Boot:game_update(dt)
+	else
+		local run_game_update = Boot:booting_update(dt)
+
+		if run_game_update then
+			Boot:game_update(dt)
+		end
 	end
 end
 
@@ -646,14 +655,14 @@ end
 
 function on_close()
 	-- function 24
-	local on_close = Boot:on_close()
+	local close = Boot:on_close()
 
-	if not on_close then
+	if close then
 		Application.force_silent_exit_policy()
 		Crashify.print_property("shutdown", true)
 	end
 
-	return on_close
+	return close
 end
 
 function shutdown()
@@ -671,50 +680,52 @@ function create_startup_world()
 	Boot.shading_env = World.create_shading_environment(Boot.world, "environment/blank")
 	Boot.viewport = Application.create_viewport(Boot.world, "overlay")
 
-	local spawn_unit = World.spawn_unit(Boot.world, "core/units/camera")
-	local camera = Unit.camera(spawn_unit, "camera")
+	local camera_unit = World.spawn_unit(Boot.world, "core/units/camera")
+	local camera = Unit.camera(camera_unit, "camera")
 
-	Camera.set_data(camera, "unit", spawn_unit)
+	Camera.set_data(camera, "unit", camera_unit)
 	Viewport.set_data(Boot.viewport, "camera", camera)
 
 	Boot.gui = World.create_screen_gui(Boot.world, "immediate")
 	Boot.bar_timer = 0
 end
 
-function update_startup_world(arg_27_0)
+function update_startup_world(dt)
 	-- function 27
-	local resolution, var_27_1 = Application.resolution()
+	local w, h = Application.resolution()
 
-	Gui.rect(Boot.gui, Vector3(0, 0, 0), Vector2(resolution, var_27_1), Color(255, 0, 0, 0))
+	Gui.rect(Boot.gui, Vector3(0, 0, 0), Vector2(w, h), Color(255, 0, 0, 0))
 
-	if not (not IS_CONSOLE and Boot.disable_loading_bar) then
-		local function fn(arg_28_0, arg_28_1, arg_28_2)
+	if IS_CONSOLE and not Boot.disable_loading_bar then
+		local function clamp(value, min, max)
 			-- function 28
-			if arg_28_2 < arg_28_0 then
-				return arg_28_2
-			elseif arg_28_0 < arg_28_1 then
-				return arg_28_1
+			if max < value then
+				return max
+			elseif value < min then
+				return min
 			else
-				return arg_28_0
+				return value
 			end
 		end
 
-		Boot.bar_timer = (Boot.bar_timer + arg_27_0) % 2
+		Boot.bar_timer = (Boot.bar_timer + dt) % 2
 
-		local resolution_2, var_27_4 = Gui.resolution()
-		local num = resolution_2 / 1920
-		local var_27_6 = Vector2(120 * num, 13 * num)
-		local num_2 = 1 * num
-		local var_27_8 = fn(Boot.bar_timer, 0, 1)
-		local num_3 = var_27_8 * var_27_8 * var_27_8
-		local var_27_10 = fn(2 - Boot.bar_timer, 0, 1)
+		local w, h = Gui.resolution()
+		local scale = w / 1920
+		local size = Vector2(120 * scale, 13 * scale)
+		local width = 1 * scale
+		local bar_value = clamp(Boot.bar_timer, 0, 1)
 
-		Gui.rect(Boot.gui, Vector3(resolution_2 - 200 * num, 50 * num, 900), var_27_6)
-		Gui.rect(Boot.gui, Vector3(resolution_2 - 200 * num + num_2, 50 * num + num_2, 901), Vector2(var_27_6[1] - num_2 * 2, var_27_6[2] - num_2 * 2), Color(0, 0, 0))
-		Gui.rect(Boot.gui, Vector3(resolution_2 - 200 * num + num_2 * 3, 50 * num + num_2 * 4, 902), Vector2((var_27_6[1] - num_2 * 6) * num_3, var_27_6[2] - num_2 * 8), Color(var_27_10 * 255, 255, 255, 255))
+		bar_value = bar_value * bar_value * bar_value
+
+		local alpha = clamp(2 - Boot.bar_timer, 0, 1)
+
+		Gui.rect(Boot.gui, Vector3(w - 200 * scale, 50 * scale, 900), size)
+		Gui.rect(Boot.gui, Vector3(w - 200 * scale + width, 50 * scale + width, 901), Vector2(size[1] - width * 2, size[2] - width * 2), Color(0, 0, 0))
+		Gui.rect(Boot.gui, Vector3(w - 200 * scale + width * 3, 50 * scale + width * 4, 902), Vector2((size[1] - width * 6) * bar_value, size[2] - width * 8), Color(alpha * 255, 255, 255, 255))
 	end
 
-	World.update_scene(Boot.world, arg_27_0)
+	World.update_scene(Boot.world, dt)
 end
 
 function render_startup_world()
@@ -722,9 +733,9 @@ function render_startup_world()
 	local world = Boot.world
 	local shading_env = Boot.shading_env
 	local viewport = Boot.viewport
-	local get_data = Viewport.get_data(Boot.viewport, "camera")
+	local camera = Viewport.get_data(Boot.viewport, "camera")
 
-	Application.render_world(world, get_data, viewport, shading_env)
+	Application.render_world(world, camera, viewport, shading_env)
 end
 
 function destroy_startup_world()
@@ -740,25 +751,25 @@ end
 
 local ReplayBoot = ReplayBoot
 
-ReplayBoot = ReplayBoot or {}
+ReplayBoot = not not ReplayBoot or not not {}
 ReplayBoot = ReplayBoot
 
 ReplayBoot.init = function (self)
 	-- function 31
 	self._packages = {}
 
-	for i, v in ipairs(ExtendedReplay.packages_to_load()) do
-		print("Loading package " .. v)
+	for _, name in ipairs(ExtendedReplay.packages_to_load()) do
+		print("Loading package " .. name)
 
-		local resource_package = Application.resource_package(v)
+		local package = Application.resource_package(name)
 
-		resource_package:load()
-		resource_package:flush()
-		table.insert(self._packages, resource_package)
+		package:load()
+		package:flush()
+		table.insert(self._packages, package)
 	end
 
-	fn("util", "verify_plugins", "error", "framerate", "patches", "class", "callback", "rectangle", "misc_util", "stack", "circular_queue", "grow_queue", "table", "math", "vector3", "quaternion", "frame_table", "path", "script_extended_replay")
-	fn("managers", "managers", "replay/replay_manager")
+	base_require("util", "verify_plugins", "error", "framerate", "patches", "class", "callback", "rectangle", "misc_util", "stack", "circular_queue", "grow_queue", "table", "math", "vector3", "quaternion", "frame_table", "path", "script_extended_replay")
+	base_require("managers", "managers", "replay/replay_manager")
 	Framerate.set_replay()
 
 	self._world = Application.new_world("replay")
@@ -768,23 +779,31 @@ ReplayBoot.init = function (self)
 	Managers.replay = ReplayManager:new(self._world)
 end
 
-ReplayBoot.update = function (self, arg_32_1)
+ReplayBoot.update = function (self, dt)
 	-- function 32
-	arg_32_1 = Managers.replay:update(arg_32_1)
+	dt = Managers.replay:update(dt)
 
-	World.update(self._world, arg_32_1)
+	World.update(self._world, dt)
 end
 
 ReplayBoot.render = function (self)
 	-- function 33
 	local render_objects = ExtendedReplay.render_objects()
 
-	if not render_objects then
+	if render_objects then
 		local overriding_camera = Managers.replay:overriding_camera()
 
-		overriding_camera = overriding_camera or render_objects.camera
+		if not overriding_camera then
+			-- Nothing
+		end
 
-		Application.render_world(self._world, overriding_camera, render_objects.viewport, render_objects.shading_environment)
+		overriding_camera = render_objects.camera
+
+		local camera = overriding_camera
+
+		::label_33_0::
+
+		Application.render_world(self._world, camera, render_objects.viewport, render_objects.shading_environment)
 	end
 end
 
@@ -793,9 +812,9 @@ ReplayBoot.shutdown = function (self)
 	Managers:destroy()
 	Application.release_world(self._world)
 
-	for i, v in ipairs(self._packages) do
-		v:unload()
-		Application.release_resource_package(v)
+	for _, package in ipairs(self._packages) do
+		package:unload()
+		Application.release_resource_package(package)
 	end
 end
 
@@ -804,9 +823,9 @@ function replay_init()
 	ReplayBoot:init()
 end
 
-function replay_update(arg_36_0)
+function replay_update(dt)
 	-- function 36
-	ReplayBoot:update(arg_36_0)
+	ReplayBoot:update(dt)
 end
 
 function replay_render()
@@ -819,183 +838,207 @@ function replay_shutdown()
 	ReplayBoot:shutdown()
 end
 
-function force_render(arg_39_0)
+function force_render(dt)
 	-- function 39
-	if not Managers.transition then
-		Managers.transition:force_render(arg_39_0)
+	if Managers.transition then
+		Managers.transition:force_render(dt)
 	end
 
 	render()
 end
 
-local tbl_2 = {}
+local EMPTY_TABLE = {}
 
-Boot.game_update = function (self, arg_40_1)
+Boot.game_update = function (self, real_world_dt)
 	-- function 40
 	local Managers = Managers
-	local scaled_delta_time = Managers.time:scaled_delta_time(arg_40_1)
+	local dt = Managers.time:scaled_delta_time(real_world_dt)
 
-	if not Managers.mod then
-		Managers.mod:update(scaled_delta_time)
+	if Managers.mod then
+		Managers.mod:update(dt)
 	end
 
 	UPDATE_RESOLUTION_LOOKUP()
-	Managers.perfhud:update(scaled_delta_time)
-	Managers.updator:update(scaled_delta_time)
+	Managers.perfhud:update(dt)
+	Managers.updator:update(dt)
 
 	GLOBAL_FRAME_INDEX = GLOBAL_FRAME_INDEX + 1
 
-	Managers.time:update(scaled_delta_time)
+	Managers.time:update(dt)
 
-	local time = Managers.time:time("main")
+	local t = Managers.time:time("main")
 
-	for k, v in pairs(DLCSettings) do
-		local manager_settings = v.manager_settings
+	for _, dlc in pairs(DLCSettings) do
+		local manager_settings_2 = dlc.manager_settings
 
-		manager_settings = manager_settings or tbl_2
+		if not manager_settings_2 then
+			-- Nothing
+		end
 
-		for k_2, v_2 in pairs(manager_settings) do
-			if not v_2.pre_update then
-				Managers[k_2].pre_update(Managers[k_2], scaled_delta_time, time)
+		manager_settings_2 = EMPTY_TABLE
+
+		local manager_settings = manager_settings_2
+
+		::label_40_0::
+
+		for name, manager_data in pairs(manager_settings) do
+			if manager_data.pre_update then
+				Managers[name].pre_update(Managers[name], dt, t)
 			end
 		end
 	end
 
-	self._machine:pre_update(scaled_delta_time, time)
-	Managers.package:update(scaled_delta_time, time)
-	Managers.token:update(scaled_delta_time, time)
+	self._machine:pre_update(dt, t)
+	Managers.package:update(dt, t)
+	Managers.token:update(dt, t)
 
-	for k_3, v_3 in pairs(DLCSettings) do
-		local manager_settings_2 = v_3.manager_settings
+	for _, dlc in pairs(DLCSettings) do
+		local manager_settings_3 = dlc.manager_settings
 
-		manager_settings_2 = manager_settings_2 or tbl_2
+		if not manager_settings_3 then
+			-- Nothing
+		end
 
-		for k_4, v_4 in pairs(manager_settings_2) do
-			if not v_4.update then
-				Managers[k_4].update(Managers[k_4], scaled_delta_time, time)
+		manager_settings_3 = EMPTY_TABLE
+
+		local manager_settings = manager_settings_3
+
+		::label_40_1::
+
+		for name, manager_data in pairs(manager_settings) do
+			if manager_data.update then
+				Managers[name].update(Managers[name], dt, t)
 			end
 		end
 	end
 
-	self._machine:update(scaled_delta_time, time)
-	Managers.state_machine:update(scaled_delta_time)
-	Managers.world:update(scaled_delta_time, time)
-	Managers.url_loader:update(scaled_delta_time)
+	self._machine:update(dt, t)
+	Managers.state_machine:update(dt)
+	Managers.world:update(dt, t)
+	Managers.url_loader:update(dt)
 
-	if not LEVEL_EDITOR_TEST and not Keyboard.pressed(Keyboard.button_index("f5")) then
+	if LEVEL_EDITOR_TEST and Keyboard.pressed(Keyboard.button_index("f5")) then
 		Application.console_send({
 			type = "stop_testing"
 		})
 	end
 
-	if not IS_WINDOWS then
+	if IS_WINDOWS then
 		Managers.curl:update(true)
-		Managers.irc:update(scaled_delta_time)
-		Managers.twitch:update(scaled_delta_time, time)
+		Managers.irc:update(dt)
+		Managers.twitch:update(dt, t)
 
-		if not rawget(_G, "Steam") then
-			Managers.steam:update(time, scaled_delta_time)
+		if rawget(_G, "Steam") then
+			Managers.steam:update(t, dt)
 		end
-	elseif not IS_XB1 then
-		Managers.rest_transport:update(true, scaled_delta_time, time)
+	elseif IS_XB1 then
+		Managers.rest_transport:update(true, dt, t)
 
-		if not GameSettingsDevelopment.twitch_enabled then
-			Managers.twitch:update(scaled_delta_time)
-			Managers.irc:update(scaled_delta_time)
+		if GameSettingsDevelopment.twitch_enabled then
+			Managers.twitch:update(dt)
+			Managers.irc:update(dt)
 		end
-	elseif not IS_PS4 then
-		Managers.rest_transport:update(true, scaled_delta_time, time)
-		Managers.irc:update(scaled_delta_time)
-		Managers.twitch:update(scaled_delta_time)
-		Managers.system_dialog:update(scaled_delta_time)
-	elseif not IS_LINUX then
+	elseif IS_PS4 then
+		Managers.rest_transport:update(true, dt, t)
+		Managers.irc:update(dt)
+		Managers.twitch:update(dt)
+		Managers.system_dialog:update(dt)
+	elseif IS_LINUX then
 		Managers.curl:update(true)
-		Managers.irc:update(scaled_delta_time)
-		Managers.twitch:update(scaled_delta_time)
+		Managers.irc:update(dt)
+		Managers.twitch:update(dt)
 	end
 
-	Managers.weave:update(scaled_delta_time, time)
-	Managers.news_ticker:update(scaled_delta_time)
-	Managers.transition:update(scaled_delta_time)
-	Managers.load_time:update(scaled_delta_time)
+	Managers.weave:update(dt, t)
+	Managers.news_ticker:update(dt)
+	Managers.transition:update(dt)
+	Managers.load_time:update(dt)
 
-	if not Managers.splitscreen then
-		Managers.splitscreen:update(scaled_delta_time)
+	if Managers.splitscreen then
+		Managers.splitscreen:update(dt)
 	end
 
-	Managers.telemetry_reporters:update(scaled_delta_time, time)
-	Managers.telemetry:update(scaled_delta_time, time)
-	Managers.invite:update(scaled_delta_time, time)
-	Managers.admin:update(scaled_delta_time)
+	Managers.telemetry_reporters:update(dt, t)
+	Managers.telemetry:update(dt, t)
+	Managers.invite:update(dt, t)
+	Managers.admin:update(dt)
 
-	if not Managers.ping then
-		Managers.ping:update(scaled_delta_time, time)
+	if Managers.ping then
+		Managers.ping:update(dt, t)
 	end
 
-	if not Managers.account then
-		Managers.account:update(scaled_delta_time)
+	if Managers.account then
+		Managers.account:update(dt)
 	end
 
-	if not Managers.light_fx then
-		Managers.light_fx:update(scaled_delta_time)
+	if Managers.light_fx then
+		Managers.light_fx:update(dt)
 	end
 
-	if not Managers.razer_chroma then
-		Managers.razer_chroma:update(scaled_delta_time)
+	if Managers.razer_chroma then
+		Managers.razer_chroma:update(dt)
 	end
 
-	if not Managers.unlock then
-		Managers.unlock:update(scaled_delta_time, time)
+	if Managers.unlock then
+		Managers.unlock:update(dt, t)
 	end
 
-	if not Managers.popup then
-		Managers.simple_popup:update(scaled_delta_time)
-		Managers.popup:update(scaled_delta_time)
+	if Managers.popup then
+		Managers.simple_popup:update(dt)
+		Managers.popup:update(dt)
 	end
 
-	if not Managers.beta_overlay then
-		Managers.beta_overlay:update(scaled_delta_time)
+	if Managers.beta_overlay then
+		Managers.beta_overlay:update(dt)
 	end
 
-	Managers.play_go:update(scaled_delta_time)
+	Managers.play_go:update(dt)
 
-	if not IS_XB1 then
-		Managers.xbox_events:update(scaled_delta_time)
+	if IS_XB1 then
+		Managers.xbox_events:update(dt)
 
 		if Managers.xbox_stats ~= nil then
 			Managers.xbox_stats:update()
 		end
 	end
 
-	if not script_data.testify then
-		Managers.mechanism:update_testify(scaled_delta_time, time)
+	if script_data.testify then
+		Managers.mechanism:update_testify(dt, t)
 
-		if not Managers.state.side then
-			Managers.state.side:update_testify(scaled_delta_time, time)
+		if Managers.state.side then
+			Managers.state.side:update_testify(dt, t)
 		end
 	end
 
-	Testify:update(scaled_delta_time, time)
+	Testify:update(dt, t)
 	end_function_call_collection()
 	table.clear(Boot.flow_return_table)
 
-	for k_5, v_5 in pairs(DLCSettings) do
-		local manager_settings_3 = v_5.manager_settings
+	for _, dlc in pairs(DLCSettings) do
+		local manager_settings_4 = dlc.manager_settings
 
-		manager_settings_3 = manager_settings_3 or tbl_2
+		if not manager_settings_4 then
+			-- Nothing
+		end
 
-		for k_6, v_6 in pairs(manager_settings_3) do
-			if not v_6.post_update then
-				Managers[k_6].post_update(Managers[k_6], scaled_delta_time, time)
+		manager_settings_4 = EMPTY_TABLE
+
+		local manager_settings = manager_settings_4
+
+		::label_40_2::
+
+		for name, manager_data in pairs(manager_settings) do
+			if manager_data.post_update then
+				Managers[name].post_update(Managers[name], dt, t)
 			end
 		end
 	end
 
-	self._machine:post_update(scaled_delta_time)
+	self._machine:post_update(dt)
 	FrameTable.swap_and_clear()
 
-	if not self.quit_game then
-		local function fn(arg_41_0)
+	if self.quit_game then
+		local function save_cb(info)
 			-- function 41
 			Boot.is_controlled_exit = true
 
@@ -1004,139 +1047,141 @@ Boot.game_update = function (self, arg_40_1)
 		end
 
 		if not self._saving then
-			Managers.save:auto_save(SaveFileName, SaveData, fn)
+			Managers.save:auto_save(SaveFileName, SaveData, save_cb)
 
 			self._saving = true
 		end
 	end
 end
 
-Boot.shutdown = function (self, arg_42_1)
+Boot.shutdown = function (self, dt)
 	-- function 42
 	print("[Boot] shutdown")
 
-	if not self._machine then
+	if self._machine then
 		self._machine:destroy(true)
 	end
 
-	if not Managers then
+	if Managers then
 		Managers:destroy()
 	end
 
-	if not Boot.world then
+	if Boot.world then
 		destroy_startup_world()
 	end
 
-	for k, v in pairs(Boot.startup_package_handles) do
-		if not ResourcePackage.has_loaded(v) then
-			ResourcePackage.unload(v)
-			Application.release_resource_package(v)
+	for package_name, handle in pairs(Boot.startup_package_handles) do
+		if ResourcePackage.has_loaded(handle) then
+			ResourcePackage.unload(handle)
+			Application.release_resource_package(handle)
 		end
 	end
 
-	if not GLOBAL_MUSIC_WORLD then
+	if GLOBAL_MUSIC_WORLD then
 		Application.release_world(MUSIC_WORLD)
 	end
 end
 
 local Game = Game
 
-Game = Game or {}
+Game = not not Game or not not {}
 Game = Game
 
 Game.setup = function (self)
 	-- function 43
-	local var_43_0 = fn_5("Game:setup()")
-	local flag = BUILD == "dev" or BUILD == "debug"
+	local p = profile_start("Game:setup()")
+	local is_dev_debug = BUILD == "dev" or BUILD == "debug"
 
-	if not IS_XB1 then
+	if IS_XB1 then
 		Application.set_kinect_enabled(true)
 	end
 
-	if not script_data.honduras_demo then
+	if script_data.honduras_demo then
 		self:_demo_setup()
 	end
 
-	local var_43_2
+	local user_settings_time
 
-	if not IS_WINDOWS then
-		if not Application.is_dedicated_server() then
-			fn_6(var_43_0, "handle gfx quality")
+	if IS_WINDOWS then
+		local non_rendering_dedicated_server = Application.is_dedicated_server()
+
+		if not non_rendering_dedicated_server then
+			profile(p, "handle gfx quality")
 			self:_handle_win32_graphics_quality()
-			fn_6(var_43_0, "handle gfx quality")
+			profile(p, "handle gfx quality")
 		end
 
-		if not rawget(_G, "Steam") then
+		if rawget(_G, "Steam") then
 			print("[Boot] User ID:", Steam.user_id(), Steam.user_name())
 		end
 
-		fn_6(var_43_0, "default settings")
+		profile(p, "default settings")
 		DefaultUserSettings.set_default_user_settings()
-		fn_6(var_43_0, "default settings")
-		fn_6(var_43_0, "user settings")
+		profile(p, "default settings")
+		profile(p, "user settings")
 		self:_load_win32_user_settings()
-		fn_6(var_43_0, "user settings")
+		profile(p, "user settings")
 		self:_init_mouse()
 
-		if not flag then
+		if is_dev_debug then
 			Window.set_resizable(true)
 		else
 			Window.set_resizable(false)
 		end
 	else
-		fn_6(var_43_0, "default settings")
+		profile(p, "default settings")
 		DefaultUserSettings.set_default_user_settings()
-		fn_6(var_43_0, "default settings")
+		profile(p, "default settings")
 
-		if not IS_PS4 then
+		if IS_PS4 then
 			self:_set_ps4_content_restrictions()
 		end
 	end
 
-	fn_6(var_43_0, "set frame times")
+	profile(p, "set frame times")
 	Framerate.set_playing()
-	fn_6(var_43_0, "set frame times")
+	profile(p, "set frame times")
 
-	if not Development.parameter("network_log_spew") then
+	if Development.parameter("network_log_spew") then
 		Network.log("spew")
-	elseif not Development.parameter("network_log_messages") then
+	elseif Development.parameter("network_log_messages") then
 		Network.log("messages")
-	elseif not Development.parameter("network_log_messages") then
+	elseif Development.parameter("network_log_messages") then
 		Network.log("info")
 	end
 
-	if not GameSettingsDevelopment.remove_debug_stuff then
-		fn_6(var_43_0, "remove debug stuff")
+	if GameSettingsDevelopment.remove_debug_stuff then
+		profile(p, "remove debug stuff")
 		DebugHelper.remove_debug_stuff()
-		fn_6(var_43_0, "remove debug stuff")
+		profile(p, "remove debug stuff")
 	end
 
-	if not script_data.settings.physics_dump then
-		fn_6(var_43_0, "physics_dump")
+	if script_data.settings.physics_dump then
+		profile(p, "physics_dump")
 		DebugHelper.enable_physics_dump()
-		fn_6(var_43_0, "physics_dump")
+		profile(p, "physics_dump")
 	end
 
-	for k, v in pairs(DLCSettings) do
-		local ingame_package_name = v.ingame_package_name
+	for _, dlc in pairs(DLCSettings) do
+		local ingame_package_name = dlc.ingame_package_name
 
-		if not ingame_package_name then
+		if ingame_package_name then
 			GlobalResources[#GlobalResources + 1] = ingame_package_name
 		end
 	end
 
-	fn_6(var_43_0, "init random")
+	profile(p, "init random")
 	self:_init_random()
-	fn_6(var_43_0, "init random")
-	fn_6(var_43_0, "managers")
+	profile(p, "init random")
+	profile(p, "managers")
 	self:_init_managers()
-	fn_6(var_43_0, "managers")
-	fn_7(var_43_0)
+	profile(p, "managers")
+	profile_end(p)
 end
 
-Game._set_ps4_content_restrictions = function (arg_44_0)
+Game._set_ps4_content_restrictions = function (self)
 	-- function 44
-	local tbl = {
+	local restrictions = {
 		{
 			country = "at",
 			age = 18
@@ -1387,36 +1432,36 @@ Game._set_ps4_content_restrictions = function (arg_44_0)
 		}
 	}
 
-	NpCheck.set_content_restriction(18, tbl)
+	NpCheck.set_content_restriction(18, restrictions)
 end
 
 Game.require_game_scripts = function (self)
 	-- function 45
-	fn_3("utils", "patches", "colors", "framerate", "global_utils", "function_call_stats", "loaded_dice", "deadlock_stack", "benchmark/benchmark_handler")
-	fn_3("settings", "version_settings")
-	fn_3("ui", "views/show_cursor_stack", "ui_fonts")
-	fn_3("settings", "demo_settings", "motion_control_settings", "game_settings_development", "controller_settings", "default_user_settings")
-	fn_3("entity_system", "entity_system")
-	fn_3("game_state", "game_state_machine", "state_context", "state_splash_screen", "state_loading", "state_ingame", "state_demo_end")
+	game_require("utils", "patches", "colors", "framerate", "global_utils", "function_call_stats", "loaded_dice", "deadlock_stack", "benchmark/benchmark_handler")
+	game_require("settings", "version_settings")
+	game_require("ui", "views/show_cursor_stack", "ui_fonts")
+	game_require("settings", "demo_settings", "motion_control_settings", "game_settings_development", "controller_settings", "default_user_settings")
+	game_require("entity_system", "entity_system")
+	game_require("game_state", "game_state_machine", "state_context", "state_splash_screen", "state_loading", "state_ingame", "state_demo_end")
 	require("scripts/managers/network/lobby_setup")
-	fn_3("managers", "admin/admin_manager", "news_ticker/news_ticker_manager", "player/player_manager", "player/player_bot", "save/save_manager", "save/save_data", "perfhud/perfhud_manager", "music/music_manager", "network/party_manager", "network/lobby_manager", "transition/transition_manager", "debug/updator", "invite/invite_manager", "unlock/unlock_manager", "popup/popup_manager", "popup/simple_popup", "light_fx/light_fx_manager", "razer_chroma/razer_chroma_manager", "play_go/play_go_manager", "controller_features/controller_features_manager", "deed/deed_manager", "boon/boon_manager", "telemetry/telemetry_manager", "telemetry/telemetry_events", "telemetry/telemetry_reporters", "load_time/load_time_manager", "game_mode/game_mechanism_manager", "ui/ui_manager", "weave/weave_manager")
+	game_require("managers", "admin/admin_manager", "news_ticker/news_ticker_manager", "player/player_manager", "player/player_bot", "save/save_manager", "save/save_data", "perfhud/perfhud_manager", "music/music_manager", "network/party_manager", "network/lobby_manager", "transition/transition_manager", "debug/updator", "invite/invite_manager", "unlock/unlock_manager", "popup/popup_manager", "popup/simple_popup", "light_fx/light_fx_manager", "razer_chroma/razer_chroma_manager", "play_go/play_go_manager", "controller_features/controller_features_manager", "deed/deed_manager", "boon/boon_manager", "telemetry/telemetry_manager", "telemetry/telemetry_events", "telemetry/telemetry_reporters", "load_time/load_time_manager", "game_mode/game_mechanism_manager", "ui/ui_manager", "weave/weave_manager")
 
-	if not IS_WINDOWS then
-		fn_3("managers", "irc/irc_manager", "curl/curl_manager", "curl/curl_token", "ping/ping_manager", "twitch/twitch_manager")
+	if IS_WINDOWS then
+		game_require("managers", "irc/irc_manager", "curl/curl_manager", "curl/curl_token", "ping/ping_manager", "twitch/twitch_manager")
 
-		if not rawget(_G, "Steam") then
-			fn_3("managers", "steam/steam_manager")
+		if rawget(_G, "Steam") then
+			game_require("managers", "steam/steam_manager")
 		end
-	elseif not IS_XB1 then
-		fn_3("managers", "events/xbox_event_manager", "rest_transport/rest_transport_manager", "twitch/twitch_manager", "irc/irc_manager")
-	elseif not IS_PS4 then
-		fn_3("managers", "irc/irc_manager", "twitch/twitch_manager", "rest_transport/rest_transport_manager", "system_dialog/system_dialog_manager")
-	elseif not IS_LINUX then
-		fn_3("managers", "irc/irc_manager", "curl/curl_manager", "curl/curl_token", "twitch/twitch_manager", "ping/ping_manager")
+	elseif IS_XB1 then
+		game_require("managers", "events/xbox_event_manager", "rest_transport/rest_transport_manager", "twitch/twitch_manager", "irc/irc_manager")
+	elseif IS_PS4 then
+		game_require("managers", "irc/irc_manager", "twitch/twitch_manager", "rest_transport/rest_transport_manager", "system_dialog/system_dialog_manager")
+	elseif IS_LINUX then
+		game_require("managers", "irc/irc_manager", "curl/curl_manager", "curl/curl_token", "twitch/twitch_manager", "ping/ping_manager")
 	end
 
-	fn_3("helpers", "effect_helper", "weapon_helper", "item_helper", "lorebook_helper", "ui_atlas_helper", "scoreboard_helper")
-	fn_3("network", "unit_spawner", "unit_storage", "network_unit")
+	game_require("helpers", "effect_helper", "weapon_helper", "item_helper", "lorebook_helper", "ui_atlas_helper", "scoreboard_helper")
+	game_require("network", "unit_spawner", "unit_storage", "network_unit")
 	self:_init_localization_manager()
 	require("scripts/ui/views/ingame_ui")
 	require("scripts/ui/views/level_end/level_end_view_wrapper")
@@ -1425,51 +1470,75 @@ Game.require_game_scripts = function (self)
 	require("scripts/tests/test_cases")
 end
 
-Game._handle_win32_graphics_quality = function (arg_46_0)
+Game._handle_win32_graphics_quality = function (self)
 	-- function 46
-	local var_46_0 = fn_5("Game:_handle_win32_graphics_quality()")
-	local user_setting = Application.user_setting("graphics_quality")
-	local flag = false
+	local p = profile_start("Game:_handle_win32_graphics_quality()")
+	local graphics_quality = Application.user_setting("graphics_quality")
+	local dirty = false
 
-	if not Application.render_caps("reflex_supported") then
-		local user_setting_2 = Application.user_setting("max_fps")
+	if Application.render_caps("reflex_supported") then
+		local user_setting = Application.user_setting("max_fps")
 
-		user_setting_2 = user_setting_2 or 0
+		if not user_setting then
+			-- Nothing
+		end
 
-		if user_setting_2 > 0 then
-			print("[Boot] Migrating from max_fps to nv_framerate_cap. Value:", user_setting_2)
-			Application.set_user_setting("render_settings", "nv_framerate_cap", user_setting_2)
+		user_setting = 0
+
+		local max_fps = user_setting
+
+		::label_46_0::
+
+		if max_fps > 0 then
+			print("[Boot] Migrating from max_fps to nv_framerate_cap. Value:", max_fps)
+			Application.set_user_setting("render_settings", "nv_framerate_cap", max_fps)
 			Application.set_user_setting("max_fps", 0)
 
-			flag = true
+			dirty = true
 		end
 	else
-		local user_setting_3 = Application.user_setting("render_settings", "nv_framerate_cap")
+		local user_setting_2 = Application.user_setting("render_settings", "nv_framerate_cap")
 
-		user_setting_3 = user_setting_3 or 0
+		if not user_setting_2 then
+			-- Nothing
+		end
 
-		if user_setting_3 > 0 then
-			print("[Boot] Migrating from nv_framerate_cap to max_fps. Value:", user_setting_3)
-			Application.set_user_setting("max_fps", user_setting_3)
+		user_setting_2 = 0
+
+		local nv_framerate_cap = user_setting_2
+
+		::label_46_1::
+
+		if nv_framerate_cap > 0 then
+			print("[Boot] Migrating from nv_framerate_cap to max_fps. Value:", nv_framerate_cap)
+			Application.set_user_setting("max_fps", nv_framerate_cap)
 			Application.set_user_setting("render_settings", "nv_framerate_cap", 0)
 
-			flag = true
+			dirty = true
 		end
 	end
 
-	local user_setting_4 = Application.user_setting("render_settings", "upscaling_mode")
+	local user_setting_3 = Application.user_setting("render_settings", "upscaling_mode")
 
-	user_setting_4 = user_setting_4 or "none"
+	if not user_setting_3 then
+		-- Nothing
+	end
 
-	if user_setting_4 ~= "none" then
-		if not Application.user_setting("render_settings", "fsr_enabled") then
+	user_setting_3 = "none"
+
+	local upscaling_mode = user_setting_3
+
+	::label_46_2::
+
+	if upscaling_mode ~= "none" then
+		if Application.user_setting("render_settings", "fsr_enabled") then
 			print("[Boot] Disabling fsr1 because another upscaler was enabled.")
 			Application.set_render_setting("fsr_enabled", "false")
 
-			flag = true
+			dirty = true
 		end
 
-		if user_setting_4 == "fsr2" then
+		if upscaling_mode == "fsr2" then
 			if not Application.render_caps("d3d12") then
 				print("[Boot] Disabling fsr2 because d3d12 was false.")
 				Application.set_user_setting("fsr2_enabled", false)
@@ -1477,44 +1546,44 @@ Game._handle_win32_graphics_quality = function (arg_46_0)
 				Application.set_render_setting("upscaling_mode", "none")
 				Application.set_render_setting("upscaling_quality", "none")
 
-				flag = true
+				dirty = true
 			end
-		elseif not (user_setting_4 ~= "dlss" or Application.render_caps("dlss_supported")) then
+		elseif upscaling_mode == "dlss" and not Application.render_caps("dlss_supported") then
 			print("[Boot] Disabling dlss because dlss_supported was false.")
 			Application.set_render_setting("upscaling_enabled", "false")
 			Application.set_render_setting("upscaling_mode", "none")
 			Application.set_render_setting("upscaling_quality", "none")
 
-			flag = true
+			dirty = true
 		end
 	end
 
-	if not (not Application.user_setting("render_settings", "dlss_g_enabled") and Application.render_caps("dlss_g_supported")) then
+	if Application.user_setting("render_settings", "dlss_g_enabled") and not Application.render_caps("dlss_g_supported") then
 		print("[Boot] Disabling dlss_g due because dlss_g_supported was false.")
 		Application.set_render_setting("dlss_g_enabled", "false")
 		Application.set_user_setting("overriden_settings", "dlss_frame_generation", true)
 
-		flag = true
+		dirty = true
 	end
 
-	if not (not Application.user_setting("dlss_enabled") and Application.render_caps("dlss_supported")) then
+	if Application.user_setting("dlss_enabled") and not Application.render_caps("dlss_supported") then
 		print("[Boot] Disabling dlss_enabled because dlss_supported was false.")
 		Application.set_user_setting("dlss_enabled", false)
 	end
 
-	local function fn(self, arg_47_1)
+	local function is_same(current, new)
 		-- function 47
-		if self == arg_47_1 then
+		if current == new then
 			return true
-		elseif not (type(self) ~= "table" or type(arg_47_1) ~= "table") then
-			for k, v in pairs(self) do
-				if arg_47_1[k] ~= v then
+		elseif type(current) == "table" and type(new) == "table" then
+			for k, v in pairs(current) do
+				if new[k] ~= v then
 					return false
 				end
 			end
 
-			for k_2, v_2 in pairs(arg_47_1) do
-				if self[k_2] ~= v_2 then
+			for k, v in pairs(new) do
+				if current[k] ~= v then
 					return false
 				end
 			end
@@ -1525,126 +1594,126 @@ Game._handle_win32_graphics_quality = function (arg_46_0)
 		end
 	end
 
-	local function fn_2(arg_48_0, arg_48_1, arg_48_2)
+	local function set_user_setting(category, setting, value)
 		-- function 48
-		if arg_48_2 ~= nil then
-			local user_setting = Application.user_setting(arg_48_0, arg_48_1)
+		if value ~= nil then
+			local current = Application.user_setting(category, setting)
 
-			if not fn(user_setting, arg_48_2) then
-				Application.set_user_setting(arg_48_0, arg_48_1, arg_48_2)
-				print("Diff in user_setting:", arg_48_0, arg_48_1, user_setting, arg_48_2)
+			if not is_same(current, value) then
+				Application.set_user_setting(category, setting, value)
+				print("Diff in user_setting:", category, setting, current, value)
 
-				flag = true
+				dirty = true
 			end
 		else
-			arg_48_2 = arg_48_1
-			arg_48_1 = arg_48_0
+			value = setting
+			setting = category
 
-			local user_setting_2 = Application.user_setting(arg_48_1)
+			local current = Application.user_setting(setting)
 
-			if not fn(user_setting_2, arg_48_2) then
-				Application.set_user_setting(arg_48_1, arg_48_2)
-				print("Diff in user_setting:", arg_48_1, user_setting_2, arg_48_2)
+			if not is_same(current, value) then
+				Application.set_user_setting(setting, value)
+				print("Diff in user_setting:", setting, current, value)
 
-				flag = true
+				dirty = true
 			end
 		end
 	end
 
-	if user_setting == nil then
-		user_setting = script_data.settings.default_graphics_quality or "medium"
+	if graphics_quality == nil then
+		graphics_quality = not not script_data.settings.default_graphics_quality or not not "medium"
 
-		Application.set_user_setting("graphics_quality", user_setting)
+		Application.set_user_setting("graphics_quality", graphics_quality)
 	end
 
-	local var_46_8 = GraphicsQuality[user_setting]
+	local settings = GraphicsQuality[graphics_quality]
 
-	if not ((LEVEL_EDITOR_TEST or not var_46_8) and var_46_8.is_custom) then
-		local user_settings = var_46_8.user_settings
+	if not LEVEL_EDITOR_TEST and settings and not settings.is_custom then
+		local user_settings = settings.user_settings
 
-		for k, v in pairs(user_settings) do
-			if k == "char_texture_quality" then
-				local var_46_10 = TextureQuality.characters[v]
+		for setting, value in pairs(user_settings) do
+			if setting == "char_texture_quality" then
+				local texture_settings = TextureQuality.characters[value]
 
-				for i, v_2 in ipairs(var_46_10) do
-					fn_2("texture_settings", v_2.texture_setting, v_2.mip_level)
+				for i, texture_setting in ipairs(texture_settings) do
+					set_user_setting("texture_settings", texture_setting.texture_setting, texture_setting.mip_level)
 				end
-			elseif k == "env_texture_quality" then
-				local var_46_11 = TextureQuality.environment[v]
+			elseif setting == "env_texture_quality" then
+				local texture_settings = TextureQuality.environment[value]
 
-				for i_2, v_3 in ipairs(var_46_11) do
-					fn_2("texture_settings", v_3.texture_setting, v_3.mip_level)
+				for i, texture_setting in ipairs(texture_settings) do
+					set_user_setting("texture_settings", texture_setting.texture_setting, texture_setting.mip_level)
 				end
-			elseif k == "local_light_shadow_quality" then
-				local var_46_12 = LocalLightShadowQuality[v]
+			elseif setting == "local_light_shadow_quality" then
+				local local_light_shadow_quality_settings = LocalLightShadowQuality[value]
 
-				for k_2, v_4 in pairs(var_46_12) do
-					fn_2("render_settings", k_2, v_4)
+				for render_setting, key in pairs(local_light_shadow_quality_settings) do
+					set_user_setting("render_settings", render_setting, key)
 				end
-			elseif k == "particles_quality" then
-				local var_46_13 = ParticlesQuality[v]
+			elseif setting == "particles_quality" then
+				local particle_quality_settings = ParticlesQuality[value]
 
-				for k_3, v_5 in pairs(var_46_13) do
-					Application.set_user_setting("render_settings", k_3, v_5)
+				for render_setting, key in pairs(particle_quality_settings) do
+					Application.set_user_setting("render_settings", render_setting, key)
 				end
-			elseif k == "sun_shadow_quality" then
-				local var_46_14 = SunShadowQuality[v]
+			elseif setting == "sun_shadow_quality" then
+				local sun_shadow_quality_settings = SunShadowQuality[value]
 
-				for k_4, v_6 in pairs(var_46_14) do
-					fn_2("render_settings", k_4, v_6)
+				for render_setting, key in pairs(sun_shadow_quality_settings) do
+					set_user_setting("render_settings", render_setting, key)
 				end
-			elseif k == "volumetric_fog_quality" then
-				local var_46_15 = VolumetricFogQuality[v]
+			elseif setting == "volumetric_fog_quality" then
+				local volumetric_fog_quality_settings = VolumetricFogQuality[value]
 
-				for k_5, v_7 in pairs(var_46_15) do
-					fn_2("render_settings", k_5, v_7)
+				for render_setting, key in pairs(volumetric_fog_quality_settings) do
+					set_user_setting("render_settings", render_setting, key)
 				end
-			elseif k == "ambient_light_quality" then
-				local var_46_16 = AmbientLightQuality[v]
+			elseif setting == "ambient_light_quality" then
+				local ambient_light_quality_settings = AmbientLightQuality[value]
 
-				for k_6, v_8 in pairs(var_46_16) do
-					fn_2("render_settings", k_6, v_8)
+				for render_setting, key in pairs(ambient_light_quality_settings) do
+					set_user_setting("render_settings", render_setting, key)
 				end
-			elseif k == "ao_quality" then
-				local var_46_17 = AmbientOcclusionQuality[v]
+			elseif setting == "ao_quality" then
+				local ao_quality_settings = AmbientOcclusionQuality[value]
 
-				for k_7, v_9 in pairs(var_46_17) do
-					fn_2("render_settings", k_7, v_9)
+				for render_setting, key in pairs(ao_quality_settings) do
+					set_user_setting("render_settings", render_setting, key)
 				end
 			end
 
-			fn_2(k, v)
+			set_user_setting(setting, value)
 		end
 
-		local render_settings = var_46_8.render_settings
+		local render_settings = settings.render_settings
 
-		for k_8, v_10 in pairs(render_settings) do
-			fn_2("render_settings", k_8, v_10)
+		for setting, value in pairs(render_settings) do
+			set_user_setting("render_settings", setting, value)
 		end
 	end
 
-	if not flag then
-		fn_6(var_46_0, "apply")
+	if dirty then
+		profile(p, "apply")
 		Application.apply_user_settings()
 		GlobalShaderFlags.apply_settings()
-		fn_6(var_46_0, "apply")
+		profile(p, "apply")
 	end
 
-	fn_6(var_46_0, "save")
+	profile(p, "save")
 	Application.save_user_settings()
-	fn_6(var_46_0, "save")
-	fn_7(var_46_0)
+	profile(p, "save")
+	profile_end(p)
 end
 
-Game._init_random = function (arg_49_0)
+Game._init_random = function (self)
 	-- function 49
-	local num = os.clock() * 10000 % 1000
+	local seed = os.clock() * 10000 % 1000
 
-	math.randomseed(num)
+	math.randomseed(seed)
 	math.random(5, 30000)
 end
 
-Game._init_mouse = function (arg_50_0)
+Game._init_mouse = function (self)
 	-- function 50
 	Window.set_cursor("gui/cursors/mouse_cursor")
 	Window.set_clip_cursor(true)
@@ -1657,9 +1726,9 @@ Game._init_managers = function (self)
 	Managers.persistent_event = EventManager:new()
 	Managers.save = SaveManager:new(script_data.settings.disable_cloud_save)
 
-	if not IS_XB1 then
+	if IS_XB1 then
 		self:_init_backend_xbox()
-	elseif not IS_PS4 then
+	elseif IS_PS4 then
 		self:_init_backend_ps4()
 	else
 		self:_init_backend()
@@ -1675,10 +1744,10 @@ Game._init_managers = function (self)
 	local Managers = Managers
 	local IS_WINDOWS = IS_WINDOWS
 
-	IS_WINDOWS = not IS_WINDOWS and PingManager:new()
+	IS_WINDOWS = not not IS_WINDOWS and not not PingManager:new()
 	Managers.ping = IS_WINDOWS
 
-	if not IS_WINDOWS then
+	if IS_WINDOWS then
 		Managers.irc = IRCManager:new()
 
 		if not Managers.curl then
@@ -1688,25 +1757,25 @@ Game._init_managers = function (self)
 		Managers.twitch = TwitchManager:new()
 		Managers.unlock = UnlockManager:new()
 
-		if not rawget(_G, "Steam") then
+		if rawget(_G, "Steam") then
 			Managers.steam = SteamManager:new()
 		end
-	elseif not IS_XB1 then
+	elseif IS_XB1 then
 		Managers.xbox_events = XboxEventManager:new()
 		Managers.rest_transport_online = RestTransportManager:new()
 		Managers.rest_transport = Managers.rest_transport_online
 
-		if not GameSettingsDevelopment.twitch_enabled then
+		if GameSettingsDevelopment.twitch_enabled then
 			Managers.twitch = TwitchManager:new()
 			Managers.irc = IRCManager:new()
 		end
-	elseif not IS_PS4 then
+	elseif IS_PS4 then
 		Managers.rest_transport_online = RestTransportManager:new()
 		Managers.rest_transport = Managers.rest_transport_online
 		Managers.system_dialog = SystemDialogManager:new()
 		Managers.irc = IRCManager:new()
 		Managers.twitch = TwitchManager:new()
-	elseif not IS_LINUX then
+	elseif IS_LINUX then
 		Managers.irc = IRCManager:new()
 
 		if not Managers.curl then
@@ -1736,85 +1805,117 @@ Game._init_managers = function (self)
 	Managers.mechanism = GameMechanismManager:new()
 	Managers.lobby = LobbyManager:new()
 
-	if GameSettingsDevelopment.use_leaderboards or not Development.parameter("use_leaderboards") then
+	if GameSettingsDevelopment.use_leaderboards or Development.parameter("use_leaderboards") then
 		Managers.leaderboards = LeaderboardManager:new()
 	end
 
-	local tbl = {}
+	local empty_table = {}
 
-	for k, v in pairs(DLCSettings) do
-		local manager_settings = v.manager_settings
+	for dlc_name, dlc in pairs(DLCSettings) do
+		local manager_settings_2 = dlc.manager_settings
 
-		manager_settings = manager_settings or tbl
+		if not manager_settings_2 then
+			-- Nothing
+		end
 
-		for k_2, v_2 in pairs(manager_settings) do
-			Managers[k_2] = rawget(_G, v_2.klass):new()
+		manager_settings_2 = empty_table
+
+		local manager_settings = manager_settings_2
+
+		::label_51_0::
+
+		for manager_name, manager_data in pairs(manager_settings) do
+			Managers[manager_name] = rawget(_G, manager_data.klass):new()
 		end
 	end
 end
 
-Game._init_backend = function (arg_52_0)
+Game._init_backend = function (self)
 	-- function 52
-	local var_52_0
-	local var_52_1
-	local str
+	local backend, mirror
 
-	if not DEDICATED_SERVER then
-		var_52_0 = "ScriptBackendPlayFabDedicated"
-		str = "PlayFabMirrorDedicated"
+	if DEDICATED_SERVER then
+		backend = "ScriptBackendPlayFabDedicated"
+		mirror = "PlayFabMirrorDedicated"
 	else
 		local parameter = Development.parameter("mechanism")
 
-		parameter = parameter or "adventure"
+		if not parameter then
+			-- Nothing
+		end
 
-		local var_52_4 = MechanismSettings[parameter]
+		parameter = "adventure"
 
-		var_52_0 = "ScriptBackendPlayFab"
+		local mechanism_name = parameter
 
-		local flag = not var_52_4 and var_52_4.playfab_mirror
+		::label_52_0::
 
-		str = not flag and flag and "PlayFabMirrorAdventure"
+		local mechanism_settings = MechanismSettings[mechanism_name]
+
+		backend = "ScriptBackendPlayFab"
+
+		local playfab_mirror = not not mechanism_settings and not not mechanism_settings.playfab_mirror
+
+		mirror = (not playfab_mirror or not playfab_mirror) and not not "PlayFabMirrorAdventure"
 	end
 
-	Managers.backend = BackendManagerPlayFab:new(var_52_0, str, "DataServerQueue")
+	Managers.backend = BackendManagerPlayFab:new(backend, mirror, "DataServerQueue")
 end
 
-Game._init_backend_xbox = function (arg_53_0)
+Game._init_backend_xbox = function (self)
 	-- function 53
-	local str = "ScriptBackendPlayFabXbox"
+	local backend = "ScriptBackendPlayFabXbox"
 	local parameter = Development.parameter("mechanism")
 
-	parameter = parameter or "adventure"
+	if not parameter then
+		-- Nothing
+	end
 
-	local var_53_2 = MechanismSettings[parameter]
-	local flag = not var_53_2 and var_53_2.playfab_mirror or "PlayFabMirrorAdventure"
+	parameter = "adventure"
 
-	Managers.backend = BackendManagerPlayFab:new(str, flag, "DataServerQueue")
+	local mechanism_name = parameter
+
+	::label_53_0::
+
+	local mechanism_settings = MechanismSettings[mechanism_name]
+	local playfab_mirror = not not mechanism_settings and not not mechanism_settings.playfab_mirror
+	local mirror = not not playfab_mirror or not not "PlayFabMirrorAdventure"
+
+	Managers.backend = BackendManagerPlayFab:new(backend, mirror, "DataServerQueue")
 end
 
-Game._init_backend_ps4 = function (arg_54_0)
+Game._init_backend_ps4 = function (self)
 	-- function 54
-	local str = "ScriptBackendPlayFabPS4"
+	local backend = "ScriptBackendPlayFabPS4"
 	local parameter = Development.parameter("mechanism")
 
-	parameter = parameter or "adventure"
+	if not parameter then
+		-- Nothing
+	end
 
-	local var_54_2 = MechanismSettings[parameter]
-	local flag = not var_54_2 and var_54_2.playfab_mirror or "PlayFabMirrorAdventure"
+	parameter = "adventure"
 
-	Managers.backend = BackendManagerPlayFab:new(str, flag, "DataServerQueue")
+	local mechanism_name = parameter
+
+	::label_54_0::
+
+	local mechanism_settings = MechanismSettings[mechanism_name]
+	local playfab_mirror = not not mechanism_settings and not not mechanism_settings.playfab_mirror
+	local mirror = not not playfab_mirror or not not "PlayFabMirrorAdventure"
+
+	Managers.backend = BackendManagerPlayFab:new(backend, mirror, "DataServerQueue")
 end
 
-Game._load_win32_user_settings = function (arg_55_0)
+Game._load_win32_user_settings = function (self)
 	-- function 55
-	local win32_user_setting = Application.win32_user_setting("max_stacking_frames")
+	local max_frames = Application.win32_user_setting("max_stacking_frames")
 
-	if not win32_user_setting then
-		Application.set_max_frame_stacking(win32_user_setting)
+	if max_frames then
+		Application.set_max_frame_stacking(max_frames)
 	end
 end
 
-Game._demo_setup = function (arg_56_0)
+Game._demo_setup = function (self)
 	-- function 56
 	Application.save_user_settings = function ()
 		-- function 57
@@ -1823,77 +1924,77 @@ Game._demo_setup = function (arg_56_0)
 
 	local key_combinations_allowed = DemoSettings.key_combinations_allowed
 
-	for k, v in pairs(key_combinations_allowed) do
-		Window.set_keystroke_enabled(k, v)
+	for key, enabled in pairs(key_combinations_allowed) do
+		Window.set_keystroke_enabled(key, enabled)
 	end
 
 	Managers.package:load("resource_packages/demo", "boot")
 end
 
-Game._init_localization_manager = function (arg_58_0)
+Game._init_localization_manager = function (self)
 	-- function 58
 	Managers.localizer = LocalizationManager:new()
 
-	local function fn(arg_59_0)
+	local function tweak_parser(tweak_name)
 		-- function 59
-		local var_59_0 = LocalizerTweakData[arg_59_0]
+		local var_59_0 = LocalizerTweakData[tweak_name]
 
-		var_59_0 = var_59_0 or "<missing LocalizerTweakData \"" .. arg_59_0 .. "\">"
+		var_59_0 = not not var_59_0 or not not ("<missing LocalizerTweakData \"" .. tweak_name .. "\">")
 
 		return var_59_0
 	end
 
-	Managers.localizer:add_macro("TWEAK", fn)
+	Managers.localizer:add_macro("TWEAK", tweak_parser)
 
-	local function fn_2(arg_60_0)
+	local function key_parser(input_service_and_key_name)
 		-- function 60
-		local find, var_60_1 = string.find(arg_60_0, "__")
+		local split_start, split_end = string.find(input_service_and_key_name, "__")
 
-		assert(not find and var_60_1, "[key_parser] You need to specify a key using this format $KEY;<input_service>__<key>. Example: $KEY;options_menu__back (note the dubbel underline separating input service and key")
+		assert(not not split_start and not not split_end, "[key_parser] You need to specify a key using this format $KEY;<input_service>__<key>. Example: $KEY;options_menu__back (note the dubbel underline separating input service and key")
 
-		local sub = string.sub(arg_60_0, 1, find - 1)
-		local sub_2 = string.sub(arg_60_0, var_60_1 + 1)
-		local get_service = Managers.input:get_service(sub)
+		local input_service_name = string.sub(input_service_and_key_name, 1, split_start - 1)
+		local key_name = string.sub(input_service_and_key_name, split_end + 1)
+		local input_service = Managers.input:get_service(input_service_name)
 
-		fassert(get_service, "[key_parser] No input service with the name %s", sub)
+		fassert(input_service, "[key_parser] No input service with the name %s", input_service_name)
 
-		local get_keymapping = get_service:get_keymapping(sub_2)
+		local key = input_service:get_keymapping(key_name)
 
-		fassert(get_keymapping, "[key_parser] There is no such key: %s in input service: %s", sub_2, sub)
+		fassert(key, "[key_parser] There is no such key: %s in input service: %s", key_name, input_service_name)
 
-		local var_60_6
+		local key_locale_name
 
-		for i = 1, get_keymapping.n, 3 do
-			local var_60_7 = get_keymapping[i]
-			local var_60_8 = get_keymapping[i + 1]
+		for j = 1, key.n, 3 do
+			local device_type = key[j]
+			local button_index = key[j + 1]
 
-			if var_60_8 == UNASSIGNED_KEY then
-				var_60_6 = "n/a"
-			elseif Managers.input:is_device_active("keyboard") or not Managers.input:is_device_active("mouse") then
-				if var_60_7 == "keyboard" then
-					var_60_6 = Keyboard.button_locale_name(var_60_8) or Keyboard.button_name(var_60_8)
-				elseif var_60_7 == "mouse" then
-					var_60_6 = Mouse.button_name(var_60_8)
+			if button_index == UNASSIGNED_KEY then
+				key_locale_name = "n/a"
+			elseif Managers.input:is_device_active("keyboard") or Managers.input:is_device_active("mouse") then
+				if device_type == "keyboard" then
+					key_locale_name = not not Keyboard.button_locale_name(button_index) or not not Keyboard.button_name(button_index)
+				elseif device_type == "mouse" then
+					key_locale_name = Mouse.button_name(button_index)
 				end
-			elseif not (not Managers.input:is_device_active("gamepad") and var_60_7 ~= "gamepad") then
-				var_60_6 = Pad1.button_name(var_60_8)
+			elseif Managers.input:is_device_active("gamepad") and device_type == "gamepad" then
+				key_locale_name = Pad1.button_name(button_index)
 			end
 		end
 
-		return var_60_6
+		return key_locale_name
 	end
 
-	Managers.localizer:add_macro("KEY", fn_2)
+	Managers.localizer:add_macro("KEY", key_parser)
 end
 
-Game.select_starting_state = function (arg_61_0)
+Game.select_starting_state = function (self)
 	-- function 61
-	local tbl = {
+	local args = {
 		Application.argv()
 	}
 
-	for i = 1, #tbl do
-		if tbl[i] == "safe-mode" then
+	for i = 1, #args do
+		if args[i] == "safe-mode" then
 			Game.safe_mode = true
 
 			assert(false)
@@ -1916,13 +2017,23 @@ Game.select_starting_state = function (arg_61_0)
 
 		return StateDedicatedServer, {}
 	elseif GameSettingsDevelopment.start_state == "game" then
-		local flag
+		local str
 
-		flag = not LEVEL_EDITOR_TEST and "resource_packages/ingame_light" and "resource_packages/ingame"
+		if LEVEL_EDITOR_TEST then
+			str = "resource_packages/ingame_light"
+
+			goto label_61_0
+		end
+
+		str = "resource_packages/ingame"
+
+		local ingame_package = str
+
+		::label_61_0::
 
 		Managers.package:load("resource_packages/menu", "boot")
 		Managers.package:load("resource_packages/menu_assets_common", "global")
-		Managers.package:load(flag, "global")
+		Managers.package:load(ingame_package, "global")
 		Managers.package:load("resource_packages/inventory", "global")
 		Managers.package:load("resource_packages/careers", "global")
 		Managers.package:load("resource_packages/pickups", "global")

@@ -3,60 +3,60 @@
 require("scripts/ui/reward_popup/reward_popup_ui")
 DLCUtils.require_list("end_view_state")
 
-local var_0_0 = local_require("scripts/ui/views/level_end/level_end_view_base_definitions")
-local tbl = {}
+local definitions = local_require("scripts/ui/views/level_end/level_end_view_base_definitions")
+local extra_portrait_materials = {}
 
-for k, v in pairs(DLCSettings) do
-	local portrait_materials = v.portrait_materials
+for _, dlc in pairs(DLCSettings) do
+	local portrait_materials = dlc.portrait_materials
 
-	if not portrait_materials then
-		for i, v_2 in ipairs(portrait_materials) do
-			tbl[#tbl + 1] = v_2
+	if portrait_materials then
+		for _, path in ipairs(portrait_materials) do
+			extra_portrait_materials[#extra_portrait_materials + 1] = path
 		end
 	end
 end
 
-local num = 3
-local num_2 = 4
+local SPEED_UP_MULT_MAX = 3
+local SPEED_UP_LERP_SPEED = 4
 
 LevelEndViewBase = class(LevelEndViewBase)
 
-LevelEndViewBase.init = function (self, arg_1_1)
+LevelEndViewBase.init = function (self, context)
 	-- function 1
-	self:setup_world(arg_1_1)
+	self:setup_world(context)
 	self:setup_transition_data()
 
-	local game_won = arg_1_1.game_won
-	local rewards = arg_1_1.rewards
+	local game_won = context.game_won
+	local rewards = context.rewards
 
-	self.context = arg_1_1
+	self.context = context
 	self.game_won = game_won
-	self.challenge_progression_status = arg_1_1.challenge_progression_status
-	self.game_mode_key = arg_1_1.game_mode_key
-	self.player_manager = arg_1_1.player_manager
-	self.input_manager = arg_1_1.input_manager
-	self.ingame_ui = arg_1_1.ingame_ui
-	self.profile_synchronizer = arg_1_1.profile_synchronizer
-	self.peer_id = arg_1_1.peer_id
-	self.local_player_id = arg_1_1.local_player_id
+	self.challenge_progression_status = context.challenge_progression_status
+	self.game_mode_key = context.game_mode_key
+	self.player_manager = context.player_manager
+	self.input_manager = context.input_manager
+	self.ingame_ui = context.ingame_ui
+	self.profile_synchronizer = context.profile_synchronizer
+	self.peer_id = context.peer_id
+	self.local_player_id = context.local_player_id
 	self.rewards = rewards
 	self.render_settings = {
 		alpha_multiplier = 0,
 		snap_pixel_positions = true
 	}
-	self._lobby = arg_1_1.lobby
-	self.is_server = arg_1_1.is_server
+	self._lobby = context.lobby
+	self.is_server = context.is_server
 	self._state_speed_mult = 1
 	self._state_machine_complete = false
 	self._skip_pressed = false
 
 	if not self.is_server then
 		local statistics_db = Managers.player:statistics_db()
-		local context = self.context
+		local context_2 = self.context
 		local _players_session_score = self._players_session_score
 
-		_players_session_score = _players_session_score or Managers.mechanism:get_players_session_score(statistics_db, self.profile_synchronizer)
-		context.players_session_score = _players_session_score
+		_players_session_score = not not _players_session_score or not not Managers.mechanism:get_players_session_score(statistics_db, self.profile_synchronizer)
+		context_2.players_session_score = _players_session_score
 		self._players_session_score = self.context.players_session_score
 	end
 
@@ -71,20 +71,20 @@ LevelEndViewBase.init = function (self, arg_1_1)
 	end
 
 	self._reward_presentation_queue = {}
-	self.reward_popup = RewardPopupUI:new(arg_1_1)
+	self.reward_popup = RewardPopupUI:new(context)
 
-	local setup_pages = self:setup_pages(game_won, rewards)
-	local tbl = {}
+	local index_by_state_name = self:setup_pages(game_won, rewards)
+	local state_name_by_index = {}
 
-	for k, v in pairs(setup_pages) do
-		tbl[v] = k
+	for state_name, index in pairs(index_by_state_name) do
+		state_name_by_index[index] = state_name
 	end
 
-	self._index_by_state_name = setup_pages
-	self._state_name_by_index = tbl
+	self._index_by_state_name = index_by_state_name
+	self._state_name_by_index = state_name_by_index
 	self._state_machine_params = {
 		parent = self,
-		context = arg_1_1,
+		context = context,
 		game_won = game_won,
 		game_mode_key = self.game_mode_key
 	}
@@ -115,116 +115,135 @@ LevelEndViewBase.setup_transition_data = function (self)
 		alpha_multiplier = 0,
 		snap_pixel_positions = true
 	}
-	self._transition_scenegraph_ui = UISceneGraph.init_scenegraph(var_0_0.transition_scenegraph_definition)
-	self._transition_widgets, self._transition_widgets_by_name = UIUtils.create_widgets(var_0_0.transition_widget_definition)
+	self._transition_scenegraph_ui = UISceneGraph.init_scenegraph(definitions.transition_scenegraph_definition)
+	self._transition_widgets, self._transition_widgets_by_name = UIUtils.create_widgets(definitions.transition_widget_definition)
 
 	UIRenderer.clear_scenegraph_queue(self.ui_renderer)
 
-	self._transition_ui_animator = UIAnimator:new(self._transition_scenegraph_ui, var_0_0.transition_animations)
+	self._transition_ui_animator = UIAnimator:new(self._transition_scenegraph_ui, definitions.transition_animations)
 end
 
-LevelEndViewBase.trigger_transition = function (self, arg_4_1)
+LevelEndViewBase.trigger_transition = function (self, transition_data)
 	-- function 4
 	self:_cleanup_transitions()
 
-	local tbl = {
+	local params = {
 		parent = self,
 		render_settings = self._transition_render_settings,
-		transition_data = arg_4_1
+		transition_data = transition_data
 	}
-	local _transition_widgets = self._transition_widgets
-	local animation_name = arg_4_1.animation_name
+	local widgets = self._transition_widgets
+	local animation_name_2 = transition_data.animation_name
 
-	animation_name = animation_name or "default"
-	self._transition_animations[#self._transition_animations + 1] = self._transition_ui_animator:start_animation(animation_name, _transition_widgets, var_0_0.transition_scenegraph_definition, tbl)
+	if not animation_name_2 then
+		-- Nothing
+	end
+
+	animation_name_2 = "default"
+
+	local animation_name = animation_name_2
+
+	::label_4_0::
+
+	self._transition_animations[#self._transition_animations + 1] = self._transition_ui_animator:start_animation(animation_name, widgets, definitions.transition_scenegraph_definition, params)
 end
 
-LevelEndViewBase.transition_camera = function (self, arg_5_1)
+LevelEndViewBase.transition_camera = function (self, transition_data)
 	-- function 5
-	if not arg_5_1.camera_name then
+	if not transition_data.camera_name then
 		return
 	end
 
-	local var_5_0
-	local level_name = arg_5_1.level_name
+	local camera_pose
+	local level_name_2 = transition_data.level_name
 
-	level_name = level_name or "levels/end_screen/world"
+	if not level_name_2 then
+		-- Nothing
+	end
+
+	level_name_2 = "levels/end_screen/world"
+
+	local level_name = level_name_2
+
+	::label_5_0::
 
 	local unit_indices = LevelResource.unit_indices(level_name, "units/hub_elements/cutscene_camera/cutscene_camera")
 
-	for k, v in pairs(unit_indices) do
-		local unit_data = LevelResource.unit_data(level_name, v)
-		local get = DynamicData.get(unit_data, "name")
+	for _, index in pairs(unit_indices) do
+		local unit_data = LevelResource.unit_data(level_name, index)
+		local name = DynamicData.get(unit_data, "name")
 
-		if not (not get and get ~= arg_5_1.camera_name) then
-			local unit_position = LevelResource.unit_position(level_name, v)
-			local unit_rotation = LevelResource.unit_rotation(level_name, v)
-			local from_quaternion_position = Matrix4x4.from_quaternion_position(unit_rotation, unit_position)
+		if name and name == transition_data.camera_name then
+			local position = LevelResource.unit_position(level_name, index)
+			local rotation = LevelResource.unit_rotation(level_name, index)
+			local pose = Matrix4x4.from_quaternion_position(rotation, position)
 
-			var_5_0 = Matrix4x4Box(from_quaternion_position)
+			camera_pose = Matrix4x4Box(pose)
 
-			print("Found camera: " .. get)
+			print("Found camera: " .. name)
 		end
 	end
 
-	self._camera_pose = var_5_0
+	self._camera_pose = camera_pose
 
 	self:position_camera()
 end
 
 LevelEndViewBase._cleanup_transitions = function (self)
 	-- function 6
-	for k, v in pairs(self._transition_animations) do
-		self._transition_ui_animator:stop_animation(v)
+	for _, anim_id in pairs(self._transition_animations) do
+		self._transition_ui_animator:stop_animation(anim_id)
 	end
 
 	table.clear(self._transition_animations)
 end
 
-LevelEndViewBase._update_transition_fade = function (self, arg_7_1, arg_7_2)
+LevelEndViewBase._update_transition_fade = function (self, dt, t)
 	-- function 7
-	if not table.is_empty(self._transition_animations) then
+	if table.is_empty(self._transition_animations) then
 		return
 	end
 
-	self:_update_transition_animations(arg_7_1, arg_7_2)
-	self:_draw_transition_widgets(arg_7_1, arg_7_2)
+	self:_update_transition_animations(dt, t)
+	self:_draw_transition_widgets(dt, t)
 end
 
-LevelEndViewBase._draw_transition_widgets = function (self, arg_8_1, arg_8_2)
+LevelEndViewBase._draw_transition_widgets = function (self, dt, t)
 	-- function 8
 	local ui_renderer = self.ui_renderer
 	local ui_top_renderer = self.ui_top_renderer
-	local _transition_scenegraph_ui = self._transition_scenegraph_ui
+	local ui_scenegraph = self._transition_scenegraph_ui
 	local input_manager = self.input_manager
-	local _transition_render_settings = self._transition_render_settings
+	local render_settings = self._transition_render_settings
 	local input_service = self:input_service()
 
-	UIRenderer.begin_pass(ui_renderer, _transition_scenegraph_ui, input_service, arg_8_1, nil, _transition_render_settings)
+	UIRenderer.begin_pass(ui_renderer, ui_scenegraph, input_service, dt, nil, render_settings)
 
-	for i, v in ipairs(self._transition_widgets) do
-		UIRenderer.draw_widget(ui_renderer, v)
+	for _, widget in ipairs(self._transition_widgets) do
+		UIRenderer.draw_widget(ui_renderer, widget)
 	end
 
 	UIRenderer.end_pass(ui_renderer)
 end
 
-LevelEndViewBase._update_transition_animations = function (self, arg_9_1, arg_9_2)
+LevelEndViewBase._update_transition_animations = function (self, dt, t)
 	-- function 9
-	local _transition_ui_animator = self._transition_ui_animator
+	local ui_animator = self._transition_ui_animator
 
-	_transition_ui_animator:update(arg_9_1)
+	ui_animator:update(dt)
 
-	for i = #self._transition_animations, 1, -1 do
-		local var_9_1 = self._transition_animations[i]
+	local num_anims = #self._transition_animations
 
-		if not _transition_ui_animator:is_animation_completed(var_9_1) then
+	for i = num_anims, 1, -1 do
+		local anim_id = self._transition_animations[i]
+
+		if ui_animator:is_animation_completed(anim_id) then
 			self._transition_animations[i] = nil
 		end
 	end
 end
 
-LevelEndViewBase.enable_chat = function (arg_10_0)
+LevelEndViewBase.enable_chat = function (self)
 	-- function 10
 	return true
 end
@@ -244,19 +263,22 @@ LevelEndViewBase.on_enter = function (self)
 	self._state_speed_mult = 1
 end
 
-LevelEndViewBase.on_exit = function (arg_13_0)
+LevelEndViewBase.on_exit = function (self)
 	-- function 13
 	if not GameSettingsDevelopment.read_only_backend then
-		local get_difficulty = Managers.state.difficulty:get_difficulty()
-		local package_name = LootChestData.chests_by_category[get_difficulty].package_name
+		local difficulty_key = Managers.state.difficulty:get_difficulty()
+		local chest_settings = LootChestData.chests_by_category[difficulty_key]
+		local chests_package_name = chest_settings.package_name
 
-		Managers.package:unload(package_name, "global")
+		Managers.package:unload(chests_package_name, "global")
 	end
 end
 
 LevelEndViewBase._vote_to_leave_game = function (self)
 	-- function 14
-	Managers.state.voting:vote(1)
+	local voting_manager = Managers.state.voting
+
+	voting_manager:vote(1)
 
 	self._voted = true
 end
@@ -272,37 +294,39 @@ LevelEndViewBase.done = function (self)
 	return self._wants_to_exit_to_game
 end
 
-LevelEndViewBase.setup_pages = function (arg_17_0, arg_17_1, arg_17_2)
+LevelEndViewBase.setup_pages = function (self, game_won, rewards)
 	-- function 17
-	return {}
+	local index_by_state_name = {}
+
+	return index_by_state_name
 end
 
-LevelEndViewBase.create_ui_elements = function (arg_18_0)
+LevelEndViewBase.create_ui_elements = function (self)
 	-- function 18
 	return
 end
 
 LevelEndViewBase._activate_viewport = function (self)
 	-- function 19
-	local get_viewport_world, var_19_1 = self:get_viewport_world()
+	local world, viewport = self:get_viewport_world()
 
-	ScriptWorld.activate_viewport(get_viewport_world, var_19_1)
+	ScriptWorld.activate_viewport(world, viewport)
 end
 
 LevelEndViewBase.get_world_link_unit = function (self)
 	-- function 20
-	local str = "levels/end_screen/world"
-	local get_viewport_world = self:get_viewport_world()
-	local level = ScriptWorld.level(get_viewport_world, str)
+	local level_name = "levels/end_screen/world"
+	local world = self:get_viewport_world()
+	local level = ScriptWorld.level(world, level_name)
 
-	if not level then
+	if level then
 		local units = Level.units(level)
 
-		for i, v in ipairs(units) do
-			local get_data = Unit.get_data(v, "name")
+		for i, level_unit in ipairs(units) do
+			local unit_name = Unit.get_data(level_unit, "name")
 
-			if not (not get_data and get_data ~= "loot_chest_spawn") then
-				return v
+			if unit_name and unit_name == "loot_chest_spawn" then
+				return level_unit
 			end
 		end
 	end
@@ -313,76 +337,76 @@ LevelEndViewBase.get_viewport_world = function (self)
 	return self._world, self._world_viewport
 end
 
-LevelEndViewBase.post_update = function (arg_22_0)
+LevelEndViewBase.post_update = function (self)
 	-- function 22
 	return
 end
 
-LevelEndViewBase.update = function (self, arg_23_1, arg_23_2)
+LevelEndViewBase.update = function (self, dt, t)
 	-- function 23
-	if self.suspended or not self.waiting_for_post_update_enter then
+	if self.suspended or self.waiting_for_post_update_enter then
 		return
 	end
 
-	local _active_camera_shakes = self._active_camera_shakes
+	local active_camera_shakes = self._active_camera_shakes
 
-	if not _active_camera_shakes then
-		for k, v in pairs(_active_camera_shakes) do
-			self:_apply_shake_event(k, arg_23_2)
+	if active_camera_shakes then
+		for settings, _ in pairs(active_camera_shakes) do
+			self:_apply_shake_event(settings, t)
 		end
 	end
 
 	local input_service = self:input_service()
 
-	if not self._started_force_shutdown then
-		self:update_force_shutdown(arg_23_1)
+	if self._started_force_shutdown then
+		self:update_force_shutdown(dt)
 	end
 
-	if not self._started_exit then
-		self:_update_exit(arg_23_1)
+	if self._started_exit then
+		self:_update_exit(dt)
 	end
 
-	if not self.reward_popup then
-		self.reward_popup:update(arg_23_1)
+	if self.reward_popup then
+		self.reward_popup:update(dt)
 	end
 
 	self:_handle_queued_presentations()
-	self:_update_transition_fade(arg_23_1, arg_23_2)
+	self:_update_transition_fade(dt, t)
 
-	if not self._machine then
-		if not self._state_can_speed_up then
-			local num_3 = 1
-			local get_service = self.input_manager:get_service("end_of_level")
-			local get = get_service:get("skip_pressed")
+	if self._machine then
+		if self._state_can_speed_up then
+			local speed_up_target = 1
+			local input_service = self.input_manager:get_service("end_of_level")
+			local get = input_service:get("skip_pressed")
 
-			get = get or get_service:get("confirm_press")
+			get = not not get or not not input_service:get("confirm_press")
 			self._skip_pressed = get
 
-			if get_service:get("confirm_hold", true) or not get_service:get("skip", true) then
-				num_3 = num
+			if input_service:get("confirm_hold", true) or input_service:get("skip", true) then
+				speed_up_target = SPEED_UP_MULT_MAX
 			end
 
-			local _state_speed_mult = self._state_speed_mult
-			local lerp = math.lerp(_state_speed_mult, num_3, num_2 * arg_23_1)
-			local clamp = math.clamp(lerp, 1, num)
+			local current_speed_mult = self._state_speed_mult
 
-			arg_23_1 = arg_23_1 * clamp
-			self._state_speed_mult = clamp
+			current_speed_mult = math.lerp(current_speed_mult, speed_up_target, SPEED_UP_LERP_SPEED * dt)
+			current_speed_mult = math.clamp(current_speed_mult, 1, SPEED_UP_MULT_MAX)
+			dt = dt * current_speed_mult
+			self._state_speed_mult = current_speed_mult
 		end
 
-		self._machine:update(arg_23_1, arg_23_2)
+		self._machine:update(dt, t)
 
-		if not self._new_state_name then
+		if self._new_state_name then
 			self:_handle_state_exit()
-		elseif not self.state_auto_change then
+		elseif self.state_auto_change then
 			self:_handle_state_auto_change()
-		elseif not self._page_selector_widget then
-			local _is_page_selector_pressed = self:_is_page_selector_pressed()
+		elseif self._page_selector_widget then
+			local index = self:_is_page_selector_pressed()
 
-			if not _is_page_selector_pressed then
-				local var_23_9 = self._state_name_by_index[_is_page_selector_pressed]
+			if index then
+				local state_name = self._state_name_by_index[index]
 
-				self:_request_state_change(var_23_9)
+				self:_request_state_change(state_name)
 			end
 		end
 	end
@@ -403,24 +427,24 @@ LevelEndViewBase.left_lobby = function (self)
 	self._left_lobby = true
 	self._lobby = nil
 
-	if not self._done_peers[Network.peer_id()] then
+	if self._done_peers[Network.peer_id()] then
 		self:exit_to_game()
 	end
 end
 
-LevelEndViewBase.destroy = function (self, arg_27_1)
+LevelEndViewBase.destroy = function (self, keep_resources)
 	-- function 27
 	self.ui_animator = nil
 
 	self:_cleanup_transitions()
 
-	if not self._machine then
+	if self._machine then
 		self._machine:destroy()
 
 		self._machine = nil
 	end
 
-	if not self.reward_popup then
+	if self.reward_popup then
 		self.reward_popup:destroy()
 
 		self.reward_popup = nil
@@ -431,62 +455,70 @@ LevelEndViewBase.destroy = function (self, arg_27_1)
 	self:play_sound("unmute_all_world_sounds")
 	self:destroy_world()
 
-	if not arg_27_1 then
+	if not keep_resources then
 		Managers.mechanism:unload_end_screen_resources()
 	end
 end
 
-LevelEndViewBase.play_sound = function (self, arg_28_1)
+LevelEndViewBase.play_sound = function (self, event)
 	-- function 28
-	WwiseWorld.trigger_event(self.wwise_world, arg_28_1)
+	WwiseWorld.trigger_event(self.wwise_world, event)
 end
 
-LevelEndViewBase._is_button_pressed = function (arg_29_0, arg_29_1)
+LevelEndViewBase._is_button_pressed = function (self, widget)
 	-- function 29
-	local button_hotspot = arg_29_1.content.button_hotspot
+	local button_hotspot = widget.content.button_hotspot
 
-	if not button_hotspot.on_release then
+	if button_hotspot.on_release then
 		button_hotspot.on_release = nil
 
 		return true
 	end
 end
 
-LevelEndViewBase._is_button_hover_enter = function (arg_30_0, arg_30_1)
+LevelEndViewBase._is_button_hover_enter = function (self, widget)
 	-- function 30
-	return arg_30_1.content.button_hotspot.on_hover_enter
+	local content = widget.content
+	local hotspot = content.button_hotspot
+
+	return hotspot.on_hover_enter
 end
 
 LevelEndViewBase._is_page_selector_pressed = function (self)
 	-- function 31
-	local content = self._page_selector_widget.content
+	local widget = self._page_selector_widget
+	local content = widget.content
 	local amount = content.amount
 
 	for i = 1, amount do
-		local str = "_" .. tostring(i)
-		local var_31_3 = content["hotspot" .. str]
+		local name_sufix = "_" .. tostring(i)
+		local hotspot_name = "hotspot" .. name_sufix
+		local hotspot = content[hotspot_name]
 
-		if not (not var_31_3.on_release and var_31_3.is_selected) then
+		if hotspot.on_release and not hotspot.is_selected then
 			return i
 		end
 	end
 end
 
-LevelEndViewBase._set_page_selector_selection = function (self, arg_32_1)
+LevelEndViewBase._set_page_selector_selection = function (self, index)
 	-- function 32
-	local content = self._page_selector_widget.content
+	local widget = self._page_selector_widget
+	local content = widget.content
 	local amount = content.amount
 
 	for i = 1, amount do
-		local str = "_" .. tostring(i)
+		local name_sufix = "_" .. tostring(i)
+		local hotspot_name = "hotspot" .. name_sufix
+		local hotspot = content[hotspot_name]
 
-		content["hotspot" .. str].is_selected = arg_32_1 == i
+		hotspot.is_selected = index == i
 	end
 end
 
-LevelEndViewBase._update_exit = function (self, arg_33_1)
+LevelEndViewBase._update_exit = function (self, dt)
 	-- function 33
-	self._exit_timer = math.max(0, self._exit_timer - arg_33_1)
+	self._exit_timer = math.max(0, self._exit_timer - dt)
 
 	if self._exit_timer == 0 then
 		self._started_exit = false
@@ -494,7 +526,7 @@ LevelEndViewBase._update_exit = function (self, arg_33_1)
 	end
 end
 
-LevelEndViewBase.do_retry = function (arg_34_0)
+LevelEndViewBase.do_retry = function (self)
 	-- function 34
 	return false
 end
@@ -502,145 +534,146 @@ end
 LevelEndViewBase._get_level_up_rewards = function (self)
 	-- function 35
 	local end_of_level_rewards = self.context.rewards.end_of_level_rewards
-	local tbl = {}
+	local items_by_level = {}
 
-	for k, v in pairs(end_of_level_rewards) do
-		if string.find(k, "level_up_reward") == 1 then
-			local split_deprecated = string.split_deprecated(k, ";")
-			local var_35_3 = tonumber(split_deprecated[2])
-			local var_35_4 = tonumber(split_deprecated[3])
+	for reward_name, item in pairs(end_of_level_rewards) do
+		if string.find(reward_name, "level_up_reward") == 1 then
+			local data = string.split_deprecated(reward_name, ";")
+			local level = tonumber(data[2])
+			local index = tonumber(data[3])
 
-			if not tbl[var_35_3] then
-				tbl[var_35_3] = {}
+			if not items_by_level[level] then
+				items_by_level[level] = {}
 			end
 
-			tbl[var_35_3][var_35_4] = v
+			items_by_level[level][index] = item
 		end
 	end
 
-	return tbl
+	return items_by_level
 end
 
 LevelEndViewBase._get_versus_level_up_rewards = function (self)
 	-- function 36
 	local end_of_level_rewards = self.context.rewards.end_of_level_rewards
-	local tbl = {}
+	local items_by_level = {}
 
-	for k, v in pairs(end_of_level_rewards) do
-		if string.find(k, "vs_level_up_reward") == 1 then
-			local split_deprecated = string.split_deprecated(k, ";")
-			local var_36_3 = tonumber(split_deprecated[2])
-			local var_36_4 = tonumber(split_deprecated[3])
+	for reward_name, item in pairs(end_of_level_rewards) do
+		if string.find(reward_name, "vs_level_up_reward") == 1 then
+			local data = string.split_deprecated(reward_name, ";")
+			local level = tonumber(data[2])
+			local index = tonumber(data[3])
 
-			if not tbl[var_36_3] then
-				tbl[var_36_3] = {}
+			if not items_by_level[level] then
+				items_by_level[level] = {}
 			end
 
-			tbl[var_36_3][var_36_4] = v
+			items_by_level[level][index] = item
 		end
 	end
 
-	return tbl
+	return items_by_level
 end
 
 LevelEndViewBase._get_win_track_rewards = function (self)
 	-- function 37
 	local end_of_level_rewards = self.context.rewards.end_of_level_rewards
-	local tbl = {
+	local win_track_rewards = {
 		start_experience = self.context.rewards.win_track_start_experience,
 		item_rewards = {}
 	}
 
-	for k, v in pairs(end_of_level_rewards) do
-		if string.find(k, "win_track_reward") == 1 then
-			local split_deprecated = string.split_deprecated(k, ";")
-			local var_37_3 = tonumber(split_deprecated[2])
+	for reward_name, item in pairs(end_of_level_rewards) do
+		if string.find(reward_name, "win_track_reward") == 1 then
+			local data = string.split_deprecated(reward_name, ";")
+			local level = tonumber(data[2])
 
-			tbl.item_rewards[var_37_3] = v
+			win_track_rewards.item_rewards[level] = item
 		end
 	end
 
-	return tbl
+	return win_track_rewards
 end
 
 LevelEndViewBase._get_deed_rewards = function (self)
 	-- function 38
 	local end_of_level_rewards = self.context.rewards.end_of_level_rewards
-	local tbl = {}
+	local deed_rewards = {}
 
-	for k, v in pairs(end_of_level_rewards) do
-		if string.find(k, "deed_reward") == 1 then
-			tbl[#tbl + 1] = v
+	for reward_name, item in pairs(end_of_level_rewards) do
+		if string.find(reward_name, "deed_reward") == 1 then
+			deed_rewards[#deed_rewards + 1] = item
 		end
 	end
 
-	return tbl
+	return deed_rewards
 end
 
 LevelEndViewBase._get_event_rewards = function (self)
 	-- function 39
 	local end_of_level_rewards = self.context.rewards.end_of_level_rewards
-	local tbl = {}
+	local event_rewards = {}
 
-	for k, v in pairs(end_of_level_rewards) do
-		if not string.find(k, "event_reward") then
-			tbl[#tbl + 1] = v
+	for reward_name, item in pairs(end_of_level_rewards) do
+		if string.find(reward_name, "event_reward") then
+			event_rewards[#event_rewards + 1] = item
 		end
 	end
 
-	return tbl
+	return event_rewards
 end
 
 LevelEndViewBase._get_deus_rewards = function (self)
 	-- function 40
 	local end_of_level_rewards = self.context.rewards.end_of_level_rewards
-	local tbl = {}
+	local deus_rewards = {}
 
-	for k, v in pairs(end_of_level_rewards) do
-		if string.find(k, "deus_reward") == 1 then
-			tbl[#tbl + 1] = v
+	for reward_name, item in pairs(end_of_level_rewards) do
+		if string.find(reward_name, "deus_reward") == 1 then
+			deus_rewards[#deus_rewards + 1] = item
 		end
 	end
 
-	return tbl
+	return deus_rewards
 end
 
 LevelEndViewBase._get_keep_decoration_rewards = function (self)
 	-- function 41
 	local end_of_level_rewards = self.context.rewards.end_of_level_rewards
-	local tbl = {}
+	local keep_decoration_rewards = {}
 
-	for k, v in pairs(end_of_level_rewards) do
-		if string.find(k, "keep_decoration_painting") == 1 then
-			tbl[#tbl + 1] = v
+	for reward_name, item in pairs(end_of_level_rewards) do
+		if string.find(reward_name, "keep_decoration_painting") == 1 then
+			keep_decoration_rewards[#keep_decoration_rewards + 1] = item
 		end
 	end
 
-	return tbl
+	return keep_decoration_rewards
 end
 
-LevelEndViewBase._present_reward = function (self, arg_42_1)
+LevelEndViewBase._present_reward = function (self, data)
 	-- function 42
 	local reward_popup = self.reward_popup
 
-	if not self:displaying_reward_presentation() then
-		local _reward_presentation_queue = self._reward_presentation_queue
+	if self:displaying_reward_presentation() then
+		local reward_presentation_queue = self._reward_presentation_queue
 
-		_reward_presentation_queue[#_reward_presentation_queue + 1] = arg_42_1
+		reward_presentation_queue[#reward_presentation_queue + 1] = data
 	else
-		reward_popup:display_presentation(arg_42_1)
+		reward_popup:display_presentation(data)
 	end
 end
 
 LevelEndViewBase._handle_queued_presentations = function (self)
 	-- function 43
-	if not (self:_is_reward_presentation_complete() or #self._reward_presentation_queue ~= 0 or self:displaying_reward_presentation()) then
-		local _reward_presentation_queue = self._reward_presentation_queue
+	if self:_is_reward_presentation_complete() or #self._reward_presentation_queue == 0 and not self:displaying_reward_presentation() then
+		local reward_presentation_queue = self._reward_presentation_queue
+		local num_queued_rewards = #reward_presentation_queue
 
-		if #_reward_presentation_queue > 0 then
-			local remove = table.remove(_reward_presentation_queue, 1)
+		if num_queued_rewards > 0 then
+			local next_reward = table.remove(reward_presentation_queue, 1)
 
-			self:_present_reward(remove)
+			self:_present_reward(next_reward)
 		else
 			self._reward_presentation_done = true
 		end
@@ -662,130 +695,134 @@ LevelEndViewBase.reward_presentation_done = function (self)
 	return self._reward_presentation_done
 end
 
-LevelEndViewBase.present_level_up = function (self, arg_47_1, arg_47_2)
+LevelEndViewBase.present_level_up = function (self, hero_name, hero_level)
 	-- function 47
-	local get_level_unlocks = ProgressionUnlocks.get_level_unlocks(arg_47_2, arg_47_1)
-	local var_47_1 = self.level_up_rewards[arg_47_2]
-	local flag = not get_level_unlocks and #get_level_unlocks > 0
-	local flag_2 = not var_47_1 and #var_47_1 > 0
-	local var_47_4
+	local level_unlocks = ProgressionUnlocks.get_level_unlocks(hero_level, hero_name)
+	local level_up_rewards = self.level_up_rewards[hero_level]
+	local has_level_up_unlocks = not not level_unlocks and #level_unlocks > 0
+	local has_level_up_rewards = not not level_up_rewards and #level_up_rewards > 0
+	local presentation_data
 
-	if flag_2 or not flag then
-		var_47_4 = {}
+	if has_level_up_rewards or has_level_up_unlocks then
+		presentation_data = {}
 	end
 
-	if not flag then
-		for i, v in ipairs(get_level_unlocks) do
-			local tbl = {}
-			local title = v.title
-			local description = v.description
+	if has_level_up_unlocks then
+		for index, template in ipairs(level_unlocks) do
+			local entry = {}
+			local title = template.title
+			local description = template.description
 
-			if not title and not description then
-				tbl[#tbl + 1] = {
+			if title and description then
+				entry[#entry + 1] = {
 					widget_type = "description",
 					value = {
 						Localize(title),
 						Localize(description)
 					}
 				}
-			elseif not title then
-				tbl[#tbl + 1] = {
+			elseif title then
+				entry[#entry + 1] = {
 					widget_type = "title",
 					value = Localize(title)
 				}
-			elseif not description then
-				tbl[#tbl + 1] = {
+			elseif description then
+				entry[#entry + 1] = {
 					widget_type = "title",
 					value = Localize(description)
 				}
 			end
 
-			tbl[#tbl + 1] = {
-				value = v.value,
-				widget_type = v.unlock_type
+			entry[#entry + 1] = {
+				value = template.value,
+				widget_type = template.unlock_type
 			}
-			var_47_4[#var_47_4 + 1] = tbl
+			presentation_data[#presentation_data + 1] = entry
 		end
 	end
 
-	if not flag_2 then
-		local get_interface = Managers.backend:get_interface("items")
+	if has_level_up_rewards then
+		local item_interface = Managers.backend:get_interface("items")
 
-		for i_2, v_2 in ipairs(var_47_1) do
-			local tbl_2 = {}
-			local backend_id = v_2.backend_id
-			local get_item_from_id = get_interface:get_item_from_id(backend_id)
-			local item_type = get_interface:get_item_masterlist_data(backend_id).item_type
-			local tbl_3 = {}
-			local get_ui_information_from_item, var_47_15, var_47_16 = UIUtils.get_ui_information_from_item(get_item_from_id)
+		for index, item in ipairs(level_up_rewards) do
+			local entry = {}
+			local backend_id = item.backend_id
+			local reward_item = item_interface:get_item_from_id(backend_id)
+			local item_data = item_interface:get_item_masterlist_data(backend_id)
+			local item_type = item_data.item_type
+			local description = {}
+			local _, display_name, _ = UIUtils.get_ui_information_from_item(reward_item)
 
 			if item_type == "loot_chest" then
-				tbl_3[1] = Localize(var_47_15)
-				tbl_3[2] = Localize("end_screen_chest_received")
+				description[1] = Localize(display_name)
+				description[2] = Localize("end_screen_chest_received")
 			else
-				tbl_3[1] = Localize(item_type)
-				tbl_3[2] = Localize("reward_weapon")
+				description[1] = Localize(item_type)
+				description[2] = Localize("reward_weapon")
 			end
 
-			if not tbl_3 then
-				tbl_2[#tbl_2 + 1] = {
+			if description then
+				entry[#entry + 1] = {
 					widget_type = "description",
-					value = tbl_3
+					value = description
 				}
 			end
 
-			tbl_2[#tbl_2 + 1] = {
+			entry[#entry + 1] = {
 				widget_type = "item",
-				value = v_2
+				value = item
 			}
-			var_47_4[#var_47_4 + 1] = tbl_2
+			presentation_data[#presentation_data + 1] = entry
 		end
 	end
 
-	if not var_47_4 then
-		self:_present_reward(var_47_4)
+	if presentation_data then
+		self:_present_reward(presentation_data)
 	end
 end
 
-LevelEndViewBase.present_win_track_reward = function (self, arg_48_1)
+LevelEndViewBase.present_win_track_reward = function (self, idx)
 	-- function 48
-	local get_interface = Managers.backend:get_interface("items")
-	local var_48_1 = self.win_track_rewards.item_rewards[arg_48_1]
-	local tbl = {}
-	local tbl_2 = {}
-	local backend_id = var_48_1.backend_id
-	local get_item_from_id = get_interface:get_item_from_id(backend_id)
-	local item_type = get_interface:get_item_masterlist_data(backend_id).item_type
-	local tbl_3 = {}
-	local get_ui_information_from_item, var_48_9, var_48_10 = UIUtils.get_ui_information_from_item(get_item_from_id)
+	local item_interface = Managers.backend:get_interface("items")
+	local win_track_rewards = self.win_track_rewards
+	local item_rewards = win_track_rewards.item_rewards
+	local win_track_reward_item = item_rewards[idx]
+	local presentation_data = {}
+	local entry = {}
+	local backend_id = win_track_reward_item.backend_id
+	local reward_item = item_interface:get_item_from_id(backend_id)
+	local item_data = item_interface:get_item_masterlist_data(backend_id)
+	local item_type = item_data.item_type
+	local description = {}
+	local _, display_name, _ = UIUtils.get_ui_information_from_item(reward_item)
 
-	tbl_3[1] = Localize(item_type)
-	tbl_3[2] = Localize(var_48_9)
+	description[1] = Localize(item_type)
+	description[2] = Localize(display_name)
 
-	if not tbl_3 then
-		tbl_2[#tbl_2 + 1] = {
+	if description then
+		entry[#entry + 1] = {
 			widget_type = "description",
-			value = tbl_3
+			value = description
 		}
 	end
 
-	tbl_2[#tbl_2 + 1] = {
+	entry[#entry + 1] = {
 		widget_type = "item",
-		value = var_48_1
+		value = win_track_reward_item
 	}
-	tbl[#tbl + 1] = tbl_2
+	presentation_data[#presentation_data + 1] = entry
 
-	self:_present_reward(tbl)
+	self:_present_reward(presentation_data)
 end
 
 LevelEndViewBase.present_additional_rewards = function (self)
 	-- function 49
 	local deed_rewards = self.deed_rewards
-	local count = #deed_rewards
-	local get_interface = Managers.backend:get_interface("items")
+	local num_deed_rewards = #deed_rewards
+	local item_interface = Managers.backend:get_interface("items")
 
-	if count > 0 then
-		local tbl = {
+	if num_deed_rewards > 0 then
+		local presentation_data = {
 			{
 				{
 					widget_type = "title",
@@ -794,57 +831,59 @@ LevelEndViewBase.present_additional_rewards = function (self)
 			}
 		}
 
-		for i, v in ipairs(deed_rewards) do
-			local tbl_2 = {}
-			local backend_id = v.backend_id
-			local get_item_from_id = get_interface:get_item_from_id(backend_id)
-			local item_type = get_interface:get_item_masterlist_data(backend_id).item_type
-			local tbl_3 = {}
-			local get_ui_information_from_item, var_49_10, var_49_11 = UIUtils.get_ui_information_from_item(get_item_from_id)
+		for _, item in ipairs(deed_rewards) do
+			local entry = {}
+			local backend_id = item.backend_id
+			local reward_item = item_interface:get_item_from_id(backend_id)
+			local item_data = item_interface:get_item_masterlist_data(backend_id)
+			local item_type = item_data.item_type
+			local description = {}
+			local _, display_name, _ = UIUtils.get_ui_information_from_item(reward_item)
 
 			if item_type == "loot_chest" then
-				tbl_3[1] = Localize(var_49_10)
-				tbl_3[2] = Localize("end_screen_chest_received")
+				description[1] = Localize(display_name)
+				description[2] = Localize("end_screen_chest_received")
 			else
-				tbl_3[1] = Localize(item_type)
-				tbl_3[2] = Localize("reward_weapon")
+				description[1] = Localize(item_type)
+				description[2] = Localize("reward_weapon")
 			end
 
-			if not tbl_3 then
-				tbl_2[#tbl_2 + 1] = {
+			if description then
+				entry[#entry + 1] = {
 					widget_type = "description",
-					value = tbl_3
+					value = description
 				}
 			end
 
-			tbl_2[#tbl_2 + 1] = {
+			entry[#entry + 1] = {
 				widget_type = "item",
-				value = v
+				value = item
 			}
-			tbl[#tbl + 1] = tbl_2
+			presentation_data[#presentation_data + 1] = entry
 		end
 
-		self:_present_reward(tbl)
+		self:_present_reward(presentation_data)
 	end
 
 	local keep_decoration_rewards = self.keep_decoration_rewards
+	local num_keep_decoration_rewards = #keep_decoration_rewards
 
-	if #keep_decoration_rewards > 0 then
-		local tbl_4 = {}
+	if num_keep_decoration_rewards > 0 then
+		local presentation_data = {}
 
-		for i_2, v_2 in ipairs(keep_decoration_rewards) do
-			local keep_decoration_name = v_2.keep_decoration_name
-			local var_49_15 = Paintings[keep_decoration_name]
-			local display_name = var_49_15.display_name
-			local icon = var_49_15.icon
-			local tbl_5 = {
+		for _, item in ipairs(keep_decoration_rewards) do
+			local keep_decoration_name = item.keep_decoration_name
+			local painting_data = Paintings[keep_decoration_name]
+			local display_name = painting_data.display_name
+			local icon = painting_data.icon
+			local description = {
 				Localize(display_name),
 				Localize("end_screen_you_received")
 			}
-			local tbl_6 = {
+			local entry = {
 				{
 					widget_type = "description",
-					value = tbl_5
+					value = description
 				},
 				{
 					widget_type = "icon",
@@ -852,48 +891,50 @@ LevelEndViewBase.present_additional_rewards = function (self)
 				}
 			}
 
-			tbl_4[#tbl_4 + 1] = tbl_6
+			presentation_data[#presentation_data + 1] = entry
 		end
 
-		self:_present_reward(tbl_4)
+		self:_present_reward(presentation_data)
 	end
 
 	local event_rewards = self.event_rewards
+	local num_event_rewards = #event_rewards
 
-	if #event_rewards > 0 then
-		local tbl_7 = {}
+	if num_event_rewards > 0 then
+		local presentation_data = {}
 
-		for i_3, v_3 in ipairs(event_rewards) do
-			local tbl_8 = {}
-			local backend_id_2 = v_3.backend_id
-			local get_item_from_id_2 = get_interface:get_item_from_id(backend_id_2)
-			local tbl_9 = {}
-			local get_ui_information_from_item_2, var_49_27, var_49_28 = UIUtils.get_ui_information_from_item(get_item_from_id_2)
+		for _, item in ipairs(event_rewards) do
+			local entry = {}
+			local backend_id = item.backend_id
+			local reward_item = item_interface:get_item_from_id(backend_id)
+			local description = {}
+			local _, display_name, _ = UIUtils.get_ui_information_from_item(reward_item)
 
-			tbl_9[1] = Localize(var_49_27)
-			tbl_9[2] = Localize("end_screen_you_received")
+			description[1] = Localize(display_name)
+			description[2] = Localize("end_screen_you_received")
 
-			if not tbl_9 then
-				tbl_8[#tbl_8 + 1] = {
+			if description then
+				entry[#entry + 1] = {
 					widget_type = "description",
-					value = tbl_9
+					value = description
 				}
 			end
 
-			tbl_8[#tbl_8 + 1] = {
+			entry[#entry + 1] = {
 				widget_type = "item",
-				value = v_3
+				value = item
 			}
-			tbl_7[#tbl_7 + 1] = tbl_8
+			presentation_data[#presentation_data + 1] = entry
 		end
 
-		self:_present_reward(tbl_7)
+		self:_present_reward(presentation_data)
 	end
 
 	local deus_rewards = self.deus_rewards
+	local num_deus_rewards = #deus_rewards
 
-	if #deus_rewards > 0 then
-		local tbl_10 = {
+	if num_deus_rewards > 0 then
+		local presentation_data = {
 			{
 				{
 					widget_type = "title",
@@ -902,63 +943,63 @@ LevelEndViewBase.present_additional_rewards = function (self)
 			}
 		}
 
-		for i_4, v_4 in ipairs(deus_rewards) do
-			local tbl_11 = {}
-			local backend_id_3 = v_4.backend_id
-			local get_item_from_id_3 = get_interface:get_item_from_id(backend_id_3)
-			local tbl_12 = {}
-			local get_ui_information_from_item_3, var_49_36, var_49_37 = UIUtils.get_ui_information_from_item(get_item_from_id_3)
+		for _, item in ipairs(deus_rewards) do
+			local entry = {}
+			local backend_id = item.backend_id
+			local reward_item = item_interface:get_item_from_id(backend_id)
+			local description = {}
+			local _, display_name, _ = UIUtils.get_ui_information_from_item(reward_item)
 
-			tbl_12[1] = Localize(var_49_36)
-			tbl_12[2] = Localize("end_screen_you_received")
+			description[1] = Localize(display_name)
+			description[2] = Localize("end_screen_you_received")
 
-			if not tbl_12 then
-				tbl_11[#tbl_11 + 1] = {
+			if description then
+				entry[#entry + 1] = {
 					widget_type = "description",
-					value = tbl_12
+					value = description
 				}
 			end
 
-			tbl_11[#tbl_11 + 1] = {
+			entry[#entry + 1] = {
 				widget_type = "item",
-				value = v_4
+				value = item
 			}
-			tbl_10[#tbl_10 + 1] = tbl_11
+			presentation_data[#presentation_data + 1] = entry
 		end
 
-		self:_present_reward(tbl_10)
+		self:_present_reward(presentation_data)
 	end
 end
 
 LevelEndViewBase.present_chest_rewards = function (self)
 	-- function 50
 	local end_of_level_rewards = self.context.rewards.end_of_level_rewards
-	local get_interface = Managers.backend:get_interface("items")
+	local item_interface = Managers.backend:get_interface("items")
 	local chest = end_of_level_rewards.chest
 
-	if not chest then
+	if chest then
 		local backend_id = chest.backend_id
-		local get_item_from_id = get_interface:get_item_from_id(backend_id)
-		local get_item_masterlist_data = get_interface:get_item_masterlist_data(backend_id)
-		local get_ui_information_from_item, var_50_7, var_50_8 = UIUtils.get_ui_information_from_item(get_item_from_id)
-		local name = get_item_masterlist_data.name
-		local tbl = {
+		local reward_item = item_interface:get_item_from_id(backend_id)
+		local item_data = item_interface:get_item_masterlist_data(backend_id)
+		local _, display_name, _ = UIUtils.get_ui_information_from_item(reward_item)
+		local item_name = item_data.name
+		local presentation_data = {
 			{
 				{
 					widget_type = "description",
 					value = {
-						Localize(var_50_7),
+						Localize(display_name),
 						Localize("end_screen_chest_received")
 					}
 				},
 				{
 					widget_type = "loot_chest",
-					value = name
+					value = item_name
 				}
 			}
 		}
 
-		self:_present_reward(tbl)
+		self:_present_reward(presentation_data)
 	end
 end
 
@@ -972,35 +1013,38 @@ LevelEndViewBase.clear_wanted_menu_state = function (self)
 	self._wanted_menu_state = nil
 end
 
-LevelEndViewBase._request_state_change = function (self, arg_53_1)
+LevelEndViewBase._request_state_change = function (self, state_name)
 	-- function 53
-	local _machine = self._machine
+	local state_machine = self._machine
 
-	if not _machine then
+	if not state_machine then
 		return
 	end
 
-	local state = _machine:state()
-	local NAME = state.NAME
-	local var_53_3
-	local flag
+	local current_state = state_machine:state()
+	local current_state_name = current_state.NAME
+	local direction
+	local new_state_index = self._index_by_state_name[state_name]
+	local current_state_index = self._index_by_state_name[current_state_name]
 
-	flag = not (self._index_by_state_name[arg_53_1] > self._index_by_state_name[NAME]) or not "left" or "right"
+	direction = (not (current_state_index < new_state_index) or not "left") and not not "right"
 
-	state:exit(flag)
+	current_state:exit(direction)
 
-	self._new_state_name = arg_53_1
+	self._new_state_name = state_name
 end
 
 LevelEndViewBase._handle_state_exit = function (self)
 	-- function 54
-	local _machine = self._machine
+	local state_machine = self._machine
 
-	if not _machine then
+	if not state_machine then
 		return
 	end
 
-	if not _machine:state():exit_done() then
+	local current_state = state_machine:state()
+
+	if current_state:exit_done() then
 		self:_setup_state_machine(self._new_state_name)
 
 		self._new_state_name = nil
@@ -1008,86 +1052,89 @@ LevelEndViewBase._handle_state_exit = function (self)
 	end
 end
 
-LevelEndViewBase._setup_state_machine = function (self, arg_55_1, arg_55_2)
+LevelEndViewBase._setup_state_machine = function (self, optional_start_state_name, initial)
 	-- function 55
-	if not self._machine then
+	if self._machine then
 		self._machine:destroy()
 
 		self._machine = nil
 	end
 
-	local flag = arg_55_1 or "EndViewStateSummary"
-	local var_55_1 = self._index_by_state_name[flag]
-	local var_55_2 = rawget(_G, flag)
-	local flag_2 = false
-	local _state_machine_params = self._state_machine_params
+	local state_name = not not optional_start_state_name or not not "EndViewStateSummary"
+	local state_index = self._index_by_state_name[state_name]
+	local start_state = rawget(_G, state_name)
+	local profiling_debugging_enabled = false
+	local state_machine_params = self._state_machine_params
 
-	_state_machine_params.initial_state = arg_55_2
-	self._state_can_speed_up = var_55_2.CAN_SPEED_UP
+	state_machine_params.initial_state = initial
+	self._state_can_speed_up = start_state.CAN_SPEED_UP
 
-	local var_55_5
+	local direction
 
-	if not arg_55_2 then
-		local _current_state_name = self._current_state_name
+	if not initial then
+		local previous_state_name = self._current_state_name
+		local previous_state_index = self._index_by_state_name[previous_state_name]
 
-		var_55_5 = not (var_55_1 > self._index_by_state_name[_current_state_name]) or not "left" or "right"
+		direction = (not (previous_state_index < state_index) or not "left") and not not "right"
 	end
 
-	_state_machine_params.direction = var_55_5
-	self._current_state_name = flag
-	self._machine = StateMachine:new(self, var_55_2, _state_machine_params, flag_2)
+	state_machine_params.direction = direction
+	self._current_state_name = state_name
+	self._machine = StateMachine:new(self, start_state, state_machine_params, profiling_debugging_enabled)
 
-	self:_show_object_set(flag)
+	self:_show_object_set(state_name)
 end
 
 LevelEndViewBase._handle_state_auto_change = function (self)
 	-- function 56
-	local _machine = self._machine
+	local state_machine = self._machine
 
-	if not _machine then
+	if not state_machine then
 		return
 	end
 
-	local state = _machine:state()
-	local NAME = state.NAME
-	local _state_name_by_index = self._state_name_by_index
-	local var_56_4 = self._index_by_state_name[NAME]
-	local count = #_state_name_by_index
+	local current_state = state_machine:state()
+	local state_name = current_state.NAME
+	local state_name_by_index = self._state_name_by_index
+	local index_by_state_name = self._index_by_state_name
+	local current_state_index = index_by_state_name[state_name]
+	local num_states = #state_name_by_index
 
-	if not self._next_auto_state_index then
-		if not state:exit_done() then
-			if count < self._next_auto_state_index then
+	if self._next_auto_state_index then
+		if current_state:exit_done() then
+			if num_states < self._next_auto_state_index then
 				if not self._started_exit then
 					self:exit_to_game()
 				end
 			else
-				self:_proceed_to_next_auto_state(self._next_auto_state_index, count)
+				self:_proceed_to_next_auto_state(self._next_auto_state_index, num_states)
 			end
 		end
 	else
-		local var_56_6
+		local new_state_index
+		local displaying_reward_presentation = self:displaying_reward_presentation()
 
-		if not self:displaying_reward_presentation() then
-			if not state:done() then
-				var_56_6 = var_56_4 + 1
+		if not displaying_reward_presentation then
+			if current_state:done() then
+				new_state_index = current_state_index + 1
 			end
 
-			if not var_56_6 then
-				state:exit()
+			if new_state_index then
+				current_state:exit()
 
-				self._next_auto_state_index = var_56_6
+				self._next_auto_state_index = new_state_index
 			end
 		end
 	end
 end
 
-LevelEndViewBase._proceed_to_next_auto_state = function (self, arg_57_1, arg_57_2)
+LevelEndViewBase._proceed_to_next_auto_state = function (self, index, num_states)
 	-- function 57
-	local var_57_0 = self._state_name_by_index[arg_57_1]
+	local new_state = self._state_name_by_index[index]
 
-	self:_setup_state_machine(var_57_0, true)
+	self:_setup_state_machine(new_state, true)
 
-	if arg_57_1 == arg_57_2 then
+	if index == num_states then
 		self:_push_mouse_cursor()
 
 		self._state_machine_complete = true
@@ -1096,91 +1143,95 @@ LevelEndViewBase._proceed_to_next_auto_state = function (self, arg_57_1, arg_57_
 	self._next_auto_state_index = nil
 end
 
-LevelEndViewBase.rpc_signal_end_of_level_done = function (self, arg_58_1, arg_58_2, arg_58_3)
+LevelEndViewBase.rpc_signal_end_of_level_done = function (self, channel_id, peer_id, do_reload)
 	-- function 58
-	if not self.is_server then
-		local get_members = self._lobby:members():get_members()
-		local peer_id = Network.peer_id()
+	if self.is_server then
+		local lobby = self._lobby
+		local members = lobby:members():get_members()
+		local my_peer_id = Network.peer_id()
 
-		for i, v in ipairs(get_members) do
-			if not (v == arg_58_2 or v == peer_id) then
-				local var_58_2 = PEER_ID_TO_CHANNEL[v]
+		for i, member_peer_id in ipairs(members) do
+			if member_peer_id ~= peer_id and member_peer_id ~= my_peer_id then
+				local channel_id = PEER_ID_TO_CHANNEL[member_peer_id]
 
-				if not var_58_2 then
-					RPC.rpc_signal_end_of_level_done(var_58_2, arg_58_2, arg_58_3)
+				if channel_id then
+					RPC.rpc_signal_end_of_level_done(channel_id, peer_id, do_reload)
 				end
 			end
 		end
 	end
 
-	self:peer_signaled_done(arg_58_2, arg_58_3)
+	self:peer_signaled_done(peer_id, do_reload)
 end
 
-LevelEndViewBase.signal_done = function (self, arg_59_1)
+LevelEndViewBase.signal_done = function (self, do_reload)
 	-- function 59
-	if not self._signaled_done then
+	if self._signaled_done then
 		return
 	end
 
 	if not self._left_lobby then
-		if not self.is_server then
-			local members = self._lobby:members()
+		if self.is_server then
+			local lobby = self._lobby
+			local lobby_members = lobby:members()
 
-			if not members then
-				local get_members = members:get_members()
-				local peer_id = Network.peer_id()
+			if lobby_members then
+				local members = lobby_members:get_members()
+				local own_peer_id = Network.peer_id()
 
-				for i, v in ipairs(get_members) do
-					if v ~= peer_id then
-						local var_59_3 = PEER_ID_TO_CHANNEL[v]
+				for i, peer_id in ipairs(members) do
+					if peer_id ~= own_peer_id then
+						local channel_id = PEER_ID_TO_CHANNEL[peer_id]
 
-						if not var_59_3 then
-							RPC.rpc_signal_end_of_level_done(var_59_3, peer_id, arg_59_1)
+						if channel_id then
+							RPC.rpc_signal_end_of_level_done(channel_id, own_peer_id, do_reload)
 						end
 					end
 				end
 			end
 		else
-			local lobby_host = self._lobby:lobby_host()
-			local peer_id_2 = Network.peer_id()
-			local var_59_6 = PEER_ID_TO_CHANNEL[lobby_host]
+			local lobby = self._lobby
+			local host = lobby:lobby_host()
+			local my_peer_id = Network.peer_id()
+			local channel_id = PEER_ID_TO_CHANNEL[host]
 
-			if not var_59_6 then
-				RPC.rpc_signal_end_of_level_done(var_59_6, peer_id_2, arg_59_1)
+			if channel_id then
+				RPC.rpc_signal_end_of_level_done(channel_id, my_peer_id, do_reload)
 			end
 		end
 	end
 
-	self:peer_signaled_done(Network.peer_id(), arg_59_1)
+	self:peer_signaled_done(Network.peer_id(), do_reload)
 end
 
-LevelEndViewBase.peer_signaled_done = function (self, arg_60_1, arg_60_2)
+LevelEndViewBase.peer_signaled_done = function (self, peer_id, do_reload)
 	-- function 60
 	if not self._started_force_shutdown then
 		self:start_force_shutdown()
 	end
 
-	self._done_peers[arg_60_1] = true
-	self._wants_reload[arg_60_1] = arg_60_2
+	self._done_peers[peer_id] = true
+	self._wants_reload[peer_id] = do_reload
 end
 
-LevelEndViewBase.rpc_notify_lobby_joined = function (self, arg_61_1)
+LevelEndViewBase.rpc_notify_lobby_joined = function (self, channel_id)
 	-- function 61
-	if not self.is_server then
-		local flag = false
-		local get_members = self._lobby:members():get_members()
-		local peer_id = Network.peer_id()
-		local var_61_3 = CHANNEL_TO_PEER_ID[arg_61_1]
+	if self.is_server then
+		local do_reload = false
+		local lobby = self._lobby
+		local members = lobby:members():get_members()
+		local my_peer_id = Network.peer_id()
+		local peer_id = CHANNEL_TO_PEER_ID[channel_id]
 
-		for i, v in ipairs(get_members) do
-			if not (v == var_61_3 or v == peer_id) then
-				local var_61_4 = PEER_ID_TO_CHANNEL[v]
+		for i, member_peer_id in ipairs(members) do
+			if member_peer_id ~= peer_id and member_peer_id ~= my_peer_id then
+				local channel_id = PEER_ID_TO_CHANNEL[member_peer_id]
 
-				RPC.rpc_signal_end_of_level_done(var_61_4, var_61_3, flag)
+				RPC.rpc_signal_end_of_level_done(channel_id, peer_id, do_reload)
 			end
 		end
 
-		self:peer_signaled_done(var_61_3, flag)
+		self:peer_signaled_done(peer_id, do_reload)
 	end
 end
 
@@ -1201,40 +1252,41 @@ LevelEndViewBase.is_force_shutdown_active = function (self)
 	return self._started_force_shutdown
 end
 
-LevelEndViewBase.update_force_shutdown = function (self, arg_65_1)
+LevelEndViewBase.update_force_shutdown = function (self, dt)
 	-- function 65
-	self._force_shutdown_timer = math.max(0, self._force_shutdown_timer - arg_65_1)
+	self._force_shutdown_timer = math.max(0, self._force_shutdown_timer - dt)
 
-	if not (self._force_shutdown_timer ~= 0 or self._signaled_done) then
+	if self._force_shutdown_timer == 0 and not self._signaled_done then
 		self:signal_done(false)
 
 		self._signaled_done = true
 	elseif not self._left_lobby then
-		local flag = true
+		local all_done = true
+		local lobby_members = self._lobby:members()
 
-		if not self._lobby:members() then
-			local get_members = self._lobby:members():get_members()
+		if lobby_members then
+			local members = self._lobby:members():get_members()
 
-			for i, v in ipairs(get_members) do
-				if not self._done_peers[v] then
-					flag = false
+			for i, peer_id in ipairs(members) do
+				if not self._done_peers[peer_id] then
+					all_done = false
 
 					break
 				end
 			end
 		end
 
-		if not flag then
+		if all_done then
 			self:exit_to_game()
 		end
 	end
 
-	if not self._started_exit then
+	if self._started_exit then
 		self._started_force_shutdown = false
 	end
 end
 
-local tbl_2 = {
+local cam_shake_settings = {
 	persistance = 1,
 	fade_out = 0.5,
 	amplitude = 0.9,
@@ -1246,208 +1298,231 @@ local tbl_2 = {
 
 LevelEndViewBase.setup_camera = function (self)
 	-- function 66
-	local var_66_0
-	local var_66_1
-	local str = "levels/end_screen/world"
-	local unit_indices = LevelResource.unit_indices(str, "units/hub_elements/cutscene_camera/cutscene_camera")
+	local camera_pose, camera_index
+	local level_name = "levels/end_screen/world"
+	local unit_indices = LevelResource.unit_indices(level_name, "units/hub_elements/cutscene_camera/cutscene_camera")
 
-	for k, v in pairs(unit_indices) do
-		local unit_data = LevelResource.unit_data(str, v)
-		local get = DynamicData.get(unit_data, "name")
+	for _, index in pairs(unit_indices) do
+		local unit_data = LevelResource.unit_data(level_name, index)
+		local name = DynamicData.get(unit_data, "name")
 
-		if not (not get and get ~= "end_screen_camera") then
-			local unit_position = LevelResource.unit_position(str, v)
-			local unit_rotation = LevelResource.unit_rotation(str, v)
-			local from_quaternion_position = Matrix4x4.from_quaternion_position(unit_rotation, unit_position)
+		if name and name == "end_screen_camera" then
+			local position = LevelResource.unit_position(level_name, index)
+			local rotation = LevelResource.unit_rotation(level_name, index)
+			local pose = Matrix4x4.from_quaternion_position(rotation, position)
 
-			var_66_0 = Matrix4x4Box(from_quaternion_position)
-			var_66_1 = v
+			camera_pose = Matrix4x4Box(pose)
+			camera_index = index
 
-			print("Found camera: " .. get)
+			print("Found camera: " .. name)
 
 			break
 		end
 	end
 
-	self._camera_pose = var_66_0
-	self._camera_index = var_66_1
+	self._camera_pose = camera_pose
+	self._camera_index = camera_index
 
 	self:position_camera()
 end
 
-LevelEndViewBase.add_camera_shake = function (self, arg_67_1, arg_67_2, arg_67_3)
+LevelEndViewBase.add_camera_shake = function (self, settings, start_time, scale)
 	-- function 67
-	local tbl = {}
-	local get_camera_rotation = self:get_camera_rotation()
-	local flag = arg_67_1 or tbl_2
-	local duration = flag.duration
-	local fade_in = flag.fade_in
-	local fade_out = flag.fade_out
-	local num = (duration or 0) + (fade_in or 0) + (fade_out or 0)
+	local data = {}
+	local current_rot = self:get_camera_rotation()
+	local settings = not not settings or not not cam_shake_settings
+	local duration = settings.duration
+	local fade_in = settings.fade_in
+	local fade_out = settings.fade_out
 
-	tbl.shake_settings = flag
-	tbl.start_time = arg_67_2
-	tbl.end_time = not num and arg_67_2 + num
-	tbl.fade_in_time = not fade_in and arg_67_2 + fade_in
-	tbl.fade_out_time = not fade_out and tbl.end_time - fade_out
+	duration = (not not duration or not not 0) + (not not fade_in or not not 0) + (not not fade_out or not not 0)
+	data.shake_settings = settings
+	data.start_time = start_time
+	data.end_time = not not duration and not not (start_time + duration)
+	data.fade_in_time = not not fade_in and not not (start_time + fade_in)
+	data.fade_out_time = not not fade_out and not not (data.end_time - fade_out)
 
-	local seed = flag.seed
+	local seed = settings.seed
 
-	seed = seed or Math.random(1, 100)
-	tbl.seed = seed
-	tbl.scale = arg_67_3 or 1
-	tbl.camera_rotation_boxed = QuaternionBox(get_camera_rotation)
+	seed = not not seed or not not Math.random(1, 100)
+	data.seed = seed
+	data.scale = not not scale or not not 1
+	data.camera_rotation_boxed = QuaternionBox(current_rot)
 	self._active_camera_shakes = {
-		[tbl] = true
+		[data] = true
 	}
 end
 
-LevelEndViewBase._apply_shake_event = function (self, arg_68_1, arg_68_2)
+LevelEndViewBase._apply_shake_event = function (self, settings, t)
 	-- function 68
-	local _active_camera_shakes = self._active_camera_shakes
-	local start_time = arg_68_1.start_time
-	local end_time = arg_68_1.end_time
-	local fade_in_time = arg_68_1.fade_in_time
-	local fade_out_time = arg_68_1.fade_out_time
+	local active_camera_shakes = self._active_camera_shakes
+	local start_time = settings.start_time
+	local end_time = settings.end_time
+	local fade_in_time = settings.fade_in_time
+	local fade_out_time = settings.fade_out_time
 
-	if not (not fade_in_time and not (arg_68_2 <= fade_in_time)) then
-		arg_68_1.fade_progress = math.clamp((arg_68_2 - start_time) / (fade_in_time - start_time), 0, 1)
-	elseif not (not fade_out_time and not (fade_out_time <= arg_68_2)) then
-		arg_68_1.fade_progress = math.clamp((end_time - arg_68_2) / (end_time - fade_out_time), 0, 1)
+	if fade_in_time and t <= fade_in_time then
+		settings.fade_progress = math.clamp((t - start_time) / (fade_in_time - start_time), 0, 1)
+	elseif fade_out_time and fade_out_time <= t then
+		settings.fade_progress = math.clamp((end_time - t) / (end_time - fade_out_time), 0, 1)
 	end
 
-	local num = self:_calculate_perlin_value(arg_68_2 - arg_68_1.start_time, arg_68_1) * arg_68_1.scale
-	local num_2 = self:_calculate_perlin_value(arg_68_2 - arg_68_1.start_time + 10, arg_68_1) * arg_68_1.scale
-	local unbox = arg_68_1.camera_rotation_boxed:unbox()
-	local num_3 = math.pi / 180
-	local var_68_9 = Quaternion(Vector3.up(), num_2 * num_3)
-	local var_68_10 = Quaternion(Vector3.right(), num * num_3)
-	local multiply = Quaternion.multiply(var_68_9, var_68_10)
-	local multiply_2 = Quaternion.multiply(unbox, multiply)
+	local pitch_noise_value = self:_calculate_perlin_value(t - settings.start_time, settings) * settings.scale
+	local yaw_noise_value = self:_calculate_perlin_value(t - settings.start_time + 10, settings) * settings.scale
+	local starting_rotation = settings.camera_rotation_boxed:unbox()
+	local deg_to_rad = math.pi / 180
+	local yaw_offset = Quaternion(Vector3.up(), yaw_noise_value * deg_to_rad)
+	local pitch_offset = Quaternion(Vector3.right(), pitch_noise_value * deg_to_rad)
+	local total_offset = Quaternion.multiply(yaw_offset, pitch_offset)
+	local rotation = Quaternion.multiply(starting_rotation, total_offset)
 
-	self:set_camera_rotation(multiply_2)
+	self:set_camera_rotation(rotation)
 
-	if not (not arg_68_1.end_time and not (arg_68_2 >= arg_68_1.end_time)) then
-		_active_camera_shakes[arg_68_1] = nil
+	if settings.end_time and t >= settings.end_time then
+		active_camera_shakes[settings] = nil
 	end
 end
 
-LevelEndViewBase._calculate_perlin_value = function (self, arg_69_1, arg_69_2)
+LevelEndViewBase._calculate_perlin_value = function (self, x, settings)
 	-- function 69
-	local num = 0
-	local shake_settings = arg_69_2.shake_settings
+	local total = 0
+	local shake_settings = settings.shake_settings
 	local persistance = shake_settings.persistance
-	local octaves = shake_settings.octaves
+	local number_of_octaves = shake_settings.octaves
 
-	for i = 0, octaves do
-		local num_2 = 2^i
-		local num_3 = persistance^i
+	for i = 0, number_of_octaves do
+		local frequency = 2^i
+		local amplitude = persistance^i
 
-		num = num + self:_interpolated_noise(arg_69_1 * num_2, arg_69_2) * num_3
+		total = total + self:_interpolated_noise(x * frequency, settings) * amplitude
 	end
 
-	local amplitude = shake_settings.amplitude
+	local amplitude_2 = shake_settings.amplitude
 
-	amplitude = amplitude or 1
+	if not amplitude_2 then
+		-- Nothing
+	end
 
-	local fade_progress = arg_69_2.fade_progress
+	amplitude_2 = 1
 
-	fade_progress = fade_progress or 1
+	local amplitude_multiplier = amplitude_2
 
-	return num * amplitude * fade_progress
+	::label_69_0::
+
+	local fade_progress = settings.fade_progress
+
+	if not fade_progress then
+		-- Nothing
+	end
+
+	fade_progress = 1
+
+	local fade_multiplier = fade_progress
+
+	::label_69_1::
+
+	total = total * amplitude_multiplier * fade_multiplier
+
+	return total
 end
 
-LevelEndViewBase._interpolated_noise = function (self, arg_70_1, arg_70_2)
+LevelEndViewBase._interpolated_noise = function (self, x, settings)
 	-- function 70
-	local floor = math.floor(arg_70_1)
-	local num = arg_70_1 - floor
-	local _smoothed_noise = self:_smoothed_noise(floor, arg_70_2)
-	local _smoothed_noise_2 = self:_smoothed_noise(floor + 1, arg_70_2)
+	local x_floored = math.floor(x)
+	local remainder = x - x_floored
+	local v1 = self:_smoothed_noise(x_floored, settings)
+	local v2 = self:_smoothed_noise(x_floored + 1, settings)
 
-	return math.lerp(_smoothed_noise, _smoothed_noise_2, num)
+	return math.lerp(v1, v2, remainder)
 end
 
-LevelEndViewBase._smoothed_noise = function (self, arg_71_1, arg_71_2)
+LevelEndViewBase._smoothed_noise = function (self, x, settings)
 	-- function 71
-	return self:_noise(arg_71_1, arg_71_2) / 2 + self:_noise(arg_71_1 - 1, arg_71_2) / 4 + self:_noise(arg_71_1 + 1, arg_71_2) / 4
+	return self:_noise(x, settings) / 2 + self:_noise(x - 1, settings) / 4 + self:_noise(x + 1, settings) / 4
 end
 
-LevelEndViewBase._noise = function (arg_72_0, arg_72_1, arg_72_2)
+LevelEndViewBase._noise = function (self, x, settings)
 	-- function 72
-	local next_random, var_72_1 = Math.next_random(arg_72_1 + arg_72_2.seed)
-	local next_random_2, var_72_3 = Math.next_random(next_random)
+	local next_seed, _ = Math.next_random(x + settings.seed)
+	local _, value = Math.next_random(next_seed)
 
-	return var_72_3 * 2 - 1
+	return value * 2 - 1
 end
 
-LevelEndViewBase.set_camera_position = function (self, arg_73_1)
+LevelEndViewBase.set_camera_position = function (self, position)
 	-- function 73
-	local get_viewport_world, var_73_1 = self:get_viewport_world()
-	local camera = ScriptViewport.camera(var_73_1)
+	local _, viewport = self:get_viewport_world()
+	local camera = ScriptViewport.camera(viewport)
 
-	return ScriptCamera.set_local_position(camera, arg_73_1)
+	return ScriptCamera.set_local_position(camera, position)
 end
 
-LevelEndViewBase.set_camera_rotation = function (self, arg_74_1)
+LevelEndViewBase.set_camera_rotation = function (self, rotation)
 	-- function 74
-	local get_viewport_world, var_74_1 = self:get_viewport_world()
-	local camera = ScriptViewport.camera(var_74_1)
+	local _, viewport = self:get_viewport_world()
+	local camera = ScriptViewport.camera(viewport)
 
-	return ScriptCamera.set_local_rotation(camera, arg_74_1)
+	return ScriptCamera.set_local_rotation(camera, rotation)
 end
 
 LevelEndViewBase.get_camera_position = function (self)
 	-- function 75
-	local get_viewport_world, var_75_1 = self:get_viewport_world()
-	local camera = ScriptViewport.camera(var_75_1)
+	local _, viewport = self:get_viewport_world()
+	local camera = ScriptViewport.camera(viewport)
 
 	return ScriptCamera.position(camera)
 end
 
 LevelEndViewBase.get_camera_rotation = function (self)
 	-- function 76
-	local get_viewport_world, var_76_1 = self:get_viewport_world()
-	local camera = ScriptViewport.camera(var_76_1)
+	local _, viewport = self:get_viewport_world()
+	local camera = ScriptViewport.camera(viewport)
 
 	return ScriptCamera.rotation(camera)
 end
 
-LevelEndViewBase.position_camera = function (self, arg_77_1, arg_77_2)
+LevelEndViewBase.position_camera = function (self, optional_pose, fov)
 	-- function 77
-	local get_viewport_world, var_77_1 = self:get_viewport_world()
-	local camera = ScriptViewport.camera(var_77_1)
-	local flag = arg_77_1 or self._camera_pose:unbox()
+	local world, viewport = self:get_viewport_world()
+	local camera = ScriptViewport.camera(viewport)
+	local camera_pose = not not optional_pose or not not self._camera_pose:unbox()
 
-	if not flag then
-		local flag_2 = arg_77_2 or 65
+	if camera_pose then
+		local fov = not not fov or not not 65
 
-		Camera.set_vertical_fov(camera, math.degrees_to_radians(flag_2))
-		ScriptCamera.set_local_pose(camera, flag)
-		ScriptCamera.force_update(get_viewport_world, camera)
+		Camera.set_vertical_fov(camera, math.degrees_to_radians(fov))
+		ScriptCamera.set_local_pose(camera, camera_pose)
+		ScriptCamera.force_update(world, camera)
 	end
 end
 
-LevelEndViewBase.set_camera_zoom = function (self, arg_78_1)
+LevelEndViewBase.set_camera_zoom = function (self, progress)
 	-- function 78
-	local unbox = self._camera_pose:unbox()
-	local translation = Matrix4x4.translation(unbox)
-	local rotation = Matrix4x4.rotation(unbox)
-	local num = 0.5 * arg_78_1
-	local num_2 = translation + Quaternion.forward(rotation) * num
+	local camera_pose = self._camera_pose:unbox()
+	local translation = Matrix4x4.translation(camera_pose)
+	local rotation = Matrix4x4.rotation(camera_pose)
+	local max_distance = 0.5
+	local distance = max_distance * progress
+	local dir = Quaternion.forward(rotation)
+	local position = translation + dir * distance
 
-	self:set_camera_position(num_2)
+	self:set_camera_position(position)
 end
 
 LevelEndViewBase._setup_viewport_camera = function (self)
 	-- function 79
-	local get_viewport_world, var_79_1 = self:get_viewport_world()
-	local unit_by_name = World.unit_by_name(get_viewport_world, "camera")
-	local world_rotation = Unit.world_rotation(unit_by_name, 0)
-	local num = Unit.world_position(unit_by_name, 0) - Quaternion.forward(world_rotation) * 3
-	local camera = ScriptViewport.camera(var_79_1)
+	local world, viewport = self:get_viewport_world()
+	local level_camera_unit = World.unit_by_name(world, "camera")
+	local level_camera_rot = Unit.world_rotation(level_camera_unit, 0)
+	local level_camera_pos = Unit.world_position(level_camera_unit, 0)
+	local level_camera_look = Quaternion.forward(level_camera_rot)
 
-	ScriptCamera.set_local_rotation(camera, world_rotation)
-	ScriptCamera.set_local_position(camera, num)
+	level_camera_pos = level_camera_pos - level_camera_look * 3
+
+	local viewport_camera = ScriptViewport.camera(viewport)
+
+	ScriptCamera.set_local_rotation(viewport_camera, level_camera_rot)
+	ScriptCamera.set_local_position(viewport_camera, level_camera_pos)
 end
 
 LevelEndViewBase._push_mouse_cursor = function (self)
@@ -1461,29 +1536,31 @@ end
 
 LevelEndViewBase._pop_mouse_cursor = function (self)
 	-- function 81
-	if not self._cursor_visible then
+	if self._cursor_visible then
 		ShowCursorStack.hide("LevelEndViewBase")
 
 		self._cursor_visible = nil
 	end
 end
 
-LevelEndViewBase.set_input_manager = function (self, arg_82_1)
+LevelEndViewBase.set_input_manager = function (self, input_manager)
 	-- function 82
-	self.input_manager = arg_82_1
+	self.input_manager = input_manager
 
-	if not self.reward_popup then
-		self.reward_popup:set_input_manager(arg_82_1)
+	if self.reward_popup then
+		self.reward_popup:set_input_manager(input_manager)
 	end
 
-	self._machine:state():set_input_manager(arg_82_1)
+	local state = self._machine:state()
+
+	state:set_input_manager(input_manager)
 end
 
 LevelEndViewBase.input_service = function (self)
 	-- function 83
 	local FAKE_INPUT_SERVICE
 
-	if not (self:displaying_reward_presentation() or table.is_empty(self._transition_animations)) then
+	if self:displaying_reward_presentation() or not table.is_empty(self._transition_animations) then
 		FAKE_INPUT_SERVICE = FAKE_INPUT_SERVICE
 
 		if not FAKE_INPUT_SERVICE then
@@ -1502,7 +1579,7 @@ LevelEndViewBase.menu_input_service = function (self)
 	-- function 84
 	local FAKE_INPUT_SERVICE
 
-	if not self.input_blocked then
+	if self.input_blocked then
 		FAKE_INPUT_SERVICE = FAKE_INPUT_SERVICE
 
 		if not FAKE_INPUT_SERVICE then
@@ -1517,37 +1594,37 @@ LevelEndViewBase.menu_input_service = function (self)
 	return FAKE_INPUT_SERVICE
 end
 
-LevelEndViewBase.set_input_blocked = function (self, arg_85_1)
+LevelEndViewBase.set_input_blocked = function (self, blocked)
 	-- function 85
-	self.input_blocked = arg_85_1
+	self.input_blocked = blocked
 end
 
-LevelEndViewBase.input_enabled = function (arg_86_0)
+LevelEndViewBase.input_enabled = function (self)
 	-- function 86
 	return true
 end
 
-LevelEndViewBase.setup_world = function (self, arg_87_1)
+LevelEndViewBase.setup_world = function (self, context)
 	-- function 87
-	local create_world, var_87_1 = self:create_world(arg_87_1)
-	local spawn_level = self:spawn_level(arg_87_1, create_world)
-	local create_viewport = self:create_viewport(arg_87_1, create_world)
-	local create_ui_renderer, var_87_5 = self:create_ui_renderer(arg_87_1, create_world, var_87_1)
-	local wwise_world = Managers.world:wwise_world(create_world)
+	local world, top_world = self:create_world(context)
+	local level = self:spawn_level(context, world)
+	local viewport = self:create_viewport(context, world)
+	local ui_renderer, ui_top_renderer = self:create_ui_renderer(context, world, top_world)
+	local wwise_world = Managers.world:wwise_world(world)
 
-	self._world = create_world
-	self._level = spawn_level
-	self._top_world = var_87_1
-	self._world_viewport = create_viewport
-	self.ui_renderer = create_ui_renderer
-	self.ui_top_renderer = var_87_5
+	self._world = world
+	self._level = level
+	self._top_world = top_world
+	self._world_viewport = viewport
+	self.ui_renderer = ui_renderer
+	self.ui_top_renderer = ui_top_renderer
 	self.wwise_world = wwise_world
-	arg_87_1.world = create_world
-	arg_87_1.top_world = var_87_1
-	arg_87_1.world_viewport = create_viewport
-	arg_87_1.ui_renderer = create_ui_renderer
-	arg_87_1.ui_top_renderer = var_87_5
-	arg_87_1.wwise_world = wwise_world
+	context.world = world
+	context.top_world = top_world
+	context.world_viewport = viewport
+	context.ui_renderer = ui_renderer
+	context.ui_top_renderer = ui_top_renderer
+	context.wwise_world = wwise_world
 end
 
 LevelEndViewBase.destroy_world = function (self)
@@ -1566,143 +1643,141 @@ LevelEndViewBase.destroy_world = function (self)
 	self._top_world = nil
 end
 
-LevelEndViewBase.get_world_flags = function (arg_89_0)
+LevelEndViewBase.get_world_flags = function (self)
 	-- function 89
-	local tbl = {
+	local flags = {
 		Application.DISABLE_SOUND,
 		Application.DISABLE_ESRAM,
 		Application.ENABLE_VOLUMETRICS
 	}
 
-	if not Application.user_setting("disable_apex_cloth") then
-		table.insert(tbl, Application.DISABLE_APEX_CLOTH)
+	if Application.user_setting("disable_apex_cloth") then
+		table.insert(flags, Application.DISABLE_APEX_CLOTH)
 	else
-		table.insert(tbl, Application.APEX_LOD_RESOURCE_BUDGET)
+		table.insert(flags, Application.APEX_LOD_RESOURCE_BUDGET)
 
 		local insert = table.insert
-		local var_89_2 = tbl
+		local var_89_1 = flags
 		local user_setting = Application.user_setting("apex_lod_resource_budget")
 
-		user_setting = user_setting or ApexClothQuality.high.apex_lod_resource_budget
+		user_setting = not not user_setting or not not ApexClothQuality.high.apex_lod_resource_budget
 
-		insert(var_89_2, user_setting)
+		insert(var_89_1, user_setting)
 	end
 
-	return tbl
+	return flags
 end
 
-LevelEndViewBase.create_world = function (self, arg_90_1)
+LevelEndViewBase.create_world = function (self, context)
 	-- function 90
-	local str = "end_screen"
-	local str_2 = "environment/ui_end_screen"
-	local num = 2
-	local get_world_flags = self:get_world_flags()
-	local create_world = Managers.world:create_world(str, str_2, nil, num, unpack(get_world_flags))
-	local world = Managers.world:world("top_ingame_view")
+	local world_name = "end_screen"
+	local shading_environment = "environment/ui_end_screen"
+	local layer = 2
+	local flags = self:get_world_flags()
+	local world = Managers.world:create_world(world_name, shading_environment, nil, layer, unpack(flags))
+	local top_world = Managers.world:world("top_ingame_view")
 
-	return create_world, world
+	return world, top_world
 end
 
-LevelEndViewBase.create_viewport = function (arg_91_0, arg_91_1, arg_91_2)
+LevelEndViewBase.create_viewport = function (self, context, world)
 	-- function 91
-	local str = "end_screen_viewport"
-	local str_2 = "default"
-	local num = 2
+	local viewport_name = "end_screen_viewport"
+	local viewport_type = "default"
+	local layer = 2
+	local viewport = ScriptWorld.create_viewport(world, viewport_name, viewport_type, layer)
 
-	return (ScriptWorld.create_viewport(arg_91_2, str, str_2, num))
+	return viewport
 end
 
-LevelEndViewBase.spawn_level = function (self, arg_92_1, arg_92_2)
+LevelEndViewBase.spawn_level = function (self, context, world)
 	-- function 92
-	local str = "levels/end_screen/world"
-	local tbl = {}
-	local var_92_2
-	local var_92_3
-	local var_92_4
-	local var_92_5
-	local flag = false
-	local spawn_level = ScriptWorld.spawn_level(arg_92_2, str, tbl, var_92_2, var_92_3, var_92_4, var_92_5, flag)
+	local level_name = "levels/end_screen/world"
+	local object_sets = {}
+	local position, rotation, shading_callback, mood_setting
+	local time_sliced_spawn = false
+	local level = ScriptWorld.spawn_level(world, level_name, object_sets, position, rotation, shading_callback, mood_setting, time_sliced_spawn)
 
-	Level.spawn_background(spawn_level)
-	Level.trigger_level_loaded(spawn_level)
-	self:_register_object_sets(spawn_level, str)
+	Level.spawn_background(level)
+	Level.trigger_level_loaded(level)
+	self:_register_object_sets(level, level_name)
 
-	return spawn_level
+	return level
 end
 
-LevelEndViewBase._register_object_sets = function (self, arg_93_1, arg_93_2)
+LevelEndViewBase._register_object_sets = function (self, level, level_name)
 	-- function 93
-	local tbl = {}
-	local object_set_names = LevelResource.object_set_names(arg_93_2)
+	local object_sets = {}
+	local available_level_sets = LevelResource.object_set_names(level_name)
 
-	for i, v in ipairs(object_set_names) do
-		tbl[v] = {
+	for _, set_name in ipairs(available_level_sets) do
+		object_sets[set_name] = {
 			set_enabled = true,
-			units = LevelResource.unit_indices_in_object_set(arg_93_2, v)
+			units = LevelResource.unit_indices_in_object_set(level_name, set_name)
 		}
 	end
 
-	self._object_sets = tbl
+	self._object_sets = object_sets
 
-	self:_show_object_set(nil, arg_93_1)
+	self:_show_object_set(nil, level)
 end
 
-LevelEndViewBase._show_object_set = function (self, arg_94_1, arg_94_2)
+LevelEndViewBase._show_object_set = function (self, object_set_name, level)
 	-- function 94
-	local flag = arg_94_2 or self._level
-	local _object_sets = self._object_sets
-	local flag_2 = false
+	local level = not not level or not not self._level
+	local object_sets = self._object_sets
+	local exists = false
 
-	for k, v in pairs(_object_sets) do
-		local set_enabled = v.set_enabled
+	for set_name, object_set_data in pairs(object_sets) do
+		local set_enabled = object_set_data.set_enabled
 
-		if not (not set_enabled and k == arg_94_1) then
-			local units = v.units
+		if set_enabled and set_name ~= object_set_name then
+			local units = object_set_data.units
 
-			for i, v_2 in ipairs(units) do
-				local unit_by_index = Level.unit_by_index(flag, v_2)
+			for _, unit_index in ipairs(units) do
+				local unit = Level.unit_by_index(level, unit_index)
 
-				if not Unit.alive(unit_by_index) then
-					Unit.set_unit_visibility(unit_by_index, false)
+				if Unit.alive(unit) then
+					Unit.set_unit_visibility(unit, false)
 				end
 			end
 
-			v.set_enabled = false
-		elseif not (k ~= arg_94_1 or set_enabled) then
-			local units_2 = v.units
+			object_set_data.set_enabled = false
+		elseif set_name == object_set_name and not set_enabled then
+			local units = object_set_data.units
 
-			for i_2, v_3 in ipairs(units_2) do
-				local unit_by_index_2 = Level.unit_by_index(flag, v_3)
+			for _, unit_index in ipairs(units) do
+				local unit = Level.unit_by_index(level, unit_index)
 
-				Unit.set_unit_visibility(unit_by_index_2, true)
+				Unit.set_unit_visibility(unit, true)
 
-				if not Unit.has_data(unit_by_index_2, "LevelEditor", "is_gizmo_unit") then
-					local get_data = Unit.get_data(unit_by_index_2, "LevelEditor", "is_gizmo_unit")
-					local is_a = Unit.is_a(unit_by_index_2, "core/stingray_renderer/helper_units/reflection_probe/reflection_probe")
+				if Unit.has_data(unit, "LevelEditor", "is_gizmo_unit") then
+					local is_gizmo = Unit.get_data(unit, "LevelEditor", "is_gizmo_unit")
+					local is_reflection_probe = Unit.is_a(unit, "core/stingray_renderer/helper_units/reflection_probe/reflection_probe")
 
-					if not (not get_data and is_a) then
-						Unit.flow_event(unit_by_index_2, "hide_helper_mesh")
-						Unit.flow_event(unit_by_index_2, "unit_object_set_enabled")
+					if is_gizmo and not is_reflection_probe then
+						Unit.flow_event(unit, "hide_helper_mesh")
+						Unit.flow_event(unit, "unit_object_set_enabled")
 					end
 				end
 			end
 
-			v.set_enabled = true
+			object_set_data.set_enabled = true
 		end
 
-		flag_2 = k == arg_94_1 or flag_2
+		exists = set_name == object_set_name or not not exists
 	end
 
-	if not flag_2 then
-		print("Showing object set:", arg_94_1)
-	elseif not arg_94_1 then
-		print(string.format("Trying to show object set %q - But it didn't exist", arg_94_1))
+	if exists then
+		print("Showing object set:", object_set_name)
+	elseif object_set_name then
+		print(string.format("Trying to show object set %q - But it didn't exist", object_set_name))
 	end
 end
 
-LevelEndViewBase.create_ui_renderer = function (self, arg_95_1, arg_95_2, arg_95_3)
+LevelEndViewBase.create_ui_renderer = function (self, context, world, top_world)
 	-- function 95
-	local tbl_2 = {
+	local materials = {
 		"material",
 		"materials/ui/ui_1080p_hud_atlas_textures",
 		"material",
@@ -1720,31 +1795,31 @@ LevelEndViewBase.create_ui_renderer = function (self, arg_95_1, arg_95_2, arg_95
 		"material",
 		"materials/fonts/gw_fonts"
 	}
-	local get_extra_materials = self.get_extra_materials
+	local extra_materials = self.get_extra_materials
 
-	if not get_extra_materials then
-		for i, v in ipairs(get_extra_materials) do
-			tbl_2[#tbl_2 + 1] = v
+	if extra_materials then
+		for _, extra_material in ipairs(extra_materials) do
+			materials[#materials + 1] = extra_material
 		end
 	end
 
-	for i_2, v_2 in ipairs(tbl) do
-		tbl_2[#tbl_2 + 1] = "material"
-		tbl_2[#tbl_2 + 1] = v_2
+	for _, extra_portrait_material in ipairs(extra_portrait_materials) do
+		materials[#materials + 1] = "material"
+		materials[#materials + 1] = extra_portrait_material
 	end
 
-	local var_95_2 = UIRenderer.create(arg_95_2, unpack(tbl_2))
-	local var_95_3 = UIRenderer.create(arg_95_3, unpack(tbl_2))
+	local ui_renderer = UIRenderer.create(world, unpack(materials))
+	local ui_top_renderer = UIRenderer.create(top_world, unpack(materials))
 
-	return var_95_2, var_95_3
+	return ui_renderer, ui_top_renderer
 end
 
-LevelEndViewBase.show_team = function (arg_96_0)
+LevelEndViewBase.show_team = function (self)
 	-- function 96
 	return
 end
 
-LevelEndViewBase.hide_team = function (arg_97_0)
+LevelEndViewBase.hide_team = function (self)
 	-- function 97
 	return
 end

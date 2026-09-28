@@ -1,154 +1,172 @@
 -- chunkname: @scripts/entity_system/systems/network/game_object_system.lua
 
-local tbl = {
+local extensions = {
 	"GameObjectExtension"
 }
 
 GameObjectSystem = class(GameObjectSystem, ExtensionSystemBase)
 
-GameObjectSystem.init = function (self, arg_1_1, arg_1_2)
+GameObjectSystem.init = function (self, entity_system_creation_context, system_name)
 	-- function 1
-	arg_1_1.entity_manager:register_system(self, arg_1_2, tbl)
+	local entity_manager = entity_system_creation_context.entity_manager
 
-	self.is_server = arg_1_1.is_server
-	self.unit_storage = arg_1_1.unit_storage
-	self.world = arg_1_1.world
-	self.name = arg_1_2
+	entity_manager:register_system(self, system_name, extensions)
+
+	self.is_server = entity_system_creation_context.is_server
+	self.unit_storage = entity_system_creation_context.unit_storage
+	self.world = entity_system_creation_context.world
+	self.name = system_name
 	self.own_peer_id = Network.peer_id()
 	self.unit_extension_data = {}
 	self.units_to_sync = {}
 end
 
-GameObjectSystem.destroy = function (arg_2_0)
+GameObjectSystem.destroy = function (self)
 	-- function 2
 	return
 end
 
-local tbl_2 = {}
+local dummy_input = {}
 
-GameObjectSystem.on_add_extension = function (self, arg_3_1, arg_3_2, arg_3_3, arg_3_4)
+GameObjectSystem.on_add_extension = function (self, world, unit, extension_name, extension_init_data)
 	-- function 3
-	local tbl = {}
+	local extension = {}
 
-	if arg_3_3 == "GameObjectExtension" then
-		local current_level = LevelHelper:current_level(self.world)
-		local flag = Level.unit_index(current_level, arg_3_2) ~= nil
+	if extension_name == "GameObjectExtension" then
+		local level = LevelHelper:current_level(self.world)
+		local level_index = Level.unit_index(level, unit)
+		local ignored = level_index ~= nil
 
-		tbl.ignored = flag
+		extension.ignored = ignored
 
-		if not flag then
-			local sync_name = arg_3_4.sync_name
+		if not ignored then
+			local sync_name_2 = extension_init_data.sync_name
 
-			sync_name = sync_name or Unit.get_data(arg_3_2, "sync_name")
+			if not sync_name_2 then
+				-- Nothing
+			end
 
-			local go_type = arg_3_4.go_type
+			sync_name_2 = Unit.get_data(unit, "sync_name")
 
-			go_type = go_type or Unit.get_data(arg_3_2, "go_type")
+			local sync_name = sync_name_2
 
-			fassert(sync_name, "Game object extension couldn't find sync_name for unit %s", arg_3_2)
-			fassert(go_type, "Game object extension couldn't find go_type for unit %s", arg_3_2)
-			fassert(NetworkLookup.sync_names[sync_name], "Sync name %s on unit %s didn't exist in NetworkLookup", sync_name, arg_3_2)
+			::label_3_0::
 
-			tbl.sync_name = sync_name
-			tbl.go_type = go_type
+			local go_type_2 = extension_init_data.go_type
+
+			if not go_type_2 then
+				-- Nothing
+			end
+
+			go_type_2 = Unit.get_data(unit, "go_type")
+
+			local go_type = go_type_2
+
+			::label_3_1::
+
+			fassert(sync_name, "Game object extension couldn't find sync_name for unit %s", unit)
+			fassert(go_type, "Game object extension couldn't find go_type for unit %s", unit)
+			fassert(NetworkLookup.sync_names[sync_name], "Sync name %s on unit %s didn't exist in NetworkLookup", sync_name, unit)
+
+			extension.sync_name = sync_name
+			extension.go_type = go_type
 
 			if not self.is_server then
-				fassert(self.units_to_sync[sync_name] == nil, "Tried to register unit %s with sync_name %s but it was already set by %s", arg_3_2, sync_name, self.units_to_sync[sync_name])
+				fassert(self.units_to_sync[sync_name] == nil, "Tried to register unit %s with sync_name %s but it was already set by %s", unit, sync_name, self.units_to_sync[sync_name])
 
-				self.units_to_sync[sync_name] = arg_3_2
+				self.units_to_sync[sync_name] = unit
 			end
 		end
 	end
 
-	ScriptUnit.set_extension(arg_3_2, "game_object_system", tbl, tbl_2)
+	ScriptUnit.set_extension(unit, "game_object_system", extension, dummy_input)
 
-	self.unit_extension_data[arg_3_2] = tbl
+	self.unit_extension_data[unit] = extension
 
-	return tbl
+	return extension
 end
 
-GameObjectSystem.extensions_ready = function (self, arg_4_1, arg_4_2, arg_4_3)
+GameObjectSystem.extensions_ready = function (self, world, unit, extension_name)
 	-- function 4
-	if arg_4_3 == "GameObjectExtension" then
-		local var_4_0 = self.unit_extension_data[arg_4_2]
+	if extension_name == "GameObjectExtension" then
+		local extension = self.unit_extension_data[unit]
 
-		if not (not self.is_server and var_4_0.ignored) then
-			NetworkUnit.add_unit(arg_4_2)
-			NetworkUnit.set_is_husk_unit(arg_4_2, false)
+		if self.is_server and not extension.ignored then
+			NetworkUnit.add_unit(unit)
+			NetworkUnit.set_is_husk_unit(unit, false)
 
-			local var_4_1
-			local var_4_2
-			local var_4_3
-			local game = Managers.state.network:game()
-			local go_type = var_4_0.go_type
-			local var_4_6 = Managers.state.unit_spawner.gameobject_initializers[go_type]
+			local unit_name, unit_template, gameobject_functor_context
+			local game_session = Managers.state.network:game()
+			local go_type = extension.go_type
+			local unit_spawner = Managers.state.unit_spawner
+			local go_initializer_function = unit_spawner.gameobject_initializers[go_type]
 
-			fassert(var_4_6, "Couldn't find initializer function for go_type %s on unit %s", go_type, arg_4_2)
+			fassert(go_initializer_function, "Couldn't find initializer function for go_type %s on unit %s", go_type, unit)
 
-			local var_4_7 = var_4_6(arg_4_2, var_4_1, var_4_2, var_4_3)
-			local create_game_object = GameSession.create_game_object(game, go_type, var_4_7)
+			local go_init_data = go_initializer_function(unit, unit_name, unit_template, gameobject_functor_context)
+			local game_object_id = GameSession.create_game_object(game_session, go_type, go_init_data)
 
-			var_4_0.game_object_id = create_game_object
+			extension.game_object_id = game_object_id
 
-			self.unit_storage:add_unit_info(arg_4_2, create_game_object, go_type, self.own_peer_id)
+			self.unit_storage:add_unit_info(unit, game_object_id, go_type, self.own_peer_id)
 		end
 	end
 end
 
-GameObjectSystem.on_remove_extension = function (self, arg_5_1, arg_5_2)
+GameObjectSystem.on_remove_extension = function (self, unit, extension_name)
 	-- function 5
-	local var_5_0 = self.unit_extension_data[arg_5_1]
+	local extension = self.unit_extension_data[unit]
 
-	if not var_5_0.ignored then
-		local game = Managers.state.network:game()
-		local game_object_id = var_5_0.game_object_id
+	if not extension.ignored then
+		local game_session = Managers.state.network:game()
+		local game_object_id = extension.game_object_id
 
-		if not game and not self.is_server then
-			GameSession.destroy_game_object(game, game_object_id)
+		if game_session and self.is_server then
+			GameSession.destroy_game_object(game_session, game_object_id)
 		end
 
-		if not game_object_id then
-			self.unit_storage:remove(arg_5_1, game_object_id)
+		if game_object_id then
+			self.unit_storage:remove(unit, game_object_id)
 		end
 
-		if not NetworkUnit.is_network_unit(arg_5_1) then
-			NetworkUnit.remove_unit(arg_5_1)
+		if NetworkUnit.is_network_unit(unit) then
+			NetworkUnit.remove_unit(unit)
 		end
 	end
 
-	self.unit_extension_data[arg_5_1] = nil
+	self.unit_extension_data[unit] = nil
 
-	ScriptUnit.remove_extension(arg_5_1, self.NAME)
+	ScriptUnit.remove_extension(unit, self.NAME)
 end
 
-GameObjectSystem.game_object_created = function (self, arg_6_1, arg_6_2, arg_6_3)
+GameObjectSystem.game_object_created = function (self, game_object_id, owner_id, go_template)
 	-- function 6
-	local game = Managers.state.network:game()
-	local game_object_field = GameSession.game_object_field(game, arg_6_1, "sync_name")
-	local var_6_2 = NetworkLookup.sync_names[game_object_field]
-	local var_6_3 = self.units_to_sync[var_6_2]
+	local game_session = Managers.state.network:game()
+	local sync_name_id = GameSession.game_object_field(game_session, game_object_id, "sync_name")
+	local sync_name = NetworkLookup.sync_names[sync_name_id]
+	local unit = self.units_to_sync[sync_name]
 
-	fassert(var_6_3, "Couldn't find unit with sync name %s and game_object_id %s", var_6_2, arg_6_1)
-	NetworkUnit.add_unit(var_6_3)
-	NetworkUnit.set_is_husk_unit(var_6_3, true)
+	fassert(unit, "Couldn't find unit with sync name %s and game_object_id %s", sync_name, game_object_id)
+	NetworkUnit.add_unit(unit)
+	NetworkUnit.set_is_husk_unit(unit, true)
 
-	local go_type = arg_6_3.go_type
+	local go_type = go_template.go_type
 
-	self.unit_storage:add_unit_info(var_6_3, arg_6_1, go_type, arg_6_2)
+	self.unit_storage:add_unit_info(unit, game_object_id, go_type, owner_id)
 
-	local var_6_5 = self.unit_extension_data[var_6_3]
+	local extension = self.unit_extension_data[unit]
 
-	var_6_5.game_object_id = arg_6_1
+	extension.game_object_id = game_object_id
 
-	fassert(not var_6_5.ignored, "Client got game_object_created for unit %s with sync_name %s that should be ignored...", var_6_3, var_6_2)
+	fassert(not extension.ignored, "Client got game_object_created for unit %s with sync_name %s that should be ignored...", unit, sync_name)
 end
 
-GameObjectSystem.update = function (arg_7_0, arg_7_1, arg_7_2)
+GameObjectSystem.update = function (self, context, t)
 	-- function 7
 	return
 end
 
-GameObjectSystem.hot_join_sync = function (arg_8_0, arg_8_1)
+GameObjectSystem.hot_join_sync = function (self, peer_id)
 	-- function 8
 	return
 end

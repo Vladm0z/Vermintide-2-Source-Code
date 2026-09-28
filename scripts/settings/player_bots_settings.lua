@@ -4,17 +4,17 @@ require("scripts/unit_extensions/human/ai_player_unit/ai_utils")
 
 local PlayerBots = PlayerBots
 
-PlayerBots = PlayerBots or {}
+PlayerBots = not not PlayerBots or not not {}
 PlayerBots = PlayerBots
 
 local BotActions = BotActions
 
-BotActions = BotActions or {}
+BotActions = not not BotActions or not not {}
 BotActions = BotActions
 
 local BotConstants = BotConstants
 
-BotConstants = BotConstants or {}
+BotConstants = not not BotConstants or not not {}
 BotConstants = BotConstants
 BotActions.default = {
 	follow = {
@@ -244,14 +244,14 @@ BotActions.default = {
 	}
 }
 
-for k, v in pairs(BotActions) do
-	for k_2, v_2 in pairs(v) do
-		v_2.name = k_2
+for category_name, category_table in pairs(BotActions) do
+	for action_name, action_table in pairs(category_table) do
+		action_table.name = action_name
 
-		local var_0_3 = UtilityConsiderations["player_bot_" .. k .. "_" .. k_2]
+		local var_0_3 = UtilityConsiderations["player_bot_" .. category_name .. "_" .. action_name]
 
-		var_0_3 = var_0_3 or nil
-		v_2.considerations = var_0_3
+		var_0_3 = not not var_0_3 or not not nil
+		action_table.considerations = var_0_3
 	end
 end
 

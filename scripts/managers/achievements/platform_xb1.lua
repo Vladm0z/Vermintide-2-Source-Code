@@ -5,98 +5,98 @@ local PROGRESS_TASK_STARTED = Achievements2017.PROGRESS_TASK_STARTED
 local PROGRESS_TASK_COMPLETED = Achievements2017.PROGRESS_TASK_COMPLETED
 local PROGRESS_TASK_FAILED = Achievements2017.PROGRESS_TASK_FAILED
 
-local function fn()
+local function initialize_xbox_achivements()
 	-- function 1
 	rawset(_G, "XB1Achievements", Achievements2017(Managers.account:user_id()))
 
-	if not Managers.account:is_online() then
+	if Managers.account:is_online() then
 		Achievements2017.refresh(XB1Achievements)
 	end
 end
 
-local function fn_2(self, arg_2_1)
+local function try_set_progress(template, progress)
 	-- function 2
 	if not rawget(_G, "XB1Achievements") then
 		return
 	end
 
-	local account = Managers.account
+	local account_manager = Managers.account
 
-	if not account:user_detached() then
+	if account_manager:user_detached() then
 		return
 	end
 
-	if not (Achievements2017.is_refreshing(XB1Achievements) or Achievements2017.progress_task_status(XB1Achievements) ~= PROGRESS_TASK_STARTED) then
+	if Achievements2017.is_refreshing(XB1Achievements) or Achievements2017.progress_task_status(XB1Achievements) == PROGRESS_TASK_STARTED then
 		return
 	end
 
-	local flag = not account:offline_mode()
-	local id = self.id
-	local ID_XB1 = self.ID_XB1
-	local var_2_4
+	local is_online = not account_manager:offline_mode()
+	local template_id = template.id
+	local achievement_id = template.ID_XB1
+	local current_progress
 
-	if not flag then
-		var_2_4 = Achievements2017.progress(XB1Achievements, ID_XB1)
+	if is_online then
+		current_progress = Achievements2017.progress(XB1Achievements, achievement_id)
 	else
-		var_2_4 = account:offline_achievement_progress(id)
+		current_progress = account_manager:offline_achievement_progress(template_id)
 
-		if not var_2_4 then
-			print("[AchievementManager] [Offline] No current progress, setting", id, arg_2_1)
-			account:set_offline_achievement_progress(id, arg_2_1)
+		if not current_progress then
+			print("[AchievementManager] [Offline] No current progress, setting", template_id, progress)
+			account_manager:set_offline_achievement_progress(template_id, progress)
 
 			return
 		end
 	end
 
-	if var_2_4 == -1 then
-		account:set_achievement_unlocked(id)
+	if current_progress == -1 then
+		account_manager:set_achievement_unlocked(template_id)
 
-		return false, string.format("[AchievementManager] Error when fetching current progress for achievement %q", id)
+		return false, string.format("[AchievementManager] Error when fetching current progress for achievement %q", template_id)
 	end
 
-	if var_2_4 == 100 then
-		account:set_achievement_unlocked(id)
+	if current_progress == 100 then
+		account_manager:set_achievement_unlocked(template_id)
 
 		return
 	end
 
-	if not (not var_2_4 and not (arg_2_1 <= var_2_4)) then
+	if not current_progress or progress <= current_progress then
 		return
 	end
 
-	local var_2_5
+	local error_msg
 
-	if not flag then
-		var_2_5 = Achievements2017.set_progress(XB1Achievements, ID_XB1, arg_2_1)
+	if is_online then
+		error_msg = Achievements2017.set_progress(XB1Achievements, achievement_id, progress)
 	else
-		print("[AchievementManager] [Offline] Setting progress", id, var_2_4, "->", arg_2_1)
+		print("[AchievementManager] [Offline] Setting progress", template_id, current_progress, "->", progress)
 
-		var_2_5 = Achievements2017.set_progress_offline(XB1Achievements, ID_XB1, arg_2_1)
+		error_msg = Achievements2017.set_progress_offline(XB1Achievements, achievement_id, progress)
 
-		if not var_2_5 then
-			print("[AchievementManager] [Offline] Updating current progress", id, arg_2_1)
-			account:set_offline_achievement_progress(id, arg_2_1)
+		if not error_msg then
+			print("[AchievementManager] [Offline] Updating current progress", template_id, progress)
+			account_manager:set_offline_achievement_progress(template_id, progress)
 		end
 	end
 
-	if not var_2_5 then
-		account:set_achievement_unlocked(id)
+	if error_msg then
+		account_manager:set_achievement_unlocked(template_id)
 
-		return false, var_2_5
+		return false, error_msg
 	end
 
-	local flag_2 = arg_2_1 == 100
+	local completed = progress == 100
 
-	return true, nil, flag_2
+	return true, nil, completed
 end
 
-return {
+local platform_functions = {
 	init = function (self)
 		-- function 3
 		self.init_state = "not_initialized"
 
 		if not Managers.account:user_detached() then
-			fn()
+			initialize_xbox_achivements()
 
 			self.init_state = "started"
 		end
@@ -107,7 +107,7 @@ return {
 		-- function 4
 		if self.init_state == "not_initialized" then
 			if not Managers.account:user_detached() then
-				fn()
+				initialize_xbox_achivements()
 
 				self.init_state = "started"
 			end
@@ -127,120 +127,122 @@ return {
 		-- function 5
 		return true
 	end,
-	version_result = function (arg_6_0)
+	version_result = function (token)
 		-- function 6
 		return true
 	end,
-	is_unlocked = function (self)
+	is_unlocked = function (template)
 		-- function 7
-		return not self.ID_XB1
+		return not template.ID_XB1
 	end,
-	is_platform_achievement = function (self)
+	is_platform_achievement = function (template)
 		-- function 8
-		return self.ID_XB1
+		return template.ID_XB1
 	end,
-	verify_platform_unlocked = function (self)
+	verify_platform_unlocked = function (template)
 		-- function 9
 		if not rawget(_G, "XB1Achievements") then
 			return
 		end
 
-		if not Managers.account:user_detached() then
+		local account_manager = Managers.account
+
+		if account_manager:user_detached() then
 			return
 		end
 
-		if not (Achievements2017.is_refreshing(XB1Achievements) or Achievements2017.progress_task_status(XB1Achievements) ~= PROGRESS_TASK_STARTED) then
+		if Achievements2017.is_refreshing(XB1Achievements) or Achievements2017.progress_task_status(XB1Achievements) == PROGRESS_TASK_STARTED then
 			return
 		end
 
-		local account = Managers.account
-		local flag = not account:offline_mode()
-		local ID_XB1 = self.ID_XB1
-		local id = self.id
-		local name = self.name
-		local num = 100
+		local account_manager = Managers.account
+		local is_online = not account_manager:offline_mode()
+		local achievement_id = template.ID_XB1
+		local template_id = template.id
+		local name = template.name
+		local completed_progress = 100
 
-		printf("[Achievements2017] Verifying - Name: %q. Template: %q. ID: %q", Localize(name), id, ID_XB1)
+		printf("[Achievements2017] Verifying - Name: %q. Template: %q. ID: %q", Localize(name), template_id, achievement_id)
 
-		local var_9_6
+		local progress
 
-		if not flag then
-			var_9_6 = Achievements2017.progress(XB1Achievements, ID_XB1)
+		if is_online then
+			progress = Achievements2017.progress(XB1Achievements, achievement_id)
 		else
-			var_9_6 = account:offline_achievement_progress(id)
+			progress = account_manager:offline_achievement_progress(template_id)
 		end
 
-		local flag_2 = true
-		local flag_3 = false
+		local verified = true
+		local token = false
 
-		if not (not var_9_6 and var_9_6 ~= -1) then
-			printf("   - #### Error: Couldn't get progress for achievement %q - Removing it from evaluation", id)
-			account:set_achievement_unlocked(id)
+		if not progress or progress == -1 then
+			printf("   - #### Error: Couldn't get progress for achievement %q - Removing it from evaluation", template_id)
+			account_manager:set_achievement_unlocked(template_id)
 
-			return flag_2, flag_3
+			return verified, token
 		end
 
-		if var_9_6 < num then
+		if progress < completed_progress then
 			local printf = printf
 			local str = "[Achievements2017] [%s] - Unlocking Name: %q. Template: %q. ID: %q"
-			local flag_4
+			local flag
 
-			flag_4 = not flag and "ONLINE" and "OFFLINE"
+			flag = (not is_online or not "ONLINE") and not not "OFFLINE"
 
-			printf(str, flag_4, Localize(name), id, ID_XB1)
+			printf(str, flag, Localize(name), template_id, achievement_id)
 
-			local var_9_12
+			local error_msg
 
-			if not flag then
-				var_9_12 = Achievements2017.set_progress(XB1Achievements, ID_XB1, num)
+			if is_online then
+				error_msg = Achievements2017.set_progress(XB1Achievements, achievement_id, completed_progress)
 			else
-				var_9_12 = Achievements2017.set_progress_offline(XB1Achievements, ID_XB1, var_9_6)
+				error_msg = Achievements2017.set_progress_offline(XB1Achievements, achievement_id, progress)
 
-				if not var_9_12 then
-					account:set_offline_achievement_progress(id, var_9_6)
+				if not error_msg then
+					account_manager:set_offline_achievement_progress(template_id, progress)
 				end
 			end
 
-			if not var_9_12 then
-				printf("[Achievements2017] #### Error: %s", var_9_12)
-				account:set_achievement_unlocked(id)
+			if error_msg then
+				printf("[Achievements2017] #### Error: %s", error_msg)
+				account_manager:set_achievement_unlocked(template_id)
 			else
-				flag_3 = true
+				token = true
 			end
 		else
 			print("[Achievements2017] - Already Unlocked")
 		end
 
-		return flag_2, flag_3
+		return verified, token
 	end,
-	set_progress = function (arg_10_0, arg_10_1, arg_10_2)
+	set_progress = function (template, progress, progress_max)
 		-- function 10
-		if arg_10_1 > 0 then
-			local num = arg_10_1 / arg_10_2 * 100
-			local floor = math.floor(num + 0.5)
+		if progress > 0 then
+			local progress_raw = progress / progress_max * 100
+			local progress_percent = math.floor(progress_raw + 0.5)
 
-			return fn_2(arg_10_0, floor)
+			return try_set_progress(template, progress_percent)
 		end
 	end,
-	unlock = function (arg_11_0)
+	unlock = function (template)
 		-- function 11
-		return fn_2(arg_11_0, 100)
+		return try_set_progress(template, 100)
 	end,
-	unlock_result = function (arg_12_0, arg_12_1)
+	unlock_result = function (token, template_id)
 		-- function 12
-		local progress_task_status = Achievements2017.progress_task_status(XB1Achievements)
+		local result = Achievements2017.progress_task_status(XB1Achievements)
 
-		if progress_task_status == PROGRESS_TASK_STARTED then
+		if result == PROGRESS_TASK_STARTED then
 			return false
-		elseif progress_task_status == PROGRESS_TASK_COMPLETED then
-			if not Managers.account:is_online() then
+		elseif result == PROGRESS_TASK_COMPLETED then
+			if Managers.account:is_online() then
 				Achievements2017.refresh(XB1Achievements)
 			end
 
 			return true
-		elseif progress_task_status == PROGRESS_TASK_FAILED then
-			print("[AchievementManager] PROGRESS_TASK_FAILED", arg_12_1)
-			Managers.account:set_achievement_unlocked(arg_12_1)
+		elseif result == PROGRESS_TASK_FAILED then
+			print("[AchievementManager] PROGRESS_TASK_FAILED", template_id)
+			Managers.account:set_achievement_unlocked(template_id)
 
 			return true, "error"
 		end
@@ -250,3 +252,5 @@ return {
 		errorf("Tried to reset Achievements, not implemented!")
 	end
 }
+
+return platform_functions

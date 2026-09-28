@@ -4,7 +4,7 @@ PerfhudManager = class(PerfhudManager)
 
 local PerfhudSettings = PerfhudSettings
 
-PerfhudSettings = PerfhudSettings or {}
+PerfhudSettings = not not PerfhudSettings or not not {}
 PerfhudSettings = PerfhudSettings
 PerfhudSettings.artist = {
 	key = "f1",
@@ -41,93 +41,101 @@ PerfhudManager.init = function (self)
 	self._accumulated_index = nil
 end
 
-PerfhudManager.update = function (self, arg_2_1, arg_2_2)
+PerfhudManager.update = function (self, dt, t)
 	-- function 2
 	if not script_data.perfhud then
 		return
 	end
 
-	local flag = Keyboard.button(Keyboard.button_index("left shift")) > 0.5 or Keyboard.button(Keyboard.button_index("right shift")) > 0.5
+	local shift_held = Keyboard.button(Keyboard.button_index("left shift")) > 0.5 or Keyboard.button(Keyboard.button_index("right shift")) > 0.5
 
-	for k, v in pairs(PerfhudSettings) do
-		if not Keyboard.pressed(Keyboard.button_index(v.key)) then
-			self:_toggle_hud(k, flag)
+	for hud_name, settings in pairs(PerfhudSettings) do
+		if Keyboard.pressed(Keyboard.button_index(settings.key)) then
+			self:_toggle_hud(hud_name, shift_held)
 		end
 	end
 
-	self:_update_peer_index(arg_2_1, arg_2_2)
+	self:_update_peer_index(dt, t)
 end
 
-PerfhudManager._update_peer_index = function (self, arg_3_1, arg_3_2)
+PerfhudManager._update_peer_index = function (self, dt, t)
 	-- function 3
 	local pressed = Keyboard.pressed(Keyboard.button_index("left ctrl"))
 
-	pressed = pressed or Keyboard.pressed(Keyboard.button_index("right ctrl"))
+	if not pressed then
+		-- Nothing
+	end
 
-	if not (not pressed and self._accumulated_index) then
+	pressed = Keyboard.pressed(Keyboard.button_index("right ctrl"))
+
+	local ctrl_pressed = pressed
+
+	::label_3_0::
+
+	if ctrl_pressed and not self._accumulated_index then
 		self._accumulated_index = ""
-	elseif not pressed then
+	elseif ctrl_pressed then
 		self:_set_peer_index(self._accumulated_index)
 
 		self._accumulated_index = nil
 	end
 
-	if not self._accumulated_index then
+	if self._accumulated_index then
 		self:_parse_keystrokes(Keyboard.keystrokes())
 	end
 end
 
-PerfhudManager._parse_keystrokes = function (self, arg_4_1)
+PerfhudManager._parse_keystrokes = function (self, strokes)
 	-- function 4
-	for i, v in ipairs(arg_4_1) do
-		if not (v == "1" or v == "2" or v == "3" or v == "4" or v == "5" or v == "6" or v == "7" or v == "8" or v == "9" or v ~= "0") then
-			self._accumulated_index = self._accumulated_index .. v
+	for _, stroke in ipairs(strokes) do
+		if stroke == "1" or stroke == "2" or stroke == "3" or stroke == "4" or stroke == "5" or stroke == "6" or stroke == "7" or stroke == "8" or stroke == "9" or stroke == "0" then
+			self._accumulated_index = self._accumulated_index .. stroke
 		end
 	end
 end
 
-PerfhudManager._set_peer_index = function (arg_5_0, arg_5_1)
+PerfhudManager._set_peer_index = function (self, accumulated_index)
 	-- function 5
-	Application.console_command("perfhud", "network_peer", arg_5_1)
+	Application.console_command("perfhud", "network_peer", accumulated_index)
 end
 
-PerfhudManager._toggle_hud = function (self, arg_6_1, arg_6_2)
+PerfhudManager._toggle_hud = function (self, hud_name, shift_held)
 	-- function 6
-	local var_6_0 = self._active_huds[arg_6_1]
+	local active = self._active_huds[hud_name]
 
-	if not arg_6_2 then
+	if not shift_held then
 		self:_close_all_huds()
 	end
 
-	if not arg_6_2 and not var_6_0 then
-		self:_close_hud(arg_6_1)
-	elseif not var_6_0 then
-		self:_open_hud(arg_6_1)
+	if shift_held and active then
+		self:_close_hud(hud_name)
+	elseif not active then
+		self:_open_hud(hud_name)
 	end
 end
 
 PerfhudManager._close_all_huds = function (self)
 	-- function 7
-	for k, v in pairs(self._active_huds) do
-		self:_close_hud(k)
+	for hud_name, _ in pairs(self._active_huds) do
+		self:_close_hud(hud_name)
 	end
 end
 
-PerfhudManager._open_hud = function (arg_8_0, arg_8_1)
+PerfhudManager._open_hud = function (self, hud_name)
 	-- function 8
-	arg_8_0._active_huds[arg_8_1] = true
+	self._active_huds[hud_name] = true
 
-	Application.console_command("perfhud", arg_8_1, unpack(PerfhudSettings[arg_8_1].custom_parameters))
+	Application.console_command("perfhud", hud_name, unpack(PerfhudSettings[hud_name].custom_parameters))
 end
 
-PerfhudManager._close_hud = function (arg_9_0, arg_9_1)
+PerfhudManager._close_hud = function (self, hud_name)
 	-- function 9
-	arg_9_0._active_huds[arg_9_1] = nil
+	self._active_huds[hud_name] = nil
 
-	Application.console_command("perfhud", arg_9_1)
+	Application.console_command("perfhud", hud_name)
 end
 
-PerfhudManager.destroy = function (self, arg_10_1, arg_10_2)
+PerfhudManager.destroy = function (self, dt, t)
 	-- function 10
 	self:_close_all_huds()
 end

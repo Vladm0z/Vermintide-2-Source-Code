@@ -2,10 +2,10 @@
 
 require("scripts/settings/ui_player_portrait_frame_settings")
 
-local var_0_0 = local_require("scripts/ui/views/positive_reinforcement_ui_definitions")
-local MAX_NUMBER_OF_MESSAGES = var_0_0.MAX_NUMBER_OF_MESSAGES
-local var_0_2 = local_require("scripts/ui/views/positive_reinforcement_ui_event_settings")
-local tbl = {
+local definitions = local_require("scripts/ui/views/positive_reinforcement_ui_definitions")
+local MAX_NUMBER_OF_MESSAGES = definitions.MAX_NUMBER_OF_MESSAGES
+local event_settings = local_require("scripts/ui/views/positive_reinforcement_ui_event_settings")
+local event_colors = {
 	fade_to = Colors.get_table("white"),
 	default = Colors.get_table("cheeseburger"),
 	kill = Colors.get_table("red"),
@@ -15,14 +15,14 @@ local breed_textures = UISettings.breed_textures
 
 PositiveReinforcementUI = class(PositiveReinforcementUI)
 
-PositiveReinforcementUI.init = function (self, arg_1_1, arg_1_2)
+PositiveReinforcementUI.init = function (self, parent, ingame_ui_context)
 	-- function 1
-	self._parent = arg_1_1
-	self.ui_renderer = arg_1_2.ui_renderer
-	self.input_manager = arg_1_2.input_manager
-	self.player_manager = arg_1_2.player_manager
-	self.peer_id = arg_1_2.peer_id
-	self.world = arg_1_2.world_manager:world("level_world")
+	self._parent = parent
+	self.ui_renderer = ingame_ui_context.ui_renderer
+	self.input_manager = ingame_ui_context.input_manager
+	self.player_manager = ingame_ui_context.player_manager
+	self.peer_id = ingame_ui_context.peer_id
+	self.world = ingame_ui_context.world_manager:world("level_world")
 	self.render_settings = {
 		snap_pixel_positions = true
 	}
@@ -33,29 +33,29 @@ PositiveReinforcementUI.init = function (self, arg_1_1, arg_1_2)
 	self._positive_enforcement_lookup = {}
 	self._animations = {}
 
-	local event = Managers.state.event
+	local event_manager = Managers.state.event
 
-	event:register(self, "add_coop_feedback", "event_add_positive_enforcement")
-	event:register(self, "add_coop_feedback_kill", "event_add_positive_enforcement_kill")
+	event_manager:register(self, "add_coop_feedback", "event_add_positive_enforcement")
+	event_manager:register(self, "add_coop_feedback_kill", "event_add_positive_enforcement_kill")
 end
 
-PositiveReinforcementUI.destroy = function (arg_2_0)
+PositiveReinforcementUI.destroy = function (self)
 	-- function 2
-	GarbageLeakDetector.register_object(arg_2_0, "positive_reinforcement_ui")
+	GarbageLeakDetector.register_object(self, "positive_reinforcement_ui")
 
-	local event = Managers.state.event
+	local event_manager = Managers.state.event
 
-	event:unregister("add_coop_feedback", arg_2_0)
-	event:unregister("add_coop_feedback_kill", arg_2_0)
+	event_manager:unregister("add_coop_feedback", self)
+	event_manager:unregister("add_coop_feedback_kill", self)
 end
 
 PositiveReinforcementUI.create_ui_elements = function (self)
 	-- function 3
 	local game_mode_key = Managers.state.game_mode:game_mode_key()
-	local hud_ui_settings = GameModeSettings[game_mode_key].hud_ui_settings
-	local scenegraph_definition = var_0_0.scenegraph_definition
+	local game_mode_setting = GameModeSettings[game_mode_key].hud_ui_settings
+	local scenegraph_definition = definitions.scenegraph_definition
 
-	if not hud_ui_settings and not hud_ui_settings.killfeed_offset then
+	if game_mode_setting and game_mode_setting.killfeed_offset then
 		scenegraph_definition.message_animated = table.clone(scenegraph_definition.message_animated_offset)
 	else
 		scenegraph_definition.message_animated = table.clone(scenegraph_definition.message_animated_base)
@@ -67,142 +67,142 @@ PositiveReinforcementUI.create_ui_elements = function (self)
 	self.message_widgets = {}
 	self._unused_widgets = {}
 
-	local num = 0
+	local i = 0
 
-	for k, v in pairs(var_0_0.message_widgets) do
-		num = num + 1
-		self.message_widgets[num] = UIWidget.init(v)
-		self._unused_widgets[num] = UIWidget.init(v)
+	for _, widget in pairs(definitions.message_widgets) do
+		i = i + 1
+		self.message_widgets[i] = UIWidget.init(widget)
+		self._unused_widgets[i] = UIWidget.init(widget)
 	end
 end
 
-PositiveReinforcementUI.remove_event = function (self, arg_4_1)
+PositiveReinforcementUI.remove_event = function (self, index)
 	-- function 4
-	local _positive_enforcement_events = self._positive_enforcement_events
-	local remove = table.remove(_positive_enforcement_events, arg_4_1)
-	local widget = remove.widget
+	local events = self._positive_enforcement_events
+	local event = table.remove(events, index)
+	local widget = event.widget
 
-	self._positive_enforcement_lookup[remove.full_hash] = nil
+	self._positive_enforcement_lookup[event.full_hash] = nil
 
-	local _unused_widgets = self._unused_widgets
+	local unused_widgets = self._unused_widgets
 
-	_unused_widgets[#_unused_widgets + 1] = widget
+	unused_widgets[#unused_widgets + 1] = widget
 end
 
-local function fn(arg_5_0, arg_5_1)
+local function trigger_assist_buffs(savior_unit, saved_unit)
 	-- function 5
-	local extension = ScriptUnit.extension(arg_5_0, "buff_system")
-	local extension_2 = ScriptUnit.extension(arg_5_1, "health_system")
-	local apply_buffs_to_value, var_5_3 = extension:apply_buffs_to_value(0, "shielding_player_by_assist")
+	local buff_ext = ScriptUnit.extension(savior_unit, "buff_system")
+	local saved_unit_health_extension = ScriptUnit.extension(saved_unit, "health_system")
+	local shield_amount, procced = buff_ext:apply_buffs_to_value(0, "shielding_player_by_assist")
 
-	if not var_5_3 then
-		if not Managers.player.is_server then
-			DamageUtils.heal_network(arg_5_1, arg_5_0, apply_buffs_to_value, "buff")
-			DamageUtils.heal_network(arg_5_0, arg_5_0, apply_buffs_to_value, "buff")
+	if procced then
+		if Managers.player.is_server then
+			DamageUtils.heal_network(saved_unit, savior_unit, shield_amount, "buff")
+			DamageUtils.heal_network(savior_unit, savior_unit, shield_amount, "buff")
 		else
-			local network = Managers.state.network
-			local network_transmit = network.network_transmit
-			local unit_game_object_id = network:unit_game_object_id(arg_5_1)
-			local unit_game_object_id_2 = network:unit_game_object_id(arg_5_0)
-			local buff = NetworkLookup.heal_types.buff
+			local network_manager = Managers.state.network
+			local network_transmit = network_manager.network_transmit
+			local saved_unit_id = network_manager:unit_game_object_id(saved_unit)
+			local savior_unit_id = network_manager:unit_game_object_id(savior_unit)
+			local heal_type_id = NetworkLookup.heal_types.buff
 
-			network_transmit:send_rpc_server("rpc_request_heal", unit_game_object_id, apply_buffs_to_value, buff)
-			network_transmit:send_rpc_server("rpc_request_heal", unit_game_object_id_2, apply_buffs_to_value, buff)
+			network_transmit:send_rpc_server("rpc_request_heal", saved_unit_id, shield_amount, heal_type_id)
+			network_transmit:send_rpc_server("rpc_request_heal", savior_unit_id, shield_amount, heal_type_id)
 		end
 	end
 end
 
-PositiveReinforcementUI.add_event = function (self, arg_6_1, arg_6_2, arg_6_3, arg_6_4, ...)
+PositiveReinforcementUI.add_event = function (self, hash, is_local_player, color_from, event_type, ...)
 	-- function 6
 	if not script_data.disable_reinforcement_ui then
-		local _positive_enforcement_events = self._positive_enforcement_events
-		local str = arg_6_1 .. arg_6_4
-		local positive_reinforcement = UISettings.positive_reinforcement
-		local time = Managers.time:time("ui")
-		local increment_duration = positive_reinforcement.increment_duration
-		local var_6_5 = var_0_2[arg_6_4]
-		local var_6_6 = self._positive_enforcement_lookup[str]
+		local events = self._positive_enforcement_events
+		local full_hash = hash .. event_type
+		local settings_positive_reinforcement = UISettings.positive_reinforcement
+		local t = Managers.time:time("ui")
+		local increment_duration = settings_positive_reinforcement.increment_duration
+		local settings = event_settings[event_type]
+		local old_event = self._positive_enforcement_lookup[full_hash]
 
-		if not var_6_6 and not positive_reinforcement.folding_enabled then
-			local content = var_6_6.widget.content
-			local num = content.count + 1
+		if old_event and settings_positive_reinforcement.folding_enabled then
+			local widget_content = old_event.widget.content
+			local count = widget_content.count + 1
 
-			content.count_text = num .. "x"
-			content.count = num
-			var_6_6.remove_time = nil
+			widget_content.count_text = count .. "x"
+			widget_content.count = count
+			old_event.remove_time = nil
 		else
 			local message_widgets = self.message_widgets
-			local _unused_widgets = self._unused_widgets
+			local unused_widgets = self._unused_widgets
 
-			if #_unused_widgets == 0 then
-				self:remove_event(#_positive_enforcement_events)
+			if #unused_widgets == 0 then
+				self:remove_event(#events)
 			end
 
-			local remove = table.remove(_unused_widgets, 1)
-			local offset = remove.offset
-			local tbl = {
+			local widget = table.remove(unused_widgets, 1)
+			local offset = widget.offset
+			local event = {
 				text = "",
 				shown_amount = 0,
 				amount = 0,
-				full_hash = str,
-				widget = remove,
-				event_type = arg_6_4,
-				is_local_player = arg_6_2,
+				full_hash = full_hash,
+				widget = widget,
+				event_type = event_type,
+				is_local_player = is_local_player,
 				data = {
 					...
 				}
 			}
-			local num_2 = #_positive_enforcement_events + 1
+			local event_index = #events + 1
 
-			table.insert(_positive_enforcement_events, 1, tbl)
+			table.insert(events, 1, event)
 
-			self._positive_enforcement_lookup[str] = tbl
+			self._positive_enforcement_lookup[full_hash] = event
 
-			local content_2 = remove.content
-			local style = remove.style
+			local content = widget.content
+			local style = widget.style
 
-			content_2.count = 1
-			content_2.count_text = nil
+			content.count = 1
+			content.count_text = nil
 
-			local icon_function, var_6_18, var_6_19 = var_6_5.icon_function(...)
+			local texture_1, texture_2, texture_3 = settings.icon_function(...)
 
-			self:_assign_portrait_texture(remove, "portrait_1", icon_function)
-			self:_assign_portrait_texture(remove, "portrait_2", var_6_19)
+			self:_assign_portrait_texture(widget, "portrait_1", texture_1)
+			self:_assign_portrait_texture(widget, "portrait_2", texture_3)
 
-			content_2.icon = var_6_18
+			content.icon = texture_2
 			offset[2] = 0
 
-			local texte_style_ids = content_2.texte_style_ids
+			local texte_style_ids = content.texte_style_ids
 
-			for i, v in ipairs(texte_style_ids) do
-				style[v].color[1] = 255
+			for _, style_id in ipairs(texte_style_ids) do
+				style[style_id].color[1] = 255
 			end
 		end
 
-		if not arg_6_2 then
-			local sound_function = var_6_5.sound_function()
+		if is_local_player then
+			local sound_event = settings.sound_function()
 
-			if not sound_function then
+			if sound_event then
 				local world = self.world
 				local wwise_world = Managers.world:wwise_world(world)
 
-				WwiseWorld.trigger_event(wwise_world, sound_function)
+				WwiseWorld.trigger_event(wwise_world, sound_event)
 			end
 		end
 	end
 end
 
-local tbl_2 = {
+local temp_portrait_size = {
 	96,
 	112
 }
 
-PositiveReinforcementUI._assign_portrait_texture = function (arg_7_0, arg_7_1, arg_7_2, arg_7_3)
+PositiveReinforcementUI._assign_portrait_texture = function (self, widget, pass_name, texture)
 	-- function 7
-	local var_7_0 = arg_7_1.style[arg_7_2]
+	local style = widget.style[pass_name]
 
-	if not arg_7_3 then
-		var_7_0.size = {
+	if not texture then
+		style.size = {
 			0,
 			0
 		}
@@ -210,54 +210,98 @@ PositiveReinforcementUI._assign_portrait_texture = function (arg_7_0, arg_7_1, a
 		return
 	end
 
-	arg_7_1.content[arg_7_2].texture_id = arg_7_3
+	widget.content[pass_name].texture_id = texture
 
-	local clone = table.clone(tbl_2)
+	local portrait_size = table.clone(temp_portrait_size)
 
-	if not UIAtlasHelper.has_atlas_settings_by_texture_name(arg_7_3) then
-		local get_atlas_settings_by_texture_name = UIAtlasHelper.get_atlas_settings_by_texture_name(arg_7_3)
+	if UIAtlasHelper.has_atlas_settings_by_texture_name(texture) then
+		local texture_settings = UIAtlasHelper.get_atlas_settings_by_texture_name(texture)
 
-		clone[1] = get_atlas_settings_by_texture_name.size[1]
-		clone[2] = get_atlas_settings_by_texture_name.size[2]
+		portrait_size[1] = texture_settings.size[1]
+		portrait_size[2] = texture_settings.size[2]
 	end
 
-	local var_7_3 = arg_7_1.style[arg_7_2]
-	local portrait_offset = var_7_3.portrait_offset
-	local offset = var_7_3.offset
+	local style = widget.style[pass_name]
+	local portrait_offset = style.portrait_offset
+	local offset = style.offset
 
-	offset[1] = portrait_offset[1] - clone[1] / 2
-	offset[2] = portrait_offset[2] - clone[2] / 2
-	var_7_3.size = clone
+	offset[1] = portrait_offset[1] - portrait_size[1] / 2
+	offset[2] = portrait_offset[2] - portrait_size[2] / 2
+	style.size = portrait_size
 end
 
-PositiveReinforcementUI.event_add_positive_enforcement = function (self, arg_8_1, arg_8_2, arg_8_3, arg_8_4, arg_8_5)
+PositiveReinforcementUI.event_add_positive_enforcement = function (self, hash, is_local_player, event_type, player1, player2)
 	-- function 8
-	if not var_0_2[arg_8_3] then
+	if not event_settings[event_type] then
 		return
 	end
 
-	if not (not arg_8_4 and arg_8_4:name()) then
-		local var_8_0
+	local name
+
+	if player1 then
+		name = player1:name()
+
+		if not name then
+			-- Nothing
+		end
 	end
 
-	if not (not arg_8_5 and arg_8_5:name()) then
-		local var_8_1
+	name = nil
+
+	local player_1_name = name
+
+	do
+		local name_2
 	end
 
-	local flag = not arg_8_4 and arg_8_4.player_unit
-	local flag_2 = not arg_8_5 and arg_8_5.player_unit
-	local alive = Unit.alive(flag)
+	::label_8_0::
 
-	alive = not alive and ScriptUnit.extension(flag, "career_system")
+	if player2 then
+		name_2 = player2:name()
 
-	local alive_2 = Unit.alive(flag_2)
+		if not name_2 then
+			-- Nothing
+		end
+	end
 
-	alive_2 = not alive_2 and ScriptUnit.extension(flag_2, "career_system")
+	name_2 = nil
 
-	local profile_index
+	local player_2_name = name_2
 
-	if not arg_8_4 then
-		profile_index = arg_8_4:profile_index()
+	::label_8_1::
+
+	local player_1_unit = not not player1 and not not player1.player_unit
+	local player_2_unit = not not player2 and not not player2.player_unit
+	local alive = Unit.alive(player_1_unit)
+
+	if alive then
+		-- Nothing
+	end
+
+	alive = ScriptUnit.extension(player_1_unit, "career_system")
+
+	local player_1_career_extension = alive
+
+	::label_8_2::
+
+	local alive_2 = Unit.alive(player_2_unit)
+
+	if alive_2 then
+		-- Nothing
+	end
+
+	alive_2 = ScriptUnit.extension(player_2_unit, "career_system")
+
+	local player_2_career_extension = alive_2
+
+	do
+		local profile_index
+	end
+
+	::label_8_3::
+
+	if player1 then
+		profile_index = player1:profile_index()
 
 		if not profile_index then
 			-- Nothing
@@ -266,14 +310,16 @@ PositiveReinforcementUI.event_add_positive_enforcement = function (self, arg_8_1
 
 	profile_index = nil
 
+	local player_1_profile_index = profile_index
+
 	do
 		local profile_index_2
 	end
 
-	::label_8_0::
+	::label_8_4::
 
-	if not arg_8_5 then
-		profile_index_2 = arg_8_5:profile_index()
+	if player2 then
+		profile_index_2 = player2:profile_index()
 
 		if not profile_index_2 then
 			-- Nothing
@@ -282,181 +328,201 @@ PositiveReinforcementUI.event_add_positive_enforcement = function (self, arg_8_1
 
 	profile_index_2 = nil
 
+	local player_2_profile_index = profile_index_2
+
 	do
 		local career_index
 	end
 
-	::label_8_1::
+	::label_8_5::
 
-	if not alive then
-		career_index = alive:career_index()
+	if player_1_career_extension then
+		career_index = player_1_career_extension:career_index()
 
 		if not career_index then
 			-- Nothing
 		end
 	end
 
-	career_index = not arg_8_4 and arg_8_4:career_index()
+	if player1 then
+		-- Nothing
+	end
+
+	::label_8_6::
+
+	career_index = player1:career_index()
+
+	local player_1_career_index = career_index
 
 	do
 		local career_index_2
 	end
 
-	::label_8_2::
+	::label_8_7::
 
-	if not alive_2 then
-		career_index_2 = alive_2:career_index()
+	if player_2_career_extension then
+		career_index_2 = player_2_career_extension:career_index()
 
 		if not career_index_2 then
 			-- Nothing
 		end
 	end
 
-	career_index_2 = not arg_8_5 and arg_8_5:career_index()
+	if player2 then
+		-- Nothing
+	end
 
-	::label_8_3::
+	::label_8_8::
 
-	local flag_3 = not profile_index and not career_index and self:_get_hero_portrait(profile_index, career_index)
-	local flag_4 = not profile_index_2 and not career_index_2 and self:_get_hero_portrait(profile_index_2, career_index_2)
+	career_index_2 = player2:career_index()
 
-	if not (not flag_3 and flag_4) then
+	local player_2_career_index = career_index_2
+
+	::label_8_9::
+
+	local player_1_profile_image = not not player_1_profile_index and not not player_1_career_index and not not self:_get_hero_portrait(player_1_profile_index, player_1_career_index)
+	local player_2_profile_image = not not player_2_profile_index and not not player_2_career_index and not not self:_get_hero_portrait(player_2_profile_index, player_2_career_index)
+
+	if not player_1_profile_image or not player_2_profile_image then
 		return
 	end
 
-	self:add_event(arg_8_1, arg_8_2, tbl.default, arg_8_3, flag_3, flag_4)
+	self:add_event(hash, is_local_player, event_colors.default, event_type, player_1_profile_image, player_2_profile_image)
 end
 
-PositiveReinforcementUI.event_add_positive_enforcement_kill = function (self, arg_9_1, arg_9_2, arg_9_3, arg_9_4, arg_9_5)
+PositiveReinforcementUI.event_add_positive_enforcement_kill = function (self, hash, is_local_player, event_type, breed_name_attacker, breed_name_killed)
 	-- function 9
-	local var_9_0 = breed_textures[arg_9_4]
-	local var_9_1 = breed_textures[arg_9_5]
+	local breed_texture_attacker = breed_textures[breed_name_attacker]
+	local breed_texture_killed = breed_textures[breed_name_killed]
 
-	if not (not var_0_2[arg_9_3] and not var_9_0 and var_9_1) then
+	if not event_settings[event_type] or not breed_texture_attacker or not breed_texture_killed then
 		return
 	end
 
-	self:add_event(arg_9_1, arg_9_2, tbl.kill, arg_9_3, var_9_0, var_9_1)
+	self:add_event(hash, is_local_player, event_colors.kill, event_type, breed_texture_attacker, breed_texture_killed)
 end
 
-PositiveReinforcementUI.event_add_positive_enforcement_player_knocked_down_or_killed = function (self, arg_10_1, arg_10_2, arg_10_3, arg_10_4, arg_10_5)
+PositiveReinforcementUI.event_add_positive_enforcement_player_knocked_down_or_killed = function (self, hash, is_local_player, event_type, profile_index, breed_name)
 	-- function 10
-	local var_10_0 = breed_textures[arg_10_5]
+	local breed_texture = breed_textures[breed_name]
 
-	if not (not var_0_2[arg_10_3] and var_10_0) then
+	if not event_settings[event_type] or not breed_texture then
 		return
 	end
 
-	if not arg_10_4 then
+	if not profile_index then
 		return
 	end
 
-	local _get_hero_portrait = self:_get_hero_portrait(arg_10_4)
+	local player_texture = self:_get_hero_portrait(profile_index)
 
-	self:add_event(arg_10_1, arg_10_2, tbl.kill, arg_10_3, var_10_0, _get_hero_portrait)
+	self:add_event(hash, is_local_player, event_colors.kill, event_type, breed_texture, player_texture)
 end
 
-PositiveReinforcementUI.event_add_lorebook_page_pickup = function (self, arg_11_1, arg_11_2, arg_11_3, arg_11_4)
+PositiveReinforcementUI.event_add_lorebook_page_pickup = function (self, hash, is_local_player, event_type, page_id)
 	-- function 11
-	self:add_event(arg_11_1, arg_11_2, tbl.personal, arg_11_3, arg_11_4)
+	self:add_event(hash, is_local_player, event_colors.personal, event_type, page_id)
 end
 
-PositiveReinforcementUI.event_add_interaction_warning = function (self, arg_12_1, arg_12_2)
+PositiveReinforcementUI.event_add_interaction_warning = function (self, hash, message)
 	-- function 12
-	self:add_event(arg_12_1, true, tbl.kill, "interaction_warning", Localize(arg_12_2))
+	self:add_event(hash, true, event_colors.kill, "interaction_warning", Localize(message))
 end
 
-PositiveReinforcementUI._get_hero_portrait = function (arg_13_0, arg_13_1, arg_13_2)
+PositiveReinforcementUI._get_hero_portrait = function (self, profile_index, career_index)
 	-- function 13
 	local scale = RESOLUTION_LOOKUP.scale
-	local var_13_1 = SPProfiles[arg_13_1]
-	local var_13_2 = var_13_1.careers[arg_13_2]
-	local display_name = var_13_1.display_name
-	local portrait_image = var_13_2.portrait_image
+	local profile_data = SPProfiles[profile_index]
+	local careers = profile_data.careers
+	local career_data = careers[career_index]
+	local display_name = profile_data.display_name
+	local character_portrait = career_data.portrait_image
 
-	return "small_" .. portrait_image
+	return "small_" .. character_portrait
 end
 
-local tbl_3 = {
+local customizer_data = {
 	root_scenegraph_id = "pivot",
 	label = "Kill feed",
 	registry_key = "kill_feed",
 	drag_scenegraph_id = "pivot_dragger"
 }
 
-PositiveReinforcementUI.update = function (self, arg_14_1, arg_14_2)
+PositiveReinforcementUI.update = function (self, dt, t)
 	-- function 14
-	HudCustomizer.run(self.ui_renderer, self.ui_scenegraph, tbl_3)
+	HudCustomizer.run(self.ui_renderer, self.ui_scenegraph, customizer_data)
 
 	local ui_renderer = self.ui_renderer
 	local ui_scenegraph = self.ui_scenegraph
-	local get_service = self.input_manager:get_service("Player")
+	local input_service = self.input_manager:get_service("Player")
 	local render_settings = self.render_settings
 
-	for k, v in pairs(self._animations) do
-		if not self._animations[k] then
-			if not UIAnimation.completed(v) then
-				UIAnimation.update(v, arg_14_1)
+	for name, animation in pairs(self._animations) do
+		if self._animations[name] then
+			if not UIAnimation.completed(animation) then
+				UIAnimation.update(animation, dt)
 			else
-				self._animations[k] = nil
+				self._animations[name] = nil
 			end
 		end
 	end
 
-	UIRenderer.begin_pass(ui_renderer, ui_scenegraph, get_service, arg_14_1, nil, render_settings)
+	UIRenderer.begin_pass(ui_renderer, ui_scenegraph, input_service, dt, nil, render_settings)
 
-	local _positive_enforcement_events = self._positive_enforcement_events
+	local events = self._positive_enforcement_events
 	local show_duration = UISettings.positive_reinforcement.show_duration
 	local snap_pixel_positions = render_settings.snap_pixel_positions
 
-	for i, v_2 in ipairs(_positive_enforcement_events) do
-		local widget = v_2.widget
+	for index, event in ipairs(events) do
+		local widget = event.widget
 		local content = widget.content
 		local style = widget.style
 		local offset = widget.offset
-		local event_type = v_2.event_type
-		local var_14_12 = var_0_2[event_type]
-		local flag = false
+		local event_type = event.event_type
+		local settings = event_settings[event_type]
+		local removed = false
 
-		if not v_2.remove_time then
-			v_2.remove_time = arg_14_2 + show_duration
-		elseif arg_14_2 > v_2.remove_time then
-			self:remove_event(i)
+		if not event.remove_time then
+			event.remove_time = t + show_duration
+		elseif t > event.remove_time then
+			self:remove_event(index)
 
-			flag = true
+			removed = true
 		end
 
-		if not flag then
-			local num = 80
-			local num_2 = -((i - 1) * num)
-			local abs = math.abs(math.abs(offset[2]) - math.abs(num_2))
+		if not removed then
+			local step_size = 80
+			local new_height_offset = -((index - 1) * step_size)
+			local diff = math.abs(math.abs(offset[2]) - math.abs(new_height_offset))
 
-			if num_2 < offset[2] then
-				local num_3 = 400
+			if new_height_offset < offset[2] then
+				local speed = 400
 
-				offset[2] = math.max(offset[2] - arg_14_1 * num_3, num_2)
+				offset[2] = math.max(offset[2] - dt * speed, new_height_offset)
 			else
-				offset[2] = num_2
+				offset[2] = new_height_offset
 			end
 
-			local num_4 = v_2.remove_time - arg_14_2
+			local time_left = event.remove_time - t
 			local fade_duration = UISettings.positive_reinforcement.fade_duration
-			local num_5 = 0
+			local fade_out_progress = 0
 
-			if fade_duration < num_4 then
-				num_5 = math.clamp((show_duration - num_4) / fade_duration, 0, 1)
-				offset[1] = -(math.easeInCubic(1 - num_5) * 35)
+			if fade_duration < time_left then
+				fade_out_progress = math.clamp((show_duration - time_left) / fade_duration, 0, 1)
+				offset[1] = -(math.easeInCubic(1 - fade_out_progress) * 35)
 			else
-				num_5 = math.clamp(num_4 / fade_duration, 0, 1)
+				fade_out_progress = math.clamp(time_left / fade_duration, 0, 1)
 			end
 
-			local num_6 = 255 * math.easeOutCubic(num_5)
+			local anim_progress = math.easeOutCubic(fade_out_progress)
+			local alpha = 255 * anim_progress
 			local texte_style_ids = content.texte_style_ids
 
-			for i_2, v_3 in ipairs(texte_style_ids) do
-				style[v_3].color[1] = num_6
+			for _, style_id in ipairs(texte_style_ids) do
+				style[style_id].color[1] = alpha
 			end
 
-			render_settings.snap_pixel_positions = num_4 <= fade_duration
+			render_settings.snap_pixel_positions = time_left <= fade_duration
 
 			UIRenderer.draw_widget(ui_renderer, widget)
 

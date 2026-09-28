@@ -5,292 +5,315 @@ require("scripts/entity_system/systems/behaviour/nodes/bt_node")
 BTPrepareForCrazyJumpAction = class(BTPrepareForCrazyJumpAction, BTNode)
 BTPrepareForCrazyJumpAction.name = "BTPrepareForCrazyJumpAction"
 
-local POSITION_LOOKUP = POSITION_LOOKUP
+local position_lookup = POSITION_LOOKUP
 local AiUtils = AiUtils
-local alive = Unit.alive
+local unit_alive = Unit.alive
 
-BTPrepareForCrazyJumpAction.init = function (arg_1_0, ...)
+BTPrepareForCrazyJumpAction.init = function (self, ...)
 	-- function 1
-	BTPrepareForCrazyJumpAction.super.init(arg_1_0, ...)
+	BTPrepareForCrazyJumpAction.super.init(self, ...)
 end
 
-local function fn(arg_2_0, arg_2_1, arg_2_2)
+local function debug3d(unit, text, color_name)
 	-- function 2
-	if not script_data.debug_ai_movement then
-		Debug.world_sticky_text(POSITION_LOOKUP[arg_2_0], arg_2_1, arg_2_2)
+	if script_data.debug_ai_movement then
+		Debug.world_sticky_text(position_lookup[unit], text, color_name)
 	end
 end
 
-BTPrepareForCrazyJumpAction.enter = function (self, arg_3_1, arg_3_2, arg_3_3)
+BTPrepareForCrazyJumpAction.enter = function (self, unit, blackboard, t)
 	-- function 3
 	aiprint("ENTER BTPrepareForCrazyJumpAction")
 
-	local action_data = self._tree_node.action_data
+	local action = self._tree_node.action_data
 
-	arg_3_2.action = action_data
+	blackboard.action = action
 
-	LocomotionUtils.set_animation_driven_movement(arg_3_1, false)
+	LocomotionUtils.set_animation_driven_movement(unit, false)
 
-	local network = Managers.state.network
+	local network_manager = Managers.state.network
 
-	network:anim_event(arg_3_1, "move_fwd")
+	network_manager:anim_event(unit, "move_fwd")
 
-	arg_3_2.jump_data = {
+	blackboard.jump_data = {
 		crouching = false,
 		ready_crouch_time = false,
 		segment_list = {}
 	}
-	arg_3_2.remembered_threat_pos = nil
+	blackboard.remembered_threat_pos = nil
 
-	local flag = not action_data and action_data.tutorial_message_template
+	local tutorial_message_template = not not action and not not action.tutorial_message_template
 
-	if not flag then
-		local var_3_3 = NetworkLookup.tutorials[flag]
-		local var_3_4 = NetworkLookup.tutorials[arg_3_2.breed.name]
+	if tutorial_message_template then
+		local template_id = NetworkLookup.tutorials[tutorial_message_template]
+		local message_id = NetworkLookup.tutorials[blackboard.breed.name]
 
-		network.network_transmit:send_rpc_all("rpc_tutorial_message", var_3_3, var_3_4)
+		network_manager.network_transmit:send_rpc_all("rpc_tutorial_message", template_id, message_id)
 	end
 end
 
-BTPrepareForCrazyJumpAction.leave = function (arg_4_0, arg_4_1, arg_4_2, arg_4_3, arg_4_4, arg_4_5)
+BTPrepareForCrazyJumpAction.leave = function (self, unit, blackboard, t, reason, destroy)
 	-- function 4
 	aiprint("LEAVE BTPrepareForCrazyJumpAction")
 
-	arg_4_2.jump_data.jump_at_target_outside_mesh = nil
+	blackboard.jump_data.jump_at_target_outside_mesh = nil
 
-	local get_default_breed_move_speed = AiUtils.get_default_breed_move_speed(arg_4_1, arg_4_2)
+	local default_move_speed = AiUtils.get_default_breed_move_speed(unit, blackboard)
+	local navigation_extension = blackboard.navigation_extension
 
-	arg_4_2.navigation_extension:set_max_speed(get_default_breed_move_speed)
+	navigation_extension:set_max_speed(default_move_speed)
 
-	if arg_4_4 ~= "done" then
-		Managers.state.network:anim_event(arg_4_1, "to_upright")
+	if reason ~= "done" then
+		Managers.state.network:anim_event(unit, "to_upright")
 
-		arg_4_2.jump_data = nil
+		blackboard.jump_data = nil
 	end
 end
 
-BTPrepareForCrazyJumpAction.run = function (arg_5_0, arg_5_1, arg_5_2, arg_5_3, arg_5_4)
+BTPrepareForCrazyJumpAction.run = function (self, unit, blackboard, t, dt)
 	-- function 5
-	local extension = ScriptUnit.extension(arg_5_1, "locomotion_system")
-	local breed = arg_5_2.breed
+	local locomotion = ScriptUnit.extension(unit, "locomotion_system")
+	local breed = blackboard.breed
 
-	if arg_5_2.target_dist > breed.jump_range then
+	if blackboard.target_dist > breed.jump_range then
 		return "failed"
 	end
 
-	local target_unit = arg_5_2.target_unit
+	local target_unit = blackboard.target_unit
 
 	if not HEALTH_ALIVE[target_unit] then
 		return "failed"
 	end
 
-	local has_extension = ScriptUnit.has_extension(target_unit, "status_system")
+	local status_extension = ScriptUnit.has_extension(target_unit, "status_system")
 
-	if not has_extension then
+	if not status_extension then
 		return "failed"
 	end
 
-	if not has_extension:is_pounced_down() then
+	local is_pounced_by_other = status_extension:is_pounced_down()
+
+	if is_pounced_by_other then
 		return "failed"
 	end
 
-	if not arg_5_2.move_closer_to_target then
-		LocomotionUtils.follow_target(arg_5_1, arg_5_2, arg_5_3, arg_5_4)
-		extension:set_wanted_rotation(nil)
+	if blackboard.move_closer_to_target then
+		LocomotionUtils.follow_target(unit, blackboard, t, dt)
+		locomotion:set_wanted_rotation(nil)
 
-		if arg_5_3 > arg_5_2.move_closer_to_target_timer then
-			local jump_data = arg_5_2.jump_data
-			local ready_to_jump, var_5_6, var_5_7 = BTPrepareForCrazyJumpAction.ready_to_jump(arg_5_1, arg_5_2, jump_data, false)
+		if t > blackboard.move_closer_to_target_timer then
+			local data = blackboard.jump_data
+			local in_los, velocity, time_of_flight = BTPrepareForCrazyJumpAction.ready_to_jump(unit, blackboard, data, false)
 
-			if not ready_to_jump then
-				BTPrepareForCrazyJumpAction.start_crawling(arg_5_1, arg_5_2, arg_5_3, jump_data)
+			if in_los then
+				BTPrepareForCrazyJumpAction.start_crawling(unit, blackboard, t, data)
 
-				arg_5_2.move_closer_to_target = false
+				blackboard.move_closer_to_target = false
 			else
-				if not (arg_5_2.target_dist < 2) or not GwNavQueries.raycango(arg_5_2.nav_world, POSITION_LOOKUP[arg_5_1], POSITION_LOOKUP[target_unit]) then
-					BTPrepareForCrazyJumpAction.start_crawling(arg_5_1, arg_5_2, arg_5_3, jump_data)
+				if blackboard.target_dist < 2 and GwNavQueries.raycango(blackboard.nav_world, POSITION_LOOKUP[unit], POSITION_LOOKUP[target_unit]) then
+					BTPrepareForCrazyJumpAction.start_crawling(unit, blackboard, t, data)
 
-					arg_5_2.move_closer_to_target = false
+					blackboard.move_closer_to_target = false
 				else
 					return "failed"
 				end
 
-				arg_5_2.move_closer_to_target_timer = arg_5_3 + 1
+				blackboard.move_closer_to_target_timer = t + 1
 			end
 		end
 	else
-		local var_5_8 = POSITION_LOOKUP[target_unit]
-		local look_at_position_flat = LocomotionUtils.look_at_position_flat(arg_5_1, var_5_8)
+		local target_position = POSITION_LOOKUP[target_unit]
+		local rot = LocomotionUtils.look_at_position_flat(unit, target_position)
 
-		extension:set_wanted_rotation(look_at_position_flat)
+		locomotion:set_wanted_rotation(rot)
 
-		local jump_data_2 = arg_5_2.jump_data
+		local data = blackboard.jump_data
 
-		if not jump_data_2.crouching then
-			LocomotionUtils.follow_target(arg_5_1, arg_5_2, arg_5_3, arg_5_4)
+		if data.crouching then
+			LocomotionUtils.follow_target(unit, blackboard, t, dt)
 
-			if not arg_5_2.target_outside_navmesh then
-				if not jump_data_2.jump_at_target_outside_mesh then
-					Managers.state.network:anim_event(arg_5_1, "idle")
-					arg_5_2.navigation_extension:move_to(POSITION_LOOKUP[arg_5_1])
+			if blackboard.target_outside_navmesh then
+				if not data.jump_at_target_outside_mesh then
+					local network_manager = Managers.state.network
 
-					jump_data_2.jump_at_target_outside_mesh = true
+					network_manager:anim_event(unit, "idle")
+
+					local navigation = blackboard.navigation_extension
+
+					navigation:move_to(position_lookup[unit])
+
+					data.jump_at_target_outside_mesh = true
 				end
 			else
-				extension:set_wanted_rotation(nil)
+				locomotion:set_wanted_rotation(nil)
 			end
 
-			if arg_5_3 > jump_data_2.ready_crouch_time then
-				local ready_to_jump_2, var_5_12, var_5_13 = BTPrepareForCrazyJumpAction.ready_to_jump(arg_5_1, arg_5_2, jump_data_2, true)
+			if t > data.ready_crouch_time then
+				local in_los, velocity, time_of_flight = BTPrepareForCrazyJumpAction.ready_to_jump(unit, blackboard, data, true)
 
-				if not ready_to_jump_2 then
+				if in_los then
 					return "done"
 				end
 
-				jump_data_2.crouching = false
-				arg_5_2.move_closer_to_target = true
+				data.crouching = false
+				blackboard.move_closer_to_target = true
 
-				Managers.state.network:anim_event(arg_5_1, "to_upright")
-				arg_5_2.navigation_extension:set_max_speed(arg_5_2.breed.run_speed)
+				Managers.state.network:anim_event(unit, "to_upright")
+				blackboard.navigation_extension:set_max_speed(blackboard.breed.run_speed)
 
-				arg_5_2.move_closer_to_target_timer = arg_5_3 + 1
-				arg_5_2.remembered_threat_pos = nil
-				jump_data_2.ready_crouch_time = nil
+				blackboard.move_closer_to_target_timer = t + 1
+				blackboard.remembered_threat_pos = nil
+				data.ready_crouch_time = nil
 
 				return "running"
 			end
 		else
-			BTPrepareForCrazyJumpAction.start_crawling(arg_5_1, arg_5_2, arg_5_3, jump_data_2)
+			BTPrepareForCrazyJumpAction.start_crawling(unit, blackboard, t, data)
 		end
 	end
 
 	return "running"
 end
 
-BTPrepareForCrazyJumpAction.start_crawling = function (arg_6_0, arg_6_1, arg_6_2, arg_6_3)
+BTPrepareForCrazyJumpAction.start_crawling = function (unit, blackboard, t, data)
 	-- function 6
-	local action = arg_6_1.action
+	local action = blackboard.action
 
-	arg_6_1.navigation_extension:set_max_speed(arg_6_1.breed.walk_speed)
-	Managers.state.network:anim_event(arg_6_0, "to_crouch")
+	blackboard.navigation_extension:set_max_speed(blackboard.breed.walk_speed)
 
-	local var_6_1 = action.difficulty_prepare_jump_time[Managers.state.difficulty:get_difficulty_rank()]
+	local network_manager = Managers.state.network
 
-	var_6_1 = var_6_1 or action.difficulty_prepare_jump_time[2]
-	arg_6_3.crouching = true
-	arg_6_3.ready_crouch_time = arg_6_2 + (var_6_1 or 0.5)
+	network_manager:anim_event(unit, "to_crouch")
+
+	local var_6_0 = action.difficulty_prepare_jump_time[Managers.state.difficulty:get_difficulty_rank()]
+
+	if not var_6_0 then
+		-- Nothing
+	end
+
+	var_6_0 = action.difficulty_prepare_jump_time[2]
+
+	local prepare_jump_time = var_6_0
+
+	::label_6_0::
+
+	data.crouching = true
+	data.ready_crouch_time = t + (not not prepare_jump_time or not not 0.5)
 end
 
-BTPrepareForCrazyJumpAction.ready_to_jump = function (arg_7_0, arg_7_1, arg_7_2, arg_7_3)
+BTPrepareForCrazyJumpAction.ready_to_jump = function (unit, blackboard, data, set_data)
 	-- function 7
-	local node = Unit.node(arg_7_1.target_unit, "j_neck")
-	local var_7_1 = POSITION_LOOKUP[arg_7_0]
-	local num = Unit.world_position(arg_7_1.target_unit, 0) + Vector3(0, 0, 0.2)
-	local num_2 = var_7_1 + Vector3.normalize(num - var_7_1) * 0.3
-	local distance = Vector3.distance(num_2, num)
-	local var_7_5
-	local var_7_6
-	local var_7_7
+	local enemy_spine_node = Unit.node(blackboard.target_unit, "j_neck")
+	local p1 = position_lookup[unit]
+	local p2 = Unit.world_position(blackboard.target_unit, 0) + Vector3(0, 0, 0.2)
+	local move_forward = Vector3.normalize(p2 - p1) * 0.3
 
-	if distance < 2.5 then
-		if not LocomotionUtils.target_in_los(arg_7_0, arg_7_1) then
-			local jump_speed = arg_7_1.breed.jump_speed
+	p1 = p1 + move_forward
 
-			var_7_6 = BTPrepareForCrazyJumpAction.test_simple_jump(num - num_2, jump_speed)
+	local total_distance = Vector3.distance(p1, p2)
+	local in_los, velocity, time_of_flight
 
-			if not var_7_6 then
-				var_7_5 = true
+	if total_distance < 2.5 then
+		if LocomotionUtils.target_in_los(unit, blackboard) then
+			local jump_speed = blackboard.breed.jump_speed
+
+			velocity = BTPrepareForCrazyJumpAction.test_simple_jump(p2 - p1, jump_speed)
+
+			if velocity then
+				in_los = true
 			end
 		end
 	else
-		local var_7_9 = Vector3(0, 0, 0.05)
+		local wedge = Vector3(0, 0, 0.05)
 
-		var_7_5, var_7_6, var_7_7 = BTPrepareForCrazyJumpAction.test_trajectory(arg_7_1, num_2 + var_7_9, num + var_7_9, arg_7_2.segment_list, true)
+		in_los, velocity, time_of_flight = BTPrepareForCrazyJumpAction.test_trajectory(blackboard, p1 + wedge, p2 + wedge, data.segment_list, true)
 	end
 
-	if not var_7_5 and not arg_7_3 then
-		arg_7_2.jump_target_pos = Vector3Box(num)
-		arg_7_2.jump_velocity_boxed = Vector3Box(var_7_6)
-		arg_7_2.total_distance = distance
-		arg_7_2.enemy_spine_node = node
+	if in_los and set_data then
+		data.jump_target_pos = Vector3Box(p2)
+		data.jump_velocity_boxed = Vector3Box(velocity)
+		data.total_distance = total_distance
+		data.enemy_spine_node = enemy_spine_node
 	end
 
-	return var_7_5, var_7_6, var_7_7
+	return in_los, velocity, time_of_flight
 end
 
-BTPrepareForCrazyJumpAction.test_trajectory = function (self, arg_8_1, arg_8_2, arg_8_3, arg_8_4)
+BTPrepareForCrazyJumpAction.test_trajectory = function (blackboard, p1, p2, segment_list, multiple_raycasts)
 	-- function 8
-	local get_data = World.get_data(self.world, "physics_world")
-	local jump_gravity = self.breed.jump_gravity
-	local var_8_2
-	local jump_speed = self.breed.jump_speed
-	local var_8_4 = Vector3(0, 0, 0.05)
-	local num = 1
-	local unbox = ScriptUnit.extension(self.target_unit, "locomotion_system").velocity_current:unbox()
-	local normalize = Vector3.normalize(arg_8_2 - arg_8_1)
-	local dot = Vector3.dot(normalize, Vector3(0, 0, 1))
-	local var_8_9
-	local num_2 = arg_8_1.z - arg_8_2.z
+	local physics_world = World.get_data(blackboard.world, "physics_world")
+	local gravity = blackboard.breed.jump_gravity
+	local jump_angle
+	local jump_speed = blackboard.breed.jump_speed
+	local wedge = Vector3(0, 0, 0.05)
+	local acceptable_accuracy = 1
+	local player_locomotion = ScriptUnit.extension(blackboard.target_unit, "locomotion_system")
+	local target_velocity = player_locomotion.velocity_current:unbox()
+	local to_target_dir = Vector3.normalize(p2 - p1)
+	local dot = Vector3.dot(to_target_dir, Vector3(0, 0, 1))
+	local high_arc
+	local height = p1.z - p2.z
 
-	if not (not (dot < -0.5) or not (num_2 > 2) or not (num_2 < 6)) then
-		var_8_9 = true
+	if dot < -0.5 and height > 2 and height < 6 then
+		high_arc = true
 		jump_speed = 5
 	end
 
-	if not var_8_9 then
-		var_8_2 = WeaponHelper.angle_to_hit_moving_target(arg_8_1, arg_8_2, jump_speed, unbox, jump_gravity, num, var_8_9)
+	if high_arc then
+		jump_angle = WeaponHelper.angle_to_hit_moving_target(p1, p2, jump_speed, target_velocity, gravity, acceptable_accuracy, high_arc)
 	else
-		var_8_2 = WeaponHelper.angle_to_hit_moving_target(arg_8_1, arg_8_2, jump_speed, unbox, jump_gravity, num)
+		jump_angle = WeaponHelper.angle_to_hit_moving_target(p1, p2, jump_speed, target_velocity, gravity, acceptable_accuracy)
 	end
 
-	if not (var_8_2 or jump_speed) then
+	if not jump_angle and not jump_speed then
 		return
 	end
 
-	local test_angled_trajectory, var_8_12, var_8_13 = WeaponHelper.test_angled_trajectory(get_data, arg_8_1 + var_8_4, arg_8_2 + var_8_4, -jump_gravity, jump_speed, var_8_2, arg_8_3)
+	local in_los, velocity, time_of_flight = WeaponHelper.test_angled_trajectory(physics_world, p1 + wedge, p2 + wedge, -gravity, jump_speed, jump_angle, segment_list)
 
-	if not var_8_12 and not jump_speed then
-		var_8_12 = Vector3.normalize(var_8_12) * jump_speed
+	if velocity and jump_speed then
+		velocity = Vector3.normalize(velocity) * jump_speed
 	end
 
-	if not arg_8_4 then
-		if not test_angled_trajectory then
+	if multiple_raycasts then
+		if not in_los then
 			return
 		end
 
-		test_angled_trajectory = WeaponHelper.ray_segmented_test(get_data, arg_8_3, Vector3(0, 0, 1.6))
+		in_los = WeaponHelper.ray_segmented_test(physics_world, segment_list, Vector3(0, 0, 1.6))
 
-		if not test_angled_trajectory then
+		if not in_los then
 			return
 		end
 
-		local num_3 = Vector3.cross(Vector3.normalize(arg_8_2 - arg_8_1), Vector3.up()) * 0.4
+		local right = Vector3.cross(Vector3.normalize(p2 - p1), Vector3.up()) * 0.4
 
-		test_angled_trajectory = WeaponHelper.ray_segmented_test(get_data, arg_8_3, Vector3(0, 0, 0.7) + num_3)
+		in_los = WeaponHelper.ray_segmented_test(physics_world, segment_list, Vector3(0, 0, 0.7) + right)
 
-		if not test_angled_trajectory then
+		if not in_los then
 			return
 		end
 
-		test_angled_trajectory = WeaponHelper.ray_segmented_test(get_data, arg_8_3, Vector3(0, 0, 0.7) - num_3)
+		in_los = WeaponHelper.ray_segmented_test(physics_world, segment_list, Vector3(0, 0, 0.7) - right)
 
-		if not test_angled_trajectory then
+		if not in_los then
 			return
 		end
 	end
 
-	return test_angled_trajectory, var_8_12, var_8_13
+	return in_los, velocity, time_of_flight
 end
 
-BTPrepareForCrazyJumpAction.test_simple_jump = function (arg_9_0, arg_9_1)
+BTPrepareForCrazyJumpAction.test_simple_jump = function (to_target, jump_speed)
 	-- function 9
-	local wanted_projectile_angle = WeaponHelper:wanted_projectile_angle(arg_9_0, 9.82, arg_9_1)
+	local angle = WeaponHelper:wanted_projectile_angle(to_target, 9.82, jump_speed)
 
-	if not wanted_projectile_angle then
-		Vector3.set_z(arg_9_0, 0)
+	if angle then
+		Vector3.set_z(to_target, 0)
 
-		local normalize = Vector3.normalize(arg_9_0)
+		local to_vec_flat = Vector3.normalize(to_target)
+		local velocity = Quaternion.rotate(Quaternion.axis_angle(Vector3.cross(to_vec_flat, Vector3.up()), angle), to_vec_flat) * jump_speed
 
-		return Quaternion.rotate(Quaternion.axis_angle(Vector3.cross(normalize, Vector3.up()), wanted_projectile_angle), normalize) * arg_9_1
+		return velocity
 	end
 end

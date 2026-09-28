@@ -2,61 +2,61 @@
 
 IngameViewLayoutLogic = class(IngameViewLayoutLogic)
 
-IngameViewLayoutLogic.init = function (self, arg_1_1, arg_1_2, arg_1_3, arg_1_4)
+IngameViewLayoutLogic.init = function (self, ingame_ui_context, params, menu_layouts, full_access_layout)
 	-- function 1
-	self._menu_layouts = arg_1_3
-	self._full_access_layout = arg_1_4
-	self.ingame_ui = arg_1_1.ingame_ui
-	self._params = arg_1_2
+	self._menu_layouts = menu_layouts
+	self._full_access_layout = full_access_layout
+	self.ingame_ui = ingame_ui_context.ingame_ui
+	self._params = params
 
-	local is_in_inn = arg_1_1.is_in_inn
+	local is_in_inn = ingame_ui_context.is_in_inn
 
-	self.is_server = arg_1_1.is_server
+	self.is_server = ingame_ui_context.is_server
 
 	local in_menu
 
-	if not is_in_inn then
-		in_menu = arg_1_3.in_menu
+	if is_in_inn then
+		in_menu = menu_layouts.in_menu
 
 		if not in_menu then
 			-- Nothing
 		end
 	end
 
-	in_menu = arg_1_3.in_game
+	in_menu = menu_layouts.in_game
 
 	::label_1_0::
 
 	self.layout_list = in_menu
 end
 
-IngameViewLayoutLogic.setup_button_layout = function (self, arg_2_1)
+IngameViewLayoutLogic.setup_button_layout = function (self, layout_data)
 	-- function 2
 	local active_button_data = self.active_button_data
 
-	if not active_button_data then
+	if active_button_data then
 		table.clear(active_button_data)
 	else
 		self.active_button_data = {}
 		active_button_data = self.active_button_data
 	end
 
-	local _params = self._params
+	local params = self._params
 
-	for i, v in ipairs(arg_2_1) do
-		if not v.can_add_function and not v.can_add_function(_params) then
-			local display_name = v.display_name
-			local display_name_func = v.display_name_func
-			local url = v.url
-			local callback = v.callback
-			local transition = v.transition
-			local transition_state = v.transition_state
-			local transition_sub_state = v.transition_sub_state
-			local disable_for_mechanism = v.disable_for_mechanism
-			local requires_player_unit = v.requires_player_unit
-			local fade = v.fade
-			local force_open = v.force_open
-			local force_ingame_menu = v.force_ingame_menu
+	for index, data in ipairs(layout_data) do
+		if not data.can_add_function or data.can_add_function(params) then
+			local display_name = data.display_name
+			local display_name_func = data.display_name_func
+			local url = data.url
+			local callback = data.callback
+			local transition = data.transition
+			local transition_state = data.transition_state
+			local transition_sub_state = data.transition_sub_state
+			local disable_for_mechanism = data.disable_for_mechanism
+			local requires_player_unit = data.requires_player_unit
+			local fade = data.fade
+			local force_open = data.force_open
+			local force_ingame_menu = data.force_ingame_menu
 
 			active_button_data[#active_button_data + 1] = {
 				display_name = display_name,
@@ -78,7 +78,7 @@ end
 
 IngameViewLayoutLogic._update_menu_options = function (self)
 	-- function 3
-	if not script_data.pause_menu_full_access then
+	if script_data.pause_menu_full_access then
 		if not self.pause_menu_full_access then
 			self.pause_menu_full_access = true
 
@@ -88,32 +88,47 @@ IngameViewLayoutLogic._update_menu_options = function (self)
 		local num_human_players = Managers.player:num_human_players()
 		local pause_menu_full_access = self.pause_menu_full_access
 
-		pause_menu_full_access = pause_menu_full_access or self.num_players ~= num_human_players
+		if not pause_menu_full_access then
+			-- Nothing
+		end
+
+		if self.num_players == num_human_players then
+			pause_menu_full_access = false
+
+			goto label_3_0
+		end
+
+		pause_menu_full_access = true
+
+		local update_layout = pause_menu_full_access
+
+		::label_3_0::
+
 		self.pause_menu_full_access = nil
 
-		if not pause_menu_full_access then
+		if update_layout then
 			self.num_players = num_human_players
 
 			local layout_list = self.layout_list
-			local var_3_3
+			local new_menu_layout
 			local level_key = Managers.state.game_mode:level_key()
-			local offline_mode = Managers.account:offline_mode()
+			local is_offline = Managers.account:offline_mode()
 
-			if not script_data.honduras_demo then
-				var_3_3 = layout_list.demo
+			if script_data.honduras_demo then
+				new_menu_layout = layout_list.demo
 			elseif level_key == "prologue" then
-				var_3_3 = layout_list.tutorial
-			elseif not offline_mode then
-				var_3_3 = layout_list.offline
+				new_menu_layout = layout_list.tutorial
+			elseif is_offline then
+				new_menu_layout = layout_list.offline
 			elseif num_human_players == 1 then
-				var_3_3 = layout_list.alone
-			elseif not self.is_server then
-				var_3_3 = layout_list.host
+				new_menu_layout = layout_list.alone
+			elseif self.is_server then
+				new_menu_layout = layout_list.host
 			else
-				var_3_3 = layout_list.client
+				new_menu_layout = layout_list.client
 			end
 
-			self:setup_button_layout(var_3_3)
+			self:setup_button_layout(new_menu_layout)
 		end
 	end
 end
@@ -122,74 +137,81 @@ IngameViewLayoutLogic._update_menu_options_enabled_states = function (self)
 	-- function 4
 	local active_button_data = self.active_button_data
 
-	if not active_button_data then
-		local is_local_player_ready_for_game = self.ingame_ui:is_local_player_ready_for_game()
+	if active_button_data then
+		local player_ready_for_game = self.ingame_ui:is_local_player_ready_for_game()
 		local is_game_matchmaking = Managers.matchmaking:is_game_matchmaking()
-		local local_player = Managers.player:local_player()
-		local flag = not local_player and local_player.player_unit ~= nil
-		local current_mechanism_name = Managers.mechanism:current_mechanism_name()
+		local player_manager = Managers.player
+		local local_player = player_manager:local_player()
+		local has_player = not not local_player and local_player.player_unit ~= nil
+		local mechanism_name = Managers.mechanism:current_mechanism_name()
 
-		for i, v in ipairs(active_button_data) do
-			local var_4_6
-			local var_4_7
-			local var_4_8
-			local disable_for_mechanism = v.disable_for_mechanism
+		for index, menu_option in ipairs(active_button_data) do
+			local disable_when_matchmaking, disable_when_matchmaking_ready, disable_not_matchmaking
+			local disable_for_mechanism_2 = menu_option.disable_for_mechanism
 
-			disable_for_mechanism = not disable_for_mechanism and v.disable_for_mechanism[current_mechanism_name]
-
-			if not disable_for_mechanism then
-				var_4_6 = disable_for_mechanism.matchmaking
-				var_4_7 = disable_for_mechanism.matchmaking_ready
-				var_4_8 = disable_for_mechanism.not_matchmaking
+			if disable_for_mechanism_2 then
+				-- Nothing
 			end
 
-			local requires_player_unit = v.requires_player_unit
-			local flag_2 = not is_local_player_ready_for_game and var_4_7 and not is_game_matchmaking or var_4_6 and (not requires_player_unit and not not flag and not var_4_8 or not is_game_matchmaking)
+			disable_for_mechanism_2 = menu_option.disable_for_mechanism[mechanism_name]
 
-			if not (not flag_2 and v.disabled) then
-				v.disabled = true
-			elseif flag_2 or not v.disabled then
-				v.disabled = false
+			local disable_for_mechanism = disable_for_mechanism_2
+
+			::label_4_0::
+
+			if disable_for_mechanism then
+				disable_when_matchmaking = disable_for_mechanism.matchmaking
+				disable_when_matchmaking_ready = disable_for_mechanism.matchmaking_ready
+				disable_not_matchmaking = disable_for_mechanism.not_matchmaking
+			end
+
+			local requires_player_unit = menu_option.requires_player_unit
+			local transition_not_allowed = (not player_ready_for_game or not disable_when_matchmaking_ready) and (not is_game_matchmaking or not disable_when_matchmaking) and (not requires_player_unit or not not has_player) and not not disable_not_matchmaking and not not not is_game_matchmaking
+
+			if transition_not_allowed and not menu_option.disabled then
+				menu_option.disabled = true
+			elseif not transition_not_allowed and menu_option.disabled then
+				menu_option.disabled = false
 			end
 		end
 	end
 end
 
-IngameViewLayoutLogic.execute_layout_option = function (self, arg_5_1)
+IngameViewLayoutLogic.execute_layout_option = function (self, index)
 	-- function 5
 	local active_button_data = self.active_button_data
 	local ingame_ui = self.ingame_ui
-	local var_5_2 = active_button_data[arg_5_1]
+	local data = active_button_data[index]
 
-	if not var_5_2 then
-		local url = var_5_2.url
+	if data then
+		local url = data.url
 
-		if not url then
+		if url then
 			Application.open_url_in_browser(url)
 		else
-			local callback = var_5_2.callback
+			local callback = data.callback
 
-			if not callback then
+			if callback then
 				callback()
 			end
 
-			local transition = var_5_2.transition
-			local transition_state = var_5_2.transition_state
-			local transition_sub_state = var_5_2.transition_sub_state
-			local fade = var_5_2.fade
-			local force_open = var_5_2.force_open
-			local force_ingame_menu = var_5_2.force_ingame_menu
-			local tbl = {
+			local transition = data.transition
+			local transition_state = data.transition_state
+			local transition_sub_state = data.transition_sub_state
+			local fade = data.fade
+			local force_open = data.force_open
+			local force_ingame_menu = data.force_ingame_menu
+			local transition_params = {
 				menu_state_name = transition_state,
 				menu_sub_state_name = transition_sub_state,
 				force_open = force_open,
 				force_ingame_menu = force_ingame_menu
 			}
 
-			if not fade then
-				ingame_ui:transition_with_fade(transition, tbl)
+			if fade then
+				ingame_ui:transition_with_fade(transition, transition_params)
 			else
-				ingame_ui:handle_transition(transition, tbl)
+				ingame_ui:handle_transition(transition, transition_params)
 			end
 		end
 	end
@@ -206,7 +228,7 @@ IngameViewLayoutLogic.layout_data = function (self)
 	return self.active_button_data
 end
 
-IngameViewLayoutLogic.destroy = function (arg_8_0)
+IngameViewLayoutLogic.destroy = function (self)
 	-- function 8
 	return
 end

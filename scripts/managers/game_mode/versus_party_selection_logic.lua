@@ -1,15 +1,17 @@
 -- chunkname: @scripts/managers/game_mode/versus_party_selection_logic.lua
 
-local flag = false
+local DRAW_DEBUG = false
 
 VersusPartySelectionLogicUtility = {}
 
-VersusPartySelectionLogicUtility.picker_index_is_bot = function (self, arg_1_1)
+VersusPartySelectionLogicUtility.picker_index_is_bot = function (party_data, picker_index)
 	-- function 1
-	return self.picker_list[arg_1_1].status.is_bot ~= false
+	local is_bot = party_data.picker_list[picker_index].status.is_bot
+
+	return is_bot ~= false
 end
 
-local tbl = {
+local RPCS = {
 	"rpc_set_party_array",
 	"rpc_sync_player_loadout",
 	"rpc_set_player_state",
@@ -23,19 +25,19 @@ local tbl = {
 VersusPartySelectionLogic = class(VersusPartySelectionLogic)
 VersusPartySelectionLogic.party_states = {
 	startup = {
-		enter = function (self, arg_2_1, arg_2_2)
+		enter = function (parent, party_data, party)
 			-- function 2
-			local _picking_settings = self._picking_settings
+			local picking_settings = parent._picking_settings
 
-			self:set_timer(_picking_settings.startup_time)
+			parent:set_timer(picking_settings.startup_time)
 		end,
-		run = function (self, arg_3_1, arg_3_2, arg_3_3, arg_3_4, arg_3_5)
+		run = function (parent, party_data, party, timer, t, dt)
 			-- function 3
-			if arg_3_3 <= 0 then
-				local picker_list = arg_3_1.picker_list
+			if timer <= 0 then
+				local picker_list = party_data.picker_list
 
 				for i = 1, #picker_list do
-					self:set_player_state("player_waiting_to_pick", arg_3_2.party_id, i)
+					parent:set_player_state("player_waiting_to_pick", party.party_id, i)
 				end
 
 				return "player_picking_character"
@@ -43,42 +45,44 @@ VersusPartySelectionLogic.party_states = {
 		end
 	},
 	player_picking_character = {
-		enter = function (self, arg_4_1, arg_4_2)
+		enter = function (parent, party_data, party)
 			-- function 4
-			local num = arg_4_1.current_picker_index + 1
+			local current_picker_index = party_data.current_picker_index
 
-			arg_4_1.current_picker_index = num
+			current_picker_index = current_picker_index + 1
+			party_data.current_picker_index = current_picker_index
 
-			self:_ensure_picker_has_character(arg_4_1, num, true)
+			parent:_ensure_picker_has_character(party_data, current_picker_index, true)
 
-			local player_pick_time = self._picking_settings.player_pick_time
+			local picking_settings = parent._picking_settings
+			local player_pick_time = picking_settings.player_pick_time
 
-			self:set_timer(player_pick_time)
-			self:set_party_current_picker(arg_4_2.party_id, num)
-			self:set_player_state("player_picking_character", arg_4_2.party_id, num)
+			parent:set_timer(player_pick_time)
+			parent:set_party_current_picker(party.party_id, current_picker_index)
+			parent:set_player_state("player_picking_character", party.party_id, current_picker_index)
 		end,
-		run = function (self, arg_5_1, arg_5_2, arg_5_3, arg_5_4, arg_5_5)
+		run = function (parent, party_data, party, timer, t, dt)
 			-- function 5
-			local current_picker_index = arg_5_1.current_picker_index
+			local current_picker_index = party_data.current_picker_index
 
-			self:_ensure_picker_has_character(arg_5_1, current_picker_index)
+			parent:_ensure_picker_has_character(party_data, current_picker_index)
 
-			if arg_5_3 <= 0 then
+			if timer <= 0 then
 				return "player_has_picked_character"
 			end
 		end
 	},
 	player_has_picked_character = {
-		enter = function (self, arg_6_1, arg_6_2)
+		enter = function (parent, party_data, party)
 			-- function 6
-			local current_picker_index = arg_6_1.current_picker_index
+			local current_picker_index = party_data.current_picker_index
 
-			self:set_player_state("player_has_picked_character", arg_6_2.party_id, current_picker_index)
-			self:_ensure_picker_has_character(arg_6_1, current_picker_index)
+			parent:set_player_state("player_has_picked_character", party.party_id, current_picker_index)
+			parent:_ensure_picker_has_character(party_data, current_picker_index)
 		end,
-		run = function (arg_7_0, arg_7_1, arg_7_2, arg_7_3, arg_7_4, arg_7_5)
+		run = function (parent, party_data, party, timer, t, dt)
 			-- function 7
-			if arg_7_1.current_picker_index >= #arg_7_1.picker_list then
+			if party_data.current_picker_index >= #party_data.picker_list then
 				return "parading"
 			end
 
@@ -86,129 +90,133 @@ VersusPartySelectionLogic.party_states = {
 		end
 	},
 	parading = {
-		enter = function (self, arg_8_1, arg_8_2)
+		enter = function (parent, party_data, party)
 			-- function 8
-			local parading_duration = Managers.state.game_mode:setting("character_picking_settings").parading_duration
+			local duration = Managers.state.game_mode:setting("character_picking_settings").parading_duration
 
-			self:set_timer(parading_duration)
+			parent:set_timer(duration)
 
-			for i = 1, #arg_8_1.picker_list do
-				self:set_player_state("parading", arg_8_2.party_id, i)
+			for i = 1, #party_data.picker_list do
+				parent:set_player_state("parading", party.party_id, i)
 			end
 		end,
-		run = function (arg_9_0, arg_9_1, arg_9_2, arg_9_3, arg_9_4, arg_9_5, arg_9_6)
+		run = function (parent, party_data, party, timer, t, dt, party_selection_logic)
 			-- function 9
-			if arg_9_3 <= 0 then
+			if timer <= 0 then
 				return "closing"
 			end
 		end
 	},
 	closing = {
-		enter = function (self, arg_10_1, arg_10_2)
+		enter = function (parent, party_data, party)
 			-- function 10
-			local _picking_settings = self._picking_settings
+			local picking_settings = parent._picking_settings
 
-			self:set_timer(_picking_settings.closing_time)
+			parent:set_timer(picking_settings.closing_time)
 
-			for i = 1, #arg_10_1.picker_list do
-				self:set_player_state("closing", arg_10_2.party_id, i)
+			for i = 1, #party_data.picker_list do
+				parent:set_player_state("closing", party.party_id, i)
 			end
 		end,
-		run = function (self, arg_11_1, arg_11_2, arg_11_3, arg_11_4, arg_11_5, arg_11_6)
+		run = function (parent, party_data, party, timer, t, dt, party_selection_logic)
 			-- function 11
-			if self._character_selection_completed or not self:_all_parties_have_picked() then
-				Managers.state.event:unregister("on_player_left_party", arg_11_6)
-				Managers.state.game_mode:game_mode():server_character_selection_completed()
+			if not parent._character_selection_completed then
+				local all_parties_done = parent:_all_parties_have_picked()
 
-				self._character_selection_completed = true
+				if all_parties_done then
+					Managers.state.event:unregister("on_player_left_party", party_selection_logic)
+					Managers.state.game_mode:game_mode():server_character_selection_completed()
+
+					parent._character_selection_completed = true
+				end
 			end
 		end
 	}
 }
 VersusPartySelectionLogic.client_states = {
 	startup = {
-		enter = function (self, arg_12_1, arg_12_2)
+		enter = function (parent, party_data, party)
 			-- function 12
-			self:set_party_timer(arg_12_1)
+			parent:set_party_timer(party_data)
 		end,
-		run = function (arg_13_0, arg_13_1, arg_13_2, arg_13_3, arg_13_4, arg_13_5)
+		run = function (parent, party_data, party, timer, t, dt)
 			-- function 13
 			return
 		end
 	},
 	player_waiting_to_pick = {
-		enter = function (arg_14_0, arg_14_1, arg_14_2)
+		enter = function (parent, party_data, party)
 			-- function 14
 			return
 		end,
-		run = function (self, arg_15_1, arg_15_2, arg_15_3, arg_15_4, arg_15_5)
+		run = function (parent, party_data, party, timer, t, dt)
 			-- function 15
-			local prev_picker_index = arg_15_1.prev_picker_index
-			local current_picker_index = arg_15_1.current_picker_index
+			local prev_picker_index = party_data.prev_picker_index
+			local current_picker_index = party_data.current_picker_index
 
 			if prev_picker_index < current_picker_index then
-				self:set_party_timer(arg_15_1)
+				parent:set_party_timer(party_data)
 
-				arg_15_1.prev_picker_index = current_picker_index
+				party_data.prev_picker_index = current_picker_index
 			end
 
-			arg_15_1.slider_timer = arg_15_3
+			party_data.slider_timer = timer
 		end
 	},
 	player_picking_character = {
-		enter = function (self, arg_16_1, arg_16_2)
+		enter = function (parent, party_data, party)
 			-- function 16
-			arg_16_1.prev_picker_index = arg_16_1.current_picker_index
+			party_data.prev_picker_index = party_data.current_picker_index
 
-			self:set_party_timer(arg_16_1)
+			parent:set_party_timer(party_data)
 		end,
-		run = function (arg_17_0, arg_17_1, arg_17_2, arg_17_3, arg_17_4, arg_17_5)
+		run = function (parent, party_data, party, timer, t, dt)
 			-- function 17
-			arg_17_1.slider_timer = arg_17_3
+			party_data.slider_timer = timer
 		end
 	},
 	player_has_picked_character = {
-		enter = function (arg_18_0, arg_18_1, arg_18_2)
+		enter = function (parent, party_data, party)
 			-- function 18
 			return
 		end,
-		run = function (self, arg_19_1, arg_19_2, arg_19_3, arg_19_4, arg_19_5)
+		run = function (parent, party_data, party, timer, t, dt)
 			-- function 19
-			local prev_picker_index = arg_19_1.prev_picker_index
-			local current_picker_index = arg_19_1.current_picker_index
+			local prev_picker_index = party_data.prev_picker_index
+			local current_picker_index = party_data.current_picker_index
 
 			if prev_picker_index < current_picker_index then
-				self:set_party_timer(arg_19_1)
+				parent:set_party_timer(party_data)
 
-				arg_19_1.prev_picker_index = current_picker_index
+				party_data.prev_picker_index = current_picker_index
 			end
 
-			arg_19_1.slider_timer = arg_19_3
+			party_data.slider_timer = timer
 		end
 	},
 	parading = {
-		enter = function (arg_20_0, arg_20_1, arg_20_2)
+		enter = function (parent, party_data, party)
 			-- function 20
 			return
 		end,
-		run = function (arg_21_0, arg_21_1, arg_21_2, arg_21_3, arg_21_4, arg_21_5)
+		run = function (parent, party_data, party, timer, t, dt)
 			-- function 21
 			return
 		end
 	},
 	closing = {
-		enter = function (arg_22_0, arg_22_1, arg_22_2)
+		enter = function (parent, party_data, party)
 			-- function 22
-			arg_22_1.slider_timer = nil
+			party_data.slider_timer = nil
 		end,
-		run = function (arg_23_0, arg_23_1, arg_23_2, arg_23_3, arg_23_4, arg_23_5)
+		run = function (parent, party_data, party, timer, t, dt)
 			-- function 23
 			return
 		end
 	}
 }
 
-local tbl_2 = {
+local ClientStateLookup = {
 	"startup",
 	"player_waiting_to_pick",
 	"player_picking_character",
@@ -223,217 +231,225 @@ local tbl_2 = {
 	parading = 5
 }
 
-VersusPartySelectionLogicUtility.ClientStateLookup = tbl_2
+VersusPartySelectionLogicUtility.ClientStateLookup = ClientStateLookup
 
-VersusPartySelectionLogic.init = function (self, arg_24_1, arg_24_2, arg_24_3, arg_24_4, arg_24_5, arg_24_6)
+VersusPartySelectionLogic.init = function (self, is_server, settings, network_server, profile_synchronizer, network_event_delegate, network_transmit)
 	-- function 24
 	self._timer_paused = false
 	self._timer = 0
 	self._timer_scale = 1
 
-	local tbl = {}
+	local party_states_lookup = {}
 
-	for k, v in pairs(VersusPartySelectionLogic.party_states) do
-		local num = #tbl + 1
+	for key, _ in pairs(VersusPartySelectionLogic.party_states) do
+		local index = #party_states_lookup + 1
 
-		tbl[num] = k
-		tbl[k] = num
+		party_states_lookup[index] = key
+		party_states_lookup[key] = index
 	end
 
-	local tbl_2 = {}
+	local client_states_lookup = {}
 
-	for k_2, v_2 in pairs(VersusPartySelectionLogic.client_states) do
-		local num_2 = #tbl_2 + 1
+	for key, _ in pairs(VersusPartySelectionLogic.client_states) do
+		local index = #client_states_lookup + 1
 
-		tbl_2[num_2] = k_2
-		tbl_2[k_2] = num_2
+		client_states_lookup[index] = key
+		client_states_lookup[key] = index
 	end
 
-	self._party_states_lookup = tbl
-	self._client_states_lookup = tbl_2
-	self._is_server = arg_24_1
-	self._network_server = arg_24_3
+	self._party_states_lookup = party_states_lookup
+	self._client_states_lookup = client_states_lookup
+	self._is_server = is_server
+	self._network_server = network_server
 
-	if not arg_24_1 then
-		self._profile_requester = arg_24_3:profile_requester()
+	if is_server then
+		self._profile_requester = network_server:profile_requester()
 	end
 
-	self._profile_synchronizer = arg_24_4
-	self._settings = arg_24_2
-	self._picking_settings = arg_24_2.character_picking_settings
+	self._profile_synchronizer = profile_synchronizer
+	self._settings = settings
+	self._picking_settings = settings.character_picking_settings
 	self._timer = self._picking_settings.startup_time + GameSettings.transition_fade_out_speed
 	self._pick_data_per_party = {}
 	self._first_update = true
 	self._party_data = nil
 	self._party = nil
 
-	self:_register_rpcs(arg_24_5, arg_24_6)
+	self:_register_rpcs(network_event_delegate, network_transmit)
 
-	if not arg_24_1 then
+	if is_server then
 		Managers.state.event:register(self, "on_player_left_party", "on_player_left_party")
 		self:_setup_picking_order()
 
-		local human_players = Managers.player:human_players()
+		local players = Managers.player:human_players()
 
-		for k_3, v_3 in pairs(human_players) do
-			local network_id = v_3:network_id()
+		for unique_id, player in pairs(players) do
+			local peer_id = player:network_id()
 
-			self:_sync_party_array(network_id)
+			self:_sync_party_array(peer_id)
 		end
 	end
 end
 
-VersusPartySelectionLogic.pre_update = function (self, arg_25_1, arg_25_2)
+VersusPartySelectionLogic.pre_update = function (self, t, dt)
 	-- function 25
 	if not DEDICATED_SERVER then
-		self:_client_pre_update(arg_25_1, arg_25_2)
+		self:_client_pre_update(t, dt)
 	end
 
-	if not self._is_server then
-		self:_server_pre_update(arg_25_1, arg_25_2)
+	if self._is_server then
+		self:_server_pre_update(t, dt)
 	end
 end
 
-VersusPartySelectionLogic._server_pre_update = function (self, arg_26_1, arg_26_2)
+VersusPartySelectionLogic._server_pre_update = function (self, t, dt)
 	-- function 26
-	local game_session = Network.game_session()
+	local game = Network.game_session()
 	local in_game_session = Managers.state.network:in_game_session()
 
-	if not (not game_session and in_game_session) then
+	if not game or not in_game_session then
 		return
 	end
 
-	local party_states = VersusPartySelectionLogic.party_states
-	local _pick_data_per_party = self._pick_data_per_party
-	local game_participating_parties = Managers.party:game_participating_parties()
-	local tbl = {}
+	local states = VersusPartySelectionLogic.party_states
+	local pick_data_per_party = self._pick_data_per_party
+	local parties = Managers.party:game_participating_parties()
+	local new_states = {}
 
-	if not self._first_update then
-		for i = 1, #_pick_data_per_party do
-			local var_26_6 = game_participating_parties[i]
-			local var_26_7 = _pick_data_per_party[i]
-			local enter = party_states[var_26_7.state].enter
+	if self._first_update then
+		for party_id = 1, #pick_data_per_party do
+			local party = parties[party_id]
+			local party_data = pick_data_per_party[party_id]
+			local current_state = party_data.state
+			local enter_func = states[current_state].enter
 
-			if not enter then
-				enter(self, var_26_7, var_26_6)
+			if enter_func then
+				enter_func(self, party_data, party)
 			end
 		end
 
-		if not DEDICATED_SERVER then
+		if DEDICATED_SERVER then
 			self._first_update = false
 		end
 	end
 
-	for j = 1, #_pick_data_per_party do
-		local var_26_9 = game_participating_parties[j]
-		local var_26_10 = _pick_data_per_party[j]
+	for party_id = 1, #pick_data_per_party do
+		local party = parties[party_id]
+		local party_data = pick_data_per_party[party_id]
+		local current_state = party_data.state
+		local new_state = states[current_state].run(self, party_data, party, self._timer, t, dt, self)
 
-		tbl[j] = party_states[var_26_10.state].run(self, var_26_10, var_26_9, self._timer, arg_26_1, arg_26_2, self)
+		new_states[party_id] = new_state
 	end
 
-	for k, v in pairs(tbl) do
-		local var_26_11 = game_participating_parties[k]
-		local var_26_12 = _pick_data_per_party[k]
-		local var_26_13 = self._party_states_lookup[v]
+	for party_id, new_state in pairs(new_states) do
+		local party = parties[party_id]
+		local party_data = pick_data_per_party[party_id]
+		local state_id = self._party_states_lookup[new_state]
 
-		self._network_transmit:send_rpc_clients("rpc_set_party_state", k, var_26_13)
+		self._network_transmit:send_rpc_clients("rpc_set_party_state", party_id, state_id)
 
-		local leave = party_states[var_26_12.state].leave
+		local old_state = party_data.state
+		local leave_func = states[old_state].leave
 
-		if not leave then
-			leave(self, var_26_12, var_26_11)
+		if leave_func then
+			leave_func(self, party_data, party)
 		end
 
-		local enter_2 = party_states[v].enter
+		local enter_func = states[new_state].enter
 
-		if not enter_2 then
-			enter_2(self, var_26_12, var_26_11)
+		if enter_func then
+			enter_func(self, party_data, party)
 		end
 
-		var_26_12.state = v
+		party_data.state = new_state
 	end
 
-	if not self._timer_paused then
+	if self._timer_paused then
 		return
 	end
 
-	self._timer = math.max(self._timer - arg_26_2, 0)
+	self._timer = math.max(self._timer - dt, 0)
 end
 
-VersusPartySelectionLogic._client_pre_update = function (self, arg_27_1, arg_27_2)
+VersusPartySelectionLogic._client_pre_update = function (self, t, dt)
 	-- function 27
-	if not Network.game_session() then
+	local game = Network.game_session()
+
+	if not game then
 		return
 	end
 
-	local _local_party_data, var_27_1, var_27_2 = self:_local_party_data()
+	local party_data, party, picker_list_id = self:_local_party_data()
 
-	if not _local_party_data then
+	if not party_data then
 		return
 	end
 
-	local client_states = VersusPartySelectionLogic.client_states
-	local state = _local_party_data.picker_list[var_27_2].state
+	local states = VersusPartySelectionLogic.client_states
+	local current_state = party_data.picker_list[picker_list_id].state
 
-	if not self._first_update then
-		local enter = client_states[state].enter
+	if self._first_update then
+		local enter_func = states[current_state].enter
 
-		if not enter then
-			enter(self, _local_party_data, var_27_1)
+		if enter_func then
+			enter_func(self, party_data, party)
 		end
 
 		self._first_update = false
 	end
 
-	client_states[state].run(self, _local_party_data, var_27_1, self._timer, arg_27_1, arg_27_2)
+	states[current_state].run(self, party_data, party, self._timer, t, dt)
 
-	if not self._is_server then
+	if self._is_server then
 		return
 	end
 
-	if not self._timer_paused then
+	if self._timer_paused then
 		return
 	end
 
-	self._timer = math.max(self._timer - arg_27_2, 0)
+	self._timer = math.max(self._timer - dt, 0)
 end
 
 VersusPartySelectionLogic._local_party_data = function (self)
 	-- function 28
-	if not DEDICATED_SERVER then
+	if DEDICATED_SERVER then
 		return nil, nil, nil
 	end
 
 	if not self._party_data then
-		local get_num_game_participating_parties = Managers.party:get_num_game_participating_parties()
+		local num_parties = Managers.party:get_num_game_participating_parties()
 
-		if #self._pick_data_per_party ~= get_num_game_participating_parties then
+		if #self._pick_data_per_party ~= num_parties then
 			return
 		end
 
-		local party = Managers.party
-		local local_player = Managers.player:local_player()
+		local party_manager = Managers.party
+		local player_manager = Managers.player
+		local local_player = player_manager:local_player()
 		local unique_id = local_player:unique_id()
-		local get_party_from_unique_id = party:get_party_from_unique_id(unique_id)
-		local var_28_5 = self._pick_data_per_party[get_party_from_unique_id.party_id]
+		local player_party = party_manager:get_party_from_unique_id(unique_id)
+		local pick_data_per_party = self._pick_data_per_party
+		local party_data = pick_data_per_party[player_party.party_id]
 
-		if not var_28_5 then
+		if not party_data then
 			return
 		end
 
 		self._local_player = local_player
-		self._party_data = var_28_5
-		self._party = get_party_from_unique_id
+		self._party_data = party_data
+		self._party = player_party
 
 		local picker_list = self._party_data.picker_list
 
-		for i, v in ipairs(picker_list) do
-			v.status = get_party_from_unique_id.slots[v.slot_id]
+		for id, picker_data in ipairs(picker_list) do
+			picker_data.status = player_party.slots[picker_data.slot_id]
 
-			local player = v.status.player
+			local player = picker_data.status.player
 
-			if not player and not player.local_player then
-				self._picker_list_id = i
+			if player and player.local_player then
+				self._picker_list_id = id
 
 				break
 			end
@@ -450,12 +466,12 @@ VersusPartySelectionLogic.destroy = function (self)
 	self:_unregister_rpcs()
 end
 
-VersusPartySelectionLogic._register_rpcs = function (self, arg_30_1, arg_30_2)
+VersusPartySelectionLogic._register_rpcs = function (self, network_event_delegate, network_transmit)
 	-- function 30
-	arg_30_1:register(self, unpack(tbl))
+	network_event_delegate:register(self, unpack(RPCS))
 
-	self._network_event_delegate = arg_30_1
-	self._network_transmit = arg_30_2
+	self._network_event_delegate = network_event_delegate
+	self._network_transmit = network_transmit
 end
 
 VersusPartySelectionLogic._unregister_rpcs = function (self)
@@ -466,248 +482,273 @@ VersusPartySelectionLogic._unregister_rpcs = function (self)
 	self._network_transmit = nil
 end
 
-VersusPartySelectionLogic.set_ingame_ui = function (self, arg_32_1)
+VersusPartySelectionLogic.set_ingame_ui = function (self, ingame_ui)
 	-- function 32
-	self._ingame_ui = arg_32_1
+	self._ingame_ui = ingame_ui
 end
 
-VersusPartySelectionLogic.hot_join_sync = function (self, arg_33_1)
+VersusPartySelectionLogic.hot_join_sync = function (self, peer_id)
 	-- function 33
-	self:_sync_party_array(arg_33_1)
+	self:_sync_party_array(peer_id)
 
-	local _pick_data_per_party = self._pick_data_per_party
+	local pick_data_per_party = self._pick_data_per_party
 
-	for i = 1, #_pick_data_per_party do
-		local var_33_1 = _pick_data_per_party[i]
-		local party_id = var_33_1.party_id
-		local var_33_3 = self._party_states_lookup[var_33_1.state]
-		local picker_list = var_33_1.picker_list
+	for i = 1, #pick_data_per_party do
+		local party_data = pick_data_per_party[i]
+		local party_id = party_data.party_id
+		local party_state_id = self._party_states_lookup[party_data.state]
+		local picker_list = party_data.picker_list
 
 		for j = 1, #picker_list do
-			local var_33_5 = picker_list[j]
-			local picker_index = var_33_5.picker_index
-			local var_33_7 = self._client_states_lookup[var_33_5.state]
+			local player_data = picker_list[j]
+			local picker_id = player_data.picker_index
+			local player_state_id = self._client_states_lookup[player_data.state]
 
-			self._network_transmit:send_rpc("rpc_set_party_state", arg_33_1, party_id, var_33_3)
+			self._network_transmit:send_rpc("rpc_set_party_state", peer_id, party_id, party_state_id)
 
-			local var_33_8
-			local var_33_9
+			local profile_index, career_index
 
-			if tbl_2[var_33_5.state] >= tbl_2.player_picking_character then
-				local slot_id = var_33_5.slot_id
+			if ClientStateLookup[player_data.state] >= ClientStateLookup.player_picking_character then
+				local slot_id = player_data.slot_id
+				local is_bot = VersusPartySelectionLogicUtility.picker_index_is_bot(party_data, slot_id)
 
-				if not VersusPartySelectionLogicUtility.picker_index_is_bot(var_33_1, slot_id) then
-					var_33_8, var_33_9 = self._profile_synchronizer:get_bot_profile(party_id, slot_id)
-				elseif not var_33_5.status.peer_id and not var_33_5.status.local_player_id then
-					var_33_8, var_33_9 = Managers.mechanism:game_mechanism():update_wanted_hero_character(var_33_5.status.peer_id, var_33_5.status.local_player_id, party_id)
+				if is_bot then
+					profile_index, career_index = self._profile_synchronizer:get_bot_profile(party_id, slot_id)
+				elseif player_data.status.peer_id and player_data.status.local_player_id then
+					local mechanism = Managers.mechanism:game_mechanism()
+
+					profile_index, career_index = mechanism:update_wanted_hero_character(player_data.status.peer_id, player_data.status.local_player_id, party_id)
 				else
-					Crashify.print_exception("VersusPartySelectionLogic", "Supposed human player missing peer_id and local_player_id. Party: %s, pick id: %s", party_id, picker_index)
+					Crashify.print_exception("VersusPartySelectionLogic", "Supposed human player missing peer_id and local_player_id. Party: %s, pick id: %s", party_id, picker_id)
 				end
 			end
 
-			if not var_33_8 then
-				local var_33_11 = Managers.party:get_party(party_id).slots_data[var_33_5.slot_id]
-				local status = picker_list[picker_index].status
-				local slot_melee = var_33_11.slot_melee
-				local slot_ranged = var_33_11.slot_ranged
-				local slot_skin = var_33_11.slot_skin
-				local slot_hat = var_33_11.slot_hat
-				local slot_frame = var_33_11.slot_frame
-				local var_33_18 = NetworkLookup.item_names[slot_melee or "n/a"]
-				local var_33_19 = NetworkLookup.item_names[slot_ranged or "n/a"]
-				local var_33_20 = NetworkLookup.item_names[slot_skin or "n/a"]
-				local var_33_21 = NetworkLookup.item_names[slot_hat or "n/a"]
-				local var_33_22 = NetworkLookup.item_names[slot_frame or "n/a"]
+			if profile_index then
+				local party = Managers.party:get_party(party_id)
+				local slots_data = party.slots_data
+				local slot_data = slots_data[player_data.slot_id]
+				local picker_data = picker_list[picker_id]
+				local status = picker_data.status
+				local melee_name, ranged_name, skin_name, hat_name, frame_name = slot_data.slot_melee, slot_data.slot_ranged, slot_data.slot_skin, slot_data.slot_hat, slot_data.slot_frame
+				local melee_id = NetworkLookup.item_names[not not melee_name or not not "n/a"]
+				local ranged_id = NetworkLookup.item_names[not not ranged_name or not not "n/a"]
+				local skin_id = NetworkLookup.item_names[not not skin_name or not not "n/a"]
+				local hat_id = NetworkLookup.item_names[not not hat_name or not not "n/a"]
+				local frame_id = NetworkLookup.item_names[not not frame_name or not not "n/a"]
 				local level = status.level
 				local versus_level = status.versus_level
 
-				self._network_transmit:send_rpc("rpc_sync_player_loadout", arg_33_1, party_id, picker_index, var_33_8, var_33_9, var_33_18, var_33_19, var_33_20, var_33_21, var_33_22, level, versus_level)
+				self._network_transmit:send_rpc("rpc_sync_player_loadout", peer_id, party_id, picker_id, profile_index, career_index, melee_id, ranged_id, skin_id, hat_id, frame_id, level, versus_level)
 			end
 
-			self._network_transmit:send_rpc("rpc_set_player_state", arg_33_1, var_33_7, party_id, picker_index)
+			self._network_transmit:send_rpc("rpc_set_player_state", peer_id, player_state_id, party_id, picker_id)
 		end
 	end
 
 	if self._timer > 0 then
-		local num = Managers.state.network:network_time() + self._timer
+		local network_time_done = Managers.state.network:network_time() + self._timer
 
-		self._network_transmit:send_rpc("rpc_set_party_selection_logic_timer", arg_33_1, self._timer, num)
+		self._network_transmit:send_rpc("rpc_set_party_selection_logic_timer", peer_id, self._timer, network_time_done)
 	end
 end
 
-VersusPartySelectionLogic.get_party_data = function (self, arg_34_1)
+VersusPartySelectionLogic.get_party_data = function (self, party_id)
 	-- function 34
-	local _pick_data_per_party = self._pick_data_per_party
+	local pick_data_per_party = self._pick_data_per_party
 
-	return not _pick_data_per_party and _pick_data_per_party[arg_34_1]
+	return not not pick_data_per_party and not not pick_data_per_party[party_id]
 end
 
-VersusPartySelectionLogic.set_player_state = function (self, arg_35_1, arg_35_2, arg_35_3)
+VersusPartySelectionLogic.set_player_state = function (self, new_state, party_id, picker_id)
 	-- function 35
-	if not self._is_server then
-		local var_35_0 = self._client_states_lookup[arg_35_1]
+	if self._is_server then
+		local new_state_id = self._client_states_lookup[new_state]
 
-		self._network_transmit:send_rpc_clients("rpc_set_player_state", var_35_0, arg_35_2, arg_35_3)
+		self._network_transmit:send_rpc_clients("rpc_set_player_state", new_state_id, party_id, picker_id)
 	end
 
-	local var_35_1 = self._pick_data_per_party[arg_35_2]
-	local var_35_2 = var_35_1.picker_list[arg_35_3]
+	local pick_data_per_party = self._pick_data_per_party
+	local party_data = pick_data_per_party[party_id]
+	local picker_list = party_data.picker_list
+	local picker_data = picker_list[picker_id]
 
 	if not DEDICATED_SERVER then
-		local _local_party_data, var_35_4, var_35_5 = self:_local_party_data()
+		local _, local_party, local_picker_list_id = self:_local_party_data()
 
-		if not (arg_35_3 ~= var_35_5 or arg_35_2 ~= var_35_4.party_id) then
-			local enter = VersusPartySelectionLogic.client_states[arg_35_1].enter
+		if picker_id == local_picker_list_id and party_id == local_party.party_id then
+			local states = VersusPartySelectionLogic.client_states
+			local enter_func = states[new_state].enter
 
-			if not enter then
-				enter(self, var_35_1, var_35_4)
+			if enter_func then
+				enter_func(self, party_data, local_party)
 			end
 		end
 	end
 
-	var_35_2.state = arg_35_1
+	picker_data.state = new_state
 
-	Managers.state.event:trigger("party_selection_logic_state_set", arg_35_1, arg_35_2, arg_35_3)
+	Managers.state.event:trigger("party_selection_logic_state_set", new_state, party_id, picker_id)
 end
 
-VersusPartySelectionLogic.set_party_current_picker = function (self, arg_36_1, arg_36_2)
+VersusPartySelectionLogic.set_party_current_picker = function (self, party_id, picker_id)
 	-- function 36
-	self._network_transmit:send_rpc_clients("rpc_set_party_picking_id", arg_36_1, arg_36_2)
+	self._network_transmit:send_rpc_clients("rpc_set_party_picking_id", party_id, picker_id)
 
 	if not DEDICATED_SERVER then
-		self._pick_data_per_party[arg_36_1].current_picker_index = arg_36_2
+		local pick_data_per_party = self._pick_data_per_party
+		local party_data = pick_data_per_party[party_id]
+
+		party_data.current_picker_index = picker_id
 	end
 end
 
-VersusPartySelectionLogic.set_timer = function (self, arg_37_1)
+VersusPartySelectionLogic.set_timer = function (self, value)
 	-- function 37
-	self._timer = arg_37_1
+	self._timer = value
 
-	if not self._is_server then
-		self._current_timer_total = arg_37_1
+	if self._is_server then
+		self._current_timer_total = value
 
-		local num = Managers.state.network:network_time() + arg_37_1
+		local network_time_done = Managers.state.network:network_time() + value
 
-		self._network_transmit:send_rpc_clients("rpc_set_party_selection_logic_timer", arg_37_1, num)
+		self._network_transmit:send_rpc_clients("rpc_set_party_selection_logic_timer", value, network_time_done)
 	end
 end
 
-VersusPartySelectionLogic._make_available_profile_lookup = function (arg_38_0, arg_38_1, arg_38_2)
+VersusPartySelectionLogic._make_available_profile_lookup = function (self, affilation, role)
 	-- function 38
-	local tbl = {}
+	local profile_lookup = {}
 
 	for i = 1, #SPProfiles do
-		local var_38_1 = SPProfiles[i]
+		local profile = SPProfiles[i]
 
-		if not (var_38_1.affiliation ~= arg_38_1 or var_38_1.role ~= arg_38_2) then
-			local get_character_level = ExperienceSettings.get_character_level(var_38_1.display_name)
-			local tbl_2 = {}
+		if profile.affiliation == affilation and profile.role == role then
+			local character_level = ExperienceSettings.get_character_level(profile.display_name)
+			local careers = {}
 
-			for j = 1, #var_38_1.careers do
-				if not var_38_1.careers[j]:is_unlocked_function(var_38_1.display_name, get_character_level) then
-					tbl_2[#tbl_2 + 1] = j
+			for i = 1, #profile.careers do
+				local career = profile.careers[i]
+
+				if career:is_unlocked_function(profile.display_name, character_level) then
+					careers[#careers + 1] = i
 				end
 			end
 
-			if #tbl_2 > 0 then
-				tbl[var_38_1.index] = tbl_2
+			if #careers > 0 then
+				profile_lookup[profile.index] = careers
 			end
 		end
 	end
 
-	fassert(not table.is_empty(tbl) and arg_38_1 == "spectators", "Failed to find any available profiles for " .. arg_38_1)
+	fassert(not table.is_empty(profile_lookup) or affilation == "spectators", "Failed to find any available profiles for " .. affilation)
 
-	return tbl
+	return profile_lookup
 end
 
-VersusPartySelectionLogic.get_character_or_random = function (self, arg_39_1, arg_39_2, arg_39_3, arg_39_4)
+VersusPartySelectionLogic.get_character_or_random = function (self, profile_index, career_index, party_data, is_bot)
 	-- function 39
-	if not (not arg_39_1 and not arg_39_2 and self:_is_hero_locked(arg_39_1, arg_39_3)) then
-		return arg_39_1, arg_39_2
+	if profile_index and career_index and not self:_is_hero_locked(profile_index, party_data) then
+		return profile_index, career_index
 	end
 
-	return self:get_random_available_character(arg_39_3, arg_39_4)
+	return self:get_random_available_character(party_data, is_bot)
 end
 
-VersusPartySelectionLogic.get_random_available_character = function (self, arg_40_1, arg_40_2)
+VersusPartySelectionLogic.get_random_available_character = function (self, party_data, is_bot)
 	-- function 40
 	local _random_profile_indices = self._random_profile_indices
 
-	_random_profile_indices = _random_profile_indices or table.select_map(SPProfiles, function (arg_41_0, arg_41_1)
+	if not _random_profile_indices then
+		-- Nothing
+	end
+
+	_random_profile_indices = table.select_map(SPProfiles, function (_, profile)
 		-- function 41
-		if arg_41_1.affiliation == "heroes" then
-			return arg_41_1.index
+		if profile.affiliation == "heroes" then
+			return profile.index
 		end
 	end)
-	self._random_profile_indices = _random_profile_indices
 
-	table.shuffle(_random_profile_indices)
+	local random_profile_indices = _random_profile_indices
+
+	::label_40_0::
+
+	self._random_profile_indices = random_profile_indices
+
+	table.shuffle(random_profile_indices)
 
 	local _random_career_indices = self._random_career_indices
 
-	_random_career_indices = _random_career_indices or {
+	if not _random_career_indices then
+		-- Nothing
+	end
+
+	_random_career_indices = {
 		1,
 		2,
 		3
 	}
-	self._random_career_indices = _random_career_indices
 
-	table.shuffle(_random_career_indices)
+	local random_career_indices = _random_career_indices
 
-	local var_40_2
-	local var_40_3
+	::label_40_1::
 
-	for i = 1, #_random_profile_indices do
-		for j = 1, #_random_career_indices do
-			local var_40_4 = _random_profile_indices[i]
-			local var_40_5 = _random_career_indices[j]
-			local name = SPProfiles[i].careers[j].name
+	self._random_career_indices = random_career_indices
 
-			if not (not PlayerUtils.get_career_override(name) and self:_is_hero_locked(var_40_4, arg_40_1)) then
-				var_40_2, var_40_3 = var_40_4, var_40_5
+	table.shuffle(random_career_indices)
+
+	local profile_index, career_index
+
+	for p_i = 1, #random_profile_indices do
+		for c_i = 1, #random_career_indices do
+			local p_idx, c_idx = random_profile_indices[p_i], random_career_indices[c_i]
+			local career_name = SPProfiles[p_i].careers[c_i].name
+
+			if PlayerUtils.get_career_override(career_name) and not self:_is_hero_locked(p_idx, party_data) then
+				profile_index, career_index = p_idx, c_idx
 
 				break
 			end
 		end
 
-		if not var_40_2 and not var_40_3 then
+		if profile_index and career_index then
 			break
 		end
 	end
 
-	if not (not var_40_2 and var_40_3) then
-		var_40_2, var_40_3 = 1, 1
+	if not profile_index or not career_index then
+		profile_index, career_index = 1, 1
 
-		table.dump(arg_40_1, "party_data", 3)
+		table.dump(party_data, "party_data", 3)
 		Crashify.print_exception("VersusPartySelectionLogic", "Could not find an available profile.")
 	end
 
-	return var_40_2, var_40_3
+	return profile_index, career_index
 end
 
-VersusPartySelectionLogic._is_hero_locked = function (self, arg_42_1, arg_42_2, arg_42_3)
+VersusPartySelectionLogic._is_hero_locked = function (self, profile_index, party_data, except_peer_id)
 	-- function 42
-	if not self._settings.duplicate_hero_careers_allowed then
+	if self._settings.duplicate_hero_careers_allowed then
 		return false
 	end
 
-	if not (not arg_42_1 and arg_42_1 ~= 0) then
+	if not profile_index or profile_index == 0 then
 		return true
 	end
 
-	local party_id = arg_42_2.party_id
-	local get_profile_index_reservation = self._profile_synchronizer:get_profile_index_reservation(party_id, arg_42_1)
+	local party_id = party_data.party_id
+	local reserver_peer = self._profile_synchronizer:get_profile_index_reservation(party_id, profile_index)
 
-	if not (not get_profile_index_reservation and get_profile_index_reservation == arg_42_3) then
+	if reserver_peer and reserver_peer ~= except_peer_id then
 		return true
 	end
 
-	local picker_list = arg_42_2.picker_list
+	local picker_list = party_data.picker_list
 
-	for i = 1, #picker_list do
-		local var_42_3 = picker_list[i]
+	for slot_id = 1, #picker_list do
+		local picker_data = picker_list[slot_id]
 
-		if not (var_42_3.state ~= "player_has_picked_character" or var_42_3.status.profile_index ~= arg_42_1 or var_42_3.picker_index == arg_42_2.current_picker_index) then
+		if picker_data.state == "player_has_picked_character" and picker_data.status.profile_index == profile_index and picker_data.picker_index ~= party_data.current_picker_index then
 			return true
 		end
 	end
@@ -715,355 +756,434 @@ VersusPartySelectionLogic._is_hero_locked = function (self, arg_42_1, arg_42_2, 
 	return false
 end
 
-VersusPartySelectionLogic._ensure_picker_has_character = function (self, arg_43_1, arg_43_2, arg_43_3)
+VersusPartySelectionLogic._ensure_picker_has_character = function (self, party_data, picker_index, force_sync)
 	-- function 43
-	local _peer_from_picker_data, var_43_1, var_43_2 = self:_peer_from_picker_data(arg_43_1, arg_43_2)
-	local party_id = arg_43_1.party_id
-	local var_43_4
-	local var_43_5
+	local peer_id, local_player_id, slot_id = self:_peer_from_picker_data(party_data, picker_index)
+	local party_id = party_data.party_id
+	local profile_index, career_index
+	local is_bot = VersusPartySelectionLogicUtility.picker_index_is_bot(party_data, picker_index)
 
-	if not VersusPartySelectionLogicUtility.picker_index_is_bot(arg_43_1, arg_43_2) then
-		var_43_4, var_43_5 = self._profile_synchronizer:get_bot_profile(party_id, var_43_2)
+	if is_bot then
+		profile_index, career_index = self._profile_synchronizer:get_bot_profile(party_id, slot_id)
 	else
-		var_43_4, var_43_5 = Managers.mechanism:game_mechanism():update_wanted_hero_character(_peer_from_picker_data, var_43_1, party_id)
+		local mechanism = Managers.mechanism:game_mechanism()
+
+		profile_index, career_index = mechanism:update_wanted_hero_character(peer_id, local_player_id, party_id)
 	end
 
-	local _try_pick_hero, var_43_7 = self:_try_pick_hero(arg_43_1, arg_43_2, var_43_4, var_43_5)
+	profile_index, career_index = self:_try_pick_hero(party_data, picker_index, profile_index, career_index)
 
-	if not arg_43_3 then
-		self:sync_player_loadout(_try_pick_hero, var_43_7, party_id, arg_43_2)
+	if force_sync then
+		self:sync_player_loadout(profile_index, career_index, party_id, picker_index)
 	end
 
-	return _try_pick_hero, var_43_7
+	return profile_index, career_index
 end
 
-VersusPartySelectionLogic._peer_from_picker_data = function (arg_44_0, arg_44_1, arg_44_2)
+VersusPartySelectionLogic._peer_from_picker_data = function (self, party_data, picker_index)
 	-- function 44
-	local var_44_0 = arg_44_1.picker_list[arg_44_2]
-	local status = var_44_0.status
+	local picker_data = party_data.picker_list[picker_index]
+	local status = picker_data.status
 
-	return status.peer_id, status.local_player_id, var_44_0.slot_id
+	return status.peer_id, status.local_player_id, picker_data.slot_id
 end
 
-VersusPartySelectionLogic._is_hero_party = function (arg_45_0, arg_45_1)
+VersusPartySelectionLogic._is_hero_party = function (self, party_id)
 	-- function 45
-	return Managers.party:get_party(arg_45_1).name == "heroes"
+	return Managers.party:get_party(party_id).name == "heroes"
 end
 
-VersusPartySelectionLogic.select_character = function (self, arg_46_1, arg_46_2)
+VersusPartySelectionLogic.select_character = function (self, profile_index, career_index)
 	-- function 46
-	assert(not arg_46_1 and arg_46_2, "[VersusPartySelectionLogic] Selecting non-character")
+	assert(not not profile_index and not not career_index, "[VersusPartySelectionLogic] Selecting non-character")
 
-	local _local_party_data = self:_local_party_data()
-	local current_picker_index = _local_party_data.current_picker_index
+	local local_party_data = self:_local_party_data()
+	local picker_index = local_party_data.current_picker_index
+	local picker_data = local_party_data.picker_list[picker_index]
+	local status = picker_data.status
+	local peer_id = status.peer_id
 
-	if _local_party_data.picker_list[current_picker_index].status.peer_id ~= Network.peer_id() then
+	if peer_id ~= Network.peer_id() then
 		return
 	end
 
-	self._network_transmit:send_rpc_server("rpc_party_select_request_pick_hero", _local_party_data.party_id, current_picker_index, arg_46_1, arg_46_2)
+	self._network_transmit:send_rpc_server("rpc_party_select_request_pick_hero", local_party_data.party_id, picker_index, profile_index, career_index)
 end
 
-VersusPartySelectionLogic._sync_hovered_item = function (arg_47_0, arg_47_1, arg_47_2, arg_47_3, arg_47_4)
+VersusPartySelectionLogic._sync_hovered_item = function (self, peer_id, local_player_id, profile_index, career_index)
 	-- function 47
-	local get_status_from_unique_id = Managers.party:get_status_from_unique_id(arg_47_1 .. ":" .. arg_47_2)
+	local player_party_status = Managers.party:get_status_from_unique_id(peer_id .. ":" .. local_player_id)
 
-	if not get_status_from_unique_id then
-		get_status_from_unique_id.hovered_profile_index = arg_47_3
-		get_status_from_unique_id.hovered_career_index = arg_47_4
+	if player_party_status then
+		player_party_status.hovered_profile_index = profile_index
+		player_party_status.hovered_career_index = career_index
 	end
 end
 
-VersusPartySelectionLogic.sync_hovered_item = function (self, arg_48_1, arg_48_2, arg_48_3, arg_48_4)
+VersusPartySelectionLogic.sync_hovered_item = function (self, peer_id, local_player_id, profile_index, career_index)
 	-- function 48
-	self:_sync_hovered_item(arg_48_1, arg_48_2, arg_48_3, arg_48_4)
+	self:_sync_hovered_item(peer_id, local_player_id, profile_index, career_index)
 
-	if not (not Managers.state.network and Managers.state.network:game()) then
+	if not Managers.state.network or not Managers.state.network:game() then
 		return
 	end
 
-	if not self._is_server then
-		self._network_transmit:send_rpc_clients("rpc_pre_game_sync_hovered_item", arg_48_1, arg_48_2, arg_48_3, arg_48_4)
+	if self._is_server then
+		self._network_transmit:send_rpc_clients("rpc_pre_game_sync_hovered_item", peer_id, local_player_id, profile_index, career_index)
 	else
-		self._network_transmit:send_rpc_server("rpc_pre_game_sync_hovered_item", arg_48_1, arg_48_2, arg_48_3, arg_48_4)
+		self._network_transmit:send_rpc_server("rpc_pre_game_sync_hovered_item", peer_id, local_player_id, profile_index, career_index)
 	end
 end
 
-VersusPartySelectionLogic.set_party_timer = function (self, arg_49_1)
+VersusPartySelectionLogic.set_party_timer = function (self, party_data)
 	-- function 49
-	local num = self._picking_settings.player_pick_time * arg_49_1.current_picker_index
+	local picking_settings = self._picking_settings
+	local player_pick_time = picking_settings.player_pick_time
+	local current_picker_index = party_data.current_picker_index
+	local timer = player_pick_time * current_picker_index
 
-	arg_49_1.slider_timer = num
-	arg_49_1.time_finished = num
+	party_data.slider_timer = timer
+	party_data.time_finished = timer
 end
 
-local function fn(self, arg_50_1)
+local function make_index_array(party, shuffle_order)
 	-- function 50
-	local tbl = {}
-	local slots = self.slots
-	local slots_data = self.slots_data
-	local num = 0
+	local array = {}
+	local slots = party.slots
+	local slots_data = party.slots_data
+	local k = 0
 
-	for i = 1, self.num_slots do
-		local var_50_4 = slots[i]
+	for i = 1, party.num_slots do
+		local status = slots[i]
 
-		if not var_50_4.is_player and not var_50_4.peer_id then
-			num = num + 1
-			tbl[num] = {
+		if status.is_player and status.peer_id then
+			k = k + 1
+			array[k] = {
 				is_connected = true,
 				state = "startup",
 				is_bot = false,
 				slot_id = i,
-				status = var_50_4
+				status = status
 			}
 		end
 	end
 
-	if arg_50_1 == "players_first" then
-		table.shuffle(tbl)
+	if shuffle_order == "players_first" then
+		table.shuffle(array)
 	end
 
-	for j = 1, self.num_slots do
-		local var_50_5 = slots[j]
+	for i = 1, party.num_slots do
+		local status = slots[i]
 
-		if not (var_50_5.is_bot or var_50_5.peer_id) then
-			num = num + 1
-			tbl[num] = {
+		if status.is_bot or not status.peer_id then
+			k = k + 1
+			array[k] = {
 				is_connected = true,
 				state = "startup",
 				is_bot = true,
-				slot_id = j,
-				status = var_50_5
+				slot_id = i,
+				status = status
 			}
 		end
 	end
 
-	if arg_50_1 == "mix_all" then
-		table.shuffle(tbl)
+	if shuffle_order == "mix_all" then
+		table.shuffle(array)
 	end
 
-	for k = 1, self.num_slots do
-		local var_50_6 = tbl[k]
+	for i = 1, party.num_slots do
+		local player_data = array[i]
 
-		var_50_6.picker_index = k
-		slots_data[var_50_6.slot_id].player_data_id = k
+		player_data.picker_index = i
+
+		local slot_data = slots_data[player_data.slot_id]
+
+		slot_data.player_data_id = i
 	end
 
-	return tbl
+	return array
 end
 
 VersusPartySelectionLogic._setup_picking_order = function (self)
 	-- function 51
-	local setting = Managers.state.game_mode:setting("shuffle_character_picking_order")
-	local _pick_data_per_party = self._pick_data_per_party
-	local game_participating_parties = Managers.party:game_participating_parties()
+	local shuffle_order = Managers.state.game_mode:setting("shuffle_character_picking_order")
+	local pick_data_per_party = self._pick_data_per_party
+	local parties = Managers.party:game_participating_parties()
 
-	for i = 1, #game_participating_parties do
-		local var_51_3 = game_participating_parties[i]
-		local var_51_4 = fn(var_51_3, setting, true)
+	for i = 1, #parties do
+		local party = parties[i]
+		local picker_list = make_index_array(party, shuffle_order, true)
 
-		_pick_data_per_party[i] = {
+		pick_data_per_party[i] = {
 			current_picker_index = 0,
 			state = "startup",
-			picker_list = var_51_4,
+			picker_list = picker_list,
 			party_id = i
 		}
 	end
 end
 
-VersusPartySelectionLogic._sync_party_array = function (self, arg_52_1)
+VersusPartySelectionLogic._sync_party_array = function (self, peer_id)
 	-- function 52
-	local _pick_data_per_party = self._pick_data_per_party
+	local pick_data_per_party = self._pick_data_per_party
 
-	for i, v in ipairs(_pick_data_per_party) do
-		local picker_list = v.picker_list
-		local tbl = {}
+	for party_id, party_data in ipairs(pick_data_per_party) do
+		local picker_list = party_data.picker_list
+		local party_array = {}
 
-		for k = 1, #picker_list do
-			tbl[k] = picker_list[k].slot_id
+		for j = 1, #picker_list do
+			party_array[j] = picker_list[j].slot_id
 		end
 
-		local current_picker_index = v.current_picker_index
+		local current_picker_index = party_data.current_picker_index
 
-		self._network_transmit:send_rpc("rpc_set_party_array", arg_52_1, i, tbl, current_picker_index)
+		self._network_transmit:send_rpc("rpc_set_party_array", peer_id, party_id, party_array, current_picker_index)
 	end
 end
 
-VersusPartySelectionLogic.sync_player_loadout = function (self, arg_53_1, arg_53_2, arg_53_3, arg_53_4)
+VersusPartySelectionLogic.sync_player_loadout = function (self, profile_index, career_index, party_id, picker_list_id)
 	-- function 53
-	local _local_party_data, var_53_1, var_53_2 = self:_local_party_data()
-	local flag = (not var_53_1 and var_53_1.party_id) ~= arg_53_3 or var_53_2 == arg_53_4
-	local var_53_4 = self._pick_data_per_party[arg_53_3]
-	local picker_index_is_bot = VersusPartySelectionLogicUtility.picker_index_is_bot(var_53_4, arg_53_4)
-	local var_53_6
-	local var_53_7
-	local var_53_8
-	local var_53_9
-	local var_53_10
-	local var_53_11
-	local var_53_12
+	local _, local_party, local_picker_list_id = self:_local_party_data()
+	local syncing_own_loadout = (not not local_party and not not local_party.party_id) == party_id and local_picker_list_id == picker_list_id
+	local party_data = self._pick_data_per_party[party_id]
+	local is_bot = VersusPartySelectionLogicUtility.picker_index_is_bot(party_data, picker_list_id)
+	local melee_id, ranged_id, skin_id, hat_id, frame_id, level, versus_level
 
-	if not arg_53_1 and (not (arg_53_1 > 0) or flag or not self._is_server or not picker_index_is_bot) then
-		var_53_6, var_53_7, var_53_8, var_53_9, var_53_10, var_53_11, var_53_12 = self:_get_loadout(arg_53_1, arg_53_2, picker_index_is_bot)
+	if profile_index and profile_index > 0 and (syncing_own_loadout or self._is_server and is_bot) then
+		melee_id, ranged_id, skin_id, hat_id, frame_id, level, versus_level = self:_get_loadout(profile_index, career_index, is_bot)
 
-		local _peer_from_picker_data, var_53_14 = self:_peer_from_picker_data(var_53_4, arg_53_4)
-		local _is_hero_party = self:_is_hero_party(arg_53_3)
+		local peer_id, local_player_id = self:_peer_from_picker_data(party_data, picker_list_id)
+		local _is_hero_party = self:_is_hero_party(party_id)
 
-		_is_hero_party = not _is_hero_party and var_53_14
+		if _is_hero_party then
+			-- Nothing
+		end
 
-		if not _is_hero_party then
-			local player = Managers.player:player(_peer_from_picker_data, var_53_14)
+		_is_hero_party = local_player_id
 
-			CosmeticUtils.sync_local_player_cosmetics(player, arg_53_1, arg_53_2)
+		local sync_cosmetics = _is_hero_party
+
+		::label_53_0::
+
+		if sync_cosmetics then
+			local player = Managers.player:player(peer_id, local_player_id)
+
+			CosmeticUtils.sync_local_player_cosmetics(player, profile_index, career_index)
 		end
 	else
-		var_53_6, var_53_7, var_53_8, var_53_9, var_53_10, var_53_11, var_53_12 = 1, 1, 1, 1, 1, 1, 0
+		melee_id, ranged_id, skin_id, hat_id, frame_id, level, versus_level = 1, 1, 1, 1, 1, 1, 0
 	end
 
-	self:_set_loadout(arg_53_3, arg_53_4, arg_53_1, arg_53_2, var_53_6, var_53_7, var_53_8, var_53_9, var_53_10, var_53_11, var_53_12)
+	self:_set_loadout(party_id, picker_list_id, profile_index, career_index, melee_id, ranged_id, skin_id, hat_id, frame_id, level, versus_level)
 
-	if not self._is_server then
-		self._network_transmit:send_rpc_clients("rpc_sync_player_loadout", arg_53_3, arg_53_4, arg_53_1, arg_53_2, var_53_6, var_53_7, var_53_8, var_53_9, var_53_10, var_53_11, var_53_12)
+	if self._is_server then
+		self._network_transmit:send_rpc_clients("rpc_sync_player_loadout", party_id, picker_list_id, profile_index, career_index, melee_id, ranged_id, skin_id, hat_id, frame_id, level, versus_level)
 	else
-		self._network_transmit:send_rpc_server("rpc_sync_player_loadout", arg_53_3, arg_53_4, arg_53_1, arg_53_2, var_53_6, var_53_7, var_53_8, var_53_9, var_53_10, var_53_11, var_53_12)
+		self._network_transmit:send_rpc_server("rpc_sync_player_loadout", party_id, picker_list_id, profile_index, career_index, melee_id, ranged_id, skin_id, hat_id, frame_id, level, versus_level)
 	end
 end
 
-VersusPartySelectionLogic._set_loadout = function (self, arg_54_1, arg_54_2, arg_54_3, arg_54_4, arg_54_5, arg_54_6, arg_54_7, arg_54_8, arg_54_9, arg_54_10, arg_54_11)
+VersusPartySelectionLogic._set_loadout = function (self, party_id, pick_id, profile_index, career_index, melee_id, ranged_id, skin_id, hat_id, frame_id, level, versus_level)
 	-- function 54
-	local get_party = Managers.party:get_party(arg_54_1)
-	local var_54_1 = self._pick_data_per_party[arg_54_1].picker_list[arg_54_2]
-	local status = var_54_1.status
+	local party = Managers.party:get_party(party_id)
+	local party_data = self._pick_data_per_party[party_id]
+	local picker_list = party_data.picker_list
+	local picker_data = picker_list[pick_id]
+	local status = picker_data.status
 
-	status.selected_profile_index = arg_54_3
-	status.selected_career_index = arg_54_4
-	status.profile_index = arg_54_3
-	status.career_index = arg_54_4
-	status.level = arg_54_10
-	status.versus_level = arg_54_11
+	status.selected_profile_index = profile_index
+	status.selected_career_index = career_index
+	status.profile_index = profile_index
+	status.career_index = career_index
+	status.level = level
+	status.versus_level = versus_level
 
-	local var_54_3 = get_party.slots_data[var_54_1.slot_id]
+	local slots_data = party.slots_data
+	local slot_data = slots_data[picker_data.slot_id]
 
-	var_54_3.slot_melee = NetworkLookup.item_names[arg_54_5]
-	var_54_3.slot_ranged = NetworkLookup.item_names[arg_54_6]
-	var_54_3.slot_skin = NetworkLookup.item_names[arg_54_7]
-	var_54_3.slot_hat = NetworkLookup.item_names[arg_54_8]
-	var_54_3.slot_frame = NetworkLookup.item_names[arg_54_9]
+	slot_data.slot_melee = NetworkLookup.item_names[melee_id]
+	slot_data.slot_ranged = NetworkLookup.item_names[ranged_id]
+	slot_data.slot_skin = NetworkLookup.item_names[skin_id]
+	slot_data.slot_hat = NetworkLookup.item_names[hat_id]
+	slot_data.slot_frame = NetworkLookup.item_names[frame_id]
 end
 
-VersusPartySelectionLogic._get_loadout = function (arg_55_0, arg_55_1, arg_55_2, arg_55_3)
+VersusPartySelectionLogic._get_loadout = function (self, profile_index, career_index, is_bot)
 	-- function 55
-	local var_55_0 = SPProfiles[arg_55_1]
-	local display_name = var_55_0.display_name
-	local var_55_2 = var_55_0.careers[arg_55_2]
-	local display_name_2 = var_55_2.display_name
-	local item_slot_types_by_slot_name = var_55_2.item_slot_types_by_slot_name
+	local profile = SPProfiles[profile_index]
+	local hero_name = profile.display_name
+	local career = profile.careers[career_index]
+	local career_name = career.display_name
+	local item_slot_types_by_slot_name = career.item_slot_types_by_slot_name
 	local get_loadout_item = BackendUtils.get_loadout_item
 	local slot_melee = item_slot_types_by_slot_name.slot_melee
 
-	slot_melee = not slot_melee and get_loadout_item(display_name_2, "slot_melee")
-
-	local slot_ranged = item_slot_types_by_slot_name.slot_ranged
-
-	slot_ranged = not slot_ranged and get_loadout_item(display_name_2, "slot_ranged")
-
-	local slot_skin = item_slot_types_by_slot_name.slot_skin
-
-	slot_skin = not slot_skin and get_loadout_item(display_name_2, "slot_skin")
-
-	local slot_hat = item_slot_types_by_slot_name.slot_hat
-
-	slot_hat = not slot_hat and get_loadout_item(display_name_2, "slot_hat")
-
-	local slot_frame = item_slot_types_by_slot_name.slot_frame
-
-	slot_frame = not slot_frame and get_loadout_item(display_name_2, "slot_frame")
-
-	local var_55_11
-
-	if not slot_melee then
-		var_55_11 = NetworkLookup.item_names[slot_melee.key]
-
-		if not var_55_11 then
-			-- Nothing
-		end
+	if slot_melee then
+		-- Nothing
 	end
 
-	var_55_11 = 1
+	slot_melee = get_loadout_item(career_name, "slot_melee")
 
-	do
-		local var_55_12
-	end
+	local melee = slot_melee
 
 	::label_55_0::
 
-	if not slot_ranged then
-		var_55_12 = NetworkLookup.item_names[slot_ranged.key]
+	local slot_ranged = item_slot_types_by_slot_name.slot_ranged
 
-		if not var_55_12 then
-			-- Nothing
-		end
+	if slot_ranged then
+		-- Nothing
 	end
 
-	var_55_12 = 1
+	slot_ranged = get_loadout_item(career_name, "slot_ranged")
 
-	do
-		local var_55_13
-	end
+	local ranged = slot_ranged
 
 	::label_55_1::
 
-	if not slot_skin then
-		var_55_13 = NetworkLookup.item_names[slot_skin.key]
+	local slot_skin = item_slot_types_by_slot_name.slot_skin
 
-		if not var_55_13 then
-			-- Nothing
-		end
+	if slot_skin then
+		-- Nothing
 	end
 
-	var_55_13 = 1
+	slot_skin = get_loadout_item(career_name, "slot_skin")
 
-	do
-		local var_55_14
-	end
+	local skin = slot_skin
 
 	::label_55_2::
 
-	if not slot_hat then
-		var_55_14 = NetworkLookup.item_names[slot_hat.key]
+	local slot_hat = item_slot_types_by_slot_name.slot_hat
 
-		if not var_55_14 then
-			-- Nothing
-		end
+	if slot_hat then
+		-- Nothing
 	end
 
-	var_55_14 = 1
+	slot_hat = get_loadout_item(career_name, "slot_hat")
 
-	do
-		local var_55_15
-	end
+	local hat = slot_hat
 
 	::label_55_3::
 
-	if not slot_hat then
-		var_55_15 = NetworkLookup.item_names[slot_frame.key]
+	local slot_frame = item_slot_types_by_slot_name.slot_frame
 
-		if not var_55_15 then
+	if slot_frame then
+		-- Nothing
+	end
+
+	slot_frame = get_loadout_item(career_name, "slot_frame")
+
+	local portrait_frame = slot_frame
+
+	do
+		local var_55_5
+	end
+
+	::label_55_4::
+
+	if melee then
+		var_55_5 = NetworkLookup.item_names[melee.key]
+
+		if not var_55_5 then
 			-- Nothing
 		end
 	end
 
-	var_55_15 = 1
+	var_55_5 = 1
 
-	::label_55_4::
+	local melee_id = var_55_5
 
-	local get = Managers.backend:get_interface("hero_attributes"):get(display_name, "experience")
-	local get_level = ExperienceSettings.get_level(get)
-	local flag
+	do
+		local var_55_6
+	end
 
-	flag = not arg_55_3 and 0 and ExperienceSettings.get_versus_level()
+	::label_55_5::
 
-	return var_55_11, var_55_12, var_55_13, var_55_14, var_55_15, get_level, flag
+	if ranged then
+		var_55_6 = NetworkLookup.item_names[ranged.key]
+
+		if not var_55_6 then
+			-- Nothing
+		end
+	end
+
+	var_55_6 = 1
+
+	local ranged_id = var_55_6
+
+	do
+		local var_55_7
+	end
+
+	::label_55_6::
+
+	if skin then
+		var_55_7 = NetworkLookup.item_names[skin.key]
+
+		if not var_55_7 then
+			-- Nothing
+		end
+	end
+
+	var_55_7 = 1
+
+	local skin_id = var_55_7
+
+	do
+		local var_55_8
+	end
+
+	::label_55_7::
+
+	if hat then
+		var_55_8 = NetworkLookup.item_names[hat.key]
+
+		if not var_55_8 then
+			-- Nothing
+		end
+	end
+
+	var_55_8 = 1
+
+	local hat_id = var_55_8
+
+	do
+		local var_55_9
+	end
+
+	::label_55_8::
+
+	if hat then
+		var_55_9 = NetworkLookup.item_names[portrait_frame.key]
+
+		if not var_55_9 then
+			-- Nothing
+		end
+	end
+
+	var_55_9 = 1
+
+	local frame_id = var_55_9
+
+	::label_55_9::
+
+	local hero_attributes = Managers.backend:get_interface("hero_attributes")
+	local experience = hero_attributes:get(hero_name, "experience")
+	local level = ExperienceSettings.get_level(experience)
+	local num
+
+	if is_bot then
+		num = 0
+
+		goto label_55_10
+	end
+
+	num = ExperienceSettings.get_versus_level()
+
+	local versus_level = num
+
+	::label_55_10::
+
+	return melee_id, ranged_id, skin_id, hat_id, frame_id, level, versus_level
 end
 
 VersusPartySelectionLogic.settings = function (self)
@@ -1073,24 +1193,28 @@ end
 
 VersusPartySelectionLogic._all_parties_have_picked = function (self)
 	-- function 57
-	local _pick_data_per_party = self._pick_data_per_party
+	local pick_data_per_party = self._pick_data_per_party
 
-	for i = 2, #_pick_data_per_party do
-		if _pick_data_per_party[i].state ~= "closing" then
+	for i = 2, #pick_data_per_party do
+		local party_data = pick_data_per_party[i]
+
+		if party_data.state ~= "closing" then
 			return false
 		end
 	end
 
-	if not Managers.state.network.profile_synchronizer:all_synced() then
+	local profile_synchronizer = Managers.state.network.profile_synchronizer
+
+	if not profile_synchronizer:all_synced() then
 		return false
 	end
 
 	return true
 end
 
-VersusPartySelectionLogic.player_joined_party = function (self, arg_58_1, arg_58_2, arg_58_3, arg_58_4)
+VersusPartySelectionLogic.player_joined_party = function (self, peer_id, local_player_id, new_party_id, slot_id)
 	-- function 58
-	if arg_58_3 == 0 then
+	if new_party_id == 0 then
 		return
 	end
 
@@ -1098,296 +1222,324 @@ VersusPartySelectionLogic.player_joined_party = function (self, arg_58_1, arg_58
 		return
 	end
 
-	local get_party = Managers.party:get_party(arg_58_3)
-	local var_58_1 = self._pick_data_per_party[arg_58_3]
-	local picker_list = var_58_1.picker_list
-	local var_58_3
+	local party = Managers.party:get_party(new_party_id)
+	local party_data = self._pick_data_per_party[new_party_id]
+	local picker_list = party_data.picker_list
+	local pick_id
 
 	for i = 1, #picker_list do
-		if picker_list[i].slot_id == arg_58_4 then
-			var_58_3 = i
+		if picker_list[i].slot_id == slot_id then
+			pick_id = i
 
 			break
 		end
 	end
 
-	fassert(var_58_3 ~= nil, "Failed to find slot id")
+	fassert(pick_id ~= nil, "Failed to find slot id")
 
-	local var_58_4 = picker_list[var_58_3]
+	local picker_data = picker_list[pick_id]
 
-	fassert(var_58_4.is_bot ~= false, "Tried to replace human player. Expected to replace bot")
+	fassert(picker_data.is_bot ~= false, "Tried to replace human player. Expected to replace bot")
 
-	local var_58_5 = get_party.slots[arg_58_4]
-	local status = var_58_4.status
+	local status = party.slots[slot_id]
+	local old_status = picker_data.status
 
-	var_58_4.status = var_58_5
-	var_58_4.is_bot = false
+	picker_data.status = status
+	picker_data.is_bot = false
 
 	if not self._is_server then
 		return
 	end
 
-	printf("[VersusPartySelectionLogic] Peer %s joined party %s with pick order %s (state: %s)", arg_58_1, arg_58_3, var_58_3, var_58_4.state)
+	printf("[VersusPartySelectionLogic] Peer %s joined party %s with pick order %s (state: %s)", peer_id, new_party_id, pick_id, picker_data.state)
 
-	if tbl_2[var_58_4.state] >= tbl_2.player_picking_character then
-		local _ensure_picker_has_character, var_58_8 = self:_ensure_picker_has_character(var_58_1, var_58_3, true)
+	if ClientStateLookup[picker_data.state] >= ClientStateLookup.player_picking_character then
+		local profile_index, career_index = self:_ensure_picker_has_character(party_data, pick_id, true)
 
-		printf("[VersusPartySelectionLogic] Peer %s in party %s hot joined and was delegated %s", var_58_5.peer_id, arg_58_3, SPProfiles[_ensure_picker_has_character].careers[var_58_8].display_name)
+		printf("[VersusPartySelectionLogic] Peer %s in party %s hot joined and was delegated %s", status.peer_id, new_party_id, SPProfiles[profile_index].careers[career_index].display_name)
 	end
 end
 
-VersusPartySelectionLogic.player_left_party = function (self, arg_59_1, arg_59_2, arg_59_3, arg_59_4, arg_59_5)
+VersusPartySelectionLogic.player_left_party = function (self, peer_id, local_player_id, party_id, slot_id, old_slot_data)
 	-- function 59
-	if arg_59_3 == 0 then
+	if party_id == 0 then
 		return
 	end
 
-	local get_party = Managers.party:get_party(arg_59_3)
-	local var_59_1 = self._pick_data_per_party[arg_59_3]
-	local picker_list = var_59_1.picker_list
-	local var_59_3
+	local party = Managers.party:get_party(party_id)
+	local party_data = self._pick_data_per_party[party_id]
+	local picker_list = party_data.picker_list
+	local index
 
 	for i = 1, #picker_list do
-		if picker_list[i].slot_id == arg_59_4 then
-			var_59_3 = i
+		if picker_list[i].slot_id == slot_id then
+			index = i
 
 			break
 		end
 	end
 
-	fassert(var_59_3 ~= nil, "Failed to find slot id")
+	fassert(index ~= nil, "Failed to find slot id")
 
-	local var_59_4 = picker_list[var_59_3]
+	local picker_data = picker_list[index]
 
-	var_59_4.is_bot = nil
-	var_59_4.status = get_party.slots[arg_59_4]
+	picker_data.is_bot = nil
+	picker_data.status = party.slots[slot_id]
 
 	if not self._is_server then
 		return
 	end
 
-	if tbl_2[var_59_4.state] >= tbl_2.player_picking_character then
-		local _ensure_picker_has_character, var_59_6 = self:_ensure_picker_has_character(var_59_1, var_59_3, true)
-		local status = arg_59_5.status
+	if ClientStateLookup[picker_data.state] >= ClientStateLookup.player_picking_character then
+		local new_profile_index, new_career_index = self:_ensure_picker_has_character(party_data, index, true)
+		local status = old_slot_data.status
 
-		status = not status and arg_59_5.status.peer_id
+		if status then
+			-- Nothing
+		end
 
-		printf("[VersusPartySelectionLogic] %s in party %s and pick id %s left and was replaced by %s", status or "UNKNOWN", get_party.party_id, var_59_3, SPProfiles[_ensure_picker_has_character].careers[var_59_6].display_name)
+		status = old_slot_data.status.peer_id
+
+		local old_peer_id = status
+
+		::label_59_0::
+
+		printf("[VersusPartySelectionLogic] %s in party %s and pick id %s left and was replaced by %s", not not old_peer_id or not not "UNKNOWN", party.party_id, index, SPProfiles[new_profile_index].careers[new_career_index].display_name)
 	end
 end
 
-VersusPartySelectionLogic._try_pick_hero = function (self, arg_60_1, arg_60_2, arg_60_3, arg_60_4, arg_60_5)
+VersusPartySelectionLogic._try_pick_hero = function (self, party_data, picker_index, profile_index, career_index, force_sync)
 	-- function 60
-	local party_id = arg_60_1.party_id
-	local picker_index_is_bot = VersusPartySelectionLogicUtility.picker_index_is_bot(arg_60_1, arg_60_2)
-	local _peer_from_picker_data, var_60_3, var_60_4 = self:_peer_from_picker_data(arg_60_1, arg_60_2)
-	local var_60_5
-	local var_60_6
+	local party_id = party_data.party_id
+	local is_bot = VersusPartySelectionLogicUtility.picker_index_is_bot(party_data, picker_index)
+	local peer_id, _, slot_id = self:_peer_from_picker_data(party_data, picker_index)
+	local current_profile_idx, current_career_idx
 
-	if not picker_index_is_bot then
-		var_60_5, var_60_6 = self._profile_synchronizer:get_bot_profile(party_id, var_60_4)
+	if is_bot then
+		current_profile_idx, current_career_idx = self._profile_synchronizer:get_bot_profile(party_id, slot_id)
 	else
-		var_60_5, var_60_6 = Managers.mechanism:get_persistent_profile_index_reservation(_peer_from_picker_data)
+		current_profile_idx, current_career_idx = Managers.mechanism:get_persistent_profile_index_reservation(peer_id)
 	end
 
-	if not self:_is_hero_locked(var_60_5, arg_60_1, _peer_from_picker_data) then
-		var_60_5, var_60_6 = nil
+	if self:_is_hero_locked(current_profile_idx, party_data, peer_id) then
+		current_profile_idx, current_career_idx = nil
 	end
 
 	repeat
-		if not (not var_60_5 and not var_60_6 and arg_60_3 ~= var_60_5 or arg_60_4 ~= var_60_6) then
+		if current_profile_idx and current_career_idx and profile_index == current_profile_idx and career_index == current_career_idx then
 			break
 		end
 
-		local state = arg_60_1.picker_list[arg_60_2].state
-		local flag = tbl_2[state] > tbl_2.player_picking_character
+		local picker_list = party_data.picker_list
+		local picker_data = picker_list[picker_index]
+		local state = picker_data.state
+		local slot_already_picked = ClientStateLookup[state] > ClientStateLookup.player_picking_character
 
-		if not var_60_5 and not flag then
+		if current_profile_idx and slot_already_picked then
 			local printf = printf
 			local str = "[VersusPartySelectionLogic] %s %s in party %s and pick id %s tried to pick a hero %s %s after timer ran out. Staying as %s %s"
-			local flag_2
+			local flag
 
-			flag_2 = not picker_index_is_bot and "BOT in slot" and "Peer"
+			flag = (not is_bot or not "BOT in slot") and not not "Peer"
 
-			printf(str, flag_2, not picker_index_is_bot and arg_60_2 and _peer_from_picker_data, party_id, arg_60_2, arg_60_3, arg_60_4, var_60_5, var_60_6)
+			printf(str, flag, (not is_bot or not picker_index) and not not peer_id, party_id, picker_index, profile_index, career_index, current_profile_idx, current_career_idx)
 
-			arg_60_3 = var_60_5
-			arg_60_4 = var_60_6
+			profile_index = current_profile_idx
+			career_index = current_career_idx
 
 			break
 		end
 
-		arg_60_5 = true
+		force_sync = true
 
-		if not (not arg_60_3 and not arg_60_4 and arg_60_3 == 0 or arg_60_4 ~= 0) then
-			arg_60_3, arg_60_4 = self:get_character_or_random(arg_60_3, arg_60_4, arg_60_1, picker_index_is_bot)
+		if not profile_index or not career_index or profile_index == 0 or career_index == 0 then
+			profile_index, career_index = self:get_character_or_random(profile_index, career_index, party_data, is_bot)
 
 			local printf_2 = printf
 			local str_2 = "[VersusPartySelectionLogic] No profile provided for %s %s. Fallbacking to %s %s."
-			local flag_3
+			local flag_2
 
-			flag_3 = not picker_index_is_bot and "BOT in slot" and "Peer"
+			flag_2 = (not is_bot or not "BOT in slot") and not not "Peer"
 
-			printf_2(str_2, flag_3, not picker_index_is_bot and arg_60_2 and _peer_from_picker_data, arg_60_3, arg_60_4)
-		elseif not self:_is_hero_locked(arg_60_3, arg_60_1, _peer_from_picker_data) then
-			local var_60_15 = arg_60_3
-			local var_60_16 = arg_60_4
+			printf_2(str_2, flag_2, (not is_bot or not picker_index) and not not peer_id, profile_index, career_index)
+		elseif self:_is_hero_locked(profile_index, party_data, peer_id) then
+			local failed_profile_index, failed_career_index = profile_index, career_index
 
-			arg_60_3, arg_60_4 = self:get_character_or_random(arg_60_3, arg_60_4, arg_60_1, picker_index_is_bot)
+			profile_index, career_index = self:get_character_or_random(profile_index, career_index, party_data, is_bot)
 
 			local printf_3 = printf
 			local str_3 = "[VersusPartySelectionLogic] %s %s tried to pick locked hero %s %s. Fallbacking to %s %s."
-			local flag_4
+			local flag_3
 
-			flag_4 = not picker_index_is_bot and "BOT in slot" and "Peer"
+			flag_3 = (not is_bot or not "BOT in slot") and not not "Peer"
 
-			printf_3(str_3, flag_4, not picker_index_is_bot and arg_60_2 and _peer_from_picker_data, var_60_15, var_60_16, arg_60_3, arg_60_4)
+			printf_3(str_3, flag_3, (not is_bot or not picker_index) and not not peer_id, failed_profile_index, failed_career_index, profile_index, career_index)
 		end
 
-		if not picker_index_is_bot then
-			self._profile_synchronizer:set_bot_profile(party_id, var_60_4, arg_60_3, arg_60_4)
+		if is_bot then
+			self._profile_synchronizer:set_bot_profile(party_id, slot_id, profile_index, career_index)
 
 			break
 		end
 
-		if not Managers.mechanism:try_reserve_profile_for_peer_by_mechanism(_peer_from_picker_data, arg_60_3, arg_60_4, true) then
-			Crashify.print_exception("VersusPartySelectionLogic", "gave peer %s in party %s hero %s, but could not reserve it", _peer_from_picker_data, party_id, arg_60_3)
+		local success = Managers.mechanism:try_reserve_profile_for_peer_by_mechanism(peer_id, profile_index, career_index, true)
 
-			arg_60_3 = var_60_5
-			arg_60_4 = var_60_6
+		if not success then
+			Crashify.print_exception("VersusPartySelectionLogic", "gave peer %s in party %s hero %s, but could not reserve it", peer_id, party_id, profile_index)
+
+			profile_index = current_profile_idx
+			career_index = current_career_idx
 		end
 	until true
 
-	if not arg_60_5 then
-		self:sync_player_loadout(arg_60_3, arg_60_4, party_id, arg_60_2)
+	if force_sync then
+		self:sync_player_loadout(profile_index, career_index, party_id, picker_index)
 	end
 
-	return arg_60_3, arg_60_4
+	return profile_index, career_index
 end
 
-VersusPartySelectionLogic.rpc_party_select_request_pick_hero = function (self, arg_61_1, arg_61_2, arg_61_3, arg_61_4, arg_61_5)
+VersusPartySelectionLogic.rpc_party_select_request_pick_hero = function (self, channel_id, party_id, picker_index, profile_index, career_index)
 	-- function 61
-	local var_61_0 = self._pick_data_per_party[arg_61_2]
-	local _try_pick_hero, var_61_2 = self:_try_pick_hero(var_61_0, arg_61_3, arg_61_4, arg_61_5)
-	local flag
+	local pick_data_per_party = self._pick_data_per_party
+	local party_data = pick_data_per_party[party_id]
+	local got_profile, got_career = self:_try_pick_hero(party_data, picker_index, profile_index, career_index)
+	local str
 
-	flag = _try_pick_hero ~= arg_61_4 or not " and succeeded" or string.format(", but got hero %s %s", _try_pick_hero, var_61_2)
+	if got_profile == profile_index then
+		str = " and succeeded"
 
-	printf("[VersusPartySelectionLogic] Peer %s in party %s tried to pick hero %s %s%s", CHANNEL_TO_PEER_ID[arg_61_1], arg_61_2, arg_61_4, arg_61_5, flag)
+		goto label_61_0
+	end
+
+	str = string.format(", but got hero %s %s", got_profile, got_career)
+
+	local fail_context = str
+
+	::label_61_0::
+
+	printf("[VersusPartySelectionLogic] Peer %s in party %s tried to pick hero %s %s%s", CHANNEL_TO_PEER_ID[channel_id], party_id, profile_index, career_index, fail_context)
 end
 
-VersusPartySelectionLogic.rpc_set_party_array = function (self, arg_62_1, arg_62_2, arg_62_3, arg_62_4)
+VersusPartySelectionLogic.rpc_set_party_array = function (self, channel_id, party_id, party_array, current_picker_index)
 	-- function 62
-	local get_party = Managers.party:get_party(arg_62_2)
-	local slots = get_party.slots
-	local tbl = {}
+	local party = Managers.party:get_party(party_id)
+	local slots = party.slots
+	local picker_list = {}
 
-	for i = 1, #arg_62_3 do
-		local var_62_3 = arg_62_3[i]
-		local var_62_4 = slots[var_62_3]
+	for i = 1, #party_array do
+		local slot_id = party_array[i]
+		local status = slots[slot_id]
 
-		tbl[i] = {
+		picker_list[i] = {
 			state = "startup",
 			picker_index = i,
-			slot_id = var_62_3,
-			status = var_62_4
+			slot_id = slot_id,
+			status = status
 		}
 	end
 
-	local var_62_5
+	local pick_data
 
-	if not self._pick_data_per_party then
-		var_62_5 = self._pick_data_per_party[arg_62_2]
+	if self._pick_data_per_party then
+		pick_data = self._pick_data_per_party[party_id]
 	end
 
-	if not var_62_5 then
-		var_62_5 = {
+	if not pick_data then
+		pick_data = {
 			current_picker_index = 0,
 			state = "startup",
-			picker_list = tbl,
-			party_id = arg_62_2
+			picker_list = picker_list,
+			party_id = party_id
 		}
-		self._pick_data_per_party[arg_62_2] = var_62_5
+		self._pick_data_per_party[party_id] = pick_data
 	end
 
-	local player_pick_time = GameModeSettings.versus.character_picking_settings.player_pick_time
-	local num_slots = get_party.num_slots
+	local individual_player_pick_time = GameModeSettings.versus.character_picking_settings.player_pick_time
+	local party_size = party.num_slots
 
-	var_62_5.current_picker_index = arg_62_4
-	var_62_5.prev_picker_index = arg_62_4 - 1
-	var_62_5.total_slider_time = player_pick_time * num_slots
+	pick_data.current_picker_index = current_picker_index
+	pick_data.prev_picker_index = current_picker_index - 1
+	pick_data.total_slider_time = individual_player_pick_time * party_size
 end
 
-VersusPartySelectionLogic.rpc_set_party_state = function (self, arg_63_1, arg_63_2, arg_63_3)
+VersusPartySelectionLogic.rpc_set_party_state = function (self, channel_id, party_id, new_state_id)
 	-- function 63
-	self._pick_data_per_party[arg_63_2].state = self._party_states_lookup[arg_63_3]
+	local pick_data = self._pick_data_per_party[party_id]
+
+	pick_data.state = self._party_states_lookup[new_state_id]
 end
 
-VersusPartySelectionLogic.rpc_sync_player_loadout = function (self, arg_64_1, arg_64_2, arg_64_3, arg_64_4, arg_64_5, arg_64_6, arg_64_7, arg_64_8, arg_64_9, arg_64_10, arg_64_11, arg_64_12)
+VersusPartySelectionLogic.rpc_sync_player_loadout = function (self, channel_id, party_id, pick_id, profile_index, career_index, melee_id, ranged_id, skin_id, hat_id, frame_id, level, versus_level)
 	-- function 64
-	local var_64_0 = CHANNEL_TO_PEER_ID[arg_64_1]
+	local peer_id = CHANNEL_TO_PEER_ID[channel_id]
 
-	if not var_64_0 then
+	if not peer_id then
 		return
 	end
 
-	if not self._is_server then
-		local var_64_1 = self._pick_data_per_party[arg_64_2]
+	if self._is_server then
+		local pick_data = self._pick_data_per_party[party_id]
+		local is_bot = VersusPartySelectionLogicUtility.picker_index_is_bot(pick_data, pick_id)
 
-		if not VersusPartySelectionLogicUtility.picker_index_is_bot(var_64_1, arg_64_3) then
+		if is_bot then
 			return
 		end
 
-		local var_64_2 = var_64_1.picker_list[arg_64_3]
-		local state = var_64_2.state
-		local status = var_64_2.status
+		local picker_list = pick_data.picker_list
+		local picker_data = picker_list[pick_id]
+		local state = picker_data.state
+		local status = picker_data.status
 
-		if not (not (tbl_2[state] > tbl_2.player_picking_character) or status.selected_profile_index ~= arg_64_4 or status.selected_career_index == arg_64_5) then
+		if ClientStateLookup[state] > ClientStateLookup.player_picking_character and (status.selected_profile_index ~= profile_index or status.selected_career_index ~= career_index) then
 			print("[VersusPartySelectionLogic] Client tried to change loadout of a different character after a character has already been picked. Bouncing back request.")
 
-			local get_persistent_profile_index_reservation, var_64_6 = Managers.mechanism:get_persistent_profile_index_reservation(status.peer_id)
+			local real_profile_idx, real_career_idx = Managers.mechanism:get_persistent_profile_index_reservation(status.peer_id)
 
-			self._network_transmit:send_rpc("rpc_sync_player_loadout", var_64_0, arg_64_2, arg_64_3, get_persistent_profile_index_reservation, var_64_6, 1, 1, 1, 1, 1, 1, 0)
+			self._network_transmit:send_rpc("rpc_sync_player_loadout", peer_id, party_id, pick_id, real_profile_idx, real_career_idx, 1, 1, 1, 1, 1, 1, 0)
 
 			return
 		end
 
-		self._network_transmit:send_rpc_clients_except("rpc_sync_player_loadout", var_64_0, arg_64_2, arg_64_3, arg_64_4, arg_64_5, arg_64_6, arg_64_7, arg_64_8, arg_64_9, arg_64_10, arg_64_11, arg_64_12)
+		self._network_transmit:send_rpc_clients_except("rpc_sync_player_loadout", peer_id, party_id, pick_id, profile_index, career_index, melee_id, ranged_id, skin_id, hat_id, frame_id, level, versus_level)
 	end
 
-	local _local_party_data, var_64_8, var_64_9 = self:_local_party_data()
-	local flag = not var_64_8 and var_64_8.party_id
+	local _, local_party, local_picker_list_id = self:_local_party_data()
+	local local_party_id = not not local_party and not not local_party.party_id
 
-	if not (flag ~= arg_64_2 or var_64_9 ~= arg_64_3) then
-		print("[VersusPartySelectionLogic] Local player was assigned to", arg_64_4, arg_64_5)
-		self:sync_player_loadout(arg_64_4, arg_64_5, flag, var_64_9)
+	if local_party_id == party_id and local_picker_list_id == pick_id then
+		print("[VersusPartySelectionLogic] Local player was assigned to", profile_index, career_index)
+		self:sync_player_loadout(profile_index, career_index, local_party_id, local_picker_list_id)
 	else
-		self:_set_loadout(arg_64_2, arg_64_3, arg_64_4, arg_64_5, arg_64_6, arg_64_7, arg_64_8, arg_64_9, arg_64_10, arg_64_11, arg_64_12)
+		self:_set_loadout(party_id, pick_id, profile_index, career_index, melee_id, ranged_id, skin_id, hat_id, frame_id, level, versus_level)
 	end
 end
 
-VersusPartySelectionLogic.rpc_set_player_state = function (self, arg_65_1, arg_65_2, arg_65_3, arg_65_4)
+VersusPartySelectionLogic.rpc_set_player_state = function (self, channel_id, new_state_id, party_id, picker_id)
 	-- function 65
 	fassert(not self._is_server, "Server should never get this")
 
-	local var_65_0 = self._client_states_lookup[arg_65_2]
+	local new_state = self._client_states_lookup[new_state_id]
 
-	self:set_player_state(var_65_0, arg_65_3, arg_65_4)
+	self:set_player_state(new_state, party_id, picker_id)
 end
 
-VersusPartySelectionLogic.rpc_set_party_picking_id = function (arg_66_0, arg_66_1, arg_66_2, arg_66_3)
+VersusPartySelectionLogic.rpc_set_party_picking_id = function (self, channel_id, party_id, picker_id)
 	-- function 66
-	arg_66_0._pick_data_per_party[arg_66_2].current_picker_index = arg_66_3
+	local pick_data_per_party = self._pick_data_per_party
+	local party_data = pick_data_per_party[party_id]
+
+	party_data.current_picker_index = picker_id
 end
 
-VersusPartySelectionLogic.rpc_pre_game_sync_hovered_item = function (self, arg_67_1, arg_67_2, arg_67_3, arg_67_4, arg_67_5)
+VersusPartySelectionLogic.rpc_pre_game_sync_hovered_item = function (self, channel_id, peer_id, local_player_id, profile_index, career_index)
 	-- function 67
-	self:_sync_hovered_item(arg_67_2, arg_67_3, arg_67_4, arg_67_5)
+	self:_sync_hovered_item(peer_id, local_player_id, profile_index, career_index)
 
-	if not self._is_server then
-		local var_67_0 = CHANNEL_TO_PEER_ID[arg_67_1]
+	if self._is_server then
+		local sender_peer_id = CHANNEL_TO_PEER_ID[channel_id]
 
-		self._network_transmit:send_rpc_clients_except("rpc_pre_game_sync_hovered_item", var_67_0, arg_67_2, arg_67_3, arg_67_4, arg_67_5)
+		self._network_transmit:send_rpc_clients_except("rpc_pre_game_sync_hovered_item", sender_peer_id, peer_id, local_player_id, profile_index, career_index)
 	end
 end
 
@@ -1396,33 +1548,35 @@ VersusPartySelectionLogic.timer = function (self)
 	return self._timer
 end
 
-VersusPartySelectionLogic.on_player_left_party = function (self, arg_69_1, arg_69_2, arg_69_3, arg_69_4)
+VersusPartySelectionLogic.on_player_left_party = function (self, peer_id, local_player_id, party_id, slot_id_player)
 	-- function 69
-	if not self._peers_ready then
-		self._peers_ready[arg_69_1] = nil
+	if self._peers_ready then
+		self._peers_ready[peer_id] = nil
 	end
 
-	local var_69_0 = self._pick_data_per_party[arg_69_3]
+	local pick_data = self._pick_data_per_party[party_id]
 
-	if not var_69_0 then
-		local picker_list = var_69_0.picker_list
+	if pick_data then
+		local picker_list = pick_data.picker_list
 
 		for i = 1, #picker_list do
-			if picker_list[i].slot_id == arg_69_4 then
+			if picker_list[i].slot_id == slot_id_player then
 				picker_list[i].is_connected = false
 			end
 		end
 	end
 end
 
-VersusPartySelectionLogic.rpc_set_party_selection_logic_timer = function (self, arg_70_1, arg_70_2, arg_70_3)
+VersusPartySelectionLogic.rpc_set_party_selection_logic_timer = function (self, peer_id, real_time_left, end_network_time)
 	-- function 70
-	local network_time = Managers.state.network:network_time()
+	local current_network_time = Managers.state.network:network_time()
 
-	if network_time == 0 then
-		network_time = arg_70_3 - arg_70_2
+	if current_network_time == 0 then
+		current_network_time = end_network_time - real_time_left
 	end
 
-	self._timer_scale = (arg_70_3 - network_time) / arg_70_2
-	self._timer = arg_70_2
+	local time_left = end_network_time - current_network_time
+
+	self._timer_scale = time_left / real_time_left
+	self._timer = real_time_left
 end

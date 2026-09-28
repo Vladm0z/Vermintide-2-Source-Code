@@ -5,37 +5,37 @@ require("scripts/settings/controller_features_settings")
 
 ControllerFeaturesManager = class(ControllerFeaturesManager)
 
-ControllerFeaturesManager.init = function (self, arg_1_1)
+ControllerFeaturesManager.init = function (self, is_in_inn)
 	-- function 1
-	if not rawget(_G, "ControllerFeaturesImplementation") then
-		self._impl = ControllerFeaturesImplementation:new(arg_1_1)
+	if rawget(_G, "ControllerFeaturesImplementation") then
+		self._impl = ControllerFeaturesImplementation:new(is_in_inn)
 	end
 end
 
-ControllerFeaturesManager.add_effect = function (self, arg_2_1, arg_2_2, arg_2_3)
+ControllerFeaturesManager.add_effect = function (self, effect_name, params, user_id)
 	-- function 2
-	if not self._impl then
-		return self._impl:add_effect(arg_2_1, arg_2_2, arg_2_3)
+	if self._impl then
+		return self._impl:add_effect(effect_name, params, user_id)
 	end
 end
 
-ControllerFeaturesManager.stop_effect = function (self, arg_3_1)
+ControllerFeaturesManager.stop_effect = function (self, effect_id)
 	-- function 3
-	if not self._impl then
-		self._impl:stop_effect(arg_3_1)
+	if self._impl then
+		self._impl:stop_effect(effect_id)
 	end
 end
 
-ControllerFeaturesManager.update = function (self, arg_4_1, arg_4_2)
+ControllerFeaturesManager.update = function (self, dt, t)
 	-- function 4
-	if not self._impl then
-		self._impl:update(arg_4_1, arg_4_2)
+	if self._impl then
+		self._impl:update(dt, t)
 	end
 end
 
 ControllerFeaturesManager.destroy = function (self)
 	-- function 5
-	if not self._impl then
+	if self._impl then
 		self._impl:destroy()
 	end
 

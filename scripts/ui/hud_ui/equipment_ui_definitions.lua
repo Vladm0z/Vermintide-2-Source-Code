@@ -1,17 +1,16 @@
 -- chunkname: @scripts/ui/hud_ui/equipment_ui_definitions.lua
 
-local num = 1920
-local num_2 = 1080
-local flag = true
-local tbl = {
+local SIZE_X, SIZE_Y = 1920, 1080
+local RETAINED_MODE_ENABLED = true
+local slot_size = {
 	46,
 	46
 }
-local tbl_2 = {
+local slot_icon_size = {
 	40,
 	40
 }
-local tbl_3 = {
+local scenegraph_definition = {
 	root_parent = {
 		scale = "hud_scale_fit",
 		position = {
@@ -20,8 +19,8 @@ local tbl_3 = {
 			UILayer.hud
 		},
 		size = {
-			num,
-			num_2
+			SIZE_X,
+			SIZE_Y
 		}
 	},
 	screen = {
@@ -32,8 +31,8 @@ local tbl_3 = {
 			UILayer.hud
 		},
 		size = {
-			num,
-			num_2
+			SIZE_X,
+			SIZE_Y
 		}
 	},
 	root = {
@@ -45,8 +44,8 @@ local tbl_3 = {
 			0
 		},
 		size = {
-			num,
-			num_2
+			SIZE_X,
+			SIZE_Y
 		}
 	},
 	screen_bottom_pivot = {
@@ -126,7 +125,7 @@ local tbl_3 = {
 			44,
 			-8
 		},
-		size = tbl
+		size = slot_size
 	},
 	ammo_background_parent = {
 		vertical_alignment = "bottom",
@@ -242,18 +241,19 @@ local tbl_3 = {
 	}
 }
 
-local function fn(arg_1_0, arg_1_1)
+local function create_slot_widget(index, total_amount)
 	-- function 1
-	local num = arg_1_0 - 1
-	local num_2 = 24
-	local var_1_2 = tbl[1]
-	local num_3 = var_1_2 * arg_1_1 + num_2 * (arg_1_1 - 1)
-	local tbl_3 = {
-		num * (var_1_2 + num_2),
+	local actual_index = index - 1
+	local spacing = 24
+	local slot_width = slot_size[1]
+	local total_slot_width = slot_width * total_amount
+	local total_width = total_slot_width + spacing * (total_amount - 1)
+	local frame_offset = {
+		actual_index * (slot_width + spacing),
 		0,
 		-30
 	}
-	local tbl_4 = {
+	local bg_color = {
 		255,
 		36,
 		215,
@@ -268,116 +268,116 @@ local function fn(arg_1_0, arg_1_1)
 					pass_type = "texture",
 					style_id = "texture_icon",
 					texture_id = "texture_icon",
-					retained_mode = flag
+					retained_mode = RETAINED_MODE_ENABLED
 				},
 				{
 					pass_type = "rotated_texture",
 					style_id = "secondary_texture_icon",
 					texture_id = "secondary_texture_icon",
-					retained_mode = flag,
-					content_check_function = function (self, arg_2_1)
+					retained_mode = RETAINED_MODE_ENABLED,
+					content_check_function = function (content, style)
 						-- function 2
-						return self.secondary_texture_icon
+						return content.secondary_texture_icon
 					end
 				},
 				{
 					pass_type = "rotated_texture",
 					style_id = "secondary_texture_icon_glow",
 					texture_id = "secondary_texture_icon_glow",
-					retained_mode = flag,
-					content_check_function = function (self, arg_3_1)
+					retained_mode = RETAINED_MODE_ENABLED,
+					content_check_function = function (content, style)
 						-- function 3
-						return self.secondary_texture_icon
+						return content.secondary_texture_icon
 					end
 				},
 				{
 					pass_type = "texture",
 					style_id = "secondary_texture_bg",
 					texture_id = "secondary_texture_bg",
-					retained_mode = flag,
-					content_check_function = function (self, arg_4_1)
+					retained_mode = RETAINED_MODE_ENABLED,
+					content_check_function = function (content, style)
 						-- function 4
-						return self.secondary_texture_icon
+						return content.secondary_texture_icon
 					end
 				},
 				{
 					pass_type = "texture",
 					style_id = "texture_frame",
 					texture_id = "texture_frame",
-					retained_mode = flag
+					retained_mode = RETAINED_MODE_ENABLED
 				},
 				{
 					pass_type = "texture",
 					style_id = "texture_background",
 					texture_id = "texture_background",
-					retained_mode = flag
+					retained_mode = RETAINED_MODE_ENABLED
 				},
 				{
 					pass_type = "texture",
 					style_id = "texture_selected",
 					texture_id = "texture_selected",
-					retained_mode = flag,
-					content_check_function = function (self, arg_5_1)
+					retained_mode = RETAINED_MODE_ENABLED,
+					content_check_function = function (content, style)
 						-- function 5
-						return self.selected
+						return content.selected
 					end
 				},
 				{
 					pass_type = "rotated_texture",
 					style_id = "texture_highlight",
 					texture_id = "texture_highlight",
-					retained_mode = flag
+					retained_mode = RETAINED_MODE_ENABLED
 				},
 				{
 					style_id = "input_text",
 					pass_type = "text",
 					text_id = "input_text",
-					retained_mode = flag
+					retained_mode = RETAINED_MODE_ENABLED
 				},
 				{
 					style_id = "input_text_shadow",
 					pass_type = "text",
 					text_id = "input_text",
-					retained_mode = flag
+					retained_mode = RETAINED_MODE_ENABLED
 				},
 				{
 					style_id = "use_count_text",
 					pass_type = "text",
 					text_id = "use_count_text",
-					retained_mode = flag,
-					content_check_function = function (self, arg_6_1)
+					retained_mode = RETAINED_MODE_ENABLED,
+					content_check_function = function (content, style)
 						-- function 6
-						return self.has_additional_slots
+						return content.has_additional_slots
 					end
 				},
 				{
 					style_id = "use_count_text_shadow",
 					pass_type = "text",
 					text_id = "use_count_text",
-					retained_mode = flag,
-					content_check_function = function (self, arg_7_1)
+					retained_mode = RETAINED_MODE_ENABLED,
+					content_check_function = function (content, style)
 						-- function 7
-						return self.has_additional_slots
+						return content.has_additional_slots
 					end
 				},
 				{
 					style_id = "can_swap_text",
 					pass_type = "text",
 					text_id = "can_swap_text",
-					retained_mode = flag,
-					content_check_function = function (self, arg_8_1)
+					retained_mode = RETAINED_MODE_ENABLED,
+					content_check_function = function (content, style)
 						-- function 8
-						return self.can_swap
+						return content.can_swap
 					end
 				},
 				{
 					style_id = "can_swap_text_shadow",
 					pass_type = "text",
 					text_id = "can_swap_text",
-					retained_mode = flag,
-					content_check_function = function (self, arg_9_1)
+					retained_mode = RETAINED_MODE_ENABLED,
+					content_check_function = function (content, style)
 						-- function 9
-						return self.can_swap
+						return content.can_swap
 					end
 				}
 			}
@@ -398,7 +398,7 @@ local function fn(arg_1_0, arg_1_1)
 			secondary_texture_bg = "hud_inventory_slot_circle",
 			use_count = 0,
 			texture_highlight = "hud_inventory_slot_small_pickup",
-			hud_index = arg_1_0
+			hud_index = index
 		},
 		style = {
 			input_text = {
@@ -488,7 +488,7 @@ local function fn(arg_1_0, arg_1_1)
 			texture_icon = {
 				vertical_alignment = "center",
 				horizontal_alignment = "center",
-				texture_size = tbl_2,
+				texture_size = slot_icon_size,
 				color = {
 					0,
 					255,
@@ -505,8 +505,8 @@ local function fn(arg_1_0, arg_1_1)
 				vertical_alignment = "top",
 				horizontal_alignment = "right",
 				texture_size = {
-					tbl_2[1] * 0.75,
-					tbl_2[2] * 0.75
+					slot_icon_size[1] * 0.75,
+					slot_icon_size[2] * 0.75
 				},
 				color = {
 					255,
@@ -521,16 +521,16 @@ local function fn(arg_1_0, arg_1_1)
 				},
 				angle = math.degrees_to_radians(-45),
 				pivot = {
-					tbl_2[1] * 0.75 * 0.5,
-					tbl_2[2] * 0.75 * 0.5
+					slot_icon_size[1] * 0.75 * 0.5,
+					slot_icon_size[2] * 0.75 * 0.5
 				}
 			},
 			secondary_texture_icon_glow = {
 				vertical_alignment = "top",
 				horizontal_alignment = "right",
 				texture_size = {
-					tbl_2[1] * 0.75,
-					tbl_2[2] * 0.75
+					slot_icon_size[1] * 0.75,
+					slot_icon_size[2] * 0.75
 				},
 				color = {
 					255,
@@ -545,8 +545,8 @@ local function fn(arg_1_0, arg_1_1)
 				},
 				angle = math.degrees_to_radians(-45),
 				pivot = {
-					tbl_2[1] * 0.75 * 0.5,
-					tbl_2[2] * 0.75 * 0.5
+					slot_icon_size[1] * 0.75 * 0.5,
+					slot_icon_size[2] * 0.75 * 0.5
 				}
 			},
 			secondary_texture_bg = {
@@ -570,8 +570,8 @@ local function fn(arg_1_0, arg_1_1)
 			},
 			texture_frame = {
 				size = {
-					tbl[1],
-					tbl[2]
+					slot_size[1],
+					slot_size[2]
 				},
 				color = {
 					255,
@@ -631,7 +631,7 @@ local function fn(arg_1_0, arg_1_1)
 			texture_background = {
 				vertical_alignment = "center",
 				horizontal_alignment = "center",
-				texture_size = tbl_2,
+				texture_size = slot_icon_size,
 				color = {
 					255,
 					255,
@@ -645,11 +645,11 @@ local function fn(arg_1_0, arg_1_1)
 				}
 			}
 		},
-		offset = tbl_3
+		offset = frame_offset
 	}
 end
 
-local tbl_4 = {
+local ammo_text_clip_style = {
 	word_wrap = false,
 	font_size = 72,
 	localize = false,
@@ -665,7 +665,7 @@ local tbl_4 = {
 		2
 	}
 }
-local tbl_5 = {
+local ammo_text_remaining_style = {
 	word_wrap = false,
 	font_size = 40,
 	localize = false,
@@ -681,7 +681,7 @@ local tbl_5 = {
 		2
 	}
 }
-local tbl_6 = {
+local ammo_text_center_style = {
 	word_wrap = false,
 	font_size = 40,
 	localize = false,
@@ -697,7 +697,7 @@ local tbl_6 = {
 		2
 	}
 }
-local tbl_7 = {
+local reload_tip_text_style = {
 	word_wrap = false,
 	localize = false,
 	font_size = 30,
@@ -712,18 +712,18 @@ local tbl_7 = {
 		2
 	}
 }
-local num_3 = 4 * (tbl[1] + 24)
+local extra_storage_x = 4 * (slot_size[1] + 24)
 
-function create_inventory_panel(arg_10_0, arg_10_1)
+function create_inventory_panel(default_texture, scenegraph_id)
 	-- function 10
-	local size = tbl_3[arg_10_1].size
-	local tbl = {
+	local texture_size = scenegraph_definition[scenegraph_id].size
+	local offset = {
 		0,
 		0,
 		1
 	}
-	local var_10_2
-	local var_10_3 = flag
+	local masked
+	local retained = RETAINED_MODE_ENABLED
 
 	return {
 		element = {
@@ -732,12 +732,12 @@ function create_inventory_panel(arg_10_0, arg_10_1)
 					texture_id = "texture_id",
 					style_id = "texture_id",
 					pass_type = "texture",
-					retained_mode = var_10_3
+					retained_mode = retained
 				}
 			}
 		},
 		content = {
-			texture_id = arg_10_0
+			texture_id = default_texture
 		},
 		style = {
 			texture_id = {
@@ -752,22 +752,22 @@ function create_inventory_panel(arg_10_0, arg_10_1)
 					0,
 					0
 				},
-				masked = var_10_2,
-				texture_size = size
+				masked = masked,
+				texture_size = texture_size
 			}
 		},
-		offset = tbl,
-		scenegraph_id = arg_10_1
+		offset = offset,
+		scenegraph_id = scenegraph_id
 	}
 end
 
-local tbl_8 = {
+local widget_definitions = {
 	background_panel = create_inventory_panel("hud_inventory_panel", "background_panel"),
-	background_panel_bg = UIWidgets.create_simple_texture("hud_inventory_panel_bg", "background_panel_bg", nil, flag),
+	background_panel_bg = UIWidgets.create_simple_texture("hud_inventory_panel_bg", "background_panel_bg", nil, RETAINED_MODE_ENABLED),
 	extra_storage_bg = {
 		scenegraph_id = "slot",
 		offset = {
-			num_3,
+			extra_storage_x,
 			22,
 			-31
 		},
@@ -777,7 +777,7 @@ local tbl_8 = {
 					pass_type = "rotated_texture",
 					style_id = "texture",
 					texture_id = "texture",
-					retained_mode = flag
+					retained_mode = RETAINED_MODE_ENABLED
 				}
 			}
 		},
@@ -807,17 +807,17 @@ local tbl_8 = {
 		}
 	}
 }
-local tbl_9 = {
-	ammo_text_clip = UIWidgets.create_simple_text("-", "ammo_text_clip", nil, nil, tbl_4, nil, flag),
-	ammo_text_remaining = UIWidgets.create_simple_text("-", "ammo_text_remaining", nil, nil, tbl_5, nil, flag),
-	ammo_text_center = UIWidgets.create_simple_text("/", "ammo_text_center", nil, nil, tbl_6, nil, flag),
-	ammo_background = UIWidgets.create_simple_texture("loot_objective_bg", "ammo_background", nil, flag, {
+local ammo_widget_definitions = {
+	ammo_text_clip = UIWidgets.create_simple_text("-", "ammo_text_clip", nil, nil, ammo_text_clip_style, nil, RETAINED_MODE_ENABLED),
+	ammo_text_remaining = UIWidgets.create_simple_text("-", "ammo_text_remaining", nil, nil, ammo_text_remaining_style, nil, RETAINED_MODE_ENABLED),
+	ammo_text_center = UIWidgets.create_simple_text("/", "ammo_text_center", nil, nil, ammo_text_center_style, nil, RETAINED_MODE_ENABLED),
+	ammo_background = UIWidgets.create_simple_texture("loot_objective_bg", "ammo_background", nil, RETAINED_MODE_ENABLED, {
 		200,
 		255,
 		255,
 		255
 	}),
-	overcharge_background = UIWidgets.create_simple_texture("hud_inventory_charge_icon", "overcharge_background", nil, flag),
+	overcharge_background = UIWidgets.create_simple_texture("hud_inventory_charge_icon", "overcharge_background", nil, RETAINED_MODE_ENABLED),
 	overcharge = UIWidgets.create_simple_uv_texture("hud_inventory_charge_icon", {
 		{
 			0,
@@ -827,12 +827,12 @@ local tbl_9 = {
 			1,
 			1
 		}
-	}, "overcharge", nil, flag),
-	reload_tip_text = UIWidgets.create_simple_text("", "reload_ui", nil, Colors.get_color_table_with_alpha("white", 0), tbl_7, nil, false, true)
+	}, "overcharge", nil, RETAINED_MODE_ENABLED),
+	reload_tip_text = UIWidgets.create_simple_text("", "reload_ui", nil, Colors.get_color_table_with_alpha("white", 0), reload_tip_text_style, nil, false, true)
 }
 local slots = InventorySettings.slots
-local tbl_10 = {}
-local tbl_11 = {
+local slot_widget_definitions = {}
+local career_skill_weapon_widget_definition = {
 	scenegraph_id = "background_panel",
 	offset = {
 		0,
@@ -845,44 +845,44 @@ local tbl_11 = {
 				pass_type = "texture",
 				style_id = "texture_icon",
 				texture_id = "texture_icon",
-				retained_mode = flag
+				retained_mode = RETAINED_MODE_ENABLED
 			},
 			{
 				pass_type = "texture",
 				style_id = "texture_selected",
 				texture_id = "texture_selected",
-				retained_mode = flag
+				retained_mode = RETAINED_MODE_ENABLED
 			},
 			{
 				style_id = "input_text",
 				pass_type = "text",
 				text_id = "input_text",
-				retained_mode = flag,
-				content_check_function = function (self)
+				retained_mode = RETAINED_MODE_ENABLED,
+				content_check_function = function (content)
 					-- function 11
-					return self.can_reload
+					return content.can_reload
 				end
 			},
 			{
 				style_id = "input_text_shadow",
 				pass_type = "text",
 				text_id = "input_text",
-				retained_mode = flag,
-				content_check_function = function (self)
+				retained_mode = RETAINED_MODE_ENABLED,
+				content_check_function = function (content)
 					-- function 12
-					return self.can_reload
+					return content.can_reload
 				end
 			},
 			{
 				pass_type = "texture",
 				style_id = "reload_icon",
 				texture_id = "reload_icon",
-				retained_mode = flag,
-				content_check_function = function (self)
+				retained_mode = RETAINED_MODE_ENABLED,
+				content_check_function = function (content)
 					-- function 13
-					local can_reload = self.can_reload
+					local can_reload = content.can_reload
 
-					can_reload = can_reload or self.is_exhausted
+					can_reload = not not can_reload or not not content.is_exhausted
 
 					return can_reload
 				end
@@ -989,31 +989,31 @@ local tbl_11 = {
 }
 
 for i = 1, #slots do
-	local var_0_17 = slots[i]
-	local hud_index = var_0_17.hud_index
+	local slot = slots[i]
+	local hud_index = slot.hud_index
 
-	if not hud_index then
-		local var_0_19
+	if hud_index then
+		local widget_def
 
-		if var_0_17.name == "slot_career_skill_weapon" then
-			var_0_19 = tbl_11
+		if slot.name == "slot_career_skill_weapon" then
+			widget_def = career_skill_weapon_widget_definition
 		else
-			var_0_19 = fn(hud_index, 6)
+			widget_def = create_slot_widget(hud_index, 6)
 		end
 
-		tbl_10[#tbl_10 + 1] = var_0_19
+		slot_widget_definitions[#slot_widget_definitions + 1] = widget_def
 	end
 end
 
-local num_4 = 2
-local tbl_12 = {}
+local extra_storage_icons = 2
+local extra_storage_icon_definitions = {}
 
-for j = 1, num_4 do
-	tbl_12[j] = {
+for i = 1, extra_storage_icons do
+	extra_storage_icon_definitions[i] = {
 		scenegraph_id = "slot",
 		offset = {
-			num_3,
-			30 + j * (tbl_2[2] + 4),
+			extra_storage_x,
+			30 + i * (slot_icon_size[2] + 4),
 			5
 		},
 		element = {
@@ -1045,7 +1045,7 @@ for j = 1, num_4 do
 					0,
 					6
 				},
-				texture_size = tbl_2,
+				texture_size = slot_icon_size,
 				color = {
 					0,
 					255,
@@ -1082,17 +1082,18 @@ animations_definitions = {
 			name = "fade_in",
 			start_progress = 0,
 			end_progress = 0.3,
-			init = function (arg_14_0, arg_14_1, arg_14_2, arg_14_3)
+			init = function (ui_scenegraph, scenegraph_definition, widget, params)
 				-- function 14
-				arg_14_2.content.visible = true
+				widget.content.visible = true
 			end,
-			update = function (arg_15_0, arg_15_1, arg_15_2, arg_15_3, arg_15_4)
+			update = function (ui_scenegraph, scenegraph_definition, widget, progress, params)
 				-- function 15
-				local num = 255 * math.easeOutCubic(arg_15_3)
+				local anim_progress = math.easeOutCubic(progress)
+				local alpha = 255 * anim_progress
 
-				arg_15_2.style.text.text_color[1] = num
+				widget.style.text.text_color[1] = alpha
 			end,
-			on_complete = function (arg_16_0, arg_16_1, arg_16_2, arg_16_3)
+			on_complete = function (ui_scenegraph, scenegraph_definition, widget, params)
 				-- function 16
 				return
 			end
@@ -1101,31 +1102,32 @@ animations_definitions = {
 			name = "fade_out",
 			start_progress = 2.3,
 			end_progress = 2.6,
-			init = function (arg_17_0, arg_17_1, arg_17_2, arg_17_3)
+			init = function (ui_scenegraph, scenegraph_definition, widget, params)
 				-- function 17
 				return
 			end,
-			update = function (arg_18_0, arg_18_1, arg_18_2, arg_18_3, arg_18_4)
+			update = function (ui_scenegraph, scenegraph_definition, widget, progress, params)
 				-- function 18
-				local num = 255 * (1 - math.easeOutCubic(arg_18_3))
+				local anim_progress = math.easeOutCubic(progress)
+				local alpha = 255 * (1 - anim_progress)
 
-				arg_18_2.style.text.text_color[1] = num
+				widget.style.text.text_color[1] = alpha
 			end,
-			on_complete = function (arg_19_0, arg_19_1, arg_19_2, arg_19_3)
+			on_complete = function (ui_scenegraph, scenegraph_definition, widget, params)
 				-- function 19
-				arg_19_2.content.visible = false
+				widget.content.visible = false
 			end
 		}
 	}
 }
 
 return {
-	slot_size = tbl,
-	NUM_SLOTS = #tbl_10,
-	scenegraph_definition = tbl_3,
-	widget_definitions = tbl_8,
-	ammo_widget_definitions = tbl_9,
-	slot_widget_definitions = tbl_10,
-	extra_storage_icon_definitions = tbl_12,
+	slot_size = slot_size,
+	NUM_SLOTS = #slot_widget_definitions,
+	scenegraph_definition = scenegraph_definition,
+	widget_definitions = widget_definitions,
+	ammo_widget_definitions = ammo_widget_definitions,
+	slot_widget_definitions = slot_widget_definitions,
+	extra_storage_icon_definitions = extra_storage_icon_definitions,
 	animations_definitions = animations_definitions
 }

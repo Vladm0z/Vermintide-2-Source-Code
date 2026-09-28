@@ -4,66 +4,68 @@ MatchmakingStatePartyJoins = class(MatchmakingStatePartyJoins)
 MatchmakingStatePartyJoins.NAME = "MatchmakingStatePartyJoins"
 MatchmakingStatePartyJoins.TIMEOUT = 30
 
-MatchmakingStatePartyJoins.init = function (self, arg_1_1)
+MatchmakingStatePartyJoins.init = function (self, params)
 	-- function 1
 	self._time = 0
-	self._peer_id = arg_1_1.peer_id
+	self._peer_id = params.peer_id
 end
 
-MatchmakingStatePartyJoins.terminate = function (arg_2_0)
+MatchmakingStatePartyJoins.terminate = function (self)
 	-- function 2
-	local lobby = Managers.lobby
+	local lobby_manager = Managers.lobby
 
-	if not lobby:query_lobby("matchmaking_join_lobby") then
-		lobby:destroy_lobby("matchmaking_join_lobby")
+	if lobby_manager:query_lobby("matchmaking_join_lobby") then
+		lobby_manager:destroy_lobby("matchmaking_join_lobby")
 	else
 		printf("[MatchmakingStatePartyJoins] WARNING: Lobby `matchmaking_join_lobby` does not exist. State is possibly inconsistent.")
 	end
 
-	arg_2_0._state_context.reserved_lobby = nil
+	self._state_context.reserved_lobby = nil
 end
 
-MatchmakingStatePartyJoins.destroy = function (arg_3_0)
+MatchmakingStatePartyJoins.destroy = function (self)
 	-- function 3
 	return
 end
 
-MatchmakingStatePartyJoins.on_enter = function (self, arg_4_1)
+MatchmakingStatePartyJoins.on_enter = function (self, state_context)
 	-- function 4
-	self._state_context = arg_4_1
+	self._state_context = state_context
 	self._peer_failed_to_follow = false
 
-	local get_lobby = Managers.lobby:get_lobby("matchmaking_join_lobby")
-	local join_lobby_data = arg_4_1.join_lobby_data
-	local get_members = arg_4_1.search_config.party_lobby_host:members():get_members()
-	local var_4_3
-	local var_4_4
+	local reserved_lobby = Managers.lobby:get_lobby("matchmaking_join_lobby")
+	local join_lobby_data = state_context.join_lobby_data
+	local search_config = state_context.search_config
+	local party_lobby_host = search_config.party_lobby_host
+	local lobby_members = party_lobby_host:members()
+	local party_members = lobby_members:get_members()
+	local lobby_type, lobby_to_join
 
-	if not get_lobby:is_dedicated_server() then
-		var_4_3 = "server"
-		var_4_4 = join_lobby_data.server_info.ip_port
+	if reserved_lobby:is_dedicated_server() then
+		lobby_type = "server"
+		lobby_to_join = join_lobby_data.server_info.ip_port
 	else
-		var_4_3 = "lobby"
-		var_4_4 = join_lobby_data.id
+		lobby_type = "lobby"
+		lobby_to_join = join_lobby_data.id
 	end
 
-	local var_4_5 = NetworkLookup.lobby_type[var_4_3]
+	local lobby_index = NetworkLookup.lobby_type[lobby_type]
 
-	for i, v in ipairs(get_members) do
-		if v ~= self._peer_id then
-			mm_printf("Telling " .. v .. " to follow to " .. var_4_3 .. " " .. var_4_4)
+	for _, peer_id in ipairs(party_members) do
+		if peer_id ~= self._peer_id then
+			mm_printf("Telling " .. peer_id .. " to follow to " .. lobby_type .. " " .. lobby_to_join)
 
-			if not string.match(var_4_4, "127.0.0.1") then
+			if string.match(lobby_to_join, "127.0.0.1") then
 				mm_printf("Seems like you are trying to follow a client on the same computer as the dedicated server is located. It cannot be done. -> Fail")
 
 				self._peer_failed_to_follow = true
 
 				error("Seems like you are trying to follow a client on the same computer as the dedicated server is located. It cannot be done. -> Fail")
 			else
-				local var_4_6 = PEER_ID_TO_CHANNEL[v]
+				local channel_id = PEER_ID_TO_CHANNEL[peer_id]
 
-				if not var_4_6 then
-					RPC.rpc_follow_to_lobby(var_4_6, var_4_5, var_4_4)
+				if channel_id then
+					RPC.rpc_follow_to_lobby(channel_id, lobby_index, lobby_to_join)
 				else
 					print("Error: could not find channel to client following me(as a host) into a lobby")
 				end
@@ -71,41 +73,47 @@ MatchmakingStatePartyJoins.on_enter = function (self, arg_4_1)
 		end
 	end
 
-	mm_printf("Wait for %d clients to leave party lobby", #get_members - 1)
+	mm_printf("Wait for %d clients to leave party lobby", #party_members - 1)
 end
 
-MatchmakingStatePartyJoins.on_exit = function (arg_5_0)
+MatchmakingStatePartyJoins.on_exit = function (self)
 	-- function 5
-	local game_mechanism = Managers.mechanism:game_mechanism()
+	local mechanism = Managers.mechanism:game_mechanism()
 
-	if not game_mechanism then
+	if mechanism then
 		-- Nothing
 	end
 
 	::label_5_0::
 
-	local get_server_id = game_mechanism.get_server_id
+	local get_server_id = mechanism.get_server_id
 
-	get_server_id = not get_server_id and game_mechanism:get_server_id()
+	if get_server_id then
+		-- Nothing
+	end
+
+	get_server_id = mechanism:get_server_id()
+
+	local server_id = get_server_id
 
 	::label_5_1::
 
-	if not get_server_id then
-		print("JOINING MATCH. SERVER NAME: " .. get_server_id)
+	if server_id then
+		print("JOINING MATCH. SERVER NAME: " .. server_id)
 	end
 end
 
-MatchmakingStatePartyJoins.update = function (self, arg_6_1, arg_6_2)
+MatchmakingStatePartyJoins.update = function (self, dt, t)
 	-- function 6
-	self._time = self._time + arg_6_1
+	self._time = self._time + dt
 
-	if not self:_all_clients_have_left_lobby() then
+	if self:_all_clients_have_left_lobby() then
 		mm_printf("Clients have left the party lobby")
 
 		return MatchmakingStateRequestProfiles, self._state_context
 	end
 
-	if self._time > MatchmakingStatePartyJoins.TIMEOUT or not self._peer_failed_to_follow then
+	if self._time > MatchmakingStatePartyJoins.TIMEOUT or self._peer_failed_to_follow then
 		mm_printf("Timeout while waiting for clients to leave party lobby")
 		Managers.lobby:destroy_lobby("matchmaking_join_lobby")
 
@@ -115,10 +123,13 @@ end
 
 MatchmakingStatePartyJoins._all_clients_have_left_lobby = function (self)
 	-- function 7
-	local get_members = self._state_context.search_config.party_lobby_host:members():get_members()
+	local search_config = self._state_context.search_config
+	local party_lobby_host = search_config.party_lobby_host
+	local lobby_members = party_lobby_host:members()
+	local party_members = lobby_members:get_members()
 
-	for i, v in ipairs(get_members) do
-		if v ~= self._peer_id then
+	for _, peer_id in ipairs(party_members) do
+		if peer_id ~= self._peer_id then
 			return false
 		end
 	end

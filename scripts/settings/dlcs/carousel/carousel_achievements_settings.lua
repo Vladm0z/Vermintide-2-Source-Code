@@ -1,8 +1,8 @@
 -- chunkname: @scripts/settings/dlcs/carousel/carousel_achievements_settings.lua
 
-local carousel = DLCSettings.carousel
+local settings = DLCSettings.carousel
 
-carousel.achievement_categories = {
+settings.achievement_categories = {
 	{
 		name = "area_selection_carousel_name",
 		entries = {
@@ -125,7 +125,7 @@ carousel.achievement_categories = {
 		}
 	}
 }
-carousel.achievement_template_file_names = {
+settings.achievement_template_file_names = {
 	"scripts/managers/achievements/achievement_templates_carousel"
 }
-carousel.achievement_events = {}
+settings.achievement_events = {}

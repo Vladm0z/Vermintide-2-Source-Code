@@ -5,82 +5,98 @@ require("scripts/entity_system/systems/behaviour/nodes/bt_node")
 BTPackMasterEscortRatOgreAction = class(BTPackMasterEscortRatOgreAction, BTNode)
 BTPackMasterEscortRatOgreAction.name = "BTPackMasterEscortRatOgreAction"
 
-BTPackMasterEscortRatOgreAction.init = function (arg_1_0, ...)
+BTPackMasterEscortRatOgreAction.init = function (self, ...)
 	-- function 1
-	BTPackMasterEscortRatOgreAction.super.init(arg_1_0, ...)
+	BTPackMasterEscortRatOgreAction.super.init(self, ...)
 end
 
-BTPackMasterEscortRatOgreAction.enter = function (self, arg_2_1, arg_2_2, arg_2_3)
+BTPackMasterEscortRatOgreAction.enter = function (self, unit, blackboard, t)
 	-- function 2
-	arg_2_2.action = self._tree_node.action_data
+	blackboard.action = self._tree_node.action_data
 
-	LocomotionUtils.set_animation_driven_movement(arg_2_1, false)
-	Managers.state.network:anim_event(arg_2_1, "combat_walk")
-	arg_2_2.navigation_extension:set_max_speed(arg_2_2.breed.walk_speed)
-	arg_2_2.locomotion_extension:set_rotation_speed(5)
+	LocomotionUtils.set_animation_driven_movement(unit, false)
 
-	local attack_cooldown = arg_2_2.attack_cooldown
+	local network_manager = Managers.state.network
 
-	attack_cooldown = attack_cooldown or 0
-	arg_2_2.attack_cooldown = attack_cooldown
+	network_manager:anim_event(unit, "combat_walk")
+
+	local navigation_extension = blackboard.navigation_extension
+
+	navigation_extension:set_max_speed(blackboard.breed.walk_speed)
+
+	local locomotion = blackboard.locomotion_extension
+
+	locomotion:set_rotation_speed(5)
+
+	local attack_cooldown = blackboard.attack_cooldown
+
+	attack_cooldown = not not attack_cooldown or not not 0
+	blackboard.attack_cooldown = attack_cooldown
 end
 
-BTPackMasterEscortRatOgreAction.leave = function (arg_3_0, arg_3_1, arg_3_2, arg_3_3, arg_3_4, arg_3_5)
+BTPackMasterEscortRatOgreAction.leave = function (self, unit, blackboard, t, reason, destroy)
 	-- function 3
-	Managers.state.network:anim_event(arg_3_1, "move_fwd")
+	Managers.state.network:anim_event(unit, "move_fwd")
 end
 
-BTPackMasterEscortRatOgreAction.run = function (arg_4_0, arg_4_1, arg_4_2, arg_4_3, arg_4_4)
+BTPackMasterEscortRatOgreAction.run = function (self, unit, blackboard, t, dt)
 	-- function 4
-	local my_escort_slot = arg_4_2.my_escort_slot
+	local escort_slot = blackboard.my_escort_slot
 
-	if not my_escort_slot then
+	if not escort_slot then
 		return "running"
 	end
 
-	if not arg_4_2.escorting_wait_for_rat_ogre then
-		if not BLACKBOARDS[my_escort_slot.ogre].wait_for_ogre then
+	if blackboard.escorting_wait_for_rat_ogre then
+		local ogre_blackboard = BLACKBOARDS[escort_slot.ogre]
+
+		if ogre_blackboard.wait_for_ogre then
 			return "running"
 		else
-			arg_4_2.escorting_wait_for_rat_ogre = false
+			blackboard.escorting_wait_for_rat_ogre = false
 
-			Managers.state.network:anim_event(arg_4_1, "combat_walk")
+			local network_manager = Managers.state.network
+
+			network_manager:anim_event(unit, "combat_walk")
 		end
 	end
 
-	local ogre = my_escort_slot.ogre
-	local var_4_2 = POSITION_LOOKUP[ogre]
-	local local_rotation = Unit.local_rotation(ogre, 0)
-	local forward = Quaternion.forward(local_rotation)
-	local normalize = Vector3.normalize(Vector3.cross(forward, Vector3.up()))
-	local num = var_4_2 + forward * 4 + normalize * my_escort_slot.side_offset
-	local raycast, var_4_8 = GwNavQueries.raycast(arg_4_2.nav_world, var_4_2, num)
+	local ogre = escort_slot.ogre
+	local ogre_pos = POSITION_LOOKUP[ogre]
+	local ogre_rot = Unit.local_rotation(ogre, 0)
+	local ogre_fwd = Quaternion.forward(ogre_rot)
+	local ogre_side = Vector3.normalize(Vector3.cross(ogre_fwd, Vector3.up()))
+	local pack_master_pos = ogre_pos + ogre_fwd * 4 + ogre_side * escort_slot.side_offset
+	local success, hit_pos = GwNavQueries.raycast(blackboard.nav_world, ogre_pos, pack_master_pos)
 
-	if not raycast then
-		arg_4_2.navigation_extension:move_to(num)
-	elseif not var_4_8 then
-		arg_4_2.navigation_extension:move_to(var_4_8)
+	if success then
+		blackboard.navigation_extension:move_to(pack_master_pos)
+	elseif hit_pos then
+		blackboard.navigation_extension:move_to(hit_pos)
 	end
 
-	local var_4_9 = BLACKBOARDS[my_escort_slot.ogre]
+	local ogre_blackboard = BLACKBOARDS[escort_slot.ogre]
 
-	if not (var_4_9.is_angry or arg_4_2.previous_attacker or HEALTH_ALIVE[ogre]) then
-		local breed = arg_4_2.breed
+	if ogre_blackboard.is_angry or blackboard.previous_attacker or not HEALTH_ALIVE[ogre] then
+		local breed = blackboard.breed
+		local ai_simple = ScriptUnit.extension(unit, "ai_system")
 
-		ScriptUnit.extension(arg_4_1, "ai_system"):set_perception(breed.perception, breed.target_selection)
+		ai_simple:set_perception(breed.perception, breed.target_selection)
 
-		arg_4_2.escorting_rat_ogre = false
-		arg_4_2.far_off_despawn_immunity = false
+		blackboard.escorting_rat_ogre = false
+		blackboard.far_off_despawn_immunity = false
 
-		if not arg_4_2.previous_attacker then
-			var_4_9.is_angry = true
-			var_4_9.previous_attacker = arg_4_2.previous_attacker
+		if blackboard.previous_attacker then
+			ogre_blackboard.is_angry = true
+			ogre_blackboard.previous_attacker = blackboard.previous_attacker
 		end
-	elseif not var_4_9.wait_for_ogre then
-		arg_4_2.escorting_wait_for_rat_ogre = true
+	elseif ogre_blackboard.wait_for_ogre then
+		blackboard.escorting_wait_for_rat_ogre = true
 
-		Managers.state.network:anim_event(arg_4_1, "idle")
-		arg_4_2.navigation_extension:stop()
+		local network_manager = Managers.state.network
+
+		network_manager:anim_event(unit, "idle")
+		blackboard.navigation_extension:stop()
 	end
 
 	return "running"

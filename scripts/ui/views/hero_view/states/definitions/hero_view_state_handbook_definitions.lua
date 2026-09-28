@@ -1,51 +1,51 @@
 -- chunkname: @scripts/ui/views/hero_view/states/definitions/hero_view_state_handbook_definitions.lua
 
-local game_start_windows = UISettings.game_start_windows
-local spacing = game_start_windows.spacing
-local large_window_size = game_start_windows.large_window_size
-local var_0_3 = large_window_size[2]
-local tbl = {
-	math.floor((large_window_size[1] + 44) / 3),
-	var_0_3
+local window_default_settings = UISettings.game_start_windows
+local small_window_spacing = window_default_settings.spacing
+local window_size = window_default_settings.large_window_size
+local side_window_height = window_size[2]
+local left_window_size = {
+	math.floor((window_size[1] + 44) / 3),
+	side_window_height
 }
-local tbl_2 = {
-	large_window_size[1] + 22 - tbl[1],
-	var_0_3
+local right_window_size = {
+	window_size[1] + 22 - left_window_size[1],
+	side_window_height
 }
-local tbl_3 = {
-	tbl_2[1] - 22,
-	tbl_2[2] - 104
+local achievement_window_size = {
+	right_window_size[1] - 22,
+	right_window_size[2] - 104
 }
-local tbl_4 = {
+local achievement_scrollbar_size = {
 	16,
-	tbl_2[2] - 44
+	right_window_size[2] - 44
 }
-local num = tbl_3[1] - 150
-local tbl_5 = {
-	tbl[1] - 22,
-	tbl[2] - 48
+local achievement_entry_width = achievement_window_size[1] - 150
+local category_window_size = {
+	left_window_size[1] - 22,
+	left_window_size[2] - 48
 }
-local tbl_6 = {
-	tbl[1] - 120,
+local tab_size = {
+	left_window_size[1] - 120,
 	60
 }
-local tbl_7 = {
-	tbl_6[1] - spacing * 2,
-	tbl[2] - tbl_6[2] - tbl_6[2]
+local tab_active_size = {
+	tab_size[1] - small_window_spacing * 2,
+	left_window_size[2] - tab_size[2] - tab_size[2]
 }
-local tbl_8 = {
-	tbl_6[1] - spacing * 2,
+local tab_list_entry_size = {
+	tab_size[1] - small_window_spacing * 2,
 	42
 }
-local num_2 = 5
-local tbl_9 = {
-	tab_size = tbl_6,
-	tab_active_size = tbl_7,
-	tab_list_entry_size = tbl_8,
-	tab_list_entry_spacing = num_2
+local tab_list_entry_spacing = 5
+local category_tab_info = {
+	tab_size = tab_size,
+	tab_active_size = tab_active_size,
+	tab_list_entry_size = tab_list_entry_size,
+	tab_list_entry_spacing = tab_list_entry_spacing
 }
-local num_3 = 14
-local tbl_10 = {
+local CATEGORY_LIST_LIMIT = 14
+local scenegraph_definition = {
 	root = {
 		is_root = true,
 		size = {
@@ -116,7 +116,7 @@ local tbl_10 = {
 		vertical_alignment = "center",
 		parent = "screen",
 		horizontal_alignment = "center",
-		size = large_window_size,
+		size = window_size,
 		position = {
 			0,
 			0,
@@ -128,8 +128,8 @@ local tbl_10 = {
 		parent = "window",
 		horizontal_alignment = "center",
 		size = {
-			large_window_size[1] - 5,
-			large_window_size[2] - 5
+			window_size[1] - 5,
+			window_size[2] - 5
 		},
 		position = {
 			0,
@@ -141,7 +141,7 @@ local tbl_10 = {
 		vertical_alignment = "bottom",
 		parent = "window",
 		horizontal_alignment = "left",
-		size = tbl,
+		size = left_window_size,
 		position = {
 			0,
 			0,
@@ -153,8 +153,8 @@ local tbl_10 = {
 		parent = "left_window",
 		horizontal_alignment = "center",
 		size = {
-			tbl[1] - 44,
-			tbl[2] - 44
+			left_window_size[1] - 44,
+			left_window_size[2] - 44
 		},
 		position = {
 			0,
@@ -166,7 +166,7 @@ local tbl_10 = {
 		vertical_alignment = "bottom",
 		parent = "window",
 		horizontal_alignment = "right",
-		size = tbl_2,
+		size = right_window_size,
 		position = {
 			0,
 			0,
@@ -178,8 +178,8 @@ local tbl_10 = {
 		parent = "right_window",
 		horizontal_alignment = "center",
 		size = {
-			tbl_2[1] - 44,
-			tbl_2[2] - 44
+			right_window_size[1] - 44,
+			right_window_size[2] - 44
 		},
 		position = {
 			0,
@@ -191,7 +191,7 @@ local tbl_10 = {
 		vertical_alignment = "center",
 		parent = "left_window",
 		horizontal_alignment = "center",
-		size = tbl_5,
+		size = category_window_size,
 		position = {
 			0,
 			0,
@@ -203,8 +203,8 @@ local tbl_10 = {
 		parent = "category_window",
 		horizontal_alignment = "center",
 		size = {
-			tbl_5[1],
-			tbl[2] - 44
+			category_window_size[1],
+			left_window_size[2] - 44
 		},
 		position = {
 			0,
@@ -217,7 +217,7 @@ local tbl_10 = {
 		parent = "category_window_mask",
 		horizontal_alignment = "center",
 		size = {
-			tbl_5[1],
+			category_window_size[1],
 			30
 		},
 		position = {
@@ -231,7 +231,7 @@ local tbl_10 = {
 		parent = "category_window_mask",
 		horizontal_alignment = "center",
 		size = {
-			tbl_5[1],
+			category_window_size[1],
 			30
 		},
 		position = {
@@ -258,9 +258,9 @@ local tbl_10 = {
 		vertical_alignment = "center",
 		parent = "category_window",
 		horizontal_alignment = "right",
-		size = tbl_4,
+		size = achievement_scrollbar_size,
 		position = {
-			-spacing,
+			-small_window_spacing,
 			0,
 			3
 		}
@@ -279,7 +279,7 @@ local tbl_10 = {
 		vertical_alignment = "center",
 		parent = "right_window",
 		horizontal_alignment = "center",
-		size = tbl_3,
+		size = achievement_window_size,
 		position = {
 			0,
 			0,
@@ -291,8 +291,8 @@ local tbl_10 = {
 		parent = "achievement_window",
 		horizontal_alignment = "center",
 		size = {
-			tbl_3[1],
-			tbl_2[2] - 44
+			achievement_window_size[1],
+			right_window_size[2] - 44
 		},
 		position = {
 			0,
@@ -305,7 +305,7 @@ local tbl_10 = {
 		parent = "achievement_window_mask",
 		horizontal_alignment = "center",
 		size = {
-			tbl_3[1],
+			achievement_window_size[1],
 			30
 		},
 		position = {
@@ -319,7 +319,7 @@ local tbl_10 = {
 		parent = "achievement_window_mask",
 		horizontal_alignment = "center",
 		size = {
-			tbl_3[1],
+			achievement_window_size[1],
 			30
 		},
 		position = {
@@ -333,7 +333,7 @@ local tbl_10 = {
 		parent = "achievement_window",
 		horizontal_alignment = "center",
 		size = {
-			num,
+			achievement_entry_width,
 			1
 		},
 		position = {
@@ -346,9 +346,9 @@ local tbl_10 = {
 		vertical_alignment = "center",
 		parent = "achievement_window",
 		horizontal_alignment = "right",
-		size = tbl_4,
+		size = achievement_scrollbar_size,
 		position = {
-			-spacing,
+			-small_window_spacing,
 			0,
 			3
 		}
@@ -508,7 +508,7 @@ local tbl_10 = {
 		}
 	}
 }
-local tbl_11 = {
+local title_text_style = {
 	use_shadow = true,
 	upper_case = true,
 	localize = false,
@@ -524,7 +524,7 @@ local tbl_11 = {
 		2
 	}
 }
-local tbl_12 = {
+local page_number_left_text_style = {
 	word_wrap = true,
 	font_size = 20,
 	localize = false,
@@ -534,12 +534,12 @@ local tbl_12 = {
 	font_type = "hell_shark",
 	text_color = Colors.get_color_table_with_alpha("font_default", 255),
 	offset = {
-		-(large_window_size[1] * 0.1 + 5),
+		-(window_size[1] * 0.1 + 5),
 		4,
 		2
 	}
 }
-local tbl_13 = {
+local page_number_right_text_style = {
 	word_wrap = true,
 	font_size = 20,
 	localize = false,
@@ -549,12 +549,12 @@ local tbl_13 = {
 	font_type = "hell_shark",
 	text_color = Colors.get_color_table_with_alpha("font_default", 255),
 	offset = {
-		large_window_size[1] * 0.1 + 4,
+		window_size[1] * 0.1 + 4,
 		4,
 		2
 	}
 }
-local tbl_14 = {
+local page_number_center_text_style = {
 	word_wrap = true,
 	font_size = 20,
 	localize = false,
@@ -570,28 +570,30 @@ local tbl_14 = {
 	}
 }
 
-local function fn(arg_1_0, arg_1_1, arg_1_2, arg_1_3)
+local function create_tab(scenegraph_id, size, text, list_scenegraph_id)
 	-- function 1
-	local flag = true
-	local str = "button_bg_01"
-	local get_atlas_settings_by_texture_name = UIAtlasHelper.get_atlas_settings_by_texture_name(str)
-	local button_frame_01 = UIFrameSettings.button_frame_01
-	local var_1_4 = button_frame_01.texture_sizes.corner[1]
-	local str_2 = "button_detail_02"
-	local size = UIAtlasHelper.get_atlas_settings_by_texture_name(str_2).size
-	local str_3 = "button_detail_03"
-	local size_2 = UIAtlasHelper.get_atlas_settings_by_texture_name(str_3).size
-	local num = 20
-	local num_4 = 20
-	local tbl = {
+	local masked = true
+	local background_texture = "button_bg_01"
+	local background_texture_settings = UIAtlasHelper.get_atlas_settings_by_texture_name(background_texture)
+	local frame_settings = UIFrameSettings.button_frame_01
+	local frame_width = frame_settings.texture_sizes.corner[1]
+	local side_detail_texture = "button_detail_02"
+	local side_detail_texture_settings = UIAtlasHelper.get_atlas_settings_by_texture_name(side_detail_texture)
+	local side_detail_texture_size = side_detail_texture_settings.size
+	local small_side_detail_texture = "button_detail_03"
+	local small_side_detail_texture_settings = UIAtlasHelper.get_atlas_settings_by_texture_name(small_side_detail_texture)
+	local small_side_detail_texture_size = small_side_detail_texture_settings.size
+	local list_item_offset_x = 20
+	local list_item_padding_text_padding = 20
+	local list_content = {
 		allow_multi_hover = true
 	}
-	local tbl_2 = {}
+	local item_styles = {}
 
-	for i = 1, num_3 do
-		local var_1_13 = num_2
+	for i = 1, CATEGORY_LIST_LIMIT do
+		local spacing = tab_list_entry_spacing
 
-		tbl[i] = {
+		list_content[i] = {
 			text = "n/a",
 			glass = "button_glass_02",
 			hover_glow = "button_state_default",
@@ -612,36 +614,60 @@ local function fn(arg_1_0, arg_1_1, arg_1_2, arg_1_3)
 						1
 					}
 				},
-				texture_id = str_3
+				texture_id = small_side_detail_texture
 			},
-			frame = button_frame_01.texture,
+			frame = frame_settings.texture,
 			background = {
 				uvs = {
 					{
 						0,
-						1 - arg_1_1[2] / get_atlas_settings_by_texture_name.size[2]
+						1 - size[2] / background_texture_settings.size[2]
 					},
 					{
-						arg_1_1[1] / get_atlas_settings_by_texture_name.size[1],
+						size[1] / background_texture_settings.size[1],
 						1
 					}
 				},
-				texture_id = str
+				texture_id = background_texture
 			}
 		}
 
-		local tbl_3 = {
+		local tbl = {
 			list_member_offset = {
 				0,
-				-(tbl_8[2] + var_1_13),
+				-(tab_list_entry_size[2] + spacing),
 				0
 			},
 			size = {
-				tbl_8[1],
-				tbl_8[2]
+				tab_list_entry_size[1],
+				tab_list_entry_size[2]
 			}
 		}
-		local tbl_4 = {
+		local tbl_2 = {
+			word_wrap = false,
+			upper_case = true,
+			font_size = 22,
+			horizontal_alignment = "left",
+			vertical_alignment = "center",
+			dynamic_font_size = true
+		}
+		local flag
+
+		flag = (not masked or not "hell_shark_masked") and not not "hell_shark"
+		tbl_2.font_type = flag
+		tbl_2.text_color = Colors.get_color_table_with_alpha("font_button_normal", 255)
+		tbl_2.offset = {
+			list_item_offset_x + list_item_padding_text_padding,
+			0,
+			14
+		}
+		tbl_2.size = {
+			tab_list_entry_size[1] - list_item_offset_x - list_item_padding_text_padding * 2,
+			tab_list_entry_size[2]
+		}
+		tbl.text = tbl_2
+
+		local tbl_3 = {
 			word_wrap = false,
 			upper_case = true,
 			font_size = 22,
@@ -651,21 +677,21 @@ local function fn(arg_1_0, arg_1_1, arg_1_2, arg_1_3)
 		}
 		local flag_2
 
-		flag_2 = not flag and "hell_shark_masked" and "hell_shark"
-		tbl_4.font_type = flag_2
-		tbl_4.text_color = Colors.get_color_table_with_alpha("font_button_normal", 255)
-		tbl_4.offset = {
-			num + num_4,
+		flag_2 = (not masked or not "hell_shark_masked") and not not "hell_shark"
+		tbl_3.font_type = flag_2
+		tbl_3.text_color = Colors.get_color_table_with_alpha("white", 255)
+		tbl_3.offset = {
+			list_item_offset_x + list_item_padding_text_padding,
 			0,
 			14
 		}
-		tbl_4.size = {
-			tbl_8[1] - num - num_4 * 2,
-			tbl_8[2]
+		tbl_3.size = {
+			tab_list_entry_size[1] - list_item_offset_x - list_item_padding_text_padding * 2,
+			tab_list_entry_size[2]
 		}
-		tbl_3.text = tbl_4
+		tbl.text_hover = tbl_3
 
-		local tbl_5 = {
+		local tbl_4 = {
 			word_wrap = false,
 			upper_case = true,
 			font_size = 22,
@@ -675,21 +701,21 @@ local function fn(arg_1_0, arg_1_1, arg_1_2, arg_1_3)
 		}
 		local flag_3
 
-		flag_3 = not flag and "hell_shark_masked" and "hell_shark"
-		tbl_5.font_type = flag_3
-		tbl_5.text_color = Colors.get_color_table_with_alpha("white", 255)
-		tbl_5.offset = {
-			num + num_4,
+		flag_3 = (not masked or not "hell_shark_masked") and not not "hell_shark"
+		tbl_4.font_type = flag_3
+		tbl_4.text_color = Colors.get_color_table_with_alpha("white", 255)
+		tbl_4.offset = {
+			list_item_offset_x + list_item_padding_text_padding,
 			0,
 			14
 		}
-		tbl_5.size = {
-			tbl_8[1] - num - num_4 * 2,
-			tbl_8[2]
+		tbl_4.size = {
+			tab_list_entry_size[1] - list_item_offset_x - list_item_padding_text_padding * 2,
+			tab_list_entry_size[2]
 		}
-		tbl_3.text_hover = tbl_5
+		tbl.text_selected = tbl_4
 
-		local tbl_6 = {
+		local tbl_5 = {
 			word_wrap = false,
 			upper_case = true,
 			font_size = 22,
@@ -699,48 +725,24 @@ local function fn(arg_1_0, arg_1_1, arg_1_2, arg_1_3)
 		}
 		local flag_4
 
-		flag_4 = not flag and "hell_shark_masked" and "hell_shark"
-		tbl_6.font_type = flag_4
-		tbl_6.text_color = Colors.get_color_table_with_alpha("white", 255)
-		tbl_6.offset = {
-			num + num_4,
-			0,
-			14
-		}
-		tbl_6.size = {
-			tbl_8[1] - num - num_4 * 2,
-			tbl_8[2]
-		}
-		tbl_3.text_selected = tbl_6
-
-		local tbl_7 = {
-			word_wrap = false,
-			upper_case = true,
-			font_size = 22,
-			horizontal_alignment = "left",
-			vertical_alignment = "center",
-			dynamic_font_size = true
-		}
-		local flag_5
-
-		flag_5 = not flag and "hell_shark_masked" and "hell_shark"
-		tbl_7.font_type = flag_5
-		tbl_7.text_color = Colors.get_color_table_with_alpha("black", 255)
-		tbl_7.offset = {
-			num + num_4 + 2,
+		flag_4 = (not masked or not "hell_shark_masked") and not not "hell_shark"
+		tbl_5.font_type = flag_4
+		tbl_5.text_color = Colors.get_color_table_with_alpha("black", 255)
+		tbl_5.offset = {
+			list_item_offset_x + list_item_padding_text_padding + 2,
 			-2,
 			13
 		}
-		tbl_7.size = {
-			tbl_8[1] - num - num_4 * 2,
-			tbl_8[2]
+		tbl_5.size = {
+			tab_list_entry_size[1] - list_item_offset_x - list_item_padding_text_padding * 2,
+			tab_list_entry_size[2]
 		}
-		tbl_3.text_shadow = tbl_7
-		tbl_3.rect = {
-			masked = flag,
+		tbl.text_shadow = tbl_5
+		tbl.rect = {
+			masked = masked,
 			size = {
-				tbl_8[1],
-				tbl_8[2]
+				tab_list_entry_size[1],
+				tab_list_entry_size[2]
 			},
 			color = {
 				100,
@@ -754,10 +756,10 @@ local function fn(arg_1_0, arg_1_1, arg_1_2, arg_1_3)
 				0
 			}
 		}
-		tbl_3.icon = {
+		tbl.icon = {
 			vertical_alignment = "center",
 			horizontal_alignment = "left",
-			masked = flag,
+			masked = masked,
 			texture_size = {
 				13,
 				13
@@ -769,13 +771,13 @@ local function fn(arg_1_0, arg_1_1, arg_1_2, arg_1_3)
 				255
 			},
 			offset = {
-				num,
+				list_item_offset_x,
 				0,
 				10
 			}
 		}
-		tbl_3.side_detail_left = {
-			masked = flag,
+		tbl.side_detail_left = {
+			masked = masked,
 			color = {
 				255,
 				255,
@@ -784,13 +786,13 @@ local function fn(arg_1_0, arg_1_1, arg_1_2, arg_1_3)
 			},
 			offset = {
 				-9,
-				tbl_8[2] / 2 - size_2[2] / 2,
+				tab_list_entry_size[2] / 2 - small_side_detail_texture_size[2] / 2,
 				9
 			},
-			size = size_2
+			size = small_side_detail_texture_size
 		}
-		tbl_3.side_detail_right = {
-			masked = flag,
+		tbl.side_detail_right = {
+			masked = masked,
 			color = {
 				255,
 				255,
@@ -798,17 +800,17 @@ local function fn(arg_1_0, arg_1_1, arg_1_2, arg_1_3)
 				255
 			},
 			offset = {
-				tbl_8[1] - size_2[1] + 9,
-				tbl_8[2] / 2 - size_2[2] / 2,
+				tab_list_entry_size[1] - small_side_detail_texture_size[1] + 9,
+				tab_list_entry_size[2] / 2 - small_side_detail_texture_size[2] / 2,
 				9
 			},
-			size = size_2
+			size = small_side_detail_texture_size
 		}
-		tbl_3.frame = {
-			masked = flag,
-			size = tbl_8,
-			texture_size = button_frame_01.texture_size,
-			texture_sizes = button_frame_01.texture_sizes,
+		tbl.frame = {
+			masked = masked,
+			size = tab_list_entry_size,
+			texture_size = frame_settings.texture_size,
+			texture_sizes = frame_settings.texture_sizes,
 			color = {
 				255,
 				255,
@@ -821,9 +823,9 @@ local function fn(arg_1_0, arg_1_1, arg_1_2, arg_1_3)
 				8
 			}
 		}
-		tbl_3.background = {
-			masked = flag,
-			size = tbl_8,
+		tbl.background = {
+			masked = masked,
+			size = tab_list_entry_size,
 			color = {
 				255,
 				150,
@@ -836,8 +838,8 @@ local function fn(arg_1_0, arg_1_1, arg_1_2, arg_1_3)
 				0
 			}
 		}
-		tbl_3.background_fade = {
-			masked = flag,
+		tbl.background_fade = {
+			masked = masked,
 			color = {
 				200,
 				255,
@@ -845,17 +847,17 @@ local function fn(arg_1_0, arg_1_1, arg_1_2, arg_1_3)
 				255
 			},
 			offset = {
-				var_1_4,
-				var_1_4 - 2,
+				frame_width,
+				frame_width - 2,
 				2
 			},
 			size = {
-				tbl_8[1] - var_1_4 * 2,
-				tbl_8[2] - var_1_4 * 2
+				tab_list_entry_size[1] - frame_width * 2,
+				tab_list_entry_size[2] - frame_width * 2
 			}
 		}
-		tbl_3.hover_glow = {
-			masked = flag,
+		tbl.hover_glow = {
+			masked = masked,
 			color = {
 				255,
 				255,
@@ -864,17 +866,17 @@ local function fn(arg_1_0, arg_1_1, arg_1_2, arg_1_3)
 			},
 			offset = {
 				0,
-				var_1_4 - 2,
+				frame_width - 2,
 				3
 			},
 			size = {
-				tbl_8[1],
-				math.min(tbl_8[2] - 5, 80)
+				tab_list_entry_size[1],
+				math.min(tab_list_entry_size[2] - 5, 80)
 			}
 		}
-		tbl_3.clicked_rect = {
-			masked = flag,
-			size = tbl_8,
+		tbl.clicked_rect = {
+			masked = masked,
+			size = tab_list_entry_size,
 			color = {
 				0,
 				0,
@@ -887,9 +889,9 @@ local function fn(arg_1_0, arg_1_1, arg_1_2, arg_1_3)
 				7
 			}
 		}
-		tbl_3.disabled_rect = {
-			masked = flag,
-			size = tbl_8,
+		tbl.disabled_rect = {
+			masked = masked,
+			size = tab_list_entry_size,
 			color = {
 				150,
 				20,
@@ -902,8 +904,8 @@ local function fn(arg_1_0, arg_1_1, arg_1_2, arg_1_3)
 				1
 			}
 		}
-		tbl_3.glass_top = {
-			masked = flag,
+		tbl.glass_top = {
+			masked = masked,
 			color = {
 				255,
 				255,
@@ -912,16 +914,16 @@ local function fn(arg_1_0, arg_1_1, arg_1_2, arg_1_3)
 			},
 			offset = {
 				0,
-				tbl_8[2] - (var_1_4 + 11),
+				tab_list_entry_size[2] - (frame_width + 11),
 				4
 			},
 			size = {
-				tbl_8[1],
+				tab_list_entry_size[1],
 				11
 			}
 		}
-		tbl_3.glass_bottom = {
-			masked = flag,
+		tbl.glass_bottom = {
+			masked = masked,
 			color = {
 				100,
 				255,
@@ -930,16 +932,16 @@ local function fn(arg_1_0, arg_1_1, arg_1_2, arg_1_3)
 			},
 			offset = {
 				0,
-				var_1_4 - 9,
+				frame_width - 9,
 				4
 			},
 			size = {
-				tbl_8[1],
+				tab_list_entry_size[1],
 				11
 			}
 		}
-		tbl_3.new_texture = {
-			masked = flag,
+		tbl.new_texture = {
+			masked = masked,
 			color = {
 				255,
 				255,
@@ -947,8 +949,8 @@ local function fn(arg_1_0, arg_1_1, arg_1_2, arg_1_3)
 				255
 			},
 			offset = {
-				tbl_8[1] - 63,
-				tbl_8[2] / 2 - 12,
+				tab_list_entry_size[1] - 63,
+				tab_list_entry_size[2] / 2 - 12,
 				12
 			},
 			size = {
@@ -956,10 +958,10 @@ local function fn(arg_1_0, arg_1_1, arg_1_2, arg_1_3)
 				25
 			}
 		}
-		tbl_2[i] = tbl_3
+		item_styles[i] = tbl
 	end
 
-	local tbl_9 = {
+	local tbl_6 = {
 		element = {
 			passes = {
 				{
@@ -996,9 +998,11 @@ local function fn(arg_1_0, arg_1_1, arg_1_2, arg_1_3)
 					texture_id = "rect_masked",
 					style_id = "disabled_rect",
 					pass_type = "texture",
-					content_check_function = function (self)
+					content_check_function = function (content)
 						-- function 2
-						return self.button_hotspot.disable_button
+						local button_hotspot = content.button_hotspot
+
+						return button_hotspot.disable_button
 					end
 				},
 				{
@@ -1016,18 +1020,22 @@ local function fn(arg_1_0, arg_1_1, arg_1_2, arg_1_3)
 					style_id = "title_text",
 					pass_type = "text",
 					text_id = "title_text",
-					content_check_function = function (self)
+					content_check_function = function (content)
 						-- function 3
-						return not self.button_hotspot.disable_button
+						local button_hotspot = content.button_hotspot
+
+						return not button_hotspot.disable_button
 					end
 				},
 				{
 					style_id = "title_text_disabled",
 					pass_type = "text",
 					text_id = "title_text",
-					content_check_function = function (self)
+					content_check_function = function (content)
 						-- function 4
-						return self.button_hotspot.disable_button
+						local button_hotspot = content.button_hotspot
+
+						return button_hotspot.disable_button
 					end
 				},
 				{
@@ -1049,50 +1057,50 @@ local function fn(arg_1_0, arg_1_1, arg_1_2, arg_1_3)
 					texture_id = "new_texture",
 					style_id = "new_texture",
 					pass_type = "texture",
-					content_check_function = function (self)
+					content_check_function = function (content)
 						-- function 5
-						return self.new
+						return content.new
 					end
 				},
 				{
 					texture_id = "locked",
 					style_id = "locked",
 					pass_type = "texture",
-					content_check_function = function (self)
+					content_check_function = function (content)
 						-- function 6
-						return self.button_hotspot.disable_button
+						return content.button_hotspot.disable_button
 					end
 				},
 				{
 					style_id = "list_style",
 					pass_type = "list_pass",
 					content_id = "list_content",
-					content_check_function = function (self)
+					content_check_function = function (content)
 						-- function 7
-						return self.active
+						return content.active
 					end,
 					passes = {
 						{
 							style_id = "text",
 							pass_type = "text",
 							text_id = "text",
-							content_check_function = function (self)
+							content_check_function = function (content)
 								-- function 8
-								local button_hotspot = self.button_hotspot
+								local button_hotspot = content.button_hotspot
 
-								return not not button_hotspot.is_hover or not button_hotspot.is_selected
+								return not button_hotspot.is_hover and not not not button_hotspot.is_selected
 							end
 						},
 						{
 							style_id = "text_hover",
 							pass_type = "text",
 							text_id = "text",
-							content_check_function = function (self)
+							content_check_function = function (content)
 								-- function 9
-								local button_hotspot = self.button_hotspot
+								local button_hotspot = content.button_hotspot
 								local is_hover = button_hotspot.is_hover
 
-								is_hover = not is_hover and not button_hotspot.is_selected
+								is_hover = not not is_hover and not not not button_hotspot.is_selected
 
 								return is_hover
 							end
@@ -1101,9 +1109,9 @@ local function fn(arg_1_0, arg_1_1, arg_1_2, arg_1_3)
 							style_id = "text_selected",
 							pass_type = "text",
 							text_id = "text",
-							content_check_function = function (self)
+							content_check_function = function (content)
 								-- function 10
-								return self.button_hotspot.is_selected
+								return content.button_hotspot.is_selected
 							end
 						},
 						{
@@ -1150,12 +1158,12 @@ local function fn(arg_1_0, arg_1_1, arg_1_2, arg_1_3)
 							texture_id = "hover_glow",
 							style_id = "hover_glow",
 							pass_type = "texture",
-							content_check_function = function (self)
+							content_check_function = function (content)
 								-- function 11
-								local button_hotspot = self.button_hotspot
+								local button_hotspot = content.button_hotspot
 								local is_hover = button_hotspot.is_hover
 
-								is_hover = is_hover or button_hotspot.is_selected
+								is_hover = not not is_hover or not not button_hotspot.is_selected
 
 								return is_hover
 							end
@@ -1169,9 +1177,11 @@ local function fn(arg_1_0, arg_1_1, arg_1_2, arg_1_3)
 							texture_id = "rect_masked",
 							style_id = "disabled_rect",
 							pass_type = "texture",
-							content_check_function = function (self)
+							content_check_function = function (content)
 								-- function 12
-								return self.button_hotspot.disable_button
+								local button_hotspot = content.button_hotspot
+
+								return button_hotspot.disable_button
 							end
 						},
 						{
@@ -1193,9 +1203,9 @@ local function fn(arg_1_0, arg_1_1, arg_1_2, arg_1_3)
 							texture_id = "new_texture",
 							style_id = "new_texture",
 							pass_type = "texture",
-							content_check_function = function (self)
+							content_check_function = function (content)
 								-- function 13
-								return self.new
+								return content.new
 							end
 						}
 					}
@@ -1210,7 +1220,7 @@ local function fn(arg_1_0, arg_1_1, arg_1_2, arg_1_3)
 			glass = "button_glass_02",
 			rect_masked = "rect_masked",
 			new_texture = "list_item_tag_new",
-			list_content = tbl,
+			list_content = list_content,
 			side_detail = {
 				uvs = {
 					{
@@ -1222,50 +1232,50 @@ local function fn(arg_1_0, arg_1_1, arg_1_2, arg_1_3)
 						1
 					}
 				},
-				texture_id = str_2
+				texture_id = side_detail_texture
 			},
 			button_hotspot = {},
-			title_text = arg_1_2 or "n/a",
-			frame = button_frame_01.texture,
+			title_text = not not text or not not "n/a",
+			frame = frame_settings.texture,
 			background = {
 				uvs = {
 					{
 						0,
-						1 - arg_1_1[2] / get_atlas_settings_by_texture_name.size[2]
+						1 - size[2] / background_texture_settings.size[2]
 					},
 					{
-						arg_1_1[1] / get_atlas_settings_by_texture_name.size[1],
+						size[1] / background_texture_settings.size[1],
 						1
 					}
 				},
-				texture_id = str
+				texture_id = background_texture
 			}
 		}
 	}
-	local tbl_10 = {
+	local tbl_7 = {
 		list_style = {
 			start_index = 1,
 			horizontal_alignment = "center",
 			vertical_alignment = "top",
 			num_draws = 0,
-			masked = flag,
+			masked = masked,
 			list_member_offset = {
 				0,
-				tbl_8[2],
+				tab_list_entry_size[2],
 				0
 			},
 			size = {
-				tbl_8[1],
-				tbl_8[2]
+				tab_list_entry_size[1],
+				tab_list_entry_size[2]
 			},
-			scenegraph_id = arg_1_3,
-			item_styles = tbl_2
+			scenegraph_id = list_scenegraph_id,
+			item_styles = item_styles
 		},
 		hotspot = {
-			masked = flag,
+			masked = masked,
 			size = {
-				arg_1_1[1],
-				arg_1_1[2]
+				size[1],
+				size[2]
 			},
 			offset = {
 				0,
@@ -1274,7 +1284,7 @@ local function fn(arg_1_0, arg_1_1, arg_1_2, arg_1_3)
 			}
 		},
 		background = {
-			masked = flag,
+			masked = masked,
 			color = {
 				255,
 				150,
@@ -1288,7 +1298,7 @@ local function fn(arg_1_0, arg_1_1, arg_1_2, arg_1_3)
 			}
 		},
 		background_fade = {
-			masked = flag,
+			masked = masked,
 			color = {
 				200,
 				255,
@@ -1296,17 +1306,17 @@ local function fn(arg_1_0, arg_1_1, arg_1_2, arg_1_3)
 				255
 			},
 			offset = {
-				var_1_4,
-				var_1_4 - 2,
+				frame_width,
+				frame_width - 2,
 				2
 			},
 			size = {
-				arg_1_1[1] - var_1_4 * 2,
-				arg_1_1[2] - var_1_4 * 2
+				size[1] - frame_width * 2,
+				size[2] - frame_width * 2
 			}
 		},
 		hover_glow = {
-			masked = flag,
+			masked = masked,
 			color = {
 				0,
 				255,
@@ -1315,16 +1325,16 @@ local function fn(arg_1_0, arg_1_1, arg_1_2, arg_1_3)
 			},
 			offset = {
 				0,
-				var_1_4 - 2,
+				frame_width - 2,
 				3
 			},
 			size = {
-				arg_1_1[1],
-				math.min(arg_1_1[2] - 5, 80)
+				size[1],
+				math.min(size[2] - 5, 80)
 			}
 		},
 		clicked_rect = {
-			masked = flag,
+			masked = masked,
 			color = {
 				0,
 				0,
@@ -1338,7 +1348,7 @@ local function fn(arg_1_0, arg_1_1, arg_1_2, arg_1_3)
 			}
 		},
 		disabled_rect = {
-			masked = flag,
+			masked = masked,
 			color = {
 				150,
 				20,
@@ -1352,28 +1362,48 @@ local function fn(arg_1_0, arg_1_1, arg_1_2, arg_1_3)
 			}
 		}
 	}
-	local tbl_11 = {
+	local tbl_8 = {
 		upper_case = true,
 		word_wrap = true,
 		font_size = 24,
 		horizontal_alignment = "left",
 		vertical_alignment = "center"
 	}
-	local flag_6
+	local flag_5
 
-	flag_6 = not flag and "hell_shark_masked" and "hell_shark"
-	tbl_11.font_type = flag_6
-	tbl_11.text_color = Colors.get_color_table_with_alpha("font_button_normal", 255)
-	tbl_11.default_text_color = Colors.get_color_table_with_alpha("font_button_normal", 255)
-	tbl_11.select_text_color = Colors.get_color_table_with_alpha("white", 255)
-	tbl_11.offset = {
+	flag_5 = (not masked or not "hell_shark_masked") and not not "hell_shark"
+	tbl_8.font_type = flag_5
+	tbl_8.text_color = Colors.get_color_table_with_alpha("font_button_normal", 255)
+	tbl_8.default_text_color = Colors.get_color_table_with_alpha("font_button_normal", 255)
+	tbl_8.select_text_color = Colors.get_color_table_with_alpha("white", 255)
+	tbl_8.offset = {
 		30,
 		0,
 		6
 	}
-	tbl_10.title_text = tbl_11
+	tbl_7.title_text = tbl_8
 
-	local tbl_12 = {
+	local tbl_9 = {
+		upper_case = true,
+		font_size = 24,
+		word_wrap = true,
+		horizontal_alignment = "left",
+		vertical_alignment = "center"
+	}
+	local flag_6
+
+	flag_6 = (not masked or not "hell_shark_masked") and not not "hell_shark"
+	tbl_9.font_type = flag_6
+	tbl_9.text_color = Colors.get_color_table_with_alpha("gray", 255)
+	tbl_9.default_text_color = Colors.get_color_table_with_alpha("gray", 255)
+	tbl_9.offset = {
+		30,
+		0,
+		6
+	}
+	tbl_7.title_text_disabled = tbl_9
+
+	local tbl_10 = {
 		upper_case = true,
 		font_size = 24,
 		word_wrap = true,
@@ -1382,40 +1412,20 @@ local function fn(arg_1_0, arg_1_1, arg_1_2, arg_1_3)
 	}
 	local flag_7
 
-	flag_7 = not flag and "hell_shark_masked" and "hell_shark"
-	tbl_12.font_type = flag_7
-	tbl_12.text_color = Colors.get_color_table_with_alpha("gray", 255)
-	tbl_12.default_text_color = Colors.get_color_table_with_alpha("gray", 255)
-	tbl_12.offset = {
-		30,
-		0,
-		6
-	}
-	tbl_10.title_text_disabled = tbl_12
-
-	local tbl_13 = {
-		upper_case = true,
-		font_size = 24,
-		word_wrap = true,
-		horizontal_alignment = "left",
-		vertical_alignment = "center"
-	}
-	local flag_8
-
-	flag_8 = not flag and "hell_shark_masked" and "hell_shark"
-	tbl_13.font_type = flag_8
-	tbl_13.text_color = Colors.get_color_table_with_alpha("black", 255)
-	tbl_13.default_text_color = Colors.get_color_table_with_alpha("black", 255)
-	tbl_13.offset = {
+	flag_7 = (not masked or not "hell_shark_masked") and not not "hell_shark"
+	tbl_10.font_type = flag_7
+	tbl_10.text_color = Colors.get_color_table_with_alpha("black", 255)
+	tbl_10.default_text_color = Colors.get_color_table_with_alpha("black", 255)
+	tbl_10.offset = {
 		32,
 		-2,
 		5
 	}
-	tbl_10.title_text_shadow = tbl_13
-	tbl_10.frame = {
-		masked = flag,
-		texture_size = button_frame_01.texture_size,
-		texture_sizes = button_frame_01.texture_sizes,
+	tbl_7.title_text_shadow = tbl_10
+	tbl_7.frame = {
+		masked = masked,
+		texture_size = frame_settings.texture_size,
+		texture_sizes = frame_settings.texture_sizes,
 		color = {
 			255,
 			255,
@@ -1428,8 +1438,8 @@ local function fn(arg_1_0, arg_1_1, arg_1_2, arg_1_3)
 			8
 		}
 	}
-	tbl_10.glass_top = {
-		masked = flag,
+	tbl_7.glass_top = {
+		masked = masked,
 		color = {
 			255,
 			255,
@@ -1438,16 +1448,16 @@ local function fn(arg_1_0, arg_1_1, arg_1_2, arg_1_3)
 		},
 		offset = {
 			0,
-			arg_1_1[2] - (var_1_4 + 11),
+			size[2] - (frame_width + 11),
 			4
 		},
 		size = {
-			arg_1_1[1],
+			size[1],
 			11
 		}
 	}
-	tbl_10.glass_bottom = {
-		masked = flag,
+	tbl_7.glass_bottom = {
+		masked = masked,
 		color = {
 			100,
 			255,
@@ -1456,16 +1466,16 @@ local function fn(arg_1_0, arg_1_1, arg_1_2, arg_1_3)
 		},
 		offset = {
 			0,
-			var_1_4 - 9,
+			frame_width - 9,
 			4
 		},
 		size = {
-			arg_1_1[1],
+			size[1],
 			11
 		}
 	}
-	tbl_10.side_detail_left = {
-		masked = flag,
+	tbl_7.side_detail_left = {
+		masked = masked,
 		color = {
 			255,
 			255,
@@ -1474,16 +1484,16 @@ local function fn(arg_1_0, arg_1_1, arg_1_2, arg_1_3)
 		},
 		offset = {
 			-9,
-			arg_1_1[2] / 2 - size[2] / 2,
+			size[2] / 2 - side_detail_texture_size[2] / 2,
 			9
 		},
 		size = {
-			size[1],
-			size[2]
+			side_detail_texture_size[1],
+			side_detail_texture_size[2]
 		}
 	}
-	tbl_10.side_detail_right = {
-		masked = flag,
+	tbl_7.side_detail_right = {
+		masked = masked,
 		color = {
 			255,
 			255,
@@ -1491,17 +1501,17 @@ local function fn(arg_1_0, arg_1_1, arg_1_2, arg_1_3)
 			255
 		},
 		offset = {
-			arg_1_1[1] - size[1] + 9,
-			arg_1_1[2] / 2 - size[2] / 2,
+			size[1] - side_detail_texture_size[1] + 9,
+			size[2] / 2 - side_detail_texture_size[2] / 2,
 			9
 		},
 		size = {
-			size[1],
-			size[2]
+			side_detail_texture_size[1],
+			side_detail_texture_size[2]
 		}
 	}
-	tbl_10.new_texture = {
-		masked = flag,
+	tbl_7.new_texture = {
+		masked = masked,
 		color = {
 			255,
 			255,
@@ -1509,8 +1519,8 @@ local function fn(arg_1_0, arg_1_1, arg_1_2, arg_1_3)
 			255
 		},
 		offset = {
-			arg_1_1[1] - 126,
-			arg_1_1[2] / 2 - 25,
+			size[1] - 126,
+			size[2] / 2 - 25,
 			10
 		},
 		size = {
@@ -1518,8 +1528,8 @@ local function fn(arg_1_0, arg_1_1, arg_1_2, arg_1_3)
 			51
 		}
 	}
-	tbl_10.locked = {
-		masked = flag,
+	tbl_7.locked = {
+		masked = masked,
 		color = {
 			255,
 			100,
@@ -1527,8 +1537,8 @@ local function fn(arg_1_0, arg_1_1, arg_1_2, arg_1_3)
 			100
 		},
 		offset = {
-			arg_1_1[1] - 64,
-			arg_1_1[2] / 2 - 20,
+			size[1] - 64,
+			size[2] / 2 - 20,
 			10
 		},
 		size = {
@@ -1536,20 +1546,20 @@ local function fn(arg_1_0, arg_1_1, arg_1_2, arg_1_3)
 			40
 		}
 	}
-	tbl_9.style = tbl_10
-	tbl_9.scenegraph_id = arg_1_0
-	tbl_9.offset = {
+	tbl_6.style = tbl_7
+	tbl_6.scenegraph_id = scenegraph_id
+	tbl_6.offset = {
 		0,
 		0,
 		0
 	}
 
-	return tbl_9
+	return tbl_6
 end
 
-local flag = true
-local tbl_15 = {
-	window = UIWidgets.create_frame("window", tbl_10.window.size, "menu_frame_11", 40),
+local disable_with_gamepad = true
+local widgets = {
+	window = UIWidgets.create_frame("window", scenegraph_definition.window.size, "menu_frame_11", 40),
 	window_background = UIWidgets.create_tiled_texture("window_background", "menu_frame_bg_01", {
 		960,
 		1080
@@ -1571,7 +1581,7 @@ local tbl_15 = {
 			0
 		}
 	}, "category_window_mask_bottom"),
-	right_window_frame = UIWidgets.create_frame("right_window", tbl_10.right_window.size, "menu_frame_11", 20),
+	right_window_frame = UIWidgets.create_frame("right_window", scenegraph_definition.right_window.size, "menu_frame_11", 20),
 	right_window_fade = UIWidgets.create_simple_texture("options_window_fade_01", "right_window_fade"),
 	right_window = UIWidgets.create_tiled_texture("right_window", "achievement_background_leather_02", {
 		256,
@@ -1584,16 +1594,16 @@ local tbl_15 = {
 	}),
 	right_window_mask = UIWidgets.create_simple_texture("mask_rect", "achievement_window"),
 	achievement_window_mask_bottom = UIWidgets.create_simple_rotated_texture("mask_rect_edge_fade", math.pi, {
-		tbl_3[1] / 2,
+		achievement_window_size[1] / 2,
 		15
 	}, "achievement_window_mask_bottom"),
 	achievement_window_mask_top = UIWidgets.create_simple_texture("mask_rect_edge_fade", "achievement_window_mask_top"),
-	exit_button = UIWidgets.create_default_button("exit_button", tbl_10.exit_button.size, nil, nil, Localize("menu_close"), 24, nil, "button_detail_04", 34, flag),
+	exit_button = UIWidgets.create_default_button("exit_button", scenegraph_definition.exit_button.size, nil, nil, Localize("menu_close"), 24, nil, "button_detail_04", 34, disable_with_gamepad),
 	title = UIWidgets.create_simple_texture("frame_title_bg_02", "title"),
-	title_bg = UIWidgets.create_background("title_bg", tbl_10.title_bg.size, "menu_frame_bg_02"),
-	title_text = UIWidgets.create_simple_text(Localize("tutorial_menu_header"), "title_text", nil, nil, tbl_11),
-	achievement_scrollbar = UIWidgets.create_chain_scrollbar("achievement_scrollbar", nil, tbl_10.achievement_scrollbar.size),
-	category_scrollbar = UIWidgets.create_chain_scrollbar("category_scrollbar", "category_window_mask", tbl_10.category_scrollbar.size),
+	title_bg = UIWidgets.create_background("title_bg", scenegraph_definition.title_bg.size, "menu_frame_bg_02"),
+	title_text = UIWidgets.create_simple_text(Localize("tutorial_menu_header"), "title_text", nil, nil, title_text_style),
+	achievement_scrollbar = UIWidgets.create_chain_scrollbar("achievement_scrollbar", nil, scenegraph_definition.achievement_scrollbar.size),
+	category_scrollbar = UIWidgets.create_chain_scrollbar("category_scrollbar", "category_window_mask", scenegraph_definition.category_scrollbar.size),
 	page_button_next = UIWidgets.create_arrow_button("page_button_next", math.pi),
 	page_button_previous = UIWidgets.create_arrow_button("page_button_previous"),
 	input_icon_next = UIWidgets.create_simple_texture("xbone_button_icon_a", "input_icon_next"),
@@ -1609,9 +1619,9 @@ local tbl_15 = {
 		}
 	}, "input_arrow_next"),
 	input_arrow_previous = UIWidgets.create_simple_texture("settings_arrow_normal", "input_arrow_previous"),
-	page_text_center = UIWidgets.create_simple_text("/", "page_text_area", nil, nil, tbl_14),
-	page_text_left = UIWidgets.create_simple_text("0", "page_text_area", nil, nil, tbl_12),
-	page_text_right = UIWidgets.create_simple_text("0", "page_text_area", nil, nil, tbl_13),
+	page_text_center = UIWidgets.create_simple_text("/", "page_text_area", nil, nil, page_number_center_text_style),
+	page_text_left = UIWidgets.create_simple_text("0", "page_text_area", nil, nil, page_number_left_text_style),
+	page_text_right = UIWidgets.create_simple_text("0", "page_text_area", nil, nil, page_number_right_text_style),
 	page_text_area = UIWidgets.create_simple_texture("tab_menu_bg_03", "page_text_area"),
 	achievement_window = {
 		scenegraph_id = "achievement_window_mask",
@@ -1623,36 +1633,37 @@ local tbl_15 = {
 				},
 				{
 					pass_type = "scroll",
-					scroll_function = function (arg_14_0, arg_14_1, arg_14_2, arg_14_3, arg_14_4, arg_14_5)
+					scroll_function = function (ui_scenegraph, ui_style, ui_content, input_service, scroll_axis, dt)
 						-- function 14
-						local num = arg_14_4.y * -1
+						local axis_input = scroll_axis.y * -1
 
-						if not (not IS_XB1 and not GameSettingsDevelopment.allow_keyboard_mouse and arg_14_2.is_gamepad_active) then
-							num = math.sign(arg_14_4.x) * -1
+						if IS_XB1 and GameSettingsDevelopment.allow_keyboard_mouse and not ui_content.is_gamepad_active then
+							axis_input = math.sign(scroll_axis.x) * -1
 						end
 
-						local hotspot = arg_14_2.hotspot
+						local hotspot = ui_content.hotspot
 
-						if num == 0 or not hotspot.is_hover then
-							arg_14_2.axis_input = num
-							arg_14_2.scroll_add = num * arg_14_2.scroll_amount
+						if axis_input ~= 0 and hotspot.is_hover then
+							ui_content.axis_input = axis_input
+							ui_content.scroll_add = axis_input * ui_content.scroll_amount
 						end
 
-						local scroll_add = arg_14_2.scroll_add
+						local scroll_add = ui_content.scroll_add
 
-						if not scroll_add then
-							local num_2 = scroll_add * (arg_14_5 * 5)
-							local num_3 = scroll_add - num_2
+						if scroll_add then
+							local step = scroll_add * (dt * 5)
 
-							if math.abs(num_3) > 0 then
-								arg_14_2.scroll_add = num_3
+							scroll_add = scroll_add - step
+
+							if math.abs(scroll_add) > 0 then
+								ui_content.scroll_add = scroll_add
 							else
-								arg_14_2.scroll_add = nil
+								ui_content.scroll_add = nil
 							end
 
-							local scroll_value = arg_14_2.scroll_value
+							local current_scroll_value = ui_content.scroll_value
 
-							arg_14_2.scroll_value = math.clamp(scroll_value + num_2, 0, 1)
+							ui_content.scroll_value = math.clamp(current_scroll_value + step, 0, 1)
 						end
 					end
 				}
@@ -1669,81 +1680,81 @@ local tbl_15 = {
 	}
 }
 
-local function fn_2(arg_15_0)
+local function create_category_tab_widgets(num_categories)
 	-- function 15
-	local tbl = {}
+	local category_tab_widgets = {}
 
-	for i = 1, arg_15_0 + 1 do
-		local flag = i == 1
-		local str = "category_tab_" .. i
-		local str_2 = "category_tab_" .. i .. "_list"
-		local str_3 = "category_tab_" .. i - 1 .. "_list"
-		local var_15_5 = tbl_10
-		local tbl_2 = {
+	for i = 1, num_categories + 1 do
+		local first_entry = i == 1
+		local scenegraph_id = "category_tab_" .. i
+		local scenegraph_list_id = "category_tab_" .. i .. "_list"
+		local previous_scenegraph_list_id = "category_tab_" .. i - 1 .. "_list"
+		local var_15_0 = scenegraph_definition
+		local tbl = {
 			horizontal_alignment = "center"
 		}
+		local flag
+
+		flag = (not first_entry or not "category_root") and not not previous_scenegraph_list_id
+		tbl.parent = flag
+
 		local flag_2
 
-		flag_2 = not flag and "category_root" and str_3
-		tbl_2.parent = flag_2
+		flag_2 = (not first_entry or not "top") and not not "bottom"
+		tbl.vertical_alignment = flag_2
+		tbl.size = tab_size
 
-		local flag_3
-
-		flag_3 = not flag and "top" and "bottom"
-		tbl_2.vertical_alignment = flag_3
-		tbl_2.size = tbl_6
-
-		local tbl_3 = {
+		local tbl_2 = {
 			nil,
 			nil,
 			0
 		}
+		local flag_3
+
+		flag_3 = (not first_entry or not -15) and not not 0
+		tbl_2[1] = flag_3
+
 		local flag_4
 
-		flag_4 = not flag and -15 and 0
-		tbl_3[1] = flag_4
-
-		local flag_5
-
-		flag_5 = not flag and -20 and -(tbl_6[2] + num_2)
-		tbl_3[2] = flag_5
-		tbl_2.position = tbl_3
-		var_15_5[str] = tbl_2
-		tbl_10[str_2] = {
+		flag_4 = (not first_entry or not -20) and not not -(tab_size[2] + tab_list_entry_spacing)
+		tbl_2[2] = flag_4
+		tbl.position = tbl_2
+		var_15_0[scenegraph_id] = tbl
+		scenegraph_definition[scenegraph_list_id] = {
 			vertical_alignment = "top",
 			horizontal_alignment = "center",
-			parent = str,
+			parent = scenegraph_id,
 			size = {
-				tbl_6[1],
+				tab_size[1],
 				0
 			},
 			position = {
 				0,
-				-(tbl_6[2] + num_2),
+				-(tab_size[2] + tab_list_entry_spacing),
 				0
 			}
 		}
-		tbl[i] = fn(str, tbl_6, "n/a", str_2)
+		category_tab_widgets[i] = create_tab(scenegraph_id, tab_size, "n/a", scenegraph_list_id)
 	end
 
-	return tbl
+	return category_tab_widgets
 end
 
-local tbl_16 = {
+local animation_definitions = {
 	on_enter = {
 		{
 			name = "fade_in",
 			start_progress = 0,
 			end_progress = 0.3,
-			init = function (arg_16_0, arg_16_1, arg_16_2, arg_16_3)
+			init = function (ui_scenegraph, in_scenegraph_definition, in_widgets, params)
 				-- function 16
-				arg_16_3.render_settings.alpha_multiplier = 0
+				params.render_settings.alpha_multiplier = 0
 			end,
-			update = function (arg_17_0, arg_17_1, arg_17_2, arg_17_3, arg_17_4)
+			update = function (ui_scenegraph, in_scenegraph_definition, in_widgets, progress, params)
 				-- function 17
-				arg_17_4.render_settings.alpha_multiplier = 1
+				params.render_settings.alpha_multiplier = 1
 			end,
-			on_complete = function (arg_18_0, arg_18_1, arg_18_2, arg_18_3)
+			on_complete = function (ui_scenegraph, in_scenegraph_definition, in_widgets, params)
 				-- function 18
 				return
 			end
@@ -1754,22 +1765,22 @@ local tbl_16 = {
 			name = "fade_out",
 			start_progress = 0,
 			end_progress = 0.3,
-			init = function (arg_19_0, arg_19_1, arg_19_2, arg_19_3)
+			init = function (ui_scenegraph, in_scenegraph_definition, in_widgets, params)
 				-- function 19
-				arg_19_3.render_settings.alpha_multiplier = 1
+				params.render_settings.alpha_multiplier = 1
 			end,
-			update = function (arg_20_0, arg_20_1, arg_20_2, arg_20_3, arg_20_4)
+			update = function (ui_scenegraph, in_scenegraph_definition, in_widgets, progress, params)
 				-- function 20
-				arg_20_4.render_settings.alpha_multiplier = 1
+				params.render_settings.alpha_multiplier = 1
 			end,
-			on_complete = function (arg_21_0, arg_21_1, arg_21_2, arg_21_3)
+			on_complete = function (ui_scenegraph, in_scenegraph_definition, in_widgets, params)
 				-- function 21
 				return
 			end
 		}
 	}
 }
-local tbl_17 = {
+local generic_input_actions = {
 	default = {
 		{
 			input_action = "confirm",
@@ -1794,111 +1805,110 @@ local tbl_17 = {
 	}
 }
 
-local function fn_3(arg_22_0)
+local function simple_tag_colorizer(inner)
 	-- function 22
-	local find, var_22_1, var_22_2 = string.find(arg_22_0, "^<(/?)kw")
+	local is_kw, _, is_end = string.find(inner, "^<(/?)kw")
 
-	if not find then
-		return arg_22_0
+	if not is_kw then
+		return inner
 	end
 
 	local flag
 
-	flag = not var_22_2 and "{#reset()}" and "{#color(255,193,91)}"
+	flag = (not is_end or not "{#reset()}") and not not "{#color(255,193,91)}"
 
 	return flag
 end
 
-local function fn_4(self, arg_23_1)
+local function create_content_widget_spacing(context, entry)
 	-- function 23
 	return {
-		scenegraph_id = self.scenegraph_id,
+		scenegraph_id = context.scenegraph_id,
 		element = {
 			passes = {}
 		},
 		content = {
-			size = arg_23_1.size
+			size = entry.size
 		},
 		style = {}
 	}
 end
 
-local function fn_5(self, arg_24_1)
+local function create_content_widget_text(context, entry)
 	-- function 24
-	local tbl = {
-		num,
+	local size = {
+		achievement_entry_width,
 		0
 	}
 	local Localize = Localize
-	local text = arg_24_1.text
+	local text = entry.text
 
-	text = text or "n/a"
+	text = not not text or not not "n/a"
 
-	local var_24_3 = Localize(text)
+	local text_content = Localize(text)
 
-	if not arg_24_1.inputs then
-		local tbl_2 = {}
+	if entry.inputs then
+		local input_strings = {}
 
-		for i, v in ipairs(arg_24_1.inputs) do
-			local str = "Player"
-			local var_24_6 = v
+		for i, input_data in ipairs(entry.inputs) do
+			local input_service = "Player"
+			local input_action = input_data
 
-			tbl_2[i] = string.format("$KEY;%s__%s: ", str, var_24_6)
+			input_strings[i] = string.format("$KEY;%s__%s: ", input_service, input_action)
 		end
 
-		var_24_3 = string.format(var_24_3, unpack(tbl_2))
+		text_content = string.format(text_content, unpack(input_strings))
 	end
 
-	local gsub = string.gsub(var_24_3, "%b<>", fn_3)
-	local tbl_3 = {
+	text_content = string.gsub(text_content, "%b<>", simple_tag_colorizer)
+
+	local text_style = {
 		vertical_alignment = "top",
 		word_wrap = true,
 		localize = false,
 		horizontal_alignment = "center",
 		font_size = 24,
 		font_type = "hell_shark_masked",
-		size = tbl,
+		size = size,
 		text_color = Colors.get_color_table_with_alpha("font_default", 255)
 	}
 
-	if not arg_24_1.style then
-		table.merge(tbl_3, arg_24_1.style)
+	if entry.style then
+		table.merge(text_style, entry.style)
 	end
 
-	local var_24_9
-	local var_24_10
-	local var_24_11
+	local text_shadow_pass, text_shadow_content, text_shadow_style
 
-	if not tbl_3.use_shadow then
-		var_24_9 = {
+	if text_style.use_shadow then
+		text_shadow_pass = {
 			style_id = "text_shadow",
 			pass_type = "text",
 			text_id = "text_shadow"
 		}
-		var_24_10 = string.gsub(gsub, "%b{}", "")
-		var_24_11 = table.shallow_copy(tbl_3)
-		var_24_11.offset = {
+		text_shadow_content = string.gsub(text_content, "%b{}", "")
+		text_shadow_style = table.shallow_copy(text_style)
+		text_shadow_style.offset = {
 			2,
 			2,
 			-1
 		}
-		var_24_11.skip_button_rendering = true
-		var_24_11.text_color = {
-			tbl_3.text_color[1],
+		text_shadow_style.skip_button_rendering = true
+		text_shadow_style.text_color = {
+			text_style.text_color[1],
 			0,
 			0,
 			0
 		}
 
-		if not tbl_3.shadow_color then
-			Colors.copy_no_alpha_to(var_24_11.text_color, tbl_3.shadow_color)
+		if text_style.shadow_color then
+			Colors.copy_no_alpha_to(text_shadow_style.text_color, text_style.shadow_color)
 		end
 	end
 
-	tbl[2] = UIUtils.get_text_height(self.ui_renderer, tbl, tbl_3, gsub)
+	size[2] = UIUtils.get_text_height(context.ui_renderer, size, text_style, text_content)
 
-	local tbl_4 = {
-		scenegraph_id = self.scenegraph_id,
+	local tbl = {
+		scenegraph_id = context.scenegraph_id,
 		element = {
 			passes = {
 				{
@@ -1906,88 +1916,88 @@ local function fn_5(self, arg_24_1)
 					pass_type = "text",
 					text_id = "text"
 				},
-				var_24_9
+				text_shadow_pass
 			}
 		}
 	}
-	local tbl_5 = {
-		text = gsub,
-		text_shadow = var_24_10,
-		size = tbl
+	local tbl_2 = {
+		text = text_content,
+		text_shadow = text_shadow_content,
+		size = size
 	}
-	local padding = arg_24_1.padding
+	local padding = entry.padding
 
-	padding = padding or 25
-	tbl_5.padding = padding
-	tbl_4.content = tbl_5
-	tbl_4.style = {
-		text = tbl_3,
-		text_shadow = var_24_11
+	padding = not not padding or not not 25
+	tbl_2.padding = padding
+	tbl.content = tbl_2
+	tbl.style = {
+		text = text_style,
+		text_shadow = text_shadow_style
 	}
 
-	return tbl_4
+	return tbl
 end
 
-local function fn_6(self, arg_25_1)
+local function create_content_widget_image(context, entry)
 	-- function 25
-	local tbl = {
+	local size = {
 		674,
 		380
 	}
-	local num_2 = 0.5 * (num - tbl[1])
-	local menu_frame_06 = UIFrameSettings.menu_frame_06
-	local shadow_frame_02 = UIFrameSettings.shadow_frame_02
-	local num_3 = -1 * shadow_frame_02.texture_sizes.horizontal[2]
-	local tbl_2 = {
-		num_3,
-		num_3
+	local horizontal_offset = 0.5 * (achievement_entry_width - size[1])
+	local frame_settings = UIFrameSettings.menu_frame_06
+	local shadow_settings = UIFrameSettings.shadow_frame_02
+	local shadow_margin = -1 * shadow_settings.texture_sizes.horizontal[2]
+	local shadow_margins = {
+		shadow_margin,
+		shadow_margin
 	}
 
 	return {
-		scenegraph_id = self.scenegraph_id,
+		scenegraph_id = context.scenegraph_id,
 		element = {
 			passes = {
 				{
 					pass_type = "texture",
 					style_id = "texture",
 					texture_id = "texture",
-					content_check_function = function (self)
+					content_check_function = function (content)
 						-- function 26
-						return self.texture
+						return content.texture
 					end
 				},
 				{
 					pass_type = "texture_frame",
 					style_id = "shadow",
 					texture_id = "shadow",
-					content_check_function = function (self)
+					content_check_function = function (content)
 						-- function 27
-						return self.texture
+						return content.texture
 					end
 				},
 				{
 					pass_type = "texture_frame",
 					style_id = "frame",
 					texture_id = "frame",
-					content_check_function = function (self)
+					content_check_function = function (content)
 						-- function 28
-						return self.texture
+						return content.texture
 					end
 				},
 				{
 					style_id = "loading_icon",
 					texture_id = "loading_icon",
 					pass_type = "rotated_texture",
-					content_check_function = function (self)
+					content_check_function = function (content)
 						-- function 29
-						return not self.texture
+						return not content.texture
 					end,
-					content_change_function = function (self, arg_30_1, arg_30_2, arg_30_3)
+					content_change_function = function (content, style, _, dt)
 						-- function 30
-						local num = (self.loading_progress + arg_30_3) % 1
+						local progress = (content.loading_progress + dt) % 1
 
-						arg_30_1.angle = 2^math.smoothstep(num, 0, 1) * math.tau
-						self.loading_progress = num
+						style.angle = 2^math.smoothstep(progress, 0, 1) * math.tau
+						content.loading_progress = progress
 					end
 				}
 			}
@@ -1995,9 +2005,9 @@ local function fn_6(self, arg_25_1)
 		content = {
 			loading_progress = 0,
 			loading_icon = "loot_loading",
-			size = tbl,
-			frame = menu_frame_06.texture,
-			shadow = shadow_frame_02.texture,
+			size = size,
+			frame = frame_settings.texture,
+			shadow = shadow_settings.texture,
 			frame_detail = {
 				texture_id = "frame_detail_03",
 				uvs = {
@@ -2017,19 +2027,19 @@ local function fn_6(self, arg_25_1)
 				vertical_alignment = "bottom",
 				masked = true,
 				horizontal_alignment = "center",
-				texture_size = tbl
+				texture_size = size
 			},
 			shadow = {
 				masked = true,
 				offset = {
-					num_2,
+					horizontal_offset,
 					0,
 					0
 				},
-				area_size = tbl,
-				frame_margins = tbl_2,
-				texture_size = shadow_frame_02.texture_size,
-				texture_sizes = shadow_frame_02.texture_sizes,
+				area_size = size,
+				frame_margins = shadow_margins,
+				texture_size = shadow_settings.texture_size,
+				texture_sizes = shadow_settings.texture_sizes,
 				color = {
 					255,
 					0,
@@ -2040,13 +2050,13 @@ local function fn_6(self, arg_25_1)
 			frame = {
 				masked = true,
 				offset = {
-					num_2,
+					horizontal_offset,
 					0,
 					1
 				},
-				area_size = tbl,
-				texture_size = menu_frame_06.texture_size,
-				texture_sizes = menu_frame_06.texture_sizes,
+				area_size = size,
+				texture_size = frame_settings.texture_size,
+				texture_sizes = frame_settings.texture_sizes,
 				color = {
 					255,
 					255,
@@ -2061,9 +2071,9 @@ local function fn_6(self, arg_25_1)
 					230,
 					59
 				},
-				size = tbl,
+				size = size,
 				offset = {
-					num_2 - 40,
+					horizontal_offset - 40,
 					16,
 					2
 				}
@@ -2075,9 +2085,9 @@ local function fn_6(self, arg_25_1)
 					230,
 					59
 				},
-				size = tbl,
+				size = size,
 				offset = {
-					num_2 + 50,
+					horizontal_offset + 50,
 					12,
 					2
 				},
@@ -2098,11 +2108,11 @@ local function fn_6(self, arg_25_1)
 					150
 				},
 				offset = {
-					num_2,
+					horizontal_offset,
 					0,
 					0
 				},
-				size = tbl,
+				size = size,
 				pivot = {
 					75,
 					75
@@ -2118,51 +2128,51 @@ local function fn_6(self, arg_25_1)
 	}
 end
 
-local function fn_7(self, arg_31_1)
+local function create_content_widget_video(context, entry)
 	-- function 31
-	local tbl = {
+	local size = {
 		852,
 		480
 	}
-	local num_2 = 0.5 * (num - tbl[1])
-	local menu_frame_06 = UIFrameSettings.menu_frame_06
-	local shadow_frame_02 = UIFrameSettings.shadow_frame_02
-	local num_3 = -1 * shadow_frame_02.texture_sizes.horizontal[2]
-	local tbl_2 = {
-		num_3,
-		num_3
+	local horizontal_offset = 0.5 * (achievement_entry_width - size[1])
+	local frame_settings = UIFrameSettings.menu_frame_06
+	local shadow_settings = UIFrameSettings.shadow_frame_02
+	local shadow_margin = -1 * shadow_settings.texture_sizes.horizontal[2]
+	local shadow_margins = {
+		shadow_margin,
+		shadow_margin
 	}
-	local str = "video/tutorial_videos/" .. arg_31_1.path
-	local create_video_player = self.layout:create_video_player(str)
+	local video_resource = "video/tutorial_videos/" .. entry.path
+	local video_player_reference = context.layout:create_video_player(video_resource)
 
 	return {
-		scenegraph_id = self.scenegraph_id,
+		scenegraph_id = context.scenegraph_id,
 		element = {
 			passes = {
 				{
 					style_id = "video",
 					pass_type = "video",
-					content_check_function = function (self)
+					content_check_function = function (content)
 						-- function 32
-						return self.video_player_reference
+						return content.video_player_reference
 					end
 				},
 				{
 					pass_type = "texture_frame",
 					style_id = "shadow",
 					texture_id = "shadow",
-					content_check_function = function (self)
+					content_check_function = function (content)
 						-- function 33
-						return self.video_player_reference
+						return content.video_player_reference
 					end
 				},
 				{
 					pass_type = "texture_frame",
 					style_id = "frame",
 					texture_id = "frame",
-					content_check_function = function (self)
+					content_check_function = function (content)
 						-- function 34
-						return self.video_player_reference
+						return content.video_player_reference
 					end
 				}
 			}
@@ -2170,11 +2180,11 @@ local function fn_7(self, arg_31_1)
 		content = {
 			loading_progress = 0,
 			loading_icon = "loot_loading",
-			size = tbl,
-			material_name = arg_31_1.path,
-			video_player_reference = create_video_player,
-			frame = menu_frame_06.texture,
-			shadow = shadow_frame_02.texture,
+			size = size,
+			material_name = entry.path,
+			video_player_reference = video_player_reference,
+			frame = frame_settings.texture,
+			shadow = shadow_settings.texture,
 			frame_detail = {
 				texture_id = "frame_detail_03",
 				uvs = {
@@ -2191,9 +2201,9 @@ local function fn_7(self, arg_31_1)
 		},
 		style = {
 			video = {
-				size = tbl,
+				size = size,
 				offset = {
-					num_2,
+					horizontal_offset,
 					0,
 					0
 				},
@@ -2207,14 +2217,14 @@ local function fn_7(self, arg_31_1)
 			shadow = {
 				masked = true,
 				offset = {
-					num_2,
+					horizontal_offset,
 					0,
 					0
 				},
-				area_size = tbl,
-				frame_margins = tbl_2,
-				texture_size = shadow_frame_02.texture_size,
-				texture_sizes = shadow_frame_02.texture_sizes,
+				area_size = size,
+				frame_margins = shadow_margins,
+				texture_size = shadow_settings.texture_size,
+				texture_sizes = shadow_settings.texture_sizes,
 				color = {
 					255,
 					0,
@@ -2225,13 +2235,13 @@ local function fn_7(self, arg_31_1)
 			frame = {
 				masked = true,
 				offset = {
-					num_2,
+					horizontal_offset,
 					0,
 					1
 				},
-				size = tbl,
-				texture_size = menu_frame_06.texture_size,
-				texture_sizes = menu_frame_06.texture_sizes,
+				size = size,
+				texture_size = frame_settings.texture_size,
+				texture_sizes = frame_settings.texture_sizes,
 				color = {
 					255,
 					255,
@@ -2244,19 +2254,19 @@ local function fn_7(self, arg_31_1)
 end
 
 return {
-	generic_input_actions = tbl_17,
-	category_tab_info = tbl_9,
-	achievement_window_size = tbl_3,
-	achievement_scrollbar_size = tbl_4,
+	generic_input_actions = generic_input_actions,
+	category_tab_info = category_tab_info,
+	achievement_window_size = achievement_window_size,
+	achievement_scrollbar_size = achievement_scrollbar_size,
 	content_blueprints = {
-		spacing = fn_4,
-		text = fn_5,
-		image = fn_6,
-		video = fn_7
+		spacing = create_content_widget_spacing,
+		text = create_content_widget_text,
+		image = create_content_widget_image,
+		video = create_content_widget_video
 	},
-	widgets = tbl_15,
-	create_category_tab_widgets_func = fn_2,
-	scenegraph_definition = tbl_10,
-	animation_definitions = tbl_16,
+	widgets = widgets,
+	create_category_tab_widgets_func = create_category_tab_widgets,
+	scenegraph_definition = scenegraph_definition,
+	animation_definitions = animation_definitions,
 	console_cursor_definition = UIWidgets.create_console_cursor("console_cursor")
 }

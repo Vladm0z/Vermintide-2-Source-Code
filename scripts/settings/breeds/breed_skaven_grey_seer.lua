@@ -1,7 +1,7 @@
 -- chunkname: @scripts/settings/breeds/breed_skaven_grey_seer.lua
 
-local scripts_utils_stagger_types = require("scripts/utils/stagger_types")
-local tbl = {
+local stagger_types = require("scripts/utils/stagger_types")
+local breed_data = {
 	show_health_bar = true,
 	walk_speed = 5,
 	minion_detection_radius = 20,
@@ -88,33 +88,33 @@ local tbl = {
 	run_on_update = AiBreedSnippets.on_grey_seer_update,
 	run_on_death = AiBreedSnippets.on_grey_seer_death,
 	run_on_despawn = AiBreedSnippets.on_grey_seer_despawn,
-	stagger_modifier_function = function (arg_1_0, arg_1_1, arg_1_2, arg_1_3, arg_1_4, arg_1_5)
+	stagger_modifier_function = function (stagger_type, duration, length, hit_zone_name, blackboard, breed)
 		-- function 1
-		if not arg_1_4.unit then
-			return arg_1_0, arg_1_1, arg_1_2
+		if not blackboard.unit then
+			return stagger_type, duration, length
 		end
 
-		local extension = ScriptUnit.extension(arg_1_4.unit, "health_system")
-		local current_health_percent = extension:current_health_percent()
+		local health_extension = ScriptUnit.extension(blackboard.unit, "health_system")
+		local hp = health_extension:current_health_percent()
 
-		if not (extension:get_is_invincible() or not (current_health_percent < 0.05) or arg_1_4.current_phase == 6) then
-			local get_max_health = extension:get_max_health()
+		if not health_extension:get_is_invincible() and hp < 0.05 and blackboard.current_phase ~= 6 then
+			local max_health = health_extension:get_max_health()
 
-			extension.is_invincible = true
+			health_extension.is_invincible = true
 
-			extension:set_current_damage(get_max_health * 0.95)
+			health_extension:set_current_damage(max_health * 0.95)
 
-			arg_1_4.death_sequence = true
+			blackboard.death_sequence = true
 		end
 
-		if not (not arg_1_4.mounted_data and arg_1_4.knocked_off_mount or not (arg_1_4.stagger_count >= 5)) then
-			arg_1_0 = scripts_utils_stagger_types.none
-			arg_1_4.stagger_ignore_anim_cb = true
+		if (not blackboard.mounted_data or blackboard.knocked_off_mount) and blackboard.stagger_count >= 5 then
+			stagger_type = stagger_types.none
+			blackboard.stagger_ignore_anim_cb = true
 		else
-			arg_1_4.stagger_ignore_anim_cb = false
+			blackboard.stagger_ignore_anim_cb = false
 		end
 
-		return arg_1_0, arg_1_1, arg_1_2
+		return stagger_type, duration, length
 	end,
 	hitzone_multiplier_types = {
 		head = "headshot"
@@ -270,19 +270,19 @@ local tbl = {
 		"kill_skaven_grey_seer_difficulty_rank",
 		"kill_skaven_grey_seer_scorpion_hardest"
 	},
-	custom_death_enter_function = function (arg_2_0, arg_2_1, arg_2_2, arg_2_3, arg_2_4, arg_2_5)
+	custom_death_enter_function = function (unit, killer_unit, damage_type, death_hit_zone, t, damage_source)
 		-- function 2
-		if not Unit.alive(arg_2_1) then
+		if not Unit.alive(killer_unit) then
 			return
 		end
 
-		QuestSettings.check_killed_lord_as_last_player_standing(arg_2_1)
+		QuestSettings.check_killed_lord_as_last_player_standing(killer_unit)
 	end
 }
 
-Breeds.skaven_grey_seer = table.create_copy(Breeds.skaven_grey_seer, tbl)
+Breeds.skaven_grey_seer = table.create_copy(Breeds.skaven_grey_seer, breed_data)
 
-local tbl_2 = {
+local action_data = {
 	ground_combat = {
 		spawn_allies_cooldown = 20,
 		use_fallback_spawners = true,
@@ -434,12 +434,12 @@ local tbl_2 = {
 	stagger = {
 		scale_animation_speeds = true,
 		stagger_animation_scale = 1.3,
-		custom_enter_function = function (arg_3_0, arg_3_1, arg_3_2, arg_3_3)
+		custom_enter_function = function (unit, blackboard, t, action)
 			-- function 3
-			local var_3_0 = arg_3_3.stagger_anims[arg_3_1.stagger_type]
-			local str = "idle_eat_warpstone"
+			local stagger_anims = action.stagger_anims[blackboard.stagger_type]
+			local idle_event = "idle_eat_warpstone"
 
-			return var_3_0, str
+			return stagger_anims, idle_event
 		end,
 		stagger_anims = {
 			{
@@ -645,4 +645,4 @@ local tbl_2 = {
 	}
 }
 
-BreedActions.skaven_grey_seer = table.create_copy(BreedActions.skaven_grey_seer, tbl_2)
+BreedActions.skaven_grey_seer = table.create_copy(BreedActions.skaven_grey_seer, action_data)

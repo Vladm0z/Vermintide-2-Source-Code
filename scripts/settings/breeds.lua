@@ -22,17 +22,17 @@ DEFAULT_BREED_AOE_RADIUS = 0.3
 
 local Breeds = Breeds
 
-Breeds = Breeds or {}
+Breeds = not not Breeds or not not {}
 Breeds = Breeds
 
 local BreedActions = BreedActions
 
-BreedActions = BreedActions or {}
+BreedActions = not not BreedActions or not not {}
 BreedActions = BreedActions
 
 local BreedHitZonesLookup = BreedHitZonesLookup
 
-BreedHitZonesLookup = BreedHitZonesLookup or {}
+BreedHitZonesLookup = not not BreedHitZonesLookup or not not {}
 BreedHitZonesLookup = BreedHitZonesLookup
 
 dofile("scripts/settings/breeds/breed_tweaks")
@@ -91,7 +91,7 @@ UNDEAD = {}
 CRITTER = {}
 ELITES = {}
 
-local tbl = {
+local DEFAULT_NAVTAG_LAYERS = {
 	end_zone = 0,
 	ledges = 1.5,
 	barrel_explosion = 10,
@@ -107,7 +107,7 @@ local tbl = {
 	bot_poison_wind = 1.5,
 	fire_grenade = 10
 }
-local tbl_2 = {
+local DEFAULT_NAV_COST_MAP_LAYERS = {
 	plague_wave = 20,
 	mutator_heavens_zone = 1,
 	lamp_oil_fire = 10,
@@ -117,88 +117,89 @@ local tbl_2 = {
 	vortex_danger_zone = 1,
 	troll_bile = 20
 }
-local clone = table.clone(tbl)
-local clone_2 = table.clone(tbl_2)
+local available_nav_tag_layers = table.clone(DEFAULT_NAVTAG_LAYERS)
+local available_nav_cost_map_layers = table.clone(DEFAULT_NAV_COST_MAP_LAYERS)
 
-for k, v in pairs(Breeds) do
-	local var_0_7 = BreedHitZonesLookup[k]
+for breed_name, breed_data in pairs(Breeds) do
+	local lookup = BreedHitZonesLookup[breed_name]
 
-	if not var_0_7 then
-		v.hit_zones_lookup = var_0_7
+	if lookup then
+		breed_data.hit_zones_lookup = lookup
 
-		fassert(v.debug_color, "breed needs a debug color")
+		fassert(breed_data.debug_color, "breed needs a debug color")
 	end
 
-	local allowed_layers = v.allowed_layers
+	local allowed_layers = breed_data.allowed_layers
 
-	if not allowed_layers then
-		table.merge(clone, allowed_layers)
+	if allowed_layers then
+		table.merge(available_nav_tag_layers, allowed_layers)
 	end
 
-	local nav_cost_map_allowed_layers = v.nav_cost_map_allowed_layers
+	local nav_cost_map_allowed_layers = breed_data.nav_cost_map_allowed_layers
 
-	if not nav_cost_map_allowed_layers then
-		table.merge(clone_2, nav_cost_map_allowed_layers)
+	if nav_cost_map_allowed_layers then
+		table.merge(available_nav_cost_map_layers, nav_cost_map_allowed_layers)
 	end
 
-	BreedUtils.inject_breed_category_mask(v)
+	BreedUtils.inject_breed_category_mask(breed_data)
 
-	if not v.aoe_height then
-		v.aoe_height = DEFAULT_BREED_AOE_HEIGHT
-	end
-end
-
-for k_2, v_2 in pairs(BreedActions) do
-	for k_3, v_3 in pairs(v_2) do
-		v_3.name = k_3
+	if not breed_data.aoe_height then
+		breed_data.aoe_height = DEFAULT_BREED_AOE_HEIGHT
 	end
 end
 
-local function fn(self, arg_1_1)
+for _, breed_actions in pairs(BreedActions) do
+	for action_name, action_data in pairs(breed_actions) do
+		action_data.name = action_name
+	end
+end
+
+local function set_bot_threat_tweak_data(current_table, max_start_delay)
 	-- function 1
-	if not self.duration then
-		self.max_start_delay = math.min(arg_1_1, self.duration * 0.9)
-	elseif not self.bot_threat_duration then
-		self.bot_threat_max_start_delay = math.min(arg_1_1, self.bot_threat_duration * 0.9)
+	if current_table.duration then
+		current_table.max_start_delay = math.min(max_start_delay, current_table.duration * 0.9)
+	elseif current_table.bot_threat_duration then
+		current_table.bot_threat_max_start_delay = math.min(max_start_delay, current_table.bot_threat_duration * 0.9)
 	end
 end
 
-local function fn_2(self)
+local function find_and_set_bot_threat_tweak_data(current_table)
 	-- function 2
-	local bot_threat_difficulty_data = self.bot_threat_difficulty_data
+	local bot_threat_difficulty_data = current_table.bot_threat_difficulty_data
 
-	if not bot_threat_difficulty_data then
-		local max_start_delay = Managers.state.difficulty:get_difficulty_value_from_table(bot_threat_difficulty_data).max_start_delay
+	if bot_threat_difficulty_data then
+		local current_difficulty_data = Managers.state.difficulty:get_difficulty_value_from_table(bot_threat_difficulty_data)
+		local max_start_delay = current_difficulty_data.max_start_delay
 
-		if not self.bot_threats then
-			local bot_threats = self.bot_threats
+		if current_table.bot_threats then
+			local bot_threats = current_table.bot_threats
 
-			if not bot_threats[1] then
-				local count = #bot_threats
+			if bot_threats[1] then
+				local num_threats = #bot_threats
 
-				for i = 1, count do
-					local var_2_4 = bot_threats[i]
+				for i = 1, num_threats do
+					local bot_threat = bot_threats[i]
 
-					fn(var_2_4, max_start_delay)
+					set_bot_threat_tweak_data(bot_threat, max_start_delay)
 				end
 			else
-				for k, v in pairs(bot_threats) do
-					local count_2 = #v
+				for _, animation_bot_threats in pairs(bot_threats) do
+					local num_threats = #animation_bot_threats
 
-					for l = 1, count_2 do
-						local var_2_6 = v[l]
+					for i = 1, num_threats do
+						local bot_threat = animation_bot_threats[i]
 
-						fn(var_2_6, max_start_delay)
+						set_bot_threat_tweak_data(bot_threat, max_start_delay)
 					end
 				end
 			end
-		elseif not self.bot_threat_duration then
-			fn(self, max_start_delay)
+		elseif current_table.bot_threat_duration then
+			set_bot_threat_tweak_data(current_table, max_start_delay)
 		end
 	else
-		for k_2, v_2 in pairs(self) do
-			if type(v_2) == "table" then
-				fn_2(v_2)
+		for _, data in pairs(current_table) do
+			if type(data) == "table" then
+				find_and_set_bot_threat_tweak_data(data)
 			end
 		end
 	end
@@ -206,54 +207,58 @@ end
 
 function SET_BREED_DIFFICULTY()
 	-- function 3
-	local difficulty = Managers.state.difficulty
+	local difficulty_manager = Managers.state.difficulty
 
-	for k, v in pairs(BreedActions) do
-		for k_2, v_2 in pairs(v) do
-			local difficulty_diminishing_damage = v_2.difficulty_diminishing_damage
+	for _, breed_actions in pairs(BreedActions) do
+		for _, action_data in pairs(breed_actions) do
+			local difficulty_diminishing_damage = action_data.difficulty_diminishing_damage
 
-			if not difficulty_diminishing_damage then
-				local get_difficulty_value_from_table = difficulty:get_difficulty_value_from_table(difficulty_diminishing_damage)
+			if difficulty_diminishing_damage then
+				local damage = difficulty_manager:get_difficulty_value_from_table(difficulty_diminishing_damage)
 
-				v_2.diminishing_damage = table.clone(get_difficulty_value_from_table)
+				action_data.diminishing_damage = table.clone(damage)
 			end
 
-			local difficulty_damage = v_2.difficulty_damage
+			local difficulty_damage = action_data.difficulty_damage
 
-			if not difficulty_damage then
-				v_2.damage = difficulty:get_difficulty_value_from_table(difficulty_damage)
+			if difficulty_damage then
+				local damage = difficulty_manager:get_difficulty_value_from_table(difficulty_damage)
+
+				action_data.damage = damage
 			end
 
-			local blocked_difficulty_damage = v_2.blocked_difficulty_damage
+			local blocked_difficulty_damage = action_data.blocked_difficulty_damage
 
-			if not blocked_difficulty_damage then
-				v_2.blocked_damage = difficulty:get_difficulty_value_from_table(blocked_difficulty_damage)
+			if blocked_difficulty_damage then
+				local blocked_damage = difficulty_manager:get_difficulty_value_from_table(blocked_difficulty_damage)
+
+				action_data.blocked_damage = blocked_damage
 			end
 
-			fn_2(v_2)
+			find_and_set_bot_threat_tweak_data(action_data)
 		end
 	end
 end
 
-table.merge(clone, BotNavTransitionManager.TRANSITION_LAYERS)
-table.merge(clone_2, BotNavTransitionManager.NAV_COST_MAP_LAYERS)
+table.merge(available_nav_tag_layers, BotNavTransitionManager.TRANSITION_LAYERS)
+table.merge(available_nav_cost_map_layers, BotNavTransitionManager.NAV_COST_MAP_LAYERS)
 
 LAYER_ID_MAPPING = {}
 
-for k_4, v_4 in pairs(clone) do
-	LAYER_ID_MAPPING[#LAYER_ID_MAPPING + 1] = k_4
+for k, v in pairs(available_nav_tag_layers) do
+	LAYER_ID_MAPPING[#LAYER_ID_MAPPING + 1] = k
 end
 
 NAV_COST_MAP_LAYER_ID_MAPPING = {}
 
-for k_5, v_5 in pairs(clone_2) do
-	NAV_COST_MAP_LAYER_ID_MAPPING[#NAV_COST_MAP_LAYER_ID_MAPPING + 1] = k_5
+for k, v in pairs(available_nav_cost_map_layers) do
+	NAV_COST_MAP_LAYER_ID_MAPPING[#NAV_COST_MAP_LAYER_ID_MAPPING + 1] = k
 end
 
 fassert(#LAYER_ID_MAPPING < NavTagVolumeStartLayer, "Nav tag volume layers are conflicting with layers used by other systems.")
 
-for i10 = #LAYER_ID_MAPPING + 1, NavTagVolumeStartLayer - 1 do
-	LAYER_ID_MAPPING[i10] = "dummy_layer" .. i10
+for i = #LAYER_ID_MAPPING + 1, NavTagVolumeStartLayer - 1 do
+	LAYER_ID_MAPPING[i] = "dummy_layer" .. i
 end
 
 DEFAULT_NAV_TAG_VOLUME_LAYER_COST_AI = {}
@@ -264,42 +269,58 @@ DEFAULT_NAV_TAG_VOLUME_LAYER_COST_BOTS = {
 
 local NAV_TAG_VOLUME_LAYER_COST_AI = NAV_TAG_VOLUME_LAYER_COST_AI
 
-NAV_TAG_VOLUME_LAYER_COST_AI = NAV_TAG_VOLUME_LAYER_COST_AI or {}
+NAV_TAG_VOLUME_LAYER_COST_AI = not not NAV_TAG_VOLUME_LAYER_COST_AI or not not {}
 NAV_TAG_VOLUME_LAYER_COST_AI = NAV_TAG_VOLUME_LAYER_COST_AI
 
 local NAV_TAG_VOLUME_LAYER_COST_BOTS = NAV_TAG_VOLUME_LAYER_COST_BOTS
 
-NAV_TAG_VOLUME_LAYER_COST_BOTS = NAV_TAG_VOLUME_LAYER_COST_BOTS or {}
+NAV_TAG_VOLUME_LAYER_COST_BOTS = not not NAV_TAG_VOLUME_LAYER_COST_BOTS or not not {}
 NAV_TAG_VOLUME_LAYER_COST_BOTS = NAV_TAG_VOLUME_LAYER_COST_BOTS
 
-for i, v_6 in ipairs(NavTagVolumeLayers) do
-	LAYER_ID_MAPPING[#LAYER_ID_MAPPING + 1] = v_6
+for _, layer_name in ipairs(NavTagVolumeLayers) do
+	LAYER_ID_MAPPING[#LAYER_ID_MAPPING + 1] = layer_name
 
-	local var_0_14 = DEFAULT_NAV_TAG_VOLUME_LAYER_COST_AI[v_6]
+	local var_0_5 = DEFAULT_NAV_TAG_VOLUME_LAYER_COST_AI[layer_name]
 
-	var_0_14 = var_0_14 or 1
+	if not var_0_5 then
+		-- Nothing
+	end
 
-	local var_0_15 = DEFAULT_NAV_TAG_VOLUME_LAYER_COST_BOTS[v_6]
+	var_0_5 = 1
 
-	var_0_15 = var_0_15 or 1
+	local default_cost_ai = var_0_5
+
+	::label_0_0::
+
+	local var_0_6 = DEFAULT_NAV_TAG_VOLUME_LAYER_COST_BOTS[layer_name]
+
+	if not var_0_6 then
+		-- Nothing
+	end
+
+	var_0_6 = 1
+
+	local default_cost_bots = var_0_6
+
+	::label_0_1::
 
 	local NAV_TAG_VOLUME_LAYER_COST_AI_2 = NAV_TAG_VOLUME_LAYER_COST_AI
-	local var_0_17 = NAV_TAG_VOLUME_LAYER_COST_AI[v_6]
+	local var_0_8 = NAV_TAG_VOLUME_LAYER_COST_AI[layer_name]
 
-	var_0_17 = var_0_17 or var_0_14
-	NAV_TAG_VOLUME_LAYER_COST_AI_2[v_6] = var_0_17
+	var_0_8 = not not var_0_8 or not not default_cost_ai
+	NAV_TAG_VOLUME_LAYER_COST_AI_2[layer_name] = var_0_8
 
 	local NAV_TAG_VOLUME_LAYER_COST_BOTS_2 = NAV_TAG_VOLUME_LAYER_COST_BOTS
-	local var_0_19 = NAV_TAG_VOLUME_LAYER_COST_BOTS[v_6]
+	local var_0_10 = NAV_TAG_VOLUME_LAYER_COST_BOTS[layer_name]
 
-	var_0_19 = var_0_19 or var_0_15
-	NAV_TAG_VOLUME_LAYER_COST_BOTS_2[v_6] = var_0_19
+	var_0_10 = not not var_0_10 or not not default_cost_bots
+	NAV_TAG_VOLUME_LAYER_COST_BOTS_2[layer_name] = var_0_10
 end
 
 table.mirror_array_inplace(LAYER_ID_MAPPING)
 table.mirror_array_inplace(NAV_COST_MAP_LAYER_ID_MAPPING)
 
-local tbl_3 = {
+local PerceptionTypes = {
 	perception_pack_master = true,
 	perception_no_seeing = true,
 	perception_all_seeing_boss = true,
@@ -311,7 +332,7 @@ local tbl_3 = {
 	perception_all_seeing = true,
 	perception_rat_ogre = true
 }
-local tbl_4 = {
+local TargetSelectionTypes = {
 	pick_closest_target_with_filter = true,
 	pick_ninja_approach_target = true,
 	pick_chaos_warrior_target_with_weights = true,
@@ -334,84 +355,93 @@ local tbl_4 = {
 	pick_tether_target = true
 }
 
-for k_6, v_7 in pairs(Breeds) do
-	v_7.name = k_6
-	v_7.is_ai = true
+for name, breed in pairs(Breeds) do
+	breed.name = name
+	breed.is_ai = true
 
-	if not v_7.allowed_layers then
-		v_7.allowed_layers = table.clone(tbl)
+	if not breed.allowed_layers then
+		breed.allowed_layers = table.clone(DEFAULT_NAVTAG_LAYERS)
 	end
 
-	if not v_7.nav_cost_map_allowed_layers then
-		v_7.nav_cost_map_allowed_layers = table.clone(tbl_2)
+	if not breed.nav_cost_map_allowed_layers then
+		breed.nav_cost_map_allowed_layers = table.clone(DEFAULT_NAV_COST_MAP_LAYERS)
 	end
 
-	if not (not v_7.perception and tbl_3[v_7.perception]) then
-		error("Bad perception type '" .. v_7.perception .. "' specified in breed .. '" .. v_7.name .. "'.")
+	if breed.perception and not PerceptionTypes[breed.perception] then
+		error("Bad perception type '" .. breed.perception .. "' specified in breed .. '" .. breed.name .. "'.")
 	end
 
-	if not (not v_7.target_selection and tbl_4[v_7.target_selection]) then
-		error("Bad 'target_selection' type '" .. v_7.target_selection .. "' specified in breed .. '" .. v_7.name .. "'.")
+	if breed.target_selection and not TargetSelectionTypes[breed.target_selection] then
+		error("Bad 'target_selection' type '" .. breed.target_selection .. "' specified in breed .. '" .. breed.name .. "'.")
 	end
 
-	if v_7.smart_object_template == nil then
-		v_7.smart_object_template = "fallback"
+	if breed.smart_object_template == nil then
+		breed.smart_object_template = "fallback"
 	end
 
-	if v_7.race == "chaos" then
-		CHAOS[v_7.name] = true
-	elseif v_7.race == "skaven" then
-		SKAVEN[v_7.name] = true
-	elseif v_7.race == "beastmen" then
-		BEASTMEN[v_7.name] = true
-	elseif v_7.race == "undead" then
-		UNDEAD[v_7.name] = true
-	elseif v_7.race == "critter" then
-		CRITTER[v_7.name] = true
-	elseif v_7.race == "dummy" then
+	if breed.race == "chaos" then
+		CHAOS[breed.name] = true
+	elseif breed.race == "skaven" then
+		SKAVEN[breed.name] = true
+	elseif breed.race == "beastmen" then
+		BEASTMEN[breed.name] = true
+	elseif breed.race == "undead" then
+		UNDEAD[breed.name] = true
+	elseif breed.race == "critter" then
+		CRITTER[breed.name] = true
+	elseif breed.race == "dummy" then
 		-- Nothing
-	elseif not v_7.race then
-		error("Bad race type '" .. v_7.race .. "' specified in breed .. '" .. v_7.name .. "'.")
+	elseif breed.race then
+		error("Bad race type '" .. breed.race .. "' specified in breed .. '" .. breed.name .. "'.")
 	else
-		error("Missing 'race' type in breed .. '" .. v_7.name .. "'.")
+		error("Missing 'race' type in breed .. '" .. breed.name .. "'.")
 	end
 
-	if not v_7.elite then
-		ELITES[v_7.name] = true
+	if breed.elite then
+		ELITES[breed.name] = true
 	end
 
-	local status_effect_settings = v_7.status_effect_settings
-	local flag = not status_effect_settings and status_effect_settings.ignored_statuses
+	local status_effect_settings = breed.status_effect_settings
+	local ignored_statuses = not not status_effect_settings and not not status_effect_settings.ignored_statuses
 
-	if not flag then
-		flag[StatusEffectNames.burning_balefire] = flag[StatusEffectNames.burning]
-		flag[StatusEffectNames.burning_balefire_death_critical] = flag[StatusEffectNames.burning_death_critical]
+	if ignored_statuses then
+		ignored_statuses[StatusEffectNames.burning_balefire] = ignored_statuses[StatusEffectNames.burning]
+		ignored_statuses[StatusEffectNames.burning_balefire_death_critical] = ignored_statuses[StatusEffectNames.burning_death_critical]
 	end
 
-	local networked_animation_variables = v_7.networked_animation_variables
+	local anim_variables = breed.networked_animation_variables
 
-	if not networked_animation_variables then
-		local tbl_5 = {}
+	if anim_variables then
+		local compiled = {}
 
-		for i_2, v_8 in ipairs(networked_animation_variables) do
-			local anims = v_8.anims
-			local variables = v_8.variables
+		for _, anim_group in ipairs(anim_variables) do
+			local anims = anim_group.anims
+			local variables = anim_group.variables
 
-			for i17 = 1, #anims do
-				local var_0_28 = anims[i17]
-				local var_0_29 = tbl_5[var_0_28]
+			for anim_i = 1, #anims do
+				local anim_name = anims[anim_i]
+				local var_0_11 = compiled[anim_name]
 
-				var_0_29 = var_0_29 or {}
-				tbl_5[var_0_28] = var_0_29
+				if not var_0_11 then
+					-- Nothing
+				end
 
-				for k_7, v_9 in pairs(variables) do
-					fassert(not var_0_29[k_7], "[Breeds] The variable '%s' for anim '%s' in breed '%s' was already defined in a previous animation group.", k_7, var_0_28, v_7.name)
+				var_0_11 = {}
 
-					var_0_29[k_7] = v_9
+				local compiled_variables = var_0_11
+
+				::label_0_2::
+
+				compiled[anim_name] = compiled_variables
+
+				for variable_name, variable_data in pairs(variables) do
+					fassert(not compiled_variables[variable_name], "[Breeds] The variable '%s' for anim '%s' in breed '%s' was already defined in a previous animation group.", variable_name, anim_name, breed.name)
+
+					compiled_variables[variable_name] = variable_data
 				end
 			end
 		end
 
-		v_7.networked_animation_variables = tbl_5
+		breed.networked_animation_variables = compiled
 	end
 end

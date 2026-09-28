@@ -1,45 +1,53 @@
 -- chunkname: @scripts/managers/achievements/platform_debug.lua
 
-return {
-	init = function (arg_1_0)
+local platform_functions = {
+	init = function (achievement_manager)
 		-- function 1
 		return
 	end,
 	check_version_number = function ()
 		-- function 2
-		local num = Application.time_since_launch() + 1 + math.random() * 2
+		local token = Application.time_since_launch() + 1 + math.random() * 2
 
-		return false, num
+		return false, token
 	end,
-	version_result = function (arg_3_0)
+	version_result = function (token)
 		-- function 3
-		return arg_3_0 < Application.time_since_launch()
+		local time = Application.time_since_launch()
+
+		return token < time
 	end,
-	is_unlocked = function (arg_4_0)
+	is_unlocked = function (template)
 		-- function 4
 		return false
 	end,
-	is_platform_achievement = function (arg_5_0)
+	is_platform_achievement = function (template)
 		-- function 5
 		return false
 	end,
-	verify_platform_unlocked = function (arg_6_0)
+	verify_platform_unlocked = function (template)
 		-- function 6
-		local flag = true
-		local var_6_1
+		local verified = true
+		local token
 
-		return flag, var_6_1
+		return verified, token
 	end,
-	unlock = function (arg_7_0)
+	unlock = function (template)
 		-- function 7
-		return Application.time_since_launch() + 5 + math.random() * 2
+		local token = Application.time_since_launch() + 5 + math.random() * 2
+
+		return token
 	end,
-	unlock_result = function (arg_8_0)
+	unlock_result = function (token)
 		-- function 8
-		return arg_8_0 < Application.time_since_launch()
+		local time = Application.time_since_launch()
+
+		return token < time
 	end,
 	reset = function ()
 		-- function 9
 		return
 	end
 }
+
+return platform_functions

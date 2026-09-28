@@ -1,11 +1,11 @@
 -- chunkname: @scripts/settings/dlcs/celebrate/celebrate_level_settings.lua
 
-local celebrate = DLCSettings.celebrate
+local settings = DLCSettings.celebrate
 
-celebrate.level_settings = "levels/honduras_dlcs/celebrate/level_settings_celebrate"
-celebrate.level_unlock_settings = "levels/honduras_dlcs/celebrate/level_unlock_settings_celebrate"
-celebrate.terror_event_blueprints_filename = "levels/honduras_dlcs/celebrate/terror_events_celebrate"
-celebrate.weighted_random_terror_events = {
+settings.level_settings = "levels/honduras_dlcs/celebrate/level_settings_celebrate"
+settings.level_unlock_settings = "levels/honduras_dlcs/celebrate/level_unlock_settings_celebrate"
+settings.terror_event_blueprints_filename = "levels/honduras_dlcs/celebrate/terror_events_celebrate"
+settings.weighted_random_terror_events = {
 	crawl_gauntlet = {
 		"crawl_gauntlet_01",
 		1,
@@ -27,4 +27,4 @@ celebrate.weighted_random_terror_events = {
 		1
 	}
 }
-celebrate.missions = {}
+settings.missions = {}

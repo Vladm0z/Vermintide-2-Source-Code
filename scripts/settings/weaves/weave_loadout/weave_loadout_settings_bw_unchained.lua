@@ -2,14 +2,14 @@
 
 local WeaveLoadoutSettings = WeaveLoadoutSettings
 
-WeaveLoadoutSettings = WeaveLoadoutSettings or {}
+WeaveLoadoutSettings = not not WeaveLoadoutSettings or not not {}
 WeaveLoadoutSettings = WeaveLoadoutSettings
 
-local str = "bright_wizard"
-local talent_tree_index = CareerSettings.bw_unchained.talent_tree_index
+local profile_name = "bright_wizard"
+local talent_index = CareerSettings.bw_unchained.talent_tree_index
 
 WeaveLoadoutSettings.bw_unchained = {
-	talent_tree = TalentTrees[str][talent_tree_index],
+	talent_tree = TalentTrees[profile_name][talent_index],
 	properties = {},
 	traits = {}
 }

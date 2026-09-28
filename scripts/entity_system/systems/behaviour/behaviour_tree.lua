@@ -199,13 +199,13 @@ DLCUtils.require_list("behaviour_trees_precompiled")
 BehaviorTree = class(BehaviorTree)
 BehaviorTree.types = {}
 
-BehaviorTree.init = function (self, arg_1_1, arg_1_2)
+BehaviorTree.init = function (self, lua_tree_node, name)
 	-- function 1
 	self._root = nil
-	self._name = arg_1_2
+	self._name = name
 	self._action_data = {}
 
-	self:parse_lua_tree(arg_1_1)
+	self:parse_lua_tree(lua_tree_node)
 end
 
 BehaviorTree.action_data = function (self)
@@ -223,57 +223,65 @@ BehaviorTree.name = function (self)
 	return self._name
 end
 
-local num = 1
+local CLASS_NAME = 1
 
-local function fn(self, arg_5_1)
+local function create_btnode_from_lua_node(lua_node, parent_btnode)
 	-- function 5
-	local var_5_0 = self[num]
-	local name = self.name
-	local condition = self.condition
+	local class_name = lua_node[CLASS_NAME]
+	local identifier = lua_node.name
+	local condition = lua_node.condition
 
-	condition = condition or "always_true"
+	if not condition then
+		-- Nothing
+	end
 
-	local enter_hook = self.enter_hook
-	local leave_hook = self.leave_hook
-	local action_data = self.action_data
-	local var_5_6 = rawget(_G, var_5_0)
+	condition = "always_true"
 
-	if not var_5_6 then
-		fassert(false, "BehaviorTree: no class registered named( %q )", tostring(var_5_0))
+	local condition_name = condition
+
+	::label_5_0::
+
+	local enter_hook_name = lua_node.enter_hook
+	local leave_hook_name = lua_node.leave_hook
+	local action_data = lua_node.action_data
+	local class_type = rawget(_G, class_name)
+
+	if not class_type then
+		fassert(false, "BehaviorTree: no class registered named( %q )", tostring(class_name))
 	else
-		return var_5_6:new(name, arg_5_1, condition, enter_hook, leave_hook, self), action_data
+		return class_type:new(identifier, parent_btnode, condition_name, enter_hook_name, leave_hook_name, lua_node), action_data
 	end
 end
 
-BehaviorTree.parse_lua_tree = function (self, arg_6_1)
+BehaviorTree.parse_lua_tree = function (self, lua_root_node)
 	-- function 6
-	self._root = fn(arg_6_1)
+	self._root = create_btnode_from_lua_node(lua_root_node)
 
-	self:parse_lua_node(arg_6_1, self._root)
+	self:parse_lua_node(lua_root_node, self._root)
 end
 
-BehaviorTree.parse_lua_node = function (self, arg_7_1, arg_7_2)
+BehaviorTree.parse_lua_node = function (self, lua_node, parent)
 	-- function 7
-	local count = #arg_7_1
+	local num_children = #lua_node
 
-	for i = 2, count do
-		local var_7_1 = arg_7_1[i]
-		local var_7_2, var_7_3 = fn(var_7_1, arg_7_2)
+	for i = 2, num_children do
+		local child = lua_node[i]
+		local bt_node, action_data = create_btnode_from_lua_node(child, parent)
 
-		if not var_7_3 then
-			self._action_data[var_7_3.name] = var_7_3
+		if action_data then
+			self._action_data[action_data.name] = action_data
 		end
 
-		fassert(var_7_2.name, "Behaviour tree node with parent %q is missing name", arg_7_1.name)
+		fassert(bt_node.name, "Behaviour tree node with parent %q is missing name", lua_node.name)
 
-		if not arg_7_2 then
-			arg_7_2:add_child(var_7_2)
+		if parent then
+			parent:add_child(bt_node)
 		end
 
-		self:parse_lua_node(var_7_1, var_7_2)
+		self:parse_lua_node(child, bt_node)
 	end
 
-	if not arg_7_2.ready then
-		arg_7_2:ready(arg_7_1)
+	if parent.ready then
+		parent:ready(lua_node)
 	end
 end

@@ -1,9 +1,9 @@
 -- chunkname: @scripts/settings/dlcs/cosmetics_2023_q1/cosmetics_2023_q1_common_settings.lua
 
-local cosmetics_2023_q1 = DLCSettings.cosmetics_2023_q1
+local settings = DLCSettings.cosmetics_2023_q1
 
-cosmetics_2023_q1.unlock_settings = {}
-cosmetics_2023_q1.unlock_settings_xb1 = {
+settings.unlock_settings = {}
+settings.unlock_settings_xb1 = {
 	maidenguard_bundle_0003 = {
 		id = "4D365039-3857-305A-C032-4353334E3E00",
 		backend_reward_id = "maidenguard_bundle_0003",
@@ -15,7 +15,7 @@ cosmetics_2023_q1.unlock_settings_xb1 = {
 		class = "UnlockDlc"
 	}
 }
-cosmetics_2023_q1.unlock_settings_ps4 = {
+settings.unlock_settings_ps4 = {
 	CUSA13595_00 = {
 		maidenguard_bundle_0003 = {
 			id = "55c25f1163df4493bb15dad14a910867",

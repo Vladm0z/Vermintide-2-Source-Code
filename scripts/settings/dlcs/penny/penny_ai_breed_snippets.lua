@@ -2,263 +2,290 @@
 
 local AiBreedSnippets = AiBreedSnippets
 
-AiBreedSnippets = AiBreedSnippets or {}
+AiBreedSnippets = not not AiBreedSnippets or not not {}
 AiBreedSnippets = AiBreedSnippets
 
-local function fn(arg_1_0, arg_1_1, arg_1_2, arg_1_3)
+local function check_for_recent_attackers_drachenfels(unit, blackboard, t, ranged_range)
 	-- function 1
-	local flag = arg_1_3 or 100
-	local recent_damages, var_1_2 = ScriptUnit.extension(arg_1_0, "health_system"):recent_damages()
+	local min_retaliation_dist_sqr = not not ranged_range or not not 100
+	local health_extension = ScriptUnit.extension(unit, "health_system")
+	local recent_damages, nr_damages = health_extension:recent_damages()
 
-	if var_1_2 > 0 then
-		local var_1_3 = recent_damages[DamageDataIndex.ATTACKER]
-		local side = arg_1_1.side
-		local var_1_5 = recent_damages[DamageDataIndex.DAMAGE_SOURCE_NAME]
-		local var_1_6 = rawget(ItemMasterList, var_1_5)
-		local flag_2 = not var_1_6 and var_1_6.slot_type == "melee"
+	if nr_damages > 0 then
+		local attacking_unit = recent_damages[DamageDataIndex.ATTACKER]
+		local side = blackboard.side
+		local damage_source = recent_damages[DamageDataIndex.DAMAGE_SOURCE_NAME]
+		local master_list_item = rawget(ItemMasterList, damage_source)
+		local is_melee = not not master_list_item and master_list_item.slot_type == "melee"
 
-		if not Unit.alive(var_1_3) and not side.VALID_ENEMY_TARGETS_PLAYERS_AND_BOTS[var_1_3] then
-			if not (not (flag < Vector3.distance_squared(POSITION_LOOKUP[arg_1_0], POSITION_LOOKUP[var_1_3])) or flag_2) then
-				arg_1_1.recent_attacker_unit = var_1_3
-				arg_1_1.recent_attacker_timer = arg_1_2 + 3
-				arg_1_1.recent_attacker = true
+		if Unit.alive(attacking_unit) and side.VALID_ENEMY_TARGETS_PLAYERS_AND_BOTS[attacking_unit] then
+			local dist_sqr = Vector3.distance_squared(POSITION_LOOKUP[unit], POSITION_LOOKUP[attacking_unit])
 
-				local extension_input = ScriptUnit.extension_input(arg_1_0, "dialogue_system")
-				local alloc_table = FrameTable.alloc_table()
+			if min_retaliation_dist_sqr < dist_sqr and not is_melee then
+				blackboard.recent_attacker_unit = attacking_unit
+				blackboard.recent_attacker_timer = t + 3
+				blackboard.recent_attacker = true
 
-				extension_input:trigger_networked_dialogue_event("ebh_retaliation_missile", alloc_table)
-			elseif not flag_2 then
-				arg_1_1.recent_melee_attacker_unit = var_1_3
-				arg_1_1.recent_melee_attacker_timer = arg_1_2 + 0.35
-				arg_1_1.recent_melee_attacker = true
+				local dialogue_input = ScriptUnit.extension_input(unit, "dialogue_system")
+				local event_data = FrameTable.alloc_table()
+
+				dialogue_input:trigger_networked_dialogue_event("ebh_retaliation_missile", event_data)
+			elseif is_melee then
+				blackboard.recent_melee_attacker_unit = attacking_unit
+				blackboard.recent_melee_attacker_timer = t + 0.35
+				blackboard.recent_melee_attacker = true
 			end
 		end
-	elseif not arg_1_1.recent_attacker then
-		if arg_1_2 > arg_1_1.recent_attacker_timer then
-			arg_1_1.recent_attacker_unit = nil
-			arg_1_1.recent_attacker_timer = math.huge
-			arg_1_1.recent_attacker = false
+	elseif blackboard.recent_attacker then
+		if t > blackboard.recent_attacker_timer then
+			blackboard.recent_attacker_unit = nil
+			blackboard.recent_attacker_timer = math.huge
+			blackboard.recent_attacker = false
 		end
-	elseif not (not arg_1_1.recent_melee_attacker and not (arg_1_2 > arg_1_1.recent_melee_attacker_timer)) then
-		arg_1_1.recent_melee_attacker_unit = nil
-		arg_1_1.recent_melee_attacker_timer = math.huge
-		arg_1_1.recent_melee_attacker = false
+	elseif blackboard.recent_melee_attacker and t > blackboard.recent_melee_attacker_timer then
+		blackboard.recent_melee_attacker_unit = nil
+		blackboard.recent_melee_attacker_timer = math.huge
+		blackboard.recent_melee_attacker = false
 	end
 end
 
-AiBreedSnippets.on_chaos_exalted_sorcerer_drachenfels_spawn = function (arg_2_0, arg_2_1)
+AiBreedSnippets.on_chaos_exalted_sorcerer_drachenfels_spawn = function (unit, blackboard)
 	-- function 2
-	local time = Managers.time:time("game")
-	local breed = arg_2_1.breed
+	local t = Managers.time:time("game")
+	local breed = blackboard.breed
 
-	arg_2_1.next_move_check = 0
-	arg_2_1.max_vortex_units = breed.max_vortex_units
-	arg_2_1.done_casting_timer = 0
-	arg_2_1.spawned_allies_wave = 0
-	arg_2_1.recent_attacker_timer = 0
-	arg_2_1.recent_melee_attacker_timer = 0
-	arg_2_1.health_extension = ScriptUnit.extension(arg_2_0, "health_system")
-	arg_2_1.num_portals_alive = 0
-	arg_2_1.tentacle_portal_units = {}
-	arg_2_1.ring_total_cooldown = 20
-	arg_2_1.charge_total_cooldown = 20
-	arg_2_1.teleport_total_cooldown = 10
-	arg_2_1.ring_cooldown = 0
-	arg_2_1.charge_cooldown = 0
-	arg_2_1.ring_summonings_finished = 0
-	arg_2_1.teleport_cooldown = 0
-	arg_2_1.ready_to_summon = true
-	arg_2_1.surrounding_players = 0
-	arg_2_1.aggro_list = {}
-	arg_2_1.ring_pulse_rate = 0
-	arg_2_1.defensive_phase_duration = 0
-	arg_2_1.defensive_phase_max_duration = 60
+	blackboard.next_move_check = 0
+	blackboard.max_vortex_units = breed.max_vortex_units
+	blackboard.done_casting_timer = 0
+	blackboard.spawned_allies_wave = 0
+	blackboard.recent_attacker_timer = 0
+	blackboard.recent_melee_attacker_timer = 0
+	blackboard.health_extension = ScriptUnit.extension(unit, "health_system")
+	blackboard.num_portals_alive = 0
+	blackboard.tentacle_portal_units = {}
+	blackboard.ring_total_cooldown = 20
+	blackboard.charge_total_cooldown = 20
+	blackboard.teleport_total_cooldown = 10
+	blackboard.ring_cooldown = 0
+	blackboard.charge_cooldown = 0
+	blackboard.ring_summonings_finished = 0
+	blackboard.teleport_cooldown = 0
+	blackboard.ready_to_summon = true
+	blackboard.surrounding_players = 0
+	blackboard.aggro_list = {}
+	blackboard.ring_pulse_rate = 0
+	blackboard.defensive_phase_duration = 0
+	blackboard.defensive_phase_max_duration = 60
 
 	local available_spells = breed.available_spells
-	local tbl = {}
-	local tbl_2 = {}
-	local get_data = World.get_data(arg_2_1.world, "physics_world")
-	local sorcerer_boss_drachenfels_center = Managers.state.conflict.level_analysis.generic_ai_node_units.sorcerer_boss_drachenfels_center
-	local var_2_7
+	local spells, spells_lookup = {}, {}
+	local physics_world = World.get_data(blackboard.world, "physics_world")
+	local level_analysis = Managers.state.conflict.level_analysis
+	local node_units = level_analysis.generic_ai_node_units.sorcerer_boss_drachenfels_center
+	local var_2_0
 
-	if not sorcerer_boss_drachenfels_center then
-		var_2_7 = sorcerer_boss_drachenfels_center[1]
+	if node_units then
+		var_2_0 = node_units[1]
 
-		if not var_2_7 then
+		if not var_2_0 then
 			-- Nothing
 		end
 	end
 
-	var_2_7 = arg_2_0
+	var_2_0 = unit
+
+	local center_unit = var_2_0
 
 	::label_2_0::
 
-	arg_2_1.no_kill_achievement = true
-	arg_2_1.ring_center_position = Vector3Box(Unit.local_position(var_2_7, 0))
-	arg_2_1.spell_count = 0
+	blackboard.no_kill_achievement = true
+	blackboard.ring_center_position = Vector3Box(Unit.local_position(center_unit, 0))
+	blackboard.spell_count = 0
 
-	local tbl_3 = {
-		name = "plague_wave",
-		plague_wave_timer = time + 10,
-		physics_world = get_data,
-		target_starting_pos = Vector3Box(),
-		plague_wave_rot = QuaternionBox(),
-		search_func = BTChaosExaltedSorcererSkulkAction.update_plague_wave
-	}
-
-	arg_2_1.plague_wave_data = tbl_3
-	tbl[#tbl + 1] = tbl_3
-	tbl_2.plague_wave = tbl_3
-
-	local tbl_4 = {
-		range = 40,
-		magic_missile = true,
-		magic_missile_speed = 20,
-		true_flight_template_name = "sorcerer_magic_missile",
-		projectile_unit_name = "units/weapons/projectile/magic_missile/magic_missile",
-		name = "magic_missile",
-		launch_angle = 0.7,
-		search_func = BTChaosExaltedSorcererSkulkAction.update_cast_missile,
-		throw_pos = Vector3Box(),
-		target_direction = Vector3Box()
-	}
-
-	arg_2_1.magic_missile_data = tbl_4
-	tbl[#tbl + 1] = tbl_4
-	tbl_2.magic_missile = tbl_4
-
-	local tbl_5 = {
-		range = 40,
-		magic_missile = true,
-		magic_missile_speed = 15,
-		true_flight_template_name = "sorcerer_strike_missile",
-		projectile_unit_name = "units/weapons/projectile/strike_missile/strike_missile",
-		name = "sorcerer_strike_missile",
-		explosion_template_name = "chaos_strike_missile_impact",
-		launch_angle = 1.25,
-		search_func = BTChaosExaltedSorcererSkulkAction.update_cast_missile,
-		throw_pos = Vector3Box(),
-		target_direction = Vector3Box()
-	}
-
-	arg_2_1.sorcerer_strike_missile_data = tbl_5
-	tbl[#tbl + 1] = tbl_5
-	tbl_2.sorcerer_strike_missile = tbl_5
-
-	local tbl_6 = {
-		range = 40,
-		name = "magic_missile_ground",
-		magic_missile = true,
-		magic_missile_speed = 10,
-		target_ground = true,
-		projectile_unit_name = "units/weapons/projectile/strike_missile_drachenfels/strike_missile_drachenfels",
-		true_flight_template_name = "sorcerer_magic_missile_ground",
-		explosion_template_name = "chaos_drachenfels_strike_missile_impact",
-		search_func = BTChaosExaltedSorcererSkulkAction.update_cast_missile,
-		throw_pos = Vector3Box(),
-		target_direction = Vector3Box()
-	}
-
-	arg_2_1.magic_missile_ground_data = tbl_6
-	tbl[#tbl + 1] = tbl_6
-	tbl_2.magic_missile_ground = tbl_6
-
-	local tbl_7 = {
-		name = "missile_barrage",
-		magic_missile = true,
-		magic_missile_speed = 20,
-		range = 40,
-		search_func = BTChaosExaltedSorcererSkulkAction.update_cast_missile,
-		throw_pos = Vector3Box(),
-		target_direction = Vector3Box()
-	}
-
-	arg_2_1.missile_barrage_data = tbl_7
-	tbl[#tbl + 1] = tbl_7
-	tbl_2.missile_barrage = tbl_7
-
-	local tbl_8 = {
-		range = 40,
-		name = "seeking_bomb_missile",
-		magic_missile = true,
-		magic_missile_speed = 2.5,
-		true_flight_template_name = "sorcerer_slow_bomb_missile",
-		projectile_unit_name = "units/weapons/projectile/insect_swarm_missile_drachenfels/insect_swarm_missile_drachenfels_01",
-		explosion_template_name = "chaos_slow_bomb_missile_new",
-		life_time = 15,
-		search_func = BTChaosExaltedSorcererSkulkAction.update_cast_missile,
-		throw_pos = Vector3Box(),
-		target_direction = Vector3Box(),
-		projectile_size = {
-			3,
-			3,
-			3
+	do
+		local spell = {
+			name = "plague_wave",
+			plague_wave_timer = t + 10,
+			physics_world = physics_world,
+			target_starting_pos = Vector3Box(),
+			plague_wave_rot = QuaternionBox(),
+			search_func = BTChaosExaltedSorcererSkulkAction.update_plague_wave
 		}
-	}
 
-	arg_2_1.seeking_bomb_missile_data = tbl_8
-	tbl[#tbl + 1] = tbl_8
-	tbl_2.seeking_bomb_missile = tbl_8
+		blackboard.plague_wave_data = spell
+		spells[#spells + 1] = spell
+		spells_lookup.plague_wave = spell
+	end
 
-	local tbl_9 = {
-		name = "dummy",
-		search_func = BTChaosExaltedSorcererSkulkAction.update_dummy
-	}
+	do
+		local spell = {
+			range = 40,
+			magic_missile = true,
+			magic_missile_speed = 20,
+			true_flight_template_name = "sorcerer_magic_missile",
+			projectile_unit_name = "units/weapons/projectile/magic_missile/magic_missile",
+			name = "magic_missile",
+			launch_angle = 0.7,
+			search_func = BTChaosExaltedSorcererSkulkAction.update_cast_missile,
+			throw_pos = Vector3Box(),
+			target_direction = Vector3Box()
+		}
 
-	arg_2_1.dummy_data = tbl_9
-	tbl[#tbl + 1] = tbl_9
-	tbl_2.dummy = tbl_9
+		blackboard.magic_missile_data = spell
+		spells[#spells + 1] = spell
+		spells_lookup.magic_missile = spell
+	end
 
-	local _id_lookup = Managers.state.entity:system("spawner_system")._id_lookup
+	do
+		local spell = {
+			range = 40,
+			magic_missile = true,
+			magic_missile_speed = 15,
+			true_flight_template_name = "sorcerer_strike_missile",
+			projectile_unit_name = "units/weapons/projectile/strike_missile/strike_missile",
+			name = "sorcerer_strike_missile",
+			explosion_template_name = "chaos_strike_missile_impact",
+			launch_angle = 1.25,
+			search_func = BTChaosExaltedSorcererSkulkAction.update_cast_missile,
+			throw_pos = Vector3Box(),
+			target_direction = Vector3Box()
+		}
+
+		blackboard.sorcerer_strike_missile_data = spell
+		spells[#spells + 1] = spell
+		spells_lookup.sorcerer_strike_missile = spell
+	end
+
+	do
+		local spell = {
+			range = 40,
+			name = "magic_missile_ground",
+			magic_missile = true,
+			magic_missile_speed = 10,
+			target_ground = true,
+			projectile_unit_name = "units/weapons/projectile/strike_missile_drachenfels/strike_missile_drachenfels",
+			true_flight_template_name = "sorcerer_magic_missile_ground",
+			explosion_template_name = "chaos_drachenfels_strike_missile_impact",
+			search_func = BTChaosExaltedSorcererSkulkAction.update_cast_missile,
+			throw_pos = Vector3Box(),
+			target_direction = Vector3Box()
+		}
+
+		blackboard.magic_missile_ground_data = spell
+		spells[#spells + 1] = spell
+		spells_lookup.magic_missile_ground = spell
+	end
+
+	do
+		local spell = {
+			name = "missile_barrage",
+			magic_missile = true,
+			magic_missile_speed = 20,
+			range = 40,
+			search_func = BTChaosExaltedSorcererSkulkAction.update_cast_missile,
+			throw_pos = Vector3Box(),
+			target_direction = Vector3Box()
+		}
+
+		blackboard.missile_barrage_data = spell
+		spells[#spells + 1] = spell
+		spells_lookup.missile_barrage = spell
+	end
+
+	do
+		local spell = {
+			range = 40,
+			name = "seeking_bomb_missile",
+			magic_missile = true,
+			magic_missile_speed = 2.5,
+			true_flight_template_name = "sorcerer_slow_bomb_missile",
+			projectile_unit_name = "units/weapons/projectile/insect_swarm_missile_drachenfels/insect_swarm_missile_drachenfels_01",
+			explosion_template_name = "chaos_slow_bomb_missile_new",
+			life_time = 15,
+			search_func = BTChaosExaltedSorcererSkulkAction.update_cast_missile,
+			throw_pos = Vector3Box(),
+			target_direction = Vector3Box(),
+			projectile_size = {
+				3,
+				3,
+				3
+			}
+		}
+
+		blackboard.seeking_bomb_missile_data = spell
+		spells[#spells + 1] = spell
+		spells_lookup.seeking_bomb_missile = spell
+	end
+
+	do
+		local spell = {
+			name = "dummy",
+			search_func = BTChaosExaltedSorcererSkulkAction.update_dummy
+		}
+
+		blackboard.dummy_data = spell
+		spells[#spells + 1] = spell
+		spells_lookup.dummy = spell
+	end
+
+	local id_lookup = Managers.state.entity:system("spawner_system")._id_lookup
 	local level_analysis = Managers.state.conflict.level_analysis
-	local sorcerer_boss_drachenfels_center_2 = level_analysis.generic_ai_node_units.sorcerer_boss_drachenfels_center
-	local sorcerer_boss_drachenfels_wall = level_analysis.generic_ai_node_units.sorcerer_boss_drachenfels_wall
+	local center_node_units = level_analysis.generic_ai_node_units.sorcerer_boss_drachenfels_center
+	local wall_node_units = level_analysis.generic_ai_node_units.sorcerer_boss_drachenfels_wall
 
-	if not sorcerer_boss_drachenfels_center_2 and not sorcerer_boss_drachenfels_wall then
+	if center_node_units and wall_node_units then
 		-- Nothing
 	end
 
 	::label_2_2::
 
-	local sorcerer_boss_drachenfels = _id_lookup.sorcerer_boss_drachenfels
+	local sorcerer_boss_drachenfels = id_lookup.sorcerer_boss_drachenfels
 
-	sorcerer_boss_drachenfels = not sorcerer_boss_drachenfels and _id_lookup.sorcerer_boss_drachenfels_minion
+	if sorcerer_boss_drachenfels then
+		-- Nothing
+	end
+
+	sorcerer_boss_drachenfels = id_lookup.sorcerer_boss_drachenfels_minion
+
+	local level_has_boss_arena = sorcerer_boss_drachenfels
 
 	::label_2_3::
 
-	if not sorcerer_boss_drachenfels then
-		local var_2_20 = sorcerer_boss_drachenfels_center_2[1]
+	if level_has_boss_arena then
+		local center_marker = center_node_units[1]
 
-		arg_2_1.in_boss_arena = Vector3.distance(POSITION_LOOKUP[arg_2_0], Unit.local_position(var_2_20, 0)) < 20
+		blackboard.in_boss_arena = Vector3.distance(POSITION_LOOKUP[unit], Unit.local_position(center_marker, 0)) < 20
 	else
-		arg_2_1.in_boss_arena = false
+		blackboard.in_boss_arena = false
 	end
 
-	if not arg_2_1.in_boss_arena then
-		arg_2_1.spawners = {
-			sorcerer_boss_center = sorcerer_boss_drachenfels_center_2
+	if blackboard.in_boss_arena then
+		blackboard.spawners = {
+			sorcerer_boss_center = center_node_units
 		}
-		arg_2_1.mode = "setup"
-		arg_2_1.intro_timer = time + 12.3
+		blackboard.mode = "setup"
+		blackboard.intro_timer = t + 12.3
 
-		local var_2_21 = sorcerer_boss_drachenfels_center_2[1]
-		local num = Unit.local_position(var_2_21, 0) + Vector3(0, 0, 0.75)
-		local local_rotation = Unit.local_rotation(var_2_21, 0)
+		local center_unit = center_node_units[1]
+		local arena_center_pos = Unit.local_position(center_unit, 0) + Vector3(0, 0, 0.75)
+		local arena_rot = Unit.local_rotation(center_unit, 0)
+		local arena_pose_box = Matrix4x4Box(Matrix4x4.from_quaternion_position(arena_rot, arena_center_pos))
 
-		arg_2_1.arena_pose_boxed = Matrix4x4Box(Matrix4x4.from_quaternion_position(local_rotation, num))
-		arg_2_1.arena_half_extents = Vector3Box(12, 12, 1)
+		blackboard.arena_pose_boxed = arena_pose_box
+		blackboard.arena_half_extents = Vector3Box(12, 12, 1)
 
-		arg_2_1.valid_teleport_pos_func = function (arg_3_0, arg_3_1)
+		blackboard.valid_teleport_pos_func = function (pos, blackboard)
 			-- function 3
-			local unbox = arg_3_1.arena_pose_boxed:unbox()
-			local unbox_2 = arg_3_1.arena_half_extents:unbox()
+			local pose = blackboard.arena_pose_boxed:unbox()
+			local half_extents = blackboard.arena_half_extents:unbox()
+			local inside = math.point_is_inside_oobb(pos, pose, half_extents)
 
-			return (math.point_is_inside_oobb(arg_3_0, unbox, unbox_2))
+			return inside
 		end
 	else
-		arg_2_1.phase = "offensive"
+		blackboard.phase = "offensive"
 
-		arg_2_1.valid_teleport_pos_func = function (arg_4_0, arg_4_1)
+		blackboard.valid_teleport_pos_func = function (pos, blackboard)
 			-- function 4
 			return true
 		end
@@ -266,101 +293,107 @@ AiBreedSnippets.on_chaos_exalted_sorcerer_drachenfels_spawn = function (arg_2_0,
 		print("Sorcerer boss not in arena")
 	end
 
-	local PLAYER_AND_BOT_UNITS = Managers.state.side:get_side_from_name("heroes").PLAYER_AND_BOT_UNITS
+	local side = Managers.state.side:get_side_from_name("heroes")
+	local player_units = side.PLAYER_AND_BOT_UNITS
 
-	for k, v in pairs(PLAYER_AND_BOT_UNITS) do
-		ScriptUnit.extension(v, "health_system").is_invincible = true
+	for _, player_unit in pairs(player_units) do
+		local health_extension = ScriptUnit.extension(player_unit, "health_system")
+
+		health_extension.is_invincible = true
 	end
 
-	arg_2_1.spells = tbl
-	arg_2_1.spells_lookup = tbl_2
+	blackboard.spells = spells
+	blackboard.spells_lookup = spells_lookup
 
-	local breed_2 = arg_2_1.breed
-	local system = Managers.state.entity:system("audio_system")
+	local breed = blackboard.breed
+	local audio_system_extension = Managers.state.entity:system("audio_system")
 
-	if not breed_2.teleport_sound_event then
-		system:play_audio_unit_event(breed_2.teleport_sound_event, arg_2_0)
+	if breed.teleport_sound_event then
+		audio_system_extension:play_audio_unit_event(breed.teleport_sound_event, unit)
 	end
 
-	Managers.state.conflict:add_unit_to_bosses(arg_2_0)
+	local conflict_director = Managers.state.conflict
 
-	arg_2_1.is_valid_target_func = GenericStatusExtension.is_lord_target
+	conflict_director:add_unit_to_bosses(unit)
+
+	blackboard.is_valid_target_func = GenericStatusExtension.is_lord_target
 end
 
-local flag = false
+local show_arena_extents = false
 
-AiBreedSnippets.on_chaos_exalted_sorcerer_drachenfels_update = function (arg_5_0, arg_5_1, arg_5_2, arg_5_3)
+AiBreedSnippets.on_chaos_exalted_sorcerer_drachenfels_update = function (unit, blackboard, t, dt)
 	-- function 5
-	fn(arg_5_0, arg_5_1, arg_5_2, 10)
+	check_for_recent_attackers_drachenfels(unit, blackboard, t, 10)
 
-	if not arg_5_1.in_boss_arena then
+	if not blackboard.in_boss_arena then
 		return
 	end
 
-	if not arg_5_1.intro_timer then
+	if blackboard.intro_timer then
 		return
 	end
 
-	local var_5_0 = Managers.state.side.side_by_unit[arg_5_0]
-	local ENEMY_PLAYER_AND_BOT_POSITIONS = var_5_0.ENEMY_PLAYER_AND_BOT_POSITIONS
-	local ENEMY_PLAYER_AND_BOT_UNITS = var_5_0.ENEMY_PLAYER_AND_BOT_UNITS
+	local side = Managers.state.side.side_by_unit[unit]
+	local enemy_player_and_bot_positions = side.ENEMY_PLAYER_AND_BOT_POSITIONS
+	local enemy_player_and_bot_units = side.ENEMY_PLAYER_AND_BOT_UNITS
 	local num = 0
-	local var_5_4 = POSITION_LOOKUP[arg_5_0]
-	local radius = BreedActions.chaos_exalted_sorcerer_drachenfels.retaliation_aoe.radius
+	local self_pos = POSITION_LOOKUP[unit]
+	local range = BreedActions.chaos_exalted_sorcerer_drachenfels.retaliation_aoe.radius
 
-	for i, v in ipairs(ENEMY_PLAYER_AND_BOT_POSITIONS) do
-		local var_5_6 = ENEMY_PLAYER_AND_BOT_UNITS[i]
+	for i, position in ipairs(enemy_player_and_bot_positions) do
+		local player_unit = enemy_player_and_bot_units[i]
 
-		if not (not (radius > Vector3.distance(var_5_4, v)) or ScriptUnit.extension(var_5_6, "status_system"):is_disabled() or ScriptUnit.extension(var_5_6, "status_system"):is_invisible()) then
+		if range > Vector3.distance(self_pos, position) and not ScriptUnit.extension(player_unit, "status_system"):is_disabled() and not ScriptUnit.extension(player_unit, "status_system"):is_invisible() then
 			num = num + 1
 		end
 	end
 
-	arg_5_1.surrounding_players = num
-	arg_5_1.ring_cooldown = math.max(arg_5_1.ring_cooldown - arg_5_3, 0)
-	arg_5_1.charge_cooldown = math.max(arg_5_1.charge_cooldown - arg_5_3, 0)
-	arg_5_1.teleport_cooldown = math.max(arg_5_1.teleport_cooldown - arg_5_3, 0)
-	arg_5_1.defensive_phase_duration = math.max(arg_5_1.defensive_phase_duration - arg_5_3, 0)
+	blackboard.surrounding_players = num
+	blackboard.ring_cooldown = math.max(blackboard.ring_cooldown - dt, 0)
+	blackboard.charge_cooldown = math.max(blackboard.charge_cooldown - dt, 0)
+	blackboard.teleport_cooldown = math.max(blackboard.teleport_cooldown - dt, 0)
+	blackboard.defensive_phase_duration = math.max(blackboard.defensive_phase_duration - dt, 0)
 
-	if not flag then
-		local unbox = arg_5_1.arena_pose_boxed:unbox()
-		local unbox_2 = arg_5_1.arena_half_extents:unbox()
+	if show_arena_extents then
+		local pose = blackboard.arena_pose_boxed:unbox()
+		local half_extents = blackboard.arena_half_extents:unbox()
 
-		QuickDrawer:box(unbox, unbox_2, Color(0, 255, 70))
+		QuickDrawer:box(pose, half_extents, Color(0, 255, 70))
 	end
 
-	if not arg_5_1.missle_bot_threat_unit then
-		local var_5_9 = POSITION_LOOKUP[arg_5_1.missle_bot_threat_unit]
-		local num_2 = 2
-		local num_3 = 1
-		local num_4 = num_3 * 0.5
-		local var_5_13 = Vector3(0, num_2, num_4)
-		local num_5 = var_5_9 - Vector3.up() * num_4
+	if blackboard.missle_bot_threat_unit then
+		local bot_threat_position = POSITION_LOOKUP[blackboard.missle_bot_threat_unit]
+		local radius = 2
+		local height = 1
+		local half_height = height * 0.5
+		local size = Vector3(0, radius, half_height)
 
-		Managers.state.entity:system("ai_bot_group_system"):aoe_threat_created(num_5, "cylinder", var_5_13, nil, 1, "Exalted Sorcerer")
+		bot_threat_position = bot_threat_position - Vector3.up() * half_height
 
-		arg_5_1.missle_bot_threat_unit = nil
+		Managers.state.entity:system("ai_bot_group_system"):aoe_threat_created(bot_threat_position, "cylinder", size, nil, 1, "Exalted Sorcerer")
+
+		blackboard.missle_bot_threat_unit = nil
 	end
 
-	if not (not arg_5_1.third_phase_in_progress and arg_5_1.current_health == 1) then
-		if not (not (arg_5_2 > arg_5_1.ring_pulse_rate) or arg_5_1.ring_damage_effect_time) then
-			local unbox_3 = Vector3Box.unbox(arg_5_1.ring_center_position)
-			local num_6 = 3
+	if blackboard.third_phase_in_progress and blackboard.current_health ~= 1 then
+		if t > blackboard.ring_pulse_rate and not blackboard.ring_damage_effect_time then
+			local origin_pos = Vector3Box.unbox(blackboard.ring_center_position)
+			local premonition_time = 3
 
-			arg_5_1.sorcerer_allow_tricke_spawn = false
+			blackboard.sorcerer_allow_tricke_spawn = false
 
-			Managers.state.network:rpc_play_particle_effect_no_rotation(nil, NetworkLookup.effects["fx/drachenfels_boss_indicator_donut_medium_part_1"], NetworkConstants.invalid_game_object_id, 0, unbox_3, false)
-			Managers.state.network:rpc_play_particle_effect_no_rotation(nil, NetworkLookup.effects["fx/drachenfels_boss_indicator_donut_large_part_1"], NetworkConstants.invalid_game_object_id, 0, unbox_3, false)
+			Managers.state.network:rpc_play_particle_effect_no_rotation(nil, NetworkLookup.effects["fx/drachenfels_boss_indicator_donut_medium_part_1"], NetworkConstants.invalid_game_object_id, 0, origin_pos, false)
+			Managers.state.network:rpc_play_particle_effect_no_rotation(nil, NetworkLookup.effects["fx/drachenfels_boss_indicator_donut_large_part_1"], NetworkConstants.invalid_game_object_id, 0, origin_pos, false)
 
-			arg_5_1.ring_damage_effect_time = arg_5_2 + num_6 - 0.75
-		elseif not (not arg_5_1.ring_damage_effect_time and not (arg_5_2 >= arg_5_1.ring_damage_effect_time)) then
-			local system = Managers.state.entity:system("audio_system")
-			local unbox_4 = Vector3Box.unbox(arg_5_1.ring_center_position)
-			local num_7 = 8
-			local num_8 = 15
-			local num_9 = num_7 * num_7
-			local num_10 = num_8 * num_8
-			local tbl = {
+			blackboard.ring_damage_effect_time = t + premonition_time - 0.75
+		elseif blackboard.ring_damage_effect_time and t >= blackboard.ring_damage_effect_time then
+			local audio_system = Managers.state.entity:system("audio_system")
+			local origin_pos = Vector3Box.unbox(blackboard.ring_center_position)
+			local inner_radius = 8
+			local outer_radius = 15
+			local inner_squared = inner_radius * inner_radius
+			local outer_squared = outer_radius * outer_radius
+			local power_level = {
 				harder = 100,
 				hard = 75,
 				normal = 50,
@@ -371,118 +404,139 @@ AiBreedSnippets.on_chaos_exalted_sorcerer_drachenfels_update = function (arg_5_0
 				easy = 50
 			}
 
-			Managers.state.network:rpc_play_particle_effect_no_rotation(nil, NetworkLookup.effects["fx/drachenfels_boss_indicator_donut_medium_part_2"], NetworkConstants.invalid_game_object_id, 0, unbox_4, false)
-			Managers.state.network:rpc_play_particle_effect_no_rotation(nil, NetworkLookup.effects["fx/drachenfels_boss_indicator_donut_large_part_2"], NetworkConstants.invalid_game_object_id, 0, unbox_4, false)
-			system:play_audio_position_event("Play_sorcerer_boss_special_ability_burn", unbox_4)
+			Managers.state.network:rpc_play_particle_effect_no_rotation(nil, NetworkLookup.effects["fx/drachenfels_boss_indicator_donut_medium_part_2"], NetworkConstants.invalid_game_object_id, 0, origin_pos, false)
+			Managers.state.network:rpc_play_particle_effect_no_rotation(nil, NetworkLookup.effects["fx/drachenfels_boss_indicator_donut_large_part_2"], NetworkConstants.invalid_game_object_id, 0, origin_pos, false)
+			audio_system:play_audio_position_event("Play_sorcerer_boss_special_ability_burn", origin_pos)
 
-			local tbl_2 = {}
-			local var_5_25 = ENEMY_PLAYER_AND_BOT_UNITS
-			local num_11 = 7
+			local nearby_ais = {}
+			local player_units = enemy_player_and_bot_units
+			local catapult_strength = 7
 
-			AiUtils.broadphase_query(unbox_4, num_8, tbl_2)
+			AiUtils.broadphase_query(origin_pos, outer_radius, nearby_ais)
 
-			for i_2, v_2 in ipairs(tbl_2) do
-				local var_5_27 = POSITION_LOOKUP[v_2]
+			for _, hit_unit in ipairs(nearby_ais) do
+				local position = POSITION_LOOKUP[hit_unit]
+				local distance_squared = Vector3.distance_squared(position, origin_pos)
 
-				if not (not (num_9 < Vector3.distance_squared(var_5_27, unbox_4)) or v_2 == arg_5_0) then
-					local str = "frag_grenade"
-					local var_5_29 = DamageProfileTemplates[str]
-					local var_5_30 = tbl[Managers.state.difficulty:get_difficulty()]
+				if inner_squared < distance_squared and hit_unit ~= unit then
+					local damage_profile_name = "frag_grenade"
+					local damage_profile = DamageProfileTemplates[damage_profile_name]
+					local difficulty_rank = Managers.state.difficulty:get_difficulty()
+					local actual_power_level = power_level[difficulty_rank]
 
-					DamageUtils.add_damage_network_player(var_5_29, nil, var_5_30, v_2, arg_5_0, "torso", POSITION_LOOKUP[v_2], Vector3.up(), "undefined")
+					DamageUtils.add_damage_network_player(damage_profile, nil, actual_power_level, hit_unit, unit, "torso", POSITION_LOOKUP[hit_unit], Vector3.up(), "undefined")
 				end
 			end
 
-			for i_3, v_3 in ipairs(var_5_25) do
-				local var_5_31 = POSITION_LOOKUP[v_3]
-				local distance_squared = Vector3.distance_squared(var_5_31, unbox_4)
-				local num_12
+			for _, player_unit in ipairs(player_units) do
+				local position = POSITION_LOOKUP[player_unit]
+				local distance_squared = Vector3.distance_squared(position, origin_pos)
+				local catapult_direction = "in"
+				local num_2
 
-				if "in" == "in" then
-					num_12 = unbox_4 - var_5_31
+				if catapult_direction == "in" then
+					num_2 = origin_pos - position
 
-					if not num_12 then
+					if not num_2 then
 						-- Nothing
 					end
 				end
 
-				num_12 = var_5_31 - unbox_4
+				num_2 = position - origin_pos
+
+				local direction = num_2
 
 				::label_5_0::
 
-				local normalize = Vector3.normalize(num_12)
+				direction = Vector3.normalize(direction)
 
-				if not (not (distance_squared < num_10) or not (num_9 < distance_squared)) then
-					local str_2 = "frag_grenade"
-					local var_5_36 = DamageProfileTemplates[str_2]
-					local get_difficulty = Managers.state.difficulty:get_difficulty()
-					local owner = Managers.player:owner(v_3)
-					local flag_2
+				if distance_squared < outer_squared and inner_squared < distance_squared then
+					local damage_profile_name = "frag_grenade"
+					local damage_profile = DamageProfileTemplates[damage_profile_name]
+					local difficulty_rank = Managers.state.difficulty:get_difficulty()
+					local player = Managers.player:owner(player_unit)
+					local is_bot = not not player and not not not player:is_player_controlled()
+					local num_3
 
-					flag_2 = not (not owner and not owner:is_player_controlled()) and 0 and tbl[get_difficulty]
+					if is_bot then
+						num_3 = 0
 
-					DamageUtils.add_damage_network_player(var_5_36, nil, flag_2, v_3, arg_5_0, "torso", POSITION_LOOKUP[v_3], Vector3.up(), "undefined")
-
-					if not num_11 then
-						StatusUtils.set_catapulted_network(v_3, true, (normalize + Vector3.up()) * num_11)
+						goto label_5_1
 					end
 
-					arg_5_1.hit_by_eruptions = true
+					num_3 = power_level[difficulty_rank]
+
+					local actual_power_level = num_3
+
+					::label_5_1::
+
+					DamageUtils.add_damage_network_player(damage_profile, nil, actual_power_level, player_unit, unit, "torso", POSITION_LOOKUP[player_unit], Vector3.up(), "undefined")
+
+					if catapult_strength then
+						StatusUtils.set_catapulted_network(player_unit, true, (direction + Vector3.up()) * catapult_strength)
+					end
+
+					blackboard.hit_by_eruptions = true
 				end
 			end
 
-			arg_5_1.ring_damage_effect_time = nil
-			arg_5_1.ring_pulse_rate = arg_5_2 + 8
-			arg_5_1.sorcerer_allow_tricke_spawn = true
+			blackboard.ring_damage_effect_time = nil
+			blackboard.ring_pulse_rate = t + 8
+			blackboard.sorcerer_allow_tricke_spawn = true
 		end
 	end
 end
 
-AiBreedSnippets.on_chaos_exalted_sorcerer_drachenfels_death = function (arg_6_0, arg_6_1)
+AiBreedSnippets.on_chaos_exalted_sorcerer_drachenfels_death = function (unit, blackboard)
 	-- function 6
-	local conflict = Managers.state.conflict
+	local conflict_director = Managers.state.conflict
 
-	conflict:remove_unit_from_bosses(arg_6_0)
-	Managers.state.entity:system("audio_system"):play_audio_unit_event("Play_sorcerer_boss_fly_stop", arg_6_0)
+	conflict_director:remove_unit_from_bosses(unit)
+
+	local audio_system = Managers.state.entity:system("audio_system")
+
+	audio_system:play_audio_unit_event("Play_sorcerer_boss_fly_stop", unit)
 
 	local statistics_db = Managers.player:statistics_db()
 
-	if not arg_6_1.no_kill_achievement then
-		local str = "penny_castle_no_kill"
-		local var_6_3 = NetworkLookup.statistics[str]
-		local stats_id = Managers.player:local_player():stats_id()
+	if blackboard.no_kill_achievement then
+		local stat_name = "penny_castle_no_kill"
+		local stat_name_index = NetworkLookup.statistics[stat_name]
+		local local_player = Managers.player:local_player()
+		local stats_id = local_player:stats_id()
 
-		statistics_db:increment_stat(stats_id, str)
-		Managers.state.network.network_transmit:send_rpc_clients("rpc_increment_stat", var_6_3)
+		statistics_db:increment_stat(stats_id, stat_name)
+		Managers.state.network.network_transmit:send_rpc_clients("rpc_increment_stat", stat_name_index)
 	end
 
-	if not arg_6_1.hit_by_eruptions then
-		local str_2 = "penny_castle_eruptions"
-		local var_6_6 = NetworkLookup.statistics[str_2]
-		local stats_id_2 = Managers.player:local_player():stats_id()
+	if not blackboard.hit_by_eruptions then
+		local stat_name = "penny_castle_eruptions"
+		local stat_name_index = NetworkLookup.statistics[stat_name]
+		local local_player = Managers.player:local_player()
+		local stats_id = local_player:stats_id()
 
-		statistics_db:increment_stat(stats_id_2, str_2)
-		Managers.state.network.network_transmit:send_rpc_clients("rpc_increment_stat", var_6_6)
+		statistics_db:increment_stat(stats_id, stat_name)
+		Managers.state.network.network_transmit:send_rpc_clients("rpc_increment_stat", stat_name_index)
 	end
 
-	local time = Managers.time:time("game")
+	local t = Managers.time:time("game")
 
-	Managers.state.conflict.specials_pacing:delay_spawning(time, 120, 20, true)
+	Managers.state.conflict.specials_pacing:delay_spawning(t, 120, 20, true)
 
-	if not arg_6_1.is_angry then
-		conflict:add_angry_boss(-1)
+	if blackboard.is_angry then
+		conflict_director:add_angry_boss(-1)
 	end
 
 	AiBreedSnippets.drop_loot(4, Vector3(14.959, 383.806, 31.202), true)
 end
 
-AiBreedSnippets.on_chaos_exalted_sorcerer_drachenfels_despawn = function (arg_7_0, arg_7_1)
+AiBreedSnippets.on_chaos_exalted_sorcerer_drachenfels_despawn = function (unit, blackboard)
 	-- function 7
-	local conflict = Managers.state.conflict
+	local conflict_director = Managers.state.conflict
 
-	conflict:remove_unit_from_bosses(arg_7_0)
+	conflict_director:remove_unit_from_bosses(unit)
 
-	if not arg_7_1.is_angry then
-		conflict:add_angry_boss(-1)
+	if blackboard.is_angry then
+		conflict_director:add_angry_boss(-1)
 	end
 end

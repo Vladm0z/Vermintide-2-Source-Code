@@ -3,25 +3,25 @@
 require("scripts/ui/views/menu_world_previewer")
 require("scripts/helpers/weave_utils")
 
-local var_0_0 = local_require("scripts/ui/views/hero_view/windows/definitions/hero_window_weave_forge_panel_definitions")
-local top_widgets = var_0_0.top_widgets
-local bottom_widgets = var_0_0.bottom_widgets
-local bottom_hdr_widgets = var_0_0.bottom_hdr_widgets
-local scenegraph_definition = var_0_0.scenegraph_definition
-local animation_definitions = var_0_0.animation_definitions
-local flag = false
+local definitions = local_require("scripts/ui/views/hero_view/windows/definitions/hero_window_weave_forge_panel_definitions")
+local top_widget_definitions = definitions.top_widgets
+local bottom_widget_definitions = definitions.bottom_widgets
+local bottom_hdr_widget_definitions = definitions.bottom_hdr_widgets
+local scenegraph_definition = definitions.scenegraph_definition
+local animation_definitions = definitions.animation_definitions
+local DO_RELOAD = false
 
 HeroWindowWeaveForgePanel = class(HeroWindowWeaveForgePanel)
 HeroWindowWeaveForgePanel.NAME = "HeroWindowWeaveForgePanel"
 
-HeroWindowWeaveForgePanel.on_enter = function (self, arg_1_1, arg_1_2)
+HeroWindowWeaveForgePanel.on_enter = function (self, params, offset)
 	-- function 1
 	print("[HeroViewWindow] Enter Substate HeroWindowWeaveForgePanel")
 
-	self._params = arg_1_1
-	self._parent = arg_1_1.parent
+	self._params = params
+	self._parent = params.parent
 
-	local ingame_ui_context = arg_1_1.ingame_ui_context
+	local ingame_ui_context = params.ingame_ui_context
 
 	self._wwise_world = ingame_ui_context.wwise_world
 	self._ui_renderer = ingame_ui_context.ui_renderer
@@ -32,100 +32,104 @@ HeroWindowWeaveForgePanel.on_enter = function (self, arg_1_1, arg_1_2)
 	}
 	self._ingame_ui_context = ingame_ui_context
 
-	local input = Managers.input
-	local tbl = {
+	local input_manager = Managers.input
+	local reward_params = {
 		wwise_world = self._wwise_world,
 		ui_renderer = self._ui_renderer,
 		ui_top_renderer = self._ui_top_renderer,
-		input_manager = input
+		input_manager = input_manager
 	}
 
 	self._animations = {}
 	self._ui_animations = {}
 
-	self:create_ui_elements(arg_1_1, arg_1_2)
+	self:create_ui_elements(params, offset)
 
-	local hero_name = arg_1_1.hero_name
-	local career_index = arg_1_1.career_index
-	local profile_index = arg_1_1.profile_index
+	local hero_name = params.hero_name
+	local career_index = params.career_index
+	local profile_index = params.profile_index
+	local profile = SPProfiles[profile_index]
+	local careers = profile.careers
+	local career = careers[career_index]
+	local career_name = career.name
 
-	self._career_name = SPProfiles[profile_index].careers[career_index].name
+	self._career_name = career_name
 	self._hero_name = hero_name
 end
 
-HeroWindowWeaveForgePanel._start_transition_animation = function (self, arg_2_1, arg_2_2)
+HeroWindowWeaveForgePanel._start_transition_animation = function (self, key, animation_name)
 	-- function 2
-	local tbl = {
+	local params = {
 		wwise_world = self._wwise_world,
 		render_settings = self._render_settings
 	}
-	local _widgets_by_name = self._widgets_by_name
-	local start_animation = self._ui_animator:start_animation(arg_2_2, _widgets_by_name, scenegraph_definition, tbl)
+	local widgets = self._widgets_by_name
+	local anim_id = self._ui_animator:start_animation(animation_name, widgets, scenegraph_definition, params)
 
-	self._animations[arg_2_1] = start_animation
+	self._animations[key] = anim_id
 end
 
 HeroWindowWeaveForgePanel._setup_definitions = function (self)
 	-- function 3
-	if not self._parent:gamepad_style_active() then
-		var_0_0 = dofile("scripts/ui/views/hero_view/windows/definitions/hero_window_weave_forge_panel_console_definitions")
+	if self._parent:gamepad_style_active() then
+		definitions = dofile("scripts/ui/views/hero_view/windows/definitions/hero_window_weave_forge_panel_console_definitions")
 	else
-		var_0_0 = dofile("scripts/ui/views/hero_view/windows/definitions/hero_window_weave_forge_panel_definitions")
+		definitions = dofile("scripts/ui/views/hero_view/windows/definitions/hero_window_weave_forge_panel_definitions")
 	end
 
-	top_widgets = var_0_0.top_widgets
-	bottom_widgets = var_0_0.bottom_widgets
-	bottom_hdr_widgets = var_0_0.bottom_hdr_widgets
-	scenegraph_definition = var_0_0.scenegraph_definition
-	animation_definitions = var_0_0.animation_definitions
+	top_widget_definitions = definitions.top_widgets
+	bottom_widget_definitions = definitions.bottom_widgets
+	bottom_hdr_widget_definitions = definitions.bottom_hdr_widgets
+	scenegraph_definition = definitions.scenegraph_definition
+	animation_definitions = definitions.animation_definitions
 end
 
-HeroWindowWeaveForgePanel.create_ui_elements = function (self, arg_4_1, arg_4_2)
+HeroWindowWeaveForgePanel.create_ui_elements = function (self, params, offset)
 	-- function 4
 	self:_setup_definitions()
 
 	self._ui_scenegraph = UISceneGraph.init_scenegraph(scenegraph_definition)
 
-	local tbl = {}
-	local tbl_2 = {}
+	local widgets_by_name = {}
+	local top_widgets = {}
 
-	for k, v in pairs(top_widgets) do
-		local var_4_2 = UIWidget.init(v)
+	for name, widget_definition in pairs(top_widget_definitions) do
+		local widget = UIWidget.init(widget_definition)
 
-		tbl_2[#tbl_2 + 1] = var_4_2
-		tbl[k] = var_4_2
+		top_widgets[#top_widgets + 1] = widget
+		widgets_by_name[name] = widget
 	end
 
-	local tbl_3 = {}
+	local bottom_widgets = {}
 
-	for k_2, v_2 in pairs(bottom_widgets) do
-		local var_4_4 = UIWidget.init(v_2)
+	for name, widget_definition in pairs(bottom_widget_definitions) do
+		local widget = UIWidget.init(widget_definition)
 
-		tbl_3[#tbl_3 + 1] = var_4_4
-		tbl[k_2] = var_4_4
+		bottom_widgets[#bottom_widgets + 1] = widget
+		widgets_by_name[name] = widget
 	end
 
-	local tbl_4 = {}
+	local bottom_hdr_widgets = {}
 
-	for k_3, v_3 in pairs(bottom_hdr_widgets) do
-		local var_4_6 = UIWidget.init(v_3)
+	for name, widget_definition in pairs(bottom_hdr_widget_definitions) do
+		local widget = UIWidget.init(widget_definition)
 
-		tbl_4[#tbl_4 + 1] = var_4_6
-		tbl[k_3] = var_4_6
+		bottom_hdr_widgets[#bottom_hdr_widgets + 1] = widget
+		widgets_by_name[name] = widget
 	end
 
-	self._top_widgets = tbl_2
-	self._bottom_widgets = tbl_3
-	self._bottom_hdr_widgets = tbl_4
-	self._widgets_by_name = tbl
+	self._top_widgets = top_widgets
+	self._bottom_widgets = bottom_widgets
+	self._bottom_hdr_widgets = bottom_hdr_widgets
+	self._widgets_by_name = widgets_by_name
 	self._ui_animator = UIAnimator:new(self._ui_scenegraph, animation_definitions)
 
-	if not arg_4_2 then
-		local local_position = self._ui_scenegraph.window.local_position
+	if offset then
+		local window_position = self._ui_scenegraph.window.local_position
 
-		local_position[1] = local_position[1] + arg_4_2[1]
-		local_position[2] = local_position[2] + arg_4_2[2]
-		local_position[3] = local_position[3] + arg_4_2[3]
+		window_position[1] = window_position[1] + offset[1]
+		window_position[2] = window_position[2] + offset[2]
+		window_position[3] = window_position[3] + offset[3]
 	end
 
 	self:_setup_essence_tooltip()
@@ -134,374 +138,399 @@ end
 
 HeroWindowWeaveForgePanel._setup_essence_tooltip = function (self)
 	-- function 5
-	local _top_widgets = self._top_widgets
-	local _widgets_by_name = self._widgets_by_name
-	local comma_value = UIUtils.comma_value(0)
-	local comma_value_2 = UIUtils.comma_value(0)
-	local format = string.format(Localize("menu_weave_forge_tooltip_essence_description_total"), comma_value, comma_value_2)
-	local str = "essence_panel"
-	local size = scenegraph_definition[str].size
-	local tbl = {
+	local top_widgets = self._top_widgets
+	local widgets_by_name = self._widgets_by_name
+	local value_string_gained = UIUtils.comma_value(0)
+	local value_string_cap = UIUtils.comma_value(0)
+	local essence_total_gained_text = string.format(Localize("menu_weave_forge_tooltip_essence_description_total"), value_string_gained, value_string_cap)
+	local scenegraph_id = "essence_panel"
+	local size = scenegraph_definition[scenegraph_id].size
+	local content_passes = {
 		"weave_progression_slot_titles"
 	}
-	local tbl_2 = {
+	local content_data = {
 		title = Localize("menu_weave_forge_tooltip_essence_title"),
 		description = Localize("menu_weave_forge_tooltip_essence_description"),
 		divider_description = Localize("menu_weave_forge_tooltip_essence_description_base_game"),
 		essence_title = Localize("menu_weave_forge_tooltip_essence_description_total_title"),
-		input_highlight = format
+		input_highlight = essence_total_gained_text
 	}
-	local num = 400
-	local flag = true
-	local var_5_11
-	local var_5_12
-	local tbl_3 = {
+	local max_width = 400
+	local grow_downwards = true
+	local horizontal_alignment, vertical_alignment
+	local offset = {
 		96,
 		0,
 		0
 	}
-	local create_additional_option_tooltip = UIWidgets.create_additional_option_tooltip(str, size, tbl, tbl_2, num, var_5_11, var_5_12, flag, tbl_3)
-	local var_5_15 = UIWidget.init(create_additional_option_tooltip)
+	local widget_definition = UIWidgets.create_additional_option_tooltip(scenegraph_id, size, content_passes, content_data, max_width, horizontal_alignment, vertical_alignment, grow_downwards, offset)
+	local widget = UIWidget.init(widget_definition)
 
-	_top_widgets[#_top_widgets + 1] = var_5_15
-	_widgets_by_name.essence_tooltip = var_5_15
+	top_widgets[#top_widgets + 1] = widget
+	widgets_by_name.essence_tooltip = widget
 end
 
-HeroWindowWeaveForgePanel._set_essence_tooltip_amounts = function (self, arg_6_1, arg_6_2)
+HeroWindowWeaveForgePanel._set_essence_tooltip_amounts = function (self, total_essence, maximum_essence)
 	-- function 6
-	local tooltip = self._widgets_by_name.essence_tooltip.content.tooltip
-	local comma_value = UIUtils.comma_value(arg_6_1)
-	local comma_value_2 = UIUtils.comma_value(arg_6_2)
-	local format = string.format(Localize("menu_weave_forge_tooltip_essence_description_total"), comma_value, comma_value_2)
+	local widgets_by_name = self._widgets_by_name
+	local widget = widgets_by_name.essence_tooltip
+	local content = widget.content
+	local tooltip = content.tooltip
+	local value_string_gained = UIUtils.comma_value(total_essence)
+	local value_string_cap = UIUtils.comma_value(maximum_essence)
+	local essence_total_gained_text = string.format(Localize("menu_weave_forge_tooltip_essence_description_total"), value_string_gained, value_string_cap)
 
 	tooltip.title = Localize("menu_weave_forge_tooltip_essence_title")
 	tooltip.description = Localize("menu_weave_forge_tooltip_essence_description")
 	tooltip.divider_description = Localize("menu_weave_forge_tooltip_essence_description_base_game")
 	tooltip.essence_title = Localize("menu_weave_forge_tooltip_essence_description_total_title")
-	tooltip.input_highlight = format
+	tooltip.input_highlight = essence_total_gained_text
 end
 
-HeroWindowWeaveForgePanel.on_exit = function (self, arg_7_1)
+HeroWindowWeaveForgePanel.on_exit = function (self, params)
 	-- function 7
 	print("[HeroViewWindow] Exit Substate HeroWindowWeaveForgePanel")
 
 	self._ui_animator = nil
 
 	local world = Managers.world:world("level_world")
-	local current_level = LevelHelper:current_level(world)
+	local level = LevelHelper:current_level(world)
 
-	Level.trigger_event(current_level, "lua_keep_vom_magic_forge_on_exit")
+	Level.trigger_event(level, "lua_keep_vom_magic_forge_on_exit")
 end
 
-HeroWindowWeaveForgePanel._set_loadout_power = function (arg_8_0, arg_8_1)
+HeroWindowWeaveForgePanel._set_loadout_power = function (self, power)
 	-- function 8
-	arg_8_0._widgets_by_name.loadout_power_text.content.text = arg_8_1
+	local widgets_by_name = self._widgets_by_name
+	local widget_text = widgets_by_name.loadout_power_text
+
+	widget_text.content.text = power
 end
 
-HeroWindowWeaveForgePanel._set_essence_amount = function (self, arg_9_1)
+HeroWindowWeaveForgePanel._set_essence_amount = function (self, essence_amount)
 	-- function 9
-	local _widgets_by_name = self._widgets_by_name
-	local essence_text = _widgets_by_name.essence_text
-	local essence_icon = _widgets_by_name.essence_icon
-	local comma_value = UIUtils.comma_value(arg_9_1)
+	local widgets_by_name = self._widgets_by_name
+	local widget_text = widgets_by_name.essence_text
+	local widget_icon = widgets_by_name.essence_icon
+	local value_string = UIUtils.comma_value(essence_amount)
 
-	essence_text.content.text = comma_value
+	widget_text.content.text = value_string
 
-	local _ui_top_renderer = self._ui_top_renderer
-	local get_text_width = UIUtils.get_text_width(_ui_top_renderer, essence_text.style.text, comma_value)
-	local var_9_6 = UIAtlasHelper.get_atlas_settings_by_texture_name(essence_icon.content.texture_id).size[1]
-	local num = 0
-	local num_2 = var_9_6 + get_text_width + num
+	local ui_renderer = self._ui_top_renderer
+	local text_width = UIUtils.get_text_width(ui_renderer, widget_text.style.text, value_string)
+	local icon_texture_settings = UIAtlasHelper.get_atlas_settings_by_texture_name(widget_icon.content.texture_id)
+	local icon_size = icon_texture_settings.size
+	local icon_width = icon_size[1]
+	local spacing = 0
+	local total_width = icon_width + text_width + spacing
 
-	essence_icon.offset[1] = -(num_2 / 2 - var_9_6 / 2 + 5)
-	essence_text.offset[1] = essence_icon.offset[1] + var_9_6 / 2 + get_text_width / 2 + num
+	widget_icon.offset[1] = -(total_width / 2 - icon_width / 2 + 5)
+	widget_text.offset[1] = widget_icon.offset[1] + icon_width / 2 + text_width / 2 + spacing
 
-	return comma_value
+	return value_string
 end
 
 HeroWindowWeaveForgePanel._sync_backend_loadout = function (self)
 	-- function 10
-	local _career_name = self._career_name
-	local get_interface = Managers.backend:get_interface("weaves")
-	local get_essence = get_interface:get_essence()
-	local get_maximum_essence = get_interface:get_maximum_essence()
-	local get_total_essence = get_interface:get_total_essence()
+	local career_name = self._career_name
+	local backend_manger = Managers.backend
+	local backend_interface_weaves = backend_manger:get_interface("weaves")
+	local essence_amount = backend_interface_weaves:get_essence()
+	local maximum_essence = backend_interface_weaves:get_maximum_essence()
+	local total_essence = backend_interface_weaves:get_total_essence()
 
-	self._current_essence_amount = get_essence
-	self._essence_value_string = self:_set_essence_amount(math.min(get_essence, get_maximum_essence))
+	self._current_essence_amount = essence_amount
+	self._essence_value_string = self:_set_essence_amount(math.min(essence_amount, maximum_essence))
 
-	self:_set_essence_tooltip_amounts(math.min(get_total_essence, get_maximum_essence), get_maximum_essence)
+	self:_set_essence_tooltip_amounts(math.min(total_essence, maximum_essence), maximum_essence)
 
-	local get_average_power_level = get_interface:get_average_power_level(_career_name)
-	local presentable_hero_power_level_weaves = UIUtils.presentable_hero_power_level_weaves(get_average_power_level)
+	local average_power_level = backend_interface_weaves:get_average_power_level(career_name)
 
-	self:_set_loadout_power(presentable_hero_power_level_weaves)
+	average_power_level = UIUtils.presentable_hero_power_level_weaves(average_power_level)
+
+	self:_set_loadout_power(average_power_level)
 end
 
-HeroWindowWeaveForgePanel._is_button_pressed = function (arg_11_0, arg_11_1)
+HeroWindowWeaveForgePanel._is_button_pressed = function (self, widget)
 	-- function 11
-	local button_hotspot = arg_11_1.content.button_hotspot
+	local content = widget.content
+	local hotspot = content.button_hotspot
 
-	if not button_hotspot.on_release then
-		button_hotspot.on_release = false
+	if hotspot.on_release then
+		hotspot.on_release = false
 
-		if not button_hotspot.is_selected then
+		if not hotspot.is_selected then
 			return true
 		end
 	end
 end
 
-HeroWindowWeaveForgePanel._handle_input = function (arg_12_0, arg_12_1, arg_12_2)
+HeroWindowWeaveForgePanel._handle_input = function (self, dt, t)
 	-- function 12
 	return
 end
 
-HeroWindowWeaveForgePanel._play_sound = function (self, arg_13_1)
+HeroWindowWeaveForgePanel._play_sound = function (self, event)
 	-- function 13
-	self._parent:play_sound(arg_13_1)
+	self._parent:play_sound(event)
 end
 
-HeroWindowWeaveForgePanel.update = function (self, arg_14_1, arg_14_2)
+HeroWindowWeaveForgePanel.update = function (self, dt, t)
 	-- function 14
-	if not flag then
-		flag = false
+	if DO_RELOAD then
+		DO_RELOAD = false
 
 		self:create_ui_elements()
 	end
 
-	local get_essence = Managers.backend:get_interface("weaves"):get_essence()
-	local get_selected_layout_name = self._parent:get_selected_layout_name()
+	local backend_manger = Managers.backend
+	local backend_interface_weaves = backend_manger:get_interface("weaves")
+	local essence_amount = backend_interface_weaves:get_essence()
+	local parent = self._parent
+	local selected_layout_name = parent:get_selected_layout_name()
 
-	if not (get_selected_layout_name ~= self._selected_layout_name or get_essence == self._current_essence_amount) then
-		self:_sync_component_visibilty_by_layout(get_selected_layout_name)
+	if selected_layout_name ~= self._selected_layout_name or essence_amount ~= self._current_essence_amount then
+		self:_sync_component_visibilty_by_layout(selected_layout_name)
 
-		self._selected_layout_name = get_selected_layout_name
+		self._selected_layout_name = selected_layout_name
 
 		self:_sync_backend_loadout()
 	end
 
-	self:_handle_input(arg_14_1, arg_14_2)
-	self:_update_animations(arg_14_1)
-	self:_draw(arg_14_1)
+	self:_handle_input(dt, t)
+	self:_update_animations(dt)
+	self:_draw(dt)
 end
 
-HeroWindowWeaveForgePanel._sync_component_visibilty_by_layout = function (self, arg_15_1)
+HeroWindowWeaveForgePanel._sync_component_visibilty_by_layout = function (self, layout_name)
 	-- function 15
-	local _ui_scenegraph = self._ui_scenegraph
-	local _widgets_by_name = self._widgets_by_name
+	local ui_scenegraph = self._ui_scenegraph
+	local widgets_by_name = self._widgets_by_name
 
-	if arg_15_1 == "weave_overview" then
-		local flag = true
+	if layout_name == "weave_overview" then
+		local visible = true
 
-		_widgets_by_name.loadout_power_title.content.visible = flag
-		_widgets_by_name.loadout_power_text.content.visible = flag
-		_widgets_by_name.top_corner_right.content.visible = flag
-		_widgets_by_name.loadout_power_tooltip.content.visible = flag
-		_widgets_by_name.bottom_panel_left.content.visible = flag
-		_widgets_by_name.bottom_panel_right.content.visible = flag
+		widgets_by_name.loadout_power_title.content.visible = visible
+		widgets_by_name.loadout_power_text.content.visible = visible
+		widgets_by_name.top_corner_right.content.visible = visible
+		widgets_by_name.loadout_power_tooltip.content.visible = visible
+		widgets_by_name.bottom_panel_left.content.visible = visible
+		widgets_by_name.bottom_panel_right.content.visible = visible
 	else
-		local flag_2 = false
+		local visible = false
 
-		_widgets_by_name.loadout_power_title.content.visible = flag_2
-		_widgets_by_name.loadout_power_text.content.visible = flag_2
-		_widgets_by_name.loadout_power_tooltip.content.visible = flag_2
-		_widgets_by_name.bottom_panel_left.content.visible = flag_2
-		_widgets_by_name.bottom_panel_right.content.visible = flag_2
-		_widgets_by_name.top_corner_right.content.visible = arg_15_1 ~= "weave_properties"
+		widgets_by_name.loadout_power_title.content.visible = visible
+		widgets_by_name.loadout_power_text.content.visible = visible
+		widgets_by_name.loadout_power_tooltip.content.visible = visible
+		widgets_by_name.bottom_panel_left.content.visible = visible
+		widgets_by_name.bottom_panel_right.content.visible = visible
+		widgets_by_name.top_corner_right.content.visible = layout_name ~= "weave_properties"
 	end
 
-	local flag_3 = arg_15_1 ~= "weave_properties"
+	local background_wheel_visibility = layout_name ~= "weave_properties"
 
-	self:_set_background_wheel_visibility(flag_3)
+	self:_set_background_wheel_visibility(background_wheel_visibility)
 end
 
-HeroWindowWeaveForgePanel.post_update = function (arg_16_0, arg_16_1, arg_16_2)
+HeroWindowWeaveForgePanel.post_update = function (self, dt, t)
 	-- function 16
 	return
 end
 
-HeroWindowWeaveForgePanel._update_animations = function (self, arg_17_1)
+HeroWindowWeaveForgePanel._update_animations = function (self, dt)
 	-- function 17
-	local upgrading = self._params.upgrading
+	local params = self._params
+	local is_upgrading = params.upgrading
 	local _upgrading_anim_progress = self._upgrading_anim_progress
 
-	_upgrading_anim_progress = _upgrading_anim_progress or 0
+	if not _upgrading_anim_progress then
+		-- Nothing
+	end
 
-	local num = 3
+	_upgrading_anim_progress = 0
 
-	if not upgrading then
-		_upgrading_anim_progress = math.min(_upgrading_anim_progress + arg_17_1 * num, 1)
+	local upgrading_anim_progress = _upgrading_anim_progress
+
+	::label_17_0::
+
+	local upgrading_speed = 3
+
+	if is_upgrading then
+		upgrading_anim_progress = math.min(upgrading_anim_progress + dt * upgrading_speed, 1)
 	else
-		_upgrading_anim_progress = math.max(_upgrading_anim_progress - arg_17_1 * num, 0)
+		upgrading_anim_progress = math.max(upgrading_anim_progress - dt * upgrading_speed, 0)
 	end
 
-	self._upgrading_anim_progress = _upgrading_anim_progress
+	self._upgrading_anim_progress = upgrading_anim_progress
 
-	local _ui_animations = self._ui_animations
-	local _animations = self._animations
-	local _ui_animator = self._ui_animator
+	local ui_animations = self._ui_animations
+	local animations = self._animations
+	local ui_animator = self._ui_animator
 
-	for k, v in pairs(self._ui_animations) do
-		UIAnimation.update(v, arg_17_1)
+	for name, animation in pairs(self._ui_animations) do
+		UIAnimation.update(animation, dt)
 
-		if not UIAnimation.completed(v) then
-			self._ui_animations[k] = nil
+		if UIAnimation.completed(animation) then
+			self._ui_animations[name] = nil
 		end
 	end
 
-	_ui_animator:update(arg_17_1)
+	ui_animator:update(dt)
 
-	for k_2, v_2 in pairs(_animations) do
-		if not _ui_animator:is_animation_completed(v_2) then
-			_ui_animator:stop_animation(v_2)
+	for animation_name, animation_id in pairs(animations) do
+		if ui_animator:is_animation_completed(animation_id) then
+			ui_animator:stop_animation(animation_id)
 
-			_animations[k_2] = nil
+			animations[animation_name] = nil
 		end
 	end
 
-	if not self._draw_background_wheel then
-		self:_update_background_animations(arg_17_1)
+	if self._draw_background_wheel then
+		self:_update_background_animations(dt)
 	end
 end
 
-HeroWindowWeaveForgePanel._draw = function (self, arg_18_1)
+HeroWindowWeaveForgePanel._draw = function (self, dt)
 	-- function 18
-	local _parent = self._parent
-	local get_ui_renderer = _parent:get_ui_renderer()
-	local _ui_top_renderer = self._ui_top_renderer
-	local _ui_scenegraph = self._ui_scenegraph
-	local _render_settings = self._render_settings
-	local window_input_service = _parent:window_input_service()
-	local hdr_renderer = _parent:hdr_renderer()
+	local parent = self._parent
+	local ui_renderer = parent:get_ui_renderer()
+	local ui_top_renderer = self._ui_top_renderer
+	local ui_scenegraph = self._ui_scenegraph
+	local render_settings = self._render_settings
+	local input_service = parent:window_input_service()
+	local hdr_renderer = parent:hdr_renderer()
 
-	UIRenderer.begin_pass(hdr_renderer, _ui_scenegraph, window_input_service, arg_18_1, nil, _render_settings)
+	UIRenderer.begin_pass(hdr_renderer, ui_scenegraph, input_service, dt, nil, render_settings)
 
-	local snap_pixel_positions = _render_settings.snap_pixel_positions
-	local alpha_multiplier = _render_settings.alpha_multiplier
+	local snap_pixel_positions = render_settings.snap_pixel_positions
+	local alpha_multiplier = render_settings.alpha_multiplier
 
-	for i, v in ipairs(self._bottom_hdr_widgets) do
-		local alpha_multiplier_2 = v.alpha_multiplier
+	for _, widget in ipairs(self._bottom_hdr_widgets) do
+		local alpha_multiplier_2 = widget.alpha_multiplier
 
-		alpha_multiplier_2 = alpha_multiplier_2 or alpha_multiplier
-		_render_settings.alpha_multiplier = alpha_multiplier_2
+		alpha_multiplier_2 = not not alpha_multiplier_2 or not not alpha_multiplier
+		render_settings.alpha_multiplier = alpha_multiplier_2
 
-		UIRenderer.draw_widget(hdr_renderer, v)
+		UIRenderer.draw_widget(hdr_renderer, widget)
 	end
 
 	UIRenderer.end_pass(hdr_renderer)
-	UIRenderer.begin_pass(get_ui_renderer, _ui_scenegraph, window_input_service, arg_18_1, nil, _render_settings)
+	UIRenderer.begin_pass(ui_renderer, ui_scenegraph, input_service, dt, nil, render_settings)
 
-	local alpha_multiplier_3 = _render_settings.alpha_multiplier
+	local alpha_multiplier = render_settings.alpha_multiplier
 
-	for i_2, v_2 in ipairs(self._bottom_widgets) do
-		local alpha_multiplier_4 = v_2.alpha_multiplier
+	for _, widget in ipairs(self._bottom_widgets) do
+		local alpha_multiplier_3 = widget.alpha_multiplier
 
-		alpha_multiplier_4 = alpha_multiplier_4 or alpha_multiplier_3
-		_render_settings.alpha_multiplier = alpha_multiplier_4
+		alpha_multiplier_3 = not not alpha_multiplier_3 or not not alpha_multiplier
+		render_settings.alpha_multiplier = alpha_multiplier_3
 
-		UIRenderer.draw_widget(get_ui_renderer, v_2)
+		UIRenderer.draw_widget(ui_renderer, widget)
 	end
 
-	UIRenderer.end_pass(get_ui_renderer)
-	UIRenderer.begin_pass(_ui_top_renderer, _ui_scenegraph, window_input_service, arg_18_1, nil, _render_settings)
+	UIRenderer.end_pass(ui_renderer)
+	UIRenderer.begin_pass(ui_top_renderer, ui_scenegraph, input_service, dt, nil, render_settings)
 
-	for i_3, v_3 in ipairs(self._top_widgets) do
-		local alpha_multiplier_5 = v_3.alpha_multiplier
+	for _, widget in ipairs(self._top_widgets) do
+		local alpha_multiplier_4 = widget.alpha_multiplier
 
-		alpha_multiplier_5 = alpha_multiplier_5 or alpha_multiplier_3
-		_render_settings.alpha_multiplier = alpha_multiplier_5
+		alpha_multiplier_4 = not not alpha_multiplier_4 or not not alpha_multiplier
+		render_settings.alpha_multiplier = alpha_multiplier_4
 
-		UIRenderer.draw_widget(_ui_top_renderer, v_3)
+		UIRenderer.draw_widget(ui_top_renderer, widget)
 	end
 
-	UIRenderer.end_pass(_ui_top_renderer)
+	UIRenderer.end_pass(ui_top_renderer)
 end
 
-HeroWindowWeaveForgePanel._set_background_bloom_intensity = function (self, arg_19_1)
+HeroWindowWeaveForgePanel._set_background_bloom_intensity = function (self, fraction)
 	-- function 19
-	local num = 1.39
-	local num_2 = 2 + 30 * self._upgrading_anim_progress
-	local num_3 = num + math.clamp(arg_19_1, 0, 1) * num_2
-	local gui = self._parent:hdr_renderer().gui
-	local _widgets_by_name = self._widgets_by_name
-	local texture_id = _widgets_by_name.hdr_background_wheel_1.content.texture_id
-	local material = Gui.material(gui, texture_id)
+	local min = 1.39
+	local max = 2 + 30 * self._upgrading_anim_progress
+	local value = min + math.clamp(fraction, 0, 1) * max
+	local parent = self._parent
+	local hdr_renderer = parent:hdr_renderer()
+	local gui = hdr_renderer.gui
+	local widgets_by_name = self._widgets_by_name
+	local hdr_background_wheel_1 = widgets_by_name.hdr_background_wheel_1
+	local texture_background_wheel_1 = hdr_background_wheel_1.content.texture_id
+	local gui_material_background_wheel_1 = Gui.material(gui, texture_background_wheel_1)
 
-	Material.set_scalar(material, "noise_intensity", num_3)
+	Material.set_scalar(gui_material_background_wheel_1, "noise_intensity", value)
 
 	for i = 1, 2 do
-		local var_19_7 = _widgets_by_name["hdr_wheel_ring_" .. i .. "_1"]
-		local var_19_8 = _widgets_by_name["hdr_wheel_ring_" .. i .. "_2"]
-		local var_19_9 = _widgets_by_name["hdr_wheel_ring_" .. i .. "_3"]
-		local texture_id_2 = var_19_7.content.texture_id
-		local texture_id_3 = var_19_8.content.texture_id
-		local texture_id_4 = var_19_9.content.texture_id
-		local material_2 = Gui.material(gui, texture_id_2)
-		local material_3 = Gui.material(gui, texture_id_3)
-		local material_4 = Gui.material(gui, texture_id_4)
+		local hdr_wheel_ring_1 = widgets_by_name["hdr_wheel_ring_" .. i .. "_1"]
+		local hdr_wheel_ring_2 = widgets_by_name["hdr_wheel_ring_" .. i .. "_2"]
+		local hdr_wheel_ring_3 = widgets_by_name["hdr_wheel_ring_" .. i .. "_3"]
+		local texture_wheel_ring_1 = hdr_wheel_ring_1.content.texture_id
+		local texture_wheel_ring_2 = hdr_wheel_ring_2.content.texture_id
+		local texture_wheel_ring_3 = hdr_wheel_ring_3.content.texture_id
+		local gui_material_wheel_ring_1 = Gui.material(gui, texture_wheel_ring_1)
+		local gui_material_wheel_ring_2 = Gui.material(gui, texture_wheel_ring_2)
+		local gui_material_wheel_ring_3 = Gui.material(gui, texture_wheel_ring_3)
 
-		Material.set_scalar(material_2, "noise_intensity", num_3)
-		Material.set_scalar(material_3, "noise_intensity", num_3)
-		Material.set_scalar(material_4, "noise_intensity", num_3)
+		Material.set_scalar(gui_material_wheel_ring_1, "noise_intensity", value)
+		Material.set_scalar(gui_material_wheel_ring_2, "noise_intensity", value)
+		Material.set_scalar(gui_material_wheel_ring_3, "noise_intensity", value)
 	end
 end
 
-HeroWindowWeaveForgePanel._set_background_wheel_visibility = function (self, arg_20_1)
+HeroWindowWeaveForgePanel._set_background_wheel_visibility = function (self, visible)
 	-- function 20
-	local _widgets_by_name = self._widgets_by_name
-	local background_wheel_1 = _widgets_by_name.background_wheel_1
-	local hdr_background_wheel_1 = _widgets_by_name.hdr_background_wheel_1
+	local widgets_by_name = self._widgets_by_name
+	local background_wheel_1 = widgets_by_name.background_wheel_1
+	local hdr_background_wheel_1 = widgets_by_name.hdr_background_wheel_1
 
-	background_wheel_1.content.visible = arg_20_1
-	hdr_background_wheel_1.content.visible = arg_20_1
+	background_wheel_1.content.visible = visible
+	hdr_background_wheel_1.content.visible = visible
 
 	for i = 1, 2 do
-		local var_20_3 = _widgets_by_name["wheel_ring_" .. i .. "_1"]
-		local var_20_4 = _widgets_by_name["wheel_ring_" .. i .. "_2"]
-		local var_20_5 = _widgets_by_name["wheel_ring_" .. i .. "_3"]
-		local var_20_6 = _widgets_by_name["hdr_wheel_ring_" .. i .. "_1"]
-		local var_20_7 = _widgets_by_name["hdr_wheel_ring_" .. i .. "_2"]
-		local var_20_8 = _widgets_by_name["hdr_wheel_ring_" .. i .. "_3"]
+		local wheel_ring_1 = widgets_by_name["wheel_ring_" .. i .. "_1"]
+		local wheel_ring_2 = widgets_by_name["wheel_ring_" .. i .. "_2"]
+		local wheel_ring_3 = widgets_by_name["wheel_ring_" .. i .. "_3"]
+		local hdr_wheel_ring_1 = widgets_by_name["hdr_wheel_ring_" .. i .. "_1"]
+		local hdr_wheel_ring_2 = widgets_by_name["hdr_wheel_ring_" .. i .. "_2"]
+		local hdr_wheel_ring_3 = widgets_by_name["hdr_wheel_ring_" .. i .. "_3"]
 
-		var_20_3.content.visible = arg_20_1
-		var_20_4.content.visible = arg_20_1
-		var_20_5.content.visible = arg_20_1
-		var_20_6.content.visible = arg_20_1
-		var_20_7.content.visible = arg_20_1
-		var_20_8.content.visible = arg_20_1
+		wheel_ring_1.content.visible = visible
+		wheel_ring_2.content.visible = visible
+		wheel_ring_3.content.visible = visible
+		hdr_wheel_ring_1.content.visible = visible
+		hdr_wheel_ring_2.content.visible = visible
+		hdr_wheel_ring_3.content.visible = visible
 	end
 
-	self._draw_background_wheel = arg_20_1
+	self._draw_background_wheel = visible
 end
 
-HeroWindowWeaveForgePanel._update_background_animations = function (self, arg_21_1)
+HeroWindowWeaveForgePanel._update_background_animations = function (self, dt)
 	-- function 21
-	local _widgets_by_name = self._widgets_by_name
+	local widgets_by_name = self._widgets_by_name
 
 	for i = 1, 2 do
-		local var_21_1 = _widgets_by_name["wheel_ring_" .. i .. "_1"]
-		local var_21_2 = _widgets_by_name["wheel_ring_" .. i .. "_2"]
-		local var_21_3 = _widgets_by_name["wheel_ring_" .. i .. "_3"]
-		local var_21_4 = _widgets_by_name["hdr_wheel_ring_" .. i .. "_1"]
-		local var_21_5 = _widgets_by_name["hdr_wheel_ring_" .. i .. "_2"]
-		local var_21_6 = _widgets_by_name["hdr_wheel_ring_" .. i .. "_3"]
-		local num = 360
-		local degrees_to_radians = math.degrees_to_radians(num)
-		local num_2 = 1 + 4 * self._upgrading_anim_progress
-		local num_3 = arg_21_1 * 0.01 * num_2
-		local num_4 = arg_21_1 * 0.008 * num_2
-		local num_5 = arg_21_1 * 0.006 * num_2
+		local wheel_ring_1 = widgets_by_name["wheel_ring_" .. i .. "_1"]
+		local wheel_ring_2 = widgets_by_name["wheel_ring_" .. i .. "_2"]
+		local wheel_ring_3 = widgets_by_name["wheel_ring_" .. i .. "_3"]
+		local hdr_wheel_ring_1 = widgets_by_name["hdr_wheel_ring_" .. i .. "_1"]
+		local hdr_wheel_ring_2 = widgets_by_name["hdr_wheel_ring_" .. i .. "_2"]
+		local hdr_wheel_ring_3 = widgets_by_name["hdr_wheel_ring_" .. i .. "_3"]
+		local degrees = 360
+		local radians = math.degrees_to_radians(degrees)
+		local overall_speed = 1 + 4 * self._upgrading_anim_progress
+		local speed_1 = dt * 0.01 * overall_speed
+		local speed_2 = dt * 0.008 * overall_speed
+		local speed_3 = dt * 0.006 * overall_speed
 
-		var_21_1.style.texture_id.angle = (var_21_1.style.texture_id.angle + degrees_to_radians * num_3) % degrees_to_radians
-		var_21_2.style.texture_id.angle = (var_21_2.style.texture_id.angle - degrees_to_radians * num_4) % -degrees_to_radians
-		var_21_3.style.texture_id.angle = (var_21_3.style.texture_id.angle + degrees_to_radians * num_5) % degrees_to_radians
-		var_21_4.style.texture_id.angle = var_21_1.style.texture_id.angle
-		var_21_5.style.texture_id.angle = var_21_2.style.texture_id.angle
-		var_21_6.style.texture_id.angle = var_21_3.style.texture_id.angle
+		wheel_ring_1.style.texture_id.angle = (wheel_ring_1.style.texture_id.angle + radians * speed_1) % radians
+		wheel_ring_2.style.texture_id.angle = (wheel_ring_2.style.texture_id.angle - radians * speed_2) % -radians
+		wheel_ring_3.style.texture_id.angle = (wheel_ring_3.style.texture_id.angle + radians * speed_3) % radians
+		hdr_wheel_ring_1.style.texture_id.angle = wheel_ring_1.style.texture_id.angle
+		hdr_wheel_ring_2.style.texture_id.angle = wheel_ring_2.style.texture_id.angle
+		hdr_wheel_ring_3.style.texture_id.angle = wheel_ring_3.style.texture_id.angle
 	end
 
-	local num_6 = 2.5
-	local num_7 = 0.5 + math.sin(Managers.time:time("ui") * num_6) * 0.5
+	local pulse_speed = 2.5
+	local progress = 0.5 + math.sin(Managers.time:time("ui") * pulse_speed) * 0.5
 
-	self:_set_background_bloom_intensity(num_7)
+	self:_set_background_bloom_intensity(progress)
 end

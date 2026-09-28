@@ -4,9 +4,9 @@ require("scripts/unit_extensions/world_markers/world_marker_extension")
 
 StoreWorldMarkerExtension = class(StoreWorldMarkerExtension, WorldMarkerExtension)
 
-StoreWorldMarkerExtension.init = function (self, arg_1_1, arg_1_2, arg_1_3)
+StoreWorldMarkerExtension.init = function (self, extension_init_context, unit, extension_init_data)
 	-- function 1
-	StoreWorldMarkerExtension.super.init(self, arg_1_1, arg_1_2, arg_1_3)
+	StoreWorldMarkerExtension.super.init(self, extension_init_context, unit, extension_init_data)
 
 	self._marker_type = "store"
 	self._add_event_name = "add_world_marker_unit"
@@ -17,9 +17,9 @@ StoreWorldMarkerExtension.init = function (self, arg_1_1, arg_1_2, arg_1_3)
 	Managers.state.event:register(self, "set_all_shop_item_seen", "event_set_all_shop_item_seen")
 end
 
-StoreWorldMarkerExtension._destroy = function (arg_2_0)
+StoreWorldMarkerExtension._destroy = function (self)
 	-- function 2
-	Managers.state.event:unregister("set_all_shop_item_seen", arg_2_0)
+	Managers.state.event:unregister("set_all_shop_item_seen", self)
 end
 
 StoreWorldMarkerExtension.event_set_all_shop_item_seen = function (self)
@@ -29,7 +29,7 @@ end
 
 StoreWorldMarkerExtension._extensions_ready = function (self)
 	-- function 4
-	if not DEDICATED_SERVER then
+	if DEDICATED_SERVER then
 		return
 	end
 
@@ -39,17 +39,17 @@ StoreWorldMarkerExtension._extensions_ready = function (self)
 	self._initialized = true
 end
 
-StoreWorldMarkerExtension._add_marker = function (self, arg_5_1)
+StoreWorldMarkerExtension._add_marker = function (self, cb)
 	-- function 5
-	local _unit = self._unit
-	local _add_event_name = self._add_event_name
-	local _event_manager = self._event_manager
-	local _marker_type = self._marker_type
+	local unit = self._unit
+	local add_event_name = self._add_event_name
+	local event_manager = self._event_manager
+	local marker_type = self._marker_type
 
-	_event_manager:trigger(_add_event_name, _marker_type, _unit, arg_5_1)
+	event_manager:trigger(add_event_name, marker_type, unit, cb)
 end
 
-StoreWorldMarkerExtension.update = function (self, arg_6_1, arg_6_2, arg_6_3, arg_6_4, arg_6_5)
+StoreWorldMarkerExtension.update = function (self, unit, dummy_input, dt, context, t)
 	-- function 6
 	if not self._initialized then
 		return
@@ -61,15 +61,15 @@ StoreWorldMarkerExtension.update = function (self, arg_6_1, arg_6_2, arg_6_3, ar
 		return
 	end
 
-	local flag = false
-	local get_login_rewards = self._backend_store:get_login_rewards()
+	local should_show = false
+	local login_rewards = self._backend_store:get_login_rewards()
 
-	if not (not get_login_rewards and not (get_login_rewards.next_claim_timestamp < os.time())) then
-		flag = true
+	if login_rewards and login_rewards.next_claim_timestamp < os.time() then
+		should_show = true
 	end
 
-	if flag == not self._id then
-		if not flag then
+	if should_show == not self._id then
+		if should_show then
 			self:add_marker()
 		else
 			self:remove_marker()

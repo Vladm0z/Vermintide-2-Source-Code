@@ -2,34 +2,34 @@
 
 PickupPackageLoader = class(PickupPackageLoader)
 
-local tbl = {}
-local tbl_2 = {}
+local CACHED_REFERENCES = {}
+local CACHED_3P = {}
 
 PickupPackageLoader.init = function (self)
 	-- function 1
 	self._loaded_pickup_map = {}
 end
 
-PickupPackageLoader.network_context_created = function (self, arg_2_1, arg_2_2, arg_2_3, arg_2_4)
+PickupPackageLoader.network_context_created = function (self, lobby, server_peer_id, own_peer_id, network_handler)
 	-- function 2
-	printf("[PickupPackageLoader] network_context_created (server_peer_id=%s, own_peer_id=%s)", arg_2_2, arg_2_3)
+	printf("[PickupPackageLoader] network_context_created (server_peer_id=%s, own_peer_id=%s)", server_peer_id, own_peer_id)
 
-	self._lobby = arg_2_1
+	self._lobby = lobby
 
-	local flag = arg_2_2 == arg_2_3
+	local is_server = server_peer_id == own_peer_id
 
-	self._is_server = flag
+	self._is_server = is_server
 
-	if not flag then
+	if is_server then
 		self._session_pickup_map = {}
 	end
 
-	self._network_handler = arg_2_4
+	self._network_handler = network_handler
 end
 
-PickupPackageLoader.matching_session = function (self, arg_3_1)
+PickupPackageLoader.matching_session = function (self, network_handler)
 	-- function 3
-	return self._network_handler == arg_3_1
+	return self._network_handler == network_handler
 end
 
 PickupPackageLoader.network_context_destroyed = function (self)
@@ -39,43 +39,45 @@ PickupPackageLoader.network_context_destroyed = function (self)
 	self._lobby = nil
 	self._network_handler = nil
 
-	if not self._is_server then
+	if self._is_server then
 		self._session_pickup_map = nil
 	end
 
 	self._is_server = nil
 end
 
-PickupPackageLoader.request_pickup = function (self, arg_5_1, arg_5_2)
+PickupPackageLoader.request_pickup = function (self, pickup_name, optional_cb)
 	-- function 5
 	assert(self._is_server, "[PickupPackageLoader] 'request_pickup' is a server only function")
 
-	local var_5_0 = self._session_pickup_map[arg_5_1]
+	local cb_or_true = self._session_pickup_map[pickup_name]
 
-	if not var_5_0 then
-		if not arg_5_2 then
-			self._session_pickup_map[arg_5_1] = function ()
+	if cb_or_true then
+		if optional_cb then
+			self._session_pickup_map[pickup_name] = function ()
 				-- function 6
-				if var_5_0 ~= true then
-					var_5_0()
+				if cb_or_true ~= true then
+					cb_or_true()
 				end
 
-				arg_5_2()
+				optional_cb()
 			end
 		end
 
 		return
 	end
 
-	self._session_pickup_map[arg_5_1] = arg_5_2 or true
+	self._session_pickup_map[pickup_name] = not not optional_cb or not not true
 
 	self._network_handler:set_session_pickup_map(table.shallow_copy(self._session_pickup_map))
 	self:_update_package_diffs()
 end
 
-PickupPackageLoader.is_pickup_processed = function (self, arg_7_1)
+PickupPackageLoader.is_pickup_processed = function (self, pickup_name)
 	-- function 7
-	return self._network_handler:get_session_pickup_map()[arg_7_1]
+	local session_pickup_map = self._network_handler:get_session_pickup_map()
+
+	return session_pickup_map[pickup_name]
 end
 
 PickupPackageLoader.processed_pickups = function (self)
@@ -83,11 +85,11 @@ PickupPackageLoader.processed_pickups = function (self)
 	return self._network_handler:get_session_pickup_map()
 end
 
-PickupPackageLoader._unload_package = function (self, arg_9_1)
+PickupPackageLoader._unload_package = function (self, pickup_name)
 	-- function 9
 	assert(self._is_server, "[PickupPackageLoader] '_unload_package' is a server only function.")
 
-	self._session_pickup_map[arg_9_1] = nil
+	self._session_pickup_map[pickup_name] = nil
 
 	self._network_handler:set_session_pickup_map(table.shallow_copy(self._session_pickup_map))
 	self:_update_package_diffs()
@@ -96,7 +98,7 @@ end
 PickupPackageLoader.update = function (self)
 	-- function 10
 	if not self._initialized then
-		if not Managers.package:has_loaded("resource_packages/pickups") then
+		if Managers.package:has_loaded("resource_packages/pickups") then
 			self._initialized = true
 		end
 
@@ -106,57 +108,57 @@ PickupPackageLoader.update = function (self)
 	self:_update_package_diffs()
 end
 
-PickupPackageLoader._package_reference = function (arg_11_0, arg_11_1)
+PickupPackageLoader._package_reference = function (self, pickup_name)
 	-- function 11
-	local var_11_0 = tbl[arg_11_1]
+	local cached = CACHED_REFERENCES[pickup_name]
 
-	if not var_11_0 then
-		return var_11_0
+	if cached then
+		return cached
 	end
 
-	tbl[arg_11_1] = "PickupPackageLoader_" .. arg_11_1
+	CACHED_REFERENCES[pickup_name] = "PickupPackageLoader_" .. pickup_name
 
-	return tbl[arg_11_1]
+	return CACHED_REFERENCES[pickup_name]
 end
 
-PickupPackageLoader._cached_3p = function (arg_12_0, arg_12_1)
+PickupPackageLoader._cached_3p = function (self, unit_name)
 	-- function 12
-	local var_12_0 = tbl_2[arg_12_1]
+	local cached = CACHED_3P[unit_name]
 
-	if not var_12_0 then
-		return var_12_0
+	if cached then
+		return cached
 	end
 
-	tbl_2[arg_12_1] = arg_12_1 .. "_3p"
+	CACHED_3P[unit_name] = unit_name .. "_3p"
 
-	return tbl_2[arg_12_1]
+	return CACHED_3P[unit_name]
 end
 
-PickupPackageLoader._has_loaded_pickup = function (self, arg_13_1)
+PickupPackageLoader._has_loaded_pickup = function (self, pickup_name)
 	-- function 13
-	local _package_reference = self:_package_reference(arg_13_1)
-	local package = Managers.package
-	local var_13_2 = AllPickups[arg_13_1]
-	local unit_name = var_13_2.unit_name
+	local package_reference = self:_package_reference(pickup_name)
+	local package_manager = Managers.package
+	local pickup_setting = AllPickups[pickup_name]
+	local unit_name = pickup_setting.unit_name
 
-	if not package:has_loaded(unit_name, _package_reference) then
+	if not package_manager:has_loaded(unit_name, package_reference) then
 		return false
 	end
 
-	local var_13_4 = rawget(ItemMasterList, var_13_2.item_name)
+	local item = rawget(ItemMasterList, pickup_setting.item_name)
 
-	if not var_13_4 then
-		local temporary_template = var_13_4.temporary_template
-		local get_weapon_template = WeaponUtils.get_weapon_template(temporary_template)
-		local left_hand_unit = get_weapon_template.left_hand_unit
+	if item then
+		local weapon_template_name = item.temporary_template
+		local weapon_template = WeaponUtils.get_weapon_template(weapon_template_name)
+		local left_hand_unit = weapon_template.left_hand_unit
 
-		if not (not left_hand_unit and not package:has_loaded(left_hand_unit, _package_reference) and package:has_loaded(self:_cached_3p(left_hand_unit), _package_reference)) then
+		if left_hand_unit and (not package_manager:has_loaded(left_hand_unit, package_reference) or not package_manager:has_loaded(self:_cached_3p(left_hand_unit), package_reference)) then
 			return false
 		end
 
-		local right_hand_unit = get_weapon_template.right_hand_unit
+		local right_hand_unit = weapon_template.right_hand_unit
 
-		if not (not right_hand_unit and not package:has_loaded(right_hand_unit, _package_reference) and package:has_loaded(self:_cached_3p(right_hand_unit), _package_reference)) then
+		if right_hand_unit and (not package_manager:has_loaded(right_hand_unit, package_reference) or not package_manager:has_loaded(self:_cached_3p(right_hand_unit), package_reference)) then
 			return false
 		end
 	end
@@ -164,159 +166,167 @@ PickupPackageLoader._has_loaded_pickup = function (self, arg_13_1)
 	return true
 end
 
-PickupPackageLoader._is_loading_pickup = function (self, arg_14_1)
+PickupPackageLoader._is_loading_pickup = function (self, pickup_name)
 	-- function 14
-	local _package_reference = self:_package_reference(arg_14_1)
-	local package = Managers.package
-	local var_14_2 = AllPickups[arg_14_1]
-	local unit_name = var_14_2.unit_name
+	local package_reference = self:_package_reference(pickup_name)
+	local package_manager = Managers.package
+	local pickup_setting = AllPickups[pickup_name]
+	local unit_name = pickup_setting.unit_name
 
-	if not package:is_loading(unit_name, _package_reference) then
+	if package_manager:is_loading(unit_name, package_reference) then
 		return true
 	end
 
-	local var_14_4 = rawget(ItemMasterList, var_14_2.item_name)
+	local item = rawget(ItemMasterList, pickup_setting.item_name)
 
-	if not var_14_4 then
-		local temporary_template = var_14_4.temporary_template
-		local get_weapon_template = WeaponUtils.get_weapon_template(temporary_template)
-		local left_hand_unit = get_weapon_template.left_hand_unit
+	if item then
+		local weapon_template_name = item.temporary_template
+		local weapon_template = WeaponUtils.get_weapon_template(weapon_template_name)
+		local left_hand_unit = weapon_template.left_hand_unit
 
-		if not left_hand_unit and package:is_loading(left_hand_unit, _package_reference) and not package:is_loading(self:_cached_3p(left_hand_unit), _package_reference) then
+		if left_hand_unit and (package_manager:is_loading(left_hand_unit, package_reference) or package_manager:is_loading(self:_cached_3p(left_hand_unit), package_reference)) then
 			return true
 		end
 
-		local right_hand_unit = get_weapon_template.right_hand_unit
+		local right_hand_unit = weapon_template.right_hand_unit
 
-		if not right_hand_unit and package:has_loaded(right_hand_unit, _package_reference) and not package:has_loaded(self:_cached_3p(right_hand_unit), _package_reference) then
+		if right_hand_unit and (package_manager:has_loaded(right_hand_unit, package_reference) or package_manager:has_loaded(self:_cached_3p(right_hand_unit), package_reference)) then
 			return true
 		end
 	end
 end
 
-PickupPackageLoader._load_pickup = function (self, arg_15_1, arg_15_2, arg_15_3)
+PickupPackageLoader._load_pickup = function (self, pickup_name, async, prioritize)
 	-- function 15
-	local _package_reference = self:_package_reference(arg_15_1)
-	local package = Managers.package
-	local var_15_2 = AllPickups[arg_15_1]
-	local unit_name = var_15_2.unit_name
+	local package_reference = self:_package_reference(pickup_name)
+	local package_manager = Managers.package
+	local pickup_setting = AllPickups[pickup_name]
+	local unit_name = pickup_setting.unit_name
 
-	package:load(unit_name, _package_reference, nil, arg_15_2, arg_15_3)
+	package_manager:load(unit_name, package_reference, nil, async, prioritize)
 
-	local var_15_4 = rawget(ItemMasterList, var_15_2.item_name)
+	local item = rawget(ItemMasterList, pickup_setting.item_name)
 
-	if not var_15_4 then
-		local temporary_template = var_15_4.temporary_template
-		local get_weapon_template = WeaponUtils.get_weapon_template(temporary_template)
+	if item then
+		local weapon_template_name = item.temporary_template
+		local weapon_template = WeaponUtils.get_weapon_template(weapon_template_name)
 
-		if not get_weapon_template then
-			local left_hand_unit = get_weapon_template.left_hand_unit
+		if weapon_template then
+			local left_hand_unit = weapon_template.left_hand_unit
 
-			if not left_hand_unit then
-				package:load(left_hand_unit, _package_reference, nil, arg_15_2, arg_15_3)
-				package:load(self:_cached_3p(left_hand_unit), _package_reference, nil, arg_15_2, arg_15_3)
+			if left_hand_unit then
+				package_manager:load(left_hand_unit, package_reference, nil, async, prioritize)
+				package_manager:load(self:_cached_3p(left_hand_unit), package_reference, nil, async, prioritize)
 			end
 
-			local right_hand_unit = get_weapon_template.right_hand_unit
+			local right_hand_unit = weapon_template.right_hand_unit
 
-			if not right_hand_unit then
-				package:load(right_hand_unit, _package_reference, nil, arg_15_2, arg_15_3)
-				package:load(self:_cached_3p(right_hand_unit), _package_reference, nil, arg_15_2, arg_15_3)
+			if right_hand_unit then
+				package_manager:load(right_hand_unit, package_reference, nil, async, prioritize)
+				package_manager:load(self:_cached_3p(right_hand_unit), package_reference, nil, async, prioritize)
 			end
 		end
 	end
 end
 
-PickupPackageLoader._unload_pickup = function (self, arg_16_1)
+PickupPackageLoader._unload_pickup = function (self, pickup_name)
 	-- function 16
-	local _package_reference = self:_package_reference(arg_16_1)
-	local package = Managers.package
-	local var_16_2 = AllPickups[arg_16_1]
-	local unit_name = var_16_2.unit_name
+	local package_reference = self:_package_reference(pickup_name)
+	local package_manager = Managers.package
+	local pickup_setting = AllPickups[pickup_name]
+	local unit_name = pickup_setting.unit_name
 
-	package:unload(unit_name, _package_reference)
+	package_manager:unload(unit_name, package_reference)
 
-	local temporary_template = var_16_2.temporary_template
+	local weapon_template_name = pickup_setting.temporary_template
 
-	if not temporary_template then
-		local get_weapon_template = WeaponUtils.get_weapon_template(temporary_template)
-		local left_hand_unit = get_weapon_template.left_hand_unit
+	if weapon_template_name then
+		local weapon_template = WeaponUtils.get_weapon_template(weapon_template_name)
+		local left_hand_unit = weapon_template.left_hand_unit
 
-		if not left_hand_unit then
-			package:unload(left_hand_unit, _package_reference)
-			package:unload(self:_cached_3p(left_hand_unit), _package_reference)
+		if left_hand_unit then
+			package_manager:unload(left_hand_unit, package_reference)
+			package_manager:unload(self:_cached_3p(left_hand_unit), package_reference)
 		end
 
-		local right_hand_unit = get_weapon_template.right_hand_unit
+		local right_hand_unit = weapon_template.right_hand_unit
 
-		if not right_hand_unit then
-			package:unload(right_hand_unit, _package_reference)
-			package:unload(self:_cached_3p(right_hand_unit), _package_reference)
+		if right_hand_unit then
+			package_manager:unload(right_hand_unit, package_reference)
+			package_manager:unload(self:_cached_3p(right_hand_unit), package_reference)
 		end
 	end
 end
 
-PickupPackageLoader._update_package_diffs = function (self, arg_17_1)
+PickupPackageLoader._update_package_diffs = function (self, skip_load)
 	-- function 17
-	if not (not self._network_handler and self._network_handler:is_fully_synced()) then
+	if not self._network_handler or not self._network_handler:is_fully_synced() then
 		return
 	end
 
-	local flag = true
-	local flag_2 = true
-	local _loaded_pickup_map = self._loaded_pickup_map
+	local async = true
+	local prioritize = true
+	local loaded_pickup_map = self._loaded_pickup_map
 	local _session_pickup_map = self._session_pickup_map
 
-	_session_pickup_map = _session_pickup_map or self._network_handler:get_session_pickup_map()
+	if not _session_pickup_map then
+		-- Nothing
+	end
 
-	local get_own_loaded_session_pickup_map = self._network_handler:get_own_loaded_session_pickup_map()
+	_session_pickup_map = self._network_handler:get_session_pickup_map()
 
-	for k, v in pairs(_loaded_pickup_map) do
-		if not _session_pickup_map[k] then
-			self:_unload_pickup(k)
+	local session_pickup_map = _session_pickup_map
 
-			_loaded_pickup_map[k] = nil
+	::label_17_0::
+
+	local synced_loaded_pickup_map = self._network_handler:get_own_loaded_session_pickup_map()
+
+	for pickup_name, status in pairs(loaded_pickup_map) do
+		if not session_pickup_map[pickup_name] then
+			self:_unload_pickup(pickup_name)
+
+			loaded_pickup_map[pickup_name] = nil
 		end
 	end
 
-	for k_2, v_2 in pairs(_session_pickup_map) do
-		local _has_loaded_pickup = self:_has_loaded_pickup(k_2)
+	for pickup_name, server_cb_or_true in pairs(session_pickup_map) do
+		local has_loaded = self:_has_loaded_pickup(pickup_name)
 
-		if not (_has_loaded_pickup or self:_is_loading_pickup(k_2)) then
-			self:_load_pickup(k_2, flag, flag_2)
-		elseif not (not _has_loaded_pickup and _loaded_pickup_map[k_2]) then
-			_loaded_pickup_map[k_2] = true
-		elseif v_2 == true or not self:is_pickup_loaded_on_all_peers(k_2) then
-			v_2()
+		if not has_loaded and not self:_is_loading_pickup(pickup_name) then
+			self:_load_pickup(pickup_name, async, prioritize)
+		elseif has_loaded and not loaded_pickup_map[pickup_name] then
+			loaded_pickup_map[pickup_name] = true
+		elseif server_cb_or_true ~= true and self:is_pickup_loaded_on_all_peers(pickup_name) then
+			server_cb_or_true()
 
-			_session_pickup_map[k_2] = true
+			session_pickup_map[pickup_name] = true
 		end
 	end
 
-	if not table.shallow_equal(_loaded_pickup_map, get_own_loaded_session_pickup_map) then
-		self._network_handler:set_own_loaded_session_pickups(table.shallow_copy(_loaded_pickup_map))
+	if not table.shallow_equal(loaded_pickup_map, synced_loaded_pickup_map) then
+		self._network_handler:set_own_loaded_session_pickups(table.shallow_copy(loaded_pickup_map))
 	end
 
-	if not self._is_server then
-		local get_session_pickup_map = self._network_handler:get_session_pickup_map()
+	if self._is_server then
+		local synced_session_pickup_map = self._network_handler:get_session_pickup_map()
 
-		if not table.shallow_equal(_session_pickup_map, get_session_pickup_map) then
-			self._network_handler:set_session_pickup_map(table.shallow_copy(_session_pickup_map))
+		if not table.shallow_equal(session_pickup_map, synced_session_pickup_map) then
+			self._network_handler:set_session_pickup_map(table.shallow_copy(session_pickup_map))
 		end
 	end
 end
 
-PickupPackageLoader.load_sync_done_for_peer = function (self, arg_18_1)
+PickupPackageLoader.load_sync_done_for_peer = function (self, peer_id)
 	-- function 18
-	if not (not self._network_handler and self._network_handler:is_fully_synced()) then
+	if not self._network_handler or not self._network_handler:is_fully_synced() then
 		return false
 	end
 
-	local get_session_pickup_map = self._network_handler:get_session_pickup_map()
-	local get_loaded_session_pickups = self._network_handler:get_loaded_session_pickups(arg_18_1)
+	local session_pickup_map = self._network_handler:get_session_pickup_map()
+	local loaded_pickup_map = self._network_handler:get_loaded_session_pickups(peer_id)
 
-	for k in pairs(get_session_pickup_map) do
-		if not get_loaded_session_pickups[k] then
+	for pickup_name in pairs(session_pickup_map) do
+		if not loaded_pickup_map[pickup_name] then
 			return false
 		end
 	end
@@ -326,15 +336,15 @@ end
 
 PickupPackageLoader.loading_completed = function (self)
 	-- function 19
-	if not (not self._network_handler and self._network_handler:is_fully_synced()) then
+	if not self._network_handler or not self._network_handler:is_fully_synced() then
 		return false
 	end
 
-	local get_session_pickup_map = self._network_handler:get_session_pickup_map()
-	local _loaded_pickup_map = self._loaded_pickup_map
+	local session_pickup_map = self._network_handler:get_session_pickup_map()
+	local loaded_pickup_map = self._loaded_pickup_map
 
-	for k in pairs(get_session_pickup_map) do
-		if _loaded_pickup_map[k] ~= true then
+	for pickup_name in pairs(session_pickup_map) do
+		if loaded_pickup_map[pickup_name] ~= true then
 			return false
 		end
 	end
@@ -344,39 +354,50 @@ end
 
 PickupPackageLoader.on_application_shutdown = function (self)
 	-- function 20
-	local _loaded_pickup_map = self._loaded_pickup_map
-	local _session_pickup_map = self._session_pickup_map
+	local loaded_pickup_map = self._loaded_pickup_map
+	local session_pickup_map = self._session_pickup_map
 
-	for k, v in pairs(_loaded_pickup_map) do
-		local _package_reference = self:_package_reference(k)
-		local unit_name = AllPickups[k].unit_name
+	for pickup_name, status in pairs(loaded_pickup_map) do
+		local package_reference = self:_package_reference(pickup_name)
+		local pickup_setting = AllPickups[pickup_name]
+		local unit_name = pickup_setting.unit_name
 
-		Managers.package:unload(unit_name, _package_reference)
+		Managers.package:unload(unit_name, package_reference)
 
-		if not self._is_server then
-			_session_pickup_map[k] = nil
+		if self._is_server then
+			session_pickup_map[pickup_name] = nil
 		end
 
-		_loaded_pickup_map[k] = nil
+		loaded_pickup_map[pickup_name] = nil
 	end
 end
 
-PickupPackageLoader.is_pickup_loaded_on_all_peers = function (self, arg_21_1, arg_21_2)
+PickupPackageLoader.is_pickup_loaded_on_all_peers = function (self, pickup_name, for_debugging)
 	-- function 21
 	local _is_server = self._is_server
 
-	_is_server = not _is_server and self._network_handler:hot_join_synced_peers()
+	if _is_server then
+		-- Nothing
+	end
 
-	if not arg_21_2 then
-		_is_server = table.shallow_copy(self._network_handler:get_peers(), true)
-		_is_server = table.array_to_map(_is_server, function (arg_22_0, arg_22_1)
+	_is_server = self._network_handler:hot_join_synced_peers()
+
+	local peers = _is_server
+
+	::label_21_0::
+
+	if for_debugging then
+		peers = table.shallow_copy(self._network_handler:get_peers(), true)
+		peers = table.array_to_map(peers, function (i, peer_id)
 			-- function 22
-			return arg_22_1, true
+			return peer_id, true
 		end)
 	end
 
-	for k in pairs(_is_server) do
-		if not self._network_handler:get_loaded_session_pickups(k)[arg_21_1] then
+	for peer_id in pairs(peers) do
+		local loaded_session_pickups = self._network_handler:get_loaded_session_pickups(peer_id)
+
+		if not loaded_session_pickups[pickup_name] then
 			return false
 		end
 	end
@@ -392,9 +413,9 @@ PickupPackageLoader.debug_loaded_pickups = function (self)
 		return
 	end
 
-	local get_session_pickup_map = self._network_handler:get_session_pickup_map()
+	local session_map = self._network_handler:get_session_pickup_map()
 
-	if not table.is_empty(get_session_pickup_map) then
+	if table.is_empty(session_map) then
 		Debug.text("No dynamic pickups to load. (DynamicPickupLoader)")
 	else
 		Debug.text("Dynamic pickups:")
@@ -402,7 +423,7 @@ PickupPackageLoader.debug_loaded_pickups = function (self)
 
 	local hot_join_synced_peers
 
-	if not self._is_server then
+	if self._is_server then
 		hot_join_synced_peers = self._network_handler:hot_join_synced_peers()
 
 		if not hot_join_synced_peers then
@@ -412,26 +433,28 @@ PickupPackageLoader.debug_loaded_pickups = function (self)
 
 	hot_join_synced_peers = self._network_handler:get_peers()
 
+	local peers = hot_join_synced_peers
+
 	::label_23_0::
 
 	if not self._is_server then
-		hot_join_synced_peers = table.shallow_copy(self._network_handler:get_peers(), true)
-		hot_join_synced_peers = table.array_to_map(hot_join_synced_peers, function (arg_24_0, arg_24_1)
+		peers = table.shallow_copy(self._network_handler:get_peers(), true)
+		peers = table.array_to_map(peers, function (i, peer_id)
 			-- function 24
-			return arg_24_1, true
+			return peer_id, true
 		end)
 	end
 
-	for k in pairs(get_session_pickup_map) do
+	for pickup_name in pairs(session_map) do
 		repeat
-			Debug.text("   %s", k)
+			Debug.text("   %s", pickup_name)
 
-			if not self:is_pickup_loaded_on_all_peers(k, not self._is_server) then
+			if not self:is_pickup_loaded_on_all_peers(pickup_name, not self._is_server) then
 				Debug.text("      --Waiting on Peer(s) to Load--")
 
-				for k_2, v in pairs(hot_join_synced_peers) do
-					if not self._network_handler:get_loaded_session_pickups(k_2)[k] then
-						Debug.text("      %s", k_2)
+				for peer_id, _ in pairs(peers) do
+					if not self._network_handler:get_loaded_session_pickups(peer_id)[pickup_name] then
+						Debug.text("      %s", peer_id)
 					end
 				end
 			end

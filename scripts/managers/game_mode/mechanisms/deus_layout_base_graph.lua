@@ -3,289 +3,294 @@
 require("scripts/settings/dlcs/morris/deus_default_graph_settings")
 require("scripts/settings/dlcs/morris/deus_map_layout_settings")
 
-local function fn(self, arg_1_1, arg_1_2, arg_1_3)
+local function add_force(config, node, force_x, force_y)
 	-- function 1
-	arg_1_1.acc_x = math.clamp(-self.FORCE_MAX, arg_1_1.acc_x + arg_1_2, self.FORCE_MAX)
-	arg_1_1.acc_y = math.clamp(-self.FORCE_MAX, arg_1_1.acc_y + arg_1_3, self.FORCE_MAX)
+	node.acc_x = math.clamp(-config.FORCE_MAX, node.acc_x + force_x, config.FORCE_MAX)
+	node.acc_y = math.clamp(-config.FORCE_MAX, node.acc_y + force_y, config.FORCE_MAX)
 end
 
-local function fn_2(self, arg_2_1, arg_2_2)
+local function attract(config, attractor, attracted)
 	-- function 2
-	local num = arg_2_2.pos_x - arg_2_1.pos_x
-	local num_2 = arg_2_2.pos_y - arg_2_1.pos_y
+	local dx, dy = attracted.pos_x - attractor.pos_x, attracted.pos_y - attractor.pos_y
 
-	if not (num ~= 0 or num_2 == 0) then
-		local sqrt = math.sqrt(num * num + num_2 * num_2)
-		local num_3 = num / sqrt
-		local num_4 = num_2 / sqrt
-		local num_5 = -1 * self.SPRING_CONSTANT * sqrt * 0.5
+	if dx ~= 0 or dy ~= 0 then
+		local distance = math.sqrt(dx * dx + dy * dy)
 
-		fn(self, arg_2_2, num_5 * num_3, num_5 * num_4)
+		dx = dx / distance
+		dy = dy / distance
+
+		local strength = -1 * config.SPRING_CONSTANT * distance * 0.5
+
+		add_force(config, attracted, strength * dx, strength * dy)
 	end
 end
 
-local function fn_3(self, arg_3_1, arg_3_2)
+local function repel(config, repeller, reppeled)
 	-- function 3
-	local num = arg_3_2.pos_x - arg_3_1.pos_x
-	local num_2 = arg_3_2.pos_y - arg_3_1.pos_y
+	local dx, dy = reppeled.pos_x - repeller.pos_x, reppeled.pos_y - repeller.pos_y
 
-	if not (num ~= 0 or num_2 == 0) then
-		local sqrt = math.sqrt(num * num + num_2 * num_2)
-		local num_3 = num / sqrt
-		local num_4 = num_2 / sqrt
-		local num_5 = self.REPEL_CONSTANT * (arg_3_1.mass * arg_3_2.mass / (sqrt * sqrt))
+	if dx ~= 0 or dy ~= 0 then
+		local distance = math.sqrt(dx * dx + dy * dy)
 
-		fn(self, arg_3_2, num_5 * num_3, num_5 * num_4)
+		dx = dx / distance
+		dy = dy / distance
+
+		local strength = config.REPEL_CONSTANT * (repeller.mass * reppeled.mass / (distance * distance))
+
+		add_force(config, reppeled, strength * dx, strength * dy)
 	end
 end
 
-local function fn_4(self, arg_4_1)
+local function move(config, node)
 	-- function 4
-	arg_4_1.vel_x = (arg_4_1.vel_x + arg_4_1.acc_x * self.DELTA * self.NODE_SPEED) * self.DAMPING_FACTOR
-	arg_4_1.vel_y = (arg_4_1.vel_y + arg_4_1.acc_y * self.DELTA * self.NODE_SPEED) * self.DAMPING_FACTOR
-	arg_4_1.pos_x = arg_4_1.pos_x + arg_4_1.vel_x
-	arg_4_1.pos_y = arg_4_1.pos_y + arg_4_1.vel_y
-	arg_4_1.acc_x = 0
-	arg_4_1.acc_y = 0
+	node.vel_x = (node.vel_x + node.acc_x * config.DELTA * config.NODE_SPEED) * config.DAMPING_FACTOR
+	node.vel_y = (node.vel_y + node.acc_y * config.DELTA * config.NODE_SPEED) * config.DAMPING_FACTOR
+	node.pos_x = node.pos_x + node.vel_x
+	node.pos_y = node.pos_y + node.vel_y
+	node.acc_x = 0
+	node.acc_y = 0
 end
 
-local function fn_5(arg_5_0, arg_5_1, arg_5_2)
+local function update(config, nodes, edges)
 	-- function 5
-	for i, v in ipairs(arg_5_2) do
-		fn_2(arg_5_0, arg_5_1[v.from], arg_5_1[v.to])
-		fn_2(arg_5_0, arg_5_1[v.to], arg_5_1[v.from])
+	for _, edge in ipairs(edges) do
+		attract(config, nodes[edge.from], nodes[edge.to])
+		attract(config, nodes[edge.to], nodes[edge.from])
 	end
 
-	for k, v_2 in pairs(arg_5_1) do
-		if not v_2.anchor then
-			for k_2, v_3 in pairs(arg_5_1) do
-				if v_2 ~= v_3 then
-					fn_3(arg_5_0, v_2, v_3)
+	for _, node in pairs(nodes) do
+		if not node.anchor then
+			for _, other_node in pairs(nodes) do
+				if node ~= other_node then
+					repel(config, node, other_node)
 				end
 			end
 		end
 	end
 
-	for k_3, v_4 in pairs(arg_5_1) do
-		if not v_4.anchor then
-			fn_4(arg_5_0, v_4)
+	for _, node in pairs(nodes) do
+		if not node.anchor then
+			move(config, node)
 		end
 	end
 end
 
-local function fn_6(arg_6_0)
+local function normalize(nodes)
 	-- function 6
-	local tbl = {}
-	local num = 0
+	local max_height_per_layer = {}
+	local max_layer = 0
 
-	for k, v in pairs(arg_6_0) do
-		local var_6_2 = tbl[v.layout_x]
-		local layout_x = v.layout_x
+	for _, node in pairs(nodes) do
+		local layer_height = max_height_per_layer[node.layout_x]
+		local layout_x = node.layout_x
 		local max
 
-		if not var_6_2 then
-			max = math.max(var_6_2, v.layout_y)
+		if layer_height then
+			max = math.max(layer_height, node.layout_y)
 
 			if not max then
 				-- Nothing
 			end
 		end
 
-		max = v.layout_y
+		max = node.layout_y
 
 		::label_6_0::
 
-		tbl[layout_x] = max
-		num = math.max(num, v.layout_x)
+		max_height_per_layer[layout_x] = max
+		max_layer = math.max(max_layer, node.layout_x)
 	end
 
-	local tbl_2 = {}
+	local new_nodes = {}
 
-	for k_2, v_2 in pairs(arg_6_0) do
-		v_2 = table.clone(v_2)
-		tbl_2[k_2] = v_2
+	for key, node in pairs(nodes) do
+		node = table.clone(node)
+		new_nodes[key] = node
 
-		local layout_x_2 = v_2.layout_x
+		local layer = node.layout_x
 
-		v_2.layout_x = layout_x_2 / num
-		v_2.layout_y = v_2.layout_y / (tbl[layout_x_2] + 1)
+		node.layout_x = layer / max_layer
+		node.layout_y = node.layout_y / (max_height_per_layer[layer] + 1)
 	end
 
-	return tbl_2
+	return new_nodes
 end
 
-local function fn_7(self, arg_7_1)
+local function setup(config, map)
 	-- function 7
-	arg_7_1 = fn_6(arg_7_1)
+	map = normalize(map)
 
-	local tbl = {}
-	local tbl_2 = {}
-	local huge = math.huge
-	local num = -math.huge
+	local nodes = {}
+	local edges = {}
+	local min_x = math.huge
+	local max_x = -math.huge
 
-	for k, v in pairs(arg_7_1) do
-		local num_2 = self.WIDTH * v.layout_x
-		local num_3 = self.HEIGHT * v.layout_y
-		local var_7_6
-		local var_7_7
+	for key, node in pairs(map) do
+		local pos_x = config.WIDTH * node.layout_x
+		local pos_y = config.HEIGHT * node.layout_y
+		local anchor, mass
 
-		huge = math.min(num_2, huge)
-		num = math.max(num_2, num)
+		min_x = math.min(pos_x, min_x)
+		max_x = math.max(pos_x, max_x)
 
-		if k == "start" then
-			var_7_6 = false
-			var_7_7 = self.DEFAULT_MASS
-		elseif #v.next == 0 then
-			var_7_6 = false
-			var_7_7 = self.DEFAULT_MASS
+		if key == "start" then
+			anchor = false
+			mass = config.DEFAULT_MASS
+		elseif #node.next == 0 then
+			anchor = false
+			mass = config.DEFAULT_MASS
 		else
-			var_7_6 = false
-			var_7_7 = self.DEFAULT_MASS
+			anchor = false
+			mass = config.DEFAULT_MASS
 		end
 
-		tbl[k] = {
+		nodes[key] = {
 			acc_y = 0,
 			acc_x = 0,
 			vel_x = 0,
 			vel_y = 0,
-			pos_x = num_2,
-			pos_y = num_3,
-			anchor = var_7_6,
-			mass = var_7_7
+			pos_x = pos_x,
+			pos_y = pos_y,
+			anchor = anchor,
+			mass = mass
 		}
 
-		for i, v_2 in ipairs(v.next) do
-			tbl_2[#tbl_2 + 1] = {
-				from = k,
-				to = v_2
+		for _, next in ipairs(node.next) do
+			edges[#edges + 1] = {
+				from = key,
+				to = next
 			}
 		end
 	end
 
-	tbl.start_anchor = {
+	nodes.start_anchor = {
 		acc_y = 0,
 		acc_x = 0,
 		vel_x = 0,
 		anchor = true,
 		vel_y = 0,
 		pos_y = 0,
-		pos_x = huge - self.WIDTH,
-		mass = self.START_MASS
+		pos_x = min_x - config.WIDTH,
+		mass = config.START_MASS
 	}
-	tbl_2[#tbl_2 + 1] = {
+	edges[#edges + 1] = {
 		from = "start_anchor",
 		to = "start"
 	}
-	tbl.final_anchor = {
+	nodes.final_anchor = {
 		acc_y = 0,
 		acc_x = 0,
 		vel_x = 0,
 		anchor = true,
 		vel_y = 0,
 		pos_y = 0,
-		pos_x = num + self.WIDTH,
-		mass = self.END_MASS
+		pos_x = max_x + config.WIDTH,
+		mass = config.END_MASS
 	}
-	tbl_2[#tbl_2 + 1] = {
+	edges[#edges + 1] = {
 		from = "final",
 		to = "final_anchor"
 	}
 
-	return tbl, tbl_2
+	return nodes, edges
 end
 
-local function fn_8(arg_8_0, arg_8_1, arg_8_2)
+local function apply_result(config, layout_nodes, base_graph)
 	-- function 8
-	local huge = math.huge
-	local num = -math.huge
-	local huge_2 = math.huge
-	local num_2 = -math.huge
+	local min_x = math.huge
+	local max_x = -math.huge
+	local min_y = math.huge
+	local max_y = -math.huge
 
-	for k, v in pairs(arg_8_1) do
-		if not arg_8_2[k] then
-			huge = math.min(huge, v.pos_x)
-			huge_2 = math.min(huge_2, v.pos_y)
-			num = math.max(num, v.pos_x)
-			num_2 = math.max(num_2, v.pos_y)
+	for key, node in pairs(layout_nodes) do
+		local base_graph_node = base_graph[key]
+
+		if base_graph_node then
+			min_x = math.min(min_x, node.pos_x)
+			min_y = math.min(min_y, node.pos_y)
+			max_x = math.max(max_x, node.pos_x)
+			max_y = math.max(max_y, node.pos_y)
 		end
 	end
 
-	local num_3 = num - huge
-	local num_4 = num_2 - huge_2
+	local width = max_x - min_x
+	local height = max_y - min_y
 
-	for k_2, v_2 in pairs(arg_8_1) do
-		if not arg_8_2[k_2] then
-			local var_8_6 = arg_8_2[k_2]
-			local num_5
+	for key, node in pairs(layout_nodes) do
+		local base_graph_node = base_graph[key]
 
-			if num_3 ~= 0 then
-				num_5 = (v_2.pos_x - huge) / num_3
+		if base_graph_node then
+			local var_8_0 = base_graph[key]
+			local num
 
-				if not num_5 then
+			if width ~= 0 then
+				num = (node.pos_x - min_x) / width
+
+				if not num then
 					-- Nothing
 				end
 			end
 
-			num_5 = 0
+			num = 0
 
 			::label_8_0::
 
-			var_8_6.layout_x = num_5
+			var_8_0.layout_x = num
 
-			local var_8_8 = arg_8_2[k_2]
-			local num_6
+			local var_8_2 = base_graph[key]
+			local num_2
 
-			if num_4 ~= 0 then
-				num_6 = (v_2.pos_y - huge_2) / num_4
+			if height ~= 0 then
+				num_2 = (node.pos_y - min_y) / height
 
-				if not num_6 then
+				if not num_2 then
 					-- Nothing
 				end
 			end
 
-			num_6 = 0
+			num_2 = 0
 
 			::label_8_1::
 
-			var_8_8.layout_y = num_6
+			var_8_2.layout_y = num_2
 		end
 	end
 end
 
-function deus_layout_normalize(arg_9_0)
+function deus_layout_normalize(base_graph)
 	-- function 9
-	return fn_6(arg_9_0)
+	return normalize(base_graph)
 end
 
-function deus_layout_base_graph(arg_10_0, arg_10_1)
+function deus_layout_base_graph(base_graph, config)
 	-- function 10
-	local var_10_0, var_10_1 = fn_7(arg_10_1, arg_10_0)
+	local nodes, edges = setup(config, base_graph)
 
-	for i = 1, arg_10_1.LAYOUT_TICKS do
-		fn_5(arg_10_1, var_10_0, var_10_1)
+	for i = 1, config.LAYOUT_TICKS do
+		update(config, nodes, edges)
 	end
 
-	fn_8(arg_10_1, var_10_0, arg_10_0)
+	apply_result(config, nodes, base_graph)
 
-	return arg_10_0
+	return base_graph
 end
 
-function debug_deus_create_realtime_layout_updater(arg_11_0, arg_11_1)
+function debug_deus_create_realtime_layout_updater(base_graph, config)
 	-- function 11
-	local var_11_0, var_11_1 = fn_7(arg_11_1, arg_11_0)
-	local LAYOUT_TICKS = arg_11_1.LAYOUT_TICKS
+	local nodes, edges = setup(config, base_graph)
+	local count = config.LAYOUT_TICKS
 
 	return function ()
 		-- function 12
-		if LAYOUT_TICKS > 0 then
-			fn_5(arg_11_1, var_11_0, var_11_1)
-			fn_8(arg_11_1, var_11_0, arg_11_0)
+		if count > 0 then
+			update(config, nodes, edges)
+			apply_result(config, nodes, base_graph)
 
-			LAYOUT_TICKS = LAYOUT_TICKS - 1
+			count = count - 1
 
-			return false, arg_11_0
+			return false, base_graph
 		end
 
-		return true, arg_11_0
+		return true, base_graph
 	end
 end

@@ -2,12 +2,16 @@
 
 LeaderboardSystem = class(LeaderboardSystem, ExtensionSystemBase)
 
-local tbl = {
+local RPCS = {
 	"rpc_client_leaderboard_register_score"
 }
 local Leaderboard = Leaderboard
 
-Leaderboard = not Leaderboard and {
+if Leaderboard then
+	-- Nothing
+end
+
+Leaderboard = {
 	Leaderboard.UINT(32),
 	Leaderboard.UINT(32),
 	Leaderboard.UINT(32),
@@ -17,128 +21,158 @@ Leaderboard = not Leaderboard and {
 	Leaderboard.UINT(4)
 }
 
-local num = 0
-local num_2 = 4
-local var_0_4 = rawget(_G, "Steam")
+local EXTRA_DATA_TEMPLATE = Leaderboard
 
-var_0_4 = not var_0_4 and GameSettingsDevelopment.network_mode == "steam"
+::label_0_0::
+
+local NO_PLAYER_ID = 0
+local MY_PROFILE_INDEX = 4
+local var_0_1 = rawget(_G, "Steam")
+
+if var_0_1 then
+	-- Nothing
+end
+
+if GameSettingsDevelopment.network_mode ~= "steam" then
+	var_0_1 = false
+
+	goto label_0_1
+end
+
+var_0_1 = true
+
+local STEAM_AVAILABLE = var_0_1
+
+::label_0_1::
 
 local Leaderboard_2 = Leaderboard
 
-Leaderboard_2 = not Leaderboard_2 and Leaderboard.KEEP_BEST
+if Leaderboard_2 then
+	-- Nothing
+end
 
-local function fn(arg_1_0, arg_1_1)
+Leaderboard_2 = Leaderboard.KEEP_BEST
+
+local SCORE_UPDATE_METHOD = Leaderboard_2
+
+::label_0_2::
+
+local function get_board_name(level_key, difficulty_name)
 	-- function 1
-	return string.format("%s_%s", arg_1_0, arg_1_1)
+	return string.format("%s_%s", level_key, difficulty_name)
 end
 
-local function fn_2(arg_2_0, arg_2_1, arg_2_2)
+local function close_and_clear_token(token, token_data, tokens)
 	-- function 2
-	Leaderboard.close(arg_2_0)
-	table.clear(arg_2_1)
+	Leaderboard.close(token)
+	table.clear(token_data)
 
-	arg_2_2[arg_2_0] = nil
+	tokens[token] = nil
 end
 
-local num_3 = 10000000
+local PRECISION = 10000000
 
-local function fn_3(arg_3_0, arg_3_1)
+local function calculate_wave_score(nr_waves_completed, completion_time)
 	-- function 3
-	assert(not (arg_3_0 <= 200) or arg_3_1 <= 10800, "Leaderboard error: Too many waves or too long playtime!")
+	assert(nr_waves_completed <= 200 and completion_time <= 10800, "Leaderboard error: Too many waves or too long playtime!")
 
-	return num_3 * arg_3_0 + (math.floor(num_3 / arg_3_1) - 1)
+	local wave_score = PRECISION * nr_waves_completed
+	local time_score = math.floor(PRECISION / completion_time) - 1
+	local final_score = wave_score + time_score
+
+	return final_score
 end
 
-function get_wave_and_time_from_score(arg_4_0)
+function get_wave_and_time_from_score(score)
 	-- function 4
-	local floor = math.floor(arg_4_0 / num_3)
-	local num = arg_4_0 % num_3
-	local floor_2 = math.floor(num_3 / (num + 1))
+	local nr_waves_completed = math.floor(score / PRECISION)
+	local rest = score % PRECISION
+	local completion_time = math.floor(PRECISION / (rest + 1))
 
-	return floor, floor_2
+	return nr_waves_completed, completion_time
 end
 
-local function fn_4(arg_5_0, arg_5_1, arg_5_2)
+local function debug_steam_wave_print_entries(status, total_scores, scores)
 	-- function 5
-	for i = 1, arg_5_1 do
-		local var_5_0 = arg_5_2[i]
-		local global_rank = var_5_0.global_rank
-		local name = var_5_0.name
-		local score = var_5_0.score
-		local var_5_4, var_5_5 = get_wave_and_time_from_score(score)
-		local data = var_5_0.data
-		local var_5_7 = data[num_2]
-		local var_5_8 = SPProfiles[var_5_7]
-		local var_5_9 = Localize(var_5_8.display_name)
-		local str = ""
+	for i = 1, total_scores do
+		local entry = scores[i]
+		local global_rank = entry.global_rank
+		local player_name = entry.name
+		local score = entry.score
+		local nr_waves_completed, completion_time = get_wave_and_time_from_score(score)
+		local extra_data = entry.data
+		local my_profile_index = extra_data[MY_PROFILE_INDEX]
+		local my_profile = SPProfiles[my_profile_index]
+		local my_hero_name = Localize(my_profile.display_name)
+		local accompanying_players_string = ""
 
 		for j = 1, 3 do
-			local var_5_11 = data[j]
+			local steamid_32 = extra_data[j]
 
-			if var_5_11 ~= num then
-				local var_5_12 = data[num_2 + j]
-				local var_5_13 = SPProfiles[var_5_12]
-				local id_32bit_to_id = Steam.id_32bit_to_id(var_5_11)
-				local user_name = Steam.user_name(id_32bit_to_id)
-				local var_5_16 = Localize(var_5_13.display_name)
+			if steamid_32 ~= NO_PLAYER_ID then
+				local profile_index = extra_data[MY_PROFILE_INDEX + j]
+				local profile = SPProfiles[profile_index]
+				local steamid_64 = Steam.id_32bit_to_id(steamid_32)
+				local user_name = Steam.user_name(steamid_64)
+				local hero_name = Localize(profile.display_name)
 
-				str = str .. user_name .. " " .. var_5_16 .. " : "
+				accompanying_players_string = accompanying_players_string .. user_name .. " " .. hero_name .. " : "
 			else
 				break
 			end
 		end
 
-		local format = string.format("%d. %s, %s: %d, %d || %s", global_rank, name, var_5_9, var_5_4, var_5_5, str)
+		local debug_string = string.format("%d. %s, %s: %d, %d || %s", global_rank, player_name, my_hero_name, nr_waves_completed, completion_time, accompanying_players_string)
 
-		print(format)
+		print(debug_string)
 	end
 end
 
-local function fn_5(arg_6_0, arg_6_1, arg_6_2)
+local function debug_simply_print(status, total_scores, scores)
 	-- function 6
-	for i = 1, arg_6_1 do
-		local var_6_0 = arg_6_2[i]
-		local global_rank = var_6_0.global_rank
-		local name = var_6_0.name
-		local score = var_6_0.score
-		local var_6_4, var_6_5 = get_wave_and_time_from_score(score)
-		local data = var_6_0.data
-		local var_6_7 = data[0]
-		local var_6_8 = data[1]
-		local var_6_9 = data[2]
-		local str = (var_6_7 or "Nothing here, Good") .. " " .. var_6_8 .. " " .. (var_6_9 or "")
-		local format = string.format("%d. %s, %d, %d || %s", global_rank, name, var_6_4, var_6_5, str)
+	for i = 1, total_scores do
+		local entry = scores[i]
+		local global_rank = entry.global_rank
+		local player_name = entry.name
+		local score = entry.score
+		local nr_waves_completed, completion_time = get_wave_and_time_from_score(score)
+		local extra_data = entry.data
+		local test1 = extra_data[0]
+		local test2 = extra_data[1]
+		local test3 = extra_data[2]
+		local accompanying_players_string = (not not test1 or not not "Nothing here, Good") .. " " .. test2 .. " " .. (not not test3 or not not "")
+		local debug_string = string.format("%d. %s, %d, %d || %s", global_rank, player_name, nr_waves_completed, completion_time, accompanying_players_string)
 
-		print(format)
+		print(debug_string)
 	end
 end
 
-LeaderboardSystem.init = function (self, arg_7_1, arg_7_2)
+LeaderboardSystem.init = function (self, entity_system_creation_context, system_name)
 	-- function 7
-	LeaderboardSystem.super.init(self, arg_7_1, arg_7_2, {})
+	LeaderboardSystem.super.init(self, entity_system_creation_context, system_name, {})
 
-	local network_event_delegate = arg_7_1.network_event_delegate
+	local network_event_delegate = entity_system_creation_context.network_event_delegate
 
 	self.network_event_delegate = network_event_delegate
 
-	network_event_delegate:register(self, unpack(tbl))
+	network_event_delegate:register(self, unpack(RPCS))
 
-	self.world = arg_7_1.world
-	self.is_server = arg_7_1.is_server
-	self.network_transmit = arg_7_1.network_transmit
+	self.world = entity_system_creation_context.world
+	self.is_server = entity_system_creation_context.is_server
+	self.network_transmit = entity_system_creation_context.network_transmit
 	self.transaction_tokens = {}
 	self.round_start_time = nil
 
-	if not script_data.debug_leaderboard then
+	if script_data.debug_leaderboard then
 		local format = string.format
 		local str = "[LeaderboardSystem] %s"
 		local flag
 
-		flag = not var_0_4 and "Steam detected, using leaderboards" and "Leaderboards are disabled"
+		flag = (not STEAM_AVAILABLE or not "Steam detected, using leaderboards") and not not "Leaderboards are disabled"
 
-		local var_7_4 = format(str, flag)
+		local debug_string = format(str, flag)
 
-		print(var_7_4)
+		print(debug_string)
 	end
 end
 
@@ -146,119 +180,121 @@ LeaderboardSystem.destroy = function (self)
 	-- function 8
 	self.network_event_delegate:unregister(self)
 
-	local transaction_tokens = self.transaction_tokens
+	local tokens = self.transaction_tokens
 
-	for k, v in pairs(transaction_tokens) do
-		fn_2(k, v, transaction_tokens)
+	for token, data in pairs(tokens) do
+		close_and_clear_token(token, data, tokens)
 	end
 
-	if not script_data.debug_leaderboard then
-		local str = "[LeaderboardSystem] DESTROYED"
+	if script_data.debug_leaderboard then
+		local debug_string = "[LeaderboardSystem] DESTROYED"
 
-		print(str)
+		print(debug_string)
 	end
 end
 
-LeaderboardSystem.update = function (self, arg_9_1, arg_9_2)
+LeaderboardSystem.update = function (self, context, t)
 	-- function 9
-	local transaction_tokens = self.transaction_tokens
+	local tokens = self.transaction_tokens
 
-	for k, v in pairs(transaction_tokens) do
-		local progress = Leaderboard.progress(k)
+	for token, data in pairs(tokens) do
+		local progress = Leaderboard.progress(token)
 
-		if not script_data.debug_leaderboard then
-			local format = string.format("[LeaderboardSystem] %s - transaction_status = %s : work_status = %s", v.name, progress.transaction_status, progress.work_status)
+		if script_data.debug_leaderboard then
+			local debug_string = string.format("[LeaderboardSystem] %s - transaction_status = %s : work_status = %s", data.name, progress.transaction_status, progress.work_status)
 
-			print(format)
+			print(debug_string)
 		end
 
-		if not (progress.work_status == "succeeded" or progress.work_status ~= "failed") then
-			local callback = v.callback
+		if progress.work_status == "succeeded" or progress.work_status == "failed" then
+			local callback = data.callback
 
 			if callback ~= nil then
 				callback(progress.work_status, progress.total_scores, progress.scores)
 			end
 
-			fn_2(k, v, transaction_tokens)
+			close_and_clear_token(token, data, tokens)
 		end
 	end
 end
 
-LeaderboardSystem.round_started = function (self, arg_10_1, arg_10_2)
+LeaderboardSystem.round_started = function (self, score_type, data)
 	-- function 10
-	if not (not self.is_server and var_0_4) then
+	if not self.is_server or not STEAM_AVAILABLE then
 		return
 	end
 
-	self.round_start_time = arg_10_2.start_time
+	self.round_start_time = data.start_time
 
-	if not script_data.debug_leaderboard then
-		local format = string.format("[LeaderboardSystem] round_started at %.2f, level score_type = %s", arg_10_2.start_time, arg_10_1 or "?")
+	if script_data.debug_leaderboard then
+		local debug_string = string.format("[LeaderboardSystem] round_started at %.2f, level score_type = %s", data.start_time, not not score_type or not not "?")
 
-		print(format)
+		print(debug_string)
 	end
 end
 
-LeaderboardSystem.debug_simulate_wave_score_enty = function (self, arg_11_1, arg_11_2, arg_11_3)
+LeaderboardSystem.debug_simulate_wave_score_enty = function (self, wave, time, nr_players)
 	-- function 11
-	local var_11_0 = fn_3(arg_11_1, arg_11_2)
-	local tbl = {}
-	local tbl_2 = {
+	local wave_score = calculate_wave_score(wave, time)
+	local human_players = {}
+	local net_ids = {
 		"1",
 		"2",
 		"3",
 		"4"
 	}
-	local tbl_3 = {
+	local hero_ids = {
 		1,
 		2,
 		3,
 		4
 	}
 
-	for i = 1, arg_11_3 do
-		local var_11_4 = tbl_2[i]
-		local id_to_id_32bit = Steam.id_to_id_32bit(var_11_4)
+	for i = 1, nr_players do
+		local network_id_64_bit = net_ids[i]
+		local network_id_32_bit = Steam.id_to_id_32bit(network_id_64_bit)
 
-		tbl[#tbl + 1] = id_to_id_32bit
-		tbl[#tbl + 1] = tbl_3[i]
+		human_players[#human_players + 1] = network_id_32_bit
+		human_players[#human_players + 1] = hero_ids[i]
 	end
 
-	self:register_score("whitebox_ai", "normal", var_11_0, tbl)
+	self:register_score("whitebox_ai", "normal", wave_score, human_players)
 end
 
 LeaderboardSystem.round_completed = function (self)
 	-- function 12
-	if not (not self.is_server and var_0_4) then
+	if not self.is_server or not STEAM_AVAILABLE then
 		return
 	end
 
 	local level_key = Managers.state.game_mode:level_key()
-	local score_type = LevelSettings[level_key].score_type
+	local level_settings = LevelSettings[level_key]
+	local score_type = level_settings.score_type
 
 	if not score_type then
 		return
 	end
 
-	local time = Managers.time:time("game")
-	local num = 1
-	local tbl = {
-		completed_time = time,
-		nr_waves_completed = num
+	local time_manager = Managers.time
+	local end_t = time_manager:time("game")
+	local nr_waves_completed = 1
+	local data = {
+		completed_time = end_t,
+		nr_waves_completed = nr_waves_completed
 	}
-	local floor = math.floor(tbl.completed_time - self.round_start_time)
+	local completion_time = math.floor(data.completed_time - self.round_start_time)
 
-	if floor <= 0 then
+	if completion_time <= 0 then
 		print("[LeaderboardSystem] Invalid completion time, score will not be recorded!")
 
 		return
 	end
 
-	local var_12_6
-	local var_12_7 = NetworkLookup.level_keys[level_key]
-	local get_difficulty = Managers.state.difficulty:get_difficulty()
-	local var_12_9 = NetworkLookup.difficulties[get_difficulty]
-	local tbl_2 = {
+	local score
+	local level_key_id = NetworkLookup.level_keys[level_key]
+	local difficulty_name = Managers.state.difficulty:get_difficulty()
+	local difficulty_id = NetworkLookup.difficulties[difficulty_name]
+	local player_data = {
 		0,
 		0,
 		0,
@@ -268,45 +304,50 @@ LeaderboardSystem.round_completed = function (self)
 		0,
 		0
 	}
-	local num_2 = 1
-	local human_players = Managers.player:human_players()
-	local profile_synchronizer = Managers.state.network.profile_synchronizer
+	local player_index = 1
+	local player_manager = Managers.player
+	local human_players = player_manager:human_players()
+	local network_manager = Managers.state.network
+	local profile_synchronizer = network_manager.profile_synchronizer
 
-	for k, v in pairs(human_players) do
-		local network_id = v:network_id()
-		local profile_by_peer = profile_synchronizer:profile_by_peer(network_id, v:local_player_id())
+	for _, player in pairs(human_players) do
+		local network_id_64_bit = player:network_id()
+		local profile_index = profile_synchronizer:profile_by_peer(network_id_64_bit, player:local_player_id())
+		local network_id_32_bit = Steam.id_to_id_32bit(network_id_64_bit)
 
-		tbl_2[num_2] = Steam.id_to_id_32bit(network_id)
-		tbl_2[num_2 + 1] = profile_by_peer
-		num_2 = num_2 + 2
+		player_data[player_index] = network_id_32_bit
+		player_data[player_index + 1] = profile_index
+		player_index = player_index + 2
 	end
 
 	if score_type == "time" then
-		var_12_6 = floor
+		score = completion_time
 	elseif score_type == "wave_and_time" then
-		local nr_waves_completed = tbl.nr_waves_completed
+		local nr_waves_completed = data.nr_waves_completed
 
-		var_12_6 = fn_3(nr_waves_completed, floor)
+		score = calculate_wave_score(nr_waves_completed, completion_time)
 	end
 
-	if not var_12_6 then
-		self.network_transmit:send_rpc_clients("rpc_client_leaderboard_register_score", var_12_7, var_12_9, var_12_6, unpack(tbl_2))
-		self:register_score(level_key, get_difficulty, var_12_6, tbl_2)
+	if score then
+		self.network_transmit:send_rpc_clients("rpc_client_leaderboard_register_score", level_key_id, difficulty_id, score, unpack(player_data))
+		self:register_score(level_key, difficulty_name, score, player_data)
 	end
 
-	if not script_data.debug_leaderboard then
-		local format = string.format("[LeaderboardSystem] start_time = %.2f, end_time = %.2f, completion_time = %d, level score_type = %s", self.round_start_time, tbl.completed_time, floor, score_type or "?")
+	if script_data.debug_leaderboard then
+		local debug_string = string.format("[LeaderboardSystem] start_time = %.2f, end_time = %.2f, completion_time = %d, level score_type = %s", self.round_start_time, data.completed_time, completion_time, not not score_type or not not "?")
 
-		print(format)
+		print(debug_string)
 	end
 end
 
-LeaderboardSystem.register_score = function (arg_13_0, arg_13_1, arg_13_2, arg_13_3, arg_13_4)
+LeaderboardSystem.register_score = function (self, level_key, difficulty_name, score, human_players)
 	-- function 13
-	local var_13_0 = fn(arg_13_1, arg_13_2)
-	local network_id = Managers.player:local_player():network_id()
-	local id_to_id_32bit = Steam.id_to_id_32bit(network_id)
-	local tbl = {
+	local board_name = get_board_name(level_key, difficulty_name)
+	local player_manager = Managers.player
+	local my_player = player_manager:local_player()
+	local my_peer_id_64 = my_player:network_id()
+	local my_peer_id_32 = Steam.id_to_id_32bit(my_peer_id_64)
+	local extra_data = {
 		0,
 		0,
 		0,
@@ -315,87 +356,87 @@ LeaderboardSystem.register_score = function (arg_13_0, arg_13_1, arg_13_2, arg_1
 		0,
 		0
 	}
-	local num = 1
-	local count = #arg_13_4
+	local curr_extra_index = 1
+	local human_players_size = #human_players
 
-	for i = 1, count, 2 do
-		local var_13_6 = arg_13_4[i]
-		local var_13_7 = arg_13_4[i + 1]
+	for i = 1, human_players_size, 2 do
+		local peer_id = human_players[i]
+		local profile_index = human_players[i + 1]
 
-		if var_13_6 == id_to_id_32bit then
-			tbl[num_2] = var_13_7
+		if peer_id == my_peer_id_32 then
+			extra_data[MY_PROFILE_INDEX] = profile_index
 		else
-			tbl[num] = var_13_6
-			tbl[num + num_2] = var_13_7
-			num = num + 1
+			extra_data[curr_extra_index] = peer_id
+			extra_data[curr_extra_index + MY_PROFILE_INDEX] = profile_index
+			curr_extra_index = curr_extra_index + 1
 		end
 	end
 
-	local register_score = Leaderboard.register_score(var_13_0, arg_13_3, Leaderboard_2, Leaderboard, tbl)
+	local token = Leaderboard.register_score(board_name, score, SCORE_UPDATE_METHOD, EXTRA_DATA_TEMPLATE, extra_data)
 
-	arg_13_0.transaction_tokens[register_score] = {
+	self.transaction_tokens[token] = {
 		name = "register_token"
 	}
 
-	if not script_data.debug_leaderboard then
-		local format = string.format("[LeaderboardSystem] register_score -> score = %s, board = %s", tostring(arg_13_3), var_13_0)
+	if script_data.debug_leaderboard then
+		local debug_string = string.format("[LeaderboardSystem] register_score -> score = %s, board = %s", tostring(score), board_name)
 
-		print(format)
+		print(debug_string)
 	end
 end
 
-LeaderboardSystem.get_ranking_range = function (arg_14_0, arg_14_1, arg_14_2, arg_14_3, arg_14_4, arg_14_5)
+LeaderboardSystem.get_ranking_range = function (self, level_key, difficulty_name, callback, start_range, num_ranks)
 	-- function 14
-	if not var_0_4 then
+	if not STEAM_AVAILABLE then
 		return
 	end
 
-	local var_14_0 = fn(arg_14_1, arg_14_2)
-	local ranking_range = Leaderboard.ranking_range(var_14_0, arg_14_4, arg_14_5, Leaderboard)
+	local board_name = get_board_name(level_key, difficulty_name)
+	local token = Leaderboard.ranking_range(board_name, start_range, num_ranks, EXTRA_DATA_TEMPLATE)
 
-	arg_14_0.transaction_tokens[ranking_range] = {
+	self.transaction_tokens[token] = {
 		name = "ranking_range_token",
-		callback = arg_14_3
+		callback = callback
 	}
 end
 
-LeaderboardSystem.get_ranking_around_self = function (arg_15_0, arg_15_1, arg_15_2, arg_15_3, arg_15_4, arg_15_5)
+LeaderboardSystem.get_ranking_around_self = function (self, level_key, difficulty_name, callback, ranks_before, ranks_after)
 	-- function 15
-	if not var_0_4 then
+	if not STEAM_AVAILABLE then
 		return
 	end
 
-	local var_15_0 = fn(arg_15_1, arg_15_2)
-	local ranking_around_self = Leaderboard.ranking_around_self(var_15_0, arg_15_4, arg_15_5, Leaderboard)
+	local board_name = get_board_name(level_key, difficulty_name)
+	local token = Leaderboard.ranking_around_self(board_name, ranks_before, ranks_after, EXTRA_DATA_TEMPLATE)
 
-	arg_15_0.transaction_tokens[ranking_around_self] = {
+	self.transaction_tokens[token] = {
 		name = "ranking_around_self_token",
-		callback = arg_15_3
+		callback = callback
 	}
 end
 
-LeaderboardSystem.get_ranking_for_friends = function (arg_16_0, arg_16_1, arg_16_2, arg_16_3)
+LeaderboardSystem.get_ranking_for_friends = function (self, level_key, difficulty_name, callback)
 	-- function 16
-	if not var_0_4 then
+	if not STEAM_AVAILABLE then
 		return
 	end
 
-	local var_16_0 = fn(arg_16_1, arg_16_2)
-	local ranking_for_friends = Leaderboard.ranking_for_friends(var_16_0, Leaderboard)
+	local board_name = get_board_name(level_key, difficulty_name)
+	local token = Leaderboard.ranking_for_friends(board_name, EXTRA_DATA_TEMPLATE)
 
-	arg_16_0.transaction_tokens[ranking_for_friends] = {
+	self.transaction_tokens[token] = {
 		name = "ranking_for_friends",
-		callback = arg_16_3
+		callback = callback
 	}
 end
 
-LeaderboardSystem.rpc_client_leaderboard_register_score = function (self, arg_17_1, arg_17_2, arg_17_3, arg_17_4, ...)
+LeaderboardSystem.rpc_client_leaderboard_register_score = function (self, channel_id, level_key_id, difficulty_id, score, ...)
 	-- function 17
-	local var_17_0 = NetworkLookup.level_keys[arg_17_2]
-	local var_17_1 = NetworkLookup.difficulties[arg_17_3]
-	local tbl = {
+	local level_key = NetworkLookup.level_keys[level_key_id]
+	local difficulty_name = NetworkLookup.difficulties[difficulty_id]
+	local human_players = {
 		...
 	}
 
-	self:register_score(var_17_0, var_17_1, arg_17_4, tbl)
+	self:register_score(level_key, difficulty_name, score, human_players)
 end

@@ -1,6 +1,6 @@
 -- chunkname: @scripts/ui/views/title_main_ui_definitions.win32.lua
 
-local tbl = {
+local scenegraph_definition = {
 	root = {
 		is_root = true,
 		size = {
@@ -750,7 +750,7 @@ local tbl = {
 		}
 	}
 }
-local tbl_2 = {
+local info_slate_text_style = {
 	font_size = 22,
 	upper_case = false,
 	localize = true,
@@ -770,7 +770,7 @@ local tbl_2 = {
 		2
 	}
 }
-local tbl_3 = {
+local game_type_tag_text_style = {
 	font_size = 32,
 	upper_case = false,
 	localize = true,
@@ -790,7 +790,7 @@ local tbl_3 = {
 		2
 	}
 }
-local tbl_4 = {
+local game_type_description_text_style = {
 	font_size = 18,
 	upper_case = false,
 	localize = true,
@@ -815,29 +815,29 @@ local tbl_4 = {
 	}
 }
 
-local function fn(arg_1_0)
+local function create_engage_prompt(ui_renderer)
 	-- function 1
-	local str = "hell_shark"
-	local num = 52
-	local tbl = {
+	local font_type = "hell_shark"
+	local font_size = 52
+	local button_size = {
 		50,
 		50
 	}
-	local var_1_3 = Localize("interaction_prefix_press")
-	local var_1_4 = Localize("to_start_game")
-	local num_2 = 10
-	local num_3 = 7.5
-	local var_1_7, var_1_8 = UIFontByResolution({
-		font_type = str,
-		font_size = num
+	local press_str = Localize("interaction_prefix_press")
+	local to_start_str = Localize("to_start_game")
+	local spacing = 10
+	local button_alignment = 7.5
+	local font, scaled_font_size = UIFontByResolution({
+		font_type = font_type,
+		font_size = font_size
 	})
-	local text_size = UIRenderer.text_size(arg_1_0, var_1_3, var_1_7[1], var_1_8)
-	local text_size_2 = UIRenderer.text_size(arg_1_0, var_1_4, var_1_7[1], var_1_8)
-	local num_4 = text_size + num_2 + tbl[1] + num_2 + text_size_2 + num_3
-	local num_5 = -num_4 * 0.5 + text_size * 0.5
-	local num_6 = -num_4 * 0.5 + tbl[1] * 0.5 + text_size + num_2 + num_3
-	local num_7 = num_6 + tbl[1] * 0.5 + num_2 + text_size_2 * 0.5
-	local tbl_2 = {
+	local press_text_width = UIRenderer.text_size(ui_renderer, press_str, font[1], scaled_font_size)
+	local to_start_width = UIRenderer.text_size(ui_renderer, to_start_str, font[1], scaled_font_size)
+	local total_size = press_text_width + spacing + button_size[1] + spacing + to_start_width + button_alignment
+	local press_offset_x = -total_size * 0.5 + press_text_width * 0.5
+	local button_offset = -total_size * 0.5 + button_size[1] * 0.5 + press_text_width + spacing + button_alignment
+	local to_start_offset = button_offset + button_size[1] * 0.5 + spacing + to_start_width * 0.5
+	local tbl = {
 		scenegraph_id = "engage_prompt",
 		element = {
 			passes = {
@@ -845,16 +845,16 @@ local function fn(arg_1_0)
 					style_id = "press_to_start",
 					pass_type = "text",
 					text_id = "press_to_start",
-					content_change_function = function (arg_2_0, arg_2_1)
+					content_change_function = function (content, style)
 						-- function 2
-						local time = Managers.time:time("main")
-						local num = 192 + math.sin(time * 5) * 63
+						local t = Managers.time:time("main")
+						local alpha = 192 + math.sin(t * 5) * 63
 
-						arg_2_1.text_color[2] = num
-						arg_2_1.text_color[3] = num
-						arg_2_1.text_color[4] = num
+						style.text_color[2] = alpha
+						style.text_color[3] = alpha
+						style.text_color[4] = alpha
 					end,
-					content_check_function = function (arg_3_0, arg_3_1)
+					content_check_function = function (content, style)
 						-- function 3
 						return not Managers.input:is_device_active("gamepad")
 					end
@@ -863,16 +863,16 @@ local function fn(arg_1_0)
 					style_id = "press",
 					pass_type = "text",
 					text_id = "press_str",
-					content_change_function = function (arg_4_0, arg_4_1)
+					content_change_function = function (content, style)
 						-- function 4
-						local time = Managers.time:time("main")
-						local num = 192 + math.sin(time * 5) * 63
+						local t = Managers.time:time("main")
+						local alpha = 192 + math.sin(t * 5) * 63
 
-						arg_4_1.text_color[2] = num
-						arg_4_1.text_color[3] = num
-						arg_4_1.text_color[4] = num
+						style.text_color[2] = alpha
+						style.text_color[3] = alpha
+						style.text_color[4] = alpha
 					end,
-					content_check_function = function (arg_5_0, arg_5_1)
+					content_check_function = function (content, style)
 						-- function 5
 						return Managers.input:is_device_active("gamepad")
 					end
@@ -881,16 +881,16 @@ local function fn(arg_1_0)
 					style_id = "to_start",
 					pass_type = "text",
 					text_id = "to_start_str",
-					content_change_function = function (arg_6_0, arg_6_1)
+					content_change_function = function (content, style)
 						-- function 6
-						local time = Managers.time:time("main")
-						local num = 192 + math.sin(time * 5) * 63
+						local t = Managers.time:time("main")
+						local alpha = 192 + math.sin(t * 5) * 63
 
-						arg_6_1.text_color[2] = num
-						arg_6_1.text_color[3] = num
-						arg_6_1.text_color[4] = num
+						style.text_color[2] = alpha
+						style.text_color[3] = alpha
+						style.text_color[4] = alpha
 					end,
-					content_check_function = function (arg_7_0, arg_7_1)
+					content_check_function = function (content, style)
 						-- function 7
 						return Managers.input:is_device_active("gamepad")
 					end
@@ -899,16 +899,16 @@ local function fn(arg_1_0)
 					style_id = "button",
 					pass_type = "texture",
 					texture_id = "button_id",
-					content_change_function = function (arg_8_0, arg_8_1)
+					content_change_function = function (content, style)
 						-- function 8
-						local time = Managers.time:time("main")
-						local num = 192 + math.sin(time * 5) * 63
+						local t = Managers.time:time("main")
+						local alpha = 192 + math.sin(t * 5) * 63
 
-						arg_8_1.color[2] = num
-						arg_8_1.color[3] = num
-						arg_8_1.color[4] = num
+						style.color[2] = alpha
+						style.color[3] = alpha
+						style.color[4] = alpha
 					end,
-					content_check_function = function (arg_9_0, arg_9_1)
+					content_check_function = function (content, style)
 						-- function 9
 						return Managers.input:is_device_active("gamepad")
 					end
@@ -916,24 +916,24 @@ local function fn(arg_1_0)
 			}
 		}
 	}
-	local tbl_3 = {
+	local tbl_2 = {
 		press_to_start = "press_any_button_to_continue",
-		press_str = var_1_3
+		press_str = press_str
 	}
 	local flag
 
-	flag = not IS_PS4 and "ps4_button_icon_cross_large" and "xbone_button_icon_a_large"
-	tbl_3.button_id = flag
-	tbl_3.to_start_str = var_1_4
-	tbl_2.content = tbl_3
-	tbl_2.style = {
+	flag = (not IS_PS4 or not "ps4_button_icon_cross_large") and not not "xbone_button_icon_a_large"
+	tbl_2.button_id = flag
+	tbl_2.to_start_str = to_start_str
+	tbl.content = tbl_2
+	tbl.style = {
 		press_to_start = {
 			vertical_alignment = "center",
 			localize = true,
 			horizontal_alignment = "center",
 			word_wrap = false,
-			font_size = num,
-			font_type = str,
+			font_size = font_size,
+			font_type = font_type,
 			text_color = {
 				255,
 				255,
@@ -951,8 +951,8 @@ local function fn(arg_1_0)
 			localize = false,
 			horizontal_alignment = "center",
 			word_wrap = false,
-			font_size = num,
-			font_type = str,
+			font_size = font_size,
+			font_type = font_type,
 			text_color = {
 				255,
 				255,
@@ -960,7 +960,7 @@ local function fn(arg_1_0)
 				255
 			},
 			offset = {
-				num_5,
+				press_offset_x,
 				0,
 				0
 			}
@@ -970,8 +970,8 @@ local function fn(arg_1_0)
 			localize = false,
 			horizontal_alignment = "center",
 			word_wrap = false,
-			font_size = num,
-			font_type = str,
+			font_size = font_size,
+			font_type = font_type,
 			text_color = {
 				255,
 				255,
@@ -979,7 +979,7 @@ local function fn(arg_1_0)
 				255
 			},
 			offset = {
-				num_7,
+				to_start_offset,
 				0,
 				0
 			}
@@ -987,7 +987,7 @@ local function fn(arg_1_0)
 		button = {
 			vertical_alignment = "center",
 			horizontal_alignment = "center",
-			texture_size = tbl,
+			texture_size = button_size,
 			color = {
 				255,
 				255,
@@ -995,7 +995,7 @@ local function fn(arg_1_0)
 				255
 			},
 			offset = {
-				num_6,
+				button_offset,
 				0,
 				0
 			}
@@ -1004,7 +1004,7 @@ local function fn(arg_1_0)
 			vertical_alignment = "center",
 			horizontal_alignment = "center",
 			texture_size = {
-				text_size,
+				press_text_width,
 				30
 			},
 			color = {
@@ -1014,7 +1014,7 @@ local function fn(arg_1_0)
 				0
 			},
 			offset = {
-				num_5,
+				press_offset_x,
 				50,
 				0
 			}
@@ -1023,7 +1023,7 @@ local function fn(arg_1_0)
 			vertical_alignment = "center",
 			horizontal_alignment = "center",
 			texture_size = {
-				tbl[1],
+				button_size[1],
 				30
 			},
 			color = {
@@ -1033,7 +1033,7 @@ local function fn(arg_1_0)
 				0
 			},
 			offset = {
-				num_6,
+				button_offset,
 				50,
 				0
 			}
@@ -1042,7 +1042,7 @@ local function fn(arg_1_0)
 			vertical_alignment = "center",
 			horizontal_alignment = "center",
 			texture_size = {
-				text_size_2,
+				to_start_width,
 				30
 			},
 			color = {
@@ -1052,7 +1052,7 @@ local function fn(arg_1_0)
 				255
 			},
 			offset = {
-				num_7,
+				to_start_offset,
 				50,
 				0
 			}
@@ -1061,7 +1061,7 @@ local function fn(arg_1_0)
 			vertical_alignment = "center",
 			horizontal_alignment = "center",
 			texture_size = {
-				num_4,
+				total_size,
 				30
 			},
 			color = {
@@ -1077,18 +1077,18 @@ local function fn(arg_1_0)
 			}
 		}
 	}
-	tbl_2.offset = {
+	tbl.offset = {
 		0,
 		-375,
 		0
 	}
 
-	return tbl_2
+	return tbl
 end
 
-UIWidgets.create_game_type_text = function (arg_10_0, arg_10_1, arg_10_2, arg_10_3)
+UIWidgets.create_game_type_text = function (text, scenegraph_id, size, color)
 	-- function 10
-	local flag = arg_10_3 or {
+	local text_color = not not color or not not {
 		255,
 		255,
 		255,
@@ -1107,25 +1107,25 @@ UIWidgets.create_game_type_text = function (arg_10_0, arg_10_1, arg_10_2, arg_10
 					style_id = "status_text",
 					pass_type = "text",
 					text_id = "status_text",
-					content_check_function = function (self, arg_11_1)
+					content_check_function = function (content, style)
 						-- function 11
-						return self.text ~= ""
+						return content.text ~= ""
 					end
 				}
 			}
 		},
 		content = {
-			text = arg_10_0,
+			text = text,
 			status_text = Localize("lb_status") .. ":",
-			color = flag
+			color = text_color
 		},
 		style = {
 			text = {
 				localize = false,
 				word_wrap = true,
 				font_type = "hell_shark",
-				font_size = arg_10_2,
-				text_color = flag,
+				font_size = size,
+				text_color = text_color,
 				offset = {
 					0,
 					0,
@@ -1136,7 +1136,7 @@ UIWidgets.create_game_type_text = function (arg_10_0, arg_10_1, arg_10_2, arg_10
 				localize = false,
 				word_wrap = true,
 				font_type = "hell_shark",
-				font_size = arg_10_2 * 0.4,
+				font_size = size * 0.4,
 				text_color = {
 					255,
 					255,
@@ -1145,7 +1145,7 @@ UIWidgets.create_game_type_text = function (arg_10_0, arg_10_1, arg_10_2, arg_10
 				},
 				offset = {
 					0,
-					arg_10_2,
+					size,
 					2
 				}
 			}
@@ -1155,11 +1155,11 @@ UIWidgets.create_game_type_text = function (arg_10_0, arg_10_1, arg_10_2, arg_10
 			0,
 			0
 		},
-		scenegraph_id = arg_10_1
+		scenegraph_id = scenegraph_id
 	}
 end
 
-local function fn_2(arg_12_0, arg_12_1, arg_12_2)
+local function create_info_text(text, scenegraph_id, font_size)
 	-- function 12
 	return {
 		element = {
@@ -1179,7 +1179,7 @@ local function fn_2(arg_12_0, arg_12_1, arg_12_2)
 		},
 		content = {
 			texture_id = "info",
-			text = arg_12_0
+			text = text
 		},
 		style = {
 			text = {
@@ -1190,7 +1190,7 @@ local function fn_2(arg_12_0, arg_12_1, arg_12_2)
 				vertical_alignment = "top",
 				dynamic_font = true,
 				font_type = "hell_shark_header",
-				font_size = arg_12_2,
+				font_size = font_size,
 				text_color = Colors.get_table("dark_gray"),
 				offset = {
 					0,
@@ -1212,14 +1212,14 @@ local function fn_2(arg_12_0, arg_12_1, arg_12_2)
 				}
 			}
 		},
-		scenegraph_id = arg_12_1
+		scenegraph_id = scenegraph_id
 	}
 end
 
-local function fn_3(arg_13_0, arg_13_1, arg_13_2, arg_13_3)
+local function create_menu_button(scenegraph_id, text, callback, menu_option_data)
 	-- function 13
-	local var_13_0 = Localize(arg_13_1)
-	local flag = not string.find(var_13_0, "{#")
+	local localized_text = Localize(text)
+	local upper_case = not string.find(localized_text, "{#")
 
 	return {
 		element = {
@@ -1232,35 +1232,35 @@ local function fn_3(arg_13_0, arg_13_1, arg_13_2, arg_13_3)
 					style_id = "text",
 					pass_type = "text",
 					text_id = "text_field",
-					content_check_function = function (self)
+					content_check_function = function (content)
 						-- function 14
-						if not Managers.input:is_device_active("mouse") then
+						if Managers.input:is_device_active("mouse") then
 							return
 						end
 
-						return not not self.button_text.disable_button or not self.button_text.is_selected
+						return not content.button_text.disable_button and not not not content.button_text.is_selected
 					end
 				},
 				{
 					style_id = "text",
 					pass_type = "text",
 					text_id = "text_field",
-					content_check_function = function (self)
+					content_check_function = function (content)
 						-- function 15
 						if not Managers.input:is_device_active("mouse") then
 							return
 						end
 
-						return not self.button_text.disable_button
+						return not content.button_text.disable_button
 					end
 				},
 				{
 					style_id = "text_disabled",
 					pass_type = "text",
 					text_id = "text_field",
-					content_check_function = function (self)
+					content_check_function = function (content)
 						-- function 16
-						return self.button_text.disable_button
+						return content.button_text.disable_button
 					end
 				},
 				{
@@ -1268,18 +1268,18 @@ local function fn_3(arg_13_0, arg_13_1, arg_13_2, arg_13_3)
 					style_id = "icon",
 					pass_type = "texture_uv",
 					content_id = "icon_content",
-					content_check_function = function (self)
+					content_check_function = function (content)
 						-- function 17
-						local parent = self.parent
+						local parent_content = content.parent
 
-						if not parent.show_icon and not parent.disabled then
+						if not parent_content.show_icon or parent_content.disabled then
 							return false
 						end
 
-						if not parent.selection_callback then
-							local selection_callback = parent.selection_callback()
+						if parent_content.selection_callback then
+							local current_index = parent_content.selection_callback()
 
-							return parent.index ~= selection_callback
+							return parent_content.index ~= current_index
 						end
 
 						return false
@@ -1291,10 +1291,10 @@ local function fn_3(arg_13_0, arg_13_1, arg_13_2, arg_13_3)
 			default_font_size = 24,
 			show_icon = false,
 			alpha_value = 255,
-			callback = arg_13_2,
-			menu_option_data = arg_13_3,
+			callback = callback,
+			menu_option_data = menu_option_data,
 			button_text = {},
-			text_field = var_13_0,
+			text_field = localized_text,
 			icon_content = {
 				icon_id = "info",
 				uvs = {
@@ -1317,7 +1317,7 @@ local function fn_3(arg_13_0, arg_13_1, arg_13_2, arg_13_3)
 				horizontal_alignment = "center",
 				vertical_alignment = "center",
 				font_type = "hell_shark",
-				upper_case = flag,
+				upper_case = upper_case,
 				text_color = Colors.get_color_table_with_alpha("font_title", 255),
 				offset = {
 					0,
@@ -1332,7 +1332,7 @@ local function fn_3(arg_13_0, arg_13_1, arg_13_2, arg_13_3)
 				horizontal_alignment = "center",
 				vertical_alignment = "center",
 				font_type = "hell_shark",
-				upper_case = flag,
+				upper_case = upper_case,
 				text_color = Colors.get_color_table_with_alpha("white", 255),
 				offset = {
 					0,
@@ -1347,7 +1347,7 @@ local function fn_3(arg_13_0, arg_13_1, arg_13_2, arg_13_3)
 				horizontal_alignment = "left",
 				vertical_alignment = "center",
 				font_type = "hell_shark",
-				upper_case = flag,
+				upper_case = upper_case,
 				text_color = Colors.get_color_table_with_alpha("gray", 50),
 				offset = {
 					0,
@@ -1375,16 +1375,17 @@ local function fn_3(arg_13_0, arg_13_1, arg_13_2, arg_13_3)
 				}
 			}
 		},
-		scenegraph_id = arg_13_0
+		scenegraph_id = scenegraph_id
 	}
 end
 
-function create_sub_logo(arg_18_0)
+function create_sub_logo(texture)
 	-- function 18
-	local size = UIAtlasHelper.get_atlas_settings_by_texture_name(arg_18_0).size
-	local tbl = {
-		size[1],
-		size[2]
+	local texture_settings = UIAtlasHelper.get_atlas_settings_by_texture_name(texture)
+	local settings_size = texture_settings.size
+	local texture_size = {
+		settings_size[1],
+		settings_size[2]
 	}
 
 	return {
@@ -1399,7 +1400,7 @@ function create_sub_logo(arg_18_0)
 			}
 		},
 		content = {
-			texture_id = arg_18_0
+			texture_id = texture
 		},
 		style = {
 			texture_id = {
@@ -1416,7 +1417,7 @@ function create_sub_logo(arg_18_0)
 					0,
 					0
 				},
-				texture_size = tbl
+				texture_size = texture_size
 			}
 		},
 		offset = {
@@ -1427,7 +1428,7 @@ function create_sub_logo(arg_18_0)
 	}
 end
 
-local function fn_4(arg_19_0, arg_19_1, arg_19_2)
+local function create_optional_text(text, scenegraph_id, text_style)
 	-- function 19
 	return {
 		element = {
@@ -1436,33 +1437,33 @@ local function fn_4(arg_19_0, arg_19_1, arg_19_2)
 					style_id = "text",
 					pass_type = "text",
 					text_id = "text",
-					content_check_function = function (self, arg_20_1)
+					content_check_function = function (content, style)
 						-- function 20
-						if self.text == nil then
+						if content.text == nil then
 							return false
 						end
 
-						return self.text ~= ""
+						return content.text ~= ""
 					end
 				}
 			}
 		},
 		content = {
-			text = arg_19_0
+			text = text
 		},
 		style = {
-			text = arg_19_2
+			text = text_style
 		},
 		offset = {
 			0,
 			0,
 			0
 		},
-		scenegraph_id = arg_19_1
+		scenegraph_id = scenegraph_id
 	}
 end
 
-local function fn_5(arg_21_0)
+local function create_info_slate(scenegraph_id)
 	-- function 21
 	return {
 		element = {
@@ -1471,26 +1472,26 @@ local function fn_5(arg_21_0)
 					style_id = "text",
 					pass_type = "text",
 					text_id = "text",
-					content_check_function = function (self, arg_22_1)
+					content_check_function = function (content, style)
 						-- function 22
-						if self.text == nil then
+						if content.text == nil then
 							return false
 						end
 
-						return self.text ~= ""
+						return content.text ~= ""
 					end
 				},
 				{
 					pass_type = "texture",
 					style_id = "background",
 					texture_id = "texture_id",
-					content_check_function = function (self, arg_23_1)
+					content_check_function = function (content, style)
 						-- function 23
-						if self.text == nil then
+						if content.text == nil then
 							return false
 						end
 
-						return self.text ~= ""
+						return content.text ~= ""
 					end
 				}
 			}
@@ -1500,7 +1501,7 @@ local function fn_5(arg_21_0)
 			texture_id = "start_screen_info_tag"
 		},
 		style = {
-			text = tbl_2,
+			text = info_slate_text_style,
 			background = {
 				vertical_alignment = "center",
 				horizontal_alignment = "center",
@@ -1516,11 +1517,11 @@ local function fn_5(arg_21_0)
 			0,
 			1
 		},
-		scenegraph_id = arg_21_0
+		scenegraph_id = scenegraph_id
 	}
 end
 
-local tbl_5 = {
+local background_widget_definitions = {
 	dead_space_filler_widget = UIWidgets.create_simple_rect("dead_space_filler", {
 		255,
 		0,
@@ -1549,7 +1550,7 @@ local tbl_5 = {
 		0
 	})
 }
-local tbl_6 = {
+local single_widget_definitions = {
 	logo = UIWidgets.create_simple_texture("vermintide_logo_title", "logo"),
 	legal_text = UIWidgets.create_simple_text("n/a", "legal_text", 12, {
 		255,
@@ -1565,13 +1566,13 @@ local tbl_6 = {
 	}),
 	start_screen_selection_left = UIWidgets.create_simple_texture("start_screen_selection_left", "selection_glow_left"),
 	start_screen_selection_right = UIWidgets.create_simple_texture("start_screen_selection_right", "selection_glow_right"),
-	create_engage_prompt = fn,
-	info_icon_text = fn_2("", "info_icon_text", 23),
-	info_slate = fn_5("info_slate"),
-	game_type = fn_4("start_menu_adventure_tag", "game_type_tag", tbl_3),
-	game_type_description = fn_4("start_menu_adventure_description", "game_type_description", tbl_4)
+	create_engage_prompt = create_engage_prompt,
+	info_icon_text = create_info_text("", "info_icon_text", 23),
+	info_slate = create_info_slate("info_slate"),
+	game_type = create_optional_text("start_menu_adventure_tag", "game_type_tag", game_type_tag_text_style),
+	game_type_description = create_optional_text("start_menu_adventure_description", "game_type_description", game_type_description_text_style)
 }
-local tbl_7 = {
+local menu_videos = {
 	main = {
 		loop = true,
 		scenegraph_id = "start_screen_video",
@@ -1608,30 +1609,37 @@ local tbl_7 = {
 		material_name = "start_2_versus"
 	}
 }
-local tbl_8 = {
+local legal_texts = {
 	"fatshark_legal_1",
 	"gw_legal_1",
 	"gw_legal_2",
 	"gw_legal_3",
 	"gw_legal_4"
 }
-local tbl_9 = {
+local animation_definitions = {
 	video_fade_in = {
 		{
 			name = "video_fade_in",
 			start_progress = 0,
 			end_progress = 0.5,
-			init = function (arg_24_0, arg_24_1, arg_24_2, arg_24_3)
+			init = function (ui_scenegraph, scenegraph_definition, widgets, params)
 				-- function 24
-				arg_24_2.start_screen_video_fade.style.rect.color[1] = 255
-			end,
-			update = function (arg_25_0, arg_25_1, arg_25_2, arg_25_3, arg_25_4)
-				-- function 25
-				local easeInCubic = math.easeInCubic(arg_25_3)
+				local widget = widgets.start_screen_video_fade
+				local style = widget.style
+				local rect_style = style.rect
 
-				arg_25_2.start_screen_video_fade.style.rect.color[1] = math.clamp(255 * (1 - easeInCubic), 0, 255)
+				rect_style.color[1] = 255
 			end,
-			on_complete = function (arg_26_0, arg_26_1, arg_26_2, arg_26_3)
+			update = function (ui_scenegraph, scenegraph_definition, widgets, progress, params)
+				-- function 25
+				local anim_progress = math.easeInCubic(progress)
+				local widget = widgets.start_screen_video_fade
+				local style = widget.style
+				local rect_style = style.rect
+
+				rect_style.color[1] = math.clamp(255 * (1 - anim_progress), 0, 255)
+			end,
+			on_complete = function (ui_scenegraph, scenegraph_definition, widgets, params)
 				-- function 26
 				return
 			end
@@ -1640,12 +1648,12 @@ local tbl_9 = {
 }
 
 return {
-	background_widget_definitions = tbl_5,
-	single_widget_definitions = tbl_6,
-	scenegraph_definition = tbl,
-	menu_videos = tbl_7,
-	create_menu_button_func = fn_3,
-	legal_texts = tbl_8,
+	background_widget_definitions = background_widget_definitions,
+	single_widget_definitions = single_widget_definitions,
+	scenegraph_definition = scenegraph_definition,
+	menu_videos = menu_videos,
+	create_menu_button_func = create_menu_button,
+	legal_texts = legal_texts,
 	create_sub_logo_func = create_sub_logo,
-	animation_definitions = tbl_9
+	animation_definitions = animation_definitions
 }

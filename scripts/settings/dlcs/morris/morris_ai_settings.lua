@@ -1,8 +1,8 @@
 -- chunkname: @scripts/settings/dlcs/morris/morris_ai_settings.lua
 
-local morris = DLCSettings.morris
+local settings = DLCSettings.morris
 
-morris.vortex_templates = {
+settings.vortex_templates = {
 	blood_storm = {
 		override_movement_speed = 3,
 		outer_fx_z_scale_multiplier = 0.1,
@@ -37,33 +37,35 @@ morris.vortex_templates = {
 		}
 	}
 }
-morris.breeds = {
+settings.breeds = {
 	"scripts/settings/breeds/breed_chaos_greed_pinata",
 	"scripts/settings/breeds/breed_chaos_curse_mutator_sorcerer"
 }
-morris.behaviour_trees = {
+settings.behaviour_trees = {
 	"scripts/entity_system/systems/behaviour/trees/chaos/chaos_greed_pinata_behavior",
 	"scripts/entity_system/systems/behaviour/trees/chaos/chaos_curse_mutator_sorcerer_behavior"
 }
-morris.behaviour_trees_precompiled = {
+settings.behaviour_trees_precompiled = {
 	"scripts/entity_system/systems/behaviour/nodes/generated/bt_selector_chaos_greed_pinata",
 	"scripts/entity_system/systems/behaviour/nodes/generated/bt_selector_curse_mutator_sorcerer"
 }
-morris.health_extensions = {
+settings.health_extensions = {
 	"GreedPinataHealthExtension"
 }
-morris.ai_breed_snippets_file_names = {
+settings.ai_breed_snippets_file_names = {
 	"scripts/settings/dlcs/morris/morris_ai_breed_snippets"
 }
-morris.bt_enter_hooks = {
-	on_skulking_sorcerer_grab = function (arg_1_0, arg_1_1, arg_1_2)
+settings.bt_enter_hooks = {
+	on_skulking_sorcerer_grab = function (unit, blackboard, t)
 		-- function 1
-		ScriptUnit.extension(arg_1_0, "health_system").is_invincible = false
+		local health_extension = ScriptUnit.extension(unit, "health_system")
 
-		local target_unit = arg_1_1.target_unit
-		local extension_input = ScriptUnit.extension_input(target_unit, "dialogue_system")
-		local alloc_table = FrameTable.alloc_table()
+		health_extension.is_invincible = false
 
-		extension_input:trigger_dialogue_event("curse_damage_taken", alloc_table)
+		local target_unit = blackboard.target_unit
+		local dialogue_input = ScriptUnit.extension_input(target_unit, "dialogue_system")
+		local event_data = FrameTable.alloc_table()
+
+		dialogue_input:trigger_dialogue_event("curse_damage_taken", event_data)
 	end
 }

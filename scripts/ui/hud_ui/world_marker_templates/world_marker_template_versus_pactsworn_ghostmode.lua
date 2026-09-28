@@ -2,36 +2,36 @@
 
 local WorldMarkerTemplates = WorldMarkerTemplates
 
-WorldMarkerTemplates = WorldMarkerTemplates or {}
+WorldMarkerTemplates = not not WorldMarkerTemplates or not not {}
 WorldMarkerTemplates = WorldMarkerTemplates
 
-local versus_pactsworn_ghostmode = WorldMarkerTemplates.versus_pactsworn_ghostmode
+local template = WorldMarkerTemplates.versus_pactsworn_ghostmode
 
-if not versus_pactsworn_ghostmode then
-	versus_pactsworn_ghostmode = {}
-	WorldMarkerTemplates.versus_pactsworn_ghostmode = versus_pactsworn_ghostmode
+if not template then
+	template = {}
+	WorldMarkerTemplates.versus_pactsworn_ghostmode = template
 end
 
-versus_pactsworn_ghostmode.position_offset = {
+template.position_offset = {
 	0,
 	0,
 	2
 }
-versus_pactsworn_ghostmode.max_distance = 50
-versus_pactsworn_ghostmode.screen_clamp = true
-versus_pactsworn_ghostmode.only_when_clamped = false
-versus_pactsworn_ghostmode.draw_behind = true
-versus_pactsworn_ghostmode.screen_margins = {
+template.max_distance = 50
+template.screen_clamp = true
+template.only_when_clamped = false
+template.draw_behind = true
+template.screen_margins = {
 	down = 150,
 	up = 200,
 	left = 150,
 	right = 150
 }
 
-versus_pactsworn_ghostmode.create_widget_definition = function (arg_1_0)
+template.create_widget_definition = function (scenegraph_id)
 	-- function 1
-	local num = 1
-	local num_2 = 60 * num
+	local icon_scale = 1
+	local arrow_offset = 60 * icon_scale
 
 	return {
 		element = {
@@ -40,9 +40,9 @@ versus_pactsworn_ghostmode.create_widget_definition = function (arg_1_0)
 					pass_type = "texture",
 					style_id = "icon",
 					texture_id = "icon",
-					content_check_function = function (self)
+					content_check_function = function (content)
 						-- function 2
-						return self.is_clamped
+						return content.is_clamped
 					end
 				},
 				{
@@ -59,18 +59,18 @@ versus_pactsworn_ghostmode.create_widget_definition = function (arg_1_0)
 					pass_type = "rotated_texture",
 					style_id = "arrow",
 					texture_id = "arrow",
-					content_check_function = function (self)
+					content_check_function = function (content)
 						-- function 3
-						return self.is_clamped
+						return content.is_clamped
 					end
 				},
 				{
 					pass_type = "texture",
 					style_id = "checkmark",
 					texture_id = "checkmark",
-					content_check_function = function (self)
+					content_check_function = function (content)
 						-- function 4
-						return self.countdown_over
+						return content.countdown_over
 					end
 				}
 			}
@@ -87,12 +87,12 @@ versus_pactsworn_ghostmode.create_widget_definition = function (arg_1_0)
 				vertical_alignment = "center",
 				horizontal_alignment = "center",
 				texture_size = {
-					70 * num,
-					90 * num
+					70 * icon_scale,
+					90 * icon_scale
 				},
 				default_size = {
-					70 * num,
-					90 * num
+					70 * icon_scale,
+					90 * icon_scale
 				},
 				color = {
 					255,
@@ -112,7 +112,7 @@ versus_pactsworn_ghostmode.create_widget_definition = function (arg_1_0)
 				angle = 0,
 				pivot = {
 					22,
-					11.5 - num_2
+					11.5 - arrow_offset
 				},
 				texture_size = {
 					44,
@@ -130,7 +130,7 @@ versus_pactsworn_ghostmode.create_widget_definition = function (arg_1_0)
 				},
 				offset = {
 					0,
-					num_2,
+					arrow_offset,
 					0
 				}
 			},
@@ -208,34 +208,34 @@ versus_pactsworn_ghostmode.create_widget_definition = function (arg_1_0)
 			0,
 			0
 		},
-		scenegraph_id = arg_1_0
+		scenegraph_id = scenegraph_id
 	}
 end
 
-versus_pactsworn_ghostmode.on_enter = function (self)
+template.on_enter = function (widget)
 	-- function 5
-	local content = self.content
+	local content = widget.content
 
 	content.just_entered = true
 	content.t = 0
 end
 
-versus_pactsworn_ghostmode.update_function = function (arg_6_0, arg_6_1, arg_6_2, arg_6_3, arg_6_4, arg_6_5)
+template.update_function = function (ui_renderer, widget, marker, settings, dt, t)
 	-- function 6
-	local content = arg_6_1.content
-	local style = arg_6_1.style
-	local user_setting = Application.user_setting("toggle_pactsworn_overhead_name_ui")
+	local content = widget.content
+	local style = widget.style
+	local allow_name = Application.user_setting("toggle_pactsworn_overhead_name_ui")
 
-	if not content.just_entered then
+	if content.just_entered then
 		content.just_entered = false
-		content.enter_timer = arg_6_5
+		content.enter_timer = t
 
-		local get_text_width = UIUtils.get_text_width(arg_6_0, style.ally_name, content.ally_name)
+		local player_name_text_width = UIUtils.get_text_width(ui_renderer, style.ally_name, content.ally_name)
 		local offset = style.checkmark.offset
 		local num
 
-		if not user_setting then
-			num = -(get_text_width / 2) - 30 - 10
+		if allow_name then
+			num = -(player_name_text_width / 2) - 30 - 10
 
 			if not num then
 				-- Nothing
@@ -249,23 +249,35 @@ versus_pactsworn_ghostmode.update_function = function (arg_6_0, arg_6_1, arg_6_2
 		offset[1] = num
 	end
 
-	local clamp = math.clamp(0.5 + (1 - content.forward_dot_dir) * 499.99999999999955, 0, 1)
-	local num_2 = arg_6_5 - content.enter_timer
-	local num_3 = 255 * math.easeOutCubic(math.min(num_2, 1)) * clamp * 0.7
+	local am = math.clamp(0.5 + (1 - content.forward_dot_dir) * 499.99999999999955, 0, 1)
+	local timer_delta = t - content.enter_timer
+	local alpha = 255 * math.easeOutCubic(math.min(timer_delta, 1)) * am
+	local fade_in_alpha = alpha * 0.7
 
-	style.icon.color[1] = num_3
-	style.arrow.color[1] = num_3
+	style.icon.color[1] = fade_in_alpha
+	style.arrow.color[1] = fade_in_alpha
 	style.arrow.angle = content.angle
 
-	local flag
+	local num_2
 
-	flag = not content.is_clamped and 60 and 0
-	style.ally_name.offset[2] = flag
-	style.ally_name_shadow.offset[2] = flag
+	if content.is_clamped then
+		num_2 = 60
+
+		goto label_6_1
+	end
+
+	num_2 = 0
+
+	local ally_name_offset_y = num_2
+
+	::label_6_1::
+
+	style.ally_name.offset[2] = ally_name_offset_y
+	style.ally_name_shadow.offset[2] = ally_name_offset_y
 
 	local player_name
 
-	if not user_setting then
+	if allow_name then
 		player_name = content.player_name
 
 		if not player_name then
@@ -275,42 +287,46 @@ versus_pactsworn_ghostmode.update_function = function (arg_6_0, arg_6_1, arg_6_2
 
 	player_name = ""
 
-	::label_6_1::
+	local ally_name = player_name
 
-	if Utf8.length(player_name) > 18 then
-		player_name = string.sub(player_name, 1, 18) .. "..."
+	::label_6_2::
+
+	local ally_name_length = Utf8.length(ally_name)
+
+	if ally_name_length > 18 then
+		ally_name = string.sub(ally_name, 1, 18) .. "..."
 	end
 
-	if not (not content.respawn_timer and content.countdown_over) then
-		local num_4 = content.respawn_timer - Managers.time:time("game")
-		local flag_2 = num_4 <= 0
+	if content.respawn_timer and not content.countdown_over then
+		local respawn_delta = content.respawn_timer - Managers.time:time("game")
+		local countdown_over = respawn_delta <= 0
 
-		player_name = not flag_2 and player_name and string.format("{#size(20);color(255,255,255)}%d{#reset()}  %s", math.abs(num_4), player_name)
-		content.countdown_over = flag_2
+		ally_name = (not countdown_over or not ally_name) and not not string.format("{#size(20);color(255,255,255)}%d{#reset()}  %s", math.abs(respawn_delta), ally_name)
+		content.countdown_over = countdown_over
 	end
 
-	if content.allow_name ~= user_setting then
-		local get_text_width_2 = UIUtils.get_text_width(arg_6_0, style.ally_name, player_name)
+	if content.allow_name ~= allow_name then
+		local player_name_text_width = UIUtils.get_text_width(ui_renderer, style.ally_name, ally_name)
 		local offset_2 = style.checkmark.offset
-		local num_5
+		local num_3
 
-		if not user_setting then
-			num_5 = -(get_text_width_2 / 2) - 30 - 10
+		if allow_name then
+			num_3 = -(player_name_text_width / 2) - 30 - 10
 
-			if not num_5 then
+			if not num_3 then
 				-- Nothing
 			end
 		end
 
-		num_5 = 0
+		num_3 = 0
 
-		::label_6_2::
+		::label_6_3::
 
-		offset_2[1] = num_5
-		content.allow_name = user_setting
+		offset_2[1] = num_3
+		content.allow_name = allow_name
 	end
 
-	content.ally_name = player_name
+	content.ally_name = ally_name
 
 	return true
 end

@@ -1,28 +1,29 @@
 -- chunkname: @scripts/ui/views/cutscene_overlay_ui.lua
 
-local var_0_0 = local_require("scripts/ui/views/cutscene_overlay_ui_definitions")
+local definitions = local_require("scripts/ui/views/cutscene_overlay_ui_definitions")
 
 CutsceneOverlayUI = class(CutsceneOverlayUI)
 
-CutsceneOverlayUI.init = function (self, arg_1_1, arg_1_2)
+CutsceneOverlayUI.init = function (self, parent, context)
 	-- function 1
-	self._parent = arg_1_1
-	self._ui_renderer = arg_1_2.ui_renderer
+	self._parent = parent
+	self._ui_renderer = context.ui_renderer
 
-	local world = Managers.world
+	local world_manager = Managers.world
+	local has_world = not not world_manager and not not world_manager:has_world("level_world")
 
-	if not (not world and world:has_world("level_world")) then
-		local world_2 = world:world("level_world")
+	if has_world then
+		local world = world_manager:world("level_world")
 
-		self._wwise_world = world:wwise_world(world_2)
+		self._wwise_world = world_manager:wwise_world(world)
 	end
 
-	local event = Managers.state.event
+	local event_manager = Managers.state.event
 
-	if not event then
+	if event_manager then
 		self._registered_event = true
 
-		event:register(self, "event_start_cutscene_overlay", "event_start_function")
+		event_manager:register(self, "event_start_cutscene_overlay", "event_start_function")
 	end
 
 	self._render_settings = {
@@ -32,10 +33,10 @@ end
 
 CutsceneOverlayUI.force_unregister_event_listener = function (self)
 	-- function 2
-	local event = Managers.state.event
+	local event_manager = Managers.state.event
 
-	if not event and not self._registered_event then
-		event:unregister("event_start_cutscene_overlay", self)
+	if event_manager and self._registered_event then
+		event_manager:unregister("event_start_cutscene_overlay", self)
 	end
 
 	self._registered_event = nil
@@ -43,40 +44,42 @@ end
 
 CutsceneOverlayUI._create_ui_elements = function (self)
 	-- function 3
-	self._ui_scenegraph = UISceneGraph.init_scenegraph(var_0_0.scenegraph_definition)
+	self._ui_scenegraph = UISceneGraph.init_scenegraph(definitions.scenegraph_definition)
 
-	local tbl = {}
-	local tbl_2 = {}
+	local active_template_lists = {}
+	local widgets_by_template = {}
 
-	for k, v in pairs(self._templates) do
-		tbl_2[k] = {
-			text_widget = UIWidget.init(var_0_0.widget_definitions.text),
-			image_widget = UIWidget.init(var_0_0.widget_definitions.image)
+	for template_list_name, _ in pairs(self._templates) do
+		local widgets = {
+			text_widget = UIWidget.init(definitions.widget_definitions.text),
+			image_widget = UIWidget.init(definitions.widget_definitions.image)
 		}
-		tbl[k] = {}
+
+		widgets_by_template[template_list_name] = widgets
+		active_template_lists[template_list_name] = {}
 	end
 
-	self._active_template_lists = tbl
-	self._widgets_by_template = tbl_2
+	self._active_template_lists = active_template_lists
+	self._widgets_by_template = widgets_by_template
 end
 
 CutsceneOverlayUI.destroy = function (self)
 	-- function 4
-	local event = Managers.state.event
+	local event_manager = Managers.state.event
 
-	if not event and not self._registered_event then
-		event:unregister("event_start_cutscene_overlay", self)
+	if event_manager and self._registered_event then
+		event_manager:unregister("event_start_cutscene_overlay", self)
 	end
 end
 
-CutsceneOverlayUI.event_start_function = function (self, arg_5_1)
+CutsceneOverlayUI.event_start_function = function (self, template_settings)
 	-- function 5
-	self:start(arg_5_1)
+	self:start(template_settings)
 end
 
-CutsceneOverlayUI.start = function (self, arg_6_1)
+CutsceneOverlayUI.start = function (self, template_settings)
 	-- function 6
-	local templates = arg_6_1.templates
+	local templates = template_settings.templates
 
 	self._templates = table.clone(templates)
 	self._start_time = Managers.time:time("ui")
@@ -85,106 +88,131 @@ CutsceneOverlayUI.start = function (self, arg_6_1)
 	self:_create_ui_elements()
 end
 
-CutsceneOverlayUI._present_template_entry = function (self, arg_7_1, arg_7_2)
+CutsceneOverlayUI._present_template_entry = function (self, template_list_name, entry)
 	-- function 7
-	local text = arg_7_2.text
-	local image = arg_7_2.image
-	local num = 255
-	local duration = arg_7_2.duration
-	local start_time = arg_7_2.start_time
-	local end_time = arg_7_2.end_time
-	local fade_in_duration = arg_7_2.fade_in_duration
-	local fade_out_duration = arg_7_2.fade_out_duration
-	local var_7_8 = self._widgets_by_template[arg_7_1]
-	local var_7_9
+	local text = entry.text
+	local image = entry.image
+	local max_alpha = 255
+	local duration = entry.duration
+	local start_time = entry.start_time
+	local end_time = entry.end_time
+	local fade_in_duration = entry.fade_in_duration
+	local fade_out_duration = entry.fade_out_duration
+	local widgets = self._widgets_by_template[template_list_name]
+	local widget
 
-	if not text then
-		var_7_9 = var_7_8.text_widget
+	if text then
+		widget = widgets.text_widget
 
-		local content = var_7_9.content
-		local var_7_11
+		local content = widget.content
+		local localize = entry.localize
+		local var_7_0
 
-		if not arg_7_2.localize then
-			var_7_11 = Localize(text)
+		if localize then
+			var_7_0 = Localize(text)
 
-			if not var_7_11 then
+			if not var_7_0 then
 				-- Nothing
 			end
 		end
 
-		var_7_11 = text
+		var_7_0 = text
 
 		::label_7_0::
 
-		content.text = var_7_11
+		content.text = var_7_0
 
-		local font_size = arg_7_2.font_size
-		local font_type = arg_7_2.font_type
-		local word_wrap = arg_7_2.word_wrap
-		local font_upper_case = arg_7_2.font_upper_case
-		local vertical_alignment = arg_7_2.vertical_alignment
+		local font_size = entry.font_size
+		local font_type = entry.font_type
+		local word_wrap = entry.word_wrap
+		local font_upper_case = entry.font_upper_case
+		local vertical_alignment_2 = entry.vertical_alignment
 
-		vertical_alignment = vertical_alignment or "center"
-
-		if not arg_7_2.horizontal_alignment then
-			local str = "center"
+		if not vertical_alignment_2 then
+			-- Nothing
 		end
 
-		local color = arg_7_2.color
+		vertical_alignment_2 = "center"
 
-		color = color or Colors.get_color_table_with_alpha("white", 255)
+		local vertical_alignment = vertical_alignment_2
 
-		local offset = arg_7_2.offset
-		local use_shadow = arg_7_2.use_shadow
-		local inject_alpha = arg_7_2.inject_alpha
-		local style = var_7_9.style
-		local text_2 = style.text
-		local text_shadow = style.text_shadow
-		local text_color = text_2.text_color
+		::label_7_1::
 
-		num = color[1]
+		local horizontal_alignment_2 = entry.horizontal_alignment
+
+		if not horizontal_alignment_2 then
+			-- Nothing
+		end
+
+		horizontal_alignment_2 = "center"
+
+		local horizontal_alignment = horizontal_alignment_2
+
+		::label_7_2::
+
+		local color_2 = entry.color
+
+		if not color_2 then
+			-- Nothing
+		end
+
+		color_2 = Colors.get_color_table_with_alpha("white", 255)
+
+		local color = color_2
+
+		::label_7_3::
+
+		local offset = entry.offset
+		local use_shadow = entry.use_shadow
+		local inject_alpha = entry.inject_alpha
+		local style = widget.style
+		local text_style = style.text
+		local text_shadow_style = style.text_shadow
+		local text_color = text_style.text_color
+
+		max_alpha = color[1]
 		text_color[2] = color[2]
 		text_color[3] = color[3]
 		text_color[4] = color[4]
-		text_2.inject_alpha = inject_alpha
-		text_2.font_size = font_size
-		text_shadow.font_size = font_size
-		text_2.font_type = font_type
-		text_shadow.font_type = font_type
-		text_2.word_wrap = word_wrap
-		text_shadow.word_wrap = word_wrap
-		text_2.upper_case = font_upper_case
-		text_shadow.upper_case = font_upper_case
-		text_2.vertical_alignment = vertical_alignment
-		text_shadow.vertical_alignment = vertical_alignment
+		text_style.inject_alpha = inject_alpha
+		text_style.font_size = font_size
+		text_shadow_style.font_size = font_size
+		text_style.font_type = font_type
+		text_shadow_style.font_type = font_type
+		text_style.word_wrap = word_wrap
+		text_shadow_style.word_wrap = word_wrap
+		text_style.upper_case = font_upper_case
+		text_shadow_style.upper_case = font_upper_case
+		text_style.vertical_alignment = vertical_alignment
+		text_shadow_style.vertical_alignment = vertical_alignment
 
 		if use_shadow ~= nil then
 			content.use_shadow = use_shadow
 		end
 
-		local offset_2 = text_2.offset
-		local offset_3 = text_shadow.offset
+		local text_offset = text_style.offset
+		local text_shadow_offset = text_shadow_style.offset
 
-		offset_2[1] = offset[1]
-		offset_2[2] = offset[2]
-		offset_2[3] = offset[3]
-		offset_3[1] = offset[1] + 2
-		offset_3[2] = offset[2] - 2
-		offset_3[3] = offset[3] - 1
-	elseif not image then
-		var_7_9 = var_7_8.image_widget
-		var_7_9.content.texture_id = image
+		text_offset[1] = offset[1]
+		text_offset[2] = offset[2]
+		text_offset[3] = offset[3]
+		text_shadow_offset[1] = offset[1] + 2
+		text_shadow_offset[2] = offset[2] - 2
+		text_shadow_offset[3] = offset[3] - 1
+	elseif image then
+		widget = widgets.image_widget
+		widget.content.texture_id = image
 
-		local texture_id = var_7_9.style.texture_id
-		local offset_4 = texture_id.offset
-		local offset_5 = arg_7_2.offset
+		local texture_style = widget.style.texture_id
+		local texture_offset = texture_style.offset
+		local offset = entry.offset
 
-		offset_4[1] = offset_5[1]
-		offset_4[2] = offset_5[2]
-		offset_4[3] = offset_5[3]
+		texture_offset[1] = offset[1]
+		texture_offset[2] = offset[2]
+		texture_offset[3] = offset[3]
 
-		local image_size = arg_7_2.image_size
-		local texture_size = texture_id.texture_size
+		local image_size = entry.image_size
+		local texture_size = texture_style.texture_size
 
 		texture_size[1] = image_size[1]
 		texture_size[2] = image_size[2]
@@ -195,136 +223,144 @@ CutsceneOverlayUI._present_template_entry = function (self, arg_7_1, arg_7_2)
 		text = text,
 		image = image,
 		duration = duration,
-		widget = var_7_9,
-		max_alpha = num,
+		widget = widget,
+		max_alpha = max_alpha,
 		start_time = start_time,
 		end_time = end_time,
-		fade_in_duration = not fade_in_duration and not (fade_in_duration > 0) or fade_in_duration,
-		fade_out_duration = not fade_out_duration and not (fade_out_duration > 0) or fade_out_duration
+		fade_in_duration = not not fade_in_duration and fade_in_duration > 0 and not not fade_in_duration,
+		fade_out_duration = not not fade_out_duration and fade_out_duration > 0 and not not fade_out_duration
 	}
 end
 
-CutsceneOverlayUI._convert_string_timestamp_to_float = function (arg_8_0, arg_8_1)
+CutsceneOverlayUI._convert_string_timestamp_to_float = function (self, string_timestamp)
 	-- function 8
-	local match, var_8_1, var_8_2 = string.match(arg_8_1, "(%d+)%:(%d+)%:(%d+)")
-	local num = match * 60 + var_8_1 + var_8_2 * 0.01
+	local minutes, seconds, hundredths = string.match(string_timestamp, "(%d+)%:(%d+)%:(%d+)")
+	local time_in_seconds = minutes * 60 + seconds + hundredths * 0.01
 end
 
-CutsceneOverlayUI._has_list_entries = function (self, arg_9_1)
+CutsceneOverlayUI._has_list_entries = function (self, template_list_name)
 	-- function 9
-	return #self._templates[arg_9_1] > 0
+	local templates = self._templates
+	local template_list = templates[template_list_name]
+
+	return #template_list > 0
 end
 
-CutsceneOverlayUI._get_entry_by_time = function (self, arg_10_1, arg_10_2)
+CutsceneOverlayUI._get_entry_by_time = function (self, template_list_name, time)
 	-- function 10
-	local var_10_0 = self._templates[arg_10_1]
-	local var_10_1 = var_10_0[1]
+	local templates = self._templates
+	local template_list = templates[template_list_name]
+	local template = template_list[1]
 
-	if not var_10_1 then
+	if not template then
 		return
 	end
 
-	local start_time = var_10_1.start_time
+	local start_time = template.start_time
+	local end_time = template.end_time
 
-	if arg_10_2 >= var_10_1.end_time then
-		table.remove(var_10_0, 1)
+	if end_time <= time then
+		table.remove(template_list, 1)
 
-		return self:_get_entry_by_time(arg_10_1, arg_10_2)
+		return self:_get_entry_by_time(template_list_name, time)
 	end
 
-	if start_time <= arg_10_2 then
-		return table.remove(var_10_0, 1)
+	if start_time <= time then
+		return table.remove(template_list, 1)
 	end
 end
 
-CutsceneOverlayUI.update = function (self, arg_11_1)
+CutsceneOverlayUI.update = function (self, dt)
 	-- function 11
-	if not self._start_time and not self._complete then
+	if not self._start_time or self._complete then
 		return
 	end
 
-	local num = Managers.time:time("ui") - self._start_time
-	local flag = true
+	local current_frame_time = Managers.time:time("ui")
+	local current_time = current_frame_time - self._start_time
+	local complete = true
 
-	for k, v in pairs(self._active_template_lists) do
-		local flag_2 = false
-		local active_entry_data = v.active_entry_data
+	for name, template_list_data in pairs(self._active_template_lists) do
+		local list_completed = false
+		local active_entry_data = template_list_data.active_entry_data
 
-		if not active_entry_data then
+		if active_entry_data then
 			local start_time = active_entry_data.start_time
 			local end_time = active_entry_data.end_time
 			local duration = active_entry_data.duration
 
-			if num > start_time + duration then
-				v.active_entry_data = nil
+			if current_time > start_time + duration then
+				template_list_data.active_entry_data = nil
 			else
 				local widget = active_entry_data.widget
 				local fade_out_duration = active_entry_data.fade_out_duration
 				local fade_in_duration = active_entry_data.fade_in_duration
 				local max_alpha = active_entry_data.max_alpha
-				local num_2 = 1
+				local alpha_progress = 1
 
-				if not (not fade_in_duration and not (num <= start_time + fade_in_duration)) then
-					num_2 = math.min((num - start_time) / fade_in_duration, 1)
-				elseif not (not fade_out_duration and not (num >= start_time + duration - fade_out_duration)) then
-					num_2 = 1 - math.min((num - (end_time - fade_out_duration)) / fade_out_duration, 1)
+				if fade_in_duration and current_time <= start_time + fade_in_duration then
+					alpha_progress = math.min((current_time - start_time) / fade_in_duration, 1)
+				elseif fade_out_duration and current_time >= start_time + duration - fade_out_duration then
+					alpha_progress = 1 - math.min((current_time - (end_time - fade_out_duration)) / fade_out_duration, 1)
 				end
 
-				self:_fade(widget, max_alpha, num_2)
-				self:_draw(widget, arg_11_1)
+				self:_fade(widget, max_alpha, alpha_progress)
+				self:_draw(widget, dt)
 			end
-		elseif not self:_has_list_entries(k) then
-			self._active_template_lists[k] = nil
-			flag_2 = true
+		elseif not self:_has_list_entries(name) then
+			self._active_template_lists[name] = nil
+			list_completed = true
 		else
-			local _get_entry_by_time = self:_get_entry_by_time(k, num)
-			local flag_3 = not _get_entry_by_time and self:_present_template_entry(k, _get_entry_by_time)
+			local current_entry = self:_get_entry_by_time(name, current_time)
+			local entry_data = not not current_entry and not not self:_present_template_entry(name, current_entry)
 
-			v.active_entry_data = flag_3
+			template_list_data.active_entry_data = entry_data
 
-			if not (not flag_3 and flag_3.initialized) then
-				flag_3.initialized = true
+			if entry_data and not entry_data.initialized then
+				entry_data.initialized = true
 
-				local sound_event = flag_3.sound_event
+				local sound_event = entry_data.sound_event
 
-				if not sound_event and not self._wwise_world then
+				if sound_event and self._wwise_world then
 					WwiseWorld.trigger_event(self._wwise_world, sound_event)
 				end
 			end
 		end
 
-		if not flag_2 then
-			flag = false
+		if not list_completed then
+			complete = false
 		end
 	end
 
-	self._complete = flag
+	self._complete = complete
 end
 
-CutsceneOverlayUI._fade = function (arg_12_0, arg_12_1, arg_12_2, arg_12_3)
+CutsceneOverlayUI._fade = function (self, widget, max_alpha, progress)
 	-- function 12
-	local num = arg_12_3 * arg_12_2
-	local style = arg_12_1.style
+	local alpha = progress * max_alpha
+	local style = widget.style
 
-	if not style.text then
-		local text_color = style.text.text_color
-		local text_color_2 = style.text_shadow.text_color
+	if style.text then
+		local color = style.text.text_color
+		local shadow_color = style.text_shadow.text_color
 
-		text_color[1] = num
-		text_color_2[1] = num
+		color[1] = alpha
+		shadow_color[1] = alpha
 	else
-		style.texture_id.color[1] = num
+		local color = style.texture_id.color
+
+		color[1] = alpha
 	end
 end
 
-CutsceneOverlayUI._draw = function (self, arg_13_1, arg_13_2)
+CutsceneOverlayUI._draw = function (self, widget, dt)
 	-- function 13
-	local _ui_renderer = self._ui_renderer
-	local _ui_scenegraph = self._ui_scenegraph
-	local FAKE_INPUT_SERVICE = FAKE_INPUT_SERVICE
+	local ui_renderer = self._ui_renderer
+	local ui_scenegraph = self._ui_scenegraph
+	local input_service = FAKE_INPUT_SERVICE
 	local render_settings = self.render_settings
 
-	UIRenderer.begin_pass(_ui_renderer, _ui_scenegraph, FAKE_INPUT_SERVICE, arg_13_2, render_settings)
-	UIRenderer.draw_widget(_ui_renderer, arg_13_1)
-	UIRenderer.end_pass(_ui_renderer)
+	UIRenderer.begin_pass(ui_renderer, ui_scenegraph, input_service, dt, render_settings)
+	UIRenderer.draw_widget(ui_renderer, widget)
+	UIRenderer.end_pass(ui_renderer)
 end

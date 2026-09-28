@@ -1,23 +1,23 @@
 -- chunkname: @scripts/ui/dlc_morris/views/start_game_view/windows/start_game_window_deus_quickplay.lua
 
-local var_0_0 = local_require("scripts/ui/dlc_morris/views/start_game_view/windows/definitions/start_game_window_deus_quickplay_definitions")
-local scenegraph_definition = var_0_0.scenegraph_definition
-local widget_definitions = var_0_0.widget_definitions
-local animation_definitions = var_0_0.animation_definitions
-local selector_input_definitions = var_0_0.selector_input_definitions
-local str = "refresh_press"
-local str_2 = "confirm_press"
+local definitions = local_require("scripts/ui/dlc_morris/views/start_game_view/windows/definitions/start_game_window_deus_quickplay_definitions")
+local scenegraph_definition = definitions.scenegraph_definition
+local widget_definitions = definitions.widget_definitions
+local animation_definitions = definitions.animation_definitions
+local selector_input_definitions = definitions.selector_input_definitions
+local START_GAME_INPUT = "refresh_press"
+local SELECTION_INPUT = "confirm_press"
 
 StartGameWindowDeusQuickplay = class(StartGameWindowDeusQuickplay)
 StartGameWindowDeusQuickplay.NAME = "StartGameWindowDeusQuickplay"
 
-StartGameWindowDeusQuickplay.on_enter = function (self, arg_1_1, arg_1_2)
+StartGameWindowDeusQuickplay.on_enter = function (self, params, offset)
 	-- function 1
 	print("[StartGameViewWindow] Enter Substate StartGameWindowDeusQuickplay")
 
-	self._parent = arg_1_1.parent
+	self._parent = params.parent
 
-	local ingame_ui_context = arg_1_1.ingame_ui_context
+	local ingame_ui_context = params.ingame_ui_context
 
 	self._ingame_ui_context = ingame_ui_context
 	self._ui_renderer = ingame_ui_context.ui_renderer
@@ -28,18 +28,18 @@ StartGameWindowDeusQuickplay.on_enter = function (self, arg_1_1, arg_1_2)
 	}
 	self._animations = {}
 
-	self:_create_ui_elements(arg_1_1, arg_1_2)
+	self:_create_ui_elements(params, offset)
 
-	local input_index = arg_1_1.input_index
+	local input_index = params.input_index
 
-	input_index = input_index or 1
+	input_index = not not input_index or not not 1
 	self._input_index = input_index
 
 	self:_handle_new_selection(self._input_index)
 
 	local get_difficulty_option = self._parent:get_difficulty_option(true)
 
-	get_difficulty_option = get_difficulty_option or Managers.state.difficulty:get_difficulty()
+	get_difficulty_option = not not get_difficulty_option or not not Managers.state.difficulty:get_difficulty()
 	self._current_difficulty = get_difficulty_option
 	self._dlc_name = nil
 
@@ -54,188 +54,204 @@ StartGameWindowDeusQuickplay.on_enter = function (self, arg_1_1, arg_1_2)
 	self:_start_transition_animation("on_enter")
 end
 
-StartGameWindowDeusQuickplay._start_transition_animation = function (self, arg_2_1)
+StartGameWindowDeusQuickplay._start_transition_animation = function (self, animation_name)
 	-- function 2
-	local tbl = {
+	local params = {
 		render_settings = self._render_settings
 	}
-	local tbl_2 = {}
-	local start_animation = self._ui_animator:start_animation(arg_2_1, tbl_2, scenegraph_definition, tbl)
+	local widgets = {}
+	local anim_id = self._ui_animator:start_animation(animation_name, widgets, scenegraph_definition, params)
 
-	self._animations[arg_2_1] = start_animation
+	self._animations[animation_name] = anim_id
 end
 
-StartGameWindowDeusQuickplay._create_ui_elements = function (self, arg_3_1, arg_3_2)
+StartGameWindowDeusQuickplay._create_ui_elements = function (self, params, offset)
 	-- function 3
 	self._ui_scenegraph = UISceneGraph.init_scenegraph(scenegraph_definition)
-	self._widgets, self._widgets_by_name = UIUtils.create_widgets(var_0_0.widget_definitions)
+	self._widgets, self._widgets_by_name = UIUtils.create_widgets(definitions.widget_definitions)
 
 	UIRenderer.clear_scenegraph_queue(self._ui_renderer)
 
 	self._ui_animator = UIAnimator:new(self._ui_scenegraph, animation_definitions)
 
-	if not arg_3_2 then
-		local local_position = self._ui_scenegraph.window.local_position
+	if offset then
+		local window_position = self._ui_scenegraph.window.local_position
 
-		local_position[1] = local_position[1] + arg_3_2[1]
-		local_position[2] = local_position[2] + arg_3_2[2]
-		local_position[3] = local_position[3] + arg_3_2[3]
+		window_position[1] = window_position[1] + offset[1]
+		window_position[2] = window_position[2] + offset[2]
+		window_position[3] = window_position[3] + offset[3]
 	end
 
 	self._widgets_by_name.difficulty_info.content.visible = false
 end
 
-StartGameWindowDeusQuickplay.on_exit = function (self, arg_4_1)
+StartGameWindowDeusQuickplay.on_exit = function (self, params)
 	-- function 4
 	print("[StartGameViewWindow] Exit Substate StartGameWindowDeusQuickplay")
 
 	self._ui_animator = nil
 
-	if not self._play_button_pressed then
-		arg_4_1.input_index = nil
+	if self._play_button_pressed then
+		params.input_index = nil
 	else
-		arg_4_1.input_index = self._input_index
+		params.input_index = self._input_index
 	end
 
 	self._parent:set_difficulty_option(self._current_difficulty)
 end
 
-StartGameWindowDeusQuickplay.set_focus = function (self, arg_5_1)
+StartGameWindowDeusQuickplay.set_focus = function (self, focused)
 	-- function 5
-	self._is_focused = arg_5_1
+	self._is_focused = focused
 end
 
-StartGameWindowDeusQuickplay.update = function (self, arg_6_1, arg_6_2)
+StartGameWindowDeusQuickplay.update = function (self, dt, t)
 	-- function 6
 	self:_update_can_play()
-	self:_update_animations(arg_6_1)
+	self:_update_animations(dt)
 	self:_handle_gamepad_activity()
-	self:_handle_input(arg_6_1, arg_6_2)
-	self:_draw(arg_6_1)
+	self:_handle_input(dt, t)
+	self:_draw(dt)
 end
 
-StartGameWindowDeusQuickplay.post_update = function (arg_7_0, arg_7_1, arg_7_2)
+StartGameWindowDeusQuickplay.post_update = function (self, dt, t)
 	-- function 7
 	return
 end
 
 StartGameWindowDeusQuickplay._handle_gamepad_activity = function (self)
 	-- function 8
-	local flag = self.gamepad_active_last_frame == nil
+	local force_update = self.gamepad_active_last_frame == nil
+	local mouse_active = Managers.input:is_device_active("mouse")
 
-	if not Managers.input:is_device_active("mouse") then
-		if not self.gamepad_active_last_frame and not flag then
+	if not mouse_active then
+		if not self.gamepad_active_last_frame or force_update then
 			self.gamepad_active_last_frame = true
 			self._input_index = 1
 
-			local var_8_1 = selector_input_definitions[self._input_index]
+			local input_funcs = selector_input_definitions[self._input_index]
 
-			if not var_8_1 and not var_8_1.enter_requirements(self) then
-				var_8_1.on_enter(self)
+			if input_funcs and input_funcs.enter_requirements(self) then
+				input_funcs.on_enter(self)
 			end
 		end
-	elseif self.gamepad_active_last_frame or not flag then
+	elseif self.gamepad_active_last_frame or force_update then
 		self.gamepad_active_last_frame = false
 
-		selector_input_definitions[self._input_index].on_exit(self)
+		local input_funcs = selector_input_definitions[self._input_index]
+
+		input_funcs.on_exit(self)
 	end
 end
 
 StartGameWindowDeusQuickplay._update_can_play = function (self)
 	-- function 9
-	local _can_play = self:_can_play()
+	local can_play = self:_can_play()
+	local play_button = self._widgets_by_name.play_button
 
-	self._widgets_by_name.play_button.content.button_hotspot.disable_button = not _can_play
+	play_button.content.button_hotspot.disable_button = not can_play
 
-	local str = "deus_default"
+	local input_desc = "deus_default"
 
-	if not _can_play then
-		str = "deus_default_play"
-	elseif not self._dlc_locked then
-		str = "deus_default_buy"
+	if can_play then
+		input_desc = "deus_default_play"
+	elseif self._dlc_locked then
+		input_desc = "deus_default_buy"
 	end
 
-	if str ~= self._prev_input_desc then
-		self._parent:set_input_description(str)
+	if input_desc ~= self._prev_input_desc then
+		self._parent:set_input_description(input_desc)
 
-		self._prev_input_desc = str
+		self._prev_input_desc = input_desc
 	end
 end
 
-StartGameWindowDeusQuickplay._handle_input = function (self, arg_10_1, arg_10_2)
+StartGameWindowDeusQuickplay._handle_input = function (self, dt, t)
 	-- function 10
-	local _parent = self._parent
-	local window_input_service = _parent:window_input_service()
-	local is_device_active = Managers.input:is_device_active("mouse")
+	local parent = self._parent
+	local input_service = parent:window_input_service()
+	local mouse_active = Managers.input:is_device_active("mouse")
 
-	if not is_device_active then
-		local _input_index = self._input_index
-		local var_10_4
+	if not mouse_active then
+		local input_index = self._input_index
+		local input_change
 
-		if not window_input_service:get("move_down") then
-			_input_index = _input_index + 1
-			var_10_4 = 1
-		elseif not window_input_service:get("move_up") then
-			_input_index = _input_index - 1
-			var_10_4 = -1
+		if input_service:get("move_down") then
+			input_index = input_index + 1
+			input_change = 1
+		elseif input_service:get("move_up") then
+			input_index = input_index - 1
+			input_change = -1
 		else
-			selector_input_definitions[_input_index].update(self, window_input_service, arg_10_1, arg_10_2)
+			local input_funcs = selector_input_definitions[input_index]
+
+			input_funcs.update(self, input_service, dt, t)
 		end
 
-		if _input_index ~= self._input_index then
-			self:_gamepad_selector_input_func(_input_index, var_10_4)
+		if input_index ~= self._input_index then
+			self:_gamepad_selector_input_func(input_index, input_change)
 		end
 
-		if not window_input_service:get(str_2, true) and not self._dlc_locked then
+		local gamepad_confirm_pressed = input_service:get(SELECTION_INPUT, true)
+
+		if gamepad_confirm_pressed and self._dlc_locked then
 			Managers.unlock:open_dlc_page(self._dlc_name)
 		end
 
-		if not self:_can_play() and not window_input_service:get(str) then
+		if self:_can_play() and input_service:get(START_GAME_INPUT) then
 			local get_quickplay_settings = self._parent:get_quickplay_settings(self._mechanism_name)
 
-			get_quickplay_settings = get_quickplay_settings or self._parent:get_quickplay_settings("adventure")
+			if not get_quickplay_settings then
+				-- Nothing
+			end
 
-			local game_mode_type = get_quickplay_settings.game_mode_type
+			get_quickplay_settings = self._parent:get_quickplay_settings("adventure")
+
+			local custom_game_settings = get_quickplay_settings
+
+			::label_10_0::
+
+			local game_mode_type = custom_game_settings.game_mode_type
 
 			self._parent:set_difficulty_option(self._current_difficulty)
 
 			self._play_button_pressed = true
 
-			self._parent:play(arg_10_2, game_mode_type)
+			self._parent:play(t, game_mode_type)
 		end
 	else
-		local _widgets_by_name = self._widgets_by_name
+		local widgets_by_name = self._widgets_by_name
 
 		for i = 1, #selector_input_definitions do
 			local widget_name = selector_input_definitions[i].widget_name
-			local var_10_9 = _widgets_by_name[widget_name]
-			local is_selected = var_10_9.content.is_selected
+			local widget = widgets_by_name[widget_name]
+			local is_selected = widget.content.is_selected
 
 			if widget_name == "difficulty_stepper" then
-				if is_selected or not UIUtils.is_button_hover_enter(var_10_9, "left_arrow_hotspot") then
+				if not is_selected and UIUtils.is_button_hover_enter(widget, "left_arrow_hotspot") then
 					self:_handle_new_selection(i)
 					self:_play_sound("Play_hud_hover")
 				end
 
-				if is_selected or not UIUtils.is_button_hover_enter(var_10_9, "right_arrow_hotspot") then
+				if not is_selected and UIUtils.is_button_hover_enter(widget, "right_arrow_hotspot") then
 					self:_handle_new_selection(i)
 					self:_play_sound("Play_hud_hover")
 				end
 
-				if UIUtils.is_button_hover(var_10_9, "info_hotspot") or UIUtils.is_button_hover(self._widgets_by_name.difficulty_info, "widget_hotspot") or is_device_active or not is_selected then
-					local tbl = {
+				if UIUtils.is_button_hover(widget, "info_hotspot") or UIUtils.is_button_hover(self._widgets_by_name.difficulty_info, "widget_hotspot") or not mouse_active and is_selected then
+					local widgets = {
 						difficulty_info = self._widgets_by_name.difficulty_info,
 						upsell_button = self._widgets_by_name.upsell_button
 					}
 
 					if not self._diff_info_anim_played then
-						self._diff_anim_id = self._ui_animator:start_animation("difficulty_info_enter", tbl, scenegraph_definition)
+						self._diff_anim_id = self._ui_animator:start_animation("difficulty_info_enter", widgets, scenegraph_definition)
 						self._diff_info_anim_played = true
 					end
 
 					self:_handle_difficulty_info(true)
 				else
-					if not self._diff_anim_id then
+					if self._diff_anim_id then
 						self._ui_animator:stop_animation(self._diff_anim_id)
 					end
 
@@ -246,402 +262,431 @@ StartGameWindowDeusQuickplay._handle_input = function (self, arg_10_1, arg_10_2)
 					self:_handle_difficulty_info(false)
 				end
 
-				if UIUtils.is_button_pressed(var_10_9, "left_arrow_hotspot") or not window_input_service:get("move_left") then
-					self:_option_selected(widget_name, "left_arrow", arg_10_2)
-				elseif UIUtils.is_button_pressed(var_10_9, "right_arrow_hotspot") or not window_input_service:get("move_right") then
-					self:_option_selected(widget_name, "right_arrow", arg_10_2)
+				if UIUtils.is_button_pressed(widget, "left_arrow_hotspot") or input_service:get("move_left") then
+					self:_option_selected(widget_name, "left_arrow", t)
+				elseif UIUtils.is_button_pressed(widget, "right_arrow_hotspot") or input_service:get("move_right") then
+					self:_option_selected(widget_name, "right_arrow", t)
 				end
-			elseif widget_name ~= "play_button" or not self:_can_play() then
-				if is_selected or not UIUtils.is_button_hover_enter(_widgets_by_name.play_button) then
+			elseif widget_name == "play_button" and self:_can_play() then
+				if not is_selected and UIUtils.is_button_hover_enter(widgets_by_name.play_button) then
 					self:_handle_new_selection(i)
 					self:_play_sound("Play_hud_hover")
 				end
 
-				if not UIUtils.is_button_pressed(_widgets_by_name.play_button) then
-					self:_option_selected(widget_name, "play_button", arg_10_2)
+				if UIUtils.is_button_pressed(widgets_by_name.play_button) then
+					self:_option_selected(widget_name, "play_button", t)
 				end
 			end
 		end
 
 		local upsell_button = self._widgets_by_name.upsell_button
 
-		if not UIUtils.is_button_pressed(upsell_button) then
+		if UIUtils.is_button_pressed(upsell_button) then
 			Managers.unlock:open_dlc_page(self._dlc_name)
 		end
 	end
 
-	self:_update_gamemode_info_text(window_input_service)
+	self:_update_gamemode_info_text(input_service)
 
-	local flag = true
+	local consume = true
 
-	if not DLCSettings.quick_play_preferences and not window_input_service:get("right_stick_press", flag) then
-		_parent:set_layout_by_name("adventure_level_preferences")
+	if DLCSettings.quick_play_preferences and input_service:get("right_stick_press", consume) then
+		parent:set_layout_by_name("adventure_level_preferences")
 	end
 end
 
-StartGameWindowDeusQuickplay._play_sound = function (self, arg_11_1)
+StartGameWindowDeusQuickplay._play_sound = function (self, event)
 	-- function 11
-	return self._parent:play_sound(arg_11_1)
+	return self._parent:play_sound(event)
 end
 
 StartGameWindowDeusQuickplay._can_play = function (self)
 	-- function 12
-	return self._current_difficulty == nil or not self._dlc_locked
+	local selected_difficulty_key = self._current_difficulty
+
+	return selected_difficulty_key ~= nil and not not not self._dlc_locked
 end
 
-StartGameWindowDeusQuickplay._set_info_window = function (self, arg_13_1)
+StartGameWindowDeusQuickplay._set_info_window = function (self, difficulty_key)
 	-- function 13
-	local var_13_0 = DifficultySettings[arg_13_1]
-	local description = var_13_0.description
-	local max_chest_power_level = var_13_0.max_chest_power_level
-	local difficulty_info = self._widgets_by_name.difficulty_info
+	local difficulty_settings = DifficultySettings[difficulty_key]
+	local description = difficulty_settings.description
+	local chest_max_power_level = difficulty_settings.max_chest_power_level
+	local selected_difficulty_info_widget = self._widgets_by_name.difficulty_info
 
-	difficulty_info.content.difficulty_description = Localize(description)
-	difficulty_info.content.highest_obtainable_level = Localize("difficulty_chest_max_powerlevel") .. ": " .. tostring(max_chest_power_level)
+	selected_difficulty_info_widget.content.difficulty_description = Localize(description)
+	selected_difficulty_info_widget.content.highest_obtainable_level = Localize("difficulty_chest_max_powerlevel") .. ": " .. tostring(chest_max_power_level)
 end
 
-StartGameWindowDeusQuickplay._update_difficulty_option = function (self, arg_14_1)
+StartGameWindowDeusQuickplay._update_difficulty_option = function (self, difficulty_key)
 	-- function 14
-	if not arg_14_1 then
-		local var_14_0 = DifficultySettings[arg_14_1]
-		local difficulty_stepper = self._widgets_by_name.difficulty_stepper
+	if difficulty_key then
+		local difficulty_settings = DifficultySettings[difficulty_key]
+		local difficulty_widget = self._widgets_by_name.difficulty_stepper
 
-		difficulty_stepper.content.selected_difficulty_text = Localize(var_14_0.display_name)
+		difficulty_widget.content.selected_difficulty_text = Localize(difficulty_settings.display_name)
 
-		local display_image = var_14_0.display_image
+		local display_image = difficulty_settings.display_image
 
-		difficulty_stepper.content.difficulty_icon = display_image
+		difficulty_widget.content.difficulty_icon = display_image
 
-		self:_set_info_window(arg_14_1)
+		self:_set_info_window(difficulty_key)
 
-		self._current_difficulty = arg_14_1
+		self._current_difficulty = difficulty_key
 	end
 end
 
-StartGameWindowDeusQuickplay._option_selected = function (self, arg_15_1, arg_15_2, arg_15_3)
+StartGameWindowDeusQuickplay._option_selected = function (self, widget_name, button_name, t)
 	-- function 15
-	if arg_15_1 == "difficulty_stepper" then
-		local _current_difficulty = self._current_difficulty
-		local difficulties = GameModeSettings.deus.difficulties
-		local find = table.find(difficulties, _current_difficulty)
+	if widget_name == "difficulty_stepper" then
+		local difficulty_key = self._current_difficulty
+		local difficulty_list = GameModeSettings.deus.difficulties
+		local find = table.find(difficulty_list, difficulty_key)
 
-		find = find or 1
+		if not find then
+			-- Nothing
+		end
 
-		local num = 0
+		find = 1
 
-		if arg_15_2 == "left_arrow" then
-			if find - 1 >= 1 then
-				num = find - 1
+		local current_difficulty_index = find
+
+		::label_15_0::
+
+		local new_current_index = 0
+
+		if button_name == "left_arrow" then
+			if current_difficulty_index - 1 >= 1 then
+				new_current_index = current_difficulty_index - 1
 
 				self._parent:play_sound("hud_morris_start_menu_set")
 			end
-		elseif not (arg_15_2 ~= "right_arrow" or not (find + 1 <= #difficulties)) then
-			num = find + 1
+		elseif button_name == "right_arrow" and current_difficulty_index + 1 <= #difficulty_list then
+			new_current_index = current_difficulty_index + 1
 
 			self._parent:play_sound("hud_morris_start_menu_set")
 		end
 
-		self:_update_difficulty_option(difficulties[num])
-	elseif arg_15_1 == "play_button" then
+		self:_update_difficulty_option(difficulty_list[new_current_index])
+	elseif widget_name == "play_button" then
 		local get_quickplay_settings = self._parent:get_quickplay_settings(self._mechanism_name)
 
-		get_quickplay_settings = get_quickplay_settings or self._parent:get_quickplay_settings("adventure")
+		if not get_quickplay_settings then
+			-- Nothing
+		end
 
-		local game_mode_type = get_quickplay_settings.game_mode_type
+		get_quickplay_settings = self._parent:get_quickplay_settings("adventure")
+
+		local custom_game_settings = get_quickplay_settings
+
+		::label_15_1::
+
+		local game_mode_type = custom_game_settings.game_mode_type
 
 		self._parent:set_difficulty_option(self._current_difficulty)
 
 		self._play_button_pressed = true
 
-		self._parent:play(arg_15_3, game_mode_type)
+		self._parent:play(t, game_mode_type)
 	else
-		ferror("Unknown selector_input_definition: %s", arg_15_1)
+		ferror("Unknown selector_input_definition: %s", widget_name)
 	end
 end
 
-StartGameWindowDeusQuickplay._verify_selection_index = function (self, arg_16_1, arg_16_2)
+StartGameWindowDeusQuickplay._verify_selection_index = function (self, input_index, input_change)
 	-- function 16
-	local _input_index = self._input_index
-	local count = #selector_input_definitions
+	local verified_index = self._input_index
+	local num_inputs = #selector_input_definitions
 
-	arg_16_1 = math.clamp(arg_16_1, 1, count)
+	input_index = math.clamp(input_index, 1, num_inputs)
 
-	if not arg_16_2 then
-		return arg_16_1
+	if not input_change then
+		return input_index
 	end
 
-	local var_16_2 = selector_input_definitions[arg_16_1]
+	local input_funcs = selector_input_definitions[input_index]
 
-	while not (not var_16_2 and not (arg_16_1 < count) or var_16_2.enter_requirements()) do
-		arg_16_1 = arg_16_1 + arg_16_2
-		var_16_2 = selector_input_definitions[arg_16_1]
+	while input_funcs and input_index < num_inputs and not input_funcs.enter_requirements() do
+		input_index = input_index + input_change
+		input_funcs = selector_input_definitions[input_index]
 	end
 
-	if not var_16_2 and not var_16_2.enter_requirements() then
-		_input_index = arg_16_1
+	if input_funcs and input_funcs.enter_requirements() then
+		verified_index = input_index
 	end
 
-	return _input_index
+	return verified_index
 end
 
-StartGameWindowDeusQuickplay._gamepad_selector_input_func = function (self, arg_17_1, arg_17_2)
+StartGameWindowDeusQuickplay._gamepad_selector_input_func = function (self, input_index, input_change)
 	-- function 17
-	local is_device_active = Managers.input:is_device_active("mouse")
+	local mouse_active = Managers.input:is_device_active("mouse")
 
-	arg_17_1 = self:_verify_selection_index(arg_17_1, arg_17_2)
+	input_index = self:_verify_selection_index(input_index, input_change)
 
-	if not (self._input_index == arg_17_1 or is_device_active) then
+	if self._input_index ~= input_index and not mouse_active then
 		self._parent:play_sound("play_gui_lobby_button_02_mission_act_click")
 
-		if not self._input_index then
-			selector_input_definitions[self._input_index].on_exit(self)
+		if self._input_index then
+			local input_funcs = selector_input_definitions[self._input_index]
+
+			input_funcs.on_exit(self)
 		end
 
-		selector_input_definitions[arg_17_1].on_enter(self)
+		local input_funcs = selector_input_definitions[input_index]
+
+		input_funcs.on_enter(self)
 	end
 
-	self._input_index = arg_17_1
+	self._input_index = input_index
 end
 
-StartGameWindowDeusQuickplay._handle_new_selection = function (self, arg_18_1, arg_18_2)
+StartGameWindowDeusQuickplay._handle_new_selection = function (self, input_index, input_change)
 	-- function 18
-	local count = #selector_input_definitions
+	local num_inputs = #selector_input_definitions
 
-	arg_18_1 = math.clamp(arg_18_1, 1, count)
+	input_index = math.clamp(input_index, 1, num_inputs)
 
-	local _widgets_by_name = self._widgets_by_name
+	local widgets_by_name = self._widgets_by_name
 
 	for i = 1, #selector_input_definitions do
-		local var_18_2 = _widgets_by_name[selector_input_definitions[i].widget_name]
-		local flag = i == arg_18_1
+		local widget_name = selector_input_definitions[i].widget_name
+		local widget = widgets_by_name[widget_name]
+		local is_selected = i == input_index
 
-		var_18_2.content.is_selected = flag
+		widget.content.is_selected = is_selected
 	end
 
-	self._input_index = arg_18_1
+	self._input_index = input_index
 end
 
-StartGameWindowDeusQuickplay._update_animations = function (self, arg_19_1)
+StartGameWindowDeusQuickplay._update_animations = function (self, dt)
 	-- function 19
-	local _ui_animator = self._ui_animator
+	local ui_animator = self._ui_animator
 
-	_ui_animator:update(arg_19_1)
+	ui_animator:update(dt)
 
 	if not Managers.input:is_device_active("gamepad") then
-		self:_update_button_animations(arg_19_1)
+		self:_update_button_animations(dt)
 	end
 
-	local _animations = self._animations
+	local animations = self._animations
 
-	for k, v in pairs(_animations) do
-		if not _ui_animator:is_animation_completed(v) then
-			_ui_animator:stop_animation(v)
+	for animation_name, animation_id in pairs(animations) do
+		if ui_animator:is_animation_completed(animation_id) then
+			ui_animator:stop_animation(animation_id)
 
-			_animations[k] = nil
+			animations[animation_name] = nil
 		end
 	end
 end
 
-StartGameWindowDeusQuickplay._update_button_animations = function (self, arg_20_1)
+StartGameWindowDeusQuickplay._update_button_animations = function (self, dt)
 	-- function 20
-	local _widgets_by_name = self._widgets_by_name
+	local widgets_by_name = self._widgets_by_name
 
-	UIWidgetUtils.animate_default_button(_widgets_by_name.upsell_button, arg_20_1)
+	UIWidgetUtils.animate_default_button(widgets_by_name.upsell_button, dt)
 end
 
-StartGameWindowDeusQuickplay._draw = function (self, arg_21_1)
+StartGameWindowDeusQuickplay._draw = function (self, dt)
 	-- function 21
-	local _ui_top_renderer = self._ui_top_renderer
-	local _ui_scenegraph = self._ui_scenegraph
-	local window_input_service = self._parent:window_input_service()
-	local _render_settings = self._render_settings
-	local var_21_4
+	local ui_top_renderer = self._ui_top_renderer
+	local ui_scenegraph = self._ui_scenegraph
+	local input_service = self._parent:window_input_service()
+	local render_settings = self._render_settings
+	local parent_scenegraph_id
 
-	UIRenderer.begin_pass(_ui_top_renderer, _ui_scenegraph, window_input_service, arg_21_1, var_21_4, _render_settings)
-	UIRenderer.draw_all_widgets(_ui_top_renderer, self._widgets)
-	UIRenderer.end_pass(_ui_top_renderer)
+	UIRenderer.begin_pass(ui_top_renderer, ui_scenegraph, input_service, dt, parent_scenegraph_id, render_settings)
+	UIRenderer.draw_all_widgets(ui_top_renderer, self._widgets)
+	UIRenderer.end_pass(ui_top_renderer)
 end
 
 StartGameWindowDeusQuickplay._update_difficulty_lock = function (self)
 	-- function 22
-	local _current_difficulty = self._current_difficulty
-	local difficulty_info = self._widgets_by_name.difficulty_info
+	local selected_difficulty_key = self._current_difficulty
+	local difficulty_info_widget = self._widgets_by_name.difficulty_info
 	local upsell_button = self._widgets_by_name.upsell_button
 
-	if not _current_difficulty then
-		local is_difficulty_approved, var_22_4, var_22_5, var_22_6 = self._parent:is_difficulty_approved(_current_difficulty)
+	if selected_difficulty_key then
+		local approved, extra_requirement_failed, dlc_locked, below_power_level = self._parent:is_difficulty_approved(selected_difficulty_key)
 
-		if not is_difficulty_approved then
-			if not var_22_4 then
-				difficulty_info.content.should_show_diff_lock_text = true
+		if not approved then
+			if extra_requirement_failed then
+				difficulty_info_widget.content.should_show_diff_lock_text = true
 
-				local content = difficulty_info.content
-				local var_22_8
+				local content = difficulty_info_widget.content
+				local var_22_1
 
-				if not var_22_4 then
-					var_22_8 = Localize(var_22_4)
+				if extra_requirement_failed then
+					var_22_1 = Localize(extra_requirement_failed)
 
-					if not var_22_8 then
+					if not var_22_1 then
 						-- Nothing
 					end
 				end
 
-				var_22_8 = ""
+				var_22_1 = ""
 
 				::label_22_0::
 
-				content.difficulty_lock_text = var_22_8
+				content.difficulty_lock_text = var_22_1
 			else
-				difficulty_info.content.should_show_diff_lock_text = false
+				difficulty_info_widget.content.should_show_diff_lock_text = false
 			end
 
-			if not var_22_5 then
-				difficulty_info.content.should_show_dlc_lock = true
-				self._dlc_locked = var_22_5
-				self._dlc_name = var_22_5
+			if dlc_locked then
+				difficulty_info_widget.content.should_show_dlc_lock = true
+				self._dlc_locked = dlc_locked
+				self._dlc_name = dlc_locked
 				upsell_button.content.visible = true
 			else
-				difficulty_info.content.should_show_dlc_lock = false
+				difficulty_info_widget.content.should_show_dlc_lock = false
 				upsell_button.content.visible = false
 				self._dlc_locked = nil
 				self._dlc_name = nil
 			end
 		else
-			difficulty_info.content.should_show_dlc_lock = false
-			difficulty_info.content.should_show_diff_lock_text = false
-			difficulty_info.content.should_resize = false
+			difficulty_info_widget.content.should_show_dlc_lock = false
+			difficulty_info_widget.content.should_show_diff_lock_text = false
+			difficulty_info_widget.content.should_resize = false
 			upsell_button.content.visible = false
 			self._dlc_locked = nil
 			self._dlc_name = nil
 		end
 
-		self._difficulty_approved = is_difficulty_approved
+		self._difficulty_approved = approved
 	else
-		difficulty_info.content.should_show_dlc_lock = false
+		difficulty_info_widget.content.should_show_dlc_lock = false
 		upsell_button.content.visible = false
 	end
 
-	local _calculate_difficulty_info_widget_size = self:_calculate_difficulty_info_widget_size(difficulty_info)
-	local num = (math.floor(_calculate_difficulty_info_widget_size) - scenegraph_definition.difficulty_info.size[2]) / 2
+	local widget_height = self:_calculate_difficulty_info_widget_size(difficulty_info_widget)
+	local offset_y = (math.floor(widget_height) - scenegraph_definition.difficulty_info.size[2]) / 2
 
 	self:_resize_difficulty_info({
 		math.floor(scenegraph_definition.difficulty_info.size[1]),
-		math.floor(_calculate_difficulty_info_widget_size)
+		math.floor(widget_height)
 	}, {
 		0,
-		-num,
+		-offset_y,
 		1
 	})
 
-	upsell_button.offset[2] = -math.floor(_calculate_difficulty_info_widget_size) / 2 + 24
+	upsell_button.offset[2] = -math.floor(widget_height) / 2 + 24
 end
 
-StartGameWindowDeusQuickplay._handle_difficulty_info = function (self, arg_23_1)
+StartGameWindowDeusQuickplay._handle_difficulty_info = function (self, show_widget)
 	-- function 23
-	if not arg_23_1 then
+	if show_widget then
 		self:_update_difficulty_lock()
 	end
 end
 
-StartGameWindowDeusQuickplay._calculate_difficulty_info_widget_size = function (self, arg_24_1)
+StartGameWindowDeusQuickplay._calculate_difficulty_info_widget_size = function (self, diff_widget)
 	-- function 24
-	local num = 20
-	local difficulty_description = arg_24_1.style.difficulty_description
-	local difficulty_description_2 = arg_24_1.content.difficulty_description
-	local get_text_height = UIUtils.get_text_height(self._ui_renderer, difficulty_description.size, difficulty_description, difficulty_description_2)
+	local spacing = 20
+	local description_text_style = diff_widget.style.difficulty_description
+	local description_text = diff_widget.content.difficulty_description
+	local description_text_height = UIUtils.get_text_height(self._ui_renderer, description_text_style.size, description_text_style, description_text)
 
-	arg_24_1.content.difficulty_description_text_size = get_text_height
+	diff_widget.content.difficulty_description_text_size = description_text_height
 
-	local highest_obtainable_level = arg_24_1.style.highest_obtainable_level
-	local highest_obtainable_level_2 = arg_24_1.content.highest_obtainable_level
-	local num_2 = UIUtils.get_text_height(self._ui_renderer, highest_obtainable_level.size, highest_obtainable_level, highest_obtainable_level_2) + num
-	local difficulty_lock_text = arg_24_1.style.difficulty_lock_text
-	local difficulty_lock_text_2 = arg_24_1.content.difficulty_lock_text
-	local num_3 = 0
+	local chest_text_style = diff_widget.style.highest_obtainable_level
+	local chest_text = diff_widget.content.highest_obtainable_level
+	local chest_text_height = UIUtils.get_text_height(self._ui_renderer, chest_text_style.size, chest_text_style, chest_text) + spacing
+	local difficulty_lock_text_style = diff_widget.style.difficulty_lock_text
+	local difficulty_lock_text = diff_widget.content.difficulty_lock_text
+	local difficulty_lock_text_height = 0
 
-	if not arg_24_1.content.should_show_diff_lock_text then
-		num_3 = UIUtils.get_text_height(self._ui_renderer, difficulty_lock_text.size, difficulty_lock_text, difficulty_lock_text_2) + num
-		arg_24_1.content.difficulty_lock_text_height = num_3
+	if diff_widget.content.should_show_diff_lock_text then
+		difficulty_lock_text_height = UIUtils.get_text_height(self._ui_renderer, difficulty_lock_text_style.size, difficulty_lock_text_style, difficulty_lock_text) + spacing
+		diff_widget.content.difficulty_lock_text_height = difficulty_lock_text_height
 	end
 
-	local dlc_lock_text = arg_24_1.style.dlc_lock_text
-	local dlc_lock_text_2 = arg_24_1.content.dlc_lock_text
-	local num_4 = 0
+	local dlc_lock_text_style = diff_widget.style.dlc_lock_text
+	local dlc_lock_text = diff_widget.content.dlc_lock_text
+	local dlc_lock_text_height = 0
 
-	if not arg_24_1.content.should_show_dlc_lock then
-		num_4 = UIUtils.get_text_height(self._ui_renderer, dlc_lock_text.size, dlc_lock_text, dlc_lock_text_2) + num
+	if diff_widget.content.should_show_dlc_lock then
+		dlc_lock_text_height = UIUtils.get_text_height(self._ui_renderer, dlc_lock_text_style.size, dlc_lock_text_style, dlc_lock_text) + spacing
 	end
 
-	return num_2 + get_text_height + num_3 + num_4 + 50
+	local widget_height = chest_text_height + description_text_height + difficulty_lock_text_height + dlc_lock_text_height + 50
+
+	return widget_height
 end
 
-StartGameWindowDeusQuickplay._resize_difficulty_info = function (self, arg_25_1, arg_25_2)
+StartGameWindowDeusQuickplay._resize_difficulty_info = function (self, new_size, new_offset)
 	-- function 25
-	local difficulty_info = self._widgets_by_name.difficulty_info
+	local difficulty_info_widget = self._widgets_by_name.difficulty_info
 
-	difficulty_info.content.should_resize = true
-	difficulty_info.content.resize_size = arg_25_1
-	difficulty_info.content.resize_offset = arg_25_2
-	difficulty_info.style.widget_hotspot.size = arg_25_1
-	difficulty_info.style.widget_hotspot.offset = arg_25_2
+	difficulty_info_widget.content.should_resize = true
+	difficulty_info_widget.content.resize_size = new_size
+	difficulty_info_widget.content.resize_offset = new_offset
+	difficulty_info_widget.style.widget_hotspot.size = new_size
+	difficulty_info_widget.style.widget_hotspot.offset = new_offset
 end
 
-StartGameWindowDeusQuickplay._update_gamemode_info_text = function (self, arg_26_1)
+StartGameWindowDeusQuickplay._update_gamemode_info_text = function (self, input_service)
 	-- function 26
-	local quickplay_gamemode_info_box = self._widgets_by_name.quickplay_gamemode_info_box
+	local gamemode_infobox_widget = self._widgets_by_name.quickplay_gamemode_info_box
 
-	if not (not arg_26_1:get("trigger_cycle_next") and quickplay_gamemode_info_box.content.is_showing_info) then
-		self._ui_animator:start_animation("gamemode_text_swap", quickplay_gamemode_info_box, scenegraph_definition)
+	if input_service:get("trigger_cycle_next") and not gamemode_infobox_widget.content.is_showing_info then
+		self._ui_animator:start_animation("gamemode_text_swap", gamemode_infobox_widget, scenegraph_definition)
 
-		quickplay_gamemode_info_box.content.is_showing_info = true
-	elseif not arg_26_1:get("trigger_cycle_next") and not quickplay_gamemode_info_box.content.is_showing_info then
-		self._ui_animator:start_animation("gamemode_text_swap", quickplay_gamemode_info_box, scenegraph_definition)
+		gamemode_infobox_widget.content.is_showing_info = true
+	elseif input_service:get("trigger_cycle_next") and gamemode_infobox_widget.content.is_showing_info then
+		self._ui_animator:start_animation("gamemode_text_swap", gamemode_infobox_widget, scenegraph_definition)
 
-		quickplay_gamemode_info_box.content.is_showing_info = false
+		gamemode_infobox_widget.content.is_showing_info = false
 	end
 
-	if not UIUtils.is_button_pressed(quickplay_gamemode_info_box, "info_hotspot") then
-		if not quickplay_gamemode_info_box.content.is_showing_info then
-			self._ui_animator:start_animation("gamemode_text_swap", quickplay_gamemode_info_box, scenegraph_definition)
+	if UIUtils.is_button_pressed(gamemode_infobox_widget, "info_hotspot") then
+		if not gamemode_infobox_widget.content.is_showing_info then
+			self._ui_animator:start_animation("gamemode_text_swap", gamemode_infobox_widget, scenegraph_definition)
 
-			quickplay_gamemode_info_box.content.is_showing_info = true
+			gamemode_infobox_widget.content.is_showing_info = true
 		else
-			self._ui_animator:start_animation("gamemode_text_swap", quickplay_gamemode_info_box, scenegraph_definition)
+			self._ui_animator:start_animation("gamemode_text_swap", gamemode_infobox_widget, scenegraph_definition)
 
-			quickplay_gamemode_info_box.content.is_showing_info = false
+			gamemode_infobox_widget.content.is_showing_info = false
 		end
 	end
 end
 
-StartGameWindowDeusQuickplay._handle_difficulty_stepper_gamepad = function (self, arg_27_1, arg_27_2, arg_27_3)
+StartGameWindowDeusQuickplay._handle_difficulty_stepper_gamepad = function (self, widget, input_service, t)
 	-- function 27
-	local tbl = {}
+	local anim_params = {}
 
-	if not arg_27_2:get("move_left") and not arg_27_1.content.is_selected then
-		self:_option_selected(self._input_index, "left_arrow", arg_27_3)
+	if input_service:get("move_left") and widget.content.is_selected then
+		self:_option_selected(self._input_index, "left_arrow", t)
 
-		arg_27_1.content.left_arrow_pressed = true
-		tbl.left_key = arg_27_1.style.left_arrow_gamepad_highlight
+		widget.content.left_arrow_pressed = true
+		anim_params.left_key = widget.style.left_arrow_gamepad_highlight
 
-		if not self._arrow_anim_id then
+		if self._arrow_anim_id then
 			self._ui_animator:stop_animation(self._arrow_anim_id)
 
-			arg_27_1.style.right_arrow_gamepad_highlight.color[1] = 0
+			widget.style.right_arrow_gamepad_highlight.color[1] = 0
 		end
 
-		self._arrow_anim_id = self._ui_animator:start_animation("left_arrow_flick", arg_27_1, scenegraph_definition, tbl)
-	elseif not arg_27_2:get("move_right") and not arg_27_1.content.is_selected then
-		self:_option_selected(self._input_index, "right_arrow", arg_27_3)
+		local anim_id = self._ui_animator:start_animation("left_arrow_flick", widget, scenegraph_definition, anim_params)
 
-		arg_27_1.content.right_arrow_pressed = true
-		tbl.right_key = arg_27_1.style.right_arrow_gamepad_highlight
+		self._arrow_anim_id = anim_id
+	elseif input_service:get("move_right") and widget.content.is_selected then
+		self:_option_selected(self._input_index, "right_arrow", t)
 
-		if not self._arrow_anim_id then
+		widget.content.right_arrow_pressed = true
+		anim_params.right_key = widget.style.right_arrow_gamepad_highlight
+
+		if self._arrow_anim_id then
 			self._ui_animator:stop_animation(self._arrow_anim_id)
 
-			arg_27_1.style.left_arrow_gamepad_highlight.color[1] = 0
+			widget.style.left_arrow_gamepad_highlight.color[1] = 0
 		end
 
-		self._arrow_anim_id = self._ui_animator:start_animation("right_arrow_flick", arg_27_1, scenegraph_definition, tbl)
+		local anim_id = self._ui_animator:start_animation("right_arrow_flick", widget, scenegraph_definition, anim_params)
+
+		self._arrow_anim_id = anim_id
 	end
 end

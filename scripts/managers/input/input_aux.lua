@@ -1,14 +1,14 @@
 -- chunkname: @scripts/managers/input/input_aux.lua
 
-local InputAux = InputAux
-
-InputAux = InputAux or {}
-InputAux = InputAux
-
 local InputAux_2 = InputAux
-local input_device_mapping = InputAux_2.input_device_mapping
 
-input_device_mapping = input_device_mapping or {
+InputAux_2 = not not InputAux_2 or not not {}
+InputAux = InputAux_2
+
+local InputAux = InputAux
+local input_device_mapping = InputAux.input_device_mapping
+
+input_device_mapping = not not input_device_mapping or not not {
 	gamepad = {
 		rawget(_G, "Pad1"),
 		rawget(_G, "Pad2"),
@@ -32,31 +32,33 @@ input_device_mapping = input_device_mapping or {
 		PlayRecordingInputDevice
 	}
 }
-InputAux_2.input_device_mapping = input_device_mapping
+InputAux.input_device_mapping = input_device_mapping
 
-if not InputAux_2.input_device_mapping.ps_pad then
-	InputAux_2.input_device_mapping.ps_pad = {}
+if not InputAux.input_device_mapping.ps_pad then
+	InputAux.input_device_mapping.ps_pad = {}
 
-	local gamepad = InputAux_2.input_device_mapping.gamepad
+	local device_list = InputAux.input_device_mapping.gamepad
 
-	for i, v in ipairs(gamepad) do
-		if v.type() == "sce_pad" then
-			InputAux_2.input_device_mapping.ps_pad[#InputAux_2.input_device_mapping.ps_pad + 1] = v
+	for _, device in ipairs(device_list) do
+		local controller_type = device.type()
+
+		if controller_type == "sce_pad" then
+			InputAux.input_device_mapping.ps_pad[#InputAux.input_device_mapping.ps_pad + 1] = device
 		end
 	end
 end
 
-if not InputAux_2.input_device_type_lookup then
-	InputAux_2.input_device_type_lookup = {}
+if not InputAux.input_device_type_lookup then
+	InputAux.input_device_type_lookup = {}
 
-	for k, v_2 in pairs(InputAux_2.input_device_mapping) do
-		for i_2, v_3 in ipairs(v_2) do
-			InputAux_2.input_device_type_lookup[v_3] = k
+	for device_type, device_list in pairs(InputAux.input_device_mapping) do
+		for _, device in ipairs(device_list) do
+			InputAux.input_device_type_lookup[device] = device_type
 		end
 	end
 end
 
-InputAux_2.input_map_types = {
+InputAux.input_map_types = {
 	soft_button = "number",
 	released = "boolean",
 	axis = "Vector3",
@@ -64,53 +66,53 @@ InputAux_2.input_map_types = {
 	held = "boolean"
 }
 
-InputAux_2.get_device_type = function (arg_1_0)
+InputAux.get_device_type = function (device)
 	-- function 1
-	return InputAux_2.input_device_type_lookup[arg_1_0]
+	return InputAux.input_device_type_lookup[device]
 end
 
-InputAux_2.remove_device = function (arg_2_0, arg_2_1)
+InputAux.remove_device = function (input_device_type, input_device)
 	-- function 2
-	local find = table.find(InputAux_2.input_device_mapping[arg_2_0], arg_2_1)
+	local index = table.find(InputAux.input_device_mapping[input_device_type], input_device)
 
-	fassert(find, "[InputAux] There is no controller with the name %s available", arg_2_1.name())
-	table.remove(InputAux_2.input_device_mapping[arg_2_0], find)
+	fassert(index, "[InputAux] There is no controller with the name %s available", input_device.name())
+	table.remove(InputAux.input_device_mapping[input_device_type], index)
 end
 
-InputAux_2.add_device = function (arg_3_0, arg_3_1)
+InputAux.add_device = function (input_device_type, input_device)
 	-- function 3
-	InputAux_2.input_device_mapping[arg_3_0][#InputAux_2.input_device_mapping[arg_3_0] + 1] = arg_3_1
+	InputAux.input_device_mapping[input_device_type][#InputAux.input_device_mapping[input_device_type] + 1] = input_device
 end
 
-InputAux_2.combination_functions = {
+InputAux.combination_functions = {
 	max = math.max,
 	min = math.min,
-	add = function (arg_4_0, arg_4_1)
+	add = function (lhs, rhs)
 		-- function 4
-		return arg_4_0 + arg_4_1
+		return lhs + rhs
 	end,
-	sub = function (arg_5_0, arg_5_1)
+	sub = function (lhs, rhs)
 		-- function 5
-		return arg_5_0 - arg_5_1
+		return lhs - rhs
 	end,
-	mul = function (arg_6_0, arg_6_1)
+	mul = function (lhs, rhs)
 		-- function 6
-		return arg_6_0 * arg_6_1
+		return lhs * rhs
 	end,
-	avg = function (arg_7_0, arg_7_1)
+	avg = function (lhs, rhs)
 		-- function 7
-		return (arg_7_0 + arg_7_1) / 2
+		return (lhs + rhs) / 2
 	end,
-	["or"] = function (arg_8_0, arg_8_1)
+	["or"] = function (lhs, rhs)
 		-- function 8
-		return arg_8_0 or arg_8_1
+		return not not lhs or not not rhs
 	end,
-	["and"] = function (arg_9_0, arg_9_1)
+	["and"] = function (lhs, rhs)
 		-- function 9
-		return not arg_9_0 and arg_9_1
+		return not not lhs and not not rhs
 	end
 }
-InputAux_2.default_values_for_types = {
+InputAux.default_values_for_types = {
 	boolean = false,
 	number = 0
 }

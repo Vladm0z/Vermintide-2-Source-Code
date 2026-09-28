@@ -4,42 +4,42 @@ require("scripts/managers/game_mode/spawning_components/spawning_helper")
 
 VersusSpawning = class(VersusSpawning)
 
-local tbl = {
+local RPCS = {
 	"rpc_from_server_send_spawn_state",
 	"rpc_to_server_spawn_failed"
 }
 
-VersusSpawning.init = function (self, arg_1_1, arg_1_2, arg_1_3, arg_1_4, arg_1_5, arg_1_6)
+VersusSpawning.init = function (self, side_name, profile_synchronizer, available_profiles, is_server, game_mode_settings, career_delegator)
 	-- function 1
-	self._side_name = arg_1_1
-	self._profile_synchronizer = arg_1_2
-	self._available_profiles = arg_1_3
-	self._available_special_profiles = arg_1_3
-	self._settings = arg_1_5
-	self._respawn_timer_margin = arg_1_5.dark_pact_respawn_timer_margin
-	self._is_server = arg_1_4
+	self._side_name = side_name
+	self._profile_synchronizer = profile_synchronizer
+	self._available_profiles = available_profiles
+	self._available_special_profiles = available_profiles
+	self._settings = game_mode_settings
+	self._respawn_timer_margin = game_mode_settings.dark_pact_respawn_timer_margin
+	self._is_server = is_server
 	self._server_peer_id = Managers.mechanism:server_peer_id()
 	self._mechanism = Managers.mechanism:game_mechanism()
 	self._win_conditions = self._mechanism:win_conditions()
-	self._career_delegator = arg_1_6
+	self._career_delegator = career_delegator
 	self._spawn_points = {}
 	self._spawn_groups = {}
 	self._used_spawn_group_positions = {}
 	self._num_spawn_points_used = 0
 
-	local mechanism_try_call, var_1_1, var_1_2 = Managers.mechanism:mechanism_try_call("get_custom_game_setting", "pactsworn_respawn_timer")
+	local mechanism_ok, custom_setting_override, custom_settings_enabled = Managers.mechanism:mechanism_try_call("get_custom_game_setting", "pactsworn_respawn_timer")
 
-	if not (not mechanism_try_call and not var_1_2 and var_1_1 == "default") then
-		self._respawn_time_override = var_1_1
+	if mechanism_ok and custom_settings_enabled and custom_setting_override ~= "default" then
+		self._respawn_time_override = custom_setting_override
 	end
 end
 
-VersusSpawning.register_rpcs = function (self, arg_2_1, arg_2_2)
+VersusSpawning.register_rpcs = function (self, network_event_delegate, network_transmit)
 	-- function 2
-	arg_2_1:register(self, unpack(tbl))
+	network_event_delegate:register(self, unpack(RPCS))
 
-	self._network_event_delegate = arg_2_1
-	self._network_transmit = arg_2_2
+	self._network_event_delegate = network_event_delegate
+	self._network_transmit = network_transmit
 end
 
 VersusSpawning.unregister_rpcs = function (self)
@@ -50,116 +50,134 @@ VersusSpawning.unregister_rpcs = function (self)
 	self._network_transmit = nil
 end
 
-function get_special_profiles(self)
+function get_special_profiles(profiles)
 	-- function 4
-	local tbl = {}
+	local t = {}
 
-	for i = 1, #self do
-		local var_4_1 = self[i]
+	for i = 1, #profiles do
+		local profile_name = profiles[i]
+		local profile = PROFILES_BY_NAME[profile_name]
 
-		if PROFILES_BY_NAME[var_4_1].role == "special" then
-			tbl[#tbl + 1] = var_4_1
+		if profile.role == "special" then
+			t[#t + 1] = profile_name
 		end
 	end
 
-	return tbl
+	return t
 end
 
-VersusSpawning.get_spawn_time = function (self, arg_5_1)
+VersusSpawning.get_spawn_time = function (self, party)
 	-- function 5
-	if not self._respawn_time_override then
+	if self._respawn_time_override then
 		return self._respawn_time_override
 	end
 
-	local var_5_0 = arg_5_1
-	local party_id = Managers.state.side:get_side_from_name("heroes").party.party_id
-	local num_used_slots = arg_5_1.num_used_slots
-	local var_5_3 = self._settings.dark_pact_respawn_timers[num_used_slots]
-	local dark_pact_minimum_spawn_time = self._settings.dark_pact_minimum_spawn_time
-	local num = -200
-	local num_2 = 0
-	local num_3 = (self._win_conditions:get_total_score(var_5_0) - self._win_conditions:get_total_score(party_id) - num) / (num_2 - num)
-	local clamp = math.clamp(num_3, 0, 1)
-	local ceil = math.ceil(math.lerp(var_5_3.min, var_5_3.max, clamp))
+	local pactsworn_party_id = party
+	local hero_party_id = Managers.state.side:get_side_from_name("heroes").party.party_id
+	local num_used_slots = party.num_used_slots
+	local spawn_timers = self._settings.dark_pact_respawn_timers[num_used_slots]
+	local minimum_spawn_time = self._settings.dark_pact_minimum_spawn_time
+	local min_score = -200
+	local max_score = 0
+	local score_difference = (self._win_conditions:get_total_score(pactsworn_party_id) - self._win_conditions:get_total_score(hero_party_id) - min_score) / (max_score - min_score)
 
-	ceil = ceil or 20
+	score_difference = math.clamp(score_difference, 0, 1)
 
-	if self._mechanism:get_current_set() == 1 then
-		ceil = var_5_3.max or 20
+	local ceil = math.ceil(math.lerp(spawn_timers.min, spawn_timers.max, score_difference))
+
+	if not ceil then
+		-- Nothing
 	end
 
-	return (math.clamp(ceil, dark_pact_minimum_spawn_time, math.huge))
+	ceil = 20
+
+	local spawn_time = ceil
+
+	::label_5_0::
+
+	local current_set = self._mechanism:get_current_set()
+
+	if current_set == 1 then
+		spawn_time = not not spawn_timers.max or not not 20
+	end
+
+	spawn_time = math.clamp(spawn_time, minimum_spawn_time, math.huge)
+
+	return spawn_time
 end
 
-local function fn(arg_6_0, arg_6_1, arg_6_2)
+local function cb_spawned_darkpact_bot_func(unit, breed, optional_data)
 	-- function 6
-	local bot_data = arg_6_2.bot_data
+	local bot_data = optional_data.bot_data
 
 	bot_data.state = "alive"
-	bot_data.unit = arg_6_0
+	bot_data.unit = unit
 end
 
-VersusSpawning.update = function (self, arg_7_1, arg_7_2)
+VersusSpawning.update = function (self, t, dt)
 	-- function 7
-	if not Managers.state.network:game() then
-		local _side_name = self._side_name
-		local var_7_1 = FindProfileIndex("vs_undecided")
-		local get_party_from_side_name = Managers.state.side:get_party_from_side_name(_side_name)
-		local occupied_slots = get_party_from_side_name.occupied_slots
+	if Managers.state.network:game() then
+		local side_name = self._side_name
+		local undecided_profile_idx = FindProfileIndex("vs_undecided")
+		local party = Managers.state.side:get_party_from_side_name(side_name)
+		local occupied_slots = party.occupied_slots
 
 		for i = 1, #occupied_slots do
-			local var_7_4 = occupied_slots[i]
-			local player_from_unique_id = Managers.player:player_from_unique_id(var_7_4.unique_id)
+			local status = occupied_slots[i]
+			local player = Managers.player:player_from_unique_id(status.unique_id)
 
-			if not player_from_unique_id then
-				local game_mode_data = var_7_4.game_mode_data
-				local spawn_state = game_mode_data.spawn_state
+			if player then
+				local data = status.game_mode_data
+				local spawn_state = data.spawn_state
 
 				if spawn_state == "w8_for_profile" then
-					local peer_id = var_7_4.peer_id
-					local local_player_id = var_7_4.local_player_id
-					local profile_by_peer = self._profile_synchronizer:profile_by_peer(peer_id, local_player_id)
+					local peer_id = status.peer_id
+					local local_player_id = status.local_player_id
+					local current_profile_index = self._profile_synchronizer:profile_by_peer(peer_id, local_player_id)
 
-					if not (not profile_by_peer and profile_by_peer == var_7_1) then
+					if current_profile_index and current_profile_index ~= undecided_profile_idx then
 						self:set_spawn_state(peer_id, local_player_id, "w8_to_spawn", 0, 0, false)
 					end
 				elseif spawn_state == "w8_to_spawn" then
-					if not (not player_from_unique_id.player_unit and Unit.alive(player_from_unique_id.player_unit)) then
-						self:_spawn_enemy(var_7_4)
-						self:set_spawn_state(var_7_4.peer_id, var_7_4.local_player_id, "spawning", 0, 0, false)
+					if not player.player_unit or not Unit.alive(player.player_unit) then
+						self:_spawn_enemy(status)
+						self:set_spawn_state(status.peer_id, status.local_player_id, "spawning", 0, 0, false)
 					end
 				elseif spawn_state == "spawning" then
-					if not player_from_unique_id.player_unit then
-						self:set_spawn_state(var_7_4.peer_id, var_7_4.local_player_id, "spawned", 0, 0, false)
+					if player.player_unit then
+						self:set_spawn_state(status.peer_id, status.local_player_id, "spawned", 0, 0, false)
 					end
 				elseif spawn_state == "spawned" then
-					local player_unit = player_from_unique_id.player_unit
+					local player_unit = player.player_unit
 
-					if not Unit.alive(player_unit) then
-						if not ScriptUnit.extension(player_unit, "status_system"):is_dead() then
-							self:set_spawn_state(var_7_4.peer_id, var_7_4.local_player_id, "dead", 0, 0, false)
+					if Unit.alive(player_unit) then
+						if ScriptUnit.extension(player_unit, "status_system"):is_dead() then
+							self:set_spawn_state(status.peer_id, status.local_player_id, "dead", 0, 0, false)
 						end
 					else
-						local get_spawn_time = self:get_spawn_time(get_party_from_side_name)
+						local spawn_time = self:get_spawn_time(party)
 
-						self:set_spawn_state(var_7_4.peer_id, var_7_4.local_player_id, "dead", 0, get_spawn_time, true)
+						self:set_spawn_state(status.peer_id, status.local_player_id, "dead", 0, spawn_time, true)
 					end
 				elseif spawn_state == "dead" then
-					local delayed_death_timer = game_mode_data.delayed_death_timer
+					local timer = data.delayed_death_timer
 
-					if not delayed_death_timer then
-						local num = arg_7_1 + self._settings.side_settings.dark_pact.spawn_times.delayed_death_time
+					if not timer then
+						local side_settings = self._settings.side_settings
+						local num = t + side_settings.dark_pact.spawn_times.delayed_death_time
 
-						num = num or 0
-						game_mode_data.delayed_death_timer = num
-					elseif arg_7_1 - delayed_death_timer >= 0 then
-						game_mode_data.delayed_death_timer = nil
+						num = not not num or not not 0
+						data.delayed_death_timer = num
+					elseif t - timer >= 0 then
+						data.delayed_death_timer = nil
 
-						Managers.state.game_mode:game_mode():assign_temporary_dark_pact_profile(var_7_4)
+						local game_mode = Managers.state.game_mode:game_mode()
 
-						local get_spawn_time_2 = self:get_spawn_time(get_party_from_side_name)
+						game_mode:assign_temporary_dark_pact_profile(status)
 
-						self:set_spawn_state(var_7_4.peer_id, var_7_4.local_player_id, "w8_for_profile", 0, get_spawn_time_2, true)
+						local spawn_time = self:get_spawn_time(party)
+
+						self:set_spawn_state(status.peer_id, status.local_player_id, "w8_for_profile", 0, spawn_time, true)
 					end
 				end
 			end
@@ -167,88 +185,95 @@ VersusSpawning.update = function (self, arg_7_1, arg_7_2)
 	end
 end
 
-VersusSpawning.client_update = function (arg_8_0, arg_8_1, arg_8_2, arg_8_3)
+VersusSpawning.client_update = function (self, t, dt, party)
 	-- function 8
 	return
 end
 
-VersusSpawning.add_spawn_point = function (self, arg_9_1)
+VersusSpawning.add_spawn_point = function (self, unit)
 	-- function 9
-	local local_position = Unit.local_position(arg_9_1, 0)
-	local local_rotation = Unit.local_rotation(arg_9_1, 0)
-	local tbl = {
-		pos = Vector3Box(local_position),
-		rot = QuaternionBox(local_rotation),
-		unit = arg_9_1
+	local pos = Unit.local_position(unit, 0)
+	local rot = Unit.local_rotation(unit, 0)
+	local spawn_point = {
+		pos = Vector3Box(pos),
+		rot = QuaternionBox(rot),
+		unit = unit
 	}
-	local get_data = Unit.get_data(arg_9_1, "spawn_group")
+	local spawn_group_id = Unit.get_data(unit, "spawn_group")
 
-	fassert(get_data, "spawn group property missing from spawn point unit")
+	fassert(spawn_group_id, "spawn group property missing from spawn point unit")
 
-	if not self._spawn_groups[get_data] then
-		self._spawn_groups[get_data] = {}
+	if not self._spawn_groups[spawn_group_id] then
+		self._spawn_groups[spawn_group_id] = {}
 	end
 
-	local count = #self._spawn_groups[get_data]
+	local num_points = #self._spawn_groups[spawn_group_id]
 
-	self._spawn_groups[get_data][count + 1] = tbl
+	self._spawn_groups[spawn_group_id][num_points + 1] = spawn_point
 end
 
-VersusSpawning.get_spawn_point = function (self, arg_10_1, arg_10_2)
+VersusSpawning.get_spawn_point = function (self, spawn_group_id, optional_slot_id)
 	-- function 10
-	local var_10_0 = self._spawn_groups[arg_10_1]
+	local spawn_points = self._spawn_groups[spawn_group_id]
 
-	if not var_10_0 then
+	if not spawn_points then
 		return nil, nil, nil
 	end
 
-	local var_10_1 = var_10_0[arg_10_2 or 1]
+	local spawn_point = spawn_points[not not optional_slot_id or not not 1]
 
-	if not var_10_1 then
-		return var_10_1.pos, var_10_1.rot, var_10_1.unit
+	if spawn_point then
+		return spawn_point.pos, spawn_point.rot, spawn_point.unit
 	end
 end
 
-VersusSpawning._check_spawn_observer = function (self, arg_11_1)
+VersusSpawning._check_spawn_observer = function (self, player)
 	-- function 11
 	local spawn_at_players_on_side = self._settings.side_settings.dark_pact.spawn_at_players_on_side
-	local observed_unit = arg_11_1:observed_unit()
+	local observed_unit = player:observed_unit()
 
-	if not Unit.alive(observed_unit) then
-		local var_11_2 = Managers.state.side.side_by_unit[observed_unit]
-		local local_position = Unit.local_position(observed_unit, 0)
-		local local_rotation = Unit.local_rotation(observed_unit, 0)
+	if Unit.alive(observed_unit) then
+		local side_manager = Managers.state.side
+		local observer_side = side_manager.side_by_unit[observed_unit]
+		local observed_position = Unit.local_position(observed_unit, 0)
+		local observed_rotation = Unit.local_rotation(observed_unit, 0)
 
-		if not var_11_2 then
-			local var_11_5 = spawn_at_players_on_side[var_11_2:name()]
+		if observer_side then
+			local observer_side_name = observer_side:name()
+			local valid_func = spawn_at_players_on_side[observer_side_name]
 
-			if not var_11_5 and not var_11_5() then
-				return local_position, local_rotation
+			if valid_func and valid_func() then
+				return observed_position, observed_rotation
 			end
 		else
-			return local_position, local_rotation
+			return observed_position, observed_rotation
 		end
 	end
 
-	local keys = table.keys(spawn_at_players_on_side)
+	local valid_sides = table.keys(spawn_at_players_on_side)
 
-	while #keys > 0 do
-		local random = math.random(1, #keys)
-		local remove = table.remove(keys, random)
+	while #valid_sides > 0 do
+		local index = math.random(1, #valid_sides)
+		local side_name = table.remove(valid_sides, index)
+		local is_allowed_func = spawn_at_players_on_side[side_name]
 
-		if not spawn_at_players_on_side[remove]() then
-			local PLAYER_AND_BOT_UNITS = Managers.state.side:get_side_from_name(remove).PLAYER_AND_BOT_UNITS
-			local count = #PLAYER_AND_BOT_UNITS
-			local random_2 = math.random(1, count)
+		if is_allowed_func() then
+			local side = Managers.state.side:get_side_from_name(side_name)
+			local units = side.PLAYER_AND_BOT_UNITS
+			local num_units = #units
+			local random_index = math.random(1, num_units)
 
-			for i = 1, count do
-				local var_11_12 = PLAYER_AND_BOT_UNITS[math.index_wrapper(i + random_2 - 1, count)]
-				local var_11_13 = POSITION_LOOKUP[var_11_12]
+			for i = 1, num_units do
+				local idx = math.index_wrapper(i + random_index - 1, num_units)
+				local unit = units[idx]
+				local position = POSITION_LOOKUP[unit]
 
-				if not var_11_13 then
-					local local_rotation_2 = Unit.local_rotation(var_11_12, 0)
+				if position then
+					local rotation = Unit.local_rotation(unit, 0)
 
-					return var_11_13 + Vector3(0, 0, 0.1), local_rotation_2
+					position = position + Vector3(0, 0, 0.1)
+
+					return position, rotation
 				end
 			end
 		end
@@ -257,97 +282,106 @@ VersusSpawning._check_spawn_observer = function (self, arg_11_1)
 	return nil, nil
 end
 
-VersusSpawning._get_fallback_spawn_position = function (arg_12_0, arg_12_1)
+VersusSpawning._get_fallback_spawn_position = function (self, player)
 	-- function 12
-	local var_12_0
-	local ahead_travel_dist = Managers.state.conflict.main_path_info.ahead_travel_dist
-	local point_on_mainpath = MainPathUtils.point_on_mainpath(nil, ahead_travel_dist)
+	local position
+	local wanted_distance = Managers.state.conflict.main_path_info.ahead_travel_dist
 
-	if not point_on_mainpath then
-		local total_path_dist = MainPathUtils.total_path_dist()
+	position = MainPathUtils.point_on_mainpath(nil, wanted_distance)
 
-		point_on_mainpath = MainPathUtils.point_on_mainpath(nil, total_path_dist - 0.1)
+	if not position then
+		local total_distance = MainPathUtils.total_path_dist()
+
+		position = MainPathUtils.point_on_mainpath(nil, total_distance - 0.1)
 	end
 
-	return point_on_mainpath
+	return position
 end
 
-VersusSpawning._get_allowed_spawn_position = function (self, arg_13_1)
+VersusSpawning._get_allowed_spawn_position = function (self, player)
 	-- function 13
-	local _check_spawn_observer, var_13_1 = self:_check_spawn_observer(arg_13_1)
+	local position, rotation = self:_check_spawn_observer(player)
 
-	if not (_check_spawn_observer or Managers.state.game_mode:is_round_started()) then
-		local get_current_spawn_group = Managers.mechanism:game_mechanism():get_current_spawn_group()
+	if not position and not Managers.state.game_mode:is_round_started() then
+		local mechanism = Managers.mechanism:game_mechanism()
+		local spawn_group = mechanism:get_current_spawn_group()
+		local has_spawn_points = table.size(self._spawn_points) > 0 or not not self._spawn_groups[spawn_group]
 
-		if not (table.size(self._spawn_points) > 0 or self._spawn_groups[get_current_spawn_group]) then
-			_check_spawn_observer, var_13_1 = self:get_spawn_point(get_current_spawn_group)
-			_check_spawn_observer = _check_spawn_observer:unbox()
-			var_13_1 = var_13_1:unbox()
+		if has_spawn_points then
+			position, rotation = self:get_spawn_point(spawn_group)
+			position = position:unbox()
+			rotation = rotation:unbox()
 		end
 	end
 
-	_check_spawn_observer = _check_spawn_observer or self:_get_fallback_spawn_position(arg_13_1)
-	var_13_1 = var_13_1 or Quaternion.identity()
+	position = not not position or not not self:_get_fallback_spawn_position(player)
+	rotation = not not rotation or not not Quaternion.identity()
 
-	return _check_spawn_observer, var_13_1
+	return position, rotation
 end
 
-VersusSpawning._spawn_enemy = function (self, arg_14_1)
+VersusSpawning._spawn_enemy = function (self, status)
 	-- function 14
-	local peer_id = arg_14_1.peer_id
-	local local_player_id = arg_14_1.local_player_id
-	local profile_index = arg_14_1.profile_index
-	local career_index = arg_14_1.career_index
-	local get_current_spawn_group = Managers.mechanism:game_mechanism():get_current_spawn_group()
-	local _get_allowed_spawn_position, var_14_6 = self:_get_allowed_spawn_position(arg_14_1.player)
-	local flag = not arg_14_1.has_done_initial_spawn and not arg_14_1.has_done_initial_spawn[get_current_spawn_group]
-	local has_done_initial_spawn = arg_14_1.has_done_initial_spawn
+	local peer_id = status.peer_id
+	local local_player_id = status.local_player_id
+	local profile_index = status.profile_index
+	local career_index = status.career_index
+	local mechanism = Managers.mechanism:game_mechanism()
+	local spawn_group = mechanism:get_current_spawn_group()
+	local position, rotation = self:_get_allowed_spawn_position(status.player)
+	local is_initial_spawn = not status.has_done_initial_spawn or not not not status.has_done_initial_spawn[spawn_group]
+	local has_done_initial_spawn = status.has_done_initial_spawn
 
-	has_done_initial_spawn = has_done_initial_spawn or {}
-	arg_14_1.has_done_initial_spawn = has_done_initial_spawn
-	arg_14_1.has_done_initial_spawn[get_current_spawn_group] = true
+	has_done_initial_spawn = not not has_done_initial_spawn or not not {}
+	status.has_done_initial_spawn = has_done_initial_spawn
+	status.has_done_initial_spawn[spawn_group] = true
 
-	local game_mode_data = arg_14_1.game_mode_data
+	local data = status.game_mode_data
 	local netpack_consumables = SpawningHelper.netpack_consumables
-	local consumables = game_mode_data.consumables
+	local consumables = data.consumables
 
-	consumables = consumables or {}
+	consumables = not not consumables or not not {}
 
-	local var_14_12 = netpack_consumables(consumables)
-	local var_14_13, var_14_14, var_14_15 = unpack(var_14_12)
-	local netpack_additional_items = SpawningHelper.netpack_additional_items(game_mode_data.additional_items)
-	local num = 0
-	local num_2 = 0
-	local num_3 = 100
-	local ammo = game_mode_data.ammo
+	local networked_consumables = netpack_consumables(consumables)
+	local healthkit_id, potion_id, grenade_id = unpack(networked_consumables)
+	local network_additional_items = SpawningHelper.netpack_additional_items(data.additional_items)
+	local ammo_melee_percent_int = 0
+	local ammo_ranged_percent_int = 0
+	local ability_cooldown_percentage_int = 100
+	local ammo = data.ammo
 
-	if not ammo then
-		num = math.floor(ammo.slot_melee * 100)
-		num_2 = math.floor(ammo.slot_ranged * 100)
+	if ammo then
+		ammo_melee_percent_int = math.floor(ammo.slot_melee * 100)
+		ammo_ranged_percent_int = math.floor(ammo.slot_ranged * 100)
 	end
 
-	local tbl = {}
+	local network_buff_ids = {}
 
-	if not game_mode_data.persistent_buffs then
-		for k, v in pairs(game_mode_data.persistent_buffs.buff_names) do
-			local var_14_22 = NetworkLookup.buff_templates[v]
+	if data.persistent_buffs then
+		for _, buff_name in pairs(data.persistent_buffs.buff_names) do
+			local buff_id = NetworkLookup.buff_templates[buff_name]
 
-			table.insert(tbl, var_14_22)
+			table.insert(network_buff_ids, buff_id)
 		end
 	end
 
 	print("Spawning versus enemy player")
 
-	if not Managers.state.network:game() then
-		local cached_inventory_hash = self._profile_synchronizer:cached_inventory_hash(peer_id, local_player_id)
+	local session = Managers.state.network:game()
 
-		Managers.state.network.network_transmit:send_rpc("rpc_to_client_spawn_player", peer_id, local_player_id, profile_index, career_index, _get_allowed_spawn_position, var_14_6, flag, num, num_2, num_3, var_14_13, var_14_14, var_14_15, netpack_additional_items, tbl, cached_inventory_hash)
+	if session then
+		local inventory_hash = self._profile_synchronizer:cached_inventory_hash(peer_id, local_player_id)
+
+		Managers.state.network.network_transmit:send_rpc("rpc_to_client_spawn_player", peer_id, local_player_id, profile_index, career_index, position, rotation, is_initial_spawn, ammo_melee_percent_int, ammo_ranged_percent_int, ability_cooldown_percentage_int, healthkit_id, potion_id, grenade_id, network_additional_items, network_buff_ids, inventory_hash)
 	end
 end
 
-VersusSpawning.setup_data = function (arg_15_0, arg_15_1, arg_15_2)
+VersusSpawning.setup_data = function (self, peer_id, local_player_id)
 	-- function 15
-	Managers.party:get_player_status(arg_15_1, arg_15_2).game_mode_data = {
+	local party_manager = Managers.party
+	local status = party_manager:get_player_status(peer_id, local_player_id)
+
+	status.game_mode_data = {
 		health_percentage = 1,
 		temporary_health_percentage = 0,
 		health_state = "alive",
@@ -361,91 +395,92 @@ VersusSpawning.setup_data = function (arg_15_0, arg_15_1, arg_15_2)
 	}
 end
 
-VersusSpawning.handle_transporter = function (arg_16_0, arg_16_1, arg_16_2, arg_16_3)
+VersusSpawning.handle_transporter = function (self, active, transporter_unit, party)
 	-- function 16
 	return
 end
 
-VersusSpawning.force_respawn = function (self, arg_17_1, arg_17_2)
+VersusSpawning.force_respawn = function (self, peer_id, local_player_id)
 	-- function 17
-	local game_mode_data = Managers.party:get_player_status(arg_17_1, arg_17_2).game_mode_data
+	local data = Managers.party:get_player_status(peer_id, local_player_id).game_mode_data
 
-	if not game_mode_data.spawn_timer then
-		game_mode_data.spawn_timer = 0
+	if not data.spawn_timer then
+		data.spawn_timer = 0
 	end
 
-	self:set_spawn_state(arg_17_1, arg_17_2, "w8_to_spawn", 0, 0, false)
+	self:set_spawn_state(peer_id, local_player_id, "w8_to_spawn", 0, 0, false)
 end
 
-VersusSpawning.rpc_from_server_send_spawn_state = function (self, arg_18_1, arg_18_2, arg_18_3, arg_18_4, arg_18_5, arg_18_6, arg_18_7)
+VersusSpawning.rpc_from_server_send_spawn_state = function (self, channel_id, peer_id, local_player_id, spawn_state_id, int_data, float_data, bool_data)
 	-- function 18
-	local var_18_0 = NetworkLookup.spawn_states[arg_18_4]
+	local spawn_state = NetworkLookup.spawn_states[spawn_state_id]
 
-	self:set_spawn_state(arg_18_2, arg_18_3, var_18_0, arg_18_5, arg_18_6, arg_18_7)
+	self:set_spawn_state(peer_id, local_player_id, spawn_state, int_data, float_data, bool_data)
 end
 
-VersusSpawning.set_spawn_state = function (self, arg_19_1, arg_19_2, arg_19_3, arg_19_4, arg_19_5, arg_19_6)
+VersusSpawning.set_spawn_state = function (self, peer_id, local_player_id, spawn_state, int_data, float_data, bool_data)
 	-- function 19
 	local Managers = Managers
-	local get_player_status = Managers.party:get_player_status(arg_19_1, arg_19_2)
+	local status = Managers.party:get_player_status(peer_id, local_player_id)
 
-	if not get_player_status then
+	if not status then
 		return
 	end
 
-	local game_mode_data = get_player_status.game_mode_data
+	local data = status.game_mode_data
 
-	if arg_19_3 == "w8_for_profile" then
-		local player = Managers.player:player(arg_19_1, arg_19_2)
-		local num = Managers.time:time("game") + arg_19_5
+	if spawn_state == "w8_for_profile" then
+		local player = Managers.player:player(peer_id, local_player_id)
+		local spawn_timer = Managers.time:time("game") + float_data
 
-		game_mode_data.spawn_timer = num
+		data.spawn_timer = spawn_timer
 
-		local get_local_player_party = Managers.party:get_local_player_party()
+		local local_player_party = Managers.party:get_local_player_party()
 
-		if not ((Network.peer_id() == arg_19_1 or not get_local_player_party) and get_player_status.party_id ~= get_local_player_party.party_id) then
-			local flag = not not player.remote or not player.bot_player
-			local var_19_7 = arg_19_6
+		if Network.peer_id() == peer_id or local_player_party and status.party_id == local_player_party.party_id then
+			local local_human = not player.remote and not not not player.bot_player
+			local show_pactsworn_ui = bool_data
 
-			Managers.state.event:trigger("add_respawn_counter_event", player, flag, num, var_19_7)
+			Managers.state.event:trigger("add_respawn_counter_event", player, local_human, spawn_timer, show_pactsworn_ui)
 		end
 	end
 
-	game_mode_data.spawn_state = arg_19_3
+	data.spawn_state = spawn_state
 
-	if not self._is_server then
-		local var_19_8 = NetworkLookup.spawn_states[arg_19_3]
+	if self._is_server then
+		local spawn_state_id = NetworkLookup.spawn_states[spawn_state]
 
-		Managers.state.network.network_transmit:send_rpc_clients("rpc_from_server_send_spawn_state", arg_19_1, arg_19_2, var_19_8, arg_19_4, arg_19_5, arg_19_6)
+		Managers.state.network.network_transmit:send_rpc_clients("rpc_from_server_send_spawn_state", peer_id, local_player_id, spawn_state_id, int_data, float_data, bool_data)
 	end
 end
 
-VersusSpawning._play_sound = function (arg_20_0, arg_20_1)
+VersusSpawning._play_sound = function (self, name)
 	-- function 20
 	local world = Managers.world:world("level_world")
 	local wwise_world = Managers.world:wwise_world(world)
 
-	WwiseWorld.trigger_event(wwise_world, arg_20_1)
+	WwiseWorld.trigger_event(wwise_world, name)
 end
 
-VersusSpawning.rpc_to_server_spawn_failed = function (self, arg_21_1, arg_21_2)
+VersusSpawning.rpc_to_server_spawn_failed = function (self, channel_id, local_player_id)
 	-- function 21
 	print("[VersusSpawning] Client detected spawning mismatch. Trying again.")
 
-	local var_21_0 = CHANNEL_TO_PEER_ID[arg_21_1]
-	local _side_name = self._side_name
-	local occupied_slots = Managers.state.side:get_party_from_side_name(_side_name).occupied_slots
+	local peer_id = CHANNEL_TO_PEER_ID[channel_id]
+	local side_name = self._side_name
+	local party = Managers.state.side:get_party_from_side_name(side_name)
+	local occupied_slots = party.occupied_slots
 
 	for i = 1, #occupied_slots do
-		local var_21_3 = occupied_slots[i]
-		local peer_id = var_21_3.peer_id
-		local local_player_id = var_21_3.local_player_id
+		local status = occupied_slots[i]
+		local other_peer_id = status.peer_id
+		local other_local_player_id = status.local_player_id
 
-		if not (var_21_0 ~= peer_id or arg_21_2 ~= local_player_id) then
-			local game_mode_data = var_21_3.game_mode_data
+		if peer_id == other_peer_id and local_player_id == other_local_player_id then
+			local data = status.game_mode_data
 
-			if game_mode_data.spawn_state == "spawning" then
-				game_mode_data.spawn_state = "w8_to_spawn"
+			if data.spawn_state == "spawning" then
+				data.spawn_state = "w8_to_spawn"
 
 				break
 			end

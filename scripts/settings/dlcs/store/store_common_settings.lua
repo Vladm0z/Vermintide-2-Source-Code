@@ -1,21 +1,21 @@
 -- chunkname: @scripts/settings/dlcs/store/store_common_settings.lua
 
-local store = DLCSettings.store
+local settings = DLCSettings.store
 
-store.interactions = {
+settings.interactions = {
 	"store_access"
 }
-store.interactions_filenames = {
+settings.interactions_filenames = {
 	"scripts/settings/store_interactions"
 }
-store.backend_interfaces = {
+settings.backend_interfaces = {
 	peddler = {
 		ignore_on_dedicated_server = true,
 		playfab_file = "scripts/managers/backend_playfab/backend_interface_peddler_playfab",
 		playfab_class = "BackendInterfacePeddlerPlayFab"
 	}
 }
-store.backend_localizations = {
+settings.backend_localizations = {
 	peddler = {
 		pl = "store_localization_pl",
 		de = "store_localization_de",

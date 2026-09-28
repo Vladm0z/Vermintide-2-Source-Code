@@ -1,8 +1,8 @@
 -- chunkname: @scripts/settings/dlcs/belladonna/belladonna_unit_variation_settings.lua
 
-local belladonna = DLCSettings.belladonna
+local settings = DLCSettings.belladonna
 
-belladonna.unit_variation_settings = {
+settings.unit_variation_settings = {
 	beastmen_common = {
 		materials_enabled_from_start = {
 			"skin_tint",
@@ -45,8 +45,8 @@ belladonna.unit_variation_settings = {
 		}
 	}
 }
-belladonna.unit_variation_settings.beastmen_common_tattoo = table.create_copy(belladonna.unit_variation_settings.beastmen_common_tattoo, belladonna.unit_variation_settings.beastmen_common)
-belladonna.unit_variation_settings.beastmen_common_tattoo.material_variations.tattoo = {
+settings.unit_variation_settings.beastmen_common_tattoo = table.create_copy(settings.unit_variation_settings.beastmen_common_tattoo, settings.unit_variation_settings.beastmen_common)
+settings.unit_variation_settings.beastmen_common_tattoo.material_variations.tattoo = {
 	min = 0,
 	max = 3,
 	materials = {
@@ -56,7 +56,7 @@ belladonna.unit_variation_settings.beastmen_common_tattoo.material_variations.ta
 		"tattoo_style"
 	}
 }
-belladonna.unit_variation_settings.beastmen_common_tattoo.material_variations.tattoo_head = {
+settings.unit_variation_settings.beastmen_common_tattoo.material_variations.tattoo_head = {
 	min = 0,
 	max = 3,
 	materials = {
@@ -66,7 +66,7 @@ belladonna.unit_variation_settings.beastmen_common_tattoo.material_variations.ta
 		"tattoo_style"
 	}
 }
-belladonna.unit_variation_settings.beastmen_common_tattoo.material_variations.tattoo_tint = {
+settings.unit_variation_settings.beastmen_common_tattoo.material_variations.tattoo_tint = {
 	min = 0,
 	max = 31,
 	materials = {
@@ -77,7 +77,7 @@ belladonna.unit_variation_settings.beastmen_common_tattoo.material_variations.ta
 		"tattoo_color_variation"
 	}
 }
-belladonna.unit_variation_settings.beastmen_common_tattoo.materials_enabled_from_start = {
+settings.unit_variation_settings.beastmen_common_tattoo.materials_enabled_from_start = {
 	"skin_tint",
 	"horn_tint",
 	"cloth_tint",
@@ -85,11 +85,11 @@ belladonna.unit_variation_settings.beastmen_common_tattoo.materials_enabled_from
 	"tattoo_head",
 	"tattoo_tint"
 }
-belladonna.unit_variation_settings.beastmen_gor = table.create_copy(belladonna.unit_variation_settings.beastmen_gor, belladonna.unit_variation_settings.beastmen_common_tattoo)
-belladonna.unit_variation_settings.beastmen_gor.material_variations.tattoo_tint.min = 0
-belladonna.unit_variation_settings.beastmen_gor.material_variations.tattoo_tint.max = 15
-belladonna.unit_variation_settings.beastmen_ungor = table.create_copy(belladonna.unit_variation_settings.beastmen_ungor, belladonna.unit_variation_settings.beastmen_common)
-belladonna.unit_variation_settings.beastmen_ungor.material_variations.skin_tint.materials = {
+settings.unit_variation_settings.beastmen_gor = table.create_copy(settings.unit_variation_settings.beastmen_gor, settings.unit_variation_settings.beastmen_common_tattoo)
+settings.unit_variation_settings.beastmen_gor.material_variations.tattoo_tint.min = 0
+settings.unit_variation_settings.beastmen_gor.material_variations.tattoo_tint.max = 15
+settings.unit_variation_settings.beastmen_ungor = table.create_copy(settings.unit_variation_settings.beastmen_ungor, settings.unit_variation_settings.beastmen_common)
+settings.unit_variation_settings.beastmen_ungor.material_variations.skin_tint.materials = {
 	"mtr_skin",
 	"mtr_fur",
 	"mtr_head_00",
@@ -97,16 +97,16 @@ belladonna.unit_variation_settings.beastmen_ungor.material_variations.skin_tint.
 	"mtr_head_02",
 	"mtr_head_03"
 }
-belladonna.unit_variation_settings.beastmen_ungor.material_variations.skin_tint.min = 0
-belladonna.unit_variation_settings.beastmen_ungor.material_variations.skin_tint.max = 15
-belladonna.unit_variation_settings.beastmen_ungor.material_variations.cloth_tint.min = 0
-belladonna.unit_variation_settings.beastmen_ungor.material_variations.cloth_tint.max = 15
-belladonna.unit_variation_settings.beastmen_ungor_archer = table.create_copy(belladonna.unit_variation_settings.beastmen_ungor_archer, belladonna.unit_variation_settings.beastmen_ungor)
-belladonna.unit_variation_settings.beastmen_ungor_archer.material_variations.skin_tint.min = 16
-belladonna.unit_variation_settings.beastmen_ungor_archer.material_variations.skin_tint.max = 31
-belladonna.unit_variation_settings.beastmen_ungor_archer.material_variations.cloth_tint.min = 16
-belladonna.unit_variation_settings.beastmen_ungor_archer.material_variations.cloth_tint.max = 31
-belladonna.unit_variation_settings.beastmen_ungor_archer.material_variations.tattoo = {
+settings.unit_variation_settings.beastmen_ungor.material_variations.skin_tint.min = 0
+settings.unit_variation_settings.beastmen_ungor.material_variations.skin_tint.max = 15
+settings.unit_variation_settings.beastmen_ungor.material_variations.cloth_tint.min = 0
+settings.unit_variation_settings.beastmen_ungor.material_variations.cloth_tint.max = 15
+settings.unit_variation_settings.beastmen_ungor_archer = table.create_copy(settings.unit_variation_settings.beastmen_ungor_archer, settings.unit_variation_settings.beastmen_ungor)
+settings.unit_variation_settings.beastmen_ungor_archer.material_variations.skin_tint.min = 16
+settings.unit_variation_settings.beastmen_ungor_archer.material_variations.skin_tint.max = 31
+settings.unit_variation_settings.beastmen_ungor_archer.material_variations.cloth_tint.min = 16
+settings.unit_variation_settings.beastmen_ungor_archer.material_variations.cloth_tint.max = 31
+settings.unit_variation_settings.beastmen_ungor_archer.material_variations.tattoo = {
 	min = 0,
 	max = 3,
 	materials = {
@@ -116,7 +116,7 @@ belladonna.unit_variation_settings.beastmen_ungor_archer.material_variations.tat
 		"tattoo_style"
 	}
 }
-belladonna.unit_variation_settings.beastmen_ungor_archer.material_variations.tattoo_tint = {
+settings.unit_variation_settings.beastmen_ungor_archer.material_variations.tattoo_tint = {
 	min = 16,
 	max = 31,
 	materials = {
@@ -126,15 +126,15 @@ belladonna.unit_variation_settings.beastmen_ungor_archer.material_variations.tat
 		"tattoo_color_variation"
 	}
 }
-belladonna.unit_variation_settings.beastmen_ungor_archer.materials_enabled_from_start = {
+settings.unit_variation_settings.beastmen_ungor_archer.materials_enabled_from_start = {
 	"skin_tint",
 	"horn_tint",
 	"cloth_tint",
 	"tattoo",
 	"tattoo_tint"
 }
-belladonna.unit_variation_settings.beastmen_bestigor = table.create_copy(belladonna.unit_variation_settings.beastmen_bestigor, belladonna.unit_variation_settings.beastmen_common_tattoo)
-belladonna.unit_variation_settings.beastmen_bestigor.material_variations.cloth_tint_set_1 = {
+settings.unit_variation_settings.beastmen_bestigor = table.create_copy(settings.unit_variation_settings.beastmen_bestigor, settings.unit_variation_settings.beastmen_common_tattoo)
+settings.unit_variation_settings.beastmen_bestigor.material_variations.cloth_tint_set_1 = {
 	min = 2,
 	max = 2,
 	materials = {
@@ -144,7 +144,7 @@ belladonna.unit_variation_settings.beastmen_bestigor.material_variations.cloth_t
 		"tint_color_set_1"
 	}
 }
-belladonna.unit_variation_settings.beastmen_bestigor.material_variations.fur_tint_set_1 = {
+settings.unit_variation_settings.beastmen_bestigor.material_variations.fur_tint_set_1 = {
 	min = 13,
 	max = 13,
 	materials = {
@@ -154,7 +154,7 @@ belladonna.unit_variation_settings.beastmen_bestigor.material_variations.fur_tin
 		"tint_color_set_1"
 	}
 }
-belladonna.unit_variation_settings.beastmen_bestigor.material_variations.skin_tint_set_2 = {
+settings.unit_variation_settings.beastmen_bestigor.material_variations.skin_tint_set_2 = {
 	min = 12,
 	max = 12,
 	materials = {
@@ -165,7 +165,7 @@ belladonna.unit_variation_settings.beastmen_bestigor.material_variations.skin_ti
 		"tint_color_set_2"
 	}
 }
-belladonna.unit_variation_settings.beastmen_bestigor.material_variations.tattoo_table = {
+settings.unit_variation_settings.beastmen_bestigor.material_variations.tattoo_table = {
 	min = 4,
 	max = 4,
 	materials = {
@@ -176,7 +176,7 @@ belladonna.unit_variation_settings.beastmen_bestigor.material_variations.tattoo_
 		"tattoo_color_set"
 	}
 }
-belladonna.unit_variation_settings.beastmen_bestigor.materials_enabled_from_start = {
+settings.unit_variation_settings.beastmen_bestigor.materials_enabled_from_start = {
 	"skin_tint",
 	"horn_tint",
 	"cloth_tint",
@@ -188,10 +188,10 @@ belladonna.unit_variation_settings.beastmen_bestigor.materials_enabled_from_star
 	"fur_tint_set_1",
 	"skin_tint_set_2"
 }
-belladonna.unit_variation_settings.beastmen_standard_bearer = table.create_copy(belladonna.unit_variation_settings.beastmen_standard_bearer, belladonna.unit_variation_settings.beastmen_bestigor)
-belladonna.unit_variation_settings.beastmen_standard_bearer.material_variations.cloth_tint_set_1.min = 3
-belladonna.unit_variation_settings.beastmen_standard_bearer.material_variations.cloth_tint_set_1.max = 3
-belladonna.unit_variation_settings.beastmen_standard_bearer.material_variations.fur_tint_set_1.min = 7
-belladonna.unit_variation_settings.beastmen_standard_bearer.material_variations.fur_tint_set_1.max = 7
-belladonna.unit_variation_settings.beastmen_standard_bearer.material_variations.skin_tint_set_2.min = 6
-belladonna.unit_variation_settings.beastmen_standard_bearer.material_variations.skin_tint_set_2.max = 6
+settings.unit_variation_settings.beastmen_standard_bearer = table.create_copy(settings.unit_variation_settings.beastmen_standard_bearer, settings.unit_variation_settings.beastmen_bestigor)
+settings.unit_variation_settings.beastmen_standard_bearer.material_variations.cloth_tint_set_1.min = 3
+settings.unit_variation_settings.beastmen_standard_bearer.material_variations.cloth_tint_set_1.max = 3
+settings.unit_variation_settings.beastmen_standard_bearer.material_variations.fur_tint_set_1.min = 7
+settings.unit_variation_settings.beastmen_standard_bearer.material_variations.fur_tint_set_1.max = 7
+settings.unit_variation_settings.beastmen_standard_bearer.material_variations.skin_tint_set_2.min = 6
+settings.unit_variation_settings.beastmen_standard_bearer.material_variations.skin_tint_set_2.max = 6

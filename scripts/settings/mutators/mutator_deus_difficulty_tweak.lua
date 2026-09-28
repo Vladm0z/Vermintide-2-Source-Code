@@ -1,6 +1,6 @@
 -- chunkname: @scripts/settings/mutators/mutator_deus_difficulty_tweak.lua
 
-local tbl = {
+local density_multiplier_steps_per_difficulty_tweak = {
 	{
 		-10,
 		1
@@ -14,7 +14,7 @@ local tbl = {
 		1.3
 	}
 }
-local tbl_2 = {
+local min_override_chance_per_difficulty_tweak = {
 	{
 		-10,
 		0.1
@@ -28,7 +28,7 @@ local tbl_2 = {
 		0.8
 	}
 }
-local tbl_3 = {
+local max_override_chance_per_difficulty_tweak = {
 	{
 		-10,
 		0.3
@@ -42,62 +42,67 @@ local tbl_3 = {
 		1
 	}
 }
-local str = "deus_difficulty_tweak_boss_buff"
+local BOSS_BUFF = "deus_difficulty_tweak_boss_buff"
 
-local function fn(arg_1_0, arg_1_1)
+local function get_lerped_value_for_difficulty(steps, current_difficulty_tweak)
 	-- function 1
-	fassert(#arg_1_0 >= 1, "need at least one step for the difficulty lerp to work.")
+	fassert(#steps >= 1, "need at least one step for the difficulty lerp to work.")
 
-	local var_1_0
-	local var_1_1
+	local selected_pre_step, selected_post_step
 
-	for i = 1, #tbl do
-		local var_1_2 = tbl[i]
+	for i = 1, #density_multiplier_steps_per_difficulty_tweak do
+		local step = density_multiplier_steps_per_difficulty_tweak[i]
 
-		if arg_1_1 <= var_1_2[1] then
-			local var_1_3 = tbl[i - 1]
-			local var_1_4 = tbl[i + 1]
+		if current_difficulty_tweak <= step[1] then
+			local step_before = density_multiplier_steps_per_difficulty_tweak[i - 1]
+			local step_after = density_multiplier_steps_per_difficulty_tweak[i + 1]
 
-			var_1_0 = var_1_3 or var_1_2
-			var_1_1 = not var_1_3 and var_1_2 and var_1_4
+			selected_pre_step = not not step_before or not not step
+			selected_post_step = (not step_before or not step) and not not step_after
 
 			break
 		end
 	end
 
-	if not var_1_0 then
-		local num = var_1_1[1] - var_1_0[1]
-		local num_2 = (arg_1_1 - var_1_0[1]) / num
+	if selected_pre_step then
+		local step_range = selected_post_step[1] - selected_pre_step[1]
+		local difficulty_val = current_difficulty_tweak - selected_pre_step[1]
+		local ratio = difficulty_val / step_range
+		local value = math.lerp(selected_pre_step[2], selected_post_step[2], ratio)
 
-		return (math.lerp(var_1_0[2], var_1_1[2], num_2))
+		return value
 	end
 end
 
 return {
 	hide_from_player_ui = true,
-	tweak_pack_spawning_settings = function (arg_2_0, arg_2_1)
+	tweak_pack_spawning_settings = function (conflict_director_name, pack_spawning_settings)
 		-- function 2
-		local get_difficulty, var_2_1 = Managers.state.difficulty:get_difficulty()
-		local var_2_2 = fn(tbl, var_2_1)
+		local _, difficulty_tweak = Managers.state.difficulty:get_difficulty()
+		local density_multiplier = get_lerped_value_for_difficulty(density_multiplier_steps_per_difficulty_tweak, difficulty_tweak)
 
-		MutatorUtils.tweak_pack_spawning_settings_density_multiplier(arg_2_1, var_2_2)
+		MutatorUtils.tweak_pack_spawning_settings_density_multiplier(pack_spawning_settings, density_multiplier)
 
-		local var_2_3 = fn(tbl_2, var_2_1)
-		local var_2_4 = fn(tbl_3, var_2_1)
+		local min_override_chance = get_lerped_value_for_difficulty(min_override_chance_per_difficulty_tweak, difficulty_tweak)
+		local max_override_chance = get_lerped_value_for_difficulty(max_override_chance_per_difficulty_tweak, difficulty_tweak)
 
-		MutatorUtils.tweak_pack_spawning_settings_override_chance(arg_2_1, var_2_3, var_2_4)
+		MutatorUtils.tweak_pack_spawning_settings_override_chance(pack_spawning_settings, min_override_chance, max_override_chance)
 	end,
-	server_ai_spawned_function = function (arg_3_0, arg_3_1, arg_3_2)
+	server_ai_spawned_function = function (context, data, unit)
 		-- function 3
-		if not Unit.get_data(arg_3_2, "breed").boss then
-			local get_difficulty, var_3_1 = Managers.state.difficulty:get_difficulty()
-			local range = DifficultyTweak.range
-			local num = (var_3_1 + range) / (range * 2)
-			local tbl = {
-				variable_value = num
-			}
+		local breed = Unit.get_data(unit, "breed")
 
-			ScriptUnit.extension(arg_3_2, "buff_system"):add_buff(str, tbl)
+		if breed.boss then
+			local _, difficulty_tweak = Managers.state.difficulty:get_difficulty()
+			local range = DifficultyTweak.range
+			local offset_difficulty_tweak_value = difficulty_tweak + range
+			local normalized_difficulty_value = offset_difficulty_tweak_value / (range * 2)
+			local params = {
+				variable_value = normalized_difficulty_value
+			}
+			local buff_extension = ScriptUnit.extension(unit, "buff_system")
+
+			buff_extension:add_buff(BOSS_BUFF, params)
 		end
 	end
 }

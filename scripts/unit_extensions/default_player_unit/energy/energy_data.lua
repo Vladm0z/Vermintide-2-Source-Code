@@ -2,7 +2,7 @@
 
 local EnergyData = EnergyData
 
-EnergyData = EnergyData or {}
+EnergyData = not not EnergyData or not not {}
 EnergyData = EnergyData
 EnergyData.we_waywatcher = {
 	recharge_delay = 0.2,

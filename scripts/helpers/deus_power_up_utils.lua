@@ -2,98 +2,105 @@
 
 require("scripts/settings/dlcs/morris/deus_power_up_settings")
 
-local scripts_utils_byte_array = require("scripts/utils/byte_array")
-local scripts_utils_lib_deflate = require("scripts/utils/lib_deflate")
+local ByteArray = require("scripts/utils/byte_array")
+local LibDeflate = require("scripts/utils/lib_deflate")
 local PowerUpClientIdCount = PowerUpClientIdCount
 
-PowerUpClientIdCount = PowerUpClientIdCount or 0
+PowerUpClientIdCount = not not PowerUpClientIdCount or not not 0
 PowerUpClientIdCount = PowerUpClientIdCount
 
-local function fn()
+local function generate_random_id()
 	-- function 1
 	return math.random_seed()
 end
 
-local function fn_2(arg_2_0, arg_2_1, arg_2_2, arg_2_3)
+local function get_random_power_up(seed, power_ups, power_up_weights, total_weight)
 	-- function 2
-	if not table.is_empty(arg_2_1) then
-		return arg_2_0, nil
+	if table.is_empty(power_ups) then
+		return seed, nil
 	end
 
-	local var_2_0
-	local var_2_1
+	local rnd_weight
 
-	arg_2_0, var_2_1 = Math.next_random(arg_2_0)
+	seed, rnd_weight = Math.next_random(seed)
 
-	if arg_2_3 == 0 then
-		return arg_2_0, nil
+	if total_weight == 0 then
+		return seed, nil
 	end
 
-	local num = 0
-	local num_2 = 1 / arg_2_3
+	local current_weight = 0
+	local weight_multiplier = 1 / total_weight
 
-	for i = 1, #arg_2_1 do
-		local var_2_4 = arg_2_1[i]
+	for i = 1, #power_ups do
+		local power_up = power_ups[i]
+		local weight = power_up_weights[i] * weight_multiplier
 
-		num = num + arg_2_2[i] * num_2
+		current_weight = current_weight + weight
 
-		if var_2_1 < num then
-			return arg_2_0, var_2_4
+		if rnd_weight < current_weight then
+			return seed, power_up
 		end
 	end
 
-	return arg_2_0, arg_2_1[#arg_2_1]
+	return seed, power_ups[#power_ups]
 end
 
-local function fn_3(arg_3_0)
+local function get_maxed_out_power_ups(power_ups_lut)
 	-- function 3
-	local tbl = {}
-	local tbl_2 = {}
+	local maxed_out_power_ups = {}
+	local power_ups_by_amount = {}
 
-	for k, v in pairs(arg_3_0) do
-		for k_2, v_2 in pairs(v) do
-			local var_3_2 = tbl_2[k_2]
+	for rarity, power_ups in pairs(power_ups_lut) do
+		for name, power_up in pairs(power_ups) do
+			local var_3_0 = power_ups_by_amount[name]
 
-			var_3_2 = var_3_2 or v_2.max_amount
+			if not var_3_0 then
+				-- Nothing
+			end
 
-			local num = var_3_2 - 1
+			var_3_0 = power_up.max_amount
 
-			tbl_2[k_2] = num
+			local amount = var_3_0
 
-			if num <= 0 then
-				tbl[k_2] = true
+			::label_3_0::
+
+			amount = amount - 1
+			power_ups_by_amount[name] = amount
+
+			if amount <= 0 then
+				maxed_out_power_ups[name] = true
 			end
 		end
 	end
 
-	return tbl
+	return maxed_out_power_ups
 end
 
-local function fn_4(arg_4_0, arg_4_1, arg_4_2)
+local function is_power_up_in_incompatibility_list(career_name, power_up_name, incompatibility)
 	-- function 4
-	local default = arg_4_2.default
+	local default_list = incompatibility.default
 
-	if not default and not table.contains(default, arg_4_1) then
+	if default_list and table.contains(default_list, power_up_name) then
 		return true
 	end
 
-	local var_4_1 = arg_4_2[arg_4_0]
+	local career_list = incompatibility[career_name]
 
-	if not var_4_1 and not table.contains(var_4_1, arg_4_1) then
+	if career_list and table.contains(career_list, power_up_name) then
 		return true
 	end
 
 	return false
 end
 
-local function fn_5(self)
+local function compatible_mutator_active(mutators)
 	-- function 5
-	if not table.is_empty(self) then
+	if table.is_empty(mutators) then
 		return true
 	end
 
-	for i = 1, #self do
-		if not Managers.state.game_mode:has_activated_mutator(self[i]) then
+	for i = 1, #mutators do
+		if Managers.state.game_mode:has_activated_mutator(mutators[i]) then
 			return true
 		end
 	end
@@ -101,20 +108,20 @@ local function fn_5(self)
 	return false
 end
 
-local function fn_6(arg_6_0, arg_6_1, arg_6_2)
+local function is_power_up_incompatible(career_name, existing_power_ups_lut, power_up)
 	-- function 6
-	local incompatibility = arg_6_2.incompatibility
-	local name = arg_6_2.name
+	local new_power_up_incompatibility = power_up.incompatibility
+	local power_up_name = power_up.name
 
-	for k, v in pairs(arg_6_1) do
-		for k_2, v_2 in pairs(v) do
-			local incompatibility_2 = v_2.incompatibility
+	for _, power_ups in pairs(existing_power_ups_lut) do
+		for existing_power_up_name, existing_power_up in pairs(power_ups) do
+			local existing_power_up_incompatibility = existing_power_up.incompatibility
 
-			if not incompatibility_2 and not fn_4(arg_6_0, name, incompatibility_2) then
+			if existing_power_up_incompatibility and is_power_up_in_incompatibility_list(career_name, power_up_name, existing_power_up_incompatibility) then
 				return true
 			end
 
-			if not incompatibility and not fn_4(arg_6_0, k_2, incompatibility) then
+			if new_power_up_incompatibility and is_power_up_in_incompatibility_list(career_name, existing_power_up_name, new_power_up_incompatibility) then
 				return true
 			end
 		end
@@ -123,360 +130,380 @@ local function fn_6(arg_6_0, arg_6_1, arg_6_2)
 	return false
 end
 
-local function fn_7(arg_7_0, arg_7_1, arg_7_2, arg_7_3, arg_7_4)
+local function get_available_power_ups_array(career_name, excluded_power_ups, existing_power_ups_lut, rarity, availability_type)
 	-- function 7
-	local tbl = {}
+	local all_excluded_power_ups = {}
 
-	for i, v in ipairs(arg_7_1) do
-		tbl[v.name] = true
+	for _, power_up in ipairs(excluded_power_ups) do
+		all_excluded_power_ups[power_up.name] = true
 	end
 
-	local var_7_1 = fn_3(arg_7_2)
+	local maxed_out_power_ups = get_maxed_out_power_ups(existing_power_ups_lut)
 
-	for k, v_2 in pairs(var_7_1) do
-		tbl[k] = true
+	for power_up_name, _ in pairs(maxed_out_power_ups) do
+		all_excluded_power_ups[power_up_name] = true
 	end
 
-	local var_7_2 = DeusPowerUpExclusionList[arg_7_0]
+	local var_7_0 = DeusPowerUpExclusionList[career_name]
 
-	var_7_2 = var_7_2 or {}
-
-	for k_2, v_3 in pairs(var_7_2) do
-		tbl[k_2] = true
+	if not var_7_0 then
+		-- Nothing
 	end
 
-	local num_set_boons_weight_multiplier = DeusPowerUpSettings.num_set_boons_weight_multiplier
-	local num = 0
-	local tbl_2 = {}
-	local tbl_3 = {}
-	local var_7_7 = DeusPowerUpsArrayByRarity[arg_7_3]
+	var_7_0 = {}
 
-	if not var_7_7 then
-		var_7_7 = DeusPowerUpsArray
-		var_7_7 = var_7_7 or {}
+	local career_excluded_power_ups = var_7_0
+
+	::label_7_0::
+
+	for power_up_name, _ in pairs(career_excluded_power_ups) do
+		all_excluded_power_ups[power_up_name] = true
 	end
 
-	for i_2, v_4 in ipairs(var_7_7) do
-		local name = v_4.name
-		local var_7_9 = DeusPowerUps[v_4.rarity][name]
-		local name_2 = var_7_9.name
+	local num_set_boons_multiplier = DeusPowerUpSettings.num_set_boons_weight_multiplier
+	local total_weight = 0
+	local weights = {}
+	local available_power_ups = {}
+	local var_7_1 = DeusPowerUpsArrayByRarity[rarity]
 
-		if not ((tbl[name_2] or not fn_5(var_7_9.mutators) or not table.contains(var_7_9.availability, arg_7_4)) and fn_6(arg_7_0, arg_7_2, v_4)) then
-			table.insert(tbl_3, var_7_9)
+	if not var_7_1 then
+		-- Nothing
+	end
 
-			local weight = var_7_9.weight
-			local var_7_12 = DeusPowerUpSetLookup[var_7_9.rarity][name_2]
+	var_7_1 = DeusPowerUpsArray
 
-			if not var_7_12 then
-				local num_2 = 1
+	if not var_7_1 then
+		-- Nothing
+	end
 
-				for i8 = 1, #var_7_12 do
-					local var_7_14 = var_7_12[i8]
+	var_7_1 = {}
 
-					for i9 = 1, #var_7_14.pieces do
-						local var_7_15 = var_7_14.pieces[i9]
+	local possible_power_ups_array = var_7_1
 
-						if not arg_7_2[var_7_15.rarity][var_7_15.name] then
-							num_2 = num_2 + (num_set_boons_weight_multiplier - 1)
+	::label_7_1::
+
+	for _, power_up_instance in ipairs(possible_power_ups_array) do
+		local instance_name = power_up_instance.name
+		local power_up = DeusPowerUps[power_up_instance.rarity][instance_name]
+		local power_up_name = power_up.name
+		local excluded = all_excluded_power_ups[power_up_name]
+
+		if not excluded and compatible_mutator_active(power_up.mutators) and table.contains(power_up.availability, availability_type) and not is_power_up_incompatible(career_name, existing_power_ups_lut, power_up_instance) then
+			table.insert(available_power_ups, power_up)
+
+			local weight = power_up.weight
+			local boon_sets = DeusPowerUpSetLookup[power_up.rarity][power_up_name]
+
+			if boon_sets then
+				local additive_weight = 1
+
+				for i = 1, #boon_sets do
+					local boon_set = boon_sets[i]
+
+					for j = 1, #boon_set.pieces do
+						local piece = boon_set.pieces[j]
+
+						if existing_power_ups_lut[piece.rarity][piece.name] then
+							additive_weight = additive_weight + (num_set_boons_multiplier - 1)
 						end
 					end
 				end
 
-				weight = weight * num_2
+				weight = weight * additive_weight
 			end
 
-			num = num + weight
+			total_weight = total_weight + weight
 
-			table.insert(tbl_2, weight)
+			table.insert(weights, weight)
 		end
 	end
 
-	return tbl_3, tbl_2, num
+	return available_power_ups, weights, total_weight
 end
 
-local select_map = table.select_map(table.set(DeusPowerUpRarities), function (arg_8_0, arg_8_1)
+local existing_power_ups_lut = table.select_map(table.set(DeusPowerUpRarities), function (_, rarity)
 	-- function 8
 	return {}
 end)
 
-local function fn_8(arg_9_0, arg_9_1, arg_9_2, arg_9_3, arg_9_4, arg_9_5, arg_9_6, arg_9_7)
+local function generate_random_power_up(seed, new_power_ups, existing_power_ups, difficulty, run_progress, availability_type, career_name, forced_rarity)
 	-- function 9
-	local var_9_0
-	local var_9_1
-	local var_9_2
+	local possible_power_ups, power_up_weights, total_weight
 
-	for i = 1, #arg_9_2 do
-		local var_9_3 = arg_9_2[i]
+	for i = 1, #existing_power_ups do
+		local power_up = existing_power_ups[i]
 
-		select_map[var_9_3.rarity][var_9_3.name] = DeusPowerUps[var_9_3.rarity][var_9_3.name]
+		existing_power_ups_lut[power_up.rarity][power_up.name] = DeusPowerUps[power_up.rarity][power_up.name]
 	end
 
-	if not arg_9_7 then
-		local index_of = table.index_of(DeusPowerUpRarities, arg_9_7)
+	if forced_rarity then
+		local start_rarity_index = table.index_of(DeusPowerUpRarities, forced_rarity)
 
-		for j = index_of, 1, -1 do
-			arg_9_7 = DeusPowerUpRarities[j]
-			var_9_0, var_9_1, var_9_2 = fn_7(arg_9_6, arg_9_1, select_map, arg_9_7, arg_9_5)
+		for current_rarity_index = start_rarity_index, 1, -1 do
+			forced_rarity = DeusPowerUpRarities[current_rarity_index]
+			possible_power_ups, power_up_weights, total_weight = get_available_power_ups_array(career_name, new_power_ups, existing_power_ups_lut, forced_rarity, availability_type)
 
-			if #var_9_0 > 0 then
+			if #possible_power_ups > 0 then
 				break
 			end
 		end
 
-		if #var_9_0 == 0 then
-			for k = index_of + 1, #DeusPowerUpRarities do
-				arg_9_7 = DeusPowerUpRarities[k]
-				var_9_0, var_9_1, var_9_2 = fn_7(arg_9_6, arg_9_1, select_map, arg_9_7, arg_9_5)
+		if #possible_power_ups == 0 then
+			for current_rarity_index = start_rarity_index + 1, #DeusPowerUpRarities do
+				forced_rarity = DeusPowerUpRarities[current_rarity_index]
+				possible_power_ups, power_up_weights, total_weight = get_available_power_ups_array(career_name, new_power_ups, existing_power_ups_lut, forced_rarity, availability_type)
 
-				if #var_9_0 > 0 then
+				if #possible_power_ups > 0 then
 					break
 				end
 			end
 		end
 
-		fassert(#var_9_0 > 0, "not enough power_ups left in the pool")
+		fassert(#possible_power_ups > 0, "not enough power_ups left in the pool")
 	else
-		var_9_0, var_9_1, var_9_2 = fn_7(arg_9_6, arg_9_1, select_map, nil, arg_9_5)
+		possible_power_ups, power_up_weights, total_weight = get_available_power_ups_array(career_name, new_power_ups, existing_power_ups_lut, nil, availability_type)
 	end
 
-	local var_9_5
-	local var_9_6
+	local power_up
 
-	arg_9_0, var_9_6 = fn_2(arg_9_0, var_9_0, var_9_1, var_9_2)
+	seed, power_up = get_random_power_up(seed, possible_power_ups, power_up_weights, total_weight)
 
-	if not var_9_6 then
+	if not power_up then
 		return
 	end
 
-	local tbl = {
-		name = var_9_6.name,
-		rarity = var_9_6.rarity,
-		client_id = fn()
+	local power_up_instance = {
+		name = power_up.name,
+		rarity = power_up.rarity,
+		client_id = generate_random_id()
 	}
 
-	for k_2 in pairs(select_map) do
-		table.clear(select_map[k_2])
+	for lut_rarity in pairs(existing_power_ups_lut) do
+		table.clear(existing_power_ups_lut[lut_rarity])
 	end
 
-	return arg_9_0, tbl
+	return seed, power_up_instance
 end
 
-local function fn_9(arg_10_0, arg_10_1)
+local function generate_specific_power_up(power_up_name, rarity)
 	-- function 10
 	return {
-		name = arg_10_0,
-		rarity = arg_10_1,
-		client_id = fn()
+		name = power_up_name,
+		rarity = rarity,
+		client_id = generate_random_id()
 	}
 end
 
-local function fn_10(arg_11_0)
+local function get_power_up_title_text(name)
 	-- function 11
-	local var_11_0 = DeusPowerUpTemplates[arg_11_0]
-	local display_name = var_11_0.display_name
-	local description_values = var_11_0.description_values
+	local power_up_data = DeusPowerUpTemplates[name]
+	local display_name = power_up_data.display_name
+	local description_values = power_up_data.description_values
 
 	return UIUtils.format_localized_description(display_name, description_values)
 end
 
 local DeusPowerUpUtils = DeusPowerUpUtils
 
-DeusPowerUpUtils = DeusPowerUpUtils or {}
+DeusPowerUpUtils = not not DeusPowerUpUtils or not not {}
 DeusPowerUpUtils = DeusPowerUpUtils
 
-DeusPowerUpUtils.get_talent_from_power_up = function (arg_12_0, arg_12_1, arg_12_2, arg_12_3)
+DeusPowerUpUtils.get_talent_from_power_up = function (talent_index, talent_tier, profile_index, career_index)
 	-- function 12
-	local var_12_0 = SPProfiles[arg_12_2].careers[arg_12_3]
-	local profile_name = var_12_0.profile_name
-	local talent_tree_index = var_12_0.talent_tree_index
-	local var_12_3 = TalentTrees[profile_name][talent_tree_index][arg_12_1][arg_12_0]
-	local var_12_4 = TalentIDLookup[var_12_3]
+	local profile_settings = SPProfiles[profile_index]
+	local career_settings = profile_settings.careers[career_index]
+	local profile_name = career_settings.profile_name
+	local talent_tree_index = career_settings.talent_tree_index
+	local talent_name = TalentTrees[profile_name][talent_tree_index][talent_tier][talent_index]
+	local lookup = TalentIDLookup[talent_name]
 
-	return TalentUtils.get_talent_by_id(profile_name, var_12_4.talent_id)
+	return TalentUtils.get_talent_by_id(profile_name, lookup.talent_id)
 end
 
-DeusPowerUpUtils.get_talent_power_up_from_tier_and_column = function (arg_13_0, arg_13_1)
+DeusPowerUpUtils.get_talent_power_up_from_tier_and_column = function (tier, column)
 	-- function 13
-	local var_13_0 = DeusPowerUpTalentLookup[arg_13_0][arg_13_1]
+	local power_up_name = DeusPowerUpTalentLookup[tier][column]
 
-	for k, v in pairs(DeusPowerUps) do
-		local var_13_1 = v[var_13_0]
+	for rarity, power_ups in pairs(DeusPowerUps) do
+		local actual_power_up = power_ups[power_up_name]
 
-		if not var_13_1 then
-			return var_13_1, k
+		if actual_power_up then
+			return actual_power_up, rarity
 		end
 	end
 
-	ferror("could not find power_up for tier %s and column %s", arg_13_0, arg_13_1)
+	ferror("could not find power_up for tier %s and column %s", tier, column)
 end
 
-DeusPowerUpUtils.get_power_up_description = function (self, arg_14_1, arg_14_2)
+DeusPowerUpUtils.get_power_up_description = function (power_up_instance, profile_index, career_index)
 	-- function 14
-	local var_14_0 = DeusPowerUps[self.rarity][self.name]
+	local power_up = DeusPowerUps[power_up_instance.rarity][power_up_instance.name]
 
-	if not var_14_0.talent then
-		local get_talent_from_power_up = DeusPowerUpUtils.get_talent_from_power_up(var_14_0.talent_index, var_14_0.talent_tier, arg_14_1, arg_14_2)
+	if power_up.talent then
+		local talent_settings = DeusPowerUpUtils.get_talent_from_power_up(power_up.talent_index, power_up.talent_tier, profile_index, career_index)
 
-		return UIUtils.get_talent_description(get_talent_from_power_up)
+		return UIUtils.get_talent_description(talent_settings)
 	else
-		return (UIUtils.get_trait_description(nil, var_14_0))
+		local power_up_description = UIUtils.get_trait_description(nil, power_up)
+
+		return power_up_description
 	end
 end
 
-DeusPowerUpUtils.get_power_up_icon = function (self, arg_15_1, arg_15_2)
+DeusPowerUpUtils.get_power_up_icon = function (power_up_instance, profile_index, career_index)
 	-- function 15
-	local var_15_0 = DeusPowerUps[self.rarity][self.name]
+	local power_up = DeusPowerUps[power_up_instance.rarity][power_up_instance.name]
 
-	if not var_15_0.talent then
-		return DeusPowerUpUtils.get_talent_from_power_up(var_15_0.talent_index, var_15_0.talent_tier, arg_15_1, arg_15_2).icon
+	if power_up.talent then
+		local talent_settings = DeusPowerUpUtils.get_talent_from_power_up(power_up.talent_index, power_up.talent_tier, profile_index, career_index)
+
+		return talent_settings.icon
 	else
-		return var_15_0.icon
+		return power_up.icon
 	end
 end
 
-DeusPowerUpUtils.get_power_up_name_text = function (arg_16_0, arg_16_1, arg_16_2, arg_16_3, arg_16_4)
+DeusPowerUpUtils.get_power_up_name_text = function (name, talent_index, talent_tier, profile_index, career_index)
 	-- function 16
-	local var_16_0
-	local str = ""
+	local title_text
+	local sub_text = ""
 
-	if not arg_16_1 and not arg_16_2 then
-		local get_talent_from_power_up = DeusPowerUpUtils.get_talent_from_power_up(arg_16_1, arg_16_2, arg_16_3, arg_16_4)
+	if talent_index and talent_tier then
+		local talent = DeusPowerUpUtils.get_talent_from_power_up(talent_index, talent_tier, profile_index, career_index)
 		local Localize = Localize
-		local display_name = get_talent_from_power_up.display_name
+		local display_name = talent.display_name
 
-		display_name = display_name or get_talent_from_power_up.name
-		var_16_0 = Localize(display_name)
+		display_name = not not display_name or not not talent.name
+		title_text = Localize(display_name)
 	else
-		var_16_0 = fn_10(arg_16_0)
+		title_text = get_power_up_title_text(name)
 	end
 
-	return var_16_0, str
+	return title_text, sub_text
 end
 
-DeusPowerUpUtils.power_ups_to_string = function (arg_17_0)
+DeusPowerUpUtils.power_ups_to_string = function (power_ups)
 	-- function 17
-	local tbl = {}
+	local string_array = {}
 
-	for i, v in ipairs(arg_17_0) do
-		table.insert(tbl, v.name)
-		table.insert(tbl, "/")
-		table.insert(tbl, v.rarity)
-		table.insert(tbl, "/")
-		table.insert(tbl, v.client_id)
-		table.insert(tbl, ",")
+	for _, power_up in ipairs(power_ups) do
+		table.insert(string_array, power_up.name)
+		table.insert(string_array, "/")
+		table.insert(string_array, power_up.rarity)
+		table.insert(string_array, "/")
+		table.insert(string_array, power_up.client_id)
+		table.insert(string_array, ",")
 	end
 
-	return table.concat(tbl, "")
+	return table.concat(string_array, "")
 end
 
 assert(table.size(DeusPowerUpTemplates) <= 256, "[DeusPowerUpUtils] Number of power ups exceeds expectation. Change 'ByteArray.write_uint8' to 'ByteArray.write_uint16' in DeusPowerUpUtils.power_ups_to_encoded_string, and it's counterpart 'encoded_string_to_power_ups'")
 
-DeusPowerUpUtils.power_ups_to_encoded_string = function (self)
+DeusPowerUpUtils.power_ups_to_encoded_string = function (power_ups)
 	-- function 18
-	local tbl = {}
+	local byte_array = {}
 
-	for i = 1, #self do
-		local var_18_1 = self[i]
+	for i = 1, #power_ups do
+		local power_up = power_ups[i]
 
-		scripts_utils_byte_array.write_uint8(tbl, NetworkLookup.deus_power_up_templates[var_18_1.name])
-		scripts_utils_byte_array.write_uint8(tbl, NetworkLookup.rarities[var_18_1.rarity])
-		scripts_utils_byte_array.write_int32(tbl, var_18_1.client_id)
+		ByteArray.write_uint8(byte_array, NetworkLookup.deus_power_up_templates[power_up.name])
+		ByteArray.write_uint8(byte_array, NetworkLookup.rarities[power_up.rarity])
+		ByteArray.write_int32(byte_array, power_up.client_id)
 	end
 
-	local read_string = scripts_utils_byte_array.read_string(tbl)
+	local byte_array_string = ByteArray.read_string(byte_array)
+	local compressed_byte_array_string = LibDeflate:CompressDeflate(byte_array_string)
 
-	return (scripts_utils_lib_deflate:CompressDeflate(read_string))
+	return compressed_byte_array_string
 end
 
-local tbl = {}
+local power_ups_working_byte_array = {}
 
-DeusPowerUpUtils.encoded_string_to_power_ups = function (arg_19_0)
+DeusPowerUpUtils.encoded_string_to_power_ups = function (compressed_power_ups_string)
 	-- function 19
-	local DecompressDeflate = scripts_utils_lib_deflate:DecompressDeflate(arg_19_0)
+	local power_ups_string = LibDeflate:DecompressDeflate(compressed_power_ups_string)
 
-	scripts_utils_byte_array.write_string(tbl, DecompressDeflate)
+	ByteArray.write_string(power_ups_working_byte_array, power_ups_string)
 
-	local tbl_2 = {}
-	local num = 1
-	local var_19_3
-	local var_19_4
-	local var_19_5
+	local power_ups = {}
+	local index = 1
+	local power_up_id, rarity_id, client_id
 
 	repeat
-		local read_uint8
+		power_up_id, index = ByteArray.read_uint8(power_ups_working_byte_array, index)
+		rarity_id, index = ByteArray.read_uint8(power_ups_working_byte_array, index)
+		client_id, index = ByteArray.read_int32(power_ups_working_byte_array, index)
 
-		read_uint8, num = scripts_utils_byte_array.read_uint8(tbl, num)
-
-		local read_uint8_2
-
-		read_uint8_2, num = scripts_utils_byte_array.read_uint8(tbl, num)
-
-		local read_int32
-
-		read_int32, num = scripts_utils_byte_array.read_int32(tbl, num)
-
-		table.insert(tbl_2, {
-			name = NetworkLookup.deus_power_up_templates[read_uint8],
-			rarity = NetworkLookup.rarities[read_uint8_2],
-			client_id = read_int32
+		table.insert(power_ups, {
+			name = NetworkLookup.deus_power_up_templates[power_up_id],
+			rarity = NetworkLookup.rarities[rarity_id],
+			client_id = client_id
 		})
-	until not tbl[num]
+	until not power_ups_working_byte_array[index]
 
-	table.clear(tbl)
+	table.clear(power_ups_working_byte_array)
 
-	return tbl_2
+	return power_ups
 end
 
-DeusPowerUpUtils.generate_specific_power_up = function (arg_20_0, arg_20_1)
+DeusPowerUpUtils.generate_specific_power_up = function (power_up_name, rarity)
 	-- function 20
-	return fn_9(arg_20_0, arg_20_1)
+	return generate_specific_power_up(power_up_name, rarity)
 end
 
-DeusPowerUpUtils.generate_random_power_ups = function (arg_21_0, arg_21_1, arg_21_2, arg_21_3, arg_21_4, arg_21_5, arg_21_6, arg_21_7)
+DeusPowerUpUtils.generate_random_power_ups = function (seed, count, existing_power_ups, difficulty, run_progress, availability_type, career_name, forced_rarity)
 	-- function 21
-	local tbl = {}
-	local flag = true
+	local new_power_ups = {}
+	local skip_metatable = true
 
-	arg_21_2 = table.shallow_copy(arg_21_2, flag)
+	existing_power_ups = table.shallow_copy(existing_power_ups, skip_metatable)
 
-	for i = 1, arg_21_1 do
-		local var_21_2
-		local var_21_3
+	for i = 1, count do
+		local power_up
 
-		arg_21_0, var_21_3 = fn_8(arg_21_0, tbl, arg_21_2, arg_21_3, arg_21_4, arg_21_5, arg_21_6, arg_21_7)
+		seed, power_up = generate_random_power_up(seed, new_power_ups, existing_power_ups, difficulty, run_progress, availability_type, career_name, forced_rarity)
 
-		if not var_21_3 then
-			table.insert(tbl, var_21_3)
-			table.insert(arg_21_2, var_21_3)
+		if power_up then
+			table.insert(new_power_ups, power_up)
+			table.insert(existing_power_ups, power_up)
 		end
 	end
 
-	return arg_21_0, tbl
+	return seed, new_power_ups
 end
 
-DeusPowerUpUtils.activate_deus_power_up = function (self, arg_22_1, arg_22_2, arg_22_3, arg_22_4, arg_22_5, arg_22_6, arg_22_7)
+DeusPowerUpUtils.activate_deus_power_up = function (power_up_instance, buff_system, talent_interface, deus_backend, deus_run_controller, local_player_unit, profile_index, career_index)
 	-- function 22
-	fassert(not self and not arg_22_1 and not arg_22_2 and not arg_22_3 and not arg_22_4 and not arg_22_5 and not arg_22_6 and arg_22_7, "DeusPowerUpUtils.activate_deus_power_up invalid arguments")
+	fassert(not not power_up_instance and not not buff_system and not not talent_interface and not not deus_backend and not not deus_run_controller and not not local_player_unit and not not profile_index and not not career_index, "DeusPowerUpUtils.activate_deus_power_up invalid arguments")
 
-	local var_22_0 = DeusPowerUps[self.rarity][self.name]
+	local power_up = DeusPowerUps[power_up_instance.rarity][power_up_instance.name]
 
-	if not var_22_0.talent then
-		local var_22_1 = SPProfiles[arg_22_6].careers[arg_22_7]
-		local name = var_22_1.name
-		local profile_name = var_22_1.profile_name
-		local talent_tree_index = var_22_1.talent_tree_index
-		local get_talent_ids = arg_22_2:get_talent_ids(name)
-		local talent_index = var_22_0.talent_index
-		local talent_tier = var_22_0.talent_tier
-		local var_22_8 = TalentTrees[profile_name][talent_tree_index][talent_tier][talent_index]
-		local talent_id = TalentIDLookup[var_22_8].talent_id
+	if power_up.talent then
+		local profile = SPProfiles[profile_index]
+		local career_data = profile.careers[career_index]
+		local career_name = career_data.name
+		local profile_name = career_data.profile_name
+		local talent_tree_index = career_data.talent_tree_index
+		local talent_ids = talent_interface:get_talent_ids(career_name)
+		local talent_index = power_up.talent_index
+		local talent_tier = power_up.talent_tier
+		local talent_name = TalentTrees[profile_name][talent_tree_index][talent_tier][talent_index]
+		local lookup = TalentIDLookup[talent_name]
+		local talent_id = lookup.talent_id
 
-		get_talent_ids[#get_talent_ids + 1] = talent_id
+		talent_ids[#talent_ids + 1] = talent_id
 
-		arg_22_3:set_deus_talent_ids(name, get_talent_ids)
-		ScriptUnit.extension(arg_22_5, "talent_system"):talents_changed()
-		ScriptUnit.extension(arg_22_5, "inventory_system"):apply_buffs_to_ammo()
+		deus_backend:set_deus_talent_ids(career_name, talent_ids)
+
+		local talent_extension = ScriptUnit.extension(local_player_unit, "talent_system")
+
+		talent_extension:talents_changed()
+
+		local inventory_extension = ScriptUnit.extension(local_player_unit, "inventory_system")
+
+		inventory_extension:apply_buffs_to_ammo()
 	else
-		arg_22_1:add_buff(arg_22_5, var_22_0.buff_name, arg_22_5)
+		buff_system:add_buff(local_player_unit, power_up.buff_name, local_player_unit)
 	end
 end

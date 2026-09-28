@@ -5,22 +5,30 @@ Pacing = class(Pacing)
 local script_data = script_data
 local debug_ai_pacing = script_data.debug_ai_pacing
 
-debug_ai_pacing = debug_ai_pacing or Development.parameter("debug_ai_pacing")
+debug_ai_pacing = not not debug_ai_pacing or not not Development.parameter("debug_ai_pacing")
 script_data.debug_ai_pacing = debug_ai_pacing
 
 local script_data_2 = script_data
 local debug_player_intensity = script_data.debug_player_intensity
 
-debug_player_intensity = debug_player_intensity or Development.parameter("debug_player_intensity")
+debug_player_intensity = not not debug_player_intensity or not not Development.parameter("debug_player_intensity")
 script_data_2.debug_player_intensity = debug_player_intensity
 
-local CurrentPacing = CurrentPacing
+local CurrentPacing_2 = CurrentPacing
 
-CurrentPacing = CurrentPacing or nil
+if not CurrentPacing_2 then
+	-- Nothing
+end
 
-Pacing.init = function (self, arg_1_1)
+CurrentPacing_2 = nil
+
+local CurrentPacing = CurrentPacing_2
+
+::label_0_0::
+
+Pacing.init = function (self, world)
 	-- function 1
-	self.world = arg_1_1
+	self.world = world
 	self.pacing_state = "pacing_build_up"
 	self._threat_population = 1
 	self._specials_population = 1
@@ -52,50 +60,50 @@ Pacing.disable_roamers = function (self)
 	self._threat_population = 0
 end
 
-Pacing.enable_hordes = function (self, arg_5_1)
+Pacing.enable_hordes = function (self, enable)
 	-- function 5
 	local flag
 
-	flag = not arg_5_1 and 1 and 0
+	flag = (not enable or not 1) and not not 0
 	self._horde_population = flag
 end
 
-Pacing.pacing_frozen = function (arg_6_0, arg_6_1)
+Pacing.pacing_frozen = function (self, t)
 	-- function 6
 	return
 end
 
-Pacing.pacing_build_up = function (self, arg_7_1)
+Pacing.pacing_build_up = function (self, t)
 	-- function 7
 	if self.total_intensity > CurrentPacing.peak_intensity_threshold then
-		self:advance_pacing(arg_7_1)
+		self:advance_pacing(t)
 	end
 end
 
-Pacing.pacing_sustain_peak = function (self, arg_8_1)
+Pacing.pacing_sustain_peak = function (self, t)
 	-- function 8
-	if arg_8_1 > self._end_pacing_time then
-		self:advance_pacing(arg_8_1)
+	if t > self._end_pacing_time then
+		self:advance_pacing(t)
 	end
 end
 
-Pacing.pacing_peak_fade = function (self, arg_9_1)
+Pacing.pacing_peak_fade = function (self, t)
 	-- function 9
 	if self.total_intensity < CurrentPacing.peak_fade_threshold then
-		self:advance_pacing(arg_9_1)
+		self:advance_pacing(t)
 	end
 end
 
-Pacing.pacing_relax = function (self, arg_10_1)
+Pacing.pacing_relax = function (self, t)
 	-- function 10
-	if not (not CurrentPacing.leave_relax_if_zero_intensity and not (self.total_intensity <= 0)) then
-		self:advance_pacing(arg_10_1)
+	if CurrentPacing.leave_relax_if_zero_intensity and self.total_intensity <= 0 then
+		self:advance_pacing(t)
 
 		return
 	end
 
-	if arg_10_1 > self._end_pacing_time then
-		self:advance_pacing(arg_10_1)
+	if t > self._end_pacing_time then
+		self:advance_pacing(t)
 	end
 end
 
@@ -129,117 +137,122 @@ Pacing.specials_population = function (self)
 	return self._specials_population
 end
 
-Pacing.enemy_killed = function (arg_17_0, arg_17_1, arg_17_2)
+Pacing.enemy_killed = function (self, killed_unit, player_units)
 	-- function 17
-	for i = 1, #arg_17_2 do
-		local var_17_0 = arg_17_2[i]
-		local local_position = Unit.local_position(arg_17_1, 0)
-		local local_position_2 = Unit.local_position(var_17_0, 0)
-		local distance = Vector3.distance(local_position, local_position_2)
-		local var_17_4
+	for i = 1, #player_units do
+		local player_unit = player_units[i]
+		local killed_pos = Unit.local_position(killed_unit, 0)
+		local player_pos = Unit.local_position(player_unit, 0)
+		local dist = Vector3.distance(killed_pos, player_pos)
+		local amount
 
-		if distance > 0 then
-			var_17_4 = 1 / distance * CurrentIntensitySettings.intensity_add_nearby_kill
+		if dist > 0 then
+			amount = 1 / dist * CurrentIntensitySettings.intensity_add_nearby_kill
 		else
-			var_17_4 = CurrentIntensitySettings.intensity_add_nearby_kill
+			amount = CurrentIntensitySettings.intensity_add_nearby_kill
 		end
 
-		ScriptUnit.extension(var_17_0, "status_system"):add_pacing_intensity(var_17_4)
+		local status_ext = ScriptUnit.extension(player_unit, "status_system")
+
+		status_ext:add_pacing_intensity(amount)
 	end
 end
 
-Pacing.advance_pacing = function (self, arg_18_1, arg_18_2)
+Pacing.advance_pacing = function (self, t, reason)
 	-- function 18
-	local pacing_state = self.pacing_state
-	local var_18_1
+	local pacing = self.pacing_state
+	local next_pacing
 
 	self._end_pacing_time = nil
 
-	if pacing_state == "pacing_build_up" then
-		var_18_1 = "pacing_sustain_peak"
-		self._end_pacing_time = arg_18_1 + ConflictUtils.random_interval(CurrentPacing.sustain_peak_duration)
+	if pacing == "pacing_build_up" then
+		next_pacing = "pacing_sustain_peak"
+		self._end_pacing_time = t + ConflictUtils.random_interval(CurrentPacing.sustain_peak_duration)
 		self._threat_population = 1
 		self._specials_population = 1
 		self._horde_population = 1
-	elseif pacing_state == "pacing_sustain_peak" then
-		var_18_1 = "pacing_peak_fade"
+	elseif pacing == "pacing_sustain_peak" then
+		next_pacing = "pacing_peak_fade"
 		self._threat_population = 0
 		self._specials_population = 0
 		self._horde_population = 0
-	elseif pacing_state == "pacing_peak_fade" then
-		var_18_1 = "pacing_relax"
-		self._end_pacing_time = arg_18_1 + ConflictUtils.random_interval(CurrentPacing.relax_duration)
+	elseif pacing == "pacing_peak_fade" then
+		next_pacing = "pacing_relax"
+		self._end_pacing_time = t + ConflictUtils.random_interval(CurrentPacing.relax_duration)
 		self._threat_population = 1
 		self._specials_population = 0
 		self._horde_population = 0
 
 		Managers.state.conflict:going_to_relax_state()
-		Managers.state.conflict:init_rush_check(arg_18_1)
-	elseif pacing_state == "pacing_relax" then
-		var_18_1 = "pacing_build_up"
+		Managers.state.conflict:init_rush_check(t)
+	elseif pacing == "pacing_relax" then
+		next_pacing = "pacing_build_up"
 		self._threat_population = 1
 		self._specials_population = 1
 		self._horde_population = 1
 
-		Managers.state.conflict.specials_pacing:delay_spawning(arg_18_1, 10, math.random(5, 10))
+		Managers.state.conflict.specials_pacing:delay_spawning(t, 10, math.random(5, 10))
 		Managers.state.conflict:stop_rush_check()
 	end
 
-	if not script_data.debug_player_intensity then
-		self:annotate_graph(var_18_1, "orange")
+	if script_data.debug_player_intensity then
+		self:annotate_graph(next_pacing, "orange")
 
-		if not arg_18_2 then
-			self:annotate_graph(arg_18_2, "firebrick")
+		if reason then
+			self:annotate_graph(reason, "firebrick")
 		end
 	end
 
-	if self.pacing_state ~= var_18_1 then
-		local var_18_2 = NetworkLookup.pacing[var_18_1]
+	if self.pacing_state ~= next_pacing then
+		local pacing_id = NetworkLookup.pacing[next_pacing]
 
-		Managers.state.network.network_transmit:send_rpc_all("rpc_pacing_changed", var_18_2)
+		Managers.state.network.network_transmit:send_rpc_all("rpc_pacing_changed", pacing_id)
 	end
 
-	self.pacing_state = var_18_1
-	self._state_start_time = arg_18_1
+	self.pacing_state = next_pacing
+	self._state_start_time = t
 end
 
-Pacing.update = function (self, arg_19_1, arg_19_2, arg_19_3)
+Pacing.update = function (self, t, dt, alive_player_units)
 	-- function 19
-	local count = #arg_19_3
+	local num_alive_player_units = #alive_player_units
 
-	if count == 0 then
+	if num_alive_player_units == 0 then
 		return
 	end
 
-	self[self.pacing_state](self, arg_19_1)
+	local pacing_state = self.pacing_state
 
-	local num = 0
+	self[pacing_state](self, t)
 
-	for i = 1, count do
-		local var_19_2 = arg_19_3[i]
-		local get_pacing_intensity = ScriptUnit.extension(var_19_2, "status_system"):get_pacing_intensity()
+	local sum_intensity = 0
 
-		self.player_intensity[i] = get_pacing_intensity
-		num = num + get_pacing_intensity
+	for k = 1, num_alive_player_units do
+		local unit = alive_player_units[k]
+		local status_ext = ScriptUnit.extension(unit, "status_system")
+		local intensity = status_ext:get_pacing_intensity()
+
+		self.player_intensity[k] = intensity
+		sum_intensity = sum_intensity + intensity
 	end
 
-	self.total_intensity = num / count
+	self.total_intensity = sum_intensity / num_alive_player_units
 end
 
 Pacing.toggle_graph = function (self)
 	-- function 20
-	if not self.graph then
+	if self.graph then
 		self.graph:set_active(not self.graph.active)
 	end
 end
 
-Pacing.show_debug = function (self, arg_21_1)
+Pacing.show_debug = function (self, show)
 	-- function 21
 	if not self.graph then
 		return false
 	end
 
-	if not arg_21_1 then
+	if show then
 		self.graph:set_active(true)
 	else
 		self.graph:set_active(false)
@@ -248,29 +261,30 @@ Pacing.show_debug = function (self, arg_21_1)
 	return true
 end
 
-Pacing.debug_add_intensity = function (arg_22_0, arg_22_1, arg_22_2)
+Pacing.debug_add_intensity = function (self, player_units, value)
 	-- function 22
-	for i = 1, #arg_22_1 do
-		local var_22_0 = arg_22_1[i]
+	for k = 1, #player_units do
+		local unit = player_units[k]
+		local status_ext = ScriptUnit.extension(unit, "status_system")
 
-		ScriptUnit.extension(var_22_0, "status_system"):add_pacing_intensity(arg_22_2)
+		status_ext:add_pacing_intensity(value)
 	end
 end
 
-local num = 120
-local tbl = {
+local time_width = 120
+local player_names = {
 	"player1",
 	"player2",
 	"player3",
 	"player4"
 }
 
-Pacing.intensity_graphs = function (self, arg_23_1, arg_23_2, arg_23_3)
+Pacing.intensity_graphs = function (self, t, dt, alive_player_units)
 	-- function 23
-	if not script_data.debug_player_intensity then
-		local graph = self.graph
+	if script_data.debug_player_intensity then
+		local g = self.graph
 
-		if not graph then
+		if not g then
 			self.graph = Managers.state.debug.graph_drawer:create_graph("intensity", {
 				"time",
 				"intensity"
@@ -278,56 +292,56 @@ Pacing.intensity_graphs = function (self, arg_23_1, arg_23_2, arg_23_3)
 			self.graph.visual_frame.y_max = 100
 			self.graph.scroll_lock.vertical = false
 			self.graph.scroll_lock.left = false
-			graph = self.graph
+			g = self.graph
 
-			graph:set_plot_color("rats", "blue", "blue")
-			graph:set_plot_color("sum", "red", "red")
+			g:set_plot_color("rats", "blue", "blue")
+			g:set_plot_color("sum", "red", "red")
 		end
 
-		local total_intensity = self.total_intensity
+		local sum_intensity = self.total_intensity
 
-		graph:add_point(arg_23_1, total_intensity, "sum")
+		g:add_point(t, sum_intensity, "sum")
 
-		self.graph.visual_frame.x_min = arg_23_1 - num
+		self.graph.visual_frame.x_min = t - time_width
 
-		for i = 1, #arg_23_3 do
-			local var_23_2 = self.player_intensity[i]
+		for k = 1, #alive_player_units do
+			local intensity = self.player_intensity[k]
 
-			graph:add_point(arg_23_1, var_23_2, tbl[i])
+			g:add_point(t, intensity, player_names[k])
 		end
 
-		local count_units_by_breed = Managers.state.conflict:count_units_by_breed("skaven_clan_rat")
+		local num_rats = Managers.state.conflict:count_units_by_breed("skaven_clan_rat")
 
-		graph:add_point(arg_23_1, count_units_by_breed, "rats")
-	elseif not self.graph then
+		g:add_point(t, num_rats, "rats")
+	elseif self.graph then
 		Managers.state.debug.graph_drawer:destroy_graph(self.graph)
 
 		self.graph = nil
 	end
 end
 
-local num_2 = 70
+local annotate_pos = 70
 
-Pacing.annotate_graph = function (self, arg_24_1, arg_24_2)
+Pacing.annotate_graph = function (self, text, color)
 	-- function 24
 	if not self.graph then
 		return
 	end
 
-	num_2 = num_2 - 6
+	annotate_pos = annotate_pos - 6
 
-	if num_2 <= 30 then
-		num_2 = 70
+	if annotate_pos <= 30 then
+		annotate_pos = 70
 	end
 
-	local time = Managers.time:time("game")
+	local t = Managers.time:time("game")
 
 	self.graph:add_annotation({
 		live = true,
-		x = time,
-		y = num_2,
-		text = arg_24_1,
-		color = arg_24_2 or "orange"
+		x = t,
+		y = annotate_pos,
+		text = text,
+		color = not not color or not not "orange"
 	})
 end
 
@@ -336,7 +350,7 @@ Pacing.get_pacing_intensity = function (self)
 	return self.total_intensity, self.player_intensity
 end
 
-Pacing.get_roaming_density = function (arg_26_0)
+Pacing.get_roaming_density = function (self)
 	-- function 26
 	return 0.5
 end

@@ -4,10 +4,10 @@ require("scripts/entity_system/systems/buff/buff_sync_type")
 require("scripts/settings/dlcs/morris/deus_cost_settings")
 require("scripts/settings/dlcs/morris/tweak_data/buff_tweak_data")
 
-local scripts_unit_extensions_default_player_unit_buffs_settings_buff_perk_names = require("scripts/unit_extensions/default_player_unit/buffs/settings/buff_perk_names")
+local buff_perks = require("scripts/unit_extensions/default_player_unit/buffs/settings/buff_perk_names")
 local DeusPowerUpSettings = DeusPowerUpSettings
 
-DeusPowerUpSettings = DeusPowerUpSettings or {
+DeusPowerUpSettings = not not DeusPowerUpSettings or not not {
 	cursed_chest_max_picks = 1,
 	num_set_boons_weight_multiplier = 1.75,
 	weapon_chest_choice_amount = 1,
@@ -21,7 +21,7 @@ DeusPowerUpSettings = DeusPowerUpSettings or {
 }
 DeusPowerUpSettings = DeusPowerUpSettings
 
-local tbl = {
+local skulls_buffs_to_refresh = {
 	"boon_skulls_01_stack",
 	"boon_skulls_01_surge",
 	"boon_skulls_02_stack",
@@ -30,32 +30,32 @@ local tbl = {
 	"boon_skulls_05_stack",
 	"boon_skulls_05_surge"
 }
-local num = 0
+local next_support_bomb_rotation = 0
 
-local function fn()
+local function get_bomb_zone_rotation()
 	-- function 1
-	local num_2 = 0.2
-	local var_1_1 = num
+	local rot_delta = 0.2
+	local rot = next_support_bomb_rotation
 
-	assert(var_1_1 < math.tau, "Bomb zone fx may overlap. Lower rot_delta")
+	assert(rot < math.tau, "Bomb zone fx may overlap. Lower rot_delta")
 
-	num = num + math.tau * num_2
+	next_support_bomb_rotation = next_support_bomb_rotation + math.tau * rot_delta
 
-	return Quaternion.axis_angle(Vector3.up(), var_1_1)
+	return Quaternion.axis_angle(Vector3.up(), rot)
 end
 
-local num_2 = 0
+local next_cursed_zone_rotation = 0
 
-local function fn_2()
+local function get_cursed_zone_rotation()
 	-- function 2
-	local num_3 = 0.5
-	local var_2_1 = num_2
+	local rot_delta = 0.5
+	local rot = next_cursed_zone_rotation
 
-	assert(var_2_1 < math.tau, "Cursed zone fx may overlap. Lower rot_delta")
+	assert(rot < math.tau, "Cursed zone fx may overlap. Lower rot_delta")
 
-	num = num + math.tau * num_3
+	next_support_bomb_rotation = next_support_bomb_rotation + math.tau * rot_delta
 
-	return Quaternion.axis_angle(Vector3.up(), var_2_1)
+	return Quaternion.axis_angle(Vector3.up(), rot)
 end
 
 DeusPowerUpBuffTemplates = {
@@ -79,7 +79,7 @@ DeusPowerUpBuffTemplates = {
 				name = "deus_large_ammo_pickup_infinite_ammo_buff",
 				icon = "icons_placeholder",
 				perks = {
-					scripts_unit_extensions_default_player_unit_buffs_settings_buff_perk_names.infinite_ammo
+					buff_perks.infinite_ammo
 				},
 				duration = MorrisBuffTweakData.deus_large_ammo_pickup_infinite_ammo_buff.duration
 			}
@@ -141,7 +141,7 @@ DeusPowerUpBuffTemplates = {
 				max_stacks = 1,
 				duration = MorrisBuffTweakData.deus_crit_on_damage_taken_buff.duration,
 				perks = {
-					scripts_unit_extensions_default_player_unit_buffs_settings_buff_perk_names.guaranteed_crit
+					buff_perks.guaranteed_crit
 				}
 			}
 		}
@@ -187,7 +187,7 @@ DeusPowerUpBuffTemplates = {
 				max_stacks = 1,
 				proc_weight = 15,
 				perks = {
-					scripts_unit_extensions_default_player_unit_buffs_settings_buff_perk_names.invulnerable
+					buff_perks.invulnerable
 				}
 			}
 		}
@@ -215,7 +215,7 @@ DeusPowerUpBuffTemplates = {
 				priority_buff = true,
 				max_stacks = 1,
 				perks = {
-					scripts_unit_extensions_default_player_unit_buffs_settings_buff_perk_names.infinite_ammo
+					buff_perks.infinite_ammo
 				}
 			}
 		}
@@ -271,7 +271,7 @@ DeusPowerUpBuffTemplates = {
 				icon = "deus_second_wind",
 				max_stacks = 1,
 				perks = {
-					scripts_unit_extensions_default_player_unit_buffs_settings_buff_perk_names.invulnerable
+					buff_perks.invulnerable
 				},
 				duration = MorrisBuffTweakData.deus_second_wind_attack_speed.duration,
 				multiplier = MorrisBuffTweakData.deus_second_wind_attack_speed.multiplier
@@ -351,7 +351,7 @@ DeusPowerUpBuffTemplates = {
 				max_stacks = 1,
 				apply_buff_func = "apply_parry_damage_immune",
 				perks = {
-					scripts_unit_extensions_default_player_unit_buffs_settings_buff_perk_names.invulnerable
+					buff_perks.invulnerable
 				},
 				duration = MorrisBuffTweakData.deus_parry_damage_immune_buff.duration
 			}
@@ -461,15 +461,16 @@ DeusPowerUpBuffTemplates = {
 				is_cooldown = true,
 				duration = MorrisBuffTweakData.boon_skulls_01_data.duration,
 				duration_modifier_func = MorrisBuffTweakData.boon_skulls_set_01_data.duration_modifier_func,
-				multiplier = function (arg_3_0, arg_3_1)
+				multiplier = function (unit, buff_extension)
 					-- function 3
-					local attack_speed_per_stack = MorrisBuffTweakData.boon_skulls_01_data.attack_speed_per_stack
+					local multiplier = MorrisBuffTweakData.boon_skulls_01_data.attack_speed_per_stack
+					local has_full_set = buff_extension:num_buff_stacks("power_up_boon_skulls_set_bonus_01_event") > 0
 
-					if not (arg_3_1:num_buff_stacks("power_up_boon_skulls_set_bonus_01_event") > 0) then
-						attack_speed_per_stack = attack_speed_per_stack * (1 + MorrisBuffTweakData.boon_skulls_set_bonus_01.effect_amplify_amount)
+					if has_full_set then
+						multiplier = multiplier * (1 + MorrisBuffTweakData.boon_skulls_set_bonus_01.effect_amplify_amount)
 					end
 
-					return attack_speed_per_stack
+					return multiplier
 				end,
 				max_stacks = MorrisBuffTweakData.boon_skulls_01_data.max_stacks
 			}
@@ -486,17 +487,18 @@ DeusPowerUpBuffTemplates = {
 				max_stacks = 1,
 				duration = MorrisBuffTweakData.boon_skulls_01_data.duration,
 				duration_modifier_func = MorrisBuffTweakData.boon_skulls_set_01_data.duration_modifier_func,
-				multiplier = function (arg_4_0, arg_4_1)
+				multiplier = function (unit, buff_extension)
 					-- function 4
-					local attack_speed_on_proc = MorrisBuffTweakData.boon_skulls_01_data.attack_speed_on_proc
+					local multiplier = MorrisBuffTweakData.boon_skulls_01_data.attack_speed_on_proc
+					local has_full_set = buff_extension:num_buff_stacks("power_up_boon_skulls_set_bonus_01_event") > 0
 
-					if not (arg_4_1:num_buff_stacks("power_up_boon_skulls_set_bonus_01_event") > 0) then
-						attack_speed_on_proc = attack_speed_on_proc * (1 + MorrisBuffTweakData.boon_skulls_set_bonus_01.effect_amplify_amount)
+					if has_full_set then
+						multiplier = multiplier * (1 + MorrisBuffTweakData.boon_skulls_set_bonus_01.effect_amplify_amount)
 					end
 
-					return attack_speed_on_proc
+					return multiplier
 				end,
-				refresh_duration_of_buffs_on_apply = tbl
+				refresh_duration_of_buffs_on_apply = skulls_buffs_to_refresh
 			}
 		}
 	},
@@ -515,15 +517,16 @@ DeusPowerUpBuffTemplates = {
 				is_cooldown = true,
 				duration = MorrisBuffTweakData.boon_skulls_02_data.duration,
 				duration_modifier_func = MorrisBuffTweakData.boon_skulls_set_01_data.duration_modifier_func,
-				multiplier = function (arg_5_0, arg_5_1)
+				multiplier = function (unit, buff_extension)
 					-- function 5
-					local power_per_stack = MorrisBuffTweakData.boon_skulls_02_data.power_per_stack
+					local multiplier = MorrisBuffTweakData.boon_skulls_02_data.power_per_stack
+					local has_full_set = buff_extension:num_buff_stacks("power_up_boon_skulls_set_bonus_01_event") > 0
 
-					if not (arg_5_1:num_buff_stacks("power_up_boon_skulls_set_bonus_01_event") > 0) then
-						power_per_stack = power_per_stack * (1 + MorrisBuffTweakData.boon_skulls_set_bonus_01.effect_amplify_amount)
+					if has_full_set then
+						multiplier = multiplier * (1 + MorrisBuffTweakData.boon_skulls_set_bonus_01.effect_amplify_amount)
 					end
 
-					return power_per_stack
+					return multiplier
 				end,
 				max_stacks = MorrisBuffTweakData.boon_skulls_02_data.max_stacks
 			}
@@ -541,7 +544,7 @@ DeusPowerUpBuffTemplates = {
 				duration = MorrisBuffTweakData.boon_skulls_02_data.duration,
 				duration_modifier_func = MorrisBuffTweakData.boon_skulls_set_01_data.duration_modifier_func,
 				multiplier = MorrisBuffTweakData.boon_skulls_02_data.power_on_proc,
-				refresh_duration_of_buffs_on_apply = tbl
+				refresh_duration_of_buffs_on_apply = skulls_buffs_to_refresh
 			}
 		}
 	},
@@ -557,17 +560,18 @@ DeusPowerUpBuffTemplates = {
 				update_frequency = 1,
 				duration = MorrisBuffTweakData.boon_skulls_04_data.proc_duration,
 				duration_modifier_func = MorrisBuffTweakData.boon_skulls_set_01_data.duration_modifier_func,
-				multiplier = function (arg_6_0, arg_6_1)
+				multiplier = function (unit, buff_extension)
 					-- function 6
-					local proc_cooldown_regen = MorrisBuffTweakData.boon_skulls_04_data.proc_cooldown_regen
+					local multiplier = MorrisBuffTweakData.boon_skulls_04_data.proc_cooldown_regen
+					local has_full_set = buff_extension:num_buff_stacks("power_up_boon_skulls_set_bonus_01_event") > 0
 
-					if not (arg_6_1:num_buff_stacks("power_up_boon_skulls_set_bonus_01_event") > 0) then
-						proc_cooldown_regen = proc_cooldown_regen * (1 + MorrisBuffTweakData.boon_skulls_set_bonus_01.effect_amplify_amount)
+					if has_full_set then
+						multiplier = multiplier * (1 + MorrisBuffTweakData.boon_skulls_set_bonus_01.effect_amplify_amount)
 					end
 
-					return proc_cooldown_regen
+					return multiplier
 				end,
-				refresh_duration_of_buffs_on_apply = tbl
+				refresh_duration_of_buffs_on_apply = skulls_buffs_to_refresh
 			}
 		}
 	},
@@ -596,15 +600,16 @@ DeusPowerUpBuffTemplates = {
 				reset_on_max_stacks = true,
 				duration = MorrisBuffTweakData.boon_skulls_05_data.duration,
 				duration_modifier_func = MorrisBuffTweakData.boon_skulls_set_01_data.duration_modifier_func,
-				multiplier = function (arg_7_0, arg_7_1)
+				multiplier = function (unit, buff_extension)
 					-- function 7
-					local power_per_stack = MorrisBuffTweakData.boon_skulls_05_data.power_per_stack
+					local multiplier = MorrisBuffTweakData.boon_skulls_05_data.power_per_stack
+					local has_full_set = buff_extension:num_buff_stacks("power_up_boon_skulls_set_bonus_01_event") > 0
 
-					if not (arg_7_1:num_buff_stacks("power_up_boon_skulls_set_bonus_01_event") > 0) then
-						power_per_stack = power_per_stack * (1 + MorrisBuffTweakData.boon_skulls_set_bonus_01.effect_amplify_amount)
+					if has_full_set then
+						multiplier = multiplier * (1 + MorrisBuffTweakData.boon_skulls_set_bonus_01.effect_amplify_amount)
 					end
 
-					return power_per_stack
+					return multiplier
 				end,
 				max_stacks = MorrisBuffTweakData.boon_skulls_05_data.max_stacks
 			}
@@ -622,17 +627,18 @@ DeusPowerUpBuffTemplates = {
 				max_stacks = 1,
 				duration = MorrisBuffTweakData.boon_skulls_05_data.duration,
 				duration_modifier_func = MorrisBuffTweakData.boon_skulls_set_01_data.duration_modifier_func,
-				multiplier = function (arg_8_0, arg_8_1)
+				multiplier = function (unit, buff_extension)
 					-- function 8
-					local power_on_proc = MorrisBuffTweakData.boon_skulls_05_data.power_on_proc
+					local multiplier = MorrisBuffTweakData.boon_skulls_05_data.power_on_proc
+					local has_full_set = buff_extension:num_buff_stacks("power_up_boon_skulls_set_bonus_01_event") > 0
 
-					if not (arg_8_1:num_buff_stacks("power_up_boon_skulls_set_bonus_01_event") > 0) then
-						power_on_proc = power_on_proc * (1 + MorrisBuffTweakData.boon_skulls_set_bonus_01.effect_amplify_amount)
+					if has_full_set then
+						multiplier = multiplier * (1 + MorrisBuffTweakData.boon_skulls_set_bonus_01.effect_amplify_amount)
 					end
 
-					return power_on_proc
+					return multiplier
 				end,
-				refresh_duration_of_buffs_on_apply = tbl
+				refresh_duration_of_buffs_on_apply = skulls_buffs_to_refresh
 			}
 		}
 	},
@@ -644,15 +650,17 @@ DeusPowerUpBuffTemplates = {
 				is_cooldown = true,
 				icon = "boon_skulls_03",
 				duration = MorrisBuffTweakData.boon_skulls_03_data.cooldown,
-				duration_modifier_func = function (arg_9_0, arg_9_1, arg_9_2, arg_9_3, arg_9_4)
+				duration_modifier_func = function (unit, sub_buff_template, duration, buff_extension, params)
 					-- function 9
-					if not (arg_9_3:num_buff_stacks("power_up_boon_skulls_set_bonus_01_event") > 0) then
-						arg_9_2 = arg_9_2 / (1 + MorrisBuffTweakData.boon_skulls_set_bonus_01.duration_amplify_amount)
+					local has_full_set = buff_extension:num_buff_stacks("power_up_boon_skulls_set_bonus_01_event") > 0
+
+					if has_full_set then
+						duration = duration / (1 + MorrisBuffTweakData.boon_skulls_set_bonus_01.duration_amplify_amount)
 					end
 
-					return arg_9_2
+					return duration
 				end,
-				refresh_duration_of_buffs_on_apply = tbl
+				refresh_duration_of_buffs_on_apply = skulls_buffs_to_refresh
 			}
 		}
 	},
@@ -995,7 +1003,7 @@ DeusPowerUpBuffTemplates = {
 				reapply_buff_func = "reapply_dot_damage",
 				buff_sync_type = BuffSyncType.ClientAndServer,
 				perks = {
-					scripts_unit_extensions_default_player_unit_buffs_settings_buff_perk_names.burning
+					buff_perks.burning
 				},
 				max_stacks = MorrisBuffTweakData.boon_career_ability_burning_aoe_data.max_stacks,
 				time_between_dot_damages = MorrisBuffTweakData.boon_career_ability_burning_aoe_data.time_between_dot_damages,
@@ -1015,7 +1023,7 @@ DeusPowerUpBuffTemplates = {
 				reapply_buff_func = "reapply_dot_damage",
 				buff_sync_type = BuffSyncType.ClientAndServer,
 				perks = {
-					scripts_unit_extensions_default_player_unit_buffs_settings_buff_perk_names.poisoned
+					buff_perks.poisoned
 				},
 				max_stacks = MorrisBuffTweakData.boon_career_ability_bleed_aoe_data.max_stacks,
 				time_between_dot_damages = MorrisBuffTweakData.boon_career_ability_bleed_aoe_data.time_between_dot_damages,
@@ -1035,7 +1043,7 @@ DeusPowerUpBuffTemplates = {
 				reapply_buff_func = "reapply_dot_damage",
 				buff_sync_type = BuffSyncType.ClientAndServer,
 				perks = {
-					scripts_unit_extensions_default_player_unit_buffs_settings_buff_perk_names.bleeding
+					buff_perks.bleeding
 				},
 				max_stacks = MorrisBuffTweakData.boon_career_ability_bleed_aoe_data.max_stacks,
 				time_between_dot_damages = MorrisBuffTweakData.boon_career_ability_bleed_aoe_data.time_between_dot_damages,
@@ -1184,7 +1192,7 @@ DLCUtils.merge("deus_power_up_buff_templates", DeusPowerUpBuffTemplates)
 
 local DeusPowerUpTemplates = DeusPowerUpTemplates
 
-DeusPowerUpTemplates = DeusPowerUpTemplates or {
+DeusPowerUpTemplates = not not DeusPowerUpTemplates or not not {
 	attack_speed = {
 		display_name = "properties_attack_speed",
 		max_amount = 1,
@@ -1659,7 +1667,7 @@ DeusPowerUpTemplates = DeusPowerUpTemplates or {
 				{
 					dormant = true,
 					perks = {
-						scripts_unit_extensions_default_player_unit_buffs_settings_buff_perk_names.potion_duration
+						buff_perks.potion_duration
 					}
 				}
 			}
@@ -1748,7 +1756,7 @@ DeusPowerUpTemplates = DeusPowerUpTemplates or {
 					update_func = "update_heal_ticks",
 					dormant = true,
 					perks = {
-						scripts_unit_extensions_default_player_unit_buffs_settings_buff_perk_names.no_permanent_health
+						buff_perks.no_permanent_health
 					}
 				}
 			}
@@ -2099,7 +2107,7 @@ DeusPowerUpTemplates = DeusPowerUpTemplates or {
 				{
 					name = "deus_push_cost_reduction",
 					perks = {
-						scripts_unit_extensions_default_player_unit_buffs_settings_buff_perk_names.slayer_stamina
+						buff_perks.slayer_stamina
 					}
 				}
 			}
@@ -2816,7 +2824,7 @@ DeusPowerUpTemplates = DeusPowerUpTemplates or {
 				{
 					name = "deus_infinite_dodges",
 					perks = {
-						scripts_unit_extensions_default_player_unit_buffs_settings_buff_perk_names.infinite_dodge
+						buff_perks.infinite_dodge
 					}
 				}
 			}
@@ -2836,7 +2844,7 @@ DeusPowerUpTemplates = DeusPowerUpTemplates or {
 				{
 					name = "deus_uninterruptable_attacks",
 					perks = {
-						scripts_unit_extensions_default_player_unit_buffs_settings_buff_perk_names.uninterruptible
+						buff_perks.uninterruptible
 					}
 				}
 			}
@@ -3275,16 +3283,17 @@ DeusPowerUpTemplates = DeusPowerUpTemplates or {
 				{
 					name = "boon_skulls_06",
 					stat_buff = "power_level",
-					multiplier = function (arg_10_0, arg_10_1)
+					multiplier = function (unit, buff_extension)
 						-- function 10
-						local num_buff_stacks = arg_10_1:num_buff_stacks("skulls_2023_buff")
-						local num = MorrisBuffTweakData.boon_skulls_06_data.power_per_stack * num_buff_stacks
+						local num_stacks = buff_extension:num_buff_stacks("skulls_2023_buff")
+						local multiplier = MorrisBuffTweakData.boon_skulls_06_data.power_per_stack * num_stacks
+						local has_full_set = buff_extension:num_buff_stacks("power_up_boon_skulls_set_bonus_02_event") > 0
 
-						if not (arg_10_1:num_buff_stacks("power_up_boon_skulls_set_bonus_02_event") > 0) then
-							num = num * (1 + MorrisBuffTweakData.boon_skulls_set_bonus_02.effect_amplify_amount)
+						if has_full_set then
+							multiplier = multiplier * (1 + MorrisBuffTweakData.boon_skulls_set_bonus_02.effect_amplify_amount)
 						end
 
-						return num
+						return multiplier
 					end
 				}
 			}
@@ -4396,7 +4405,7 @@ DeusPowerUpTemplates = DeusPowerUpTemplates or {
 					buff_func = "grenade_explode_buff_area",
 					event = "on_grenade_exploded",
 					perks = {
-						scripts_unit_extensions_default_player_unit_buffs_settings_buff_perk_names.no_explosion_friendly_fire
+						buff_perks.no_explosion_friendly_fire
 					}
 				}
 			}
@@ -4424,7 +4433,7 @@ DeusPowerUpTemplates = DeusPowerUpTemplates or {
 					buff_func = "grenade_explode_buff_area",
 					event = "on_grenade_exploded",
 					perks = {
-						scripts_unit_extensions_default_player_unit_buffs_settings_buff_perk_names.no_explosion_friendly_fire
+						buff_perks.no_explosion_friendly_fire
 					}
 				}
 			}
@@ -4453,7 +4462,7 @@ DeusPowerUpTemplates = DeusPowerUpTemplates or {
 					buff_func = "grenade_explode_buff_area",
 					event = "on_grenade_exploded",
 					perks = {
-						scripts_unit_extensions_default_player_unit_buffs_settings_buff_perk_names.no_explosion_friendly_fire
+						buff_perks.no_explosion_friendly_fire
 					}
 				}
 			}
@@ -4482,7 +4491,7 @@ DeusPowerUpTemplates = DeusPowerUpTemplates or {
 					buff_func = "grenade_explode_buff_area",
 					event = "on_grenade_exploded",
 					perks = {
-						scripts_unit_extensions_default_player_unit_buffs_settings_buff_perk_names.no_explosion_friendly_fire
+						buff_perks.no_explosion_friendly_fire
 					}
 				}
 			}
@@ -4511,7 +4520,7 @@ DeusPowerUpTemplates = DeusPowerUpTemplates or {
 					buff_func = "grenade_explode_buff_area",
 					event = "on_grenade_exploded",
 					perks = {
-						scripts_unit_extensions_default_player_unit_buffs_settings_buff_perk_names.no_explosion_friendly_fire
+						buff_perks.no_explosion_friendly_fire
 					}
 				}
 			}
@@ -5069,7 +5078,7 @@ DeusPowerUpTemplates = DeusPowerUpTemplates or {
 				{
 					name = "indomitable",
 					perks = {
-						scripts_unit_extensions_default_player_unit_buffs_settings_buff_perk_names.infinite_wounds
+						buff_perks.infinite_wounds
 					}
 				}
 			}
@@ -5369,7 +5378,7 @@ DeusPowerUpIncompatibilityPairs = {
 
 local DeusPowerUpExclusionList = DeusPowerUpExclusionList
 
-DeusPowerUpExclusionList = DeusPowerUpExclusionList or {
+DeusPowerUpExclusionList = not not DeusPowerUpExclusionList or not not {
 	wh_zealot = {
 		talent_3_1 = true,
 		talent_3_3 = true,
@@ -5510,12 +5519,12 @@ DeusPowerUpExclusionList = DeusPowerUpExclusionList
 
 local DeusPowerUpAvailabilityTypes = DeusPowerUpAvailabilityTypes
 
-DeusPowerUpAvailabilityTypes = DeusPowerUpAvailabilityTypes or table.enum("cursed_chest", "shrine", "terror_event", "weapon_chest")
+DeusPowerUpAvailabilityTypes = not not DeusPowerUpAvailabilityTypes or not not table.enum("cursed_chest", "shrine", "terror_event", "weapon_chest")
 DeusPowerUpAvailabilityTypes = DeusPowerUpAvailabilityTypes
 
 local DeusPowerUpRarityPool = DeusPowerUpRarityPool
 
-DeusPowerUpRarityPool = DeusPowerUpRarityPool or {
+DeusPowerUpRarityPool = not not DeusPowerUpRarityPool or not not {
 	rare = {
 		{
 			"talent_2_1",
@@ -7050,7 +7059,7 @@ DeusPowerUpSets = {
 
 local DeusPowerUpRarities = DeusPowerUpRarities
 
-DeusPowerUpRarities = DeusPowerUpRarities or {
+DeusPowerUpRarities = not not DeusPowerUpRarities or not not {
 	"event",
 	"rare",
 	"exotic",
@@ -7059,194 +7068,238 @@ DeusPowerUpRarities = DeusPowerUpRarities or {
 DeusPowerUpRarities = DeusPowerUpRarities
 DeusPowerUpTalentLookup = {}
 
-for k, v in pairs(DeusPowerUpTemplates) do
-	if not v.talent then
-		local talent_tier = v.talent_tier
-		local talent_index = v.talent_index
-		local var_0_14 = DeusPowerUpTalentLookup[talent_tier]
+for power_up_name, power_up_settings in pairs(DeusPowerUpTemplates) do
+	if power_up_settings.talent then
+		local talent_tier = power_up_settings.talent_tier
+		local talent_index = power_up_settings.talent_index
+		local var_0_6 = DeusPowerUpTalentLookup[talent_tier]
 
-		var_0_14 = var_0_14 or {}
-		DeusPowerUpTalentLookup[talent_tier] = var_0_14
-		var_0_14[talent_index] = k
+		if not var_0_6 then
+			-- Nothing
+		end
+
+		var_0_6 = {}
+
+		local talent_tier_map = var_0_6
+
+		::label_0_0::
+
+		DeusPowerUpTalentLookup[talent_tier] = talent_tier_map
+		talent_tier_map[talent_index] = power_up_name
 	end
 end
 
-local flag = true
-local str = "[DeusPowerUpSettings] One or more errors in power_up settings."
+local is_valid = true
+local error_message = "[DeusPowerUpSettings] One or more errors in power_up settings."
 
-for k_2, v_2 in pairs(DeusPowerUpRarityPool) do
-	for i, v_3 in ipairs(v_2) do
-		local var_0_17 = v_3[1]
+for _, power_up_configs in pairs(DeusPowerUpRarityPool) do
+	for _, power_config in ipairs(power_up_configs) do
+		local power_up_name = power_config[1]
 
-		if not DeusPowerUpTemplates[var_0_17] then
-			flag = false
-			str = str .. string.format("\n'%s' is in rarity pool but has no template.", var_0_17)
+		if not DeusPowerUpTemplates[power_up_name] then
+			is_valid = false
+			error_message = error_message .. string.format("\n'%s' is in rarity pool but has no template.", power_up_name)
 		end
 	end
 end
 
 if #DeusPowerUpRarities ~= table.size(DeusPowerUpRarityPool) then
-	flag = false
-	str = str .. string.format("\nSizes of DeusPowerUpRarities (%d) and DeusPowerUpRarityPool (%d) are not the same! Make sure both tables have the same rarities!", #DeusPowerUpRarities, table.size(DeusPowerUpRarityPool))
+	is_valid = false
+	error_message = error_message .. string.format("\nSizes of DeusPowerUpRarities (%d) and DeusPowerUpRarityPool (%d) are not the same! Make sure both tables have the same rarities!", #DeusPowerUpRarities, table.size(DeusPowerUpRarityPool))
 end
 
-for i_2, v_4 in ipairs(DeusPowerUpRarities) do
-	if not DeusPowerUpRarityPool[v_4] then
-		flag = false
-		str = str .. string.format("\nDeusPowerUpRarities contains the rarity '%s' which is missing in DeusPowerUpRarityPool.", v_4)
+for _, rarity in ipairs(DeusPowerUpRarities) do
+	if not DeusPowerUpRarityPool[rarity] then
+		is_valid = false
+		error_message = error_message .. string.format("\nDeusPowerUpRarities contains the rarity '%s' which is missing in DeusPowerUpRarityPool.", rarity)
 	end
 end
 
-for i_3, v_5 in ipairs(DeusPowerUpRarities) do
-	if not DeusCostSettings.shop.power_ups[v_5] then
-		str = str .. string.format("\nPower up with the rarity '%s' can be generated but there is no cost settings for that.", v_5)
+for _, rarity in ipairs(DeusPowerUpRarities) do
+	local power_up_costs = DeusCostSettings.shop.power_ups
+
+	if not power_up_costs[rarity] then
+		error_message = error_message .. string.format("\nPower up with the rarity '%s' can be generated but there is no cost settings for that.", rarity)
 	end
 end
 
-assert(flag, str)
+assert(is_valid, error_message)
 
 local DeusPowerUps = DeusPowerUps
 
-DeusPowerUps = DeusPowerUps or {}
+DeusPowerUps = not not DeusPowerUps or not not {}
 DeusPowerUps = DeusPowerUps
 
 local DeusPowerUpsArray = DeusPowerUpsArray
 
-DeusPowerUpsArray = DeusPowerUpsArray or {}
+DeusPowerUpsArray = not not DeusPowerUpsArray or not not {}
 DeusPowerUpsArray = DeusPowerUpsArray
-DeusPowerUpsArrayByRarity = table.select_map(table.set(DeusPowerUpRarities), function (arg_11_0, arg_11_1)
+DeusPowerUpsArrayByRarity = table.select_map(table.set(DeusPowerUpRarities), function (_, rarity)
 	-- function 11
 	return {}
 end)
-DeusPowerUpSetLookup = table.select_map(table.set(DeusPowerUpRarities), function (arg_12_0, arg_12_1)
+DeusPowerUpSetLookup = table.select_map(table.set(DeusPowerUpRarities), function (_, rarity)
 	-- function 12
 	return {}
 end)
 DeusPowerUpsLookup = {}
 
-for k_3, v_6 in pairs(DeusPowerUpIncompatibilityPairs) do
-	for i_4, v_7 in ipairs(v_6) do
-		local var_0_20 = v_7[1]
-		local var_0_21 = v_7[2]
-		local var_0_22 = DeusPowerUpTemplates[var_0_20]
-		local var_0_23 = DeusPowerUpTemplates[var_0_21]
+for career_name, incompatibility_list in pairs(DeusPowerUpIncompatibilityPairs) do
+	for _, pair in ipairs(incompatibility_list) do
+		local power_up_1 = pair[1]
+		local power_up_2 = pair[2]
+		local power_up_1_template = DeusPowerUpTemplates[power_up_1]
+		local power_up_2_template = DeusPowerUpTemplates[power_up_2]
 
-		assert(var_0_22, tostring(var_0_20) .. "in DeusPowerUpIncompatibilityPairs, but not in DeusPowerUpTemplates")
-		assert(var_0_23, tostring(var_0_21) .. "in DeusPowerUpIncompatibilityPairs, but not in DeusPowerUpTemplates")
+		assert(power_up_1_template, tostring(power_up_1) .. "in DeusPowerUpIncompatibilityPairs, but not in DeusPowerUpTemplates")
+		assert(power_up_2_template, tostring(power_up_2) .. "in DeusPowerUpIncompatibilityPairs, but not in DeusPowerUpTemplates")
 
-		local incompatibility = var_0_22.incompatibility
+		local incompatibility = power_up_1_template.incompatibility
 
-		incompatibility = incompatibility or {}
+		if not incompatibility then
+			-- Nothing
+		end
 
-		local incompatibility_2 = var_0_23.incompatibility
+		incompatibility = {}
 
-		incompatibility_2 = incompatibility_2 or {}
+		local incompatibility_1 = incompatibility
 
-		local var_0_26 = incompatibility[k_3]
+		::label_0_1::
 
-		var_0_26 = var_0_26 or {}
+		local incompatibility_3 = power_up_2_template.incompatibility
 
-		local var_0_27 = incompatibility_2[k_3]
+		if not incompatibility_3 then
+			-- Nothing
+		end
 
-		var_0_27 = var_0_27 or {}
-		var_0_26[#var_0_26 + 1] = var_0_21
-		var_0_27[#var_0_27 + 1] = var_0_20
-		incompatibility[k_3] = var_0_26
-		incompatibility_2[k_3] = var_0_27
-		var_0_22.incompatibility = incompatibility
-		var_0_23.incompatibility = incompatibility_2
+		incompatibility_3 = {}
+
+		local incompatibility_2 = incompatibility_3
+
+		::label_0_2::
+
+		local var_0_11 = incompatibility_1[career_name]
+
+		if not var_0_11 then
+			-- Nothing
+		end
+
+		var_0_11 = {}
+
+		local career_incompatibility_1 = var_0_11
+
+		::label_0_3::
+
+		local var_0_12 = incompatibility_2[career_name]
+
+		if not var_0_12 then
+			-- Nothing
+		end
+
+		var_0_12 = {}
+
+		local career_incompatibility_2 = var_0_12
+
+		::label_0_4::
+
+		career_incompatibility_1[#career_incompatibility_1 + 1] = power_up_2
+		career_incompatibility_2[#career_incompatibility_2 + 1] = power_up_1
+		incompatibility_1[career_name] = career_incompatibility_1
+		incompatibility_2[career_name] = career_incompatibility_2
+		power_up_1_template.incompatibility = incompatibility_1
+		power_up_2_template.incompatibility = incompatibility_2
 	end
 end
 
-for k_4, v_8 in pairs(DeusPowerUpRarityPool) do
-	DeusPowerUps[k_4] = {}
+for rarity, power_up_configs in pairs(DeusPowerUpRarityPool) do
+	DeusPowerUps[rarity] = {}
 
-	for i_5, v_9 in ipairs(v_8) do
-		local var_0_28 = v_9[1]
-		local var_0_29 = v_9[2]
-		local var_0_30 = v_9[3]
-		local var_0_31 = DeusPowerUpTemplates[var_0_28]
-		local new_map = Script.new_map(13)
+	for _, power_up_config in ipairs(power_up_configs) do
+		local power_up_name = power_up_config[1]
+		local availability = power_up_config[2]
+		local mutators = power_up_config[3]
+		local template = DeusPowerUpTemplates[power_up_name]
+		local new_power_up = Script.new_map(13)
 
-		new_map.name = var_0_28
-		new_map.rarity = k_4
-		new_map.mutators = var_0_30
-		new_map.availability = var_0_29
+		new_power_up.name = power_up_name
+		new_power_up.rarity = rarity
+		new_power_up.mutators = mutators
+		new_power_up.availability = availability
 
-		local str_2 = "max_amount"
-		local max_amount = var_0_31.max_amount
+		local str = "max_amount"
+		local max_amount = template.max_amount
 
-		max_amount = max_amount or 1
-		new_map[str_2] = max_amount
-		new_map.incompatibility = var_0_31.incompatibility
+		max_amount = not not max_amount or not not 1
+		new_power_up[str] = max_amount
+		new_power_up.incompatibility = template.incompatibility
 
-		local str_3 = "weight"
-		local weight = var_0_31.weight
+		local str_2 = "weight"
+		local weight = template.weight
 
-		weight = weight or DeusPowerUpSettings.weight_by_rarity[k_4]
-		new_map[str_3] = weight
+		weight = not not weight or not not DeusPowerUpSettings.weight_by_rarity[rarity]
+		new_power_up[str_2] = weight
 
-		if not var_0_31.talent then
-			new_map.talent = true
-			new_map.talent_tier = var_0_31.talent_tier
-			new_map.talent_index = var_0_31.talent_index
+		if template.talent then
+			new_power_up.talent = true
+			new_power_up.talent_tier = template.talent_tier
+			new_power_up.talent_index = template.talent_index
 		else
-			new_map.display_name = var_0_31.display_name
-			new_map.plain_display_name = var_0_31.plain_display_name
-			new_map.buff_name = "power_up_" .. var_0_28 .. "_" .. k_4
-			new_map.advanced_description = var_0_31.advanced_description
-			new_map.description_values = var_0_31.description_values
-			new_map.icon = var_0_31.icon
+			new_power_up.display_name = template.display_name
+			new_power_up.plain_display_name = template.plain_display_name
+			new_power_up.buff_name = "power_up_" .. power_up_name .. "_" .. rarity
+			new_power_up.advanced_description = template.advanced_description
+			new_power_up.description_values = template.description_values
+			new_power_up.icon = template.icon
 
-			local clone = table.clone(var_0_31.buff_template)
-			local var_0_38 = MorrisBuffTweakData[var_0_28]
+			local buff_template = table.clone(template.buff_template)
+			local tweak_data = MorrisBuffTweakData[power_up_name]
 
-			if not var_0_38 then
-				for k_5, v_10 in pairs(var_0_38) do
-					clone.buffs[1][k_5] = v_10
+			if tweak_data then
+				for key, value in pairs(tweak_data) do
+					buff_template.buffs[1][key] = value
 				end
 			end
 
-			clone.buffs[1].name = new_map.buff_name
-			DeusPowerUpBuffTemplates[new_map.buff_name] = clone
+			buff_template.buffs[1].name = new_power_up.buff_name
+			DeusPowerUpBuffTemplates[new_power_up.buff_name] = buff_template
 		end
 
-		DeusPowerUps[k_4][var_0_28] = new_map
+		DeusPowerUps[rarity][power_up_name] = new_power_up
 
-		table.insert(DeusPowerUpsArray, new_map)
+		table.insert(DeusPowerUpsArray, new_power_up)
 
-		DeusPowerUps[k_4][var_0_28].id = #DeusPowerUpsArray
+		DeusPowerUps[rarity][power_up_name].id = #DeusPowerUpsArray
 
-		table.insert(DeusPowerUpsArrayByRarity[k_4], new_map)
+		table.insert(DeusPowerUpsArrayByRarity[rarity], new_power_up)
 
-		DeusPowerUps[k_4][var_0_28].lookup_id = #DeusPowerUpsLookup + 1
-		DeusPowerUpsLookup[#DeusPowerUpsLookup + 1] = new_map
-		DeusPowerUpsLookup[var_0_28] = new_map
+		DeusPowerUps[rarity][power_up_name].lookup_id = #DeusPowerUpsLookup + 1
+		DeusPowerUpsLookup[#DeusPowerUpsLookup + 1] = new_power_up
+		DeusPowerUpsLookup[power_up_name] = new_power_up
 	end
 end
 
-for k_6, v_11 in pairs(DeusPowerUpSets) do
-	for k_7, v_12 in pairs(v_11.pieces) do
-		local rarity = v_12.rarity
-		local name = v_12.name
-		local var_0_41 = DeusPowerUpSetLookup[rarity]
-		local var_0_42 = DeusPowerUpSetLookup[rarity][name]
+for _, power_up_set in pairs(DeusPowerUpSets) do
+	for _, set_piece_settings in pairs(power_up_set.pieces) do
+		local rarity = set_piece_settings.rarity
+		local name = set_piece_settings.name
+		local var_0_17 = DeusPowerUpSetLookup[rarity]
+		local var_0_18 = DeusPowerUpSetLookup[rarity][name]
 
-		var_0_42 = var_0_42 or {}
-		var_0_41[name] = var_0_42
+		var_0_18 = not not var_0_18 or not not {}
+		var_0_17[name] = var_0_18
 
-		table.insert(DeusPowerUpSetLookup[rarity][name], v_11)
+		table.insert(DeusPowerUpSetLookup[rarity][name], power_up_set)
 	end
 
-	for k_8, v_13 in pairs(v_11.rewards) do
-		local rarity_2 = v_13.rarity
-		local name_2 = v_13.name
-		local var_0_45 = DeusPowerUpSetLookup[rarity_2]
-		local var_0_46 = DeusPowerUpSetLookup[rarity_2][name_2]
+	for _, set_reward_settings in pairs(power_up_set.rewards) do
+		local rarity = set_reward_settings.rarity
+		local name = set_reward_settings.name
+		local var_0_19 = DeusPowerUpSetLookup[rarity]
+		local var_0_20 = DeusPowerUpSetLookup[rarity][name]
 
-		var_0_46 = var_0_46 or {}
-		var_0_45[name_2] = var_0_46
+		var_0_20 = not not var_0_20 or not not {}
+		var_0_19[name] = var_0_20
 
-		table.insert(DeusPowerUpSetLookup[rarity_2][name_2], v_11)
+		table.insert(DeusPowerUpSetLookup[rarity][name], power_up_set)
 	end
 end

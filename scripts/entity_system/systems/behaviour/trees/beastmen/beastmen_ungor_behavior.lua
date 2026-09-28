@@ -1,34 +1,34 @@
 -- chunkname: @scripts/entity_system/systems/behaviour/trees/beastmen/beastmen_ungor_behavior.lua
 
-local beastmen_ungor = BreedActions.beastmen_ungor
-local tbl = {
+local ACTIONS = BreedActions.beastmen_ungor
+local UNGOR_COMBAT = {
 	"BTUtilityNode",
 	{
 		"BTClanRatFollowAction",
 		name = "follow",
-		action_data = beastmen_ungor.follow
+		action_data = ACTIONS.follow
 	},
 	{
 		"BTAttackAction",
 		name = "running_attack",
 		condition = "ask_target_before_attacking",
-		action_data = beastmen_ungor.running_attack
+		action_data = ACTIONS.running_attack
 	},
 	{
 		"BTAttackAction",
 		name = "normal_attack",
 		condition = "ask_target_before_attacking",
-		action_data = beastmen_ungor.normal_attack
+		action_data = ACTIONS.normal_attack
 	},
 	{
 		"BTCombatShoutAction",
 		name = "combat_shout",
-		action_data = beastmen_ungor.combat_shout
+		action_data = ACTIONS.combat_shout
 	},
 	condition = "confirmed_player_sighting",
 	name = "in_combat"
 }
-local tbl_2 = {
+local UNGOR_SMART_OBJECT = {
 	"BTSelector",
 	{
 		"BTTeleportAction",
@@ -49,7 +49,7 @@ local tbl_2 = {
 		"BTSmashDoorAction",
 		name = "smash_door",
 		condition = "at_door_smartobject",
-		action_data = beastmen_ungor.smash_door
+		action_data = ACTIONS.smash_door
 	},
 	condition = "at_smartobject",
 	name = "smartobject"
@@ -81,27 +81,27 @@ BreedBehaviors.ungor = {
 		"BTStaggerAction",
 		name = "stagger",
 		condition = "stagger",
-		action_data = beastmen_ungor.stagger
+		action_data = ACTIONS.stagger
 	},
 	{
 		"BTBlockedAction",
 		name = "blocked",
 		condition = "blocked",
-		action_data = beastmen_ungor.blocked
+		action_data = ACTIONS.blocked
 	},
-	tbl_2,
-	tbl,
+	UNGOR_SMART_OBJECT,
+	UNGOR_COMBAT,
 	{
 		"BTMoveToGoalAction",
 		name = "move_to_goal",
 		condition = "has_goal_destination",
-		action_data = beastmen_ungor.follow
+		action_data = ACTIONS.follow
 	},
 	{
 		"BTAlertedAction",
 		name = "alerted",
 		condition = "player_spotted",
-		action_data = beastmen_ungor.alerted
+		action_data = ACTIONS.alerted
 	},
 	{
 		"BTIdleAction",

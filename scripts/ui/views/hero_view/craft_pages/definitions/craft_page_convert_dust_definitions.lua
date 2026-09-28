@@ -1,19 +1,19 @@
 -- chunkname: @scripts/ui/views/hero_view/craft_pages/definitions/craft_page_convert_dust_definitions.lua
 
-local game_start_windows = UISettings.game_start_windows
-local background = game_start_windows.background
-local frame = game_start_windows.frame
-local size = game_start_windows.size
-local spacing = game_start_windows.spacing
-local var_0_5 = UIFrameSettings[frame].texture_sizes.vertical[1]
-local var_0_6 = UIFrameSettings[frame].texture_sizes.horizontal[2]
-local num = size[1] - (var_0_5 * 2 + 60)
+local window_default_settings = UISettings.game_start_windows
+local window_background = window_default_settings.background
+local window_frame = window_default_settings.frame
+local window_size = window_default_settings.size
+local window_spacing = window_default_settings.spacing
+local window_frame_width = UIFrameSettings[window_frame].texture_sizes.vertical[1]
+local window_frame_height = UIFrameSettings[window_frame].texture_sizes.horizontal[2]
+local window_text_width = window_size[1] - (window_frame_width * 2 + 60)
 
 NUM_CRAFT_SLOTS_X = 1
 NUM_CRAFT_SLOTS_Y = 1
 NUM_CRAFT_SLOTS = NUM_CRAFT_SLOTS_X * NUM_CRAFT_SLOTS_Y
 
-local tbl = {
+local scenegraph_definition = {
 	root = {
 		is_root = true,
 		size = {
@@ -56,7 +56,7 @@ local tbl = {
 		vertical_alignment = "center",
 		parent = "menu_root",
 		horizontal_alignment = "center",
-		size = size,
+		size = window_size,
 		position = {
 			0,
 			0,
@@ -138,7 +138,7 @@ local tbl = {
 		parent = "window",
 		horizontal_alignment = "center",
 		size = {
-			size[1] - 100,
+			window_size[1] - 100,
 			60
 		},
 		position = {
@@ -191,7 +191,7 @@ local tbl = {
 	}
 }
 
-local function fn(arg_1_0)
+local function create_craft_material_widget(scenegraph_id)
 	-- function 1
 	return {
 		element = {
@@ -214,18 +214,18 @@ local function fn(arg_1_0)
 					style_id = "text",
 					pass_type = "text",
 					text_id = "text",
-					content_check_function = function (self)
+					content_check_function = function (content)
 						-- function 2
-						return not self.warning
+						return not content.warning
 					end
 				},
 				{
 					style_id = "text_warning",
 					pass_type = "text",
 					text_id = "text",
-					content_check_function = function (self)
+					content_check_function = function (content)
 						-- function 3
-						return self.warning
+						return content.warning
 					end
 				},
 				{
@@ -236,27 +236,27 @@ local function fn(arg_1_0)
 				{
 					style_id = "text_bg",
 					pass_type = "rect",
-					content_check_function = function (self)
+					content_check_function = function (content)
 						-- function 4
-						return self.draw_background
+						return content.draw_background
 					end
 				},
 				{
 					style_id = "text_bg_2",
 					pass_type = "rect",
-					content_check_function = function (self)
+					content_check_function = function (content)
 						-- function 5
-						return self.draw_background
+						return content.draw_background
 					end
 				},
 				{
 					item_id = "item",
 					pass_type = "item_tooltip",
-					content_check_function = function (self)
+					content_check_function = function (content)
 						-- function 6
-						local is_hover = self.button_hotspot.is_hover
+						local is_hover = content.button_hotspot.is_hover
 
-						is_hover = not is_hover and self.item
+						is_hover = not not is_hover and not not content.item
 
 						return is_hover
 					end
@@ -391,7 +391,7 @@ local function fn(arg_1_0)
 				}
 			}
 		},
-		scenegraph_id = arg_1_0,
+		scenegraph_id = scenegraph_id,
 		offset = {
 			0,
 			0,
@@ -400,12 +400,12 @@ local function fn(arg_1_0)
 	}
 end
 
-local flag = true
-local tbl_2 = {
+local disable_with_gamepad = true
+local widgets = {
 	item_grid_bg = UIWidgets.create_simple_texture("crafting_bg_02", "item_grid", nil, nil, nil, -1),
-	item_grid = UIWidgets.create_grid("item_grid", tbl.item_grid.size, NUM_CRAFT_SLOTS_Y, NUM_CRAFT_SLOTS_X, 20, 20),
+	item_grid = UIWidgets.create_grid("item_grid", scenegraph_definition.item_grid.size, NUM_CRAFT_SLOTS_Y, NUM_CRAFT_SLOTS_X, 20, 20),
 	item_grid_icon = UIWidgets.create_simple_texture("crafting_icon_dust", "item_grid_icon"),
-	craft_button = UIWidgets.create_default_button("craft_button", tbl.craft_button.size, nil, nil, Localize("hero_view_crafting_convert"), 24, nil, "button_detail_02", nil, flag),
+	craft_button = UIWidgets.create_default_button("craft_button", scenegraph_definition.craft_button.size, nil, nil, Localize("hero_view_crafting_convert"), 24, nil, "button_detail_02", nil, disable_with_gamepad),
 	craft_bar_fg = UIWidgets.create_simple_texture("crafting_bar_fg", "craft_bar_fg"),
 	craft_bar_bg = UIWidgets.create_simple_rect("craft_bar_bg", {
 		255,
@@ -414,27 +414,27 @@ local tbl_2 = {
 		0
 	}),
 	craft_bar = UIWidgets.create_simple_texture("crafting_bar", "craft_bar", nil, nil, nil, 2),
-	material_text_1 = fn("material_text_1"),
-	material_text_2 = fn("material_text_2"),
+	material_text_1 = create_craft_material_widget("material_text_1"),
+	material_text_2 = create_craft_material_widget("material_text_2"),
 	material_bg = UIWidgets.create_simple_texture("crafting_bg_conversion", "material_bg")
 }
-local tbl_3 = {
+local animation_definitions = {
 	on_enter = {
 		{
 			name = "fade_in",
 			start_progress = 0,
 			end_progress = 0.3,
-			init = function (arg_7_0, arg_7_1, arg_7_2, arg_7_3)
+			init = function (ui_scenegraph, scenegraph_definition, widgets, params)
 				-- function 7
-				arg_7_3.render_settings.alpha_multiplier = 0
+				params.render_settings.alpha_multiplier = 0
 			end,
-			update = function (arg_8_0, arg_8_1, arg_8_2, arg_8_3, arg_8_4)
+			update = function (ui_scenegraph, scenegraph_definition, widgets, progress, params)
 				-- function 8
-				local easeOutCubic = math.easeOutCubic(arg_8_3)
+				local anim_progress = math.easeOutCubic(progress)
 
-				arg_8_4.render_settings.alpha_multiplier = easeOutCubic
+				params.render_settings.alpha_multiplier = anim_progress
 			end,
-			on_complete = function (arg_9_0, arg_9_1, arg_9_2, arg_9_3)
+			on_complete = function (ui_scenegraph, scenegraph_definition, widgets, params)
 				-- function 9
 				return
 			end
@@ -445,17 +445,17 @@ local tbl_3 = {
 			name = "fade_out",
 			start_progress = 0,
 			end_progress = 0.3,
-			init = function (arg_10_0, arg_10_1, arg_10_2, arg_10_3)
+			init = function (ui_scenegraph, scenegraph_definition, widgets, params)
 				-- function 10
-				arg_10_3.render_settings.alpha_multiplier = 1
+				params.render_settings.alpha_multiplier = 1
 			end,
-			update = function (arg_11_0, arg_11_1, arg_11_2, arg_11_3, arg_11_4)
+			update = function (ui_scenegraph, scenegraph_definition, widgets, progress, params)
 				-- function 11
-				local easeOutCubic = math.easeOutCubic(arg_11_3)
+				local anim_progress = math.easeOutCubic(progress)
 
-				arg_11_4.render_settings.alpha_multiplier = 1 - easeOutCubic
+				params.render_settings.alpha_multiplier = 1 - anim_progress
 			end,
-			on_complete = function (arg_12_0, arg_12_1, arg_12_2, arg_12_3)
+			on_complete = function (ui_scenegraph, scenegraph_definition, widgets, params)
 				-- function 12
 				return
 			end
@@ -464,7 +464,7 @@ local tbl_3 = {
 }
 
 return {
-	widgets = tbl_2,
-	scenegraph_definition = tbl,
-	animation_definitions = tbl_3
+	widgets = widgets,
+	scenegraph_definition = scenegraph_definition,
+	animation_definitions = animation_definitions
 }

@@ -2,14 +2,14 @@
 
 NetworkEventDelegate = class(NetworkEventDelegate)
 
-local var_0_0 = getmetatable(NetworkEventDelegate)
+local delegate_metatable = getmetatable(NetworkEventDelegate)
 
-local function fn()
+local function empty_function()
 	-- function 1
 	return
 end
 
-local function fn_2()
+local function empty_deny_function()
 	-- function 2
 	return false
 end
@@ -18,116 +18,118 @@ NetworkEventDelegate.init = function (self)
 	-- function 3
 	self._registered_objects = {}
 
-	local tbl = {
-		__index = function (arg_4_0, arg_4_1)
-			-- function 4
-			if arg_4_1 == "approve_channel" then
-				return fn_2
-			end
+	local event_meta_table = {}
 
-			visual_assert(false, "RPC not registered %q", arg_4_1)
-			printf("RPC not registered %q", arg_4_1)
-
-			return fn
+	event_meta_table.__index = function (t, key)
+		-- function 4
+		if key == "approve_channel" then
+			return empty_deny_function
 		end
-	}
 
-	self.event_table = setmetatable({}, tbl)
+		visual_assert(false, "RPC not registered %q", key)
+		printf("RPC not registered %q", key)
+
+		return empty_function
+	end
+
+	self.event_table = setmetatable({}, event_meta_table)
 	self._return_objects = {}
 end
 
-NetworkEventDelegate.register = function (self, arg_5_1, ...)
+NetworkEventDelegate.register = function (self, object, ...)
 	-- function 5
 	for i = 1, select("#", ...) do
-		local var_5_0 = select(i, ...)
+		local callback_name = select(i, ...)
 
-		fassert(arg_5_1[var_5_0], "[NetworkEventDelegate]: No callback function with name %q specified in passed object", var_5_0)
+		fassert(object[callback_name], "[NetworkEventDelegate]: No callback function with name %q specified in passed object", callback_name)
 
 		local _registered_objects = self._registered_objects
-		local var_5_2 = self._registered_objects[var_5_0]
+		local var_5_1 = self._registered_objects[callback_name]
 
-		var_5_2 = var_5_2 or {}
-		_registered_objects[var_5_0] = var_5_2
-		self._registered_objects[var_5_0][#self._registered_objects[var_5_0] + 1] = arg_5_1
+		var_5_1 = not not var_5_1 or not not {}
+		_registered_objects[callback_name] = var_5_1
+		self._registered_objects[callback_name][#self._registered_objects[callback_name] + 1] = object
 
-		if rawget(self.event_table, var_5_0) == nil then
-			local function fn(arg_6_0, ...)
+		if rawget(self.event_table, callback_name) == nil then
+			local function rpc_callback(event_table, ...)
 				-- function 6
-				local var_6_0 = self._registered_objects[var_5_0]
-				local count = #var_6_0
+				local registered_objects = self._registered_objects[callback_name]
+				local num_registered_objects = #registered_objects
 
-				for i = 1, count do
-					local var_6_2 = var_6_0[i]
+				for i = 1, num_registered_objects do
+					local object = registered_objects[i]
 
-					var_6_2[var_5_0](var_6_2, ...)
+					object[callback_name](object, ...)
 				end
 			end
 
-			self.event_table[var_5_0] = fn
+			self.event_table[callback_name] = rpc_callback
 		end
 	end
 end
 
-NetworkEventDelegate.register_with_return = function (self, arg_7_1, arg_7_2)
+NetworkEventDelegate.register_with_return = function (self, object, callback_name)
 	-- function 7
-	fassert(arg_7_1[arg_7_2], "[NetworkEventDelegate]: No callback function with name %q specified in passed object", arg_7_2)
-	fassert(self._return_objects[arg_7_2] == nil, "[NetworkEventDelegate]: Can only register one of these", arg_7_2)
+	fassert(object[callback_name], "[NetworkEventDelegate]: No callback function with name %q specified in passed object", callback_name)
+	fassert(self._return_objects[callback_name] == nil, "[NetworkEventDelegate]: Can only register one of these", callback_name)
 
-	self._return_objects[arg_7_2] = arg_7_1
+	self._return_objects[callback_name] = object
 
-	if rawget(self.event_table, arg_7_2) == nil then
-		local function fn(arg_8_0, ...)
+	if rawget(self.event_table, callback_name) == nil then
+		local function rpc_callback(event_table, ...)
 			-- function 8
-			local var_8_0 = self._return_objects[arg_7_2]
+			local object = self._return_objects[callback_name]
 
-			return var_8_0[arg_7_2](var_8_0, ...)
+			return object[callback_name](object, ...)
 		end
 
-		self.event_table[arg_7_2] = fn
+		self.event_table[callback_name] = rpc_callback
 	end
 end
 
-NetworkEventDelegate.unregister = function (self, arg_9_1)
+NetworkEventDelegate.unregister = function (self, object)
 	-- function 9
-	for k, v in pairs(self._registered_objects) do
-		local count = #v
-		local var_9_1
+	for callback_name, registered_objects in pairs(self._registered_objects) do
+		local num_registered_objects = #registered_objects
+		local found
 
-		for k_2 = count, 1, -1 do
-			if arg_9_1 == v[k_2] then
-				table.remove(v, k_2)
+		for i = num_registered_objects, 1, -1 do
+			local registered_object = registered_objects[i]
 
-				var_9_1 = true
+			if object == registered_object then
+				table.remove(registered_objects, i)
+
+				found = true
 			end
 		end
 
-		if #v ~= 0 or not var_9_1 then
-			assert(rawget(self.event_table, k))
+		if #registered_objects == 0 and found then
+			assert(rawget(self.event_table, callback_name))
 
-			self.event_table[k] = nil
+			self.event_table[callback_name] = nil
 		end
 	end
 
-	for k_3, v_2 in pairs(self._return_objects) do
-		if arg_9_1 == v_2 then
-			self._return_objects[k_3] = nil
+	for callback_name, registered_object in pairs(self._return_objects) do
+		if object == registered_object then
+			self._return_objects[callback_name] = nil
 		end
 	end
 end
 
-NetworkEventDelegate.unregister_callback = function (arg_10_0, arg_10_1)
+NetworkEventDelegate.unregister_callback = function (self, callback_name)
 	-- function 10
-	arg_10_0._registered_objects[arg_10_1] = nil
+	self._registered_objects[callback_name] = nil
 end
 
 NetworkEventDelegate._cleanup = function (self)
 	-- function 11
-	for k, v in pairs(self._registered_objects) do
-		local count = #v
+	for callback_name, registered_objects in pairs(self._registered_objects) do
+		local num_registered_objects = #registered_objects
 
-		fassert(count == 0, "[NetworkEventDelegate]: Object(s) not unregistered at cleanup for callback_name: %q", k)
+		fassert(num_registered_objects == 0, "[NetworkEventDelegate]: Object(s) not unregistered at cleanup for callback_name: %q", callback_name)
 
-		self.event_table[k] = nil
+		self.event_table[callback_name] = nil
 	end
 
 	self._registered_objects = nil

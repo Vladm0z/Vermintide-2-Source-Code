@@ -2,7 +2,7 @@
 
 local CommonPopupSettings = CommonPopupSettings
 
-CommonPopupSettings = CommonPopupSettings or {}
+CommonPopupSettings = not not CommonPopupSettings or not not {}
 CommonPopupSettings = CommonPopupSettings
 CommonPopupSettings.scorpion = {
 	definitions_path = "scripts/ui/dlc_upsell/upsell_popup_definitions",
@@ -238,21 +238,22 @@ CommonPopupSettings.geheimnisnacht = {
 			button_text = "popup_button_open_mission_selection_event_tab",
 			on_pressed = function ()
 				-- function 6
-				local maps_by_live_event = require("scripts/settings/dlcs/geheimnisnacht_2025/geheimnisnacht_utils").maps_by_live_event(true)
+				local GeheimnisnachtUtils = require("scripts/settings/dlcs/geheimnisnacht_2025/geheimnisnacht_utils")
+				local levels = GeheimnisnachtUtils.maps_by_live_event(true)
 
-				if not PlayerData then
+				if PlayerData then
 					local PlayerData = PlayerData
 					local mission_selection = PlayerData.mission_selection
 
-					mission_selection = mission_selection or {}
+					mission_selection = not not mission_selection or not not {}
 					PlayerData.mission_selection = mission_selection
 
 					local mission_selection_2 = PlayerData.mission_selection
 					local custom = PlayerData.mission_selection.custom
 
-					custom = custom or {}
+					custom = not not custom or not not {}
 					mission_selection_2.custom = custom
-					PlayerData.mission_selection.custom.level_id = table.random(maps_by_live_event)
+					PlayerData.mission_selection.custom.level_id = table.random(levels)
 				end
 
 				Managers.ui:handle_transition("start_game_view_force", {
@@ -419,11 +420,11 @@ CommonPopupSettings.skulls = {
 
 require("scripts/settings/handbook_settings")
 
-for k, v in pairs(HandbookSettings.popups) do
-	CommonPopupSettings[k] = {
+for popup_id, popup_settings in pairs(HandbookSettings.popups) do
+	CommonPopupSettings[popup_id] = {
 		definitions_path = "scripts/ui/dlc_upsell/handbook_popup_definitions",
 		class_name = "HandbookPopup",
 		popup_type = "handbook",
-		pages = v.pages
+		pages = popup_settings.pages
 	}
 end

@@ -89,7 +89,7 @@ local tbl = {
 }
 local setting = Development.setting("disable_ratling_gunner")
 
-setting = setting or false
+setting = not not setting or not not false
 tbl.disabled = setting
 tbl.line_of_sight_cast_template = {
 	"c_spine",
@@ -221,39 +221,41 @@ tbl.hit_zones = {
 	}
 }
 
-tbl.custom_death_enter_function = function (arg_1_0, arg_1_1, arg_1_2, arg_1_3, arg_1_4, arg_1_5)
+tbl.custom_death_enter_function = function (unit, killer_unit, damage_type, death_hit_zone, t, damage_source)
 	-- function 1
-	local var_1_0 = BLACKBOARDS[arg_1_0]
+	local blackboard = BLACKBOARDS[unit]
 
-	if not Unit.alive(arg_1_1) then
+	if not Unit.alive(killer_unit) then
 		return
 	end
 
-	QuestSettings.check_ratling_gunner_killed_by_melee(arg_1_1, arg_1_5)
-	QuestSettings.check_ratling_gunner_killed_while_shooting(var_1_0, arg_1_1)
+	QuestSettings.check_ratling_gunner_killed_by_melee(killer_unit, damage_source)
+	QuestSettings.check_ratling_gunner_killed_while_shooting(blackboard, killer_unit)
 end
 
-Breeds.skaven_ratling_gunner = table.create_copy(Breeds.skaven_ratling_gunner, tbl)
+local breed_data = tbl
 
-local tbl_2 = {
+Breeds.skaven_ratling_gunner = table.create_copy(Breeds.skaven_ratling_gunner, breed_data)
+
+local action_data = {
 	move_to_players = {
 		find_target_function_name = "_find_target_ratling_gunner"
 	},
 	lurk = {
 		move_anim = "move_fwd",
 		check_distance = 35,
-		move_speed = tbl.walk_speed
+		move_speed = breed_data.walk_speed
 	},
 	engage = {
 		check_distance = 20,
 		max_angle_step = 2,
 		move_anim = "move_fwd_run",
 		min_angle_step = 0,
-		move_speed = tbl.run_speed
+		move_speed = breed_data.run_speed
 	},
 	move_to_shoot_position = {
 		move_anim = "move_fwd_run",
-		move_speed = tbl.run_speed,
+		move_speed = breed_data.run_speed,
 		keep_target_distance = {
 			15,
 			20
@@ -432,4 +434,4 @@ local tbl_2 = {
 	}
 }
 
-BreedActions.skaven_ratling_gunner = table.create_copy(BreedActions.skaven_ratling_gunner, tbl_2)
+BreedActions.skaven_ratling_gunner = table.create_copy(BreedActions.skaven_ratling_gunner, action_data)

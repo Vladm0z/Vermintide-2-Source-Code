@@ -4,103 +4,109 @@ require("scripts/entity_system/systems/behaviour/nodes/bt_node")
 
 BTPlaceStandardAction = class(BTPlaceStandardAction, BTNode)
 
-BTPlaceStandardAction.init = function (arg_1_0, ...)
+BTPlaceStandardAction.init = function (self, ...)
 	-- function 1
-	BTPlaceStandardAction.super.init(arg_1_0, ...)
+	BTPlaceStandardAction.super.init(self, ...)
 end
 
 BTPlaceStandardAction.name = "BTPlaceStandardAction"
 
-local function fn(self)
+local function randomize(event)
 	-- function 2
-	if type(self) == "table" then
-		return self[Math.random(1, #self)]
+	if type(event) == "table" then
+		return event[Math.random(1, #event)]
 	else
-		return self
+		return event
 	end
 end
 
-BTPlaceStandardAction.enter = function (self, arg_3_1, arg_3_2, arg_3_3)
+BTPlaceStandardAction.enter = function (self, unit, blackboard, t)
 	-- function 3
-	arg_3_2.action = self._tree_node.action_data
-	arg_3_2.active_node = BTPlaceStandardAction
+	local action = self._tree_node.action_data
 
-	arg_3_2.navigation_extension:set_enabled(false)
-	arg_3_2.locomotion_extension:set_wanted_velocity(Vector3(0, 0, 0))
+	blackboard.action = action
+	blackboard.active_node = BTPlaceStandardAction
 
-	arg_3_2.attacking_target = arg_3_2.target_unit
-	arg_3_2.anim_cb_placed_standard = nil
-	arg_3_2.anim_cb_place_standard = nil
-	arg_3_2.attack_aborted = nil
+	blackboard.navigation_extension:set_enabled(false)
+	blackboard.locomotion_extension:set_wanted_velocity(Vector3(0, 0, 0))
+
+	blackboard.attacking_target = blackboard.target_unit
+	blackboard.anim_cb_placed_standard = nil
+	blackboard.anim_cb_place_standard = nil
+	blackboard.attack_aborted = nil
 end
 
-BTPlaceStandardAction.leave = function (arg_4_0, arg_4_1, arg_4_2, arg_4_3, arg_4_4, arg_4_5)
+BTPlaceStandardAction.leave = function (self, unit, blackboard, t, reason, destroy)
 	-- function 4
-	local get_default_breed_move_speed = AiUtils.get_default_breed_move_speed(arg_4_1, arg_4_2)
-	local navigation_extension = arg_4_2.navigation_extension
+	local default_move_speed = AiUtils.get_default_breed_move_speed(unit, blackboard)
+	local navigation_extension = blackboard.navigation_extension
 
 	navigation_extension:set_enabled(true)
-	navigation_extension:set_max_speed(get_default_breed_move_speed)
+	navigation_extension:set_max_speed(default_move_speed)
 
-	arg_4_2.active_node = nil
-	arg_4_2.action = nil
-	arg_4_2.attacking_target = nil
-	arg_4_2.attack_aborted = nil
+	blackboard.active_node = nil
+	blackboard.action = nil
+	blackboard.attacking_target = nil
+	blackboard.attack_aborted = nil
 
-	Managers.state.entity:system("ai_slot_system"):do_slot_search(arg_4_1, true)
+	local ai_slot_system = Managers.state.entity:system("ai_slot_system")
 
-	if not arg_4_2.anim_cb_place_standard then
-		arg_4_2.has_placed_standard = true
-		arg_4_2.switching_weapons = 2
+	ai_slot_system:do_slot_search(unit, true)
+
+	if blackboard.anim_cb_place_standard then
+		blackboard.has_placed_standard = true
+		blackboard.switching_weapons = 2
 	end
 
-	if arg_4_2.move_state == "idle" or not HEALTH_ALIVE[arg_4_1] then
-		arg_4_2.move_state = "idle"
+	if blackboard.move_state ~= "idle" and HEALTH_ALIVE[unit] then
+		blackboard.move_state = "idle"
 	end
 
-	arg_4_2.anim_cb_placed_standard = nil
-	arg_4_2.anim_cb_place_standard = nil
+	blackboard.anim_cb_placed_standard = nil
+	blackboard.anim_cb_place_standard = nil
 end
 
-BTPlaceStandardAction.run = function (arg_5_0, arg_5_1, arg_5_2, arg_5_3, arg_5_4)
+BTPlaceStandardAction.run = function (self, unit, blackboard, t, dt)
 	-- function 5
-	if arg_5_2.anim_cb_placed_standard or not arg_5_2.attack_aborted then
+	if blackboard.anim_cb_placed_standard or blackboard.attack_aborted then
 		return "done"
 	end
 
-	if arg_5_2.move_state ~= "attacking" then
-		Managers.state.network:anim_event(arg_5_1, fn(arg_5_2.action.place_standard_animation))
+	if blackboard.move_state ~= "attacking" then
+		Managers.state.network:anim_event(unit, randomize(blackboard.action.place_standard_animation))
 
-		arg_5_2.move_state = "attacking"
+		blackboard.move_state = "attacking"
 	end
 
 	return "running"
 end
 
-BTPlaceStandardAction.anim_cb_place_standard = function (arg_6_0, arg_6_1, arg_6_2)
+BTPlaceStandardAction.anim_cb_place_standard = function (self, unit, blackboard)
 	-- function 6
-	if not Managers.state.network:game() then
-		local var_6_0 = POSITION_LOOKUP[arg_6_1]
-		local num = var_6_0 + Quaternion.forward(Unit.local_rotation(arg_6_1, 0))
-		local var_6_2
-		local nav_world = arg_6_2.nav_world
-		local num_2 = 1
-		local num_3 = 1
-		local triangle_from_position, var_6_7 = GwNavQueries.triangle_from_position(nav_world, num, num_2, num_3)
+	local network_manager = Managers.state.network
+	local game = network_manager:game()
 
-		if not triangle_from_position then
-			var_6_2 = Vector3.copy(num)
-			var_6_2.z = var_6_7
+	if game then
+		local self_pos = POSITION_LOOKUP[unit]
+		local position = self_pos + Quaternion.forward(Unit.local_rotation(unit, 0))
+		local position_on_navmesh
+		local nav_world = blackboard.nav_world
+		local above, below = 1, 1
+		local is_on_navmesh, altitude = GwNavQueries.triangle_from_position(nav_world, position, above, below)
+
+		if is_on_navmesh then
+			position_on_navmesh = Vector3.copy(position)
+			position_on_navmesh.z = altitude
 		else
-			local num_4 = 1
-			local num_5 = 0.05
+			local horizontal_limit = 1
+			local distance_from_nav_border = 0.05
 
-			var_6_2 = GwNavQueries.inside_position_from_outside_position(nav_world, num, num_2, num_3, num_4, num_5)
+			position_on_navmesh = GwNavQueries.inside_position_from_outside_position(nav_world, position, above, below, horizontal_limit, distance_from_nav_border)
 		end
 
-		if not var_6_2 then
-			local action = arg_6_2.action
-			local tbl = {
+		if position_on_navmesh then
+			local action = blackboard.action
+			local extension_init_data = {
 				health_system = {
 					health = action.standard_health
 				},
@@ -109,66 +115,68 @@ BTPlaceStandardAction.anim_cb_place_standard = function (arg_6_0, arg_6_1, arg_6
 				},
 				ai_supplementary_system = {
 					standard_template_name = action.standard_template_name,
-					standard_bearer_unit = arg_6_1
+					standard_bearer_unit = unit
 				},
 				ping_system = {
 					always_pingable = true
 				}
 			}
-			local str = "units/weapons/enemy/wpn_bm_standard_01/wpn_bm_standard_01_placed"
-			local spawn_network_unit = Managers.state.unit_spawner:spawn_network_unit(str, "standard_unit", tbl, var_6_2)
+			local unit_name = "units/weapons/enemy/wpn_bm_standard_01/wpn_bm_standard_01_placed"
+			local standard_unit = Managers.state.unit_spawner:spawn_network_unit(unit_name, "standard_unit", extension_init_data, position_on_navmesh)
 
-			arg_6_2.standard_unit = spawn_network_unit
+			blackboard.standard_unit = standard_unit
 
-			local world = arg_6_2.world
-			local local_position = Unit.local_position(spawn_network_unit, 0)
-			local get_template = ExplosionUtils.get_template("standard_bearer_explosion")
-			local name = arg_6_2.breed.name
-			local broadphase = arg_6_2.group_blackboard.broadphase
-			local radius = get_template.explosion.radius
-			local alloc_table = FrameTable.alloc_table()
-			local alloc_table_2 = FrameTable.alloc_table()
-			local query = Broadphase.query(broadphase, var_6_0, radius, alloc_table)
+			local world = blackboard.world
+			local explosion_position = Unit.local_position(standard_unit, 0)
+			local explosion_template = ExplosionUtils.get_template("standard_bearer_explosion")
+			local damage_source = blackboard.breed.name
+			local broadphase = blackboard.group_blackboard.broadphase
+			local radius = explosion_template.explosion.radius
+			local broadphase_results = FrameTable.alloc_table()
+			local nearby_beastmen_blackboards = FrameTable.alloc_table()
+			local num_results = Broadphase.query(broadphase, self_pos, radius, broadphase_results)
 
-			for i = 1, query do
-				local var_6_23 = alloc_table[i]
+			for i = 1, num_results do
+				local nearby_unit = broadphase_results[i]
 
-				if not HEALTH_ALIVE[var_6_23] then
-					local var_6_24 = BLACKBOARDS[var_6_23]
+				if HEALTH_ALIVE[nearby_unit] then
+					local nearby_unit_blackboard = BLACKBOARDS[nearby_unit]
 
-					if var_6_24.breed.race == "beastmen" then
-						var_6_24.standard_bearer_stagger = true
-						alloc_table_2[#alloc_table_2 + 1] = var_6_24
+					if nearby_unit_blackboard.breed.race == "beastmen" then
+						nearby_unit_blackboard.standard_bearer_stagger = true
+						nearby_beastmen_blackboards[#nearby_beastmen_blackboards + 1] = nearby_unit_blackboard
 					end
 				end
 			end
 
-			DamageUtils.create_explosion(world, arg_6_2.target_unit, local_position, Quaternion.identity(), get_template, 1, name, true, false, arg_6_1, false, nil, arg_6_1)
+			DamageUtils.create_explosion(world, blackboard.target_unit, explosion_position, Quaternion.identity(), explosion_template, 1, damage_source, true, false, unit, false, nil, unit)
 
-			for j = 1, #alloc_table_2 do
-				local var_6_25 = alloc_table_2[j]
+			for i = 1, #nearby_beastmen_blackboards do
+				local nearby_beastmen_blackboard = nearby_beastmen_blackboards[i]
 			end
 
-			local go_id = Managers.state.unit_storage:go_id(arg_6_1)
-			local var_6_27 = NetworkLookup.explosion_templates[get_template.name]
-			local var_6_28 = NetworkLookup.damage_sources[name]
+			local attacker_unit_id = Managers.state.unit_storage:go_id(unit)
+			local explosion_template_id = NetworkLookup.explosion_templates[explosion_template.name]
+			local damage_source_id = NetworkLookup.damage_sources[damage_source]
 
-			Managers.state.network.network_transmit:send_rpc_clients("rpc_create_explosion", go_id, false, local_position, Quaternion.identity(), var_6_27, 1, var_6_28, 0, false, go_id)
+			Managers.state.network.network_transmit:send_rpc_clients("rpc_create_explosion", attacker_unit_id, false, explosion_position, Quaternion.identity(), explosion_template_id, 1, damage_source_id, 0, false, attacker_unit_id)
 		end
 
-		arg_6_2.anim_cb_place_standard = true
+		blackboard.anim_cb_place_standard = true
 
-		if not arg_6_2.triggered_standard_chanting_sound then
-			Managers.state.entity:system("audio_system"):play_audio_unit_event(arg_6_2.action.stop_chanting_sound_event, arg_6_1)
+		if blackboard.triggered_standard_chanting_sound then
+			local audio_system = Managers.state.entity:system("audio_system")
 
-			arg_6_2.triggered_standard_chanting_sound = nil
+			audio_system:play_audio_unit_event(blackboard.action.stop_chanting_sound_event, unit)
+
+			blackboard.triggered_standard_chanting_sound = nil
 		end
 
-		Managers.state.entity:system("surrounding_aware_system"):add_system_event(arg_6_1, "has_planted_standard", DialogueSettings.special_proximity_distance_heard)
+		Managers.state.entity:system("surrounding_aware_system"):add_system_event(unit, "has_planted_standard", DialogueSettings.special_proximity_distance_heard)
 	end
 end
 
-BTPlaceStandardAction.anim_cb_placed_standard = function (arg_7_0, arg_7_1, arg_7_2)
+BTPlaceStandardAction.anim_cb_placed_standard = function (self, unit, blackboard)
 	-- function 7
-	arg_7_2.anim_cb_placed_standard = true
+	blackboard.anim_cb_placed_standard = true
 end

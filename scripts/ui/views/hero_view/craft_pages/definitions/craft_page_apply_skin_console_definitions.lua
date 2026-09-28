@@ -1,13 +1,13 @@
 -- chunkname: @scripts/ui/views/hero_view/craft_pages/definitions/craft_page_apply_skin_console_definitions.lua
 
-local num = 1
-local num_2 = 1
-local num_3 = num * num_2
-local num_4 = 1
-local num_5 = 1
-local num_6 = num_4 * num_5
+local NUM_CRAFT_SLOTS_X = 1
+local NUM_CRAFT_SLOTS_Y = 1
+local NUM_CRAFT_SLOTS = NUM_CRAFT_SLOTS_X * NUM_CRAFT_SLOTS_Y
+local NUM_RECIPE_SLOTS_X = 1
+local NUM_RECIPE_SLOTS_Y = 1
+local NUM_RECIPE_SLOTS = NUM_RECIPE_SLOTS_X * NUM_RECIPE_SLOTS_Y
 local console_menu_scenegraphs = UISettings.console_menu_scenegraphs
-local tbl = {
+local scenegraph_definition = {
 	screen = console_menu_scenegraphs.screen,
 	area = console_menu_scenegraphs.area,
 	area_left = console_menu_scenegraphs.area_left,
@@ -184,8 +184,8 @@ local tbl = {
 		}
 	}
 }
-local flag = true
-local tbl_2 = {
+local disable_with_gamepad = true
+local widgets = {
 	item_grid_bg = UIWidgets.create_simple_texture("console_crafting_slot_01", "item_grid", nil, nil, nil, -2),
 	item_grid_bg_2 = UIWidgets.create_simple_texture("console_crafting_slot_01", "item_grid_2", nil, nil, nil, -2),
 	item_grid_link = UIWidgets.create_simple_rotated_texture("console_crafting_slot_connection", 0, {
@@ -194,8 +194,8 @@ local tbl_2 = {
 	}, "item_grid_link", nil, nil, nil, 0),
 	item_grid_icon = UIWidgets.create_simple_texture("crafting_icon_01", "item_grid_icon"),
 	item_grid_2_icon = UIWidgets.create_simple_texture("crafting_icon_02", "item_grid_2_icon"),
-	item_grid = UIWidgets.create_grid("item_grid", tbl.item_grid.size, num_2, num, 20, 20),
-	item_grid_2 = UIWidgets.create_grid("item_grid_2", tbl.item_grid_2.size, num_5, num_4, 30, 30),
+	item_grid = UIWidgets.create_grid("item_grid", scenegraph_definition.item_grid.size, NUM_CRAFT_SLOTS_Y, NUM_CRAFT_SLOTS_X, 20, 20),
+	item_grid_2 = UIWidgets.create_grid("item_grid_2", scenegraph_definition.item_grid_2.size, NUM_RECIPE_SLOTS_Y, NUM_RECIPE_SLOTS_X, 30, 30),
 	craft_button = UIWidgets.create_console_craft_button("craft_button", "console_crafting_recipe_icon_apply"),
 	material_text_1 = UIWidgets.create_craft_material_widget("material_text_1"),
 	material_text_2 = UIWidgets.create_craft_material_widget("material_text_2"),
@@ -205,23 +205,23 @@ local tbl_2 = {
 	material_text_6 = UIWidgets.create_craft_material_widget("material_text_6"),
 	material_text_7 = UIWidgets.create_craft_material_widget("material_text_7")
 }
-local tbl_3 = {
+local animation_definitions = {
 	on_enter = {
 		{
 			name = "fade_in",
 			start_progress = 0,
 			end_progress = 0.3,
-			init = function (arg_1_0, arg_1_1, arg_1_2, arg_1_3)
+			init = function (ui_scenegraph, scenegraph_definition, widgets, params)
 				-- function 1
-				arg_1_3.render_settings.alpha_multiplier = 0
+				params.render_settings.alpha_multiplier = 0
 			end,
-			update = function (arg_2_0, arg_2_1, arg_2_2, arg_2_3, arg_2_4)
+			update = function (ui_scenegraph, scenegraph_definition, widgets, progress, params)
 				-- function 2
-				local easeOutCubic = math.easeOutCubic(arg_2_3)
+				local anim_progress = math.easeOutCubic(progress)
 
-				arg_2_4.render_settings.alpha_multiplier = easeOutCubic
+				params.render_settings.alpha_multiplier = anim_progress
 			end,
-			on_complete = function (arg_3_0, arg_3_1, arg_3_2, arg_3_3)
+			on_complete = function (ui_scenegraph, scenegraph_definition, widgets, params)
 				-- function 3
 				return
 			end
@@ -232,17 +232,17 @@ local tbl_3 = {
 			name = "fade_out",
 			start_progress = 0,
 			end_progress = 0.3,
-			init = function (arg_4_0, arg_4_1, arg_4_2, arg_4_3)
+			init = function (ui_scenegraph, scenegraph_definition, widgets, params)
 				-- function 4
-				arg_4_3.render_settings.alpha_multiplier = 1
+				params.render_settings.alpha_multiplier = 1
 			end,
-			update = function (arg_5_0, arg_5_1, arg_5_2, arg_5_3, arg_5_4)
+			update = function (ui_scenegraph, scenegraph_definition, widgets, progress, params)
 				-- function 5
-				local easeOutCubic = math.easeOutCubic(arg_5_3)
+				local anim_progress = math.easeOutCubic(progress)
 
-				arg_5_4.render_settings.alpha_multiplier = 1 - easeOutCubic
+				params.render_settings.alpha_multiplier = 1 - anim_progress
 			end,
-			on_complete = function (arg_6_0, arg_6_1, arg_6_2, arg_6_3)
+			on_complete = function (ui_scenegraph, scenegraph_definition, widgets, params)
 				-- function 6
 				return
 			end
@@ -251,7 +251,7 @@ local tbl_3 = {
 }
 
 return {
-	widgets = tbl_2,
-	scenegraph_definition = tbl,
-	animation_definitions = tbl_3
+	widgets = widgets,
+	scenegraph_definition = scenegraph_definition,
+	animation_definitions = animation_definitions
 }

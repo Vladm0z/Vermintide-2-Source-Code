@@ -1,23 +1,24 @@
 -- chunkname: @scripts/settings/breeds/breed_pet_skeleton.lua
 
-local scripts_utils_stagger_types = require("scripts/utils/stagger_types")
+local stagger_types = require("scripts/utils/stagger_types")
 
 require("scripts/settings/profiles/career_constants")
 
-local function fn(arg_1_0, arg_1_1, arg_1_2, arg_1_3, arg_1_4)
+local function hit_ai_func(unit, blackboard, hit_unit, action, attack)
 	-- function 1
-	if arg_1_2 ~= arg_1_1.attacking_target then
-		local num = 0
+	if hit_unit ~= blackboard.attacking_target then
+		local damage = 0
+		local buff_extension = ScriptUnit.extension(unit, "buff_system")
 
-		ScriptUnit.extension(arg_1_0, "buff_system"):trigger_procs("on_damage_dealt", arg_1_2, arg_1_0, num, nil, nil, nil, nil, nil, nil, nil, nil, nil)
+		buff_extension:trigger_procs("on_damage_dealt", hit_unit, unit, damage, nil, nil, nil, nil, nil, nil, nil, nil, nil)
 
 		if not Managers.state.network:in_game_session() then
-			Managers.state.achievement:trigger_event("on_damage_dealt", arg_1_2, arg_1_0, num, nil, nil, nil, nil, nil, nil, nil, nil, nil)
+			Managers.state.achievement:trigger_event("on_damage_dealt", hit_unit, unit, damage, nil, nil, nil, nil, nil, nil, nil, nil, nil)
 		end
 	end
 end
 
-local tbl = {
+local breed_data = {
 	detection_radius = 18,
 	pet_skeleton_type = "default",
 	walk_speed = 4,
@@ -174,21 +175,21 @@ local tbl = {
 		40,
 		40
 	},
-	stagger_modifier_function = function (arg_2_0, arg_2_1, arg_2_2, arg_2_3, arg_2_4, arg_2_5)
+	stagger_modifier_function = function (stagger, duration, length, hit_zone_name, blackboard, breed)
 		-- function 2
-		if arg_2_4.stagger_type == 3 then
-			if arg_2_0 ~= 3 or not arg_2_4.heavy_stagger_immune_time then
-				arg_2_0 = 0
-				arg_2_1 = 0
-				arg_2_2 = 0
-			elseif arg_2_0 == 3 or not arg_2_4.stagger_immune_time then
-				arg_2_0 = 0
-				arg_2_1 = 0
-				arg_2_2 = 0
+		if blackboard.stagger_type == 3 then
+			if stagger == 3 and blackboard.heavy_stagger_immune_time then
+				stagger = 0
+				duration = 0
+				length = 0
+			elseif stagger ~= 3 and blackboard.stagger_immune_time then
+				stagger = 0
+				duration = 0
+				length = 0
 			end
 		end
 
-		return arg_2_0, arg_2_1, arg_2_2
+		return stagger, duration, length
 	end,
 	BTHesitationVariations = {
 		hesitate = {
@@ -437,9 +438,9 @@ local tbl = {
 	}
 }
 
-Breeds.pet_skeleton = table.create_copy(Breeds.pet_skeleton, tbl)
+Breeds.pet_skeleton = table.create_copy(Breeds.pet_skeleton, breed_data)
 
-local tbl_2 = {
+local AttackIntensityPerDifficulty = {
 	normal = {
 		easy = {
 			normal = 2
@@ -499,7 +500,7 @@ local tbl_2 = {
 		}
 	}
 }
-local tbl_3 = {
+local action_data = {
 	spawn = {
 		incrementing_anim_variations = {
 			{
@@ -623,31 +624,32 @@ local tbl_3 = {
 		goal_margin = 0.3,
 		action_weight = 1,
 		considerations = UtilityConsiderations.clan_rat_follow,
-		move_speed_func = function (arg_3_0, arg_3_1)
+		move_speed_func = function (unit, blackboard)
 			-- function 3
-			local goal_destination = arg_3_1.goal_destination
+			local goal_destination = blackboard.goal_destination
 
 			if not goal_destination then
 				return
 			end
 
-			local unbox = goal_destination:unbox()
-			local num = 0
-			local has_extension = ScriptUnit.has_extension(arg_3_1.commander_unit, "locomotion_system")
+			goal_destination = goal_destination:unbox()
 
-			if not has_extension then
-				num = Vector3.length(has_extension:current_velocity())
+			local commander_speed = 0
+			local commander_locomotion = ScriptUnit.has_extension(blackboard.commander_unit, "locomotion_system")
+
+			if commander_locomotion then
+				commander_speed = Vector3.length(commander_locomotion:current_velocity())
 			end
 
-			local var_3_4 = POSITION_LOOKUP[arg_3_0]
-			local distance = Vector3.distance(var_3_4, unbox)
-			local max = math.max(arg_3_1.breed.run_speed, num)
-			local max_2 = math.max(arg_3_1.breed.min_run_speed, num)
-			local run_max_speed_distance = arg_3_1.breed.run_max_speed_distance
-			local run_min_speed_distance = arg_3_1.breed.run_min_speed_distance
-			local lerp = math.lerp(max_2, max, math.clamp01((distance - run_min_speed_distance) / run_max_speed_distance))
+			local unit_position = POSITION_LOOKUP[unit]
+			local distance_to_goal = Vector3.distance(unit_position, goal_destination)
+			local max_speed = math.max(blackboard.breed.run_speed, commander_speed)
+			local min_speed = math.max(blackboard.breed.min_run_speed, commander_speed)
+			local max_speed_dist = blackboard.breed.run_max_speed_distance
+			local min_speed_dist = blackboard.breed.run_min_speed_distance
+			local speed = math.lerp(min_speed, max_speed, math.clamp01((distance_to_goal - min_speed_dist) / max_speed_dist))
 
-			arg_3_1.navigation_extension:set_max_speed(lerp)
+			blackboard.navigation_extension:set_max_speed(speed)
 		end,
 		start_anims_name = {
 			bwd = "move_start_bwd",
@@ -747,7 +749,7 @@ local tbl_3 = {
 		action_weight = 10,
 		ignore_ai_damage = true,
 		self_running_speed_threshold = 1,
-		difficulty_attack_intensity = tbl_2,
+		difficulty_attack_intensity = AttackIntensityPerDifficulty,
 		considerations = UtilityConsiderations.marauder_running_attack,
 		target_running_distance_threshold = math.huge,
 		running_attacks = {
@@ -770,10 +772,10 @@ local tbl_3 = {
 				push_ai = {
 					stagger_distance = 1,
 					stagger_impact = {
-						scripts_utils_stagger_types.weak,
-						scripts_utils_stagger_types.none,
-						scripts_utils_stagger_types.none,
-						scripts_utils_stagger_types.none
+						stagger_types.weak,
+						stagger_types.none,
+						stagger_types.none,
+						stagger_types.none
 					},
 					stagger_duration = {
 						1,
@@ -808,10 +810,10 @@ local tbl_3 = {
 				push_ai = {
 					stagger_distance = 1,
 					stagger_impact = {
-						scripts_utils_stagger_types.weak,
-						scripts_utils_stagger_types.none,
-						scripts_utils_stagger_types.none,
-						scripts_utils_stagger_types.none
+						stagger_types.weak,
+						stagger_types.none,
+						stagger_types.none,
+						stagger_types.none
 					},
 					stagger_duration = {
 						1,
@@ -900,7 +902,7 @@ local tbl_3 = {
 			}
 		},
 		fatigue_type = BreedTweaks.fatigue_types.roamer.running_attack,
-		hit_ai_func = fn
+		hit_ai_func = hit_ai_func
 	},
 	sweep_attack = {
 		damage = 3,
@@ -908,7 +910,7 @@ local tbl_3 = {
 		action_weight = 1,
 		ignore_ai_damage = true,
 		damage_type = "cutting",
-		difficulty_attack_intensity = tbl_2,
+		difficulty_attack_intensity = AttackIntensityPerDifficulty,
 		considerations = UtilityConsiderations.marauder_attack,
 		attacks = {
 			{
@@ -931,10 +933,10 @@ local tbl_3 = {
 				push_ai = {
 					stagger_distance = 1,
 					stagger_impact = {
-						scripts_utils_stagger_types.weak,
-						scripts_utils_stagger_types.none,
-						scripts_utils_stagger_types.none,
-						scripts_utils_stagger_types.none
+						stagger_types.weak,
+						stagger_types.none,
+						stagger_types.none,
+						stagger_types.none
 					},
 					stagger_duration = {
 						1,
@@ -965,10 +967,10 @@ local tbl_3 = {
 				push_ai = {
 					stagger_distance = 1,
 					stagger_impact = {
-						scripts_utils_stagger_types.weak,
-						scripts_utils_stagger_types.none,
-						scripts_utils_stagger_types.none,
-						scripts_utils_stagger_types.none
+						stagger_types.weak,
+						stagger_types.none,
+						stagger_types.none,
+						stagger_types.none
 					},
 					stagger_duration = {
 						1,
@@ -1057,7 +1059,7 @@ local tbl_3 = {
 				5
 			}
 		},
-		hit_ai_func = fn
+		hit_ai_func = hit_ai_func
 	},
 	combat_step = {
 		move_speed = 4,
@@ -1113,17 +1115,19 @@ local tbl_3 = {
 	},
 	stagger = {
 		scale_animation_speeds = true,
-		custom_enter_function = function (arg_4_0, arg_4_1, arg_4_2, arg_4_3)
+		custom_enter_function = function (unit, blackboard, t, action)
 			-- function 4
-			if arg_4_1.stagger_type == 3 then
-				arg_4_1.stagger_immune_time = arg_4_2 + 2.25
-				arg_4_1.heavy_stagger_immune_time = arg_4_2 + 1.5
-			elseif arg_4_1.stagger_type == 6 then
-				arg_4_1.stagger_immune_time = arg_4_2 + 3.5
-				arg_4_1.heavy_stagger_immune_time = arg_4_2 + 3
+			if blackboard.stagger_type == 3 then
+				blackboard.stagger_immune_time = t + 2.25
+				blackboard.heavy_stagger_immune_time = t + 1.5
+			elseif blackboard.stagger_type == 6 then
+				blackboard.stagger_immune_time = t + 3.5
+				blackboard.heavy_stagger_immune_time = t + 3
 			end
 
-			return arg_4_3.stagger_anims[arg_4_1.stagger_type], "idle"
+			local stagger_anims = action.stagger_anims[blackboard.stagger_type]
+
+			return stagger_anims, "idle"
 		end,
 		stagger_anims = {
 			{
@@ -1375,12 +1379,12 @@ local tbl_3 = {
 	follow_owner = {}
 }
 
-tbl_3.command_attack = table.clone(tbl_3.sweep_attack)
-tbl_3.command_attack.considerations = UtilityConsiderations.command_attack
-tbl_3.running_command_attack = table.clone(tbl_3.running_sweep_attack)
-tbl_3.running_command_attack.considerations = UtilityConsiderations.running_command_attack
-tbl_3.command_follow = table.clone(tbl_3.follow)
-tbl_3.command_follow.slow_approach_time = 0
-tbl_3.command_follow.walk_time = 0
-tbl_3.fallback_idle = tbl_3.idle
-BreedActions.pet_skeleton = table.create_copy(BreedActions.pet_skeleton, tbl_3)
+action_data.command_attack = table.clone(action_data.sweep_attack)
+action_data.command_attack.considerations = UtilityConsiderations.command_attack
+action_data.running_command_attack = table.clone(action_data.running_sweep_attack)
+action_data.running_command_attack.considerations = UtilityConsiderations.running_command_attack
+action_data.command_follow = table.clone(action_data.follow)
+action_data.command_follow.slow_approach_time = 0
+action_data.command_follow.walk_time = 0
+action_data.fallback_idle = action_data.idle
+BreedActions.pet_skeleton = table.create_copy(BreedActions.pet_skeleton, action_data)

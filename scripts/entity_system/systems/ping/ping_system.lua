@@ -4,29 +4,29 @@ require("scripts/unit_extensions/default_player_unit/ping/context_aware_ping_ext
 require("scripts/unit_extensions/default_player_unit/ping/ping_target_extension")
 require("scripts/settings/ping_templates")
 
-local num = 15
-local num_2 = 5
-local num_3 = 0.05
-local num_4 = 5
-local num_5 = 2
-local num_6 = 0.7
-local flag = true
-local tbl = {
+local PING_DURATION = 15
+local SELF_PING_DURATION = 5
+local MAX_PING_RESPONSE_UV_DISTANCE = 0.05
+local VERSUS_ENEMY_PING_DURATION = 5
+local REFRESH_PING_SOUND_COOLDOWN = 2
+local UNIQUE_PING_SOUND_COOLDOWN = 0.7
+local PLAY_SOUND_WHEN_PINGING_SAME_UNIT = true
+local RPCS = {
 	"rpc_ping_unit",
 	"rpc_ping_world_position",
 	"rpc_remove_ping",
 	"rpc_social_message"
 }
-local tbl_2 = {
+local extensions = {
 	"ContextAwarePingExtension",
 	"PingTargetExtension"
 }
-local tbl_3 = {
+local WORLD_MARKER_CONTENT_LOOKUP = {
 	"world_marker_response_1",
 	"world_marker_response_2",
 	"world_marker_response_3"
 }
-local tbl_4 = {
+local WORLD_MARKER_ICON_LOOKUP = {
 	"world_marker_icon_response_1",
 	"world_marker_icon_response_2",
 	"world_marker_icon_response_3"
@@ -34,25 +34,26 @@ local tbl_4 = {
 
 PingSystem = class(PingSystem, ExtensionSystemBase)
 
-PingSystem.init = function (self, arg_1_1, arg_1_2)
+PingSystem.init = function (self, context, system_name)
 	-- function 1
-	PingSystem.super.init(self, arg_1_1, arg_1_2, tbl_2)
+	PingSystem.super.init(self, context, system_name, extensions)
 
-	local network_event_delegate = arg_1_1.network_event_delegate
+	local network_event_delegate = context.network_event_delegate
 
-	network_event_delegate:register(self, unpack(tbl))
+	network_event_delegate:register(self, unpack(RPCS))
 
 	self._network_event_delegate = network_event_delegate
-	self._unit_storage = arg_1_1.unit_storage
-	self._world = arg_1_1.world
+	self._unit_storage = context.unit_storage
+	self._world = context.world
 	self._wwise_world = Managers.world:wwise_world(self._world)
 	self._pinged_units = {}
 	self._world_markers = {}
 	self._last_ping_t = {}
 
-	local ping_mode = Managers.state.game_mode:settings().ping_mode
+	local settings = Managers.state.game_mode:settings()
+	local ping_mode = settings.ping_mode
 
-	if not ping_mode then
+	if ping_mode then
 		self._outlines_enabled = ping_mode.outlines
 		self._world_markers_enabled = ping_mode.world_markers
 	else
@@ -67,7 +68,7 @@ PingSystem.init = function (self, arg_1_1, arg_1_2)
 
 	if not item then
 		item = self._outlines_enabled.unit
-		item = item or self._world_markers_enabled
+		item = not not item or not not self._world_markers_enabled
 	end
 
 	self._pings_enabled = item
@@ -79,285 +80,314 @@ PingSystem.destroy = function (self)
 	self._network_event_delegate:unregister(self)
 end
 
-PingSystem.freeze = function (self, arg_3_1)
+PingSystem.freeze = function (self, unit)
 	-- function 3
-	local var_3_0 = self._pinged_units[arg_3_1]
+	local data = self._pinged_units[unit]
 
-	if not var_3_0 then
-		if not var_3_0._pinged then
-			local _is_outline_enabled = self:_is_outline_enabled(arg_3_1)
+	if data then
+		if data._pinged then
+			local apply_outline = self:_is_outline_enabled(unit)
 
-			var_3_0:set_pinged(false, nil, nil, _is_outline_enabled)
+			data:set_pinged(false, nil, nil, apply_outline)
 		end
 
-		self._pinged_units[arg_3_1] = nil
+		self._pinged_units[unit] = nil
 	end
 end
 
-PingSystem.unfreeze = function (arg_4_0, arg_4_1)
+PingSystem.unfreeze = function (self, unit)
 	-- function 4
 	return
 end
 
-PingSystem.update = function (self, arg_5_1, arg_5_2)
+PingSystem.update = function (self, context, t)
 	-- function 5
-	PingSystem.super.update(self, arg_5_1, arg_5_2)
+	PingSystem.super.update(self, context, t)
 
 	if not self._pings_enabled then
 		return
 	end
 
-	if not self.is_server then
-		self:_update_server(arg_5_1, arg_5_2)
+	if self.is_server then
+		self:_update_server(context, t)
 	else
-		self:_update_client(arg_5_1, arg_5_2)
+		self:_update_client(context, t)
 	end
 end
 
-PingSystem._update_server = function (self, arg_6_1, arg_6_2)
+PingSystem._update_server = function (self, context, t)
 	-- function 6
-	local _pinged_units = self._pinged_units
+	local pinged_units = self._pinged_units
 
-	for k, v in pairs(_pinged_units) do
-		local pinged_unit = v.pinged_unit
+	for pinger_unit, data in pairs(pinged_units) do
+		local pinged_unit = data.pinged_unit
 
-		if not ALIVE[pinged_unit] then
-			if not ALIVE[k] then
-				local start_time = v.start_time
+		if ALIVE[pinged_unit] then
+			if ALIVE[pinger_unit] then
+				local start_time = data.start_time
 
-				if not (k ~= pinged_unit or not (arg_6_2 >= start_time + num_2)) then
-					self:_remove_ping(k)
+				if pinger_unit == pinged_unit and t >= start_time + SELF_PING_DURATION then
+					self:_remove_ping(pinger_unit)
 				end
 
-				if not (self._current_mechanism_name ~= "versus" or v.ping_type ~= PingTypes.ENEMY_GENERIC) then
-					if arg_6_2 >= start_time + num_4 then
-						self:_remove_ping(k)
+				if self._current_mechanism_name == "versus" and data.ping_type == PingTypes.ENEMY_GENERIC then
+					if t >= start_time + VERSUS_ENEMY_PING_DURATION then
+						self:_remove_ping(pinger_unit)
 					end
-				elseif arg_6_2 >= start_time + num then
-					self:_remove_ping(k)
+				elseif t >= start_time + PING_DURATION then
+					self:_remove_ping(pinger_unit)
 				end
 			else
-				self:_remove_ping(k)
+				self:_remove_ping(pinger_unit)
 			end
-		elseif not v.position then
-			if arg_6_2 >= v.start_time + num then
-				self:_remove_ping(k)
+		elseif data.position then
+			local start_time = data.start_time
+
+			if t >= start_time + PING_DURATION then
+				self:_remove_ping(pinger_unit)
 			end
 		else
-			self:_remove_ping(k)
+			self:_remove_ping(pinger_unit)
 		end
 	end
 end
 
-PingSystem._update_client = function (self, arg_7_1, arg_7_2)
+PingSystem._update_client = function (self, context, t)
 	-- function 7
-	local _pinged_units = self._pinged_units
+	local pinged_units = self._pinged_units
 
-	for k, v in pairs(_pinged_units) do
-		local var_7_1 = ALIVE[k]
+	for pinger_unit, data in pairs(pinged_units) do
+		local var_7_0 = ALIVE[pinger_unit]
 
-		if not var_7_1 then
-			var_7_1 = v.position
-			var_7_1 = var_7_1 or ALIVE[v.pinged_unit]
+		if var_7_0 then
+			-- Nothing
 		end
 
-		if not var_7_1 then
-			self:_remove_ping(k)
+		var_7_0 = data.position
+
+		if not var_7_0 then
+			-- Nothing
+		end
+
+		var_7_0 = ALIVE[data.pinged_unit]
+
+		local valid_ping = var_7_0
+
+		::label_7_0::
+
+		if not valid_ping then
+			self:_remove_ping(pinger_unit)
 		end
 	end
 end
 
-PingSystem.hot_join_sync = function (self, arg_8_1)
+PingSystem.hot_join_sync = function (self, sender)
 	-- function 8
-	local _pinged_units = self._pinged_units
-	local network = Managers.state.network
-	local var_8_2 = PEER_ID_TO_CHANNEL[arg_8_1]
+	local pinged_units = self._pinged_units
+	local network_manager = Managers.state.network
+	local channel_id = PEER_ID_TO_CHANNEL[sender]
 
-	for k, v in pairs(_pinged_units) do
+	for pinger_unit, data in pairs(pinged_units) do
 		repeat
-			local pinged_unit = v.pinged_unit
+			local pinged_unit = data.pinged_unit
 
-			if not (not ALIVE[k] and not pinged_unit and ALIVE[pinged_unit]) then
+			if not ALIVE[pinger_unit] or pinged_unit and not ALIVE[pinged_unit] then
 				break
 			end
 
-			local unit_game_object_id = network:unit_game_object_id(k)
-			local var_8_5
-			local var_8_6
+			local pinger_unit_id = network_manager:unit_game_object_id(pinger_unit)
+			local pinged_unit_id, is_level_unit
 
-			if not pinged_unit then
-				var_8_5, var_8_6 = network:game_object_or_level_id(pinged_unit)
+			if pinged_unit then
+				pinged_unit_id, is_level_unit = network_manager:game_object_or_level_id(pinged_unit)
 			end
 
-			local position = v.position
+			local position = data.position
 
-			if not unit_game_object_id then
-				if not var_8_5 then
-					RPC.rpc_ping_unit(var_8_2, unit_game_object_id, var_8_5, var_8_6, v.flash, v.ping_type, v.social_wheel_event_id)
+			if pinger_unit_id then
+				if pinged_unit_id then
+					RPC.rpc_ping_unit(channel_id, pinger_unit_id, pinged_unit_id, is_level_unit, data.flash, data.ping_type, data.social_wheel_event_id)
 
 					break
 				end
 
-				if not position then
-					local flag = false
+				if position then
+					local is_double_press = false
 
-					RPC.rpc_ping_world_position(var_8_2, unit_game_object_id, Vector3(unpack(position)), v.ping_type, v.social_wheel_event_id, flag)
+					RPC.rpc_ping_world_position(channel_id, pinger_unit_id, Vector3(unpack(position)), data.ping_type, data.social_wheel_event_id, is_double_press)
 				end
 			end
 		until true
 	end
 end
 
-PingSystem._handle_ping = function (self, arg_9_1, arg_9_2, arg_9_3, arg_9_4, arg_9_5, arg_9_6, arg_9_7)
+PingSystem._handle_ping = function (self, ping_type, social_wheel_event_id, sender_player, pinger_unit, pinged_unit, position, flash)
 	-- function 9
-	if not (not arg_9_5 and Unit.alive(arg_9_5)) then
+	if pinged_unit and not Unit.alive(pinged_unit) then
 		return
 	end
 
-	if not arg_9_5 then
-		local has_extension = ScriptUnit.has_extension(arg_9_5, "buff_system")
+	if pinged_unit then
+		local buff_ext = ScriptUnit.has_extension(pinged_unit, "buff_system")
 
-		if not has_extension and not has_extension:has_buff_type("mutator_shadow_damage_reduction") then
+		if buff_ext and buff_ext:has_buff_type("mutator_shadow_damage_reduction") then
 			return
 		end
 	end
 
-	if arg_9_1 == PingTypes.CANCEL then
-		self:_remove_ping(arg_9_4)
+	if ping_type == PingTypes.CANCEL then
+		self:_remove_ping(pinger_unit)
 
 		return
 	end
 
-	if not (not arg_9_1 and arg_9_1 ~= PingTypes.CHAT_ONLY) then
+	if not ping_type or ping_type == PingTypes.CHAT_ONLY then
 		return
 	end
 
-	local get_party = arg_9_3:get_party()
+	local party = sender_player:get_party()
 
-	if not get_party then
+	if not party then
 		return
 	end
 
-	local flag_2 = false
+	local pinging_same_unit = false
 
-	if not self._pinged_units[arg_9_4] then
-		flag_2 = not arg_9_5 and arg_9_5 == self._pinged_units[arg_9_4].pinged_unit
+	if self._pinged_units[pinger_unit] then
+		pinging_same_unit = not not pinged_unit and pinged_unit == self._pinged_units[pinger_unit].pinged_unit
 
-		self:_remove_ping(arg_9_4, true)
+		self:_remove_ping(pinger_unit, true)
 	end
 
-	local time = Managers.time:time("game")
-	local network = Managers.state.network
-	local unit_game_object_id = network:unit_game_object_id(arg_9_4)
-	local var_9_6
-	local var_9_7
+	local t = Managers.time:time("game")
+	local network_manager = Managers.state.network
+	local pinger_unit_id = network_manager:unit_game_object_id(pinger_unit)
+	local pinged_unit_id, is_level_unit
 
-	if not arg_9_5 then
-		var_9_6, var_9_7 = network:game_object_or_level_id(arg_9_5)
+	if pinged_unit then
+		pinged_unit_id, is_level_unit = network_manager:game_object_or_level_id(pinged_unit)
 	end
 
-	self._pinged_units[arg_9_4] = {
-		start_time = time,
-		pinged_unit = arg_9_5,
-		flash = arg_9_7,
-		party_id = get_party.party_id,
-		pinger_unique_id = arg_9_3:unique_id(),
-		pinger_unit_id = unit_game_object_id,
-		pinged_unit_id = var_9_6,
-		ping_type = arg_9_1,
-		position = not arg_9_6 and {
-			Vector3.to_elements(arg_9_6)
+	self._pinged_units[pinger_unit] = {
+		start_time = t,
+		pinged_unit = pinged_unit,
+		flash = flash,
+		party_id = party.party_id,
+		pinger_unique_id = sender_player:unique_id(),
+		pinger_unit_id = pinger_unit_id,
+		pinged_unit_id = pinged_unit_id,
+		ping_type = ping_type,
+		position = not not position and not not {
+			Vector3.to_elements(position)
 		},
-		social_wheel_event_id = arg_9_2
+		social_wheel_event_id = social_wheel_event_id
 	}
 
-	Managers.telemetry_events:ping_used(arg_9_3, PingTypes[arg_9_1], arg_9_5, POSITION_LOOKUP[arg_9_4])
+	Managers.telemetry_events:ping_used(sender_player, PingTypes[ping_type], pinged_unit, POSITION_LOOKUP[pinger_unit])
 
-	if not self.is_server then
-		if not arg_9_5 then
-			self.network_transmit:send_rpc_party_clients("rpc_ping_unit", get_party, true, unit_game_object_id, var_9_6, var_9_7, arg_9_7, arg_9_1, arg_9_2)
-			self:_play_ping_vo(arg_9_4, arg_9_5, arg_9_1, arg_9_2)
-		elseif not arg_9_6 then
-			local flag_3 = false
+	if self.is_server then
+		if pinged_unit then
+			self.network_transmit:send_rpc_party_clients("rpc_ping_unit", party, true, pinger_unit_id, pinged_unit_id, is_level_unit, flash, ping_type, social_wheel_event_id)
+			self:_play_ping_vo(pinger_unit, pinged_unit, ping_type, social_wheel_event_id)
+		elseif position then
+			local is_double_press = false
 
-			self.network_transmit:send_rpc_party_clients("rpc_ping_world_position", get_party, true, unit_game_object_id, arg_9_6, arg_9_1, arg_9_2, flag_3)
-			self:_play_ping_vo(arg_9_4, nil, arg_9_1, arg_9_2)
+			self.network_transmit:send_rpc_party_clients("rpc_ping_world_position", party, true, pinger_unit_id, position, ping_type, social_wheel_event_id, is_double_press)
+			self:_play_ping_vo(pinger_unit, nil, ping_type, social_wheel_event_id)
 		end
 	end
 
-	if not DEDICATED_SERVER then
+	if DEDICATED_SERVER then
 		return
 	end
 
-	local unique_id = Managers.player:local_player():unique_id()
+	local local_player = Managers.player:local_player()
+	local unique_player_id = local_player:unique_id()
 
-	if not Managers.party:is_player_in_party(unique_id, get_party.party_id) then
+	if not Managers.party:is_player_in_party(unique_player_id, party.party_id) then
 		return
 	end
 
-	if not arg_9_5 then
-		self:_add_unit_ping(arg_9_4, arg_9_5, arg_9_7, arg_9_1)
+	if pinged_unit then
+		self:_add_unit_ping(pinger_unit, pinged_unit, flash, ping_type)
 	end
 
-	if not (not self._world_markers_enabled and arg_9_1 == PingTypes.VO_ONLY) then
-		self:_add_world_marker(arg_9_4, arg_9_5, arg_9_6, arg_9_1, arg_9_2)
+	if self._world_markers_enabled and ping_type ~= PingTypes.VO_ONLY then
+		self:_add_world_marker(pinger_unit, pinged_unit, position, ping_type, social_wheel_event_id)
 	end
 
-	local flag_4 = false
-	local var_9_11 = self._last_ping_t[arg_9_4]
+	local skip_sound = false
+	local var_9_0 = self._last_ping_t[pinger_unit]
 
-	var_9_11 = var_9_11 or 0
+	if not var_9_0 then
+		-- Nothing
+	end
 
-	if not (not flag_2 and not flag and not (time < var_9_11 + num_5)) then
-		flag_4 = true
-	elseif not (arg_9_5 or not (time < var_9_11 + num_5)) then
-		flag_4 = true
-	elseif not (not arg_9_5 and flag_2 or not (time < var_9_11 + num_6)) then
-		flag_4 = true
+	var_9_0 = 0
+
+	local last_ping_t = var_9_0
+
+	::label_9_0::
+
+	if pinging_same_unit and (not PLAY_SOUND_WHEN_PINGING_SAME_UNIT or t < last_ping_t + REFRESH_PING_SOUND_COOLDOWN) then
+		skip_sound = true
+	elseif not pinged_unit and t < last_ping_t + REFRESH_PING_SOUND_COOLDOWN then
+		skip_sound = true
+	elseif pinged_unit and not pinging_same_unit and t < last_ping_t + UNIQUE_PING_SOUND_COOLDOWN then
+		skip_sound = true
 	else
-		self._last_ping_t[arg_9_4] = time
+		self._last_ping_t[pinger_unit] = t
 	end
 
-	if not flag_4 then
-		local var_9_12 = NetworkLookup.social_wheel_events[arg_9_2]
-		local var_9_13 = SocialWheelSettingsLookup[var_9_12]
-		local flag_5 = not var_9_13 and var_9_13.ping_sound_effect
+	if not skip_sound then
+		local social_wheel_event_name = NetworkLookup.social_wheel_events[social_wheel_event_id]
+		local social_wheel_settings = SocialWheelSettingsLookup[social_wheel_event_name]
+		local ping_sound_effect = not not social_wheel_settings and not not social_wheel_settings.ping_sound_effect
 
-		if not flag_5 then
-			self:_play_sound(flag_5)
+		if ping_sound_effect then
+			self:_play_sound(ping_sound_effect)
 		else
-			local flag_6
+			local str
 
-			flag_6 = not arg_9_5 and not Unit.get_data(arg_9_5, "breed") and "hud_ping_enemy" and "hud_ping"
+			if pinged_unit and Unit.get_data(pinged_unit, "breed") then
+				str = "hud_ping_enemy"
 
-			self:_play_sound(flag_6)
+				goto label_9_1
+			end
+
+			str = "hud_ping"
+
+			local event = str
+
+			::label_9_1::
+
+			self:_play_sound(event)
 		end
 	end
 end
 
-PingSystem._handle_chat = function (self, arg_10_1, arg_10_2, arg_10_3, arg_10_4, arg_10_5, arg_10_6)
+PingSystem._handle_chat = function (self, ping_type, social_wheel_event_id, sender_player, pinger_unit, pinged_unit, chat_messages)
 	-- function 10
-	if not (not arg_10_5 and arg_10_1 ~= PingTypes.ENEMY_GENERIC) then
-		local get_data = Unit.get_data(arg_10_5, "breed")
+	if pinged_unit and ping_type == PingTypes.ENEMY_GENERIC then
+		local breed = Unit.get_data(pinged_unit, "breed")
 
-		if not get_data and not get_data.is_ai then
+		if not breed or breed.is_ai then
 			return
 		end
 	end
 
-	local flag = not arg_10_2 and arg_10_2 ~= NetworkLookup.social_wheel_events["n/a"]
-	local flag_2 = not flag and SocialWheelSettingsLookup[NetworkLookup.social_wheel_events[arg_10_2]]
-	local var_10_3
-	local var_10_4
+	local valid_social_wheel_id = not not social_wheel_event_id and social_wheel_event_id ~= NetworkLookup.social_wheel_events["n/a"]
+	local social_wheel_event_settings = not not valid_social_wheel_id and not not SocialWheelSettingsLookup[NetworkLookup.social_wheel_events[social_wheel_event_id]]
+	local event_text, localization_parameters
 
-	if not MechanismOverrides.get(IgnoreChatPings)[arg_10_1] then
-		if not flag then
-			if not (not IS_CONSOLE and arg_10_1 == PingTypes.LOCAL_ONLY) then
-				local get_party = arg_10_3:get_party()
+	if not MechanismOverrides.get(IgnoreChatPings)[ping_type] then
+		if valid_social_wheel_id then
+			if IS_CONSOLE and ping_type ~= PingTypes.LOCAL_ONLY then
+				local party = sender_player:get_party()
 				local unit_game_object_id
 
-				if not arg_10_5 then
-					unit_game_object_id = Managers.state.network:unit_game_object_id(arg_10_5)
+				if pinged_unit then
+					unit_game_object_id = Managers.state.network:unit_game_object_id(pinged_unit)
 
 					if not unit_game_object_id then
 						-- Nothing
@@ -366,101 +396,105 @@ PingSystem._handle_chat = function (self, arg_10_1, arg_10_2, arg_10_3, arg_10_4
 
 				unit_game_object_id = 0
 
+				local pinged_unit_id = unit_game_object_id
+
 				::label_10_0::
 
-				local flag_3 = true
+				local include_spectators = true
 
-				self.network_transmit:send_rpc_party("rpc_social_wheel_event", get_party, flag_3, arg_10_3.peer_id, arg_10_2, unit_game_object_id)
+				self.network_transmit:send_rpc_party("rpc_social_wheel_event", party, include_spectators, sender_player.peer_id, social_wheel_event_id, pinged_unit_id)
 			end
 
-			local event_text_func = flag_2.event_text_func
+			local text_func = social_wheel_event_settings.event_text_func
+			local text = social_wheel_event_settings.event_text
 
-			var_10_3, var_10_4 = flag_2.event_text
+			event_text, localization_parameters = text
 
-			if not event_text_func and not arg_10_5 then
-				local flag_4 = false
+			if text_func and pinged_unit then
+				local do_localize = false
 
-				var_10_3, var_10_4 = event_text_func(arg_10_5, flag_2, flag_4)
+				event_text, localization_parameters = text_func(pinged_unit, social_wheel_event_settings, do_localize)
 			end
 
-			if var_10_3 or not arg_10_6 then
-				var_10_3 = arg_10_6[math.random(1, #arg_10_6)]
+			if not event_text and chat_messages then
+				event_text = chat_messages[math.random(1, #chat_messages)]
 			end
-		elseif not arg_10_6 then
-			var_10_3 = arg_10_6[math.random(1, #arg_10_6)]
+		elseif chat_messages then
+			event_text = chat_messages[math.random(1, #chat_messages)]
 		end
 
-		if not var_10_3 then
-			local flag_5 = true
-			local flag_6 = true
-			local network_id = arg_10_3:network_id()
-			local num = 1
-			local var_10_14
-			local game_mechanism = Managers.mechanism:game_mechanism()
+		if event_text then
+			local localize, localize_parameters = true, true
+			local sended_peer_id = sender_player:network_id()
+			local channel_id, message_target = 1
+			local mechanism = Managers.mechanism:game_mechanism()
 
-			if not game_mechanism.get_chat_channel then
-				num, var_10_14 = game_mechanism:get_chat_channel(network_id, false)
+			if mechanism.get_chat_channel then
+				channel_id, message_target = mechanism:get_chat_channel(sended_peer_id, false)
 			end
 
-			Managers.chat:send_chat_message(num, arg_10_3:local_player_id(), var_10_3, flag_5, var_10_4, flag_6, nil, var_10_14, nil, nil, network_id)
+			Managers.chat:send_chat_message(channel_id, sender_player:local_player_id(), event_text, localize, localization_parameters, localize_parameters, nil, message_target, nil, nil, sended_peer_id)
 		end
 	end
 
-	if not flag then
-		local execute_func = flag_2.execute_func
+	if valid_social_wheel_id then
+		local execute_func = social_wheel_event_settings.execute_func
 
-		if not execute_func then
-			local var_10_17 = SocialWheelSettings[flag_2.category_name]
+		if execute_func then
+			local social_wheel_category = SocialWheelSettings[social_wheel_event_settings.category_name]
 
-			execute_func(flag_2.data, arg_10_5, arg_10_3, var_10_17)
+			execute_func(social_wheel_event_settings.data, pinged_unit, sender_player, social_wheel_category)
 		end
 	end
 end
 
-PingSystem.handle_local_ping = function (self, arg_11_1, arg_11_2, arg_11_3, arg_11_4, arg_11_5, arg_11_6)
+PingSystem.handle_local_ping = function (self, ping_type, social_wheel_event_id, sender_player, pinger_unit, pinged_unit, chat_messages)
 	-- function 11
-	self:_handle_chat(arg_11_1, arg_11_2, arg_11_3, arg_11_4, arg_11_5, arg_11_6)
+	self:_handle_chat(ping_type, social_wheel_event_id, sender_player, pinger_unit, pinged_unit, chat_messages)
 end
 
-PingSystem.is_ping_cancel = function (self, arg_12_1, arg_12_2)
+PingSystem.is_ping_cancel = function (self, sender_unique_id, position)
 	-- function 12
 	if not self._world_markers_enabled then
 		return
 	end
 
-	if not arg_12_2 then
-		local _world = self._world
-		local viewport = ScriptWorld.viewport(_world, "player_1")
-		local flag = not viewport and ScriptViewport.camera(viewport)
+	if position then
+		local world = self._world
+		local viewport = ScriptWorld.viewport(world, "player_1")
+		local camera = not not viewport and not not ScriptViewport.camera(viewport)
 
-		if not flag and not Camera.inside_frustum(flag, arg_12_2) then
-			local unbox = Vector3Aux.unbox(WorldMarkerTemplates.ping.position_offset)
-			local world_to_screen_uv = ScriptCamera.world_to_screen_uv(flag, arg_12_2)
-			local num = num_3 * num_3
+		if camera and Camera.inside_frustum(camera, position) then
+			local ping_offset = Vector3Aux.unbox(WorldMarkerTemplates.ping.position_offset)
+			local ping_screen_uv = ScriptCamera.world_to_screen_uv(camera, position)
+			local max_dist_sq = MAX_PING_RESPONSE_UV_DISTANCE * MAX_PING_RESPONSE_UV_DISTANCE
 
-			for k, v in pairs(self._pinged_units) do
-				local var_12_6
+			for pinger_unit, data in pairs(self._pinged_units) do
+				local var_12_0
 
-				if not v.position then
-					var_12_6 = Vector3(unpack(v.position))
+				if data.position then
+					var_12_0 = Vector3(unpack(data.position))
 
-					if not var_12_6 then
+					if not var_12_0 then
 						-- Nothing
 					end
 				end
 
-				var_12_6 = POSITION_LOOKUP[v.pinged_unit]
+				var_12_0 = POSITION_LOOKUP[data.pinged_unit]
+
+				local existing_position = var_12_0
 
 				::label_12_0::
 
-				if not var_12_6 then
-					local num_2 = var_12_6 + unbox
+				if existing_position then
+					existing_position = existing_position + ping_offset
 
-					if not Camera.inside_frustum(flag, num_2) then
-						local world_to_screen_uv_2 = ScriptCamera.world_to_screen_uv(flag, num_2)
+					if Camera.inside_frustum(camera, existing_position) then
+						local existing_screen_uv = ScriptCamera.world_to_screen_uv(camera, existing_position)
+						local distance_sq = Vector3.distance_squared(existing_screen_uv, ping_screen_uv)
 
-						if not (not (num >= Vector3.distance_squared(world_to_screen_uv_2, world_to_screen_uv)) or arg_12_1 ~= v.pinger_unique_id) then
-							return PingTypes.CANCEL, num_2
+						if distance_sq <= max_dist_sq and sender_unique_id == data.pinger_unique_id then
+							return PingTypes.CANCEL, existing_position
 						end
 					end
 				end
@@ -469,482 +503,488 @@ PingSystem.is_ping_cancel = function (self, arg_12_1, arg_12_2)
 	end
 end
 
-PingSystem._get_unit_ping_type = function (self, arg_13_1, arg_13_2, arg_13_3)
+PingSystem._get_unit_ping_type = function (self, pinged_unit, sender_unique_id, sent_ping_type)
 	-- function 13
 	if not self._world_markers_enabled then
-		return arg_13_3
+		return sent_ping_type
 	end
 
-	if not (arg_13_3 == PingTypes.ACKNOWLEDGE or arg_13_3 ~= PingTypes.DENY) then
+	if sent_ping_type == PingTypes.ACKNOWLEDGE or sent_ping_type == PingTypes.DENY then
 		return nil
 	end
 
-	if arg_13_3 == PingTypes.CONTEXT then
-		if not (not arg_13_1 and ALIVE[arg_13_1]) then
+	if sent_ping_type == PingTypes.CONTEXT then
+		if not pinged_unit or not ALIVE[pinged_unit] then
 			return PingTypes.MOVEMENT_GENERIC
 		end
 
-		if not ScriptUnit.has_extension(arg_13_1, "pickup_system") then
+		if ScriptUnit.has_extension(pinged_unit, "pickup_system") then
 			return PingTypes.PLAYER_PICK_UP
 		end
 
-		local get_party_from_unique_id = Managers.party:get_party_from_unique_id(arg_13_2)
-		local side = Managers.state.side
-		local var_13_2 = side.side_by_party[get_party_from_unique_id]
-		local var_13_3 = side.side_by_unit[arg_13_1]
+		local sender_party = Managers.party:get_party_from_unique_id(sender_unique_id)
+		local side_manager = Managers.state.side
+		local sender_side = side_manager.side_by_party[sender_party]
+		local pinged_side = side_manager.side_by_unit[pinged_unit]
 
-		if not side:is_enemy_by_side(var_13_2, var_13_3) then
+		if side_manager:is_enemy_by_side(sender_side, pinged_side) then
 			return PingTypes.ENEMY_GENERIC
 		end
 
 		return PingTypes.PLAYER_HELP
 	end
 
-	return arg_13_3
+	return sent_ping_type
 end
 
-PingSystem._get_world_position_ping_type = function (arg_14_0, arg_14_1, arg_14_2)
+PingSystem._get_world_position_ping_type = function (self, sent_ping_type, is_double_press)
 	-- function 14
-	if not arg_14_2 then
+	if is_double_press then
 		return PingTypes.ENEMY_POSITION
 	end
 
-	if not (arg_14_1 == PingTypes.ACKNOWLEDGE or arg_14_1 ~= PingTypes.DENY) then
-		return arg_14_1, nil
+	if sent_ping_type == PingTypes.ACKNOWLEDGE or sent_ping_type == PingTypes.DENY then
+		return sent_ping_type, nil
 	end
 
-	if arg_14_1 == PingTypes.CONTEXT then
+	if sent_ping_type == PingTypes.CONTEXT then
 		return PingTypes.MOVEMENT_GENERIC, nil
 	end
 
-	return arg_14_1, nil
+	return sent_ping_type, nil
 end
 
-PingSystem._add_unit_ping = function (self, arg_15_1, arg_15_2, arg_15_3, arg_15_4)
+PingSystem._add_unit_ping = function (self, pinger_unit, pinged_unit, flash, ping_type)
 	-- function 15
-	local has_extension = ScriptUnit.has_extension(arg_15_2, "ping_system")
+	local ping_extension = ScriptUnit.has_extension(pinged_unit, "ping_system")
 
-	if not has_extension then
+	if not ping_extension then
 		return
 	end
 
-	local var_15_1
-	local var_15_2
-	local var_15_3
-	local get = MechanismOverrides.get(PingTemplates, self._current_mechanism_name)
+	local do_ping, chat_messages, ping_icon
+	local ping_templates = MechanismOverrides.get(PingTemplates, self._current_mechanism_name)
 
-	for k, v in pairs(get) do
-		if not v:check_func(arg_15_1, arg_15_2) then
-			local var_15_5, var_15_6
-
-			var_15_1, var_15_5, var_15_6 = v:exec_func(self, arg_15_1, arg_15_2, arg_15_4, self._current_mechanism_name)
+	for _, data in pairs(ping_templates) do
+		if data:check_func(pinger_unit, pinged_unit) then
+			do_ping, chat_messages, ping_icon = data:exec_func(self, pinger_unit, pinged_unit, ping_type, self._current_mechanism_name)
 
 			break
 		end
 	end
 
-	if not var_15_1 then
+	if not do_ping then
 		return
 	end
 
-	if not has_extension.set_pinged then
-		local _is_outline_enabled = self:_is_outline_enabled(arg_15_2)
+	if ping_extension.set_pinged then
+		local apply_outline = self:_is_outline_enabled(pinged_unit)
 
-		has_extension:set_pinged(true, arg_15_3, arg_15_1, _is_outline_enabled)
+		ping_extension:set_pinged(true, flash, pinger_unit, apply_outline)
 	end
 
-	local unit_owner = Managers.player:unit_owner(arg_15_1)
+	local sender_player = Managers.player:unit_owner(pinger_unit)
 
-	if not unit_owner and not unit_owner.local_player then
-		local get_attributes = Managers.state.entity:system("ai_system"):get_attributes(arg_15_2)
-		local get_data = Unit.get_data(arg_15_2, "breed")
+	if sender_player and sender_player.local_player then
+		local ai_system = Managers.state.entity:system("ai_system")
+		local attributes = ai_system:get_attributes(pinged_unit)
+		local breed = Unit.get_data(pinged_unit, "breed")
 
-		if not get_data and get_data.show_health_bar and not get_attributes.grudge_marked then
-			Managers.state.event:trigger("boss_health_bar_register_unit", arg_15_2, "ping")
+		if (not breed or not breed.show_health_bar) and attributes.grudge_marked then
+			Managers.state.event:trigger("boss_health_bar_register_unit", pinged_unit, "ping")
 		end
 	end
 end
 
-PingSystem._add_world_marker = function (self, arg_16_1, arg_16_2, arg_16_3, arg_16_4, arg_16_5)
+PingSystem._add_world_marker = function (self, pinger_unit, pinged_unit, position, ping_type, social_wheel_event_id)
 	-- function 16
-	if not (arg_16_2 or arg_16_3) then
+	if not pinged_unit and not position then
 		return
 	end
 
-	if arg_16_4 == PingTypes.LOCAL_ONLY then
+	if ping_type == PingTypes.LOCAL_ONLY then
 		return
 	end
 
-	local var_16_0
-	local var_16_1
-	local var_16_2
-	local var_16_3
-	local get = MechanismOverrides.get(PingTemplates, self._current_mechanism_name)
+	local do_ping, chat_messages, chat_message, ping_icon
+	local ping_templates = MechanismOverrides.get(PingTemplates, self._current_mechanism_name)
 
-	for k, v in pairs(get) do
-		if not v:check_func(arg_16_1, arg_16_2) then
-			var_16_0, var_16_1, var_16_3 = v:exec_func(self, arg_16_1, arg_16_2, arg_16_4, arg_16_5, self._current_mechanism_name)
+	for _, data in pairs(ping_templates) do
+		if data:check_func(pinger_unit, pinged_unit) then
+			do_ping, chat_messages, ping_icon = data:exec_func(self, pinger_unit, pinged_unit, ping_type, social_wheel_event_id, self._current_mechanism_name)
 
 			break
 		end
 	end
 
-	if not var_16_0 then
+	if not do_ping then
 		return
 	end
 
-	if not ((var_16_3 or not arg_16_5) and arg_16_5 == NetworkLookup.social_wheel_events["n/a"]) then
-		local var_16_5 = NetworkLookup.social_wheel_events[arg_16_5]
-		local var_16_6 = SocialWheelSettingsLookup[var_16_5]
+	if not ping_icon and social_wheel_event_id and social_wheel_event_id ~= NetworkLookup.social_wheel_events["n/a"] then
+		local social_wheel_event_name = NetworkLookup.social_wheel_events[social_wheel_event_id]
+		local social_wheel_event_settings = SocialWheelSettingsLookup[social_wheel_event_name]
 
-		var_16_3 = var_16_6.icon
+		ping_icon = social_wheel_event_settings.icon
 
-		if not var_16_6.event_text_func and not arg_16_2 then
-			local event_text_func, var_16_8 = var_16_6.event_text_func(arg_16_2, var_16_6)
+		if social_wheel_event_settings.event_text_func and pinged_unit then
+			local event_text, localization_parameters = social_wheel_event_settings.event_text_func(pinged_unit, social_wheel_event_settings)
 
-			var_16_8 = not var_16_8 and LocalizeArray(var_16_8)
+			localization_parameters = not not localization_parameters and not not LocalizeArray(localization_parameters)
 
-			if not var_16_8 then
-				var_16_2 = string.format(Localize(event_text_func), unpack(var_16_8))
+			if localization_parameters then
+				chat_message = string.format(Localize(event_text), unpack(localization_parameters))
 			else
-				var_16_2 = Localize(event_text_func)
+				chat_message = Localize(event_text)
 			end
 		else
-			var_16_2 = Localize(var_16_6.event_text)
+			chat_message = Localize(social_wheel_event_settings.event_text)
 		end
 	end
 
-	if not var_16_3 then
+	if not ping_icon then
 		return
 	end
 
-	local function fn(arg_17_0, arg_17_1)
+	local function cb(id, widget)
 		-- function 17
-		arg_17_1.content.icon = var_16_3
-		arg_17_1.content.icon_pulse = var_16_3
+		widget.content.icon = ping_icon
+		widget.content.icon_pulse = ping_icon
 
-		local content = arg_17_1.content
-		local var_17_1 = var_16_2
+		local content = widget.content
+		local var_17_1 = chat_message
 
 		if not var_17_1 then
-			var_17_1 = var_16_1
-			var_17_1 = not var_17_1 and var_16_1[1]
+			var_17_1 = chat_messages
+			var_17_1 = not not var_17_1 and not not chat_messages[1]
 		end
 
 		content.text = var_17_1
 
-		local owner = Managers.player:owner(arg_16_1)
-		local profile_index = owner:profile_index()
-		local career_index = owner:career_index()
-		local var_17_5 = SPProfiles[profile_index].careers[career_index]
-		local current_mechanism_name = Managers.mechanism:current_mechanism_name()
-		local var_17_7
+		local player = Managers.player:owner(pinger_unit)
+		local profile_index = player:profile_index()
+		local career_index = player:career_index()
+		local career = SPProfiles[profile_index].careers[career_index]
+		local mechanism_name = Managers.mechanism:current_mechanism_name()
+		local color
 
-		if current_mechanism_name == "versus" then
-			var_17_7 = not arg_17_1.content and arg_17_1.content.text == "MOVEMENT_GENERIC" and Colors.get_color_table_with_alpha("local_player_picking", 200) and Colors.get_color_table_with_alpha("opponent_team", 200)
+		if mechanism_name == "versus" then
+			color = (not widget.content or widget.content.text ~= "MOVEMENT_GENERIC" or not Colors.get_color_table_with_alpha("local_player_picking", 200)) and not not Colors.get_color_table_with_alpha("opponent_team", 200)
 		else
-			var_17_7 = Colors.get_color_table_with_alpha(var_17_5.display_name, 255) or Colors.color_definitions.white
+			color = not not Colors.get_color_table_with_alpha(career.display_name, 255) or not not Colors.color_definitions.white
 		end
 
-		arg_17_1.style.icon.color = table.clone(var_17_7)
-		arg_17_1.style.icon_spawn_pulse.color = table.clone(var_17_7)
-		arg_17_1.style.icon_spawn_pulse.default_color = arg_17_1.style.icon.color
-		self._world_markers[arg_16_1] = {
-			id = arg_17_0,
-			widget = arg_17_1
+		widget.style.icon.color = table.clone(color)
+		widget.style.icon_spawn_pulse.color = table.clone(color)
+		widget.style.icon_spawn_pulse.default_color = widget.style.icon.color
+		self._world_markers[pinger_unit] = {
+			id = id,
+			widget = widget
 		}
 	end
 
-	arg_16_3 = arg_16_3 or Unit.local_position(arg_16_2, 0)
+	position = not not position or not not Unit.local_position(pinged_unit, 0)
 
-	Managers.state.event:trigger("add_world_marker_position", "ping", arg_16_3, fn)
+	Managers.state.event:trigger("add_world_marker_position", "ping", position, cb)
 end
 
-PingSystem.remove_ping_from_unit = function (self, arg_18_1)
+PingSystem.remove_ping_from_unit = function (self, target_unit)
 	-- function 18
 	if not self._pings_enabled then
 		return
 	end
 
-	for k, v in pairs(self._pinged_units) do
-		if arg_18_1 == v.pinged_unit then
-			self:_remove_ping(k)
+	for pinger_unit, target in pairs(self._pinged_units) do
+		if target_unit == target.pinged_unit then
+			self:_remove_ping(pinger_unit)
 		end
 	end
 end
 
-PingSystem._remove_ping = function (self, arg_19_1, arg_19_2)
+PingSystem._remove_ping = function (self, pinger_unit, skip_sync)
 	-- function 19
-	if not arg_19_1 then
+	if not pinger_unit then
 		return
 	end
 
-	local var_19_0 = self._pinged_units[arg_19_1]
-	local var_19_1 = self._world_markers[arg_19_1]
-	local flag = not var_19_1 and var_19_1.id
+	local data = self._pinged_units[pinger_unit]
+	local world_marker = self._world_markers[pinger_unit]
+	local world_marker_id = not not world_marker and not not world_marker.id
 
-	self._pinged_units[arg_19_1] = nil
-	self._world_markers[arg_19_1] = nil
+	self._pinged_units[pinger_unit] = nil
+	self._world_markers[pinger_unit] = nil
 
-	if not var_19_0 then
+	if not data then
 		return
 	end
 
-	if not (not self.is_server and arg_19_2) then
-		local get_party = Managers.party:get_party(var_19_0.party_id)
-		local pinger_unit_id = var_19_0.pinger_unit_id
+	if self.is_server and not skip_sync then
+		local party = Managers.party:get_party(data.party_id)
+		local pinger_unit_id = data.pinger_unit_id
 
-		self.network_transmit:send_rpc_party_clients("rpc_remove_ping", get_party, true, pinger_unit_id)
+		self.network_transmit:send_rpc_party_clients("rpc_remove_ping", party, true, pinger_unit_id)
 	end
 
-	local pinged_unit = var_19_0.pinged_unit
+	local pinged_unit = data.pinged_unit
 
-	if not ALIVE[pinged_unit] then
-		local has_extension = ScriptUnit.has_extension(pinged_unit, "ping_system")
+	if ALIVE[pinged_unit] then
+		local ping_extension = ScriptUnit.has_extension(pinged_unit, "ping_system")
 
-		if not has_extension and not has_extension.set_pinged and not has_extension:pinged() then
-			local _is_outline_enabled = self:_is_outline_enabled(pinged_unit)
+		if ping_extension and ping_extension.set_pinged and ping_extension:pinged() then
+			local apply_outline = self:_is_outline_enabled(pinged_unit)
 
-			has_extension:set_pinged(false, nil, arg_19_1, _is_outline_enabled)
+			ping_extension:set_pinged(false, nil, pinger_unit, apply_outline)
 		end
 	end
 
-	if not self._world_markers_enabled and not flag then
-		Managers.state.event:trigger("remove_world_marker", flag)
+	if self._world_markers_enabled and world_marker_id then
+		Managers.state.event:trigger("remove_world_marker", world_marker_id)
 	end
 
-	local child_pings = var_19_0.child_pings
+	local child_pings = data.child_pings
 
-	if not child_pings then
+	if child_pings then
 		for i = 1, #child_pings do
-			local var_19_9 = child_pings[i]
+			local child_pinger_unit = child_pings[i]
 
-			self:_remove_ping(var_19_9, arg_19_2)
+			self:_remove_ping(child_pinger_unit, skip_sync)
 		end
 	end
 end
 
-PingSystem.get_pinged_unit = function (self, arg_20_1)
+PingSystem.get_pinged_unit = function (self, owner_unit)
 	-- function 20
-	local var_20_0 = self._pinged_units[arg_20_1]
+	local ping_data = self._pinged_units[owner_unit]
 
-	if not var_20_0 then
+	if ping_data then
 		-- Nothing
 	end
 
 	::label_20_0::
 
-	local alive = Unit.alive(var_20_0.pinged_unit)
+	local alive = Unit.alive(ping_data.pinged_unit)
 
-	alive = not alive and var_20_0.pinged_unit
+	alive = not not alive and not not ping_data.pinged_unit
 
 	::label_20_1::
 
 	return alive
 end
 
-PingSystem._is_outline_enabled = function (self, arg_21_1)
+PingSystem._is_outline_enabled = function (self, unit)
 	-- function 21
-	if not self._outlines_enabled.item and not ScriptUnit.has_extension(arg_21_1, "pickup_system") and not ScriptUnit.has_extension(arg_21_1, "interactable_system") then
+	if self._outlines_enabled.item and ScriptUnit.has_extension(unit, "pickup_system") and ScriptUnit.has_extension(unit, "interactable_system") then
 		return true
 	end
 
 	return self._outlines_enabled.unit
 end
 
-PingSystem._play_ping_vo = function (arg_22_0, arg_22_1, arg_22_2, arg_22_3, arg_22_4)
+PingSystem._play_ping_vo = function (self, pinger_unit, pinged_unit, ping_type, social_wheel_event_id)
 	-- function 22
-	local alloc_table = FrameTable.alloc_table()
-	local extension_input = ScriptUnit.extension_input(arg_22_1, "dialogue_system")
+	local event_data = FrameTable.alloc_table()
+	local dialogue_input = ScriptUnit.extension_input(pinger_unit, "dialogue_system")
 
-	alloc_table.is_ping = true
+	event_data.is_ping = true
 
-	if not arg_22_2 and not Unit.alive(arg_22_2) then
-		local var_22_2
+	if pinged_unit and Unit.alive(pinged_unit) then
+		local vo_event_name
+		local is_enemy = Managers.state.side:is_enemy(pinger_unit, pinged_unit)
 
-		if not Managers.state.side:is_enemy(arg_22_1, arg_22_2) then
-			local var_22_3 = BLACKBOARDS[arg_22_2]
+		if is_enemy then
+			local bb = BLACKBOARDS[pinged_unit]
 
-			if not var_22_3 then
-				local name = var_22_3.breed.name
-				local var_22_5 = POSITION_LOOKUP[arg_22_2]
+			if bb then
+				local breed = bb.breed
+				local breed_name = breed.name
+				local var_22_0 = POSITION_LOOKUP[pinged_unit]
 
-				var_22_5 = var_22_5 or Unit.world_position(arg_22_2, 0)
+				if not var_22_0 then
+					-- Nothing
+				end
 
-				local flat = Vector3.flat(var_22_5)
-				local var_22_7 = POSITION_LOOKUP[arg_22_1]
-				local flat_2 = Vector3.flat(var_22_7)
+				var_22_0 = Unit.world_position(pinged_unit, 0)
 
-				alloc_table.enemy_tag = name
-				alloc_table.enemy_unit = arg_22_2
-				alloc_table.distance = Vector3.distance(flat, flat_2)
+				local pinged_unit_pos = var_22_0
 
-				extension_input:trigger_networked_dialogue_event("seen_enemy", alloc_table)
+				::label_22_0::
+
+				local pinged_unit_pos_flat = Vector3.flat(pinged_unit_pos)
+				local pinger_unit_pos = POSITION_LOOKUP[pinger_unit]
+				local pinger_unit_pos_flat = Vector3.flat(pinger_unit_pos)
+
+				event_data.enemy_tag = breed_name
+				event_data.enemy_unit = pinged_unit
+				event_data.distance = Vector3.distance(pinged_unit_pos_flat, pinger_unit_pos_flat)
+
+				dialogue_input:trigger_networked_dialogue_event("seen_enemy", event_data)
 			end
 
 			return
 		end
 
-		local has_extension = ScriptUnit.has_extension(arg_22_2, "status_system")
+		local status_extension = ScriptUnit.has_extension(pinged_unit, "status_system")
 
-		if not has_extension then
-			local disabled_vo_reason = has_extension:disabled_vo_reason()
+		if status_extension then
+			local event = status_extension:disabled_vo_reason()
 
-			if not disabled_vo_reason then
-				alloc_table.source_name = ScriptUnit.extension(arg_22_1, "dialogue_system").context.player_profile
-				alloc_table.target_name = ScriptUnit.extension(arg_22_2, "dialogue_system").context.player_profile
+			if event then
+				event_data.source_name = ScriptUnit.extension(pinger_unit, "dialogue_system").context.player_profile
+				event_data.target_name = ScriptUnit.extension(pinged_unit, "dialogue_system").context.player_profile
 
-				extension_input:trigger_networked_dialogue_event(disabled_vo_reason, alloc_table)
+				dialogue_input:trigger_networked_dialogue_event(event, event_data)
 			end
 
 			return
 		end
 
-		local get_data = Unit.get_data(arg_22_2, "lookat_tag")
+		local lookat_tag = Unit.get_data(pinged_unit, "lookat_tag")
 
-		if not get_data then
-			alloc_table.item_tag = get_data or Unit.debug_name(arg_22_2)
+		if lookat_tag then
+			event_data.item_tag = not not lookat_tag or not not Unit.debug_name(pinged_unit)
 
-			extension_input:trigger_networked_dialogue_event("seen_item", alloc_table)
+			dialogue_input:trigger_networked_dialogue_event("seen_item", event_data)
 
 			return
 		end
 	else
-		local var_22_12
+		local vo_event_name
 
-		if not (not arg_22_4 and arg_22_4 == NetworkLookup.social_wheel_events["n/a"]) then
-			local var_22_13 = NetworkLookup.social_wheel_events[arg_22_4]
+		if social_wheel_event_id and social_wheel_event_id ~= NetworkLookup.social_wheel_events["n/a"] then
+			local social_wheel_event_name = NetworkLookup.social_wheel_events[social_wheel_event_id]
+			local social_wheel_event_settings = SocialWheelSettingsLookup[social_wheel_event_name]
 
-			var_22_12 = SocialWheelSettingsLookup[var_22_13].vo_event_name
+			vo_event_name = social_wheel_event_settings.vo_event_name
 		end
 
-		if not var_22_12 then
-			if arg_22_3 == PingTypes.ACKNOWLEDGE then
-				var_22_12 = "vw_affirmative"
-			elseif arg_22_3 == PingTypes.CANCEL then
-				var_22_12 = "vw_cancel"
-			elseif arg_22_3 == PingTypes.DENY then
-				var_22_12 = "vw_negation"
-			elseif arg_22_3 == PingTypes.ENEMY_GENERIC then
-				var_22_12 = "vw_attack_now"
-			elseif arg_22_3 == PingTypes.MOVEMENT_GENERIC then
-				var_22_12 = "vw_go_here"
-			elseif arg_22_3 == PingTypes.PLAYER_PICK_UP_ACKNOWLEDGE then
-				var_22_12 = "vw_answer_ping"
+		if not vo_event_name then
+			if ping_type == PingTypes.ACKNOWLEDGE then
+				vo_event_name = "vw_affirmative"
+			elseif ping_type == PingTypes.CANCEL then
+				vo_event_name = "vw_cancel"
+			elseif ping_type == PingTypes.DENY then
+				vo_event_name = "vw_negation"
+			elseif ping_type == PingTypes.ENEMY_GENERIC then
+				vo_event_name = "vw_attack_now"
+			elseif ping_type == PingTypes.MOVEMENT_GENERIC then
+				vo_event_name = "vw_go_here"
+			elseif ping_type == PingTypes.PLAYER_PICK_UP_ACKNOWLEDGE then
+				vo_event_name = "vw_answer_ping"
 			else
 				return
 			end
 		end
 
-		if not var_22_12 then
-			extension_input:trigger_networked_dialogue_event(var_22_12, alloc_table)
+		if vo_event_name then
+			dialogue_input:trigger_networked_dialogue_event(vo_event_name, event_data)
 		end
 	end
 end
 
-PingSystem.rpc_ping_unit = function (self, arg_23_1, arg_23_2, arg_23_3, arg_23_4, arg_23_5, arg_23_6, arg_23_7)
+PingSystem.rpc_ping_unit = function (self, channel_id, pinger_unit_id, pinged_unit_id, is_level_unit, flash, ping_type, social_wheel_event_id)
 	-- function 23
-	local unit = self._unit_storage:unit(arg_23_2)
-	local game_object_or_level_unit = Managers.state.network:game_object_or_level_unit(arg_23_3, arg_23_4)
-	local unit_owner = Managers.player:unit_owner(unit)
+	local pinger_unit = self._unit_storage:unit(pinger_unit_id)
+	local pinged_unit = Managers.state.network:game_object_or_level_unit(pinged_unit_id, is_level_unit)
+	local sender_player = Managers.player:unit_owner(pinger_unit)
 
-	if not unit_owner then
+	if not sender_player then
 		return
 	end
 
-	local unique_id = unit_owner:unique_id()
+	local sender_unique_id = sender_player:unique_id()
 
-	if not self.is_server then
-		arg_23_6 = self:_get_unit_ping_type(game_object_or_level_unit, unique_id, arg_23_6)
+	if self.is_server then
+		ping_type = self:_get_unit_ping_type(pinged_unit, sender_unique_id, ping_type)
 
-		local var_23_4
-		local var_23_5
-		local get = MechanismOverrides.get(PingTemplates, self._current_mechanism_name)
+		local do_ping, chat_messages
+		local ping_templates = MechanismOverrides.get(PingTemplates, self._current_mechanism_name)
 
-		for k, v in pairs(get) do
-			if not v:check_func(unit, game_object_or_level_unit) then
-				var_23_4, var_23_5 = v:exec_func(self, unit, game_object_or_level_unit, arg_23_6, arg_23_7, self._current_mechanism_name)
+		for _, data in pairs(ping_templates) do
+			if data:check_func(pinger_unit, pinged_unit) then
+				do_ping, chat_messages = data:exec_func(self, pinger_unit, pinged_unit, ping_type, social_wheel_event_id, self._current_mechanism_name)
 
 				break
 			end
 		end
 
-		if not var_23_4 then
+		if not do_ping then
 			return
 		end
 
-		self:_handle_ping(arg_23_6, arg_23_7, unit_owner, unit, game_object_or_level_unit, nil, arg_23_5)
-		self:_handle_chat(arg_23_6, arg_23_7, unit_owner, unit, game_object_or_level_unit, var_23_5)
+		self:_handle_ping(ping_type, social_wheel_event_id, sender_player, pinger_unit, pinged_unit, nil, flash)
+		self:_handle_chat(ping_type, social_wheel_event_id, sender_player, pinger_unit, pinged_unit, chat_messages)
 	else
-		if not Managers.chat:ignoring_peer_id(unit_owner.peer_id) then
+		if Managers.chat:ignoring_peer_id(sender_player.peer_id) then
 			return
 		end
 
-		self:_handle_ping(arg_23_6, arg_23_7, unit_owner, unit, game_object_or_level_unit, nil, arg_23_5)
+		self:_handle_ping(ping_type, social_wheel_event_id, sender_player, pinger_unit, pinged_unit, nil, flash)
 	end
 end
 
-PingSystem.rpc_ping_world_position = function (self, arg_24_1, arg_24_2, arg_24_3, arg_24_4, arg_24_5, arg_24_6)
+PingSystem.rpc_ping_world_position = function (self, channel_id, pinger_unit_id, position, ping_type, social_wheel_event_id, is_double_press)
 	-- function 24
-	local unit = self._unit_storage:unit(arg_24_2)
-	local unit_owner = Managers.player:unit_owner(unit)
+	local pinger_unit = self._unit_storage:unit(pinger_unit_id)
+	local sender_player = Managers.player:unit_owner(pinger_unit)
 
-	if not unit_owner then
+	if not sender_player then
 		return
 	end
 
-	if not self.is_server then
-		local var_24_2
-		local var_24_3
+	if self.is_server then
+		local new_position
 
-		arg_24_4, var_24_3 = self:_get_world_position_ping_type(arg_24_4, arg_24_6)
-		arg_24_3 = not var_24_3 and var_24_3 and arg_24_3
+		ping_type, new_position = self:_get_world_position_ping_type(ping_type, is_double_press)
 
-		local var_24_4
-		local get = MechanismOverrides.get(PingTemplates, self._current_mechanism_name)
+		if new_position and not new_position then
+			-- Nothing
+		end
 
-		for k, v in pairs(get) do
-			if not v:check_func(unit, nil) then
-				k, var_24_4, k = v:exec_func(self, unit, nil, arg_24_4, arg_24_5, self._current_mechanism_name)
+		local chat_messages
+		local ping_templates = MechanismOverrides.get(PingTemplates, self._current_mechanism_name)
+
+		for _, data in pairs(ping_templates) do
+			if data:check_func(pinger_unit, nil) then
+				_, chat_messages, _ = data:exec_func(self, pinger_unit, nil, ping_type, social_wheel_event_id, self._current_mechanism_name)
 
 				break
 			end
 		end
 
-		self:_handle_ping(arg_24_4, arg_24_5, unit_owner, unit, nil, arg_24_3, nil)
-		self:_handle_chat(arg_24_4, arg_24_5, unit_owner, unit, nil, var_24_4)
+		self:_handle_ping(ping_type, social_wheel_event_id, sender_player, pinger_unit, nil, position, nil)
+		self:_handle_chat(ping_type, social_wheel_event_id, sender_player, pinger_unit, nil, chat_messages)
 	else
-		if not Managers.chat:ignoring_peer_id(unit_owner.peer_id) then
+		if Managers.chat:ignoring_peer_id(sender_player.peer_id) then
 			return
 		end
 
-		self:_handle_ping(arg_24_4, arg_24_5, unit_owner, unit, nil, arg_24_3, nil)
+		self:_handle_ping(ping_type, social_wheel_event_id, sender_player, pinger_unit, nil, position, nil)
 	end
 end
 
-PingSystem.rpc_social_message = function (self, arg_25_1, arg_25_2, arg_25_3, arg_25_4)
+PingSystem.rpc_social_message = function (self, channel_id, pinger_unit_id, social_wheel_event_id, pinged_unit_id)
 	-- function 25
 	fassert(self.is_server, "Only server should get this")
 
-	local unit = self._unit_storage:unit(arg_25_2)
-	local unit_2 = self._unit_storage:unit(arg_25_4)
-	local unit_owner = Managers.player:unit_owner(unit)
+	local pinger_unit = self._unit_storage:unit(pinger_unit_id)
+	local pinged_unit = self._unit_storage:unit(pinged_unit_id)
+	local sender_player = Managers.player:unit_owner(pinger_unit)
 
-	self:_handle_chat(nil, arg_25_3, unit_owner, unit, unit_2)
+	self:_handle_chat(nil, social_wheel_event_id, sender_player, pinger_unit, pinged_unit)
 end
 
-PingSystem.rpc_remove_ping = function (self, arg_26_1, arg_26_2)
+PingSystem.rpc_remove_ping = function (self, channel_id, pinger_unit_id)
 	-- function 26
 	if not self._pings_enabled then
 		return
 	end
 
-	local unit = self._unit_storage:unit(arg_26_2)
+	local pinger_unit = self._unit_storage:unit(pinger_unit_id)
 
-	self:_remove_ping(unit)
+	self:_remove_ping(pinger_unit)
 end
 
-PingSystem._play_sound = function (self, arg_27_1)
+PingSystem._play_sound = function (self, event)
 	-- function 27
-	WwiseWorld.trigger_event(self._wwise_world, arg_27_1)
+	WwiseWorld.trigger_event(self._wwise_world, event)
 end

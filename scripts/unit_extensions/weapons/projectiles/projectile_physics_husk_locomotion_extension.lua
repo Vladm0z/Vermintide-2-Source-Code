@@ -5,58 +5,58 @@ ProjectilePhysicsHuskLocomotionExtension = class(ProjectilePhysicsHuskLocomotion
 local script_data = script_data
 local debug_projectiles = script_data.debug_projectiles
 
-debug_projectiles = debug_projectiles or Development.parameter("debug_projectiles")
+debug_projectiles = not not debug_projectiles or not not Development.parameter("debug_projectiles")
 script_data.debug_projectiles = debug_projectiles
 
-ProjectilePhysicsHuskLocomotionExtension.init = function (self, arg_1_1, arg_1_2, arg_1_3)
+ProjectilePhysicsHuskLocomotionExtension.init = function (self, extension_init_context, unit, extension_init_data)
 	-- function 1
-	self.unit = arg_1_2
-	self.owner_unit = arg_1_3.owner_unit
+	self.unit = unit
+	self.owner_unit = extension_init_data.owner_unit
 	self.is_server = Managers.player.is_server
 	self.is_husk = not self.is_server
 	self.stopped = false
 
-	local position_network_scale = AiAnimUtils.position_network_scale(arg_1_3.network_position)
-	local rotation_network_scale = AiAnimUtils.rotation_network_scale(arg_1_3.network_rotation)
-	local velocity_network_scale = AiAnimUtils.velocity_network_scale(arg_1_3.network_velocity)
-	local velocity_network_scale_2 = AiAnimUtils.velocity_network_scale(arg_1_3.network_angular_velocity)
-	local create_actor = Unit.create_actor(arg_1_2, "throw")
+	local position = AiAnimUtils.position_network_scale(extension_init_data.network_position)
+	local rotation = AiAnimUtils.rotation_network_scale(extension_init_data.network_rotation)
+	local velocity = AiAnimUtils.velocity_network_scale(extension_init_data.network_velocity)
+	local angular_velocity = AiAnimUtils.velocity_network_scale(extension_init_data.network_angular_velocity)
+	local physics_actor = Unit.create_actor(unit, "throw")
 
-	Actor.teleport_position(create_actor, position_network_scale)
-	Actor.teleport_rotation(create_actor, rotation_network_scale)
-	Actor.set_velocity(create_actor, velocity_network_scale)
-	Actor.set_angular_velocity(create_actor, velocity_network_scale_2)
+	Actor.teleport_position(physics_actor, position)
+	Actor.teleport_rotation(physics_actor, rotation)
+	Actor.set_velocity(physics_actor, velocity)
+	Actor.set_angular_velocity(physics_actor, angular_velocity)
 
-	self.physics_actor = create_actor
+	self.physics_actor = physics_actor
 
-	for i = 1, Unit.num_actors(arg_1_2) do
-		local actor = Unit.actor(arg_1_2, i)
+	for i = 1, Unit.num_actors(unit) do
+		local actor = Unit.actor(unit, i)
 
-		if not (not actor and not Actor.is_physical(actor) and actor == create_actor) then
-			Actor.set_velocity(actor, velocity_network_scale)
-			Actor.set_angular_velocity(actor, velocity_network_scale_2)
+		if actor and Actor.is_physical(actor) and actor ~= physics_actor then
+			Actor.set_velocity(actor, velocity)
+			Actor.set_angular_velocity(actor, angular_velocity)
 		end
 	end
 end
 
-ProjectilePhysicsHuskLocomotionExtension.destroy = function (arg_2_0)
+ProjectilePhysicsHuskLocomotionExtension.destroy = function (self)
 	-- function 2
 	return
 end
 
-ProjectilePhysicsHuskLocomotionExtension.update = function (self, arg_3_1, arg_3_2, arg_3_3, arg_3_4, arg_3_5)
+ProjectilePhysicsHuskLocomotionExtension.update = function (self, unit, input, dt, context, t)
 	-- function 3
-	if not script_data.debug_projectiles then
-		local network = Managers.state.network
-		local unit_game_object_id = network:unit_game_object_id(arg_3_1)
-		local game = network:game()
-		local game_object_field = GameSession.game_object_field(game, unit_game_object_id, "debug_pos")
-		local local_position = Unit.local_position(arg_3_1, 0)
+	if script_data.debug_projectiles then
+		local network_manager = Managers.state.network
+		local go_id = network_manager:unit_game_object_id(unit)
+		local game = network_manager:game()
+		local debug_pos = GameSession.game_object_field(game, go_id, "debug_pos")
+		local pos = Unit.local_position(unit, 0)
 
-		QuickDrawer:line(game_object_field, local_position, Color(255, 0, 255, 0))
+		QuickDrawer:line(debug_pos, pos, Color(255, 0, 255, 0))
 	end
 
-	if not self.stopped then
+	if self.stopped then
 		return
 	end
 end
@@ -66,22 +66,22 @@ ProjectilePhysicsHuskLocomotionExtension.is_at_rest = function (self)
 	return Actor.is_sleeping(self.physics_actor)
 end
 
-ProjectilePhysicsHuskLocomotionExtension.teleport = function (self, arg_5_1, arg_5_2)
+ProjectilePhysicsHuskLocomotionExtension.teleport = function (self, position, rotation)
 	-- function 5
-	local from_quaternion_position = Matrix4x4.from_quaternion_position(arg_5_2, arg_5_1)
+	local pose = Matrix4x4.from_quaternion_position(rotation, position)
 	local unit = self.unit
-	local physics_actor = self.physics_actor
+	local actor = self.physics_actor
 
-	Unit.set_local_pose(unit, 0, from_quaternion_position)
-	Actor.teleport_pose(physics_actor, from_quaternion_position)
+	Unit.set_local_pose(unit, 0, pose)
+	Actor.teleport_pose(actor, pose)
 
-	local zero = Vector3.zero()
+	local null_vector = Vector3.zero()
 
-	Actor.set_angular_velocity(physics_actor, zero)
-	Actor.set_velocity(physics_actor, zero)
+	Actor.set_angular_velocity(actor, null_vector)
+	Actor.set_velocity(actor, null_vector)
 end
 
-ProjectilePhysicsHuskLocomotionExtension.bounce = function (arg_6_0)
+ProjectilePhysicsHuskLocomotionExtension.bounce = function (self)
 	-- function 6
 	return
 end

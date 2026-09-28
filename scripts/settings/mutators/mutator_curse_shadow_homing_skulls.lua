@@ -4,39 +4,42 @@ require("scripts/settings/dlcs/belakor/belakor_balancing")
 
 script_data.shadow_homing_skulls_debug = false
 
-local printf = printf
+local global_printf = printf
 
-local function fn(...)
+local function printf(...)
 	-- function 1
-	local var_1_0 = sprintf(...)
+	local message = sprintf(...)
 
-	printf("[MutatorCurseShadowHomingSkulls] %s", var_1_0)
+	global_printf("[MutatorCurseShadowHomingSkulls] %s", message)
 end
 
-local function fn_2(...)
+local function dprintf(...)
 	-- function 2
-	if not script_data.belakor_shooters_debug then
-		local var_2_0 = sprintf(...)
+	if script_data.belakor_shooters_debug then
+		local message = sprintf(...)
 
-		printf("[MutatorCurseShadowHomingSkulls] %s", var_2_0)
+		global_printf("[MutatorCurseShadowHomingSkulls] %s", message)
 	end
 end
 
-local function fn_3(arg_3_0, arg_3_1, arg_3_2)
+local function find_positions(physics_world, random_player, shooter_count)
 	-- function 3
-	local tbl = {}
-	local PLAYER_AND_BOT_UNITS = Managers.state.side:get_side_from_name("heroes").PLAYER_AND_BOT_UNITS
+	local forbidden_position_list = {}
+	local side = Managers.state.side:get_side_from_name("heroes")
+	local players = side.PLAYER_AND_BOT_UNITS
 
-	for i = 1, #PLAYER_AND_BOT_UNITS do
-		local var_3_2 = PLAYER_AND_BOT_UNITS[i]
+	for player_index = 1, #players do
+		local unit = players[player_index]
 
-		tbl[#tbl + 1] = POSITION_LOOKUP[var_3_2]
+		forbidden_position_list[#forbidden_position_list + 1] = POSITION_LOOKUP[unit]
 	end
 
-	return (ConflictUtils.find_visible_positions_in_sphere_around_player(arg_3_0, arg_3_2, arg_3_1, BelakorBalancing.homing_skulls_radius, BelakorBalancing.homing_skulls_min_pitch, BelakorBalancing.homing_skulls_max_pitch, BelakorBalancing.homing_skulls_pitch_delta, 0, 2 * math.pi, BelakorBalancing.homing_skulls_yaw_delta, tbl, BelakorBalancing.homing_skulls_radius, BelakorBalancing.homing_skulls_distance_between_skulls, BelakorBalancing.homing_skulls_min_distance_above_ground))
+	local cluster_center_positions = ConflictUtils.find_visible_positions_in_sphere_around_player(physics_world, shooter_count, random_player, BelakorBalancing.homing_skulls_radius, BelakorBalancing.homing_skulls_min_pitch, BelakorBalancing.homing_skulls_max_pitch, BelakorBalancing.homing_skulls_pitch_delta, 0, 2 * math.pi, BelakorBalancing.homing_skulls_yaw_delta, forbidden_position_list, BelakorBalancing.homing_skulls_radius, BelakorBalancing.homing_skulls_distance_between_skulls, BelakorBalancing.homing_skulls_min_distance_above_ground)
+
+	return cluster_center_positions
 end
 
-local tbl = {
+local STATES = {
 	WAITING_TO_SPAWN = "WAITING_TO_SPAWN",
 	DISABLED = "DISABLED",
 	SPAWNING = "SPAWNING"
@@ -49,87 +52,96 @@ return {
 	packages = {
 		"resource_packages/mutators/mutator_curse_shadow_homing_skulls"
 	},
-	server_start_function = function (self, arg_4_1)
+	server_start_function = function (context, data)
 		-- function 4
-		arg_4_1.conflict_director = Managers.state.conflict
-		arg_4_1.physics_world = World.physics_world(self.world)
-		arg_4_1.state = tbl.WAITING_TO_SPAWN
+		data.conflict_director = Managers.state.conflict
+		data.physics_world = World.physics_world(context.world)
+		data.state = STATES.WAITING_TO_SPAWN
 	end,
-	server_players_left_safe_zone = function (arg_5_0, arg_5_1)
+	server_players_left_safe_zone = function (context, data)
 		-- function 5
-		arg_5_1.started = true
+		data.started = true
 	end,
-	server_pre_update_function = function (arg_6_0, arg_6_1, arg_6_2, arg_6_3)
+	server_pre_update_function = function (context, data, dt, t)
 		-- function 6
-		if Managers.state.unit_spawner.game_session == nil or not global_is_inside_inn then
+		if Managers.state.unit_spawner.game_session == nil or global_is_inside_inn then
 			return
 		end
 
-		if not arg_6_1.started then
+		if not data.started then
 			return
 		end
 
-		local state = arg_6_1.state
-		local conflict_director = arg_6_1.conflict_director
-		local flag = not (conflict_director.pacing:horde_population() < 1) or conflict_director.pacing:get_state() ~= "pacing_frozen"
+		local current_state = data.state
+		local conflict_director = data.conflict_director
+		local pacing_disabled = conflict_director.pacing:horde_population() < 1 and conflict_director.pacing:get_state() ~= "pacing_frozen"
 
-		if state == tbl.WAITING_TO_SPAWN then
-			if not arg_6_1.next_spawn_t then
-				arg_6_1.next_spawn_t = arg_6_3 + Math.random_range(BelakorBalancing.homing_skulls_min_time_between_spawns, BelakorBalancing.homing_skulls_max_time_between_spawns)
-				arg_6_1.state = tbl.WAITING_TO_SPAWN
+		if current_state == STATES.WAITING_TO_SPAWN then
+			if not data.next_spawn_t then
+				local next_delta = Math.random_range(BelakorBalancing.homing_skulls_min_time_between_spawns, BelakorBalancing.homing_skulls_max_time_between_spawns)
+
+				data.next_spawn_t = t + next_delta
+				data.state = STATES.WAITING_TO_SPAWN
 			end
 
-			if not (not arg_6_1.next_spawn_t and not (arg_6_3 > arg_6_1.next_spawn_t)) then
-				arg_6_1.state = tbl.SPAWNING
-			elseif not flag then
-				arg_6_1.state = tbl.DISABLED
+			if not data.next_spawn_t or t > data.next_spawn_t then
+				data.state = STATES.SPAWNING
+			elseif pacing_disabled then
+				data.state = STATES.DISABLED
 			end
-		elseif state == tbl.DISABLED then
-			if not flag then
-				arg_6_1.next_spawn_t = arg_6_3 + Math.random_range(BelakorBalancing.homing_skulls_min_time_between_spawns, BelakorBalancing.homing_skulls_max_time_between_spawns)
-				arg_6_1.state = tbl.WAITING_TO_SPAWN
-			end
-		elseif state == tbl.SPAWNING then
-			local get_random_alive_hero = PlayerUtils.get_random_alive_hero()
+		elseif current_state == STATES.DISABLED then
+			if not pacing_disabled then
+				local next_delta = Math.random_range(BelakorBalancing.homing_skulls_min_time_between_spawns, BelakorBalancing.homing_skulls_max_time_between_spawns)
 
-			if not get_random_alive_hero then
-				arg_6_1.next_spawn_t = arg_6_3 + BelakorBalancing.homing_skulls_retry_time_on_spawn_failure
-				arg_6_1.state = tbl.WAITING_TO_SPAWN
+				data.next_spawn_t = t + next_delta
+				data.state = STATES.WAITING_TO_SPAWN
+			end
+		elseif current_state == STATES.SPAWNING then
+			local random_player = PlayerUtils.get_random_alive_hero()
+
+			if not random_player then
+				data.next_spawn_t = t + BelakorBalancing.homing_skulls_retry_time_on_spawn_failure
+				data.state = STATES.WAITING_TO_SPAWN
 			else
-				local physics_world = arg_6_1.physics_world
-				local homing_skulls_maximum_count = BelakorBalancing.homing_skulls_maximum_count
-				local var_6_6 = fn_3(physics_world, get_random_alive_hero, homing_skulls_maximum_count)
+				local physics_world = data.physics_world
+				local shooter_count = BelakorBalancing.homing_skulls_maximum_count
+				local positions_found = find_positions(physics_world, random_player, shooter_count)
 
-				if not (not var_6_6 and not (#var_6_6 >= BelakorBalancing.homing_skulls_minimum_count)) then
-					for i = 1, #var_6_6 do
-						local var_6_7 = var_6_6[i]
-						local flag_2 = false
-						local identity = Quaternion.identity()
-						local str = "mutator"
-						local str_2 = "deus_04"
+				if positions_found and #positions_found >= BelakorBalancing.homing_skulls_minimum_count then
+					for i = 1, #positions_found do
+						local position = positions_found[i]
+						local with_physics = false
+						local rotation = Quaternion.identity()
+						local spawn_type = "mutator"
+						local pickup_name = "deus_04"
+						local pickup_system = Managers.state.entity:system("pickup_system")
 
-						Managers.state.entity:system("pickup_system"):spawn_pickup(str_2, var_6_7, identity, flag_2, str)
+						pickup_system:spawn_pickup(pickup_name, position, rotation, with_physics, spawn_type)
 					end
 
-					Managers.state.entity:system("audio_system"):play_2d_audio_event("Play_curse_shadow_skulls_spawn")
+					local audio_system = Managers.state.entity:system("audio_system")
 
-					arg_6_1.next_spawn_t = arg_6_3 + Math.random_range(BelakorBalancing.homing_skulls_min_time_between_spawns, BelakorBalancing.homing_skulls_max_time_between_spawns)
-					arg_6_1.state = tbl.WAITING_TO_SPAWN
+					audio_system:play_2d_audio_event("Play_curse_shadow_skulls_spawn")
+
+					local next_delta = Math.random_range(BelakorBalancing.homing_skulls_min_time_between_spawns, BelakorBalancing.homing_skulls_max_time_between_spawns)
+
+					data.next_spawn_t = t + next_delta
+					data.state = STATES.WAITING_TO_SPAWN
 				else
-					arg_6_1.next_spawn_t = arg_6_3 + BelakorBalancing.homing_skulls_retry_time_on_spawn_failure
-					arg_6_1.state = tbl.WAITING_TO_SPAWN
+					data.next_spawn_t = t + BelakorBalancing.homing_skulls_retry_time_on_spawn_failure
+					data.state = STATES.WAITING_TO_SPAWN
 				end
 			end
 		end
 
-		if not script_data.shadow_homing_skulls_debug then
+		if script_data.shadow_homing_skulls_debug then
 			local text = Debug.text
-			local str_3 = "homing skulls state state: %s - %s"
-			local state_2 = arg_6_1.state
+			local str = "homing skulls state state: %s - %s"
+			local state = data.state
 			local num
 
-			if not arg_6_1.next_spawn_t then
-				num = arg_6_1.next_spawn_t - arg_6_3
+			if data.next_spawn_t then
+				num = data.next_spawn_t - t
 
 				if not num then
 					-- Nothing
@@ -140,10 +152,10 @@ return {
 
 			::label_6_0::
 
-			text(str_3, state_2, num)
+			text(str, state, num)
 		end
 	end,
-	server_player_hit_function = function (arg_7_0, arg_7_1, arg_7_2, arg_7_3, arg_7_4)
+	server_player_hit_function = function (context, data, hit_unit, attacker_unit, hit_data)
 		-- function 7
 		return
 	end

@@ -2,29 +2,29 @@
 
 BackendInterfaceRunes = class(BackendInterfaceRunes)
 
-local str = "runes_"
-local str_2 = "runes"
-local str_3 = "rune_"
+local DB_ENTITY_NAME_PREFIX = "runes_"
+local DB_ENTITY_TYPE = "runes"
+local DB_ATTRIBUTE_NAME_PREFIX = "rune_"
 
-BackendInterfaceRunes.init = function (arg_1_0)
+BackendInterfaceRunes.init = function (self)
 	-- function 1
 	return
 end
 
 BackendInterfaceRunes._refresh_attributes = function (self)
 	-- function 2
-	local get_entities_with_attributes = Backend.get_entities_with_attributes(str_2)
-	local tbl = {}
+	local entities = Backend.get_entities_with_attributes(DB_ENTITY_TYPE)
+	local runes_by_entity_name = {}
 
-	for k, v in pairs(get_entities_with_attributes) do
-		local entity_name = v.entity_name
-		local runes = v.runes
+	for entity_id, entity in pairs(entities) do
+		local entity_name = entity.entity_name
+		local runes = entity.runes
 
-		runes.entity_id = k
-		tbl[entity_name] = runes
+		runes.entity_id = entity_id
+		runes_by_entity_name[entity_name] = runes
 	end
 
-	self._runes = tbl
+	self._runes = runes_by_entity_name
 end
 
 BackendInterfaceRunes.on_authenticated = function (self)
@@ -32,36 +32,39 @@ BackendInterfaceRunes.on_authenticated = function (self)
 	self:_refresh_attributes()
 end
 
-BackendInterfaceRunes.get = function (self, arg_4_1)
+BackendInterfaceRunes.get = function (self, backend_id)
 	-- function 4
-	local str_2 = str .. arg_4_1
-	local var_4_1 = self._runes[str_2]
+	local db_entity_name = DB_ENTITY_NAME_PREFIX .. backend_id
+	local runes = self._runes[db_entity_name]
+	local value_json = runes
 
-	if not var_4_1 then
-		Application.warning(string.format("[BackendInterfaceRunes:get] Tried to get undefined rune %q", str_2))
+	if not value_json then
+		Application.warning(string.format("[BackendInterfaceRunes:get] Tried to get undefined rune %q", db_entity_name))
 
 		return
 	end
 
-	return (cjson.decode(var_4_1))
+	local value = cjson.decode(value_json)
+
+	return value
 end
 
-BackendInterfaceRunes.set = function (self, arg_5_1, arg_5_2)
+BackendInterfaceRunes.set = function (self, backend_id, rune)
 	-- function 5
-	local str_2 = str .. arg_5_1
-	local str_4 = str_3 .. arg_5_2.rune_slot
-	local var_5_2 = self._runes[str_2]
+	local db_entity_name = DB_ENTITY_NAME_PREFIX .. backend_id
+	local db_attribute_name = DB_ATTRIBUTE_NAME_PREFIX .. rune.rune_slot
+	local runes = self._runes[db_entity_name]
 
-	if arg_5_2 == nil then
-		Application.warning(string.format("[BackendInterfaceRunes:set] Tried to set runes %q for entity %q to nil", str_4, str_2))
+	if rune == nil then
+		Application.warning(string.format("[BackendInterfaceRunes:set] Tried to set runes %q for entity %q to nil", db_attribute_name, db_entity_name))
 
 		return
 	end
 
-	local entity_id = var_5_2.entity_id
-	local encode = cjson.encode(arg_5_2)
-	local set_entity_attribute = Backend.set_entity_attribute(entity_id, str_4, encode)
+	local entity_id = runes.entity_id
+	local value_json = cjson.encode(rune)
+	local error_code = Backend.set_entity_attribute(entity_id, db_attribute_name, value_json)
 
-	fassert(not set_entity_attribute and set_entity_attribute == Backend.RES_NO_CHANGE, "[BackendInterfaceRunes:set] BackendItem.set_entity_attribute() returned an unexpected result: %d", set_entity_attribute)
+	fassert(not error_code or error_code == Backend.RES_NO_CHANGE, "[BackendInterfaceRunes:set] BackendItem.set_entity_attribute() returned an unexpected result: %d", error_code)
 	self:_refresh_attributes()
 end

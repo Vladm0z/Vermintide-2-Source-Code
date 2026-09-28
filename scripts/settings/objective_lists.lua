@@ -1,24 +1,24 @@
 -- chunkname: @scripts/settings/objective_lists.lua
 
-local scripts_entity_system_systems_objective_objective_types = require("scripts/entity_system/systems/objective/objective_types")
-local scripts_entity_system_systems_objective_objective_tags = require("scripts/entity_system/systems/objective/objective_tags")
+local ObjectiveTypes = require("scripts/entity_system/systems/objective/objective_types")
+local ObjectiveTags = require("scripts/entity_system/systems/objective/objective_tags")
 
 ObjectiveLists = {}
 
-local num = 1
-local num_2 = 10
-local num_3 = 10
-local num_4 = 1
-local num_5 = 1
-local num_6 = 10
-local num_7 = 20
-local num_8 = 10
-local num_9 = 1
-local num_10 = 10
+local points_multiplier = 1
+local reach_points = 10
+local interact_points = 10
+local payload_points = 1
+local capture_points = 1
+local safe_room_points = 10
+local socket_points = 20
+local target_points = 10
+local survive_points = 1
+local waystone_points = 10
 
-local function fn(arg_1_0)
+local function increment_func(existing_value)
 	-- function 1
-	return (arg_1_0 or 0) + 1
+	return (not not existing_value or not not 0) + 1
 end
 
 ObjectiveLists.bell_pvp_set_1 = {
@@ -28,7 +28,7 @@ ObjectiveLists.bell_pvp_set_1 = {
 			score_for_completion = 0,
 			volume_type = "any_alive",
 			volume_name = "versus_bell_reach_SZ_01",
-			objective_type = scripts_entity_system_systems_objective_objective_types.objective_reach,
+			objective_type = ObjectiveTypes.objective_reach,
 			vo_context_on_activate = {
 				current_objective = "start_zone"
 			},
@@ -42,8 +42,8 @@ ObjectiveLists.bell_pvp_set_1 = {
 			description = "level_objective_description_bell_01",
 			volume_type = "any_alive",
 			volume_name = "versus_bell_reach_01",
-			objective_type = scripts_entity_system_systems_objective_objective_types.objective_reach,
-			score_for_completion = num_2
+			objective_type = ObjectiveTypes.objective_reach,
+			score_for_completion = reach_points
 		}
 	},
 	{
@@ -53,16 +53,17 @@ ObjectiveLists.bell_pvp_set_1 = {
 			num_sections = 90,
 			capture_time = 180,
 			play_complete_vo = true,
-			objective_type = scripts_entity_system_systems_objective_objective_types.objective_capture_point,
-			score_per_section = num_5,
+			objective_type = ObjectiveTypes.objective_capture_point,
+			score_per_section = capture_points,
 			vo_context_on_complete = {
 				current_objective = "two"
 			},
-			almost_done = function (arg_2_0, arg_2_1)
+			almost_done = function (self, active_objectives)
 				-- function 2
-				local var_2_0 = arg_2_1[1]
+				local objective_name = active_objectives[1]
+				local objective_extension = Managers.state.entity:system("objective_system"):extension_by_objective_name(objective_name)
 
-				if Managers.state.entity:system("objective_system"):extension_by_objective_name(var_2_0):get_percentage_done() > 0.75 then
+				if objective_extension:get_percentage_done() > 0.75 then
 					return true
 				end
 			end
@@ -73,8 +74,8 @@ ObjectiveLists.bell_pvp_set_1 = {
 			description = "level_objective_description_bell_alley",
 			volume_type = "any_alive",
 			volume_name = "versus_bell_reach_alley",
-			objective_type = scripts_entity_system_systems_objective_objective_types.objective_reach,
-			score_for_completion = num_2
+			objective_type = ObjectiveTypes.objective_reach,
+			score_for_completion = reach_points
 		}
 	},
 	{
@@ -82,8 +83,8 @@ ObjectiveLists.bell_pvp_set_1 = {
 			description = "level_objective_description_bell_02_B",
 			volume_type = "any_alive",
 			volume_name = "versus_bell_reach_01_B",
-			objective_type = scripts_entity_system_systems_objective_objective_types.objective_reach,
-			score_for_completion = num_2
+			objective_type = ObjectiveTypes.objective_reach,
+			score_for_completion = reach_points
 		}
 	},
 	{
@@ -91,8 +92,8 @@ ObjectiveLists.bell_pvp_set_1 = {
 			description = "level_objective_description_bell_03",
 			volume_type = "any_alive",
 			volume_name = "versus_bell_reach_02",
-			objective_type = scripts_entity_system_systems_objective_objective_types.objective_reach,
-			score_for_completion = num_2
+			objective_type = ObjectiveTypes.objective_reach,
+			score_for_completion = reach_points
 		}
 	},
 	{
@@ -102,17 +103,18 @@ ObjectiveLists.bell_pvp_set_1 = {
 			play_arrive_vo = true,
 			play_complete_vo = true,
 			close_to_win_on_section = 3,
-			objective_type = scripts_entity_system_systems_objective_objective_types.objective_socket,
-			score_per_socket = num_7,
+			objective_type = ObjectiveTypes.objective_socket,
+			score_per_socket = socket_points,
 			vo_context_on_complete = {
 				current_objective = "safe_room"
 			},
-			almost_done = function (self, arg_3_1)
+			almost_done = function (self, active_objectives)
 				-- function 3
 				local num_sockets = self.num_sockets
-				local var_3_1 = arg_3_1[1]
+				local objective_name = active_objectives[1]
+				local objective_extension = Managers.state.entity:system("objective_system"):extension_by_objective_name(objective_name)
 
-				if Managers.state.entity:system("objective_system"):extension_by_objective_name(var_3_1):get_percentage_done() >= (num_sockets - 1.5) / num_sockets then
+				if objective_extension:get_percentage_done() >= (num_sockets - 1.5) / num_sockets then
 					return true
 				end
 			end
@@ -124,8 +126,8 @@ ObjectiveLists.bell_pvp_set_1 = {
 			volume_type = "all_alive",
 			play_safehouse_vo = true,
 			volume_name = "versus_reach_waystone_round_1",
-			objective_type = scripts_entity_system_systems_objective_objective_types.objective_safehouse,
-			score_for_each_player_inside = num_6
+			objective_type = ObjectiveTypes.objective_safehouse,
+			score_for_each_player_inside = safe_room_points
 		}
 	}
 }
@@ -136,7 +138,7 @@ ObjectiveLists.bell_pvp_set_2 = {
 			score_for_completion = 0,
 			volume_type = "any_alive",
 			volume_name = "versus_bell_reach_SZ_02",
-			objective_type = scripts_entity_system_systems_objective_objective_types.objective_reach,
+			objective_type = ObjectiveTypes.objective_reach,
 			vo_context_on_activate = {
 				current_objective = "start_zone"
 			},
@@ -150,8 +152,8 @@ ObjectiveLists.bell_pvp_set_2 = {
 			description = "level_objective_description_bell_06",
 			volume_type = "any_alive",
 			volume_name = "versus_bell_reach_03",
-			objective_type = scripts_entity_system_systems_objective_objective_types.objective_reach,
-			score_for_completion = num_2
+			objective_type = ObjectiveTypes.objective_reach,
+			score_for_completion = reach_points
 		}
 	},
 	{
@@ -160,16 +162,17 @@ ObjectiveLists.bell_pvp_set_2 = {
 			num_sections = 90,
 			play_complete_vo = true,
 			play_arrive_vo = true,
-			objective_type = scripts_entity_system_systems_objective_objective_types.objective_payload,
-			score_per_section = num_4,
+			objective_type = ObjectiveTypes.objective_payload,
+			score_per_section = payload_points,
 			vo_context_on_complete = {
 				current_objective = "two"
 			},
-			almost_done = function (arg_4_0, arg_4_1)
+			almost_done = function (self, active_objectives)
 				-- function 4
-				local var_4_0 = arg_4_1[1]
+				local objective_name = active_objectives[1]
+				local objective_extension = Managers.state.entity:system("objective_system"):extension_by_objective_name(objective_name)
 
-				if Managers.state.entity:system("objective_system"):extension_by_objective_name(var_4_0):get_percentage_done() > 0.8 then
+				if objective_extension:get_percentage_done() > 0.8 then
 					return true
 				end
 			end
@@ -180,8 +183,8 @@ ObjectiveLists.bell_pvp_set_2 = {
 			description = "level_objective_description_bell_07_B",
 			volume_type = "any_alive",
 			volume_name = "versus_reach_objective_04_B",
-			objective_type = scripts_entity_system_systems_objective_objective_types.objective_reach,
-			score_for_completion = num_2
+			objective_type = ObjectiveTypes.objective_reach,
+			score_for_completion = reach_points
 		}
 	},
 	{
@@ -189,8 +192,8 @@ ObjectiveLists.bell_pvp_set_2 = {
 			description = "level_objective_description_bell_08A",
 			volume_type = "any_alive",
 			volume_name = "versus_bell_reach_04",
-			objective_type = scripts_entity_system_systems_objective_objective_types.objective_reach,
-			score_for_completion = num_2
+			objective_type = ObjectiveTypes.objective_reach,
+			score_for_completion = reach_points
 		}
 	},
 	{
@@ -198,8 +201,8 @@ ObjectiveLists.bell_pvp_set_2 = {
 			description = "level_objective_description_bell_08",
 			volume_type = "any_alive",
 			volume_name = "versus_reach_bell",
-			objective_type = scripts_entity_system_systems_objective_objective_types.objective_reach,
-			score_for_completion = num_2
+			objective_type = ObjectiveTypes.objective_reach,
+			score_for_completion = reach_points
 		}
 	},
 	{
@@ -208,80 +211,82 @@ ObjectiveLists.bell_pvp_set_2 = {
 			play_complete_vo = true,
 			close_to_win_on_section = 3,
 			play_arrive_vo = true,
-			objective_type = scripts_entity_system_systems_objective_objective_types.objective_target,
+			objective_type = ObjectiveTypes.objective_target,
 			vo_context_on_complete = {
 				current_objective = "waystone"
 			},
-			almost_done = function (arg_5_0, arg_5_1)
+			almost_done = function (self, active_objectives)
 				-- function 5
-				local system = Managers.state.entity:system("objective_system")
+				local objective_system = Managers.state.entity:system("objective_system")
+				local num_total = objective_system:num_current_sub_objectives()
+				local num_completed = objective_system:num_current_completed_sub_objectives()
 
-				if system:num_current_sub_objectives() - system:num_current_completed_sub_objectives() <= 3 then
+				if num_total - num_completed <= 3 then
 					return true
 				end
 			end,
 			sub_objectives = {
 				sub_sub_objective_container_01 = {
 					description = "level_objective_description_bell_09",
-					objective_type = scripts_entity_system_systems_objective_objective_types.objective_target,
-					score_for_completion = num_8 * 3,
+					objective_type = ObjectiveTypes.objective_target,
+					score_for_completion = target_points * 3,
 					sub_objectives = {
 						versus_target_objective_bell_01 = {
 							description = "level_objective_description_bell_09",
-							objective_tag = scripts_entity_system_systems_objective_objective_tags.objective_tag_chains,
-							objective_type = scripts_entity_system_systems_objective_objective_types.objective_target
+							objective_tag = ObjectiveTags.objective_tag_chains,
+							objective_type = ObjectiveTypes.objective_target
 						},
 						versus_target_objective_bell_02 = {
 							description = "level_objective_description_bell_09",
-							objective_tag = scripts_entity_system_systems_objective_objective_tags.objective_tag_chains,
-							objective_type = scripts_entity_system_systems_objective_objective_types.objective_target
+							objective_tag = ObjectiveTags.objective_tag_chains,
+							objective_type = ObjectiveTypes.objective_target
 						},
 						versus_target_objective_bell_03 = {
 							description = "level_objective_description_bell_09",
-							objective_tag = scripts_entity_system_systems_objective_objective_tags.objective_tag_chains,
-							objective_type = scripts_entity_system_systems_objective_objective_types.objective_target
+							objective_tag = ObjectiveTags.objective_tag_chains,
+							objective_type = ObjectiveTypes.objective_target
 						}
 					}
 				},
 				sub_sub_objective_container_02 = {
 					description = "level_objective_description_bell_09",
-					score_for_completion = num_8 * 3,
+					score_for_completion = target_points * 3,
 					sub_objectives = {
 						versus_target_objective_bell_04 = {
 							description = "level_objective_description_bell_09",
-							objective_tag = scripts_entity_system_systems_objective_objective_tags.objective_tag_chains,
-							objective_type = scripts_entity_system_systems_objective_objective_types.objective_target
+							objective_tag = ObjectiveTags.objective_tag_chains,
+							objective_type = ObjectiveTypes.objective_target
 						},
 						versus_target_objective_bell_05 = {
 							description = "level_objective_description_bell_09",
-							objective_tag = scripts_entity_system_systems_objective_objective_tags.objective_tag_chains,
-							objective_type = scripts_entity_system_systems_objective_objective_types.objective_target
+							objective_tag = ObjectiveTags.objective_tag_chains,
+							objective_type = ObjectiveTypes.objective_target
 						},
 						versus_target_objective_bell_06 = {
 							description = "level_objective_description_bell_09",
-							objective_tag = scripts_entity_system_systems_objective_objective_tags.objective_tag_chains,
-							objective_type = scripts_entity_system_systems_objective_objective_types.objective_target
+							objective_tag = ObjectiveTags.objective_tag_chains,
+							objective_type = ObjectiveTypes.objective_target
 						}
 					}
 				},
 				sub_sub_objective_container_03 = {
 					description = "level_objective_description_bell_09",
-					score_for_completion = num_8 * 3,
+					score_for_completion = target_points * 3,
 					sub_objectives = {
 						versus_target_objective_bell_07 = {
 							description = "level_objective_description_bell_09",
-							objective_tag = scripts_entity_system_systems_objective_objective_tags.objective_tag_chains,
-							objective_type = scripts_entity_system_systems_objective_objective_types.objective_target
+							objective_tag = ObjectiveTags.objective_tag_chains,
+							objective_type = ObjectiveTypes.objective_target
 						},
 						versus_target_objective_bell_08 = {
 							description = "level_objective_description_bell_09",
-							objective_tag = scripts_entity_system_systems_objective_objective_tags.objective_tag_chains,
-							objective_type = scripts_entity_system_systems_objective_objective_types.objective_target
+							objective_tag = ObjectiveTags.objective_tag_chains,
+							objective_type = ObjectiveTypes.objective_target
 						},
 						versus_target_objective_bell_09 = {
 							description = "level_objective_description_bell_09",
-							objective_tag = scripts_entity_system_systems_objective_objective_tags.objective_tag_chains,
-							objective_type = scripts_entity_system_systems_objective_objective_types.objective_target
+							objective_tag = ObjectiveTags.objective_tag_chains,
+							objective_type = ObjectiveTypes.objective_target
 						}
 					}
 				}
@@ -293,8 +298,8 @@ ObjectiveLists.bell_pvp_set_2 = {
 			description = "level_objective_description_bell_10",
 			volume_type = "any_alive",
 			volume_name = "versus_bell_reach_05",
-			objective_type = scripts_entity_system_systems_objective_objective_types.objective_reach,
-			score_for_completion = num_2
+			objective_type = ObjectiveTypes.objective_reach,
+			score_for_completion = reach_points
 		}
 	},
 	{
@@ -304,8 +309,8 @@ ObjectiveLists.bell_pvp_set_2 = {
 			play_arrive_vo = true,
 			volume_name = "versus_reach_waystone",
 			play_waystone_vo = true,
-			objective_type = scripts_entity_system_systems_objective_objective_types.objective_safehouse,
-			score_for_each_player_inside = num_10
+			objective_type = ObjectiveTypes.objective_safehouse,
+			score_for_each_player_inside = waystone_points
 		}
 	}
 }
@@ -316,7 +321,7 @@ ObjectiveLists.military_pvp_set_1 = {
 			score_for_completion = 0,
 			volume_type = "any_alive",
 			volume_name = "versus_military_sz_01",
-			objective_type = scripts_entity_system_systems_objective_objective_types.objective_reach,
+			objective_type = ObjectiveTypes.objective_reach,
 			vo_context_on_activate = {
 				current_objective = "start_zone"
 			},
@@ -330,8 +335,8 @@ ObjectiveLists.military_pvp_set_1 = {
 			description = "level_objective_description_military_alley",
 			volume_type = "any_alive",
 			volume_name = "versus_military_reach_first_alley",
-			objective_type = scripts_entity_system_systems_objective_objective_types.objective_reach,
-			score_for_completion = num_2
+			objective_type = ObjectiveTypes.objective_reach,
+			score_for_completion = reach_points
 		}
 	},
 	{
@@ -339,8 +344,8 @@ ObjectiveLists.military_pvp_set_1 = {
 			description = "level_objective_description_military_01",
 			volume_type = "any_alive",
 			volume_name = "versus_military_reach_franz",
-			objective_type = scripts_entity_system_systems_objective_objective_types.objective_reach,
-			score_for_completion = num_2
+			objective_type = ObjectiveTypes.objective_reach,
+			score_for_completion = reach_points
 		}
 	},
 	{
@@ -350,17 +355,18 @@ ObjectiveLists.military_pvp_set_1 = {
 			play_arrive_vo = true,
 			play_complete_vo = true,
 			close_to_win_on_section = 2,
-			objective_type = scripts_entity_system_systems_objective_objective_types.objective_socket,
-			score_per_socket = num_7,
+			objective_type = ObjectiveTypes.objective_socket,
+			score_per_socket = socket_points,
 			vo_context_on_complete = {
 				current_objective = "two"
 			},
-			almost_done = function (self, arg_6_1)
+			almost_done = function (self, active_objectives)
 				-- function 6
 				local num_sockets = self.num_sockets
-				local var_6_1 = arg_6_1[1]
+				local objective_name = active_objectives[1]
+				local objective_extension = Managers.state.entity:system("objective_system"):extension_by_objective_name(objective_name)
 
-				if Managers.state.entity:system("objective_system"):extension_by_objective_name(var_6_1):get_percentage_done() >= (num_sockets - 1.5) / num_sockets then
+				if objective_extension:get_percentage_done() >= (num_sockets - 1.5) / num_sockets then
 					return true
 				end
 			end
@@ -371,16 +377,16 @@ ObjectiveLists.military_pvp_set_1 = {
 			description = "level_objective_description_military_03",
 			volume_type = "any_alive",
 			volume_name = "versus_military_reach_02",
-			objective_type = scripts_entity_system_systems_objective_objective_types.objective_reach,
-			score_for_completion = num_2
+			objective_type = ObjectiveTypes.objective_reach,
+			score_for_completion = reach_points
 		}
 	},
 	{
 		versus_interact_objective_military_001 = {
 			description = "level_objective_description_military_04",
 			play_arrive_vo = true,
-			objective_type = scripts_entity_system_systems_objective_objective_types.objective_interact,
-			score_for_completion = num_3
+			objective_type = ObjectiveTypes.objective_interact,
+			score_for_completion = interact_points
 		}
 	},
 	{
@@ -390,8 +396,8 @@ ObjectiveLists.military_pvp_set_1 = {
 			time_for_completion = 90,
 			score_for_completion = 0,
 			play_complete_vo = true,
-			objective_type = scripts_entity_system_systems_objective_objective_types.objective_survive,
-			score_per_section = num_9,
+			objective_type = ObjectiveTypes.objective_survive,
+			score_per_section = survive_points,
 			vo_context_on_complete = {
 				current_objective = "safe_room"
 			}
@@ -403,8 +409,8 @@ ObjectiveLists.military_pvp_set_1 = {
 			volume_type = "all_alive",
 			play_safehouse_vo = true,
 			volume_name = "versus_military_reach_02B",
-			objective_type = scripts_entity_system_systems_objective_objective_types.objective_safehouse,
-			score_for_each_player_inside = num_6
+			objective_type = ObjectiveTypes.objective_safehouse,
+			score_for_each_player_inside = safe_room_points
 		}
 	}
 }
@@ -415,7 +421,7 @@ ObjectiveLists.military_pvp_set_2 = {
 			score_for_completion = 0,
 			volume_type = "any_alive",
 			volume_name = "versus_military_sz_02",
-			objective_type = scripts_entity_system_systems_objective_objective_types.objective_reach,
+			objective_type = ObjectiveTypes.objective_reach,
 			vo_context_on_activate = {
 				current_objective = "start_zone"
 			},
@@ -429,8 +435,8 @@ ObjectiveLists.military_pvp_set_2 = {
 			description = "level_objective_description_military_07",
 			volume_type = "any_alive",
 			volume_name = "versus_military_reach_03",
-			objective_type = scripts_entity_system_systems_objective_objective_types.objective_reach,
-			score_for_completion = num_2
+			objective_type = ObjectiveTypes.objective_reach,
+			score_for_completion = reach_points
 		}
 	},
 	{
@@ -438,8 +444,8 @@ ObjectiveLists.military_pvp_set_2 = {
 			description = "level_objective_description_military_07_B",
 			volume_type = "any_alive",
 			volume_name = "versus_military_reach_03_B",
-			objective_type = scripts_entity_system_systems_objective_objective_types.objective_reach,
-			score_for_completion = num_2
+			objective_type = ObjectiveTypes.objective_reach,
+			score_for_completion = reach_points
 		}
 	},
 	{
@@ -447,8 +453,8 @@ ObjectiveLists.military_pvp_set_2 = {
 			description = "level_objective_description_military_09",
 			volume_type = "any_alive",
 			volume_name = "versus_military_reach_04",
-			objective_type = scripts_entity_system_systems_objective_objective_types.objective_reach,
-			score_for_completion = num_2
+			objective_type = ObjectiveTypes.objective_reach,
+			score_for_completion = reach_points
 		}
 	},
 	{
@@ -458,16 +464,17 @@ ObjectiveLists.military_pvp_set_2 = {
 			num_sections = 90,
 			capture_time = 180,
 			play_complete_vo = true,
-			objective_type = scripts_entity_system_systems_objective_objective_types.objective_capture_point,
-			score_per_section = num_5,
+			objective_type = ObjectiveTypes.objective_capture_point,
+			score_per_section = capture_points,
 			vo_context_on_complete = {
 				current_objective = "two"
 			},
-			almost_done = function (arg_7_0, arg_7_1)
+			almost_done = function (self, active_objectives)
 				-- function 7
-				local var_7_0 = arg_7_1[1]
+				local objective_name = active_objectives[1]
+				local objective_extension = Managers.state.entity:system("objective_system"):extension_by_objective_name(objective_name)
 
-				if Managers.state.entity:system("objective_system"):extension_by_objective_name(var_7_0):get_percentage_done() > 0.75 then
+				if objective_extension:get_percentage_done() > 0.75 then
 					return true
 				end
 			end
@@ -479,8 +486,8 @@ ObjectiveLists.military_pvp_set_2 = {
 			volume_type = "any_alive",
 			volume_name = "versus_military_reach_05",
 			close_to_win_on_completion = true,
-			objective_type = scripts_entity_system_systems_objective_objective_types.objective_reach,
-			score_for_completion = num_2
+			objective_type = ObjectiveTypes.objective_reach,
+			score_for_completion = reach_points
 		}
 	},
 	{
@@ -488,8 +495,8 @@ ObjectiveLists.military_pvp_set_2 = {
 			description = "level_objective_description_military_12",
 			mission_name = "military_move_along_wall",
 			play_arrive_vo = true,
-			objective_type = scripts_entity_system_systems_objective_objective_types.objective_interact,
-			score_for_completion = num_3,
+			objective_type = ObjectiveTypes.objective_interact,
+			score_for_completion = interact_points,
 			vo_context_on_activate = {
 				objective_part = 1
 			},
@@ -507,8 +514,8 @@ ObjectiveLists.military_pvp_set_2 = {
 			play_complete_vo = true,
 			score_for_completion = 0,
 			play_arrive_vo = true,
-			objective_type = scripts_entity_system_systems_objective_objective_types.objective_survive,
-			score_per_section = num_9,
+			objective_type = ObjectiveTypes.objective_survive,
+			score_per_section = survive_points,
 			vo_context_on_complete = {
 				objective_part = 2
 			},
@@ -523,8 +530,8 @@ ObjectiveLists.military_pvp_set_2 = {
 			description = "level_objective_description_military_13",
 			play_arrive_vo = true,
 			num_sockets = 1,
-			objective_type = scripts_entity_system_systems_objective_objective_types.objective_socket,
-			score_per_socket = num_7,
+			objective_type = ObjectiveTypes.objective_socket,
+			score_per_socket = socket_points,
 			on_leaf_complete_sound_event = {
 				heroes = "versus_hud_sub_objective_completed_heroes",
 				dark_pact = "versus_hud_sub_objective_completed_pactsworn"
@@ -536,8 +543,8 @@ ObjectiveLists.military_pvp_set_2 = {
 			description = "level_objective_description_military_14",
 			mission_name = "military_open_gate",
 			play_complete_vo = true,
-			objective_type = scripts_entity_system_systems_objective_objective_types.objective_interact,
-			score_for_completion = num_3,
+			objective_type = ObjectiveTypes.objective_interact,
+			score_for_completion = interact_points,
 			vo_context_on_complete = {
 				current_objective = "safe_room"
 			}
@@ -549,8 +556,8 @@ ObjectiveLists.military_pvp_set_2 = {
 			volume_type = "all_alive",
 			play_safehouse_vo = true,
 			volume_name = "versus_military_reach_06",
-			objective_type = scripts_entity_system_systems_objective_objective_types.objective_safehouse,
-			score_for_each_player_inside = num_6
+			objective_type = ObjectiveTypes.objective_safehouse,
+			score_for_each_player_inside = safe_room_points
 		}
 	}
 }
@@ -561,7 +568,7 @@ ObjectiveLists.military_pvp_set_3 = {
 			score_for_completion = 0,
 			volume_type = "any_alive",
 			volume_name = "versus_military_sz_03",
-			objective_type = scripts_entity_system_systems_objective_objective_types.objective_reach,
+			objective_type = ObjectiveTypes.objective_reach,
 			vo_context_on_activate = {
 				current_objective = "start_zone"
 			},
@@ -575,8 +582,8 @@ ObjectiveLists.military_pvp_set_3 = {
 			description = "level_objective_description_military_16",
 			volume_type = "any_alive",
 			volume_name = "versus_military_reach_07",
-			objective_type = scripts_entity_system_systems_objective_objective_types.objective_reach,
-			score_for_completion = num_2
+			objective_type = ObjectiveTypes.objective_reach,
+			score_for_completion = reach_points
 		}
 	},
 	{
@@ -586,16 +593,17 @@ ObjectiveLists.military_pvp_set_3 = {
 			num_sections = 95,
 			capture_time = 210,
 			play_complete_vo = true,
-			objective_type = scripts_entity_system_systems_objective_objective_types.objective_capture_point,
-			score_per_section = num_5,
+			objective_type = ObjectiveTypes.objective_capture_point,
+			score_per_section = capture_points,
 			vo_context_on_complete = {
 				current_objective = "two"
 			},
-			almost_done = function (arg_8_0, arg_8_1)
+			almost_done = function (self, active_objectives)
 				-- function 8
-				local var_8_0 = arg_8_1[1]
+				local objective_name = active_objectives[1]
+				local objective_extension = Managers.state.entity:system("objective_system"):extension_by_objective_name(objective_name)
 
-				if Managers.state.entity:system("objective_system"):extension_by_objective_name(var_8_0):get_percentage_done() > 0.75 then
+				if objective_extension:get_percentage_done() > 0.75 then
 					return true
 				end
 			end
@@ -606,8 +614,8 @@ ObjectiveLists.military_pvp_set_3 = {
 			description = "level_objective_description_military_18",
 			volume_type = "any_alive",
 			volume_name = "versus_military_reach_08",
-			objective_type = scripts_entity_system_systems_objective_objective_types.objective_reach,
-			score_for_completion = num_2
+			objective_type = ObjectiveTypes.objective_reach,
+			score_for_completion = reach_points
 		}
 	},
 	{
@@ -615,8 +623,8 @@ ObjectiveLists.military_pvp_set_3 = {
 			description = "level_objective_description_military_19",
 			mission_name = "military_ring_bell",
 			play_arrive_vo = true,
-			score_for_completion = num_3,
-			objective_type = scripts_entity_system_systems_objective_objective_types.objective_interact
+			score_for_completion = interact_points,
+			objective_type = ObjectiveTypes.objective_interact
 		}
 	},
 	{
@@ -626,16 +634,18 @@ ObjectiveLists.military_pvp_set_3 = {
 			num_sections = 95,
 			play_complete_vo = true,
 			score_for_completion = 0,
-			objective_type = scripts_entity_system_systems_objective_objective_types.objective_survive,
-			score_per_section = num_9,
+			objective_type = ObjectiveTypes.objective_survive,
+			score_per_section = survive_points,
 			vo_context_on_complete = {
 				current_objective = "waystone"
 			},
-			almost_done = function (arg_9_0, arg_9_1)
+			almost_done = function (self, active_objectives)
 				-- function 9
-				local system = Managers.state.entity:system("objective_system")
+				local objective_system = Managers.state.entity:system("objective_system")
+				local num_total = objective_system:num_current_sub_objectives()
+				local num_completed = objective_system:num_current_completed_sub_objectives()
 
-				if system:num_current_sub_objectives() - system:num_current_completed_sub_objectives() <= 1 then
+				if num_total - num_completed <= 1 then
 					return true
 				end
 			end
@@ -647,8 +657,8 @@ ObjectiveLists.military_pvp_set_3 = {
 			volume_type = "all_alive",
 			play_waystone_vo = true,
 			volume_name = "versus_military_reach_09",
-			objective_type = scripts_entity_system_systems_objective_objective_types.objective_safehouse,
-			score_for_each_player_inside = num_2
+			objective_type = ObjectiveTypes.objective_safehouse,
+			score_for_each_player_inside = reach_points
 		}
 	}
 }
@@ -659,7 +669,7 @@ ObjectiveLists.farmlands_pvp_set_1 = {
 			score_for_completion = 0,
 			volume_type = "any_alive",
 			volume_name = "volume_versus_reach_sz_01",
-			objective_type = scripts_entity_system_systems_objective_objective_types.objective_reach,
+			objective_type = ObjectiveTypes.objective_reach,
 			vo_context_on_activate = {
 				current_objective = "start_zone"
 			},
@@ -673,8 +683,8 @@ ObjectiveLists.farmlands_pvp_set_1 = {
 			description = "level_objective_description_farmlands_01",
 			volume_type = "any_alive",
 			volume_name = "volume_versus_reach_001",
-			objective_type = scripts_entity_system_systems_objective_objective_types.objective_reach,
-			score_for_completion = num_2
+			objective_type = ObjectiveTypes.objective_reach,
+			score_for_completion = reach_points
 		}
 	},
 	{
@@ -682,8 +692,8 @@ ObjectiveLists.farmlands_pvp_set_1 = {
 			description = "level_objective_description_farmlands_01_farm",
 			volume_type = "any_alive",
 			volume_name = "versus_reach_001_farm",
-			objective_type = scripts_entity_system_systems_objective_objective_types.objective_reach,
-			score_for_completion = num_2
+			objective_type = ObjectiveTypes.objective_reach,
+			score_for_completion = reach_points
 		}
 	},
 	{
@@ -691,8 +701,8 @@ ObjectiveLists.farmlands_pvp_set_1 = {
 			description = "level_objective_description_farmlands_02_road",
 			volume_type = "any_alive",
 			volume_name = "versus_reach_02_road",
-			objective_type = scripts_entity_system_systems_objective_objective_types.objective_reach,
-			score_for_completion = num_2
+			objective_type = ObjectiveTypes.objective_reach,
+			score_for_completion = reach_points
 		}
 	},
 	{
@@ -700,8 +710,8 @@ ObjectiveLists.farmlands_pvp_set_1 = {
 			description = "level_objective_description_farmlands_03",
 			volume_type = "any_alive",
 			volume_name = "volume_versus_reach_002",
-			objective_type = scripts_entity_system_systems_objective_objective_types.objective_reach,
-			score_for_completion = num_2
+			objective_type = ObjectiveTypes.objective_reach,
+			score_for_completion = reach_points
 		}
 	},
 	{
@@ -709,48 +719,50 @@ ObjectiveLists.farmlands_pvp_set_1 = {
 			description = "level_objective_description_farmlands_04",
 			play_complete_vo = true,
 			play_arrive_vo = true,
-			objective_type = scripts_entity_system_systems_objective_objective_types.objective_target,
+			objective_type = ObjectiveTypes.objective_target,
 			vo_context_on_complete = {
 				current_objective = "two"
 			},
-			almost_done = function (arg_10_0, arg_10_1)
+			almost_done = function (self, active_objectives)
 				-- function 10
-				local system = Managers.state.entity:system("objective_system")
+				local objective_system = Managers.state.entity:system("objective_system")
+				local num_total = objective_system:num_current_sub_objectives()
+				local num_completed = objective_system:num_current_completed_sub_objectives()
 
-				if system:num_current_sub_objectives() - system:num_current_completed_sub_objectives() <= 1 then
+				if num_total - num_completed <= 1 then
 					return true
 				end
 			end,
 			sub_objectives = {
 				versus_target_objective_001 = {
 					description = "level_objective_description_farmlands_04",
-					objective_type = scripts_entity_system_systems_objective_objective_types.objective_target,
-					score_for_completion = num_8
+					objective_type = ObjectiveTypes.objective_target,
+					score_for_completion = target_points
 				},
 				versus_target_objective_002 = {
 					description = "level_objective_description_farmlands_04",
-					score_for_completion = num_8,
-					objective_type = scripts_entity_system_systems_objective_objective_types.objective_target
+					score_for_completion = target_points,
+					objective_type = ObjectiveTypes.objective_target
 				},
 				versus_target_objective_003 = {
 					description = "level_objective_description_farmlands_04",
-					objective_type = scripts_entity_system_systems_objective_objective_types.objective_target,
-					score_for_completion = num_8
+					objective_type = ObjectiveTypes.objective_target,
+					score_for_completion = target_points
 				},
 				versus_target_objective_004 = {
 					description = "level_objective_description_farmlands_04",
-					objective_type = scripts_entity_system_systems_objective_objective_types.objective_target,
-					score_for_completion = num_8
+					objective_type = ObjectiveTypes.objective_target,
+					score_for_completion = target_points
 				},
 				versus_target_objective_005 = {
 					description = "level_objective_description_farmlands_04",
-					objective_type = scripts_entity_system_systems_objective_objective_types.objective_target,
-					score_for_completion = num_8
+					objective_type = ObjectiveTypes.objective_target,
+					score_for_completion = target_points
 				},
 				versus_target_objective_006 = {
 					description = "level_objective_description_farmlands_04",
-					objective_type = scripts_entity_system_systems_objective_objective_types.objective_target,
-					score_for_completion = num_8
+					objective_type = ObjectiveTypes.objective_target,
+					score_for_completion = target_points
 				}
 			}
 		}
@@ -760,8 +772,8 @@ ObjectiveLists.farmlands_pvp_set_1 = {
 			description = "level_objective_description_farmlands_05",
 			volume_type = "any_alive",
 			volume_name = "volume_versus_reach_003",
-			objective_type = scripts_entity_system_systems_objective_objective_types.objective_reach,
-			score_for_completion = num_2
+			objective_type = ObjectiveTypes.objective_reach,
+			score_for_completion = reach_points
 		}
 	},
 	{
@@ -769,8 +781,8 @@ ObjectiveLists.farmlands_pvp_set_1 = {
 			description = "level_objective_description_farmlands_06",
 			volume_type = "any_alive",
 			volume_name = "volume_versus_reach_004",
-			objective_type = scripts_entity_system_systems_objective_objective_types.objective_reach,
-			score_for_completion = num_2
+			objective_type = ObjectiveTypes.objective_reach,
+			score_for_completion = reach_points
 		}
 	},
 	{
@@ -778,16 +790,16 @@ ObjectiveLists.farmlands_pvp_set_1 = {
 			description = "level_objective_description_farmlands_07",
 			mission_name = "versus_mission_farmlands_key",
 			play_arrive_vo = true,
-			objective_type = scripts_entity_system_systems_objective_objective_types.objective_interact,
-			score_for_completion = num_3
+			objective_type = ObjectiveTypes.objective_interact,
+			score_for_completion = interact_points
 		}
 	},
 	{
 		versus_mission_objective_open_barn = {
 			description = "level_objective_description_farmlands_08",
 			mission_name = "versus_mission_objective_barn",
-			objective_type = scripts_entity_system_systems_objective_objective_types.objective_interact,
-			score_for_completion = num_3
+			objective_type = ObjectiveTypes.objective_interact,
+			score_for_completion = interact_points
 		}
 	},
 	{
@@ -797,7 +809,7 @@ ObjectiveLists.farmlands_pvp_set_1 = {
 			play_complete_vo = true,
 			score_for_completion = 30,
 			play_arrive_vo = true,
-			objective_type = scripts_entity_system_systems_objective_objective_types.objective_survive,
+			objective_type = ObjectiveTypes.objective_survive,
 			vo_context_on_activate = {
 				current_objective = "three"
 			},
@@ -810,14 +822,15 @@ ObjectiveLists.farmlands_pvp_set_1 = {
 		versus_socket_objective_01 = {
 			description = "level_objective_description_farmlands_09_B",
 			num_sockets = 1,
-			objective_type = scripts_entity_system_systems_objective_objective_types.objective_socket,
-			score_per_socket = num_7,
-			almost_done = function (self, arg_11_1)
+			objective_type = ObjectiveTypes.objective_socket,
+			score_per_socket = socket_points,
+			almost_done = function (self, active_objectives)
 				-- function 11
 				local num_sockets = self.num_sockets
-				local var_11_1 = arg_11_1[1]
+				local objective_name = active_objectives[1]
+				local objective_extension = Managers.state.entity:system("objective_system"):extension_by_objective_name(objective_name)
 
-				if Managers.state.entity:system("objective_system"):extension_by_objective_name(var_11_1):get_percentage_done() >= (num_sockets - 1.5) / num_sockets then
+				if objective_extension:get_percentage_done() >= (num_sockets - 1.5) / num_sockets then
 					return true
 				end
 			end
@@ -829,8 +842,8 @@ ObjectiveLists.farmlands_pvp_set_1 = {
 			volume_type = "all_alive",
 			play_safehouse_vo = true,
 			volume_name = "volume_versus_reach_005",
-			objective_type = scripts_entity_system_systems_objective_objective_types.objective_safehouse,
-			score_for_each_player_inside = num_6
+			objective_type = ObjectiveTypes.objective_safehouse,
+			score_for_each_player_inside = safe_room_points
 		}
 	}
 }
@@ -841,7 +854,7 @@ ObjectiveLists.farmlands_pvp_set_2 = {
 			score_for_completion = 0,
 			volume_name = "volume_versus_reach_sz_02",
 			volume_type = "any_alive",
-			objective_type = scripts_entity_system_systems_objective_objective_types.objective_reach,
+			objective_type = ObjectiveTypes.objective_reach,
 			vo_context_on_activate = {
 				current_objective = "start_zone"
 			},
@@ -855,8 +868,8 @@ ObjectiveLists.farmlands_pvp_set_2 = {
 			description = "level_objective_description_farmlands_11",
 			volume_type = "any_alive",
 			volume_name = "volume_versus_reach_006",
-			objective_type = scripts_entity_system_systems_objective_objective_types.objective_reach,
-			score_for_completion = num_2
+			objective_type = ObjectiveTypes.objective_reach,
+			score_for_completion = reach_points
 		}
 	},
 	{
@@ -866,16 +879,17 @@ ObjectiveLists.farmlands_pvp_set_2 = {
 			num_sections = 80,
 			capture_time = 180,
 			play_complete_vo = true,
-			objective_type = scripts_entity_system_systems_objective_objective_types.objective_capture_point,
-			score_per_section = num_5,
+			objective_type = ObjectiveTypes.objective_capture_point,
+			score_per_section = capture_points,
 			vo_context_on_complete = {
 				current_objective = "two"
 			},
-			almost_done = function (arg_12_0, arg_12_1)
+			almost_done = function (self, active_objectives)
 				-- function 12
-				local var_12_0 = arg_12_1[1]
+				local objective_name = active_objectives[1]
+				local objective_extension = Managers.state.entity:system("objective_system"):extension_by_objective_name(objective_name)
 
-				if Managers.state.entity:system("objective_system"):extension_by_objective_name(var_12_0):get_percentage_done() > 0.75 then
+				if objective_extension:get_percentage_done() > 0.75 then
 					return true
 				end
 			end
@@ -886,8 +900,8 @@ ObjectiveLists.farmlands_pvp_set_2 = {
 			description = "level_objective_description_farmlands_11_B",
 			volume_type = "any_alive",
 			volume_name = "volume_versus_reach_006_B",
-			objective_type = scripts_entity_system_systems_objective_objective_types.objective_reach,
-			score_for_completion = num_2
+			objective_type = ObjectiveTypes.objective_reach,
+			score_for_completion = reach_points
 		}
 	},
 	{
@@ -895,8 +909,8 @@ ObjectiveLists.farmlands_pvp_set_2 = {
 			description = "level_objective_description_farmlands_13",
 			volume_type = "any_alive",
 			volume_name = "volume_versus_reach_007",
-			objective_type = scripts_entity_system_systems_objective_objective_types.objective_reach,
-			score_for_completion = num_2
+			objective_type = ObjectiveTypes.objective_reach,
+			score_for_completion = reach_points
 		}
 	},
 	{
@@ -904,55 +918,57 @@ ObjectiveLists.farmlands_pvp_set_2 = {
 			description = "level_objective_description_farmlands_14",
 			volume_type = "any_alive",
 			volume_name = "volume_versus_reach_008",
-			objective_type = scripts_entity_system_systems_objective_objective_types.objective_reach,
-			score_for_completion = num_2
+			objective_type = ObjectiveTypes.objective_reach,
+			score_for_completion = reach_points
 		}
 	},
 	{
 		versus_interact_objective_prisoners_streets = {
 			description = "level_objective_description_farmlands_15",
-			objective_type = scripts_entity_system_systems_objective_objective_types.objective_interact,
-			objective_tag = scripts_entity_system_systems_objective_objective_tags.objective_tag_prisoner,
-			score_for_completion = num_3
+			objective_type = ObjectiveTypes.objective_interact,
+			objective_tag = ObjectiveTags.objective_tag_prisoner,
+			score_for_completion = interact_points
 		}
 	},
 	{
 		sub_objective_container_prisoners_01 = {
 			description = "level_objective_description_farmlands_16",
 			play_arrive_vo = true,
-			objective_type = scripts_entity_system_systems_objective_objective_types.objective_interact,
-			almost_done = function (arg_13_0, arg_13_1)
+			objective_type = ObjectiveTypes.objective_interact,
+			almost_done = function (self, active_objectives)
 				-- function 13
-				local system = Managers.state.entity:system("objective_system")
+				local objective_system = Managers.state.entity:system("objective_system")
+				local num_total = objective_system:num_current_sub_objectives()
+				local num_completed = objective_system:num_current_completed_sub_objectives()
 
-				if system:num_current_sub_objectives() - system:num_current_completed_sub_objectives() <= 1 then
+				if num_total - num_completed <= 1 then
 					return true
 				end
 			end,
 			sub_objectives = {
 				versus_interact_objective_prisoners_001 = {
 					description = "level_objective_description_farmlands_16",
-					objective_tag = scripts_entity_system_systems_objective_objective_tags.objective_tag_prisoner,
-					objective_type = scripts_entity_system_systems_objective_objective_types.objective_interact,
-					score_for_completion = num_3
+					objective_tag = ObjectiveTags.objective_tag_prisoner,
+					objective_type = ObjectiveTypes.objective_interact,
+					score_for_completion = interact_points
 				},
 				versus_interact_objective_prisoners_002 = {
 					description = "level_objective_description_farmlands_16",
-					objective_type = scripts_entity_system_systems_objective_objective_types.objective_interact,
-					objective_tag = scripts_entity_system_systems_objective_objective_tags.objective_tag_prisoner,
-					score_for_completion = num_3
+					objective_type = ObjectiveTypes.objective_interact,
+					objective_tag = ObjectiveTags.objective_tag_prisoner,
+					score_for_completion = interact_points
 				},
 				versus_interact_objective_prisoners_003 = {
 					description = "level_objective_description_farmlands_16",
-					objective_type = scripts_entity_system_systems_objective_objective_types.objective_interact,
-					objective_tag = scripts_entity_system_systems_objective_objective_tags.objective_tag_prisoner,
-					score_for_completion = num_3
+					objective_type = ObjectiveTypes.objective_interact,
+					objective_tag = ObjectiveTags.objective_tag_prisoner,
+					score_for_completion = interact_points
 				},
 				versus_interact_objective_prisoners_004 = {
 					description = "level_objective_description_farmlands_16",
-					objective_type = scripts_entity_system_systems_objective_objective_types.objective_interact,
-					objective_tag = scripts_entity_system_systems_objective_objective_tags.objective_tag_prisoner,
-					score_for_completion = num_3
+					objective_type = ObjectiveTypes.objective_interact,
+					objective_tag = ObjectiveTags.objective_tag_prisoner,
+					score_for_completion = interact_points
 				}
 			}
 		}
@@ -960,27 +976,29 @@ ObjectiveLists.farmlands_pvp_set_2 = {
 	{
 		sub_objective_container_prisoners_02 = {
 			description = "level_objective_description_farmlands_17",
-			objective_type = scripts_entity_system_systems_objective_objective_types.objective_interact,
-			almost_done = function (arg_14_0, arg_14_1)
+			objective_type = ObjectiveTypes.objective_interact,
+			almost_done = function (self, active_objectives)
 				-- function 14
-				local system = Managers.state.entity:system("objective_system")
+				local objective_system = Managers.state.entity:system("objective_system")
+				local num_total = objective_system:num_current_sub_objectives()
+				local num_completed = objective_system:num_current_completed_sub_objectives()
 
-				if system:num_current_sub_objectives() - system:num_current_completed_sub_objectives() <= 1 then
+				if num_total - num_completed <= 1 then
 					return true
 				end
 			end,
 			sub_objectives = {
 				versus_interact_objective_prisoners_005 = {
 					description = "level_objective_description_farmlands_17",
-					objective_type = scripts_entity_system_systems_objective_objective_types.objective_interact,
-					objective_tag = scripts_entity_system_systems_objective_objective_tags.objective_tag_prisoner,
-					score_for_completion = num_3
+					objective_type = ObjectiveTypes.objective_interact,
+					objective_tag = ObjectiveTags.objective_tag_prisoner,
+					score_for_completion = interact_points
 				},
 				versus_interact_objective_prisoners_006 = {
 					description = "level_objective_description_farmlands_17",
-					objective_type = scripts_entity_system_systems_objective_objective_types.objective_interact,
-					objective_tag = scripts_entity_system_systems_objective_objective_tags.objective_tag_prisoner,
-					score_for_completion = num_3
+					objective_type = ObjectiveTypes.objective_interact,
+					objective_tag = ObjectiveTags.objective_tag_prisoner,
+					score_for_completion = interact_points
 				}
 			}
 		}
@@ -989,43 +1007,45 @@ ObjectiveLists.farmlands_pvp_set_2 = {
 		sub_objective_container_prisoners_03 = {
 			description = "level_objective_description_farmlands_18",
 			play_complete_vo = true,
-			objective_type = scripts_entity_system_systems_objective_objective_types.objective_interact,
-			objective_tag = scripts_entity_system_systems_objective_objective_tags.objective_tag_prisoner,
+			objective_type = ObjectiveTypes.objective_interact,
+			objective_tag = ObjectiveTags.objective_tag_prisoner,
 			vo_context_on_complete = {
 				current_objective = "waystone"
 			},
-			almost_done = function (arg_15_0, arg_15_1)
+			almost_done = function (self, active_objectives)
 				-- function 15
-				local system = Managers.state.entity:system("objective_system")
+				local objective_system = Managers.state.entity:system("objective_system")
+				local num_total = objective_system:num_current_sub_objectives()
+				local num_completed = objective_system:num_current_completed_sub_objectives()
 
-				if system:num_current_sub_objectives() - system:num_current_completed_sub_objectives() <= 1 then
+				if num_total - num_completed <= 1 then
 					return true
 				end
 			end,
 			sub_objectives = {
 				versus_interact_objective_prisoners_007 = {
 					description = "level_objective_description_farmlands_18",
-					objective_type = scripts_entity_system_systems_objective_objective_types.objective_interact,
-					objective_tag = scripts_entity_system_systems_objective_objective_tags.objective_tag_prisoner,
-					score_for_completion = num_3
+					objective_type = ObjectiveTypes.objective_interact,
+					objective_tag = ObjectiveTags.objective_tag_prisoner,
+					score_for_completion = interact_points
 				},
 				versus_interact_objective_prisoners_008 = {
 					description = "level_objective_description_farmlands_18",
-					objective_type = scripts_entity_system_systems_objective_objective_types.objective_interact,
-					objective_tag = scripts_entity_system_systems_objective_objective_tags.objective_tag_prisoner,
-					score_for_completion = num_3
+					objective_type = ObjectiveTypes.objective_interact,
+					objective_tag = ObjectiveTags.objective_tag_prisoner,
+					score_for_completion = interact_points
 				},
 				versus_interact_objective_prisoners_009 = {
 					description = "level_objective_description_farmlands_18",
-					objective_type = scripts_entity_system_systems_objective_objective_types.objective_interact,
-					objective_tag = scripts_entity_system_systems_objective_objective_tags.objective_tag_prisoner,
-					score_for_completion = num_3
+					objective_type = ObjectiveTypes.objective_interact,
+					objective_tag = ObjectiveTags.objective_tag_prisoner,
+					score_for_completion = interact_points
 				},
 				versus_interact_objective_prisoners_010 = {
 					description = "level_objective_description_farmlands_18",
-					objective_type = scripts_entity_system_systems_objective_objective_types.objective_interact,
-					objective_tag = scripts_entity_system_systems_objective_objective_tags.objective_tag_prisoner,
-					score_for_completion = num_3
+					objective_type = ObjectiveTypes.objective_interact,
+					objective_tag = ObjectiveTags.objective_tag_prisoner,
+					score_for_completion = interact_points
 				}
 			}
 		}
@@ -1036,8 +1056,8 @@ ObjectiveLists.farmlands_pvp_set_2 = {
 			volume_type = "all_alive",
 			play_waystone_vo = true,
 			volume_name = "volume_versus_reach_009",
-			objective_type = scripts_entity_system_systems_objective_objective_types.objective_safehouse,
-			score_for_each_player_inside = num_10
+			objective_type = ObjectiveTypes.objective_safehouse,
+			score_for_each_player_inside = waystone_points
 		}
 	}
 }
@@ -1048,7 +1068,7 @@ ObjectiveLists.fort_pvp_set_1 = {
 			score_for_completion = 0,
 			volume_type = "any_alive",
 			volume_name = "versus_reach_001",
-			objective_type = scripts_entity_system_systems_objective_objective_types.objective_reach,
+			objective_type = ObjectiveTypes.objective_reach,
 			vo_context_on_activate = {
 				current_objective = "start_zone"
 			},
@@ -1062,8 +1082,8 @@ ObjectiveLists.fort_pvp_set_1 = {
 			description = "level_objective_description_fort_01",
 			volume_type = "any_alive",
 			volume_name = "versus_reach_002",
-			objective_type = scripts_entity_system_systems_objective_objective_types.objective_reach,
-			score_for_completion = num_2
+			objective_type = ObjectiveTypes.objective_reach,
+			score_for_completion = reach_points
 		}
 	},
 	{
@@ -1073,16 +1093,17 @@ ObjectiveLists.fort_pvp_set_1 = {
 			num_sections = 50,
 			capture_time = 120,
 			play_complete_vo = true,
-			objective_type = scripts_entity_system_systems_objective_objective_types.objective_capture_point,
-			score_per_section = num_5,
+			objective_type = ObjectiveTypes.objective_capture_point,
+			score_per_section = capture_points,
 			vo_context_on_complete = {
 				current_objective = "two"
 			},
-			almost_done = function (arg_16_0, arg_16_1)
+			almost_done = function (self, active_objectives)
 				-- function 16
-				local var_16_0 = arg_16_1[1]
+				local objective_name = active_objectives[1]
+				local objective_extension = Managers.state.entity:system("objective_system"):extension_by_objective_name(objective_name)
 
-				if Managers.state.entity:system("objective_system"):extension_by_objective_name(var_16_0):get_percentage_done() > 0.75 then
+				if objective_extension:get_percentage_done() > 0.75 then
 					return true
 				end
 			end
@@ -1093,8 +1114,8 @@ ObjectiveLists.fort_pvp_set_1 = {
 			description = "level_objective_description_fort_02_B",
 			volume_type = "any_alive",
 			volume_name = "versus_reach_002_B_road",
-			objective_type = scripts_entity_system_systems_objective_objective_types.objective_reach,
-			score_for_completion = num_2
+			objective_type = ObjectiveTypes.objective_reach,
+			score_for_completion = reach_points
 		}
 	},
 	{
@@ -1102,8 +1123,8 @@ ObjectiveLists.fort_pvp_set_1 = {
 			description = "level_objective_description_fort_03",
 			volume_type = "any_alive",
 			volume_name = "versus_reach_003",
-			objective_type = scripts_entity_system_systems_objective_objective_types.objective_reach,
-			score_for_completion = num_2
+			objective_type = ObjectiveTypes.objective_reach,
+			score_for_completion = reach_points
 		}
 	},
 	{
@@ -1112,16 +1133,17 @@ ObjectiveLists.fort_pvp_set_1 = {
 			num_sections = 70,
 			play_complete_vo = true,
 			play_arrive_vo = true,
-			objective_type = scripts_entity_system_systems_objective_objective_types.objective_payload,
-			score_per_section = num_4,
+			objective_type = ObjectiveTypes.objective_payload,
+			score_per_section = payload_points,
 			vo_context_on_complete = {
 				current_objective = "safe_room"
 			},
-			almost_done = function (arg_17_0, arg_17_1)
+			almost_done = function (self, active_objectives)
 				-- function 17
-				local var_17_0 = arg_17_1[1]
+				local objective_name = active_objectives[1]
+				local objective_extension = Managers.state.entity:system("objective_system"):extension_by_objective_name(objective_name)
 
-				if Managers.state.entity:system("objective_system"):extension_by_objective_name(var_17_0):get_percentage_done() > 0.8 then
+				if objective_extension:get_percentage_done() > 0.8 then
 					return true
 				end
 			end
@@ -1132,8 +1154,8 @@ ObjectiveLists.fort_pvp_set_1 = {
 			description = "level_objective_description_fort_05",
 			volume_type = "any_alive",
 			volume_name = "versus_reach_004",
-			objective_type = scripts_entity_system_systems_objective_objective_types.objective_reach,
-			score_for_completion = num_2
+			objective_type = ObjectiveTypes.objective_reach,
+			score_for_completion = reach_points
 		}
 	},
 	{
@@ -1143,8 +1165,8 @@ ObjectiveLists.fort_pvp_set_1 = {
 			play_safehouse_vo = true,
 			volume_name = "versus_reach_005",
 			play_arrive_vo = true,
-			objective_type = scripts_entity_system_systems_objective_objective_types.objective_safehouse,
-			score_for_each_player_inside = num_6
+			objective_type = ObjectiveTypes.objective_safehouse,
+			score_for_each_player_inside = safe_room_points
 		}
 	}
 }
@@ -1155,7 +1177,7 @@ ObjectiveLists.fort_pvp_set_2 = {
 			score_for_completion = 0,
 			volume_type = "any_alive",
 			volume_name = "versus_reach_006",
-			objective_type = scripts_entity_system_systems_objective_objective_types.objective_reach,
+			objective_type = ObjectiveTypes.objective_reach,
 			vo_context_on_activate = {
 				current_objective = "start_zone"
 			},
@@ -1169,16 +1191,16 @@ ObjectiveLists.fort_pvp_set_2 = {
 			description = "level_objective_description_fort_06",
 			volume_type = "any_alive",
 			volume_name = "versus_reach_007",
-			objective_type = scripts_entity_system_systems_objective_objective_types.objective_reach,
-			score_for_completion = num_2
+			objective_type = ObjectiveTypes.objective_reach,
+			score_for_completion = reach_points
 		}
 	},
 	{
 		versus_fort_interact_001 = {
 			description = "level_objective_description_fort_07",
 			play_arrive_vo = true,
-			objective_type = scripts_entity_system_systems_objective_objective_types.objective_interact,
-			score_for_completion = num_3,
+			objective_type = ObjectiveTypes.objective_interact,
+			score_for_completion = interact_points,
 			vo_context_on_activate = {
 				objective_part = 1
 			},
@@ -1192,32 +1214,34 @@ ObjectiveLists.fort_pvp_set_2 = {
 			play_complete_vo = true,
 			play_arrive_vo = true,
 			description = "level_objective_description_fort_07_B",
-			objective_type = scripts_entity_system_systems_objective_objective_types.objective_interact,
+			objective_type = ObjectiveTypes.objective_interact,
 			sub_objectives = {
 				versus_interact_fort_tower_001 = {
 					description = "level_objective_description_fort_07_B",
-					objective_type = scripts_entity_system_systems_objective_objective_types.objective_interact,
-					score_for_completion = num_3
+					objective_type = ObjectiveTypes.objective_interact,
+					score_for_completion = interact_points
 				},
 				versus_interact_fort_tower_002 = {
 					description = "level_objective_description_fort_07_B",
-					objective_type = scripts_entity_system_systems_objective_objective_types.objective_interact,
-					score_for_completion = num_3
+					objective_type = ObjectiveTypes.objective_interact,
+					score_for_completion = interact_points
 				},
 				versus_interact_fort_tower_003 = {
 					description = "level_objective_description_fort_07_B",
-					objective_type = scripts_entity_system_systems_objective_objective_types.objective_interact,
-					score_for_completion = num_3
+					objective_type = ObjectiveTypes.objective_interact,
+					score_for_completion = interact_points
 				}
 			},
 			vo_context_on_complete = {
 				current_objective = "two"
 			},
-			almost_done = function (arg_18_0, arg_18_1)
+			almost_done = function (self, active_objectives)
 				-- function 18
-				local system = Managers.state.entity:system("objective_system")
+				local objective_system = Managers.state.entity:system("objective_system")
+				local num_total = objective_system:num_current_sub_objectives()
+				local num_completed = objective_system:num_current_completed_sub_objectives()
 
-				if system:num_current_sub_objectives() - system:num_current_completed_sub_objectives() <= 1 then
+				if num_total - num_completed <= 1 then
 					return true
 				end
 			end
@@ -1228,8 +1252,8 @@ ObjectiveLists.fort_pvp_set_2 = {
 			description = "level_objective_description_fort_08",
 			volume_type = "any_alive",
 			volume_name = "versus_reach_008",
-			objective_type = scripts_entity_system_systems_objective_objective_types.objective_reach,
-			score_for_completion = num_2
+			objective_type = ObjectiveTypes.objective_reach,
+			score_for_completion = reach_points
 		}
 	},
 	{
@@ -1237,8 +1261,8 @@ ObjectiveLists.fort_pvp_set_2 = {
 			description = "level_objective_description_fort_09",
 			volume_type = "any_alive",
 			volume_name = "versus_reach_009",
-			objective_type = scripts_entity_system_systems_objective_objective_types.objective_reach,
-			score_for_completion = num_2
+			objective_type = ObjectiveTypes.objective_reach,
+			score_for_completion = reach_points
 		}
 	},
 	{
@@ -1246,13 +1270,14 @@ ObjectiveLists.fort_pvp_set_2 = {
 			description = "level_objective_description_fort_10",
 			num_sections = 90,
 			play_arrive_vo = true,
-			objective_type = scripts_entity_system_systems_objective_objective_types.objective_payload,
-			score_per_section = num_4,
-			almost_done = function (arg_19_0, arg_19_1)
+			objective_type = ObjectiveTypes.objective_payload,
+			score_per_section = payload_points,
+			almost_done = function (self, active_objectives)
 				-- function 19
-				local var_19_0 = arg_19_1[1]
+				local objective_name = active_objectives[1]
+				local objective_extension = Managers.state.entity:system("objective_system"):extension_by_objective_name(objective_name)
 
-				if Managers.state.entity:system("objective_system"):extension_by_objective_name(var_19_0):get_percentage_done() > 0.8 then
+				if objective_extension:get_percentage_done() > 0.8 then
 					return true
 				end
 			end
@@ -1263,8 +1288,8 @@ ObjectiveLists.fort_pvp_set_2 = {
 			description = "level_objective_description_fort_11",
 			mission_name = "mission_fort_breach_wall",
 			play_complete_vo = true,
-			objective_type = scripts_entity_system_systems_objective_objective_types.objective_interact,
-			score_for_completion = num_3,
+			objective_type = ObjectiveTypes.objective_interact,
+			score_for_completion = interact_points,
 			vo_context_on_complete = {
 				current_objective = "safe_room"
 			}
@@ -1276,8 +1301,8 @@ ObjectiveLists.fort_pvp_set_2 = {
 			volume_type = "all_alive",
 			play_safehouse_vo = true,
 			volume_name = "versus_reach_010",
-			objective_type = scripts_entity_system_systems_objective_objective_types.objective_safehouse,
-			score_for_each_player_inside = num_6
+			objective_type = ObjectiveTypes.objective_safehouse,
+			score_for_each_player_inside = safe_room_points
 		}
 	}
 }
@@ -1288,7 +1313,7 @@ ObjectiveLists.fort_pvp_set_3 = {
 			score_for_completion = 0,
 			volume_type = "any_alive",
 			volume_name = "versus_reach_011",
-			objective_type = scripts_entity_system_systems_objective_objective_types.objective_reach,
+			objective_type = ObjectiveTypes.objective_reach,
 			vo_context_on_activate = {
 				current_objective = "start_zone"
 			},
@@ -1302,36 +1327,38 @@ ObjectiveLists.fort_pvp_set_3 = {
 			description = "level_objective_description_fort_12",
 			volume_type = "any_alive",
 			volume_name = "versus_reach_012",
-			objective_type = scripts_entity_system_systems_objective_objective_types.objective_reach,
-			score_for_completion = num_2
+			objective_type = ObjectiveTypes.objective_reach,
+			score_for_completion = reach_points
 		}
 	},
 	{
 		sub_objective_container_cannon_balls = {
 			description = "level_objective_description_fort_13",
 			play_complete_vo = true,
-			objective_type = scripts_entity_system_systems_objective_objective_types.objective_socket,
+			objective_type = ObjectiveTypes.objective_socket,
 			vo_context_on_complete = {
 				current_objective = "two"
 			},
-			almost_done = function (arg_20_0, arg_20_1)
+			almost_done = function (self, active_objectives)
 				-- function 20
-				local system = Managers.state.entity:system("objective_system")
+				local objective_system = Managers.state.entity:system("objective_system")
+				local num_total = objective_system:num_current_sub_objectives()
+				local num_completed = objective_system:num_current_completed_sub_objectives()
 
-				if system:num_current_sub_objectives() - system:num_current_completed_sub_objectives() <= 1 then
+				if num_total - num_completed <= 1 then
 					return true
 				end
 			end,
 			sub_objectives = {
 				versus_socket_objective_01 = {
 					description = "level_objective_description_fort_13",
-					objective_type = scripts_entity_system_systems_objective_objective_types.objective_socket,
-					score_for_completion = num_7
+					objective_type = ObjectiveTypes.objective_socket,
+					score_for_completion = socket_points
 				},
 				versus_socket_objective_02 = {
 					description = "level_objective_description_fort_13",
-					objective_type = scripts_entity_system_systems_objective_objective_types.objective_socket,
-					score_for_completion = num_7
+					objective_type = ObjectiveTypes.objective_socket,
+					score_for_completion = socket_points
 				}
 			}
 		}
@@ -1339,8 +1366,8 @@ ObjectiveLists.fort_pvp_set_3 = {
 	{
 		versus_interact_objective_elevator = {
 			description = "level_objective_description_fort_14",
-			objective_type = scripts_entity_system_systems_objective_objective_types.objective_interact,
-			score_for_completion = num_3
+			objective_type = ObjectiveTypes.objective_interact,
+			score_for_completion = interact_points
 		}
 	},
 	{
@@ -1348,8 +1375,8 @@ ObjectiveLists.fort_pvp_set_3 = {
 			description = "level_objective_description_fort_15",
 			volume_type = "any_alive",
 			volume_name = "versus_reach_013",
-			objective_type = scripts_entity_system_systems_objective_objective_types.objective_reach,
-			score_for_completion = num_2
+			objective_type = ObjectiveTypes.objective_reach,
+			score_for_completion = reach_points
 		}
 	},
 	{
@@ -1357,16 +1384,16 @@ ObjectiveLists.fort_pvp_set_3 = {
 			description = "level_objective_description_fort_16",
 			volume_type = "any_alive",
 			volume_name = "versus_reach_014",
-			objective_type = scripts_entity_system_systems_objective_objective_types.objective_reach,
-			score_for_completion = num_2
+			objective_type = ObjectiveTypes.objective_reach,
+			score_for_completion = reach_points
 		}
 	},
 	{
 		versus_interaction_fort_portcullis = {
 			description = "level_objective_description_fort_17",
 			play_arrive_vo = true,
-			objective_type = scripts_entity_system_systems_objective_objective_types.objective_interact,
-			score_for_completion = num_3,
+			objective_type = ObjectiveTypes.objective_interact,
+			score_for_completion = interact_points,
 			vo_context_on_activate = {
 				objective_part = 1
 			},
@@ -1383,8 +1410,8 @@ ObjectiveLists.fort_pvp_set_3 = {
 			play_complete_vo = true,
 			score_for_completion = 0,
 			play_arrive_vo = true,
-			objective_type = scripts_entity_system_systems_objective_objective_types.objective_survive,
-			score_per_section = num_9,
+			objective_type = ObjectiveTypes.objective_survive,
+			score_per_section = survive_points,
 			vo_context_on_complete = {
 				current_objective = "three",
 				objective_part = 1
@@ -1396,25 +1423,25 @@ ObjectiveLists.fort_pvp_set_3 = {
 			description = "level_objective_description_fort_17_B",
 			volume_type = "any_alive",
 			volume_name = "versus_reach_015",
-			objective_type = scripts_entity_system_systems_objective_objective_types.objective_reach,
-			score_for_completion = num_2
+			objective_type = ObjectiveTypes.objective_reach,
+			score_for_completion = reach_points
 		}
 	},
 	{
 		sub_objective_container_cannons = {
 			description = "level_objective_description_fort_18",
 			play_arrive_vo = true,
-			objective_type = scripts_entity_system_systems_objective_objective_types.objective_interact,
+			objective_type = ObjectiveTypes.objective_interact,
 			sub_objectives = {
 				versus_interact_cannon_01 = {
 					description = "level_objective_description_fort_18",
-					objective_type = scripts_entity_system_systems_objective_objective_types.objective_interact,
-					score_for_completion = num_7 + num_3
+					objective_type = ObjectiveTypes.objective_interact,
+					score_for_completion = socket_points + interact_points
 				},
 				versus_interact_cannon_02 = {
 					description = "level_objective_description_fort_18",
-					objective_type = scripts_entity_system_systems_objective_objective_types.objective_interact,
-					score_for_completion = num_7 + num_3
+					objective_type = ObjectiveTypes.objective_interact,
+					score_for_completion = socket_points + interact_points
 				}
 			}
 		}
@@ -1423,8 +1450,8 @@ ObjectiveLists.fort_pvp_set_3 = {
 		versus_socket_objective_fort = {
 			description = "level_objective_description_military_13",
 			num_sockets = 1,
-			objective_type = scripts_entity_system_systems_objective_objective_types.objective_socket,
-			score_per_socket = num_7,
+			objective_type = ObjectiveTypes.objective_socket,
+			score_per_socket = socket_points,
 			on_last_leaf_complete_sound_event = {
 				heroes = "versus_hud_sub_objective_completed_heroes",
 				dark_pact = "versus_hud_sub_objective_completed_pactsworn"
@@ -1435,8 +1462,8 @@ ObjectiveLists.fort_pvp_set_3 = {
 		versus_interact_cannon_03 = {
 			description = "level_objective_description_fort_20",
 			play_complete_vo = true,
-			objective_type = scripts_entity_system_systems_objective_objective_types.objective_interact,
-			score_for_completion = num_3,
+			objective_type = ObjectiveTypes.objective_interact,
+			score_for_completion = interact_points,
 			vo_context_on_complete = {
 				current_objective = "waystone"
 			}
@@ -1448,8 +1475,8 @@ ObjectiveLists.fort_pvp_set_3 = {
 			volume_type = "all_alive",
 			play_waystone_vo = true,
 			volume_name = "volume_versus_reach_end_dome",
-			objective_type = scripts_entity_system_systems_objective_objective_types.objective_safehouse,
-			score_for_each_player_inside = num_10
+			objective_type = ObjectiveTypes.objective_safehouse,
+			score_for_each_player_inside = waystone_points
 		}
 	}
 }
@@ -1460,7 +1487,7 @@ ObjectiveLists.forest_ambush_pvp_set_1 = {
 			score_for_completion = 0,
 			volume_type = "any_alive",
 			volume_name = "versus_forest_ambush_reach_001",
-			objective_type = scripts_entity_system_systems_objective_objective_types.objective_reach,
+			objective_type = ObjectiveTypes.objective_reach,
 			vo_context_on_activate = {
 				current_objective = "start_zone"
 			},
@@ -1474,8 +1501,8 @@ ObjectiveLists.forest_ambush_pvp_set_1 = {
 			description = "level_objective_description_forest_ambush_01",
 			volume_type = "any_alive",
 			volume_name = "versus_forest_ambush_reach_002",
-			objective_type = scripts_entity_system_systems_objective_objective_types.objective_reach,
-			score_for_completion = num_2
+			objective_type = ObjectiveTypes.objective_reach,
+			score_for_completion = reach_points
 		}
 	},
 	{
@@ -1483,43 +1510,45 @@ ObjectiveLists.forest_ambush_pvp_set_1 = {
 			description = "level_objective_description_forest_ambush_02",
 			play_complete_vo = true,
 			play_arrive_vo = true,
-			objective_type = scripts_entity_system_systems_objective_objective_types.objective_target,
+			objective_type = ObjectiveTypes.objective_target,
 			vo_context_on_complete = {
 				current_objective = "two"
 			},
-			almost_done = function (arg_21_0, arg_21_1)
+			almost_done = function (self, active_objectives)
 				-- function 21
-				local system = Managers.state.entity:system("objective_system")
+				local objective_system = Managers.state.entity:system("objective_system")
+				local num_total = objective_system:num_current_sub_objectives()
+				local num_completed = objective_system:num_current_completed_sub_objectives()
 
-				if system:num_current_sub_objectives() - system:num_current_completed_sub_objectives() <= 1 then
+				if num_total - num_completed <= 1 then
 					return true
 				end
 			end,
 			sub_objectives = {
 				versus_target_objective_001 = {
 					description = "level_objective_description_forest_ambush_02",
-					objective_type = scripts_entity_system_systems_objective_objective_types.objective_target,
-					score_for_completion = num_8
+					objective_type = ObjectiveTypes.objective_target,
+					score_for_completion = target_points
 				},
 				versus_target_objective_002 = {
 					description = "level_objective_description_forest_ambush_02",
-					objective_type = scripts_entity_system_systems_objective_objective_types.objective_target,
-					score_for_completion = num_8
+					objective_type = ObjectiveTypes.objective_target,
+					score_for_completion = target_points
 				},
 				versus_target_objective_003 = {
 					description = "level_objective_description_forest_ambush_02",
-					objective_type = scripts_entity_system_systems_objective_objective_types.objective_target,
-					score_for_completion = num_8
+					objective_type = ObjectiveTypes.objective_target,
+					score_for_completion = target_points
 				},
 				versus_target_objective_004 = {
 					description = "level_objective_description_forest_ambush_02",
-					objective_type = scripts_entity_system_systems_objective_objective_types.objective_target,
-					score_for_completion = num_8
+					objective_type = ObjectiveTypes.objective_target,
+					score_for_completion = target_points
 				},
 				versus_target_objective_005 = {
 					description = "level_objective_description_forest_ambush_02",
-					objective_type = scripts_entity_system_systems_objective_objective_types.objective_target,
-					score_for_completion = num_8
+					objective_type = ObjectiveTypes.objective_target,
+					score_for_completion = target_points
 				}
 			}
 		}
@@ -1529,8 +1558,8 @@ ObjectiveLists.forest_ambush_pvp_set_1 = {
 			description = "level_objective_description_forest_ambush_03",
 			volume_type = "any_alive",
 			volume_name = "versus_forest_ambush_reach_003",
-			objective_type = scripts_entity_system_systems_objective_objective_types.objective_reach,
-			score_for_completion = num_2
+			objective_type = ObjectiveTypes.objective_reach,
+			score_for_completion = reach_points
 		}
 	},
 	{
@@ -1538,8 +1567,8 @@ ObjectiveLists.forest_ambush_pvp_set_1 = {
 			description = "level_objective_description_forest_ambush_04",
 			volume_type = "any_alive",
 			volume_name = "versus_forest_ambush_reach_004",
-			objective_type = scripts_entity_system_systems_objective_objective_types.objective_reach,
-			score_for_completion = num_2
+			objective_type = ObjectiveTypes.objective_reach,
+			score_for_completion = reach_points
 		}
 	},
 	{
@@ -1547,19 +1576,20 @@ ObjectiveLists.forest_ambush_pvp_set_1 = {
 			description = "level_objective_description_forest_ambush_05",
 			num_sections = 20,
 			play_arrive_vo = true,
-			objective_type = scripts_entity_system_systems_objective_objective_types.objective_payload,
-			score_per_section = num_4,
+			objective_type = ObjectiveTypes.objective_payload,
+			score_per_section = payload_points,
 			vo_context_on_activate = {
 				objective_part = 1
 			},
 			vo_context_on_complete = {
 				objective_part = 2
 			},
-			almost_done = function (arg_22_0, arg_22_1)
+			almost_done = function (self, active_objectives)
 				-- function 22
-				local var_22_0 = arg_22_1[1]
+				local objective_name = active_objectives[1]
+				local objective_extension = Managers.state.entity:system("objective_system"):extension_by_objective_name(objective_name)
 
-				if Managers.state.entity:system("objective_system"):extension_by_objective_name(var_22_0):get_percentage_done() > 0.8 then
+				if objective_extension:get_percentage_done() > 0.8 then
 					return true
 				end
 			end
@@ -1573,8 +1603,8 @@ ObjectiveLists.forest_ambush_pvp_set_1 = {
 			play_complete_vo = true,
 			score_for_completion = 0,
 			play_arrive_vo = true,
-			objective_type = scripts_entity_system_systems_objective_objective_types.objective_survive,
-			score_per_section = num_9,
+			objective_type = ObjectiveTypes.objective_survive,
+			score_per_section = survive_points,
 			vo_context_on_complete = {
 				current_objective = "safe_room"
 			}
@@ -1586,8 +1616,8 @@ ObjectiveLists.forest_ambush_pvp_set_1 = {
 			volume_type = "all_alive",
 			play_safehouse_vo = true,
 			volume_name = "versus_forest_ambush_reach_005",
-			objective_type = scripts_entity_system_systems_objective_objective_types.objective_safehouse,
-			score_for_each_player_inside = num_6
+			objective_type = ObjectiveTypes.objective_safehouse,
+			score_for_each_player_inside = safe_room_points
 		}
 	}
 }
@@ -1598,7 +1628,7 @@ ObjectiveLists.forest_ambush_pvp_set_2 = {
 			score_for_completion = 0,
 			volume_type = "any_alive",
 			volume_name = "versus_forest_ambush_reach_006",
-			objective_type = scripts_entity_system_systems_objective_objective_types.objective_reach,
+			objective_type = ObjectiveTypes.objective_reach,
 			vo_context_on_activate = {
 				current_objective = "start_zone"
 			},
@@ -1612,8 +1642,8 @@ ObjectiveLists.forest_ambush_pvp_set_2 = {
 			description = "level_objective_description_forest_ambush_07",
 			volume_type = "any_alive",
 			volume_name = "versus_forest_ambush_reach_007",
-			objective_type = scripts_entity_system_systems_objective_objective_types.objective_reach,
-			score_for_completion = num_2
+			objective_type = ObjectiveTypes.objective_reach,
+			score_for_completion = reach_points
 		}
 	},
 	{
@@ -1621,33 +1651,35 @@ ObjectiveLists.forest_ambush_pvp_set_2 = {
 			description = "level_objective_description_forest_ambush_08",
 			play_complete_vo = true,
 			play_arrive_vo = true,
-			objective_type = scripts_entity_system_systems_objective_objective_types.objective_socket,
+			objective_type = ObjectiveTypes.objective_socket,
 			vo_context_on_complete = {
 				current_objective = "two"
 			},
-			almost_done = function (arg_23_0, arg_23_1)
+			almost_done = function (self, active_objectives)
 				-- function 23
-				local system = Managers.state.entity:system("objective_system")
+				local objective_system = Managers.state.entity:system("objective_system")
+				local num_total = objective_system:num_current_sub_objectives()
+				local num_completed = objective_system:num_current_completed_sub_objectives()
 
-				if system:num_current_sub_objectives() - system:num_current_completed_sub_objectives() <= 1 then
+				if num_total - num_completed <= 1 then
 					return true
 				end
 			end,
 			sub_objectives = {
 				versus_socket_objective_doomwheels_001 = {
 					description = "level_objective_description_forest_ambush_08",
-					objective_type = scripts_entity_system_systems_objective_objective_types.objective_socket,
-					score_for_completion = num_7
+					objective_type = ObjectiveTypes.objective_socket,
+					score_for_completion = socket_points
 				},
 				versus_socket_objective_doomwheels_002 = {
 					description = "level_objective_description_forest_ambush_08",
-					objective_type = scripts_entity_system_systems_objective_objective_types.objective_socket,
-					score_for_completion = num_7
+					objective_type = ObjectiveTypes.objective_socket,
+					score_for_completion = socket_points
 				},
 				versus_socket_objective_doomwheels_003 = {
 					description = "level_objective_description_forest_ambush_08",
-					objective_type = scripts_entity_system_systems_objective_objective_types.objective_socket,
-					score_for_completion = num_7
+					objective_type = ObjectiveTypes.objective_socket,
+					score_for_completion = socket_points
 				}
 			}
 		}
@@ -1657,8 +1689,8 @@ ObjectiveLists.forest_ambush_pvp_set_2 = {
 			description = "level_objective_description_forest_ambush_08_B",
 			volume_type = "any_alive",
 			volume_name = "versus_forest_ambush_reach_008_B",
-			objective_type = scripts_entity_system_systems_objective_objective_types.objective_reach,
-			score_for_completion = num_2
+			objective_type = ObjectiveTypes.objective_reach,
+			score_for_completion = reach_points
 		}
 	},
 	{
@@ -1666,36 +1698,38 @@ ObjectiveLists.forest_ambush_pvp_set_2 = {
 			description = "level_objective_description_forest_ambush_09",
 			volume_type = "any_alive",
 			volume_name = "versus_forest_ambush_reach_008",
-			objective_type = scripts_entity_system_systems_objective_objective_types.objective_reach,
-			score_for_completion = num_2
+			objective_type = ObjectiveTypes.objective_reach,
+			score_for_completion = reach_points
 		}
 	},
 	{
 		sub_objective_container_gargoyle_heads_01 = {
 			description = "level_objective_description_forest_ambush_11",
 			play_arrive_vo = true,
-			objective_type = scripts_entity_system_systems_objective_objective_types.objective_socket,
+			objective_type = ObjectiveTypes.objective_socket,
 			vo_context_on_complete = {
 				current_objective = "three"
 			},
-			almost_done = function (arg_24_0, arg_24_1)
+			almost_done = function (self, active_objectives)
 				-- function 24
-				local system = Managers.state.entity:system("objective_system")
+				local objective_system = Managers.state.entity:system("objective_system")
+				local num_total = objective_system:num_current_sub_objectives()
+				local num_completed = objective_system:num_current_completed_sub_objectives()
 
-				if system:num_current_sub_objectives() - system:num_current_completed_sub_objectives() <= 1 then
+				if num_total - num_completed <= 1 then
 					return true
 				end
 			end,
 			sub_objectives = {
 				versus_socket_objective_gargoyles_001 = {
 					description = "level_objective_description_forest_ambush_11",
-					objective_type = scripts_entity_system_systems_objective_objective_types.objective_socket,
-					score_for_completion = num_7
+					objective_type = ObjectiveTypes.objective_socket,
+					score_for_completion = socket_points
 				},
 				versus_socket_objective_gargoyles_002 = {
 					description = "level_objective_description_forest_ambush_11",
-					objective_type = scripts_entity_system_systems_objective_objective_types.objective_socket,
-					score_for_completion = num_7
+					objective_type = ObjectiveTypes.objective_socket,
+					score_for_completion = socket_points
 				}
 			}
 		}
@@ -1705,8 +1739,8 @@ ObjectiveLists.forest_ambush_pvp_set_2 = {
 			description = "level_objective_description_forest_ambush_10",
 			volume_type = "any_alive",
 			volume_name = "versus_forest_ambush_reach_009",
-			objective_type = scripts_entity_system_systems_objective_objective_types.objective_reach,
-			score_for_completion = num_2
+			objective_type = ObjectiveTypes.objective_reach,
+			score_for_completion = reach_points
 		}
 	},
 	{
@@ -1714,48 +1748,50 @@ ObjectiveLists.forest_ambush_pvp_set_2 = {
 			description = "level_objective_description_forest_ambush_11_B",
 			play_complete_vo = true,
 			play_arrive_vo = true,
-			objective_type = scripts_entity_system_systems_objective_objective_types.objective_interact,
+			objective_type = ObjectiveTypes.objective_interact,
 			vo_context_on_complete = {
 				current_objective = "safe_room"
 			},
-			almost_done = function (arg_25_0, arg_25_1)
+			almost_done = function (self, active_objectives)
 				-- function 25
-				local system = Managers.state.entity:system("objective_system")
+				local objective_system = Managers.state.entity:system("objective_system")
+				local num_total = objective_system:num_current_sub_objectives()
+				local num_completed = objective_system:num_current_completed_sub_objectives()
 
-				if system:num_current_sub_objectives() - system:num_current_completed_sub_objectives() <= 1 then
+				if num_total - num_completed <= 1 then
 					return true
 				end
 			end,
 			sub_objectives = {
 				versus_interact_objective_prisoners_001 = {
 					description = "level_objective_description_forest_ambush_11_B",
-					objective_type = scripts_entity_system_systems_objective_objective_types.objective_interact,
-					objective_tag = scripts_entity_system_systems_objective_objective_tags.objective_tag_prisoner,
-					score_for_completion = num_3
+					objective_type = ObjectiveTypes.objective_interact,
+					objective_tag = ObjectiveTags.objective_tag_prisoner,
+					score_for_completion = interact_points
 				},
 				versus_interact_objective_prisoners_002 = {
 					description = "level_objective_description_forest_ambush_11_B",
-					objective_type = scripts_entity_system_systems_objective_objective_types.objective_interact,
-					objective_tag = scripts_entity_system_systems_objective_objective_tags.objective_tag_prisoner,
-					score_for_completion = num_3
+					objective_type = ObjectiveTypes.objective_interact,
+					objective_tag = ObjectiveTags.objective_tag_prisoner,
+					score_for_completion = interact_points
 				},
 				versus_interact_objective_prisoners_003 = {
 					description = "level_objective_description_forest_ambush_11_B",
-					objective_type = scripts_entity_system_systems_objective_objective_types.objective_interact,
-					objective_tag = scripts_entity_system_systems_objective_objective_tags.objective_tag_prisoner,
-					score_for_completion = num_3
+					objective_type = ObjectiveTypes.objective_interact,
+					objective_tag = ObjectiveTags.objective_tag_prisoner,
+					score_for_completion = interact_points
 				},
 				versus_interact_objective_prisoners_004 = {
 					description = "level_objective_description_forest_ambush_11_B",
-					objective_type = scripts_entity_system_systems_objective_objective_types.objective_interact,
-					objective_tag = scripts_entity_system_systems_objective_objective_tags.objective_tag_prisoner,
-					score_for_completion = num_3
+					objective_type = ObjectiveTypes.objective_interact,
+					objective_tag = ObjectiveTags.objective_tag_prisoner,
+					score_for_completion = interact_points
 				},
 				versus_interact_objective_prisoners_005 = {
 					description = "level_objective_description_forest_ambush_11_B",
-					objective_type = scripts_entity_system_systems_objective_objective_types.objective_interact,
-					objective_tag = scripts_entity_system_systems_objective_objective_tags.objective_tag_prisoner,
-					score_for_completion = num_3
+					objective_type = ObjectiveTypes.objective_interact,
+					objective_tag = ObjectiveTags.objective_tag_prisoner,
+					score_for_completion = interact_points
 				}
 			}
 		}
@@ -1766,8 +1802,8 @@ ObjectiveLists.forest_ambush_pvp_set_2 = {
 			volume_type = "all_alive",
 			play_safehouse_vo = true,
 			volume_name = "versus_forest_ambush_reach_010",
-			objective_type = scripts_entity_system_systems_objective_objective_types.objective_safehouse,
-			score_for_each_player_inside = num_6
+			objective_type = ObjectiveTypes.objective_safehouse,
+			score_for_each_player_inside = safe_room_points
 		}
 	}
 }
@@ -1778,7 +1814,7 @@ ObjectiveLists.forest_ambush_pvp_set_3 = {
 			score_for_completion = 0,
 			volume_type = "any_alive",
 			volume_name = "versus_forest_ambush_reach_011",
-			objective_type = scripts_entity_system_systems_objective_objective_types.objective_reach,
+			objective_type = ObjectiveTypes.objective_reach,
 			vo_context_on_activate = {
 				current_objective = "start_zone"
 			},
@@ -1792,8 +1828,8 @@ ObjectiveLists.forest_ambush_pvp_set_3 = {
 			description = "level_objective_description_forest_ambush_12",
 			volume_type = "any_alive",
 			volume_name = "versus_forest_ambush_reach_012",
-			objective_type = scripts_entity_system_systems_objective_objective_types.objective_reach,
-			score_for_completion = num_2
+			objective_type = ObjectiveTypes.objective_reach,
+			score_for_completion = reach_points
 		}
 	},
 	{
@@ -1803,8 +1839,8 @@ ObjectiveLists.forest_ambush_pvp_set_3 = {
 			play_arrive_vo = true,
 			capture_time = 180,
 			play_complete_vo = true,
-			objective_type = scripts_entity_system_systems_objective_objective_types.objective_capture_point,
-			score_per_section = num_5,
+			objective_type = ObjectiveTypes.objective_capture_point,
+			score_per_section = capture_points,
 			vo_context_on_complete = {
 				current_objective = "two"
 			}
@@ -1815,16 +1851,16 @@ ObjectiveLists.forest_ambush_pvp_set_3 = {
 			description = "level_objective_description_forest_ambush_13",
 			volume_type = "any_alive",
 			volume_name = "versus_forest_ambush_reach_013",
-			objective_type = scripts_entity_system_systems_objective_objective_types.objective_reach,
-			score_for_completion = num_2
+			objective_type = ObjectiveTypes.objective_reach,
+			score_for_completion = reach_points
 		}
 	},
 	{
 		versus_interact_ring_bell = {
 			description = "level_objective_description_forest_ambush_14",
 			play_arrive_vo = true,
-			objective_type = scripts_entity_system_systems_objective_objective_types.objective_interact,
-			score_for_completion = num_3
+			objective_type = ObjectiveTypes.objective_interact,
+			score_for_completion = interact_points
 		}
 	},
 	{
@@ -1834,16 +1870,18 @@ ObjectiveLists.forest_ambush_pvp_set_3 = {
 			num_sections = 100,
 			play_complete_vo = true,
 			score_for_completion = 0,
-			objective_type = scripts_entity_system_systems_objective_objective_types.objective_survive,
-			score_per_section = num_9,
+			objective_type = ObjectiveTypes.objective_survive,
+			score_per_section = survive_points,
 			vo_context_on_complete = {
 				current_objective = "waystone"
 			},
-			almost_done = function (arg_26_0, arg_26_1)
+			almost_done = function (self, active_objectives)
 				-- function 26
-				local system = Managers.state.entity:system("objective_system")
+				local objective_system = Managers.state.entity:system("objective_system")
+				local num_total = objective_system:num_current_sub_objectives()
+				local num_completed = objective_system:num_current_completed_sub_objectives()
 
-				if system:num_current_sub_objectives() - system:num_current_completed_sub_objectives() <= 1 then
+				if num_total - num_completed <= 1 then
 					return true
 				end
 			end
@@ -1855,8 +1893,8 @@ ObjectiveLists.forest_ambush_pvp_set_3 = {
 			volume_type = "all_alive",
 			play_waystone_vo = true,
 			volume_name = "versus_forest_ambush_reach_014",
-			objective_type = scripts_entity_system_systems_objective_objective_types.objective_safehouse,
-			score_for_each_player_inside = num_10
+			objective_type = ObjectiveTypes.objective_safehouse,
+			score_for_each_player_inside = waystone_points
 		}
 	}
 }
@@ -1867,7 +1905,7 @@ ObjectiveLists.dwarf_exterior_pvp_set_1 = {
 			score_for_completion = 0,
 			volume_type = "any_alive",
 			volume_name = "versus_exterior_reach_sz01",
-			objective_type = scripts_entity_system_systems_objective_objective_types.objective_reach,
+			objective_type = ObjectiveTypes.objective_reach,
 			vo_context_on_activate = {
 				current_objective = "start_zone"
 			},
@@ -1881,8 +1919,8 @@ ObjectiveLists.dwarf_exterior_pvp_set_1 = {
 			description = "level_objective_description_exterior_01",
 			volume_type = "any_alive",
 			volume_name = "versus_exterior_reach_001",
-			objective_type = scripts_entity_system_systems_objective_objective_types.objective_reach,
-			score_for_completion = num_2
+			objective_type = ObjectiveTypes.objective_reach,
+			score_for_completion = reach_points
 		}
 	},
 	{
@@ -1890,8 +1928,8 @@ ObjectiveLists.dwarf_exterior_pvp_set_1 = {
 			description = "level_objective_description_exterior_02",
 			volume_type = "any_alive",
 			volume_name = "versus_exterior_reach_002",
-			objective_type = scripts_entity_system_systems_objective_objective_types.objective_reach,
-			score_for_completion = num_2
+			objective_type = ObjectiveTypes.objective_reach,
+			score_for_completion = reach_points
 		}
 	},
 	{
@@ -1899,8 +1937,8 @@ ObjectiveLists.dwarf_exterior_pvp_set_1 = {
 			description = "level_objective_description_exterior_03",
 			volume_type = "any_alive",
 			volume_name = "versus_exterior_reach_003",
-			objective_type = scripts_entity_system_systems_objective_objective_types.objective_reach,
-			score_for_completion = num_2
+			objective_type = ObjectiveTypes.objective_reach,
+			score_for_completion = reach_points
 		}
 	},
 	{
@@ -1910,16 +1948,17 @@ ObjectiveLists.dwarf_exterior_pvp_set_1 = {
 			num_sections = 25,
 			capture_time = 180,
 			play_complete_vo = true,
-			objective_type = scripts_entity_system_systems_objective_objective_types.objective_capture_point,
-			score_per_section = num_5,
+			objective_type = ObjectiveTypes.objective_capture_point,
+			score_per_section = capture_points,
 			vo_context_on_complete = {
 				current_objective = "two"
 			},
-			almost_done = function (arg_27_0, arg_27_1)
+			almost_done = function (self, active_objectives)
 				-- function 27
-				local var_27_0 = arg_27_1[1]
+				local objective_name = active_objectives[1]
+				local objective_extension = Managers.state.entity:system("objective_system"):extension_by_objective_name(objective_name)
 
-				if Managers.state.entity:system("objective_system"):extension_by_objective_name(var_27_0):get_percentage_done() > 0.75 then
+				if objective_extension:get_percentage_done() > 0.75 then
 					return true
 				end
 			end
@@ -1930,16 +1969,16 @@ ObjectiveLists.dwarf_exterior_pvp_set_1 = {
 			description = "level_objective_description_exterior_05",
 			volume_type = "any_alive",
 			volume_name = "versus_exterior_reach_005",
-			objective_type = scripts_entity_system_systems_objective_objective_types.objective_reach,
-			score_for_completion = num_2
+			objective_type = ObjectiveTypes.objective_reach,
+			score_for_completion = reach_points
 		}
 	},
 	{
 		versus_interact_objective_exterior_001 = {
 			description = "level_objective_description_exterior_06_A",
 			play_arrive_vo = true,
-			objective_type = scripts_entity_system_systems_objective_objective_types.objective_interact,
-			score_for_completion = num_3,
+			objective_type = ObjectiveTypes.objective_interact,
+			score_for_completion = interact_points,
 			vo_context_on_activate = {
 				objective_part = 1
 			}
@@ -1953,8 +1992,8 @@ ObjectiveLists.dwarf_exterior_pvp_set_1 = {
 			dialogue_event = "vs_mg_dwarf_external_windlass_reminder",
 			time_for_completion = 20,
 			play_dialogue_event_on_complete = true,
-			objective_type = scripts_entity_system_systems_objective_objective_types.objective_survive,
-			score_per_section = num_9,
+			objective_type = ObjectiveTypes.objective_survive,
+			score_per_section = survive_points,
 			on_last_leaf_complete_sound_event = {
 				heroes = "versus_hud_sub_objective_completed_heroes",
 				dark_pact = "versus_hud_sub_objective_completed_pactsworn"
@@ -1964,8 +2003,8 @@ ObjectiveLists.dwarf_exterior_pvp_set_1 = {
 	{
 		versus_interact_objective_exterior_002 = {
 			description = "level_objective_description_exterior_06_B",
-			objective_type = scripts_entity_system_systems_objective_objective_types.objective_interact,
-			score_for_completion = num_3,
+			objective_type = ObjectiveTypes.objective_interact,
+			score_for_completion = interact_points,
 			vo_context_on_activate = {
 				objective_part = 2
 			}
@@ -1979,8 +2018,8 @@ ObjectiveLists.dwarf_exterior_pvp_set_1 = {
 			dialogue_event = "vs_mg_dwarf_external_windlass_reminder",
 			time_for_completion = 20,
 			play_dialogue_event_on_complete = true,
-			objective_type = scripts_entity_system_systems_objective_objective_types.objective_survive,
-			score_per_section = num_9,
+			objective_type = ObjectiveTypes.objective_survive,
+			score_per_section = survive_points,
 			on_last_leaf_complete_sound_event = {
 				heroes = "versus_hud_sub_objective_completed_heroes",
 				dark_pact = "versus_hud_sub_objective_completed_pactsworn"
@@ -1990,8 +2029,8 @@ ObjectiveLists.dwarf_exterior_pvp_set_1 = {
 	{
 		versus_interact_objective_exterior_003 = {
 			description = "level_objective_description_exterior_06_C",
-			objective_type = scripts_entity_system_systems_objective_objective_types.objective_interact,
-			score_for_completion = num_3
+			objective_type = ObjectiveTypes.objective_interact,
+			score_for_completion = interact_points
 		}
 	},
 	{
@@ -2001,8 +2040,8 @@ ObjectiveLists.dwarf_exterior_pvp_set_1 = {
 			time_for_completion = 20,
 			score_for_completion = 0,
 			play_complete_vo = true,
-			objective_type = scripts_entity_system_systems_objective_objective_types.objective_survive,
-			score_per_section = num_9,
+			objective_type = ObjectiveTypes.objective_survive,
+			score_per_section = survive_points,
 			vo_context_on_complete = {
 				current_objective = "safe_room"
 			}
@@ -2014,8 +2053,8 @@ ObjectiveLists.dwarf_exterior_pvp_set_1 = {
 			volume_type = "all_alive",
 			play_safehouse_vo = true,
 			volume_name = "versus_exterior_reach_006",
-			objective_type = scripts_entity_system_systems_objective_objective_types.objective_safehouse,
-			score_for_each_player_inside = num_6
+			objective_type = ObjectiveTypes.objective_safehouse,
+			score_for_each_player_inside = safe_room_points
 		}
 	}
 }
@@ -2026,7 +2065,7 @@ ObjectiveLists.dwarf_exterior_pvp_set_2 = {
 			score_for_completion = 0,
 			volume_type = "any_alive",
 			volume_name = "versus_exterior_reach_007",
-			objective_type = scripts_entity_system_systems_objective_objective_types.objective_reach,
+			objective_type = ObjectiveTypes.objective_reach,
 			vo_context_on_activate = {
 				current_objective = "start_zone"
 			},
@@ -2040,8 +2079,8 @@ ObjectiveLists.dwarf_exterior_pvp_set_2 = {
 			description = "level_objective_description_exterior_08",
 			volume_type = "any_alive",
 			volume_name = "versus_exterior_reach_008",
-			objective_type = scripts_entity_system_systems_objective_objective_types.objective_reach,
-			score_for_completion = num_2
+			objective_type = ObjectiveTypes.objective_reach,
+			score_for_completion = reach_points
 		}
 	},
 	{
@@ -2049,16 +2088,17 @@ ObjectiveLists.dwarf_exterior_pvp_set_2 = {
 			description = "level_objective_description_exterior_09",
 			num_sections = 70,
 			play_arrive_vo = true,
-			objective_type = scripts_entity_system_systems_objective_objective_types.objective_payload,
-			score_per_section = num_4,
+			objective_type = ObjectiveTypes.objective_payload,
+			score_per_section = payload_points,
 			vo_context_on_complete = {
 				current_objective = "two"
 			},
-			almost_done = function (arg_28_0, arg_28_1)
+			almost_done = function (self, active_objectives)
 				-- function 28
-				local var_28_0 = arg_28_1[1]
+				local objective_name = active_objectives[1]
+				local objective_extension = Managers.state.entity:system("objective_system"):extension_by_objective_name(objective_name)
 
-				if Managers.state.entity:system("objective_system"):extension_by_objective_name(var_28_0):get_percentage_done() > 0.8 then
+				if objective_extension:get_percentage_done() > 0.8 then
 					return true
 				end
 			end
@@ -2068,8 +2108,8 @@ ObjectiveLists.dwarf_exterior_pvp_set_2 = {
 		versus_interact_objective_black_powder = {
 			description = "level_objective_description_exterior_09_B",
 			play_complete_vo = true,
-			objective_type = scripts_entity_system_systems_objective_objective_types.objective_interact,
-			score_for_completion = num_3
+			objective_type = ObjectiveTypes.objective_interact,
+			score_for_completion = interact_points
 		}
 	},
 	{
@@ -2077,8 +2117,8 @@ ObjectiveLists.dwarf_exterior_pvp_set_2 = {
 			description = "level_objective_description_exterior_11",
 			volume_type = "any_alive",
 			volume_name = "versus_exterior_reach_011",
-			objective_type = scripts_entity_system_systems_objective_objective_types.objective_reach,
-			score_for_completion = num_2
+			objective_type = ObjectiveTypes.objective_reach,
+			score_for_completion = reach_points
 		}
 	},
 	{
@@ -2087,18 +2127,20 @@ ObjectiveLists.dwarf_exterior_pvp_set_2 = {
 			close_to_win_on_sub_objective = 2,
 			play_arrive_vo = true,
 			play_complete_vo = true,
-			objective_type = scripts_entity_system_systems_objective_objective_types.objective_target,
+			objective_type = ObjectiveTypes.objective_target,
 			vo_context_on_activate = {
 				objective_part = 1
 			},
 			vo_context_on_complete = {
 				current_objective = "safe_room"
 			},
-			almost_done = function (arg_29_0, arg_29_1)
+			almost_done = function (self, active_objectives)
 				-- function 29
-				local system = Managers.state.entity:system("objective_system")
+				local objective_system = Managers.state.entity:system("objective_system")
+				local num_total = objective_system:num_current_sub_objectives()
+				local num_completed = objective_system:num_current_completed_sub_objectives()
 
-				if system:num_current_sub_objectives() - system:num_current_completed_sub_objectives() <= 1 then
+				if num_total - num_completed <= 1 then
 					return true
 				end
 			end,
@@ -2110,10 +2152,10 @@ ObjectiveLists.dwarf_exterior_pvp_set_2 = {
 					description = "level_objective_description_exterior_12",
 					play_dialogue_event_on_complete = true,
 					dialogue_event = "vs_mg_dwarf_external_capture_points_reminder",
-					objective_type = scripts_entity_system_systems_objective_objective_types.objective_capture_point,
-					score_per_section = num_5,
+					objective_type = ObjectiveTypes.objective_capture_point,
+					score_per_section = capture_points,
 					vo_context_on_complete = {
-						objective_part = fn
+						objective_part = increment_func
 					}
 				},
 				versus_capture_objective_mine_002 = {
@@ -2123,10 +2165,10 @@ ObjectiveLists.dwarf_exterior_pvp_set_2 = {
 					description = "level_objective_description_exterior_12",
 					play_dialogue_event_on_complete = true,
 					dialogue_event = "vs_mg_dwarf_external_capture_points_reminder",
-					objective_type = scripts_entity_system_systems_objective_objective_types.objective_capture_point,
-					score_per_section = num_5,
+					objective_type = ObjectiveTypes.objective_capture_point,
+					score_per_section = capture_points,
 					vo_context_on_complete = {
-						objective_part = fn
+						objective_part = increment_func
 					}
 				},
 				versus_capture_objective_mine_003 = {
@@ -2136,10 +2178,10 @@ ObjectiveLists.dwarf_exterior_pvp_set_2 = {
 					description = "level_objective_description_exterior_12",
 					play_dialogue_event_on_complete = true,
 					dialogue_event = "vs_mg_dwarf_external_capture_points_reminder",
-					objective_type = scripts_entity_system_systems_objective_objective_types.objective_capture_point,
-					score_per_section = num_5,
+					objective_type = ObjectiveTypes.objective_capture_point,
+					score_per_section = capture_points,
 					vo_context_on_complete = {
-						objective_part = fn
+						objective_part = increment_func
 					}
 				}
 			}
@@ -2151,8 +2193,8 @@ ObjectiveLists.dwarf_exterior_pvp_set_2 = {
 			volume_type = "all_alive",
 			play_safehouse_vo = true,
 			volume_name = "versus_exterior_reach_012",
-			objective_type = scripts_entity_system_systems_objective_objective_types.objective_safehouse,
-			score_for_each_player_inside = num_6
+			objective_type = ObjectiveTypes.objective_safehouse,
+			score_for_each_player_inside = safe_room_points
 		}
 	}
 }
@@ -2163,7 +2205,7 @@ ObjectiveLists.dwarf_exterior_pvp_set_3 = {
 			score_for_completion = 0,
 			volume_type = "any_alive",
 			volume_name = "versus_exterior_reach_013",
-			objective_type = scripts_entity_system_systems_objective_objective_types.objective_reach,
+			objective_type = ObjectiveTypes.objective_reach,
 			vo_context_on_activate = {
 				current_objective = "start_zone"
 			},
@@ -2177,8 +2219,8 @@ ObjectiveLists.dwarf_exterior_pvp_set_3 = {
 			description = "level_objective_description_exterior_14",
 			volume_type = "any_alive",
 			volume_name = "versus_exterior_reach_014",
-			objective_type = scripts_entity_system_systems_objective_objective_types.objective_reach,
-			score_for_completion = num_2
+			objective_type = ObjectiveTypes.objective_reach,
+			score_for_completion = reach_points
 		}
 	},
 	{
@@ -2186,8 +2228,8 @@ ObjectiveLists.dwarf_exterior_pvp_set_3 = {
 			description = "level_objective_description_exterior_15",
 			volume_type = "any_alive",
 			volume_name = "versus_exterior_reach_015",
-			objective_type = scripts_entity_system_systems_objective_objective_types.objective_reach,
-			score_for_completion = num_2
+			objective_type = ObjectiveTypes.objective_reach,
+			score_for_completion = reach_points
 		}
 	},
 	{
@@ -2195,8 +2237,8 @@ ObjectiveLists.dwarf_exterior_pvp_set_3 = {
 			description = "level_objective_description_exterior_20",
 			play_complete_vo = true,
 			play_arrive_vo = true,
-			objective_type = scripts_entity_system_systems_objective_objective_types.objective_interact,
-			score_for_completion = num_3,
+			objective_type = ObjectiveTypes.objective_interact,
+			score_for_completion = interact_points,
 			vo_context_on_complete = {
 				current_objective = "two",
 				objective_part = 0
@@ -2208,8 +2250,8 @@ ObjectiveLists.dwarf_exterior_pvp_set_3 = {
 			description = "level_objective_description_exterior_16",
 			volume_type = "any_alive",
 			volume_name = "versus_exterior_reach_016",
-			objective_type = scripts_entity_system_systems_objective_objective_types.objective_reach,
-			score_for_completion = num_2
+			objective_type = ObjectiveTypes.objective_reach,
+			score_for_completion = reach_points
 		}
 	},
 	{
@@ -2217,8 +2259,8 @@ ObjectiveLists.dwarf_exterior_pvp_set_3 = {
 			description = "level_objective_description_exterior_17",
 			volume_type = "any_alive",
 			volume_name = "versus_exterior_reach_017",
-			objective_type = scripts_entity_system_systems_objective_objective_types.objective_reach,
-			score_for_completion = num_2,
+			objective_type = ObjectiveTypes.objective_reach,
+			score_for_completion = reach_points,
 			vo_context_on_complete = {
 				objective_part = 1
 			}
@@ -2230,8 +2272,8 @@ ObjectiveLists.dwarf_exterior_pvp_set_3 = {
 			volume_type = "any_alive",
 			volume_name = "versus_exterior_reach_018",
 			play_arrive_vo = true,
-			objective_type = scripts_entity_system_systems_objective_objective_types.objective_reach,
-			score_for_completion = num_2
+			objective_type = ObjectiveTypes.objective_reach,
+			score_for_completion = reach_points
 		}
 	},
 	{
@@ -2239,7 +2281,7 @@ ObjectiveLists.dwarf_exterior_pvp_set_3 = {
 			description = "level_objective_description_exterior_19",
 			play_complete_vo = true,
 			play_arrive_vo = true,
-			objective_type = scripts_entity_system_systems_objective_objective_types.objective_target,
+			objective_type = ObjectiveTypes.objective_target,
 			vo_context_on_activate = {
 				destroyed_chains = 0,
 				objective_part = 2
@@ -2247,11 +2289,13 @@ ObjectiveLists.dwarf_exterior_pvp_set_3 = {
 			vo_context_on_complete = {
 				objective_part = 3
 			},
-			almost_done = function (arg_30_0, arg_30_1)
+			almost_done = function (self, active_objectives)
 				-- function 30
-				local system = Managers.state.entity:system("objective_system")
+				local objective_system = Managers.state.entity:system("objective_system")
+				local num_total = objective_system:num_current_sub_objectives()
+				local num_completed = objective_system:num_current_completed_sub_objectives()
 
-				if system:num_current_sub_objectives() - system:num_current_completed_sub_objectives() <= 1 then
+				if num_total - num_completed <= 1 then
 					return true
 				end
 			end,
@@ -2260,60 +2304,60 @@ ObjectiveLists.dwarf_exterior_pvp_set_3 = {
 					description = "level_objective_description_exterior_19",
 					play_dialogue_event_on_complete = true,
 					dialogue_event = "vs_mg_dwarf_external_chains_reminder",
-					objective_type = scripts_entity_system_systems_objective_objective_types.objective_target,
-					score_for_completion = num_8,
+					objective_type = ObjectiveTypes.objective_target,
+					score_for_completion = target_points,
 					vo_context_on_complete = {
-						destroyed_chains = fn
+						destroyed_chains = increment_func
 					}
 				},
 				versus_target_objective_002 = {
 					description = "level_objective_description_exterior_19",
 					play_dialogue_event_on_complete = true,
 					dialogue_event = "vs_mg_dwarf_external_chains_reminder",
-					score_for_completion = num_8,
-					objective_type = scripts_entity_system_systems_objective_objective_types.objective_target,
+					score_for_completion = target_points,
+					objective_type = ObjectiveTypes.objective_target,
 					vo_context_on_complete = {
-						destroyed_chains = fn
+						destroyed_chains = increment_func
 					}
 				},
 				versus_target_objective_003 = {
 					description = "level_objective_description_exterior_19",
 					play_dialogue_event_on_complete = true,
 					dialogue_event = "vs_mg_dwarf_external_chains_reminder",
-					objective_type = scripts_entity_system_systems_objective_objective_types.objective_target,
-					score_for_completion = num_8,
+					objective_type = ObjectiveTypes.objective_target,
+					score_for_completion = target_points,
 					vo_context_on_complete = {
-						destroyed_chains = fn
+						destroyed_chains = increment_func
 					}
 				},
 				versus_target_objective_004 = {
 					description = "level_objective_description_exterior_19",
 					play_dialogue_event_on_complete = true,
 					dialogue_event = "vs_mg_dwarf_external_chains_reminder",
-					objective_type = scripts_entity_system_systems_objective_objective_types.objective_target,
-					score_for_completion = num_8,
+					objective_type = ObjectiveTypes.objective_target,
+					score_for_completion = target_points,
 					vo_context_on_complete = {
-						destroyed_chains = fn
+						destroyed_chains = increment_func
 					}
 				},
 				versus_target_objective_005 = {
 					description = "level_objective_description_exterior_19",
 					play_dialogue_event_on_complete = true,
 					dialogue_event = "vs_mg_dwarf_external_chains_reminder",
-					objective_type = scripts_entity_system_systems_objective_objective_types.objective_target,
-					score_for_completion = num_8,
+					objective_type = ObjectiveTypes.objective_target,
+					score_for_completion = target_points,
 					vo_context_on_complete = {
-						destroyed_chains = fn
+						destroyed_chains = increment_func
 					}
 				},
 				versus_target_objective_006 = {
 					description = "level_objective_description_exterior_19",
 					play_dialogue_event_on_complete = true,
 					dialogue_event = "vs_mg_dwarf_external_chains_reminder",
-					objective_type = scripts_entity_system_systems_objective_objective_types.objective_target,
-					score_for_completion = num_8,
+					objective_type = ObjectiveTypes.objective_target,
+					score_for_completion = target_points,
 					vo_context_on_complete = {
-						destroyed_chains = fn
+						destroyed_chains = increment_func
 					}
 				}
 			}
@@ -2322,8 +2366,8 @@ ObjectiveLists.dwarf_exterior_pvp_set_3 = {
 	{
 		versus_interact_objective_bombcart_again = {
 			description = "level_objective_description_exterior_20",
-			objective_type = scripts_entity_system_systems_objective_objective_types.objective_interact,
-			score_for_completion = num_3,
+			objective_type = ObjectiveTypes.objective_interact,
+			score_for_completion = interact_points,
 			vo_context_on_complete = {
 				objective_part = 4
 			}
@@ -2337,15 +2381,15 @@ ObjectiveLists.dwarf_exterior_pvp_set_3 = {
 			score_for_completion = 0,
 			play_dialogue_event_on_complete = true,
 			dialogue_event = "vs_mg_dwarf_external_ignite_bomb",
-			objective_type = scripts_entity_system_systems_objective_objective_types.objective_survive,
-			score_per_section = num_9
+			objective_type = ObjectiveTypes.objective_survive,
+			score_per_section = survive_points
 		}
 	},
 	{
 		versus_interact_objective_ignite_bomb = {
 			description = "level_objective_description_exterior_21",
-			objective_type = scripts_entity_system_systems_objective_objective_types.objective_interact,
-			score_for_completion = num_3
+			objective_type = ObjectiveTypes.objective_interact,
+			score_for_completion = interact_points
 		}
 	},
 	{
@@ -2355,8 +2399,8 @@ ObjectiveLists.dwarf_exterior_pvp_set_3 = {
 			time_for_completion = 20,
 			score_for_completion = 0,
 			play_complete_vo = true,
-			objective_type = scripts_entity_system_systems_objective_objective_types.objective_survive,
-			score_per_section = num_9,
+			objective_type = ObjectiveTypes.objective_survive,
+			score_per_section = survive_points,
 			vo_context_on_complete = {
 				current_objective = "waystone"
 			}
@@ -2368,8 +2412,8 @@ ObjectiveLists.dwarf_exterior_pvp_set_3 = {
 			volume_type = "all_alive",
 			play_waystone_vo = true,
 			volume_name = "versus_exterior_reach_019",
-			objective_type = scripts_entity_system_systems_objective_objective_types.objective_safehouse,
-			score_for_each_player_inside = num_2
+			objective_type = ObjectiveTypes.objective_safehouse,
+			score_for_each_player_inside = reach_points
 		}
 	}
 }
@@ -2388,47 +2432,47 @@ ObjectiveLists.weave_3 = {
 		kill_enemies = {},
 		capture_point_004 = {
 			is_scored = true,
-			on_start_func = function (arg_31_0)
+			on_start_func = function (unit)
 				-- function 31
-				local get_data = Unit.get_data(arg_31_0, "terror_event_spawner_id")
+				local spawner_id = Unit.get_data(unit, "terror_event_spawner_id")
 
-				Managers.weave:start_terror_event("capture_point_3_event", get_data)
+				Managers.weave:start_terror_event("capture_point_3_event", spawner_id)
 			end,
-			on_complete_func = function (arg_32_0)
+			on_complete_func = function (unit)
 				-- function 32
-				local get_data = Unit.get_data(arg_32_0, "terror_event_spawner_id")
+				local spawner_id = Unit.get_data(unit, "terror_event_spawner_id")
 
-				Managers.weave:stop_terror_event("capture_point_3_event", get_data)
+				Managers.weave:stop_terror_event("capture_point_3_event", spawner_id)
 			end
 		},
 		capture_point_002 = {
 			is_scored = true,
-			on_start_func = function (arg_33_0)
+			on_start_func = function (unit)
 				-- function 33
-				local get_data = Unit.get_data(arg_33_0, "terror_event_spawner_id")
+				local spawner_id = Unit.get_data(unit, "terror_event_spawner_id")
 
-				Managers.weave:start_terror_event("capture_point_1_event_small", get_data)
+				Managers.weave:start_terror_event("capture_point_1_event_small", spawner_id)
 			end,
-			on_complete_func = function (arg_34_0)
+			on_complete_func = function (unit)
 				-- function 34
-				local get_data = Unit.get_data(arg_34_0, "terror_event_spawner_id")
+				local spawner_id = Unit.get_data(unit, "terror_event_spawner_id")
 
-				Managers.weave:stop_terror_event("capture_point_1_event_small", get_data)
+				Managers.weave:stop_terror_event("capture_point_1_event_small", spawner_id)
 			end
 		},
 		capture_point_005 = {
 			is_scored = true,
-			on_start_func = function (arg_35_0)
+			on_start_func = function (unit)
 				-- function 35
-				local get_data = Unit.get_data(arg_35_0, "terror_event_spawner_id")
+				local spawner_id = Unit.get_data(unit, "terror_event_spawner_id")
 
-				Managers.weave:start_terror_event("capture_point_1_event_large", get_data)
+				Managers.weave:start_terror_event("capture_point_1_event_large", spawner_id)
 			end,
-			on_complete_func = function (arg_36_0)
+			on_complete_func = function (unit)
 				-- function 36
-				local get_data = Unit.get_data(arg_36_0, "terror_event_spawner_id")
+				local spawner_id = Unit.get_data(unit, "terror_event_spawner_id")
 
-				Managers.weave:stop_terror_event("capture_point_1_event_large", get_data)
+				Managers.weave:stop_terror_event("capture_point_1_event_large", spawner_id)
 			end
 		}
 	}
@@ -2444,49 +2488,49 @@ ObjectiveLists.weave_5 = {
 		capture_point_003 = {
 			is_scored = true,
 			sort_index = 3,
-			on_start_func = function (arg_37_0)
+			on_start_func = function (unit)
 				-- function 37
-				local get_data = Unit.get_data(arg_37_0, "terror_event_spawner_id")
+				local spawner_id = Unit.get_data(unit, "terror_event_spawner_id")
 
-				Managers.weave:start_terror_event("capture_point_3_event", get_data)
+				Managers.weave:start_terror_event("capture_point_3_event", spawner_id)
 			end,
-			on_complete_func = function (arg_38_0)
+			on_complete_func = function (unit)
 				-- function 38
-				local get_data = Unit.get_data(arg_38_0, "terror_event_spawner_id")
+				local spawner_id = Unit.get_data(unit, "terror_event_spawner_id")
 
-				Managers.weave:stop_terror_event("capture_point_3_event", get_data)
+				Managers.weave:stop_terror_event("capture_point_3_event", spawner_id)
 			end
 		},
 		capture_point_001 = {
 			is_scored = true,
 			sort_index = 1,
-			on_start_func = function (arg_39_0)
+			on_start_func = function (unit)
 				-- function 39
-				local get_data = Unit.get_data(arg_39_0, "terror_event_spawner_id")
+				local spawner_id = Unit.get_data(unit, "terror_event_spawner_id")
 
-				Managers.weave:start_terror_event("capture_point_1_event_small", get_data)
+				Managers.weave:start_terror_event("capture_point_1_event_small", spawner_id)
 			end,
-			on_complete_func = function (arg_40_0)
+			on_complete_func = function (unit)
 				-- function 40
-				local get_data = Unit.get_data(arg_40_0, "terror_event_spawner_id")
+				local spawner_id = Unit.get_data(unit, "terror_event_spawner_id")
 
-				Managers.weave:stop_terror_event("capture_point_1_event_small", get_data)
+				Managers.weave:stop_terror_event("capture_point_1_event_small", spawner_id)
 			end
 		},
 		capture_point_002 = {
 			is_scored = true,
 			sort_index = 2,
-			on_start_func = function (arg_41_0)
+			on_start_func = function (unit)
 				-- function 41
-				local get_data = Unit.get_data(arg_41_0, "terror_event_spawner_id")
+				local spawner_id = Unit.get_data(unit, "terror_event_spawner_id")
 
-				Managers.weave:start_terror_event("capture_point_1_event_large", get_data)
+				Managers.weave:start_terror_event("capture_point_1_event_large", spawner_id)
 			end,
-			on_complete_func = function (arg_42_0)
+			on_complete_func = function (unit)
 				-- function 42
-				local get_data = Unit.get_data(arg_42_0, "terror_event_spawner_id")
+				local spawner_id = Unit.get_data(unit, "terror_event_spawner_id")
 
-				Managers.weave:stop_terror_event("capture_point_1_event_large", get_data)
+				Managers.weave:stop_terror_event("capture_point_1_event_large", spawner_id)
 			end
 		}
 	}
@@ -2502,20 +2546,20 @@ ObjectiveLists.weave_7 = {
 		weave_prop_skaven_doom_wheel_01_spawner_002 = {
 			timer = 10,
 			is_scored = true,
-			on_socket_start_func = function (arg_43_0)
+			on_socket_start_func = function (unit)
 				-- function 43
-				local get_data = Unit.get_data(arg_43_0, "terror_event_spawner_id")
+				local spawner_id = Unit.get_data(unit, "terror_event_spawner_id")
 
-				Managers.weave:start_terror_event("weave_spot_event_skaven_gutter_runner", get_data)
+				Managers.weave:start_terror_event("weave_spot_event_skaven_gutter_runner", spawner_id)
 			end
 		},
 		weave_limited_item_track_spawner_002 = {
 			template_name = "explosive_barrel_spawner",
-			on_first_pickup_func = function (arg_44_0)
+			on_first_pickup_func = function (unit)
 				-- function 44
-				local get_data = Unit.get_data(arg_44_0, "terror_event_spawner_id")
+				local spawner_id = Unit.get_data(unit, "terror_event_spawner_id")
 
-				Managers.weave:start_terror_event("weave_spot_event_special_mixed", get_data)
+				Managers.weave:start_terror_event("weave_spot_event_special_mixed", spawner_id)
 			end
 		}
 	},
@@ -2524,20 +2568,20 @@ ObjectiveLists.weave_7 = {
 		weave_prop_skaven_doom_wheel_01_spawner_001 = {
 			timer = 10,
 			is_scored = true,
-			on_socket_start_func = function (arg_45_0)
+			on_socket_start_func = function (unit)
 				-- function 45
-				local get_data = Unit.get_data(arg_45_0, "terror_event_spawner_id")
+				local spawner_id = Unit.get_data(unit, "terror_event_spawner_id")
 
-				Managers.weave:start_terror_event("weave_spot_event_boss_minotaur", get_data)
+				Managers.weave:start_terror_event("weave_spot_event_boss_minotaur", spawner_id)
 			end
 		},
 		weave_limited_item_track_spawner_003 = {
 			template_name = "explosive_barrel_spawner",
-			on_first_pickup_func = function (arg_46_0)
+			on_first_pickup_func = function (unit)
 				-- function 46
-				local get_data = Unit.get_data(arg_46_0, "terror_event_spawner_id")
+				local spawner_id = Unit.get_data(unit, "terror_event_spawner_id")
 
-				Managers.weave:start_terror_event("weave_spot_event_boss_chaos_spawn_nodelay", get_data)
+				Managers.weave:start_terror_event("weave_spot_event_boss_chaos_spawn_nodelay", spawner_id)
 			end
 		}
 	}
@@ -2552,47 +2596,47 @@ ObjectiveLists.weave_9 = {
 		kill_enemies = {},
 		capture_point_001 = {
 			is_scored = true,
-			on_start_func = function (arg_47_0)
+			on_start_func = function (unit)
 				-- function 47
-				local get_data = Unit.get_data(arg_47_0, "terror_event_spawner_id")
+				local spawner_id = Unit.get_data(unit, "terror_event_spawner_id")
 
-				Managers.weave:start_terror_event("capture_point_1_chaos", get_data)
+				Managers.weave:start_terror_event("capture_point_1_chaos", spawner_id)
 			end,
-			on_complete_func = function (arg_48_0)
+			on_complete_func = function (unit)
 				-- function 48
-				local get_data = Unit.get_data(arg_48_0, "terror_event_spawner_id")
+				local spawner_id = Unit.get_data(unit, "terror_event_spawner_id")
 
-				Managers.weave:stop_terror_event("capture_point_1_chaos", get_data)
+				Managers.weave:stop_terror_event("capture_point_1_chaos", spawner_id)
 			end
 		},
 		capture_point_002 = {
 			is_scored = true,
-			on_start_func = function (arg_49_0)
+			on_start_func = function (unit)
 				-- function 49
-				local get_data = Unit.get_data(arg_49_0, "terror_event_spawner_id")
+				local spawner_id = Unit.get_data(unit, "terror_event_spawner_id")
 
-				Managers.weave:start_terror_event("capture_point_6_boss_event_skaven", get_data)
+				Managers.weave:start_terror_event("capture_point_6_boss_event_skaven", spawner_id)
 			end,
-			on_complete_func = function (arg_50_0)
+			on_complete_func = function (unit)
 				-- function 50
-				local get_data = Unit.get_data(arg_50_0, "terror_event_spawner_id")
+				local spawner_id = Unit.get_data(unit, "terror_event_spawner_id")
 
-				Managers.weave:stop_terror_event("capture_point_6_boss_event_skaven", get_data)
+				Managers.weave:stop_terror_event("capture_point_6_boss_event_skaven", spawner_id)
 			end
 		},
 		capture_point_003 = {
 			is_scored = true,
-			on_start_func = function (arg_51_0)
+			on_start_func = function (unit)
 				-- function 51
-				local get_data = Unit.get_data(arg_51_0, "terror_event_spawner_id")
+				local spawner_id = Unit.get_data(unit, "terror_event_spawner_id")
 
-				Managers.weave:start_terror_event("capture_point_event_beastmen", get_data)
+				Managers.weave:start_terror_event("capture_point_event_beastmen", spawner_id)
 			end,
-			on_complete_func = function (arg_52_0)
+			on_complete_func = function (unit)
 				-- function 52
-				local get_data = Unit.get_data(arg_52_0, "terror_event_spawner_id")
+				local spawner_id = Unit.get_data(unit, "terror_event_spawner_id")
 
-				Managers.weave:stop_terror_event("capture_point_event_beastmen", get_data)
+				Managers.weave:stop_terror_event("capture_point_event_beastmen", spawner_id)
 			end
 		}
 	}
@@ -2637,47 +2681,47 @@ ObjectiveLists.weave_14 = {
 		kill_enemies = {},
 		capture_point_002 = {
 			is_scored = true,
-			on_start_func = function (arg_53_0)
+			on_start_func = function (unit)
 				-- function 53
-				local get_data = Unit.get_data(arg_53_0, "terror_event_spawner_id")
+				local spawner_id = Unit.get_data(unit, "terror_event_spawner_id")
 
-				Managers.weave:start_terror_event("capture_point_3_event", get_data)
+				Managers.weave:start_terror_event("capture_point_3_event", spawner_id)
 			end,
-			on_complete_func = function (arg_54_0)
+			on_complete_func = function (unit)
 				-- function 54
-				local get_data = Unit.get_data(arg_54_0, "terror_event_spawner_id")
+				local spawner_id = Unit.get_data(unit, "terror_event_spawner_id")
 
-				Managers.weave:stop_terror_event("capture_point_3_event", get_data)
+				Managers.weave:stop_terror_event("capture_point_3_event", spawner_id)
 			end
 		},
 		capture_point_001 = {
 			is_scored = true,
-			on_start_func = function (arg_55_0)
+			on_start_func = function (unit)
 				-- function 55
-				local get_data = Unit.get_data(arg_55_0, "terror_event_spawner_id")
+				local spawner_id = Unit.get_data(unit, "terror_event_spawner_id")
 
-				Managers.weave:start_terror_event("capture_point_1_event_small", get_data)
+				Managers.weave:start_terror_event("capture_point_1_event_small", spawner_id)
 			end,
-			on_complete_func = function (arg_56_0)
+			on_complete_func = function (unit)
 				-- function 56
-				local get_data = Unit.get_data(arg_56_0, "terror_event_spawner_id")
+				local spawner_id = Unit.get_data(unit, "terror_event_spawner_id")
 
-				Managers.weave:stop_terror_event("capture_point_1_event_small", get_data)
+				Managers.weave:stop_terror_event("capture_point_1_event_small", spawner_id)
 			end
 		},
 		capture_point_003 = {
 			is_scored = true,
-			on_start_func = function (arg_57_0)
+			on_start_func = function (unit)
 				-- function 57
-				local get_data = Unit.get_data(arg_57_0, "terror_event_spawner_id")
+				local spawner_id = Unit.get_data(unit, "terror_event_spawner_id")
 
-				Managers.weave:start_terror_event("capture_point_1_event_large", get_data)
+				Managers.weave:start_terror_event("capture_point_1_event_large", spawner_id)
 			end,
-			on_complete_func = function (arg_58_0)
+			on_complete_func = function (unit)
 				-- function 58
-				local get_data = Unit.get_data(arg_58_0, "terror_event_spawner_id")
+				local spawner_id = Unit.get_data(unit, "terror_event_spawner_id")
 
-				Managers.weave:stop_terror_event("capture_point_1_event_large", get_data)
+				Managers.weave:stop_terror_event("capture_point_1_event_large", spawner_id)
 			end
 		}
 	}
@@ -2693,39 +2737,39 @@ ObjectiveLists.weave_16 = {
 		weave_prop_skaven_doom_wheel_01_spawner_001 = {
 			timer = 10,
 			is_scored = true,
-			on_socket_start_func = function (arg_59_0)
+			on_socket_start_func = function (unit)
 				-- function 59
-				local get_data = Unit.get_data(arg_59_0, "terror_event_spawner_id")
+				local spawner_id = Unit.get_data(unit, "terror_event_spawner_id")
 
-				Managers.weave:start_terror_event("weave_spot_event_boss_stormfiend", get_data)
+				Managers.weave:start_terror_event("weave_spot_event_boss_stormfiend", spawner_id)
 			end
 		},
 		weave_prop_skaven_doom_wheel_01_spawner_002 = {
 			timer = 10,
 			is_scored = true,
-			on_socket_start_func = function (arg_60_0)
+			on_socket_start_func = function (unit)
 				-- function 60
-				local get_data = Unit.get_data(arg_60_0, "terror_event_spawner_id")
+				local spawner_id = Unit.get_data(unit, "terror_event_spawner_id")
 
-				Managers.weave:start_terror_event("weave_spot_event_boss_chaos_spawn", get_data)
+				Managers.weave:start_terror_event("weave_spot_event_boss_chaos_spawn", spawner_id)
 			end
 		},
 		weave_limited_item_track_spawner_001 = {
 			template_name = "explosive_barrel_spawner",
-			on_first_pickup_func = function (arg_61_0)
+			on_first_pickup_func = function (unit)
 				-- function 61
-				local get_data = Unit.get_data(arg_61_0, "terror_event_spawner_id")
+				local spawner_id = Unit.get_data(unit, "terror_event_spawner_id")
 
-				Managers.weave:start_terror_event("capture_point_1_event_medium", get_data)
+				Managers.weave:start_terror_event("capture_point_1_event_medium", spawner_id)
 			end
 		},
 		weave_limited_item_track_spawner_007 = {
 			template_name = "explosive_barrel_spawner",
-			on_first_pickup_func = function (arg_62_0)
+			on_first_pickup_func = function (unit)
 				-- function 62
-				local get_data = Unit.get_data(arg_62_0, "terror_event_spawner_id")
+				local spawner_id = Unit.get_data(unit, "terror_event_spawner_id")
 
-				Managers.weave:start_terror_event("objective_specials_raid", get_data)
+				Managers.weave:start_terror_event("objective_specials_raid", spawner_id)
 			end
 		}
 	}
@@ -2740,20 +2784,20 @@ ObjectiveLists.weave_18 = {
 		kill_enemies = {},
 		weave_explosive_barrel_socket_001 = {
 			is_scored = true,
-			on_start_func = function (arg_63_0)
+			on_start_func = function (unit)
 				-- function 63
-				local get_data = Unit.get_data(arg_63_0, "terror_event_spawner_id")
+				local spawner_id = Unit.get_data(unit, "terror_event_spawner_id")
 
-				Managers.weave:start_terror_event("objective_specials_raid", get_data)
+				Managers.weave:start_terror_event("objective_specials_raid", spawner_id)
 			end
 		},
 		weave_limited_item_track_spawner_004 = {
 			template_name = "gargoyle_head_spawner",
-			on_first_pickup_func = function (arg_64_0)
+			on_first_pickup_func = function (unit)
 				-- function 64
-				local get_data = Unit.get_data(arg_64_0, "terror_event_spawner_id")
+				local spawner_id = Unit.get_data(unit, "terror_event_spawner_id")
 
-				Managers.weave:start_terror_event("weave_spot_event_chaos_warriors", get_data)
+				Managers.weave:start_terror_event("weave_spot_event_chaos_warriors", spawner_id)
 			end
 		}
 	},
@@ -2761,20 +2805,20 @@ ObjectiveLists.weave_18 = {
 		kill_enemies = {},
 		weave_explosive_barrel_socket_002 = {
 			is_scored = true,
-			on_start_func = function (arg_65_0)
+			on_start_func = function (unit)
 				-- function 65
-				local get_data = Unit.get_data(arg_65_0, "terror_event_spawner_id")
+				local spawner_id = Unit.get_data(unit, "terror_event_spawner_id")
 
-				Managers.weave:start_terror_event("objective_event_beastmen", get_data)
+				Managers.weave:start_terror_event("objective_event_beastmen", spawner_id)
 			end
 		},
 		weave_limited_item_track_spawner_007 = {
 			template_name = "gargoyle_head_spawner",
-			on_first_pickup_func = function (arg_66_0)
+			on_first_pickup_func = function (unit)
 				-- function 66
-				local get_data = Unit.get_data(arg_66_0, "terror_event_spawner_id")
+				local spawner_id = Unit.get_data(unit, "terror_event_spawner_id")
 
-				Managers.weave:start_terror_event("weave_spot_event_skaven_specials_small", get_data)
+				Managers.weave:start_terror_event("weave_spot_event_skaven_specials_small", spawner_id)
 			end
 		}
 	},
@@ -2782,11 +2826,11 @@ ObjectiveLists.weave_18 = {
 		kill_enemies = {},
 		weave_limited_item_track_spawner_006 = {
 			template_name = "gargoyle_head_spawner",
-			on_first_pickup_func = function (arg_67_0)
+			on_first_pickup_func = function (unit)
 				-- function 67
-				local get_data = Unit.get_data(arg_67_0, "terror_event_spawner_id")
+				local spawner_id = Unit.get_data(unit, "terror_event_spawner_id")
 
-				Managers.weave:start_terror_event("capture_point_1_event_small", get_data)
+				Managers.weave:start_terror_event("capture_point_1_event_small", spawner_id)
 			end
 		},
 		weave_explosive_barrel_socket_003 = {
@@ -2804,47 +2848,47 @@ ObjectiveLists.weave_20 = {
 		kill_enemies = {},
 		capture_point_006 = {
 			is_scored = true,
-			on_start_func = function (arg_68_0)
+			on_start_func = function (unit)
 				-- function 68
-				local get_data = Unit.get_data(arg_68_0, "terror_event_spawner_id")
+				local spawner_id = Unit.get_data(unit, "terror_event_spawner_id")
 
-				Managers.weave:start_terror_event("capture_point_1_event_large_skaven", get_data)
+				Managers.weave:start_terror_event("capture_point_1_event_large_skaven", spawner_id)
 			end,
-			on_complete_func = function (arg_69_0)
+			on_complete_func = function (unit)
 				-- function 69
-				local get_data = Unit.get_data(arg_69_0, "terror_event_spawner_id")
+				local spawner_id = Unit.get_data(unit, "terror_event_spawner_id")
 
-				Managers.weave:stop_terror_event("capture_point_1_event_large_skaven", get_data)
+				Managers.weave:stop_terror_event("capture_point_1_event_large_skaven", spawner_id)
 			end
 		},
 		capture_point_002 = {
 			is_scored = true,
-			on_start_func = function (arg_70_0)
+			on_start_func = function (unit)
 				-- function 70
-				local get_data = Unit.get_data(arg_70_0, "terror_event_spawner_id")
+				local spawner_id = Unit.get_data(unit, "terror_event_spawner_id")
 
-				Managers.weave:start_terror_event("capture_point_2_event", get_data)
+				Managers.weave:start_terror_event("capture_point_2_event", spawner_id)
 			end,
-			on_complete_func = function (arg_71_0)
+			on_complete_func = function (unit)
 				-- function 71
-				local get_data = Unit.get_data(arg_71_0, "terror_event_spawner_id")
+				local spawner_id = Unit.get_data(unit, "terror_event_spawner_id")
 
-				Managers.weave:stop_terror_event("capture_point_2_event", get_data)
+				Managers.weave:stop_terror_event("capture_point_2_event", spawner_id)
 			end
 		},
 		capture_point_003 = {
 			is_scored = true,
-			on_start_func = function (arg_72_0)
+			on_start_func = function (unit)
 				-- function 72
-				local get_data = Unit.get_data(arg_72_0, "terror_event_spawner_id")
+				local spawner_id = Unit.get_data(unit, "terror_event_spawner_id")
 
-				Managers.weave:start_terror_event("capture_point_event_beastmen", get_data)
+				Managers.weave:start_terror_event("capture_point_event_beastmen", spawner_id)
 			end,
-			on_complete_func = function (arg_73_0)
+			on_complete_func = function (unit)
 				-- function 73
-				local get_data = Unit.get_data(arg_73_0, "terror_event_spawner_id")
+				local spawner_id = Unit.get_data(unit, "terror_event_spawner_id")
 
-				Managers.weave:stop_terror_event("capture_point_event_beastmen", get_data)
+				Managers.weave:stop_terror_event("capture_point_event_beastmen", spawner_id)
 			end
 		}
 	}
@@ -2924,20 +2968,20 @@ ObjectiveLists.weave_24 = {
 		weave_prop_skaven_doom_wheel_01_spawner_002 = {
 			timer = 10,
 			is_scored = true,
-			on_socket_start_func = function (arg_74_0)
+			on_socket_start_func = function (unit)
 				-- function 74
-				local get_data = Unit.get_data(arg_74_0, "terror_event_spawner_id")
+				local spawner_id = Unit.get_data(unit, "terror_event_spawner_id")
 
-				Managers.weave:start_terror_event("weave_spot_event_boss_chaos_spawn", get_data)
+				Managers.weave:start_terror_event("weave_spot_event_boss_chaos_spawn", spawner_id)
 			end
 		},
 		weave_limited_item_track_spawner_009 = {
 			template_name = "magic_barrel_spawner",
-			on_first_pickup_func = function (arg_75_0)
+			on_first_pickup_func = function (unit)
 				-- function 75
-				local get_data = Unit.get_data(arg_75_0, "terror_event_spawner_id")
+				local spawner_id = Unit.get_data(unit, "terror_event_spawner_id")
 
-				Managers.weave:start_terror_event("capture_point_3_event", get_data)
+				Managers.weave:start_terror_event("capture_point_3_event", spawner_id)
 			end
 		}
 	}
@@ -2947,47 +2991,47 @@ ObjectiveLists.weave_25 = {
 		kill_enemies = {},
 		capture_point_007 = {
 			is_scored = true,
-			on_start_func = function (arg_76_0)
+			on_start_func = function (unit)
 				-- function 76
-				local get_data = Unit.get_data(arg_76_0, "terror_event_spawner_id")
+				local spawner_id = Unit.get_data(unit, "terror_event_spawner_id")
 
-				Managers.weave:start_terror_event("capture_point_1_event_medium", get_data)
+				Managers.weave:start_terror_event("capture_point_1_event_medium", spawner_id)
 			end,
-			on_complete_func = function (arg_77_0)
+			on_complete_func = function (unit)
 				-- function 77
-				local get_data = Unit.get_data(arg_77_0, "terror_event_spawner_id")
+				local spawner_id = Unit.get_data(unit, "terror_event_spawner_id")
 
-				Managers.weave:stop_terror_event("capture_point_1_event_medium", get_data)
+				Managers.weave:stop_terror_event("capture_point_1_event_medium", spawner_id)
 			end
 		},
 		capture_point_008 = {
 			is_scored = true,
-			on_start_func = function (arg_78_0)
+			on_start_func = function (unit)
 				-- function 78
-				local get_data = Unit.get_data(arg_78_0, "terror_event_spawner_id")
+				local spawner_id = Unit.get_data(unit, "terror_event_spawner_id")
 
-				Managers.weave:start_terror_event("capture_point_3_event", get_data)
+				Managers.weave:start_terror_event("capture_point_3_event", spawner_id)
 			end,
-			on_complete_func = function (arg_79_0)
+			on_complete_func = function (unit)
 				-- function 79
-				local get_data = Unit.get_data(arg_79_0, "terror_event_spawner_id")
+				local spawner_id = Unit.get_data(unit, "terror_event_spawner_id")
 
-				Managers.weave:stop_terror_event("capture_point_3_event", get_data)
+				Managers.weave:stop_terror_event("capture_point_3_event", spawner_id)
 			end
 		},
 		capture_point_005 = {
 			is_scored = true,
-			on_start_func = function (arg_80_0)
+			on_start_func = function (unit)
 				-- function 80
-				local get_data = Unit.get_data(arg_80_0, "terror_event_spawner_id")
+				local spawner_id = Unit.get_data(unit, "terror_event_spawner_id")
 
-				Managers.weave:start_terror_event("capture_point_2_event", get_data)
+				Managers.weave:start_terror_event("capture_point_2_event", spawner_id)
 			end,
-			on_complete_func = function (arg_81_0)
+			on_complete_func = function (unit)
 				-- function 81
-				local get_data = Unit.get_data(arg_81_0, "terror_event_spawner_id")
+				local spawner_id = Unit.get_data(unit, "terror_event_spawner_id")
 
-				Managers.weave:stop_terror_event("capture_point_2_event", get_data)
+				Managers.weave:stop_terror_event("capture_point_2_event", spawner_id)
 			end
 		}
 	}
@@ -3002,20 +3046,20 @@ ObjectiveLists.weave_27 = {
 		kill_enemies = {},
 		weave_explosive_barrel_socket_007 = {
 			is_scored = true,
-			on_start_func = function (arg_82_0)
+			on_start_func = function (unit)
 				-- function 82
-				local get_data = Unit.get_data(arg_82_0, "terror_event_spawner_id")
+				local spawner_id = Unit.get_data(unit, "terror_event_spawner_id")
 
-				Managers.weave:start_terror_event("capture_point_1_event_small", get_data)
+				Managers.weave:start_terror_event("capture_point_1_event_small", spawner_id)
 			end
 		},
 		weave_limited_item_track_spawner_001 = {
 			template_name = "gargoyle_head_spawner",
-			on_first_pickup_func = function (arg_83_0)
+			on_first_pickup_func = function (unit)
 				-- function 83
-				local get_data = Unit.get_data(arg_83_0, "terror_event_spawner_id")
+				local spawner_id = Unit.get_data(unit, "terror_event_spawner_id")
 
-				Managers.weave:start_terror_event("weave_spot_event_skaven_specials_small", get_data)
+				Managers.weave:start_terror_event("weave_spot_event_skaven_specials_small", spawner_id)
 			end
 		}
 	},
@@ -3023,20 +3067,20 @@ ObjectiveLists.weave_27 = {
 		kill_enemies = {},
 		weave_explosive_barrel_socket_003 = {
 			is_scored = true,
-			on_start_func = function (arg_84_0)
+			on_start_func = function (unit)
 				-- function 84
-				local get_data = Unit.get_data(arg_84_0, "terror_event_spawner_id")
+				local spawner_id = Unit.get_data(unit, "terror_event_spawner_id")
 
-				Managers.weave:start_terror_event("weave_spot_event_boss_minotaur_nodelay", get_data)
+				Managers.weave:start_terror_event("weave_spot_event_boss_minotaur_nodelay", spawner_id)
 			end
 		},
 		weave_limited_item_track_spawner_006 = {
 			template_name = "gargoyle_head_spawner",
-			on_first_pickup_func = function (arg_85_0)
+			on_first_pickup_func = function (unit)
 				-- function 85
-				local get_data = Unit.get_data(arg_85_0, "terror_event_spawner_id")
+				local spawner_id = Unit.get_data(unit, "terror_event_spawner_id")
 
-				Managers.weave:start_terror_event("weave_spot_event_skaven_specials_medium", get_data)
+				Managers.weave:start_terror_event("weave_spot_event_skaven_specials_medium", spawner_id)
 			end
 		}
 	},
@@ -3044,20 +3088,20 @@ ObjectiveLists.weave_27 = {
 		kill_enemies = {},
 		weave_explosive_barrel_socket_004 = {
 			is_scored = true,
-			on_start_func = function (arg_86_0)
+			on_start_func = function (unit)
 				-- function 86
-				local get_data = Unit.get_data(arg_86_0, "terror_event_spawner_id")
+				local spawner_id = Unit.get_data(unit, "terror_event_spawner_id")
 
-				Managers.weave:start_terror_event("objective_specials_raid", get_data)
+				Managers.weave:start_terror_event("objective_specials_raid", spawner_id)
 			end
 		},
 		weave_limited_item_track_spawner_004 = {
 			template_name = "gargoyle_head_spawner",
-			on_first_pickup_func = function (arg_87_0)
+			on_first_pickup_func = function (unit)
 				-- function 87
-				local get_data = Unit.get_data(arg_87_0, "terror_event_spawner_id")
+				local spawner_id = Unit.get_data(unit, "terror_event_spawner_id")
 
-				Managers.weave:start_terror_event("objective_event_beastmen", get_data)
+				Managers.weave:start_terror_event("objective_event_beastmen", spawner_id)
 			end
 		}
 	}
@@ -3079,11 +3123,11 @@ ObjectiveLists.weave_28 = {
 		},
 		weave_target_spawner_016 = {
 			is_scored = true,
-			on_complete_func = function (arg_88_0)
+			on_complete_func = function (unit)
 				-- function 88
-				local get_data = Unit.get_data(arg_88_0, "terror_event_spawner_id")
+				local spawner_id = Unit.get_data(unit, "terror_event_spawner_id")
 
-				Managers.weave:start_terror_event("weave_spot_event_special_skaven", get_data)
+				Managers.weave:start_terror_event("weave_spot_event_special_skaven", spawner_id)
 			end
 		},
 		weave_target_spawner_022 = {
@@ -3100,11 +3144,11 @@ ObjectiveLists.weave_28 = {
 		},
 		weave_target_spawner_043 = {
 			is_scored = true,
-			on_complete_func = function (arg_89_0)
+			on_complete_func = function (unit)
 				-- function 89
-				local get_data = Unit.get_data(arg_89_0, "terror_event_spawner_id")
+				local spawner_id = Unit.get_data(unit, "terror_event_spawner_id")
 
-				Managers.weave:start_terror_event("weave_spot_event_special_skaven", get_data)
+				Managers.weave:start_terror_event("weave_spot_event_special_skaven", spawner_id)
 			end
 		}
 	}
@@ -3115,39 +3159,39 @@ ObjectiveLists.weave_29 = {
 		weave_prop_skaven_doom_wheel_01_spawner_001 = {
 			timer = 10,
 			is_scored = true,
-			on_socket_start_func = function (arg_90_0)
+			on_socket_start_func = function (unit)
 				-- function 90
-				local get_data = Unit.get_data(arg_90_0, "terror_event_spawner_id")
+				local spawner_id = Unit.get_data(unit, "terror_event_spawner_id")
 
-				Managers.weave:start_terror_event("weave_spot_event_boss_rat_ogre", get_data)
+				Managers.weave:start_terror_event("weave_spot_event_boss_rat_ogre", spawner_id)
 			end
 		},
 		weave_prop_skaven_doom_wheel_01_spawner_002 = {
 			timer = 10,
 			is_scored = true,
-			on_socket_start_func = function (arg_91_0)
+			on_socket_start_func = function (unit)
 				-- function 91
-				local get_data = Unit.get_data(arg_91_0, "terror_event_spawner_id")
+				local spawner_id = Unit.get_data(unit, "terror_event_spawner_id")
 
-				Managers.weave:start_terror_event("weave_spot_event_boss_stormfiend", get_data)
+				Managers.weave:start_terror_event("weave_spot_event_boss_stormfiend", spawner_id)
 			end
 		},
 		weave_limited_item_track_spawner_001 = {
 			template_name = "explosive_barrel_spawner",
-			on_first_pickup_func = function (arg_92_0)
+			on_first_pickup_func = function (unit)
 				-- function 92
-				local get_data = Unit.get_data(arg_92_0, "terror_event_spawner_id")
+				local spawner_id = Unit.get_data(unit, "terror_event_spawner_id")
 
-				Managers.weave:start_terror_event("capture_point_1_event_small", get_data)
+				Managers.weave:start_terror_event("capture_point_1_event_small", spawner_id)
 			end
 		},
 		weave_limited_item_track_spawner_004 = {
 			template_name = "explosive_barrel_spawner",
-			on_first_pickup_func = function (arg_93_0)
+			on_first_pickup_func = function (unit)
 				-- function 93
-				local get_data = Unit.get_data(arg_93_0, "terror_event_spawner_id")
+				local spawner_id = Unit.get_data(unit, "terror_event_spawner_id")
 
-				Managers.weave:start_terror_event("capture_point_specials_raid", get_data)
+				Managers.weave:start_terror_event("capture_point_specials_raid", spawner_id)
 			end
 		}
 	}
@@ -3157,47 +3201,47 @@ ObjectiveLists.weave_30 = {
 		kill_enemies = {},
 		weave_target_spawner_004 = {
 			is_scored = true,
-			on_complete_func = function (arg_94_0)
+			on_complete_func = function (unit)
 				-- function 94
-				local get_data = Unit.get_data(arg_94_0, "terror_event_spawner_id")
+				local spawner_id = Unit.get_data(unit, "terror_event_spawner_id")
 
-				Managers.weave:start_terror_event("weave_spot_event_boss_rat_ogre_nodelay", get_data)
+				Managers.weave:start_terror_event("weave_spot_event_boss_rat_ogre_nodelay", spawner_id)
 			end
 		},
 		weave_target_spawner_006 = {
 			is_scored = true,
-			on_complete_func = function (arg_95_0)
+			on_complete_func = function (unit)
 				-- function 95
-				local get_data = Unit.get_data(arg_95_0, "terror_event_spawner_id")
+				local spawner_id = Unit.get_data(unit, "terror_event_spawner_id")
 
-				Managers.weave:start_terror_event("capture_point_1_event_small", get_data)
+				Managers.weave:start_terror_event("capture_point_1_event_small", spawner_id)
 			end
 		},
 		weave_target_spawner_028 = {
 			is_scored = true,
-			on_complete_func = function (arg_96_0)
+			on_complete_func = function (unit)
 				-- function 96
-				local get_data = Unit.get_data(arg_96_0, "terror_event_spawner_id")
+				local spawner_id = Unit.get_data(unit, "terror_event_spawner_id")
 
-				Managers.weave:start_terror_event("weave_spot_event_boss_minotaur_nodelay", get_data)
+				Managers.weave:start_terror_event("weave_spot_event_boss_minotaur_nodelay", spawner_id)
 			end
 		},
 		weave_target_spawner_024 = {
 			is_scored = true,
-			on_complete_func = function (arg_97_0)
+			on_complete_func = function (unit)
 				-- function 97
-				local get_data = Unit.get_data(arg_97_0, "terror_event_spawner_id")
+				local spawner_id = Unit.get_data(unit, "terror_event_spawner_id")
 
-				Managers.weave:start_terror_event("objective_event_beastmen", get_data)
+				Managers.weave:start_terror_event("objective_event_beastmen", spawner_id)
 			end
 		},
 		weave_target_spawner_035 = {
 			is_scored = true,
-			on_complete_func = function (arg_98_0)
+			on_complete_func = function (unit)
 				-- function 98
-				local get_data = Unit.get_data(arg_98_0, "terror_event_spawner_id")
+				local spawner_id = Unit.get_data(unit, "terror_event_spawner_id")
 
-				Managers.weave:start_terror_event("weave_spot_event_boss_stormfiend_nodelay", get_data)
+				Managers.weave:start_terror_event("weave_spot_event_boss_stormfiend_nodelay", spawner_id)
 			end
 		}
 	}
@@ -3241,92 +3285,92 @@ ObjectiveLists.weave_33 = {
 		kill_enemies = {},
 		weave_target_spawner_001 = {
 			is_scored = true,
-			on_complete_func = function (arg_99_0)
+			on_complete_func = function (unit)
 				-- function 99
-				local get_data = Unit.get_data(arg_99_0, "terror_event_spawner_id")
+				local spawner_id = Unit.get_data(unit, "terror_event_spawner_id")
 
-				Managers.weave:start_terror_event("weave_spot_event_special_mixed", get_data)
+				Managers.weave:start_terror_event("weave_spot_event_special_mixed", spawner_id)
 			end
 		},
 		weave_target_spawner_005 = {
 			is_scored = true,
-			on_complete_func = function (arg_100_0)
+			on_complete_func = function (unit)
 				-- function 100
-				local get_data = Unit.get_data(arg_100_0, "terror_event_spawner_id")
+				local spawner_id = Unit.get_data(unit, "terror_event_spawner_id")
 
-				Managers.weave:start_terror_event("weave_spot_event_special_mixed", get_data)
+				Managers.weave:start_terror_event("weave_spot_event_special_mixed", spawner_id)
 			end
 		},
 		weave_target_spawner_009 = {
 			is_scored = true,
-			on_complete_func = function (arg_101_0)
+			on_complete_func = function (unit)
 				-- function 101
-				local get_data = Unit.get_data(arg_101_0, "terror_event_spawner_id")
+				local spawner_id = Unit.get_data(unit, "terror_event_spawner_id")
 
-				Managers.weave:start_terror_event("weave_spot_event_special_mixed", get_data)
+				Managers.weave:start_terror_event("weave_spot_event_special_mixed", spawner_id)
 			end
 		},
 		weave_target_spawner_013 = {
 			is_scored = true,
-			on_complete_func = function (arg_102_0)
+			on_complete_func = function (unit)
 				-- function 102
-				local get_data = Unit.get_data(arg_102_0, "terror_event_spawner_id")
+				local spawner_id = Unit.get_data(unit, "terror_event_spawner_id")
 
-				Managers.weave:start_terror_event("weave_spot_event_special_mixed", get_data)
+				Managers.weave:start_terror_event("weave_spot_event_special_mixed", spawner_id)
 			end
 		},
 		weave_target_spawner_011 = {
 			is_scored = true,
-			on_complete_func = function (arg_103_0)
+			on_complete_func = function (unit)
 				-- function 103
-				local get_data = Unit.get_data(arg_103_0, "terror_event_spawner_id")
+				local spawner_id = Unit.get_data(unit, "terror_event_spawner_id")
 
-				Managers.weave:start_terror_event("weave_spot_event_special_mixed", get_data)
+				Managers.weave:start_terror_event("weave_spot_event_special_mixed", spawner_id)
 			end
 		},
 		weave_target_spawner_012 = {
 			is_scored = true,
-			on_complete_func = function (arg_104_0)
+			on_complete_func = function (unit)
 				-- function 104
-				local get_data = Unit.get_data(arg_104_0, "terror_event_spawner_id")
+				local spawner_id = Unit.get_data(unit, "terror_event_spawner_id")
 
-				Managers.weave:start_terror_event("weave_spot_event_special_mixed", get_data)
+				Managers.weave:start_terror_event("weave_spot_event_special_mixed", spawner_id)
 			end
 		},
 		weave_target_spawner_022 = {
 			is_scored = true,
-			on_complete_func = function (arg_105_0)
+			on_complete_func = function (unit)
 				-- function 105
-				local get_data = Unit.get_data(arg_105_0, "terror_event_spawner_id")
+				local spawner_id = Unit.get_data(unit, "terror_event_spawner_id")
 
-				Managers.weave:start_terror_event("weave_spot_event_special_mixed", get_data)
+				Managers.weave:start_terror_event("weave_spot_event_special_mixed", spawner_id)
 			end
 		},
 		weave_target_spawner_028 = {
 			is_scored = true,
-			on_complete_func = function (arg_106_0)
+			on_complete_func = function (unit)
 				-- function 106
-				local get_data = Unit.get_data(arg_106_0, "terror_event_spawner_id")
+				local spawner_id = Unit.get_data(unit, "terror_event_spawner_id")
 
-				Managers.weave:start_terror_event("weave_spot_event_special_mixed", get_data)
+				Managers.weave:start_terror_event("weave_spot_event_special_mixed", spawner_id)
 			end
 		},
 		weave_target_spawner_016 = {
 			is_scored = true,
-			on_complete_func = function (arg_107_0)
+			on_complete_func = function (unit)
 				-- function 107
-				local get_data = Unit.get_data(arg_107_0, "terror_event_spawner_id")
+				local spawner_id = Unit.get_data(unit, "terror_event_spawner_id")
 
-				Managers.weave:start_terror_event("weave_spot_event_special_mixed", get_data)
+				Managers.weave:start_terror_event("weave_spot_event_special_mixed", spawner_id)
 			end
 		},
 		weave_target_spawner_015 = {
 			is_scored = true,
-			on_complete_func = function (arg_108_0)
+			on_complete_func = function (unit)
 				-- function 108
-				local get_data = Unit.get_data(arg_108_0, "terror_event_spawner_id")
+				local spawner_id = Unit.get_data(unit, "terror_event_spawner_id")
 
-				Managers.weave:start_terror_event("weave_spot_event_special_mixed", get_data)
+				Managers.weave:start_terror_event("weave_spot_event_special_mixed", spawner_id)
 			end
 		}
 	}
@@ -3336,77 +3380,77 @@ ObjectiveLists.weave_34 = {
 		kill_enemies = {},
 		capture_point_001 = {
 			is_scored = true,
-			on_start_func = function (arg_109_0)
+			on_start_func = function (unit)
 				-- function 109
-				local get_data = Unit.get_data(arg_109_0, "terror_event_spawner_id")
+				local spawner_id = Unit.get_data(unit, "terror_event_spawner_id")
 
-				Managers.weave:start_terror_event("capture_point_3_event_no_chaos", get_data)
+				Managers.weave:start_terror_event("capture_point_3_event_no_chaos", spawner_id)
 			end,
-			on_complete_func = function (arg_110_0)
+			on_complete_func = function (unit)
 				-- function 110
-				local get_data = Unit.get_data(arg_110_0, "terror_event_spawner_id")
+				local spawner_id = Unit.get_data(unit, "terror_event_spawner_id")
 
-				Managers.weave:stop_terror_event("capture_point_3_event_no_chaos", get_data)
+				Managers.weave:stop_terror_event("capture_point_3_event_no_chaos", spawner_id)
 			end
 		},
 		capture_point_002 = {
 			is_scored = true,
-			on_start_func = function (arg_111_0)
+			on_start_func = function (unit)
 				-- function 111
-				local get_data = Unit.get_data(arg_111_0, "terror_event_spawner_id")
+				local spawner_id = Unit.get_data(unit, "terror_event_spawner_id")
 
-				Managers.weave:start_terror_event("capture_point_specials_raid", get_data)
+				Managers.weave:start_terror_event("capture_point_specials_raid", spawner_id)
 			end,
-			on_complete_func = function (arg_112_0)
+			on_complete_func = function (unit)
 				-- function 112
-				local get_data = Unit.get_data(arg_112_0, "terror_event_spawner_id")
+				local spawner_id = Unit.get_data(unit, "terror_event_spawner_id")
 
-				Managers.weave:stop_terror_event("capture_point_specials_raid", get_data)
+				Managers.weave:stop_terror_event("capture_point_specials_raid", spawner_id)
 			end
 		},
 		capture_point_003 = {
 			is_scored = true,
-			on_start_func = function (arg_113_0)
+			on_start_func = function (unit)
 				-- function 113
-				local get_data = Unit.get_data(arg_113_0, "terror_event_spawner_id")
+				local spawner_id = Unit.get_data(unit, "terror_event_spawner_id")
 
-				Managers.weave:start_terror_event("capture_point_1_event_large_skaven", get_data)
+				Managers.weave:start_terror_event("capture_point_1_event_large_skaven", spawner_id)
 			end,
-			on_complete_func = function (arg_114_0)
+			on_complete_func = function (unit)
 				-- function 114
-				local get_data = Unit.get_data(arg_114_0, "terror_event_spawner_id")
+				local spawner_id = Unit.get_data(unit, "terror_event_spawner_id")
 
-				Managers.weave:stop_terror_event("capture_point_1_event_large_skaven", get_data)
+				Managers.weave:stop_terror_event("capture_point_1_event_large_skaven", spawner_id)
 			end
 		},
 		capture_point_004 = {
 			is_scored = true,
-			on_start_func = function (arg_115_0)
+			on_start_func = function (unit)
 				-- function 115
-				local get_data = Unit.get_data(arg_115_0, "terror_event_spawner_id")
+				local spawner_id = Unit.get_data(unit, "terror_event_spawner_id")
 
-				Managers.weave:start_terror_event("capture_point_1_event_medium_no_chaos", get_data)
+				Managers.weave:start_terror_event("capture_point_1_event_medium_no_chaos", spawner_id)
 			end,
-			on_complete_func = function (arg_116_0)
+			on_complete_func = function (unit)
 				-- function 116
-				local get_data = Unit.get_data(arg_116_0, "terror_event_spawner_id")
+				local spawner_id = Unit.get_data(unit, "terror_event_spawner_id")
 
-				Managers.weave:stop_terror_event("capture_point_1_event_medium_no_chaos", get_data)
+				Managers.weave:stop_terror_event("capture_point_1_event_medium_no_chaos", spawner_id)
 			end
 		},
 		capture_point_008 = {
 			is_scored = true,
-			on_start_func = function (arg_117_0)
+			on_start_func = function (unit)
 				-- function 117
-				local get_data = Unit.get_data(arg_117_0, "terror_event_spawner_id")
+				local spawner_id = Unit.get_data(unit, "terror_event_spawner_id")
 
-				Managers.weave:start_terror_event("capture_point_1_event_small_no_chaos", get_data)
+				Managers.weave:start_terror_event("capture_point_1_event_small_no_chaos", spawner_id)
 			end,
-			on_complete_func = function (arg_118_0)
+			on_complete_func = function (unit)
 				-- function 118
-				local get_data = Unit.get_data(arg_118_0, "terror_event_spawner_id")
+				local spawner_id = Unit.get_data(unit, "terror_event_spawner_id")
 
-				Managers.weave:stop_terror_event("capture_point_1_event_small_no_chaos", get_data)
+				Managers.weave:stop_terror_event("capture_point_1_event_small_no_chaos", spawner_id)
 			end
 		}
 	}
@@ -3417,20 +3461,20 @@ ObjectiveLists.weave_35 = {
 		weave_prop_skaven_doom_wheel_01_spawner_001 = {
 			timer = 10,
 			is_scored = true,
-			on_socket_start_func = function (arg_119_0)
+			on_socket_start_func = function (unit)
 				-- function 119
-				local get_data = Unit.get_data(arg_119_0, "terror_event_spawner_id")
+				local spawner_id = Unit.get_data(unit, "terror_event_spawner_id")
 
-				Managers.weave:start_terror_event("weave_spot_event_skaven_gutter_runner", get_data)
+				Managers.weave:start_terror_event("weave_spot_event_skaven_gutter_runner", spawner_id)
 			end
 		},
 		weave_limited_item_track_spawner_003 = {
 			template_name = "explosive_barrel_spawner",
-			on_first_pickup_func = function (arg_120_0)
+			on_first_pickup_func = function (unit)
 				-- function 120
-				local get_data = Unit.get_data(arg_120_0, "terror_event_spawner_id")
+				local spawner_id = Unit.get_data(unit, "terror_event_spawner_id")
 
-				Managers.weave:start_terror_event("objective_event_beastmen", get_data)
+				Managers.weave:start_terror_event("objective_event_beastmen", spawner_id)
 			end
 		}
 	}
@@ -3500,39 +3544,39 @@ ObjectiveLists.weave_37 = {
 		weave_prop_skaven_doom_wheel_01_spawner_001 = {
 			timer = 10,
 			is_scored = true,
-			on_socket_start_func = function (arg_121_0)
+			on_socket_start_func = function (unit)
 				-- function 121
-				local get_data = Unit.get_data(arg_121_0, "terror_event_spawner_id")
+				local spawner_id = Unit.get_data(unit, "terror_event_spawner_id")
 
-				Managers.weave:start_terror_event("weave_spot_event_boss_stormfiend", get_data)
+				Managers.weave:start_terror_event("weave_spot_event_boss_stormfiend", spawner_id)
 			end
 		},
 		weave_prop_skaven_doom_wheel_01_spawner_002 = {
 			timer = 10,
 			is_scored = true,
-			on_socket_start_func = function (arg_122_0)
+			on_socket_start_func = function (unit)
 				-- function 122
-				local get_data = Unit.get_data(arg_122_0, "terror_event_spawner_id")
+				local spawner_id = Unit.get_data(unit, "terror_event_spawner_id")
 
-				Managers.weave:start_terror_event("weave_spot_event_boss_rat_ogre", get_data)
+				Managers.weave:start_terror_event("weave_spot_event_boss_rat_ogre", spawner_id)
 			end
 		},
 		weave_limited_item_track_spawner_004 = {
 			template_name = "explosive_barrel_spawner",
-			on_first_pickup_func = function (arg_123_0)
+			on_first_pickup_func = function (unit)
 				-- function 123
-				local get_data = Unit.get_data(arg_123_0, "terror_event_spawner_id")
+				local spawner_id = Unit.get_data(unit, "terror_event_spawner_id")
 
-				Managers.weave:start_terror_event("capture_point_1_event_medium", get_data)
+				Managers.weave:start_terror_event("capture_point_1_event_medium", spawner_id)
 			end
 		},
 		weave_limited_item_track_spawner_002 = {
 			template_name = "explosive_barrel_spawner",
-			on_first_pickup_func = function (arg_124_0)
+			on_first_pickup_func = function (unit)
 				-- function 124
-				local get_data = Unit.get_data(arg_124_0, "terror_event_spawner_id")
+				local spawner_id = Unit.get_data(unit, "terror_event_spawner_id")
 
-				Managers.weave:start_terror_event("capture_point_2_event", get_data)
+				Managers.weave:start_terror_event("capture_point_2_event", spawner_id)
 			end
 		}
 	}
@@ -3543,81 +3587,81 @@ ObjectiveLists.weave_38 = {
 		capture_point_001 = {
 			timer = 25,
 			is_scored = true,
-			on_start_func = function (arg_125_0)
+			on_start_func = function (unit)
 				-- function 125
-				local get_data = Unit.get_data(arg_125_0, "terror_event_spawner_id")
+				local spawner_id = Unit.get_data(unit, "terror_event_spawner_id")
 
-				Managers.weave:start_terror_event("capture_point_1_chaos", get_data)
+				Managers.weave:start_terror_event("capture_point_1_chaos", spawner_id)
 			end,
-			on_complete_func = function (arg_126_0)
+			on_complete_func = function (unit)
 				-- function 126
-				local get_data = Unit.get_data(arg_126_0, "terror_event_spawner_id")
+				local spawner_id = Unit.get_data(unit, "terror_event_spawner_id")
 
-				Managers.weave:stop_terror_event("capture_point_1_chaos", get_data)
+				Managers.weave:stop_terror_event("capture_point_1_chaos", spawner_id)
 			end
 		},
 		capture_point_002 = {
 			timer = 25,
 			is_scored = true,
-			on_start_func = function (arg_127_0)
+			on_start_func = function (unit)
 				-- function 127
-				local get_data = Unit.get_data(arg_127_0, "terror_event_spawner_id")
+				local spawner_id = Unit.get_data(unit, "terror_event_spawner_id")
 
-				Managers.weave:start_terror_event("capture_point_2_event", get_data)
+				Managers.weave:start_terror_event("capture_point_2_event", spawner_id)
 			end,
-			on_complete_func = function (arg_128_0)
+			on_complete_func = function (unit)
 				-- function 128
-				local get_data = Unit.get_data(arg_128_0, "terror_event_spawner_id")
+				local spawner_id = Unit.get_data(unit, "terror_event_spawner_id")
 
-				Managers.weave:stop_terror_event("capture_point_2_event", get_data)
+				Managers.weave:stop_terror_event("capture_point_2_event", spawner_id)
 			end
 		},
 		capture_point_003_skaven = {
 			timer = 25,
 			is_scored = true,
-			on_start_func = function (arg_129_0)
+			on_start_func = function (unit)
 				-- function 129
-				local get_data = Unit.get_data(arg_129_0, "terror_event_spawner_id")
+				local spawner_id = Unit.get_data(unit, "terror_event_spawner_id")
 
-				Managers.weave:start_terror_event("capture_point_1_event_large_skaven", get_data)
+				Managers.weave:start_terror_event("capture_point_1_event_large_skaven", spawner_id)
 			end,
-			on_complete_func = function (arg_130_0)
+			on_complete_func = function (unit)
 				-- function 130
-				local get_data = Unit.get_data(arg_130_0, "terror_event_spawner_id")
+				local spawner_id = Unit.get_data(unit, "terror_event_spawner_id")
 
-				Managers.weave:stop_terror_event("capture_point_1_event_large_skaven", get_data)
+				Managers.weave:stop_terror_event("capture_point_1_event_large_skaven", spawner_id)
 			end
 		},
 		capture_point_006_skaven = {
 			timer = 25,
 			is_scored = true,
-			on_start_func = function (arg_131_0)
+			on_start_func = function (unit)
 				-- function 131
-				local get_data = Unit.get_data(arg_131_0, "terror_event_spawner_id")
+				local spawner_id = Unit.get_data(unit, "terror_event_spawner_id")
 
-				Managers.weave:start_terror_event("capture_point_6_boss_event_skaven", get_data)
+				Managers.weave:start_terror_event("capture_point_6_boss_event_skaven", spawner_id)
 			end,
-			on_complete_func = function (arg_132_0)
+			on_complete_func = function (unit)
 				-- function 132
-				local get_data = Unit.get_data(arg_132_0, "terror_event_spawner_id")
+				local spawner_id = Unit.get_data(unit, "terror_event_spawner_id")
 
-				Managers.weave:stop_terror_event("capture_point_6_boss_event_skaven", get_data)
+				Managers.weave:stop_terror_event("capture_point_6_boss_event_skaven", spawner_id)
 			end
 		},
 		capture_point_007 = {
 			timer = 25,
 			is_scored = true,
-			on_start_func = function (arg_133_0)
+			on_start_func = function (unit)
 				-- function 133
-				local get_data = Unit.get_data(arg_133_0, "terror_event_spawner_id")
+				local spawner_id = Unit.get_data(unit, "terror_event_spawner_id")
 
-				Managers.weave:start_terror_event("capture_point_1_event_large", get_data)
+				Managers.weave:start_terror_event("capture_point_1_event_large", spawner_id)
 			end,
-			on_complete_func = function (arg_134_0)
+			on_complete_func = function (unit)
 				-- function 134
-				local get_data = Unit.get_data(arg_134_0, "terror_event_spawner_id")
+				local spawner_id = Unit.get_data(unit, "terror_event_spawner_id")
 
-				Managers.weave:stop_terror_event("capture_point_1_event_large", get_data)
+				Managers.weave:stop_terror_event("capture_point_1_event_large", spawner_id)
 			end
 		}
 	}
@@ -3643,47 +3687,47 @@ ObjectiveLists.weave_woods_3_cps = {
 		kill_enemies = {},
 		capture_point_001 = {
 			is_scored = true,
-			on_start_func = function (arg_135_0)
+			on_start_func = function (unit)
 				-- function 135
-				local get_data = Unit.get_data(arg_135_0, "terror_event_spawner_id")
+				local spawner_id = Unit.get_data(unit, "terror_event_spawner_id")
 
-				Managers.weave:start_terror_event("capture_point_1_event_small", get_data)
+				Managers.weave:start_terror_event("capture_point_1_event_small", spawner_id)
 			end,
-			on_complete_func = function (arg_136_0)
+			on_complete_func = function (unit)
 				-- function 136
-				local get_data = Unit.get_data(arg_136_0, "terror_event_spawner_id")
+				local spawner_id = Unit.get_data(unit, "terror_event_spawner_id")
 
-				Managers.weave:stop_terror_event("capture_point_1_event_small", get_data)
+				Managers.weave:stop_terror_event("capture_point_1_event_small", spawner_id)
 			end
 		},
 		capture_point_007 = {
 			is_scored = true,
-			on_start_func = function (arg_137_0)
+			on_start_func = function (unit)
 				-- function 137
-				local get_data = Unit.get_data(arg_137_0, "terror_event_spawner_id")
+				local spawner_id = Unit.get_data(unit, "terror_event_spawner_id")
 
-				Managers.weave:start_terror_event("capture_point_1_event_medium", get_data)
+				Managers.weave:start_terror_event("capture_point_1_event_medium", spawner_id)
 			end,
-			on_complete_func = function (arg_138_0)
+			on_complete_func = function (unit)
 				-- function 138
-				local get_data = Unit.get_data(arg_138_0, "terror_event_spawner_id")
+				local spawner_id = Unit.get_data(unit, "terror_event_spawner_id")
 
-				Managers.weave:stop_terror_event("capture_point_1_event_medium", get_data)
+				Managers.weave:stop_terror_event("capture_point_1_event_medium", spawner_id)
 			end
 		},
 		capture_point_008 = {
 			is_scored = true,
-			on_start_func = function (arg_139_0)
+			on_start_func = function (unit)
 				-- function 139
-				local get_data = Unit.get_data(arg_139_0, "terror_event_spawner_id")
+				local spawner_id = Unit.get_data(unit, "terror_event_spawner_id")
 
-				Managers.weave:start_terror_event("capture_point_2_event", get_data)
+				Managers.weave:start_terror_event("capture_point_2_event", spawner_id)
 			end,
-			on_complete_func = function (arg_140_0)
+			on_complete_func = function (unit)
 				-- function 140
-				local get_data = Unit.get_data(arg_140_0, "terror_event_spawner_id")
+				local spawner_id = Unit.get_data(unit, "terror_event_spawner_id")
 
-				Managers.weave:stop_terror_event("capture_point_2_event", get_data)
+				Managers.weave:stop_terror_event("capture_point_2_event", spawner_id)
 			end
 		}
 	}
@@ -3693,56 +3737,56 @@ ObjectiveLists.weave_woods_3_cps = {
 		kill_enemies = {},
 		weave_explosive_barrel_socket_007 = {
 			is_scored = true,
-			on_start_func = function (arg_141_0)
+			on_start_func = function (unit)
 				-- function 141
-				local get_data = Unit.get_data(arg_141_0, "terror_event_spawner_id")
+				local spawner_id = Unit.get_data(unit, "terror_event_spawner_id")
 
-				Managers.weave:start_terror_event("capture_point_1_event_small", get_data)
+				Managers.weave:start_terror_event("capture_point_1_event_small", spawner_id)
 			end
 		},
 		weave_explosive_barrel_socket_004 = {
 			is_scored = true,
-			on_start_func = function (arg_142_0)
+			on_start_func = function (unit)
 				-- function 142
-				local get_data = Unit.get_data(arg_142_0, "terror_event_spawner_id")
+				local spawner_id = Unit.get_data(unit, "terror_event_spawner_id")
 
-				Managers.weave:start_terror_event("capture_point_1_event_large_skaven", get_data)
+				Managers.weave:start_terror_event("capture_point_1_event_large_skaven", spawner_id)
 			end
 		},
 		weave_explosive_barrel_socket_003 = {
 			is_scored = true,
-			on_start_func = function (arg_143_0)
+			on_start_func = function (unit)
 				-- function 143
-				local get_data = Unit.get_data(arg_143_0, "terror_event_spawner_id")
+				local spawner_id = Unit.get_data(unit, "terror_event_spawner_id")
 
-				Managers.weave:start_terror_event("weave_spot_event_boss_chaos_troll", get_data)
+				Managers.weave:start_terror_event("weave_spot_event_boss_chaos_troll", spawner_id)
 			end
 		},
 		weave_limited_item_track_spawner_001 = {
 			template_name = "gargoyle_head_spawner",
-			on_first_pickup_func = function (arg_144_0)
+			on_first_pickup_func = function (unit)
 				-- function 144
-				local get_data = Unit.get_data(arg_144_0, "terror_event_spawner_id")
+				local spawner_id = Unit.get_data(unit, "terror_event_spawner_id")
 
-				Managers.weave:start_terror_event("weave_spot_event_chaos_warriors", get_data)
+				Managers.weave:start_terror_event("weave_spot_event_chaos_warriors", spawner_id)
 			end
 		},
 		weave_limited_item_track_spawner_006 = {
 			template_name = "gargoyle_head_spawner",
-			on_first_pickup_func = function (arg_145_0)
+			on_first_pickup_func = function (unit)
 				-- function 145
-				local get_data = Unit.get_data(arg_145_0, "terror_event_spawner_id")
+				local spawner_id = Unit.get_data(unit, "terror_event_spawner_id")
 
-				Managers.weave:start_terror_event("weave_spot_event_skaven_specials_medium", get_data)
+				Managers.weave:start_terror_event("weave_spot_event_skaven_specials_medium", spawner_id)
 			end
 		},
 		weave_limited_item_track_spawner_004 = {
 			template_name = "gargoyle_head_spawner",
-			on_first_pickup_func = function (arg_146_0)
+			on_first_pickup_func = function (unit)
 				-- function 146
-				local get_data = Unit.get_data(arg_146_0, "terror_event_spawner_id")
+				local spawner_id = Unit.get_data(unit, "terror_event_spawner_id")
 
-				Managers.weave:start_terror_event("capture_point_1_chaos", get_data)
+				Managers.weave:start_terror_event("capture_point_1_chaos", spawner_id)
 			end
 		}
 	}
@@ -3753,62 +3797,62 @@ ObjectiveLists["weave_27 - Copy"] = {
 		weave_prop_skaven_doom_wheel_01_spawner_001 = {
 			timer = 10,
 			is_scored = true,
-			on_socket_start_func = function (arg_147_0)
+			on_socket_start_func = function (unit)
 				-- function 147
-				local get_data = Unit.get_data(arg_147_0, "terror_event_spawner_id")
+				local spawner_id = Unit.get_data(unit, "terror_event_spawner_id")
 
-				Managers.weave:start_terror_event("capture_point_1_event_small", get_data)
+				Managers.weave:start_terror_event("capture_point_1_event_small", spawner_id)
 			end
 		},
 		weave_prop_skaven_doom_wheel_01_spawner_002 = {
 			timer = 10,
 			is_scored = true,
-			on_socket_start_func = function (arg_148_0)
+			on_socket_start_func = function (unit)
 				-- function 148
-				local get_data = Unit.get_data(arg_148_0, "terror_event_spawner_id")
+				local spawner_id = Unit.get_data(unit, "terror_event_spawner_id")
 
-				Managers.weave:start_terror_event("capture_point_1_event_small", get_data)
+				Managers.weave:start_terror_event("capture_point_1_event_small", spawner_id)
 			end
 		},
 		weave_limited_item_track_spawner_003 = {
 			template_name = "explosive_barrel_spawner",
-			on_pickup_func = function (arg_149_0)
+			on_pickup_func = function (unit)
 				-- function 149
-				local get_data = Unit.get_data(arg_149_0, "terror_event_spawner_id")
+				local spawner_id = Unit.get_data(unit, "terror_event_spawner_id")
 
-				Managers.weave:start_terror_event("capture_point_4_event", get_data)
+				Managers.weave:start_terror_event("capture_point_4_event", spawner_id)
 			end
 		},
 		weave_limited_item_track_spawner_006 = {
 			template_name = "explosive_barrel_spawner",
-			on_pickup_func = function (arg_150_0)
+			on_pickup_func = function (unit)
 				-- function 150
-				local get_data = Unit.get_data(arg_150_0, "terror_event_spawner_id")
+				local spawner_id = Unit.get_data(unit, "terror_event_spawner_id")
 
-				Managers.weave:start_terror_event("capture_point_1_event_large", get_data)
+				Managers.weave:start_terror_event("capture_point_1_event_large", spawner_id)
 			end
 		}
 	}
 }
 
-local tbl = {}
+local data_by_name = {}
 
-for k, v in pairs(ObjectiveLists) do
-	for i, v_2 in ipairs(v) do
-		table.clear(tbl)
+for lists_name, lists in pairs(ObjectiveLists) do
+	for list_i, list in ipairs(lists) do
+		table.clear(data_by_name)
 
-		for k_2, v_3 in pairs(v_2) do
+		for objective_name, objective_data in pairs(list) do
 			local fassert = fassert
 			local is_empty
 
-			if not tbl[k_2] then
-				is_empty = table.is_empty(v_3)
+			if data_by_name[objective_name] then
+				is_empty = table.is_empty(objective_data)
 
 				if not is_empty then
 					-- Nothing
 				end
 
-				if tbl[k_2] ~= v_3 then
+				if data_by_name[objective_name] ~= objective_data then
 					is_empty = false
 
 					goto label_0_0
@@ -3819,9 +3863,9 @@ for k, v in pairs(ObjectiveLists) do
 
 			::label_0_0::
 
-			fassert(is_empty, "[ObjectiveLists] An objective set may not include multiple objectives of the same name, unless they don't contain any data or point to the same objective data reference. %s was found twice in list number %s in %s", k_2, i, k)
+			fassert(is_empty, "[ObjectiveLists] An objective set may not include multiple objectives of the same name, unless they don't contain any data or point to the same objective data reference. %s was found twice in list number %s in %s", objective_name, list_i, lists_name)
 
-			tbl[k_2] = v_3
+			data_by_name[objective_name] = objective_data
 		end
 	end
 end

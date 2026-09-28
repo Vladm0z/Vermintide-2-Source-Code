@@ -7,46 +7,46 @@ local PLACEHOLDER_ICON = AchievementTemplateHelper.PLACEHOLDER_ICON
 local achievements = AchievementTemplates.achievements
 local add_console_achievements = AchievementTemplateHelper.add_console_achievements
 local rpc_increment_stat_unique_id = AchievementTemplateHelper.rpc_increment_stat_unique_id
-local tbl = {
+local XB1_ACHIEVEMENT_ID = {
 	divine_complete_legend = 131,
 	divine_collectible_challenge = 132,
 	divine_generator_challenge = 133
 }
-local tbl_2 = {
+local PS4_ACHIEVEMENT_ID = {
 	divine_generator_challenge = "096"
 }
-local tbl_3 = {
+local portals = {
 	LevelSettings.dlc_reikwald_river
 }
-local tbl_4 = {
+local difficulties = {
 	"normal",
 	"hard",
 	"harder",
 	"hardest",
 	"cataclysm"
 }
-local tbl_5 = {
+local player_facing_diff_names = {
 	hardest = "legend",
 	hard = "veteran",
 	harder = "champion",
 	cataclysm = "cataclysm",
 	normal = "recruit"
 }
-local tbl_6 = {}
+local all_difficulties = {}
 
-for i = 1, #tbl_4 do
-	local var_0_13 = tbl_4[i]
-	local str = "divine_complete_" .. tbl_5[var_0_13]
-	local str_2 = "achv_divine_complete_" .. tbl_5[var_0_13] .. "_icon"
+for i = 1, #difficulties do
+	local difficulty_name = difficulties[i]
+	local name = "divine_complete_" .. player_facing_diff_names[difficulty_name]
+	local icon = "achv_divine_complete_" .. player_facing_diff_names[difficulty_name] .. "_icon"
 
-	tbl_6[i] = str
+	all_difficulties[i] = name
 
-	add_levels_complete_challenge(achievements, str, tbl_3, DifficultySettings[var_0_13].rank, str_2, nil, tbl[str], tbl_2[str])
+	add_levels_complete_challenge(achievements, name, portals, DifficultySettings[difficulty_name].rank, icon, nil, XB1_ACHIEVEMENT_ID[name], PS4_ACHIEVEMENT_ID[name])
 end
 
-local num = 1
-local num_2 = 1852 * num
-local num_3 = 765
+local NAUTICAL_MILES = 1
+local METERS_TO_TRAVEL = 1852 * NAUTICAL_MILES
+local BOAT_TRAVEL_DISTANCE = 765
 
 achievements.divine_nautical_miles_challenge = {
 	name = "achv_divine_nautical_miles_challenge_name",
@@ -56,33 +56,33 @@ achievements.divine_nautical_miles_challenge = {
 	events = {
 		"divine_nautical_miles_challenge"
 	},
-	completed = function (self, arg_1_1, arg_1_2)
+	completed = function (statistics_db, stats_id, template_data)
 		-- function 1
-		return self:get_persistent_stat(arg_1_1, "divine_nautical_miles_challenge") >= num_2
+		return statistics_db:get_persistent_stat(stats_id, "divine_nautical_miles_challenge") >= METERS_TO_TRAVEL
 	end,
-	on_event = function (self, arg_2_1, arg_2_2, arg_2_3, arg_2_4)
+	on_event = function (statistics_db, stats_id, template_data, event_name, event_data)
 		-- function 2
-		self:modify_stat_by_amount(arg_2_1, "divine_nautical_miles_challenge", num_3)
+		statistics_db:modify_stat_by_amount(stats_id, "divine_nautical_miles_challenge", BOAT_TRAVEL_DISTANCE)
 	end,
-	progress = function (self, arg_3_1, arg_3_2)
+	progress = function (statistics_db, stats_id, template_data)
 		-- function 3
-		local get_persistent_stat = self:get_persistent_stat(arg_3_1, "divine_nautical_miles_challenge")
-		local num_2 = math.floor(get_persistent_stat * 0.539957) * 0.001
+		local meters_travelled = statistics_db:get_persistent_stat(stats_id, "divine_nautical_miles_challenge")
+		local nautical_miles_travelled = math.floor(meters_travelled * 0.539957) * 0.001
 
 		return {
-			num_2,
-			num
+			nautical_miles_travelled,
+			NAUTICAL_MILES
 		}
 	end,
-	progress_text_format_func = function (arg_4_0, arg_4_1)
+	progress_text_format_func = function (current, required)
 		-- function 4
-		return string.format("%.1f / %d", arg_4_0, arg_4_1)
+		return string.format("%.1f / %d", current, required)
 	end
 }
 
-local num_4 = 60
-local num_5 = 50
-local num_6 = 3
+local ANCHOR_TIMER = 60
+local ANCHOR_FAKE_TIMER = 50
+local NUM_ANCHOR_EVENTS = 3
 
 achievements.divine_anchor_challenge = {
 	name = "achv_divine_anchor_challenge_name",
@@ -91,55 +91,55 @@ achievements.divine_anchor_challenge = {
 	icon = "achv_divine_anchor_challenge_icon",
 	desc = function ()
 		-- function 5
-		return string.format(Localize("achv_divine_anchor_challenge_desc"), num_5)
+		return string.format(Localize("achv_divine_anchor_challenge_desc"), ANCHOR_FAKE_TIMER)
 	end,
 	events = {
 		"divine_anchor_attached",
 		"divine_anchor_destroyed",
 		"divine_anchor_challenge_completed"
 	},
-	completed = function (self, arg_6_1, arg_6_2)
+	completed = function (statistics_db, stats_id, template_data)
 		-- function 6
-		return self:get_persistent_stat(arg_6_1, "divine_anchor_challenge") >= 1
+		return statistics_db:get_persistent_stat(stats_id, "divine_anchor_challenge") >= 1
 	end,
-	on_event = function (arg_7_0, arg_7_1, arg_7_2, arg_7_3, arg_7_4)
+	on_event = function (statistics_db, stats_id, template_data, event_name, event_data)
 		-- function 7
-		if not (not Managers.state.network and Managers.state.network.is_server) then
+		if not Managers.state.network or not Managers.state.network.is_server then
 			return
 		end
 
-		local time = Managers.time:time("game")
+		local t = Managers.time:time("game")
 
-		if arg_7_3 == "divine_anchor_attached" then
-			if arg_7_2.total_time == nil then
-				arg_7_2.total_time = 0
-				arg_7_2.num_events_done = 0
+		if event_name == "divine_anchor_attached" then
+			if template_data.total_time == nil then
+				template_data.total_time = 0
+				template_data.num_events_done = 0
 			end
 
-			arg_7_2.attached_timestamp = time
-			arg_7_2.num_events_done = arg_7_2.num_events_done + 1
+			template_data.attached_timestamp = t
+			template_data.num_events_done = template_data.num_events_done + 1
 
-			local players_at_start = arg_7_2.players_at_start
+			local players_at_start = template_data.players_at_start
 
-			players_at_start = players_at_start or table.keys(Managers.player:human_players())
-			arg_7_2.players_at_start = players_at_start
-		elseif arg_7_3 ~= "divine_anchor_destroyed" or not arg_7_2.attached_timestamp then
-			local num = time - arg_7_2.attached_timestamp
+			players_at_start = not not players_at_start or not not table.keys(Managers.player:human_players())
+			template_data.players_at_start = players_at_start
+		elseif event_name == "divine_anchor_destroyed" and template_data.attached_timestamp then
+			local time_since_attached = t - template_data.attached_timestamp
 
-			arg_7_2.total_time = arg_7_2.total_time + num
+			template_data.total_time = template_data.total_time + time_since_attached
 		end
 
-		if not (arg_7_3 ~= "divine_anchor_challenge_completed" or not (num_4 > arg_7_2.total_time) or not (arg_7_2.num_events_done >= num_6)) then
-			local players_at_start_2 = arg_7_2.players_at_start
+		if event_name == "divine_anchor_challenge_completed" and ANCHOR_TIMER > template_data.total_time and template_data.num_events_done >= NUM_ANCHOR_EVENTS then
+			local valid_players = template_data.players_at_start
 
-			for i = 1, #players_at_start_2 do
-				rpc_increment_stat_unique_id(players_at_start_2[i], "divine_anchor_challenge")
+			for i = 1, #valid_players do
+				rpc_increment_stat_unique_id(valid_players[i], "divine_anchor_challenge")
 			end
 		end
 	end
 }
 
-local num_7 = 45
+local SINK_SHIPS_TIMER = 45
 
 achievements.divine_sink_ships_challenge = {
 	name = "achv_divine_sink_ships_challenge_name",
@@ -147,25 +147,26 @@ achievements.divine_sink_ships_challenge = {
 	icon = "achv_divine_sink_ships_challenge_icon",
 	desc = function ()
 		-- function 8
-		return string.format(Localize("achv_divine_sink_ships_challenge_desc"), num_7)
+		return string.format(Localize("achv_divine_sink_ships_challenge_desc"), SINK_SHIPS_TIMER)
 	end,
 	events = {
 		"divine_sink_ships_challenge"
 	},
-	completed = function (self, arg_9_1, arg_9_2)
+	completed = function (statistics_db, stats_id, template_data)
 		-- function 9
-		return self:get_persistent_stat(arg_9_1, "divine_sink_ships_challenge") >= 1
+		return statistics_db:get_persistent_stat(stats_id, "divine_sink_ships_challenge") >= 1
 	end,
-	on_event = function (self, arg_10_1, arg_10_2, arg_10_3, arg_10_4)
+	on_event = function (statistics_db, stats_id, template_data, event_name, event_data)
 		-- function 10
-		local time = Managers.time:time("game")
+		local t = Managers.time:time("game")
+		local challenge_start = event_data[1]
 
-		if not arg_10_4[1] then
-			arg_10_2.challenge_over_t = time + num_7
-		elseif not arg_10_2.challenge_over_t then
+		if challenge_start then
+			template_data.challenge_over_t = t + SINK_SHIPS_TIMER
+		elseif not template_data.challenge_over_t then
 			return
-		elseif time < arg_10_2.challenge_over_t then
-			self:increment_stat(arg_10_1, "divine_sink_ships_challenge")
+		elseif t < template_data.challenge_over_t then
+			statistics_db:increment_stat(stats_id, "divine_sink_ships_challenge")
 		end
 	end
 }
@@ -180,13 +181,13 @@ achievements.divine_cannon_challenge = {
 	events = {
 		"divine_cannon_challenge"
 	},
-	completed = function (self, arg_12_1, arg_12_2)
+	completed = function (statistics_db, stats_id, template_data)
 		-- function 12
-		return self:get_persistent_stat(arg_12_1, "divine_cannon_challenge") >= 1
+		return statistics_db:get_persistent_stat(stats_id, "divine_cannon_challenge") >= 1
 	end,
-	on_event = function (self, arg_13_1, arg_13_2, arg_13_3, arg_13_4)
+	on_event = function (statistics_db, stats_id, template_data, event_name, event_data)
 		-- function 13
-		self:increment_stat(arg_13_1, "divine_cannon_challenge")
+		statistics_db:increment_stat(stats_id, "divine_cannon_challenge")
 	end
 }
 achievements.divine_chaos_warrior_challenge = {
@@ -201,32 +202,34 @@ achievements.divine_chaos_warrior_challenge = {
 	events = {
 		"on_damage_dealt"
 	},
-	completed = function (self, arg_15_1, arg_15_2)
+	completed = function (statistics_db, stats_id, template_data)
 		-- function 15
-		return self:get_persistent_stat(arg_15_1, "divine_chaos_warrior_challenge") >= 1
+		return statistics_db:get_persistent_stat(stats_id, "divine_chaos_warrior_challenge") >= 1
 	end,
-	on_event = function (self, arg_16_1, arg_16_2, arg_16_3, arg_16_4)
+	on_event = function (statistics_db, stats_id, template_data, event_name, event_data)
 		-- function 16
-		if arg_16_4[9] ~= "sawblade_instant_kill" then
+		local damage_source = event_data[9]
+
+		if damage_source ~= "sawblade_instant_kill" then
 			return
 		end
 
 		local level_key = Managers.state.game_mode:level_key()
 
-		if not (not level_key and level_key == "dlc_reikwald_river") then
+		if not level_key or level_key ~= "dlc_reikwald_river" then
 			return
 		end
 
-		local var_16_1 = arg_16_4[1]
-		local flag = not var_16_1 and Unit.get_data(var_16_1, "breed")
-		local flag_2 = not flag and flag.name
+		local victim_unit = event_data[1]
+		local breed = not not victim_unit and not not Unit.get_data(victim_unit, "breed")
+		local breed_name = not not breed and not not breed.name
 
-		if not (flag_2 == "chaos_warrior" or flag_2 ~= "chaos_bulwark") then
-			self:increment_stat_and_sync_to_clients("divine_chaos_warrior_challenge")
+		if breed_name == "chaos_warrior" or breed_name == "chaos_bulwark" then
+			statistics_db:increment_stat_and_sync_to_clients("divine_chaos_warrior_challenge")
 		end
 	end
 }
-divine_all_challenges = table.clone(tbl_6)
+divine_all_challenges = table.clone(all_difficulties)
 
 table.remove(divine_all_challenges, #divine_all_challenges)
 
@@ -236,4 +239,4 @@ divine_all_challenges[#divine_all_challenges + 1] = "divine_cannon_challenge"
 divine_all_challenges[#divine_all_challenges + 1] = "divine_chaos_warrior_challenge"
 
 add_meta_challenge(achievements, "divine_all_challenges", divine_all_challenges, "achv_divine_complete_all_icon", nil, nil, nil)
-add_console_achievements(tbl, tbl_2)
+add_console_achievements(XB1_ACHIEVEMENT_ID, PS4_ACHIEVEMENT_ID)

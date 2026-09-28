@@ -2,159 +2,161 @@
 
 local GameModeCustomSettingsHandlerUtility = GameModeCustomSettingsHandlerUtility
 
-GameModeCustomSettingsHandlerUtility = GameModeCustomSettingsHandlerUtility or {}
+GameModeCustomSettingsHandlerUtility = not not GameModeCustomSettingsHandlerUtility or not not {}
 GameModeCustomSettingsHandlerUtility = GameModeCustomSettingsHandlerUtility
 
-GameModeCustomSettingsHandlerUtility.parse_packed_custom_settings = function (arg_1_0, arg_1_1)
+GameModeCustomSettingsHandlerUtility.parse_packed_custom_settings = function (packed_custom_settings, game_mode_name)
 	-- function 1
-	local alloc_table = FrameTable.alloc_table()
-	local split = string.split(arg_1_0, ";")
-	local custom_game_settings_templates = GameModeSettings[arg_1_1].custom_game_settings_templates
+	local settings = FrameTable.alloc_table()
+	local custom_settings_table = string.split(packed_custom_settings, ";")
+	local settings_template = GameModeSettings[game_mode_name].custom_game_settings_templates
 
-	for i = 1, #split, 2 do
-		local var_1_3 = tonumber(split[i])
-		local var_1_4 = tonumber(split[i + 1])
+	for i = 1, #custom_settings_table, 2 do
+		local idx = tonumber(custom_settings_table[i])
+		local lookup_value = tonumber(custom_settings_table[i + 1])
 
-		if not (not var_1_3 and var_1_4) then
+		if not idx or not lookup_value then
 			break
 		end
 
-		local var_1_5 = custom_game_settings_templates[var_1_3]
-		local setting_name = var_1_5.setting_name
-		local var_1_7 = var_1_5.values[var_1_4]
+		local template = settings_template[idx]
+		local name = template.setting_name
+		local value = template.values[lookup_value]
 
-		alloc_table[#alloc_table + 1] = {
-			name = setting_name,
-			value = var_1_7,
-			template = var_1_5
+		settings[#settings + 1] = {
+			name = name,
+			value = value,
+			template = template
 		}
 	end
 
-	return alloc_table
+	return settings
 end
 
 GameModeCustomSettingsHandler = class(GameModeCustomSettingsHandler)
 
-local tbl = {
+local RPCS = {
 	"rpc_game_mode_custom_settings_full_sync",
 	"rpc_game_mode_custom_settings_request_full_sync",
 	"rpc_game_mode_custom_settings_handler_set_enabled"
 }
 
-GameModeCustomSettingsHandler.init = function (self, arg_2_1, arg_2_2)
+GameModeCustomSettingsHandler.init = function (self, game_mode_name, custom_settings)
 	-- function 2
-	self._game_mode_settings = GameModeSettings[arg_2_1]
+	self._game_mode_settings = GameModeSettings[game_mode_name]
 	self._settings_template = self._game_mode_settings.custom_game_settings_templates
 	self._settings = {}
 
 	self:set_enabled(false)
 end
 
-GameModeCustomSettingsHandler.server_set_setting = function (self, arg_3_1, arg_3_2)
+GameModeCustomSettingsHandler.server_set_setting = function (self, setting_name, value)
 	-- function 3
-	fassert(self._enabled, "GameModeCustomSettingsHandler is disabled, cannot set setting %s", tostring(arg_3_1))
+	fassert(self._enabled, "GameModeCustomSettingsHandler is disabled, cannot set setting %s", tostring(setting_name))
 
-	local var_3_0 = self._settings_template[arg_3_1]
+	local setting_data = self._settings_template[setting_name]
 
-	self._settings[var_3_0.id] = arg_3_2
+	self._settings[setting_data.id] = value
 
 	self:_print_settings()
 
-	local get_match_handler = Managers.mechanism:network_handler():get_match_handler()
-	local pack_settings = self:pack_settings(self._settings, self._settings_template)
+	local network_handler = Managers.mechanism:network_handler()
+	local match_handler = network_handler:get_match_handler()
+	local packed_settings = self:pack_settings(self._settings, self._settings_template)
 
-	get_match_handler:send_rpc_others("rpc_game_mode_custom_settings_full_sync", pack_settings, self._enabled)
+	match_handler:send_rpc_others("rpc_game_mode_custom_settings_full_sync", packed_settings, self._enabled)
 end
 
-GameModeCustomSettingsHandler.pack_settings = function (arg_4_0, arg_4_1, arg_4_2)
+GameModeCustomSettingsHandler.pack_settings = function (self, settings, settings_template)
 	-- function 4
-	local alloc_table = FrameTable.alloc_table()
+	local packed_settings = FrameTable.alloc_table()
 
-	for i, v in ipairs(arg_4_1) do
-		alloc_table[i] = arg_4_2[i].values_reverse_lookup[v]
+	for k, v in ipairs(settings) do
+		packed_settings[k] = settings_template[k].values_reverse_lookup[v]
 	end
 
-	return alloc_table
+	return packed_settings
 end
 
 GameModeCustomSettingsHandler.get_packed_custom_settings = function (self)
 	-- function 5
-	local str = ""
-	local _settings = self._settings
-	local flag = false
-	local _settings_template = self._settings_template
+	local changed_packaged_settings = ""
+	local settings = self._settings
+	local has_custom_settings = false
+	local settings_template = self._settings_template
 
-	for i, v in ipairs(_settings) do
-		if v ~= _settings_template[i].default then
-			local var_5_4 = i
-			local var_5_5 = _settings_template[i].values_reverse_lookup[v]
+	for k, v in ipairs(settings) do
+		if v ~= settings_template[k].default then
+			local idx = k
+			local value = settings_template[k].values_reverse_lookup[v]
 
-			str = str .. string.format("%s;%s;", var_5_4, var_5_5)
-			flag = true
+			changed_packaged_settings = changed_packaged_settings .. string.format("%s;%s;", idx, value)
+			has_custom_settings = true
 		end
 	end
 
-	return not flag and str and "n/a"
+	return (not has_custom_settings or not changed_packaged_settings) and not not "n/a"
 end
 
-GameModeCustomSettingsHandler.unpack_settings = function (arg_6_0, arg_6_1, arg_6_2)
+GameModeCustomSettingsHandler.unpack_settings = function (self, packed_settings, settings_template)
 	-- function 6
-	local tbl = {}
+	local settings = {}
 
-	for i, v in ipairs(arg_6_1) do
-		tbl[i] = arg_6_2[i].values[v]
+	for k, v in ipairs(packed_settings) do
+		settings[k] = settings_template[k].values[v]
 	end
 
-	return tbl
+	return settings
 end
 
-GameModeCustomSettingsHandler.request_full_sync = function (arg_7_0)
+GameModeCustomSettingsHandler.request_full_sync = function (self)
 	-- function 7
-	local get_match_handler = Managers.mechanism:network_handler():get_match_handler()
+	local network_handler = Managers.mechanism:network_handler()
+	local match_handler = network_handler:get_match_handler()
 
-	if not get_match_handler:is_leader() then
-		get_match_handler:send_rpc_up("rpc_game_mode_custom_settings_request_full_sync")
+	if match_handler:is_leader() then
+		match_handler:send_rpc_up("rpc_game_mode_custom_settings_request_full_sync")
 	end
 end
 
-GameModeCustomSettingsHandler.get_setting = function (self, arg_8_1)
+GameModeCustomSettingsHandler.get_setting = function (self, setting_name)
 	-- function 8
-	local var_8_0 = self._settings_template[arg_8_1]
-	local var_8_1
+	local setting_data = self._settings_template[setting_name]
+	local setting
 
-	if not var_8_0 then
-		var_8_1 = self._settings[var_8_0.id]
+	if setting_data then
+		setting = self._settings[setting_data.id]
 	end
 
-	return var_8_1, self._enabled
+	return setting, self._enabled
 end
 
 GameModeCustomSettingsHandler.reset_custom_settings = function (self)
 	-- function 9
-	for i, v in ipairs(self._settings_template) do
-		self._settings[i] = v.default
+	for k, v in ipairs(self._settings_template) do
+		self._settings[k] = v.default
 	end
 end
 
-GameModeCustomSettingsHandler.set_enabled = function (self, arg_10_1, arg_10_2)
+GameModeCustomSettingsHandler.set_enabled = function (self, enabled, do_sync)
 	-- function 10
-	self._enabled = arg_10_1
+	self._enabled = enabled
 
-	if not arg_10_1 then
+	if not enabled then
 		self:reset_custom_settings()
 	end
 
-	if not DEDICATED_SERVER then
+	if DEDICATED_SERVER then
 		return
 	end
 
-	if not arg_10_2 then
+	if do_sync then
 		local network_handler = Managers.mechanism:network_handler()
-		local flag = not network_handler and network_handler:get_match_handler()
+		local match_handler = not not network_handler and not not network_handler:get_match_handler()
 
-		if not flag and not flag:is_match_owner() then
-			printf("GameModeCustomSettingsHandler: match_owner called set_enabled(%s)", tostring(arg_10_1))
-			flag:send_rpc_others("rpc_game_mode_custom_settings_handler_set_enabled", arg_10_1)
+		if match_handler and match_handler:is_match_owner() then
+			printf("GameModeCustomSettingsHandler: match_owner called set_enabled(%s)", tostring(enabled))
+			match_handler:send_rpc_others("rpc_game_mode_custom_settings_handler_set_enabled", enabled)
 		end
 	end
 end
@@ -164,14 +166,14 @@ GameModeCustomSettingsHandler.is_enabled = function (self)
 	return self._enabled
 end
 
-GameModeCustomSettingsHandler.register_rpcs = function (arg_12_0, arg_12_1)
+GameModeCustomSettingsHandler.register_rpcs = function (self, network_event_delegate)
 	-- function 12
-	arg_12_1:register(arg_12_0, unpack(tbl))
+	network_event_delegate:register(self, unpack(RPCS))
 end
 
-GameModeCustomSettingsHandler.unregister_rpcs = function (arg_13_0, arg_13_1)
+GameModeCustomSettingsHandler.unregister_rpcs = function (self, network_event_delegate)
 	-- function 13
-	arg_13_1:unregister(arg_13_0)
+	network_event_delegate:unregister(self)
 end
 
 GameModeCustomSettingsHandler.get_settings = function (self)
@@ -184,84 +186,100 @@ GameModeCustomSettingsHandler.get_settings_template = function (self)
 	return self._settings_template
 end
 
-GameModeCustomSettingsHandler.rpc_game_mode_custom_settings_full_sync = function (self, arg_16_1, arg_16_2, arg_16_3)
+GameModeCustomSettingsHandler.rpc_game_mode_custom_settings_full_sync = function (self, channel_id, settings, enabled)
 	-- function 16
-	self:set_enabled(arg_16_3)
+	self:set_enabled(enabled)
 
-	self._settings = self:unpack_settings(arg_16_2, self._settings_template)
+	self._settings = self:unpack_settings(settings, self._settings_template)
 
 	self:_print_settings()
-	Managers.mechanism:network_handler():get_match_handler():propagate_rpc("rpc_game_mode_custom_settings_full_sync", CHANNEL_TO_PEER_ID[arg_16_1], arg_16_2, arg_16_3)
+
+	local network_handler = Managers.mechanism:network_handler()
+	local match_handler = network_handler:get_match_handler()
+
+	match_handler:propagate_rpc("rpc_game_mode_custom_settings_full_sync", CHANNEL_TO_PEER_ID[channel_id], settings, enabled)
 end
 
-GameModeCustomSettingsHandler.rpc_game_mode_custom_settings_request_full_sync = function (self, arg_17_1)
+GameModeCustomSettingsHandler.rpc_game_mode_custom_settings_request_full_sync = function (self, channel_id)
 	-- function 17
-	local var_17_0 = CHANNEL_TO_PEER_ID[arg_17_1]
+	local peer_id = CHANNEL_TO_PEER_ID[channel_id]
 
-	if not var_17_0 then
-		local get_match_handler = Managers.mechanism:network_handler():get_match_handler()
-		local pack_settings = self:pack_settings(self._settings, self._settings_template)
+	if peer_id then
+		local network_handler = Managers.mechanism:network_handler()
+		local match_handler = network_handler:get_match_handler()
+		local packed_settings = self:pack_settings(self._settings, self._settings_template)
 
-		get_match_handler:send_rpc("rpc_game_mode_custom_settings_full_sync", var_17_0, pack_settings, self._enabled)
+		match_handler:send_rpc("rpc_game_mode_custom_settings_full_sync", peer_id, packed_settings, self._enabled)
 	end
 end
 
-GameModeCustomSettingsHandler.rpc_game_mode_custom_settings_handler_set_enabled = function (self, arg_18_1, arg_18_2)
+GameModeCustomSettingsHandler.rpc_game_mode_custom_settings_handler_set_enabled = function (self, channel_id, enabled)
 	-- function 18
-	printf("GameModeCustomSettingsHandler: rpc_game_mode_custom_settings_handler_set_enabled, enabled = %s", tostring(arg_18_2))
-	self:set_enabled(arg_18_2)
+	printf("GameModeCustomSettingsHandler: rpc_game_mode_custom_settings_handler_set_enabled, enabled = %s", tostring(enabled))
+	self:set_enabled(enabled)
 
-	local event = Managers.state.event
+	local event_manager = Managers.state.event
 
-	if not event then
-		event:trigger("lobby_member_game_mode_custom_settings_handler_enabled", arg_18_2)
+	if event_manager then
+		event_manager:trigger("lobby_member_game_mode_custom_settings_handler_enabled", enabled)
 	end
 
 	local network_handler = Managers.mechanism:network_handler()
-	local flag = not network_handler and network_handler:get_match_handler()
+	local match_handler = not not network_handler and not not network_handler:get_match_handler()
 
-	if not flag then
-		flag:propagate_rpc("rpc_game_mode_custom_settings_handler_set_enabled", CHANNEL_TO_PEER_ID[arg_18_1], arg_18_2)
+	if match_handler then
+		match_handler:propagate_rpc("rpc_game_mode_custom_settings_handler_set_enabled", CHANNEL_TO_PEER_ID[channel_id], enabled)
 	end
 end
 
 GameModeCustomSettingsHandler._print_settings = function (self)
 	-- function 19
-	local format = string.format("GameModeCustomSettingsHandler: settings updated: \n Custom Settings Enabled = %s \n", self._enabled)
+	local to_print = string.format("GameModeCustomSettingsHandler: settings updated: \n Custom Settings Enabled = %s \n", self._enabled)
 
 	for i = 1, #self._settings_template do
-		local setting_name = self._settings_template[i].setting_name
-		local get_setting = self:get_setting(setting_name)
-		local format_2 = string.format("\n %s: %s", setting_name, get_setting)
+		local setting = self._settings_template[i]
+		local setting_name = setting.setting_name
+		local setting_value = self:get_setting(setting_name)
+		local line = string.format("\n %s: %s", setting_name, setting_value)
 
-		format = format .. format_2
+		to_print = to_print .. line
 	end
 
-	print(format)
+	print(to_print)
 end
 
 GameModeCustomSettingsHandler.get_telemetry_data = function (self)
 	-- function 20
-	local tbl = {}
-	local tbl_2 = {}
+	local settings_hash_map = {}
+	local modified_settings = {}
 
 	for i = 1, #self._settings_template do
-		local var_20_2 = self._settings_template[i]
-		local setting_name = var_20_2.setting_name
-		local get_setting = self:get_setting(setting_name)
+		local template = self._settings_template[i]
+		local setting_name = template.setting_name
+		local setting = self:get_setting(setting_name)
 
-		tbl[setting_name] = get_setting
+		settings_hash_map[setting_name] = setting
 
-		if get_setting ~= var_20_2.default then
-			tbl_2[#tbl_2 + 1] = setting_name
+		if setting ~= template.default then
+			modified_settings[#modified_settings + 1] = setting_name
 		end
 	end
 
 	local flag
 
-	flag = #tbl_2 ~= 0 or not true or false
+	if #modified_settings == 0 then
+		flag = true
 
-	return tbl, flag, tbl_2
+		goto label_20_0
+	end
+
+	flag = false
+
+	local is_default_settings = flag
+
+	::label_20_0::
+
+	return settings_hash_map, is_default_settings, modified_settings
 end
 
 GameModeCustomSettingsHandler.destroy = function (self)

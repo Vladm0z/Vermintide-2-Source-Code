@@ -4,23 +4,23 @@ local json = require("PlayFab.json")
 local PlayFabSettings = require("PlayFab.PlayFabSettings")
 local PlayFabHttpsCurlData = PlayFabHttpsCurlData
 
-PlayFabHttpsCurlData = PlayFabHttpsCurlData or {}
+PlayFabHttpsCurlData = not not PlayFabHttpsCurlData or not not {}
 PlayFabHttpsCurlData = PlayFabHttpsCurlData
 
 local PlayFabHttpsCurlData_2 = PlayFabHttpsCurlData
 local request_id = PlayFabHttpsCurlData.request_id
 
-request_id = request_id or 0
+request_id = not not request_id or not not 0
 PlayFabHttpsCurlData_2.request_id = request_id
 
 local PlayFabHttpsCurlData_3 = PlayFabHttpsCurlData
 local active_requests = PlayFabHttpsCurlData.active_requests
 
-active_requests = active_requests or {}
+active_requests = not not active_requests or not not {}
 PlayFabHttpsCurlData_3.active_requests = active_requests
 
-local num = 2
-local tbl = {
+local MAX_RETRIES = 2
+local retry_codes = {
 	1199,
 	1342,
 	1133,
@@ -32,42 +32,43 @@ local tbl = {
 	1101
 }
 
-local function fn(self, arg_1_1, arg_1_2, arg_1_3)
+local function on_error(request_data, result, id, error_override)
 	-- function 1
-	local var_1_0
+	local error_code
 
-	if not arg_1_1.data and not arg_1_1.data.Error then
-		local Logs = arg_1_1.data.Logs
+	if result.data and result.data.Error then
+		local logs = result.data.Logs
 
-		if not Logs then
-			for i = 1, #Logs do
-				local Data = Logs[i].Data
+		if logs then
+			for i = 1, #logs do
+				local log = logs[i]
+				local data = log.Data
 
-				if not Data then
-					local apiError = Data.apiError
+				if data then
+					local api_error = data.apiError
 
-					if not apiError then
-						var_1_0 = apiError.errorCode
+					if api_error then
+						error_code = api_error.errorCode
 					end
 				end
 			end
 		end
-	elseif not arg_1_1.errorCode then
-		var_1_0 = arg_1_1.errorCode
+	elseif result.errorCode then
+		error_code = result.errorCode
 	end
 
-	local contains = table.contains(tbl, var_1_0)
+	local retry = table.contains(retry_codes, error_code)
 
-	if not contains then
-		local data = arg_1_1.data
-		local flag = not data and data.Logs
+	if not retry then
+		local data = result.data
+		local logs = not not data and not not data.Logs
 
-		if not flag then
-			for j = 1, #flag do
-				local var_1_7 = flag[j]
+		if logs then
+			for i = 1, #logs do
+				local log = logs[i]
 
-				if not ((var_1_7.Message == "RetriableError" or not var_1_7.Data) and var_1_7.Data.error ~= "Timeout") then
-					contains = true
+				if log.Message == "RetriableError" or log.Data and log.Data.error == "Timeout" then
+					retry = true
 
 					break
 				end
@@ -75,33 +76,31 @@ local function fn(self, arg_1_1, arg_1_2, arg_1_3)
 		end
 	end
 
-	if not (not contains and not (self.retries < num)) then
-		local url = self.url
-		local body = self.body
-		local headers = self.headers
-		local request_cb = self.request_cb
-		local options = self.options
-		local decode = json.decode(body)
+	if retry and request_data.retries < MAX_RETRIES then
+		local url = request_data.url
+		local body = request_data.body
+		local headers = request_data.headers
+		local request_cb = request_data.request_cb
+		local options = request_data.options
+		local request = json.decode(body)
 
-		if not decode.FunctionParameter then
-			decode.FunctionParameter = {}
+		if not request.FunctionParameter then
+			request.FunctionParameter = {}
 		end
 
-		decode.FunctionParameter.retry = true
-		decode.FunctionParameter.final_retry = self.retries + 1 == num
+		request.FunctionParameter.retry = true
+		request.FunctionParameter.final_retry = request_data.retries + 1 == MAX_RETRIES
+		body = json.encode(request)
+		headers[4] = "content-length: " .. tostring(string.len(body))
 
-		local encode = json.encode(decode)
+		Managers.curl:post(url, body, headers, request_cb, id, options)
 
-		headers[4] = "content-length: " .. tostring(string.len(encode))
-
-		Managers.curl:post(url, encode, headers, request_cb, arg_1_2, options)
-
-		self.retries = self.retries + 1
+		request_data.retries = request_data.retries + 1
 
 		local format
 
-		if not arg_1_3 then
-			format = string.format(" | Error Override: %s", arg_1_3)
+		if error_override then
+			format = string.format(" | Error Override: %s", error_override)
 
 			if not format then
 				-- Nothing
@@ -110,110 +109,116 @@ local function fn(self, arg_1_1, arg_1_2, arg_1_3)
 
 		format = ""
 
+		local override = format
+
 		::label_1_0::
 
-		printf("[PLAYFAB HTTPS CURL] RESENDING REQUEST. Id: %s | Error Code: %s%s", arg_1_2, var_1_0, format)
-		Crashify.print_exception("Backend_Error", "RESENDING REQUEST: %s", self)
+		printf("[PLAYFAB HTTPS CURL] RESENDING REQUEST. Id: %s | Error Code: %s%s", id, error_code, override)
+		Crashify.print_exception("Backend_Error", "RESENDING REQUEST: %s", request_data)
 	else
-		var_1_0 = not arg_1_3 and arg_1_3 and var_1_0
+		if error_override and not error_override then
+			-- Nothing
+		end
 
-		Managers.backend:playfab_api_error(arg_1_1, var_1_0)
+		Managers.backend:playfab_api_error(result, error_code)
 
-		PlayFabHttpsCurlData.active_requests[arg_1_2] = nil
+		PlayFabHttpsCurlData.active_requests[id] = nil
 	end
 end
 
-function curl_callback(arg_2_0, arg_2_1, arg_2_2, arg_2_3, arg_2_4)
+function curl_callback(success, code, headers, data, id)
 	-- function 2
-	local var_2_0 = PlayFabHttpsCurlData.active_requests[arg_2_4]
+	local request_data = PlayFabHttpsCurlData.active_requests[id]
 
-	if not arg_2_0 then
-		local var_2_1, var_2_2 = pcall(json.decode, arg_2_3)
+	if success then
+		local _, response = pcall(json.decode, data)
 
-		if not (not var_2_2 and type(var_2_2) ~= "table") then
-			if not ((var_2_2.code ~= 200 or not var_2_2.data) and var_2_2.data.Error) then
-				var_2_0.onSuccess(var_2_2.data)
+		if response and type(response) == "table" then
+			if response.code == 200 and response.data and not response.data.Error then
+				request_data.onSuccess(response.data)
 
-				PlayFabHttpsCurlData.active_requests[arg_2_4] = nil
-			elseif not var_2_0.onFail then
-				var_2_0.onFail(var_2_2)
+				PlayFabHttpsCurlData.active_requests[id] = nil
+			elseif request_data.onFail then
+				request_data.onFail(response)
 
-				PlayFabHttpsCurlData.active_requests[arg_2_4] = nil
+				PlayFabHttpsCurlData.active_requests[id] = nil
 			else
-				fn(var_2_0, var_2_2, arg_2_4)
+				on_error(request_data, response, id)
 			end
 		else
-			local tbl = {
+			local error_data = {
 				error = "ServiceUnavailable",
 				errorCode = 1123,
 				status = "",
-				code = arg_2_1
+				code = code
 			}
 
-			if not arg_2_3 then
-				tbl.errorMessage = "Could not deserialize response from server: " .. tostring(arg_2_3)
+			if data then
+				error_data.errorMessage = "Could not deserialize response from server: " .. tostring(data)
 			else
-				tbl.errorMessage = "Could not deserialize response from server: NO DATA"
+				error_data.errorMessage = "Could not deserialize response from server: NO DATA"
 			end
 
-			fn(var_2_0, tbl, arg_2_4)
+			on_error(request_data, error_data, id)
 		end
 	else
-		local tbl_2 = {
+		local error_data = {
 			error = "ServiceUnavailable",
 			errorCode = 1123,
 			status = "",
-			code = arg_2_1
+			code = code
 		}
 
-		if not arg_2_3 then
-			tbl_2.errorMessage = "Could not deserialize response from server: " .. tostring(arg_2_3)
+		if data then
+			error_data.errorMessage = "Could not deserialize response from server: " .. tostring(data)
 		else
-			tbl_2.errorMessage = "Could not deserialize response from server: NO DATA"
+			error_data.errorMessage = "Could not deserialize response from server: NO DATA"
 		end
 
-		fn(var_2_0, tbl_2, arg_2_4, tostring(arg_2_3))
+		on_error(request_data, error_data, id, tostring(data))
 	end
 end
 
-return {
-	MakePlayFabApiCall = function (arg_3_0, arg_3_1, arg_3_2, arg_3_3, arg_3_4, arg_3_5)
-		-- function 3
-		local encode = json.encode(arg_3_1)
-		local tbl = {
-			"X-ReportErrorAsSuccess: true",
-			"X-PlayFabSDK: " .. PlayFabSettings._internalSettings.sdkVersionString,
-			"Content-Type: application/json",
-			"content-length: " .. string.len(encode)
-		}
+local PlayFabHttpsCurl = {}
 
-		if not arg_3_2 then
-			tbl[#tbl + 1] = arg_3_2 .. ": " .. arg_3_3
-		end
+PlayFabHttpsCurl.MakePlayFabApiCall = function (url_path, request, auth_key, auth_value, on_success_callback, optional_on_fail_callback)
+	-- function 3
+	local json_request = json.encode(request)
+	local headers = {
+		"X-ReportErrorAsSuccess: true",
+		"X-PlayFabSDK: " .. PlayFabSettings._internalSettings.sdkVersionString,
+		"Content-Type: application/json",
+		"content-length: " .. string.len(json_request)
+	}
 
-		local str = "https://" .. PlayFabSettings.settings.titleId .. ".playfabapi.com"
-		local num = PlayFabHttpsCurlData.request_id + 1
-		local curl = Managers.curl
-		local str_2 = str .. arg_3_0
-		local tbl_2 = {
-			[curl._curl.OPT_SSL_OPTIONS] = curl._curl.SSLOPT_NO_REVOKE
-		}
-		local tbl_3 = {
-			retries = 0,
-			onSuccess = arg_3_4,
-			onFail = arg_3_5,
-			url = str_2,
-			body = encode,
-			headers = tbl,
-			request_cb = curl_callback,
-			id = num,
-			options = tbl_2
-		}
-
-		PlayFabHttpsCurlData.active_requests[num] = tbl_3
-
-		curl:post(str_2, encode, tbl, curl_callback, num, tbl_2)
-
-		PlayFabHttpsCurlData.request_id = num
+	if auth_key then
+		headers[#headers + 1] = auth_key .. ": " .. auth_value
 	end
-}
+
+	local base_url = "https://" .. PlayFabSettings.settings.titleId .. ".playfabapi.com"
+	local id = PlayFabHttpsCurlData.request_id + 1
+	local curl_manager = Managers.curl
+	local full_url = base_url .. url_path
+	local options = {
+		[curl_manager._curl.OPT_SSL_OPTIONS] = curl_manager._curl.SSLOPT_NO_REVOKE
+	}
+	local request_data = {
+		retries = 0,
+		onSuccess = on_success_callback,
+		onFail = optional_on_fail_callback,
+		url = full_url,
+		body = json_request,
+		headers = headers,
+		request_cb = curl_callback,
+		id = id,
+		options = options
+	}
+
+	PlayFabHttpsCurlData.active_requests[id] = request_data
+
+	curl_manager:post(full_url, json_request, headers, curl_callback, id, options)
+
+	PlayFabHttpsCurlData.request_id = id
+end
+
+return PlayFabHttpsCurl

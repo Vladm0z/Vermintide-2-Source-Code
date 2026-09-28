@@ -2,9 +2,9 @@
 
 PoisonWindGlobadierStateThrowing = class(PoisonWindGlobadierStateThrowing, EnemyCharacterState)
 
-PoisonWindGlobadierStateThrowing.init = function (self, arg_1_1)
+PoisonWindGlobadierStateThrowing.init = function (self, character_state_init_context)
 	-- function 1
-	EnemyCharacterState.init(self, arg_1_1, "globadier_throwing")
+	EnemyCharacterState.init(self, character_state_init_context, "globadier_throwing")
 
 	self.current_movement_speed_scale = 0
 	self.last_input_direction = Vector3Box(0, 0, 0)
@@ -18,53 +18,53 @@ PoisonWindGlobadierStateThrowing.init = function (self, arg_1_1)
 	self._right_wpn_particle_node_name = "e_globe"
 end
 
-local POSITION_LOOKUP = POSITION_LOOKUP
+local position_lookup = POSITION_LOOKUP
 
-PoisonWindGlobadierStateThrowing.on_enter = function (self, arg_2_1, arg_2_2, arg_2_3, arg_2_4, arg_2_5, arg_2_6, arg_2_7)
+PoisonWindGlobadierStateThrowing.on_enter = function (self, unit, input, dt, context, t, previous_state, params)
 	-- function 2
 	table.clear(self._temp_params)
 
-	self._unit = arg_2_1
-	self._first_person_extension = ScriptUnit.has_extension(arg_2_1, "first_person_system")
-	self._status_extension = ScriptUnit.extension(arg_2_1, "status_system")
-	self._career_extension = ScriptUnit.extension(arg_2_1, "career_system")
-	self._buff_extension = ScriptUnit.extension(arg_2_1, "buff_system")
-	self._locomotion_extension = ScriptUnit.extension(arg_2_1, "locomotion_system")
-	self._input_extension = ScriptUnit.has_extension(arg_2_1, "input_system")
-	self._inventory_extension = ScriptUnit.has_extension(arg_2_1, "inventory_system")
+	self._unit = unit
+	self._first_person_extension = ScriptUnit.has_extension(unit, "first_person_system")
+	self._status_extension = ScriptUnit.extension(unit, "status_system")
+	self._career_extension = ScriptUnit.extension(unit, "career_system")
+	self._buff_extension = ScriptUnit.extension(unit, "buff_system")
+	self._locomotion_extension = ScriptUnit.extension(unit, "locomotion_system")
+	self._input_extension = ScriptUnit.has_extension(unit, "input_system")
+	self._inventory_extension = ScriptUnit.has_extension(unit, "inventory_system")
 	self._is_server = Managers.player.is_server
 
-	local get_data = Unit.get_data(arg_2_1, "breed")
+	local breed = Unit.get_data(unit, "breed")
 
-	self._breed = get_data
-	self._previous_state = arg_2_6
+	self._breed = breed
+	self._previous_state = previous_state
 
 	table.clear(self._impact_data)
 
 	self._impact_data.position = Vector3Box()
 	self._impact_data.direction = Vector3Box()
 	self._impact_data.hit_normal = Vector3Box()
-	self._wind_up_movement_speed = get_data.wind_up_movement_speed
+	self._wind_up_movement_speed = breed.wind_up_movement_speed
 
-	local _first_person_extension = self._first_person_extension
+	local first_person_extension = self._first_person_extension
 
-	_first_person_extension:unhide_weapons("catapulted")
-	CharacterStateHelper.show_inventory_3p(arg_2_1, true, false, self._is_server, self._inventory_extension)
-	CharacterStateHelper.play_animation_event(arg_2_1, "globe_charge")
-	CharacterStateHelper.play_animation_event_first_person(_first_person_extension, "globe_charge")
+	first_person_extension:unhide_weapons("catapulted")
+	CharacterStateHelper.show_inventory_3p(unit, true, false, self._is_server, self._inventory_extension)
+	CharacterStateHelper.play_animation_event(unit, "globe_charge")
+	CharacterStateHelper.play_animation_event_first_person(first_person_extension, "globe_charge")
 
 	self._done_priming = false
-	self._prime_time = arg_2_5 + get_data.globe_throw_prime_time
-	self._max_prime_time = get_data.globe_throw_prime_time
+	self._prime_time = t + breed.globe_throw_prime_time
+	self._max_prime_time = breed.globe_throw_prime_time
 
-	if not self._first_person_extension then
+	if self._first_person_extension then
 		self._first_person_unit = self._first_person_extension:get_first_person_unit()
 	end
 
 	self:set_breed_action("throw_poison_globe")
 end
 
-PoisonWindGlobadierStateThrowing.on_exit = function (self, arg_3_1, arg_3_2, arg_3_3, arg_3_4, arg_3_5, arg_3_6)
+PoisonWindGlobadierStateThrowing.on_exit = function (self, unit, input, dt, context, t, next_state)
 	-- function 3
 	self._throw_ready = nil
 	self._throw_time = nil
@@ -77,172 +77,178 @@ PoisonWindGlobadierStateThrowing.on_exit = function (self, arg_3_1, arg_3_2, arg
 	self:_destroy_indicator_unit()
 end
 
-PoisonWindGlobadierStateThrowing.update = function (self, arg_4_1, arg_4_2, arg_4_3, arg_4_4, arg_4_5)
+PoisonWindGlobadierStateThrowing.update = function (self, unit, input, dt, context, t)
 	-- function 4
-	local _csm = self._csm
-	local get_movement_settings_table = PlayerUnitMovementSettings.get_movement_settings_table(arg_4_1)
-	local _status_extension = self._status_extension
-	local _first_person_extension = self._first_person_extension
-	local _locomotion_extension = self._locomotion_extension
+	local csm = self._csm
+	local movement_settings_table = PlayerUnitMovementSettings.get_movement_settings_table(unit)
+	local status_extension = self._status_extension
+	local first_person_extension = self._first_person_extension
+	local locomotion_extension = self._locomotion_extension
 
 	if not self._done_priming then
-		self:_update_priming(arg_4_1, arg_4_5, arg_4_3)
+		self:_update_priming(unit, t, dt)
 	end
 
-	if arg_4_5 > self._prime_time then
+	if t > self._prime_time then
 		self._done_priming = true
 	end
 
-	if not self._done_priming then
+	if self._done_priming then
 		if not self._throw_time then
 			self:_calculate_trajectory()
 			self:_update_indicator_unit()
 		end
 
-		self:_update_movement(arg_4_1, arg_4_5, arg_4_3)
+		self:_update_movement(unit, t, dt)
 	end
 
-	local flag = false
+	local done_throwing = false
+	local ghost_mode_extension = ScriptUnit.extension(unit, "ghost_mode_system")
+	local is_in_ghost_mode = ghost_mode_extension:is_in_ghost_mode()
 
-	if not ScriptUnit.extension(arg_4_1, "ghost_mode_system"):is_in_ghost_mode() then
+	if is_in_ghost_mode then
 		self:_stop_priming()
 
-		flag = true
-	elseif not self._throw_time then
-		flag = self:_throw_anim_update(arg_4_5)
+		done_throwing = true
+	elseif self._throw_time then
+		done_throwing = self:_throw_anim_update(t)
 	end
 
-	if not CharacterStateHelper.do_common_state_transitions(_status_extension, _csm) then
-		if not flag then
+	if CharacterStateHelper.do_common_state_transitions(status_extension, csm) then
+		if not done_throwing then
 			self:_stop_priming()
 		end
 
 		return
 	end
 
-	if not flag then
-		if not _locomotion_extension:is_on_ground() then
-			_csm:change_state("walking")
-			_first_person_extension:change_state("walking")
+	if done_throwing then
+		if locomotion_extension:is_on_ground() then
+			csm:change_state("walking")
+			first_person_extension:change_state("walking")
 
 			return
 		end
 
-		if _locomotion_extension:current_velocity().z <= 0 then
-			_csm:change_state("falling", self._temp_params)
-			_first_person_extension:change_state("falling")
+		if locomotion_extension:current_velocity().z <= 0 then
+			csm:change_state("falling", self._temp_params)
+			first_person_extension:change_state("falling")
 
 			return
 		end
 
-		_first_person_extension:animation_set_variable("armed", 0)
-		_csm:change_state("standing")
+		first_person_extension:animation_set_variable("armed", 0)
+		csm:change_state("standing")
 
 		return
 	end
 
-	if not CharacterStateHelper.is_using_transport(_status_extension) then
-		_csm:change_state("using_transport")
+	if CharacterStateHelper.is_using_transport(status_extension) then
+		csm:change_state("using_transport")
 
 		return
 	end
 
-	if not CharacterStateHelper.is_pushed(_status_extension) then
-		_status_extension:set_pushed(false)
+	if CharacterStateHelper.is_pushed(status_extension) then
+		status_extension:set_pushed(false)
 
-		local pushed = get_movement_settings_table.stun_settings.pushed
+		local params = movement_settings_table.stun_settings.pushed
+		local hit_react_type = status_extension:hit_react_type()
 
-		pushed.hit_react_type = _status_extension:hit_react_type() .. "_push"
+		params.hit_react_type = hit_react_type .. "_push"
 
-		_csm:change_state("stunned", pushed)
-
-		return
-	end
-
-	if not CharacterStateHelper.is_block_broken(_status_extension) then
-		_status_extension:set_block_broken(false)
-
-		local parry_broken = get_movement_settings_table.stun_settings.parry_broken
-
-		parry_broken.hit_react_type = "medium_push"
-
-		_csm:change_state("stunned", parry_broken)
+		csm:change_state("stunned", params)
 
 		return
 	end
 
-	local _input_extension = self._input_extension
+	if CharacterStateHelper.is_block_broken(status_extension) then
+		status_extension:set_block_broken(false)
 
-	if not _input_extension then
+		local params = movement_settings_table.stun_settings.parry_broken
+
+		params.hit_react_type = "medium_push"
+
+		csm:change_state("stunned", params)
+
 		return
 	end
 
-	local get = _input_extension:get("dark_pact_action_one_release")
-	local flag_2 = false
+	local input_extension = self._input_extension
 
-	if not get then
+	if not input_extension then
+		return
+	end
+
+	local input_throw = input_extension:get("dark_pact_action_one_release")
+	local abort_input_throw = false
+
+	if input_throw then
 		self._throw_ready = true
 	end
 
-	local get_2 = _input_extension:get("dark_pact_action_two")
+	local input_cancel = input_extension:get("dark_pact_action_two")
 
-	if not ((flag_2 or not get_2) and self._throw_time) then
+	if abort_input_throw or input_cancel and not self._throw_time then
 		self:_stop_priming()
-		_csm:change_state("standing")
+		csm:change_state("standing")
 
 		return
 	end
 
-	if not (not self._throw_ready and self._throw_time) then
-		self:_set_throw_start(arg_4_5)
+	if self._throw_ready and not self._throw_time then
+		self:_set_throw_start(t)
 		self._career_extension:start_activated_ability_cooldown()
 	end
 
-	local globe_throw_look_sense = self._breed.globe_throw_look_sense
+	local breed = self._breed
+	local look_sense_override = breed.globe_throw_look_sense
 
-	CharacterStateHelper.look(self._input_extension, self._player.viewport_name, self._first_person_extension, self._status_extension, self._inventory_extension, globe_throw_look_sense)
+	CharacterStateHelper.look(self._input_extension, self._player.viewport_name, self._first_person_extension, self._status_extension, self._inventory_extension, look_sense_override)
 end
 
 PoisonWindGlobadierStateThrowing._calculate_trajectory = function (self)
 	-- function 5
-	local _first_person_unit = self._first_person_unit
-	local _breed = self._breed
-	local local_rotation = Unit.local_rotation(_first_person_unit, 0)
-	local pitch_from_rotation = ActionUtils.pitch_from_rotation(local_rotation)
-	local node = Unit.node(_first_person_unit, "root_point")
-	local world_position = Unit.world_position(_first_person_unit, node)
-	local var_5_6 = world_position
-	local unbox = self._position:unbox()
+	local first_person_unit = self._first_person_unit
+	local breed = self._breed
+	local rotation = Unit.local_rotation(first_person_unit, 0)
+	local angle = ActionUtils.pitch_from_rotation(rotation)
+	local throw_node_index = Unit.node(first_person_unit, "root_point")
+	local initial_position = Unit.world_position(first_person_unit, throw_node_index)
+	local current_position = initial_position
+	local prev_position = self._position:unbox()
 
-	if not (not Vector3.equal(world_position, unbox) and pitch_from_rotation ~= self._angle) then
+	if Vector3.equal(initial_position, prev_position) and angle == self._angle then
 		return
 	end
 
-	self._position:store(world_position)
+	self._position:store(initial_position)
 
-	self._angle = pitch_from_rotation
+	self._angle = angle
 
-	local degrees_to_radians = math.degrees_to_radians(pitch_from_rotation)
-	local normalize = Vector3.normalize(Vector3.flat(Quaternion.forward(local_rotation)))
-	local normalize_2 = Vector3.normalize(normalize + Vector3(0, 0, _breed.globe_throw_upwards_amount))
-	local num = _breed.globe_throw_speed * 0.01
-	local default = ProjectileGravitySettings.default
-	local _physics_world = self._physics_world
-	local num_2 = 0.5
-	local tbl = {
-		WeaponHelper:position_on_trajectory(world_position, normalize_2, num, degrees_to_radians, default, 0)
+	local radians = math.degrees_to_radians(angle)
+	local target_vector = Vector3.normalize(Vector3.flat(Quaternion.forward(rotation)))
+
+	target_vector = Vector3.normalize(target_vector + Vector3(0, 0, breed.globe_throw_upwards_amount))
+
+	local speed = breed.globe_throw_speed * 0.01
+	local gravity = ProjectileGravitySettings.default
+	local physics_world = self._physics_world
+	local interval = 0.5
+	local points = {
+		WeaponHelper:position_on_trajectory(initial_position, target_vector, speed, radians, gravity, 0)
 	}
-	local num_3 = 0.05
-	local num_4 = 5
-	local network = Managers.state.network
+	local radius = 0.05
+	local max_hits = 5
+	local network_manager = Managers.state.network
 
-	for i = num_2, 10, num_2 do
-		local position_on_trajectory = WeaponHelper:position_on_trajectory(world_position, normalize_2, num, degrees_to_radians, default, i)
-		local linear_sphere_sweep = PhysicsWorld.linear_sphere_sweep(_physics_world, var_5_6, position_on_trajectory, num_3, num_4, "collision_filter", "filter_player_ray_projectile_static_only")
+	for t = interval, 10, interval do
+		local new_position = WeaponHelper:position_on_trajectory(initial_position, target_vector, speed, radians, gravity, t)
+		local result = PhysicsWorld.linear_sphere_sweep(physics_world, current_position, new_position, radius, max_hits, "collision_filter", "filter_player_ray_projectile_static_only")
 		local count
 
-		if not linear_sphere_sweep then
-			count = #linear_sphere_sweep
+		if result then
+			count = #result
 
 			if not count then
 				-- Nothing
@@ -251,152 +257,160 @@ PoisonWindGlobadierStateThrowing._calculate_trajectory = function (self)
 
 		count = 0
 
+		local num_results = count
+
 		::label_5_0::
 
-		if count > 0 then
-			local flag = false
+		if num_results > 0 then
+			local done = false
 
-			for j = 1, count do
-				local var_5_23 = linear_sphere_sweep[j]
-				local position = var_5_23.position
-				local normal = var_5_23.normal
-				local actor = var_5_23.actor
-				local distance = var_5_23.distance
-				local normalize_3 = Vector3.normalize(position - var_5_6)
+			for i = 1, num_results do
+				local hit = result[i]
+				local position = hit.position
+				local hit_normal = hit.normal
+				local hit_actor = hit.actor
+				local distance = hit.distance
+				local direction = Vector3.normalize(position - current_position)
 
 				if distance > 0 then
-					local unit = Actor.unit(actor)
+					local hit_unit = Actor.unit(hit_actor)
 
-					if not network:level_object_id(unit) then
-						tbl[#tbl + 1] = position
+					if network_manager:level_object_id(hit_unit) then
+						points[#points + 1] = position
 
-						local num_5 = var_5_6 - WeaponHelper:position_on_trajectory(world_position, normalize_2, num, degrees_to_radians, default, i + num_2)
-						local length = Vector3.length(num_5)
-						local num_6 = 0.2
-						local num_7 = i - (num_2 - distance / length * num_2) + num_6
-						local _impact_data = self._impact_data
+						local next_position = WeaponHelper:position_on_trajectory(initial_position, target_vector, speed, radians, gravity, t + interval)
+						local no_impact_delta = current_position - next_position
+						local no_impact_length = Vector3.length(no_impact_delta)
+						local buffer = 0.2
+						local time = t - (interval - distance / no_impact_length * interval) + buffer
+						local impact_data = self._impact_data
 
-						_impact_data.position:store(position)
-						_impact_data.hit_normal:store(normal)
-						_impact_data.direction:store(normalize_3)
+						impact_data.position:store(position)
+						impact_data.hit_normal:store(hit_normal)
+						impact_data.direction:store(direction)
 
-						_impact_data.hit_unit = unit
+						impact_data.hit_unit = hit_unit
 
-						local num_actors = Unit.num_actors(unit)
-						local actor_2 = Unit.actor
-						local var_5_37
+						local num_actors = Unit.num_actors(hit_unit)
+						local unit_actor = Unit.actor
+						local actor_index
 
-						for k = 0, num_actors - 1 do
-							if actor == actor_2(unit, k) then
-								var_5_37 = k
+						for i = 0, num_actors - 1 do
+							local actor = unit_actor(hit_unit, i)
+
+							if hit_actor == actor then
+								actor_index = i
 
 								break
 							end
 						end
 
-						_impact_data.actor_index = var_5_37
-						_impact_data.time = num_7
-						flag = true
+						impact_data.actor_index = actor_index
+						impact_data.time = time
+						done = true
 
 						break
 					end
 				end
 			end
 
-			if not flag then
+			if done then
 				break
 			end
 		end
 
-		var_5_6 = position_on_trajectory
+		current_position = new_position
 	end
 
-	if #tbl > 1 then
-		self._spline = SplineCurve:new(tbl, "Hermite", "SplineMovementMetered", "GlobadierProjectileTrajectory")
-		self._num_segments = #tbl
+	if #points > 1 then
+		self._spline = SplineCurve:new(points, "Hermite", "SplineMovementMetered", "GlobadierProjectileTrajectory")
+		self._num_segments = #points
 	end
 end
 
-PoisonWindGlobadierStateThrowing._update_priming = function (self, arg_6_1, arg_6_2, arg_6_3)
+PoisonWindGlobadierStateThrowing._update_priming = function (self, unit, t, dt)
 	-- function 6
-	if arg_6_2 > self._prime_time then
+	if t > self._prime_time then
 		self._done_priming = true
 
 		self:_create_indicator_unit()
 
-		local _unit = self._unit
-		local _first_person_extension = self._first_person_extension
+		local unit = self._unit
+		local first_person_extension = self._first_person_extension
 
 		if not self._thrown then
-			CharacterStateHelper.play_animation_event(_unit, "globe_charge_hold")
-			CharacterStateHelper.play_animation_event_first_person(_first_person_extension, "globe_charge_hold")
+			CharacterStateHelper.play_animation_event(unit, "globe_charge_hold")
+			CharacterStateHelper.play_animation_event_first_person(first_person_extension, "globe_charge_hold")
 		end
 	end
 
-	if not not self._done_priming then
-		local _prime_time = self._prime_time
-		local _max_prime_time = self._max_prime_time
-		local num = _max_prime_time - (_prime_time - arg_6_2)
-		local clamp = math.clamp(num / _max_prime_time, 0, 1)
+	local update_priming = not self._done_priming
 
-		self:_set_priming_progress(clamp)
-		self:_update_movement(arg_6_1, arg_6_2, arg_6_3, clamp)
+	if update_priming then
+		local prime_time = self._prime_time
+		local max_prime_time = self._max_prime_time
+		local time = max_prime_time - (prime_time - t)
+		local progress = math.clamp(time / max_prime_time, 0, 1)
+
+		self:_set_priming_progress(progress)
+		self:_update_movement(unit, t, dt, progress)
 	end
 end
 
-PoisonWindGlobadierStateThrowing._set_priming_progress = function (self, arg_7_1)
+PoisonWindGlobadierStateThrowing._set_priming_progress = function (self, progress)
 	-- function 7
-	local _career_extension = self._career_extension
-	local str = "fire"
-	local ability_id = _career_extension:ability_id(str)
+	local career_extension = self._career_extension
+	local ability_name = "fire"
+	local ability_id = career_extension:ability_id(ability_name)
+	local ability_data = career_extension:get_activated_ability_data(ability_id)
 
-	_career_extension:get_activated_ability_data(ability_id).priming_progress = arg_7_1
+	ability_data.priming_progress = progress
 end
 
 PoisonWindGlobadierStateThrowing._stop_priming = function (self)
 	-- function 8
-	local _unit = self._unit
-	local _first_person_extension = self._first_person_extension
+	local unit = self._unit
+	local first_person_extension = self._first_person_extension
 
-	CharacterStateHelper.play_animation_event(_unit, "globe_charge_cancel")
-	CharacterStateHelper.play_animation_event_first_person(_first_person_extension, "globe_charge_cancel")
+	CharacterStateHelper.play_animation_event(unit, "globe_charge_cancel")
+	CharacterStateHelper.play_animation_event_first_person(first_person_extension, "globe_charge_cancel")
 
 	self._done_priming = false
 end
 
-PoisonWindGlobadierStateThrowing._set_throw_start = function (self, arg_9_1)
+PoisonWindGlobadierStateThrowing._set_throw_start = function (self, t)
 	-- function 9
-	local _unit = self._unit
-	local _breed = self._breed
-	local _first_person_unit = self._first_person_unit
-	local _first_person_extension = self._first_person_extension
+	local unit = self._unit
+	local breed = self._breed
+	local first_person_unit = self._first_person_unit
+	local first_person_extension = self._first_person_extension
 
-	CharacterStateHelper.play_animation_event(_unit, "globe_throw")
-	CharacterStateHelper.play_animation_event_first_person(_first_person_extension, "globe_throw")
-	_first_person_extension:animation_set_variable("armed", 0)
+	CharacterStateHelper.play_animation_event(unit, "globe_throw")
+	CharacterStateHelper.play_animation_event_first_person(first_person_extension, "globe_throw")
+	first_person_extension:animation_set_variable("armed", 0)
 
-	self._throw_time = arg_9_1 + _breed.globe_throw_spawn_globe_time
-	self._finish_time = arg_9_1 + _breed.globe_throw_finish_time
+	self._throw_time = t + breed.globe_throw_spawn_globe_time
+	self._finish_time = t + breed.globe_throw_finish_time
 	self._thrown = false
-	self._throw_rotation_box = QuaternionBox(Unit.local_rotation(_first_person_unit, 0))
+	self._throw_rotation_box = QuaternionBox(Unit.local_rotation(first_person_unit, 0))
 
-	local node = Unit.node(_first_person_unit, "j_rightweaponattach")
-	local world_position = Unit.world_position(_first_person_unit, node)
+	local throw_node_index = Unit.node(first_person_unit, "j_rightweaponattach")
+	local node_position = Unit.world_position(first_person_unit, throw_node_index)
 
-	self._throw_position_box = Vector3Box(world_position)
+	self._throw_position_box = Vector3Box(node_position)
 end
 
-PoisonWindGlobadierStateThrowing._throw_anim_update = function (self, arg_10_1)
+PoisonWindGlobadierStateThrowing._throw_anim_update = function (self, t)
 	-- function 10
-	local _throw_time = self._throw_time
+	local throw_time = self._throw_time
 
-	if not (not _throw_time and self._thrown or not (_throw_time <= arg_10_1)) then
+	if throw_time and not self._thrown and throw_time <= t then
 		self:_throw()
 	end
 
-	local _finish_time = self._finish_time
+	local finish_time = self._finish_time
 
-	if not (not _finish_time and not (_finish_time <= arg_10_1)) then
+	if finish_time and finish_time <= t then
 		return true
 	end
 
@@ -407,163 +421,224 @@ end
 
 PoisonWindGlobadierStateThrowing._throw = function (self)
 	-- function 11
-	local _unit = self._unit
-	local _breed = self._breed
+	local unit = self._unit
+	local breed = self._breed
+	local first_person_extension = self._first_person_extension
 
-	self._first_person_extension:hide_weapons("catapulted")
-	CharacterStateHelper.show_inventory_3p(_unit, false, true, Managers.player.is_server, self._inventory_extension)
+	first_person_extension:hide_weapons("catapulted")
+	CharacterStateHelper.show_inventory_3p(unit, false, true, Managers.player.is_server, self._inventory_extension)
 	self._status_extension:set_unarmed(true)
 
-	local unbox = self._throw_rotation_box:unbox()
-	local unbox_2 = self._throw_position_box:unbox()
-	local pitch_from_rotation = ActionUtils.pitch_from_rotation(unbox)
-	local globe_throw_speed = _breed.globe_throw_speed
-	local normalize = Vector3.normalize(Vector3.flat(Quaternion.forward(unbox)))
-	local normalize_2 = Vector3.normalize(normalize + Vector3(0, 0, _breed.globe_throw_upwards_amount))
-	local globe_throw_impact_difficulty_damage = _breed.globe_throw_impact_difficulty_damage
-	local globe_throw_dot_difficulty_damage = _breed.globe_throw_dot_difficulty_damage
-	local globe_throw_dot_damage_interval = _breed.globe_throw_dot_damage_interval
-	local get_difficulty_rank = Managers.state.difficulty:get_difficulty_rank()
-	local globe_throw_aoe_radius = _breed.globe_throw_aoe_radius
-	local globe_throw_initial_radius = _breed.globe_throw_initial_radius
-	local globe_throw_aoe_life_time = _breed.globe_throw_aoe_life_time
-	local str = "vs_poison_wind_globadier"
-	local var_11_16 = globe_throw_dot_difficulty_damage[get_difficulty_rank]
+	local rotation = self._throw_rotation_box:unbox()
+	local position = self._throw_position_box:unbox()
+	local angle = ActionUtils.pitch_from_rotation(rotation)
+	local speed = breed.globe_throw_speed
+	local target_vector = Vector3.normalize(Vector3.flat(Quaternion.forward(rotation)))
 
-	if not var_11_16 then
-		var_11_16 = globe_throw_dot_difficulty_damage[2]
-		var_11_16 = var_11_16 or 5
+	target_vector = Vector3.normalize(target_vector + Vector3(0, 0, breed.globe_throw_upwards_amount))
+
+	local aoe_init_difficulty_damage = breed.globe_throw_impact_difficulty_damage
+	local aoe_dot_difficulty_damage = breed.globe_throw_dot_difficulty_damage
+	local aoe_dot_damage_interval = breed.globe_throw_dot_damage_interval
+	local difficulty_rank = Managers.state.difficulty:get_difficulty_rank()
+	local radius = breed.globe_throw_aoe_radius
+	local initial_radius = breed.globe_throw_initial_radius
+	local cloud_life_time = breed.globe_throw_aoe_life_time
+	local damage_source = "vs_poison_wind_globadier"
+	local var_11_0 = aoe_dot_difficulty_damage[difficulty_rank]
+
+	if not var_11_0 then
+		-- Nothing
 	end
 
-	local calculate_damage = DamageUtils.calculate_damage(var_11_16)
-	local var_11_18 = globe_throw_impact_difficulty_damage[get_difficulty_rank]
+	var_11_0 = aoe_dot_difficulty_damage[2]
 
-	if not var_11_18 then
-		var_11_18 = globe_throw_impact_difficulty_damage[2]
-		var_11_18 = var_11_18 or 7
+	if not var_11_0 then
+		-- Nothing
 	end
 
-	local calculate_damage_2 = DamageUtils.calculate_damage(var_11_18)
-	local flag = true
-	local flag_2 = false
-	local _impact_data = self._impact_data
-	local var_11_23
+	var_11_0 = 5
 
-	if not _impact_data.time then
-		var_11_23 = table.clone(_impact_data)
+	local aoe_dot_damage_table = var_11_0
+
+	::label_11_0::
+
+	local aoe_dot_damage = DamageUtils.calculate_damage(aoe_dot_damage_table)
+	local var_11_1 = aoe_init_difficulty_damage[difficulty_rank]
+
+	if not var_11_1 then
+		-- Nothing
 	end
 
-	Managers.state.entity:system("projectile_system"):spawn_globadier_globe(unbox_2, normalize_2, pitch_from_rotation, globe_throw_speed, globe_throw_initial_radius, globe_throw_aoe_radius, globe_throw_aoe_life_time, _unit, str, calculate_damage, calculate_damage_2, globe_throw_dot_damage_interval, flag, flag_2, var_11_23)
+	var_11_1 = aoe_init_difficulty_damage[2]
+
+	if not var_11_1 then
+		-- Nothing
+	end
+
+	var_11_1 = 7
+
+	local aoe_init_damage_table = var_11_1
+
+	::label_11_1::
+
+	local aoe_init_damage = DamageUtils.calculate_damage(aoe_init_damage_table)
+	local create_nav_tag_volume = true
+	local instant_explosion = false
+	local impact_data = self._impact_data
+	local fixed_impact_data
+
+	if impact_data.time then
+		fixed_impact_data = table.clone(impact_data)
+	end
+
+	Managers.state.entity:system("projectile_system"):spawn_globadier_globe(position, target_vector, angle, speed, initial_radius, radius, cloud_life_time, unit, damage_source, aoe_dot_damage, aoe_init_damage, aoe_dot_damage_interval, create_nav_tag_volume, instant_explosion, fixed_impact_data)
 
 	self._thrown = true
 end
 
 PoisonWindGlobadierStateThrowing._update_indicator_unit = function (self)
 	-- function 12
-	if not self._indicator_unit then
-		local unbox = self._impact_data.position:unbox()
+	if self._indicator_unit then
+		local impact_data = self._impact_data
+		local impact_position = impact_data.position:unbox()
 
-		Unit.set_local_position(self._indicator_unit, 0, unbox)
+		Unit.set_local_position(self._indicator_unit, 0, impact_position)
 
-		local var_12_1 = POSITION_LOOKUP[Managers.player:local_player().player_unit]
-		local multiply = Quaternion.multiply(Quaternion.axis_angle(Vector3.up(), math.pi * 0.5), Quaternion.look(var_12_1 - unbox, Vector3.up()))
+		local player_pos = POSITION_LOOKUP[Managers.player:local_player().player_unit]
+		local desired_rot = Quaternion.multiply(Quaternion.axis_angle(Vector3.up(), math.pi * 0.5), Quaternion.look(player_pos - impact_position, Vector3.up()))
 
-		Unit.set_local_rotation(self._indicator_unit, 0, multiply)
-		self:check_enemies_in_range_vfx(unbox)
+		Unit.set_local_rotation(self._indicator_unit, 0, desired_rot)
+		self:check_enemies_in_range_vfx(impact_position)
 	end
 end
 
 PoisonWindGlobadierStateThrowing._create_indicator_unit = function (self)
 	-- function 13
-	local _world = self._world
-	local _indicator_fx_unit_name = self._indicator_fx_unit_name
+	local world = self._world
+	local unit_name = self._indicator_fx_unit_name
 
-	self._indicator_unit = World.spawn_unit(_world, _indicator_fx_unit_name, Vector3.zero())
+	self._indicator_unit = World.spawn_unit(world, unit_name, Vector3.zero())
 
-	local globe_throw_aoe_radius = self._breed.globe_throw_aoe_radius
+	local radius = self._breed.globe_throw_aoe_radius
 
-	Unit.set_local_scale(self._indicator_unit, 0, Vector3(globe_throw_aoe_radius, globe_throw_aoe_radius, globe_throw_aoe_radius))
+	Unit.set_local_scale(self._indicator_unit, 0, Vector3(radius, radius, radius))
 end
 
 PoisonWindGlobadierStateThrowing._destroy_indicator_unit = function (self)
 	-- function 14
-	local _world = self._world
+	local world = self._world
 
-	if not Unit.alive(self._indicator_unit) then
-		World.destroy_unit(_world, self._indicator_unit)
+	if Unit.alive(self._indicator_unit) then
+		World.destroy_unit(world, self._indicator_unit)
 
 		self._indicator_unit = nil
 	end
 end
 
-PoisonWindGlobadierStateThrowing._update_movement = function (self, arg_15_1, arg_15_2, arg_15_3, arg_15_4)
+PoisonWindGlobadierStateThrowing._update_movement = function (self, unit, t, dt, progress)
 	-- function 15
-	local _input_extension = self._input_extension
-	local _buff_extension = self._buff_extension
-	local _first_person_extension = self._first_person_extension
-	local get_movement_settings_table = PlayerUnitMovementSettings.get_movement_settings_table(arg_15_1)
-	local get_movement_input = CharacterStateHelper.get_movement_input(_input_extension)
-	local has_move_input = CharacterStateHelper.has_move_input(_input_extension)
+	local input_extension = self._input_extension
+	local buff_extension = self._buff_extension
+	local first_person_extension = self._first_person_extension
+	local movement_settings_table = PlayerUnitMovementSettings.get_movement_settings_table(unit)
+	local move_input = CharacterStateHelper.get_movement_input(input_extension)
+	local is_moving = CharacterStateHelper.has_move_input(input_extension)
 	local current_movement_speed_scale = self.current_movement_speed_scale
 
 	if not self.is_bot then
 		local _breed = self._breed
 
-		_breed = not _breed and self._breed.breed_move_acceleration_up
+		if _breed then
+			-- Nothing
+		end
+
+		_breed = self._breed.breed_move_acceleration_up
+
+		local breed_move_acceleration_up = _breed
+
+		::label_15_0::
 
 		local _breed_2 = self._breed
 
-		_breed_2 = not _breed_2 and self._breed.breed_move_acceleration_down
+		if _breed_2 then
+			-- Nothing
+		end
 
-		local num = _breed * arg_15_3
+		_breed_2 = self._breed.breed_move_acceleration_down
 
-		num = num or get_movement_settings_table.move_acceleration_up * arg_15_3
+		local breed_move_acceleration_down = _breed_2
 
-		local num_2 = _breed_2 * arg_15_3
+		::label_15_1::
 
-		num_2 = num_2 or get_movement_settings_table.move_acceleration_down * arg_15_3
+		local num = breed_move_acceleration_up * dt
 
-		if not has_move_input then
-			current_movement_speed_scale = math.min(1, current_movement_speed_scale + num)
+		if not num then
+			-- Nothing
+		end
+
+		num = movement_settings_table.move_acceleration_up * dt
+
+		local move_acceleration_up_dt = num
+
+		::label_15_2::
+
+		local num_2 = breed_move_acceleration_down * dt
+
+		if not num_2 then
+			-- Nothing
+		end
+
+		num_2 = movement_settings_table.move_acceleration_down * dt
+
+		local move_acceleration_down_dt = num_2
+
+		::label_15_3::
+
+		if is_moving then
+			current_movement_speed_scale = math.min(1, current_movement_speed_scale + move_acceleration_up_dt)
 		else
-			current_movement_speed_scale = math.max(0, current_movement_speed_scale - num_2)
+			current_movement_speed_scale = math.max(0, current_movement_speed_scale - move_acceleration_down_dt)
 		end
 	else
-		current_movement_speed_scale = not has_move_input and 1 and 0
+		current_movement_speed_scale = (not is_moving or not 1) and not not 0
 	end
 
-	local lerp = math.lerp(self._wind_up_movement_speed, 0.6, (arg_15_4 or 1)^2)
-	local num_3 = _buff_extension:apply_buffs_to_value(lerp, "movement_speed") * current_movement_speed_scale * get_movement_settings_table.player_speed_scale
-	local var_15_13 = Vector3(0, 0, 0)
+	local movement_speed = math.lerp(self._wind_up_movement_speed, 0.6, (not not progress or not not 1)^2)
+	local current_max_move_speed = movement_speed
+	local buffed_move_speed = buff_extension:apply_buffs_to_value(current_max_move_speed, "movement_speed")
+	local final_move_speed = buffed_move_speed * current_movement_speed_scale * movement_settings_table.player_speed_scale
+	local movement = Vector3(0, 0, 0)
 
-	if not get_movement_input then
-		var_15_13 = var_15_13 + get_movement_input
+	if move_input then
+		movement = movement + move_input
 	end
 
-	local var_15_14
-	local normalize = Vector3.normalize(var_15_13)
+	local move_input_direction
 
-	if Vector3.length(normalize) == 0 then
-		normalize = self.last_input_direction:unbox()
+	move_input_direction = Vector3.normalize(movement)
+
+	if Vector3.length(move_input_direction) == 0 then
+		move_input_direction = self.last_input_direction:unbox()
 	else
-		self.last_input_direction:store(normalize)
+		self.last_input_direction:store(move_input_direction)
 	end
 
-	local get_move_animation = CharacterStateHelper.get_move_animation(self._locomotion_extension, _input_extension, self._status_extension, self.move_anim_3p)
+	local move_anim_3p = CharacterStateHelper.get_move_animation(self._locomotion_extension, input_extension, self._status_extension, self.move_anim_3p)
 
-	if get_move_animation ~= self.move_anim_3p then
-		CharacterStateHelper.play_animation_event(arg_15_1, get_move_animation)
+	if move_anim_3p ~= self.move_anim_3p then
+		CharacterStateHelper.play_animation_event(unit, move_anim_3p)
 
-		self.move_anim_3p = get_move_animation
+		self.move_anim_3p = move_anim_3p
 	end
 
-	if not ((self._previous_state == "jumping" or self._previous_state == "falling") and self._locomotion_extension:is_on_ground()) then
-		CharacterStateHelper.move_in_air_pactsworn(self._first_person_extension, _input_extension, self._locomotion_extension, num_3, arg_15_1)
+	if (self._previous_state == "jumping" or self._previous_state == "falling") and not self._locomotion_extension:is_on_ground() then
+		CharacterStateHelper.move_in_air_pactsworn(self._first_person_extension, input_extension, self._locomotion_extension, final_move_speed, unit)
 	else
-		CharacterStateHelper.move_on_ground(_first_person_extension, _input_extension, self._locomotion_extension, normalize, num_3, arg_15_1)
+		CharacterStateHelper.move_on_ground(first_person_extension, input_extension, self._locomotion_extension, move_input_direction, final_move_speed, unit)
 	end
 
-	CharacterStateHelper.look(_input_extension, self._player.viewport_name, _first_person_extension, self._status_extension, self._inventory_extension)
+	CharacterStateHelper.look(input_extension, self._player.viewport_name, first_person_extension, self._status_extension, self._inventory_extension)
 
 	self.current_movement_speed_scale = current_movement_speed_scale
 end

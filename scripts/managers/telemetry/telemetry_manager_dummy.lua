@@ -2,27 +2,27 @@
 
 TelemetryManagerDummy = class(TelemetryManagerDummy)
 
-TelemetryManagerDummy.init = function (arg_1_0)
+TelemetryManagerDummy.init = function (self)
 	-- function 1
 	return
 end
 
-TelemetryManagerDummy.reload_settings = function (arg_2_0)
+TelemetryManagerDummy.reload_settings = function (self)
 	-- function 2
 	return
 end
 
-TelemetryManagerDummy.update = function (arg_3_0, arg_3_1)
+TelemetryManagerDummy.update = function (self, dt)
 	-- function 3
 	return
 end
 
-TelemetryManagerDummy.register_event = function (arg_4_0, arg_4_1)
+TelemetryManagerDummy.register_event = function (self, event)
 	-- function 4
 	return
 end
 
-TelemetryManagerDummy.post_batch = function (arg_5_0)
+TelemetryManagerDummy.post_batch = function (self)
 	-- function 5
 	return
 end

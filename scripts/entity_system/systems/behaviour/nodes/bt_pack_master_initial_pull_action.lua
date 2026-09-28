@@ -4,112 +4,120 @@ require("scripts/entity_system/systems/behaviour/nodes/bt_node")
 
 BTPackMasterInitialPullAction = class(BTPackMasterInitialPullAction, BTNode)
 
-BTPackMasterInitialPullAction.init = function (arg_1_0, ...)
+BTPackMasterInitialPullAction.init = function (self, ...)
 	-- function 1
-	BTPackMasterInitialPullAction.super.init(arg_1_0, ...)
+	BTPackMasterInitialPullAction.super.init(self, ...)
 end
 
 BTPackMasterInitialPullAction.name = "BTPackMasterInitialPullAction"
 
-BTPackMasterInitialPullAction.enter = function (self, arg_2_1, arg_2_2, arg_2_3)
+BTPackMasterInitialPullAction.enter = function (self, unit, blackboard, t)
 	-- function 2
-	arg_2_2.action = self._tree_node.action_data
+	local action = self._tree_node.action_data
 
-	local navigation_extension = arg_2_2.navigation_extension
+	blackboard.action = action
+
+	local navigation_extension = blackboard.navigation_extension
 
 	AiUtils.allow_smart_object_layers(navigation_extension, false)
-	self:_find_pull_position(arg_2_1, arg_2_2, arg_2_3)
+	self:_find_pull_position(unit, blackboard, t)
 
-	if not arg_2_2.pull_position_end then
-		Unit.set_local_rotation(arg_2_1, 0, Quaternion.look(arg_2_2.pull_position_start:unbox() - arg_2_2.pull_position_end:unbox(), Vector3.up()))
-		StatusUtils.set_grabbed_by_pack_master_network("pack_master_pulling", arg_2_2.drag_target_unit, true, arg_2_1)
-		LocomotionUtils.set_animation_driven_movement(arg_2_1, true, false, false)
+	if blackboard.pull_position_end then
+		Unit.set_local_rotation(unit, 0, Quaternion.look(blackboard.pull_position_start:unbox() - blackboard.pull_position_end:unbox(), Vector3.up()))
+		StatusUtils.set_grabbed_by_pack_master_network("pack_master_pulling", blackboard.drag_target_unit, true, unit)
+		LocomotionUtils.set_animation_driven_movement(unit, true, false, false)
 	end
 
-	AiUtils.show_polearm(arg_2_1, false)
+	AiUtils.show_polearm(unit, false)
 end
 
-BTPackMasterInitialPullAction._find_pull_position = function (arg_3_0, arg_3_1, arg_3_2, arg_3_3)
+BTPackMasterInitialPullAction._find_pull_position = function (self, unit, blackboard, t)
 	-- function 3
-	local action = arg_3_2.action
-	local nav_world = arg_3_2.nav_world
-	local var_3_2 = POSITION_LOOKUP[arg_3_1]
-	local drag_target_unit = arg_3_2.drag_target_unit
-	local var_3_4 = POSITION_LOOKUP[drag_target_unit]
-	local normalize = Vector3.normalize(var_3_2 - var_3_4)
-	local atan2 = math.atan2(normalize.y, normalize.x, 0)
-	local traverse_logic = arg_3_2.navigation_extension:traverse_logic()
-	local num = 10
+	local action = blackboard.action
+	local nav_world = blackboard.nav_world
+	local position = POSITION_LOOKUP[unit]
+	local drag_target_unit = blackboard.drag_target_unit
+	local position_target = POSITION_LOOKUP[drag_target_unit]
+	local direction_to_pull = Vector3.normalize(position - position_target)
+	local angle_towards_pull = math.atan2(direction_to_pull.y, direction_to_pull.x, 0)
+	local navigation_extension = blackboard.navigation_extension
+	local traverse_logic = navigation_extension:traverse_logic()
+	local num_segments = 10
 
-	for i = 1, num do
-		local degrees_to_radians = math.degrees_to_radians(45 * i / num)
-		local num_2 = atan2 + degrees_to_radians
-		local num_3 = var_3_2 + action.pull_distance * Vector3(math.cos(num_2), math.sin(num_2), 0)
-		local triangle_from_position, var_3_13 = GwNavQueries.triangle_from_position(nav_world, num_3, 0.5, 0.5)
-		local raycango = GwNavQueries.raycango(nav_world, var_3_2, num_3, traverse_logic)
+	for i = 1, num_segments do
+		local angle = math.degrees_to_radians(45 * i / num_segments)
+		local angle_cw = angle_towards_pull + angle
+		local offset_cw = action.pull_distance * Vector3(math.cos(angle_cw), math.sin(angle_cw), 0)
+		local position_end_cw = position + offset_cw
+		local success_cw, altitude_cw = GwNavQueries.triangle_from_position(nav_world, position_end_cw, 0.5, 0.5)
+		local raycango_success = GwNavQueries.raycango(nav_world, position, position_end_cw, traverse_logic)
 
-		if not triangle_from_position and not raycango then
-			num_3.z = var_3_13
-			arg_3_2.pull_position_end = Vector3Box(num_3)
+		if success_cw and raycango_success then
+			position_end_cw.z = altitude_cw
+			blackboard.pull_position_end = Vector3Box(position_end_cw)
 
 			break
 		else
-			local num_4 = atan2 - degrees_to_radians
-			local num_5 = var_3_2 + action.pull_distance * Vector3(math.cos(num_4), math.sin(num_4), 0)
-			local triangle_from_position_2, var_3_18 = GwNavQueries.triangle_from_position(nav_world, num_5, 0.5, 0.5)
-			local raycango_2 = GwNavQueries.raycango(nav_world, var_3_2, num_5, traverse_logic)
+			local angle_ccw = angle_towards_pull - angle
+			local offset_ccw = action.pull_distance * Vector3(math.cos(angle_ccw), math.sin(angle_ccw), 0)
+			local position_target_ccw = position + offset_ccw
+			local success_ccw, altitude_ccw = GwNavQueries.triangle_from_position(nav_world, position_target_ccw, 0.5, 0.5)
+			local raycango_success_ccw = GwNavQueries.raycango(nav_world, position, position_target_ccw, traverse_logic)
 
-			if not triangle_from_position_2 and not raycango_2 then
-				num_5.z = var_3_18
-				arg_3_2.pull_position_end = Vector3Box(num_5)
+			if success_ccw and raycango_success_ccw then
+				position_target_ccw.z = altitude_ccw
+				blackboard.pull_position_end = Vector3Box(position_target_ccw)
 
 				break
 			end
 		end
 	end
 
-	arg_3_2.pull_position_start = Vector3Box(var_3_2)
-	arg_3_2.pull_t_end = arg_3_3 + action.pull_time
+	blackboard.pull_position_start = Vector3Box(position)
+	blackboard.pull_t_end = t + action.pull_time
 end
 
-BTPackMasterInitialPullAction.leave = function (arg_4_0, arg_4_1, arg_4_2, arg_4_3, arg_4_4, arg_4_5)
+BTPackMasterInitialPullAction.leave = function (self, unit, blackboard, t, reason, destroy)
 	-- function 4
-	arg_4_2.pull_position_start = nil
-	arg_4_2.pull_position_end = nil
-	arg_4_2.pull_t_end = nil
+	blackboard.pull_position_start = nil
+	blackboard.pull_position_end = nil
+	blackboard.pull_t_end = nil
 
-	if arg_4_4 == "done" or not Unit.alive(arg_4_2.drag_target_unit) then
-		StatusUtils.set_grabbed_by_pack_master_network("pack_master_pulling", arg_4_2.drag_target_unit, false, arg_4_1)
+	if reason ~= "done" and Unit.alive(blackboard.drag_target_unit) then
+		StatusUtils.set_grabbed_by_pack_master_network("pack_master_pulling", blackboard.drag_target_unit, false, unit)
 
-		arg_4_2.target_unit = nil
-		arg_4_2.drag_target_unit = nil
+		blackboard.target_unit = nil
+		blackboard.drag_target_unit = nil
 
-		AiUtils.show_polearm(arg_4_1, true)
+		AiUtils.show_polearm(unit, true)
 	end
 
-	local navigation_extension = arg_4_2.navigation_extension
+	local navigation_extension = blackboard.navigation_extension
 
 	AiUtils.allow_smart_object_layers(navigation_extension, true)
 
-	if not arg_4_5 then
-		LocomotionUtils.set_animation_driven_movement(arg_4_1, false)
-		arg_4_2.locomotion_extension:set_movement_type("snap_to_navmesh")
+	if not destroy then
+		LocomotionUtils.set_animation_driven_movement(unit, false)
+
+		local locomotion_extension = blackboard.locomotion_extension
+
+		locomotion_extension:set_movement_type("snap_to_navmesh")
 	end
 
-	arg_4_2.attack_cooldown = arg_4_3 + arg_4_2.action.cooldown
+	blackboard.attack_cooldown = t + blackboard.action.cooldown
 end
 
-BTPackMasterInitialPullAction.run = function (arg_5_0, arg_5_1, arg_5_2, arg_5_3, arg_5_4)
+BTPackMasterInitialPullAction.run = function (self, unit, blackboard, t, dt)
 	-- function 5
-	if not AiUtils.is_of_interest_to_packmaster(arg_5_1, arg_5_2.drag_target_unit) then
+	if not AiUtils.is_of_interest_to_packmaster(unit, blackboard.drag_target_unit) then
 		return "failed"
 	end
 
-	if arg_5_2.pull_position_end == nil then
+	if blackboard.pull_position_end == nil then
 		return "done"
 	end
 
-	if arg_5_3 > arg_5_2.pull_t_end then
+	if t > blackboard.pull_t_end then
 		return "done"
 	end
 

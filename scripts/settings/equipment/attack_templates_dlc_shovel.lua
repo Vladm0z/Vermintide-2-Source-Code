@@ -2,7 +2,7 @@
 
 local AttackTemplates = AttackTemplates
 
-AttackTemplates = AttackTemplates or {}
+AttackTemplates = not not AttackTemplates or not not {}
 AttackTemplates = AttackTemplates
 AttackTemplates.cursed_blood_spread = {
 	is_push = true,

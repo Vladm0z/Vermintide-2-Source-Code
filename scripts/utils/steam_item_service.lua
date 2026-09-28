@@ -2,59 +2,63 @@
 
 local SteamItemService = SteamItemService
 
-SteamItemService = SteamItemService or {}
+SteamItemService = not not SteamItemService or not not {}
 SteamItemService = SteamItemService
 
-local function fn(arg_1_0, arg_1_1)
+local function make_price_table(str_data, out)
 	-- function 1
-	for iter_1_0 in string.gmatch(arg_1_0, "[^,]+") do
-		arg_1_1[string.sub(iter_1_0, 1, 3)] = tonumber(string.sub(iter_1_0, 4))
+	for currency_amount in string.gmatch(str_data, "[^,]+") do
+		local currency = string.sub(currency_amount, 1, 3)
+		local amount = tonumber(string.sub(currency_amount, 4))
+
+		out[currency] = amount
 	end
 
-	return arg_1_1
+	return out
 end
 
-local tbl = {}
+local _price_chunks = {}
 
-SteamItemService.parse = function (arg_2_0)
+SteamItemService.parse = function (price_data_string)
 	-- function 2
-	string.split_deprecated(arg_2_0, ";", tbl)
+	string.split_deprecated(price_data_string, ";", _price_chunks)
 
-	if tbl[1] ~= "1" then
-		table.clear(tbl)
+	if _price_chunks[1] ~= "1" then
+		table.clear(_price_chunks)
 
 		return nil, "unknown version"
 	end
 
-	local tbl_2 = {
-		regular_prices = fn(tbl[2], {})
-	}
-	local var_2_1 = tbl[3]
+	local out = {}
 
-	if not var_2_1 then
-		tbl_2.discount_prices = fn(string.sub(var_2_1, 34), {})
+	out.regular_prices = make_price_table(_price_chunks[2], {})
 
-		local sub = string.sub(var_2_1, 1, 16)
-		local sub_2 = string.sub(var_2_1, 18, 33)
-		local date = os.date("!%Y%m%dT%H%M%SZ")
+	local discounts_string = _price_chunks[3]
 
-		tbl_2.discount_is_active = not (sub <= date) or date < sub_2
-		tbl_2.discount_start = sub
-		tbl_2.discount_end = sub_2
+	if discounts_string then
+		out.discount_prices = make_price_table(string.sub(discounts_string, 34), {})
+
+		local discount_start = string.sub(discounts_string, 1, 16)
+		local discount_end = string.sub(discounts_string, 18, 33)
+		local current_date = os.date("!%Y%m%dT%H%M%SZ")
+
+		out.discount_is_active = discount_start <= current_date and current_date < discount_end
+		out.discount_start = discount_start
+		out.discount_end = discount_end
 	end
 
-	table.clear(tbl)
+	table.clear(_price_chunks)
 
-	return tbl_2
+	return out
 end
 
-SteamItemService.get_item_data = function (arg_3_0)
+SteamItemService.get_item_data = function (id)
 	-- function 3
-	local get_item_definition_property = SteamInventory.get_item_definition_property(arg_3_0, "price")
+	local price_data_string = SteamInventory.get_item_definition_property(id, "price")
 
-	if not get_item_definition_property then
+	if not price_data_string then
 		return nil, "unknown item"
 	end
 
-	return SteamItemService.parse(get_item_definition_property)
+	return SteamItemService.parse(price_data_string)
 end

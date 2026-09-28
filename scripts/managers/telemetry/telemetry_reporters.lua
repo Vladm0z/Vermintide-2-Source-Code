@@ -5,7 +5,7 @@ require("scripts/managers/telemetry/reporters/heartbeat_reporter")
 TelemetryReporters = class(TelemetryReporters)
 TelemetryReporters.NAME = "TelemetryReporters"
 
-local tbl = {
+local REPORTER_CLASS_MAP = {
 	heartbeat = HeartbeatReporter
 }
 
@@ -16,37 +16,37 @@ TelemetryReporters.init = function (self)
 	self:start_reporter("heartbeat")
 end
 
-TelemetryReporters.start_reporter = function (arg_2_0, arg_2_1, arg_2_2)
+TelemetryReporters.start_reporter = function (self, name, params)
 	-- function 2
-	local var_2_0 = tbl[arg_2_1]
+	local reporter_class = REPORTER_CLASS_MAP[name]
 
-	arg_2_0._reporters[arg_2_1] = var_2_0:new(arg_2_2)
+	self._reporters[name] = reporter_class:new(params)
 end
 
-TelemetryReporters.stop_reporter = function (self, arg_3_1)
+TelemetryReporters.stop_reporter = function (self, name)
 	-- function 3
-	self._reporters[arg_3_1]:report()
-	self._reporters[arg_3_1]:destroy()
+	self._reporters[name]:report()
+	self._reporters[name]:destroy()
 
-	self._reporters[arg_3_1] = nil
+	self._reporters[name] = nil
 end
 
-TelemetryReporters.reporter = function (self, arg_4_1)
+TelemetryReporters.reporter = function (self, name)
 	-- function 4
-	return self._reporters[arg_4_1]
+	return self._reporters[name]
 end
 
-TelemetryReporters.update = function (self, arg_5_1, arg_5_2)
+TelemetryReporters.update = function (self, dt, t)
 	-- function 5
-	for k, v in pairs(self._reporters) do
-		v:update(arg_5_1, arg_5_2)
+	for _, reporter in pairs(self._reporters) do
+		reporter:update(dt, t)
 	end
 end
 
 TelemetryReporters.destroy = function (self)
 	-- function 6
-	for k, v in pairs(self._reporters) do
-		v:destroy()
+	for _, reporter in pairs(self._reporters) do
+		reporter:destroy()
 	end
 end
 

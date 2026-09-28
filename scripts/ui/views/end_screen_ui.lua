@@ -1,29 +1,29 @@
 -- chunkname: @scripts/ui/views/end_screen_ui.lua
 
-local var_0_0 = local_require("scripts/ui/views/end_screen_ui_definitions")
-local scenegraph_definition = var_0_0.scenegraph_definition
-local animations = var_0_0.animations
-local screens = var_0_0.screens
+local definitions = local_require("scripts/ui/views/end_screen_ui_definitions")
+local scenegraph_definition = definitions.scenegraph_definition
+local animation_definitions = definitions.animations
+local screens = definitions.screens
 
-for k, v in pairs(screens) do
-	require(v.file_name)
+for _, definition in pairs(screens) do
+	require(definition.file_name)
 end
 
-local flag = false
+local DO_RELOAD = false
 
 EndScreenUI = class(EndScreenUI)
 
-EndScreenUI.init = function (self, arg_1_1)
+EndScreenUI.init = function (self, ingame_ui_context)
 	-- function 1
-	self.ui_renderer = arg_1_1.ui_top_renderer
-	self.world_manager = arg_1_1.world_manager
+	self.ui_renderer = ingame_ui_context.ui_top_renderer
+	self.world_manager = ingame_ui_context.world_manager
 	self.render_settings = {
 		alpha_multiplier = 1,
 		snap_pixel_positions = true
 	}
-	self._ingame_ui_context = arg_1_1
+	self._ingame_ui_context = ingame_ui_context
 
-	local input_manager = arg_1_1.input_manager
+	local input_manager = ingame_ui_context.input_manager
 
 	self.input_manager = input_manager
 
@@ -48,18 +48,18 @@ end
 
 EndScreenUI.create_ui_elements = function (self)
 	-- function 3
-	flag = false
+	DO_RELOAD = false
 	self.draw_flags = {
 		draw_text = false,
 		banner_alpha_multiplier = 0,
 		draw_background = false
 	}
 	self.ui_scenegraph = UISceneGraph.init_scenegraph(scenegraph_definition)
-	self.background_rect_widget = UIWidget.init(var_0_0.widgets.background_rect)
+	self.background_rect_widget = UIWidget.init(definitions.widgets.background_rect)
 
 	UIRenderer.clear_scenegraph_queue(self.ui_renderer)
 
-	self.ui_animator = UIAnimator:new(self.ui_scenegraph, animations)
+	self.ui_animator = UIAnimator:new(self.ui_scenegraph, animation_definitions)
 end
 
 EndScreenUI.input_service = function (self)
@@ -67,11 +67,11 @@ EndScreenUI.input_service = function (self)
 	return self.input_manager:get_service("end_screen_ui")
 end
 
-EndScreenUI.on_enter = function (self, arg_5_1, arg_5_2, arg_5_3)
+EndScreenUI.on_enter = function (self, screen_name, screen_context, screen_params)
 	-- function 5
-	local var_5_0 = screens[arg_5_1]
+	local screen_definition = screens[screen_name]
 
-	fassert(var_5_0, "Unknown screen name: %s", arg_5_1)
+	fassert(screen_definition, "Unknown screen name: %s", screen_name)
 
 	local input_manager = self.input_manager
 
@@ -84,28 +84,29 @@ EndScreenUI.on_enter = function (self, arg_5_1, arg_5_2, arg_5_3)
 	self:play_sound("mute_all_world_sounds")
 	Wwise.set_state("override", "false")
 
-	if not arg_5_2 and not arg_5_2.display_screen_delay then
+	if screen_context and screen_context.display_screen_delay then
 		self._delayed_screen_data = {
-			display_t = Managers.time:time("ui") + arg_5_2.display_screen_delay,
-			screen_definition = var_5_0,
-			screen_context = arg_5_2,
-			screen_params = arg_5_3
+			display_t = Managers.time:time("ui") + screen_context.display_screen_delay,
+			screen_definition = screen_definition,
+			screen_context = screen_context,
+			screen_params = screen_params
 		}
 	else
-		self:_create_screen(var_5_0, arg_5_2, arg_5_3)
+		self:_create_screen(screen_definition, screen_context, screen_params)
 	end
 end
 
-EndScreenUI._create_screen = function (self, arg_6_1, arg_6_2, arg_6_3)
+EndScreenUI._create_screen = function (self, screen_definition, screen_context, screen_params)
 	-- function 6
 	self.is_active = true
 
 	self:_fade_in_background()
 
 	local input_service = self:input_service()
-	local class_name = arg_6_1.class_name
+	local class_name = screen_definition.class_name
+	local screen_class = rawget(_G, class_name)
 
-	self._screen = rawget(_G, class_name):new(self._ingame_ui_context, input_service, arg_6_2, arg_6_3)
+	self._screen = screen_class:new(self._ingame_ui_context, input_service, screen_context, screen_params)
 
 	self._screen:on_fade_in()
 end
@@ -144,19 +145,19 @@ EndScreenUI._fade_in_background = function (self)
 	}, scenegraph_definition, self.draw_flags)
 end
 
-EndScreenUI.update = function (self, arg_11_1, arg_11_2)
+EndScreenUI.update = function (self, dt, t)
 	-- function 11
-	if not flag then
+	if DO_RELOAD then
 		self:create_ui_elements()
 	end
 
-	local _delayed_screen_data = self._delayed_screen_data
+	local delayed_screen_data = self._delayed_screen_data
 
-	if not _delayed_screen_data then
-		if arg_11_2 > _delayed_screen_data.display_t then
+	if delayed_screen_data then
+		if t > delayed_screen_data.display_t then
 			self._delayed_screen_data = nil
 
-			self:_create_screen(_delayed_screen_data.screen_definition, _delayed_screen_data.screen_context, _delayed_screen_data.screen_params)
+			self:_create_screen(delayed_screen_data.screen_definition, delayed_screen_data.screen_context, delayed_screen_data.screen_params)
 		end
 
 		return
@@ -166,47 +167,47 @@ EndScreenUI.update = function (self, arg_11_1, arg_11_2)
 		return
 	end
 
-	local _screen = self._screen
+	local screen = self._screen
 
-	_screen:update(arg_11_1, arg_11_2)
+	screen:update(dt, t)
 
 	local ui_animator = self.ui_animator
 
-	ui_animator:update(arg_11_1)
+	ui_animator:update(dt)
 
-	if not self.background_in_anim_id then
-		if not ui_animator:is_animation_completed(self.background_in_anim_id) then
+	if self.background_in_anim_id then
+		if ui_animator:is_animation_completed(self.background_in_anim_id) then
 			self.background_in_anim_id = nil
 			self._fade_in_completed = true
 
-			_screen:start()
+			screen:start()
 		end
-	elseif not (not _screen:started() and not _screen:completed() and Managers.backend:is_pending_request()) then
+	elseif screen:started() and screen:completed() and not Managers.backend:is_pending_request() then
 		Managers.transition:fade_in(GameSettings.transition_fade_in_speed, callback(self, "on_complete"))
 	end
 
-	self:draw(arg_11_1)
+	self:draw(dt)
 end
 
-EndScreenUI.draw = function (self, arg_12_1)
+EndScreenUI.draw = function (self, dt)
 	-- function 12
 	local ui_renderer = self.ui_renderer
 	local ui_scenegraph = self.ui_scenegraph
-	local get_service = self.input_manager:get_service("end_screen_ui")
+	local input_service = self.input_manager:get_service("end_screen_ui")
 	local draw_flags = self.draw_flags
 	local render_settings = self.render_settings
 
-	UIRenderer.begin_pass(ui_renderer, ui_scenegraph, get_service, arg_12_1, nil, render_settings)
+	UIRenderer.begin_pass(ui_renderer, ui_scenegraph, input_service, dt, nil, render_settings)
 
-	if not draw_flags.draw_background then
+	if draw_flags.draw_background then
 		UIRenderer.draw_widget(ui_renderer, self.background_rect_widget)
 	end
 
 	UIRenderer.end_pass(ui_renderer)
-	self._screen:draw(arg_12_1)
+	self._screen:draw(dt)
 end
 
-EndScreenUI.play_sound = function (self, arg_13_1)
+EndScreenUI.play_sound = function (self, event)
 	-- function 13
-	WwiseWorld.trigger_event(self.wwise_world, arg_13_1)
+	WwiseWorld.trigger_event(self.wwise_world, event)
 end

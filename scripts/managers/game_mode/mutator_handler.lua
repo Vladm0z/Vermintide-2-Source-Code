@@ -3,54 +3,58 @@
 require("scripts/managers/game_mode/mutator_common_settings")
 require("scripts/managers/game_mode/mutator_templates")
 
-function mutator_dprint(arg_1_0, ...)
+function mutator_dprint(text, ...)
 	-- function 1
-	if not script_data.debug_mutators then
-		local format = string.format(arg_1_0, ...)
+	if script_data.debug_mutators then
+		local s = string.format(text, ...)
 
-		printf("[Mutator] %s", format)
+		printf("[Mutator] %s", s)
 	end
 end
 
-function mutator_print(arg_2_0, ...)
+function mutator_print(text, ...)
 	-- function 2
-	local format = string.format(arg_2_0, ...)
+	local s = string.format(text, ...)
 
-	printf("[Mutator] %s", format)
+	printf("[Mutator] %s", s)
 end
 
 MutatorHandler = class(MutatorHandler)
 
-local tbl = {
+local RPCS = {
 	"rpc_activate_mutator_client",
 	"rpc_deactivate_mutator_client"
 }
 
-MutatorHandler.init = function (self, arg_3_1, arg_3_2, arg_3_3, arg_3_4, arg_3_5, arg_3_6, arg_3_7)
+MutatorHandler.init = function (self, mutators, is_server, network_handler, has_local_client, world, network_event_delegate, network_transmit)
 	-- function 3
-	self._is_server = arg_3_2
-	self._network_handler = arg_3_3
-	self._has_local_client = arg_3_4
-	self._network_transmit = arg_3_7
-	self.network_event_delegate = arg_3_6
+	self._is_server = is_server
+	self._network_handler = network_handler
+	self._has_local_client = has_local_client
+	self._network_transmit = network_transmit
+	self.network_event_delegate = network_event_delegate
 
-	arg_3_6:register(self, unpack(tbl))
+	network_event_delegate:register(self, unpack(RPCS))
 
-	self._mutator_context = {
-		world = arg_3_5,
-		is_server = arg_3_2
+	local mutator_context = {
+		world = world
 	}
+
+	mutator_context.is_server = is_server
+	self._mutator_context = mutator_context
 	self._active_mutators = {}
 	self._mutators = {}
 
-	if not arg_3_2 and not arg_3_1 then
+	if is_server and mutators then
 		self._initialized_mutator_map = {}
 
-		self:initialize_mutators(arg_3_1)
+		self:initialize_mutators(mutators)
 	else
-		self._initialized_mutator_map = arg_3_3:get_initialized_mutator_map()
+		self._initialized_mutator_map = network_handler:get_initialized_mutator_map()
 
-		arg_3_3:get_network_state():register_callback("client_data_updated", self, "on_client_mutator_list_updated", "initialized_mutator_map")
+		local network_state = network_handler:get_network_state()
+
+		network_state:register_callback("client_data_updated", self, "on_client_mutator_list_updated", "initialized_mutator_map")
 	end
 
 	Managers.state.event:register(self, "on_player_disabled", "player_disabled")
@@ -61,16 +65,18 @@ MutatorHandler.destroy = function (self)
 	Managers.state.event:unregister(self)
 
 	if not self._is_server then
-		self._network_handler:get_network_state():unregister_callback(self, "client_data_updated")
+		local network_state = self._network_handler:get_network_state()
+
+		network_state:unregister_callback(self, "client_data_updated")
 	end
 
-	local _active_mutators = self._active_mutators
-	local _mutator_context = self._mutator_context
+	local active_mutators = self._active_mutators
+	local mutator_context = self._mutator_context
 
-	_mutator_context.is_destroy = true
+	mutator_context.is_destroy = true
 
-	for k, v in pairs(_active_mutators) do
-		self:_deactivate_mutator(k, _active_mutators, _mutator_context, true)
+	for name, _ in pairs(active_mutators) do
+		self:_deactivate_mutator(name, active_mutators, mutator_context, true)
 	end
 
 	self.network_event_delegate:unregister(self)
@@ -80,155 +86,157 @@ MutatorHandler.destroy = function (self)
 	self._active_mutators = nil
 end
 
-MutatorHandler.initialize_mutators = function (self, arg_5_1)
+MutatorHandler.initialize_mutators = function (self, mutators)
 	-- function 5
-	local _active_mutators = self._active_mutators
-	local _mutator_context = self._mutator_context
+	local active_mutators = self._active_mutators
+	local mutator_context = self._mutator_context
 
-	for i = 1, #arg_5_1 do
-		local var_5_2 = arg_5_1[i]
+	for i = 1, #mutators do
+		local name = mutators[i]
 
-		self:_server_initialize_mutator(var_5_2, _active_mutators, _mutator_context)
+		self:_server_initialize_mutator(name, active_mutators, mutator_context)
 	end
 
-	if not self._is_server then
-		self._network_handler:get_network_state():set_initialized_mutator_map(table.shallow_copy(self._initialized_mutator_map))
+	if self._is_server then
+		local network_state = self._network_handler:get_network_state()
+
+		network_state:set_initialized_mutator_map(table.shallow_copy(self._initialized_mutator_map))
 	end
 end
 
 MutatorHandler.activate_mutators = function (self)
 	-- function 6
-	if not self._is_server then
-		local _mutator_context = self._mutator_context
-		local _active_mutators = self._active_mutators
-		local _mutators = self._mutators
+	if self._is_server then
+		local mutator_context = self._mutator_context
+		local active_mutators = self._active_mutators
+		local mutators = self._mutators
 
-		for k, v in pairs(_mutators) do
-			self:_activate_mutator(k, _active_mutators, _mutator_context, v)
+		for name, data in pairs(mutators) do
+			self:_activate_mutator(name, active_mutators, mutator_context, data)
 		end
 	end
 end
 
-MutatorHandler.deactivate_mutators = function (self, arg_7_1)
+MutatorHandler.deactivate_mutators = function (self, is_destroy)
 	-- function 7
-	local _active_mutators = self._active_mutators
-	local _mutator_context = self._mutator_context
+	local active_mutators = self._active_mutators
+	local mutator_context = self._mutator_context
 
-	_mutator_context.is_destroy = arg_7_1
+	mutator_context.is_destroy = is_destroy
 
-	for k, v in pairs(_active_mutators) do
-		self:_deactivate_mutator(k, _active_mutators, _mutator_context, true)
+	for name, _ in pairs(active_mutators) do
+		self:_deactivate_mutator(name, active_mutators, mutator_context, true)
 	end
 end
 
-MutatorHandler.activate_mutator = function (self, arg_8_1, arg_8_2, arg_8_3)
+MutatorHandler.activate_mutator = function (self, name, optional_duration, optional_flag)
 	-- function 8
-	if not self._is_server then
-		local _mutator_context = self._mutator_context
-		local _active_mutators = self._active_mutators
-		local var_8_2 = self._mutators[arg_8_1]
+	if self._is_server then
+		local mutator_context = self._mutator_context
+		local active_mutators = self._active_mutators
+		local data = self._mutators[name]
 
-		if not arg_8_3 then
-			var_8_2[arg_8_3] = true
+		if optional_flag then
+			data[optional_flag] = true
 		end
 
-		self:_activate_mutator(arg_8_1, _active_mutators, _mutator_context, var_8_2, arg_8_2)
+		self:_activate_mutator(name, active_mutators, mutator_context, data, optional_duration)
 	end
 end
 
-MutatorHandler.deactivate_mutator = function (self, arg_9_1)
+MutatorHandler.deactivate_mutator = function (self, name)
 	-- function 9
-	if not self._is_server then
-		local _active_mutators = self._active_mutators
-		local _mutator_context = self._mutator_context
+	if self._is_server then
+		local active_mutators = self._active_mutators
+		local mutator_context = self._mutator_context
 
-		self:_deactivate_mutator(arg_9_1, _active_mutators, _mutator_context)
+		self:_deactivate_mutator(name, active_mutators, mutator_context)
 	end
 end
 
-MutatorHandler.hot_join_sync = function (self, arg_10_1)
+MutatorHandler.hot_join_sync = function (self, peer_id)
 	-- function 10
-	local _network_transmit = self._network_transmit
-	local _active_mutators = self._active_mutators
-	local _mutator_context = self._mutator_context
-	local _is_server = self._is_server
+	local network_transmit = self._network_transmit
+	local active_mutators = self._active_mutators
+	local mutator_context = self._mutator_context
+	local is_server = self._is_server
 
-	for k, v in pairs(_active_mutators) do
-		local var_10_4 = NetworkLookup.mutator_templates[k]
-		local flag = not not v.activated_by_twitch
+	for mutator_name, mutator_settings in pairs(active_mutators) do
+		local mutator_id = NetworkLookup.mutator_templates[mutator_name]
+		local activated_by_twitch = not not mutator_settings.activated_by_twitch
 
-		_network_transmit:send_rpc("rpc_activate_mutator_client", arg_10_1, var_10_4, flag)
+		network_transmit:send_rpc("rpc_activate_mutator_client", peer_id, mutator_id, activated_by_twitch)
 	end
 
-	for k_2, v_2 in pairs(_active_mutators) do
-		local template = v_2.template
+	for name, mutator_data in pairs(active_mutators) do
+		local template = mutator_data.template
 
-		if not _is_server then
-			template.server.hot_join_sync_function(_mutator_context, v_2, arg_10_1)
+		if is_server then
+			template.server.hot_join_sync_function(mutator_context, mutator_data, peer_id)
 		else
-			template.client.hot_join_sync_function(_mutator_context, v_2, arg_10_1)
+			template.client.hot_join_sync_function(mutator_context, mutator_data, peer_id)
 		end
 	end
 end
 
-MutatorHandler.pre_update = function (self, arg_11_1, arg_11_2)
+MutatorHandler.pre_update = function (self, dt, t)
 	-- function 11
-	local _active_mutators = self._active_mutators
-	local _mutator_context = self._mutator_context
-	local _is_server = self._is_server
+	local active_mutators = self._active_mutators
+	local mutator_context = self._mutator_context
+	local is_server = self._is_server
 
-	for k, v in pairs(_active_mutators) do
-		local template = v.template
+	for name, mutator_data in pairs(active_mutators) do
+		local template = mutator_data.template
 
-		if not _is_server and not template.server.pre_update then
-			template.server.pre_update(_mutator_context, v, arg_11_1, arg_11_2)
+		if is_server and template.server.pre_update then
+			template.server.pre_update(mutator_context, mutator_data, dt, t)
 		end
 
-		if not self._has_local_client and not template.client.pre_update then
-			template.client.pre_update(_mutator_context, v, arg_11_1, arg_11_2)
+		if self._has_local_client and template.client.pre_update then
+			template.client.pre_update(mutator_context, mutator_data, dt, t)
 		end
 	end
 end
 
-local flag = true
+local first_update = true
 
-MutatorHandler.update = function (self, arg_12_1, arg_12_2)
+MutatorHandler.update = function (self, dt, t)
 	-- function 12
-	local _active_mutators = self._active_mutators
-	local _mutator_context = self._mutator_context
-	local _is_server = self._is_server
+	local active_mutators = self._active_mutators
+	local mutator_context = self._mutator_context
+	local is_server = self._is_server
 
-	for k, v in pairs(_active_mutators) do
-		if not flag then
-			print("FIRST UPDATE @" .. arg_12_2)
+	for name, mutator_data in pairs(active_mutators) do
+		if first_update then
+			print("FIRST UPDATE @" .. t)
 
-			flag = false
+			first_update = false
 		end
 
-		local template = v.template
+		local template = mutator_data.template
 
-		if not _is_server and not template.server.update then
-			template.server.update(_mutator_context, v, arg_12_1, arg_12_2)
+		if is_server and template.server.update then
+			template.server.update(mutator_context, mutator_data, dt, t)
 		end
 
-		if not self._has_local_client and not template.client.update then
-			template.client.update(_mutator_context, v, arg_12_1, arg_12_2)
+		if self._has_local_client and template.client.update then
+			template.client.update(mutator_context, mutator_data, dt, t)
 		end
 
-		if not (not v.deactivate_at_t and not (arg_12_2 > v.deactivate_at_t)) then
-			self:_deactivate_mutator(k, _active_mutators, _mutator_context)
+		if mutator_data.deactivate_at_t and t > mutator_data.deactivate_at_t then
+			self:_deactivate_mutator(name, active_mutators, mutator_context)
 		end
 	end
 end
 
-MutatorHandler.has_activated_mutator = function (self, arg_13_1)
+MutatorHandler.has_activated_mutator = function (self, name)
 	-- function 13
-	return self._active_mutators[arg_13_1] ~= nil
+	return self._active_mutators[name] ~= nil
 end
 
-MutatorHandler.has_mutator = function (self, arg_14_1)
+MutatorHandler.has_mutator = function (self, name)
 	-- function 14
-	return self._mutators[arg_14_1] ~= nil
+	return self._mutators[name] ~= nil
 end
 
 MutatorHandler.activated_mutators = function (self)
@@ -246,225 +254,229 @@ MutatorHandler.initialized_mutator_map = function (self)
 	return self._initialized_mutator_map
 end
 
-MutatorHandler.player_disabled = function (self, arg_18_1, arg_18_2, arg_18_3)
+MutatorHandler.player_disabled = function (self, disabling_event, target_unit, attacker_unit)
 	-- function 18
-	local _mutator_context = self._mutator_context
-	local _active_mutators = self._active_mutators
-	local _is_server = self._is_server
+	local mutator_context = self._mutator_context
+	local active_mutators = self._active_mutators
+	local is_server = self._is_server
 
-	for k, v in pairs(_active_mutators) do
-		local template = v.template
+	for _, mutator_data in pairs(active_mutators) do
+		local template = mutator_data.template
 
-		if not _is_server then
-			template.server.player_disabled_function(_mutator_context, v, arg_18_1, arg_18_2, arg_18_3)
+		if is_server then
+			template.server.player_disabled_function(mutator_context, mutator_data, disabling_event, target_unit, attacker_unit)
 		end
 	end
 end
 
-MutatorHandler.ai_killed = function (self, arg_19_1, arg_19_2, arg_19_3, arg_19_4)
+MutatorHandler.ai_killed = function (self, killed_unit, killer_unit, death_data, killing_blow)
 	-- function 19
-	local _mutator_context = self._mutator_context
-	local _active_mutators = self._active_mutators
-	local _is_server = self._is_server
-	local _has_local_client = self._has_local_client
+	local mutator_context = self._mutator_context
+	local active_mutators = self._active_mutators
+	local is_server = self._is_server
+	local has_local_client = self._has_local_client
 
-	for k, v in pairs(_active_mutators) do
-		local template = v.template
+	for _, mutator_data in pairs(active_mutators) do
+		local template = mutator_data.template
 
-		if not _is_server then
-			template.server.ai_killed_function(_mutator_context, v, arg_19_1, arg_19_2, arg_19_3, arg_19_4)
+		if is_server then
+			template.server.ai_killed_function(mutator_context, mutator_data, killed_unit, killer_unit, death_data, killing_blow)
 		end
 
-		if not _has_local_client then
-			template.client.ai_killed_function(_mutator_context, v, arg_19_1, arg_19_2, arg_19_3, arg_19_4)
+		if has_local_client then
+			template.client.ai_killed_function(mutator_context, mutator_data, killed_unit, killer_unit, death_data, killing_blow)
 		end
 	end
 end
 
-MutatorHandler.level_object_killed = function (self, arg_20_1, arg_20_2)
+MutatorHandler.level_object_killed = function (self, killed_unit, killing_blow)
 	-- function 20
-	local _mutator_context = self._mutator_context
-	local _active_mutators = self._active_mutators
-	local _is_server = self._is_server
-	local _has_local_client = self._has_local_client
+	local mutator_context = self._mutator_context
+	local active_mutators = self._active_mutators
+	local is_server = self._is_server
+	local has_local_client = self._has_local_client
 
-	for k, v in pairs(_active_mutators) do
-		local template = v.template
+	for _, mutator_data in pairs(active_mutators) do
+		local template = mutator_data.template
 
-		if not _is_server then
-			template.server.level_object_killed_function(_mutator_context, v, arg_20_1, arg_20_2)
+		if is_server then
+			template.server.level_object_killed_function(mutator_context, mutator_data, killed_unit, killing_blow)
 		end
 
-		if not _has_local_client then
-			template.client.level_object_killed_function(_mutator_context, v, arg_20_1, arg_20_2)
+		if has_local_client then
+			template.client.level_object_killed_function(mutator_context, mutator_data, killed_unit, killing_blow)
 		end
 	end
 end
 
-MutatorHandler.ai_hit_by_player = function (self, arg_21_1, arg_21_2, arg_21_3)
+MutatorHandler.ai_hit_by_player = function (self, hit_unit, attacking_unit, attack_data)
 	-- function 21
-	local _mutator_context = self._mutator_context
-	local _active_mutators = self._active_mutators
-	local _is_server = self._is_server
-	local _has_local_client = self._has_local_client
+	local mutator_context = self._mutator_context
+	local active_mutators = self._active_mutators
+	local is_server = self._is_server
+	local has_local_client = self._has_local_client
 
-	for k, v in pairs(_active_mutators) do
-		local template = v.template
+	for _, mutator_data in pairs(active_mutators) do
+		local template = mutator_data.template
 
-		if not _is_server then
-			template.server.ai_hit_by_player_function(_mutator_context, v, arg_21_1, arg_21_2, arg_21_3)
+		if is_server then
+			template.server.ai_hit_by_player_function(mutator_context, mutator_data, hit_unit, attacking_unit, attack_data)
 		end
 
-		if not _has_local_client then
-			template.client.ai_hit_by_player_function(_mutator_context, v, arg_21_1, arg_21_2, arg_21_3)
+		if has_local_client then
+			template.client.ai_hit_by_player_function(mutator_context, mutator_data, hit_unit, attacking_unit, attack_data)
 		end
 	end
 end
 
-MutatorHandler.player_hit = function (self, arg_22_1, arg_22_2, arg_22_3)
+MutatorHandler.player_hit = function (self, hit_unit, attacking_unit, attack_data)
 	-- function 22
-	local _mutator_context = self._mutator_context
-	local _active_mutators = self._active_mutators
-	local _is_server = self._is_server
-	local _has_local_client = self._has_local_client
+	local mutator_context = self._mutator_context
+	local active_mutators = self._active_mutators
+	local is_server = self._is_server
+	local has_local_client = self._has_local_client
 
-	for k, v in pairs(_active_mutators) do
-		local template = v.template
+	for _, mutator_data in pairs(active_mutators) do
+		local template = mutator_data.template
 
-		if not _is_server then
-			template.server.player_hit_function(_mutator_context, v, arg_22_1, arg_22_2, arg_22_3)
+		if is_server then
+			template.server.player_hit_function(mutator_context, mutator_data, hit_unit, attacking_unit, attack_data)
 		end
 
-		if not _has_local_client then
-			template.client.player_hit_function(_mutator_context, v, arg_22_1, arg_22_2, arg_22_3)
+		if has_local_client then
+			template.client.player_hit_function(mutator_context, mutator_data, hit_unit, attacking_unit, attack_data)
 		end
 	end
 end
 
-MutatorHandler.modify_player_base_damage = function (self, arg_23_1, arg_23_2, arg_23_3, arg_23_4)
+MutatorHandler.modify_player_base_damage = function (self, damaged_unit, attacker_unit, damage, damage_type)
 	-- function 23
-	local _mutator_context = self._mutator_context
-	local _active_mutators = self._active_mutators
-	local _is_server = self._is_server
+	local mutator_context = self._mutator_context
+	local active_mutators = self._active_mutators
+	local is_server = self._is_server
 
-	for k, v in pairs(_active_mutators) do
-		local template = v.template
+	for _, mutator_data in pairs(active_mutators) do
+		local template = mutator_data.template
 
-		if not _is_server and not template.modify_player_base_damage then
-			arg_23_3 = template.modify_player_base_damage(_mutator_context, v, arg_23_1, arg_23_2, arg_23_3, arg_23_4)
+		if is_server and template.modify_player_base_damage then
+			damage = template.modify_player_base_damage(mutator_context, mutator_data, damaged_unit, attacker_unit, damage, damage_type)
 		end
 	end
 
-	return arg_23_3
+	return damage
 end
 
-MutatorHandler.player_respawned = function (self, arg_24_1)
+MutatorHandler.player_respawned = function (self, spawned_unit)
 	-- function 24
-	local _mutator_context = self._mutator_context
-	local _active_mutators = self._active_mutators
-	local _is_server = self._is_server
-	local _has_local_client = self._has_local_client
+	local mutator_context = self._mutator_context
+	local active_mutators = self._active_mutators
+	local is_server = self._is_server
+	local has_local_client = self._has_local_client
 
-	for k, v in pairs(_active_mutators) do
-		local template = v.template
+	for _, mutator_data in pairs(active_mutators) do
+		local template = mutator_data.template
 
-		if not _is_server then
-			template.server.player_respawned_function(_mutator_context, v, arg_24_1)
+		if is_server then
+			template.server.player_respawned_function(mutator_context, mutator_data, spawned_unit)
 		end
 
-		if not _has_local_client then
-			template.client.player_respawned_function(_mutator_context, v, arg_24_1)
+		if has_local_client then
+			template.client.player_respawned_function(mutator_context, mutator_data, spawned_unit)
 		end
 	end
 end
 
-MutatorHandler.damage_taken = function (self, arg_25_1, arg_25_2, arg_25_3, arg_25_4, arg_25_5)
+MutatorHandler.damage_taken = function (self, attacked_unit, attacker_unit, damage, damage_source, damage_type)
 	-- function 25
-	local _mutator_context = self._mutator_context
-	local _active_mutators = self._active_mutators
-	local _is_server = self._is_server
-	local _has_local_client = self._has_local_client
+	local mutator_context = self._mutator_context
+	local active_mutators = self._active_mutators
+	local is_server = self._is_server
+	local has_local_client = self._has_local_client
 
-	for k, v in pairs(_active_mutators) do
-		local template = v.template
+	for _, mutator_data in pairs(active_mutators) do
+		local template = mutator_data.template
 
-		if not _is_server then
-			template.server.damage_taken_function(_mutator_context, v, arg_25_1, arg_25_2, arg_25_3, arg_25_4, arg_25_5)
+		if is_server then
+			template.server.damage_taken_function(mutator_context, mutator_data, attacked_unit, attacker_unit, damage, damage_source, damage_type)
 		end
 
-		if not _has_local_client then
-			template.client.damage_taken_function(_mutator_context, v, arg_25_1, arg_25_2, arg_25_3, arg_25_4, arg_25_5)
+		if has_local_client then
+			template.client.damage_taken_function(mutator_context, mutator_data, attacked_unit, attacker_unit, damage, damage_source, damage_type)
 		end
 	end
 end
 
-MutatorHandler.pre_ai_spawned = function (self, arg_26_1, arg_26_2)
+MutatorHandler.pre_ai_spawned = function (self, breed, optional_data)
 	-- function 26
-	if not self._is_server then
+	local is_server = self._is_server
+
+	if not is_server then
 		return
 	end
 
-	local _mutator_context = self._mutator_context
-	local _active_mutators = self._active_mutators
+	local mutator_context = self._mutator_context
+	local active_mutators = self._active_mutators
 
-	for k, v in pairs(_active_mutators) do
-		local template = v.template
+	for _, mutator_data in pairs(active_mutators) do
+		local template = mutator_data.template
 
-		if not template.server.pre_ai_spawned_function then
-			template.server.pre_ai_spawned_function(_mutator_context, v, arg_26_1, arg_26_2)
+		if template.server.pre_ai_spawned_function then
+			template.server.pre_ai_spawned_function(mutator_context, mutator_data, breed, optional_data)
 		end
 	end
 end
 
-MutatorHandler.ai_spawned = function (self, arg_27_1)
+MutatorHandler.ai_spawned = function (self, spawned_unit)
 	-- function 27
-	local _mutator_context = self._mutator_context
-	local _active_mutators = self._active_mutators
-	local _is_server = self._is_server
-	local _has_local_client = self._has_local_client
+	local mutator_context = self._mutator_context
+	local active_mutators = self._active_mutators
+	local is_server = self._is_server
+	local has_local_client = self._has_local_client
 
-	for k, v in pairs(_active_mutators) do
-		local template = v.template
+	for _, mutator_data in pairs(active_mutators) do
+		local template = mutator_data.template
 
-		if not _is_server then
-			template.server.ai_spawned_function(_mutator_context, v, arg_27_1)
+		if is_server then
+			template.server.ai_spawned_function(mutator_context, mutator_data, spawned_unit)
 		end
 
-		if not _has_local_client then
-			template.client.ai_spawned_function(_mutator_context, v, arg_27_1)
+		if has_local_client then
+			template.client.ai_spawned_function(mutator_context, mutator_data, spawned_unit)
 		end
 	end
 end
 
-MutatorHandler.post_ai_spawned = function (self, arg_28_1, arg_28_2, arg_28_3)
+MutatorHandler.post_ai_spawned = function (self, ai_unit, breed, optional_data)
 	-- function 28
-	if not self._is_server then
+	local is_server = self._is_server
+
+	if not is_server then
 		return
 	end
 
-	local _mutator_context = self._mutator_context
-	local _active_mutators = self._active_mutators
+	local mutator_context = self._mutator_context
+	local active_mutators = self._active_mutators
 
-	for k, v in pairs(_active_mutators) do
-		local template = v.template
+	for _, mutator_data in pairs(active_mutators) do
+		local template = mutator_data.template
 
-		if not template.server.post_ai_spawned_function then
-			template.server.post_ai_spawned_function(_mutator_context, v, arg_28_1, arg_28_2, arg_28_3)
+		if template.server.post_ai_spawned_function then
+			template.server.post_ai_spawned_function(mutator_context, mutator_data, ai_unit, breed, optional_data)
 		end
 	end
 end
 
 MutatorHandler.players_left_safe_zone = function (self)
 	-- function 29
-	local _mutator_context = self._mutator_context
-	local _active_mutators = self._active_mutators
-	local _is_server = self._is_server
+	local mutator_context = self._mutator_context
+	local active_mutators = self._active_mutators
+	local is_server = self._is_server
 
-	for k, v in pairs(_active_mutators) do
-		local template = v.template
+	for _, mutator_data in pairs(active_mutators) do
+		local template = mutator_data.template
 
-		if not _is_server then
-			template.server.server_players_left_safe_zone(_mutator_context, v)
+		if is_server then
+			template.server.server_players_left_safe_zone(mutator_context, mutator_data)
 		end
 	end
 end
@@ -473,114 +485,117 @@ MutatorHandler.evaluate_lose_conditions = function (self)
 	-- function 30
 	fassert(self._is_server, "evaluate_lose_conditions only runs on server")
 
-	local _mutator_context = self._mutator_context
-	local _active_mutators = self._active_mutators
-	local flag = false
-	local var_30_3
+	local mutator_context = self._mutator_context
+	local active_mutators = self._active_mutators
+	local lost, lost_delay = false
 
-	for k, v in pairs(_active_mutators) do
-		local template = v.template
+	for _, mutator_data in pairs(active_mutators) do
+		local template = mutator_data.template
 
-		if not template.lose_condition_function then
-			local lose_condition_function, var_30_6 = template.lose_condition_function(_mutator_context, v)
+		if template.lose_condition_function then
+			local result, delay = template.lose_condition_function(mutator_context, mutator_data)
 
-			if not lose_condition_function then
-				if not (not var_30_6 and var_30_3 == nil or not (var_30_3 < var_30_6)) then
-					var_30_3 = var_30_6
+			if result then
+				if delay and (lost_delay == nil or lost_delay < delay) then
+					lost_delay = delay
 				end
 
-				flag = lose_condition_function
+				lost = result
 			end
 		end
 	end
 
-	return flag, var_30_3
+	return lost, lost_delay
 end
 
 MutatorHandler.evaluate_end_zone_activation_conditions = function (self)
 	-- function 31
 	fassert(self._is_server, "evaluate_end_zone_activation_conditions only runs on server")
 
-	local _mutator_context = self._mutator_context
-	local _active_mutators = self._active_mutators
+	local mutator_context = self._mutator_context
+	local active_mutators = self._active_mutators
 
-	for k, v in pairs(_active_mutators) do
-		local template = v.template
+	for _, mutator_data in pairs(active_mutators) do
+		local template = mutator_data.template
 
-		if not (not template.end_zone_activation_condition_function and template.end_zone_activation_condition_function(_mutator_context, v)) then
-			return false
+		if template.end_zone_activation_condition_function then
+			local result = template.end_zone_activation_condition_function(mutator_context, mutator_data)
+
+			if not result then
+				return false
+			end
 		end
 	end
 
 	return true
 end
 
-MutatorHandler.post_process_terror_event = function (self, arg_32_1)
+MutatorHandler.post_process_terror_event = function (self, elements)
 	-- function 32
 	fassert(self._is_server, "post_process_terror_event only runs on server")
 
-	local _mutator_context = self._mutator_context
-	local _active_mutators = self._active_mutators
+	local mutator_context = self._mutator_context
+	local active_mutators = self._active_mutators
 
-	for k, v in pairs(_active_mutators) do
-		local template = v.template
+	for _, mutator_data in pairs(active_mutators) do
+		local template = mutator_data.template
 
-		if not template.post_process_terror_event then
-			template.post_process_terror_event(_mutator_context, v, arg_32_1)
+		if template.post_process_terror_event then
+			template.post_process_terror_event(mutator_context, mutator_data, elements)
 		end
 	end
 end
 
-MutatorHandler.pickup_settings_updated_settings = function (self, arg_33_1)
+MutatorHandler.pickup_settings_updated_settings = function (self, pickup_settings)
 	-- function 33
 	if not self._is_server then
 		return
 	end
 
-	if not arg_33_1 then
+	if not pickup_settings then
 		return nil
 	end
 
-	local clone = table.clone(arg_33_1)
-	local tbl = {}
-	local _mutators = self._mutators
+	local pickup_settings_clone = table.clone(pickup_settings)
+	local final_multipliers = {}
+	local mutators = self._mutators
 
-	for k, v in pairs(_mutators) do
-		local pickup_system_multipliers = v.template.pickup_system_multipliers
+	for _, mutator in pairs(mutators) do
+		local pickup_system_multipliers = mutator.template.pickup_system_multipliers
 
-		if not pickup_system_multipliers then
-			for k_2, v_2 in pairs(pickup_system_multipliers) do
-				if not tbl[k_2] then
-					tbl[k_2] = tbl[k_2] * v_2
+		if pickup_system_multipliers then
+			for pickup_type, value in pairs(pickup_system_multipliers) do
+				if final_multipliers[pickup_type] then
+					final_multipliers[pickup_type] = final_multipliers[pickup_type] * value
 				else
-					tbl[k_2] = v_2
+					final_multipliers[pickup_type] = value
 				end
 			end
 		end
 	end
 
-	local function fn(arg_34_0, arg_34_1, arg_34_2)
+	local function apply_multipliers(pickup_type, pickup_name, amount)
 		-- function 34
-		if not tbl[arg_34_1] then
-			return math.ceil(arg_34_2 * tbl[arg_34_1])
-		elseif not tbl[arg_34_0] then
-			return math.ceil(arg_34_2 * tbl[arg_34_0])
+		if final_multipliers[pickup_name] then
+			return math.ceil(amount * final_multipliers[pickup_name])
+		elseif final_multipliers[pickup_type] then
+			return math.ceil(amount * final_multipliers[pickup_type])
 		else
-			return arg_34_2
+			return amount
 		end
 	end
 
-	for k_3, v_3 in pairs(clone) do
-		if type(v_3) == "table" then
-			for k_4, v_4 in pairs(v_3) do
-				v_3[k_4] = fn(k_3, k_4, v_4)
+	for pickup_type, value in pairs(pickup_settings_clone) do
+		if type(value) == "table" then
+			for pickup_name, amount in pairs(value) do
+				value[pickup_name] = apply_multipliers(pickup_type, pickup_name, amount)
 			end
 		else
-			clone[k_3] = fn(k_3, nil, v_3)
+			pickup_settings_clone[pickup_type] = apply_multipliers(pickup_type, nil, value)
 		end
 	end
 
-	return clone
+	return pickup_settings_clone
 end
 
 MutatorHandler.conflict_director_updated_settings = function (self)
@@ -589,235 +604,239 @@ MutatorHandler.conflict_director_updated_settings = function (self)
 		return
 	end
 
-	local _mutator_context = self._mutator_context
-	local _mutators = self._mutators
+	local mutator_context = self._mutator_context
+	local mutators = self._mutators
 
-	for k, v in pairs(_mutators) do
-		local template = v.template
+	for name, mutator_data in pairs(mutators) do
+		local template = mutator_data.template
 
-		if not template.update_conflict_settings then
-			template.update_conflict_settings(_mutator_context, v)
+		if template.update_conflict_settings then
+			template.update_conflict_settings(mutator_context, mutator_data)
 		end
 	end
 end
 
 MutatorHandler.get_terror_event_tags = function (self)
 	-- function 36
-	local _mutator_context = self._mutator_context
-	local _mutators = self._mutators
-	local var_36_2
+	local mutator_context = self._mutator_context
+	local mutators = self._mutators
+	local terror_event_tags
 
-	for k, v in pairs(_mutators) do
-		local template = v.template
+	for name, mutator_data in pairs(mutators) do
+		local template = mutator_data.template
 
-		if not template.get_terror_event_tags then
-			var_36_2 = var_36_2 or {}
+		if template.get_terror_event_tags then
+			terror_event_tags = not not terror_event_tags or not not {}
 
-			template.get_terror_event_tags(_mutator_context, v, var_36_2)
+			template.get_terror_event_tags(mutator_context, mutator_data, terror_event_tags)
 		end
 	end
 
-	return var_36_2
+	return terror_event_tags
 end
 
-MutatorHandler.tweak_zones = function (self, arg_37_1, arg_37_2, arg_37_3)
+MutatorHandler.tweak_zones = function (self, conflict_director_name, zones, num_zones)
 	-- function 37
 	if not self._is_server then
 		return
 	end
 
-	local _mutator_context = self._mutator_context
-	local _mutators = self._mutators
+	local mutator_context = self._mutator_context
+	local mutators = self._mutators
 
-	for k, v in pairs(_mutators) do
-		local template = v.template
+	for name, mutator_data in pairs(mutators) do
+		local template = mutator_data.template
 
-		if not template.tweak_zones then
-			template.tweak_zones(_mutator_context, v, arg_37_1, arg_37_2, arg_37_3)
+		if template.tweak_zones then
+			template.tweak_zones(mutator_context, mutator_data, conflict_director_name, zones, num_zones)
 		end
 	end
 
-	return arg_37_2
+	return zones
 end
 
-MutatorHandler._server_initialize_mutator = function (self, arg_38_1, arg_38_2, arg_38_3)
+MutatorHandler._server_initialize_mutator = function (self, name, active_mutators, mutator_context)
 	-- function 38
 	fassert(self._is_server, "Only server is allowed to run mutator initialization function.")
 
-	if not MutatorTemplates[arg_38_1] then
-		mutator_print("No such template (%s)", arg_38_1)
+	if not MutatorTemplates[name] then
+		mutator_print("No such template (%s)", name)
 
 		return
 	end
 
-	local _mutators = self._mutators
+	local mutators = self._mutators
 
-	fassert(_mutators[arg_38_1] == nil, "Can't initialize an already initialized mutator (%s)", arg_38_1)
-	fassert(arg_38_2[arg_38_1] == nil, "Can't initialize an activated mutator (%s)", arg_38_1)
+	fassert(mutators[name] == nil, "Can't initialize an already initialized mutator (%s)", name)
+	fassert(active_mutators[name] == nil, "Can't initialize an activated mutator (%s)", name)
 
-	local var_38_1 = MutatorTemplates[arg_38_1]
-	local tbl = {
-		template = var_38_1
+	local template = MutatorTemplates[name]
+	local mutator_data = {
+		template = template
 	}
 
-	mutator_print("Initializing mutator '%s'", arg_38_1)
+	mutator_print("Initializing mutator '%s'", name)
 
-	local server = var_38_1.server
+	local server_template = template.server
 
-	if not server.initialize_function then
-		server.initialize_function(arg_38_3, tbl)
+	if server_template.initialize_function then
+		server_template.initialize_function(mutator_context, mutator_data)
 	end
 
-	self._mutators[arg_38_1] = tbl
-	self._initialized_mutator_map[arg_38_1] = true
+	self._mutators[name] = mutator_data
+	self._initialized_mutator_map[name] = true
 end
 
-MutatorHandler._activate_mutator = function (self, arg_39_1, arg_39_2, arg_39_3, arg_39_4, arg_39_5)
+MutatorHandler._activate_mutator = function (self, name, active_mutators, mutator_context, mutator_data, optional_duration)
 	-- function 39
-	fassert(arg_39_2[arg_39_1] == nil, "Can't have multiple of same mutator running at the same time (%s)", arg_39_1)
+	fassert(active_mutators[name] == nil, "Can't have multiple of same mutator running at the same time (%s)", name)
 
-	if not MutatorTemplates[arg_39_1] then
-		mutator_print("No such template (%s)", arg_39_1)
+	if not MutatorTemplates[name] then
+		mutator_print("No such template (%s)", name)
 
 		return
 	end
 
-	mutator_print("Activating mutator '%s'", arg_39_1)
+	mutator_print("Activating mutator '%s'", name)
 
-	local var_39_0 = MutatorTemplates[arg_39_1]
+	local template = MutatorTemplates[name]
 
-	arg_39_4 = arg_39_4 or {
-		template = var_39_0
+	mutator_data = not not mutator_data or not not {
+		template = template
 	}
 
-	if not arg_39_5 then
-		arg_39_4.deactivate_at_t = Managers.time:time("game") + arg_39_5
+	if optional_duration then
+		local t = Managers.time:time("game")
+
+		mutator_data.deactivate_at_t = t + optional_duration
 	end
 
-	arg_39_2[arg_39_1] = arg_39_4
+	active_mutators[name] = mutator_data
 
-	if not self._is_server then
-		local server = var_39_0.server
+	if self._is_server then
+		local server_template = template.server
 
-		if not server.start_function then
-			server.start_function(arg_39_3, arg_39_4)
+		if server_template.start_function then
+			server_template.start_function(mutator_context, mutator_data)
 		end
 	end
 
-	if not self._has_local_client then
-		local client = var_39_0.client
+	if self._has_local_client then
+		local client_template = template.client
 
-		if not client.start_function then
-			client.start_function(arg_39_3, arg_39_4)
+		if client_template.start_function then
+			client_template.start_function(mutator_context, mutator_data)
 		end
 	end
 
-	if not var_39_0.register_rpcs then
-		var_39_0.register_rpcs(arg_39_3, arg_39_4, self.network_event_delegate)
+	if template.register_rpcs then
+		template.register_rpcs(mutator_context, mutator_data, self.network_event_delegate)
 	end
 
-	if not self._is_server then
-		local var_39_3 = NetworkLookup.mutator_templates[arg_39_1]
-		local flag = not not arg_39_4.activated_by_twitch
+	if self._is_server then
+		local mutator_id = NetworkLookup.mutator_templates[name]
+		local activated_by_twitch = not not mutator_data.activated_by_twitch
 
-		self._network_transmit:send_rpc_clients("rpc_activate_mutator_client", var_39_3, flag)
+		self._network_transmit:send_rpc_clients("rpc_activate_mutator_client", mutator_id, activated_by_twitch)
 	end
 end
 
-MutatorHandler._deactivate_mutator = function (self, arg_40_1, arg_40_2, arg_40_3, arg_40_4)
+MutatorHandler._deactivate_mutator = function (self, name, active_mutators, mutator_context, is_destroy)
 	-- function 40
-	fassert(arg_40_2[arg_40_1], "Trying to deactivate mutator (%s) but it isn't active", arg_40_1)
-	mutator_print("Deactivating mutator '%s'", arg_40_1)
+	fassert(active_mutators[name], "Trying to deactivate mutator (%s) but it isn't active", name)
+	mutator_print("Deactivating mutator '%s'", name)
 
-	local var_40_0 = MutatorTemplates[arg_40_1]
-	local var_40_1 = arg_40_2[arg_40_1]
+	local template = MutatorTemplates[name]
+	local mutator_data = active_mutators[name]
 
-	if not var_40_0.unregister_rpcs then
-		var_40_0.unregister_rpcs(arg_40_3, var_40_1)
+	if template.unregister_rpcs then
+		template.unregister_rpcs(mutator_context, mutator_data)
 	end
 
-	arg_40_2[arg_40_1] = nil
-	self._mutators[arg_40_1] = nil
+	active_mutators[name] = nil
+	self._mutators[name] = nil
 
-	if not self._is_server then
-		local server = var_40_0.server
+	if self._is_server then
+		local server_template = template.server
 
-		if not server.stop_function then
-			server.stop_function(arg_40_3, var_40_1, arg_40_4)
+		if server_template.stop_function then
+			server_template.stop_function(mutator_context, mutator_data, is_destroy)
 		end
 
-		self._initialized_mutator_map[arg_40_1] = nil
+		self._initialized_mutator_map[name] = nil
 
-		self._network_handler:get_network_state():set_initialized_mutator_map(table.shallow_copy(self._initialized_mutator_map))
+		local network_state = self._network_handler:get_network_state()
+
+		network_state:set_initialized_mutator_map(table.shallow_copy(self._initialized_mutator_map))
 	end
 
-	if not self._has_local_client then
-		local client = var_40_0.client
+	if self._has_local_client then
+		local client_template = template.client
 
-		if not client.stop_function then
-			client.stop_function(arg_40_3, var_40_1, arg_40_4)
+		if client_template.stop_function then
+			client_template.stop_function(mutator_context, mutator_data, is_destroy)
 		end
 	end
 
-	if not (not self._is_server and arg_40_4) then
-		local var_40_4 = NetworkLookup.mutator_templates[arg_40_1]
+	if self._is_server and not is_destroy then
+		local mutator_id = NetworkLookup.mutator_templates[name]
 
-		self._network_transmit:send_rpc_clients("rpc_deactivate_mutator_client", var_40_4)
+		self._network_transmit:send_rpc_clients("rpc_deactivate_mutator_client", mutator_id)
 	end
 end
 
-MutatorHandler.tweak_pack_spawning_settings = function (arg_41_0, arg_41_1, arg_41_2, arg_41_3)
+MutatorHandler.tweak_pack_spawning_settings = function (zone_mutator_list, mutator_list, conflict_director_name, pack_spawning_settings)
 	-- function 41
-	local var_41_0
+	local new_pack_spawning_settings
 
-	local function fn(arg_42_0)
+	local function run_mutators(mutators)
 		-- function 42
-		for i, v in ipairs(arg_42_0) do
-			local var_42_0 = MutatorTemplates[v]
+		for _, mutator_name in ipairs(mutators) do
+			local mutator_template = MutatorTemplates[mutator_name]
 
-			if not var_42_0.tweak_pack_spawning_settings then
-				if not var_41_0 then
-					var_41_0 = table.clone(arg_41_3)
+			if mutator_template.tweak_pack_spawning_settings then
+				if not new_pack_spawning_settings then
+					new_pack_spawning_settings = table.clone(pack_spawning_settings)
 				end
 
-				var_42_0.tweak_pack_spawning_settings(arg_41_2, var_41_0)
+				mutator_template.tweak_pack_spawning_settings(conflict_director_name, new_pack_spawning_settings)
 			end
 		end
 	end
 
-	fn(arg_41_1)
-	fn(arg_41_0)
+	run_mutators(mutator_list)
+	run_mutators(zone_mutator_list)
 
-	return var_41_0 or arg_41_3
+	return not not new_pack_spawning_settings or not not pack_spawning_settings
 end
 
-MutatorHandler.rpc_activate_mutator_client = function (self, arg_43_1, arg_43_2, arg_43_3)
+MutatorHandler.rpc_activate_mutator_client = function (self, channel_id, mutator_id, activated_by_twitch)
 	-- function 43
 	fassert(not self._is_server, "Only call rpc_activate_mutator_client on clients.")
 
-	local var_43_0 = NetworkLookup.mutator_templates[arg_43_2]
-	local _active_mutators = self._active_mutators
-	local _mutator_context = self._mutator_context
-	local tbl = {
-		template = MutatorTemplates[var_43_0],
-		activated_by_twitch = arg_43_3
+	local mutator_name = NetworkLookup.mutator_templates[mutator_id]
+	local active_mutators = self._active_mutators
+	local mutator_context = self._mutator_context
+	local mutator_data = {
+		template = MutatorTemplates[mutator_name],
+		activated_by_twitch = activated_by_twitch
 	}
 
-	self:_activate_mutator(var_43_0, _active_mutators, _mutator_context, tbl)
+	self:_activate_mutator(mutator_name, active_mutators, mutator_context, mutator_data)
 end
 
-MutatorHandler.rpc_deactivate_mutator_client = function (self, arg_44_1, arg_44_2)
+MutatorHandler.rpc_deactivate_mutator_client = function (self, channel_id, mutator_id)
 	-- function 44
 	fassert(not self._is_server, "Only call rpc_deactivate_mutator_client on clients.")
 
-	local var_44_0 = NetworkLookup.mutator_templates[arg_44_2]
-	local _active_mutators = self._active_mutators
-	local _mutator_context = self._mutator_context
+	local mutator_name = NetworkLookup.mutator_templates[mutator_id]
+	local active_mutators = self._active_mutators
+	local mutator_context = self._mutator_context
 
-	self:_deactivate_mutator(var_44_0, _active_mutators, _mutator_context)
+	self:_deactivate_mutator(mutator_name, active_mutators, mutator_context)
 end
 
-MutatorHandler.on_client_mutator_list_updated = function (self, arg_45_1, arg_45_2, arg_45_3, arg_45_4, arg_45_5, arg_45_6, arg_45_7)
+MutatorHandler.on_client_mutator_list_updated = function (self, key_type, peer_id, local_player_id, profile_index, career_index, party_id, value)
 	-- function 45
-	self._initialized_mutator_map = arg_45_7
+	self._initialized_mutator_map = value
 end

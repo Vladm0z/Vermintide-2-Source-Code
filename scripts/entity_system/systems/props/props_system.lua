@@ -6,12 +6,12 @@ require("scripts/unit_extensions/level/rotating_hazard_extension")
 
 PropsSystem = class(PropsSystem, ExtensionSystemBase)
 
-local tbl = {
+local RPCS = {
 	"rpc_thorn_bush_trigger_area_damage",
 	"rpc_thorn_bush_trigger_despawn",
 	"rpc_sync_rotating_hazard"
 }
-local tbl_2 = {
+local extensions = {
 	"PerlinLightExtension",
 	"BotNavTransitionExtension",
 	"QuestChallengePropExtension",
@@ -22,11 +22,11 @@ local tbl_2 = {
 	"EventUpsellPropExtension"
 }
 
-DLCUtils.append("prop_extension", tbl_2)
+DLCUtils.append("prop_extension", extensions)
 
-PropsSystem.init = function (self, arg_1_1, arg_1_2)
+PropsSystem.init = function (self, entity_system_creation_context, system_name)
 	-- function 1
-	PropsSystem.super.init(self, arg_1_1, arg_1_2, tbl_2)
+	PropsSystem.super.init(self, entity_system_creation_context, system_name, extensions)
 
 	for k, v in pairs(PerlinLightConfigurations) do
 		Light.add_flicker_configuration(k, v.persistance, v.octaves, v.min_value, v.frequency_multiplier, v.translation.persistance, v.translation.octaves, v.translation.jitter_multiplier_xy, v.translation.jitter_multiplier_z, v.translation.frequency_multiplier)
@@ -34,45 +34,45 @@ PropsSystem.init = function (self, arg_1_1, arg_1_2)
 
 	PerlinLightConfigurations_reload = false
 	self._extensions = {}
-	self._network_event_delegate = arg_1_1.network_event_delegate
+	self._network_event_delegate = entity_system_creation_context.network_event_delegate
 
-	self._network_event_delegate:register(self, unpack(tbl))
+	self._network_event_delegate:register(self, unpack(RPCS))
 end
 
-PropsSystem.on_add_extension = function (self, arg_2_1, arg_2_2, arg_2_3, arg_2_4)
+PropsSystem.on_add_extension = function (self, world, unit, extension_name, extension_init_data)
 	-- function 2
-	local var_2_0
+	local extension
 
-	if arg_2_3 == "PerlinLightExtension" then
-		local get_data = Unit.get_data(arg_2_2, "flicker_config")
-		local var_2_2
+	if extension_name == "PerlinLightExtension" then
+		local flicker_config_name = Unit.get_data(unit, "flicker_config")
+		local light
 
-		if not Unit.has_data(arg_2_2, "perlin_light_node_name") then
-			local get_data_2 = Unit.get_data(arg_2_2, "perlin_light_node_name")
+		if Unit.has_data(unit, "perlin_light_node_name") then
+			local flicker_node = Unit.get_data(unit, "perlin_light_node_name")
 
-			if not Unit.has_light(arg_2_2, get_data_2) then
-				var_2_2 = Unit.light(arg_2_2, get_data_2)
+			if Unit.has_light(unit, flicker_node) then
+				light = Unit.light(unit, flicker_node)
 			end
 		end
 
-		if var_2_2 == nil then
-			var_2_2 = Unit.light(arg_2_2, 0)
+		if light == nil then
+			light = Unit.light(unit, 0)
 		end
 
-		Light.set_flicker_type(var_2_2, get_data)
+		Light.set_flicker_type(light, flicker_config_name)
 
-		var_2_0 = {}
+		extension = {}
 	else
-		if arg_2_3 ~= "ThornSisterWallExtension" or not self.is_server then
-			Managers.level_transition_handler.transient_package_loader:add_unit(arg_2_2)
+		if extension_name == "ThornSisterWallExtension" and self.is_server then
+			Managers.level_transition_handler.transient_package_loader:add_unit(unit)
 		end
 
-		var_2_0 = PropsSystem.super.on_add_extension(self, arg_2_1, arg_2_2, arg_2_3, arg_2_4)
+		extension = PropsSystem.super.on_add_extension(self, world, unit, extension_name, extension_init_data)
 	end
 
-	self._extensions[arg_2_2] = var_2_0
+	self._extensions[unit] = extension
 
-	return var_2_0
+	return extension
 end
 
 PropsSystem.destroy = function (self)
@@ -80,48 +80,49 @@ PropsSystem.destroy = function (self)
 	self._network_event_delegate:unregister(self)
 end
 
-PropsSystem.on_remove_extension = function (self, arg_4_1, arg_4_2)
+PropsSystem.on_remove_extension = function (self, unit, extension_name)
 	-- function 4
-	if arg_4_2 ~= "PerlinLightExtension" then
-		if arg_4_2 ~= "ThornSisterWallExtension" or not self.is_server then
-			Managers.level_transition_handler.transient_package_loader:remove_unit(arg_4_1)
+	if extension_name ~= "PerlinLightExtension" then
+		if extension_name == "ThornSisterWallExtension" and self.is_server then
+			Managers.level_transition_handler.transient_package_loader:remove_unit(unit)
 		end
 
-		PropsSystem.super.on_remove_extension(self, arg_4_1, arg_4_2)
+		PropsSystem.super.on_remove_extension(self, unit, extension_name)
 	end
 end
 
-PropsSystem.update = function (arg_5_0, arg_5_1, arg_5_2)
+PropsSystem.update = function (self, context, t)
 	-- function 5
-	PropsSystem.super.update(arg_5_0, arg_5_1, arg_5_2)
+	PropsSystem.super.update(self, context, t)
 end
 
-PropsSystem.rpc_thorn_bush_trigger_area_damage = function (arg_6_0, arg_6_1, arg_6_2)
+PropsSystem.rpc_thorn_bush_trigger_area_damage = function (self, channel_id, unit_id)
 	-- function 6
-	local unit = Managers.state.unit_storage:unit(arg_6_2)
-	local extension = ScriptUnit.extension(unit, "props_system")
+	local unit = Managers.state.unit_storage:unit(unit_id)
+	local script = ScriptUnit.extension(unit, "props_system")
 
-	if not extension then
-		extension:trigger_area_damage()
+	if script then
+		script:trigger_area_damage()
 	end
 end
 
-PropsSystem.rpc_thorn_bush_trigger_despawn = function (arg_7_0, arg_7_1, arg_7_2)
+PropsSystem.rpc_thorn_bush_trigger_despawn = function (self, channel_id, unit_id)
 	-- function 7
-	local unit = Managers.state.unit_storage:unit(arg_7_2)
-	local extension = ScriptUnit.extension(unit, "props_system")
+	local unit = Managers.state.unit_storage:unit(unit_id)
+	local script = ScriptUnit.extension(unit, "props_system")
 	local world = Managers.world:world("level_world")
 
 	WwiseUtils.trigger_unit_event(world, "Play_winds_life_gameplay_thorn_hit_player", unit, 0)
 
-	if not extension then
-		extension:despawn()
+	if script then
+		script:despawn()
 	end
 end
 
-PropsSystem.rpc_sync_rotating_hazard = function (self, arg_8_1, arg_8_2, arg_8_3, arg_8_4, arg_8_5, arg_8_6, arg_8_7)
+PropsSystem.rpc_sync_rotating_hazard = function (self, channel_id, go_id, is_level_unit, start_t, pause_t, state, seed)
 	-- function 8
-	local game_object_or_level_unit = Managers.state.network:game_object_or_level_unit(arg_8_2, arg_8_3)
+	local unit = Managers.state.network:game_object_or_level_unit(go_id, is_level_unit)
+	local extension = self._extensions[unit]
 
-	self._extensions[game_object_or_level_unit]:network_sync(arg_8_4, arg_8_5, arg_8_6, arg_8_7)
+	extension:network_sync(start_t, pause_t, state, seed)
 end

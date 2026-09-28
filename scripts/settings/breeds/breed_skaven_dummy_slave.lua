@@ -1,6 +1,6 @@
 -- chunkname: @scripts/settings/breeds/breed_skaven_dummy_slave.lua
 
-local tbl = {
+local breed_data = {
 	not_bot_target = true,
 	horde_behavior = "SET_TO_NIL",
 	target_selection = "pick_no_targets",
@@ -13,33 +13,33 @@ local tbl = {
 	debug_spawn_category = "Misc"
 }
 
-for k, v in pairs(Breeds.skaven_slave) do
-	local var_0_1 = tbl[k]
+for key, value in pairs(Breeds.skaven_slave) do
+	local keep_value = breed_data[key]
 
-	if var_0_1 == "SET_TO_NIL" then
-		tbl[k] = nil
-	elseif var_0_1 ~= nil then
-		tbl[k] = var_0_1
+	if keep_value == "SET_TO_NIL" then
+		breed_data[key] = nil
+	elseif keep_value ~= nil then
+		breed_data[key] = keep_value
 	else
-		tbl[k] = v
+		breed_data[key] = value
 	end
 end
 
-Breeds.skaven_dummy_slave = table.create_copy(Breeds.skaven_dummy_slave, tbl)
+Breeds.skaven_dummy_slave = table.create_copy(Breeds.skaven_dummy_slave, breed_data)
 Breeds.skaven_dummy_slave.is_always_spawnable = nil
 
-local tbl_2 = {}
+local action_data = {}
 
-for k_2, v_2 in pairs(BreedActions.skaven_dummy_clan_rat) do
-	local var_0_3 = tbl_2[k_2]
+for key, value in pairs(BreedActions.skaven_dummy_clan_rat) do
+	local keep_value = action_data[key]
 
-	if var_0_3 == "SET_TO_NIL" then
-		tbl_2[k_2] = nil
-	elseif var_0_3 ~= nil then
-		tbl_2[k_2] = var_0_3
+	if keep_value == "SET_TO_NIL" then
+		action_data[key] = nil
+	elseif keep_value ~= nil then
+		action_data[key] = keep_value
 	else
-		tbl_2[k_2] = v_2
+		action_data[key] = value
 	end
 end
 
-BreedActions.skaven_dummy_slave = table.create_copy(BreedActions.skaven_dummy_slave, tbl_2)
+BreedActions.skaven_dummy_slave = table.create_copy(BreedActions.skaven_dummy_slave, action_data)

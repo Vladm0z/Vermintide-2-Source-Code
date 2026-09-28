@@ -1,12 +1,12 @@
 -- chunkname: @scripts/settings/dlcs/woods/woods_sound_settings.lua
 
-local woods = DLCSettings.woods
+local settings = DLCSettings.woods
 
-woods.dialogue_lookup = {
+settings.dialogue_lookup = {
 	"dialogues/generated/lookup_wood_elf_woods",
 	"dialogues/generated/lookup_dlc_woods"
 }
-woods.dialogue_settings = {
+settings.dialogue_settings = {
 	inn_level = {
 		"dialogues/generated/dlc_woods"
 	},
@@ -23,10 +23,10 @@ woods.dialogue_settings = {
 		"dialogues/generated/dlc_woods"
 	}
 }
-woods.auto_load_files = {
+settings.auto_load_files = {
 	"dialogues/generated/wood_elf_woods"
 }
-woods.network_sound_events = {
+settings.network_sound_events = {
 	"thorn_wall_damage_heavy",
 	"thorn_wall_damage_light",
 	"thorn_hit_poison",

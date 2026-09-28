@@ -1,6 +1,6 @@
 -- chunkname: @scripts/settings/dlcs/carousel/carousel_experience_settings.lua
 
-local tbl = {
+local versus_experience_levels = {
 	0,
 	1500,
 	1501,
@@ -252,101 +252,107 @@ local tbl = {
 	22083,
 	22249
 }
-local count = #tbl
-local num = 0
+local num_defined_versus_levels = #versus_experience_levels
+local total_defined_versus_experience = 0
 
-for i = 1, count do
-	num = num + tbl[i]
+for i = 1, num_defined_versus_levels do
+	total_defined_versus_experience = total_defined_versus_experience + versus_experience_levels[i]
 end
 
 local ExperienceSettings = ExperienceSettings
 
-ExperienceSettings = ExperienceSettings or {}
+ExperienceSettings = not not ExperienceSettings or not not {}
 ExperienceSettings = ExperienceSettings
 
 ExperienceSettings.get_versus_level = function ()
 	-- function 1
-	local get_versus_experience = ExperienceSettings.get_versus_experience()
+	local versus_experience = ExperienceSettings.get_versus_experience()
 
-	return ExperienceSettings.get_versus_level_from_experience(get_versus_experience)
+	return ExperienceSettings.get_versus_level_from_experience(versus_experience)
 end
 
-ExperienceSettings.get_versus_player_level = function (self)
+ExperienceSettings.get_versus_player_level = function (player)
 	-- function 2
-	local game = Managers.state.network:game()
+	local network_manager = Managers.state.network
+	local network_game = network_manager:game()
 
-	if not game then
+	if not network_game then
 		return nil
 	end
 
 	local unit_storage = Managers.state.unit_storage
-	local player_unit = self.player_unit
-	local go_id = unit_storage:go_id(player_unit)
+	local unit = player.player_unit
+	local go_id = unit_storage:go_id(unit)
 
 	if not go_id then
 		return nil
 	end
 
-	return (GameSession.game_object_field(game, go_id, "versus_level"))
+	local level = GameSession.game_object_field(network_game, go_id, "versus_level")
+
+	return level
 end
 
 ExperienceSettings.get_versus_experience = function ()
 	-- function 3
-	return Managers.backend:get_interface("versus"):get_profile_data("experience") or 0
+	local versus_interface = Managers.backend:get_interface("versus")
+	local versus_experience = versus_interface:get_profile_data("experience")
+
+	return not not versus_experience or not not 0
 end
 
-ExperienceSettings.get_versus_level_from_experience = function (arg_4_0)
+ExperienceSettings.get_versus_level_from_experience = function (experience)
 	-- function 4
-	arg_4_0 = arg_4_0 or 0
+	experience = not not experience or not not 0
 
-	assert(arg_4_0 >= 0, "Negative XP!??")
+	assert(experience >= 0, "Negative XP!??")
 
-	local num_2 = 0
-	local num_3 = 0
-	local num_4 = 0
-	local num_5 = 0
-	local var_4_4
+	local exp_total = 0
+	local level = 0
+	local progress = 0
+	local experience_into_level = 0
+	local previous_exp_total
 
-	if arg_4_0 >= num then
-		return count, num_4, num_5
+	if experience >= total_defined_versus_experience then
+		return num_defined_versus_levels, progress, experience_into_level
 	end
 
-	for i = 1, count do
-		local var_4_5 = num_2
+	for i = 1, num_defined_versus_levels do
+		previous_exp_total = exp_total
+		exp_total = exp_total + versus_experience_levels[i]
 
-		num_2 = num_2 + tbl[i]
-
-		if arg_4_0 < num_2 then
-			num_3 = i - 1
-			num_5 = arg_4_0 - var_4_5
-			num_4 = num_5 / tbl[i]
+		if experience < exp_total then
+			level = i - 1
+			experience_into_level = experience - previous_exp_total
+			progress = experience_into_level / versus_experience_levels[i]
 
 			break
 		end
 	end
 
-	return num_3, num_4, num_5
+	return level, progress, experience_into_level
 end
 
-ExperienceSettings.get_versus_progress_breakdown = function (arg_5_0, arg_5_1)
+ExperienceSettings.get_versus_progress_breakdown = function (start_experience, total_experience_gained)
 	-- function 5
-	local get_versus_level_from_experience, var_5_1 = ExperienceSettings.get_versus_level_from_experience(arg_5_0)
-	local get_versus_level_from_experience_2, var_5_3 = ExperienceSettings.get_versus_level_from_experience(arg_5_0 + arg_5_1)
-	local tbl_2 = {}
+	local start_level, start_experience_level_progress = ExperienceSettings.get_versus_level_from_experience(start_experience)
+	local end_level, end_experience_level_progress = ExperienceSettings.get_versus_level_from_experience(start_experience + total_experience_gained)
+	local breakdown = {}
 
-	for i = get_versus_level_from_experience, get_versus_level_from_experience_2 do
-		if not tbl[i + 1] then
-			tbl_2[i] = 0
+	for i = start_level, end_level do
+		if not versus_experience_levels[i + 1] then
+			breakdown[i] = 0
 		else
-			local num = tbl[i + 1] * (i ~= get_versus_level_from_experience_2 or not var_5_3 or 1)
+			local end_level_experience = versus_experience_levels[i + 1] * ((i ~= end_level or not end_experience_level_progress) and not not 1)
+			local start_level_experience = end_level_experience * start_experience_level_progress
 
-			tbl_2[i] = (num - num * var_5_1) / arg_5_1
-			var_5_1 = 0
+			breakdown[i] = (end_level_experience - start_level_experience) / total_experience_gained
+			start_experience_level_progress = 0
 		end
 	end
 
-	return tbl_2, get_versus_level_from_experience
+	return breakdown, start_level
 end
 
-ExperienceSettings.max_versus_experience = num
-ExperienceSettings.max_versus_level = count
+ExperienceSettings.max_versus_experience = total_defined_versus_experience
+ExperienceSettings.max_versus_level = num_defined_versus_levels

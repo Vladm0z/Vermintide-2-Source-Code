@@ -1,45 +1,44 @@
 -- chunkname: @scripts/entity_system/systems/locomotion/locomotion_templates_ai_husk.lua
 
-local LocomotionTemplates = LocomotionTemplates
-
-LocomotionTemplates = LocomotionTemplates or {}
-LocomotionTemplates = LocomotionTemplates
-
 local LocomotionTemplates_2 = LocomotionTemplates
-local var_0_2
-local var_0_3
-local flag = true
 
-if not flag then
-	local start = Profiler.start
-	local stop = Profiler.stop
+LocomotionTemplates_2 = not not LocomotionTemplates_2 or not not {}
+LocomotionTemplates = LocomotionTemplates_2
+
+local LocomotionTemplates = LocomotionTemplates
+local detailed_profiler_start, detailed_profiler_stop
+local DETAILED_PROFILING = true
+
+if DETAILED_PROFILING then
+	detailed_profiler_start = Profiler.start
+	detailed_profiler_start = Profiler.stop
 else
-	local function fn()
+	function detailed_profiler_start()
 		-- function 1
 		return
 	end
 
-	local function fn_2()
+	function detailed_profiler_stop()
 		-- function 2
 		return
 	end
 end
 
-LocomotionTemplates_2.AiHuskLocomotionExtension = {}
+LocomotionTemplates.AiHuskLocomotionExtension = {}
 
-LocomotionTemplates_2.AiHuskLocomotionExtension.init = function (self, arg_3_1)
+LocomotionTemplates.AiHuskLocomotionExtension.init = function (data, nav_world)
 	-- function 3
-	self.nav_world = arg_3_1
-	self.destroy_units = {}
-	self.all_update_units = {}
-	self.affected_by_gravity_update_units = {}
-	self.pure_network_update_units = {}
-	self.other_update_units = {}
+	data.nav_world = nav_world
+	data.destroy_units = {}
+	data.all_update_units = {}
+	data.affected_by_gravity_update_units = {}
+	data.pure_network_update_units = {}
+	data.other_update_units = {}
 end
 
-local flag_2 = false
+local LOLUPDATE = false
 
-LocomotionTemplates_2.AiHuskLocomotionExtension.update = function (self, arg_4_1, arg_4_2)
+LocomotionTemplates.AiHuskLocomotionExtension.update = function (data, t, dt)
 	-- function 4
 	local game = Managers.state.network:game()
 
@@ -47,166 +46,179 @@ LocomotionTemplates_2.AiHuskLocomotionExtension.update = function (self, arg_4_1
 		return
 	end
 
-	self.game = game
+	data.game = game
 
-	if not flag_2 then
-		LocomotionTemplates_2.AiHuskLocomotionExtension.update_alive(self, arg_4_1, arg_4_2)
-		LocomotionTemplates_2.AiHuskLocomotionExtension.update_pure_network_update_units(self, arg_4_1, arg_4_2)
-		LocomotionTemplates_2.AiHuskLocomotionExtension.update_other_update_units_navmesh_check(self, arg_4_1, arg_4_2)
-		LocomotionTemplates_2.AiHuskLocomotionExtension.update_other_update_units(self, arg_4_1, arg_4_2)
+	if LOLUPDATE then
+		LocomotionTemplates.AiHuskLocomotionExtension.update_alive(data, t, dt)
+		LocomotionTemplates.AiHuskLocomotionExtension.update_pure_network_update_units(data, t, dt)
+		LocomotionTemplates.AiHuskLocomotionExtension.update_other_update_units_navmesh_check(data, t, dt)
+		LocomotionTemplates.AiHuskLocomotionExtension.update_other_update_units(data, t, dt)
 	else
-		LocomotionTemplates_2.AiHuskLocomotionExtension.update_other_update_units_navmesh_check(self, arg_4_1, arg_4_2)
-		EngineOptimizedExtensions.ai_husk_locomotion_update(arg_4_2, game, self.all_update_units)
+		LocomotionTemplates.AiHuskLocomotionExtension.update_other_update_units_navmesh_check(data, t, dt)
+		EngineOptimizedExtensions.ai_husk_locomotion_update(dt, game, data.all_update_units)
 	end
 end
 
-LocomotionTemplates_2.AiHuskLocomotionExtension.update_alive = function (self, arg_5_1, arg_5_2)
+LocomotionTemplates.AiHuskLocomotionExtension.update_alive = function (data, t, dt)
 	-- function 5
-	local all_update_units = self.all_update_units
-	local pure_network_update_units = self.pure_network_update_units
-	local other_update_units = self.other_update_units
+	local all_update_units = data.all_update_units
+	local pure_network_update_units = data.pure_network_update_units
+	local other_update_units = data.other_update_units
 
-	for k, v in pairs(all_update_units) do
-		if not HEALTH_ALIVE[k] then
-			all_update_units[k] = nil
-			pure_network_update_units[k] = nil
-			other_update_units[k] = nil
+	for unit, extension in pairs(all_update_units) do
+		if not HEALTH_ALIVE[unit] then
+			all_update_units[unit] = nil
+			pure_network_update_units[unit] = nil
+			other_update_units[unit] = nil
 		end
 	end
 end
 
-LocomotionTemplates_2.AiHuskLocomotionExtension.update_pure_network_update_units = function (self, arg_6_1, arg_6_2)
+LocomotionTemplates.AiHuskLocomotionExtension.update_pure_network_update_units = function (data, t, dt)
 	-- function 6
-	local game_object_field = GameSession.game_object_field
-	local length_squared = Vector3.length_squared
-	local length = Vector3.length
-	local record_statistics = Profiler.record_statistics
-	local set_local_position = Unit.set_local_position
-	local set_local_rotation = Unit.set_local_rotation
-	local local_rotation = Unit.local_rotation
-	local lerp = Quaternion.lerp
-	local min = math.min
-	local max = math.max
-	local zero = Vector3.zero()
+	local GameSession_game_object_field = GameSession.game_object_field
+	local Vector3_length_squared = Vector3.length_squared
+	local Vector3_length = Vector3.length
+	local Profiler_record_statistics = Profiler.record_statistics
+	local Unit_set_local_position = Unit.set_local_position
+	local Unit_set_local_rotation = Unit.set_local_rotation
+	local Unit_local_rotation = Unit.local_rotation
+	local Quaternion_lerp = Quaternion.lerp
+	local math_min = math.min
+	local math_max = math.max
+	local null_vector = Vector3.zero()
 	local POSITION_LOOKUP = POSITION_LOOKUP
-	local num = NetworkConstants.VELOCITY_EPSILON * NetworkConstants.VELOCITY_EPSILON
-	local num_2 = 0.0001
-	local num_3 = 0.1
-	local num_4 = 0.97
-	local min_2 = math.min(arg_6_2 * 15, 1)
-	local game = self.game
+	local VELOCITY_EPSILON_SQ = NetworkConstants.VELOCITY_EPSILON * NetworkConstants.VELOCITY_EPSILON
+	local POS_EPSILON_SQ = 0.0001
+	local POS_LERP_TIME = 0.1
+	local WALK_THRESHOLD = 0.97
+	local rotation_lerp_amount = math.min(dt * 15, 1)
+	local game = data.game
 	local unit_storage = Managers.state.unit_storage
 
-	for k, v in pairs(self.pure_network_update_units) do
-		local var_6_19 = POSITION_LOOKUP[k]
-		local go_id = unit_storage:go_id(k)
-		local var_6_21 = game_object_field(game, go_id, "position")
-		local var_6_22 = game_object_field(game, go_id, "has_teleported")
-		local var_6_23 = game_object_field(game, go_id, "yaw_rot")
-		local var_6_24 = game_object_field(game, go_id, "velocity")
+	for unit, extension in pairs(data.pure_network_update_units) do
+		local old_pos = POSITION_LOOKUP[unit]
+		local go_id = unit_storage:go_id(unit)
+		local network_pos = GameSession_game_object_field(game, go_id, "position")
+		local has_teleported = GameSession_game_object_field(game, go_id, "has_teleported")
+		local network_yaw = GameSession_game_object_field(game, go_id, "yaw_rot")
+		local network_velocity = GameSession_game_object_field(game, go_id, "velocity")
 
-		if num > length_squared(var_6_24) then
-			var_6_24 = Vector3(0, 0, 0)
+		if VELOCITY_EPSILON_SQ > Vector3_length_squared(network_velocity) then
+			network_velocity = Vector3(0, 0, 0)
 		end
 
-		local var_6_25
+		local lerp_pos
 
-		if v.has_teleported ~= var_6_22 then
-			v.has_teleported = var_6_22
-			v._pos_lerp_time = 0
+		if extension.has_teleported ~= has_teleported then
+			extension.has_teleported = has_teleported
+			extension._pos_lerp_time = 0
 
-			v.last_lerp_position:store(var_6_21)
-			v.last_lerp_position_offset:store(zero)
-			v.accumulated_movement:store(zero)
+			extension.last_lerp_position:store(network_pos)
+			extension.last_lerp_position_offset:store(null_vector)
+			extension.accumulated_movement:store(null_vector)
 
-			var_6_25 = var_6_21
+			lerp_pos = network_pos
 		else
-			local unbox = v.last_lerp_position:unbox()
-			local unbox_2 = v.last_lerp_position_offset:unbox()
-			local unbox_3 = v.accumulated_movement:unbox()
+			local last_pos = extension.last_lerp_position:unbox()
+			local last_pos_offset = extension.last_lerp_position_offset:unbox()
+			local accumulated_movement = extension.accumulated_movement:unbox()
 
-			v._pos_lerp_time = v._pos_lerp_time + arg_6_2
+			extension._pos_lerp_time = extension._pos_lerp_time + dt
 
-			local num_5 = v._pos_lerp_time / num_3
-			local num_6 = unbox_3 + var_6_24 * arg_6_2
-			local lerp_2 = Vector3.lerp(unbox_2, zero, min(num_5, 1))
+			local lerp_t = extension._pos_lerp_time / POS_LERP_TIME
+			local move_delta = network_velocity * dt
 
-			var_6_25 = unbox + num_6 + lerp_2
+			accumulated_movement = accumulated_movement + move_delta
 
-			if num_2 < length_squared(var_6_21 - unbox) then
-				v._pos_lerp_time = 0
+			local lerp_pos_offset = Vector3.lerp(last_pos_offset, null_vector, math_min(lerp_t, 1))
 
-				v.last_lerp_position:store(var_6_21)
-				v.last_lerp_position_offset:store(var_6_25 - var_6_21)
-				v.accumulated_movement:store(zero)
+			lerp_pos = last_pos + accumulated_movement + lerp_pos_offset
+
+			if POS_EPSILON_SQ < Vector3_length_squared(network_pos - last_pos) then
+				extension._pos_lerp_time = 0
+
+				extension.last_lerp_position:store(network_pos)
+				extension.last_lerp_position_offset:store(lerp_pos - network_pos)
+				extension.accumulated_movement:store(null_vector)
 			else
-				v.accumulated_movement:store(num_6)
+				extension.accumulated_movement:store(accumulated_movement)
 			end
 		end
 
-		if not v.is_constrained then
-			var_6_25 = Vector3.clamp_3d(var_6_25, v.constrain_min, v.constrain_max)
+		if extension.is_constrained then
+			lerp_pos = Vector3.clamp_3d(lerp_pos, extension.constrain_min, extension.constrain_max)
 		end
 
-		set_local_position(k, 0, var_6_25)
+		Unit_set_local_position(unit, 0, lerp_pos)
 
-		local var_6_32 = local_rotation(k, 0)
-		local var_6_33 = Quaternion(Vector3.up(), var_6_23)
+		local old_rot = Unit_local_rotation(unit, 0)
+		local new_network_rot = Quaternion(Vector3.up(), network_yaw)
 
-		set_local_rotation(k, 0, lerp(var_6_32, var_6_33, min_2))
-		v._velocity:store(var_6_24)
+		Unit_set_local_rotation(unit, 0, Quaternion_lerp(old_rot, new_network_rot, rotation_lerp_amount))
+		extension._velocity:store(network_velocity)
 
-		local mover = Unit.mover(k)
+		local mover = Unit.mover(unit)
 
 		assert(mover == nil, "remove this assert if you see this")
 
-		local var_6_35 = Vector3(var_6_24.x, var_6_24.y, 0)
-		local length_2 = Vector3.length(var_6_35)
+		local flat_velocity = Vector3(network_velocity.x, network_velocity.y, 0)
+		local speed = Vector3.length(flat_velocity)
 
-		Unit.animation_set_variable(k, v._move_speed_anim_var, max(length_2, num_4))
+		Unit.animation_set_variable(unit, extension._move_speed_anim_var, math_max(speed, WALK_THRESHOLD))
 	end
 end
 
-local num = 0.5
+local ALLOWED_MOVER_MOVE_DISTANCE = 0.5
 
-LocomotionTemplates_2.AiHuskLocomotionExtension.update_other_update_units_navmesh_check = function (self, arg_7_1, arg_7_2)
+LocomotionTemplates.AiHuskLocomotionExtension.update_other_update_units_navmesh_check = function (data, t, dt)
 	-- function 7
-	local nav_world = self.nav_world
-	local var_7_1
-	local var_7_2
+	local nav_world = data.nav_world
+	local physics_world, traverse_logic
 
-	for k, v in pairs(self.other_update_units) do
-		if not (v.is_network_driven or v.hit_wall or Unit.mover(k) ~= nil) then
-			local local_position = Unit.local_position(k, 0)
+	for unit, extension in pairs(data.other_update_units) do
+		if not extension.is_network_driven and not extension.hit_wall and Unit.mover(unit) == nil then
+			local current_position = Unit.local_position(unit, 0)
 
-			var_7_2 = var_7_2 or v:traverse_logic()
-			var_7_1 = var_7_1 or World.physics_world(v._world)
+			traverse_logic = not not traverse_logic or not not extension:traverse_logic()
+			physics_world = not not physics_world or not not World.physics_world(extension._world)
 
-			local current_velocity = v:current_velocity()
-			local navmesh_movement_check = LocomotionUtils.navmesh_movement_check(local_position, current_velocity, nav_world, var_7_1, var_7_2)
+			local velocity = extension:current_velocity()
+			local result = LocomotionUtils.navmesh_movement_check(current_position, velocity, nav_world, physics_world, traverse_logic)
 
-			if navmesh_movement_check == "navmesh_hit_wall" then
-				v.hit_wall = true
-			elseif navmesh_movement_check == "navmesh_use_mover" then
-				v:set_mover_disable_reason("not_constrained_by_mover", false)
+			if result == "navmesh_hit_wall" then
+				extension.hit_wall = true
+			elseif result == "navmesh_use_mover" then
+				extension:set_mover_disable_reason("not_constrained_by_mover", false)
 
-				local mover = Unit.mover(k)
+				local mover = Unit.mover(unit)
 
-				if not mover then
-					local override_mover_move_distance = v.breed.override_mover_move_distance
+				if mover then
+					local breed = extension.breed
+					local override_mover_move_distance = breed.override_mover_move_distance
 
-					override_mover_move_distance = override_mover_move_distance or num
+					if not override_mover_move_distance then
+						-- Nothing
+					end
 
-					Mover.set_position(mover, local_position)
+					override_mover_move_distance = ALLOWED_MOVER_MOVE_DISTANCE
 
-					if not LocomotionUtils.separate_mover_fallbacks(mover, override_mover_move_distance) then
-						local position = Mover.position(mover)
+					local mover_move_distance = override_mover_move_distance
 
-						Unit.set_local_position(k, 0, position)
+					::label_7_0::
+
+					Mover.set_position(mover, current_position)
+
+					local success = LocomotionUtils.separate_mover_fallbacks(mover, mover_move_distance)
+
+					if success then
+						local mover_position = Mover.position(mover)
+
+						Unit.set_local_position(unit, 0, mover_position)
 					else
-						v:set_mover_disable_reason("not_constrained_by_mover", true)
+						extension:set_mover_disable_reason("not_constrained_by_mover", true)
 
-						v.hit_wall = true
+						extension.hit_wall = true
 					end
 				end
 			end
@@ -214,97 +226,99 @@ LocomotionTemplates_2.AiHuskLocomotionExtension.update_other_update_units_navmes
 	end
 end
 
-LocomotionTemplates_2.AiHuskLocomotionExtension.update_other_update_units = function (self, arg_8_1, arg_8_2)
+LocomotionTemplates.AiHuskLocomotionExtension.update_other_update_units = function (data, t, dt)
 	-- function 8
-	local game_object_field = GameSession.game_object_field
-	local length_squared = Vector3.length_squared
-	local length = Vector3.length
-	local set_local_position = Unit.set_local_position
-	local set_local_rotation = Unit.set_local_rotation
-	local local_rotation = Unit.local_rotation
-	local lerp = Quaternion.lerp
-	local num = NetworkConstants.VELOCITY_EPSILON * NetworkConstants.VELOCITY_EPSILON
-	local num_2 = 0.97
-	local game = self.game
+	local GameSession_game_object_field = GameSession.game_object_field
+	local Vector3_length_squared = Vector3.length_squared
+	local Vector3_length = Vector3.length
+	local Unit_set_local_position = Unit.set_local_position
+	local Unit_set_local_rotation = Unit.set_local_rotation
+	local Unit_local_rotation = Unit.local_rotation
+	local Quaternion_lerp = Quaternion.lerp
+	local VELOCITY_EPSILON_SQ = NetworkConstants.VELOCITY_EPSILON * NetworkConstants.VELOCITY_EPSILON
+	local WALK_THRESHOLD = 0.97
+	local game = data.game
 	local unit_storage = Managers.state.unit_storage
-	local nav_world = self.nav_world
-	local var_8_12
+	local nav_world = data.nav_world
+	local traverse_logic
 
-	for k, v in pairs(self.other_update_units) do
-		local go_id = unit_storage:go_id(k)
-		local local_position = Unit.local_position(k, 0)
+	for unit, extension in pairs(data.other_update_units) do
+		local go_id = unit_storage:go_id(unit)
+		local current_position = Unit.local_position(unit, 0)
 
-		var_8_12 = var_8_12 or v:traverse_logic()
+		traverse_logic = not not traverse_logic or not not extension:traverse_logic()
 
-		local animation_wanted_root_pose = Unit.animation_wanted_root_pose(k)
-		local translation = Matrix4x4.translation(animation_wanted_root_pose)
-		local var_8_17
+		local wanted_pose = Unit.animation_wanted_root_pose(unit)
+		local wanted_position = Matrix4x4.translation(wanted_pose)
+		local wanted_rotation
 
-		if not v.has_network_driven_rotation then
-			local var_8_18 = game_object_field(game, go_id, "yaw_rot")
+		if extension.has_network_driven_rotation then
+			local yaw = GameSession_game_object_field(game, go_id, "yaw_rot")
 
-			var_8_17 = Quaternion(Vector3.up(), var_8_18)
+			wanted_rotation = Quaternion(Vector3.up(), yaw)
 		else
-			local rotation = Matrix4x4.rotation(animation_wanted_root_pose)
-			local local_rotation_2 = Unit.local_rotation(k, 0)
-			local up = Quaternion.up(local_rotation_2)
-			local inverse = Quaternion.inverse(local_rotation_2)
-			local multiply = Quaternion.multiply(inverse, rotation)
-			local num_3 = Quaternion.yaw(multiply) * v._animation_rotation_scale
+			local anim_rotation = Matrix4x4.rotation(wanted_pose)
+			local current_rotation = Unit.local_rotation(unit, 0)
+			local up_vector = Quaternion.up(current_rotation)
+			local current_rotation_inv = Quaternion.inverse(current_rotation)
+			local delta_rotation = Quaternion.multiply(current_rotation_inv, anim_rotation)
+			local yaw_rotation_radians = Quaternion.yaw(delta_rotation)
 
-			var_8_17 = Quaternion.multiply(local_rotation_2, Quaternion(up, num_3))
+			yaw_rotation_radians = yaw_rotation_radians * extension._animation_rotation_scale
+			wanted_rotation = Quaternion.multiply(current_rotation, Quaternion(up_vector, yaw_rotation_radians))
 		end
 
-		local var_8_25 = game_object_field(game, go_id, "velocity")
+		local network_velocity = GameSession_game_object_field(game, go_id, "velocity")
 
-		if num > length_squared(var_8_25) then
-			var_8_25 = Vector3(0, 0, 0)
+		if VELOCITY_EPSILON_SQ > Vector3_length_squared(network_velocity) then
+			network_velocity = Vector3(0, 0, 0)
 		end
 
-		local var_8_26 = var_8_25
-		local var_8_27
-		local var_8_28
-		local mover = Unit.mover(k)
+		local wanted_velocity = network_velocity
+		local final_position, final_velocity
+		local mover = Unit.mover(unit)
 
-		if not (not v.is_affected_by_gravity and mover == nil) then
-			var_8_26.z = v._velocity:unbox().z - 9.82 * arg_8_2
+		if extension.is_affected_by_gravity and mover ~= nil then
+			local previous_velocity = extension._velocity:unbox()
 
-			Mover.move(mover, var_8_26 * arg_8_2, arg_8_2)
+			wanted_velocity.z = previous_velocity.z - 9.82 * dt
 
-			var_8_27 = Mover.position(mover)
-			var_8_28 = (var_8_27 - local_position) / arg_8_2
+			Mover.move(mover, wanted_velocity * dt, dt)
 
-			if not (not Mover.collides_down(mover) and not (Mover.standing_frames(mover) > 0)) then
-				var_8_28.z = 0
+			final_position = Mover.position(mover)
+			final_velocity = (final_position - current_position) / dt
+
+			if Mover.collides_down(mover) and Mover.standing_frames(mover) > 0 then
+				final_velocity.z = 0
 			else
-				var_8_28.z = var_8_26.z
+				final_velocity.z = wanted_velocity.z
 			end
 		else
-			var_8_27 = GwNavQueries.move_on_navmesh(nav_world, local_position, var_8_26, arg_8_2, var_8_12)
-			var_8_28 = var_8_26
+			final_position = GwNavQueries.move_on_navmesh(nav_world, current_position, wanted_velocity, dt, traverse_logic)
+			final_velocity = wanted_velocity
 		end
 
-		if not v.is_constrained then
-			var_8_27 = Vector3.clamp_3d(var_8_27, v.constrain_min, v.constrain_max)
+		if extension.is_constrained then
+			final_position = Vector3.clamp_3d(final_position, extension.constrain_min, extension.constrain_max)
 		end
 
-		set_local_position(k, 0, var_8_27)
-		set_local_rotation(k, 0, var_8_17)
-		v._velocity:store(var_8_28)
+		Unit_set_local_position(unit, 0, final_position)
+		Unit_set_local_rotation(unit, 0, wanted_rotation)
+		extension._velocity:store(final_velocity)
 
-		v._pos_lerp_time = 0
+		extension._pos_lerp_time = 0
 
-		v.last_lerp_position:store(var_8_27)
-		v.last_lerp_position_offset:store(Vector3(0, 0, 0))
-		v.accumulated_movement:store(Vector3(0, 0, 0))
+		extension.last_lerp_position:store(final_position)
+		extension.last_lerp_position_offset:store(Vector3(0, 0, 0))
+		extension.accumulated_movement:store(Vector3(0, 0, 0))
 
 		if mover ~= nil then
-			Mover.set_position(mover, var_8_27)
+			Mover.set_position(mover, final_position)
 		end
 
-		local var_8_30 = Vector3(var_8_28.x, var_8_28.y, 0)
-		local var_8_31 = length(var_8_30)
+		local flat_velocity = Vector3(final_velocity.x, final_velocity.y, 0)
+		local speed = Vector3_length(flat_velocity)
 
-		Unit.animation_set_variable(k, v._move_speed_anim_var, math.max(var_8_31, num_2))
+		Unit.animation_set_variable(unit, extension._move_speed_anim_var, math.max(speed, WALK_THRESHOLD))
 	end
 end

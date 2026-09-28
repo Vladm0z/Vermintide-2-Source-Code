@@ -1,6 +1,6 @@
 -- chunkname: @scripts/ui/views/popup_profile_picker_definitions.lua
 
-local tbl = {
+local scenegraph_definition = {
 	screen = {
 		scale = "fit",
 		size = {
@@ -266,7 +266,7 @@ local tbl = {
 		}
 	}
 }
-local tbl_2 = {
+local title_text_style = {
 	use_shadow = true,
 	upper_case = true,
 	localize = false,
@@ -282,7 +282,7 @@ local tbl_2 = {
 		2
 	}
 }
-local tbl_3 = {
+local window_sub_title_text_style = {
 	font_size = 24,
 	upper_case = false,
 	localize = false,
@@ -298,7 +298,7 @@ local tbl_3 = {
 		1
 	}
 }
-local tbl_4 = {
+local hero_career_style = {
 	font_size = 40,
 	upper_case = false,
 	localize = false,
@@ -315,7 +315,7 @@ local tbl_4 = {
 		2
 	}
 }
-local tbl_5 = {
+local hero_name_style = {
 	word_wrap = true,
 	font_size = 30,
 	localize = false,
@@ -330,7 +330,7 @@ local tbl_5 = {
 		2
 	}
 }
-local tbl_6 = {
+local hero_level_style = {
 	word_wrap = true,
 	font_size = 52,
 	localize = false,
@@ -345,7 +345,7 @@ local tbl_6 = {
 		2
 	}
 }
-local tbl_7 = {
+local timer_text_style = {
 	font_size = 46,
 	upper_case = false,
 	localize = false,
@@ -361,7 +361,7 @@ local tbl_7 = {
 		1
 	}
 }
-local tbl_8 = {
+local timer_title_text_style = {
 	font_size = 28,
 	upper_case = false,
 	localize = false,
@@ -378,7 +378,7 @@ local tbl_8 = {
 	}
 }
 
-local function fn(arg_1_0, arg_1_1, arg_1_2)
+local function create_gamepad_button(input_action, text, scenegraph_id)
 	-- function 1
 	return {
 		element = {
@@ -387,25 +387,25 @@ local function fn(arg_1_0, arg_1_1, arg_1_2)
 					style_id = "text",
 					pass_type = "text",
 					text_id = "text",
-					content_check_function = function (self)
+					content_check_function = function (content)
 						-- function 2
-						return self.is_gamepad_active
+						return content.is_gamepad_active
 					end
 				},
 				{
 					pass_type = "texture",
 					style_id = "icon",
 					texture_id = "icon",
-					content_check_function = function (self)
+					content_check_function = function (content)
 						-- function 3
-						return self.is_gamepad_active
+						return content.is_gamepad_active
 					end
 				}
 			}
 		},
 		content = {
-			input_action = arg_1_0,
-			text = arg_1_1 or ""
+			input_action = input_action,
+			text = not not text or not not ""
 		},
 		style = {
 			text = {
@@ -434,19 +434,19 @@ local function fn(arg_1_0, arg_1_1, arg_1_2)
 				}
 			}
 		},
-		scenegraph_id = arg_1_2
+		scenegraph_id = scenegraph_id
 	}
 end
 
-local function fn_2(arg_4_0, arg_4_1)
+local function create_hero_icon_widget(scenegraph_id, size)
 	-- function 4
-	arg_4_1 = arg_4_1 or {
+	size = not not size or not not {
 		108,
 		108
 	}
 
 	return {
-		scenegraph_id = arg_4_0,
+		scenegraph_id = scenegraph_id,
 		offset = {
 			0,
 			0,
@@ -462,31 +462,31 @@ local function fn_2(arg_4_0, arg_4_1)
 					pass_type = "texture",
 					style_id = "taken_texture",
 					texture_id = "taken_texture",
-					content_check_function = function (self)
+					content_check_function = function (content)
 						-- function 5
-						return self.taken
+						return content.taken
 					end
 				},
 				{
 					pass_type = "texture",
 					style_id = "glow",
 					texture_id = "glow",
-					content_check_function = function (self)
+					content_check_function = function (content)
 						-- function 6
-						return self.button_hotspot.is_selected
+						return content.button_hotspot.is_selected
 					end
 				},
 				{
 					style_id = "icon",
 					texture_id = "icon",
 					pass_type = "texture",
-					content_change_function = function (self, arg_7_1)
+					content_change_function = function (content, style)
 						-- function 7
-						local is_hover = self.button_hotspot.is_hover
-						local color = arg_7_1.color
+						local is_hover = content.button_hotspot.is_hover
+						local color = style.color
 						local flag
 
-						flag = not is_hover and 255 and 230
+						flag = (not is_hover or not 255) and not not 230
 						color[1] = flag
 					end
 				}
@@ -524,8 +524,8 @@ local function fn_2(arg_4_0, arg_4_1)
 					1
 				},
 				texture_size = {
-					1.9074074074074074 * arg_4_1[1],
-					1.9074074074074074 * arg_4_1[1]
+					1.9074074074074074 * size[1],
+					1.9074074074074074 * size[1]
 				}
 			},
 			icon = {
@@ -545,13 +545,13 @@ local function fn_2(arg_4_0, arg_4_1)
 	}
 end
 
-local var_0_10 = (function (arg_8_0, arg_8_1)
+local function create_hero_widget(scenegraph_id, size)
 	-- function 8
-	local str = "menu_frame_12"
-	local var_8_1 = UIFrameSettings[str]
-	local str_2 = "frame_outer_glow_01"
-	local var_8_3 = UIFrameSettings[str_2]
-	local var_8_4 = var_8_3.texture_sizes.horizontal[2]
+	local frame_style = "menu_frame_12"
+	local frame_settings = UIFrameSettings[frame_style]
+	local hover_frame_style = "frame_outer_glow_01"
+	local hover_frame_settings = UIFrameSettings[hover_frame_style]
+	local hover_frame_width = hover_frame_settings.texture_sizes.horizontal[2]
 
 	return {
 		element = {
@@ -559,37 +559,37 @@ local var_0_10 = (function (arg_8_0, arg_8_1)
 				{
 					pass_type = "hotspot",
 					content_id = "button_hotspot",
-					content_check_function = function (self)
+					content_check_function = function (content)
 						-- function 9
-						return self.parent.exists
+						return content.parent.exists
 					end
 				},
 				{
 					texture_id = "portrait",
 					style_id = "portrait",
 					pass_type = "texture",
-					content_check_function = function (self)
+					content_check_function = function (content)
 						-- function 10
-						return self.exists
+						return content.exists
 					end
 				},
 				{
 					style_id = "rect",
 					pass_type = "rect",
-					content_check_function = function (self)
+					content_check_function = function (content)
 						-- function 11
-						return self.exists
+						return content.exists
 					end
 				},
 				{
 					texture_id = "lock_texture",
 					style_id = "lock_texture",
 					pass_type = "texture",
-					content_check_function = function (self)
+					content_check_function = function (content)
 						-- function 12
-						local locked = self.locked
+						local locked = content.locked
 
-						locked = not locked and self.exists
+						locked = not not locked and not not content.exists
 
 						return locked
 					end
@@ -598,11 +598,11 @@ local var_0_10 = (function (arg_8_0, arg_8_1)
 					texture_id = "taken_texture",
 					style_id = "taken_texture",
 					pass_type = "texture",
-					content_check_function = function (self)
+					content_check_function = function (content)
 						-- function 13
-						local taken = self.taken
+						local taken = content.taken
 
-						taken = not taken and not not self.locked or self.exists
+						taken = not not taken and not content.locked and not not content.exists
 
 						return taken
 					end
@@ -611,29 +611,29 @@ local var_0_10 = (function (arg_8_0, arg_8_1)
 					pass_type = "texture_frame",
 					style_id = "frame",
 					texture_id = "frame",
-					content_check_function = function (self)
+					content_check_function = function (content)
 						-- function 14
-						return self.exists
+						return content.exists
 					end
 				},
 				{
 					style_id = "overlay",
 					pass_type = "rect",
-					content_check_function = function (self)
+					content_check_function = function (content)
 						-- function 15
-						local button_hotspot = self.button_hotspot
+						local button_hotspot = content.button_hotspot
 
-						return not not button_hotspot.is_hover or not not button_hotspot.is_selected or not not self.locked or self.exists
+						return not button_hotspot.is_hover and not button_hotspot.is_selected and not content.locked and not not content.exists
 					end
 				},
 				{
 					style_id = "overlay_locked",
 					pass_type = "rect",
-					content_check_function = function (self)
+					content_check_function = function (content)
 						-- function 16
-						local locked = self.locked
+						local locked = content.locked
 
-						locked = not locked and self.exists
+						locked = not not locked and not not content.exists
 
 						return locked
 					end
@@ -642,11 +642,11 @@ local var_0_10 = (function (arg_8_0, arg_8_1)
 					pass_type = "texture_frame",
 					style_id = "hover_frame",
 					texture_id = "hover_frame",
-					content_check_function = function (self)
+					content_check_function = function (content)
 						-- function 17
-						local is_selected = self.button_hotspot.is_selected
+						local is_selected = content.button_hotspot.is_selected
 
-						is_selected = not is_selected and self.exists
+						is_selected = not not is_selected and not not content.exists
 
 						return is_selected
 					end
@@ -654,34 +654,45 @@ local var_0_10 = (function (arg_8_0, arg_8_1)
 				{
 					pass_type = "hover",
 					content_id = "hover_hotspot",
-					content_check_function = function (self)
+					content_check_function = function (content)
 						-- function 18
-						return not self.parent.exists
+						return not content.parent.exists
 					end
 				},
 				{
 					pass_type = "texture",
 					style_id = "empty_slot",
 					texture_id = "empty_slot",
-					content_check_function = function (self)
+					content_check_function = function (content)
 						-- function 19
-						return not self.exists
+						return not content.exists
 					end
 				},
 				{
 					style_id = "hourglass",
 					texture_id = "hourglass",
 					pass_type = "texture",
-					content_check_function = function (self)
+					content_check_function = function (content)
 						-- function 20
-						return not self.exists
+						return not content.exists
 					end,
-					content_change_function = function (self, arg_21_1)
+					content_change_function = function (content, style)
 						-- function 21
-						local flag
+						local num
 
-						flag = not self.is_hover and 255 and 184
-						arg_21_1.color[1] = math.ceil(arg_21_1.color[1] + 0.1 * (flag - arg_21_1.color[1]))
+						if content.is_hover then
+							num = 255
+
+							goto label_21_0
+						end
+
+						num = 184
+
+						local target = num
+
+						::label_21_0::
+
+						style.color[1] = math.ceil(style.color[1] + 0.1 * (target - style.color[1]))
 					end
 				}
 			}
@@ -696,15 +707,15 @@ local var_0_10 = (function (arg_8_0, arg_8_1)
 			taken = false,
 			exists = false,
 			button_hotspot = {},
-			frame = var_8_1.texture,
-			hover_frame = var_8_3.texture,
+			frame = frame_settings.texture,
+			hover_frame = hover_frame_settings.texture,
 			hover_hotspot = {}
 		},
 		style = {
 			rect = {
 				vertical_alignment = "center",
 				horizontal_alignment = "center",
-				texture_size = arg_8_1,
+				texture_size = size,
 				color = {
 					200,
 					0,
@@ -720,7 +731,7 @@ local var_0_10 = (function (arg_8_0, arg_8_1)
 			portrait = {
 				vertical_alignment = "center",
 				horizontal_alignment = "center",
-				texture_size = arg_8_1,
+				texture_size = size,
 				color = {
 					255,
 					255,
@@ -774,7 +785,7 @@ local var_0_10 = (function (arg_8_0, arg_8_1)
 			overlay = {
 				vertical_alignment = "center",
 				horizontal_alignment = "center",
-				texture_size = arg_8_1,
+				texture_size = size,
 				color = {
 					80,
 					0,
@@ -790,7 +801,7 @@ local var_0_10 = (function (arg_8_0, arg_8_1)
 			overlay_locked = {
 				vertical_alignment = "center",
 				horizontal_alignment = "center",
-				texture_size = arg_8_1,
+				texture_size = size,
 				color = {
 					200,
 					0,
@@ -804,8 +815,8 @@ local var_0_10 = (function (arg_8_0, arg_8_1)
 				}
 			},
 			frame = {
-				texture_size = var_8_1.texture_size,
-				texture_sizes = var_8_1.texture_sizes,
+				texture_size = frame_settings.texture_size,
+				texture_sizes = frame_settings.texture_sizes,
 				color = {
 					255,
 					255,
@@ -820,11 +831,11 @@ local var_0_10 = (function (arg_8_0, arg_8_1)
 			},
 			hover_frame = {
 				size = {
-					arg_8_1[1] + var_8_4 * 2,
-					arg_8_1[2] + var_8_4 * 2
+					size[1] + hover_frame_width * 2,
+					size[2] + hover_frame_width * 2
 				},
-				texture_size = var_8_3.texture_size,
-				texture_sizes = var_8_3.texture_sizes,
+				texture_size = hover_frame_settings.texture_size,
+				texture_sizes = hover_frame_settings.texture_sizes,
 				color = {
 					255,
 					255,
@@ -832,13 +843,13 @@ local var_0_10 = (function (arg_8_0, arg_8_1)
 					255
 				},
 				offset = {
-					-var_8_4,
-					-var_8_4,
+					-hover_frame_width,
+					-hover_frame_width,
 					0
 				}
 			},
 			empty_slot = {
-				texture_size = arg_8_1,
+				texture_size = size,
 				offset = {
 					0,
 					0,
@@ -865,20 +876,22 @@ local var_0_10 = (function (arg_8_0, arg_8_1)
 			0,
 			0
 		},
-		scenegraph_id = arg_8_0
+		scenegraph_id = scenegraph_id
 	}
-end)("hero_root", tbl.hero_root.size)
-local var_0_11 = fn_2("hero_icon_root", tbl.hero_icon_root.size)
-local flag = true
-local tbl_9 = {
-	window = UIWidgets.create_background_with_frame("window", tbl.window.size, "menu_frame_bg_02", "menu_frame_11"),
+end
+
+local hero_widget_definition = create_hero_widget("hero_root", scenegraph_definition.hero_root.size)
+local hero_icon_widget_definition = create_hero_icon_widget("hero_icon_root", scenegraph_definition.hero_icon_root.size)
+local disable_with_gamepad = true
+local widget_definitions = {
+	window = UIWidgets.create_background_with_frame("window", scenegraph_definition.window.size, "menu_frame_bg_02", "menu_frame_11"),
 	window_shadow = UIWidgets.create_simple_texture("options_window_fade_01", "window", nil, nil, nil, 1),
 	title = UIWidgets.create_simple_texture("frame_title_bg", "title"),
-	title_bg = UIWidgets.create_background("title_bg", tbl.title_bg.size, "menu_frame_bg_02"),
-	title_text = UIWidgets.create_simple_text(Localize("join_popup_title"), "title_text", nil, nil, tbl_2),
-	window_sub_title = UIWidgets.create_simple_text(Localize("join_popup_sub_title"), "window_sub_title", nil, nil, tbl_3),
-	select_button = UIWidgets.create_default_button("select_button", tbl.select_button.size, nil, nil, Localize("input_description_confirm"), nil, nil, nil, nil, flag),
-	cancel_button = UIWidgets.create_default_button("cancel_button", tbl.cancel_button.size, nil, nil, Localize("input_description_cancel"), nil, nil, nil, nil, flag),
+	title_bg = UIWidgets.create_background("title_bg", scenegraph_definition.title_bg.size, "menu_frame_bg_02"),
+	title_text = UIWidgets.create_simple_text(Localize("join_popup_title"), "title_text", nil, nil, title_text_style),
+	window_sub_title = UIWidgets.create_simple_text(Localize("join_popup_sub_title"), "window_sub_title", nil, nil, window_sub_title_text_style),
+	select_button = UIWidgets.create_default_button("select_button", scenegraph_definition.select_button.size, nil, nil, Localize("input_description_confirm"), nil, nil, nil, nil, disable_with_gamepad),
+	cancel_button = UIWidgets.create_default_button("cancel_button", scenegraph_definition.cancel_button.size, nil, nil, Localize("input_description_cancel"), nil, nil, nil, nil, disable_with_gamepad),
 	hero_info_panel = UIWidgets.create_simple_texture("item_slot_side_fade", "hero_info_panel", nil, nil, {
 		255,
 		0,
@@ -887,13 +900,13 @@ local tbl_9 = {
 	}),
 	hero_info_panel_glow = UIWidgets.create_simple_texture("item_slot_side_effect", "hero_info_panel", nil, nil, Colors.get_color_table_with_alpha("font_title", 255), 1),
 	hero_info_level_bg = UIWidgets.create_simple_texture("hero_level_bg", "hero_info_level_bg"),
-	info_career_name = UIWidgets.create_simple_text("n/a", "info_career_name", nil, nil, tbl_4),
-	info_hero_name = UIWidgets.create_simple_text("n/a", "info_hero_name", nil, nil, tbl_5),
-	info_hero_level = UIWidgets.create_simple_text("n/a", "info_hero_level", nil, nil, tbl_6),
-	timer_text = UIWidgets.create_simple_text("00:00", "timer_text", nil, nil, tbl_7),
-	timer_title_text = UIWidgets.create_simple_text(Localize("join_popup_timer_title"), "timer_title_text", nil, nil, tbl_8)
+	info_career_name = UIWidgets.create_simple_text("n/a", "info_career_name", nil, nil, hero_career_style),
+	info_hero_name = UIWidgets.create_simple_text("n/a", "info_hero_name", nil, nil, hero_name_style),
+	info_hero_level = UIWidgets.create_simple_text("n/a", "info_hero_level", nil, nil, hero_level_style),
+	timer_text = UIWidgets.create_simple_text("00:00", "timer_text", nil, nil, timer_text_style),
+	timer_title_text = UIWidgets.create_simple_text(Localize("join_popup_timer_title"), "timer_title_text", nil, nil, timer_title_text_style)
 }
-local tbl_10 = {
+local generic_input_actions = {
 	default = {
 		{
 			input_action = "l1_r1",
@@ -925,9 +938,9 @@ local tbl_10 = {
 }
 
 return {
-	scenegraph_definition = tbl,
-	widget_definitions = tbl_9,
-	hero_widget_definition = var_0_10,
-	hero_icon_widget_definition = var_0_11,
-	generic_input_actions = tbl_10
+	scenegraph_definition = scenegraph_definition,
+	widget_definitions = widget_definitions,
+	hero_widget_definition = hero_widget_definition,
+	hero_icon_widget_definition = hero_icon_widget_definition,
+	generic_input_actions = generic_input_actions
 }

@@ -2,41 +2,41 @@
 
 require("core/gwnav/lua/safe_require")
 
-local var_0_0 = safe_require_guard()
+local NavClass = safe_require_guard()
 
-var_0_0.NavClass = function (self, arg_1_1)
+NavClass.NavClass = function (class, super)
 	-- function 1
-	self = self or {}
+	class = not not class or not not {}
 
-	if next(self) == nil then
-		local tbl = {
-			__call = function (arg_2_0, ...)
-				-- function 2
-				local tbl = {}
+	if next(class) == nil then
+		local meta = {}
 
-				setmetatable(tbl, self)
+		meta.__call = function (self, ...)
+			-- function 2
+			local object = {}
 
-				if not tbl.init then
-					tbl:init(...)
-				end
+			setmetatable(object, class)
 
-				return tbl
+			if object.init then
+				object:init(...)
 			end
-		}
 
-		setmetatable(self, tbl)
+			return object
+		end
+
+		setmetatable(class, meta)
 	end
 
-	if not arg_1_1 then
-		for k, v in pairs(arg_1_1) do
-			self[k] = v
+	if super then
+		for k, v in pairs(super) do
+			class[k] = v
 		end
 	end
 
-	self.Super = arg_1_1
-	self.__index = self
+	class.Super = super
+	class.__index = class
 
-	return self
+	return class
 end
 
-return var_0_0.NavClass
+return NavClass.NavClass

@@ -1,6 +1,6 @@
 -- chunkname: @scripts/ui/views/twitch_view_definitions.lua
 
-local tbl = {
+local scenegraph_definition = {
 	root = {
 		is_root = true,
 		position = {
@@ -222,16 +222,16 @@ local tbl = {
 	}
 }
 
-local function fn(arg_1_0, arg_1_1)
+local function create_window(scenegraph_id, size)
 	-- function 1
-	local str = "menu_frame_bg_01"
-	local get_atlas_settings_by_texture_name = UIAtlasHelper.get_atlas_settings_by_texture_name(str)
-	local menu_frame_02 = UIFrameSettings.menu_frame_02
-	local menu_frame_06 = UIFrameSettings.menu_frame_06
-	local tbl = {
+	local background_texture = "menu_frame_bg_01"
+	local background_texture_settings = UIAtlasHelper.get_atlas_settings_by_texture_name(background_texture)
+	local frame_settings = UIFrameSettings.menu_frame_02
+	local inner_frame_settings = UIFrameSettings.menu_frame_06
+	local widget = {
 		element = {}
 	}
-	local tbl_2 = {
+	local passes = {
 		{
 			scenegraph_id = "popup_text_box",
 			pass_type = "hotspot",
@@ -265,17 +265,17 @@ local function fn(arg_1_0, arg_1_1)
 		{
 			style_id = "inner_rect",
 			pass_type = "rect",
-			content_check_function = function (arg_2_0, arg_2_1)
+			content_check_function = function (content, style)
 				-- function 2
-				return not not Managers.twitch:is_connected() or not Managers.twitch:is_connecting()
+				return not Managers.twitch:is_connected() and not not not Managers.twitch:is_connecting()
 			end
 		},
 		{
 			style_id = "inner_inner_rect",
 			pass_type = "rect",
-			content_check_function = function (arg_3_0, arg_3_1)
+			content_check_function = function (content, style)
 				-- function 3
-				return not not Managers.twitch:is_connected() or not Managers.twitch:is_connecting()
+				return not Managers.twitch:is_connected() and not not not Managers.twitch:is_connecting()
 			end
 		},
 		{
@@ -286,14 +286,16 @@ local function fn(arg_1_0, arg_1_1)
 			style_id = "text",
 			pass_type = "text",
 			text_id = "text_field",
-			content_check_function = function (self, arg_4_1)
+			content_check_function = function (content, style)
 				-- function 4
-				if not Managers.twitch:is_connected() then
+				local connected = Managers.twitch:is_connected()
+
+				if connected then
 					local user_name = Managers.twitch:user_name()
 
-					self.text_field = Localize("start_game_window_twitch_confirm_connection") .. user_name
+					content.text_field = Localize("start_game_window_twitch_confirm_connection") .. user_name
 				else
-					self.text_field = Localize("start_game_window_twitch_connect_description")
+					content.text_field = Localize("start_game_window_twitch_connect_description")
 				end
 
 				return true
@@ -308,17 +310,19 @@ local function fn(arg_1_0, arg_1_1)
 			style_id = "login_hint",
 			pass_type = "text",
 			text_id = "login_hint",
-			content_check_function = function (self, arg_5_1)
+			content_check_function = function (content, style)
 				-- function 5
-				if not self.text_input_hotspot.is_hover then
-					arg_5_1.text_color = {
+				local hotspot = content.text_input_hotspot
+
+				if hotspot.is_hover then
+					style.text_color = {
 						128,
 						255,
 						255,
 						255
 					}
 				else
-					arg_5_1.text_color = {
+					style.text_color = {
 						60,
 						255,
 						255,
@@ -326,38 +330,40 @@ local function fn(arg_1_0, arg_1_1)
 					}
 				end
 
-				return self.twitch_name ~= "" or not not Managers.twitch:is_connected() or not not self.text_field_active or not Managers.twitch:is_connecting()
+				return content.twitch_name == "" and not Managers.twitch:is_connected() and not content.text_field_active and not not not Managers.twitch:is_connecting()
 			end
 		},
 		{
 			style_id = "twitch_name",
 			pass_type = "text",
 			text_id = "twitch_name",
-			content_check_function = function (self, arg_6_1)
+			content_check_function = function (content, style)
 				-- function 6
-				if not self.text_field_active then
-					arg_6_1.caret_color[1] = 0
+				if not content.text_field_active then
+					style.caret_color[1] = 0
 				else
-					arg_6_1.caret_color[1] = 128 + math.sin(Managers.time:time("ui") * 5) * 128
+					style.caret_color[1] = 128 + math.sin(Managers.time:time("ui") * 5) * 128
 				end
 
-				return not not Managers.twitch:is_connected() or not Managers.twitch:is_connecting()
+				return not Managers.twitch:is_connected() and not not not Managers.twitch:is_connecting()
 			end
 		},
 		{
 			style_id = "connecting",
 			pass_type = "text",
 			text_id = "connecting_id",
-			content_check_function = function (self, arg_7_1)
+			content_check_function = function (content, style)
 				-- function 7
-				if not Managers.twitch:is_connecting() then
+				local is_connecting = Managers.twitch:is_connecting()
+
+				if not is_connecting then
 					return
 				end
 
-				local num = 10 * Managers.time:time("ui")
-				local rep = string.rep(".", num % 5)
+				local timer = 10 * Managers.time:time("ui")
+				local dot_str = string.rep(".", timer % 5)
 
-				self.connecting_id = "Connecting" .. rep
+				content.connecting_id = "Connecting" .. dot_str
 
 				return true
 			end
@@ -366,12 +372,12 @@ local function fn(arg_1_0, arg_1_1)
 			style_id = "error_field",
 			pass_type = "text",
 			text_id = "error_id",
-			content_check_function = function (arg_8_0, arg_8_1)
+			content_check_function = function (content, style)
 				-- function 8
 				local is_connecting = Managers.twitch:is_connecting()
 				local is_connected = Managers.twitch:is_connected()
 
-				if is_connecting or not is_connected then
+				if is_connecting or is_connected then
 					return
 				end
 
@@ -379,7 +385,7 @@ local function fn(arg_1_0, arg_1_1)
 			end
 		}
 	}
-	local tbl_3 = {
+	local content = {
 		text_field_active = false,
 		text_start_offset = 0,
 		connecting_id = "Connecting",
@@ -393,7 +399,7 @@ local function fn(arg_1_0, arg_1_1)
 		caret_index = 1,
 		login_hint = "Type your username here",
 		play_text_field = "Play with",
-		frame = menu_frame_02.texture,
+		frame = frame_settings.texture,
 		background = {
 			uvs = {
 				{
@@ -401,17 +407,17 @@ local function fn(arg_1_0, arg_1_1)
 					0
 				},
 				{
-					math.min(arg_1_1[1] / get_atlas_settings_by_texture_name.size[1], 1),
-					math.min(arg_1_1[2] / get_atlas_settings_by_texture_name.size[2], 1)
+					math.min(size[1] / background_texture_settings.size[1], 1),
+					math.min(size[2] / background_texture_settings.size[2], 1)
 				}
 			},
-			texture_id = str
+			texture_id = background_texture
 		},
 		text_input_hotspot = {},
 		screen_hotspot = {},
 		frame_hotspot = {}
 	}
-	local tbl_4 = {
+	local style = {
 		background = {
 			color = {
 				255,
@@ -426,8 +432,8 @@ local function fn(arg_1_0, arg_1_1)
 			}
 		},
 		frame = {
-			texture_size = menu_frame_02.texture_size,
-			texture_sizes = menu_frame_02.texture_sizes,
+			texture_size = frame_settings.texture_size,
+			texture_sizes = frame_settings.texture_sizes,
 			color = {
 				255,
 				255,
@@ -658,20 +664,20 @@ local function fn(arg_1_0, arg_1_1)
 		}
 	}
 
-	tbl.element.passes = tbl_2
-	tbl.content = tbl_3
-	tbl.style = tbl_4
-	tbl.offset = {
+	widget.element.passes = passes
+	widget.content = content
+	widget.style = style
+	widget.offset = {
 		0,
 		0,
 		0
 	}
-	tbl.scenegraph_id = arg_1_0
+	widget.scenegraph_id = scenegraph_id
 
-	return tbl
+	return widget
 end
 
-local tbl_2 = {
+local chat_output_widget = {
 	scenegraph_id = "feed_area",
 	element = {
 		passes = {
@@ -679,7 +685,7 @@ local tbl_2 = {
 				pass_type = "texture",
 				style_id = "mask",
 				texture_id = "mask_id",
-				content_check_function = function (arg_9_0)
+				content_check_function = function (content)
 					-- function 9
 					return Managers.twitch:is_connected()
 				end
@@ -687,7 +693,7 @@ local tbl_2 = {
 			{
 				style_id = "edge",
 				pass_type = "rounded_background",
-				content_check_function = function (arg_10_0)
+				content_check_function = function (content)
 					-- function 10
 					return Managers.twitch:is_connected()
 				end
@@ -695,7 +701,7 @@ local tbl_2 = {
 			{
 				style_id = "background",
 				pass_type = "rounded_background",
-				content_check_function = function (arg_11_0)
+				content_check_function = function (content)
 					-- function 11
 					return Managers.twitch:is_connected()
 				end
@@ -704,7 +710,7 @@ local tbl_2 = {
 				style_id = "text",
 				pass_type = "text_area_chat",
 				text_id = "text_field",
-				content_check_function = function (arg_12_0)
+				content_check_function = function (content)
 					-- function 12
 					return Managers.twitch:is_connected()
 				end
@@ -778,17 +784,17 @@ local tbl_2 = {
 		}
 	}
 }
-local tbl_3 = {
+local widget_definitions = {
 	widgets = {
-		frame_widget = fn("popup_root", tbl.popup_root.size),
-		chat_output_widget = tbl_2,
+		frame_widget = create_window("popup_root", scenegraph_definition.popup_root.size),
+		chat_output_widget = chat_output_widget,
 		exit_button = UIWidgets.create_simple_two_state_button("exit_button", "tabs_icon_close", "tabs_icon_close_glow")
 	},
-	connect_button = UIWidgets.create_default_button("twitch_connect_button", tbl.twitch_connect_button.size, nil, nil, "connect"),
-	disconnect_button = UIWidgets.create_default_button("twitch_disconnect_button", tbl.twitch_disconnect_button.size, nil, nil, "disconnect")
+	connect_button = UIWidgets.create_default_button("twitch_connect_button", scenegraph_definition.twitch_connect_button.size, nil, nil, "connect"),
+	disconnect_button = UIWidgets.create_default_button("twitch_disconnect_button", scenegraph_definition.twitch_disconnect_button.size, nil, nil, "disconnect")
 }
 
 return {
-	scenegraph_definition = tbl,
-	widget_definitions = tbl_3
+	scenegraph_definition = scenegraph_definition,
+	widget_definitions = widget_definitions
 }

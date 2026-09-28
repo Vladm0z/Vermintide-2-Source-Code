@@ -1,32 +1,32 @@
 -- chunkname: @scripts/ui/views/start_game_view/windows/definitions/start_game_window_mutator_grid_console_definitions.lua
 
-local game_start_windows = UISettings.game_start_windows
-local frame = game_start_windows.frame
-local size = game_start_windows.size
-local var_0_3 = UIFrameSettings[frame].texture_sizes.vertical[1]
-local num = size[1] - (var_0_3 * 2 + 60)
-local tbl = {
-	size[1],
-	size[2]
+local window_default_settings = UISettings.game_start_windows
+local window_frame = window_default_settings.frame
+local window_size = window_default_settings.size
+local window_frame_width = UIFrameSettings[window_frame].texture_sizes.vertical[1]
+local window_text_width = window_size[1] - (window_frame_width * 2 + 60)
+local actual_window_size = {
+	window_size[1],
+	window_size[2]
 }
-local tbl_2 = {
+local animation_definitions = {
 	on_enter = {
 		{
 			name = "fade_in",
 			start_progress = 0,
 			end_progress = 0.3,
-			init = function (arg_1_0, arg_1_1, arg_1_2, arg_1_3)
+			init = function (ui_scenegraph, scenegraph_definition, widgets, params)
 				-- function 1
-				arg_1_3.render_settings.alpha_multiplier = 0
+				params.render_settings.alpha_multiplier = 0
 			end,
-			update = function (arg_2_0, arg_2_1, arg_2_2, arg_2_3, arg_2_4)
+			update = function (ui_scenegraph, scenegraph_definition, widgets, progress, params)
 				-- function 2
-				local easeOutCubic = math.easeOutCubic(arg_2_3)
+				local anim_progress = math.easeOutCubic(progress)
 
-				arg_2_4.render_settings.alpha_multiplier = easeOutCubic
-				arg_2_0.actual_window.local_position[2] = arg_2_1.actual_window.position[2] + math.floor(-100 * (1 - easeOutCubic))
+				params.render_settings.alpha_multiplier = anim_progress
+				ui_scenegraph.actual_window.local_position[2] = scenegraph_definition.actual_window.position[2] + math.floor(-100 * (1 - anim_progress))
 			end,
-			on_complete = function (arg_3_0, arg_3_1, arg_3_2, arg_3_3)
+			on_complete = function (ui_scenegraph, scenegraph_definition, widgets, params)
 				-- function 3
 				return
 			end
@@ -37,24 +37,24 @@ local tbl_2 = {
 			name = "fade_out",
 			start_progress = 0,
 			end_progress = 0.3,
-			init = function (arg_4_0, arg_4_1, arg_4_2, arg_4_3)
+			init = function (ui_scenegraph, scenegraph_definition, widgets, params)
 				-- function 4
-				arg_4_3.render_settings.alpha_multiplier = 1
+				params.render_settings.alpha_multiplier = 1
 			end,
-			update = function (arg_5_0, arg_5_1, arg_5_2, arg_5_3, arg_5_4)
+			update = function (ui_scenegraph, scenegraph_definition, widgets, progress, params)
 				-- function 5
-				local easeOutCubic = math.easeOutCubic(arg_5_3)
+				local anim_progress = math.easeOutCubic(progress)
 
-				arg_5_4.render_settings.alpha_multiplier = 1 - easeOutCubic
+				params.render_settings.alpha_multiplier = 1 - anim_progress
 			end,
-			on_complete = function (arg_6_0, arg_6_1, arg_6_2, arg_6_3)
+			on_complete = function (ui_scenegraph, scenegraph_definition, widgets, params)
 				-- function 6
 				return
 			end
 		}
 	}
 }
-local tbl_3 = {
+local scenegraph_definition = {
 	root = {
 		is_root = true,
 		size = {
@@ -97,7 +97,7 @@ local tbl_3 = {
 		vertical_alignment = "center",
 		parent = "menu_root",
 		horizontal_alignment = "left",
-		size = size,
+		size = window_size,
 		position = {
 			220,
 			0,
@@ -137,7 +137,7 @@ local tbl_3 = {
 		parent = "window",
 		horizontal_alignment = "center",
 		size = {
-			size[1] + 90,
+			window_size[1] + 90,
 			100
 		},
 		position = {
@@ -151,7 +151,7 @@ local tbl_3 = {
 		parent = "heroic_deed_background",
 		horizontal_alignment = "center",
 		size = {
-			size[1],
+			window_size[1],
 			50
 		},
 		position = {
@@ -178,7 +178,7 @@ local tbl_3 = {
 		vertical_alignment = "center",
 		parent = "window",
 		horizontal_alignment = "left",
-		size = tbl,
+		size = actual_window_size,
 		position = {
 			0,
 			0,
@@ -189,7 +189,7 @@ local tbl_3 = {
 		vertical_alignment = "center",
 		parent = "actual_window",
 		horizontal_alignment = "center",
-		size = tbl,
+		size = actual_window_size,
 		position = {
 			0,
 			50,
@@ -229,7 +229,7 @@ local tbl_3 = {
 		parent = "title_text_detail",
 		horizontal_alignment = "center",
 		size = {
-			size[1],
+			window_size[1],
 			50
 		},
 		position = {
@@ -243,8 +243,8 @@ local tbl_3 = {
 		parent = "window",
 		horizontal_alignment = "center",
 		size = {
-			num,
-			size[2] / 2
+			window_text_width,
+			window_size[2] / 2
 		},
 		position = {
 			0,
@@ -365,7 +365,7 @@ local tbl_3 = {
 		}
 	}
 }
-local tbl_4 = {
+local page_number_left_text_style = {
 	word_wrap = true,
 	font_size = 26,
 	localize = false,
@@ -380,7 +380,7 @@ local tbl_4 = {
 		2
 	}
 }
-local tbl_5 = {
+local page_number_right_text_style = {
 	word_wrap = true,
 	font_size = 26,
 	localize = false,
@@ -395,7 +395,7 @@ local tbl_5 = {
 		2
 	}
 }
-local tbl_6 = {
+local page_number_center_text_style = {
 	word_wrap = true,
 	font_size = 26,
 	localize = false,
@@ -410,7 +410,7 @@ local tbl_6 = {
 		2
 	}
 }
-local tbl_7 = {
+local heroic_deed_title_style = {
 	font_size = 50,
 	upper_case = true,
 	localize = false,
@@ -427,7 +427,7 @@ local tbl_7 = {
 		2
 	}
 }
-local tbl_8 = {
+local mark_deeds_text_style = {
 	font_size = 28,
 	upper_case = false,
 	localize = false,
@@ -442,16 +442,16 @@ local tbl_8 = {
 		2
 	}
 }
-local num_2 = 5
-local num_3 = 7
-local num_4 = 12
-local num_5 = 12
-local flag = false
-local tbl_9 = {
-	heroic_deed_description_background = UIWidgets.create_rect_with_outer_frame("heroic_deed_background", tbl_3.heroic_deed_background.size, "frame_outer_fade_02", nil, UISettings.console_start_game_menu_rect_color),
-	heroic_deed_title = UIWidgets.create_simple_text(Localize("start_game_window_mutator_title"), "heroic_deed_title", nil, nil, tbl_7),
+local rows = 5
+local slots_per_row = 7
+local slot_width_spacing = 12
+local slot_height_spacing = 12
+local use_pages = false
+local widgets = {
+	heroic_deed_description_background = UIWidgets.create_rect_with_outer_frame("heroic_deed_background", scenegraph_definition.heroic_deed_background.size, "frame_outer_fade_02", nil, UISettings.console_start_game_menu_rect_color),
+	heroic_deed_title = UIWidgets.create_simple_text(Localize("start_game_window_mutator_title"), "heroic_deed_title", nil, nil, heroic_deed_title_style),
 	heroic_deed_divider = UIWidgets.create_simple_texture("divider_01_top", "heroic_deed_divider"),
-	item_grid = UIWidgets.create_grid("item_grid", tbl_3.item_grid.size, num_2, num_3, num_4, num_5, flag, nil, true),
+	item_grid = UIWidgets.create_grid("item_grid", scenegraph_definition.item_grid.size, rows, slots_per_row, slot_width_spacing, slot_height_spacing, use_pages, nil, true),
 	input_icon_next = UIWidgets.create_simple_texture("xbone_button_icon_a", "input_icon_next"),
 	input_icon_previous = UIWidgets.create_simple_texture("xbone_button_icon_a", "input_icon_previous"),
 	input_arrow_next = UIWidgets.create_simple_uv_texture("settings_arrow_normal", {
@@ -467,12 +467,12 @@ local tbl_9 = {
 	input_arrow_previous = UIWidgets.create_simple_texture("settings_arrow_normal", "page_button_previous"),
 	page_button_next = UIWidgets.create_arrow_button("page_button_next", math.pi),
 	page_button_previous = UIWidgets.create_arrow_button("page_button_previous"),
-	page_text_center = UIWidgets.create_simple_text("/", "page_text_area", nil, nil, tbl_6),
-	page_text_left = UIWidgets.create_simple_text("0", "page_text_area", nil, nil, tbl_4),
-	page_text_right = UIWidgets.create_simple_text("0", "page_text_area", nil, nil, tbl_5),
+	page_text_center = UIWidgets.create_simple_text("/", "page_text_area", nil, nil, page_number_center_text_style),
+	page_text_left = UIWidgets.create_simple_text("0", "page_text_area", nil, nil, page_number_left_text_style),
+	page_text_right = UIWidgets.create_simple_text("0", "page_text_area", nil, nil, page_number_right_text_style),
 	page_text_area = UIWidgets.create_simple_texture("tab_menu_bg_03", "page_text_area")
 }
-local tbl_10 = {
+local overlay_widgets = {
 	claim_overlay = UIWidgets.create_simple_rect("deletion_overlay_background", {
 		220,
 		12,
@@ -483,19 +483,19 @@ local tbl_10 = {
 	claim_overlay_loading_glow = UIWidgets.create_simple_texture("loading_title_divider", "deletion_overlay", nil, nil, nil, 1),
 	claim_overlay_loading_frame = UIWidgets.create_simple_texture("loading_title_divider_background", "deletion_overlay")
 }
-local tbl_11 = {
+local delete_deeds_button_widgets = {
 	mark_deeds_text = UIWidgets.create_simple_text(string.format(Localize("mark_deeds_text"), "$KEY;start_game_view__mouse_middle_press:"), "mark_deeds_text_anchor", {
 		600,
 		100
-	}, nil, tbl_8, nil, false, true),
-	button_clear = UIWidgets.create_default_button("clear_bottons_anchor", tbl_3.clear_bottons_anchor.size, nil, nil, Localize("button_clear_all"), 21, nil, nil, nil, true, true),
-	button_delete = UIWidgets.create_default_button("delete_bottons_anchor", tbl_3.delete_bottons_anchor.size, nil, nil, Localize("button_delete_selected"), 21, nil, nil, nil, true, true)
+	}, nil, mark_deeds_text_style, nil, false, true),
+	button_clear = UIWidgets.create_default_button("clear_bottons_anchor", scenegraph_definition.clear_bottons_anchor.size, nil, nil, Localize("button_clear_all"), 21, nil, nil, nil, true, true),
+	button_delete = UIWidgets.create_default_button("delete_bottons_anchor", scenegraph_definition.delete_bottons_anchor.size, nil, nil, Localize("button_delete_selected"), 21, nil, nil, nil, true, true)
 }
 
 return {
-	widgets = tbl_9,
-	scenegraph_definition = tbl_3,
-	animation_definitions = tbl_2,
-	delete_deeds_button_widgets = tbl_11,
-	overlay_widgets = tbl_10
+	widgets = widgets,
+	scenegraph_definition = scenegraph_definition,
+	animation_definitions = animation_definitions,
+	delete_deeds_button_widgets = delete_deeds_button_widgets,
+	overlay_widgets = overlay_widgets
 }

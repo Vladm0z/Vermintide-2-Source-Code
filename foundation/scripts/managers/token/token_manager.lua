@@ -7,26 +7,26 @@ TokenManager.init = function (self)
 	self._tokens = {}
 end
 
-TokenManager.register_token = function (arg_2_0, arg_2_1, arg_2_2, arg_2_3)
+TokenManager.register_token = function (self, token, callback, timeout)
 	-- function 2
-	arg_2_0._tokens[#arg_2_0._tokens + 1] = {
-		token = arg_2_1,
-		callback = arg_2_2,
-		timeout = arg_2_3 or math.huge
+	self._tokens[#self._tokens + 1] = {
+		token = token,
+		callback = callback,
+		timeout = not not timeout or not not math.huge
 	}
 end
 
-TokenManager.update = function (self, arg_3_1, arg_3_2)
+TokenManager.update = function (self, dt, t)
 	-- function 3
-	for k, v in pairs(self._tokens) do
-		local token = v.token
+	for id, entry in pairs(self._tokens) do
+		local token = entry.token
 
 		token:update()
 
-		if not (token:done() or not (arg_3_2 >= v.timeout)) then
-			local callback = v.callback
+		if token:done() or t >= entry.timeout then
+			local callback = entry.callback
 
-			if not callback then
+			if callback then
 				local info = token:info()
 
 				callback(info)
@@ -34,17 +34,19 @@ TokenManager.update = function (self, arg_3_1, arg_3_2)
 
 			token:close()
 
-			self._tokens[k] = nil
+			self._tokens[id] = nil
 		end
 	end
 end
 
 TokenManager.destroy = function (self)
 	-- function 4
-	for k, v in pairs(self._tokens) do
-		v.token:close()
+	for id, entry in pairs(self._tokens) do
+		local token = entry.token
 
-		self._tokens[k] = nil
+		token:close()
+
+		self._tokens[id] = nil
 	end
 
 	self._tokens = nil

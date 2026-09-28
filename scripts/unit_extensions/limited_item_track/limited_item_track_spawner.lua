@@ -4,27 +4,28 @@ require("scripts/unit_extensions/limited_item_track/limited_item_track_spawner_t
 
 LimitedItemTrackSpawner = class(LimitedItemTrackSpawner)
 
-LimitedItemTrackSpawner.init = function (self, arg_1_1, arg_1_2, arg_1_3)
+LimitedItemTrackSpawner.init = function (self, world, unit, extension_init_data)
 	-- function 1
 	assert(Managers.player.is_server, "Spawner should only exist on server")
-	assert(arg_1_3.pool > 0, "Can't have pool less than 1")
+	assert(extension_init_data.pool > 0, "Can't have pool less than 1")
 
-	self.world = arg_1_1
-	self.unit = arg_1_2
+	self.world = world
+	self.unit = unit
 	self.num_items = 0
 	self.items = {}
 	self.socketed_items = {}
 	self.num_socketed_items = 0
-	self.pool = arg_1_3.pool
-	self.template_name = arg_1_3.template_name
+	self.pool = extension_init_data.pool
+	self.template_name = extension_init_data.template_name
 	self.time_between_spawns = 2
 	self.time_to_spawn = 0
 	self.pool_exhausted = false
-	self.network_manager = arg_1_3.network_manager
+	self.network_manager = extension_init_data.network_manager
 
 	local template_name = self.template_name
+	local init_func = LimitedItemTrackSpawnerTemplates[template_name].init_func
 
-	self.spawn_data = LimitedItemTrackSpawnerTemplates[template_name].init_func(arg_1_1, arg_1_2, arg_1_3)
+	self.spawn_data = init_func(world, unit, extension_init_data)
 end
 
 LimitedItemTrackSpawner.extensions_ready = function (self)
@@ -32,49 +33,54 @@ LimitedItemTrackSpawner.extensions_ready = function (self)
 	Unit.flow_event(self.unit, "lua_spawner_initialized")
 end
 
-LimitedItemTrackSpawner.destroy = function (arg_3_0)
+LimitedItemTrackSpawner.destroy = function (self)
 	-- function 3
 	return
 end
 
-LimitedItemTrackSpawner.update = function (arg_4_0, arg_4_1, arg_4_2, arg_4_3, arg_4_4, arg_4_5)
+LimitedItemTrackSpawner.update = function (self, unit, input, dt, context, t)
 	-- function 4
 	return
 end
 
-LimitedItemTrackSpawner.socket_item = function (self, arg_5_1)
+LimitedItemTrackSpawner.socket_item = function (self, unit)
 	-- function 5
-	local find_item_id = self:find_item_id(arg_5_1)
+	local id = self:find_item_id(unit)
 
-	self.socketed_items[find_item_id] = arg_5_1
+	self.socketed_items[id] = unit
 	self.num_socketed_items = table.size(self.socketed_items)
 end
 
 LimitedItemTrackSpawner.spawn_item = function (self)
 	-- function 6
-	local unit = self.unit
-	local find_empty_id = self:find_empty_id()
+	local self_unit = self.unit
+	local id = self:find_empty_id()
 
-	fassert(find_empty_id, "Found no empty id")
+	fassert(id, "Found no empty id")
 
-	self.spawn_data.id = find_empty_id
+	local spawn_data = self.spawn_data
+
+	spawn_data.id = id
 
 	local template_name = self.template_name
-	local spawn_func = LimitedItemTrackSpawnerTemplates[template_name].spawn_func(self.world, unit, self.spawn_data)
+	local spawn_func = LimitedItemTrackSpawnerTemplates[template_name].spawn_func
+	local unit = spawn_func(self.world, self_unit, self.spawn_data)
 
-	self.items[find_empty_id] = spawn_func
+	self.items[id] = unit
 	self.num_items = self.num_items + 1
 
-	Unit.flow_event(unit, "lua_spawner_spawn_item")
+	Unit.flow_event(self_unit, "lua_spawner_spawn_item")
 end
 
-LimitedItemTrackSpawner.find_item_id = function (self, arg_7_1)
+LimitedItemTrackSpawner.find_item_id = function (self, unit)
 	-- function 7
 	local pool = self.pool
 	local items = self.items
 
 	for i = 1, pool do
-		if items[i] == arg_7_1 then
+		local item = items[i]
+
+		if item == unit then
 			return i
 		end
 	end
@@ -86,37 +92,39 @@ LimitedItemTrackSpawner.find_empty_id = function (self)
 	local items = self.items
 
 	for i = 1, pool do
-		if not items[i] then
+		local item = items[i]
+
+		if not item then
 			return i
 		end
 	end
 end
 
-LimitedItemTrackSpawner.remove = function (self, arg_9_1)
+LimitedItemTrackSpawner.remove = function (self, id)
 	-- function 9
 	local items = self.items
 
-	if not items[arg_9_1] then
-		items[arg_9_1] = nil
+	if items[id] then
+		items[id] = nil
 		self.num_items = self.num_items - 1
 		self.pool_exhausted = false
 	end
 end
 
-LimitedItemTrackSpawner.transform = function (self, arg_10_1)
+LimitedItemTrackSpawner.transform = function (self, id)
 	-- function 10
 	local items = self.items
 
-	if not items[arg_10_1] then
-		items[arg_10_1] = true
+	if items[id] then
+		items[id] = true
 	end
 end
 
-LimitedItemTrackSpawner.is_transformed = function (self, arg_11_1)
+LimitedItemTrackSpawner.is_transformed = function (self, id)
 	-- function 11
-	local var_11_0 = self.items[arg_11_1]
+	local item = self.items[id]
 
-	if type(var_11_0) == "boolean" then
+	if type(item) == "boolean" then
 		return true
 	else
 		return false
@@ -129,7 +137,7 @@ LimitedItemTrackSpawner.is_any_transformed = function (self)
 	local items = self.items
 
 	for i = 1, pool do
-		if not self:is_transformed(i) then
+		if self:is_transformed(i) then
 			return true
 		end
 	end
@@ -140,6 +148,7 @@ end
 LimitedItemTrackSpawner.is_any_item_spawned = function (self)
 	-- function 13
 	local pool = self.pool
+	local items = self.items
 
-	return #self.items > 0
+	return #items > 0
 end

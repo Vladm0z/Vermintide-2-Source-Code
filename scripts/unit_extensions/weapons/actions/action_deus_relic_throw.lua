@@ -10,71 +10,83 @@ ActionDeusRelicThrow._throw = function (self)
 	Unit.flow_event(weapon_unit, "lua_unwield")
 
 	local owner_unit = self.owner_unit
-	local flag = false
+	local include_local_player = false
 
-	CharacterStateHelper.show_inventory_3p(owner_unit, false, flag, self.is_server, self.owner_inventory_extension)
+	CharacterStateHelper.show_inventory_3p(owner_unit, false, include_local_player, self.is_server, self.owner_inventory_extension)
 
 	local current_action = self.current_action
-	local get_first_person_unit = ScriptUnit.extension(owner_unit, "first_person_system"):get_first_person_unit()
-	local var_1_5 = POSITION_LOOKUP[get_first_person_unit]
-	local local_pose = Unit.local_pose(get_first_person_unit, 0)
-	local throw_offset = current_action.throw_offset
-	local var_1_8 = Vector3(throw_offset[1], throw_offset[2], throw_offset[3])
-	local num = var_1_5 + Matrix4x4.transform_without_translation(local_pose, var_1_8)
-	local world_rotation = Unit.world_rotation(weapon_unit, 0)
+	local first_person_extension = ScriptUnit.extension(owner_unit, "first_person_system")
+	local first_person_unit = first_person_extension:get_first_person_unit()
+	local first_person_unit_pos = POSITION_LOOKUP[first_person_unit]
+	local fp_pose = Unit.local_pose(first_person_unit, 0)
+	local to = current_action.throw_offset
+	local throw_offset = Vector3(to[1], to[2], to[3])
+	local throw_offset_transformed = Matrix4x4.transform_without_translation(fp_pose, throw_offset)
+	local position = first_person_unit_pos + throw_offset_transformed
+	local proj_rotation = Unit.world_rotation(weapon_unit, 0)
 
-	if not current_action.is_statue_and_needs_rotation_cause_reasons then
-		local var_1_11 = Quaternion(Vector3.up(), -math.pi)
+	if current_action.is_statue_and_needs_rotation_cause_reasons then
+		local statue_rotation_two = Quaternion(Vector3.up(), -math.pi)
 
-		world_rotation = Quaternion.multiply(world_rotation, var_1_11)
+		proj_rotation = Quaternion.multiply(proj_rotation, statue_rotation_two)
 	end
 
-	if not current_action.rotate_towards_owner_unit then
-		world_rotation = Quaternion.look(Vector3.normalize(Vector3.flat(POSITION_LOOKUP[owner_unit]) - Vector3.flat(num)))
+	if current_action.rotate_towards_owner_unit then
+		proj_rotation = Quaternion.look(Vector3.normalize(Vector3.flat(POSITION_LOOKUP[owner_unit]) - Vector3.flat(position)))
 	end
 
 	local projectile_info = current_action.projectile_info
-	local str = "thrown"
+	local spawn_type = "thrown"
 	local speed = current_action.speed
-	local has_extension = ScriptUnit.has_extension(owner_unit, "buff_system")
+	local buff_extension = ScriptUnit.has_extension(owner_unit, "buff_system")
 
-	if not has_extension then
-		speed = has_extension:apply_buffs_to_value(speed, "throw_speed_increase")
+	if buff_extension then
+		speed = buff_extension:apply_buffs_to_value(speed, "throw_speed_increase")
 	end
 
-	local velocity_multiplier = current_action.velocity_multiplier
+	local velocity_multiplier_2 = current_action.velocity_multiplier
 
-	velocity_multiplier = velocity_multiplier or 0.25
-
-	local local_rotation = Unit.local_rotation(get_first_person_unit, 0)
-	local var_1_18 = Vector3(0, 0, 0)
-
-	if not ScriptUnit.has_extension(owner_unit, "locomotion_system") then
-		var_1_18 = ScriptUnit.extension(owner_unit, "locomotion_system"):current_velocity()
+	if not velocity_multiplier_2 then
+		-- Nothing
 	end
 
-	local world_pose = Unit.world_pose(self.weapon_unit, 0)
-	local angular_velocity = current_action.angular_velocity
-	local var_1_21 = Vector3(angular_velocity[1], angular_velocity[2], angular_velocity[3])
-	local transform_without_translation = Matrix4x4.transform_without_translation(world_pose, var_1_21)
+	velocity_multiplier_2 = 0.25
+
+	local velocity_multiplier = velocity_multiplier_2
+
+	::label_1_0::
+
+	local rotation = Unit.local_rotation(first_person_unit, 0)
+	local thrower_velocity = Vector3(0, 0, 0)
+
+	if ScriptUnit.has_extension(owner_unit, "locomotion_system") then
+		thrower_velocity = ScriptUnit.extension(owner_unit, "locomotion_system"):current_velocity()
+	end
+
+	local weapon_pose = Unit.world_pose(self.weapon_unit, 0)
+	local av = current_action.angular_velocity
+	local angular_velocity = Vector3(av[1], av[2], av[3])
+	local angular_velocity_transformed = Matrix4x4.transform_without_translation(weapon_pose, angular_velocity)
 	local normalize = Vector3.normalize
-	local forward = Quaternion.forward(local_rotation)
+	local forward = Quaternion.forward(rotation)
 	local Vector3 = Vector3
+	local num = 0
 	local num_2 = 0
-	local num_3 = 0
 	local uppety = current_action.uppety
 
-	uppety = uppety or 0.6
+	uppety = not not uppety or not not 0.6
 
-	local num_4 = normalize(forward + Vector3(num_2, num_3, uppety)) * speed + var_1_18 * velocity_multiplier
+	local velocity = normalize(forward + Vector3(num, num_2, uppety)) * speed + thrower_velocity * velocity_multiplier
 
-	ActionUtils.spawn_pickup_projectile(self.world, weapon_unit, projectile_info.projectile_unit_name, projectile_info.projectile_unit_template_name, current_action, owner_unit, num, world_rotation, num_4, transform_without_translation, self.item_name, str)
+	ActionUtils.spawn_pickup_projectile(self.world, weapon_unit, projectile_info.projectile_unit_name, projectile_info.projectile_unit_template_name, current_action, owner_unit, position, proj_rotation, velocity, angular_velocity_transformed, self.item_name, spawn_type)
 
-	local has_extension_2 = ScriptUnit.has_extension(self.owner_unit, "status_system")
+	local status_extension = ScriptUnit.has_extension(self.owner_unit, "status_system")
 
 	self.owner_inventory_extension:destroy_slot("slot_level_event", false, true)
 
-	if not (not has_extension_2 and CharacterStateHelper.pack_master_status(has_extension_2)) then
+	local grabbed_by_packmaster = not not status_extension and not not CharacterStateHelper.pack_master_status(status_extension)
+
+	if not grabbed_by_packmaster then
 		self.owner_inventory_extension:wield_previous_weapon()
 	end
 end

@@ -1,8 +1,8 @@
 -- chunkname: @scripts/settings/dlcs/fall_collection_2021/fall_collection_2021_common_settings.lua
 
-local fall_collection_2021 = DLCSettings.fall_collection_2021
+local settings = DLCSettings.fall_collection_2021
 
-fall_collection_2021.unlock_settings_xb1 = {
+settings.unlock_settings_xb1 = {
 	fall_collection_2021_bundle = {
 		id = "30504E39-5850-3050-C050-4D434C436E00",
 		backend_reward_id = "fall_collection_2021_bundle",
@@ -34,7 +34,7 @@ fall_collection_2021.unlock_settings_xb1 = {
 		class = "UnlockDlc"
 	}
 }
-fall_collection_2021.unlock_settings_ps4 = {
+settings.unlock_settings_ps4 = {
 	CUSA13595_00 = {
 		fall_collection_2021_bundle = {
 			id = "4aee9597ce734b21b31d4a28b84d1e01",

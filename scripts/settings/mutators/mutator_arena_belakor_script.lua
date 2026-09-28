@@ -1,97 +1,102 @@
 -- chunkname: @scripts/settings/mutators/mutator_arena_belakor_script.lua
 
-local num = 7
-local tbl = {
+local DECAL_TARGET_POSITION_COUNT = 7
+local BaseStates = {
 	tower = {
 		mission_name = "arena_belakor_overload_statue",
-		setup = function (arg_1_0, arg_1_1)
+		setup = function (state_template, data)
 			-- function 1
-			if not arg_1_1.is_server then
-				arg_1_1.active_locus = {}
+			if data.is_server then
+				data.active_locus = {}
 
-				local get_entities = Managers.state.entity:get_entities("DeusBelakorLocusExtension")
+				local locus_entities = Managers.state.entity:get_entities("DeusBelakorLocusExtension")
 
-				for k, v in pairs(get_entities) do
-					arg_1_1.active_locus[#arg_1_1.active_locus + 1] = {
-						k,
-						v
+				for locus_unit, extension in pairs(locus_entities) do
+					data.active_locus[#data.active_locus + 1] = {
+						locus_unit,
+						extension
 					}
 				end
 			end
 		end,
-		on_server_enter = function (arg_2_0, arg_2_1)
+		on_server_enter = function (state_template, data)
 			-- function 2
 			return
 		end,
-		on_server_exit = function (arg_3_0, arg_3_1)
+		on_server_exit = function (state_template, data)
 			-- function 3
 			return
 		end,
-		on_client_enter = function (self, arg_4_1)
+		on_client_enter = function (state_template, data)
 			-- function 4
-			Managers.state.entity:system("mission_system"):start_mission(self.base_state.mission_name)
+			local mission_system = Managers.state.entity:system("mission_system")
 
-			local get_entities = Managers.state.entity:get_entities("DeusBelakorLocusExtension")
+			mission_system:start_mission(state_template.base_state.mission_name)
 
-			for k, v in pairs(get_entities) do
-				local local_position = Unit.local_position(k, 0)
-				local huge = math.huge
-				local var_4_3
-				local local_position_2 = Unit.local_position(arg_4_1.big_statue, 0)
+			local locus_entities = Managers.state.entity:get_entities("DeusBelakorLocusExtension")
 
-				for k_2 = 1, #arg_4_1.decal_poses do
-					local unbox = arg_4_1.decal_poses[k_2]:unbox()
-					local translation = Matrix4x4.translation(unbox)
-					local distance_squared = Vector3.distance_squared(local_position, translation)
+			for locus_unit, extension in pairs(locus_entities) do
+				local locus_position = Unit.local_position(locus_unit, 0)
+				local min_distance = math.huge
+				local index
+				local closest_decal_pose = Unit.local_position(data.big_statue, 0)
 
-					if distance_squared < huge then
-						local_position_2 = unbox
-						huge = distance_squared
-						var_4_3 = k_2
+				for i = 1, #data.decal_poses do
+					local decal_pose = data.decal_poses[i]:unbox()
+					local decal_position = Matrix4x4.translation(decal_pose)
+					local distance = Vector3.distance_squared(locus_position, decal_position)
+
+					if distance < min_distance then
+						closest_decal_pose = decal_pose
+						min_distance = distance
+						index = i
 					end
 				end
 
-				v:connect_to_statue(arg_4_1.big_statue, local_position_2)
+				extension:connect_to_statue(data.big_statue, closest_decal_pose)
 
-				if not var_4_3 then
-					table.swap_delete(arg_4_1.decal_poses, var_4_3)
+				if index then
+					table.swap_delete(data.decal_poses, index)
 				end
 			end
 		end,
-		on_client_exit = function (self, arg_5_1)
+		on_client_exit = function (state_template, data)
 			-- function 5
-			Managers.state.entity:system("mission_system"):end_mission(self.base_state.mission_name)
-		end,
-		server_update = function (arg_6_0, arg_6_1, arg_6_2, arg_6_3)
-			-- function 6
-			local num = 0
+			local mission_system = Managers.state.entity:system("mission_system")
 
-			for i, v in ipairs(arg_6_1.active_locus) do
+			mission_system:end_mission(state_template.base_state.mission_name)
+		end,
+		server_update = function (current_state, data, dt, t)
+			-- function 6
+			local done_locus = 0
+
+			for _, unit_and_extension in ipairs(data.active_locus) do
+				local extension = unit_and_extension[2]
 				local flag
 
-				flag = not v[2]:is_complete() and 1 and 0
-				num = num + flag
+				flag = (not extension:is_complete() or not 1) and not not 0
+				done_locus = done_locus + flag
 			end
 
-			if arg_6_1.shared_state:get_server(arg_6_1.shared_state:get_key("socketed_count")) ~= num then
-				arg_6_1.shared_state:set_server(arg_6_1.shared_state:get_key("socketed_count"), num)
+			if data.shared_state:get_server(data.shared_state:get_key("socketed_count")) ~= done_locus then
+				data.shared_state:set_server(data.shared_state:get_key("socketed_count"), done_locus)
 			end
 		end,
-		client_update = function (arg_7_0, arg_7_1, arg_7_2, arg_7_3)
+		client_update = function (current_state, data, dt, t)
 			-- function 7
-			local flow_variable = Level.flow_variable(arg_7_1.level, "socketed_count")
-			local get_server = arg_7_1.shared_state:get_server(arg_7_1.shared_state:get_key("socketed_count"))
+			local current_value = Level.flow_variable(data.level, "socketed_count")
+			local new_value = data.shared_state:get_server(data.shared_state:get_key("socketed_count"))
 
-			if flow_variable ~= get_server then
-				Level.set_flow_variable(arg_7_1.level, "socketed_count", get_server)
-				Level.trigger_event(arg_7_1.level, "update_socketed_count")
+			if current_value ~= new_value then
+				Level.set_flow_variable(data.level, "socketed_count", new_value)
+				Level.trigger_event(data.level, "update_socketed_count")
 			end
 		end
 	}
 }
-local var_0_2
+local ArenaStates
 
-var_0_2 = {
+ArenaStates = {
 	none = {
 		id = 0
 	},
@@ -99,70 +104,76 @@ var_0_2 = {
 		mission_name = "arena_belakor_go_tower",
 		exit_volume_id = "trigger_approach_tower_done",
 		id = 1,
-		on_server_enter = function (self, arg_8_1)
+		on_server_enter = function (state_template, data)
 			-- function 8
-			local system = Managers.state.entity:system("volume_system")
-			local exit_volume_id = self.exit_volume_id
+			local volume_system = Managers.state.entity:system("volume_system")
+			local exit_volume_id = state_template.exit_volume_id
 
-			system:register_volume(exit_volume_id, "trigger_volume", {
+			volume_system:register_volume(exit_volume_id, "trigger_volume", {
 				sub_type = "players_inside",
 				on_triggered = function ()
 					-- function 9
-					arg_8_1.shared_state:set_server(arg_8_1.shared_state:get_key("state"), var_0_2.tower_phase_1.id)
+					data.shared_state:set_server(data.shared_state:get_key("state"), ArenaStates.tower_phase_1.id)
 				end
 			})
 		end,
-		on_server_exit = function (self, arg_10_1)
+		on_server_exit = function (state_template, data)
 			-- function 10
-			local system = Managers.state.entity:system("volume_system")
-			local exit_volume_id = self.exit_volume_id
+			local volume_system = Managers.state.entity:system("volume_system")
+			local exit_volume_id = state_template.exit_volume_id
 
-			system:unregister_volume(exit_volume_id)
+			volume_system:unregister_volume(exit_volume_id)
 		end,
-		on_client_enter = function (self, arg_11_1)
+		on_client_enter = function (state_template, data)
 			-- function 11
-			Managers.state.entity:system("mission_system"):start_mission(self.mission_name)
+			local mission_system = Managers.state.entity:system("mission_system")
+
+			mission_system:start_mission(state_template.mission_name)
 		end,
-		on_client_exit = function (self, arg_12_1)
+		on_client_exit = function (state_template, data)
 			-- function 12
-			Managers.state.entity:system("mission_system"):end_mission(self.mission_name)
+			local mission_system = Managers.state.entity:system("mission_system")
+
+			mission_system:end_mission(state_template.mission_name)
 		end
 	},
 	tower_phase_1 = {
 		id = 2,
-		base_state = tbl.tower,
-		server_update = function (arg_13_0, arg_13_1, arg_13_2, arg_13_3)
+		base_state = BaseStates.tower,
+		server_update = function (current_state, data, dt, t)
 			-- function 13
-			local num = 0
+			local done_locus = 0
 
-			for i, v in ipairs(arg_13_1.active_locus) do
+			for _, unit_and_extension in ipairs(data.active_locus) do
+				local extension = unit_and_extension[2]
 				local flag
 
-				flag = not v[2]:is_complete() and 1 and 0
-				num = num + flag
+				flag = (not extension:is_complete() or not 1) and not not 0
+				done_locus = done_locus + flag
 			end
 
-			if not (not (num > 0) or not (num / #arg_13_1.active_locus >= 0.5)) then
-				arg_13_1.shared_state:set_server(arg_13_1.shared_state:get_key("state"), var_0_2.tower_phase_2.id)
+			if done_locus > 0 and done_locus / #data.active_locus >= 0.5 then
+				data.shared_state:set_server(data.shared_state:get_key("state"), ArenaStates.tower_phase_2.id)
 			end
 		end
 	},
 	tower_phase_2 = {
 		id = 3,
-		base_state = tbl.tower,
-		server_update = function (arg_14_0, arg_14_1, arg_14_2, arg_14_3)
+		base_state = BaseStates.tower,
+		server_update = function (current_state, data, dt, t)
 			-- function 14
-			local num = 0
+			local done_locus = 0
 
-			for i, v in ipairs(arg_14_1.active_locus) do
+			for _, unit_and_extension in ipairs(data.active_locus) do
+				local extension = unit_and_extension[2]
 				local flag
 
-				flag = not v[2]:is_complete() and 1 and 0
-				num = num + flag
+				flag = (not extension:is_complete() or not 1) and not not 0
+				done_locus = done_locus + flag
 			end
 
-			if not (not (num > 0) or not (num / #arg_14_1.active_locus >= 1)) then
-				arg_14_1.shared_state:set_server(arg_14_1.shared_state:get_key("state"), var_0_2.escape.id)
+			if done_locus > 0 and done_locus / #data.active_locus >= 1 then
+				data.shared_state:set_server(data.shared_state:get_key("state"), ArenaStates.escape.id)
 			end
 		end
 	},
@@ -170,34 +181,34 @@ var_0_2 = {
 		mission_name = "arena_belakor_escape",
 		exit_volume_id = "trigger_escape_done",
 		id = 4,
-		setup = function (arg_15_0, arg_15_1)
+		setup = function (state_template, data)
 			-- function 15
 			return
 		end,
-		on_server_enter = function (arg_16_0, arg_16_1)
+		on_server_enter = function (state_template, data)
 			-- function 16
 			return
 		end,
-		on_client_enter = function (arg_17_0, arg_17_1)
+		on_client_enter = function (state_template, data)
 			-- function 17
 			return
 		end
 	}
 }
 
-local tbl_2 = {}
-local tbl_3 = {}
+local id_to_state = {}
+local id_to_state_name = {}
 
-for k, v in pairs(var_0_2) do
-	tbl_2[v.id] = v
-	tbl_3[v.id] = k
+for state_name, state in pairs(ArenaStates) do
+	id_to_state[state.id] = state
+	id_to_state_name[state.id] = state_name
 end
 
-local tbl_4 = {
+local shared_state_spec = {
 	server = {
 		state = {
 			type = "number",
-			default_value = var_0_2.none.id,
+			default_value = ArenaStates.none.id,
 			composite_keys = {}
 		},
 		socketed_count = {
@@ -209,174 +220,205 @@ local tbl_4 = {
 	peer = {}
 }
 
-SharedState.validate_spec(tbl_4)
+SharedState.validate_spec(shared_state_spec)
 
 return {
 	hide_from_player_ui = true,
-	client_start_function = function (self, arg_18_1)
+	client_start_function = function (context, data)
 		-- function 18
-		local is_server = self.is_server
-		local var_18_1
-		local var_18_2
-		local peer_id = Network.peer_id()
+		local is_server = context.is_server
+		local network_server, server_peer_id
+		local own_peer_id = Network.peer_id()
 
-		if not is_server then
-			var_18_1 = Managers.mechanism:network_handler()
-			var_18_2 = peer_id
+		if is_server then
+			network_server = Managers.mechanism:network_handler()
+			server_peer_id = own_peer_id
 		else
-			var_18_2 = Managers.mechanism:network_handler().server_peer_id
+			local network_client = Managers.mechanism:network_handler()
+
+			server_peer_id = network_client.server_peer_id
 		end
 
-		arg_18_1.is_server = is_server
-		arg_18_1.world = self.world
-		arg_18_1.level = LevelHelper:current_level(arg_18_1.world)
-		arg_18_1.shared_state = SharedState:new("mutator_arena_belakor_script", tbl_4, is_server, var_18_1, var_18_2, peer_id)
-		arg_18_1.current_state = var_0_2.none
+		data.is_server = is_server
+		data.world = context.world
+		data.level = LevelHelper:current_level(data.world)
+		data.shared_state = SharedState:new("mutator_arena_belakor_script", shared_state_spec, is_server, network_server, server_peer_id, own_peer_id)
+		data.current_state = ArenaStates.none
 
-		if not is_server then
-			arg_18_1.shared_state:set_server(arg_18_1.shared_state:get_key("state"), var_0_2.approaching_the_tower.id)
+		if is_server then
+			data.shared_state:set_server(data.shared_state:get_key("state"), ArenaStates.approaching_the_tower.id)
 		end
 
-		local get_entities = Managers.state.entity:get_entities("DeusArenaBelakorBigStatueExtension")
-		local var_18_5
+		local big_statues = Managers.state.entity:get_entities("DeusArenaBelakorBigStatueExtension")
+		local big_statue
 
-		for k, v in pairs(get_entities) do
-			fassert(arg_18_1.big_statue == nil, "There can only be one unit with DeusArenaBelakorBigStatueExtension", #get_entities)
+		for unit, _ in pairs(big_statues) do
+			fassert(data.big_statue == nil, "There can only be one unit with DeusArenaBelakorBigStatueExtension", #big_statues)
 
-			var_18_5 = k
+			big_statue = unit
 		end
 
-		fassert(var_18_5, "There has to be one unit with DeusArenaBelakorBigStatueExtension")
+		fassert(big_statue, "There has to be one unit with DeusArenaBelakorBigStatueExtension")
 
-		arg_18_1.big_statue = var_18_5
+		data.big_statue = big_statue
 
-		local tbl = {}
+		local decal_poses = {}
 
-		for k_2 = 1, num do
-			local str = "ap_decal_0" .. k_2
+		for i = 1, DECAL_TARGET_POSITION_COUNT do
+			local node_name = "ap_decal_0" .. i
 
-			fassert(Unit.has_node(var_18_5, str), "There has to be a node called %s in the statue", str)
+			fassert(Unit.has_node(big_statue, node_name), "There has to be a node called %s in the statue", node_name)
 
-			local node = Unit.node(var_18_5, str)
-			local world_pose = Unit.world_pose(arg_18_1.big_statue, node)
+			local node = Unit.node(big_statue, node_name)
+			local decal_pose = Unit.world_pose(data.big_statue, node)
 
-			tbl[#tbl + 1] = Matrix4x4Box(world_pose)
+			decal_poses[#decal_poses + 1] = Matrix4x4Box(decal_pose)
 		end
 
-		arg_18_1.decal_poses = tbl
+		data.decal_poses = decal_poses
 	end,
-	register_rpcs = function (arg_19_0, arg_19_1, arg_19_2)
+	register_rpcs = function (context, data, network_event_delegate)
 		-- function 19
-		arg_19_1.shared_state:register_rpcs(arg_19_2)
-		arg_19_1.shared_state:full_sync()
+		data.shared_state:register_rpcs(network_event_delegate)
+		data.shared_state:full_sync()
 	end,
-	unregister_rpcs = function (arg_20_0, arg_20_1)
+	unregister_rpcs = function (context, data)
 		-- function 20
-		arg_20_1.shared_state:unregister_rpcs()
+		data.shared_state:unregister_rpcs()
 	end,
-	client_update_function = function (self, arg_21_1, arg_21_2, arg_21_3)
+	client_update_function = function (context, data, dt, t)
 		-- function 21
-		if Managers.party:get_party_from_player_id(Network.peer_id(), 1).name == "undecided" then
+		local party_manager = Managers.party
+		local party = party_manager:get_party_from_player_id(Network.peer_id(), 1)
+
+		if party.name == "undecided" then
 			return
 		end
 
-		if not arg_21_1.setup_done then
-			for k, v in pairs(tbl) do
-				local setup = v.setup
+		if not data.setup_done then
+			for _, state_template in pairs(BaseStates) do
+				local setup = state_template.setup
 
-				if not setup then
-					setup(v, arg_21_1)
+				if setup then
+					setup(state_template, data)
 				end
 			end
 
-			for k_2, v_2 in pairs(var_0_2) do
-				local setup_2 = v_2.setup
+			for _, state_template in pairs(ArenaStates) do
+				local setup = state_template.setup
 
-				if not setup_2 then
-					setup_2(v_2, arg_21_1)
+				if setup then
+					setup(state_template, data)
 				end
 			end
 
-			arg_21_1.setup_done = true
+			data.setup_done = true
 		end
 
-		local is_server = self.is_server
-		local current_state = arg_21_1.current_state
+		local is_server = context.is_server
+		local current_state = data.current_state
 
-		if not current_state then
-			if not is_server then
-				if not current_state.base_state and not current_state.base_state.server_update then
-					current_state.base_state.server_update(current_state, arg_21_1, arg_21_2, arg_21_3)
+		if current_state then
+			if is_server then
+				if current_state.base_state and current_state.base_state.server_update then
+					current_state.base_state.server_update(current_state, data, dt, t)
 				end
 
-				if not current_state.server_update then
-					current_state.server_update(current_state, arg_21_1, arg_21_2, arg_21_3)
+				if current_state.server_update then
+					current_state.server_update(current_state, data, dt, t)
 				end
 			end
 
-			if not current_state.base_state and not current_state.base_state.client_update then
-				current_state.base_state.client_update(current_state, arg_21_1, arg_21_2, arg_21_3)
+			if current_state.base_state and current_state.base_state.client_update then
+				current_state.base_state.client_update(current_state, data, dt, t)
 			end
 
-			if not current_state.client_update then
-				current_state.client_update(current_state, arg_21_1, arg_21_2, arg_21_3)
+			if current_state.client_update then
+				current_state.client_update(current_state, data, dt, t)
 			end
 		end
 
-		local get_server = arg_21_1.shared_state:get_server(arg_21_1.shared_state:get_key("state"))
-		local var_21_5 = tbl_2[get_server]
+		local new_state_id = data.shared_state:get_server(data.shared_state:get_key("state"))
+		local new_state = id_to_state[new_state_id]
 
-		if current_state ~= var_21_5 then
+		if current_state ~= new_state then
 			local base_state = current_state.base_state
 
-			base_state = not base_state and current_state.base_state ~= var_21_5.base_state
+			if base_state then
+				-- Nothing
+			end
 
-			local base_state_2 = var_21_5.base_state
+			if current_state.base_state == new_state.base_state then
+				base_state = false
 
-			base_state_2 = not base_state_2 and current_state.base_state ~= var_21_5.base_state
+				goto label_21_0
+			end
 
-			if not is_server then
-				if not current_state.on_server_exit then
-					current_state.on_server_exit(current_state, arg_21_1)
+			base_state = true
+
+			local current_base_state_left = base_state
+
+			::label_21_0::
+
+			local base_state_2 = new_state.base_state
+
+			if base_state_2 then
+				-- Nothing
+			end
+
+			if current_state.base_state == new_state.base_state then
+				base_state_2 = false
+
+				goto label_21_1
+			end
+
+			base_state_2 = true
+
+			local new_base_state_entered = base_state_2
+
+			::label_21_1::
+
+			if is_server then
+				if current_state.on_server_exit then
+					current_state.on_server_exit(current_state, data)
 				end
 
-				if not base_state and not current_state.base_state.on_server_exit then
-					current_state.base_state.on_server_exit(current_state, arg_21_1)
+				if current_base_state_left and current_state.base_state.on_server_exit then
+					current_state.base_state.on_server_exit(current_state, data)
 				end
 			end
 
-			if not current_state.on_client_exit then
-				current_state.on_client_exit(current_state, arg_21_1)
+			if current_state.on_client_exit then
+				current_state.on_client_exit(current_state, data)
 			end
 
-			if not base_state and not current_state.base_state.on_client_exit then
-				current_state.base_state.on_client_exit(current_state, arg_21_1)
+			if current_base_state_left and current_state.base_state.on_client_exit then
+				current_state.base_state.on_client_exit(current_state, data)
 			end
 
-			Level.trigger_event(arg_21_1.level, "on_exit_" .. tbl_3[current_state.id])
+			Level.trigger_event(data.level, "on_exit_" .. id_to_state_name[current_state.id])
 
-			local var_21_8 = var_21_5
+			current_state = new_state
+			data.current_state = current_state
 
-			arg_21_1.current_state = var_21_8
+			Level.trigger_event(data.level, "on_enter_" .. id_to_state_name[current_state.id])
 
-			Level.trigger_event(arg_21_1.level, "on_enter_" .. tbl_3[var_21_8.id])
-
-			if not is_server then
-				if not base_state_2 and not var_21_5.base_state.on_server_enter then
-					var_21_5.base_state.on_server_enter(var_21_8, arg_21_1)
+			if is_server then
+				if new_base_state_entered and new_state.base_state.on_server_enter then
+					new_state.base_state.on_server_enter(current_state, data)
 				end
 
-				if not var_21_5.on_server_enter then
-					var_21_5.on_server_enter(var_21_5, arg_21_1)
+				if new_state.on_server_enter then
+					new_state.on_server_enter(new_state, data)
 				end
 			end
 
-			if not base_state_2 and not var_21_5.base_state.on_client_enter then
-				var_21_5.base_state.on_client_enter(var_21_5, arg_21_1)
+			if new_base_state_entered and new_state.base_state.on_client_enter then
+				new_state.base_state.on_client_enter(new_state, data)
 			end
 
-			if not var_21_5.on_client_enter then
-				var_21_5.on_client_enter(var_21_5, arg_21_1)
+			if new_state.on_client_enter then
+				new_state.on_client_enter(new_state, data)
 			end
 		end
 	end

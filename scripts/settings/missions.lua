@@ -1700,8 +1700,8 @@ Missions.weave_collect_limited_item_objective = {
 
 DLCUtils.merge("missions", Missions)
 
-for k, v in pairs(Missions) do
-	assert(v.mission_template_name, "mission_template_name not specified")
+for name, data in pairs(Missions) do
+	assert(data.mission_template_name, "mission_template_name not specified")
 
-	v.name = k
+	data.name = name
 end

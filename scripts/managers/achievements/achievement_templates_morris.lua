@@ -1,199 +1,212 @@
 -- chunkname: @scripts/managers/achievements/achievement_templates_morris.lua
 
-local function fn(arg_1_0, arg_1_1, arg_1_2, arg_1_3)
+local function check_journey_completed_difficulty(statistics_db, stats_id, journey_name, difficulty_rank)
 	-- function 1
-	local difficulty = Managers.state.difficulty
+	local difficulty_manager = Managers.state.difficulty
 
-	if not difficulty then
+	if not difficulty_manager then
 		return false
 	end
 
-	local get_default_difficulties = difficulty:get_default_difficulties()
-	local completed_journey_difficulty_index = LevelUnlockUtils.completed_journey_difficulty_index(arg_1_0, arg_1_1, arg_1_2)
+	local difficulties = difficulty_manager:get_default_difficulties()
+	local difficulty_index = LevelUnlockUtils.completed_journey_difficulty_index(statistics_db, stats_id, journey_name)
 
-	if not completed_journey_difficulty_index then
+	if not difficulty_index then
 		return false
 	end
 
-	local var_1_3 = get_default_difficulties[completed_journey_difficulty_index]
+	local difficulty_key = difficulties[difficulty_index]
 
-	if not var_1_3 then
+	if not difficulty_key then
 		return false
 	end
 
-	return arg_1_3 <= DifficultySettings[var_1_3].rank
+	local completed_rank = DifficultySettings[difficulty_key].rank
+
+	return difficulty_rank <= completed_rank
 end
 
-local function fn_2(arg_2_0, arg_2_1, arg_2_2, arg_2_3)
+local function check_journey_dominant_god_completed_difficulty(statistics_db, stats_id, dominant_god, difficulty_rank)
 	-- function 2
-	local difficulty = Managers.state.difficulty
+	local difficulty_manager = Managers.state.difficulty
 
-	if not difficulty then
+	if not difficulty_manager then
 		return false
 	end
 
-	local get_default_difficulties = difficulty:get_default_difficulties()
-	local completed_journey_dominant_god_difficulty_index = LevelUnlockUtils.completed_journey_dominant_god_difficulty_index(arg_2_0, arg_2_1, arg_2_2)
+	local difficulties = difficulty_manager:get_default_difficulties()
+	local difficulty_index = LevelUnlockUtils.completed_journey_dominant_god_difficulty_index(statistics_db, stats_id, dominant_god)
 
-	if not completed_journey_dominant_god_difficulty_index then
+	if not difficulty_index then
 		return false
 	end
 
-	local var_2_3 = get_default_difficulties[completed_journey_dominant_god_difficulty_index]
+	local difficulty_key = difficulties[difficulty_index]
 
-	if not var_2_3 then
+	if not difficulty_key then
 		return false
 	end
 
-	return arg_2_3 <= DifficultySettings[var_2_3].rank
+	local completed_rank = DifficultySettings[difficulty_key].rank
+
+	return difficulty_rank <= completed_rank
 end
 
-local function fn_3(arg_3_0, arg_3_1, arg_3_2, arg_3_3, arg_3_4)
+local function check_hero_journey_completed_difficulty(statistics_db, stats_id, hero, journey_name, difficulty_rank)
 	-- function 3
-	local difficulty = Managers.state.difficulty
+	local difficulty_manager = Managers.state.difficulty
 
-	if not difficulty then
+	if not difficulty_manager then
 		return false
 	end
 
-	local get_default_difficulties = difficulty:get_default_difficulties()
-	local completed_hero_journey_difficulty_index = LevelUnlockUtils.completed_hero_journey_difficulty_index(arg_3_0, arg_3_1, arg_3_2, arg_3_3)
+	local difficulties = difficulty_manager:get_default_difficulties()
+	local difficulty_index = LevelUnlockUtils.completed_hero_journey_difficulty_index(statistics_db, stats_id, hero, journey_name)
 
-	if not completed_hero_journey_difficulty_index then
+	if not difficulty_index then
 		return false
 	end
 
-	local var_3_3 = get_default_difficulties[completed_hero_journey_difficulty_index]
+	local difficulty_key = difficulties[difficulty_index]
 
-	if not var_3_3 then
+	if not difficulty_key then
 		return false
 	end
 
-	return arg_3_4 <= DifficultySettings[var_3_3].rank
+	local completed_rank = DifficultySettings[difficulty_key].rank
+
+	return difficulty_rank <= completed_rank
 end
 
-local function fn_4(self, arg_4_1, arg_4_2, arg_4_3, arg_4_4, arg_4_5, arg_4_6, arg_4_7)
+local function add_journey_complete_challenge(achievements, id, journey_name, difficulty_rank, icon, dlc, id_xb1, id_ps4)
 	-- function 4
-	self[arg_4_1] = {
-		name = "achv_" .. arg_4_1 .. "_name",
-		desc = "achv_" .. arg_4_1 .. "_desc",
-		icon = arg_4_4 or "achievement_trophy_" .. arg_4_1,
-		required_dlc = arg_4_5,
-		ID_XB1 = arg_4_6,
-		ID_PS4 = arg_4_7,
-		completed = function (arg_5_0, arg_5_1)
+	local template = {
+		name = "achv_" .. id .. "_name",
+		desc = "achv_" .. id .. "_desc",
+		icon = not not icon or not not ("achievement_trophy_" .. id),
+		required_dlc = dlc,
+		ID_XB1 = id_xb1,
+		ID_PS4 = id_ps4,
+		completed = function (statistics_db, stats_id)
 			-- function 5
-			return fn(arg_5_0, arg_5_1, arg_4_2, arg_4_3)
+			return check_journey_completed_difficulty(statistics_db, stats_id, journey_name, difficulty_rank)
 		end
 	}
+
+	achievements[id] = template
 end
 
-local function fn_5(self, arg_6_1, arg_6_2, arg_6_3, arg_6_4, arg_6_5, arg_6_6, arg_6_7)
+local function add_opened_shrine_challenge(achievements, id, shrine_types, num_shrines_required, icon, dlc, id_xb1, id_ps4)
 	-- function 6
-	self[arg_6_1] = {
-		name = "achv_" .. arg_6_1 .. "_name",
-		desc = "achv_" .. arg_6_1 .. "_desc",
-		icon = arg_6_4 or "achievement_trophy_" .. arg_6_1,
-		required_dlc = arg_6_5,
-		ID_XB1 = arg_6_6,
-		ID_PS4 = arg_6_7,
-		progress = function (self, arg_7_1)
+	local template = {
+		name = "achv_" .. id .. "_name",
+		desc = "achv_" .. id .. "_desc",
+		icon = not not icon or not not ("achievement_trophy_" .. id),
+		required_dlc = dlc,
+		ID_XB1 = id_xb1,
+		ID_PS4 = id_ps4,
+		progress = function (statistics_db, stats_id)
 			-- function 7
-			local num = 0
+			local count = 0
 
-			for i = 1, #arg_6_2 do
-				local var_7_1 = arg_6_2[i]
+			for i = 1, #shrine_types do
+				local shrine_type = shrine_types[i]
 
-				num = num + self:get_persistent_stat(arg_7_1, "opened_shrines", var_7_1)
+				count = count + statistics_db:get_persistent_stat(stats_id, "opened_shrines", shrine_type)
 			end
 
 			return {
-				num,
-				arg_6_3
+				count,
+				num_shrines_required
 			}
 		end,
-		completed = function (self, arg_8_1)
+		completed = function (statistics_db, stats_id)
 			-- function 8
-			local num = 0
+			local count = 0
 
-			for i = 1, #arg_6_2 do
-				local var_8_1 = arg_6_2[i]
+			for i = 1, #shrine_types do
+				local shrine_type = shrine_types[i]
 
-				num = num + self:get_persistent_stat(arg_8_1, "opened_shrines", var_8_1)
+				count = count + statistics_db:get_persistent_stat(stats_id, "opened_shrines", shrine_type)
 			end
 
-			return num >= arg_6_3
+			return count >= num_shrines_required
 		end
 	}
+
+	achievements[id] = template
 end
 
-local function fn_6(self, arg_9_1, arg_9_2, arg_9_3, arg_9_4, arg_9_5, arg_9_6, arg_9_7)
+local function add_journey_dominant_god_complete_challenge(achievements, id, dominant_god, difficulty_rank, icon, dlc, id_xb1, id_ps4)
 	-- function 9
-	self[arg_9_1] = {
-		name = "achv_" .. arg_9_1 .. "_name",
-		desc = "achv_" .. arg_9_1 .. "_desc",
-		icon = arg_9_4 or "achievement_trophy_" .. arg_9_1,
-		required_dlc = arg_9_5,
-		ID_XB1 = arg_9_6,
-		ID_PS4 = arg_9_7,
-		completed = function (arg_10_0, arg_10_1)
+	local template = {
+		name = "achv_" .. id .. "_name",
+		desc = "achv_" .. id .. "_desc",
+		icon = not not icon or not not ("achievement_trophy_" .. id),
+		required_dlc = dlc,
+		ID_XB1 = id_xb1,
+		ID_PS4 = id_ps4,
+		completed = function (statistics_db, stats_id)
 			-- function 10
-			return fn_2(arg_10_0, arg_10_1, arg_9_2, arg_9_3)
+			return check_journey_dominant_god_completed_difficulty(statistics_db, stats_id, dominant_god, difficulty_rank)
 		end
 	}
+
+	achievements[id] = template
 end
 
-local function fn_7(self, arg_11_1, arg_11_2, arg_11_3, arg_11_4, arg_11_5, arg_11_6, arg_11_7, arg_11_8)
+local function add_hero_journey_complete_challenge(achievements, id, hero, journey_name, difficulty_rank, icon, dlc, id_xb1, id_ps4)
 	-- function 11
-	local var_11_0 = DifficultyRankLookup[arg_11_4]
-	local var_11_1 = DifficultySettings[var_11_0]
-
-	self[arg_11_1] = {
-		name = "achv_" .. arg_11_1 .. "_name",
-		desc = "achv_" .. arg_11_1 .. "_desc",
-		icon = arg_11_5 or "achievement_trophy_" .. arg_11_1,
-		required_dlc = arg_11_6,
-		required_dlc_extra = var_11_1.dlc_requirement,
-		ID_XB1 = arg_11_7,
-		ID_PS4 = arg_11_8,
-		completed = function (arg_12_0, arg_12_1)
+	local difficulty = DifficultyRankLookup[difficulty_rank]
+	local difficulty_setting = DifficultySettings[difficulty]
+	local template = {
+		name = "achv_" .. id .. "_name",
+		desc = "achv_" .. id .. "_desc",
+		icon = not not icon or not not ("achievement_trophy_" .. id),
+		required_dlc = dlc,
+		required_dlc_extra = difficulty_setting.dlc_requirement,
+		ID_XB1 = id_xb1,
+		ID_PS4 = id_ps4,
+		completed = function (statistics_db, stats_id)
 			-- function 12
-			return fn_3(arg_12_0, arg_12_1, arg_11_2, arg_11_3, arg_11_4)
+			return check_hero_journey_completed_difficulty(statistics_db, stats_id, hero, journey_name, difficulty_rank)
 		end
 	}
+
+	achievements[id] = template
 end
 
 local achievements = AchievementTemplates.achievements
 
-fn_4(achievements, "morris_complete_journey_citadel", "journey_citadel", DifficultySettings.normal.rank, "achievement_morris_citadel", "morris", 92, "084")
+add_journey_complete_challenge(achievements, "morris_complete_journey_citadel", "journey_citadel", DifficultySettings.normal.rank, "achievement_morris_citadel", "morris", 92, "084")
 
-if not IS_CONSOLE then
-	fn_4(achievements, "morris_complete_journey_citadel_champion", "journey_citadel", DifficultySettings.harder.rank, "achievement_morris_citadel", "morris", 93, "085")
-	fn_4(achievements, "morris_complete_journey_citadel_legend", "journey_citadel", DifficultySettings.hardest.rank, "achievement_morris_citadel", "morris", 94, "086")
-	fn_5(achievements, "morris_opened_shrines_swap_weapon", {
+if IS_CONSOLE then
+	add_journey_complete_challenge(achievements, "morris_complete_journey_citadel_champion", "journey_citadel", DifficultySettings.harder.rank, "achievement_morris_citadel", "morris", 93, "085")
+	add_journey_complete_challenge(achievements, "morris_complete_journey_citadel_legend", "journey_citadel", DifficultySettings.hardest.rank, "achievement_morris_citadel", "morris", 94, "086")
+	add_opened_shrine_challenge(achievements, "morris_opened_shrines_swap_weapon", {
 		DEUS_CHEST_TYPES.swap_melee,
 		DEUS_CHEST_TYPES.swap_ranged
 	}, 30, nil, nil, 99, nil)
-	fn_5(achievements, "morris_opened_shrines_upgrade", {
+	add_opened_shrine_challenge(achievements, "morris_opened_shrines_upgrade", {
 		DEUS_CHEST_TYPES.upgrade
 	}, 20, nil, nil, 100, nil)
-	fn_5(achievements, "morris_opened_shrines_power_up", {
+	add_opened_shrine_challenge(achievements, "morris_opened_shrines_power_up", {
 		DEUS_CHEST_TYPES.power_up
 	}, 30, nil, nil, 101, nil)
 end
 
-fn_6(achievements, "morris_complete_journey_dominant_god_nurgle", DEUS_GOD_TYPES.NURGLE, DifficultySettings.normal.rank, "achievement_morris_nurgle", "morris", 95, nil)
-fn_6(achievements, "morris_complete_journey_dominant_god_khorne", DEUS_GOD_TYPES.KHORNE, DifficultySettings.normal.rank, "achievement_morris_khorne", "morris", 96, nil)
-fn_6(achievements, "morris_complete_journey_dominant_god_slaanesh", DEUS_GOD_TYPES.SLAANESH, DifficultySettings.normal.rank, "achievement_morris_slaanesh", "morris", 97, nil)
-fn_6(achievements, "morris_complete_journey_dominant_god_tzeentch", DEUS_GOD_TYPES.TZEENTCH, DifficultySettings.normal.rank, "achievement_morris_tzeentch", "morris", 98, nil)
-fn_6(achievements, "morris_complete_journey_dominant_god_belakor", DEUS_GOD_TYPES.BELAKOR, DifficultySettings.normal.rank, "achievement_morris_tzeentch", "belakor", 99, nil)
+add_journey_dominant_god_complete_challenge(achievements, "morris_complete_journey_dominant_god_nurgle", DEUS_GOD_TYPES.NURGLE, DifficultySettings.normal.rank, "achievement_morris_nurgle", "morris", 95, nil)
+add_journey_dominant_god_complete_challenge(achievements, "morris_complete_journey_dominant_god_khorne", DEUS_GOD_TYPES.KHORNE, DifficultySettings.normal.rank, "achievement_morris_khorne", "morris", 96, nil)
+add_journey_dominant_god_complete_challenge(achievements, "morris_complete_journey_dominant_god_slaanesh", DEUS_GOD_TYPES.SLAANESH, DifficultySettings.normal.rank, "achievement_morris_slaanesh", "morris", 97, nil)
+add_journey_dominant_god_complete_challenge(achievements, "morris_complete_journey_dominant_god_tzeentch", DEUS_GOD_TYPES.TZEENTCH, DifficultySettings.normal.rank, "achievement_morris_tzeentch", "morris", 98, nil)
+add_journey_dominant_god_complete_challenge(achievements, "morris_complete_journey_dominant_god_belakor", DEUS_GOD_TYPES.BELAKOR, DifficultySettings.normal.rank, "achievement_morris_tzeentch", "belakor", 99, nil)
 
-local tbl = {
+local difficulties = {
 	"harder",
 	"hardest",
 	"cataclysm"
 }
-local tbl_2 = {
+local icon_by_hero = {
 	we = "achievement_morris_kerillian_",
 	bw = "achievement_morris_sienna_",
 	wh = "achievement_morris_victor_",
@@ -201,15 +214,15 @@ local tbl_2 = {
 	es = "achievement_morris_markus_"
 }
 
-for i, v in ipairs(SPProfilesAbbreviation) do
-	for i_2, v_2 in ipairs(AvailableJourneyOrder) do
-		for i_3, v_3 in ipairs(tbl) do
-			local var_0_10 = DifficultyMapping[v_3]
-			local rank = DifficultySettings[v_3].rank
-			local format = string.format("morris_complete_%s_%s_%s", v_2, v, var_0_10)
-			local str = tbl_2[v] .. i_3
+for _, hero in ipairs(SPProfilesAbbreviation) do
+	for _, journey_name in ipairs(AvailableJourneyOrder) do
+		for difficulty_index, difficulty in ipairs(difficulties) do
+			local difficulty_name = DifficultyMapping[difficulty]
+			local difficulty_rank = DifficultySettings[difficulty].rank
+			local id = string.format("morris_complete_%s_%s_%s", journey_name, hero, difficulty_name)
+			local icon = icon_by_hero[hero] .. difficulty_index
 
-			fn_7(achievements, format, v, v_2, rank, str, "morris", nil, nil)
+			add_hero_journey_complete_challenge(achievements, id, hero, journey_name, difficulty_rank, icon, "morris", nil, nil)
 		end
 	end
 end

@@ -4,36 +4,37 @@ require("scripts/entity_system/systems/behaviour/nodes/bt_node")
 
 BTThrowRockAction = class(BTThrowRockAction, BTNode)
 
-BTThrowRockAction.init = function (arg_1_0, ...)
+BTThrowRockAction.init = function (self, ...)
 	-- function 1
-	BTThrowRockAction.super.init(arg_1_0, ...)
+	BTThrowRockAction.super.init(self, ...)
 end
 
 BTThrowRockAction.name = "BTThrowRockAction"
 
-BTThrowRockAction.enter = function (self, arg_2_1, arg_2_2, arg_2_3)
+BTThrowRockAction.enter = function (self, unit, blackboard, t)
 	-- function 2
-	local action_data = self._tree_node.action_data
+	local action = self._tree_node.action_data
 
-	Managers.state.network:anim_event(arg_2_1, action_data.attack_anim)
+	Managers.state.network:anim_event(unit, action.attack_anim)
 
-	arg_2_2.attack_cooldown = arg_2_3 + action_data.cooldown
+	blackboard.attack_cooldown = t + action.cooldown
 end
 
-BTThrowRockAction.leave = function (arg_3_0, arg_3_1, arg_3_2, arg_3_3, arg_3_4, arg_3_5)
+BTThrowRockAction.leave = function (self, unit, blackboard, t, reason, destroy)
 	-- function 3
 	print("BTThrowRockAction LEAVE")
 
-	arg_3_2.running_attack_action = nil
+	blackboard.running_attack_action = nil
 end
 
-BTThrowRockAction.run = function (arg_4_0, arg_4_1, arg_4_2, arg_4_3, arg_4_4)
+BTThrowRockAction.run = function (self, unit, blackboard, t, dt)
 	-- function 4
-	local rotation_towards_unit = LocomotionUtils.rotation_towards_unit(arg_4_1, arg_4_2.target_unit)
+	local rot = LocomotionUtils.rotation_towards_unit(unit, blackboard.target_unit)
+	local locomotion = blackboard.locomotion_extension
 
-	arg_4_2.locomotion_extension:set_wanted_rotation(rotation_towards_unit)
+	locomotion:set_wanted_rotation(rot)
 
-	if arg_4_3 > arg_4_2.attack_cooldown then
-		arg_4_2.running_attack_action = nil
+	if t > blackboard.attack_cooldown then
+		blackboard.running_attack_action = nil
 	end
 end

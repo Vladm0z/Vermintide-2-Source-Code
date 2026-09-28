@@ -1,6 +1,6 @@
 -- chunkname: @scripts/settings/equipment/item_master_list_mutators_batch_02.lua
 
-local tbl = {
+local item_master_list = {
 	mutator_statue_01 = {
 		temporary_template = "mutator_statue_01",
 		slot_type = "healthkit",
@@ -15,4 +15,4 @@ local tbl = {
 	}
 }
 
-table.merge_recursive(ItemMasterList, tbl)
+table.merge_recursive(ItemMasterList, item_master_list)

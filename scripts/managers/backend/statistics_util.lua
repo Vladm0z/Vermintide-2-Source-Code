@@ -1,12 +1,12 @@
 -- chunkname: @scripts/managers/backend/statistics_util.lua
 
-local alive = Unit.alive
-local get_data = Unit.get_data
+local Unit_alive = Unit.alive
+local Unit_get_data = Unit.get_data
 
 StatisticsUtil = {}
 
 local StatisticsUtil = StatisticsUtil
-local tbl = {
+local _tracked_weapon_kill_stats = {
 	we_1h_axe = {
 		"holly"
 	},
@@ -41,47 +41,48 @@ local tbl = {
 
 DLCUtils.dofile_list("statistics_util")
 
-StatisticsUtil.generate_weapon_kill_stats_dlc = function (self, arg_1_1, arg_1_2)
+StatisticsUtil.generate_weapon_kill_stats_dlc = function (stat_player, dlc_name, template)
 	-- function 1
-	for k, v in pairs(tbl) do
-		if not table.contains(v, arg_1_1) then
-			local clone = table.clone(arg_1_2)
-			local str = arg_1_1 .. "_kills_" .. k
+	for weapon_name, dlcs in pairs(_tracked_weapon_kill_stats) do
+		if table.contains(dlcs, dlc_name) then
+			local entry = table.clone(template)
+			local stat_name = dlc_name .. "_kills_" .. weapon_name
 
-			clone.database_name = str
-			self[str] = clone
+			entry.database_name = stat_name
+			stat_player[stat_name] = entry
 		end
 	end
 end
 
-local function fn(self, arg_2_1, arg_2_2)
+local function _track_weapon_kill_stats(statistics_db, stats_id, weapon_item)
 	-- function 2
-	local name = arg_2_2.name
-	local var_2_1 = tbl[name]
+	local weapon_name = weapon_item.name
+	local weapon_stats_dlcs = _tracked_weapon_kill_stats[weapon_name]
+	local rarity = weapon_item.rarity
 
-	if arg_2_2.rarity == "magic" then
-		local required_unlock_item = arg_2_2.required_unlock_item
+	if rarity == "magic" then
+		local base_weapon_name = weapon_item.required_unlock_item
 
-		var_2_1 = tbl[required_unlock_item]
-		name = required_unlock_item
+		weapon_stats_dlcs = _tracked_weapon_kill_stats[base_weapon_name]
+		weapon_name = base_weapon_name
 	end
 
-	if not var_2_1 then
-		local unlock = Managers.unlock
+	if weapon_stats_dlcs then
+		local dlc_manager = Managers.unlock
 
-		for i = 1, #var_2_1 do
-			local var_2_4 = var_2_1[i]
+		for dlc_id = 1, #weapon_stats_dlcs do
+			local dlc_name = weapon_stats_dlcs[dlc_id]
 
-			if not unlock:is_dlc_unlocked(var_2_4) then
-				self:increment_stat(arg_2_1, var_2_4 .. "_kills_" .. name)
+			if dlc_manager:is_dlc_unlocked(dlc_name) then
+				statistics_db:increment_stat(stats_id, dlc_name .. "_kills_" .. weapon_name)
 			end
 		end
 	end
 end
 
-DLCUtils.merge("_tracked_weapon_kill_stats", tbl)
+DLCUtils.merge("_tracked_weapon_kill_stats", _tracked_weapon_kill_stats)
 
-local tbl_2 = {
+local _tracked_levels_complted_w_weapons_levels = {
 	warcamp = {
 		"scorpion"
 	},
@@ -95,7 +96,7 @@ local tbl_2 = {
 		"scorpion"
 	}
 }
-local tbl_3 = {
+local _tracked_levels_complted_w_weapons_weapons = {
 	bw_1h_flail_flaming = {
 		"scorpion"
 	},
@@ -113,45 +114,48 @@ local tbl_3 = {
 	}
 }
 
-StatisticsUtil.generate_level_complete_with_weapon_stats_dlc = function (self, arg_3_1, arg_3_2)
+StatisticsUtil.generate_level_complete_with_weapon_stats_dlc = function (stat_player, dlc_name, template)
 	-- function 3
-	for k, v in pairs(tbl_2) do
-		if not table.contains(v, arg_3_1) then
-			for k_2, v_2 in pairs(tbl_3) do
-				if not table.contains(v_2, arg_3_1) then
-					local clone = table.clone(arg_3_2)
-					local str = arg_3_1 .. "_" .. k .. "_" .. k_2
+	for level_name, level_dlcs in pairs(_tracked_levels_complted_w_weapons_levels) do
+		if table.contains(level_dlcs, dlc_name) then
+			for weapon_name, weapon_dlcs in pairs(_tracked_levels_complted_w_weapons_weapons) do
+				if table.contains(weapon_dlcs, dlc_name) then
+					local entry = table.clone(template)
+					local stat_name = dlc_name .. "_" .. level_name .. "_" .. weapon_name
 
-					clone.database_name = str
-					self[str] = clone
+					entry.database_name = stat_name
+					stat_player[stat_name] = entry
 				end
 			end
 		end
 	end
 end
 
-local function fn_2(self, arg_4_1, arg_4_2, arg_4_3, arg_4_4)
+local function _track_level_complete_with_weapon_stats(statistics_db, stats_id, level, weapon_name, difficulty)
 	-- function 4
-	local var_4_0 = DifficultySettings[arg_4_4]
+	local difficulty_settings = DifficultySettings[difficulty]
 
-	if not var_4_0 then
+	if not difficulty_settings then
 		return
 	end
 
-	if not (not arg_4_2 and tbl_2[arg_4_2]) then
-		local flag = not arg_4_3 and tbl_3[arg_4_3]
+	local is_level_tracked = not not level and not not _tracked_levels_complted_w_weapons_levels[level]
 
-		if not flag then
-			local unlock = Managers.unlock
+	if is_level_tracked then
+		local weapon_stats_dlcs = not not weapon_name and not not _tracked_levels_complted_w_weapons_weapons[weapon_name]
 
-			for i = 1, #flag do
-				local var_4_3 = flag[i]
+		if weapon_stats_dlcs then
+			local dlc_manager = Managers.unlock
 
-				if not unlock:is_dlc_unlocked(var_4_3) then
-					local str = var_4_3 .. "_" .. arg_4_2 .. "_" .. arg_4_3
+			for dlc_id = 1, #weapon_stats_dlcs do
+				local dlc_name = weapon_stats_dlcs[dlc_id]
 
-					if self:get_persistent_stat(arg_4_1, str) < var_4_0.rank then
-						self:set_stat(arg_4_1, str, var_4_0.rank)
+				if dlc_manager:is_dlc_unlocked(dlc_name) then
+					local stat_name = dlc_name .. "_" .. level .. "_" .. weapon_name
+					local current_difficulty = statistics_db:get_persistent_stat(stats_id, stat_name)
+
+					if current_difficulty < difficulty_settings.rank then
+						statistics_db:set_stat(stats_id, stat_name, difficulty_settings.rank)
 					end
 				end
 			end
@@ -159,150 +163,153 @@ local function fn_2(self, arg_4_1, arg_4_2, arg_4_3, arg_4_4)
 	end
 end
 
-StatisticsUtil.register_kill = function (arg_5_0, arg_5_1, arg_5_2, arg_5_3)
+StatisticsUtil.register_kill = function (victim_unit, damage_data, statistics_db, is_server)
 	-- function 5
-	local has_extension = ScriptUnit.has_extension(arg_5_0, "health_system")
-	local last_damage_data = has_extension.last_damage_data
+	local victim_health_extension = ScriptUnit.has_extension(victim_unit, "health_system")
+	local victim_damage_data = victim_health_extension.last_damage_data
 
-	if not last_damage_data then
+	if not victim_damage_data then
 		return
 	end
 
-	local player = Managers.player
-	local owner = player:owner(arg_5_0)
-	local var_5_4 = get_data(arg_5_0, "breed")
-	local flag = not var_5_4 and var_5_4.name
-	local breed = last_damage_data.breed
-	local attacker_side = last_damage_data.attacker_side
-	local attacker_unique_id = last_damage_data.attacker_unique_id
-	local player_from_unique_id = player:player_from_unique_id(attacker_unique_id)
-	local side = Managers.state.side
-	local var_5_11 = side.side_by_unit[arg_5_0]
+	local player_manager = Managers.player
+	local victim_player = player_manager:owner(victim_unit)
+	local breed_killed = Unit_get_data(victim_unit, "breed")
+	local breed_killed_name = not not breed_killed and not not breed_killed.name
+	local breed_attacker = victim_damage_data.breed
+	local attacker_side = victim_damage_data.attacker_side
+	local attacker_unique_id = victim_damage_data.attacker_unique_id
+	local attacker_player = player_manager:player_from_unique_id(attacker_unique_id)
+	local side_manager = Managers.state.side
+	local victim_side = side_manager.side_by_unit[victim_unit]
 	local local_player = Managers.player:local_player()
-	local flag_2 = not owner and has_extension:was_attacked_by(not local_player and local_player:unique_id())
+	local recent_attack = not not victim_player and not not victim_health_extension:was_attacked_by(not not local_player and not not local_player:unique_id())
 
-	if not flag_2 and owner == local_player or not side:is_enemy_by_side(attacker_side, var_5_11) then
-		local stats_id = local_player:stats_id()
-		local name = flag_2.attacker_breed.name
+	if recent_attack and victim_player ~= local_player and side_manager:is_enemy_by_side(attacker_side, victim_side) then
+		local local_stats_id = local_player:stats_id()
+		local attacker_breed_name = recent_attack.attacker_breed.name
 
-		arg_5_2:increment_stat(stats_id, "eliminations_as_breed", name)
-		Managers.state.event:trigger("add_player_kill_confirmation", attacker_side:name(), owner)
+		statistics_db:increment_stat(local_stats_id, "eliminations_as_breed", attacker_breed_name)
+		Managers.state.event:trigger("add_player_kill_confirmation", attacker_side:name(), victim_player)
 	end
 
-	if not (not player_from_unique_id and player_from_unique_id == owner) then
-		local stats_id_2 = player_from_unique_id:stats_id()
+	if attacker_player and attacker_player ~= victim_player then
+		local stats_id = attacker_player:stats_id()
 
-		arg_5_2:increment_stat(stats_id_2, "kills_total")
+		statistics_db:increment_stat(stats_id, "kills_total")
 
-		if not var_5_4 then
-			Managers.state.achievement:trigger_event("register_kill", stats_id_2, arg_5_0, arg_5_1, var_5_4)
+		if breed_killed then
+			Managers.state.achievement:trigger_event("register_kill", stats_id, victim_unit, damage_data, breed_killed)
 
-			local race = var_5_4.race
+			local killed_race_name = breed_killed.race
 
-			if Breeds[flag] or not PlayerBreeds[flag] or not Managers.state.side:is_enemy_by_side(attacker_side, var_5_11) then
-				local get_difficulty = Managers.state.difficulty:get_difficulty()
+			if Breeds[breed_killed_name] or PlayerBreeds[breed_killed_name] and Managers.state.side:is_enemy_by_side(attacker_side, victim_side) then
+				local difficulty_manager = Managers.state.difficulty
+				local difficulty_name = difficulty_manager:get_difficulty()
 
-				arg_5_2:increment_stat(stats_id_2, "kills_per_breed", flag)
-				arg_5_2:increment_stat(stats_id_2, "kills_per_breed_difficulty", flag, get_difficulty)
+				statistics_db:increment_stat(stats_id, "kills_per_breed", breed_killed_name)
+				statistics_db:increment_stat(stats_id, "kills_per_breed_difficulty", breed_killed_name, difficulty_name)
 			end
 
-			arg_5_2:increment_stat(stats_id_2, "kills_per_breed_persistent", flag)
+			statistics_db:increment_stat(stats_id, "kills_per_breed_persistent", breed_killed_name)
 
-			if not race then
-				arg_5_2:increment_stat(stats_id_2, "kills_per_race", race)
+			if killed_race_name then
+				statistics_db:increment_stat(stats_id, "kills_per_race", killed_race_name)
 
-				if race == "critter" then
+				if killed_race_name == "critter" then
 					local human_players = Managers.player:human_players()
 
-					for k, v in pairs(human_players) do
-						local stats_id_3 = v:stats_id()
+					for _, player in pairs(human_players) do
+						local id = player:stats_id()
 
-						if not stats_id_3 then
-							arg_5_2:increment_stat(stats_id_3, "kills_critter_total")
+						if id then
+							statistics_db:increment_stat(id, "kills_critter_total")
 						end
 					end
 				end
 			end
 
-			local var_5_21 = arg_5_1[DamageDataIndex.DAMAGE_SOURCE_NAME]
-			local var_5_22 = rawget(ItemMasterList, var_5_21)
+			local damage_source = damage_data[DamageDataIndex.DAMAGE_SOURCE_NAME]
+			local master_list_item = rawget(ItemMasterList, damage_source)
 
-			if not var_5_22 then
-				local slot_type = var_5_22.slot_type
-				local var_5_24 = arg_5_1[DamageDataIndex.ATTACK_TYPE]
+			if master_list_item then
+				local slot_type = master_list_item.slot_type
+				local attack_type = damage_data[DamageDataIndex.ATTACK_TYPE]
 
-				if not var_5_24 then
-					slot_type = var_5_24 == "heavy_attack" or var_5_24 == "light_attack" or "melee" or "ranged"
+				if attack_type then
+					slot_type = (attack_type == "heavy_attack" or attack_type == "light_attack") and not not "melee" or not not "ranged"
 				end
 
 				if not slot_type then
-					local template = var_5_22.template
+					local weapon_template_name = master_list_item.template
 
-					if not template then
-						local get_weapon_template = WeaponUtils.get_weapon_template(template)
-						local flag_3 = not get_weapon_template and get_weapon_template.buff_type
+					if weapon_template_name then
+						local weapon_template = WeaponUtils.get_weapon_template(weapon_template_name)
+						local buff_type = not not weapon_template and not not weapon_template.buff_type
 
-						if not MeleeBuffTypes[flag_3] then
+						if MeleeBuffTypes[buff_type] then
 							slot_type = "melee"
-						elseif not RangedBuffTypes[flag_3] then
+						elseif RangedBuffTypes[buff_type] then
 							slot_type = "ranged"
 						end
 					end
 				end
 
 				if slot_type == "melee" then
-					arg_5_2:increment_stat(stats_id_2, "kills_melee")
+					statistics_db:increment_stat(stats_id, "kills_melee")
 				elseif slot_type == "ranged" then
-					arg_5_2:increment_stat(stats_id_2, "kills_ranged")
+					statistics_db:increment_stat(stats_id, "kills_ranged")
 				end
 
-				fn(arg_5_2, stats_id_2, var_5_22)
+				_track_weapon_kill_stats(statistics_db, stats_id, master_list_item)
 			end
 		end
 	end
 
-	if not var_5_4 and not breed and not var_5_4.awards_positive_reinforcement_message then
-		local setting = Managers.state.game_mode:setting("positive_reinforcement_check")
-		local str = "killed_special"
+	if breed_killed and breed_attacker and breed_killed.awards_positive_reinforcement_message then
+		local positive_reinforcement_check = Managers.state.game_mode:setting("positive_reinforcement_check")
+		local predicate = "killed_special"
 
-		if not setting and not setting(str, breed, var_5_4) then
-			local name_2 = breed.name
-			local flag_4 = false
-			local str_2 = ""
+		if not positive_reinforcement_check or positive_reinforcement_check(predicate, breed_attacker, breed_killed) then
+			local breed_attacker_name = breed_attacker.name
+			local local_human = false
+			local stats_id = ""
 
-			if not player_from_unique_id then
-				flag_4 = player_from_unique_id.local_player
-				str_2 = player_from_unique_id:stats_id()
+			if attacker_player then
+				local_human = attacker_player.local_player
+				stats_id = attacker_player:stats_id()
 			end
 
-			local var_5_33 = str_2
-			local killfeed_fold_with = var_5_4.killfeed_fold_with
+			local var_5_0 = stats_id
+			local killfeed_fold_with = breed_killed.killfeed_fold_with
 
-			killfeed_fold_with = killfeed_fold_with or flag
+			killfeed_fold_with = not not killfeed_fold_with or not not breed_killed_name
 
-			local str_3 = var_5_33 .. killfeed_fold_with
+			local hash = var_5_0 .. killfeed_fold_with
 
-			Managers.state.event:trigger("add_coop_feedback_kill", str_3, flag_4, str, name_2, flag, player_from_unique_id, owner)
+			Managers.state.event:trigger("add_coop_feedback_kill", hash, local_human, predicate, breed_attacker_name, breed_killed_name, attacker_player, victim_player)
 		end
 	end
 
-	if not var_5_4 and var_5_4.elite and not var_5_4.boss then
-		local var_5_36 = Managers.state.side.side_by_unit[arg_5_0]
+	if breed_killed and (breed_killed.elite or breed_killed.boss) then
+		local victim_side = Managers.state.side.side_by_unit[victim_unit]
 
-		if not (not attacker_side and attacker_side == var_5_36) then
-			local occupied_slots = attacker_side.party.occupied_slots
+		if attacker_side and attacker_side ~= victim_side then
+			local party = attacker_side.party
+			local occupied_slots = party.occupied_slots
 
-			for i, v_2 in ipairs(occupied_slots) do
-				local player_2 = v_2.player
+			for _, player_status in ipairs(occupied_slots) do
+				local player = player_status.player
 
-				if player_2 ~= player_from_unique_id then
-					local stats_id_4 = player_2:stats_id()
+				if player ~= attacker_player then
+					local stats_id = player:stats_id()
 
-					if not arg_5_2:is_registered(stats_id_4) then
-						local get_difficulty_2 = Managers.state.difficulty:get_difficulty()
+					if statistics_db:is_registered(stats_id) then
+						local difficulty_manager = Managers.state.difficulty
+						local difficulty_name = difficulty_manager:get_difficulty()
 
-						arg_5_2:increment_stat(stats_id_4, "kill_assists_per_breed", flag)
-						arg_5_2:increment_stat(stats_id_4, "kill_assists_per_breed_difficulty", flag, get_difficulty_2)
+						statistics_db:increment_stat(stats_id, "kill_assists_per_breed", breed_killed_name)
+						statistics_db:increment_stat(stats_id, "kill_assists_per_breed_difficulty", breed_killed_name, difficulty_name)
 					end
 				end
 			end
@@ -310,415 +317,480 @@ StatisticsUtil.register_kill = function (arg_5_0, arg_5_1, arg_5_2, arg_5_3)
 	end
 end
 
-StatisticsUtil.register_knockdown = function (arg_6_0, arg_6_1, arg_6_2, arg_6_3)
+StatisticsUtil.register_knockdown = function (victim_unit, damage_data, statistics_db, is_server)
 	-- function 6
-	local has_extension = ScriptUnit.has_extension(arg_6_0, "health_system")
-	local last_damage_data = has_extension.last_damage_data
+	local victim_health_extension = ScriptUnit.has_extension(victim_unit, "health_system")
+	local victim_damage_data = victim_health_extension.last_damage_data
 
-	if not last_damage_data then
+	if not victim_damage_data then
 		return
 	end
 
-	local player = Managers.player
-	local owner = player:owner(arg_6_0)
-	local var_6_4 = get_data(arg_6_0, "breed")
-	local flag = not var_6_4 and var_6_4.name
-	local breed = last_damage_data.breed
-	local attacker_unique_id = last_damage_data.attacker_unique_id
-	local player_from_unique_id = player:player_from_unique_id(attacker_unique_id)
+	local player_manager = Managers.player
+	local victim_player = player_manager:owner(victim_unit)
+	local breed_killed = Unit_get_data(victim_unit, "breed")
+	local breed_killed_name = not not breed_killed and not not breed_killed.name
+	local breed_attacker = victim_damage_data.breed
+	local attacker_unique_id = victim_damage_data.attacker_unique_id
+	local attacker_player = player_manager:player_from_unique_id(attacker_unique_id)
 	local local_player = Managers.player:local_player()
 
-	if not flag then
-		if not (not player_from_unique_id and player_from_unique_id == owner) then
-			local stats_id = player_from_unique_id:stats_id()
+	if breed_killed_name then
+		if attacker_player and attacker_player ~= victim_player then
+			local stats_id = attacker_player:stats_id()
 
-			arg_6_2:increment_stat(stats_id, "vs_knockdowns_per_breed", flag)
+			statistics_db:increment_stat(stats_id, "vs_knockdowns_per_breed", breed_killed_name)
 		end
 
-		local was_attacked_by = has_extension:was_attacked_by(not local_player and local_player:unique_id())
+		local recent_attack = victim_health_extension:was_attacked_by(not not local_player and not not local_player:unique_id())
 
-		if not (not was_attacked_by and owner == local_player) then
-			local name = was_attacked_by.attacker_breed.name
-			local stats_id_2 = local_player:stats_id()
+		if recent_attack and victim_player ~= local_player then
+			local attacker_breed_name = recent_attack.attacker_breed.name
+			local local_stats_id = local_player:stats_id()
 
-			arg_6_2:increment_stat(stats_id_2, "eliminations_as_breed", name)
-			arg_6_2:increment_stat(stats_id_2, "vs_knockdowns_per_breed", flag)
-			Managers.state.event:trigger("add_player_knock_confirmation", local_player, owner)
+			statistics_db:increment_stat(local_stats_id, "eliminations_as_breed", attacker_breed_name)
+			statistics_db:increment_stat(local_stats_id, "vs_knockdowns_per_breed", breed_killed_name)
+			Managers.state.event:trigger("add_player_knock_confirmation", local_player, victim_player)
 		end
 	end
 
-	if not var_6_4 and not breed and not var_6_4.awards_positive_reinforcement_message then
-		local name_2 = breed.name
-		local str = "player_knocked_down"
-		local flag_2 = false
-		local str_2 = ""
+	if breed_killed and breed_attacker then
+		local print_message = breed_killed.awards_positive_reinforcement_message
 
-		if not player_from_unique_id then
-			flag_2 = player_from_unique_id.local_player
-			str_2 = player_from_unique_id:stats_id()
-		end
+		if print_message then
+			local breed_attacker_name = breed_attacker.name
+			local predicate = "player_knocked_down"
+			local local_human = false
+			local stats_id = ""
 
-		Managers.state.event:trigger("add_coop_feedback_kill", str_2 .. flag, flag_2, str, name_2, flag)
+			if attacker_player then
+				local_human = attacker_player.local_player
+				stats_id = attacker_player:stats_id()
+			end
 
-		if not owner and not player_from_unique_id then
-			Managers.state.achievement:trigger_event("register_knockdown", str_2, arg_6_0, player_from_unique_id, var_6_4)
+			Managers.state.event:trigger("add_coop_feedback_kill", stats_id .. breed_killed_name, local_human, predicate, breed_attacker_name, breed_killed_name)
+
+			if victim_player and attacker_player then
+				Managers.state.achievement:trigger_event("register_knockdown", stats_id, victim_unit, attacker_player, breed_killed)
+			end
 		end
 	end
 end
 
-StatisticsUtil.check_save = function (arg_7_0, arg_7_1)
+StatisticsUtil.check_save = function (savior_unit, enemy_unit)
 	-- function 7
-	local target_unit = BLACKBOARDS[arg_7_1].target_unit
-	local player = Managers.player
+	local blackboard = BLACKBOARDS[enemy_unit]
+	local saved_unit = blackboard.target_unit
+	local player_manager = Managers.player
 
-	if not (not arg_7_0 and target_unit) then
+	if not savior_unit or not saved_unit then
 		return
 	end
 
-	local is_player_unit = player:is_player_unit(arg_7_0)
-	local is_player_unit_2 = player:is_player_unit(target_unit)
+	local savior_is_player = player_manager:is_player_unit(savior_unit)
+	local saved_is_player = player_manager:is_player_unit(saved_unit)
 
-	if not (not is_player_unit and is_player_unit_2) then
+	if not savior_is_player or not saved_is_player then
 		return
 	end
 
-	local owner = player:owner(arg_7_0)
-	local owner_2 = player:owner(target_unit)
+	local savior_player = player_manager:owner(savior_unit)
+	local saved_player = player_manager:owner(saved_unit)
 
-	if owner == owner_2 then
+	if savior_player == saved_player then
 		return
 	end
 
-	local var_7_6
-	local network = Managers.state.network
-	local game = network:game()
-	local flag = not game and network:unit_game_object_id(target_unit)
+	local saved_unit_dir
+	local network_manager = Managers.state.network
+	local game = network_manager:game()
+	local game_object_id = not not game and not not network_manager:unit_game_object_id(saved_unit)
 
-	if not flag then
-		var_7_6 = Vector3.normalize(Vector3.flat(GameSession.game_object_field(game, flag, "aim_direction")))
+	if game_object_id then
+		saved_unit_dir = Vector3.normalize(Vector3.flat(GameSession.game_object_field(game, game_object_id, "aim_direction")))
 	else
-		var_7_6 = Quaternion.forward(Unit.local_rotation(target_unit, 0))
+		saved_unit_dir = Quaternion.forward(Unit.local_rotation(saved_unit, 0))
 	end
 
-	local forward = Quaternion.forward(Unit.local_rotation(arg_7_1, 0))
-	local var_7_11 = POSITION_LOOKUP[target_unit]
-	local var_7_12 = POSITION_LOOKUP[arg_7_1]
-	local num = var_7_11 - var_7_12
-	local flag_2 = not (Vector3.distance(var_7_11, var_7_12) < 3) or not (Vector3.dot(num, var_7_6) > 0) or Vector3.dot(num, forward) > 0
-	local extension = ScriptUnit.extension(target_unit, "status_system")
-	local get_pouncer_unit = extension:get_pouncer_unit()
+	local enemy_unit_dir = Quaternion.forward(Unit.local_rotation(enemy_unit, 0))
+	local saved_unit_pos = POSITION_LOOKUP[saved_unit]
+	local enemy_unit_pos = POSITION_LOOKUP[enemy_unit]
+	local attack_dir = saved_unit_pos - enemy_unit_pos
+	local is_behind = Vector3.distance(saved_unit_pos, enemy_unit_pos) < 3 and Vector3.dot(attack_dir, saved_unit_dir) > 0 and Vector3.dot(attack_dir, enemy_unit_dir) > 0
+	local status_ext = ScriptUnit.extension(saved_unit, "status_system")
+	local get_pouncer_unit = status_ext:get_pouncer_unit()
 
-	get_pouncer_unit = get_pouncer_unit or extension:get_pack_master_grabber()
-
-	local is_disabled = extension:is_disabled()
-	local var_7_18
-	local statistics_db = player:statistics_db()
-	local stats_id = owner:stats_id()
-
-	if arg_7_1 == get_pouncer_unit then
-		var_7_18 = "save"
-
-		statistics_db:increment_stat(stats_id, "saves")
-	elseif flag_2 or not is_disabled then
-		var_7_18 = "aid"
-
-		statistics_db:increment_stat(stats_id, "aidings")
+	if not get_pouncer_unit then
+		-- Nothing
 	end
 
-	if not var_7_18 then
-		local flag_3 = not not owner.remote or not owner.bot_player
+	get_pouncer_unit = status_ext:get_pack_master_grabber()
 
-		Managers.state.event:trigger("add_coop_feedback", stats_id .. owner_2:stats_id(), flag_3, var_7_18, owner, owner_2)
-		ScriptUnit.extension(target_unit, "buff_system"):trigger_procs("on_assisted", arg_7_0, arg_7_1)
-		ScriptUnit.extension(arg_7_0, "buff_system"):trigger_procs("on_assisted_ally", target_unit, arg_7_1)
+	local grabber_unit = get_pouncer_unit
+
+	::label_7_0::
+
+	local is_disabled = status_ext:is_disabled()
+	local predicate
+	local statistics_db = player_manager:statistics_db()
+	local savior_player_stats_id = savior_player:stats_id()
+
+	if enemy_unit == grabber_unit then
+		predicate = "save"
+
+		statistics_db:increment_stat(savior_player_stats_id, "saves")
+	elseif is_behind or is_disabled then
+		predicate = "aid"
+
+		statistics_db:increment_stat(savior_player_stats_id, "aidings")
+	end
+
+	if predicate then
+		local local_human = not savior_player.remote and not not not savior_player.bot_player
+
+		Managers.state.event:trigger("add_coop_feedback", savior_player_stats_id .. saved_player:stats_id(), local_human, predicate, savior_player, saved_player)
+
+		local buff_extension = ScriptUnit.extension(saved_unit, "buff_system")
+
+		buff_extension:trigger_procs("on_assisted", savior_unit, enemy_unit)
+
+		local savior_buff_extension = ScriptUnit.extension(savior_unit, "buff_system")
+
+		savior_buff_extension:trigger_procs("on_assisted_ally", saved_unit, enemy_unit)
 
 		local network_transmit = Managers.state.network.network_transmit
-		local network_id = owner:network_id()
-		local local_player_id = owner:local_player_id()
-		local network_id_2 = owner_2:network_id()
-		local local_player_id_2 = owner_2:local_player_id()
-		local var_7_27 = NetworkLookup.coop_feedback[var_7_18]
-		local unit_game_object_id = network:unit_game_object_id(arg_7_1)
+		local savior_player_id = savior_player:network_id()
+		local savior_local_player_id = savior_player:local_player_id()
+		local saved_player_id = saved_player:network_id()
+		local saved_local_player_id = saved_player:local_player_id()
+		local predicate_id = NetworkLookup.coop_feedback[predicate]
+		local enemy_unit_id = network_manager:unit_game_object_id(enemy_unit)
 
-		network_transmit:send_rpc_clients("rpc_assist", network_id, local_player_id, network_id_2, local_player_id_2, var_7_27, unit_game_object_id)
+		network_transmit:send_rpc_clients("rpc_assist", savior_player_id, savior_local_player_id, saved_player_id, saved_local_player_id, predicate_id, enemy_unit_id)
 	end
 end
 
-StatisticsUtil.register_pull_up = function (arg_8_0, arg_8_1, arg_8_2)
+StatisticsUtil.register_pull_up = function (puller_up_unit, pulled_up_unit, statistics_db)
 	-- function 8
-	local player = Managers.player
-	local owner = player:owner(arg_8_0)
-	local owner_2 = player:owner(arg_8_1)
+	local player_manager = Managers.player
+	local player1 = player_manager:owner(puller_up_unit)
+	local player2 = player_manager:owner(pulled_up_unit)
 
-	if not owner and not owner_2 then
-		local str = "assisted_respawn"
-		local flag = not not owner.remote or not owner.bot_player
+	if player1 and player2 then
+		local predicate = "assisted_respawn"
+		local local_human = not player1.remote and not not not player1.bot_player
 
-		Managers.state.event:trigger("add_coop_feedback", owner:stats_id() .. owner_2:stats_id(), flag, str, owner, owner_2)
+		Managers.state.event:trigger("add_coop_feedback", player1:stats_id() .. player2:stats_id(), local_human, predicate, player1, player2)
 	end
 end
 
-StatisticsUtil.register_assisted_respawn = function (arg_9_0, arg_9_1, arg_9_2)
+StatisticsUtil.register_assisted_respawn = function (reviver_unit, revivee_unit, statistics_db)
 	-- function 9
-	local player = Managers.player
-	local owner = player:owner(arg_9_0)
-	local owner_2 = player:owner(arg_9_1)
+	local player_manager = Managers.player
+	local player1 = player_manager:owner(reviver_unit)
+	local player2 = player_manager:owner(revivee_unit)
 
-	if not owner and not owner_2 then
-		local str = "assisted_respawn"
-		local flag = not not owner.remote or not owner.bot_player
+	if player1 and player2 then
+		local predicate = "assisted_respawn"
+		local local_human = not player1.remote and not not not player1.bot_player
 
-		Managers.state.event:trigger("add_coop_feedback", owner:stats_id() .. owner_2:stats_id(), flag, str, owner, owner_2)
+		Managers.state.event:trigger("add_coop_feedback", player1:stats_id() .. player2:stats_id(), local_human, predicate, player1, player2)
 	end
 end
 
-StatisticsUtil.register_revive = function (arg_10_0, arg_10_1, arg_10_2)
+StatisticsUtil.register_revive = function (reviver_unit, revivee_unit, statistics_db)
 	-- function 10
-	local player = Managers.player
-	local owner = player:owner(arg_10_0)
+	local player_manager = Managers.player
+	local player1 = player_manager:owner(reviver_unit)
 
-	if not owner then
-		local stats_id = owner:stats_id()
+	if player1 then
+		local stats_id = player1:stats_id()
 
-		arg_10_2:increment_stat(stats_id, "revives")
+		statistics_db:increment_stat(stats_id, "revives")
 	end
 
-	local owner_2 = player:owner(arg_10_1)
+	local player2 = player_manager:owner(revivee_unit)
 
-	if not owner_2 then
-		local stats_id_2 = owner_2:stats_id()
+	if player2 then
+		local stats_id = player2:stats_id()
 
-		arg_10_2:increment_stat(stats_id_2, "times_revived")
+		statistics_db:increment_stat(stats_id, "times_revived")
 	end
 
-	if not owner and not owner_2 then
-		local str = "revive"
-		local flag = not not owner.remote or not owner.bot_player
+	if player1 and player2 then
+		local predicate = "revive"
+		local local_human = not player1.remote and not not not player1.bot_player
 
-		Managers.state.event:trigger("add_coop_feedback", owner:stats_id() .. owner_2:stats_id(), flag, str, owner, owner_2)
-		Managers.state.achievement:trigger_event("register_revive", arg_10_0, arg_10_1)
+		Managers.state.event:trigger("add_coop_feedback", player1:stats_id() .. player2:stats_id(), local_human, predicate, player1, player2)
+		Managers.state.achievement:trigger_event("register_revive", reviver_unit, revivee_unit)
 	end
 end
 
-StatisticsUtil.register_heal = function (arg_11_0, arg_11_1, arg_11_2)
+StatisticsUtil.register_heal = function (healer_unit, healed_unit, statistics_db)
 	-- function 11
-	local player = Managers.player
-	local owner = player:owner(arg_11_0)
-	local owner_2 = player:owner(arg_11_1)
+	local player_manager = Managers.player
+	local player1 = player_manager:owner(healer_unit)
+	local player2 = player_manager:owner(healed_unit)
 
-	if not (not owner and not owner_2 and owner == owner_2) then
-		local str = "heal"
-		local flag = not not owner.remote or not owner.bot_player
+	if player1 and player2 and player1 ~= player2 then
+		local predicate = "heal"
+		local local_human = not player1.remote and not not not player1.bot_player
 
-		Managers.state.event:trigger("add_coop_feedback", owner:stats_id() .. owner_2:stats_id(), flag, str, owner, owner_2)
+		Managers.state.event:trigger("add_coop_feedback", player1:stats_id() .. player2:stats_id(), local_human, predicate, player1, player2)
 
-		local stats_id = owner:stats_id()
+		local stats_id = player1:stats_id()
 
-		arg_11_2:increment_stat(stats_id, "times_friend_healed")
+		statistics_db:increment_stat(stats_id, "times_friend_healed")
 	end
 end
 
-StatisticsUtil.register_damage = function (arg_12_0, arg_12_1, arg_12_2)
+StatisticsUtil.register_damage = function (victim_unit, damage_data, statistics_db)
 	-- function 12
-	local var_12_0 = arg_12_1[DamageDataIndex.ATTACKER]
-	local var_12_1 = arg_12_1[DamageDataIndex.DAMAGE_SOURCE_NAME]
-	local var_12_2 = var_12_0
-	local player = Managers.player
-	local get_actual_attacker_player = AiUtils.get_actual_attacker_player(var_12_2, arg_12_0, var_12_1)
+	local damage_data_attacker_unit = damage_data[DamageDataIndex.ATTACKER]
+	local damage_source_name = damage_data[DamageDataIndex.DAMAGE_SOURCE_NAME]
+	local attacker_unit = damage_data_attacker_unit
+	local player_manager = Managers.player
+	local attacker_player = AiUtils.get_actual_attacker_player(attacker_unit, victim_unit, damage_source_name)
 
-	if not get_actual_attacker_player then
-		var_12_2 = get_actual_attacker_player.player_unit
+	if attacker_player then
+		attacker_unit = attacker_player.player_unit
 	else
-		var_12_2 = arg_12_1[DamageDataIndex.SOURCE_ATTACKER_UNIT] or var_12_2
-		var_12_2 = AiUtils.get_actual_attacker_unit(var_12_2)
-		get_actual_attacker_player = player:owner(var_12_2)
+		attacker_unit = not not damage_data[DamageDataIndex.SOURCE_ATTACKER_UNIT] or not not attacker_unit
+		attacker_unit = AiUtils.get_actual_attacker_unit(attacker_unit)
+		attacker_player = player_manager:owner(attacker_unit)
 	end
 
-	local var_12_5 = alive(arg_12_0)
+	local var_12_0 = Unit_alive(victim_unit)
 
-	var_12_5 = not var_12_5 and get_data(arg_12_0, "breed")
+	if var_12_0 then
+		-- Nothing
+	end
 
-	local var_12_6 = alive(var_12_2)
+	var_12_0 = Unit_get_data(victim_unit, "breed")
 
-	var_12_6 = not var_12_6 and get_data(var_12_2, "breed")
+	local victim_breed = var_12_0
 
-	local get_actual_attacker_breed = AiUtils.get_actual_attacker_breed(var_12_6, arg_12_0, var_12_1, var_12_0, get_actual_attacker_player)
+	::label_12_0::
 
-	if not (not var_12_6 and var_12_6 == get_actual_attacker_breed) then
-		var_12_2 = nil
+	local var_12_1 = Unit_alive(attacker_unit)
 
-		if not (not get_actual_attacker_breed and get_actual_attacker_breed.is_player) then
-			get_actual_attacker_player = nil
+	if var_12_1 then
+		-- Nothing
+	end
+
+	var_12_1 = Unit_get_data(attacker_unit, "breed")
+
+	local attacker_breed = var_12_1
+
+	::label_12_1::
+
+	local actual_attacker_breed = AiUtils.get_actual_attacker_breed(attacker_breed, victim_unit, damage_source_name, damage_data_attacker_unit, attacker_player)
+
+	if attacker_breed and attacker_breed ~= actual_attacker_breed then
+		attacker_unit = nil
+
+		if actual_attacker_breed and not actual_attacker_breed.is_player then
+			attacker_player = nil
 		end
 	end
 
-	local var_12_8 = get_actual_attacker_breed
+	attacker_breed = actual_attacker_breed
 
-	if not (not get_actual_attacker_player and arg_12_2:is_registered(get_actual_attacker_player:stats_id())) then
+	if attacker_player and not statistics_db:is_registered(attacker_player:stats_id()) then
 		return
 	end
 
-	local owner = player:owner(arg_12_0)
-	local var_12_10 = arg_12_1[DamageDataIndex.DAMAGE_AMOUNT]
+	local victim_player = player_manager:owner(victim_unit)
+	local damage_amount = damage_data[DamageDataIndex.DAMAGE_AMOUNT]
 
-	if not owner then
-		local stats_id = owner:stats_id()
+	if victim_player then
+		local stats_id = victim_player:stats_id()
 
-		arg_12_2:modify_stat_by_amount(stats_id, "damage_taken", var_12_10)
+		statistics_db:modify_stat_by_amount(stats_id, "damage_taken", damage_amount)
 
-		local extension = ScriptUnit.extension(arg_12_0, "health_system")
-		local current_health = extension:current_health()
-		local get_max_health = extension:get_max_health()
-		local num = (current_health - var_12_10) / get_max_health
-		local extension_2 = ScriptUnit.extension(arg_12_0, "career_system")
-		local career_name = extension_2:career_name()
+		local health_extension = ScriptUnit.extension(victim_unit, "health_system")
+		local current_health = health_extension:current_health()
+		local max_health = health_extension:get_max_health()
+		local current_health_percentage = (current_health - damage_amount) / max_health
+		local career_extension = ScriptUnit.extension(victim_unit, "career_system")
+		local career_name = career_extension:career_name()
+		local breed = career_extension:get_breed()
 
-		if not extension_2:get_breed().is_hero then
-			Managers.state.achievement:trigger_event("register_damage_taken", arg_12_0, arg_12_1)
+		if breed.is_hero then
+			Managers.state.achievement:trigger_event("register_damage_taken", victim_unit, damage_data)
 
-			if num < arg_12_2:get_stat(stats_id, "min_health_percentage", career_name) then
-				arg_12_2:set_stat(stats_id, "min_health_percentage", career_name, num)
+			local min_health = statistics_db:get_stat(stats_id, "min_health_percentage", career_name)
+
+			if current_health_percentage < min_health then
+				statistics_db:set_stat(stats_id, "min_health_percentage", career_name, current_health_percentage)
 			end
 		end
 	end
 
-	if not get_actual_attacker_player and not var_12_5 then
-		local name = var_12_5.name
-		local current_health_2 = ScriptUnit.extension(arg_12_0, "health_system"):current_health()
+	if attacker_player and victim_breed then
+		local breed_name = victim_breed.name
+		local health_extension = ScriptUnit.extension(victim_unit, "health_system")
+		local current_health = health_extension:current_health()
 
-		if current_health_2 > 0 then
-			local side = Managers.state.side
-			local stats_id_2 = get_actual_attacker_player:stats_id()
+		if current_health > 0 then
+			local side_manager = Managers.state.side
+			local stats_id = attacker_player:stats_id()
 
-			Managers.state.achievement:trigger_event("register_damage", stats_id_2, arg_12_0, arg_12_1, var_12_2, var_12_5)
+			Managers.state.achievement:trigger_event("register_damage", stats_id, victim_unit, damage_data, attacker_unit, victim_breed)
 
-			var_12_10 = math.clamp(var_12_10, 0, current_health_2)
+			damage_amount = math.clamp(damage_amount, 0, current_health)
 
-			arg_12_2:modify_stat_by_amount(stats_id_2, "damage_dealt", var_12_10)
+			statistics_db:modify_stat_by_amount(stats_id, "damage_dealt", damage_amount)
 
-			local get_side_from_player_unique_id = side:get_side_from_player_unique_id(get_actual_attacker_player:unique_id())
-			local var_12_23 = side.side_by_unit[arg_12_0]
-			local is_enemy_by_side = side:is_enemy_by_side(get_side_from_player_unique_id, var_12_23)
+			local attacker_side = side_manager:get_side_from_player_unique_id(attacker_player:unique_id())
+			local victim_side = side_manager.side_by_unit[victim_unit]
+			local is_enemy = side_manager:is_enemy_by_side(attacker_side, victim_side)
 
-			if Breeds[name] or not PlayerBreeds[name] or not is_enemy_by_side then
-				arg_12_2:modify_stat_by_amount(stats_id_2, "damage_dealt_per_breed", name, var_12_10)
+			if Breeds[breed_name] or PlayerBreeds[breed_name] and is_enemy then
+				statistics_db:modify_stat_by_amount(stats_id, "damage_dealt_per_breed", breed_name, damage_amount)
 			end
 
-			if arg_12_1[DamageDataIndex.HIT_ZONE] == "head" then
-				arg_12_2:increment_stat(stats_id_2, "headshots")
+			local hit_zone = damage_data[DamageDataIndex.HIT_ZONE]
+
+			if hit_zone == "head" then
+				statistics_db:increment_stat(stats_id, "headshots")
 			end
 
-			local flag = not var_12_8 and var_12_8.name
+			local attacker_breed_name = not not attacker_breed and not not attacker_breed.name
 
-			if not is_enemy_by_side then
+			if is_enemy then
 				if Managers.mechanism:current_mechanism_name() == "versus" then
-					if get_side_from_player_unique_id:name() == "heroes" then
-						arg_12_2:modify_stat_by_amount(stats_id_2, "vs_damage_dealt_to_pactsworn", var_12_10)
+					if attacker_side:name() == "heroes" then
+						statistics_db:modify_stat_by_amount(stats_id, "vs_damage_dealt_to_pactsworn", damage_amount)
 					end
 
-					if not (not var_12_8 and get_side_from_player_unique_id:name() ~= "dark_pact") then
-						arg_12_2:modify_stat_by_amount(stats_id_2, "state_damage_dealt_as_pactsworn_breed", flag, var_12_10)
+					if attacker_breed and attacker_side:name() == "dark_pact" then
+						statistics_db:modify_stat_by_amount(stats_id, "state_damage_dealt_as_pactsworn_breed", attacker_breed_name, damage_amount)
 					end
 				end
 
-				if not owner and not get_side_from_player_unique_id.show_damage_feedback and not HEALTH_ALIVE[arg_12_0] then
-					local owner_2 = player:owner(arg_12_0)
-					local flag_2 = not not get_actual_attacker_player.remote or not get_actual_attacker_player.bot_player
-					local flag_3
+				if victim_player and attacker_side.show_damage_feedback and HEALTH_ALIVE[victim_unit] then
+					local target_player = player_manager:owner(victim_unit)
+					local local_human = not attacker_player.remote and not not not attacker_player.bot_player
+					local str
 
-					flag_3 = not flag_2 and "dealing_damage" and "other_dealing_damage"
+					if local_human then
+						str = "dealing_damage"
 
-					local var_12_29 = arg_12_1[DamageDataIndex.DAMAGE_TYPE]
+						goto label_12_2
+					end
 
-					Managers.state.event:trigger("add_damage_feedback_event", stats_id_2 .. name, flag_2, flag_3, get_actual_attacker_player, owner_2, var_12_10, var_12_29)
+					str = "other_dealing_damage"
+
+					local event_type = str
+
+					::label_12_2::
+
+					local damage_type = damage_data[DamageDataIndex.DAMAGE_TYPE]
+
+					Managers.state.event:trigger("add_damage_feedback_event", stats_id .. breed_name, local_human, event_type, attacker_player, target_player, damage_amount, damage_type)
 				end
 			end
 
-			if not flag then
-				arg_12_2:modify_stat_by_amount(stats_id_2, "damage_dealt_as_breed", flag, var_12_10)
+			if attacker_breed_name then
+				statistics_db:modify_stat_by_amount(stats_id, "damage_dealt_as_breed", attacker_breed_name, damage_amount)
 			end
 		end
 	end
 
-	if var_12_1 ~= "skaven_ratling_gunner" or not owner then
-		local stats_id_3 = owner:stats_id()
+	if damage_source_name == "skaven_ratling_gunner" and victim_player then
+		local stats_id = victim_player:stats_id()
 
-		arg_12_2:modify_stat_by_amount(stats_id_3, "damage_taken_from_ratling_gunner", var_12_10)
+		statistics_db:modify_stat_by_amount(stats_id, "damage_taken_from_ratling_gunner", damage_amount)
 	end
 end
 
-StatisticsUtil.won_games = function (self)
+StatisticsUtil.won_games = function (statistics_db)
 	-- function 13
-	local stats_id = Managers.player:local_player():stats_id()
-	local num = 0
+	local local_player = Managers.player:local_player()
+	local stats_id = local_player:stats_id()
+	local completed = 0
 
-	for i, v in ipairs(UnlockableLevels) do
-		num = num + self:get_persistent_stat(stats_id, "completed_levels", v)
+	for _, level_name in ipairs(UnlockableLevels) do
+		completed = completed + statistics_db:get_persistent_stat(stats_id, "completed_levels", level_name)
 	end
 
-	return num
+	return completed
 end
 
-StatisticsUtil.register_collected_grimoires = function (arg_14_0, arg_14_1)
+StatisticsUtil.register_collected_grimoires = function (collected_grimoires, statistics_db)
 	-- function 14
-	local stats_id = Managers.player:local_player():stats_id()
+	local local_player = Managers.player:local_player()
+	local stats_id = local_player:stats_id()
 
-	for i = 1, arg_14_0 do
-		arg_14_1:increment_stat(stats_id, "total_collected_grimoires")
+	for i = 1, collected_grimoires do
+		statistics_db:increment_stat(stats_id, "total_collected_grimoires")
 	end
 
-	local level_id = LevelHelper:current_level_settings().level_id
+	local level_settings = LevelHelper:current_level_settings()
+	local level_id = level_settings.level_id
 
 	if not table.find(UnlockableLevels, level_id) then
 		return
 	end
 
-	if arg_14_0 > arg_14_1:get_persistent_stat(stats_id, "collected_grimoires", level_id) then
-		arg_14_1:set_stat(stats_id, "collected_grimoires", level_id, arg_14_0)
+	local current_collected_grimoires = statistics_db:get_persistent_stat(stats_id, "collected_grimoires", level_id)
+
+	if current_collected_grimoires < collected_grimoires then
+		statistics_db:set_stat(stats_id, "collected_grimoires", level_id, collected_grimoires)
 	end
 end
 
-StatisticsUtil.register_collected_tomes = function (arg_15_0, arg_15_1)
+StatisticsUtil.register_collected_tomes = function (collected_tomes, statistics_db)
 	-- function 15
-	local stats_id = Managers.player:local_player():stats_id()
+	local local_player = Managers.player:local_player()
+	local stats_id = local_player:stats_id()
 
-	for i = 1, arg_15_0 do
-		arg_15_1:increment_stat(stats_id, "total_collected_tomes")
+	for i = 1, collected_tomes do
+		statistics_db:increment_stat(stats_id, "total_collected_tomes")
 	end
 
-	local level_id = LevelHelper:current_level_settings().level_id
+	local level_settings = LevelHelper:current_level_settings()
+	local level_id = level_settings.level_id
 
 	if not table.find(UnlockableLevels, level_id) then
 		return
 	end
 
-	if arg_15_0 > arg_15_1:get_persistent_stat(stats_id, "collected_tomes", level_id) then
-		arg_15_1:set_stat(stats_id, "collected_tomes", level_id, arg_15_0)
+	local current_collected_tomes = statistics_db:get_persistent_stat(stats_id, "collected_tomes", level_id)
+
+	if current_collected_tomes < collected_tomes then
+		statistics_db:set_stat(stats_id, "collected_tomes", level_id, collected_tomes)
 	end
 end
 
-StatisticsUtil.register_collected_dice = function (arg_16_0, arg_16_1)
+StatisticsUtil.register_collected_dice = function (collected_dice, statistics_db)
 	-- function 16
-	local stats_id = Managers.player:local_player():stats_id()
+	local local_player = Managers.player:local_player()
+	local stats_id = local_player:stats_id()
 
-	for i = 1, arg_16_0 do
-		arg_16_1:increment_stat(stats_id, "total_collected_dice")
+	for i = 1, collected_dice do
+		statistics_db:increment_stat(stats_id, "total_collected_dice")
 	end
 
-	local level_id = LevelHelper:current_level_settings().level_id
+	local level_settings = LevelHelper:current_level_settings()
+	local level_id = level_settings.level_id
 
 	if not table.find(UnlockableLevels, level_id) then
 		return
 	end
 
-	if arg_16_0 > arg_16_1:get_persistent_stat(stats_id, "collected_dice", level_id) then
-		arg_16_1:set_stat(stats_id, "collected_dice", level_id, arg_16_0)
+	local current_collected_dice = statistics_db:get_persistent_stat(stats_id, "collected_dice", level_id)
+
+	if current_collected_dice < collected_dice then
+		statistics_db:set_stat(stats_id, "collected_dice", level_id, collected_dice)
 	end
 end
 
-StatisticsUtil.register_complete_level = function (self)
+StatisticsUtil.register_complete_level = function (statistics_db)
 	-- function 17
-	local level_id = LevelHelper:current_level_settings().level_id
+	local level_settings = LevelHelper:current_level_settings()
+	local level_id = level_settings.level_id
 
 	if not table.find(UnlockableLevels, level_id) then
 		return
@@ -727,525 +799,565 @@ StatisticsUtil.register_complete_level = function (self)
 	local game_mode_key = Managers.state.game_mode:game_mode_key()
 	local local_player = Managers.player:local_player()
 	local stats_id = local_player:stats_id()
-	local var_17_4
-	local var_17_5
+	local profile, display_name
 
 	if game_mode_key == "versus" then
-		local preferred_profile_index = Managers.party:get_status_from_unique_id(stats_id).preferred_profile_index
+		local local_player_status = Managers.party:get_status_from_unique_id(stats_id)
+		local selected_profile_index = local_player_status.preferred_profile_index
 
-		if not preferred_profile_index then
+		if not selected_profile_index then
 			return
 		end
 
-		var_17_4 = SPProfiles[preferred_profile_index]
-		var_17_5 = var_17_4.display_name
+		profile = SPProfiles[selected_profile_index]
+		display_name = profile.display_name
 	else
 		local profile_index = local_player:profile_index()
 
-		var_17_4 = SPProfiles[profile_index]
-		var_17_5 = var_17_4.display_name
+		profile = SPProfiles[profile_index]
+		display_name = profile.display_name
 	end
 
-	self:increment_stat(stats_id, "completed_levels_" .. var_17_5, level_id)
+	statistics_db:increment_stat(stats_id, "completed_levels_" .. display_name, level_id)
 
-	local system = Managers.state.entity:system("mission_system")
-	local get_level_end_mission_data = system:get_level_end_mission_data("grimoire_hidden_mission")
-	local get_level_end_mission_data_2 = system:get_level_end_mission_data("tome_bonus_mission")
-	local get_level_end_mission_data_3 = system:get_level_end_mission_data("bonus_dice_hidden_mission")
+	local mission_system = Managers.state.entity:system("mission_system")
+	local grimoire_mission_data = mission_system:get_level_end_mission_data("grimoire_hidden_mission")
+	local tome_mission_data = mission_system:get_level_end_mission_data("tome_bonus_mission")
+	local dice_mission_data = mission_system:get_level_end_mission_data("bonus_dice_hidden_mission")
 
-	if not get_level_end_mission_data then
-		StatisticsUtil.register_collected_grimoires(get_level_end_mission_data.current_amount, self)
+	if grimoire_mission_data then
+		StatisticsUtil.register_collected_grimoires(grimoire_mission_data.current_amount, statistics_db)
 	end
 
-	if not get_level_end_mission_data_2 then
-		StatisticsUtil.register_collected_tomes(get_level_end_mission_data_2.current_amount, self)
+	if tome_mission_data then
+		StatisticsUtil.register_collected_tomes(tome_mission_data.current_amount, statistics_db)
 	end
 
-	if not get_level_end_mission_data_3 then
-		StatisticsUtil.register_collected_dice(get_level_end_mission_data_3.current_amount, self)
+	if dice_mission_data then
+		StatisticsUtil.register_collected_dice(dice_mission_data.current_amount, statistics_db)
 	end
 
-	self:increment_stat(stats_id, "completed_levels", level_id)
+	statistics_db:increment_stat(stats_id, "completed_levels", level_id)
 
-	if not Managers.deed and not Managers.deed:has_deed() then
-		self:increment_stat(stats_id, "completed_heroic_deeds")
+	if Managers.deed and Managers.deed:has_deed() then
+		statistics_db:increment_stat(stats_id, "completed_heroic_deeds")
 	end
 
-	local get_difficulty = Managers.state.difficulty:get_difficulty()
+	local difficulty_manager = Managers.state.difficulty
+	local difficulty_name = difficulty_manager:get_difficulty()
 	local career_index = local_player:career_index()
-	local name = var_17_4.careers[career_index].name
+	local career_data = profile.careers[career_index]
+	local career_name = career_data.name
 
-	StatisticsUtil._register_completed_level_difficulty(self, level_id, name, get_difficulty)
+	StatisticsUtil._register_completed_level_difficulty(statistics_db, level_id, career_name, difficulty_name)
 
-	local get_interface = Managers.backend:get_interface("items")
-	local get_loadout_item_id = BackendUtils.get_loadout_item_id(name, "slot_melee")
-	local flag = not get_loadout_item_id and get_interface:get_item_name(get_loadout_item_id)
-	local get_loadout_item_id_2 = BackendUtils.get_loadout_item_id(name, "slot_ranged")
-	local flag_2 = not get_loadout_item_id_2 and get_interface:get_item_name(get_loadout_item_id_2)
+	local item_interface = Managers.backend:get_interface("items")
+	local melee_backend_id = BackendUtils.get_loadout_item_id(career_name, "slot_melee")
+	local melee_item_name = not not melee_backend_id and not not item_interface:get_item_name(melee_backend_id)
+	local ranged_backend_id = BackendUtils.get_loadout_item_id(career_name, "slot_ranged")
+	local ranged_item_name = not not ranged_backend_id and not not item_interface:get_item_name(ranged_backend_id)
 
-	fn_2(self, stats_id, level_id, flag, get_difficulty)
-	fn_2(self, stats_id, level_id, flag_2, get_difficulty)
+	_track_level_complete_with_weapon_stats(statistics_db, stats_id, level_id, melee_item_name, difficulty_name)
+	_track_level_complete_with_weapon_stats(statistics_db, stats_id, level_id, ranged_item_name, difficulty_name)
 
-	if not Managers.unlock:is_dlc_unlocked("holly") then
-		local rank = DifficultySettings.hardest.rank
-		local rank_2
+	if Managers.unlock:is_dlc_unlocked("holly") then
+		local min_difficulty_rank = DifficultySettings.hardest.rank
+		local rank
 
-		if not DifficultySettings[get_difficulty] then
-			rank_2 = DifficultySettings[get_difficulty].rank
+		if DifficultySettings[difficulty_name] then
+			rank = DifficultySettings[difficulty_name].rank
 
-			if not rank_2 then
+			if not rank then
 				-- Nothing
 			end
 		end
 
-		rank_2 = 0
+		rank = 0
+
+		local completed_difficulty_rank = rank
 
 		::label_17_0::
 
-		local flag_3 = rank <= rank_2
-		local flag_4 = level_id == "ground_zero" or level_id == "warcamp" or level_id == "skaven_stronghold" or level_id == "skittergate"
+		local above_legend_difficulty = min_difficulty_rank <= completed_difficulty_rank
+		local is_lord_level = level_id == "ground_zero" or level_id == "warcamp" or level_id == "skaven_stronghold" or level_id == "skittergate"
 
-		if not flag_3 and not flag_4 then
-			local tbl = {
+		if above_legend_difficulty and is_lord_level then
+			local weapon_names = {
 				"we_1h_axe",
 				"bw_1h_crowbill",
 				"wh_dual_wield_axe_falchion",
 				"dr_dual_wield_hammers",
 				"es_dual_wield_hammer_sword"
 			}
-			local var_17_25
+			local weapon_name
 
-			if not table.contains(tbl, flag) then
-				var_17_25 = flag
-			elseif not table.contains(tbl, flag_2) then
-				var_17_25 = flag_2
+			if table.contains(weapon_names, melee_item_name) then
+				weapon_name = melee_item_name
+			elseif table.contains(weapon_names, ranged_item_name) then
+				weapon_name = ranged_item_name
 			end
 
-			if not var_17_25 then
-				local str = "holly_completed_level_" .. level_id .. "_with_" .. var_17_25
+			if weapon_name then
+				local stat_name = "holly_completed_level_" .. level_id .. "_with_" .. weapon_name
 
-				self:increment_stat(stats_id, str)
+				statistics_db:increment_stat(stats_id, stat_name)
 			end
 		end
 	end
 end
 
-StatisticsUtil.register_versus_game_won = function (self, arg_18_1, arg_18_2)
+StatisticsUtil.register_versus_game_won = function (statistics_db, player, game_won)
 	-- function 18
-	local stats_id = arg_18_1:stats_id()
-	local var_18_1 = self
-	local increment_stat = self.increment_stat
-	local var_18_3 = stats_id
+	local stats_id = player:stats_id()
+	local var_18_0 = statistics_db
+	local increment_stat = statistics_db.increment_stat
+	local var_18_2 = stats_id
 	local flag
 
-	flag = not arg_18_2 and "vs_game_won" and "vs_game_lost"
+	flag = (not game_won or not "vs_game_won") and not not "vs_game_lost"
 
-	increment_stat(var_18_1, var_18_3, flag)
+	increment_stat(var_18_0, var_18_2, flag)
 end
 
-StatisticsUtil.register_weave_complete = function (self, arg_19_1, arg_19_2, arg_19_3)
+StatisticsUtil.register_weave_complete = function (statistics_db, player, is_quick_game, difficulty_key)
 	-- function 19
-	local stats_id = arg_19_1:stats_id()
-	local weave = Managers.weave
-	local get_weave_tier = weave:get_weave_tier()
-	local get_active_weave = weave:get_active_weave()
-	local get_active_wind = weave:get_active_wind()
-	local get_score = weave:get_score()
-	local get_num_players = weave:get_num_players()
-	local profile_index = arg_19_1:profile_index()
-	local var_19_8 = SPProfiles[profile_index]
-	local career_index = arg_19_1:career_index()
-	local name = var_19_8.careers[career_index].name
-	local get_stat = self:get_stat(stats_id, "min_health_percentage", name)
-	local get_persistent_stat = self:get_persistent_stat(stats_id, "min_health_completed", name)
+	local stats_id = player:stats_id()
+	local weave_manager = Managers.weave
+	local weave_tier = weave_manager:get_weave_tier()
+	local weave_name = weave_manager:get_active_weave()
+	local wind = weave_manager:get_active_wind()
+	local score = weave_manager:get_score()
+	local num_players = weave_manager:get_num_players()
+	local profile_index = player:profile_index()
+	local profile = SPProfiles[profile_index]
+	local career_index = player:career_index()
+	local career_data = profile.careers[career_index]
+	local career_name = career_data.name
+	local completed_percentage = statistics_db:get_stat(stats_id, "min_health_percentage", career_name)
+	local highest_completed_percentage = statistics_db:get_persistent_stat(stats_id, "min_health_completed", career_name)
 
-	if not (not get_persistent_stat and not get_stat and not (get_persistent_stat <= get_stat)) then
-		self:set_stat(stats_id, "min_health_completed", name, get_stat)
+	if highest_completed_percentage and completed_percentage and highest_completed_percentage <= completed_percentage then
+		statistics_db:set_stat(stats_id, "min_health_completed", career_name, completed_percentage)
 	end
 
-	if not arg_19_2 then
-		local str = "weave_quickplay_wins"
+	if is_quick_game then
+		local weave_quickplay_wins_stat_name = "weave_quickplay_wins"
 
-		self:increment_stat(stats_id, ScorpionSeasonalSettings.current_season_name, str)
-		self:increment_stat(stats_id, "scorpion_weaves_won")
+		statistics_db:increment_stat(stats_id, ScorpionSeasonalSettings.current_season_name, weave_quickplay_wins_stat_name)
+		statistics_db:increment_stat(stats_id, "scorpion_weaves_won")
 
-		if not (ScorpionSeasonalSettings.current_season_id == 1 or IS_WINDOWS) then
-			local str_2 = "weave_quickplay_" .. arg_19_3 .. "_wins"
+		if ScorpionSeasonalSettings.current_season_id == 1 or not IS_WINDOWS then
+			local weave_quickplay_wins_difficulty_stat_name = "weave_quickplay_" .. difficulty_key .. "_wins"
 
-			self:increment_stat(stats_id, "season_1", str_2)
+			statistics_db:increment_stat(stats_id, "season_1", weave_quickplay_wins_difficulty_stat_name)
 		end
 	else
-		if not (ScorpionSeasonalSettings.current_season_id == 1 or IS_WINDOWS) then
-			local str_3 = "weave_rainbow_" .. get_active_wind .. "_" .. name .. "_season_1"
+		if ScorpionSeasonalSettings.current_season_id == 1 or not IS_WINDOWS then
+			local rainbow_stat_name = "weave_rainbow_" .. wind .. "_" .. career_name .. "_season_1"
 
-			self:set_stat(stats_id, "season_1", str_3, 1)
+			statistics_db:set_stat(stats_id, "season_1", rainbow_stat_name, 1)
 
-			local str_4 = "weaves_complete_" .. name .. "_season_1"
+			local career_stat_name = "weaves_complete_" .. career_name .. "_season_1"
 
-			self:increment_stat(stats_id, "season_1", str_4)
-			StatisticsUtil._register_mutator_challenges(self, stats_id, get_active_wind)
-			self:increment_stat(stats_id, "season_1", "weave_won", get_weave_tier)
+			statistics_db:increment_stat(stats_id, "season_1", career_stat_name)
+			StatisticsUtil._register_mutator_challenges(statistics_db, stats_id, wind)
+			statistics_db:increment_stat(stats_id, "season_1", "weave_won", weave_tier)
 		end
 
-		self:increment_stat(stats_id, "completed_weaves", get_active_weave)
-		self:increment_stat(stats_id, "scorpion_weaves_won")
+		statistics_db:increment_stat(stats_id, "completed_weaves", weave_name)
+		statistics_db:increment_stat(stats_id, "scorpion_weaves_won")
 
-		local get_weave_score_stat = ScorpionSeasonalSettings.get_weave_score_stat(get_weave_tier, get_num_players)
+		local stat_name = ScorpionSeasonalSettings.get_weave_score_stat(weave_tier, num_players)
+		local value = statistics_db:get_persistent_stat(stats_id, ScorpionSeasonalSettings.current_season_name, stat_name)
 
-		if get_score > self:get_persistent_stat(stats_id, ScorpionSeasonalSettings.current_season_name, get_weave_score_stat) then
-			self:set_stat(stats_id, ScorpionSeasonalSettings.current_season_name, get_weave_score_stat, get_score)
+		if value < score then
+			statistics_db:set_stat(stats_id, ScorpionSeasonalSettings.current_season_name, stat_name, score)
 		end
 	end
 end
 
-StatisticsUtil._register_mutator_challenges = function (self, arg_20_1, arg_20_2)
+StatisticsUtil._register_mutator_challenges = function (statistics_db, stats_id, wind)
 	-- function 20
-	if not (ScorpionSeasonalSettings.current_season_id == 1 or IS_WINDOWS) then
-		if arg_20_2 == "life" then
-			local str = "weave_life_stepped_in_bush"
+	if ScorpionSeasonalSettings.current_season_id == 1 or not IS_WINDOWS then
+		if wind == "life" then
+			local life_stat_id = "weave_life_stepped_in_bush"
+			local result = statistics_db:get_persistent_stat(stats_id, "season_1", life_stat_id)
 
-			if self:get_persistent_stat(arg_20_1, "season_1", str) == 0 then
-				local str_2 = "scorpion_weaves_life_season_1"
+			if result == 0 then
+				local id = "scorpion_weaves_life_season_1"
 
-				self:increment_stat(arg_20_1, "season_1", str_2)
+				statistics_db:increment_stat(stats_id, "season_1", id)
 			end
-		elseif arg_20_2 == "death" then
-			local str_3 = "weave_death_hit_by_spirit"
+		elseif wind == "death" then
+			local death_stat_id = "weave_death_hit_by_spirit"
+			local result = statistics_db:get_persistent_stat(stats_id, "season_1", death_stat_id)
 
-			if self:get_persistent_stat(arg_20_1, "season_1", str_3) == 0 then
-				local str_4 = "scorpion_weaves_death_season_1"
+			if result == 0 then
+				local id = "scorpion_weaves_death_season_1"
 
-				self:increment_stat(arg_20_1, "season_1", str_4)
+				statistics_db:increment_stat(stats_id, "season_1", id)
 			end
-		elseif arg_20_2 == "beasts" then
-			local str_5 = "weave_beasts_destroyed_totems"
+		elseif wind == "beasts" then
+			local beasts_stat_id = "weave_beasts_destroyed_totems"
+			local result = statistics_db:get_persistent_stat(stats_id, "season_1", beasts_stat_id)
 
-			if self:get_persistent_stat(arg_20_1, "season_1", str_5) == 0 then
-				local str_6 = "scorpion_weaves_beasts_season_1"
+			if result == 0 then
+				local id = "scorpion_weaves_beasts_season_1"
 
-				self:increment_stat(arg_20_1, "season_1", str_6)
+				statistics_db:increment_stat(stats_id, "season_1", id)
 			end
-		elseif arg_20_2 == "light" then
-			local str_7 = "weave_light_low_curse"
+		elseif wind == "light" then
+			local beasts_stat_id = "weave_light_low_curse"
+			local result = statistics_db:get_persistent_stat(stats_id, "season_1", beasts_stat_id)
 
-			if self:get_persistent_stat(arg_20_1, "season_1", str_7) == 0 then
-				local str_8 = "scorpion_weaves_light_season_1"
+			if result == 0 then
+				local id = "scorpion_weaves_light_season_1"
 
-				self:increment_stat(arg_20_1, "season_1", str_8)
+				statistics_db:increment_stat(stats_id, "season_1", id)
 			end
-		elseif arg_20_2 == "shadow" then
-			local str_9 = "weave_shadow_kill_no_shrouded"
+		elseif wind == "shadow" then
+			local beasts_stat_id = "weave_shadow_kill_no_shrouded"
+			local result = statistics_db:get_persistent_stat(stats_id, "season_1", beasts_stat_id)
 
-			if self:get_persistent_stat(arg_20_1, "season_1", str_9) == 0 then
-				local str_10 = "scorpion_weaves_shadow_season_1"
+			if result == 0 then
+				local id = "scorpion_weaves_shadow_season_1"
 
-				self:increment_stat(arg_20_1, "season_1", str_10)
+				statistics_db:increment_stat(stats_id, "season_1", id)
 			end
 		end
 	end
 end
 
-StatisticsUtil.register_journey_complete = function (arg_21_0, arg_21_1, arg_21_2, arg_21_3, arg_21_4)
+StatisticsUtil.register_journey_complete = function (statistics_db, player, journey_name, dominant_god, difficulty_name)
 	-- function 21
-	StatisticsUtil._register_completed_journey_difficulty(arg_21_0, arg_21_1, arg_21_2, arg_21_3, arg_21_4)
+	StatisticsUtil._register_completed_journey_difficulty(statistics_db, player, journey_name, dominant_god, difficulty_name)
 end
 
-StatisticsUtil.register_complete_tutorial = function (self)
+StatisticsUtil.register_complete_tutorial = function (statistics_db)
 	-- function 22
-	local current_level_settings = LevelHelper:current_level_settings()
-	local stats_id = Managers.player:local_player():stats_id()
-	local level_id = current_level_settings.level_id
+	local level_settings = LevelHelper:current_level_settings()
+	local local_player = Managers.player:local_player()
+	local stats_id = local_player:stats_id()
+	local level_id = level_settings.level_id
 
-	self:increment_stat(stats_id, "completed_levels", level_id)
+	statistics_db:increment_stat(stats_id, "completed_levels", level_id)
 end
 
-StatisticsUtil.register_played_quickplay_level = function (self, arg_23_1, arg_23_2)
+StatisticsUtil.register_played_quickplay_level = function (statistics_db, player, level_key)
 	-- function 23
-	if not table.find(UnlockableLevels, arg_23_2) then
+	if not table.find(UnlockableLevels, level_key) then
 		return
 	end
 
-	self:increment_stat(arg_23_1:stats_id(), "played_levels_quickplay", arg_23_2)
-	StatisticsUtil.register_last_played_level_id(self, arg_23_1, arg_23_2)
+	statistics_db:increment_stat(player:stats_id(), "played_levels_quickplay", level_key)
+	StatisticsUtil.register_last_played_level_id(statistics_db, player, level_key)
 end
 
-StatisticsUtil.register_played_weekly_event_level = function (self, arg_24_1, arg_24_2, arg_24_3)
+StatisticsUtil.register_played_weekly_event_level = function (statistics_db, player, level_key, difficulty_key)
 	-- function 24
-	if not table.find(UnlockableLevels, arg_24_2) then
+	if not table.find(UnlockableLevels, level_key) then
 		return
 	end
 
-	local stats_id = arg_24_1:stats_id()
+	local stats_id = player:stats_id()
 
-	self:increment_stat(stats_id, "played_levels_weekly_event", arg_24_2)
+	statistics_db:increment_stat(stats_id, "played_levels_weekly_event", level_key)
 
-	local get_difficulty = Managers.state.difficulty:get_difficulty()
+	local difficulty_manager = Managers.state.difficulty
+	local difficulty_name = difficulty_manager:get_difficulty()
 
-	self:increment_stat(stats_id, "completed_weekly_event_difficulty", get_difficulty)
+	statistics_db:increment_stat(stats_id, "completed_weekly_event_difficulty", difficulty_name)
 end
 
-StatisticsUtil.register_last_played_level_id = function (self, arg_25_1, arg_25_2)
+StatisticsUtil.register_last_played_level_id = function (statistics_db, player, level_key)
 	-- function 25
-	local find = table.find(UnlockableLevels, arg_25_2)
+	local unlockable_level_id = table.find(UnlockableLevels, level_key)
 
-	if not find then
-		self:set_stat(arg_25_1:stats_id(), "last_played_level_id", find)
+	if unlockable_level_id then
+		statistics_db:set_stat(player:stats_id(), "last_played_level_id", unlockable_level_id)
 	end
 end
 
-StatisticsUtil.get_game_progress = function (self)
+StatisticsUtil.get_game_progress = function (statistics_db)
 	-- function 26
-	local stats_id = Managers.player:local_player():stats_id()
-	local num = #MainGameLevels * 5
-	local num_2 = 0
-	local var_26_3
-	local var_26_4
+	local local_player = Managers.player:local_player()
+	local stats_id = local_player:stats_id()
+	local max_value = #MainGameLevels * 5
+	local current_value = 0
+	local level_difficulty_name, level_completed_difficulty
 
-	for k, v in pairs(MainGameLevels) do
-		local var_26_5 = LevelDifficultyDBNames[v]
-		local get_persistent_stat = self:get_persistent_stat(stats_id, "completed_levels_difficulty", var_26_5)
+	for _, level_id in pairs(MainGameLevels) do
+		level_difficulty_name = LevelDifficultyDBNames[level_id]
+		level_completed_difficulty = statistics_db:get_persistent_stat(stats_id, "completed_levels_difficulty", level_difficulty_name)
 
-		print("Completed Level Difficulty", var_26_5, get_persistent_stat, v)
+		print("Completed Level Difficulty", level_difficulty_name, level_completed_difficulty, level_id)
 
-		num_2 = num_2 + get_persistent_stat
+		current_value = current_value + level_completed_difficulty
 	end
 
-	return num_2 / num * 100
+	local game_progress = current_value / max_value * 100
+
+	return game_progress
 end
 
-StatisticsUtil._register_completed_level_difficulty = function (self, arg_27_1, arg_27_2, arg_27_3)
+StatisticsUtil._register_completed_level_difficulty = function (statistics_db, level_id, career_name, difficulty_name)
 	-- function 27
 	local local_player = Managers.player:local_player()
 	local stats_id = local_player:stats_id()
-	local var_27_2 = LevelDifficultyDBNames[arg_27_1]
-	local get_persistent_stat = self:get_persistent_stat(stats_id, "completed_levels_difficulty", var_27_2)
-	local get_default_difficulties = Managers.state.difficulty:get_default_difficulties()
-	local find = table.find(get_default_difficulties, arg_27_3)
+	local level_difficulty_name = LevelDifficultyDBNames[level_id]
+	local current_completed_difficulty = statistics_db:get_persistent_stat(stats_id, "completed_levels_difficulty", level_difficulty_name)
+	local difficulty_manager = Managers.state.difficulty
+	local difficulties = difficulty_manager:get_default_difficulties()
+	local difficulty = table.find(difficulties, difficulty_name)
 
-	if not find then
-		Managers.state.achievement:trigger_event("register_completed_level", arg_27_3, arg_27_1, arg_27_2, local_player)
+	if difficulty then
+		Managers.state.achievement:trigger_event("register_completed_level", difficulty_name, level_id, career_name, local_player)
 
-		if get_persistent_stat < find then
-			self:set_stat(stats_id, "completed_levels_difficulty", var_27_2, find)
+		if current_completed_difficulty < difficulty then
+			statistics_db:set_stat(stats_id, "completed_levels_difficulty", level_difficulty_name, difficulty)
 		end
 
-		if not (not self:has_stat("mission_streak", arg_27_2) and not (find > self:get_persistent_stat(stats_id, "mission_streak", arg_27_2, arg_27_1))) then
-			self:set_stat(stats_id, "mission_streak", arg_27_2, arg_27_1, find)
+		if statistics_db:has_stat("mission_streak", career_name) then
+			local current_streak_difficulty = statistics_db:get_persistent_stat(stats_id, "mission_streak", career_name, level_id)
+
+			if current_streak_difficulty < difficulty then
+				statistics_db:set_stat(stats_id, "mission_streak", career_name, level_id, difficulty)
+			end
 		end
 	end
 
-	self:increment_stat(stats_id, "completed_career_levels", arg_27_2, arg_27_1, arg_27_3)
+	statistics_db:increment_stat(stats_id, "completed_career_levels", career_name, level_id, difficulty_name)
 
-	local get_stat = self:get_stat(stats_id, "min_health_percentage", arg_27_2)
-	local get_persistent_stat_2 = self:get_persistent_stat(stats_id, "min_health_completed", arg_27_2)
+	local completed_percentage = statistics_db:get_stat(stats_id, "min_health_percentage", career_name)
+	local highest_completed_percentage = statistics_db:get_persistent_stat(stats_id, "min_health_completed", career_name)
 
-	if not (not get_persistent_stat_2 and not get_stat and not (get_persistent_stat_2 < get_stat)) then
-		self:set_stat(stats_id, "min_health_completed", arg_27_2, get_stat)
+	if highest_completed_percentage and completed_percentage and highest_completed_percentage < completed_percentage then
+		statistics_db:set_stat(stats_id, "min_health_completed", career_name, completed_percentage)
 	end
 
-	self:increment_stat(stats_id, "played_difficulty", arg_27_3)
+	statistics_db:increment_stat(stats_id, "played_difficulty", difficulty_name)
 end
 
-StatisticsUtil._register_completed_journey_difficulty = function (self, arg_28_1, arg_28_2, arg_28_3, arg_28_4)
+StatisticsUtil._register_completed_journey_difficulty = function (statistics_db, player, journey_name, dominant_god, difficulty_name)
 	-- function 28
-	local stats_id = arg_28_1:stats_id()
-	local profile_index = arg_28_1:profile_index()
-	local var_28_2 = SPProfilesAbbreviation[profile_index]
-	local var_28_3 = JourneyDifficultyDBNames[arg_28_2]
-	local var_28_4 = JourneyDominantGodDifficultyDBNames[arg_28_3]
-	local get_persistent_stat = self:get_persistent_stat(stats_id, "completed_journeys_difficulty", var_28_3)
-	local get_persistent_stat_2 = self:get_persistent_stat(stats_id, "completed_journey_dominant_god_difficulty", var_28_4)
-	local get_persistent_stat_3 = self:get_persistent_stat(stats_id, "completed_hero_journey_difficulty", var_28_2, var_28_3)
-	local get_default_difficulties = Managers.state.difficulty:get_default_difficulties()
-	local find = table.find(get_default_difficulties, arg_28_4)
+	local stats_id = player:stats_id()
+	local profile_index = player:profile_index()
+	local profile_abbreviation = SPProfilesAbbreviation[profile_index]
+	local journey_db_name = JourneyDifficultyDBNames[journey_name]
+	local journey_dominant_god_db_name = JourneyDominantGodDifficultyDBNames[dominant_god]
+	local current_completed_difficulty = statistics_db:get_persistent_stat(stats_id, "completed_journeys_difficulty", journey_db_name)
+	local current_completed_journey_dominant_god_difficulty = statistics_db:get_persistent_stat(stats_id, "completed_journey_dominant_god_difficulty", journey_dominant_god_db_name)
+	local current_completed_hero_journey_difficulty = statistics_db:get_persistent_stat(stats_id, "completed_hero_journey_difficulty", profile_abbreviation, journey_db_name)
+	local difficulties = Managers.state.difficulty:get_default_difficulties()
+	local difficulty_index = table.find(difficulties, difficulty_name)
 
-	if get_persistent_stat < find then
-		if find > #DefaultDifficulties then
-			ferror("This shouldn't happen. \ndifficulties: %s\ndifficulty_name: %s\ndifficulty_index: %s\nDefaultDifficulties: %s\ncurrent_completed_difficulty: %s", table.tostring(get_default_difficulties), arg_28_4, find, table.tostring(DefaultDifficulties), get_persistent_stat)
+	if current_completed_difficulty < difficulty_index then
+		if difficulty_index > #DefaultDifficulties then
+			ferror("This shouldn't happen. \ndifficulties: %s\ndifficulty_name: %s\ndifficulty_index: %s\nDefaultDifficulties: %s\ncurrent_completed_difficulty: %s", table.tostring(difficulties), difficulty_name, difficulty_index, table.tostring(DefaultDifficulties), current_completed_difficulty)
 		end
 
-		self:set_stat(stats_id, "completed_journeys_difficulty", var_28_3, find)
+		statistics_db:set_stat(stats_id, "completed_journeys_difficulty", journey_db_name, difficulty_index)
 	end
 
-	if get_persistent_stat_2 < find then
-		if find > #DefaultDifficulties then
-			ferror("This shouldn't happen. \ndifficulties: %s\ndifficulty_name: %s\ndifficulty_index: %s\nDefaultDifficulties: %s\ncurrent_completed_journey_dominant_god_difficulty: %s", table.tostring(get_default_difficulties), arg_28_4, find, table.tostring(DefaultDifficulties), get_persistent_stat_2)
+	if current_completed_journey_dominant_god_difficulty < difficulty_index then
+		if difficulty_index > #DefaultDifficulties then
+			ferror("This shouldn't happen. \ndifficulties: %s\ndifficulty_name: %s\ndifficulty_index: %s\nDefaultDifficulties: %s\ncurrent_completed_journey_dominant_god_difficulty: %s", table.tostring(difficulties), difficulty_name, difficulty_index, table.tostring(DefaultDifficulties), current_completed_journey_dominant_god_difficulty)
 		end
 
-		self:set_stat(stats_id, "completed_journey_dominant_god_difficulty", var_28_4, find)
+		statistics_db:set_stat(stats_id, "completed_journey_dominant_god_difficulty", journey_dominant_god_db_name, difficulty_index)
 	end
 
-	if get_persistent_stat_3 < find then
-		if find > #DefaultDifficulties then
-			ferror("This shouldn't happen. \ndifficulties: %s\ndifficulty_name: %s\ndifficulty_index: %s\nDefaultDifficulties: %s\ncurrent_completed_hero_journey_difficulty: %s", table.tostring(get_default_difficulties), arg_28_4, find, table.tostring(DefaultDifficulties), get_persistent_stat_3)
+	if current_completed_hero_journey_difficulty < difficulty_index then
+		if difficulty_index > #DefaultDifficulties then
+			ferror("This shouldn't happen. \ndifficulties: %s\ndifficulty_name: %s\ndifficulty_index: %s\nDefaultDifficulties: %s\ncurrent_completed_hero_journey_difficulty: %s", table.tostring(difficulties), difficulty_name, difficulty_index, table.tostring(DefaultDifficulties), current_completed_hero_journey_difficulty)
 		end
 
-		self:set_stat(stats_id, "completed_hero_journey_difficulty", var_28_2, var_28_3, find)
+		statistics_db:set_stat(stats_id, "completed_hero_journey_difficulty", profile_abbreviation, journey_db_name, difficulty_index)
 	end
 end
 
-StatisticsUtil.unlock_lorebook_page = function (arg_29_0, arg_29_1)
+StatisticsUtil.unlock_lorebook_page = function (page_id, statistics_db)
 	-- function 29
-	local local_player = Managers.player:local_player()
+	local player = Managers.player:local_player()
 
-	if not local_player then
-		local stats_id = local_player:stats_id()
+	if player then
+		local stats_id = player:stats_id()
 
-		print("unlock_lorebook_page", arg_29_0)
-		arg_29_1:set_array_stat(stats_id, "lorebook_unlocks", arg_29_0, true)
+		print("unlock_lorebook_page", page_id)
+		statistics_db:set_array_stat(stats_id, "lorebook_unlocks", page_id, true)
 
-		local var_29_2 = LorebookCategoryNames[arg_29_0]
+		local category_name = LorebookCategoryNames[page_id]
 
-		LoreBookHelper.mark_page_id_as_new(var_29_2)
+		LoreBookHelper.mark_page_id_as_new(category_name)
 	end
 end
 
-local function fn_3(arg_30_0, arg_30_1, arg_30_2)
+local function survival_stat_name(level_id, difficulty, stat_suffix)
 	-- function 30
-	assert(arg_30_2 == "waves" or arg_30_2 == "time" or arg_30_2 == "kills")
+	assert(stat_suffix == "waves" or stat_suffix == "time" or stat_suffix == "kills")
 
-	return (string.format("survival_%s_%s_%s", arg_30_0, arg_30_1, arg_30_2))
+	local stat_name = string.format("survival_%s_%s_%s", level_id, difficulty, stat_suffix)
+
+	return stat_name
 end
 
-StatisticsUtil.get_survival_stat = function (self, arg_31_1, arg_31_2, arg_31_3, arg_31_4)
+StatisticsUtil.get_survival_stat = function (statistics_db, level_id, difficulty, stat_name, stats_id)
 	-- function 31
-	local var_31_0 = fn_3(arg_31_1, arg_31_2, arg_31_3)
-	local local_player = Managers.player:local_player()
+	local stat = survival_stat_name(level_id, difficulty, stat_name)
+	local player_manager = Managers.player
+	local local_player = player_manager:local_player()
 
-	arg_31_4 = arg_31_4 or local_player:stats_id()
+	stats_id = not not stats_id or not not local_player:stats_id()
 
-	return (self:get_persistent_stat(arg_31_4, var_31_0))
+	local value = statistics_db:get_persistent_stat(stats_id, stat)
+
+	return value
 end
 
-StatisticsUtil._set_survival_stat = function (self, arg_32_1, arg_32_2, arg_32_3, arg_32_4)
+StatisticsUtil._set_survival_stat = function (statistics_db, level_id, difficulty, stat_name, value)
 	-- function 32
-	local var_32_0 = fn_3(arg_32_1, arg_32_2, arg_32_3)
-	local stats_id = Managers.player:local_player():stats_id()
+	local stat = survival_stat_name(level_id, difficulty, stat_name)
+	local player_manager = Managers.player
+	local local_player = player_manager:local_player()
+	local stats_id = local_player:stats_id()
 
-	self:set_stat(stats_id, var_32_0, arg_32_4)
+	statistics_db:set_stat(stats_id, stat, value)
 end
 
-StatisticsUtil.reset_mission_streak = function (self, arg_33_1, arg_33_2)
+StatisticsUtil.reset_mission_streak = function (player, statistics_db, stats_id)
 	-- function 33
-	local profile_index = self:profile_index()
-	local var_33_1 = SPProfiles[profile_index]
-	local career_index = self:career_index()
-	local name = var_33_1.careers[career_index].name
-	local level_id = LevelHelper:current_level_settings().level_id
+	local profile_index = player:profile_index()
+	local profile = SPProfiles[profile_index]
+	local career_index = player:career_index()
+	local career_data = profile.careers[career_index]
+	local career_name = career_data.name
+	local level_settings = LevelHelper:current_level_settings()
+	local level_id = level_settings.level_id
 
-	if not arg_33_1:has_stat("mission_streak", name) then
+	if statistics_db:has_stat("mission_streak", career_name) then
 		for i = 1, 3 do
-			local str = "act_" .. i
-			local var_33_6 = GameActs[str]
-			local flag = false
+			local act_key = "act_" .. i
+			local act_levels = GameActs[act_key]
+			local do_reset = false
 
-			for j = 1, #var_33_6 do
-				if arg_33_1:get_persistent_stat(arg_33_2, "mission_streak", name, var_33_6[j]) == 0 then
-					flag = true
+			for i = 1, #act_levels do
+				local cleared = statistics_db:get_persistent_stat(stats_id, "mission_streak", career_name, act_levels[i])
+
+				if cleared == 0 then
+					do_reset = true
 
 					break
 				end
 			end
 
-			if not flag and not table.contains(var_33_6, level_id) then
-				for k = 1, #var_33_6 do
-					arg_33_1:set_stat(arg_33_2, "mission_streak", name, var_33_6[k], 0)
+			if do_reset and table.contains(act_levels, level_id) then
+				for i = 1, #act_levels do
+					statistics_db:set_stat(stats_id, "mission_streak", career_name, act_levels[i], 0)
 				end
 			end
 		end
 	end
 end
 
-StatisticsUtil._modify_survival_stat = function (self, arg_34_1, arg_34_2, arg_34_3, arg_34_4)
+StatisticsUtil._modify_survival_stat = function (statistics_db, level_id, difficulty, stat_name, value)
 	-- function 34
-	local var_34_0 = fn_3(arg_34_1, arg_34_2, arg_34_3)
-	local stats_id = Managers.player:local_player():stats_id()
+	local stat = survival_stat_name(level_id, difficulty, stat_name)
+	local player_manager = Managers.player
+	local local_player = player_manager:local_player()
+	local stats_id = local_player:stats_id()
 
-	self:modify_stat_by_amount(stats_id, var_34_0, arg_34_4)
+	statistics_db:modify_stat_by_amount(stats_id, stat, value)
 end
 
-StatisticsUtil.register_complete_survival_level = function (self)
+StatisticsUtil.register_complete_survival_level = function (statistics_db)
 	-- function 35
-	local get_missions, var_35_1 = Managers.state.entity:system("mission_system"):get_missions()
-	local survival_wave = get_missions.survival_wave
+	local mission_system = Managers.state.entity:system("mission_system")
+	local active_missions, completed_missions = mission_system:get_missions()
+	local mission_data = active_missions.survival_wave
 
-	if not survival_wave then
+	if not mission_data then
 		return
 	end
 
-	local stats_id = Managers.player:local_player():stats_id()
-	local level_id = LevelHelper:current_level_settings().level_id
-	local starting_wave = survival_wave.starting_wave
-	local var_35_6 = SurvivalDifficultyByStartWave[starting_wave]
-	local get_stat = self:get_stat(stats_id, "kills_total")
+	local player_manager = Managers.player
+	local local_player = player_manager:local_player()
+	local stats_id = local_player:stats_id()
+	local level_settings = LevelHelper:current_level_settings()
+	local level_id = level_settings.level_id
+	local start_wave = mission_data.starting_wave
+	local start_difficulty = SurvivalDifficultyByStartWave[start_wave]
+	local kills = statistics_db:get_stat(stats_id, "kills_total")
 
-	StatisticsUtil._modify_survival_stat(self, level_id, var_35_6, "kills", get_stat)
+	StatisticsUtil._modify_survival_stat(statistics_db, level_id, start_difficulty, "kills", kills)
 
-	local wave_completed = survival_wave.wave_completed
+	local wave_completed = mission_data.wave_completed
 
 	if wave_completed ~= 0 then
-		local num = wave_completed - starting_wave
-		local get_survival_stat = StatisticsUtil.get_survival_stat(self, level_id, var_35_6, "waves")
+		local completed_waves = wave_completed - start_wave
+		local current_completed_waves = StatisticsUtil.get_survival_stat(statistics_db, level_id, start_difficulty, "waves")
 
-		if get_survival_stat < num then
-			StatisticsUtil._set_survival_stat(self, level_id, var_35_6, "waves", num)
+		if current_completed_waves < completed_waves then
+			StatisticsUtil._set_survival_stat(statistics_db, level_id, start_difficulty, "waves", completed_waves)
 		end
 
-		local num_2 = survival_wave.wave_completed_time - survival_wave.start_time
-		local get_survival_stat_2 = StatisticsUtil.get_survival_stat(self, level_id, var_35_6, "time")
+		local completed_time = mission_data.wave_completed_time - mission_data.start_time
+		local current_completed_time = StatisticsUtil.get_survival_stat(statistics_db, level_id, start_difficulty, "time")
 
-		if not (get_survival_stat < num or num ~= get_survival_stat or not (num_2 < get_survival_stat_2)) then
-			StatisticsUtil._set_survival_stat(self, level_id, var_35_6, "time", num_2)
+		if current_completed_waves < completed_waves or completed_waves == current_completed_waves and completed_time < current_completed_time then
+			StatisticsUtil._set_survival_stat(statistics_db, level_id, start_difficulty, "time", completed_time)
 		end
 
-		local var_35_13
-		local difficulty = Managers.state.difficulty
-		local get_default_difficulties = difficulty:get_default_difficulties()
-		local find = table.find(get_default_difficulties, var_35_6)
-		local var_35_17 = LevelDifficultyDBNames[level_id]
+		local completed_difficulty
+		local difficulty_manager = Managers.state.difficulty
+		local level_difficulties = difficulty_manager:get_default_difficulties()
+		local start_difficulty_index = table.find(level_difficulties, start_difficulty)
+		local level_difficulty_name = LevelDifficultyDBNames[level_id]
+		local current_completed_difficulty_index = statistics_db:get_persistent_stat(stats_id, "completed_levels_difficulty", level_difficulty_name)
+		local started_on_unlocked_difficulty = current_completed_difficulty_index >= start_difficulty_index - 1
 
-		if not (self:get_persistent_stat(stats_id, "completed_levels_difficulty", var_35_17) >= find - 1) then
-			local get_difficulty = difficulty:get_difficulty()
-			local find_2 = table.find(get_default_difficulties, get_difficulty)
-			local flag = find_2 ~= #get_default_difficulties or not (num >= 13 * (find_2 - find + 1)) or not find_2 or find_2 - 1
+		if started_on_unlocked_difficulty then
+			local difficulty = difficulty_manager:get_difficulty()
+			local difficulty_index = table.find(level_difficulties, difficulty)
+			local completed_difficulty_index = (difficulty_index ~= #level_difficulties or not (completed_waves >= 13 * (difficulty_index - start_difficulty_index + 1)) or not difficulty_index) and not not (difficulty_index - 1)
 
-			if flag > 0 then
-				var_35_13 = get_default_difficulties[flag]
+			if completed_difficulty_index > 0 then
+				completed_difficulty = level_difficulties[completed_difficulty_index]
 			end
 
-			if not (not flag and not (flag < 3) or not (num >= 13)) then
-				Crashify.print_exception("StatisticsUtil", "Error in survival mode data. completed_difficulty_index = %s, completed_waves = %s, started_on_unlocked_difficulty = true", flag, num)
+			if completed_difficulty_index and completed_difficulty_index < 3 and completed_waves >= 13 then
+				Crashify.print_exception("StatisticsUtil", "Error in survival mode data. completed_difficulty_index = %s, completed_waves = %s, started_on_unlocked_difficulty = true", completed_difficulty_index, completed_waves)
 			end
 		else
-			local var_35_21
+			local completed_difficulty_index
 
-			for i = #get_default_difficulties, 1, -1 do
-				local var_35_22 = get_default_difficulties[i]
+			for i = #level_difficulties, 1, -1 do
+				local difficulty = level_difficulties[i]
+				local difficulty_end_wave = SurvivalEndWaveByDifficulty[difficulty]
 
-				if wave_completed >= SurvivalEndWaveByDifficulty[var_35_22] then
-					var_35_21 = i
-					var_35_13 = var_35_22
+				if difficulty_end_wave <= wave_completed then
+					completed_difficulty_index = i
+					completed_difficulty = difficulty
 
 					break
 				end
 			end
 
-			if not (not var_35_21 and not (var_35_21 < 3) or not (num >= 13)) then
-				Crashify.print_exception("StatisticsUtil", "Error in survival mode data. completed_difficulty_index = %s, completed_waves = %s, started_on_unlocked_difficulty = false", var_35_21, num)
+			if completed_difficulty_index and completed_difficulty_index < 3 and completed_waves >= 13 then
+				Crashify.print_exception("StatisticsUtil", "Error in survival mode data. completed_difficulty_index = %s, completed_waves = %s, started_on_unlocked_difficulty = false", completed_difficulty_index, completed_waves)
 			end
 		end
 
-		if not var_35_13 then
-			StatisticsUtil._register_completed_level_difficulty(self, level_id, var_35_13)
+		if completed_difficulty then
+			StatisticsUtil._register_completed_level_difficulty(statistics_db, level_id, completed_difficulty)
 		end
 	end
 end
 
-StatisticsUtil.register_disable = function (self, arg_36_1, arg_36_2)
+StatisticsUtil.register_disable = function (disabler_player, statistics_db, disabler_breed_name)
 	-- function 36
 	if Managers.mechanism:current_mechanism_name() == "versus" then
-		local stats_id = self:stats_id()
+		local stats_id = disabler_player:stats_id()
 
-		arg_36_1:increment_stat(stats_id, "vs_disables_per_breed", arg_36_2)
+		statistics_db:increment_stat(stats_id, "vs_disables_per_breed", disabler_breed_name)
 	end
 end

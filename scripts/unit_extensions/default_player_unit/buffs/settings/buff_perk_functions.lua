@@ -1,99 +1,100 @@
 -- chunkname: @scripts/unit_extensions/default_player_unit/buffs/settings/buff_perk_functions.lua
 
-local scripts_unit_extensions_default_player_unit_buffs_settings_buff_perk_names = require("scripts/unit_extensions/default_player_unit/buffs/settings/buff_perk_names")
-local str = "BUFF_PERK"
-
-return {
-	[scripts_unit_extensions_default_player_unit_buffs_settings_buff_perk_names.overpowered] = {
-		added = function (arg_1_0, arg_1_1, arg_1_2, arg_1_3)
+local buff_perk_names = require("scripts/unit_extensions/default_player_unit/buffs/settings/buff_perk_names")
+local STATUS_REASON = "BUFF_PERK"
+local buff_perk_functions = {
+	[buff_perk_names.overpowered] = {
+		added = function (buff_ext, unit, buff, is_server)
 			-- function 1
-			if not arg_1_3 then
-				StatusUtils.set_overpowered_network(arg_1_1, true, "slow_bomb", arg_1_1)
+			if is_server then
+				StatusUtils.set_overpowered_network(unit, true, "slow_bomb", unit)
 			end
 		end,
-		removed = function (arg_2_0, arg_2_1, arg_2_2, arg_2_3)
+		removed = function (buff_ext, unit, buff, is_server)
 			-- function 2
-			if not arg_2_3 then
-				StatusUtils.set_overpowered_network(arg_2_1, false, "slow_bomb", nil)
+			if is_server then
+				StatusUtils.set_overpowered_network(unit, false, "slow_bomb", nil)
 			end
 		end
 	},
-	[scripts_unit_extensions_default_player_unit_buffs_settings_buff_perk_names.poisoned] = {
-		added = function (arg_3_0, arg_3_1, arg_3_2, arg_3_3)
+	[buff_perk_names.poisoned] = {
+		added = function (buff_ext, unit, buff, is_server)
 			-- function 3
-			Managers.state.status_effect:set_status(arg_3_1, StatusEffectNames.poisoned, str, true)
+			Managers.state.status_effect:set_status(unit, StatusEffectNames.poisoned, STATUS_REASON, true)
 		end,
-		removed = function (arg_4_0, arg_4_1, arg_4_2, arg_4_3)
+		removed = function (buff_ext, unit, buff, is_server)
 			-- function 4
-			if not HEALTH_ALIVE[arg_4_1] then
-				Managers.state.status_effect:add_timed_status(arg_4_1, StatusEffectNames.poisoned)
+			if not HEALTH_ALIVE[unit] then
+				Managers.state.status_effect:add_timed_status(unit, StatusEffectNames.poisoned)
 			end
 
-			Managers.state.status_effect:set_status(arg_4_1, StatusEffectNames.poisoned, str, false)
+			Managers.state.status_effect:set_status(unit, StatusEffectNames.poisoned, STATUS_REASON, false)
 		end
 	},
-	[scripts_unit_extensions_default_player_unit_buffs_settings_buff_perk_names.burning] = {
-		added = function (arg_5_0, arg_5_1, arg_5_2, arg_5_3)
+	[buff_perk_names.burning] = {
+		added = function (buff_ext, unit, buff, is_server)
 			-- function 5
-			Managers.state.status_effect:set_status(arg_5_1, StatusEffectNames.burning, str, true)
+			Managers.state.status_effect:set_status(unit, StatusEffectNames.burning, STATUS_REASON, true)
 		end,
-		removed = function (arg_6_0, arg_6_1, arg_6_2, arg_6_3)
+		removed = function (buff_ext, unit, buff, is_server)
 			-- function 6
-			if not HEALTH_ALIVE[arg_6_1] then
-				Managers.state.status_effect:add_timed_status(arg_6_1, StatusEffectNames.burning)
+			if not HEALTH_ALIVE[unit] then
+				Managers.state.status_effect:add_timed_status(unit, StatusEffectNames.burning)
 			end
 
-			Managers.state.status_effect:set_status(arg_6_1, StatusEffectNames.burning, str, false)
+			Managers.state.status_effect:set_status(unit, StatusEffectNames.burning, STATUS_REASON, false)
 		end
 	},
-	[scripts_unit_extensions_default_player_unit_buffs_settings_buff_perk_names.burning_balefire] = {
-		added = function (arg_7_0, arg_7_1, arg_7_2, arg_7_3)
+	[buff_perk_names.burning_balefire] = {
+		added = function (buff_ext, unit, buff, is_server)
 			-- function 7
-			Managers.state.status_effect:set_status(arg_7_1, StatusEffectNames.burning_balefire, str, true)
+			Managers.state.status_effect:set_status(unit, StatusEffectNames.burning_balefire, STATUS_REASON, true)
 		end,
-		removed = function (arg_8_0, arg_8_1, arg_8_2, arg_8_3)
+		removed = function (buff_ext, unit, buff, is_server)
 			-- function 8
-			if not HEALTH_ALIVE[arg_8_1] then
-				Managers.state.status_effect:add_timed_status(arg_8_1, StatusEffectNames.burning_balefire)
+			if not HEALTH_ALIVE[unit] then
+				Managers.state.status_effect:add_timed_status(unit, StatusEffectNames.burning_balefire)
 			end
 
-			Managers.state.status_effect:set_status(arg_8_1, StatusEffectNames.burning_balefire, str, false)
+			Managers.state.status_effect:set_status(unit, StatusEffectNames.burning_balefire, STATUS_REASON, false)
 		end
 	},
-	[scripts_unit_extensions_default_player_unit_buffs_settings_buff_perk_names.burning_elven_magic] = {
-		added = function (arg_9_0, arg_9_1, arg_9_2, arg_9_3)
+	[buff_perk_names.burning_elven_magic] = {
+		added = function (buff_ext, unit, buff, is_server)
 			-- function 9
-			Managers.state.status_effect:set_status(arg_9_1, StatusEffectNames.burning_elven_magic, str, true)
+			Managers.state.status_effect:set_status(unit, StatusEffectNames.burning_elven_magic, STATUS_REASON, true)
 		end,
-		removed = function (arg_10_0, arg_10_1, arg_10_2, arg_10_3)
+		removed = function (buff_ext, unit, buff, is_server)
 			-- function 10
-			if not HEALTH_ALIVE[arg_10_1] then
-				Managers.state.status_effect:add_timed_status(arg_10_1, StatusEffectNames.burning_elven_magic)
+			if not HEALTH_ALIVE[unit] then
+				Managers.state.status_effect:add_timed_status(unit, StatusEffectNames.burning_elven_magic)
 			end
 
-			Managers.state.status_effect:set_status(arg_10_1, StatusEffectNames.burning_elven_magic, str, false)
+			Managers.state.status_effect:set_status(unit, StatusEffectNames.burning_elven_magic, STATUS_REASON, false)
 		end
 	},
-	[scripts_unit_extensions_default_player_unit_buffs_settings_buff_perk_names.burning_warpfire] = {
-		added = function (arg_11_0, arg_11_1, arg_11_2, arg_11_3)
+	[buff_perk_names.burning_warpfire] = {
+		added = function (buff_ext, unit, buff, is_server)
 			-- function 11
-			local has_status = Managers.state.status_effect:has_status(arg_11_1, StatusEffectNames.burning_warpfire)
+			local has_status = Managers.state.status_effect:has_status(unit, StatusEffectNames.burning_warpfire)
 
-			if not (not arg_11_2.template.timed_status_effect_time and has_status) then
-				Managers.state.status_effect:add_timed_status(arg_11_1, StatusEffectNames.burning_warpfire, arg_11_2.template.timed_status_effect_time)
+			if buff.template.timed_status_effect_time and not has_status then
+				Managers.state.status_effect:add_timed_status(unit, StatusEffectNames.burning_warpfire, buff.template.timed_status_effect_time)
 			elseif not has_status then
-				Managers.state.status_effect:set_status(arg_11_1, StatusEffectNames.burning_warpfire, str, true)
+				Managers.state.status_effect:set_status(unit, StatusEffectNames.burning_warpfire, STATUS_REASON, true)
 			end
 		end,
-		removed = function (arg_12_0, arg_12_1, arg_12_2, arg_12_3)
+		removed = function (buff_ext, unit, buff, is_server)
 			-- function 12
-			if not HEALTH_ALIVE[arg_12_1] then
-				Managers.state.status_effect:add_timed_status(arg_12_1, StatusEffectNames.burning_warpfire)
+			if not HEALTH_ALIVE[unit] then
+				Managers.state.status_effect:add_timed_status(unit, StatusEffectNames.burning_warpfire)
 			end
 
-			if not arg_12_2.template.timed_status_effect_time then
-				Managers.state.status_effect:set_status(arg_12_1, StatusEffectNames.burning_warpfire, str, false)
+			if not buff.template.timed_status_effect_time then
+				Managers.state.status_effect:set_status(unit, StatusEffectNames.burning_warpfire, STATUS_REASON, false)
 			end
 		end
 	}
 }
+
+return buff_perk_functions

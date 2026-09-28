@@ -10,8 +10,8 @@ PopupSettings = {
 }
 PopupSettingsByName = {}
 
-for k, v in pairs(PopupSettings) do
-	local name = v.name
+for i, settings in pairs(PopupSettings) do
+	local name = settings.name
 
-	PopupSettingsByName[name] = v
+	PopupSettingsByName[name] = settings
 end

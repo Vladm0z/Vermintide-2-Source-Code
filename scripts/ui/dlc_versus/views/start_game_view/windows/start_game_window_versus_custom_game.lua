@@ -1,23 +1,23 @@
 -- chunkname: @scripts/ui/dlc_versus/views/start_game_view/windows/start_game_window_versus_custom_game.lua
 
-local var_0_0 = local_require("scripts/ui/dlc_versus/views/start_game_view/windows/definitions/start_game_window_versus_custom_game_definitions")
-local scenegraph_definition = var_0_0.scenegraph_definition
-local widgets = var_0_0.widgets
-local animation_definitions = var_0_0.animation_definitions
-local selector_input_definition = var_0_0.selector_input_definition
-local str = "refresh_press"
-local str_2 = "confirm_press"
+local definitions = local_require("scripts/ui/dlc_versus/views/start_game_view/windows/definitions/start_game_window_versus_custom_game_definitions")
+local scenegraph_definition = definitions.scenegraph_definition
+local widget_definitions = definitions.widgets
+local animation_definitions = definitions.animation_definitions
+local selector_input_definition = definitions.selector_input_definition
+local START_GAME_INPUT = "refresh_press"
+local SELECTION_INPUT = "confirm_press"
 
 StartGameWindowVersusCustomGame = class(StartGameWindowVersusCustomGame)
 StartGameWindowVersusCustomGame.NAME = "StartGameWindowVersusCustomGame"
 
-StartGameWindowVersusCustomGame.on_enter = function (self, arg_1_1, arg_1_2)
+StartGameWindowVersusCustomGame.on_enter = function (self, params, offset)
 	-- function 1
 	print("[StartGameViewWindow] Enter Substate StartGameWindowVersusCustomGame")
 
-	self._parent = arg_1_1.parent
+	self._parent = params.parent
 
-	local ingame_ui_context = arg_1_1.ingame_ui_context
+	local ingame_ui_context = params.ingame_ui_context
 
 	self._ingame_ui_context = ingame_ui_context
 	self._ui_renderer = ingame_ui_context.ui_renderer
@@ -25,17 +25,20 @@ StartGameWindowVersusCustomGame.on_enter = function (self, arg_1_1, arg_1_2)
 	self._input_manager = ingame_ui_context.input_manager
 	self._statistics_db = ingame_ui_context.statistics_db
 	self._mechanism_name = Managers.mechanism:current_mechanism_name()
-	self._stats_id = Managers.player:local_player():stats_id()
+
+	local local_player = Managers.player:local_player()
+
+	self._stats_id = local_player:stats_id()
 	self._render_settings = {
 		snap_pixel_positions = true
 	}
 	self._animations = {}
 
-	self:_create_ui_elements(arg_1_1, arg_1_2)
+	self:_create_ui_elements(params, offset)
 
-	local input_index = arg_1_1.input_index
+	local input_index = params.input_index
 
-	input_index = input_index or 1
+	input_index = not not input_index or not not 1
 	self._input_index = input_index
 
 	self:_handle_new_selection(self._input_index)
@@ -44,11 +47,11 @@ StartGameWindowVersusCustomGame.on_enter = function (self, arg_1_1, arg_1_2)
 	self._play_button_pressed = false
 	self._previous_can_play = nil
 
-	local flag = not Managers.account:offline_mode()
+	local is_online = not Managers.account:offline_mode()
 
-	self._is_online = flag
+	self._is_online = is_online
 
-	if not flag then
+	if is_online then
 		self._parent:change_generic_actions("default_custom_game")
 	else
 		self._parent:change_generic_actions("offline_custom_game")
@@ -57,100 +60,100 @@ StartGameWindowVersusCustomGame.on_enter = function (self, arg_1_1, arg_1_2)
 	self:_start_transition_animation("on_enter")
 end
 
-StartGameWindowVersusCustomGame._start_transition_animation = function (self, arg_2_1)
+StartGameWindowVersusCustomGame._start_transition_animation = function (self, animation_name)
 	-- function 2
-	local tbl = {
+	local params = {
 		render_settings = self._render_settings
 	}
-	local tbl_2 = {}
-	local start_animation = self._ui_animator:start_animation(arg_2_1, tbl_2, scenegraph_definition, tbl)
+	local widgets = {}
+	local anim_id = self._ui_animator:start_animation(animation_name, widgets, scenegraph_definition, params)
 
-	self._animations[arg_2_1] = start_animation
+	self._animations[animation_name] = anim_id
 end
 
-StartGameWindowVersusCustomGame._create_ui_elements = function (self, arg_3_1, arg_3_2)
+StartGameWindowVersusCustomGame._create_ui_elements = function (self, params, offset)
 	-- function 3
-	local init_scenegraph = UISceneGraph.init_scenegraph(scenegraph_definition)
+	local ui_scenegraph = UISceneGraph.init_scenegraph(scenegraph_definition)
 
-	self._ui_scenegraph = init_scenegraph
+	self._ui_scenegraph = ui_scenegraph
 
-	local tbl = {}
-	local tbl_2 = {}
+	local widgets = {}
+	local widgets_by_name = {}
 
-	for k, v in pairs(widgets) do
-		local var_3_3 = UIWidget.init(v)
+	for name, widget_definition in pairs(widget_definitions) do
+		local widget = UIWidget.init(widget_definition)
 
-		tbl[#tbl + 1] = var_3_3
-		tbl_2[k] = var_3_3
+		widgets[#widgets + 1] = widget
+		widgets_by_name[name] = widget
 	end
 
-	self._widgets = tbl
-	self._widgets_by_name = tbl_2
+	self._widgets = widgets
+	self._widgets_by_name = widgets_by_name
 
 	UIRenderer.clear_scenegraph_queue(self._ui_renderer)
 
-	self._ui_animator = UIAnimator:new(init_scenegraph, animation_definitions)
+	self._ui_animator = UIAnimator:new(ui_scenegraph, animation_definitions)
 
-	if not arg_3_2 then
-		local local_position = self._ui_scenegraph.window.local_position
+	if offset then
+		local window_position = self._ui_scenegraph.window.local_position
 
-		local_position[1] = local_position[1] + arg_3_2[1]
-		local_position[2] = local_position[2] + arg_3_2[2]
-		local_position[3] = local_position[3] + arg_3_2[3]
+		window_position[1] = window_position[1] + offset[1]
+		window_position[2] = window_position[2] + offset[2]
+		window_position[3] = window_position[3] + offset[3]
 	end
 end
 
-StartGameWindowVersusCustomGame.on_exit = function (self, arg_4_1)
+StartGameWindowVersusCustomGame.on_exit = function (self, params)
 	-- function 4
 	print("[StartGameViewWindow] Exit Substate StartGameWindowVersusCustomGame")
 
 	self._ui_animator = nil
 
-	if not self._play_button_pressed then
-		arg_4_1.input_index = nil
+	if self._play_button_pressed then
+		params.input_index = nil
 	else
-		arg_4_1.input_index = self._input_index
+		params.input_index = self._input_index
 	end
 end
 
-StartGameWindowVersusCustomGame.set_focus = function (self, arg_5_1)
+StartGameWindowVersusCustomGame.set_focus = function (self, focused)
 	-- function 5
-	self._is_focused = arg_5_1
+	self._is_focused = focused
 end
 
-StartGameWindowVersusCustomGame.update = function (self, arg_6_1, arg_6_2)
+StartGameWindowVersusCustomGame.update = function (self, dt, t)
 	-- function 6
-	local is_device_active = Managers.input:is_device_active("gamepad")
+	local gamepad_active = Managers.input:is_device_active("gamepad")
 
 	self:_update_can_play()
-	self:_update_animations(arg_6_1)
+	self:_update_animations(dt)
 
-	if not self._is_focused then
-		self:_handle_input(arg_6_1, arg_6_2)
-		self:_update_play_button_texture(is_device_active)
+	if self._is_focused then
+		self:_handle_input(dt, t)
+		self:_update_play_button_texture(gamepad_active)
 	end
 
-	self:_draw(arg_6_1)
+	self:_draw(dt)
 end
 
-StartGameWindowVersusCustomGame.post_update = function (arg_7_0, arg_7_1, arg_7_2)
+StartGameWindowVersusCustomGame.post_update = function (self, dt, t)
 	-- function 7
 	return
 end
 
 StartGameWindowVersusCustomGame._update_can_play = function (self)
 	-- function 8
-	local _can_play = self:_can_play()
+	local can_play = self:_can_play()
 
-	if self._previous_can_play ~= _can_play then
-		self._previous_can_play = _can_play
+	if self._previous_can_play ~= can_play then
+		self._previous_can_play = can_play
 
 		local play_button = self._widgets_by_name.play_button
 
-		play_button.content.button_hotspot.disable_button = not _can_play
-		play_button.content.disabled = not _can_play
+		play_button.content.button_hotspot.disable_button = not can_play
+		play_button.content.disabled = not can_play
 
-		if not _can_play then
+		if can_play then
 			self._parent:set_input_description("play_available")
 		else
 			self._parent:set_input_description(nil)
@@ -158,75 +161,78 @@ StartGameWindowVersusCustomGame._update_can_play = function (self)
 	end
 end
 
-StartGameWindowVersusCustomGame._handle_input = function (self, arg_9_1, arg_9_2)
+StartGameWindowVersusCustomGame._handle_input = function (self, dt, t)
 	-- function 9
-	local _parent = self._parent
-	local window_input_service = _parent:window_input_service()
+	local parent = self._parent
+	local input_service = parent:window_input_service()
 
-	if not window_input_service:get(str_2, true) then
-		self:_option_selected(self._input_index, arg_9_2)
+	if input_service:get(SELECTION_INPUT, true) then
+		self:_option_selected(self._input_index, t)
 	end
 
-	local _input_index = self._input_index
+	local input_index = self._input_index
 
-	if not window_input_service:get("move_down") then
-		_input_index = _input_index + 1
-	elseif not window_input_service:get("move_up") then
-		_input_index = _input_index - 1
+	if input_service:get("move_down") then
+		input_index = input_index + 1
+	elseif input_service:get("move_up") then
+		input_index = input_index - 1
 	end
 
-	if _input_index ~= self._input_index then
-		self:_handle_new_selection(_input_index)
+	if input_index ~= self._input_index then
+		self:_handle_new_selection(input_index)
 	end
 
-	local _widgets_by_name = self._widgets_by_name
+	local widgets_by_name = self._widgets_by_name
 
 	for i = 1, #selector_input_definition do
-		local var_9_4 = _widgets_by_name[selector_input_definition[i]]
+		local widget_name = selector_input_definition[i]
+		local widget = widgets_by_name[widget_name]
+		local is_selected = widget.content.is_selected
 
-		if var_9_4.content.is_selected or not UIUtils.is_button_hover_enter(var_9_4) then
+		if not is_selected and UIUtils.is_button_hover_enter(widget) then
 			self:_handle_new_selection(i)
 		end
 
-		if not UIUtils.is_button_pressed(var_9_4) then
-			self:_option_selected(self._input_index, arg_9_2)
+		if UIUtils.is_button_pressed(widget) then
+			self:_option_selected(self._input_index, t)
 		end
 	end
 
-	if not self:_can_play() then
-		if not UIUtils.is_button_hover_enter(_widgets_by_name.play_button) then
+	if self:_can_play() then
+		if UIUtils.is_button_hover_enter(widgets_by_name.play_button) then
 			self._parent:play_sound("Play_hud_hover")
 		end
 
-		if window_input_service:get(str) or not UIUtils.is_button_pressed(_widgets_by_name.play_button) then
+		if input_service:get(START_GAME_INPUT) or UIUtils.is_button_pressed(widgets_by_name.play_button) then
 			self._play_button_pressed = true
 
 			self:_play()
 		end
 	end
 
-	local flag = true
+	local consume = true
 
-	if not window_input_service:get("right_stick_press", flag) and not self._is_online then
-		_parent:set_window_input_focus("versus_additional_custom_settings")
+	if input_service:get("right_stick_press", consume) and self._is_online then
+		parent:set_window_input_focus("versus_additional_custom_settings")
 	end
 end
 
 StartGameWindowVersusCustomGame._can_play = function (self)
 	-- function 10
-	local network_id = Managers.player:local_player():network_id()
-	local var_10_1
-	local var_10_2
-	local get_local_player_party = Managers.party:get_local_player_party()
-	local flag = not get_local_player_party and get_local_player_party.num_used_slots == 1
+	local local_player_peer_id = Managers.player:local_player():network_id()
+	local is_player_alone_in_party, is_party_leader
+	local party = Managers.party:get_local_player_party()
+	local is_player_alone_in_party = not not party and party.num_used_slots == 1
 
-	if not DEDICATED_SERVER then
-		var_10_2 = Managers.party:client_is_friend_party_leader(network_id) or Managers.party:is_leader(network_id)
+	if DEDICATED_SERVER then
+		is_party_leader = not not Managers.party:client_is_friend_party_leader(local_player_peer_id) or not not Managers.party:is_leader(local_player_peer_id)
 	else
-		var_10_2 = Managers.party:is_leader(network_id) or self._ingame_ui_context.is_server
+		is_party_leader = not not Managers.party:is_leader(local_player_peer_id) or not not self._ingame_ui_context.is_server
 	end
 
-	return flag or var_10_2
+	local can_play = not not is_player_alone_in_party or not not is_party_leader
+
+	return can_play
 end
 
 StartGameWindowVersusCustomGame._play = function (self)
@@ -236,11 +242,19 @@ StartGameWindowVersusCustomGame._play = function (self)
 
 	local get_selected_level_id = self._parent:get_selected_level_id()
 
-	get_selected_level_id = get_selected_level_id or "any"
+	if not get_selected_level_id then
+		-- Nothing
+	end
 
-	local is_private_option_enabled = self._parent:is_private_option_enabled()
+	get_selected_level_id = "any"
+
+	local mission_id = get_selected_level_id
+
+	::label_11_0::
+
+	local is_private = self._parent:is_private_option_enabled()
 	local lobby = Managers.state.network:lobby()
-	local tbl = {
+	local search_config = {
 		player_hosted = true,
 		matchmaking_start_state = "MatchmakingStatePlayerHostedGame",
 		dedicated_server = false,
@@ -248,124 +262,137 @@ StartGameWindowVersusCustomGame._play = function (self)
 		mechanism = "versus",
 		quick_game = false,
 		difficulty = "versus_base",
-		mission_id = get_selected_level_id,
-		any_level = get_selected_level_id == "any",
-		private_game = is_private_option_enabled or false,
+		mission_id = mission_id,
+		any_level = mission_id == "any",
+		private_game = not not is_private or not not false,
 		party_lobby_host = lobby,
 		max_num_players = GameModeSettings.versus.max_num_players
 	}
 
-	Managers.matchmaking:find_game(tbl)
+	Managers.matchmaking:find_game(search_config)
 end
 
-StartGameWindowVersusCustomGame._option_selected = function (self, arg_12_1, arg_12_2)
+StartGameWindowVersusCustomGame._option_selected = function (self, input_index, t)
 	-- function 12
-	local _parent = self._parent
-	local get_custom_game_settings = _parent:get_custom_game_settings(self._mechanism_name)
+	local parent = self._parent
+	local get_custom_game_settings = parent:get_custom_game_settings(self._mechanism_name)
 
-	get_custom_game_settings = get_custom_game_settings or _parent:get_custom_game_settings("adventure")
+	if not get_custom_game_settings then
+		-- Nothing
+	end
 
-	local var_12_2 = selector_input_definition[arg_12_1]
+	get_custom_game_settings = parent:get_custom_game_settings("adventure")
 
-	if var_12_2 == "mission_setting" then
-		self._parent:set_layout_by_name(get_custom_game_settings.layout_name)
-	elseif var_12_2 == "difficulty_setting" then
+	local custom_game_settings = get_custom_game_settings
+
+	::label_12_0::
+
+	local selected_widget_name = selector_input_definition[input_index]
+
+	if selected_widget_name == "mission_setting" then
+		self._parent:set_layout_by_name(custom_game_settings.layout_name)
+	elseif selected_widget_name == "difficulty_setting" then
 		self._parent:set_layout_by_name("difficulty_selection_custom")
-	elseif var_12_2 == "play_button" then
+	elseif selected_widget_name == "play_button" then
 		self._play_button_pressed = true
 
 		self:_play()
 	else
-		ferror("Unknown selector_input_definition: %s", var_12_2)
+		ferror("Unknown selector_input_definition: %s", selected_widget_name)
 	end
 end
 
-StartGameWindowVersusCustomGame._handle_new_selection = function (self, arg_13_1)
+StartGameWindowVersusCustomGame._handle_new_selection = function (self, input_index)
 	-- function 13
-	local _widgets_by_name = self._widgets_by_name
-	local count = #selector_input_definition
+	local widgets_by_name = self._widgets_by_name
+	local num_inputs = #selector_input_definition
 
-	arg_13_1 = math.clamp(arg_13_1, 1, count)
+	input_index = math.clamp(input_index, 1, num_inputs)
 
-	if not _widgets_by_name[selector_input_definition[arg_13_1]].content.disabled then
+	local widget_name = selector_input_definition[input_index]
+	local widget = widgets_by_name[widget_name]
+	local widget_content = widget.content
+
+	if widget_content.disabled then
 		return
 	end
 
 	for i = 1, #selector_input_definition do
-		local var_13_2 = _widgets_by_name[selector_input_definition[i]]
-		local flag = i ~= arg_13_1 or self._gamepad_active
+		local widget_name = selector_input_definition[i]
+		local widget = widgets_by_name[widget_name]
+		local is_selected = i == input_index and not not self._gamepad_active
 
-		var_13_2.content.is_selected = flag
+		widget.content.is_selected = is_selected
 	end
 
-	if self._input_index ~= arg_13_1 then
+	if self._input_index ~= input_index then
 		self._parent:play_sound("play_gui_lobby_button_02_mission_act_click")
 	end
 
-	self._input_index = arg_13_1
+	self._input_index = input_index
 end
 
-StartGameWindowVersusCustomGame._update_animations = function (self, arg_14_1)
+StartGameWindowVersusCustomGame._update_animations = function (self, dt)
 	-- function 14
-	local _ui_animator = self._ui_animator
+	local ui_animator = self._ui_animator
 
-	_ui_animator:update(arg_14_1)
+	ui_animator:update(dt)
 
-	local _animations = self._animations
+	local animations = self._animations
 
-	for k, v in pairs(_animations) do
-		if not _ui_animator:is_animation_completed(v) then
-			_ui_animator:stop_animation(v)
+	for animation_name, animation_id in pairs(animations) do
+		if ui_animator:is_animation_completed(animation_id) then
+			ui_animator:stop_animation(animation_id)
 
-			_animations[k] = nil
+			animations[animation_name] = nil
 		end
 	end
 
-	local _widgets_by_name = self._widgets_by_name
+	local widgets_by_name = self._widgets_by_name
 
-	if not _widgets_by_name.play_button.content.button_hotspot.disable_button then
-		UIWidgetUtils.animate_play_button(_widgets_by_name.play_button, arg_14_1)
+	if not widgets_by_name.play_button.content.button_hotspot.disable_button then
+		UIWidgetUtils.animate_play_button(widgets_by_name.play_button, dt)
 	end
 end
 
-StartGameWindowVersusCustomGame._draw = function (self, arg_15_1)
+StartGameWindowVersusCustomGame._draw = function (self, dt)
 	-- function 15
-	local _ui_top_renderer = self._ui_top_renderer
-	local _ui_scenegraph = self._ui_scenegraph
-	local window_input_service = self._parent:window_input_service()
-	local _render_settings = self._render_settings
-	local var_15_4
+	local ui_top_renderer = self._ui_top_renderer
+	local ui_scenegraph = self._ui_scenegraph
+	local input_service = self._parent:window_input_service()
+	local render_settings = self._render_settings
+	local parent_scenegraph_id
 
-	UIRenderer.begin_pass(_ui_top_renderer, _ui_scenegraph, window_input_service, arg_15_1, var_15_4, _render_settings)
+	UIRenderer.begin_pass(ui_top_renderer, ui_scenegraph, input_service, dt, parent_scenegraph_id, render_settings)
 
-	local _widgets = self._widgets
+	local widgets = self._widgets
 
-	for i = 1, #_widgets do
-		local var_15_6 = _widgets[i]
+	for i = 1, #widgets do
+		local widget = widgets[i]
 
-		UIRenderer.draw_widget(_ui_top_renderer, var_15_6)
+		UIRenderer.draw_widget(ui_top_renderer, widget)
 	end
 
-	UIRenderer.end_pass(_ui_top_renderer)
+	UIRenderer.end_pass(ui_top_renderer)
 end
 
-StartGameWindowVersusCustomGame._update_play_button_texture = function (self, arg_16_1)
+StartGameWindowVersusCustomGame._update_play_button_texture = function (self, gamepad_active)
 	-- function 16
-	local _widgets_by_name = self._widgets_by_name
+	local widgets_by_name = self._widgets_by_name
 
-	if self._gamepad_active ~= arg_16_1 then
-		self._gamepad_active = arg_16_1
+	if self._gamepad_active ~= gamepad_active then
+		self._gamepad_active = gamepad_active
 
-		if not arg_16_1 then
-			local window_input_service = self._parent:window_input_service()
-			local str = "refresh"
-			local get_gamepad_input_texture_data = UISettings.get_gamepad_input_texture_data(window_input_service, str, arg_16_1)
+		if gamepad_active then
+			local input_service = self._parent:window_input_service()
+			local input_action = "refresh"
+			local button_texture_data = UISettings.get_gamepad_input_texture_data(input_service, input_action, gamepad_active)
 
-			if not get_gamepad_input_texture_data then
-				_widgets_by_name.play_button.content.texture_icon_id = get_gamepad_input_texture_data.texture
+			if button_texture_data then
+				widgets_by_name.play_button.content.texture_icon_id = button_texture_data.texture
 			end
 		else
-			_widgets_by_name.play_button.content.texture_icon_id = "options_button_icon_quickplay"
+			widgets_by_name.play_button.content.texture_icon_id = "options_button_icon_quickplay"
 		end
 
 		self:_handle_new_selection(self._input_index)

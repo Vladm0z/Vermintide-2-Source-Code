@@ -2,13 +2,15 @@
 
 local LevelHelper = LevelHelper
 
-LevelHelper = LevelHelper or {}
+LevelHelper = not not LevelHelper or not not {}
 LevelHelper = LevelHelper
 LevelHelper.INGAME_WORLD_NAME = "level_world"
 
-LevelHelper.current_level_settings = function (arg_1_0)
+LevelHelper.current_level_settings = function (self)
 	-- function 1
-	if not Managers.state.game_mode then
+	local game_mode_manager = Managers.state.game_mode
+
+	if game_mode_manager then
 		local level_key = Managers.state.game_mode:level_key()
 
 		return LevelSettings[level_key]
@@ -17,58 +19,60 @@ LevelHelper.current_level_settings = function (arg_1_0)
 	return nil
 end
 
-LevelHelper.current_level = function (self, arg_2_1)
+LevelHelper.current_level = function (self, world)
 	-- function 2
-	local current_level_settings = self:current_level_settings()
+	local level_settings = self:current_level_settings()
+	local level = ScriptWorld.level(world, level_settings.level_name)
 
-	return (ScriptWorld.level(arg_2_1, current_level_settings.level_name))
+	return level
 end
 
-LevelHelper.get_environment_variation_id = function (self, arg_3_1)
+LevelHelper.get_environment_variation_id = function (self, level_key)
 	-- function 3
-	local get_title_data = Managers.backend:get_title_data("environment_variations")
+	local backend_manager = Managers.backend
+	local environment_variations = backend_manager:get_title_data("environment_variations")
 
-	if not get_title_data then
-		return self:get_random_variation_id(arg_3_1)
+	if not environment_variations then
+		return self:get_random_variation_id(level_key)
 	end
 
-	local var_3_1 = cjson.decode(get_title_data)[arg_3_1]
+	environment_variations = cjson.decode(environment_variations)
 
-	if not var_3_1 then
+	local level_environment_variations = environment_variations[level_key]
+
+	if not level_environment_variations then
 		return 0
 	end
 
-	local type = var_3_1.type
+	local type = level_environment_variations.type
 
 	if type == "random" then
-		return self:get_random_variation_id(arg_3_1)
+		return self:get_random_variation_id(level_key)
 	elseif type == "specific" then
-		local var_3_3 = LevelSettings[arg_3_1]
-		local flag = not var_3_3 and var_3_3.environment_variations
+		local level_settings = LevelSettings[level_key]
+		local existing_variations = not not level_settings and not not level_settings.environment_variations
 
-		if not (not flag and not (#flag < 1)) then
+		if not existing_variations or #existing_variations < 1 then
 			return 0
 		end
 
-		local variations = var_3_1.variations
-		local var_3_6
-		local var_3_7
-		local var_3_8
+		local variations = level_environment_variations.variations
+		local selected_variation_string, i, id
 
 		while #variations > 0 do
-			local random = math.random(1, #variations)
-			local var_3_10 = variations[random]
+			i = math.random(1, #variations)
+			selected_variation_string = variations[i]
 
-			if var_3_10 == "default" then
+			if selected_variation_string == "default" then
 				return 0
 			end
 
-			local find = table.find(flag, var_3_10)
+			id = table.find(existing_variations, selected_variation_string)
 
-			if not find then
-				return find
+			if id then
+				return id
 			else
-				table.remove(variations, random)
+				table.remove(variations, i)
 			end
 		end
 	elseif type == "default" then
@@ -78,14 +82,14 @@ LevelHelper.get_environment_variation_id = function (self, arg_3_1)
 	return 0
 end
 
-LevelHelper.get_random_variation_id = function (arg_4_0, arg_4_1)
+LevelHelper.get_random_variation_id = function (self, level_key)
 	-- function 4
-	local var_4_0 = rawget(LevelSettings, arg_4_1)
-	local flag = not var_4_0 and var_4_0.environment_variations
+	local settings = rawget(LevelSettings, level_key)
+	local variations = not not settings and not not settings.environment_variations
 	local random
 
-	if not flag then
-		random = math.random(0, #flag)
+	if variations then
+		random = math.random(0, #variations)
 
 		if not random then
 			-- Nothing
@@ -99,87 +103,102 @@ LevelHelper.get_random_variation_id = function (arg_4_0, arg_4_1)
 	return random
 end
 
-LevelHelper.flow_event = function (self, arg_5_1, arg_5_2)
+LevelHelper.flow_event = function (self, world, event)
 	-- function 5
-	local current_level_settings = self:current_level_settings()
-	local level = ScriptWorld.level(arg_5_1, current_level_settings.level_name)
+	local level_settings = self:current_level_settings()
+	local level = ScriptWorld.level(world, level_settings.level_name)
 
-	Level.trigger_event(level, arg_5_2)
+	Level.trigger_event(level, event)
 end
 
-LevelHelper.set_flow_parameter = function (self, arg_6_1, arg_6_2, arg_6_3)
+LevelHelper.set_flow_parameter = function (self, world, name, value)
 	-- function 6
-	local current_level_settings = self:current_level_settings()
-	local level = ScriptWorld.level(arg_6_1, current_level_settings.level_name)
+	local level_settings = self:current_level_settings()
+	local level = ScriptWorld.level(world, level_settings.level_name)
 
-	Level.set_flow_variable(level, arg_6_2, arg_6_3)
+	Level.set_flow_variable(level, name, value)
 end
 
-LevelHelper.unit_index = function (self, arg_7_1, arg_7_2)
+LevelHelper.unit_index = function (self, world, unit)
 	-- function 7
-	local current_level = self:current_level(arg_7_1)
+	local level = self:current_level(world)
 
-	return Level.unit_index(current_level, arg_7_2)
+	return Level.unit_index(level, unit)
 end
 
-LevelHelper.unit_by_index = function (self, arg_8_1, arg_8_2)
+LevelHelper.unit_by_index = function (self, world, index)
 	-- function 8
-	local current_level = self:current_level(arg_8_1)
+	local level = self:current_level(world)
 
-	return Level.unit_by_index(current_level, arg_8_2)
+	return Level.unit_by_index(level, index)
 end
 
-LevelHelper.find_dialogue_unit = function (arg_9_0, arg_9_1, arg_9_2)
+LevelHelper.find_dialogue_unit = function (self, world, dialogue_profile)
 	-- function 9
-	local current_level = LevelHelper:current_level(arg_9_1)
-	local units = Level.units(current_level)
-	local var_9_2
+	local level = LevelHelper:current_level(world)
+	local units = Level.units(level)
+	local intro_vo_unit
 
-	for i, v in ipairs(units) do
-		if not (not Unit.has_data(v, "dialogue_profile") and Unit.get_data(v, "dialogue_profile") ~= arg_9_2) then
-			var_9_2 = v
+	for _, unit in ipairs(units) do
+		if Unit.has_data(unit, "dialogue_profile") then
+			local found_dialogue_profile = Unit.get_data(unit, "dialogue_profile")
 
-			break
+			if found_dialogue_profile == dialogue_profile then
+				intro_vo_unit = unit
+
+				break
+			end
 		end
 	end
 
-	return var_9_2
+	return intro_vo_unit
 end
 
-LevelHelper.get_base_level = function (arg_10_0, arg_10_1)
+LevelHelper.get_base_level = function (self, level_key)
 	-- function 10
-	local var_10_0 = LevelSettings[arg_10_1]
+	local level_settings = LevelSettings[level_key]
 	local base_level_name
 
-	if not var_10_0 then
-		base_level_name = var_10_0.base_level_name
+	if level_settings then
+		base_level_name = level_settings.base_level_name
 
 		if not base_level_name then
 			-- Nothing
 		end
 	end
 
-	base_level_name = arg_10_1
+	base_level_name = level_key
 
 	::label_10_0::
 
 	return base_level_name
 end
 
-LevelHelper.get_small_level_image = function (arg_11_0, arg_11_1)
+LevelHelper.get_small_level_image = function (self, level_key)
 	-- function 11
-	local small_level_image = LevelSettings[arg_11_1].small_level_image
+	local level_settings = LevelSettings[level_key]
+	local small_level_image = level_settings.small_level_image
 
-	small_level_image = small_level_image or arg_11_1 .. "_small_image"
-
-	if not UIAtlasHelper.has_texture_by_name(small_level_image) then
-		small_level_image = "any_small_image"
+	if not small_level_image then
+		-- Nothing
 	end
 
-	return small_level_image
+	small_level_image = level_key .. "_small_image"
+
+	local level_image = small_level_image
+
+	::label_11_0::
+
+	if not UIAtlasHelper.has_texture_by_name(level_image) then
+		level_image = "any_small_image"
+	end
+
+	return level_image
 end
 
-LevelHelper.should_load_enemies = function (arg_12_0, arg_12_1)
+LevelHelper.should_load_enemies = function (self, level_key)
 	-- function 12
-	return not LevelSettings[arg_12_1].preload_no_enemies
+	local level_settings = LevelSettings[level_key]
+
+	return not level_settings.preload_no_enemies
 end

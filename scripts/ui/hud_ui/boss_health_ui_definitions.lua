@@ -2,15 +2,15 @@
 
 local_require("scripts/ui/ui_widgets")
 
-local flag = false
-local tbl = {
+local retained_mode = false
+local base_portrait_size = {
 	60,
 	70
 }
-local num = 440
-local num_2 = num + tbl[1]
-local num_3 = 80
-local tbl_2 = {
+local base_bar_length = 440
+local total_bar_length = base_bar_length + base_portrait_size[1]
+local additional_bar_length = 80
+local scenegraph_definition = {
 	screen = {
 		scale = "fit",
 		size = {
@@ -28,7 +28,7 @@ local tbl_2 = {
 		parent = "screen",
 		horizontal_alignment = "center",
 		size = {
-			num_2,
+			total_bar_length,
 			70
 		},
 		position = {
@@ -42,7 +42,7 @@ local tbl_2 = {
 		parent = "pivot_parent",
 		horizontal_alignment = "center",
 		size = {
-			num_2,
+			total_bar_length,
 			14
 		},
 		position = {
@@ -56,7 +56,7 @@ local tbl_2 = {
 		parent = "pivot",
 		horizontal_alignment = "left",
 		size = {
-			num_2,
+			total_bar_length,
 			70
 		},
 		position = {
@@ -67,53 +67,63 @@ local tbl_2 = {
 	}
 }
 
-if not IS_CONSOLE then
-	tbl_2.screen.scale = "hud_fit"
+if IS_CONSOLE then
+	scenegraph_definition.screen.scale = "hud_fit"
 end
 
-local function fn(arg_1_0)
+local function create_health_bar_widget(is_additional)
 	-- function 1
-	local var_1_0 = num
-	local var_1_1 = tbl
-	local num_2 = 1
-	local tbl_2 = {
+	local bar_length = base_bar_length
+	local portrait_size = base_portrait_size
+	local detail_scale = 1
+	local default_color = {
 		255,
 		255,
 		255,
 		255
 	}
-	local num_4 = 3
-	local num_5 = -16
+	local max_grudge_per_line = 3
+	local grudge_line_offset = -16
 
-	if not arg_1_0 then
-		var_1_0 = num_3
-		num_2 = 0.6
+	if is_additional then
+		bar_length = additional_bar_length
+		detail_scale = 0.6
 	end
 
-	local flag_2
+	local num
 
-	flag_2 = not arg_1_0 and 8 and 0
+	if is_additional then
+		num = 8
 
-	local tbl_3 = {
+		goto label_1_0
+	end
+
+	num = 0
+
+	local bar_y_offset = num
+
+	::label_1_0::
+
+	local widget = {
 		element = {}
 	}
-	local tbl_4 = {
+	local passes = {
 		{
 			pass_type = "texture",
 			style_id = "portrait",
 			texture_id = "portrait",
-			retained_mode = flag
+			retained_mode = retained_mode
 		},
 		{
 			pass_type = "texture",
 			style_id = "marked_portrait_frame",
 			texture_id = "marked_portrait_frame",
-			retained_mode = flag,
-			content_check_function = function (self)
+			retained_mode = retained_mode,
+			content_check_function = function (content)
 				-- function 2
-				local var_2_0 = self.attributes[1]
+				local var_2_0 = content.attributes[1]
 
-				var_2_0 = var_2_0 or self.has_custom_attribute
+				var_2_0 = not not var_2_0 or not not content.has_custom_attribute
 
 				return var_2_0
 			end
@@ -122,40 +132,40 @@ local function fn(arg_1_0)
 			pass_type = "texture",
 			style_id = "portrait_healing",
 			texture_id = "portrait_healing",
-			retained_mode = flag
+			retained_mode = retained_mode
 		},
 		{
 			pass_type = "texture",
 			style_id = "lower_normal_bg",
 			texture_id = "lower_normal_bg",
-			retained_mode = flag,
-			content_check_function = function (self)
+			retained_mode = retained_mode,
+			content_check_function = function (chk_content)
 				-- function 3
-				return not self.attributes[1] and arg_1_0
+				return not chk_content.attributes[1] or not not is_additional
 			end
 		}
 	}
-	local tbl_5 = {
+	local content = {
 		lower_normal_bg = "boss_hp_bar_bottom",
 		portrait_healing = "boss_portrait_heal",
 		portrait = "icons_placeholder",
 		marked_portrait_frame = "unit_frame_portrait_enemy_marked",
-		bar_length = var_1_0,
+		bar_length = bar_length,
 		skull_dividers = {}
 	}
-	local tbl_6 = {}
-	local num_6 = 0
-	local num_7 = var_1_1[1] * num_2
-	local num_8 = var_1_1[2] * num_2
+	local style = {}
+	local reference_x = 0
+	local portrait_size_x = portrait_size[1] * detail_scale
+	local portrait_size_y = portrait_size[2] * detail_scale
 
-	tbl_6.portrait = {
+	style.portrait = {
 		size = {
-			num_7,
-			num_8
+			portrait_size_x,
+			portrait_size_y
 		},
 		offset = {
-			num_6,
-			-(num_8 - 20 * num_2) - 2,
+			reference_x,
+			-(portrait_size_y - 20 * detail_scale) - 2,
 			6
 		},
 		color = {
@@ -165,14 +175,14 @@ local function fn(arg_1_0)
 			255
 		}
 	}
-	tbl_6.portrait_healing = {
+	style.portrait_healing = {
 		size = {
-			num_7 - 8 * num_2,
-			num_8 - 8 * num_2
+			portrait_size_x - 8 * detail_scale,
+			portrait_size_y - 8 * detail_scale
 		},
 		offset = {
-			num_6 + 2,
-			-(num_8 - 22 * num_2),
+			reference_x + 2,
+			-(portrait_size_y - 22 * detail_scale),
 			7
 		},
 		color = {
@@ -182,14 +192,14 @@ local function fn(arg_1_0)
 			0
 		}
 	}
-	tbl_6.marked_portrait_frame = {
+	style.marked_portrait_frame = {
 		size = {
-			num_7,
-			num_8
+			portrait_size_x,
+			portrait_size_y
 		},
 		offset = {
-			num_6,
-			-(num_8 - 20 * num_2) - 2,
+			reference_x,
+			-(portrait_size_y - 20 * detail_scale) - 2,
 			8
 		},
 		color = {
@@ -199,83 +209,83 @@ local function fn(arg_1_0)
 			255
 		}
 	}
+	reference_x = reference_x + portrait_size_x
 
-	local num_9 = num_6 + num_7
-	local tbl_7 = {}
-	local tbl_8 = {
-		var_1_0 + 32 * num_2
+	local tbl = {}
+	local tbl_2 = {
+		bar_length + 32 * detail_scale
 	}
-	local flag_3
+	local flag
 
-	flag_3 = not arg_1_0 and 20 and 55
-	tbl_8[2] = flag_3
-	tbl_7.size = tbl_8
+	flag = (not is_additional or not 20) and not not 55
+	tbl_2[2] = flag
+	tbl.size = tbl_2
 
-	local tbl_9 = {
-		num_9 - 23,
+	local tbl_3 = {
+		reference_x - 23,
 		nil,
 		2
 	}
-	local num_10 = -28 * num_2
-	local flag_4
+	local num_2 = -28 * detail_scale
+	local flag_2
 
-	flag_4 = not arg_1_0 and 20 and 55
-	tbl_9[2] = num_10 - flag_4 + flag_2
-	tbl_7.offset = tbl_9
+	flag_2 = (not is_additional or not 20) and not not 55
+	tbl_3[2] = num_2 - flag_2 + bar_y_offset
+	tbl.offset = tbl_3
 
-	local tbl_10 = {
+	local tbl_4 = {
 		nil,
 		255,
 		255,
 		255
 	}
-	local flag_5
+	local flag_3
 
-	flag_5 = not arg_1_0 and 230 and 255
-	tbl_10[1] = flag_5
-	tbl_7.color = tbl_10
-	tbl_6.lower_normal_bg = tbl_7
+	flag_3 = (not is_additional or not 230) and not not 255
+	tbl_4[1] = flag_3
+	tbl.color = tbl_4
+	style.lower_normal_bg = tbl
 
-	if not arg_1_0 then
-		tbl_4[#tbl_4 + 1] = {
+	if not is_additional then
+		passes[#passes + 1] = {
 			pass_type = "texture",
 			style_id = "lower_marked_bg",
 			texture_id = "lower_marked_bg",
-			retained_mode = flag,
-			content_check_function = function (self)
+			retained_mode = retained_mode,
+			content_check_function = function (chk_content)
 				-- function 4
-				local var_4_0 = self.attributes[1]
+				local var_4_0 = chk_content.attributes[1]
 
-				var_4_0 = not var_4_0 and not arg_1_0
+				var_4_0 = not not var_4_0 and not not not is_additional
 
 				return var_4_0
 			end
 		}
-		tbl_5.lower_marked_bg = "boss_hp_bar_marked_bg"
-		tbl_5.attribute_offset_reference = num_9
+		content.lower_marked_bg = "boss_hp_bar_marked_bg"
+		content.attribute_offset_reference = reference_x
 
-		local num_11 = 0
+		local num_dividers = 0
 
 		for i = 1, 6 do
-			local str = "attribute_text_" .. i
+			local id = "attribute_text_" .. i
 
-			tbl_4[#tbl_4 + 1] = {
+			passes[#passes + 1] = {
 				pass_type = "text",
-				text_id = str,
-				style_id = str,
-				retained_mode = flag,
-				content_check_function = function (self)
+				text_id = id,
+				style_id = id,
+				retained_mode = retained_mode,
+				content_check_function = function (chk_content)
 					-- function 5
-					return self.attributes[i]
+					return chk_content.attributes[i]
 				end
 			}
 
-			local ceil = math.ceil(i / num_4)
-			local num_12 = -24 + num_5 * ceil
+			local line = math.ceil(i / max_grudge_per_line)
+			local y_offset = -24 + grudge_line_offset * line
 
-			tbl_5[str] = ""
-			tbl_5.show_attributes = true
-			tbl_6[str] = {
+			content[id] = ""
+			content.show_attributes = true
+			style[id] = {
 				vertical_alignment = "top",
 				upper_case = false,
 				horizontal_alignment = "left",
@@ -284,36 +294,36 @@ local function fn(arg_1_0)
 				text_color = Colors.get_color_table_with_alpha("orange", 255),
 				offset = {
 					0,
-					num_12 + flag_2,
+					y_offset + bar_y_offset,
 					7
 				}
 			}
 
-			if (i - 1) % num_4 ~= 0 then
-				num_11 = num_11 + 1
+			if (i - 1) % max_grudge_per_line ~= 0 then
+				num_dividers = num_dividers + 1
 
-				local str_2 = "skull_divider_" .. num_11
+				local divider_id = "skull_divider_" .. num_dividers
 
-				tbl_5.skull_dividers[i] = str_2
-				tbl_5[str_2] = "skull_divider"
-				tbl_4[#tbl_4 + 1] = {
+				content.skull_dividers[i] = divider_id
+				content[divider_id] = "skull_divider"
+				passes[#passes + 1] = {
 					pass_type = "texture",
-					texture_id = str_2,
-					style_id = str_2,
-					retained_mode = flag,
-					content_check_function = function (self)
+					texture_id = divider_id,
+					style_id = divider_id,
+					retained_mode = retained_mode,
+					content_check_function = function (chk_content)
 						-- function 6
-						return self.attributes[i]
+						return chk_content.attributes[i]
 					end
 				}
-				tbl_6[str_2] = {
+				style[divider_id] = {
 					size = {
 						22,
 						27
 					},
 					offset = {
 						0,
-						ceil + flag_2,
+						line + bar_y_offset,
 						7
 					},
 					color = {
@@ -326,14 +336,14 @@ local function fn(arg_1_0)
 			end
 		end
 
-		tbl_6.lower_marked_bg = {
+		style.lower_marked_bg = {
 			size = {
-				var_1_0 + 32,
+				bar_length + 32,
 				55
 			},
 			offset = {
-				num_9 - 23,
-				-83 * num_2 + flag_2,
+				reference_x - 23,
+				-83 * detail_scale + bar_y_offset,
 				2
 			},
 			color = {
@@ -345,28 +355,28 @@ local function fn(arg_1_0)
 		}
 	end
 
-	local str_3 = "bar_fg"
+	local bar_fg_name = "bar_fg"
 
-	tbl_4[#tbl_4 + 1] = {
+	passes[#passes + 1] = {
 		pass_type = "texture",
-		texture_id = str_3,
-		style_id = str_3,
-		retained_mode = flag
+		texture_id = bar_fg_name,
+		style_id = bar_fg_name,
+		retained_mode = retained_mode
 	}
 
-	local num_13 = 0.04139433551198257 * var_1_0
-	local flag_6
+	local fg_padding = 0.04139433551198257 * bar_length
+	local flag_4
 
-	flag_6 = not arg_1_0 and "boss_hp_bar_titleless" and "boss_hp_bar"
-	tbl_5[str_3] = flag_6
-	tbl_6[str_3] = {
+	flag_4 = (not is_additional or not "boss_hp_bar_titleless") and not not "boss_hp_bar"
+	content[bar_fg_name] = flag_4
+	style[bar_fg_name] = {
 		size = {
-			var_1_0 + num_13 * num_2,
-			75 * num_2
+			bar_length + fg_padding * detail_scale,
+			75 * detail_scale
 		},
 		offset = {
-			num_9,
-			-35 * num_2 + flag_2,
+			reference_x,
+			-35 * detail_scale + bar_y_offset,
 			5
 		},
 		color = {
@@ -377,42 +387,43 @@ local function fn(arg_1_0)
 		}
 	}
 
-	local num_14 = num_9 + 0.013071895424836602 * var_1_0
+	local edge_size = 0.013071895424836602 * bar_length
 
-	tbl_5.attributes = {}
+	reference_x = reference_x + edge_size
+	content.attributes = {}
 
-	local str_4 = "bar_bg"
-	local num_15 = -24 * num_2 + flag_2
+	local bar_bg_name = "bar_bg"
+	local bar_y = -24 * detail_scale + bar_y_offset
 
-	tbl_4[#tbl_4 + 1] = {
+	passes[#passes + 1] = {
 		pass_type = "texture",
-		texture_id = str_4,
-		style_id = str_4,
-		retained_mode = flag
+		texture_id = bar_bg_name,
+		style_id = bar_bg_name,
+		retained_mode = retained_mode
 	}
-	tbl_5[str_4] = "boss_hp_bar_bg"
-	tbl_6[str_4] = {
-		color = table.clone(tbl_2),
+	content[bar_bg_name] = "boss_hp_bar_bg"
+	style[bar_bg_name] = {
+		color = table.clone(default_color),
 		offset = {
-			num_14,
-			num_15,
+			reference_x,
+			bar_y,
 			0
 		},
 		size = {
-			var_1_0,
-			14 * num_2
+			bar_length,
+			14 * detail_scale
 		}
 	}
 
-	local str_5 = "bar"
+	local bar_name = "bar"
 
-	tbl_4[#tbl_4 + 1] = {
+	passes[#passes + 1] = {
 		pass_type = "texture_uv",
-		content_id = str_5,
-		style_id = str_5,
-		retained_mode = flag
+		content_id = bar_name,
+		style_id = bar_name,
+		retained_mode = retained_mode
 	}
-	tbl_6[str_5] = {
+	style[bar_name] = {
 		color = {
 			255,
 			255,
@@ -420,12 +431,12 @@ local function fn(arg_1_0)
 			255
 		},
 		size = {
-			var_1_0,
-			14 * num_2
+			bar_length,
+			14 * detail_scale
 		},
 		offset = {
-			num_14,
-			num_15,
+			reference_x,
+			bar_y,
 			2
 		},
 		default_offset = {
@@ -434,11 +445,11 @@ local function fn(arg_1_0)
 			2
 		},
 		default_size = {
-			var_1_0,
-			14 * num_2
+			bar_length,
+			14 * detail_scale
 		}
 	}
-	tbl_5[str_5] = {
+	content[bar_name] = {
 		texture_id = "boss_hp_bar_fill",
 		uvs = {
 			{
@@ -451,17 +462,17 @@ local function fn(arg_1_0)
 			}
 		}
 	}
-	tbl_5.healing_bar_offset_reference = num_14
+	content.healing_bar_offset_reference = reference_x
 
-	local str_6 = "healing_bar"
+	local healing_bar_name = "healing_bar"
 
-	tbl_4[#tbl_4 + 1] = {
+	passes[#passes + 1] = {
 		pass_type = "texture_uv",
-		content_id = str_6,
-		style_id = str_6,
-		retained_mode = flag
+		content_id = healing_bar_name,
+		style_id = healing_bar_name,
+		retained_mode = retained_mode
 	}
-	tbl_6[str_6] = {
+	style[healing_bar_name] = {
 		color = {
 			200,
 			255,
@@ -469,12 +480,12 @@ local function fn(arg_1_0)
 			255
 		},
 		size = {
-			var_1_0,
-			14 * num_2
+			bar_length,
+			14 * detail_scale
 		},
 		offset = {
-			num_14,
-			num_15,
+			reference_x,
+			bar_y,
 			3
 		},
 		default_offset = {
@@ -483,11 +494,11 @@ local function fn(arg_1_0)
 			3
 		},
 		default_size = {
-			var_1_0,
-			14 * num_2
+			bar_length,
+			14 * detail_scale
 		}
 	}
-	tbl_5[str_6] = {
+	content[healing_bar_name] = {
 		texture_id = "boss_hp_bar_healing",
 		uvs = {
 			{
@@ -501,18 +512,18 @@ local function fn(arg_1_0)
 		}
 	}
 
-	local str_7 = "healing_bar_flash"
+	local healing_bar_flash = "healing_bar_flash"
 
-	tbl_4[#tbl_4 + 1] = {
+	passes[#passes + 1] = {
 		pass_type = "texture",
-		content_id = str_7,
-		style_id = str_7,
-		retained_mode = flag
+		content_id = healing_bar_flash,
+		style_id = healing_bar_flash,
+		retained_mode = retained_mode
 	}
 
-	local var_1_37 = UIFrameSettings.boss_hp_bar_heal_flash.texture_sizes.vertical[1]
+	local bar_flash_padding = UIFrameSettings.boss_hp_bar_heal_flash.texture_sizes.vertical[1]
 
-	tbl_6[str_7] = {
+	style[healing_bar_flash] = {
 		color = {
 			0,
 			255,
@@ -520,12 +531,12 @@ local function fn(arg_1_0)
 			255
 		},
 		size = {
-			var_1_0 + var_1_37 * 2,
-			40 * num_2
+			bar_length + bar_flash_padding * 2,
+			40 * detail_scale
 		},
 		offset = {
-			num_14 - var_1_37,
-			num_15 - var_1_37 * num_2,
+			reference_x - bar_flash_padding,
+			bar_y - bar_flash_padding * detail_scale,
 			5
 		},
 		default_offset = {
@@ -534,24 +545,24 @@ local function fn(arg_1_0)
 			5
 		},
 		default_size = {
-			var_1_0,
-			40 * num_2
+			bar_length,
+			40 * detail_scale
 		}
 	}
-	tbl_5[str_7] = {
+	content[healing_bar_flash] = {
 		texture_id = "boss_hp_bar_heal_flash"
 	}
-	tbl_5.dead_space_bar_offset_reference = num_14
+	content.dead_space_bar_offset_reference = reference_x
 
-	local str_8 = "dead_space_bar"
+	local dead_space_bar_name = "dead_space_bar"
 
-	tbl_4[#tbl_4 + 1] = {
+	passes[#passes + 1] = {
 		pass_type = "texture_uv",
-		content_id = str_8,
-		style_id = str_8,
-		retained_mode = flag
+		content_id = dead_space_bar_name,
+		style_id = dead_space_bar_name,
+		retained_mode = retained_mode
 	}
-	tbl_6[str_8] = {
+	style[dead_space_bar_name] = {
 		color = {
 			255,
 			255,
@@ -559,12 +570,12 @@ local function fn(arg_1_0)
 			255
 		},
 		size = {
-			var_1_0,
-			14 * num_2
+			bar_length,
+			14 * detail_scale
 		},
 		offset = {
-			num_14,
-			num_15,
+			reference_x,
+			bar_y,
 			1
 		},
 		default_offset = {
@@ -573,11 +584,11 @@ local function fn(arg_1_0)
 			1
 		},
 		default_size = {
-			var_1_0,
-			14 * num_2
+			bar_length,
+			14 * detail_scale
 		}
 	}
-	tbl_5[str_8] = {
+	content[dead_space_bar_name] = {
 		texture_id = "boss_hp_bar_dead_space",
 		uvs = {
 			{
@@ -590,31 +601,39 @@ local function fn(arg_1_0)
 			}
 		}
 	}
-	tbl_5.dead_space_bar_divider_offset_reference = num_14
+	content.dead_space_bar_divider_offset_reference = reference_x
 
-	local str_9 = "dead_space_bar_divider"
+	local dead_space_bar_divider_name = "dead_space_bar_divider"
 
-	tbl_4[#tbl_4 + 1] = {
+	passes[#passes + 1] = {
 		pass_type = "texture",
-		texture_id = str_9,
-		style_id = str_9,
-		retained_mode = flag,
-		content_check_function = function (self)
+		texture_id = dead_space_bar_divider_name,
+		style_id = dead_space_bar_divider_name,
+		retained_mode = retained_mode,
+		content_check_function = function (chk_content)
 			-- function 7
-			local max_health_fraction = self.max_health_fraction
+			local max_health_fraction_2 = chk_content.max_health_fraction
 
-			max_health_fraction = max_health_fraction or 1
+			if not max_health_fraction_2 then
+				-- Nothing
+			end
+
+			max_health_fraction_2 = 1
+
+			local max_health_fraction = max_health_fraction_2
+
+			::label_7_0::
 
 			return max_health_fraction ~= 1
 		end
 	}
-	tbl_5[str_9] = "boss_hp_divider"
-	tbl_6[str_9] = {
+	content[dead_space_bar_divider_name] = "boss_hp_divider"
+	style[dead_space_bar_divider_name] = {
 		default_width_offset = 11,
-		color = table.clone(tbl_2),
+		color = table.clone(default_color),
 		offset = {
-			num_14 + var_1_0 - 11,
-			num_15 - 8,
+			reference_x + bar_length - 11,
+			bar_y - 8,
 			7
 		},
 		size = {
@@ -622,51 +641,59 @@ local function fn(arg_1_0)
 			29
 		}
 	}
-	tbl_5.bar_edge_reference_offset = num_14
+	content.bar_edge_reference_offset = reference_x
 
-	local str_10 = "bar_edge"
+	local bar_edge_name = "bar_edge"
 
-	tbl_4[#tbl_4 + 1] = {
+	passes[#passes + 1] = {
 		pass_type = "texture",
-		texture_id = str_10,
-		style_id = str_10,
-		retained_mode = flag,
-		content_check_function = function (self)
+		texture_id = bar_edge_name,
+		style_id = bar_edge_name,
+		retained_mode = retained_mode,
+		content_check_function = function (chk_content)
 			-- function 8
-			local bar_edge_fraction = self.bar_edge_fraction
+			local bar_edge_fraction_2 = chk_content.bar_edge_fraction
 
-			bar_edge_fraction = bar_edge_fraction or 1
+			if not bar_edge_fraction_2 then
+				-- Nothing
+			end
+
+			bar_edge_fraction_2 = 1
+
+			local bar_edge_fraction = bar_edge_fraction_2
+
+			::label_8_0::
 
 			return bar_edge_fraction ~= 1
 		end
 	}
-	tbl_5[str_10] = "boss_hp_bar_edge"
-	tbl_6[str_10] = {
-		color = table.clone(tbl_2),
-		default_width_offset = 7 * num_2,
+	content[bar_edge_name] = "boss_hp_bar_edge"
+	style[bar_edge_name] = {
+		color = table.clone(default_color),
+		default_width_offset = 7 * detail_scale,
 		offset = {
 			0,
-			num_15,
+			bar_y,
 			4
 		},
 		size = {
-			13 * num_2,
-			14 * num_2
+			13 * detail_scale,
+			14 * detail_scale
 		}
 	}
 
-	if not arg_1_0 then
-		local num_16 = 4
-		local str_11 = "title_text"
+	if not is_additional then
+		local title_y = 4
+		local title_text = "title_text"
 
-		tbl_4[#tbl_4 + 1] = {
+		passes[#passes + 1] = {
 			pass_type = "text",
-			text_id = str_11,
-			style_id = str_11,
-			retained_mode = flag
+			text_id = title_text,
+			style_id = title_text,
+			retained_mode = retained_mode
 		}
-		tbl_5[str_11] = ""
-		tbl_6[str_11] = {
+		content[title_text] = ""
+		style[title_text] = {
 			vertical_alignment = "top",
 			upper_case = false,
 			horizontal_alignment = "left",
@@ -674,22 +701,22 @@ local function fn(arg_1_0)
 			font_type = "hell_shark",
 			text_color = Colors.get_color_table_with_alpha("font_button_normal", 255),
 			offset = {
-				num_14 + 4,
-				4 + flag_2,
+				reference_x + 4,
+				4 + bar_y_offset,
 				7
 			}
 		}
 
-		local str_12 = "title_text_shadow_shadow"
+		local title_text_shadow = "title_text_shadow_shadow"
 
-		tbl_4[#tbl_4 + 1] = {
+		passes[#passes + 1] = {
 			pass_type = "text",
-			text_id = str_11,
-			style_id = str_12,
-			retained_mode = flag
+			text_id = title_text,
+			style_id = title_text_shadow,
+			retained_mode = retained_mode
 		}
-		tbl_5[str_12] = ""
-		tbl_6[str_12] = {
+		content[title_text_shadow] = ""
+		style[title_text_shadow] = {
 			vertical_alignment = "top",
 			upper_case = true,
 			horizontal_alignment = "left",
@@ -697,28 +724,28 @@ local function fn(arg_1_0)
 			font_type = "hell_shark",
 			text_color = Colors.get_color_table_with_alpha("black", 255),
 			offset = {
-				num_14 + 6,
-				num_16 - 2 + flag_2,
+				reference_x + 6,
+				title_y - 2 + bar_y_offset,
 				6
 			}
 		}
 	end
 
-	tbl_3.element.passes = tbl_4
-	tbl_3.content = tbl_5
-	tbl_3.style = tbl_6
-	tbl_3.offset = {
+	widget.element.passes = passes
+	widget.content = content
+	widget.style = style
+	widget.offset = {
 		0,
 		0,
 		0
 	}
-	tbl_3.scenegraph_id = "pivot"
+	widget.scenegraph_id = "pivot"
 
-	return tbl_3
+	return widget
 end
 
 return {
-	scenegraph_definition = tbl_2,
-	widget_create_func = fn,
-	total_bar_length = num_2
+	scenegraph_definition = scenegraph_definition,
+	widget_create_func = create_health_bar_widget,
+	total_bar_length = total_bar_length
 }

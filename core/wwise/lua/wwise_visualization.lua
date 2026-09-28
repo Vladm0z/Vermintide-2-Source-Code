@@ -2,146 +2,158 @@
 
 local WwiseVisualization = WwiseVisualization
 
-WwiseVisualization = WwiseVisualization or {}
+WwiseVisualization = not not WwiseVisualization or not not {}
 WwiseVisualization = WwiseVisualization
 
 local Unit = stingray.Unit
 local Vector3 = stingray.Vector3
 local LineObject = stingray.LineObject
 local Color = stingray.Color
-local LevelEditor = stingray.LevelEditor
+local LevelEditor_2 = stingray.LevelEditor
 
-LevelEditor = LevelEditor or LevelEditor
-
-local tbl = {}
-
-local function fn(arg_1_0)
-	-- function 1
-	local flag = true
-	local get_data = Unit.get_data(arg_1_0, "Wwise", "event_name")
-
-	if not (get_data == nil or get_data ~= "") then
-		flag = false
-	elseif Wwise.has_event(get_data) == false then
-		print_error("WwiseVisualizaton. Wwise banks do not contain event: " .. get_data)
-
-		flag = false
-	end
-
-	return flag
+if not LevelEditor_2 then
+	-- Nothing
 end
 
-WwiseVisualization.add_soundscape_unit = function (arg_2_0)
+LevelEditor_2 = LevelEditor
+
+local LevelEditor = LevelEditor_2
+
+::label_0_0::
+
+local soundscape_units = {}
+
+local function verify_unit_script_data(unit)
+	-- function 1
+	local result = true
+	local event_name = Unit.get_data(unit, "Wwise", "event_name")
+
+	if event_name == nil or event_name == "" then
+		result = false
+	elseif Wwise.has_event(event_name) == false then
+		print_error("WwiseVisualizaton. Wwise banks do not contain event: " .. event_name)
+
+		result = false
+	end
+
+	return result
+end
+
+WwiseVisualization.add_soundscape_unit = function (unit)
 	-- function 2
 	if not stingray.Wwise then
 		return
 	end
 
-	if not fn(arg_2_0) then
+	if not verify_unit_script_data(unit) then
 		return
 	end
 
-	tbl[#tbl + 1] = arg_2_0
+	soundscape_units[#soundscape_units + 1] = unit
 end
 
-local function fn_2(arg_3_0, arg_3_1, arg_3_2)
+local function render_soundscape_unit(lines, lines_noz, unit)
 	-- function 3
-	local get_data = Unit.get_data(arg_3_2, "Wwise", "event_name")
-	local get_data_2 = Unit.get_data(arg_3_2, "Wwise", "unit_node")
+	local event_name = Unit.get_data(unit, "Wwise", "event_name")
+	local get_data = Unit.get_data(unit, "Wwise", "unit_node")
 
-	get_data_2 = get_data_2 or ""
-
-	local num = 1
-
-	if get_data_2 ~= "" then
-		num = Unit.node(arg_3_2, get_data_2)
+	if not get_data then
+		-- Nothing
 	end
 
-	local world_pose = Unit.world_pose(arg_3_2, num)
-	local translation = Matrix4x4.translation(world_pose)
-	local lower = string.lower(Unit.get_data(arg_3_2, "Wwise", "shape"))
-	local num_2 = 5
-	local var_3_7 = num_2
+	get_data = ""
 
-	if lower == "sphere" then
-		var_3_7 = Unit.get_data(arg_3_2, "Wwise", "sphere_radius") or num_2
-	elseif lower == "box" then
-		var_3_7 = Vector3(0, 0, 0)
+	local unit_object_name = get_data
 
-		local get_data_3 = Unit.get_data(arg_3_2, "Wwise", "box_extents", 0)
+	::label_3_0::
 
-		get_data_3 = get_data_3 or num_2
-		var_3_7.x = get_data_3
+	local unit_object = 1
 
-		local get_data_4 = Unit.get_data(arg_3_2, "Wwise", "box_extents", 1)
-
-		get_data_4 = get_data_4 or num_2
-		var_3_7.y = get_data_4
-
-		local get_data_5 = Unit.get_data(arg_3_2, "Wwise", "box_extents", 2)
-
-		get_data_5 = get_data_5 or num_2
-		var_3_7.z = get_data_5
+	if unit_object_name ~= "" then
+		unit_object = Unit.node(unit, unit_object_name)
 	end
 
-	local var_3_11
+	local pose = Unit.world_pose(unit, unit_object)
+	local position = Matrix4x4.translation(pose)
+	local shape = string.lower(Unit.get_data(unit, "Wwise", "shape"))
+	local default_scale = 5
+	local scale = default_scale
 
-	if not Unit.has_data(arg_3_2, "Wwise", "trigger_range") then
-		var_3_11 = Unit.get_data(arg_3_2, "Wwise", "trigger_range")
+	if shape == "sphere" then
+		scale = not not Unit.get_data(unit, "Wwise", "sphere_radius") or not not default_scale
+	elseif shape == "box" then
+		scale = Vector3(0, 0, 0)
+
+		local get_data_2 = Unit.get_data(unit, "Wwise", "box_extents", 0)
+
+		get_data_2 = not not get_data_2 or not not default_scale
+		scale.x = get_data_2
+
+		local get_data_3 = Unit.get_data(unit, "Wwise", "box_extents", 1)
+
+		get_data_3 = not not get_data_3 or not not default_scale
+		scale.y = get_data_3
+
+		local get_data_4 = Unit.get_data(unit, "Wwise", "box_extents", 2)
+
+		get_data_4 = not not get_data_4 or not not default_scale
+		scale.z = get_data_4
+	end
+
+	local range
+
+	if Unit.has_data(unit, "Wwise", "trigger_range") then
+		range = Unit.get_data(unit, "Wwise", "trigger_range")
 	else
-		var_3_11 = Wwise.max_attenuation(get_data)
+		range = Wwise.max_attenuation(event_name)
 	end
 
-	local var_3_12 = Color(0, 240, 170)
-	local var_3_13 = Color(0, 160, 225)
+	local trigger_range_color = Color(0, 240, 170)
+	local source_shape_color = Color(0, 160, 225)
 
-	if Wwise.position_type(get_data) == Wwise.WWISE_3D_SOUND then
-		if lower == "point" then
-			LineObject.add_sphere(arg_3_1, var_3_12, translation, var_3_11)
-		elseif lower == "sphere" then
-			LineObject.add_sphere(arg_3_1, var_3_13, translation, var_3_7)
-			LineObject.add_sphere(arg_3_1, var_3_12, translation, var_3_7 + var_3_11)
-		elseif lower == "box" then
-			Matrix4x4.set_x(world_pose, Vector3.normalize(Matrix4x4.x(world_pose)))
-			Matrix4x4.set_y(world_pose, Vector3.normalize(Matrix4x4.y(world_pose)))
-			Matrix4x4.set_z(world_pose, Vector3.normalize(Matrix4x4.z(world_pose)))
-			LineObject.add_box(arg_3_1, var_3_13, world_pose, var_3_7)
-			LineObject.add_box(arg_3_1, var_3_12, world_pose, var_3_7 + Vector3(1, 1, 1) * var_3_11)
+	if Wwise.position_type(event_name) == Wwise.WWISE_3D_SOUND then
+		if shape == "point" then
+			LineObject.add_sphere(lines_noz, trigger_range_color, position, range)
+		elseif shape == "sphere" then
+			LineObject.add_sphere(lines_noz, source_shape_color, position, scale)
+			LineObject.add_sphere(lines_noz, trigger_range_color, position, scale + range)
+		elseif shape == "box" then
+			Matrix4x4.set_x(pose, Vector3.normalize(Matrix4x4.x(pose)))
+			Matrix4x4.set_y(pose, Vector3.normalize(Matrix4x4.y(pose)))
+			Matrix4x4.set_z(pose, Vector3.normalize(Matrix4x4.z(pose)))
+			LineObject.add_box(lines_noz, source_shape_color, pose, scale)
+			LineObject.add_box(lines_noz, trigger_range_color, pose, scale + Vector3(1, 1, 1) * range)
 		end
 	end
 end
 
-WwiseVisualization.render = function (arg_4_0, arg_4_1)
+WwiseVisualization.render = function (lines, lines_noz)
 	-- function 4
 	if not stingray.Wwise then
 		return
 	end
 
-	local var_4_0
-	local var_4_1
-	local var_4_2
+	local current_selection, last_selected_level_object, last_selected_component_id
 
-	if not LevelEditor then
-		var_4_0 = Selection.objects(LevelEditor.selection)
-
-		local last_selected_object, var_4_4 = Selection.last_selected_object(LevelEditor.selection)
+	if LevelEditor then
+		current_selection = Selection.objects(LevelEditor.selection)
+		last_selected_level_object, last_selected_component_id = Selection.last_selected_object(LevelEditor.selection)
 	else
-		var_4_0 = LevelEditing.selection:objects()
-
-		local last_selected_object_2, var_4_6 = Selection.last_selected_object(LevelEditing.selection)
+		current_selection = LevelEditing.selection:objects()
+		last_selected_level_object, last_selected_component_id = Selection.last_selected_object(LevelEditing.selection)
 	end
 
-	for k, v in pairs(var_4_0) do
-		local _unit = v._unit
-		local index_of = Array.index_of(tbl, _unit)
+	for _, selection_table in pairs(current_selection) do
+		local selection_unit = selection_table._unit
+		local i = Array.index_of(soundscape_units, selection_unit)
 
-		if not index_of then
-			local var_4_9 = tbl[index_of]
+		if i then
+			local soundscape_unit = soundscape_units[i]
 
-			if not Unit.alive(var_4_9) then
-				table.remove(tbl, index_of)
+			if not Unit.alive(soundscape_unit) then
+				table.remove(soundscape_units, i)
 			else
-				fn_2(arg_4_0, arg_4_1, var_4_9)
+				render_soundscape_unit(lines, lines_noz, soundscape_unit)
 			end
 		end
 	end

@@ -1,33 +1,33 @@
 -- chunkname: @scripts/ui/views/ingame_player_list_ui_v2_definitions.lua
 
-local tbl = {
+local PLAYER_LIST_SIZE = {
 	620,
 	160
 }
-local tbl_2 = {
+local POPUP_ELEMENT_SIZE = {
 	500,
 	36
 }
-local tbl_3 = {
+local MUTATOR_SUMMARY_SIZE = {
 	450,
 	0
 }
-local tbl_4 = {
+local BANNER_LEFT_SIZE = {
 	660,
 	1080
 }
-local tbl_5 = {
+local BANNER_RIGHT_SIZE = {
 	660,
 	1080
 }
-local num = (tbl_4[1] - tbl_5[1]) / 2
-local tbl_6 = {
+local INPUT_DESCRIPTION_POSITION_X = (BANNER_LEFT_SIZE[1] - BANNER_RIGHT_SIZE[1]) / 2
+local banner_color = {
 	200,
 	10,
 	10,
 	10
 }
-local tbl_7 = {
+local scenegraph_definition = {
 	root = {
 		is_root = true,
 		position = {
@@ -88,19 +88,19 @@ local tbl_7 = {
 			0,
 			1
 		},
-		size = tbl_4
+		size = BANNER_LEFT_SIZE
 	},
 	banner_left_edge = {
 		scale = "fit_height",
 		horizontal_alignment = "left",
 		position = {
-			tbl_4[1],
+			BANNER_LEFT_SIZE[1],
 			0,
 			1
 		},
 		size = {
 			5,
-			tbl_4[2]
+			BANNER_LEFT_SIZE[2]
 		}
 	},
 	banner_right = {
@@ -111,19 +111,19 @@ local tbl_7 = {
 			0,
 			1
 		},
-		size = tbl_5
+		size = BANNER_RIGHT_SIZE
 	},
 	banner_right_edge = {
 		scale = "fit_height",
 		horizontal_alignment = "right",
 		position = {
-			-tbl_4[1],
+			-BANNER_LEFT_SIZE[1],
 			0,
 			1
 		},
 		size = {
 			5,
-			tbl_4[2]
+			BANNER_LEFT_SIZE[2]
 		}
 	},
 	player_list_input_description = {
@@ -131,7 +131,7 @@ local tbl_7 = {
 		parent = "screen",
 		horizontal_alignment = "center",
 		position = {
-			num,
+			INPUT_DESCRIPTION_POSITION_X,
 			50,
 			-1
 		},
@@ -494,7 +494,7 @@ local tbl_7 = {
 			-200,
 			1
 		},
-		size = tbl_3
+		size = MUTATOR_SUMMARY_SIZE
 	},
 	mutator_summary2 = {
 		vertical_alignment = "top",
@@ -505,7 +505,7 @@ local tbl_7 = {
 			-100,
 			1
 		},
-		size = tbl_3
+		size = MUTATOR_SUMMARY_SIZE
 	},
 	mutator_summary3 = {
 		vertical_alignment = "top",
@@ -516,7 +516,7 @@ local tbl_7 = {
 			-100,
 			1
 		},
-		size = tbl_3
+		size = MUTATOR_SUMMARY_SIZE
 	},
 	mutator_summary4 = {
 		vertical_alignment = "top",
@@ -527,7 +527,7 @@ local tbl_7 = {
 			-100,
 			1
 		},
-		size = tbl_3
+		size = MUTATOR_SUMMARY_SIZE
 	},
 	mutator_summary5 = {
 		vertical_alignment = "top",
@@ -538,7 +538,7 @@ local tbl_7 = {
 			-100,
 			1
 		},
-		size = tbl_3
+		size = MUTATOR_SUMMARY_SIZE
 	},
 	mutator_summary6 = {
 		vertical_alignment = "top",
@@ -549,7 +549,7 @@ local tbl_7 = {
 			-100,
 			1
 		},
-		size = tbl_3
+		size = MUTATOR_SUMMARY_SIZE
 	},
 	weave_objective_header = {
 		vertical_alignment = "top",
@@ -560,7 +560,7 @@ local tbl_7 = {
 			-200,
 			1
 		},
-		size = tbl_3
+		size = MUTATOR_SUMMARY_SIZE
 	},
 	weave_objective_divider = {
 		vertical_alignment = "top",
@@ -619,8 +619,8 @@ local tbl_7 = {
 			0
 		},
 		size = {
-			tbl[1],
-			tbl[2]
+			PLAYER_LIST_SIZE[1],
+			PLAYER_LIST_SIZE[2]
 		}
 	},
 	player_list_portrait = {
@@ -661,8 +661,8 @@ local tbl_7 = {
 			10
 		},
 		size = {
-			tbl_2[1],
-			tbl_2[2]
+			POPUP_ELEMENT_SIZE[1],
+			POPUP_ELEMENT_SIZE[2]
 		}
 	},
 	private_checkbox = {
@@ -738,17 +738,40 @@ local tbl_7 = {
 	}
 }
 
-local function fn(arg_1_0, arg_1_1)
+local function create_vertical_edge_divider(scenegraph_id, size)
 	-- function 1
-	local flag
+	local scenegraph_definition = scenegraph_definition[scenegraph_id]
+	local str
 
-	flag = tbl_7[arg_1_0].horizontal_alignment ~= "right" or not "left" or "right"
+	if scenegraph_definition.horizontal_alignment == "right" then
+		str = "left"
 
-	local flag_2
+		goto label_1_0
+	end
 
-	flag_2 = flag ~= "left" or not -1 or 1
+	str = "right"
 
-	return {
+	local horizontal_alignment = str
+
+	do
+		local num
+	end
+
+	::label_1_0::
+
+	if horizontal_alignment == "left" then
+		num = -1
+
+		goto label_1_1
+	end
+
+	num = 1
+
+	local offset_multiplier = num
+
+	::label_1_1::
+
+	local widget = {
 		element = {
 			passes = {
 				{
@@ -776,8 +799,8 @@ local function fn(arg_1_0, arg_1_1)
 		style = {
 			edge = {
 				texture_size = {
-					arg_1_1[1],
-					arg_1_1[2]
+					size[1],
+					size[2]
 				},
 				color = {
 					255,
@@ -786,15 +809,15 @@ local function fn(arg_1_0, arg_1_1)
 					255
 				},
 				offset = {
-					5 * flag_2,
+					5 * offset_multiplier,
 					0,
 					6
 				},
 				texture_tiling_size = {
 					5,
-					arg_1_1[2]
+					size[2]
 				},
-				horizontal_alignment = flag
+				horizontal_alignment = horizontal_alignment
 			},
 			edge_holder_top = {
 				vertical_alignment = "top",
@@ -805,7 +828,7 @@ local function fn(arg_1_0, arg_1_1)
 					255
 				},
 				offset = {
-					11 * flag_2,
+					11 * offset_multiplier,
 					0,
 					10
 				},
@@ -813,7 +836,7 @@ local function fn(arg_1_0, arg_1_1)
 					17,
 					9
 				},
-				horizontal_alignment = flag
+				horizontal_alignment = horizontal_alignment
 			},
 			edge_holder_bottom = {
 				vertical_alignment = "bottom",
@@ -824,7 +847,7 @@ local function fn(arg_1_0, arg_1_1)
 					255
 				},
 				offset = {
-					11 * flag_2,
+					11 * offset_multiplier,
 					0,
 					10
 				},
@@ -832,23 +855,26 @@ local function fn(arg_1_0, arg_1_1)
 					17,
 					9
 				},
-				horizontal_alignment = flag
+				horizontal_alignment = horizontal_alignment
 			}
 		},
-		scenegraph_id = arg_1_0,
+		scenegraph_id = scenegraph_id,
 		offset = {
 			0,
 			0,
 			0
 		}
 	}
+
+	return widget
 end
 
-local function fn_2(arg_2_0, arg_2_1, arg_2_2)
+local function create_loot_widget(texture, text, scale)
 	-- function 2
-	local size = UIAtlasHelper.get_atlas_settings_by_texture_name(arg_2_0).size
+	local texture_settings = UIAtlasHelper.get_atlas_settings_by_texture_name(texture)
+	local texture_size = texture_settings.size
 
-	arg_2_2 = arg_2_2 or 1
+	scale = not not scale or not not 1
 
 	return {
 		scenegraph_id = "loot_objective",
@@ -868,18 +894,18 @@ local function fn_2(arg_2_0, arg_2_1, arg_2_2)
 					style_id = "counter_text",
 					pass_type = "text",
 					text_id = "counter_text",
-					content_check_function = function (self)
+					content_check_function = function (content)
 						-- function 3
-						return self.amount > 0
+						return content.amount > 0
 					end
 				},
 				{
 					style_id = "counter_text_disabled",
 					pass_type = "text",
 					text_id = "counter_text",
-					content_check_function = function (self)
+					content_check_function = function (content)
 						-- function 4
-						return self.amount == 0
+						return content.amount == 0
 					end
 				},
 				{
@@ -891,9 +917,9 @@ local function fn_2(arg_2_0, arg_2_1, arg_2_2)
 					pass_type = "texture",
 					style_id = "icon",
 					texture_id = "icon",
-					content_check_function = function (self)
+					content_check_function = function (content)
 						-- function 5
-						return self.amount > 0
+						return content.amount > 0
 					end
 				},
 				{
@@ -911,9 +937,9 @@ local function fn_2(arg_2_0, arg_2_1, arg_2_2)
 		content = {
 			counter_text = "x9",
 			amount = 0,
-			text = arg_2_1 or "n/a",
-			icon = arg_2_0,
-			glow_icon = arg_2_0 .. "_glow"
+			text = not not text or not not "n/a",
+			icon = texture,
+			glow_icon = texture .. "_glow"
 		},
 		style = {
 			text = {
@@ -923,8 +949,8 @@ local function fn_2(arg_2_0, arg_2_1, arg_2_2)
 				horizontal_alignment = "left",
 				text_color = Colors.get_table("font_title"),
 				offset = {
-					arg_2_2 * size[1],
-					arg_2_2 * size[2] - 50,
+					scale * texture_size[1],
+					scale * texture_size[2] - 50,
 					1
 				}
 			},
@@ -935,8 +961,8 @@ local function fn_2(arg_2_0, arg_2_1, arg_2_2)
 				horizontal_alignment = "left",
 				text_color = Colors.get_table("black"),
 				offset = {
-					arg_2_2 * size[1] + 1,
-					arg_2_2 * size[2] - 50 - 1,
+					scale * texture_size[1] + 1,
+					scale * texture_size[2] - 50 - 1,
 					0
 				}
 			},
@@ -947,7 +973,7 @@ local function fn_2(arg_2_0, arg_2_1, arg_2_2)
 				horizontal_alignment = "left",
 				text_color = Colors.get_table("font_default"),
 				offset = {
-					arg_2_2 * size[1],
+					scale * texture_size[1],
 					-40,
 					1
 				}
@@ -964,7 +990,7 @@ local function fn_2(arg_2_0, arg_2_1, arg_2_2)
 					130
 				},
 				offset = {
-					arg_2_2 * size[1],
+					scale * texture_size[1],
 					-40,
 					1
 				}
@@ -976,7 +1002,7 @@ local function fn_2(arg_2_0, arg_2_1, arg_2_2)
 				horizontal_alignment = "left",
 				text_color = Colors.get_table("black"),
 				offset = {
-					arg_2_2 * size[1] + 1,
+					scale * texture_size[1] + 1,
 					-41,
 					0
 				}
@@ -996,8 +1022,8 @@ local function fn_2(arg_2_0, arg_2_1, arg_2_2)
 					1
 				},
 				texture_size = {
-					arg_2_2 * size[1],
-					arg_2_2 * size[2]
+					scale * texture_size[1],
+					scale * texture_size[2]
 				}
 			},
 			background_icon = {
@@ -1015,8 +1041,8 @@ local function fn_2(arg_2_0, arg_2_1, arg_2_2)
 					0
 				},
 				texture_size = {
-					arg_2_2 * size[1],
-					arg_2_2 * size[2]
+					scale * texture_size[1],
+					scale * texture_size[2]
 				}
 			},
 			glow_icon = {
@@ -1034,8 +1060,8 @@ local function fn_2(arg_2_0, arg_2_1, arg_2_2)
 					2
 				},
 				texture_size = {
-					arg_2_2 * size[1],
-					arg_2_2 * size[2]
+					scale * texture_size[1],
+					scale * texture_size[2]
 				}
 			}
 		},
@@ -1047,7 +1073,7 @@ local function fn_2(arg_2_0, arg_2_1, arg_2_2)
 	}
 end
 
-local function fn_3()
+local function create_node_info_widget()
 	-- function 6
 	return {
 		scenegraph_id = "node_info",
@@ -1076,9 +1102,9 @@ local function fn_3()
 						{
 							style_id = "curse_section",
 							pass_type = "auto_layout",
-							content_check_function = function (self)
+							content_check_function = function (content)
 								-- function 7
-								return self.curse_text ~= ""
+								return content.curse_text ~= ""
 							end,
 							sub_passes = {
 								{
@@ -1096,9 +1122,9 @@ local function fn_3()
 						{
 							style_id = "breed_section",
 							pass_type = "auto_layout",
-							content_check_function = function (self)
+							content_check_function = function (content)
 								-- function 8
-								return self.breed_text ~= ""
+								return content.breed_text ~= ""
 							end,
 							sub_passes = {
 								{
@@ -1117,9 +1143,9 @@ local function fn_3()
 							style_id = "minor_modifier_section",
 							pass_type = "auto_layout",
 							content_id = "minor_modifier_1_section",
-							content_check_function = function (self)
+							content_check_function = function (content)
 								-- function 9
-								return self.text ~= ""
+								return content.text ~= ""
 							end,
 							sub_passes = {
 								{
@@ -1138,9 +1164,9 @@ local function fn_3()
 							style_id = "minor_modifier_section",
 							pass_type = "auto_layout",
 							content_id = "minor_modifier_2_section",
-							content_check_function = function (self)
+							content_check_function = function (content)
 								-- function 10
-								return self.text ~= ""
+								return content.text ~= ""
 							end,
 							sub_passes = {
 								{
@@ -1159,9 +1185,9 @@ local function fn_3()
 							style_id = "minor_modifier_section",
 							pass_type = "auto_layout",
 							content_id = "minor_modifier_3_section",
-							content_check_function = function (self)
+							content_check_function = function (content)
 								-- function 11
-								return self.text ~= ""
+								return content.text ~= ""
 							end,
 							sub_passes = {
 								{
@@ -1179,9 +1205,9 @@ local function fn_3()
 						{
 							style_id = "terror_event_power_up_section",
 							pass_type = "auto_layout",
-							content_check_function = function (self)
+							content_check_function = function (content)
 								-- function 12
-								return self.terror_event_power_up_text ~= ""
+								return content.terror_event_power_up_text ~= ""
 							end,
 							sub_passes = {
 								{
@@ -1482,7 +1508,7 @@ local function fn_3()
 	}
 end
 
-local function fn_4(arg_13_0, arg_13_1)
+local function create_weave_sub_objective_widget(scenegraph_id, size)
 	-- function 13
 	return {
 		element = {
@@ -1567,8 +1593,8 @@ local function fn_4(arg_13_0, arg_13_1)
 				dynamic_font_size = true,
 				font_type = "hell_shark_header",
 				size = {
-					arg_13_1[1] - 50,
-					arg_13_1[2]
+					size[1] - 50,
+					size[2]
 				},
 				text_color = Colors.get_color_table_with_alpha("font_button_normal", 255),
 				offset = {
@@ -1586,8 +1612,8 @@ local function fn_4(arg_13_0, arg_13_1)
 				dynamic_font_size = true,
 				font_type = "hell_shark_header",
 				size = {
-					arg_13_1[1] - 50,
-					arg_13_1[2]
+					size[1] - 50,
+					size[2]
 				},
 				text_color = Colors.get_color_table_with_alpha("black", 255),
 				offset = {
@@ -1632,22 +1658,22 @@ local function fn_4(arg_13_0, arg_13_1)
 			0,
 			0
 		},
-		scenegraph_id = arg_13_0
+		scenegraph_id = scenegraph_id
 	}
 end
 
-local function fn_5(arg_14_0, arg_14_1)
+local function create_description_text(text, scenegraph_id)
 	-- function 14
-	return {
+	local definition = {
 		element = {
 			passes = {
 				{
 					style_id = "description_text",
 					pass_type = "text",
 					text_id = "description_text",
-					content_check_function = function (self)
+					content_check_function = function (content)
 						-- function 15
-						return self.text ~= ""
+						return content.text ~= ""
 					end
 				},
 				{
@@ -1663,7 +1689,7 @@ local function fn_5(arg_14_0, arg_14_1)
 			}
 		},
 		content = {
-			text = arg_14_0,
+			text = text,
 			description_text = Localize("lb_mission")
 		},
 		style = {
@@ -1716,22 +1742,24 @@ local function fn_5(arg_14_0, arg_14_1)
 				}
 			}
 		},
-		scenegraph_id = arg_14_1,
+		scenegraph_id = scenegraph_id,
 		offset = {
 			0,
 			0,
 			0
 		}
 	}
+
+	return definition
 end
 
-local function fn_6(arg_16_0, arg_16_1)
+local function create_reward_item(offset_x, item)
 	-- function 16
-	local tbl = {
+	local icon_size = {
 		60,
 		60
 	}
-	local tbl_2 = {
+	local definition = {
 		scenegraph_id = "reward_item",
 		element = {
 			passes = {
@@ -1749,11 +1777,11 @@ local function fn_6(arg_16_0, arg_16_1)
 					scenegraph_id = "reward_item_tooltip",
 					item_id = "item",
 					pass_type = "item_tooltip",
-					content_check_function = function (self)
+					content_check_function = function (content)
 						-- function 17
-						local is_hover = self.hotspot.is_hover
+						local is_hover = content.hotspot.is_hover
 
-						is_hover = not is_hover and self.item
+						is_hover = not not is_hover and not not content.item
 
 						return is_hover
 					end
@@ -1762,15 +1790,15 @@ local function fn_6(arg_16_0, arg_16_1)
 		},
 		content = {
 			hotspot = {},
-			icon_id = arg_16_1.data.inventory_icon,
-			item = arg_16_1
+			icon_id = item.data.inventory_icon,
+			item = item
 		},
 		style = {
 			icon = {
 				vertical_alignment = "top",
 				horizontal_alignment = "left",
-				texture_size = tbl,
-				area_size = tbl,
+				texture_size = icon_size,
+				area_size = icon_size,
 				offset = {
 					0,
 					0,
@@ -1779,13 +1807,13 @@ local function fn_6(arg_16_0, arg_16_1)
 			}
 		},
 		offset = {
-			arg_16_0,
+			offset_x,
 			0,
 			0
 		}
 	}
 
-	UIWidgets.append_item_frame_pass("frame_id", tbl_2.element.passes, tbl_2.content, tbl_2.style, tbl, {
+	UIWidgets.append_item_frame_pass("frame_id", definition.element.passes, definition.content, definition.style, icon_size, {
 		0,
 		0,
 		1
@@ -1794,20 +1822,21 @@ local function fn_6(arg_16_0, arg_16_1)
 		vertical_alignment = "top"
 	}, nil, nil)
 
-	return tbl_2
+	return definition
 end
 
-local function fn_7(arg_18_0)
+local function player_widget_definition(index)
 	-- function 18
-	local str = "player_list"
-	local size = tbl_7[str].size
-	local menu_frame_09 = UIFrameSettings.menu_frame_09
-	local str_2 = "talent_tree_bg_01"
-	local get_atlas_settings_by_texture_name = UIAtlasHelper.get_atlas_settings_by_texture_name(str_2)
-	local num = 0
-	local INSIGNIA_OFFSET = UISettings.INSIGNIA_OFFSET
+	local scenegraph_id = "player_list"
+	local size = scenegraph_definition[scenegraph_id].size
+	local frame_settings = UIFrameSettings.menu_frame_09
+	local background_texture = "talent_tree_bg_01"
+	local background_texture_settings = UIAtlasHelper.get_atlas_settings_by_texture_name(background_texture)
+	local insignia_offset = 0
 
-	return {
+	insignia_offset = UISettings.INSIGNIA_OFFSET
+
+	local definition = {
 		element = {
 			passes = {
 				{
@@ -1824,29 +1853,29 @@ local function fn_7(arg_18_0)
 					pass_type = "texture",
 					style_id = "host_texture",
 					texture_id = "host_texture",
-					content_check_function = function (self)
+					content_check_function = function (content)
 						-- function 19
-						return self.show_host
+						return content.show_host
 					end
 				},
 				{
 					pass_type = "texture",
 					style_id = "ping_texture",
 					texture_id = "ping_texture",
-					content_check_function = function (self)
+					content_check_function = function (content)
 						-- function 20
-						return self.show_ping
+						return content.show_ping
 					end
 				},
 				{
 					style_id = "ping_text",
 					pass_type = "text",
 					text_id = "ping_text",
-					content_check_function = function (self, arg_21_1)
+					content_check_function = function (content, style)
 						-- function 21
-						local show_ping = self.show_ping
+						local show_ping = content.show_ping
 
-						show_ping = not show_ping and Application.user_setting("show_numerical_latency")
+						show_ping = not not show_ping and not not Application.user_setting("show_numerical_latency")
 
 						return show_ping
 					end
@@ -1855,9 +1884,9 @@ local function fn_7(arg_18_0)
 					style_id = "build_private_text",
 					pass_type = "text",
 					text_id = "build_private_text",
-					content_check_function = function (self, arg_22_1)
+					content_check_function = function (content, style)
 						-- function 22
-						return not self.is_build_visible
+						return not content.is_build_visible
 					end
 				},
 				{
@@ -1874,12 +1903,12 @@ local function fn_7(arg_18_0)
 					style_id = "chat_button_hotspot",
 					texture_id = "chat_button_texture",
 					pass_type = "texture",
-					content_change_function = function (self, arg_23_1)
+					content_change_function = function (content, style)
 						-- function 23
-						local color = arg_23_1.color
+						local color = style.color
 						local flag
 
-						flag = not self.show_chat_button and 255 and 60
+						flag = (not content.show_chat_button or not 255) and not not 60
 						color[1] = flag
 					end
 				},
@@ -1887,11 +1916,11 @@ local function fn_7(arg_18_0)
 					pass_type = "texture",
 					style_id = "chat_button_disabled",
 					texture_id = "disabled_texture",
-					content_check_function = function (self)
+					content_check_function = function (content)
 						-- function 24
-						local show_chat_button = self.show_chat_button
+						local show_chat_button = content.show_chat_button
 
-						show_chat_button = not show_chat_button and self.chat_button_hotspot.is_selected
+						show_chat_button = not not show_chat_button and not not content.chat_button_hotspot.is_selected
 
 						return show_chat_button
 					end
@@ -1900,20 +1929,20 @@ local function fn_7(arg_18_0)
 					style_id = "chat_button_hotspot",
 					pass_type = "hotspot",
 					content_id = "chat_button_hotspot",
-					content_check_function = function (self)
+					content_check_function = function (content)
 						-- function 25
-						return not self.disable_button
+						return not content.disable_button
 					end
 				},
 				{
 					style_id = "tooltip_text",
 					pass_type = "tooltip_text",
 					text_id = "chat_tooltip_text_mute",
-					content_check_function = function (self)
+					content_check_function = function (content)
 						-- function 26
-						local show_chat_button = self.show_chat_button
+						local show_chat_button = content.show_chat_button
 
-						show_chat_button = not show_chat_button and not not self.chat_button_hotspot.is_selected or self.chat_button_hotspot.is_hover
+						show_chat_button = not not show_chat_button and not content.chat_button_hotspot.is_selected and not not content.chat_button_hotspot.is_hover
 
 						return show_chat_button
 					end
@@ -1922,13 +1951,13 @@ local function fn_7(arg_18_0)
 					style_id = "tooltip_text",
 					pass_type = "tooltip_text",
 					text_id = "chat_tooltip_text_unmute",
-					content_check_function = function (self)
+					content_check_function = function (content)
 						-- function 27
-						local show_chat_button = self.show_chat_button
+						local show_chat_button = content.show_chat_button
 
-						if not show_chat_button then
-							show_chat_button = self.chat_button_hotspot.is_selected
-							show_chat_button = not show_chat_button and self.chat_button_hotspot.is_hover
+						if show_chat_button then
+							show_chat_button = content.chat_button_hotspot.is_selected
+							show_chat_button = not not show_chat_button and not not content.chat_button_hotspot.is_hover
 						end
 
 						return show_chat_button
@@ -1948,12 +1977,12 @@ local function fn_7(arg_18_0)
 					style_id = "voice_button_hotspot",
 					texture_id = "voice_button_texture",
 					pass_type = "texture",
-					content_change_function = function (self, arg_28_1)
+					content_change_function = function (content, style)
 						-- function 28
-						local color = arg_28_1.color
+						local color = style.color
 						local flag
 
-						flag = not self.show_voice_button and 255 and 60
+						flag = (not content.show_voice_button or not 255) and not not 60
 						color[1] = flag
 					end
 				},
@@ -1961,11 +1990,11 @@ local function fn_7(arg_18_0)
 					pass_type = "texture",
 					style_id = "voice_button_disabled",
 					texture_id = "disabled_texture",
-					content_check_function = function (self)
+					content_check_function = function (content)
 						-- function 29
-						local show_voice_button = self.show_voice_button
+						local show_voice_button = content.show_voice_button
 
-						show_voice_button = not show_voice_button and self.voice_button_hotspot.is_selected
+						show_voice_button = not not show_voice_button and not not content.voice_button_hotspot.is_selected
 
 						return show_voice_button
 					end
@@ -1974,20 +2003,20 @@ local function fn_7(arg_18_0)
 					style_id = "voice_button_hotspot",
 					pass_type = "hotspot",
 					content_id = "voice_button_hotspot",
-					content_check_function = function (self)
+					content_check_function = function (content)
 						-- function 30
-						return not self.disable_button
+						return not content.disable_button
 					end
 				},
 				{
 					style_id = "tooltip_text",
 					pass_type = "tooltip_text",
 					text_id = "voice_tooltip_text_mute",
-					content_check_function = function (self)
+					content_check_function = function (content)
 						-- function 31
-						local show_voice_button = self.show_voice_button
+						local show_voice_button = content.show_voice_button
 
-						show_voice_button = not show_voice_button and not not self.voice_button_hotspot.is_selected or self.voice_button_hotspot.is_hover
+						show_voice_button = not not show_voice_button and not content.voice_button_hotspot.is_selected and not not content.voice_button_hotspot.is_hover
 
 						return show_voice_button
 					end
@@ -1996,13 +2025,13 @@ local function fn_7(arg_18_0)
 					style_id = "tooltip_text",
 					pass_type = "tooltip_text",
 					text_id = "voice_tooltip_text_unmute",
-					content_check_function = function (self)
+					content_check_function = function (content)
 						-- function 32
-						local show_voice_button = self.show_voice_button
+						local show_voice_button = content.show_voice_button
 
-						if not show_voice_button then
-							show_voice_button = self.voice_button_hotspot.is_selected
-							show_voice_button = not show_voice_button and self.voice_button_hotspot.is_hover
+						if show_voice_button then
+							show_voice_button = content.voice_button_hotspot.is_selected
+							show_voice_button = not not show_voice_button and not not content.voice_button_hotspot.is_hover
 						end
 
 						return show_voice_button
@@ -2022,12 +2051,12 @@ local function fn_7(arg_18_0)
 					style_id = "kick_button_hotspot",
 					texture_id = "kick_button_texture",
 					pass_type = "texture",
-					content_change_function = function (self, arg_33_1)
+					content_change_function = function (content, style)
 						-- function 33
-						local color = arg_33_1.color
+						local color = style.color
 						local flag
 
-						flag = not self.show_kick_button and 255 and 60
+						flag = (not content.show_kick_button or not 255) and not not 60
 						color[1] = flag
 					end
 				},
@@ -2035,20 +2064,20 @@ local function fn_7(arg_18_0)
 					style_id = "kick_button_hotspot",
 					pass_type = "hotspot",
 					content_id = "kick_button_hotspot",
-					content_check_function = function (self)
+					content_check_function = function (content)
 						-- function 34
-						return not self.disable_button
+						return not content.disable_button
 					end
 				},
 				{
 					style_id = "tooltip_text",
 					pass_type = "tooltip_text",
 					text_id = "kick_tooltip_text",
-					content_check_function = function (self)
+					content_check_function = function (content)
 						-- function 35
-						local show_kick_button = self.show_kick_button
+						local show_kick_button = content.show_kick_button
 
-						show_kick_button = not show_kick_button and self.kick_button_hotspot.is_hover
+						show_kick_button = not not show_kick_button and not not content.kick_button_hotspot.is_hover
 
 						return show_kick_button
 					end
@@ -2067,12 +2096,12 @@ local function fn_7(arg_18_0)
 					style_id = "profile_button_hotspot",
 					texture_id = "profile_button_texture",
 					pass_type = "texture",
-					content_change_function = function (self, arg_36_1)
+					content_change_function = function (content, style)
 						-- function 36
-						local color = arg_36_1.color
+						local color = style.color
 						local flag
 
-						flag = not self.show_profile_button and 255 and 60
+						flag = (not content.show_profile_button or not 255) and not not 60
 						color[1] = flag
 					end
 				},
@@ -2080,20 +2109,20 @@ local function fn_7(arg_18_0)
 					style_id = "profile_button_hotspot",
 					pass_type = "hotspot",
 					content_id = "profile_button_hotspot",
-					content_check_function = function (self)
+					content_check_function = function (content)
 						-- function 37
-						return not self.disable_button
+						return not content.disable_button
 					end
 				},
 				{
 					style_id = "tooltip_text",
 					pass_type = "tooltip_text",
 					text_id = "profile_tooltip_text",
-					content_check_function = function (self)
+					content_check_function = function (content)
 						-- function 38
-						local show_profile_button = self.show_profile_button
+						local show_profile_button = content.show_profile_button
 
-						show_profile_button = not show_profile_button and self.profile_button_hotspot.is_hover
+						show_profile_button = not not show_profile_button and not not content.profile_button_hotspot.is_hover
 
 						return show_profile_button
 					end
@@ -2102,12 +2131,12 @@ local function fn_7(arg_18_0)
 					style_id = "name",
 					pass_type = "text",
 					text_id = "name",
-					content_check_function = function (self, arg_39_1)
+					content_check_function = function (content, style)
 						-- function 39
-						if self.button_hotspot.is_selected or not self.controller_button_hotspot.is_hover then
-							arg_39_1.text_color = arg_39_1.hover_color
+						if content.button_hotspot.is_selected or content.controller_button_hotspot.is_hover then
+							style.text_color = style.hover_color
 						else
-							arg_39_1.text_color = arg_39_1.color
+							style.text_color = style.color
 						end
 
 						return true
@@ -2122,12 +2151,12 @@ local function fn_7(arg_18_0)
 					style_id = "hero",
 					pass_type = "text",
 					text_id = "hero",
-					content_check_function = function (self, arg_40_1)
+					content_check_function = function (content, style)
 						-- function 40
-						if self.button_hotspot.is_selected or not self.controller_button_hotspot.is_hover then
-							arg_40_1.text_color = arg_40_1.hover_color
+						if content.button_hotspot.is_selected or content.controller_button_hotspot.is_hover then
+							style.text_color = style.hover_color
 						else
-							arg_40_1.text_color = arg_40_1.color
+							style.text_color = style.color
 						end
 
 						return true
@@ -2173,225 +2202,226 @@ local function fn_7(arg_18_0)
 					style_id = "ability_bar",
 					pass_type = "texture_uv",
 					content_id = "ability_bar",
-					content_change_function = function (self, arg_41_1)
+					content_change_function = function (content, style)
 						-- function 41
-						local bar_value = self.bar_value
-						local texture_size = arg_41_1.texture_size
-						local uvs = self.uvs
-						local var_41_3 = arg_41_1.full_size[1]
+						local ability_progress = content.bar_value
+						local size = style.texture_size
+						local uvs = content.uvs
+						local bar_length = style.full_size[1]
 
-						uvs[2][2] = bar_value
-						texture_size[1] = var_41_3 * bar_value
+						uvs[2][2] = ability_progress
+						size[1] = bar_length * ability_progress
 					end
 				},
 				{
 					style_id = "grimoire_bar",
 					pass_type = "texture_uv",
 					content_id = "grimoire_bar",
-					content_change_function = function (arg_42_0, arg_42_1)
+					content_change_function = function (content, style)
 						-- function 42
-						arg_42_1.texture_size[1] = (200 - INSIGNIA_OFFSET) * arg_42_1.grimoire_debuff
-						arg_42_0.uvs[1][1] = 1 - arg_42_1.grimoire_debuff
+						style.texture_size[1] = (200 - insignia_offset) * style.grimoire_debuff
+						content.uvs[1][1] = 1 - style.grimoire_debuff
 					end
 				},
 				{
 					style_id = "grimoire_debuff_divider",
 					texture_id = "grimoire_debuff_divider",
 					pass_type = "texture",
-					content_change_function = function (arg_43_0, arg_43_1)
+					content_change_function = function (content, style)
 						-- function 43
-						local grimoire_debuff = arg_43_1.grimoire_debuff
+						local grimoire_debuff = style.grimoire_debuff
+						local offset = style.offset
 
-						arg_43_1.offset[1] = arg_43_1.base_offset[1] - (200 - INSIGNIA_OFFSET) * grimoire_debuff
+						offset[1] = style.base_offset[1] - (200 - insignia_offset) * grimoire_debuff
 					end
 				},
 				{
 					texture_id = "slot_melee",
 					style_id = "slot_melee",
 					pass_type = "texture",
-					content_check_function = function (self)
+					content_check_function = function (content)
 						-- function 44
-						return self.slot_melee
+						return content.slot_melee
 					end
 				},
 				{
 					style_id = "slot_melee",
 					pass_type = "hotspot",
 					content_id = "slot_melee_hotspot",
-					content_check_function = function (self)
+					content_check_function = function (content)
 						-- function 45
-						return self.parent.slot_melee
+						return content.parent.slot_melee
 					end
 				},
 				{
 					texture_id = "slot_melee_frame",
 					style_id = "slot_melee_frame",
 					pass_type = "texture",
-					content_check_function = function (self)
+					content_check_function = function (content)
 						-- function 46
-						return self.slot_melee
+						return content.slot_melee
 					end
 				},
 				{
 					texture_id = "slot_melee_rarity_texture",
 					style_id = "slot_melee_rarity_texture",
 					pass_type = "texture",
-					content_check_function = function (self)
+					content_check_function = function (content)
 						-- function 47
-						return self.slot_melee
+						return content.slot_melee
 					end
 				},
 				{
 					texture_id = "slot_ranged",
 					style_id = "slot_ranged",
 					pass_type = "texture",
-					content_check_function = function (self)
+					content_check_function = function (content)
 						-- function 48
-						return self.slot_ranged
+						return content.slot_ranged
 					end
 				},
 				{
 					style_id = "slot_ranged",
 					pass_type = "hotspot",
 					content_id = "slot_ranged_hotspot",
-					content_check_function = function (self)
+					content_check_function = function (content)
 						-- function 49
-						return self.parent.slot_ranged
+						return content.parent.slot_ranged
 					end
 				},
 				{
 					texture_id = "slot_ranged_frame",
 					style_id = "slot_ranged_frame",
 					pass_type = "texture",
-					content_check_function = function (self)
+					content_check_function = function (content)
 						-- function 50
-						return self.slot_ranged
+						return content.slot_ranged
 					end
 				},
 				{
 					texture_id = "slot_ranged_rarity_texture",
 					style_id = "slot_ranged_rarity_texture",
 					pass_type = "texture",
-					content_check_function = function (self)
+					content_check_function = function (content)
 						-- function 51
-						return self.slot_ranged
+						return content.slot_ranged
 					end
 				},
 				{
 					texture_id = "slot_necklace",
 					style_id = "slot_necklace",
 					pass_type = "texture",
-					content_check_function = function (self)
+					content_check_function = function (content)
 						-- function 52
-						return self.slot_necklace
+						return content.slot_necklace
 					end
 				},
 				{
 					style_id = "slot_necklace",
 					pass_type = "hotspot",
 					content_id = "slot_necklace_hotspot",
-					content_check_function = function (self)
+					content_check_function = function (content)
 						-- function 53
-						return self.parent.slot_necklace
+						return content.parent.slot_necklace
 					end
 				},
 				{
 					texture_id = "slot_necklace_frame",
 					style_id = "slot_necklace_frame",
 					pass_type = "texture",
-					content_check_function = function (self)
+					content_check_function = function (content)
 						-- function 54
-						return self.slot_necklace
+						return content.slot_necklace
 					end
 				},
 				{
 					texture_id = "slot_necklace_rarity_texture",
 					style_id = "slot_necklace_rarity_texture",
 					pass_type = "texture",
-					content_check_function = function (self)
+					content_check_function = function (content)
 						-- function 55
-						return self.slot_necklace
+						return content.slot_necklace
 					end
 				},
 				{
 					texture_id = "slot_ring",
 					style_id = "slot_ring",
 					pass_type = "texture",
-					content_check_function = function (self)
+					content_check_function = function (content)
 						-- function 56
-						return self.slot_ring
+						return content.slot_ring
 					end
 				},
 				{
 					style_id = "slot_ring",
 					pass_type = "hotspot",
 					content_id = "slot_ring_hotspot",
-					content_check_function = function (self)
+					content_check_function = function (content)
 						-- function 57
-						return self.parent.slot_ring
+						return content.parent.slot_ring
 					end
 				},
 				{
 					texture_id = "slot_ring_frame",
 					style_id = "slot_ring_frame",
 					pass_type = "texture",
-					content_check_function = function (self)
+					content_check_function = function (content)
 						-- function 58
-						return self.slot_ring
+						return content.slot_ring
 					end
 				},
 				{
 					texture_id = "slot_ring_rarity_texture",
 					style_id = "slot_ring_rarity_texture",
 					pass_type = "texture",
-					content_check_function = function (self)
+					content_check_function = function (content)
 						-- function 59
-						return self.slot_ring
+						return content.slot_ring
 					end
 				},
 				{
 					texture_id = "slot_trinket_1",
 					style_id = "slot_trinket_1",
 					pass_type = "texture",
-					content_check_function = function (self)
+					content_check_function = function (content)
 						-- function 60
-						return self.slot_trinket_1
+						return content.slot_trinket_1
 					end
 				},
 				{
 					style_id = "slot_trinket_1",
 					pass_type = "hotspot",
 					content_id = "slot_trinket_1_hotspot",
-					content_check_function = function (self)
+					content_check_function = function (content)
 						-- function 61
-						return self.parent.slot_trinket_1
+						return content.parent.slot_trinket_1
 					end
 				},
 				{
 					texture_id = "slot_trinket_1_frame",
 					style_id = "slot_trinket_1_frame",
 					pass_type = "texture",
-					content_check_function = function (self)
+					content_check_function = function (content)
 						-- function 62
-						return self.slot_trinket_1
+						return content.slot_trinket_1
 					end
 				},
 				{
 					texture_id = "slot_trinket_1_rarity_texture",
 					style_id = "slot_trinket_1_rarity_texture",
 					pass_type = "texture",
-					content_check_function = function (self)
+					content_check_function = function (content)
 						-- function 63
-						return self.slot_trinket_1
+						return content.slot_trinket_1
 					end
 				},
 				{
 					texture_id = "talent_frame",
 					style_id = "talent_1_frame",
 					pass_type = "texture",
-					content_check_function = function (self)
+					content_check_function = function (content)
 						-- function 64
-						return self.talent_1.talent
+						return content.talent_1.talent
 					end
 				},
 				{
@@ -2404,9 +2434,9 @@ local function fn_7(arg_18_0)
 					style_id = "talent_1",
 					pass_type = "texture",
 					content_id = "talent_1",
-					content_check_function = function (self)
+					content_check_function = function (content)
 						-- function 65
-						return self.talent
+						return content.talent
 					end
 				},
 				{
@@ -2415,11 +2445,11 @@ local function fn_7(arg_18_0)
 					pass_type = "talent_tooltip",
 					talent_id = "talent",
 					content_id = "talent_1",
-					content_check_function = function (self)
+					content_check_function = function (content)
 						-- function 66
-						local talent = self.talent
+						local talent = content.talent
 
-						talent = not talent and self.is_hover
+						talent = not not talent and not not content.is_hover
 
 						return talent
 					end
@@ -2428,9 +2458,9 @@ local function fn_7(arg_18_0)
 					texture_id = "talent_frame",
 					style_id = "talent_2_frame",
 					pass_type = "texture",
-					content_check_function = function (self)
+					content_check_function = function (content)
 						-- function 67
-						return self.talent_2.talent
+						return content.talent_2.talent
 					end
 				},
 				{
@@ -2443,9 +2473,9 @@ local function fn_7(arg_18_0)
 					style_id = "talent_2",
 					pass_type = "texture",
 					content_id = "talent_2",
-					content_check_function = function (self)
+					content_check_function = function (content)
 						-- function 68
-						return self.talent
+						return content.talent
 					end
 				},
 				{
@@ -2454,11 +2484,11 @@ local function fn_7(arg_18_0)
 					pass_type = "talent_tooltip",
 					talent_id = "talent",
 					content_id = "talent_2",
-					content_check_function = function (self)
+					content_check_function = function (content)
 						-- function 69
-						local talent = self.talent
+						local talent = content.talent
 
-						talent = not talent and self.is_hover
+						talent = not not talent and not not content.is_hover
 
 						return talent
 					end
@@ -2467,9 +2497,9 @@ local function fn_7(arg_18_0)
 					texture_id = "talent_frame",
 					style_id = "talent_3_frame",
 					pass_type = "texture",
-					content_check_function = function (self)
+					content_check_function = function (content)
 						-- function 70
-						return self.talent_3.talent
+						return content.talent_3.talent
 					end
 				},
 				{
@@ -2482,9 +2512,9 @@ local function fn_7(arg_18_0)
 					style_id = "talent_3",
 					pass_type = "texture",
 					content_id = "talent_3",
-					content_check_function = function (self)
+					content_check_function = function (content)
 						-- function 71
-						return self.talent
+						return content.talent
 					end
 				},
 				{
@@ -2493,11 +2523,11 @@ local function fn_7(arg_18_0)
 					pass_type = "talent_tooltip",
 					talent_id = "talent",
 					content_id = "talent_3",
-					content_check_function = function (self)
+					content_check_function = function (content)
 						-- function 72
-						local talent = self.talent
+						local talent = content.talent
 
-						talent = not talent and self.is_hover
+						talent = not not talent and not not content.is_hover
 
 						return talent
 					end
@@ -2506,9 +2536,9 @@ local function fn_7(arg_18_0)
 					texture_id = "talent_frame",
 					style_id = "talent_4_frame",
 					pass_type = "texture",
-					content_check_function = function (self)
+					content_check_function = function (content)
 						-- function 73
-						return self.talent_4.talent
+						return content.talent_4.talent
 					end
 				},
 				{
@@ -2521,9 +2551,9 @@ local function fn_7(arg_18_0)
 					style_id = "talent_4",
 					pass_type = "texture",
 					content_id = "talent_4",
-					content_check_function = function (self)
+					content_check_function = function (content)
 						-- function 74
-						return self.talent
+						return content.talent
 					end
 				},
 				{
@@ -2532,11 +2562,11 @@ local function fn_7(arg_18_0)
 					pass_type = "talent_tooltip",
 					talent_id = "talent",
 					content_id = "talent_4",
-					content_check_function = function (self)
+					content_check_function = function (content)
 						-- function 75
-						local talent = self.talent
+						local talent = content.talent
 
-						talent = not talent and self.is_hover
+						talent = not not talent and not not content.is_hover
 
 						return talent
 					end
@@ -2545,9 +2575,9 @@ local function fn_7(arg_18_0)
 					texture_id = "talent_frame",
 					style_id = "talent_5_frame",
 					pass_type = "texture",
-					content_check_function = function (self)
+					content_check_function = function (content)
 						-- function 76
-						return self.talent_5.talent
+						return content.talent_5.talent
 					end
 				},
 				{
@@ -2560,9 +2590,9 @@ local function fn_7(arg_18_0)
 					style_id = "talent_5",
 					pass_type = "texture",
 					content_id = "talent_5",
-					content_check_function = function (self)
+					content_check_function = function (content)
 						-- function 77
-						return self.talent
+						return content.talent
 					end
 				},
 				{
@@ -2571,11 +2601,11 @@ local function fn_7(arg_18_0)
 					pass_type = "talent_tooltip",
 					talent_id = "talent",
 					content_id = "talent_5",
-					content_check_function = function (self)
+					content_check_function = function (content)
 						-- function 78
-						local talent = self.talent
+						local talent = content.talent
 
-						talent = not talent and self.is_hover
+						talent = not not talent and not not content.is_hover
 
 						return talent
 					end
@@ -2584,9 +2614,9 @@ local function fn_7(arg_18_0)
 					texture_id = "talent_frame",
 					style_id = "talent_6_frame",
 					pass_type = "texture",
-					content_check_function = function (self)
+					content_check_function = function (content)
 						-- function 79
-						return self.talent_6.talent
+						return content.talent_6.talent
 					end
 				},
 				{
@@ -2599,9 +2629,9 @@ local function fn_7(arg_18_0)
 					style_id = "talent_6",
 					pass_type = "texture",
 					content_id = "talent_6",
-					content_check_function = function (self)
+					content_check_function = function (content)
 						-- function 80
-						return self.talent
+						return content.talent
 					end
 				},
 				{
@@ -2610,11 +2640,11 @@ local function fn_7(arg_18_0)
 					pass_type = "talent_tooltip",
 					talent_id = "talent",
 					content_id = "talent_6",
-					content_check_function = function (self)
+					content_check_function = function (content)
 						-- function 81
-						local talent = self.talent
+						local talent = content.talent
 
-						talent = not talent and self.is_hover
+						talent = not not talent and not not content.is_hover
 
 						return talent
 					end
@@ -2658,7 +2688,7 @@ local function fn_7(arg_18_0)
 			slot_ranged_rarity_texture = "icon_bg_plentiful",
 			slot_ranged_frame = "reward_pop_up_item_frame",
 			slot_ring_frame = "reward_pop_up_item_frame",
-			frame = menu_frame_09.texture,
+			frame = frame_settings.texture,
 			background = {
 				uvs = {
 					{
@@ -2666,11 +2696,11 @@ local function fn_7(arg_18_0)
 						0
 					},
 					{
-						math.min(size[1] / get_atlas_settings_by_texture_name.size[1], 1),
-						math.min((size[2] - 50) / get_atlas_settings_by_texture_name.size[2], 1)
+						math.min(size[1] / background_texture_settings.size[1], 1),
+						math.min((size[2] - 50) / background_texture_settings.size[2], 1)
 					}
 				},
-				texture_id = str_2
+				texture_id = background_texture
 			},
 			button_hotspot = {
 				allow_multi_hover = true
@@ -2723,13 +2753,13 @@ local function fn_7(arg_18_0)
 				bar_value = 1,
 				internal_bar_value = 0,
 				draw_health_bar = true,
-				texture_id = "teammate_hp_bar_color_tint_" .. math.min(arg_18_0, 4)
+				texture_id = "teammate_hp_bar_color_tint_" .. math.min(index, 4)
 			},
 			total_health_bar = {
 				bar_value = 1,
 				internal_bar_value = 0,
 				draw_health_bar = true,
-				texture_id = "teammate_hp_bar_" .. math.min(arg_18_0, 4)
+				texture_id = "teammate_hp_bar_" .. math.min(index, 4)
 			},
 			grimoire_bar = {
 				texture_id = "hud_panel_hp_bar_bg_grimoire",
@@ -3288,7 +3318,7 @@ local function fn_7(arg_18_0)
 				horizontal_alignment = "left",
 				gradient_threshold = 1,
 				texture_size = {
-					200 - INSIGNIA_OFFSET,
+					200 - insignia_offset,
 					18
 				},
 				color = {
@@ -3298,7 +3328,7 @@ local function fn_7(arg_18_0)
 					0
 				},
 				offset = {
-					150 + INSIGNIA_OFFSET,
+					150 + insignia_offset,
 					-82,
 					14
 				}
@@ -3308,7 +3338,7 @@ local function fn_7(arg_18_0)
 				horizontal_alignment = "left",
 				gradient_threshold = 1,
 				texture_size = {
-					200 - INSIGNIA_OFFSET,
+					200 - insignia_offset,
 					18
 				},
 				color = {
@@ -3318,7 +3348,7 @@ local function fn_7(arg_18_0)
 					255
 				},
 				offset = {
-					150 + INSIGNIA_OFFSET,
+					150 + insignia_offset,
 					-82,
 					13
 				}
@@ -3327,11 +3357,11 @@ local function fn_7(arg_18_0)
 				vertical_alignment = "top",
 				horizontal_alignment = "left",
 				full_size = {
-					194 - INSIGNIA_OFFSET,
+					194 - insignia_offset,
 					10
 				},
 				texture_size = {
-					200 - INSIGNIA_OFFSET,
+					200 - insignia_offset,
 					12
 				},
 				color = {
@@ -3341,7 +3371,7 @@ local function fn_7(arg_18_0)
 					255
 				},
 				offset = {
-					153 + INSIGNIA_OFFSET,
+					153 + insignia_offset,
 					-100,
 					13
 				}
@@ -3351,7 +3381,7 @@ local function fn_7(arg_18_0)
 				horizontal_alignment = "right",
 				grimoire_debuff = 0,
 				texture_size = {
-					200 - INSIGNIA_OFFSET,
+					200 - insignia_offset,
 					18
 				},
 				color = {
@@ -3361,7 +3391,7 @@ local function fn_7(arg_18_0)
 					255
 				},
 				offset = {
-					-tbl[1] + 150 + 200,
+					-PLAYER_LIST_SIZE[1] + 150 + 200,
 					-82,
 					13
 				}
@@ -3381,12 +3411,12 @@ local function fn_7(arg_18_0)
 					255
 				},
 				base_offset = {
-					-tbl[1] + 150 + 200 + 1.5,
+					-PLAYER_LIST_SIZE[1] + 150 + 200 + 1.5,
 					-84,
 					20
 				},
 				offset = {
-					-tbl[1] + 150 + 200,
+					-PLAYER_LIST_SIZE[1] + 150 + 200,
 					-82,
 					20
 				}
@@ -3399,7 +3429,7 @@ local function fn_7(arg_18_0)
 					20
 				},
 				texture_size = {
-					200 - INSIGNIA_OFFSET,
+					200 - insignia_offset,
 					30
 				},
 				tile_offset = {
@@ -3407,7 +3437,7 @@ local function fn_7(arg_18_0)
 					false
 				},
 				offset = {
-					150 + INSIGNIA_OFFSET,
+					150 + insignia_offset,
 					-82,
 					10
 				},
@@ -3426,7 +3456,7 @@ local function fn_7(arg_18_0)
 					35
 				},
 				offset = {
-					150 + INSIGNIA_OFFSET,
+					150 + insignia_offset,
 					-80,
 					15
 				},
@@ -3441,11 +3471,11 @@ local function fn_7(arg_18_0)
 				vertical_alignment = "top",
 				horizontal_alignment = "left",
 				texture_size = {
-					160 - INSIGNIA_OFFSET,
+					160 - insignia_offset,
 					35
 				},
 				offset = {
-					170 + INSIGNIA_OFFSET,
+					170 + insignia_offset,
 					-80,
 					15
 				},
@@ -3476,8 +3506,8 @@ local function fn_7(arg_18_0)
 				}
 			},
 			frame = {
-				texture_size = menu_frame_09.texture_size,
-				texture_sizes = menu_frame_09.texture_sizes,
+				texture_size = frame_settings.texture_size,
+				texture_sizes = frame_settings.texture_sizes,
 				color = {
 					255,
 					255,
@@ -3496,7 +3526,7 @@ local function fn_7(arg_18_0)
 					size[2]
 				},
 				color = {
-					tbl_6[1],
+					banner_color[1],
 					255,
 					255,
 					255
@@ -3883,11 +3913,11 @@ local function fn_7(arg_18_0)
 				dynamic_font_size = true,
 				font_type = "arial",
 				size = {
-					210 - INSIGNIA_OFFSET,
+					210 - insignia_offset,
 					30
 				},
 				offset = {
-					150 + INSIGNIA_OFFSET,
+					150 + insignia_offset,
 					121,
 					3
 				},
@@ -3902,11 +3932,11 @@ local function fn_7(arg_18_0)
 				dynamic_font_size = true,
 				font_size = 20,
 				size = {
-					210 - INSIGNIA_OFFSET,
+					210 - insignia_offset,
 					30
 				},
 				offset = {
-					152 + INSIGNIA_OFFSET,
+					152 + insignia_offset,
 					119,
 					2
 				},
@@ -3921,11 +3951,11 @@ local function fn_7(arg_18_0)
 				dynamic_font_size = true,
 				font_type = "hell_shark_header",
 				size = {
-					210 - INSIGNIA_OFFSET,
+					210 - insignia_offset,
 					30
 				},
 				offset = {
-					150 + INSIGNIA_OFFSET,
+					150 + insignia_offset,
 					90,
 					3
 				},
@@ -3942,27 +3972,29 @@ local function fn_7(arg_18_0)
 				dynamic_font_size = true,
 				font_type = "hell_shark_header",
 				size = {
-					210 - INSIGNIA_OFFSET,
+					210 - insignia_offset,
 					30
 				},
 				offset = {
-					152 + INSIGNIA_OFFSET,
+					152 + insignia_offset,
 					88,
 					2
 				},
 				text_color = Colors.get_table("black")
 			}
 		},
-		scenegraph_id = str,
+		scenegraph_id = scenegraph_id,
 		offset = {
 			0,
 			0,
 			0
 		}
 	}
+
+	return definition
 end
 
-local tbl_8 = {
+local popup_buttons = {
 	{
 		text = "player_list_kick_player",
 		func_name = "kick_player",
@@ -3973,7 +4005,7 @@ local tbl_8 = {
 		func_name = "popup_test_func"
 	}
 }
-local tbl_9 = {
+local popup_widget_definition = {
 	scenegraph_id = "popup",
 	element = {
 		passes = {
@@ -3985,22 +4017,22 @@ local tbl_9 = {
 					{
 						pass_type = "hotspot",
 						content_id = "button_hotspot",
-						content_check_function = function (self, arg_82_1)
+						content_check_function = function (content, style)
 							-- function 82
-							return self.button_hotspot.disable_button ~= true
+							return content.button_hotspot.disable_button ~= true
 						end
 					},
 					{
 						style_id = "button_text",
 						pass_type = "text",
 						text_id = "button_text",
-						content_check_function = function (self, arg_83_1)
+						content_check_function = function (content, style)
 							-- function 83
-							if self.button_hotspot.disable_button ~= true then
-								if not self.button_hotspot.is_hover then
-									arg_83_1.button_text.text_color = arg_83_1.button_text.hover_color
+							if content.button_hotspot.disable_button ~= true then
+								if content.button_hotspot.is_hover then
+									style.button_text.text_color = style.button_text.hover_color
 								else
-									arg_83_1.button_text.text_color = arg_83_1.button_text.base_color
+									style.button_text.text_color = style.button_text.base_color
 								end
 							end
 
@@ -4024,26 +4056,26 @@ local tbl_9 = {
 		}
 	}
 }
-local count = #tbl_8
+local popup_buttons_n = #popup_buttons
 
-for i = 1, count do
-	local var_0_18 = tbl_8[i]
-	local tbl_10 = {
+for i = 1, popup_buttons_n do
+	local popup_button = popup_buttons[i]
+	local content = {
 		button_hotspot = {},
-		button_text = var_0_18.text,
-		button_func_name = var_0_18.func_name,
-		button_availability_func_name = var_0_18.availability_func
+		button_text = popup_button.text,
+		button_func_name = popup_button.func_name,
+		button_availability_func_name = popup_button.availability_func
 	}
-	local tbl_11 = {
+	local style = {
 		vertical_alignment = "center",
 		horizontal_alignment = "center",
 		size = {
-			tbl_2[1],
-			tbl_2[2]
+			POPUP_ELEMENT_SIZE[1],
+			POPUP_ELEMENT_SIZE[2]
 		},
 		list_member_offset = {
 			0,
-			-tbl_2[2],
+			-POPUP_ELEMENT_SIZE[2],
 			0
 		},
 		button_text = {
@@ -4059,13 +4091,13 @@ for i = 1, count do
 		}
 	}
 
-	tbl_9.content.list_content[i] = tbl_10
-	tbl_9.style.list_style.item_styles[i] = tbl_11
+	popup_widget_definition.content.list_content[i] = content
+	popup_widget_definition.style.list_style.item_styles[i] = style
 end
 
-tbl_9.style.list_style.num_draws = count
+popup_widget_definition.style.list_style.num_draws = popup_buttons_n
 
-local tbl_12 = {
+local level_title_style = {
 	use_shadow = true,
 	upper_case = true,
 	localize = false,
@@ -4081,7 +4113,7 @@ local tbl_12 = {
 		2
 	}
 }
-local tbl_13 = {
+local difficulty_text_style = {
 	use_shadow = true,
 	vertical_alignment = "top",
 	horizontal_alignment = "right",
@@ -4095,7 +4127,7 @@ local tbl_13 = {
 		2
 	}
 }
-local tbl_14 = {
+local player_career_name_style = {
 	use_shadow = true,
 	upper_case = true,
 	localize = false,
@@ -4111,7 +4143,7 @@ local tbl_14 = {
 		0
 	}
 }
-local tbl_15 = {
+local player_hero_name_style = {
 	use_shadow = true,
 	vertical_alignment = "top",
 	localize = false,
@@ -4125,7 +4157,7 @@ local tbl_15 = {
 		0
 	}
 }
-local tbl_16 = {
+local career_perks_title_style = {
 	vertical_alignment = "top",
 	use_shadow = true,
 	horizontal_alignment = "left",
@@ -4138,7 +4170,7 @@ local tbl_16 = {
 		0
 	}
 }
-local tbl_17 = {
+local right_banner_header = {
 	vertical_alignment = "top",
 	use_shadow = true,
 	horizontal_alignment = "left",
@@ -4151,7 +4183,7 @@ local tbl_17 = {
 		0
 	}
 }
-local tbl_18 = {
+local main_weave_objective_style = {
 	vertical_alignment = "top",
 	use_shadow = true,
 	horizontal_alignment = "left",
@@ -4164,7 +4196,7 @@ local tbl_18 = {
 		0
 	}
 }
-local tbl_19 = {
+local right_banner_sub_header = {
 	vertical_alignment = "top",
 	use_shadow = true,
 	horizontal_alignment = "left",
@@ -4177,7 +4209,7 @@ local tbl_19 = {
 		0
 	}
 }
-local tbl_20 = {
+local rewards_title = {
 	vertical_alignment = "top",
 	use_shadow = true,
 	horizontal_alignment = "center",
@@ -4190,7 +4222,7 @@ local tbl_20 = {
 		0
 	}
 }
-local tbl_21 = {
+local career_perks_name_style = {
 	font_type = "hell_shark_header",
 	use_shadow = true,
 	localize = false,
@@ -4209,7 +4241,7 @@ local tbl_21 = {
 		0
 	}
 }
-local tbl_22 = {
+local career_perks_description_style = {
 	font_type = "hell_shark",
 	font_size = 24,
 	localize = false,
@@ -4229,7 +4261,7 @@ local tbl_22 = {
 		0
 	}
 }
-local tbl_23 = {
+local input_description_style = {
 	font_size = 24,
 	upper_case = true,
 	localize = true,
@@ -4244,7 +4276,7 @@ local tbl_23 = {
 		1
 	}
 }
-local tbl_24 = {
+local mutator_pass_styles = {
 	mutators = {
 		text = {
 			font_size = 26,
@@ -4283,84 +4315,84 @@ local tbl_24 = {
 		}
 	}
 }
-local tbl_25 = {
-	banner_left = UIWidgets.create_simple_rect("banner_left", tbl_6),
-	banner_right = UIWidgets.create_simple_rect("banner_right", tbl_6),
-	banner_left_edge = fn("banner_left", {
+local static_widget_definitions = {
+	banner_left = UIWidgets.create_simple_rect("banner_left", banner_color),
+	banner_right = UIWidgets.create_simple_rect("banner_right", banner_color),
+	banner_left_edge = create_vertical_edge_divider("banner_left", {
 		5,
-		tbl_7.banner_left.size[2]
+		scenegraph_definition.banner_left.size[2]
 	}),
-	banner_right_edge = fn("banner_right", {
+	banner_right_edge = create_vertical_edge_divider("banner_right", {
 		5,
-		tbl_7.banner_right.size[2]
+		scenegraph_definition.banner_right.size[2]
 	}),
 	player_name_divider = UIWidgets.create_simple_texture("infoslate_frame_02_horizontal", "player_name_divider"),
 	mission_details_divider = UIWidgets.create_simple_texture("infoslate_frame_02_horizontal", "mission_details_divider"),
-	mechanism_type_name = UIWidgets.create_simple_text(string.upper(Localize("not_assigned")), "mechanism_type_name", 22, nil, tbl_17),
-	mission_type_name = UIWidgets.create_simple_text(string.upper(Localize("not_assigned")), "mission_type_name", 22, nil, tbl_19),
-	player_ability_title = UIWidgets.create_simple_text(Localize("hero_view_activated_ability"), "player_ability_title", 22, nil, tbl_16),
-	player_passive_title = UIWidgets.create_simple_text(Localize("hero_view_passive_ability"), "player_passive_title", 22, nil, tbl_16)
+	mechanism_type_name = UIWidgets.create_simple_text(string.upper(Localize("not_assigned")), "mechanism_type_name", 22, nil, right_banner_header),
+	mission_type_name = UIWidgets.create_simple_text(string.upper(Localize("not_assigned")), "mission_type_name", 22, nil, right_banner_sub_header),
+	player_ability_title = UIWidgets.create_simple_text(Localize("hero_view_activated_ability"), "player_ability_title", 22, nil, career_perks_title_style),
+	player_passive_title = UIWidgets.create_simple_text(Localize("hero_view_passive_ability"), "player_passive_title", 22, nil, career_perks_title_style)
 }
-local num_2 = 0
-local tbl_26 = {
-	player_ability_name = UIWidgets.create_simple_text("n/a", "player_ability_name", 22, nil, tbl_21),
-	player_ability_description = UIWidgets.create_simple_text("n/a", "player_ability_description", 22, nil, tbl_22),
+local private_checkbox_offset = 0
+local widget_definitions = {
+	player_ability_name = UIWidgets.create_simple_text("n/a", "player_ability_name", 22, nil, career_perks_name_style),
+	player_ability_description = UIWidgets.create_simple_text("n/a", "player_ability_description", 22, nil, career_perks_description_style),
 	player_ability_icon = UIWidgets.create_simple_texture("icons_placeholder", "player_ability_icon"),
-	player_passive_name = UIWidgets.create_simple_text("n/a", "player_passive_name", 22, nil, tbl_21),
-	player_passive_description = UIWidgets.create_simple_text("n/a", "player_passive_description", 22, nil, tbl_22),
+	player_passive_name = UIWidgets.create_simple_text("n/a", "player_passive_name", 22, nil, career_perks_name_style),
+	player_passive_description = UIWidgets.create_simple_text("n/a", "player_passive_description", 22, nil, career_perks_description_style),
 	player_passive_icon = UIWidgets.create_simple_texture("icons_placeholder", "player_passive_icon"),
-	game_level = UIWidgets.create_simple_text("n/a", "game_level", 22, nil, tbl_12),
-	game_difficulty = UIWidgets.create_simple_text("n/a", "game_difficulty", 22, nil, tbl_13),
-	player_career_name = UIWidgets.create_simple_text("n/a", "player_career_name", 22, nil, tbl_14),
-	player_hero_name = UIWidgets.create_simple_text("n/a", "player_hero_name", 22, nil, tbl_15),
+	game_level = UIWidgets.create_simple_text("n/a", "game_level", 22, nil, level_title_style),
+	game_difficulty = UIWidgets.create_simple_text("n/a", "game_difficulty", 22, nil, difficulty_text_style),
+	player_career_name = UIWidgets.create_simple_text("n/a", "player_career_name", 22, nil, player_career_name_style),
+	player_hero_name = UIWidgets.create_simple_text("n/a", "player_hero_name", 22, nil, player_hero_name_style),
 	mutator_summary1 = UIWidgets.create_simple_item_presentation("mutator_summary1", {
 		"mutators"
-	}, nil, tbl_24),
+	}, nil, mutator_pass_styles),
 	mutator_summary2 = UIWidgets.create_simple_item_presentation("mutator_summary2", {
 		"mutators"
-	}, nil, tbl_24),
+	}, nil, mutator_pass_styles),
 	mutator_summary3 = UIWidgets.create_simple_item_presentation("mutator_summary3", {
 		"mutators"
-	}, nil, tbl_24),
+	}, nil, mutator_pass_styles),
 	mutator_summary4 = UIWidgets.create_simple_item_presentation("mutator_summary4", {
 		"mutators"
-	}, nil, tbl_24),
+	}, nil, mutator_pass_styles),
 	mutator_summary5 = UIWidgets.create_simple_item_presentation("mutator_summary5", {
 		"mutators"
-	}, nil, tbl_24),
+	}, nil, mutator_pass_styles),
 	mutator_summary6 = UIWidgets.create_simple_item_presentation("mutator_summary6", {
 		"mutators"
-	}, nil, tbl_24)
+	}, nil, mutator_pass_styles)
 }
-local tbl_27 = {
-	weave_objective_header = UIWidgets.create_simple_text(Utf8.upper(Localize("menu_weave_play_objective_title")), "weave_objective_header", 22, nil, tbl_17),
+local weave_objective_widgets = {
+	weave_objective_header = UIWidgets.create_simple_text(Utf8.upper(Localize("menu_weave_play_objective_title")), "weave_objective_header", 22, nil, right_banner_header),
 	weave_objective_divider = UIWidgets.create_simple_texture("infoslate_frame_02_horizontal", "weave_objective_divider"),
-	main_objective_text = UIWidgets.create_simple_text(Localize("menu_weave_play_objective_sub_title"), "weave_main_objective", 22, nil, tbl_18)
+	main_objective_text = UIWidgets.create_simple_text(Localize("menu_weave_play_objective_sub_title"), "weave_main_objective", 22, nil, main_weave_objective_style)
 }
-local tbl_28 = {
-	reward_header = UIWidgets.create_simple_text(Localize("deed_reward_title"), "reward_divider", 22, nil, tbl_20),
+local specific_widget_definitions = {
+	reward_header = UIWidgets.create_simple_text(Localize("deed_reward_title"), "reward_divider", 22, nil, rewards_title),
 	reward_divider = UIWidgets.create_simple_texture("divider_01_top", "reward_divider"),
-	collectibles_name = UIWidgets.create_simple_text(Utf8.upper(Localize("collectibles_name")), "collectibles_name", 22, nil, tbl_17),
+	collectibles_name = UIWidgets.create_simple_text(Utf8.upper(Localize("collectibles_name")), "collectibles_name", 22, nil, right_banner_header),
 	collectibles_divider = UIWidgets.create_simple_texture("infoslate_frame_02_horizontal", "collectibles_divider"),
-	level_description = fn_5("", "level_description"),
-	input_description_text = UIWidgets.create_simple_text("player_list_show_mouse_description", "player_list_input_description", nil, nil, tbl_23),
-	private_checkbox = UIWidgets.create_checkbox_widget("start_game_window_private_game", "", "private_checkbox", num_2, nil)
+	level_description = create_description_text("", "level_description"),
+	input_description_text = UIWidgets.create_simple_text("player_list_show_mouse_description", "player_list_input_description", nil, nil, input_description_style),
+	private_checkbox = UIWidgets.create_checkbox_widget("start_game_window_private_game", "", "private_checkbox", private_checkbox_offset, nil)
 }
-local flag = true
+local disable_unsupported = true
 
 return {
-	PLAYER_LIST_SIZE = tbl,
-	scenegraph_definition = tbl_7,
-	widget_definitions = tbl_26,
-	specific_widget_definitions = tbl_28,
-	static_widget_definitions = tbl_25,
-	player_widget_definition = fn_7,
-	weave_objective_widgets = tbl_27,
-	create_weave_sub_objective_widget = fn_4,
-	popup_widget_definition = tbl_9,
-	create_loot_widget = fn_2,
-	create_reward_item = fn_6,
-	create_node_info_widget = fn_3,
+	PLAYER_LIST_SIZE = PLAYER_LIST_SIZE,
+	scenegraph_definition = scenegraph_definition,
+	widget_definitions = widget_definitions,
+	specific_widget_definitions = specific_widget_definitions,
+	static_widget_definitions = static_widget_definitions,
+	player_widget_definition = player_widget_definition,
+	weave_objective_widgets = weave_objective_widgets,
+	create_weave_sub_objective_widget = create_weave_sub_objective_widget,
+	popup_widget_definition = popup_widget_definition,
+	create_loot_widget = create_loot_widget,
+	create_reward_item = create_reward_item,
+	create_node_info_widget = create_node_info_widget,
 	console_cursor_definition = UIWidgets.create_console_cursor("console_cursor"),
-	item_tooltip = UIWidgets.create_simple_item_presentation("item_tooltip", UISettings.console_tooltip_pass_definitions, nil, nil, flag)
+	item_tooltip = UIWidgets.create_simple_item_presentation("item_tooltip", UISettings.console_tooltip_pass_definitions, nil, nil, disable_unsupported)
 }

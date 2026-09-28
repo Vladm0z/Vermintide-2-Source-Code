@@ -2,27 +2,27 @@
 
 SpectatorUI = class(SpectatorUI)
 
-SpectatorUI.init = function (self, arg_1_1, arg_1_2)
+SpectatorUI.init = function (self, parent, ingame_ui_context)
 	-- function 1
-	self._parent = arg_1_1
-	self._ui_renderer = arg_1_2.ui_renderer
-	self._ingame_ui = arg_1_2.ingame_ui
-	self._input_manager = arg_1_2.input_manager
-	self._player_manager = arg_1_2.player_manager
+	self._parent = parent
+	self._ui_renderer = ingame_ui_context.ui_renderer
+	self._ingame_ui = ingame_ui_context.ingame_ui
+	self._input_manager = ingame_ui_context.input_manager
+	self._player_manager = ingame_ui_context.player_manager
 	self._ui_animations = {}
 	self._render_settings = {
 		snap_pixel_positions = true
 	}
 	self._text = ""
 
-	local world = arg_1_2.world_manager:world("level_world")
+	local world = ingame_ui_context.world_manager:world("level_world")
 
 	self._wwise_world = Managers.world:wwise_world(world)
 
-	local event = Managers.state.event
+	local event_manager = Managers.state.event
 
-	event:register(self, "on_spectator_target_changed", "on_spectator_target_changed")
-	event:register(self, "new_player_unit", "on_player_spawned")
+	event_manager:register(self, "on_spectator_target_changed", "on_spectator_target_changed")
+	event_manager:register(self, "new_player_unit", "on_player_spawned")
 
 	self._marker_ids = {}
 end
@@ -31,23 +31,23 @@ SpectatorUI.destroy = function (self)
 	-- function 2
 	print("[SpectatorUI] - Destroy")
 
-	local event = Managers.state.event
+	local event_manager = Managers.state.event
 
-	event:unregister("on_spectator_target_changed", self)
-	event:unregister("new_player_unit", self)
+	event_manager:unregister("on_spectator_target_changed", self)
+	event_manager:unregister("new_player_unit", self)
 	self:set_visible(false)
 end
 
-SpectatorUI.update = function (self, arg_3_1, arg_3_2)
+SpectatorUI.update = function (self, dt, t)
 	-- function 3
 	if not self._is_visible then
 		return
 	end
 
-	self:draw(arg_3_1, arg_3_2)
+	self:draw(dt, t)
 end
 
-SpectatorUI.draw = function (arg_4_0, arg_4_1, arg_4_2)
+SpectatorUI.draw = function (self, dt, t)
 	-- function 4
 	return
 end
@@ -57,17 +57,17 @@ SpectatorUI.set_dirty = function (self)
 	self._dirty = true
 end
 
-SpectatorUI.set_visible = function (self, arg_6_1)
+SpectatorUI.set_visible = function (self, visible)
 	-- function 6
-	self._is_visible = arg_6_1
+	self._is_visible = visible
 
-	if not arg_6_1 then
-		local _get_actual_players = self:_get_actual_players()
+	if visible then
+		local players = self:_get_actual_players()
 
-		for k, v in pairs(_get_actual_players) do
-			local player_unit = v.player_unit
+		for _, player in pairs(players) do
+			local player_unit = player.player_unit
 
-			if not player_unit then
+			if player_unit then
 				self:_add_world_marker(player_unit)
 			end
 		end
@@ -76,73 +76,73 @@ SpectatorUI.set_visible = function (self, arg_6_1)
 	end
 end
 
-SpectatorUI._get_actual_players = function (arg_7_0)
+SpectatorUI._get_actual_players = function (self)
 	-- function 7
-	local tbl = {}
+	local players = {}
 	local parties = Managers.party:parties()
 
-	for k, v in pairs(parties) do
-		if v.name ~= "spectators" then
-			local occupied_slots = v.occupied_slots
+	for _, party in pairs(parties) do
+		if party.name ~= "spectators" then
+			local occupied_slots = party.occupied_slots
 
-			for k_2, v_2 in pairs(occupied_slots) do
-				tbl[#tbl + 1] = v_2.player
+			for _, slot in pairs(occupied_slots) do
+				players[#players + 1] = slot.player
 			end
 		end
 	end
 
-	return tbl
+	return players
 end
 
-SpectatorUI._add_world_marker = function (self, arg_8_1)
+SpectatorUI._add_world_marker = function (self, player_unit)
 	-- function 8
-	local var_8_0 = self._marker_ids[arg_8_1]
+	local id = self._marker_ids[player_unit]
 
-	if not var_8_0 then
-		self:_clear_world_marker(arg_8_1, var_8_0)
+	if id then
+		self:_clear_world_marker(player_unit, id)
 	end
 
-	local var_8_1 = callback(self, "cb_world_marker_spawned", arg_8_1)
+	local callback = callback(self, "cb_world_marker_spawned", player_unit)
 
-	Managers.state.event:trigger("add_world_marker_unit", "versus_pactsworn_ghostmode", arg_8_1, var_8_1)
+	Managers.state.event:trigger("add_world_marker_unit", "versus_pactsworn_ghostmode", player_unit, callback)
 end
 
 SpectatorUI._clear_world_markers = function (self)
 	-- function 9
-	for k, v in pairs(self._marker_ids) do
-		self:_clear_world_marker(k, v)
+	for player_unit, id in pairs(self._marker_ids) do
+		self:_clear_world_marker(player_unit, id)
 	end
 end
 
-SpectatorUI._clear_world_marker = function (arg_10_0, arg_10_1, arg_10_2)
+SpectatorUI._clear_world_marker = function (self, player_unit, id)
 	-- function 10
-	Managers.state.event:trigger("remove_world_marker", arg_10_2)
+	Managers.state.event:trigger("remove_world_marker", id)
 
-	arg_10_0._marker_ids[arg_10_1] = nil
+	self._marker_ids[player_unit] = nil
 end
 
-SpectatorUI.on_spectator_target_changed = function (self, arg_11_1)
+SpectatorUI.on_spectator_target_changed = function (self, spectated_player_unit)
 	-- function 11
-	self._spectated_player_unit = arg_11_1
-	self._spectated_player = Managers.player:owner(arg_11_1)
+	self._spectated_player_unit = spectated_player_unit
+	self._spectated_player = Managers.player:owner(spectated_player_unit)
 	self._is_spectator = true
 	self._text = "Spectating: " .. self._spectated_player:name()
 end
 
-SpectatorUI.on_player_spawned = function (self, arg_12_1, arg_12_2, arg_12_3)
+SpectatorUI.on_player_spawned = function (self, player, unit, player_unique_id)
 	-- function 12
 	if not self._is_visible then
 		return
 	end
 
-	self:_add_world_marker(arg_12_2)
+	self:_add_world_marker(unit)
 end
 
-SpectatorUI.cb_world_marker_spawned = function (arg_13_0, arg_13_1, arg_13_2, arg_13_3)
+SpectatorUI.cb_world_marker_spawned = function (self, unit, marker_id, widget)
 	-- function 13
-	local profile_index = Managers.player:owner(arg_13_1):profile_index()
-	local var_13_1 = SPProfiles[profile_index]
+	local profile_index = Managers.player:owner(unit):profile_index()
+	local profile = SPProfiles[profile_index]
 
-	arg_13_3.content.icon = var_13_1.ui_portrait
-	arg_13_0._marker_ids[arg_13_1] = arg_13_2
+	widget.content.icon = profile.ui_portrait
+	self._marker_ids[unit] = marker_id
 end

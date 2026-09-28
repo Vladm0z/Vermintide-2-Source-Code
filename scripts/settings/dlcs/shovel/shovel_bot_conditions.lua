@@ -3,13 +3,13 @@
 local BTConditions = BTConditions
 local can_activate = BTConditions.can_activate
 
-can_activate = can_activate or {}
+can_activate = not not can_activate or not not {}
 BTConditions.can_activate = can_activate
 
 local BTConditions_2 = BTConditions
 local can_activate_non_combat = BTConditions.can_activate_non_combat
 
-can_activate_non_combat = can_activate_non_combat or {}
+can_activate_non_combat = not not can_activate_non_combat or not not {}
 BTConditions_2.can_activate_non_combat = can_activate_non_combat
 
 table.merge_recursive(BTConditions.ability_check_categories, {
@@ -18,32 +18,36 @@ table.merge_recursive(BTConditions.ability_check_categories, {
 	}
 })
 
-BTConditions.can_activate.bw_necromancer = function (self)
+BTConditions.can_activate.bw_necromancer = function (blackboard)
 	-- function 1
-	if self.ai_slot_extension.num_occupied_slots >= 3 then
+	local num_occupied_slots = blackboard.ai_slot_extension.num_occupied_slots
+
+	if num_occupied_slots >= 3 then
 		return true
 	end
 
 	if not Managers.state.game_mode:is_round_started() then
-		self._bt_conditions_first_ability = true
+		blackboard._bt_conditions_first_ability = true
 
 		return false
-	elseif not self._bt_conditions_first_ability then
-		local time = Managers.time:time("game")
-		local _first_ability_t = self._first_ability_t
+	elseif blackboard._bt_conditions_first_ability then
+		local t = Managers.time:time("game")
+		local _first_ability_t = blackboard._first_ability_t
 
-		_first_ability_t = _first_ability_t or time + Math.random(1, 4)
-		self._first_ability_t = _first_ability_t
+		_first_ability_t = not not _first_ability_t or not not (t + Math.random(1, 4))
+		blackboard._first_ability_t = _first_ability_t
 
-		if time < self._first_ability_t then
+		if t < blackboard._first_ability_t then
 			return false
 		end
 
-		self._bt_conditions_first_ability = nil
-		self._first_ability_t = nil
+		blackboard._bt_conditions_first_ability = nil
+		blackboard._first_ability_t = nil
 	end
 
-	if self.ai_commander_extension:get_controlled_units_count() <= 4 then
+	local num_skeletons = blackboard.ai_commander_extension:get_controlled_units_count()
+
+	if num_skeletons <= 4 then
 		return true
 	end
 

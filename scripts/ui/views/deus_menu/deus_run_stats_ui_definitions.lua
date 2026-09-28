@@ -2,64 +2,64 @@
 
 require("scripts/ui/views/deus_menu/ui_widgets_deus")
 
-local flag = false
-local tbl = {
+local ALLOW_BOON_REMOVAL = false
+local full_size = {
 	1920,
 	1080
 }
-local tbl_2 = {
+local blessing_widget_size = {
 	410,
 	240
 }
-local tbl_3 = {
+local blessing_widget_spacing = {
 	10,
 	10
 }
-local tbl_4 = {
+local item_size = {
 	410,
 	0
 }
-local num = 15
-local tbl_5 = {
+local item_spacing = 15
+local title_size = {
 	360,
 	32
 }
-local tbl_6 = {
-	num,
+local weapon_melee_position = {
+	item_spacing,
 	-50,
 	1
 }
-local tbl_7 = {
+local slot_size = {
 	400,
 	250
 }
-local tbl_8 = {
-	num + 5,
+local healing_slot_position = {
+	item_spacing + 5,
 	80,
 	1
 }
-local tbl_9 = {
-	num + 5 + tbl_3[1] + tbl_2[1],
+local potion_slot_position = {
+	item_spacing + 5 + blessing_widget_spacing[1] + blessing_widget_size[1],
 	80,
 	1
 }
-local tbl_10 = {
-	num + 5 + (tbl_3[1] + tbl_2[1]) * 2,
+local grenade_slot_position = {
+	item_spacing + 5 + (blessing_widget_spacing[1] + blessing_widget_size[1]) * 2,
 	80,
 	1
 }
-local tbl_11 = {
-	tbl_4[1] * 0.5,
+local weapon_title_position = {
+	item_size[1] * 0.5,
 	0,
 	1
 }
-local tbl_12 = {
-	tbl_6[1] + tbl_4[1] + num,
-	tbl_6[2],
+local weapon_ranged_position = {
+	weapon_melee_position[1] + item_size[1] + item_spacing,
+	weapon_melee_position[2],
 	1
 }
-local end_screen = UILayer.end_screen
-local tbl_13 = {
+local base_layer = UILayer.end_screen
+local scenegraph = {
 	fullscreen_fade = {
 		vertical_alignment = "center",
 		horizontal_alignment = "center",
@@ -71,34 +71,34 @@ local tbl_13 = {
 		position = {
 			0,
 			0,
-			end_screen - 1
+			base_layer - 1
 		}
 	},
 	root = {
 		is_root = true,
-		size = tbl,
+		size = full_size,
 		position = {
 			0,
 			0,
-			end_screen
+			base_layer
 		}
 	},
 	screen = {
 		scale = "fit",
-		size = tbl,
+		size = full_size,
 		position = {
 			0,
 			0,
-			end_screen + 100
+			base_layer + 100
 		}
 	},
 	screen_reminder = {
 		scale = "fit",
-		size = tbl,
+		size = full_size,
 		position = {
 			0,
 			0,
-			end_screen
+			base_layer
 		}
 	},
 	screen_center = {
@@ -119,7 +119,7 @@ local tbl_13 = {
 		vertical_alignment = "center",
 		parent = "screen_center",
 		horizontal_alignment = "center",
-		size = tbl,
+		size = full_size,
 		position = {
 			0,
 			0,
@@ -134,7 +134,7 @@ local tbl_13 = {
 		position = {
 			0,
 			0,
-			end_screen + 200
+			base_layer + 200
 		}
 	},
 	center_title = {
@@ -161,7 +161,7 @@ local tbl_13 = {
 		position = {
 			425,
 			0,
-			end_screen + 6
+			base_layer + 6
 		}
 	},
 	options_background = {
@@ -174,7 +174,7 @@ local tbl_13 = {
 		position = {
 			425,
 			0,
-			end_screen + 6
+			base_layer + 6
 		}
 	},
 	options_background_edge = {
@@ -187,7 +187,7 @@ local tbl_13 = {
 		position = {
 			-260,
 			0,
-			end_screen + 3
+			base_layer + 3
 		}
 	},
 	power_up_root = {
@@ -236,7 +236,7 @@ local tbl_13 = {
 			50
 		},
 		position = {
-			num + 5,
+			item_spacing + 5,
 			-130,
 			10
 		}
@@ -245,7 +245,7 @@ local tbl_13 = {
 		vertical_alignment = "center",
 		parent = "blessing_root",
 		horizontal_alignment = "left",
-		size = tbl_2,
+		size = blessing_widget_size,
 		position = {
 			0,
 			20,
@@ -256,9 +256,9 @@ local tbl_13 = {
 		vertical_alignment = "center",
 		parent = "blessing_1",
 		horizontal_alignment = "left",
-		size = tbl_2,
+		size = blessing_widget_size,
 		position = {
-			tbl_2[1] + tbl_3[1],
+			blessing_widget_size[1] + blessing_widget_spacing[1],
 			0,
 			10
 		}
@@ -267,9 +267,9 @@ local tbl_13 = {
 		vertical_alignment = "center",
 		parent = "blessing_2",
 		horizontal_alignment = "left",
-		size = tbl_2,
+		size = blessing_widget_size,
 		position = {
-			tbl_2[1] + tbl_3[1],
+			blessing_widget_size[1] + blessing_widget_spacing[1],
 			0,
 			10
 		}
@@ -278,9 +278,9 @@ local tbl_13 = {
 		vertical_alignment = "center",
 		parent = "blessing_root",
 		horizontal_alignment = "left",
-		size = tbl_2,
+		size = blessing_widget_size,
 		position = {
-			tbl_2[1] + tbl_3[1],
+			blessing_widget_size[1] + blessing_widget_spacing[1],
 			0,
 			10
 		}
@@ -289,10 +289,10 @@ local tbl_13 = {
 		vertical_alignment = "center",
 		parent = "blessing_4",
 		horizontal_alignment = "left",
-		size = tbl_2,
+		size = blessing_widget_size,
 		position = {
 			0,
-			-tbl_2[2] - tbl_3[2],
+			-blessing_widget_size[2] - blessing_widget_spacing[2],
 			10
 		}
 	},
@@ -300,10 +300,10 @@ local tbl_13 = {
 		vertical_alignment = "center",
 		parent = "blessing_5",
 		horizontal_alignment = "left",
-		size = tbl_2,
+		size = blessing_widget_size,
 		position = {
 			0,
-			-tbl_2[2] - tbl_3[2],
+			-blessing_widget_size[2] - blessing_widget_spacing[2],
 			10
 		}
 	},
@@ -357,7 +357,7 @@ local tbl_13 = {
 			0,
 			0
 		},
-		position = tbl_6
+		position = weapon_melee_position
 	},
 	weapon_ranged = {
 		vertical_alignment = "top",
@@ -367,21 +367,21 @@ local tbl_13 = {
 			0,
 			0
 		},
-		position = tbl_12
+		position = weapon_ranged_position
 	},
 	weapon_melee_title = {
 		vertical_alignment = "bottom",
 		parent = "weapon_melee",
 		horizontal_alignment = "center",
-		size = tbl_5,
-		position = tbl_11
+		size = title_size,
+		position = weapon_title_position
 	},
 	weapon_ranged_title = {
 		vertical_alignment = "bottom",
 		parent = "weapon_ranged",
 		horizontal_alignment = "center",
-		size = tbl_5,
-		position = tbl_11
+		size = title_size,
+		position = weapon_title_position
 	},
 	healing_slot = {
 		vertical_alignment = "bottom",
@@ -391,7 +391,7 @@ local tbl_13 = {
 			0,
 			0
 		},
-		position = tbl_8
+		position = healing_slot_position
 	},
 	potion_slot = {
 		vertical_alignment = "bottom",
@@ -401,7 +401,7 @@ local tbl_13 = {
 			0,
 			0
 		},
-		position = tbl_9
+		position = potion_slot_position
 	},
 	grenade_slot = {
 		vertical_alignment = "bottom",
@@ -411,10 +411,10 @@ local tbl_13 = {
 			0,
 			0
 		},
-		position = tbl_10
+		position = grenade_slot_position
 	}
 }
-local tbl_14 = {
+local player_career_name_style = {
 	font_type = "hell_shark_header",
 	upper_case = true,
 	localize = false,
@@ -434,7 +434,7 @@ local tbl_14 = {
 		0
 	}
 }
-local tbl_15 = {
+local player_hero_name_style = {
 	use_shadow = true,
 	vertical_alignment = "top",
 	localize = false,
@@ -448,7 +448,7 @@ local tbl_15 = {
 		0
 	}
 }
-local tbl_16 = {
+local level_title_style = {
 	use_shadow = true,
 	upper_case = true,
 	localize = false,
@@ -464,7 +464,7 @@ local tbl_16 = {
 		2
 	}
 }
-local tbl_17 = {
+local difficulty_text_style = {
 	use_shadow = true,
 	vertical_alignment = "top",
 	horizontal_alignment = "right",
@@ -478,7 +478,7 @@ local tbl_17 = {
 		2
 	}
 }
-local tbl_18 = {
+local center_title_style = {
 	use_shadow = true,
 	upper_case = true,
 	vertical_alignment = "center",
@@ -492,7 +492,7 @@ local tbl_18 = {
 		1
 	}
 }
-local tbl_19 = {
+local no_active_items_text = {
 	word_wrap = false,
 	use_shadow = true,
 	font_size = 24,
@@ -510,9 +510,9 @@ local tbl_19 = {
 	}
 }
 
-local function fn(arg_1_0, arg_1_1, arg_1_2)
+local function create_edge_divider(scenegraph_id, size, layer)
 	-- function 1
-	return {
+	local widget = {
 		element = {
 			passes = {
 				{
@@ -540,7 +540,7 @@ local function fn(arg_1_0, arg_1_1, arg_1_2)
 		style = {
 			bottom_edge = {
 				size = {
-					[2] = arg_1_1[2]
+					[2] = size[2]
 				},
 				color = {
 					255,
@@ -551,10 +551,10 @@ local function fn(arg_1_0, arg_1_1, arg_1_2)
 				offset = {
 					5,
 					0,
-					arg_1_2
+					layer
 				},
 				texture_tiling_size = {
-					arg_1_1[1] - 10,
+					size[1] - 10,
 					5
 				}
 			},
@@ -569,7 +569,7 @@ local function fn(arg_1_0, arg_1_1, arg_1_2)
 				offset = {
 					0,
 					-6,
-					arg_1_2 + 1
+					layer + 1
 				},
 				texture_size = {
 					9,
@@ -587,7 +587,7 @@ local function fn(arg_1_0, arg_1_1, arg_1_2)
 				offset = {
 					0,
 					-6,
-					arg_1_2 + 1
+					layer + 1
 				},
 				texture_size = {
 					9,
@@ -595,23 +595,25 @@ local function fn(arg_1_0, arg_1_1, arg_1_2)
 				}
 			}
 		},
-		scenegraph_id = arg_1_0,
+		scenegraph_id = scenegraph_id,
 		offset = {
 			0,
 			0,
 			0
 		}
 	}
+
+	return widget
 end
 
-local tbl_20 = {
+local banner_color = {
 	200,
 	10,
 	10,
 	10
 }
 
-function create_input_text(arg_2_0, arg_2_1, arg_2_2)
+function create_input_text(text, scenegraph_id, disable_with_gamepad)
 	-- function 2
 	return {
 		element = {
@@ -620,7 +622,7 @@ function create_input_text(arg_2_0, arg_2_1, arg_2_2)
 					style_id = "text",
 					pass_type = "text",
 					text_id = "text",
-					content_check_function = function (arg_3_0, arg_3_1)
+					content_check_function = function (content, style)
 						-- function 3
 						return not ShowCursorStack.cursor_active()
 					end
@@ -629,7 +631,7 @@ function create_input_text(arg_2_0, arg_2_1, arg_2_2)
 					style_id = "text_shadow",
 					pass_type = "text",
 					text_id = "text",
-					content_check_function = function (arg_4_0, arg_4_1)
+					content_check_function = function (content, style)
 						-- function 4
 						return not ShowCursorStack.cursor_active()
 					end
@@ -637,8 +639,8 @@ function create_input_text(arg_2_0, arg_2_1, arg_2_2)
 			}
 		},
 		content = {
-			text = arg_2_0,
-			disable_with_gamepad = arg_2_2
+			text = text,
+			disable_with_gamepad = disable_with_gamepad
 		},
 		style = {
 			text = {
@@ -677,26 +679,26 @@ function create_input_text(arg_2_0, arg_2_1, arg_2_2)
 			0,
 			0
 		},
-		scenegraph_id = arg_2_1
+		scenegraph_id = scenegraph_id
 	}
 end
 
-local tbl_21 = {
+local animations_definitions = {
 	reminder = {
 		{
 			name = "fade_in_reminder_text",
 			start_progress = 4,
 			end_progress = 4.3,
-			init = function (arg_5_0, arg_5_1, arg_5_2, arg_5_3)
+			init = function (ui_scenegraph, scenegraph_definition, widget, params)
 				-- function 5
 				return
 			end,
-			update = function (arg_6_0, arg_6_1, arg_6_2, arg_6_3, arg_6_4)
+			update = function (ui_scenegraph, scenegraph_definition, widget, progress, params)
 				-- function 6
-				arg_6_2.style.text.text_color[1] = arg_6_3 * 255
-				arg_6_2.style.text_shadow.text_color[1] = arg_6_3 * 255
+				widget.style.text.text_color[1] = progress * 255
+				widget.style.text_shadow.text_color[1] = progress * 255
 			end,
-			on_complete = function (arg_7_0, arg_7_1, arg_7_2, arg_7_3)
+			on_complete = function (ui_scenegraph, scenegraph_definition, widget, params)
 				-- function 7
 				return
 			end
@@ -705,16 +707,16 @@ local tbl_21 = {
 			name = "fade_out_reminder_text",
 			start_progress = 6,
 			end_progress = 6.5,
-			init = function (arg_8_0, arg_8_1, arg_8_2, arg_8_3)
+			init = function (ui_scenegraph, scenegraph_definition, widget, params)
 				-- function 8
 				return
 			end,
-			update = function (arg_9_0, arg_9_1, arg_9_2, arg_9_3, arg_9_4)
+			update = function (ui_scenegraph, scenegraph_definition, widget, progress, params)
 				-- function 9
-				arg_9_2.style.text.text_color[1] = (1 - arg_9_3) * 255
-				arg_9_2.style.text_shadow.text_color[1] = (1 - arg_9_3) * 255
+				widget.style.text.text_color[1] = (1 - progress) * 255
+				widget.style.text_shadow.text_color[1] = (1 - progress) * 255
 			end,
-			on_complete = function (arg_10_0, arg_10_1, arg_10_2, arg_10_3)
+			on_complete = function (ui_scenegraph, scenegraph_definition, widget, params)
 				-- function 10
 				return
 			end
@@ -722,7 +724,7 @@ local tbl_21 = {
 	}
 }
 
-function create_reminder_text(arg_11_0, arg_11_1, arg_11_2)
+function create_reminder_text(text, scenegraph_id, color)
 	-- function 11
 	return {
 		element = {
@@ -731,36 +733,36 @@ function create_reminder_text(arg_11_0, arg_11_1, arg_11_2)
 					style_id = "text",
 					pass_type = "text",
 					text_id = "power_up_text",
-					content_check_function = function (self)
+					content_check_function = function (content)
 						-- function 12
-						return self.info_type == "deus_power_up"
+						return content.info_type == "deus_power_up"
 					end
 				},
 				{
 					style_id = "text_shadow",
 					pass_type = "text",
 					text_id = "power_up_text",
-					content_check_function = function (self)
+					content_check_function = function (content)
 						-- function 13
-						return self.info_type == "deus_power_up"
+						return content.info_type == "deus_power_up"
 					end
 				},
 				{
 					style_id = "text",
 					pass_type = "text",
 					text_id = "item_text",
-					content_check_function = function (self)
+					content_check_function = function (content)
 						-- function 14
-						return self.info_type == "deus_item_tooltip"
+						return content.info_type == "deus_item_tooltip"
 					end
 				},
 				{
 					style_id = "text_shadow",
 					pass_type = "text",
 					text_id = "item_text",
-					content_check_function = function (self)
+					content_check_function = function (content)
 						-- function 15
-						return self.info_type == "deus_item_tooltip"
+						return content.info_type == "deus_item_tooltip"
 					end
 				}
 			}
@@ -805,19 +807,19 @@ function create_reminder_text(arg_11_0, arg_11_1, arg_11_2)
 			0,
 			0
 		},
-		scenegraph_id = arg_11_1
+		scenegraph_id = scenegraph_id
 	}
 end
 
-local flag_2 = true
-local tbl_22 = {
+local disable_with_gamepad = true
+local widgets = {
 	fullscreen_fade = UIWidgets.create_simple_rect("fullscreen_fade", {
 		155,
 		0,
 		0,
 		0
 	}),
-	center_title = UIWidgets.create_simple_text(Localize("menu_weave_forge_options_sub_title_properties_utility"), "center_title", 32, nil, tbl_18),
+	center_title = UIWidgets.create_simple_text(Localize("menu_weave_forge_options_sub_title_properties_utility"), "center_title", 32, nil, center_title_style),
 	center_title_bg = UIWidgets.create_simple_texture("tab_menu_bg_03", "center_title"),
 	options_background_edge = UIWidgets.create_simple_texture("shrine_sidebar_background", "options_background_edge"),
 	options_background = UIWidgets.create_tiled_texture("options_background", "menu_frame_bg_01_mask2", {
@@ -840,12 +842,12 @@ local tbl_22 = {
 		}
 	}, "options_background_mask"),
 	power_up_mask = UIWidgets.create_simple_texture("mask_rect", "power_up_window"),
-	no_blessings_text = UIWidgets.create_simple_text("", "no_blessings_text", nil, nil, tbl_19),
-	input_description_text = create_input_text("player_list_show_mouse_description", "deus_run_stats_input_description", flag_2),
-	power_up_description = UIWidgets.create_power_up("power_up_description_root", tbl_13.power_up_description_root.size, true, flag)
+	no_blessings_text = UIWidgets.create_simple_text("", "no_blessings_text", nil, nil, no_active_items_text),
+	input_description_text = create_input_text("player_list_show_mouse_description", "deus_run_stats_input_description", disable_with_gamepad),
+	power_up_description = UIWidgets.create_power_up("power_up_description_root", scenegraph.power_up_description_root.size, true, ALLOW_BOON_REMOVAL)
 }
 
-local function fn_2(arg_16_0, arg_16_1)
+local function create_title_widget(scenegraph_id, text)
 	-- function 16
 	return {
 		element = {
@@ -858,11 +860,11 @@ local function fn_2(arg_16_0, arg_16_1)
 					style_id = "frame",
 					pass_type = "texture_frame",
 					texture_id = "frame",
-					content_change_function = function (self, arg_17_1)
+					content_change_function = function (content, style)
 						-- function 17
-						self.frame = UIFrameSettings[self.frame_settings_name].texture
-						arg_17_1.texture_size = UIFrameSettings[self.frame_settings_name].texture_size
-						arg_17_1.texture_sizes = UIFrameSettings[self.frame_settings_name].texture_sizes
+						content.frame = UIFrameSettings[content.frame_settings_name].texture
+						style.texture_size = UIFrameSettings[content.frame_settings_name].texture_size
+						style.texture_sizes = UIFrameSettings[content.frame_settings_name].texture_sizes
 					end
 				},
 				{
@@ -879,7 +881,7 @@ local function fn_2(arg_16_0, arg_16_1)
 		},
 		content = {
 			frame_settings_name = "item_tooltip_frame_01",
-			text = arg_16_1
+			text = text
 		},
 		style = {
 			frame = {},
@@ -915,11 +917,11 @@ local function fn_2(arg_16_0, arg_16_1)
 				}
 			}
 		},
-		scenegraph_id = arg_16_0
+		scenegraph_id = scenegraph_id
 	}
 end
 
-local tbl_23 = {
+local tooltip_passes = {
 	"item_titles",
 	"skin_applied",
 	"ammunition",
@@ -937,11 +939,11 @@ local tbl_23 = {
 	"detailed_stats_ranged_light",
 	"detailed_stats_ranged_heavy"
 }
-local tbl_24 = {
-	weapon_melee = UIWidgets.create_simple_item_tooltip("weapon_melee", tbl_23),
-	weapon_ranged = UIWidgets.create_simple_item_tooltip("weapon_ranged", tbl_23),
-	weapon_melee_title = fn_2("weapon_melee_title", "deus_weapon_inspect_primary_title"),
-	weapon_ranged_title = fn_2("weapon_ranged_title", "deus_weapon_inspect_secondary_title"),
+local equipment_widgets = {
+	weapon_melee = UIWidgets.create_simple_item_tooltip("weapon_melee", tooltip_passes),
+	weapon_ranged = UIWidgets.create_simple_item_tooltip("weapon_ranged", tooltip_passes),
+	weapon_melee_title = create_title_widget("weapon_melee_title", "deus_weapon_inspect_primary_title"),
+	weapon_ranged_title = create_title_widget("weapon_ranged_title", "deus_weapon_inspect_secondary_title"),
 	healing_slot = UIWidgets.create_framed_info_box("healing_slot", "menu_frame_12", "menu_frame_12", "menu_frame_12", Localize("deus_weapon_inspect_healing_title"), "consumables_empty_medpack", {
 		50,
 		50
@@ -964,30 +966,30 @@ local tbl_24 = {
 		100
 	})
 }
-local content = tbl_24.weapon_melee.content
+local weapon_melee_content = equipment_widgets.weapon_melee.content
 
-content.disable_fade_in = true
-content.no_equipped_item = true
-content.force_top_alignment = true
+weapon_melee_content.disable_fade_in = true
+weapon_melee_content.no_equipped_item = true
+weapon_melee_content.force_top_alignment = true
 
-local content_2 = tbl_24.weapon_ranged.content
+local weapon_ranged_content = equipment_widgets.weapon_ranged.content
 
-content_2.disable_fade_in = true
-content_2.no_equipped_item = true
-content_2.force_top_alignment = true
+weapon_ranged_content.disable_fade_in = true
+weapon_ranged_content.no_equipped_item = true
+weapon_ranged_content.force_top_alignment = true
 
-local tbl_25 = {
+local reminder_widgets = {
 	reminder_text = create_reminder_text("n/a", "reminder_text")
 }
-local tbl_26 = {
+local power_up_widget_size = {
 	64,
 	64
 }
-local tbl_27 = {
+local power_up_widget_spacing = {
 	20,
 	10
 }
-local tbl_28 = {
+local blessing_widget_data = {
 	title_frame_name = "menu_frame_12",
 	max_blessing_amount = 6,
 	icon_frame_name = "button_frame_01_gold",
@@ -1002,9 +1004,9 @@ local tbl_28 = {
 		150
 	}
 }
-local tbl_29 = {
+local round_power_up_widget_data = {
 	background_icon = "button_frame_01",
-	width = tbl_26[1],
+	width = power_up_widget_size[1],
 	icon_size = {
 		35,
 		35
@@ -1024,9 +1026,9 @@ local tbl_29 = {
 		-1
 	}
 }
-local tbl_30 = {
+local rectangular_power_up_widget_data = {
 	background_icon = "button_frame_01",
-	width = tbl_26[1],
+	width = power_up_widget_size[1],
 	icon_size = {
 		58,
 		58
@@ -1046,7 +1048,7 @@ local tbl_30 = {
 		1
 	}
 }
-local tbl_31 = {
+local generic_input_actions = {
 	default = {
 		{
 			input_action = "left_stick",
@@ -1063,17 +1065,17 @@ local tbl_31 = {
 }
 
 return {
-	generic_input_actions = tbl_31,
-	scenegraph = tbl_13,
-	widgets = tbl_22,
-	equipment_widgets = tbl_24,
-	reminder_widgets = tbl_25,
-	blessing_widget_data = tbl_28,
+	generic_input_actions = generic_input_actions,
+	scenegraph = scenegraph,
+	widgets = widgets,
+	equipment_widgets = equipment_widgets,
+	reminder_widgets = reminder_widgets,
+	blessing_widget_data = blessing_widget_data,
 	max_power_up_amount = max_power_up_amount,
-	round_power_up_widget_data = tbl_29,
-	rectangular_power_up_widget_data = tbl_30,
-	animations_definitions = tbl_21,
-	power_up_widget_size = tbl_26,
-	power_up_widget_spacing = tbl_27,
-	allow_boon_removal = flag
+	round_power_up_widget_data = round_power_up_widget_data,
+	rectangular_power_up_widget_data = rectangular_power_up_widget_data,
+	animations_definitions = animations_definitions,
+	power_up_widget_size = power_up_widget_size,
+	power_up_widget_spacing = power_up_widget_spacing,
+	allow_boon_removal = ALLOW_BOON_REMOVAL
 }

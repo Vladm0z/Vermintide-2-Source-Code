@@ -118,13 +118,13 @@ player.holly_kills_es_dual_wield_hammer_sword = {
 	source = "player_data"
 }
 
-local tbl = {
+local holly_lord_levels = {
 	"warcamp",
 	"skaven_stronghold",
 	"ground_zero",
 	"skittergate"
 }
-local tbl_2 = {
+local weapon_names = {
 	"we_1h_axe",
 	"bw_1h_crowbill",
 	"wh_dual_wield_axe_falchion",
@@ -132,17 +132,17 @@ local tbl_2 = {
 	"es_dual_wield_hammer_sword"
 }
 
-for i = 1, #tbl do
-	local var_0_3 = tbl[i]
+for i = 1, #holly_lord_levels do
+	local level_name = holly_lord_levels[i]
 
-	for j = 1, #tbl_2 do
-		local var_0_4 = tbl_2[j]
-		local str = "holly_completed_level_" .. var_0_3 .. "_with_" .. var_0_4
+	for j = 1, #weapon_names do
+		local weapon_name = weapon_names[j]
+		local stat_name = "holly_completed_level_" .. level_name .. "_with_" .. weapon_name
 
-		player[str] = {
+		player[stat_name] = {
 			value = 0,
 			source = "player_data",
-			database_name = str
+			database_name = stat_name
 		}
 	end
 end

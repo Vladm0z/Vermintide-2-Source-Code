@@ -4,20 +4,20 @@ require("scripts/managers/camera/cameras/base_camera")
 
 SwayCamera = class(SwayCamera, BaseCamera)
 
-SwayCamera.init = function (arg_1_0, arg_1_1)
+SwayCamera.init = function (self, root_node)
 	-- function 1
-	BaseCamera.init(arg_1_0, arg_1_1)
+	BaseCamera.init(self, root_node)
 end
 
-SwayCamera.parse_parameters = function (arg_2_0, arg_2_1, arg_2_2)
+SwayCamera.parse_parameters = function (self, camera_settings, parent_node)
 	-- function 2
-	BaseCamera.parse_parameters(arg_2_0, arg_2_1, arg_2_2)
+	BaseCamera.parse_parameters(self, camera_settings, parent_node)
 end
 
-SwayCamera.update = function (arg_3_0, arg_3_1, arg_3_2, arg_3_3, arg_3_4)
+SwayCamera.update = function (self, dt, position, rotation, data)
 	-- function 3
-	local unbox = arg_3_4.final_rotation:unbox()
-	local multiply = Quaternion.multiply(arg_3_3, unbox)
+	local new_rot = data.final_rotation:unbox()
+	local final_rot = Quaternion.multiply(rotation, new_rot)
 
-	BaseCamera.update(arg_3_0, arg_3_1, arg_3_2, multiply, arg_3_4)
+	BaseCamera.update(self, dt, position, final_rot, data)
 end

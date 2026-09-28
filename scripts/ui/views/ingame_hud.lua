@@ -9,12 +9,12 @@ DLCUtils.dofile("hud_component_list_path")
 
 IngameHud = class(IngameHud)
 
-IngameHud.init = function (self, arg_1_1, arg_1_2)
+IngameHud.init = function (self, parent, ingame_ui_context)
 	-- function 1
-	self._parent = arg_1_1
+	self._parent = parent
 	self._peer_id = Network.peer_id()
 	self._player = Managers.player:local_player()
-	self._ingame_ui_context = arg_1_2
+	self._ingame_ui_context = ingame_ui_context
 
 	self:_setup_components()
 end
@@ -24,31 +24,42 @@ IngameHud._setup_components = function (self)
 	self._currently_visible_components = {}
 	self._current_group_name = nil
 
-	local _ingame_ui_context = self._ingame_ui_context
-	local mechanism_setting = Managers.mechanism:mechanism_setting("tobii_available")
+	local ingame_ui_context = self._ingame_ui_context
+	local tobii_available = Managers.mechanism:mechanism_setting("tobii_available")
+	local has_tobii = rawget(_G, "Tobii")
 
-	if not rawget(_G, "Tobii") and not mechanism_setting then
-		_ingame_ui_context.cleanui = UICleanUI.create(self._peer_id)
-		self._clean_ui = _ingame_ui_context.cleanui
+	if has_tobii and tobii_available then
+		ingame_ui_context.cleanui = UICleanUI.create(self._peer_id)
+		self._clean_ui = ingame_ui_context.cleanui
 		self._clean_ui.hud = self
 
-		local get_is_connected = Tobii.get_is_connected()
+		local is_tobii_connected = Tobii.get_is_connected()
 		local user_setting = Application.user_setting("tobii_eyetracking")
 
-		user_setting = not user_setting and Application.user_setting("tobii_clean_ui")
+		if user_setting then
+			-- Nothing
+		end
 
-		self:enable_clean_ui(not get_is_connected and user_setting)
+		user_setting = Application.user_setting("tobii_clean_ui")
+
+		local clean_ui_enabled = user_setting
+
+		::label_2_0::
+
+		self:enable_clean_ui(not not is_tobii_connected and not not clean_ui_enabled)
 	else
 		self._clean_ui = nil
 	end
 
-	local hud_component_list_path = Managers.state.game_mode:settings().hud_component_list_path
-	local _setup_component_definitions = self:_setup_component_definitions(hud_component_list_path)
+	local game_mode_manager = Managers.state.game_mode
+	local game_mode_settings = game_mode_manager:settings()
+	local hud_component_list_path = game_mode_settings.hud_component_list_path
+	local definitions = self:_setup_component_definitions(hud_component_list_path)
 
-	self._definitions = _setup_component_definitions
-	self._components_hud_scale_lookup = _setup_component_definitions.components_hud_scale_lookup
+	self._definitions = definitions
+	self._components_hud_scale_lookup = definitions.components_hud_scale_lookup
 
-	self:_compile_component_list(_ingame_ui_context, _setup_component_definitions.components)
+	self:_compile_component_list(ingame_ui_context, definitions.components)
 	Managers.state.event:register(self, "player_party_changed", "event_player_party_changed")
 end
 
@@ -58,240 +69,253 @@ IngameHud.reset_components = function (self)
 	self:_setup_components()
 end
 
-IngameHud.event_player_party_changed = function (self, arg_4_1, arg_4_2, arg_4_3, arg_4_4)
+IngameHud.event_player_party_changed = function (self, player, is_local, old_party_id, new_party_id)
 	-- function 4
-	if not arg_4_2 then
+	if not is_local then
 		return
 	end
 
 	self:reset_components()
 end
 
-IngameHud._setup_component_definitions = function (arg_5_0, arg_5_1)
+IngameHud._setup_component_definitions = function (self, hud_component_list_path)
 	-- function 5
-	local var_5_0 = local_require(arg_5_1)
-	local clone = table.clone(var_5_0.components)
-	local visibility_groups = var_5_0.visibility_groups
-	local tbl = {}
+	local definitions = local_require(hud_component_list_path)
+	local components = table.clone(definitions.components)
+	local visibility_groups = definitions.visibility_groups
+	local visibility_groups_lookup = {}
 
-	for i, v in ipairs(visibility_groups) do
-		tbl[v.name] = v
+	for _, settings in ipairs(visibility_groups) do
+		local name = settings.name
+
+		visibility_groups_lookup[name] = settings
 	end
 
-	for k, v_2 in pairs(DLCSettings) do
-		local ingame_hud_components = v_2.ingame_hud_components
+	for name, dlc in pairs(DLCSettings) do
+		local ingame_hud_components = dlc.ingame_hud_components
 
-		if not ingame_hud_components then
-			for k_2, v_3 in pairs(ingame_hud_components) do
-				local class_name = v_3.class_name
-				local flag = true
+		if ingame_hud_components then
+			for _, settings in pairs(ingame_hud_components) do
+				local class_name = settings.class_name
+				local add = true
 
-				for i6 = 1, #clone do
-					if clone[i6].class_name == class_name then
-						flag = false
+				for i = 1, #components do
+					if components[i].class_name == class_name then
+						add = false
 					end
 				end
 
-				if not flag then
-					clone[#clone + 1] = table.clone(v_3)
+				if add then
+					components[#components + 1] = table.clone(settings)
 				end
 			end
 		end
 	end
 
-	local function fn(self, arg_6_1)
+	local function sort_components_by_hud_scale(a, b)
 		-- function 6
-		local use_hud_scale = arg_6_1.use_hud_scale
+		local use_hud_scale = b.use_hud_scale
 
-		use_hud_scale = not use_hud_scale and not self.use_hud_scale
+		use_hud_scale = not not use_hud_scale and not not not a.use_hud_scale
 
 		return use_hud_scale
 	end
 
-	table.sort(clone, fn)
+	table.sort(components, sort_components_by_hud_scale)
 
-	local tbl_2 = {}
-	local tbl_3 = {}
+	local components_lookup = {}
+	local components_hud_scale_lookup = {}
 
-	for i_2, v_4 in ipairs(clone) do
-		local class_name_2 = v_4.class_name
+	for _, settings in ipairs(components) do
+		local name = settings.class_name
 
-		tbl_2[class_name_2] = v_4
+		components_lookup[name] = settings
 
-		if not v_4.use_hud_scale then
-			tbl_3[class_name_2] = true
+		if settings.use_hud_scale then
+			components_hud_scale_lookup[name] = true
 		end
 	end
 
-	for i_3, v_5 in ipairs(clone) do
-		local class_name_3 = v_5.class_name
-		local visibility_groups_2 = v_5.visibility_groups
+	for _, settings in ipairs(components) do
+		local class_name = settings.class_name
+		local visibility_groups = settings.visibility_groups
 
-		for i_4, v_6 in ipairs(visibility_groups_2) do
-			local var_5_13 = tbl[v_6]
+		for _, group_name in ipairs(visibility_groups) do
+			local visibility_group = visibility_groups_lookup[group_name]
 
-			if not var_5_13 then
-				fassert(var_5_13, "Could not find the visibility group: (%s) for component: (%s)", v_6, class_name_3)
+			if visibility_group then
+				fassert(visibility_group, "Could not find the visibility group: (%s) for component: (%s)", group_name, class_name)
 
-				local validation_function = var_5_13.validation_function
+				local validation_function = visibility_group.validation_function
 
-				fassert(validation_function, "Could not find any validation_function for visibility group: (%s)", v_6)
+				fassert(validation_function, "Could not find any validation_function for visibility group: (%s)", group_name)
 
-				if not var_5_13.visible_components then
-					var_5_13.visible_components = {}
+				if not visibility_group.visible_components then
+					visibility_group.visible_components = {}
 				end
 
-				var_5_13.visible_components[class_name_3] = true
+				local visible_components = visibility_group.visible_components
+
+				visible_components[class_name] = true
 			end
 		end
 
-		local filename = v_5.filename
+		local filename = settings.filename
 
 		require(filename)
 	end
 
 	return {
-		components = clone,
-		components_lookup = tbl_2,
-		components_hud_scale_lookup = tbl_3,
+		components = components,
+		components_lookup = components_lookup,
+		components_hud_scale_lookup = components_hud_scale_lookup,
 		visibility_groups = visibility_groups,
-		visibility_groups_lookup = tbl
+		visibility_groups_lookup = visibility_groups_lookup
 	}
 end
 
-IngameHud._compile_component_list = function (self, arg_7_1, arg_7_2)
+IngameHud._compile_component_list = function (self, ingame_ui_context, component_definitions)
 	-- function 7
-	local tbl = {}
-	local tbl_2 = {}
-	local tbl_3 = {}
-	local tbl_4 = {}
+	local component_list = {}
+	local components = {}
+	local components_array = {}
+	local components_array_id_lookup = {}
 
-	for i = 1, #arg_7_2 do
-		local var_7_4 = arg_7_2[i]
-		local class_name = var_7_4.class_name
+	for i = 1, #component_definitions do
+		local definition = component_definitions[i]
+		local class_name = definition.class_name
 
-		fassert(tbl[class_name] == nil, "Duplicate entries of component (%s)", class_name)
+		fassert(component_list[class_name] == nil, "Duplicate entries of component (%s)", class_name)
 
-		tbl[class_name] = var_7_4
+		component_list[class_name] = definition
 
-		self:_add_component(tbl, tbl_2, tbl_3, tbl_4, class_name)
+		self:_add_component(component_list, components, components_array, components_array_id_lookup, class_name)
 	end
 
-	self._component_list = tbl
-	self._components = tbl_2
-	self._components_array = tbl_3
-	self._components_array_id_lookup = tbl_4
+	self._component_list = component_list
+	self._components = components
+	self._components_array = components_array
+	self._components_array_id_lookup = components_array_id_lookup
 end
 
-IngameHud._add_component = function (self, arg_8_1, arg_8_2, arg_8_3, arg_8_4, arg_8_5)
+IngameHud._add_component = function (self, component_list, components, components_array, components_array_id_lookup, class_name)
 	-- function 8
-	local var_8_0 = arg_8_1[arg_8_5]
+	local definition = component_list[class_name]
 
-	fassert(var_8_0, "No definition found for component (%s)", arg_8_5)
+	fassert(definition, "No definition found for component (%s)", class_name)
 
-	if arg_8_2[arg_8_5] ~= nil then
-		table.dump(arg_8_2, "Hud components:")
+	if components[class_name] ~= nil then
+		table.dump(components, "Hud components:")
 	end
 
-	fassert(arg_8_2[arg_8_5] == nil, "Component (%s) is already added", arg_8_5)
+	fassert(components[class_name] == nil, "Component (%s) is already added", class_name)
 
-	local _ingame_ui_context = self._ingame_ui_context
-	local validation_function = var_8_0.validation_function
+	local ingame_ui_context = self._ingame_ui_context
+	local validation_function = definition.validation_function
 
-	if not validation_function and not validation_function(_ingame_ui_context, _ingame_ui_context.is_in_inn) then
-		local var_8_3 = rawget(_G, arg_8_5):new(self, _ingame_ui_context)
+	if not validation_function or validation_function(ingame_ui_context, ingame_ui_context.is_in_inn) then
+		local class = rawget(_G, class_name)
+		local component = class:new(self, ingame_ui_context)
 
-		var_8_3.name = arg_8_5
-		arg_8_2[arg_8_5] = var_8_3
+		component.name = class_name
+		components[class_name] = component
 
-		local num = #arg_8_3 + 1
+		local id = #components_array + 1
 
-		arg_8_3[num] = var_8_3
-		arg_8_4[var_8_3] = num
+		components_array[id] = component
+		components_array_id_lookup[component] = id
 	end
 end
 
-IngameHud._remove_component = function (self, arg_9_1, arg_9_2, arg_9_3, arg_9_4, arg_9_5)
+IngameHud._remove_component = function (self, component_list, components, components_array, components_array_id_lookup, class_name)
 	-- function 9
-	local var_9_0 = arg_9_2[arg_9_5]
+	local component = components[class_name]
 
-	if not var_9_0 then
-		local var_9_1 = arg_9_1[arg_9_5]
+	if not component then
+		local definition = component_list[class_name]
 
-		fassert(var_9_1.validation_function, "Component does not exist and doesn't have a validation_function, how did this happen?")
+		fassert(definition.validation_function, "Component does not exist and doesn't have a validation_function, how did this happen?")
 
-		local _ingame_ui_context = self._ingame_ui_context
-		local validation_function = var_9_1.validation_function(_ingame_ui_context, _ingame_ui_context.is_in_inn)
+		local ingame_ui_context = self._ingame_ui_context
+		local validated = definition.validation_function(ingame_ui_context, ingame_ui_context.is_in_inn)
 
-		fassert(validation_function == false, "Validation functions returned true but component does not exist, somethings weird.")
+		fassert(validated == false, "Validation functions returned true but component does not exist, somethings weird.")
 
 		return
 	end
 
-	self._currently_visible_components[var_9_0.name] = nil
+	self._currently_visible_components[component.name] = nil
 
-	local var_9_4 = arg_9_4[var_9_0]
-	local count = #arg_9_3
-	local var_9_6 = arg_9_3[count]
+	local id = components_array_id_lookup[component]
+	local last_component_id = #components_array
+	local last_component = components_array[last_component_id]
 
-	arg_9_3[var_9_4] = var_9_6
-	arg_9_4[var_9_6] = var_9_4
+	components_array[id] = last_component
+	components_array_id_lookup[last_component] = id
 
-	if not var_9_0.destroy then
-		var_9_0:destroy()
+	if component.destroy then
+		component:destroy()
 	end
 
-	arg_9_2[arg_9_5] = nil
-	arg_9_3[count] = nil
-	arg_9_4[var_9_0] = nil
+	components[class_name] = nil
+	components_array[last_component_id] = nil
+	components_array_id_lookup[component] = nil
 end
 
-IngameHud.remove_components = function (self, arg_10_1)
+IngameHud.remove_components = function (self, components_to_remove)
 	-- function 10
-	local _component_list = self._component_list
-	local _components = self._components
-	local _components_array = self._components_array
-	local _components_array_id_lookup = self._components_array_id_lookup
-	local count = #arg_10_1
+	local component_list = self._component_list
+	local components = self._components
+	local components_array = self._components_array
+	local components_array_id_lookup = self._components_array_id_lookup
+	local num_components = #components_to_remove
 
-	for i = 1, count do
-		local var_10_5 = arg_10_1[i]
+	for i = 1, num_components do
+		local class_name = components_to_remove[i]
 
-		self:_remove_component(_component_list, _components, _components_array, _components_array_id_lookup, var_10_5)
+		self:_remove_component(component_list, components, components_array, components_array_id_lookup, class_name)
 	end
 end
 
-IngameHud.component = function (self, arg_11_1)
+IngameHud.component = function (self, component_name)
 	-- function 11
-	return self._components[arg_11_1]
+	local components = self._components
+	local component = components[component_name]
+
+	return component
 end
 
 IngameHud._update_components_post_visibility = function (self)
 	-- function 12
-	if not self._update_post_visibility then
-		local var_12_0 = self._definitions.visibility_groups_lookup[self._current_group_name]
-		local _components_array = self._components_array
-		local visible_components = var_12_0.visible_components
+	if self._update_post_visibility then
+		local definitions = self._definitions
+		local visibility_groups_lookup = definitions.visibility_groups_lookup
+		local current_group_name = self._current_group_name
+		local group_settings = visibility_groups_lookup[current_group_name]
+		local components_array = self._components_array
+		local visible_components = group_settings.visible_components
 
-		for i = 1, #_components_array do
-			local var_12_3 = _components_array[i]
-			local name = var_12_3.name
-			local var_12_5
+		for j = 1, #components_array do
+			local component = components_array[j]
+			local component_name = component.name
+			local var_12_0
 
-			if not visible_components then
-				var_12_5 = visible_components[name]
+			if visible_components then
+				var_12_0 = visible_components[component_name]
 
-				if not var_12_5 then
+				if not var_12_0 then
 					-- Nothing
 				end
 			end
 
-			var_12_5 = false
+			var_12_0 = false
+
+			local status = var_12_0
 
 			::label_12_0::
 
-			if not var_12_3.post_visibility_changed then
-				var_12_3:post_visibility_changed(var_12_5)
+			if component.post_visibility_changed then
+				component:post_visibility_changed(status)
 			end
 		end
 
@@ -301,54 +325,57 @@ end
 
 IngameHud._update_components_visibility = function (self)
 	-- function 13
-	local visibility_groups = self._definitions.visibility_groups
-	local count = #visibility_groups
-	local debug_hud_visibility_group = script_data.debug_hud_visibility_group
-	local flag = not debug_hud_visibility_group and debug_hud_visibility_group ~= "none"
+	local definitions = self._definitions
+	local visibility_groups = definitions.visibility_groups
+	local num_visibility_groups = #visibility_groups
+	local debug_visibility_group = script_data.debug_hud_visibility_group
+	local handle_debug = not not debug_visibility_group and debug_visibility_group ~= "none"
 
-	for i = 1, count do
-		local var_13_4 = visibility_groups[i]
-		local name = var_13_4.name
-		local validation_function = var_13_4.validation_function
-		local flag_2 = false
+	for i = 1, num_visibility_groups do
+		local visibility_group = visibility_groups[i]
+		local group_name = visibility_group.name
+		local validation_function = visibility_group.validation_function
+		local is_valid = false
 
-		if not flag then
-			flag_2 = name == debug_hud_visibility_group
+		if handle_debug then
+			is_valid = group_name == debug_visibility_group
 		else
-			flag_2 = validation_function(self)
+			is_valid = validation_function(self)
 		end
 
-		if not flag_2 then
-			if name ~= self._current_group_name then
-				local _components_array = self._components_array
-				local _currently_visible_components = self._currently_visible_components
-				local visible_components = var_13_4.visible_components
+		if is_valid then
+			if group_name ~= self._current_group_name then
+				local components_array = self._components_array
+				local currently_visible_components = self._currently_visible_components
+				local visible_components = visibility_group.visible_components
 
-				for j = 1, #_components_array do
-					local var_13_11 = _components_array[j]
-					local name_2 = var_13_11.name
-					local var_13_13
+				for j = 1, #components_array do
+					local component = components_array[j]
+					local component_name = component.name
+					local var_13_0
 
-					if not visible_components then
-						var_13_13 = visible_components[name_2]
+					if visible_components then
+						var_13_0 = visible_components[component_name]
 
-						if not var_13_13 then
+						if not var_13_0 then
 							-- Nothing
 						end
 					end
 
-					var_13_13 = false
+					var_13_0 = false
+
+					local status = var_13_0
 
 					::label_13_0::
 
-					if not var_13_11.set_visible then
-						var_13_11:set_visible(var_13_13)
+					if component.set_visible then
+						component:set_visible(status)
 					end
 
-					_currently_visible_components[name_2] = var_13_13
+					currently_visible_components[component_name] = status
 				end
 
-				self._current_group_name = name
+				self._current_group_name = group_name
 				self._update_post_visibility = true
 			end
 
@@ -356,21 +383,21 @@ IngameHud._update_components_visibility = function (self)
 		end
 	end
 
-	if not flag then
+	if handle_debug then
 		local text = Debug.text
 		local str = "HUD visibility group: "
 		local tostring = tostring
 		local _current_group_name = self._current_group_name
 
-		_current_group_name = _current_group_name or "none"
+		_current_group_name = not not _current_group_name or not not "none"
 
 		text(str .. tostring(_current_group_name))
 	end
 end
 
-IngameHud.get_hud_component = function (self, arg_14_1)
+IngameHud.get_hud_component = function (self, hud_component_name)
 	-- function 14
-	return self._components[arg_14_1]
+	return self._components[hud_component_name]
 end
 
 IngameHud._update_hud_scale = function (self)
@@ -380,10 +407,10 @@ IngameHud._update_hud_scale = function (self)
 	end
 
 	if not self._scale_modified then
-		local num = UISettings.hud_scale * 0.01
+		local hud_scale_multiplier = UISettings.hud_scale * 0.01
 
-		self._scale_modified = self._hud_scale_multiplier ~= num
-		self._hud_scale_multiplier = num
+		self._scale_modified = self._hud_scale_multiplier ~= hud_scale_multiplier
+		self._hud_scale_multiplier = hud_scale_multiplier
 	end
 end
 
@@ -391,90 +418,90 @@ IngameHud._apply_hud_scale = function (self)
 	-- function 16
 	self:_update_hud_scale()
 
-	local _scale_modified = self._scale_modified
-	local _resolution_modified = self._resolution_modified
-	local flag = _scale_modified or _resolution_modified
-	local _hud_scale_multiplier = self._hud_scale_multiplier
+	local scale_modified = self._scale_modified
+	local resolution_modified = self._resolution_modified
+	local force_update = not not scale_modified or not not resolution_modified
+	local hud_scale_multiplier = self._hud_scale_multiplier
 
-	UPDATE_RESOLUTION_LOOKUP(flag, _hud_scale_multiplier)
+	UPDATE_RESOLUTION_LOOKUP(force_update, hud_scale_multiplier)
 end
 
 IngameHud._abort_hud_scale = function (self)
 	-- function 17
-	local _scale_modified = self._scale_modified
-	local _resolution_modified = self._resolution_modified
-	local flag = _scale_modified or _resolution_modified
+	local scale_modified = self._scale_modified
+	local resolution_modified = self._resolution_modified
+	local force_update = not not scale_modified or not not resolution_modified
 
-	UPDATE_RESOLUTION_LOOKUP(flag)
+	UPDATE_RESOLUTION_LOOKUP(force_update)
 end
 
-IngameHud.update = function (self, arg_18_1, arg_18_2)
+IngameHud.update = function (self, dt, t)
 	-- function 18
 	self:_reset_hud_frame_variables()
 	self:_update_components_visibility()
 
-	local _player = self._player
-	local _currently_visible_components = self._currently_visible_components
-	local _components_array = self._components_array
+	local player = self._player
+	local currently_visible_components = self._currently_visible_components
+	local components_array = self._components_array
 	local use_custom_hud_scale = UISettings.use_custom_hud_scale
-	local flag = false
-	local modified = RESOLUTION_LOOKUP.modified
+	local hud_scale_applied = false
+	local resolution_modified = RESOLUTION_LOOKUP.modified
 
-	for i = 1, #_components_array do
-		local var_18_6 = _components_array[i]
-		local name = var_18_6.name
+	for i = 1, #components_array do
+		local component = components_array[i]
+		local component_name = component.name
 
-		if not use_custom_hud_scale and flag or not self._components_hud_scale_lookup[name] then
-			flag = true
+		if use_custom_hud_scale and not hud_scale_applied and self._components_hud_scale_lookup[component_name] then
+			hud_scale_applied = true
 
 			self:_apply_hud_scale()
 		end
 
-		if not modified and not var_18_6.resolution_modified then
-			var_18_6:resolution_modified()
+		if resolution_modified and component.resolution_modified then
+			component:resolution_modified()
 		end
 
-		if not var_18_6.update and not _currently_visible_components[name] then
-			var_18_6:update(arg_18_1, arg_18_2, _player)
+		if component.update and currently_visible_components[component_name] then
+			component:update(dt, t, player)
 		end
 	end
 
-	self:_update_clean_ui(arg_18_1, arg_18_2)
+	self:_update_clean_ui(dt, t)
 
-	if not flag then
+	if hud_scale_applied then
 		self:_abort_hud_scale()
 	end
 
 	HudCustomizer.reset_button(self._ingame_ui_context.ui_renderer)
 end
 
-IngameHud.post_update = function (self, arg_19_1, arg_19_2)
+IngameHud.post_update = function (self, dt, t)
 	-- function 19
 	self:_reset_hud_frame_variables()
 	self:_update_components_post_visibility()
 
-	local _player = self._player
-	local _currently_visible_components = self._currently_visible_components
-	local _components_array = self._components_array
+	local player = self._player
+	local currently_visible_components = self._currently_visible_components
+	local components_array = self._components_array
 	local use_custom_hud_scale = UISettings.use_custom_hud_scale
-	local flag = false
+	local hud_scale_applied = false
 
-	for i = 1, #_components_array do
-		local var_19_5 = _components_array[i]
-		local name = var_19_5.name
+	for i = 1, #components_array do
+		local component = components_array[i]
+		local component_name = component.name
 
-		if not use_custom_hud_scale and flag or not self._components_hud_scale_lookup[name] then
-			flag = true
+		if use_custom_hud_scale and not hud_scale_applied and self._components_hud_scale_lookup[component_name] then
+			hud_scale_applied = true
 
 			self:_apply_hud_scale()
 		end
 
-		if not var_19_5.post_update and not _currently_visible_components[name] then
-			var_19_5:post_update(arg_19_1, arg_19_2, _player)
+		if component.post_update and currently_visible_components[component_name] then
+			component:post_update(dt, t, player)
 		end
 	end
 
-	if not flag then
+	if hud_scale_applied then
 		self:_abort_hud_scale()
 	end
 
@@ -486,11 +513,11 @@ IngameHud.destroy = function (self)
 	-- function 20
 	Managers.state.event:unregister("player_party_changed", self)
 
-	local _components_array = self._components_array
+	local components_array = self._components_array
 
-	for i, v in ipairs(_components_array) do
-		if not v.destroy then
-			v:destroy()
+	for _, component in ipairs(components_array) do
+		if component.destroy then
+			component:destroy()
 		end
 	end
 
@@ -503,20 +530,22 @@ IngameHud.parent = function (self)
 	return self._parent
 end
 
-IngameHud.input_service = function (arg_22_0)
+IngameHud.input_service = function (self)
 	-- function 22
 	return false
 end
 
-local function fn(self)
+local function is_own_player_dead_helper(player)
 	-- function 23
-	local flag = not self and self.player_unit
+	local player_unit = not not player and not not player.player_unit
 
-	if not ALIVE[flag] then
+	if not ALIVE[player_unit] then
 		return true
 	end
 
-	return ScriptUnit.extension(flag, "status_system"):is_ready_for_assisted_respawn()
+	local status_extension = ScriptUnit.extension(player_unit, "status_system")
+
+	return status_extension:is_ready_for_assisted_respawn()
 end
 
 IngameHud.is_in_inn = function (self)
@@ -528,7 +557,7 @@ IngameHud._reset_hud_frame_variables = function (self)
 	-- function 25
 	self._crosshair_position_x = false
 	self._crosshair_position_y = false
-	self._is_own_player_dead = fn(self._player)
+	self._is_own_player_dead = is_own_player_dead_helper(self._player)
 end
 
 IngameHud.is_own_player_dead = function (self)
@@ -538,46 +567,46 @@ end
 
 IngameHud.get_crosshair_position = function (self)
 	-- function 27
-	if not (not self._crosshair_position_x and self._crosshair_position_y) then
-		local inv_scale = RESOLUTION_LOOKUP.inv_scale
-		local num = RESOLUTION_LOOKUP.res_w * 0.5 * inv_scale
-		local num_2 = RESOLUTION_LOOKUP.res_h * 0.5 * inv_scale
-		local _player = self._player
-		local flag = not _player and _player.player_unit
+	if not self._crosshair_position_x or not self._crosshair_position_y then
+		local inv_res_scale = RESOLUTION_LOOKUP.inv_scale
+		local position_x = RESOLUTION_LOOKUP.res_w * 0.5 * inv_res_scale
+		local position_y = RESOLUTION_LOOKUP.res_h * 0.5 * inv_res_scale
+		local player = self._player
+		local player_unit = not not player and not not player.player_unit
 
-		if not ALIVE[flag] then
-			local has_extension = ScriptUnit.has_extension(flag, "eyetracking_system")
+		if ALIVE[player_unit] then
+			local eyetracking_extension = ScriptUnit.has_extension(player_unit, "eyetracking_system")
 
-			if not has_extension and not has_extension:get_is_feature_enabled("tobii_extended_view") then
-				local get_forward_rayhit = has_extension:get_forward_rayhit()
+			if eyetracking_extension and eyetracking_extension:get_is_feature_enabled("tobii_extended_view") then
+				local world_pos = eyetracking_extension:get_forward_rayhit()
 
-				if not get_forward_rayhit then
-					local viewport_name = _player.viewport_name
-					local viewport_world_name = _player.viewport_world_name
-					local world = Managers.world:world(viewport_world_name)
+				if world_pos then
+					local viewport_name = player.viewport_name
+					local world_name = player.viewport_world_name
+					local world = Managers.world:world(world_name)
 					local viewport = ScriptWorld.viewport(world, viewport_name)
 					local camera = ScriptViewport.camera(viewport)
-					local world_to_screen = Camera.world_to_screen(camera, get_forward_rayhit)
+					local position_in_screen = Camera.world_to_screen(camera, world_pos)
 
-					num = world_to_screen.x * inv_scale
-					num_2 = world_to_screen.y * inv_scale
+					position_x = position_in_screen.x * inv_res_scale
+					position_y = position_in_screen.y * inv_res_scale
 				end
 			end
 		end
 
-		self._crosshair_position_x = num
-		self._crosshair_position_y = num_2
+		self._crosshair_position_x = position_x
+		self._crosshair_position_y = position_y
 	end
 
 	return self._crosshair_position_x, self._crosshair_position_y
 end
 
-IngameHud.enable_clean_ui = function (self, arg_28_1)
+IngameHud.enable_clean_ui = function (self, enable)
 	-- function 28
-	self._tobii_clean_ui_is_enabled = arg_28_1
+	self._tobii_clean_ui_is_enabled = enable
 end
 
-IngameHud._update_clean_ui = function (self, arg_29_1, arg_29_2)
+IngameHud._update_clean_ui = function (self, dt, t)
 	-- function 29
 	if not self._clean_ui then
 		return
@@ -585,24 +614,40 @@ IngameHud._update_clean_ui = function (self, arg_29_1, arg_29_2)
 
 	local _had_tobii = self._had_tobii
 
-	_had_tobii = _had_tobii or false
+	if not _had_tobii then
+		-- Nothing
+	end
+
+	_had_tobii = false
+
+	local had_tobii = _had_tobii
+
+	::label_29_0::
 
 	local var_29_1 = rawget(_G, "Tobii")
 
-	var_29_1 = not var_29_1 and Tobii.get_is_connected()
-
-	if _had_tobii ~= var_29_1 then
-		UICleanUI.update(self._clean_ui, arg_29_1)
+	if var_29_1 then
+		-- Nothing
 	end
 
-	self._had_tobii = var_29_1
+	var_29_1 = Tobii.get_is_connected()
 
-	if not var_29_1 then
+	local has_tobii = var_29_1
+
+	::label_29_1::
+
+	if had_tobii ~= has_tobii then
+		UICleanUI.update(self._clean_ui, dt)
+	end
+
+	self._had_tobii = has_tobii
+
+	if not has_tobii then
 		return
 	end
 
 	if self._tobii_clean_ui_was_enabled ~= self._tobii_clean_ui_is_enabled then
-		UICleanUI.update(self._clean_ui, arg_29_1)
+		UICleanUI.update(self._clean_ui, dt)
 	end
 
 	self._tobii_clean_ui_was_enabled = self._tobii_clean_ui_is_enabled
@@ -611,5 +656,5 @@ IngameHud._update_clean_ui = function (self, arg_29_1, arg_29_2)
 		return
 	end
 
-	UICleanUI.update(self._clean_ui, arg_29_1)
+	UICleanUI.update(self._clean_ui, dt)
 end

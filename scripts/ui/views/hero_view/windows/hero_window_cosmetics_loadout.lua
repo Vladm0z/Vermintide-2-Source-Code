@@ -1,21 +1,21 @@
 -- chunkname: @scripts/ui/views/hero_view/windows/hero_window_cosmetics_loadout.lua
 
-local var_0_0 = local_require("scripts/ui/views/hero_view/windows/definitions/hero_window_cosmetics_loadout_definitions")
-local widgets = var_0_0.widgets
-local scenegraph_definition = var_0_0.scenegraph_definition
-local animation_definitions = var_0_0.animation_definitions
-local flag = false
+local definitions = local_require("scripts/ui/views/hero_view/windows/definitions/hero_window_cosmetics_loadout_definitions")
+local widget_definitions = definitions.widgets
+local scenegraph_definition = definitions.scenegraph_definition
+local animation_definitions = definitions.animation_definitions
+local DO_RELOAD = false
 
 HeroWindowCosmeticsLoadout = class(HeroWindowCosmeticsLoadout)
 HeroWindowCosmeticsLoadout.NAME = "HeroWindowCosmeticsLoadout"
 
-HeroWindowCosmeticsLoadout.on_enter = function (self, arg_1_1, arg_1_2)
+HeroWindowCosmeticsLoadout.on_enter = function (self, params, offset)
 	-- function 1
 	print("[HeroViewWindow] Enter Substate HeroWindowCosmeticsLoadout")
 
-	self.parent = arg_1_1.parent
+	self.parent = params.parent
 
-	local ingame_ui_context = arg_1_1.ingame_ui_context
+	local ingame_ui_context = params.ingame_ui_context
 
 	self.ui_renderer = ingame_ui_context.ui_renderer
 	self.ui_top_renderer = ingame_ui_context.ui_top_renderer
@@ -25,136 +25,140 @@ HeroWindowCosmeticsLoadout.on_enter = function (self, arg_1_1, arg_1_2)
 		snap_pixel_positions = true
 	}
 
-	local player = Managers.player
+	local player_manager = Managers.player
+	local local_player = player_manager:local_player()
 
-	self._stats_id = player:local_player():stats_id()
-	self.player_manager = player
+	self._stats_id = local_player:stats_id()
+	self.player_manager = player_manager
 	self.peer_id = ingame_ui_context.peer_id
 	self._animations = {}
 	self._equipment_items = {}
 
-	self:create_ui_elements(arg_1_1, arg_1_2)
+	self:create_ui_elements(params, offset)
 
-	self.hero_name = arg_1_1.hero_name
-	self.career_index = arg_1_1.career_index
+	self.hero_name = params.hero_name
+	self.career_index = params.career_index
 end
 
-HeroWindowCosmeticsLoadout.create_ui_elements = function (self, arg_2_1, arg_2_2)
+HeroWindowCosmeticsLoadout.create_ui_elements = function (self, params, offset)
 	-- function 2
 	self.ui_scenegraph = UISceneGraph.init_scenegraph(scenegraph_definition)
 
-	local tbl = {}
-	local tbl_2 = {}
+	local widgets = {}
+	local widgets_by_name = {}
 
-	for k, v in pairs(widgets) do
-		local var_2_2 = UIWidget.init(v)
+	for name, widget_definition in pairs(widget_definitions) do
+		local widget = UIWidget.init(widget_definition)
 
-		tbl[#tbl + 1] = var_2_2
-		tbl_2[k] = var_2_2
+		widgets[#widgets + 1] = widget
+		widgets_by_name[name] = widget
 	end
 
-	self._widgets = tbl
-	self._widgets_by_name = tbl_2
+	self._widgets = widgets
+	self._widgets_by_name = widgets_by_name
 
 	UIRenderer.clear_scenegraph_queue(self.ui_renderer)
 
 	self.ui_animator = UIAnimator:new(self.ui_scenegraph, animation_definitions)
 
-	if not arg_2_2 then
-		local local_position = self.ui_scenegraph.window.local_position
+	if offset then
+		local window_position = self.ui_scenegraph.window.local_position
 
-		local_position[1] = local_position[1] + arg_2_2[1]
-		local_position[2] = local_position[2] + arg_2_2[2]
-		local_position[3] = local_position[3] + arg_2_2[3]
+		window_position[1] = window_position[1] + offset[1]
+		window_position[2] = window_position[2] + offset[2]
+		window_position[3] = window_position[3] + offset[3]
 	end
 end
 
-HeroWindowCosmeticsLoadout.on_exit = function (self, arg_3_1)
+HeroWindowCosmeticsLoadout.on_exit = function (self, params)
 	-- function 3
 	print("[HeroViewWindow] Exit Substate HeroWindowCosmeticsLoadout")
 
 	self.ui_animator = nil
 end
 
-HeroWindowCosmeticsLoadout.update = function (self, arg_4_1, arg_4_2)
+HeroWindowCosmeticsLoadout.update = function (self, dt, t)
 	-- function 4
-	if not flag then
-		flag = false
+	if DO_RELOAD then
+		DO_RELOAD = false
 
 		self:create_ui_elements()
 	end
 
-	self:_update_animations(arg_4_1)
+	self:_update_animations(dt)
 	self:_update_loadout_sync()
 	self:_update_selected_cosmetic_slot_index()
-	self:_handle_input(arg_4_1, arg_4_2)
-	self:draw(arg_4_1)
+	self:_handle_input(dt, t)
+	self:draw(dt)
 end
 
-HeroWindowCosmeticsLoadout.post_update = function (arg_5_0, arg_5_1, arg_5_2)
+HeroWindowCosmeticsLoadout.post_update = function (self, dt, t)
 	-- function 5
 	return
 end
 
-HeroWindowCosmeticsLoadout._update_animations = function (self, arg_6_1)
+HeroWindowCosmeticsLoadout._update_animations = function (self, dt)
 	-- function 6
-	self.ui_animator:update(arg_6_1)
+	self.ui_animator:update(dt)
 
-	local _animations = self._animations
+	local animations = self._animations
 	local ui_animator = self.ui_animator
 
-	for k, v in pairs(_animations) do
-		if not ui_animator:is_animation_completed(v) then
-			ui_animator:stop_animation(v)
+	for animation_name, animation_id in pairs(animations) do
+		if ui_animator:is_animation_completed(animation_id) then
+			ui_animator:stop_animation(animation_id)
 
-			_animations[k] = nil
+			animations[animation_name] = nil
 		end
 	end
 
-	local _widgets_by_name = self._widgets_by_name
+	local widgets_by_name = self._widgets_by_name
 end
 
-HeroWindowCosmeticsLoadout._is_button_pressed = function (arg_7_0, arg_7_1)
+HeroWindowCosmeticsLoadout._is_button_pressed = function (self, widget)
 	-- function 7
-	local button_hotspot = arg_7_1.content.button_hotspot
+	local content = widget.content
+	local hotspot = content.button_hotspot
 
-	if not button_hotspot.on_release then
-		button_hotspot.on_release = false
+	if hotspot.on_release then
+		hotspot.on_release = false
 
 		return true
 	end
 end
 
-HeroWindowCosmeticsLoadout._handle_input = function (self, arg_8_1, arg_8_2)
+HeroWindowCosmeticsLoadout._handle_input = function (self, dt, t)
 	-- function 8
 	local parent = self.parent
+	local slot_index_hovered = self:_is_equipment_slot_hovered()
 
-	if not self:_is_equipment_slot_hovered() then
+	if slot_index_hovered then
 		self:_play_sound("play_gui_cosmetics_selection_hover")
 	end
 
-	local _is_equipment_slot_pressed = self:_is_equipment_slot_pressed()
+	local slot_index_pressed = self:_is_equipment_slot_pressed()
 
-	if not _is_equipment_slot_pressed then
-		parent:set_selected_cosmetic_slot_index(_is_equipment_slot_pressed)
+	if slot_index_pressed then
+		parent:set_selected_cosmetic_slot_index(slot_index_pressed)
 		self:_play_sound("play_gui_cosmetics_selection_click")
 	end
 end
 
 HeroWindowCosmeticsLoadout._update_selected_cosmetic_slot_index = function (self)
 	-- function 9
-	local get_selected_cosmetic_slot_index = self.parent:get_selected_cosmetic_slot_index()
+	local index = self.parent:get_selected_cosmetic_slot_index()
 
-	if get_selected_cosmetic_slot_index ~= self._selected_cosmetic_slot_index then
-		self:_set_equipment_slot_selected(get_selected_cosmetic_slot_index)
+	if index ~= self._selected_cosmetic_slot_index then
+		self:_set_equipment_slot_selected(index)
 
-		self._selected_cosmetic_slot_index = get_selected_cosmetic_slot_index
+		self._selected_cosmetic_slot_index = index
 	end
 end
 
 HeroWindowCosmeticsLoadout._update_loadout_sync = function (self)
 	-- function 10
-	local loadout_sync_id = self.parent.loadout_sync_id
+	local parent = self.parent
+	local loadout_sync_id = parent.loadout_sync_id
 
 	if loadout_sync_id ~= self._loadout_sync_id then
 		self:_populate_loadout()
@@ -163,60 +167,70 @@ HeroWindowCosmeticsLoadout._update_loadout_sync = function (self)
 	end
 end
 
-HeroWindowCosmeticsLoadout._exit = function (self, arg_11_1)
+HeroWindowCosmeticsLoadout._exit = function (self, selected_level)
 	-- function 11
 	self.exit = true
-	self.exit_level_id = arg_11_1
+	self.exit_level_id = selected_level
 end
 
-HeroWindowCosmeticsLoadout.draw = function (self, arg_12_1)
+HeroWindowCosmeticsLoadout.draw = function (self, dt)
 	-- function 12
 	local ui_renderer = self.ui_renderer
 	local ui_top_renderer = self.ui_top_renderer
 	local ui_scenegraph = self.ui_scenegraph
-	local window_input_service = self.parent:window_input_service()
+	local input_service = self.parent:window_input_service()
 
-	UIRenderer.begin_pass(ui_top_renderer, ui_scenegraph, window_input_service, arg_12_1, nil, self.render_settings)
+	UIRenderer.begin_pass(ui_top_renderer, ui_scenegraph, input_service, dt, nil, self.render_settings)
 
-	for i, v in ipairs(self._widgets) do
-		UIRenderer.draw_widget(ui_top_renderer, v)
+	for _, widget in ipairs(self._widgets) do
+		UIRenderer.draw_widget(ui_top_renderer, widget)
 	end
 
-	local _active_node_widgets = self._active_node_widgets
+	local active_node_widgets = self._active_node_widgets
 
-	if not _active_node_widgets then
-		for i_2, v_2 in ipairs(_active_node_widgets) do
-			UIRenderer.draw_widget(ui_top_renderer, v_2)
+	if active_node_widgets then
+		for _, widget in ipairs(active_node_widgets) do
+			UIRenderer.draw_widget(ui_top_renderer, widget)
 		end
 	end
 
 	UIRenderer.end_pass(ui_top_renderer)
 end
 
-HeroWindowCosmeticsLoadout._play_sound = function (self, arg_13_1)
+HeroWindowCosmeticsLoadout._play_sound = function (self, event)
 	-- function 13
-	self.parent:play_sound(arg_13_1)
+	self.parent:play_sound(event)
 end
 
 HeroWindowCosmeticsLoadout._setup_slot_icons = function (self)
 	-- function 14
-	local slots_by_cosmetic_index = InventorySettings.slots_by_cosmetic_index
+	local slots = InventorySettings.slots_by_cosmetic_index
 
-	for k, v in pairs(slots_by_cosmetic_index) do
-		local ui_slot_index = v.ui_slot_index
+	for _, slot in pairs(slots) do
+		local index = slot.ui_slot_index
 
-		if not ui_slot_index then
-			local content = self._widgets_by_name.loadout_grid.content
-			local str = "_1_" .. tostring(ui_slot_index)
-			local str_2 = "item_icon" .. str
-			local str_3 = "hotspot" .. str
-			local str_4 = "item_tooltip" .. str
-			local str_5 = "slot_icon" .. str
-			local type = v.type
-			local var_14_9 = slot_icon_by_type[type]
+		if index then
+			local widget = self._widgets_by_name.loadout_grid
+			local content = widget.content
+			local name_sufix = "_1_" .. tostring(index)
+			local item_icon_name = "item_icon" .. name_sufix
+			local hotspot_name = "hotspot" .. name_sufix
+			local item_tooltip_name = "item_tooltip" .. name_sufix
+			local slot_icon_name = "slot_icon" .. name_sufix
+			local slot_type = slot.type
+			local var_14_0 = slot_icon_by_type[slot_type]
 
-			var_14_9 = var_14_9 or "tabs_icon_all_selected"
-			content[str_5] = var_14_9
+			if not var_14_0 then
+				-- Nothing
+			end
+
+			var_14_0 = "tabs_icon_all_selected"
+
+			local icon_texture = var_14_0
+
+			::label_14_0::
+
+			content[slot_icon_name] = icon_texture
 		end
 	end
 end
@@ -224,75 +238,83 @@ end
 HeroWindowCosmeticsLoadout._populate_loadout = function (self)
 	-- function 15
 	local hero_name = self.hero_name
-	local slots_by_cosmetic_index = InventorySettings.slots_by_cosmetic_index
+	local slots = InventorySettings.slots_by_cosmetic_index
 	local career_index = self.career_index
-	local var_15_3 = FindProfileIndex(hero_name)
-	local name = SPProfiles[var_15_3].careers[career_index].name
+	local profile_index = FindProfileIndex(hero_name)
+	local profile = SPProfiles[profile_index]
+	local career_data = profile.careers[career_index]
+	local career_name = career_data.name
 
-	for k, v in pairs(slots_by_cosmetic_index) do
-		local name_2 = v.name
-		local get_loadout_item = BackendUtils.get_loadout_item(name, name_2)
+	for _, slot in pairs(slots) do
+		local slot_name = slot.name
+		local item = BackendUtils.get_loadout_item(career_name, slot_name)
 
-		if not get_loadout_item then
-			self:_equip_item_presentation(get_loadout_item, v)
+		if item then
+			self:_equip_item_presentation(item, slot)
 		end
 	end
 end
 
-HeroWindowCosmeticsLoadout._equip_item_presentation = function (self, arg_16_1, arg_16_2)
+HeroWindowCosmeticsLoadout._equip_item_presentation = function (self, item, slot)
 	-- function 16
-	local slot_type = arg_16_1.data.slot_type
-	local slot_index = arg_16_2.slot_index
-	local cosmetic_index = arg_16_2.cosmetic_index
-	local _widgets_by_name = self._widgets_by_name
+	local item_data = item.data
+	local slot_type = item_data.slot_type
+	local slot_index = slot.slot_index
+	local cosmetic_index = slot.cosmetic_index
+	local widgets_by_name = self._widgets_by_name
 
-	if not cosmetic_index then
-		self._equipment_items[cosmetic_index] = arg_16_1
+	if cosmetic_index then
+		self._equipment_items[cosmetic_index] = item
 
-		local loadout_grid = _widgets_by_name.loadout_grid
-		local content = loadout_grid.content
-		local style = loadout_grid.style
-		local str = "_1_" .. tostring(cosmetic_index)
-		local str_2 = "item_icon" .. str
-		local str_3 = "hotspot" .. str
-		local str_4 = "item_tooltip" .. str
-		local get_ui_information_from_item, var_16_12, var_16_13 = UIUtils.get_ui_information_from_item(arg_16_1)
+		local widget = widgets_by_name.loadout_grid
+		local content = widget.content
+		local style = widget.style
+		local name_sufix = "_1_" .. tostring(cosmetic_index)
+		local item_icon_name = "item_icon" .. name_sufix
+		local hotspot_name = "hotspot" .. name_sufix
+		local item_tooltip_name = "item_tooltip" .. name_sufix
+		local inventory_icon, display_name, _ = UIUtils.get_ui_information_from_item(item)
 
-		content[str_4] = var_16_12
-		content["item" .. str] = arg_16_1
+		content[item_tooltip_name] = display_name
+		content["item" .. name_sufix] = item
 
-		local backend_id = arg_16_1.backend_id
-		local rarity = arg_16_1.rarity
-		local get_interface = Managers.backend:get_interface("items")
+		local backend_id = item.backend_id
+		local rarity = item.rarity
+		local backend_items = Managers.backend:get_interface("items")
 
-		if not backend_id then
-			rarity = get_interface:get_item_rarity(backend_id)
+		if backend_id then
+			rarity = backend_items:get_item_rarity(backend_id)
 		end
 
-		if not rarity then
-			content["rarity_texture" .. str] = UISettings.item_rarity_textures[rarity]
+		if rarity then
+			local rarity_texture_name = "rarity_texture" .. name_sufix
+
+			content[rarity_texture_name] = UISettings.item_rarity_textures[rarity]
 		end
 
-		local var_16_17 = content[str_3]
+		local item_content = content[hotspot_name]
 
-		if not var_16_17 then
-			var_16_17[str_2] = get_ui_information_from_item
+		if item_content then
+			item_content[item_icon_name] = inventory_icon
 		end
 	end
 end
 
 HeroWindowCosmeticsLoadout._is_equipment_slot_pressed = function (self)
 	-- function 17
-	local content = self._widgets_by_name.loadout_grid.content
+	local widget = self._widgets_by_name.loadout_grid
+	local content = widget.content
 	local rows = content.rows
 	local columns = content.columns
 
 	for i = 1, rows do
-		for j = 1, columns do
-			local str = "_" .. tostring(i) .. "_" .. tostring(j)
+		for k = 1, columns do
+			local name_sufix = "_" .. tostring(i) .. "_" .. tostring(k)
+			local hotspot_name = "hotspot" .. name_sufix
+			local slot_hotspot = content[hotspot_name]
 
-			if not content["hotspot" .. str].on_pressed then
-				return j
+			if slot_hotspot.on_pressed then
+				return k
 			end
 		end
 	end
@@ -300,80 +322,102 @@ end
 
 HeroWindowCosmeticsLoadout._is_equipment_slot_hovered = function (self)
 	-- function 18
-	local content = self._widgets_by_name.loadout_grid.content
+	local widget = self._widgets_by_name.loadout_grid
+	local content = widget.content
 	local rows = content.rows
 	local columns = content.columns
 
 	for i = 1, rows do
-		for j = 1, columns do
-			local str = "_" .. tostring(i) .. "_" .. tostring(j)
+		for k = 1, columns do
+			local name_sufix = "_" .. tostring(i) .. "_" .. tostring(k)
+			local hotspot_name = "hotspot" .. name_sufix
+			local slot_hotspot = content[hotspot_name]
 
-			if not content["hotspot" .. str].on_hover_enter then
-				return j
+			if slot_hotspot.on_hover_enter then
+				return k
 			end
 		end
 	end
 end
 
-HeroWindowCosmeticsLoadout._set_equipment_slot_selected = function (self, arg_19_1)
+HeroWindowCosmeticsLoadout._set_equipment_slot_selected = function (self, column_index)
 	-- function 19
-	local content = self._widgets_by_name.loadout_grid.content
+	local widget = self._widgets_by_name.loadout_grid
+	local content = widget.content
 	local rows = content.rows
 	local columns = content.columns
 
 	for i = 1, rows do
-		for j = 1, columns do
-			local str = "_" .. tostring(i) .. "_" .. tostring(j)
+		for k = 1, columns do
+			local name_sufix = "_" .. tostring(i) .. "_" .. tostring(k)
+			local hotspot_name = "hotspot" .. name_sufix
+			local slot_hotspot = content[hotspot_name]
 
-			content["hotspot" .. str].is_selected = not arg_19_1 and arg_19_1 == j
+			slot_hotspot.is_selected = not not column_index and column_index == k
 		end
 	end
 end
 
-HeroWindowCosmeticsLoadout._is_equipment_slot_hovered_by_type = function (self, arg_20_1)
+HeroWindowCosmeticsLoadout._is_equipment_slot_hovered_by_type = function (self, item_type)
 	-- function 20
-	local content = self._widgets_by_name.loadout_grid.content
+	local widget = self._widgets_by_name.loadout_grid
+	local content = widget.content
 	local rows = content.rows
 	local columns = content.columns
-	local slots_by_cosmetic_index = InventorySettings.slots_by_cosmetic_index
+	local slots = InventorySettings.slots_by_cosmetic_index
 
 	for i = 1, rows do
-		for j = 1, columns do
-			if slots_by_cosmetic_index[j].type == arg_20_1 then
-				local str = "_" .. tostring(i) .. "_" .. tostring(j)
+		for k = 1, columns do
+			local slot_settings = slots[k]
 
-				if not content["hotspot" .. str].internal_is_hover then
-					return j
+			if slot_settings.type == item_type then
+				local name_sufix = "_" .. tostring(i) .. "_" .. tostring(k)
+				local hotspot_name = "hotspot" .. name_sufix
+				local slot_hotspot = content[hotspot_name]
+
+				if slot_hotspot.internal_is_hover then
+					return k
 				end
 			end
 		end
 	end
 end
 
-HeroWindowCosmeticsLoadout._highlight_equipment_slot_by_type = function (self, arg_21_1)
+HeroWindowCosmeticsLoadout._highlight_equipment_slot_by_type = function (self, item_type)
 	-- function 21
-	local loadout_grid = self._widgets_by_name.loadout_grid
-	local content = loadout_grid.content
-	local style = loadout_grid.style
+	local widget = self._widgets_by_name.loadout_grid
+	local content = widget.content
+	local style = widget.style
 	local rows = content.rows
 	local columns = content.columns
-	local slots_by_cosmetic_index = InventorySettings.slots_by_cosmetic_index
+	local slots = InventorySettings.slots_by_cosmetic_index
 
 	for i = 1, rows do
-		for j = 1, columns do
-			local var_21_6 = slots_by_cosmetic_index[j]
-			local str = "_" .. tostring(i) .. "_" .. tostring(j)
-			local str_2 = "hotspot" .. str
-			local str_3 = "slot_hover" .. str
-			local var_21_10 = content[str_2]
-			local flag = var_21_6.type == arg_21_1
+		for k = 1, columns do
+			local slot_settings = slots[k]
+			local name_sufix = "_" .. tostring(i) .. "_" .. tostring(k)
+			local hotspot_name = "hotspot" .. name_sufix
+			local slot_hover_name = "slot_hover" .. name_sufix
+			local slot_hotspot = content[hotspot_name]
+			local enabled = slot_settings.type == item_type
 
-			var_21_10.highlight = flag
+			slot_hotspot.highlight = enabled
 
-			local flag_2
+			local num
 
-			flag_2 = not var_21_10.internal_is_hover and 255 and 100
-			style[str_3].color[1] = not flag and flag_2 and 255
+			if slot_hotspot.internal_is_hover then
+				num = 255
+
+				goto label_21_0
+			end
+
+			num = 100
+
+			local alpha = num
+
+			::label_21_0::
+
+			style[slot_hover_name].color[1] = (not enabled or not alpha) and not not 255
 		end
 	end
 end

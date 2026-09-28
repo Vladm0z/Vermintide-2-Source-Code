@@ -5,9 +5,9 @@ require("scripts/entity_system/systems/behaviour/nodes/bt_node")
 BTPackMasterGetHookAction = class(BTPackMasterGetHookAction, BTNode)
 BTPackMasterGetHookAction.name = "BTPackMasterGetHookAction"
 
-local num = 10
-local num_2 = 1
-local num_3 = 2
+local DRAG_DESTINATIONS_N = 10
+local DESTINATION_POS_I = 1
+local DESTINATION_SCORE_I = 2
 
 BTPackMasterGetHookAction.init = function (self, ...)
 	-- function 1
@@ -16,121 +16,122 @@ BTPackMasterGetHookAction.init = function (self, ...)
 	self.navigation_group_manager = Managers.state.conflict.navigation_group_manager
 end
 
-BTPackMasterGetHookAction.enter = function (arg_2_0, arg_2_1, arg_2_2, arg_2_3)
+BTPackMasterGetHookAction.enter = function (self, unit, blackboard, t)
 	-- function 2
-	if not arg_2_2.best_cover then
-		arg_2_2.end_time = arg_2_3 + 10
+	if not blackboard.best_cover then
+		blackboard.end_time = t + 10
 
-		arg_2_2.navigation_extension:move_to(POSITION_LOOKUP[arg_2_1])
+		blackboard.navigation_extension:move_to(POSITION_LOOKUP[unit])
 	end
 
-	Managers.state.network:anim_event(arg_2_1, "run_away")
+	Managers.state.network:anim_event(unit, "run_away")
 
-	arg_2_2.move_state = "moving"
+	blackboard.move_state = "moving"
 end
 
-BTPackMasterGetHookAction.leave = function (arg_3_0, arg_3_1, arg_3_2, arg_3_3, arg_3_4, arg_3_5)
+BTPackMasterGetHookAction.leave = function (self, unit, blackboard, t, reason, destroy)
 	-- function 3
-	if arg_3_4 == "done" then
-		AiUtils.show_polearm(arg_3_1, true)
+	if reason == "done" then
+		AiUtils.show_polearm(unit, true)
 
-		arg_3_2.needs_hook = nil
-		arg_3_2.best_cover = nil
-		arg_3_2.best_cover_score = nil
+		blackboard.needs_hook = nil
+		blackboard.best_cover = nil
+		blackboard.best_cover_score = nil
 	end
 
-	Managers.state.network:anim_event(arg_3_1, "move_fwd")
+	Managers.state.network:anim_event(unit, "move_fwd")
 end
 
-BTPackMasterGetHookAction.run = function (self, arg_4_1, arg_4_2, arg_4_3, arg_4_4)
+BTPackMasterGetHookAction.run = function (self, unit, blackboard, t, dt)
 	-- function 4
-	local average_player_position = ConflictUtils.average_player_position()
+	local player_center_pos = ConflictUtils.average_player_position()
 
-	if average_player_position == nil then
+	if player_center_pos == nil then
 		return "failed"
 	end
 
-	local var_4_1 = POSITION_LOOKUP[arg_4_1]
-	local nav_world = arg_4_2.nav_world
+	local position = POSITION_LOOKUP[unit]
+	local nav_world = blackboard.nav_world
 
-	if not arg_4_2.navigation_extension:has_reached_destination(1) then
-		if arg_4_3 > arg_4_2.end_time then
+	if blackboard.navigation_extension:has_reached_destination(1) then
+		if t > blackboard.end_time then
 			return "done"
 		end
 
-		self:find_hidden_cover(var_4_1, average_player_position, arg_4_2)
+		self:find_hidden_cover(position, player_center_pos, blackboard)
 
-		if not arg_4_2.best_cover then
+		if not blackboard.best_cover then
 			return "done"
 		end
 
-		if arg_4_2.best_cover_score < 0 then
+		if blackboard.best_cover_score < 0 then
 			return "done"
 		end
 
-		arg_4_2.navigation_extension:move_to(arg_4_2.best_cover:unbox())
+		blackboard.navigation_extension:move_to(blackboard.best_cover:unbox())
 	end
 
-	if not script_data.debug_ai_movement and not arg_4_2.best_cover then
-		local unbox = arg_4_2.best_cover:unbox()
-		local num = unbox + Vector3(0, 0, 15)
+	if script_data.debug_ai_movement and blackboard.best_cover then
+		local cover_pos = blackboard.best_cover:unbox()
+		local high_pos = cover_pos + Vector3(0, 0, 15)
 
-		QuickDrawer:sphere(unbox, 0.75, Color(255, 0, 150), 6)
-		QuickDrawer:line(unbox, num, Color(255, 0, 150))
-		QuickDrawer:sphere(num, 0.75, Color(255, 0, 150), 6)
+		QuickDrawer:sphere(cover_pos, 0.75, Color(255, 0, 150), 6)
+		QuickDrawer:line(cover_pos, high_pos, Color(255, 0, 150))
+		QuickDrawer:sphere(high_pos, 0.75, Color(255, 0, 150), 6)
 	end
 
 	return "running"
 end
 
-BTPackMasterGetHookAction.find_hidden_cover = function (arg_5_0, arg_5_1, arg_5_2, arg_5_3)
+BTPackMasterGetHookAction.find_hidden_cover = function (self, position, player_center_pos, blackboard)
 	-- function 5
-	arg_5_3.best_cover_score = -math.huge
-	arg_5_3.best_cover = nil
+	blackboard.best_cover_score = -math.huge
+	blackboard.best_cover = nil
 
-	local alloc_table = FrameTable.alloc_table()
-	local normalize = Vector3.normalize(arg_5_1 - arg_5_2)
-	local num = 19
-	local num_2 = 5
-	local local_position = Unit.local_position
+	local found_cover_units = FrameTable.alloc_table()
+	local wanted_direction = Vector3.normalize(position - player_center_pos)
+	local max_rad = 19
+	local min_rad = 5
+	local unit_position = Unit.local_position
 	local distance_squared = Vector3.distance_squared
 	local distance = Vector3.distance
-	local normalize_2 = Vector3.normalize
+	local normalize = Vector3.normalize
 	local dot = Vector3.dot
 	local max = math.max
-	local cover_points_broadphase = Managers.state.conflict.level_analysis.cover_points_broadphase
-	local query = Broadphase.query(cover_points_broadphase, arg_5_1, num, alloc_table)
-	local num_3 = num_2 * num_2
-	local num_4 = num * num
+	local bp = Managers.state.conflict.level_analysis.cover_points_broadphase
+	local found_cover_units_n = Broadphase.query(bp, position, max_rad, found_cover_units)
 
-	if not script_data.debug_ai_movement then
-		QuickDrawerStay:sphere(arg_5_2, 2, Colors.get("cyan"))
-		QuickDrawerStay:vector(arg_5_2, normalize * 4, Colors.get("cyan"))
+	min_rad = min_rad * min_rad
+	max_rad = max_rad * max_rad
+
+	if script_data.debug_ai_movement then
+		QuickDrawerStay:sphere(player_center_pos, 2, Colors.get("cyan"))
+		QuickDrawerStay:vector(player_center_pos, wanted_direction * 4, Colors.get("cyan"))
 	end
 
-	local min = math.min(query, 15)
+	local max_i = math.min(found_cover_units_n, 15)
 
-	for i = 1, min do
-		local var_5_15 = alloc_table[i]
-		local var_5_16 = local_position(var_5_15, 0)
-		local var_5_17 = distance_squared(var_5_16, arg_5_1)
+	for i = 1, max_i do
+		local unit = found_cover_units[i]
+		local pos = unit_position(unit, 0)
+		local dist_squared = distance_squared(pos, position)
 
-		if not (not (num_3 <= var_5_17) or not (var_5_17 < num_4)) then
-			local local_rotation = Unit.local_rotation(var_5_15, 0)
-			local num_5 = var_5_16 - arg_5_1
-			local var_5_20 = dot(num_5, normalize)
-			local var_5_21 = dot(Quaternion.forward(local_rotation), -normalize)
+		if min_rad <= dist_squared and dist_squared < max_rad then
+			local rot = Unit.local_rotation(unit, 0)
+			local pm_to_cover_point = pos - position
+			local direction_dot = dot(pm_to_cover_point, wanted_direction)
+			local hidden_dot = dot(Quaternion.forward(rot), -wanted_direction)
 
-			if not (not (var_5_20 > arg_5_3.best_cover_score) or not (var_5_21 > 0)) then
-				arg_5_3.best_cover_score = var_5_20
-				arg_5_3.best_cover = Vector3Box(var_5_16)
+			if direction_dot > blackboard.best_cover_score and hidden_dot > 0 then
+				blackboard.best_cover_score = direction_dot
+				blackboard.best_cover = Vector3Box(pos)
 			end
 
-			if not script_data.debug_ai_movement then
-				local var_5_22 = Color(255, 255 * max(-var_5_20, 0), 255 * max(var_5_20, 0), 255 * max(0, var_5_21))
+			if script_data.debug_ai_movement then
+				local color = Color(255, 255 * max(-direction_dot, 0), 255 * max(direction_dot, 0), 255 * max(0, hidden_dot))
 
-				QuickDrawerStay:sphere(var_5_16, 1, var_5_22)
-				QuickDrawerStay:line(var_5_16 + Vector3(0, 0, 1), var_5_16 + Quaternion.forward(local_rotation) * 2 + Vector3(0, 0, 1), var_5_22)
+				QuickDrawerStay:sphere(pos, 1, color)
+				QuickDrawerStay:line(pos + Vector3(0, 0, 1), pos + Quaternion.forward(rot) * 2 + Vector3(0, 0, 1), color)
 			end
 		end
 	end

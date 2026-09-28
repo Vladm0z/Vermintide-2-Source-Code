@@ -6,42 +6,42 @@ require("scripts/settings/terror_events/terror_events_generic")
 WeightedRandomTerrorEvents = {}
 TerrorEventBlueprints = {}
 
-local function fn(arg_1_0, arg_1_1)
+local function fetch_terror_events(key, override_file_ending)
 	-- function 1
-	local flag = arg_1_1 or arg_1_0
-	local str = "scripts/settings/terror_events/terror_events_" .. flag
+	local file_ending = not not override_file_ending or not not key
+	local file_path = "scripts/settings/terror_events/terror_events_" .. file_ending
 
-	fassert(Application.can_get("lua", str), "Failed to load terror events for level %s with path %s NOTE: Make sure the terror events file is in scripts/settings/terror_events/ with the name terror_events_%s.", arg_1_0, str, flag)
+	fassert(Application.can_get("lua", file_path), "Failed to load terror events for level %s with path %s NOTE: Make sure the terror events file is in scripts/settings/terror_events/ with the name terror_events_%s.", key, file_path, file_ending)
 
-	local var_1_2, var_1_3 = unpack(local_require(str))
+	local terror_events, weighted_random_terror_events = unpack(local_require(file_path))
 
-	TerrorEventBlueprints[arg_1_0] = var_1_2
+	TerrorEventBlueprints[key] = terror_events
 
-	if not var_1_3 then
-		WeightedRandomTerrorEvents[arg_1_0] = var_1_3
+	if weighted_random_terror_events then
+		WeightedRandomTerrorEvents[key] = weighted_random_terror_events
 	end
 end
 
-for k, v in pairs(LevelSettings) do
-	local flag = not v.no_terror_events
+for level_key, level_data in pairs(LevelSettings) do
+	local has_terror_events = not level_data.no_terror_events
 
-	if type(v) ~= "table" or not flag then
-		local override_file_ending = v.override_file_ending
+	if type(level_data) == "table" and has_terror_events then
+		local override_file_ending = level_data.override_file_ending
 
-		fn(k, override_file_ending)
+		fetch_terror_events(level_key, override_file_ending)
 	end
 end
 
-fn("weaves")
+fetch_terror_events("weaves")
 
-for k_2, v_2 in pairs(WeightedRandomTerrorEvents) do
-	for k_3, v_3 in pairs(v_2) do
-		for i6 = 1, #v_3, 2 do
-			local var_0_3 = v_3[i6]
+for level_key, weighted_terror_events in pairs(WeightedRandomTerrorEvents) do
+	for chunk_name, chunk in pairs(weighted_terror_events) do
+		for i = 1, #chunk, 2 do
+			local event_name = chunk[i]
 
-			fassert(TerrorEventBlueprints[k_2][var_0_3], "TerrorEventChunk %s has a bad event: '%s'.", k_3, tostring(var_0_3))
+			fassert(TerrorEventBlueprints[level_key][event_name], "TerrorEventChunk %s has a bad event: '%s'.", chunk_name, tostring(event_name))
 		end
 
-		v_3.loaded_probability_table = LoadedDice.create_from_mixed(v_3)
+		chunk.loaded_probability_table = LoadedDice.create_from_mixed(chunk)
 	end
 end

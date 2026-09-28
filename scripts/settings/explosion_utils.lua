@@ -2,14 +2,14 @@
 
 local ExplosionUtils = ExplosionUtils
 
-ExplosionUtils = ExplosionUtils or {}
+ExplosionUtils = not not ExplosionUtils or not not {}
 ExplosionUtils = ExplosionUtils
 
-ExplosionUtils.get_template = function (arg_1_0)
+ExplosionUtils.get_template = function (template_name)
 	-- function 1
-	if not arg_1_0 then
+	if not template_name then
 		return
 	end
 
-	return MechanismOverrides.get(ExplosionTemplates[arg_1_0])
+	return MechanismOverrides.get(ExplosionTemplates[template_name])
 end

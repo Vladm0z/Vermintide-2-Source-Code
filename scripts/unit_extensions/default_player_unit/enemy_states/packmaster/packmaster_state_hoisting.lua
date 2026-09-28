@@ -2,106 +2,111 @@
 
 PackmasterStateHoisting = class(PackmasterStateHoisting, EnemyCharacterState)
 
-PackmasterStateHoisting.init = function (self, arg_1_1)
+PackmasterStateHoisting.init = function (self, character_state_init_context)
 	-- function 1
-	EnemyCharacterState.init(self, arg_1_1, "packmaster_hoisting")
+	EnemyCharacterState.init(self, character_state_init_context, "packmaster_hoisting")
 
-	local var_1_0 = arg_1_1
+	local context = character_state_init_context
 
 	self.current_movement_speed_scale = 0
 	self.last_input_direction = Vector3Box(0, 0, 0)
 end
 
-PackmasterStateHoisting.on_enter = function (self, arg_2_1, arg_2_2, arg_2_3, arg_2_4, arg_2_5, arg_2_6, arg_2_7)
+PackmasterStateHoisting.on_enter = function (self, unit, input, dt, context, t, previous_state, dragged_unit)
 	-- function 2
-	self._hosting_end_time = arg_2_5 + BreedActions.skaven_pack_master.hoist.hoist_anim_length
-	self._drag_target_unit = arg_2_7
-	self._unit = arg_2_1
+	self._hosting_end_time = t + BreedActions.skaven_pack_master.hoist.hoist_anim_length
+	self._drag_target_unit = dragged_unit
+	self._unit = unit
 
-	local _drag_target_unit = self._drag_target_unit
-	local var_2_1 = Vector3(0, 0, 0)
+	local drag_target_unit = self._drag_target_unit
+	local velocity = Vector3(0, 0, 0)
 
-	self._locomotion_extension:set_forced_velocity(var_2_1)
+	self._locomotion_extension:set_forced_velocity(velocity)
 	self._locomotion_extension:set_wanted_velocity(Vector3.zero())
 	CharacterStateHelper.change_camera_state(self._player, "follow_third_person")
-	StatusUtils.set_grabbed_by_pack_master_network("pack_master_hoisting", _drag_target_unit, true, arg_2_1)
+	StatusUtils.set_grabbed_by_pack_master_network("pack_master_hoisting", drag_target_unit, true, unit)
 	self:set_breed_action("hoist")
 end
 
-PackmasterStateHoisting.on_exit = function (self, arg_3_1, arg_3_2, arg_3_3, arg_3_4, arg_3_5, arg_3_6)
+PackmasterStateHoisting.on_exit = function (self, unit, input, dt, context, t, next_state)
 	-- function 3
-	local _drag_target_unit = self._drag_target_unit
-	local _first_person_extension = self._first_person_extension
+	local drag_target_unit = self._drag_target_unit
+	local first_person_extension = self._first_person_extension
 
-	if not Unit.alive(_drag_target_unit) then
+	if Unit.alive(drag_target_unit) then
 		-- Nothing
 	end
 
 	self._drag_target_unit = nil
 
 	CharacterStateHelper.change_camera_state(self._player, "follow")
-	_first_person_extension:toggle_visibility(CameraTransitionSettings.perspective_transition_time)
-	_first_person_extension:set_wanted_player_height("stand", arg_3_5)
+	first_person_extension:toggle_visibility(CameraTransitionSettings.perspective_transition_time)
+	first_person_extension:set_wanted_player_height("stand", t)
 
-	if not self._action_aborted then
+	if self._action_aborted then
 		return
 	end
 
-	local flag = true
+	local include_local_player = true
 
 	if not self._status_extension:get_unarmed() then
-		CharacterStateHelper.show_inventory_3p(arg_3_1, true, flag, self._is_server, self._inventory_extension)
-		_first_person_extension:unhide_weapons("catapulted")
+		CharacterStateHelper.show_inventory_3p(unit, true, include_local_player, self._is_server, self._inventory_extension)
+		first_person_extension:unhide_weapons("catapulted")
 	else
-		CharacterStateHelper.play_animation_event(arg_3_1, "to_unarmed")
-		CharacterStateHelper.play_animation_event_first_person(_first_person_extension, "to_unarmed")
-		_first_person_extension:animation_set_variable("armed", 0)
-		CharacterStateHelper.show_inventory_3p(arg_3_1, false, flag, self._is_server, self._inventory_extension)
+		CharacterStateHelper.play_animation_event(unit, "to_unarmed")
+		CharacterStateHelper.play_animation_event_first_person(first_person_extension, "to_unarmed")
+		first_person_extension:animation_set_variable("armed", 0)
+		CharacterStateHelper.show_inventory_3p(unit, false, include_local_player, self._is_server, self._inventory_extension)
 	end
 
 	self:set_breed_action("n/a")
 
-	local _career_extension = self._career_extension
-	local ability_id = _career_extension:ability_id("equip")
+	local career_extension = self._career_extension
+	local equip_ability_id = career_extension:ability_id("equip")
+	local equip_ability = career_extension:ability_by_id(equip_ability_id)
 
-	_career_extension:ability_by_id(ability_id):unfreeze()
+	equip_ability:unfreeze()
 end
 
-PackmasterStateHoisting.update = function (self, arg_4_1, arg_4_2, arg_4_3, arg_4_4, arg_4_5)
+PackmasterStateHoisting.update = function (self, unit, input, dt, context, t)
 	-- function 4
-	local _csm = self._csm
-	local _inventory_extension = self._inventory_extension
-	local extension = ScriptUnit.extension(arg_4_1, "input_system")
-	local _status_extension = self._status_extension
-	local _drag_target_unit = self._drag_target_unit
-	local var_4_5
+	local csm = self._csm
+	local inventory_extension = self._inventory_extension
+	local input_extension = ScriptUnit.extension(unit, "input_system")
+	local status_extension = self._status_extension
+	local drag_target_unit = self._drag_target_unit
+	local target_is_dead
 
-	if not _drag_target_unit and not HEALTH_ALIVE[_drag_target_unit] then
-		if not ScriptUnit.extension(_drag_target_unit, "status_system"):is_dead() then
-			local _temp_params = self._temp_params
+	if drag_target_unit and HEALTH_ALIVE[drag_target_unit] then
+		local target_unit_status_extension = ScriptUnit.extension(drag_target_unit, "status_system")
 
-			_csm:change_state("walking", _temp_params)
+		target_is_dead = target_unit_status_extension:is_dead()
+
+		if target_is_dead then
+			local params = self._temp_params
+
+			csm:change_state("walking", params)
 
 			return
 		end
 	else
-		local _temp_params_2 = self._temp_params
+		local params = self._temp_params
 
-		_csm:change_state("walking", _temp_params_2)
+		csm:change_state("walking", params)
 
 		return
 	end
 
-	if not CharacterStateHelper.is_dead(_status_extension) then
+	if CharacterStateHelper.is_dead(status_extension) then
 		self:release_dragged_target()
-		_csm:change_state("dead")
+		csm:change_state("dead")
 
 		return true
 	end
 
-	if not CharacterStateHelper.is_staggered(_status_extension) then
+	if CharacterStateHelper.is_staggered(status_extension) then
 		self:release_dragged_target()
-		_csm:change_state("staggered")
+		csm:change_state("staggered")
 
 		return true
 	end
@@ -109,41 +114,41 @@ PackmasterStateHoisting.update = function (self, arg_4_1, arg_4_2, arg_4_3, arg_
 	if not self._locomotion_extension:is_on_ground() then
 		self:release_dragged_target()
 
-		local _temp_params_3 = self._temp_params
+		local params = self._temp_params
 
-		_csm:change_state("walking", _temp_params_3)
+		csm:change_state("walking", params)
 
 		return true
 	end
 
-	if not extension then
+	if not input_extension then
 		return
 	end
 
-	if arg_4_5 > self._hosting_end_time then
-		StatusUtils.set_grabbed_by_pack_master_network("pack_master_hanging", _drag_target_unit, true, arg_4_1)
-		_status_extension:set_packmaster_released()
-		_status_extension:set_unarmed(true)
+	if t > self._hosting_end_time then
+		StatusUtils.set_grabbed_by_pack_master_network("pack_master_hanging", drag_target_unit, true, unit)
+		status_extension:set_packmaster_released()
+		status_extension:set_unarmed(true)
 
-		local _temp_params_4 = self._temp_params
-		local extension_2 = ScriptUnit.extension(arg_4_1, "career_system")
+		local params = self._temp_params
+		local career_extension = ScriptUnit.extension(unit, "career_system")
 
-		_csm:change_state("standing", _temp_params_4)
+		csm:change_state("standing", params)
 	end
 
 	self._locomotion_extension:set_disable_rotation_update()
-	CharacterStateHelper.look(extension, self._player.viewport_name, self._first_person_extension, _status_extension, _inventory_extension)
+	CharacterStateHelper.look(input_extension, self._player.viewport_name, self._first_person_extension, status_extension, inventory_extension)
 end
 
 PackmasterStateHoisting.release_dragged_target = function (self)
 	-- function 5
-	local _status_extension = self._status_extension
-	local _first_person_extension = self._first_person_extension
-	local _drag_target_unit = self._drag_target_unit
-	local extension = ScriptUnit.extension(_drag_target_unit, "status_system")
+	local status_extension = self._status_extension
+	local first_person_extension = self._first_person_extension
+	local drag_target_unit = self._drag_target_unit
+	local target_status_extension = ScriptUnit.extension(drag_target_unit, "status_system")
 
 	CharacterStateHelper.show_inventory_3p(self._unit, true, true, Managers.player.is_server, self._inventory_extension)
-	_first_person_extension:unhide_weapons("catapulted")
-	StatusUtils.set_grabbed_by_pack_master_network("pack_master_unhooked", _drag_target_unit, false, self._unit)
-	_status_extension:set_packmaster_released()
+	first_person_extension:unhide_weapons("catapulted")
+	StatusUtils.set_grabbed_by_pack_master_network("pack_master_unhooked", drag_target_unit, false, self._unit)
+	status_extension:set_packmaster_released()
 end

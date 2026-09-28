@@ -2,24 +2,24 @@
 
 require("scripts/ui/views/level_end/level_end_view_v2")
 
-local tbl = {
+local RPCS = {
 	"rpc_signal_end_of_level_done",
 	"rpc_notify_lobby_joined"
 }
 
-for k, v in pairs(DLCSettings) do
-	local end_view = v.end_view
+for _, dlc in pairs(DLCSettings) do
+	local end_view_files = dlc.end_view
 
-	if not end_view then
-		table.map(end_view, require)
+	if end_view_files then
+		table.map(end_view_files, require)
 	end
 end
 
 LevelEndViewWrapper = class(LevelEndViewWrapper)
 
-LevelEndViewWrapper.init = function (self, arg_1_1)
+LevelEndViewWrapper.init = function (self, level_end_view_context)
 	-- function 1
-	self._level_end_view_context = arg_1_1
+	self._level_end_view_context = level_end_view_context
 
 	self:_create_input_service()
 
@@ -32,26 +32,26 @@ LevelEndViewWrapper._load_level_packages = function (self)
 	-- function 2
 	local level_end_view_packages = self._level_end_view_context.level_end_view_packages
 
-	level_end_view_packages = level_end_view_packages or {}
+	level_end_view_packages = not not level_end_view_packages or not not {}
 	self._level_packages = level_end_view_packages
 
-	local flag = true
-	local flag_2 = true
-	local var_2_3 = callback(self, "cb_package_loaded")
+	local asynchronous = true
+	local prioritize = true
+	local cb = callback(self, "cb_package_loaded")
 
 	if not table.is_empty(self._level_packages) then
-		for i, v in ipairs(self._level_packages) do
-			Managers.package:load(v, "end_screen", var_2_3, flag, flag_2)
+		for _, package_name in ipairs(self._level_packages) do
+			Managers.package:load(package_name, "end_screen", cb, asynchronous, prioritize)
 		end
 	else
-		var_2_3()
+		cb()
 	end
 end
 
 LevelEndViewWrapper.cb_package_loaded = function (self)
 	-- function 3
-	for i, v in ipairs(self._level_packages) do
-		if not Managers.package:has_loaded(v, "end_screen") then
+	for _, package_name in ipairs(self._level_packages) do
+		if not Managers.package:has_loaded(package_name, "end_screen") then
 			return
 		end
 	end
@@ -61,8 +61,8 @@ end
 
 LevelEndViewWrapper._unload_level_packages = function (self)
 	-- function 4
-	for i, v in ipairs(self._level_packages) do
-		Managers.package:unload(v, "end_screen")
+	for _, package_name in ipairs(self._level_packages) do
+		Managers.package:unload(package_name, "end_screen")
 	end
 end
 
@@ -84,51 +84,53 @@ LevelEndViewWrapper._initiate_level_end_view = function (self)
 	-- function 7
 	local level_end_view = self._level_end_view_context.level_end_view
 
-	if not level_end_view then
-		self._level_end_view = rawget(_G, level_end_view):new(self._level_end_view_context)
+	if level_end_view then
+		local class = rawget(_G, level_end_view)
+
+		self._level_end_view = class:new(self._level_end_view_context)
 	else
 		self._level_end_view = LevelEndView:new(self._level_end_view_context)
 	end
 
 	for i = 1, #self._delayed_calls do
-		local var_7_1 = self._delayed_calls[i]
+		local delayed_call = self._delayed_calls[i]
 
-		self._level_end_view[var_7_1.func](self._level_end_view, unpack(var_7_1.parameters))
+		self._level_end_view[delayed_call.func](self._level_end_view, unpack(delayed_call.parameters))
 	end
 
 	table.clear(self._delayed_calls)
 end
 
-LevelEndViewWrapper._create_input_service = function (arg_8_0)
+LevelEndViewWrapper._create_input_service = function (self)
 	-- function 8
-	local input = Managers.input
+	local input_manager = Managers.input
 
-	input:create_input_service("end_of_level", "IngameMenuKeymaps", "EndLevelViewKeymapsFilters")
-	input:map_device_to_service("end_of_level", "keyboard")
-	input:map_device_to_service("end_of_level", "mouse")
-	input:map_device_to_service("end_of_level", "gamepad")
-	input:block_device_except_service("end_of_level", "keyboard", 1)
-	input:block_device_except_service("end_of_level", "mouse", 1)
-	input:block_device_except_service("end_of_level", "gamepad", 1)
+	input_manager:create_input_service("end_of_level", "IngameMenuKeymaps", "EndLevelViewKeymapsFilters")
+	input_manager:map_device_to_service("end_of_level", "keyboard")
+	input_manager:map_device_to_service("end_of_level", "mouse")
+	input_manager:map_device_to_service("end_of_level", "gamepad")
+	input_manager:block_device_except_service("end_of_level", "keyboard", 1)
+	input_manager:block_device_except_service("end_of_level", "mouse", 1)
+	input_manager:block_device_except_service("end_of_level", "gamepad", 1)
 
-	arg_8_0._level_end_view_context.input_manager = input
+	self._level_end_view_context.input_manager = input_manager
 end
 
 LevelEndViewWrapper.destroy = function (self)
 	-- function 9
-	if not self._registered_rpcs then
+	if self._registered_rpcs then
 		self:unregister_rpcs()
 	end
 
 	if not Managers.chat:chat_is_focused() then
-		local input = Managers.input
+		local input_manager = Managers.input
 
-		input:device_unblock_all_services("keyboard")
-		input:device_unblock_all_services("mouse")
-		input:device_unblock_all_services("gamepad")
+		input_manager:device_unblock_all_services("keyboard")
+		input_manager:device_unblock_all_services("mouse")
+		input_manager:device_unblock_all_services("gamepad")
 	end
 
-	if not self._level_end_view then
+	if self._level_end_view then
 		self._level_end_view:delete()
 
 		self._level_end_view = nil
@@ -143,15 +145,15 @@ LevelEndViewWrapper.game_state_changed = function (self)
 	-- function 10
 	self:_create_input_service()
 
-	local input = Managers.input
+	local input_manager = Managers.input
 
-	if not self._level_end_view then
-		self._level_end_view:set_input_manager(input)
+	if self._level_end_view then
+		self._level_end_view:set_input_manager(input_manager)
 	else
 		self._delayed_calls[#self._delayed_calls + 1] = {
 			func = "set_input_manager",
 			parameters = {
-				input
+				input_manager
 			}
 		}
 	end
@@ -159,7 +161,7 @@ end
 
 LevelEndViewWrapper.start = function (self, ...)
 	-- function 11
-	if not self._level_end_view then
+	if self._level_end_view then
 		self._level_end_view:start()
 	else
 		self._delayed_calls[#self._delayed_calls + 1] = {
@@ -189,11 +191,11 @@ LevelEndViewWrapper.do_retry = function (self)
 	return self._level_end_view:do_retry()
 end
 
-LevelEndViewWrapper.register_rpcs = function (self, arg_14_1)
+LevelEndViewWrapper.register_rpcs = function (self, network_event_delegate)
 	-- function 14
-	arg_14_1:register(self, unpack(tbl))
+	network_event_delegate:register(self, unpack(RPCS))
 
-	self._network_event_delegate = arg_14_1
+	self._network_event_delegate = network_event_delegate
 	self._registered_rpcs = true
 end
 
@@ -207,7 +209,7 @@ end
 
 LevelEndViewWrapper.rpc_signal_end_of_level_done = function (self, ...)
 	-- function 16
-	if not self._level_end_view then
+	if self._level_end_view then
 		self._level_end_view:rpc_signal_end_of_level_done(...)
 	else
 		self._delayed_calls[#self._delayed_calls + 1] = {
@@ -221,7 +223,7 @@ end
 
 LevelEndViewWrapper.rpc_notify_lobby_joined = function (self, ...)
 	-- function 17
-	if not self._level_end_view then
+	if self._level_end_view then
 		self._level_end_view:rpc_notify_lobby_joined(...)
 	else
 		self._delayed_calls[#self._delayed_calls + 1] = {
@@ -235,7 +237,7 @@ end
 
 LevelEndViewWrapper.left_lobby = function (self, ...)
 	-- function 18
-	if not self._level_end_view then
+	if self._level_end_view then
 		self._level_end_view:left_lobby(...)
 	else
 		self._delayed_calls[#self._delayed_calls + 1] = {
@@ -247,16 +249,16 @@ LevelEndViewWrapper.left_lobby = function (self, ...)
 	end
 end
 
-LevelEndViewWrapper.update = function (self, arg_19_1, arg_19_2)
+LevelEndViewWrapper.update = function (self, dt, t)
 	-- function 19
-	if not self._level_end_view then
-		self._level_end_view:update(arg_19_1, arg_19_2)
+	if self._level_end_view then
+		self._level_end_view:update(dt, t)
 	end
 end
 
-LevelEndViewWrapper.post_update = function (self, arg_20_1, arg_20_2)
+LevelEndViewWrapper.post_update = function (self, dt, t)
 	-- function 20
-	if not self._level_end_view then
-		self._level_end_view:post_update(arg_20_1, arg_20_2)
+	if self._level_end_view then
+		self._level_end_view:post_update(dt, t)
 	end
 end

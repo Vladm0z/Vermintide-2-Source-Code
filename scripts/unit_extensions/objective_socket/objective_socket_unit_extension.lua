@@ -2,7 +2,7 @@
 
 ObjectiveSocketUnitExtension = class(ObjectiveSocketUnitExtension)
 
-local tbl = {
+local ObjectiveSocketUnitExtensionSettings = {
 	optional_color = {
 		0.02,
 		0.02,
@@ -10,151 +10,149 @@ local tbl = {
 	}
 }
 
-ObjectiveSocketUnitExtension.init = function (self, arg_1_1, arg_1_2, arg_1_3, arg_1_4)
+ObjectiveSocketUnitExtension.init = function (self, extension_init_context, unit, extension_init_data, is_server)
 	-- function 1
-	self.world = arg_1_1.world
-	self.unit = arg_1_2
-	self.is_server = arg_1_4
+	self.world = extension_init_context.world
+	self.unit = unit
+	self.is_server = is_server
 	self.sockets = {}
 	self.num_sockets = 0
 	self.num_open_sockets = 0
 	self.num_closed_sockets = 0
 	self.distance = 10000
 
-	self:setup_sockets(arg_1_2)
+	self:setup_sockets(unit)
 
-	local get_data = Unit.get_data(arg_1_2, "pick_config")
+	local get_data = Unit.get_data(unit, "pick_config")
 
-	get_data = get_data or "ordered"
+	get_data = not not get_data or not not "ordered"
 	self.pick_config = get_data
-	POSITION_LOOKUP[arg_1_2] = Unit.world_position(arg_1_2, 0)
+	POSITION_LOOKUP[unit] = Unit.world_position(unit, 0)
 
-	self:_handle_optional_slots(arg_1_2)
+	self:_handle_optional_slots(unit)
 end
 
-ObjectiveSocketUnitExtension._handle_optional_slots = function (arg_2_0, arg_2_1)
+ObjectiveSocketUnitExtension._handle_optional_slots = function (self, unit)
 	-- function 2
-	if not Unit.get_data(arg_2_1, "optional") then
-		script_data.socket_unit = arg_2_1
+	if Unit.get_data(unit, "optional") then
+		script_data.socket_unit = unit
 
-		local optional_color = tbl.optional_color
-		local var_2_1 = Vector3(optional_color[1], optional_color[2], optional_color[3])
-		local num = 0
+		local color_table = ObjectiveSocketUnitExtensionSettings.optional_color
+		local color = Vector3(color_table[1], color_table[2], color_table[3])
+		local i = 0
 
-		while not Unit.has_data(arg_2_1, "optional_meshes", num) do
-			local get_data = Unit.get_data(arg_2_1, "optional_meshes", num)
-			local mesh = Unit.mesh(arg_2_1, get_data)
+		while Unit.has_data(unit, "optional_meshes", i) do
+			local mesh_name = Unit.get_data(unit, "optional_meshes", i)
+			local mesh = Unit.mesh(unit, mesh_name)
 			local num_materials = Mesh.num_materials(mesh)
 
-			for i = 0, num_materials - 1 do
-				local material = Mesh.material(mesh, i)
+			for j = 0, num_materials - 1 do
+				local material = Mesh.material(mesh, j)
 
-				Material.set_vector3(material, "rgb", var_2_1)
+				Material.set_vector3(material, "rgb", color)
 			end
 
-			num = num + 1
+			i = i + 1
 		end
 	end
 end
 
-ObjectiveSocketUnitExtension.destroy = function (arg_3_0)
+ObjectiveSocketUnitExtension.destroy = function (self)
 	-- function 3
-	POSITION_LOOKUP[arg_3_0.unit] = nil
+	POSITION_LOOKUP[self.unit] = nil
 end
 
-ObjectiveSocketUnitExtension.setup_sockets = function (self, arg_4_1)
+ObjectiveSocketUnitExtension.setup_sockets = function (self, unit)
 	-- function 4
 	local sockets = self.sockets
-	local str = "socket_"
-	local num = 1
-	local str_2 = "socket_1"
+	local base = "socket_"
+	local i = 1
+	local socket_name = "socket_1"
 
-	while not Unit.has_node(arg_4_1, str_2) do
-		local node = Unit.node(arg_4_1, str_2)
+	while Unit.has_node(unit, socket_name) do
+		local node_index = Unit.node(unit, socket_name)
 
-		sockets[num] = {
+		sockets[i] = {
 			open = true,
-			socket_name = str_2,
-			node_index = node
+			socket_name = socket_name,
+			node_index = node_index
 		}
-		num = num + 1
-		str_2 = str .. num
+		i = i + 1
+		socket_name = base .. i
 	end
 
-	fassert(num - 1 > 0, "No socket nodes in unit %q", arg_4_1)
+	fassert(i - 1 > 0, "No socket nodes in unit %q", unit)
 
-	self.num_sockets = num - 1
+	self.num_sockets = i - 1
 end
 
-ObjectiveSocketUnitExtension.pick_socket_ordered = function (self, arg_5_1)
+ObjectiveSocketUnitExtension.pick_socket_ordered = function (self, sockets)
 	-- function 5
 	local num_sockets = self.num_sockets
 
 	for i = 1, num_sockets do
-		local var_5_1 = arg_5_1[i]
+		local socket = sockets[i]
 
-		if not var_5_1.open then
-			return var_5_1, i
+		if socket.open then
+			return socket, i
 		end
 	end
 
 	print("[ObjectiveSocketUnitExtension]: No sockets open")
 end
 
-ObjectiveSocketUnitExtension.pick_socket_closest = function (self, arg_6_1, arg_6_2)
+ObjectiveSocketUnitExtension.pick_socket_closest = function (self, sockets, unit)
 	-- function 6
-	local var_6_0 = POSITION_LOOKUP[arg_6_2]
-	local unit = self.unit
+	local position = POSITION_LOOKUP[unit]
+	local socket_unit = self.unit
 	local num_sockets = self.num_sockets
-	local huge = math.huge
-	local var_6_4
-	local var_6_5
+	local closest_dsq = math.huge
+	local closest_socket, closest_id
 
 	for i = 1, num_sockets do
-		local var_6_6 = arg_6_1[i]
+		local socket = sockets[i]
 
-		if not var_6_6.open then
-			local world_position = Unit.world_position(unit, var_6_6.node_index)
-			local distance_squared = Vector3.distance_squared(var_6_0, world_position)
+		if socket.open then
+			local socket_position = Unit.world_position(socket_unit, socket.node_index)
+			local distance_squared = Vector3.distance_squared(position, socket_position)
 
-			if distance_squared < huge then
-				huge = distance_squared
-				var_6_4 = var_6_6
-				var_6_5 = i
+			if distance_squared < closest_dsq then
+				closest_dsq = distance_squared
+				closest_socket = socket
+				closest_id = i
 			end
 		end
 	end
 
-	if not var_6_4 then
+	if not closest_socket then
 		print("[ObjectiveSocketUnitExtension]: No sockets open")
 	end
 
-	return var_6_4, var_6_5
+	return closest_socket, closest_id
 end
 
-ObjectiveSocketUnitExtension.pick_socket = function (self, arg_7_1)
+ObjectiveSocketUnitExtension.pick_socket = function (self, unit)
 	-- function 7
-	local var_7_0
-	local var_7_1
+	local socket, i
 	local pick_config = self.pick_config
 
 	if pick_config == "ordered" then
-		var_7_0, var_7_1 = self:pick_socket_ordered(self.sockets)
+		socket, i = self:pick_socket_ordered(self.sockets)
 	elseif pick_config == "closest" then
-		var_7_0, var_7_1 = self:pick_socket_closest(self.sockets, arg_7_1)
+		socket, i = self:pick_socket_closest(self.sockets, unit)
 	else
 		ferror("[ObjectiveSocketSystem] Unknown pick_config %q in unit %q", pick_config, self.unit)
 	end
 
-	return var_7_0, var_7_1
+	return socket, i
 end
 
-ObjectiveSocketUnitExtension.socket_from_id = function (self, arg_8_1)
+ObjectiveSocketUnitExtension.socket_from_id = function (self, socket_id)
 	-- function 8
-	return self.sockets[arg_8_1]
+	return self.sockets[socket_id]
 end
 
-ObjectiveSocketUnitExtension.update = function (arg_9_0, arg_9_1, arg_9_2, arg_9_3, arg_9_4, arg_9_5)
+ObjectiveSocketUnitExtension.update = function (self, unit, input, dt, context, t)
 	-- function 9
 	return
 end

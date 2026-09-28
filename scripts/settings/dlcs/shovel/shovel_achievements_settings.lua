@@ -1,8 +1,8 @@
 -- chunkname: @scripts/settings/dlcs/shovel/shovel_achievements_settings.lua
 
-local shovel = DLCSettings.shovel
+local settings = DLCSettings.shovel
 
-shovel.achievement_outline = {
+settings.achievement_outline = {
 	heroes = {
 		categories = {
 			{
@@ -31,7 +31,7 @@ shovel.achievement_outline = {
 		}
 	}
 }
-shovel.achievement_template_file_names = {
+settings.achievement_template_file_names = {
 	"scripts/managers/achievements/achievement_templates_shovel"
 }
-shovel.achievement_events = {}
+settings.achievement_events = {}

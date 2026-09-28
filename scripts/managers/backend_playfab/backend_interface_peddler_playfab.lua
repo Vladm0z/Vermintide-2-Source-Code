@@ -4,17 +4,17 @@ require("scripts/utils/steam_item_service")
 
 BackendInterfacePeddlerPlayFab = class(BackendInterfacePeddlerPlayFab)
 
-local str = "Store"
-local tbl = {
+local PEDDLER_ID = "Store"
+local NON_FATAL_ERROR_CODES = {
 	[1052] = true,
 	[1053] = true,
 	[1047] = true,
 	[1059] = true
 }
 
-BackendInterfacePeddlerPlayFab.init = function (self, arg_1_1)
+BackendInterfacePeddlerPlayFab.init = function (self, backend_mirror)
 	-- function 1
-	self._backend_mirror = arg_1_1
+	self._backend_mirror = backend_mirror
 	self._peddler_stock = {}
 	self._chips = {}
 	self._app_prices = {}
@@ -39,15 +39,15 @@ BackendInterfacePeddlerPlayFab.ready = function (self)
 	-- function 2
 	local _login_rewards = self._login_rewards
 
-	if not _login_rewards then
+	if _login_rewards then
 		_login_rewards = self._stock_ready
 
-		if not _login_rewards then
+		if _login_rewards then
 			_login_rewards = self._steam_stock_ready
 
-			if not _login_rewards then
+			if _login_rewards then
 				_login_rewards = self._chips_ready
-				_login_rewards = not _login_rewards and self._app_prices_ready
+				_login_rewards = not not _login_rewards and not not self._app_prices_ready
 			end
 		end
 	end
@@ -67,188 +67,194 @@ BackendInterfacePeddlerPlayFab.get_peddler_stock = function (self)
 	return self._peddler_stock
 end
 
-local tbl_2 = {}
+local empty_params = {}
 
-BackendInterfacePeddlerPlayFab.get_filtered_items = function (self, arg_5_1, arg_5_2)
+BackendInterfacePeddlerPlayFab.get_filtered_items = function (self, filter, params)
 	-- function 5
-	local _peddler_stock = self._peddler_stock
+	local all_items = self._peddler_stock
+	local backend_common = Managers.backend:get_interface("common")
+	local items = backend_common:filter_items(all_items, filter, not not params or not not empty_params)
 
-	return (Managers.backend:get_interface("common"):filter_items(_peddler_stock, arg_5_1, arg_5_2 or tbl_2))
+	return items
 end
 
-BackendInterfacePeddlerPlayFab.get_chips = function (self, arg_6_1)
+BackendInterfacePeddlerPlayFab.get_chips = function (self, chip_type)
 	-- function 6
-	return self._chips[arg_6_1]
+	return self._chips[chip_type]
 end
 
-BackendInterfacePeddlerPlayFab.get_app_price = function (self, arg_7_1)
+BackendInterfacePeddlerPlayFab.get_app_price = function (self, app_id)
 	-- function 7
-	return self._app_prices[arg_7_1]
+	return self._app_prices[app_id]
 end
 
-BackendInterfacePeddlerPlayFab.get_steam_item_price = function (self, arg_8_1)
+BackendInterfacePeddlerPlayFab.get_steam_item_price = function (self, steam_itemdefid)
 	-- function 8
-	return self._steam_item_prices[arg_8_1], self._steam_item_currency
+	return self._steam_item_prices[steam_itemdefid], self._steam_item_currency
 end
 
-BackendInterfacePeddlerPlayFab.is_purchaseable = function (self, arg_9_1)
+BackendInterfacePeddlerPlayFab.is_purchaseable = function (self, steam_itemdefid)
 	-- function 9
-	return self._steam_item_prices[arg_9_1] ~= nil
+	return self._steam_item_prices[steam_itemdefid] ~= nil
 end
 
 BackendInterfacePeddlerPlayFab.get_unseen_currency_rewards = function (self)
 	-- function 10
-	local get_user_data = self._backend_mirror:get_user_data("unseen_rewards")
+	local unseen_rewards_json = self._backend_mirror:get_user_data("unseen_rewards")
 
-	if not get_user_data then
+	if not unseen_rewards_json then
 		return nil
 	end
 
 	local currency_ui_settings = DLCSettings.store.currency_ui_settings
-	local decode = cjson.decode(get_user_data)
-	local var_10_3
-	local num = 1
+	local unseen_rewards = cjson.decode(unseen_rewards_json)
+	local unseen_items
+	local index = 1
 
-	while num <= #decode do
-		local var_10_5 = decode[num]
-		local reward_type = var_10_5.reward_type
-		local currency_type = var_10_5.currency_type
+	while index <= #unseen_rewards do
+		local reward = unseen_rewards[index]
+		local reward_type = reward.reward_type
+		local currency_type = reward.currency_type
 
-		if not (reward_type ~= "currency" or currency_ui_settings[currency_type] == nil) then
-			var_10_3 = var_10_3 or {}
-			var_10_3[#var_10_3 + 1] = var_10_5
+		if reward_type == "currency" and currency_ui_settings[currency_type] ~= nil then
+			unseen_items = not not unseen_items or not not {}
+			unseen_items[#unseen_items + 1] = reward
 
-			table.remove(decode, num)
+			table.remove(unseen_rewards, index)
 		else
-			num = num + 1
+			index = index + 1
 		end
 	end
 
-	if not var_10_3 then
-		self._backend_mirror:set_user_data("unseen_rewards", cjson.encode(decode))
+	if unseen_items then
+		self._backend_mirror:set_user_data("unseen_rewards", cjson.encode(unseen_rewards))
 	end
 
-	return var_10_3
+	return unseen_items
 end
 
-BackendInterfacePeddlerPlayFab.refresh_stock = function (self, arg_11_1)
+BackendInterfacePeddlerPlayFab.refresh_stock = function (self, external_cb)
 	-- function 11
 	self._peddler_stock = {}
 
-	local tbl = {
-		StoreId = str
+	local request = {
+		StoreId = PEDDLER_ID
 	}
-	local var_11_1 = callback(self, "_refresh_stock_cb", arg_11_1)
+	local request_cb = callback(self, "_refresh_stock_cb", external_cb)
+	local mirror = self._backend_mirror
+	local request_queue = mirror:request_queue()
 
-	self._backend_mirror:request_queue():enqueue_api_request("GetStoreItems", tbl, var_11_1)
+	request_queue:enqueue_api_request("GetStoreItems", request, request_cb)
 end
 
-local function fn(self)
+local function verify_stock_item(item_master_list_data)
 	-- function 12
-	local var_12_0
+	local has_platform_id
 
-	if not IS_CONSOLE then
+	if IS_CONSOLE then
 		return true
 	else
-		local steam_itemdefid = self.steam_itemdefid
+		local steam_itemdefid = item_master_list_data.steam_itemdefid
 
-		var_12_0 = steam_itemdefid ~= nil
+		has_platform_id = steam_itemdefid ~= nil
 
-		if not var_12_0 then
-			local flag = false
+		if has_platform_id then
+			local platform_id_approved = false
 
-			if not steam_itemdefid and not HAS_STEAM then
-				flag = true
+			if steam_itemdefid and HAS_STEAM then
+				platform_id_approved = true
 			end
 
-			if not flag then
+			if not platform_id_approved then
 				return false
 			end
 		end
 	end
 
-	return true, var_12_0
+	return true, has_platform_id
 end
 
-BackendInterfacePeddlerPlayFab._refresh_stock_cb = function (self, arg_13_1, arg_13_2)
+BackendInterfacePeddlerPlayFab._refresh_stock_cb = function (self, external_cb, result)
 	-- function 13
-	local Store = arg_13_2.Store
-	local _peddler_stock = self._peddler_stock
-	local get_all_inventory_items = self._backend_mirror:get_all_inventory_items()
-	local HAS_STEAM = HAS_STEAM
-	local num = #_peddler_stock + 1
+	local stock = result.Store
+	local peddler_stock = self._peddler_stock
+	local mirror = self._backend_mirror
+	local inventory_items = mirror:get_all_inventory_items()
+	local has_steam = HAS_STEAM
+	local stock_index = #peddler_stock + 1
 	local seen_shop_items = PlayerData.seen_shop_items
-	local flag = false
+	local new_items = false
 
-	for i = 1, #Store do
-		local var_13_7 = Store[i]
-		local ItemId = var_13_7.ItemId
+	for i = 1, #stock do
+		local item = stock[i]
+		local key = item.ItemId
 
-		if not (not var_13_7.ItemId and rawget(ItemMasterList, var_13_7.ItemId)) then
-			printf("BackendInterfacePeddlerPlayFab - ItemMasterList has no item %q", tostring(var_13_7.ItemId))
+		if item.ItemId and not rawget(ItemMasterList, item.ItemId) then
+			printf("BackendInterfacePeddlerPlayFab - ItemMasterList has no item %q", tostring(item.ItemId))
 		else
-			local var_13_9 = ItemMasterList[ItemId]
-			local flag_2 = false
+			local data = ItemMasterList[key]
+			local owned = false
 
-			for k, v in pairs(get_all_inventory_items) do
-				if ItemId == v.key then
-					flag_2 = true
+			for backend_id, inventory_item in pairs(inventory_items) do
+				if key == inventory_item.key then
+					owned = true
 
 					break
 				end
 			end
 
-			local var_13_11, var_13_12 = fn(var_13_9)
+			local verified, has_platform = verify_stock_item(data)
 
-			if not (not var_13_11 and var_13_12) then
-				local regular_prices = var_13_7.CustomData.regular_prices
-				local VirtualCurrencyPrices = var_13_7.VirtualCurrencyPrices
-
-				_peddler_stock[num] = {
+			if verified and not has_platform then
+				local regular_prices = item.CustomData.regular_prices
+				local current_prices = item.VirtualCurrencyPrices
+				local item_data = {
 					type = "item",
-					data = table.clone(var_13_9),
-					key = ItemId,
-					id = ItemId,
+					data = table.clone(data),
+					key = key,
+					id = key,
 					regular_prices = regular_prices,
-					current_prices = VirtualCurrencyPrices,
-					end_time = var_13_7.CustomData.end_time,
-					owned = flag_2,
-					dlc_name = var_13_9.dlc_name,
-					steam_itemdefid = not HAS_STEAM and var_13_9.steam_itemdefid
+					current_prices = current_prices,
+					end_time = item.CustomData.end_time,
+					owned = owned,
+					dlc_name = data.dlc_name,
+					steam_itemdefid = not not has_steam and not not data.steam_itemdefid
 				}
-				num = num + 1
 
-				if not seen_shop_items[ItemId] then
-					flag = true
+				peddler_stock[stock_index] = item_data
+				stock_index = stock_index + 1
+
+				if not seen_shop_items[key] then
+					new_items = true
 				end
 			end
 		end
 	end
 
-	print(string.format("[BackendInterfacePeddlerPlayFab] _refresh_stock_cb -> Added %s item(s) to the peddler stock", #_peddler_stock))
+	print(string.format("[BackendInterfacePeddlerPlayFab] _refresh_stock_cb -> Added %s item(s) to the peddler stock", #peddler_stock))
 
-	self._peddler_stock = _peddler_stock
+	self._peddler_stock = peddler_stock
 	self._stock_ready = true
 
-	if not arg_13_1 then
-		arg_13_1()
+	if external_cb then
+		external_cb()
 	end
 
-	if BUILD ~= "dev" or IS_XB1 or not IS_PS4 then
-		flag = false
+	if BUILD == "dev" and (IS_XB1 or IS_PS4) then
+		new_items = false
 	end
 
-	if not flag then
-		local Metadata = arg_13_2.MarketingData.Metadata
+	if new_items then
+		local metadata = result.MarketingData.Metadata
 
-		if type(Metadata) == "string" then
-			Metadata = cjson.decode(Metadata)
+		if type(metadata) == "string" then
+			metadata = cjson.decode(metadata)
 		end
 
-		local uploaded = Metadata.uploaded
-		local store_update_timestamp = PlayerData.store_update_timestamp
+		local uploaded = metadata.uploaded
+		local last_update = PlayerData.store_update_timestamp
 
-		if not (not store_update_timestamp and not (store_update_timestamp < uploaded)) then
+		if not last_update or last_update < uploaded then
 			PlayerData.store_new_items = true
 			PlayerData.store_update_timestamp = uploaded
 
@@ -259,255 +265,276 @@ BackendInterfacePeddlerPlayFab._refresh_stock_cb = function (self, arg_13_1, arg
 	end
 end
 
-BackendInterfacePeddlerPlayFab.set_chips = function (arg_14_0, arg_14_1, arg_14_2)
+BackendInterfacePeddlerPlayFab.set_chips = function (self, chip_type, chip_amount)
 	-- function 14
-	arg_14_0._chips[arg_14_1] = arg_14_2
+	self._chips[chip_type] = chip_amount
 end
 
-BackendInterfacePeddlerPlayFab.refresh_chips = function (self, arg_15_1)
+BackendInterfacePeddlerPlayFab.refresh_chips = function (self, external_cb)
 	-- function 15
-	local tbl = {
+	local request = {
 		FunctionName = "getUserChips",
 		FunctionParameter = {}
 	}
+	local mirror = self._backend_mirror
+	local request_queue = mirror:request_queue()
 
-	self._backend_mirror:request_queue():enqueue(tbl, callback(self, "_refresh_chips_cb", arg_15_1), false)
+	request_queue:enqueue(request, callback(self, "_refresh_chips_cb", external_cb), false)
 end
 
-BackendInterfacePeddlerPlayFab._refresh_chips_cb = function (self, arg_16_1, arg_16_2)
+BackendInterfacePeddlerPlayFab._refresh_chips_cb = function (self, external_cb, result)
 	-- function 16
-	local chips = arg_16_2.FunctionResult.chips
+	local function_result = result.FunctionResult
+	local chips = function_result.chips
 
-	for k, v in pairs(chips) do
-		self:set_chips(k, v)
+	for chip_type, chip_amount in pairs(chips) do
+		self:set_chips(chip_type, chip_amount)
 	end
 
 	self._chips_ready = true
 
-	if not arg_16_1 then
-		arg_16_1()
+	if external_cb then
+		external_cb()
 	end
 end
 
-BackendInterfacePeddlerPlayFab.refresh_layout_override = function (self, arg_17_1, arg_17_2)
+BackendInterfacePeddlerPlayFab.refresh_layout_override = function (self, use_mirrored_title_data, external_cb)
 	-- function 17
-	local _backend_mirror = self._backend_mirror
+	local mirror = self._backend_mirror
 
-	if not arg_17_1 then
-		local store_layout_override = _backend_mirror:get_title_data().store_layout_override
+	if use_mirrored_title_data then
+		local title_data = mirror:get_title_data()
+		local override_json = title_data.store_layout_override
 
-		if not store_layout_override then
-			local decode = cjson.decode(store_layout_override)
-			local StoreLayoutConfig = StoreLayoutConfig
+		if override_json then
+			local override = cjson.decode(override_json)
+			local layout = StoreLayoutConfig
 
-			if not decode.menu_options then
-				StoreLayoutConfig.menu_options = decode.menu_options
+			if override.menu_options then
+				layout.menu_options = override.menu_options
 			end
 
-			if not decode.structure then
-				for k, v in pairs(decode.structure) do
-					StoreLayoutConfig.structure[k] = v
+			if override.structure then
+				for key, value in pairs(override.structure) do
+					layout.structure[key] = value
 				end
 			end
 
-			if not decode.pages then
-				for k_2, v_2 in pairs(decode.pages) do
-					StoreLayoutConfig.pages[k_2] = v_2
+			if override.pages then
+				for key, value in pairs(override.pages) do
+					layout.pages[key] = value
 				end
 			end
 		end
 
-		if not arg_17_2 then
-			arg_17_2()
+		if external_cb then
+			external_cb()
 		end
 	else
-		local tbl = {
+		local request = {
 			Keys = {
 				"store_layout_override"
 			}
 		}
-		local var_17_5 = callback(self, "_refresh_layout_override_cb", arg_17_2)
+		local success_cb = callback(self, "_refresh_layout_override_cb", external_cb)
+		local mirror = self._backend_mirror
+		local request_queue = mirror:request_queue()
 
-		self._backend_mirror:request_queue():enqueue_api_request("GetTitleData", tbl, var_17_5)
+		request_queue:enqueue_api_request("GetTitleData", request, success_cb)
 	end
 end
 
-BackendInterfacePeddlerPlayFab._refresh_layout_override_cb = function (self, arg_18_1, arg_18_2)
+BackendInterfacePeddlerPlayFab._refresh_layout_override_cb = function (self, external_cb, result)
 	-- function 18
-	local Data = arg_18_2.Data
+	local Data = result.Data
 
-	Data = not Data and arg_18_2.Data.store_layout_override
+	if Data then
+		-- Nothing
+	end
 
-	self._backend_mirror:set_title_data("store_layout_override", Data)
-	self:refresh_layout_override(true, arg_18_1)
+	Data = result.Data.store_layout_override
+
+	local override = Data
+
+	::label_18_0::
+
+	local mirror = self._backend_mirror
+
+	mirror:set_title_data("store_layout_override", override)
+	self:refresh_layout_override(true, external_cb)
 end
 
 BackendInterfacePeddlerPlayFab.store_display_items = function (self)
 	-- function 19
-	local store_display_items = self._backend_mirror:get_title_data().store_display_items
+	local mirror = self._backend_mirror
+	local title_data = mirror:get_title_data()
+	local store_display_items_str = title_data.store_display_items
 
-	return not store_display_items and cjson.decode(store_display_items)
+	return not not store_display_items_str and not not cjson.decode(store_display_items_str)
 end
 
-BackendInterfacePeddlerPlayFab.refresh_platform_item_prices = function (arg_20_0, arg_20_1)
+BackendInterfacePeddlerPlayFab.refresh_platform_item_prices = function (self, external_cb)
 	-- function 20
-	if not HAS_STEAM then
+	if HAS_STEAM then
 		print("[BackendInterfacePeddlerPlayFab] refresh steam item prices")
-		Managers.steam:request_item_prices(callback(arg_20_0, "_refresh_steam_item_prices_cb", arg_20_1))
+		Managers.steam:request_item_prices(callback(self, "_refresh_steam_item_prices_cb", external_cb))
 	end
 end
 
-BackendInterfacePeddlerPlayFab._read_bundle_from_steam = function (arg_21_0, arg_21_1)
+BackendInterfacePeddlerPlayFab._read_bundle_from_steam = function (self, steam_itemdefid)
 	-- function 21
-	local get_item_definition_property = SteamInventory.get_item_definition_property(arg_21_1, "bundle")
+	local bundle_string = SteamInventory.get_item_definition_property(steam_itemdefid, "bundle")
 
-	if not get_item_definition_property then
-		local split_deprecated = string.split_deprecated(get_item_definition_property, ";")
+	if bundle_string then
+		local bundle_contains = string.split_deprecated(bundle_string, ";")
 
-		for i, v in ipairs(split_deprecated) do
-			split_deprecated[i] = tonumber(v)
+		for k, v in ipairs(bundle_contains) do
+			bundle_contains[k] = tonumber(v)
 		end
 
-		local get_item_definition_property_2 = SteamInventory.get_item_definition_property(arg_21_1, "purchase_bundle_discount")
+		local discount = SteamInventory.get_item_definition_property(steam_itemdefid, "purchase_bundle_discount")
 
-		return split_deprecated, tonumber(get_item_definition_property_2)
+		return bundle_contains, tonumber(discount)
 	end
 end
 
-BackendInterfacePeddlerPlayFab._refresh_steam_item_prices_cb = function (self, arg_22_1, arg_22_2, arg_22_3)
+BackendInterfacePeddlerPlayFab._refresh_steam_item_prices_cb = function (self, external_cb, price_list, currency)
 	-- function 22
 	print("_refresh_steam_item_prices_cb")
 
-	local get_all_inventory_items = self._backend_mirror:get_all_inventory_items()
-	local _peddler_stock = self._peddler_stock
-	local num = #_peddler_stock + 1
-	local tbl = {}
+	local mirror = self._backend_mirror
+	local inventory_items = mirror:get_all_inventory_items()
+	local peddler_stock = self._peddler_stock
+	local steam_stock_index = #peddler_stock + 1
+	local bundles = {}
 
-	for i = 1, #arg_22_2, 2 do
-		local var_22_4 = arg_22_2[i]
-		local var_22_5 = arg_22_2[i + 1]
-		local var_22_6 = SteamitemdefidToMasterList[var_22_4]
+	for i = 1, #price_list, 2 do
+		local steam_itemdefid = price_list[i]
+		local price = price_list[i + 1]
+		local item_key = SteamitemdefidToMasterList[steam_itemdefid]
 
-		if not var_22_6 then
-			self._steam_item_prices[var_22_4] = var_22_5
+		if item_key then
+			self._steam_item_prices[steam_itemdefid] = price
 
-			local var_22_7 = ItemMasterList[var_22_6]
+			local master_item = ItemMasterList[item_key]
 
-			if var_22_7.steam_store_hidden or not fn(var_22_7) then
-				local flag = false
+			if not master_item.steam_store_hidden and verify_stock_item(master_item) then
+				local owned = false
 
-				for k, v in pairs(get_all_inventory_items) do
-					if var_22_6 == v.key then
-						flag = true
+				for backend_id, inventory_item in pairs(inventory_items) do
+					if item_key == inventory_item.key then
+						owned = true
 
 						break
 					end
 				end
 
-				local clone = table.clone(var_22_7)
+				local cloned_master_item = table.clone(master_item)
 
-				if not (var_22_7.item_type == "bundle" or var_22_7.item_type ~= "cosmetic_bundle") then
-					local _read_bundle_from_steam, var_22_11 = self:_read_bundle_from_steam(var_22_4)
+				if master_item.item_type == "bundle" or master_item.item_type == "cosmetic_bundle" then
+					local contains, discount = self:_read_bundle_from_steam(steam_itemdefid)
 
-					if not _read_bundle_from_steam then
-						clone.bundle_contains = _read_bundle_from_steam
-						clone.discount = var_22_11
+					if contains then
+						cloned_master_item.bundle_contains = contains
+						cloned_master_item.discount = discount
 					else
-						Crashify.print_exception("[BackendInterfacePeddlerPlayFab]", "_refresh_steam_item_prices_cb, bundle_contains table is empty. steam_itemdef_id: %s", tostring(var_22_4))
-						print(table.dump(clone, "MISSING BUNDLE CONTAINS", 2))
+						Crashify.print_exception("[BackendInterfacePeddlerPlayFab]", "_refresh_steam_item_prices_cb, bundle_contains table is empty. steam_itemdef_id: %s", tostring(steam_itemdefid))
+						print(table.dump(cloned_master_item, "MISSING BUNDLE CONTAINS", 2))
 					end
 
-					tbl[#tbl + 1] = clone
+					bundles[#bundles + 1] = cloned_master_item
 				end
 
-				_peddler_stock[num] = {
+				peddler_stock[steam_stock_index] = {
 					type = "item",
-					data = clone,
-					key = var_22_6,
-					id = var_22_6,
-					owned = flag,
-					steam_itemdefid = var_22_4,
-					steam_price = var_22_5,
-					steam_data = SteamItemService.get_item_data(var_22_4)
+					data = cloned_master_item,
+					key = item_key,
+					id = item_key,
+					owned = owned,
+					steam_itemdefid = steam_itemdefid,
+					steam_price = price,
+					steam_data = SteamItemService.get_item_data(steam_itemdefid)
 				}
-				num = num + 1
+				steam_stock_index = steam_stock_index + 1
 			end
 		else
-			print("Missing item masterlist item for steam_itemdefid:", var_22_4)
+			print("Missing item masterlist item for steam_itemdefid:", steam_itemdefid)
 		end
 	end
 
-	for l = 1, #tbl do
-		local var_22_12 = tbl[l]
-		local num_2 = 0
-		local bundle_contains = var_22_12.bundle_contains
+	for i = 1, #bundles do
+		local bundle_item_data = bundles[i]
+		local price_sum = 0
+		local bundle_contains = bundle_item_data.bundle_contains
 
 		if type(bundle_contains) == "table" then
-			for i4 = 1, #bundle_contains do
-				local var_22_15 = bundle_contains[i4]
-				local var_22_16 = self._steam_item_prices[var_22_15]
+			for j = 1, #bundle_contains do
+				local steam_itemdefid = bundle_contains[j]
+				local var_22_0 = self._steam_item_prices[steam_itemdefid]
 
-				var_22_16 = var_22_16 or 0
-				num_2 = num_2 + var_22_16
+				var_22_0 = not not var_22_0 or not not 0
+				price_sum = price_sum + var_22_0
 			end
 		end
 
-		var_22_12.bundle_price = num_2
+		bundle_item_data.bundle_price = price_sum
 	end
 
-	self._steam_item_currency = arg_22_3
+	self._steam_item_currency = currency
 	self._steam_stock_ready = true
 
-	if not arg_22_1 then
-		arg_22_1()
+	if external_cb then
+		external_cb()
 	end
 end
 
-BackendInterfacePeddlerPlayFab.refresh_app_prices = function (self, arg_23_1)
+BackendInterfacePeddlerPlayFab.refresh_app_prices = function (self, external_cb)
 	-- function 23
-	local PLATFORM = PLATFORM
+	local platform = PLATFORM
 
-	if IS_WINDOWS or not IS_LINUX then
-		self:_refresh_app_prices_steam(arg_23_1)
-	elseif not IS_PS4 then
-		self:_refresh_app_prices_psn(arg_23_1)
-	elseif not IS_XB1 then
-		self:_refresh_app_prices_xboxlive(arg_23_1)
+	if IS_WINDOWS or IS_LINUX then
+		self:_refresh_app_prices_steam(external_cb)
+	elseif IS_PS4 then
+		self:_refresh_app_prices_psn(external_cb)
+	elseif IS_XB1 then
+		self:_refresh_app_prices_xboxlive(external_cb)
 	end
 end
 
-BackendInterfacePeddlerPlayFab._refresh_app_prices_steam = function (self, arg_24_1)
+BackendInterfacePeddlerPlayFab._refresh_app_prices_steam = function (self, external_cb)
 	-- function 24
-	local tbl = {
+	local request = {
 		FunctionName = "getSteamAppPriceInfo",
 		FunctionParameter = {}
 	}
+	local mirror = self._backend_mirror
+	local request_queue = mirror:request_queue()
 
-	self._backend_mirror:request_queue():enqueue(tbl, callback(self, "_refresh_app_prices_steam_cb", arg_24_1), false)
+	request_queue:enqueue(request, callback(self, "_refresh_app_prices_steam_cb", external_cb), false)
 end
 
-BackendInterfacePeddlerPlayFab._refresh_app_prices_steam_cb = function (self, arg_25_1, arg_25_2)
+BackendInterfacePeddlerPlayFab._refresh_app_prices_steam_cb = function (self, external_cb, result)
 	-- function 25
-	local FunctionResult = arg_25_2.FunctionResult
-	local flag = true
+	local function_result = result.FunctionResult
+	local success = true
 
-	if not FunctionResult.error then
-		print("[BackendInterfacePeddlerPlayFab] _refresh_app_prices_steam_cb ERROR", FunctionResult.error)
+	if function_result.error then
+		print("[BackendInterfacePeddlerPlayFab] _refresh_app_prices_steam_cb ERROR", function_result.error)
 
-		flag = false
+		success = false
 	else
-		local price_info = FunctionResult.price_info
+		local price_info = function_result.price_info
 
-		if not price_info then
-			for k, v in pairs(price_info) do
-				local currency = v.currency
-				local initial_price = v.initial_price
-				local final_price = v.final_price
+		if price_info then
+			for app_id, info in pairs(price_info) do
+				local currency = info.currency
+				local regular_price = info.initial_price
+				local current_price = info.final_price
 
-				self._app_prices[k] = {
+				self._app_prices[app_id] = {
 					currency = currency,
-					regular_price = initial_price,
-					current_price = final_price
+					regular_price = regular_price,
+					current_price = current_price
 				}
 			end
 		end
@@ -515,342 +542,374 @@ BackendInterfacePeddlerPlayFab._refresh_app_prices_steam_cb = function (self, ar
 
 	self._app_prices_ready = true
 
-	if not arg_25_1 then
-		arg_25_1(flag)
+	if external_cb then
+		external_cb(success)
 	end
 end
 
-BackendInterfacePeddlerPlayFab._refresh_app_prices_psn = function (self, arg_26_1)
+BackendInterfacePeddlerPlayFab._refresh_app_prices_psn = function (self, external_cb)
 	-- function 26
 	table.clear(self._psn_requests)
 
-	local tbl = {}
-	local str = ""
+	local product_label_lookup = {}
+	local product_labels_string = ""
 	local title_id = PS4.title_id()
 
 	table.clear(self._app_prices)
 
-	for k, v in pairs(DLCSettings) do
-		local unlock_settings_ps4 = v.unlock_settings_ps4
+	for name, dlc_data in pairs(DLCSettings) do
+		local unlock_settings_ps4 = dlc_data.unlock_settings_ps4
 
-		if not unlock_settings_ps4 then
-			local var_26_4 = unlock_settings_ps4[title_id]
+		if unlock_settings_ps4 then
+			local var_26_0 = unlock_settings_ps4[title_id]
 
-			var_26_4 = var_26_4 or {}
+			if not var_26_0 then
+				-- Nothing
+			end
 
-			for k_2, v_2 in pairs(var_26_4) do
-				local product_label = v_2.product_label
+			var_26_0 = {}
 
-				if not product_label then
-					str = str .. v_2.product_label .. ":"
-					tbl[product_label] = k_2
+			local regional_unlock_settings = var_26_0
 
-					if table.size(tbl) > 20 then
+			::label_26_0::
+
+			for name, unlock_settings in pairs(regional_unlock_settings) do
+				local product_label = unlock_settings.product_label
+
+				if product_label then
+					product_labels_string = product_labels_string .. unlock_settings.product_label .. ":"
+					product_label_lookup[product_label] = name
+
+					if table.size(product_label_lookup) > 20 then
 						self._psn_requests[#self._psn_requests + 1] = {
-							product_labels_string = str,
-							product_label_lookup = table.clone(tbl)
+							product_labels_string = product_labels_string,
+							product_label_lookup = table.clone(product_label_lookup)
 						}
 
-						table.clear(tbl)
+						table.clear(product_label_lookup)
 
-						str = ""
+						product_labels_string = ""
 					end
 				end
 			end
 		end
 	end
 
-	if table.size(tbl) > 0 then
+	if table.size(product_label_lookup) > 0 then
 		self._psn_requests[#self._psn_requests + 1] = {
-			product_labels_string = str,
-			product_label_lookup = table.clone(tbl)
+			product_labels_string = product_labels_string,
+			product_label_lookup = table.clone(product_label_lookup)
 		}
 
-		table.clear(tbl)
+		table.clear(product_label_lookup)
 
-		local str_2 = ""
+		product_labels_string = ""
 	end
 
-	local var_26_7 = self._psn_requests[1]
+	local request = self._psn_requests[1]
 
-	Managers.account:get_product_details(var_26_7.product_labels_string, 0, callback(self, "_refresh_app_prices_psn_cb", arg_26_1, var_26_7.product_label_lookup))
+	Managers.account:get_product_details(request.product_labels_string, 0, callback(self, "_refresh_app_prices_psn_cb", external_cb, request.product_label_lookup))
 end
 
-BackendInterfacePeddlerPlayFab._refresh_app_prices_psn_cb = function (self, arg_27_1, arg_27_2, arg_27_3)
+BackendInterfacePeddlerPlayFab._refresh_app_prices_psn_cb = function (self, external_cb, product_label_lookup, result_json)
 	-- function 27
 	print("")
 	print("############ WEBAPI JSON COMMERCE RESULT ############")
-	print(arg_27_3)
+	print(result_json)
 	print("#####################################################")
 	print("")
 
-	if not arg_27_3 then
-		local tbl = {}
-		local decode = cjson.decode(arg_27_3)
+	if result_json then
+		local empty_table = {}
+		local result = cjson.decode(result_json)
 
-		for k, v in pairs(decode) do
-			local label = v.label
-			local skus = v.skus
-			local var_27_4
+		for idx, product in pairs(result) do
+			local product_label = product.label
+			local skus = product.skus
+			local var_27_0
 
-			if not skus then
-				var_27_4 = skus[1]
+			if skus then
+				var_27_0 = skus[1]
 
-				if not var_27_4 then
+				if not var_27_0 then
 					-- Nothing
 				end
 			end
 
-			var_27_4 = tbl
+			var_27_0 = empty_table
+
+			local sku = var_27_0
 
 			::label_27_0::
 
-			local var_27_5 = arg_27_2[label]
+			local dlc_name = product_label_lookup[product_label]
 
-			self._app_prices[var_27_5] = {
-				name = v.name,
-				is_plus_price = var_27_4.is_plus_price,
-				plus_upsell_price = var_27_4.plus_upsell_price,
-				original_price = var_27_4.original_price,
-				price = var_27_4.price,
-				display_original_price = var_27_4.display_original_price,
-				display_plus_upsell_price = var_27_4.display_plus_upsell_price,
-				display_price = var_27_4.display_price,
-				product_id = var_27_4.product_id,
-				product_label = label
+			self._app_prices[dlc_name] = {
+				name = product.name,
+				is_plus_price = sku.is_plus_price,
+				plus_upsell_price = sku.plus_upsell_price,
+				original_price = sku.original_price,
+				price = sku.price,
+				display_original_price = sku.display_original_price,
+				display_plus_upsell_price = sku.display_plus_upsell_price,
+				display_price = sku.display_price,
+				product_id = sku.product_id,
+				product_label = product_label
 			}
 		end
-	elseif not arg_27_1 then
-		local flag = false
+	elseif external_cb then
+		local success = false
 
-		arg_27_1(flag)
+		external_cb(success)
 	end
 
 	table.remove(self._psn_requests, 1)
 
 	if table.size(self._psn_requests) > 0 then
-		local var_27_7 = self._psn_requests[1]
+		local request = self._psn_requests[1]
 
-		Managers.account:get_product_details(var_27_7.product_labels_string, 0, callback(self, "_refresh_app_prices_psn_cb", arg_27_1, var_27_7.product_label_lookup))
+		Managers.account:get_product_details(request.product_labels_string, 0, callback(self, "_refresh_app_prices_psn_cb", external_cb, request.product_label_lookup))
 	else
 		self._app_prices_ready = true
 
-		if not arg_27_1 then
-			local flag_2 = false
+		if external_cb then
+			local success = false
 
-			arg_27_1(flag_2)
+			external_cb(success)
 		end
 	end
 end
 
-BackendInterfacePeddlerPlayFab._refresh_app_prices_xboxlive = function (self, arg_28_1)
+BackendInterfacePeddlerPlayFab._refresh_app_prices_xboxlive = function (self, external_cb)
 	-- function 28
-	local tbl = {}
-	local tbl_2 = {}
+	local product_id_lookup = {}
+	local product_ids = {}
 
 	table.clear(self._app_prices)
 
-	for k, v in pairs(DLCSettings) do
-		local unlock_settings_xb1 = v.unlock_settings_xb1
+	for name, dlc_data in pairs(DLCSettings) do
+		local unlock_settings_xb1_2 = dlc_data.unlock_settings_xb1
 
-		unlock_settings_xb1 = unlock_settings_xb1 or {}
+		if not unlock_settings_xb1_2 then
+			-- Nothing
+		end
 
-		for k_2, v_2 in pairs(unlock_settings_xb1) do
-			local id = v_2.id
+		unlock_settings_xb1_2 = {}
 
-			if not id then
-				tbl_2[#tbl_2 + 1] = id
-				tbl[id] = k_2
+		local unlock_settings_xb1 = unlock_settings_xb1_2
+
+		::label_28_0::
+
+		for name, unlock_settings in pairs(unlock_settings_xb1) do
+			local product_id = unlock_settings.id
+
+			if product_id then
+				product_ids[#product_ids + 1] = product_id
+				product_id_lookup[product_id] = name
 			end
 		end
 	end
 
-	if #tbl_2 < 0 then
-		local flag = true
+	if #product_ids < 0 then
+		local success = true
 
-		if not arg_28_1 then
-			arg_28_1(flag)
+		if external_cb then
+			external_cb(success)
 		end
 
 		return
 	end
 
 	print("####### GET PRICING INFORMATION")
-	table.dump(tbl_2, "PRODUCT_IDS", 5)
-	table.dump(tbl, "PRODUCT_ID_LOOKUP", 5)
-	Managers.account:get_product_details(tbl_2, callback(self, "_refresh_app_prices_xboxlive_cb", arg_28_1, tbl))
+	table.dump(product_ids, "PRODUCT_IDS", 5)
+	table.dump(product_id_lookup, "PRODUCT_ID_LOOKUP", 5)
+	Managers.account:get_product_details(product_ids, callback(self, "_refresh_app_prices_xboxlive_cb", external_cb, product_id_lookup))
 end
 
-BackendInterfacePeddlerPlayFab._refresh_app_prices_xboxlive_cb = function (self, arg_29_1, arg_29_2, arg_29_3)
+BackendInterfacePeddlerPlayFab._refresh_app_prices_xboxlive_cb = function (self, external_cb, product_id_lookup, result)
 	-- function 29
-	if not arg_29_3.error then
-		Application.warning(arg_29_3.error)
+	if result.error then
+		Application.warning(result.error)
 	end
 
-	if not arg_29_3.product_details then
-		for k, v in pairs(arg_29_3.product_details) do
-			local var_29_0 = arg_29_2[string.upper(k)]
+	if result.product_details then
+		for product_id, catalog_item_details in pairs(result.product_details) do
+			local capitalized_product_id = string.upper(product_id)
+			local dlc_name = product_id_lookup[capitalized_product_id]
 
-			self._app_prices[var_29_0] = v
+			self._app_prices[dlc_name] = catalog_item_details
 		end
 	end
 
-	if not arg_29_1 then
-		local flag = arg_29_3.error == nil
+	if external_cb then
+		local success = result.error == nil
 
-		arg_29_1(flag)
+		external_cb(success)
 	end
 
 	self._app_prices_ready = true
 end
 
-BackendInterfacePeddlerPlayFab.exchange_chips = function (self, arg_30_1, arg_30_2, arg_30_3, arg_30_4)
+BackendInterfacePeddlerPlayFab.exchange_chips = function (self, item_id, chip_type, expected_chip_amount, external_cb)
 	-- function 30
-	local tbl = {
-		StoreId = str,
-		ItemId = arg_30_1,
-		VirtualCurrency = arg_30_2,
-		Price = arg_30_3
+	local request = {
+		StoreId = PEDDLER_ID,
+		ItemId = item_id,
+		VirtualCurrency = chip_type,
+		Price = expected_chip_amount
 	}
-	local var_30_1 = callback(self, "_exchange_chips_success_cb", arg_30_4)
-	local var_30_2 = callback(self, "_exchange_chips_error_cb", arg_30_4)
+	local success_cb = callback(self, "_exchange_chips_success_cb", external_cb)
+	local error_cb = callback(self, "_exchange_chips_error_cb", external_cb)
+	local mirror = self._backend_mirror
+	local request_queue = mirror:request_queue()
 
-	self._backend_mirror:request_queue():enqueue_api_request("PurchaseItem", tbl, var_30_1, var_30_2)
+	request_queue:enqueue_api_request("PurchaseItem", request, success_cb, error_cb)
 end
 
-BackendInterfacePeddlerPlayFab._exchange_chips_success_cb = function (self, arg_31_1, arg_31_2)
+BackendInterfacePeddlerPlayFab._exchange_chips_success_cb = function (self, external_cb, result)
 	-- function 31
-	local Items = arg_31_2.Items
-	local _chips = self._chips
-	local _backend_mirror = self._backend_mirror
+	local items = result.Items
+	local chips = self._chips
+	local mirror = self._backend_mirror
 
-	for i = 1, #Items do
-		local var_31_3 = Items[i]
-		local ItemInstanceId = var_31_3.ItemInstanceId
+	for i = 1, #items do
+		local item = items[i]
+		local item_instance_id = item.ItemInstanceId
 
-		_backend_mirror:add_item(ItemInstanceId, var_31_3)
+		mirror:add_item(item_instance_id, item)
 
-		if not var_31_3.BundleParent then
-			local UnitCurrency = var_31_3.UnitCurrency
-			local UnitPrice = var_31_3.UnitPrice
+		if not item.BundleParent then
+			local chip_type = item.UnitCurrency
+			local chip_amount = item.UnitPrice
 
-			_chips[UnitCurrency] = _chips[UnitCurrency] - UnitPrice
+			chips[chip_type] = chips[chip_type] - chip_amount
 
-			print(string.format("[BackendInterfacePeddlerPlayFab] Exchanged %s %s for %s", UnitPrice, UnitCurrency, var_31_3.ItemId))
+			print(string.format("[BackendInterfacePeddlerPlayFab] Exchanged %s %s for %s", chip_amount, chip_type, item.ItemId))
 		end
 	end
 
-	local tbl = {
+	local request = {
 		FunctionName = "storePurchaseMade",
 		FunctionParameter = {
-			items = Items
+			items = items
 		}
 	}
-	local var_31_8 = callback(self, "_store_purchase_made_cb", Items)
+	local request_cb = callback(self, "_store_purchase_made_cb", items)
+	local request_queue = self._backend_mirror:request_queue()
 
-	self._backend_mirror:request_queue():enqueue(tbl, var_31_8, true)
-	arg_31_1(true, Items)
+	request_queue:enqueue(request, request_cb, true)
+	external_cb(true, items)
 end
 
-BackendInterfacePeddlerPlayFab._exchange_chips_error_cb = function (self, arg_32_1, arg_32_2, arg_32_3)
+BackendInterfacePeddlerPlayFab._exchange_chips_error_cb = function (self, external_cb, result, reenable_queue_function)
 	-- function 32
-	local errorCode = arg_32_2.errorCode
+	local error_code = result.errorCode
+	local is_non_fatal = NON_FATAL_ERROR_CODES[error_code]
 
-	if not tbl[errorCode] then
-		arg_32_3()
-		self:_refresh_on_error(arg_32_1)
+	if is_non_fatal then
+		reenable_queue_function()
+		self:_refresh_on_error(external_cb)
 	else
-		Managers.backend:playfab_error(BACKEND_PLAYFAB_ERRORS.ERR_PLAYFAB_ERROR, errorCode)
-		arg_32_1(false)
+		Managers.backend:playfab_error(BACKEND_PLAYFAB_ERRORS.ERR_PLAYFAB_ERROR, error_code)
+		external_cb(false)
 	end
 end
 
-BackendInterfacePeddlerPlayFab._store_purchase_made_cb = function (self, arg_33_1, arg_33_2)
+BackendInterfacePeddlerPlayFab._store_purchase_made_cb = function (self, items, result)
 	-- function 33
-	local FunctionResult = arg_33_2.FunctionResult
-	local updated_statistics = FunctionResult.updated_statistics
+	local function_result = result.FunctionResult
+	local updated_statistics = function_result.updated_statistics
 
-	if not updated_statistics then
-		local player = Managers.player
+	if updated_statistics then
+		local player_2 = Managers.player
 
-		player = not player and Managers.player:local_player()
+		if player_2 then
+			-- Nothing
+		end
+
+		player_2 = Managers.player:local_player()
+
+		local player = player_2
+
+		::label_33_0::
 
 		local statistics_db = Managers.player:statistics_db()
 
-		if not (not player and statistics_db) then
+		if not player or not statistics_db then
 			print("[BackendInterfacePeddlerPlayFab] Could not get statistics_db, skipping updating statistics...")
 		else
-			local stats_id = player:stats_id()
+			local player_stats_id = player:stats_id()
 
-			for k, v in pairs(updated_statistics) do
-				if not statistics_db.statistics[stats_id][k] then
-					Application.warning("[BackendInterfacePeddlerPlayFab] updated_statistics " .. k .. " doesn't exist.")
+			for key, value in pairs(updated_statistics) do
+				if not statistics_db.statistics[player_stats_id][key] then
+					Application.warning("[BackendInterfacePeddlerPlayFab] updated_statistics " .. key .. " doesn't exist.")
 				else
-					statistics_db:set_stat(stats_id, k, v)
+					statistics_db:set_stat(player_stats_id, key, value)
 				end
 			end
 		end
 	end
 
-	if not FunctionResult.new_cosmetics then
-		for k_2 = 1, #FunctionResult.new_cosmetics do
-			local var_33_5 = FunctionResult.new_cosmetics[k_2]
-			local find_by_key, var_33_7 = table.find_by_key(arg_33_1, "ItemId", var_33_5)
+	if function_result.new_cosmetics then
+		for i = 1, #function_result.new_cosmetics do
+			local cosmetic = function_result.new_cosmetics[i]
+			local _, item = table.find_by_key(items, "ItemId", cosmetic)
 
-			self._backend_mirror:add_item(not var_33_7 and var_33_7.ItemInstanceId, {
-				ItemId = FunctionResult.new_cosmetics[k_2]
+			self._backend_mirror:add_item(not not item and not not item.ItemInstanceId, {
+				ItemId = function_result.new_cosmetics[i]
 			})
 		end
 	end
 
-	if not FunctionResult.new_weapon_skins then
-		for l = 1, #FunctionResult.new_weapon_skins do
+	if function_result.new_weapon_skins then
+		for i = 1, #function_result.new_weapon_skins do
 			self._backend_mirror:add_item(nil, {
-				ItemId = FunctionResult.new_weapon_skins[l]
+				ItemId = function_result.new_weapon_skins[i]
 			})
 		end
 	end
 end
 
-BackendInterfacePeddlerPlayFab._refresh_on_error = function (self, arg_34_1)
+BackendInterfacePeddlerPlayFab._refresh_on_error = function (self, external_cb)
 	-- function 34
-	self:refresh_stock(callback(self, "_refresh_stock_on_error_cb", arg_34_1))
+	self:refresh_stock(callback(self, "_refresh_stock_on_error_cb", external_cb))
 end
 
-BackendInterfacePeddlerPlayFab._refresh_stock_on_error_cb = function (self, arg_35_1)
+BackendInterfacePeddlerPlayFab._refresh_stock_on_error_cb = function (self, external_cb)
 	-- function 35
-	self:refresh_chips(callback(self, "_refresh_chips_on_error_cb", arg_35_1))
+	self:refresh_chips(callback(self, "_refresh_chips_on_error_cb", external_cb))
 end
 
-BackendInterfacePeddlerPlayFab._refresh_chips_on_error_cb = function (self, arg_36_1)
+BackendInterfacePeddlerPlayFab._refresh_chips_on_error_cb = function (self, external_cb)
 	-- function 36
-	self:refresh_layout_override(false, callback(self, "_refresh_layout_override_on_error_cb", arg_36_1))
+	self:refresh_layout_override(false, callback(self, "_refresh_layout_override_on_error_cb", external_cb))
 end
 
-BackendInterfacePeddlerPlayFab._refresh_layout_override_on_error_cb = function (arg_37_0, arg_37_1)
+BackendInterfacePeddlerPlayFab._refresh_layout_override_on_error_cb = function (self, external_cb)
 	-- function 37
 	Managers.backend:playfab_error(BACKEND_PLAYFAB_ERRORS.ERR_PLAYFAB_NON_FATAL_STORE_ERROR, nil)
-	arg_37_1(false)
+	external_cb(false)
 end
 
-BackendInterfacePeddlerPlayFab.refresh_login_rewards = function (self, arg_38_1)
+BackendInterfacePeddlerPlayFab.refresh_login_rewards = function (self, external_cb)
 	-- function 38
-	local tbl = {
+	local request = {
 		FunctionName = "getStoreRewards"
 	}
-	local var_38_1 = callback(self, "_refresh_login_rewards_cb", arg_38_1)
+	local request_cb = callback(self, "_refresh_login_rewards_cb", external_cb)
+	local request_queue = self._backend_mirror:request_queue()
 
-	self._backend_mirror:request_queue():enqueue(tbl, var_38_1, false)
+	request_queue:enqueue(request, request_cb, false)
 end
 
-BackendInterfacePeddlerPlayFab._refresh_login_rewards_cb = function (self, arg_39_1, arg_39_2)
+BackendInterfacePeddlerPlayFab._refresh_login_rewards_cb = function (self, external_cb, result)
 	-- function 39
-	local FunctionResult = arg_39_2.FunctionResult
+	local login_rewards = result.FunctionResult
 
-	self._login_rewards = FunctionResult
+	self._login_rewards = login_rewards
 
-	if not arg_39_1 then
-		arg_39_1(FunctionResult)
+	if external_cb then
+		external_cb(login_rewards)
 	end
 end
 
@@ -864,122 +923,132 @@ BackendInterfacePeddlerPlayFab.done_claiming_login_rewards = function (self)
 	return self._is_done_claiming
 end
 
-BackendInterfacePeddlerPlayFab.claim_login_rewards = function (self, arg_42_1, arg_42_2)
+BackendInterfacePeddlerPlayFab.claim_login_rewards = function (self, external_cb, offset)
 	-- function 42
 	if not self._is_done_claiming then
 		return
 	end
 
-	local tbl = {
+	local request = {
 		FunctionName = "claimStoreRewards",
 		FunctionParameter = {
-			offset = arg_42_2
+			offset = offset
 		}
 	}
-	local var_42_1 = callback(self, "_claim_store_rewards_cb", arg_42_1, arg_42_2)
+	local request_cb = callback(self, "_claim_store_rewards_cb", external_cb, offset)
+	local request_queue = self._backend_mirror:request_queue()
 
-	self._backend_mirror:request_queue():enqueue(tbl, var_42_1, true)
+	request_queue:enqueue(request, request_cb, true)
 
 	self._is_done_claiming = false
 end
 
-BackendInterfacePeddlerPlayFab._claim_store_rewards_cb = function (self, arg_43_1, arg_43_2, arg_43_3)
+BackendInterfacePeddlerPlayFab._claim_store_rewards_cb = function (self, external_cb, offset, result)
 	-- function 43
-	self:_refresh_login_rewards_cb(nil, arg_43_3)
+	self:_refresh_login_rewards_cb(nil, result)
 
-	local items = arg_43_3.FunctionResult.items
-	local _backend_mirror = self._backend_mirror
-	local flag = false
+	local granted_items = result.FunctionResult.items
+	local backend_mirror = self._backend_mirror
+	local rewards_claimed = false
 
-	if not items then
-		for i = 1, #items do
-			local var_43_3 = items[i]
-			local ItemInstanceId = var_43_3.ItemInstanceId
+	if granted_items then
+		for i = 1, #granted_items do
+			local item = granted_items[i]
+			local backend_id = item.ItemInstanceId
+			local UsesIncrementedBy = item.UsesIncrementedBy
 
-			if not var_43_3.UsesIncrementedBy then
-				local num = 1
+			if not UsesIncrementedBy then
+				-- Nothing
 			end
 
-			_backend_mirror:add_item(ItemInstanceId, var_43_3)
+			UsesIncrementedBy = 1
 
-			flag = true
+			local amount = UsesIncrementedBy
+
+			::label_43_0::
+
+			backend_mirror:add_item(backend_id, item)
+
+			rewards_claimed = true
 		end
 	end
 
-	local new_cosmetics = arg_43_3.FunctionResult.new_cosmetics
+	local new_cosmetics = result.FunctionResult.new_cosmetics
 
-	if not new_cosmetics then
-		local _backend_mirror_2 = self._backend_mirror
+	if new_cosmetics then
+		local backend_mirror = self._backend_mirror
 
-		for j = 1, #new_cosmetics do
-			local var_43_8 = new_cosmetics[j]
+		for i = 1, #new_cosmetics do
+			local cosmetic_name = new_cosmetics[i]
+			local backend_id = backend_mirror:add_item(nil, {
+				ItemId = cosmetic_name
+			})
 
-			if not _backend_mirror_2:add_item(nil, {
-				ItemId = var_43_8
-			}) then
-				flag = true
+			if backend_id then
+				rewards_claimed = true
 			end
 		end
 	end
 
-	local new_steam_items = arg_43_3.FunctionResult.new_steam_items
+	local new_steam_items = result.FunctionResult.new_steam_items
 
-	if not new_steam_items then
-		local _backend_mirror_3 = self._backend_mirror
+	if new_steam_items then
+		local backend_mirror = self._backend_mirror
 
-		for k = 1, #new_steam_items do
-			local var_43_11 = new_steam_items[k]
-			local var_43_12 = tonumber(var_43_11[1])
-			local var_43_13 = var_43_11[2]
-			local var_43_14 = var_43_11[3]
-			local var_43_15 = var_43_11[4]
-			local var_43_16 = SteamitemdefidToMasterList[var_43_12]
+		for i = 1, #new_steam_items do
+			local item = new_steam_items[i]
+			local steam_itemdefid = tonumber(item[1])
+			local steam_backend_unique_id = item[2]
+			local flags = item[3]
+			local amount = item[4]
+			local item_key = SteamitemdefidToMasterList[steam_itemdefid]
 
-			if not var_43_16 then
-				local tbl = {
-					ItemId = var_43_16,
-					ItemInstanceId = var_43_13
+			if item_key then
+				local steam_item = {
+					ItemId = item_key,
+					ItemInstanceId = steam_backend_unique_id
 				}
+				local backend_id = backend_mirror:add_item(steam_backend_unique_id, steam_item, true)
 
-				if not _backend_mirror_3:add_item(var_43_13, tbl, true) then
-					flag = true
+				if backend_id then
+					rewards_claimed = true
 				end
 			end
 		end
 	end
 
-	local currency_added = arg_43_3.FunctionResult.currency_added
+	local currency_added = result.FunctionResult.currency_added
 
-	if not currency_added then
-		for l = 1, #currency_added do
-			local var_43_19 = currency_added[l]
-			local var_43_20 = self
+	if currency_added then
+		for i = 1, #currency_added do
+			local data = currency_added[i]
+			local var_43_1 = self
 			local set_chips = self.set_chips
-			local code = var_43_19.code
-			local var_43_23 = self._chips[var_43_19.code]
+			local code = data.code
+			local var_43_4 = self._chips[data.code]
 
-			var_43_23 = var_43_23 or 0
+			var_43_4 = not not var_43_4 or not not 0
 
-			set_chips(var_43_20, code, var_43_23 + var_43_19.amount)
+			set_chips(var_43_1, code, var_43_4 + data.amount)
 		end
 
-		flag = true
+		rewards_claimed = true
 	end
 
-	local chest_inventory = arg_43_3.FunctionResult.chest_inventory
+	local chest_inventory = result.FunctionResult.chest_inventory
 
-	if not chest_inventory then
-		_backend_mirror:set_read_only_data("chest_inventory", chest_inventory, true)
+	if chest_inventory then
+		backend_mirror:set_read_only_data("chest_inventory", chest_inventory, true)
 	end
 
-	if not flag then
-		Managers.telemetry_events:store_rewards_claimed(arg_43_3.FunctionResult, arg_43_2)
+	if rewards_claimed then
+		Managers.telemetry_events:store_rewards_claimed(result.FunctionResult, offset)
 		Managers.save:auto_save(SaveFileName, SaveData, nil)
 	end
 
 	self._is_done_claiming = true
 
-	if not arg_43_1 then
-		arg_43_1(arg_43_3.FunctionResult)
+	if external_cb then
+		external_cb(result.FunctionResult)
 	end
 end

@@ -4,20 +4,23 @@ require("scripts/utils/hero_spawner_handler")
 
 SpawnManager = class(SpawnManager)
 
-local num = 8
+local NUM_PLAYERS = 8
 
-SpawnManager.init = function (self, arg_1_1, arg_1_2, arg_1_3, arg_1_4, arg_1_5, arg_1_6, arg_1_7)
+SpawnManager.init = function (self, world, is_server, network_event_delegate, unit_spawner, profile_synchronizer, network_server, checkpoint_data)
 	-- function 1
-	self.world = arg_1_1
+	self.world = world
 	self.spawn_points = {}
 	self.last_spawn_point = 0
-	self._is_server = arg_1_2
+	self._is_server = is_server
 	self._spawning = true
 	self.new_spawns = {}
-	self.unit_spawner = arg_1_4
+	self.unit_spawner = unit_spawner
 	self.num_new_spawns = 0
-	self._game_mode = Managers.state.game_mode:game_mode()
-	self.hero_spawner_handler = HeroSpawnerHandler:new(arg_1_2, arg_1_5, arg_1_3)
+
+	local game_mode_manager = Managers.state.game_mode
+
+	self._game_mode = game_mode_manager:game_mode()
+	self.hero_spawner_handler = HeroSpawnerHandler:new(is_server, profile_synchronizer, network_event_delegate)
 	self._bot_profile_release_list = {}
 	self._spawn_list = {}
 	self._available_profile_order = {}
@@ -25,9 +28,9 @@ SpawnManager.init = function (self, arg_1_1, arg_1_2, arg_1_3, arg_1_4, arg_1_5,
 	self._bot_players = {}
 	self._delayed_bot_despawn_list = {}
 	self._game_objects_to_remove = {}
-	self._profile_synchronizer = arg_1_5
-	self._network_server = arg_1_6
-	self._network_event_delegate = arg_1_3
+	self._profile_synchronizer = profile_synchronizer
+	self._network_server = network_server
+	self._network_event_delegate = network_event_delegate
 	self._disable_spawning_reason_filter = {}
 	self._checkpoint_data = nil
 	self._respawns_enabled = true
@@ -46,16 +49,25 @@ SpawnManager.destroy = function (self)
 	assert(self._despawn_queue_size == 0, "Players left to despawn when the spawn manager is destroyed")
 end
 
-SpawnManager._default_player_statuses = function (arg_3_0)
+SpawnManager._default_player_statuses = function (self)
 	-- function 3
-	local team_a_num_slots = Managers.state.game_mode:settings().team_a_num_slots
+	local game_mode_settings = Managers.state.game_mode:settings()
+	local team_a_num_slots = game_mode_settings.team_a_num_slots
 
-	team_a_num_slots = team_a_num_slots or num
+	if not team_a_num_slots then
+		-- Nothing
+	end
 
-	local tbl = {}
+	team_a_num_slots = NUM_PLAYERS
 
-	for i = 1, team_a_num_slots do
-		tbl[i] = {
+	local num_slots = team_a_num_slots
+
+	::label_3_0::
+
+	local statuses = {}
+
+	for i = 1, num_slots do
+		local status = {
 			temporary_health_percentage = 0,
 			spawn_state = "not_spawned",
 			health_percentage = 1,
@@ -67,21 +79,23 @@ SpawnManager._default_player_statuses = function (arg_3_0)
 				slot_melee = 1
 			}
 		}
+
+		statuses[i] = status
 	end
 
-	return tbl
+	return statuses
 end
 
-SpawnManager._spawn_pos_rot_from_index = function (self, arg_4_1)
+SpawnManager._spawn_pos_rot_from_index = function (self, index)
 	-- function 4
-	local var_4_0 = self.spawn_points[arg_4_1]
-	local unbox = var_4_0.pos:unbox()
-	local unbox_2 = var_4_0.rot:unbox()
+	local spawn_point = self.spawn_points[index]
+	local position = spawn_point.pos:unbox()
+	local rotation = spawn_point.rot:unbox()
 
-	return unbox, unbox_2
+	return position, rotation
 end
 
-SpawnManager.flow_callback_set_checkpoint = function (self, arg_5_1, arg_5_2, ...)
+SpawnManager.flow_callback_set_checkpoint = function (self, no_spawn_volume, safe_zone_volume_name, ...)
 	-- function 5
 	if not self._is_server then
 		print("calling flow_callback_set_checkpoint on client.")
@@ -89,46 +103,46 @@ SpawnManager.flow_callback_set_checkpoint = function (self, arg_5_1, arg_5_2, ..
 		return
 	end
 
-	local create_checkpoint_data = Managers.state.entity:system("mission_system"):create_checkpoint_data()
-	local create_checkpoint_data_2 = Managers.state.entity:system("pickup_system"):create_checkpoint_data()
-	local create_checkpoint_data_3 = Managers.state.conflict.level_analysis:create_checkpoint_data()
-	local create_checkpoint_data_4 = Managers.state.networked_flow_state:create_checkpoint_data()
+	local mission_data = Managers.state.entity:system("mission_system"):create_checkpoint_data()
+	local pickup_data = Managers.state.entity:system("pickup_system"):create_checkpoint_data()
+	local level_analysis_data = Managers.state.conflict.level_analysis:create_checkpoint_data()
+	local networked_flow_state_data = Managers.state.networked_flow_state:create_checkpoint_data()
 
 	self._checkpoint_data = {
 		player_statuses = self:_clone_player_status(self._player_statuses),
 		spawns = self:_pack_spawn_unit_level_indices(...),
-		no_spawn_volume = arg_5_1,
-		safe_zone_volume_name = arg_5_2,
-		pickup = create_checkpoint_data_2,
-		level_analysis = create_checkpoint_data_3,
-		mission = create_checkpoint_data,
-		networked_flow_state = create_checkpoint_data_4
+		no_spawn_volume = no_spawn_volume,
+		safe_zone_volume_name = safe_zone_volume_name,
+		pickup = pickup_data,
+		level_analysis = level_analysis_data,
+		mission = mission_data,
+		networked_flow_state = networked_flow_state_data
 	}
 end
 
-SpawnManager.load_checkpoint_data = function (self, arg_6_1)
+SpawnManager.load_checkpoint_data = function (self, data)
 	-- function 6
-	self._checkpoint_data = arg_6_1
+	self._checkpoint_data = data
 
-	local _clone_player_status = self:_clone_player_status(arg_6_1.player_statuses)
-	local current_level = LevelHelper:current_level(self.world)
+	local statuses = self:_clone_player_status(data.player_statuses)
+	local level = LevelHelper:current_level(self.world)
 
-	for i, v in ipairs(arg_6_1.spawns) do
-		local unit_by_index = Level.unit_by_index(current_level, v)
-		local local_position = Unit.local_position(unit_by_index, 0)
-		local local_rotation = Unit.local_rotation(unit_by_index, 0)
-		local var_6_5 = _clone_player_status[i]
+	for i, unit_index in ipairs(data.spawns) do
+		local unit = Level.unit_by_index(level, unit_index)
+		local pos = Unit.local_position(unit, 0)
+		local rot = Unit.local_rotation(unit, 0)
+		local status = statuses[i]
 
-		if not var_6_5.position and not var_6_5.rotation then
-			var_6_5.position:store(local_position)
-			var_6_5.rotation:store(local_rotation)
+		if status.position and status.rotation then
+			status.position:store(pos)
+			status.rotation:store(rot)
 		else
-			var_6_5.position = Vector3Box(local_position)
-			var_6_5.rotation = QuaternionBox(local_rotation)
+			status.position = Vector3Box(pos)
+			status.rotation = QuaternionBox(rot)
 		end
 	end
 
-	self._player_statuses = _clone_player_status
+	self._player_statuses = statuses
 end
 
 SpawnManager.checkpoint_data = function (self)
@@ -136,64 +150,68 @@ SpawnManager.checkpoint_data = function (self)
 	return self._checkpoint_data
 end
 
-SpawnManager._clone_player_status = function (self, arg_8_1)
+SpawnManager._clone_player_status = function (self, t)
 	-- function 8
-	local tbl = {}
+	local clone = {}
 
-	for k, v in pairs(arg_8_1) do
-		if type(v) == "table" then
-			tbl[k] = self:_clone_player_status(v)
-		elseif k == "position" then
-			tbl[k] = Vector3Box(v:unbox())
-		elseif k == "rotation" then
-			tbl[k] = QuaternionBox(v:unbox())
+	for key, value in pairs(t) do
+		if type(value) == "table" then
+			clone[key] = self:_clone_player_status(value)
+		elseif key == "position" then
+			clone[key] = Vector3Box(value:unbox())
+		elseif key == "rotation" then
+			clone[key] = QuaternionBox(value:unbox())
 		else
-			tbl[k] = v
+			clone[key] = value
 		end
 	end
 
-	return tbl
+	return clone
 end
 
 SpawnManager._pack_spawn_unit_level_indices = function (self, ...)
 	-- function 9
-	local tbl = {}
-	local current_level = LevelHelper:current_level(self.world)
+	local return_table = {}
+	local level = LevelHelper:current_level(self.world)
 
-	for i, v in ipairs({
+	for i, unit in ipairs({
 		...
 	}) do
-		tbl[i] = Level.unit_index(current_level, v)
+		local level_index = Level.unit_index(level, unit)
+
+		return_table[i] = level_index
 	end
 
-	return tbl
+	return return_table
 end
 
-SpawnManager.pre_update = function (self, arg_10_1, arg_10_2)
+SpawnManager.pre_update = function (self, dt, t)
 	-- function 10
 	if self._despawn_queue_size > 0 then
 		self:_update_despawns()
 	end
 end
 
-SpawnManager.delayed_despawn = function (self, arg_11_1)
+SpawnManager.delayed_despawn = function (self, player)
 	-- function 11
-	local _despawn_queue = self._despawn_queue
+	local despawn_queue = self._despawn_queue
 
 	self._despawn_queue_size = self._despawn_queue_size + 1
-	_despawn_queue[self._despawn_queue_size] = arg_11_1
+	despawn_queue[self._despawn_queue_size] = player
 
-	arg_11_1:mark_as_queued_for_despawn()
+	player:mark_as_queued_for_despawn()
 end
 
 SpawnManager._update_despawns = function (self)
 	-- function 12
-	local _despawn_queue = self._despawn_queue
+	local despawn_queue = self._despawn_queue
 
 	for i = self._despawn_queue_size, 1, -1 do
-		_despawn_queue[i]:despawn()
+		local player = despawn_queue[i]
 
-		_despawn_queue[i] = nil
+		player:despawn()
+
+		despawn_queue[i] = nil
 	end
 
 	self._despawn_queue_size = 0

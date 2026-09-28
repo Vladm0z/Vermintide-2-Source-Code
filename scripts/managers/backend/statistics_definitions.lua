@@ -44,21 +44,21 @@ player.damage_dealt = {
 }
 player.quest_statistics = {}
 
-local rules = QuestSettings.rules
+local quest_rules = QuestSettings.rules
 
-for k, v in pairs(rules) do
-	local format = string.format("%s_quest", k)
+for quest_type, data in pairs(quest_rules) do
+	local stat_prefix = string.format("%s_quest", quest_type)
 
-	for k_2 = 1, v.max_quests do
-		local format_2 = string.format("%s_%d", format, k_2)
+	for i = 1, data.max_quests do
+		local quest_name = string.format("%s_%d", stat_prefix, i)
 
-		for l = 1, v.num_criterias do
-			local format_3 = string.format("%s_stat_%d", format_2, l)
+		for j = 1, data.num_criterias do
+			local stat_name = string.format("%s_stat_%d", quest_name, j)
 
-			player.quest_statistics[format_3] = {
+			player.quest_statistics[stat_name] = {
 				value = 0,
 				source = "player_data",
-				database_name = "quest_statistics_" .. format_3
+				database_name = "quest_statistics_" .. stat_name
 			}
 		end
 	end
@@ -140,7 +140,7 @@ player.kill_skaven_storm_vermin_warlord_difficulty_rank = {
 }
 player.highest_equipped_rarity = {}
 
-local tbl = {
+local slot_types = {
 	"melee",
 	"ranged",
 	"necklace",
@@ -152,11 +152,11 @@ local tbl = {
 	"weapon_pose"
 }
 
-for i, v_2 in ipairs(tbl) do
-	player.highest_equipped_rarity[v_2] = {
+for _, slot in ipairs(slot_types) do
+	player.highest_equipped_rarity[slot] = {
 		value = 0,
 		source = "player_data",
-		database_name = "highest_equipped_rarity_" .. v_2
+		database_name = "highest_equipped_rarity_" .. slot
 	}
 end
 
@@ -553,21 +553,21 @@ unit_test.profiles = {
 	}
 }
 
-for k_3, v_3 in pairs(CareerSettings) do
-	if k_3 ~= "empire_soldier_tutorial" then
-		player.completed_career_levels[k_3] = {}
+for career, _ in pairs(CareerSettings) do
+	if career ~= "empire_soldier_tutorial" then
+		player.completed_career_levels[career] = {}
 
-		for k_4, v_4 in pairs(LevelSettings) do
-			if not table.contains(UnlockableLevels, k_4) then
-				player.completed_career_levels[k_3][k_4] = {}
+		for level_key, level in pairs(LevelSettings) do
+			if table.contains(UnlockableLevels, level_key) then
+				player.completed_career_levels[career][level_key] = {}
 
-				for k_5, v_5 in pairs(DifficultySettings) do
-					local str = "completed_career_levels_" .. k_3 .. "_" .. k_4 .. "_" .. k_5
+				for diff, _ in pairs(DifficultySettings) do
+					local database_name = "completed_career_levels_" .. career .. "_" .. level_key .. "_" .. diff
 
-					player.completed_career_levels[k_3][k_4][k_5] = {
+					player.completed_career_levels[career][level_key][diff] = {
 						value = 0,
 						source = "player_data",
-						database_name = str
+						database_name = database_name
 					}
 				end
 			end
@@ -578,137 +578,135 @@ end
 player.min_health_percentage = {}
 player.min_health_completed = {}
 
-for k_6, v_6 in pairs(CareerSettings) do
-	local breed = CareerSettings[k_6].breed
+for career, _ in pairs(CareerSettings) do
+	local career_breed = CareerSettings[career].breed
 
-	if not breed and not breed.is_hero then
-		player.min_health_percentage[k_6] = {
+	if career_breed and career_breed.is_hero then
+		player.min_health_percentage[career] = {
 			value = 1
 		}
 
-		local str_2 = "min_health_completed_" .. k_6
+		local database_name = "min_health_completed_" .. career
 
-		player.min_health_completed[k_6] = {
+		player.min_health_completed[career] = {
 			value = 0,
 			source = "player_data",
-			database_name = str_2
+			database_name = database_name
 		}
 	end
 end
 
-for k_7, v_7 in pairs(DifficultySettings) do
-	local str_3 = "played_difficulty_" .. k_7
+for diff, _ in pairs(DifficultySettings) do
+	local database_name = "played_difficulty_" .. diff
 
-	player.played_difficulty[k_7] = {
+	player.played_difficulty[diff] = {
 		value = 0,
 		source = "player_data",
-		database_name = str_3
+		database_name = database_name
 	}
-
-	local format_4 = string.format("completed_weekly_event_difficulty_%s", k_7)
-
-	player.completed_weekly_event_difficulty[k_7] = {
+	database_name = string.format("completed_weekly_event_difficulty_%s", diff)
+	player.completed_weekly_event_difficulty[diff] = {
 		value = 0,
 		source = "player_data",
-		database_name = format_4
+		database_name = database_name
 	}
 end
 
-for k_8, v_8 in pairs(Breeds) do
-	player.kills_per_breed[k_8] = {
+for breed_name, breed in pairs(Breeds) do
+	player.kills_per_breed[breed_name] = {
 		value = 0,
 		sync_on_hot_join = true,
-		name = k_8
+		name = breed_name
 	}
-	player.kills_per_breed_persistent[k_8] = {
+	player.kills_per_breed_persistent[breed_name] = {
 		value = 0,
 		source = "player_data",
-		database_name = "kills_per_breed_persistent_" .. k_8
+		database_name = "kills_per_breed_persistent_" .. breed_name
 	}
-	player.kill_assists_per_breed[k_8] = {
+	player.kill_assists_per_breed[breed_name] = {
 		value = 0,
-		name = k_8
+		name = breed_name
 	}
-	player.damage_dealt_per_breed[k_8] = {
+	player.damage_dealt_per_breed[breed_name] = {
 		value = 0,
-		name = k_8
+		name = breed_name
 	}
 
-	local race = v_8.race
+	local race = breed.race
 
-	if not (not race and player.kills_per_race[race]) then
+	if race and not player.kills_per_race[race] then
 		player.kills_per_race[race] = {
 			value = 0,
 			name = race
 		}
 	end
 
-	player.kills_per_breed_difficulty[k_8] = {}
-	player.kill_assists_per_breed_difficulty[k_8] = {}
+	player.kills_per_breed_difficulty[breed_name] = {}
+	player.kill_assists_per_breed_difficulty[breed_name] = {}
 
-	local DifficultySettings = DifficultySettings
+	local difficulties = DifficultySettings
 
-	for k_9 in pairs(DifficultySettings) do
-		player.kills_per_breed_difficulty[k_8][k_9] = {
+	for difficulty_name in pairs(difficulties) do
+		player.kills_per_breed_difficulty[breed_name][difficulty_name] = {
 			value = 0
 		}
-		player.kill_assists_per_breed_difficulty[k_8][k_9] = {
+		player.kill_assists_per_breed_difficulty[breed_name][difficulty_name] = {
 			value = 0
 		}
 	end
 end
 
-for k_10, v_9 in pairs(PlayerBreeds) do
-	player.kills_per_breed[k_10] = {
+for breed_name, breed in pairs(PlayerBreeds) do
+	player.kills_per_breed[breed_name] = {
 		value = 0,
 		sync_on_hot_join = true,
-		name = k_10
+		name = breed_name
 	}
-	player.kill_assists_per_breed[k_10] = {
+	player.kill_assists_per_breed[breed_name] = {
 		value = 0,
-		name = k_10
+		name = breed_name
 	}
-	player.damage_dealt_per_breed[k_10] = {
+	player.damage_dealt_per_breed[breed_name] = {
 		value = 0,
-		name = k_10
+		name = breed_name
 	}
-	player.kills_per_breed_persistent[k_10] = {
-		value = 0,
-		source = "player_data",
-		database_name = "kills_per_breed_persistent_" .. k_10
-	}
-	player.damage_dealt_as_breed[k_10] = {
+	player.kills_per_breed_persistent[breed_name] = {
 		value = 0,
 		source = "player_data",
-		name = k_10,
-		database_name = "damage_dealt_as_" .. k_10
+		database_name = "kills_per_breed_persistent_" .. breed_name
 	}
-	player.eliminations_as_breed[k_10] = {
+	player.damage_dealt_as_breed[breed_name] = {
 		value = 0,
 		source = "player_data",
-		name = k_10,
-		database_name = "eliminations_as_" .. k_10
+		name = breed_name,
+		database_name = "damage_dealt_as_" .. breed_name
+	}
+	player.eliminations_as_breed[breed_name] = {
+		value = 0,
+		source = "player_data",
+		name = breed_name,
+		database_name = "eliminations_as_" .. breed_name
 	}
 
-	local race_2 = v_9.race
+	local race = breed.race
 
-	if not (not race_2 and player.kills_per_race[race_2]) then
-		player.kills_per_race[race_2] = {
+	if race and not player.kills_per_race[race] then
+		player.kills_per_race[race] = {
 			value = 0,
-			name = race_2
+			name = race
 		}
 	end
 
-	player.kills_per_breed_difficulty[k_10] = {}
-	player.kill_assists_per_breed_difficulty[k_10] = {}
+	player.kills_per_breed_difficulty[breed_name] = {}
+	player.kill_assists_per_breed_difficulty[breed_name] = {}
 
-	local DifficultySettings_2 = DifficultySettings
+	local difficulties = DifficultySettings
 
-	for k_11 in pairs(DifficultySettings_2) do
-		player.kills_per_breed_difficulty[k_10][k_11] = {
+	for difficulty_name in pairs(difficulties) do
+		player.kills_per_breed_difficulty[breed_name][difficulty_name] = {
 			value = 0
 		}
-		player.kill_assists_per_breed_difficulty[k_10][k_11] = {
+		player.kill_assists_per_breed_difficulty[breed_name][difficulty_name] = {
 			value = 0
 		}
 	end
@@ -716,41 +714,42 @@ end
 
 LevelDifficultyDBNames = {}
 
-for k_12, v_10 in pairs(UnlockableLevels) do
-	local flag = LevelSettings[v_10].dlc_name ~= nil
-	local tbl_2 = {
+for _, level_key in pairs(UnlockableLevels) do
+	local level = LevelSettings[level_key]
+	local is_dlc_level = level.dlc_name ~= nil
+	local completed_levels_definition = {
 		value = 0,
 		sync_on_hot_join = true,
 		sync_to_host = true,
-		database_name = "completed_levels_" .. v_10
+		database_name = "completed_levels_" .. level_key
 	}
 
-	if not flag then
-		tbl_2.source = "player_data"
+	if is_dlc_level then
+		completed_levels_definition.source = "player_data"
 	end
 
-	player.completed_levels[v_10] = tbl_2
+	player.completed_levels[level_key] = completed_levels_definition
 
-	local tbl_3 = {
+	local played_levels_quickplay_definition = {
 		value = 0,
 		sync_to_host = true,
-		database_name = "played_levels_quickplay_" .. v_10
+		database_name = "played_levels_quickplay_" .. level_key
 	}
-	local tbl_4 = {
+	local played_levels_weekly_event_definition = {
 		value = 0,
 		source = "player_data",
 		sync_to_host = true,
-		database_name = "played_levels_weekly_event_" .. v_10
+		database_name = "played_levels_weekly_event_" .. level_key
 	}
 
-	if not flag then
-		tbl_3.source = "player_data"
+	if is_dlc_level then
+		played_levels_quickplay_definition.source = "player_data"
 	end
 
-	player.played_levels_quickplay[v_10] = tbl_3
-	player.played_levels_weekly_event[v_10] = tbl_4
+	player.played_levels_quickplay[level_key] = played_levels_quickplay_definition
+	player.played_levels_weekly_event[level_key] = played_levels_weekly_event_definition
 
-	local tbl_5 = {
+	local heroes = {
 		"bright_wizard",
 		"wood_elf",
 		"empire_soldier",
@@ -758,94 +757,94 @@ for k_12, v_10 in pairs(UnlockableLevels) do
 		"dwarf_ranger"
 	}
 
-	for i_2, v_11 in ipairs(tbl_5) do
-		local str_4 = "completed_levels_" .. v_11
-		local var_0_22 = player[str_4]
-		local tbl_6 = {
+	for _, hero in ipairs(heroes) do
+		local key = "completed_levels_" .. hero
+		local t = player[key]
+		local definition = {
 			value = 0,
-			database_name = str_4 .. "_" .. v_10
+			database_name = key .. "_" .. level_key
 		}
 
-		if not flag then
-			tbl_6.source = "player_data"
+		if is_dlc_level then
+			definition.source = "player_data"
 		end
 
-		var_0_22[v_10] = tbl_6
+		t[level_key] = definition
 	end
 
-	local str_5 = v_10 .. "_difficulty_completed"
+	local level_difficulty_name = level_key .. "_difficulty_completed"
 
-	LevelDifficultyDBNames[v_10] = str_5
+	LevelDifficultyDBNames[level_key] = level_difficulty_name
 
-	local tbl_7 = {
+	local completed_levels_difficulty_definition = {
 		value = 0,
 		sync_on_hot_join = true,
-		database_name = str_5
+		database_name = level_difficulty_name
 	}
 
-	if not flag then
-		tbl_7.source = "player_data"
+	if is_dlc_level then
+		completed_levels_difficulty_definition.source = "player_data"
 	end
 
-	player.completed_levels_difficulty[str_5] = tbl_7
+	player.completed_levels_difficulty[level_difficulty_name] = completed_levels_difficulty_definition
 
-	local str_6 = "collected_grimoire_" .. v_10
-	local tbl_8 = {
+	local grimoire_name = "collected_grimoire_" .. level_key
+	local collected_grimoires_definition = {
 		value = 0,
-		database_name = str_6
+		database_name = grimoire_name
 	}
 
-	if not flag then
-		tbl_8.source = "player_data"
+	if is_dlc_level then
+		collected_grimoires_definition.source = "player_data"
 	end
 
-	player.collected_grimoires[v_10] = tbl_8
+	player.collected_grimoires[level_key] = collected_grimoires_definition
 
-	local str_7 = "collected_tome_" .. v_10
-	local tbl_9 = {
+	local tome_name = "collected_tome_" .. level_key
+	local tome_name_definition = {
 		value = 0,
-		database_name = str_7
+		database_name = tome_name
 	}
 
-	if not flag then
-		tbl_9.source = "player_data"
+	if is_dlc_level then
+		tome_name_definition.source = "player_data"
 	end
 
-	player.collected_tomes[v_10] = tbl_9
+	player.collected_tomes[level_key] = tome_name_definition
 
-	local str_8 = "collected_die_" .. v_10
-	local tbl_10 = {
+	local die_name = "collected_die_" .. level_key
+	local die_name_definition = {
 		value = 0,
-		database_name = str_8
+		database_name = die_name
 	}
 
-	if not flag then
-		tbl_10.source = "player_data"
+	if is_dlc_level then
+		die_name_definition.source = "player_data"
 	end
 
-	player.collected_dice[v_10] = tbl_10
+	player.collected_dice[level_key] = die_name_definition
 
-	local str_9 = "collected_painting_scraps_" .. v_10
+	local painting_name = "collected_painting_scraps_" .. level_key
 
-	player.collected_painting_scraps[v_10] = {
+	player.collected_painting_scraps[level_key] = {
 		value = 0,
 		source = "player_data",
-		database_name = str_9
+		database_name = painting_name
 	}
 end
 
 DLCUtils.dofile_list("statistics_definitions")
 
-local function fn(arg_1_0)
+local function add_names(stats)
 	-- function 1
-	for k, v in pairs(arg_1_0) do
-		if not v.value then
-			fn(v)
+	for stat_name, stat_definition in pairs(stats) do
+		if not stat_definition.value then
+			add_names(stat_definition)
 		else
-			v.name = k
+			stat_definition.name = stat_name
 		end
 	end
 end
 
-fn(player)
-fn(unit_test)
+add_names(player)
+add_names(unit_test)

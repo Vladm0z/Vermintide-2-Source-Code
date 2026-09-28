@@ -4,119 +4,129 @@ require("scripts/entity_system/systems/behaviour/nodes/bt_node")
 
 BTCritterRatScurryUnderDoorAction = class(BTCritterRatScurryUnderDoorAction, BTNode)
 
-BTCritterRatScurryUnderDoorAction.init = function (arg_1_0, ...)
+BTCritterRatScurryUnderDoorAction.init = function (self, ...)
 	-- function 1
-	BTCritterRatScurryUnderDoorAction.super.init(arg_1_0, ...)
+	BTCritterRatScurryUnderDoorAction.super.init(self, ...)
 end
 
 BTCritterRatScurryUnderDoorAction.name = "BTCritterRatScurryUnderDoorAction"
 
-BTCritterRatScurryUnderDoorAction.enter = function (self, arg_2_1, arg_2_2, arg_2_3)
+BTCritterRatScurryUnderDoorAction.enter = function (self, unit, blackboard, t)
 	-- function 2
-	arg_2_2.action = self._tree_node.action_data
+	blackboard.action = self._tree_node.action_data
 
-	local next_smart_object_data = arg_2_2.next_smart_object_data
-	local unbox = next_smart_object_data.entrance_pos:unbox()
-	local unbox_2 = next_smart_object_data.exit_pos:unbox()
+	local next_smart_object_data = blackboard.next_smart_object_data
+	local entrance_pos = next_smart_object_data.entrance_pos:unbox()
+	local exit_pos = next_smart_object_data.exit_pos:unbox()
 
-	arg_2_2.scurry_under_entrance_pos = Vector3Box(unbox)
-	arg_2_2.scurry_under_exit_pos = Vector3Box(unbox_2)
-	arg_2_2.scurry_under_lookat_direction = Vector3Box(Vector3.normalize(Vector3.flat(unbox_2 - unbox)))
+	blackboard.scurry_under_entrance_pos = Vector3Box(entrance_pos)
+	blackboard.scurry_under_exit_pos = Vector3Box(exit_pos)
+	blackboard.scurry_under_lookat_direction = Vector3Box(Vector3.normalize(Vector3.flat(exit_pos - entrance_pos)))
 
-	arg_2_2.locomotion_extension:set_movement_type("snap_to_navmesh")
+	local locomotion_extension = blackboard.locomotion_extension
 
-	if arg_2_2.move_state ~= "moving" then
-		Managers.state.network:anim_event(arg_2_1, "move_fwd")
+	locomotion_extension:set_movement_type("snap_to_navmesh")
 
-		arg_2_2.move_state = "moving"
+	if blackboard.move_state ~= "moving" then
+		Managers.state.network:anim_event(unit, "move_fwd")
+
+		blackboard.move_state = "moving"
 	end
 
-	arg_2_2.scurry_state = "moving_to_door"
+	blackboard.scurry_state = "moving_to_door"
 end
 
-BTCritterRatScurryUnderDoorAction.leave = function (arg_3_0, arg_3_1, arg_3_2, arg_3_3, arg_3_4, arg_3_5)
+BTCritterRatScurryUnderDoorAction.leave = function (self, unit, blackboard, t, reason, destroy)
 	-- function 3
-	arg_3_2.scurry_under_entrance_pos = nil
-	arg_3_2.scurry_under_exit_pos = nil
-	arg_3_2.scurry_state = nil
-	arg_3_2.scurry_under_lookat_direction = nil
-	arg_3_2.is_scurrying_under_door = nil
-	arg_3_2.anim_cb_scurry_under_finished = nil
-	arg_3_2.is_smart_objecting = nil
+	blackboard.scurry_under_entrance_pos = nil
+	blackboard.scurry_under_exit_pos = nil
+	blackboard.scurry_state = nil
+	blackboard.scurry_under_lookat_direction = nil
+	blackboard.is_scurrying_under_door = nil
+	blackboard.anim_cb_scurry_under_finished = nil
+	blackboard.is_smart_objecting = nil
 
-	if not arg_3_5 then
-		LocomotionUtils.set_animation_driven_movement(arg_3_1, false)
-		arg_3_2.locomotion_extension:set_movement_type("snap_to_navmesh")
+	if not destroy then
+		LocomotionUtils.set_animation_driven_movement(unit, false)
+
+		local locomotion_extension = blackboard.locomotion_extension
+
+		locomotion_extension:set_movement_type("snap_to_navmesh")
 	end
 
-	local navigation_extension = arg_3_2.navigation_extension
+	local navigation_extension = blackboard.navigation_extension
 
 	navigation_extension:set_enabled(true)
 
-	if not (not navigation_extension:is_using_smart_object() and navigation_extension:use_smart_object(false) or arg_3_2.exit_last_action) then
-		print("Could not release smart object, since nav mesh was not found. Killing AI", arg_3_1)
+	if navigation_extension:is_using_smart_object() then
+		local success = navigation_extension:use_smart_object(false)
 
-		local str = "forced"
-		local var_3_2 = Vector3(0, 0, -1)
+		if not success and not blackboard.exit_last_action then
+			print("Could not release smart object, since nav mesh was not found. Killing AI", unit)
 
-		AiUtils.kill_unit(arg_3_1, nil, nil, str, var_3_2)
+			local damage_type = "forced"
+			local damage_direction = Vector3(0, 0, -1)
+
+			AiUtils.kill_unit(unit, nil, nil, damage_type, damage_direction)
+		end
 	end
 end
 
-BTCritterRatScurryUnderDoorAction.run = function (self, arg_4_1, arg_4_2, arg_4_3, arg_4_4)
+BTCritterRatScurryUnderDoorAction.run = function (self, unit, blackboard, t, dt)
 	-- function 4
-	local var_4_0 = POSITION_LOOKUP[arg_4_1]
-	local locomotion_extension = arg_4_2.locomotion_extension
-	local navigation_extension = arg_4_2.navigation_extension
+	local unit_position = POSITION_LOOKUP[unit]
+	local locomotion_extension = blackboard.locomotion_extension
+	local navigation_extension = blackboard.navigation_extension
 
-	if arg_4_2.next_smart_object_data.next_smart_object_id == nil then
+	if blackboard.next_smart_object_data.next_smart_object_id == nil then
 		aiprint("Critter rat lost smart object during door action")
 
 		return "failed"
 	end
 
-	if not (arg_4_2.scurry_state ~= "moving_to_door" or self:_moving_to_door_update(arg_4_1, arg_4_2)) then
+	if blackboard.scurry_state == "moving_to_door" and not self:_moving_to_door_update(unit, blackboard) then
 		return "failed"
 	end
 
-	if arg_4_2.scurry_state == "moving_towards_smartobject_entrance" then
-		self:_move_towards_smartobject_entrance_update(arg_4_1, arg_4_2, arg_4_4)
+	if blackboard.scurry_state == "moving_towards_smartobject_entrance" then
+		self:_move_towards_smartobject_entrance_update(unit, blackboard, dt)
 	end
 
-	if arg_4_2.scurry_state == "waiting_to_reach_end" then
-		self:_waiting_to_reach_end_update(arg_4_1, arg_4_2)
+	if blackboard.scurry_state == "waiting_to_reach_end" then
+		self:_waiting_to_reach_end_update(unit, blackboard)
 	end
 
-	if arg_4_2.scurry_state == "done" then
-		arg_4_2.scurry_state = "done_for_reals"
-	elseif arg_4_2.scurry_state == "done_for_reals" then
-		arg_4_2.scurry_state = "done_for_reals2"
-	elseif arg_4_2.scurry_state == "done_for_reals2" then
+	if blackboard.scurry_state == "done" then
+		blackboard.scurry_state = "done_for_reals"
+	elseif blackboard.scurry_state == "done_for_reals" then
+		blackboard.scurry_state = "done_for_reals2"
+	elseif blackboard.scurry_state == "done_for_reals2" then
 		return "done"
 	end
 
 	return "running"
 end
 
-BTCritterRatScurryUnderDoorAction._moving_to_door_update = function (arg_5_0, arg_5_1, arg_5_2)
+BTCritterRatScurryUnderDoorAction._moving_to_door_update = function (self, unit, blackboard)
 	-- function 5
-	local var_5_0 = POSITION_LOOKUP[arg_5_1]
-	local unbox = arg_5_2.scurry_under_entrance_pos:unbox()
+	local unit_position = POSITION_LOOKUP[unit]
+	local entrance_pos = blackboard.scurry_under_entrance_pos:unbox()
+	local entrance_distance = Vector3.distance(entrance_pos, unit_position)
 
-	if Vector3.distance(unbox, var_5_0) < 1 then
-		local locomotion_extension = arg_5_2.locomotion_extension
+	if entrance_distance < 1 then
+		local locomotion_extension = blackboard.locomotion_extension
 
 		locomotion_extension:set_wanted_velocity(Vector3.zero())
 		locomotion_extension:set_movement_type("script_driven")
 
-		local navigation_extension = arg_5_2.navigation_extension
+		local navigation_extension = blackboard.navigation_extension
 
 		navigation_extension:set_enabled(false)
 
-		if not navigation_extension:use_smart_object(true) then
-			arg_5_2.is_smart_objecting = true
-			arg_5_2.is_scurrying_under_door = true
-			arg_5_2.scurry_state = "moving_towards_smartobject_entrance"
+		if navigation_extension:use_smart_object(true) then
+			blackboard.is_smart_objecting = true
+			blackboard.is_scurrying_under_door = true
+			blackboard.scurry_state = "moving_towards_smartobject_entrance"
 		else
 			print("BTCritterRatScurryUnderDoorAction - failing to use smart object")
 
@@ -127,46 +137,50 @@ BTCritterRatScurryUnderDoorAction._moving_to_door_update = function (arg_5_0, ar
 	return true
 end
 
-BTCritterRatScurryUnderDoorAction._move_towards_smartobject_entrance_update = function (arg_6_0, arg_6_1, arg_6_2, arg_6_3)
+BTCritterRatScurryUnderDoorAction._move_towards_smartobject_entrance_update = function (self, unit, blackboard, dt)
 	-- function 6
-	local var_6_0 = POSITION_LOOKUP[arg_6_1]
-	local unbox = arg_6_2.scurry_under_entrance_pos:unbox()
-	local unbox_2 = arg_6_2.scurry_under_lookat_direction:unbox()
-	local look = Quaternion.look(unbox_2)
-	local num = unbox - var_6_0
-	local length = Vector3.length(num)
-	local locomotion_extension = arg_6_2.locomotion_extension
+	local unit_position = POSITION_LOOKUP[unit]
+	local entrance_pos = blackboard.scurry_under_entrance_pos:unbox()
+	local look_direction_wanted = blackboard.scurry_under_lookat_direction:unbox()
+	local wanted_rotation = Quaternion.look(look_direction_wanted)
+	local vector_to_target = entrance_pos - unit_position
+	local distance_to_target = Vector3.length(vector_to_target)
+	local locomotion_extension = blackboard.locomotion_extension
 
-	if length > 0.1 then
-		local run_speed = arg_6_2.breed.run_speed
+	if distance_to_target > 0.1 then
+		local speed = blackboard.breed.run_speed
 
-		if length < run_speed * arg_6_3 then
-			run_speed = arg_6_3 ~= 0 or not 0 or length / arg_6_3
+		if distance_to_target < speed * dt then
+			speed = (dt ~= 0 or not 0) and not not (distance_to_target / dt)
 		end
 
-		local normalize = Vector3.normalize(num)
+		local direction_to_target = Vector3.normalize(vector_to_target)
 
-		locomotion_extension:set_wanted_velocity(normalize * run_speed)
-		locomotion_extension:set_wanted_rotation(look)
+		locomotion_extension:set_wanted_velocity(direction_to_target * speed)
+		locomotion_extension:set_wanted_rotation(wanted_rotation)
 	else
-		LocomotionUtils.set_animation_driven_movement(arg_6_1, true, false, false)
-		locomotion_extension:teleport_to(unbox, look)
-		Managers.state.network:anim_event(arg_6_1, "dig_door")
+		LocomotionUtils.set_animation_driven_movement(unit, true, false, false)
+		locomotion_extension:teleport_to(entrance_pos, wanted_rotation)
+		Managers.state.network:anim_event(unit, "dig_door")
 
-		arg_6_2.scurry_state = "waiting_to_reach_end"
+		blackboard.scurry_state = "waiting_to_reach_end"
 	end
 end
 
-BTCritterRatScurryUnderDoorAction._waiting_to_reach_end_update = function (arg_7_0, arg_7_1, arg_7_2)
+BTCritterRatScurryUnderDoorAction._waiting_to_reach_end_update = function (self, unit, blackboard)
 	-- function 7
-	if not arg_7_2.anim_cb_scurry_under_finished then
-		local unbox = arg_7_2.scurry_under_exit_pos:unbox()
+	if blackboard.anim_cb_scurry_under_finished then
+		local exit_pos = blackboard.scurry_under_exit_pos:unbox()
+		local navigation_extension = blackboard.navigation_extension
 
-		arg_7_2.navigation_extension:set_navbot_position(unbox)
-		arg_7_2.locomotion_extension:teleport_to(unbox)
-		Managers.state.network:anim_event(arg_7_1, "move_fwd")
+		navigation_extension:set_navbot_position(exit_pos)
 
-		arg_7_2.spawn_to_running = true
-		arg_7_2.scurry_state = "done"
+		local locomotion_extension = blackboard.locomotion_extension
+
+		locomotion_extension:teleport_to(exit_pos)
+		Managers.state.network:anim_event(unit, "move_fwd")
+
+		blackboard.spawn_to_running = true
+		blackboard.scurry_state = "done"
 	end
 end

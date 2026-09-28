@@ -4,7 +4,7 @@ require("foundation/scripts/util/table")
 
 local Colors = Colors
 
-Colors = Colors or {}
+Colors = not not Colors or not not {}
 Colors = Colors
 Colors.color_definitions = {
 	maroon = {
@@ -1541,263 +1541,265 @@ Colors.color_definitions = {
 Colors.indexed_colors, Colors.num_colors = table.values(Colors.color_definitions)
 
 if not Colors.distinct_colors_lookup then
-	local num = 1
-	local num_2 = 92 + 63 * (num % 3)
-	local num_3 = num_2 / 2
+	local i = 1
+	local f = 92 + 63 * (i % 3)
+	local g = f / 2
 
 	Colors.distinct_colors_lookup = {
 		{
 			0,
-			num_2,
+			f,
 			0
 		},
 		{
 			0,
 			0,
-			num_2
+			f
 		},
 		{
-			num_2,
+			f,
 			0,
 			0
 		},
 		{
-			num_2,
-			num_2,
+			f,
+			f,
 			0
 		},
 		{
 			0,
-			num_2,
-			num_2
+			f,
+			f
 		},
 		{
-			num_2,
+			f,
 			0,
-			num_2
+			f
 		},
 		{
-			num_2,
-			num_3,
+			f,
+			g,
 			0
 		},
 		{
-			num_2,
+			f,
 			0,
-			num_3
+			g
 		},
 		{
 			0,
-			num_3,
-			num_2
+			g,
+			f
 		},
 		{
-			num_3,
+			g,
 			0,
-			num_2
+			f
 		}
 	}
 end
 
-Colors.get_categorical_color = function (arg_1_0)
+Colors.get_categorical_color = function (index)
 	-- function 1
-	local num = arg_1_0 * 1.61803398875 % 1
-
-	return {
+	local golden_ratio = 1.61803398875
+	local hue = index * golden_ratio % 1
+	local color = {
 		255,
-		Colors.hsl2rgb(num, 0.4, 0.5)
+		Colors.hsl2rgb(hue, 0.4, 0.5)
 	}
+
+	return color
 end
 
-Colors.get = function (arg_2_0)
+Colors.get = function (name)
 	-- function 2
-	local var_2_0 = Colors.color_definitions[arg_2_0]
+	local color = Colors.color_definitions[name]
 
-	return Color(var_2_0[1], var_2_0[2], var_2_0[3], var_2_0[4])
+	return Color(color[1], color[2], color[3], color[4])
 end
 
-Colors.get_color_with_alpha = function (arg_3_0, arg_3_1)
+Colors.get_color_with_alpha = function (name, alpha)
 	-- function 3
-	local var_3_0 = Colors.color_definitions[arg_3_0]
+	local color = Colors.color_definitions[name]
 
-	return Color(arg_3_1, var_3_0[2], var_3_0[3], var_3_0[4])
+	return Color(alpha, color[2], color[3], color[4])
 end
 
-local tbl = {}
+local _table_scratch = {}
 
-Colors.get_table = function (arg_4_0, arg_4_1)
+Colors.get_table = function (name, reuse_global_table)
 	-- function 4
-	local var_4_0 = Colors.color_definitions[arg_4_0]
+	local color = Colors.color_definitions[name]
 
-	if not arg_4_1 then
-		tbl[1] = var_4_0[1]
-		tbl[2] = var_4_0[2]
-		tbl[3] = var_4_0[3]
-		tbl[4] = var_4_0[4]
+	if reuse_global_table then
+		_table_scratch[1] = color[1]
+		_table_scratch[2] = color[2]
+		_table_scratch[3] = color[3]
+		_table_scratch[4] = color[4]
 
-		return tbl
+		return _table_scratch
 	end
 
 	return {
-		var_4_0[1],
-		var_4_0[2],
-		var_4_0[3],
-		var_4_0[4]
+		color[1],
+		color[2],
+		color[3],
+		color[4]
 	}
 end
 
-Colors.get_table_rgba = function (arg_5_0)
+Colors.get_table_rgba = function (name)
 	-- function 5
-	local var_5_0 = Colors.color_definitions[arg_5_0]
+	local color = Colors.color_definitions[name]
 
 	return {
-		var_5_0[2],
-		var_5_0[3],
-		var_5_0[4],
-		var_5_0[1]
+		color[2],
+		color[3],
+		color[4],
+		color[1]
 	}
 end
 
-Colors.get_color_table_with_alpha = function (arg_6_0, arg_6_1, arg_6_2)
+Colors.get_color_table_with_alpha = function (name, alpha, reuse_global_table)
 	-- function 6
-	local var_6_0 = Colors.color_definitions[arg_6_0]
+	local color = Colors.color_definitions[name]
 
-	if not arg_6_2 then
-		tbl[1] = arg_6_1
-		tbl[2] = var_6_0[2]
-		tbl[3] = var_6_0[3]
-		tbl[4] = var_6_0[4]
+	if reuse_global_table then
+		_table_scratch[1] = alpha
+		_table_scratch[2] = color[2]
+		_table_scratch[3] = color[3]
+		_table_scratch[4] = color[4]
 
-		return tbl
+		return _table_scratch
 	end
 
 	return {
-		arg_6_1,
-		var_6_0[2],
-		var_6_0[3],
-		var_6_0[4]
+		alpha,
+		color[2],
+		color[3],
+		color[4]
 	}
 end
 
-Colors.get_indexed = function (arg_7_0)
+Colors.get_indexed = function (index)
 	-- function 7
-	local var_7_0 = Colors.indexed_colors[arg_7_0]
+	local color = Colors.indexed_colors[index]
 
-	return Color(var_7_0[1], var_7_0[2], var_7_0[3], var_7_0[4])
+	return Color(color[1], color[2], color[3], color[4])
 end
 
-Colors.copy_to = function (self, arg_8_1)
+Colors.copy_to = function (dst, src)
 	-- function 8
-	self[1] = arg_8_1[1]
-	self[2] = arg_8_1[2]
-	self[3] = arg_8_1[3]
-	self[4] = arg_8_1[4]
+	dst[1] = src[1]
+	dst[2] = src[2]
+	dst[3] = src[3]
+	dst[4] = src[4]
 end
 
-Colors.copy_no_alpha_to = function (self, arg_9_1)
+Colors.copy_no_alpha_to = function (dst, src)
 	-- function 9
-	self[2] = arg_9_1[2]
-	self[3] = arg_9_1[3]
-	self[4] = arg_9_1[4]
+	dst[2] = src[2]
+	dst[3] = src[3]
+	dst[4] = src[4]
 end
 
-Colors.set = function (self, arg_10_1, arg_10_2, arg_10_3, arg_10_4)
+Colors.set = function (dst, a, r, g, b)
 	-- function 10
-	self[1] = arg_10_1
-	self[2] = arg_10_2
-	self[3] = arg_10_3
-	self[4] = arg_10_4
+	dst[1] = a
+	dst[2] = r
+	dst[3] = g
+	dst[4] = b
 end
 
-Colors.lerp_color_tables = function (self, arg_11_1, arg_11_2, arg_11_3)
+Colors.lerp_color_tables = function (color1, color2, t, out)
 	-- function 11
-	arg_11_3 = arg_11_3 or {}
+	out = not not out or not not {}
 
-	local num = 1 - arg_11_2
+	local s = 1 - t
 
-	arg_11_3[1] = self[1] * num + arg_11_1[1] * arg_11_2
-	arg_11_3[2] = self[2] * num + arg_11_1[2] * arg_11_2
-	arg_11_3[3] = self[3] * num + arg_11_1[3] * arg_11_2
-	arg_11_3[4] = self[4] * num + arg_11_1[4] * arg_11_2
+	out[1] = color1[1] * s + color2[1] * t
+	out[2] = color1[2] * s + color2[2] * t
+	out[3] = color1[3] * s + color2[3] * t
+	out[4] = color1[4] * s + color2[4] * t
 
-	return arg_11_3
+	return out
 end
 
-Colors.from_hex = function (arg_12_0)
+Colors.from_hex = function (hex)
 	-- function 12
-	local match, var_12_1, var_12_2 = string.match(arg_12_0, "^#?(%x%x)(%x%x)(%x%x)$")
+	local r, g, b = string.match(hex, "^#?(%x%x)(%x%x)(%x%x)$")
 
-	return tonumber(match, 16), tonumber(var_12_1, 16), tonumber(var_12_2, 16)
+	return tonumber(r, 16), tonumber(g, 16), tonumber(b, 16)
 end
 
-local function fn(arg_13_0, arg_13_1, arg_13_2)
+local function hue2rgb(p, q, t)
 	-- function 13
-	if arg_13_2 < 0 then
-		arg_13_2 = arg_13_2 + 1
-	elseif arg_13_2 > 1 then
-		arg_13_2 = arg_13_2 - 1
+	if t < 0 then
+		t = t + 1
+	elseif t > 1 then
+		t = t - 1
 	end
 
-	if arg_13_2 < 0.16666666666666666 then
-		return arg_13_0 + (arg_13_1 - arg_13_0) * 6 * arg_13_2
-	elseif arg_13_2 < 0.5 then
-		return arg_13_1
-	elseif arg_13_2 < 0.6666666666666666 then
-		return arg_13_0 + (arg_13_1 - arg_13_0) * 6 * (0.6666666666666666 - arg_13_2)
+	if t < 0.16666666666666666 then
+		return p + (q - p) * 6 * t
+	elseif t < 0.5 then
+		return q
+	elseif t < 0.6666666666666666 then
+		return p + (q - p) * 6 * (0.6666666666666666 - t)
 	end
 
-	return arg_13_0
+	return p
 end
 
-Colors.hsl2rgb = function (arg_14_0, arg_14_1, arg_14_2)
+Colors.hsl2rgb = function (h, s, l)
 	-- function 14
-	local var_14_0
-	local var_14_1
-	local var_14_2
+	local r, g, b
 
-	if arg_14_1 ~= 0 then
+	if s ~= 0 then
 		local num
 
-		if arg_14_2 < 0.5 then
-			num = arg_14_2 * (1 + arg_14_1)
+		if l < 0.5 then
+			num = l * (1 + s)
 
 			if not num then
 				-- Nothing
 			end
 		end
 
-		num = arg_14_1 + arg_14_2 * (1 - arg_14_1)
+		num = s + l * (1 - s)
+
+		local q = num
 
 		::label_14_0::
 
-		local num_2 = 2 * arg_14_2 - num
+		local p = 2 * l - q
 
-		var_14_0 = fn(num_2, num, arg_14_0 + 0.3333333333333333)
-		var_14_1 = fn(num_2, num, arg_14_0)
-		var_14_2 = fn(num_2, num, arg_14_0 - 0.3333333333333333)
+		r = hue2rgb(p, q, h + 0.3333333333333333)
+		g = hue2rgb(p, q, h)
+		b = hue2rgb(p, q, h - 0.3333333333333333)
 	else
-		var_14_0, var_14_1, var_14_2 = arg_14_2, arg_14_2, arg_14_2
+		r, g, b = l, l, l
 	end
 
 	local floor = math.floor
 
-	return floor(var_14_0 * 255 + 0.5), floor(var_14_1 * 255 + 0.5), floor(var_14_2 * 255 + 0.5)
+	return floor(r * 255 + 0.5), floor(g * 255 + 0.5), floor(b * 255 + 0.5)
 end
 
-local num_4 = 0.7
+local DARKEN_FACTOR = 0.7
 
-Colors.darker = function (self, arg_15_1)
+Colors.darker = function (col, k)
 	-- function 15
-	arg_15_1 = num_4^(arg_15_1 or 1)
-	self[2], self[3], self[4] = self[2] * arg_15_1, self[3] * arg_15_1, self[4] * arg_15_1
+	k = DARKEN_FACTOR^(not not k or not not 1)
+	col[2], col[3], col[4] = col[2] * k, col[3] * k, col[4] * k
 end
 
-Colors.brighter = function (arg_16_0, arg_16_1)
+Colors.brighter = function (col, k)
 	-- function 16
-	return Colors.darker(arg_16_0, -arg_16_1)
+	return Colors.darker(col, -k)
 end
 
-Colors.luminance = function (self)
+Colors.luminance = function (col)
 	-- function 17
-	return 0.2126 * self[2] + 0.7152 * self[3] + 0.0722 * self[4]
+	return 0.2126 * col[2] + 0.7152 * col[3] + 0.0722 * col[4]
 end

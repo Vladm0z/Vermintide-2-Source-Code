@@ -4,13 +4,13 @@ require("scripts/settings/dialogue_settings")
 
 HealthTriggerSystem = class(HealthTriggerSystem, ExtensionSystemBase)
 
-local tbl = {
+local extensions = {
 	"HealthTriggerExtension"
 }
 
-HealthTriggerSystem.init = function (self, arg_1_1, arg_1_2)
+HealthTriggerSystem.init = function (self, entity_system_creation_context, system_name)
 	-- function 1
-	HealthTriggerSystem.super.init(self, arg_1_1, arg_1_2, tbl)
+	HealthTriggerSystem.super.init(self, entity_system_creation_context, system_name, extensions)
 
 	self.unit_extensions = {}
 end
@@ -22,107 +22,109 @@ HealthTriggerSystem.destroy = function (self)
 	self.unit_extensions = nil
 end
 
-HealthTriggerSystem.on_add_extension = function (arg_3_0, arg_3_1, arg_3_2, arg_3_3, ...)
+HealthTriggerSystem.on_add_extension = function (self, world, unit, extension_name, ...)
 	-- function 3
-	local tbl = {}
+	local extension = {}
 
-	ScriptUnit.set_extension(arg_3_2, "health_trigger_system", tbl)
+	ScriptUnit.set_extension(unit, "health_trigger_system", extension)
 
-	arg_3_0.unit_extensions[arg_3_2] = tbl
+	self.unit_extensions[unit] = extension
 
-	GarbageLeakDetector.register_object(tbl, "health_trigger_extension")
+	GarbageLeakDetector.register_object(extension, "health_trigger_extension")
 
-	return tbl
+	return extension
 end
 
-HealthTriggerSystem.on_remove_extension = function (arg_4_0, arg_4_1, arg_4_2)
+HealthTriggerSystem.on_remove_extension = function (self, unit, extension_name)
 	-- function 4
-	assert(ScriptUnit.has_extension(arg_4_1, "health_trigger_system"), "Trying to remove non-existing extension %q from unit %s", arg_4_2, arg_4_1)
-	ScriptUnit.remove_extension(arg_4_1, "health_trigger_system")
+	assert(ScriptUnit.has_extension(unit, "health_trigger_system"), "Trying to remove non-existing extension %q from unit %s", extension_name, unit)
+	ScriptUnit.remove_extension(unit, "health_trigger_system")
 
-	arg_4_0.unit_extensions[arg_4_1] = nil
+	self.unit_extensions[unit] = nil
 end
 
-HealthTriggerSystem.extensions_ready = function (self, arg_5_1, arg_5_2, arg_5_3)
+HealthTriggerSystem.extensions_ready = function (self, world, unit, extension_name)
 	-- function 5
 	assert(self.is_server, "[HealthTriggerSystem] Clients should not hold health trigger extensions")
 
-	local var_5_0 = self.unit_extensions[arg_5_2]
+	local extension = self.unit_extensions[unit]
 
-	var_5_0.health_extension = ScriptUnit.extension(arg_5_2, "health_system")
+	extension.health_extension = ScriptUnit.extension(unit, "health_system")
 
-	assert(var_5_0.health_extension)
+	assert(extension.health_extension)
 
-	var_5_0.last_health_percent = var_5_0.health_extension:current_health_percent()
-	var_5_0.last_health_tick_percent = var_5_0.health_extension:current_health_percent()
-	var_5_0.dialogue_input = ScriptUnit.extension_input(arg_5_2, "dialogue_system")
-	var_5_0.tick_time = 0
+	extension.last_health_percent = extension.health_extension:current_health_percent()
+	extension.last_health_tick_percent = extension.health_extension:current_health_percent()
+	extension.dialogue_input = ScriptUnit.extension_input(unit, "dialogue_system")
+	extension.tick_time = 0
 end
 
-local levels = HealthTriggerSettings.levels
+local health_trigger_levels = HealthTriggerSettings.levels
 local rapid_health_loss = HealthTriggerSettings.rapid_health_loss
 
-HealthTriggerSystem.update = function (self, arg_6_1, arg_6_2)
+HealthTriggerSystem.update = function (self, context, t)
 	-- function 6
-	for k, v in pairs(self.unit_extensions) do
-		local last_health_percent = v.last_health_percent
-		local current_health_percent = v.health_extension:current_health_percent()
+	for unit, extension in pairs(self.unit_extensions) do
+		local last_health_percent = extension.last_health_percent
+		local health_extension = extension.health_extension
+		local current_health_percent = health_extension:current_health_percent()
 
 		if last_health_percent ~= current_health_percent then
-			v.last_health_percent = current_health_percent
+			extension.last_health_percent = current_health_percent
 
-			for i, v_2 in ipairs(levels) do
-				if not (not (v_2 < last_health_percent) or not (current_health_percent <= v_2)) then
-					local alloc_table = FrameTable.alloc_table()
+			for _, amount in ipairs(health_trigger_levels) do
+				if amount < last_health_percent and current_health_percent <= amount then
+					local event_data = FrameTable.alloc_table()
 
-					alloc_table.trigger_type = "decreasing"
-					alloc_table.current_amount = current_health_percent
-					alloc_table.last_amount = last_health_percent
+					event_data.trigger_type = "decreasing"
+					event_data.current_amount = current_health_percent
+					event_data.last_amount = last_health_percent
 
-					v.dialogue_input:trigger_dialogue_event("health_trigger", alloc_table)
+					extension.dialogue_input:trigger_dialogue_event("health_trigger", event_data)
 
-					local player_profile = ScriptUnit.extension(k, "dialogue_system").context.player_profile
+					local target_name = ScriptUnit.extension(unit, "dialogue_system").context.player_profile
 
-					SurroundingAwareSystem.add_event(k, "enemy_health_trigger", DialogueSettings.default_view_distance, "trigger_type", "decreasing", "current_amount", alloc_table.current_amount, "last_amount", alloc_table.last_amount, "target_name", player_profile)
-				elseif not (not (last_health_percent < v_2) or not (v_2 <= current_health_percent)) then
-					local alloc_table_2 = FrameTable.alloc_table()
+					SurroundingAwareSystem.add_event(unit, "enemy_health_trigger", DialogueSettings.default_view_distance, "trigger_type", "decreasing", "current_amount", event_data.current_amount, "last_amount", event_data.last_amount, "target_name", target_name)
+				elseif last_health_percent < amount and amount <= current_health_percent then
+					local event_data = FrameTable.alloc_table()
 
-					alloc_table_2.trigger_type = "increasing"
-					alloc_table_2.current_amount = current_health_percent
-					alloc_table_2.last_amount = last_health_percent
+					event_data.trigger_type = "increasing"
+					event_data.current_amount = current_health_percent
+					event_data.last_amount = last_health_percent
 
-					v.dialogue_input:trigger_dialogue_event("health_trigger", alloc_table_2)
+					extension.dialogue_input:trigger_dialogue_event("health_trigger", event_data)
 
-					local player_profile_2 = ScriptUnit.extension(k, "dialogue_system").context.player_profile
+					local target_name = ScriptUnit.extension(unit, "dialogue_system").context.player_profile
 
-					SurroundingAwareSystem.add_event(k, "enemy_health_trigger", DialogueSettings.default_view_distance, "trigger_type", "increasing", "current_amount", alloc_table_2.current_amount, "last_amount", alloc_table_2.last_amount, "target_name", player_profile_2)
+					SurroundingAwareSystem.add_event(unit, "enemy_health_trigger", DialogueSettings.default_view_distance, "trigger_type", "increasing", "current_amount", event_data.current_amount, "last_amount", event_data.last_amount, "target_name", target_name)
 				end
 			end
 		end
 
-		if arg_6_2 > v.tick_time + rapid_health_loss.tick_time then
-			v.tick_time = arg_6_2
+		if t > extension.tick_time + rapid_health_loss.tick_time then
+			extension.tick_time = t
 
-			local last_health_tick_percent = v.last_health_tick_percent
+			local last_health_tick_percent = extension.last_health_tick_percent
 
-			v.last_health_tick_percent = current_health_percent
+			extension.last_health_tick_percent = current_health_percent
 
-			local num = last_health_tick_percent - current_health_percent
-			local tick_loss_threshold = rapid_health_loss.tick_loss_threshold
-			local extension = ScriptUnit.extension(k, "status_system")
+			local health_loss = last_health_tick_percent - current_health_percent
+			local health_loss_threshold = rapid_health_loss.tick_loss_threshold
+			local status_extension = ScriptUnit.extension(unit, "status_system")
 
-			if not (not (tick_loss_threshold < num) or extension:is_wounded() or not (current_health_percent > 0)) then
-				local player_profile_3 = ScriptUnit.extension(k, "dialogue_system").context.player_profile
-				local alloc_table_3 = FrameTable.alloc_table()
+			if health_loss_threshold < health_loss and not status_extension:is_wounded() and current_health_percent > 0 then
+				local target_name = ScriptUnit.extension(unit, "dialogue_system").context.player_profile
+				local event_data = FrameTable.alloc_table()
 
-				alloc_table_3.trigger_type = "losing_rapidly"
-				alloc_table_3.target_name = player_profile_3
+				event_data.trigger_type = "losing_rapidly"
+				event_data.target_name = target_name
 
-				v.dialogue_input:trigger_dialogue_event("health_trigger", alloc_table_3)
+				extension.dialogue_input:trigger_dialogue_event("health_trigger", event_data)
 
-				local player_shield_check = Managers.state.entity:system("dialogue_system"):player_shield_check(k, "slot_melee")
+				local dialogue_system = Managers.state.entity:system("dialogue_system")
+				local has_shield = dialogue_system:player_shield_check(unit, "slot_melee")
 
-				SurroundingAwareSystem.add_event(k, "health_trigger", DialogueSettings.default_view_distance, "trigger_type", "losing_rapidly", "has_shield", player_shield_check, "target_name", player_profile_3)
+				SurroundingAwareSystem.add_event(unit, "health_trigger", DialogueSettings.default_view_distance, "trigger_type", "losing_rapidly", "has_shield", has_shield, "target_name", target_name)
 			end
 		end
 	end

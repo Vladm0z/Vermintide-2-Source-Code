@@ -1,71 +1,71 @@
 -- chunkname: @scripts/utils/function_call_stats.lua
 
-local tbl = {}
-local num = 0
-local tbl_2 = {}
+local CALL_LIST = {}
+local COUNTER = 0
+local CALL_DATA = {}
 
-local function fn(arg_1_0)
+local function on_function_call(event)
 	-- function 1
-	local getinfo = debug.getinfo(2)
+	local res = debug.getinfo(2)
 
-	if not getinfo then
-		num = num + 1
+	if res then
+		COUNTER = COUNTER + 1
 
-		local var_1_1 = tostring(getinfo.name)
-		local currentline = getinfo.currentline
-		local var_1_3
+		local func_name = tostring(res.name)
+		local currentline = res.currentline
+		local name
 
 		if currentline ~= -1 then
-			var_1_3 = getinfo.short_src .. ":" .. tostring(currentline) .. " " .. var_1_1 .. "()"
+			name = res.short_src .. ":" .. tostring(currentline) .. " " .. func_name .. "()"
 		else
-			var_1_3 = getinfo.short_src .. " " .. var_1_1 .. "()"
+			name = res.short_src .. " " .. func_name .. "()"
 		end
 
-		local var_1_4 = tbl[var_1_3]
+		local index = CALL_LIST[name]
 
-		if not var_1_4 then
-			var_1_4 = #tbl + 1
-			tbl[var_1_4] = var_1_3
-			tbl[var_1_3] = var_1_4
-			tbl_2[var_1_4] = {
+		if not index then
+			index = #CALL_LIST + 1
+			CALL_LIST[index] = name
+			CALL_LIST[name] = index
+			CALL_DATA[index] = {
 				num = 1,
-				position = var_1_3
+				position = name
 			}
 		end
 
-		tbl_2[var_1_4].num = tbl_2[var_1_4].num + 1
+		CALL_DATA[index].num = CALL_DATA[index].num + 1
 	end
 end
 
-local function fn_2(self, arg_2_1)
+local function compare(e1, e2)
 	-- function 2
-	return self.num > arg_2_1.num
+	return e1.num > e2.num
 end
 
 function start_function_call_collection()
 	-- function 3
-	debug.sethook(fn, "c")
+	debug.sethook(on_function_call, "c")
 end
 
 function end_function_call_collection()
 	-- function 4
-	if num > 0 then
+	if COUNTER > 0 then
 		debug.sethook()
-		print("Counter", num)
-		table.sort(tbl_2, fn_2)
+		print("Counter", COUNTER)
+		table.sort(CALL_DATA, compare)
 
-		for i = 1, 100 do
-			local var_4_0 = tbl_2[i]
+		for ii = 1, 100 do
+			local elem = CALL_DATA[ii]
 
-			if not var_4_0 then
+			if not elem then
 				break
 			end
 
-			print(var_4_0.num, var_4_0.position)
+			print(elem.num, elem.position)
 		end
 
-		tbl = {}
-		num = 0
-		tbl_2 = {}
+		CALL_LIST = {}
+		COUNTER = 0
+		CALL_DATA = {}
 	end
 end

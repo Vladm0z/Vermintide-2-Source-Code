@@ -1,20 +1,20 @@
 -- chunkname: @scripts/ui/views/start_game_view/windows/start_game_window_game_mode.lua
 
-local var_0_0 = local_require("scripts/ui/views/start_game_view/windows/definitions/start_game_window_game_mode_definitions")
-local widgets = var_0_0.widgets
-local scenegraph_definition = var_0_0.scenegraph_definition
-local animation_definitions = var_0_0.animation_definitions
+local definitions = local_require("scripts/ui/views/start_game_view/windows/definitions/start_game_window_game_mode_definitions")
+local widget_definitions = definitions.widgets
+local scenegraph_definition = definitions.scenegraph_definition
+local animation_definitions = definitions.animation_definitions
 
 StartGameWindowGameMode = class(StartGameWindowGameMode)
 StartGameWindowGameMode.NAME = "StartGameWindowGameMode"
 
-StartGameWindowGameMode.on_enter = function (self, arg_1_1, arg_1_2)
+StartGameWindowGameMode.on_enter = function (self, params, offset)
 	-- function 1
 	print("[StartGameWindow] Enter Substate StartGameWindowGameMode")
 
-	self.parent = arg_1_1.parent
+	self.parent = params.parent
 
-	local ingame_ui_context = arg_1_1.ingame_ui_context
+	local ingame_ui_context = params.ingame_ui_context
 
 	self.ui_renderer = ingame_ui_context.ui_renderer
 	self.input_manager = ingame_ui_context.input_manager
@@ -22,169 +22,188 @@ StartGameWindowGameMode.on_enter = function (self, arg_1_1, arg_1_2)
 	self.render_settings = {
 		snap_pixel_positions = true
 	}
-	self._layout_settings = arg_1_1.layout_settings
+	self._layout_settings = params.layout_settings
 
-	local player = Managers.player
+	local player_manager = Managers.player
+	local local_player = player_manager:local_player()
 
-	self._stats_id = player:local_player():stats_id()
-	self.player_manager = player
+	self._stats_id = local_player:stats_id()
+	self.player_manager = player_manager
 	self.peer_id = ingame_ui_context.peer_id
 	self._animations = {}
 	self._ui_animations = {}
 
-	self:create_ui_elements(arg_1_1, arg_1_2)
+	self:create_ui_elements(params, offset)
 end
 
-StartGameWindowGameMode.create_ui_elements = function (self, arg_2_1, arg_2_2)
+StartGameWindowGameMode.create_ui_elements = function (self, params, offset)
 	-- function 2
-	local init_scenegraph = UISceneGraph.init_scenegraph(scenegraph_definition)
+	local ui_scenegraph = UISceneGraph.init_scenegraph(scenegraph_definition)
 
-	self.ui_scenegraph = init_scenegraph
+	self.ui_scenegraph = ui_scenegraph
 
-	local tbl = {}
-	local tbl_2 = {}
+	local widgets = {}
+	local widgets_by_name = {}
 
-	for k, v in pairs(widgets) do
-		local var_2_3 = UIWidget.init(v)
+	for name, widget_definition in pairs(widget_definitions) do
+		local widget = UIWidget.init(widget_definition)
 
-		tbl[#tbl + 1] = var_2_3
-		tbl_2[k] = var_2_3
+		widgets[#widgets + 1] = widget
+		widgets_by_name[name] = widget
 	end
 
-	self._widgets = tbl
-	self._widgets_by_name = tbl_2
+	self._widgets = widgets
+	self._widgets_by_name = widgets_by_name
 
-	local tbl_3 = {}
-	local window_layouts = self._layout_settings.window_layouts
-	local num = 16
+	local game_mode_widgets = {}
+	local layout_settings = self._layout_settings
+	local window_layouts = layout_settings.window_layouts
+	local game_mode_option_spacing = 16
 
-	for k_2 = 1, #window_layouts do
-		local var_2_7 = window_layouts[k_2]
+	for i = 1, #window_layouts do
+		local settings = window_layouts[i]
 
-		if not var_2_7.panel_sorting and not self.parent:can_add_layout(var_2_7) then
-			local str = "game_mode_option"
-			local size = scenegraph_definition[str].size
-			local display_name = var_2_7.display_name
+		if settings.panel_sorting and self.parent:can_add_layout(settings) then
+			local scenegraph_id = "game_mode_option"
+			local size = scenegraph_definition[scenegraph_id].size
+			local display_name_2 = settings.display_name
 
-			display_name = display_name or "n/a"
+			if not display_name_2 then
+				-- Nothing
+			end
 
-			if not (var_2_7.localize == nil or var_2_7.localize) then
+			display_name_2 = "n/a"
+
+			local display_name = display_name_2
+
+			::label_2_0::
+
+			local localize = settings.localize == nil or not not settings.localize
+
+			if localize then
 				display_name = Localize(display_name)
 			end
 
-			local icon_name = var_2_7.icon_name
-			local background_icon_name = var_2_7.background_icon_name
-			local dynamic_font_size = var_2_7.dynamic_font_size
-			local create_window_category_button = UIWidgets.create_window_category_button(str, size, display_name, icon_name, background_icon_name, dynamic_font_size)
-			local var_2_15 = UIWidget.init(create_window_category_button)
-			local num_2 = #tbl_3 + 1
-			local name = var_2_7.name
+			local icon_name = settings.icon_name
+			local background_icon_name = settings.background_icon_name
+			local dynamic_font_size = settings.dynamic_font_size
+			local widget_definition = UIWidgets.create_window_category_button(scenegraph_id, size, display_name, icon_name, background_icon_name, dynamic_font_size)
+			local widget = UIWidget.init(widget_definition)
+			local current_game_mode_index = #game_mode_widgets + 1
+			local layout_name = settings.name
 
-			var_2_15.content.layout_name = name
-			var_2_15.offset[2] = -num * num_2 - size[2] * (num_2 - 1)
+			widget.content.layout_name = layout_name
+			widget.offset[2] = -game_mode_option_spacing * current_game_mode_index - size[2] * (current_game_mode_index - 1)
 
-			if name == "twitch" then
-				var_2_15.content.disabled = not GameSettingsDevelopment.twitch_enabled and Managers.account:offline_mode()
+			if layout_name == "twitch" then
+				widget.content.disabled = not GameSettingsDevelopment.twitch_enabled or not not Managers.account:offline_mode()
 			end
 
-			tbl_3[num_2] = var_2_15
+			game_mode_widgets[current_game_mode_index] = widget
 		end
 	end
 
-	self._game_mode_widgets = tbl_3
+	self._game_mode_widgets = game_mode_widgets
 
 	UIRenderer.clear_scenegraph_queue(self.ui_renderer)
 
-	self.ui_animator = UIAnimator:new(init_scenegraph, animation_definitions)
+	self.ui_animator = UIAnimator:new(ui_scenegraph, animation_definitions)
 
-	if not arg_2_2 then
-		local local_position = init_scenegraph.window.local_position
+	if offset then
+		local window_position = ui_scenegraph.window.local_position
 
-		local_position[1] = local_position[1] + arg_2_2[1]
-		local_position[2] = local_position[2] + arg_2_2[2]
-		local_position[3] = local_position[3] + arg_2_2[3]
+		window_position[1] = window_position[1] + offset[1]
+		window_position[2] = window_position[2] + offset[2]
+		window_position[3] = window_position[3] + offset[3]
 	end
 end
 
-StartGameWindowGameMode.on_exit = function (self, arg_3_1)
+StartGameWindowGameMode.on_exit = function (self, params)
 	-- function 3
 	print("[StartGameWindow] Exit Substate StartGameWindowGameMode")
 
 	self.ui_animator = nil
 end
 
-StartGameWindowGameMode.update = function (self, arg_4_1, arg_4_2)
+StartGameWindowGameMode.update = function (self, dt, t)
 	-- function 4
 	self:_update_selected_option()
-	self:_update_animations(arg_4_1)
-	self:_handle_input(arg_4_1, arg_4_2)
-	self:draw(arg_4_1)
+	self:_update_animations(dt)
+	self:_handle_input(dt, t)
+	self:draw(dt)
 end
 
-StartGameWindowGameMode.post_update = function (arg_5_0, arg_5_1, arg_5_2)
+StartGameWindowGameMode.post_update = function (self, dt, t)
 	-- function 5
 	return
 end
 
-StartGameWindowGameMode._update_animations = function (self, arg_6_1)
+StartGameWindowGameMode._update_animations = function (self, dt)
 	-- function 6
-	self:_update_game_options_hover_effect(arg_6_1)
+	self:_update_game_options_hover_effect(dt)
 
-	local _ui_animations = self._ui_animations
+	local ui_animations = self._ui_animations
 
-	for k, v in pairs(_ui_animations) do
-		UIAnimation.update(v, arg_6_1)
+	for name, animation in pairs(ui_animations) do
+		UIAnimation.update(animation, dt)
 
-		if not UIAnimation.completed(v) then
-			_ui_animations[k] = nil
+		if UIAnimation.completed(animation) then
+			ui_animations[name] = nil
 		end
 	end
 
 	local ui_animator = self.ui_animator
 
-	ui_animator:update(arg_6_1)
+	ui_animator:update(dt)
 
-	local _animations = self._animations
+	local animations = self._animations
 
-	for k_2, v_2 in pairs(_animations) do
-		if not ui_animator:is_animation_completed(v_2) then
-			ui_animator:stop_animation(v_2)
+	for animation_name, animation_id in pairs(animations) do
+		if ui_animator:is_animation_completed(animation_id) then
+			ui_animator:stop_animation(animation_id)
 
-			_animations[k_2] = nil
+			animations[animation_name] = nil
 		end
 	end
 end
 
-StartGameWindowGameMode._is_button_pressed = function (arg_7_0, arg_7_1)
+StartGameWindowGameMode._is_button_pressed = function (self, widget)
 	-- function 7
-	local button_hotspot = arg_7_1.content.button_hotspot
+	local content = widget.content
+	local hotspot = content.button_hotspot
 
-	if not button_hotspot.on_release then
-		button_hotspot.on_release = false
+	if hotspot.on_release then
+		hotspot.on_release = false
 
 		return true
 	end
 end
 
-StartGameWindowGameMode._is_button_hover_enter = function (arg_8_0, arg_8_1)
+StartGameWindowGameMode._is_button_hover_enter = function (self, widget)
 	-- function 8
-	return arg_8_1.content.button_hotspot.on_hover_enter
+	local content = widget.content
+	local hotspot = content.button_hotspot
+
+	return hotspot.on_hover_enter
 end
 
-StartGameWindowGameMode._is_button_selected = function (arg_9_0, arg_9_1)
+StartGameWindowGameMode._is_button_selected = function (self, widget)
 	-- function 9
-	return arg_9_1.content.button_hotspot.is_selected
+	local content = widget.content
+	local hotspot = content.button_hotspot
+
+	return hotspot.is_selected
 end
 
-StartGameWindowGameMode._handle_input = function (self, arg_10_1, arg_10_2)
+StartGameWindowGameMode._handle_input = function (self, dt, t)
 	-- function 10
-	local _game_mode_widgets = self._game_mode_widgets
+	local game_mode_widgets = self._game_mode_widgets
 
-	for i = 1, #_game_mode_widgets do
-		local var_10_1 = _game_mode_widgets[i]
+	for i = 1, #game_mode_widgets do
+		local widget = game_mode_widgets[i]
 
-		if not (not self:_is_button_pressed(var_10_1) and self:_is_button_selected(var_10_1)) then
-			local layout_name = var_10_1.content.layout_name
+		if self:_is_button_pressed(widget) and not self:_is_button_selected(widget) then
+			local layout_name = widget.content.layout_name
 
 			self.parent:set_layout_by_name(layout_name)
 
@@ -192,85 +211,89 @@ StartGameWindowGameMode._handle_input = function (self, arg_10_1, arg_10_2)
 		end
 	end
 
-	local lobby_browser_option = self._widgets_by_name.lobby_browser_option
+	local widgets_by_name = self._widgets_by_name
+	local lobby_browser_widget = widgets_by_name.lobby_browser_option
 
-	if not self:_is_button_pressed(lobby_browser_option) then
+	if self:_is_button_pressed(lobby_browser_widget) then
 		self.parent:set_layout_by_name("lobby_browser")
 	end
 end
 
-StartGameWindowGameMode._update_game_options_hover_effect = function (self, arg_11_1)
+StartGameWindowGameMode._update_game_options_hover_effect = function (self, dt)
 	-- function 11
-	local _game_mode_widgets = self._game_mode_widgets
+	local game_mode_widgets = self._game_mode_widgets
 
-	for i = 1, #_game_mode_widgets do
-		local var_11_1 = _game_mode_widgets[i]
+	for i = 1, #game_mode_widgets do
+		local widget = game_mode_widgets[i]
 
-		UIWidgetUtils.animate_option_button(var_11_1, arg_11_1)
+		UIWidgetUtils.animate_option_button(widget, dt)
 
-		if not (not self:_is_button_hover_enter(var_11_1) and self:_is_button_selected(var_11_1)) then
+		if self:_is_button_hover_enter(widget) and not self:_is_button_selected(widget) then
 			self:_play_sound("play_gui_equipment_button_hover")
 		end
 	end
 
-	local lobby_browser_option = self._widgets_by_name.lobby_browser_option
+	local widgets_by_name = self._widgets_by_name
+	local lobby_browser_widget = widgets_by_name.lobby_browser_option
 
-	if not self:_is_button_hover_enter(lobby_browser_option) then
+	if self:_is_button_hover_enter(lobby_browser_widget) then
 		self:_play_sound("play_gui_equipment_button_hover")
 	end
 
-	UIWidgetUtils.animate_default_button(lobby_browser_option, arg_11_1)
+	UIWidgetUtils.animate_default_button(lobby_browser_widget, dt)
 end
 
-StartGameWindowGameMode._set_selected_option = function (self, arg_12_1)
+StartGameWindowGameMode._set_selected_option = function (self, selected_layout_name)
 	-- function 12
-	local _game_mode_widgets = self._game_mode_widgets
+	local game_mode_widgets = self._game_mode_widgets
 
-	for i = 1, #_game_mode_widgets do
-		local var_12_1 = _game_mode_widgets[i]
-		local flag = var_12_1.content.layout_name == arg_12_1
+	for i = 1, #game_mode_widgets do
+		local widget = game_mode_widgets[i]
+		local layout_name = widget.content.layout_name
+		local is_selected = layout_name == selected_layout_name
 
-		var_12_1.content.button_hotspot.is_selected = flag
+		widget.content.button_hotspot.is_selected = is_selected
 	end
 
-	self._selected_layout_name = arg_12_1
+	self._selected_layout_name = selected_layout_name
 end
 
 StartGameWindowGameMode._update_selected_option = function (self)
 	-- function 13
-	local get_selected_layout_name = self.parent:get_selected_layout_name()
+	local parent = self.parent
+	local selected_layout_name = parent:get_selected_layout_name()
 
-	if get_selected_layout_name ~= self._selected_layout_name then
-		self:_set_selected_option(get_selected_layout_name)
+	if selected_layout_name ~= self._selected_layout_name then
+		self:_set_selected_option(selected_layout_name)
 	end
 end
 
-StartGameWindowGameMode.draw = function (self, arg_14_1)
+StartGameWindowGameMode.draw = function (self, dt)
 	-- function 14
 	local ui_renderer = self.ui_renderer
 	local ui_scenegraph = self.ui_scenegraph
-	local window_input_service = self.parent:window_input_service()
+	local input_service = self.parent:window_input_service()
 
-	UIRenderer.begin_pass(ui_renderer, ui_scenegraph, window_input_service, arg_14_1, nil, self.render_settings)
+	UIRenderer.begin_pass(ui_renderer, ui_scenegraph, input_service, dt, nil, self.render_settings)
 
-	for k, v in pairs(self._widgets_by_name) do
-		UIRenderer.draw_widget(ui_renderer, v)
+	for _, widget in pairs(self._widgets_by_name) do
+		UIRenderer.draw_widget(ui_renderer, widget)
 	end
 
-	local _game_mode_widgets = self._game_mode_widgets
+	local game_mode_widgets = self._game_mode_widgets
 
-	for k_2 = 1, #_game_mode_widgets do
-		local var_14_4 = _game_mode_widgets[k_2]
+	for i = 1, #game_mode_widgets do
+		local widget = game_mode_widgets[i]
 
-		if not var_14_4.content.disabled then
-			UIRenderer.draw_widget(ui_renderer, var_14_4)
+		if not widget.content.disabled then
+			UIRenderer.draw_widget(ui_renderer, widget)
 		end
 	end
 
 	UIRenderer.end_pass(ui_renderer)
 end
 
-StartGameWindowGameMode._play_sound = function (self, arg_15_1)
+StartGameWindowGameMode._play_sound = function (self, event)
 	-- function 15
-	self.parent:play_sound(arg_15_1)
+	self.parent:play_sound(event)
 end

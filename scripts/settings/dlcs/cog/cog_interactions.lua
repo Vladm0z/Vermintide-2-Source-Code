@@ -3,43 +3,45 @@
 local InteractionDefinitions = InteractionDefinitions
 local cog_missing_cog_pickup = InteractionDefinitions.cog_missing_cog_pickup
 
-cog_missing_cog_pickup = cog_missing_cog_pickup or table.clone(InteractionDefinitions.smartobject)
+cog_missing_cog_pickup = not not cog_missing_cog_pickup or not not table.clone(InteractionDefinitions.smartobject)
 InteractionDefinitions.cog_missing_cog_pickup = cog_missing_cog_pickup
 InteractionDefinitions.cog_missing_cog_pickup.config.swap_to_3p = false
 
-InteractionDefinitions.cog_missing_cog_pickup.client.can_interact = function (arg_1_0, arg_1_1, arg_1_2, arg_1_3)
+InteractionDefinitions.cog_missing_cog_pickup.client.can_interact = function (interactor_unit, interactable_unit, data, config)
 	-- function 1
-	local player = Managers.player
-	local stats_id = Managers.player:unit_owner(arg_1_0):stats_id()
-	local get_persistent_stat = player:statistics_db():get_persistent_stat(stats_id, "cog_missing_cog")
-	local unlock = Managers.unlock
-	local str = "cog"
+	local player_manager = Managers.player
+	local player = Managers.player:unit_owner(interactor_unit)
+	local stats_id = player:stats_id()
+	local statistics_db = player_manager:statistics_db()
+	local has_cog = statistics_db:get_persistent_stat(stats_id, "cog_missing_cog")
+	local dlc_manager = Managers.unlock
+	local dlc_name = "cog"
 
-	return not (get_persistent_stat < 1) or unlock:is_dlc_unlocked(str)
+	return has_cog < 1 and not not dlc_manager:is_dlc_unlocked(dlc_name)
 end
 
-InteractionDefinitions.cog_missing_cog_pickup.client.stop = function (arg_2_0, arg_2_1, arg_2_2, arg_2_3, arg_2_4, arg_2_5, arg_2_6)
+InteractionDefinitions.cog_missing_cog_pickup.client.stop = function (world, interactor_unit, interactable_unit, data, config, t, result)
 	-- function 2
-	arg_2_3.start_time = nil
+	data.start_time = nil
 
-	if not (arg_2_6 ~= InteractionResult.SUCCESS or arg_2_3.is_husk) then
-		local unit_owner = Managers.player:unit_owner(arg_2_1)
+	if result == InteractionResult.SUCCESS and not data.is_husk then
+		local player = Managers.player:unit_owner(interactor_unit)
 
-		if not (not unit_owner and not unit_owner.local_player and unit_owner.bot_player) then
+		if player and player.local_player and not player.bot_player then
 			local statistics_db = Managers.player:statistics_db()
-			local stats_id = unit_owner:stats_id()
+			local stats_id = player:stats_id()
 
 			statistics_db:increment_stat(stats_id, "cog_missing_cog")
 			Managers.backend:commit()
 		end
 	end
 
-	local str = "lua_interaction_stopped_smartobject_" .. InteractionResult[arg_2_6]
+	local local_flow_event = "lua_interaction_stopped_smartobject_" .. InteractionResult[result]
 
-	Unit.flow_event(arg_2_2, str)
+	Unit.flow_event(interactable_unit, local_flow_event)
 end
 
-InteractionDefinitions.cog_missing_cog_pickup.client.hud_description = function (arg_3_0, arg_3_1, arg_3_2, arg_3_3, arg_3_4)
+InteractionDefinitions.cog_missing_cog_pickup.client.hud_description = function (interactable_unit, data, config, fail_reason, interactor_unit)
 	-- function 3
-	return Unit.get_data(arg_3_0, "interaction_data", "hud_description"), Unit.get_data(arg_3_0, "interaction_data", "hud_interaction_action")
+	return Unit.get_data(interactable_unit, "interaction_data", "hud_description"), Unit.get_data(interactable_unit, "interaction_data", "hud_interaction_action")
 end

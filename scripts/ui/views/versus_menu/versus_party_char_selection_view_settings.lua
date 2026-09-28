@@ -1,6 +1,6 @@
 -- chunkname: @scripts/ui/views/versus_menu/versus_party_char_selection_view_settings.lua
 
-return {
+local view_settings = {
 	picking_states_strings_lookup = {
 		done = "Done",
 		waiting = "Waiting",
@@ -67,3 +67,5 @@ return {
 		}
 	}
 }
+
+return view_settings

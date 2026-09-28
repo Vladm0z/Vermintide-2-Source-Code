@@ -2,29 +2,33 @@
 
 PoisonWindGlobadierStateStanding = class(PoisonWindGlobadierStateStanding, EnemyCharacterStateStanding)
 
-PoisonWindGlobadierStateStanding.init = function (self, arg_1_1)
+PoisonWindGlobadierStateStanding.init = function (self, character_state_init_context)
 	-- function 1
-	PoisonWindGlobadierStateStanding.super.init(self, arg_1_1)
+	PoisonWindGlobadierStateStanding.super.init(self, character_state_init_context)
 
 	self._gas_ability_id = self._career_extension:ability_id("gas")
 end
 
-PoisonWindGlobadierStateStanding.update = function (self, arg_2_1, arg_2_2, arg_2_3, arg_2_4, arg_2_5)
+PoisonWindGlobadierStateStanding.update = function (self, unit, input, dt, context, t)
 	-- function 2
-	if not self:common_state_changes() then
+	local handled = self:common_state_changes()
+
+	if handled then
 		return
 	end
 
-	local _csm = self._csm
-	local _career_extension = self._career_extension
+	local csm = self._csm
+	local career_extension = self._career_extension
+	local ghost_mode_extension = self._ghost_mode_extension
+	local in_ghost_mode = ghost_mode_extension:is_in_ghost_mode()
 
-	if self._ghost_mode_extension:is_in_ghost_mode() or not _career_extension:ability_was_triggered(self._gas_ability_id) then
-		_csm:change_state("globadier_throwing")
+	if not in_ghost_mode and career_extension:ability_was_triggered(self._gas_ability_id) then
+		csm:change_state("globadier_throwing")
 
 		return
 	end
 
-	self:_update_taunt_dialogue(arg_2_5)
+	self:_update_taunt_dialogue(t)
 
-	local common_movement = self:common_movement(arg_2_5)
+	handled = self:common_movement(t)
 end

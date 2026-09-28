@@ -1,55 +1,55 @@
 -- chunkname: @scripts/entity_system/systems/behaviour/trees/beastmen/beastmen_ungor_archer_behavior.lua
 
-local beastmen_ungor_archer = BreedActions.beastmen_ungor_archer
-local tbl = {
+local ACTIONS = BreedActions.beastmen_ungor_archer
+local UNGOR_ARCHER_RANGED_COMBAT = {
 	"BTUtilityNode",
 	{
 		"BTFindRangedPositionAction",
 		name = "find_ranged_position",
-		action_data = beastmen_ungor_archer.find_ranged_position
+		action_data = ACTIONS.find_ranged_position
 	},
 	{
 		"BTMoveToRangedPositionAction",
 		name = "move_to_ranged_position",
-		action_data = beastmen_ungor_archer.move_to_ranged_position
+		action_data = ACTIONS.move_to_ranged_position
 	},
 	{
 		"BTFireProjectileAction",
 		name = "fire_projectile",
 		weight = 2,
-		action_data = beastmen_ungor_archer.fire_projectile
+		action_data = ACTIONS.fire_projectile
 	},
 	condition = "confirmed_player_sighting",
 	name = "in_combat"
 }
-local tbl_2 = {
+local UNGOR_ARCHER_MELEE_COMBAT = {
 	"BTUtilityNode",
 	{
 		"BTClanRatFollowAction",
 		name = "follow",
-		action_data = beastmen_ungor_archer.follow
+		action_data = ACTIONS.follow
 	},
 	{
 		"BTAttackAction",
 		name = "running_attack",
 		condition = "ask_target_before_attacking",
-		action_data = beastmen_ungor_archer.running_attack
+		action_data = ACTIONS.running_attack
 	},
 	{
 		"BTAttackAction",
 		name = "normal_attack",
 		condition = "ask_target_before_attacking",
-		action_data = beastmen_ungor_archer.normal_attack
+		action_data = ACTIONS.normal_attack
 	},
 	{
 		"BTCombatShoutAction",
 		name = "combat_shout",
-		action_data = beastmen_ungor_archer.combat_shout
+		action_data = ACTIONS.combat_shout
 	},
 	condition = "ungor_archer_enter_melee_combat",
 	name = "in_combat"
 }
-local tbl_3 = {
+local UNGOR_ARCHER_SMART_OBJECT = {
 	"BTSelector",
 	{
 		"BTTeleportAction",
@@ -70,7 +70,7 @@ local tbl_3 = {
 		"BTSmashDoorAction",
 		name = "smash_door",
 		condition = "at_door_smartobject",
-		action_data = beastmen_ungor_archer.smash_door
+		action_data = ACTIONS.smash_door
 	},
 	condition = "at_smartobject",
 	name = "smartobject"
@@ -97,34 +97,34 @@ BreedBehaviors.ungor_archer = {
 		"BTStaggerAction",
 		name = "stagger",
 		condition = "stagger",
-		action_data = beastmen_ungor_archer.stagger
+		action_data = ACTIONS.stagger
 	},
 	{
 		"BTBlockedAction",
 		name = "blocked",
 		condition = "blocked",
-		action_data = beastmen_ungor_archer.blocked
+		action_data = ACTIONS.blocked
 	},
 	{
 		"BTSwitchWeaponsAction",
 		name = "switch_weapons",
 		condition = "switch_to_melee_weapon",
-		action_data = beastmen_ungor_archer.switch_weapons
+		action_data = ACTIONS.switch_weapons
 	},
-	tbl_3,
-	tbl_2,
-	tbl,
+	UNGOR_ARCHER_SMART_OBJECT,
+	UNGOR_ARCHER_MELEE_COMBAT,
+	UNGOR_ARCHER_RANGED_COMBAT,
 	{
 		"BTMoveToGoalAction",
 		name = "move_to_goal",
 		condition = "has_goal_destination",
-		action_data = beastmen_ungor_archer.follow
+		action_data = ACTIONS.follow
 	},
 	{
 		"BTAlertedAction",
 		name = "alerted",
 		condition = "player_spotted",
-		action_data = beastmen_ungor_archer.alerted
+		action_data = ACTIONS.alerted
 	},
 	{
 		"BTIdleAction",

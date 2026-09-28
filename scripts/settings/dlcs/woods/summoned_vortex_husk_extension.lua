@@ -2,169 +2,203 @@
 
 SummonedVortexHuskExtension = class(SummonedVortexHuskExtension)
 
-SummonedVortexHuskExtension.init = function (self, arg_1_1, arg_1_2, arg_1_3)
+SummonedVortexHuskExtension.init = function (self, extension_init_context, unit, extension_init_data)
 	-- function 1
-	local world = arg_1_1.world
+	local world = extension_init_context.world
 	local game = Managers.state.network:game()
 
 	self.world = world
 	self.game = game
-	self.unit = arg_1_2
+	self.unit = unit
 
-	local vortex_template_name = arg_1_3.vortex_template_name
-	local var_1_3 = VortexTemplates[vortex_template_name]
+	local vortex_template_name = extension_init_data.vortex_template_name
+	local vortex_template = VortexTemplates[vortex_template_name]
 
 	self.vortex_template_name = vortex_template_name
-	self.vortex_template = var_1_3
+	self.vortex_template = vortex_template
 
-	local inner_fx_name = var_1_3.inner_fx_name
-	local var_1_5 = POSITION_LOOKUP[arg_1_2]
-	local create_particles = World.create_particles(world, inner_fx_name, var_1_5)
-	local local_rotation = Unit.local_rotation(arg_1_2, 0)
-	local from_quaternion = Matrix4x4.from_quaternion(local_rotation)
-	local num = var_1_3.full_inner_radius / var_1_3.full_fx_radius
-	local inner_fx_z_scale_multiplier = var_1_3.inner_fx_z_scale_multiplier
+	local inner_fx_name = vortex_template.inner_fx_name
+	local position = POSITION_LOOKUP[unit]
+	local inner_fx_id = World.create_particles(world, inner_fx_name, position)
+	local rotation = Unit.local_rotation(unit, 0)
+	local inner_pose = Matrix4x4.from_quaternion(rotation)
+	local inner_scale_xy = vortex_template.full_inner_radius / vortex_template.full_fx_radius
+	local inner_fx_z_scale_multiplier_2 = vortex_template.inner_fx_z_scale_multiplier
 
-	inner_fx_z_scale_multiplier = inner_fx_z_scale_multiplier or 1
+	if not inner_fx_z_scale_multiplier_2 then
+		-- Nothing
+	end
 
-	Matrix4x4.set_scale(from_quaternion, Vector3(num, num, inner_fx_z_scale_multiplier))
-	World.link_particles(world, create_particles, arg_1_2, 0, from_quaternion, "stop")
+	inner_fx_z_scale_multiplier_2 = 1
 
-	self._inner_fx_id = create_particles
+	local inner_fx_z_scale_multiplier = inner_fx_z_scale_multiplier_2
 
-	local outer_fx_name = var_1_3.outer_fx_name
-	local create_particles_2 = World.create_particles(world, outer_fx_name, var_1_5)
-	local from_quaternion_2 = Matrix4x4.from_quaternion(local_rotation)
-	local num_2 = var_1_3.full_outer_radius / var_1_3.full_fx_radius
-	local outer_fx_z_scale_multiplier = var_1_3.outer_fx_z_scale_multiplier
+	::label_1_0::
 
-	outer_fx_z_scale_multiplier = outer_fx_z_scale_multiplier or 1
+	Matrix4x4.set_scale(inner_pose, Vector3(inner_scale_xy, inner_scale_xy, inner_fx_z_scale_multiplier))
+	World.link_particles(world, inner_fx_id, unit, 0, inner_pose, "stop")
 
-	Matrix4x4.set_scale(from_quaternion_2, Vector3(num_2, num_2, outer_fx_z_scale_multiplier))
-	World.link_particles(world, create_particles_2, arg_1_2, 0, from_quaternion_2, "stop")
+	self._inner_fx_id = inner_fx_id
 
-	self._outer_fx_id = create_particles_2
+	local outer_fx_name = vortex_template.outer_fx_name
+	local outer_fx_id = World.create_particles(world, outer_fx_name, position)
+	local outer_pose = Matrix4x4.from_quaternion(rotation)
+	local outer_scale_xy = vortex_template.full_outer_radius / vortex_template.full_fx_radius
+	local outer_fx_z_scale_multiplier_2 = vortex_template.outer_fx_z_scale_multiplier
 
-	local inner_decal_unit = arg_1_3.inner_decal_unit
+	if not outer_fx_z_scale_multiplier_2 then
+		-- Nothing
+	end
 
-	if not inner_decal_unit then
-		World.link_unit(world, inner_decal_unit, arg_1_2, 0)
-		Unit.set_local_scale(inner_decal_unit, 0, Vector3(num, num, 1))
+	outer_fx_z_scale_multiplier_2 = 1
+
+	local outer_fx_z_scale_multiplier = outer_fx_z_scale_multiplier_2
+
+	::label_1_1::
+
+	Matrix4x4.set_scale(outer_pose, Vector3(outer_scale_xy, outer_scale_xy, outer_fx_z_scale_multiplier))
+	World.link_particles(world, outer_fx_id, unit, 0, outer_pose, "stop")
+
+	self._outer_fx_id = outer_fx_id
+
+	local inner_decal_unit = extension_init_data.inner_decal_unit
+
+	if inner_decal_unit then
+		World.link_unit(world, inner_decal_unit, unit, 0)
+		Unit.set_local_scale(inner_decal_unit, 0, Vector3(inner_scale_xy, inner_scale_xy, 1))
 		Unit.flow_event(inner_decal_unit, "vortex_spawned")
 
 		self._inner_decal_unit = inner_decal_unit
 	end
 
-	local outer_decal_unit = arg_1_3.outer_decal_unit
+	local outer_decal_unit = extension_init_data.outer_decal_unit
 
-	if not outer_decal_unit then
-		World.link_unit(world, outer_decal_unit, arg_1_2, 0)
-		Unit.set_local_scale(outer_decal_unit, 0, Vector3(num_2, num_2, 1))
+	if outer_decal_unit then
+		World.link_unit(world, outer_decal_unit, unit, 0)
+		Unit.set_local_scale(outer_decal_unit, 0, Vector3(outer_scale_xy, outer_scale_xy, 1))
 		Unit.flow_event(outer_decal_unit, "vortex_spawned")
 
 		self._outer_decal_unit = outer_decal_unit
 	end
 
-	local owner_unit = arg_1_3.owner_unit
+	local owner_unit = extension_init_data.owner_unit
 
-	owner_unit = owner_unit or arg_1_2
+	owner_unit = not not owner_unit or not not unit
 	self._owner_unit = owner_unit
 
-	local go_id = Managers.state.unit_storage:go_id(arg_1_2)
+	local unit_storage = Managers.state.unit_storage
+	local go_id = unit_storage:go_id(unit)
 
 	self.current_height_lerp = GameSession.game_object_field(game, go_id, "height_percentage")
 end
 
-SummonedVortexHuskExtension.extensions_ready = function (self, arg_2_1, arg_2_2)
+SummonedVortexHuskExtension.extensions_ready = function (self, world, unit)
 	-- function 2
-	local start_sound_event_name = self.vortex_template.start_sound_event_name
+	local start_sound_event_name_2 = self.vortex_template.start_sound_event_name
 
-	start_sound_event_name = start_sound_event_name or "Play_enemy_sorcerer_vortex_loop"
+	if not start_sound_event_name_2 then
+		-- Nothing
+	end
 
-	WwiseUtils.trigger_unit_event(arg_2_1, start_sound_event_name, arg_2_2)
+	start_sound_event_name_2 = "Play_enemy_sorcerer_vortex_loop"
+
+	local start_sound_event_name = start_sound_event_name_2
+
+	::label_2_0::
+
+	WwiseUtils.trigger_unit_event(world, start_sound_event_name, unit)
 end
 
 SummonedVortexHuskExtension.destroy = function (self)
 	-- function 3
 	local world = self.world
 	local unit = self.unit
-	local stop_sound_event_name = self.vortex_template.stop_sound_event_name
+	local stop_sound_event_name_2 = self.vortex_template.stop_sound_event_name
 
-	stop_sound_event_name = stop_sound_event_name or "Stop_enemy_sorcerer_vortex_loop"
+	if not stop_sound_event_name_2 then
+		-- Nothing
+	end
+
+	stop_sound_event_name_2 = "Stop_enemy_sorcerer_vortex_loop"
+
+	local stop_sound_event_name = stop_sound_event_name_2
+
+	::label_3_0::
 
 	WwiseUtils.trigger_unit_event(world, stop_sound_event_name, unit)
 
-	local _inner_decal_unit = self._inner_decal_unit
+	local inner_decal_unit = self._inner_decal_unit
 
-	if not Unit.alive(_inner_decal_unit) then
-		Unit.flow_event(_inner_decal_unit, "vortex_despawned")
+	if Unit.alive(inner_decal_unit) then
+		Unit.flow_event(inner_decal_unit, "vortex_despawned")
 	end
 
-	local _outer_decal_unit = self._outer_decal_unit
+	local outer_decal_unit = self._outer_decal_unit
 
-	if not Unit.alive(_outer_decal_unit) then
-		Unit.flow_event(_outer_decal_unit, "vortex_despawned")
+	if Unit.alive(outer_decal_unit) then
+		Unit.flow_event(outer_decal_unit, "vortex_despawned")
 	end
 end
 
-local num = 2
+local HEIGHT_FX_LERP = 2
 
-SummonedVortexHuskExtension.update = function (self, arg_4_1, arg_4_2, arg_4_3, arg_4_4, arg_4_5)
+SummonedVortexHuskExtension.update = function (self, unit, input, dt, context, t)
 	-- function 4
 	local game = self.game
-	local go_id = Managers.state.unit_storage:go_id(arg_4_1)
-	local game_object_field = GameSession.game_object_field(game, go_id, "fx_radius_percentage")
-	local game_object_field_2 = GameSession.game_object_field(game, go_id, "height_percentage")
+	local unit_storage = Managers.state.unit_storage
+	local go_id = unit_storage:go_id(unit)
+	local fx_radius_percentage = GameSession.game_object_field(game, go_id, "fx_radius_percentage")
+	local height_percentage = GameSession.game_object_field(game, go_id, "height_percentage")
 	local current_height_lerp = self.current_height_lerp
-	local lerp = math.lerp(current_height_lerp, game_object_field_2, math.min(arg_4_3 * num, 1))
+	local height_lerp = math.lerp(current_height_lerp, height_percentage, math.min(dt * HEIGHT_FX_LERP, 1))
 
-	self.current_height_lerp = lerp
+	self.current_height_lerp = height_lerp
 
 	local vortex_template = self.vortex_template
-	local num_2 = game_object_field * vortex_template.full_fx_radius
-	local num_3 = lerp * vortex_template.max_height
+	local scale_xy = fx_radius_percentage * vortex_template.full_fx_radius
+	local scale_z = height_lerp * vortex_template.max_height
 
-	Unit.set_local_scale(arg_4_1, 0, Vector3(num_2, num_2, num_3))
+	Unit.set_local_scale(unit, 0, Vector3(scale_xy, scale_xy, scale_z))
 end
 
-local tbl = {}
-local num_2 = 8
-local num_3 = 10
+local spiral = {}
+local spiral_segments = 8
+local spiral_lines = 10
 
-SummonedVortexHuskExtension.debug_render_vortex = function (arg_5_0, arg_5_1, arg_5_2, arg_5_3, arg_5_4, arg_5_5, arg_5_6, arg_5_7, arg_5_8)
+SummonedVortexHuskExtension.debug_render_vortex = function (self, t, dt, pos, fx_radius, inner_radius, outer_radius, spin_speed, height)
 	-- function 5
-	arg_5_4 = arg_5_4 + math.sin(arg_5_1 * 1.7) * 0.4
+	fx_radius = fx_radius + math.sin(t * 1.7) * 0.4
 
-	local num = 2 * math.pi / 6
-	local floor = math.floor(155 / num_2)
-	local num_4 = arg_5_8 / num_2
+	local step = 2 * math.pi / 6
+	local col_delta = math.floor(155 / spiral_segments)
+	local height_step = height / spiral_segments
 
-	for i = 1, num_3 do
-		local num_5 = i * 2 * math.pi / num_3
+	for j = 1, spiral_lines do
+		local alpha = j * 2 * math.pi / spiral_lines
 
-		for j = 1, num_2 do
-			local num_6 = arg_5_4 + 0.5 * (j * j) / num_2
-			local num_7 = arg_5_1 * arg_5_7 + j * num + num_5
+		for i = 1, spiral_segments do
+			local r = fx_radius + 0.5 * (i * i) / spiral_segments
+			local v = t * spin_speed + i * step + alpha
 
-			tbl[j] = Vector3(math.sin(num_7) * num_6, math.cos(num_7) * num_6, (j - 1) * num_4)
+			spiral[i] = Vector3(math.sin(v) * r, math.cos(v) * r, (i - 1) * height_step)
 		end
 
-		local num_8 = arg_5_4 + math.sin(arg_5_1) * 0.2
-		local num_9 = arg_5_1 * arg_5_7 + num_5 + 0 * num
-		local var_5_8 = Vector3(math.sin(num_9) * num_8, math.cos(num_9) * num_8, 0)
+		local r = fx_radius + math.sin(t) * 0.2
+		local v = t * spin_speed + alpha + 0 * step
+		local pos1 = Vector3(math.sin(v) * r, math.cos(v) * r, 0)
 
-		QuickDrawer:sphere(arg_5_3 + var_5_8, (math.sin(num_9 * 3) + 1) / 3, Color(155, 255, 155))
+		QuickDrawer:sphere(pos + pos1, (math.sin(v * 3) + 1) / 3, Color(155, 255, 155))
 
-		for k = 1, num_2 do
-			local var_5_9 = tbl[k]
-			local var_5_10 = Color(155 - floor * k, 255 - floor * k, 155 - floor * k)
+		for i = 1, spiral_segments do
+			local pos2 = spiral[i]
+			local color = Color(155 - col_delta * i, 255 - col_delta * i, 155 - col_delta * i)
 
-			QuickDrawer:line(arg_5_3 + var_5_8, arg_5_3 + var_5_9, var_5_10)
+			QuickDrawer:line(pos + pos1, pos + pos2, color)
 
-			var_5_8 = var_5_9
+			pos1 = pos2
 		end
 	end
 
-	QuickDrawer:circle(arg_5_3, arg_5_5, Vector3.up(), Colors.get("pink"))
-	QuickDrawer:circle(arg_5_3, arg_5_6, Vector3.up(), Colors.get("lime_green"))
+	QuickDrawer:circle(pos, inner_radius, Vector3.up(), Colors.get("pink"))
+	QuickDrawer:circle(pos, outer_radius, Vector3.up(), Colors.get("lime_green"))
 end

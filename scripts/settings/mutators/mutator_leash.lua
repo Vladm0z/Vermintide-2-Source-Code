@@ -20,295 +20,304 @@ return {
 	start_damage_sound_event = "Play_mutator_leash_loop",
 	damage_sound_global_parameter = "leash_distance",
 	center_effect_name = "fx/leash_beam_center_01",
-	calculate_center_position = function (self)
+	calculate_center_position = function (data)
 		-- function 1
-		local num = 0
-		local zero = Vector3.zero()
-		local PLAYER_UNITS = self.hero_side.PLAYER_UNITS
+		local num_alive_players = 0
+		local center_position = Vector3.zero()
+		local hero_side = data.hero_side
+		local PLAYER_UNITS = hero_side.PLAYER_UNITS
 
 		for i = 1, #PLAYER_UNITS do
-			local var_1_3 = PLAYER_UNITS[i]
-			local extension = ScriptUnit.extension(var_1_3, "status_system")
+			local player_unit = PLAYER_UNITS[i]
+			local status_extension = ScriptUnit.extension(player_unit, "status_system")
 
-			if not (not HEALTH_ALIVE[var_1_3] and extension:is_knocked_down()) then
-				zero = zero + POSITION_LOOKUP[var_1_3]
-				num = num + 1
+			if HEALTH_ALIVE[player_unit] and not status_extension:is_knocked_down() then
+				local player_position = POSITION_LOOKUP[player_unit]
+
+				center_position = center_position + player_position
+				num_alive_players = num_alive_players + 1
 			end
 		end
 
-		if num > 0 then
-			zero = zero / num
+		if num_alive_players > 0 then
+			center_position = center_position / num_alive_players
 		end
 
-		return zero, num
+		return center_position, num_alive_players
 	end,
-	server_start_function = function (arg_2_0, arg_2_1)
+	server_start_function = function (context, data)
 		-- function 2
-		arg_2_1.player_damage_data = {}
-		arg_2_1.hero_side = Managers.state.side:get_side_from_name("heroes")
+		data.player_damage_data = {}
+		data.hero_side = Managers.state.side:get_side_from_name("heroes")
 	end,
-	server_update_function = function (arg_3_0, arg_3_1)
+	server_update_function = function (context, data)
 		-- function 3
-		local time = Managers.time:time("game")
-		local template = arg_3_1.template
-		local calculate_center_position = template.calculate_center_position(arg_3_1)
-		local player_damage_data = arg_3_1.player_damage_data
-		local PLAYER_UNITS = arg_3_1.hero_side.PLAYER_UNITS
+		local t = Managers.time:time("game")
+		local template = data.template
+		local center_position = template.calculate_center_position(data)
+		local player_damage_data = data.player_damage_data
+		local hero_side = data.hero_side
+		local PLAYER_UNITS = hero_side.PLAYER_UNITS
 
 		for i = 1, #PLAYER_UNITS do
-			local var_3_5 = PLAYER_UNITS[i]
+			local player_unit = PLAYER_UNITS[i]
 
-			if not HEALTH_ALIVE[var_3_5] then
-				if player_damage_data[var_3_5] == nil then
-					player_damage_data[var_3_5] = {}
+			if HEALTH_ALIVE[player_unit] then
+				if player_damage_data[player_unit] == nil then
+					player_damage_data[player_unit] = {}
 				end
 
-				local var_3_6 = POSITION_LOOKUP[var_3_5]
-				local distance = Vector3.distance(calculate_center_position, var_3_6)
-				local var_3_8 = player_damage_data[var_3_5]
+				local player_position = POSITION_LOOKUP[player_unit]
+				local distance = Vector3.distance(center_position, player_position)
+				local current_player_damage_data = player_damage_data[player_unit]
 
-				var_3_8.distance_to_center = distance
+				current_player_damage_data.distance_to_center = distance
 
 				if distance >= template.min_damage_distance then
-					if not var_3_8.do_damage then
-						var_3_8.do_damage = true
-						var_3_8.last_t = time
+					if not current_player_damage_data.do_damage then
+						current_player_damage_data.do_damage = true
+						current_player_damage_data.last_t = t
 					end
-				elseif not var_3_8.do_damage then
-					var_3_8.do_damage = false
+				elseif current_player_damage_data.do_damage then
+					current_player_damage_data.do_damage = false
 				end
 			end
 		end
 
-		local damage_percentage_per_interval = template.damage_percentage_per_interval
+		local damage_percentage = template.damage_percentage_per_interval
 		local damage_type = template.damage_type
-		local min_damage_interval = template.min_damage_interval
-		local max_damage_interval = template.max_damage_interval
-		local min_damage_distance = template.min_damage_distance
-		local max_damage_distance = template.max_damage_distance
-		local num = 1
+		local min_damage_interval, max_damage_interval = template.min_damage_interval, template.max_damage_interval
+		local min_damage_distance, max_damage_distance = template.min_damage_distance, template.max_damage_distance
+		local damage_i = 1
 
-		for k, v in pairs(player_damage_data) do
-			if not HEALTH_ALIVE[k] then
-				player_damage_data[k] = nil
-			elseif not v.do_damage then
-				local extension = ScriptUnit.extension(k, "status_system")
-				local num_2 = (v.distance_to_center - min_damage_distance) / (max_damage_distance - min_damage_distance)
-				local lerp = math.lerp(min_damage_interval, max_damage_interval, num_2)
-				local max = math.max(max_damage_interval, lerp)
+		for player_unit, damage_data in pairs(player_damage_data) do
+			if not HEALTH_ALIVE[player_unit] then
+				player_damage_data[player_unit] = nil
+			elseif damage_data.do_damage then
+				local status_extension = ScriptUnit.extension(player_unit, "status_system")
+				local distance = damage_data.distance_to_center
+				local distance_normalized = (distance - min_damage_distance) / (max_damage_distance - min_damage_distance)
+				local interval_lerp_value = math.lerp(min_damage_interval, max_damage_interval, distance_normalized)
+				local interval = math.max(max_damage_interval, interval_lerp_value)
+				local last_t = damage_data.last_t
 
-				if not (not (time > v.last_t + max) or extension:is_knocked_down()) then
-					local num_3 = ScriptUnit.extension(k, "health_system"):get_max_health() * damage_percentage_per_interval
-					local var_3_21 = POSITION_LOOKUP[k]
-					local normalize = Vector3.normalize(var_3_21 - calculate_center_position)
+				if t > last_t + interval and not status_extension:is_knocked_down() then
+					local player_health_extension = ScriptUnit.extension(player_unit, "health_system")
+					local max_health = player_health_extension:get_max_health()
+					local damage = max_health * damage_percentage
+					local player_position = POSITION_LOOKUP[player_unit]
+					local damage_direction = Vector3.normalize(player_position - center_position)
 
-					DamageUtils.add_damage_network(k, k, num_3, "torso", damage_type, nil, normalize, nil, nil, nil, nil, nil, nil, nil, nil, nil, nil, nil, num)
+					DamageUtils.add_damage_network(player_unit, player_unit, damage, "torso", damage_type, nil, damage_direction, nil, nil, nil, nil, nil, nil, nil, nil, nil, nil, nil, damage_i)
 
-					num = num + 1
-					v.last_t = time
+					damage_i = damage_i + 1
+					damage_data.last_t = t
 				end
 			end
 		end
 	end,
-	client_start_function = function (self, arg_4_1)
+	client_start_function = function (context, data)
 		-- function 4
-		local beam_effect_name = arg_4_1.template.beam_effect_name
-		local world = self.world
-		local player = Managers.player
-		local get_side_from_name
+		local template = data.template
+		local beam_effect_name = template.beam_effect_name
+		local world = context.world
+		local player_manager = Managers.player
+		local wwise_world = Managers.world:wwise_world(world)
+		local hero_side = Managers.state.side:get_side_from_name("heroes")
 
-		arg_4_1.wwise_world, get_side_from_name = Managers.world:wwise_world(world), Managers.state.side:get_side_from_name("heroes")
-		arg_4_1.local_player = player:local_player()
-		arg_4_1.beam_start_variable_id = World.find_particles_variable(world, beam_effect_name, "start")
-		arg_4_1.beam_end_variable_id = World.find_particles_variable(world, beam_effect_name, "end")
-		arg_4_1.center_effect_id = nil
-		arg_4_1.center_sound = nil
-		arg_4_1.beam_effects = {}
-		arg_4_1.playing_sounds = {}
-		arg_4_1.hero_side = get_side_from_name
+		data.wwise_world = wwise_world
+		data.local_player = player_manager:local_player()
+		data.beam_start_variable_id = World.find_particles_variable(world, beam_effect_name, "start")
+		data.beam_end_variable_id = World.find_particles_variable(world, beam_effect_name, "end")
+		data.center_effect_id = nil
+		data.center_sound = nil
+		data.beam_effects = {}
+		data.playing_sounds = {}
+		data.hero_side = hero_side
 	end,
-	client_update_function = function (self, arg_5_1)
+	client_update_function = function (context, data)
 		-- function 5
-		local world = self.world
-		local wwise_world = arg_5_1.wwise_world
-		local template = arg_5_1.template
-		local start_damage_sound_event = template.start_damage_sound_event
-		local stop_damage_sound_event = template.stop_damage_sound_event
-		local calculate_center_position, var_5_6 = arg_5_1.template.calculate_center_position(arg_5_1)
-		local beam_effects = arg_5_1.beam_effects
-		local playing_sounds = arg_5_1.playing_sounds
+		local world = context.world
+		local wwise_world = data.wwise_world
+		local template = data.template
+		local start_damage_sound_event, stop_damage_sound_event = template.start_damage_sound_event, template.stop_damage_sound_event
+		local center_position, num_alive_players = data.template.calculate_center_position(data)
+		local beam_effects = data.beam_effects
+		local playing_sounds = data.playing_sounds
 
-		if var_5_6 > 1 then
-			local local_player = arg_5_1.local_player
-			local player = Managers.player
-			local center_effect_name = template.center_effect_name
-			local center_sound_event = template.center_sound_event
+		if num_alive_players > 1 then
+			local local_player = data.local_player
+			local player_manager = Managers.player
+			local center_effect_name, center_sound_event = template.center_effect_name, template.center_sound_event
 			local player_effect_name = template.player_effect_name
-			local beam_effect_name = template.beam_effect_name
-			local beam_material_name = template.beam_material_name
-			local beam_material_min_intensity = template.beam_material_min_intensity
-			local beam_material_max_intensity = template.beam_material_max_intensity
-			local num = 0.5
-			local max_damage_distance = template.max_damage_distance
-			local beam_start_variable_id = arg_5_1.beam_start_variable_id
-			local beam_end_variable_id = arg_5_1.beam_end_variable_id
-			local min_damage_distance = template.min_damage_distance
-			local max_damage_distance_2 = template.max_damage_distance
+			local beam_effect_name, beam_material_name = template.beam_effect_name, template.beam_material_name
+			local beam_min_intensity, beam_max_intensity = template.beam_material_min_intensity, template.beam_material_max_intensity
+			local beam_min_beam_distance, beam_max_beam_distance = 0.5, template.max_damage_distance
+			local beam_start_variable_id, beam_end_variable_id = data.beam_start_variable_id, data.beam_end_variable_id
+			local min_damage_distance, max_damage_distance = template.min_damage_distance, template.max_damage_distance
 
-			if arg_5_1.center_effect_id == nil then
-				arg_5_1.center_effect_id = World.create_particles(world, center_effect_name, Vector3.zero(), Quaternion.identity())
+			if data.center_effect_id == nil then
+				data.center_effect_id = World.create_particles(world, center_effect_name, Vector3.zero(), Quaternion.identity())
 			end
 
-			local center_effect_id = arg_5_1.center_effect_id
+			local center_effect_id = data.center_effect_id
 
-			World.move_particles(world, center_effect_id, calculate_center_position)
+			World.move_particles(world, center_effect_id, center_position)
 
-			if arg_5_1.center_sound == nil then
-				local trigger_position_event, var_5_26, var_5_27 = WwiseUtils.trigger_position_event(world, center_sound_event, calculate_center_position)
+			if data.center_sound == nil then
+				local event_id, source_id, _ = WwiseUtils.trigger_position_event(world, center_sound_event, center_position)
 
-				arg_5_1.center_sound = {
-					source_id = var_5_26,
-					event_id = trigger_position_event
+				data.center_sound = {
+					source_id = source_id,
+					event_id = event_id
 				}
 			end
 
-			WwiseWorld.set_source_position(wwise_world, arg_5_1.center_sound.source_id, calculate_center_position)
+			WwiseWorld.set_source_position(wwise_world, data.center_sound.source_id, center_position)
 
-			local PLAYER_UNITS = arg_5_1.hero_side.PLAYER_UNITS
+			local hero_side = data.hero_side
+			local PLAYER_UNITS = hero_side.PLAYER_UNITS
 
 			for i = 1, #PLAYER_UNITS do
-				local var_5_29 = PLAYER_UNITS[i]
+				local player_unit = PLAYER_UNITS[i]
 
-				if not HEALTH_ALIVE[var_5_29] then
-					if not beam_effects[var_5_29] then
-						local create_particles = World.create_particles(world, beam_effect_name, Vector3.zero(), Quaternion.identity())
-						local create_particles_2 = World.create_particles(world, player_effect_name, Vector3.zero(), Quaternion.identity())
+				if HEALTH_ALIVE[player_unit] then
+					if not beam_effects[player_unit] then
+						local beam_effect_id = World.create_particles(world, beam_effect_name, Vector3.zero(), Quaternion.identity())
+						local player_effect_id = World.create_particles(world, player_effect_name, Vector3.zero(), Quaternion.identity())
 
-						beam_effects[var_5_29] = {
-							beam_effect_id = create_particles,
-							player_effect_id = create_particles_2
+						beam_effects[player_unit] = {
+							beam_effect_id = beam_effect_id,
+							player_effect_id = player_effect_id
 						}
 					end
 
-					local var_5_32
-					local unit_owner = player:unit_owner(var_5_29)
+					local player_effect_position
+					local player = player_manager:unit_owner(player_unit)
 
-					if unit_owner == local_player then
-						local first_person_unit = ScriptUnit.extension(var_5_29, "first_person_system").first_person_unit
+					if player == local_player then
+						local first_person_extension = ScriptUnit.extension(player_unit, "first_person_system")
+						local first_person_unit = first_person_extension.first_person_unit
 
-						var_5_32 = Unit.world_position(first_person_unit, Unit.node(first_person_unit, "root_point")) - 0.5 * Vector3.up()
+						player_effect_position = Unit.world_position(first_person_unit, Unit.node(first_person_unit, "root_point")) - 0.5 * Vector3.up()
 					else
-						local node = Unit.node(var_5_29, "j_spine")
+						local effect_node = Unit.node(player_unit, "j_spine")
 
-						var_5_32 = Unit.world_position(var_5_29, node)
+						player_effect_position = Unit.world_position(player_unit, effect_node)
 					end
 
-					local player_effect_id = beam_effects[var_5_29].player_effect_id
+					local player_effect_id = beam_effects[player_unit].player_effect_id
 
-					World.move_particles(world, player_effect_id, var_5_32)
+					World.move_particles(world, player_effect_id, player_effect_position)
 
-					local beam_effect_id = beam_effects[var_5_29].beam_effect_id
+					local beam_effect_id = beam_effects[player_unit].beam_effect_id
 
-					World.set_particles_variable(world, beam_effect_id, beam_start_variable_id, calculate_center_position + Vector3.up() * 0.5)
-					World.set_particles_variable(world, beam_effect_id, beam_end_variable_id, var_5_32)
+					World.set_particles_variable(world, beam_effect_id, beam_start_variable_id, center_position + Vector3.up() * 0.5)
+					World.set_particles_variable(world, beam_effect_id, beam_end_variable_id, player_effect_position)
 
-					local var_5_38 = POSITION_LOOKUP[var_5_29]
-					local distance = Vector3.distance(calculate_center_position, var_5_38)
-					local auto_lerp = math.auto_lerp(num, max_damage_distance, beam_material_min_intensity, beam_material_max_intensity, distance)
-					local clamp = math.clamp(auto_lerp, beam_material_min_intensity, beam_material_max_intensity)
+					local player_position = POSITION_LOOKUP[player_unit]
+					local distance = Vector3.distance(center_position, player_position)
+					local intensity_value = math.auto_lerp(beam_min_beam_distance, beam_max_beam_distance, beam_min_intensity, beam_max_intensity, distance)
 
-					World.set_particles_material_scalar(world, beam_effect_id, beam_material_name, "intensity", clamp)
+					intensity_value = math.clamp(intensity_value, beam_min_intensity, beam_max_intensity)
 
-					local num_2 = (distance / min_damage_distance)^2
-					local min = math.min(num_2, 1)
+					World.set_particles_material_scalar(world, beam_effect_id, beam_material_name, "intensity", intensity_value)
 
-					World.set_particles_material_scalar(world, beam_effect_id, beam_material_name, "softness", min)
+					local softness_value = (distance / min_damage_distance)^2
 
-					if unit_owner == local_player then
-						if playing_sounds[var_5_29] == nil then
-							playing_sounds[var_5_29] = WwiseWorld.trigger_event(wwise_world, start_damage_sound_event)
+					softness_value = math.min(softness_value, 1)
+
+					World.set_particles_material_scalar(world, beam_effect_id, beam_material_name, "softness", softness_value)
+
+					if player == local_player then
+						if playing_sounds[player_unit] == nil then
+							local sound_id = WwiseWorld.trigger_event(wwise_world, start_damage_sound_event)
+
+							playing_sounds[player_unit] = sound_id
 						end
 
-						local var_5_44
+						local sound_value
 
 						if min_damage_distance <= distance then
-							var_5_44 = math.min(math.auto_lerp(min_damage_distance, max_damage_distance_2, 1, 2, distance), 2)
+							sound_value = math.min(math.auto_lerp(min_damage_distance, max_damage_distance, 1, 2, distance), 2)
 						else
-							var_5_44 = math.auto_lerp(0, min_damage_distance, 0, 1, distance)
+							sound_value = math.auto_lerp(0, min_damage_distance, 0, 1, distance)
 						end
 
-						if not template.damage_sound_global_parameter then
-							Managers.state.entity:system("audio_system"):set_global_parameter(template.damage_sound_global_parameter, var_5_44)
+						if template.damage_sound_global_parameter then
+							local audio_system = Managers.state.entity:system("audio_system")
+
+							audio_system:set_global_parameter(template.damage_sound_global_parameter, sound_value)
 						end
 					end
 				end
 			end
 		else
-			if not arg_5_1.center_effect_id then
-				World.destroy_particles(world, arg_5_1.center_effect_id)
+			if data.center_effect_id then
+				World.destroy_particles(world, data.center_effect_id)
 
-				arg_5_1.center_effect_id = nil
+				data.center_effect_id = nil
 			end
 
-			if not arg_5_1.center_sound then
-				local event_id = arg_5_1.center_sound.event_id
+			if data.center_sound then
+				local event_id = data.center_sound.event_id
 
 				WwiseWorld.stop_event(wwise_world, event_id)
 
-				arg_5_1.center_sound = nil
+				data.center_sound = nil
 			end
 		end
 
-		for k, v in pairs(beam_effects) do
-			if not (not HEALTH_ALIVE[k] and var_5_6 ~= 1) then
-				for k_2, v_2 in pairs(v) do
-					World.destroy_particles(world, v_2)
+		for player_unit, effects in pairs(beam_effects) do
+			if not HEALTH_ALIVE[player_unit] or num_alive_players == 1 then
+				for _, effect_id in pairs(effects) do
+					World.destroy_particles(world, effect_id)
 				end
 
-				beam_effects[k] = nil
+				beam_effects[player_unit] = nil
 
-				if not playing_sounds[k] then
+				if playing_sounds[player_unit] then
 					WwiseWorld.trigger_event(wwise_world, stop_damage_sound_event)
 
-					playing_sounds[k] = nil
+					playing_sounds[player_unit] = nil
 				end
 			end
 		end
 	end,
-	client_stop_function = function (self, arg_6_1)
+	client_stop_function = function (context, data)
 		-- function 6
-		local world = self.world
-		local wwise_world = arg_6_1.wwise_world
-		local template = arg_6_1.template
+		local world = context.world
+		local wwise_world = data.wwise_world
+		local template = data.template
 
-		if not arg_6_1.center_effect_id then
-			World.destroy_particles(world, arg_6_1.center_effect_id)
+		if data.center_effect_id then
+			World.destroy_particles(world, data.center_effect_id)
 
-			arg_6_1.center_effect_id = nil
+			data.center_effect_id = nil
 		end
 
-		if not arg_6_1.center_sound then
-			local event_id = arg_6_1.center_sound.event_id
+		if data.center_sound then
+			local event_id = data.center_sound.event_id
 
 			WwiseWorld.stop_event(wwise_world, event_id)
 
-			arg_6_1.center_sound = nil
+			data.center_sound = nil
 		end
 
-		local beam_effects = arg_6_1.beam_effects
-		local playing_sounds = arg_6_1.playing_sounds
+		local beam_effects = data.beam_effects
+		local playing_sounds = data.playing_sounds
 
-		for k, v in pairs(beam_effects) do
-			for k_2, v_2 in pairs(v) do
-				World.destroy_particles(world, v_2)
+		for player_unit, effects in pairs(beam_effects) do
+			for _, effect_id in pairs(effects) do
+				World.destroy_particles(world, effect_id)
 			end
 
-			beam_effects[k] = nil
+			beam_effects[player_unit] = nil
 
-			if not playing_sounds[k] then
+			if playing_sounds[player_unit] then
 				WwiseWorld.trigger_event(wwise_world, template.stop_damage_sound_event)
 
-				playing_sounds[k] = nil
+				playing_sounds[player_unit] = nil
 			end
 		end
 	end

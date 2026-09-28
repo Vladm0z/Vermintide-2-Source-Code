@@ -1,6 +1,6 @@
 -- chunkname: @levels/honduras_dlcs/karak_azgaraz/dwarf_interior/world_spawn_zones.lua
 
-local tbl = {
+local path_markers = {
 	{
 		roaming_set = "skaven",
 		main_path_index = 1,
@@ -1011,7 +1011,7 @@ local tbl = {
 		}
 	}
 }
-local tbl_2 = {
+local main_paths = {
 	{
 		path_length = 6.173613548278809,
 		travel_dist = {
@@ -2845,7 +2845,7 @@ local tbl_2 = {
 		}
 	}
 }
-local tbl_3 = {
+local crossroads = {
 	B = {
 		main_path_index = 12,
 		num_roads = 13,
@@ -2871,7 +2871,7 @@ local tbl_3 = {
 		}
 	}
 }
-local tbl_4 = {
+local zones = {
 	{
 		unique_zone_id = 1,
 		roaming_set = "skaven",
@@ -46596,7 +46596,7 @@ local tbl_4 = {
 		}
 	}
 }
-local tbl_5 = {
+local cover_points = {
 	-83.33422088623047,
 	-5.012130260467529,
 	8.000039100646973,
@@ -55368,7 +55368,7 @@ local tbl_5 = {
 	-0.3363358974456787,
 	0.9417421221733093
 }
-local tbl_6 = {
+local position_lookup = {
 	{
 		242.2198486328125,
 		-38.780296325683594,
@@ -253965,20 +253965,20 @@ local tbl_6 = {
 		20.466259002685547
 	}
 }
-local num = 39719
-local num_2 = 146
-local num_3 = 1559.3833643198
-local str = "1"
+local number_of_spawns = 39719
+local num_main_zones = 146
+local total_main_path_length = 1559.3833643198
+local spawner_version = "1"
 
 return {
-	version = str,
-	number_of_spawns = num,
-	path_markers = tbl,
-	zones = tbl_4,
-	cover_points = tbl_5,
-	num_main_zones = num_2,
-	position_lookup = tbl_6,
-	main_paths = tbl_2,
-	crossroads = tbl_3,
-	total_main_path_length = num_3
+	version = spawner_version,
+	number_of_spawns = number_of_spawns,
+	path_markers = path_markers,
+	zones = zones,
+	cover_points = cover_points,
+	num_main_zones = num_main_zones,
+	position_lookup = position_lookup,
+	main_paths = main_paths,
+	crossroads = crossroads,
+	total_main_path_length = total_main_path_length
 }

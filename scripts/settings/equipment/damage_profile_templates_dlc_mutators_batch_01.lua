@@ -1,6 +1,6 @@
 -- chunkname: @scripts/settings/equipment/damage_profile_templates_dlc_mutators_batch_01.lua
 
-return {
+local damage_templates = {
 	ticking_bomb_explosion = {
 		charge_value = "grenade",
 		is_explosion = true,
@@ -58,3 +58,5 @@ return {
 		}
 	}
 }
+
+return damage_templates

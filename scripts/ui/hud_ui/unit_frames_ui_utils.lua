@@ -2,69 +2,73 @@
 
 local UnitFramesUiUtils = UnitFramesUiUtils
 
-UnitFramesUiUtils = UnitFramesUiUtils or {}
+UnitFramesUiUtils = not not UnitFramesUiUtils or not not {}
 UnitFramesUiUtils = UnitFramesUiUtils
 
-local num = 24
-local num_2 = 16
+local DAMAGE_FONT_SIZE = 24
+local DAMAGE_PART_FONT_SIZE = 16
 
-UnitFramesUiUtils.create_damage_widget = function (arg_1_0, arg_1_1)
+UnitFramesUiUtils.create_damage_widget = function (widget_type, rows)
 	-- function 1
-	local tbl = {}
-	local flag = arg_1_0 == "team"
-	local tbl_2
+	local entries = {}
+	local is_team_portrait = widget_type == "team"
+	local tbl
 
-	if not flag then
-		tbl_2 = {
+	if is_team_portrait then
+		tbl = {
 			100,
 			50,
 			0
 		}
 
-		if not tbl_2 then
+		if not tbl then
 			-- Nothing
 		end
 	end
 
-	tbl_2 = {
+	tbl = {
 		-15,
 		40,
 		0
 	}
 
+	local offset = tbl
+
 	::label_1_0::
 
-	local num_3 = 24
-	local num_4 = num_3 + 16
+	local damage_icon_size = 24
+	local start_name_x = damage_icon_size + 16
 
-	for i = 1, arg_1_1 do
-		local tbl_3
+	for i = 1, rows do
+		local tbl_2
 
-		if not flag then
-			tbl_3 = {
-				num_4,
+		if is_team_portrait then
+			tbl_2 = {
+				start_name_x,
 				20 - i * 20,
 				0
 			}
 
-			if not tbl_3 then
+			if not tbl_2 then
 				-- Nothing
 			end
 		end
 
-		tbl_3 = {
-			num_4,
+		tbl_2 = {
+			start_name_x,
 			30 + i * 20,
 			0
 		}
 
+		local text_offset = tbl_2
+
 		::label_1_1::
 
-		local tbl_4 = {
-			-num_3 - 4,
-			tbl_3[2] - num_3 * 0.45
+		local damage_icon_offset = {
+			-damage_icon_size - 4,
+			text_offset[2] - damage_icon_size * 0.45
 		}
-		local tbl_5 = {
+		local widget_definition = {
 			scenegraph_id = "portrait_pivot",
 			element = {
 				passes = {
@@ -164,9 +168,9 @@ UnitFramesUiUtils.create_damage_widget = function (arg_1_0, arg_1_1)
 					horizontal_alignment = "center",
 					debug_draw_box = true,
 					font_type = "hell_shark",
-					font_size = num,
+					font_size = DAMAGE_FONT_SIZE,
 					text_color = Colors.get_table("gray"),
-					offset = tbl_3
+					offset = text_offset
 				},
 				text_total_sum = {
 					vertical_alignment = "center",
@@ -174,9 +178,9 @@ UnitFramesUiUtils.create_damage_widget = function (arg_1_0, arg_1_1)
 					horizontal_alignment = "center",
 					debug_draw_box = true,
 					font_type = "hell_shark",
-					font_size = num,
+					font_size = DAMAGE_FONT_SIZE,
 					text_color = Colors.get_table("green"),
-					offset = tbl_3
+					offset = text_offset
 				},
 				text_total_sum_decimal_part = {
 					vertical_alignment = "center",
@@ -184,9 +188,9 @@ UnitFramesUiUtils.create_damage_widget = function (arg_1_0, arg_1_1)
 					horizontal_alignment = "left",
 					debug_draw_box = true,
 					font_type = "hell_shark",
-					font_size = num_2,
+					font_size = DAMAGE_PART_FONT_SIZE,
 					text_color = Colors.get_table("white"),
-					offset = tbl_3
+					offset = text_offset
 				},
 				text_last_dmg = {
 					vertical_alignment = "center",
@@ -194,27 +198,27 @@ UnitFramesUiUtils.create_damage_widget = function (arg_1_0, arg_1_1)
 					horizontal_alignment = "center",
 					debug_draw_box = true,
 					font_type = "hell_shark",
-					font_size = num_2,
+					font_size = DAMAGE_PART_FONT_SIZE,
 					text_color = Colors.get_table("yellow"),
-					offset = tbl_3
+					offset = text_offset
 				},
 				text_last_dmg_2 = {
 					vertical_alignment = "center",
 					dynamic_font = true,
 					horizontal_alignment = "center",
 					font_type = "hell_shark",
-					font_size = num_2,
+					font_size = DAMAGE_PART_FONT_SIZE,
 					text_color = Colors.get_table("yellow"),
-					offset = tbl_3
+					offset = text_offset
 				},
 				text_last_dmg_3 = {
 					vertical_alignment = "center",
 					dynamic_font = true,
 					horizontal_alignment = "center",
 					font_type = "hell_shark",
-					font_size = num_2,
+					font_size = DAMAGE_PART_FONT_SIZE,
 					text_color = Colors.get_table("yellow"),
-					offset = tbl_3
+					offset = text_offset
 				},
 				text_last_dmg_4 = {
 					vertical_alignment = "center",
@@ -222,36 +226,36 @@ UnitFramesUiUtils.create_damage_widget = function (arg_1_0, arg_1_1)
 					horizontal_alignment = "center",
 					debug_draw_box = true,
 					font_type = "hell_shark",
-					font_size = num_2,
+					font_size = DAMAGE_PART_FONT_SIZE,
 					text_color = Colors.get_table("yellow"),
-					offset = tbl_3
+					offset = text_offset
 				},
 				text_last_dmg_5 = {
 					vertical_alignment = "center",
 					dynamic_font = true,
 					horizontal_alignment = "center",
 					font_type = "hell_shark",
-					font_size = num_2,
+					font_size = DAMAGE_PART_FONT_SIZE,
 					text_color = Colors.get_table("yellow"),
-					offset = tbl_3
+					offset = text_offset
 				},
 				text_last_dmg_6 = {
 					vertical_alignment = "center",
 					dynamic_font = true,
 					horizontal_alignment = "center",
 					font_type = "hell_shark",
-					font_size = num_2,
+					font_size = DAMAGE_PART_FONT_SIZE,
 					text_color = Colors.get_table("yellow"),
-					offset = tbl_3
+					offset = text_offset
 				},
 				text_last_dmg_7 = {
 					vertical_alignment = "center",
 					dynamic_font = true,
 					horizontal_alignment = "center",
 					font_type = "hell_shark",
-					font_size = num_2,
+					font_size = DAMAGE_PART_FONT_SIZE,
 					text_color = Colors.get_table("yellow"),
-					offset = tbl_3
+					offset = text_offset
 				},
 				text_last_dmg_8 = {
 					vertical_alignment = "center",
@@ -259,34 +263,34 @@ UnitFramesUiUtils.create_damage_widget = function (arg_1_0, arg_1_1)
 					horizontal_alignment = "center",
 					debug_draw_box = true,
 					font_type = "hell_shark",
-					font_size = num_2,
+					font_size = DAMAGE_PART_FONT_SIZE,
 					text_color = Colors.get_table("yellow"),
-					offset = tbl_3
+					offset = text_offset
 				},
 				text_last_dmg_9 = {
 					vertical_alignment = "center",
 					dynamic_font = true,
 					horizontal_alignment = "center",
 					font_type = "hell_shark",
-					font_size = num_2,
+					font_size = DAMAGE_PART_FONT_SIZE,
 					text_color = Colors.get_table("yellow"),
-					offset = tbl_3
+					offset = text_offset
 				},
 				text_last_dmg_10 = {
 					vertical_alignment = "center",
 					dynamic_font = true,
 					horizontal_alignment = "center",
 					font_type = "hell_shark",
-					font_size = num_2,
+					font_size = DAMAGE_PART_FONT_SIZE,
 					text_color = Colors.get_table("yellow"),
-					offset = tbl_3
+					offset = text_offset
 				},
 				damage_icon = {
 					size = {
-						num_3,
-						num_3
+						damage_icon_size,
+						damage_icon_size
 					},
-					offset = tbl_4,
+					offset = damage_icon_offset,
 					color = {
 						255,
 						199,
@@ -295,11 +299,11 @@ UnitFramesUiUtils.create_damage_widget = function (arg_1_0, arg_1_1)
 					}
 				}
 			},
-			offset = tbl_2
+			offset = offset
 		}
 
-		tbl[#tbl + i] = tbl_5
+		entries[#entries + i] = widget_definition
 	end
 
-	return tbl
+	return entries
 end

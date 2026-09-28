@@ -1,13 +1,13 @@
 -- chunkname: @scripts/settings/breeds/breed_chaos_berzerker.lua
 
-local scripts_utils_stagger_types = require("scripts/utils/stagger_types")
-local tbl = {
+local stagger_types = require("scripts/utils/stagger_types")
+local MOVING_STAGGERS = {
 	"run_stagger_left"
 }
-local tbl_2 = {
+local MOVING_HVY_STAGGERS = {
 	"run_stagger_right"
 }
-local tbl_3 = {
+local breed_data = {
 	proximity_system_check = true,
 	walk_speed = 2.25,
 	bone_lod_level = 0,
@@ -99,21 +99,21 @@ local tbl_3 = {
 		"move_fwd_5",
 		"move_fwd_6"
 	},
-	stagger_modifier_function = function (arg_1_0, arg_1_1, arg_1_2, arg_1_3, arg_1_4, arg_1_5)
+	stagger_modifier_function = function (stagger_type, duration, length, hit_zone_name, blackboard, breed)
 		-- function 1
-		if arg_1_4.stagger_type == scripts_utils_stagger_types.heavy then
-			if arg_1_0 ~= scripts_utils_stagger_types.heavy or not arg_1_4.heavy_stagger_immune_time then
-				arg_1_0 = scripts_utils_stagger_types.none
-				arg_1_1 = 0
-				arg_1_2 = 0
-			elseif arg_1_0 == scripts_utils_stagger_types.heavy or not arg_1_4.stagger_immune_time then
-				arg_1_0 = scripts_utils_stagger_types.none
-				arg_1_1 = 0
-				arg_1_2 = 0
+		if blackboard.stagger_type == stagger_types.heavy then
+			if stagger_type == stagger_types.heavy and blackboard.heavy_stagger_immune_time then
+				stagger_type = stagger_types.none
+				duration = 0
+				length = 0
+			elseif stagger_type ~= stagger_types.heavy and blackboard.stagger_immune_time then
+				stagger_type = stagger_types.none
+				duration = 0
+				length = 0
 			end
 		end
 
-		return arg_1_0, arg_1_1, arg_1_2
+		return stagger_type, duration, length
 	end,
 	animation_merge_options = {
 		idle_animation_merge_options = {},
@@ -307,9 +307,9 @@ local tbl_3 = {
 	}
 }
 
-Breeds.chaos_berzerker = table.create_copy(Breeds.chaos_berzerker, tbl_3)
+Breeds.chaos_berzerker = table.create_copy(Breeds.chaos_berzerker, breed_data)
 
-local tbl_4 = {
+local AttackIntensityPerDifficulty = {
 	normal = {
 		easy = {
 			normal = 2
@@ -407,7 +407,7 @@ local tbl_4 = {
 		}
 	}
 }
-local tbl_5 = {
+local DEFAULT_ALLOWED_STAGGERS = {
 	true,
 	false,
 	false,
@@ -416,7 +416,7 @@ local tbl_5 = {
 	false,
 	true
 }
-local tbl_6 = {
+local OPENING_ALLOWED_STAGGERS = {
 	true,
 	true,
 	false,
@@ -425,7 +425,7 @@ local tbl_6 = {
 	false,
 	true
 }
-local tbl_7 = {
+local JUMPATTACK_IGNORE_STAGGERS = {
 	true,
 	true,
 	true,
@@ -434,7 +434,7 @@ local tbl_7 = {
 	false,
 	true
 }
-local tbl_8 = {
+local action_data = {
 	alerted = {
 		no_hesitation = true,
 		cooldown = -1,
@@ -467,9 +467,9 @@ local tbl_8 = {
 		cooldown = -1,
 		action_weight = 1,
 		alt_tired_anim = "move_fwd_jog",
-		custom_is_tired_function = function (arg_2_0, arg_2_1)
+		custom_is_tired_function = function (unit, blackboard)
 			-- function 2
-			if not (not arg_2_1.time_since_last_combo and not (arg_2_1.time_since_last_combo <= 8)) then
+			if blackboard.time_since_last_combo and blackboard.time_since_last_combo <= 8 then
 				return true
 			end
 
@@ -524,7 +524,7 @@ local tbl_8 = {
 		action_weight = 10,
 		moving_attack = true,
 		damage_type = "cutting",
-		difficulty_attack_intensity = tbl_4,
+		difficulty_attack_intensity = AttackIntensityPerDifficulty,
 		default_attack = {
 			anims = "attack_lunge"
 		},
@@ -532,7 +532,7 @@ local tbl_8 = {
 		considerations = UtilityConsiderations.chaos_berzerker_running_attack,
 		fatigue_type = BreedTweaks.fatigue_types.roamer.running_attack,
 		difficulty_diminishing_damage = BreedTweaks.diminishing_damage_and_cooldown.berzerker,
-		ignore_staggers = tbl_7,
+		ignore_staggers = JUMPATTACK_IGNORE_STAGGERS,
 		attack_finished_duration = BreedTweaks.attack_finished_duration.chaos_elite,
 		dodge_window_start = BreedTweaks.dodge_windows.running_attack,
 		dodge_window_duration = BreedTweaks.dodge_window_durations.running_attack
@@ -544,7 +544,7 @@ local tbl_8 = {
 		player_push_speed = 3,
 		attack_intensity_type = "normal",
 		action_weight = 1,
-		difficulty_attack_intensity = tbl_4,
+		difficulty_attack_intensity = AttackIntensityPerDifficulty,
 		default_attack = {
 			anims = {
 				"attack_pounce",
@@ -659,15 +659,15 @@ local tbl_8 = {
 		moving_stagger_minimum_destination_distance = 4,
 		scale_animation_speeds = true,
 		moving_stagger_threshold = 2.5,
-		custom_enter_function = function (arg_3_0, arg_3_1, arg_3_2, arg_3_3)
+		custom_enter_function = function (unit, blackboard, t, action)
 			-- function 3
-			local combo_attack_data = arg_3_1.combo_attack_data
+			local combo = blackboard.combo_attack_data
 
-			if not combo_attack_data and not combo_attack_data.aborted then
+			if combo and combo.aborted then
 				local clamp
 
-				if arg_3_1.stagger_type < scripts_utils_stagger_types.heavy then
-					clamp = math.clamp(arg_3_1.stagger_type - 1, 1, 1.5)
+				if blackboard.stagger_type < stagger_types.heavy then
+					clamp = math.clamp(blackboard.stagger_type - 1, 1, 1.5)
 
 					if not clamp then
 						-- Nothing
@@ -676,22 +676,26 @@ local tbl_8 = {
 
 				clamp = 1
 
+				local berzerker_stagger_multiplier = clamp
+
 				::label_3_0::
 
-				if not (arg_3_1.stagger_type == scripts_utils_stagger_types.explosion or arg_3_1.stagger_type == scripts_utils_stagger_types.heavy) then
-					arg_3_1.stagger_ignore_anim_cb = true
-					arg_3_1.stagger_time = arg_3_2 + arg_3_1.breed.berzerking_stagger_time * clamp
+				if blackboard.stagger_type ~= stagger_types.explosion and blackboard.stagger_type ~= stagger_types.heavy then
+					blackboard.stagger_ignore_anim_cb = true
+					blackboard.stagger_time = t + blackboard.breed.berzerking_stagger_time * berzerker_stagger_multiplier
 				end
 			end
 
-			if arg_3_1.stagger_type == scripts_utils_stagger_types.heavy then
-				arg_3_1.stagger_immune_time = arg_3_2 + 2.25
-				arg_3_1.heavy_stagger_immune_time = arg_3_2 + 1.5
-			elseif arg_3_1.stagger_type == scripts_utils_stagger_types.explosion then
-				arg_3_1.stagger_immune_time = arg_3_2 + 3.5
+			if blackboard.stagger_type == stagger_types.heavy then
+				blackboard.stagger_immune_time = t + 2.25
+				blackboard.heavy_stagger_immune_time = t + 1.5
+			elseif blackboard.stagger_type == stagger_types.explosion then
+				blackboard.stagger_immune_time = t + 3.5
 			end
 
-			return arg_3_3.stagger_anims[arg_3_1.stagger_type], "idle"
+			local stagger_anims = action.stagger_anims[blackboard.stagger_type]
+
+			return stagger_anims, "idle"
 		end,
 		stagger_anims = {
 			{
@@ -728,11 +732,11 @@ local tbl_8 = {
 				dwn = {
 					"stun_down"
 				},
-				moving_fwd = tbl,
-				moving_bwd = tbl,
-				moving_left = tbl,
-				moving_right = tbl,
-				moving_dwn = tbl
+				moving_fwd = MOVING_STAGGERS,
+				moving_bwd = MOVING_STAGGERS,
+				moving_left = MOVING_STAGGERS,
+				moving_right = MOVING_STAGGERS,
+				moving_dwn = MOVING_STAGGERS
 			},
 			{
 				fwd = {
@@ -766,11 +770,11 @@ local tbl_8 = {
 					"stagger_medium_downward_2",
 					"stagger_medium_downward_3"
 				},
-				moving_fwd = tbl,
-				moving_bwd = tbl,
-				moving_left = tbl,
-				moving_right = tbl,
-				moving_dwn = tbl
+				moving_fwd = MOVING_STAGGERS,
+				moving_bwd = MOVING_STAGGERS,
+				moving_left = MOVING_STAGGERS,
+				moving_right = MOVING_STAGGERS,
+				moving_dwn = MOVING_STAGGERS
 			},
 			{
 				fwd = {
@@ -805,11 +809,11 @@ local tbl_8 = {
 					"stagger_bwd_heavy_3",
 					"stagger_bwd_heavy_4"
 				},
-				moving_fwd = tbl_2,
-				moving_bwd = tbl_2,
-				moving_left = tbl_2,
-				moving_right = tbl_2,
-				moving_dwn = tbl_2
+				moving_fwd = MOVING_HVY_STAGGERS,
+				moving_bwd = MOVING_HVY_STAGGERS,
+				moving_left = MOVING_HVY_STAGGERS,
+				moving_right = MOVING_HVY_STAGGERS,
+				moving_dwn = MOVING_HVY_STAGGERS
 			},
 			{
 				fwd = {
@@ -832,11 +836,11 @@ local tbl_8 = {
 					"stun_right_ranged_light_2",
 					"stun_right_ranged_light_3"
 				},
-				moving_fwd = tbl,
-				moving_bwd = tbl,
-				moving_left = tbl,
-				moving_right = tbl,
-				moving_dwn = tbl
+				moving_fwd = MOVING_STAGGERS,
+				moving_bwd = MOVING_STAGGERS,
+				moving_left = MOVING_STAGGERS,
+				moving_right = MOVING_STAGGERS,
+				moving_dwn = MOVING_STAGGERS
 			},
 			{
 				fwd = {
@@ -870,11 +874,11 @@ local tbl_8 = {
 					"stagger_medium_downward_2",
 					"stagger_medium_downward_3"
 				},
-				moving_fwd = tbl,
-				moving_bwd = tbl,
-				moving_left = tbl,
-				moving_right = tbl,
-				moving_dwn = tbl
+				moving_fwd = MOVING_STAGGERS,
+				moving_bwd = MOVING_STAGGERS,
+				moving_left = MOVING_STAGGERS,
+				moving_right = MOVING_STAGGERS,
+				moving_dwn = MOVING_STAGGERS
 			},
 			{
 				fwd = {
@@ -890,11 +894,11 @@ local tbl_8 = {
 				right = {
 					"stagger_explosion_right"
 				},
-				moving_fwd = tbl_2,
-				moving_bwd = tbl_2,
-				moving_left = tbl_2,
-				moving_right = tbl_2,
-				moving_dwn = tbl_2
+				moving_fwd = MOVING_HVY_STAGGERS,
+				moving_bwd = MOVING_HVY_STAGGERS,
+				moving_left = MOVING_HVY_STAGGERS,
+				moving_right = MOVING_HVY_STAGGERS,
+				moving_dwn = MOVING_HVY_STAGGERS
 			},
 			{
 				fwd = {
@@ -930,11 +934,11 @@ local tbl_8 = {
 				dwn = {
 					"stun_down"
 				},
-				moving_fwd = tbl,
-				moving_bwd = tbl,
-				moving_left = tbl,
-				moving_right = tbl,
-				moving_dwn = tbl
+				moving_fwd = MOVING_STAGGERS,
+				moving_bwd = MOVING_STAGGERS,
+				moving_left = MOVING_STAGGERS,
+				moving_right = MOVING_STAGGERS,
+				moving_dwn = MOVING_STAGGERS
 			},
 			{
 				fwd = {},
@@ -979,16 +983,16 @@ local tbl_8 = {
 					"stagger_medium_downward_2",
 					"stagger_medium_downward_3"
 				},
-				moving_fwd = tbl,
-				moving_bwd = tbl,
-				moving_left = tbl,
-				moving_right = tbl,
-				moving_dwn = tbl
+				moving_fwd = MOVING_STAGGERS,
+				moving_bwd = MOVING_STAGGERS,
+				moving_left = MOVING_STAGGERS,
+				moving_right = MOVING_STAGGERS,
+				moving_dwn = MOVING_STAGGERS
 			}
 		}
 	}
 }
-local tbl_9 = {
+local frenzy_attack = {
 	action_weight = 10,
 	attack_intensity = 5,
 	combo_anim_variations = 3,
@@ -1003,9 +1007,9 @@ local tbl_9 = {
 	player_push_speed = 4,
 	attack_intensity_type = "frenzy",
 	move_anim = "move_fwd",
-	difficulty_attack_intensity = tbl_4,
+	difficulty_attack_intensity = AttackIntensityPerDifficulty,
 	considerations = UtilityConsiderations.berzerker_frenzy_attack,
-	ignore_staggers = tbl_5,
+	ignore_staggers = DEFAULT_ALLOWED_STAGGERS,
 	attack_directions = {
 		attack_combo_1_01 = "left",
 		attack_combo_1_02 = "left",
@@ -1052,7 +1056,7 @@ local tbl_9 = {
 				"attack_combo_2_01",
 				"attack_combo_3_01"
 			},
-			ignore_staggers = tbl_5
+			ignore_staggers = DEFAULT_ALLOWED_STAGGERS
 		},
 		attack_2 = {
 			attack_start_slow_fraction = 0.65,
@@ -1072,7 +1076,7 @@ local tbl_9 = {
 				"attack_combo_2_02",
 				"attack_combo_3_02"
 			},
-			ignore_staggers = tbl_5
+			ignore_staggers = DEFAULT_ALLOWED_STAGGERS
 		},
 		attack_3 = {
 			attack_start_slow_fraction = 0.5,
@@ -1092,7 +1096,7 @@ local tbl_9 = {
 				"attack_combo_2_03",
 				"attack_combo_3_03"
 			},
-			ignore_staggers = tbl_5
+			ignore_staggers = DEFAULT_ALLOWED_STAGGERS
 		},
 		attack_3b = {
 			attack_start_slow_fraction = 0.5,
@@ -1112,7 +1116,7 @@ local tbl_9 = {
 				"attack_combo_2_04",
 				"attack_combo_3_04"
 			},
-			ignore_staggers = tbl_5
+			ignore_staggers = DEFAULT_ALLOWED_STAGGERS
 		},
 		attack_4 = {
 			attack_start_slow_fraction = 0.5,
@@ -1131,7 +1135,7 @@ local tbl_9 = {
 				"attack_combo_2_04",
 				"attack_combo_3_04"
 			},
-			ignore_staggers = tbl_5,
+			ignore_staggers = DEFAULT_ALLOWED_STAGGERS,
 			next = {
 				"attack_5",
 				"attack_5",
@@ -1156,7 +1160,7 @@ local tbl_9 = {
 				"attack_combo_2_05",
 				"attack_combo_3_05"
 			},
-			ignore_staggers = tbl_5
+			ignore_staggers = DEFAULT_ALLOWED_STAGGERS
 		},
 		attack_heavy = {
 			rotation_scheme = "continuous",
@@ -1178,7 +1182,7 @@ local tbl_9 = {
 				"attack_combo_2_finish",
 				"attack_combo_3_finish"
 			},
-			ignore_staggers = tbl_6,
+			ignore_staggers = OPENING_ALLOWED_STAGGERS,
 			damage_done_time = {
 				attack_combo_2_finish = 1.2463768115942029,
 				attack_combo_3_finish = 1
@@ -1195,9 +1199,9 @@ local tbl_9 = {
 	}
 }
 
-tbl_8.frenzy_attack = table.create_copy(tbl_8.frenzy_attack, tbl_9)
-tbl_8.frenzy_attack.considerations = UtilityConsiderations.berzerker_frenzy_attack
-tbl_8.frenzy_attack.combo_attacks.attack_1 = {
+action_data.frenzy_attack = table.create_copy(action_data.frenzy_attack, frenzy_attack)
+action_data.frenzy_attack.considerations = UtilityConsiderations.berzerker_frenzy_attack
+action_data.frenzy_attack.combo_attacks.attack_1 = {
 	run_speed = 5,
 	rotation_scheme = "continuous",
 	fatigue_type = "blocked_berzerker",
@@ -1206,7 +1210,7 @@ tbl_8.frenzy_attack.combo_attacks.attack_1 = {
 	attack_intensity_type = "frenzy",
 	combo_cooldown_start = true,
 	next = "attack_2",
-	difficulty_attack_intensity = tbl_4,
+	difficulty_attack_intensity = AttackIntensityPerDifficulty,
 	anim = {
 		"attack_combo_1_01",
 		"attack_combo_2_01",
@@ -1217,6 +1221,6 @@ tbl_8.frenzy_attack.combo_attacks.attack_1 = {
 		"attack_combo_2_01",
 		"attack_combo_3_01"
 	},
-	ignore_staggers = tbl_5
+	ignore_staggers = DEFAULT_ALLOWED_STAGGERS
 }
-BreedActions.chaos_berzerker = table.create_copy(BreedActions.chaos_berzerker, tbl_8)
+BreedActions.chaos_berzerker = table.create_copy(BreedActions.chaos_berzerker, action_data)

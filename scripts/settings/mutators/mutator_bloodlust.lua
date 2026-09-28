@@ -26,109 +26,125 @@ return {
 		skaven_storm_vermin = 3,
 		skaven_storm_vermin_with_shield = 3
 	},
-	add_buff = function (self, arg_1_1, arg_1_2)
+	add_buff = function (buff_system, player_unit, buff_name)
 		-- function 1
-		self:add_buff(arg_1_1, arg_1_2, arg_1_1)
+		buff_system:add_buff(player_unit, buff_name, player_unit)
 	end,
-	add_debuff = function (self, arg_2_1, arg_2_2, arg_2_3)
+	add_debuff = function (buffs, buff_system, player_unit, buff_name)
 		-- function 2
-		local flag = true
-		local add_buff = arg_2_1:add_buff(arg_2_2, arg_2_3, arg_2_2, flag)
+		local is_server_controlled = true
+		local server_buff_id = buff_system:add_buff(player_unit, buff_name, player_unit, is_server_controlled)
 
-		self[#self + 1] = add_buff
+		buffs[#buffs + 1] = server_buff_id
 	end,
-	remove_buff = function (self, arg_3_1, arg_3_2)
+	remove_buff = function (buffs, buff_system, player_unit)
 		-- function 3
-		local count = #self
-		local var_3_1 = self[count]
+		local num_buffs = #buffs
+		local server_buff_id = buffs[num_buffs]
 
-		arg_3_1:remove_server_controlled_buff(arg_3_2, var_3_1)
+		buff_system:remove_server_controlled_buff(player_unit, server_buff_id)
 
-		self[count] = nil
+		buffs[num_buffs] = nil
 	end,
-	server_start_function = function (arg_4_0, arg_4_1)
+	server_start_function = function (context, data)
 		-- function 4
-		arg_4_1.player_units = {}
-		arg_4_1.buff_system = Managers.state.entity:system("buff_system")
-		arg_4_1.player_manager = Managers.player
-		arg_4_1.buff_name = "mutator_bloodlust"
-		arg_4_1.debuff_name = "mutator_bloodlust_debuff"
+		data.player_units = {}
+		data.buff_system = Managers.state.entity:system("buff_system")
+		data.player_manager = Managers.player
+		data.buff_name = "mutator_bloodlust"
+		data.debuff_name = "mutator_bloodlust_debuff"
 	end,
-	server_update_function = function (arg_5_0, arg_5_1)
+	server_update_function = function (context, data)
 		-- function 5
-		local time = Managers.time:time("game")
-		local template = arg_5_1.template
-		local player_units = arg_5_1.player_units
+		local t = Managers.time:time("game")
+		local template = data.template
+		local player_units = data.player_units
 
-		for k, v in pairs(player_units) do
-			if not Unit.alive(k) then
-				player_units[k] = nil
-			elseif not AiUtils.unit_knocked_down(k) then
-				local buffs = v.buffs
-				local count = #buffs
+		for unit, unit_data in pairs(player_units) do
+			if not Unit.alive(unit) then
+				player_units[unit] = nil
+			elseif AiUtils.unit_knocked_down(unit) then
+				local buffs = unit_data.buffs
+				local num_buffs = #buffs
 
-				for k_2 = 1, count do
-					template.remove_buff(buffs, arg_5_1.buff_system, k)
+				for i = 1, num_buffs do
+					template.remove_buff(buffs, data.buff_system, unit)
 				end
 
-				player_units[k] = nil
-			elseif not (not (time >= v.add_debuff_at_t) or ScriptUnit.extension(k, "buff_system"):has_buff_type(arg_5_1.debuff_name)) then
-				local buffs_2 = v.buffs
+				player_units[unit] = nil
+			elseif t >= unit_data.add_debuff_at_t then
+				local buff_extension = ScriptUnit.extension(unit, "buff_system")
+				local has_debuff = buff_extension:has_buff_type(data.debuff_name)
 
-				template.add_debuff(buffs_2, arg_5_1.buff_system, k, arg_5_1.debuff_name)
+				if not has_debuff then
+					local buffs = unit_data.buffs
+
+					template.add_debuff(buffs, data.buff_system, unit, data.debuff_name)
+				end
 			end
 		end
 	end,
-	server_ai_killed_function = function (arg_6_0, arg_6_1, arg_6_2, arg_6_3)
+	server_ai_killed_function = function (context, data, killed_unit, killer_unit)
 		-- function 6
-		if not arg_6_1.player_manager:is_player_unit(arg_6_3) then
+		if not data.player_manager:is_player_unit(killer_unit) then
 			return
 		end
 
-		local owner = Managers.player:owner(arg_6_3)
+		local player = Managers.player:owner(killer_unit)
+		local is_bot = not not player and not not not player:is_player_controlled()
 
-		if not (not owner and not owner:is_player_controlled()) then
+		if is_bot then
 			return
 		end
 
-		local has_buff_type = ScriptUnit.extension(arg_6_3, "buff_system"):has_buff_type(arg_6_1.debuff_name)
-		local template = arg_6_1.template
+		local buff_extension = ScriptUnit.extension(killer_unit, "buff_system")
+		local has_debuff = buff_extension:has_buff_type(data.debuff_name)
+		local template = data.template
 
-		if not has_buff_type then
-			template.remove_buff(arg_6_1.player_units[arg_6_3].buffs, arg_6_1.buff_system, arg_6_3, arg_6_1.debuff_name)
+		if has_debuff then
+			template.remove_buff(data.player_units[killer_unit].buffs, data.buff_system, killer_unit, data.debuff_name)
 		end
 
-		local player_units = arg_6_1.player_units
+		local player_units = data.player_units
 
-		if not player_units[arg_6_3] then
-			player_units[arg_6_3] = {
+		if not player_units[killer_unit] then
+			player_units[killer_unit] = {
 				buffs = {}
 			}
 		end
 
-		local name = BLACKBOARDS[arg_6_2].breed.name
-		local var_6_5 = player_units[arg_6_3]
-		local var_6_6 = template.amount_of_stacks_per_breed[name]
+		local breed_name = BLACKBOARDS[killed_unit].breed.name
+		local unit_data = player_units[killer_unit]
+		local var_6_0 = template.amount_of_stacks_per_breed[breed_name]
 
-		var_6_6 = var_6_6 or 1
-
-		for i = 1, var_6_6 do
-			template.add_buff(arg_6_1.buff_system, arg_6_3, arg_6_1.buff_name)
+		if not var_6_0 then
+			-- Nothing
 		end
 
-		var_6_5.add_debuff_at_t = Managers.time:time("game") + template.debuff_start_time
+		var_6_0 = 1
+
+		local amount_of_stacks = var_6_0
+
+		::label_6_0::
+
+		for i = 1, amount_of_stacks do
+			template.add_buff(data.buff_system, killer_unit, data.buff_name)
+		end
+
+		unit_data.add_debuff_at_t = Managers.time:time("game") + template.debuff_start_time
 	end,
-	server_stop_function = function (arg_7_0, arg_7_1, arg_7_2)
+	server_stop_function = function (context, data, is_destroy)
 		-- function 7
-		local player_units = arg_7_1.player_units
+		local player_units = data.player_units
 
-		for k, v in pairs(player_units) do
-			if not Unit.alive(k) then
-				local has_buff_type = ScriptUnit.extension(k, "buff_system"):has_buff_type(arg_7_1.debuff_name)
-				local template = arg_7_1.template
+		for unit, unit_data in pairs(player_units) do
+			if Unit.alive(unit) then
+				local buff_extension = ScriptUnit.extension(unit, "buff_system")
+				local has_debuff = buff_extension:has_buff_type(data.debuff_name)
+				local template = data.template
 
-				if not has_buff_type then
-					template.remove_buff(v.buffs, arg_7_1.buff_system, k, arg_7_1.debuff_name)
+				if has_debuff then
+					template.remove_buff(unit_data.buffs, data.buff_system, unit, data.debuff_name)
 				end
 			end
 		end

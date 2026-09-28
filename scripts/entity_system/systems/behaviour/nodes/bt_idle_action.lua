@@ -4,125 +4,135 @@ require("scripts/entity_system/systems/behaviour/nodes/bt_node")
 
 BTIdleAction = class(BTIdleAction, BTNode)
 
-BTIdleAction.init = function (arg_1_0, ...)
+BTIdleAction.init = function (self, ...)
 	-- function 1
-	BTIdleAction.super.init(arg_1_0, ...)
+	BTIdleAction.super.init(self, ...)
 end
 
 BTIdleAction.name = "BTIdleAction"
 
-local function fn(self)
+local function randomize(event)
 	-- function 2
-	if type(self) == "table" then
-		return self[Math.random(1, #self)]
+	if type(event) == "table" then
+		return event[Math.random(1, #event)]
 	else
-		return self
+		return event
 	end
 end
 
-BTIdleAction.enter = function (self, arg_3_1, arg_3_2, arg_3_3)
+BTIdleAction.enter = function (self, unit, blackboard, t)
 	-- function 3
-	local network = Managers.state.network
-	local str = "idle"
-	local action_data = self._tree_node.action_data
+	local network_manager = Managers.state.network
+	local animation = "idle"
+	local action = self._tree_node.action_data
 
-	arg_3_2.action = action_data
-	arg_3_2.spawn_to_running = nil
+	blackboard.action = action
+	blackboard.spawn_to_running = nil
 
-	if not action_data and not action_data.alerted_anims and not arg_3_2.confirmed_player_sighting then
-		str = action_data.alerted_anims[math.random(1, #action_data.alerted_anims)]
-	elseif not (not action_data and not action_data.idle_combat and arg_3_2.is_passive) then
-		str = fn(action_data.idle_combat)
-	elseif not action_data and not action_data.idle_animation then
-		str = fn(action_data.idle_animation)
-	elseif not (not arg_3_2.is_passive and arg_3_2.spawn_type == "horde" or arg_3_2.spawn_type == "horde_hidden") then
-		if not action_data and not action_data.animations then
-			local animations = action_data.animations
-			local num = action_data.anim_cycle_index % #animations + 1
+	if action and action.alerted_anims and blackboard.confirmed_player_sighting then
+		animation = action.alerted_anims[math.random(1, #action.alerted_anims)]
+	elseif action and action.idle_combat and not blackboard.is_passive then
+		animation = randomize(action.idle_combat)
+	elseif action and action.idle_animation then
+		animation = randomize(action.idle_animation)
+	elseif blackboard.is_passive and blackboard.spawn_type ~= "horde" and blackboard.spawn_type ~= "horde_hidden" then
+		if action and action.animations then
+			local anims = action.animations
+			local index = action.anim_cycle_index % #anims + 1
 
-			str = animations[num]
-			action_data.anim_cycle_index = num
+			animation = anims[index]
+			action.anim_cycle_index = index
 		end
-	elseif not action_data and not action_data.combat_animations then
-		local combat_animations = action_data.combat_animations
-		local num_2 = action_data.anim_cycle_index % #combat_animations + 1
+	elseif action and action.combat_animations then
+		local anims = action.combat_animations
+		local index = action.anim_cycle_index % #anims + 1
 
-		str = combat_animations[num_2]
-		action_data.anim_cycle_index = num_2
+		animation = anims[index]
+		action.anim_cycle_index = index
 	end
 
-	local optional_spawn_data = arg_3_2.optional_spawn_data
-	local flag = not optional_spawn_data and optional_spawn_data.idle_animation
+	local optional_spawn_data = blackboard.optional_spawn_data
+	local idle_animation = not not optional_spawn_data and not not optional_spawn_data.idle_animation
 
-	if not (not flag and flag == "") then
-		str = flag
+	if idle_animation and idle_animation ~= "" then
+		animation = idle_animation
 	end
 
-	if arg_3_2.move_state ~= "idle" or not action_data or not action_data.force_idle_animation then
-		network:anim_event(arg_3_1, str)
+	if blackboard.move_state ~= "idle" or action and action.force_idle_animation then
+		network_manager:anim_event(unit, animation)
 
-		arg_3_2.move_state = "idle"
+		blackboard.move_state = "idle"
 	end
 
-	arg_3_2.navigation_extension:set_enabled(false)
-	arg_3_2.locomotion_extension:set_wanted_velocity(Vector3.zero())
+	blackboard.navigation_extension:set_enabled(false)
+	blackboard.locomotion_extension:set_wanted_velocity(Vector3.zero())
 end
 
-BTIdleAction.leave = function (arg_4_0, arg_4_1, arg_4_2, arg_4_3, arg_4_4, arg_4_5)
+BTIdleAction.leave = function (self, unit, blackboard, t, reason, destroy)
 	-- function 4
-	arg_4_2.navigation_extension:set_enabled(true)
+	blackboard.navigation_extension:set_enabled(true)
 end
 
-local function fn_2(arg_5_0, arg_5_1, arg_5_2)
+local function player_within_distance(unit, sqr_near_dist, side)
 	-- function 5
-	local var_5_0 = POSITION_LOOKUP[arg_5_0]
-	local ENEMY_PLAYER_POSITIONS = arg_5_2.ENEMY_PLAYER_POSITIONS
+	local pos = POSITION_LOOKUP[unit]
+	local player_positions = side.ENEMY_PLAYER_POSITIONS
 
-	for i = 1, #ENEMY_PLAYER_POSITIONS do
-		local var_5_2 = ENEMY_PLAYER_POSITIONS[i]
+	for i = 1, #player_positions do
+		local player_pos = player_positions[i]
+		local sqr_dist = Vector3.distance_squared(pos, player_pos)
 
-		if arg_5_1 > Vector3.distance_squared(var_5_0, var_5_2) then
-			return arg_5_2.ENEMY_PLAYER_UNITS[i]
+		if sqr_dist < sqr_near_dist then
+			return side.ENEMY_PLAYER_UNITS[i]
 		end
 	end
 end
 
-BTIdleAction._discovery_sound_when_close = function (arg_6_0, arg_6_1, arg_6_2)
+BTIdleAction._discovery_sound_when_close = function (self, unit, blackboard)
 	-- function 6
-	local action = arg_6_2.action
+	local action = blackboard.action
 
-	action = not action and arg_6_2.action.sound_when_near_distance_sqr
+	if action then
+		-- Nothing
+	end
 
-	if not (not action and arg_6_2.sound_when_near_played) then
-		local var_6_1 = fn_2(arg_6_1, action, arg_6_2.side)
+	action = blackboard.action.sound_when_near_distance_sqr
 
-		if not var_6_1 then
-			local network_id = Managers.player:unit_owner(var_6_1):network_id()
-			local network = Managers.state.network
-			local sound_when_near_event = arg_6_2.action.sound_when_near_event
-			local var_6_5 = NetworkLookup.sound_events[sound_when_near_event]
-			local unit_game_object_id = network:unit_game_object_id(arg_6_1)
+	local near_distance_sqr = action
 
-			network.network_transmit:send_rpc("rpc_server_audio_unit_event", network_id, var_6_5, unit_game_object_id, false, 0)
+	::label_6_0::
 
-			arg_6_2.sound_when_near_played = true
+	if near_distance_sqr and not blackboard.sound_when_near_played then
+		local player_unit = player_within_distance(unit, near_distance_sqr, blackboard.side)
+
+		if player_unit then
+			local player = Managers.player:unit_owner(player_unit)
+			local peer_id = player:network_id()
+			local network_manager = Managers.state.network
+			local sound_event = blackboard.action.sound_when_near_event
+			local sound_id = NetworkLookup.sound_events[sound_event]
+			local unit_id = network_manager:unit_game_object_id(unit)
+
+			network_manager.network_transmit:send_rpc("rpc_server_audio_unit_event", peer_id, sound_id, unit_id, false, 0)
+
+			blackboard.sound_when_near_played = true
 		end
 	end
 end
 
-local alive = Unit.alive
+local Unit_alive = Unit.alive
 
-BTIdleAction.run = function (self, arg_7_1, arg_7_2, arg_7_3, arg_7_4)
+BTIdleAction.run = function (self, unit, blackboard, t, dt)
 	-- function 7
-	local target_unit = arg_7_2.target_unit
-	local action = arg_7_2.action
-	local flag = not action and action.dont_face_target
+	local target_unit = blackboard.target_unit
+	local action = blackboard.action
+	local should_not_face_target = not not action and not not action.dont_face_target
 
-	if not (not alive(target_unit) and flag) then
-		local rotation_towards_unit_flat = LocomotionUtils.rotation_towards_unit_flat(arg_7_1, target_unit)
+	if Unit_alive(target_unit) and not should_not_face_target then
+		local rot = LocomotionUtils.rotation_towards_unit_flat(unit, target_unit)
 
-		arg_7_2.locomotion_extension:set_wanted_rotation(rotation_towards_unit_flat)
-		self:_discovery_sound_when_close(arg_7_1, arg_7_2)
+		blackboard.locomotion_extension:set_wanted_rotation(rot)
+		self:_discovery_sound_when_close(unit, blackboard)
 	end
 
 	return "running"

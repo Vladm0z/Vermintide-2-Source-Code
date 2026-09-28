@@ -2,454 +2,467 @@
 
 BTSpawnAllies = class(BTSpawnAllies, BTNode)
 
-BTSpawnAllies.init = function (arg_1_0, ...)
+BTSpawnAllies.init = function (self, ...)
 	-- function 1
-	BTSpawnAllies.super.init(arg_1_0, ...)
+	BTSpawnAllies.super.init(self, ...)
 end
 
 BTSpawnAllies.name = "BTSpawnAllies"
 
-local function fn(self)
+local function randomize(event)
 	-- function 2
-	if type(self) == "table" then
-		return self[Math.random(1, #self)]
+	if type(event) == "table" then
+		return event[Math.random(1, #event)]
 	else
-		return self
+		return event
 	end
 end
 
-BTSpawnAllies.enter = function (self, arg_3_1, arg_3_2, arg_3_3)
+BTSpawnAllies.enter = function (self, unit, blackboard, t)
 	-- function 3
-	local action_data = self._tree_node.action_data
+	local action = self._tree_node.action_data
 
-	arg_3_2.action = action_data
-	arg_3_2.active_node = BTSpawnAllies
-	arg_3_2.disable_improve_slot_position = true
+	blackboard.action = action
+	blackboard.active_node = BTSpawnAllies
+	blackboard.disable_improve_slot_position = true
 
-	local stay_still = action_data.stay_still
-	local find_spawn_points = action_data.find_spawn_points
-	local var_3_3
-	local var_3_4
+	local stay_still = action.stay_still
+	local find_spawn_points = action.find_spawn_points
+	local call_position, data
 
-	if not arg_3_2.has_call_position then
-		var_3_4 = arg_3_2.spawning_allies
-		var_3_3 = action_data.stay_still or var_3_4.call_position:unbox()
-		arg_3_2.has_call_position = false
-	elseif not find_spawn_points then
-		var_3_4 = {
+	if blackboard.has_call_position then
+		data = blackboard.spawning_allies
+		call_position = not not action.stay_still or not not data.call_position:unbox()
+		blackboard.has_call_position = false
+	elseif find_spawn_points then
+		data = {
 			end_time = math.huge
 		}
-		arg_3_2.spawning_allies = var_3_4
-		var_3_3 = BTSpawnAllies.find_spawn_point(arg_3_1, arg_3_2, action_data, var_3_4)
+		blackboard.spawning_allies = data
+		call_position = BTSpawnAllies.find_spawn_point(unit, blackboard, action, data)
 	end
 
-	if not arg_3_2.override_spawn_allies_call_position then
-		var_3_3 = arg_3_2.override_spawn_allies_call_position:unbox()
+	if blackboard.override_spawn_allies_call_position then
+		call_position = blackboard.override_spawn_allies_call_position:unbox()
 
-		var_3_4.call_position:store(var_3_3)
+		data.call_position:store(call_position)
 
 		stay_still = false
 	end
 
-	if not stay_still then
-		if not action_data.animation then
-			Managers.state.network:anim_event(arg_3_1, fn(action_data.animation))
+	if stay_still then
+		if action.animation then
+			Managers.state.network:anim_event(unit, randomize(action.animation))
 		end
 
-		arg_3_2.navigation_extension:set_enabled(false)
-		arg_3_2.locomotion_extension:set_wanted_velocity(Vector3.zero())
+		blackboard.navigation_extension:set_enabled(false)
+		blackboard.locomotion_extension:set_wanted_velocity(Vector3.zero())
 	else
-		local navigation_extension = arg_3_2.navigation_extension
+		local nav_ext = blackboard.navigation_extension
 
-		navigation_extension:set_max_speed(action_data.run_to_spawn_speed)
-		navigation_extension:move_to(var_3_3)
+		nav_ext:set_max_speed(action.run_to_spawn_speed)
+		nav_ext:move_to(call_position)
 
-		arg_3_2.run_speed_overridden = true
+		blackboard.run_speed_overridden = true
 
-		if arg_3_2.move_state ~= "moving" then
-			local get_start_anim, var_3_7 = LocomotionUtils.get_start_anim(arg_3_1, arg_3_2, action_data.start_anims)
+		if blackboard.move_state ~= "moving" then
+			local start_anim, anim_locked = LocomotionUtils.get_start_anim(unit, blackboard, action.start_anims)
 
-			if not var_3_7 then
-				LocomotionUtils.set_animation_driven_movement(arg_3_1, true, false, false)
-				arg_3_2.locomotion_extension:use_lerp_rotation(false)
+			if anim_locked then
+				LocomotionUtils.set_animation_driven_movement(unit, true, false, false)
+				blackboard.locomotion_extension:use_lerp_rotation(false)
 
-				arg_3_2.follow_animation_locked = var_3_7
-				arg_3_2.anim_cb_rotation_start = nil
-				arg_3_2.move_animation_name = get_start_anim
+				blackboard.follow_animation_locked = anim_locked
+				blackboard.anim_cb_rotation_start = nil
+				blackboard.move_animation_name = start_anim
 
-				local get_animation_rotation_scale = AiAnimUtils.get_animation_rotation_scale(arg_3_1, POSITION_LOOKUP[arg_3_2.target_unit], get_start_anim, action_data.start_anims_data)
+				local rot_scale = AiAnimUtils.get_animation_rotation_scale(unit, POSITION_LOOKUP[blackboard.target_unit], start_anim, action.start_anims_data)
 
-				LocomotionUtils.set_animation_rotation_scale(arg_3_1, get_animation_rotation_scale)
+				LocomotionUtils.set_animation_rotation_scale(unit, rot_scale)
 
-				arg_3_2.move_animation_name = nil
+				blackboard.move_animation_name = nil
 			end
 
-			Managers.state.network:anim_event(arg_3_1, get_start_anim or action_data.move_anim)
+			Managers.state.network:anim_event(unit, not not start_anim or not not action.move_anim)
 
-			arg_3_2.move_state = "moving"
+			blackboard.move_state = "moving"
 		end
 	end
 
-	if not action_data.has_ward then
-		self:_activate_ward(arg_3_1, arg_3_2)
+	if action.has_ward then
+		self:_activate_ward(unit, blackboard)
 	end
 
-	local stinger_name = action_data.stinger_name
+	local stinger_name = action.stinger_name
 
-	if not (not stinger_name and arg_3_2.played_stinger) then
-		local wwise_world = Managers.world:wwise_world(arg_3_2.world)
-		local trigger_event, var_3_12 = WwiseWorld.trigger_event(wwise_world, stinger_name)
+	if stinger_name and not blackboard.played_stinger then
+		local wwise_world = Managers.world:wwise_world(blackboard.world)
+		local wwise_playing_id, wwise_source_id = WwiseWorld.trigger_event(wwise_world, stinger_name)
 
 		Managers.state.network.network_transmit:send_rpc_clients("rpc_server_audio_event", NetworkLookup.sound_events[stinger_name])
 
-		arg_3_2.played_stinger = true
+		blackboard.played_stinger = true
 	end
 end
 
-BTSpawnAllies.leave = function (self, arg_4_1, arg_4_2, arg_4_3, arg_4_4)
+BTSpawnAllies.leave = function (self, unit, blackboard, t, reason)
 	-- function 4
-	local navigation_extension = arg_4_2.navigation_extension
+	local nav_ext = blackboard.navigation_extension
 
-	navigation_extension:set_enabled(true)
+	nav_ext:set_enabled(true)
 
-	arg_4_2.disable_improve_slot_position = false
+	blackboard.disable_improve_slot_position = false
 
-	if not arg_4_2.action.stay_still then
-		if not arg_4_2.action.defensive_mode_duration then
-			if type(arg_4_2.action.defensive_mode_duration) == "table" then
-				local get_difficulty_rank = Managers.state.difficulty:get_difficulty_rank()
-				local var_4_2 = arg_4_2.action.defensive_mode_duration[get_difficulty_rank]
+	if blackboard.action.stay_still then
+		if blackboard.action.defensive_mode_duration then
+			if type(blackboard.action.defensive_mode_duration) == "table" then
+				local difficulty_rank = Managers.state.difficulty:get_difficulty_rank()
+				local var_4_0 = blackboard.action.defensive_mode_duration[difficulty_rank]
 
-				var_4_2 = var_4_2 or arg_4_2.action.defensive_mode_duration[2]
-				arg_4_2.defensive_mode_duration = var_4_2
+				var_4_0 = not not var_4_0 or not not blackboard.action.defensive_mode_duration[2]
+				blackboard.defensive_mode_duration = var_4_0
 			else
-				arg_4_2.defensive_mode_duration = arg_4_2.action.defensive_mode_duration
+				blackboard.defensive_mode_duration = blackboard.action.defensive_mode_duration
 			end
 		end
 
-		arg_4_2.action = nil
-		arg_4_2.spawning_allies = nil
-		arg_4_2.spawned_allies_wave = arg_4_2.spawned_allies_wave + 1
+		blackboard.action = nil
+		blackboard.spawning_allies = nil
+		blackboard.spawned_allies_wave = blackboard.spawned_allies_wave + 1
 	else
-		navigation_extension:set_max_speed(arg_4_2.run_speed)
+		nav_ext:set_max_speed(blackboard.run_speed)
 
-		arg_4_2.run_speed_overridden = nil
+		blackboard.run_speed_overridden = nil
 
-		if not (not arg_4_2.action.defensive_mode_duration and type(arg_4_2.action.defensive_mode_duration) ~= "table") then
-			local get_difficulty_rank_2 = Managers.state.difficulty:get_difficulty_rank()
-			local var_4_4 = arg_4_2.action.defensive_mode_duration[get_difficulty_rank_2]
+		if blackboard.action.defensive_mode_duration and type(blackboard.action.defensive_mode_duration) == "table" then
+			local difficulty_rank = Managers.state.difficulty:get_difficulty_rank()
+			local var_4_1 = blackboard.action.defensive_mode_duration[difficulty_rank]
 
-			var_4_4 = var_4_4 or arg_4_2.action.defensive_mode_duration[2]
-			arg_4_2.defensive_mode_duration = var_4_4
+			var_4_1 = not not var_4_1 or not not blackboard.action.defensive_mode_duration[2]
+			blackboard.defensive_mode_duration = var_4_1
 		else
-			local defensive_mode_duration = arg_4_2.action.defensive_mode_duration
+			local defensive_mode_duration = blackboard.action.defensive_mode_duration
 
-			defensive_mode_duration = defensive_mode_duration or 20
-			arg_4_2.defensive_mode_duration = defensive_mode_duration
+			defensive_mode_duration = not not defensive_mode_duration or not not 20
+			blackboard.defensive_mode_duration = defensive_mode_duration
 		end
 
-		arg_4_2.action = nil
-		arg_4_2.spawning_allies = nil
-		arg_4_2.spawned_allies_wave = arg_4_2.spawned_allies_wave + 1
+		blackboard.action = nil
+		blackboard.spawning_allies = nil
+		blackboard.spawned_allies_wave = blackboard.spawned_allies_wave + 1
 	end
 
-	if not arg_4_2.follow_animation_locked then
-		self:_release_animation_lock(arg_4_1, arg_4_2)
+	if blackboard.follow_animation_locked then
+		self:_release_animation_lock(unit, blackboard)
 	end
 
-	arg_4_2.active_node = nil
+	blackboard.active_node = nil
 end
 
-BTSpawnAllies._activate_ward = function (arg_5_0, arg_5_1, arg_5_2)
+BTSpawnAllies._activate_ward = function (self, unit, blackboard)
 	-- function 5
-	local ward_function = arg_5_2.action.ward_function
+	local ward_function = blackboard.action.ward_function
 
-	if not arg_5_2.ward_active then
-		arg_5_2.ward_active = true
+	if not blackboard.ward_active then
+		blackboard.ward_active = true
 
-		ward_function(arg_5_1, true, true)
+		ward_function(unit, true, true)
 	end
 end
 
-local function fn_2(arg_6_0, ...)
+local function draw(shape, ...)
 	-- function 6
-	if not script_data.ai_champion_spawn_debug then
-		QuickDrawerStay[arg_6_0](QuickDrawerStay, ...)
+	if script_data.ai_champion_spawn_debug then
+		QuickDrawerStay[shape](QuickDrawerStay, ...)
 	end
 end
 
-local function fn_3(...)
+local function dprint(...)
 	-- function 7
-	if not script_data.ai_champion_spawn_debug then
+	if script_data.ai_champion_spawn_debug then
 		print(...)
 	end
 end
 
-local tbl = {}
+local SPAWN_POS_TEMP = {}
 
-BTSpawnAllies.find_spawn_point = function (arg_8_0, arg_8_1, arg_8_2, arg_8_3, arg_8_4)
+BTSpawnAllies.find_spawn_point = function (unit, blackboard, action, data, override_spawn_group)
 	-- function 8
-	if not arg_8_4 then
+	if not override_spawn_group then
 		-- Nothing
 	end
 
 	::label_8_0::
 
-	local optional_go_to_spawn = arg_8_2.optional_go_to_spawn
+	local optional_go_to_spawn = action.optional_go_to_spawn
 
-	optional_go_to_spawn = optional_go_to_spawn or arg_8_2.spawn_group
+	if not optional_go_to_spawn then
+		-- Nothing
+	end
+
+	optional_go_to_spawn = action.spawn_group
+
+	local spawn_group = optional_go_to_spawn
 
 	::label_8_1::
 
-	local system = Managers.state.entity:system("spawner_system")
-	local var_8_2 = system._id_lookup[optional_go_to_spawn]
+	local spawner_system = Managers.state.entity:system("spawner_system")
+	local spawners_raw = spawner_system._id_lookup[spawn_group]
 
-	if var_8_2 or not arg_8_2.use_fallback_spawners then
-		var_8_2 = system._enabled_spawners
+	if not spawners_raw and action.use_fallback_spawners then
+		spawners_raw = spawner_system._enabled_spawners
 	end
 
-	fassert(var_8_2, "Level %s is lacking spawners of spawner group %s, this is necessary to use BTSpawnAllies behaviour in breed %s", Managers.state.game_mode:level_key(), optional_go_to_spawn, arg_8_1.breed.name)
+	fassert(spawners_raw, "Level %s is lacking spawners of spawner group %s, this is necessary to use BTSpawnAllies behaviour in breed %s", Managers.state.game_mode:level_key(), spawn_group, blackboard.breed.name)
 
-	local clone = table.clone(var_8_2)
-	local side = arg_8_1.side
+	local spawners = table.clone(spawners_raw)
+	local side = blackboard.side
 	local ENEMY_PLAYER_AND_BOT_POSITIONS = side.ENEMY_PLAYER_AND_BOT_POSITIONS
 	local ENEMY_PLAYER_AND_BOT_UNITS = side.ENEMY_PLAYER_AND_BOT_UNITS
-	local var_8_7 = Vector3(0, 0, 0)
-	local num = 0
+	local average_player_position = Vector3(0, 0, 0)
+	local num_players = 0
 
-	for i, v in ipairs(ENEMY_PLAYER_AND_BOT_POSITIONS) do
-		local var_8_9 = ENEMY_PLAYER_AND_BOT_UNITS[i]
+	for i, pos in ipairs(ENEMY_PLAYER_AND_BOT_POSITIONS) do
+		local player_unit = ENEMY_PLAYER_AND_BOT_UNITS[i]
 
-		if not ScriptUnit.extension(var_8_9, "status_system"):is_disabled() then
-			num = num + 1
-			var_8_7 = var_8_7 + v
+		if not ScriptUnit.extension(player_unit, "status_system"):is_disabled() then
+			num_players = num_players + 1
+			average_player_position = average_player_position + pos
 		end
 	end
 
-	local distance_squared = Vector3.distance_squared
-	local var_8_11 = POSITION_LOOKUP[arg_8_0]
+	local Vector3_distance_squared = Vector3.distance_squared
+	local call_position = POSITION_LOOKUP[unit]
 
-	if num > 0 then
-		local flat = Vector3.flat(var_8_7 / num)
-		local num_2 = -math.huge
-		local var_8_14
-		local count = #clone
+	if num_players > 0 then
+		local flat_average_player_position = Vector3.flat(average_player_position / num_players)
+		local best_dist_sq = -math.huge
+		local best_index
+		local num_spawners = #spawners
 
-		for k = 1, count do
-			local var_8_16 = clone[k]
-			local spawn_position = ScriptUnit.extension(var_8_16, "spawner_system"):spawn_position()
+		for i = 1, num_spawners do
+			local spawner = spawners[i]
+			local pos = ScriptUnit.extension(spawner, "spawner_system"):spawn_position()
 
-			tbl[k] = spawn_position
+			SPAWN_POS_TEMP[i] = pos
 
-			local var_8_18 = distance_squared(Vector3.flat(spawn_position), flat)
+			local dist_sq = Vector3_distance_squared(Vector3.flat(pos), flat_average_player_position)
 
-			if num_2 < var_8_18 then
-				num_2 = var_8_18
-				var_8_14 = k
+			if best_dist_sq < dist_sq then
+				best_dist_sq = dist_sq
+				best_index = i
 			end
 		end
 
-		for k_2, v_2 in pairs(tbl) do
-			fn_2("sphere", v_2, 0.05, Color(255, 255, 255))
+		for i, pos in pairs(SPAWN_POS_TEMP) do
+			draw("sphere", pos, 0.05, Color(255, 255, 255))
 		end
 
-		local var_8_19 = tbl[var_8_14]
-		local var_8_20
-		local huge = math.huge
+		local best_pos = SPAWN_POS_TEMP[best_index]
+		local best_other_index
+		local best_other_dist_sq = math.huge
 
-		for i5 = 1, count do
-			if i5 ~= var_8_14 then
-				local var_8_22 = tbl[i5]
-				local var_8_23 = distance_squared(Vector3.flat(var_8_22), Vector3.flat(var_8_19))
+		for i = 1, num_spawners do
+			if i ~= best_index then
+				local pos = SPAWN_POS_TEMP[i]
+				local dist_sq = Vector3_distance_squared(Vector3.flat(pos), Vector3.flat(best_pos))
 
-				if var_8_23 < huge then
-					var_8_20 = i5
-					huge = var_8_23
+				if dist_sq < best_other_dist_sq then
+					best_other_index = i
+					best_other_dist_sq = dist_sq
 				end
 			end
 		end
 
-		local var_8_24 = clone[var_8_14]
-		local var_8_25 = clone[var_8_20]
-		local normalize = Vector3.normalize(Vector3.flat(Quaternion.forward(ScriptUnit.extension(var_8_24, "spawner_system"):spawn_rotation()) + Quaternion.forward(ScriptUnit.extension(var_8_25, "spawner_system"):spawn_rotation())))
-		local var_8_27 = tbl[var_8_14]
-		local var_8_28 = tbl[var_8_20]
+		local spawner_1 = spawners[best_index]
+		local spawner_2 = spawners[best_other_index]
+		local fwd = Vector3.normalize(Vector3.flat(Quaternion.forward(ScriptUnit.extension(spawner_1, "spawner_system"):spawn_rotation()) + Quaternion.forward(ScriptUnit.extension(spawner_2, "spawner_system"):spawn_rotation())))
+		local pos1, pos2 = SPAWN_POS_TEMP[best_index], SPAWN_POS_TEMP[best_other_index]
 
-		fn_2("sphere", var_8_27, 0.34, Color(0, 255, 255))
-		fn_2("sphere", var_8_28, 0.34, Color(0, 255, 255))
+		draw("sphere", pos1, 0.34, Color(0, 255, 255))
+		draw("sphere", pos2, 0.34, Color(0, 255, 255))
 
-		local num_3 = (tbl[var_8_14] + tbl[var_8_20]) * 0.5
+		local average_pos = (SPAWN_POS_TEMP[best_index] + SPAWN_POS_TEMP[best_other_index]) * 0.5
 
-		num_3.z = math.max(tbl[var_8_14].z, tbl[var_8_20].z)
+		average_pos.z = math.max(SPAWN_POS_TEMP[best_index].z, SPAWN_POS_TEMP[best_other_index].z)
 
-		fn_2("sphere", num_3, 0.34, Color(0, 255, 255))
-		fn_2("line", var_8_27, var_8_28, Color(0, 255, 255))
+		draw("sphere", average_pos, 0.34, Color(0, 255, 255))
+		draw("line", pos1, pos2, Color(0, 255, 255))
 
-		local num_4 = 0.25
-		local nav_world = arg_8_1.nav_world
-		local num_5 = num_3 + normalize * 1.5
-		local num_6 = 0.25
-		local num_7 = 10
-		local var_8_35
-		local var_8_36
+		local step = 0.25
+		local nav_world = blackboard.nav_world
+		local check_pos = average_pos + fwd * 1.5
+		local above, below = 0.25, 10
+		local success, z
 
-		fn_2("line", num_3, num_5, Color(0, 255, 255))
+		draw("line", average_pos, check_pos, Color(0, 255, 255))
 
-		for i6 = 1, 10 do
-			local var_8_37 = num_5
+		for i = 1, 10 do
+			local old_check = check_pos
 
-			num_5 = num_5 + num_4 * normalize
+			check_pos = check_pos + step * fwd
+			success, z = GwNavQueries.triangle_from_position(nav_world, check_pos, above, below)
 
-			local triangle_from_position, var_8_39 = GwNavQueries.triangle_from_position(nav_world, num_5, num_6, num_7)
-			local var_8_40 = var_8_39
+			if success then
+				call_position = Vector3(check_pos.x, check_pos.y, z)
 
-			if not triangle_from_position then
-				var_8_11 = Vector3(num_5.x, num_5.y, var_8_40)
-
-				fn_3("success")
-				fn_2("line", var_8_37, var_8_11, Color(0, 255, 0))
-				fn_2("sphere", var_8_11, 0.34, Color(0, 255, 255))
+				dprint("success")
+				draw("line", old_check, call_position, Color(0, 255, 0))
+				draw("sphere", call_position, 0.34, Color(0, 255, 255))
 
 				break
 			else
-				fn_3("fail")
-				fn_2("line", var_8_37, num_5, Color(255, 0, 0))
-				fn_2("sphere", num_5, 0.34, Color(255, 0, 0))
+				dprint("fail")
+				draw("line", old_check, check_pos, Color(255, 0, 0))
+				draw("sphere", check_pos, 0.34, Color(255, 0, 0))
 			end
 		end
 
-		arg_8_3.spawn_forward = Vector3Box(normalize)
-		arg_8_3.spawners = {
-			clone[var_8_14],
-			clone[var_8_20]
+		data.spawn_forward = Vector3Box(fwd)
+		data.spawners = {
+			spawners[best_index],
+			spawners[best_other_index]
 		}
 
-		table.clear(tbl)
+		table.clear(SPAWN_POS_TEMP)
 	else
-		arg_8_3.spawn_forward = Vector3Box(Quaternion.forward(Unit.local_rotation(arg_8_0, 0)))
-		arg_8_3.spawners = {
-			clone[1],
-			clone[2]
+		data.spawn_forward = Vector3Box(Quaternion.forward(Unit.local_rotation(unit, 0)))
+		data.spawners = {
+			spawners[1],
+			spawners[2]
 		}
 	end
 
-	arg_8_3.call_position = Vector3Box(var_8_11)
+	data.call_position = Vector3Box(call_position)
 
-	return var_8_11
+	return call_position
 end
 
-BTSpawnAllies._spawn = function (arg_9_0, arg_9_1, arg_9_2, arg_9_3, arg_9_4)
+BTSpawnAllies._spawn = function (self, unit, data, blackboard, t)
 	-- function 9
-	local action = arg_9_3.action
+	local action = blackboard.action
 
-	if not action.animation then
-		Managers.state.network:anim_event(arg_9_1, fn(action.animation))
+	if action.animation then
+		Managers.state.network:anim_event(unit, randomize(action.animation))
 	end
 
-	arg_9_3.navigation_extension:set_enabled(false)
+	blackboard.navigation_extension:set_enabled(false)
 
-	local side_id = arg_9_3.side.side_id
-	local locomotion_extension = arg_9_3.locomotion_extension
+	local side = blackboard.side
+	local side_id = side.side_id
+	local loc_ext = blackboard.locomotion_extension
 
-	locomotion_extension:set_wanted_velocity(Vector3.zero())
-	locomotion_extension:use_lerp_rotation(true)
+	loc_ext:set_wanted_velocity(Vector3.zero())
+	loc_ext:use_lerp_rotation(true)
 
 	if not action.dont_rotate then
-		locomotion_extension:set_wanted_rotation(Quaternion.look(arg_9_2.spawn_forward:unbox(), Vector3.up()))
+		loc_ext:set_wanted_rotation(Quaternion.look(data.spawn_forward:unbox(), Vector3.up()))
 	end
 
-	local get_difficulty = Managers.state.difficulty:get_difficulty()
+	local difficulty = Managers.state.difficulty:get_difficulty()
 
-	if action.difficulty_spawn_list or not action.spawn_list then
+	if action.difficulty_spawn_list or action.spawn_list then
 		local difficulty_spawn_list = action.difficulty_spawn_list
 
 		if not difficulty_spawn_list then
-			difficulty_spawn_list = action.difficulty_spawn_list[get_difficulty]
-			difficulty_spawn_list = difficulty_spawn_list or action.spawn_list
+			-- Nothing
 		end
 
-		local spawners = arg_9_2.spawners
+		difficulty_spawn_list = action.difficulty_spawn_list[difficulty]
 
-		Managers.state.entity:system("surrounding_aware_system"):add_system_event(arg_9_1, "enemy_attack", DialogueSettings.enemy_spawn_allies, "attack_tag", "spawn_allies")
+		if not difficulty_spawn_list then
+			-- Nothing
+		end
 
-		local system = Managers.state.entity:system("spawner_system")
+		difficulty_spawn_list = action.spawn_list
 
-		for i = 1, #difficulty_spawn_list do
-			local var_9_7 = spawners[(i - 1) % #spawners + 1]
+		local spawn_list = difficulty_spawn_list
 
-			system:spawn_horde(var_9_7, {
-				difficulty_spawn_list[i]
+		::label_9_0::
+
+		local spawners = data.spawners
+
+		Managers.state.entity:system("surrounding_aware_system"):add_system_event(unit, "enemy_attack", DialogueSettings.enemy_spawn_allies, "attack_tag", "spawn_allies")
+
+		local spawner_system = Managers.state.entity:system("spawner_system")
+
+		for i = 1, #spawn_list do
+			local unit = spawners[(i - 1) % #spawners + 1]
+
+			spawner_system:spawn_horde(unit, {
+				spawn_list[i]
 			}, side_id)
 		end
 	end
 
-	local var_9_8
+	local spawn
 
-	if not action.phase_spawn then
-		local respawn_thresholds, var_9_10, var_9_11, var_9_12, var_9_13 = arg_9_3.health_extension:respawn_thresholds()
+	if action.phase_spawn then
+		local _, _, _, _, phase = blackboard.health_extension:respawn_thresholds()
 
-		var_9_8 = action.phase_spawn[var_9_13]
+		spawn = action.phase_spawn[phase]
 	else
-		var_9_8 = not action.difficulty_spawn and action.difficulty_spawn[get_difficulty] and action.spawn
+		spawn = (not action.difficulty_spawn or not action.difficulty_spawn[difficulty]) and not not action.spawn
 	end
 
-	if not var_9_8 then
-		local flag = true
-		local flag_2 = true
-		local var_9_16 = var_9_8
+	if spawn then
+		local strictly_not_close_to_players = true
+		local silent = true
+		local composition_type = spawn
 		local limit_spawners = action.limit_spawners
 		local use_closest_spawners = action.use_closest_spawners
-		local var_9_19 = arg_9_1
+		local source_unit = unit
 		local terror_event_id = action.terror_event_id
-		local conflict = Managers.state.conflict
-		local tbl = {
+		local conflict_director = Managers.state.conflict
+		local group_template = {
 			size = 0,
 			template = "horde",
 			id = Managers.state.entity:system("ai_group_system"):generate_group_id()
 		}
+		local horde = conflict_director.horde_spawner:execute_event_horde(t, terror_event_id, side_id, composition_type, limit_spawners, silent, group_template, strictly_not_close_to_players, nil, use_closest_spawners, source_unit)
 
-		arg_9_3.spawn_allies_horde = conflict.horde_spawner:execute_event_horde(arg_9_4, terror_event_id, side_id, var_9_16, limit_spawners, flag_2, tbl, flag, nil, use_closest_spawners, var_9_19)
+		blackboard.spawn_allies_horde = horde
 	end
 end
 
-BTSpawnAllies.run = function (self, arg_10_1, arg_10_2, arg_10_3, arg_10_4)
+BTSpawnAllies.run = function (self, unit, blackboard, t, dt)
 	-- function 10
-	local spawning_allies = arg_10_2.spawning_allies
+	local data = blackboard.spawning_allies
 
-	if not spawning_allies then
+	if not data then
 		return "done"
 	end
 
-	if arg_10_3 > spawning_allies.end_time then
-		arg_10_2.played_stinger = nil
+	if t > data.end_time then
+		blackboard.played_stinger = nil
 
 		return "done"
 	else
-		local action = arg_10_2.action
+		local action = blackboard.action
 
-		if not (spawning_allies.spawned or action.stay_still or Vector3.distance_squared(POSITION_LOOKUP[arg_10_1], spawning_allies.call_position:unbox()) < 0.5 or not (arg_10_2.navigation_extension:number_failed_move_attempts() > 1)) then
-			spawning_allies.spawned = true
-			spawning_allies.end_time = arg_10_3 + action.duration
+		if not data.spawned and (action.stay_still or Vector3.distance_squared(POSITION_LOOKUP[unit], data.call_position:unbox()) < 0.5 or blackboard.navigation_extension:number_failed_move_attempts() > 1) then
+			data.spawned = true
+			data.end_time = t + action.duration
 
-			if not arg_10_2.follow_animation_locked then
-				self:_release_animation_lock(arg_10_1, arg_10_2)
+			if blackboard.follow_animation_locked then
+				self:_release_animation_lock(unit, blackboard)
 			end
 
-			self:_spawn(arg_10_1, spawning_allies, arg_10_2, arg_10_3)
-		elseif not spawning_allies.spawned then
-			arg_10_2.locomotion_extension:set_wanted_rotation(Quaternion.look(spawning_allies.spawn_forward:unbox(), Vector3.up()))
-		elseif not arg_10_2.follow_animation_locked and not arg_10_2.anim_cb_rotation_start then
-			self:_release_animation_lock(arg_10_1, arg_10_2)
+			self:_spawn(unit, data, blackboard, t)
+		elseif data.spawned then
+			blackboard.locomotion_extension:set_wanted_rotation(Quaternion.look(data.spawn_forward:unbox(), Vector3.up()))
+		elseif blackboard.follow_animation_locked and blackboard.anim_cb_rotation_start then
+			self:_release_animation_lock(unit, blackboard)
 		end
 
 		return "running"
 	end
 end
 
-BTSpawnAllies._release_animation_lock = function (arg_11_0, arg_11_1, arg_11_2)
+BTSpawnAllies._release_animation_lock = function (self, unit, blackboard)
 	-- function 11
-	arg_11_2.follow_animation_locked = nil
+	blackboard.follow_animation_locked = nil
 
-	LocomotionUtils.set_animation_driven_movement(arg_11_1, false)
-	arg_11_2.locomotion_extension:use_lerp_rotation(true)
+	LocomotionUtils.set_animation_driven_movement(unit, false)
+	blackboard.locomotion_extension:use_lerp_rotation(true)
 end

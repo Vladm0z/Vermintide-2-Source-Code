@@ -2,21 +2,21 @@
 
 local DeusGenUtils = DeusGenUtils
 
-DeusGenUtils = DeusGenUtils or {}
+DeusGenUtils = not not DeusGenUtils or not not {}
 DeusGenUtils = DeusGenUtils
 
-DeusGenUtils.create_random_generator = function (arg_1_0)
+DeusGenUtils.create_random_generator = function (seed)
 	-- function 1
-	return function (arg_2_0, arg_2_1)
+	return function (first_bound, second_bound)
 		-- function 2
-		local var_2_0
+		local val
 
-		if not arg_2_0 then
-			arg_1_0, var_2_0 = Math.next_random(arg_1_0, arg_2_0, arg_2_1)
+		if first_bound then
+			seed, val = Math.next_random(seed, first_bound, second_bound)
 		else
-			arg_1_0, var_2_0 = Math.next_random(arg_1_0)
+			seed, val = Math.next_random(seed)
 		end
 
-		return var_2_0, arg_1_0
+		return val, seed
 	end
 end

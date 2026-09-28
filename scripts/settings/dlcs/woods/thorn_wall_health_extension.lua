@@ -2,55 +2,55 @@
 
 ThornWallHealthExtension = class(ThornWallHealthExtension, GenericHealthExtension)
 
-local alive = Unit.alive
-local flow_event = Unit.flow_event
-local set_flow_variable = Unit.set_flow_variable
+local unit_alive = Unit.alive
+local unit_flow_event = Unit.flow_event
+local unit_set_flow_variable = Unit.set_flow_variable
 
-ThornWallHealthExtension.init = function (arg_1_0, arg_1_1, arg_1_2, arg_1_3)
+ThornWallHealthExtension.init = function (self, extension_init_context, unit, extension_init_data)
 	-- function 1
-	ThornWallHealthExtension.super.init(arg_1_0, arg_1_1, arg_1_2, arg_1_3)
+	ThornWallHealthExtension.super.init(self, extension_init_context, unit, extension_init_data)
 end
 
-ThornWallHealthExtension.extensions_ready = function (arg_2_0, arg_2_1, arg_2_2, arg_2_3)
+ThornWallHealthExtension.extensions_ready = function (self, world, unit, extension_name)
 	-- function 2
 	return
 end
 
-ThornWallHealthExtension.destroy = function (arg_3_0)
+ThornWallHealthExtension.destroy = function (self)
 	-- function 3
-	ThornWallHealthExtension.super.destroy(arg_3_0)
+	ThornWallHealthExtension.super.destroy(self)
 end
 
-ThornWallHealthExtension.apply_client_predicted_damage = function (arg_4_0, arg_4_1)
+ThornWallHealthExtension.apply_client_predicted_damage = function (self, predicted_damage)
 	-- function 4
 	return
 end
 
-local tbl = {
+local allowed_damage_sources = {
 	chaos_exalted_champion_norsca = true,
 	chaos_exalted_champion_warcamp = true,
 	skaven_storm_vermin_warlord = true
 }
 
-ThornWallHealthExtension.add_damage = function (self, arg_5_1, arg_5_2, arg_5_3, arg_5_4, arg_5_5, arg_5_6, arg_5_7, arg_5_8, arg_5_9, arg_5_10, arg_5_11, arg_5_12, arg_5_13, arg_5_14, arg_5_15, arg_5_16, arg_5_17)
+ThornWallHealthExtension.add_damage = function (self, attacker_unit, damage_amount, hit_zone_name, damage_type, hit_position, damage_direction, damage_source_name, hit_ragdoll_actor, damaging_unit, hit_react_type, is_critical_strike, added_dot, first_hit, total_hits, attack_type, backstab_multiplier, target_index)
 	-- function 5
 	local unit = self.unit
-	local is_enemy = DamageUtils.is_enemy(arg_5_1, unit)
-	local num = 0
+	local is_attacker_enemy = DamageUtils.is_enemy(attacker_unit, unit)
+	local damage_override = 0
 
-	if not tbl[arg_5_7] then
-		num = 100
+	if allowed_damage_sources[damage_source_name] then
+		damage_override = 100
 	end
 
-	Managers.state.achievement:trigger_event("register_thorn_wall_damage", self.unit, arg_5_1, num, arg_5_15)
+	Managers.state.achievement:trigger_event("register_thorn_wall_damage", self.unit, attacker_unit, damage_override, attack_type)
 
-	if not (is_enemy or arg_5_15 == "heavy_attack" or arg_5_15 ~= "light_attack") then
-		ThornWallHealthExtension.super.add_damage(self, arg_5_1, num, arg_5_3, arg_5_4, arg_5_5, arg_5_6, arg_5_7, arg_5_8, arg_5_9, arg_5_10, arg_5_11, arg_5_12, arg_5_13, arg_5_14, arg_5_15, arg_5_16, arg_5_17)
+	if is_attacker_enemy or attack_type == "heavy_attack" or attack_type == "light_attack" then
+		ThornWallHealthExtension.super.add_damage(self, attacker_unit, damage_override, hit_zone_name, damage_type, hit_position, damage_direction, damage_source_name, hit_ragdoll_actor, damaging_unit, hit_react_type, is_critical_strike, added_dot, first_hit, total_hits, attack_type, backstab_multiplier, target_index)
 
-		if not unit and not alive(unit) then
-			set_flow_variable(unit, "hit_direction", arg_5_6)
-			set_flow_variable(unit, "hit_position", arg_5_5)
-			flow_event(unit, "lua_simple_damage")
+		if unit and unit_alive(unit) then
+			unit_set_flow_variable(unit, "hit_direction", damage_direction)
+			unit_set_flow_variable(unit, "hit_position", hit_position)
+			unit_flow_event(unit, "lua_simple_damage")
 		end
 	end
 end

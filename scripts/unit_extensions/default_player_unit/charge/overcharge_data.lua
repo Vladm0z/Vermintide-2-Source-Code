@@ -2,7 +2,7 @@
 
 local OverchargeData = OverchargeData
 
-OverchargeData = OverchargeData or {}
+OverchargeData = not not OverchargeData or not not {}
 OverchargeData = OverchargeData
 OverchargeData.dr_ironbreaker = {
 	overcharge_threshold = 10,

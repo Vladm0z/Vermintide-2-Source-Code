@@ -1,6 +1,6 @@
 -- chunkname: @scripts/entity_system/systems/behaviour/trees/skaven/skaven_gutter_runner_behavior.lua
 
-local skaven_gutter_runner = BreedActions.skaven_gutter_runner
+local ACTIONS = BreedActions.skaven_gutter_runner
 
 BreedBehaviors.gutter_runner = {
 	"BTSelector",
@@ -13,7 +13,7 @@ BreedBehaviors.gutter_runner = {
 		"BTStaggerAction",
 		name = "stagger",
 		condition = "stagger",
-		action_data = skaven_gutter_runner.stagger
+		action_data = ACTIONS.stagger
 	},
 	{
 		"BTSpawningAction",
@@ -41,7 +41,7 @@ BreedBehaviors.gutter_runner = {
 			"BTSmashDoorAction",
 			name = "smash_door",
 			condition = "at_door_smartobject",
-			action_data = skaven_gutter_runner.smash_door
+			action_data = ACTIONS.smash_door
 		},
 		{
 			"BTNinjaHighGroundAction",
@@ -55,19 +55,19 @@ BreedBehaviors.gutter_runner = {
 		"BTNinjaVanishAction",
 		name = "ninja_vanish",
 		condition = "ninja_vanish",
-		action_data = skaven_gutter_runner.ninja_vanish
+		action_data = ACTIONS.ninja_vanish
 	},
 	{
 		"BTSequence",
 		{
 			"BTCrazyJumpAction",
 			name = "crazy_jump_x",
-			action_data = skaven_gutter_runner.jump
+			action_data = ACTIONS.jump
 		},
 		{
 			"BTTargetPouncedAction",
 			name = "target_pounced-x",
-			action_data = skaven_gutter_runner.target_pounced
+			action_data = ACTIONS.target_pounced
 		},
 		condition = "quick_jump",
 		name = "quick_jump"
@@ -81,17 +81,17 @@ BreedBehaviors.gutter_runner = {
 		{
 			"BTPrepareForCrazyJumpAction",
 			name = "prepare_crazy_jump",
-			action_data = skaven_gutter_runner.prepare_crazy_jump
+			action_data = ACTIONS.prepare_crazy_jump
 		},
 		{
 			"BTCrazyJumpAction",
 			name = "crazy_jump",
-			action_data = skaven_gutter_runner.jump
+			action_data = ACTIONS.jump
 		},
 		{
 			"BTTargetPouncedAction",
 			name = "target_pounced",
-			action_data = skaven_gutter_runner.target_pounced
+			action_data = ACTIONS.target_pounced
 		},
 		condition = "comitted_to_target",
 		name = "approach_target"
@@ -101,12 +101,12 @@ BreedBehaviors.gutter_runner = {
 		{
 			"BTSkulkAroundAction",
 			name = "skulk_around",
-			action_data = skaven_gutter_runner.skulking
+			action_data = ACTIONS.skulking
 		},
 		{
 			"BTSkulkIdleAction",
 			name = "skulk_idle",
-			action_data = skaven_gutter_runner.skulk_idle
+			action_data = ACTIONS.skulk_idle
 		},
 		condition = "can_see_player",
 		name = "skulking"

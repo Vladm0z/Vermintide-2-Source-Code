@@ -1,12 +1,12 @@
 -- chunkname: @scripts/ui/views/hero_view/windows/definitions/hero_window_character_selection_console_definitions.lua
 
-local num = 426
-local num_2 = 240
-local tbl = {
+local video_window_width = 426
+local video_window_height = 240
+local career_info_size = {
 	450,
 	170
 }
-local tbl_2 = {
+local scenegraph_definition = {
 	screen = {
 		scale = "fit",
 		size = {
@@ -211,7 +211,7 @@ local tbl_2 = {
 		}
 	}
 }
-local tbl_3 = {
+local hero_career_style = {
 	font_size = 40,
 	upper_case = true,
 	localize = false,
@@ -228,7 +228,7 @@ local tbl_3 = {
 		2
 	}
 }
-local tbl_4 = {
+local hero_name_style = {
 	word_wrap = true,
 	font_size = 30,
 	localize = false,
@@ -243,7 +243,7 @@ local tbl_4 = {
 		2
 	}
 }
-local tbl_5 = {
+local hero_level_style = {
 	word_wrap = true,
 	font_size = 52,
 	localize = false,
@@ -258,7 +258,7 @@ local tbl_5 = {
 		2
 	}
 }
-local tbl_6 = {
+local info_text_style = {
 	word_wrap = true,
 	font_size = 26,
 	localize = false,
@@ -274,16 +274,16 @@ local tbl_6 = {
 	}
 }
 
-local function fn(arg_1_0, arg_1_1)
+local function create_hero_widget(scenegraph_id, size)
 	-- function 1
-	local menu_frame_12 = UIFrameSettings.menu_frame_12
-	local frame_corner_detail_01_gold = UIFrameSettings.frame_corner_detail_01_gold
-	local frame_outer_glow_01 = UIFrameSettings.frame_outer_glow_01
-	local var_1_3 = frame_outer_glow_01.texture_sizes.horizontal[2]
-	local frame_outer_glow_01_white = UIFrameSettings.frame_outer_glow_01_white
-	local var_1_5 = frame_outer_glow_01_white.texture_sizes.horizontal[2]
-	local str = "frame_inner_glow_03"
-	local var_1_7 = UIFrameSettings[str]
+	local frame_settings = UIFrameSettings.menu_frame_12
+	local frame_premium_settings = UIFrameSettings.frame_corner_detail_01_gold
+	local hover_frame_settings = UIFrameSettings.frame_outer_glow_01
+	local hover_frame_width = hover_frame_settings.texture_sizes.horizontal[2]
+	local currently_selected_frame_settings = UIFrameSettings.frame_outer_glow_01_white
+	local currently_selected_frame_width = currently_selected_frame_settings.texture_sizes.horizontal[2]
+	local bot_frame_style = "frame_inner_glow_03"
+	local bot_frame_settings = UIFrameSettings[bot_frame_style]
 
 	return {
 		element = {
@@ -305,20 +305,20 @@ local function fn(arg_1_0, arg_1_1)
 					texture_id = "lock_texture",
 					style_id = "lock_texture",
 					pass_type = "texture",
-					content_check_function = function (self)
+					content_check_function = function (content)
 						-- function 2
-						return self.locked
+						return content.locked
 					end
 				},
 				{
 					texture_id = "taken_texture",
 					style_id = "taken_texture",
 					pass_type = "texture",
-					content_check_function = function (self)
+					content_check_function = function (content)
 						-- function 3
-						local taken = self.taken
+						local taken = content.taken
 
-						taken = not taken and not self.locked
+						taken = not not taken and not not not content.locked
 
 						return taken
 					end
@@ -327,27 +327,27 @@ local function fn(arg_1_0, arg_1_1)
 					texture_id = "bot_frame",
 					style_id = "bot_frame",
 					pass_type = "texture_frame",
-					content_check_function = function (self)
+					content_check_function = function (content)
 						-- function 4
-						return self.bot_selected
+						return content.bot_selected
 					end
 				},
 				{
 					texture_id = "bot_texture",
 					style_id = "bot_texture",
 					pass_type = "texture",
-					content_check_function = function (self)
+					content_check_function = function (content)
 						-- function 5
-						return self.bot_selected
+						return content.bot_selected
 					end
 				},
 				{
 					style_id = "bot_text",
 					pass_type = "text",
 					text_id = "bot_priority",
-					content_check_function = function (self)
+					content_check_function = function (content)
 						-- function 6
-						return self.bot_priority
+						return content.bot_priority
 					end
 				},
 				{
@@ -359,53 +359,53 @@ local function fn(arg_1_0, arg_1_1)
 					pass_type = "texture_frame",
 					style_id = "frame_premium",
 					texture_id = "frame_premium",
-					content_check_function = function (self)
+					content_check_function = function (content)
 						-- function 7
-						return self.is_premium
+						return content.is_premium
 					end
 				},
 				{
 					style_id = "overlay",
 					pass_type = "rect",
-					content_check_function = function (self)
+					content_check_function = function (content)
 						-- function 8
-						local button_hotspot = self.button_hotspot
+						local button_hotspot = content.button_hotspot
 
-						return not not button_hotspot.is_hover or not not button_hotspot.is_selected or not self.locked
+						return not button_hotspot.is_hover and not button_hotspot.is_selected and not not not content.locked
 					end
 				},
 				{
 					style_id = "overlay_locked",
 					pass_type = "rect",
-					content_check_function = function (self)
+					content_check_function = function (content)
 						-- function 9
-						if not self.dlc_name then
-							local button_hotspot = self.button_hotspot
+						if content.dlc_name then
+							local button_hotspot = content.button_hotspot
 
-							return not not button_hotspot.is_hover or not not button_hotspot.is_selected or self.locked
+							return not button_hotspot.is_hover and not button_hotspot.is_selected and not not content.locked
 						else
-							return self.locked
+							return content.locked
 						end
 					end
 				},
 				{
 					style_id = "overlay_dlc_selected",
 					pass_type = "rect",
-					content_check_function = function (self)
+					content_check_function = function (content)
 						-- function 10
-						local button_hotspot = self.button_hotspot
-						local dlc_name = self.dlc_name
+						local button_hotspot = content.button_hotspot
+						local dlc_name = content.dlc_name
 
-						if not dlc_name then
+						if dlc_name then
 							if not button_hotspot.is_hover then
 								dlc_name = button_hotspot.is_selected
 
-								if not dlc_name then
+								if dlc_name then
 									-- Nothing
 								end
 							end
 
-							dlc_name = self.locked
+							dlc_name = content.locked
 						end
 
 						::label_10_0::
@@ -417,18 +417,18 @@ local function fn(arg_1_0, arg_1_1)
 					pass_type = "texture_frame",
 					style_id = "hover_frame",
 					texture_id = "hover_frame",
-					content_check_function = function (self)
+					content_check_function = function (content)
 						-- function 11
-						return self.button_hotspot.is_selected
+						return content.button_hotspot.is_selected
 					end
 				},
 				{
 					pass_type = "texture_frame",
 					style_id = "currently_selected_frame",
 					texture_id = "currently_selected_frame",
-					content_check_function = function (self)
+					content_check_function = function (content)
 						-- function 12
-						return not not self.button_hotspot.is_selected or self.is_currently_selected_character
+						return not content.button_hotspot.is_selected and not not content.is_currently_selected_character
 					end
 				}
 			}
@@ -442,17 +442,17 @@ local function fn(arg_1_0, arg_1_1)
 			is_currently_selected_character = false,
 			bot_texture = "bot_selected_icon",
 			button_hotspot = {},
-			bot_frame = var_1_7.texture,
-			frame = menu_frame_12.texture,
-			frame_premium = frame_corner_detail_01_gold.texture,
-			hover_frame = frame_outer_glow_01.texture,
-			currently_selected_frame = frame_outer_glow_01_white.texture
+			bot_frame = bot_frame_settings.texture,
+			frame = frame_settings.texture,
+			frame_premium = frame_premium_settings.texture,
+			hover_frame = hover_frame_settings.texture,
+			currently_selected_frame = currently_selected_frame_settings.texture
 		},
 		style = {
 			rect = {
 				vertical_alignment = "center",
 				horizontal_alignment = "center",
-				texture_size = arg_1_1,
+				texture_size = size,
 				color = {
 					200,
 					0,
@@ -468,7 +468,7 @@ local function fn(arg_1_0, arg_1_1)
 			portrait = {
 				vertical_alignment = "center",
 				horizontal_alignment = "center",
-				texture_size = arg_1_1,
+				texture_size = size,
 				color = {
 					255,
 					255,
@@ -520,8 +520,8 @@ local function fn(arg_1_0, arg_1_1)
 				}
 			},
 			bot_frame = {
-				texture_size = var_1_7.texture_size,
-				texture_sizes = var_1_7.texture_sizes,
+				texture_size = bot_frame_settings.texture_size,
+				texture_sizes = bot_frame_settings.texture_sizes,
 				color = {
 					255,
 					244,
@@ -572,7 +572,7 @@ local function fn(arg_1_0, arg_1_1)
 			overlay = {
 				vertical_alignment = "center",
 				horizontal_alignment = "center",
-				texture_size = arg_1_1,
+				texture_size = size,
 				color = {
 					80,
 					0,
@@ -588,7 +588,7 @@ local function fn(arg_1_0, arg_1_1)
 			overlay_locked = {
 				vertical_alignment = "center",
 				horizontal_alignment = "center",
-				texture_size = arg_1_1,
+				texture_size = size,
 				color = {
 					200,
 					0,
@@ -604,7 +604,7 @@ local function fn(arg_1_0, arg_1_1)
 			overlay_dlc_selected = {
 				vertical_alignment = "center",
 				horizontal_alignment = "center",
-				texture_size = arg_1_1,
+				texture_size = size,
 				color = {
 					90,
 					0,
@@ -618,8 +618,8 @@ local function fn(arg_1_0, arg_1_1)
 				}
 			},
 			frame = {
-				texture_size = menu_frame_12.texture_size,
-				texture_sizes = menu_frame_12.texture_sizes,
+				texture_size = frame_settings.texture_size,
+				texture_sizes = frame_settings.texture_sizes,
 				color = {
 					255,
 					255,
@@ -633,8 +633,8 @@ local function fn(arg_1_0, arg_1_1)
 				}
 			},
 			frame_premium = {
-				texture_size = frame_corner_detail_01_gold.texture_size,
-				texture_sizes = frame_corner_detail_01_gold.texture_sizes,
+				texture_size = frame_premium_settings.texture_size,
+				texture_sizes = frame_premium_settings.texture_sizes,
 				color = {
 					255,
 					255,
@@ -649,11 +649,11 @@ local function fn(arg_1_0, arg_1_1)
 			},
 			hover_frame = {
 				size = {
-					arg_1_1[1] + var_1_3 * 2,
-					arg_1_1[2] + var_1_3 * 2
+					size[1] + hover_frame_width * 2,
+					size[2] + hover_frame_width * 2
 				},
-				texture_size = frame_outer_glow_01.texture_size,
-				texture_sizes = frame_outer_glow_01.texture_sizes,
+				texture_size = hover_frame_settings.texture_size,
+				texture_sizes = hover_frame_settings.texture_sizes,
 				color = {
 					255,
 					255,
@@ -661,18 +661,18 @@ local function fn(arg_1_0, arg_1_1)
 					255
 				},
 				offset = {
-					-var_1_3,
-					-var_1_3,
+					-hover_frame_width,
+					-hover_frame_width,
 					0
 				}
 			},
 			currently_selected_frame = {
 				size = {
-					arg_1_1[1] + var_1_5 * 2,
-					arg_1_1[2] + var_1_5 * 2
+					size[1] + currently_selected_frame_width * 2,
+					size[2] + currently_selected_frame_width * 2
 				},
-				texture_size = frame_outer_glow_01_white.texture_size,
-				texture_sizes = frame_outer_glow_01_white.texture_sizes,
+				texture_size = currently_selected_frame_settings.texture_size,
+				texture_sizes = currently_selected_frame_settings.texture_sizes,
 				color = {
 					255,
 					50,
@@ -680,8 +680,8 @@ local function fn(arg_1_0, arg_1_1)
 					50
 				},
 				offset = {
-					-var_1_5,
-					-var_1_5,
+					-currently_selected_frame_width,
+					-currently_selected_frame_width,
 					0
 				}
 			}
@@ -691,13 +691,13 @@ local function fn(arg_1_0, arg_1_1)
 			0,
 			0
 		},
-		scenegraph_id = arg_1_0
+		scenegraph_id = scenegraph_id
 	}
 end
 
-local function fn_2(arg_13_0, arg_13_1)
+local function create_hero_icon_widget(scenegraph_id, size)
 	-- function 13
-	local tbl = {
+	local icon_size = {
 		80,
 		80
 	}
@@ -709,18 +709,18 @@ local function fn_2(arg_13_0, arg_13_1)
 					texture_id = "icon",
 					style_id = "icon",
 					pass_type = "texture",
-					content_check_function = function (self)
+					content_check_function = function (content)
 						-- function 14
-						return not self.selected
+						return not content.selected
 					end
 				},
 				{
 					texture_id = "icon_selected",
 					style_id = "icon_selected",
 					pass_type = "texture",
-					content_check_function = function (self)
+					content_check_function = function (content)
 						-- function 15
-						return self.selected
+						return content.selected
 					end
 				},
 				{
@@ -739,7 +739,7 @@ local function fn_2(arg_13_0, arg_13_1)
 			icon = {
 				vertical_alignment = "center",
 				horizontal_alignment = "center",
-				texture_size = tbl,
+				texture_size = icon_size,
 				color = {
 					200,
 					80,
@@ -755,7 +755,7 @@ local function fn_2(arg_13_0, arg_13_1)
 			icon_selected = {
 				vertical_alignment = "center",
 				horizontal_alignment = "center",
-				texture_size = tbl,
+				texture_size = icon_size,
 				color = {
 					255,
 					255,
@@ -771,7 +771,7 @@ local function fn_2(arg_13_0, arg_13_1)
 			holder = {
 				vertical_alignment = "center",
 				horizontal_alignment = "center",
-				texture_size = arg_13_1,
+				texture_size = size,
 				color = {
 					255,
 					255,
@@ -790,15 +790,15 @@ local function fn_2(arg_13_0, arg_13_1)
 			0,
 			0
 		},
-		scenegraph_id = arg_13_0
+		scenegraph_id = scenegraph_id
 	}
 end
 
-local tbl_7 = {
+local empty_hero_widget_size = {
 	110,
 	130
 }
-local tbl_8 = {
+local empty_hero_widget = {
 	scenegraph_id = "hero_root",
 	offset = {
 		0,
@@ -819,12 +819,23 @@ local tbl_8 = {
 				style_id = "icon",
 				texture_id = "icon",
 				pass_type = "texture",
-				content_change_function = function (self, arg_16_1)
+				content_change_function = function (content, style)
 					-- function 16
-					local flag
+					local num
 
-					flag = not self.is_hover and 255 and 184
-					arg_16_1.color[1] = math.ceil(arg_16_1.color[1] + 0.1 * (flag - arg_16_1.color[1]))
+					if content.is_hover then
+						num = 255
+
+						goto label_16_0
+					end
+
+					num = 184
+
+					local target = num
+
+					::label_16_0::
+
+					style.color[1] = math.ceil(style.color[1] + 0.1 * (target - style.color[1]))
 				end
 			}
 		}
@@ -835,7 +846,7 @@ local tbl_8 = {
 	},
 	style = {
 		bg = {
-			texture_size = tbl_7,
+			texture_size = empty_hero_widget_size,
 			offset = {
 				0,
 				0,
@@ -855,16 +866,16 @@ local tbl_8 = {
 		}
 	}
 }
-local flag = true
-local tbl_9 = {
+local disable_with_gamepad = true
+local widgets = {
 	background = UIWidgets.create_simple_rect("screen", {
 		128,
 		0,
 		0,
 		0
 	}, 4),
-	select_button = UIWidgets.create_default_button("select_button", tbl_2.select_button.size, nil, nil, Localize("input_description_confirm"), nil, nil, nil, nil, flag),
-	info_text = UIWidgets.create_simple_text(Localize("manage_inventory_select"), "locked_info_text", nil, nil, tbl_6),
+	select_button = UIWidgets.create_default_button("select_button", scenegraph_definition.select_button.size, nil, nil, Localize("input_description_confirm"), nil, nil, nil, nil, disable_with_gamepad),
+	info_text = UIWidgets.create_simple_text(Localize("manage_inventory_select"), "locked_info_text", nil, nil, info_text_style),
 	hero_info_panel = UIWidgets.create_simple_texture("item_slot_side_fade", "hero_info_panel", nil, nil, {
 		255,
 		0,
@@ -875,9 +886,9 @@ local tbl_9 = {
 	hero_info_level_bg = UIWidgets.create_simple_texture("hero_level_bg", "hero_info_level_bg"),
 	hero_info_divider = UIWidgets.create_simple_texture("divider_vertical_hero_middle", "hero_info_divider"),
 	hero_info_divider_edge = UIWidgets.create_simple_texture("divider_vertical_hero_end", "hero_info_divider_edge"),
-	info_career_name = UIWidgets.create_simple_text("n/a", "info_career_name", nil, nil, tbl_3),
-	info_hero_name = UIWidgets.create_simple_text("n/a", "info_hero_name", nil, nil, tbl_4),
-	info_hero_level = UIWidgets.create_simple_text("n/a", "info_hero_level", nil, nil, tbl_5),
+	info_career_name = UIWidgets.create_simple_text("n/a", "info_career_name", nil, nil, hero_career_style),
+	info_hero_name = UIWidgets.create_simple_text("n/a", "info_hero_name", nil, nil, hero_name_style),
+	info_hero_level = UIWidgets.create_simple_text("n/a", "info_hero_level", nil, nil, hero_level_style),
 	bottom_panel = UIWidgets.create_simple_uv_texture("menu_panel_bg", {
 		{
 			0,
@@ -889,7 +900,7 @@ local tbl_9 = {
 		}
 	}, "bottom_panel", nil, nil, UISettings.console_menu_rect_color)
 }
-local tbl_10 = {
+local generic_input_actions = {
 	default = {
 		{
 			input_action = "d_pad",
@@ -940,24 +951,24 @@ local tbl_10 = {
 		}
 	}
 }
-local tbl_11 = {
+local animation_definitions = {
 	on_enter = {
 		{
 			name = "fade_in",
 			start_progress = 0,
 			end_progress = 0.3,
-			init = function (arg_17_0, arg_17_1, arg_17_2, arg_17_3)
+			init = function (ui_scenegraph, scenegraph_definition, widgets, params)
 				-- function 17
-				arg_17_3.render_settings.alpha_multiplier = 0
+				params.render_settings.alpha_multiplier = 0
 			end,
-			update = function (arg_18_0, arg_18_1, arg_18_2, arg_18_3, arg_18_4)
+			update = function (ui_scenegraph, scenegraph_definition, widgets, progress, params)
 				-- function 18
-				local easeOutCubic = math.easeOutCubic(arg_18_3)
+				local anim_progress = math.easeOutCubic(progress)
 
-				arg_18_4.render_settings.alpha_multiplier = easeOutCubic
-				arg_18_0.left_side_root.local_position[1] = arg_18_1.left_side_root.position[1] + -100 * (1 - easeOutCubic)
+				params.render_settings.alpha_multiplier = anim_progress
+				ui_scenegraph.left_side_root.local_position[1] = scenegraph_definition.left_side_root.position[1] + -100 * (1 - anim_progress)
 			end,
-			on_complete = function (arg_19_0, arg_19_1, arg_19_2, arg_19_3)
+			on_complete = function (ui_scenegraph, scenegraph_definition, widgets, params)
 				-- function 19
 				return
 			end
@@ -968,18 +979,18 @@ local tbl_11 = {
 			name = "fade_out",
 			start_progress = 0,
 			end_progress = 1,
-			init = function (arg_20_0, arg_20_1, arg_20_2, arg_20_3)
+			init = function (ui_scenegraph, scenegraph_definition, widgets, params)
 				-- function 20
-				arg_20_3.render_settings.alpha_multiplier = 1
+				params.render_settings.alpha_multiplier = 1
 			end,
-			update = function (arg_21_0, arg_21_1, arg_21_2, arg_21_3, arg_21_4)
+			update = function (ui_scenegraph, scenegraph_definition, widgets, progress, params)
 				-- function 21
-				local easeOutCubic = math.easeOutCubic(arg_21_3)
+				local anim_progress = math.easeOutCubic(progress)
 
-				arg_21_4.render_settings.alpha_multiplier = 1 - easeOutCubic
-				arg_21_0.left_side_root.local_position[1] = arg_21_1.left_side_root.position[1] + -100 * easeOutCubic
+				params.render_settings.alpha_multiplier = 1 - anim_progress
+				ui_scenegraph.left_side_root.local_position[1] = scenegraph_definition.left_side_root.position[1] + -100 * anim_progress
 			end,
-			on_complete = function (arg_22_0, arg_22_1, arg_22_2, arg_22_3)
+			on_complete = function (ui_scenegraph, scenegraph_definition, widgets, params)
 				-- function 22
 				return
 			end
@@ -988,11 +999,11 @@ local tbl_11 = {
 }
 
 return {
-	widgets = tbl_9,
-	hero_widget = fn("hero_root", tbl_2.hero_root.size),
-	empty_hero_widget = tbl_8,
-	hero_icon_widget = fn_2("hero_icon_root", tbl_2.hero_icon_root.size),
-	generic_input_actions = tbl_10,
-	scenegraph_definition = tbl_2,
-	animation_definitions = tbl_11
+	widgets = widgets,
+	hero_widget = create_hero_widget("hero_root", scenegraph_definition.hero_root.size),
+	empty_hero_widget = empty_hero_widget,
+	hero_icon_widget = create_hero_icon_widget("hero_icon_root", scenegraph_definition.hero_icon_root.size),
+	generic_input_actions = generic_input_actions,
+	scenegraph_definition = scenegraph_definition,
+	animation_definitions = animation_definitions
 }

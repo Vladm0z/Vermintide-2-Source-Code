@@ -1,8 +1,8 @@
 -- chunkname: @scripts/settings/dlcs/geheimnisnacht_2021/geheimnisnacht_2021_common_settings.lua
 
-local geheimnisnacht_2021 = DLCSettings.geheimnisnacht_2021
+local settings = DLCSettings.geheimnisnacht_2021
 
-geheimnisnacht_2021.anim_lookup = {
+settings.anim_lookup = {
 	"idle_pray_01",
 	"idle_pray_02",
 	"idle_pray_03",
@@ -10,12 +10,12 @@ geheimnisnacht_2021.anim_lookup = {
 	"idle_pray_05",
 	"to_ritual_skull"
 }
-geheimnisnacht_2021.effects = {}
-geheimnisnacht_2021.unlock_settings = {}
-geheimnisnacht_2021.dialogue_lookup = {}
-geheimnisnacht_2021.dialogue_settings = {}
-geheimnisnacht_2021.auto_load_files = {}
-geheimnisnacht_2021.network_sound_events = {
+settings.effects = {}
+settings.unlock_settings = {}
+settings.dialogue_lookup = {}
+settings.dialogue_settings = {}
+settings.auto_load_files = {}
+settings.network_sound_events = {
 	"enemy_skaven_halloween_ritual_loop",
 	"enemy_skaven_halloween_ritual_loop_stop",
 	"enemy_marauder_halloween_ritual_loop",
@@ -24,51 +24,51 @@ geheimnisnacht_2021.network_sound_events = {
 	"halloween_event_ritual_loop_stop",
 	"Play_event_stinger_geheimnisnacht_ritual_broken"
 }
-geheimnisnacht_2021.entity_extensions = {
+settings.entity_extensions = {
 	"scripts/settings/dlcs/geheimnisnacht_2021/geheimnisnacht_2021_altar_extension"
 }
-geheimnisnacht_2021.prop_extension = {
+settings.prop_extension = {
 	"Geheimnisnacht2021AltarExtension"
 }
-geheimnisnacht_2021.death_reactions = {
+settings.death_reactions = {
 	"scripts/settings/dlcs/geheimnisnacht_2021/geheimnisnacht_2021_death_reactions"
 }
-geheimnisnacht_2021.interactions = {
+settings.interactions = {
 	"geheimnisnacht_2021_altar"
 }
-geheimnisnacht_2021.interactions_filenames = {
+settings.interactions_filenames = {
 	"scripts/settings/dlcs/geheimnisnacht_2021/geheimnisnacht_2021_interactions"
 }
-geheimnisnacht_2021.unit_extension_templates = {
+settings.unit_extension_templates = {
 	"scripts/settings/dlcs/geheimnisnacht_2021/geheimnisnacht_2021_unit_extension_templates"
 }
-geheimnisnacht_2021.husk_lookup = {
+settings.husk_lookup = {
 	"units/gameplay/ritual_site_01",
 	"units/weapons/player/pup_ritual_site_01/pup_ritual_site_01"
 }
-geheimnisnacht_2021.generic_terror_event_files = {
+settings.generic_terror_event_files = {
 	"scripts/settings/dlcs/geheimnisnacht_2021/geheimnisnacht_2021_generic_terror_events"
 }
-geheimnisnacht_2021.mutators = {
+settings.mutators = {
 	"geheimnisnacht_2021",
 	"geheimnisnacht_2021_hard_mode"
 }
-geheimnisnacht_2021.missions = {
+settings.missions = {
 	mission_geheimnisnacht_2021_event = {
 		mission_template_name = "goal",
 		text = "mission_geheimnisnacht_2021_event"
 	}
 }
-geheimnisnacht_2021.network_go_types = {
+settings.network_go_types = {
 	"geheimnisnacht_2021_altar"
 }
-geheimnisnacht_2021.item_master_list_file_names = {
+settings.item_master_list_file_names = {
 	"scripts/settings/dlcs/geheimnisnacht_2021/item_master_list_geheimnisnacht_2021"
 }
-geheimnisnacht_2021.weapon_skins_file_names = {
+settings.weapon_skins_file_names = {
 	"scripts/settings/dlcs/geheimnisnacht_2021/weapon_skins_geheimnisnacht_2021"
 }
-geheimnisnacht_2021.pickups = {
+settings.pickups = {
 	level_events = {
 		geheimnisnacht_2021_side_objective = {
 			only_once = true,
@@ -87,15 +87,15 @@ geheimnisnacht_2021.pickups = {
 		}
 	}
 }
-geheimnisnacht_2021.action_template_file_names = {
+settings.action_template_file_names = {
 	"scripts/settings/dlcs/geheimnisnacht_2021/action_throw_geheimnisnacht_2021",
 	"scripts/settings/dlcs/geheimnisnacht_2021/action_inspect_geheimnisnacht_2021"
 }
-geheimnisnacht_2021.action_classes_lookup = {
+settings.action_classes_lookup = {
 	throw_geheimnisnacht_2021 = "ActionThrowGeheimnisnacht2021",
 	inspect_geheimnisnacht_2021 = "ActionInspectGeheimnisnacht2021"
 }
-geheimnisnacht_2021.game_object_templates = {
+settings.game_object_templates = {
 	geheimnisnacht_2021_altar = {
 		game_object_created_func_name = "game_object_created_network_unit",
 		syncs_position = true,
@@ -103,31 +103,32 @@ geheimnisnacht_2021.game_object_templates = {
 		game_object_destroyed_func_name = "game_object_destroyed_network_unit"
 	}
 }
-geheimnisnacht_2021.game_object_initializers = {
-	geheimnisnacht_2021_altar = function (arg_1_0, arg_1_1, arg_1_2, arg_1_3)
+settings.game_object_initializers = {
+	geheimnisnacht_2021_altar = function (unit, unit_name, unit_template, gameobject_functor_context)
 		-- function 1
-		local has_extension = ScriptUnit.has_extension(arg_1_0, "health_system")
-		local has_extension_2 = ScriptUnit.has_extension(arg_1_0, "props_system")
-
-		return {
+		local health_extension = ScriptUnit.has_extension(unit, "health_system")
+		local altar_extension = ScriptUnit.has_extension(unit, "props_system")
+		local data_table = {
 			go_type = NetworkLookup.go_types.geheimnisnacht_2021_altar,
-			husk_unit = NetworkLookup.husks[arg_1_1],
-			position = Unit.local_position(arg_1_0, 0),
-			rotation = Unit.local_rotation(arg_1_0, 0),
-			health = has_extension:get_max_health(),
-			state = has_extension_2:get_current_state()
+			husk_unit = NetworkLookup.husks[unit_name],
+			position = Unit.local_position(unit, 0),
+			rotation = Unit.local_rotation(unit, 0),
+			health = health_extension:get_max_health(),
+			state = altar_extension:get_current_state()
 		}
+
+		return data_table
 	end
 }
-geheimnisnacht_2021.game_object_extractors = {
-	geheimnisnacht_2021_altar = function (arg_2_0, arg_2_1, arg_2_2, arg_2_3, arg_2_4)
+settings.game_object_extractors = {
+	geheimnisnacht_2021_altar = function (game_session, game_object_id, owner_id, unit, gameobject_functor_context)
 		-- function 2
-		local game_object_field = GameSession.game_object_field(arg_2_0, arg_2_1, "health")
-		local game_object_field_2 = GameSession.game_object_field(arg_2_0, arg_2_1, "state")
-		local str = "geheimnisnacht_2021_altar"
-		local tbl = {
+		local health = GameSession.game_object_field(game_session, game_object_id, "health")
+		local state = GameSession.game_object_field(game_session, game_object_id, "state")
+		local unit_template_name = "geheimnisnacht_2021_altar"
+		local extension_init_data = {
 			health_system = {
-				health = game_object_field
+				health = health
 			},
 			death_system = {
 				death_reaction_template = "geheimnisnacht_2021_altar",
@@ -138,85 +139,87 @@ geheimnisnacht_2021.game_object_extractors = {
 				hit_reaction_template = "level_object"
 			},
 			props_system = {
-				state = game_object_field_2
+				state = state
 			}
 		}
 
-		return str, tbl
+		return unit_template_name, extension_init_data
 	end
 }
-geheimnisnacht_2021.ai_group_templates = {
+settings.ai_group_templates = {
 	geheimnisnacht_2021_altar_cultists = {
-		setup_group = function (arg_3_0, arg_3_1, arg_3_2, arg_3_3)
+		setup_group = function (world, nav_world, group, first_unit)
 			-- function 3
-			arg_3_2.idle = true
+			group.idle = true
 		end,
-		init = function (arg_4_0, arg_4_1, arg_4_2, arg_4_3)
+		init = function (world, nav_world, group, t)
 			-- function 4
 			return
 		end,
-		update = function (arg_5_0, arg_5_1, arg_5_2, arg_5_3)
+		update = function (world, nav_world, group, t)
 			-- function 5
 			return
 		end,
-		destroy = function (arg_6_0, arg_6_1, arg_6_2)
+		destroy = function (world, nav_world, group)
 			-- function 6
-			Managers.state.event:trigger("geheimnisnacht_2021_altar_cultists_killed", arg_6_2.id)
+			Managers.state.event:trigger("geheimnisnacht_2021_altar_cultists_killed", group.id)
 		end,
-		wake_up_group = function (self, arg_7_1)
+		wake_up_group = function (group, prime_target_unit)
 			-- function 7
-			self.idle = false, Managers.state.event:trigger("geheimnisnacht_2021_altar_cultists_aggroed", self.id)
+			group.idle = false, Managers.state.event:trigger("geheimnisnacht_2021_altar_cultists_aggroed", group.id)
 
-			Managers.state.entity:system("ai_group_system"):run_func_on_all_members(self, AIGroupTemplates.geheimnisnacht_2021_altar_cultists.wake_up_unit, arg_7_1)
+			Managers.state.entity:system("ai_group_system"):run_func_on_all_members(group, AIGroupTemplates.geheimnisnacht_2021_altar_cultists.wake_up_unit, prime_target_unit)
 		end,
-		wake_up_unit = function (arg_8_0, arg_8_1, arg_8_2)
+		wake_up_unit = function (unit, group, prime_target_unit)
 			-- function 8
-			Managers.state.network:anim_event(arg_8_0, "idle")
+			Managers.state.network:anim_event(unit, "idle")
 
-			local extension = ScriptUnit.extension(arg_8_0, "ai_system")
+			local ai_simple = ScriptUnit.extension(unit, "ai_system")
 
-			extension:enemy_aggro(nil, arg_8_2)
+			ai_simple:enemy_aggro(nil, prime_target_unit)
 
-			local _breed = extension._breed
+			local breed = ai_simple._breed
 
-			extension:set_perception(_breed.perception, _breed.target_selection)
+			ai_simple:set_perception(breed.perception, breed.target_selection)
 
-			local var_8_2 = BLACKBOARDS[arg_8_0]
+			local blackboard = BLACKBOARDS[unit]
 
-			var_8_2.ignore_interest_points = false
-			var_8_2.only_trust_your_own_eyes = false
+			blackboard.ignore_interest_points = false
+			blackboard.only_trust_your_own_eyes = false
 
-			local optional_spawn_data = var_8_2.optional_spawn_data
+			local optional_spawn_data = blackboard.optional_spawn_data
 
-			if not optional_spawn_data then
+			if optional_spawn_data then
 				optional_spawn_data.idle_animation = nil
 			end
 		end
 	},
 	critter_nurglings = {
-		setup_group = function (arg_9_0, arg_9_1, arg_9_2)
+		setup_group = function (world, nav_world, group)
 			-- function 9
 			return
 		end,
-		init = function (arg_10_0, arg_10_1, arg_10_2, arg_10_3)
+		init = function (world, nav_world, group, t)
 			-- function 10
 			return
 		end,
-		update = function (arg_11_0, arg_11_1, arg_11_2, arg_11_3)
+		update = function (world, nav_world, group, t)
 			-- function 11
 			return
 		end,
-		destroy = function (arg_12_0, arg_12_1, arg_12_2)
+		destroy = function (world, nav_world, group)
 			-- function 12
 			return
 		end,
-		wake_up_group = function (arg_13_0)
+		wake_up_group = function (group)
 			-- function 13
-			Managers.state.entity:system("ai_group_system"):run_func_on_all_members(arg_13_0, AIGroupTemplates.critter_nurglings.wake_up_unit)
+			Managers.state.entity:system("ai_group_system"):run_func_on_all_members(group, AIGroupTemplates.critter_nurglings.wake_up_unit)
 		end,
-		wake_up_unit = function (arg_14_0, arg_14_1)
+		wake_up_unit = function (unit, group)
 			-- function 14
-			BLACKBOARDS[arg_14_0].is_fleeing = true
+			local blackboard = BLACKBOARDS[unit]
+
+			blackboard.is_fleeing = true
 		end
 	}
 }

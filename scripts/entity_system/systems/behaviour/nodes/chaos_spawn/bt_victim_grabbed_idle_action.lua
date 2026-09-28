@@ -5,46 +5,47 @@ require("scripts/entity_system/systems/behaviour/nodes/bt_node")
 BTVictimGrabbedIdleAction = class(BTVictimGrabbedIdleAction, BTNode)
 BTVictimGrabbedIdleAction.name = "BTVictimGrabbedIdleAction"
 
-BTVictimGrabbedIdleAction.init = function (arg_1_0, ...)
+BTVictimGrabbedIdleAction.init = function (self, ...)
 	-- function 1
-	BTVictimGrabbedIdleAction.super.init(arg_1_0, ...)
+	BTVictimGrabbedIdleAction.super.init(self, ...)
 end
 
-BTVictimGrabbedIdleAction.enter = function (self, arg_2_1, arg_2_2, arg_2_3)
+BTVictimGrabbedIdleAction.enter = function (self, unit, blackboard, t)
 	-- function 2
-	local network = Managers.state.network
-	local str = "idle_grabbed"
+	local network_manager = Managers.state.network
+	local animation = "idle_grabbed"
+	local action = self._tree_node.action_data
 
-	arg_2_2.action = self._tree_node.action_data
+	blackboard.action = action
 
-	if arg_2_2.move_state ~= "idle" then
-		network:anim_event(arg_2_1, str)
+	if blackboard.move_state ~= "idle" then
+		network_manager:anim_event(unit, animation)
 
-		arg_2_2.move_state = "idle"
+		blackboard.move_state = "idle"
 	end
 
-	arg_2_2.navigation_extension:set_enabled(false)
-	arg_2_2.locomotion_extension:set_wanted_velocity(Vector3.zero())
-	StatusUtils.set_grabbed_by_chaos_spawn_status_network(arg_2_2.victim_grabbed, "idle")
+	blackboard.navigation_extension:set_enabled(false)
+	blackboard.locomotion_extension:set_wanted_velocity(Vector3.zero())
+	StatusUtils.set_grabbed_by_chaos_spawn_status_network(blackboard.victim_grabbed, "idle")
 
-	arg_2_2.grabbed_state = "idle"
+	blackboard.grabbed_state = "idle"
 end
 
-BTVictimGrabbedIdleAction.leave = function (arg_3_0, arg_3_1, arg_3_2, arg_3_3, arg_3_4, arg_3_5)
+BTVictimGrabbedIdleAction.leave = function (self, unit, blackboard, t, reason, destroy)
 	-- function 3
-	arg_3_2.navigation_extension:set_enabled(true)
+	blackboard.navigation_extension:set_enabled(true)
 end
 
-local alive = Unit.alive
+local Unit_alive = Unit.alive
 
-BTVictimGrabbedIdleAction.run = function (arg_4_0, arg_4_1, arg_4_2, arg_4_3, arg_4_4)
+BTVictimGrabbedIdleAction.run = function (self, unit, blackboard, t, dt)
 	-- function 4
-	local target_unit = arg_4_2.target_unit
+	local target_unit = blackboard.target_unit
 
-	if not alive(target_unit) then
-		local rotation_towards_unit_flat = LocomotionUtils.rotation_towards_unit_flat(arg_4_1, target_unit)
+	if Unit_alive(target_unit) then
+		local rot = LocomotionUtils.rotation_towards_unit_flat(unit, target_unit)
 
-		arg_4_2.locomotion_extension:set_wanted_rotation(rotation_towards_unit_flat)
+		blackboard.locomotion_extension:set_wanted_rotation(rot)
 	end
 
 	return "running"

@@ -2,39 +2,48 @@
 
 local LoreBookHelper = LoreBookHelper
 
-LoreBookHelper = LoreBookHelper or {}
+LoreBookHelper = not not LoreBookHelper or not not {}
 LoreBookHelper = LoreBookHelper
 
-local tbl = {}
+local new_pages = {}
 
 LoreBookHelper.save_new_pages = function ()
 	-- function 1
-	local SaveData = SaveData
-	local new_lorebook_ids = SaveData.new_lorebook_ids
+	local save_data = SaveData
+	local new_lorebook_ids_2 = save_data.new_lorebook_ids
 
-	new_lorebook_ids = new_lorebook_ids or {}
-
-	for k, v in pairs(tbl) do
-		new_lorebook_ids[k] = true
+	if not new_lorebook_ids_2 then
+		-- Nothing
 	end
 
-	SaveData.new_lorebook_ids = new_lorebook_ids
+	new_lorebook_ids_2 = {}
+
+	local new_lorebook_ids = new_lorebook_ids_2
+
+	::label_1_0::
+
+	for category_name, _ in pairs(new_pages) do
+		new_lorebook_ids[category_name] = true
+	end
+
+	save_data.new_lorebook_ids = new_lorebook_ids
 
 	Managers.save:auto_save(SaveFileName, SaveData, nil)
 end
 
-LoreBookHelper.mark_page_id_as_new = function (arg_2_0)
+LoreBookHelper.mark_page_id_as_new = function (category_name)
 	-- function 2
-	tbl[arg_2_0] = true
+	new_pages[category_name] = true
 end
 
-LoreBookHelper.unmark_page_id_as_new = function (arg_3_0)
+LoreBookHelper.unmark_page_id_as_new = function (page_id)
 	-- function 3
-	local new_lorebook_ids = SaveData.new_lorebook_ids
+	local save_data = SaveData
+	local new_lorebook_ids = save_data.new_lorebook_ids
 
-	assert(new_lorebook_ids, "Requested to unmark lorebook page id %d without any save data.", arg_3_0)
+	assert(new_lorebook_ids, "Requested to unmark lorebook page id %d without any save data.", page_id)
 
-	new_lorebook_ids[arg_3_0] = nil
+	new_lorebook_ids[page_id] = nil
 
 	Managers.save:auto_save(SaveFileName, SaveData, nil)
 end

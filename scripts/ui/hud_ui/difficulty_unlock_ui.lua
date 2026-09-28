@@ -2,25 +2,25 @@
 
 require("scripts/settings/difficulty_settings")
 
-local var_0_0 = local_require("scripts/ui/hud_ui/difficulty_unlock_ui_definitions")
-local scenegraph_definition = var_0_0.scenegraph_definition
-local animations = var_0_0.animations
-local SurvivalStartWaveByDifficulty = SurvivalStartWaveByDifficulty
+local definitions = local_require("scripts/ui/hud_ui/difficulty_unlock_ui_definitions")
+local scenegraph_definition = definitions.scenegraph_definition
+local animation_definitions = definitions.animations
+local survival_start_wave_by_difficulty = SurvivalStartWaveByDifficulty
 
 DifficultyUnlockUI = class(DifficultyUnlockUI)
 
-local flag = false
+local DO_RELOAD = false
 
-DifficultyUnlockUI.init = function (self, arg_1_1, arg_1_2)
+DifficultyUnlockUI.init = function (self, parent, ingame_ui_context)
 	-- function 1
-	self._parent = arg_1_1
-	self.ui_renderer = arg_1_2.ui_renderer
-	self.ingame_ui = arg_1_2.ingame_ui
-	self.input_manager = arg_1_2.input_manager
-	self.world = arg_1_2.world_manager:world("level_world")
+	self._parent = parent
+	self.ui_renderer = ingame_ui_context.ui_renderer
+	self.ingame_ui = ingame_ui_context.ingame_ui
+	self.input_manager = ingame_ui_context.input_manager
+	self.world = ingame_ui_context.world_manager:world("level_world")
 	self.wwise_world = Managers.world:wwise_world(self.world)
 	self.difficulty_manager = Managers.state.difficulty
-	self.statistics_db = arg_1_2.statistics_db
+	self.statistics_db = ingame_ui_context.statistics_db
 	self.ui_animations = {}
 
 	self:create_ui_elements()
@@ -32,16 +32,16 @@ DifficultyUnlockUI.create_ui_elements = function (self)
 	-- function 2
 	self.ui_scenegraph = UISceneGraph.init_scenegraph(scenegraph_definition)
 
-	local widget_definitions = var_0_0.widget_definitions
-	local tbl = {}
+	local widget_definitions = definitions.widget_definitions
+	local icon_widgets = {}
 
 	for i = 1, 5 do
-		local str = "difficulty_icon_" .. i
+		local definition_name = "difficulty_icon_" .. i
 
-		tbl[i] = UIWidget.init(widget_definitions[str])
+		icon_widgets[i] = UIWidget.init(widget_definitions[definition_name])
 	end
 
-	self.icon_widgets = tbl
+	self.icon_widgets = icon_widgets
 	self.background_top_widget = UIWidget.init(widget_definitions.background_top)
 	self.background_center_widget = UIWidget.init(widget_definitions.background_center)
 	self.background_bottom_widget = UIWidget.init(widget_definitions.background_bottom)
@@ -51,45 +51,54 @@ DifficultyUnlockUI.create_ui_elements = function (self)
 
 	UIRenderer.clear_scenegraph_queue(self.ui_renderer)
 
-	self.ui_animator = UIAnimator:new(self.ui_scenegraph, animations)
+	self.ui_animator = UIAnimator:new(self.ui_scenegraph, animation_definitions)
 	self.is_visible = true
 end
 
 DifficultyUnlockUI.difficulty_set = function (self)
 	-- function 3
 	local statistics_db = self.statistics_db
-	local stats_id = Managers.player:local_player():stats_id()
+	local player = Managers.player:local_player()
+	local player_stats_id = player:stats_id()
 	local level_key = Managers.state.game_mode:level_key()
-	local var_3_3 = LevelSettings[level_key]
-	local get_default_difficulties = self.difficulty_manager:get_default_difficulties()
-	local mirror_table = table.mirror_table(get_default_difficulties)
-	local get_difficulty = self.difficulty_manager:get_difficulty()
-	local find = table.find(mirror_table, get_difficulty)
-	local completed_level_difficulty_index = LevelUnlockUtils.completed_level_difficulty_index(statistics_db, stats_id, level_key)
+	local level_settings = LevelSettings[level_key]
+	local level_difficulties = self.difficulty_manager:get_default_difficulties()
+	local mirrored_level_difficulties = table.mirror_table(level_difficulties)
+	local current_difficulty = self.difficulty_manager:get_difficulty()
+	local start_index = table.find(mirrored_level_difficulties, current_difficulty)
+	local completed_level_difficulty_index = LevelUnlockUtils.completed_level_difficulty_index(statistics_db, player_stats_id, level_key)
 
-	completed_level_difficulty_index = completed_level_difficulty_index or 0
+	if not completed_level_difficulty_index then
+		-- Nothing
+	end
 
-	local num = completed_level_difficulty_index + 1
+	completed_level_difficulty_index = 0
 
-	if not (not find and get_difficulty == get_default_difficulties[#get_default_difficulties]) then
-		local var_3_10 = SurvivalStartWaveByDifficulty[get_difficulty]
-		local tbl = {}
-		local tbl_2 = {}
+	local highest_completed_difficulty_index = completed_level_difficulty_index
 
-		for i = find, #get_default_difficulties do
-			local var_3_13 = get_default_difficulties[i]
+	::label_3_0::
 
-			if not (var_3_13 == get_difficulty or not (num < i)) then
-				local var_3_14 = SurvivalStartWaveByDifficulty[var_3_13]
+	highest_completed_difficulty_index = highest_completed_difficulty_index + 1
 
-				tbl[#tbl + 1] = var_3_14 - var_3_10
-				tbl_2[#tbl_2 + 1] = var_3_13
+	if start_index and current_difficulty ~= level_difficulties[#level_difficulties] then
+		local original_start_wave = survival_start_wave_by_difficulty[current_difficulty]
+		local persentation_wave_list = {}
+		local persentation_wave_difficulty_list = {}
+
+		for i = start_index, #level_difficulties do
+			local difficulty = level_difficulties[i]
+
+			if difficulty ~= current_difficulty and highest_completed_difficulty_index < i then
+				local wave_by_difficulty = survival_start_wave_by_difficulty[difficulty]
+
+				persentation_wave_list[#persentation_wave_list + 1] = wave_by_difficulty - original_start_wave
+				persentation_wave_difficulty_list[#persentation_wave_difficulty_list + 1] = difficulty
 			end
 		end
 
-		self.next_presentation_wave = tbl[1]
-		self.persentation_wave_list = tbl
-		self.persentation_wave_difficulty_list = tbl_2
+		self.next_presentation_wave = persentation_wave_list[1]
+		self.persentation_wave_list = persentation_wave_list
+		self.persentation_wave_difficulty_list = persentation_wave_difficulty_list
 	end
 end
 
@@ -97,19 +106,22 @@ DifficultyUnlockUI.align_icon_widgets = function (self)
 	-- function 4
 	local icon_draw_count = self.icon_draw_count
 	local icon_widgets = self.icon_widgets
-	local num = 50
-	local num_2 = -(icon_draw_count / 2 * num) + num * 0.5
+	local widget_width = 50
+	local draw_position_x = -(icon_draw_count / 2 * widget_width) + widget_width * 0.5
 
-	if not icon_widgets then
+	if icon_widgets then
 		local ui_scenegraph = self.ui_scenegraph
-		local num_3 = 0
+		local spacing = 0
 
 		for i = 1, icon_draw_count do
-			local var_4_6 = icon_widgets[i]
+			local widget = icon_widgets[i]
+			local scenegraph_id = widget.scenegraph_id
+			local widget_scenegraph = ui_scenegraph[scenegraph_id]
+			local local_position = widget_scenegraph.local_position
 
-			ui_scenegraph[var_4_6.scenegraph_id].local_position[1] = num_2
-			num_2 = num_2 + num
-			var_4_6.element.dirty = true
+			local_position[1] = draw_position_x
+			draw_position_x = draw_position_x + widget_width
+			widget.element.dirty = true
 		end
 	end
 end
@@ -121,33 +133,43 @@ DifficultyUnlockUI.destroy = function (self)
 	self:set_visible(false)
 end
 
-DifficultyUnlockUI.set_visible = function (self, arg_6_1)
+DifficultyUnlockUI.set_visible = function (self, visible)
 	-- function 6
-	self.is_visible = arg_6_1
+	self.is_visible = visible
 
 	local ui_renderer = self.ui_renderer
 	local icon_widgets = self.icon_widgets
 
-	if not icon_widgets then
-		for i, v in ipairs(icon_widgets) do
-			UIRenderer.set_element_visible(ui_renderer, v.element, arg_6_1)
+	if icon_widgets then
+		for index, widget in ipairs(icon_widgets) do
+			UIRenderer.set_element_visible(ui_renderer, widget.element, visible)
 		end
 	end
 end
 
-DifficultyUnlockUI._check_for_presentation_start = function (self, arg_7_1)
+DifficultyUnlockUI._check_for_presentation_start = function (self, mission_data)
 	-- function 7
-	local previous_wave_completed = self.previous_wave_completed
+	local previous_wave_completed_2 = self.previous_wave_completed
 
-	previous_wave_completed = previous_wave_completed or 0
+	if not previous_wave_completed_2 then
+		-- Nothing
+	end
 
-	local num = arg_7_1.wave_completed - arg_7_1.starting_wave
+	previous_wave_completed_2 = 0
 
-	if num <= previous_wave_completed then
+	local previous_wave_completed = previous_wave_completed_2
+
+	::label_7_0::
+
+	local wave_completed = mission_data.wave_completed - mission_data.starting_wave
+
+	if wave_completed <= previous_wave_completed then
 		return
 	end
 
-	if self.next_presentation_wave == num then
+	local next_presentation_wave = self.next_presentation_wave
+
+	if next_presentation_wave == wave_completed then
 		table.remove(self.persentation_wave_list, 1)
 
 		self.next_presentation_wave = self.persentation_wave_list[1]
@@ -158,70 +180,70 @@ DifficultyUnlockUI._check_for_presentation_start = function (self, arg_7_1)
 		self.presentation_start_time = 0
 	end
 
-	self.previous_wave_completed = num
+	self.previous_wave_completed = wave_completed
 end
 
-DifficultyUnlockUI._update_start_timer = function (self, arg_8_1)
+DifficultyUnlockUI._update_start_timer = function (self, dt)
 	-- function 8
-	local presentation_start_time = self.presentation_start_time
+	local time = self.presentation_start_time
 
-	if not presentation_start_time then
-		local num = 10
+	if time then
+		local end_time = 10
 
-		if presentation_start_time == num then
+		if time == end_time then
 			self:display_unlock(nil, self.display_presentation_difficulty)
 
 			self.display_presentation_difficulty = nil
-			presentation_start_time = nil
+			time = nil
 		else
-			presentation_start_time = math.min(presentation_start_time + arg_8_1, num)
+			time = math.min(time + dt, end_time)
 		end
 
-		self.presentation_start_time = presentation_start_time
+		self.presentation_start_time = time
 	end
 end
 
-DifficultyUnlockUI.update = function (self, arg_9_1, arg_9_2)
+DifficultyUnlockUI.update = function (self, dt, mission_data)
 	-- function 9
-	if not flag then
-		flag = false
+	if DO_RELOAD then
+		DO_RELOAD = false
 
 		self:create_ui_elements()
 	end
 
-	if not self.next_presentation_wave then
-		self:_check_for_presentation_start(arg_9_2)
+	if self.next_presentation_wave then
+		self:_check_for_presentation_start(mission_data)
 	end
 
-	self:_update_start_timer(arg_9_1)
+	self:_update_start_timer(dt)
 
-	if not (not self.is_visible and self.draw_widgets) then
+	if not self.is_visible or not self.draw_widgets then
 		return
 	end
 
-	local var_9_0
+	local is_dirty
 	local ui_animations = self.ui_animations
 
-	if not ui_animations then
-		for k, v in pairs(ui_animations) do
-			var_9_0 = true
+	if ui_animations then
+		for name, animation in pairs(ui_animations) do
+			is_dirty = true
 
-			UIAnimation.update(v, arg_9_1)
+			UIAnimation.update(animation, dt)
 
-			if not UIAnimation.completed(v) then
-				self.ui_animations[k] = nil
+			if UIAnimation.completed(animation) then
+				self.ui_animations[name] = nil
 			end
 		end
 	end
 
 	local ui_animator = self.ui_animator
 
-	ui_animator:update(arg_9_1)
+	ui_animator:update(dt)
 
 	local presentation_anim_id = self.presentation_anim_id
 
-	if not presentation_anim_id then
-		if not ui_animator:is_animation_completed(presentation_anim_id) then
+	if presentation_anim_id then
+		if ui_animator:is_animation_completed(presentation_anim_id) then
 			ui_animator:stop_animation(presentation_anim_id)
 
 			self.presentation_anim_id = nil
@@ -229,13 +251,13 @@ DifficultyUnlockUI.update = function (self, arg_9_1, arg_9_2)
 			self:start_explode_animation()
 		end
 
-		var_9_0 = true
+		is_dirty = true
 	end
 
 	local explode_anim_id = self.explode_anim_id
 
-	if not explode_anim_id then
-		if not ui_animator:is_animation_completed(explode_anim_id) then
+	if explode_anim_id then
+		if ui_animator:is_animation_completed(explode_anim_id) then
 			ui_animator:stop_animation(explode_anim_id)
 
 			self.explode_anim_id = nil
@@ -243,44 +265,48 @@ DifficultyUnlockUI.update = function (self, arg_9_1, arg_9_2)
 			self:on_presentation_complete()
 		end
 
-		var_9_0 = true
+		is_dirty = true
 	end
 
-	if var_9_0 or not RESOLUTION_LOOKUP.modified then
-		var_9_0 = true
+	if not is_dirty then
+		local resolution_modified = RESOLUTION_LOOKUP.modified
+
+		if resolution_modified then
+			is_dirty = true
+		end
 	end
 
-	if not var_9_0 then
+	if is_dirty then
 		local icon_widgets = self.icon_widgets
 
-		if not icon_widgets then
-			for i, v_2 in ipairs(icon_widgets) do
-				v_2.element.dirty = true
+		if icon_widgets then
+			for index, widget in ipairs(icon_widgets) do
+				widget.element.dirty = true
 			end
 		end
 	end
 
-	self:draw(arg_9_1)
+	self:draw(dt)
 end
 
-DifficultyUnlockUI.draw = function (self, arg_10_1)
+DifficultyUnlockUI.draw = function (self, dt)
 	-- function 10
 	local ui_renderer = self.ui_renderer
 	local ui_scenegraph = self.ui_scenegraph
-	local get_service = self.input_manager:get_service("ingame_menu")
+	local input_service = self.input_manager:get_service("ingame_menu")
 
-	UIRenderer.begin_pass(ui_renderer, ui_scenegraph, get_service, arg_10_1)
+	UIRenderer.begin_pass(ui_renderer, ui_scenegraph, input_service, dt)
 
 	local icon_draw_count = self.icon_draw_count
 
-	if not icon_draw_count then
+	if icon_draw_count then
 		local icon_widgets = self.icon_widgets
 
-		if not icon_widgets then
+		if icon_widgets then
 			for i = 1, icon_draw_count do
-				local var_10_5 = icon_widgets[i]
+				local widget = icon_widgets[i]
 
-				UIRenderer.draw_widget(ui_renderer, var_10_5)
+				UIRenderer.draw_widget(ui_renderer, widget)
 			end
 		end
 	end
@@ -294,18 +320,18 @@ DifficultyUnlockUI.draw = function (self, arg_10_1)
 	UIRenderer.end_pass(ui_renderer)
 end
 
-DifficultyUnlockUI.set_difficulty_amount = function (self, arg_11_1)
+DifficultyUnlockUI.set_difficulty_amount = function (self, amount)
 	-- function 11
-	self.icon_draw_count = arg_11_1
+	self.icon_draw_count = amount
 
 	self:align_icon_widgets()
 end
 
-DifficultyUnlockUI.display_unlock = function (self, arg_12_1, arg_12_2)
+DifficultyUnlockUI.display_unlock = function (self, level_key, difficulty)
 	-- function 12
-	local var_12_0 = DifficultySettings[arg_12_2]
-	local rank = var_12_0.rank
-	local display_name = var_12_0.display_name
+	local difficulty_settings = DifficultySettings[difficulty]
+	local rank = difficulty_settings.rank
+	local display_name = difficulty_settings.display_name
 
 	self.difficulty_text_widget.content.text = display_name
 
@@ -322,52 +348,63 @@ end
 
 DifficultyUnlockUI.start_presentation_animation = function (self)
 	-- function 14
-	local tbl = {
+	local params = {
 		wwise_world = self.wwise_world
 	}
-	local tbl_2 = {}
+	local widgets = {}
 	local icon_draw_count = self.icon_draw_count
 	local icon_widgets = self.icon_widgets
-	local tbl_3 = {}
+	local icons = {}
 
 	for i = 1, icon_draw_count do
-		tbl_3[i] = icon_widgets[i]
+		icons[i] = icon_widgets[i]
 	end
 
-	tbl_2.icons = tbl_3
-	tbl_2.background_top = self.background_top_widget
-	tbl_2.background_center = self.background_center_widget
-	tbl_2.background_bottom = self.background_bottom_widget
-	tbl_2.background_glow = self.background_glow_widget
-	tbl_2.difficulty_text = self.difficulty_text_widget
-	tbl_2.difficulty_title_text = self.difficulty_title_text_widget
-	self.presentation_anim_id = self.ui_animator:start_animation("presentation", tbl_2, scenegraph_definition, tbl)
+	widgets.icons = icons
+	widgets.background_top = self.background_top_widget
+	widgets.background_center = self.background_center_widget
+	widgets.background_bottom = self.background_bottom_widget
+	widgets.background_glow = self.background_glow_widget
+	widgets.difficulty_text = self.difficulty_text_widget
+	widgets.difficulty_title_text = self.difficulty_title_text_widget
+	self.presentation_anim_id = self.ui_animator:start_animation("presentation", widgets, scenegraph_definition, params)
 end
 
 DifficultyUnlockUI.start_explode_animation = function (self)
 	-- function 15
-	local tbl = {
+	local params = {
 		wwise_world = self.wwise_world
 	}
-	local tbl_2 = {}
+	local widgets = {}
 	local icon_draw_count = self.icon_draw_count
 	local icon_widgets = self.icon_widgets
-	local tbl_3 = {}
+	local icons = {}
 
 	for i = 1, icon_draw_count do
-		tbl_3[i] = icon_widgets[i]
+		icons[i] = icon_widgets[i]
 	end
 
-	tbl_2.icons = tbl_3
-	tbl_2.background_top = self.background_top_widget
-	tbl_2.background_center = self.background_center_widget
-	tbl_2.background_bottom = self.background_bottom_widget
-	tbl_2.background_glow = self.background_glow_widget
-	tbl_2.difficulty_text = self.difficulty_text_widget
-	tbl_2.difficulty_title_text = self.difficulty_title_text_widget
+	widgets.icons = icons
+	widgets.background_top = self.background_top_widget
+	widgets.background_center = self.background_center_widget
+	widgets.background_bottom = self.background_bottom_widget
+	widgets.background_glow = self.background_glow_widget
+	widgets.difficulty_text = self.difficulty_text_widget
+	widgets.difficulty_title_text = self.difficulty_title_text_widget
 
-	local flag
+	local str
 
-	flag = icon_draw_count ~= 4 or not "explode_parts_4" or "explode_parts_5"
-	self.explode_anim_id = self.ui_animator:start_animation(flag, tbl_2, scenegraph_definition, tbl)
+	if icon_draw_count == 4 then
+		str = "explode_parts_4"
+
+		goto label_15_0
+	end
+
+	str = "explode_parts_5"
+
+	local animation_name = str
+
+	::label_15_0::
+
+	self.explode_anim_id = self.ui_animator:start_animation(animation_name, widgets, scenegraph_definition, params)
 end

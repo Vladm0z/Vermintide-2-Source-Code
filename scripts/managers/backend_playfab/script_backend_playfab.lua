@@ -5,9 +5,9 @@ require("scripts/settings/version_settings")
 DLCUtils.require_list("playfab_mirror_files")
 
 local IPlayFabHttps = require("PlayFab.IPlayFabHttps")
-local scripts_managers_backend_playfab_https_curl = require("scripts/managers/backend/playfab_https_curl")
+local playfab_https = require("scripts/managers/backend/playfab_https_curl")
 
-IPlayFabHttps.SetHttp(scripts_managers_backend_playfab_https_curl)
+IPlayFabHttps.SetHttp(playfab_https)
 
 local PlayFabClientApi = require("PlayFab.PlayFabClientApi")
 
@@ -16,37 +16,37 @@ ScriptBackendPlayFab = class(ScriptBackendPlayFab)
 
 ScriptBackendPlayFab.init = function (self)
 	-- function 1
-	if not HAS_STEAM then
+	if HAS_STEAM then
 		self._steam_ticket_id = Steam.retrieve_auth_session_ticket("AzurePlayFab")
-	elseif not GameSettingsDevelopment.use_offline_backend then
+	elseif GameSettingsDevelopment.use_offline_backend then
 		-- Nothing
 	end
 
 	self._metadata = Managers.backend:get_metadata()
 end
 
-ScriptBackendPlayFab.update_state = function (arg_2_0)
+ScriptBackendPlayFab.update_state = function (self)
 	-- function 2
 	return
 end
 
 ScriptBackendPlayFab.update_signin = function (self)
 	-- function 3
-	if not self._steam_ticket_id then
-		local var_3_0
+	if self._steam_ticket_id then
+		local ticket
 
-		if not HAS_STEAM then
-			var_3_0 = Steam.poll_auth_session_ticket(self._steam_ticket_id)
-		elseif not GameSettingsDevelopment.use_offline_backend then
+		if HAS_STEAM then
+			ticket = Steam.poll_auth_session_ticket(self._steam_ticket_id)
+		elseif GameSettingsDevelopment.use_offline_backend then
 			-- Nothing
 		end
 
-		if not var_3_0 then
-			local tbl = {
+		if ticket then
+			local login_request = {
 				TicketIsServiceSpecific = true,
 				CreateAccount = true,
 				TitleId = PlayFabClientApi.settings.titleId,
-				SteamTicket = var_3_0,
+				SteamTicket = ticket,
 				InfoRequestParameters = {
 					GetUserReadOnlyData = true,
 					GetUserData = true,
@@ -58,71 +58,72 @@ ScriptBackendPlayFab.update_signin = function (self)
 					}
 				}
 			}
-			local var_3_2 = callback(self, "login_request_cb")
+			local login_request_cb = callback(self, "login_request_cb")
 
-			PlayFabClientApi.LoginWithSteam(tbl, var_3_2)
+			PlayFabClientApi.LoginWithSteam(login_request, login_request_cb)
 
 			self._steam_ticket_id = nil
 		end
 	end
 
-	local _signin_result_error = self._signin_result_error
+	local signin_result = self._signin_result_error
 
-	if not _signin_result_error then
-		local errorCode = _signin_result_error.errorCode
-		local errorMessage = _signin_result_error.errorMessage
+	if signin_result then
+		local error_code = signin_result.errorCode
+		local error_message = signin_result.errorMessage
 
 		return {
-			reason = errorCode,
-			details = errorMessage
+			reason = error_code,
+			details = error_message
 		}
 	end
 
-	local _initial_set_up_result_error = self._initial_set_up_result_error
+	local initial_set_up_result = self._initial_set_up_result_error
 
-	if not _initial_set_up_result_error then
-		local errorCode_2 = _initial_set_up_result_error.errorCode
-		local errorMessage_2 = _initial_set_up_result_error.errorMessage
+	if initial_set_up_result then
+		local error_code = initial_set_up_result.errorCode
+		local error_message = initial_set_up_result.errorMessage
 
 		return {
-			reason = errorCode_2,
-			details = errorMessage_2
+			reason = error_code,
+			details = error_message
 		}
 	end
 
-	local _initial_data_set_up_result_error = self._initial_data_set_up_result_error
+	local initial_data_set_up_result = self._initial_data_set_up_result_error
 
-	if not _initial_data_set_up_result_error then
-		local errorCode_3 = _initial_data_set_up_result_error.errorCode
-		local errorMessage_3 = _initial_data_set_up_result_error.errorMessage
+	if initial_data_set_up_result then
+		local error_code = initial_data_set_up_result.errorCode
+		local error_message = initial_data_set_up_result.errorMessage
 
 		return {
-			reason = errorCode_3,
-			details = errorMessage_3
+			reason = error_code,
+			details = error_message
 		}
 	end
 
 	return nil
 end
 
-ScriptBackendPlayFab.login_request_cb = function (self, arg_4_1)
+ScriptBackendPlayFab.login_request_cb = function (self, result)
 	-- function 4
-	self._signin_result = arg_4_1
+	self._signin_result = result
 
-	local UserReadOnlyData = arg_4_1.InfoResultPayload.UserReadOnlyData
-	local PlayFabId = arg_4_1.PlayFabId
+	local info_result_payload = result.InfoResultPayload
+	local read_only_data = info_result_payload.UserReadOnlyData
+	local playfab_id = result.PlayFabId
 
-	Crashify.print_property("playfab_id", PlayFabId)
-	Managers.telemetry_events:player_authenticated(PlayFabId)
+	Crashify.print_property("playfab_id", playfab_id)
+	Managers.telemetry_events:player_authenticated(playfab_id)
 	self:_update_telemetry_settings()
 
-	local account_set_up = UserReadOnlyData.account_set_up
-	local initial_inventory_setup = UserReadOnlyData.initial_inventory_setup
-	local NewlyCreated = arg_4_1.NewlyCreated
+	local account_set_up = read_only_data.account_set_up
+	local initial_inventory_setup = read_only_data.initial_inventory_setup
+	local NewlyCreated = result.NewlyCreated
 
-	NewlyCreated = (NewlyCreated or not account_set_up) and account_set_up.Value == "false"
+	NewlyCreated = not not NewlyCreated or not account_set_up or account_set_up.Value == "false"
 	self._setup_initial_account_needed = NewlyCreated
-	self._setup_initial_inventory_needed = not initial_inventory_setup and initial_inventory_setup.Value == "false"
+	self._setup_initial_inventory_needed = not initial_inventory_setup or initial_inventory_setup.Value == "false"
 
 	self:_validate_version()
 
@@ -131,72 +132,81 @@ end
 
 ScriptBackendPlayFab._update_telemetry_settings = function (self)
 	-- function 5
-	local telemetry_settings_override = self._signin_result.InfoResultPayload.TitleData.telemetry_settings_override
+	local settings_override = self._signin_result.InfoResultPayload.TitleData.telemetry_settings_override
 
-	if not telemetry_settings_override then
-		table.merge(TelemetrySettings, cjson.decode(telemetry_settings_override))
+	if settings_override then
+		table.merge(TelemetrySettings, cjson.decode(settings_override))
 		Managers.telemetry:reload_settings()
 	end
 end
 
 ScriptBackendPlayFab._validate_version = function (self)
 	-- function 6
-	local tbl = {
+	local request = {
 		FunctionName = "validateVersion",
 		FunctionParameter = {
 			Version = VersionSettings.version,
 			metadata = self._metadata
 		}
 	}
-	local var_6_1 = callback(self, "_validate_version_cb")
+	local callback = callback(self, "_validate_version_cb")
 
-	PlayFabClientApi.ExecuteCloudScript(tbl, var_6_1)
+	PlayFabClientApi.ExecuteCloudScript(request, callback)
 
 	self._validating_version = true
 end
 
-ScriptBackendPlayFab._validate_version_cb = function (self, arg_7_1)
+ScriptBackendPlayFab._validate_version_cb = function (self, result)
 	-- function 7
-	local FunctionResult = arg_7_1.FunctionResult
+	local FunctionResult = result.FunctionResult
 
-	FunctionResult = not FunctionResult and arg_7_1.FunctionResult.valid_version
+	if FunctionResult then
+		-- Nothing
+	end
+
+	FunctionResult = result.FunctionResult.valid_version
+
+	local valid = FunctionResult
+
+	::label_7_0::
+
 	self._validating_version = nil
 
-	if FunctionResult ~= true then
+	if valid ~= true then
 		self._signed_in = false
 		self._signin_result_error = {
 			errorCode = BACKEND_PLAYFAB_ERRORS.ERR_PLAYFAB_UNSUPPORTED_VERSION_ERROR
 		}
-	elseif not self._setup_initial_account_needed then
+	elseif self._setup_initial_account_needed then
 		self:_set_up_initial_account()
-	elseif not self._setup_initial_inventory_needed then
+	elseif self._setup_initial_inventory_needed then
 		self:_set_up_initial_inventory()
 	end
 end
 
 ScriptBackendPlayFab._set_up_initial_account = function (self)
 	-- function 8
-	local tbl = {
+	local initial_account_set_up = {
 		FunctionName = "initialAccountSetUp",
 		FunctionParameter = {
 			metadata = self._metadata
 		}
 	}
-	local var_8_1 = callback(self, "initial_setup_request_cb")
+	local initial_setup_request_cb = callback(self, "initial_setup_request_cb")
 
-	PlayFabClientApi.ExecuteCloudScript(tbl, var_8_1)
+	PlayFabClientApi.ExecuteCloudScript(initial_account_set_up, initial_setup_request_cb)
 
 	self._setting_up_initial_account = true
 end
 
-ScriptBackendPlayFab.initial_setup_request_cb = function (self, arg_9_1)
+ScriptBackendPlayFab.initial_setup_request_cb = function (self, result)
 	-- function 9
-	local read_only_data = arg_9_1.FunctionResult.read_only_data
+	local read_only_data = result.FunctionResult.read_only_data
 
-	if not read_only_data then
-		for k, v in pairs(read_only_data) do
-			self._signin_result.InfoResultPayload.UserReadOnlyData[k] = {
-				Value = v
+	if read_only_data then
+		for key, data in pairs(read_only_data) do
+			self._signin_result.InfoResultPayload.UserReadOnlyData[key] = {
+				Value = data
 			}
 		end
 	end
@@ -207,26 +217,28 @@ ScriptBackendPlayFab.initial_setup_request_cb = function (self, arg_9_1)
 	self._setup_initial_account_needed = nil
 end
 
-ScriptBackendPlayFab._set_up_initial_inventory = function (self, arg_10_1)
+ScriptBackendPlayFab._set_up_initial_inventory = function (self, start_index)
 	-- function 10
-	local tbl = {
+	local initial_account_data_set_up = {
 		FunctionName = "initialInventorySetup",
 		FunctionParameter = {
-			start_index = arg_10_1 or 0,
+			start_index = not not start_index or not not 0,
 			metadata = self._metadata
 		}
 	}
-	local var_10_1 = callback(self, "initial_inventory_setup_request_cb")
+	local initial_inventory_setup_request_cb = callback(self, "initial_inventory_setup_request_cb")
 
-	PlayFabClientApi.ExecuteCloudScript(tbl, var_10_1)
+	PlayFabClientApi.ExecuteCloudScript(initial_account_data_set_up, initial_inventory_setup_request_cb)
 
 	self._setting_up_initial_inventory = true
 end
 
-ScriptBackendPlayFab.initial_inventory_setup_request_cb = function (self, arg_11_1)
+ScriptBackendPlayFab.initial_inventory_setup_request_cb = function (self, result)
 	-- function 11
-	if not arg_11_1.FunctionResult.done then
-		local new_start_index = arg_11_1.FunctionResult.new_start_index
+	local done = result.FunctionResult.done
+
+	if not done then
+		local new_start_index = result.FunctionResult.new_start_index
 
 		self:_set_up_initial_inventory(new_start_index)
 	else
@@ -237,7 +249,7 @@ end
 
 ScriptBackendPlayFab.authenticated = function (self)
 	-- function 12
-	if self._validating_version or self._setting_up_initial_account or not self._setting_up_initial_inventory then
+	if self._validating_version or self._setting_up_initial_account or self._setting_up_initial_inventory then
 		return false
 	end
 
@@ -249,7 +261,7 @@ ScriptBackendPlayFab.get_signin_result = function (self)
 	return self._signin_result
 end
 
-ScriptBackendPlayFab.destroy = function (arg_14_0)
+ScriptBackendPlayFab.destroy = function (self)
 	-- function 14
 	return
 end

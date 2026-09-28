@@ -3,41 +3,41 @@
 require("scripts/helpers/deus_power_up_utils")
 require("scripts/network/shared_state")
 
-local scripts_managers_game_mode_mechanisms_deus_run_state_spec = require("scripts/managers/game_mode/mechanisms/deus_run_state_spec")
+local shared_state_spec = require("scripts/managers/game_mode/mechanisms/deus_run_state_spec")
 
 DeusRunState = class(DeusRunState)
 
-DeusRunState.init = function (self, arg_1_1, arg_1_2, arg_1_3, arg_1_4, arg_1_5, arg_1_6, arg_1_7, arg_1_8, arg_1_9, arg_1_10)
+DeusRunState.init = function (self, run_id, is_server, network_handler, server_peer_id, own_peer_id, own_initial_loadout, own_initial_talents, own_initial_bot_loadout, own_initial_bot_talents, weapon_group_whitelist)
 	-- function 1
-	self._run_id = arg_1_1
-	self._is_server = arg_1_2
-	self._server_peer_id = arg_1_4
-	self._own_peer_id = arg_1_5
-	self._network_handler = arg_1_3
+	self._run_id = run_id
+	self._is_server = is_server
+	self._server_peer_id = server_peer_id
+	self._own_peer_id = own_peer_id
+	self._network_handler = network_handler
 	self._event_mutator_packages = {}
 
-	local str = "deus_run_state_" .. arg_1_1
+	local run_state_id_key = "deus_run_state_" .. run_id
 
-	self._shared_state = SharedState:new(str, scripts_managers_game_mode_mechanisms_deus_run_state_spec, arg_1_2, arg_1_3, arg_1_4, arg_1_5)
-	self._own_initial_loadout = arg_1_6
-	self._own_initial_talents = arg_1_7
-	self._own_initial_bot_loadout = arg_1_8
-	self._own_initial_bot_talents = arg_1_9
-	self._weapon_group_whitelist = arg_1_10
+	self._shared_state = SharedState:new(run_state_id_key, shared_state_spec, is_server, network_handler, server_peer_id, own_peer_id)
+	self._own_initial_loadout = own_initial_loadout
+	self._own_initial_talents = own_initial_talents
+	self._own_initial_bot_loadout = own_initial_bot_loadout
+	self._own_initial_bot_talents = own_initial_bot_talents
+	self._weapon_group_whitelist = weapon_group_whitelist
 end
 
-DeusRunState.network_context_created = function (self, arg_2_1, arg_2_2, arg_2_3, arg_2_4, arg_2_5)
+DeusRunState.network_context_created = function (self, lobby, server_peer_id, own_peer_id, is_server, network_handler)
 	-- function 2
-	self._is_server = arg_2_4
-	self._server_peer_id = arg_2_2
-	self._network_handler = arg_2_5
+	self._is_server = is_server
+	self._server_peer_id = server_peer_id
+	self._network_handler = network_handler
 
-	self._shared_state:network_context_created(arg_2_1, arg_2_2, arg_2_3, arg_2_4, arg_2_5)
+	self._shared_state:network_context_created(lobby, server_peer_id, own_peer_id, is_server, network_handler)
 end
 
-DeusRunState.register_rpcs = function (self, arg_3_1)
+DeusRunState.register_rpcs = function (self, network_event_delegate)
 	-- function 3
-	self._shared_state:register_rpcs(arg_3_1)
+	self._shared_state:register_rpcs(network_event_delegate)
 end
 
 DeusRunState.unregister_rpcs = function (self)
@@ -55,8 +55,8 @@ DeusRunState.destroy = function (self)
 	self:unregister_rpcs()
 	self._shared_state:destroy()
 
-	for i, v in ipairs(self._event_mutator_packages) do
-		Managers.package:unload(v, "deus_run_state_mutator_package")
+	for _, package_name in ipairs(self._event_mutator_packages) do
+		Managers.package:unload(package_name, "deus_run_state_mutator_package")
 	end
 end
 
@@ -105,9 +105,9 @@ DeusRunState.get_weapon_group_whitelist = function (self)
 	return self._weapon_group_whitelist
 end
 
-DeusRunState.set_run_ended = function (self, arg_16_1)
+DeusRunState.set_run_ended = function (self, value)
 	-- function 16
-	self._shared_state:set_server(self._shared_state:get_key("run_ended"), arg_16_1)
+	self._shared_state:set_server(self._shared_state:get_key("run_ended"), value)
 end
 
 DeusRunState.get_run_ended = function (self)
@@ -115,14 +115,14 @@ DeusRunState.get_run_ended = function (self)
 	return self._shared_state:get_server(self._shared_state:get_key("run_ended"))
 end
 
-DeusRunState.set_run_seed = function (self, arg_18_1)
+DeusRunState.set_run_seed = function (self, run_seed)
 	-- function 18
-	self._run_seed = arg_18_1
+	self._run_seed = run_seed
 end
 
-DeusRunState.set_run_difficulty = function (self, arg_19_1)
+DeusRunState.set_run_difficulty = function (self, difficulty)
 	-- function 19
-	self._difficulty = arg_19_1
+	self._difficulty = difficulty
 end
 
 DeusRunState.get_run_difficulty = function (self)
@@ -130,9 +130,9 @@ DeusRunState.get_run_difficulty = function (self)
 	return self._difficulty
 end
 
-DeusRunState.set_journey_name = function (self, arg_21_1)
+DeusRunState.set_journey_name = function (self, journey_name)
 	-- function 21
-	self._journey_name = arg_21_1
+	self._journey_name = journey_name
 end
 
 DeusRunState.get_journey_name = function (self)
@@ -140,9 +140,9 @@ DeusRunState.get_journey_name = function (self)
 	return self._journey_name
 end
 
-DeusRunState.set_dominant_god = function (self, arg_23_1)
+DeusRunState.set_dominant_god = function (self, dominant_god)
 	-- function 23
-	self._dominant_god = arg_23_1
+	self._dominant_god = dominant_god
 end
 
 DeusRunState.get_dominant_god = function (self)
@@ -160,9 +160,9 @@ DeusRunState.get_run_seed = function (self)
 	return self._run_seed
 end
 
-DeusRunState.set_current_node_key = function (self, arg_27_1)
+DeusRunState.set_current_node_key = function (self, node_key)
 	-- function 27
-	self._shared_state:set_server(self._shared_state:get_key("run_node_key"), arg_27_1)
+	self._shared_state:set_server(self._shared_state:get_key("run_node_key"), node_key)
 end
 
 DeusRunState.get_current_node_key = function (self)
@@ -174,14 +174,14 @@ DeusRunState.get_completed_level_count = function (self)
 	-- function 29
 	local get_server = self._shared_state:get_server(self._shared_state:get_key("completed_level_count"))
 
-	get_server = get_server or 0
+	get_server = not not get_server or not not 0
 
 	return get_server
 end
 
-DeusRunState.set_completed_level_count = function (self, arg_30_1)
+DeusRunState.set_completed_level_count = function (self, count)
 	-- function 30
-	self._shared_state:set_server(self._shared_state:get_key("completed_level_count"), arg_30_1)
+	self._shared_state:set_server(self._shared_state:get_key("completed_level_count"), count)
 end
 
 DeusRunState.get_traversed_nodes = function (self)
@@ -189,25 +189,25 @@ DeusRunState.get_traversed_nodes = function (self)
 	return self._shared_state:get_server(self._shared_state:get_key("traversed_nodes"))
 end
 
-DeusRunState.set_traversed_nodes = function (self, arg_32_1)
+DeusRunState.set_traversed_nodes = function (self, traversed_nodes_array)
 	-- function 32
-	self._shared_state:set_server(self._shared_state:get_key("traversed_nodes"), arg_32_1)
+	self._shared_state:set_server(self._shared_state:get_key("traversed_nodes"), traversed_nodes_array)
 end
 
 DeusRunState.get_blessings = function (self)
 	-- function 33
-	local get_server = self._shared_state:get_server(self._shared_state:get_key("blessings_with_buyer"))
-	local tbl = {}
+	local blessings_with_buyer = self._shared_state:get_server(self._shared_state:get_key("blessings_with_buyer"))
+	local blessings_array = {}
 
-	for k, v in pairs(get_server) do
-		tbl[#tbl + 1] = k
+	for blessing, _ in pairs(blessings_with_buyer) do
+		blessings_array[#blessings_array + 1] = blessing
 	end
 
-	if not script_data.deus_force_load_blessing then
-		tbl[#tbl + 1] = script_data.deus_force_load_blessing
+	if script_data.deus_force_load_blessing then
+		blessings_array[#blessings_array + 1] = script_data.deus_force_load_blessing
 	end
 
-	return tbl
+	return blessings_array
 end
 
 DeusRunState.get_blessings_with_buyer = function (self)
@@ -215,267 +215,268 @@ DeusRunState.get_blessings_with_buyer = function (self)
 	return self._shared_state:get_server(self._shared_state:get_key("blessings_with_buyer"))
 end
 
-DeusRunState.set_blessings_with_buyer = function (self, arg_35_1)
+DeusRunState.set_blessings_with_buyer = function (self, blessings_with_buyer)
 	-- function 35
-	self._shared_state:set_server(self._shared_state:get_key("blessings_with_buyer"), arg_35_1)
+	self._shared_state:set_server(self._shared_state:get_key("blessings_with_buyer"), blessings_with_buyer)
 end
 
-DeusRunState.get_blessing_lifetime = function (self, arg_36_1)
+DeusRunState.get_blessing_lifetime = function (self, blessing_name)
 	-- function 36
-	local var_36_0 = self._shared_state:get_server(self._shared_state:get_key("blessing_lifetimes"))[arg_36_1]
+	local blessing_lifetimes = self._shared_state:get_server(self._shared_state:get_key("blessing_lifetimes"))
+	local var_36_0 = blessing_lifetimes[blessing_name]
 
-	var_36_0 = var_36_0 or 0
+	var_36_0 = not not var_36_0 or not not 0
 
 	return var_36_0
 end
 
-DeusRunState.set_blessing_lifetime = function (self, arg_37_1, arg_37_2)
+DeusRunState.set_blessing_lifetime = function (self, blessing_name, lifetime)
 	-- function 37
-	local get_server = self._shared_state:get_server(self._shared_state:get_key("blessing_lifetimes"))
-	local flag = true
-	local clone = table.clone(get_server, flag)
+	local blessing_lifetimes = self._shared_state:get_server(self._shared_state:get_key("blessing_lifetimes"))
+	local skip_metatable = true
 
-	clone[arg_37_1] = arg_37_2
+	blessing_lifetimes = table.clone(blessing_lifetimes, skip_metatable)
+	blessing_lifetimes[blessing_name] = lifetime
 
-	self._shared_state:set_server(self._shared_state:get_key("blessing_lifetimes"), clone)
+	self._shared_state:set_server(self._shared_state:get_key("blessing_lifetimes"), blessing_lifetimes)
 end
 
-DeusRunState.get_peer_initialized = function (self, arg_38_1)
+DeusRunState.get_peer_initialized = function (self, peer_id)
 	-- function 38
-	local get_key = self._shared_state:get_key("peer_initialized", arg_38_1)
+	local key = self._shared_state:get_key("peer_initialized", peer_id)
 
-	return self._shared_state:get_server(get_key)
+	return self._shared_state:get_server(key)
 end
 
-DeusRunState.set_peer_initialized = function (self, arg_39_1, arg_39_2)
+DeusRunState.set_peer_initialized = function (self, peer_id, initialized)
 	-- function 39
-	local get_key = self._shared_state:get_key("peer_initialized", arg_39_1)
+	local key = self._shared_state:get_key("peer_initialized", peer_id)
 
-	self._shared_state:set_server(get_key, arg_39_2)
+	self._shared_state:set_server(key, initialized)
 end
 
-DeusRunState.get_profile_initialized = function (self, arg_40_1, arg_40_2, arg_40_3, arg_40_4)
+DeusRunState.get_profile_initialized = function (self, peer_id, local_player_id, profile_index, career_index)
 	-- function 40
-	local get_key = self._shared_state:get_key("profile_initialized", arg_40_1, arg_40_2, arg_40_3, arg_40_4)
+	local key = self._shared_state:get_key("profile_initialized", peer_id, local_player_id, profile_index, career_index)
 
-	return self._shared_state:get_server(get_key)
+	return self._shared_state:get_server(key)
 end
 
-DeusRunState.set_profile_initialized = function (self, arg_41_1, arg_41_2, arg_41_3, arg_41_4, arg_41_5)
+DeusRunState.set_profile_initialized = function (self, peer_id, local_player_id, profile_index, career_index, initialized)
 	-- function 41
-	local get_key = self._shared_state:get_key("profile_initialized", arg_41_1, arg_41_2, arg_41_3, arg_41_4)
+	local key = self._shared_state:get_key("profile_initialized", peer_id, local_player_id, profile_index, career_index)
 
-	self._shared_state:set_server(get_key, arg_41_5)
+	self._shared_state:set_server(key, initialized)
 end
 
-DeusRunState.get_cursed_levels_completed = function (self, arg_42_1)
+DeusRunState.get_cursed_levels_completed = function (self, peer_id)
 	-- function 42
-	local get_key = self._shared_state:get_key("cursed_levels_completed", arg_42_1)
+	local key = self._shared_state:get_key("cursed_levels_completed", peer_id)
 
-	return self._shared_state:get_server(get_key)
+	return self._shared_state:get_server(key)
 end
 
-DeusRunState.set_cursed_levels_completed = function (self, arg_43_1, arg_43_2)
+DeusRunState.set_cursed_levels_completed = function (self, peer_id, count)
 	-- function 43
-	local get_key = self._shared_state:get_key("cursed_levels_completed", arg_43_1)
+	local key = self._shared_state:get_key("cursed_levels_completed", peer_id)
 
-	self._shared_state:set_server(get_key, arg_43_2)
+	self._shared_state:set_server(key, count)
 end
 
-DeusRunState.get_cursed_chests_purified = function (self, arg_44_1)
+DeusRunState.get_cursed_chests_purified = function (self, peer_id)
 	-- function 44
-	local get_key = self._shared_state:get_key("cursed_chests_purified", arg_44_1)
+	local key = self._shared_state:get_key("cursed_chests_purified", peer_id)
 
-	return self._shared_state:get_server(get_key)
+	return self._shared_state:get_server(key)
 end
 
-DeusRunState.set_cursed_chests_purified = function (self, arg_45_1, arg_45_2)
+DeusRunState.set_cursed_chests_purified = function (self, peer_id, count)
 	-- function 45
-	local get_key = self._shared_state:get_key("cursed_chests_purified", arg_45_1)
+	local key = self._shared_state:get_key("cursed_chests_purified", peer_id)
 
-	self._shared_state:set_server(get_key, arg_45_2)
+	self._shared_state:set_server(key, count)
 end
 
-DeusRunState.get_coin_chests_collected = function (self, arg_46_1)
+DeusRunState.get_coin_chests_collected = function (self, peer_id)
 	-- function 46
-	local get_key = self._shared_state:get_key("coin_chests_collected", arg_46_1)
+	local key = self._shared_state:get_key("coin_chests_collected", peer_id)
 
-	return self._shared_state:get_server(get_key)
+	return self._shared_state:get_server(key)
 end
 
-DeusRunState.set_coin_chests_collected = function (self, arg_47_1, arg_47_2)
+DeusRunState.set_coin_chests_collected = function (self, peer_id, count)
 	-- function 47
-	local get_key = self._shared_state:get_key("coin_chests_collected", arg_47_1)
+	local key = self._shared_state:get_key("coin_chests_collected", peer_id)
 
-	self._shared_state:set_server(get_key, arg_47_2)
+	self._shared_state:set_server(key, count)
 end
 
 DeusRunState.get_party_power_ups = function (self)
 	-- function 48
-	local get_key = self._shared_state:get_key("party_power_ups")
+	local key = self._shared_state:get_key("party_power_ups")
 
-	return self._shared_state:get_server(get_key)
+	return self._shared_state:get_server(key)
 end
 
-DeusRunState.set_party_power_ups = function (self, arg_49_1)
+DeusRunState.set_party_power_ups = function (self, power_ups)
 	-- function 49
-	local get_key = self._shared_state:get_key("party_power_ups")
+	local key = self._shared_state:get_key("party_power_ups")
 
-	self._shared_state:set_server(get_key, arg_49_1)
+	self._shared_state:set_server(key, power_ups)
 end
 
 DeusRunState.get_bought_power_ups = function (self)
 	-- function 50
-	local get_key = self._shared_state:get_key("bought_power_ups")
+	local key = self._shared_state:get_key("bought_power_ups")
 
-	return self._shared_state:get_server(get_key)
+	return self._shared_state:get_server(key)
 end
 
-DeusRunState.set_bought_power_ups = function (self, arg_51_1)
+DeusRunState.set_bought_power_ups = function (self, bought_power_ups)
 	-- function 51
-	local get_key = self._shared_state:get_key("bought_power_ups")
+	local key = self._shared_state:get_key("bought_power_ups")
 
-	self._shared_state:set_server(get_key, arg_51_1)
+	self._shared_state:set_server(key, bought_power_ups)
 end
 
 DeusRunState.get_bought_blessings = function (self)
 	-- function 52
-	local get_key = self._shared_state:get_key("bought_blessings")
+	local key = self._shared_state:get_key("bought_blessings")
 
-	return self._shared_state:get_server(get_key)
+	return self._shared_state:get_server(key)
 end
 
-DeusRunState.set_bought_blessings = function (self, arg_53_1)
+DeusRunState.set_bought_blessings = function (self, bought_blessings)
 	-- function 53
-	local get_key = self._shared_state:get_key("bought_blessings")
+	local key = self._shared_state:get_key("bought_blessings")
 
-	self._shared_state:set_server(get_key, arg_53_1)
+	self._shared_state:set_server(key, bought_blessings)
 end
 
 DeusRunState.get_ground_coins_picked_up = function (self)
 	-- function 54
-	local get_key = self._shared_state:get_key("ground_coins_picked_up")
+	local key = self._shared_state:get_key("ground_coins_picked_up")
 
-	return self._shared_state:get_server(get_key)
+	return self._shared_state:get_server(key)
 end
 
-DeusRunState.set_ground_coins_picked_up = function (self, arg_55_1)
+DeusRunState.set_ground_coins_picked_up = function (self, coin_count)
 	-- function 55
-	local get_key = self._shared_state:get_key("ground_coins_picked_up")
+	local key = self._shared_state:get_key("ground_coins_picked_up")
 
-	self._shared_state:set_server(get_key, arg_55_1)
+	self._shared_state:set_server(key, coin_count)
 end
 
 DeusRunState.get_monster_coins_picked_up = function (self)
 	-- function 56
-	local get_key = self._shared_state:get_key("monster_coins_picked_up")
+	local key = self._shared_state:get_key("monster_coins_picked_up")
 
-	return self._shared_state:get_server(get_key)
+	return self._shared_state:get_server(key)
 end
 
-DeusRunState.set_monster_coins_picked_up = function (self, arg_57_1)
+DeusRunState.set_monster_coins_picked_up = function (self, coin_count)
 	-- function 57
-	local get_key = self._shared_state:get_key("monster_coins_picked_up")
+	local key = self._shared_state:get_key("monster_coins_picked_up")
 
-	self._shared_state:set_server(get_key, arg_57_1)
+	self._shared_state:set_server(key, coin_count)
 end
 
 DeusRunState.get_coins_spent = function (self)
 	-- function 58
-	local get_key = self._shared_state:get_key("coins_spent")
+	local key = self._shared_state:get_key("coins_spent")
 
-	return self._shared_state:get_server(get_key)
+	return self._shared_state:get_server(key)
 end
 
-DeusRunState.set_coins_spent = function (self, arg_59_1)
+DeusRunState.set_coins_spent = function (self, coin_count)
 	-- function 59
-	local get_key = self._shared_state:get_key("coins_spent")
+	local key = self._shared_state:get_key("coins_spent")
 
-	self._shared_state:set_server(get_key, arg_59_1)
+	self._shared_state:set_server(key, coin_count)
 end
 
 DeusRunState.get_coins_earned = function (self)
 	-- function 60
-	local get_key = self._shared_state:get_key("coins_earned")
+	local key = self._shared_state:get_key("coins_earned")
 
-	return self._shared_state:get_server(get_key)
+	return self._shared_state:get_server(key)
 end
 
-DeusRunState.set_coins_earned = function (self, arg_61_1)
+DeusRunState.set_coins_earned = function (self, coin_count)
 	-- function 61
-	local get_key = self._shared_state:get_key("coins_earned")
+	local key = self._shared_state:get_key("coins_earned")
 
-	self._shared_state:set_server(get_key, arg_61_1)
+	self._shared_state:set_server(key, coin_count)
 end
 
 DeusRunState.get_melee_swap_chests_used = function (self)
 	-- function 62
-	local get_key = self._shared_state:get_key("melee_swap_chests_used")
+	local key = self._shared_state:get_key("melee_swap_chests_used")
 
-	return self._shared_state:get_server(get_key)
+	return self._shared_state:get_server(key)
 end
 
-DeusRunState.set_melee_swap_chests_used = function (self, arg_63_1)
+DeusRunState.set_melee_swap_chests_used = function (self, value)
 	-- function 63
-	local get_key = self._shared_state:get_key("melee_swap_chests_used")
+	local key = self._shared_state:get_key("melee_swap_chests_used")
 
-	self._shared_state:set_server(get_key, arg_63_1)
+	self._shared_state:set_server(key, value)
 end
 
 DeusRunState.get_ranged_swap_chests_used = function (self)
 	-- function 64
-	local get_key = self._shared_state:get_key("ranged_swap_chests_used")
+	local key = self._shared_state:get_key("ranged_swap_chests_used")
 
-	return self._shared_state:get_server(get_key)
+	return self._shared_state:get_server(key)
 end
 
-DeusRunState.set_ranged_swap_chests_used = function (self, arg_65_1)
+DeusRunState.set_ranged_swap_chests_used = function (self, value)
 	-- function 65
-	local get_key = self._shared_state:get_key("ranged_swap_chests_used")
+	local key = self._shared_state:get_key("ranged_swap_chests_used")
 
-	self._shared_state:set_server(get_key, arg_65_1)
+	self._shared_state:set_server(key, value)
 end
 
 DeusRunState.get_upgrade_chests_used = function (self)
 	-- function 66
-	local get_key = self._shared_state:get_key("upgrade_chests_used")
+	local key = self._shared_state:get_key("upgrade_chests_used")
 
-	return self._shared_state:get_server(get_key)
+	return self._shared_state:get_server(key)
 end
 
-DeusRunState.set_upgrade_chests_used = function (self, arg_67_1)
+DeusRunState.set_upgrade_chests_used = function (self, value)
 	-- function 67
-	local get_key = self._shared_state:get_key("upgrade_chests_used")
+	local key = self._shared_state:get_key("upgrade_chests_used")
 
-	self._shared_state:set_server(get_key, arg_67_1)
+	self._shared_state:set_server(key, value)
 end
 
 DeusRunState.get_power_up_chests_used = function (self)
 	-- function 68
-	local get_key = self._shared_state:get_key("power_up_chests_used")
+	local key = self._shared_state:get_key("power_up_chests_used")
 
-	return self._shared_state:get_server(get_key)
+	return self._shared_state:get_server(key)
 end
 
-DeusRunState.set_power_up_chests_used = function (self, arg_69_1)
+DeusRunState.set_power_up_chests_used = function (self, value)
 	-- function 69
-	local get_key = self._shared_state:get_key("power_up_chests_used")
+	local key = self._shared_state:get_key("power_up_chests_used")
 
-	self._shared_state:set_server(get_key, arg_69_1)
+	self._shared_state:set_server(key, value)
 end
 
 DeusRunState.get_host_migration_count = function (self)
 	-- function 70
-	local get_key = self._shared_state:get_key("host_migration_count")
+	local key = self._shared_state:get_key("host_migration_count")
 
-	return self._shared_state:get_server(get_key)
+	return self._shared_state:get_server(key)
 end
 
-DeusRunState.set_host_migration_count = function (self, arg_71_1)
+DeusRunState.set_host_migration_count = function (self, value)
 	-- function 71
-	local get_key = self._shared_state:get_key("host_migration_count")
+	local key = self._shared_state:get_key("host_migration_count")
 
-	self._shared_state:set_server(get_key, arg_71_1)
+	self._shared_state:set_server(key, value)
 end
 
 DeusRunState.get_belakor_enabled = function (self)
@@ -483,67 +484,68 @@ DeusRunState.get_belakor_enabled = function (self)
 	return self._belakor_enabled
 end
 
-DeusRunState.set_belakor_enabled = function (self, arg_73_1)
+DeusRunState.set_belakor_enabled = function (self, belakor_enabled)
 	-- function 73
-	self._belakor_enabled = arg_73_1
+	self._belakor_enabled = belakor_enabled
 end
 
 DeusRunState.get_arena_belakor_node = function (self)
 	-- function 74
-	local get_key = self._shared_state:get_key("arena_belakor_node")
-	local get_server = self._shared_state:get_server(get_key)
+	local key = self._shared_state:get_key("arena_belakor_node")
+	local value = self._shared_state:get_server(key)
 
-	return get_server == "" or not get_server or nil
+	return (value == "" or not value) and not not nil
 end
 
-DeusRunState.set_arena_belakor_node = function (self, arg_75_1)
+DeusRunState.set_arena_belakor_node = function (self, value)
 	-- function 75
-	local get_key = self._shared_state:get_key("arena_belakor_node")
+	local key = self._shared_state:get_key("arena_belakor_node")
 
-	self._shared_state:set_server(get_key, arg_75_1)
+	self._shared_state:set_server(key, value)
 end
 
-DeusRunState.get_seen_arena_belakor_node = function (self, arg_76_1)
+DeusRunState.get_seen_arena_belakor_node = function (self, peer_id)
 	-- function 76
-	local get_key = self._shared_state:get_key("seen_arena_belakor_node", arg_76_1)
-	local get_server = self._shared_state:get_server(get_key)
+	local key = self._shared_state:get_key("seen_arena_belakor_node", peer_id)
+	local value = self._shared_state:get_server(key)
 
-	return get_server == "" or not get_server or nil
+	return (value == "" or not value) and not not nil
 end
 
-DeusRunState.set_seen_arena_belakor_node = function (self, arg_77_1, arg_77_2)
+DeusRunState.set_seen_arena_belakor_node = function (self, peer_id, value)
 	-- function 77
-	local get_key = self._shared_state:get_key("seen_arena_belakor_node", arg_77_1)
+	local key = self._shared_state:get_key("seen_arena_belakor_node", peer_id)
 
-	self._shared_state:set_server(get_key, arg_77_2)
+	self._shared_state:set_server(key, value)
 end
 
-DeusRunState.set_event_mutators = function (self, arg_78_1)
+DeusRunState.set_event_mutators = function (self, mutators)
 	-- function 78
-	self._event_mutators = arg_78_1
+	self._event_mutators = mutators
 
-	for i, v in ipairs(arg_78_1) do
-		local packages = MutatorTemplates[v].packages
+	for _, mutator_name in ipairs(mutators) do
+		local mutator = MutatorTemplates[mutator_name]
+		local packages = mutator.packages
 
-		if not packages then
+		if packages then
 			table.append(self._event_mutator_packages, packages)
 		end
 	end
 
-	for i_2, v_2 in ipairs(self._event_mutator_packages) do
-		Managers.package:load(v_2, "deus_run_state_mutator_package", nil, true)
+	for _, package_name in ipairs(self._event_mutator_packages) do
+		Managers.package:load(package_name, "deus_run_state_mutator_package", nil, true)
 	end
 end
 
-DeusRunState.get_event_mutators = function (self, arg_79_1)
+DeusRunState.get_event_mutators = function (self, mutators)
 	-- function 79
 	return self._event_mutators
 end
 
 DeusRunState.is_weekly_event_packages_loaded = function (self)
 	-- function 80
-	for i, v in ipairs(self._event_mutator_packages) do
-		if not Managers.package:has_loaded(v, "deus_run_state_mutator_package") then
+	for _, package_name in ipairs(self._event_mutator_packages) do
+		if not Managers.package:has_loaded(package_name, "deus_run_state_mutator_package") then
 			return false
 		end
 	end
@@ -551,317 +553,318 @@ DeusRunState.is_weekly_event_packages_loaded = function (self)
 	return true
 end
 
-DeusRunState.set_event_boons = function (self, arg_81_1)
+DeusRunState.set_event_boons = function (self, boons)
 	-- function 81
-	local tbl = {}
+	local event_boons = {}
 
-	for i = 1, #arg_81_1 do
-		local var_81_1 = arg_81_1[i]
-		local rarity = DeusPowerUpsLookup[var_81_1].rarity
+	for i = 1, #boons do
+		local boon_name = boons[i]
+		local boon = DeusPowerUpsLookup[boon_name]
+		local rarity = boon.rarity
 
-		tbl[#tbl + 1] = DeusPowerUpUtils.generate_specific_power_up(var_81_1, rarity)
+		event_boons[#event_boons + 1] = DeusPowerUpUtils.generate_specific_power_up(boon_name, rarity)
 	end
 
-	self._event_boons = tbl
+	self._event_boons = event_boons
 end
 
-DeusRunState.get_event_boons = function (self, arg_82_1)
+DeusRunState.get_event_boons = function (self, boons)
 	-- function 82
 	return self._event_boons
 end
 
-DeusRunState.get_granted_non_party_end_of_level_power_ups = function (self, arg_83_1, arg_83_2, arg_83_3, arg_83_4)
+DeusRunState.get_granted_non_party_end_of_level_power_ups = function (self, peer_id, local_player_id, profile_index, career_index)
 	-- function 83
-	return self._shared_state:get_server(self._shared_state:get_key("granted_non_party_end_of_level_power_ups", arg_83_1, arg_83_2, arg_83_3, arg_83_4))
+	return self._shared_state:get_server(self._shared_state:get_key("granted_non_party_end_of_level_power_ups", peer_id, local_player_id, profile_index, career_index))
 end
 
-DeusRunState.set_granted_non_party_end_of_level_power_ups = function (self, arg_84_1, arg_84_2, arg_84_3, arg_84_4, arg_84_5)
+DeusRunState.set_granted_non_party_end_of_level_power_ups = function (self, peer_id, local_player_id, profile_index, career_index, granted_non_party_end_of_level_power_ups_array)
 	-- function 84
-	self._shared_state:set_server(self._shared_state:get_key("granted_non_party_end_of_level_power_ups", arg_84_1, arg_84_2, arg_84_3, arg_84_4), arg_84_5)
+	self._shared_state:set_server(self._shared_state:get_key("granted_non_party_end_of_level_power_ups", peer_id, local_player_id, profile_index, career_index), granted_non_party_end_of_level_power_ups_array)
 end
 
-DeusRunState.get_player_profile = function (self, arg_85_1, arg_85_2)
+DeusRunState.get_player_profile = function (self, peer_id, local_player_id)
 	-- function 85
-	local profile_by_peer, var_85_1 = self._network_handler.profile_synchronizer:profile_by_peer(arg_85_1, arg_85_2)
+	local profile_index, career_index = self._network_handler.profile_synchronizer:profile_by_peer(peer_id, local_player_id)
 
-	return profile_by_peer or 0, var_85_1 or 0
+	return not not profile_index or not not 0, not not career_index or not not 0
 end
 
-DeusRunState.get_player_level = function (self, arg_86_1)
+DeusRunState.get_player_level = function (self, peer_id)
 	-- function 86
-	return self._shared_state:get_peer(arg_86_1, self._shared_state:get_key("player_level"))
+	return self._shared_state:get_peer(peer_id, self._shared_state:get_key("player_level"))
 end
 
-DeusRunState.set_own_player_level = function (self, arg_87_1)
+DeusRunState.set_own_player_level = function (self, level)
 	-- function 87
-	self._shared_state:set_own(self._shared_state:get_key("player_level"), arg_87_1)
+	self._shared_state:set_own(self._shared_state:get_key("player_level"), level)
 end
 
-DeusRunState.get_versus_player_level = function (self, arg_88_1)
+DeusRunState.get_versus_player_level = function (self, peer_id)
 	-- function 88
-	return self._shared_state:get_peer(arg_88_1, self._shared_state:get_key("versus_player_level"))
+	return self._shared_state:get_peer(peer_id, self._shared_state:get_key("versus_player_level"))
 end
 
-DeusRunState.set_own_versus_player_level = function (self, arg_89_1)
+DeusRunState.set_own_versus_player_level = function (self, versus_level)
 	-- function 89
-	self._shared_state:set_own(self._shared_state:get_key("versus_player_level"), arg_89_1)
+	self._shared_state:set_own(self._shared_state:get_key("versus_player_level"), versus_level)
 end
 
-DeusRunState.get_player_name = function (self, arg_90_1)
+DeusRunState.get_player_name = function (self, peer_id)
 	-- function 90
-	return self._shared_state:get_peer(arg_90_1, self._shared_state:get_key("player_name"))
+	return self._shared_state:get_peer(peer_id, self._shared_state:get_key("player_name"))
 end
 
-DeusRunState.set_own_player_name = function (self, arg_91_1)
+DeusRunState.set_own_player_name = function (self, name)
 	-- function 91
-	self._shared_state:set_own(self._shared_state:get_key("player_name"), arg_91_1)
+	self._shared_state:set_own(self._shared_state:get_key("player_name"), name)
 end
 
-DeusRunState.get_player_frame = function (self, arg_92_1)
+DeusRunState.get_player_frame = function (self, peer_id)
 	-- function 92
-	return self._shared_state:get_peer(arg_92_1, self._shared_state:get_key("player_frame"))
+	return self._shared_state:get_peer(peer_id, self._shared_state:get_key("player_frame"))
 end
 
-DeusRunState.set_own_player_frame = function (self, arg_93_1)
+DeusRunState.set_own_player_frame = function (self, frame)
 	-- function 93
-	self._shared_state:set_own(self._shared_state:get_key("player_frame"), arg_93_1)
+	self._shared_state:set_own(self._shared_state:get_key("player_frame"), frame)
 end
 
-DeusRunState.get_player_spawned_once = function (self, arg_94_1, arg_94_2, arg_94_3, arg_94_4)
+DeusRunState.get_player_spawned_once = function (self, peer_id, local_player_id, profile_index, career_index)
 	-- function 94
-	local get_key = self._shared_state:get_key("spawned_once", arg_94_1, arg_94_2, arg_94_3, arg_94_4)
-	local get_server = self._shared_state:get_server(get_key)
+	local key = self._shared_state:get_key("spawned_once", peer_id, local_player_id, profile_index, career_index)
+	local get_server = self._shared_state:get_server(key)
 
-	get_server = get_server or false
+	get_server = not not get_server or not not false
 
 	return get_server
 end
 
-DeusRunState.set_player_spawned_once = function (self, arg_95_1, arg_95_2, arg_95_3, arg_95_4, arg_95_5)
+DeusRunState.set_player_spawned_once = function (self, peer_id, local_player_id, profile_index, career_index, player_spawned_once)
 	-- function 95
-	local get_key = self._shared_state:get_key("spawned_once", arg_95_1, arg_95_2, arg_95_3, arg_95_4)
+	local key = self._shared_state:get_key("spawned_once", peer_id, local_player_id, profile_index, career_index)
 
-	self._shared_state:set_server(get_key, arg_95_5)
+	self._shared_state:set_server(key, player_spawned_once)
 end
 
-DeusRunState.get_player_power_ups = function (self, arg_96_1, arg_96_2, arg_96_3, arg_96_4)
+DeusRunState.get_player_power_ups = function (self, peer_id, local_player_id, profile_index, career_index)
 	-- function 96
-	local get_key = self._shared_state:get_key("power_ups", arg_96_1, arg_96_2, arg_96_3, arg_96_4)
+	local key = self._shared_state:get_key("power_ups", peer_id, local_player_id, profile_index, career_index)
 
-	return self._shared_state:get_server(get_key)
+	return self._shared_state:get_server(key)
 end
 
-DeusRunState.set_player_power_ups = function (self, arg_97_1, arg_97_2, arg_97_3, arg_97_4, arg_97_5)
+DeusRunState.set_player_power_ups = function (self, peer_id, local_player_id, profile_index, career_index, power_ups)
 	-- function 97
-	local get_key = self._shared_state:get_key("power_ups", arg_97_1, arg_97_2, arg_97_3, arg_97_4)
+	local key = self._shared_state:get_key("power_ups", peer_id, local_player_id, profile_index, career_index)
 
-	self._shared_state:set_server(get_key, arg_97_5)
+	self._shared_state:set_server(key, power_ups)
 end
 
-DeusRunState.get_player_persistent_buffs = function (self, arg_98_1, arg_98_2, arg_98_3, arg_98_4)
+DeusRunState.get_player_persistent_buffs = function (self, peer_id, local_player_id, profile_index, career_index)
 	-- function 98
-	local get_key = self._shared_state:get_key("persistent_buffs", arg_98_1, arg_98_2, arg_98_3, arg_98_4)
+	local key = self._shared_state:get_key("persistent_buffs", peer_id, local_player_id, profile_index, career_index)
 
-	return self._shared_state:get_server(get_key)
+	return self._shared_state:get_server(key)
 end
 
-DeusRunState.set_player_persistent_buffs = function (self, arg_99_1, arg_99_2, arg_99_3, arg_99_4, arg_99_5)
+DeusRunState.set_player_persistent_buffs = function (self, peer_id, local_player_id, profile_index, career_index, persistent_buffs)
 	-- function 99
-	local get_key = self._shared_state:get_key("persistent_buffs", arg_99_1, arg_99_2, arg_99_3, arg_99_4)
+	local key = self._shared_state:get_key("persistent_buffs", peer_id, local_player_id, profile_index, career_index)
 
-	self._shared_state:set_server(get_key, arg_99_5)
+	self._shared_state:set_server(key, persistent_buffs)
 end
 
-DeusRunState.get_player_soft_currency = function (self, arg_100_1, arg_100_2)
+DeusRunState.get_player_soft_currency = function (self, peer_id, local_player_id)
 	-- function 100
-	local get_key = self._shared_state:get_key("soft_currency", arg_100_1, arg_100_2)
+	local key = self._shared_state:get_key("soft_currency", peer_id, local_player_id)
 
-	return self._shared_state:get_server(get_key)
+	return self._shared_state:get_server(key)
 end
 
-DeusRunState.set_player_soft_currency = function (self, arg_101_1, arg_101_2, arg_101_3)
+DeusRunState.set_player_soft_currency = function (self, peer_id, local_player_id, coins)
 	-- function 101
-	local get_key = self._shared_state:get_key("soft_currency", arg_101_1, arg_101_2)
+	local key = self._shared_state:get_key("soft_currency", peer_id, local_player_id)
 
-	self._shared_state:set_server(get_key, arg_101_3)
+	self._shared_state:set_server(key, coins)
 end
 
-DeusRunState.get_player_health_percentage = function (self, arg_102_1, arg_102_2, arg_102_3, arg_102_4)
+DeusRunState.get_player_health_percentage = function (self, peer_id, local_player_id, profile_index, career_index)
 	-- function 102
-	local get_key = self._shared_state:get_key("health_percentage", arg_102_1, arg_102_2, arg_102_3, arg_102_4)
+	local key = self._shared_state:get_key("health_percentage", peer_id, local_player_id, profile_index, career_index)
 
-	return self._shared_state:get_server(get_key)
+	return self._shared_state:get_server(key)
 end
 
-DeusRunState.set_player_health_percentage = function (self, arg_103_1, arg_103_2, arg_103_3, arg_103_4, arg_103_5)
+DeusRunState.set_player_health_percentage = function (self, peer_id, local_player_id, profile_index, career_index, health_percentage)
 	-- function 103
-	local get_key = self._shared_state:get_key("health_percentage", arg_103_1, arg_103_2, arg_103_3, arg_103_4)
+	local key = self._shared_state:get_key("health_percentage", peer_id, local_player_id, profile_index, career_index)
 
-	self._shared_state:set_server(get_key, arg_103_5)
+	self._shared_state:set_server(key, health_percentage)
 end
 
-DeusRunState.get_player_health_state = function (self, arg_104_1, arg_104_2, arg_104_3, arg_104_4)
+DeusRunState.get_player_health_state = function (self, peer_id, local_player_id, profile_index, career_index)
 	-- function 104
-	local get_key = self._shared_state:get_key("health_state", arg_104_1, arg_104_2, arg_104_3, arg_104_4)
+	local key = self._shared_state:get_key("health_state", peer_id, local_player_id, profile_index, career_index)
 
-	return self._shared_state:get_server(get_key)
+	return self._shared_state:get_server(key)
 end
 
-DeusRunState.set_player_health_state = function (self, arg_105_1, arg_105_2, arg_105_3, arg_105_4, arg_105_5)
+DeusRunState.set_player_health_state = function (self, peer_id, local_player_id, profile_index, career_index, health_state)
 	-- function 105
-	local get_key = self._shared_state:get_key("health_state", arg_105_1, arg_105_2, arg_105_3, arg_105_4)
+	local key = self._shared_state:get_key("health_state", peer_id, local_player_id, profile_index, career_index)
 
-	self._shared_state:set_server(get_key, arg_105_5)
+	self._shared_state:set_server(key, health_state)
 end
 
-DeusRunState.get_player_melee_ammo = function (self, arg_106_1, arg_106_2, arg_106_3, arg_106_4)
+DeusRunState.get_player_melee_ammo = function (self, peer_id, local_player_id, profile_index, career_index)
 	-- function 106
-	local get_key = self._shared_state:get_key("melee_ammo", arg_106_1, arg_106_2, arg_106_3, arg_106_4)
+	local key = self._shared_state:get_key("melee_ammo", peer_id, local_player_id, profile_index, career_index)
 
-	return self._shared_state:get_server(get_key)
+	return self._shared_state:get_server(key)
 end
 
-DeusRunState.set_player_melee_ammo = function (self, arg_107_1, arg_107_2, arg_107_3, arg_107_4, arg_107_5)
+DeusRunState.set_player_melee_ammo = function (self, peer_id, local_player_id, profile_index, career_index, melee_ammo)
 	-- function 107
-	local get_key = self._shared_state:get_key("melee_ammo", arg_107_1, arg_107_2, arg_107_3, arg_107_4)
+	local key = self._shared_state:get_key("melee_ammo", peer_id, local_player_id, profile_index, career_index)
 
-	self._shared_state:set_server(get_key, arg_107_5)
+	self._shared_state:set_server(key, melee_ammo)
 end
 
-DeusRunState.get_player_ranged_ammo = function (self, arg_108_1, arg_108_2, arg_108_3, arg_108_4)
+DeusRunState.get_player_ranged_ammo = function (self, peer_id, local_player_id, profile_index, career_index)
 	-- function 108
-	local get_key = self._shared_state:get_key("ranged_ammo", arg_108_1, arg_108_2, arg_108_3, arg_108_4)
+	local key = self._shared_state:get_key("ranged_ammo", peer_id, local_player_id, profile_index, career_index)
 
-	return self._shared_state:get_server(get_key)
+	return self._shared_state:get_server(key)
 end
 
-DeusRunState.set_player_ranged_ammo = function (self, arg_109_1, arg_109_2, arg_109_3, arg_109_4, arg_109_5)
+DeusRunState.set_player_ranged_ammo = function (self, peer_id, local_player_id, profile_index, career_index, ranged_ammo)
 	-- function 109
-	local get_key = self._shared_state:get_key("ranged_ammo", arg_109_1, arg_109_2, arg_109_3, arg_109_4)
+	local key = self._shared_state:get_key("ranged_ammo", peer_id, local_player_id, profile_index, career_index)
 
-	self._shared_state:set_server(get_key, arg_109_5)
+	self._shared_state:set_server(key, ranged_ammo)
 end
 
-DeusRunState.get_player_consumable_healthkit_slot = function (self, arg_110_1, arg_110_2, arg_110_3, arg_110_4)
+DeusRunState.get_player_consumable_healthkit_slot = function (self, peer_id, local_player_id, profile_index, career_index)
 	-- function 110
-	local get_key = self._shared_state:get_key("healthkit", arg_110_1, arg_110_2, arg_110_3, arg_110_4)
-	local get_server = self._shared_state:get_server(get_key)
+	local key = self._shared_state:get_key("healthkit", peer_id, local_player_id, profile_index, career_index)
+	local val = self._shared_state:get_server(key)
 
-	return get_server == "" or not get_server or nil
+	return (val == "" or not val) and not not nil
 end
 
-DeusRunState.set_player_consumable_healthkit_slot = function (self, arg_111_1, arg_111_2, arg_111_3, arg_111_4, arg_111_5)
+DeusRunState.set_player_consumable_healthkit_slot = function (self, peer_id, local_player_id, profile_index, career_index, item_name)
 	-- function 111
-	local get_key = self._shared_state:get_key("healthkit", arg_111_1, arg_111_2, arg_111_3, arg_111_4)
-	local flag = arg_111_5 or ""
+	local key = self._shared_state:get_key("healthkit", peer_id, local_player_id, profile_index, career_index)
+	local val = not not item_name or not not ""
 
-	self._shared_state:set_server(get_key, flag)
+	self._shared_state:set_server(key, val)
 end
 
-DeusRunState.get_player_consumable_potion_slot = function (self, arg_112_1, arg_112_2, arg_112_3, arg_112_4)
+DeusRunState.get_player_consumable_potion_slot = function (self, peer_id, local_player_id, profile_index, career_index)
 	-- function 112
-	local get_key = self._shared_state:get_key("potion", arg_112_1, arg_112_2, arg_112_3, arg_112_4)
-	local get_server = self._shared_state:get_server(get_key)
+	local key = self._shared_state:get_key("potion", peer_id, local_player_id, profile_index, career_index)
+	local val = self._shared_state:get_server(key)
 
-	return get_server == "" or not get_server or nil
+	return (val == "" or not val) and not not nil
 end
 
-DeusRunState.set_player_consumable_potion_slot = function (self, arg_113_1, arg_113_2, arg_113_3, arg_113_4, arg_113_5)
+DeusRunState.set_player_consumable_potion_slot = function (self, peer_id, local_player_id, profile_index, career_index, item_name)
 	-- function 113
-	local get_key = self._shared_state:get_key("potion", arg_113_1, arg_113_2, arg_113_3, arg_113_4)
-	local flag = arg_113_5 or ""
+	local key = self._shared_state:get_key("potion", peer_id, local_player_id, profile_index, career_index)
+	local val = not not item_name or not not ""
 
-	self._shared_state:set_server(get_key, flag)
+	self._shared_state:set_server(key, val)
 end
 
-DeusRunState.get_player_consumable_grenade_slot = function (self, arg_114_1, arg_114_2, arg_114_3, arg_114_4)
+DeusRunState.get_player_consumable_grenade_slot = function (self, peer_id, local_player_id, profile_index, career_index)
 	-- function 114
-	local get_key = self._shared_state:get_key("grenade", arg_114_1, arg_114_2, arg_114_3, arg_114_4)
-	local get_server = self._shared_state:get_server(get_key)
+	local key = self._shared_state:get_key("grenade", peer_id, local_player_id, profile_index, career_index)
+	local val = self._shared_state:get_server(key)
 
-	return get_server == "" or not get_server or nil
+	return (val == "" or not val) and not not nil
 end
 
-DeusRunState.set_player_consumable_grenade_slot = function (self, arg_115_1, arg_115_2, arg_115_3, arg_115_4, arg_115_5)
+DeusRunState.set_player_consumable_grenade_slot = function (self, peer_id, local_player_id, profile_index, career_index, item_name)
 	-- function 115
-	local get_key = self._shared_state:get_key("grenade", arg_115_1, arg_115_2, arg_115_3, arg_115_4)
-	local flag = arg_115_5 or ""
+	local key = self._shared_state:get_key("grenade", peer_id, local_player_id, profile_index, career_index)
+	local val = not not item_name or not not ""
 
-	self._shared_state:set_server(get_key, flag)
+	self._shared_state:set_server(key, val)
 end
 
-DeusRunState.get_player_additional_items = function (self, arg_116_1, arg_116_2, arg_116_3, arg_116_4)
+DeusRunState.get_player_additional_items = function (self, peer_id, local_player_id, profile_index, career_index)
 	-- function 116
-	local get_key = self._shared_state:get_key("additional_items", arg_116_1, arg_116_2, arg_116_3, arg_116_4)
+	local key = self._shared_state:get_key("additional_items", peer_id, local_player_id, profile_index, career_index)
 
-	return self._shared_state:get_server(get_key)
+	return self._shared_state:get_server(key)
 end
 
-DeusRunState.set_player_additional_items = function (self, arg_117_1, arg_117_2, arg_117_3, arg_117_4, arg_117_5)
+DeusRunState.set_player_additional_items = function (self, peer_id, local_player_id, profile_index, career_index, additional_items)
 	-- function 117
-	local get_key = self._shared_state:get_key("additional_items", arg_117_1, arg_117_2, arg_117_3, arg_117_4)
+	local key = self._shared_state:get_key("additional_items", peer_id, local_player_id, profile_index, career_index)
 
-	self._shared_state:set_server(get_key, arg_117_5)
+	self._shared_state:set_server(key, additional_items)
 end
 
-DeusRunState.get_player_loadout = function (self, arg_118_1, arg_118_2, arg_118_3, arg_118_4, arg_118_5)
+DeusRunState.get_player_loadout = function (self, peer_id, local_player_id, profile_index, career_index, slot)
 	-- function 118
-	local get_key = self._shared_state:get_key(arg_118_5, arg_118_1, arg_118_2, arg_118_3, arg_118_4)
-	local get_server = self._shared_state:get_server(get_key)
+	local key = self._shared_state:get_key(slot, peer_id, local_player_id, profile_index, career_index)
+	local val = self._shared_state:get_server(key)
 
-	return get_server == "" or not get_server or nil
+	return (val == "" or not val) and not not nil
 end
 
-DeusRunState.set_player_loadout = function (self, arg_119_1, arg_119_2, arg_119_3, arg_119_4, arg_119_5, arg_119_6)
+DeusRunState.set_player_loadout = function (self, peer_id, local_player_id, profile_index, career_index, slot, serialized_deus_weapon)
 	-- function 119
-	local get_key = self._shared_state:get_key(arg_119_5, arg_119_1, arg_119_2, arg_119_3, arg_119_4)
+	local key = self._shared_state:get_key(slot, peer_id, local_player_id, profile_index, career_index)
 
-	self._shared_state:set_server(get_key, arg_119_6 or "")
+	self._shared_state:set_server(key, not not serialized_deus_weapon or not not "")
 end
 
-DeusRunState.set_twitch_level_vote = function (self, arg_120_1)
+DeusRunState.set_twitch_level_vote = function (self, node_key)
 	-- function 120
-	self._shared_state:set_server(self._shared_state:get_key("twitch_vote"), arg_120_1 or "")
+	self._shared_state:set_server(self._shared_state:get_key("twitch_vote"), not not node_key or not not "")
 end
 
 DeusRunState.get_twitch_level_vote = function (self)
 	-- function 121
-	local get_server = self._shared_state:get_server(self._shared_state:get_key("twitch_vote"))
+	local twitch_vote = self._shared_state:get_server(self._shared_state:get_key("twitch_vote"))
 
-	if get_server == "" then
+	if twitch_vote == "" then
 		return nil
 	else
-		return get_server
+		return twitch_vote
 	end
 end
 
-DeusRunState.set_scoreboard = function (self, arg_122_1)
+DeusRunState.set_scoreboard = function (self, scoreboard)
 	-- function 122
-	self._scoreboard = arg_122_1
+	self._scoreboard = scoreboard
 end
 
-DeusRunState.get_scoreboard = function (self, arg_123_1)
+DeusRunState.get_scoreboard = function (self, scoreboard)
 	-- function 123
 	return self._scoreboard
 end
 
-DeusRunState.set_persisted_score = function (self, arg_124_1, arg_124_2, arg_124_3)
+DeusRunState.set_persisted_score = function (self, peer_id, local_player_id, persisted_score)
 	-- function 124
-	local get_key = self._shared_state:get_key("persisted_score", arg_124_1, arg_124_2)
+	local key = self._shared_state:get_key("persisted_score", peer_id, local_player_id)
 
-	self._shared_state:set_server(get_key, arg_124_3)
+	self._shared_state:set_server(key, persisted_score)
 end
 
-DeusRunState.get_persisted_score = function (self, arg_125_1, arg_125_2, arg_125_3)
+DeusRunState.get_persisted_score = function (self, peer_id, local_player_id, persisted_score)
 	-- function 125
-	local get_key = self._shared_state:get_key("persisted_score", arg_125_1, arg_125_2)
+	local key = self._shared_state:get_key("persisted_score", peer_id, local_player_id)
 
-	return self._shared_state:get_server(get_key)
+	return self._shared_state:get_server(key)
 end
 
-DeusRunState.set_own_weapon_pool_data = function (self, arg_126_1)
+DeusRunState.set_own_weapon_pool_data = function (self, weapon_pool_data)
 	-- function 126
-	self._weapon_pool_data = arg_126_1
+	self._weapon_pool_data = weapon_pool_data
 end
 
 DeusRunState.get_own_weapon_pool_data = function (self)
@@ -869,30 +872,30 @@ DeusRunState.get_own_weapon_pool_data = function (self)
 	return self._weapon_pool_data
 end
 
-DeusRunState.set_own_weapon_pool_excludes = function (self, arg_128_1)
+DeusRunState.set_own_weapon_pool_excludes = function (self, pool_excludes)
 	-- function 128
-	self._weapon_pool_excludes = arg_128_1
+	self._weapon_pool_excludes = pool_excludes
 end
 
 DeusRunState.get_own_weapon_pool_excludes = function (self)
 	-- function 129
 	local _weapon_pool_excludes = self._weapon_pool_excludes
 
-	_weapon_pool_excludes = _weapon_pool_excludes or {}
+	_weapon_pool_excludes = not not _weapon_pool_excludes or not not {}
 
 	return _weapon_pool_excludes
 end
 
-DeusRunState.get_player_telemetry_id = function (self, arg_130_1)
+DeusRunState.get_player_telemetry_id = function (self, peer_id)
 	-- function 130
-	local get_key = self._shared_state:get_key("telemetry_id")
+	local key = self._shared_state:get_key("telemetry_id")
 
-	return self._shared_state:get_peer(arg_130_1, get_key)
+	return self._shared_state:get_peer(peer_id, key)
 end
 
-DeusRunState.set_own_player_telemetry_id = function (self, arg_131_1)
+DeusRunState.set_own_player_telemetry_id = function (self, telemetry_id)
 	-- function 131
-	local get_key = self._shared_state:get_key("telemetry_id")
+	local key = self._shared_state:get_key("telemetry_id")
 
-	self._shared_state:set_own(get_key, arg_131_1)
+	self._shared_state:set_own(key, telemetry_id)
 end

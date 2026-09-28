@@ -1,17 +1,17 @@
 -- chunkname: @scripts/ui/views/friends_ui_component.lua
 
-local var_0_0 = local_require("scripts/ui/views/friends_ui_component_definitions")
-local flag = true
+local definitions = local_require("scripts/ui/views/friends_ui_component_definitions")
+local DO_RELOAD = true
 
 FriendsUIComponent = class(FriendsUIComponent)
 
-FriendsUIComponent.init = function (self, arg_1_1)
+FriendsUIComponent.init = function (self, ingame_ui_context)
 	-- function 1
-	self._ui_top_renderer = arg_1_1.ui_top_renderer
+	self._ui_top_renderer = ingame_ui_context.ui_top_renderer
 	self._render_settings = {
 		snap_pixel_positions = true
 	}
-	self._network_lobby = arg_1_1.network_lobby
+	self._network_lobby = ingame_ui_context.network_lobby
 	self._invite_cooldown = {}
 
 	self:_create_ui_elements()
@@ -19,24 +19,24 @@ end
 
 FriendsUIComponent._create_ui_elements = function (self)
 	-- function 2
-	self._ui_scenegraph = UISceneGraph.init_scenegraph(var_0_0.scenegraph_definition)
+	self._ui_scenegraph = UISceneGraph.init_scenegraph(definitions.scenegraph_definition)
 
-	local widget_definitions = var_0_0.widget_definitions
-	local tbl = {}
-	local tbl_2 = {}
+	local widget_definitions = definitions.widget_definitions
+	local widgets = {}
+	local widgets_by_name = {}
 
-	for k, v in pairs(widget_definitions) do
-		if k ~= "friends_button" then
-			local var_2_3 = UIWidget.init(v)
+	for name, widget_definition in pairs(widget_definitions) do
+		if name ~= "friends_button" then
+			local widget = UIWidget.init(widget_definition)
 
-			tbl[#tbl + 1] = var_2_3
-			tbl_2[k] = var_2_3
+			widgets[#widgets + 1] = widget
+			widgets_by_name[name] = widget
 		end
 	end
 
-	self._widgets = tbl
-	self._widgets_by_name = tbl_2
-	self._friends_button_widget = UIWidget.init(var_0_0.widget_definitions.friends_button)
+	self._widgets = widgets
+	self._widgets_by_name = widgets_by_name
+	self._friends_button_widget = UIWidget.init(definitions.widget_definitions.friends_button)
 end
 
 FriendsUIComponent.is_active = function (self)
@@ -46,7 +46,7 @@ end
 
 FriendsUIComponent.activate_friends_ui = function (self)
 	-- function 4
-	if not (not IS_XB1 and Managers.account:friends_list_initiated()) then
+	if IS_XB1 and not Managers.account:friends_list_initiated() then
 		Managers.account:setup_friendslist()
 	end
 
@@ -64,73 +64,73 @@ end
 
 FriendsUIComponent._refresh_friends_list = function (self)
 	-- function 6
-	local tbl = {}
-	local _widgets_by_name = self._widgets_by_name
+	local empty_list = {}
+	local widgets_by_name = self._widgets_by_name
 
-	self:_populate_tab(_widgets_by_name.online_tab, tbl)
-	self:_populate_tab(_widgets_by_name.offline_tab, tbl)
+	self:_populate_tab(widgets_by_name.online_tab, empty_list)
+	self:_populate_tab(widgets_by_name.offline_tab, empty_list)
 
-	local friend_list_limit = var_0_0.list_info.friend_list_limit
+	local friend_list_limit = definitions.list_info.friend_list_limit
 
 	Managers.account:get_friends(friend_list_limit, callback(self, "cb_refresh_friends_done"))
 end
 
 FriendsUIComponent.join_lobby_data = function (self)
 	-- function 7
-	local _join_lobby_data = self._join_lobby_data
+	local join_lobby_data = self._join_lobby_data
 
 	self._join_lobby_data = nil
 
-	return _join_lobby_data
+	return join_lobby_data
 end
 
-local tbl = {}
+local EMPTY_TABLE = {}
 
-FriendsUIComponent.cb_refresh_friends_done = function (self, arg_8_1)
+FriendsUIComponent.cb_refresh_friends_done = function (self, friend_list)
 	-- function 8
-	arg_8_1 = arg_8_1 or tbl
+	friend_list = not not friend_list or not not EMPTY_TABLE
 
-	local tbl_2 = {}
-	local tbl_3 = {}
-	local tbl_4 = {}
+	local playing_friends = {}
+	local online_friends = {}
+	local offline_friends = {}
 
-	for k, v in pairs(arg_8_1) do
-		v.id = k
+	for id, friend in pairs(friend_list) do
+		friend.id = id
 
-		if v.status == "offline" then
-			tbl_4[#tbl_4 + 1] = v
-		elseif not v.playing_this_game then
-			tbl_2[#tbl_2 + 1] = v
+		if friend.status == "offline" then
+			offline_friends[#offline_friends + 1] = friend
+		elseif friend.playing_this_game then
+			playing_friends[#playing_friends + 1] = friend
 		else
-			tbl_3[#tbl_3 + 1] = v
+			online_friends[#online_friends + 1] = friend
 		end
 	end
 
-	local function fn(self, arg_9_1)
+	local function sort(a, b)
 		-- function 9
-		return self.name < arg_9_1.name
+		return a.name < b.name
 	end
 
-	table.sort(tbl_2, fn)
-	table.sort(tbl_3, fn)
-	table.sort(tbl_4, fn)
+	table.sort(playing_friends, sort)
+	table.sort(online_friends, sort)
+	table.sort(offline_friends, sort)
 
-	for k_2 = 1, #tbl_3 do
-		local var_8_4 = tbl_3[k_2]
+	for i = 1, #online_friends do
+		local friend = online_friends[i]
 
-		tbl_2[#tbl_2 + 1] = var_8_4
+		playing_friends[#playing_friends + 1] = friend
 	end
 
-	local _widgets_by_name = self._widgets_by_name
+	local widgets_by_name = self._widgets_by_name
 
-	self:_populate_tab(_widgets_by_name.online_tab, tbl_2, true)
-	self:_populate_tab(_widgets_by_name.offline_tab, tbl_4, false)
+	self:_populate_tab(widgets_by_name.online_tab, playing_friends, true)
+	self:_populate_tab(widgets_by_name.offline_tab, offline_friends, false)
 end
 
-FriendsUIComponent._button_pressed = function (arg_10_0, arg_10_1)
+FriendsUIComponent._button_pressed = function (self, hotspot_content)
 	-- function 10
-	if not arg_10_1.on_release then
-		arg_10_1.on_release = false
+	if hotspot_content.on_release then
+		hotspot_content.on_release = false
 
 		return true
 	end
@@ -138,427 +138,454 @@ FriendsUIComponent._button_pressed = function (arg_10_0, arg_10_1)
 	return false
 end
 
-FriendsUIComponent.update = function (self, arg_11_1, arg_11_2)
+FriendsUIComponent.update = function (self, dt, input_service)
 	-- function 11
-	if not flag then
-		flag = false
+	if DO_RELOAD then
+		DO_RELOAD = false
 
 		self:_create_ui_elements()
 	end
 
-	self:_update_invite_cooldown(arg_11_1)
-	self:_update_animations(arg_11_1)
-	self:_handle_input(arg_11_2, arg_11_1)
-	self:_update_active_tab(arg_11_2, arg_11_1)
-	self:_draw(arg_11_2, arg_11_1)
+	self:_update_invite_cooldown(dt)
+	self:_update_animations(dt)
+	self:_handle_input(input_service, dt)
+	self:_update_active_tab(input_service, dt)
+	self:_draw(input_service, dt)
 end
 
-FriendsUIComponent._update_invite_cooldown = function (self, arg_12_1)
+FriendsUIComponent._update_invite_cooldown = function (self, dt)
 	-- function 12
-	local _invite_cooldown = self._invite_cooldown
+	local invite_cooldown = self._invite_cooldown
 
-	for k, v in pairs(_invite_cooldown) do
-		v = v - arg_12_1
+	for id, cooldown in pairs(invite_cooldown) do
+		cooldown = cooldown - dt
 
-		if v < 0 then
-			_invite_cooldown[k] = nil
+		if cooldown < 0 then
+			invite_cooldown[id] = nil
 		else
-			_invite_cooldown[k] = v
+			invite_cooldown[id] = cooldown
 		end
 	end
 end
 
-FriendsUIComponent._update_animations = function (self, arg_13_1)
+FriendsUIComponent._update_animations = function (self, dt)
 	-- function 13
-	self:_update_refresh_animations(arg_13_1)
+	self:_update_refresh_animations(dt)
 end
 
-FriendsUIComponent._update_refresh_animations = function (self, arg_14_1)
+FriendsUIComponent._update_refresh_animations = function (self, dt)
 	-- function 14
 	local refresh_button = self._widgets_by_name.refresh_button
 	local content = refresh_button.content
 
-	if not content.animate then
-		local num = 0
-		local pi = math.pi
-		local num_2 = 20
-		local rotate_progress = content.rotate_progress
+	if content.animate then
+		local start = 0
+		local target = math.pi
+		local speed = 20
+		local rotate_progress_2 = content.rotate_progress
 
-		rotate_progress = rotate_progress or num
+		if not rotate_progress_2 then
+			-- Nothing
+		end
 
-		local min = math.min(rotate_progress + arg_14_1 * num_2, pi)
+		rotate_progress_2 = start
 
-		if min == pi then
-			min = num
+		local rotate_progress = rotate_progress_2
+
+		::label_14_0::
+
+		rotate_progress = math.min(rotate_progress + dt * speed, target)
+
+		if rotate_progress == target then
+			rotate_progress = start
 			content.animate = false
 		end
 
-		content.rotate_progress = min
+		content.rotate_progress = rotate_progress
 
 		local style = refresh_button.style
 
-		style.button_texture.angle = min
-		style.button_texture_hover.angle = min
+		style.button_texture.angle = rotate_progress
+		style.button_texture_hover.angle = rotate_progress
 	end
 end
 
-FriendsUIComponent._handle_input = function (self, arg_15_1, arg_15_2)
+FriendsUIComponent._handle_input = function (self, input_service, dt)
 	-- function 15
-	local _widgets_by_name = self._widgets_by_name
-	local _active = self._active
+	local widgets_by_name = self._widgets_by_name
+	local active = self._active
 
-	if not self:_button_pressed(self._friends_button_widget.content.button_hotspot) then
-		if not _active then
+	if self:_button_pressed(self._friends_button_widget.content.button_hotspot) then
+		if active then
 			self:deactivate_friends_ui()
 		else
 			self:activate_friends_ui()
 		end
 	end
 
-	if not _active then
-		local content = _widgets_by_name.hotspot_area.content
+	if active then
+		do
+			local hotspot_area_content = widgets_by_name.hotspot_area.content
 
-		if not arg_15_1:get("left_press") and content.is_hover and not self._friends_button_widget.content.button_hotspot.is_hover then
-			content.disregard_exit = true
-		end
+			if input_service:get("left_press") and (hotspot_area_content.is_hover or self._friends_button_widget.content.button_hotspot.is_hover) then
+				hotspot_area_content.disregard_exit = true
+			end
 
-		if not arg_15_1:get("left_release") then
-			if content.disregard_exit or content.is_hover or not self._friends_button_widget.content.button_hotspot.is_hover then
-				content.disregard_exit = nil
-			else
-				self:deactivate_friends_ui()
+			if input_service:get("left_release") then
+				if hotspot_area_content.disregard_exit or hotspot_area_content.is_hover or self._friends_button_widget.content.button_hotspot.is_hover then
+					hotspot_area_content.disregard_exit = nil
+				else
+					self:deactivate_friends_ui()
+				end
 			end
 		end
 
-		if not self:_button_pressed(_widgets_by_name.exit_button.content) then
+		if self:_button_pressed(widgets_by_name.exit_button.content) then
 			self:deactivate_friends_ui()
 		end
 
-		if not self:_button_pressed(_widgets_by_name.refresh_button.content) then
-			self:_animate_refresh_button(_widgets_by_name.refresh_button)
+		if self:_button_pressed(widgets_by_name.refresh_button.content) then
+			self:_animate_refresh_button(widgets_by_name.refresh_button)
 			self:_refresh_friends_list()
 		end
 
-		if not self:_button_pressed(_widgets_by_name.online_tab.content.button_hotspot) then
-			self:_tab_pressed(_widgets_by_name.online_tab)
+		if self:_button_pressed(widgets_by_name.online_tab.content.button_hotspot) then
+			self:_tab_pressed(widgets_by_name.online_tab)
 		end
 
-		if not self:_button_pressed(_widgets_by_name.offline_tab.content.button_hotspot) then
-			self:_tab_pressed(_widgets_by_name.offline_tab)
+		if self:_button_pressed(widgets_by_name.offline_tab.content.button_hotspot) then
+			self:_tab_pressed(widgets_by_name.offline_tab)
 		end
 	end
 end
 
-FriendsUIComponent._update_active_tab = function (self, arg_16_1, arg_16_2)
+FriendsUIComponent._update_active_tab = function (self, input_service, dt)
 	-- function 16
-	local _active_tab = self._active_tab
+	local active_tab = self._active_tab
 
-	if not _active_tab then
+	if not active_tab then
 		return
 	end
 
-	local tabs_size = var_0_0.scenegraph_info.tabs_size
-	local tabs_active_size = var_0_0.scenegraph_info.tabs_active_size
-	local list_style = _active_tab.style.list_style
-	local num = list_style.list_member_offset[2] * list_style.num_draws - (tabs_active_size[2] - tabs_size[2] - 10)
-	local scenegraph_id = list_style.scenegraph_id
-	local position = self._ui_scenegraph[scenegraph_id].position
-	local num_2 = 1 - _active_tab.content.scrollbar.scroll_value
+	local tabs_size = definitions.scenegraph_info.tabs_size
+	local tabs_active_size = definitions.scenegraph_info.tabs_active_size
+	local list_style = active_tab.style.list_style
+	local size_y = list_style.list_member_offset[2] * list_style.num_draws - (tabs_active_size[2] - tabs_size[2] - 10)
+	local list_scenegraph_id = list_style.scenegraph_id
+	local scenegraph_node = self._ui_scenegraph[list_scenegraph_id]
+	local scenegraph_pos = scenegraph_node.position
+	local value = 1 - active_tab.content.scrollbar.scroll_value
 
-	position[2] = -tabs_size[2] + num * num_2
+	scenegraph_pos[2] = -tabs_size[2] + size_y * value
 
-	self:_update_list(_active_tab)
-	self:_handle_list_input(_active_tab)
+	self:_update_list(active_tab)
+	self:_handle_list_input(active_tab)
 end
 
-FriendsUIComponent._animate_refresh_button = function (arg_17_0, arg_17_1)
+FriendsUIComponent._animate_refresh_button = function (self, widget)
 	-- function 17
-	arg_17_1.content.animate = true
+	widget.content.animate = true
 end
 
-local tbl_2 = {
+local _update_list_temp_pos_table = {
 	0,
 	0
 }
 
-FriendsUIComponent._update_list = function (self, arg_18_1)
+FriendsUIComponent._update_list = function (self, active_tab)
 	-- function 18
-	local list_style = arg_18_1.style.list_style
-	local _get_mask_position_and_size, var_18_2 = self:_get_mask_position_and_size(arg_18_1)
-	local get_world_position = UISceneGraph.get_world_position(self._ui_scenegraph, list_style.scenegraph_id)
-	local get_size = UISceneGraph.get_size(self._ui_scenegraph, list_style.scenegraph_id)
-	local list_content = arg_18_1.content.list_content
+	local list_style = active_tab.style.list_style
+	local mask_pos, mask_size = self:_get_mask_position_and_size(active_tab)
+	local list_pos = UISceneGraph.get_world_position(self._ui_scenegraph, list_style.scenegraph_id)
+	local list_size = UISceneGraph.get_size(self._ui_scenegraph, list_style.scenegraph_id)
+	local item_contents = active_tab.content.list_content
 	local item_styles = list_style.item_styles
 	local num_draws = list_style.num_draws
-	local flag = false
+	local is_in_dedicated_server_lobby = false
 	local matchmaking = Managers.matchmaking
 
-	matchmaking = not matchmaking and Managers.matchmaking
+	if matchmaking then
+		-- Nothing
+	end
 
-	local flag_2 = not matchmaking and matchmaking.lobby:lobby_data("matchmaking_type")
-	local get_current_mechanism = Managers.level_transition_handler:get_current_mechanism()
-	local in_hub_level = Managers.level_transition_handler:in_hub_level()
+	matchmaking = Managers.matchmaking
 
-	if get_current_mechanism == "versus" then
-		if not in_hub_level then
-			if not (not flag_2 and NetworkLookup.matchmaking_types[tonumber(flag_2)] ~= "versus") then
-				flag = true
+	local matchmaking_manager = matchmaking
+
+	::label_18_0::
+
+	local matchmaking_type = not not matchmaking_manager and not not matchmaking_manager.lobby:lobby_data("matchmaking_type")
+	local mechanism_name = Managers.level_transition_handler:get_current_mechanism()
+	local is_in_inn = Managers.level_transition_handler:in_hub_level()
+
+	if mechanism_name == "versus" then
+		if not is_in_inn then
+			if matchmaking_type and NetworkLookup.matchmaking_types[tonumber(matchmaking_type)] == "versus" then
+				is_in_dedicated_server_lobby = true
 			end
-		elseif not in_hub_level then
-			local flag_3 = not matchmaking and matchmaking:search_info()
+		elseif is_in_inn then
+			local matchmaking_search_info = not not matchmaking_manager and not not matchmaking_manager:search_info()
 
-			if not matchmaking and not matchmaking:is_game_matchmaking() and not flag_3 and not flag_3.quick_game then
-				flag = true
+			if matchmaking_manager and matchmaking_manager:is_game_matchmaking() and matchmaking_search_info and matchmaking_search_info.quick_game then
+				is_in_dedicated_server_lobby = true
 			end
 		end
 	end
 
 	for i = 1, num_draws do
-		local var_18_14 = list_content[i]
-		local var_18_15 = item_styles[i]
-		local size = var_18_15.size
-		local list_member_offset = var_18_15.list_member_offset
+		local content = item_contents[i]
+		local style = item_styles[i]
+		local size = style.size
+		local offset = style.list_member_offset
 
-		tbl_2[1] = get_world_position[1] + list_member_offset[1] * i + size[1] / 2
-		tbl_2[2] = get_world_position[2] + get_size[2] + list_member_offset[2] * i
+		_update_list_temp_pos_table[1] = list_pos[1] + offset[1] * i + size[1] / 2
+		_update_list_temp_pos_table[2] = list_pos[2] + list_size[2] + offset[2] * i
 
-		local point_is_inside_2d_box = math.point_is_inside_2d_box(tbl_2, _get_mask_position_and_size, var_18_2)
+		local lower_visible = math.point_is_inside_2d_box(_update_list_temp_pos_table, mask_pos, mask_size)
 
-		tbl_2[2] = tbl_2[2] + size[2] / 2
+		_update_list_temp_pos_table[2] = _update_list_temp_pos_table[2] + size[2] / 2
 
-		local point_is_inside_2d_box_2 = math.point_is_inside_2d_box(tbl_2, _get_mask_position_and_size, var_18_2)
+		local middle_visible = math.point_is_inside_2d_box(_update_list_temp_pos_table, mask_pos, mask_size)
 
-		tbl_2[2] = tbl_2[2] + size[2] / 2
+		_update_list_temp_pos_table[2] = _update_list_temp_pos_table[2] + size[2] / 2
 
-		local point_is_inside_2d_box_3 = math.point_is_inside_2d_box(tbl_2, _get_mask_position_and_size, var_18_2)
-		local flag_4 = point_is_inside_2d_box or point_is_inside_2d_box_3
-		local playing_game_info = var_18_14.playing_game_info
-		local flag_5 = false
+		local top_visible = math.point_is_inside_2d_box(_update_list_temp_pos_table, mask_pos, mask_size)
+		local visible = not not lower_visible or not not top_visible
+		local playing_game_info = content.playing_game_info
+		local is_friend_in_dedicated_server_lobby = false
 
-		if not playing_game_info and playing_game_info.ip and not playing_game_info.server_port then
-			flag_5 = true
+		if playing_game_info and (playing_game_info.ip or playing_game_info.server_port) then
+			is_friend_in_dedicated_server_lobby = true
 		end
 
-		var_18_14.visible = flag_4
-		var_18_14.profile_button.visible = flag_4
-		var_18_14.invite_button.visible = not flag_4 and not flag
-		var_18_14.join_button.visible = not flag_4 and not not flag or not flag_5
+		content.visible = visible
+		content.profile_button.visible = visible
+		content.invite_button.visible = not not visible and not not not is_in_dedicated_server_lobby
+		content.join_button.visible = not not visible and not is_in_dedicated_server_lobby and not not not is_friend_in_dedicated_server_lobby
 	end
 end
 
-FriendsUIComponent._handle_list_input = function (self, arg_19_1)
+FriendsUIComponent._handle_list_input = function (self, active_tab)
 	-- function 19
-	local list_content = arg_19_1.content.list_content
-	local num_draws = arg_19_1.style.list_style.num_draws
+	local item_contents = active_tab.content.list_content
+	local list_style = active_tab.style.list_style
+	local num_draws = list_style.num_draws
 
 	for i = 1, num_draws do
-		local var_19_2 = list_content[i]
+		local content = item_contents[i]
 
-		if not self:_button_pressed(var_19_2.invite_button) then
-			self:_send_invite(var_19_2)
+		if self:_button_pressed(content.invite_button) then
+			self:_send_invite(content)
 		end
 
-		if not self:_button_pressed(var_19_2.profile_button) then
-			self:_open_player_profile(var_19_2)
+		if self:_button_pressed(content.profile_button) then
+			self:_open_player_profile(content)
 		end
 
-		if not self:_button_pressed(var_19_2.join_button) then
-			self:_join_player(var_19_2)
+		if self:_button_pressed(content.join_button) then
+			self:_join_player(content)
 		end
 	end
 end
 
-FriendsUIComponent._draw = function (self, arg_20_1, arg_20_2)
+FriendsUIComponent._draw = function (self, input_service, dt)
 	-- function 20
-	local _ui_top_renderer = self._ui_top_renderer
-	local _ui_scenegraph = self._ui_scenegraph
+	local ui_renderer = self._ui_top_renderer
+	local ui_scenegraph = self._ui_scenegraph
 
-	UIRenderer.begin_pass(_ui_top_renderer, _ui_scenegraph, arg_20_1, arg_20_2, nil, self._render_settings)
-	UIRenderer.draw_widget(_ui_top_renderer, self._friends_button_widget)
+	UIRenderer.begin_pass(ui_renderer, ui_scenegraph, input_service, dt, nil, self._render_settings)
+	UIRenderer.draw_widget(ui_renderer, self._friends_button_widget)
 
-	if not self._active then
-		local _widgets = self._widgets
+	if self._active then
+		local widgets = self._widgets
 
-		for i, v in ipairs(_widgets) do
-			UIRenderer.draw_widget(_ui_top_renderer, v)
+		for _, widget in ipairs(widgets) do
+			UIRenderer.draw_widget(ui_renderer, widget)
 		end
 	end
 
-	UIRenderer.end_pass(_ui_top_renderer)
+	UIRenderer.end_pass(ui_renderer)
 end
 
-FriendsUIComponent._tab_pressed = function (self, arg_21_1)
+FriendsUIComponent._tab_pressed = function (self, widget)
 	-- function 21
-	if self._active_tab == arg_21_1 then
+	if self._active_tab == widget then
 		self:_deactivate_active_tab()
 	else
-		if not self._active_tab then
+		if self._active_tab then
 			self:_deactivate_active_tab()
 		end
 
-		self:_activate_tab(arg_21_1)
+		self:_activate_tab(widget)
 	end
 end
 
-FriendsUIComponent._activate_tab = function (self, arg_22_1)
+FriendsUIComponent._activate_tab = function (self, widget)
 	-- function 22
-	self._active_tab = arg_22_1
+	self._active_tab = widget
 
-	local scenegraph_id = arg_22_1.scenegraph_id
-	local var_22_1 = self._ui_scenegraph[scenegraph_id]
-	local tabs_active_size = var_0_0.scenegraph_info.tabs_active_size
+	local scenegraph_id = widget.scenegraph_id
+	local scenegraph_node = self._ui_scenegraph[scenegraph_id]
+	local tabs_active_size = definitions.scenegraph_info.tabs_active_size
 
-	var_22_1.size[1] = tabs_active_size[1]
-	var_22_1.size[2] = tabs_active_size[2]
-	var_22_1.position[2] = -tabs_active_size[2]
-	arg_22_1.content.active = true
-	arg_22_1.content.list_content.active = true
-	arg_22_1.style.drop_down_arrow.angle = math.pi
+	scenegraph_node.size[1] = tabs_active_size[1]
+	scenegraph_node.size[2] = tabs_active_size[2]
+	scenegraph_node.position[2] = -tabs_active_size[2]
+	widget.content.active = true
+	widget.content.list_content.active = true
 
-	local tabs_size = var_0_0.scenegraph_info.tabs_size
+	local drop_down_arrow = widget.style.drop_down_arrow
 
-	arg_22_1.style.hotspot.offset[2] = tabs_active_size[2] - tabs_size[2]
+	drop_down_arrow.angle = math.pi
 
-	if arg_22_1.content.scrollbar.percentage < 1 then
-		arg_22_1.content.scrollbar.active = true
+	local tabs_size = definitions.scenegraph_info.tabs_size
+
+	widget.style.hotspot.offset[2] = tabs_active_size[2] - tabs_size[2]
+
+	if widget.content.scrollbar.percentage < 1 then
+		widget.content.scrollbar.active = true
 	else
-		arg_22_1.content.scrollbar.active = false
+		widget.content.scrollbar.active = false
 	end
 end
 
 FriendsUIComponent._deactivate_active_tab = function (self)
 	-- function 23
-	local _active_tab = self._active_tab
+	local widget = self._active_tab
 
 	self._active_tab = nil
 
-	local scenegraph_id = _active_tab.scenegraph_id
-	local var_23_2 = self._ui_scenegraph[scenegraph_id]
-	local tabs_size = var_0_0.scenegraph_info.tabs_size
+	local scenegraph_id = widget.scenegraph_id
+	local scenegraph_node = self._ui_scenegraph[scenegraph_id]
+	local tabs_size = definitions.scenegraph_info.tabs_size
 
-	var_23_2.size[1] = tabs_size[1]
-	var_23_2.size[2] = tabs_size[2]
-	var_23_2.position[2] = -tabs_size[2]
-	_active_tab.content.active = false
-	_active_tab.content.list_content.active = false
-	_active_tab.content.scrollbar.active = false
-	_active_tab.style.drop_down_arrow.angle = 0
-	_active_tab.style.hotspot.offset[2] = 0
+	scenegraph_node.size[1] = tabs_size[1]
+	scenegraph_node.size[2] = tabs_size[2]
+	scenegraph_node.position[2] = -tabs_size[2]
+	widget.content.active = false
+	widget.content.list_content.active = false
+	widget.content.scrollbar.active = false
+
+	local drop_down_arrow = widget.style.drop_down_arrow
+
+	drop_down_arrow.angle = 0
+	widget.style.hotspot.offset[2] = 0
 end
 
-FriendsUIComponent._populate_tab = function (self, arg_24_1, arg_24_2, arg_24_3)
+FriendsUIComponent._populate_tab = function (self, widget, list, allow_invite)
 	-- function 24
-	local content = arg_24_1.content
-	local list_style = arg_24_1.style.list_style
+	local content = widget.content
+	local style = widget.style.list_style
 	local list_content = content.list_content
-	local item_styles = list_style.item_styles
+	local item_styles = style.item_styles
 	local allowed_to_initiate_join_lobby = Managers.matchmaking:allowed_to_initiate_join_lobby()
-	local min = math.min(#arg_24_2, var_0_0.list_info.friend_list_limit)
+	local num_friends = math.min(#list, definitions.list_info.friend_list_limit)
 
-	for i = 1, min do
-		local var_24_6 = arg_24_2[i]
-		local var_24_7 = list_content[i]
+	for i = 1, num_friends do
+		local friend = list[i]
+		local content = list_content[i]
 
-		var_24_7.name = UIRenderer.crop_text_width(self._ui_top_renderer, var_24_6.name, 200, item_styles[i].name)
-		var_24_7.id = var_24_6.id
+		content.name = UIRenderer.crop_text_width(self._ui_top_renderer, friend.name, 200, item_styles[i].name)
+		content.id = friend.id
 
-		local flag = false
-		local playing_this_game = var_24_6.playing_this_game
+		local can_join = false
+		local playing_this_game = friend.playing_this_game
 
-		if not allowed_to_initiate_join_lobby and not playing_this_game then
-			local playing_game = var_24_6.playing_game
+		if allowed_to_initiate_join_lobby and playing_this_game then
+			local playing_game = friend.playing_game
 
-			if not playing_game and playing_game.lobby and not playing_game.ip then
-				flag = true
+			if playing_game and (playing_game.lobby or playing_game.ip) then
+				can_join = true
 			end
 		end
 
-		var_24_7.invite_button.allow_invite = arg_24_3
-		var_24_7.join_button.allow_join = flag
+		content.invite_button.allow_invite = allow_invite
+		content.join_button.allow_join = can_join
 
-		if not flag then
-			var_24_7.playing_game_info = var_24_6.playing_game
+		if can_join then
+			content.playing_game_info = friend.playing_game
 		end
 
-		local var_24_11 = item_styles[i]
+		local style = item_styles[i]
 
-		if not playing_this_game then
-			var_24_11.name.text_color = Colors.get_color_table_with_alpha("online_green", 255)
-		elseif var_24_6.status ~= "offline" then
-			var_24_11.name.text_color = Colors.get_color_table_with_alpha("white", 255)
+		if playing_this_game then
+			style.name.text_color = Colors.get_color_table_with_alpha("online_green", 255)
+		elseif friend.status ~= "offline" then
+			style.name.text_color = Colors.get_color_table_with_alpha("white", 255)
 		else
-			var_24_11.name.text_color = Colors.get_color_table_with_alpha("font_default", 255)
+			style.name.text_color = Colors.get_color_table_with_alpha("font_default", 255)
 		end
 	end
 
-	content.real_text = string.format("%s (%s)", content.text, tostring(min))
-	list_style.num_draws = min
+	content.real_text = string.format("%s (%s)", content.text, tostring(num_friends))
+	style.num_draws = num_friends
 
-	self:_setup_tab_scrollbar(arg_24_1)
+	self:_setup_tab_scrollbar(widget)
 end
 
-FriendsUIComponent._setup_tab_scrollbar = function (arg_25_0, arg_25_1)
+FriendsUIComponent._setup_tab_scrollbar = function (self, widget)
 	-- function 25
-	local tabs_size = var_0_0.scenegraph_info.tabs_size
-	local num = var_0_0.scenegraph_info.tabs_active_size[2] - tabs_size[2]
-	local list_style = arg_25_1.style.list_style
-	local var_25_3 = list_style.list_member_offset[2]
+	local tabs_size = definitions.scenegraph_info.tabs_size
+	local tabs_active_size = definitions.scenegraph_info.tabs_active_size
+	local focus_size = tabs_active_size[2] - tabs_size[2]
+	local list_style = widget.style.list_style
+	local list_member_offset_y = list_style.list_member_offset[2]
 	local num_draws = list_style.num_draws
-	local var_25_5
+	local total_size
 
 	if num_draws == 0 then
-		var_25_5 = var_25_3
+		total_size = list_member_offset_y
 	else
-		var_25_5 = var_25_3 * num_draws
+		total_size = list_member_offset_y * num_draws
 	end
 
-	local num_2 = num / var_25_5
-	local scrollbar = arg_25_1.content.scrollbar
+	local percentage = focus_size / total_size
+	local scrollbar_content = widget.content.scrollbar
 
-	if num_2 < 1 then
-		scrollbar.percentage = num_2
-		scrollbar.scroll_value = 1
-		scrollbar.scroll_amount = var_25_3 / var_25_5
+	if percentage < 1 then
+		scrollbar_content.percentage = percentage
+		scrollbar_content.scroll_value = 1
+		scrollbar_content.scroll_amount = list_member_offset_y / total_size
 	else
-		scrollbar.scroll_value = 1
+		scrollbar_content.scroll_value = 1
 	end
 end
 
-local tbl_3 = {
+local _get_mask_size_temp = {
 	0,
 	0
 }
-local tbl_4 = {
+local _get_mask_position_temp = {
 	0,
 	0,
 	0
 }
 
-FriendsUIComponent._get_mask_position_and_size = function (self, arg_26_1)
+FriendsUIComponent._get_mask_position_and_size = function (self, widget)
 	-- function 26
-	local mask = arg_26_1.style.mask
-	local size = mask.size
+	local mask_style = widget.style.mask
+	local size = mask_style.size
 
-	tbl_3[1] = size[1]
-	tbl_3[2] = size[2]
+	_get_mask_size_temp[1] = size[1]
+	_get_mask_size_temp[2] = size[2]
 
-	local get_world_position = UISceneGraph.get_world_position(self._ui_scenegraph, arg_26_1.scenegraph_id)
-	local offset = mask.offset
+	local scenegraph_pos = UISceneGraph.get_world_position(self._ui_scenegraph, widget.scenegraph_id)
+	local offset = mask_style.offset
 
-	tbl_4[1] = get_world_position[1] + offset[1]
-	tbl_4[2] = get_world_position[2] + offset[2]
-	tbl_4[3] = get_world_position[3] + offset[3]
+	_get_mask_position_temp[1] = scenegraph_pos[1] + offset[1]
+	_get_mask_position_temp[2] = scenegraph_pos[2] + offset[2]
+	_get_mask_position_temp[3] = scenegraph_pos[3] + offset[3]
 
-	return tbl_4, tbl_3
+	return _get_mask_position_temp, _get_mask_size_temp
 end
 
-FriendsUIComponent._send_invite = function (self, arg_27_1)
+FriendsUIComponent._send_invite = function (self, content)
 	-- function 27
-	if not self._invite_cooldown[arg_27_1.id] then
+	if self._invite_cooldown[content.id] then
 		return
 	end
 
-	local id = arg_27_1.id
+	local id = content.id
 	local invite_target = self._network_lobby:invite_target()
 
 	Managers.account:send_session_invitation(id, invite_target)
@@ -566,33 +593,32 @@ FriendsUIComponent._send_invite = function (self, arg_27_1)
 	self._invite_cooldown[id] = 5
 end
 
-FriendsUIComponent._open_player_profile = function (arg_28_0, arg_28_1)
+FriendsUIComponent._open_player_profile = function (self, content)
 	-- function 28
-	local id = arg_28_1.id
+	local id = content.id
 
-	if not IS_PS4 then
+	if IS_PS4 then
 		Managers.account:show_player_profile_with_account_id(id)
 	else
 		Managers.account:show_player_profile(id)
 	end
 end
 
-FriendsUIComponent._join_player = function (self, arg_29_1)
+FriendsUIComponent._join_player = function (self, content)
 	-- function 29
-	local playing_game_info = arg_29_1.playing_game_info
-	local lobby = playing_game_info.lobby
-	local ip = playing_game_info.ip
-	local server_port = playing_game_info.server_port
+	local playing_game_info = content.playing_game_info
+	local lobby_id = playing_game_info.lobby
+	local ip, port = playing_game_info.ip, playing_game_info.server_port
 
-	if not lobby then
-		local get_lobby_data_from_id = LobbyInternal.get_lobby_data_from_id(lobby)
+	if lobby_id then
+		local lobby_data = LobbyInternal.get_lobby_data_from_id(lobby_id)
 
-		get_lobby_data_from_id.id = lobby
-		self._join_lobby_data = get_lobby_data_from_id
-	elseif not ip and not server_port then
+		lobby_data.id = lobby_id
+		self._join_lobby_data = lobby_data
+	elseif ip and port then
 		self._join_lobby_data = {
 			server_info = {
-				ip_port = ip .. ":" .. server_port
+				ip_port = ip .. ":" .. port
 			}
 		}
 	end

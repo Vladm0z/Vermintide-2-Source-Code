@@ -3,7 +3,7 @@
 WeaveKillEnemiesExtension = class(WeaveKillEnemiesExtension, BaseObjectiveExtension)
 WeaveKillEnemiesExtension.NAME = "WeaveKillEnemiesExtension"
 
-local tbl = {
+local BASE_SCORE_MULTIPLIER = {
 	hardest = 0.7,
 	hard = 0.9,
 	harder = 0.8,
@@ -13,49 +13,58 @@ local tbl = {
 	normal = 1
 }
 
-WeaveKillEnemiesExtension.init = function (self, arg_1_1, arg_1_2, arg_1_3)
+WeaveKillEnemiesExtension.init = function (self, extension_init_context, unit, extension_init_data)
 	-- function 1
-	WeaveKillEnemiesExtension.super.init(self, arg_1_1, arg_1_2, arg_1_3)
+	WeaveKillEnemiesExtension.super.init(self, extension_init_context, unit, extension_init_data)
 
-	self._on_start_func = arg_1_3.on_start_func
-	self._on_progress_func = arg_1_3.on_progress_func
-	self._on_complete_func = arg_1_3.on_complete_func
+	self._on_start_func = extension_init_data.on_start_func
+	self._on_progress_func = extension_init_data.on_progress_func
+	self._on_complete_func = extension_init_data.on_complete_func
 	self._num_killed = 0
 
-	local amount = arg_1_3.amount
+	local amount = extension_init_data.amount
 
-	amount = amount or 0
+	amount = not not amount or not not 0
 	self._kills_required = amount
 
-	local base_score_per_kill = arg_1_3.base_score_per_kill
+	local base_score_per_kill = extension_init_data.base_score_per_kill
 
-	base_score_per_kill = base_score_per_kill or WeaveSettings.base_score_per_kill
+	base_score_per_kill = not not base_score_per_kill or not not WeaveSettings.base_score_per_kill
 	self._base_score_per_kill = base_score_per_kill
 
-	local breed_score_multipliers = arg_1_3.breed_score_multipliers
+	local breed_score_multipliers = extension_init_data.breed_score_multipliers
 
-	breed_score_multipliers = breed_score_multipliers or {}
+	breed_score_multipliers = not not breed_score_multipliers or not not {}
 	self._breed_score_multipliers = breed_score_multipliers
 
-	local score_multiplier = arg_1_3.score_multiplier
+	local score_multiplier_2 = extension_init_data.score_multiplier
 
-	score_multiplier = score_multiplier or 1
+	if not score_multiplier_2 then
+		-- Nothing
+	end
 
-	local get_difficulty = Managers.state.difficulty:get_difficulty()
+	score_multiplier_2 = 1
+
+	local score_multiplier = score_multiplier_2
+
+	::label_1_0::
+
+	local difficulty_manager = Managers.state.difficulty
+	local difficulty = difficulty_manager:get_difficulty()
 
 	if type(score_multiplier) == "table" then
-		score_multiplier = score_multiplier[get_difficulty] or tbl[get_difficulty] or 1
+		score_multiplier = not not score_multiplier[difficulty] or not not BASE_SCORE_MULTIPLIER[difficulty] or not not 1
 	end
 
 	self._weave_manager = Managers.weave
 	self._score_multiplier = score_multiplier
-	self._breeds_allowed = arg_1_3.breeds_allowed
-	self._races_allowed = arg_1_3.races_allowed
-	self._hit_zones_allowed = arg_1_3.hit_zones_allowed
-	self._attacks_allowed = arg_1_3.attacks_allowed
-	self._damage_types_allowed = arg_1_3.damage_types_allowed
+	self._breeds_allowed = extension_init_data.breeds_allowed
+	self._races_allowed = extension_init_data.races_allowed
+	self._hit_zones_allowed = extension_init_data.hit_zones_allowed
+	self._attacks_allowed = extension_init_data.attacks_allowed
+	self._damage_types_allowed = extension_init_data.damage_types_allowed
 
-	if not arg_1_1.is_server then
+	if not extension_init_context.is_server then
 		return
 	end
 
@@ -69,68 +78,68 @@ WeaveKillEnemiesExtension.init = function (self, arg_1_1, arg_1_2, arg_1_3)
 				default = self._breed_score_multipliers
 			}
 		else
-			local enemies_score_multipliers = WeaveSettings.enemies_score_multipliers
-			local _breed_score_multipliers = self._breed_score_multipliers
+			local default_score_multiplier = WeaveSettings.enemies_score_multipliers
+			local score_multipliers = self._breed_score_multipliers
 
-			for k, v in pairs(enemies_score_multipliers) do
-				if not _breed_score_multipliers[k] then
-					_breed_score_multipliers[k] = v
+			for breed_name, multiplier in pairs(default_score_multiplier) do
+				if not score_multipliers[breed_name] then
+					score_multipliers[breed_name] = multiplier
 				end
 			end
 		end
 	end
 
-	if not (not self._breeds_allowed and #self._breeds_allowed ~= 0) then
+	if self._breeds_allowed and #self._breeds_allowed == 0 then
 		self._breeds_allowed = nil
 	end
 
-	if not (not self._races_allowed and #self._races_allowed ~= 0) then
+	if self._races_allowed and #self._races_allowed == 0 then
 		self._races_allowed = nil
 	end
 
-	if not (not self._hit_zones_allowed and #self._hit_zones_allowed ~= 0) then
+	if self._hit_zones_allowed and #self._hit_zones_allowed == 0 then
 		self._hit_zones_allowed = nil
 	end
 
-	if not (not self._attacks_allowed and #self._attacks_allowed ~= 0) then
+	if self._attacks_allowed and #self._attacks_allowed == 0 then
 		self._attacks_allowed = nil
 	end
 
-	if not (not self._damage_types_allowed and #self._damage_types_allowed ~= 0) then
+	if self._damage_types_allowed and #self._damage_types_allowed == 0 then
 		self._damage_types_allowed = nil
 	end
 end
 
-WeaveKillEnemiesExtension.initial_sync_data = function (self, arg_2_1)
+WeaveKillEnemiesExtension.initial_sync_data = function (self, game_object_data_table)
 	-- function 2
-	arg_2_1.value = self:get_percentage_done()
+	game_object_data_table.value = self:get_percentage_done()
 end
 
-WeaveKillEnemiesExtension._set_objective_data = function (arg_3_0, arg_3_1)
+WeaveKillEnemiesExtension._set_objective_data = function (self, objective_data)
 	-- function 3
 	return
 end
 
 WeaveKillEnemiesExtension._activate = function (self)
 	-- function 4
-	local has_extension = ScriptUnit.has_extension(self._unit, "tutorial_system")
+	local extension = ScriptUnit.has_extension(self._unit, "tutorial_system")
 
-	if not has_extension then
-		has_extension:set_active(true)
+	if extension then
+		extension:set_active(true)
 	end
 end
 
-WeaveKillEnemiesExtension._deactivate = function (arg_5_0)
+WeaveKillEnemiesExtension._deactivate = function (self)
 	-- function 5
 	return
 end
 
-WeaveKillEnemiesExtension._server_update = function (arg_6_0, arg_6_1, arg_6_2)
+WeaveKillEnemiesExtension._server_update = function (self, dt, t)
 	-- function 6
 	return
 end
 
-WeaveKillEnemiesExtension._client_update = function (arg_7_0, arg_7_1, arg_7_2)
+WeaveKillEnemiesExtension._client_update = function (self, dt, t)
 	-- function 7
 	return
 end
@@ -157,38 +166,38 @@ WeaveKillEnemiesExtension.get_percentage_done = function (self)
 	return math.clamp(self._num_killed / self._kills_required, 0, 1)
 end
 
-WeaveKillEnemiesExtension.on_ai_killed = function (self, arg_10_1, arg_10_2, arg_10_3, arg_10_4)
+WeaveKillEnemiesExtension.on_ai_killed = function (self, killed_unit, killer_unit, death_data, killing_blow)
 	-- function 10
-	local _hit_zones_allowed = self._hit_zones_allowed
+	local hit_zones_allowed = self._hit_zones_allowed
 
-	if not _hit_zones_allowed and not arg_10_4 then
-		local var_10_1 = arg_10_4[DamageDataIndex.HIT_ZONE]
+	if hit_zones_allowed and killing_blow then
+		local death_hit_zone = killing_blow[DamageDataIndex.HIT_ZONE]
 
-		if not table.contains(_hit_zones_allowed, var_10_1) then
+		if not table.contains(hit_zones_allowed, death_hit_zone) then
 			return
 		end
 	end
 
-	local _damage_types_allowed = self._damage_types_allowed
+	local damage_types_allowed = self._damage_types_allowed
 
-	if not _damage_types_allowed and not arg_10_4 then
-		local var_10_3 = arg_10_4[DamageDataIndex.DAMAGE_TYPE]
+	if damage_types_allowed and killing_blow then
+		local damage_type = killing_blow[DamageDataIndex.DAMAGE_TYPE]
 
-		if not table.contains(_damage_types_allowed, var_10_3) then
+		if not table.contains(damage_types_allowed, damage_type) then
 			return
 		end
 	end
 
-	local _attacks_allowed = self._attacks_allowed
+	local attacks_allowed = self._attacks_allowed
 
-	if not _attacks_allowed and not arg_10_4 then
-		local var_10_5 = arg_10_4[DamageDataIndex.DAMAGE_SOURCE_NAME]
-		local var_10_6 = rawget(ItemMasterList, var_10_5)
+	if attacks_allowed and killing_blow then
+		local weapon_name = killing_blow[DamageDataIndex.DAMAGE_SOURCE_NAME]
+		local master_list_item = rawget(ItemMasterList, weapon_name)
 
-		if not var_10_6 then
-			local slot_type = var_10_6.slot_type
+		if master_list_item then
+			local slot_type = master_list_item.slot_type
 
-			if not table.contains(_attacks_allowed, slot_type) then
+			if not table.contains(attacks_allowed, slot_type) then
 				return
 			end
 		else
@@ -196,55 +205,73 @@ WeaveKillEnemiesExtension.on_ai_killed = function (self, arg_10_1, arg_10_2, arg
 		end
 	end
 
-	local _breeds_allowed = self._breeds_allowed
-	local flag = false
-	local name = arg_10_3.breed.name
+	local breeds_allowed = self._breeds_allowed
+	local enemy_found = false
+	local breed_name = death_data.breed.name
 
-	if not _breeds_allowed and not table.contains(_breeds_allowed, name) then
-		flag = true
+	if breeds_allowed and table.contains(breeds_allowed, breed_name) then
+		enemy_found = true
 	end
 
-	local _races_allowed = self._races_allowed
+	local races_allowed = self._races_allowed
 
-	if flag or not _races_allowed then
-		local race = arg_10_3.breed.race
+	if not enemy_found and races_allowed then
+		local race_name = death_data.breed.race
 
-		if not table.contains(_races_allowed, race) then
-			flag = true
+		if table.contains(races_allowed, race_name) then
+			enemy_found = true
 		end
 	end
 
-	if not ((_breeds_allowed or not _races_allowed) and flag) then
+	if (breeds_allowed or races_allowed) and not enemy_found then
 		return
 	end
 
 	self._num_killed = self._num_killed + 1
 
-	if self._num_killed ~= 1 or not self._on_start_func then
+	if self._num_killed == 1 and self._on_start_func then
 		self._on_start_func(self._unit)
 
 		self._on_start_func = nil
 	end
 
-	if not self._on_progress_func then
+	if self._on_progress_func then
 		self._on_progress_func(self._unit, self._num_killed, self._kills_required)
 	end
 
 	if self._method == "score" then
-		local var_10_13 = WeaveSettings.roaming_multiplier[PLATFORM]
-		local get_data = Unit.get_data(arg_10_1, "spawn_type")
+		local roaming_multiplier = WeaveSettings.roaming_multiplier[PLATFORM]
+		local get_data = Unit.get_data(killed_unit, "spawn_type")
 
-		get_data = get_data or "unknown"
+		if not get_data then
+			-- Nothing
+		end
 
-		local _breed_score_multipliers = self._breed_score_multipliers
-		local var_10_16 = _breed_score_multipliers[name]
+		get_data = "unknown"
 
-		var_10_16 = var_10_16 or _breed_score_multipliers.default
+		local spawn_type = get_data
 
-		local num
+		::label_10_0::
 
-		if get_data == "roam" then
-			num = self._score_multiplier * var_10_13
+		local score_multiplier_per_breed = self._breed_score_multipliers
+		local var_10_1 = score_multiplier_per_breed[breed_name]
+
+		if not var_10_1 then
+			-- Nothing
+		end
+
+		var_10_1 = score_multiplier_per_breed.default
+
+		local breed_score_multiplier = var_10_1
+
+		do
+			local num
+		end
+
+		::label_10_1::
+
+		if spawn_type == "roam" then
+			num = self._score_multiplier * roaming_multiplier
 
 			if not num then
 				-- Nothing
@@ -253,19 +280,22 @@ WeaveKillEnemiesExtension.on_ai_killed = function (self, arg_10_1, arg_10_2, arg
 
 		num = self._score_multiplier
 
-		::label_10_0::
+		local score_multiplier = num
 
-		local num_2 = num * var_10_16
+		::label_10_2::
 
-		if not arg_10_3.despawned then
-			Managers.weave:increase_bar_score(num_2)
-			print("Spawn type: " .. get_data, "Score: " .. num_2, "Score Multiplier: ", num)
+		local score = score_multiplier * breed_score_multiplier
+		local despawned = death_data.despawned
+
+		if not despawned then
+			Managers.weave:increase_bar_score(score)
+			print("Spawn type: " .. spawn_type, "Score: " .. score, "Score Multiplier: ", score_multiplier)
 		end
 
-		Unit.set_data(arg_10_1, "spawn_type", nil)
+		Unit.set_data(killed_unit, "spawn_type", nil)
 	end
 
-	if not self._is_server then
+	if self._is_server then
 		self:server_set_value(self:get_percentage_done())
 	end
 end

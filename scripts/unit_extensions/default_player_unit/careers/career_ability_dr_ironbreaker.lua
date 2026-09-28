@@ -2,13 +2,13 @@
 
 CareerAbilityDRIronbreaker = class(CareerAbilityDRIronbreaker)
 
-CareerAbilityDRIronbreaker.init = function (self, arg_1_1, arg_1_2, arg_1_3)
+CareerAbilityDRIronbreaker.init = function (self, extension_init_context, unit, extension_init_data)
 	-- function 1
-	self._owner_unit = arg_1_2
-	self._world = arg_1_1.world
+	self._owner_unit = unit
+	self._world = extension_init_context.world
 	self._wwise_world = Managers.world:wwise_world(self._world)
 
-	local player = arg_1_3.player
+	local player = extension_init_data.player
 
 	self._player = player
 	self._is_server = player.is_server
@@ -20,112 +20,112 @@ CareerAbilityDRIronbreaker.init = function (self, arg_1_1, arg_1_2, arg_1_3)
 	self._priming_fx_name = "fx/chr_ironbreaker_aoe_decal"
 end
 
-CareerAbilityDRIronbreaker.extensions_ready = function (self, arg_2_1, arg_2_2)
+CareerAbilityDRIronbreaker.extensions_ready = function (self, world, unit)
 	-- function 2
-	self._first_person_extension = ScriptUnit.has_extension(arg_2_2, "first_person_system")
-	self._status_extension = ScriptUnit.extension(arg_2_2, "status_system")
-	self._career_extension = ScriptUnit.extension(arg_2_2, "career_system")
-	self._buff_extension = ScriptUnit.extension(arg_2_2, "buff_system")
-	self._input_extension = ScriptUnit.has_extension(arg_2_2, "input_system")
+	self._first_person_extension = ScriptUnit.has_extension(unit, "first_person_system")
+	self._status_extension = ScriptUnit.extension(unit, "status_system")
+	self._career_extension = ScriptUnit.extension(unit, "career_system")
+	self._buff_extension = ScriptUnit.extension(unit, "buff_system")
+	self._input_extension = ScriptUnit.has_extension(unit, "input_system")
 
-	if not self._first_person_extension then
+	if self._first_person_extension then
 		self._first_person_unit = self._first_person_extension:get_first_person_unit()
 	end
 end
 
-CareerAbilityDRIronbreaker.destroy = function (arg_3_0)
+CareerAbilityDRIronbreaker.destroy = function (self)
 	-- function 3
 	return
 end
 
-CareerAbilityDRIronbreaker.update = function (self, arg_4_1, arg_4_2, arg_4_3, arg_4_4, arg_4_5)
+CareerAbilityDRIronbreaker.update = function (self, unit, input, dt, context, t)
 	-- function 4
 	if not self:_ability_available() then
 		return
 	end
 
-	local _input_extension = self._input_extension
+	local input_extension = self._input_extension
 
-	if not _input_extension then
+	if not input_extension then
 		return
 	end
 
 	if not self._is_priming then
-		if not _input_extension:get("action_career") then
+		if input_extension:get("action_career") then
 			self:_start_priming()
 		end
-	elseif not self._is_priming then
-		self:_update_priming(arg_4_3)
+	elseif self._is_priming then
+		self:_update_priming(dt)
 
-		if not _input_extension:get("action_two") then
+		if input_extension:get("action_two") then
 			self:_stop_priming()
 
 			return
 		end
 
-		if not _input_extension:get("weapon_reload") then
+		if input_extension:get("weapon_reload") then
 			self:_stop_priming()
 
 			return
 		end
 
-		if not _input_extension:get("action_career_hold") then
+		if not input_extension:get("action_career_hold") then
 			self:_run_ability()
 		end
 	end
 end
 
-CareerAbilityDRIronbreaker.stop = function (self, arg_5_1)
+CareerAbilityDRIronbreaker.stop = function (self, reason)
 	-- function 5
-	if arg_5_1 == "pushed" or arg_5_1 == "stunned" or not self._is_priming then
+	if reason ~= "pushed" and reason ~= "stunned" and self._is_priming then
 		self:_stop_priming()
 	end
 end
 
 CareerAbilityDRIronbreaker._ability_available = function (self)
 	-- function 6
-	local _career_extension = self._career_extension
-	local _status_extension = self._status_extension
-	local can_use_activated_ability = _career_extension:can_use_activated_ability()
+	local career_extension = self._career_extension
+	local status_extension = self._status_extension
+	local can_use_activated_ability = career_extension:can_use_activated_ability()
 
-	can_use_activated_ability = not can_use_activated_ability and not _status_extension:is_disabled()
+	can_use_activated_ability = not not can_use_activated_ability and not not not status_extension:is_disabled()
 
 	return can_use_activated_ability
 end
 
 CareerAbilityDRIronbreaker._start_priming = function (self)
 	-- function 7
-	if not self._local_player then
-		local _world = self._world
-		local _priming_fx_name = self._priming_fx_name
+	if self._local_player then
+		local world = self._world
+		local effect_name = self._priming_fx_name
 
-		self._priming_fx_id = World.create_particles(_world, _priming_fx_name, Vector3.zero())
+		self._priming_fx_id = World.create_particles(world, effect_name, Vector3.zero())
 	end
 
 	self._is_priming = true
 end
 
-CareerAbilityDRIronbreaker._update_priming = function (self, arg_8_1)
+CareerAbilityDRIronbreaker._update_priming = function (self, dt)
 	-- function 8
-	local _priming_fx_id = self._priming_fx_id
+	local effect_id = self._priming_fx_id
 
-	if not _priming_fx_id then
-		local _world = self._world
-		local _owner_unit = self._owner_unit
-		local var_8_3 = POSITION_LOOKUP[_owner_unit]
+	if effect_id then
+		local world = self._world
+		local owner_unit = self._owner_unit
+		local owner_unit_position = POSITION_LOOKUP[owner_unit]
 
-		World.move_particles(_world, _priming_fx_id, var_8_3)
+		World.move_particles(world, effect_id, owner_unit_position)
 	end
 end
 
 CareerAbilityDRIronbreaker._stop_priming = function (self)
 	-- function 9
-	local _priming_fx_id = self._priming_fx_id
+	local effect_id = self._priming_fx_id
 
-	if not _priming_fx_id then
-		local _world = self._world
+	if effect_id then
+		local world = self._world
 
-		World.destroy_particles(_world, _priming_fx_id)
+		World.destroy_particles(world, effect_id)
 
 		self._priming_fx_id = nil
 	end
@@ -137,142 +137,147 @@ CareerAbilityDRIronbreaker._run_ability = function (self)
 	-- function 10
 	self:_stop_priming()
 
-	local _owner_unit = self._owner_unit
-	local _is_server = self._is_server
-	local _local_player = self._local_player
-	local _bot_player = self._bot_player
-	local _network_manager = self._network_manager
-	local network_transmit = _network_manager.network_transmit
-	local unit_game_object_id = _network_manager:unit_game_object_id(_owner_unit)
-	local _career_extension = self._career_extension
-	local extension = ScriptUnit.extension(_owner_unit, "talent_system")
+	local owner_unit = self._owner_unit
+	local is_server = self._is_server
+	local local_player = self._local_player
+	local bot_player = self._bot_player
+	local network_manager = self._network_manager
+	local network_transmit = network_manager.network_transmit
+	local owner_unit_id = network_manager:unit_game_object_id(owner_unit)
+	local career_extension = self._career_extension
+	local talent_extension = ScriptUnit.extension(owner_unit, "talent_system")
 
-	CharacterStateHelper.play_animation_event(_owner_unit, "iron_breaker_active_ability")
+	CharacterStateHelper.play_animation_event(owner_unit, "iron_breaker_active_ability")
 
-	local tbl = {
+	local buffs = {
 		"bardin_ironbreaker_activated_ability",
 		"bardin_ironbreaker_activated_ability_block_cost",
 		"bardin_ironbreaker_activated_ability_attack_intensity_decay_increase"
 	}
 
-	if not extension:has_talent("bardin_ironbreaker_activated_ability_taunt_range_and_duration") then
-		table.clear(tbl)
+	if talent_extension:has_talent("bardin_ironbreaker_activated_ability_taunt_range_and_duration") then
+		table.clear(buffs)
 
-		tbl = {
+		buffs = {
 			"bardin_ironbreaker_activated_ability_taunt_range_and_duration",
 			"bardin_ironbreaker_activated_ability_taunt_range_and_duration_block_cost",
 			"bardin_ironbreaker_activated_ability_taunt_range_and_duration_attack_intensity_decay_increase"
 		}
 	end
 
-	local alloc_table = FrameTable.alloc_table()
+	local targets = FrameTable.alloc_table()
 
-	alloc_table[1] = _owner_unit
+	targets[1] = owner_unit
 
-	local num = 10
-	local num_2 = 10
+	local range = 10
+	local duration = 10
 
-	if not extension:has_talent("bardin_ironbreaker_activated_ability_taunt_range_and_duration") then
-		num_2 = 15
-		num = 15
+	if talent_extension:has_talent("bardin_ironbreaker_activated_ability_taunt_range_and_duration") then
+		duration = 15
+		range = 15
 	end
 
-	if not extension:has_talent("bardin_ironbreaker_activated_ability_power_buff_allies") then
-		local PLAYER_AND_BOT_UNITS = Managers.state.side.side_by_unit[_owner_unit].PLAYER_AND_BOT_UNITS
-		local count = #PLAYER_AND_BOT_UNITS
+	if talent_extension:has_talent("bardin_ironbreaker_activated_ability_power_buff_allies") then
+		local side = Managers.state.side.side_by_unit[owner_unit]
+		local player_and_bot_units = side.PLAYER_AND_BOT_UNITS
+		local num_targets = #player_and_bot_units
 
-		for i = 1, count do
-			local var_10_15 = PLAYER_AND_BOT_UNITS[i]
-			local var_10_16 = POSITION_LOOKUP[var_10_15]
-			local var_10_17 = POSITION_LOOKUP[_owner_unit]
+		for i = 1, num_targets do
+			local target_unit = player_and_bot_units[i]
+			local ally_position = POSITION_LOOKUP[target_unit]
+			local owner_position = POSITION_LOOKUP[owner_unit]
+			local distance_squared = Vector3.distance_squared(owner_position, ally_position)
+			local range_squared = range * range
 
-			if Vector3.distance_squared(var_10_17, var_10_16) < num * num then
-				local str = "bardin_ironbreaker_activated_ability_power_buff"
-				local unit_game_object_id_2 = _network_manager:unit_game_object_id(var_10_15)
-				local extension_2 = ScriptUnit.extension(var_10_15, "buff_system")
-				local var_10_21 = NetworkLookup.buff_templates[str]
+			if distance_squared < range_squared then
+				local buff_to_add = "bardin_ironbreaker_activated_ability_power_buff"
+				local target_unit_object_id = network_manager:unit_game_object_id(target_unit)
+				local target_buff_extension = ScriptUnit.extension(target_unit, "buff_system")
+				local buff_template_name_id = NetworkLookup.buff_templates[buff_to_add]
 
-				if not _is_server then
-					extension_2:add_buff(str)
-					network_transmit:send_rpc_clients("rpc_add_buff", unit_game_object_id_2, var_10_21, unit_game_object_id, 0, false)
+				if is_server then
+					target_buff_extension:add_buff(buff_to_add)
+					network_transmit:send_rpc_clients("rpc_add_buff", target_unit_object_id, buff_template_name_id, owner_unit_id, 0, false)
 				else
-					network_transmit:send_rpc_server("rpc_add_buff", unit_game_object_id_2, var_10_21, unit_game_object_id, 0, true)
+					network_transmit:send_rpc_server("rpc_add_buff", target_unit_object_id, buff_template_name_id, owner_unit_id, 0, true)
 				end
 			end
 		end
 	end
 
-	local flag = true
-	local has_talent = extension:has_talent("bardin_ironbreaker_activated_ability_taunt_bosses")
+	local do_stagger = true
+	local taunt_bosses = talent_extension:has_talent("bardin_ironbreaker_activated_ability_taunt_bosses")
 
-	if not _is_server then
-		ScriptUnit.extension(_owner_unit, "target_override_system"):taunt(num, num_2, flag, has_talent)
+	if is_server then
+		local target_override_extension = ScriptUnit.extension(owner_unit, "target_override_system")
+
+		target_override_extension:taunt(range, duration, do_stagger, taunt_bosses)
 	else
-		network_transmit:send_rpc_server("rpc_taunt", unit_game_object_id, num, num_2, flag, has_talent)
+		network_transmit:send_rpc_server("rpc_taunt", owner_unit_id, range, duration, do_stagger, taunt_bosses)
 	end
 
-	local count_2 = #alloc_table
+	local num_targets = #targets
 
-	for j = 1, count_2 do
-		local var_10_25 = alloc_table[j]
-		local unit_game_object_id_3 = _network_manager:unit_game_object_id(var_10_25)
-		local extension_3 = ScriptUnit.extension(var_10_25, "buff_system")
+	for i = 1, num_targets do
+		local target_unit = targets[i]
+		local target_unit_object_id = network_manager:unit_game_object_id(target_unit)
+		local target_buff_extension = ScriptUnit.extension(target_unit, "buff_system")
 
-		for i_2, v in ipairs(tbl) do
-			local var_10_28 = NetworkLookup.buff_templates[v]
+		for j, buff_name in ipairs(buffs) do
+			local buff_template_name_id = NetworkLookup.buff_templates[buff_name]
 
-			if not _is_server then
-				extension_3:add_buff(v, {
-					attacker_unit = _owner_unit
+			if is_server then
+				target_buff_extension:add_buff(buff_name, {
+					attacker_unit = owner_unit
 				})
-				network_transmit:send_rpc_clients("rpc_add_buff", unit_game_object_id_3, var_10_28, unit_game_object_id, 0, false)
+				network_transmit:send_rpc_clients("rpc_add_buff", target_unit_object_id, buff_template_name_id, owner_unit_id, 0, false)
 			else
-				network_transmit:send_rpc_server("rpc_add_buff", unit_game_object_id_3, var_10_28, unit_game_object_id, 0, true)
+				network_transmit:send_rpc_server("rpc_add_buff", target_unit_object_id, buff_template_name_id, owner_unit_id, 0, true)
 			end
 		end
 	end
 
-	if not _is_server and _bot_player and not _local_player then
-		local _first_person_extension = self._first_person_extension
+	if (not is_server or not bot_player) and local_player then
+		local first_person_extension = self._first_person_extension
 
-		_first_person_extension:animation_event("ability_shout")
-		_first_person_extension:play_hud_sound_event("Play_career_ability_bardin_ironbreaker_enter")
-		_first_person_extension:play_remote_unit_sound_event("Play_career_ability_bardin_ironbreaker_enter", _owner_unit, 0)
+		first_person_extension:animation_event("ability_shout")
+		first_person_extension:play_hud_sound_event("Play_career_ability_bardin_ironbreaker_enter")
+		first_person_extension:play_remote_unit_sound_event("Play_career_ability_bardin_ironbreaker_enter", owner_unit, 0)
 	end
 
 	self:_play_vfx()
 	self:_play_vo()
-	_career_extension:start_activated_ability_cooldown()
+	career_extension:start_activated_ability_cooldown()
 end
 
 CareerAbilityDRIronbreaker._play_vo = function (self)
 	-- function 11
-	local _owner_unit = self._owner_unit
-	local extension_input = ScriptUnit.extension_input(_owner_unit, "dialogue_system")
-	local alloc_table = FrameTable.alloc_table()
+	local owner_unit = self._owner_unit
+	local dialogue_input = ScriptUnit.extension_input(owner_unit, "dialogue_system")
+	local event_data = FrameTable.alloc_table()
 
-	extension_input:trigger_networked_dialogue_event("activate_ability", alloc_table)
+	dialogue_input:trigger_networked_dialogue_event("activate_ability", event_data)
 end
 
 CareerAbilityDRIronbreaker._play_vfx = function (self)
 	-- function 12
-	local _owner_unit = self._owner_unit
-	local _network_manager = self._network_manager
-	local network_transmit = _network_manager.network_transmit
-	local unit_game_object_id = _network_manager:unit_game_object_id(_owner_unit)
-	local str = "fx/chr_iron_breaker_ability_taunt"
-	local var_12_5 = NetworkLookup.effects[str]
-	local var_12_6 = unit_game_object_id
-	local num = 0
-	local var_12_8 = Vector3(0, 0, 0)
-	local identity = Quaternion.identity()
-	local flag = false
+	local owner_unit = self._owner_unit
+	local network_manager = self._network_manager
+	local network_transmit = network_manager.network_transmit
+	local owner_unit_id = network_manager:unit_game_object_id(owner_unit)
+	local effect_name = "fx/chr_iron_breaker_ability_taunt"
+	local effect_id = NetworkLookup.effects[effect_name]
+	local game_object_id = owner_unit_id
+	local node_id = 0
+	local offset = Vector3(0, 0, 0)
+	local rotation_offset = Quaternion.identity()
+	local linked = false
 
-	Managers.state.event:trigger("event_play_particle_effect", str, _owner_unit, num, var_12_8, identity, flag)
+	Managers.state.event:trigger("event_play_particle_effect", effect_name, owner_unit, node_id, offset, rotation_offset, linked)
 
-	if not Managers.player.is_server then
-		network_transmit:send_rpc_clients("rpc_play_particle_effect", var_12_5, var_12_6, num, var_12_8, identity, flag)
+	if Managers.player.is_server then
+		network_transmit:send_rpc_clients("rpc_play_particle_effect", effect_id, game_object_id, node_id, offset, rotation_offset, linked)
 	else
-		network_transmit:send_rpc_server("rpc_play_particle_effect", var_12_5, var_12_6, num, var_12_8, identity, flag)
+		network_transmit:send_rpc_server("rpc_play_particle_effect", effect_id, game_object_id, node_id, offset, rotation_offset, linked)
 	end
 end

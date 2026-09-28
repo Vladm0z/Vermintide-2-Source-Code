@@ -17,32 +17,32 @@ ScriptPresence.init = function (self)
 	self._presence_update_timer = 0
 end
 
-ScriptPresence.set_presence = function (self, arg_2_1)
+ScriptPresence.set_presence = function (self, presence)
 	-- function 2
-	if not PRESENCE_LUT[arg_2_1] then
-		self._presence_func = PRESENCE_LUT[arg_2_1]
+	if PRESENCE_LUT[presence] then
+		self._presence_func = PRESENCE_LUT[presence]
 		self._current_presence_set = nil
 		self._current_presence_data = {}
 	else
-		Application.warning(string.format("[ScriptPresence] Trying to set presence '%s' which doesn't exist", arg_2_1))
+		Application.warning(string.format("[ScriptPresence] Trying to set presence '%s' which doesn't exist", presence))
 	end
 end
 
-ScriptPresence.update = function (self, arg_3_1)
+ScriptPresence.update = function (self, dt)
 	-- function 3
-	local account = Managers.account
+	local account_manager = Managers.account
 
-	if not (account:user_detached() or account:is_online()) then
+	if account_manager:user_detached() or not account_manager:is_online() then
 		return
 	end
 
 	local _presence_update_timer = self._presence_update_timer
 
-	_presence_update_timer = _presence_update_timer or 0
-	self._presence_update_timer = _presence_update_timer - arg_3_1
+	_presence_update_timer = not not _presence_update_timer or not not 0
+	self._presence_update_timer = _presence_update_timer - dt
 
 	if self._presence_update_timer < 0 then
-		local user_id = account:user_id()
+		local user_id = account_manager:user_id()
 
 		self[self._presence_func](self, user_id)
 
@@ -50,97 +50,153 @@ ScriptPresence.update = function (self, arg_3_1)
 	end
 end
 
-ScriptPresence.update_none = function (self, arg_4_1)
+ScriptPresence.update_none = function (self, user_id)
 	-- function 4
-	local str = ""
+	local presence_name = ""
 
-	if self._current_presence_set ~= str then
-		self:_set_presence(arg_4_1, str)
+	if self._current_presence_set ~= presence_name then
+		self:_set_presence(user_id, presence_name)
 
-		self._current_presence_set = str
+		self._current_presence_set = presence_name
 	end
 end
 
-ScriptPresence.update_menu = function (self, arg_5_1)
+ScriptPresence.update_menu = function (self, user_id)
 	-- function 5
-	local str = "in_menus"
+	local presence_name = "in_menus"
 
-	if self._current_presence_set ~= str then
-		self:_set_presence(arg_5_1, str)
+	if self._current_presence_set ~= presence_name then
+		self:_set_presence(user_id, presence_name)
 
-		self._current_presence_set = str
+		self._current_presence_set = presence_name
 	end
 end
 
-local tbl = {}
+local ACTIVE_PRESENCE_DATA = {}
 
-ScriptPresence.update_playing = function (self, arg_6_1)
+ScriptPresence.update_playing = function (self, user_id)
 	-- function 6
 	local mechanism = Managers.mechanism
 
-	mechanism = not mechanism and Managers.mechanism:current_mechanism_name()
+	if mechanism then
+		-- Nothing
+	end
+
+	mechanism = Managers.mechanism:current_mechanism_name()
+
+	local mechanism_key = mechanism
+
+	::label_6_0::
 
 	local game_mode = Managers.state.game_mode
 
-	game_mode = not game_mode and Managers.state.game_mode:game_mode_key()
+	if game_mode then
+		-- Nothing
+	end
+
+	game_mode = Managers.state.game_mode:game_mode_key()
+
+	local game_mode_key = game_mode
+
+	::label_6_1::
 
 	local game_mode_2 = Managers.state.game_mode
 
-	game_mode_2 = not game_mode_2 and Managers.state.game_mode:level_key()
+	if game_mode_2 then
+		-- Nothing
+	end
+
+	game_mode_2 = Managers.state.game_mode:level_key()
+
+	local current_level = game_mode_2
+
+	::label_6_2::
 
 	local difficulty = Managers.state.difficulty
 
-	difficulty = not difficulty and Managers.state.difficulty:get_difficulty()
+	if difficulty then
+		-- Nothing
+	end
+
+	difficulty = Managers.state.difficulty:get_difficulty()
+
+	local current_difficulty = difficulty
+
+	::label_6_3::
 
 	local player = Managers.player
 
-	player = not player and Managers.player:num_human_players()
+	if player then
+		-- Nothing
+	end
+
+	player = Managers.player:num_human_players()
+
+	local current_num_players = player
+
+	::label_6_4::
 
 	local matchmaking = Managers.matchmaking
 
-	matchmaking = not matchmaking and Managers.matchmaking:is_game_private()
+	if matchmaking then
+		-- Nothing
+	end
 
-	if not (not game_mode_2 and not difficulty and player) then
+	matchmaking = Managers.matchmaking:is_game_private()
+
+	local is_private = matchmaking
+
+	::label_6_5::
+
+	if not current_level or not current_difficulty or not current_num_players then
 		self:set_presence("menu")
 	else
-		local str = ""
+		local prefix = ""
 
-		if not self:_has_new_data(game_mode_2, difficulty, player, matchmaking) then
-			local flag
+		if self:_has_new_data(current_level, current_difficulty, current_num_players, is_private) then
+			prefix = (current_num_players == 4 or is_private) and not not "playing" or not not "needs_assistance"
 
-			flag = player == 4 or not matchmaking or "playing" or "needs_assistance"
+			self:_setup_stat_data(current_level, current_difficulty, current_num_players)
 
-			self:_setup_stat_data(game_mode_2, difficulty, player)
+			local presence_string
 
-			local var_6_8
-
-			if game_mode == "weave" then
+			if game_mode_key == "weave" then
 				local network = Managers.state.network
 
-				network = not network and Managers.state.network:lobby()
-
-				if not (not network and network:lobby_data("weave_quick_game") == "true") then
-					var_6_8 = flag .. "_" .. "weave_quick_game_" .. difficulty
-				else
-					var_6_8 = "playing_weave"
+				if network then
+					-- Nothing
 				end
-			elseif mechanism == "deus" then
-				local get_state = Managers.mechanism:get_state()
 
-				if get_state == "map_deus" then
-					var_6_8 = "chaos_wastes_map"
-				elseif get_state == "inn_deus" then
-					var_6_8 = "chaos_wastes_keep"
+				network = Managers.state.network:lobby()
+
+				local lobby = network
+
+				::label_6_6::
+
+				local weave_quick_game = not not lobby and lobby:lobby_data("weave_quick_game") == "true"
+
+				if weave_quick_game then
+					presence_string = prefix .. "_" .. "weave_quick_game_" .. current_difficulty
 				else
-					var_6_8 = flag .. "_chaos_wastes_" .. difficulty
+					presence_string = "playing_weave"
+				end
+			elseif mechanism_key == "deus" then
+				local state = Managers.mechanism:get_state()
+
+				if state == "map_deus" then
+					presence_string = "chaos_wastes_map"
+				elseif state == "inn_deus" then
+					presence_string = "chaos_wastes_keep"
+				else
+					presence_string = prefix .. "_chaos_wastes_" .. current_difficulty
 				end
 			else
-				var_6_8 = flag .. "_" .. game_mode_2 .. "_" .. difficulty
+				presence_string = prefix .. "_" .. current_level .. "_" .. current_difficulty
 			end
 
-			self:_set_presence(arg_6_1, var_6_8)
+			self:_set_presence(user_id, presence_string)
 
-			self._current_presence_set = var_6_8
+			self._current_presence_set = presence_string
 		end
 	end
 end
@@ -148,101 +204,101 @@ end
 CURRENT_DIFFICULTY = "easy"
 CURRENT_LEVEL = "magnus"
 
-ScriptPresence._extract_stat_data = function (arg_7_0, arg_7_1, arg_7_2, arg_7_3)
+ScriptPresence._extract_stat_data = function (self, current_level, current_difficulty, current_num_players)
 	-- function 7
-	local tbl = {}
+	local data = {}
 
-	if not arg_7_1 then
-		local var_7_1 = LevelSettings[arg_7_1]
+	if current_level then
+		local level_settings = LevelSettings[current_level]
 
-		if not var_7_1 then
-			arg_7_1 = var_7_1.display_name
+		if level_settings then
+			current_level = level_settings.display_name
 		else
-			arg_7_1 = nil
+			current_level = nil
 		end
 	end
 
-	if not arg_7_2 then
-		local var_7_2 = DifficultySettings[arg_7_2]
+	if current_difficulty then
+		local difficulty_settings = DifficultySettings[current_difficulty]
 
-		if not var_7_2 then
-			arg_7_2 = var_7_2.display_name
+		if difficulty_settings then
+			current_difficulty = difficulty_settings.display_name
 		else
-			arg_7_2 = nil
+			current_difficulty = nil
 		end
 	end
 
-	if not arg_7_3 then
-		arg_7_3 = string.format("(%s/4)", arg_7_3)
+	if current_num_players then
+		current_num_players = string.format("(%s/4)", current_num_players)
 	else
-		arg_7_2 = nil
+		current_difficulty = nil
 	end
 
-	tbl.CurrentNumPlayers = arg_7_3 or ""
-	tbl.CurrentMap = arg_7_1 or ""
-	tbl.CurrentDifficulty = arg_7_2 or ""
+	data.CurrentNumPlayers = not not current_num_players or not not ""
+	data.CurrentMap = not not current_level or not not ""
+	data.CurrentDifficulty = not not current_difficulty or not not ""
 
-	return tbl
+	return data
 end
 
-ScriptPresence._has_new_data = function (arg_8_0, arg_8_1, arg_8_2, arg_8_3, arg_8_4)
+ScriptPresence._has_new_data = function (self, current_level, current_difficulty, current_num_players, is_private)
 	-- function 8
-	if tbl.current_level ~= arg_8_1 then
+	if ACTIVE_PRESENCE_DATA.current_level ~= current_level then
 		return true
-	elseif tbl.current_difficulty ~= arg_8_2 then
+	elseif ACTIVE_PRESENCE_DATA.current_difficulty ~= current_difficulty then
 		return true
-	elseif tbl.current_num_players ~= arg_8_3 then
+	elseif ACTIVE_PRESENCE_DATA.current_num_players ~= current_num_players then
 		return true
-	elseif tbl.is_private ~= arg_8_4 then
+	elseif ACTIVE_PRESENCE_DATA.is_private ~= is_private then
 		return true
 	end
 
 	return false
 end
 
-ScriptPresence._setup_stat_data = function (arg_9_0, arg_9_1, arg_9_2, arg_9_3, arg_9_4)
+ScriptPresence._setup_stat_data = function (self, current_level, current_difficulty, current_num_players, is_private)
 	-- function 9
-	tbl.current_level = arg_9_1
-	tbl.current_difficulty = arg_9_2
-	tbl.current_num_players = arg_9_3
-	tbl.is_private = arg_9_4
+	ACTIVE_PRESENCE_DATA.current_level = current_level
+	ACTIVE_PRESENCE_DATA.current_difficulty = current_difficulty
+	ACTIVE_PRESENCE_DATA.current_num_players = current_num_players
+	ACTIVE_PRESENCE_DATA.is_private = is_private
 end
 
 ScriptPresence.destroy = function (self)
 	-- function 10
-	local account = Managers.account
+	local account_manager = Managers.account
 
-	if not account then
-		local user_id = account:user_id()
-		local is_online = account:is_online()
+	if account_manager then
+		local user_id = account_manager:user_id()
+		local is_online = account_manager:is_online()
 
-		if not user_id and not is_online then
+		if user_id and is_online then
 			self:_set_presence(user_id, "")
 		end
 	end
 end
 
-ScriptPresence._set_presence = function (self, arg_11_1, arg_11_2)
+ScriptPresence._set_presence = function (self, user_id, presence_string)
 	-- function 11
-	if self._current_presence_set == arg_11_2 then
+	if self._current_presence_set == presence_string then
 		return
 	end
 
-	if not ScriptPresence.USE_ASYNC then
-		print("##### Presence:", arg_11_2)
-		Presence.set_async(arg_11_1, arg_11_2)
+	if ScriptPresence.USE_ASYNC then
+		print("##### Presence:", presence_string)
+		Presence.set_async(user_id, presence_string)
 	else
-		Presence.set(arg_11_1, arg_11_2)
+		Presence.set(user_id, presence_string)
 	end
 end
 
-ScriptPresence.cb_async_presence_set = function (arg_12_0, arg_12_1)
+ScriptPresence.cb_async_presence_set = function (self, info)
 	-- function 12
 	local str = "Presence set: "
 
-	if not arg_12_1.error_code then
-		str = str .. "ERROR (" .. tostring(arg_12_1.error_code) .. ")"
+	if info.error_code then
+		str = str .. "ERROR (" .. tostring(info.error_code) .. ")"
 	else
-		local str_2 = str .. "SUCCESS"
+		str = str .. "SUCCESS"
 	end
 end

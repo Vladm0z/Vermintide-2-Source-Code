@@ -1,14 +1,18 @@
 -- chunkname: @scripts/entity_system/systems/cutscene/cutscene_system_testify.lua
 
-return {
-	skip_cutscene = function (self)
+local CutsceneSystemTestify = {
+	skip_cutscene = function (cutscene_system)
 		-- function 1
-		self:skip_pressed()
+		cutscene_system:skip_pressed()
 	end,
-	wait_for_cutscene_to_finish = function (self)
+	wait_for_cutscene_to_finish = function (cutscene_system)
 		-- function 2
-		if not self:has_intro_cutscene_finished_playing() then
+		local cutscene_finished = cutscene_system:has_intro_cutscene_finished_playing()
+
+		if not cutscene_finished then
 			return Testify.RETRY
 		end
 	end
 }
+
+return CutsceneSystemTestify

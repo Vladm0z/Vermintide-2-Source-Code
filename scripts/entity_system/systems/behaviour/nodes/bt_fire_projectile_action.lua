@@ -4,252 +4,280 @@ require("scripts/entity_system/systems/behaviour/nodes/bt_node")
 
 BTFireProjectileAction = class(BTFireProjectileAction, BTNode)
 
-BTFireProjectileAction.init = function (arg_1_0, ...)
+BTFireProjectileAction.init = function (self, ...)
 	-- function 1
-	BTFireProjectileAction.super.init(arg_1_0, ...)
+	BTFireProjectileAction.super.init(self, ...)
 end
 
 BTFireProjectileAction.name = "BTFireProjectileAction"
 
-local function fn(self)
+local function randomize(event)
 	-- function 2
-	if type(self) == "table" then
-		return self[Math.random(1, #self)]
+	if type(event) == "table" then
+		return event[Math.random(1, #event)]
 	else
-		return self
+		return event
 	end
 end
 
 BTFireProjectileAction = class(BTFireProjectileAction, BTNode)
 BTFireProjectileAction.name = "BTFireProjectileAction"
 
-BTFireProjectileAction.enter = function (self, arg_3_1, arg_3_2, arg_3_3)
+BTFireProjectileAction.enter = function (self, unit, blackboard, t)
 	-- function 3
-	local action_data = self._tree_node.action_data
+	local action = self._tree_node.action_data
 
-	arg_3_2.action = action_data
-	arg_3_2.active_node = BTFireProjectileAction
-	arg_3_2.attack_finished = false
-	arg_3_2.attack_aborted = false
-	arg_3_2.anim_cb_spawn_projectile = nil
+	blackboard.action = action
+	blackboard.active_node = BTFireProjectileAction
+	blackboard.attack_finished = false
+	blackboard.attack_aborted = false
+	blackboard.anim_cb_spawn_projectile = nil
 
-	arg_3_2.navigation_extension:set_enabled(false)
-	arg_3_2.locomotion_extension:set_wanted_velocity(Vector3(0, 0, 0))
+	blackboard.navigation_extension:set_enabled(false)
+	blackboard.locomotion_extension:set_wanted_velocity(Vector3(0, 0, 0))
 
-	arg_3_2.aim_cooldown = arg_3_3 + math.random(action_data.aim_cooldown[1], action_data.aim_cooldown[2])
-	arg_3_2.start_check_for_dodge_t = arg_3_2.aim_cooldown - action_data.dodge_window
-	arg_3_2.ranged_state = "aiming"
-	arg_3_2.move_state = "attacking"
+	blackboard.aim_cooldown = t + math.random(action.aim_cooldown[1], action.aim_cooldown[2])
+	blackboard.start_check_for_dodge_t = blackboard.aim_cooldown - action.dodge_window
+	blackboard.ranged_state = "aiming"
+	blackboard.move_state = "attacking"
 
-	Managers.state.network:anim_event(arg_3_1, action_data.aim_animation)
-	Managers.state.entity:system("ai_slot_system"):do_slot_search(arg_3_1, false)
-	self:_check_for_volley_attack(arg_3_2, arg_3_1, arg_3_3)
+	local network_manager = Managers.state.network
 
-	local volley_target_unit = arg_3_2.volley_target_unit
+	network_manager:anim_event(unit, action.aim_animation)
 
-	volley_target_unit = volley_target_unit or arg_3_2.target_unit
-	arg_3_2.attacking_target = volley_target_unit
-	arg_3_2.target_unit_status_extension = ScriptUnit.has_extension(arg_3_2.attacking_target, "status_system")
+	local ai_slot_system = Managers.state.entity:system("ai_slot_system")
 
-	local extension_input = ScriptUnit.extension_input(arg_3_1, "dialogue_system")
-	local alloc_table = FrameTable.alloc_table()
+	ai_slot_system:do_slot_search(unit, false)
+	self:_check_for_volley_attack(blackboard, unit, t)
 
-	extension_input:trigger_networked_dialogue_event(arg_3_2.action.leader_fire_volley_dialogue_event, alloc_table)
+	local volley_target_unit = blackboard.volley_target_unit
+
+	volley_target_unit = not not volley_target_unit or not not blackboard.target_unit
+	blackboard.attacking_target = volley_target_unit
+
+	local target_unit_status_extension = ScriptUnit.has_extension(blackboard.attacking_target, "status_system")
+
+	blackboard.target_unit_status_extension = target_unit_status_extension
+
+	local dialogue_input = ScriptUnit.extension_input(unit, "dialogue_system")
+	local event_data = FrameTable.alloc_table()
+
+	dialogue_input:trigger_networked_dialogue_event(blackboard.action.leader_fire_volley_dialogue_event, event_data)
 end
 
-BTFireProjectileAction._check_for_volley_attack = function (arg_4_0, arg_4_1, arg_4_2, arg_4_3)
+BTFireProjectileAction._check_for_volley_attack = function (self, blackboard, unit, t)
 	-- function 4
-	local target_unit = arg_4_1.target_unit
-	local tbl = {}
+	local target_unit = blackboard.target_unit
+	local nearby_archers = {}
 
-	if not (arg_4_1.is_volley_leader or arg_4_1.has_volley_target) then
-		local broadphase = arg_4_1.group_blackboard.broadphase
-		local archer_broadphase_results = arg_4_1.archer_broadphase_results
-		local num = 15
-		local var_4_5 = POSITION_LOOKUP[arg_4_2]
-		local query = Broadphase.query(broadphase, var_4_5, num, archer_broadphase_results)
-		local fire_volley_at_t = arg_4_1.fire_volley_at_t
+	if blackboard.is_volley_leader or not blackboard.has_volley_target then
+		local broadphase = blackboard.group_blackboard.broadphase
+		local broadphase_query_result = blackboard.archer_broadphase_results
+		local radius = 15
+		local self_pos = POSITION_LOOKUP[unit]
+		local num_results = Broadphase.query(broadphase, self_pos, radius, broadphase_query_result)
+		local fire_volley_at_t_2 = blackboard.fire_volley_at_t
 
-		fire_volley_at_t = fire_volley_at_t or arg_4_3 + 1 + math.random()
+		if not fire_volley_at_t_2 then
+			-- Nothing
+		end
 
-		local var_4_8 = Vector3(0, 0, 0)
+		fire_volley_at_t_2 = t + 1 + math.random()
 
-		if query >= 3 then
-			for i = 1, query do
-				local var_4_9 = archer_broadphase_results[i]
-				local var_4_10 = BLACKBOARDS[var_4_9]
-				local breed = var_4_10.breed
-				local var_4_12 = POSITION_LOOKUP[var_4_9]
+		local fire_volley_at_t = fire_volley_at_t_2
 
-				if not breed.is_archer then
-					tbl[#tbl + 1] = var_4_10
-					var_4_8 = var_4_8 + var_4_12
+		::label_4_0::
+
+		local group_position = Vector3(0, 0, 0)
+
+		if num_results >= 3 then
+			for i = 1, num_results do
+				local nearby_unit = broadphase_query_result[i]
+				local nearby_unit_blackboard = BLACKBOARDS[nearby_unit]
+				local nearby_unit_breed = nearby_unit_blackboard.breed
+				local nearby_unit_position = POSITION_LOOKUP[nearby_unit]
+
+				if nearby_unit_breed.is_archer then
+					nearby_archers[#nearby_archers + 1] = nearby_unit_blackboard
+					group_position = group_position + nearby_unit_position
 				end
 			end
 		end
 
-		local count = #tbl
+		local num_nearby_archers = #nearby_archers
 
-		if count >= 3 then
-			local num_2 = 0
+		if num_nearby_archers >= 3 then
+			local longest_fire_time = 0
 
-			for j = 1, count do
-				local var_4_15 = tbl[j]
+			for i = 1, num_nearby_archers do
+				local nearby_unit_blackboard = nearby_archers[i]
 
-				if var_4_15.unit ~= arg_4_2 then
-					var_4_15.volley_target_unit = target_unit
-					var_4_15.has_volley_target = true
+				if nearby_unit_blackboard.unit ~= unit then
+					nearby_unit_blackboard.volley_target_unit = target_unit
+					nearby_unit_blackboard.has_volley_target = true
 
-					local num_3 = fire_volley_at_t + Math.random_range(0.15, 1.5)
+					local nearby_unit_fire_volley_at_t = fire_volley_at_t + Math.random_range(0.15, 1.5)
 
-					var_4_15.fire_volley_at_t = num_3
+					nearby_unit_blackboard.fire_volley_at_t = nearby_unit_fire_volley_at_t
 
-					if num_2 < num_3 then
-						num_2 = num_3
+					if longest_fire_time < nearby_unit_fire_volley_at_t then
+						longest_fire_time = nearby_unit_fire_volley_at_t
 					end
 
-					if not var_4_15.confirmed_player_sighting then
-						AiUtils.activate_unit(var_4_15)
+					if not nearby_unit_blackboard.confirmed_player_sighting then
+						AiUtils.activate_unit(nearby_unit_blackboard)
 					end
 				end
 			end
 
-			arg_4_1.volley_target_unit = target_unit
-			arg_4_1.fire_volley_at_t = num_2 + Math.random_range(0.15, 0.3)
+			blackboard.volley_target_unit = target_unit
+			blackboard.fire_volley_at_t = longest_fire_time + Math.random_range(0.15, 0.3)
 
-			local system = Managers.state.entity:system("audio_system")
-			local group_volley_sound = arg_4_1.action.group_volley_sound
-			local num_4 = var_4_8 / count
+			local audio_system = Managers.state.entity:system("audio_system")
+			local group_volley_sound = blackboard.action.group_volley_sound
+			local center_position = group_position / num_nearby_archers
 
-			system:play_audio_position_event(group_volley_sound, num_4)
+			audio_system:play_audio_position_event(group_volley_sound, center_position)
 
-			arg_4_1.is_volley_leader = true
-			arg_4_1.nearby_archers = tbl
+			blackboard.is_volley_leader = true
+			blackboard.nearby_archers = nearby_archers
 		end
 	end
 end
 
-BTFireProjectileAction.leave = function (arg_5_0, arg_5_1, arg_5_2, arg_5_3, arg_5_4)
+BTFireProjectileAction.leave = function (self, unit, blackboard, t, reason)
 	-- function 5
-	local get_default_breed_move_speed = AiUtils.get_default_breed_move_speed(arg_5_1, arg_5_2)
-	local navigation_extension = arg_5_2.navigation_extension
+	local default_move_speed = AiUtils.get_default_breed_move_speed(unit, blackboard)
+	local navigation_extension = blackboard.navigation_extension
 
 	navigation_extension:set_enabled(true)
-	navigation_extension:set_max_speed(get_default_breed_move_speed)
-	arg_5_2.locomotion_extension:set_rotation_speed(nil)
+	navigation_extension:set_max_speed(default_move_speed)
+	blackboard.locomotion_extension:set_rotation_speed(nil)
 
-	arg_5_2.action = nil
-	arg_5_2.active_node = nil
-	arg_5_2.aim_cooldown = nil
-	arg_5_2.anim_cb_spawn_projectile = nil
-	arg_5_2.attack_aborted = nil
-	arg_5_2.attack_success = nil
-	arg_5_2.attacking_target = nil
-	arg_5_2.fire_volley_at_t = nil
-	arg_5_2.ranged_state = nil
-	arg_5_2.shoot_cooldown = nil
-	arg_5_2.target_is_dodging = nil
-	arg_5_2.target_unit_status_extension = nil
-	arg_5_2.volley_target_unit = nil
-	arg_5_2.ranged_state = nil
+	blackboard.action = nil
+	blackboard.active_node = nil
+	blackboard.aim_cooldown = nil
+	blackboard.anim_cb_spawn_projectile = nil
+	blackboard.attack_aborted = nil
+	blackboard.attack_success = nil
+	blackboard.attacking_target = nil
+	blackboard.fire_volley_at_t = nil
+	blackboard.ranged_state = nil
+	blackboard.shoot_cooldown = nil
+	blackboard.target_is_dodging = nil
+	blackboard.target_unit_status_extension = nil
+	blackboard.volley_target_unit = nil
+	blackboard.ranged_state = nil
 
-	Managers.state.entity:system("ai_slot_system"):do_slot_search(arg_5_1, true)
+	local ai_slot_system = Managers.state.entity:system("ai_slot_system")
+
+	ai_slot_system:do_slot_search(unit, true)
 end
 
-BTFireProjectileAction.run = function (self, arg_6_1, arg_6_2, arg_6_3, arg_6_4)
+BTFireProjectileAction.run = function (self, unit, blackboard, t, dt)
 	-- function 6
-	local attacking_target = arg_6_2.attacking_target
+	local attacking_target = blackboard.attacking_target
 
 	if not Unit.alive(attacking_target) then
 		return "done"
 	end
 
-	if not arg_6_2.attack_aborted then
+	if blackboard.attack_aborted then
 		return "done"
 	end
 
-	if not (not arg_6_2.start_check_for_dodge_t and not (arg_6_3 > arg_6_2.start_check_for_dodge_t)) then
-		local target_unit_status_extension = arg_6_2.target_unit_status_extension
+	if blackboard.start_check_for_dodge_t and t > blackboard.start_check_for_dodge_t then
+		local target_unit_status_extension = blackboard.target_unit_status_extension
 
-		target_unit_status_extension = not target_unit_status_extension and arg_6_2.target_unit_status_extension:get_is_dodging()
-		arg_6_2.target_is_dodging = target_unit_status_extension
+		if target_unit_status_extension then
+			-- Nothing
+		end
 
-		if not arg_6_2.anim_cb_spawn_projectile then
-			arg_6_2.start_check_for_dodge_t = nil
+		target_unit_status_extension = blackboard.target_unit_status_extension:get_is_dodging()
+
+		local target_is_dodging = target_unit_status_extension
+
+		::label_6_0::
+
+		blackboard.target_is_dodging = target_is_dodging
+
+		if blackboard.anim_cb_spawn_projectile then
+			blackboard.start_check_for_dodge_t = nil
 		end
 	end
 
-	local world_rotation = Unit.world_rotation(arg_6_1, 0)
-	local flat = Vector3.flat(Quaternion.forward(world_rotation))
-	local normalize = Vector3.normalize(flat)
-	local var_6_5 = POSITION_LOOKUP[attacking_target]
-	local var_6_6 = POSITION_LOOKUP[arg_6_1]
-	local flat_2 = Vector3.flat(var_6_5 - var_6_6)
-	local normalize_2 = Vector3.normalize(flat_2)
+	local rotation = Unit.world_rotation(unit, 0)
+	local rotation_forward = Vector3.flat(Quaternion.forward(rotation))
+	local rotation_forward_normalized = Vector3.normalize(rotation_forward)
+	local target_position = POSITION_LOOKUP[attacking_target]
+	local unit_position = POSITION_LOOKUP[unit]
+	local to_target = Vector3.flat(target_position - unit_position)
+	local to_target_normalized = Vector3.normalize(to_target)
+	local dot = Vector3.dot(to_target_normalized, rotation_forward_normalized)
 
-	if Vector3.dot(normalize_2, normalize) < math.inverse_sqrt_2 then
-		local rotation_towards_unit_flat = LocomotionUtils.rotation_towards_unit_flat(arg_6_1, attacking_target)
+	if dot < math.inverse_sqrt_2 then
+		local rot = LocomotionUtils.rotation_towards_unit_flat(unit, attacking_target)
 
-		arg_6_2.locomotion_extension:set_wanted_rotation(rotation_towards_unit_flat)
+		blackboard.locomotion_extension:set_wanted_rotation(rot)
 	end
 
-	local network = Managers.state.network
-	local ranged_state = arg_6_2.ranged_state
-	local action = arg_6_2.action
+	local network_manager = Managers.state.network
+	local state = blackboard.ranged_state
+	local action = blackboard.action
 
-	if ranged_state == "aiming" then
-		if arg_6_2.has_volley_target or not arg_6_2.is_volley_leader then
-			if not ((not (arg_6_3 >= arg_6_2.aim_cooldown) or not arg_6_2.fire_volley_at_t) and not (arg_6_3 > arg_6_2.fire_volley_at_t)) then
-				arg_6_2.ranged_state = "shooting"
+	if state == "aiming" then
+		if blackboard.has_volley_target or blackboard.is_volley_leader then
+			if t >= blackboard.aim_cooldown and blackboard.fire_volley_at_t and t > blackboard.fire_volley_at_t then
+				blackboard.ranged_state = "shooting"
 
-				network:anim_event(arg_6_1, action.shoot_animation)
-			elseif not (not (arg_6_3 >= arg_6_2.aim_cooldown) or arg_6_2.fire_volley_at_t) then
-				arg_6_2.ranged_state = "shooting"
+				network_manager:anim_event(unit, action.shoot_animation)
+			elseif t >= blackboard.aim_cooldown and not blackboard.fire_volley_at_t then
+				blackboard.ranged_state = "shooting"
 
-				network:anim_event(arg_6_1, action.shoot_animation)
+				network_manager:anim_event(unit, action.shoot_animation)
 			end
-		elseif not (arg_6_3 >= arg_6_2.aim_cooldown) or not arg_6_2.has_line_of_sight then
-			arg_6_2.ranged_state = "shooting"
+		elseif t >= blackboard.aim_cooldown and blackboard.has_line_of_sight then
+			blackboard.ranged_state = "shooting"
 
-			network:anim_event(arg_6_1, action.shoot_animation)
-		elseif arg_6_3 >= arg_6_2.aim_cooldown then
-			arg_6_2.ranged_state = "aftermath"
-			arg_6_2.shoot_cooldown = arg_6_3
+			network_manager:anim_event(unit, action.shoot_animation)
+		elseif t >= blackboard.aim_cooldown then
+			blackboard.ranged_state = "aftermath"
+			blackboard.shoot_cooldown = t
 		end
-	elseif ranged_state == "shooting" then
-		if not arg_6_2.anim_cb_spawn_projectile then
-			self:_fire_projectile(arg_6_1, arg_6_2, arg_6_4)
+	elseif state == "shooting" then
+		if blackboard.anim_cb_spawn_projectile then
+			self:_fire_projectile(unit, blackboard, dt)
 
-			arg_6_2.shoot_cooldown = arg_6_3 + action.shoot_cooldown
-			arg_6_2.ranged_state = "aftermath"
+			blackboard.shoot_cooldown = t + action.shoot_cooldown
+			blackboard.ranged_state = "aftermath"
 		end
-	elseif arg_6_3 > arg_6_2.shoot_cooldown then
+	elseif t > blackboard.shoot_cooldown then
 		return "done"
 	end
 
 	return "running"
 end
 
-BTFireProjectileAction._fire_from_position_direction = function (arg_7_0, arg_7_1, arg_7_2, arg_7_3, arg_7_4, arg_7_5)
+BTFireProjectileAction._fire_from_position_direction = function (self, blackboard, unit, dt, projectile_speed, g)
 	-- function 7
-	local var_7_0
-	local attacking_target = arg_7_1.attacking_target
+	local target_pos
+	local attacking_target = blackboard.attacking_target
 
-	if not Unit.has_node(attacking_target, "j_neck") then
+	if Unit.has_node(attacking_target, "j_neck") then
 		local node = Unit.node(attacking_target, "j_neck")
 
-		var_7_0 = Unit.world_position(attacking_target, node)
+		target_pos = Unit.world_position(attacking_target, node)
 	else
-		var_7_0 = POSITION_LOOKUP[attacking_target] + Vector3(0, 0, 1.5)
+		target_pos = POSITION_LOOKUP[attacking_target] + Vector3(0, 0, 1.5)
 	end
 
-	local node_2 = Unit.node(arg_7_2, "j_lefthand")
-	local world_position = Unit.world_position(arg_7_2, node_2)
-	local has_extension = ScriptUnit.has_extension(attacking_target, "locomotion_system")
+	local fire_node = Unit.node(unit, "j_lefthand")
+	local fire_position = Unit.world_position(unit, fire_node)
+	local target_locomotion = ScriptUnit.has_extension(attacking_target, "locomotion_system")
 	local small_sample_size_average_velocity
 
-	if not has_extension.small_sample_size_average_velocity then
-		small_sample_size_average_velocity = has_extension:small_sample_size_average_velocity()
+	if target_locomotion.small_sample_size_average_velocity then
+		small_sample_size_average_velocity = target_locomotion:small_sample_size_average_velocity()
 
 		if not small_sample_size_average_velocity then
 			-- Nothing
@@ -258,93 +286,114 @@ BTFireProjectileAction._fire_from_position_direction = function (arg_7_0, arg_7_
 
 	small_sample_size_average_velocity = Vector3.zero()
 
+	local target_current_velocity = small_sample_size_average_velocity
+
 	::label_7_0::
 
-	local length = Vector3.length(small_sample_size_average_velocity)
+	local target_current_speed = Vector3.length(target_current_velocity)
 
-	if length > 4 then
-		small_sample_size_average_velocity = small_sample_size_average_velocity * (4 / length)
+	if target_current_speed > 4 then
+		target_current_velocity = target_current_velocity * (4 / target_current_speed)
 	end
 
-	local angle_to_hit_moving_target, var_7_9 = WeaponHelper.angle_to_hit_moving_target(world_position, var_7_0, arg_7_4, small_sample_size_average_velocity, arg_7_5, 0.1)
-	local num = var_7_9 - world_position
+	local angle, estimated_target_position = WeaponHelper.angle_to_hit_moving_target(fire_position, target_pos, projectile_speed, target_current_velocity, g, 0.1)
+	local to_target = estimated_target_position - fire_position
 
-	if not angle_to_hit_moving_target then
-		Vector3.set_z(num, 0)
+	if angle then
+		Vector3.set_z(to_target, 0)
 
-		local normalize = Vector3.normalize(num)
-		local num_2 = Quaternion.rotate(Quaternion.axis_angle(Vector3.cross(normalize, Vector3.up()), angle_to_hit_moving_target), normalize) * arg_7_4
+		local to_vec_flat = Vector3.normalize(to_target)
+		local velocity = Quaternion.rotate(Quaternion.axis_angle(Vector3.cross(to_vec_flat, Vector3.up()), angle), to_vec_flat) * projectile_speed
 
-		return world_position, num, num_2
+		return fire_position, to_target, velocity
 	end
 
 	return false
 end
 
-local pi = math.pi
-local num = pi * 2
+local PI = math.pi
+local TWO_PI = PI * 2
 
-BTFireProjectileAction._fire_projectile = function (self, arg_8_1, arg_8_2, arg_8_3)
+BTFireProjectileAction._fire_projectile = function (self, unit, blackboard, dt)
 	-- function 8
-	local action = arg_8_2.action
+	local action = blackboard.action
 	local projectile_speed = action.projectile_speed
 	local projectile_gravity = action.projectile_gravity
-	local _fire_from_position_direction, var_8_4, var_8_5 = self:_fire_from_position_direction(arg_8_2, arg_8_1, arg_8_3, projectile_speed, projectile_gravity)
+	local from_position, _, velocity = self:_fire_from_position_direction(blackboard, unit, dt, projectile_speed, projectile_gravity)
 
-	if not _fire_from_position_direction then
+	if not from_position then
 		return false
 	end
 
 	local light_weight_projectile_template_name = action.light_weight_projectile_template_name
-	local var_8_7 = LightWeightProjectiles[light_weight_projectile_template_name]
-	local str = "filter_enemy_player_afro_ray_projectile"
+	local light_weight_projectile_template = LightWeightProjectiles[light_weight_projectile_template_name]
+	local collision_filter = "filter_enemy_player_afro_ray_projectile"
 	local difficulty_hit_chance = action.difficulty_hit_chance
-	local get_difficulty_rank = Managers.state.difficulty:get_difficulty_rank()
-	local var_8_11 = var_8_7.attack_power_level[get_difficulty_rank]
+	local difficulty_rank = Managers.state.difficulty:get_difficulty_rank()
+	local var_8_0 = light_weight_projectile_template.attack_power_level[difficulty_rank]
 
-	var_8_11 = var_8_11 or var_8_7.attack_power_level[2]
+	if not var_8_0 then
+		-- Nothing
+	end
 
-	local target_is_dodging = arg_8_2.target_is_dodging
-	local flag = not not arg_8_2.fired_first_shot or var_8_7.first_shot_spread
-	local flag_2 = true
+	var_8_0 = light_weight_projectile_template.attack_power_level[2]
 
-	if not get_difficulty_rank and not difficulty_hit_chance then
-		local var_8_15 = difficulty_hit_chance[get_difficulty_rank]
+	local power_level = var_8_0
 
-		var_8_15 = var_8_15 or difficulty_hit_chance[2]
-		flag_2 = var_8_15 >= math.random()
+	::label_8_0::
 
-		if not flag_2 and not flag then
-			str = "filter_enemy_player_afro_ray_projectile_no_hitbox"
+	local target_is_dodging = blackboard.target_is_dodging
+	local first_shot_spread = not blackboard.fired_first_shot and not not light_weight_projectile_template.first_shot_spread
+	local hit = true
+
+	if difficulty_rank and difficulty_hit_chance then
+		local var_8_1 = difficulty_hit_chance[difficulty_rank]
+
+		if not var_8_1 then
+			-- Nothing
+		end
+
+		var_8_1 = difficulty_hit_chance[2]
+
+		local hit_chance = var_8_1
+
+		::label_8_1::
+
+		hit = hit_chance >= math.random()
+
+		if not hit or first_shot_spread then
+			local collision_filter_miss = "filter_enemy_player_afro_ray_projectile_no_hitbox"
+
+			collision_filter = collision_filter_miss
 		end
 	end
 
-	local length = Vector3.length(Vector3.flat(var_8_5))
-	local normalize = Vector3.normalize(var_8_5)
-	local spread = var_8_7.spread
-	local dodge_spread = var_8_7.dodge_spread
-	local num = Math.random() * (flag or not target_is_dodging or dodge_spread or spread)
+	local flat_speed = Vector3.length(Vector3.flat(velocity))
+	local normalized_direction = Vector3.normalize(velocity)
+	local spread = light_weight_projectile_template.spread
+	local dodge_spread = light_weight_projectile_template.dodge_spread
+	local spread_angle = Math.random() * ((not not first_shot_spread or not target_is_dodging or not dodge_spread) and not not spread)
 
-	num = not flag_2 and num and var_8_7.miss_spread or 0
+	spread_angle = (not hit or not spread_angle) and not not light_weight_projectile_template.miss_spread or not not 0
 
-	local var_8_21 = Quaternion(Vector3.right(), num)
-	local var_8_22 = Quaternion(Vector3.forward(), (Math.random() - 0.5) * pi)
-	local look = Quaternion.look(normalize, Vector3.up())
-	local multiply = Quaternion.multiply(Quaternion.multiply(look, var_8_22), var_8_21)
-	local forward = Quaternion.forward(multiply)
-	local tbl = {
-		power_level = var_8_11,
-		damage_profile = var_8_7.damage_profile,
-		hit_effect = var_8_7.hit_effect,
-		player_push_velocity = Vector3Box(normalize * var_8_7.impact_push_speed),
-		projectile_linker = var_8_7.projectile_linker,
-		first_person_hit_flow_events = var_8_7.first_person_hit_flow_events
+	local pitch = Quaternion(Vector3.right(), spread_angle)
+	local roll = Quaternion(Vector3.forward(), (Math.random() - 0.5) * PI)
+	local dir_rot = Quaternion.look(normalized_direction, Vector3.up())
+	local spread_rot = Quaternion.multiply(Quaternion.multiply(dir_rot, roll), pitch)
+	local spread_direction = Quaternion.forward(spread_rot)
+	local action_data = {
+		power_level = power_level,
+		damage_profile = light_weight_projectile_template.damage_profile,
+		hit_effect = light_weight_projectile_template.hit_effect,
+		player_push_velocity = Vector3Box(normalized_direction * light_weight_projectile_template.impact_push_speed),
+		projectile_linker = light_weight_projectile_template.projectile_linker,
+		first_person_hit_flow_events = light_weight_projectile_template.first_person_hit_flow_events
 	}
-	local system = Managers.state.entity:system("projectile_system")
-	local var_8_28 = projectile_gravity
-	local peer_id = Network.peer_id()
+	local projectile_system = Managers.state.entity:system("projectile_system")
+	local gravity = projectile_gravity
+	local owner_peer_id = Network.peer_id()
 
-	system:create_light_weight_projectile(arg_8_2.breed.name, arg_8_1, _fire_from_position_direction, forward, var_8_7.projectile_speed, var_8_28, length, var_8_7.projectile_max_range, str, tbl, var_8_7.light_weight_projectile_effect, peer_id)
+	projectile_system:create_light_weight_projectile(blackboard.breed.name, unit, from_position, spread_direction, light_weight_projectile_template.projectile_speed, gravity, flat_speed, light_weight_projectile_template.projectile_max_range, collision_filter, action_data, light_weight_projectile_template.light_weight_projectile_effect, owner_peer_id)
 
-	arg_8_2.fired_first_shot = true
+	blackboard.fired_first_shot = true
 end

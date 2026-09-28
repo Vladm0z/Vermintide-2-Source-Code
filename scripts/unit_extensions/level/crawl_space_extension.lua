@@ -2,45 +2,47 @@
 
 CrawlSpaceExtension = class(CrawlSpaceExtension)
 
-CrawlSpaceExtension.init = function (self, arg_1_1, arg_1_2, arg_1_3)
+CrawlSpaceExtension.init = function (self, extension_init_context, unit, extension_init_data)
 	-- function 1
-	self.unit = arg_1_2
+	self.unit = unit
 	self.partner_unit = nil
-	self.entrance_type = Unit.get_data(arg_1_2, "entrance_type")
+	self.entrance_type = Unit.get_data(unit, "entrance_type")
 
-	local local_position = Unit.local_position(arg_1_2, 0)
-	local local_rotation = Unit.local_rotation(arg_1_2, 0)
+	local pos = Unit.local_position(unit, 0)
+	local rotation = Unit.local_rotation(unit, 0)
 
-	if not (self.entrance_type == "manhole" or self.entrance_type ~= "well") then
-		local_rotation = Quaternion.multiply(local_rotation, Quaternion.from_euler_angles_xyz(90, 0, 0))
+	if self.entrance_type == "manhole" or self.entrance_type == "well" then
+		rotation = Quaternion.multiply(rotation, Quaternion.from_euler_angles_xyz(90, 0, 0))
 	end
 
-	local flat = Vector3.flat(Quaternion.forward(local_rotation))
+	local look_dir = Vector3.flat(Quaternion.forward(rotation))
 
-	self.enter_rot = Vector3Box(flat)
-	self.enter_pos = Vector3Box(local_position - flat + Vector3.down())
-	self.entrance_type = Unit.get_data(arg_1_2, "entrance_type")
-	self.id = Unit.get_data(arg_1_2, "crawl_space_id")
+	self.enter_rot = Vector3Box(look_dir)
+	self.enter_pos = Vector3Box(pos - look_dir + Vector3.down())
+	self.entrance_type = Unit.get_data(unit, "entrance_type")
+	self.id = Unit.get_data(unit, "crawl_space_id")
 
 	local flag
 
-	flag = self.id ~= 0 or not "spawner" or "tunnel"
+	flag = (self.id ~= 0 or not "spawner") and not not "tunnel"
 	self.type = flag
 end
 
 CrawlSpaceExtension.extensions_ready = function (self)
 	-- function 2
 	if self.entrance_type == "chimney" then
-		ScriptUnit.extension(self.unit, "interactable_system"):set_enabled(false)
+		local interactable_extension = ScriptUnit.extension(self.unit, "interactable_system")
+
+		interactable_extension:set_enabled(false)
 	end
 end
 
-CrawlSpaceExtension.update = function (arg_3_0, arg_3_1, arg_3_2, arg_3_3, arg_3_4, arg_3_5)
+CrawlSpaceExtension.update = function (self, unit, input, dt, context, t)
 	-- function 3
 	return
 end
 
-CrawlSpaceExtension.hot_join_sync = function (arg_4_0, arg_4_1)
+CrawlSpaceExtension.hot_join_sync = function (self, sender)
 	-- function 4
 	return
 end

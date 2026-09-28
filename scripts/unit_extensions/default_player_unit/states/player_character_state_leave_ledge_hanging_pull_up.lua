@@ -2,11 +2,11 @@
 
 PlayerCharacterStateLeaveLedgeHangingPullUp = class(PlayerCharacterStateLeaveLedgeHangingPullUp, PlayerCharacterState)
 
-PlayerCharacterStateLeaveLedgeHangingPullUp.init = function (self, arg_1_1)
+PlayerCharacterStateLeaveLedgeHangingPullUp.init = function (self, character_state_init_context)
 	-- function 1
-	PlayerCharacterState.init(self, arg_1_1, "leave_ledge_hanging_pull_up")
+	PlayerCharacterState.init(self, character_state_init_context, "leave_ledge_hanging_pull_up")
 
-	local var_1_0 = arg_1_1
+	local context = character_state_init_context
 
 	self.is_server = Managers.player.is_server
 	self.end_position = Vector3Box()
@@ -19,38 +19,42 @@ PlayerCharacterStateLeaveLedgeHangingPullUp.on_enter_animation_event = function 
 	CharacterStateHelper.play_animation_event(unit, "hanging_exit")
 end
 
-PlayerCharacterStateLeaveLedgeHangingPullUp.on_enter = function (self, arg_3_1, arg_3_2, arg_3_3, arg_3_4, arg_3_5, arg_3_6, arg_3_7)
+PlayerCharacterStateLeaveLedgeHangingPullUp.on_enter = function (self, unit, input, dt, context, t, previous_state, params)
 	-- function 3
 	local unit = self.unit
 	local input_extension = self.input_extension
 	local first_person_extension = self.first_person_extension
-	local ledge_unit = arg_3_7.ledge_unit
+	local ledge_unit = params.ledge_unit
+	local start_rotation_box = params.start_rotation_box
 
-	self.start_rotation_box, self.ledge_unit = arg_3_7.start_rotation_box, ledge_unit
+	self.ledge_unit = ledge_unit
+	self.start_rotation_box = start_rotation_box
 
 	self:calculate_end_position()
 	self.locomotion_extension:enable_animation_driven_movement_with_rotation_no_mover()
 	self:on_enter_animation_event()
 
-	self.finish_time = arg_3_5 + PlayerUnitMovementSettings.get_movement_settings_table(unit).ledge_hanging.leaving_animation_time
+	local movement_settings_table = PlayerUnitMovementSettings.get_movement_settings_table(unit)
+
+	self.finish_time = t + movement_settings_table.ledge_hanging.leaving_animation_time
 end
 
-PlayerCharacterStateLeaveLedgeHangingPullUp.on_exit = function (self, arg_4_1, arg_4_2, arg_4_3, arg_4_4, arg_4_5, arg_4_6)
+PlayerCharacterStateLeaveLedgeHangingPullUp.on_exit = function (self, unit, input, dt, context, t, next_state)
 	-- function 4
 	local status_extension = self.status_extension
 
 	self.start_rotation_box = nil
 
-	if not arg_4_6 then
+	if next_state then
 		self.locomotion_extension:enable_script_driven_movement()
 		self.locomotion_extension:set_forced_velocity(nil)
 		self.locomotion_extension:set_wanted_velocity(Vector3:zero())
 		self.locomotion_extension:teleport_to(self.end_position:unbox())
 	end
 
-	if not Managers.state.network:game() then
-		StatusUtils.set_pulled_up_network(arg_4_1, false)
-		CharacterStateHelper.set_is_on_ledge(self.ledge_unit, arg_4_1, false, self.is_server, self.status_extension)
+	if Managers.state.network:game() then
+		StatusUtils.set_pulled_up_network(unit, false)
+		CharacterStateHelper.set_is_on_ledge(self.ledge_unit, unit, false, self.is_server, self.status_extension)
 	end
 
 	CharacterStateHelper.change_camera_state(self.player, "follow")
@@ -58,12 +62,12 @@ PlayerCharacterStateLeaveLedgeHangingPullUp.on_exit = function (self, arg_4_1, a
 
 	status_extension.start_climb_rotation = nil
 
-	local flag = false
+	local include_local_player = false
 
-	CharacterStateHelper.show_inventory_3p(arg_4_1, true, flag, self.is_server, self.inventory_extension)
+	CharacterStateHelper.show_inventory_3p(unit, true, include_local_player, self.is_server, self.inventory_extension)
 end
 
-PlayerCharacterStateLeaveLedgeHangingPullUp.update = function (self, arg_5_1, arg_5_2, arg_5_3, arg_5_4, arg_5_5)
+PlayerCharacterStateLeaveLedgeHangingPullUp.update = function (self, unit, input, dt, context, t)
 	-- function 5
 	local csm = self.csm
 	local unit = self.unit
@@ -71,49 +75,49 @@ PlayerCharacterStateLeaveLedgeHangingPullUp.update = function (self, arg_5_1, ar
 	local status_extension = self.status_extension
 	local locomotion_extension = self.locomotion_extension
 
-	if not CharacterStateHelper.is_dead(status_extension) then
+	if CharacterStateHelper.is_dead(status_extension) then
 		csm:change_state("dead")
 
 		return
 	end
 
-	if not CharacterStateHelper.is_knocked_down(status_extension) then
+	if CharacterStateHelper.is_knocked_down(status_extension) then
 		csm:change_state("knocked_down")
 
 		return
 	end
 
-	if not CharacterStateHelper.is_pounced_down(status_extension) then
+	if CharacterStateHelper.is_pounced_down(status_extension) then
 		csm:change_state("pounced_down")
 
 		return
 	end
 
-	local is_catapulted, var_5_6 = CharacterStateHelper.is_catapulted(status_extension)
+	local is_catapulted, direction = CharacterStateHelper.is_catapulted(status_extension)
 
-	if not is_catapulted then
-		local tbl = {
+	if is_catapulted then
+		local params = {
 			sound_event = "Play_hit_by_ratogre",
-			direction = var_5_6
+			direction = direction
 		}
 
-		csm:change_state("catapulted", tbl)
+		csm:change_state("catapulted", params)
 
 		return
 	end
 
-	if arg_5_5 > self.finish_time then
+	if t > self.finish_time then
 		csm:change_state("walking")
 
 		return
 	end
 
-	if not status_extension.start_climb_rotation then
-		local unbox = self.start_rotation_box:unbox()
-		local local_rotation = Unit.local_rotation(unit, 0)
-		local lerp = Quaternion.lerp(local_rotation, unbox, math.min(arg_5_3 * 2, 1))
+	if status_extension.start_climb_rotation then
+		local wanted_rotation = self.start_rotation_box:unbox()
+		local current_rotation = Unit.local_rotation(unit, 0)
+		local new_rotation = Quaternion.lerp(current_rotation, wanted_rotation, math.min(dt * 2, 1))
 
-		Unit.set_local_rotation(unit, 0, lerp)
+		Unit.set_local_rotation(unit, 0, new_rotation)
 	end
 
 	self.locomotion_extension:set_disable_rotation_update()
@@ -124,24 +128,26 @@ PlayerCharacterStateLeaveLedgeHangingPullUp.calculate_end_position = function (s
 	-- function 6
 	local unit = self.unit
 	local ledge_unit = self.ledge_unit
-	local get_movement_settings_table = PlayerUnitMovementSettings.get_movement_settings_table(unit)
+	local movement_settings_table = PlayerUnitMovementSettings.get_movement_settings_table(unit)
 	local node = Unit.node(ledge_unit, "g_gameplay_ledge_finger_box")
-	local world_position = Unit.world_position(ledge_unit, node)
-	local world_rotation = Unit.world_rotation(ledge_unit, node)
-	local local_position = Unit.local_position(unit, 0)
-	local right = Quaternion.right(world_rotation)
-	local num = local_position - world_position
-	local dot = Vector3.dot(right, num)
-	local node_2 = Unit.node(ledge_unit, "g_gameplay_ledge_respawn_box")
-	local world_position_2 = Unit.world_position(ledge_unit, node_2)
-	local world_rotation_2 = Unit.world_rotation(ledge_unit, node_2)
-	local num_2 = world_position_2 + Quaternion.right(world_rotation_2) * dot
-	local get_hang_ledge_spawn_position = ScriptUnit.extension(unit, "whereabouts_system"):get_hang_ledge_spawn_position()
-	local flag = Vector3.distance(num_2, get_hang_ledge_spawn_position) < 4
+	local ledge_position = Unit.world_position(ledge_unit, node)
+	local ledge_rotation = Unit.world_rotation(ledge_unit, node)
+	local current_position = Unit.local_position(unit, 0)
+	local ledge_right_vector = Quaternion.right(ledge_rotation)
+	local direction = current_position - ledge_position
+	local position_offset_amount = Vector3.dot(ledge_right_vector, direction)
+	local node = Unit.node(ledge_unit, "g_gameplay_ledge_respawn_box")
+	local respawn_box_position = Unit.world_position(ledge_unit, node)
+	local respawn_box_rotation = Unit.world_rotation(ledge_unit, node)
+	local respawn_box_right_vector = Quaternion.right(respawn_box_rotation)
+	local new_position = respawn_box_position + respawn_box_right_vector * position_offset_amount
+	local nav_mesh_pos = ScriptUnit.extension(unit, "whereabouts_system"):get_hang_ledge_spawn_position()
+	local distance = Vector3.distance(new_position, nav_mesh_pos)
+	local is_close = distance < 4
 
-	if not get_hang_ledge_spawn_position and not flag then
-		num_2 = get_hang_ledge_spawn_position
+	if nav_mesh_pos and is_close then
+		new_position = nav_mesh_pos
 	end
 
-	self.end_position:store(num_2)
+	self.end_position:store(new_position)
 end

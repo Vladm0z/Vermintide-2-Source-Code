@@ -2,7 +2,7 @@
 
 require("scripts/settings/breeds")
 
-local tbl = {
+local breed_unit_flow_event_overrides = {
 	chr_beastmen_bestigor = {
 		burn_death_critical = false,
 		burn_death = false,
@@ -285,19 +285,21 @@ local tbl = {
 		poisoned = false
 	}
 }
-local tbl_2 = {}
+local BREED_FLOW_EVENT_OVERRIDE_DATA_LOOKUP = {}
 
-for k, v in pairs(Breeds) do
-	for k_2, v_2 in pairs(tbl) do
-		local base_unit = v.base_unit
-		local reverse = string.reverse(base_unit)
-		local find, var_0_5 = string.find(reverse, "/")
-		local sub = string.sub(reverse, 1, find - 1)
+for breed_name, breed_data in pairs(Breeds) do
+	for unit_name, event_data in pairs(breed_unit_flow_event_overrides) do
+		local breed_unit_name = breed_data.base_unit
+		local reverse_breed_unit_name = string.reverse(breed_unit_name)
+		local start_idx, end_idx = string.find(reverse_breed_unit_name, "/")
 
-		if string.reverse(sub) == k_2 then
-			tbl_2[k] = v_2
+		reverse_breed_unit_name = string.sub(reverse_breed_unit_name, 1, start_idx - 1)
+		breed_unit_name = string.reverse(reverse_breed_unit_name)
+
+		if breed_unit_name == unit_name then
+			BREED_FLOW_EVENT_OVERRIDE_DATA_LOOKUP[breed_name] = event_data
 		end
 	end
 end
 
-return tbl_2
+return BREED_FLOW_EVENT_OVERRIDE_DATA_LOOKUP

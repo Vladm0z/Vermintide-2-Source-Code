@@ -3,32 +3,32 @@
 local script_data = script_data
 local debug_state_machines = script_data.debug_state_machines
 
-debug_state_machines = debug_state_machines or Development.parameter("debug_state_machines")
+debug_state_machines = not not debug_state_machines or not not Development.parameter("debug_state_machines")
 script_data.debug_state_machines = debug_state_machines
 
-local tbl = {
-	__index = function (arg_1_0, arg_1_1)
+local no_write_meta = {
+	__index = function (t, k)
 		-- function 1
 		return nil
 	end,
-	__newindex = function (arg_2_0, arg_2_1, arg_2_2)
+	__newindex = function (t, k, v)
 		-- function 2
-		error("FAIL : tried to set [" .. arg_2_1 .. "] to [" .. tostring(arg_2_2) .. "]")
+		error("FAIL : tried to set [" .. k .. "] to [" .. tostring(v) .. "]")
 	end
 }
 
 GenericStateMachine = class(GenericStateMachine)
 
-GenericStateMachine.init = function (self, arg_3_1, arg_3_2, arg_3_3, arg_3_4)
+GenericStateMachine.init = function (self, extension_init_context, unit, states, start_state)
 	-- function 3
-	self.unit = arg_3_2
+	self.unit = unit
 	self.debugging = false
 end
 
-GenericStateMachine.post_init = function (self, arg_4_1, arg_4_2)
+GenericStateMachine.post_init = function (self, states, start_state)
 	-- function 4
-	self.states = arg_4_1
-	self.dummy_params = setmetatable({}, tbl)
+	self.states = states
+	self.dummy_params = setmetatable({}, no_write_meta)
 	self.dummy_state = setmetatable({
 		name = "dummy",
 		update = function ()
@@ -39,19 +39,19 @@ GenericStateMachine.post_init = function (self, arg_4_1, arg_4_2)
 			-- function 6
 			return
 		end
-	}, tbl)
+	}, no_write_meta)
 	self.state_current = self.dummy_state
-	self.state_next = arg_4_2
+	self.state_next = start_state
 	self.state_next_params = {}
 end
 
-GenericStateMachine.update = function (self, arg_7_1, arg_7_2, arg_7_3, arg_7_4, arg_7_5)
+GenericStateMachine.update = function (self, unit, input, dt, context, t)
 	-- function 7
 	if self.state_current ~= nil then
-		self.state_current:update(arg_7_1, arg_7_2, arg_7_3, arg_7_4, arg_7_5)
+		self.state_current:update(unit, input, dt, context, t)
 	end
 
-	if not script_data.debug_state_machines then
+	if script_data.debug_state_machines then
 		if self.state_next ~= nil then
 			printf("Changing state from %s to %s on unit %s", self.state_current.name, self.state_next, self.unit)
 			Debug.text("State: %s -> %s", self.state_current.name, self.state_next)
@@ -61,26 +61,26 @@ GenericStateMachine.update = function (self, arg_7_1, arg_7_2, arg_7_3, arg_7_4,
 	end
 
 	if self.state_next ~= nil then
-		local flag = false
+		local is_destroy = false
 
-		self.state_current:on_exit(arg_7_1, arg_7_2, arg_7_3, arg_7_4, arg_7_5, self.state_next, flag)
+		self.state_current:on_exit(unit, input, dt, context, t, self.state_next, is_destroy)
 
-		local var_7_1 = self.states[self.state_next]
-		local var_7_2 = var_7_1
-		local on_enter = var_7_1.on_enter
-		local var_7_4 = arg_7_1
-		local var_7_5 = arg_7_2
-		local var_7_6 = arg_7_3
-		local var_7_7 = arg_7_4
-		local var_7_8 = arg_7_5
+		local state = self.states[self.state_next]
+		local var_7_0 = state
+		local on_enter = state.on_enter
+		local var_7_2 = unit
+		local var_7_3 = input
+		local var_7_4 = dt
+		local var_7_5 = context
+		local var_7_6 = t
 		local name = self.state_current.name
 		local state_next_params = self.state_next_params
 
-		state_next_params = state_next_params or self.dummy_params
+		state_next_params = not not state_next_params or not not self.dummy_params
 
-		on_enter(var_7_2, var_7_4, var_7_5, var_7_6, var_7_7, var_7_8, name, state_next_params)
+		on_enter(var_7_0, var_7_2, var_7_3, var_7_4, var_7_5, var_7_6, name, state_next_params)
 
-		self.state_current = var_7_1
+		self.state_current = state
 		self.state_next = nil
 		self.state_next_params = nil
 	end
@@ -90,24 +90,21 @@ GenericStateMachine.update = function (self, arg_7_1, arg_7_2, arg_7_3, arg_7_4,
 	end
 end
 
-GenericStateMachine.change_state = function (self, arg_8_1, arg_8_2)
+GenericStateMachine.change_state = function (self, state_next, state_next_params)
 	-- function 8
 	assert(self.state_next == nil, "next state is already set ")
 
-	self.state_next = arg_8_1
-	self.state_next_params = arg_8_2
+	self.state_next = state_next
+	self.state_next_params = state_next_params
 end
 
-GenericStateMachine.exit_current_state = function (self, arg_9_1)
+GenericStateMachine.exit_current_state = function (self, is_destroy)
 	-- function 9
-	if not self.state_current then
-		local time = Managers.time:time("game")
-		local var_9_1
-		local var_9_2
-		local var_9_3
-		local var_9_4
+	if self.state_current then
+		local t = Managers.time:time("game")
+		local input, context, next_state, dt
 
-		self.state_current:on_exit(self.unit, var_9_1, var_9_4, var_9_2, time, var_9_3, arg_9_1)
+		self.state_current:on_exit(self.unit, input, dt, context, t, next_state, is_destroy)
 
 		self.state_current = nil
 	end
@@ -117,7 +114,7 @@ GenericStateMachine.current_state = function (self)
 	-- function 10
 	local name
 
-	if not self.state_current then
+	if self.state_current then
 		name = self.state_current.name
 
 		if not name then

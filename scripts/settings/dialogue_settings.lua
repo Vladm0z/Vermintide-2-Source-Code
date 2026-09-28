@@ -2,7 +2,7 @@
 
 local DialogueSettings = DialogueSettings
 
-DialogueSettings = DialogueSettings or {}
+DialogueSettings = not not DialogueSettings or not not {}
 DialogueSettings = DialogueSettings
 DialogueSettings.auto_load_files = {
 	"dialogues/generated/witch_hunter_honduras",
@@ -219,26 +219,26 @@ DialogueSettings.blocked_auto_load_files = {
 DLCUtils.append("auto_load_files", DialogueSettings.auto_load_files)
 DLCUtils.merge("auto_load_files_mechanism", DialogueSettings.auto_load_files_mechanism, true)
 
-for k, v in pairs(DLCSettings) do
-	local dialogue_settings = v.dialogue_settings
+for _, dlc in pairs(DLCSettings) do
+	local dialogue_settings = dlc.dialogue_settings
 
-	if not dialogue_settings then
-		for k_2, v_2 in pairs(dialogue_settings) do
-			local var_0_2 = DialogueSettings.level_specific_load_files[k_2]
+	if dialogue_settings then
+		for level_id, dialogue_settings_table in pairs(dialogue_settings) do
+			local current_level_settings = DialogueSettings.level_specific_load_files[level_id]
 
-			if not var_0_2 then
-				table.append(var_0_2, v_2)
+			if current_level_settings then
+				table.append(current_level_settings, dialogue_settings_table)
 			else
-				DialogueSettings.level_specific_load_files[k_2] = v_2
+				DialogueSettings.level_specific_load_files[level_id] = dialogue_settings_table
 			end
 		end
 	end
 
-	local blocked_auto_load_files = v.blocked_auto_load_files
+	local blocked_auto_load_files = dlc.blocked_auto_load_files
 
-	if not blocked_auto_load_files then
-		for k_3, v_3 in pairs(blocked_auto_load_files) do
-			DialogueSettings.blocked_auto_load_files[k_3] = v_3
+	if blocked_auto_load_files then
+		for name, value in pairs(blocked_auto_load_files) do
+			DialogueSettings.blocked_auto_load_files[name] = value
 		end
 	end
 end
@@ -1274,13 +1274,13 @@ SpecialSubtitleEvents = {
 	}
 }
 
-local tbl = {
+local NEUTRAL_COLOR = {
 	255,
 	255,
 	217,
 	192
 }
-local tbl_2 = {
+local HOSTILE_COLOR = {
 	255,
 	180,
 	37,
@@ -1288,7 +1288,7 @@ local tbl_2 = {
 }
 
 DialogueSettings.speaker_color_lookup = {
-	default = tbl,
+	default = NEUTRAL_COLOR,
 	bright_wizard = {
 		255,
 		255,
@@ -1319,23 +1319,23 @@ DialogueSettings.speaker_color_lookup = {
 		235,
 		30
 	},
-	inn_keeper = tbl,
-	ferry_lady = tbl,
-	catrinne = tbl,
-	npc_cage_villager = tbl,
-	player_gods = tbl,
-	chaos_exalted_sorcerer_drachenfels = tbl_2,
-	npc_gatekeeper_daemon = tbl_2,
-	npc_whisper_daemon = tbl_2,
-	blightreaper = tbl_2,
-	blightreaper_alt = tbl_2,
-	chaos_exalted_champion = tbl_2,
-	chaos_exalted_champion2 = tbl_2,
-	chaos_exalted_champion_norsca = tbl_2,
-	chaos_exalted_champion_warcamp = tbl_2,
-	chaos_exalted_sorcerer = tbl_2,
-	grey_seer = tbl_2,
-	skaven_storm_vermin_warlord = tbl_2,
+	inn_keeper = NEUTRAL_COLOR,
+	ferry_lady = NEUTRAL_COLOR,
+	catrinne = NEUTRAL_COLOR,
+	npc_cage_villager = NEUTRAL_COLOR,
+	player_gods = NEUTRAL_COLOR,
+	chaos_exalted_sorcerer_drachenfels = HOSTILE_COLOR,
+	npc_gatekeeper_daemon = HOSTILE_COLOR,
+	npc_whisper_daemon = HOSTILE_COLOR,
+	blightreaper = HOSTILE_COLOR,
+	blightreaper_alt = HOSTILE_COLOR,
+	chaos_exalted_champion = HOSTILE_COLOR,
+	chaos_exalted_champion2 = HOSTILE_COLOR,
+	chaos_exalted_champion_norsca = HOSTILE_COLOR,
+	chaos_exalted_champion_warcamp = HOSTILE_COLOR,
+	chaos_exalted_sorcerer = HOSTILE_COLOR,
+	grey_seer = HOSTILE_COLOR,
+	skaven_storm_vermin_warlord = HOSTILE_COLOR,
 	sofia_necromancer = {
 		255,
 		0,

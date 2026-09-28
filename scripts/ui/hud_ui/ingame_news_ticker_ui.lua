@@ -2,9 +2,9 @@
 
 IngameNewsTickerUI = class(IngameNewsTickerUI)
 
-local num = 300
-local num_2 = 120
-local tbl = {
+local REFRESH_TIMER_MESSAGE = 300
+local REFRESH_TIMER_NO_MESSAGE = 120
+local scenegraph_definition = {
 	root = {
 		scale = "fit",
 		size = {
@@ -74,7 +74,7 @@ local tbl = {
 		}
 	}
 }
-local tbl_2 = {
+local text_style = {
 	vertical_alignment = "bottom",
 	font_size = 18,
 	localize = false,
@@ -88,7 +88,7 @@ local tbl_2 = {
 		2
 	}
 }
-local tbl_3 = {
+local text_style_shadow = {
 	vertical_alignment = "bottom",
 	font_size = 18,
 	localize = false,
@@ -102,22 +102,22 @@ local tbl_3 = {
 		1
 	}
 }
-local tbl_4 = {
+local widget_definitions = {
 	simple_rect = UIWidgets.create_simple_rect("news_ticker_bg", Colors.get_color_table_with_alpha("black", 192), -1, {
 		0,
 		-5,
 		-1
 	}),
-	news_ticker_text_widget = UIWidgets.create_simple_text("", "news_ticker_text", nil, nil, tbl_2),
-	news_ticker_text_shadow_widget = UIWidgets.create_simple_text("", "news_ticker_text", nil, nil, tbl_3),
+	news_ticker_text_widget = UIWidgets.create_simple_text("", "news_ticker_text", nil, nil, text_style),
+	news_ticker_text_shadow_widget = UIWidgets.create_simple_text("", "news_ticker_text", nil, nil, text_style_shadow),
 	news_ticker_mask_widget = UIWidgets.create_simple_texture("mask_rect", "news_ticker_mask")
 }
 
-IngameNewsTickerUI.init = function (self, arg_1_1, arg_1_2)
+IngameNewsTickerUI.init = function (self, parent, ingame_ui_context)
 	-- function 1
-	self._parent = arg_1_1
-	self.ui_renderer = arg_1_2.ui_renderer
-	self.input_manager = arg_1_2.input_manager
+	self._parent = parent
+	self.ui_renderer = ingame_ui_context.ui_renderer
+	self.input_manager = ingame_ui_context.input_manager
 	self.platform = PLATFORM
 	self.ui_animations = {}
 
@@ -133,26 +133,26 @@ IngameNewsTickerUI.create_ui_elements = function (self)
 	-- function 2
 	UIRenderer.clear_scenegraph_queue(self.ui_renderer)
 
-	self.ui_scenegraph = UISceneGraph.init_scenegraph(tbl)
-	self.news_ticker_text_widget = UIWidget.init(tbl_4.news_ticker_text_widget)
-	self.news_ticker_text_shadow_widget = UIWidget.init(tbl_4.news_ticker_text_shadow_widget)
-	self.news_ticker_mask_widget = UIWidget.init(tbl_4.news_ticker_mask_widget)
-	self.simple_rect = UIWidget.init(tbl_4.simple_rect)
+	self.ui_scenegraph = UISceneGraph.init_scenegraph(scenegraph_definition)
+	self.news_ticker_text_widget = UIWidget.init(widget_definitions.news_ticker_text_widget)
+	self.news_ticker_text_shadow_widget = UIWidget.init(widget_definitions.news_ticker_text_shadow_widget)
+	self.news_ticker_mask_widget = UIWidget.init(widget_definitions.news_ticker_mask_widget)
+	self.simple_rect = UIWidget.init(widget_definitions.simple_rect)
 
-	local text = self.news_ticker_text_widget.style.text
+	local text_style = self.news_ticker_text_widget.style.text
 
-	text.localize = false
-	text.horizontal_alignment = "left"
+	text_style.localize = false
+	text_style.horizontal_alignment = "left"
 
-	local text_2 = self.news_ticker_text_shadow_widget.style.text
+	local text_style = self.news_ticker_text_shadow_widget.style.text
 
-	text_2.localize = false
-	text_2.horizontal_alignment = "left"
+	text_style.localize = false
+	text_style.horizontal_alignment = "left"
 end
 
-IngameNewsTickerUI.destroy = function (arg_3_0)
+IngameNewsTickerUI.destroy = function (self)
 	-- function 3
-	GarbageLeakDetector.register_object(arg_3_0, "ingame_news_ticker_ui")
+	GarbageLeakDetector.register_object(self, "ingame_news_ticker_ui")
 end
 
 IngameNewsTickerUI.refresh_message = function (self)
@@ -163,11 +163,11 @@ IngameNewsTickerUI.refresh_message = function (self)
 	self.news_ticker_manager:refresh_ingame_message()
 end
 
-local flag = true
+local DO_RELOAD = true
 
-IngameNewsTickerUI.update = function (self, arg_5_1, arg_5_2)
+IngameNewsTickerUI.update = function (self, dt, t)
 	-- function 5
-	if not flag then
+	if DO_RELOAD then
 		self:create_ui_elements()
 
 		self.news_ticker_speed = 100
@@ -175,95 +175,93 @@ IngameNewsTickerUI.update = function (self, arg_5_1, arg_5_2)
 
 		self:refresh_message()
 
-		flag = false
+		DO_RELOAD = false
 	end
 
 	local news_ticker_manager = self.news_ticker_manager
 	local news_ticker_started = self.news_ticker_started
 	local refreshing_ingame_message = news_ticker_manager:refreshing_ingame_message()
 
-	if not (news_ticker_started or refreshing_ingame_message) then
-		local ingame_text = news_ticker_manager:ingame_text()
+	if not news_ticker_started and not refreshing_ingame_message then
+		local news_ticker_text = news_ticker_manager:ingame_text()
 
-		if not ingame_text then
-			self:setup_news_ticker(ingame_text)
+		if news_ticker_text then
+			self:setup_news_ticker(news_ticker_text)
 		end
 
 		if not self.message_refresh_delay then
-			local var_5_4
+			local var_5_0
 
-			if not ingame_text then
-				var_5_4 = num
+			if news_ticker_text then
+				var_5_0 = REFRESH_TIMER_MESSAGE
 
-				if not var_5_4 then
+				if not var_5_0 then
 					-- Nothing
 				end
 			end
 
-			var_5_4 = num_2
+			var_5_0 = REFRESH_TIMER_NO_MESSAGE
 
 			::label_5_0::
 
-			self.message_refresh_delay = var_5_4
+			self.message_refresh_delay = var_5_0
 		end
 	end
 
 	local ui_scenegraph = self.ui_scenegraph
-	local news_ticker_started_2 = self.news_ticker_started
+	local news_ticker_started = self.news_ticker_started
 
-	if self:handle_delay(arg_5_1) or not news_ticker_started_2 then
-		local local_position = ui_scenegraph.news_ticker_text.local_position
+	if not self:handle_delay(dt) and news_ticker_started then
+		local news_ticker_widget_position = ui_scenegraph.news_ticker_text.local_position
 
-		if local_position[1] + self.news_ticker_text_width <= 0 then
-			local_position[1] = 1920
+		if news_ticker_widget_position[1] + self.news_ticker_text_width <= 0 then
+			news_ticker_widget_position[1] = 1920
 			self.delay = 5
 		end
 
-		local_position[1] = local_position[1] - arg_5_1 * self.news_ticker_speed
+		news_ticker_widget_position[1] = news_ticker_widget_position[1] - dt * self.news_ticker_speed
 
-		self:draw(arg_5_1, arg_5_2)
+		self:draw(dt, t)
 	end
 
-	if not (refreshing_ingame_message or self:handle_message_refresh_delay(arg_5_1)) then
+	if not refreshing_ingame_message and not self:handle_message_refresh_delay(dt) then
 		self:refresh_message()
 	end
 end
 
-IngameNewsTickerUI.handle_delay = function (self, arg_6_1)
+IngameNewsTickerUI.handle_delay = function (self, dt)
 	-- function 6
-	local delay = self.delay
+	local delay_time = self.delay
 
-	if not delay then
-		local num = delay - arg_6_1
-
-		self.delay = not (num > 0) or not num or nil
+	if delay_time then
+		delay_time = delay_time - dt
+		self.delay = (not (delay_time > 0) or not delay_time) and not not nil
 
 		return true
 	end
 end
 
-IngameNewsTickerUI.handle_message_refresh_delay = function (self, arg_7_1)
+IngameNewsTickerUI.handle_message_refresh_delay = function (self, dt)
 	-- function 7
-	local message_refresh_delay = self.message_refresh_delay
+	local delay_time = self.message_refresh_delay
 
-	if not message_refresh_delay then
-		local num = message_refresh_delay - arg_7_1
-
-		self.message_refresh_delay = not (num > 0) or not num or nil
+	if delay_time then
+		delay_time = delay_time - dt
+		self.message_refresh_delay = (not (delay_time > 0) or not delay_time) and not not nil
 
 		return true
 	end
 end
 
-IngameNewsTickerUI.draw = function (self, arg_8_1, arg_8_2)
+IngameNewsTickerUI.draw = function (self, dt, t)
 	-- function 8
 	local ui_renderer = self.ui_renderer
 	local ui_scenegraph = self.ui_scenegraph
 	local input_manager = self.input_manager
-	local get_service = input_manager:get_service("ingame_menu")
-	local is_device_active = input_manager:is_device_active("gamepad")
+	local input_service = input_manager:get_service("ingame_menu")
+	local gamepad_active = input_manager:is_device_active("gamepad")
 
-	UIRenderer.begin_pass(ui_renderer, ui_scenegraph, get_service, arg_8_1)
+	UIRenderer.begin_pass(ui_renderer, ui_scenegraph, input_service, dt)
 	UIRenderer.draw_widget(ui_renderer, self.news_ticker_mask_widget)
 	UIRenderer.draw_widget(ui_renderer, self.news_ticker_text_widget)
 	UIRenderer.draw_widget(ui_renderer, self.news_ticker_text_shadow_widget)
@@ -271,22 +269,22 @@ IngameNewsTickerUI.draw = function (self, arg_8_1, arg_8_2)
 	UIRenderer.end_pass(ui_renderer)
 end
 
-IngameNewsTickerUI.setup_news_ticker = function (self, arg_9_1)
+IngameNewsTickerUI.setup_news_ticker = function (self, text)
 	-- function 9
-	local news_ticker_text_widget = self.news_ticker_text_widget
-	local news_ticker_text_shadow_widget = self.news_ticker_text_shadow_widget
-	local content = news_ticker_text_widget.content
-	local content_2 = news_ticker_text_shadow_widget.content
-	local style = news_ticker_text_widget.style
+	local widget = self.news_ticker_text_widget
+	local shadow_widget = self.news_ticker_text_shadow_widget
+	local widget_content = widget.content
+	local shadow_widget_content = shadow_widget.content
+	local widget_style = widget.style
 
-	content.text = arg_9_1
-	content_2.text = arg_9_1
+	widget_content.text = text
+	shadow_widget_content.text = text
 
-	local text = style.text
-	local font_type = text.font_type
-	local var_9_7, var_9_8 = UIFontByResolution(text)
-	local text_size, var_9_10, var_9_11 = UIRenderer.text_size(self.ui_renderer, arg_9_1, var_9_7[1], var_9_8)
+	local text_style = widget_style.text
+	local font_type = text_style.font_type
+	local font, scaled_font_size = UIFontByResolution(text_style)
+	local text_width, text_height, min = UIRenderer.text_size(self.ui_renderer, text, font[1], scaled_font_size)
 
-	self.news_ticker_text_width = text_size
+	self.news_ticker_text_width = text_width
 	self.news_ticker_started = true
 end

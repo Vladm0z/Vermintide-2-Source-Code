@@ -1,6 +1,6 @@
 -- chunkname: @levels/honduras_dlcs/wizards/dlc_wizards_trail/world_spawn_zones.lua
 
-local tbl = {
+local path_markers = {
 	{
 		roaming_set = "skaven",
 		main_path_index = 1,
@@ -968,7 +968,7 @@ local tbl = {
 		}
 	}
 }
-local tbl_2 = {
+local main_paths = {
 	{
 		path_length = 131.7830400466919,
 		travel_dist = {
@@ -2861,7 +2861,7 @@ local tbl_2 = {
 		}
 	}
 }
-local tbl_3 = {
+local crossroads = {
 	A = {
 		main_path_index = 7,
 		num_roads = 28,
@@ -2871,7 +2871,7 @@ local tbl_3 = {
 		}
 	}
 }
-local tbl_4 = {
+local zones = {
 	{
 		unique_zone_id = 1,
 		roaming_set = "skaven",
@@ -64379,7 +64379,7 @@ local tbl_4 = {
 		}
 	}
 }
-local tbl_5 = {
+local cover_points = {
 	178.2425079345703,
 	-58.75975036621094,
 	400.4679260253906,
@@ -70591,7 +70591,7 @@ local tbl_5 = {
 	0.9823388457298279,
 	0.18711073696613312
 }
-local tbl_6 = {
+local position_lookup = {
 	{
 		231.6681671142578,
 		30.210140228271484,
@@ -354353,20 +354353,20 @@ local tbl_6 = {
 		378.2106628417969
 	}
 }
-local num = 56752
-local num_2 = 162
-local num_3 = 1682.0610184669
-local str = "1"
+local number_of_spawns = 56752
+local num_main_zones = 162
+local total_main_path_length = 1682.0610184669
+local spawner_version = "1"
 
 return {
-	version = str,
-	number_of_spawns = num,
-	path_markers = tbl,
-	zones = tbl_4,
-	cover_points = tbl_5,
-	num_main_zones = num_2,
-	position_lookup = tbl_6,
-	main_paths = tbl_2,
-	crossroads = tbl_3,
-	total_main_path_length = num_3
+	version = spawner_version,
+	number_of_spawns = number_of_spawns,
+	path_markers = path_markers,
+	zones = zones,
+	cover_points = cover_points,
+	num_main_zones = num_main_zones,
+	position_lookup = position_lookup,
+	main_paths = main_paths,
+	crossroads = crossroads,
+	total_main_path_length = total_main_path_length
 }

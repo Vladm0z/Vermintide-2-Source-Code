@@ -2,19 +2,19 @@
 
 VersusHordeAbilityExtension = class(VersusHordeAbilityExtension)
 
-local num = 2
+local CLIENT_PAUSE_SYNC_DURATION = 2
 
-VersusHordeAbilityExtension.init = function (self, arg_1_1, arg_1_2, arg_1_3)
+VersusHordeAbilityExtension.init = function (self, extension_init_context, unit, extension_init_data)
 	-- function 1
 	self.is_server = Managers.player.is_server
 	self._horde_ability_system = Managers.state.entity:system("versus_horde_ability_system")
 	self._settings = self._horde_ability_system:settings()
-	self._unit = arg_1_2
+	self._unit = unit
 	self.network_manager = Managers.state.network
 	self._game = Managers.state.network:game()
-	self._world = arg_1_1.world
+	self._world = extension_init_context.world
 
-	if not self.is_server then
+	if self.is_server then
 		self:create_ability_game_object()
 
 		self._ability_charge = 0
@@ -28,47 +28,55 @@ VersusHordeAbilityExtension.init = function (self, arg_1_1, arg_1_2, arg_1_3)
 	self._own_peer_id = Network.peer_id()
 end
 
-VersusHordeAbilityExtension._activate = function (self, arg_2_1)
+VersusHordeAbilityExtension._activate = function (self, t)
 	-- function 2
 	self._horde_ability_system:activate_dark_pact_horde_ability()
 
-	self._pause_sync_until = arg_2_1 + num
+	self._pause_sync_until = t + CLIENT_PAUSE_SYNC_DURATION
 	self._fully_charged = false
 
-	if not self._unit and not POSITION_LOOKUP[self._unit] then
+	if self._unit and POSITION_LOOKUP[self._unit] then
 		self._audio_system:play_audio_position_event("Play_versus_pactsworn_horde_ability", POSITION_LOOKUP[self._unit])
 	end
 
-	local game_mode = Managers.state.game_mode
+	local game_mode_2 = Managers.state.game_mode
 
-	game_mode = not game_mode and Managers.state.game_mode:game_mode()
+	if game_mode_2 then
+		-- Nothing
+	end
+
+	game_mode_2 = Managers.state.game_mode:game_mode()
+
+	local game_mode = game_mode_2
+
+	::label_2_0::
 
 	local local_player = Managers.player:local_player()
 
-	if not local_player then
+	if local_player then
 		game_mode:activated_ability_telemetry("versus_horde_ability", local_player)
 	end
 end
 
-VersusHordeAbilityExtension.extensions_ready = function (self, arg_3_1, arg_3_2)
+VersusHordeAbilityExtension.extensions_ready = function (self, world, unit)
 	-- function 3
-	self._input_extension = ScriptUnit.has_extension(arg_3_2, "input_system")
-	self._ghost_mode_extension = ScriptUnit.extension(arg_3_2, "ghost_mode_system")
+	self._input_extension = ScriptUnit.has_extension(unit, "input_system")
+	self._ghost_mode_extension = ScriptUnit.extension(unit, "ghost_mode_system")
 end
 
-VersusHordeAbilityExtension.update = function (self, arg_4_1)
+VersusHordeAbilityExtension.update = function (self, t)
 	-- function 4
 	if self._owner_peer_id ~= self._own_peer_id then
 		return
 	end
 
-	if arg_4_1 < self._pause_sync_until then
+	if t < self._pause_sync_until then
 		return
 	end
 
-	local flag = self:get_ability_charge(arg_4_1) >= self:cooldown()
+	local cooldown_ready = self:get_ability_charge(t) >= self:cooldown()
 
-	if not (not flag and self._fully_charged) then
+	if cooldown_ready and not self._fully_charged then
 		self._audio_system:play_sound_local("Play_versus_pactsworn_horde_ability_ready")
 
 		self._fully_charged = true
@@ -76,14 +84,22 @@ VersusHordeAbilityExtension.update = function (self, arg_4_1)
 
 	local _input_extension = self._input_extension
 
-	_input_extension = not _input_extension and self._input_extension:get("versus_horde_ability")
+	if _input_extension then
+		-- Nothing
+	end
+
+	_input_extension = self._input_extension:get("versus_horde_ability")
+
+	local input_activated = _input_extension
+
+	::label_4_0::
 
 	local is_in_ghost_mode = self._ghost_mode_extension:is_in_ghost_mode()
-	local flag_2 = not flag and self._horde_ability_system:is_activation_allowed(is_in_ghost_mode)
+	local is_activation_allowed = not not cooldown_ready and not not self._horde_ability_system:is_activation_allowed(is_in_ghost_mode)
 
-	if not _input_extension then
-		if not flag_2 then
-			self:_activate(arg_4_1)
+	if input_activated then
+		if is_activation_allowed then
+			self:_activate(t)
 		else
 			local wwise_world = Managers.world:wwise_world(self._world)
 
@@ -94,7 +110,7 @@ end
 
 VersusHordeAbilityExtension.destroy = function (self)
 	-- function 5
-	if not self.network_manager:game() and not self.is_server then
+	if self.network_manager:game() and self.is_server then
 		self.network_manager:destroy_game_object(self._ability_go_id)
 
 		self._ability_go_id = nil
@@ -105,38 +121,40 @@ VersusHordeAbilityExtension.create_ability_game_object = function (self)
 	-- function 6
 	fassert(self.is_server, "Trying to create ability game object on a client")
 
-	local _unit = self._unit
-	local unit_game_object_id = self.network_manager:unit_game_object_id(_unit)
-	local tbl = {
+	local unit = self._unit
+	local go_id = self.network_manager:unit_game_object_id(unit)
+	local game_object_data_table = {
 		cooldown_mod = 0,
 		ability_charge = 0,
 		boost_mod = 0,
 		go_type = NetworkLookup.go_types.dark_pact_horde_ability,
-		unit_game_object_id = unit_game_object_id
+		unit_game_object_id = go_id
 	}
-	local var_6_3 = callback(self, "cb_game_session_disconnect")
-	local create_game_object = self.network_manager:create_game_object("dark_pact_horde_ability", tbl, var_6_3)
+	local callback = callback(self, "cb_game_session_disconnect")
+	local ability_object_id = self.network_manager:create_game_object("dark_pact_horde_ability", game_object_data_table, callback)
 
-	self:set_ability_game_object_id(create_game_object)
+	self:set_ability_game_object_id(ability_object_id)
 end
 
-VersusHordeAbilityExtension.set_ability_game_object_id = function (self, arg_7_1)
+VersusHordeAbilityExtension.set_ability_game_object_id = function (self, id)
 	-- function 7
-	self._ability_go_id = arg_7_1
+	self._ability_go_id = id
 end
 
-VersusHordeAbilityExtension.get_ability_charge = function (self, arg_8_1)
+VersusHordeAbilityExtension.get_ability_charge = function (self, t)
 	-- function 8
-	if not self.is_server then
+	if self.is_server then
 		return self._ability_charge
 	end
 
-	if arg_8_1 < self._pause_sync_until then
+	if t < self._pause_sync_until then
 		return 0
 	end
 
-	if not self._game and not self._ability_go_id then
-		return (GameSession.game_object_field(self._game, self._ability_go_id, "ability_charge"))
+	if self._game and self._ability_go_id then
+		local ability_charge = GameSession.game_object_field(self._game, self._ability_go_id, "ability_charge")
+
+		return ability_charge
 	end
 
 	return 0
@@ -144,37 +162,37 @@ end
 
 VersusHordeAbilityExtension.get_charge_modifiers = function (self)
 	-- function 9
-	local num = 0
-	local num_2 = 0
+	local cooldown_mod = 0
+	local boost_mod = 0
 
-	if not self._game and not self._ability_go_id then
-		if not self.is_server then
-			num = self._cooldown_mod
-			num_2 = self._boost_mod
+	if self._game and self._ability_go_id then
+		if self.is_server then
+			cooldown_mod = self._cooldown_mod
+			boost_mod = self._boost_mod
 		else
-			num = GameSession.game_object_field(self._game, self._ability_go_id, "cooldown_mod")
-			num_2 = GameSession.game_object_field(self._game, self._ability_go_id, "boost_mod")
+			cooldown_mod = GameSession.game_object_field(self._game, self._ability_go_id, "cooldown_mod")
+			boost_mod = GameSession.game_object_field(self._game, self._ability_go_id, "boost_mod")
 		end
 	end
 
-	return num, num_2
+	return cooldown_mod, boost_mod
 end
 
-VersusHordeAbilityExtension.server_set_ability_charge = function (self, arg_10_1, arg_10_2, arg_10_3)
+VersusHordeAbilityExtension.server_set_ability_charge = function (self, ability_charge, cooldown_mod, boost_mod)
 	-- function 10
-	arg_10_2 = arg_10_2 * 100
-	arg_10_3 = arg_10_3 * 100
+	cooldown_mod = cooldown_mod * 100
+	boost_mod = boost_mod * 100
 
-	if not self._game and not self._ability_go_id then
-		GameSession.set_game_object_field(self._game, self._ability_go_id, "ability_charge", arg_10_1)
-		GameSession.set_game_object_field(self._game, self._ability_go_id, "cooldown_mod", arg_10_2)
-		GameSession.set_game_object_field(self._game, self._ability_go_id, "boost_mod", arg_10_3)
+	if self._game and self._ability_go_id then
+		GameSession.set_game_object_field(self._game, self._ability_go_id, "ability_charge", ability_charge)
+		GameSession.set_game_object_field(self._game, self._ability_go_id, "cooldown_mod", cooldown_mod)
+		GameSession.set_game_object_field(self._game, self._ability_go_id, "boost_mod", boost_mod)
 	end
 
-	if not self.is_server then
-		self._ability_charge = arg_10_1
-		self._cooldown_mod = arg_10_2
-		self._boost_mod = arg_10_3
+	if self.is_server then
+		self._ability_charge = ability_charge
+		self._cooldown_mod = cooldown_mod
+		self._boost_mod = boost_mod
 	end
 end
 
@@ -183,7 +201,7 @@ VersusHordeAbilityExtension.cooldown = function (self)
 	return self._cooldown
 end
 
-VersusHordeAbilityExtension.cb_game_session_disconnect = function (arg_12_0)
+VersusHordeAbilityExtension.cb_game_session_disconnect = function (self)
 	-- function 12
 	return
 end
@@ -193,10 +211,10 @@ VersusHordeAbilityExtension.unit = function (self)
 	return self._unit
 end
 
-VersusHordeAbilityExtension.game_object_initialized = function (self, arg_14_1, arg_14_2)
+VersusHordeAbilityExtension.game_object_initialized = function (self, unit, go_id)
 	-- function 14
-	local game = Managers.state.network:game()
+	local game_session = Managers.state.network:game()
 
-	self._go_id = arg_14_2
-	self._owner_peer_id = GameSession.game_object_field(game, arg_14_2, "owner_peer_id")
+	self._go_id = go_id
+	self._owner_peer_id = GameSession.game_object_field(game_session, go_id, "owner_peer_id")
 end

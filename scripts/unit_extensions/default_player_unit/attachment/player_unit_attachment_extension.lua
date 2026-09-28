@@ -8,16 +8,16 @@ PlayerUnitAttachmentExtension = class(PlayerUnitAttachmentExtension)
 local script_data = script_data
 local attachment_debug = script_data.attachment_debug
 
-attachment_debug = attachment_debug or Development.parameter("attachment_debug")
+attachment_debug = not not attachment_debug or not not Development.parameter("attachment_debug")
 script_data.attachment_debug = attachment_debug
 
-PlayerUnitAttachmentExtension.init = function (self, arg_1_1, arg_1_2, arg_1_3)
+PlayerUnitAttachmentExtension.init = function (self, extension_init_context, unit, extension_init_data)
 	-- function 1
-	self._world = arg_1_1.world
-	self._unit = arg_1_2
-	self._profile = arg_1_3.profile
-	self._is_server = arg_1_3.is_server
-	self._player = arg_1_3.player
+	self._world = extension_init_context.world
+	self._unit = unit
+	self._profile = extension_init_data.profile
+	self._is_server = extension_init_data.is_server
+	self._player = extension_init_data.player
 	self._profile_index = FindProfileIndex(self._profile.display_name)
 	self.current_item_buffs = {}
 	self._attachments = {
@@ -26,31 +26,32 @@ PlayerUnitAttachmentExtension.init = function (self, arg_1_1, arg_1_2, arg_1_3)
 	self._synced_slot_buffs = {}
 end
 
-PlayerUnitAttachmentExtension.extensions_ready = function (self, arg_2_1, arg_2_2)
+PlayerUnitAttachmentExtension.extensions_ready = function (self, world, unit)
 	-- function 2
-	self.buff_extension = ScriptUnit.extension(arg_2_2, "buff_system")
-	self.career_extension = ScriptUnit.extension(arg_2_2, "career_system")
-	self._cosmetic_extension = ScriptUnit.extension(arg_2_2, "cosmetic_system")
+	self.buff_extension = ScriptUnit.extension(unit, "buff_system")
+	self.career_extension = ScriptUnit.extension(unit, "career_system")
+	self._cosmetic_extension = ScriptUnit.extension(unit, "cosmetic_system")
 	self._tp_unit_mesh = self._cosmetic_extension:get_third_person_mesh_unit()
 
-	local _attachments = self._attachments
-	local _profile = self._profile
+	local attachments = self._attachments
+	local profile = self._profile
 	local attachment_slots = InventorySettings.attachment_slots
-	local count = #attachment_slots
+	local slots_n = #attachment_slots
 	local career_name = self.career_extension:career_name()
-	local bot_player = self._player.bot_player
+	local is_bot = self._player.bot_player
 
-	for i = 1, count do
+	for i = 1, slots_n do
 		repeat
-			local name = attachment_slots[i].name
-			local get_loadout_item = BackendUtils.get_loadout_item(career_name, name, bot_player)
+			local slot = attachment_slots[i]
+			local slot_name = slot.name
+			local item = BackendUtils.get_loadout_item(career_name, slot_name, is_bot)
 
-			if not get_loadout_item then
-				local clone = table.clone(get_loadout_item.data)
+			if item then
+				local item_data = table.clone(item.data)
 
-				clone.backend_id = get_loadout_item.backend_id
+				item_data.backend_id = item.backend_id
 
-				self:create_attachment(name, clone)
+				self:create_attachment(slot_name, item_data)
 			end
 		until true
 	end
@@ -58,32 +59,34 @@ PlayerUnitAttachmentExtension.extensions_ready = function (self, arg_2_1, arg_2_
 	self:show_attachments(false)
 end
 
-PlayerUnitAttachmentExtension.game_object_initialized = function (self, arg_3_1, arg_3_2)
+PlayerUnitAttachmentExtension.game_object_initialized = function (self, unit, unit_go_id)
 	-- function 3
-	local slots = self._attachments.slots
-	local network = Managers.state.network
-	local _is_server = self._is_server
+	local attachments = self._attachments
+	local slots = attachments.slots
+	local network_manager = Managers.state.network
+	local is_server = self._is_server
 
-	for k, v in pairs(slots) do
-		local var_3_3 = NetworkLookup.equipment_slots[k]
-		local var_3_4 = NetworkLookup.item_names[v.item_data.name]
+	for slot_name, slot_data in pairs(slots) do
+		local slot_id = NetworkLookup.equipment_slots[slot_name]
+		local item_id = NetworkLookup.item_names[slot_data.item_data.name]
 
-		if not _is_server then
-			network.network_transmit:send_rpc_clients("rpc_create_attachment", arg_3_2, var_3_3, var_3_4)
+		if is_server then
+			network_manager.network_transmit:send_rpc_clients("rpc_create_attachment", unit_go_id, slot_id, item_id)
 		else
-			network.network_transmit:send_rpc_server("rpc_create_attachment", arg_3_2, var_3_3, var_3_4)
+			network_manager.network_transmit:send_rpc_server("rpc_create_attachment", unit_go_id, slot_id, item_id)
 		end
 
-		local backend_id = v.item_data.backend_id
-		local _get_property_and_trait_buffs = self:_get_property_and_trait_buffs(backend_id)
-		local tbl = {}
-		local merge = table.merge(tbl, _get_property_and_trait_buffs.server)
-		local merge_2 = table.merge(merge, _get_property_and_trait_buffs.both)
+		local backend_id = slot_data.item_data.backend_id
+		local buffs = self:_get_property_and_trait_buffs(backend_id)
+		local synced_buffs = {}
 
-		if table.size(merge_2) > 0 then
-			self:_send_rpc_add_attachment_buffs(arg_3_2, var_3_3, merge_2)
+		synced_buffs = table.merge(synced_buffs, buffs.server)
+		synced_buffs = table.merge(synced_buffs, buffs.both)
 
-			self._synced_slot_buffs[k] = merge_2
+		if table.size(synced_buffs) > 0 then
+			self:_send_rpc_add_attachment_buffs(unit_go_id, slot_id, synced_buffs)
+
+			self._synced_slot_buffs[slot_name] = synced_buffs
 		end
 	end
 end
@@ -92,99 +95,100 @@ PlayerUnitAttachmentExtension.destroy = function (self)
 	-- function 4
 	local slots = self._attachments.slots
 
-	for k, v in pairs(slots) do
-		AttachmentUtils.destroy_attachment(self._world, self._unit, v)
+	for slot_name, slot_data in pairs(slots) do
+		AttachmentUtils.destroy_attachment(self._world, self._unit, slot_data)
 	end
 end
 
-PlayerUnitAttachmentExtension.update = function (self, arg_5_1, arg_5_2, arg_5_3, arg_5_4, arg_5_5)
+PlayerUnitAttachmentExtension.update = function (self, unit, input, dt, context, t)
 	-- function 5
 	self:update_resync_loadout()
 end
 
-PlayerUnitAttachmentExtension.hot_join_sync = function (self, arg_6_1)
+PlayerUnitAttachmentExtension.hot_join_sync = function (self, sender)
 	-- function 6
-	AttachmentUtils.hot_join_sync(arg_6_1, self._unit, self._attachments.slots, self._synced_slot_buffs)
+	AttachmentUtils.hot_join_sync(sender, self._unit, self._attachments.slots, self._synced_slot_buffs)
 end
 
-PlayerUnitAttachmentExtension.create_attachment = function (self, arg_7_1, arg_7_2)
+PlayerUnitAttachmentExtension.create_attachment = function (self, slot_name, item_data)
 	-- function 7
-	local _attachments = self._attachments
-	local _unit = self._unit
-	local get_item_template = BackendUtils.get_item_template(arg_7_2)
-	local var_7_3 = _unit
+	local attachments = self._attachments
+	local unit = self._unit
+	local item_template = BackendUtils.get_item_template(item_data)
+	local parent_unit = unit
 
-	if not get_item_template.link_to_skin then
-		var_7_3 = self._tp_unit_mesh
+	if item_template.link_to_skin then
+		parent_unit = self._tp_unit_mesh
 	end
 
-	local create_attachment = AttachmentUtils.create_attachment(self._world, var_7_3, _attachments, arg_7_1, arg_7_2, false)
+	local slot_data = AttachmentUtils.create_attachment(self._world, parent_unit, attachments, slot_name, item_data, false)
 
-	_attachments.slots[arg_7_1] = create_attachment
+	attachments.slots[slot_name] = slot_data
 
-	local item_data = create_attachment.item_data
-	local get_item_template_2 = BackendUtils.get_item_template(item_data)
-	local first_person_mode = ScriptUnit.extension(_unit, "first_person_system").first_person_mode
-	local bot_player = self._player.bot_player
+	local item_data = slot_data.item_data
+	local item_template = BackendUtils.get_item_template(item_data)
+	local first_player_mode = ScriptUnit.extension(unit, "first_person_system").first_person_mode
+	local is_bot = self._player.bot_player
 
-	if not first_person_mode and not bot_player then
-		local show_attachments_event = get_item_template_2.show_attachments_event
+	if not first_player_mode or is_bot then
+		local show_attachments_event = item_template.show_attachments_event
 
-		if not show_attachments_event then
+		if show_attachments_event then
 			Unit.flow_event(self._tp_unit_mesh, show_attachments_event)
 			Unit.flow_event(self._unit, show_attachments_event)
 
-			if not self._show_attachments then
-				self:_show_attachment(arg_7_1, create_attachment, true)
+			if self._show_attachments then
+				self:_show_attachment(slot_name, slot_data, true)
 			end
 		end
 	end
 
 	local backend_id = item_data.backend_id
-	local _get_property_and_trait_buffs = self:_get_property_and_trait_buffs(backend_id)
+	local buffs = self:_get_property_and_trait_buffs(backend_id)
 
-	self:_apply_buffs(_get_property_and_trait_buffs, item_data.name, arg_7_1, item_data.name)
+	self:_apply_buffs(buffs, item_data.name, slot_name, item_data.name)
 
-	local has_extension = ScriptUnit.has_extension(_unit, "cosmetic_system")
+	local cosmetic_extension = ScriptUnit.has_extension(unit, "cosmetic_system")
 
-	if not (not has_extension and arg_7_1 ~= "slot_hat") then
-		local character_material_changes = get_item_template_2.character_material_changes
+	if cosmetic_extension and slot_name == "slot_hat" then
+		local character_material_changes = item_template.character_material_changes
 
-		if not character_material_changes then
-			has_extension:change_skin_materials(character_material_changes)
+		if character_material_changes then
+			cosmetic_extension:change_skin_materials(character_material_changes)
 		end
 	end
 
-	CosmeticUtils.update_cosmetic_slot(self._player, arg_7_1, item_data.name)
+	CosmeticUtils.update_cosmetic_slot(self._player, slot_name, item_data.name)
 
-	local get_item_from_id = Managers.backend:get_interface("items"):get_item_from_id(backend_id)
+	local backend_interface_items = Managers.backend:get_interface("items")
+	local item = backend_interface_items:get_item_from_id(backend_id)
 
-	LoadoutUtils.sync_loadout_slot(self._player, arg_7_1, get_item_from_id)
+	LoadoutUtils.sync_loadout_slot(self._player, slot_name, item)
 end
 
-PlayerUnitAttachmentExtension.remove_attachment = function (self, arg_8_1)
+PlayerUnitAttachmentExtension.remove_attachment = function (self, slot_name)
 	-- function 8
-	local var_8_0 = self._attachments.slots[arg_8_1]
+	local slot_data = self._attachments.slots[slot_name]
 
-	if var_8_0 == nil then
+	if slot_data == nil then
 		return
 	end
 
-	AttachmentUtils.destroy_attachment(self._world, self._unit, var_8_0)
-	self:_remove_buffs(arg_8_1)
+	AttachmentUtils.destroy_attachment(self._world, self._unit, slot_data)
+	self:_remove_buffs(slot_name)
 
-	local item_data = var_8_0.item_data
+	local item_data = slot_data.item_data
 
-	self._attachments.slots[arg_8_1] = nil
+	self._attachments.slots[slot_name] = nil
 
-	local network = Managers.state.network
-	local unit_game_object_id = network:unit_game_object_id(self._unit)
-	local var_8_4 = NetworkLookup.equipment_slots[arg_8_1]
+	local network_manager = Managers.state.network
+	local unit_go_id = network_manager:unit_game_object_id(self._unit)
+	local slot_id = NetworkLookup.equipment_slots[slot_name]
 
-	if not self._is_server then
-		network.network_transmit:send_rpc_clients("rpc_remove_attachment", unit_game_object_id, var_8_4)
+	if self._is_server then
+		network_manager.network_transmit:send_rpc_clients("rpc_remove_attachment", unit_go_id, slot_id)
 	else
-		network.network_transmit:send_rpc_server("rpc_remove_attachment", unit_game_object_id, var_8_4)
+		network_manager.network_transmit:send_rpc_server("rpc_remove_attachment", unit_go_id, slot_id)
 	end
 end
 
@@ -193,227 +197,254 @@ PlayerUnitAttachmentExtension.attachments = function (self)
 	return self._attachments
 end
 
-PlayerUnitAttachmentExtension.get_slot_data = function (self, arg_10_1)
+PlayerUnitAttachmentExtension.get_slot_data = function (self, slot_id)
 	-- function 10
-	return self._attachments.slots[arg_10_1]
+	local attachments = self._attachments
+	local slots = attachments.slots
+
+	return slots[slot_id]
 end
 
-PlayerUnitAttachmentExtension._show_attachment = function (self, arg_11_1, arg_11_2, arg_11_3)
+PlayerUnitAttachmentExtension._show_attachment = function (self, slot_name, slot_data, show)
 	-- function 11
-	local var_11_0 = arg_11_3
+	local should_show = show
+	local always_hide = self._cosmetic_extension:always_hide_attachment_slot(slot_name)
 
-	if not self._cosmetic_extension:always_hide_attachment_slot(arg_11_1) then
-		var_11_0 = false
+	if always_hide then
+		should_show = false
 	end
 
-	local unit = arg_11_2.unit
+	local unit = slot_data.unit
 
-	Unit.set_unit_visibility(unit, var_11_0)
+	Unit.set_unit_visibility(unit, should_show)
 
-	if not var_11_0 then
+	if should_show then
 		Unit.flow_event(unit, "lua_attachment_unhidden")
 
-		local item_data = arg_11_2.item_data
-		local show_attachments_event = BackendUtils.get_item_template(item_data).show_attachments_event
+		local item_data = slot_data.item_data
+		local item_template = BackendUtils.get_item_template(item_data)
+		local show_attachments_event = item_template.show_attachments_event
 
-		if not show_attachments_event then
+		if show_attachments_event then
 			Unit.flow_event(self._tp_unit_mesh, show_attachments_event)
 			Unit.flow_event(self._unit, show_attachments_event)
 		end
 
-		self._cosmetic_extension:trigger_equip_events(arg_11_1, unit)
+		self._cosmetic_extension:trigger_equip_events(slot_name, unit)
 	else
 		Unit.flow_event(unit, "lua_attachment_hidden")
 	end
 end
 
-PlayerUnitAttachmentExtension.show_attachments = function (self, arg_12_1)
+PlayerUnitAttachmentExtension.show_attachments = function (self, show)
 	-- function 12
-	if self._show_attachments ~= arg_12_1 then
+	if self._show_attachments ~= show then
 		local slots = self._attachments.slots
 
-		for k, v in pairs(slots) do
-			if not v.unit then
-				self:_show_attachment(k, v, arg_12_1)
+		for slot_name, slot_data in pairs(slots) do
+			if slot_data.unit then
+				self:_show_attachment(slot_name, slot_data, show)
 			end
 		end
 
-		local flag
+		local str
 
-		flag = not arg_12_1 and "lua_attachment_unhidden" and "lua_attachment_hidden"
+		if show then
+			str = "lua_attachment_unhidden"
 
-		Unit.flow_event(self._tp_unit_mesh, flag)
+			goto label_12_0
+		end
 
-		self._show_attachments = arg_12_1
+		str = "lua_attachment_hidden"
+
+		local attachment_event = str
+
+		::label_12_0::
+
+		Unit.flow_event(self._tp_unit_mesh, attachment_event)
+
+		self._show_attachments = show
 	end
 end
 
-PlayerUnitAttachmentExtension.create_attachment_in_slot = function (self, arg_13_1, arg_13_2)
+PlayerUnitAttachmentExtension.create_attachment_in_slot = function (self, slot_name, backend_id)
 	-- function 13
-	local get_item_from_masterlist = BackendUtils.get_item_from_masterlist(arg_13_2)
+	local item_data = BackendUtils.get_item_from_masterlist(backend_id)
 
-	if not get_item_from_masterlist then
-		Crashify.print_exception("PlayerUnitAttachmentExtension", "Tried to create attachment %q in slot %q but was unable to find item", arg_13_2, arg_13_1)
+	if not item_data then
+		Crashify.print_exception("PlayerUnitAttachmentExtension", "Tried to create attachment %q in slot %q but was unable to find item", backend_id, slot_name)
 
 		return
 	end
 
-	local var_13_1 = self._attachments.slots[arg_13_1]
-	local flag = not var_13_1 and var_13_1.item_data == get_item_from_masterlist
-	local name = get_item_from_masterlist.name
+	local slot_data = self._attachments.slots[slot_name]
+	local attachment_already_equiped = not not slot_data and slot_data.item_data == item_data
+	local item_name = item_data.name
 
-	if not flag then
+	if attachment_already_equiped then
 		return
 	end
 
-	self:remove_attachment(arg_13_1)
+	self:remove_attachment(slot_name)
 
 	self._item_to_spawn = {
-		slot_id = arg_13_1,
-		item_data = get_item_from_masterlist
+		slot_id = slot_name,
+		item_data = item_data
 	}
 	self.resync_loadout_needed = true
 end
 
 PlayerUnitAttachmentExtension.update_resync_loadout = function (self)
 	-- function 14
-	local _item_to_spawn = self._item_to_spawn
+	local equipment_to_spawn = self._item_to_spawn
 
-	if not _item_to_spawn then
+	if not equipment_to_spawn then
 		return
 	end
 
-	local profile_synchronizer = Managers.state.network.profile_synchronizer
-	local network_id = self._player:network_id()
+	local network_manager = Managers.state.network
+	local profile_synchronizer = network_manager.profile_synchronizer
+	local peer_id = self._player:network_id()
 	local local_player_id = self._player:local_player_id()
 
-	if not self.resync_loadout_needed then
-		local bot_player = self._player.bot_player
-		local flag = true
+	if self.resync_loadout_needed then
+		local is_bot = self._player.bot_player
+		local force_resync = true
 
-		profile_synchronizer:resync_loadout(network_id, local_player_id, bot_player, flag)
+		profile_synchronizer:resync_loadout(peer_id, local_player_id, is_bot, force_resync)
 
 		self.resync_loadout_needed = false
 	end
 
-	if not profile_synchronizer:all_ingame_synced_for_peer(network_id, local_player_id) then
-		self:spawn_resynced_loadout(_item_to_spawn)
+	if profile_synchronizer:all_ingame_synced_for_peer(peer_id, local_player_id) then
+		self:spawn_resynced_loadout(equipment_to_spawn)
 
 		self._item_to_spawn = nil
 	end
 end
 
-PlayerUnitAttachmentExtension.spawn_resynced_loadout = function (self, arg_15_1)
+PlayerUnitAttachmentExtension.spawn_resynced_loadout = function (self, item_to_spawn)
 	-- function 15
-	local slot_id = arg_15_1.slot_id
-	local item_data = arg_15_1.item_data
-	local network = Managers.state.network
-	local go_id = Managers.state.unit_storage:go_id(self._unit)
-	local var_15_4 = NetworkLookup.equipment_slots[slot_id]
-	local var_15_5 = NetworkLookup.item_names[item_data.name]
+	local slot_name = item_to_spawn.slot_id
+	local item_data = item_to_spawn.item_data
+	local network_manager = Managers.state.network
+	local unit_object_id = Managers.state.unit_storage:go_id(self._unit)
+	local slot_id = NetworkLookup.equipment_slots[slot_name]
+	local item_id = NetworkLookup.item_names[item_data.name]
+	local is_server = self._is_server
 
-	if not self._is_server then
-		network.network_transmit:send_rpc_clients("rpc_create_attachment", go_id, var_15_4, var_15_5)
+	if is_server then
+		network_manager.network_transmit:send_rpc_clients("rpc_create_attachment", unit_object_id, slot_id, item_id)
 	else
-		network.network_transmit:send_rpc_server("rpc_create_attachment", go_id, var_15_4, var_15_5)
+		network_manager.network_transmit:send_rpc_server("rpc_create_attachment", unit_object_id, slot_id, item_id)
 	end
 
 	local backend_id = item_data.backend_id
-	local _get_property_and_trait_buffs = self:_get_property_and_trait_buffs(backend_id)
-	local tbl = {}
-	local merge = table.merge(tbl, _get_property_and_trait_buffs.server)
-	local merge_2 = table.merge(merge, _get_property_and_trait_buffs.both)
+	local buffs = self:_get_property_and_trait_buffs(backend_id)
+	local synced_buffs = {}
 
-	if table.size(merge_2) > 0 then
-		self:_send_rpc_add_attachment_buffs(go_id, var_15_4, merge_2)
+	synced_buffs = table.merge(synced_buffs, buffs.server)
+	synced_buffs = table.merge(synced_buffs, buffs.both)
 
-		self._synced_slot_buffs[slot_id] = merge_2
+	if table.size(synced_buffs) > 0 then
+		self:_send_rpc_add_attachment_buffs(unit_object_id, slot_id, synced_buffs)
+
+		self._synced_slot_buffs[slot_name] = synced_buffs
 	end
 
-	self:create_attachment(slot_id, item_data)
+	self:create_attachment(slot_name, item_data)
 end
 
-PlayerUnitAttachmentExtension._send_rpc_add_attachment_buffs = function (self, arg_16_1, arg_16_2, arg_16_3)
+PlayerUnitAttachmentExtension._send_rpc_add_attachment_buffs = function (self, unit_object_id, slot_id, synced_buffs)
 	-- function 16
-	local buffs_to_rpc_params = BuffUtils.buffs_to_rpc_params(arg_16_3)
-	local var_16_1, var_16_2, var_16_3, var_16_4 = unpack(buffs_to_rpc_params)
+	local rpc_params = BuffUtils.buffs_to_rpc_params(synced_buffs)
+	local num_buffs, buff_ids, buff_value_type_ids, buff_values = unpack(rpc_params)
 
-	if not (#var_16_2 ~= #var_16_3 or #var_16_3 == #var_16_4) then
-		fassert(false, "[PlayerUnitAttachmentExtension] Length of arrays buff_names(%d) and buff_value_types(%d) and buff_values(%d) are not equal!", #var_16_2, #var_16_3, #var_16_4)
+	if #buff_ids ~= #buff_value_type_ids or #buff_value_type_ids ~= #buff_values then
+		fassert(false, "[PlayerUnitAttachmentExtension] Length of arrays buff_names(%d) and buff_value_types(%d) and buff_values(%d) are not equal!", #buff_ids, #buff_value_type_ids, #buff_values)
 	end
 
-	if var_16_1 > 0 then
-		local network_transmit = Managers.state.network.network_transmit
+	if num_buffs > 0 then
+		local network_manager = Managers.state.network
+		local network_transmit = network_manager.network_transmit
 
-		if not self._is_server then
-			network_transmit:send_rpc_clients("rpc_add_attachment_buffs", arg_16_1, arg_16_2, var_16_1, var_16_2, var_16_3, var_16_4)
+		if self._is_server then
+			network_transmit:send_rpc_clients("rpc_add_attachment_buffs", unit_object_id, slot_id, num_buffs, buff_ids, buff_value_type_ids, buff_values)
 		else
-			network_transmit:send_rpc_server("rpc_add_attachment_buffs", arg_16_1, arg_16_2, var_16_1, var_16_2, var_16_3, var_16_4)
+			network_transmit:send_rpc_server("rpc_add_attachment_buffs", unit_object_id, slot_id, num_buffs, buff_ids, buff_value_type_ids, buff_values)
 		end
 	end
 end
 
-local tbl = {
+local buffs = {
 	client = {},
 	server = {},
 	both = {}
 }
 
-PlayerUnitAttachmentExtension._get_property_and_trait_buffs = function (arg_17_0, arg_17_1)
+PlayerUnitAttachmentExtension._get_property_and_trait_buffs = function (self, backend_id)
 	-- function 17
-	local get_interface = Managers.backend:get_interface("items")
+	local backend_items = Managers.backend:get_interface("items")
 
-	table.clear(tbl.client)
-	table.clear(tbl.server)
-	table.clear(tbl.both)
+	table.clear(buffs.client)
+	table.clear(buffs.server)
+	table.clear(buffs.both)
 
-	return GearUtils.get_property_and_trait_buffs(get_interface, arg_17_1, tbl)
+	return GearUtils.get_property_and_trait_buffs(backend_items, backend_id, buffs)
 end
 
-local tbl_2 = {}
+local params = {}
 
-PlayerUnitAttachmentExtension._apply_buffs = function (self, arg_18_1, arg_18_2, arg_18_3)
+PlayerUnitAttachmentExtension._apply_buffs = function (self, buffs_by_buffer, item_name, slot_name)
 	-- function 18
 	local buff_extension = self.buff_extension
-	local var_18_1 = self.current_item_buffs[arg_18_3]
+	local var_18_0 = self.current_item_buffs[slot_name]
 
-	var_18_1 = var_18_1 or {}
+	if not var_18_0 then
+		-- Nothing
+	end
 
-	local num = 1
+	var_18_0 = {}
 
-	for k, v in pairs(arg_18_1) do
-		if not (self._is_server or k == "client" or k ~= "both") then
-			for k_2, v_2 in pairs(v) do
-				local get_buff_template = BuffUtils.get_buff_template(k_2)
+	local current_item_buffs = var_18_0
 
-				fassert(get_buff_template, "buff name %s does not exist on item %s, typo?", k_2, arg_18_2)
-				table.clear(tbl_2)
+	::label_18_0::
 
-				for k_3, v_3 in pairs(v_2) do
-					tbl_2[k_3] = v_3
+	local index = 1
+
+	for buffer, buffs in pairs(buffs_by_buffer) do
+		if self._is_server or buffer == "client" or buffer == "both" then
+			for buff_name, variable_data in pairs(buffs) do
+				local buff_data = BuffUtils.get_buff_template(buff_name)
+
+				fassert(buff_data, "buff name %s does not exist on item %s, typo?", buff_name, item_name)
+				table.clear(params)
+
+				for data_type, data_value in pairs(variable_data) do
+					params[data_type] = data_value
 				end
 
-				var_18_1[num] = buff_extension:add_buff(k_2, tbl_2)
-				num = num + 1
+				current_item_buffs[index] = buff_extension:add_buff(buff_name, params)
+				index = index + 1
 			end
 		end
 	end
 
-	self.current_item_buffs[arg_18_3] = var_18_1
+	self.current_item_buffs[slot_name] = current_item_buffs
 end
 
-PlayerUnitAttachmentExtension._remove_buffs = function (self, arg_19_1)
+PlayerUnitAttachmentExtension._remove_buffs = function (self, slot_name)
 	-- function 19
 	local buff_extension = self.buff_extension
-	local var_19_1 = self.current_item_buffs[arg_19_1]
+	local current_item_buffs = self.current_item_buffs[slot_name]
 
-	if not var_19_1 then
-		for i = 1, #var_19_1 do
-			local var_19_2 = var_19_1[i]
+	if current_item_buffs then
+		for i = 1, #current_item_buffs do
+			local buff_id = current_item_buffs[i]
 
-			buff_extension:remove_buff(var_19_2)
+			buff_extension:remove_buff(buff_id)
 		end
 
-		table.clear(var_19_1)
+		table.clear(current_item_buffs)
 	end
 end

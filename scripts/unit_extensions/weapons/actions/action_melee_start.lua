@@ -2,61 +2,69 @@
 
 ActionMeleeStart = class(ActionMeleeStart, ActionDummy)
 
-local function fn(arg_1_0, arg_1_1, arg_1_2, arg_1_3)
+local function scale_delay_value(action_settings, value, owner_unit, buff_extension)
 	-- function 1
-	return arg_1_1 / ActionUtils.get_action_time_scale(arg_1_2, arg_1_0)
+	local new_value = value
+	local time_scale = ActionUtils.get_action_time_scale(owner_unit, action_settings)
+
+	new_value = new_value / time_scale
+
+	return new_value
 end
 
-ActionMeleeStart.init = function (self, arg_2_1, arg_2_2, arg_2_3, arg_2_4, arg_2_5, arg_2_6, arg_2_7, arg_2_8)
+ActionMeleeStart.init = function (self, world, item_name, is_server, owner_unit, damage_unit, first_person_unit, weapon_unit, weapon_system)
 	-- function 2
-	ActionMeleeStart.super.init(self, arg_2_1, arg_2_2, arg_2_3, arg_2_4, arg_2_5, arg_2_6, arg_2_7, arg_2_8)
+	ActionMeleeStart.super.init(self, world, item_name, is_server, owner_unit, damage_unit, first_person_unit, weapon_unit, weapon_system)
 
-	self._owner_unit = arg_2_4
-	self.input_extension = ScriptUnit.extension(arg_2_4, "input_system")
-	self.buff_extension = ScriptUnit.extension(arg_2_4, "buff_system")
-	self.spread_extension = ScriptUnit.has_extension(arg_2_7, "spread_system")
+	self._owner_unit = owner_unit
+	self.input_extension = ScriptUnit.extension(owner_unit, "input_system")
+	self.buff_extension = ScriptUnit.extension(owner_unit, "buff_system")
+	self.spread_extension = ScriptUnit.has_extension(weapon_unit, "spread_system")
 end
 
-ActionMeleeStart.client_owner_start_action = function (self, arg_3_1, arg_3_2, arg_3_3, arg_3_4, arg_3_5)
+ActionMeleeStart.client_owner_start_action = function (self, new_action, t, chain_action_data, power_level, action_init_data)
 	-- function 3
-	ActionMeleeStart.super.client_owner_start_action(self, arg_3_1, arg_3_2, arg_3_3, arg_3_4, arg_3_5)
+	ActionMeleeStart.super.client_owner_start_action(self, new_action, t, chain_action_data, power_level, action_init_data)
 	Unit.flow_event(self.first_person_unit, "sfx_swing_charge")
-	self:_play_additional_animation(arg_3_1.custom_start_anim_data)
+	self:_play_additional_animation(new_action.custom_start_anim_data)
 
-	self.zoom_condition_function = arg_3_1.zoom_condition_function
+	self.zoom_condition_function = new_action.zoom_condition_function
 
 	local owner_unit = self.owner_unit
 	local buff_extension = self.buff_extension
-	local var_3_2 = fn
-	local var_3_3 = arg_3_1
-	local blocking_charge_start_time = arg_3_1.blocking_charge_start_time
+	local var_3_0 = scale_delay_value
+	local var_3_1 = new_action
+	local blocking_charge_start_time = new_action.blocking_charge_start_time
 
-	blocking_charge_start_time = blocking_charge_start_time or 0
-	self._block_delay = var_3_2(var_3_3, blocking_charge_start_time, owner_unit, buff_extension)
+	blocking_charge_start_time = not not blocking_charge_start_time or not not 0
+	self._block_delay = var_3_0(var_3_1, blocking_charge_start_time, owner_unit, buff_extension)
 
-	if not self.zoom_condition_function then
-		local var_3_5 = fn
-		local var_3_6 = arg_3_1
-		local aim_zoom_delay = arg_3_1.aim_zoom_delay
+	if self.zoom_condition_function then
+		local var_3_3 = scale_delay_value
+		local var_3_4 = new_action
+		local aim_zoom_delay_2 = new_action.aim_zoom_delay
 
-		aim_zoom_delay = aim_zoom_delay or 0
-		self.aim_zoom_time = arg_3_2 + var_3_5(var_3_6, aim_zoom_delay, owner_unit, buff_extension)
+		aim_zoom_delay_2 = not not aim_zoom_delay_2 or not not 0
+
+		local aim_zoom_delay = var_3_3(var_3_4, aim_zoom_delay_2, owner_unit, buff_extension)
+
+		self.aim_zoom_time = t + aim_zoom_delay
 	end
 end
 
-ActionMeleeStart.client_owner_post_update = function (self, arg_4_1, arg_4_2, arg_4_3)
+ActionMeleeStart.client_owner_post_update = function (self, dt, t, world)
 	-- function 4
-	local current_action = self.current_action
+	local action = self.current_action
 	local owner_unit = self.owner_unit
-	local action_start_t = self.action_start_t
-	local blocking_charge = current_action.blocking_charge
+	local action_start_time = self.action_start_t
+	local blocking_charge = action.blocking_charge
 	local status_extension = self.status_extension
 
-	if not ((status_extension.blocking or not blocking_charge) and not (arg_4_2 > action_start_t + self._block_delay)) then
+	if not status_extension.blocking and blocking_charge and t > action_start_time + self._block_delay then
 		local go_id = Managers.state.unit_storage:go_id(owner_unit)
 
 		if not LEVEL_EDITOR_TEST then
-			if not self.is_server then
+			if self.is_server then
 				Managers.state.network.network_transmit:send_rpc_clients("rpc_set_blocking", go_id, true)
 				Managers.state.network.network_transmit:send_rpc_clients("rpc_set_charge_blocking", go_id, true)
 			else
@@ -68,53 +76,55 @@ ActionMeleeStart.client_owner_post_update = function (self, arg_4_1, arg_4_2, ar
 		status_extension:set_blocking(true)
 		status_extension:set_charge_blocking(true)
 
-		status_extension.timed_block = arg_4_2 + 0.5
+		status_extension.timed_block = t + 0.5
 	end
 
-	if not self.zoom_condition_function and not self.zoom_condition_function(current_action.lookup_data) then
+	if self.zoom_condition_function and self.zoom_condition_function(action.lookup_data) then
 		local input_extension = self.input_extension
 		local buff_extension = self.buff_extension
 
-		if not (status_extension:is_zooming() or not (arg_4_2 >= self.aim_zoom_time)) then
-			status_extension:set_zooming(true, current_action.default_zoom)
+		if not status_extension:is_zooming() and t >= self.aim_zoom_time then
+			status_extension:set_zooming(true, action.default_zoom)
 		end
 
-		if not buff_extension:has_buff_perk("increased_zoom") and not status_extension:is_zooming() and not input_extension:get("action_three") then
-			status_extension:switch_variable_zoom(current_action.buffed_zoom_thresholds)
+		if buff_extension:has_buff_perk("increased_zoom") and status_extension:is_zooming() and input_extension:get("action_three") then
+			status_extension:switch_variable_zoom(action.buffed_zoom_thresholds)
 		end
 	end
 end
 
-ActionMeleeStart.finish = function (self, arg_5_1, arg_5_2)
+ActionMeleeStart.finish = function (self, reason, data)
 	-- function 5
-	local flag = true
-	local flag_2 = true
+	local reset_block = true
+	local reset_aim = true
 
-	if arg_5_1 == "new_interupting_action" then
-		local flag_3 = not arg_5_2 and arg_5_2.new_action_settings
+	if reason == "new_interupting_action" then
+		local next_action = not not data and not not data.new_action_settings
 
-		if not flag_3 then
-			flag = not flag_3.chain_block_charge
-			flag_2 = not flag_3.chain_aim
+		if next_action then
+			reset_block = not next_action.chain_block_charge
+			reset_aim = not next_action.chain_aim
 		end
 	end
 
-	local current_action = self.current_action
+	local action = self.current_action
 	local owner_unit = self.owner_unit
 
-	if not flag_2 then
-		local unzoom_condition_function = current_action.unzoom_condition_function
+	if reset_aim then
+		local unzoom_condition_function = action.unzoom_condition_function
 
-		if not unzoom_condition_function and not unzoom_condition_function(arg_5_1, arg_5_2) then
-			ScriptUnit.extension(owner_unit, "status_system"):set_zooming(false)
+		if not unzoom_condition_function or unzoom_condition_function(reason, data) then
+			local status_extension = ScriptUnit.extension(owner_unit, "status_system")
+
+			status_extension:set_zooming(false)
 		end
 	end
 
-	if not flag then
+	if reset_block then
 		if not LEVEL_EDITOR_TEST then
 			local go_id = Managers.state.unit_storage:go_id(owner_unit)
 
-			if not self.is_server then
+			if self.is_server then
 				Managers.state.network.network_transmit:send_rpc_clients("rpc_set_blocking", go_id, false)
 				Managers.state.network.network_transmit:send_rpc_clients("rpc_set_charge_blocking", go_id, false)
 			else
@@ -123,11 +133,11 @@ ActionMeleeStart.finish = function (self, arg_5_1, arg_5_2)
 			end
 		end
 
-		local extension = ScriptUnit.extension(owner_unit, "status_system")
+		local status_extension = ScriptUnit.extension(owner_unit, "status_system")
 
-		extension:set_blocking(false)
-		extension:set_charge_blocking(false)
+		status_extension:set_blocking(false)
+		status_extension:set_charge_blocking(false)
 	end
 
-	self:_play_additional_animation(current_action.custom_finish_anim_data)
+	self:_play_additional_animation(action.custom_finish_anim_data)
 end

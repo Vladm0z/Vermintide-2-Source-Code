@@ -3,13 +3,13 @@
 MatchmakingStateReserveSlotsPlayerHosted = class(MatchmakingStateReserveSlotsPlayerHosted)
 MatchmakingStateReserveSlotsPlayerHosted.NAME = "MatchmakingStateReserveSlotsPlayerHosted"
 
-MatchmakingStateReserveSlotsPlayerHosted.init = function (self, arg_1_1)
+MatchmakingStateReserveSlotsPlayerHosted.init = function (self, params)
 	-- function 1
-	self._lobby = arg_1_1.lobby
-	self._network_options = arg_1_1.network_options
-	self._matchmaking_manager = arg_1_1.matchmaking_manager
-	self._network_transmit = arg_1_1.network_transmit
-	self._is_server = arg_1_1.is_server
+	self._lobby = params.lobby
+	self._network_options = params.network_options
+	self._matchmaking_manager = params.matchmaking_manager
+	self._network_transmit = params.network_transmit
+	self._is_server = params.is_server
 	self._state = "waiting_to_join_lobby"
 end
 
@@ -22,19 +22,20 @@ MatchmakingStateReserveSlotsPlayerHosted.destroy = function (self)
 	end
 end
 
-MatchmakingStateReserveSlotsPlayerHosted.on_enter = function (self, arg_3_1)
+MatchmakingStateReserveSlotsPlayerHosted.on_enter = function (self, state_context)
 	-- function 3
-	self._state_context = arg_3_1
-	self._search_config = arg_3_1.search_config
+	self._state_context = state_context
+	self._search_config = state_context.search_config
 	self._reservation_reply = nil
 	self._connected_to_server = false
 	self._connect_timeout = nil
 	self._current_lobby = Managers.state.network:lobby()
 	self._joined_peers = {}
 
-	local join_lobby_data = arg_3_1.join_lobby_data
+	local join_lobby_data = state_context.join_lobby_data
+	local lobby_client = Managers.lobby:query_lobby("matchmaking_join_lobby")
 
-	if not Managers.lobby:query_lobby("matchmaking_join_lobby") then
+	if not lobby_client then
 		Managers.lobby:make_lobby(LobbyClient, "matchmaking_join_lobby", "MatchmakingStateReserveSlotsPlayerHosted (on_enter)", self._network_options, join_lobby_data)
 	end
 
@@ -44,86 +45,86 @@ MatchmakingStateReserveSlotsPlayerHosted.on_enter = function (self, arg_3_1)
 	local str = "hosted by: "
 	local host = join_lobby_data.host
 
-	host = host or "<no_host_name>"
+	host = not not host or not not "<no_host_name>"
 	debug.state = str .. host
 
 	self._matchmaking_manager:send_system_chat_message("matchmaking_status_starting_handshake")
 end
 
-MatchmakingStateReserveSlotsPlayerHosted.on_exit = function (arg_4_0)
+MatchmakingStateReserveSlotsPlayerHosted.on_exit = function (self)
 	-- function 4
 	return
 end
 
-MatchmakingStateReserveSlotsPlayerHosted.terminate = function (arg_5_0)
+MatchmakingStateReserveSlotsPlayerHosted.terminate = function (self)
 	-- function 5
-	if not Managers.lobby:query_lobby("matchmaking_join_lobby") then
+	if Managers.lobby:query_lobby("matchmaking_join_lobby") then
 		Managers.lobby:destroy_lobby("matchmaking_join_lobby")
 	end
 end
 
-MatchmakingStateReserveSlotsPlayerHosted.update = function (self, arg_6_1, arg_6_2)
+MatchmakingStateReserveSlotsPlayerHosted.update = function (self, dt, t)
 	-- function 6
-	self:_update_states(arg_6_1, arg_6_2)
+	self:_update_states(dt, t)
 
 	return self._new_state, self._state_context
 end
 
-MatchmakingStateReserveSlotsPlayerHosted._update_states = function (self, arg_7_1, arg_7_2)
+MatchmakingStateReserveSlotsPlayerHosted._update_states = function (self, dt, t)
 	-- function 7
-	local query_lobby = Managers.lobby:query_lobby("matchmaking_join_lobby")
+	local lobby_client = Managers.lobby:query_lobby("matchmaking_join_lobby")
 
-	if not query_lobby then
+	if not lobby_client then
 		return self:_join_game_failed("failure_start_join_server")
 	else
-		query_lobby:update(arg_7_1)
+		lobby_client:update(dt)
 
-		if not query_lobby:failed() then
+		if lobby_client:failed() then
 			return self:_join_game_failed("failure_start_join_server")
 		end
 	end
 
-	local lobby_host = query_lobby:lobby_host()
-	local id = query_lobby:id()
-	local _state = self._state
+	local host = lobby_client:lobby_host()
+	local lobby_id = lobby_client:id()
+	local state = self._state
 
-	if _state == "waiting_to_join_lobby" then
-		if not (not query_lobby:is_joined() and lobby_host == "0") then
+	if state == "waiting_to_join_lobby" then
+		if lobby_client:is_joined() and host ~= "0" then
 			self._matchmaking_manager.debug.text = "Connecting to host"
 
 			mm_printf("Joined lobby, checking network hash...")
 
-			self._check_network_hash_timeout = arg_7_2 + MatchmakingSettings.REQUEST_JOIN_LOBBY_REPLY_TIME
+			self._check_network_hash_timeout = t + MatchmakingSettings.REQUEST_JOIN_LOBBY_REPLY_TIME
 			self._state = "verify_not_blocked"
 		end
-	elseif _state == "verify_not_blocked" then
-		local lobby_host_2 = query_lobby:lobby_host()
-		local relationship = Friends.relationship(lobby_host_2)
+	elseif state == "verify_not_blocked" then
+		local host_peer_id = lobby_client:lobby_host()
+		local relationship = Friends.relationship(host_peer_id)
 
-		if not (relationship == Friends.IGNORED or relationship ~= Friends.IGNORED_FRIEND) then
+		if relationship == Friends.IGNORED or relationship == Friends.IGNORED_FRIEND then
 			return self:_join_game_failed("user_blocked")
 		end
 
 		self._state = "waiting_to_connect"
-		self._connect_timeout = arg_7_2 + MatchmakingSettings.REQUEST_JOIN_LOBBY_REPLY_TIME
-	elseif _state == "waiting_to_connect" then
-		if not self._connected_to_server then
-			if not self._is_server then
+		self._connect_timeout = t + MatchmakingSettings.REQUEST_JOIN_LOBBY_REPLY_TIME
+	elseif state == "waiting_to_connect" then
+		if self._connected_to_server then
+			if self._is_server then
 				self._state = "waiting_for_peers_to_join"
-				self._waiting_for_peers_to_join_timout = arg_7_2 + MatchmakingSettings.REQUEST_JOIN_LOBBY_REPLY_TIME
+				self._waiting_for_peers_to_join_timout = t + MatchmakingSettings.REQUEST_JOIN_LOBBY_REPLY_TIME
 
-				return self:_join_game_success(arg_7_2)
+				return self:_join_game_success(t)
 			else
-				self._waiting_for_confirmation_timout = arg_7_2 + MatchmakingSettings.REQUEST_JOIN_LOBBY_REPLY_TIME
+				self._waiting_for_confirmation_timout = t + MatchmakingSettings.REQUEST_JOIN_LOBBY_REPLY_TIME
 				self._state = "waiting_for_confirmation"
 
-				return self:_join_game_success(arg_7_2)
+				return self:_join_game_success(t)
 			end
-		elseif arg_7_2 > self._connect_timeout then
+		elseif t > self._connect_timeout then
 			local user_name
 
-			if not LobbyInternal.user_name then
-				user_name = LobbyInternal.user_name(lobby_host)
+			if LobbyInternal.user_name then
+				user_name = LobbyInternal.user_name(host)
 
 				if not user_name then
 					-- Nothing
@@ -132,38 +133,41 @@ MatchmakingStateReserveSlotsPlayerHosted._update_states = function (self, arg_7_
 
 			user_name = "-"
 
+			local host_name = user_name
+
 			::label_7_0::
 
-			mm_printf_force("Failed to connect to host due to timeout. lobby_id=%s, host_id:%s", id, user_name)
+			mm_printf_force("Failed to connect to host due to timeout. lobby_id=%s, host_id:%s", lobby_id, host_name)
 
 			return self:_join_game_failed("connection_timeout")
 		end
-	elseif _state == "waiting_for_peers_to_join" then
-		if not self:_all_players_joined() then
+	elseif state == "waiting_for_peers_to_join" then
+		if self:_all_players_joined() then
 			self._state = "request_reservation"
-		elseif arg_7_2 > self._waiting_for_peers_to_join_timout then
+		elseif t > self._waiting_for_peers_to_join_timout then
 			return self:_join_game_failed("join_timeout")
 		end
-	elseif _state == "request_reservation" then
+	elseif state == "request_reservation" then
 		self._matchmaking_manager.debug.text = "Requesting reservation"
 
 		mm_printf("Connected, request reservation...")
 
-		local get_members = self._lobby:members():get_members()
+		local lobby_members = self._lobby:members()
+		local members = lobby_members:get_members()
 
-		self._network_transmit:send_rpc("rpc_matchmaking_request_reserve_slots", lobby_host, id, get_members)
+		self._network_transmit:send_rpc("rpc_matchmaking_request_reserve_slots", host, lobby_id, members)
 
-		self._reservation_timeout = arg_7_2 + MatchmakingSettings.REQUEST_JOIN_LOBBY_REPLY_TIME
+		self._reservation_timeout = t + MatchmakingSettings.REQUEST_JOIN_LOBBY_REPLY_TIME
 		self._state = "asking_for_reservation"
-	elseif _state == "asking_for_reservation" then
-		local num = MatchmakingSettings.REQUEST_JOIN_LOBBY_REPLY_TIME - (self._reservation_timeout - arg_7_2)
+	elseif state == "asking_for_reservation" then
+		local reservation_time = MatchmakingSettings.REQUEST_JOIN_LOBBY_REPLY_TIME - (self._reservation_timeout - t)
 
-		self._matchmaking_manager.debug.text = string.format("Requesting to reserve slots %s [%.0f]", query_lobby:id(), num)
+		self._matchmaking_manager.debug.text = string.format("Requesting to reserve slots %s [%.0f]", lobby_client:id(), reservation_time)
 
 		local user_name_2
 
-		if not LobbyInternal.user_name then
-			user_name_2 = LobbyInternal.user_name(lobby_host)
+		if LobbyInternal.user_name then
+			user_name_2 = LobbyInternal.user_name(host)
 
 			if not user_name_2 then
 				-- Nothing
@@ -172,73 +176,75 @@ MatchmakingStateReserveSlotsPlayerHosted._update_states = function (self, arg_7_
 
 		user_name_2 = "-"
 
+		local host_name = user_name_2
+
 		::label_7_1::
 
-		local _reservation_reply = self._reservation_reply
+		local reservation_reply = self._reservation_reply
 
-		if arg_7_2 > self._reservation_timeout then
-			mm_printf_force("Failed to reserve slots due to timeout. lobby_id=%s, host_id:%s", id, user_name_2)
+		if t > self._reservation_timeout then
+			mm_printf_force("Failed to reserve slots due to timeout. lobby_id=%s, host_id:%s", lobby_id, host_name)
 
 			return self:_join_game_failed("connection_timeout")
-		elseif _reservation_reply ~= nil then
-			if _reservation_reply == "lobby_ok" then
-				mm_printf("Successfully reserved slots after %.2f seconds: lobby_id=%s host_id:%s", num, id, user_name_2)
+		elseif reservation_reply ~= nil then
+			if reservation_reply == "lobby_ok" then
+				mm_printf("Successfully reserved slots after %.2f seconds: lobby_id=%s host_id:%s", reservation_time, lobby_id, host_name)
 
 				return self:_reservation_success(true)
 			else
-				mm_printf_force("Failed to reserve slots  due to host responding '%s'. lobby_id=%s, host_id:%s", _reservation_reply, id, user_name_2)
+				mm_printf_force("Failed to reserve slots  due to host responding '%s'. lobby_id=%s, host_id:%s", reservation_reply, lobby_id, host_name)
 
 				return self:_reservation_success(false)
 			end
 		end
-	elseif _state == "waiting_for_confirmation" then
+	elseif state == "waiting_for_confirmation" then
 		-- Nothing
 	end
 end
 
-MatchmakingStateReserveSlotsPlayerHosted._join_game_success = function (self, arg_8_1)
+MatchmakingStateReserveSlotsPlayerHosted._join_game_success = function (self, t)
 	-- function 8
-	local flag = true
+	local success = true
 
-	if not self._is_server then
-		self._joined_peers[Network.peer_id()] = flag
+	if self._is_server then
+		self._joined_peers[Network.peer_id()] = success
 
 		local join_lobby_data = self._state_context.join_lobby_data
 
 		self._network_transmit:send_rpc_clients("rpc_matchmaking_client_join_player_hosted", join_lobby_data.id)
 	else
-		local lobby_host = self._current_lobby:lobby_host()
+		local host = self._current_lobby:lobby_host()
 
-		self._network_transmit:send_rpc("rpc_matchmaking_client_joined_player_hosted", lobby_host, flag)
+		self._network_transmit:send_rpc("rpc_matchmaking_client_joined_player_hosted", host, success)
 	end
 end
 
-MatchmakingStateReserveSlotsPlayerHosted._join_game_failed = function (self, arg_9_1)
+MatchmakingStateReserveSlotsPlayerHosted._join_game_failed = function (self, reason)
 	-- function 9
-	print("[MatchmakingStateReserveSlotsPlayerHosted] FAILED: " .. arg_9_1)
+	print("[MatchmakingStateReserveSlotsPlayerHosted] FAILED: " .. reason)
 
-	local flag = false
+	local success = false
 
-	if not self._is_server then
+	if self._is_server then
 		self._joined_peers[Network.peer_id()] = false
 
-		self._network_transmit:send_rpc_clients("rpc_matchmaking_reservation_success", flag)
+		self._network_transmit:send_rpc_clients("rpc_matchmaking_reservation_success", success)
 	else
-		local lobby_host = self._current_lobby:lobby_host()
+		local host = self._current_lobby:lobby_host()
 
-		self._network_transmit:send_rpc("rpc_matchmaking_client_joined_player_hosted", lobby_host, flag)
+		self._network_transmit:send_rpc("rpc_matchmaking_client_joined_player_hosted", host, success)
 	end
 
 	self:_cancel_join()
 end
 
-MatchmakingStateReserveSlotsPlayerHosted._reservation_success = function (self, arg_10_1)
+MatchmakingStateReserveSlotsPlayerHosted._reservation_success = function (self, success)
 	-- function 10
-	if not self._is_server then
-		self._network_transmit:send_rpc_clients("rpc_matchmaking_reservation_success", arg_10_1)
+	if self._is_server then
+		self._network_transmit:send_rpc_clients("rpc_matchmaking_reservation_success", success)
 	end
 
-	if not arg_10_1 then
+	if success then
 		self._state = "done"
 		self._new_state = MatchmakingStateWaitJoinPlayerHosted
 	else
@@ -248,7 +254,7 @@ end
 
 MatchmakingStateReserveSlotsPlayerHosted._cancel_join = function (self)
 	-- function 11
-	if not Managers.lobby:query_lobby("matchmaking_join_lobby") then
+	if Managers.lobby:query_lobby("matchmaking_join_lobby") then
 		Managers.lobby:destroy_lobby("matchmaking_join_lobby")
 	end
 
@@ -259,8 +265,8 @@ MatchmakingStateReserveSlotsPlayerHosted._cancel_join = function (self)
 	local join_by_lobby_browser = self._state_context.join_by_lobby_browser
 	local friend_join = self._state_context.friend_join
 
-	if not (not self._is_server and join_by_lobby_browser or friend_join) then
-		if not self._search_config.dedicated_server then
+	if self._is_server and not join_by_lobby_browser and not friend_join then
+		if self._search_config.dedicated_server then
 			self._new_state = MatchmakingStateReserveLobby
 		else
 			self._new_state = MatchmakingStateSearchPlayerHostedLobby
@@ -272,55 +278,56 @@ end
 
 MatchmakingStateReserveSlotsPlayerHosted._all_players_joined = function (self)
 	-- function 12
-	local get_members = self._lobby:members():get_members()
-	local flag = true
+	local lobby_members = self._lobby:members()
+	local members = lobby_members:get_members()
+	local all_joined = true
 
-	for k, v in pairs(get_members) do
-		if not self._joined_peers[v] then
-			flag = false
+	for _, peer_id in pairs(members) do
+		if not self._joined_peers[peer_id] then
+			all_joined = false
 
 			break
 		end
 	end
 
-	return flag
+	return all_joined
 end
 
-MatchmakingStateReserveSlotsPlayerHosted.rpc_matchmaking_client_joined_player_hosted = function (self, arg_13_1, arg_13_2)
+MatchmakingStateReserveSlotsPlayerHosted.rpc_matchmaking_client_joined_player_hosted = function (self, channel_id, success)
 	-- function 13
 	if not self._is_server then
 		fassert(false, "[MatchmakingStateReserveSlotsPlayerHosted] Server Only function")
 	end
 
-	local var_13_0 = CHANNEL_TO_PEER_ID[arg_13_1]
+	local peer_id = CHANNEL_TO_PEER_ID[channel_id]
 
-	self._joined_peers[var_13_0] = arg_13_2
+	self._joined_peers[peer_id] = success
 
-	if not arg_13_2 then
+	if not success then
 		self:_join_game_failed("peer_failed_to_join")
 	end
 end
 
-MatchmakingStateReserveSlotsPlayerHosted.rpc_matchmaking_request_reserve_slots_reply = function (self, arg_14_1, arg_14_2, arg_14_3)
+MatchmakingStateReserveSlotsPlayerHosted.rpc_matchmaking_request_reserve_slots_reply = function (self, channel_id, reply_id, reply_variable)
 	-- function 14
-	self._reservation_reply = NetworkLookup.game_ping_reply[arg_14_2]
-	self._reservation_reply_variable = arg_14_3
+	self._reservation_reply = NetworkLookup.game_ping_reply[reply_id]
+	self._reservation_reply_variable = reply_variable
 end
 
-MatchmakingStateReserveSlotsPlayerHosted.rpc_matchmaking_reservation_success = function (self, arg_15_1, arg_15_2)
+MatchmakingStateReserveSlotsPlayerHosted.rpc_matchmaking_reservation_success = function (self, channel_id, success)
 	-- function 15
-	if not self._is_server then
+	if self._is_server then
 		fassert(false, "[MatchmakingStateReserveSlotsPlayerHosted] The lobby host should never receive this")
 	end
 
-	if not arg_15_2 then
+	if success then
 		self._new_state = MatchmakingStateWaitJoinPlayerHosted
 	else
 		self:_cancel_join()
 	end
 end
 
-MatchmakingStateReserveSlotsPlayerHosted.rpc_notify_connected = function (self, arg_16_1)
+MatchmakingStateReserveSlotsPlayerHosted.rpc_notify_connected = function (self, channel_id)
 	-- function 16
 	self._connected_to_server = true
 end

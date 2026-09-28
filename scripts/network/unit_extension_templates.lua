@@ -1,14 +1,36 @@
 -- chunkname: @scripts/network/unit_extension_templates.lua
 
-local flag
+local str
 
-flag = not _G.GameSettingsDevelopment and not GameSettingsDevelopment.use_engine_optimized_ai_locomotion and "AILocomotionExtensionC" and "AILocomotionExtension"
+if _G.GameSettingsDevelopment and GameSettingsDevelopment.use_engine_optimized_ai_locomotion then
+	str = "AILocomotionExtensionC"
 
-local flag_2
+	goto label_0_0
+end
 
-flag_2 = not IS_WINDOWS and "PlayerEyeTrackingExtension" and nil
+str = "AILocomotionExtension"
 
-local tbl = {
+local ai_locomotion_name = str
+
+do
+	local str_2
+end
+
+::label_0_0::
+
+if IS_WINDOWS then
+	str_2 = "PlayerEyeTrackingExtension"
+
+	goto label_0_1
+end
+
+str_2 = nil
+
+local eye_tracking_name = str_2
+
+::label_0_1::
+
+local unit_templates = {
 	player_unit_base = {
 		go_type = "player_unit",
 		self_owned_extensions = {
@@ -39,7 +61,7 @@ local tbl = {
 			"PlayerSoundEffectExtension",
 			"PlayerUnitAttackIntensityExtension",
 			"AICommanderExtension",
-			flag_2
+			eye_tracking_name
 		},
 		self_owned_extensions_server = {
 			"PlayerInputExtension",
@@ -71,7 +93,7 @@ local tbl = {
 			"PlayerSoundEffectExtension",
 			"PlayerUnitAttackIntensityExtension",
 			"AICommanderExtension",
-			flag_2
+			eye_tracking_name
 		},
 		husk_extensions = {
 			"SimpleHuskInventoryExtension",
@@ -219,7 +241,7 @@ local tbl = {
 			"PlayerSoundEffectExtension",
 			"PlayerUnitVisualEffectsExtension",
 			"AICommanderExtension",
-			flag_2
+			eye_tracking_name
 		},
 		self_owned_extensions_server = {
 			"PlayerInputTutorialExtension",
@@ -264,7 +286,7 @@ local tbl = {
 			"PlayerUnitVisualEffectsExtension",
 			"PlayerUnitAttackIntensityExtension",
 			"AICommanderExtension",
-			flag_2
+			eye_tracking_name
 		},
 		husk_extensions = {
 			"SimpleHuskInventoryExtension",
@@ -407,7 +429,7 @@ local tbl = {
 	ai_unit_base = {
 		go_type = "ai_unit",
 		self_owned_extensions = {
-			flag,
+			ai_locomotion_name,
 			"AINavigationExtension",
 			"GenericHitReactionExtension",
 			"GenericHealthExtension",
@@ -461,7 +483,7 @@ local tbl = {
 	ai_unit_critter = {
 		go_type = "ai_unit",
 		self_owned_extensions = {
-			flag,
+			ai_locomotion_name,
 			"AINavigationExtension",
 			"GenericHitReactionExtension",
 			"GenericHealthExtension",
@@ -505,7 +527,7 @@ local tbl = {
 	ai_unit_critter_nurgling = {
 		go_type = "ai_unit_with_inventory",
 		self_owned_extensions = {
-			flag,
+			ai_locomotion_name,
 			"AINavigationExtension",
 			"GenericHitReactionExtension",
 			"GenericHealthExtension",
@@ -951,7 +973,7 @@ local tbl = {
 	ai_unit_pet_skeleton = {
 		go_type = "ai_unit_with_inventory",
 		self_owned_extensions = {
-			flag,
+			ai_locomotion_name,
 			"AINavigationExtension",
 			"GenericHitReactionExtension",
 			"GenericHealthExtension",
@@ -1019,7 +1041,7 @@ local tbl = {
 	ai_unit_pet_skeleton_with_shield = {
 		go_type = "ai_unit_with_inventory_and_shield",
 		self_owned_extensions = {
-			flag,
+			ai_locomotion_name,
 			"AINavigationExtension",
 			"GenericHitReactionExtension",
 			"GenericHealthExtension",
@@ -1155,7 +1177,7 @@ local tbl = {
 	ai_unit_loot_rat = {
 		go_type = "ai_unit_with_inventory",
 		self_owned_extensions = {
-			flag,
+			ai_locomotion_name,
 			"AINavigationExtension",
 			"GenericHitReactionExtension",
 			"LootRatHealthExtension",
@@ -1211,7 +1233,7 @@ local tbl = {
 	ai_unit_rat_ogre = {
 		go_type = "ai_unit_with_inventory",
 		self_owned_extensions = {
-			flag,
+			ai_locomotion_name,
 			"AINavigationExtension",
 			"GenericHitReactionExtension",
 			"AIInventoryExtension",
@@ -1269,7 +1291,7 @@ local tbl = {
 	ai_unit_chaos_troll = {
 		go_type = "ai_unit_chaos_troll",
 		self_owned_extensions = {
-			flag,
+			ai_locomotion_name,
 			"AINavigationExtension",
 			"GenericHitReactionExtension",
 			"AIInventoryExtension",
@@ -1335,7 +1357,7 @@ local tbl = {
 	ai_unit_stormfiend = {
 		go_type = "ai_unit_stormfiend",
 		self_owned_extensions = {
-			flag,
+			ai_locomotion_name,
 			"AINavigationExtension",
 			"GenericHitReactionExtension",
 			"AIInventoryExtension",
@@ -1417,7 +1439,7 @@ local tbl = {
 	ai_unit_chaos_spawn = {
 		go_type = "ai_unit",
 		self_owned_extensions = {
-			flag,
+			ai_locomotion_name,
 			"AINavigationExtension",
 			"GenericHitReactionExtension",
 			"GenericHealthExtension",
@@ -1782,7 +1804,7 @@ local tbl = {
 	ai_unit_vortex = {
 		go_type = "ai_unit_vortex",
 		self_owned_extensions = {
-			flag,
+			ai_locomotion_name,
 			"AINavigationExtension",
 			"VortexExtension",
 			"AISimpleExtension"
@@ -2745,128 +2767,143 @@ local tbl = {
 	}
 }
 
-DLCUtils.map_list("unit_extension_templates", function (arg_1_0)
+DLCUtils.map_list("unit_extension_templates", function (file)
 	-- function 1
-	table.merge(tbl, dofile(arg_1_0))
+	table.merge(unit_templates, dofile(file))
 end)
 
-local tbl_2 = {
+local extension_table_names = {
 	"self_owned_extensions",
 	"self_owned_extensions_server",
 	"husk_extensions",
 	"husk_extensions_server"
 }
-local count = #tbl_2
+local extension_table_names_n = #extension_table_names
 
-for k, v in pairs(tbl) do
-	v.NAME = k
+for unit_template_name, template_data in pairs(unit_templates) do
+	template_data.NAME = unit_template_name
 
-	for k_2 = 1, count do
-		local var_0_5 = tbl_2[k_2]
-		local var_0_6 = v[var_0_5]
+	for i = 1, extension_table_names_n do
+		local extension_table_name = extension_table_names[i]
+		local var_0_2 = template_data[extension_table_name]
 
-		var_0_6 = var_0_6 or {}
+		if not var_0_2 then
+			-- Nothing
+		end
 
-		local count_2 = #var_0_6
+		var_0_2 = {}
 
-		if v.base_template ~= nil then
-			local var_0_8 = tbl[v.base_template]
+		local extension_list = var_0_2
 
-			assert(var_0_8.base_template == nil, "%s tried to inherit from template that had a base_template", k)
+		::label_0_2::
 
-			local var_0_9 = var_0_8[var_0_5]
+		local extension_list_n = #extension_list
 
-			if not var_0_9 then
-				inherited_extension_list_n = #var_0_9
+		if template_data.base_template ~= nil then
+			local inherited_template_name = template_data.base_template
+			local inherited_template_data = unit_templates[inherited_template_name]
 
-				for l = 1, inherited_extension_list_n do
-					count_2 = count_2 + 1
-					var_0_6[count_2] = var_0_9[l]
+			assert(inherited_template_data.base_template == nil, "%s tried to inherit from template that had a base_template", unit_template_name)
+
+			local inherited_extension_list = inherited_template_data[extension_table_name]
+
+			if inherited_extension_list then
+				inherited_extension_list_n = #inherited_extension_list
+
+				for j = 1, inherited_extension_list_n do
+					extension_list_n = extension_list_n + 1
+					extension_list[extension_list_n] = inherited_extension_list[j]
 				end
 			end
 
-			local remove_when_killed = var_0_8.remove_when_killed
+			local remove_when_killed_2 = inherited_template_data.remove_when_killed
 
-			remove_when_killed = not remove_when_killed and var_0_8.remove_when_killed[var_0_5]
+			if remove_when_killed_2 then
+				-- Nothing
+			end
 
-			if not remove_when_killed then
-				if v.remove_when_killed == nil then
-					v.remove_when_killed = {}
+			remove_when_killed_2 = inherited_template_data.remove_when_killed[extension_table_name]
+
+			local inherited_remove_when_killed = remove_when_killed_2
+
+			::label_0_3::
+
+			if inherited_remove_when_killed then
+				if template_data.remove_when_killed == nil then
+					template_data.remove_when_killed = {}
 				end
 
-				if v.remove_when_killed[var_0_5] == nil then
-					v.remove_when_killed[var_0_5] = {}
+				if template_data.remove_when_killed[extension_table_name] == nil then
+					template_data.remove_when_killed[extension_table_name] = {}
 				end
 
-				for i4 = 1, #remove_when_killed do
-					local var_0_11 = v.remove_when_killed[var_0_5]
+				for j = 1, #inherited_remove_when_killed do
+					local remove_when_killed = template_data.remove_when_killed[extension_table_name]
 
-					var_0_11[#var_0_11 + 1] = remove_when_killed[i4]
+					remove_when_killed[#remove_when_killed + 1] = inherited_remove_when_killed[j]
 				end
 			end
 		end
 
-		v["num_" .. var_0_5] = count_2
+		template_data["num_" .. extension_table_name] = extension_list_n
 
-		local remove_when_killed_2 = v.remove_when_killed
+		local remove_when_killed = template_data.remove_when_killed
 
-		if not remove_when_killed_2 then
-			for i5 = 1, count do
-				local var_0_13 = tbl_2[i5]
-				local var_0_14 = remove_when_killed_2[var_0_13]
+		if remove_when_killed then
+			for i = 1, extension_table_names_n do
+				local extension_table_name = extension_table_names[i]
+				local extension_list = remove_when_killed[extension_table_name]
 
-				if not var_0_14 then
-					remove_when_killed_2["num_" .. var_0_13] = #var_0_14
+				if extension_list then
+					remove_when_killed["num_" .. extension_table_name] = #extension_list
 				end
 			end
 		end
 	end
 end
 
-tbl.get_extensions = function (arg_2_0, arg_2_1, arg_2_2)
+unit_templates.get_extensions = function (unit_template_name, is_husk, is_server)
 	-- function 2
-	local var_2_0
-	local var_2_1
-	local var_2_2 = tbl[arg_2_0]
+	local extensions, num_extensions
+	local template = unit_templates[unit_template_name]
 
-	if not arg_2_1 then
-		if not arg_2_2 and not var_2_2.husk_extensions_server then
-			var_2_0, var_2_1 = var_2_2.husk_extensions_server, var_2_2.num_husk_extensions_server
+	if is_husk then
+		if is_server and template.husk_extensions_server then
+			extensions, num_extensions = template.husk_extensions_server, template.num_husk_extensions_server
 		else
-			var_2_0, var_2_1 = var_2_2.husk_extensions, var_2_2.num_husk_extensions
+			extensions, num_extensions = template.husk_extensions, template.num_husk_extensions
 		end
-	elseif not arg_2_2 and not var_2_2.self_owned_extensions_server then
-		var_2_0, var_2_1 = var_2_2.self_owned_extensions_server, var_2_2.num_self_owned_extensions_server
+	elseif is_server and template.self_owned_extensions_server then
+		extensions, num_extensions = template.self_owned_extensions_server, template.num_self_owned_extensions_server
 	else
-		var_2_0, var_2_1 = var_2_2.self_owned_extensions, var_2_2.num_self_owned_extensions
+		extensions, num_extensions = template.self_owned_extensions, template.num_self_owned_extensions
 	end
 
-	return var_2_0, var_2_1
+	return extensions, num_extensions
 end
 
-tbl.extensions_to_remove_on_death = function (arg_3_0, arg_3_1, arg_3_2)
+unit_templates.extensions_to_remove_on_death = function (unit_template_name, is_husk, is_server)
 	-- function 3
-	local var_3_0
-	local var_3_1
-	local remove_when_killed = tbl[arg_3_0].remove_when_killed
+	local extensions, num_extensions
+	local remove_when_killed = unit_templates[unit_template_name].remove_when_killed
 
 	if remove_when_killed == nil then
 		return nil
 	end
 
-	if not arg_3_1 then
-		if not arg_3_2 and not remove_when_killed.husk_extensions_server then
-			var_3_0, var_3_1 = remove_when_killed.husk_extensions_server, remove_when_killed.num_husk_extensions_server
+	if is_husk then
+		if is_server and remove_when_killed.husk_extensions_server then
+			extensions, num_extensions = remove_when_killed.husk_extensions_server, remove_when_killed.num_husk_extensions_server
 		else
-			var_3_0, var_3_1 = remove_when_killed.husk_extensions, remove_when_killed.num_husk_extensions
+			extensions, num_extensions = remove_when_killed.husk_extensions, remove_when_killed.num_husk_extensions
 		end
-	elseif not arg_3_2 and not remove_when_killed.self_owned_extensions_server then
-		var_3_0, var_3_1 = remove_when_killed.self_owned_extensions_server, remove_when_killed.num_self_owned_extensions_server
+	elseif is_server and remove_when_killed.self_owned_extensions_server then
+		extensions, num_extensions = remove_when_killed.self_owned_extensions_server, remove_when_killed.num_self_owned_extensions_server
 	else
-		var_3_0, var_3_1 = remove_when_killed.self_owned_extensions, remove_when_killed.num_self_owned_extensions
+		extensions, num_extensions = remove_when_killed.self_owned_extensions, remove_when_killed.num_self_owned_extensions
 	end
 
-	return var_3_0, var_3_1
+	return extensions, num_extensions
 end
 
-return tbl
+return unit_templates

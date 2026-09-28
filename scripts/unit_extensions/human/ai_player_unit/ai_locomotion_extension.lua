@@ -2,29 +2,29 @@
 
 require("scripts/helpers/mover_helper")
 
-local local_position = Unit.local_position
-local num = 10
-local num_2 = 20
-local num_3 = 0.5
+local Unit_local_position = Unit.local_position
+local DEFAULT_ROTATION_SPEED = 10
+local LOCOMOTION_GRAVITY = 20
+local ALLOWED_MOVER_MOVE_DISTANCE = 0.5
 
 AILocomotionExtension = class(AILocomotionExtension)
 
-AILocomotionExtension.init = function (self, arg_1_1, arg_1_2, arg_1_3)
+AILocomotionExtension.init = function (self, extension_init_context, unit, extension_init_data)
 	-- function 1
-	self._system_data = arg_1_3.system_data
-	self._unit = arg_1_2
-	self.breed = arg_1_3.breed
-	self._world = arg_1_1.world
-	self._nav_world = arg_1_3.nav_world
+	self._system_data = extension_init_data.system_data
+	self._unit = unit
+	self.breed = extension_init_data.breed
+	self._world = extension_init_context.world
+	self._nav_world = extension_init_data.nav_world
 
 	assert(self._nav_world)
 
-	self._move_speed_var = Unit.animation_find_variable(arg_1_2, "move_speed")
+	self._move_speed_var = Unit.animation_find_variable(unit, "move_speed")
 	self._velocity = Vector3Box()
 	self._update_function_name = "update_script_driven"
 	self._wanted_velocity = nil
 	self._wanted_rotation = nil
-	self._rotation_speed = num
+	self._rotation_speed = DEFAULT_ROTATION_SPEED
 	self._rotation_speed_modifier = 1
 	self._infinite_rotation_speed = false
 	self._affected_by_gravity = true
@@ -36,78 +36,79 @@ AILocomotionExtension.init = function (self, arg_1_1, arg_1_2, arg_1_3)
 	self._lerp_rotation = true
 	self._is_falling = false
 	self._check_falling = true
-	self._gravity = num_2
+	self._gravity = LOCOMOTION_GRAVITY
 	self.move_speed = 0
 	self._system_data.all_update_units[self._unit] = self
 
-	Unit.set_animation_merge_options(arg_1_2)
+	Unit.set_animation_merge_options(unit)
 
 	self.is_server = Managers.player.is_server
 	self._last_fall_position = Vector3Box(10000, 10000, 10000)
 	self._mover_state = MoverHelper.create_mover_state()
 
-	local str = "c_mover_collision"
+	local collision_actor_name = "c_mover_collision"
+	local has_collision_actor = Unit.actor(unit, collision_actor_name)
 
-	if not Unit.actor(arg_1_2, str) then
-		self._collision_state = MoverHelper.create_collision_state(arg_1_2, str)
+	if has_collision_actor then
+		self._collision_state = MoverHelper.create_collision_state(unit, collision_actor_name)
 	end
 
 	local set_active_mover = MoverHelper.set_active_mover
-	local var_1_2 = arg_1_2
+	local var_1_1 = unit
 	local _mover_state = self._mover_state
 	local default_mover = self.breed.default_mover
 
-	default_mover = default_mover or "mover"
+	default_mover = not not default_mover or not not "mover"
 
-	set_active_mover(var_1_2, _mover_state, default_mover)
+	set_active_mover(var_1_1, _mover_state, default_mover)
 	self:set_movement_type("snap_to_navmesh")
 end
 
 AILocomotionExtension.destroy = function (self)
 	-- function 2
-	local _system_data = self._system_data
-	local _unit = self._unit
+	local system_data = self._system_data
+	local unit = self._unit
 
-	_system_data.destroy_units[_unit] = self
+	system_data.destroy_units[unit] = self
 end
 
-AILocomotionExtension.ready = function (arg_3_0, arg_3_1, arg_3_2)
+AILocomotionExtension.ready = function (self, go_id, blackboard)
 	-- function 3
 	return
 end
 
-AILocomotionExtension.hot_join_sync = function (self, arg_4_1)
+AILocomotionExtension.hot_join_sync = function (self, sender)
 	-- function 4
-	local _unit = self._unit
+	local unit = self._unit
 
-	if not FROZEN[_unit] then
+	if FROZEN[unit] then
 		return
 	end
 
-	local var_4_1 = PEER_ID_TO_CHANNEL[arg_4_1]
+	local channel_id = PEER_ID_TO_CHANNEL[sender]
 
-	if not Unit.has_animation_state_machine(_unit) then
-		local unit_game_object_id = Managers.state.network:unit_game_object_id(_unit)
-		local get_data = Unit.get_data(_unit, "breed")
+	if Unit.has_animation_state_machine(unit) then
+		local game_object_id = Managers.state.network:unit_game_object_id(unit)
+		local breed = Unit.get_data(unit, "breed")
 
-		RPC[get_data.animation_sync_rpc](var_4_1, unit_game_object_id, Unit.animation_get_state(_unit))
+		RPC[breed.animation_sync_rpc](channel_id, game_object_id, Unit.animation_get_state(unit))
 	else
-		local unit_game_object_id_2 = Managers.state.network:unit_game_object_id(_unit)
+		local game_object_id = Managers.state.network:unit_game_object_id(unit)
 
-		RPC.rpc_hot_join_nail_to_wall_fix(var_4_1, unit_game_object_id_2)
+		RPC.rpc_hot_join_nail_to_wall_fix(channel_id, game_object_id)
 	end
 end
 
-AILocomotionExtension.set_mover_displacement = function (self, arg_5_1, arg_5_2)
+AILocomotionExtension.set_mover_displacement = function (self, displacement, duration)
 	-- function 5
-	if not arg_5_1 then
+	if displacement then
 		local mover = Unit.mover(self._unit)
 
-		Mover.move(mover, arg_5_1, 0.00390625)
+		Mover.move(mover, displacement, 0.00390625)
 
-		self._mover_displacement_duration = arg_5_2
-		self._mover_displacement = Vector3Box(arg_5_1)
-		self._mover_displacement_t = arg_5_2
+		self._mover_displacement_duration = duration
+		self._mover_displacement = Vector3Box(displacement)
+		self._mover_displacement_t = duration
 	else
 		self._mover_displacement = Vector3Box(0, 0, 0)
 		self._mover_displacement_duration = nil
@@ -115,279 +116,299 @@ AILocomotionExtension.set_mover_displacement = function (self, arg_5_1, arg_5_2)
 	end
 end
 
-AILocomotionExtension.teleport_to = function (self, arg_6_1, arg_6_2)
+AILocomotionExtension.teleport_to = function (self, position, rotation)
 	-- function 6
-	local _unit = self._unit
+	local unit = self._unit
 
-	Unit.set_local_position(_unit, 0, arg_6_1)
+	Unit.set_local_position(unit, 0, position)
 
-	if not arg_6_2 then
-		Unit.set_local_rotation(_unit, 0, arg_6_2)
+	if rotation then
+		Unit.set_local_rotation(unit, 0, rotation)
 	end
 
-	local network = Managers.state.network
-	local game = network:game()
+	local network_manager = Managers.state.network
+	local game = network_manager:game()
 
-	if not game then
-		local unit_game_object_id = network:unit_game_object_id(_unit)
-		local num = GameSession.game_object_field(game, unit_game_object_id, "has_teleported") % NetworkConstants.teleports.max + 1
+	if game then
+		local game_object_id = network_manager:unit_game_object_id(unit)
+		local has_teleported_value = GameSession.game_object_field(game, game_object_id, "has_teleported")
 
-		GameSession.set_game_object_field(game, unit_game_object_id, "has_teleported", num)
+		has_teleported_value = has_teleported_value % NetworkConstants.teleports.max + 1
+
+		GameSession.set_game_object_field(game, game_object_id, "has_teleported", has_teleported_value)
 	end
 end
 
-local str = "update_animation_driven_movement_script_driven_rotation"
-local str_2 = "update_animation_driven"
-local str_3 = "update_script_driven"
-local str_4 = "update_linked_transport"
+local ANIMATION_DRIVEN_SCRIPT_DRIVEN_ROTATION_FUNCTION_NAME = "update_animation_driven_movement_script_driven_rotation"
+local ANIMATION_DRIVEN_FUNCTION_NAME = "update_animation_driven"
+local SCRIPT_DRIVEN_FUNCTION_NAME = "update_script_driven"
+local LINKED_TRANSPORT_FUNCTION_NAME = "update_linked_transport"
 
-AILocomotionExtension.set_animation_driven = function (self, arg_7_1, arg_7_2, arg_7_3, arg_7_4)
+AILocomotionExtension.set_animation_driven = function (self, is_animation_driven, is_affected_by_gravity, script_driven_rotation, is_on_transport)
 	-- function 7
-	arg_7_2 = arg_7_2 or false
+	is_affected_by_gravity = not not is_affected_by_gravity or not not false
 
-	local _unit = self._unit
+	local unit = self._unit
 
-	self:set_affected_by_gravity(arg_7_2)
+	self:set_affected_by_gravity(is_affected_by_gravity)
 
-	local network = Managers.state.network
-	local network_transmit = network.network_transmit
-	local game = network:game()
+	local network_manager = Managers.state.network
+	local network_transmit = network_manager.network_transmit
+	local game = network_manager:game()
 
-	game = not game and network:unit_game_object_id(_unit)
+	if game then
+		-- Nothing
+	end
 
-	if not game then
+	game = network_manager:unit_game_object_id(unit)
+
+	local game_object_id = game
+
+	::label_7_0::
+
+	if not game_object_id then
 		return
 	end
 
-	local _update_function_name = self._update_function_name
-	local _affected_by_gravity = self._affected_by_gravity
-	local flag = _update_function_name == str_2
-	local flag_2 = _update_function_name == str
-	local flag_3 = _update_function_name == str_3
-	local flag_4 = _update_function_name == str_4
-	local flag_5 = false
-	local _system_data = self._system_data
+	local old_func_name = self._update_function_name
+	local was_affected_by_gravity = self._affected_by_gravity
+	local was_animation_driven = old_func_name == ANIMATION_DRIVEN_FUNCTION_NAME
+	local was_animation_driven_script_rot = old_func_name == ANIMATION_DRIVEN_SCRIPT_DRIVEN_ROTATION_FUNCTION_NAME
+	local was_script_driven = old_func_name == SCRIPT_DRIVEN_FUNCTION_NAME
+	local was_on_transport = old_func_name == LINKED_TRANSPORT_FUNCTION_NAME
+	local changed = false
+	local system_data = self._system_data
 
-	if not arg_7_4 then
-		if not flag_4 then
-			self._update_function_name = str_4
-			_system_data.animation_update_units[_unit] = nil
-			_system_data.animation_and_script_update_units[_unit] = nil
+	if is_on_transport then
+		if not was_on_transport then
+			self._update_function_name = LINKED_TRANSPORT_FUNCTION_NAME
+			system_data.animation_update_units[unit] = nil
+			system_data.animation_and_script_update_units[unit] = nil
 
-			network_transmit:send_rpc_clients("rpc_set_linked_transport_driven", game, arg_7_2)
+			network_transmit:send_rpc_clients("rpc_set_linked_transport_driven", game_object_id, is_affected_by_gravity)
 		end
 
-		flag_5 = true
-	elseif not (not arg_7_1 and not arg_7_3 and flag_2) then
-		self._update_function_name = str
-		_system_data.animation_update_units[_unit] = nil
-		_system_data.animation_and_script_update_units[_unit] = self
+		changed = true
+	elseif is_animation_driven and script_driven_rotation and not was_animation_driven_script_rot then
+		self._update_function_name = ANIMATION_DRIVEN_SCRIPT_DRIVEN_ROTATION_FUNCTION_NAME
+		system_data.animation_update_units[unit] = nil
+		system_data.animation_and_script_update_units[unit] = self
 
-		if not game then
-			local local_position = Unit.local_position(_unit, 0)
-			local local_rotation = Unit.local_rotation(_unit, 0)
+		if game_object_id then
+			local position = Unit.local_position(unit, 0)
+			local rotation = Unit.local_rotation(unit, 0)
 
-			network_transmit:send_rpc_clients("rpc_set_animation_driven_script_movement", game, local_position, local_rotation, arg_7_2)
+			network_transmit:send_rpc_clients("rpc_set_animation_driven_script_movement", game_object_id, position, rotation, is_affected_by_gravity)
 		end
 
-		flag_5 = true
-	elseif not (not arg_7_1 and arg_7_3 or flag) then
-		self._update_function_name = str_2
-		_system_data.animation_update_units[_unit] = self
-		_system_data.animation_and_script_update_units[_unit] = nil
+		changed = true
+	elseif is_animation_driven and not script_driven_rotation and not was_animation_driven then
+		self._update_function_name = ANIMATION_DRIVEN_FUNCTION_NAME
+		system_data.animation_update_units[unit] = self
+		system_data.animation_and_script_update_units[unit] = nil
 
-		if not game then
-			local local_position_2 = Unit.local_position(_unit, 0)
-			local local_rotation_2 = Unit.local_rotation(_unit, 0)
+		if game_object_id then
+			local position = Unit.local_position(unit, 0)
+			local rotation = Unit.local_rotation(unit, 0)
 
-			network_transmit:send_rpc_clients("rpc_set_animation_driven", game, local_position_2, local_rotation_2, arg_7_2)
+			network_transmit:send_rpc_clients("rpc_set_animation_driven", game_object_id, position, rotation, is_affected_by_gravity)
 		end
 
-		flag_5 = true
-	elseif not (arg_7_1 or flag_3) then
-		self._update_function_name = str_3
-		_system_data.animation_update_units[_unit] = nil
-		_system_data.animation_and_script_update_units[_unit] = nil
+		changed = true
+	elseif not is_animation_driven and not was_script_driven then
+		self._update_function_name = SCRIPT_DRIVEN_FUNCTION_NAME
+		system_data.animation_update_units[unit] = nil
+		system_data.animation_and_script_update_units[unit] = nil
 
-		if not game then
-			network_transmit:send_rpc_clients("rpc_set_script_driven", game, arg_7_2)
+		if game_object_id then
+			network_transmit:send_rpc_clients("rpc_set_script_driven", game_object_id, is_affected_by_gravity)
 		end
 
-		flag_5 = true
+		changed = true
 	end
 
-	if not (not game and flag_5 or _affected_by_gravity == arg_7_2) then
-		network_transmit:send_rpc_clients("rpc_set_affected_by_gravity", game, arg_7_2)
+	if game_object_id and not changed and was_affected_by_gravity ~= is_affected_by_gravity then
+		network_transmit:send_rpc_clients("rpc_set_affected_by_gravity", game_object_id, is_affected_by_gravity)
 	end
 end
 
-AILocomotionExtension.set_animation_translation_scale = function (self, arg_8_1)
+AILocomotionExtension.set_animation_translation_scale = function (self, animation_translation_scale)
 	-- function 8
-	self._animation_translation_scale_box:store(arg_8_1)
+	self._animation_translation_scale_box:store(animation_translation_scale)
 end
 
-AILocomotionExtension.set_animation_rotation_scale = function (self, arg_9_1)
+AILocomotionExtension.set_animation_rotation_scale = function (self, animation_rotation_scale)
 	-- function 9
-	self._animation_rotation_scale = arg_9_1
+	self._animation_rotation_scale = animation_rotation_scale
 end
 
-AILocomotionExtension.set_wanted_velocity_flat = function (self, arg_10_1)
+AILocomotionExtension.set_wanted_velocity_flat = function (self, wanted_velocity)
 	-- function 10
-	arg_10_1.z = self._velocity.z
-	self._wanted_velocity = arg_10_1
+	wanted_velocity.z = self._velocity.z
+	self._wanted_velocity = wanted_velocity
 end
 
-AILocomotionExtension.set_wanted_velocity = function (self, arg_11_1)
+AILocomotionExtension.set_wanted_velocity = function (self, wanted_velocity)
 	-- function 11
-	self._wanted_velocity = arg_11_1
+	self._wanted_velocity = wanted_velocity
 
-	self._velocity:store(arg_11_1)
+	self._velocity:store(wanted_velocity)
 end
 
-AILocomotionExtension.set_wanted_rotation = function (self, arg_12_1)
+AILocomotionExtension.set_wanted_rotation = function (self, rotation)
 	-- function 12
-	self._wanted_rotation = arg_12_1
+	self._wanted_rotation = rotation
 end
 
-AILocomotionExtension.use_lerp_rotation = function (self, arg_13_1)
+AILocomotionExtension.use_lerp_rotation = function (self, active)
 	-- function 13
-	self._lerp_rotation = arg_13_1
+	self._lerp_rotation = active
 end
 
-AILocomotionExtension.set_rotation_speed = function (self, arg_14_1)
+AILocomotionExtension.set_rotation_speed = function (self, rotation_speed)
 	-- function 14
-	if arg_14_1 == nil then
-		self._rotation_speed = num
+	if rotation_speed == nil then
+		self._rotation_speed = DEFAULT_ROTATION_SPEED
 	else
-		self._rotation_speed = arg_14_1
+		self._rotation_speed = rotation_speed
 	end
 end
 
-AILocomotionExtension.set_rotation_speed_modifier = function (self, arg_15_1, arg_15_2, arg_15_3)
+AILocomotionExtension.set_rotation_speed_modifier = function (self, rotation_speed_modifier, rotation_speed_modifier_lerp_time, start_time)
 	-- function 15
 	self._system_data.rotation_speed_modifier_update_units[self._unit] = self
-	self._rotation_speed_modifier = arg_15_1
-	self._rotation_speed_modifier_lerp_start_value = arg_15_1
-	self._rotation_speed_modifier_lerp_start_time = arg_15_3
-	self._rotation_speed_modifier_lerp_end_time = arg_15_3 + arg_15_2
+	self._rotation_speed_modifier = rotation_speed_modifier
+	self._rotation_speed_modifier_lerp_start_value = rotation_speed_modifier
+	self._rotation_speed_modifier_lerp_start_time = start_time
+	self._rotation_speed_modifier_lerp_end_time = start_time + rotation_speed_modifier_lerp_time
 end
 
-AILocomotionExtension.set_affected_by_gravity = function (self, arg_16_1)
+AILocomotionExtension.set_affected_by_gravity = function (self, affected_by_gravity)
 	-- function 16
-	self._affected_by_gravity = arg_16_1
+	self._affected_by_gravity = affected_by_gravity
 
-	if not (not arg_16_1 and self._system_data.snap_to_navmesh_update_units[self._unit] ~= nil) then
+	if affected_by_gravity and self._system_data.snap_to_navmesh_update_units[self._unit] == nil then
 		self._system_data.affected_by_gravity_update_units[self._unit] = self
-	elseif not arg_16_1 then
+	elseif not affected_by_gravity then
 		self._system_data.affected_by_gravity_update_units[self._unit] = nil
 	end
 end
 
-AILocomotionExtension.set_gravity = function (self, arg_17_1)
+AILocomotionExtension.set_gravity = function (self, gravity)
 	-- function 17
-	self._gravity = arg_17_1 or num_2
+	self._gravity = not not gravity or not not LOCOMOTION_GRAVITY
 end
 
-AILocomotionExtension.set_mover_disable_reason = function (self, arg_18_1, arg_18_2)
+AILocomotionExtension.set_mover_disable_reason = function (self, reason, state)
 	-- function 18
-	MoverHelper.set_disable_reason(self._unit, self._mover_state, arg_18_1, arg_18_2)
+	MoverHelper.set_disable_reason(self._unit, self._mover_state, reason, state)
 end
 
-AILocomotionExtension.set_check_falling = function (self, arg_19_1)
+AILocomotionExtension.set_check_falling = function (self, state)
 	-- function 19
-	self._check_falling = arg_19_1
+	self._check_falling = state
 end
 
-AILocomotionExtension.set_collision_disabled = function (self, arg_20_1, arg_20_2)
+AILocomotionExtension.set_collision_disabled = function (self, reason, state)
 	-- function 20
-	if not self._collision_state then
-		MoverHelper.set_collision_disable_reason(self._unit, self._collision_state, arg_20_1, arg_20_2)
+	if self._collision_state then
+		MoverHelper.set_collision_disable_reason(self._unit, self._collision_state, reason, state)
 	end
 end
 
-AILocomotionExtension.set_movement_type = function (self, arg_21_1, arg_21_2)
+AILocomotionExtension.set_movement_type = function (self, movement_type, override_mover_move_distance)
 	-- function 21
-	if arg_21_1 == self.movement_type then
+	if movement_type == self.movement_type then
 		return
 	end
 
-	self.movement_type = arg_21_1
+	self.movement_type = movement_type
 
-	local _unit = self._unit
+	local unit = self._unit
 
-	if arg_21_1 == "script_driven" then
+	if movement_type == "script_driven" then
 		self._snap_to_navmesh = false
 		self._constrained_by_mover = false
-		self._system_data.script_driven_update_units[_unit] = self
-		self._system_data.snap_to_navmesh_update_units[_unit] = nil
-		self._system_data.get_to_navmesh_update_units[_unit] = nil
-		self._system_data.mover_constrained_update_units[_unit] = nil
-		self._system_data.affected_by_gravity_update_units[_unit] = not self._affected_by_gravity and self and nil
+		self._system_data.script_driven_update_units[unit] = self
+		self._system_data.snap_to_navmesh_update_units[unit] = nil
+		self._system_data.get_to_navmesh_update_units[unit] = nil
+		self._system_data.mover_constrained_update_units[unit] = nil
+		self._system_data.affected_by_gravity_update_units[unit] = (not self._affected_by_gravity or not self) and not not nil
 
-		MoverHelper.set_disable_reason(_unit, self._mover_state, "constrained_by_mover", true)
-	elseif arg_21_1 == "snap_to_navmesh" then
-		local var_21_1 = local_position(_unit, 0)
-		local triangle_from_position, var_21_3 = GwNavQueries.triangle_from_position(self._nav_world, var_21_1, 0.5, 0.5)
+		MoverHelper.set_disable_reason(unit, self._mover_state, "constrained_by_mover", true)
+	elseif movement_type == "snap_to_navmesh" then
+		local pos = Unit_local_position(unit, 0)
+		local is_position_on_navmesh, altitude = GwNavQueries.triangle_from_position(self._nav_world, pos, 0.5, 0.5)
 
-		if not triangle_from_position then
-			self._system_data.snap_to_navmesh_update_units[_unit] = self
-			self._system_data.get_to_navmesh_update_units[_unit] = nil
+		if is_position_on_navmesh then
+			self._system_data.snap_to_navmesh_update_units[unit] = self
+			self._system_data.get_to_navmesh_update_units[unit] = nil
 		else
-			self._system_data.get_to_navmesh_update_units[_unit] = self
-			self._system_data.snap_to_navmesh_update_units[_unit] = nil
+			self._system_data.get_to_navmesh_update_units[unit] = self
+			self._system_data.snap_to_navmesh_update_units[unit] = nil
 		end
 
 		self._snap_to_navmesh = true
 		self._constrained_by_mover = false
-		self._system_data.script_driven_update_units[_unit] = nil
-		self._system_data.mover_constrained_update_units[_unit] = nil
-		self._system_data.affected_by_gravity_update_units[_unit] = nil
+		self._system_data.script_driven_update_units[unit] = nil
+		self._system_data.mover_constrained_update_units[unit] = nil
+		self._system_data.affected_by_gravity_update_units[unit] = nil
 
-		MoverHelper.set_disable_reason(_unit, self._mover_state, "constrained_by_mover", true)
-	elseif arg_21_1 == "constrained_by_mover" then
+		MoverHelper.set_disable_reason(unit, self._mover_state, "constrained_by_mover", true)
+	elseif movement_type == "constrained_by_mover" then
 		self._snap_to_navmesh = false
 		self._constrained_by_mover = true
-		self._system_data.script_driven_update_units[_unit] = nil
-		self._system_data.snap_to_navmesh_update_units[_unit] = nil
-		self._system_data.get_to_navmesh_update_units[_unit] = nil
-		self._system_data.mover_constrained_update_units[_unit] = self
-		self._system_data.affected_by_gravity_update_units[_unit] = not self._affected_by_gravity and self and nil
+		self._system_data.script_driven_update_units[unit] = nil
+		self._system_data.snap_to_navmesh_update_units[unit] = nil
+		self._system_data.get_to_navmesh_update_units[unit] = nil
+		self._system_data.mover_constrained_update_units[unit] = self
+		self._system_data.affected_by_gravity_update_units[unit] = (not self._affected_by_gravity or not self) and not not nil
 
-		MoverHelper.set_disable_reason(_unit, self._mover_state, "constrained_by_mover", false)
+		MoverHelper.set_disable_reason(unit, self._mover_state, "constrained_by_mover", false)
 
-		local mover = Unit.mover(_unit)
-		local flag = arg_21_2 or num_3
-		local separate, var_21_7, var_21_8, var_21_9 = Mover.separate(mover, flag)
+		local mover = Unit.mover(unit)
+		local allowed_mover_move_distance = not not override_mover_move_distance or not not ALLOWED_MOVER_MOVE_DISTANCE
+		local is_colliding, colliding_actor, move_vector, new_position = Mover.separate(mover, allowed_mover_move_distance)
 
-		if not separate then
-			if not var_21_9 then
-				Mover.set_position(mover, var_21_9)
+		if is_colliding then
+			if new_position then
+				Mover.set_position(mover, new_position)
 			else
-				local str = "forced"
-				local var_21_11 = Vector3(0, 0, -1)
+				local damage_type = "forced"
+				local damage_direction = Vector3(0, 0, -1)
 
-				AiUtils.kill_unit(_unit, nil, nil, str, var_21_11)
+				AiUtils.kill_unit(unit, nil, nil, damage_type, damage_direction)
 
 				return
 			end
 		end
 
-		local position = Mover.position(mover)
+		local mover_position = Mover.position(mover)
 
-		Unit.set_local_position(_unit, 0, position)
+		Unit.set_local_position(unit, 0, mover_position)
 
-		local get_data = World.get_data(self._world, "physics_world")
-		local num = 0.5
-		local num_2 = 1.5
-		local var_21_16 = Vector3(num, num_2, num)
-		local look = Quaternion.look(Vector3(0, 0, 1))
-		local flag_2
+		local physics_world = World.get_data(self._world, "physics_world")
+		local radius = 0.5
+		local half_height = 1.5
+		local size = Vector3(radius, half_height, radius)
+		local rotation = Quaternion.look(Vector3(0, 0, 1))
+		local str
 
-		flag_2 = not (num_2 - num > 0) or not "capsule" or "sphere"
+		if half_height - radius > 0 then
+			str = "capsule"
 
-		local immediate_overlap, var_21_20 = PhysicsWorld.immediate_overlap(get_data, "shape", flag_2, "position", position, "rotation", look, "size", var_21_16, "collision_filter", "filter_environment_overlap")
+			goto label_21_0
+		end
 
-		self._is_falling = var_21_20 == 0
+		str = "sphere"
+
+		local shape = str
+
+		::label_21_0::
+
+		local hit_actors, num_hit_actors = PhysicsWorld.immediate_overlap(physics_world, "shape", shape, "position", mover_position, "rotation", rotation, "size", size, "collision_filter", "filter_environment_overlap")
+
+		self._is_falling = num_hit_actors == 0
 	end
 end
 

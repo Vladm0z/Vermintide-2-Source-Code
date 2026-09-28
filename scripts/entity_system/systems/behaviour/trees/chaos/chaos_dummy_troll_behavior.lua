@@ -1,6 +1,6 @@
 -- chunkname: @scripts/entity_system/systems/behaviour/trees/chaos/chaos_dummy_troll_behavior.lua
 
-local chaos_dummy_troll = BreedActions.chaos_dummy_troll
+local ACTIONS = BreedActions.chaos_dummy_troll
 
 BreedBehaviors.dummy_troll = {
 	"BTSelector",
@@ -20,7 +20,7 @@ BreedBehaviors.dummy_troll = {
 			"BTClimbAction",
 			name = "climb",
 			condition = "at_climb_smartobject",
-			action_data = chaos_dummy_troll.climb
+			action_data = ACTIONS.climb
 		},
 		{
 			"BTJumpAcrossAction",
@@ -31,7 +31,7 @@ BreedBehaviors.dummy_troll = {
 			"BTSmashDoorAction",
 			name = "smash_door",
 			condition = "at_door_smartobject",
-			action_data = chaos_dummy_troll.smash_door
+			action_data = ACTIONS.smash_door
 		},
 		condition = "ratogre_at_smartobject",
 		name = "smartobject"
@@ -40,20 +40,20 @@ BreedBehaviors.dummy_troll = {
 		"BTTrollDownedAction",
 		name = "downed",
 		condition = "troll_downed",
-		action_data = chaos_dummy_troll.downed
+		action_data = ACTIONS.downed
 	},
 	{
 		"BTStaggerAction",
 		name = "stagger",
 		condition = "stagger",
-		action_data = chaos_dummy_troll.stagger
+		action_data = ACTIONS.stagger
 	},
 	{
 		"BTMoveToGoalAction",
 		enter_hook = "crouch_or_upright_on_enter",
 		name = "move_to_goal",
 		condition = "has_goal_destination",
-		action_data = chaos_dummy_troll.follow
+		action_data = ACTIONS.follow
 	},
 	{
 		"BTIdleAction",

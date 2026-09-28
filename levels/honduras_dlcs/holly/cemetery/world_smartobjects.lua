@@ -1,6 +1,6 @@
 -- chunkname: @levels/honduras_dlcs/holly/cemetery/world_smartobjects.lua
 
-local tbl = {
+local smart_objects = {
 	["c915d106-0f44-4a3f-a271-71f0ba459964"] = {
 		{
 			smart_object_index = 709,
@@ -55326,13 +55326,13 @@ local tbl = {
 		}
 	}
 }
-local num = 2189
-local str = "v1"
-local str_2 = "2017.MAY.05.05"
+local smart_object_count = 2189
+local version = "v1"
+local ledgelator_version = "2017.MAY.05.05"
 
 return {
-	smart_objects = tbl,
-	smart_object_count = num,
-	version = str,
-	ledgelator_version = str_2
+	smart_objects = smart_objects,
+	smart_object_count = smart_object_count,
+	version = version,
+	ledgelator_version = ledgelator_version
 }

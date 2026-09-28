@@ -1,7 +1,7 @@
 -- chunkname: @scripts/ui/views/menu_information_slate_ui_definitions.lua
 
-local num = 590
-local tbl = {
+local panel_scroll_area = 590
+local scenegraph_definition = {
 	screen = {
 		scale = "fit",
 		size = {
@@ -221,7 +221,7 @@ local tbl = {
 		}
 	}
 }
-local tbl_2 = {
+local alert_name_text_style = {
 	vertical_alignment = "top",
 	upper_case = true,
 	localize = false,
@@ -240,7 +240,7 @@ local tbl_2 = {
 		0
 	}
 }
-local tbl_3 = {
+local header_text_style = {
 	font_size = 56,
 	upper_case = true,
 	localize = false,
@@ -260,7 +260,7 @@ local tbl_3 = {
 		0
 	}
 }
-local tbl_4 = {
+local sub_header_text_style = {
 	font_size = 25,
 	upper_case = false,
 	localize = false,
@@ -280,7 +280,7 @@ local tbl_4 = {
 		0
 	}
 }
-local tbl_5 = {
+local info_text_style = {
 	font_size = 25,
 	upper_case = false,
 	localize = false,
@@ -311,7 +311,7 @@ local tbl_5 = {
 		0
 	}
 }
-local tbl_6 = {
+local body_text_style = {
 	font_size = 25,
 	upper_case = false,
 	localize = false,
@@ -331,17 +331,17 @@ local tbl_6 = {
 		0
 	}
 }
-local tbl_7 = {
+local body_parsing_data = {
 	text = {
 		spacing = 25,
-		default_text_style = tbl_6
+		default_text_style = body_text_style
 	},
 	image = {
 		spacing = 25
 	}
 }
 
-function create_hotspot_text(arg_1_0, arg_1_1, arg_1_2)
+function create_hotspot_text(text, scenegraph_id, text_style)
 	-- function 1
 	return {
 		element = {
@@ -355,12 +355,14 @@ function create_hotspot_text(arg_1_0, arg_1_1, arg_1_2)
 					style_id = "text",
 					pass_type = "text",
 					text_id = "text",
-					content_change_function = function (self, arg_2_1)
+					content_change_function = function (content, style)
 						-- function 2
-						if not self.hotspot.is_hover then
-							arg_2_1.text_color = arg_2_1.hover_color
+						local is_hover = content.hotspot.is_hover
+
+						if is_hover then
+							style.text_color = style.hover_color
 						else
-							arg_2_1.text_color = arg_2_1.base_color
+							style.text_color = style.base_color
 						end
 					end
 				}
@@ -368,10 +370,10 @@ function create_hotspot_text(arg_1_0, arg_1_1, arg_1_2)
 		},
 		content = {
 			hotspot = {},
-			text = arg_1_0
+			text = text
 		},
 		style = {
-			text = arg_1_2,
+			text = text_style,
 			hotspot = {
 				vertical_alignment = "bottom",
 				horizontal_alignment = "left",
@@ -391,11 +393,11 @@ function create_hotspot_text(arg_1_0, arg_1_1, arg_1_2)
 			0,
 			0
 		},
-		scenegraph_id = arg_1_1
+		scenegraph_id = scenegraph_id
 	}
 end
 
-function create_gamepad_input(arg_3_0, arg_3_1)
+function create_gamepad_input(scenegraph_id, color)
 	-- function 3
 	local tbl = {
 		element = {
@@ -404,28 +406,34 @@ function create_gamepad_input(arg_3_0, arg_3_1)
 					texture_id = "xb_input",
 					style_id = "texture_id",
 					pass_type = "texture",
-					content_check_function = function (arg_4_0, arg_4_1)
+					content_check_function = function (content, style)
 						-- function 4
-						local is_device_active = Managers.input:is_device_active("gamepad")
+						local gamepad_active = Managers.input:is_device_active("gamepad")
 						local use_ps4_input_icons = UISettings.use_ps4_input_icons
+						local input_device = Managers.input:get_most_recent_device()
+						local device_type = input_device.type()
+						local is_ps_pad = device_type == "sce_pad"
 
-						use_ps4_input_icons = Managers.input:get_most_recent_device().type() == "sce_pad" or use_ps4_input_icons
+						use_ps4_input_icons = not not is_ps_pad or not not use_ps4_input_icons
 
-						return not is_device_active and not use_ps4_input_icons
+						return not not gamepad_active and not not not use_ps4_input_icons
 					end
 				},
 				{
 					texture_id = "ps_input",
 					style_id = "texture_id",
 					pass_type = "texture",
-					content_check_function = function (arg_5_0, arg_5_1)
+					content_check_function = function (content, style)
 						-- function 5
-						local is_device_active = Managers.input:is_device_active("gamepad")
+						local gamepad_active = Managers.input:is_device_active("gamepad")
 						local use_ps4_input_icons = UISettings.use_ps4_input_icons
+						local input_device = Managers.input:get_most_recent_device()
+						local device_type = input_device.type()
+						local is_ps_pad = device_type == "sce_pad"
 
-						use_ps4_input_icons = Managers.input:get_most_recent_device().type() == "sce_pad" or use_ps4_input_icons
+						use_ps4_input_icons = not not is_ps_pad or not not use_ps4_input_icons
 
-						return not is_device_active and use_ps4_input_icons
+						return not not gamepad_active and not not use_ps4_input_icons
 					end
 				}
 			}
@@ -434,12 +442,12 @@ function create_gamepad_input(arg_3_0, arg_3_1)
 	local tbl_2 = {}
 	local flag
 
-	flag = not IS_CONSOLE and "xbone_button_icon_menu_large" and "xbone_button_icon_x"
+	flag = (not IS_CONSOLE or not "xbone_button_icon_menu_large") and not not "xbone_button_icon_x"
 	tbl_2.xb_input = flag
 
 	local flag_2
 
-	flag_2 = not IS_CONSOLE and "ps4_button_icon_options" and "ps4_button_icon_square"
+	flag_2 = (not IS_CONSOLE or not "ps4_button_icon_options") and not not "ps4_button_icon_square"
 	tbl_2.ps_input = flag_2
 	tbl.content = tbl_2
 	tbl.style = {
@@ -448,7 +456,7 @@ function create_gamepad_input(arg_3_0, arg_3_1)
 				34,
 				34
 			},
-			color = arg_3_1 or {
+			color = not not color or not not {
 				255,
 				255,
 				255,
@@ -466,38 +474,54 @@ function create_gamepad_input(arg_3_0, arg_3_1)
 		0,
 		0
 	}
-	tbl.scenegraph_id = arg_3_0
+	tbl.scenegraph_id = scenegraph_id
 
-	return tbl
+	local definition = tbl
+
+	return definition
 end
 
-local function fn(self)
+local function create_switch_panel(information_data)
 	-- function 6
-	local count = #self
-	local tbl = {}
-	local tbl_2 = {
+	local num_information_slates = #information_data
+	local widget_def = {}
+	local element = {
 		passes = {}
 	}
-	local passes = tbl_2.passes
-	local tbl_3 = {}
-	local tbl_4 = {}
+	local passes = element.passes
+	local content = {}
+	local style = {}
 
 	passes[#passes + 1] = {
 		style_id = "right_arrow",
 		pass_type = "texture_uv",
 		content_id = "right_arrow",
-		content_check_function = function (arg_7_0, arg_7_1)
+		content_check_function = function (content, style)
 			-- function 7
-			return not Managers.input:is_device_active("gamepad")
-		end,
-		content_change_function = function (self, arg_8_1)
-			-- function 8
-			local flag
+			local gamepad_active = Managers.input:is_device_active("gamepad")
 
-			flag = not self.parent.right_arrow_hotspot.is_hover and 1 and 0.6
-			arg_8_1.color[2] = 255 * flag
-			arg_8_1.color[3] = 255 * flag
-			arg_8_1.color[4] = 255 * flag
+			return not gamepad_active
+		end,
+		content_change_function = function (content, style)
+			-- function 8
+			local hotspot = content.parent.right_arrow_hotspot
+			local num
+
+			if hotspot.is_hover then
+				num = 1
+
+				goto label_8_0
+			end
+
+			num = 0.6
+
+			local intensity_multiplier = num
+
+			::label_8_0::
+
+			style.color[2] = 255 * intensity_multiplier
+			style.color[3] = 255 * intensity_multiplier
+			style.color[4] = 255 * intensity_multiplier
 		end
 	}
 	passes[#passes + 1] = {
@@ -509,29 +533,45 @@ local function fn(self)
 		style_id = "right_shoulder",
 		texture_id = "right_shoulder",
 		pass_type = "texture",
-		content_check_function = function (arg_9_0, arg_9_1)
+		content_check_function = function (content, style)
 			-- function 9
-			return (Managers.input:is_device_active("gamepad"))
+			local gamepad_active = Managers.input:is_device_active("gamepad")
+
+			return gamepad_active
 		end,
-		content_change_function = function (self, arg_10_1)
+		content_change_function = function (content, style)
 			-- function 10
-			if IS_PS4 or not IS_XB1 then
+			if IS_PS4 or IS_XB1 then
 				return
 			end
 
 			local use_ps4_input_icons = UISettings.use_ps4_input_icons
 			local input = Managers.input
 
-			input = not input and Managers.input:get_most_recent_device()
-			use_ps4_input_icons = not input and input.type() == "sce_pad" and use_ps4_input_icons
+			if input then
+				-- Nothing
+			end
+
+			input = Managers.input:get_most_recent_device()
+
+			local input_device = input
+
+			::label_10_0::
+
+			if input_device then
+				local device_type = input_device.type()
+				local is_ps_pad = device_type == "sce_pad"
+
+				use_ps4_input_icons = not not is_ps_pad or not not use_ps4_input_icons
+			end
 
 			local flag
 
-			flag = not use_ps4_input_icons and "ps4_button_icon_r1" and "xbone_button_icon_rb"
-			self.right_shoulder = flag
+			flag = (not use_ps4_input_icons or not "ps4_button_icon_r1") and not not "xbone_button_icon_rb"
+			content.right_shoulder = flag
 		end
 	}
-	tbl_4.right_arrow = {
+	style.right_arrow = {
 		vertical_alignment = "center",
 		horizontal_alignment = "center",
 		area_size = {
@@ -549,7 +589,7 @@ local function fn(self)
 			255
 		}
 	}
-	tbl_4.right_shoulder = {
+	style.right_shoulder = {
 		vertical_alignment = "center",
 		horizontal_alignment = "center",
 		texture_size = {
@@ -563,8 +603,8 @@ local function fn(self)
 			255
 		}
 	}
-	tbl_3.right_arrow_hotspot = {}
-	tbl_3.right_arrow = {
+	content.right_arrow_hotspot = {}
+	content.right_arrow = {
 		texture_id = "info_slate_arrow",
 		uvs = {
 			{
@@ -580,43 +620,87 @@ local function fn(self)
 
 	local flag
 
-	flag = not IS_PS4 and "ps4_button_icon_r1" and "xbone_button_icon_rb"
-	tbl_3.right_shoulder = flag
-	tbl_3.current_index = nil
+	flag = (not IS_PS4 or not "ps4_button_icon_r1") and not not "xbone_button_icon_rb"
+	content.right_shoulder = flag
+	content.current_index = nil
 
-	local tbl_5 = {
+	local slate_size = {
 		16,
 		16
 	}
-	local num = 8
-	local num_2 = -28
+	local spacing = 8
+	local horizontal_offset = -28
 
-	for i = count, 1, -1 do
-		local var_6_10 = self[i]
-		local str = "slate_" .. i
+	for i = num_information_slates, 1, -1 do
+		local slate_data = information_data[i]
+		local slate_name = "slate_" .. i
 
 		passes[#passes + 1] = {
 			pass_type = "rect",
-			content_id = str,
-			style_id = str,
-			content_change_function = function (self, arg_11_1)
+			content_id = slate_name,
+			style_id = slate_name,
+			content_change_function = function (content, style)
 				-- function 11
-				local alert_color = arg_11_1.alert_color
-				local var_11_1 = self.parent[str .. "_hotspot"]
-				local is_hover = var_11_1.is_hover
-
-				is_hover = is_hover or self.index == self.parent.current_index
-
-				local flag
-
-				flag = not var_11_1.is_hover and 1 and 0.8
-				arg_11_1.color[1] = 255
-
-				local color = arg_11_1.color
-				local var_11_5
+				local alert_color = style.alert_color
+				local hotspot = content.parent[slate_name .. "_hotspot"]
+				local is_hover = hotspot.is_hover
 
 				if not is_hover then
-					var_11_5 = alert_color[2]
+					-- Nothing
+				end
+
+				if content.index ~= content.parent.current_index then
+					is_hover = false
+
+					goto label_11_0
+				end
+
+				is_hover = true
+
+				local is_selected = is_hover
+
+				do
+					local num
+				end
+
+				::label_11_0::
+
+				if hotspot.is_hover then
+					num = 1
+
+					goto label_11_1
+				end
+
+				num = 0.8
+
+				local intensity_multiplier = num
+
+				::label_11_1::
+
+				style.color[1] = 255
+
+				local color = style.color
+				local var_11_3
+
+				if is_selected then
+					var_11_3 = alert_color[2]
+
+					if not var_11_3 then
+						-- Nothing
+					end
+				end
+
+				var_11_3 = 255
+
+				::label_11_2::
+
+				color[2] = var_11_3 * intensity_multiplier
+
+				local color_2 = style.color
+				local var_11_5
+
+				if is_selected then
+					var_11_5 = alert_color[3]
 
 					if not var_11_5 then
 						-- Nothing
@@ -625,15 +709,15 @@ local function fn(self)
 
 				var_11_5 = 255
 
-				::label_11_0::
+				::label_11_3::
 
-				color[2] = var_11_5 * flag
+				color_2[3] = var_11_5 * intensity_multiplier
 
-				local color_2 = arg_11_1.color
+				local color_3 = style.color
 				local var_11_7
 
-				if not is_hover then
-					var_11_7 = alert_color[3]
+				if is_selected then
+					var_11_7 = alert_color[4]
 
 					if not var_11_7 then
 						-- Nothing
@@ -642,45 +726,28 @@ local function fn(self)
 
 				var_11_7 = 255
 
-				::label_11_1::
+				::label_11_4::
 
-				color_2[3] = var_11_7 * flag
-
-				local color_3 = arg_11_1.color
-				local var_11_9
-
-				if not is_hover then
-					var_11_9 = alert_color[4]
-
-					if not var_11_9 then
-						-- Nothing
-					end
-				end
-
-				var_11_9 = 255
-
-				::label_11_2::
-
-				color_3[4] = var_11_9 * flag
+				color_3[4] = var_11_7 * intensity_multiplier
 			end
 		}
 		passes[#passes + 1] = {
 			pass_type = "hotspot",
-			content_id = str .. "_hotspot",
-			style_id = str
+			content_id = slate_name .. "_hotspot",
+			style_id = slate_name
 		}
-		tbl_3[str .. "_hotspot"] = {}
-		tbl_3[str] = {
+		content[slate_name .. "_hotspot"] = {}
+		content[slate_name] = {
 			index = i
 		}
-		tbl_4[str] = {
+		style[slate_name] = {
 			vertical_alignment = "center",
 			horizontal_alignment = "center",
-			alert_color = var_6_10.alert_color,
-			texture_size = tbl_5,
+			alert_color = slate_data.alert_color,
+			texture_size = slate_size,
 			area_size = {
-				tbl_5[1] * 1.5,
-				tbl_5[2] * 1.5
+				slate_size[1] * 1.5,
+				slate_size[2] * 1.5
 			},
 			color = {
 				255,
@@ -689,58 +756,87 @@ local function fn(self)
 				255
 			},
 			offset = {
-				num_2,
+				horizontal_offset,
 				0,
 				0
 			}
 		}
-		num_2 = num_2 - tbl_5[1] - num
+		horizontal_offset = horizontal_offset - slate_size[1] - spacing
 	end
 
-	local num_3 = num_2 - 4
-
+	horizontal_offset = horizontal_offset - 4
 	passes[#passes + 1] = {
 		style_id = "left_arrow",
 		texture_id = "left_arrow",
 		pass_type = "texture",
-		content_check_function = function (arg_12_0, arg_12_1)
+		content_check_function = function (content, style)
 			-- function 12
-			return not Managers.input:is_device_active("gamepad")
-		end,
-		content_change_function = function (self, arg_13_1)
-			-- function 13
-			local flag
+			local gamepad_active = Managers.input:is_device_active("gamepad")
 
-			flag = not self.left_arrow_hotspot.is_hover and 1 and 0.6
-			arg_13_1.color[2] = 255 * flag
-			arg_13_1.color[3] = 255 * flag
-			arg_13_1.color[4] = 255 * flag
+			return not gamepad_active
+		end,
+		content_change_function = function (content, style)
+			-- function 13
+			local hotspot = content.left_arrow_hotspot
+			local num
+
+			if hotspot.is_hover then
+				num = 1
+
+				goto label_13_0
+			end
+
+			num = 0.6
+
+			local intensity_multiplier = num
+
+			::label_13_0::
+
+			style.color[2] = 255 * intensity_multiplier
+			style.color[3] = 255 * intensity_multiplier
+			style.color[4] = 255 * intensity_multiplier
 		end
 	}
 	passes[#passes + 1] = {
 		style_id = "left_shoulder",
 		texture_id = "left_shoulder",
 		pass_type = "texture",
-		content_check_function = function (arg_14_0, arg_14_1)
+		content_check_function = function (content, style)
 			-- function 14
-			return (Managers.input:is_device_active("gamepad"))
+			local gamepad_active = Managers.input:is_device_active("gamepad")
+
+			return gamepad_active
 		end,
-		content_change_function = function (self, arg_15_1)
+		content_change_function = function (content, style)
 			-- function 15
-			if IS_PS4 or not IS_XB1 then
+			if IS_PS4 or IS_XB1 then
 				return
 			end
 
 			local use_ps4_input_icons = UISettings.use_ps4_input_icons
 			local input = Managers.input
 
-			input = not input and Managers.input:get_most_recent_device()
-			use_ps4_input_icons = not input and input.type() == "sce_pad" and use_ps4_input_icons
+			if input then
+				-- Nothing
+			end
+
+			input = Managers.input:get_most_recent_device()
+
+			local input_device = input
+
+			::label_15_0::
+
+			if input_device then
+				local device_type = input_device.type()
+				local is_ps_pad = device_type == "sce_pad"
+
+				use_ps4_input_icons = not not is_ps_pad or not not use_ps4_input_icons
+			end
 
 			local flag
 
-			flag = not use_ps4_input_icons and "ps4_button_icon_l1" and "xbone_button_icon_lb"
-			self.left_shoulder = flag
+			flag = (not use_ps4_input_icons or not "ps4_button_icon_l1") and not not "xbone_button_icon_lb"
+			content.left_shoulder = flag
 		end
 	}
 	passes[#passes + 1] = {
@@ -748,7 +844,7 @@ local function fn(self)
 		pass_type = "hotspot",
 		content_id = "left_arrow_hotspot"
 	}
-	tbl_4.left_arrow = {
+	style.left_arrow = {
 		vertical_alignment = "center",
 		horizontal_alignment = "center",
 		area_size = {
@@ -766,12 +862,12 @@ local function fn(self)
 			255
 		},
 		offset = {
-			num_3,
+			horizontal_offset,
 			0,
 			0
 		}
 	}
-	tbl_4.left_shoulder = {
+	style.left_shoulder = {
 		vertical_alignment = "center",
 		horizontal_alignment = "center",
 		texture_size = {
@@ -785,39 +881,39 @@ local function fn(self)
 			255
 		},
 		offset = {
-			num_3,
+			horizontal_offset,
 			0,
 			0
 		}
 	}
-	tbl_3.left_arrow_hotspot = {}
-	tbl_3.left_arrow = "info_slate_arrow"
+	content.left_arrow_hotspot = {}
+	content.left_arrow = "info_slate_arrow"
 
 	local flag_2
 
-	flag_2 = not IS_PS4 and "ps4_button_icon_l1" and "xbone_button_icon_lb"
-	tbl_3.left_shoulder = flag_2
-	tbl.element = tbl_2
-	tbl.content = tbl_3
-	tbl.style = tbl_4
-	tbl.scenegraph_id = "switch_panel"
-	tbl.offset = {
+	flag_2 = (not IS_PS4 or not "ps4_button_icon_l1") and not not "xbone_button_icon_lb"
+	content.left_shoulder = flag_2
+	widget_def.element = element
+	widget_def.content = content
+	widget_def.style = style
+	widget_def.scenegraph_id = "switch_panel"
+	widget_def.offset = {
 		-5,
 		0,
 		0
 	}
 
-	return tbl
+	return widget_def
 end
 
-local flag = true
-local tbl_8 = {
+local disable_with_gamepad = true
+local tbl = {
 	panel = UIWidgets.create_simple_rect("panel", {
 		192,
 		0,
 		0,
 		0
-	}, nil, nil, tbl.top_panel.size),
+	}, nil, nil, scenegraph_definition.top_panel.size),
 	panel_mask = UIWidgets.create_simple_texture("mask_rect", "panel_mask", nil, nil, {
 		255,
 		255,
@@ -855,54 +951,54 @@ local tbl_8 = {
 		255,
 		255,
 		255
-	}, tbl_2),
+	}, alert_name_text_style),
 	header = UIWidgets.create_simple_text("Header", "header", 25, {
 		255,
 		255,
 		255,
 		255
-	}, tbl_3),
+	}, header_text_style),
 	sub_header = UIWidgets.create_simple_text("Sub Header", "sub_header", 25, {
 		255,
 		255,
 		255,
 		255
-	}, tbl_4)
+	}, sub_header_text_style)
 }
 local create_hotspot_text = create_hotspot_text
-local var_0_12
+local var_0_2
 
-if not Managers.localizer:exists("info_slate_more_information") then
-	var_0_12 = Localize("info_slate_more_information")
+if Managers.localizer:exists("info_slate_more_information") then
+	var_0_2 = Localize("info_slate_more_information")
 
-	if not var_0_12 then
+	if not var_0_2 then
 		-- Nothing
 	end
 end
 
-var_0_12 = "More Information"
+var_0_2 = "More Information"
 
 ::label_0_0::
 
-tbl_8.more_information = create_hotspot_text(var_0_12, "information", tbl_5)
+tbl.more_information = create_hotspot_text(var_0_2, "information", info_text_style)
 
 local create_hotspot_text_2 = create_hotspot_text
-local var_0_14
+local var_0_4
 
-if not Managers.localizer:exists("info_slate_less_information") then
-	var_0_14 = Localize("info_slate_less_information")
+if Managers.localizer:exists("info_slate_less_information") then
+	var_0_4 = Localize("info_slate_less_information")
 
-	if not var_0_14 then
+	if not var_0_4 then
 		-- Nothing
 	end
 end
 
-var_0_14 = "Less Information"
+var_0_4 = "Less Information"
 
 ::label_0_1::
 
-tbl_8.less_information = create_hotspot_text_2(var_0_14, "information", tbl_5)
-tbl_8.triangle_right = UIWidgets.create_simple_triangle("triangle", {
+tbl.less_information = create_hotspot_text_2(var_0_4, "information", info_text_style)
+tbl.triangle_right = UIWidgets.create_simple_triangle("triangle", {
 	255,
 	255,
 	255,
@@ -910,8 +1006,8 @@ tbl_8.triangle_right = UIWidgets.create_simple_triangle("triangle", {
 }, "right", {
 	10,
 	10
-}, flag)
-tbl_8.triangle_down = UIWidgets.create_simple_triangle("triangle", {
+}, disable_with_gamepad)
+tbl.triangle_down = UIWidgets.create_simple_triangle("triangle", {
 	255,
 	255,
 	255,
@@ -919,37 +1015,38 @@ tbl_8.triangle_down = UIWidgets.create_simple_triangle("triangle", {
 }, "down", {
 	10,
 	10
-}, flag)
-tbl_8.input = create_gamepad_input("triangle", {
+}, disable_with_gamepad)
+tbl.input = create_gamepad_input("triangle", {
 	255,
 	255,
 	255,
 	255
 })
 
-local tbl_9 = {
+local widgets = tbl
+local animation_definitions = {
 	animate_switch_panel_in = {
 		{
 			name = "fade_in",
 			start_progress = 0,
 			end_progress = 0.5,
-			init = function (arg_16_0, arg_16_1, arg_16_2, arg_16_3)
+			init = function (ui_scenegraph, scenegraph_definition, widgets, params)
 				-- function 16
-				arg_16_0.switch_panel.position[1] = 200
+				ui_scenegraph.switch_panel.position[1] = 200
 			end,
-			update = function (arg_17_0, arg_17_1, arg_17_2, arg_17_3, arg_17_4)
+			update = function (ui_scenegraph, scenegraph_definition, widgets, progress, params)
 				-- function 17
-				local easeOutCubic = math.easeOutCubic(arg_17_3)
+				local anim_progress = math.easeOutCubic(progress)
 
-				arg_17_0.switch_panel.position[1] = 200 - 250 * easeOutCubic
+				ui_scenegraph.switch_panel.position[1] = 200 - 250 * anim_progress
 
-				local switch_panel = arg_17_2.switch_panel
+				local switch_panel_widget = widgets.switch_panel
 
-				if not switch_panel then
-					switch_panel.content.alpha_value = easeOutCubic * easeOutCubic
+				if switch_panel_widget then
+					switch_panel_widget.content.alpha_value = anim_progress * anim_progress
 				end
 			end,
-			on_complete = function (arg_18_0, arg_18_1, arg_18_2, arg_18_3)
+			on_complete = function (ui_scenegraph, scenegraph_definition, widgets, params)
 				-- function 18
 				return
 			end
@@ -960,23 +1057,23 @@ local tbl_9 = {
 			name = "fade_in",
 			start_progress = 0,
 			end_progress = 0.5,
-			init = function (arg_19_0, arg_19_1, arg_19_2, arg_19_3)
+			init = function (ui_scenegraph, scenegraph_definition, widgets, params)
 				-- function 19
-				arg_19_0.switch_panel.position[1] = 0
+				ui_scenegraph.switch_panel.position[1] = 0
 			end,
-			update = function (arg_20_0, arg_20_1, arg_20_2, arg_20_3, arg_20_4)
+			update = function (ui_scenegraph, scenegraph_definition, widgets, progress, params)
 				-- function 20
-				local easeOutCubic = math.easeOutCubic(arg_20_3)
+				local anim_progress = math.easeOutCubic(progress)
 
-				arg_20_0.switch_panel.position[1] = 250 * easeOutCubic
+				ui_scenegraph.switch_panel.position[1] = 250 * anim_progress
 
-				local switch_panel = arg_20_2.switch_panel
+				local switch_panel_widget = widgets.switch_panel
 
-				if not switch_panel then
-					switch_panel.content.alpha_value = 1 - easeOutCubic * easeOutCubic
+				if switch_panel_widget then
+					switch_panel_widget.content.alpha_value = 1 - anim_progress * anim_progress
 				end
 			end,
-			on_complete = function (arg_21_0, arg_21_1, arg_21_2, arg_21_3)
+			on_complete = function (ui_scenegraph, scenegraph_definition, widgets, params)
 				-- function 21
 				return
 			end
@@ -987,23 +1084,23 @@ local tbl_9 = {
 			name = "fade_in",
 			start_progress = 0,
 			end_progress = 0.5,
-			init = function (arg_22_0, arg_22_1, arg_22_2, arg_22_3)
+			init = function (ui_scenegraph, scenegraph_definition, widgets, params)
 				-- function 22
-				arg_22_3.render_settings.alpha_multiplier = 0
-				arg_22_0.panel.position[1] = 200
-				arg_22_2.more_information.content.visible = true
-				arg_22_2.less_information.content.visible = false
-				arg_22_2.triangle_right.content.visible = true
-				arg_22_2.triangle_down.content.visible = false
+				params.render_settings.alpha_multiplier = 0
+				ui_scenegraph.panel.position[1] = 200
+				widgets.more_information.content.visible = true
+				widgets.less_information.content.visible = false
+				widgets.triangle_right.content.visible = true
+				widgets.triangle_down.content.visible = false
 			end,
-			update = function (arg_23_0, arg_23_1, arg_23_2, arg_23_3, arg_23_4)
+			update = function (ui_scenegraph, scenegraph_definition, widgets, progress, params)
 				-- function 23
-				local easeOutCubic = math.easeOutCubic(arg_23_3)
+				local anim_progress = math.easeOutCubic(progress)
 
-				arg_23_4.render_settings.alpha_multiplier = easeOutCubic * easeOutCubic
-				arg_23_0.panel.position[1] = 200 - 250 * easeOutCubic
+				params.render_settings.alpha_multiplier = anim_progress * anim_progress
+				ui_scenegraph.panel.position[1] = 200 - 250 * anim_progress
 			end,
-			on_complete = function (arg_24_0, arg_24_1, arg_24_2, arg_24_3)
+			on_complete = function (ui_scenegraph, scenegraph_definition, widgets, params)
 				-- function 24
 				return
 			end
@@ -1014,28 +1111,28 @@ local tbl_9 = {
 			name = "fade_out",
 			start_progress = 0,
 			end_progress = 0.25,
-			init = function (arg_25_0, arg_25_1, arg_25_2, arg_25_3)
+			init = function (ui_scenegraph, scenegraph_definition, widgets, params)
 				-- function 25
-				arg_25_3.render_settings.alpha_multiplier = 1
-				arg_25_3.render_settings.scrollbar_alpha = 0
+				params.render_settings.alpha_multiplier = 1
+				params.render_settings.scrollbar_alpha = 0
 			end,
-			update = function (arg_26_0, arg_26_1, arg_26_2, arg_26_3, arg_26_4)
+			update = function (ui_scenegraph, scenegraph_definition, widgets, progress, params)
 				-- function 26
-				local easeOutCubic = math.easeOutCubic(arg_26_3)
+				local anim_progress = math.easeOutCubic(progress)
 
-				arg_26_4.render_settings.alpha_multiplier = 1 - easeOutCubic * easeOutCubic
-				arg_26_0.panel.position[1] = 250 * easeOutCubic
+				params.render_settings.alpha_multiplier = 1 - anim_progress * anim_progress
+				ui_scenegraph.panel.position[1] = 250 * anim_progress
 
-				local switch_panel = arg_26_2.switch_panel
+				local switch_panel_widget = widgets.switch_panel
 
-				if not switch_panel then
-					switch_panel.content.alpha_value = arg_26_4.render_settings.alpha_multiplier
+				if switch_panel_widget then
+					switch_panel_widget.content.alpha_value = params.render_settings.alpha_multiplier
 				end
 			end,
-			on_complete = function (arg_27_0, arg_27_1, arg_27_2, arg_27_3)
+			on_complete = function (ui_scenegraph, scenegraph_definition, widgets, params)
 				-- function 27
-				arg_27_0.panel_mask.size[2] = 0
-				arg_27_2.panel.style.rect.texture_size[2] = arg_27_1.top_panel.size[2]
+				ui_scenegraph.panel_mask.size[2] = 0
+				widgets.panel.style.rect.texture_size[2] = scenegraph_definition.top_panel.size[2]
 			end
 		}
 	},
@@ -1044,23 +1141,23 @@ local tbl_9 = {
 			name = "expand",
 			start_progress = 0,
 			end_progress = 0.5,
-			init = function (arg_28_0, arg_28_1, arg_28_2, arg_28_3)
+			init = function (ui_scenegraph, scenegraph_definition, widgets, params)
 				-- function 28
-				arg_28_0.panel_mask.size[2] = 0
-				arg_28_2.more_information.content.visible = false
-				arg_28_2.less_information.content.visible = true
-				arg_28_2.triangle_right.content.visible = false
-				arg_28_2.triangle_down.content.visible = true
-				arg_28_3.render_settings.scrollbar_alpha = 0
+				ui_scenegraph.panel_mask.size[2] = 0
+				widgets.more_information.content.visible = false
+				widgets.less_information.content.visible = true
+				widgets.triangle_right.content.visible = false
+				widgets.triangle_down.content.visible = true
+				params.render_settings.scrollbar_alpha = 0
 			end,
-			update = function (arg_29_0, arg_29_1, arg_29_2, arg_29_3, arg_29_4)
+			update = function (ui_scenegraph, scenegraph_definition, widgets, progress, params)
 				-- function 29
-				local easeOutCubic = math.easeOutCubic(arg_29_3)
+				local anim_progress = math.easeOutCubic(progress)
 
-				arg_29_0.panel_mask.size[2] = 590 * easeOutCubic
-				arg_29_2.panel.style.rect.texture_size[2] = math.lerp(arg_29_1.top_panel.size[2], arg_29_1.panel.size[2], easeOutCubic)
+				ui_scenegraph.panel_mask.size[2] = 590 * anim_progress
+				widgets.panel.style.rect.texture_size[2] = math.lerp(scenegraph_definition.top_panel.size[2], scenegraph_definition.panel.size[2], anim_progress)
 			end,
-			on_complete = function (arg_30_0, arg_30_1, arg_30_2, arg_30_3)
+			on_complete = function (ui_scenegraph, scenegraph_definition, widgets, params)
 				-- function 30
 				return
 			end
@@ -1069,17 +1166,17 @@ local tbl_9 = {
 			name = "fade_scrollbar",
 			start_progress = 0.5,
 			end_progress = 0.75,
-			init = function (arg_31_0, arg_31_1, arg_31_2, arg_31_3)
+			init = function (ui_scenegraph, scenegraph_definition, widgets, params)
 				-- function 31
 				return
 			end,
-			update = function (arg_32_0, arg_32_1, arg_32_2, arg_32_3, arg_32_4)
+			update = function (ui_scenegraph, scenegraph_definition, widgets, progress, params)
 				-- function 32
-				local easeOutCubic = math.easeOutCubic(arg_32_3)
+				local anim_progress = math.easeOutCubic(progress)
 
-				arg_32_4.render_settings.scrollbar_alpha = easeOutCubic
+				params.render_settings.scrollbar_alpha = anim_progress
 			end,
-			on_complete = function (arg_33_0, arg_33_1, arg_33_2, arg_33_3)
+			on_complete = function (ui_scenegraph, scenegraph_definition, widgets, params)
 				-- function 33
 				return
 			end
@@ -1090,21 +1187,21 @@ local tbl_9 = {
 			name = "expand",
 			start_progress = 0,
 			end_progress = 0,
-			init = function (arg_34_0, arg_34_1, arg_34_2, arg_34_3)
+			init = function (ui_scenegraph, scenegraph_definition, widgets, params)
 				-- function 34
-				arg_34_0.panel_mask.size[2] = 0
-				arg_34_2.more_information.content.visible = false
-				arg_34_2.less_information.content.visible = true
-				arg_34_2.triangle_right.content.visible = false
-				arg_34_2.triangle_down.content.visible = true
-				arg_34_3.render_settings.scrollbar_alpha = 1
+				ui_scenegraph.panel_mask.size[2] = 0
+				widgets.more_information.content.visible = false
+				widgets.less_information.content.visible = true
+				widgets.triangle_right.content.visible = false
+				widgets.triangle_down.content.visible = true
+				params.render_settings.scrollbar_alpha = 1
 			end,
-			update = function (arg_35_0, arg_35_1, arg_35_2, arg_35_3, arg_35_4)
+			update = function (ui_scenegraph, scenegraph_definition, widgets, progress, params)
 				-- function 35
-				arg_35_0.panel_mask.size[2] = 590
-				arg_35_2.panel.style.rect.texture_size[2] = arg_35_1.panel.size[2]
+				ui_scenegraph.panel_mask.size[2] = 590
+				widgets.panel.style.rect.texture_size[2] = scenegraph_definition.panel.size[2]
 			end,
-			on_complete = function (arg_36_0, arg_36_1, arg_36_2, arg_36_3)
+			on_complete = function (ui_scenegraph, scenegraph_definition, widgets, params)
 				-- function 36
 				return
 			end
@@ -1115,22 +1212,22 @@ local tbl_9 = {
 			name = "collapse",
 			start_progress = 0,
 			end_progress = 0.5,
-			init = function (arg_37_0, arg_37_1, arg_37_2, arg_37_3)
+			init = function (ui_scenegraph, scenegraph_definition, widgets, params)
 				-- function 37
-				arg_37_0.panel_mask.size[2] = 590
-				arg_37_2.more_information.content.visible = true
-				arg_37_2.less_information.content.visible = false
-				arg_37_2.triangle_right.content.visible = true
-				arg_37_2.triangle_down.content.visible = false
+				ui_scenegraph.panel_mask.size[2] = 590
+				widgets.more_information.content.visible = true
+				widgets.less_information.content.visible = false
+				widgets.triangle_right.content.visible = true
+				widgets.triangle_down.content.visible = false
 			end,
-			update = function (arg_38_0, arg_38_1, arg_38_2, arg_38_3, arg_38_4)
+			update = function (ui_scenegraph, scenegraph_definition, widgets, progress, params)
 				-- function 38
-				local easeOutCubic = math.easeOutCubic(arg_38_3)
+				local anim_progress = math.easeOutCubic(progress)
 
-				arg_38_0.panel_mask.size[2] = 590 * (1 - easeOutCubic)
-				arg_38_2.panel.style.rect.texture_size[2] = math.lerp(arg_38_1.panel.size[2], arg_38_1.top_panel.size[2], easeOutCubic)
+				ui_scenegraph.panel_mask.size[2] = 590 * (1 - anim_progress)
+				widgets.panel.style.rect.texture_size[2] = math.lerp(scenegraph_definition.panel.size[2], scenegraph_definition.top_panel.size[2], anim_progress)
 			end,
-			on_complete = function (arg_39_0, arg_39_1, arg_39_2, arg_39_3)
+			on_complete = function (ui_scenegraph, scenegraph_definition, widgets, params)
 				-- function 39
 				return
 			end
@@ -1141,22 +1238,22 @@ local tbl_9 = {
 			name = "collapse",
 			start_progress = 0,
 			end_progress = 0,
-			init = function (arg_40_0, arg_40_1, arg_40_2, arg_40_3)
+			init = function (ui_scenegraph, scenegraph_definition, widgets, params)
 				-- function 40
-				arg_40_0.panel_mask.size[2] = 590
-				arg_40_2.more_information.content.visible = true
-				arg_40_2.less_information.content.visible = false
-				arg_40_2.triangle_right.content.visible = true
-				arg_40_2.triangle_down.content.visible = false
+				ui_scenegraph.panel_mask.size[2] = 590
+				widgets.more_information.content.visible = true
+				widgets.less_information.content.visible = false
+				widgets.triangle_right.content.visible = true
+				widgets.triangle_down.content.visible = false
 			end,
-			update = function (arg_41_0, arg_41_1, arg_41_2, arg_41_3, arg_41_4)
+			update = function (ui_scenegraph, scenegraph_definition, widgets, progress, params)
 				-- function 41
-				local easeOutCubic = math.easeOutCubic(arg_41_3)
+				local anim_progress = math.easeOutCubic(progress)
 
-				arg_41_0.panel_mask.size[2] = 590 * (1 - easeOutCubic)
-				arg_41_2.panel.style.rect.texture_size[2] = math.lerp(arg_41_1.panel.size[2], arg_41_1.top_panel.size[2], easeOutCubic)
+				ui_scenegraph.panel_mask.size[2] = 590 * (1 - anim_progress)
+				widgets.panel.style.rect.texture_size[2] = math.lerp(scenegraph_definition.panel.size[2], scenegraph_definition.top_panel.size[2], anim_progress)
 			end,
-			on_complete = function (arg_42_0, arg_42_1, arg_42_2, arg_42_3)
+			on_complete = function (ui_scenegraph, scenegraph_definition, widgets, params)
 				-- function 42
 				return
 			end
@@ -1165,10 +1262,10 @@ local tbl_9 = {
 }
 
 return {
-	widget_definitions = tbl_8,
-	body_parsing_data = tbl_7,
-	animation_definitions = tbl_9,
-	scenegraph_definition = tbl,
-	panel_scroll_area = num,
-	create_switch_panel_func = fn
+	widget_definitions = widgets,
+	body_parsing_data = body_parsing_data,
+	animation_definitions = animation_definitions,
+	scenegraph_definition = scenegraph_definition,
+	panel_scroll_area = panel_scroll_area,
+	create_switch_panel_func = create_switch_panel
 }

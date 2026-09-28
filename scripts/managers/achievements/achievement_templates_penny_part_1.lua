@@ -5,24 +5,24 @@ local add_levels_complete_challenge = AchievementTemplateHelper.add_levels_compl
 local add_meta_challenge = AchievementTemplateHelper.add_meta_challenge
 local PLACEHOLDER_ICON = AchievementTemplateHelper.PLACEHOLDER_ICON
 local achievements = AchievementTemplates.achievements
-local tbl = {
+local XB1_ACHIEVEMENT_ID = {
 	penny_portals_heads = 86,
 	penny_portals_vintage = 87
 }
-local tbl_2 = {
+local PS4_ACHIEVEMENT_ID = {
 	penny_portals_vintage = "081"
 }
 
-add_event_challenge(achievements, "penny_portals_portal", nil, nil, nil, tbl.penny_portals_portal, tbl_2.penny_portals_portal)
-add_event_challenge(achievements, "penny_portals_heads", nil, nil, nil, tbl.penny_portals_heads, tbl_2.penny_portals_heads)
-add_event_challenge(achievements, "penny_portals_cleanser", nil, nil, nil, tbl.penny_portals_cleanser, tbl_2.penny_portals_cleanser)
-add_event_challenge(achievements, "penny_portals_vintage", nil, nil, nil, tbl.penny_portals_vintage, tbl_2.penny_portals_vintage)
-add_event_challenge(achievements, "penny_portals_hideout", nil, nil, nil, tbl.penny_portals_hideout, tbl_2.penny_portals_hideout)
+add_event_challenge(achievements, "penny_portals_portal", nil, nil, nil, XB1_ACHIEVEMENT_ID.penny_portals_portal, PS4_ACHIEVEMENT_ID.penny_portals_portal)
+add_event_challenge(achievements, "penny_portals_heads", nil, nil, nil, XB1_ACHIEVEMENT_ID.penny_portals_heads, PS4_ACHIEVEMENT_ID.penny_portals_heads)
+add_event_challenge(achievements, "penny_portals_cleanser", nil, nil, nil, XB1_ACHIEVEMENT_ID.penny_portals_cleanser, PS4_ACHIEVEMENT_ID.penny_portals_cleanser)
+add_event_challenge(achievements, "penny_portals_vintage", nil, nil, nil, XB1_ACHIEVEMENT_ID.penny_portals_vintage, PS4_ACHIEVEMENT_ID.penny_portals_vintage)
+add_event_challenge(achievements, "penny_portals_hideout", nil, nil, nil, XB1_ACHIEVEMENT_ID.penny_portals_hideout, PS4_ACHIEVEMENT_ID.penny_portals_hideout)
 
-local tbl_3 = {
+local portals = {
 	LevelSettings.dlc_portals
 }
-local tbl_4 = {
+local difficulties = {
 	"normal",
 	"hard",
 	"harder",
@@ -30,12 +30,12 @@ local tbl_4 = {
 	"cataclysm"
 }
 
-for i = 1, #tbl_4 do
-	local var_0_9 = tbl_4[i]
-	local var_0_10 = DifficultyMapping[var_0_9]
-	local str = "penny_complete_portals_" .. var_0_10
+for i = 1, #difficulties do
+	local difficulty_key = difficulties[i]
+	local difficulty_name = DifficultyMapping[difficulty_key]
+	local name = "penny_complete_portals_" .. difficulty_name
 
-	add_levels_complete_challenge(achievements, str, tbl_3, DifficultySettings[var_0_9].rank, nil, nil, tbl[str], tbl_2[str])
+	add_levels_complete_challenge(achievements, name, portals, DifficultySettings[difficulty_key].rank, nil, nil, XB1_ACHIEVEMENT_ID[name], PS4_ACHIEVEMENT_ID[name])
 end
 
 add_meta_challenge(achievements, "penny_complete_portals", {

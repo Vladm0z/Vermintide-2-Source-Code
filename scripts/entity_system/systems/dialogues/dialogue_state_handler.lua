@@ -1,71 +1,71 @@
 -- chunkname: @scripts/entity_system/systems/dialogues/dialogue_state_handler.lua
 
-local num = 10
+local MAX_DIALOGUE_CHECKS_PER_FRAME = 10
 
 DialogueStateHandler = class(DialogueStateHandler)
 DialogueStateHandler.debug = true
 
-local function fn(...)
+local function debug_printf(...)
 	-- function 1
-	if not DialogueStateHandler.debug then
+	if DialogueStateHandler.debug then
 		print("[DialogueStateHandler] " .. string.format(...))
 	end
 end
 
-DialogueStateHandler.init = function (self, arg_2_1)
+DialogueStateHandler.init = function (self, world)
 	-- function 2
-	self._world = arg_2_1
+	self._world = world
 	self._playing_dialogues = {}
 	self._current_index = 1
 end
 
-DialogueStateHandler.add_playing_dialogue = function (arg_3_0, arg_3_1, arg_3_2, arg_3_3, arg_3_4)
+DialogueStateHandler.add_playing_dialogue = function (self, identifier, event_id, t, dialogue_duration)
 	-- function 3
-	arg_3_0._playing_dialogues[#arg_3_0._playing_dialogues + 1] = {
-		identifier = arg_3_1,
-		event_id = arg_3_2,
-		start_time = arg_3_3,
-		expected_end = arg_3_3 + arg_3_4
+	self._playing_dialogues[#self._playing_dialogues + 1] = {
+		identifier = identifier,
+		event_id = event_id,
+		start_time = t,
+		expected_end = t + dialogue_duration
 	}
 end
 
-local tbl = {}
+local DIALOGUES_TO_REMOVE = {}
 
-DialogueStateHandler.update = function (self, arg_4_1)
+DialogueStateHandler.update = function (self, t)
 	-- function 4
-	if not table.is_empty(self._playing_dialogues) then
+	if table.is_empty(self._playing_dialogues) then
 		return
 	end
 
-	table.clear(tbl)
+	table.clear(DIALOGUES_TO_REMOVE)
 
-	local num_2 = 0
-	local _current_index = self._current_index
-	local current_level = LevelHelper:current_level(self._world)
+	local num_checks = 0
+	local start_index = self._current_index
+	local level = LevelHelper:current_level(self._world)
 
 	repeat
-		local var_4_3 = self._playing_dialogues[self._current_index]
+		local dialogue_data = self._playing_dialogues[self._current_index]
 
-		if arg_4_1 > var_4_3.expected_end then
-			Level.set_flow_variable(current_level, "dialogue_identifier", var_4_3.identifier)
-			Level.trigger_event(current_level, "dialogue_ended")
+		if t > dialogue_data.expected_end then
+			Level.set_flow_variable(level, "dialogue_identifier", dialogue_data.identifier)
+			Level.trigger_event(level, "dialogue_ended")
 
-			tbl[#tbl + 1] = self._current_index
+			DIALOGUES_TO_REMOVE[#DIALOGUES_TO_REMOVE + 1] = self._current_index
 
-			fn("Triggering %s after %.2fs", var_4_3.identifier, arg_4_1 - var_4_3.start_time)
+			debug_printf("Triggering %s after %.2fs", dialogue_data.identifier, t - dialogue_data.start_time)
 		end
 
 		self._current_index = math.index_wrapper(self._current_index + 1, #self._playing_dialogues)
-		num_2 = num_2 + 1
-	until not (self._current_index == _current_index or not (num_2 >= num))
+		num_checks = num_checks + 1
+	until self._current_index == start_index or num_checks >= MAX_DIALOGUE_CHECKS_PER_FRAME
 
-	if not table.is_empty(tbl) then
-		table.sort(tbl)
+	if not table.is_empty(DIALOGUES_TO_REMOVE) then
+		table.sort(DIALOGUES_TO_REMOVE)
 
-		for i = #tbl, 1, -1 do
-			local var_4_4 = tbl[i]
+		for i = #DIALOGUES_TO_REMOVE, 1, -1 do
+			local index = DIALOGUES_TO_REMOVE[i]
 
-			table.remove(self._playing_dialogues, var_4_4)
+			table.remove(self._playing_dialogues, index)
 		end
 	end
 end

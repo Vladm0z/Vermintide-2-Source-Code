@@ -3286,17 +3286,17 @@ UIPlayerPortraitFrameSettings = {
 	}
 }
 
-local function fn()
+local function get_current_stat()
 	-- function 1
 	return
 end
 
-local function fn_2()
+local function get_texture()
 	-- function 2
 	return
 end
 
-local function fn_3()
+local function get_color()
 	-- function 3
 	return
 end

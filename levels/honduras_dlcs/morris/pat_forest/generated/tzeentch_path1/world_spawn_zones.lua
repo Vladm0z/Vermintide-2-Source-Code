@@ -1,6 +1,6 @@
 -- chunkname: @levels/honduras_dlcs/morris/pat_forest/generated/tzeentch_path1/world_spawn_zones.lua
 
-local tbl = {
+local path_markers = {
 	{
 		kind = "good",
 		main_path_index = 1,
@@ -291,7 +291,7 @@ local tbl = {
 		}
 	}
 }
-local tbl_2 = {
+local main_paths = {
 	{
 		path_length = 5.701047420501709,
 		travel_dist = {
@@ -981,8 +981,8 @@ local tbl_2 = {
 		}
 	}
 }
-local tbl_3 = {}
-local tbl_4 = {
+local crossroads = {}
+local zones = {
 	{
 		unique_zone_id = 1,
 		travel_dist = 20.515567302703857,
@@ -21986,7 +21986,7 @@ local tbl_4 = {
 		}
 	}
 }
-local tbl_5 = {
+local cover_points = {
 	32.19123840332031,
 	59.189247131347656,
 	31.092639923095703,
@@ -24643,7 +24643,7 @@ local tbl_5 = {
 	0.7926234006881714,
 	-0.6097114682197571
 }
-local tbl_6 = {
+local position_lookup = {
 	{
 		102.39543914794922,
 		127.60595703125,
@@ -123595,20 +123595,20 @@ local tbl_6 = {
 		33.659423828125
 	}
 }
-local num = 19790
-local num_2 = 47
-local num_3 = 511.82514476776
-local str = "1"
+local number_of_spawns = 19790
+local num_main_zones = 47
+local total_main_path_length = 511.82514476776
+local spawner_version = "1"
 
 return {
-	version = str,
-	number_of_spawns = num,
-	path_markers = tbl,
-	zones = tbl_4,
-	cover_points = tbl_5,
-	num_main_zones = num_2,
-	position_lookup = tbl_6,
-	main_paths = tbl_2,
-	crossroads = tbl_3,
-	total_main_path_length = num_3
+	version = spawner_version,
+	number_of_spawns = number_of_spawns,
+	path_markers = path_markers,
+	zones = zones,
+	cover_points = cover_points,
+	num_main_zones = num_main_zones,
+	position_lookup = position_lookup,
+	main_paths = main_paths,
+	crossroads = crossroads,
+	total_main_path_length = total_main_path_length
 }

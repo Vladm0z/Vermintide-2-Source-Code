@@ -1,6 +1,6 @@
 -- chunkname: @scripts/settings/light_fx_settings.lua
 
-local var_0_0
+local percent_to_rgb
 
 LightFXSettings = {
 	inn_level = {
@@ -29,33 +29,42 @@ LightFXSettings = {
 			255,
 			1
 		},
-		update_func = function (self)
+		update_func = function (v)
 			-- function 1
-			assert(#self == 5, "[LightFXManager] You need to pass in 5 values ( red, green, blue, intensity, blendtime )")
+			assert(#v == 5, "[LightFXManager] You need to pass in 5 values ( red, green, blue, intensity, blendtime )")
 
 			local network = Managers.state.network
 
-			network = not network and Managers.state.network:game()
-
-			if not network then
-				return self
+			if network then
+				-- Nothing
 			end
 
-			local local_player = Managers.player:local_player()
+			network = Managers.state.network:game()
 
-			if not local_player then
-				return self
+			local game = network
+
+			::label_1_0::
+
+			if not game then
+				return v
 			end
 
-			local player_unit = local_player.player_unit
+			local player = Managers.player:local_player()
 
-			if not Unit.alive(player_unit) then
-				local current_health_percent = ScriptUnit.extension(player_unit, "health_system"):current_health_percent()
-
-				self[1], self[2], self[3] = var_0_0(current_health_percent)
+			if not player then
+				return v
 			end
 
-			return self
+			local unit = player.player_unit
+
+			if Unit.alive(unit) then
+				local health_ext = ScriptUnit.extension(unit, "health_system")
+				local health_percent = health_ext:current_health_percent()
+
+				v[1], v[2], v[3] = percent_to_rgb(health_percent)
+			end
+
+			return v
 		end
 	}
 }
@@ -73,33 +82,41 @@ LightFXConditionalSettings = {
 			-- function 2
 			local network = Managers.state.network
 
-			network = not network and Managers.state.network:game()
+			if network then
+				-- Nothing
+			end
 
-			if not network then
+			network = Managers.state.network:game()
+
+			local game = network
+
+			::label_2_0::
+
+			if not game then
 				return
 			end
 
-			local local_player = Managers.player:local_player()
+			local player = Managers.player:local_player()
 
-			if not local_player then
+			if not player then
 				return
 			end
 
-			local player_unit = local_player.player_unit
+			local unit = player.player_unit
 
-			if not Unit.alive(player_unit) then
-				local extension = ScriptUnit.extension(player_unit, "status_system")
+			if Unit.alive(unit) then
+				local status_ext = ScriptUnit.extension(unit, "status_system")
 
-				if extension.knocked_down or not extension:is_ready_for_assisted_respawn() then
+				if status_ext.knocked_down or status_ext:is_ready_for_assisted_respawn() then
 					return true
 				end
 			else
 				return true
 			end
 		end,
-		update_func = function (arg_3_0, arg_3_1, arg_3_2)
+		update_func = function (dt, t, v)
 			-- function 3
-			Managers.light_fx:set_lightfx_color(arg_3_2[1], arg_3_2[2], arg_3_2[3], arg_3_2[4], arg_3_2[5])
+			Managers.light_fx:set_lightfx_color(v[1], v[2], v[3], v[4], v[5])
 		end
 	},
 	{
@@ -116,57 +133,64 @@ LightFXConditionalSettings = {
 			-- function 4
 			local network = Managers.state.network
 
-			network = not network and Managers.state.network:game()
+			if network then
+				-- Nothing
+			end
 
-			if not network then
+			network = Managers.state.network:game()
+
+			local game = network
+
+			::label_4_0::
+
+			if not game then
 				return false
 			end
 
-			local local_player = Managers.player:local_player()
+			local player = Managers.player:local_player()
 
-			if not local_player then
+			if not player then
 				return false
 			end
 
-			local player_unit = local_player.player_unit
+			local unit = player.player_unit
 
-			if not Unit.alive(player_unit) then
+			if not Unit.alive(unit) then
 				return false
 			end
 
-			local recent_damages, var_4_4 = ScriptUnit.extension(player_unit, "health_system"):recent_damages()
+			local health_extension = ScriptUnit.extension(unit, "health_system")
+			local strided_array, array_length = health_extension:recent_damages()
+			local damaged = array_length > 0
 
-			return var_4_4 > 0
+			return damaged
 		end,
-		update_func = function (arg_5_0, arg_5_1, arg_5_2)
+		update_func = function (dt, t, v)
 			-- function 5
-			Managers.light_fx:set_lightfx_color(arg_5_2[1], arg_5_2[2], arg_5_2[3], arg_5_2[4], arg_5_2[5])
+			Managers.light_fx:set_lightfx_color(v[1], v[2], v[3], v[4], v[5])
 		end
 	}
 }
 
-function var_0_0(arg_6_0)
+function percent_to_rgb(percent)
 	-- function 6
-	arg_6_0 = 1 - arg_6_0
+	percent = 1 - percent
 
-	if arg_6_0 == 1 then
-		arg_6_0 = 0.99
+	if percent == 1 then
+		percent = 0.99
 	end
 
-	local var_6_0
-	local var_6_1
-	local var_6_2
-	local num
+	local r, g, b
 
-	if arg_6_0 < 0.5 then
-		var_6_0 = math.floor(255 * (arg_6_0 / 0.5))
-		num = 255
+	if percent < 0.5 then
+		r = math.floor(255 * (percent / 0.5))
+		g = 255
 	else
-		var_6_0 = 255
-		num = math.floor(255 * ((0.5 - arg_6_0 % 0.5) / 0.5))
+		r = 255
+		g = math.floor(255 * ((0.5 - percent % 0.5) / 0.5))
 	end
 
-	local num_2 = 0
+	b = 0
 
-	return var_6_0, num, num_2
+	return r, g, b
 end

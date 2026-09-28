@@ -1,547 +1,550 @@
 -- chunkname: @scripts/settings/equipment/weapon_templates/brace_of_pistols.lua
 
-local tbl = {
-	actions = {
-		action_one = {
-			default = {
-				total_time_secondary = 2,
-				speed = 16000,
-				kind = "handgun",
-				charge_value = "bullet_hit",
-				alert_sound_range_fire = 12,
-				alert_sound_range_hit = 2,
-				apply_recoil = true,
-				reload_when_out_of_ammo = true,
-				headshot_multiplier = 2,
-				hit_effect = "bullet_impact",
-				aim_assist_max_ramp_multiplier = 0.3,
-				aim_assist_auto_hit_chance = 0.5,
-				aim_assist_ramp_decay_delay = 0.2,
-				range = 100,
-				ammo_usage = 1,
-				fire_time = 0,
-				anim_event_secondary = "reload",
-				aim_assist_ramp_multiplier = 0.1,
-				anim_event = "attack_shoot",
-				reload_time = 0.1,
-				total_time = 1,
-				allowed_chain_actions = {
-					{
-						sub_action = "default",
-						start_time = 0.4,
-						action = "action_wield",
-						input = "action_wield"
-					},
-					{
-						sub_action = "default",
-						start_time = 0.75,
-						action = "action_one",
-						sound_time_offset = -0.05,
-						chain_ready_sound = "weapon_gun_ready",
-						release_required = "action_one_hold",
-						input = "action_one"
-					},
-					{
-						sub_action = "default",
-						start_time = 0.75,
-						action = "action_one",
-						input = "action_one_hold"
-					},
-					{
-						sub_action = "default",
-						start_time = 0.4,
-						action = "action_two",
-						input = "action_two_hold"
-					},
-					{
-						sub_action = "default",
-						start_time = 0.75,
-						action = "weapon_reload",
-						input = "weapon_reload"
-					},
-					{
-						sub_action = "default",
-						start_time = 0.6,
-						action = "action_three",
-						input = "action_three"
-					},
-					{
-						sub_action = "auto_reload",
-						start_time = 0.8,
-						action = "weapon_reload",
-						auto_chain = true
-					}
-				},
-				enter_function = function (arg_1_0, arg_1_1)
-					-- function 1
-					arg_1_1:clear_input_buffer()
+local weapon_template = {}
 
-					return arg_1_1:reset_release_input()
-				end,
-				projectile_info = Projectiles.pistol_shot,
-				impact_data = {
-					damage_profile = "shot_carbine"
+weapon_template.actions = {
+	action_one = {
+		default = {
+			total_time_secondary = 2,
+			speed = 16000,
+			kind = "handgun",
+			charge_value = "bullet_hit",
+			alert_sound_range_fire = 12,
+			alert_sound_range_hit = 2,
+			apply_recoil = true,
+			reload_when_out_of_ammo = true,
+			headshot_multiplier = 2,
+			hit_effect = "bullet_impact",
+			aim_assist_max_ramp_multiplier = 0.3,
+			aim_assist_auto_hit_chance = 0.5,
+			aim_assist_ramp_decay_delay = 0.2,
+			range = 100,
+			ammo_usage = 1,
+			fire_time = 0,
+			anim_event_secondary = "reload",
+			aim_assist_ramp_multiplier = 0.1,
+			anim_event = "attack_shoot",
+			reload_time = 0.1,
+			total_time = 1,
+			allowed_chain_actions = {
+				{
+					sub_action = "default",
+					start_time = 0.4,
+					action = "action_wield",
+					input = "action_wield"
 				},
-				recoil_settings = {
-					horizontal_climb = 0,
-					restore_duration = 0.25,
-					vertical_climb = 2,
-					climb_duration = 0.1,
-					climb_function = math.easeInCubic,
-					restore_function = math.ease_out_quad
+				{
+					sub_action = "default",
+					start_time = 0.75,
+					action = "action_one",
+					sound_time_offset = -0.05,
+					chain_ready_sound = "weapon_gun_ready",
+					release_required = "action_one_hold",
+					input = "action_one"
+				},
+				{
+					sub_action = "default",
+					start_time = 0.75,
+					action = "action_one",
+					input = "action_one_hold"
+				},
+				{
+					sub_action = "default",
+					start_time = 0.4,
+					action = "action_two",
+					input = "action_two_hold"
+				},
+				{
+					sub_action = "default",
+					start_time = 0.75,
+					action = "weapon_reload",
+					input = "weapon_reload"
+				},
+				{
+					sub_action = "default",
+					start_time = 0.6,
+					action = "action_three",
+					input = "action_three"
+				},
+				{
+					sub_action = "auto_reload",
+					start_time = 0.8,
+					action = "weapon_reload",
+					auto_chain = true
 				}
 			},
-			fast_shot = {
-				reload_when_out_of_ammo = true,
-				alert_sound_range_fire = 12,
-				kind = "handgun",
-				alert_sound_range_hit = 2,
-				apply_recoil = true,
-				spread_template_override = "pistol_special",
-				charge_value = "bullet_hit",
-				headshot_multiplier = 2,
-				aim_assist_ramp_multiplier = 0.05,
-				hit_effect = "bullet_impact",
-				aim_assist_max_ramp_multiplier = 0.3,
-				aim_assist_auto_hit_chance = 0.75,
-				minimum_hold_time = 0.2,
-				range = 100,
-				ammo_usage = 1,
-				fire_time = 0,
-				aim_assist_ramp_decay_delay = 0.1,
-				speed = 16000,
-				hold_input = "action_two_hold",
-				anim_event = "attack_shoot_fast",
-				reload_time = 0.1,
-				total_time = 1,
-				buff_data = {
-					{
-						start_time = 0,
-						external_multiplier = 0.85,
-						buff_name = "planted_fast_decrease_movement"
-					}
-				},
-				allowed_chain_actions = {
-					{
-						sub_action = "default",
-						start_time = 0.2,
-						action = "action_wield",
-						input = "action_wield"
-					},
-					{
-						sub_action = "fast_shot",
-						start_time = 0.25,
-						action = "action_one",
-						sound_time_offset = -0.05,
-						chain_ready_sound = "weapon_gun_ready",
-						release_required = "action_one_hold",
-						input = "action_one"
-					},
-					{
-						sub_action = "fast_shot",
-						start_time = 0.25,
-						action = "action_one",
-						input = "action_one_hold"
-					},
-					{
-						sub_action = "default",
-						start_time = 0.2,
-						action = "weapon_reload",
-						input = "weapon_reload"
-					},
-					{
-						start_time = 0,
-						blocker = true,
-						input = "action_two_hold"
-					},
-					{
-						sub_action = "auto_reload",
-						start_time = 0,
-						action = "weapon_reload",
-						auto_chain = true
-					}
-				},
-				enter_function = function (arg_2_0, arg_2_1)
-					-- function 2
-					arg_2_1:clear_input_buffer()
+			enter_function = function (attacker_unit, input_extension)
+				-- function 1
+				input_extension:clear_input_buffer()
 
-					return arg_2_1:reset_release_input()
-				end,
-				projectile_info = Projectiles.pistol_shot,
-				impact_data = {
-					damage_profile = "shot_carbine"
-				},
-				recoil_settings = {
-					horizontal_climb = 0,
-					restore_duration = 0.25,
-					vertical_climb = 2,
-					climb_duration = 0.1,
-					climb_function = math.easeInCubic,
-					restore_function = math.ease_out_quad
-				}
+				return input_extension:reset_release_input()
+			end,
+			projectile_info = Projectiles.pistol_shot,
+			impact_data = {
+				damage_profile = "shot_carbine"
 			},
-			special_action_shoot = {
-				total_time_secondary = 2,
-				speed = 16000,
-				kind = "handgun",
-				charge_value = "bullet_hit",
-				alert_sound_range_fire = 12,
-				alert_sound_range_hit = 2,
-				apply_recoil = true,
-				reload_when_out_of_ammo = true,
-				headshot_multiplier = 2,
-				hit_effect = "bullet_impact",
-				aim_assist_max_ramp_multiplier = 0.3,
-				aim_assist_auto_hit_chance = 0.5,
-				aim_assist_ramp_decay_delay = 0.2,
-				range = 100,
-				ammo_usage = 1,
-				fire_time = 0,
-				anim_event_secondary = "reload",
-				aim_assist_ramp_multiplier = 0.1,
-				anim_event = "attack_shoot",
-				reload_time = 0.1,
-				total_time = 1,
-				allowed_chain_actions = {
-					{
-						sub_action = "default",
-						start_time = 0.4,
-						action = "action_wield",
-						input = "action_wield"
-					},
-					{
-						sub_action = "default",
-						start_time = 0.75,
-						action = "action_one",
-						sound_time_offset = -0.05,
-						chain_ready_sound = "weapon_gun_ready",
-						release_required = "action_one_hold",
-						input = "action_one"
-					},
-					{
-						sub_action = "default",
-						start_time = 0.75,
-						action = "action_one",
-						input = "action_one_hold"
-					},
-					{
-						sub_action = "default",
-						start_time = 0.4,
-						action = "action_two",
-						input = "action_two_hold"
-					},
-					{
-						sub_action = "default",
-						start_time = 0.75,
-						action = "weapon_reload",
-						input = "weapon_reload"
-					},
-					{
-						sub_action = "default",
-						start_time = 0.6,
-						action = "action_three",
-						input = "action_three"
-					},
-					{
-						sub_action = "auto_reload",
-						start_time = 0.8,
-						action = "weapon_reload",
-						auto_chain = true
-					}
-				},
-				enter_function = function (arg_3_0, arg_3_1)
-					-- function 3
-					arg_3_1:clear_input_buffer()
-
-					return arg_3_1:reset_release_input()
-				end,
-				projectile_info = Projectiles.pistol_shot,
-				impact_data = {
-					damage_profile = "shot_carbine"
-				},
-				recoil_settings = {
-					horizontal_climb = 0,
-					restore_duration = 0.25,
-					vertical_climb = 2,
-					climb_duration = 0.1,
-					climb_function = math.easeInCubic,
-					restore_function = math.ease_out_quad
-				}
+			recoil_settings = {
+				horizontal_climb = 0,
+				restore_duration = 0.25,
+				vertical_climb = 2,
+				climb_duration = 0.1,
+				climb_function = math.easeInCubic,
+				restore_function = math.ease_out_quad
 			}
 		},
-		action_two = {
-			default = {
-				anim_event = "lock_target",
-				can_abort_reload = true,
-				allow_hold_toggle = true,
-				anim_end_event = "attack_finished",
-				kind = "dummy",
-				minimum_hold_time = 0.2,
-				spread_template_override = "pistol_special",
-				hold_input = "action_two_hold",
-				ammo_requirement = 1,
-				anim_end_event_condition_func = function (arg_4_0, arg_4_1)
-					-- function 4
-					return arg_4_1 ~= "new_interupting_action"
-				end,
-				total_time = math.huge,
-				buff_data = {
-					{
-						start_time = 0,
-						external_multiplier = 0.85,
-						buff_name = "planted_fast_decrease_movement"
-					}
+		fast_shot = {
+			reload_when_out_of_ammo = true,
+			alert_sound_range_fire = 12,
+			kind = "handgun",
+			alert_sound_range_hit = 2,
+			apply_recoil = true,
+			spread_template_override = "pistol_special",
+			charge_value = "bullet_hit",
+			headshot_multiplier = 2,
+			aim_assist_ramp_multiplier = 0.05,
+			hit_effect = "bullet_impact",
+			aim_assist_max_ramp_multiplier = 0.3,
+			aim_assist_auto_hit_chance = 0.75,
+			minimum_hold_time = 0.2,
+			range = 100,
+			ammo_usage = 1,
+			fire_time = 0,
+			aim_assist_ramp_decay_delay = 0.1,
+			speed = 16000,
+			hold_input = "action_two_hold",
+			anim_event = "attack_shoot_fast",
+			reload_time = 0.1,
+			total_time = 1,
+			buff_data = {
+				{
+					start_time = 0,
+					external_multiplier = 0.85,
+					buff_name = "planted_fast_decrease_movement"
+				}
+			},
+			allowed_chain_actions = {
+				{
+					sub_action = "default",
+					start_time = 0.2,
+					action = "action_wield",
+					input = "action_wield"
 				},
-				allowed_chain_actions = {
-					{
-						sub_action = "default",
-						start_time = 0,
-						action = "action_wield",
-						input = "action_wield"
-					},
-					{
-						sub_action = "fast_shot",
-						start_time = 0,
-						action = "action_one",
-						input = "action_one"
-					},
-					{
-						sub_action = "fast_shot",
-						start_time = 0.25,
-						action = "action_one",
-						input = "action_one_hold"
-					},
-					{
-						sub_action = "default",
-						start_time = 0,
-						action = "weapon_reload",
-						input = "weapon_reload"
-					},
-					{
-						start_time = 0,
-						blocker = true,
-						input = "action_two_hold"
-					},
-					{
-						sub_action = "auto_reload",
-						start_time = 0,
-						action = "weapon_reload",
-						auto_chain = true
-					}
+				{
+					sub_action = "fast_shot",
+					start_time = 0.25,
+					action = "action_one",
+					sound_time_offset = -0.05,
+					chain_ready_sound = "weapon_gun_ready",
+					release_required = "action_one_hold",
+					input = "action_one"
 				},
-				condition_func = function (arg_5_0, arg_5_1, arg_5_2)
-					-- function 5
-					if not (not arg_5_2 and not (arg_5_2:total_remaining_ammo() <= 0)) then
-						return false
-					end
+				{
+					sub_action = "fast_shot",
+					start_time = 0.25,
+					action = "action_one",
+					input = "action_one_hold"
+				},
+				{
+					sub_action = "default",
+					start_time = 0.2,
+					action = "weapon_reload",
+					input = "weapon_reload"
+				},
+				{
+					start_time = 0,
+					blocker = true,
+					input = "action_two_hold"
+				},
+				{
+					sub_action = "auto_reload",
+					start_time = 0,
+					action = "weapon_reload",
+					auto_chain = true
+				}
+			},
+			enter_function = function (attacker_unit, input_extension)
+				-- function 2
+				input_extension:clear_input_buffer()
 
-					return true
+				return input_extension:reset_release_input()
+			end,
+			projectile_info = Projectiles.pistol_shot,
+			impact_data = {
+				damage_profile = "shot_carbine"
+			},
+			recoil_settings = {
+				horizontal_climb = 0,
+				restore_duration = 0.25,
+				vertical_climb = 2,
+				climb_duration = 0.1,
+				climb_function = math.easeInCubic,
+				restore_function = math.ease_out_quad
+			}
+		},
+		special_action_shoot = {
+			total_time_secondary = 2,
+			speed = 16000,
+			kind = "handgun",
+			charge_value = "bullet_hit",
+			alert_sound_range_fire = 12,
+			alert_sound_range_hit = 2,
+			apply_recoil = true,
+			reload_when_out_of_ammo = true,
+			headshot_multiplier = 2,
+			hit_effect = "bullet_impact",
+			aim_assist_max_ramp_multiplier = 0.3,
+			aim_assist_auto_hit_chance = 0.5,
+			aim_assist_ramp_decay_delay = 0.2,
+			range = 100,
+			ammo_usage = 1,
+			fire_time = 0,
+			anim_event_secondary = "reload",
+			aim_assist_ramp_multiplier = 0.1,
+			anim_event = "attack_shoot",
+			reload_time = 0.1,
+			total_time = 1,
+			allowed_chain_actions = {
+				{
+					sub_action = "default",
+					start_time = 0.4,
+					action = "action_wield",
+					input = "action_wield"
+				},
+				{
+					sub_action = "default",
+					start_time = 0.75,
+					action = "action_one",
+					sound_time_offset = -0.05,
+					chain_ready_sound = "weapon_gun_ready",
+					release_required = "action_one_hold",
+					input = "action_one"
+				},
+				{
+					sub_action = "default",
+					start_time = 0.75,
+					action = "action_one",
+					input = "action_one_hold"
+				},
+				{
+					sub_action = "default",
+					start_time = 0.4,
+					action = "action_two",
+					input = "action_two_hold"
+				},
+				{
+					sub_action = "default",
+					start_time = 0.75,
+					action = "weapon_reload",
+					input = "weapon_reload"
+				},
+				{
+					sub_action = "default",
+					start_time = 0.6,
+					action = "action_three",
+					input = "action_three"
+				},
+				{
+					sub_action = "auto_reload",
+					start_time = 0.8,
+					action = "weapon_reload",
+					auto_chain = true
+				}
+			},
+			enter_function = function (attacker_unit, input_extension)
+				-- function 3
+				input_extension:clear_input_buffer()
+
+				return input_extension:reset_release_input()
+			end,
+			projectile_info = Projectiles.pistol_shot,
+			impact_data = {
+				damage_profile = "shot_carbine"
+			},
+			recoil_settings = {
+				horizontal_climb = 0,
+				restore_duration = 0.25,
+				vertical_climb = 2,
+				climb_duration = 0.1,
+				climb_function = math.easeInCubic,
+				restore_function = math.ease_out_quad
+			}
+		}
+	},
+	action_two = {
+		default = {
+			anim_event = "lock_target",
+			can_abort_reload = true,
+			allow_hold_toggle = true,
+			anim_end_event = "attack_finished",
+			kind = "dummy",
+			minimum_hold_time = 0.2,
+			spread_template_override = "pistol_special",
+			hold_input = "action_two_hold",
+			ammo_requirement = 1,
+			anim_end_event_condition_func = function (unit, end_reason)
+				-- function 4
+				return end_reason ~= "new_interupting_action"
+			end,
+			total_time = math.huge,
+			buff_data = {
+				{
+					start_time = 0,
+					external_multiplier = 0.85,
+					buff_name = "planted_fast_decrease_movement"
+				}
+			},
+			allowed_chain_actions = {
+				{
+					sub_action = "default",
+					start_time = 0,
+					action = "action_wield",
+					input = "action_wield"
+				},
+				{
+					sub_action = "fast_shot",
+					start_time = 0,
+					action = "action_one",
+					input = "action_one"
+				},
+				{
+					sub_action = "fast_shot",
+					start_time = 0.25,
+					action = "action_one",
+					input = "action_one_hold"
+				},
+				{
+					sub_action = "default",
+					start_time = 0,
+					action = "weapon_reload",
+					input = "weapon_reload"
+				},
+				{
+					start_time = 0,
+					blocker = true,
+					input = "action_two_hold"
+				},
+				{
+					sub_action = "auto_reload",
+					start_time = 0,
+					action = "weapon_reload",
+					auto_chain = true
+				}
+			},
+			condition_func = function (unit, input_extension, ammo_extension)
+				-- function 5
+				if ammo_extension and ammo_extension:total_remaining_ammo() <= 0 then
+					return false
 				end
-			}
-		},
-		action_three = {
-			default = {
-				anim_end_event = "attack_finished",
-				ammo_requirement = 1,
-				can_abort_reload = true,
-				kind = "dummy",
-				anim_event = "special_action",
-				total_time = 1.71,
-				anim_end_event_condition_func = function (arg_6_0, arg_6_1)
-					-- function 6
-					return arg_6_1 ~= "new_interupting_action"
-				end,
-				allowed_chain_actions = {
-					{
-						sub_action = "default",
-						start_time = 0.4,
-						action = "action_wield",
-						input = "action_wield"
-					},
-					{
-						sub_action = "special_action_shoot",
-						start_time = 0.75,
-						action = "action_one",
-						release_required = "action_one_hold",
-						end_time = 1.68,
-						input = "action_one"
-					},
-					{
-						sub_action = "special_action_shoot",
-						start_time = 0.75,
-						action = "action_one",
-						end_time = 1.68,
-						input = "action_one_hold"
-					},
-					{
-						sub_action = "default",
-						start_time = 1.7,
-						action = "action_one",
-						release_required = "action_one_hold",
-						input = "action_one"
-					},
-					{
-						sub_action = "default",
-						start_time = 0.4,
-						action = "action_two",
-						input = "action_two_hold"
-					},
-					{
-						sub_action = "default",
-						start_time = 0.75,
-						action = "weapon_reload",
-						input = "weapon_reload"
-					},
-					{
-						sub_action = "default",
-						start_time = 0.8,
-						action = "action_three",
-						input = "action_three"
-					}
+
+				return true
+			end
+		}
+	},
+	action_three = {
+		default = {
+			anim_end_event = "attack_finished",
+			ammo_requirement = 1,
+			can_abort_reload = true,
+			kind = "dummy",
+			anim_event = "special_action",
+			total_time = 1.71,
+			anim_end_event_condition_func = function (unit, end_reason)
+				-- function 6
+				return end_reason ~= "new_interupting_action"
+			end,
+			allowed_chain_actions = {
+				{
+					sub_action = "default",
+					start_time = 0.4,
+					action = "action_wield",
+					input = "action_wield"
 				},
-				condition_func = function (arg_7_0, arg_7_1, arg_7_2)
-					-- function 7
-					if not (not arg_7_2 and not (arg_7_2:total_remaining_ammo() <= 0)) then
-						return false
-					end
-
-					return true
-				end
-			}
-		},
-		weapon_reload = {
-			default = {
-				weapon_action_hand = "either",
-				kind = "reload",
-				total_time = 0,
-				condition_func = function (arg_8_0, arg_8_1)
-					-- function 8
-					local extension = ScriptUnit.extension(arg_8_0, "inventory_system")
-					local extension_2 = ScriptUnit.extension(arg_8_0, "status_system")
-					local var_8_2
-
-					if not extension_2:is_zooming() then
-						return false
-					end
-
-					local equipment = extension:equipment()
-
-					if equipment.right_hand_wielded_unit == nil or not ScriptUnit.has_extension(equipment.right_hand_wielded_unit, "ammo_system") then
-						var_8_2 = ScriptUnit.extension(equipment.right_hand_wielded_unit, "ammo_system")
-					elseif equipment.left_hand_wielded_unit == nil or not ScriptUnit.has_extension(equipment.left_hand_wielded_unit, "ammo_system") then
-						var_8_2 = ScriptUnit.extension(equipment.left_hand_wielded_unit, "ammo_system")
-					end
-
-					return not var_8_2 and var_8_2:can_reload()
-				end,
-				chain_condition_func = function (arg_9_0, arg_9_1)
-					-- function 9
-					local extension = ScriptUnit.extension(arg_9_0, "inventory_system")
-					local extension_2 = ScriptUnit.extension(arg_9_0, "status_system")
-					local var_9_2
-
-					if not extension_2:is_zooming() then
-						return false
-					end
-
-					local equipment = extension:equipment()
-
-					if equipment.right_hand_wielded_unit == nil or not ScriptUnit.has_extension(equipment.right_hand_wielded_unit, "ammo_system") then
-						var_9_2 = ScriptUnit.extension(equipment.right_hand_wielded_unit, "ammo_system")
-					elseif equipment.left_hand_wielded_unit == nil or not ScriptUnit.has_extension(equipment.left_hand_wielded_unit, "ammo_system") then
-						var_9_2 = ScriptUnit.extension(equipment.left_hand_wielded_unit, "ammo_system")
-					end
-
-					return not var_9_2 and var_9_2:can_reload()
-				end,
-				allowed_chain_actions = {}
+				{
+					sub_action = "special_action_shoot",
+					start_time = 0.75,
+					action = "action_one",
+					release_required = "action_one_hold",
+					end_time = 1.68,
+					input = "action_one"
+				},
+				{
+					sub_action = "special_action_shoot",
+					start_time = 0.75,
+					action = "action_one",
+					end_time = 1.68,
+					input = "action_one_hold"
+				},
+				{
+					sub_action = "default",
+					start_time = 1.7,
+					action = "action_one",
+					release_required = "action_one_hold",
+					input = "action_one"
+				},
+				{
+					sub_action = "default",
+					start_time = 0.4,
+					action = "action_two",
+					input = "action_two_hold"
+				},
+				{
+					sub_action = "default",
+					start_time = 0.75,
+					action = "weapon_reload",
+					input = "weapon_reload"
+				},
+				{
+					sub_action = "default",
+					start_time = 0.8,
+					action = "action_three",
+					input = "action_three"
+				}
 			},
-			auto_reload = {
-				weapon_action_hand = "either",
-				kind = "reload",
-				total_time = 0,
-				condition_func = function (arg_10_0, arg_10_1)
-					-- function 10
-					local extension = ScriptUnit.extension(arg_10_0, "inventory_system")
-					local extension_2 = ScriptUnit.extension(arg_10_0, "status_system")
-					local var_10_2
+			condition_func = function (unit, input_extension, ammo_extension)
+				-- function 7
+				if ammo_extension and ammo_extension:total_remaining_ammo() <= 0 then
+					return false
+				end
 
-					if not extension_2:is_zooming() then
-						return false
-					end
+				return true
+			end
+		}
+	},
+	weapon_reload = {
+		default = {
+			weapon_action_hand = "either",
+			kind = "reload",
+			total_time = 0,
+			condition_func = function (action_user, input_extension)
+				-- function 8
+				local inventory_extension = ScriptUnit.extension(action_user, "inventory_system")
+				local status_extension = ScriptUnit.extension(action_user, "status_system")
+				local ammo_extension
+				local zooming = status_extension:is_zooming()
 
-					local equipment = extension:equipment()
+				if zooming then
+					return false
+				end
 
-					if equipment.right_hand_wielded_unit == nil or not ScriptUnit.has_extension(equipment.right_hand_wielded_unit, "ammo_system") then
-						var_10_2 = ScriptUnit.extension(equipment.right_hand_wielded_unit, "ammo_system")
-					elseif equipment.left_hand_wielded_unit == nil or not ScriptUnit.has_extension(equipment.left_hand_wielded_unit, "ammo_system") then
-						var_10_2 = ScriptUnit.extension(equipment.left_hand_wielded_unit, "ammo_system")
-					end
+				local equipment = inventory_extension:equipment()
 
-					return not var_10_2 and var_10_2:ammo_count() ~= 0 or var_10_2:can_reload()
-				end,
-				chain_condition_func = function (arg_11_0, arg_11_1)
-					-- function 11
-					local extension = ScriptUnit.extension(arg_11_0, "inventory_system")
-					local extension_2 = ScriptUnit.extension(arg_11_0, "status_system")
-					local var_11_2
+				if equipment.right_hand_wielded_unit ~= nil and ScriptUnit.has_extension(equipment.right_hand_wielded_unit, "ammo_system") then
+					ammo_extension = ScriptUnit.extension(equipment.right_hand_wielded_unit, "ammo_system")
+				elseif equipment.left_hand_wielded_unit ~= nil and ScriptUnit.has_extension(equipment.left_hand_wielded_unit, "ammo_system") then
+					ammo_extension = ScriptUnit.extension(equipment.left_hand_wielded_unit, "ammo_system")
+				end
 
-					if not extension_2:is_zooming() then
-						return false
-					end
+				return not not ammo_extension and not not ammo_extension:can_reload()
+			end,
+			chain_condition_func = function (action_user, input_extension)
+				-- function 9
+				local inventory_extension = ScriptUnit.extension(action_user, "inventory_system")
+				local status_extension = ScriptUnit.extension(action_user, "status_system")
+				local ammo_extension
+				local zooming = status_extension:is_zooming()
 
-					local equipment = extension:equipment()
+				if zooming then
+					return false
+				end
 
-					if equipment.right_hand_wielded_unit == nil or not ScriptUnit.has_extension(equipment.right_hand_wielded_unit, "ammo_system") then
-						var_11_2 = ScriptUnit.extension(equipment.right_hand_wielded_unit, "ammo_system")
-					elseif equipment.left_hand_wielded_unit == nil or not ScriptUnit.has_extension(equipment.left_hand_wielded_unit, "ammo_system") then
-						var_11_2 = ScriptUnit.extension(equipment.left_hand_wielded_unit, "ammo_system")
-					end
+				local equipment = inventory_extension:equipment()
 
-					return not var_11_2 and var_11_2:ammo_count() ~= 0 or var_11_2:can_reload()
-				end,
-				allowed_chain_actions = {}
-			}
+				if equipment.right_hand_wielded_unit ~= nil and ScriptUnit.has_extension(equipment.right_hand_wielded_unit, "ammo_system") then
+					ammo_extension = ScriptUnit.extension(equipment.right_hand_wielded_unit, "ammo_system")
+				elseif equipment.left_hand_wielded_unit ~= nil and ScriptUnit.has_extension(equipment.left_hand_wielded_unit, "ammo_system") then
+					ammo_extension = ScriptUnit.extension(equipment.left_hand_wielded_unit, "ammo_system")
+				end
+
+				return not not ammo_extension and not not ammo_extension:can_reload()
+			end,
+			allowed_chain_actions = {}
 		},
-		action_inspect = ActionTemplates.action_inspect,
-		action_wield = ActionTemplates.wield
+		auto_reload = {
+			weapon_action_hand = "either",
+			kind = "reload",
+			total_time = 0,
+			condition_func = function (action_user, input_extension)
+				-- function 10
+				local inventory_extension = ScriptUnit.extension(action_user, "inventory_system")
+				local status_extension = ScriptUnit.extension(action_user, "status_system")
+				local ammo_extension
+				local zooming = status_extension:is_zooming()
+
+				if zooming then
+					return false
+				end
+
+				local equipment = inventory_extension:equipment()
+
+				if equipment.right_hand_wielded_unit ~= nil and ScriptUnit.has_extension(equipment.right_hand_wielded_unit, "ammo_system") then
+					ammo_extension = ScriptUnit.extension(equipment.right_hand_wielded_unit, "ammo_system")
+				elseif equipment.left_hand_wielded_unit ~= nil and ScriptUnit.has_extension(equipment.left_hand_wielded_unit, "ammo_system") then
+					ammo_extension = ScriptUnit.extension(equipment.left_hand_wielded_unit, "ammo_system")
+				end
+
+				return not not ammo_extension and ammo_extension:ammo_count() == 0 and not not ammo_extension:can_reload()
+			end,
+			chain_condition_func = function (action_user, input_extension)
+				-- function 11
+				local inventory_extension = ScriptUnit.extension(action_user, "inventory_system")
+				local status_extension = ScriptUnit.extension(action_user, "status_system")
+				local ammo_extension
+				local zooming = status_extension:is_zooming()
+
+				if zooming then
+					return false
+				end
+
+				local equipment = inventory_extension:equipment()
+
+				if equipment.right_hand_wielded_unit ~= nil and ScriptUnit.has_extension(equipment.right_hand_wielded_unit, "ammo_system") then
+					ammo_extension = ScriptUnit.extension(equipment.right_hand_wielded_unit, "ammo_system")
+				elseif equipment.left_hand_wielded_unit ~= nil and ScriptUnit.has_extension(equipment.left_hand_wielded_unit, "ammo_system") then
+					ammo_extension = ScriptUnit.extension(equipment.left_hand_wielded_unit, "ammo_system")
+				end
+
+				return not not ammo_extension and ammo_extension:ammo_count() == 0 and not not ammo_extension:can_reload()
+			end,
+			allowed_chain_actions = {}
+		}
 	},
-	action_on_wield = {
-		action = "weapon_reload",
-		sub_action = "default"
-	},
-	ammo_data = {
-		ammo_hand = "right",
-		ammo_per_reload = 2,
-		max_ammo = 30,
-		ammo_per_clip = 12,
-		reload_on_ammo_pickup = true,
-		reload_time = 1,
-		play_reload_anim_on_wield_reload = true
-	},
-	attack_meta_data = {
-		aim_at_node = "j_head",
-		can_charge_shot = false,
-		effective_against = bit.bor(BreedCategory.Berserker, BreedCategory.Special, BreedCategory.Armored)
-	}
+	action_inspect = ActionTemplates.action_inspect,
+	action_wield = ActionTemplates.wield
 }
-
-tbl.default_spread_template = "brace_of_pistols"
-tbl.spread_lerp_speed = 5
-tbl.right_hand_unit = ""
-tbl.right_hand_attachment_node_linking = AttachmentNodeLinking.pistol.right
-tbl.left_hand_unit = ""
-tbl.left_hand_attachment_node_linking = AttachmentNodeLinking.pistol.left
-tbl.display_unit = "units/weapons/weapon_display/display_pistols"
-tbl.wield_anim = "to_dual_pistol"
-tbl.state_machine = "units/beings/player/first_person_base/state_machines/ranged/dual_pistol"
-tbl.reload_event = "reload"
-tbl.crosshair_style = "default"
-tbl.gui_texture = "hud_weapon_icon_repeating_handgun"
-tbl.buff_type = "RANGED"
-tbl.weapon_type = "BRACE_OF_PISTOLS"
-tbl.dodge_count = 100
-tbl.buffs = {
+weapon_template.action_on_wield = {
+	action = "weapon_reload",
+	sub_action = "default"
+}
+weapon_template.ammo_data = {
+	ammo_hand = "right",
+	ammo_per_reload = 2,
+	max_ammo = 30,
+	ammo_per_clip = 12,
+	reload_on_ammo_pickup = true,
+	reload_time = 1,
+	play_reload_anim_on_wield_reload = true
+}
+weapon_template.attack_meta_data = {
+	aim_at_node = "j_head",
+	can_charge_shot = false,
+	effective_against = bit.bor(BreedCategory.Berserker, BreedCategory.Special, BreedCategory.Armored)
+}
+weapon_template.default_spread_template = "brace_of_pistols"
+weapon_template.spread_lerp_speed = 5
+weapon_template.right_hand_unit = ""
+weapon_template.right_hand_attachment_node_linking = AttachmentNodeLinking.pistol.right
+weapon_template.left_hand_unit = ""
+weapon_template.left_hand_attachment_node_linking = AttachmentNodeLinking.pistol.left
+weapon_template.display_unit = "units/weapons/weapon_display/display_pistols"
+weapon_template.wield_anim = "to_dual_pistol"
+weapon_template.state_machine = "units/beings/player/first_person_base/state_machines/ranged/dual_pistol"
+weapon_template.reload_event = "reload"
+weapon_template.crosshair_style = "default"
+weapon_template.gui_texture = "hud_weapon_icon_repeating_handgun"
+weapon_template.buff_type = "RANGED"
+weapon_template.weapon_type = "BRACE_OF_PISTOLS"
+weapon_template.dodge_count = 100
+weapon_template.buffs = {
 	change_dodge_distance = {
 		external_optional_multiplier = 1.25
 	},
@@ -549,7 +552,7 @@ tbl.buffs = {
 		external_optional_multiplier = 1.25
 	}
 }
-tbl.aim_assist_settings = {
+weapon_template.aim_assist_settings = {
 	max_range = 22,
 	no_aim_input_multiplier = 0,
 	aim_at_node = "j_spine",
@@ -562,13 +565,13 @@ tbl.aim_assist_settings = {
 		skaven_slave = 1
 	}
 }
-tbl.wwise_dep_right_hand = {
+weapon_template.wwise_dep_right_hand = {
 	"wwise/pistol"
 }
-tbl.wwise_dep_left_hand = {
+weapon_template.wwise_dep_left_hand = {
 	"wwise/pistol"
 }
-tbl.weapon_diagram = {
+weapon_template.weapon_diagram = {
 	light_attack = {
 		[DamageTypes.ARMOR_PIERCING] = 5,
 		[DamageTypes.CLEAVE] = 2,
@@ -584,12 +587,12 @@ tbl.weapon_diagram = {
 		[DamageTypes.DAMAGE] = 6
 	}
 }
-tbl.tooltip_keywords = {
+weapon_template.tooltip_keywords = {
 	"weapon_keyword_high_damage",
 	"weapon_keyword_rapid_fire",
 	"weapon_keyword_versatile"
 }
-tbl.tooltip_compare = {
+weapon_template.tooltip_compare = {
 	light = {
 		action_name = "action_one",
 		sub_action_name = "default"
@@ -599,7 +602,7 @@ tbl.tooltip_compare = {
 		sub_action_name = "fast_shot"
 	}
 }
-tbl.tooltip_detail = {
+weapon_template.tooltip_detail = {
 	light = {
 		action_name = "action_one",
 		sub_action_name = "default"
@@ -609,8 +612,8 @@ tbl.tooltip_detail = {
 		sub_action_name = "fast_shot"
 	}
 }
-tbl.tooltip_special_action_description = "special_action_brace_of_pistols"
+weapon_template.tooltip_special_action_description = "special_action_brace_of_pistols"
 
 return {
-	brace_of_pistols_template_1 = table.clone(tbl)
+	brace_of_pistols_template_1 = table.clone(weapon_template)
 }

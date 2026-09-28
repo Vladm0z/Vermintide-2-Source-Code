@@ -2,112 +2,112 @@
 
 local NetworkUnit = NetworkUnit
 
-NetworkUnit = NetworkUnit or {}
+NetworkUnit = not not NetworkUnit or not not {}
 NetworkUnit = NetworkUnit
 
 local NetworkUnitData = NetworkUnitData
 
-NetworkUnitData = NetworkUnitData or {}
+NetworkUnitData = not not NetworkUnitData or not not {}
 NetworkUnitData = NetworkUnitData
 
-local NetworkUnitData_2 = NetworkUnitData
+local unit_network_data = NetworkUnitData
 
 NetworkUnit.reset_unit_data = function ()
 	-- function 1
 	NetworkUnitData = {}
-	NetworkUnitData_2 = NetworkUnitData
+	unit_network_data = NetworkUnitData
 end
 
-NetworkUnit.add_unit = function (arg_2_0)
+NetworkUnit.add_unit = function (unit)
 	-- function 2
-	assert(NetworkUnitData_2[arg_2_0] == nil)
+	assert(unit_network_data[unit] == nil)
 
-	NetworkUnitData_2[arg_2_0] = {}
+	unit_network_data[unit] = {}
 end
 
-NetworkUnit.remove_unit = function (arg_3_0)
+NetworkUnit.remove_unit = function (unit)
 	-- function 3
-	assert(NetworkUnitData_2[arg_3_0] ~= nil)
+	assert(unit_network_data[unit] ~= nil)
 
-	NetworkUnitData_2[arg_3_0] = nil
+	unit_network_data[unit] = nil
 end
 
-NetworkUnit.reset_unit = function (arg_4_0)
+NetworkUnit.reset_unit = function (unit)
 	-- function 4
-	assert(NetworkUnitData_2[arg_4_0] ~= nil)
+	assert(unit_network_data[unit] ~= nil)
 
-	local var_4_0 = NetworkUnitData_2[arg_4_0]
+	local unit_data = unit_network_data[unit]
 
-	var_4_0.go_type = nil
-	var_4_0.go_id = nil
-	var_4_0.owner = nil
-	var_4_0.is_husk = nil
+	unit_data.go_type = nil
+	unit_data.go_id = nil
+	unit_data.owner = nil
+	unit_data.is_husk = nil
 end
 
-NetworkUnit.set_game_object_type = function (arg_5_0, arg_5_1)
+NetworkUnit.set_game_object_type = function (unit, go_type)
 	-- function 5
-	NetworkUnitData_2[arg_5_0].go_type = arg_5_1
+	unit_network_data[unit].go_type = go_type
 end
 
-NetworkUnit.game_object_type = function (arg_6_0)
+NetworkUnit.game_object_type = function (unit)
 	-- function 6
-	return NetworkUnitData_2[arg_6_0].go_type
+	return unit_network_data[unit].go_type
 end
 
-NetworkUnit.game_object_type_level = function (arg_7_0)
+NetworkUnit.game_object_type_level = function (unit)
 	-- function 7
-	return NetworkUnitData_2[arg_7_0].go_type .. "_level"
+	return unit_network_data[unit].go_type .. "_level"
 end
 
-NetworkUnit.set_game_object_id = function (arg_8_0, arg_8_1)
+NetworkUnit.set_game_object_id = function (unit, go_id)
 	-- function 8
-	NetworkUnitData_2[arg_8_0].go_id = arg_8_1
+	unit_network_data[unit].go_id = go_id
 end
 
-NetworkUnit.game_object_id = function (arg_9_0)
+NetworkUnit.game_object_id = function (unit)
 	-- function 9
-	return NetworkUnitData_2[arg_9_0].go_id
+	return unit_network_data[unit].go_id
 end
 
-NetworkUnit.set_owner_peer_id = function (arg_10_0, arg_10_1)
+NetworkUnit.set_owner_peer_id = function (unit, peer_id)
 	-- function 10
-	NetworkUnitData_2[arg_10_0].owner = arg_10_1
+	unit_network_data[unit].owner = peer_id
 end
 
-NetworkUnit.owner_peer_id = function (arg_11_0)
+NetworkUnit.owner_peer_id = function (unit)
 	-- function 11
-	return NetworkUnitData_2[arg_11_0].peer_id
+	return unit_network_data[unit].peer_id
 end
 
-NetworkUnit.set_is_husk_unit = function (arg_12_0, arg_12_1)
+NetworkUnit.set_is_husk_unit = function (unit, is_husk)
 	-- function 12
-	NetworkUnitData_2[arg_12_0].is_husk = arg_12_1
+	unit_network_data[unit].is_husk = is_husk
 end
 
-NetworkUnit.is_husk_unit = function (arg_13_0)
+NetworkUnit.is_husk_unit = function (unit)
 	-- function 13
-	return not not NetworkUnitData_2[arg_13_0].is_husk
+	return not not unit_network_data[unit].is_husk
 end
 
-NetworkUnit.is_network_unit = function (arg_14_0)
+NetworkUnit.is_network_unit = function (unit)
 	-- function 14
-	return NetworkUnitData_2[arg_14_0] ~= nil
+	return unit_network_data[unit] ~= nil
 end
 
-NetworkUnit.on_extensions_registered = function (arg_15_0)
+NetworkUnit.on_extensions_registered = function (unit)
 	-- function 15
-	Unit.set_flow_variable(arg_15_0, "is_husk_unit", NetworkUnit.is_husk_unit(arg_15_0))
-	Unit.flow_event(arg_15_0, "on_extensions_registered")
+	Unit.set_flow_variable(unit, "is_husk_unit", NetworkUnit.is_husk_unit(unit))
+	Unit.flow_event(unit, "on_extensions_registered")
 end
 
-NetworkUnit.on_game_object_sync_done = function (arg_16_0)
+NetworkUnit.on_game_object_sync_done = function (unit)
 	-- function 16
-	Unit.set_flow_variable(arg_16_0, "is_husk_unit", NetworkUnit.is_husk_unit(arg_16_0))
-	Unit.flow_event(arg_16_0, "on_game_object_sync_done")
+	Unit.set_flow_variable(unit, "is_husk_unit", NetworkUnit.is_husk_unit(unit))
+	Unit.flow_event(unit, "on_game_object_sync_done")
 end
 
-NetworkUnit.transfer_unit = function (arg_17_0, arg_17_1)
+NetworkUnit.transfer_unit = function (unit, unit_new)
 	-- function 17
-	NetworkUnitData_2[arg_17_1] = NetworkUnitData_2[arg_17_0]
-	NetworkUnitData_2[arg_17_0] = nil
+	unit_network_data[unit_new] = unit_network_data[unit]
+	unit_network_data[unit] = nil
 end

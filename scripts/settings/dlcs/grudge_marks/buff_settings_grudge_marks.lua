@@ -1,35 +1,36 @@
 -- chunkname: @scripts/settings/dlcs/grudge_marks/buff_settings_grudge_marks.lua
 
-local grudge_marks = DLCSettings.grudge_marks
-local scripts_unit_extensions_default_player_unit_buffs_settings_buff_perk_names = require("scripts/unit_extensions/default_player_unit/buffs/settings/buff_perk_names")
+local settings = DLCSettings.grudge_marks
+local buff_perks = require("scripts/unit_extensions/default_player_unit/buffs/settings/buff_perk_names")
 
-local function fn()
+local function is_server()
 	-- function 1
 	return Managers.state.network.is_server
 end
 
-local function fn_2(arg_2_0)
+local function owner_is_local_player(owner_unit)
 	-- function 2
-	if not DEDICATED_SERVER then
+	if DEDICATED_SERVER then
 		return false
 	end
 
-	local player = Managers.player
-	local local_player = player:local_player()
+	local player_manager = Managers.player
+	local local_player = player_manager:local_player()
+	local owner_player = player_manager:unit_owner(owner_unit)
 
-	if player:unit_owner(arg_2_0) == local_player then
+	if owner_player == local_player then
 		return true
 	end
 
 	return false
 end
 
-local function fn_3(arg_3_0, arg_3_1)
+local function teleport_validation_func(pos, validation_data)
 	-- function 3
-	local ENEMY_PLAYER_AND_BOT_POSITIONS = arg_3_1.side.ENEMY_PLAYER_AND_BOT_POSITIONS
+	local enemy_positions = validation_data.side.ENEMY_PLAYER_AND_BOT_POSITIONS
 
-	for i = 1, #ENEMY_PLAYER_AND_BOT_POSITIONS do
-		if Vector3.distance_squared(arg_3_0, ENEMY_PLAYER_AND_BOT_POSITIONS[i]) < arg_3_1.min_dist_sqr then
+	for i = 1, #enemy_positions do
+		if Vector3.distance_squared(pos, enemy_positions[i]) < validation_data.min_dist_sqr then
 			return false
 		end
 	end
@@ -37,9 +38,9 @@ local function fn_3(arg_3_0, arg_3_1)
 	return true
 end
 
-local num = 10
+local TERMITE_BOSS_RAGE_DURATION = 10
 
-grudge_marks.buff_templates = {
+settings.buff_templates = {
 	grudge_mark_health = {
 		buffs = {
 			{
@@ -100,7 +101,7 @@ grudge_marks.buff_templates = {
 				name = "grudge_mark_termite_particle_buff",
 				max_stacks = 1,
 				refresh_durations = true,
-				duration = num,
+				duration = TERMITE_BOSS_RAGE_DURATION,
 				particles = {
 					{
 						orphaned_policy = "stop",
@@ -118,7 +119,7 @@ grudge_marks.buff_templates = {
 				stat_buff = "damage_taken",
 				refresh_durations = true,
 				max_stacks = 1,
-				duration = num
+				duration = TERMITE_BOSS_RAGE_DURATION
 			},
 			{
 				remove_buff_func = "remove_stagger_immunity",
@@ -126,7 +127,7 @@ grudge_marks.buff_templates = {
 				refresh_durations = true,
 				max_stacks = 1,
 				apply_buff_func = "make_stagger_immune",
-				duration = num
+				duration = TERMITE_BOSS_RAGE_DURATION
 			},
 			{
 				multiplier = 0.25,
@@ -134,7 +135,7 @@ grudge_marks.buff_templates = {
 				stat_buff = "damage_dealt",
 				refresh_durations = true,
 				max_stacks = 1,
-				duration = num
+				duration = TERMITE_BOSS_RAGE_DURATION
 			}
 		}
 	},
@@ -251,7 +252,7 @@ grudge_marks.buff_templates = {
 			{
 				name = "grudge_mark_ranged_immune",
 				perks = {
-					scripts_unit_extensions_default_player_unit_buffs_settings_buff_perk_names.invulnerable_ranged
+					buff_perks.invulnerable_ranged
 				}
 			}
 		}
@@ -276,7 +277,7 @@ grudge_marks.buff_templates = {
 				duration = 5,
 				name = "grudge_mark_periodic_shield_buff",
 				perks = {
-					scripts_unit_extensions_default_player_unit_buffs_settings_buff_perk_names.invulnerable
+					buff_perks.invulnerable
 				},
 				particles = {
 					{
@@ -436,7 +437,7 @@ grudge_marks.buff_templates = {
 				buff_func = "ai_crushing_blow",
 				event = "on_damage_dealt",
 				perks = {
-					scripts_unit_extensions_default_player_unit_buffs_settings_buff_perk_names.ai_unblockable
+					buff_perks.ai_unblockable
 				}
 			},
 			{
@@ -666,207 +667,222 @@ grudge_marks.buff_templates = {
 			{
 				name = "grudge_mark_ignore_death_buff",
 				perks = {
-					scripts_unit_extensions_default_player_unit_buffs_settings_buff_perk_names.ignore_death
+					buff_perks.ignore_death
 				}
 			}
 		}
 	}
 }
-grudge_marks.buff_function_templates = {
-	make_stagger_immune = function (arg_4_0, arg_4_1, arg_4_2)
+settings.buff_function_templates = {
+	make_stagger_immune = function (unit, buff, params)
 		-- function 4
-		if not ALIVE[arg_4_0] then
-			local var_4_0 = BLACKBOARDS[arg_4_0]
+		if ALIVE[unit] then
+			local blackboard = BLACKBOARDS[unit]
 
-			if not var_4_0 then
-				var_4_0.stagger_immunity = {
+			if blackboard then
+				local stagger_immunity = {
 					health_threshold = 0
 				}
+
+				blackboard.stagger_immunity = stagger_immunity
 			end
 		end
 	end,
-	remove_stagger_immunity = function (arg_5_0, arg_5_1, arg_5_2)
+	remove_stagger_immunity = function (unit, buff, params)
 		-- function 5
-		if not ALIVE[arg_5_0] then
-			local var_5_0 = BLACKBOARDS[arg_5_0]
+		if ALIVE[unit] then
+			local blackboard = BLACKBOARDS[unit]
 
-			if not var_5_0 then
-				local tbl = {
+			if blackboard then
+				local stagger_immunity = {
 					health_threshold = 0
 				}
 
-				var_5_0.stagger_immunity = nil
+				blackboard.stagger_immunity = nil
 			end
 		end
 	end,
-	apply_buff_to_all_players = function (arg_6_0, arg_6_1, arg_6_2)
+	apply_buff_to_all_players = function (unit, buff, params)
 		-- function 6
-		if not fn() then
+		if not is_server() then
 			return
 		end
 
-		if not ALIVE[arg_6_0] then
-			local get_side_from_name = Managers.state.side:get_side_from_name("heroes")
-			local buff_to_add = arg_6_1.template.buff_to_add
-			local system = Managers.state.entity:system("buff_system")
-			local PLAYER_AND_BOT_UNITS = get_side_from_name.PLAYER_AND_BOT_UNITS
+		if ALIVE[unit] then
+			local side = Managers.state.side:get_side_from_name("heroes")
+			local buff_name = buff.template.buff_to_add
+			local buff_system = Managers.state.entity:system("buff_system")
+			local player_and_bot_units = side.PLAYER_AND_BOT_UNITS
 
-			for i = 1, #PLAYER_AND_BOT_UNITS do
-				local var_6_4 = PLAYER_AND_BOT_UNITS[i]
+			for i = 1, #player_and_bot_units do
+				local player_unit = player_and_bot_units[i]
 
-				system:add_buff(var_6_4, buff_to_add, arg_6_0, false)
+				buff_system:add_buff(player_unit, buff_name, unit, false)
 			end
 
-			local effect_name = arg_6_1.template.effect_name
+			local effect_name = buff.template.effect_name
 
-			if not effect_name then
-				local var_6_6 = POSITION_LOOKUP[arg_6_0]
+			if effect_name then
+				local unit_pos = POSITION_LOOKUP[unit]
 
-				Managers.state.network:rpc_play_particle_effect(nil, NetworkLookup.effects[effect_name], NetworkConstants.invalid_game_object_id, 0, var_6_6, Quaternion.identity(), false)
+				Managers.state.network:rpc_play_particle_effect(nil, NetworkLookup.effects[effect_name], NetworkConstants.invalid_game_object_id, 0, unit_pos, Quaternion.identity(), false)
 			end
 		end
 	end,
-	remove_intangible_mirror_damage = function (arg_7_0, arg_7_1, arg_7_2)
+	remove_intangible_mirror_damage = function (unit, buff, params)
 		-- function 7
-		Managers.state.entity:system("audio_system"):play_audio_unit_event("enemy_grudge_intangible_destroy", arg_7_0)
+		local audio_system = Managers.state.entity:system("audio_system")
+
+		audio_system:play_audio_unit_event("enemy_grudge_intangible_destroy", unit)
 	end,
-	add_buff_based_on_health_chunks = function (arg_8_0, arg_8_1, arg_8_2)
+	add_buff_based_on_health_chunks = function (unit, buff, params)
 		-- function 8
-		if not fn() then
+		if not is_server() then
 			return
 		end
 
-		if not ALIVE[arg_8_0] then
-			local extension = ScriptUnit.extension(arg_8_0, "health_system")
-			local extension_2 = ScriptUnit.extension(arg_8_0, "buff_system")
-			local system = Managers.state.entity:system("buff_system")
-			local template = arg_8_1.template
+		if ALIVE[unit] then
+			local health_extension = ScriptUnit.extension(unit, "health_system")
+			local buff_extension = ScriptUnit.extension(unit, "buff_system")
+			local buff_system = Managers.state.entity:system("buff_system")
+			local template = buff.template
 			local buff_to_add = template.buff_to_add
-			local num = extension:get_max_health() / template.chunk_amount
-			local get_damage_taken = extension:get_damage_taken()
-			local next_chunk = arg_8_1.next_chunk
+			local chunk_size = health_extension:get_max_health() / template.chunk_amount
+			local total_damage_taken = health_extension:get_damage_taken()
+			local next_chunk = buff.next_chunk
 
-			next_chunk = next_chunk or num
-			arg_8_1.next_chunk = next_chunk
+			next_chunk = not not next_chunk or not not chunk_size
+			buff.next_chunk = next_chunk
 
-			if get_damage_taken >= arg_8_1.next_chunk then
-				system:add_buff_synced(arg_8_0, buff_to_add, BuffSyncType.All)
+			if total_damage_taken >= buff.next_chunk then
+				buff_system:add_buff_synced(unit, buff_to_add, BuffSyncType.All)
 
-				arg_8_1.next_chunk = arg_8_1.next_chunk + num
+				buff.next_chunk = buff.next_chunk + chunk_size
 			end
 
-			if num > extension:current_health() then
-				system:add_buff_synced(arg_8_0, buff_to_add, BuffSyncType.All)
+			if chunk_size > health_extension:current_health() then
+				buff_system:add_buff_synced(unit, buff_to_add, BuffSyncType.All)
 			end
 		end
 	end,
-	ai_spawn_mirror_images = function (arg_9_0, arg_9_1, arg_9_2)
+	ai_spawn_mirror_images = function (unit, buff, params)
 		-- function 9
-		if not fn() then
+		if not is_server() then
 			return
 		end
 
-		local t = arg_9_2.t
+		local t = params.t
 
-		if not arg_9_1.update_frequency_time then
-			arg_9_1.update_frequency_time = t + arg_9_1.template.update_frequency_time
+		if not buff.update_frequency_time then
+			buff.update_frequency_time = t + buff.template.update_frequency_time
 		end
 
-		if not (t < arg_9_1.update_frequency_time) or not arg_9_1.first_update_done then
-			local update_dialogue_delay = arg_9_1.template.update_dialogue_delay
+		if t < buff.update_frequency_time and buff.first_update_done then
+			local update_dialogue_delay = buff.template.update_dialogue_delay
 
-			if not (not update_dialogue_delay and arg_9_1.update_dialogue_done) then
-				if not arg_9_1.update_dialogue_delay_time then
-					arg_9_1.update_dialogue_delay_time = t + update_dialogue_delay
+			if update_dialogue_delay and not buff.update_dialogue_done then
+				if not buff.update_dialogue_delay_time then
+					buff.update_dialogue_delay_time = t + update_dialogue_delay
 				end
 
-				if t > arg_9_1.update_dialogue_delay_time then
-					local str = "curse_very_negative_effect_happened"
-					local get_random_player = Managers.state.entity:system("dialogue_system"):get_random_player()
+				if t > buff.update_dialogue_delay_time then
+					local dialogue_name = "curse_very_negative_effect_happened"
+					local dialogue_system = Managers.state.entity:system("dialogue_system")
+					local random_player = dialogue_system:get_random_player()
 
-					if get_random_player ~= nil then
-						local extension_input = ScriptUnit.extension_input(get_random_player, "dialogue_system")
-						local alloc_table = FrameTable.alloc_table()
+					if random_player ~= nil then
+						local dialogue_input = ScriptUnit.extension_input(random_player, "dialogue_system")
+						local event_data = FrameTable.alloc_table()
 
-						extension_input:trigger_dialogue_event(str, alloc_table)
+						dialogue_input:trigger_dialogue_event(dialogue_name, event_data)
 					end
 
-					arg_9_1.update_dialogue_done = true
+					buff.update_dialogue_done = true
 				end
 			end
 
 			return
 		end
 
-		arg_9_1.update_frequency_time = t + arg_9_1.template.update_frequency_time
-		arg_9_1.first_update_done = true
+		buff.update_frequency_time = t + buff.template.update_frequency_time
+		buff.first_update_done = true
 
-		local function fn_2()
+		local function nav_callback()
 			-- function 10
-			if not ALIVE[arg_9_0] then
-				local var_10_0 = BLACKBOARDS[arg_9_0]
-				local breed = var_10_0.breed
-				local var_10_2 = Managers.state.side.side_by_unit[arg_9_0]
-				local var_10_3 = POSITION_LOOKUP[arg_9_0]
-				local num = 4
-				local num_2 = 10
-				local num_3 = 5
-				local str = "fx/grudge_marks_illusionist"
-				local str_2 = "enemy_grudge_intangible"
-				local get_spawn_pos_on_circle = ConflictUtils.get_spawn_pos_on_circle(var_10_0.nav_world, var_10_3, num_2, num, num_3, nil, nil, nil, 8, 8)
+			if ALIVE[unit] then
+				local blackboard = BLACKBOARDS[unit]
+				local breed = blackboard.breed
+				local side = Managers.state.side.side_by_unit[unit]
+				local unit_pos = POSITION_LOOKUP[unit]
+				local spread = 4
+				local dist = 10
+				local tries = 5
+				local play_effect = "fx/grudge_marks_illusionist"
+				local play_sound = "enemy_grudge_intangible"
+				local teleport_position = ConflictUtils.get_spawn_pos_on_circle(blackboard.nav_world, unit_pos, dist, spread, tries, nil, nil, nil, 8, 8)
 
-				if not get_spawn_pos_on_circle then
-					ConflictUtils.teleport_ai_unit(arg_9_0, get_spawn_pos_on_circle, str_2, str)
+				if teleport_position then
+					ConflictUtils.teleport_ai_unit(unit, teleport_position, play_sound, play_effect)
 				end
 
-				local tbl = {
+				local enhancements = {
 					{
 						"grudge_mark_intangible_mirror",
 						no_attribute = true,
 						name = "mirror_base"
 					}
 				}
-				local get_attributes = Managers.state.entity:system("ai_system"):get_attributes(arg_9_0)
-				local breed_enhancements = get_attributes.breed_enhancements
+				local ai_system = Managers.state.entity:system("ai_system")
+				local parent_attributes = ai_system:get_attributes(unit)
+				local breed_enhancements = parent_attributes.breed_enhancements
 
-				for k, v in pairs(breed_enhancements) do
-					if not v and k == "intangible" then
-						k = "intangible_mirror"
-						tbl[#tbl + 1] = BreedEnhancements[k]
+				for enhancement_name, value in pairs(breed_enhancements) do
+					if value and enhancement_name == "intangible" then
+						enhancement_name = "intangible_mirror"
+						enhancements[#enhancements + 1] = BreedEnhancements[enhancement_name]
 					end
 				end
 
-				local name_index = get_attributes.grudge_marked.name_index
-				local _mirror_units = arg_9_1._mirror_units
+				local name_index = parent_attributes.grudge_marked.name_index
+				local _mirror_units = buff._mirror_units
 
-				_mirror_units = _mirror_units or {}
-				arg_9_1._mirror_units = _mirror_units
+				if not _mirror_units then
+					-- Nothing
+				end
 
-				for k_2 = 1, #_mirror_units do
-					local var_10_15 = _mirror_units[k_2]
+				_mirror_units = {}
 
-					if not ALIVE[var_10_15] then
-						AiUtils.kill_unit(var_10_15, arg_9_0)
+				local old_mirrors = _mirror_units
+
+				::label_10_0::
+
+				buff._mirror_units = old_mirrors
+
+				for i = 1, #old_mirrors do
+					local mirror_unit = old_mirrors[i]
+
+					if ALIVE[mirror_unit] then
+						AiUtils.kill_unit(mirror_unit, unit)
 					end
 				end
 
-				table.clear(_mirror_units)
+				table.clear(old_mirrors)
 
-				local tbl_2 = {}
-				local num_4 = 6.25
+				local pos_list = {}
+				local min_dist_sqr = 6.25
 
-				local function fn(arg_11_0, arg_11_1)
+				local function valid_teleport_pos_func(pos, pos_list)
 					-- function 11
-					for i = 1, #arg_11_1 do
-						if Vector3.distance_squared(arg_11_0, arg_11_1[i]) < num_4 then
+					for i = 1, #pos_list do
+						if Vector3.distance_squared(pos, pos_list[i]) < min_dist_sqr then
 							return false
 						end
 					end
 
-					local ENEMY_PLAYER_AND_BOT_POSITIONS = var_10_2.ENEMY_PLAYER_AND_BOT_POSITIONS
+					local enemy_positions = side.ENEMY_PLAYER_AND_BOT_POSITIONS
 
-					for j = 1, #ENEMY_PLAYER_AND_BOT_POSITIONS do
-						if Vector3.distance_squared(arg_11_0, ENEMY_PLAYER_AND_BOT_POSITIONS[j]) < num_4 then
+					for i = 1, #enemy_positions do
+						if Vector3.distance_squared(pos, enemy_positions[i]) < min_dist_sqr then
 							return false
 						end
 					end
@@ -874,656 +890,751 @@ grudge_marks.buff_function_templates = {
 					return true
 				end
 
-				local num_mirrors = arg_9_1.template.num_mirrors
+				local buff_template = buff.template
+				local num_mirrors = buff_template.num_mirrors
 
-				for l = 1, num_mirrors do
-					local get_spawn_pos_on_circle_with_func = ConflictUtils.get_spawn_pos_on_circle_with_func(var_10_0.nav_world, var_10_3, num_2, num, num_3, fn, tbl_2, 8, 8)
+				for i = 1, num_mirrors do
+					local mirror_pos = ConflictUtils.get_spawn_pos_on_circle_with_func(blackboard.nav_world, unit_pos, dist, spread, tries, valid_teleport_pos_func, pos_list, 8, 8)
 
-					if not get_spawn_pos_on_circle_with_func then
-						tbl_2[#tbl_2 + 1] = get_spawn_pos_on_circle_with_func
+					if mirror_pos then
+						pos_list[#pos_list + 1] = mirror_pos
 
-						local tbl_3 = {
-							side_id = var_10_2.side_id,
-							spawned_func = function (arg_12_0, arg_12_1, arg_12_2)
+						local optional_data = {
+							side_id = side.side_id,
+							spawned_func = function (ai_unit, breed, optional_data)
 								-- function 12
-								local var_12_0 = BLACKBOARDS[arg_12_0]
+								local blackboard = BLACKBOARDS[ai_unit]
 
-								var_12_0.deny_kill_loot = true
-								var_12_0.is_illusion = true
+								blackboard.deny_kill_loot = true
+								blackboard.is_illusion = true
 
-								local _mirror_units = arg_9_1._mirror_units
+								local mirror_units = buff._mirror_units
 
-								if not _mirror_units then
-									_mirror_units[#_mirror_units + 1] = arg_12_0
+								if mirror_units then
+									mirror_units[#mirror_units + 1] = ai_unit
 								end
 
-								local has_extension = ScriptUnit.has_extension(arg_12_0, "health_system")
+								local health_extension = ScriptUnit.has_extension(ai_unit, "health_system")
 
-								if not has_extension.force_set_wounded then
-									has_extension:force_set_wounded()
+								if health_extension.force_set_wounded then
+									health_extension:force_set_wounded()
 								end
 
-								ScriptUnit.extension(arg_12_0, "death_system"):override_death_behavior(0, "fx/mutator_death_03")
-								Managers.state.entity:system("death_system"):set_death_reaction_template(arg_12_0, "despawn")
+								local death_extension = ScriptUnit.extension(ai_unit, "death_system")
+
+								death_extension:override_death_behavior(0, "fx/mutator_death_03")
+
+								local death_system = Managers.state.entity:system("death_system")
+
+								death_system:set_death_reaction_template(ai_unit, "despawn")
 							end,
-							enhancements = tbl,
+							enhancements = enhancements,
 							name_index = name_index
 						}
-						local get_closest_position = ConflictUtils.get_closest_position(get_spawn_pos_on_circle_with_func, var_10_2.ENEMY_PLAYER_AND_BOT_POSITIONS)
+						local target_position = ConflictUtils.get_closest_position(mirror_pos, side.ENEMY_PLAYER_AND_BOT_POSITIONS)
 
-						get_closest_position = get_closest_position or get_spawn_pos_on_circle or Vector3.zero()
+						target_position = not not target_position or not not teleport_position or not not Vector3.zero()
 
-						local flag = not get_closest_position and ConflictUtils.look_at_position_flat(get_spawn_pos_on_circle_with_func, get_closest_position)
+						local rot = not not target_position and not not ConflictUtils.look_at_position_flat(mirror_pos, target_position)
 
-						Managers.state.conflict:spawn_queued_unit(breed, Vector3Box(get_spawn_pos_on_circle_with_func), QuaternionBox(flag), "mirror_spawn", nil, nil, tbl_3, nil)
+						Managers.state.conflict:spawn_queued_unit(breed, Vector3Box(mirror_pos), QuaternionBox(rot), "mirror_spawn", nil, nil, optional_data, nil)
 
-						local var_10_24 = NetworkLookup.effects[str]
-						local num_5 = 0
-						local identity = Quaternion.identity()
+						local effect_name_id = NetworkLookup.effects[play_effect]
+						local node_id = 0
+						local rotation_offset = Quaternion.identity()
+						local network_manager = Managers.state.network
 
-						Managers.state.network:rpc_play_particle_effect(nil, var_10_24, NetworkConstants.invalid_game_object_id, num_5, get_spawn_pos_on_circle_with_func, identity, false)
+						network_manager:rpc_play_particle_effect(nil, effect_name_id, NetworkConstants.invalid_game_object_id, node_id, mirror_pos, rotation_offset, false)
 					end
 				end
 			end
 		end
 
-		Managers.state.entity:system("ai_navigation_system"):add_safe_navigation_callback(fn_2)
+		local ai_navigation_system = Managers.state.entity:system("ai_navigation_system")
+
+		ai_navigation_system:add_safe_navigation_callback(nav_callback)
 	end,
-	ai_spawn_liquid_blob = function (arg_13_0, arg_13_1, arg_13_2)
+	ai_spawn_liquid_blob = function (unit, buff, params)
 		-- function 13
-		if not fn() then
+		if not is_server() then
 			return
 		end
 
-		local function fn_2()
+		local function nav_callback()
 			-- function 14
-			if not ALIVE[arg_13_0] then
-				local var_14_0 = BLACKBOARDS[arg_13_0]
-				local var_14_1 = POSITION_LOOKUP[arg_13_0]
-				local num = 1
-				local num_2 = 3
-				local num_3 = 5
-				local get_spawn_pos_on_circle = ConflictUtils.get_spawn_pos_on_circle(var_14_0.nav_world, var_14_1, num_2, num, num_3)
+			if ALIVE[unit] then
+				local blackboard = BLACKBOARDS[unit]
+				local unit_pos = POSITION_LOOKUP[unit]
+				local spread = 1
+				local dist = 3
+				local tries = 5
+				local mesh_pos = ConflictUtils.get_spawn_pos_on_circle(blackboard.nav_world, unit_pos, dist, spread, tries)
 
-				if not get_spawn_pos_on_circle then
+				if not mesh_pos then
 					return
 				end
 
-				Managers.state.entity:system("audio_system"):play_audio_unit_event("enemy_grudge_bubonic_spawn", arg_13_0)
+				local audio_system_extension = Managers.state.entity:system("audio_system")
 
-				local spawn_nurgle_liquid_blob_dynamic = AiUtils.spawn_nurgle_liquid_blob_dynamic(Managers.state.network, get_spawn_pos_on_circle, arg_13_0)
-				local side = Managers.state.side
-				local var_14_8 = side.side_by_unit[arg_13_0]
+				audio_system_extension:play_audio_unit_event("enemy_grudge_bubonic_spawn", unit)
 
-				var_14_8 = var_14_8 or side:get_side_from_name("dark_pact")
+				local blob_unit = AiUtils.spawn_nurgle_liquid_blob_dynamic(Managers.state.network, mesh_pos, unit)
+				local side_manager = Managers.state.side
+				local var_14_0 = side_manager.side_by_unit[unit]
 
-				local side_id = var_14_8.side_id
+				if not var_14_0 then
+					-- Nothing
+				end
 
-				side:add_unit_to_side(spawn_nurgle_liquid_blob_dynamic, side_id)
+				var_14_0 = side_manager:get_side_from_name("dark_pact")
+
+				local side = var_14_0
+
+				::label_14_0::
+
+				local side_id = side.side_id
+
+				side_manager:add_unit_to_side(blob_unit, side_id)
 			end
 		end
 
-		Managers.state.entity:system("ai_navigation_system"):add_safe_navigation_callback(fn_2)
-	end,
-	ai_health_regen_update = function (arg_15_0, arg_15_1, arg_15_2)
-		-- function 15
-		local time = Managers.time:time("game")
-		local frequency = arg_15_1.template.frequency
+		local ai_navigation_system = Managers.state.entity:system("ai_navigation_system")
 
-		if not arg_15_1.timer then
-			arg_15_1.timer = time + frequency
+		ai_navigation_system:add_safe_navigation_callback(nav_callback)
+	end,
+	ai_health_regen_update = function (unit, buff, params)
+		-- function 15
+		local t = Managers.time:time("game")
+		local frequency = buff.template.frequency
+
+		if not buff.timer then
+			buff.timer = t + frequency
 		end
 
-		if time < arg_15_1.timer then
+		if t < buff.timer then
 			return
 		end
 
-		arg_15_1.timer = time + frequency
+		buff.timer = t + frequency
 
-		if not fn() and not HEALTH_ALIVE[arg_15_0] then
-			local has_extension = ScriptUnit.has_extension(arg_15_0, "health_system")
-			local num = has_extension:get_max_health() * arg_15_1.template.part_healed_of_max_heath
+		if is_server() and HEALTH_ALIVE[unit] then
+			local health_extension = ScriptUnit.has_extension(unit, "health_system")
+			local max_health = health_extension:get_max_health()
+			local amount_to_heal = max_health * buff.template.part_healed_of_max_heath
 
-			has_extension:add_heal(arg_15_0, num, nil, "leech")
+			health_extension:add_heal(unit, amount_to_heal, nil, "leech")
 		end
 	end,
-	apply_curse_to_nearby_players = function (arg_16_0, arg_16_1, arg_16_2, arg_16_3)
+	apply_curse_to_nearby_players = function (unit, buff, params, world)
 		-- function 16
-		local template = arg_16_1.template
+		local template = buff.template
 		local max_distance = template.max_distance
-		local var_16_2 = POSITION_LOOKUP[arg_16_0]
-		local cursed_players = arg_16_1.cursed_players
+		local position = POSITION_LOOKUP[unit]
+		local cursed_players_2 = buff.cursed_players
 
-		cursed_players = cursed_players or {}
-		arg_16_1.cursed_players = cursed_players
+		cursed_players_2 = not not cursed_players_2 or not not {}
+		buff.cursed_players = cursed_players_2
 
-		local inside_last_frame = arg_16_1.inside_last_frame
+		local inside_last_frame_2 = buff.inside_last_frame
 
-		inside_last_frame = inside_last_frame or {}
-		arg_16_1.inside_last_frame = inside_last_frame
+		inside_last_frame_2 = not not inside_last_frame_2 or not not {}
+		buff.inside_last_frame = inside_last_frame_2
 
-		local inside_last_frame_2 = arg_16_1.inside_last_frame
-		local cursed_players_2 = arg_16_1.cursed_players
-		local player_unit = Managers.player:local_player().player_unit
-		local player_units_broadphase = Managers.state.entity:system("proximity_system").player_units_broadphase
-		local alloc_table = FrameTable.alloc_table()
-		local query = Broadphase.query(player_units_broadphase, var_16_2, max_distance, alloc_table)
-		local alloc_table_2 = FrameTable.alloc_table()
+		local inside_last_frame = buff.inside_last_frame
+		local cursed_players = buff.cursed_players
+		local local_player = Managers.player:local_player().player_unit
+		local proximity_system = Managers.state.entity:system("proximity_system")
+		local player_broadphase = proximity_system.player_units_broadphase
+		local nearby_players = FrameTable.alloc_table()
+		local nearby_players_n = Broadphase.query(player_broadphase, position, max_distance, nearby_players)
+		local inside_this_frame = FrameTable.alloc_table()
 
-		for i = 1, query do
-			local var_16_12 = alloc_table[i]
+		for i = 1, nearby_players_n do
+			local player_unit = nearby_players[i]
 
-			alloc_table_2[var_16_12] = true
+			inside_this_frame[player_unit] = true
 
-			if not inside_last_frame_2[var_16_12] then
-				if var_16_12 ~= player_unit or not ALIVE[var_16_12] then
-					local extension = ScriptUnit.extension(var_16_12, "buff_system")
+			if not inside_last_frame[player_unit] then
+				if player_unit == local_player and ALIVE[player_unit] then
+					local buff_extension = ScriptUnit.extension(player_unit, "buff_system")
 					local buff_to_add = template.buff_to_add
+					local num_stacks = buff_extension:num_buff_stacks(buff_to_add)
 
-					if extension:num_buff_stacks(buff_to_add) == 0 then
-						local wwise_world = Managers.world:wwise_world(arg_16_3)
+					if num_stacks == 0 then
+						local wwise_world = Managers.world:wwise_world(world)
 
 						WwiseWorld.trigger_event(wwise_world, template.sound_on_enter)
 					end
 				end
 
-				cursed_players_2[var_16_12] = true
-				inside_last_frame_2[var_16_12] = true
+				cursed_players[player_unit] = true
+				inside_last_frame[player_unit] = true
 			end
 		end
 
-		if not fn() then
-			local time = Managers.time:time("game")
-			local last_curse_t = arg_16_1.last_curse_t
+		if is_server() then
+			local t = Managers.time:time("game")
+			local last_curse_t = buff.last_curse_t
 
-			last_curse_t = last_curse_t or time
-			arg_16_1.last_curse_t = last_curse_t
+			last_curse_t = not not last_curse_t or not not t
+			buff.last_curse_t = last_curse_t
 
 			local time_between_curses = template.time_between_curses
-			local num = arg_16_1.last_curse_t + time_between_curses
-			local flag = num <= time
+			local next_curse_t = buff.last_curse_t + time_between_curses
+			local should_apply_buff = next_curse_t <= t
 
-			for k, v in pairs(cursed_players_2) do
-				if not flag then
-					if not alloc_table_2[k] then
-						local buff_to_add_2 = template.buff_to_add
+			for cursed_player, _ in pairs(cursed_players) do
+				if should_apply_buff then
+					if inside_this_frame[cursed_player] then
+						local buff_to_add = template.buff_to_add
+						local buff_system = Managers.state.entity:system("buff_system")
 
-						Managers.state.entity:system("buff_system"):add_buff(k, buff_to_add_2, arg_16_0)
+						buff_system:add_buff(cursed_player, buff_to_add, unit)
 					else
-						cursed_players_2[k] = nil
+						cursed_players[cursed_player] = nil
 					end
 				end
 
-				local flag_2
+				local flag
 
-				flag_2 = not alloc_table_2[k] and true and nil
-				inside_last_frame_2[k] = flag_2
+				flag = (not inside_this_frame[cursed_player] or not true) and not not nil
+				inside_last_frame[cursed_player] = flag
 			end
 
-			arg_16_1.last_curse_t = not flag and num and arg_16_1.last_curse_t
-		elseif not ALIVE[player_unit] then
-			local flag_3
+			buff.last_curse_t = (not should_apply_buff or not next_curse_t) and not not buff.last_curse_t
+		elseif ALIVE[local_player] then
+			local flag_2
 
-			flag_3 = not alloc_table_2[player_unit] and true and nil
-			inside_last_frame_2[player_unit] = flag_3
+			flag_2 = (not inside_this_frame[local_player] or not true) and not not nil
+			inside_last_frame[local_player] = flag_2
 		end
 	end,
-	ai_create_explosion = function (arg_17_0, arg_17_1, arg_17_2, arg_17_3)
+	ai_create_explosion = function (owner_unit, buff, params, world)
 		-- function 17
-		if not (not fn() and ALIVE[arg_17_0]) then
+		if not is_server() or not ALIVE[owner_unit] then
 			return
 		end
 
-		local template = arg_17_1.template
-		local explosion_template_name = template.explosion_template_name
-		local damage_source_name = template.damage_source_name
+		local buff_template = buff.template
+		local explosion_template_name = buff_template.explosion_template_name
+		local damage_source_name_2 = buff_template.damage_source_name
 
-		damage_source_name = damage_source_name or "buff"
+		if not damage_source_name_2 then
+			-- Nothing
+		end
 
-		local var_17_3 = POSITION_LOOKUP[arg_17_0]
+		damage_source_name_2 = "buff"
 
-		var_17_3 = var_17_3 or Unit.world_position(arg_17_0, 0)
+		local damage_source_name = damage_source_name_2
 
-		local get_template = ExplosionUtils.get_template(explosion_template_name)
+		::label_17_0::
 
-		DamageUtils.create_explosion(arg_17_3, arg_17_0, var_17_3, Quaternion.identity(), get_template, 1, damage_source_name, true, false, arg_17_0, 0, false)
+		local var_17_1 = POSITION_LOOKUP[owner_unit]
 
-		local go_id = Managers.state.unit_storage:go_id(arg_17_0)
-		local var_17_6 = NetworkLookup.explosion_templates[explosion_template_name]
-		local var_17_7 = NetworkLookup.damage_sources[damage_source_name]
+		if not var_17_1 then
+			-- Nothing
+		end
 
-		Managers.state.network.network_transmit:send_rpc_clients("rpc_create_explosion", go_id, false, var_17_3, Quaternion.identity(), var_17_6, 1, var_17_7, 0, false, go_id)
+		var_17_1 = Unit.world_position(owner_unit, 0)
+
+		local explosion_position = var_17_1
+
+		::label_17_1::
+
+		local explosion_template = ExplosionUtils.get_template(explosion_template_name)
+
+		DamageUtils.create_explosion(world, owner_unit, explosion_position, Quaternion.identity(), explosion_template, 1, damage_source_name, true, false, owner_unit, 0, false)
+
+		local attacker_unit_id = Managers.state.unit_storage:go_id(owner_unit)
+		local explosion_template_id = NetworkLookup.explosion_templates[explosion_template_name]
+		local damage_source_id = NetworkLookup.damage_sources[damage_source_name]
+
+		Managers.state.network.network_transmit:send_rpc_clients("rpc_create_explosion", attacker_unit_id, false, explosion_position, Quaternion.identity(), explosion_template_id, 1, damage_source_id, 0, false, attacker_unit_id)
 	end,
-	ai_add_hit_sfx = function (arg_18_0, arg_18_1, arg_18_2)
+	ai_add_hit_sfx = function (unit, buff, params)
 		-- function 18
-		local template = arg_18_1.template
-		local flag = not template and template.hit_sfx_name
+		local template = buff.template
+		local override_sfx = not not template and not not template.hit_sfx_name
 
-		if not flag then
-			local has_extension = ScriptUnit.has_extension(arg_18_0, "ai_inventory_system")
+		if override_sfx then
+			local ai_inventory_extension = ScriptUnit.has_extension(unit, "ai_inventory_system")
 
-			if not has_extension then
-				arg_18_1._override_id = has_extension:add_additional_hit_sfx(flag)
+			if ai_inventory_extension then
+				buff._override_id = ai_inventory_extension:add_additional_hit_sfx(override_sfx)
 			end
 		end
 	end,
-	ai_remove_hit_sfx = function (arg_19_0, arg_19_1, arg_19_2)
+	ai_remove_hit_sfx = function (unit, buff, params)
 		-- function 19
-		local has_extension = ScriptUnit.has_extension(arg_19_0, "ai_inventory_system")
+		local ai_inventory_extension = ScriptUnit.has_extension(unit, "ai_inventory_system")
 
-		if not has_extension then
-			has_extension:remove_additioanl_hit_sfx(arg_19_1._override_id)
+		if ai_inventory_extension then
+			ai_inventory_extension:remove_additioanl_hit_sfx(buff._override_id)
 
-			arg_19_1._override_id = nil
+			buff._override_id = nil
 		end
 	end,
-	first_person_flow_event = function (arg_20_0, arg_20_1, arg_20_2)
+	first_person_flow_event = function (unit, buff, params)
 		-- function 20
-		local flow_event = arg_20_1.template.flow_event
+		local flow_event = buff.template.flow_event
+		local local_player = owner_is_local_player(unit)
 
-		if not fn_2(arg_20_0) then
-			local has_extension = ScriptUnit.has_extension(arg_20_0, "first_person_system")
-			local flag = not has_extension and has_extension:get_first_person_unit()
+		if local_player then
+			local first_person_extension = ScriptUnit.has_extension(unit, "first_person_system")
+			local first_person_unit = not not first_person_extension and not not first_person_extension:get_first_person_unit()
 
-			if not flag then
-				Unit.flow_event(flag, flow_event)
+			if first_person_unit then
+				Unit.flow_event(first_person_unit, flow_event)
 			end
 		end
 	end,
-	remove_all_stamina = function (arg_21_0, arg_21_1, arg_21_2)
+	remove_all_stamina = function (unit, buff, params)
 		-- function 21
-		if not fn_2(arg_21_0) then
-			local has_extension = ScriptUnit.has_extension(arg_21_0, "status_system")
+		local local_player = owner_is_local_player(unit)
 
-			if not has_extension then
-				has_extension:add_fatigue_points("complete", arg_21_2.attacker_unit)
+		if local_player then
+			local status_extension = ScriptUnit.has_extension(unit, "status_system")
+
+			if status_extension then
+				status_extension:add_fatigue_points("complete", params.attacker_unit)
 			end
 		end
 	end,
-	trigger_terror_event = function (arg_22_0, arg_22_1, arg_22_2)
+	trigger_terror_event = function (owner_unit, buff, params)
 		-- function 22
-		if not (not fn() and ALIVE[arg_22_0]) then
+		if not is_server() or not ALIVE[owner_unit] then
 			return
 		end
 
-		local faction_terror_events = arg_22_1.template.faction_terror_events
-		local var_22_1 = BLACKBOARDS[arg_22_0]
-		local flag = not var_22_1 and var_22_1.breed
-		local var_22_3 = faction_terror_events[not flag and flag.race]
+		local buff_template = buff.template
+		local faction_terror_events = buff_template.faction_terror_events
+		local blackboard = BLACKBOARDS[owner_unit]
+		local breed = not not blackboard and not not blackboard.breed
+		local faction = not not breed and not not breed.race
+		local var_22_0 = faction_terror_events[faction]
 
-		var_22_3 = var_22_3 or faction_terror_events.default
+		if not var_22_0 then
+			-- Nothing
+		end
 
-		local seed = arg_22_1.seed
+		var_22_0 = faction_terror_events.default
 
-		seed = seed or Managers.mechanism:get_level_seed()
+		local terror_event = var_22_0
 
-		Managers.state.conflict:start_terror_event(var_22_3, seed, arg_22_0)
+		::label_22_0::
 
-		arg_22_1.seed = Math.next_random(seed)
+		local seed_2 = buff.seed
+
+		if not seed_2 then
+			-- Nothing
+		end
+
+		seed_2 = Managers.mechanism:get_level_seed()
+
+		local seed = seed_2
+
+		::label_22_1::
+
+		Managers.state.conflict:start_terror_event(terror_event, seed, owner_unit)
+
+		buff.seed = Math.next_random(seed)
 	end,
-	add_extra_frenzy_stack = function (arg_23_0, arg_23_1, arg_23_2)
+	add_extra_frenzy_stack = function (unit, buff, params)
 		-- function 23
-		if not ALIVE[arg_23_0] then
-			local has_extension = ScriptUnit.has_extension(arg_23_0, "buff_system")
+		if ALIVE[unit] then
+			local buff_extension = ScriptUnit.has_extension(unit, "buff_system")
 
-			if not has_extension then
-				has_extension:add_buff(arg_23_1.template.buff_to_add)
+			if buff_extension then
+				buff_extension:add_buff(buff.template.buff_to_add)
 			end
 		end
 	end,
-	frenzy_damage_over_time = function (arg_24_0, arg_24_1, arg_24_2)
+	frenzy_damage_over_time = function (unit, buff, params)
 		-- function 24
-		if not fn() then
+		if not is_server() then
 			return
 		end
 
-		if not ALIVE[arg_24_0] then
-			local has_extension = ScriptUnit.has_extension(arg_24_0, "health_system")
+		if ALIVE[unit] then
+			local health_extension = ScriptUnit.has_extension(unit, "health_system")
 
-			if not has_extension then
+			if not health_extension then
 				return
 			end
 
-			local current_health = has_extension:current_health()
-			local damage_per_tick = arg_24_1.template.damage_per_tick
+			local current_health = health_extension:current_health()
+			local damage_per_tick = buff.template.damage_per_tick
 
 			if current_health <= damage_per_tick then
 				damage_per_tick = current_health - 1
 			end
 
 			if damage_per_tick > 0 then
-				DamageUtils.add_damage_network(arg_24_0, arg_24_0, damage_per_tick, "torso", "buff", nil, Vector3(0, 0, 0), "buff", nil, arg_24_0, nil, nil, nil, nil, nil, nil, nil, nil, nil, nil, 1)
+				DamageUtils.add_damage_network(unit, unit, damage_per_tick, "torso", "buff", nil, Vector3(0, 0, 0), "buff", nil, unit, nil, nil, nil, nil, nil, nil, nil, nil, nil, nil, 1)
 			end
 		end
 	end,
-	apply_frenzy_func = function (arg_25_0, arg_25_1, arg_25_2)
+	apply_frenzy_func = function (unit, buff, params)
 		-- function 25
-		if not ALIVE[arg_25_0] then
-			local owner = Managers.player:owner(arg_25_0)
+		if ALIVE[unit] then
+			local player = Managers.player:owner(unit)
 
-			if not (not owner and owner.remote) then
-				Managers.state.camera:set_mood("skill_zealot", arg_25_1, true)
+			if player and not player.remote then
+				Managers.state.camera:set_mood("skill_zealot", buff, true)
 			end
 
-			local has_extension = ScriptUnit.has_extension(arg_25_0, "first_person_system")
+			local first_person_extension = ScriptUnit.has_extension(unit, "first_person_system")
 
-			if not has_extension then
-				has_extension:play_hud_sound_event("enemy_grudge_frenzy_start")
+			if first_person_extension then
+				first_person_extension:play_hud_sound_event("enemy_grudge_frenzy_start")
 			end
 		end
 	end,
-	remove_frenzy_func = function (arg_26_0, arg_26_1, arg_26_2)
+	remove_frenzy_func = function (unit, buff, params)
 		-- function 26
-		if not ALIVE[arg_26_0] then
-			local owner = Managers.player:owner(arg_26_0)
+		if ALIVE[unit] then
+			local player = Managers.player:owner(unit)
 
-			if not (not owner and owner.remote) then
-				Managers.state.camera:set_mood("skill_zealot", arg_26_1, false)
+			if player and not player.remote then
+				Managers.state.camera:set_mood("skill_zealot", buff, false)
 			end
 		end
 	end,
-	remove_frenzy_handlers = function (arg_27_0, arg_27_1, arg_27_2)
+	remove_frenzy_handlers = function (unit, buff, params)
 		-- function 27
-		if not arg_27_1.buff_ids then
-			local system = Managers.state.entity:system("buff_system")
+		if buff.buff_ids then
+			local buff_system = Managers.state.entity:system("buff_system")
 
-			for k, v in pairs(arg_27_1.buff_ids) do
-				if not ALIVE[k] then
-					system:remove_server_controlled_buff(k, v)
+			for unit, buff_id in pairs(buff.buff_ids) do
+				if ALIVE[unit] then
+					buff_system:remove_server_controlled_buff(unit, buff_id)
 				end
 			end
 		end
 	end,
-	grudge_mark_ignore_death_aura_update = function (arg_28_0, arg_28_1, arg_28_2)
+	grudge_mark_ignore_death_aura_update = function (unit, buff, params)
 		-- function 28
-		local ally_broadphase_categories = Managers.state.side.side_by_unit[arg_28_0].ally_broadphase_categories
-		local alloc_table = FrameTable.alloc_table()
-		local var_28_2 = POSITION_LOOKUP[arg_28_0]
-		local radius = arg_28_1.template.radius
-		local broadphase_query = AiUtils.broadphase_query(var_28_2, radius, alloc_table, ally_broadphase_categories)
-		local buff_to_add = arg_28_1.template.buff_to_add
-		local alloc_table_2 = FrameTable.alloc_table()
-		local inside_allies = arg_28_1.inside_allies
+		local side = Managers.state.side.side_by_unit[unit]
+		local broadphase_categories = side.ally_broadphase_categories
+		local nearby_allies = FrameTable.alloc_table()
+		local position = POSITION_LOOKUP[unit]
+		local radius = buff.template.radius
+		local num_allies = AiUtils.broadphase_query(position, radius, nearby_allies, broadphase_categories)
+		local buff_name = buff.template.buff_to_add
+		local inside_this_frame = FrameTable.alloc_table()
+		local inside_allies_2 = buff.inside_allies
 
-		inside_allies = inside_allies or {}
-		arg_28_1.inside_allies = inside_allies
+		if not inside_allies_2 then
+			-- Nothing
+		end
 
-		for i = 1, broadphase_query do
-			local var_28_8 = alloc_table[i]
+		inside_allies_2 = {}
 
-			if var_28_8 ~= arg_28_0 then
-				local has_extension = ScriptUnit.has_extension(var_28_8, "buff_system")
+		local inside_allies = inside_allies_2
 
-				if not has_extension then
-					if not inside_allies[var_28_8] then
-						inside_allies[var_28_8] = has_extension:add_buff(buff_to_add)
+		::label_28_0::
+
+		buff.inside_allies = inside_allies
+
+		for i = 1, num_allies do
+			local ally_unit = nearby_allies[i]
+
+			if ally_unit ~= unit then
+				local buff_extension = ScriptUnit.has_extension(ally_unit, "buff_system")
+
+				if buff_extension then
+					if not inside_allies[ally_unit] then
+						inside_allies[ally_unit] = buff_extension:add_buff(buff_name)
 					end
 
-					alloc_table_2[var_28_8] = true
+					inside_this_frame[ally_unit] = true
 				end
 			end
 		end
 
-		for k, v in pairs(inside_allies) do
-			if not alloc_table_2[k] then
-				local has_extension_2 = ScriptUnit.has_extension(k, "buff_system")
+		for ally_unit, buff_id in pairs(inside_allies) do
+			if not inside_this_frame[ally_unit] then
+				local buff_extension = ScriptUnit.has_extension(ally_unit, "buff_system")
 
-				if not has_extension_2 then
-					has_extension_2:remove_buff(v)
+				if buff_extension then
+					buff_extension:remove_buff(buff_id)
 				end
 
-				inside_allies[k] = nil
+				inside_allies[ally_unit] = nil
 			end
 		end
 	end,
-	grudge_mark_ignore_death_aura_cleanup = function (arg_29_0, arg_29_1, arg_29_2)
+	grudge_mark_ignore_death_aura_cleanup = function (unit, buff, params)
 		-- function 29
-		local inside_allies = arg_29_1.inside_allies
+		local inside_allies = buff.inside_allies
 
 		if not inside_allies then
 			return
 		end
 
-		for k, v in pairs(inside_allies) do
-			local has_extension = ScriptUnit.has_extension(k, "buff_system")
+		for ally_unit, buff_id in pairs(inside_allies) do
+			local buff_extension = ScriptUnit.has_extension(ally_unit, "buff_system")
 
-			if not has_extension then
-				has_extension:remove_buff(v)
+			if buff_extension then
+				buff_extension:remove_buff(buff_id)
 			end
 		end
 
-		arg_29_1.inside_allies = nil
+		buff.inside_allies = nil
 	end
 }
-grudge_marks.proc_functions = {
-	add_frenzy_handler = function (arg_30_0, arg_30_1, arg_30_2)
+settings.proc_functions = {
+	add_frenzy_handler = function (owner_unit, buff, params)
 		-- function 30
-		if not fn() then
+		if not is_server() then
 			return
 		end
 
-		local var_30_0 = arg_30_2[1]
-		local var_30_1 = arg_30_2[4]
+		local attacker_unit = params[1]
+		local attack_type = params[4]
 
-		if not ALIVE[arg_30_0] and not ALIVE[var_30_0] and not MeleeAttackTypes[var_30_1] then
-			local buff_to_add = arg_30_1.template.buff_to_add
-			local system = Managers.state.entity:system("buff_system")
+		if ALIVE[owner_unit] and ALIVE[attacker_unit] and MeleeAttackTypes[attack_type] then
+			local buff_to_add = buff.template.buff_to_add
+			local buff_system = Managers.state.entity:system("buff_system")
 
-			if not arg_30_1.buff_ids then
-				arg_30_1.buff_ids = {}
+			if not buff.buff_ids then
+				buff.buff_ids = {}
 			end
 
-			if not arg_30_1.buff_ids[var_30_0] then
-				arg_30_1.buff_ids[var_30_0] = system:add_buff(var_30_0, buff_to_add, arg_30_0, true)
+			if not buff.buff_ids[attacker_unit] then
+				buff.buff_ids[attacker_unit] = buff_system:add_buff(attacker_unit, buff_to_add, owner_unit, true)
 			end
 		end
 	end,
-	add_frenzy_stack = function (arg_31_0, arg_31_1, arg_31_2)
+	add_frenzy_stack = function (owner_unit, buff, params)
 		-- function 31
-		local var_31_0 = arg_31_2[1]
+		local hit_unit = params[1]
 
-		if not ALIVE[arg_31_0] and not ALIVE[var_31_0] then
-			if not (not arg_31_1.attacker_unit and var_31_0 == arg_31_1.attacker_unit) then
+		if ALIVE[owner_unit] and ALIVE[hit_unit] then
+			if not buff.attacker_unit or hit_unit ~= buff.attacker_unit then
 				return
 			end
 
-			local has_extension = ScriptUnit.has_extension(arg_31_0, "buff_system")
+			local buff_extension = ScriptUnit.has_extension(owner_unit, "buff_system")
 
-			if not (not has_extension and has_extension:has_buff_type(arg_31_1.template.blocker_buff)) then
-				has_extension:add_buff(arg_31_1.template.buff_to_add)
+			if buff_extension and not buff_extension:has_buff_type(buff.template.blocker_buff) then
+				buff_extension:add_buff(buff.template.buff_to_add)
 			end
 		end
 	end,
-	spawn_liquid_forward = function (arg_32_0, arg_32_1, arg_32_2)
+	spawn_liquid_forward = function (owner_unit, buff, params)
 		-- function 32
-		if not fn() then
+		if not is_server() then
 			return
 		end
 
-		BuffUtils.create_liquid_forward(arg_32_0, arg_32_1)
+		BuffUtils.create_liquid_forward(owner_unit, buff)
 	end,
-	ai_add_buff_on_damage_dealt = function (arg_33_0, arg_33_1, arg_33_2, arg_33_3, arg_33_4)
+	ai_add_buff_on_damage_dealt = function (owner_unit, buff, params, world, param_order)
 		-- function 33
-		local var_33_0 = arg_33_2[arg_33_4.attacked_unit]
-		local var_33_1 = arg_33_2[arg_33_4.damage_amount]
+		local target_unit = params[param_order.attacked_unit]
+		local damage_amount = params[param_order.damage_amount]
 
-		if not (not ALIVE[var_33_0] and not (var_33_1 > 0)) then
-			local buff_to_add = arg_33_1.template.buff_to_add
-			local extension = ScriptUnit.extension(var_33_0, "buff_system")
-			local network = Managers.state.network
-			local network_transmit = network.network_transmit
-			local unit_game_object_id = network:unit_game_object_id(var_33_0)
-			local var_33_7 = NetworkLookup.buff_templates[buff_to_add]
+		if ALIVE[target_unit] and damage_amount > 0 then
+			local buff_template = buff.template
+			local buff_name = buff_template.buff_to_add
+			local buff_extension = ScriptUnit.extension(target_unit, "buff_system")
+			local network_manager = Managers.state.network
+			local network_transmit = network_manager.network_transmit
+			local unit_object_id = network_manager:unit_game_object_id(target_unit)
+			local buff_template_name_id = NetworkLookup.buff_templates[buff_name]
 
-			if not fn() then
-				extension:add_buff(buff_to_add, {
-					attacker_unit = var_33_0
+			if is_server() then
+				buff_extension:add_buff(buff_name, {
+					attacker_unit = target_unit
 				})
-				network_transmit:send_rpc_clients("rpc_add_buff", unit_game_object_id, var_33_7, unit_game_object_id, 0, false)
+				network_transmit:send_rpc_clients("rpc_add_buff", unit_object_id, buff_template_name_id, unit_object_id, 0, false)
 			else
-				network_transmit:send_rpc_server("rpc_add_buff", unit_game_object_id, var_33_7, unit_game_object_id, 0, true)
+				network_transmit:send_rpc_server("rpc_add_buff", unit_object_id, buff_template_name_id, unit_object_id, 0, true)
 			end
 		end
 	end,
-	ai_delay_regen = function (arg_34_0, arg_34_1, arg_34_2)
+	ai_delay_regen = function (owner_unit, buff, params)
 		-- function 34
-		local time = Managers.time:time("game")
-		local on_hit_delay = arg_34_1.template.on_hit_delay
+		local t = Managers.time:time("game")
+		local on_hit_delay = buff.template.on_hit_delay
 
-		if not arg_34_1.timer then
-			arg_34_1.timer = time + on_hit_delay
+		if not buff.timer then
+			buff.timer = t + on_hit_delay
 		end
 
-		arg_34_1.timer = time + on_hit_delay
+		buff.timer = t + on_hit_delay
 	end,
-	ai_heal_on_damage_dealt = function (arg_35_0, arg_35_1, arg_35_2, arg_35_3, arg_35_4)
+	ai_heal_on_damage_dealt = function (owner_unit, buff, params, world, param_order)
 		-- function 35
-		if not fn() then
+		if not is_server() then
 			return
 		end
 
-		local var_35_0 = arg_35_2[arg_35_4.attacked_unit]
+		local target_unit = params[param_order.attacked_unit]
 
-		if not ALIVE[arg_35_0] and not ALIVE[var_35_0] and not DamageUtils.is_enemy(arg_35_0, var_35_0) then
-			local has_extension = ScriptUnit.has_extension(arg_35_0, "health_system")
+		if ALIVE[owner_unit] and ALIVE[target_unit] and DamageUtils.is_enemy(owner_unit, target_unit) then
+			local health_extension = ScriptUnit.has_extension(owner_unit, "health_system")
 
-			if not has_extension and not has_extension:is_alive() then
-				local var_35_2 = arg_35_2[arg_35_4.damage_amount]
-				local template = arg_35_1.template
-				local multiplier = template.multiplier
+			if health_extension and health_extension:is_alive() then
+				local damage_amount = params[param_order.damage_amount]
+				local buff_template = buff.template
+				local multiplier_2 = buff_template.multiplier
 
-				multiplier = multiplier or 1
+				if not multiplier_2 then
+					-- Nothing
+				end
 
-				local bonus = template.bonus
+				multiplier_2 = 1
 
-				bonus = bonus or 0
+				local multiplier = multiplier_2
 
-				local clamp = math.clamp(var_35_2 * multiplier + bonus, 0, 255)
+				::label_35_0::
 
-				has_extension:add_heal(arg_35_0, clamp, nil, "leech")
+				local bonus_2 = buff_template.bonus
+
+				if not bonus_2 then
+					-- Nothing
+				end
+
+				bonus_2 = 0
+
+				local bonus = bonus_2
+
+				::label_35_1::
+
+				local amount_to_heal = math.clamp(damage_amount * multiplier + bonus, 0, 255)
+
+				health_extension:add_heal(owner_unit, amount_to_heal, nil, "leech")
 			end
 		end
 	end,
-	random_teleport_ai = function (arg_36_0, arg_36_1, arg_36_2)
+	random_teleport_ai = function (owner_unit, buff, params)
 		-- function 36
-		if not fn() then
+		if not is_server() then
 			return
 		end
 
-		local function fn_2()
+		local function nav_callback()
 			-- function 37
-			if not ALIVE[arg_36_0] then
-				local var_37_0 = BLACKBOARDS[arg_36_0]
-				local var_37_1 = POSITION_LOOKUP[arg_36_0]
-				local template = arg_36_1.template
-				local min_teleport_distance = template.min_teleport_distance
-				local max_teleport_distance = template.max_teleport_distance
-				local find_valid_pos_attempts = template.find_valid_pos_attempts
-				local min_dist_from_players = template.min_dist_from_players
-				local var_37_7 = Managers.state.side.side_by_unit[arg_36_0]
-				local tbl = {
-					side = var_37_7,
-					min_dist_sqr = min_dist_from_players * min_dist_from_players
+			if ALIVE[owner_unit] then
+				local blackboard = BLACKBOARDS[owner_unit]
+				local unit_pos = POSITION_LOOKUP[owner_unit]
+				local template = buff.template
+				local min_dist = template.min_teleport_distance
+				local max_dist = template.max_teleport_distance
+				local tries = template.find_valid_pos_attempts
+				local min_player_dist = template.min_dist_from_players
+				local side = Managers.state.side.side_by_unit[owner_unit]
+				local validation_data = {
+					side = side,
+					min_dist_sqr = min_player_dist * min_player_dist
 				}
-				local get_spawn_pos_on_circle_with_func_range = ConflictUtils.get_spawn_pos_on_circle_with_func_range(var_37_0.nav_world, var_37_1, min_teleport_distance, max_teleport_distance, find_valid_pos_attempts, fn_3, tbl, 8, 8)
+				local teleport_position = ConflictUtils.get_spawn_pos_on_circle_with_func_range(blackboard.nav_world, unit_pos, min_dist, max_dist, tries, teleport_validation_func, validation_data, 8, 8)
 
-				if not get_spawn_pos_on_circle_with_func_range then
-					local str = "enemy_grudge_warping"
-					local str_2 = "fx/grudge_marks_shadow_step"
+				if teleport_position then
+					local play_sound = "enemy_grudge_warping"
+					local play_effect = "fx/grudge_marks_shadow_step"
 
-					ConflictUtils.teleport_ai_unit(arg_36_0, get_spawn_pos_on_circle_with_func_range, str, str_2)
+					ConflictUtils.teleport_ai_unit(owner_unit, teleport_position, play_sound, play_effect)
 				end
 			end
 		end
 
-		Managers.state.entity:system("ai_navigation_system"):add_safe_navigation_callback(fn_2)
+		local ai_navigation_system = Managers.state.entity:system("ai_navigation_system")
+
+		ai_navigation_system:add_safe_navigation_callback(nav_callback)
 	end,
-	ai_crushing_blow = function (arg_38_0, arg_38_1, arg_38_2, arg_38_3, arg_38_4)
+	ai_crushing_blow = function (owner_unit, buff, params, world, param_order)
 		-- function 38
-		if not (not fn() and ALIVE[arg_38_0]) then
+		if not is_server() or not ALIVE[owner_unit] then
 			return
 		end
 
-		local var_38_0 = arg_38_2[arg_38_4.attacked_unit]
-		local var_38_1 = BLACKBOARDS[arg_38_0]
-		local has_extension = ScriptUnit.has_extension(var_38_0, "status_system")
+		local attacked_unit = params[param_order.attacked_unit]
+		local blackboard = BLACKBOARDS[owner_unit]
+		local status_extension = ScriptUnit.has_extension(attacked_unit, "status_system")
 
-		if not var_38_1 and not var_38_1.hit_through_block and not has_extension then
-			local extension = ScriptUnit.extension(var_38_0, "buff_system")
-			local buff_to_add = arg_38_1.template.buff_to_add
-			local action = var_38_1.action
+		if blackboard and blackboard.hit_through_block and status_extension then
+			local buff_extension = ScriptUnit.extension(attacked_unit, "buff_system")
+			local buff_template = buff.template
+			local buff_name = buff_template.buff_to_add
+			local action = blackboard.action
 
-			if not action and not action.fatigue_type then
-				local can_block, var_38_7, var_38_8, var_38_9 = has_extension:can_block(arg_38_0)
+			if action and action.fatigue_type then
+				local can_block, fatigue_point_costs_multiplier, improved_block, enemy_weapon_direction = status_extension:can_block(owner_unit)
 				local fatigue_type = action.fatigue_type
 
 				if type(fatigue_type) == "table" then
-					fatigue_type = Managers.state.difficulty:get_difficulty_value_from_table(fatigue_type)
+					local difficulty_manager = Managers.state.difficulty
+
+					fatigue_type = difficulty_manager:get_difficulty_value_from_table(fatigue_type)
 				end
 
-				has_extension:blocked_attack(fatigue_type, arg_38_0, var_38_7, var_38_8, var_38_9)
+				status_extension:blocked_attack(fatigue_type, owner_unit, fatigue_point_costs_multiplier, improved_block, enemy_weapon_direction)
 
-				if not fn() then
-					local network = Managers.state.network
-					local go_id = Managers.state.unit_storage:go_id(var_38_0)
-					local var_38_13 = NetworkLookup.fatigue_types[fatigue_type]
-					local game_object_or_level_id, var_38_15 = network:game_object_or_level_id(arg_38_0)
+				if is_server() then
+					local network_manager = Managers.state.network
+					local unit_storage = Managers.state.unit_storage
+					local go_id = unit_storage:go_id(attacked_unit)
+					local fatigue_type_id = NetworkLookup.fatigue_types[fatigue_type]
+					local attacker_unit_id, attacker_is_level_unit = network_manager:game_object_or_level_id(owner_unit)
 
-					network.network_transmit:send_rpc_clients("rpc_player_blocked_attack", go_id, var_38_13, game_object_or_level_id, var_38_7, var_38_8, var_38_9, var_38_15)
+					network_manager.network_transmit:send_rpc_clients("rpc_player_blocked_attack", go_id, fatigue_type_id, attacker_unit_id, fatigue_point_costs_multiplier, improved_block, enemy_weapon_direction, attacker_is_level_unit)
 				end
 			end
 
-			local var_38_16 = arg_38_2[arg_38_4.PROC_MODIFIABLE]
+			local proc_mod_table = params[param_order.PROC_MODIFIABLE]
 
-			var_38_16.damage_amount = 0
+			proc_mod_table.damage_amount = 0
 
-			if not action and not action.blocked_damage then
-				var_38_16.damage_amount = action.blocked_damage
+			if action and action.blocked_damage then
+				proc_mod_table.damage_amount = action.blocked_damage
 			end
 
-			local network_2 = Managers.state.network
-			local network_transmit = network_2.network_transmit
-			local unit_game_object_id = network_2:unit_game_object_id(var_38_0)
-			local var_38_20 = NetworkLookup.buff_templates[buff_to_add]
+			local network_manager = Managers.state.network
+			local network_transmit = network_manager.network_transmit
+			local unit_object_id = network_manager:unit_game_object_id(attacked_unit)
+			local buff_template_name_id = NetworkLookup.buff_templates[buff_name]
 
-			if not fn() then
-				extension:add_buff(buff_to_add, {
-					attacker_unit = arg_38_0
+			if is_server() then
+				buff_extension:add_buff(buff_name, {
+					attacker_unit = owner_unit
 				})
-				network_transmit:send_rpc_clients("rpc_add_buff", unit_game_object_id, var_38_20, unit_game_object_id, 0, false)
+				network_transmit:send_rpc_clients("rpc_add_buff", unit_object_id, buff_template_name_id, unit_object_id, 0, false)
 			else
-				network_transmit:send_rpc_server("rpc_add_buff", unit_game_object_id, var_38_20, unit_game_object_id, 0, true)
+				network_transmit:send_rpc_server("rpc_add_buff", unit_object_id, buff_template_name_id, unit_object_id, 0, true)
 			end
 		end
 	end,
-	ai_create_explosion = grudge_marks.buff_function_templates.ai_create_explosion,
-	grudge_mark_shockwave = function (arg_39_0, arg_39_1, arg_39_2, arg_39_3)
+	ai_create_explosion = settings.buff_function_templates.ai_create_explosion,
+	grudge_mark_shockwave = function (owner_unit, buff, params, world)
 		-- function 39
-		local str = "grenade_frag_01"
-		local get_template = ExplosionUtils.get_template("grudge_mark_shockwave")
-		local var_39_2 = POSITION_LOOKUP[arg_39_0]
+		local damage_source = "grenade_frag_01"
+		local explosion_template = ExplosionUtils.get_template("grudge_mark_shockwave")
+		local explosion_position = POSITION_LOOKUP[owner_unit]
 
-		DamageUtils.create_explosion(arg_39_3, arg_39_0, var_39_2, Quaternion.identity(), get_template, 1, str, true, false, arg_39_0, false)
+		DamageUtils.create_explosion(world, owner_unit, explosion_position, Quaternion.identity(), explosion_template, 1, damage_source, true, false, owner_unit, false)
 
-		local go_id = Managers.state.unit_storage:go_id(arg_39_0)
-		local var_39_4 = NetworkLookup.explosion_templates[get_template.name]
-		local var_39_5 = NetworkLookup.damage_sources[str]
+		local attacker_unit_id = Managers.state.unit_storage:go_id(owner_unit)
+		local explosion_template_id = NetworkLookup.explosion_templates[explosion_template.name]
+		local damage_source_id = NetworkLookup.damage_sources[damage_source]
 
-		Managers.state.network.network_transmit:send_rpc_clients("rpc_create_explosion", go_id, false, var_39_2, Quaternion.identity(), var_39_4, 1, var_39_5, 0, false, go_id)
+		Managers.state.network.network_transmit:send_rpc_clients("rpc_create_explosion", attacker_unit_id, false, explosion_position, Quaternion.identity(), explosion_template_id, 1, damage_source_id, 0, false, attacker_unit_id)
 	end,
-	grudge_mark_termite_shockwave = function (arg_40_0, arg_40_1, arg_40_2, arg_40_3)
+	grudge_mark_termite_shockwave = function (owner_unit, buff, params, world)
 		-- function 40
-		local str = "grenade_frag_01"
-		local get_template = ExplosionUtils.get_template("grudge_mark_termite_shockwave")
-		local var_40_2 = POSITION_LOOKUP[arg_40_0]
+		local damage_source = "grenade_frag_01"
+		local explosion_template = ExplosionUtils.get_template("grudge_mark_termite_shockwave")
+		local explosion_position = POSITION_LOOKUP[owner_unit]
 
-		DamageUtils.create_explosion(arg_40_3, arg_40_0, var_40_2, Quaternion.identity(), get_template, 1, str, true, false, arg_40_0, false)
+		DamageUtils.create_explosion(world, owner_unit, explosion_position, Quaternion.identity(), explosion_template, 1, damage_source, true, false, owner_unit, false)
 
-		local go_id = Managers.state.unit_storage:go_id(arg_40_0)
-		local var_40_4 = NetworkLookup.explosion_templates[get_template.name]
-		local var_40_5 = NetworkLookup.damage_sources[str]
+		local attacker_unit_id = Managers.state.unit_storage:go_id(owner_unit)
+		local explosion_template_id = NetworkLookup.explosion_templates[explosion_template.name]
+		local damage_source_id = NetworkLookup.damage_sources[damage_source]
 
-		Managers.state.network.network_transmit:send_rpc_clients("rpc_create_explosion", go_id, false, var_40_2, Quaternion.identity(), var_40_4, 1, var_40_5, 0, false, go_id)
+		Managers.state.network.network_transmit:send_rpc_clients("rpc_create_explosion", attacker_unit_id, false, explosion_position, Quaternion.identity(), explosion_template_id, 1, damage_source_id, 0, false, attacker_unit_id)
 	end
 }
-grudge_marks.stacking_buff_functions = {}
+settings.stacking_buff_functions = {}

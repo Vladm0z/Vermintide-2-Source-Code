@@ -1,21 +1,21 @@
 -- chunkname: @scripts/settings/dlcs/paperweight/paperweight_equipment_settings.lua
 
-local paperweight = DLCSettings.paperweight
+local settings = DLCSettings.paperweight
 
-paperweight.item_master_list_file_names = {
+settings.item_master_list_file_names = {
 	"scripts/settings/equipment/item_master_list_paperweight"
 }
-paperweight.weapon_skins_file_names = {
+settings.weapon_skins_file_names = {
 	"scripts/settings/equipment/weapon_skins_paperweight"
 }
-paperweight.weapon_template_file_names = {
+settings.weapon_template_file_names = {
 	"scripts/settings/equipment/weapon_templates/1h_axes_wood_elf",
 	"scripts/settings/equipment/weapon_templates/1h_crowbills",
 	"scripts/settings/equipment/weapon_templates/dual_wield_axe_falchion",
 	"scripts/settings/equipment/weapon_templates/dual_wield_hammer_sword",
 	"scripts/settings/equipment/weapon_templates/dual_wield_hammers"
 }
-paperweight.inventory_package_list = {
+settings.inventory_package_list = {
 	"units/weapons/player/wpn_we_axe_01_t1/wpn_we_axe_01_t1",
 	"units/weapons/player/wpn_we_axe_01_t1/wpn_we_axe_01_t1_3p",
 	"units/weapons/player/wpn_we_axe_01_t2/wpn_we_axe_01_t2",
@@ -47,7 +47,7 @@ paperweight.inventory_package_list = {
 	"units/weapons/player/wpn_emp_sword_06_t2/wpn_emp_sword_06_t2_runed_01",
 	"units/weapons/player/wpn_emp_sword_06_t2/wpn_emp_sword_06_t2_runed_01_3p"
 }
-paperweight.default_items = {
+settings.default_items = {
 	we_1h_axe = {
 		inventory_icon = "icon_we_1h_axe_01",
 		description = "description_default_holly_weapons",

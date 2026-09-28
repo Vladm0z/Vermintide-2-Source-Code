@@ -1,7 +1,7 @@
 -- chunkname: @scripts/settings/breeds/breed_beastmen_bestigor.lua
 
-local scripts_utils_stagger_types = require("scripts/utils/stagger_types")
-local tbl = {
+local stagger_types = require("scripts/utils/stagger_types")
+local breed_data = {
 	detection_radius = 30,
 	perception_previous_attacker_stickyness_value = 0,
 	walk_speed = 2.75,
@@ -144,21 +144,21 @@ local tbl = {
 		walk_animation_merge_options = {},
 		move_animation_merge_options = {}
 	},
-	stagger_modifier_function = function (arg_1_0, arg_1_1, arg_1_2, arg_1_3, arg_1_4, arg_1_5)
+	stagger_modifier_function = function (stagger_type, duration, length, hit_zone_name, blackboard, breed)
 		-- function 1
-		if arg_1_4.stagger_type == scripts_utils_stagger_types.heavy then
-			if arg_1_0 ~= scripts_utils_stagger_types.heavy or not arg_1_4.heavy_stagger_immune_time then
-				arg_1_0 = scripts_utils_stagger_types.none
-				arg_1_1 = 0
-				arg_1_2 = 0
-			elseif arg_1_0 == scripts_utils_stagger_types.heavy or not arg_1_4.stagger_immune_time then
-				arg_1_0 = scripts_utils_stagger_types.none
-				arg_1_1 = 0
-				arg_1_2 = 0
+		if blackboard.stagger_type == stagger_types.heavy then
+			if stagger_type == stagger_types.heavy and blackboard.heavy_stagger_immune_time then
+				stagger_type = stagger_types.none
+				duration = 0
+				length = 0
+			elseif stagger_type ~= stagger_types.heavy and blackboard.stagger_immune_time then
+				stagger_type = stagger_types.none
+				duration = 0
+				length = 0
 			end
 		end
 
-		return arg_1_0, arg_1_1, arg_1_2
+		return stagger_type, duration, length
 	end,
 	run_on_spawn = AiBreedSnippets.on_beastmen_bestigor_spawn,
 	run_on_update = AiBreedSnippets.on_beastmen_bestigor_update,
@@ -312,14 +312,14 @@ local tbl = {
 	}
 }
 
-Breeds.beastmen_bestigor = table.create_copy(Breeds.beastmen_bestigor, tbl)
-Breeds.beastmen_bestigor_dummy = table.create_copy(Breeds.beastmen_bestigor_dummy, tbl)
+Breeds.beastmen_bestigor = table.create_copy(Breeds.beastmen_bestigor, breed_data)
+Breeds.beastmen_bestigor_dummy = table.create_copy(Breeds.beastmen_bestigor_dummy, breed_data)
 Breeds.beastmen_bestigor_dummy.behavior = "beastmen_dummy"
 Breeds.beastmen_bestigor_dummy.horde_behavior = "beastmen_dummy"
 Breeds.beastmen_bestigor_dummy.debug_spawn_category = "Misc"
 Breeds.beastmen_bestigor_dummy.perception = "perception_no_seeing"
 
-local tbl_2 = {
+local AttackIntensityPerDifficulty = {
 	sweep = {
 		easy = {
 			normal = 1.5,
@@ -484,7 +484,7 @@ local tbl_2 = {
 		}
 	}
 }
-local tbl_3 = {
+local action_data = {
 	alerted = {
 		no_hesitation = true,
 		cooldown = -1,
@@ -583,7 +583,7 @@ local tbl_3 = {
 		move_anim = "move_fwd",
 		width = 0.4,
 		considerations = UtilityConsiderations.bestigor_cleave_attack,
-		difficulty_attack_intensity = tbl_2,
+		difficulty_attack_intensity = AttackIntensityPerDifficulty,
 		knocked_down_attack_anim = {
 			"attack_downed"
 		},
@@ -617,7 +617,7 @@ local tbl_3 = {
 		move_anim = "move_fwd",
 		width = 2,
 		considerations = UtilityConsiderations.bestigor_sweep_attack,
-		difficulty_attack_intensity = tbl_2,
+		difficulty_attack_intensity = AttackIntensityPerDifficulty,
 		attack_anim = {
 			"attack_pounce",
 			"attack_pounce_2"
@@ -652,7 +652,7 @@ local tbl_3 = {
 		damage_type = "blunt",
 		unblockable = true,
 		attack_anim = "attack_push",
-		difficulty_attack_intensity = tbl_2,
+		difficulty_attack_intensity = AttackIntensityPerDifficulty,
 		considerations = UtilityConsiderations.storm_vermin_push_attack,
 		ignore_staggers = {
 			true,
@@ -713,7 +713,7 @@ local tbl_3 = {
 		player_push_speed = 9.5,
 		blocked_velocity_scale = 1.5,
 		charge_notification_sound_event = "Play_boss_aggro_enter",
-		difficulty_attack_intensity = tbl_2,
+		difficulty_attack_intensity = AttackIntensityPerDifficulty,
 		considerations = UtilityConsiderations.beastmen_charge,
 		charging_distance_thresholds = {
 			far = 10,
@@ -753,11 +753,11 @@ local tbl_3 = {
 		push_ai = {
 			stagger_distance = 1.5,
 			stagger_impact = {
-				scripts_utils_stagger_types.explosion,
-				scripts_utils_stagger_types.explosion,
-				scripts_utils_stagger_types.none,
-				scripts_utils_stagger_types.none,
-				scripts_utils_stagger_types.explosion
+				stagger_types.explosion,
+				stagger_types.explosion,
+				stagger_types.none,
+				stagger_types.none,
+				stagger_types.explosion
 			},
 			stagger_duration = {
 				3,
@@ -810,43 +810,42 @@ local tbl_3 = {
 		difficulty_duration = BreedTweaks.blocked_duration.beastmen_elite
 	},
 	stagger = {
-		custom_enter_function = function (arg_2_0, arg_2_1, arg_2_2, arg_2_3)
+		custom_enter_function = function (unit, blackboard, t, action)
 			-- function 2
-			local charge_stagger = arg_2_1.charge_stagger
-			local var_2_1
-			local var_2_2
+			local charge_stagger = blackboard.charge_stagger
+			local stagger_anims, override_rotation
 
-			if not arg_2_1.standard_bearer_stagger then
-				local var_2_3 = arg_2_3.standard_stagger_anims[arg_2_1.stagger_type]
+			if blackboard.standard_bearer_stagger then
+				local stagger_anims = action.standard_stagger_anims[blackboard.stagger_type]
 
-				arg_2_1.standard_bearer_stagger = nil
+				blackboard.standard_bearer_stagger = nil
 
-				return var_2_3, "idle"
+				return stagger_anims, "idle"
 			end
 
-			if not (not charge_stagger and arg_2_1.stagger_type == scripts_utils_stagger_types.explosion or arg_2_1.stagger_type == scripts_utils_stagger_types.weak) then
-				var_2_1 = arg_2_3.charge_stagger_anims[arg_2_1.stagger_type]
-				arg_2_1.charge_stagger = nil
+			if charge_stagger and blackboard.stagger_type ~= stagger_types.explosion and blackboard.stagger_type ~= stagger_types.weak then
+				stagger_anims = action.charge_stagger_anims[blackboard.stagger_type]
+				blackboard.charge_stagger = nil
 
-				local unbox = arg_2_1.stagger_direction:unbox()
-				local num = Quaternion.forward(Unit.local_rotation(arg_2_0, 0)) + Vector3.flat(unbox) * 0.5
+				local impact_dir = blackboard.stagger_direction:unbox()
+				local new_impact_dir = Quaternion.forward(Unit.local_rotation(unit, 0)) + Vector3.flat(impact_dir) * 0.5
 
-				arg_2_1.stagger_direction:store(Vector3.normalize(num))
+				blackboard.stagger_direction:store(Vector3.normalize(new_impact_dir))
 
-				var_2_2 = Quaternion.look(Vector3.normalize(num))
+				override_rotation = Quaternion.look(Vector3.normalize(new_impact_dir))
 			else
-				var_2_1 = arg_2_3.stagger_anims[arg_2_1.stagger_type]
+				stagger_anims = action.stagger_anims[blackboard.stagger_type]
 			end
 
-			if arg_2_1.stagger_type == scripts_utils_stagger_types.heavy then
-				arg_2_1.stagger_immune_time = arg_2_2 + 2.25
-				arg_2_1.heavy_stagger_immune_time = arg_2_2 + 1.5
-			elseif arg_2_1.stagger_type == scripts_utils_stagger_types.explosion then
-				arg_2_1.stagger_immune_time = arg_2_2 + 3.5
-				arg_2_1.heavy_stagger_immune_time = arg_2_2 + 3
+			if blackboard.stagger_type == stagger_types.heavy then
+				blackboard.stagger_immune_time = t + 2.25
+				blackboard.heavy_stagger_immune_time = t + 1.5
+			elseif blackboard.stagger_type == stagger_types.explosion then
+				blackboard.stagger_immune_time = t + 3.5
+				blackboard.heavy_stagger_immune_time = t + 3
 			end
 
-			return var_2_1, "idle", nil, var_2_2
+			return stagger_anims, "idle", nil, override_rotation
 		end,
 		stagger_anims = {
 			{
@@ -1267,4 +1266,4 @@ local tbl_3 = {
 	}
 }
 
-BreedActions.beastmen_bestigor = table.create_copy(BreedActions.beastmen_bestigor, tbl_3)
+BreedActions.beastmen_bestigor = table.create_copy(BreedActions.beastmen_bestigor, action_data)

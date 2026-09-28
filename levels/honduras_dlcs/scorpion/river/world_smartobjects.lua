@@ -1,6 +1,6 @@
 -- chunkname: @levels/honduras_dlcs/scorpion/river/world_smartobjects.lua
 
-local tbl = {
+local smart_objects = {
 	["2d60d7b7-65c3-49cf-9005-102efcf9aecd"] = {
 		{
 			smart_object_index = 151,
@@ -17653,13 +17653,13 @@ local tbl = {
 		}
 	}
 }
-local num = 736
-local str = "v1"
-local str_2 = "2017.MAY.05.05"
+local smart_object_count = 736
+local version = "v1"
+local ledgelator_version = "2017.MAY.05.05"
 
 return {
-	smart_objects = tbl,
-	smart_object_count = num,
-	version = str,
-	ledgelator_version = str_2
+	smart_objects = smart_objects,
+	smart_object_count = smart_object_count,
+	version = version,
+	ledgelator_version = ledgelator_version
 }

@@ -1,17 +1,17 @@
 -- chunkname: @scripts/settings/breeds/breed_chaos_exalted_champion.lua
 
-local scripts_utils_stagger_types = require("scripts/utils/stagger_types")
-local tbl = {
+local stagger_types = require("scripts/utils/stagger_types")
+local pushed_data = {
 	ahead_dist = 1.5,
 	push_width = 1.25,
 	push_forward_offset = 1.5,
 	push_stagger_distance = 1,
 	player_pushed_speed = 4,
 	push_stagger_impact = {
-		scripts_utils_stagger_types.medium,
-		scripts_utils_stagger_types.medium,
-		scripts_utils_stagger_types.none,
-		scripts_utils_stagger_types.none
+		stagger_types.medium,
+		stagger_types.medium,
+		stagger_types.none,
+		stagger_types.none
 	},
 	push_stagger_duration = {
 		1.5,
@@ -20,7 +20,7 @@ local tbl = {
 		0
 	}
 }
-local tbl_2 = {
+local breed_data = {
 	is_bot_threat = true,
 	perception_continuous = "perception_continuous_rat_ogre",
 	walk_speed = 2,
@@ -94,7 +94,7 @@ local tbl_2 = {
 	base_unit = "units/beings/enemies/chaos_warrior_boss/chr_chaos_warrior_boss",
 	enter_walk_distance = 1,
 	bots_flank_while_targeted = false,
-	displace_players_data = tbl,
+	displace_players_data = pushed_data,
 	infighting = InfightingSettings.boss,
 	detection_radius = math.huge,
 	perception_weights = {
@@ -299,35 +299,35 @@ local tbl_2 = {
 		bot_poison_wind = 1.5,
 		fire_grenade = 10
 	},
-	stagger_modifier_function = function (arg_1_0, arg_1_1, arg_1_2, arg_1_3, arg_1_4, arg_1_5)
+	stagger_modifier_function = function (stagger_type, duration, length, hit_zone_name, blackboard, breed)
 		-- function 1
-		local time = Managers.time:time("game")
+		local t = Managers.time:time("game")
 
-		if not (not arg_1_4.stagger_immune_time and not (time < arg_1_4.stagger_immune_time)) then
-			arg_1_0 = scripts_utils_stagger_types.none
-			arg_1_1 = 0
-			arg_1_2 = 0
+		if blackboard.stagger_immune_time and t < blackboard.stagger_immune_time then
+			stagger_type = stagger_types.none
+			duration = 0
+			length = 0
 		end
 
-		return arg_1_0, arg_1_1, arg_1_2
+		return stagger_type, duration, length
 	end,
 	difficulty_kill_achievements = {
 		"kill_chaos_exalted_champion_difficulty_rank",
 		"kill_chaos_exalted_champion_scorpion_hardest"
 	},
-	custom_death_enter_function = function (arg_2_0, arg_2_1, arg_2_2, arg_2_3, arg_2_4, arg_2_5)
+	custom_death_enter_function = function (unit, killer_unit, damage_type, death_hit_zone, t, damage_source)
 		-- function 2
-		if not Unit.alive(arg_2_1) then
+		if not Unit.alive(killer_unit) then
 			return
 		end
 
-		QuestSettings.check_killed_lord_as_last_player_standing(arg_2_1)
+		QuestSettings.check_killed_lord_as_last_player_standing(killer_unit)
 	end
 }
 
-Breeds.chaos_exalted_champion_warcamp = table.create_copy(Breeds.chaos_exalted_champion_warcamp, tbl_2)
+Breeds.chaos_exalted_champion_warcamp = table.create_copy(Breeds.chaos_exalted_champion_warcamp, breed_data)
 
-local tbl_3 = {
+local breed_data_norsca = {
 	death_sound_event = "Play_enemy_vce_chaos_warrior_die",
 	attack_player_sound_event = "Play_breed_triggered_sound",
 	server_controlled_health_bar = false,
@@ -344,21 +344,21 @@ local tbl_3 = {
 	max_health = BreedTweaks.max_health.norsca_champion
 }
 
-for k, v in pairs(tbl_2) do
-	local var_0_4 = tbl_3[k]
+for key, value in pairs(breed_data) do
+	local keep_value = breed_data_norsca[key]
 
-	if var_0_4 == "SET_TO_NIL" then
-		tbl_3[k] = nil
-	elseif var_0_4 ~= nil then
-		tbl_3[k] = var_0_4
+	if keep_value == "SET_TO_NIL" then
+		breed_data_norsca[key] = nil
+	elseif keep_value ~= nil then
+		breed_data_norsca[key] = keep_value
 	else
-		tbl_3[k] = v
+		breed_data_norsca[key] = value
 	end
 end
 
-Breeds.chaos_exalted_champion_norsca = table.create_copy(Breeds.chaos_exalted_champion_norsca, tbl_3)
+Breeds.chaos_exalted_champion_norsca = table.create_copy(Breeds.chaos_exalted_champion_norsca, breed_data_norsca)
 
-local tbl_4 = {
+local action_data = {
 	follow = {
 		move_anim = "move_fwd",
 		slow_approach_time = 2,
@@ -955,11 +955,11 @@ local tbl_4 = {
 				push_ai = {
 					stagger_distance = 3,
 					stagger_impact = {
-						scripts_utils_stagger_types.explosion,
-						scripts_utils_stagger_types.explosion,
-						scripts_utils_stagger_types.none,
-						scripts_utils_stagger_types.none,
-						scripts_utils_stagger_types.explosion
+						stagger_types.explosion,
+						stagger_types.explosion,
+						stagger_types.none,
+						stagger_types.none,
+						stagger_types.explosion
 					},
 					stagger_duration = {
 						4.5,
@@ -988,28 +988,33 @@ local tbl_4 = {
 						offset_up = 0
 					}
 				},
-				hit_ai_func = function (arg_3_0, arg_3_1, arg_3_2, arg_3_3, arg_3_4)
+				hit_ai_func = function (unit, blackboard, hit_unit, action, attack)
 					-- function 3
-					local tbl = {
+					local stat_names = {
 						"exalted_champion_charge_chaos_warrior",
 						"exalted_champion_charge_chaos_warrior_cata"
 					}
 
-					for i = 1, #tbl do
-						local get_difficulty = Managers.state.difficulty:get_difficulty()
+					for i = 1, #stat_names do
+						local current_difficulty = Managers.state.difficulty:get_difficulty()
+						local allowed_difficulties = QuestSettings.allowed_difficulties[stat_names[i]]
+						local allowed_difficulty = allowed_difficulties[current_difficulty]
 
-						if not (not QuestSettings.allowed_difficulties[tbl[i]][get_difficulty] and arg_3_1.hit_warrior_challenge_completed) then
-							local flag = BLACKBOARDS[arg_3_2].breed.name == "chaos_warrior"
-							local num_times_hit_chaos_warrior = arg_3_1.num_times_hit_chaos_warrior
+						if allowed_difficulty and not blackboard.hit_warrior_challenge_completed then
+							local hit_unit_blackboard = BLACKBOARDS[hit_unit]
+							local is_chaos_warrior = hit_unit_blackboard.breed.name == "chaos_warrior"
+							local num_times_hit_chaos_warrior = blackboard.num_times_hit_chaos_warrior
 
-							if not flag then
-								arg_3_1.num_times_hit_chaos_warrior = num_times_hit_chaos_warrior + 1
+							if is_chaos_warrior then
+								blackboard.num_times_hit_chaos_warrior = num_times_hit_chaos_warrior + 1
 							end
 
-							if arg_3_1.num_times_hit_chaos_warrior >= QuestSettings.exalted_champion_charge_chaos_warrior then
-								Managers.player:statistics_db():increment_stat_and_sync_to_clients(tbl[i])
+							if blackboard.num_times_hit_chaos_warrior >= QuestSettings.exalted_champion_charge_chaos_warrior then
+								local statistics_db = Managers.player:statistics_db()
 
-								arg_3_1.hit_warrior_challenge_completed = true
+								statistics_db:increment_stat_and_sync_to_clients(stat_names[i])
+
+								blackboard.hit_warrior_challenge_completed = true
 							end
 						end
 					end
@@ -1046,32 +1051,41 @@ local tbl_4 = {
 		attack_anim = "attack_pounce"
 	},
 	stagger = {
-		custom_enter_function = function (arg_4_0, arg_4_1, arg_4_2, arg_4_3)
+		custom_enter_function = function (unit, blackboard, t, action)
 			-- function 4
-			local var_4_0 = arg_4_1.action.stagger_anims[arg_4_1.stagger_type]
+			local stagger_anims = blackboard.action.stagger_anims[blackboard.stagger_type]
 
-			if arg_4_1.stagger_type == scripts_utils_stagger_types.explosion then
-				if not (not arg_4_1.chain_stagger_resistant_t and not (arg_4_2 > arg_4_1.chain_stagger_resistant_t)) then
-					arg_4_1.chain_stagger_resistant_t = nil
-					arg_4_1.num_chain_stagger = nil
+			if blackboard.stagger_type == stagger_types.explosion then
+				if blackboard.chain_stagger_resistant_t and t > blackboard.chain_stagger_resistant_t then
+					blackboard.chain_stagger_resistant_t = nil
+					blackboard.num_chain_stagger = nil
 				end
 
-				local num_chain_stagger = arg_4_1.num_chain_stagger
+				local num_chain_stagger_2 = blackboard.num_chain_stagger
 
-				num_chain_stagger = num_chain_stagger or 0
-				arg_4_1.num_chain_stagger = num_chain_stagger + 1
-
-				if not (arg_4_1.chain_stagger_resistant_t or not (arg_4_1.num_chain_stagger > 1) or arg_4_1.stagger_type ~= scripts_utils_stagger_types.explosion) then
-					arg_4_1.chain_stagger_resistant_t = arg_4_2 + 8
+				if not num_chain_stagger_2 then
+					-- Nothing
 				end
 
-				if not (not arg_4_1.chain_stagger_resistant_t and not (arg_4_2 < arg_4_1.chain_stagger_resistant_t)) then
-					var_4_0 = arg_4_1.action.stagger_anims[scripts_utils_stagger_types.heavy]
-					arg_4_1.stagger_time = arg_4_2 + 2
+				num_chain_stagger_2 = 0
+
+				local num_chain_stagger = num_chain_stagger_2
+
+				::label_4_0::
+
+				blackboard.num_chain_stagger = num_chain_stagger + 1
+
+				if not blackboard.chain_stagger_resistant_t and blackboard.num_chain_stagger > 1 and blackboard.stagger_type == stagger_types.explosion then
+					blackboard.chain_stagger_resistant_t = t + 8
+				end
+
+				if blackboard.chain_stagger_resistant_t and t < blackboard.chain_stagger_resistant_t then
+					stagger_anims = blackboard.action.stagger_anims[stagger_types.heavy]
+					blackboard.stagger_time = t + 2
 				end
 			end
 
-			return var_4_0, "idle"
+			return stagger_anims, "idle"
 		end,
 		stagger_anims = {
 			{
@@ -1199,7 +1213,7 @@ local tbl_4 = {
 	}
 }
 
-BreedActions.chaos_exalted_champion = table.create_copy(BreedActions.chaos_exalted_champion, tbl_4)
+BreedActions.chaos_exalted_champion = table.create_copy(BreedActions.chaos_exalted_champion, action_data)
 BreedActions.chaos_exalted_champion.angry_charge = table.create_copy(BreedActions.chaos_exalted_champion.angry_charge, BreedActions.chaos_exalted_champion.charge)
 BreedActions.chaos_exalted_champion.angry_charge.considerations = UtilityConsiderations.chaos_exalted_champion_angry_lunge_attack
 BreedActions.chaos_exalted_champion.norsca_charge = table.create_copy(BreedActions.chaos_exalted_champion.norsca_charge, BreedActions.chaos_exalted_champion.charge)

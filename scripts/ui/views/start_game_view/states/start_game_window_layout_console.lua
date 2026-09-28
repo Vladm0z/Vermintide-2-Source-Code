@@ -1,6 +1,6 @@
 -- chunkname: @scripts/ui/views/start_game_view/states/start_game_window_layout_console.lua
 
-local tbl = {
+local windows = {
 	panel = {
 		ignore_alignment = true,
 		name = "panel",
@@ -67,7 +67,7 @@ local tbl = {
 		class_name = "StartGameWindowLobbyBrowserConsole"
 	}
 }
-local tbl_2 = {
+local window_layouts = {
 	{
 		sound_event_enter = "play_gui_lobby_button_00_quickplay",
 		display_name = "start_game_window_adventure_title",
@@ -85,9 +85,9 @@ local tbl_2 = {
 			panel = 1,
 			background = 2
 		},
-		can_add_function = function (self)
+		can_add_function = function (overview)
 			-- function 1
-			return self:is_in_mechanism("adventure")
+			return overview:is_in_mechanism("adventure")
 		end
 	},
 	{
@@ -108,9 +108,9 @@ local tbl_2 = {
 			background = 2,
 			additional_settings = 4
 		},
-		can_add_function = function (self)
+		can_add_function = function (overview)
 			-- function 2
-			return self:is_in_mechanism("adventure")
+			return overview:is_in_mechanism("adventure")
 		end
 	},
 	{
@@ -131,9 +131,9 @@ local tbl_2 = {
 			background = 2,
 			mutator_summary = 4
 		},
-		can_add_function = function (self)
+		can_add_function = function (overview)
 			-- function 3
-			return self:is_in_mechanism("adventure")
+			return overview:is_in_mechanism("adventure")
 		end
 	},
 	{
@@ -153,11 +153,11 @@ local tbl_2 = {
 			panel = 1,
 			background = 2
 		},
-		can_add_function = function (self)
+		can_add_function = function (overview)
 			-- function 4
-			local is_in_mechanism = self:is_in_mechanism("adventure")
+			local is_in_mechanism = overview:is_in_mechanism("adventure")
 
-			is_in_mechanism = not is_in_mechanism and self:can_use_streaming()
+			is_in_mechanism = not not is_in_mechanism and not not overview:can_use_streaming()
 
 			return is_in_mechanism
 		end
@@ -177,11 +177,11 @@ local tbl_2 = {
 			panel = 1,
 			background = 2
 		},
-		can_add_function = function (self)
+		can_add_function = function (overview)
 			-- function 5
-			local is_in_mechanism = self:is_in_mechanism("adventure")
+			local is_in_mechanism = overview:is_in_mechanism("adventure")
 
-			is_in_mechanism = not is_in_mechanism and not IS_XB1
+			is_in_mechanism = not not is_in_mechanism and not not not IS_XB1
 
 			return is_in_mechanism
 		end
@@ -249,7 +249,7 @@ local tbl_2 = {
 		}
 	}
 }
-local tbl_3 = {
+local tbl = {
 	default = {
 		{
 			input_action = "confirm",
@@ -267,7 +267,7 @@ local tbl_3 = {
 			description_text = "input_description_level_preferences",
 			content_check_function = function ()
 				-- function 6
-				return PLATFORM ~= "xb1" or DLCSettings.quick_play_preferences
+				return PLATFORM == "xb1" and not not DLCSettings.quick_play_preferences
 			end
 		},
 		{
@@ -276,7 +276,7 @@ local tbl_3 = {
 			description_text = "map_friend_button_tooltip",
 			content_check_function = function ()
 				-- function 7
-				return not not IS_WINDOWS or not Managers.account:offline_mode()
+				return not IS_WINDOWS and not not not Managers.account:offline_mode()
 			end
 		}
 	},
@@ -308,7 +308,7 @@ local tbl_3 = {
 			description_text = "map_friend_button_tooltip",
 			content_check_function = function ()
 				-- function 8
-				return not not IS_WINDOWS or not Managers.account:offline_mode()
+				return not IS_WINDOWS and not not not Managers.account:offline_mode()
 			end
 		}
 	},
@@ -358,7 +358,7 @@ local tbl_3 = {
 			description_text = "map_friend_button_tooltip",
 			content_check_function = function ()
 				-- function 9
-				return not not IS_WINDOWS or not Managers.account:offline_mode()
+				return not IS_WINDOWS and not not not Managers.account:offline_mode()
 			end
 		}
 	},
@@ -390,7 +390,7 @@ local tbl_3 = {
 			description_text = "map_friend_button_tooltip",
 			content_check_function = function ()
 				-- function 10
-				return not not IS_WINDOWS or not Managers.account:offline_mode()
+				return not IS_WINDOWS and not not not Managers.account:offline_mode()
 			end
 		}
 	},
@@ -411,7 +411,7 @@ local tbl_3 = {
 			description_text = "map_friend_button_tooltip",
 			content_check_function = function ()
 				-- function 11
-				return not not IS_WINDOWS or not Managers.account:offline_mode()
+				return not IS_WINDOWS and not not not Managers.account:offline_mode()
 			end
 		}
 	},
@@ -432,7 +432,7 @@ local tbl_3 = {
 			description_text = "map_friend_button_tooltip",
 			content_check_function = function ()
 				-- function 12
-				return not not IS_WINDOWS or not Managers.account:offline_mode()
+				return not IS_WINDOWS and not not not Managers.account:offline_mode()
 			end
 		}
 	},
@@ -459,7 +459,7 @@ local tbl_3 = {
 			description_text = "map_friend_button_tooltip",
 			content_check_function = function ()
 				-- function 13
-				return not not IS_WINDOWS or not Managers.account:offline_mode()
+				return not IS_WINDOWS and not not not Managers.account:offline_mode()
 			end
 		},
 		{
@@ -486,7 +486,7 @@ local tbl_3 = {
 			description_text = "map_friend_button_tooltip",
 			content_check_function = function ()
 				-- function 14
-				return not not IS_WINDOWS or not Managers.account:offline_mode()
+				return not IS_WINDOWS and not not not Managers.account:offline_mode()
 			end
 		},
 		{
@@ -507,7 +507,7 @@ local tbl_3 = {
 			description_text = "map_friend_button_tooltip",
 			content_check_function = function ()
 				-- function 15
-				return not not IS_WINDOWS or not Managers.account:offline_mode()
+				return not IS_WINDOWS and not not not Managers.account:offline_mode()
 			end
 		}
 	},
@@ -570,10 +570,10 @@ local tbl_3 = {
 		}
 	}
 }
-local tbl_4 = {
+local tbl_2 = {
 	ignore_generic_actions = true
 }
-local tbl_5 = {
+local tbl_3 = {
 	{
 		input_action = "d_horizontal",
 		priority = 1,
@@ -581,23 +581,23 @@ local tbl_5 = {
 		ignore_keybinding = true
 	}
 }
-local tbl_6 = {
+local tbl_4 = {
 	input_action = "confirm",
 	priority = 2
 }
 local flag
 
-flag = not IS_XB1 and "dlc1_4_input_description_storepage" and "buy_now"
-tbl_6.description_text = flag
-tbl_5[2] = tbl_6
-tbl_5[3] = {
+flag = (not IS_XB1 or not "dlc1_4_input_description_storepage") and not not "buy_now"
+tbl_4.description_text = flag
+tbl_3[2] = tbl_4
+tbl_3[3] = {
 	input_action = "back",
 	priority = 3,
 	description_text = "input_description_back"
 }
-tbl_4.actions = tbl_5
-tbl_3.select_area_buy = tbl_4
-tbl_3.select_area_base = {
+tbl_2.actions = tbl_3
+tbl.select_area_buy = tbl_2
+tbl.select_area_base = {
 	ignore_generic_actions = true,
 	actions = {
 		{
@@ -613,7 +613,7 @@ tbl_3.select_area_base = {
 		}
 	}
 }
-tbl_3.select_area_confirm = {
+tbl.select_area_confirm = {
 	ignore_generic_actions = true,
 	actions = {
 		{
@@ -634,7 +634,7 @@ tbl_3.select_area_confirm = {
 		}
 	}
 }
-tbl_3.select_mission = {
+tbl.select_mission = {
 	ignore_generic_actions = true,
 	actions = {
 		{
@@ -650,7 +650,7 @@ tbl_3.select_mission = {
 		}
 	}
 }
-tbl_3.select_mission_confirm = {
+tbl.select_mission_confirm = {
 	ignore_generic_actions = true,
 	actions = {
 		{
@@ -671,7 +671,7 @@ tbl_3.select_mission_confirm = {
 		}
 	}
 }
-tbl_3.select_heroic_deed = {
+tbl.select_heroic_deed = {
 	ignore_generic_actions = true,
 	actions = {
 		{
@@ -707,7 +707,7 @@ tbl_3.select_heroic_deed = {
 		}
 	}
 }
-tbl_3.play_available = {
+tbl.play_available = {
 	actions = {
 		{
 			input_action = "refresh",
@@ -716,7 +716,7 @@ tbl_3.play_available = {
 		}
 	}
 }
-tbl_3.play_available_lock = {
+tbl.play_available_lock = {
 	actions = {
 		{
 			input_action = "refresh",
@@ -730,7 +730,7 @@ tbl_3.play_available_lock = {
 		}
 	}
 }
-tbl_3.search_available = {
+tbl.search_available = {
 	actions = {
 		{
 			input_action = "refresh",
@@ -739,7 +739,7 @@ tbl_3.search_available = {
 		}
 	}
 }
-tbl_3.cancel_matchmaking = {
+tbl.cancel_matchmaking = {
 	actions = {
 		{
 			input_action = "refresh",
@@ -748,106 +748,8 @@ tbl_3.cancel_matchmaking = {
 		}
 	}
 }
-tbl_3.cancel_matchmaking_lock = {
+tbl.cancel_matchmaking_lock = {
 	actions = {
-		{
-			input_action = "refresh",
-			priority = 6,
-			description_text = "cancel_matchmaking"
-		},
-		{
-			input_action = "right_stick_press",
-			priority = 7,
-			description_text = "start_game_window_disallow_join"
-		}
-	}
-}
-tbl_3.set_next_weave_available = {
-	actions = {
-		{
-			input_action = "refresh",
-			priority = 1,
-			description_text = "input_description_play"
-		}
-	}
-}
-tbl_3.play_available_set_next_weave_available = {
-	actions = {
-		{
-			input_action = "special_1",
-			priority = 1,
-			description_text = "input_description_set_next_weave"
-		},
-		{
-			input_action = "refresh",
-			priority = 6,
-			description_text = "input_description_play"
-		}
-	}
-}
-tbl_3.cancel_available_set_next_weave_available = {
-	actions = {
-		{
-			input_action = "special_1",
-			priority = 1,
-			description_text = "input_description_set_next_weave"
-		},
-		{
-			input_action = "refresh",
-			priority = 6,
-			description_text = "cancel_matchmaking"
-		}
-	}
-}
-tbl_3.set_next_weave_available = {
-	actions = {
-		{
-			input_action = "special_1",
-			priority = 1,
-			description_text = "input_description_set_next_weave"
-		}
-	}
-}
-tbl_3.set_next_weave_available_lock = {
-	actions = {
-		{
-			input_action = "refresh",
-			priority = 1,
-			description_text = "input_description_play"
-		},
-		{
-			input_action = "right_stick_press",
-			priority = 7,
-			description_text = "start_game_window_disallow_join"
-		}
-	}
-}
-tbl_3.play_available_set_next_weave_available_lock = {
-	actions = {
-		{
-			input_action = "special_1",
-			priority = 1,
-			description_text = "input_description_set_next_weave"
-		},
-		{
-			input_action = "refresh",
-			priority = 6,
-			description_text = "input_description_play"
-		},
-		{
-			input_action = "right_stick_press",
-			priority = 7,
-			description_text = "start_game_window_disallow_join"
-		}
-	}
-}
-tbl_3.cancel_available_set_next_weave_available_lock = {
-	actions = {
-		{
-			input_action = "special_1",
-			priority = 1,
-			description_text = "input_description_set_next_weave"
-		},
 		{
 			input_action = "refresh",
 			priority = 6,
@@ -860,7 +762,105 @@ tbl_3.cancel_available_set_next_weave_available_lock = {
 		}
 	}
 }
-tbl_3.set_next_weave_available_lock = {
+tbl.set_next_weave_available = {
+	actions = {
+		{
+			input_action = "refresh",
+			priority = 1,
+			description_text = "input_description_play"
+		}
+	}
+}
+tbl.play_available_set_next_weave_available = {
+	actions = {
+		{
+			input_action = "special_1",
+			priority = 1,
+			description_text = "input_description_set_next_weave"
+		},
+		{
+			input_action = "refresh",
+			priority = 6,
+			description_text = "input_description_play"
+		}
+	}
+}
+tbl.cancel_available_set_next_weave_available = {
+	actions = {
+		{
+			input_action = "special_1",
+			priority = 1,
+			description_text = "input_description_set_next_weave"
+		},
+		{
+			input_action = "refresh",
+			priority = 6,
+			description_text = "cancel_matchmaking"
+		}
+	}
+}
+tbl.set_next_weave_available = {
+	actions = {
+		{
+			input_action = "special_1",
+			priority = 1,
+			description_text = "input_description_set_next_weave"
+		}
+	}
+}
+tbl.set_next_weave_available_lock = {
+	actions = {
+		{
+			input_action = "refresh",
+			priority = 1,
+			description_text = "input_description_play"
+		},
+		{
+			input_action = "right_stick_press",
+			priority = 7,
+			description_text = "start_game_window_disallow_join"
+		}
+	}
+}
+tbl.play_available_set_next_weave_available_lock = {
+	actions = {
+		{
+			input_action = "special_1",
+			priority = 1,
+			description_text = "input_description_set_next_weave"
+		},
+		{
+			input_action = "refresh",
+			priority = 6,
+			description_text = "input_description_play"
+		},
+		{
+			input_action = "right_stick_press",
+			priority = 7,
+			description_text = "start_game_window_disallow_join"
+		}
+	}
+}
+tbl.cancel_available_set_next_weave_available_lock = {
+	actions = {
+		{
+			input_action = "special_1",
+			priority = 1,
+			description_text = "input_description_set_next_weave"
+		},
+		{
+			input_action = "refresh",
+			priority = 6,
+			description_text = "cancel_matchmaking"
+		},
+		{
+			input_action = "right_stick_press",
+			priority = 7,
+			description_text = "start_game_window_disallow_join"
+		}
+	}
+}
+tbl.set_next_weave_available_lock = {
 	actions = {
 		{
 			input_action = "special_1",
@@ -874,7 +874,7 @@ tbl_3.set_next_weave_available_lock = {
 		}
 	}
 }
-tbl_3.default_lobby_browser = {
+tbl.default_lobby_browser = {
 	{
 		input_action = "left_stick",
 		priority = 1,
@@ -887,7 +887,7 @@ tbl_3.default_lobby_browser = {
 		description_text = "input_description_close"
 	}
 }
-tbl_3.filter = {
+tbl.filter = {
 	actions = {
 		{
 			input_action = "special_1",
@@ -906,7 +906,7 @@ tbl_3.filter = {
 		}
 	}
 }
-tbl_3.join_filter = {
+tbl.join_filter = {
 	actions = {
 		{
 			input_action = "special_1",
@@ -930,7 +930,7 @@ tbl_3.join_filter = {
 		}
 	}
 }
-tbl_3.set_filter = {
+tbl.set_filter = {
 	actions = {
 		{
 			input_action = "confirm",
@@ -940,111 +940,115 @@ tbl_3.set_filter = {
 	}
 }
 
-DLCUtils.merge("start_game_layout_console_generic_inputs", tbl_3)
+local generic_input_actions = tbl
 
-local tbl_7 = {
+DLCUtils.merge("start_game_layout_console_generic_inputs", generic_input_actions)
+
+local mechanism_custom_game_settings = {
 	adventure = {
 		game_mode_type = "custom",
 		difficulty_index_getter_name = "completed_level_difficulty_index",
 		layout_name = "area_selection"
 	}
 }
-local tbl_8 = {
+local mechanism_twitch_settings = {
 	adventure = {
 		game_mode_type = "twitch",
 		difficulty_index_getter_name = "completed_level_difficulty_index",
 		layout_name = "area_selection"
 	}
 }
-local tbl_9 = {
+local mechanism_quickplay_settings = {
 	adventure = {
 		game_mode_type = "adventure",
 		layout_name = "area_selection"
 	}
 }
-local tbl_10 = {}
+local save_data_table_maps = {}
 
-DLCUtils.map("start_game_window_layout_console", function (self)
+DLCUtils.map("start_game_window_layout_console", function (start_game_window_layout_console)
 	-- function 16
-	local windows = self.windows
+	local new_windows = start_game_window_layout_console.windows
 
-	if not windows then
-		for k, v in pairs(windows) do
-			tbl[k] = v
+	if new_windows then
+		for name, window in pairs(new_windows) do
+			windows[name] = window
 		end
 	end
 
-	local window_layouts = self.window_layouts
+	local new_window_layouts = start_game_window_layout_console.window_layouts
 
-	if not window_layouts then
-		for k_2 = 1, #window_layouts do
-			tbl_2[#tbl_2 + 1] = window_layouts[k_2]
+	if new_window_layouts then
+		for i = 1, #new_window_layouts do
+			window_layouts[#window_layouts + 1] = new_window_layouts[i]
 		end
 	end
 
-	local mechanism_custom_game = self.mechanism_custom_game
+	local dlc_mechanism_custom_game = start_game_window_layout_console.mechanism_custom_game
 
-	if not mechanism_custom_game then
-		local mechanism_name = mechanism_custom_game.mechanism_name
+	if dlc_mechanism_custom_game then
+		local mechanism_name = dlc_mechanism_custom_game.mechanism_name
 
-		fassert(tbl_7[mechanism_name] == nil, "Trying to set custom_game for the mechanism '%s' which is already set.", mechanism_name)
+		fassert(mechanism_custom_game_settings[mechanism_name] == nil, "Trying to set custom_game for the mechanism '%s' which is already set.", mechanism_name)
 
-		tbl_7[mechanism_name] = mechanism_custom_game
+		mechanism_custom_game_settings[mechanism_name] = dlc_mechanism_custom_game
 	end
 
-	local mechanism_twitch = self.mechanism_twitch
+	local dlc_mechanism_twitch = start_game_window_layout_console.mechanism_twitch
 
-	if not mechanism_twitch then
-		local mechanism_name_2 = mechanism_twitch.mechanism_name
+	if dlc_mechanism_twitch then
+		local mechanism_name = dlc_mechanism_twitch.mechanism_name
 
-		fassert(tbl_8[mechanism_name_2] == nil, "Trying to set twitch for the mechanism '%s' which is already set.", mechanism_name_2)
+		fassert(mechanism_twitch_settings[mechanism_name] == nil, "Trying to set twitch for the mechanism '%s' which is already set.", mechanism_name)
 
-		tbl_8[mechanism_name_2] = mechanism_twitch
+		mechanism_twitch_settings[mechanism_name] = dlc_mechanism_twitch
 	end
 
-	local mechanism_quickplay = self.mechanism_quickplay
+	local dlc_mechanism_quickplay = start_game_window_layout_console.mechanism_quickplay
 
-	if not mechanism_quickplay then
-		local mechanism_name_3 = mechanism_quickplay.mechanism_name
+	if dlc_mechanism_quickplay then
+		local mechanism_name = dlc_mechanism_quickplay.mechanism_name
 
-		fassert(tbl_9[mechanism_name_3] == nil, "Trying to set twitch for the mechanism '%s' which is already set.", mechanism_name_3)
+		fassert(mechanism_quickplay_settings[mechanism_name] == nil, "Trying to set twitch for the mechanism '%s' which is already set.", mechanism_name)
 
-		tbl_9[mechanism_name_3] = mechanism_quickplay
+		mechanism_quickplay_settings[mechanism_name] = dlc_mechanism_quickplay
 	end
 end)
-DLCUtils.merge("start_game_save_data_table_map_console", tbl_10)
+DLCUtils.merge("start_game_save_data_table_map_console", save_data_table_maps)
 
-local huge = math.huge
+local HUGE = math.huge
 
-table.sort(tbl_2, function (self, arg_17_1)
+table.sort(window_layouts, function (a, b)
 	-- function 17
-	local panel_sorting = self.panel_sorting
+	local panel_sorting = a.panel_sorting
 
-	panel_sorting = panel_sorting or huge
+	panel_sorting = not not panel_sorting or not not HUGE
 
-	local panel_sorting_2 = arg_17_1.panel_sorting
+	local panel_sorting_2 = b.panel_sorting
 
-	panel_sorting_2 = panel_sorting_2 or huge
+	panel_sorting_2 = not not panel_sorting_2 or not not HUGE
 
 	return panel_sorting < panel_sorting_2
 end)
 
-local tbl_11 = {}
+local video_resources = {}
 
-for k, v in pairs(AreaSettings) do
-	tbl_11[k] = v.video_settings
+for area_name, settings in pairs(AreaSettings) do
+	local video_settings = settings.video_settings
+
+	video_resources[area_name] = video_settings
 end
 
-local num = 5
+local MAX_ACTIVE_WINDOWS = 5
 
 return {
-	max_active_windows = num,
-	windows = tbl,
-	window_layouts = tbl_2,
-	generic_input_actions = tbl_3,
-	video_resources = tbl_11,
-	mechanism_custom_game_settings = tbl_7,
-	mechanism_twitch_settings = tbl_8,
-	mechanism_quickplay_settings = tbl_9,
-	save_data_table_maps = tbl_10
+	max_active_windows = MAX_ACTIVE_WINDOWS,
+	windows = windows,
+	window_layouts = window_layouts,
+	generic_input_actions = generic_input_actions,
+	video_resources = video_resources,
+	mechanism_custom_game_settings = mechanism_custom_game_settings,
+	mechanism_twitch_settings = mechanism_twitch_settings,
+	mechanism_quickplay_settings = mechanism_quickplay_settings,
+	save_data_table_maps = save_data_table_maps
 }

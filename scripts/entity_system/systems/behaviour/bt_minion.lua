@@ -1,9 +1,9 @@
 -- chunkname: @scripts/entity_system/systems/behaviour/bt_minion.lua
 
-local flag = true
+local USE_PRECOMPILED_ROOT_TABLES = true
 local BreedBehaviors = BreedBehaviors
 
-BreedBehaviors = BreedBehaviors or {}
+BreedBehaviors = not not BreedBehaviors or not not {}
 BreedBehaviors = BreedBehaviors
 
 dofile("scripts/entity_system/systems/behaviour/trees/skaven/skaven_gutter_runner_behavior")
@@ -58,14 +58,14 @@ dofile("scripts/entity_system/systems/behaviour/trees/critters/critter_nurgling_
 dofile("scripts/entity_system/systems/behaviour/trees/training_dummy_behavior")
 DLCUtils.dofile_list("behaviour_trees")
 
-if not flag then
-	for k, v in pairs(BreedBehaviors) do
-		v[1] = "BTSelector_" .. k
-		v.name = k .. "_GENERATED"
+if USE_PRECOMPILED_ROOT_TABLES then
+	for bt_name, bt_node in pairs(BreedBehaviors) do
+		bt_node[1] = "BTSelector_" .. bt_name
+		bt_node.name = bt_name .. "_GENERATED"
 	end
 else
-	for k_2, v_2 in pairs(BreedBehaviors) do
-		v_2[1] = "BTSelector"
-		v_2.name = k_2
+	for bt_name, bt_node in pairs(BreedBehaviors) do
+		bt_node[1] = "BTSelector"
+		bt_node.name = bt_name
 	end
 end

@@ -4,169 +4,175 @@ require("scripts/entity_system/systems/behaviour/nodes/bt_node")
 
 BTPackMasterAttackAction = class(BTPackMasterAttackAction, BTNode)
 
-BTPackMasterAttackAction.init = function (arg_1_0, ...)
+BTPackMasterAttackAction.init = function (self, ...)
 	-- function 1
-	BTPackMasterAttackAction.super.init(arg_1_0, ...)
+	BTPackMasterAttackAction.super.init(self, ...)
 end
 
 BTPackMasterAttackAction.name = "BTPackMasterAttackAction"
 
-BTPackMasterAttackAction.enter = function (self, arg_2_1, arg_2_2, arg_2_3)
+BTPackMasterAttackAction.enter = function (self, unit, blackboard, t)
 	-- function 2
-	arg_2_2.action = self._tree_node.action_data
-	arg_2_2.active_node = BTPackMasterAttackAction
-	arg_2_2.attacks_done = 0
-	arg_2_2.attack_aborted = nil
-	arg_2_2.attack_success = nil
-	arg_2_2.drag_target_unit = arg_2_2.target_unit
+	local action = self._tree_node.action_data
 
-	local has_extension = ScriptUnit.has_extension(arg_2_2.target_unit, "status_system")
+	blackboard.action = action
+	blackboard.active_node = BTPackMasterAttackAction
+	blackboard.attacks_done = 0
+	blackboard.attack_aborted = nil
+	blackboard.attack_success = nil
+	blackboard.drag_target_unit = blackboard.target_unit
 
-	has_extension = has_extension or nil
-	arg_2_2.target_unit_status_extension = has_extension
+	local has_extension = ScriptUnit.has_extension(blackboard.target_unit, "status_system")
 
-	arg_2_2.navigation_extension:set_enabled(false)
-	arg_2_2.locomotion_extension:set_wanted_velocity(Vector3.zero())
+	has_extension = not not has_extension or not not nil
+	blackboard.target_unit_status_extension = has_extension
+
+	blackboard.navigation_extension:set_enabled(false)
+	blackboard.locomotion_extension:set_wanted_velocity(Vector3.zero())
 end
 
-BTPackMasterAttackAction.leave = function (arg_3_0, arg_3_1, arg_3_2, arg_3_3, arg_3_4, arg_3_5)
+BTPackMasterAttackAction.leave = function (self, unit, blackboard, t, reason, destroy)
 	-- function 3
-	arg_3_2.navigation_extension:set_enabled(true)
+	blackboard.navigation_extension:set_enabled(true)
 
-	if arg_3_4 ~= "done" then
-		arg_3_2.packmaster_target_group = nil
+	if reason ~= "done" then
+		blackboard.packmaster_target_group = nil
 
-		if not arg_3_2.attack_success and not Unit.alive(arg_3_2.drag_target_unit) then
-			StatusUtils.set_grabbed_by_pack_master_network("pack_master_pulling", arg_3_2.drag_target_unit, false, arg_3_1)
+		if blackboard.attack_success and Unit.alive(blackboard.drag_target_unit) then
+			StatusUtils.set_grabbed_by_pack_master_network("pack_master_pulling", blackboard.drag_target_unit, false, unit)
 			print("Packmaster weird case")
 		end
 
-		arg_3_2.target_unit = nil
-		arg_3_2.drag_target_unit = nil
+		blackboard.target_unit = nil
+		blackboard.drag_target_unit = nil
 
-		if not arg_3_5 then
-			LocomotionUtils.set_animation_driven_movement(arg_3_1, false)
+		if not destroy then
+			LocomotionUtils.set_animation_driven_movement(unit, false)
 		end
 	end
 
-	arg_3_2.target_unit_status_extension = nil
-	arg_3_2.active_node = nil
-	arg_3_2.attack_aborted = nil
-	arg_3_2.attack_finished = nil
-	arg_3_2.attack_success = nil
-	arg_3_2.attack_time_ends = nil
-	arg_3_2.attack_cooldown = arg_3_3 + arg_3_2.action.cooldown
-	arg_3_2.action = nil
-	arg_3_2.create_bot_threat_at = nil
+	blackboard.target_unit_status_extension = nil
+	blackboard.active_node = nil
+	blackboard.attack_aborted = nil
+	blackboard.attack_finished = nil
+	blackboard.attack_success = nil
+	blackboard.attack_time_ends = nil
+	blackboard.attack_cooldown = t + blackboard.action.cooldown
+	blackboard.action = nil
+	blackboard.create_bot_threat_at = nil
 end
 
-BTPackMasterAttackAction.run = function (self, arg_4_1, arg_4_2, arg_4_3, arg_4_4)
+BTPackMasterAttackAction.run = function (self, unit, blackboard, t, dt)
 	-- function 4
-	if not AiUtils.is_of_interest_to_packmaster(arg_4_1, arg_4_2.target_unit) then
+	if not AiUtils.is_of_interest_to_packmaster(unit, blackboard.target_unit) then
 		return "failed"
 	end
 
-	if not arg_4_2.attack_aborted then
-		Managers.state.network:anim_event(arg_4_1, "idle")
+	if blackboard.attack_aborted then
+		local network_manager = Managers.state.network
+
+		network_manager:anim_event(unit, "idle")
 
 		return "failed"
 	end
 
-	if not arg_4_2.attack_success then
+	if blackboard.attack_success then
 		return "done"
 	end
 
-	self:attack(arg_4_1, arg_4_3, arg_4_4, arg_4_2)
+	self:attack(unit, t, dt, blackboard)
 
 	return "running"
 end
 
-BTPackMasterAttackAction.attack = function (self, arg_5_1, arg_5_2, arg_5_3, arg_5_4)
+BTPackMasterAttackAction.attack = function (self, unit, t, dt, blackboard)
 	-- function 5
-	local action = arg_5_4.action
-	local locomotion_extension = arg_5_4.locomotion_extension
+	local action = blackboard.action
+	local locomotion_extension = blackboard.locomotion_extension
 
-	if arg_5_4.move_state ~= "attacking" then
-		arg_5_4.move_state = "attacking"
+	if blackboard.move_state ~= "attacking" then
+		blackboard.move_state = "attacking"
 
 		locomotion_extension:use_lerp_rotation(true)
-		LocomotionUtils.set_animation_driven_movement(arg_5_1, true, false, true)
-		Managers.state.network:anim_event(arg_5_1, action.attack_anim)
+		LocomotionUtils.set_animation_driven_movement(unit, true, false, true)
+		Managers.state.network:anim_event(unit, action.attack_anim)
 
-		arg_5_4.attack_time_ends = arg_5_2 + action.attack_anim_duration
-		arg_5_4.create_bot_threat_at = arg_5_2 + action.bot_threat_start_time
+		blackboard.attack_time_ends = t + action.attack_anim_duration
+		blackboard.create_bot_threat_at = t + action.bot_threat_start_time
 	end
 
-	local rotation_towards_unit = LocomotionUtils.rotation_towards_unit(arg_5_1, arg_5_4.target_unit)
+	local rotation = LocomotionUtils.rotation_towards_unit(unit, blackboard.target_unit)
 
-	locomotion_extension:set_wanted_rotation(rotation_towards_unit)
+	locomotion_extension:set_wanted_rotation(rotation)
 
-	if not (not arg_5_4.create_bot_threat_at and not (arg_5_2 > arg_5_4.create_bot_threat_at)) then
-		self:create_bot_threat(arg_5_1, arg_5_4, arg_5_2)
+	if blackboard.create_bot_threat_at and t > blackboard.create_bot_threat_at then
+		self:create_bot_threat(unit, blackboard, t)
 
-		arg_5_4.create_bot_threat_at = nil
+		blackboard.create_bot_threat_at = nil
 	end
 
-	if not (not arg_5_4.attack_time_ends and not (arg_5_2 > arg_5_4.attack_time_ends)) then
-		arg_5_4.attack_aborted = true
+	if not blackboard.attack_time_ends or t > blackboard.attack_time_ends then
+		blackboard.attack_aborted = true
 	end
 end
 
-BTPackMasterAttackAction.attack_success = function (arg_6_0, arg_6_1, arg_6_2)
+BTPackMasterAttackAction.attack_success = function (self, unit, blackboard)
 	-- function 6
-	if not (not arg_6_2.active_node and arg_6_2.active_node ~= BTPackMasterAttackAction) then
-		local target_unit = arg_6_2.target_unit
-		local target_unit_status_extension = arg_6_2.target_unit_status_extension
+	if blackboard.active_node and blackboard.active_node == BTPackMasterAttackAction then
+		local target_unit = blackboard.target_unit
+		local target_status_ext = blackboard.target_unit_status_extension
 
-		if not target_unit_status_extension and target_unit_status_extension:get_is_dodging() and not target_unit_status_extension:is_invisible() then
-			local var_6_2 = POSITION_LOOKUP[arg_6_1]
-			local var_6_3 = POSITION_LOOKUP[target_unit]
-			local normalize = Vector3.normalize(Vector3.flat(var_6_3 - var_6_2))
-			local forward = Quaternion.forward(Unit.local_rotation(arg_6_1, 0))
-			local dot = Vector3.dot(normalize, forward)
-			local acos = math.acos(dot)
-			local distance_squared = Vector3.distance_squared(var_6_2, var_6_3)
+		if target_status_ext and (target_status_ext:get_is_dodging() or target_status_ext:is_invisible()) then
+			local pos = POSITION_LOOKUP[unit]
+			local dodge_pos = POSITION_LOOKUP[target_unit]
+			local dir = Vector3.normalize(Vector3.flat(dodge_pos - pos))
+			local forward = Quaternion.forward(Unit.local_rotation(unit, 0))
+			local dot_value = Vector3.dot(dir, forward)
+			local angle = math.acos(dot_value)
+			local distance_squared = Vector3.distance_squared(pos, dodge_pos)
 
-			if not (not (math.radians_to_degrees(acos) <= arg_6_2.action.dodge_angle) or not (distance_squared < arg_6_2.action.dodge_distance * arg_6_2.action.dodge_distance)) then
-				arg_6_2.attack_success = PerceptionUtils.pack_master_has_line_of_sight_for_attack(arg_6_2.physics_world, arg_6_1, target_unit)
+			if math.radians_to_degrees(angle) <= blackboard.action.dodge_angle and distance_squared < blackboard.action.dodge_distance * blackboard.action.dodge_distance then
+				blackboard.attack_success = PerceptionUtils.pack_master_has_line_of_sight_for_attack(blackboard.physics_world, unit, target_unit)
 			else
-				arg_6_2.attack_success = false
+				blackboard.attack_success = false
 
 				QuestSettings.check_pack_master_dodge(target_unit)
 			end
 		else
-			arg_6_2.attack_success = PerceptionUtils.pack_master_has_line_of_sight_for_attack(arg_6_2.physics_world, arg_6_1, target_unit)
+			blackboard.attack_success = PerceptionUtils.pack_master_has_line_of_sight_for_attack(blackboard.physics_world, unit, target_unit)
 		end
 
-		local has_extension = ScriptUnit.has_extension(arg_6_2.target_unit, "first_person_system")
+		local first_person_extension = ScriptUnit.has_extension(blackboard.target_unit, "first_person_system")
 
-		if not arg_6_2.attack_success and not has_extension then
-			has_extension:animation_event("shake_get_hit")
+		if blackboard.attack_success and first_person_extension then
+			first_person_extension:animation_event("shake_get_hit")
 		end
 	end
 end
 
-BTPackMasterAttackAction.create_bot_threat = function (arg_7_0, arg_7_1, arg_7_2, arg_7_3)
+BTPackMasterAttackAction.create_bot_threat = function (self, unit, blackboard, t)
 	-- function 7
-	local has_extension = ScriptUnit.has_extension(arg_7_2.target_unit, "first_person_system")
+	local first_person_extension = ScriptUnit.has_extension(blackboard.target_unit, "first_person_system")
 
-	if not has_extension then
-		local current_position = has_extension:current_position()
-		local current_rotation = has_extension:current_rotation()
-		local normalize = Vector3.normalize(current_position - POSITION_LOOKUP[arg_7_1])
-		local forward = Quaternion.forward(current_rotation)
-		local dot = Vector3.dot(forward, normalize)
+	if first_person_extension then
+		local camera_position = first_person_extension:current_position()
+		local camera_rotation = first_person_extension:current_rotation()
+		local unit_to_target = Vector3.normalize(camera_position - POSITION_LOOKUP[unit])
+		local target_first_person_dir = Quaternion.forward(camera_rotation)
+		local angle = Vector3.dot(target_first_person_dir, unit_to_target)
+		local behind_target = angle >= 0.55 and angle <= 1
 
-		if not (not (dot >= 0.55) or dot <= 1) then
-			local action = arg_7_2.action
-			local var_7_7 = POSITION_LOOKUP[arg_7_1]
-			local num = POSITION_LOOKUP[arg_7_2.target_unit] - var_7_7
-			local length = Vector3.length(num)
-			local dodge_distance = action.dodge_distance
-			local calculate_oobb, var_7_12, var_7_13 = AiUtils.calculate_oobb(length + 2, var_7_7, Quaternion.look(num), 2, dodge_distance)
-			local num_2 = arg_7_2.attack_time_ends - arg_7_3
+		if not behind_target then
+			local action = blackboard.action
+			local self_pos = POSITION_LOOKUP[unit]
+			local to_target = POSITION_LOOKUP[blackboard.target_unit] - self_pos
+			local distance = Vector3.length(to_target)
+			local width = action.dodge_distance
+			local obstacle_position, obstacle_rotation, obstacle_size = AiUtils.calculate_oobb(distance + 2, self_pos, Quaternion.look(to_target), 2, width)
+			local bot_threat_duration = blackboard.attack_time_ends - t
+			local ai_bot_group_system = Managers.state.entity:system("ai_bot_group_system")
 
-			Managers.state.entity:system("ai_bot_group_system"):aoe_threat_created(calculate_oobb, "oobb", var_7_13, var_7_12, num_2, "Packmaster")
+			ai_bot_group_system:aoe_threat_created(obstacle_position, "oobb", obstacle_size, obstacle_rotation, bot_threat_duration, "Packmaster")
 		end
 	end
 end

@@ -2,35 +2,36 @@
 
 ShadowDaggerExtension = class(ShadowDaggerExtension)
 
-local num = 10
+local DAGGER_DURATION = 10
 
-ShadowDaggerExtension.init = function (self, arg_1_1, arg_1_2, arg_1_3)
+ShadowDaggerExtension.init = function (self, extension_init_context, unit, extension_init_data)
 	-- function 1
-	self._projectile_locomotion_extension = ScriptUnit.extension(arg_1_2, "projectile_locomotion_system")
+	self._projectile_locomotion_extension = ScriptUnit.extension(unit, "projectile_locomotion_system")
 end
 
-ShadowDaggerExtension.destroy = function (arg_2_0)
+ShadowDaggerExtension.destroy = function (self)
 	-- function 2
 	return
 end
 
-ShadowDaggerExtension.on_remove_extension = function (arg_3_0, arg_3_1, arg_3_2)
+ShadowDaggerExtension.on_remove_extension = function (self, unit, extension_name)
 	-- function 3
 	return
 end
 
-ShadowDaggerExtension.update = function (self, arg_4_1, arg_4_2, arg_4_3, arg_4_4, arg_4_5)
+ShadowDaggerExtension.update = function (self, unit, input, dt, context, t)
 	-- function 4
-	if not self._done then
+	if self._done then
 		return
 	end
 
-	local time_lived = self._projectile_locomotion_extension.time_lived
+	local current_life_time = self._projectile_locomotion_extension.time_lived
+	local unit_alive = Unit.alive(unit)
 
-	if not Unit.alive(arg_4_1) then
+	if not unit_alive then
 		self._done = true
-	elseif time_lived > num then
-		Managers.state.unit_spawner:mark_for_deletion(arg_4_1)
+	elseif current_life_time > DAGGER_DURATION then
+		Managers.state.unit_spawner:mark_for_deletion(unit)
 
 		self._done = true
 	end

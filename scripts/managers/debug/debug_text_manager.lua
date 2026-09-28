@@ -2,11 +2,11 @@
 
 DebugTextManager = class(DebugTextManager)
 
-DebugTextManager.init = function (self, arg_1_1, arg_1_2, arg_1_3, arg_1_4)
+DebugTextManager.init = function (self, world, gui, is_server, network_event_delegate)
 	-- function 1
-	self._world = arg_1_1
-	self._gui = arg_1_2
-	self._world_gui = World.create_world_gui(arg_1_1, Matrix4x4.identity(), 1, 1, "material", "materials/fonts/gw_fonts", "immediate")
+	self._world = world
+	self._gui = gui
+	self._world_gui = World.create_world_gui(world, Matrix4x4.identity(), 1, 1, "material", "materials/fonts/gw_fonts", "immediate")
 	self._time = 0
 	self._screen_text_size = 50
 	self._screen_text_time = 5
@@ -20,88 +20,92 @@ DebugTextManager.init = function (self, arg_1_1, arg_1_2, arg_1_3, arg_1_4)
 	self._world_texts = {}
 end
 
-DebugTextManager.update = function (self, arg_2_1, arg_2_2)
+DebugTextManager.update = function (self, dt, viewport_name)
 	-- function 2
-	self._time = self._time + arg_2_1
+	self._time = self._time + dt
 
-	if not script_data and not script_data.disable_debug_draw then
+	if script_data and script_data.disable_debug_draw then
 		return
 	end
 
-	self:_update_unit_texts(arg_2_2, arg_2_1)
-	self:_update_world_texts(arg_2_2)
+	self:_update_unit_texts(viewport_name, dt)
+	self:_update_world_texts(viewport_name)
 	self:_update_screen_text()
 end
 
-DebugTextManager._update_unit_texts = function (self, arg_3_1, arg_3_2)
+DebugTextManager._update_unit_texts = function (self, viewport_name, dt)
 	-- function 3
-	local camera_rotation = Managers.state.camera:camera_rotation(arg_3_1)
-	local _world_gui = self._world_gui
-	local str = "arial"
-	local _unit_text_size = self._unit_text_size
-	local str_2 = "materials/fonts/" .. str
+	local camera_rotation = Managers.state.camera:camera_rotation(viewport_name)
+	local world_gui = self._world_gui
+	local material = "arial"
+	local text_size = self._unit_text_size
+	local font = "materials/fonts/" .. material
 
-	for k, v in pairs(self._unit_texts) do
-		if not Unit.alive(k) then
-			for k_2, v_2 in pairs(v) do
-				for i, v_3 in ipairs(v_2) do
-					if self._time > v_3.time then
-						Gui.destroy_text_3d(self._world_gui, v_3.id)
-						table.remove(v_2, i)
+	for unit, categories in pairs(self._unit_texts) do
+		if Unit.alive(unit) then
+			for category, gui_texts in pairs(categories) do
+				for i, gui_text in ipairs(gui_texts) do
+					if self._time > gui_text.time then
+						Gui.destroy_text_3d(self._world_gui, gui_text.id)
+						table.remove(gui_texts, i)
 					else
-						local var_3_5 = Vector3(v_3.offset.x, v_3.offset.y, v_3.offset.z)
-						local from_quaternion_position = Matrix4x4.from_quaternion_position(camera_rotation, Unit.world_position(k, v_3.node_index) + var_3_5)
-						local var_3_7 = Vector3(v_3.text_offset.x, v_3.text_offset.y, v_3.text_offset.z)
-						local var_3_8
+						local offset = Vector3(gui_text.offset.x, gui_text.offset.y, gui_text.offset.z)
+						local tm = Matrix4x4.from_quaternion_position(camera_rotation, Unit.world_position(unit, gui_text.node_index) + offset)
+						local text_offset = Vector3(gui_text.text_offset.x, gui_text.text_offset.y, gui_text.text_offset.z)
+						local color
+						local fade = gui_text.fade
 
-						if not v_3.fade then
-							local num = (v_3.time - self._time) / (v_3.time - v_3.starting_time) * 255
+						if fade then
+							local time_left = gui_text.time - self._time
+							local total_time = gui_text.time - gui_text.starting_time
+							local alpha = time_left / total_time * 255
 
-							var_3_8 = Color(num, v_3.color.r, v_3.color.g, v_3.color.b)
+							color = Color(alpha, gui_text.color.r, gui_text.color.g, gui_text.color.b)
 						else
-							var_3_8 = Color(v_3.color.r, v_3.color.g, v_3.color.b)
+							color = Color(gui_text.color.r, gui_text.color.g, gui_text.color.b)
 						end
 
-						local floating_position_box = v_3.floating_position_box
+						local floating_position_box = gui_text.floating_position_box
 
-						if not floating_position_box then
-							local num_2 = floating_position_box:unbox() + Vector3.forward() * arg_3_2 * 0.5
+						if floating_position_box then
+							local floating_position = floating_position_box:unbox()
 
-							var_3_7 = var_3_7 + num_2
+							floating_position = floating_position + Vector3.forward() * dt * 0.5
+							text_offset = text_offset + floating_position
 
-							v_3.floating_position_box:store(num_2)
+							gui_text.floating_position_box:store(floating_position)
 						end
 
-						Gui.update_text_3d(_world_gui, v_3.id, v_3.text, str_2, v_3.text_size, str, from_quaternion_position, var_3_7, 0, var_3_8)
+						Gui.update_text_3d(world_gui, gui_text.id, gui_text.text, font, gui_text.text_size, material, tm, text_offset, 0, color)
 					end
 				end
 			end
 		else
-			self:_destroy_unit_texts(k)
+			self:_destroy_unit_texts(unit)
 		end
 	end
 end
 
-DebugTextManager._update_world_texts = function (self, arg_4_1)
+DebugTextManager._update_world_texts = function (self, viewport_name)
 	-- function 4
-	local camera_rotation = Managers.state.camera:camera_rotation(arg_4_1)
-	local _world_gui = self._world_gui
-	local _world_text_size = self._world_text_size
-	local str = "arial"
-	local str_2 = "materials/fonts/" .. str
+	local camera_rotation = Managers.state.camera:camera_rotation(viewport_name)
+	local world_gui = self._world_gui
+	local text_size = self._world_text_size
+	local material = "arial"
+	local font = "materials/fonts/" .. material
 
-	for k, v in pairs(self._world_texts) do
-		for i, v_2 in ipairs(v) do
-			if self._time > v_2.time then
-				Gui.destroy_text_3d(self._world_gui, v_2.id)
-				table.remove(v, i)
+	for category, gui_texts in pairs(self._world_texts) do
+		for i, gui_text in ipairs(gui_texts) do
+			if self._time > gui_text.time then
+				Gui.destroy_text_3d(self._world_gui, gui_text.id)
+				table.remove(gui_texts, i)
 			else
-				local var_4_5 = Vector3(v_2.position.x, v_2.position.y, v_2.position.z)
-				local var_4_6 = Vector3(v_2.text_offset.x, v_2.text_offset.y, v_2.text_offset.z)
-				local from_quaternion_position = Matrix4x4.from_quaternion_position(camera_rotation, var_4_5)
-				local var_4_8 = Color(v_2.color.r, v_2.color.g, v_2.color.b)
+				local position = Vector3(gui_text.position.x, gui_text.position.y, gui_text.position.z)
+				local text_offset = Vector3(gui_text.text_offset.x, gui_text.text_offset.y, gui_text.text_offset.z)
+				local tm = Matrix4x4.from_quaternion_position(camera_rotation, position)
+				local color = Color(gui_text.color.r, gui_text.color.g, gui_text.color.b)
 
-				Gui.update_text_3d(_world_gui, v_2.id, v_2.text, str_2, v_2.text_size, str, from_quaternion_position, var_4_6, 0, var_4_8)
+				Gui.update_text_3d(world_gui, gui_text.id, gui_text.text, font, gui_text.text_size, material, tm, text_offset, 0, color)
 			end
 		end
 	end
@@ -109,7 +113,7 @@ end
 
 DebugTextManager._update_screen_text = function (self)
 	-- function 5
-	if not (not self._screen_text and not (self._time > self._screen_text.time)) then
+	if self._screen_text and self._time > self._screen_text.time then
 		Gui.destroy_text(self._gui, self._screen_text.text_id)
 		Gui.destroy_rect(self._gui, self._screen_text.bgr_id)
 
@@ -117,94 +121,96 @@ DebugTextManager._update_screen_text = function (self)
 	end
 end
 
-DebugTextManager.output_unit_text = function (self, arg_6_1, arg_6_2, arg_6_3, arg_6_4, arg_6_5, arg_6_6, arg_6_7, arg_6_8, arg_6_9, arg_6_10, arg_6_11)
+DebugTextManager.output_unit_text = function (self, text, text_size, unit, node_index, offset, time, category, color, viewport_name, floating, fade)
 	-- function 6
-	if not script_data and not script_data.disable_debug_draw then
+	if script_data and script_data.disable_debug_draw then
 		return
 	end
 
-	arg_6_4 = arg_6_4 or 0
-	arg_6_2 = arg_6_2 or self._unit_text_size
+	node_index = not not node_index or not not 0
+	text_size = not not text_size or not not self._unit_text_size
 
-	local _world_gui = self._world_gui
-	local str = "arial"
-	local str_2 = "materials/fonts/" .. str
-	local var_6_3
+	local gui = self._world_gui
+	local material = "arial"
+	local font = "materials/fonts/" .. material
+	local tm
 
-	if not arg_6_9 then
-		local camera_rotation = Managers.state.camera:camera_rotation(arg_6_9)
+	if viewport_name then
+		local camera_rotation = Managers.state.camera:camera_rotation(viewport_name)
 
-		var_6_3 = Matrix4x4.from_quaternion_position(camera_rotation, Unit.world_position(arg_6_3, arg_6_4) + arg_6_5)
+		tm = Matrix4x4.from_quaternion_position(camera_rotation, Unit.world_position(unit, node_index) + offset)
 	else
-		var_6_3 = Unit.world_pose(arg_6_3, arg_6_4)
+		tm = Unit.world_pose(unit, node_index)
 	end
 
-	local text_extents, var_6_6 = Gui.text_extents(_world_gui, arg_6_1, str_2, arg_6_2)
-	local num = var_6_6[1] - text_extents[1]
-	local num_2 = var_6_6[2] - text_extents[2]
-	local var_6_9 = Vector3(-num / 2, -num_2 / 2, 0)
+	local text_extent_min, text_extent_max = Gui.text_extents(gui, text, font, text_size)
+	local text_width = text_extent_max[1] - text_extent_min[1]
+	local text_height = text_extent_max[2] - text_extent_min[2]
+	local text_offset = Vector3(-text_width / 2, -text_height / 2, 0)
 
-	arg_6_5 = arg_6_5 or Vector3(0, 0, 0)
-	arg_6_7 = arg_6_7 or "none"
-	arg_6_8 = arg_6_8 or Vector3(255, 255, 255)
+	offset = not not offset or not not Vector3(0, 0, 0)
+	category = not not category or not not "none"
+	color = not not color or not not Vector3(255, 255, 255)
 
-	local var_6_10
+	local floating_position_box
 
-	if not arg_6_10 then
-		var_6_10 = Vector3Box(Vector3.zero())
+	if floating then
+		floating_position_box = Vector3Box(Vector3.zero())
 	end
 
-	local tbl = {
+	local new_text = {
 		alpha = 255,
-		id = Gui.text_3d(_world_gui, arg_6_1, str_2, arg_6_2, str, var_6_3, var_6_9, 0, Color(arg_6_8.x, arg_6_8.y, arg_6_8.z)),
-		text = arg_6_1,
-		text_size = arg_6_2,
-		node_index = arg_6_4,
+		id = Gui.text_3d(gui, text, font, text_size, material, tm, text_offset, 0, Color(color.x, color.y, color.z)),
+		text = text,
+		text_size = text_size,
+		node_index = node_index,
 		offset = {
-			x = arg_6_5.x,
-			y = arg_6_5.y,
-			z = arg_6_5.z
+			x = offset.x,
+			y = offset.y,
+			z = offset.z
 		},
 		text_offset = {
-			x = var_6_9.x,
-			y = var_6_9.y,
-			z = var_6_9.z
+			x = text_offset.x,
+			y = text_offset.y,
+			z = text_offset.z
 		},
 		color = {
-			r = arg_6_8.x,
-			g = arg_6_8.y,
-			b = arg_6_8.z
+			r = color.x,
+			g = color.y,
+			b = color.z
 		},
-		time = self._time + (arg_6_6 or self._unit_text_time),
-		floating_position_box = var_6_10,
-		fade = arg_6_11,
+		time = self._time + (not not time or not not self._unit_text_time),
+		floating_position_box = floating_position_box,
+		fade = fade,
 		starting_time = self._time
 	}
 	local _unit_texts = self._unit_texts
-	local var_6_13 = self._unit_texts[arg_6_3]
+	local var_6_1 = self._unit_texts[unit]
 
-	var_6_13 = var_6_13 or {}
-	_unit_texts[arg_6_3] = var_6_13
+	var_6_1 = not not var_6_1 or not not {}
+	_unit_texts[unit] = var_6_1
 
-	local var_6_14 = self._unit_texts[arg_6_3]
-	local var_6_15 = self._unit_texts[arg_6_3][arg_6_7]
+	local var_6_2 = self._unit_texts[unit]
+	local var_6_3 = self._unit_texts[unit][category]
 
-	var_6_15 = var_6_15 or {}
-	var_6_14[arg_6_7] = var_6_15
-	self._unit_texts[arg_6_3][arg_6_7][#self._unit_texts[arg_6_3][arg_6_7] + 1] = tbl
+	var_6_3 = not not var_6_3 or not not {}
+	var_6_2[category] = var_6_3
+	self._unit_texts[unit][category][#self._unit_texts[unit][category] + 1] = new_text
 end
 
-DebugTextManager.clear_unit_text = function (self, arg_7_1, arg_7_2)
+DebugTextManager.clear_unit_text = function (self, clear_unit, clear_category)
 	-- function 7
-	for k, v in pairs(self._unit_texts) do
-		if not (not arg_7_1 and arg_7_1 ~= k) then
-			for k_2, v_2 in pairs(v) do
-				if not (not arg_7_2 and k_2 == "none" or arg_7_2 ~= k_2) then
-					for i4 = #v_2, 1, -1 do
-						local var_7_0 = v_2[i4]
+	for unit, categories in pairs(self._unit_texts) do
+		if not clear_unit or clear_unit == unit then
+			for category, gui_texts in pairs(categories) do
+				if not clear_category or category == "none" or clear_category == category then
+					local num_gui_texts = #gui_texts
 
-						Gui.destroy_text_3d(self._world_gui, var_7_0.id)
-						table.remove(v_2, i4)
+					for i = num_gui_texts, 1, -1 do
+						local gui_text = gui_texts[i]
+
+						Gui.destroy_text_3d(self._world_gui, gui_text.id)
+						table.remove(gui_texts, i)
 					end
 				end
 			end
@@ -212,29 +218,29 @@ DebugTextManager.clear_unit_text = function (self, arg_7_1, arg_7_2)
 	end
 end
 
-DebugTextManager.output_world_text = function (self, arg_8_1, arg_8_2, arg_8_3, arg_8_4, arg_8_5, arg_8_6, arg_8_7, arg_8_8)
+DebugTextManager.output_world_text = function (self, text, text_size, position, time, category, color, viewport_name, rotation)
 	-- function 8
-	if not script_data and not script_data.disable_debug_draw then
+	if script_data and script_data.disable_debug_draw then
 		return
 	end
 
-	arg_8_2 = arg_8_2 or self._world_text_size
+	text_size = not not text_size or not not self._world_text_size
 
-	local _world_gui = self._world_gui
-	local str = "arial"
-	local str_2 = "materials/fonts/" .. str
-	local var_8_3
+	local gui = self._world_gui
+	local material = "arial"
+	local font = "materials/fonts/" .. material
+	local tm
 
-	if not arg_8_7 then
-		local camera_rotation = Managers.state.camera:camera_rotation(arg_8_7)
+	if viewport_name then
+		local camera_rotation = Managers.state.camera:camera_rotation(viewport_name)
 
-		var_8_3 = Matrix4x4.from_quaternion_position(camera_rotation, arg_8_3)
+		tm = Matrix4x4.from_quaternion_position(camera_rotation, position)
 	else
 		local from_quaternion_position = Matrix4x4.from_quaternion_position
 		local inverse
 
-		if not arg_8_8 then
-			inverse = Quaternion.inverse(arg_8_8)
+		if rotation then
+			inverse = Quaternion.inverse(rotation)
 
 			if not inverse then
 				-- Nothing
@@ -245,128 +251,130 @@ DebugTextManager.output_world_text = function (self, arg_8_1, arg_8_2, arg_8_3, 
 
 		::label_8_0::
 
-		var_8_3 = from_quaternion_position(inverse, arg_8_3)
+		tm = from_quaternion_position(inverse, position)
 	end
 
-	local text_extents, var_8_8 = Gui.text_extents(_world_gui, arg_8_1, str_2, arg_8_2)
-	local num = var_8_8[1] - text_extents[1]
-	local num_2 = var_8_8[2] - text_extents[2]
-	local var_8_11 = Vector3(-num / 2, -num_2 / 2, 0)
+	local text_extent_min, text_extent_max = Gui.text_extents(gui, text, font, text_size)
+	local text_width = text_extent_max[1] - text_extent_min[1]
+	local text_height = text_extent_max[2] - text_extent_min[2]
+	local text_offset = Vector3(-text_width / 2, -text_height / 2, 0)
 
-	arg_8_5 = arg_8_5 or "none"
-	arg_8_6 = arg_8_6 or Vector3(255, 255, 255)
+	category = not not category or not not "none"
+	color = not not color or not not Vector3(255, 255, 255)
 
-	local tbl = {
-		id = Gui.text_3d(_world_gui, arg_8_1, str_2, arg_8_2, str, var_8_3, var_8_11, 0, Color(arg_8_6.x, arg_8_6.y, arg_8_6.z)),
-		text = arg_8_1,
-		text_size = arg_8_2,
+	local new_text = {
+		id = Gui.text_3d(gui, text, font, text_size, material, tm, text_offset, 0, Color(color.x, color.y, color.z)),
+		text = text,
+		text_size = text_size,
 		position = {
-			x = arg_8_3.x,
-			y = arg_8_3.y,
-			z = arg_8_3.z
+			x = position.x,
+			y = position.y,
+			z = position.z
 		},
 		text_offset = {
-			x = var_8_11.x,
-			y = var_8_11.y,
-			z = var_8_11.z
+			x = text_offset.x,
+			y = text_offset.y,
+			z = text_offset.z
 		},
 		color = {
-			r = arg_8_6.x,
-			g = arg_8_6.y,
-			b = arg_8_6.z
+			r = color.x,
+			g = color.y,
+			b = color.z
 		},
-		time = self._time + (arg_8_4 or self._world_text_time)
+		time = self._time + (not not time or not not self._world_text_time)
 	}
 	local _world_texts = self._world_texts
-	local var_8_14 = self._world_texts[arg_8_5]
+	local var_8_3 = self._world_texts[category]
 
-	var_8_14 = var_8_14 or {}
-	_world_texts[arg_8_5] = var_8_14
-	self._world_texts[arg_8_5][#self._world_texts[arg_8_5] + 1] = tbl
+	var_8_3 = not not var_8_3 or not not {}
+	_world_texts[category] = var_8_3
+	self._world_texts[category][#self._world_texts[category] + 1] = new_text
 end
 
-DebugTextManager.clear_world_text = function (self, arg_9_1)
+DebugTextManager.clear_world_text = function (self, clear_category)
 	-- function 9
-	for k, v in pairs(self._world_texts) do
-		if not (not arg_9_1 and k == "none" or arg_9_1 ~= k) then
-			for k_2 = #v, 1, -1 do
-				local var_9_0 = v[k_2]
+	for category, gui_texts in pairs(self._world_texts) do
+		if not clear_category or category == "none" or clear_category == category then
+			for i = #gui_texts, 1, -1 do
+				local gui_text = gui_texts[i]
 
-				Gui.destroy_text_3d(self._world_gui, var_9_0.id)
-				table.remove(v, k_2)
+				Gui.destroy_text_3d(self._world_gui, gui_text.id)
+				table.remove(gui_texts, i)
 			end
 		end
 	end
 end
 
-DebugTextManager.output_screen_text = function (self, arg_10_1, arg_10_2, arg_10_3, arg_10_4)
+DebugTextManager.output_screen_text = function (self, text, text_size, time, color)
 	-- function 10
-	if not script_data and not script_data.disable_debug_draw then
+	if script_data and script_data.disable_debug_draw then
 		return
 	end
 
-	arg_10_2 = arg_10_2 or self._screen_text_size
-	arg_10_4 = arg_10_4 or Vector3(255, 255, 255)
+	text_size = not not text_size or not not self._screen_text_size
+	color = not not color or not not Vector3(255, 255, 255)
 
-	local _gui = self._gui
-	local var_10_1 = Vector2(RESOLUTION_LOOKUP.res_w, RESOLUTION_LOOKUP.res_h)
-	local str = "arial"
-	local str_2 = "materials/fonts/" .. str
-	local text_extents, var_10_5 = Gui.text_extents(_gui, arg_10_1, str_2, arg_10_2)
-	local num = var_10_5[1] - text_extents[1]
-	local num_2 = var_10_5[2] - text_extents[2]
-	local var_10_8 = Vector3(var_10_1.x / 2 - num / 2, var_10_1.y / 2 - num_2 / 2, 11)
-	local num_3 = 10
-	local num_4 = var_10_8.x - num_3
-	local num_5 = var_10_8.y - num_3
-	local num_6 = num + num_3 * 2
-	local num_7 = num_2 + num_3 * 2
-	local var_10_14 = Vector3(num_4, num_5, 10)
-	local var_10_15 = Vector2(num_6, num_7)
+	local gui = self._gui
+	local resolution = Vector2(RESOLUTION_LOOKUP.res_w, RESOLUTION_LOOKUP.res_h)
+	local material = "arial"
+	local font = "materials/fonts/" .. material
+	local text_extent_min, text_extent_max = Gui.text_extents(gui, text, font, text_size)
+	local text_w = text_extent_max[1] - text_extent_min[1]
+	local text_h = text_extent_max[2] - text_extent_min[2]
+	local text_position = Vector3(resolution.x / 2 - text_w / 2, resolution.y / 2 - text_h / 2, 11)
+	local bgr_margin = 10
+	local bgr_x = text_position.x - bgr_margin
+	local bgr_y = text_position.y - bgr_margin
+	local bgr_w = text_w + bgr_margin * 2
+	local bgr_h = text_h + bgr_margin * 2
+	local bgr_position = Vector3(bgr_x, bgr_y, 10)
+	local bgr_size = Vector2(bgr_w, bgr_h)
 
-	if not self._screen_text then
-		Gui.update_text(_gui, self._screen_text.text_id, arg_10_1, str_2, arg_10_2, str, var_10_8, Color(arg_10_4.x, arg_10_4.y, arg_10_4.z))
-		Gui.update_rect(_gui, self._screen_text.bgr_id, var_10_14, var_10_15, Color(120, 0, 0, 0))
+	if self._screen_text then
+		Gui.update_text(gui, self._screen_text.text_id, text, font, text_size, material, text_position, Color(color.x, color.y, color.z))
+		Gui.update_rect(gui, self._screen_text.bgr_id, bgr_position, bgr_size, Color(120, 0, 0, 0))
 
-		self._screen_text.time = self._time + (arg_10_3 or self._screen_text_time)
+		self._screen_text.time = self._time + (not not time or not not self._screen_text_time)
 	else
-		self._screen_text = {
-			text_id = Gui.text(_gui, arg_10_1, str_2, arg_10_2, str, var_10_8, Color(arg_10_4.x, arg_10_4.y, arg_10_4.z)),
-			bgr_id = Gui.rect(_gui, var_10_14, var_10_15, Color(120, 0, 0, 0)),
-			time = self._time + (arg_10_3 or self._screen_text_time)
+		local screen_text = {
+			text_id = Gui.text(gui, text, font, text_size, material, text_position, Color(color.x, color.y, color.z)),
+			bgr_id = Gui.rect(gui, bgr_position, bgr_size, Color(120, 0, 0, 0)),
+			time = self._time + (not not time or not not self._screen_text_time)
 		}
+
+		self._screen_text = screen_text
 	end
 end
 
 DebugTextManager.destroy = function (self)
 	-- function 11
-	if not self._screen_text then
+	if self._screen_text then
 		Gui.destroy_text(self._gui, self._screen_text.text_id)
 		Gui.destroy_rect(self._gui, self._screen_text.bgr_id)
 
 		self._screen_text = nil
 	end
 
-	for k, v in pairs(self._unit_texts) do
-		self:_destroy_unit_texts(k)
+	for unit, categories in pairs(self._unit_texts) do
+		self:_destroy_unit_texts(unit)
 	end
 
-	for k_2, v_2 in pairs(self._world_texts) do
-		for i, v_3 in ipairs(v_2) do
-			Gui.destroy_text_3d(self._world_gui, v_3.id)
+	for category, gui_texts in pairs(self._world_texts) do
+		for i, gui_text in ipairs(gui_texts) do
+			Gui.destroy_text_3d(self._world_gui, gui_text.id)
 		end
 	end
 end
 
-DebugTextManager._destroy_unit_texts = function (self, arg_12_1)
+DebugTextManager._destroy_unit_texts = function (self, unit)
 	-- function 12
-	local var_12_0 = self._unit_texts[arg_12_1]
+	local categories = self._unit_texts[unit]
 
-	for k, v in pairs(var_12_0) do
-		for i, v_2 in ipairs(v) do
-			Gui.destroy_text_3d(self._world_gui, v_2.id)
+	for category, gui_texts in pairs(categories) do
+		for i, gui_text in ipairs(gui_texts) do
+			Gui.destroy_text_3d(self._world_gui, gui_text.id)
 		end
 	end
 
-	self._unit_texts[arg_12_1] = nil
+	self._unit_texts[unit] = nil
 end

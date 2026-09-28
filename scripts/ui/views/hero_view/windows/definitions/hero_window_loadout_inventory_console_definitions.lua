@@ -1,7 +1,7 @@
 -- chunkname: @scripts/ui/views/hero_view/windows/definitions/hero_window_loadout_inventory_console_definitions.lua
 
 local console_menu_scenegraphs = UISettings.console_menu_scenegraphs
-local tbl = {
+local scenegraph_definition = {
 	screen = console_menu_scenegraphs.screen,
 	area = console_menu_scenegraphs.area,
 	area_left = console_menu_scenegraphs.area_left,
@@ -148,7 +148,7 @@ local tbl = {
 		}
 	}
 }
-local tbl_2 = {
+local page_number_left_text_style = {
 	word_wrap = true,
 	font_size = 26,
 	localize = false,
@@ -163,7 +163,7 @@ local tbl_2 = {
 		2
 	}
 }
-local tbl_3 = {
+local page_number_right_text_style = {
 	word_wrap = true,
 	font_size = 26,
 	localize = false,
@@ -178,7 +178,7 @@ local tbl_3 = {
 		2
 	}
 }
-local tbl_4 = {
+local page_number_center_text_style = {
 	word_wrap = true,
 	font_size = 26,
 	localize = false,
@@ -193,8 +193,8 @@ local tbl_4 = {
 		2
 	}
 }
-local tbl_5 = {
-	item_grid = UIWidgets.create_grid("item_grid", tbl.item_grid.size, 6, 5, 16, 10, false),
+local widgets = {
+	item_grid = UIWidgets.create_grid("item_grid", scenegraph_definition.item_grid.size, 6, 5, 16, 10, false),
 	page_button_next = UIWidgets.create_arrow_button("page_button_next", math.pi),
 	page_button_previous = UIWidgets.create_arrow_button("page_button_previous"),
 	input_icon_next = UIWidgets.create_simple_texture("xbone_button_icon_a", "input_icon_next"),
@@ -210,14 +210,14 @@ local tbl_5 = {
 		}
 	}, "input_arrow_next"),
 	input_arrow_previous = UIWidgets.create_simple_texture("settings_arrow_normal", "input_arrow_previous"),
-	page_text_center = UIWidgets.create_simple_text("/", "page_text_area", nil, nil, tbl_4),
-	page_text_left = UIWidgets.create_simple_text("0", "page_text_area", nil, nil, tbl_2),
-	page_text_right = UIWidgets.create_simple_text("0", "page_text_area", nil, nil, tbl_3),
+	page_text_center = UIWidgets.create_simple_text("/", "page_text_area", nil, nil, page_number_center_text_style),
+	page_text_left = UIWidgets.create_simple_text("0", "page_text_area", nil, nil, page_number_left_text_style),
+	page_text_right = UIWidgets.create_simple_text("0", "page_text_area", nil, nil, page_number_right_text_style),
 	page_text_area = UIWidgets.create_simple_texture("tab_menu_bg_03", "page_text_area"),
 	item_tooltip = UIWidgets.create_simple_item_presentation("item_tooltip", UISettings.console_tooltip_pass_definitions),
 	item_tooltip_compare = UIWidgets.create_simple_item_presentation("item_tooltip_compare", UISettings.console_tooltip_pass_definitions)
 }
-local tbl_6 = {
+local generic_input_actions = {
 	default = {
 		{
 			input_action = "d_pad",
@@ -292,24 +292,24 @@ local tbl_6 = {
 		}
 	}
 }
-local tbl_7 = {
+local animation_definitions = {
 	on_enter = {
 		{
 			name = "fade_in",
 			start_progress = 0,
 			end_progress = 0.3,
-			init = function (arg_1_0, arg_1_1, arg_1_2, arg_1_3)
+			init = function (ui_scenegraph, scenegraph_definition, widgets, params)
 				-- function 1
-				arg_1_3.render_settings.alpha_multiplier = 0
+				params.render_settings.alpha_multiplier = 0
 			end,
-			update = function (arg_2_0, arg_2_1, arg_2_2, arg_2_3, arg_2_4)
+			update = function (ui_scenegraph, scenegraph_definition, widgets, progress, params)
 				-- function 2
-				local easeOutCubic = math.easeOutCubic(arg_2_3)
+				local anim_progress = math.easeOutCubic(progress)
 
-				arg_2_4.render_settings.alpha_multiplier = easeOutCubic
-				arg_2_0.area_left.local_position[1] = arg_2_1.area_left.position[1] + math.floor(-100 * (1 - easeOutCubic))
+				params.render_settings.alpha_multiplier = anim_progress
+				ui_scenegraph.area_left.local_position[1] = scenegraph_definition.area_left.position[1] + math.floor(-100 * (1 - anim_progress))
 			end,
-			on_complete = function (arg_3_0, arg_3_1, arg_3_2, arg_3_3)
+			on_complete = function (ui_scenegraph, scenegraph_definition, widgets, params)
 				-- function 3
 				return
 			end
@@ -320,17 +320,17 @@ local tbl_7 = {
 			name = "fade_out",
 			start_progress = 0,
 			end_progress = 0.3,
-			init = function (arg_4_0, arg_4_1, arg_4_2, arg_4_3)
+			init = function (ui_scenegraph, scenegraph_definition, widgets, params)
 				-- function 4
-				arg_4_3.render_settings.alpha_multiplier = 1
+				params.render_settings.alpha_multiplier = 1
 			end,
-			update = function (arg_5_0, arg_5_1, arg_5_2, arg_5_3, arg_5_4)
+			update = function (ui_scenegraph, scenegraph_definition, widgets, progress, params)
 				-- function 5
-				local easeOutCubic = math.easeOutCubic(arg_5_3)
+				local anim_progress = math.easeOutCubic(progress)
 
-				arg_5_4.render_settings.alpha_multiplier = 1 - easeOutCubic
+				params.render_settings.alpha_multiplier = 1 - anim_progress
 			end,
-			on_complete = function (arg_6_0, arg_6_1, arg_6_2, arg_6_3)
+			on_complete = function (ui_scenegraph, scenegraph_definition, widgets, params)
 				-- function 6
 				return
 			end
@@ -339,8 +339,8 @@ local tbl_7 = {
 }
 
 return {
-	widgets = tbl_5,
-	scenegraph_definition = tbl,
-	animation_definitions = tbl_7,
-	generic_input_actions = tbl_6
+	widgets = widgets,
+	scenegraph_definition = scenegraph_definition,
+	animation_definitions = animation_definitions,
+	generic_input_actions = generic_input_actions
 }

@@ -1,6 +1,6 @@
 -- chunkname: @levels/honduras_dlcs/morris/pat_mountain/generated/wastes_path3/world_patrol_waypoints.lua
 
-local tbl = {
+local boss_waypoints = {
 	{
 		{
 			id = "boss_2",
@@ -2080,7 +2080,7 @@ local tbl = {
 		}
 	}
 }
-local tbl_2 = {
+local patrol_waypoints = {
 	{
 		travel_dist = 37.2584810256958,
 		id = "roaming_17",
@@ -8836,12 +8836,12 @@ local tbl_2 = {
 		}
 	}
 }
-local tbl_3 = {}
-local str = "1"
+local event_waypoints = {}
+local patrol_spline_version = "1"
 
 return {
-	version = str,
-	boss_waypoints = tbl,
-	patrol_waypoints = tbl_2,
-	event_waypoints = tbl_3
+	version = patrol_spline_version,
+	boss_waypoints = boss_waypoints,
+	patrol_waypoints = patrol_waypoints,
+	event_waypoints = event_waypoints
 }

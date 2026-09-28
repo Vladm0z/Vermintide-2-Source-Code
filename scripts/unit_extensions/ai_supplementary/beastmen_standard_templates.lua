@@ -23,22 +23,22 @@ BeastmenStandardTemplates = {
 		sfx_loop_stop = "Stop_enemy_beastmen_standar_spell_loop",
 		apply_buff_to_player = false,
 		ai_buff_vfx_name = "fx/chr_beastmen_standard_bearer_buff_01",
-		custom_update_func = function (arg_1_0, arg_1_1, arg_1_2, arg_1_3, arg_1_4, arg_1_5)
+		custom_update_func = function (template, data, t, dt, unit, units_inside)
 			-- function 1
-			if not arg_1_1.is_server and arg_1_1.challenge_done and not (arg_1_2 > arg_1_1.challenge_time) or not HEALTH_ALIVE[arg_1_1.standard_bearer_unit] then
-				local str = "scorpion_keep_standard_bearer_alive"
-				local var_1_1 = NetworkLookup.statistics[str]
+			if data.is_server and not data.challenge_done and t > data.challenge_time and HEALTH_ALIVE[data.standard_bearer_unit] then
+				local stat_name = "scorpion_keep_standard_bearer_alive"
+				local stat_name_index = NetworkLookup.statistics[stat_name]
 				local statistics_db = Managers.player:statistics_db()
 				local local_player = Managers.player:local_player()
 
-				if not local_player then
+				if local_player then
 					local stats_id = local_player:stats_id()
 
-					statistics_db:increment_stat(stats_id, str)
-					Managers.state.network.network_transmit:send_rpc_clients("rpc_increment_stat", var_1_1)
+					statistics_db:increment_stat(stats_id, stat_name)
+					Managers.state.network.network_transmit:send_rpc_clients("rpc_increment_stat", stat_name_index)
 				end
 
-				arg_1_1.challenge_done = true
+				data.challenge_done = true
 			end
 		end
 	},
@@ -51,25 +51,34 @@ BeastmenStandardTemplates = {
 		sfx_taking_damage = "Play_enemy_beastmen_standar_taking_damage",
 		astar_check_frequency = 10,
 		composition = "standard_bearer_ambush",
-		custom_update_func = function (self, arg_2_1, arg_2_2, arg_2_3, arg_2_4, arg_2_5)
+		custom_update_func = function (template, data, t, dt, unit, units_inside)
 			-- function 2
-			local next_horde_t = arg_2_1.next_horde_t
+			local next_horde_t_2 = data.next_horde_t
 
-			next_horde_t = next_horde_t or 0
+			if not next_horde_t_2 then
+				-- Nothing
+			end
 
-			if next_horde_t < arg_2_2 then
-				local conflict = Managers.state.conflict
-				local local_position = Unit.local_position(arg_2_4, 0)
-				local var_2_3 = HordeCompositions[self.composition]
-				local get_difficulty_rank, var_2_5 = Managers.state.difficulty:get_difficulty_rank()
-				local var_2_6 = var_2_3[DifficultyTweak.converters.composition_rank(get_difficulty_rank, var_2_5) - 1]
-				local tbl = {
-					sound_settings = self.horde_sound_settings
+			next_horde_t_2 = 0
+
+			local next_horde_t = next_horde_t_2
+
+			::label_2_0::
+
+			if next_horde_t < t then
+				local conflict_director = Managers.state.conflict
+				local override_epicenter_pos = Unit.local_position(unit, 0)
+				local override_composition_table = HordeCompositions[template.composition]
+				local current_difficulty_rank, difficulty_tweak = Managers.state.difficulty:get_difficulty_rank()
+				local composition_difficulty_rank = DifficultyTweak.converters.composition_rank(current_difficulty_rank, difficulty_tweak)
+				local override_composition = override_composition_table[composition_difficulty_rank - 1]
+				local extra_data = {
+					sound_settings = template.horde_sound_settings
 				}
 
-				conflict.horde_spawner:execute_ambush_horde(tbl, conflict.default_enemy_side_id, false, local_position, var_2_6)
+				conflict_director.horde_spawner:execute_ambush_horde(extra_data, conflict_director.default_enemy_side_id, false, override_epicenter_pos, override_composition)
 
-				arg_2_1.next_horde_t = arg_2_2 + 10
+				data.next_horde_t = t + 10
 			end
 		end,
 		horde_sound_settings = {

@@ -1,17 +1,20 @@
 -- chunkname: @scripts/managers/game_mode/game_mechanism_manager_testify.lua
 
-return {
-	request_vote = function (self, arg_1_1)
+local GameMechanismManagerTestify = {
+	request_vote = function (mechanism_manager, params)
 		-- function 1
-		self:request_vote(arg_1_1)
+		mechanism_manager:request_vote(params)
 	end,
-	versus_get_num_sets = function (self, arg_2_1)
+	versus_get_num_sets = function (mechanism_manager, params)
 		-- function 2
-		if self:current_mechanism_name() ~= "versus" then
+		local current_mechanism_name = mechanism_manager:current_mechanism_name()
+
+		if current_mechanism_name ~= "versus" then
 			return Testify.RETRY
 		end
 
-		local num_sets = self:game_mechanism():num_sets()
+		local current_mechanism = mechanism_manager:game_mechanism()
+		local num_sets = current_mechanism:num_sets()
 
 		if num_sets < 1 then
 			return Testify.RETRY
@@ -20,3 +23,5 @@ return {
 		return num_sets
 	end
 }
+
+return GameMechanismManagerTestify

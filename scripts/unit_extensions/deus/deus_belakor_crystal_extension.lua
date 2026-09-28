@@ -2,15 +2,15 @@
 
 DeusBelakorCrystalExtension = class(DeusBelakorCrystalExtension)
 
-local num = 5
-local num_2 = 1
-local num_3 = 2
-local num_4 = 1
-local num_5 = 1
+local CHECK_VALID_POSITION_EVERY_SECONDS = 5
+local RESPAWN_LOCUS_MIN_DISTANCE = 1
+local RESPAWN_LOCUS_MAX_DISTANCE = 2
+local RESPAWN_LOCUS_ABOVE_MAX_DISTANCE = 1
+local RESPAWN_LOCUS_BELOW_MAX_DISTANCE = 1
 
-DeusBelakorCrystalExtension.init = function (self, arg_1_1, arg_1_2, arg_1_3)
+DeusBelakorCrystalExtension.init = function (self, extension_init_context, unit, extension_init_data)
 	-- function 1
-	self._unit = arg_1_2
+	self._unit = unit
 	self._is_server = Managers.player.is_server
 
 	if not self._is_server then
@@ -21,18 +21,20 @@ DeusBelakorCrystalExtension.init = function (self, arg_1_1, arg_1_2, arg_1_3)
 	self._astar = GwNavAStar.create()
 end
 
-DeusBelakorCrystalExtension.game_object_initialized = function (self, arg_2_1, arg_2_2)
+DeusBelakorCrystalExtension.game_object_initialized = function (self, unit, go_id)
 	-- function 2
-	self._go_id = arg_2_2
+	self._go_id = go_id
 end
 
-DeusBelakorCrystalExtension.extensions_ready = function (self, arg_3_1, arg_3_2)
+DeusBelakorCrystalExtension.extensions_ready = function (self, world, unit)
 	-- function 3
 	if not self._is_server then
 		return
 	end
 
-	ScriptUnit.extension(arg_3_2, "kill_volume_handler_system"):add_handler(function ()
+	local kill_volume_handler_extension = ScriptUnit.extension(unit, "kill_volume_handler_system")
+
+	kill_volume_handler_extension:add_handler(function ()
 		-- function 4
 		if not self._nearest_locus then
 			self._nearest_locus = self:_find_nearest_locus()
@@ -60,59 +62,59 @@ DeusBelakorCrystalExtension.destroy = function (self)
 	self._running_astar = nil
 end
 
-DeusBelakorCrystalExtension.update = function (self, arg_6_1, arg_6_2, arg_6_3, arg_6_4, arg_6_5)
+DeusBelakorCrystalExtension.update = function (self, unit, input, dt, context, t)
 	-- function 6
 	if not self._is_server then
 		return
 	end
 
 	if not self._next_check then
-		self._next_check = arg_6_5
+		self._next_check = t
 	end
 
-	if arg_6_5 < self._next_check then
+	if t < self._next_check then
 		return
 	end
 
-	local var_6_0 = POSITION_LOOKUP[arg_6_1]
+	local crystal_position = POSITION_LOOKUP[unit]
 
 	if not self._nearest_locus then
 		self._nearest_locus = self:_find_nearest_locus()
 	end
 
-	if not (not self._nearest_locus and ALIVE[self._nearest_locus]) then
-		self._next_check = arg_6_5 + num
+	if not self._nearest_locus or not ALIVE[self._nearest_locus] then
+		self._next_check = t + CHECK_VALID_POSITION_EVERY_SECONDS
 
 		return
 	end
 
-	local var_6_1 = POSITION_LOOKUP[self._nearest_locus]
+	local locus_position = POSITION_LOOKUP[self._nearest_locus]
 
-	if not self._running_astar then
-		if not GwNavAStar.processing_finished(self._astar) then
+	if self._running_astar then
+		if GwNavAStar.processing_finished(self._astar) then
 			self._running_astar = false
 
 			if not GwNavAStar.path_found(self._astar) then
-				local tbl = {}
+				local output_position_list = {}
 
-				ConflictUtils.find_positions_around_position(var_6_1, tbl, self._nav_world, num_2, num_3, 1, nil, nil, nil, nil, nil, num_5, num_4)
+				ConflictUtils.find_positions_around_position(locus_position, output_position_list, self._nav_world, RESPAWN_LOCUS_MIN_DISTANCE, RESPAWN_LOCUS_MAX_DISTANCE, 1, nil, nil, nil, nil, nil, RESPAWN_LOCUS_BELOW_MAX_DISTANCE, RESPAWN_LOCUS_ABOVE_MAX_DISTANCE)
 
-				local var_6_3 = tbl[1]
+				local new_position = output_position_list[1]
 
-				if not var_6_3 then
-					local actor = Unit.actor(arg_6_1, "throw")
+				if new_position then
+					local actor = Unit.actor(unit, "throw")
 
 					Actor.set_velocity(actor, Vector3(0, 0, 0))
-					Actor.teleport_position(Unit.actor(arg_6_1, "throw"), var_6_3 + Vector3(0, 0, 1))
+					Actor.teleport_position(Unit.actor(unit, "throw"), new_position + Vector3(0, 0, 1))
 				end
 			end
 
-			self._next_check = arg_6_5 + num
+			self._next_check = t + CHECK_VALID_POSITION_EVERY_SECONDS
 		end
 	else
-		local traverse_logic = Managers.state.bot_nav_transition:traverse_logic()
+		local bot_traverse_logic = Managers.state.bot_nav_transition:traverse_logic()
 
-		GwNavAStar.start_with_propagation_box(self._astar, self._nav_world, var_6_0, var_6_1, 30, traverse_logic)
+		GwNavAStar.start_with_propagation_box(self._astar, self._nav_world, crystal_position, locus_position, 30, bot_traverse_logic)
 
 		self._running_astar = true
 
@@ -122,19 +124,18 @@ end
 
 DeusBelakorCrystalExtension._find_nearest_locus = function (self)
 	-- function 7
-	local var_7_0 = POSITION_LOOKUP[self._unit]
-	local get_entities = Managers.state.entity:get_entities("DeusBelakorLocusExtension")
-	local var_7_2
-	local var_7_3
+	local crystal_position = POSITION_LOOKUP[self._unit]
+	local entities = Managers.state.entity:get_entities("DeusBelakorLocusExtension")
+	local nearest_locus, nearest_locus_distance
 
-	for k, v in pairs(get_entities) do
-		local length = Vector3.length(var_7_0 - POSITION_LOOKUP[k])
+	for locus_unit, _ in pairs(entities) do
+		local distance = Vector3.length(crystal_position - POSITION_LOOKUP[locus_unit])
 
-		if not (not var_7_3 and not (length < var_7_3)) then
-			var_7_2 = k
-			var_7_3 = length
+		if not nearest_locus_distance or distance < nearest_locus_distance then
+			nearest_locus = locus_unit
+			nearest_locus_distance = distance
 		end
 	end
 
-	return var_7_2
+	return nearest_locus
 end

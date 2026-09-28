@@ -19,13 +19,13 @@ CameraCarrier.destroy = function (self)
 	end
 end
 
-CameraCarrier.update = function (self, arg_3_1)
+CameraCarrier.update = function (self, dt)
 	-- function 3
 	if not DEDICATED_SERVER then
 		return
 	end
 
-	self._time_since_reevaluate_camera_carrier = self._time_since_reevaluate_camera_carrier + arg_3_1
+	self._time_since_reevaluate_camera_carrier = self._time_since_reevaluate_camera_carrier + dt
 
 	if self._time_since_reevaluate_camera_carrier > CameraCarrier.CAMERA_CARRIER_REEVALUATE_PERIOD then
 		self:_reevaluate_camera_carrier()
@@ -40,22 +40,24 @@ CameraCarrier._reevaluate_camera_carrier = function (self)
 		return
 	end
 
-	local _best_suited_camera_carrier = self:_best_suited_camera_carrier()
+	local carrier_player = self:_best_suited_camera_carrier()
 
-	if not self._camera_carrier_linked then
-		if Managers.player:player_from_unique_id(self._camera_carrier_unique_id) == _best_suited_camera_carrier then
+	if self._camera_carrier_linked then
+		local player = Managers.player:player_from_unique_id(self._camera_carrier_unique_id)
+
+		if player == carrier_player then
 			return
 		end
 
 		self:_detach_carrier_camera()
 	end
 
-	if _best_suited_camera_carrier == nil then
+	if carrier_player == nil then
 		return
 	end
 
-	print(string.format("Switching camera carrier to %s", _best_suited_camera_carrier:name()))
-	self:_attach_carrier_camera(_best_suited_camera_carrier)
+	print(string.format("Switching camera carrier to %s", carrier_player:name()))
+	self:_attach_carrier_camera(carrier_player)
 end
 
 CameraCarrier._create_carrier_camera = function (self)
@@ -63,11 +65,12 @@ CameraCarrier._create_carrier_camera = function (self)
 	assert(self._carrier_camera_unit == nil)
 	assert(DEDICATED_SERVER)
 
-	local backlit_camera = DefaultUnits.standard.backlit_camera
-	local zero = Vector3.zero()
-	local identity = Quaternion.identity()
+	local unit_name = DefaultUnits.standard.backlit_camera
+	local position = Vector3.zero()
+	local rotation = Quaternion.identity()
+	local camera_unit = Managers.state.unit_spawner:spawn_local_unit(unit_name, position, rotation)
 
-	self._carrier_camera_unit = Managers.state.unit_spawner:spawn_local_unit(backlit_camera, zero, identity)
+	self._carrier_camera_unit = camera_unit
 end
 
 CameraCarrier._destroy_carrier_camera = function (self)
@@ -80,19 +83,19 @@ CameraCarrier._destroy_carrier_camera = function (self)
 	self._camera_carrier_unique_id = nil
 end
 
-CameraCarrier._attach_carrier_camera = function (self, arg_7_1)
+CameraCarrier._attach_carrier_camera = function (self, player)
 	-- function 7
 	assert(DEDICATED_SERVER)
-	assert(arg_7_1 ~= nil)
+	assert(player ~= nil)
 
-	if arg_7_1.player_unit == nil then
-		print(string.format("Failed to switching camera carrier to %s since there is no unit", arg_7_1:name()))
+	if player.player_unit == nil then
+		print(string.format("Failed to switching camera carrier to %s since there is no unit", player:name()))
 
 		return
 	end
 
-	if not Unit.alive(arg_7_1.player_unit) then
-		print(string.format("Failed to switching camera carrier to %s since the player unit is not alive", arg_7_1:name()))
+	if not Unit.alive(player.player_unit) then
+		print(string.format("Failed to switching camera carrier to %s since the player unit is not alive", player:name()))
 
 		return
 	end
@@ -101,11 +104,11 @@ CameraCarrier._attach_carrier_camera = function (self, arg_7_1)
 		self:_create_carrier_camera()
 	end
 
-	local world = Unit.world(arg_7_1.player_unit)
+	local world = Unit.world(player.player_unit)
 
-	World.link_unit(world, self._carrier_camera_unit, arg_7_1.player_unit)
+	World.link_unit(world, self._carrier_camera_unit, player.player_unit)
 
-	self._camera_carrier_unique_id = arg_7_1:profile_id()
+	self._camera_carrier_unique_id = player:profile_id()
 	self._camera_carrier_linked = true
 end
 
@@ -125,33 +128,33 @@ CameraCarrier._detach_carrier_camera = function (self)
 	self._camera_carrier_linked = false
 end
 
-CameraCarrier._most_ahead_player = function (arg_9_0)
+CameraCarrier._most_ahead_player = function (self)
 	-- function 9
-	local conflict = Managers.state.conflict
+	local conflict_director = Managers.state.conflict
 
-	if conflict == nil then
+	if conflict_director == nil then
 		return nil
 	end
 
-	local ahead_unit = conflict.main_path_info.ahead_unit
+	local ahead_unit = conflict_director.main_path_info.ahead_unit
 
 	return Managers.player:unit_owner(ahead_unit)
 end
 
 CameraCarrier._best_suited_camera_carrier = function (self)
 	-- function 10
-	local _most_ahead_player = self:_most_ahead_player()
+	local most_ahead = self:_most_ahead_player()
 
-	if _most_ahead_player ~= nil then
-		return _most_ahead_player
+	if most_ahead ~= nil then
+		return most_ahead
 	end
 
-	local leader = Managers.party:leader()
-	local players_at_peer = Managers.player:players_at_peer(leader)
+	local leader_peer_id = Managers.party:leader()
+	local players = Managers.player:players_at_peer(leader_peer_id)
 
-	if players_at_peer == nil then
+	if players == nil then
 		return nil
 	end
 
-	return players_at_peer[1]
+	return players[1]
 end

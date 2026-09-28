@@ -4,94 +4,105 @@ require("scripts/unit_extensions/weapons/projectiles/true_flight_templates")
 
 ActionTrueFlightBow = class(ActionTrueFlightBow, ActionBase)
 
-ActionTrueFlightBow.init = function (self, arg_1_1, arg_1_2, arg_1_3, arg_1_4, arg_1_5, arg_1_6, arg_1_7, arg_1_8)
+ActionTrueFlightBow.init = function (self, world, item_name, is_server, owner_unit, damage_unit, first_person_unit, weapon_unit, weapon_system)
 	-- function 1
-	ActionTrueFlightBow.super.init(self, arg_1_1, arg_1_2, arg_1_3, arg_1_4, arg_1_5, arg_1_6, arg_1_7, arg_1_8)
+	ActionTrueFlightBow.super.init(self, world, item_name, is_server, owner_unit, damage_unit, first_person_unit, weapon_unit, weapon_system)
 
-	if not ScriptUnit.has_extension(arg_1_7, "ammo_system") then
-		self.ammo_extension = ScriptUnit.extension(arg_1_7, "ammo_system")
+	if ScriptUnit.has_extension(weapon_unit, "ammo_system") then
+		self.ammo_extension = ScriptUnit.extension(weapon_unit, "ammo_system")
 	end
 
-	self.spread_extension = ScriptUnit.extension(arg_1_7, "spread_system")
-	self.overcharge_extension = ScriptUnit.extension(arg_1_4, "overcharge_system")
-	self.first_person_extension = ScriptUnit.extension(arg_1_4, "first_person_system")
+	self.spread_extension = ScriptUnit.extension(weapon_unit, "spread_system")
+	self.overcharge_extension = ScriptUnit.extension(owner_unit, "overcharge_system")
+	self.first_person_extension = ScriptUnit.extension(owner_unit, "first_person_system")
 end
 
-ActionTrueFlightBow.client_owner_start_action = function (self, arg_2_1, arg_2_2, arg_2_3, arg_2_4, arg_2_5)
+ActionTrueFlightBow.client_owner_start_action = function (self, new_action, t, chain_action_data, power_level, action_init_data)
 	-- function 2
-	ActionTrueFlightBow.super.client_owner_start_action(self, arg_2_1, arg_2_2, arg_2_3, arg_2_4, arg_2_5)
+	ActionTrueFlightBow.super.client_owner_start_action(self, new_action, t, chain_action_data, power_level, action_init_data)
 
-	self.current_action = arg_2_1
-	self.true_flight_template_id = TrueFlightTemplates[arg_2_1.true_flight_template].lookup_id
+	self.current_action = new_action
+	self.true_flight_template_id = TrueFlightTemplates[new_action.true_flight_template].lookup_id
 
 	assert(self.true_flight_template_id)
 
 	local owner_unit = self.owner_unit
-	local extension = ScriptUnit.extension(owner_unit, "buff_system")
-	local is_critical_strike = ActionUtils.is_critical_strike(owner_unit, arg_2_1, arg_2_2)
-	local _update_extra_shots = self:_update_extra_shots(extension)
+	local buff_extension = ScriptUnit.extension(owner_unit, "buff_system")
+	local is_critical_strike = ActionUtils.is_critical_strike(owner_unit, new_action, t)
+	local _update_extra_shots = self:_update_extra_shots(buff_extension)
 
-	_update_extra_shots = _update_extra_shots or 0
-	self.num_extra_shots = _update_extra_shots
+	if not _update_extra_shots then
+		-- Nothing
+	end
 
-	self:_update_extra_shots(extension, _update_extra_shots)
+	_update_extra_shots = 0
 
-	local num_projectiles = arg_2_1.num_projectiles
+	local num_extra_shots = _update_extra_shots
 
-	num_projectiles = num_projectiles or 1
-	self.num_projectiles = num_projectiles + _update_extra_shots
+	::label_2_0::
 
-	if not ScriptUnit.has_extension(owner_unit, "talent_system"):has_talent("kerillian_waywatcher_activated_ability_additional_projectile") then
+	self.num_extra_shots = num_extra_shots
+
+	self:_update_extra_shots(buff_extension, num_extra_shots)
+
+	local num_projectiles = new_action.num_projectiles
+
+	num_projectiles = not not num_projectiles or not not 1
+	self.num_projectiles = num_projectiles + num_extra_shots
+
+	local talent_extension = ScriptUnit.has_extension(owner_unit, "talent_system")
+
+	if talent_extension:has_talent("kerillian_waywatcher_activated_ability_additional_projectile") then
 		self.num_projectiles = self.num_projectiles + 1
 	end
 
-	local multi_projectile_spread = arg_2_1.multi_projectile_spread
+	local multi_projectile_spread = new_action.multi_projectile_spread
 
-	multi_projectile_spread = multi_projectile_spread or 0.075
+	multi_projectile_spread = not not multi_projectile_spread or not not 0.075
 	self.multi_projectile_spread = multi_projectile_spread
 	self.num_projectiles_shot = 1
 
-	if not arg_2_3 then
-		self.targets = arg_2_3.targets
+	if chain_action_data then
+		self.targets = chain_action_data.targets
 
 		if not self.targets then
 			self.targets = {
-				arg_2_3.target
+				chain_action_data.target
 			}
 		end
 	end
 
-	if not arg_2_5 then
-		self.targets = arg_2_5.targets
+	if action_init_data then
+		self.targets = action_init_data.targets
 
 		if not self.targets then
 			self.targets = {
-				arg_2_5.target
+				action_init_data.target
 			}
 		end
 	end
 
 	self.state = "waiting_to_shoot"
 
-	local fire_time = arg_2_1.fire_time
+	local fire_time = new_action.fire_time
 
-	fire_time = fire_time or 0
-	self.time_to_shoot = arg_2_2 + fire_time
-	self.power_level = arg_2_4
+	fire_time = not not fire_time or not not 0
+	self.time_to_shoot = t + fire_time
+	self.power_level = power_level
 	self.extra_buff_shot = false
 
-	local has_extension = ScriptUnit.has_extension(owner_unit, "hud_system")
+	local hud_extension = ScriptUnit.has_extension(owner_unit, "hud_system")
 
-	self:_handle_critical_strike(is_critical_strike, extension, has_extension, nil, "on_critical_shot", nil)
+	self:_handle_critical_strike(is_critical_strike, buff_extension, hud_extension, nil, "on_critical_shot", nil)
 
 	self._is_critical_strike = is_critical_strike
 end
 
-ActionTrueFlightBow.client_owner_post_update = function (self, arg_3_1, arg_3_2, arg_3_3, arg_3_4)
+ActionTrueFlightBow.client_owner_post_update = function (self, dt, t, world, can_damage)
 	-- function 3
 	local current_action = self.current_action
 
-	if not (self.state ~= "waiting_to_shoot" or not (arg_3_2 >= self.time_to_shoot)) then
+	if self.state == "waiting_to_shoot" and t >= self.time_to_shoot then
 		self.state = "shooting"
 	end
 
@@ -102,67 +113,78 @@ ActionTrueFlightBow.client_owner_post_update = function (self, arg_3_1, arg_3_2,
 
 		local first_person_extension = self.first_person_extension
 
-		if not self.current_action.reset_aim_on_attack then
+		if self.current_action.reset_aim_on_attack then
 			first_person_extension:reset_aim_assist_multiplier()
 		end
 
 		local fire_sound_event = self.current_action.fire_sound_event
 
-		if not fire_sound_event then
-			local fire_sound_on_husk = self.current_action.fire_sound_on_husk
+		if fire_sound_event then
+			local play_on_husk = self.current_action.fire_sound_on_husk
 
-			first_person_extension:play_hud_sound_event(fire_sound_event, nil, fire_sound_on_husk)
+			first_person_extension:play_hud_sound_event(fire_sound_event, nil, play_on_husk)
 		end
 
-		if not self.current_action.extra_fire_sound_event then
-			local var_3_4 = POSITION_LOOKUP[self.owner_unit]
+		if self.current_action.extra_fire_sound_event then
+			local position = POSITION_LOOKUP[self.owner_unit]
 
-			WwiseUtils.trigger_position_event(self.world, self.current_action.extra_fire_sound_event, var_3_4)
+			WwiseUtils.trigger_position_event(self.world, self.current_action.extra_fire_sound_event, position)
 		end
 	end
 end
 
-ActionTrueFlightBow.finish = function (self, arg_4_1, arg_4_2)
+ActionTrueFlightBow.finish = function (self, reason, data)
 	-- function 4
-	local extension = ScriptUnit.extension(self.owner_unit, "status_system")
+	local owner_unit_status = ScriptUnit.extension(self.owner_unit, "status_system")
 
-	if not (not arg_4_2 and arg_4_2.new_action ~= "action_two" or arg_4_2.new_sub_action == "default") then
-		extension:set_zooming(false)
+	if not data or data.new_action ~= "action_two" or data.new_sub_action ~= "default" then
+		owner_unit_status:set_zooming(false)
 	end
 end
 
-ActionTrueFlightBow.fire = function (self, arg_5_1)
+ActionTrueFlightBow.fire = function (self, current_action)
 	-- function 5
 	local owner_unit = self.owner_unit
-	local speed = arg_5_1.speed
-	local get_projectile_start_position_rotation, var_5_3 = self.first_person_extension:get_projectile_start_position_rotation()
+	local speed = current_action.speed
+	local first_person_extension = self.first_person_extension
+	local position, rotation = first_person_extension:get_projectile_start_position_rotation()
 	local spread_extension = self.spread_extension
 	local num_projectiles = self.num_projectiles
-	local num = num_projectiles - self.num_extra_shots + 1
+	local extra_shots_idx = num_projectiles - self.num_extra_shots + 1
 
 	for i = 1, num_projectiles do
-		local var_5_7 = var_5_3
-		local flag = num <= i
+		local fire_rotation = rotation
+		local is_extra_shot = extra_shots_idx <= i
 
-		if not spread_extension then
+		if spread_extension then
 			if self.num_projectiles_shot > 1 then
-				local num_2 = math.pi * (self.num_projectiles_shot % 2 + 0.5)
-				local flag_2
+				local spread_horizontal_angle = math.pi * (self.num_projectiles_shot % 2 + 0.5)
+				local num
 
-				flag_2 = self.num_projectiles_shot ~= 1 or not 0 or math.round((self.num_projectiles_shot - 1) * 0.5, 0)
+				if self.num_projectiles_shot == 1 then
+					num = 0
 
-				local num_3 = self.multi_projectile_spread * flag_2
+					goto label_5_0
+				end
 
-				var_5_7 = spread_extension:combine_spread_rotations(num_2, num_3, var_5_7)
+				num = math.round((self.num_projectiles_shot - 1) * 0.5, 0)
+
+				local shot_count_offset = num
+
+				::label_5_0::
+
+				local angle_offset = self.multi_projectile_spread * shot_count_offset
+
+				fire_rotation = spread_extension:combine_spread_rotations(spread_horizontal_angle, angle_offset, fire_rotation)
 			end
 
-			if not flag then
+			if not is_extra_shot then
 				spread_extension:set_shooting()
 			end
 		end
 
-		local pitch_from_rotation = ActionUtils.pitch_from_rotation(var_5_7)
-		local normalize = Vector3.normalize(Quaternion.forward(var_5_7))
+		local angle = ActionUtils.pitch_from_rotation(fire_rotation)
+		local target_vector = Vector3.normalize(Quaternion.forward(fire_rotation))
 
 		if i > 1 then
 			speed = speed * (1 - i * 0.05)
@@ -170,53 +192,57 @@ ActionTrueFlightBow.fire = function (self, arg_5_1)
 
 		local targets = self.targets
 
-		if not targets then
-			if not arg_5_1.single_target then
-				targets = self.targets[1]
-
-				if not targets then
-					-- Nothing
-				end
-			end
-
-			targets = self.targets[i]
+		if targets then
+			-- Nothing
 		end
 
-		::label_5_0::
+		if current_action.single_target then
+			targets = self.targets[1]
 
-		local lookup_data = arg_5_1.lookup_data
-		local num_4 = 1
+			if not targets then
+				-- Nothing
+			end
+		end
 
-		ActionUtils.spawn_true_flight_projectile(owner_unit, targets, self.true_flight_template_id, get_projectile_start_position_rotation, var_5_7, pitch_from_rotation, normalize, speed, self.item_name, lookup_data.item_template_name, lookup_data.action_name, lookup_data.sub_action_name, num_4, self._is_critical_strike, self.power_level)
+		targets = self.targets[i]
 
-		if not (not self.ammo_extension and flag) then
+		local target_unit = targets
+
+		::label_5_1::
+
+		local lookup_data = current_action.lookup_data
+		local scale = 1
+
+		ActionUtils.spawn_true_flight_projectile(owner_unit, target_unit, self.true_flight_template_id, position, fire_rotation, angle, target_vector, speed, self.item_name, lookup_data.item_template_name, lookup_data.action_name, lookup_data.sub_action_name, scale, self._is_critical_strike, self.power_level)
+
+		if self.ammo_extension and not is_extra_shot then
 			local ammo_usage = self.current_action.ammo_usage
 
 			self.ammo_extension:use_ammo(ammo_usage)
 
-			if not self.ammo_extension:can_reload() then
-				local flag_3 = false
+			if self.ammo_extension:can_reload() then
+				local play_reload_animation = false
 
-				self.ammo_extension:start_reload(flag_3)
+				self.ammo_extension:start_reload(play_reload_animation)
 			end
 		end
 
 		self.num_projectiles_shot = self.num_projectiles_shot + 1
 
-		local overcharge_type = arg_5_1.overcharge_type
+		local overcharge_type = current_action.overcharge_type
 
-		if not (not overcharge_type and flag) then
-			local var_5_20 = PlayerUnitStatusSettings.overcharge_values[overcharge_type]
+		if overcharge_type and not is_extra_shot then
+			local overcharge_amount = PlayerUnitStatusSettings.overcharge_values[overcharge_type]
 
-			if not arg_5_1.scale_overcharge then
-				self.overcharge_extension:add_charge(var_5_20, self.charge_level)
+			if current_action.scale_overcharge then
+				self.overcharge_extension:add_charge(overcharge_amount, self.charge_level)
 			else
-				self.overcharge_extension:add_charge(var_5_20)
+				self.overcharge_extension:add_charge(overcharge_amount)
 			end
 		end
 
-		if not arg_5_1.alert_sound_range_fire then
-			Managers.state.entity:system("ai_system"):alert_enemies_within_range(owner_unit, POSITION_LOOKUP[owner_unit], arg_5_1.alert_sound_range_fire)
+		if current_action.alert_sound_range_fire then
+			Managers.state.entity:system("ai_system"):alert_enemies_within_range(owner_unit, POSITION_LOOKUP[owner_unit], current_action.alert_sound_range_fire)
 		end
 	end
 end

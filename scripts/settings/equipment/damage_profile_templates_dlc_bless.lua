@@ -1,52 +1,54 @@
 -- chunkname: @scripts/settings/equipment/damage_profile_templates_dlc_bless.lua
 
-local function fn(arg_1_0, arg_1_1, arg_1_2, arg_1_3, arg_1_4, ...)
+local function new_template(damage_profile_name, damage_profile_name_appendix, override_damage_profile_name, charge_value, default_attack_template, ...)
 	-- function 1
-	local var_1_0 = DamageProfileTemplates[arg_1_0]
-	local clone = table.clone(var_1_0)
-	local var_1_2 = select("#", ...)
+	local original_damage_profile = DamageProfileTemplates[damage_profile_name]
+	local damage_profile = table.clone(original_damage_profile)
+	local num_args = select("#", ...)
 
-	if not arg_1_4 then
-		if type(clone.default_target) == "string" then
-			clone.default_target = PowerLevelTemplates[clone.default_target]
+	if default_attack_template then
+		local default_target_type = type(damage_profile.default_target)
+
+		if default_target_type == "string" then
+			damage_profile.default_target = PowerLevelTemplates[damage_profile.default_target]
 		end
 
-		clone.default_target = table.clone(clone.default_target)
-		clone.default_target.attack_template = arg_1_4
+		damage_profile.default_target = table.clone(damage_profile.default_target)
+		damage_profile.default_target.attack_template = default_attack_template
 
-		if type(clone.targets) == "string" then
-			clone.targets = PowerLevelTemplates[clone.targets]
+		if type(damage_profile.targets) == "string" then
+			damage_profile.targets = PowerLevelTemplates[damage_profile.targets]
 		end
 
-		clone.targets = table.clone(clone.targets)
+		damage_profile.targets = table.clone(damage_profile.targets)
 
-		local targets = clone.targets
+		local targets = damage_profile.targets
 
-		if not targets then
-			for i, v in ipairs(targets) do
-				if i <= var_1_2 then
-					v.attack_template = select(i, ...)
+		if targets then
+			for index, target in ipairs(targets) do
+				if index <= num_args then
+					target.attack_template = select(index, ...)
 				else
-					v.attack_template = arg_1_4
+					target.attack_template = default_attack_template
 				end
 			end
 		end
 	end
 
-	if not arg_1_3 then
-		clone.charge_value = arg_1_3
+	if charge_value then
+		damage_profile.charge_value = charge_value
 	end
 
-	if not arg_1_2 then
-		DamageProfileTemplates[arg_1_2] = clone
-	elseif not arg_1_1 then
-		local str = arg_1_0 .. arg_1_1
+	if override_damage_profile_name then
+		DamageProfileTemplates[override_damage_profile_name] = damage_profile
+	elseif damage_profile_name_appendix then
+		local new_damage_profile_name = damage_profile_name .. damage_profile_name_appendix
 
-		DamageProfileTemplates[str] = clone
+		DamageProfileTemplates[new_damage_profile_name] = damage_profile
 	end
 end
 
-local tbl = {
+local damage_templates = {
 	hammer_book_charged_explosion = {
 		no_stagger_damage_reduction = true,
 		charge_value = "aoe",
@@ -520,17 +522,17 @@ local tbl = {
 	}
 }
 
-fn("medium_blunt_smiter_1h", "_priest", nil, nil)
+new_template("medium_blunt_smiter_1h", "_priest", nil, nil)
 
 DamageProfileTemplates.medium_blunt_smiter_1h_priest.default_target.power_distribution.impact = 0.3
 
-fn("medium_blunt_smiter_1h", "_thrust", nil, nil)
+new_template("medium_blunt_smiter_1h", "_thrust", nil, nil)
 
 DamageProfileTemplates.medium_blunt_smiter_1h_thrust.default_target.power_distribution.impact = 0.35
 DamageProfileTemplates.medium_blunt_smiter_1h_thrust.default_target.power_distribution.attack = 0.45
 
-fn("shield_slam_aoe", "_priest", nil, nil)
+new_template("shield_slam_aoe", "_priest", nil, nil)
 
 DamageProfileTemplates.shield_slam_aoe_priest.charge_value = "aoe"
 
-return tbl
+return damage_templates

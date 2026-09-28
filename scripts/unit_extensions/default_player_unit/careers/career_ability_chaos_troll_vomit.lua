@@ -2,15 +2,15 @@
 
 CareerAbilityChaosTrollVomit = class(CareerAbilityChaosTrollVomit)
 
-CareerAbilityChaosTrollVomit.init = function (self, arg_1_1, arg_1_2, arg_1_3, arg_1_4)
+CareerAbilityChaosTrollVomit.init = function (self, extension_init_context, unit, extension_init_data, ability_data)
 	-- function 1
-	self._owner_unit = arg_1_2
-	self._world = arg_1_1.world
+	self._owner_unit = unit
+	self._world = extension_init_context.world
 	self._wwise_world = Managers.world:wwise_world(self._world)
 	self._physics_world = World.physics_world(self._world)
-	self._ability_data = arg_1_4
+	self._ability_data = ability_data
 
-	local player = arg_1_3.player
+	local player = extension_init_data.player
 
 	self._player = player
 	self._is_server = player.is_server
@@ -20,38 +20,38 @@ CareerAbilityChaosTrollVomit.init = function (self, arg_1_1, arg_1_2, arg_1_3, a
 	self._input_manager = Managers.input
 end
 
-CareerAbilityChaosTrollVomit.extensions_ready = function (self, arg_2_1, arg_2_2)
+CareerAbilityChaosTrollVomit.extensions_ready = function (self, world, unit)
 	-- function 2
-	self._first_person_extension = ScriptUnit.has_extension(arg_2_2, "first_person_system")
-	self._status_extension = ScriptUnit.extension(arg_2_2, "status_system")
-	self._career_extension = ScriptUnit.extension(arg_2_2, "career_system")
-	self._buff_extension = ScriptUnit.extension(arg_2_2, "buff_system")
-	self._locomotion_extension = ScriptUnit.extension(arg_2_2, "locomotion_system")
-	self._input_extension = ScriptUnit.has_extension(arg_2_2, "input_system")
-	self._inventory_extension = ScriptUnit.extension(arg_2_2, "inventory_system")
-	self._ghost_mode_extension = ScriptUnit.has_extension(arg_2_2, "ghost_mode_system")
+	self._first_person_extension = ScriptUnit.has_extension(unit, "first_person_system")
+	self._status_extension = ScriptUnit.extension(unit, "status_system")
+	self._career_extension = ScriptUnit.extension(unit, "career_system")
+	self._buff_extension = ScriptUnit.extension(unit, "buff_system")
+	self._locomotion_extension = ScriptUnit.extension(unit, "locomotion_system")
+	self._input_extension = ScriptUnit.has_extension(unit, "input_system")
+	self._inventory_extension = ScriptUnit.extension(unit, "inventory_system")
+	self._ghost_mode_extension = ScriptUnit.has_extension(unit, "ghost_mode_system")
 	self._ability_input = self._ability_data.input_action
 
-	if not self._first_person_extension then
+	if self._first_person_extension then
 		self._first_person_unit = self._first_person_extension:get_first_person_unit()
 	end
 end
 
-CareerAbilityChaosTrollVomit.destroy = function (arg_3_0)
+CareerAbilityChaosTrollVomit.destroy = function (self)
 	-- function 3
 	return
 end
 
-CareerAbilityChaosTrollVomit.update = function (arg_4_0, arg_4_1, arg_4_2, arg_4_3, arg_4_4, arg_4_5)
+CareerAbilityChaosTrollVomit.update = function (self, unit, input, dt, context, t)
 	-- function 4
 	return
 end
 
 CareerAbilityChaosTrollVomit.was_triggered = function (self)
 	-- function 5
-	local _input_extension = self._input_extension
+	local input_extension = self._input_extension
 
-	if not _input_extension then
+	if not input_extension then
 		return false
 	end
 
@@ -60,7 +60,7 @@ CareerAbilityChaosTrollVomit.was_triggered = function (self)
 			return false
 		end
 
-		if not _input_extension:get(self._ability_input) then
+		if input_extension:get(self._ability_input) then
 			self:_start()
 
 			return true
@@ -72,18 +72,19 @@ end
 
 CareerAbilityChaosTrollVomit._ability_available = function (self)
 	-- function 6
-	local _career_extension = self._career_extension
-	local _status_extension = self._status_extension
-	local _locomotion_extension = self._locomotion_extension
-	local is_in_ghost_mode = self._ghost_mode_extension:is_in_ghost_mode()
-	local can_use_activated_ability = _career_extension:can_use_activated_ability(self._ability_data.ability_id)
+	local career_extension = self._career_extension
+	local status_extension = self._status_extension
+	local locomotion_extension = self._locomotion_extension
+	local ghost_mode_extension = self._ghost_mode_extension
+	local in_ghost_mode = ghost_mode_extension:is_in_ghost_mode()
+	local can_use_activated_ability = career_extension:can_use_activated_ability(self._ability_data.ability_id)
 
-	if not can_use_activated_ability then
-		if not _status_extension:is_disabled() then
-			can_use_activated_ability = _locomotion_extension:is_on_ground()
+	if can_use_activated_ability then
+		if not status_extension:is_disabled() then
+			can_use_activated_ability = locomotion_extension:is_on_ground()
 
-			if not can_use_activated_ability then
-				can_use_activated_ability = not is_in_ghost_mode
+			if can_use_activated_ability then
+				can_use_activated_ability = not in_ghost_mode
 			end
 		else
 			can_use_activated_ability = false
@@ -97,12 +98,12 @@ CareerAbilityChaosTrollVomit._ability_available = function (self)
 	return can_use_activated_ability
 end
 
-CareerAbilityChaosTrollVomit.finish = function (arg_7_0, arg_7_1)
+CareerAbilityChaosTrollVomit.finish = function (self, reason)
 	-- function 7
 	return
 end
 
-CareerAbilityChaosTrollVomit.stop = function (arg_8_0, arg_8_1)
+CareerAbilityChaosTrollVomit.stop = function (self, reason)
 	-- function 8
 	return
 end
@@ -112,7 +113,7 @@ CareerAbilityChaosTrollVomit._start = function (self)
 	self:_play_vo()
 end
 
-CareerAbilityChaosTrollVomit._play_vo = function (arg_10_0)
+CareerAbilityChaosTrollVomit._play_vo = function (self)
 	-- function 10
 	return
 end

@@ -1,6 +1,6 @@
 -- chunkname: @levels/honduras_dlcs/karak_azgaraz/dwarf_exterior/world_patrol_waypoints.lua
 
-local tbl = {
+local boss_waypoints = {
 	{
 		{
 			id = "boss_4",
@@ -7259,7 +7259,7 @@ local tbl = {
 		}
 	}
 }
-local tbl_2 = {
+local patrol_waypoints = {
 	{
 		travel_dist = 156.9747262597084,
 		id = "roaming_3",
@@ -12257,7 +12257,7 @@ local tbl_2 = {
 		}
 	}
 }
-local tbl_3 = {
+local event_waypoints = {
 	{
 		travel_dist = 619.5769747495651,
 		id = "event_1",
@@ -14227,11 +14227,11 @@ local tbl_3 = {
 		}
 	}
 }
-local str = "1"
+local patrol_spline_version = "1"
 
 return {
-	version = str,
-	boss_waypoints = tbl,
-	patrol_waypoints = tbl_2,
-	event_waypoints = tbl_3
+	version = patrol_spline_version,
+	boss_waypoints = boss_waypoints,
+	patrol_waypoints = patrol_waypoints,
+	event_waypoints = event_waypoints
 }

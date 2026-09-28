@@ -1,6 +1,6 @@
 -- chunkname: @levels/honduras_dlcs/morris/pat_forest/generated/wastes_path2/world_smartobjects.lua
 
-local tbl = {
+local smart_objects = {
 	["01cb758d-2e8c-4f81-b685-3bc1a1e71fdc"] = {
 		{
 			smart_object_index = 227,
@@ -7816,13 +7816,13 @@ local tbl = {
 		}
 	}
 }
-local num = 327
-local str = "v1"
-local str_2 = "2017.MAY.05.05"
+local smart_object_count = 327
+local version = "v1"
+local ledgelator_version = "2017.MAY.05.05"
 
 return {
-	smart_objects = tbl,
-	smart_object_count = num,
-	version = str,
-	ledgelator_version = str_2
+	smart_objects = smart_objects,
+	smart_object_count = smart_object_count,
+	version = version,
+	ledgelator_version = ledgelator_version
 }

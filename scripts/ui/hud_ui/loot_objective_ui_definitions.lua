@@ -1,16 +1,15 @@
 -- chunkname: @scripts/ui/hud_ui/loot_objective_ui_definitions.lua
 
-local num = 1920
-local num_2 = 1080
-local tbl = {
+local SIZE_X, SIZE_Y = 1920, 1080
+local ICON_SIZE = {
 	64,
 	64
 }
-local tbl_2 = {
+local BACKGROUND_SIZE = {
 	819,
 	60
 }
-local tbl_3 = {
+local scenegraph_definition = {
 	root = {
 		is_root = true,
 		position = {
@@ -19,8 +18,8 @@ local tbl_3 = {
 			UILayer.hud
 		},
 		size = {
-			num,
-			num_2
+			SIZE_X,
+			SIZE_Y
 		}
 	},
 	background_parent = {
@@ -66,36 +65,38 @@ local tbl_3 = {
 		}
 	}
 }
+local color = table.clone(Colors.color_definitions.white)
 
-table.clone(Colors.color_definitions.white)[1] = 0
+color[1] = 0
 
-local function fn(arg_1_0, arg_1_1)
+local function create_loot_widget(texture, amount)
 	-- function 1
-	local tbl = {
+	local spacing = {
 		20,
 		20
 	}
-	local size = UIAtlasHelper.get_atlas_settings_by_texture_name(arg_1_0).size
-	local num = size[1] * arg_1_1
-	local num_2 = tbl[1] * (arg_1_1 - 1)
-	local tbl_2 = {
-		num + num_2,
-		size[2] + tbl[2]
+	local texture_settings = UIAtlasHelper.get_atlas_settings_by_texture_name(texture)
+	local texture_size = texture_settings.size
+	local texture_total_width = texture_size[1] * amount
+	local total_spacing = spacing[1] * (amount - 1)
+	local size = {
+		texture_total_width + total_spacing,
+		texture_size[2] + spacing[2]
 	}
-	local item_hover_01 = UIFrameSettings.item_hover_01
-	local corner = item_hover_01.texture_sizes.corner
-	local tbl_3 = {}
-	local tbl_4 = {}
-	local tbl_5 = {}
-	local tbl_6 = {}
-	local tbl_7 = {}
+	local frame_settings = UIFrameSettings.item_hover_01
+	local frame_corner_size = frame_settings.texture_sizes.corner
+	local icon_textures = {}
+	local glow_icon_textures = {}
+	local background_icon_textures = {}
+	local icon_texture_sizes = {}
+	local icon_texture_colors = {}
 
-	for i = 1, arg_1_1 do
-		tbl_3[i] = arg_1_0
-		tbl_4[i] = arg_1_0 .. "_glow"
-		tbl_5[i] = arg_1_0 .. "_bg"
-		tbl_6[i] = size
-		tbl_7[i] = {
+	for i = 1, amount do
+		icon_textures[i] = texture
+		glow_icon_textures[i] = texture .. "_glow"
+		background_icon_textures[i] = texture .. "_bg"
+		icon_texture_sizes[i] = texture_size
+		icon_texture_colors[i] = {
 			0,
 			255,
 			255,
@@ -132,16 +133,16 @@ local function fn(arg_1_0, arg_1_1)
 		content = {
 			draw_count = 0,
 			background = "loot_objective_bg",
-			amount = arg_1_1,
-			frame = item_hover_01.texture,
-			icon_textures = tbl_3,
-			glow_icon_textures = tbl_4,
-			background_icon_textures = tbl_5
+			amount = amount,
+			frame = frame_settings.texture,
+			icon_textures = icon_textures,
+			glow_icon_textures = glow_icon_textures,
+			background_icon_textures = background_icon_textures
 		},
 		style = {
 			frame = {
-				texture_size = item_hover_01.texture_size,
-				texture_sizes = item_hover_01.texture_sizes,
+				texture_size = frame_settings.texture_size,
+				texture_sizes = frame_settings.texture_sizes,
 				color = {
 					150,
 					255,
@@ -155,12 +156,12 @@ local function fn(arg_1_0, arg_1_1)
 					255
 				},
 				size = {
-					tbl_2[1] + corner[1] * 2,
-					tbl_2[2] + corner[2] * 2
+					size[1] + frame_corner_size[1] * 2,
+					size[2] + frame_corner_size[2] * 2
 				},
 				offset = {
-					-corner[1],
-					-corner[2],
+					-frame_corner_size[1],
+					-frame_corner_size[2],
 					2
 				}
 			},
@@ -188,11 +189,11 @@ local function fn(arg_1_0, arg_1_1)
 				axis = 1,
 				direction = 1,
 				spacing = {
-					tbl[1],
+					spacing[1],
 					0
 				},
-				texture_sizes = tbl_6,
-				texture_colors = tbl_7,
+				texture_sizes = icon_texture_sizes,
+				texture_colors = icon_texture_colors,
 				color = {
 					0,
 					255,
@@ -206,21 +207,21 @@ local function fn(arg_1_0, arg_1_1)
 					255
 				},
 				offset = {
-					-tbl_2[1] / 2,
-					-size[2] / 2,
+					-size[1] / 2,
+					-texture_size[2] / 2,
 					2
 				},
-				draw_count = arg_1_1
+				draw_count = amount
 			},
 			background_icon_textures = {
 				scenegraph_id = "pivot",
 				axis = 1,
 				direction = 1,
 				spacing = {
-					tbl[1],
+					spacing[1],
 					0
 				},
-				texture_sizes = tbl_6,
+				texture_sizes = icon_texture_sizes,
 				color = {
 					255,
 					255,
@@ -234,21 +235,21 @@ local function fn(arg_1_0, arg_1_1)
 					255
 				},
 				offset = {
-					-tbl_2[1] / 2,
-					-size[2] / 2,
+					-size[1] / 2,
+					-texture_size[2] / 2,
 					1
 				},
-				draw_count = arg_1_1
+				draw_count = amount
 			},
 			glow_icon_textures = {
 				scenegraph_id = "pivot",
 				axis = 1,
 				direction = 1,
 				spacing = {
-					tbl[1],
+					spacing[1],
 					0
 				},
-				texture_sizes = tbl_6,
+				texture_sizes = icon_texture_sizes,
 				color = {
 					255,
 					255,
@@ -262,11 +263,11 @@ local function fn(arg_1_0, arg_1_1)
 					255
 				},
 				offset = {
-					-tbl_2[1] / 2,
-					-size[2] / 2,
+					-size[1] / 2,
+					-texture_size[2] / 2,
 					3
 				},
-				draw_count = arg_1_1
+				draw_count = amount
 			}
 		},
 		offset = {
@@ -277,10 +278,10 @@ local function fn(arg_1_0, arg_1_1)
 	}
 end
 
-local tbl_4 = {}
+local widget_definitions = {}
 
 return {
-	scenegraph_definition = tbl_3,
-	widget_definitions = tbl_4,
-	create_loot_widget = fn
+	scenegraph_definition = scenegraph_definition,
+	widget_definitions = widget_definitions,
+	create_loot_widget = create_loot_widget
 }

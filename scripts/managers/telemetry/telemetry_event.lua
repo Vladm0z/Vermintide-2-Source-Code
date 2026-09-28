@@ -5,34 +5,34 @@ TelemetryEvent.NAME = "TelemetryEvent"
 
 local type_name = Script.type_name
 
-TelemetryEvent.init = function (self, arg_1_1, arg_1_2, arg_1_3, arg_1_4)
+TelemetryEvent.init = function (self, source, subject, type, session)
 	-- function 1
-	fassert(type_name(arg_1_1) == "table", "'source' needs to be table")
-	fassert(type_name(arg_1_2) == "table" or arg_1_2 == nil, "'subject' needs to be a table or nil")
-	fassert(type_name(arg_1_3) == "string", "'type' needs to be a string")
-	fassert(type_name(arg_1_4) == "table" or arg_1_4 == nil, "'session' needs to be a table or nil")
+	fassert(type_name(source) == "table", "'source' needs to be table")
+	fassert(type_name(subject) == "table" or subject == nil, "'subject' needs to be a table or nil")
+	fassert(type_name(type) == "string", "'type' needs to be a string")
+	fassert(type_name(session) == "table" or session == nil, "'session' needs to be a table or nil")
 
 	self._event = {
 		specversion = "1.2",
-		source = arg_1_1,
-		subject = arg_1_2,
-		type = arg_1_3,
-		session = arg_1_4
+		source = source,
+		subject = subject,
+		type = type,
+		session = session
 	}
 end
 
-TelemetryEvent.set_revision = function (arg_2_0, arg_2_1)
+TelemetryEvent.set_revision = function (self, revision)
 	-- function 2
-	fassert(type_name(arg_2_1) == "number" or arg_2_1 == nil, "'revision' needs to be a number or nil")
+	fassert(type_name(revision) == "number" or revision == nil, "'revision' needs to be a number or nil")
 
-	arg_2_0._event.revision = arg_2_1
+	self._event.revision = revision
 end
 
-TelemetryEvent.set_data = function (arg_3_0, arg_3_1)
+TelemetryEvent.set_data = function (self, data)
 	-- function 3
-	assert(type_name(arg_3_1) == "table" or arg_3_1 == nil, "'data' needs to be a table or nil")
+	assert(type_name(data) == "table" or data == nil, "'data' needs to be a table or nil")
 
-	arg_3_0._event.data = arg_3_1
+	self._event.data = data
 end
 
 TelemetryEvent.raw = function (self)

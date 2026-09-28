@@ -1,15 +1,15 @@
 -- chunkname: @scripts/ui/views/hero_view/windows/definitions/hero_window_crafting_console_definitions.lua
 
-local game_start_windows = UISettings.game_start_windows
-local background = game_start_windows.background
-local frame = game_start_windows.frame
-local size = game_start_windows.size
-local spacing = game_start_windows.spacing
-local var_0_5 = UIFrameSettings[frame].texture_sizes.vertical[1]
-local var_0_6 = UIFrameSettings[frame].texture_sizes.horizontal[2]
-local num = size[1] - (var_0_5 * 2 + 60)
+local window_default_settings = UISettings.game_start_windows
+local window_background = window_default_settings.background
+local window_frame = window_default_settings.frame
+local window_size = window_default_settings.size
+local window_spacing = window_default_settings.spacing
+local window_frame_width = UIFrameSettings[window_frame].texture_sizes.vertical[1]
+local window_frame_height = UIFrameSettings[window_frame].texture_sizes.horizontal[2]
+local window_text_width = window_size[1] - (window_frame_width * 2 + 60)
 local console_menu_scenegraphs = UISettings.console_menu_scenegraphs
-local tbl = {
+local scenegraph_definition = {
 	screen = console_menu_scenegraphs.screen,
 	craft_bg_root = console_menu_scenegraphs.craft_bg_root,
 	area = console_menu_scenegraphs.area,
@@ -301,7 +301,7 @@ local tbl = {
 		parent = "description_bg",
 		horizontal_alignment = "center",
 		size = {
-			size[1] - 40,
+			window_size[1] - 40,
 			50
 		},
 		position = {
@@ -343,7 +343,7 @@ local tbl = {
 		parent = "craft_bg_root",
 		horizontal_alignment = "center",
 		size = {
-			size[1],
+			window_size[1],
 			440
 		},
 		position = {
@@ -353,7 +353,7 @@ local tbl = {
 		}
 	}
 }
-local tbl_2 = {
+local title_text_style = {
 	font_size = 36,
 	upper_case = true,
 	localize = false,
@@ -370,7 +370,7 @@ local tbl_2 = {
 		2
 	}
 }
-local tbl_3 = {
+local description_text_style = {
 	word_wrap = true,
 	font_size = 20,
 	localize = false,
@@ -385,7 +385,7 @@ local tbl_3 = {
 		2
 	}
 }
-local tbl_4 = {
+local page_number_left_text_style = {
 	word_wrap = true,
 	font_size = 20,
 	localize = false,
@@ -395,12 +395,12 @@ local tbl_4 = {
 	font_type = "hell_shark",
 	text_color = Colors.get_color_table_with_alpha("font_default", 255),
 	offset = {
-		-(size[1] * 0.1 + 5),
+		-(window_size[1] * 0.1 + 5),
 		4,
 		2
 	}
 }
-local tbl_5 = {
+local page_number_right_text_style = {
 	word_wrap = true,
 	font_size = 20,
 	localize = false,
@@ -410,12 +410,12 @@ local tbl_5 = {
 	font_type = "hell_shark",
 	text_color = Colors.get_color_table_with_alpha("font_default", 255),
 	offset = {
-		size[1] * 0.1 + 4,
+		window_size[1] * 0.1 + 4,
 		4,
 		2
 	}
 }
-local tbl_6 = {
+local page_number_center_text_style = {
 	word_wrap = true,
 	font_size = 20,
 	localize = false,
@@ -430,14 +430,14 @@ local tbl_6 = {
 		2
 	}
 }
-local clone = table.clone(UISettings.console_tooltip_pass_definitions)
+local tooltip_passes = table.clone(UISettings.console_tooltip_pass_definitions)
 
-clone[#clone + 1] = "craft_item_background"
-clone[#clone + 1] = "craft_item_new_frame"
-clone[#clone + 1] = "craft_item_reward_title"
+tooltip_passes[#tooltip_passes + 1] = "craft_item_background"
+tooltip_passes[#tooltip_passes + 1] = "craft_item_new_frame"
+tooltip_passes[#tooltip_passes + 1] = "craft_item_reward_title"
 
-local flag = true
-local tbl_7 = {
+local masked = true
+local widgets = {
 	craft_bar_bg = UIWidgets.create_simple_texture("console_crafting_bar_bg", "craft_bar", nil, nil, nil, -2),
 	craft_bar = UIWidgets.create_simple_gradient_mask_texture("gamepad_crafting_bar_mask", "craft_bar"),
 	craft_lock_shadow = UIWidgets.create_simple_texture("console_crafting_disc_big_bg", "craft_lock_shadow", nil, nil, {
@@ -449,7 +449,7 @@ local tbl_7 = {
 	craft_lock_top_left = UIWidgets.create_simple_rotated_texture("console_crafting_animation_slice_upper", 0, {
 		208,
 		312
-	}, "craft_lock_top_left", flag),
+	}, "craft_lock_top_left", masked),
 	craft_lock_top_right = UIWidgets.create_simple_uv_rotated_texture("console_crafting_animation_slice_upper", {
 		{
 			1,
@@ -462,8 +462,8 @@ local tbl_7 = {
 	}, 0, {
 		0,
 		312
-	}, "craft_lock_top_right", flag),
-	craft_lock_top_effect = UIWidgets.create_simple_texture("console_crafting_animation_dust", "craft_lock_top_effect", flag),
+	}, "craft_lock_top_right", masked),
+	craft_lock_top_effect = UIWidgets.create_simple_texture("console_crafting_animation_dust", "craft_lock_top_effect", masked),
 	craft_lock_bottom_left = UIWidgets.create_simple_uv_texture("console_crafting_animation_slice_lower", {
 		{
 			1,
@@ -473,12 +473,12 @@ local tbl_7 = {
 			0,
 			1
 		}
-	}, "craft_lock_bottom_left", flag),
-	craft_lock_bottom_right = UIWidgets.create_simple_texture("console_crafting_animation_slice_lower", "craft_lock_bottom_right", flag),
+	}, "craft_lock_bottom_left", masked),
+	craft_lock_bottom_right = UIWidgets.create_simple_texture("console_crafting_animation_slice_lower", "craft_lock_bottom_right", masked),
 	craft_effect_bottom_left = UIWidgets.create_simple_rotated_texture("console_crafting_animation_dust", math.pi / 3, {
 		19.5,
 		94.5
-	}, "craft_effect_bottom_left", flag),
+	}, "craft_effect_bottom_left", masked),
 	craft_effect_bottom_right = UIWidgets.create_simple_uv_rotated_texture("console_crafting_animation_dust", {
 		{
 			1,
@@ -491,8 +491,8 @@ local tbl_7 = {
 	}, math.pi * 2 - math.pi / 3, {
 		19.5,
 		94.5
-	}, "craft_effect_bottom_right", flag),
-	craft_lock_eye_left = UIWidgets.create_simple_texture("console_crafting_animation_eye", "craft_lock_eye_left", flag),
+	}, "craft_effect_bottom_right", masked),
+	craft_lock_eye_left = UIWidgets.create_simple_texture("console_crafting_animation_eye", "craft_lock_eye_left", masked),
 	craft_lock_eye_right = UIWidgets.create_simple_uv_texture("console_crafting_animation_eye", {
 		{
 			1,
@@ -502,7 +502,7 @@ local tbl_7 = {
 			0,
 			1
 		}
-	}, "craft_lock_eye_right", flag),
+	}, "craft_lock_eye_right", masked),
 	crafting_mask = UIWidgets.create_simple_texture("mask_circular", "crafting_mask"),
 	craft_bg = UIWidgets.create_simple_rotated_texture("console_crafting_disc_big_bg", 0, {
 		197,
@@ -514,13 +514,13 @@ local tbl_7 = {
 	}, "craft_bg_detail"),
 	crafting_glow = UIWidgets.create_simple_texture("console_crafting_disc_small_outer_glow", "crafting_glow"),
 	craft_icon_connection = UIWidgets.create_simple_texture("console_crafting_disc_connector", "craft_icon_connection"),
-	description_bg = UIWidgets.create_rect_with_outer_frame("description_bg", tbl.description_bg.size, "frame_outer_fade_02", 0, UISettings.console_menu_rect_color),
-	title_text = UIWidgets.create_simple_text("n/a", "title_text", nil, nil, tbl_2),
-	description_text = UIWidgets.create_simple_text("n/a", "description_text", nil, nil, tbl_3),
+	description_bg = UIWidgets.create_rect_with_outer_frame("description_bg", scenegraph_definition.description_bg.size, "frame_outer_fade_02", 0, UISettings.console_menu_rect_color),
+	title_text = UIWidgets.create_simple_text("n/a", "title_text", nil, nil, title_text_style),
+	description_text = UIWidgets.create_simple_text("n/a", "description_text", nil, nil, description_text_style),
 	title_text_divider = UIWidgets.create_simple_texture("divider_01_top", "title_text_divider"),
-	item_tooltip = UIWidgets.create_simple_item_presentation("item_tooltip_result", clone)
+	item_tooltip = UIWidgets.create_simple_item_presentation("item_tooltip_result", tooltip_passes)
 }
-local tbl_8 = {
+local generic_input_actions = {
 	default = {
 		{
 			input_action = "d_pad",
@@ -605,7 +605,7 @@ local tbl_8 = {
 		}
 	}
 }
-local tbl_9 = {
+local input_actions = {
 	salvage = {
 		actions = {
 			{
@@ -747,23 +747,23 @@ local tbl_9 = {
 		}
 	}
 }
-local tbl_10 = {
+local animation_definitions = {
 	on_enter = {
 		{
 			name = "fade_in",
 			start_progress = 0,
 			end_progress = 0.3,
-			init = function (arg_2_0, arg_2_1, arg_2_2, arg_2_3)
+			init = function (ui_scenegraph, scenegraph_definition, widgets, params)
 				-- function 2
-				arg_2_3.render_settings.alpha_multiplier = 0
+				params.render_settings.alpha_multiplier = 0
 			end,
-			update = function (arg_3_0, arg_3_1, arg_3_2, arg_3_3, arg_3_4)
+			update = function (ui_scenegraph, scenegraph_definition, widgets, progress, params)
 				-- function 3
-				local easeOutCubic = math.easeOutCubic(arg_3_3)
+				local anim_progress = math.easeOutCubic(progress)
 
-				arg_3_4.render_settings.alpha_multiplier = easeOutCubic
+				params.render_settings.alpha_multiplier = anim_progress
 			end,
-			on_complete = function (arg_4_0, arg_4_1, arg_4_2, arg_4_3)
+			on_complete = function (ui_scenegraph, scenegraph_definition, widgets, params)
 				-- function 4
 				return
 			end
@@ -774,17 +774,17 @@ local tbl_10 = {
 			name = "fade_out",
 			start_progress = 0,
 			end_progress = 0.3,
-			init = function (arg_5_0, arg_5_1, arg_5_2, arg_5_3)
+			init = function (ui_scenegraph, scenegraph_definition, widgets, params)
 				-- function 5
-				arg_5_3.render_settings.alpha_multiplier = 1
+				params.render_settings.alpha_multiplier = 1
 			end,
-			update = function (arg_6_0, arg_6_1, arg_6_2, arg_6_3, arg_6_4)
+			update = function (ui_scenegraph, scenegraph_definition, widgets, progress, params)
 				-- function 6
-				local easeOutCubic = math.easeOutCubic(arg_6_3)
+				local anim_progress = math.easeOutCubic(progress)
 
-				arg_6_4.render_settings.alpha_multiplier = 1 - easeOutCubic
+				params.render_settings.alpha_multiplier = 1 - anim_progress
 			end,
-			on_complete = function (arg_7_0, arg_7_1, arg_7_2, arg_7_3)
+			on_complete = function (ui_scenegraph, scenegraph_definition, widgets, params)
 				-- function 7
 				return
 			end
@@ -795,100 +795,103 @@ local tbl_10 = {
 			name = "reset",
 			start_progress = 0,
 			end_progress = 0,
-			init = function (arg_8_0, arg_8_1, arg_8_2, arg_8_3)
+			init = function (ui_scenegraph, scenegraph_definition, widgets, params)
 				-- function 8
-				local craft_lock_top_left = arg_8_2.craft_lock_top_left
-				local craft_lock_top_right = arg_8_2.craft_lock_top_right
-				local num = math.pi / 2
+				local craft_lock_top_left = widgets.craft_lock_top_left
+				local craft_lock_top_right = widgets.craft_lock_top_right
+				local max_angle = math.pi / 2
 
-				craft_lock_top_left.style.texture_id.angle = num
-				craft_lock_top_right.style.texture_id.angle = -num
+				craft_lock_top_left.style.texture_id.angle = max_angle
+				craft_lock_top_right.style.texture_id.angle = -max_angle
 
-				local craft_lock_bottom_left = arg_8_2.craft_lock_bottom_left
-				local craft_lock_bottom_right = arg_8_2.craft_lock_bottom_right
+				local craft_lock_bottom_left = widgets.craft_lock_bottom_left
+				local craft_lock_bottom_right = widgets.craft_lock_bottom_right
 
 				craft_lock_bottom_left.offset[2] = -208
 				craft_lock_bottom_right.offset[2] = -208
 
-				local craft_lock_eye_left = arg_8_2.craft_lock_eye_left
-				local craft_lock_eye_right = arg_8_2.craft_lock_eye_right
-				local texture_id = craft_lock_eye_left.style.texture_id
-				local texture_id_2 = craft_lock_eye_right.style.texture_id
-				local num_2 = 224
-				local num_3 = 217
+				local craft_lock_eye_left = widgets.craft_lock_eye_left
+				local craft_lock_eye_right = widgets.craft_lock_eye_right
+				local style_eye_left = craft_lock_eye_left.style.texture_id
+				local style_eye_right = craft_lock_eye_right.style.texture_id
+				local eye_width = 224
+				local eye_height = 217
 
-				texture_id.color[1] = 0
-				texture_id.horizontal_alignment = "center"
-				texture_id.vertical_alignment = "center"
+				style_eye_left.color[1] = 0
+				style_eye_left.horizontal_alignment = "center"
+				style_eye_left.vertical_alignment = "center"
 
-				local texture_size = texture_id.texture_size
+				local texture_size = style_eye_left.texture_size
 
-				texture_size = texture_size or {
-					num_2,
-					num_3
+				texture_size = not not texture_size or not not {
+					eye_width,
+					eye_height
 				}
-				texture_id.texture_size = texture_size
-				texture_id_2.color[1] = 0
-				texture_id_2.horizontal_alignment = "center"
-				texture_id_2.vertical_alignment = "center"
+				style_eye_left.texture_size = texture_size
+				style_eye_right.color[1] = 0
+				style_eye_right.horizontal_alignment = "center"
+				style_eye_right.vertical_alignment = "center"
 
-				local texture_size_2 = texture_id_2.texture_size
+				local texture_size_2 = style_eye_right.texture_size
 
-				texture_size_2 = texture_size_2 or {
-					num_2,
-					num_3
+				texture_size_2 = not not texture_size_2 or not not {
+					eye_width,
+					eye_height
 				}
-				texture_id_2.texture_size = texture_size_2
+				style_eye_right.texture_size = texture_size_2
 
-				local num_4 = 39
-				local num_5 = 189
-				local texture_id_3 = arg_8_2.craft_lock_top_effect.style.texture_id
+				local effect_width = 39
+				local effect_height = 189
+				local craft_lock_top_effect = widgets.craft_lock_top_effect
+				local style_lock_top_effect = craft_lock_top_effect.style.texture_id
 
-				texture_id_3.color[1] = 0
-				texture_id_3.horizontal_alignment = "center"
-				texture_id_3.vertical_alignment = "center"
+				style_lock_top_effect.color[1] = 0
+				style_lock_top_effect.horizontal_alignment = "center"
+				style_lock_top_effect.vertical_alignment = "center"
 
-				local texture_size_3 = texture_id_3.texture_size
+				local texture_size_3 = style_lock_top_effect.texture_size
 
-				texture_size_3 = texture_size_3 or {
-					num_4,
-					num_5
+				texture_size_3 = not not texture_size_3 or not not {
+					effect_width,
+					effect_height
 				}
-				texture_id_3.texture_size = texture_size_3
+				style_lock_top_effect.texture_size = texture_size_3
 
-				local texture_id_4 = arg_8_2.craft_effect_bottom_left.style.texture_id
+				local craft_effect_bottom_left = widgets.craft_effect_bottom_left
+				local style_effect_bottom_left = craft_effect_bottom_left.style.texture_id
 
-				texture_id_4.color[1] = 0
-				texture_id_4.horizontal_alignment = "center"
-				texture_id_4.vertical_alignment = "center"
+				style_effect_bottom_left.color[1] = 0
+				style_effect_bottom_left.horizontal_alignment = "center"
+				style_effect_bottom_left.vertical_alignment = "center"
 
-				local texture_size_4 = texture_id_4.texture_size
+				local texture_size_4 = style_effect_bottom_left.texture_size
 
-				texture_size_4 = texture_size_4 or {
-					num_4,
-					num_5
+				texture_size_4 = not not texture_size_4 or not not {
+					effect_width,
+					effect_height
 				}
-				texture_id_4.texture_size = texture_size_4
+				style_effect_bottom_left.texture_size = texture_size_4
 
-				local texture_id_5 = arg_8_2.craft_effect_bottom_right.style.texture_id
+				local craft_effect_bottom_right = widgets.craft_effect_bottom_right
+				local style_effect_bottom_right = craft_effect_bottom_right.style.texture_id
 
-				texture_id_5.color[1] = 0
-				texture_id_5.horizontal_alignment = "center"
-				texture_id_5.vertical_alignment = "center"
+				style_effect_bottom_right.color[1] = 0
+				style_effect_bottom_right.horizontal_alignment = "center"
+				style_effect_bottom_right.vertical_alignment = "center"
 
-				local texture_size_5 = texture_id_5.texture_size
+				local texture_size_5 = style_effect_bottom_right.texture_size
 
-				texture_size_5 = texture_size_5 or {
-					num_4,
-					num_5
+				texture_size_5 = not not texture_size_5 or not not {
+					effect_width,
+					effect_height
 				}
-				texture_id_5.texture_size = texture_size_5
+				style_effect_bottom_right.texture_size = texture_size_5
 			end,
-			update = function (arg_9_0, arg_9_1, arg_9_2, arg_9_3, arg_9_4)
+			update = function (ui_scenegraph, scenegraph_definition, widgets, progress, params)
 				-- function 9
 				return
 			end,
-			on_complete = function (arg_10_0, arg_10_1, arg_10_2, arg_10_3)
+			on_complete = function (ui_scenegraph, scenegraph_definition, widgets, params)
 				-- function 10
 				return
 			end
@@ -899,100 +902,103 @@ local tbl_10 = {
 			name = "reset",
 			start_progress = 0,
 			end_progress = 0,
-			init = function (arg_11_0, arg_11_1, arg_11_2, arg_11_3)
+			init = function (ui_scenegraph, scenegraph_definition, widgets, params)
 				-- function 11
-				local craft_lock_top_left = arg_11_2.craft_lock_top_left
-				local craft_lock_top_right = arg_11_2.craft_lock_top_right
-				local num = math.pi / 2
+				local craft_lock_top_left = widgets.craft_lock_top_left
+				local craft_lock_top_right = widgets.craft_lock_top_right
+				local max_angle = math.pi / 2
 
-				craft_lock_top_left.style.texture_id.angle = num
-				craft_lock_top_right.style.texture_id.angle = -num
+				craft_lock_top_left.style.texture_id.angle = max_angle
+				craft_lock_top_right.style.texture_id.angle = -max_angle
 
-				local craft_lock_bottom_left = arg_11_2.craft_lock_bottom_left
-				local craft_lock_bottom_right = arg_11_2.craft_lock_bottom_right
+				local craft_lock_bottom_left = widgets.craft_lock_bottom_left
+				local craft_lock_bottom_right = widgets.craft_lock_bottom_right
 
 				craft_lock_bottom_left.offset[2] = -208
 				craft_lock_bottom_right.offset[2] = -208
 
-				local craft_lock_eye_left = arg_11_2.craft_lock_eye_left
-				local craft_lock_eye_right = arg_11_2.craft_lock_eye_right
-				local texture_id = craft_lock_eye_left.style.texture_id
-				local texture_id_2 = craft_lock_eye_right.style.texture_id
-				local num_2 = 224
-				local num_3 = 217
+				local craft_lock_eye_left = widgets.craft_lock_eye_left
+				local craft_lock_eye_right = widgets.craft_lock_eye_right
+				local style_eye_left = craft_lock_eye_left.style.texture_id
+				local style_eye_right = craft_lock_eye_right.style.texture_id
+				local eye_width = 224
+				local eye_height = 217
 
-				texture_id.color[1] = 0
-				texture_id.horizontal_alignment = "center"
-				texture_id.vertical_alignment = "center"
+				style_eye_left.color[1] = 0
+				style_eye_left.horizontal_alignment = "center"
+				style_eye_left.vertical_alignment = "center"
 
-				local texture_size = texture_id.texture_size
+				local texture_size = style_eye_left.texture_size
 
-				texture_size = texture_size or {
-					num_2,
-					num_3
+				texture_size = not not texture_size or not not {
+					eye_width,
+					eye_height
 				}
-				texture_id.texture_size = texture_size
-				texture_id_2.color[1] = 0
-				texture_id_2.horizontal_alignment = "center"
-				texture_id_2.vertical_alignment = "center"
+				style_eye_left.texture_size = texture_size
+				style_eye_right.color[1] = 0
+				style_eye_right.horizontal_alignment = "center"
+				style_eye_right.vertical_alignment = "center"
 
-				local texture_size_2 = texture_id_2.texture_size
+				local texture_size_2 = style_eye_right.texture_size
 
-				texture_size_2 = texture_size_2 or {
-					num_2,
-					num_3
+				texture_size_2 = not not texture_size_2 or not not {
+					eye_width,
+					eye_height
 				}
-				texture_id_2.texture_size = texture_size_2
+				style_eye_right.texture_size = texture_size_2
 
-				local num_4 = 39
-				local num_5 = 189
-				local texture_id_3 = arg_11_2.craft_lock_top_effect.style.texture_id
+				local effect_width = 39
+				local effect_height = 189
+				local craft_lock_top_effect = widgets.craft_lock_top_effect
+				local style_lock_top_effect = craft_lock_top_effect.style.texture_id
 
-				texture_id_3.color[1] = 0
-				texture_id_3.horizontal_alignment = "center"
-				texture_id_3.vertical_alignment = "top"
+				style_lock_top_effect.color[1] = 0
+				style_lock_top_effect.horizontal_alignment = "center"
+				style_lock_top_effect.vertical_alignment = "top"
 
-				local texture_size_3 = texture_id_3.texture_size
+				local texture_size_3 = style_lock_top_effect.texture_size
 
-				texture_size_3 = texture_size_3 or {
-					num_4,
-					num_5
+				texture_size_3 = not not texture_size_3 or not not {
+					effect_width,
+					effect_height
 				}
-				texture_id_3.texture_size = texture_size_3
+				style_lock_top_effect.texture_size = texture_size_3
 
-				local texture_id_4 = arg_11_2.craft_effect_bottom_left.style.texture_id
+				local craft_effect_bottom_left = widgets.craft_effect_bottom_left
+				local style_effect_bottom_left = craft_effect_bottom_left.style.texture_id
 
-				texture_id_4.color[1] = 0
-				texture_id_4.horizontal_alignment = "center"
-				texture_id_4.vertical_alignment = "center"
+				style_effect_bottom_left.color[1] = 0
+				style_effect_bottom_left.horizontal_alignment = "center"
+				style_effect_bottom_left.vertical_alignment = "center"
 
-				local texture_size_4 = texture_id_4.texture_size
+				local texture_size_4 = style_effect_bottom_left.texture_size
 
-				texture_size_4 = texture_size_4 or {
-					num_4,
-					num_5
+				texture_size_4 = not not texture_size_4 or not not {
+					effect_width,
+					effect_height
 				}
-				texture_id_4.texture_size = texture_size_4
+				style_effect_bottom_left.texture_size = texture_size_4
 
-				local texture_id_5 = arg_11_2.craft_effect_bottom_right.style.texture_id
+				local craft_effect_bottom_right = widgets.craft_effect_bottom_right
+				local style_effect_bottom_right = craft_effect_bottom_right.style.texture_id
 
-				texture_id_5.color[1] = 0
-				texture_id_5.horizontal_alignment = "center"
-				texture_id_5.vertical_alignment = "center"
+				style_effect_bottom_right.color[1] = 0
+				style_effect_bottom_right.horizontal_alignment = "center"
+				style_effect_bottom_right.vertical_alignment = "center"
 
-				local texture_size_5 = texture_id_5.texture_size
+				local texture_size_5 = style_effect_bottom_right.texture_size
 
-				texture_size_5 = texture_size_5 or {
-					num_4,
-					num_5
+				texture_size_5 = not not texture_size_5 or not not {
+					effect_width,
+					effect_height
 				}
-				texture_id_5.texture_size = texture_size_5
+				style_effect_bottom_right.texture_size = texture_size_5
 			end,
-			update = function (arg_12_0, arg_12_1, arg_12_2, arg_12_3, arg_12_4)
+			update = function (ui_scenegraph, scenegraph_definition, widgets, progress, params)
 				-- function 12
 				return
 			end,
-			on_complete = function (arg_13_0, arg_13_1, arg_13_2, arg_13_3)
+			on_complete = function (ui_scenegraph, scenegraph_definition, widgets, params)
 				-- function 13
 				return
 			end
@@ -1001,15 +1007,18 @@ local tbl_10 = {
 			name = "shadow",
 			start_progress = 0,
 			end_progress = 0.5,
-			init = function (arg_14_0, arg_14_1, arg_14_2, arg_14_3)
+			init = function (ui_scenegraph, scenegraph_definition, widgets, params)
 				-- function 14
 				return
 			end,
-			update = function (arg_15_0, arg_15_1, arg_15_2, arg_15_3, arg_15_4)
+			update = function (ui_scenegraph, scenegraph_definition, widgets, progress, params)
 				-- function 15
-				arg_15_2.craft_lock_shadow.style.texture_id.color[1] = 200 * arg_15_3
+				local craft_lock_shadow = widgets.craft_lock_shadow
+				local style = craft_lock_shadow.style.texture_id
+
+				style.color[1] = 200 * progress
 			end,
-			on_complete = function (arg_16_0, arg_16_1, arg_16_2, arg_16_3)
+			on_complete = function (ui_scenegraph, scenegraph_definition, widgets, params)
 				-- function 16
 				return
 			end
@@ -1018,22 +1027,22 @@ local tbl_10 = {
 			name = "top",
 			start_progress = 0,
 			end_progress = 0.4,
-			init = function (arg_17_0, arg_17_1, arg_17_2, arg_17_3)
+			init = function (ui_scenegraph, scenegraph_definition, widgets, params)
 				-- function 17
 				return
 			end,
-			update = function (arg_18_0, arg_18_1, arg_18_2, arg_18_3, arg_18_4)
+			update = function (ui_scenegraph, scenegraph_definition, widgets, progress, params)
 				-- function 18
-				local craft_lock_top_left = arg_18_2.craft_lock_top_left
-				local craft_lock_top_right = arg_18_2.craft_lock_top_right
-				local num = math.pi / 2
-				local easeInCubic = math.easeInCubic(arg_18_3)
-				local catmullrom = math.catmullrom(easeInCubic, -7.4, 0, 1, 0.7)
+				local craft_lock_top_left = widgets.craft_lock_top_left
+				local craft_lock_top_right = widgets.craft_lock_top_right
+				local max_angle = math.pi / 2
+				local ease_progress = math.easeInCubic(progress)
+				local anim_progress = math.catmullrom(ease_progress, -7.4, 0, 1, 0.7)
 
-				craft_lock_top_left.style.texture_id.angle = num - num * catmullrom
-				craft_lock_top_right.style.texture_id.angle = -num + num * catmullrom
+				craft_lock_top_left.style.texture_id.angle = max_angle - max_angle * anim_progress
+				craft_lock_top_right.style.texture_id.angle = -max_angle + max_angle * anim_progress
 			end,
-			on_complete = function (arg_19_0, arg_19_1, arg_19_2, arg_19_3)
+			on_complete = function (ui_scenegraph, scenegraph_definition, widgets, params)
 				-- function 19
 				return
 			end
@@ -1042,26 +1051,26 @@ local tbl_10 = {
 			name = "top_effect",
 			start_progress = 0.3,
 			end_progress = 0.8,
-			init = function (arg_20_0, arg_20_1, arg_20_2, arg_20_3)
+			init = function (ui_scenegraph, scenegraph_definition, widgets, params)
 				-- function 20
 				return
 			end,
-			update = function (arg_21_0, arg_21_1, arg_21_2, arg_21_3, arg_21_4)
+			update = function (ui_scenegraph, scenegraph_definition, widgets, progress, params)
 				-- function 21
-				local craft_lock_top_effect = arg_21_2.craft_lock_top_effect
-				local texture_id = craft_lock_top_effect.style.texture_id
+				local craft_lock_top_effect = widgets.craft_lock_top_effect
+				local style = craft_lock_top_effect.style.texture_id
 				local offset = craft_lock_top_effect.offset
 
-				texture_id.color[1] = 150 - 150 * math.easeInCubic(arg_21_3)
-				offset[2] = -50 * math.easeOutCubic(arg_21_3)
+				style.color[1] = 150 - 150 * math.easeInCubic(progress)
+				offset[2] = -50 * math.easeOutCubic(progress)
 
-				local num = 78
-				local num_2 = 378
+				local effect_width = 78
+				local effect_height = 378
 
-				texture_id.texture_size[1] = num * arg_21_3
-				texture_id.texture_size[2] = num_2 * arg_21_3
+				style.texture_size[1] = effect_width * progress
+				style.texture_size[2] = effect_height * progress
 			end,
-			on_complete = function (arg_22_0, arg_22_1, arg_22_2, arg_22_3)
+			on_complete = function (ui_scenegraph, scenegraph_definition, widgets, params)
 				-- function 22
 				return
 			end
@@ -1070,21 +1079,21 @@ local tbl_10 = {
 			name = "bottom",
 			start_progress = 0.5,
 			end_progress = 0.8,
-			init = function (arg_23_0, arg_23_1, arg_23_2, arg_23_3)
+			init = function (ui_scenegraph, scenegraph_definition, widgets, params)
 				-- function 23
 				return
 			end,
-			update = function (arg_24_0, arg_24_1, arg_24_2, arg_24_3, arg_24_4)
+			update = function (ui_scenegraph, scenegraph_definition, widgets, progress, params)
 				-- function 24
-				local craft_lock_bottom_left = arg_24_2.craft_lock_bottom_left
-				local craft_lock_bottom_right = arg_24_2.craft_lock_bottom_right
-				local catmullrom = math.catmullrom(arg_24_3, -7.4, 0, 1, 0.7)
-				local num = 208
+				local craft_lock_bottom_left = widgets.craft_lock_bottom_left
+				local craft_lock_bottom_right = widgets.craft_lock_bottom_right
+				local anim_progress = math.catmullrom(progress, -7.4, 0, 1, 0.7)
+				local distance = 208
 
-				craft_lock_bottom_left.offset[2] = -num + catmullrom * num
-				craft_lock_bottom_right.offset[2] = -num + catmullrom * num
+				craft_lock_bottom_left.offset[2] = -distance + anim_progress * distance
+				craft_lock_bottom_right.offset[2] = -distance + anim_progress * distance
 			end,
-			on_complete = function (arg_25_0, arg_25_1, arg_25_2, arg_25_3)
+			on_complete = function (ui_scenegraph, scenegraph_definition, widgets, params)
 				-- function 25
 				return
 			end
@@ -1093,35 +1102,35 @@ local tbl_10 = {
 			name = "bottom_effect_left",
 			start_progress = 0.7,
 			end_progress = 1.1,
-			init = function (arg_26_0, arg_26_1, arg_26_2, arg_26_3)
+			init = function (ui_scenegraph, scenegraph_definition, widgets, params)
 				-- function 26
 				return
 			end,
-			update = function (arg_27_0, arg_27_1, arg_27_2, arg_27_3, arg_27_4)
+			update = function (ui_scenegraph, scenegraph_definition, widgets, progress, params)
 				-- function 27
-				local craft_effect_bottom_left = arg_27_2.craft_effect_bottom_left
-				local texture_id = craft_effect_bottom_left.style.texture_id
+				local craft_effect_bottom_left = widgets.craft_effect_bottom_left
+				local style = craft_effect_bottom_left.style.texture_id
 				local offset = craft_effect_bottom_left.offset
-				local easeOutCubic = math.easeOutCubic(arg_27_3)
+				local anim_progress = math.easeOutCubic(progress)
 
-				texture_id.color[1] = 80 - 80 * math.easeInCubic(arg_27_3)
+				style.color[1] = 80 - 80 * math.easeInCubic(progress)
 
-				local num = 27.299999999999997
-				local num_2 = 132.29999999999998
-				local pivot = texture_id.pivot
-				local texture_size = texture_id.texture_size
+				local effect_width = 27.299999999999997
+				local effect_height = 132.29999999999998
+				local pivot = style.pivot
+				local texture_size = style.texture_size
 
-				texture_size[1] = num + num * easeOutCubic
-				texture_size[2] = num_2 * easeOutCubic
+				texture_size[1] = effect_width + effect_width * anim_progress
+				texture_size[2] = effect_height * anim_progress
 				pivot[1] = texture_size[1] / 2
 				pivot[2] = texture_size[2] / 2
 
-				local num_3 = (num - texture_size[1]) * 0.5
+				local offset_value = (effect_width - texture_size[1]) * 0.5
 
-				offset[1] = num_3
-				offset[2] = num_3 * 0.5
+				offset[1] = offset_value
+				offset[2] = offset_value * 0.5
 			end,
-			on_complete = function (arg_28_0, arg_28_1, arg_28_2, arg_28_3)
+			on_complete = function (ui_scenegraph, scenegraph_definition, widgets, params)
 				-- function 28
 				return
 			end
@@ -1130,35 +1139,35 @@ local tbl_10 = {
 			name = "bottom_effect_right",
 			start_progress = 0.7,
 			end_progress = 1.1,
-			init = function (arg_29_0, arg_29_1, arg_29_2, arg_29_3)
+			init = function (ui_scenegraph, scenegraph_definition, widgets, params)
 				-- function 29
 				return
 			end,
-			update = function (arg_30_0, arg_30_1, arg_30_2, arg_30_3, arg_30_4)
+			update = function (ui_scenegraph, scenegraph_definition, widgets, progress, params)
 				-- function 30
-				local craft_effect_bottom_right = arg_30_2.craft_effect_bottom_right
-				local texture_id = craft_effect_bottom_right.style.texture_id
+				local craft_effect_bottom_right = widgets.craft_effect_bottom_right
+				local style = craft_effect_bottom_right.style.texture_id
 				local offset = craft_effect_bottom_right.offset
-				local easeOutCubic = math.easeOutCubic(arg_30_3)
+				local anim_progress = math.easeOutCubic(progress)
 
-				texture_id.color[1] = 80 - 80 * math.easeInCubic(arg_30_3)
+				style.color[1] = 80 - 80 * math.easeInCubic(progress)
 
-				local num = 27.299999999999997
-				local num_2 = 132.29999999999998
-				local pivot = texture_id.pivot
-				local texture_size = texture_id.texture_size
+				local effect_width = 27.299999999999997
+				local effect_height = 132.29999999999998
+				local pivot = style.pivot
+				local texture_size = style.texture_size
 
-				texture_size[1] = num + num * easeOutCubic
-				texture_size[2] = num_2 * easeOutCubic
+				texture_size[1] = effect_width + effect_width * anim_progress
+				texture_size[2] = effect_height * anim_progress
 				pivot[1] = texture_size[1] / 2
 				pivot[2] = texture_size[2] / 2
 
-				local num_3 = (num - texture_size[1]) * 0.5
+				local offset_value = (effect_width - texture_size[1]) * 0.5
 
-				offset[1] = -num_3
-				offset[2] = num_3 * 0.5
+				offset[1] = -offset_value
+				offset[2] = offset_value * 0.5
 			end,
-			on_complete = function (arg_31_0, arg_31_1, arg_31_2, arg_31_3)
+			on_complete = function (ui_scenegraph, scenegraph_definition, widgets, params)
 				-- function 31
 				return
 			end
@@ -1167,30 +1176,30 @@ local tbl_10 = {
 			name = "eyes",
 			start_progress = 0.5,
 			end_progress = 0.8,
-			init = function (arg_32_0, arg_32_1, arg_32_2, arg_32_3)
+			init = function (ui_scenegraph, scenegraph_definition, widgets, params)
 				-- function 32
 				return
 			end,
-			update = function (arg_33_0, arg_33_1, arg_33_2, arg_33_3, arg_33_4)
+			update = function (ui_scenegraph, scenegraph_definition, widgets, progress, params)
 				-- function 33
-				local craft_lock_eye_left = arg_33_2.craft_lock_eye_left
-				local craft_lock_eye_right = arg_33_2.craft_lock_eye_right
-				local texture_id = craft_lock_eye_left.style.texture_id
-				local texture_id_2 = craft_lock_eye_right.style.texture_id
-				local num = 255 * arg_33_3
+				local craft_lock_eye_left = widgets.craft_lock_eye_left
+				local craft_lock_eye_right = widgets.craft_lock_eye_right
+				local style_eye_left = craft_lock_eye_left.style.texture_id
+				local style_eye_right = craft_lock_eye_right.style.texture_id
+				local alpha = 255 * progress
 
-				texture_id.color[1] = num
-				texture_id_2.color[1] = num
+				style_eye_left.color[1] = alpha
+				style_eye_right.color[1] = alpha
 
-				local num_2 = 224
-				local num_3 = 217
+				local eye_width = 224
+				local eye_height = 217
 
-				texture_id.texture_size[1] = num_2 * arg_33_3
-				texture_id.texture_size[2] = num_3 * arg_33_3
-				texture_id_2.texture_size[1] = num_2 * arg_33_3
-				texture_id_2.texture_size[2] = num_3 * arg_33_3
+				style_eye_left.texture_size[1] = eye_width * progress
+				style_eye_left.texture_size[2] = eye_height * progress
+				style_eye_right.texture_size[1] = eye_width * progress
+				style_eye_right.texture_size[2] = eye_height * progress
 			end,
-			on_complete = function (arg_34_0, arg_34_1, arg_34_2, arg_34_3)
+			on_complete = function (ui_scenegraph, scenegraph_definition, widgets, params)
 				-- function 34
 				return
 			end
@@ -1201,33 +1210,33 @@ local tbl_10 = {
 			name = "eyes",
 			start_progress = 0,
 			end_progress = 0.15,
-			init = function (arg_35_0, arg_35_1, arg_35_2, arg_35_3)
+			init = function (ui_scenegraph, scenegraph_definition, widgets, params)
 				-- function 35
 				return
 			end,
-			update = function (arg_36_0, arg_36_1, arg_36_2, arg_36_3, arg_36_4)
+			update = function (ui_scenegraph, scenegraph_definition, widgets, progress, params)
 				-- function 36
-				local craft_lock_eye_left = arg_36_2.craft_lock_eye_left
-				local craft_lock_eye_right = arg_36_2.craft_lock_eye_right
-				local texture_id = craft_lock_eye_left.style.texture_id
-				local texture_id_2 = craft_lock_eye_right.style.texture_id
+				local craft_lock_eye_left = widgets.craft_lock_eye_left
+				local craft_lock_eye_right = widgets.craft_lock_eye_right
+				local style_eye_left = craft_lock_eye_left.style.texture_id
+				local style_eye_right = craft_lock_eye_right.style.texture_id
 
-				arg_36_3 = 1 - arg_36_3
+				progress = 1 - progress
 
-				local num = 255 * arg_36_3
+				local alpha = 255 * progress
 
-				texture_id.color[1] = num
-				texture_id_2.color[1] = num
+				style_eye_left.color[1] = alpha
+				style_eye_right.color[1] = alpha
 
-				local num_2 = 224
-				local num_3 = 217
+				local eye_width = 224
+				local eye_height = 217
 
-				texture_id.texture_size[1] = num_2 * arg_36_3
-				texture_id.texture_size[2] = num_3 * arg_36_3
-				texture_id_2.texture_size[1] = num_2 * arg_36_3
-				texture_id_2.texture_size[2] = num_3 * arg_36_3
+				style_eye_left.texture_size[1] = eye_width * progress
+				style_eye_left.texture_size[2] = eye_height * progress
+				style_eye_right.texture_size[1] = eye_width * progress
+				style_eye_right.texture_size[2] = eye_height * progress
 			end,
-			on_complete = function (arg_37_0, arg_37_1, arg_37_2, arg_37_3)
+			on_complete = function (ui_scenegraph, scenegraph_definition, widgets, params)
 				-- function 37
 				return
 			end
@@ -1236,15 +1245,18 @@ local tbl_10 = {
 			name = "shadow",
 			start_progress = 0.2,
 			end_progress = 0.5,
-			init = function (arg_38_0, arg_38_1, arg_38_2, arg_38_3)
+			init = function (ui_scenegraph, scenegraph_definition, widgets, params)
 				-- function 38
 				return
 			end,
-			update = function (arg_39_0, arg_39_1, arg_39_2, arg_39_3, arg_39_4)
+			update = function (ui_scenegraph, scenegraph_definition, widgets, progress, params)
 				-- function 39
-				arg_39_2.craft_lock_shadow.style.texture_id.color[1] = 200 - 200 * arg_39_3
+				local craft_lock_shadow = widgets.craft_lock_shadow
+				local style = craft_lock_shadow.style.texture_id
+
+				style.color[1] = 200 - 200 * progress
 			end,
-			on_complete = function (arg_40_0, arg_40_1, arg_40_2, arg_40_3)
+			on_complete = function (ui_scenegraph, scenegraph_definition, widgets, params)
 				-- function 40
 				return
 			end
@@ -1253,22 +1265,22 @@ local tbl_10 = {
 			name = "top",
 			start_progress = 0.2,
 			end_progress = 0.5,
-			init = function (arg_41_0, arg_41_1, arg_41_2, arg_41_3)
+			init = function (ui_scenegraph, scenegraph_definition, widgets, params)
 				-- function 41
 				return
 			end,
-			update = function (arg_42_0, arg_42_1, arg_42_2, arg_42_3, arg_42_4)
+			update = function (ui_scenegraph, scenegraph_definition, widgets, progress, params)
 				-- function 42
-				arg_42_3 = 1 - arg_42_3
+				progress = 1 - progress
 
-				local craft_lock_top_left = arg_42_2.craft_lock_top_left
-				local craft_lock_top_right = arg_42_2.craft_lock_top_right
-				local num = math.pi / 2
+				local craft_lock_top_left = widgets.craft_lock_top_left
+				local craft_lock_top_right = widgets.craft_lock_top_right
+				local max_angle = math.pi / 2
 
-				craft_lock_top_left.style.texture_id.angle = num - num * arg_42_3
-				craft_lock_top_right.style.texture_id.angle = -num + num * arg_42_3
+				craft_lock_top_left.style.texture_id.angle = max_angle - max_angle * progress
+				craft_lock_top_right.style.texture_id.angle = -max_angle + max_angle * progress
 			end,
-			on_complete = function (arg_43_0, arg_43_1, arg_43_2, arg_43_3)
+			on_complete = function (ui_scenegraph, scenegraph_definition, widgets, params)
 				-- function 43
 				return
 			end
@@ -1277,22 +1289,22 @@ local tbl_10 = {
 			name = "bottom",
 			start_progress = 0.2,
 			end_progress = 0.5,
-			init = function (arg_44_0, arg_44_1, arg_44_2, arg_44_3)
+			init = function (ui_scenegraph, scenegraph_definition, widgets, params)
 				-- function 44
 				return
 			end,
-			update = function (arg_45_0, arg_45_1, arg_45_2, arg_45_3, arg_45_4)
+			update = function (ui_scenegraph, scenegraph_definition, widgets, progress, params)
 				-- function 45
-				arg_45_3 = 1 - arg_45_3
+				progress = 1 - progress
 
-				local craft_lock_bottom_left = arg_45_2.craft_lock_bottom_left
-				local craft_lock_bottom_right = arg_45_2.craft_lock_bottom_right
-				local num = 208
+				local craft_lock_bottom_left = widgets.craft_lock_bottom_left
+				local craft_lock_bottom_right = widgets.craft_lock_bottom_right
+				local distance = 208
 
-				craft_lock_bottom_left.offset[2] = -num + arg_45_3 * num
-				craft_lock_bottom_right.offset[2] = -num + arg_45_3 * num
+				craft_lock_bottom_left.offset[2] = -distance + progress * distance
+				craft_lock_bottom_right.offset[2] = -distance + progress * distance
 			end,
-			on_complete = function (arg_46_0, arg_46_1, arg_46_2, arg_46_3)
+			on_complete = function (ui_scenegraph, scenegraph_definition, widgets, params)
 				-- function 46
 				return
 			end
@@ -1301,10 +1313,10 @@ local tbl_10 = {
 }
 
 return {
-	widgets = tbl_7,
+	widgets = widgets,
 	node_widgets = node_widgets,
-	scenegraph_definition = tbl,
-	animation_definitions = tbl_10,
-	generic_input_actions = tbl_8,
-	input_actions = tbl_9
+	scenegraph_definition = scenegraph_definition,
+	animation_definitions = animation_definitions,
+	generic_input_actions = generic_input_actions,
+	input_actions = input_actions
 }

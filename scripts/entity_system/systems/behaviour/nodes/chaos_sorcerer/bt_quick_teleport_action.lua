@@ -4,221 +4,245 @@ require("scripts/entity_system/systems/behaviour/nodes/bt_node")
 
 BTQuickTeleportAction = class(BTQuickTeleportAction, BTNode)
 
-BTQuickTeleportAction.init = function (arg_1_0, ...)
+BTQuickTeleportAction.init = function (self, ...)
 	-- function 1
-	BTQuickTeleportAction.super.init(arg_1_0, ...)
+	BTQuickTeleportAction.super.init(self, ...)
 end
 
 BTQuickTeleportAction.name = "BTQuickTeleportAction"
 
-local function fn(self)
+local function randomize(event)
 	-- function 2
-	if type(self) == "table" then
-		return self[Math.random(1, #self)]
+	if type(event) == "table" then
+		return event[Math.random(1, #event)]
 	else
-		return self
+		return event
 	end
 end
 
-BTQuickTeleportAction.enter = function (self, arg_3_1, arg_3_2, arg_3_3)
+BTQuickTeleportAction.enter = function (self, unit, blackboard, t)
 	-- function 3
-	local action_data = self._tree_node.action_data
+	local action = self._tree_node.action_data
 
-	arg_3_2.action = action_data
-	arg_3_2.active_node = BTQuickTeleportAction
+	blackboard.action = action
+	blackboard.active_node = BTQuickTeleportAction
 
-	if not action_data.sound_event then
-		Managers.state.entity:system("audio_system"):play_audio_unit_event(action_data.sound_event, arg_3_1)
+	if action.sound_event then
+		local audio_system = Managers.state.entity:system("audio_system")
+
+		audio_system:play_audio_unit_event(action.sound_event, unit)
 	end
 
-	if not arg_3_2.action.force_teleport then
-		arg_3_2.quick_teleport = true
+	if blackboard.action.force_teleport then
+		blackboard.quick_teleport = true
 	end
 
-	arg_3_2.locomotion_extension:set_wanted_velocity(Vector3.zero())
-	arg_3_2.navigation_extension:set_enabled(false)
+	local locomotion_extension = blackboard.locomotion_extension
 
-	if not action_data.teleport_start_anim then
-		Managers.state.network:anim_event(arg_3_1, fn(action_data.teleport_start_anim))
+	locomotion_extension:set_wanted_velocity(Vector3.zero())
+
+	local navigation_extension = blackboard.navigation_extension
+
+	navigation_extension:set_enabled(false)
+
+	if action.teleport_start_anim then
+		Managers.state.network:anim_event(unit, randomize(action.teleport_start_anim))
 	end
 
-	if not action_data.push_close_players then
-		arg_3_2.hit_units = {}
+	if action.push_close_players then
+		blackboard.hit_units = {}
 	end
 
-	if not arg_3_2.action.teleport_start_function then
-		arg_3_2.action.teleport_start_function(arg_3_1, arg_3_2)
+	if blackboard.action.teleport_start_function then
+		blackboard.action.teleport_start_function(unit, blackboard)
 	end
 end
 
-BTQuickTeleportAction.leave = function (arg_4_0, arg_4_1, arg_4_2, arg_4_3, arg_4_4, arg_4_5)
+BTQuickTeleportAction.leave = function (self, unit, blackboard, t, reason, destroy)
 	-- function 4
-	arg_4_2.quick_teleport_exit_pos = nil
-	arg_4_2.active_node = nil
-	arg_4_2.quick_teleport = false
+	blackboard.quick_teleport_exit_pos = nil
+	blackboard.active_node = nil
+	blackboard.quick_teleport = false
 
-	arg_4_2.navigation_extension:set_enabled(true)
+	local navigation_extension = blackboard.navigation_extension
 
-	arg_4_2.face_player_when_teleporting = false
+	navigation_extension:set_enabled(true)
 
-	if not arg_4_2.action.push_close_players then
-		arg_4_2.hit_units = nil
+	blackboard.face_player_when_teleporting = false
+
+	if blackboard.action.push_close_players then
+		blackboard.hit_units = nil
 	end
 end
 
-BTQuickTeleportAction.run = function (self, arg_5_1, arg_5_2, arg_5_3, arg_5_4)
+BTQuickTeleportAction.run = function (self, unit, blackboard, t, dt)
 	-- function 5
-	if not arg_5_2.action.teleport_start_anim then
-		self:anim_cb_teleport_start_finished(arg_5_1, arg_5_2)
+	if not blackboard.action.teleport_start_anim then
+		self:anim_cb_teleport_start_finished(unit, blackboard)
 	end
 
-	if not arg_5_2.action.teleport_end_anim then
-		self:anim_cb_teleport_end_finished(arg_5_1, arg_5_2)
+	if not blackboard.action.teleport_end_anim then
+		self:anim_cb_teleport_end_finished(unit, blackboard)
 	end
 
-	if not arg_5_2.quick_teleport then
+	if not blackboard.quick_teleport then
 		return "done"
 	end
 
 	return "running"
 end
 
-BTQuickTeleportAction.play_teleport_effect = function (arg_6_0, arg_6_1, arg_6_2, arg_6_3, arg_6_4)
+BTQuickTeleportAction.play_teleport_effect = function (self, unit, blackboard, start_position, end_position)
 	-- function 6
-	local action = arg_6_2.action
+	local action = blackboard.action
 	local teleport_effect = action.teleport_effect
 
-	if not teleport_effect then
-		local var_6_2 = NetworkLookup.effects[teleport_effect]
-		local num = 0
-		local identity = Quaternion.identity()
-		local network = Managers.state.network
+	if teleport_effect then
+		local effect_name_id = NetworkLookup.effects[teleport_effect]
+		local node_id = 0
+		local rotation_offset = Quaternion.identity()
+		local network_manager = Managers.state.network
 
-		network:rpc_play_particle_effect(nil, var_6_2, NetworkConstants.invalid_game_object_id, num, arg_6_3, identity, false)
+		network_manager:rpc_play_particle_effect(nil, effect_name_id, NetworkConstants.invalid_game_object_id, node_id, start_position, rotation_offset, false)
 
 		if not action.teleport_end_effect then
-			network:rpc_play_particle_effect(nil, var_6_2, NetworkConstants.invalid_game_object_id, num, arg_6_4, identity, false)
+			network_manager:rpc_play_particle_effect(nil, effect_name_id, NetworkConstants.invalid_game_object_id, node_id, end_position, rotation_offset, false)
 		end
 	end
 
 	local teleport_effect_trail = action.teleport_effect_trail
 
-	if not teleport_effect_trail then
-		local network_2 = Managers.state.network
-		local num_2 = 0
-		local normalize = Vector3.normalize(arg_6_3 - arg_6_4)
-		local look = Quaternion.look(normalize, Vector3.up())
-		local var_6_11 = NetworkLookup.effects[teleport_effect_trail]
+	if teleport_effect_trail then
+		local network_manager = Managers.state.network
+		local node_id = 0
+		local dir = Vector3.normalize(start_position - end_position)
+		local trail_rotation_offset = Quaternion.look(dir, Vector3.up())
+		local trail_effect_name_id = NetworkLookup.effects[teleport_effect_trail]
 
-		network_2:rpc_play_particle_effect(nil, var_6_11, NetworkConstants.invalid_game_object_id, num_2, arg_6_3, look, false)
+		network_manager:rpc_play_particle_effect(nil, trail_effect_name_id, NetworkConstants.invalid_game_object_id, node_id, start_position, trail_rotation_offset, false)
 
 		if not action.teleport_end_effect then
-			network_2:rpc_play_particle_effect(nil, var_6_11, NetworkConstants.invalid_game_object_id, num_2, arg_6_4, look, false)
+			network_manager:rpc_play_particle_effect(nil, trail_effect_name_id, NetworkConstants.invalid_game_object_id, node_id, end_position, trail_rotation_offset, false)
 		end
 	end
 
-	local breed = arg_6_2.breed
-	local system = Managers.state.entity:system("audio_system")
+	local breed = blackboard.breed
+	local audio_system_extension = Managers.state.entity:system("audio_system")
 
-	if not breed.teleport_sound_event then
-		system:play_audio_unit_event(breed.teleport_sound_event, arg_6_1)
+	if breed.teleport_sound_event then
+		audio_system_extension:play_audio_unit_event(breed.teleport_sound_event, unit)
 	end
 end
 
-BTQuickTeleportAction.anim_cb_teleport_start_finished = function (self, arg_7_1, arg_7_2)
+BTQuickTeleportAction.anim_cb_teleport_start_finished = function (self, unit, blackboard)
 	-- function 7
-	local var_7_0 = POSITION_LOOKUP[arg_7_1]
-	local var_7_1
-	local teleport_pos_func = arg_7_2.action.teleport_pos_func
+	local entrance_position = POSITION_LOOKUP[unit]
+	local teleport_position
+	local teleport_pos_func = blackboard.action.teleport_pos_func
 
-	if not teleport_pos_func then
-		var_7_1 = teleport_pos_func(arg_7_1, arg_7_2)
+	if teleport_pos_func then
+		teleport_position = teleport_pos_func(unit, blackboard)
 	else
-		var_7_1 = arg_7_2.quick_teleport_exit_pos:unbox()
+		teleport_position = blackboard.quick_teleport_exit_pos:unbox()
 	end
 
-	if not var_7_1 then
+	if not teleport_position then
 		return
 	end
 
-	arg_7_2.navigation_extension:set_navbot_position(var_7_1)
-	arg_7_2.locomotion_extension:teleport_to(var_7_1)
-	Managers.state.entity:system("ai_bot_group_system"):enemy_teleported(arg_7_1, var_7_1)
-	self:play_teleport_effect(arg_7_1, arg_7_2, var_7_0, var_7_1)
+	local navigation_extension = blackboard.navigation_extension
 
-	if not arg_7_2.action.remove_pings then
-		Managers.state.entity:system("ping_system"):remove_ping_from_unit(arg_7_1)
+	navigation_extension:set_navbot_position(teleport_position)
+
+	local locomotion_extension = blackboard.locomotion_extension
+
+	locomotion_extension:teleport_to(teleport_position)
+	Managers.state.entity:system("ai_bot_group_system"):enemy_teleported(unit, teleport_position)
+	self:play_teleport_effect(unit, blackboard, entrance_position, teleport_position)
+
+	if blackboard.action.remove_pings then
+		local ping_system = Managers.state.entity:system("ping_system")
+
+		ping_system:remove_ping_from_unit(unit)
 	end
 
-	if not arg_7_2.action.push_close_players then
-		local ENEMY_PLAYER_AND_BOT_UNITS = arg_7_2.side.ENEMY_PLAYER_AND_BOT_UNITS
+	if blackboard.action.push_close_players then
+		local side = blackboard.side
+		local ENEMY_PLAYER_AND_BOT_UNITS = side.ENEMY_PLAYER_AND_BOT_UNITS
 
 		for i = 1, #ENEMY_PLAYER_AND_BOT_UNITS do
-			local var_7_4 = ENEMY_PLAYER_AND_BOT_UNITS[i]
+			local target_unit = ENEMY_PLAYER_AND_BOT_UNITS[i]
 
-			self:push_close_players(arg_7_1, arg_7_2, var_7_0, var_7_4)
+			self:push_close_players(unit, blackboard, entrance_position, target_unit)
 		end
 	end
 
-	local target_unit = arg_7_2.target_unit
+	local target_unit = blackboard.target_unit
 
-	if not arg_7_2.face_player_when_teleporting and not Unit.alive(target_unit) then
-		local var_7_6 = POSITION_LOOKUP[target_unit]
-		local flat = Vector3.flat(var_7_6 - var_7_1)
-		local look = Quaternion.look(flat, Vector3.up())
+	if blackboard.face_player_when_teleporting and Unit.alive(target_unit) then
+		local target_pos = POSITION_LOOKUP[target_unit]
+		local look_at_direction_flat = Vector3.flat(target_pos - teleport_position)
+		local unit_to_target_rot = Quaternion.look(look_at_direction_flat, Vector3.up())
 
-		Unit.set_local_rotation(arg_7_1, 0, look)
+		Unit.set_local_rotation(unit, 0, unit_to_target_rot)
 	end
 
-	if not arg_7_2.action.teleport_end_anim then
-		Managers.state.network:anim_event(arg_7_1, arg_7_2.action.teleport_end_anim)
+	if blackboard.action.teleport_end_anim then
+		Managers.state.network:anim_event(unit, blackboard.action.teleport_end_anim)
 	end
 
-	arg_7_2.teleport_at_t = Managers.time:time("game")
+	local t = Managers.time:time("game")
+
+	blackboard.teleport_at_t = t
 end
 
-BTQuickTeleportAction.anim_cb_teleport_end_finished = function (arg_8_0, arg_8_1, arg_8_2)
+BTQuickTeleportAction.anim_cb_teleport_end_finished = function (self, unit, blackboard)
 	-- function 8
-	arg_8_2.quick_teleport = false
+	blackboard.quick_teleport = false
 end
 
-BTQuickTeleportAction.anim_cb_tp_end_enter = function (arg_9_0, arg_9_1, arg_9_2)
+BTQuickTeleportAction.anim_cb_tp_end_enter = function (self, unit, blackboard)
 	-- function 9
-	local action = arg_9_2.action
+	local action = blackboard.action
 
-	if not action.teleport_end_effect then
-		local var_9_1 = NetworkLookup.effects[action.teleport_end_effect]
-		local num = 0
-		local identity = Quaternion.identity()
-		local var_9_4 = POSITION_LOOKUP[arg_9_1]
+	if action.teleport_end_effect then
+		local effect_name_id = NetworkLookup.effects[action.teleport_end_effect]
+		local node_id = 0
+		local rotation_offset = Quaternion.identity()
+		local position = POSITION_LOOKUP[unit]
+		local network_manager = Managers.state.network
 
-		Managers.state.network:rpc_play_particle_effect(nil, var_9_1, NetworkConstants.invalid_game_object_id, num, var_9_4, identity, false)
+		network_manager:rpc_play_particle_effect(nil, effect_name_id, NetworkConstants.invalid_game_object_id, node_id, position, rotation_offset, false)
 	end
 end
 
-BTQuickTeleportAction.push_close_players = function (arg_10_0, arg_10_1, arg_10_2, arg_10_3, arg_10_4)
+BTQuickTeleportAction.push_close_players = function (self, unit, blackboard, position, target_unit)
 	-- function 10
-	local action = arg_10_2.action
+	local action = blackboard.action
 	local radius = action.radius
 	local push_speed = action.push_speed
 	local push_speed_z = action.push_speed_z
-	local hit_units = arg_10_2.hit_units
-	local num = POSITION_LOOKUP[arg_10_4] - arg_10_3
-	local length = Vector3.length(Vector3.flat(num))
+	local hit_units = blackboard.hit_units
+	local pos = POSITION_LOOKUP[target_unit]
+	local to_target = pos - position
+	local dist = Vector3.length(Vector3.flat(to_target))
+	local hit_unit_id = hit_units[target_unit]
 
-	if not (hit_units[arg_10_4] or not (length < radius)) then
-		local num_2 = push_speed * Vector3.normalize(num)
+	if not hit_unit_id and dist < radius then
+		local velocity = push_speed * Vector3.normalize(to_target)
 
-		if not push_speed_z then
-			Vector3.set_z(num_2, push_speed_z)
+		if push_speed_z then
+			Vector3.set_z(velocity, push_speed_z)
 		end
 
-		if not action.catapult_players then
-			StatusUtils.set_catapulted_network(arg_10_4, true, num_2)
+		if action.catapult_players then
+			StatusUtils.set_catapulted_network(target_unit, true, velocity)
 		else
-			ScriptUnit.extension(arg_10_4, "locomotion_system"):add_external_velocity(num_2)
+			local locomotion_extension = ScriptUnit.extension(target_unit, "locomotion_system")
+
+			locomotion_extension:add_external_velocity(velocity)
 		end
 
-		hit_units[arg_10_4] = true
+		hit_units[target_unit] = true
 	end
 end

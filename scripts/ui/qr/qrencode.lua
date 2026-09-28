@@ -1,13 +1,13 @@
 -- chunkname: @scripts/ui/qr/qrencode.lua
 
-local flag = false
-local flag_2 = false
-local bxor = require("bit").bxor
+local debugging = false
+local testing = false
+local bit_xor = require("bit").bxor
 
-local function fn(arg_1_0, arg_1_1)
+local function binary(x, digits)
 	-- function 1
-	local format = string.format("%o", arg_1_0)
-	local tbl = {
+	local s = string.format("%o", x)
+	local a = {
 		["0"] = "000",
 		["1"] = "001",
 		["6"] = "110",
@@ -17,33 +17,35 @@ local function fn(arg_1_0, arg_1_1)
 		["7"] = "111",
 		["4"] = "100"
 	}
-	local gsub = string.gsub(format, "(.)", function (arg_2_0)
-		-- function 2
-		return tbl[arg_2_0]
-	end)
-	local gsub_2 = string.gsub(gsub, "^0*(.*)$", "%1")
-	local format_2 = string.format("%%%ds", arg_1_1)
-	local format_3 = string.format(format_2, gsub_2)
 
-	return string.gsub(format_3, " ", "0")
+	s = string.gsub(s, "(.)", function (d)
+		-- function 2
+		return a[d]
+	end)
+	s = string.gsub(s, "^0*(.*)$", "%1")
+
+	local fmtstring = string.format("%%%ds", digits)
+	local ret = string.format(fmtstring, s)
+
+	return string.gsub(ret, " ", "0")
 end
 
-local function fn_2(arg_3_0, arg_3_1, arg_3_2, arg_3_3)
+local function fill_matrix_position(matrix, bitstring, x, y)
 	-- function 3
-	if arg_3_1 == "1" then
-		arg_3_0[arg_3_2][arg_3_3] = 2
+	if bitstring == "1" then
+		matrix[x][y] = 2
 	else
-		arg_3_0[arg_3_2][arg_3_3] = -2
+		matrix[x][y] = -2
 	end
 end
 
-local function fn_3(arg_4_0)
+local function get_mode(str)
 	-- function 4
-	local var_4_0
+	local mode
 
-	if not string.match(arg_4_0, "^[0-9]+$") then
+	if string.match(str, "^[0-9]+$") then
 		return 1
-	elseif not string.match(arg_4_0, "^[0-9A-Z $%%*./:+-]+$") then
+	elseif string.match(str, "^[0-9A-Z $%%*./:+-]+$") then
 		return 2
 	else
 		return 4
@@ -54,7 +56,7 @@ local function fn_3(arg_4_0)
 	return nil
 end
 
-local tbl = {
+local capacity = {
 	{
 		19,
 		16,
@@ -297,24 +299,20 @@ local tbl = {
 	}
 }
 
-local function fn_4(arg_5_0, arg_5_1, arg_5_2)
+local function get_version_eclevel(len, mode, requested_ec_level)
 	-- function 5
-	local var_5_0 = arg_5_1
+	local local_mode = mode
 
-	if arg_5_1 == 4 then
-		var_5_0 = 3
-	elseif arg_5_1 == 8 then
-		var_5_0 = 4
+	if mode == 4 then
+		local_mode = 3
+	elseif mode == 8 then
+		local_mode = 4
 	end
 
-	assert(var_5_0 <= 4)
+	assert(local_mode <= 4)
 
-	local var_5_1
-	local var_5_2
-	local var_5_3
-	local var_5_4
-	local var_5_5
-	local tbl_2 = {
+	local bytes, bits, digits, modebits, c
+	local tab = {
 		{
 			10,
 			9,
@@ -334,44 +332,44 @@ local function fn_4(arg_5_0, arg_5_1, arg_5_2)
 			12
 		}
 	}
-	local num = 40
-	local flag = arg_5_2 or 1
-	local num_2 = 1
-	local num_3 = 4
+	local minversion = 40
+	local maxec_level = not not requested_ec_level or not not 1
+	local min, max = 1, 4
 
-	if not (not arg_5_2 and not (arg_5_2 >= 1) or not (arg_5_2 <= 4)) then
-		num_2 = arg_5_2
-		num_3 = arg_5_2
+	if requested_ec_level and requested_ec_level >= 1 and requested_ec_level <= 4 then
+		min = requested_ec_level
+		max = requested_ec_level
 	end
 
-	for i = num_2, num_3 do
-		for j = 1, #tbl do
-			local num_4 = tbl[j][i] * 8 - 4
+	for ec_level = min, max do
+		for version = 1, #capacity do
+			bits = capacity[version][ec_level] * 8
+			bits = bits - 4
 
-			if j < 10 then
-				var_5_3 = tbl_2[1][var_5_0]
-			elseif j < 27 then
-				var_5_3 = tbl_2[2][var_5_0]
-			elseif j <= 40 then
-				var_5_3 = tbl_2[3][var_5_0]
+			if version < 10 then
+				digits = tab[1][local_mode]
+			elseif version < 27 then
+				digits = tab[2][local_mode]
+			elseif version <= 40 then
+				digits = tab[3][local_mode]
 			end
 
-			local num_5 = num_4 - var_5_3
+			modebits = bits - digits
 
-			if var_5_0 == 1 then
-				var_5_5 = math.floor(num_5 * 3 / 10)
-			elseif var_5_0 == 2 then
-				var_5_5 = math.floor(num_5 * 2 / 11)
-			elseif var_5_0 == 3 then
-				var_5_5 = math.floor(num_5 * 1 / 8)
+			if local_mode == 1 then
+				c = math.floor(modebits * 3 / 10)
+			elseif local_mode == 2 then
+				c = math.floor(modebits * 2 / 11)
+			elseif local_mode == 3 then
+				c = math.floor(modebits * 1 / 8)
 			else
-				var_5_5 = math.floor(num_5 * 1 / 13)
+				c = math.floor(modebits * 1 / 13)
 			end
 
-			if arg_5_0 <= var_5_5 then
-				if j <= num then
-					num = j
-					flag = i
+			if len <= c then
+				if version <= minversion then
+					minversion = version
+					maxec_level = ec_level
 				end
 
 				break
@@ -379,22 +377,22 @@ local function fn_4(arg_5_0, arg_5_1, arg_5_2)
 		end
 	end
 
-	return num, flag
+	return minversion, maxec_level
 end
 
-local function fn_5(arg_6_0, arg_6_1, arg_6_2)
+local function get_length(str, version, mode)
 	-- function 6
-	local var_6_0 = arg_6_2
+	local i = mode
 
-	if arg_6_2 == 4 then
-		var_6_0 = 3
-	elseif arg_6_2 == 8 then
-		var_6_0 = 4
+	if mode == 4 then
+		i = 3
+	elseif mode == 8 then
+		i = 4
 	end
 
-	assert(var_6_0 <= 4)
+	assert(i <= 4)
 
-	local tbl = {
+	local tab = {
 		{
 			10,
 			9,
@@ -414,42 +412,45 @@ local function fn_5(arg_6_0, arg_6_1, arg_6_2)
 			12
 		}
 	}
-	local var_6_2
+	local digits
 
-	if arg_6_1 < 10 then
-		var_6_2 = tbl[1][var_6_0]
-	elseif arg_6_1 < 27 then
-		var_6_2 = tbl[2][var_6_0]
-	elseif arg_6_1 <= 40 then
-		var_6_2 = tbl[3][var_6_0]
+	if version < 10 then
+		digits = tab[1][i]
+	elseif version < 27 then
+		digits = tab[2][i]
+	elseif version <= 40 then
+		digits = tab[3][i]
 	else
 		assert(false, "get_length, version > 40 not supported")
 	end
 
-	return (fn(#arg_6_0, var_6_2))
+	local len = binary(#str, digits)
+
+	return len
 end
 
-local function fn_6(arg_7_0, arg_7_1, arg_7_2)
+local function get_version_eclevel_mode_bistringlength(str, requested_ec_level, mode)
 	-- function 7
-	local var_7_0
+	local local_mode
 
-	if not arg_7_2 then
+	if mode then
 		assert(false, "not implemented")
 
-		var_7_0 = arg_7_2
+		local_mode = mode
 	else
-		var_7_0 = fn_3(arg_7_0)
+		local_mode = get_mode(str)
 	end
 
-	local var_7_1
-	local var_7_2
-	local var_7_3, var_7_4 = fn_4(#arg_7_0, var_7_0, arg_7_1)
-	local var_7_5 = fn_5(arg_7_0, var_7_3, var_7_0)
+	local version, ec_level
 
-	return var_7_3, var_7_4, fn(var_7_0, 4), var_7_0, var_7_5
+	version, ec_level = get_version_eclevel(#str, local_mode, requested_ec_level)
+
+	local length_string = get_length(str, version, local_mode)
+
+	return version, ec_level, binary(local_mode, 4), local_mode, length_string
 end
 
-local tbl_2 = {
+local asciitbl = {
 	-1,
 	-1,
 	-1,
@@ -547,106 +548,103 @@ local tbl_2 = {
 	-1
 }
 
-local function fn_7(arg_8_0)
+local function encode_string_numeric(str)
 	-- function 8
-	local str = ""
-	local var_8_1
+	local bitstring = ""
+	local int
 
-	string.gsub(arg_8_0, "..?.?", function (arg_9_0)
+	string.gsub(str, "..?.?", function (a)
 		-- function 9
-		var_8_1 = tonumber(arg_9_0)
+		int = tonumber(a)
 
-		if #arg_9_0 == 3 then
-			str = str .. fn(var_8_1, 10)
-		elseif #arg_9_0 == 2 then
-			str = str .. fn(var_8_1, 7)
+		if #a == 3 then
+			bitstring = bitstring .. binary(int, 10)
+		elseif #a == 2 then
+			bitstring = bitstring .. binary(int, 7)
 		else
-			str = str .. fn(var_8_1, 4)
+			bitstring = bitstring .. binary(int, 4)
 		end
 	end)
 
-	return str
+	return bitstring
 end
 
-local function fn_8(arg_10_0)
+local function encode_string_ascii(str)
 	-- function 10
-	local str = ""
-	local var_10_1
-	local var_10_2
-	local var_10_3
+	local bitstring = ""
+	local int, b1, b2
 
-	string.gsub(arg_10_0, "..?", function (arg_11_0)
+	string.gsub(str, "..?", function (a)
 		-- function 11
-		if #arg_11_0 == 2 then
-			var_10_2 = tbl_2[string.byte(string.sub(arg_11_0, 1, 1))]
-			var_10_3 = tbl_2[string.byte(string.sub(arg_11_0, 2, 2))]
-			var_10_1 = var_10_2 * 45 + var_10_3
-			str = str .. fn(var_10_1, 11)
+		if #a == 2 then
+			b1 = asciitbl[string.byte(string.sub(a, 1, 1))]
+			b2 = asciitbl[string.byte(string.sub(a, 2, 2))]
+			int = b1 * 45 + b2
+			bitstring = bitstring .. binary(int, 11)
 		else
-			var_10_1 = tbl_2[string.byte(arg_11_0)]
-			str = str .. fn(var_10_1, 6)
+			int = asciitbl[string.byte(a)]
+			bitstring = bitstring .. binary(int, 6)
 		end
 	end)
 
-	return str
+	return bitstring
 end
 
-local function fn_9(arg_12_0)
+local function encode_string_binary(str)
 	-- function 12
-	local tbl = {}
+	local ret = {}
 
-	string.gsub(arg_12_0, ".", function (arg_13_0)
+	string.gsub(str, ".", function (x)
 		-- function 13
-		tbl[#tbl + 1] = fn(string.byte(arg_13_0), 8)
+		ret[#ret + 1] = binary(string.byte(x), 8)
 	end)
 
-	return table.concat(tbl)
+	return table.concat(ret)
 end
 
-local function fn_10(arg_14_0, arg_14_1)
+local function encode_data(str, mode)
 	-- function 14
-	if arg_14_1 == 1 then
-		return fn_7(arg_14_0)
-	elseif arg_14_1 == 2 then
-		return fn_8(arg_14_0)
-	elseif arg_14_1 == 4 then
-		return fn_9(arg_14_0)
+	if mode == 1 then
+		return encode_string_numeric(str)
+	elseif mode == 2 then
+		return encode_string_ascii(str)
+	elseif mode == 4 then
+		return encode_string_binary(str)
 	else
 		assert(false, "not implemented yet")
 	end
 end
 
-local function fn_11(arg_15_0, arg_15_1, arg_15_2)
+local function add_pad_data(version, ec_level, data)
 	-- function 15
-	local var_15_0
-	local var_15_1
-	local num = tbl[arg_15_0][arg_15_1] * 8
-	local min = math.min(4, num - #arg_15_2)
+	local count_to_pad, missing_digits
+	local cpty = capacity[version][ec_level] * 8
 
-	if min > 0 then
-		arg_15_2 = arg_15_2 .. string.rep("0", min)
+	count_to_pad = math.min(4, cpty - #data)
+
+	if count_to_pad > 0 then
+		data = data .. string.rep("0", count_to_pad)
 	end
 
-	if math.fmod(#arg_15_2, 8) ~= 0 then
-		local num_2 = 8 - math.fmod(#arg_15_2, 8)
-
-		arg_15_2 = arg_15_2 .. string.rep("0", num_2)
+	if math.fmod(#data, 8) ~= 0 then
+		missing_digits = 8 - math.fmod(#data, 8)
+		data = data .. string.rep("0", missing_digits)
 	end
 
-	assert(math.fmod(#arg_15_2, 8) == 0)
+	assert(math.fmod(#data, 8) == 0)
 
-	while num > #arg_15_2 do
-		arg_15_2 = arg_15_2 .. "11101100"
+	while cpty > #data do
+		data = data .. "11101100"
 
-		if num > #arg_15_2 then
-			arg_15_2 = arg_15_2 .. "00010001"
+		if cpty > #data then
+			data = data .. "00010001"
 		end
 	end
 
-	return arg_15_2
+	return data
 end
 
-local tbl_3 = {
+local alpha_int = {
 	[0] = 0,
 	2,
 	4,
@@ -904,7 +902,7 @@ local tbl_3 = {
 	142,
 	1
 }
-local tbl_4 = {
+local int_alpha = {
 	[0] = 0,
 	255,
 	1,
@@ -1162,7 +1160,7 @@ local tbl_4 = {
 	88,
 	175
 }
-local tbl_5 = {
+local generator_polynomial = {
 	[7] = {
 		21,
 		102,
@@ -1450,144 +1448,141 @@ local tbl_5 = {
 	}
 }
 
-local function fn_12(arg_16_0)
+local function convert_bitstring_to_bytes(data)
 	-- function 16
-	local tbl = {}
-	local gsub = string.gsub(arg_16_0, "(........)", function (arg_17_0)
+	local msg = {}
+	local tab = string.gsub(data, "(........)", function (x)
 		-- function 17
-		tbl[#tbl + 1] = tonumber(arg_17_0, 2)
+		msg[#msg + 1] = tonumber(x, 2)
 	end)
 
-	return tbl
+	return msg
 end
 
-local function fn_13(arg_18_0, arg_18_1)
+local function get_generator_polynominal_adjusted(num_ec_codewords, highest_exponent)
 	-- function 18
-	local tbl = {
+	local gp_alpha = {
 		[0] = 0
 	}
 
-	for i = 0, arg_18_1 - arg_18_0 - 1 do
-		tbl[i] = 0
+	for i = 0, highest_exponent - num_ec_codewords - 1 do
+		gp_alpha[i] = 0
 	end
 
-	local var_18_1 = tbl_5[arg_18_0]
+	local gp = generator_polynomial[num_ec_codewords]
 
-	for j = 1, arg_18_0 + 1 do
-		tbl[arg_18_1 - arg_18_0 + j - 1] = var_18_1[j]
+	for i = 1, num_ec_codewords + 1 do
+		gp_alpha[highest_exponent - num_ec_codewords + i - 1] = gp[i]
 	end
 
-	return tbl
+	return gp_alpha
 end
 
-local function fn_14(self)
+local function convert_to_alpha(tab)
 	-- function 19
-	local tbl = {}
+	local new_tab = {}
 
-	for i = 0, #self do
-		tbl[i] = tbl_4[self[i]]
+	for i = 0, #tab do
+		new_tab[i] = int_alpha[tab[i]]
 	end
 
-	return tbl
+	return new_tab
 end
 
-local function fn_15(self, arg_20_1)
+local function convert_to_int(tab, len_message)
 	-- function 20
-	local tbl = {}
+	local new_tab = {}
 
-	for i = 0, #self do
-		tbl[i] = tbl_3[self[i]]
+	for i = 0, #tab do
+		new_tab[i] = alpha_int[tab[i]]
 	end
 
-	return tbl
+	return new_tab
 end
 
-local function fn_16(arg_21_0, arg_21_1)
+local function calculate_error_correction(data, num_ec_codewords)
 	-- function 21
-	local var_21_0
+	local mp
 
-	if type(arg_21_0) == "string" then
-		var_21_0 = fn_12(arg_21_0)
-	elseif type(arg_21_0) == "table" then
-		var_21_0 = arg_21_0
+	if type(data) == "string" then
+		mp = convert_bitstring_to_bytes(data)
+	elseif type(data) == "table" then
+		mp = data
 	else
-		assert(false, "Unknown type for data: %s", type(arg_21_0))
+		assert(false, "Unknown type for data: %s", type(data))
 	end
 
-	local count = #var_21_0
-	local num = count + arg_21_1 - 1
-	local var_21_3
-	local var_21_4
-	local var_21_5
-	local tbl = {}
-	local tbl_2 = {}
-	local tbl_3 = {}
+	local len_message = #mp
+	local highest_exponent = len_message + num_ec_codewords - 1
+	local gp_alpha, tmp, he
+	local gp_int = {}
+	local mp_int, mp_alpha = {}, {}
 
-	for i = 1, count do
-		tbl_2[num - i + 1] = var_21_0[i]
+	for i = 1, len_message do
+		mp_int[highest_exponent - i + 1] = mp[i]
 	end
 
-	for j = 1, num - count do
-		tbl_2[j] = 0
+	for i = 1, highest_exponent - len_message do
+		mp_int[i] = 0
 	end
 
-	tbl_2[0] = 0
+	mp_int[0] = 0
+	mp_alpha = convert_to_alpha(mp_int)
 
-	local var_21_9 = fn_14(tbl_2)
+	while num_ec_codewords <= highest_exponent do
+		gp_alpha = get_generator_polynominal_adjusted(num_ec_codewords, highest_exponent)
 
-	while arg_21_1 <= num do
-		local var_21_10 = fn_13(arg_21_1, num)
-		local var_21_11 = var_21_9[num]
+		local exp = mp_alpha[highest_exponent]
 
-		for k = num, num - arg_21_1, -1 do
-			if var_21_10[k] + var_21_11 > 255 then
-				var_21_10[k] = math.fmod(var_21_10[k] + var_21_11, 255)
+		for i = highest_exponent, highest_exponent - num_ec_codewords, -1 do
+			if gp_alpha[i] + exp > 255 then
+				gp_alpha[i] = math.fmod(gp_alpha[i] + exp, 255)
 			else
-				var_21_10[k] = var_21_10[k] + var_21_11
+				gp_alpha[i] = gp_alpha[i] + exp
 			end
 		end
 
-		for l = num - arg_21_1 - 1, 0, -1 do
-			var_21_10[l] = 0
+		for i = highest_exponent - num_ec_codewords - 1, 0, -1 do
+			gp_alpha[i] = 0
 		end
 
-		local var_21_12 = fn_15(var_21_10)
+		gp_int = convert_to_int(gp_alpha)
+		mp_int = convert_to_int(mp_alpha)
+		tmp = {}
 
-		tbl_2 = fn_15(var_21_9)
-
-		local tbl_4 = {}
-
-		for i4 = num, 0, -1 do
-			tbl_4[i4] = bxor(var_21_12[i4], tbl_2[i4])
+		for i = highest_exponent, 0, -1 do
+			tmp[i] = bit_xor(gp_int[i], mp_int[i])
 		end
 
-		for i5 = num, 0, -1 do
-			if i5 < arg_21_1 then
+		he = highest_exponent
+
+		for i = he, 0, -1 do
+			if i < num_ec_codewords then
 				break
 			end
 
-			if tbl_4[i5] == 0 then
-				tbl_4[i5] = nil
-				num = num - 1
+			if tmp[i] == 0 then
+				tmp[i] = nil
+				highest_exponent = highest_exponent - 1
 			else
 				break
 			end
 		end
 
-		tbl_2 = tbl_4
-		var_21_9 = fn_14(tbl_2)
+		mp_int = tmp
+		mp_alpha = convert_to_alpha(mp_int)
 	end
 
-	local tbl_5 = {}
+	local ret = {}
 
-	for i6 = #tbl_2, 0, -1 do
-		tbl_5[#tbl_5 + 1] = tbl_2[i6]
+	for i = #mp_int, 0, -1 do
+		ret[#ret + 1] = mp_int[i]
 	end
 
-	return tbl_5
+	return ret
 end
 
-local tbl_6 = {
+local ecblocks = {
 	{
 		{
 			1,
@@ -3717,7 +3712,7 @@ local tbl_6 = {
 		}
 	}
 }
-local tbl_7 = {
+local remainder = {
 	0,
 	7,
 	7,
@@ -3760,138 +3755,138 @@ local tbl_7 = {
 	0
 }
 
-local function fn_17(arg_22_0, arg_22_1, arg_22_2)
+local function arrange_codewords_and_calculate_ec(version, ec_level, data)
 	-- function 22
-	if type(arg_22_2) == "table" then
-		local str = ""
+	if type(data) == "table" then
+		local tmp = ""
 
-		for i = 1, #arg_22_2 do
-			str = str .. fn(arg_22_2[i], 8)
+		for i = 1, #data do
+			tmp = tmp .. binary(data[i], 8)
 		end
 
-		arg_22_2 = str
+		data = tmp
 	end
 
-	local var_22_1 = tbl_6[arg_22_0][arg_22_1]
-	local var_22_2
-	local var_22_3
-	local tbl = {}
-	local tbl_2 = {}
-	local num = 1
-	local num_2 = 0
-	local num_3 = 0
+	local blocks = ecblocks[version][ec_level]
+	local size_datablock_bytes, size_ecblock_bytes
+	local datablocks = {}
+	local ecblocks = {}
+	local count = 1
+	local pos = 0
+	local cpty_ec_bits = 0
 
-	for j = 1, #var_22_1 / 2 do
-		for k = 1, var_22_1[2 * j - 1] do
-			local var_22_9 = var_22_1[2 * j][2]
-			local num_4 = var_22_1[2 * j][1] - var_22_1[2 * j][2]
+	for i = 1, #blocks / 2 do
+		for j = 1, blocks[2 * i - 1] do
+			size_datablock_bytes = blocks[2 * i][2]
+			size_ecblock_bytes = blocks[2 * i][1] - blocks[2 * i][2]
+			cpty_ec_bits = cpty_ec_bits + size_ecblock_bytes * 8
+			datablocks[#datablocks + 1] = string.sub(data, pos * 8 + 1, (pos + size_datablock_bytes) * 8)
 
-			num_3 = num_3 + num_4 * 8
-			tbl[#tbl + 1] = string.sub(arg_22_2, num_2 * 8 + 1, (num_2 + var_22_9) * 8)
+			local tmp_tab = calculate_error_correction(datablocks[#datablocks], size_ecblock_bytes)
+			local tmp_str = ""
 
-			local var_22_11 = fn_16(tbl[#tbl], num_4)
-			local str_2 = ""
-
-			for l = 1, #var_22_11 do
-				str_2 = str_2 .. fn(var_22_11[l], 8)
+			for x = 1, #tmp_tab do
+				tmp_str = tmp_str .. binary(tmp_tab[x], 8)
 			end
 
-			tbl_2[#tbl_2 + 1] = str_2
-			num_2 = num_2 + var_22_9
-			num = num + 1
+			ecblocks[#ecblocks + 1] = tmp_str
+			pos = pos + size_datablock_bytes
+			count = count + 1
 		end
 	end
 
-	local str_3 = ""
-	local num_5 = 1
+	local arranged_data = ""
+
+	pos = 1
 
 	repeat
-		for i4 = 1, #tbl do
-			if num_5 < #tbl[i4] then
-				str_3 = str_3 .. string.sub(tbl[i4], num_5, num_5 + 7)
+		for i = 1, #datablocks do
+			if pos < #datablocks[i] then
+				arranged_data = arranged_data .. string.sub(datablocks[i], pos, pos + 7)
 			end
 		end
 
-		num_5 = num_5 + 8
-	until #str_3 == #arg_22_2
+		pos = pos + 8
+	until #arranged_data == #data
 
-	local str_4 = ""
-	local num_6 = 1
+	local arranged_ec = ""
+
+	pos = 1
 
 	repeat
-		for i5 = 1, #tbl_2 do
-			if num_6 < #tbl_2[i5] then
-				str_4 = str_4 .. string.sub(tbl_2[i5], num_6, num_6 + 7)
+		for i = 1, #ecblocks do
+			if pos < #ecblocks[i] then
+				arranged_ec = arranged_ec .. string.sub(ecblocks[i], pos, pos + 7)
 			end
 		end
 
-		num_6 = num_6 + 8
-	until #str_4 == num_3
+		pos = pos + 8
+	until #arranged_ec == cpty_ec_bits
 
-	return str_3 .. str_4
+	return arranged_data .. arranged_ec
 end
 
-local function fn_18(arg_23_0)
+local function add_position_detection_patterns(tab_x)
 	-- function 23
-	local count = #arg_23_0
+	local size = #tab_x
 
 	for i = 1, 8 do
 		for j = 1, 8 do
-			arg_23_0[i][j] = -2
-			arg_23_0[count - 8 + i][j] = -2
-			arg_23_0[i][count - 8 + j] = -2
+			tab_x[i][j] = -2
+			tab_x[size - 8 + i][j] = -2
+			tab_x[i][size - 8 + j] = -2
 		end
 	end
 
-	for k = 1, 7 do
-		arg_23_0[1][k] = 2
-		arg_23_0[7][k] = 2
-		arg_23_0[k][1] = 2
-		arg_23_0[k][7] = 2
-		arg_23_0[count][k] = 2
-		arg_23_0[count - 6][k] = 2
-		arg_23_0[count - k + 1][1] = 2
-		arg_23_0[count - k + 1][7] = 2
-		arg_23_0[1][count - k + 1] = 2
-		arg_23_0[7][count - k + 1] = 2
-		arg_23_0[k][count - 6] = 2
-		arg_23_0[k][count] = 2
+	for i = 1, 7 do
+		tab_x[1][i] = 2
+		tab_x[7][i] = 2
+		tab_x[i][1] = 2
+		tab_x[i][7] = 2
+		tab_x[size][i] = 2
+		tab_x[size - 6][i] = 2
+		tab_x[size - i + 1][1] = 2
+		tab_x[size - i + 1][7] = 2
+		tab_x[1][size - i + 1] = 2
+		tab_x[7][size - i + 1] = 2
+		tab_x[i][size - 6] = 2
+		tab_x[i][size] = 2
 	end
 
-	for l = 1, 3 do
-		for i4 = 1, 3 do
-			arg_23_0[2 + i4][l + 2] = 2
-			arg_23_0[count - i4 - 1][l + 2] = 2
-			arg_23_0[2 + i4][count - l - 1] = 2
+	for i = 1, 3 do
+		for j = 1, 3 do
+			tab_x[2 + j][i + 2] = 2
+			tab_x[size - j - 1][i + 2] = 2
+			tab_x[2 + j][size - i - 1] = 2
 		end
 	end
 end
 
-local function fn_19(arg_24_0)
+local function add_timing_pattern(tab_x)
 	-- function 24
-	local var_24_0
-	local var_24_1
-	local num = 7
-	local num_2 = 9
+	local line, col
 
-	for i = num_2, #arg_24_0 - 8 do
+	line = 7
+	col = 9
+
+	for i = col, #tab_x - 8 do
 		if math.fmod(i, 2) == 1 then
-			arg_24_0[i][num] = 2
+			tab_x[i][line] = 2
 		else
-			arg_24_0[i][num] = -2
+			tab_x[i][line] = -2
 		end
 	end
 
-	for j = num_2, #arg_24_0 - 8 do
-		if math.fmod(j, 2) == 1 then
-			arg_24_0[num][j] = 2
+	for i = col, #tab_x - 8 do
+		if math.fmod(i, 2) == 1 then
+			tab_x[line][i] = 2
 		else
-			arg_24_0[num][j] = -2
+			tab_x[line][i] = -2
 		end
 	end
 end
 
-local tbl_8 = {
+local alignment_pattern = {
 	{},
 	{
 		6,
@@ -4151,50 +4146,48 @@ local tbl_8 = {
 	}
 }
 
-local function fn_20(arg_25_0)
+local function add_alignment_pattern(tab_x)
 	-- function 25
-	local num = (#arg_25_0 - 17) / 4
-	local var_25_1 = tbl_8[num]
-	local var_25_2
-	local var_25_3
+	local version = (#tab_x - 17) / 4
+	local ap = alignment_pattern[version]
+	local pos_x, pos_y
 
-	for i = 1, #var_25_1 do
-		for j = 1, #var_25_1 do
-			if not ((i ~= 1 or j ~= 1 or i ~= #var_25_1) and j ~= 1 and i ~= 1 or j == #var_25_1) then
-				local num_2 = var_25_1[i] + 1
-				local num_3 = var_25_1[j] + 1
-
-				arg_25_0[num_2][num_3] = 2
-				arg_25_0[num_2 + 1][num_3] = -2
-				arg_25_0[num_2 - 1][num_3] = -2
-				arg_25_0[num_2 + 2][num_3] = 2
-				arg_25_0[num_2 - 2][num_3] = 2
-				arg_25_0[num_2][num_3 - 2] = 2
-				arg_25_0[num_2 + 1][num_3 - 2] = 2
-				arg_25_0[num_2 - 1][num_3 - 2] = 2
-				arg_25_0[num_2 + 2][num_3 - 2] = 2
-				arg_25_0[num_2 - 2][num_3 - 2] = 2
-				arg_25_0[num_2][num_3 + 2] = 2
-				arg_25_0[num_2 + 1][num_3 + 2] = 2
-				arg_25_0[num_2 - 1][num_3 + 2] = 2
-				arg_25_0[num_2 + 2][num_3 + 2] = 2
-				arg_25_0[num_2 - 2][num_3 + 2] = 2
-				arg_25_0[num_2][num_3 - 1] = -2
-				arg_25_0[num_2 + 1][num_3 - 1] = -2
-				arg_25_0[num_2 - 1][num_3 - 1] = -2
-				arg_25_0[num_2 + 2][num_3 - 1] = 2
-				arg_25_0[num_2 - 2][num_3 - 1] = 2
-				arg_25_0[num_2][num_3 + 1] = -2
-				arg_25_0[num_2 + 1][num_3 + 1] = -2
-				arg_25_0[num_2 - 1][num_3 + 1] = -2
-				arg_25_0[num_2 + 2][num_3 + 1] = 2
-				arg_25_0[num_2 - 2][num_3 + 1] = 2
+	for x = 1, #ap do
+		for y = 1, #ap do
+			if (x ~= 1 or y ~= 1) and (x ~= #ap or y ~= 1) and (x ~= 1 or y ~= #ap) then
+				pos_x = ap[x] + 1
+				pos_y = ap[y] + 1
+				tab_x[pos_x][pos_y] = 2
+				tab_x[pos_x + 1][pos_y] = -2
+				tab_x[pos_x - 1][pos_y] = -2
+				tab_x[pos_x + 2][pos_y] = 2
+				tab_x[pos_x - 2][pos_y] = 2
+				tab_x[pos_x][pos_y - 2] = 2
+				tab_x[pos_x + 1][pos_y - 2] = 2
+				tab_x[pos_x - 1][pos_y - 2] = 2
+				tab_x[pos_x + 2][pos_y - 2] = 2
+				tab_x[pos_x - 2][pos_y - 2] = 2
+				tab_x[pos_x][pos_y + 2] = 2
+				tab_x[pos_x + 1][pos_y + 2] = 2
+				tab_x[pos_x - 1][pos_y + 2] = 2
+				tab_x[pos_x + 2][pos_y + 2] = 2
+				tab_x[pos_x - 2][pos_y + 2] = 2
+				tab_x[pos_x][pos_y - 1] = -2
+				tab_x[pos_x + 1][pos_y - 1] = -2
+				tab_x[pos_x - 1][pos_y - 1] = -2
+				tab_x[pos_x + 2][pos_y - 1] = 2
+				tab_x[pos_x - 2][pos_y - 1] = 2
+				tab_x[pos_x][pos_y + 1] = -2
+				tab_x[pos_x + 1][pos_y + 1] = -2
+				tab_x[pos_x - 1][pos_y + 1] = -2
+				tab_x[pos_x + 2][pos_y + 1] = 2
+				tab_x[pos_x - 2][pos_y + 1] = 2
 			end
 		end
 	end
 end
 
-local tbl_9 = {
+local typeinfo = {
 	{
 		[0] = "111011111000100",
 		"111001011110011",
@@ -4241,47 +4234,47 @@ local tbl_9 = {
 	}
 }
 
-local function fn_21(arg_26_0, arg_26_1, arg_26_2)
+local function add_typeinfo_to_matrix(matrix, ec_level, mask)
 	-- function 26
-	local var_26_0 = tbl_9[arg_26_1][arg_26_2]
-	local var_26_1
+	local ec_mask_type = typeinfo[ec_level][mask]
+	local bit
 
 	for i = 1, 7 do
-		local sub = string.sub(var_26_0, i, i)
+		bit = string.sub(ec_mask_type, i, i)
 
-		fn_2(arg_26_0, sub, 9, #arg_26_0 - i + 1)
+		fill_matrix_position(matrix, bit, 9, #matrix - i + 1)
 	end
 
-	for j = 8, 9 do
-		local sub_2 = string.sub(var_26_0, j, j)
+	for i = 8, 9 do
+		bit = string.sub(ec_mask_type, i, i)
 
-		fn_2(arg_26_0, sub_2, 9, 17 - j)
+		fill_matrix_position(matrix, bit, 9, 17 - i)
 	end
 
-	for k = 10, 15 do
-		local sub_3 = string.sub(var_26_0, k, k)
+	for i = 10, 15 do
+		bit = string.sub(ec_mask_type, i, i)
 
-		fn_2(arg_26_0, sub_3, 9, 16 - k)
+		fill_matrix_position(matrix, bit, 9, 16 - i)
 	end
 
-	for l = 1, 6 do
-		local sub_4 = string.sub(var_26_0, l, l)
+	for i = 1, 6 do
+		bit = string.sub(ec_mask_type, i, i)
 
-		fn_2(arg_26_0, sub_4, l, 9)
+		fill_matrix_position(matrix, bit, i, 9)
 	end
 
-	local sub_5 = string.sub(var_26_0, 7, 7)
+	bit = string.sub(ec_mask_type, 7, 7)
 
-	fn_2(arg_26_0, sub_5, 8, 9)
+	fill_matrix_position(matrix, bit, 8, 9)
 
-	for i4 = 8, 15 do
-		local sub_6 = string.sub(var_26_0, i4, i4)
+	for i = 8, 15 do
+		bit = string.sub(ec_mask_type, i, i)
 
-		fn_2(arg_26_0, sub_6, #arg_26_0 - 15 + i4, 9)
+		fill_matrix_position(matrix, bit, #matrix - 15 + i, 9)
 	end
 end
 
-local tbl_10 = {
+local version_information = {
 	"001010010011111000",
 	"001111011010000100",
 	"100110010101100100",
@@ -4318,385 +4311,368 @@ local tbl_10 = {
 	"100101100011000101"
 }
 
-local function fn_22(arg_27_0, arg_27_1)
+local function add_version_information(matrix, version)
 	-- function 27
-	if arg_27_1 < 7 then
+	if version < 7 then
 		return
 	end
 
-	local count = #arg_27_0
-	local var_27_1 = tbl_10[arg_27_1 - 6]
-	local var_27_2
-	local var_27_3
-	local var_27_4
-	local var_27_5
-	local var_27_6
-	local num = #arg_27_0 - 10
-	local num_2 = 1
+	local size = #matrix
+	local bitstring = version_information[version - 6]
+	local x, y, bit, start_x, start_y
 
-	for i = 1, #var_27_1 do
-		local sub = string.sub(var_27_1, i, i)
-		local num_3 = num + math.fmod(i - 1, 3)
-		local num_4 = num_2 + math.floor((i - 1) / 3)
+	start_x = #matrix - 10
+	start_y = 1
 
-		fn_2(arg_27_0, sub, num_3, num_4)
+	for i = 1, #bitstring do
+		bit = string.sub(bitstring, i, i)
+		x = start_x + math.fmod(i - 1, 3)
+		y = start_y + math.floor((i - 1) / 3)
+
+		fill_matrix_position(matrix, bit, x, y)
 	end
 
-	local num_5 = 1
-	local num_6 = #arg_27_0 - 10
+	start_x = 1
+	start_y = #matrix - 10
 
-	for j = 1, #var_27_1 do
-		local sub_2 = string.sub(var_27_1, j, j)
-		local num_7 = num_5 + math.floor((j - 1) / 3)
-		local num_8 = num_6 + math.fmod(j - 1, 3)
+	for i = 1, #bitstring do
+		bit = string.sub(bitstring, i, i)
+		x = start_x + math.floor((i - 1) / 3)
+		y = start_y + math.fmod(i - 1, 3)
 
-		fn_2(arg_27_0, sub_2, num_7, num_8)
+		fill_matrix_position(matrix, bit, x, y)
 	end
 end
 
-local function fn_23(arg_28_0, arg_28_1, arg_28_2)
+local function prepare_matrix_with_mask(version, ec_level, mask)
 	-- function 28
-	local var_28_0
-	local tbl = {}
-	local num = arg_28_0 * 4 + 17
+	local size
+	local tab_x = {}
 
-	for i = 1, num do
-		tbl[i] = {}
+	size = version * 4 + 17
 
-		for j = 1, num do
-			tbl[i][j] = 0
+	for i = 1, size do
+		tab_x[i] = {}
+
+		for j = 1, size do
+			tab_x[i][j] = 0
 		end
 	end
 
-	fn_18(tbl)
-	fn_19(tbl)
-	fn_22(tbl, arg_28_0)
+	add_position_detection_patterns(tab_x)
+	add_timing_pattern(tab_x)
+	add_version_information(tab_x, version)
 
-	tbl[9][num - 7] = 2
+	tab_x[9][size - 7] = 2
 
-	fn_20(tbl)
-	fn_21(tbl, arg_28_1, arg_28_2)
+	add_alignment_pattern(tab_x)
+	add_typeinfo_to_matrix(tab_x, ec_level, mask)
 
-	return tbl
+	return tab_x
 end
 
-local function fn_24(arg_29_0, arg_29_1, arg_29_2, arg_29_3)
+local function get_pixel_with_mask(mask, x, y, value)
 	-- function 29
-	arg_29_1 = arg_29_1 - 1
-	arg_29_2 = arg_29_2 - 1
+	x = x - 1
+	y = y - 1
 
-	local flag = false
+	local invert = false
 
-	if arg_29_0 == -1 then
+	if mask == -1 then
 		-- Nothing
-	elseif arg_29_0 == 0 then
-		if math.fmod(arg_29_1 + arg_29_2, 2) == 0 then
-			flag = true
+	elseif mask == 0 then
+		if math.fmod(x + y, 2) == 0 then
+			invert = true
 		end
-	elseif arg_29_0 == 1 then
-		if math.fmod(arg_29_2, 2) == 0 then
-			flag = true
+	elseif mask == 1 then
+		if math.fmod(y, 2) == 0 then
+			invert = true
 		end
-	elseif arg_29_0 == 2 then
-		if math.fmod(arg_29_1, 3) == 0 then
-			flag = true
+	elseif mask == 2 then
+		if math.fmod(x, 3) == 0 then
+			invert = true
 		end
-	elseif arg_29_0 == 3 then
-		if math.fmod(arg_29_1 + arg_29_2, 3) == 0 then
-			flag = true
+	elseif mask == 3 then
+		if math.fmod(x + y, 3) == 0 then
+			invert = true
 		end
-	elseif arg_29_0 == 4 then
-		if math.fmod(math.floor(arg_29_2 / 2) + math.floor(arg_29_1 / 3), 2) == 0 then
-			flag = true
+	elseif mask == 4 then
+		if math.fmod(math.floor(y / 2) + math.floor(x / 3), 2) == 0 then
+			invert = true
 		end
-	elseif arg_29_0 == 5 then
-		if math.fmod(arg_29_1 * arg_29_2, 2) + math.fmod(arg_29_1 * arg_29_2, 3) == 0 then
-			flag = true
+	elseif mask == 5 then
+		if math.fmod(x * y, 2) + math.fmod(x * y, 3) == 0 then
+			invert = true
 		end
-	elseif arg_29_0 == 6 then
-		if math.fmod(math.fmod(arg_29_1 * arg_29_2, 2) + math.fmod(arg_29_1 * arg_29_2, 3), 2) == 0 then
-			flag = true
+	elseif mask == 6 then
+		if math.fmod(math.fmod(x * y, 2) + math.fmod(x * y, 3), 2) == 0 then
+			invert = true
 		end
-	elseif arg_29_0 == 7 then
-		if math.fmod(math.fmod(arg_29_1 * arg_29_2, 3) + math.fmod(arg_29_1 + arg_29_2, 2), 2) == 0 then
-			flag = true
+	elseif mask == 7 then
+		if math.fmod(math.fmod(x * y, 3) + math.fmod(x + y, 2), 2) == 0 then
+			invert = true
 		end
 	else
 		assert(false, "This can't happen (mask must be <= 7)")
 	end
 
-	if not flag then
-		return 1 - 2 * tonumber(arg_29_3)
+	if invert then
+		return 1 - 2 * tonumber(value)
 	else
-		return -1 + 2 * tonumber(arg_29_3)
+		return -1 + 2 * tonumber(value)
 	end
 end
 
-local function fn_25(self, arg_30_1, arg_30_2, arg_30_3, arg_30_4)
+local function get_next_free_positions(matrix, x, y, dir, byte)
 	-- function 30
-	local tbl = {}
-	local num = 1
-	local str = "right"
+	local ret = {}
+	local count = 1
+	local mode = "right"
 
-	while num <= #arg_30_4 do
-		if not (str ~= "right" or self[arg_30_1][arg_30_2] ~= 0) then
-			tbl[#tbl + 1] = {
-				arg_30_1,
-				arg_30_2
+	while count <= #byte do
+		if mode == "right" and matrix[x][y] == 0 then
+			ret[#ret + 1] = {
+				x,
+				y
 			}
-			str = "left"
-			num = num + 1
-		elseif not (str ~= "left" or self[arg_30_1 - 1][arg_30_2] ~= 0) then
-			tbl[#tbl + 1] = {
-				arg_30_1 - 1,
-				arg_30_2
+			mode = "left"
+			count = count + 1
+		elseif mode == "left" and matrix[x - 1][y] == 0 then
+			ret[#ret + 1] = {
+				x - 1,
+				y
 			}
-			str = "right"
-			num = num + 1
+			mode = "right"
+			count = count + 1
 
-			if arg_30_3 == "up" then
-				arg_30_2 = arg_30_2 - 1
+			if dir == "up" then
+				y = y - 1
 			else
-				arg_30_2 = arg_30_2 + 1
+				y = y + 1
 			end
-		elseif not (str ~= "right" or self[arg_30_1 - 1][arg_30_2] ~= 0) then
-			tbl[#tbl + 1] = {
-				arg_30_1 - 1,
-				arg_30_2
+		elseif mode == "right" and matrix[x - 1][y] == 0 then
+			ret[#ret + 1] = {
+				x - 1,
+				y
 			}
-			num = num + 1
+			count = count + 1
 
-			if arg_30_3 == "up" then
-				arg_30_2 = arg_30_2 - 1
+			if dir == "up" then
+				y = y - 1
 			else
-				arg_30_2 = arg_30_2 + 1
+				y = y + 1
 			end
-		elseif arg_30_3 == "up" then
-			arg_30_2 = arg_30_2 - 1
+		elseif dir == "up" then
+			y = y - 1
 		else
-			arg_30_2 = arg_30_2 + 1
+			y = y + 1
 		end
 
-		if not (arg_30_2 < 1 or not (arg_30_2 > #self)) then
-			arg_30_1 = arg_30_1 - 2
+		if y < 1 or y > #matrix then
+			x = x - 2
 
-			if arg_30_1 == 7 then
-				arg_30_1 = 6
+			if x == 7 then
+				x = 6
 			end
 
-			if arg_30_3 == "up" then
-				arg_30_3 = "down"
-				arg_30_2 = 1
+			if dir == "up" then
+				dir = "down"
+				y = 1
 			else
-				arg_30_3 = "up"
-				arg_30_2 = #self
+				dir = "up"
+				y = #matrix
 			end
 		end
 	end
 
-	return tbl, arg_30_1, arg_30_2, arg_30_3
+	return ret, x, y, dir
 end
 
-local function fn_26(arg_31_0, arg_31_1, arg_31_2)
+local function add_data_to_matrix(matrix, data, mask)
 	-- function 31
-	local count = #arg_31_0
-	local var_31_1
-	local var_31_2
-	local var_31_3
-	local var_31_4
-	local var_31_5
-	local var_31_6
-	local str = "up"
-	local num = 0
-	local var_31_9, var_31_10 = count, count
+	local size = #matrix
+	local x, y, positions, _x, _y, m
+	local dir = "up"
+	local byte_number = 0
 
-	string.gsub(arg_31_1, ".?.?.?.?.?.?.?.?", function (arg_32_0)
+	x, y = size, size
+
+	string.gsub(data, ".?.?.?.?.?.?.?.?", function (byte)
 		-- function 32
-		num = num + 1
-		var_31_3, var_31_9, var_31_10, str = fn_25(arg_31_0, var_31_9, var_31_10, str, arg_32_0, arg_31_2)
+		byte_number = byte_number + 1
+		positions, x, y, dir = get_next_free_positions(matrix, x, y, dir, byte, mask)
 
-		for i = 1, #arg_32_0 do
-			var_31_4 = var_31_3[i][1]
-			var_31_5 = var_31_3[i][2]
-			var_31_6 = fn_24(arg_31_2, var_31_4, var_31_5, string.sub(arg_32_0, i, i))
+		for i = 1, #byte do
+			_x = positions[i][1]
+			_y = positions[i][2]
+			m = get_pixel_with_mask(mask, _x, _y, string.sub(byte, i, i))
 
-			if not flag then
-				arg_31_0[var_31_4][var_31_5] = var_31_6 * (i + 10)
+			if debugging then
+				matrix[_x][_y] = m * (i + 10)
 			else
-				arg_31_0[var_31_4][var_31_5] = var_31_6
+				matrix[_x][_y] = m
 			end
 		end
 	end)
 end
 
-local function fn_27(self)
+local function calculate_penalty(matrix)
 	-- function 33
-	local num = 0
-	local num_2 = 0
-	local num_3 = 0
-	local num_4 = 0
-	local count = #self
-	local num_5 = 0
-	local var_33_6
-	local var_33_7
-	local var_33_8
+	local penalty1, penalty2, penalty3, penalty4 = 0, 0, 0, 0
+	local size = #matrix
+	local number_of_dark_cells = 0
+	local last_bit_blank, is_blank, number_of_consecutive_bits
 
-	for i = 1, count do
-		local num_6 = 0
-		local var_33_10
+	for x = 1, size do
+		number_of_consecutive_bits = 0
+		last_bit_blank = nil
 
-		for j = 1, count do
-			if self[i][j] > 0 then
-				num_5 = num_5 + 1
-
-				local flag = false
+		for y = 1, size do
+			if matrix[x][y] > 0 then
+				number_of_dark_cells = number_of_dark_cells + 1
+				is_blank = false
 			else
-				local flag_2 = true
+				is_blank = true
 			end
 
-			local flag_3 = self[i][j] < 0
+			is_blank = matrix[x][y] < 0
 
-			if var_33_10 == flag_3 then
-				num_6 = num_6 + 1
+			if last_bit_blank == is_blank then
+				number_of_consecutive_bits = number_of_consecutive_bits + 1
 			else
-				if num_6 >= 5 then
-					num = num + num_6 - 2
+				if number_of_consecutive_bits >= 5 then
+					penalty1 = penalty1 + number_of_consecutive_bits - 2
 				end
 
-				num_6 = 1
+				number_of_consecutive_bits = 1
 			end
 
-			var_33_10 = flag_3
+			last_bit_blank = is_blank
 		end
 
-		if num_6 >= 5 then
-			num = num + num_6 - 2
+		if number_of_consecutive_bits >= 5 then
+			penalty1 = penalty1 + number_of_consecutive_bits - 2
 		end
 	end
 
-	for k = 1, count do
-		local num_7 = 0
-		local var_33_15
+	for y = 1, size do
+		number_of_consecutive_bits = 0
+		last_bit_blank = nil
 
-		for l = 1, count do
-			local flag_4 = self[l][k] < 0
+		for x = 1, size do
+			is_blank = matrix[x][y] < 0
 
-			if var_33_15 == flag_4 then
-				num_7 = num_7 + 1
+			if last_bit_blank == is_blank then
+				number_of_consecutive_bits = number_of_consecutive_bits + 1
 			else
-				if num_7 >= 5 then
-					num = num + num_7 - 2
+				if number_of_consecutive_bits >= 5 then
+					penalty1 = penalty1 + number_of_consecutive_bits - 2
 				end
 
-				num_7 = 1
+				number_of_consecutive_bits = 1
 			end
 
-			var_33_15 = flag_4
+			last_bit_blank = is_blank
 		end
 
-		if num_7 >= 5 then
-			num = num + num_7 - 2
-		end
-	end
-
-	for i4 = 1, count do
-		for i5 = 1, count do
-			if not (not (i5 < count - 1) or not (i4 < count - 1) or (not (self[i4][i5] < 0) or not (self[i4 + 1][i5] < 0) or not (self[i4][i5 + 1] < 0) or not (self[i4 + 1][i5 + 1] < 0) or not (self[i4][i5] > 0)) and (not (self[i4 + 1][i5] > 0) or not (self[i4][i5 + 1] > 0) or not (self[i4 + 1][i5 + 1] > 0))) then
-				num_2 = num_2 + 3
-			end
-
-			if not (not (count > i5 + 6) or not (self[i4][i5] > 0) or not (self[i4][i5 + 1] < 0) or not (self[i4][i5 + 2] > 0) or not (self[i4][i5 + 3] > 0) or not (self[i4][i5 + 4] > 0) or not (self[i4][i5 + 5] < 0) or not (self[i4][i5 + 6] > 0) or (not (count > i5 + 10) or not (self[i4][i5 + 7] < 0) or not (self[i4][i5 + 8] < 0) or not (self[i4][i5 + 9] < 0) or not (self[i4][i5 + 10] < 0) or not (i5 - 4 >= 1)) and (not (self[i4][i5 - 1] < 0) or not (self[i4][i5 - 2] < 0) or not (self[i4][i5 - 3] < 0) or not (self[i4][i5 - 4] < 0))) then
-				num_3 = num_3 + 40
-			end
-
-			if not (not (count >= i4 + 6) or not (self[i4][i5] > 0) or not (self[i4 + 1][i5] < 0) or not (self[i4 + 2][i5] > 0) or not (self[i4 + 3][i5] > 0) or not (self[i4 + 4][i5] > 0) or not (self[i4 + 5][i5] < 0) or not (self[i4 + 6][i5] > 0) or (not (count >= i4 + 10) or not (self[i4 + 7][i5] < 0) or not (self[i4 + 8][i5] < 0) or not (self[i4 + 9][i5] < 0) or not (self[i4 + 10][i5] < 0) or not (i4 - 4 >= 1)) and (not (self[i4 - 1][i5] < 0) or not (self[i4 - 2][i5] < 0) or not (self[i4 - 3][i5] < 0) or not (self[i4 - 4][i5] < 0))) then
-				num_3 = num_3 + 40
-			end
+		if number_of_consecutive_bits >= 5 then
+			penalty1 = penalty1 + number_of_consecutive_bits - 2
 		end
 	end
 
-	local num_8 = num_5 / (count * count)
-	local num_9 = math.floor(math.abs(num_8 * 100 - 50)) * 2
+	for x = 1, size do
+		for y = 1, size do
+			if y < size - 1 and x < size - 1 and (not (matrix[x][y] < 0) or not (matrix[x + 1][y] < 0) or not (matrix[x][y + 1] < 0) or not (matrix[x + 1][y + 1] < 0)) and matrix[x][y] > 0 and matrix[x + 1][y] > 0 and matrix[x][y + 1] > 0 and matrix[x + 1][y + 1] > 0 then
+				penalty2 = penalty2 + 3
+			end
 
-	return num + num_2 + num_3 + num_9
+			if size > y + 6 and matrix[x][y] > 0 and matrix[x][y + 1] < 0 and matrix[x][y + 2] > 0 and matrix[x][y + 3] > 0 and matrix[x][y + 4] > 0 and matrix[x][y + 5] < 0 and matrix[x][y + 6] > 0 and (not (size > y + 10) or not (matrix[x][y + 7] < 0) or not (matrix[x][y + 8] < 0) or not (matrix[x][y + 9] < 0) or not (matrix[x][y + 10] < 0)) and y - 4 >= 1 and matrix[x][y - 1] < 0 and matrix[x][y - 2] < 0 and matrix[x][y - 3] < 0 and matrix[x][y - 4] < 0 then
+				penalty3 = penalty3 + 40
+			end
+
+			if size >= x + 6 and matrix[x][y] > 0 and matrix[x + 1][y] < 0 and matrix[x + 2][y] > 0 and matrix[x + 3][y] > 0 and matrix[x + 4][y] > 0 and matrix[x + 5][y] < 0 and matrix[x + 6][y] > 0 and (not (size >= x + 10) or not (matrix[x + 7][y] < 0) or not (matrix[x + 8][y] < 0) or not (matrix[x + 9][y] < 0) or not (matrix[x + 10][y] < 0)) and x - 4 >= 1 and matrix[x - 1][y] < 0 and matrix[x - 2][y] < 0 and matrix[x - 3][y] < 0 and matrix[x - 4][y] < 0 then
+				penalty3 = penalty3 + 40
+			end
+		end
+	end
+
+	local dark_ratio = number_of_dark_cells / (size * size)
+
+	penalty4 = math.floor(math.abs(dark_ratio * 100 - 50)) * 2
+
+	return penalty1 + penalty2 + penalty3 + penalty4
 end
 
-local function fn_28(arg_34_0, arg_34_1, arg_34_2, arg_34_3)
+local function get_matrix_and_penalty(version, ec_level, data, mask)
 	-- function 34
-	local var_34_0 = fn_23(arg_34_0, arg_34_1, arg_34_3)
+	local tab = prepare_matrix_with_mask(version, ec_level, mask)
 
-	fn_26(var_34_0, arg_34_2, arg_34_3)
+	add_data_to_matrix(tab, data, mask)
 
-	local var_34_1 = fn_27(var_34_0)
+	local penalty = calculate_penalty(tab)
 
-	return var_34_0, var_34_1
+	return tab, penalty
 end
 
-local function fn_29(arg_35_0, arg_35_1, arg_35_2)
+local function get_matrix_with_lowest_penalty(version, ec_level, data)
 	-- function 35
-	local var_35_0
-	local var_35_1
-	local var_35_2
-	local var_35_3
-	local var_35_4, var_35_5 = fn_28(arg_35_0, arg_35_1, arg_35_2, 0)
+	local tab, penalty, tab_min_penalty, min_penalty
+
+	tab_min_penalty, min_penalty = get_matrix_and_penalty(version, ec_level, data, 0)
 
 	for i = 1, 7 do
-		local var_35_6, var_35_7 = fn_28(arg_35_0, arg_35_1, arg_35_2, i)
+		tab, penalty = get_matrix_and_penalty(version, ec_level, data, i)
 
-		if var_35_7 < var_35_5 then
-			var_35_4 = var_35_6
-			var_35_5 = var_35_7
+		if penalty < min_penalty then
+			tab_min_penalty = tab
+			min_penalty = penalty
 		end
 	end
 
-	return var_35_4
+	return tab_min_penalty
 end
 
-local function fn_30(arg_36_0, arg_36_1, arg_36_2)
+local function qrcode(str, ec_level, mode)
 	-- function 36
-	local var_36_0
-	local var_36_1
-	local var_36_2
-	local var_36_3
-	local var_36_4
-	local var_36_5, var_36_6, var_36_7, var_36_8
+	local arranged_data, version, data_raw, mode, len_bitstring
 
-	var_36_5, arg_36_1, var_36_6, var_36_7, var_36_8 = fn_6(arg_36_0, arg_36_1)
+	version, ec_level, data_raw, mode, len_bitstring = get_version_eclevel_mode_bistringlength(str, ec_level)
+	data_raw = data_raw .. len_bitstring
+	data_raw = data_raw .. encode_data(str, mode)
+	data_raw = add_pad_data(version, ec_level, data_raw)
+	arranged_data = arrange_codewords_and_calculate_ec(version, ec_level, data_raw)
 
-	local str = (var_36_6 .. var_36_8) .. fn_10(arg_36_0, var_36_7)
-	local var_36_10 = fn_11(var_36_5, arg_36_1, str)
-	local var_36_11 = fn_17(var_36_5, arg_36_1, var_36_10)
-
-	if math.fmod(#var_36_11, 8) ~= 0 then
-		return false, string.format("Arranged data %% 8 != 0: data length = %d, mod 8 = %d", #var_36_11, math.fmod(#var_36_11, 8))
+	if math.fmod(#arranged_data, 8) ~= 0 then
+		return false, string.format("Arranged data %% 8 != 0: data length = %d, mod 8 = %d", #arranged_data, math.fmod(#arranged_data, 8))
 	end
 
-	local str_2 = var_36_11 .. string.rep("0", tbl_7[var_36_5])
-	local var_36_13 = fn_29(var_36_5, arg_36_1, str_2)
+	arranged_data = arranged_data .. string.rep("0", remainder[version])
 
-	return true, var_36_13
+	local tab = get_matrix_with_lowest_penalty(version, ec_level, arranged_data)
+
+	return true, tab
 end
 
-if not flag_2 then
+if testing then
 	return {
-		encode_string_numeric = fn_7,
-		encode_string_ascii = fn_8,
-		qrcode = fn_30,
-		binary = fn,
-		get_mode = fn_3,
-		get_length = fn_5,
-		add_pad_data = fn_11,
-		get_generator_polynominal_adjusted = fn_13,
-		get_pixel_with_mask = fn_24,
-		get_version_eclevel_mode_bistringlength = fn_6,
-		remainder = tbl_7,
-		arrange_codewords_and_calculate_ec = fn_17,
-		calculate_error_correction = fn_16,
-		convert_bitstring_to_bytes = fn_12,
-		bit_xor = bxor
+		encode_string_numeric = encode_string_numeric,
+		encode_string_ascii = encode_string_ascii,
+		qrcode = qrcode,
+		binary = binary,
+		get_mode = get_mode,
+		get_length = get_length,
+		add_pad_data = add_pad_data,
+		get_generator_polynominal_adjusted = get_generator_polynominal_adjusted,
+		get_pixel_with_mask = get_pixel_with_mask,
+		get_version_eclevel_mode_bistringlength = get_version_eclevel_mode_bistringlength,
+		remainder = remainder,
+		arrange_codewords_and_calculate_ec = arrange_codewords_and_calculate_ec,
+		calculate_error_correction = calculate_error_correction,
+		convert_bitstring_to_bytes = convert_bitstring_to_bytes,
+		bit_xor = bit_xor
 	}
 end
 
 return {
-	qrcode = fn_30
+	qrcode = qrcode
 }

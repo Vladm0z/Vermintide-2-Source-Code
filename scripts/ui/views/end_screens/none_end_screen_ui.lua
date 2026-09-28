@@ -2,13 +2,13 @@
 
 require("scripts/ui/views/end_screens/base_end_screen_ui")
 
-local var_0_0 = local_require("scripts/ui/views/end_screens/none_end_screen_ui_definitions")
+local definitions = local_require("scripts/ui/views/end_screens/none_end_screen_ui_definitions")
 
 NoneEndScreenUI = class(NoneEndScreenUI, BaseEndScreenUI)
 
-NoneEndScreenUI.init = function (arg_1_0, arg_1_1, arg_1_2, arg_1_3, arg_1_4)
+NoneEndScreenUI.init = function (self, ingame_ui_context, input_service, screen_context, params)
 	-- function 1
-	NoneEndScreenUI.super.init(arg_1_0, arg_1_1, arg_1_2, var_0_0, arg_1_4)
+	NoneEndScreenUI.super.init(self, ingame_ui_context, input_service, definitions, params)
 end
 
 NoneEndScreenUI._start = function (self)

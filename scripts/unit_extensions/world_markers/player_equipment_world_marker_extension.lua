@@ -4,9 +4,9 @@ require("scripts/unit_extensions/world_markers/world_marker_extension")
 
 PlayerEquipmentWorldMarkerExtension = class(PlayerEquipmentWorldMarkerExtension, WorldMarkerExtension)
 
-PlayerEquipmentWorldMarkerExtension.init = function (self, arg_1_1, arg_1_2, arg_1_3)
+PlayerEquipmentWorldMarkerExtension.init = function (self, extension_init_context, unit, extension_init_data)
 	-- function 1
-	PlayerEquipmentWorldMarkerExtension.super.init(self, arg_1_1, arg_1_2, arg_1_3)
+	PlayerEquipmentWorldMarkerExtension.super.init(self, extension_init_context, unit, extension_init_data)
 
 	self._marker_type = "versus_hero_status"
 	self._add_event_name = "add_world_marker_unit"
@@ -21,63 +21,65 @@ end
 
 PlayerEquipmentWorldMarkerExtension._extensions_ready = function (self)
 	-- function 2
-	if not DEDICATED_SERVER then
+	if DEDICATED_SERVER then
 		return
 	end
 
-	if not Managers.level_transition_handler:in_hub_level() then
+	if Managers.level_transition_handler:in_hub_level() then
 		return
 	end
 
-	local _unit = self._unit
+	local unit = self._unit
 
-	self._status_extension = ScriptUnit.extension(_unit, "status_system")
+	self._status_extension = ScriptUnit.extension(unit, "status_system")
 
-	local unique_id = Managers.player:local_player():unique_id()
-	local side = Managers.state.side
-	local var_2_3 = side.side_by_unit[_unit]
-	local get_side_from_player_unique_id = side:get_side_from_player_unique_id(unique_id)
+	local local_player = Managers.player:local_player()
+	local local_unique_id = local_player:unique_id()
+	local side_manager = Managers.state.side
+	local side = side_manager.side_by_unit[unit]
+	local local_side = side_manager:get_side_from_player_unique_id(local_unique_id)
 
-	self._side = var_2_3
-	self._is_enemy = side:is_enemy_by_side(var_2_3, get_side_from_player_unique_id)
-	self._local_player_is_dark_pact = get_side_from_player_unique_id:name() == "dark_pact"
+	self._side = side
+	self._is_enemy = side_manager:is_enemy_by_side(side, local_side)
+	self._local_player_is_dark_pact = local_side:name() == "dark_pact"
 	self._initialized = true
 end
 
-PlayerEquipmentWorldMarkerExtension._add_marker = function (self, arg_3_1)
+PlayerEquipmentWorldMarkerExtension._add_marker = function (self, cb)
 	-- function 3
-	local _unit = self._unit
-	local _add_event_name = self._add_event_name
-	local _event_manager = self._event_manager
-	local _marker_type = self._marker_type
+	local unit = self._unit
+	local add_event_name = self._add_event_name
+	local event_manager = self._event_manager
+	local marker_type = self._marker_type
 
-	_event_manager:trigger(_add_event_name, _marker_type, _unit, arg_3_1)
+	event_manager:trigger(add_event_name, marker_type, unit, cb)
 end
 
-PlayerEquipmentWorldMarkerExtension.update = function (self, arg_4_1, arg_4_2, arg_4_3, arg_4_4, arg_4_5)
+PlayerEquipmentWorldMarkerExtension.update = function (self, unit, dummy_input, dt, context, t)
 	-- function 4
 	if not self._initialized then
 		return
 	end
 
-	local side = Managers.state.side
-	local unique_id = Managers.player:local_player():unique_id()
-	local get_side_from_player_unique_id = side:get_side_from_player_unique_id(unique_id)
+	local side_manager = Managers.state.side
+	local local_player = Managers.player:local_player()
+	local local_unique_id = local_player:unique_id()
+	local local_side = side_manager:get_side_from_player_unique_id(local_unique_id)
 
-	self._local_player_is_dark_pact = get_side_from_player_unique_id:name() == "dark_pact"
-	self._is_enemy = side:is_enemy_by_side(self._side, get_side_from_player_unique_id)
+	self._local_player_is_dark_pact = local_side:name() == "dark_pact"
+	self._is_enemy = side_manager:is_enemy_by_side(self._side, local_side)
 
-	if not (not self._local_player_is_dark_pact and self._is_enemy) then
+	if not self._local_player_is_dark_pact or not self._is_enemy then
 		return
 	end
 
-	local _status_extension = self._status_extension
-	local is_dead = _status_extension:is_dead()
-	local is_invisible = _status_extension:is_invisible()
+	local status_extension = self._status_extension
+	local is_dead = status_extension:is_dead()
+	local is_invisible = status_extension:is_invisible()
 
-	if not self._id and is_dead and not is_invisible then
+	if self._id and (is_dead or is_invisible) then
 		self:remove_marker()
-	elseif not (self._id or is_dead or is_invisible) then
+	elseif not self._id and not is_dead and not is_invisible then
 		self:add_marker()
 	end
 end

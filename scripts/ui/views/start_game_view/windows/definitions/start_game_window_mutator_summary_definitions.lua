@@ -1,19 +1,20 @@
 -- chunkname: @scripts/ui/views/start_game_view/windows/definitions/start_game_window_mutator_summary_definitions.lua
 
-local game_start_windows = UISettings.game_start_windows
-local frame = game_start_windows.frame
-local size = game_start_windows.size
-local tbl = {
-	size[1] - 60,
+local window_default_settings = UISettings.game_start_windows
+local window_frame = window_default_settings.frame
+local window_size = window_default_settings.size
+local confirm_button_size = {
+	window_size[1] - 60,
 	72
 }
-local tbl_2 = {
-	size[1] - 20,
-	size[2] - (50 + tbl[2])
+local game_option_size = {
+	window_size[1] - 20,
+	window_size[2] - (50 + confirm_button_size[2])
 }
-local str = "menu_frame_08"
-local var_0_6 = UIFrameSettings[str].texture_sizes.corner[1]
-local tbl_3 = {
+local deed_frame_name = "menu_frame_08"
+local deed_frame_settings = UIFrameSettings[deed_frame_name]
+local deed_frame_width = deed_frame_settings.texture_sizes.corner[1]
+local scenegraph_definition = {
 	root = {
 		is_root = true,
 		size = {
@@ -56,7 +57,7 @@ local tbl_3 = {
 		vertical_alignment = "center",
 		parent = "menu_root",
 		horizontal_alignment = "center",
-		size = size,
+		size = window_size,
 		position = {
 			0,
 			0,
@@ -69,7 +70,7 @@ local tbl_3 = {
 		horizontal_alignment = "center",
 		size = {
 			16,
-			size[2]
+			window_size[2]
 		},
 		position = {
 			195,
@@ -83,7 +84,7 @@ local tbl_3 = {
 		horizontal_alignment = "center",
 		size = {
 			16,
-			size[2]
+			window_size[2]
 		},
 		position = {
 			-195,
@@ -95,7 +96,7 @@ local tbl_3 = {
 		vertical_alignment = "top",
 		parent = "window",
 		horizontal_alignment = "center",
-		size = tbl_2,
+		size = game_option_size,
 		position = {
 			0,
 			-16,
@@ -107,12 +108,12 @@ local tbl_3 = {
 		parent = "game_option_1",
 		horizontal_alignment = "center",
 		size = {
-			tbl_2[1] - 10,
+			game_option_size[1] - 10,
 			0
 		},
 		position = {
 			0,
-			-var_0_6,
+			-deed_frame_width,
 			1
 		}
 	},
@@ -120,7 +121,7 @@ local tbl_3 = {
 		vertical_alignment = "bottom",
 		parent = "window",
 		horizontal_alignment = "center",
-		size = tbl,
+		size = confirm_button_size,
 		position = {
 			0,
 			18,
@@ -129,14 +130,13 @@ local tbl_3 = {
 	}
 }
 
-local function fn(arg_1_0, arg_1_1)
+local function create_placeholder_option(scenegraph_id, size)
 	-- function 1
-	local str = "game_options_bg_04"
-	local get_atlas_settings_by_texture_name = UIAtlasHelper.get_atlas_settings_by_texture_name(str)
-	local str_2 = "menu_frame_08"
-	local var_1_3 = UIFrameSettings[str_2]
-
-	return {
+	local background_texture = "game_options_bg_04"
+	local background_texture_settings = UIAtlasHelper.get_atlas_settings_by_texture_name(background_texture)
+	local frame_name = "menu_frame_08"
+	local frame_settings = UIFrameSettings[frame_name]
+	local widget = {
 		element = {
 			passes = {
 				{
@@ -152,19 +152,19 @@ local function fn(arg_1_0, arg_1_1)
 			}
 		},
 		content = {
-			frame = var_1_3.texture,
+			frame = frame_settings.texture,
 			background = {
 				uvs = {
 					{
 						0,
-						1 - math.min(arg_1_1[2] / get_atlas_settings_by_texture_name.size[2], 1)
+						1 - math.min(size[2] / background_texture_settings.size[2], 1)
 					},
 					{
-						math.min(arg_1_1[1] / get_atlas_settings_by_texture_name.size[1], 1),
+						math.min(size[1] / background_texture_settings.size[1], 1),
 						1
 					}
 				},
-				texture_id = str
+				texture_id = background_texture
 			}
 		},
 		style = {
@@ -180,9 +180,9 @@ local function fn(arg_1_0, arg_1_1)
 					0,
 					10
 				},
-				size = arg_1_1,
-				texture_size = var_1_3.texture_size,
-				texture_sizes = var_1_3.texture_sizes
+				size = size,
+				texture_size = frame_settings.texture_size,
+				texture_sizes = frame_settings.texture_sizes
 			},
 			background = {
 				color = {
@@ -198,19 +198,21 @@ local function fn(arg_1_0, arg_1_1)
 				}
 			}
 		},
-		scenegraph_id = arg_1_0,
+		scenegraph_id = scenegraph_id,
 		offset = {
 			0,
 			0,
 			0
 		}
 	}
+
+	return widget
 end
 
-local tbl_4 = {
+local widgets = {
 	background_fade = UIWidgets.create_simple_texture("options_window_fade_01", "window"),
-	window = UIWidgets.create_frame("window", size, frame, 20),
-	confirm_button = UIWidgets.create_default_button("confirm_button", tbl_3.confirm_button.size, nil, nil, Localize("confirm_menu_button_name"), 32),
+	window = UIWidgets.create_frame("window", window_size, window_frame, 20),
+	confirm_button = UIWidgets.create_default_button("confirm_button", scenegraph_definition.confirm_button.size, nil, nil, Localize("confirm_menu_button_name"), 32),
 	game_options_left_chain = UIWidgets.create_tiled_texture("game_options_left_chain", "chain_link_01", {
 		16,
 		19
@@ -219,13 +221,13 @@ local tbl_4 = {
 		16,
 		19
 	}),
-	game_option_placeholder = fn("game_option_1", tbl_3.game_option_1.size),
-	item_presentation_frame = UIWidgets.create_frame("game_option_1", tbl_3.game_option_1.size, str, 20),
+	game_option_placeholder = create_placeholder_option("game_option_1", scenegraph_definition.game_option_1.size),
+	item_presentation_frame = UIWidgets.create_frame("game_option_1", scenegraph_definition.game_option_1.size, deed_frame_name, 20),
 	item_presentation_bg = UIWidgets.create_simple_texture("game_options_bg_04", "game_option_1"),
 	item_presentation = UIWidgets.create_simple_item_presentation("item_presentation")
 }
 
 return {
-	widgets = tbl_4,
-	scenegraph_definition = tbl_3
+	widgets = widgets,
+	scenegraph_definition = scenegraph_definition
 }

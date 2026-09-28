@@ -14,9 +14,9 @@ StateMachineManager.init = function (self)
 	self._column1_width = 0
 end
 
-StateMachineManager.update = function (self, arg_2_1)
+StateMachineManager.update = function (self, dt)
 	-- function 2
-	if not StateMachineManager.DEBUG then
+	if StateMachineManager.DEBUG then
 		if self._world == nil then
 			self._world = Application.debug_world()
 
@@ -25,7 +25,7 @@ StateMachineManager.update = function (self, arg_2_1)
 			end
 		end
 
-		if not self._gui then
+		if self._gui then
 			self:_draw_panel()
 		end
 	end
@@ -33,71 +33,71 @@ end
 
 StateMachineManager.destroy = function (self)
 	-- function 3
-	if not (not StateMachineManager.DEBUG and self._gui == nil) then
+	if StateMachineManager.DEBUG and self._gui ~= nil then
 		World.destroy_gui(self._world, self._gui)
 
 		self._gui = nil
 	end
 end
 
-StateMachineManager._register_state_machine = function (arg_4_0, arg_4_1)
+StateMachineManager._register_state_machine = function (self, state_machine)
 	-- function 4
-	arg_4_0._state_machines[#arg_4_0._state_machines + 1] = arg_4_1
+	self._state_machines[#self._state_machines + 1] = state_machine
 end
 
-StateMachineManager._unregister_state_machine = function (self, arg_5_1)
+StateMachineManager._unregister_state_machine = function (self, state_machine)
 	-- function 5
-	local find = table.find(self._state_machines, arg_5_1)
+	local index = table.find(self._state_machines, state_machine)
 
-	assert(find, "unregister a state machine " .. arg_5_1._name .. " that was not registered")
-	table.remove(self._state_machines, find)
+	assert(index, "unregister a state machine " .. state_machine._name .. " that was not registered")
+	table.remove(self._state_machines, index)
 end
 
 StateMachineManager._root_state_machines = function (self)
 	-- function 6
-	local tbl = {}
+	local result = {}
 
-	for i, v in ipairs(self._state_machines) do
-		if v._state_machine_stack[1] == v then
-			tbl[#tbl + 1] = v
+	for _, state_machine in ipairs(self._state_machines) do
+		if state_machine._state_machine_stack[1] == state_machine then
+			result[#result + 1] = state_machine
 		end
 	end
 
-	return tbl
+	return result
 end
 
-StateMachineManager._state_machines_column_width = function (self, arg_7_1)
+StateMachineManager._state_machines_column_width = function (self, state_machines)
 	-- function 7
-	local num = 0
+	local width = 0
 
-	for i, v in ipairs(arg_7_1) do
-		local text_extents, var_7_2 = Gui.text_extents(self._gui, v._name, StateMachineManager.FONT, StateMachineManager.FONT_SIZE)
-		local num_2 = var_7_2.x - text_extents.x
+	for _, state_machine in ipairs(state_machines) do
+		local min, max = Gui.text_extents(self._gui, state_machine._name, StateMachineManager.FONT, StateMachineManager.FONT_SIZE)
+		local text_width = max.x - min.x
 
-		num = math.max(num_2, num)
+		width = math.max(text_width, width)
 	end
 
-	return num
+	return width
 end
 
 StateMachineManager._draw_panel = function (self)
 	-- function 8
-	local resolution, var_8_1 = Gui.resolution()
-	local num = 16
-	local num_2 = 4
-	local _root_state_machines = self:_root_state_machines()
-	local num_3 = self:_state_machines_column_width(_root_state_machines) + 2 * num_2
+	local width, height = Gui.resolution()
+	local column_margin = 16
+	local text_margin = 4
+	local root_state_machines = self:_root_state_machines()
+	local column1_width = self:_state_machines_column_width(root_state_machines) + 2 * text_margin
 
-	self._column1_width = math.max(num_3, self._column1_width)
+	self._column1_width = math.max(column1_width, self._column1_width)
 
-	Gui.rect(self._gui, Vector2(num, num), Vector2(self._column1_width, var_8_1 - 2 * num), Color(64, 0, 0, 0))
+	Gui.rect(self._gui, Vector2(column_margin, column_margin), Vector2(self._column1_width, height - 2 * column_margin), Color(64, 0, 0, 0))
 
-	local var_8_6 = num
-	local num_4 = var_8_1 - num
+	local x = column_margin
+	local y = height - column_margin
 
-	for i, v in ipairs(_root_state_machines) do
-		Gui.text(self._gui, v._name, StateMachineManager.FONT, StateMachineManager.FONT_SIZE, StateMachineManager.FONT_MATERIAL, Vector3(var_8_6 + num_2, num_4 - StateMachineManager.FONT_SIZE, 0))
+	for _, state_machine in ipairs(root_state_machines) do
+		Gui.text(self._gui, state_machine._name, StateMachineManager.FONT, StateMachineManager.FONT_SIZE, StateMachineManager.FONT_MATERIAL, Vector3(x + text_margin, y - StateMachineManager.FONT_SIZE, 0))
 
-		num_4 = num_4 - StateMachineManager.FONT_SIZE
+		y = y - StateMachineManager.FONT_SIZE
 	end
 end

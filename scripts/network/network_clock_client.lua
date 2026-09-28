@@ -1,51 +1,61 @@
 -- chunkname: @scripts/network/network_clock_client.lua
 
-local function fn(self)
+local function get_median(list)
 	-- function 1
-	local count = #self
-	local var_1_1
+	local n = #list
+	local median
 
-	if count % 2 == 0 then
-		local num = count / 2
-		local num_2 = num + 1
+	if n % 2 == 0 then
+		local i1 = n / 2
+		local i2 = i1 + 1
+		local d1 = list[i1]
+		local d2 = list[i2]
 
-		var_1_1 = (self[num] + self[num_2]) / 2
+		median = (d1 + d2) / 2
 	else
-		var_1_1 = self[math.ceil(count / 2)]
+		local i = math.ceil(n / 2)
+
+		median = list[i]
 	end
 
-	return var_1_1
+	return median
 end
 
-local function fn_2(self)
+local function get_mean(list)
 	-- function 2
-	local count = #self
-	local num = 0
+	local n = #list
+	local s = 0
 
-	for i = 1, count do
-		num = num + self[i]
+	for i = 1, n do
+		s = s + list[i]
 	end
 
-	return num / count
+	local mean = s / n
+
+	return mean
 end
 
-local function fn_3(self, arg_3_1)
+local function get_sd(list, median)
 	-- function 3
-	local count = #self
-	local num = 0
+	local n = #list
+	local differences = 0
 
-	for i = 1, count do
-		num = num + (self[i] - arg_3_1)^2
+	for i = 1, n do
+		local val = list[i]
+		local difference_squared = (val - median)^2
+
+		differences = differences + difference_squared
 	end
 
-	local num_2 = num / count
+	local variance = differences / n
+	local sd = math.sqrt(variance)
 
-	return (math.sqrt(num_2))
+	return sd
 end
 
 NetworkClockClient = class(NetworkClockClient)
 
-local tbl = {
+local RPCS = {
 	"rpc_network_time_sync_response",
 	"rpc_network_current_server_time_response"
 }
@@ -60,11 +70,11 @@ NetworkClockClient.init = function (self)
 	self._state = "syncing"
 end
 
-NetworkClockClient.register_rpcs = function (self, arg_5_1)
+NetworkClockClient.register_rpcs = function (self, network_event_delegate)
 	-- function 5
-	arg_5_1:register(self, unpack(tbl))
+	network_event_delegate:register(self, unpack(RPCS))
 
-	self._network_event_delegate = arg_5_1
+	self._network_event_delegate = network_event_delegate
 end
 
 NetworkClockClient.unregister_rpcs = function (self)
@@ -78,7 +88,7 @@ NetworkClockClient.synchronized = function (self)
 	-- function 7
 	local flag
 
-	flag = self._state ~= "synced" or not true or false
+	flag = (self._state ~= "synced" or not true) and not not false
 
 	return flag
 end
@@ -88,127 +98,127 @@ NetworkClockClient.time = function (self)
 	return self._clock
 end
 
-local num = 3
-local num_2 = 6
-local num_3 = 2
+local INIT_SYNC_TIME_STEP = 3
+local INIT_SYNC_TIMES = 6
+local SYNC_TIME_STEP = 2
 
-NetworkClockClient.update = function (self, arg_9_1)
+NetworkClockClient.update = function (self, dt)
 	-- function 9
 	if self._state == "syncing" then
-		self:_update_clock(arg_9_1)
+		self:_update_clock(dt)
 
-		local network = Managers.state.network
+		local network_manager = Managers.state.network
 
-		if not network:in_game_session() then
+		if not network_manager:in_game_session() then
 			return
 		end
 
-		local num_4 = self._request_timer + arg_9_1
+		local request_timer = self._request_timer + dt
 
-		if not (not (num_4 >= num) or not (self._times_synced < num_2)) then
-			num_4 = 0
+		if request_timer >= INIT_SYNC_TIME_STEP and self._times_synced < INIT_SYNC_TIMES then
+			request_timer = 0
 			self._times_synced = self._times_synced + 1
 
-			network.network_transmit:send_rpc_server("rpc_network_clock_sync_request", self._clock)
+			network_manager.network_transmit:send_rpc_server("rpc_network_clock_sync_request", self._clock)
 		end
 
-		self._request_timer = num_4
+		self._request_timer = request_timer
 	elseif self._state == "synced" then
-		self:_update_clock(arg_9_1)
+		self:_update_clock(dt)
 
-		local network_2 = Managers.state.network
+		local network_manager = Managers.state.network
 
-		if not network_2:in_game_session() then
+		if not network_manager:in_game_session() then
 			return
 		end
 
-		local num_5 = self._request_timer + arg_9_1
+		local request_timer = self._request_timer + dt
 
-		if num_5 >= num_3 then
-			num_5 = 0
+		if request_timer >= SYNC_TIME_STEP then
+			request_timer = 0
 
-			network_2.network_transmit:send_rpc_server("rpc_network_current_server_time_request", self._clock)
+			network_manager.network_transmit:send_rpc_server("rpc_network_current_server_time_request", self._clock)
 		end
 
-		self._request_timer = num_5
+		self._request_timer = request_timer
 	else
 		printf("[NetworkClockClient] FAIL Unknown state: %q", self._state)
 	end
 
-	if not Development.parameter("network_clock_debug") then
-		self:_debug_stuff(arg_9_1)
+	if Development.parameter("network_clock_debug") then
+		self:_debug_stuff(dt)
 	end
 end
 
-NetworkClockClient._update_clock = function (self, arg_10_1)
+NetworkClockClient._update_clock = function (self, delta)
 	-- function 10
-	local num = self._clock + arg_10_1
+	local new_time = self._clock + delta
 
-	if num < 0 then
-		num = 0
+	if new_time < 0 then
+		new_time = 0
 
-		printf("[NetworkClockClient] delta (%f) larger than current time (%f), clamping resulting time to 0.", arg_10_1, self._clock)
+		printf("[NetworkClockClient] delta (%f) larger than current time (%f), clamping resulting time to 0.", delta, self._clock)
 	end
 
-	self._clock = num
+	self._clock = new_time
 end
 
-local function fn_4(arg_11_0, arg_11_1)
+local function sort_function(a, b)
 	-- function 11
-	return arg_11_0 < arg_11_1
+	return a < b
 end
 
-NetworkClockClient._update_delta_history = function (self, arg_12_1)
+NetworkClockClient._update_delta_history = function (self, delta)
 	-- function 12
-	local _delta_history = self._delta_history
+	local delta_history = self._delta_history
 
-	_delta_history[#_delta_history + 1] = arg_12_1
+	delta_history[#delta_history + 1] = delta
 
-	table.sort(_delta_history, fn_4)
+	table.sort(delta_history, sort_function)
 
-	self._delta_history = _delta_history
+	self._delta_history = delta_history
 end
 
 NetworkClockClient._calculate_mean_dt = function (self)
 	-- function 13
-	local _delta_history = self._delta_history
-	local var_13_1 = fn(_delta_history)
-	local var_13_2 = fn_3(_delta_history, var_13_1)
-	local count = #_delta_history
-	local num = 1
+	local delta_history = self._delta_history
+	local median = get_median(delta_history)
+	local sd = get_sd(delta_history, median)
+	local n = #delta_history
+	local i = 1
 
-	while num <= count do
-		local var_13_5 = _delta_history[num]
+	while i <= n do
+		local dt = delta_history[i]
 
-		if not (var_13_5 > var_13_1 + var_13_2 or not (var_13_5 < var_13_1 - var_13_2)) then
-			table.remove(_delta_history, num)
+		if dt > median + sd or dt < median - sd then
+			table.remove(delta_history, i)
 
-			count = count - 1
+			n = n - 1
 		else
-			num = num + 1
+			i = i + 1
 		end
 	end
 
-	self._mean_dt = fn_2(_delta_history)
-	self._delta_history = _delta_history
+	self._mean_dt = get_mean(delta_history)
+	self._delta_history = delta_history
 end
 
-NetworkClockClient.destroy = function (arg_14_0)
+NetworkClockClient.destroy = function (self)
 	-- function 14
 	return
 end
 
-NetworkClockClient._debug_stuff = function (self, arg_15_1)
+NetworkClockClient._debug_stuff = function (self, dt)
 	-- function 15
-	local debug_text = Managers.state.debug_text
+	local debug_text_manager = Managers.state.debug_text
 
-	if not debug_text then
-		local format = string.format("%.3f", self._clock)
+	if debug_text_manager then
+		local text = string.format("%.3f", self._clock)
 
-		debug_text:output_screen_text(format, 22, 0.1)
+		debug_text_manager:output_screen_text(text, 22, 0.1)
 	end
 
-	if not Keyboard.pressed(Keyboard.button_index("p")) then
+	if Keyboard.pressed(Keyboard.button_index("p")) then
 		print("<[NetworkClockClient] DEBUG INFO>")
 		printf("state: %q", self._state)
 		printf("mean dt: %q", self._mean_dt)
@@ -217,19 +227,20 @@ NetworkClockClient._debug_stuff = function (self, arg_15_1)
 	end
 end
 
-NetworkClockClient.rpc_network_time_sync_response = function (self, arg_16_1, arg_16_2, arg_16_3)
+NetworkClockClient.rpc_network_time_sync_response = function (self, channel_id, time_sent_request, server_time)
 	-- function 16
-	local _clock = self._clock
-	local num = (_clock - arg_16_2) / 2
-	local num_3 = arg_16_3 - _clock + num
+	local current_time = self._clock
+	local client_latency_delta = (current_time - time_sent_request) / 2
+	local client_server_delta = server_time - current_time
+	local delta = client_server_delta + client_latency_delta
 
 	if #self._delta_history == 0 then
-		self:_update_clock(num_3)
+		self:_update_clock(delta)
 	end
 
-	self:_update_delta_history(num_3)
+	self:_update_delta_history(delta)
 
-	if self._times_synced >= num_2 then
+	if self._times_synced >= INIT_SYNC_TIMES then
 		self:_calculate_mean_dt()
 		self:_update_clock(self._mean_dt)
 
@@ -238,11 +249,12 @@ NetworkClockClient.rpc_network_time_sync_response = function (self, arg_16_1, ar
 	end
 end
 
-NetworkClockClient.rpc_network_current_server_time_response = function (self, arg_17_1, arg_17_2, arg_17_3)
+NetworkClockClient.rpc_network_current_server_time_response = function (self, channel_id, time_sent_request, server_time)
 	-- function 17
-	local _clock = self._clock
-	local num = (_clock - arg_17_2) / 2
-	local num_2 = arg_17_3 - _clock + num
+	local current_time = self._clock
+	local client_latency_delta = (current_time - time_sent_request) / 2
+	local client_server_delta = server_time - current_time
+	local delta = client_server_delta + client_latency_delta
 
-	self:_update_clock(num_2)
+	self:_update_clock(delta)
 end

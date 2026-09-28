@@ -2,10 +2,10 @@
 
 require("scripts/entity_system/systems/behaviour/nodes/bt_node")
 
-local alive = Unit.alive
+local unit_alive = Unit.alive
 local Profiler = Profiler
 
-local function fn()
+local function nop()
 	-- function 1
 	return
 end
@@ -20,60 +20,62 @@ BTSelector_training_dummy.init = function (self, ...)
 	self._children = {}
 end
 
-BTSelector_training_dummy.leave = function (self, arg_3_1, arg_3_2, arg_3_3, arg_3_4)
+BTSelector_training_dummy.leave = function (self, unit, blackboard, t, reason)
 	-- function 3
-	self:set_running_child(arg_3_1, arg_3_2, arg_3_3, nil, arg_3_4)
+	self:set_running_child(unit, blackboard, t, nil, reason)
 end
 
-BTSelector_training_dummy.run = function (self, arg_4_1, arg_4_2, arg_4_3, arg_4_4)
+BTSelector_training_dummy.run = function (self, unit, blackboard, t, dt)
 	-- function 4
-	local start = Profiler.start
-	local stop = Profiler.stop
-	local current_running_child = self:current_running_child(arg_4_2)
-	local _children = self._children
-	local var_4_4 = _children[1]
-	local var_4_5
+	local Profiler_start, Profiler_stop = Profiler.start, Profiler.stop
+	local child_running = self:current_running_child(blackboard)
+	local children = self._children
 
-	if not arg_4_2.stagger then
-		if not arg_4_2.stagger_prohibited then
-			arg_4_2.stagger = false
-		else
-			var_4_5 = true
+	do
+		local node_stagger = children[1]
+		local condition_result
+
+		if blackboard.stagger then
+			if blackboard.stagger_prohibited then
+				blackboard.stagger = false
+			else
+				condition_result = true
+			end
+		end
+
+		if condition_result then
+			self:set_running_child(unit, blackboard, t, node_stagger, "aborted")
+
+			local result, evaluate = node_stagger:run(unit, blackboard, t, dt)
+
+			if result ~= "running" then
+				self:set_running_child(unit, blackboard, t, nil, result)
+			end
+
+			if result ~= "failed" then
+				return result, evaluate
+			end
+		elseif node_stagger == child_running then
+			self:set_running_child(unit, blackboard, t, nil, "failed")
 		end
 	end
 
-	if not var_4_5 then
-		self:set_running_child(arg_4_1, arg_4_2, arg_4_3, var_4_4, "aborted")
+	local node_do_nothing = children[2]
 
-		local run, var_4_7 = var_4_4:run(arg_4_1, arg_4_2, arg_4_3, arg_4_4)
+	self:set_running_child(unit, blackboard, t, node_do_nothing, "aborted")
 
-		if run ~= "running" then
-			self:set_running_child(arg_4_1, arg_4_2, arg_4_3, nil, run)
-		end
+	local result, evaluate = node_do_nothing:run(unit, blackboard, t, dt)
 
-		if run ~= "failed" then
-			return run, var_4_7
-		end
-	elseif var_4_4 == current_running_child then
-		self:set_running_child(arg_4_1, arg_4_2, arg_4_3, nil, "failed")
+	if result ~= "running" then
+		self:set_running_child(unit, blackboard, t, nil, result)
 	end
 
-	local var_4_8 = _children[2]
-
-	self:set_running_child(arg_4_1, arg_4_2, arg_4_3, var_4_8, "aborted")
-
-	local run_2, var_4_10 = var_4_8:run(arg_4_1, arg_4_2, arg_4_3, arg_4_4)
-
-	if run_2 ~= "running" then
-		self:set_running_child(arg_4_1, arg_4_2, arg_4_3, nil, run_2)
-	end
-
-	if run_2 ~= "failed" then
-		return run_2, var_4_10
+	if result ~= "failed" then
+		return result, evaluate
 	end
 end
 
-BTSelector_training_dummy.add_child = function (arg_5_0, arg_5_1)
+BTSelector_training_dummy.add_child = function (self, node)
 	-- function 5
-	arg_5_0._children[#arg_5_0._children + 1] = arg_5_1
+	self._children[#self._children + 1] = node
 end

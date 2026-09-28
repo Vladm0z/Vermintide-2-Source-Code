@@ -1,26 +1,26 @@
 -- chunkname: @scripts/ui/weave_tutorial/weave_tutorial_popup_ui.lua
 
-local var_0_0 = local_require("scripts/ui/weave_tutorial/weave_tutorial_popup_ui_definitions")
-local scenegraph_definition = var_0_0.scenegraph_definition
-local body_definitions = var_0_0.body_definitions
-local animation_definitions = var_0_0.animation_definitions
-local generic_input_actions = var_0_0.generic_input_actions
+local definitions = local_require("scripts/ui/weave_tutorial/weave_tutorial_popup_ui_definitions")
+local scenegraph_definition = definitions.scenegraph_definition
+local body_definitions = definitions.body_definitions
+local animation_definitions = definitions.animation_definitions
+local generic_input_actions = definitions.generic_input_actions
 
 WeaveTutorialPopupUI = class(WeaveTutorialPopupUI)
 
-local num = 40
+local paragraph_divider_height = 40
 
-WeaveTutorialPopupUI.init = function (self, arg_1_1)
+WeaveTutorialPopupUI.init = function (self, ui_context)
 	-- function 1
-	self.ui_renderer = arg_1_1.ui_renderer
-	self.ui_top_renderer = arg_1_1.ui_top_renderer
-	self.input_manager = arg_1_1.input_manager
-	self.world = arg_1_1.world
+	self.ui_renderer = ui_context.ui_renderer
+	self.ui_top_renderer = ui_context.ui_top_renderer
+	self.input_manager = ui_context.input_manager
+	self.world = ui_context.world
 	self.wwise_world = Managers.world:wwise_world(self.world)
 	self.render_settings = {
 		snap_pixel_positions = true
 	}
-	self.ui_context = arg_1_1
+	self.ui_context = ui_context
 	self.body_paragraphs = {}
 	self.body_paragraph_heights = {}
 	self._animations = {}
@@ -45,24 +45,24 @@ WeaveTutorialPopupUI._create_ui_elements = function (self)
 	-- function 3
 	self.ui_scenegraph = UISceneGraph.init_scenegraph(scenegraph_definition)
 
-	local widget_definitions = var_0_0.widget_definitions
+	local widget_definitions = definitions.widget_definitions
 
 	self.widgets = {}
 
-	local tbl = {}
+	local widgets_by_name = {}
 
-	for k, v in pairs(widget_definitions) do
-		local var_3_2 = UIWidget.init(v)
+	for name, widget_definition in pairs(widget_definitions) do
+		local widget = UIWidget.init(widget_definition)
 
-		self.widgets[#self.widgets + 1] = var_3_2
-		tbl[k] = var_3_2
+		self.widgets[#self.widgets + 1] = widget
+		widgets_by_name[name] = widget
 	end
 
-	self.widgets_by_name = tbl
-	self.button_1 = tbl.button_1
-	self.button_2 = tbl.button_2
-	self.title_text = tbl.title_text
-	self.sub_title_text = tbl.sub_title_text
+	self.widgets_by_name = widgets_by_name
+	self.button_1 = widgets_by_name.button_1
+	self.button_2 = widgets_by_name.button_2
+	self.title_text = widgets_by_name.title_text
+	self.sub_title_text = widgets_by_name.sub_title_text
 	self.body_text = UIWidget.init(body_definitions.body_text)
 	self.body_text_divider = UIWidget.init(body_definitions.paragraph_divider)
 
@@ -78,30 +78,31 @@ WeaveTutorialPopupUI._create_ui_elements = function (self)
 	self.ui_animator = UIAnimator:new(self.ui_scenegraph, animation_definitions)
 end
 
-WeaveTutorialPopupUI.show = function (self, arg_4_1, arg_4_2, arg_4_3, arg_4_4, arg_4_5, arg_4_6, arg_4_7, arg_4_8)
+WeaveTutorialPopupUI.show = function (self, title, sub_title, body, optional_button_2, optional_button_2_func, optional_button_2_input_actions, disable_body_localization, data)
 	-- function 4
-	if not self.is_visible then
+	if self.is_visible then
 		print("WeaveTutorialPopupUI is already visible")
 
 		return
 	end
 
-	self._optional_button_2_func = arg_4_5
+	self._optional_button_2_func = optional_button_2_func
 
-	self._menu_input_description:set_input_description(arg_4_6)
+	self._menu_input_description:set_input_description(optional_button_2_input_actions)
 	self:start_transition_animation("on_show", "transition_enter")
-	self:populate_message(arg_4_1, arg_4_2, arg_4_3, arg_4_4, arg_4_7, arg_4_8)
+	self:populate_message(title, sub_title, body, optional_button_2, disable_body_localization, data)
 
 	self.is_visible = true
 
 	self:_acquire_input()
 end
 
-WeaveTutorialPopupUI.show_custom_popup = function (self, arg_5_1)
+WeaveTutorialPopupUI.show_custom_popup = function (self, popup_data)
 	-- function 5
-	local custom_popup = arg_5_1.custom_popup
+	local popup_class_name = popup_data.custom_popup
+	local klass = rawget(_G, popup_class_name)
 
-	self._custom_popup = rawget(_G, custom_popup):new(self.ui_context, self)
+	self._custom_popup = klass:new(self.ui_context, self)
 	self.is_visible = true
 
 	self:_acquire_input()
@@ -121,7 +122,7 @@ end
 
 WeaveTutorialPopupUI._destroy_custom_popup = function (self)
 	-- function 7
-	if not self._custom_popup then
+	if self._custom_popup then
 		self._custom_popup:destroy()
 
 		self._custom_popup = nil
@@ -142,103 +143,103 @@ WeaveTutorialPopupUI.destroy = function (self)
 	self.ui_animator = nil
 end
 
-WeaveTutorialPopupUI.update = function (self, arg_9_1)
+WeaveTutorialPopupUI.update = function (self, dt)
 	-- function 9
 	if not self.is_visible then
 		return
 	end
 
-	local get_service = self.input_manager:get_service("weave_tutorial")
+	local input_service = self.input_manager:get_service("weave_tutorial")
 
-	if not self._custom_popup then
-		self._custom_popup:update(arg_9_1, get_service)
+	if self._custom_popup then
+		self._custom_popup:update(dt, input_service)
 	else
-		if UIUtils.is_button_pressed(self.button_1) or get_service:get("toggle_menu", true) or not get_service:get("confirm_press", true) then
+		if UIUtils.is_button_pressed(self.button_1) or input_service:get("toggle_menu", true) or input_service:get("confirm_press", true) then
 			self:hide()
 
 			return
 		end
 
-		if not self._optional_button_2_func and UIUtils.is_button_pressed(self.button_2) and not get_service:get("special_1_press", true) then
+		if self._optional_button_2_func and (UIUtils.is_button_pressed(self.button_2) or input_service:get("special_1_press", true)) then
 			self._optional_button_2_func(self)
 			self:hide()
 
 			return
 		end
 
-		self:_update_animations(arg_9_1)
-		self:_draw(arg_9_1, get_service)
+		self:_update_animations(dt)
+		self:_draw(dt, input_service)
 	end
 end
 
-WeaveTutorialPopupUI._update_animations = function (self, arg_10_1)
+WeaveTutorialPopupUI._update_animations = function (self, dt)
 	-- function 10
-	self.ui_animator:update(arg_10_1)
+	self.ui_animator:update(dt)
 
-	local _animations = self._animations
+	local animations = self._animations
 	local ui_animator = self.ui_animator
 
-	for k, v in pairs(_animations) do
-		if not ui_animator:is_animation_completed(v) then
-			ui_animator:stop_animation(v)
+	for animation_name, animation_id in pairs(animations) do
+		if ui_animator:is_animation_completed(animation_id) then
+			ui_animator:stop_animation(animation_id)
 
-			_animations[k] = nil
+			animations[animation_name] = nil
 		end
 	end
 
-	UIWidgetUtils.animate_default_button(self.button_1, arg_10_1)
-	UIWidgetUtils.animate_default_button(self.button_2, arg_10_1)
+	UIWidgetUtils.animate_default_button(self.button_1, dt)
+	UIWidgetUtils.animate_default_button(self.button_2, dt)
 end
 
-WeaveTutorialPopupUI._draw = function (self, arg_11_1, arg_11_2)
+WeaveTutorialPopupUI._draw = function (self, dt, input_service)
 	-- function 11
-	if not self._custom_popup then
+	if self._custom_popup then
 		return
 	end
 
 	local ui_top_renderer = self.ui_top_renderer
 	local ui_scenegraph = self.ui_scenegraph
 	local render_settings = self.render_settings
-	local is_device_active = Managers.input:is_device_active("gamepad")
+	local gamepad_active = Managers.input:is_device_active("gamepad")
 
-	UIRenderer.begin_pass(ui_top_renderer, ui_scenegraph, arg_11_2, arg_11_1, nil, render_settings)
+	UIRenderer.begin_pass(ui_top_renderer, ui_scenegraph, input_service, dt, nil, render_settings)
 
-	for i, v in ipairs(self.widgets) do
-		UIRenderer.draw_widget(ui_top_renderer, v)
+	for _, widget in ipairs(self.widgets) do
+		UIRenderer.draw_widget(ui_top_renderer, widget)
 	end
 
 	self:draw_body(ui_top_renderer)
 	UIRenderer.end_pass(ui_top_renderer)
 
-	if not is_device_active then
-		self._menu_input_description:draw(ui_top_renderer, arg_11_1)
+	if gamepad_active then
+		self._menu_input_description:draw(ui_top_renderer, dt)
 	end
 end
 
-WeaveTutorialPopupUI.populate_message = function (self, arg_12_1, arg_12_2, arg_12_3, arg_12_4, arg_12_5)
+WeaveTutorialPopupUI.populate_message = function (self, title_text, sub_title_text, body_text, optional_button_2, disable_body_localization)
 	-- function 12
-	local content = self.title_text.content
+	local title = self.title_text.content
 
-	content.text = arg_12_1 or ""
-	content.visible = arg_12_1 ~= nil
+	title.text = not not title_text or not not ""
+	title.visible = title_text ~= nil
 
-	local content_2 = self.sub_title_text.content
+	local sub_title = self.sub_title_text.content
 
-	content_2.text = arg_12_2 or ""
-	content_2.visible = arg_12_2 ~= nil
+	sub_title.text = not not sub_title_text or not not ""
+	sub_title.visible = sub_title_text ~= nil
 
 	local button_2 = self.button_2
 
-	if not arg_12_4 then
+	if optional_button_2 then
 		button_2.content.visible = true
-		button_2.content.title_text = Localize(arg_12_4)
+		button_2.content.title_text = Localize(optional_button_2)
 	else
 		button_2.content.visible = false
 	end
 
-	local flag = not arg_12_5 and arg_12_3 and Localize(arg_12_3)
+	local localized_body_text = (not disable_body_localization or not body_text) and not not Localize(body_text)
 
-	self.body_paragraphs = UIRenderer.break_paragraphs(flag, {})
+	self.body_paragraphs = UIRenderer.break_paragraphs(localized_body_text, {})
 
 	self:resize_to_fit()
 
@@ -251,84 +252,85 @@ end
 
 WeaveTutorialPopupUI.resize_to_fit = function (self)
 	-- function 13
-	local ui_top_renderer = self.ui_top_renderer
+	local ui_renderer = self.ui_top_renderer
 	local ui_scenegraph = self.ui_scenegraph
-	local sub_title = ui_scenegraph.sub_title
-	local body = ui_scenegraph.body
-	local window = ui_scenegraph.window
-	local size = body.size
-	local text = self.body_text.style.text
-	local num_2 = 0
+	local sub_title_text_def = ui_scenegraph.sub_title
+	local body_text_def = ui_scenegraph.body
+	local window_def = ui_scenegraph.window
+	local body_widget_size = body_text_def.size
+	local body_text = self.body_text
+	local style = body_text.style.text
+	local body_height = 0
 
 	self.body_paragraph_heights = {}
 
-	local body_paragraphs = self.body_paragraphs
-	local count = #body_paragraphs
+	local paragraphs = self.body_paragraphs
+	local num_paragraphs = #paragraphs
 
-	for i = 1, count do
-		local get_text_height = UIUtils.get_text_height(ui_top_renderer, size, text, body_paragraphs[i])
+	for i = 1, num_paragraphs do
+		local height = UIUtils.get_text_height(ui_renderer, body_widget_size, style, paragraphs[i])
 
-		self.body_paragraph_heights[i] = get_text_height
-		num_2 = num_2 + get_text_height
+		self.body_paragraph_heights[i] = height
+		body_height = body_height + height
 
-		if i < count then
-			num_2 = num_2 + num
+		if i < num_paragraphs then
+			body_height = body_height + paragraph_divider_height
 		end
 	end
 
-	body.size[2] = num_2
+	body_text_def.size[2] = body_height
 
-	local visible = self.title_text.content.visible
-	local position = scenegraph_definition.sub_title.position
-	local position_2 = sub_title.position
-	local var_13_14
+	local title_visible = self.title_text.content.visible
+	local original_subtitle_pos = scenegraph_definition.sub_title.position
+	local position = sub_title_text_def.position
+	local var_13_1
 
-	if not visible then
-		var_13_14 = position[2]
+	if title_visible then
+		var_13_1 = original_subtitle_pos[2]
 
-		if not var_13_14 then
+		if not var_13_1 then
 			-- Nothing
 		end
 	end
 
-	var_13_14 = 0
+	var_13_1 = 0
 
 	::label_13_0::
 
-	position_2[2] = var_13_14
+	position[2] = var_13_1
 
-	local visible_2 = self.sub_title_text.content.visible
-	local position_3 = scenegraph_definition.body.position
-	local position_4 = body.position
-	local var_13_18
+	local sub_title_visible = self.sub_title_text.content.visible
+	local original_body_pos = scenegraph_definition.body.position
+	local position_2 = body_text_def.position
+	local var_13_3
 
-	if not visible_2 then
-		var_13_18 = position_3[2]
+	if sub_title_visible then
+		var_13_3 = original_body_pos[2]
 
-		if not var_13_18 then
+		if not var_13_3 then
 			-- Nothing
 		end
 	end
 
-	var_13_18 = position[2]
+	var_13_3 = original_subtitle_pos[2]
 
 	::label_13_1::
 
-	position_4[2] = var_13_18
+	position_2[2] = var_13_3
 
-	local calculate_base_window_height = self:calculate_base_window_height()
+	local base_window_height = self:calculate_base_window_height()
 
-	window.size[2] = num_2 + calculate_base_window_height
+	window_def.size[2] = body_height + base_window_height
 
 	local button_1 = self.button_1
 	local button_2 = self.button_2
 
-	if not button_2.content.visible then
-		local num_3 = 20
-		local size_2 = scenegraph_definition.button_1.size
+	if button_2.content.visible then
+		local spacing = 20
+		local button_size = scenegraph_definition.button_1.size
 
-		button_1.offset[1] = size_2[1] * 0.5 + num_3
-		button_2.offset[1] = -size_2[1] * 0.5 - num_3
+		button_1.offset[1] = button_size[1] * 0.5 + spacing
+		button_2.offset[1] = -button_size[1] * 0.5 - spacing
 	else
 		button_1.offset[1] = 0
 	end
@@ -336,66 +338,90 @@ end
 
 WeaveTutorialPopupUI.calculate_base_window_height = function (self)
 	-- function 14
-	local num = self.title_start_y - self.sub_title_start_y
-	local flag
+	local title_size = self.title_start_y - self.sub_title_start_y
+	local num
 
-	flag = not self.title_text.content.visible and 0 and num
+	if self.title_text.content.visible then
+		num = 0
 
-	local num_2 = self.sub_title_start_y - self.body_start_y
-	local flag_2
+		goto label_14_0
+	end
 
-	flag_2 = not self.sub_title_text.content.visible and 0 and num_2
+	num = title_size
 
-	return self.button_height - self.body_start_y - flag + 50
+	local title_offset = num
+
+	::label_14_0::
+
+	local sub_title_size = self.sub_title_start_y - self.body_start_y
+	local num_2
+
+	if self.sub_title_text.content.visible then
+		num_2 = 0
+
+		goto label_14_1
+	end
+
+	num_2 = sub_title_size
+
+	local sub_title_offset = num_2
+
+	::label_14_1::
+
+	local window_height = self.button_height - self.body_start_y - title_offset + 50
+
+	return window_height
 end
 
-WeaveTutorialPopupUI.draw_body = function (self, arg_15_1)
+WeaveTutorialPopupUI.draw_body = function (self, renderer)
 	-- function 15
-	local body_text = self.body_text
-	local body_text_divider = self.body_text_divider
-	local offset = body_text.offset
-	local offset_2 = body_text_divider.offset
-	local num_2 = 0
-	local body_paragraphs = self.body_paragraphs
-	local body_paragraph_heights = self.body_paragraph_heights
-	local count = #body_paragraphs
+	local body_text_widget = self.body_text
+	local divider_widget = self.body_text_divider
+	local text_offset = body_text_widget.offset
+	local divider_offset = divider_widget.offset
+	local y_offset = 0
+	local paragraphs = self.body_paragraphs
+	local paragraph_heights = self.body_paragraph_heights
+	local num_paragraphs = #paragraphs
 
-	for i = 1, count do
-		offset[2] = -num_2
-		body_text.content.text = body_paragraphs[i]
+	for i = 1, num_paragraphs do
+		text_offset[2] = -y_offset
+		body_text_widget.content.text = paragraphs[i]
 
-		UIRenderer.draw_widget(arg_15_1, body_text)
+		UIRenderer.draw_widget(renderer, body_text_widget)
 
-		num_2 = num_2 + body_paragraph_heights[i]
+		y_offset = y_offset + paragraph_heights[i]
 
-		if i < count then
-			offset_2[2] = -(num_2 + num / 2)
+		if i < num_paragraphs then
+			divider_offset[2] = -(y_offset + paragraph_divider_height / 2)
 
-			UIRenderer.draw_widget(arg_15_1, body_text_divider)
+			UIRenderer.draw_widget(renderer, divider_widget)
 
-			num_2 = num_2 + num
+			y_offset = y_offset + paragraph_divider_height
 		end
 	end
 end
 
-WeaveTutorialPopupUI.start_transition_animation = function (self, arg_16_1, arg_16_2)
+WeaveTutorialPopupUI.start_transition_animation = function (self, key, animation_name)
 	-- function 16
-	local tbl = {
+	local params = {
 		wwise_world = self.wwise_world,
 		render_settings = self.render_settings,
 		text_highlight_widget = self.widgets_by_name.result_text_bg
 	}
-	local tbl_2 = {
+	local widgets = {
 		self.widgets_by_name.screen_background
 	}
-	local start_animation = self.ui_animator:start_animation(arg_16_2, tbl_2, scenegraph_definition, tbl)
+	local anim_id = self.ui_animator:start_animation(animation_name, widgets, scenegraph_definition, params)
 
-	self._animations[arg_16_1] = start_animation
+	self._animations[key] = anim_id
 end
 
 WeaveTutorialPopupUI._acquire_input = function (self)
 	-- function 17
-	self.input_manager:capture_input({
+	local input_manager = self.input_manager
+
+	input_manager:capture_input({
 		"keyboard",
 		"gamepad",
 		"mouse"
@@ -405,7 +431,9 @@ end
 
 WeaveTutorialPopupUI._release_input = function (self)
 	-- function 18
-	self.input_manager:release_input({
+	local input_manager = self.input_manager
+
+	input_manager:release_input({
 		"keyboard",
 		"gamepad",
 		"mouse"

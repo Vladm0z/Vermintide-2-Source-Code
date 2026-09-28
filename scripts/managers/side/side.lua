@@ -3,9 +3,9 @@
 SideRelations, SideRelationLookup = table.enum_lookup("ally", "enemy", "neutral")
 Side = class(Side)
 
-Side.init = function (self, arg_1_1, arg_1_2)
+Side.init = function (self, definition, side_id)
 	-- function 1
-	self._name = arg_1_1.name
+	self._name = definition.name
 	self._units = {}
 	self.units_lookup = {}
 	self._num_units = 0
@@ -23,10 +23,10 @@ Side.init = function (self, arg_1_1, arg_1_2)
 	self._num_allied_units = 0
 	self._neutral_sides = {}
 	self.neutral_sides_lookup = {}
-	self.party = arg_1_1.party
-	self.side_id = arg_1_2
+	self.party = definition.party
+	self.side_id = side_id
 	self.broadphase_category = {
-		arg_1_1.name
+		definition.name
 	}
 	self.enemy_broadphase_categories = {}
 	self.ally_broadphase_categories = {}
@@ -37,13 +37,13 @@ Side.init = function (self, arg_1_1, arg_1_2)
 		[SideRelations.neutral] = self.neutral_broadphase_categories
 	}
 
-	local add_these_settings = arg_1_1.add_these_settings
+	local add_these_settings = definition.add_these_settings
 
-	if not add_these_settings then
-		for k, v in pairs(add_these_settings) do
-			fassert(not self[k], "Mechanism trying to add setting that is already defined")
+	if add_these_settings then
+		for key, value in pairs(add_these_settings) do
+			fassert(not self[key], "Mechanism trying to add setting that is already defined")
 
-			self[k] = v
+			self[key] = value
 		end
 	end
 
@@ -62,34 +62,32 @@ Side.init = function (self, arg_1_1, arg_1_2)
 	self.AI_TARGET_UNITS = {}
 end
 
-Side.set_relation = function (self, arg_2_1, arg_2_2)
+Side.set_relation = function (self, relation, sides)
 	-- function 2
-	local var_2_0
-	local var_2_1
-	local var_2_2
+	local relation_sides, relation_side_lookup, relation_broadphase_categories
 
-	if arg_2_1 == SideRelations.enemy then
-		var_2_0 = self._enemy_sides
-		var_2_1 = self.enemy_sides_lookup
-		var_2_2 = self.enemy_broadphase_categories
-	elseif arg_2_1 == SideRelations.ally then
-		var_2_0 = self._allied_sides
-		var_2_1 = self.allied_sides_lookup
-		var_2_2 = self.ally_broadphase_categories
-	elseif arg_2_1 == SideRelations.neutral then
-		var_2_0 = self._neutral_sides
-		var_2_1 = self.neutral_sides_lookup
-		var_2_2 = self.neutral_broadphase_categories
+	if relation == SideRelations.enemy then
+		relation_sides = self._enemy_sides
+		relation_side_lookup = self.enemy_sides_lookup
+		relation_broadphase_categories = self.enemy_broadphase_categories
+	elseif relation == SideRelations.ally then
+		relation_sides = self._allied_sides
+		relation_side_lookup = self.allied_sides_lookup
+		relation_broadphase_categories = self.ally_broadphase_categories
+	elseif relation == SideRelations.neutral then
+		relation_sides = self._neutral_sides
+		relation_side_lookup = self.neutral_sides_lookup
+		relation_broadphase_categories = self.neutral_broadphase_categories
 	else
-		ferror("Unknown relation (%s)", arg_2_1)
+		ferror("Unknown relation (%s)", relation)
 	end
 
-	for i = 1, #arg_2_2 do
-		local var_2_3 = arg_2_2[i]
+	for i = 1, #sides do
+		local side = sides[i]
 
-		var_2_0[#var_2_0 + 1] = var_2_3
-		var_2_1[var_2_3] = true
-		var_2_2[#var_2_2 + 1] = var_2_3:name()
+		relation_sides[#relation_sides + 1] = side
+		relation_side_lookup[side] = true
+		relation_broadphase_categories[#relation_broadphase_categories + 1] = side:name()
 	end
 end
 
@@ -108,129 +106,133 @@ Side.get_allied_sides = function (self)
 	return self._allied_sides
 end
 
-Side.add_unit = function (self, arg_6_1)
+Side.add_unit = function (self, unit)
 	-- function 6
-	fassert(self.units_lookup[arg_6_1] == nil, "Unit is already added to side.")
+	fassert(self.units_lookup[unit] == nil, "Unit is already added to side.")
 
-	local num = self._num_units + 1
+	local num_units = self._num_units + 1
 
-	self._units[num] = arg_6_1
-	self.units_lookup[arg_6_1] = num
-	self._num_units = num
+	self._units[num_units] = unit
+	self.units_lookup[unit] = num_units
+	self._num_units = num_units
 end
 
-Side.remove_unit = function (self, arg_7_1)
+Side.remove_unit = function (self, unit)
 	-- function 7
-	fassert(self.units_lookup[arg_7_1] ~= nil, "Unit has not been added or is already removed from side.")
+	fassert(self.units_lookup[unit] ~= nil, "Unit has not been added or is already removed from side.")
 
-	local _units = self._units
-	local _num_units = self._num_units
+	local units = self._units
+	local num_units = self._num_units
 	local units_lookup = self.units_lookup
-	local var_7_3 = units_lookup[arg_7_1]
-	local var_7_4 = _units[_num_units]
+	local replace_index = units_lookup[unit]
+	local last_unit = units[num_units]
 
-	_units[var_7_3] = var_7_4
-	units_lookup[var_7_4] = var_7_3
-	_units[_num_units] = nil
-	units_lookup[arg_7_1] = nil
-	self._num_units = _num_units - 1
+	units[replace_index] = last_unit
+	units_lookup[last_unit] = replace_index
+	units[num_units] = nil
+	units_lookup[unit] = nil
+	self._num_units = num_units - 1
 end
 
-Side.broadphase_categories_by_relation = function (self, arg_8_1)
+Side.broadphase_categories_by_relation = function (self, relation)
 	-- function 8
-	return self._broadphase_categories_by_relation[arg_8_1]
+	return self._broadphase_categories_by_relation[relation]
 end
 
-Side.add_enemy_unit = function (self, arg_9_1)
+Side.add_enemy_unit = function (self, unit)
 	-- function 9
-	fassert(self.enemy_units_lookup[arg_9_1] == nil, "Enemy unit is already added to side.")
+	fassert(self.enemy_units_lookup[unit] == nil, "Enemy unit is already added to side.")
 
-	local num = self._num_enemy_units + 1
+	local num_enemy_units = self._num_enemy_units + 1
 
-	self._enemy_units[num] = arg_9_1
-	self.enemy_units_lookup[arg_9_1] = num
-	self._num_enemy_units = num
+	self._enemy_units[num_enemy_units] = unit
+	self.enemy_units_lookup[unit] = num_enemy_units
+	self._num_enemy_units = num_enemy_units
 end
 
-Side.remove_enemy_unit = function (self, arg_10_1)
+Side.remove_enemy_unit = function (self, unit)
 	-- function 10
-	fassert(self.enemy_units_lookup[arg_10_1] ~= nil, "Enemy unit has not been added or is already removed from side.")
+	fassert(self.enemy_units_lookup[unit] ~= nil, "Enemy unit has not been added or is already removed from side.")
 
-	local _enemy_units = self._enemy_units
-	local _num_enemy_units = self._num_enemy_units
+	local enemy_units = self._enemy_units
+	local num_enemy_units = self._num_enemy_units
 	local enemy_units_lookup = self.enemy_units_lookup
-	local var_10_3 = enemy_units_lookup[arg_10_1]
-	local var_10_4 = _enemy_units[_num_enemy_units]
+	local replace_index = enemy_units_lookup[unit]
+	local last_unit = enemy_units[num_enemy_units]
 
-	_enemy_units[var_10_3] = var_10_4
-	enemy_units_lookup[var_10_4] = var_10_3
-	_enemy_units[_num_enemy_units] = nil
-	enemy_units_lookup[arg_10_1] = nil
-	self._num_enemy_units = _num_enemy_units - 1
+	enemy_units[replace_index] = last_unit
+	enemy_units_lookup[last_unit] = replace_index
+	enemy_units[num_enemy_units] = nil
+	enemy_units_lookup[unit] = nil
+	self._num_enemy_units = num_enemy_units - 1
 end
 
-Side.add_allied_unit = function (self, arg_11_1)
+Side.add_allied_unit = function (self, unit)
 	-- function 11
-	fassert(self.allied_units_lookup[arg_11_1] == nil, "Ally unit is already added to side.")
+	fassert(self.allied_units_lookup[unit] == nil, "Ally unit is already added to side.")
 
-	local num = self._num_allied_units + 1
+	local num_allied_units = self._num_allied_units + 1
 
-	self._allied_units[num] = arg_11_1
-	self.allied_units_lookup[arg_11_1] = num
-	self._num_allied_units = num
+	self._allied_units[num_allied_units] = unit
+	self.allied_units_lookup[unit] = num_allied_units
+	self._num_allied_units = num_allied_units
 end
 
-Side.remove_allied_unit = function (self, arg_12_1)
+Side.remove_allied_unit = function (self, unit)
 	-- function 12
-	fassert(self.allied_units_lookup[arg_12_1] ~= nil, "Ally unit has not been added or is already removed from side.")
+	fassert(self.allied_units_lookup[unit] ~= nil, "Ally unit has not been added or is already removed from side.")
 
-	local _allied_units = self._allied_units
-	local _num_allied_units = self._num_allied_units
+	local ally_units = self._allied_units
+	local num_allied_units = self._num_allied_units
 	local allied_units_lookup = self.allied_units_lookup
-	local var_12_3 = allied_units_lookup[arg_12_1]
-	local var_12_4 = _allied_units[_num_allied_units]
+	local replace_index = allied_units_lookup[unit]
+	local last_unit = ally_units[num_allied_units]
 
-	_allied_units[var_12_3] = var_12_4
-	allied_units_lookup[var_12_4] = var_12_3
-	_allied_units[_num_allied_units] = nil
-	allied_units_lookup[arg_12_1] = nil
-	self._num_allied_units = _num_allied_units - 1
+	ally_units[replace_index] = last_unit
+	allied_units_lookup[last_unit] = replace_index
+	ally_units[num_allied_units] = nil
+	allied_units_lookup[unit] = nil
+	self._num_allied_units = num_allied_units - 1
 end
 
-Side.add_player_unit = function (self, arg_13_1)
+Side.add_player_unit = function (self, player_unit)
 	-- function 13
-	local _player_units = self._player_units
+	local player_units = self._player_units
 
-	fassert(table.find(_player_units, arg_13_1) == nil, "player_unit has already been added to side.")
+	fassert(table.find(player_units, player_unit) == nil, "player_unit has already been added to side.")
 
-	_player_units[#_player_units + 1] = arg_13_1
+	local num_player_units = #player_units + 1
+
+	player_units[num_player_units] = player_unit
 end
 
-Side.remove_player_unit = function (self, arg_14_1)
+Side.remove_player_unit = function (self, player_unit)
 	-- function 14
-	local _player_units = self._player_units
-	local find = table.find(_player_units, arg_14_1)
+	local player_units = self._player_units
+	local index = table.find(player_units, player_unit)
 
-	fassert(find ~= false, "player_unit did not get added or has already been removed from side.")
-	table.swap_delete(_player_units, find)
+	fassert(index ~= false, "player_unit did not get added or has already been removed from side.")
+	table.swap_delete(player_units, index)
 end
 
-Side.add_enemy_player_unit = function (self, arg_15_1)
+Side.add_enemy_player_unit = function (self, player_unit)
 	-- function 15
-	local _enemy_player_units = self._enemy_player_units
+	local enemy_player_units = self._enemy_player_units
 
-	fassert(table.find(_enemy_player_units, arg_15_1) == nil, "player_unit has already been added as an enemy.")
+	fassert(table.find(enemy_player_units, player_unit) == nil, "player_unit has already been added as an enemy.")
 
-	_enemy_player_units[#_enemy_player_units + 1] = arg_15_1
+	local num_enemy_player_units = #enemy_player_units + 1
+
+	enemy_player_units[num_enemy_player_units] = player_unit
 end
 
-Side.remove_enemy_player_unit = function (self, arg_16_1)
+Side.remove_enemy_player_unit = function (self, player_unit)
 	-- function 16
-	local _enemy_player_units = self._enemy_player_units
-	local find = table.find(_enemy_player_units, arg_16_1)
+	local enemy_player_units = self._enemy_player_units
+	local index = table.find(enemy_player_units, player_unit)
 
-	fassert(find ~= nil, "player_unit did not get added or has already been removed as an enemy.")
-	table.swap_delete(_enemy_player_units, find)
+	fassert(index ~= nil, "player_unit did not get added or has already been removed as an enemy.")
+	table.swap_delete(enemy_player_units, index)
 end
 
 Side.player_units = function (self)

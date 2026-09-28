@@ -4,158 +4,163 @@ AIEnemySlotExtension = class(AIEnemySlotExtension)
 
 local SlotTemplates = SlotTemplates
 local SlotTypeSettings = SlotTypeSettings
-local distance_squared = Vector3.distance_squared
-local distance = Vector3.distance
-local dot = Vector3.dot
-local str = "normal"
-local num = 1
+local Vector3_distance_sq = Vector3.distance_squared
+local Vector3_distance = Vector3.distance
+local Vector3_dot = Vector3.dot
+local DEFAULT_SLOT_TYPE = "normal"
+local debug_id = 1
 
-AIEnemySlotExtension.init = function (self, arg_1_1, arg_1_2, arg_1_3)
+AIEnemySlotExtension.init = function (self, extension_init_context, unit, extension_init_data)
 	-- function 1
-	self.unit = arg_1_2
+	self.unit = unit
 	self.target = nil
 	self.target_position = Vector3Box()
 	self.improve_wait_slot_position_t = 0
-	self._debug_id = num
-	num = num + 1
+	self._debug_id = debug_id
+	debug_id = debug_id + 1
 	self.belongs_to_ai = true
 	self.gathering = Managers.state.conflict.gathering
 end
 
-AIEnemySlotExtension.extensions_ready = function (self, arg_2_1, arg_2_2)
+AIEnemySlotExtension.extensions_ready = function (self, world, unit)
 	-- function 2
-	local breed = BLACKBOARDS[arg_2_2].breed
+	local breed = BLACKBOARDS[unit].breed
 
 	self.breed = breed
 
-	local slot_template = breed.slot_template
-	local var_2_2 = Managers.state.difficulty:get_difficulty_value_from_table(SlotTemplates)[slot_template]
+	local slot_template_name = breed.slot_template
+	local slot_template_difficulty = Managers.state.difficulty:get_difficulty_value_from_table(SlotTemplates)
+	local slot_template = slot_template_difficulty[slot_template_name]
 
-	fassert(slot_template, "Breed " .. breed.name .. " that uses slot system does not have a slot_template set in its breed.")
-	fassert(var_2_2, "Breed " .. breed.name .. " that uses slot system does not have a slot_template setup in SlotTemplates.")
+	fassert(slot_template_name, "Breed " .. breed.name .. " that uses slot system does not have a slot_template set in its breed.")
+	fassert(slot_template, "Breed " .. breed.name .. " that uses slot system does not have a slot_template setup in SlotTemplates.")
 
-	self.slot_template = var_2_2
-	self.slot_type_settings = SlotTypeSettings[var_2_2.slot_type]
-	self.use_slot_type = var_2_2.slot_type
-	self._navigation_ext = ScriptUnit.extension(arg_2_2, "ai_navigation_system")
+	self.slot_template = slot_template
+	self.slot_type_settings = SlotTypeSettings[slot_template.slot_type]
+	self.use_slot_type = slot_template.slot_type
+	self._navigation_ext = ScriptUnit.extension(unit, "ai_navigation_system")
 end
 
-AIEnemySlotExtension.cleanup_extension = function (self, arg_3_1, arg_3_2, arg_3_3)
+AIEnemySlotExtension.cleanup_extension = function (self, unit, update_slots_ai_units, update_slots_ai_units_n)
 	-- function 3
 	self:_detach_from_slot()
 	self:_detach_from_ai_slot("cleanup_extension")
 
-	for i = 1, arg_3_3 do
-		if arg_3_2[i] == arg_3_1 then
-			arg_3_2[i] = arg_3_2[arg_3_3]
-			arg_3_2[arg_3_3] = nil
+	for i = 1, update_slots_ai_units_n do
+		local ai_unit = update_slots_ai_units[i]
+
+		if ai_unit == unit then
+			update_slots_ai_units[i] = update_slots_ai_units[update_slots_ai_units_n]
+			update_slots_ai_units[update_slots_ai_units_n] = nil
 
 			break
 		end
 	end
 end
 
-AIEnemySlotExtension._improve_slot_position = function (self, arg_4_1, arg_4_2, arg_4_3)
+AIEnemySlotExtension._improve_slot_position = function (self, self_unit, t, nav_world)
 	-- function 4
-	if not ALIVE[arg_4_1] then
+	if not ALIVE[self_unit] then
 		return
 	end
 
-	local get_current_slot, var_4_1 = self:get_current_slot()
+	local slot, in_queue = self:get_current_slot()
 
-	if not get_current_slot then
+	if not slot then
 		return
 	end
 
-	if not var_4_1 then
-		if arg_4_2 > self.improve_wait_slot_position_t then
-			self.improve_wait_slot_position_t = arg_4_2 + Math.random() * 0.4
+	if in_queue then
+		if t > self.improve_wait_slot_position_t then
+			self.improve_wait_slot_position_t = t + Math.random() * 0.4
 		else
 			return
 		end
 	end
 
-	local var_4_2
-	local owner_extension = get_current_slot.owner_extension
+	local new_position
+	local slot_owner_extension = slot.owner_extension
 
-	if not owner_extension then
-		var_4_2 = owner_extension:get_destination(self, get_current_slot, var_4_1, arg_4_3, arg_4_2)
+	if slot_owner_extension then
+		new_position = slot_owner_extension:get_destination(self, slot, in_queue, nav_world, t)
 	end
 
-	if not var_4_2 then
+	if not new_position then
 		return
 	end
 
-	local local_position = Unit.local_position(arg_4_1, 0)
+	local ai_unit_position = Unit.local_position(self_unit, 0)
 
-	if not var_4_1 then
-		local var_4_5 = distance(var_4_2, local_position)
+	if in_queue then
+		local var_4_0 = Vector3_distance(new_position, ai_unit_position)
 
-		var_4_5 = var_4_5 or math.huge
-		self.wait_slot_distance = var_4_5
+		var_4_0 = not not var_4_0 or not not math.huge
+		self.wait_slot_distance = var_4_0
 	end
 
-	local _navigation_ext = self._navigation_ext
-	local destination = _navigation_ext:destination()
+	local navigation_extension = self._navigation_ext
+	local previous_destination = navigation_extension:destination()
+	local distance_sq = Vector3_distance_sq(ai_unit_position, new_position)
 
-	if not (distance_squared(local_position, var_4_2) > 1 or not (dot(var_4_2 - local_position, destination - local_position) < 0)) then
-		_navigation_ext:move_to(var_4_2)
+	if distance_sq > 1 or Vector3_dot(new_position - ai_unit_position, previous_destination - ai_unit_position) < 0 then
+		navigation_extension:move_to(new_position)
 	end
 end
 
-AIEnemySlotExtension._improve_ai_slot_position = function (self, arg_5_1, arg_5_2, arg_5_3, arg_5_4)
+AIEnemySlotExtension._improve_ai_slot_position = function (self, self_unit, t, nav_world, target_unit)
 	-- function 5
-	local local_position = Unit.local_position(arg_5_1, 0)
-	local var_5_1
+	local ai_unit_position = Unit.local_position(self_unit, 0)
+	local new_position
 
-	if not USE_ENGINE_SLOID_SYSTEM then
+	if USE_ENGINE_SLOID_SYSTEM then
 		if not self.sloid_id then
 			return
 		end
 
-		local get_sloid_position = EngineOptimized.get_sloid_position(self.sloid_id)
+		local sloid_pos = EngineOptimized.get_sloid_position(self.sloid_id)
 
-		var_5_1 = Vector3(get_sloid_position[1], get_sloid_position[2], get_sloid_position[3])
+		new_position = Vector3(sloid_pos[1], sloid_pos[2], sloid_pos[3])
 	else
-		local gathering_ball = self.gathering_ball
+		local ball = self.gathering_ball
 
-		if not gathering_ball then
+		if not ball then
 			return
 		end
 
-		local pos = gathering_ball.pos
+		local ball_pos = ball.pos
 
-		var_5_1 = Vector3(pos[1], pos[2], pos[3])
+		new_position = Vector3(ball_pos[1], ball_pos[2], ball_pos[3])
 	end
 
-	local _navigation_ext = self._navigation_ext
-	local destination = _navigation_ext:destination()
+	local navigation_extension = self._navigation_ext
+	local previous_destination = navigation_extension:destination()
+	local distance_sq = Vector3_distance_sq(ai_unit_position, new_position)
 
-	if not (distance_squared(local_position, var_5_1) > 1 or not (dot(var_5_1 - local_position, destination - local_position) < 0)) then
-		_navigation_ext:move_to(var_5_1)
+	if distance_sq > 1 or Vector3_dot(new_position - ai_unit_position, previous_destination - ai_unit_position) < 0 then
+		navigation_extension:move_to(new_position)
 	end
 end
 
-AIEnemySlotExtension.freeze = function (self, arg_6_1)
+AIEnemySlotExtension.freeze = function (self, unit)
 	-- function 6
 	self:_detach_from_slot()
 	self:_detach_from_ai_slot("freeze")
 end
 
-AIEnemySlotExtension.unfreeze = function (self, arg_7_1)
+AIEnemySlotExtension.unfreeze = function (self, unit)
 	-- function 7
 	self.target = nil
 	self.improve_wait_slot_position_t = 0
 end
 
-AIEnemySlotExtension.update = function (self, arg_8_1, arg_8_2, arg_8_3, arg_8_4, arg_8_5, arg_8_6)
+AIEnemySlotExtension.update = function (self, self_unit, all_slot_extensions, nav_world, t, traverse_logic, system)
 	-- function 8
-	local var_8_0 = BLACKBOARDS[arg_8_1]
-	local target_unit = var_8_0.target_unit
+	local blackboard = BLACKBOARDS[self_unit]
+	local target_unit = blackboard.target_unit
 
-	if not self.gathering_ball then
+	if self.gathering_ball then
 		self:_update_ai_target(target_unit)
-	elseif not self.sloid_id then
+	elseif self.sloid_id then
 		self:_engine_update_ai_target(target_unit)
 	else
 		self:_update_target(target_unit)
@@ -165,134 +170,156 @@ AIEnemySlotExtension.update = function (self, arg_8_1, arg_8_2, arg_8_3, arg_8_4
 		return
 	end
 
-	local var_8_2 = arg_8_2[target_unit]
-	local flag = not var_8_2 and var_8_2.belongs_to_player
+	local target_unit_extension = all_slot_extensions[target_unit]
+	local target_is_player = not not target_unit_extension and not not target_unit_extension.belongs_to_player
 
-	if not (flag or AiUtils.unit_breed(target_unit)) then
+	if not target_is_player and not AiUtils.unit_breed(target_unit) then
 		return
 	end
 
-	if not flag then
-		if not self.do_search and not self.slot_template.disable_slot_search then
+	if target_is_player then
+		if not self.do_search or self.slot_template.disable_slot_search then
 			return
 		end
 
-		local using_override_target = var_8_0.using_override_target
+		local skip_slots_behind_target = blackboard.using_override_target
 		local avoid_slots_behind_overwhelmed_target = self.slot_template.avoid_slots_behind_overwhelmed_target
 
-		var_8_2:request_best_slot(self, using_override_target, avoid_slots_behind_overwhelmed_target, arg_8_3, arg_8_5, arg_8_4)
+		target_unit_extension:request_best_slot(self, skip_slots_behind_target, avoid_slots_behind_overwhelmed_target, nav_world, traverse_logic, t)
 
-		if not var_8_0.disable_improve_slot_position then
-			self:_improve_slot_position(arg_8_1, arg_8_4, arg_8_3)
+		if not blackboard.disable_improve_slot_position then
+			self:_improve_slot_position(self_unit, t, nav_world)
 		end
 
-		local delayed_prioritized_ai_unit_update_time = self.delayed_prioritized_ai_unit_update_time
+		local delayed_priotized_time = self.delayed_prioritized_ai_unit_update_time
 
-		if not (not delayed_prioritized_ai_unit_update_time and not (delayed_prioritized_ai_unit_update_time < arg_8_4)) then
+		if delayed_priotized_time and delayed_priotized_time < t then
 			self:_detach_from_slot()
-			arg_8_6:register_prioritized_ai_unit_update(arg_8_1)
+			system:register_prioritized_ai_unit_update(self_unit)
 
 			self.delayed_prioritized_ai_unit_update_time = nil
 		end
-	elseif not USE_ENGINE_SLOID_SYSTEM then
+	elseif USE_ENGINE_SLOID_SYSTEM then
 		if not self.sloid_id then
-			if not self:ai_has_slot(target_unit) then
-				self:on_ai_slot_gained(target_unit, arg_8_6)
-				self:_improve_ai_slot_position(arg_8_1, arg_8_4, arg_8_3, target_unit)
+			local success = self:ai_has_slot(target_unit)
+
+			if success then
+				self:on_ai_slot_gained(target_unit, system)
+				self:_improve_ai_slot_position(self_unit, t, nav_world, target_unit)
 			end
 		else
-			self:_improve_ai_slot_position(arg_8_1, arg_8_4, arg_8_3, target_unit)
+			self:_improve_ai_slot_position(self_unit, t, nav_world, target_unit)
 		end
 	elseif not self.gathering_ball then
-		if not self:ai_has_slot(target_unit) then
-			self:on_ai_slot_gained(target_unit, arg_8_6)
-			self:_improve_ai_slot_position(arg_8_1, arg_8_4, arg_8_3, target_unit)
+		local success = self:ai_has_slot(target_unit)
+
+		if success then
+			self:on_ai_slot_gained(target_unit, system)
+			self:_improve_ai_slot_position(self_unit, t, nav_world, target_unit)
 		end
 	else
-		self:_improve_ai_slot_position(arg_8_1, arg_8_4, arg_8_3, target_unit)
+		self:_improve_ai_slot_position(self_unit, t, nav_world, target_unit)
 	end
 end
 
-AIEnemySlotExtension.ai_has_slot = function (arg_9_0, arg_9_1)
+AIEnemySlotExtension.ai_has_slot = function (self, target_unit)
 	-- function 9
-	local var_9_0 = BLACKBOARDS[arg_9_1]
+	local target_blackboard = BLACKBOARDS[target_unit]
+	local infighting = target_blackboard.breed.infighting
+	local num_slots = infighting.crowded_slots
 
-	return var_9_0.breed.infighting.crowded_slots >= var_9_0.lean_dogpile
+	return num_slots >= target_blackboard.lean_dogpile
 end
 
-AIEnemySlotExtension.on_unit_blocked_attack = function (self, arg_10_1, arg_10_2)
+AIEnemySlotExtension.on_unit_blocked_attack = function (self, ai_unit, system)
 	-- function 10
-	if not self.waiting_on_slot then
+	if self.waiting_on_slot then
 		return
 	end
 
-	if not self.slot then
+	local slot = self.slot
+
+	if not slot then
 		return nil
 	end
 
 	local slot_template = self.slot_template
 
-	if not slot_template.abandon_slot_when_blocked then
-		if not slot_template.abandon_slot_when_blocked_time then
-			self.delayed_prioritized_ai_unit_update_time = Managers.time:time("game") + slot_template.abandon_slot_when_blocked_time
+	if slot_template.abandon_slot_when_blocked then
+		if slot_template.abandon_slot_when_blocked_time then
+			local t = Managers.time:time("game")
+
+			self.delayed_prioritized_ai_unit_update_time = t + slot_template.abandon_slot_when_blocked_time
 		else
 			self:_detach_from_slot()
 			self:_detach_from_ai_slot("on_unit_blocked_attack")
-			arg_10_2:register_prioritized_ai_unit_update(arg_10_1)
+			system:register_prioritized_ai_unit_update(ai_unit)
 		end
 	end
 end
 
-AIEnemySlotExtension.ai_unit_staggered = function (self, arg_11_1, arg_11_2)
+AIEnemySlotExtension.ai_unit_staggered = function (self, ai_unit, system)
 	-- function 11
-	if not self.waiting_on_slot then
+	if self.waiting_on_slot then
 		return
 	end
 
-	if not self.slot then
+	local slot = self.slot
+
+	if not slot then
 		return nil
 	end
 
 	local slot_template = self.slot_template
 
-	if not slot_template.abandon_slot_when_staggered then
-		if not slot_template.abandon_slot_when_staggered_time then
-			self.delayed_prioritized_ai_unit_update_time = Managers.time:time("game") + slot_template.abandon_slot_when_staggered_time
+	if slot_template.abandon_slot_when_staggered then
+		if slot_template.abandon_slot_when_staggered_time then
+			local t = Managers.time:time("game")
+
+			self.delayed_prioritized_ai_unit_update_time = t + slot_template.abandon_slot_when_staggered_time
 		else
 			self:_detach_from_slot()
 			self:_detach_from_ai_slot("ai_unit_staggered")
-			arg_11_2:register_prioritized_ai_unit_update(arg_11_1)
+			system:register_prioritized_ai_unit_update(ai_unit)
 		end
 	end
 end
 
 AIEnemySlotExtension._detach_from_slot = function (self)
 	-- function 12
-	local slot = self.slot
+	local slot_2 = self.slot
 
-	slot = slot or self.waiting_on_slot
+	if not slot_2 then
+		-- Nothing
+	end
+
+	slot_2 = self.waiting_on_slot
+
+	local slot = slot_2
+
+	::label_12_0::
 
 	local waiting_on_slot = self.waiting_on_slot
-	local flag = not slot and slot.owner_extension
+	local slot_owner_extension = not not slot and not not slot.owner_extension
 
-	if not flag then
-		flag:free_slot(self, slot, waiting_on_slot ~= nil)
+	if slot_owner_extension then
+		slot_owner_extension:free_slot(self, slot, waiting_on_slot ~= nil)
 	end
 
 	self.waiting_on_slot = nil
 	self.slot = nil
 end
 
-AIEnemySlotExtension._detach_from_ai_slot = function (self, arg_13_1)
+AIEnemySlotExtension._detach_from_ai_slot = function (self, reason)
 	-- function 13
-	local var_13_0
+	local target_unit
 
-	if not USE_ENGINE_SLOID_SYSTEM then
+	if USE_ENGINE_SLOID_SYSTEM then
 		if not self.sloid_id then
 			return
 		end
 
-		var_13_0 = self.target_unit
+		target_unit = self.target_unit
 	else
 		local gathering_ball = self.gathering_ball
 
@@ -300,51 +327,51 @@ AIEnemySlotExtension._detach_from_ai_slot = function (self, arg_13_1)
 			return
 		end
 
-		var_13_0 = gathering_ball.target_unit
+		target_unit = gathering_ball.target_unit
 	end
 
-	local var_13_2 = BLACKBOARDS[var_13_0]
+	local blackboard = BLACKBOARDS[target_unit]
 
-	if not var_13_2 then
-		var_13_2.lean_dogpile = var_13_2.lean_dogpile - 1
+	if blackboard then
+		blackboard.lean_dogpile = blackboard.lean_dogpile - 1
 	end
 
-	self:on_ai_slot_lost(var_13_0)
+	self:on_ai_slot_lost(target_unit)
 end
 
-AIEnemySlotExtension._update_target = function (self, arg_14_1)
+AIEnemySlotExtension._update_target = function (self, target_unit)
 	-- function 14
-	if not (not self.slot and self.slot.target_unit == arg_14_1) then
+	if self.slot and self.slot.target_unit ~= target_unit then
 		self:_detach_from_slot()
 	end
 
-	if not Unit.alive(arg_14_1) then
+	if not Unit.alive(target_unit) then
 		self.target = nil
 
 		self.target_position:store(0, 0, 0)
 
-		if not self.slot then
+		if self.slot then
 			self:_detach_from_slot()
 		end
 
 		return
 	end
 
-	local local_position = Unit.local_position(arg_14_1, 0)
+	local target_unit_position = Unit.local_position(target_unit, 0)
 
-	self.target_position:store(local_position)
+	self.target_position:store(target_unit_position)
 end
 
-AIEnemySlotExtension._update_ai_target = function (self, arg_15_1)
+AIEnemySlotExtension._update_ai_target = function (self, target_unit)
 	-- function 15
-	if self.gathering_ball.target_unit ~= arg_15_1 then
+	if self.gathering_ball.target_unit ~= target_unit then
 		self:_detach_from_ai_slot("new_target_unit")
 	end
 end
 
-AIEnemySlotExtension._engine_update_ai_target = function (self, arg_16_1)
+AIEnemySlotExtension._engine_update_ai_target = function (self, target_unit)
 	-- function 16
-	if self.target_unit ~= arg_16_1 then
+	if self.target_unit ~= target_unit then
 		self:_detach_from_ai_slot("new_target_unit")
 	end
 end
@@ -357,37 +384,45 @@ AIEnemySlotExtension.on_slot_lost = function (self)
 	self.slot = nil
 end
 
-AIEnemySlotExtension.on_slot_gained = function (self, arg_18_1, arg_18_2)
+AIEnemySlotExtension.on_slot_gained = function (self, slot_provider_ext, slot)
 	-- function 18
-	local waiting_on_slot = self.waiting_on_slot
-	local slot = self.slot
+	local queue_slot = self.waiting_on_slot
+	local previous_slot = self.slot
 
-	if not waiting_on_slot then
-		waiting_on_slot.owner_extension:free_slot(self, waiting_on_slot, true)
+	if queue_slot then
+		local slot_extension = queue_slot.owner_extension
+
+		slot_extension:free_slot(self, queue_slot, true)
 	end
 
-	if not slot then
-		slot.owner_extension:free_slot(self, slot, false)
+	if previous_slot then
+		local slot_extension = previous_slot.owner_extension
+
+		slot_extension:free_slot(self, previous_slot, false)
 	end
 
 	self.waiting_on_slot = nil
-	self.slot = arg_18_2
+	self.slot = slot
 end
 
-AIEnemySlotExtension.on_entered_slot_queue = function (self, arg_19_1, arg_19_2)
+AIEnemySlotExtension.on_entered_slot_queue = function (self, slot_provider_ext, slot)
 	-- function 19
-	local waiting_on_slot = self.waiting_on_slot
-	local slot = self.slot
+	local queue_slot = self.waiting_on_slot
+	local previous_slot = self.slot
 
-	if not waiting_on_slot then
-		waiting_on_slot.owner_extension:free_slot(self, waiting_on_slot, true)
+	if queue_slot then
+		local slot_extension = queue_slot.owner_extension
+
+		slot_extension:free_slot(self, queue_slot, true)
 	end
 
-	if not slot then
-		slot.owner_extension:free_slot(self, slot, false)
+	if previous_slot then
+		local slot_extension = previous_slot.owner_extension
+
+		slot_extension:free_slot(self, previous_slot, false)
 	end
 
-	self.waiting_on_slot = arg_19_2
+	self.waiting_on_slot = slot
 	self.slot = nil
 end
 
@@ -395,7 +430,7 @@ AIEnemySlotExtension.get_current_slot = function (self)
 	-- function 20
 	local slot = self.slot
 
-	slot = slot or self.waiting_on_slot
+	slot = not not slot or not not self.waiting_on_slot
 
 	return slot, self.waiting_on_slot ~= nil
 end
@@ -404,83 +439,105 @@ AIEnemySlotExtension.get_preferred_slot_type = function (self)
 	-- function 21
 	local use_slot_type = self.use_slot_type
 
-	use_slot_type = use_slot_type or str
+	use_slot_type = not not use_slot_type or not not DEFAULT_SLOT_TYPE
 
 	return use_slot_type
 end
 
-AIEnemySlotExtension.on_ai_slot_gained = function (self, arg_22_1, arg_22_2)
+AIEnemySlotExtension.on_ai_slot_gained = function (self, defender_unit, system)
 	-- function 22
-	local var_22_0 = BLACKBOARDS[arg_22_1]
+	local target_blackboard = BLACKBOARDS[defender_unit]
 
-	var_22_0.lean_dogpile = var_22_0.lean_dogpile + 1
+	target_blackboard.lean_dogpile = target_blackboard.lean_dogpile + 1
 
 	local unit = self.unit
-	local var_22_2 = BLACKBOARDS[unit]
-	local local_position = Unit.local_position(arg_22_1, 0)
-	local local_position_2 = Unit.local_position(unit, 0)
-	local infighting = var_22_0.breed.infighting
+	local blackboard = BLACKBOARDS[unit]
+	local defender_pos = Unit.local_position(defender_unit, 0)
+	local attacker_pos = Unit.local_position(unit, 0)
+	local infighting = target_blackboard.breed.infighting
 	local num
 
-	if not USE_ENGINE_SLOID_SYSTEM then
+	if USE_ENGINE_SLOID_SYSTEM then
 		num = 3
-	else
-		num = infighting.distance
-		num = num or 2
+
+		goto label_22_0
 	end
 
-	local boid_radius = var_22_2.breed.infighting.boid_radius
+	num = infighting.distance
 
-	boid_radius = boid_radius or 0.3
+	if not num then
+		-- Nothing
+	end
 
-	local num_2 = Vector3.normalize(local_position_2 - local_position) * (num + boid_radius)
+	num = 2
 
-	if not USE_ENGINE_SLOID_SYSTEM then
+	local distance = num
+
+	::label_22_0::
+
+	local attacker_infighting = blackboard.breed.infighting
+	local boid_radius_2 = attacker_infighting.boid_radius
+
+	if not boid_radius_2 then
+		-- Nothing
+	end
+
+	boid_radius_2 = 0.3
+
+	local boid_radius = boid_radius_2
+
+	::label_22_1::
+
+	local to_attacker = Vector3.normalize(attacker_pos - defender_pos) * (distance + boid_radius)
+
+	if USE_ENGINE_SLOID_SYSTEM then
 		local add_sloid = EngineOptimized.add_sloid
-		local num_3 = local_position + num_2
-		local var_22_11 = boid_radius
-		local side_id = var_22_2.side.side_id
-		local var_22_13 = unit
-		local var_22_14 = arg_22_1
+		local num_2 = defender_pos + to_attacker
+		local var_22_4 = boid_radius
+		local side_id = blackboard.side.side_id
+		local var_22_6 = unit
+		local var_22_7 = defender_unit
 		local tonumber = tonumber
 		local get_data = Unit.get_data(unit, "unique_id")
 
-		get_data = get_data or "?"
-		self.sloid_id = add_sloid(num_3, var_22_11, side_id, var_22_13, var_22_14, tonumber(get_data))
+		get_data = not not get_data or not not "?"
+		self.sloid_id = add_sloid(num_2, var_22_4, side_id, var_22_6, var_22_7, tonumber(get_data))
 
-		local var_22_17 = Managers.state.conflict.dogpiled_attackers_on_unit[arg_22_1]
+		local dogpiled_attackers = Managers.state.conflict.dogpiled_attackers_on_unit[defender_unit]
 
-		if not var_22_17 then
-			Managers.state.conflict.dogpiled_attackers_on_unit[arg_22_1] = {
+		if not dogpiled_attackers then
+			Managers.state.conflict.dogpiled_attackers_on_unit[defender_unit] = {
 				[unit] = self.sloid_id
 			}
 		else
-			var_22_17[unit] = self.sloid_id
+			dogpiled_attackers[unit] = self.sloid_id
 		end
 
-		self.target_unit = arg_22_1
+		self.target_unit = defender_unit
 	else
-		self.gathering_ball = self.gathering:add_ball(local_position + num_2, boid_radius, unit, arg_22_1)
+		self.gathering_ball = self.gathering:add_ball(defender_pos + to_attacker, boid_radius, unit, defender_unit)
 	end
 end
 
-AIEnemySlotExtension.on_ai_slot_lost = function (self, arg_23_1)
+AIEnemySlotExtension.on_ai_slot_lost = function (self, target_unit)
 	-- function 23
-	if not USE_ENGINE_SLOID_SYSTEM then
-		local var_23_0 = Managers.state.conflict.dogpiled_attackers_on_unit[arg_23_1]
+	if USE_ENGINE_SLOID_SYSTEM then
+		local attacker_list = Managers.state.conflict.dogpiled_attackers_on_unit[target_unit]
 
-		fassert(var_23_0[self.unit], "missing dogpiled_attackers_on_unit, can't remove", arg_23_1)
+		fassert(attacker_list[self.unit], "missing dogpiled_attackers_on_unit, can't remove", target_unit)
 
-		var_23_0[self.unit] = nil
+		attacker_list[self.unit] = nil
 
 		print("on_ai_slot_lost, sloid_id:", self.sloid_id)
 
-		local remove_sloid, var_23_2 = EngineOptimized.remove_sloid(self.sloid_id, self.unit)
+		local sloid_id_changed, affected_unit = EngineOptimized.remove_sloid(self.sloid_id, self.unit)
 
-		if not remove_sloid then
-			printf("\t-> sloid_id was changed: %s, unit-id: %s, sloid_id: %s", var_23_2, Unit.get_data(var_23_2, "unique_id"), remove_sloid)
+		if sloid_id_changed then
+			printf("\t-> sloid_id was changed: %s, unit-id: %s, sloid_id: %s", affected_unit, Unit.get_data(affected_unit, "unique_id"), sloid_id_changed)
 
-			ScriptUnit.has_extension(var_23_2, "ai_slot_system").sloid_id = remove_sloid
+			local slot_ext = ScriptUnit.has_extension(affected_unit, "ai_slot_system")
+
+			slot_ext.sloid_id = sloid_id_changed
 		end
 
 		self.sloid_id = nil
@@ -495,14 +552,14 @@ AIEnemySlotExtension.on_ai_slot_lost = function (self, arg_23_1)
 	end
 end
 
-AIEnemySlotExtension.free_slot = function (self, arg_24_1)
+AIEnemySlotExtension.free_slot = function (self, slot_consumer_ext)
 	-- function 24
 	local unit = self.unit
-	local var_24_1 = BLACKBOARDS[unit]
+	local blackboard = BLACKBOARDS[unit]
 
-	if not var_24_1 then
-		var_24_1.lean_dogpile = var_24_1.lean_dogpile - 1
+	if blackboard then
+		blackboard.lean_dogpile = blackboard.lean_dogpile - 1
 	end
 
-	arg_24_1:on_ai_slot_lost(self)
+	slot_consumer_ext:on_ai_slot_lost(self)
 end

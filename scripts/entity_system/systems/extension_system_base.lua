@@ -2,21 +2,21 @@
 
 ExtensionSystemBase = class(ExtensionSystemBase)
 
-ExtensionSystemBase.init = function (self, arg_1_1, arg_1_2, arg_1_3)
+ExtensionSystemBase.init = function (self, entity_system_creation_context, system_name, extension_list)
 	-- function 1
-	self.is_server = arg_1_1.is_server
-	self.world = arg_1_1.world
-	self.name = arg_1_2
+	self.is_server = entity_system_creation_context.is_server
+	self.world = entity_system_creation_context.world
+	self.name = system_name
 
-	local entity_manager = arg_1_1.entity_manager
+	local entity_manager = entity_system_creation_context.entity_manager
 
-	entity_manager:register_system(self, arg_1_2, arg_1_3)
+	entity_manager:register_system(self, system_name, extension_list)
 
 	self.entity_manager = entity_manager
-	self.unit_storage = arg_1_1.unit_storage
-	self.network_transmit = arg_1_1.network_transmit
-	self.system_api = arg_1_1.system_api
-	self.statistics_db = arg_1_1.statistics_db
+	self.unit_storage = entity_system_creation_context.unit_storage
+	self.network_transmit = entity_system_creation_context.network_transmit
+	self.system_api = entity_system_creation_context.system_api
+	self.statistics_db = entity_system_creation_context.statistics_db
 	self.extension_init_context = {
 		world = self.world,
 		unit_storage = self.unit_storage,
@@ -24,196 +24,196 @@ ExtensionSystemBase.init = function (self, arg_1_1, arg_1_2, arg_1_3)
 		network_transmit = self.network_transmit,
 		system_api = self.system_api,
 		statistics_db = self.statistics_db,
-		ingame_ui = arg_1_1.ingame_ui,
-		is_server = arg_1_1.is_server,
+		ingame_ui = entity_system_creation_context.ingame_ui,
+		is_server = entity_system_creation_context.is_server,
 		owning_system = self
 	}
 	self.update_list = {}
 	self.extensions = {}
 	self.profiler_names = {}
 
-	for i = 1, #arg_1_3 do
-		local var_1_1 = arg_1_3[i]
+	for i = 1, #extension_list do
+		local extension_name = extension_list[i]
 
-		self.update_list[var_1_1] = {
+		self.update_list[extension_name] = {
 			pre_update = {},
 			update = {},
 			post_update = {}
 		}
-		self.extensions[var_1_1] = 0
-		self.profiler_names[var_1_1] = var_1_1 .. " [ALL]"
+		self.extensions[extension_name] = 0
+		self.profiler_names[extension_name] = extension_name .. " [ALL]"
 	end
 end
 
-ExtensionSystemBase.on_add_extension = function (self, arg_2_1, arg_2_2, arg_2_3, arg_2_4)
+ExtensionSystemBase.on_add_extension = function (self, world, unit, extension_name, extension_init_data)
 	-- function 2
-	local NAME = self.NAME
-	local var_2_1
-	local add_extension = ScriptUnit.add_extension(self.extension_init_context, arg_2_2, arg_2_3, NAME, arg_2_4, var_2_1)
+	local extension_alias = self.NAME
+	local extension_pool_table
+	local extension = ScriptUnit.add_extension(self.extension_init_context, unit, extension_name, extension_alias, extension_init_data, extension_pool_table)
 	local extensions = self.extensions
-	local var_2_4 = self.extensions[arg_2_3]
+	local var_2_1 = self.extensions[extension_name]
 
-	var_2_4 = var_2_4 or 0
-	extensions[arg_2_3] = var_2_4 + 1
+	var_2_1 = not not var_2_1 or not not 0
+	extensions[extension_name] = var_2_1 + 1
 
-	if not add_extension.pre_update then
-		self.update_list[arg_2_3].pre_update[arg_2_2] = add_extension
+	if extension.pre_update then
+		self.update_list[extension_name].pre_update[unit] = extension
 	end
 
-	if not add_extension.update then
-		self.update_list[arg_2_3].update[arg_2_2] = add_extension
+	if extension.update then
+		self.update_list[extension_name].update[unit] = extension
 	end
 
-	if not add_extension.post_update then
-		self.update_list[arg_2_3].post_update[arg_2_2] = add_extension
+	if extension.post_update then
+		self.update_list[extension_name].post_update[unit] = extension
 	end
 
-	return add_extension
+	return extension
 end
 
-ExtensionSystemBase.on_remove_extension = function (self, arg_3_1, arg_3_2)
+ExtensionSystemBase.on_remove_extension = function (self, unit, extension_name)
 	-- function 3
-	local has_extension = ScriptUnit.has_extension(arg_3_1, self.NAME)
+	local extension = ScriptUnit.has_extension(unit, self.NAME)
 
-	assert(has_extension, "Trying to remove non-existing extension %q from unit %s", arg_3_2, arg_3_1)
-	ScriptUnit.remove_extension(arg_3_1, self.NAME)
+	assert(extension, "Trying to remove non-existing extension %q from unit %s", extension_name, unit)
+	ScriptUnit.remove_extension(unit, self.NAME)
 
-	self.extensions[arg_3_2] = self.extensions[arg_3_2] - 1
-	self.update_list[arg_3_2].pre_update[arg_3_1] = nil
-	self.update_list[arg_3_2].update[arg_3_1] = nil
-	self.update_list[arg_3_2].post_update[arg_3_1] = nil
+	self.extensions[extension_name] = self.extensions[extension_name] - 1
+	self.update_list[extension_name].pre_update[unit] = nil
+	self.update_list[extension_name].update[unit] = nil
+	self.update_list[extension_name].post_update[unit] = nil
 end
 
-ExtensionSystemBase.on_freeze_extension = function (arg_4_0, arg_4_1, arg_4_2)
+ExtensionSystemBase.on_freeze_extension = function (self, unit, extension_name)
 	-- function 4
 	return
 end
 
-local tbl = {}
+local dummy_input = {}
 
-ExtensionSystemBase.pre_update = function (self, arg_5_1, arg_5_2)
+ExtensionSystemBase.pre_update = function (self, context, t)
 	-- function 5
-	local dt = arg_5_1.dt
+	local dt = context.dt
 	local update_list = self.update_list
-	local var_5_2 = tbl
+	local dummy_input = dummy_input
 
-	for k, v in pairs(self.extensions) do
-		local var_5_3 = self.profiler_names[k]
+	for extension_name, _ in pairs(self.extensions) do
+		local profiler_name = self.profiler_names[extension_name]
 
-		for k_2, v_2 in pairs(update_list[k].pre_update) do
-			v_2:pre_update(k_2, var_5_2, dt, arg_5_1, arg_5_2)
+		for unit, extension in pairs(update_list[extension_name].pre_update) do
+			extension:pre_update(unit, dummy_input, dt, context, t)
 		end
 	end
 end
 
-ExtensionSystemBase.enable_update_function = function (arg_6_0, arg_6_1, arg_6_2, arg_6_3, arg_6_4)
+ExtensionSystemBase.enable_update_function = function (self, extension_name, update_function_name, unit, extension)
 	-- function 6
-	arg_6_0.update_list[arg_6_1][arg_6_2][arg_6_3] = arg_6_4
+	self.update_list[extension_name][update_function_name][unit] = extension
 end
 
-ExtensionSystemBase.disable_update_function = function (arg_7_0, arg_7_1, arg_7_2, arg_7_3)
+ExtensionSystemBase.disable_update_function = function (self, extension_name, update_function_name, unit)
 	-- function 7
-	arg_7_0.update_list[arg_7_1][arg_7_2][arg_7_3] = nil
+	self.update_list[extension_name][update_function_name][unit] = nil
 end
 
-ExtensionSystemBase.update = function (self, arg_8_1, arg_8_2)
+ExtensionSystemBase.update = function (self, context, t)
 	-- function 8
-	local dt = arg_8_1.dt
+	local dt = context.dt
 	local update_list = self.update_list
-	local var_8_2 = tbl
+	local dummy_input = dummy_input
 
-	for k, v in pairs(self.extensions) do
-		local var_8_3 = self.profiler_names[k]
+	for extension_name, _ in pairs(self.extensions) do
+		local profiler_name = self.profiler_names[extension_name]
 
-		for k_2, v_2 in pairs(update_list[k].update) do
-			v_2:update(k_2, var_8_2, dt, arg_8_1, arg_8_2)
+		for unit, extension in pairs(update_list[extension_name].update) do
+			extension:update(unit, dummy_input, dt, context, t)
 		end
 	end
 end
 
-ExtensionSystemBase.post_update = function (self, arg_9_1, arg_9_2)
+ExtensionSystemBase.post_update = function (self, context, t)
 	-- function 9
-	local dt = arg_9_1.dt
+	local dt = context.dt
 	local update_list = self.update_list
-	local var_9_2 = tbl
+	local dummy_input = dummy_input
 
-	for k, v in pairs(self.extensions) do
-		local var_9_3 = self.profiler_names[k]
+	for extension_name, _ in pairs(self.extensions) do
+		local profiler_name = self.profiler_names[extension_name]
 
-		for k_2, v_2 in pairs(update_list[k].post_update) do
-			v_2:post_update(k_2, var_9_2, dt, arg_9_1, arg_9_2)
+		for unit, extension in pairs(update_list[extension_name].post_update) do
+			extension:post_update(unit, dummy_input, dt, context, t)
 		end
 	end
 end
 
-ExtensionSystemBase.pre_update_extension = function (self, arg_10_1, arg_10_2, arg_10_3, arg_10_4)
+ExtensionSystemBase.pre_update_extension = function (self, extension_name, dt, context, t)
 	-- function 10
-	local var_10_0 = tbl
+	local dummy_input = dummy_input
 
-	for k, v in pairs(self.update_list[arg_10_1].pre_update) do
-		v:pre_update(k, var_10_0, arg_10_2, arg_10_3, arg_10_4)
+	for unit, extension in pairs(self.update_list[extension_name].pre_update) do
+		extension:pre_update(unit, dummy_input, dt, context, t)
 	end
 end
 
-ExtensionSystemBase.update_extension = function (self, arg_11_1, arg_11_2, arg_11_3, arg_11_4)
+ExtensionSystemBase.update_extension = function (self, extension_name, dt, context, t)
 	-- function 11
-	local var_11_0 = tbl
+	local dummy_input = dummy_input
 
-	for k, v in pairs(self.update_list[arg_11_1].update) do
-		v:update(k, var_11_0, arg_11_2, arg_11_3, arg_11_4)
+	for unit, extension in pairs(self.update_list[extension_name].update) do
+		extension:update(unit, dummy_input, dt, context, t)
 	end
 end
 
-ExtensionSystemBase.post_update_extension = function (self, arg_12_1, arg_12_2, arg_12_3, arg_12_4)
+ExtensionSystemBase.post_update_extension = function (self, extension_name, dt, context, t)
 	-- function 12
-	local var_12_0 = tbl
+	local dummy_input = dummy_input
 
-	for k, v in pairs(self.update_list[arg_12_1].post_update) do
-		v:post_update(k, var_12_0, arg_12_2, arg_12_3, arg_12_4)
+	for unit, extension in pairs(self.update_list[extension_name].post_update) do
+		extension:post_update(unit, dummy_input, dt, context, t)
 	end
 end
 
-ExtensionSystemBase.hot_join_sync = function (self, arg_13_1)
+ExtensionSystemBase.hot_join_sync = function (self, peer_id)
 	-- function 13
-	for k, v in pairs(self.extensions) do
-		self:_hot_join_sync_extension(k, arg_13_1)
+	for extension_name, _ in pairs(self.extensions) do
+		self:_hot_join_sync_extension(extension_name, peer_id)
 	end
 end
 
-ExtensionSystemBase._hot_join_sync_extension = function (self, arg_14_1, arg_14_2)
+ExtensionSystemBase._hot_join_sync_extension = function (self, extension_name, peer_id)
 	-- function 14
-	local get_entities = self.entity_manager:get_entities(arg_14_1)
+	local entities = self.entity_manager:get_entities(extension_name)
 
-	for k, v in pairs(get_entities) do
-		if not v.hot_join_sync then
-			v:hot_join_sync(arg_14_2)
+	for unit, internal in pairs(entities) do
+		if internal.hot_join_sync then
+			internal:hot_join_sync(peer_id)
 		end
 	end
 end
 
-ExtensionSystemBase.destroy = function (arg_15_0)
+ExtensionSystemBase.destroy = function (self)
 	-- function 15
 	return
 end
 
-local tbl_2 = {}
+local RETURN_TABLE = {}
 
-ExtensionSystemBase.get_extensions_from_extension_name = function (self, arg_16_1)
+ExtensionSystemBase.get_extensions_from_extension_name = function (self, extension_name)
 	-- function 16
-	fassert(self.update_list[arg_16_1], "[ExtensionSystemBase:get_extensions_from_type] There is no extension called %q", arg_16_1)
-	table.clear(tbl_2)
+	fassert(self.update_list[extension_name], "[ExtensionSystemBase:get_extensions_from_type] There is no extension called %q", extension_name)
+	table.clear(RETURN_TABLE)
 
-	for k, v in pairs(self.update_list[arg_16_1].pre_update) do
-		tbl_2[k] = v
+	for unit, data in pairs(self.update_list[extension_name].pre_update) do
+		RETURN_TABLE[unit] = data
 	end
 
-	for k_2, v_2 in pairs(self.update_list[arg_16_1].update) do
-		tbl_2[k_2] = v_2
+	for unit, data in pairs(self.update_list[extension_name].update) do
+		RETURN_TABLE[unit] = data
 	end
 
-	for k_3, v_3 in pairs(self.update_list[arg_16_1].post_update) do
-		tbl_2[k_3] = v_3
+	for unit, data in pairs(self.update_list[extension_name].post_update) do
+		RETURN_TABLE[unit] = data
 	end
 
-	return tbl_2
+	return RETURN_TABLE
 end

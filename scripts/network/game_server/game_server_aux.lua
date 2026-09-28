@@ -2,12 +2,12 @@
 
 GameServerAux = {}
 
-GameServerAux.create_network_hash = function (arg_1_0, arg_1_1)
+GameServerAux.create_network_hash = function (config_file_name, project_hash)
 	-- function 1
-	return LobbyAux.create_network_hash(arg_1_0, arg_1_1)
+	return LobbyAux.create_network_hash(config_file_name, project_hash)
 end
 
-GameServerAux.verify_lobby_data = function (arg_2_0)
+GameServerAux.verify_lobby_data = function (lobby)
 	-- function 2
 	return true
 end

@@ -1,6 +1,6 @@
 -- chunkname: @levels/honduras_dlcs/termite/dlc_termite_1/world_patrol_waypoints.lua
 
-local tbl = {
+local boss_waypoints = {
 	{
 		{
 			id = "boss_1",
@@ -971,7 +971,7 @@ local tbl = {
 		}
 	}
 }
-local tbl_2 = {
+local patrol_waypoints = {
 	{
 		travel_dist = 569.2158665060997,
 		id = "roaming_1",
@@ -1173,12 +1173,12 @@ local tbl_2 = {
 		}
 	}
 }
-local tbl_3 = {}
-local str = "1"
+local event_waypoints = {}
+local patrol_spline_version = "1"
 
 return {
-	version = str,
-	boss_waypoints = tbl,
-	patrol_waypoints = tbl_2,
-	event_waypoints = tbl_3
+	version = patrol_spline_version,
+	boss_waypoints = boss_waypoints,
+	patrol_waypoints = patrol_waypoints,
+	event_waypoints = event_waypoints
 }
